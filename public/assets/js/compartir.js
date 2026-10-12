@@ -25,7 +25,7 @@ import { tiene } from './parametros.js';
  * Emojis que se dibujan casi negros (〰️, el de Zip): sobre el fondo morado no se ven, así que en
  * pantalla llevan contorno claro (`.emoji-claro`, D-164) y en la imagen, un halo claro.
  */
-export const EMOJI_OSCUROS = ['〰️'];
+export const EMOJI_OSCUROS = ['〰️', '➕'];
 
 /** Dibuja con halo claro si el texto trae un emoji oscuro; si no, tal cual. */
 function conHalo(c, texto, dibujar) {

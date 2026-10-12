@@ -45,7 +45,7 @@ public/<carpeta>/
   Toda página de `/labs/` carga primero la puerta (`labs-puerta.js`) y lleva
   `<meta name="robots" content="noindex, nofollow">`, y sus puentes también el `noindex`
   (`og.mjs` los pone en las que genera; D-281). En `/labs/`, un proyecto va en **Proyectos
-  activos** mientras se prueba y en **La Bodega** si no prosperó (D-280).
+  activos** mientras se prueba y en **La Bodega** si no prosperó, plegado a su título (D-280).
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
   (`apple-touch-icon` y `apple-mobile-web-app-title`), el script que elige el manifest del idioma

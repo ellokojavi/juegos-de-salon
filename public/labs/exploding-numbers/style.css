@@ -1,0 +1,118 @@
+/* Números explosivos (laboratorio, D-297). Lo compartido vive en assets/css/base.css. */
+
+/* El fondo de la página: noche con brasas, naranja y rosado */
+body {
+  --bg1: #1a0610; --bg2: #2a0a1e; --bg3: #12062a;
+  --fondo:
+    radial-gradient(1000px 560px at 0% -10%, rgba(255, 138, 61, 0.28), transparent 60%),
+    radial-gradient(900px 520px at 110% 20%, rgba(255, 46, 136, 0.22), transparent 60%),
+    radial-gradient(800px 600px at 50% 120%, rgba(255, 210, 63, 0.14), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+}
+
+.portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
+.titulo-ne { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; text-align: center; }
+.titulo-ne .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-ne .bomba { font-size: 2.3rem; display: inline-block; animation: ne-late 1.6s ease-in-out infinite; }
+.titulo-ne.chico .display { font-size: 1.6rem; }
+.titulo-ne.chico .bomba { font-size: 1.5rem; }
+@keyframes ne-late { 0%, 100% { transform: scale(1) rotate(-6deg); } 45% { transform: scale(1.18) rotate(8deg); } 55% { transform: scale(0.94) rotate(4deg); } }
+.credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.credito a { color: var(--cyan); }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+
+/* El tablero: 9 columnas. Cada número lleva el color de su familia (--c: 1 y 9, 2 y 8…), en el borde */
+.tablero-ne { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; width: 100%; max-width: 420px; margin: 0 auto; }
+.num { aspect-ratio: 1; min-width: 0; border-radius: 9px; border: 2px solid color-mix(in srgb, var(--c) 45%, transparent);
+  background: rgba(255,255,255,0.06); color: var(--ink); display: grid; place-items: center; padding: 0;
+  font: 900 clamp(1.05rem, 5.4vw, 1.5rem) var(--font-num); font-variant-numeric: tabular-nums;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s, opacity 0.3s; }
+button.num { cursor: pointer; }
+button.num:not(:disabled):active { transform: scale(0.9); }
+/* El elegido: se enciende con su color y sube un poco */
+.num.sel { background: var(--c); border-color: #fff; color: #1a0610; transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.4), 0 0 18px var(--c); }
+/* Estallado: queda su sombra, para ver por dónde pasa la línea */
+.num.fuera { background: transparent; border-color: rgba(255,255,255,0.06); color: rgba(255,255,255,0.13); box-shadow: none; transform: none; }
+.num.boom { animation: ne-boom 0.42s ease-out; }
+@keyframes ne-boom { 0% { transform: scale(1.35); background: #fff; color: #fff; } 35% { transform: scale(0.7); } 100% { transform: none; } }
+/* No se unen: tiembla en rojo */
+.num.no { animation: ne-no 0.4s ease-in-out; border-color: #ff4d5e; }
+@keyframes ne-no { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+/* La ayuda: los dos laten en amarillo */
+.num.pista { box-shadow: 0 0 0 3px var(--yellow), 0 0 14px rgba(255, 210, 63, 0.7); animation: ne-pista 1s ease-in-out infinite; }
+@keyframes ne-pista { 50% { transform: scale(0.88); } }
+/* Una fila entera: destella y se aplasta */
+.num.se-va { animation: ne-se-va 0.5s ease-in forwards; }
+@keyframes ne-se-va { 0% { background: #ffd23f; border-color: #fff; } 40% { transform: scaleY(1.2); opacity: 1; } 100% { transform: scaleY(0) scaleX(1.3); opacity: 0; } }
+/* Los de ➕ caen de a uno */
+.num.nace { animation: ne-nace 0.4s cubic-bezier(.3,1.6,.6,1) both; animation-delay: calc(var(--k, 0) * 35ms); }
+@keyframes ne-nace { from { transform: translateY(-40px) scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
+/* El tablero tiembla con cada estallido, y más con una fila */
+.tiembla { animation: ne-tiembla 0.22s ease-out; }
+.tiembla-fuerte { animation: ne-tiembla-fuerte 0.45s ease-out; }
+@keyframes ne-tiembla { 25% { transform: translate(2px, -1px); } 50% { transform: translate(-2px, 1px); } 75% { transform: translate(1px, 1px); } }
+@keyframes ne-tiembla-fuerte { 15% { transform: translate(5px, -3px) rotate(0.6deg); } 35% { transform: translate(-5px, 3px) rotate(-0.6deg); } 55% { transform: translate(3px, 2px); } 75% { transform: translate(-2px, -1px); } }
+
+/* Las explosiones: una capa sobre todo, con la onda, el destello, las chispas y los pedazos del número */
+.chispas { position: fixed; inset: 0; pointer-events: none; z-index: 60; overflow: hidden; }
+.onda, .destello, .chispa, .pedazo, .kaboom { position: absolute; transform: translate(-50%, -50%); }
+.onda { width: var(--t); height: var(--t); border-radius: 50%; border: 4px solid var(--c); box-shadow: 0 0 20px var(--c), inset 0 0 12px var(--c);
+  animation: ne-onda 0.55s ease-out forwards; }
+@keyframes ne-onda { from { transform: translate(-50%, -50%) scale(0.2); opacity: 1; } to { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
+.destello { width: var(--t); height: var(--t); border-radius: 50%; background: radial-gradient(circle, #fff 0%, rgba(255, 230, 150, 0.85) 30%, transparent 70%);
+  animation: ne-destello 0.35s ease-out forwards; }
+.kaboom { font-size: var(--t); line-height: 1; animation: ne-kaboom 0.5s ease-out forwards; }
+@keyframes ne-kaboom { 0% { transform: translate(-50%, -50%) scale(0.2) rotate(var(--g)); opacity: 1; } 35% { transform: translate(-50%, -50%) scale(1.15) rotate(var(--g)); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.4) rotate(var(--g)); opacity: 0; } }
+@keyframes ne-destello { from { transform: translate(-50%, -50%) scale(0.3); opacity: 1; } to { transform: translate(-50%, -50%) scale(1.2); opacity: 0; } }
+.chispa { width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c), 0 0 2px #fff;
+  animation: ne-vuela var(--d) cubic-bezier(.15,.7,.35,1) forwards; }
+.pedazo { font: 900 1.25rem var(--font-num); color: var(--c); text-shadow: 0 0 6px var(--c); animation: ne-vuela var(--d) cubic-bezier(.15,.7,.35,1) forwards; }
+@keyframes ne-vuela {
+  from { transform: translate(-50%, -50%) scale(1.2) rotate(0); opacity: 1; }
+  to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 24px)) scale(0.2) rotate(var(--g)); opacity: 0; } }
+
+.marcador { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
+.aviso-ne { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; }
+.aviso-ne.mal { color: #ff8a8a; } .aviso-ne.ayuda, .aviso-ne.ojo { color: var(--yellow); }
+.aviso-ne.fila { color: var(--yellow); font: 1.4rem var(--font-display); letter-spacing: 0.05em; animation: pop 0.45s ease-out; }
+
+/* ➕, la ayuda y Rendirse: tres botones iguales en una fila (como los de Rutas), pegados abajo
+   mientras el tablero crece con ➕ */
+.acciones-ne { position: sticky; bottom: 0; z-index: 5; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+  margin: 0 -8px; padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); border-radius: 18px 18px 0 0;
+  background: rgba(26, 6, 16, 0.55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.acciones-ne .btn { width: 100%; min-width: 0; min-height: 44px; padding: 4px; font-size: 0.9rem; line-height: 1.15; }
+.acciones-ne .btn:disabled { opacity: 0.4; }
+.acciones-ne .btn.armado { border-color: var(--yellow); color: var(--yellow); }
+.rendirse.armado { color: #ff8a8a !important; border-color: #ff8a8a !important; }
+/* Sin pares, ➕ se enciende para que se vea dónde seguir */
+#btn-mas.llama { border-color: #ff8a3d; color: #ffb27a; animation: ne-llama 1.1s ease-in-out infinite; }
+@keyframes ne-llama { 50% { box-shadow: 0 0 0 3px rgba(255, 138, 61, 0.35), 0 0 18px rgba(255, 138, 61, 0.6); } }
+
+/* La portada: un tablero chico que se juega solo */
+.tablero-ne.chico { max-width: 260px; gap: 3px; }
+.tablero-ne.chico .num { font-size: 0.95rem; border-radius: 6px; border-width: 1.5px; }
+.tablero-ne.chico.entra { animation: ne-entra 0.4s ease-out; }
+@keyframes ne-entra { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+/* El alto de un tablero de 2 filas, fijo: al irse las filas no se encoge, y el «¡Limpio!» queda al
+   centro del espacio que dejó el tablero, grande, en su lugar */
+.demo { position: relative; width: 100%; max-width: 260px; aspect-ratio: 260 / 56; margin: 0 auto; }
+.demo-rotulo { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; pointer-events: none;
+  font: 2.4rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); text-shadow: 0 3px 0 rgba(0,0,0,0.35), 0 0 18px rgba(255, 210, 63, 0.45);
+  opacity: 0; transition: opacity 0.3s; }
+.demo-rotulo.ve { opacity: 1; animation: ne-limpio 0.55s cubic-bezier(.3,1.6,.6,1); }
+@keyframes ne-limpio { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.resultado { text-align: center; display: grid; gap: 10px; }
+.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.sello-ne { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+.sello-ne.mal { color: #ff8a8a; }
+.resultado .comentario { text-align: left; }
+.divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
+.desglose { text-align: left; margin: 0 auto; padding-left: 1.2em; }
+.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
