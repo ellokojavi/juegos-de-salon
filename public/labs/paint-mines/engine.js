@@ -12,6 +12,8 @@ import { DIBUJOS, DIBUJOS2, PALETA } from './dibujos.js';
 
 export const LADO = 7;
 export const RESTA_ERROR = 15;
+/** Lo que cuesta cada ayuda 💡 (D-292). */
+export const RESTA_AYUDA = 10;
 /** El premio del modo difícil (dos colores): el puntaje se multiplica (pedido del dueño). */
 export const PREMIO_DIFICIL = 1.5;
 
@@ -45,43 +47,60 @@ export const numero = (sol, i) => VECINAS[i].filter(j => sol[j] === sol[i]).leng
  * en el Buscaminas). Una casilla con un solo color posible se conoce, muestra su número y se sigue.
  * Devuelve el mapa de conocidas.
  */
-export function resolver(sol, dadas) {
+export const resolver = (sol, dadas) => deducir(sol, dadas).sabe;
+
+/**
+ * La ayuda (D-292): la primera casilla que se puede deducir desde las conocidas, y los números que la
+ * explican (las casillas conocidas cuyas reglas la tocaron). `null` si ya no queda nada por deducir.
+ */
+export function ayuda(sol, conocidas) {
+  const { primera } = deducir(sol, conocidas, true);
+  return primera;
+}
+
+function deducir(sol, dadas, soloLaPrimera = false) {
   const colores = Math.max(...sol) + 1;
   const posibles = sol.map(() => (1 << colores) - 1);
-  const sabe = new Map();
-  const conocer = j => { sabe.set(j, Math.log2(posibles[j])); };
-  for (const i of dadas) { posibles[i] = 1 << sol[i]; conocer(i); }
+  const sabe = new Map(), fuentes = new Map();
+  let primera = null;
+  const conocer = j => {
+    sabe.set(j, Math.log2(posibles[j]));
+    if (soloLaPrimera && !primera) primera = { celda: j, por: [...(fuentes.get(j) || [])] };
+  };
+  for (const i of dadas) { posibles[i] = 1 << sol[i]; sabe.set(i, sol[i]); }
+  const anotar = (j, de) => { if (!fuentes.has(j)) fuentes.set(j, new Set()); for (const i of de) fuentes.get(j).add(i); };
   let cambio = true;
-  const quitar = (des, v) => {
+  const quitar = (des, v, de) => {
     for (const j of des) if (!sabe.has(j) && (posibles[j] >> v) & 1) {
-      posibles[j] &= ~(1 << v); cambio = true;
+      posibles[j] &= ~(1 << v); cambio = true; anotar(j, de);
       if (!(posibles[j] & (posibles[j] - 1))) conocer(j);
     }
   };
-  const poner = (des, v) => { for (const j of des) if (!sabe.has(j)) { posibles[j] = 1 << v; conocer(j); cambio = true; } };
-  while (cambio) {
+  const poner = (des, v, de) => { for (const j of des) if (!sabe.has(j)) { posibles[j] = 1 << v; anotar(j, de); conocer(j); cambio = true; } };
+  while (cambio && !primera) {
     cambio = false;
     // Cada conocida: sus vecinas que todavía pueden ser de su color, y cuántas de ellas lo son
     const reglas = [];
     for (const [i, v] of sabe) {
       const des = VECINAS[i].filter(j => !sabe.has(j) && (posibles[j] >> v) & 1);
       if (!des.length) continue;
-      reglas.push({ des, v, n: numero(sol, i) - VECINAS[i].filter(j => sabe.get(j) === v).length });
+      reglas.push({ i, des, v, n: numero(sol, i) - VECINAS[i].filter(j => sabe.get(j) === v).length });
     }
     for (const r of reglas) {
-      if (r.n === 0) quitar(r.des, r.v);
-      else if (r.n === r.des.length) poner(r.des, r.v);
+      if (primera) break;
+      if (r.n === 0) quitar(r.des, r.v, [r.i]);
+      else if (r.n === r.des.length) poner(r.des, r.v, [r.i]);
     }
     if (cambio) continue;
     // Una dentro de otra, para el mismo color: lo que sobra de la grande tiene la diferencia
     for (const a of reglas) for (const b of reglas) {
-      if (a === b || a.v !== b.v || a.des.length >= b.des.length || !a.des.every(j => b.des.includes(j))) continue;
+      if (primera || a === b || a.v !== b.v || a.des.length >= b.des.length || !a.des.every(j => b.des.includes(j))) continue;
       const resto = b.des.filter(j => !a.des.includes(j)), n = b.n - a.n;
-      if (n === 0) quitar(resto, a.v);
-      else if (n === resto.length) poner(resto, a.v);
+      if (n === 0) quitar(resto, a.v, [a.i, b.i]);
+      else if (n === resto.length) poner(resto, a.v, [a.i, b.i]);
     }
   }
-  return sabe;
+  return { sabe, primera };
 }
 
 /**
@@ -125,16 +144,18 @@ export function generar(semilla, { colores = 1 } = {}) {
  */
 export function estado(t, jugadas = []) {
   const conocidas = new Set(t.dadas), errores = new Set();
-  for (const { i, color } of jugadas) {
+  let ayudas = 0;
+  for (const { i, color, ayuda: pedida } of jugadas) {
+    if (pedida) { ayudas++; continue; }
     if (conocidas.has(i)) continue;
     conocidas.add(i);
     if (t.sol[i] !== color) errores.add(i);
   }
-  return { conocidas, errores, fin: conocidas.size === t.sol.length };
+  return { conocidas, errores, ayudas, fin: conocidas.size === t.sol.length };
 }
 
 /** De 0 a 100: cada error resta RESTA_ERROR. */
-export const puntaje = (e, { colores = 1 } = {}) => Math.round(Math.max(0, 100 - RESTA_ERROR * e.errores.size) * (colores === 2 ? PREMIO_DIFICIL : 1));
+export const puntaje = (e, { colores = 1 } = {}) => Math.round(Math.max(0, 100 - RESTA_ERROR * e.errores.size - RESTA_AYUDA * (e.ayudas || 0)) * (colores === 2 ? PREMIO_DIFICIL : 1));
 /** El máximo posible: 100, o 150 en el modo difícil. */
 export const maximo = colores => Math.round(100 * (colores === 2 ? PREMIO_DIFICIL : 1));
 

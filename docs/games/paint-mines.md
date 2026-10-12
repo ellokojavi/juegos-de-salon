@@ -30,7 +30,9 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
   color verdadero, con un borde rojo, y resta 15 («❌ Se pintaba de morado: −15.» o «❌ No se pintaba: −15.»). Arriba: errores y cuántas faltan.
 - **Al terminar:** los números se van, las sin pintar se apagan, las pintadas brillan y se dice qué era
   («🐟 ¡Era un pez!»).
-- **Puntaje:** 100 − 15 por error, nunca bajo 0. Con 70 o más, confeti.
+- **💡 Ayuda (−10)** (D-292): bajo los pinceles. Marca, latiendo en amarillo, una casilla que se
+  puede deducir con lo que se ve, y los números que lo explican; no dice de qué color es.
+- **Puntaje:** 100 − 15 por error − 10 por ayuda, nunca bajo 0. Con 70 o más, confeti.
 - **El final:** el dibujo, su nombre, un sello (¡Perfecto! sin errores, si no ¡Pintado!), el puntaje
   con su desglose, el tiempo, compartir, otro tablero, el de hoy (si se jugó con semilla) y, tras una
   línea, el formulario de comentarios (D-265, D-268).
@@ -41,7 +43,7 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
 ## Modo difícil (D-291)
 
 - **El interruptor:** en la portada, antes de Empezar, una palanca sobre una placa de metal («⚡ Modo
-  difícil · Dos colores · puntaje ×1.5»). Bajo el título dice «APAGADO» o «ENCENDIDO». Al subirla la placa se electrifica: titila en celeste y
+  difícil · Dos colores · puntaje ×1.5»). Bajo el título dice «APAGADO» o «ENCENDIDO». Al subirla, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto (D-292), y la placa se electrifica: titila en celeste y
   amarillo, saltan chispas ⚡, suena y vibra. Es un `role="switch"`; el celular recuerda su posición
   (`juegos-de-salon:pintaminas:dificil`) y el link lo trae con `?colors=2`.
 - **El tablero:** dos colores al azar de `PALETA` (nunca amarillo con naranjo juntos: se confundían), con los dibujos de `DIBUJOS2` (de dos colores), un
