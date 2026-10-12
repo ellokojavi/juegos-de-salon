@@ -1,10 +1,10 @@
 # Changelog
 
 ## 0.164.0 — 2026-10-12
-- **🚇 Laboratorio: Rutas** (D-293), el tercer proyecto activo. Nueve piezas de un plano de metro:
-  arrastra para marcar un rectángulo y, al soltar, gira media vuelta. Une todas las líneas en el
-  mínimo de giros, como un golf; reiniciar es gratis. Inspirado en Junction Nine, con el link en la
-  portada.
+- **🚇 Laboratorio: Rutas** (D-293, D-294), el tercer proyecto activo. Nueve piezas de un plano de
+  metro: arrastra para marcar un rectángulo y, al soltar, gira media vuelta. Une todas las líneas en el
+  mínimo de giros, como un golf, en cinco etapas cada vez más difíciles; reiniciar es gratis. Inspirado
+  en Junction Nine, con el link en la portada.
 
 ## 0.163.1 — 2026-10-11
 - **🖌️ Pintaminas (laboratorio):** el modo difícil también cambia el fondo de la página, a un azul noche

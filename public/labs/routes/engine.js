@@ -164,25 +164,45 @@ function mapa(r, lineas) {
 }
 
 /**
- * El tablero de una semilla: `{ piezas, colores, inicio, minimo, revuelta }`. Se desordena desde la meta con
- * `giros` giros al azar y se calcula el mínimo exacto; se rehace si queda muy fácil (menos de 3) o ya
- * resuelto por otro camino.
+ * Las etapas (D-294): cada partida son cinco tableros, cada uno más difícil. Sube el mínimo de giros y,
+ * desde la cuarta, hay una línea más que seguir con la vista. El mínimo se pide exacto: un tablero de
+ * la etapa 3 se resuelve en 4 giros, ni uno menos.
  */
-export function generar(semilla, { lineas = 4, giros = 5 } = {}) {
+export const ETAPAS = [
+  { lineas: 3, minimo: 2 },
+  { lineas: 4, minimo: 3 },
+  { lineas: 4, minimo: 4 },
+  { lineas: 5, minimo: 4 },
+  { lineas: 5, minimo: 5 },
+];
+
+/**
+ * El tablero de una semilla: `{ piezas, colores, inicio, minimo, revuelta }`. Se desordena desde la meta
+ * con giros al azar y se calcula el mínimo exacto; se rehace hasta que dé el que se pide (`minimo`), o,
+ * sin pedirlo, uno de 3 a `giros`. `revuelta`: los giros con que se desordenó; deshechos al revés lo
+ * resuelven (no siempre en el mínimo).
+ */
+export function generar(semilla, { lineas = 4, giros = 5, minimo: pedido = null } = {}) {
   const r = azar(String(semilla));
-  for (let intento = 0; intento < 50; intento++) {
+  const vueltas = pedido ? pedido + 1 : giros;
+  for (let intento = 0; intento < 200; intento++) {
     const { piezas, colores } = mapa(r, lineas);
     let inicio = META;
     const revuelta = [];
-    for (let g = 0; g < giros; g++) { const rect = RECTANGULOS[Math.floor(r() * RECTANGULOS.length)]; revuelta.push(rect); inicio = girar(inicio, rect); }
+    for (let g = 0; g < vueltas; g++) { const rect = RECTANGULOS[Math.floor(r() * RECTANGULOS.length)]; revuelta.push(rect); inicio = girar(inicio, rect); }
     if (resuelto(piezas, inicio)) continue;
-    const m = minimo(inicio, giros);
-    if (m === null || m < 3) continue;
-    // `revuelta`: los giros con que se desordenó; deshechos al revés lo resuelven (no siempre en el mínimo)
+    const m = minimo(inicio, vueltas);
+    if (m === null || (pedido ? m !== pedido : m < 3)) continue;
     return { piezas, colores, inicio, minimo: m, revuelta };
   }
   throw new Error('no se pudo armar el tablero');
 }
 
-/** De 0 a 100: 100 si se iguala el mínimo; cada giro de más resta RESTA_GIRO. Nunca baja de 10 si se resolvió. */
+/** El tablero de una etapa (0 a 4) de una partida: la semilla de la partida, con su número. */
+export const generarEtapa = (semilla, n) => generar(`${semilla}:etapa-${n + 1}`, ETAPAS[n]);
+
+/** De 0 a 100 por tablero: 100 si se iguala el mínimo; cada giro de más resta RESTA_GIRO. Nunca baja de 10 si se resolvió. */
 export const puntaje = (giros, min) => Math.max(10, 100 - RESTA_GIRO * Math.max(0, giros - min));
+
+/** El puntaje de la partida: el promedio de sus etapas, redondeado. */
+export const puntajeTotal = puntajes => Math.round(puntajes.reduce((a, b) => a + b, 0) / puntajes.length);

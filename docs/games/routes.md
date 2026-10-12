@@ -14,25 +14,30 @@ portada y en el laboratorio.
 
 ## Portada
 
-El título con un 🚇 que anda, el lema («Une todas las líneas del metro girando partes del tablero, en
-el menor número de giros.»), el crédito, y un tablero resuelto que gira solo una parte y la devuelve,
+El título con un 🚇 que anda, el lema («Une todas las líneas del metro girando partes del tablero.»), el crédito, y un tablero resuelto que gira solo una parte y la devuelve,
 una y otra vez (con movimiento reducido queda quieto). Después los tres pasos y Empezar, que pasa por
 la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
 
 ## Cómo se juega
+
+- **Etapas** (D-294): cada partida son 5 tableros, cada uno más difícil: 3 líneas y mínimo 2; 4 y 3;
+  4 y 4; 5 y 4; 5 y 5. Arriba, «Etapa n de 5», cinco puntos (verde la hecha, dorada en el mínimo,
+  blanca la actual) y «4 líneas · mínimo 3 giros». Al unir una etapa, «🚇 ¡Etapa 2 lista!» y llega
+  la siguiente. La partida vale el promedio de las etapas.
 
 - **Girar:** se arrastra de una pieza a otra y queda marcado en amarillo el rectángulo entre las dos;
   al soltar, gira media vuelta: cada pieza viaja a su lugar espejo y se da vuelta. Un toque gira una
   sola pieza (la deja dada vuelta en su lugar).
 - **La meta:** que todas las líneas sigan sin cortes de pieza en pieza. Vale cualquier orden en que
   todos los bordes calcen, aunque no sea el original.
-- **Arriba:** «Giros: n · Mínimo: m». **↺ Reiniciar** vuelve al tablero del comienzo con 0 giros, gratis.
+- **Arriba:** «Giros: n · Mínimo: m». **↺ Reiniciar** vuelve al tablero del comienzo de la etapa con 0
+  giros, gratis; sin giros está apagado y al terminar la etapa se va.
 - **Al unirlas:** las líneas brillan y el tablero se marca en verde («🚇 ¡Todas las líneas unidas!»).
-- **Puntaje:** 100 si se iguala el mínimo; −15 por cada giro de más; nunca menos de 10. Con 70 o más,
-  confeti.
-- **El final:** el tablero resuelto, un sello (¡Ruta perfecta! en el mínimo, si no ¡Rutas unidas!), el
-  puntaje, el desglose (giros contra el mínimo, y cuántas veces reiniciaste), el tiempo, compartir
-  («⛳ 6 giros · mínimo 5»), otro tablero, el de hoy (si se jugó con semilla) y, tras una línea, el
+- **Puntaje:** por etapa, 100 si se iguala el mínimo, −15 por cada giro de más, nunca menos de 10; la
+  partida, el promedio. Con 70 o más, confeti.
+- **El final:** el último tablero resuelto, un sello (¡Todas en el mínimo! o ¡Rutas unidas!), el
+  puntaje, el desglose (cada etapa: «Etapa 3: 5 giros (mínimo 4) · 85», y cuántas veces reiniciaste),
+  el tiempo, compartir (una línea por etapa: «🟩 1: 2/2»), otro tablero, el de hoy (si se jugó con semilla) y, tras una línea, el
   formulario de comentarios (D-265, D-268).
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos.
 

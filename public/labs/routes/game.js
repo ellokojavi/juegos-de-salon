@@ -13,7 +13,7 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { generar, girar, resuelto, bordesUnidos, puntaje, RECTANGULOS, LADO, RESTA_GIRO } from './engine.js';
+import { generar, generarEtapa, girar, resuelto, bordesUnidos, puntaje, puntajeTotal, RECTANGULOS, LADO, RESTA_GIRO, ETAPAS } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -22,18 +22,21 @@ const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const JUNCTION = 'https://bricksandchips.co/junction-nine';
 const T = {
   nombre: 'Rutas',
-  lema: 'Une todas las líneas del metro girando partes del tablero, en el menor número de giros.',
+  lema: 'Une todas las líneas del metro girando partes del tablero.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
     ['🔄', 'Arrastra de una pieza a otra para marcar un rectángulo: al soltar, gira media vuelta. Un toque gira una sola pieza.'],
     ['🚇', 'Une todas las líneas: cada una tiene que seguir sin cortes de pieza en pieza.'],
-    ['⛳', `Hazlo en el mínimo de giros. Cada giro de más resta ${RESTA_GIRO}; reiniciar es gratis.`],
+    ['⛳', `Son ${ETAPAS.length} etapas, cada una más difícil. Hazlas en el mínimo de giros: cada giro de más resta ${RESTA_GIRO}; reiniciar es gratis.`],
   ],
   empezar: '🚇 Empezar', aJugar: '¡A girar!',
+  // Las etapas (D-294): cinco tableros de dificultad creciente
+  etapa: 'Etapa {n} de {t}', etapaDe: '{l} líneas · mínimo {m} giros', etapaLista: '🚇 ¡Etapa {n} lista!', etapaPerfecta: '🚇 ¡Etapa {n} en el mínimo!',
+  filaEtapa: 'Etapa {n}: {g} giros (mínimo {m}) · {p}',
   marcador: 'Giros: {g} · Mínimo: {m}', reiniciar: '↺ Reiniciar', reiniciado: 'De vuelta al comienzo: los giros vuelven a 0.',
   unidas: '🚇 ¡Todas las líneas unidas!',
-  fin: { perfecto: '¡Ruta perfecta!', listo: '¡Rutas unidas!' },
-  desglose: ['Lo hiciste en {g} giros; el mínimo era {m}.', 'Igualaste el mínimo: {m} giros.'], reinicios: ['Reiniciaste 1 vez.', 'Reiniciaste {n} veces.'],
+  fin: { perfecto: '¡Todas en el mínimo!', listo: '¡Rutas unidas!' },
+  reinicios: ['Reiniciaste 1 vez.', 'Reiniciaste {n} veces.'],
   tiempo: 'Tiempo: {t}.',
   otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
   comentarAbrir: '💬 Dejar un comentario',
@@ -46,7 +49,7 @@ const vista = document.getElementById('vista');
 const pie = document.getElementById('pie');
 const params = new URLSearchParams(location.search);
 const SEMILLA_URL = (params.get('seed') || '').trim();
-const P = { semilla: '', t: null, estado: null, giros: 0, reinicios: 0, desde: 0, terminado: false };
+const P = { semilla: '', etapa: 0, t: null, estado: null, giros: 0, reinicios: 0, hechas: [], desde: 0, terminado: false };
 
 function pieComentario(pantalla) {
   pie.replaceChildren(el('button', {
@@ -55,7 +58,7 @@ function pieComentario(pantalla) {
   }, T.comentarAbrir));
 }
 const contexto = pantalla => ({
-  juego: GAME_ID, pantalla, semilla: P.semilla, giros: P.giros, minimo: P.t?.minimo, reinicios: P.reinicios,
+  juego: GAME_ID, pantalla, semilla: P.semilla, etapa: P.etapa + 1, giros: P.giros, minimo: P.t?.minimo, reinicios: P.reinicios, hechas: P.hechas.map(h => `${h.giros}/${h.minimo}`).join(' '),
   url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
 });
 
@@ -72,6 +75,7 @@ const PUNTO = { N: k => [35 + 30 * k, 0], S: k => [35 + 30 * k, 100], O: k => [0
 const ADENTRO = { N: [0, 1], S: [0, -1], O: [1, 0], E: [-1, 0] };
 function dibujoPieza(pieza) {
   const s = svg('svg', { viewBox: '0 0 100 100', class: 'pieza-svg', 'aria-hidden': 'true' });
+  const estaciones = [];
   for (const { de, a, color } of pieza.tramos) {
     const [x1, y1] = PUNTO[de.lado](de.k), [x2, y2] = PUNTO[a.lado](a.k);
     const [dx1, dy1] = ADENTRO[de.lado], [dx2, dy2] = ADENTRO[a.lado];
@@ -79,7 +83,11 @@ function dibujoPieza(pieza) {
     s.append(svg('path', { d: `M${x1} ${y1} C${c1} ${c2} ${x2} ${y2}`, stroke: color, 'stroke-width': 9, fill: 'none', 'stroke-linecap': 'butt', class: 'tramo' }));
     // La estación, en la mitad de la curva
     const m = (u, v, w, z) => 0.125 * u + 0.375 * v + 0.375 * w + 0.125 * z;
-    s.append(svg('circle', { cx: m(x1, c1[0], c2[0], x2), cy: m(y1, c1[1], c2[1], y2), r: 5.5, class: 'estacion' }));
+    // Una sola estación por lugar: en los cruces se apilaban y se leían como un manchón
+    const cx = m(x1, c1[0], c2[0], x2), cy = m(y1, c1[1], c2[1], y2);
+    if (estaciones.some(([x, y]) => Math.hypot(x - cx, y - cy) < 14)) continue;
+    estaciones.push([cx, cy]);
+    s.append(svg('circle', { cx, cy, r: 5.5, class: 'estacion' }));
   }
   return s;
 }
@@ -171,20 +179,32 @@ function portada() {
 
 function empezar() {
   P.semilla = SEMILLA_URL || `dia:${fechaLocal()}`;
-  P.t = generar(P.semilla);
-  P.estado = P.t.inicio; P.giros = 0; P.reinicios = 0; P.terminado = false;
+  P.etapa = 0; P.hechas = []; P.reinicios = 0;
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
   // El 3, 2, 1 de La Copa (D-105): el tablero se arma con el "¡A girar!", y el tiempo corre desde ahí
   vista.replaceChildren(); pie.replaceChildren();
   cuentaRegresiva({ titulo: '🚇 Rutas', ya: T.aJugar }).then(() => { P.desde = Date.now(); jugar(); });
 }
 
+/** Los puntos de las etapas: hechas (verde, dorada si fue en el mínimo), la actual y las que vienen. */
+const progreso = () => el('div', { class: 'etapas', 'aria-hidden': 'true' }, ...ETAPAS.map((_, k) => {
+  const h = P.hechas[k];
+  return el('span', { class: `punto${h ? (h.giros <= h.minimo ? ' perfecta' : ' hecha') : k === P.etapa ? ' actual' : ''}` });
+}));
+
 function jugar() {
-  const { t } = P;
+  const t = P.t = generarEtapa(P.semilla, P.etapa);
+  P.estado = t.inicio; P.giros = 0; P.terminado = false;
+  const cabeza = el('div', { class: 'cabeza-etapa entra', id: 'etapa' },
+    el('p', { class: 'n-etapa' }, fmt(T.etapa, { n: P.etapa + 1, t: ETAPAS.length })), progreso(),
+    el('p', { class: 'muted de-etapa' }, fmt(T.etapaDe, { l: ETAPAS[P.etapa].lineas, m: t.minimo })));
   const marcador = el('p', { class: 'marcador', id: 'marcador' });
   const aviso = el('p', { class: 'aviso-rt', 'aria-live': 'polite' }, '');
-  const pintarMarcador = () => { marcador.textContent = fmt(T.marcador, { g: P.giros, m: t.minimo }); };
-  // Los bordes que ya calzan se iluminan: se ve qué está unido
+  const pintar = () => {
+    marcador.textContent = fmt(T.marcador, { g: P.giros, m: t.minimo });
+    reiniciar.disabled = !P.giros || P.terminado;
+  };
+  // Los bordes que ya calzan
   const unir = () => {
     const unidos = new Set(bordesUnidos(t.piezas, P.estado).flat());
     tab.caja.querySelectorAll('.pieza').forEach(n => n.classList.toggle('unida', unidos.has(+n.dataset.lugar)));
@@ -196,8 +216,8 @@ function jugar() {
       P.estado = tab.aplicar(P.estado, r);
       P.giros++;
       SFX.flip(); vibrate(15);
-      aviso.textContent = '';
-      pintarMarcador();
+      aviso.className = 'aviso-rt'; aviso.textContent = '';
+      pintar();
       setTimeout(unir, QUIETO ? 0 : 450);
       if (resuelto(t.piezas, P.estado)) terminar();
     },
@@ -207,43 +227,55 @@ function jugar() {
     SFX.tap(); vibrate(10);
     P.estado = t.inicio; P.giros = 0; P.reinicios++;
     tab.poner(P.estado, !QUIETO);
-    pintarMarcador(); unir();
-    aviso.textContent = T.reiniciado;
+    pintar(); unir();
+    aviso.className = 'aviso-rt'; aviso.textContent = T.reiniciado;
   } }, T.reiniciar);
+  // Etapa lista: las líneas brillan, y viene la siguiente o el resultado
   const terminar = () => {
     P.terminado = true;
+    P.hechas.push({ giros: P.giros, minimo: t.minimo, puntaje: puntaje(P.giros, t.minimo) });
     tab.caja.classList.add('bloqueado');
-    setTimeout(() => { tab.caja.classList.add('resuelto'); aviso.className = 'aviso-rt bien'; aviso.textContent = T.unidas; SFX.reveal(); }, QUIETO ? 0 : 500);
-    setTimeout(resultado, QUIETO ? 900 : 2300);
+    reiniciar.remove();
+    setTimeout(() => {
+      tab.caja.classList.add('resuelto');
+      aviso.className = 'aviso-rt bien';
+      aviso.textContent = fmt(P.giros <= t.minimo ? T.etapaPerfecta : T.etapaLista, { n: P.etapa + 1 });
+      cabeza.querySelector('.etapas').replaceWith(progreso());
+      SFX.reveal();
+    }, QUIETO ? 0 : 500);
+    setTimeout(() => {
+      if (P.etapa + 1 < ETAPAS.length) { P.etapa++; jugar(); } else resultado();
+    }, QUIETO ? 1000 : 2300);
   };
   tab.poner(P.estado, false);
-  vista.replaceChildren(tituloJuego(), marcador, tab.caja, aviso, reiniciar);
-  pintarMarcador(); unir();
+  vista.replaceChildren(tituloJuego(), cabeza, marcador, tab.caja, aviso, reiniciar);
+  pintar(); unir();
   pieComentario('juego');
 }
 
-/** El link de un tablero: su semilla. */
+/** El link de una partida: su semilla. */
 const enlace = semilla => (semilla ? `?seed=${encodeURIComponent(semilla)}` : '');
 
 function resultado() {
   const { t } = P;
-  const s = puntaje(P.giros, t.minimo), ms = Date.now() - P.desde;
-  trackFinish({ detalle: `${s}/100 · ${P.giros} giros (mínimo ${t.minimo}) · ${P.reinicios} reinicios · ${mmss(ms)}` });
+  const s = puntajeTotal(P.hechas.map(h => h.puntaje)), ms = Date.now() - P.desde;
+  trackFinish({ detalle: `${s}/100 · ${P.hechas.map(h => `${h.giros}/${h.minimo}`).join(' ')} · ${P.reinicios} reinicios · ${mmss(ms)}` });
   SFX.win();
   if (!QUIETO && s >= 70) confetti({ count: 160, duration: 2400 });
   pie.replaceChildren();
-  const perfecto = P.giros <= t.minimo;
-  const lineas = [perfecto ? fmt(T.desglose[1], { m: t.minimo }) : fmt(T.desglose[0], { g: P.giros, m: t.minimo })];
+  const perfecto = P.hechas.every(h => h.giros <= h.minimo);
+  const lineas = P.hechas.map((h, k) => fmt(T.filaEtapa, { n: k + 1, g: h.giros, m: h.minimo, p: h.giros <= h.minimo ? '⛳ 100' : h.puntaje }));
   if (P.reinicios) lineas.push(fmt(T.reinicios[P.reinicios === 1 ? 0 : 1], { n: P.reinicios }));
   const fin = crearTablero(t);
   fin.caja.classList.add('chico', 'resuelto');
   fin.poner(P.estado, false);
-  const tarjeta = `⛳ ${P.giros} giros · mínimo ${t.minimo}${perfecto ? ' · ¡perfecto!' : ''}`;
+  // Para compartir: los giros de cada etapa contra su mínimo, sin delatar los tableros
+  const tarjeta = P.hechas.map((h, k) => `${h.giros <= h.minimo ? '🟩' : '🟨'} ${k + 1}: ${h.giros}/${h.minimo}`).join('\n');
   vista.replaceChildren(el('div', { class: 'resultado' },
     fin.caja,
     el('p', { class: 'sello-rt' }, perfecto ? T.fin.perfecto : T.fin.listo),
     el('div', { class: 'score-big', id: 'puntaje' }, `${s}/100`),
-    el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
+    el('ul', { class: 'desglose muted', id: 'desglose' }, ...lineas.map(x => el('li', {}, x))),
     el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
     botonResultadoSolo({ C: COMMON.es, emoji: '🚇', juego: T.nombre, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta, url: `${SITIO}labs/routes/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: enlace(Math.random().toString(36).slice(2, 8)) }, T.otraVez),
