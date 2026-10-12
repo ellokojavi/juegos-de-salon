@@ -5,6 +5,7 @@
   metro: arrastra para marcar un rectángulo y, al soltar, gira media vuelta. Une todas las líneas en el
   mínimo de giros, como un golf, en cinco etapas cada vez más difíciles; reiniciar es gratis. Inspirado
   en Junction Nine, con el link en la portada.
+
 ## 0.163.2 — 2026-10-12
 - **🖌️ Pintaminas (laboratorio):** la 💡 Ayuda pide un segundo toque antes de cobrar, como en El caso,
   y una ayuda pagada se puede volver a ver gratis. En el modo difícil, el segundo color lleva rayas, para
