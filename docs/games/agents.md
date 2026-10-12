@@ -1,7 +1,7 @@
 # 🕵️ Agentes (prototipo del laboratorio, en Proyectos activos)
 
 Un *Codenames* mini para uno solo (D-286): el juego da una pista con su número y el jugador
-encuentra a sus agentes entre 12 palabras, sin tocar las neutrales ni al asesino. **Inspirado en
+encuentra a sus agentes entre 15 palabras, sin tocar las neutrales ni al asesino. **Inspirado en
 [Codenames](https://czechgames.com/en/codenames/), de Vlaada Chvátil (Czech Games Edition)**, y lo
 dice en la portada, en el final y en el laboratorio.
 
@@ -67,7 +67,7 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
 
 - `pistas.js`: 40 pistas, cada una con 9 palabras que van con ella (`si`) y 3 tentaciones
   (`casi`). Una palabra nueva se piensa como jugador: que la asociación se vea sin explicarla.
-- `engine.js`: `generar(semilla)` elige 3 pistas que no se pisen (ninguna es palabra o tentación de
+- `engine.js`: `generar(semilla)` elige 4 pistas que no se pisen (y cuál lleva un agente menos) (ninguna es palabra o tentación de
   otra), 3 agentes de cada una que no sean de otra elegida, el asesino de las tentaciones (y que no
   sea agente de ninguna; su carta lleva `tienta`, la pista a la que se parece) y los neutrales de otras pistas. Ninguna pista aparece en su propio tablero.
   `estado(t, jugadas)` reconstruye la partida desde las jugadas (`{i}` o `{pasar:true}`).
