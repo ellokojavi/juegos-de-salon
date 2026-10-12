@@ -151,11 +151,14 @@ export function estado(t, jugadas = []) {
     conocidas.add(i);
     if (t.sol[i] !== color) errores.add(i);
   }
-  return { conocidas, errores, ayudas, fin: conocidas.size === t.sol.length };
+  // avance: qué parte de lo que había que pintar ya se pintó (para quien se rinde)
+  const avance = (conocidas.size - t.dadas.length) / Math.max(1, t.sol.length - t.dadas.length);
+  return { conocidas, errores, ayudas, avance, fin: conocidas.size === t.sol.length };
 }
 
 /** De 0 a 100: cada error resta RESTA_ERROR. */
-export const puntaje = (e, { colores = 1 } = {}) => Math.round(Math.max(0, 100 - RESTA_ERROR * e.errores.size - RESTA_AYUDA * (e.ayudas || 0)) * (colores === 2 ? PREMIO_DIFICIL : 1));
+// Quien se rinde se lleva la parte que pintó: el puntaje vale ese avance (D-296)
+export const puntaje = (e, { colores = 1, rendido = false } = {}) => Math.round(Math.max(0, 100 - RESTA_ERROR * e.errores.size - RESTA_AYUDA * (e.ayudas || 0)) * (rendido ? e.avance : 1) * (colores === 2 ? PREMIO_DIFICIL : 1));
 /** El máximo posible: 100, o 150 en el modo difícil. */
 export const maximo = colores => Math.round(100 * (colores === 2 ? PREMIO_DIFICIL : 1));
 

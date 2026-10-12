@@ -92,4 +92,13 @@ const tA = generar('ayuda-puntaje'), libresA = tA.sol.map((_, i) => i).filter(i 
 const eA = estado(tA, [{ ayuda: true }, { ayuda: true }, ...libresA.map(i => ({ i, color: tA.sol[i] }))]);
 assert.ok(eA.fin && eA.ayudas === 2 && puntaje(eA) === 100 - 2 * RESTA_AYUDA);
 assert.equal(puntaje(eA, { colores: 2 }), Math.round((100 - 2 * RESTA_AYUDA) * 1.5));
+// Rendirse (D-296): el puntaje vale la parte pintada
+{
+  const t = generar('rendirse'), libres = t.sol.map((_, i) => i).filter(i => !t.dadas.includes(i));
+  const mitad = libres.slice(0, Math.floor(libres.length / 2)).map(i => ({ i, color: t.sol[i] }));
+  const e = estado(t, mitad);
+  assert.ok(Math.abs(e.avance - mitad.length / libres.length) < 1e-9);
+  assert.equal(puntaje(e, { rendido: true }), Math.round(100 * e.avance));
+  assert.equal(puntaje(estado(t, []), { rendido: true }), 0);
+}
 console.log('✓ Pintaminas (labs)');
