@@ -46,5 +46,7 @@
 11. **La lista de chequeo** del final de los cánones, entera. La parte que se puede contar la
     cuenta `node public/assets/js/games.test.mjs`: motor, tests, gancho y especificación (C-12).
 
-La versión y la entrada del `CHANGELOG.md` no las escribe quien hace el juego: se ponen al
-fusionar, y `publicar.yml` hace el resto (C-11, D-205).
+La versión no la escribe quien hace el juego: su entrada va sin número en `changelog/<rama>.md`
+(`node tools/release/changelog.mjs nueva menor`), el número se pone solo al fusionar y
+`publicar.yml` hace el resto (C-11, D-205, D-300). Un juego entra al laboratorio con documentación y
+una revisión corta de usabilidad; el PR que lo saca lleva la pasada completa (D-304).

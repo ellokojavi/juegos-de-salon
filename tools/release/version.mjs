@@ -1,4 +1,5 @@
-// La versión de hoy: la de la primera entrada de CHANGELOG.md (`## 0.98.1 — 2026-10-04`). Desde
+// La versión de hoy: la primera entrada de CHANGELOG.md (`## 0.98.1 — 2026-10-04`) subida por las
+// entradas pendientes de changelog/, en el orden en que llegaron a main (D-300, changelog.mjs). Desde
 // D-205 las páginas de public/ no la llevan en git; set-version.py la estampa al publicar.
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -20,4 +21,4 @@ export function desordenadas(texto) {
   return res;
 }
 
-export const versionHoy = () => versionDe(readFileSync(join(RAIZ, 'CHANGELOG.md'), 'utf8'));
+export { versionHoy } from './changelog.mjs';

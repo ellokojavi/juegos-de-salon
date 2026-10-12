@@ -1,4 +1,5 @@
-# Las pruebas de punta a punta en Chrome, en cada PR y en cada fusión a main (D-193).
+# Las pruebas de punta a punta en Chrome, en cada PR y en cada fusión a main (D-193). En main las
+# llama publicar.yml antes de publicar (D-302): si fallan, el sitio no cambia.
 # Cada guion de tools/e2e/ corre en su propio job, en paralelo, y los largos se reparten en partes
 # (`cup/torneo.mjs:copa`): el job más lento marca cuánto espera el PR. Los que abren salas en el
 # Firebase de producción quedan fuera y siguen a mano: la lista la decide tools/e2e/ci.mjs,
@@ -8,13 +9,13 @@ name: Punta a punta
 
 on:
   pull_request:
-  push:
-    branches: [main]
+  workflow_call:
   workflow_dispatch:
 
-# Un push nuevo al mismo PR cancela la corrida anterior
+# Un push nuevo al mismo PR cancela la corrida anterior. Llamado desde publicar.yml, `github.workflow`
+# es "Publicar": así una corrida a mano en main no cancela la que está por publicar
 concurrency:
-  group: e2e-${{ github.ref }}
+  group: e2e-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -125,9 +126,9 @@ jobs:
           case "${{ needs.e2e.result }}" in success|skipped) ;; *) exit 1 ;; esac
 
   # En main nadie mira el check: si sale en rojo, abre un issue (o comenta el que ya está abierto)
-  # con los guiones que fallaron y el link a la corrida, donde están sus capturas (D-205). No frena
-  # la publicación, que corre aparte en publicar.yml. También después de una fusión de un toque,
-  # que corre este workflow a mano (D-273).
+  # con los guiones que fallaron y el link a la corrida, donde están sus capturas (D-205). En main
+  # corre dentro de publicar.yml, así que ese rojo también frena la publicación (D-302). También
+  # en una corrida a mano (Actions → Punta a punta → Run workflow).
   avisar:
     needs: [lista, e2e]
     if: failure() && github.event_name != 'pull_request'
@@ -143,7 +144,7 @@ jobs:
           titulo="main en rojo: Punta a punta"
           fallaron=$(gh run view "$GITHUB_RUN_ID" -R "$GITHUB_REPOSITORY" --json jobs \
             --jq '.jobs[] | select(.conclusion == "failure") | "- `" + .name + "`"')
-          cuerpo=$(printf 'Las pruebas de punta a punta fallaron en `main` después de fusionar %s.\n\n%s\n\nCorrida y capturas: %s\n\nEl sitio ya se publicó (publicar.yml no las espera): revisar si lo publicado está roto (D-205).' \
+          cuerpo=$(printf 'Las pruebas de punta a punta fallaron en `main` después de fusionar %s.\n\n%s\n\nCorrida y capturas: %s\n\nSi corrió dentro de Publicar, el sitio no se publicó: sigue la versión anterior hasta que main vuelva a verde (D-302).' \
             "${GITHUB_SHA:0:7}" "$fallaron" "$CORRIDA")
           abierto=$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$titulo\" in:title" --json number --jq '.[0].number // empty')
           if [ -n "$abierto" ]; then

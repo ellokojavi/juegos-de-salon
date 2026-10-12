@@ -37,8 +37,11 @@ El README va **en inglés** (C-13, D-78); todo lo demás, en español chileno.
   lo que trae ese PR, con `node tools/agents/documentar.mjs revisar --desde <base del PR>`: con `--desde`
   lista los commits de la rama (no los de `main`) y sus comprobaciones miran la copia de trabajo.
   Los arreglos
-  van **en la rama de ese PR**, con permiso de la sesión dueña (D-135). En este modo no tocas
-  `revisadoHasta`: eso es de la ronda.
+  van **en la rama de ese PR**, con permiso de la sesión dueña (D-135), en commits **sin push**: la
+  sesión sube todo junto cuando terminan los dos agentes (D-303). En este modo no tocas
+  `revisadoHasta`: eso es de la ronda. En un PR solo del laboratorio o que saca un juego de él, mira
+  la etapa en la primera línea de `node tools/agents/portadas.mjs revisar` (D-304): si sale, el
+  README y la tarjeta social del juego (puntos 3 a 5) son parte de tu revisión.
 
 ## Qué revisas
 
@@ -51,8 +54,10 @@ El README va **en inglés** (C-13, D-78); todo lo demás, en español chileno.
    (`git diff <antes>..<después> --stat` y lo que haga falta). Si no hay nada nuevo ni pendiente,
    termina sin PR.
 2. **Por cada cambio**, que quede contado donde corresponde:
-   - **`CHANGELOG.md`:** cada versión publicada tiene su entrada, con lo que cambió para quien
-     juega, en el tono de las anteriores.
+   - **El CHANGELOG** (D-300): cada PR fusionado dejó su entrada sin número en `changelog/` (o ya
+     está junta en `CHANGELOG.md`), con lo que cambió para quien juega, en el tono de las
+     anteriores. En un PR, que su `changelog/<rama>.md` cuente lo que trae. Los números no los
+     escribes tú: se ponen solos, y los junta el agente de procesos.
    - **`docs/DECISIONES.md`:** cada D-n que se cita en el código o en un commit existe, tiene
      fecha y estado, y las que reemplaza dicen "reemplazada por D-n". Los números no se repiten.
    - **`docs/REQUERIMIENTOS.md`:** el requerimiento que se cumplió está marcado ✅ con su versión.
@@ -102,14 +107,14 @@ incompletas, enlaces rotos.
 **También arreglas, aunque son textos de la app:** los mensajes con que la app se presenta (punto 6
 de arriba): son su descripción, y se atrasan igual que la documentación (D-271).
 
-**No tocas:** código de la app, reglas de Firebase, el número de versión (lo pone en el CHANGELOG
-quien fusiona, D-205), ni decisiones nuevas: si un cambio parece necesitar una decisión que nadie tomó, lo
+**No tocas:** código de la app, reglas de Firebase, el número de versión (se pone solo, D-300), ni
+`CHANGELOG.md` en un PR (la entrada va en `changelog/`), ni decisiones nuevas: si un cambio parece necesitar una decisión que nadie tomó, lo
 escribes en el PR como pregunta para el dueño.
 
 ## Cómo entregas
 
 - Una rama `docs-<fecha>` desde `origin/main` (en una copia aparte si hay otras sesiones
-  trabajando, D-135). Antes del último commit, cierra la ronda en tu memoria:
+  trabajando, D-135), con commits en local y un solo push al terminar (D-303). Antes del último commit, cierra la ronda en tu memoria:
   `node tools/agents/documentar.mjs anotar --hasta <commit revisado> --pendiente "…"` (una vez por cada
   cosa que quede pendiente). Después de abrir el PR, agrega su link con
   `node tools/agents/documentar.mjs anotar --hasta <el mismo commit> --pr <url>` en el commit siguiente:

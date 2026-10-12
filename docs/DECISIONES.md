@@ -69,11 +69,11 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
-| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218 |
+| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
-| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276 |
+| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-301, D-303, D-304 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -1688,7 +1688,7 @@ no abre. Una leyenda debajo explica los estados.
 **Por qué:** pedido del dueño: que cada uno vea su grilla completa y qué le queda.
 
 ## D-132 · Un agente de usabilidad con ronda diaria y dilemas como issues
-**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213, D-275, D-276
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213, D-275, D-276, D-303, D-304
 **Decisión:** Un subagente (`.claude/agents/usabilidad.md`) revisa solo usabilidad: textos,
 botones, interacciones, navegación y mensajes para compartir, con la guía `docs/USABILIDAD.md`
 (reglas U-n, que crecen con cada decisión del dueño).
@@ -1731,7 +1731,7 @@ a 17 de ΔE2000 (antes, 7,8), sin rojos que se confundan con el choque.
 **Por qué:** pedido del dueño (trabajado en otra sesión y publicado junto con D-133).
 
 ## D-135 · Varias sesiones de Claude a la vez: cada una en su copia del repo
-**Fecha:** 2026-09-25 · **Estado:** corregida por D-213
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-213, D-300, D-301, D-303
 **Decisión:** Cada sesión trabaja en su propio `git worktree`, con ramas de nombre de tema; la
 versión se asigna al fusionar y los números D-n miran también los PR abiertos. Las pruebas usan
 un puerto propio para el sitio y para Chrome (`SITIO`, `PUERTO_CDP`) y matan solo su Chrome.
@@ -2562,7 +2562,7 @@ el resumen final no repitan la imagen. Si la imagen no se puede compartir (un co
 descarga y el texto se copia igual: la imagen sigue llegando.
 
 ## D-172 · Un agente de documentación con ronda diaria en la nube
-**Fecha:** 2026-10-02 · **Estado:** corregida por D-276
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-276, D-303, D-304
 **Decisión:** Un subagente (`.claude/agents/documentacion.md`) revisa una vez al día lo que entró
 a `main` y deja la documentación al día: `CHANGELOG.md`, decisiones, requerimientos, la doc de
 cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
@@ -2975,7 +2975,7 @@ un link viejo pegado en un chat quedaba sin tarjeta y Google veía 404); cambiar
 carpeta `juegos/` para todos (cambiaba las URL sin ganar nada a cambio).
 
 ## D-193 · Las pruebas de punta a punta corren solas en GitHub
-**Fecha:** 2026-10-02 · **Estado:** corregida por D-216 · **Relación:** completa D-143
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-216, D-302 · **Relación:** completa D-143
 **Decisión:** `.github/workflows/e2e.yml` corre las pruebas de `tools/e2e/` en Chrome en cada PR
 y en cada fusión a main, un job por guion y en paralelo. El PR muestra cuál falló y deja sus
 capturas como artefacto. `tools/e2e/ci.mjs` decide cuáles: todos los guiones menos las
@@ -3188,7 +3188,7 @@ devuelve a la pantalla de jugar. Si no cabe, `ajustarCabeza` deja la píldora de
 (`.justo`) y, si ni así, la saca (`.sin-chip`); el reloj no se parte (`nowrap`).
 
 ## D-204 · Publicar más rápido: los guiones largos en partes y la revisión de un PR, acotada
-**Fecha:** 2026-10-04 · **Estado:** corregida por D-213 · **Relación:** amplía D-132, D-172 y D-193
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-213, D-304 · **Relación:** amplía D-132, D-172 y D-193
 **Decisión:** Lo que hace esperar un PR se acorta sin sacar ninguna revisión:
 - **CI en partes.** El check `Punta a punta` tarda lo que su job más lento. `cup/torneo.mjs`
   (9 min) se corre en tres jobs (`--parte copa`, `laboratorio`, `demos`) y `cup-games/idiomas.mjs`
@@ -3211,7 +3211,7 @@ revisión de usabilidad de cada PR jugaba la copa entera aunque el PR fuera de o
 poder correr solas, sin depender del estado que dejó la anterior.
 
 ## D-205 · La versión se estampa al publicar, no en git
-**Fecha:** 2026-10-04 · **Estado:** corregida por D-299 · **Relación:** reemplaza el estampado a mano de C-11; corrige D-22, D-51, D-72, D-181 y D-192; amplía D-193 y D-204
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-299, D-300, D-302 · **Relación:** reemplaza el estampado a mano de C-11; corrige D-22, D-51, D-72, D-181 y D-192; amplía D-193 y D-204
 **Decisión:** Las páginas de `public/` en git ya no llevan versión: ni import map, ni `?v=` en las
 hojas de estilo y las imágenes de las tarjetas, y el pie del menú dice `v0.0.0`.
 - **El número es la primera entrada de `CHANGELOG.md`** (`## X.Y.Z — fecha`), que se escribe al
@@ -4779,7 +4779,7 @@ no habla español).
 dice "sin instalar", que se refiere a que no hay que bajar nada de una tienda.
 
 ## D-273 · Un agente de procesos, y decisiones de un toque
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-275, D-276 · **Relación:** completa D-132 y D-172 (los agentes de usabilidad y de documentación) y D-216 (el auto-merge)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-275, D-276, D-302 · **Relación:** completa D-132 y D-172 (los agentes de usabilidad y de documentación) y D-216 (el auto-merge)
 **Decisión:** Un tercer agente (`.claude/agents/procesos.md`) corre una vez al día y no arregla
 cosas sueltas: **cierra lo que quedó abierto** (PR que esperan, issues viejos, lo que los otros
 agentes arrastran de una ronda a otra) y **convierte cada error que se repite en un mecanismo**
@@ -5369,3 +5369,123 @@ opción para el dueño, con sus riesgos).
 **Consecuencias:** un aviso "Intermitente" es un guion para arreglar: el agente de procesos los cuenta
 como patrón (`e2e-intermitente-<guion>`). `cambios.test.mjs` fija qué se salta y qué no.
 
+## D-300 · El CHANGELOG por archivo: cada PR deja su entrada sin número y la versión se pone sola
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-205 y D-135 (la versión se asigna al fusionar)
+**Contexto:** del 3 al 12 de octubre entraron 125 PR y 89 veces hubo que traer `main` a una rama;
+en 64 se resolvió a mano un choque en la primera línea de `CHANGELOG.md`, porque todos agregaban su
+`## X.Y.Z` en el mismo lugar, y varias terminaron con la versión renumerada o hacia atrás (el patrón
+`version-hacia-atras`). El dueño aprobó la opción del informe de procesos.
+**Decisión:**
+- **Un PR no escribe en `CHANGELOG.md`**: deja su entrada en `changelog/<rama>.md`, sin número.
+  Primera línea `nivel: parche` (o `menor`, o `mayor`), y después las líneas `- …` de siempre.
+  `node tools/release/changelog.mjs nueva [nivel]` la crea.
+- **La versión de hoy** es la primera entrada de `CHANGELOG.md` subida una vez por cada entrada de
+  `changelog/`, en el orden en que llegaron a `main`: manda el commit de la línea principal que
+  agregó cada archivo (`git log --first-parent`). `set-version.py --version` y `publicar.yml` la
+  leen de `changelog.mjs version`; `publicar.yml` deja en el resumen de la corrida qué número le
+  tocó a cada entrada (`changelog.mjs ver`). Una sola cuenta, en `changelog.mjs`.
+- **El agente de procesos las junta** en su ronda (`changelog.mjs juntar`, en su PR): pasan a
+  `CHANGELOG.md` con su número y su fecha, y se borran de `changelog/`. La versión publicada no
+  cambia al fusionar eso, aunque otro PR haya entrado entretanto (lo prueba `changelog.test.mjs`).
+- **El check `pruebas`** (`changelog.mjs revisar --base HEAD^1`) frena una entrada de `changelog/`
+  que no se entiende y un PR que agrega un `## X.Y.Z` a `CHANGELOG.md` (salvo el que junta), y
+  avisa sin frenar si el PR cambia `public/` sin entrada. Necesita la historia: `pruebas.yml` y
+  `publicar.yml` sacan el repo con `fetch-depth: 0` y `filter: blob:none` (los commits y los
+  árboles, no el contenido de los archivos viejos).
+- **Un PR abierto de antes**, con su entrada numerada en `CHANGELOG.md`, la pasa a `changelog/`
+  con `node tools/release/changelog.mjs migrar` antes de traer `main`: deja `CHANGELOG.md` como
+  estaba en su base y escribe `changelog/<rama>.md` con el nivel que tenía.
+**Por qué:** dos archivos nuevos distintos nunca chocan, y el número que dependía del orden de
+fusión ahora sale de ese orden en vez de adivinarlo antes.
+**Alternativas descartadas:** que `publicar.yml` escriba `CHANGELOG.md` en `main` (la rama exige
+los checks y el token del workflow no los dispara); `merge=union` en `CHANGELOG.md` (junta las
+dos entradas, pero con el mismo número); ordenar por nombre o por fecha de creación (un PR creado
+antes y fusionado después movería versiones ya publicadas).
+**Consecuencias:** `version.mjs` (`versionHoy`) y `set-version.py` leen la versión de
+`changelog.mjs`. El agente de usabilidad pone la entrada de su ronda en `changelog/` como cualquier
+PR; en el PR de otra sesión, la entrada es de esa sesión.
+
+## D-301 · Los números de decisión se reservan, y DECISIONES.md se fusiona decisión por decisión
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-135 (el número de una decisión)
+**Contexto:** "el siguiente al más alto en `main` y en los PR abiertos" (D-135) no alcanza cuando
+dos sesiones lo miran a la vez: 10 renumeraciones del 3 al 12 de octubre (en el código, los
+commits y las guías), y el mismo día de esta decisión #372 y #374 traían el mismo número. Y 52 de
+las 89 puestas al día chocaron en `docs/DECISIONES.md`, casi siempre por dos decisiones agregadas
+al final o dos números sumados a la misma fila del índice.
+**Decisión:**
+- **El número se reserva antes de escribirlo:** `node tools/agents/decision.mjs reservar [--cuantas n]`
+  toma el siguiente libre (en `main`, en los PR abiertos y en las reservas) y lo sube como rama
+  `reserva/D-n` con `git push --force-with-lease=<rama>:` (vacío: "que no exista"); GitHub la niega
+  si otra sesión llegó antes, y se prueba el siguiente. `documentar.mjs revisar` no cuenta como
+  hueco un número reservado. La ronda de procesos borra las reservas que ya están en `main`
+  (`decision.mjs limpiar`) y anota "número sin usar" las abandonadas.
+- **`docs/DECISIONES.md` tiene su driver de fusión** (`.gitattributes`: `merge=decisiones`,
+  configurado en la copia por `reservar` o `decision.mjs instalar`). Al traer `main`, junta
+  decisión por decisión: las nuevas de cada lado entran en orden; una cambiada de un solo lado
+  queda con ese cambio; en el índice, las filas se juntan por su tema, y dos lados que suman
+  decisiones distintas a la misma fila quedan con las dos. Lo que los dos lados cambian distinto
+  (la misma decisión, el mismo número para dos decisiones, otra cosa de la misma fila) queda en
+  conflicto, como siempre. GitHub no usa el driver: solo la copia local, que es donde se resuelve.
+**Por qué:** pasados por el driver, 36 de los 53 choques de DECISIONES.md del 3 al 12 de octubre
+se habrían juntado solos (30 igual que a mano; en los otros 6 la persona había agregado algo más en
+el merge, y en uno había dejado D-282 repetida); los 17 que quedan en conflicto eran números
+repetidos, que la reserva evita.
+**Alternativas descartadas:** `merge=union` en todo el archivo (con una fila del índice editada en
+los dos lados deja las dos filas, y una decisión editada en los dos lados, mezclada); un archivo
+por decisión (el cambio más grande, y el índice seguiría siendo uno).
+**Consecuencias:** en un fork no se puede reservar: la decisión sigue como `D-??` (D-189).
+`decision.test.mjs` prueba el driver con git de verdad.
+
+## D-302 · Publicar espera la punta a punta de main
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-205 y D-193 (la punta a punta de `main` corría aparte y no frenaba la publicación) y D-273 (la fusión de un toque corría los dos workflows)
+**Contexto:** `main` no exige estar al día antes de fusionar, así que lo fusionado se prueba de
+verdad recién en `main`, y `publicar.yml` no lo esperaba: de los 7 rojos de `main` del 4 al 12 de
+octubre, los 7 se publicaron igual. Con el segundo intento de D-299, un rojo ya no es una falla
+pasajera, y esperar cuesta lo que tarda la punta a punta (~8 min).
+**Decisión:** `publicar.yml` llama a `e2e.yml` (`workflow_call`) junto con `pruebas.yml`, y las
+reglas de Firebase y el sitio se publican solo si pasan las dos. `e2e.yml` ya no corre por su cuenta
+en cada push a `main` (sería la misma corrida dos veces); sigue en cada PR y a mano. Su job
+`avisar` abre el issue "main en rojo" desde dentro de Publicar, y `cerrar-aviso` lo cierra cuando
+vuelve a verde. La fusión de un toque (`aprobar.mjs fusionar`) corre solo `publicar.yml`.
+**Por qué:** pedido del dueño: que lo que se publica esté probado entero.
+**Alternativas descartadas:** `workflow_run` (correría el `publicar.yml` de `main` sobre otro
+commit, y una fusión de un toque no lo despierta); exigir que la rama esté al día antes de
+fusionar (cada PR tendría que traer `main` y correr todo de nuevo).
+**Consecuencias:** publicar tarda unos 8 minutos más. Un rojo de verdad deja el sitio en la versión
+anterior hasta que `main` vuelva a verde. `procesos.mjs revisar` mira la última corrida de
+`publicar.yml` para saber si `main` está en verde.
+
+## D-303 · Un solo push al terminar
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-135 (cómo se trabaja en una rama), D-132 y D-172 (los agentes subían sus arreglos al PR cada uno)
+**Contexto:** cada push a un PR lanza los 58 guiones de la punta a punta y cancela la corrida
+anterior. Del 2 al 12 de octubre, 274 corridas se cancelaron así (un tercio de los minutos de
+runner), 194 de ellas porque el push siguiente llegó en menos de 3 minutos: la sesión y los dos
+agentes empujando de a un commit.
+**Decisión:** los commits se hacen en local y se suben **juntos, una vez**, cuando el trabajo está
+listo. En el PR de una sesión, los agentes de usabilidad y de documentación hacen sus commits sin
+push, y la sesión dueña sube todo cuando terminan. Las rondas de los agentes y de procesos, igual:
+un push al final. Un arreglo que pide el CI o un comentario es otro push, y está bien.
+**Por qué:** el dueño eligió esto antes que hacer esperar 3 minutos a cada corrida del PR.
+**Alternativas descartadas:** una espera de 3 minutos en el job `lista` de `e2e.yml` (se
+descartó por ahora: suma 3 minutos a cada PR).
+**Consecuencias:** `CLAUDE.md` y las guías de los tres agentes lo dicen donde dicen cómo entregar.
+
+## D-304 · La revisión de usabilidad según la etapa del juego
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-132, D-172 y D-204 (qué revisan los agentes en un PR)
+**Contexto:** un juego pasa por un PR que lo trae al laboratorio, PR de ajustes dentro de él y un PR
+que lo saca. En los del laboratorio (35 de 119 PR del sitio desde el 5 de octubre) el juego cambia
+mucho y lo juega poca gente; en el que lo saca, el agente revisaba un diff de una línea (`labs:
+true`) justo cuando el juego llega a todos.
+**Decisión:** `node tools/agents/portadas.mjs revisar` dice la etapa en su primera línea:
+- **🧪 Solo del laboratorio** (todo lo de `public/` está en `public/labs/`): documentación y
+  usabilidad corta: la revisión de portadas (U-36) y las pantallas que cambiaron, a 320 px.
+- **🎓 Saca un juego del laboratorio** (pierde `labs: true` en `games.js` o en `cup/rules.js`, o su
+  carpeta sale de `public/labs/`): pasada completa de usabilidad al juego entero —todas sus
+  pantallas, los cuatro idiomas, 390 y 320 px, sus textos y mensajes, su portada y su lugar en la
+  portada general— y documentación con el README y la tarjeta social.
+- **Todo lo demás:** los dos agentes, como siempre.
+**Por qué:** pedido del dueño: la revisión fuerte va donde el juego llega a todos. En el
+laboratorio no se saca del todo: 8 de los ~15 PR con arreglos de usabilidad de esos días eran del
+laboratorio, casi siempre de portadas y de textos cortados a 320 px, que la revisión corta mira.
+**Consecuencias:** `portadas.test.mjs` prueba la etapa y la salida del laboratorio (por la bandera y
+por la carpeta). Las guías de usabilidad, documentación y procesos lo dicen en su modo PR.
