@@ -113,6 +113,9 @@ function portada() {
   paso();
 }
 
+/** El modo difícil también cambia el fondo de la página (pedido del dueño): de noche eléctrica. */
+const fondoDificil = () => document.body.classList.toggle('modo-dificil', P.dificil);
+
 /**
  * El interruptor del modo difícil: una palanca sobre una placa. Al subirla, la placa se electrifica
  * (chispas y un brillo que titila) y el juego pasa a dos colores con el puntaje ×1.5.
@@ -126,6 +129,7 @@ function interruptor() {
       P.dificil = !P.dificil;
       try { localStorage.setItem(GUARDADO, P.dificil ? '1' : '0'); } catch { /* sin almacenamiento: solo esta vez */ }
       caja.classList.toggle('on', P.dificil); caja.setAttribute('aria-checked', String(P.dificil));
+      fondoDificil();
       estado.textContent = T.dificilEstado[+P.dificil];
       if (P.dificil) { SFX.error(); vibrate([15, 30, 15, 30, 40]); caja.classList.remove('chispa'); void caja.offsetWidth; caja.classList.add('chispa'); parpadear(caja); }
       else { SFX.tap(); vibrate(10); }
@@ -282,6 +286,7 @@ function resultado(e) {
   scrollTo(0, 0);
 }
 
+fondoDificil();
 document.getElementById('sound-slot').append(soundToggle());
 initSound();
 sparkles();
