@@ -5,7 +5,7 @@
   jugadas, mostrando las dos clases: girar una carta sola o cambiar de lugar dos vecinas. Al armarse,
   la ruta se ilumina.
 - **🖌️ Pintaminas (laboratorio): la portada juega una partida de verdad**, de a una casilla y en el
-  orden en que se deduciría, hasta mostrar el dibujo. La palanca dice «Modo fácil» o «⚡ Modo difícil»,
+  orden en que se deduciría, hasta mostrar el dibujo; con el modo difícil, de dos colores. La palanca dice «Modo fácil» o «⚡ Modo difícil»,
   la placa lleva grabado el recorrido de la palanca, y al pasar al modo difícil un destello cubre toda la vista.
 
 ## 0.165.2 — 2026-10-12
