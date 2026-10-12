@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.167.2 — 2026-10-12
+- **🖌️ Pintaminas (laboratorio):** en el modo difícil, las cerezas salen rojas con el tallo verde,
+  como son; los otros dibujos siguen con colores al azar.
+
 ## 0.167.1 — 2026-10-12
 - **🧪 Laboratorio: las portadas al día.** Pintaminas cuenta el modo de dos colores y la ayuda; Rutas,
   que las piezas quedan al revés y que deshacer y reiniciar son gratis; Agentes, las marcas 📌. Las
