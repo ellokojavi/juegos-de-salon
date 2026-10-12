@@ -137,7 +137,7 @@ entrar para que la partida cuente.
 ### Uno al día (`/hangman/?today`, D-230)
 
 Cuando El Ahorcado es el juego de Uno al día, `/hangman/?today` no ofrece modos: la intro lleva la
-línea de Uno al día y un solo botón, **Jugar el de hoy**, que abre directo 🧍 Jugar solo con el
+línea de Uno al día y un solo botón, **Jugar hoy**, que abre directo 🧍 Jugar solo con el
 🎴 mazo del celular (Mezcla, 6 vidas y comprar letras, lo de siempre) y el nombre que se recuerda
 (o "Jugador 1"). La palabra sale de la semilla del día (`semillaDel` → `azarDel(semilla, 'ahorcado')`
 como semilla del mazo), así que es la misma para todos los que juegan en el mismo idioma. Al
