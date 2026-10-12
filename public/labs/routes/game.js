@@ -286,7 +286,8 @@ function jugar() {
     acabar('rendido');
   } }, T.rendirse);
   tab.poner(P.estado, false);
-  vista.replaceChildren(tituloJuego(), cabeza, el('div', { class: 'fila-marcador' }, reloj, marcador), tab.caja, aviso, el('div', { class: 'acciones-rt' }, reiniciar, rendirse));
+  // Sin el título mientras se juega (#360): la barra de arriba ya muestra 🚇, y así Reiniciar y Rendirse se ven sin bajar en un celular chico
+  vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj, marcador), tab.caja, aviso, el('div', { class: 'acciones-rt' }, reiniciar, rendirse));
   tic();
   pintar(); unir();
   pieComentario('juego');
@@ -325,7 +326,8 @@ function resultado(motivo = 'completa') {
   if (motivo === 'completa') fin.caja.classList.add('resuelto');
   fin.poner(P.estado, false);
   // Para compartir: los giros de cada etapa contra su mínimo, sin delatar los tableros
-  const tarjeta = P.hechas.map((h, k) => `${h.giros <= h.minimo ? '🟩' : '🟨'} ${k + 1}: ${h.giros}/${h.minimo}`).join('\n');
+  // Las etapas que faltaron también van, con ⬛ (no se ve si se rindió o se le acabó el tiempo)
+  const tarjeta = ETAPAS.map((e, k) => { const h = P.hechas[k]; return h ? `${h.giros <= h.minimo ? '🟩' : '🟨'} ${k + 1}: ${h.giros}/${h.minimo}` : `⬛ ${k + 1}: —`; }).join('\n');
   vista.replaceChildren(el('div', { class: 'resultado' },
     fin.caja,
     el('p', { class: `sello-rt${motivo === 'completa' ? '' : ' mal'}` }, motivo === 'completa' ? (perfecto ? T.fin.perfecto : T.fin.listo) : T.finPor[motivo]),
