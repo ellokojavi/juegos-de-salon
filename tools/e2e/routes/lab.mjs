@@ -39,7 +39,7 @@ ok(await ev(`document.getElementById('btn-reiniciar').disabled`), 'sin giros, Re
 ok(/⏱ [67]:\d\d/.test(await ev(`document.getElementById('reloj').textContent`)), 'el reloj parte en 7 minutos y baja');
 const lugares = () => ev(`JSON.stringify([...document.querySelectorAll('#tablero .pieza')].map(n => [+n.dataset.p, +n.dataset.lugar]))`).then(JSON.parse);
 // Lo que se ve es lo que dice el motor: cada pieza dada vuelta (v) se dibuja girada media vuelta
-const comoElMotor = async (sel, estado) => (await ev(`JSON.stringify([...document.querySelectorAll('${sel} .pieza')].map(n => [+n.dataset.lugar, Math.round(parseFloat(n.style.transform.slice(7)) / 180) % 2]))`).then(JSON.parse)).every(([l, v]) => estado[l].v === v);
+const comoElMotor = async (sel, estado) => (await ev(`JSON.stringify([...document.querySelectorAll('${sel} .pieza')].map(n => [+n.dataset.lugar, (n.firstChild.style.transform.includes('180') ? 1 : 0)]))`).then(JSON.parse)).every(([l, v]) => estado[l].v === v);
 ok(await comoElMotor('#tablero', t.inicio), 'al empezar, cada pieza se dibuja como dice el motor (las dadas vuelta, giradas)');
 // Arrastrar de la esquina de arriba a la izquierda al centro: gira ese bloque de 2×2
 const arrastrar = (c1, f1, c2, f2) => ev(`(()=>{const t=document.getElementById('tablero'),b=t.getBoundingClientRect(),at=(c,f)=>({clientX:b.left+b.width*(c+0.5)/3,clientY:b.top+b.height*(f+0.5)/3,bubbles:true,pointerId:1});t.dispatchEvent(new PointerEvent('pointerdown',at(${c1},${f1})));t.dispatchEvent(new PointerEvent('pointermove',at(${c2},${f2})));t.dispatchEvent(new PointerEvent('pointerup',at(${c2},${f2})));return 1})()`);
