@@ -46,7 +46,7 @@ const T = {
   tiempo: 'Tiempo: {t}.',
   otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
   comentarAbrir: '💬 Dejar un comentario',
-  comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendía cómo girar, si el mínimo te pareció justo y qué le cambiarías.', ph: 'Por ejemplo: me costó ver dónde quedaba cada pieza al girar.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
+  comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendía cómo girar, si el mínimo te pareció justo y qué le cambiarías.', ph: 'Por ejemplo: me costó ver dónde quedaba cada pieza al girar.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
 };
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
