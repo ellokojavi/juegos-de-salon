@@ -88,6 +88,6 @@ assert.notDeepEqual(generar('a').numeros, generar('b').numeros);
   assert.equal(puntaje(p), Math.round(70 * avance(p)) - 10);
   assert.ok(Math.abs(avance(p) - 12 / 72) < 1e-9, 'lo agregado con ➕ también cuenta');
   assert.match(tarjeta(p), /➕⬜⬜ 1 de 3 ➕/);
-  assert.match(tarjeta(p), /% tachado/);
+  assert.match(tarjeta(p), /% estallado/);
 }
 console.log(`✓ números explosivos: pares, filas, ➕, puntaje, y 400 tableros que se limpian`);

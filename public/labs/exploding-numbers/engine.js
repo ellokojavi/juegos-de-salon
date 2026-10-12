@@ -151,6 +151,6 @@ export function puntaje(p) {
 export function tarjeta(p) {
   const usados = MAS - p.mas;
   const signos = '➕'.repeat(usados) + '⬜'.repeat(p.mas);
-  const fin = p.celdas.length === 0 ? '✨ Tablero limpio' : `🧹 ${Math.round(100 * avance(p))} % tachado`;
+  const fin = p.celdas.length === 0 ? '✨ Tablero limpio' : `🧹 ${Math.round(100 * avance(p))} % estallado`;
   return [fin, `${signos} ${usados} de ${MAS} ➕`, p.ayudas ? `💡 ${p.ayudas}` : null].filter(Boolean).join('\n');
 }
