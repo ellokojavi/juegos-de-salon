@@ -55,7 +55,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
-| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, tablero sin adivinar) | `docs/games/paint-mines.md` | D-289 |
+| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, pinceles, tablero sin adivinar, modo difícil) | `docs/games/paint-mines.md` | D-289, D-290, D-291 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -5164,7 +5164,7 @@ revisa un año de tableros del día: ninguno al azar, todos con las pistas del c
 antes de 15 días, y que en el año salgan las 100.
 
 ## D-289 · Pintaminas: un Buscaminas de colores en Proyectos activos del laboratorio
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-280 (un segundo proyecto activo)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-290 · **Relación:** amplía D-280 (un segundo proyecto activo); ampliada por D-291 (el modo difícil)
 **Contexto:** el dueño pidió investigar *ColorSweeper* (ARRKKA, publicado por Com2uS en 2026): un
 Buscaminas en que cada casilla tiene un color y su número dice cuántas de sus 8 vecinas son de su
 mismo color, con puzzles que se resuelven sin adivinar y, al terminar, un dibujo (como los

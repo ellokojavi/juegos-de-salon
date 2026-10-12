@@ -10,13 +10,14 @@ y lo dice en la portada y en el laboratorio.
 - **Dónde:** `https://juegosdesalon.cl/labs/paint-mines/`, en el laboratorio (con la llave de cada
   persona, D-281, D-284). Id `pintaminas` en la señal de uso.
 - **Para quién:** uno solo. Solo en español (es un prototipo).
-- **Estado:** proyecto activo desde v0.161.0, para probarlo con amigos. Si gusta, la idea es que
+- **Estado:** proyecto activo desde v0.161.0 (los pinceles «Pinta» y «No pinta» desde v0.161.1, el
+  modo difícil desde v0.162.0), para probarlo con amigos. Si gusta, la idea es que
   entre a La Copa.
 
 ## Portada
 
 El título con una 🖌️ que pinta, el lema («Pinta la grilla y descubre el dibujo escondido. Cada número
-cuenta cuántas de sus vecinas son de su mismo color.»), el crédito, y un tablero chico que se pinta
+cuenta cuántas de sus vecinas son como ella: pintadas o no.»), el crédito, y un tablero chico que se pinta
 solo hasta mostrar su dibujo y vuelve a empezar (con movimiento reducido queda pintado). Después los
 tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
 
@@ -55,17 +56,22 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
 
 - `dibujos.js`: 17 dibujos de 7×7 (`#` se pinta, `.` no), cada uno con nombre y emoji, todos
   irregulares: uno simétrico se adivina por espejo y el test lo rechaza (D-290). Un dibujo nuevo tiene
-  que reconocerse a 7×7 y tener entre 12 y 40 pintadas. `PALETA`: los 6 colores con su nombre y su
-  emoji cuadrado.
+  que reconocerse a 7×7 y tener entre 12 y 40 pintadas. `DIBUJOS2`: los 10 del modo difícil (`#` y
+  `+`, un color cada uno), también irregulares y con al menos 4 casillas de cada color (D-291).
+  `PALETA`: los 6 colores con su nombre y su emoji cuadrado.
 - `engine.js`: `resolver(sol, dadas)` deduce como un jugador, con los colores que todavía puede tener
   cada casilla (sirve para uno o dos colores): cada casilla conocida dice cuántas de sus
   vecinas desconocidas se pintan; si son todas o ninguna, se saben; y si las desconocidas de una
   están todas entre las de otra, la diferencia también. Cada deducida suma su número y se sigue.
-  `generar(semilla)` elige un dibujo (quizás espejado), agrega dadas al azar hasta que `resolver` lo
+  `generar(semilla, { colores })` elige un dibujo (de `DIBUJOS2` con `colores: 2`; quizás espejado) y sus
+  colores al azar de `PALETA`, agrega dadas al azar hasta que `resolver` lo
   termina y saca las que sobran (en promedio quedan 1 o 2: el resto se deduce en cadena).
   `estado(t, jugadas)` reconstruye la partida desde las jugadas `{ i, color }`.
-- `engine.test.mjs` revisa los dibujos y 300 tableros (se resuelven sin adivinar, sin dadas de sobra,
-  y el estado y el puntaje); `tools/e2e/paint-mines/lab.mjs`, la partida entera.
+  `puntaje(e, { colores })` aplica `PREMIO_DIFICIL` (×1.5) con dos colores, y `maximo(colores)` da
+  100 o 150.
+- `engine.test.mjs` revisa los dibujos (irregulares), la paleta y 300 tableros de cada modo (se
+  resuelven sin adivinar, sin dadas de sobra, y el estado y el puntaje); `tools/e2e/paint-mines/lab.mjs`,
+  la partida entera, el interruptor y una partida difícil sin errores (150/150).
 
 ## Excepciones a los cánones
 
