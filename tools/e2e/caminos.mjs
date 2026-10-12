@@ -412,7 +412,12 @@ export const CAMINOS = {
    * `/<clave>/` cuando la clave no es un id del registro: la portada del laboratorio, Agentes
    * (D-286), Pintaminas (D-289), Rutas rotas (D-293) y Números explosivos (D-297).
    */
-  labs: { intro: [] },
+  labs: {
+    intro: [],
+    // La Bodega plegada al título, y con El caso abierto
+    bodega: [`document.getElementById('bodega').scrollIntoView(); 1`],
+    'bodega-abierta': [`document.querySelector('#seccion-caso summary').click(); document.getElementById('bodega').scrollIntoView(); 1`],
+  },
   'labs/agents': {
     intro: [],
     juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
