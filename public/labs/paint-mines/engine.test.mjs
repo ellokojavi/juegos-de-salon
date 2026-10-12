@@ -1,7 +1,7 @@
 // Pintaminas (laboratorio, D-289): los dibujos son de 7×7, cada tablero se resuelve sin adivinar
 // —con las dadas, `resolver` lo deduce entero— y el estado y el puntaje se calculan bien.
 import assert from 'node:assert/strict';
-import { DIBUJOS } from './dibujos.js';
+import { DIBUJOS, DIBUJOS2, PALETA } from './dibujos.js';
 import { generar, resolver, estado, puntaje, tarjeta, numero, VECINAS, LADO, RESTA_ERROR } from './engine.js';
 
 for (const d of DIBUJOS) {
@@ -9,8 +9,18 @@ for (const d of DIBUJOS) {
   for (const f of d.filas) assert.match(f, /^[#.]{7}$/, `${d.nombre}: ${f}`);
   const tinta = d.filas.join('').split('#').length - 1;
   assert.ok(tinta >= 12 && tinta <= 40, `${d.nombre}: ${tinta} de tinta, demasiado o muy poco`);
-  assert.ok(d.nombre && d.emoji && d.color && d.cuadro, `${d.nombre}: le falta algo`);
+  assert.ok(d.nombre && d.emoji, `${d.nombre}: le falta algo`);
+  // Irregulares: uno simétrico (de lado a lado o de arriba abajo) se adivina por espejo
+  assert.ok(!d.filas.every(f => f === [...f].reverse().join('')), `${d.nombre}: es simétrico de lado a lado`);
+  assert.ok(d.filas.join() !== [...d.filas].reverse().join(), `${d.nombre}: es simétrico de arriba abajo`);
 }
+for (const d of DIBUJOS2) {
+  for (const f of d.filas) assert.match(f, /^[#+.]{7}$/, `${d.nombre}: ${f}`);
+  const de = c => d.filas.join('').split(c).length - 1;
+  assert.ok(de('#') >= 4 && de('+') >= 4 && de('#') + de('+') >= 12 && de('#') + de('+') <= 40, `${d.nombre}: colores mal repartidos`);
+  assert.ok(!d.filas.every(f => f === [...f].reverse().join('')) && d.filas.join() !== [...d.filas].reverse().join(), `${d.nombre}: es simétrico`);
+}
+for (const p of PALETA) assert.ok(p.nombre && /^#[0-9a-f]{6}$/.test(p.color) && p.cuadro, `${p.nombre}: color`);
 assert.deepEqual(VECINAS[0].sort((a, b) => a - b), [1, 7, 8]);
 assert.equal(VECINAS[24].length, 8);
 
@@ -29,6 +39,22 @@ for (let n = 0; n < 300; n++) {
 }
 console.log(`  (en promedio ${(dadasTotal / 300).toFixed(1)} casillas dadas de ${LADO * LADO})`);
 
+// El modo difícil, de dos colores: 300 tableros que también se resuelven sin adivinar
+let dadas2 = 0;
+for (let n = 0; n < 300; n++) {
+  const t = generar(`dos-${n}`, { colores: 2 });
+  assert.equal(t.dibujo.pinturas.length, 2);
+  assert.notEqual(t.dibujo.pinturas[0].nombre, t.dibujo.pinturas[1].nombre);
+  // Amarillo y naranjo se confunden a simple vista: no comparten tablero
+  assert.notDeepEqual(t.dibujo.pinturas.map(p => p.nombre).sort(), ['amarillo', 'naranjo'], `dos-${n}: amarillo con naranjo`);
+  assert.ok(t.sol.includes(2), `${n}: no hay segundo color`);
+  const sabe = resolver(t.sol, t.dadas);
+  assert.equal(sabe.size, t.sol.length, `dos-${n}: no se resuelve sin adivinar`);
+  for (const [i, k] of sabe) assert.equal(k, t.sol[i], `dos-${n}: dedujo mal la casilla ${i}`);
+  dadas2 += t.dadas.length;
+}
+console.log(`  (dos colores: en promedio ${(dadas2 / 300).toFixed(1)} casillas dadas)`);
+
 // El estado y el puntaje
 const t = generar('prueba-estado');
 const libres = t.sol.map((_, i) => i).filter(i => !t.dadas.includes(i));
@@ -42,6 +68,9 @@ assert.equal(puntaje(estado(t, [{ i: libres[0], color: 1 - t.sol[libres[0]] }, .
 e = estado(t, [{ i: libres[0], color: 1 - t.sol[libres[0]] }, { i: libres[0], color: 1 - t.sol[libres[0]] }]);
 assert.equal(e.errores.size, 1);
 assert.equal(puntaje({ errores: { size: 9 } }), 0);
+// El modo difícil paga ×1.5
+assert.equal(puntaje({ errores: { size: 0 } }, { colores: 2 }), 150);
+assert.equal(puntaje({ errores: { size: 1 } }, { colores: 2 }), 128);
 assert.equal(tarjeta(t, e).split('\n').length, LADO);
 assert.ok(numero(t.sol, 0) <= 3);
 console.log('✓ Pintaminas (labs)');
