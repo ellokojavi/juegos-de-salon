@@ -103,15 +103,15 @@ function deducir(sol, dadas, soloLaPrimera = false) {
   return { sabe, primera };
 }
 
+/** Los pares de PALETA que no comparten tablero en el modo difícil. */
+const PARECIDOS = [['amarillo', 'naranjo']];
+
 /**
  * El tablero de una semilla: `{ dibujo: { nombre, emoji, pinturas }, sol: [0..colores ×49], dadas }`.
  * Con `colores: 2` (el modo difícil) usa los dibujos de dos colores. El dibujo puede salir espejado,
  * y sus colores salen al azar de PALETA, salvo los dibujos con sus colores propios (`colores`). Con
  * las dadas se resuelve entero.
  */
-/** Los pares de PALETA que no comparten tablero en el modo difícil. */
-const PARECIDOS = [['amarillo', 'naranjo']];
-
 export function generar(semilla, { colores = 1 } = {}) {
   const r = azar(String(semilla));
   const lista = colores === 2 ? DIBUJOS2 : DIBUJOS;
