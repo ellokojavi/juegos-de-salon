@@ -27,8 +27,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      # En un PR que solo trae documentación (docs/, marketing/, .claude/, los .md) la lista sale
-      # vacía y no corre ningún guion: el check queda en verde en segundos (D-205)
+      # En un PR que no toca nada del navegador (documentación, marketing, los agentes, el taller que
+      # ningún guion importa, las reglas y los otros workflows; tools/e2e/cambios.mjs) la lista sale
+      # vacía y no corre ningún guion: el check queda en verde en segundos (D-205, D-299)
       - id: lista
         env:
           GH_TOKEN: ${{ github.token }}
@@ -76,18 +77,34 @@ jobs:
           timeout 60 "$RUNNER_TEMP/chrome" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true
 
       - name: ${{ matrix.guion }}
+        id: primero
+        continue-on-error: true
         env:
           SALIDA_E2E: ${{ runner.temp }}/e2e
         run: node tools/e2e/ci.mjs ${{ matrix.guion }}
 
+      # Un segundo intento, solo para el guion que falló (D-299): de las 7 veces que main salió en
+      # rojo entre el 4 y el 12 de octubre, 5 volvieron a verde en la corrida siguiente sin que nadie
+      # tocara ese juego. Si pasa al segundo, el job queda en verde con un aviso ⚠️ "Intermitente"
+      # que dice cuál fue: se ve en el PR y no se esconde. Si falla dos veces, es rojo de verdad.
+      - name: ${{ matrix.guion }} (segundo intento)
+        if: steps.primero.outcome == 'failure'
+        env:
+          SALIDA_E2E: ${{ runner.temp }}/e2e/segundo-intento
+          GUION: ${{ matrix.guion }}
+        run: |
+          echo "::warning title=Intermitente::$GUION falló al primer intento; se repite una vez (D-299)"
+          node tools/e2e/ci.mjs "$GUION"
+          echo "::warning title=Intermitente::$GUION pasó al segundo intento: falla a veces (capturas del primero en el artefacto)"
+
       # Las capturas de lo que falló, para mirarlas sin repetir la corrida. El nombre de un
       # artefacto no admite "/" ni ":", y los guiones van en carpetas por juego, con su parte
-      # (cup/torneo.mjs:copa)
-      - if: failure()
+      # (cup/torneo.mjs:copa). También las del primer intento de un guion que pasó al segundo.
+      - if: failure() || steps.primero.outcome == 'failure'
         env:
           GUION: ${{ matrix.guion }}
         run: echo "ARTEFACTO=capturas-${GUION//[\/:]/-}" >> "$GITHUB_ENV"
-      - if: failure()
+      - if: failure() || steps.primero.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTEFACTO }}
