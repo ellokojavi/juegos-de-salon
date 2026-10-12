@@ -504,7 +504,7 @@
     {
       "seccion": "generala",
       "imagen": "docs/screenshots/generala/06-final.png",
-      "pie": "Standings and every score card",
+      "pie": "Final standings",
       "guion": "generala-local",
       "toma": "06-final"
     },
@@ -539,7 +539,7 @@
     {
       "seccion": "ahorcado",
       "imagen": "docs/screenshots/hangman/02-configuracion.png",
-      "pie": "Word, lives and who plays",
+      "pie": "Theme and who plays",
       "guion": "ahorcado-local",
       "toma": "02-setup"
     },
