@@ -26,6 +26,7 @@
     'loco_Cris': '8ec321a014d83c5c51f3b2cd20feef15356712b908d05cd843cd66cc3b1a7700',
     'ratoncito': '6a35ce1320faf96bdfdd1ecf882119353a7d7b72b67302786b546a9d48274a77',
     'el_mas_lindo': 'dc1e85d247f1ace88abd7129c0fdba64e43bd78d27b60c4761f5c125900d3734',
+    'jiri': '5c6c52c8e92cc8699a9db6e0ff740df96c901c2f7387f7d7cb921fb070d77f77',
   };
   var GUARDADA = 'juegos-de-salon:labs-llave';
   // La etiqueta de esa llave, para que el feedback 🐞 diga quién lo manda (cup/reportes.js)

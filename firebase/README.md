@@ -377,12 +377,16 @@ degrada con elegancia, se cae. Desde v0.18 al menos se le dice al jugador (D-40)
 
 Confirmar los números en la consola antes de fijar umbrales: Google los ha cambiado.
 
-### Vigilarlo (RP-22, pendiente)
+### Vigilarlo (RP-22)
 
 1. **Firebase Console → Realtime Database → Uso**: línea base de conexiones, almacenamiento
    y descarga con el tráfico real.
-2. **Google Cloud Monitoring** (el proyecto Firebase ya es proyecto GCP): política de alerta
-   sobre conexiones activas de RTDB, umbral ~80 de 100, notificando por correo.
+2. **Alerta de conexiones, en Google Cloud Monitoring** (creada el 2026-10-12): la política
+   [Firebase: 80 de 100 conexiones](https://console.cloud.google.com/monitoring/alerting/policies/2345084699692281801?project=juegos-de-salon)
+   mira `firebasedatabase.googleapis.com/network/active_connections` y avisa por correo
+   (canal "JBot Mac Mini GCloud Notification") cuando pasa de 80. Se creó a mano en la consola: la
+   llave de la cuenta de servicio es para la base, no para configurar Google Cloud.
+3. **Descarga mensual: sin alerta todavía.**
 
 ### Si el uso crece de verdad
 
