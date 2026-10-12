@@ -21,6 +21,7 @@
   var HUELLAS = {
     'dueño': '867ef25adf5e043b13378e8c3ca53f1b53b5dc4ee8df926e74b7448b2f5b7417',
     'MI': 'f01eea37a3c990f60b252663ada208c1d8c83cb858d891b35bf3dee78a3e877d',
+    'Chanicua': '441119bfd83362159a827adaabe0d71a43ec146fca8cb02109521fa624f8b874',
   };
   var GUARDADA = 'juegos-de-salon:labs-llave';
   var h = document.documentElement;
