@@ -25,7 +25,7 @@ const T = {
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
     ['🕵️', `Toca las palabras que van con la pista: «MAR · 3» quiere decir que 3 van con MAR. Llegan ${CUANTAS} pistas, de a una.`],
-    ['⚠️', `Evita las ${NEUTRALES} palabras neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}), que se parece a una pista: tocar uno corta la pista.`],
+    ['⚠️', `Evita las ${NEUTRALES} palabras neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}): todas se parecen a alguna pista. Tocar una corta la pista.`],
     ['⏭️', 'Si dudas, pasa a la siguiente pista. Cada agente suma, aunque sea de otra pista.'],
   ],
   empezar: '🕵️ Empezar', aJugar: '¡A jugar!', pista: 'Pista {n} de {t}', faltan: 'Te faltan {n}', faltaUna: 'Te falta 1',
@@ -304,7 +304,7 @@ function resultado() {
     class: `carta ${c.tipo === 'agente' ? 'agente' : c.tipo}${e.tocadas.has(i) ? '' : ' sin-tocar'}`,
     style: `--n:${c.w.length};--k:${i}`,
   }, c.tipo === 'asesino' ? `💀 ${c.w}` : c.w,
-  c.tipo === 'asesino' && t.pistas[c.tienta] ? el('span', { class: 'de-pista' }, fmt(T.tienta, { p: t.pistas[c.tienta].pista })) : null,
+  c.tipo !== 'agente' && t.pistas[c.tienta] ? el('span', { class: 'de-pista' }, fmt(T.tienta, { p: t.pistas[c.tienta].pista })) : null,
   // Bajo cada agente, su pista: así el tablero dice también cuáles eran las pistas
   c.tipo === 'agente' ? el('span', { class: 'de-pista' }, t.pistas[c.p].pista) : null)));
   const asesino = t.cartas.find(c => c.tipo === 'asesino');

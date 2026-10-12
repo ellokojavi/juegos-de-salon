@@ -24,8 +24,9 @@ const barajar = (xs, r) => { const a = xs.slice(); for (let i = a.length - 1; i 
  * El tablero de una semilla: `pistas` (la palabra y cuántas van con ella) y `cartas` en el orden de
  * la grilla, cada una `{ w, tipo: 'agente'|'neutral'|'asesino', p }` (`p`: la pista del agente; el asesino
  * lleva además `tienta`: la pista a la que se parece).
- * Ningún agente va también con otra de las pistas del tablero, el asesino se le parece a una pero
- * no va con ninguna, y las neutrales no tientan.
+ * Ningún agente va también con otra de las pistas del tablero; el asesino y las neutrales se le
+ * parecen a una (salen de sus tentaciones, `casi`) pero no van con ninguna: así las tres cartas que
+ * no son tuyas parecen de alguna pista. Las neutrales llevan también `tienta`.
  */
 export function generar(semilla) {
   const r = azar(String(semilla));
@@ -50,11 +51,13 @@ export function generar(semilla) {
     usadas.add(asesino);
     // `tienta`: la pista a la que se parece, para explicar la trampa al final
     cartas.push({ w: asesino, tipo: 'asesino', p: null, tienta: elegidas.findIndex(x => x.casi.includes(asesino)) });
-    // Las neutrales: de otras pistas, sin parecido con estas
-    const otras = PISTAS.filter(x => !elegidas.includes(x)).flatMap(x => x.si).filter(w => !si.has(w) && !casi.has(w) && !usadas.has(w));
-    const neutrales = barajar([...new Set(otras)], r).slice(0, NEUTRALES);
+    // Las neutrales también tientan: de las tentaciones que quedan, de preferencia de otras pistas
+    // que la del asesino, para que la trampa no se concentre en una sola
+    const quedan = barajar([...casi].filter(w => !si.has(w) && !usadas.has(w)), r);
+    const tientaA = w => elegidas.findIndex(x => x.casi.includes(w));
+    const neutrales = [...quedan.filter(w => tientaA(w) !== tientaA(asesino)), ...quedan.filter(w => tientaA(w) === tientaA(asesino))].slice(0, NEUTRALES);
     if (neutrales.length < NEUTRALES) continue;
-    for (const w of neutrales) { usadas.add(w); cartas.push({ w, tipo: 'neutral', p: null }); }
+    for (const w of neutrales) { usadas.add(w); cartas.push({ w, tipo: 'neutral', p: null, tienta: tientaA(w) }); }
     return { pistas: elegidas.map(x => ({ pista: x.pista, n: POR_PISTA })), cartas: barajar(cartas, r) };
   }
   throw new Error('no se pudo armar un tablero');
