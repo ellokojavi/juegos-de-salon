@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.168.2 — 2026-10-12
+- **🧪 Laboratorio: La Bodega, plegada.** Sus juegos se ven solo con su título y un toque los abre
+  para ver de qué se tratan y jugarlos; así no tienen el mismo peso que los proyectos activos.
+
+## 0.168.0 — 2026-10-12
+- **💥 Números explosivos (laboratorio, nuevo)** (D-297), inspirado en Number Match: haz estallar de a
+  pares los números iguales o que suman 10, si están juntos en línea, hasta dejar el tablero limpio.
+  Sin pares, ➕ copia abajo los que quedan (3 por partida). Cada par estalla, una fila entera explota
+  y se va, y al limpiarlo todo explota. El tablero del día siempre tiene salida.
+
 ## 0.167.3 — 2026-10-12
 - **🚇 Rutas pasa a llamarse Rutas rotas** (pedido del dueño): las líneas parten cortadas y hay que
   unirlas. Cambia el nombre en la portada, el laboratorio y lo que se comparte; el link
