@@ -2,7 +2,7 @@
 // tienta pero no va con ninguna, las neutrales no tientan— y el estado y el puntaje se calculan bien.
 import assert from 'node:assert/strict';
 import { PISTAS } from './pistas.js';
-import { generar, estado, puntaje, tarjeta, AGENTES, CUANTAS, NEUTRALES } from './engine.js';
+import { generar, estado, puntaje, tarjeta, AGENTES, CUANTAS, NEUTRALES, SIN_REPETIR, numeroDeDia, pistasDelDia } from './engine.js';
 
 const nombres = PISTAS.map(x => x.pista);
 assert.equal(new Set(nombres).size, nombres.length, 'pistas repetidas');
@@ -30,6 +30,23 @@ for (let n = 0; n < 300; n++) {
     if (c.tipo === 'neutral') assert.ok(elegidas[c.tienta]?.casi.includes(c.w), `${n}: la neutral ${c.w} no tienta a la pista que dice`);
   }
   assert.ok(!t.cartas.some(c => t.pistas.some(p => p.pista === c.w)), `${n}: una pista está en el tablero`);
+}
+
+// El calendario (D-288): un año de tableros del día, sin una pista que vuelva antes de SIN_REPETIR
+// días, igual cada vez que se calcula
+{
+  const base = numeroDeDia('dia:2026-10-12'), ultima = {};
+  for (let d = 0; d < 365; d++) {
+    const n = base + d, fecha = new Date(n * 864e5).toISOString().slice(0, 10);
+    assert.ok(pistasDelDia(n), `${fecha}: el calendario no armó el día`);
+    const t = generar(`dia:${fecha}`);
+    assert.deepEqual(t.pistas.map(p => p.pista).sort(), pistasDelDia(n).map(x => x.pista).sort(), `${fecha}: no usó las pistas del calendario`);
+    for (const p of t.pistas) {
+      if (p.pista in ultima) assert.ok(d - ultima[p.pista] >= SIN_REPETIR, `${fecha}: ${p.pista} volvió a los ${d - ultima[p.pista]} días`);
+      ultima[p.pista] = d;
+    }
+  }
+  assert.equal(Object.keys(ultima).length, PISTAS.length, 'en un año salen todas las pistas');
 }
 
 // El estado y el puntaje
