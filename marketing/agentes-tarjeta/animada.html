@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<!-- La tarjeta de Agentes, animada: 6 s en bucle (render(t) es determinista). Se dibuja con construir-video.mjs -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@700;900&display=swap">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: #150726; }
+  #t { width: 600px; height: 315px; transform-origin: 0 0; font-family: 'Nunito', sans-serif; color: #fff; position: relative;
+    background: radial-gradient(circle at 78% 30%, rgba(255, 210, 63, 0.18), transparent 45%),
+      radial-gradient(circle at 15% 90%, rgba(46, 230, 214, 0.16), transparent 40%),
+      linear-gradient(160deg, #150726, #2a0a4a 55%, #0b1e3f); }
+  /* Puntitos de fondo, como los de la app */
+  .p { position: absolute; border-radius: 50%; opacity: 0.35; }
+  .izq { position: absolute; left: 30px; top: 34px; width: 300px; }
+  .lab { display: inline-block; font: 900 10px 'Nunito'; letter-spacing: 0.14em; text-transform: uppercase; color: #2ee6d6;
+    border: 1.5px solid rgba(46, 230, 214, 0.6); border-radius: 999px; padding: 3px 10px; }
+  .titulo { position: relative; display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .titulo .ico { font-size: 44px; transform: rotate(-6deg); }
+  .titulo h1 { background-size: 300% 100% !important; font: 72px/0.95 'Bangers'; letter-spacing: 0.03em; padding-right: 4px;
+    background: linear-gradient(90deg, #ffd23f, #ff6fa8, #2ee6d6, #9dff3a); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 3px 0 rgba(0,0,0,0.35)); }
+  .sello { position: absolute; right: -14px; bottom: -6px; font: 15px 'Bangers'; letter-spacing: 0.14em; color: #ff4d5e;
+    border: 2.5px solid #ff4d5e; border-radius: 6px; padding: 2px 8px; transform: rotate(-9deg); background: rgba(22, 8, 48, 0.82); }
+  .lema { margin-top: 16px; font: 900 21px/1.2 'Nunito'; }
+  .lema b { color: #ffd23f; }
+  .sub { margin-top: 8px; font: 700 13px/1.35 'Nunito'; color: rgba(255,255,255,0.78); }
+  .pie { position: absolute; left: 30px; bottom: 22px; font: 700 11px 'Nunito'; color: rgba(255,255,255,0.6); }
+  .pie b { color: #fff; }
+  .der { position: absolute; right: 30px; top: 40px; width: 228px; }
+  .pista { text-align: center; font: 30px 'Bangers'; letter-spacing: 0.08em; border: 2.5px solid rgba(255, 210, 63, 0.8); border-radius: 12px;
+    background: rgba(255, 210, 63, 0.14); padding: 4px 0 2px; }
+  .pista b { color: #ffd23f; font-weight: normal; }
+  .mesa { margin-top: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; position: relative; }
+  .c { height: 50px; border-radius: 10px; display: grid; place-items: center; font: 900 12.5px 'Nunito'; letter-spacing: 0.02em;
+    background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.18); position: relative; }
+  .c.ag { background: rgba(157, 255, 58, 0.34); border-color: #9dff3a; color: #f2ffe0; }
+  .c.as { background: #0c0414; border-color: #ff3d3d; color: #ff8a8a; }
+  .c.ma::after { content: '📌'; position: absolute; top: -9px; right: -6px; font-size: 14px; }
+  .lupa { position: absolute; font-size: 34px; left: 0; top: 0; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.5)); }
+  .destello { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle, transparent 35%, rgba(255, 30, 60, 0.55)); opacity: 0; }
+  .ojo { margin-top: 9px; text-align: center; font: 900 11.5px 'Nunito'; color: #ff8a8a; }
+</style>
+</head>
+<body>
+<div id="t">
+  <span class="p" style="left:350px;top:22px;width:7px;height:7px;background:#ffd23f"></span>
+  <span class="p" style="left:300px;top:270px;width:10px;height:10px;background:#2ee6d6"></span>
+  <span class="p" style="left:560px;top:290px;width:6px;height:6px;background:#ff6fa8"></span>
+  <span class="p" style="left:20px;top:150px;width:5px;height:5px;background:#9dff3a"></span>
+  <div class="izq">
+    <span class="lab" id="lab">🧪 Nuevo · en prueba</span>
+    <div class="titulo"><span class="ico" id="ico">🕵️</span><h1 id="titulo">Agentes</h1><span class="sello" id="sello">Clasificado</span></div>
+    <p class="lema"><span id="l1">Una pista. 12 palabras.</span><br><b id="l2">Encuentra a tus agentes.</b></p>
+    <p class="sub" id="sub">Y cuidado con el asesino: se parece a la pista. Un tablero nuevo cada día.</p>
+  </div>
+  <p class="pie" id="pie"><b>juegosdesalon.cl</b> · Inspirado en Codenames</p>
+  <div class="der">
+    <div class="pista" id="pista"><span id="pp">MAR</span> · <b>3</b></div>
+    <div class="mesa">
+      <span class="c" id="c0">OLA</span><span class="c" id="c1">LUNA</span><span class="c" id="c2">RÍO</span>
+      <span class="c" id="c3">BARCO</span><span class="c" id="c4">NUBE</span><span class="c" id="c5">ISLA</span>
+      <span class="lupa" id="lupa">🔍</span>
+    </div>
+    <p class="ojo" id="ojo">¿RÍO? 💀 Ojo, que puede ser el asesino…</p>
+  </div>
+<div class="destello" id="destello"></div>
+</div>
+<!-- Escala al ancho de la ventana, y la animación -->
+<script>
+  const $ = id => document.getElementById(id);
+  $('t').style.transform = `scale(${innerWidth / 600})`;
+  window.FPS = 30; window.DURATION = 6;
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const fase = (t, a, b) => clamp((t - a) / (b - a));
+  const out = x => 1 - (1 - x) ** 3;
+  const back = x => { const c = 1.7; return 1 + (c + 1) * (x - 1) ** 3 + c * (x - 1) ** 2; };
+  const ABC = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+  // Letras "al azar" que dependen solo del cuadro: el video sale igual cada vez
+  const letra = (n, k) => ABC[(n * 7919 + k * 104729) % ABC.length];
+  const aparece = (id, a, dy = 14) => { const k = out(fase(t0, a, a + 0.35)); $(id).style.opacity = k; $(id).style.transform = `translateY(${(1 - k) * dy}px)`; };
+  let t0 = 0;
+  // Los agentes que la lupa va encontrando: [carta, cuándo llega la lupa]
+  const AGENTES = [[0, 2.0], [3, 2.6], [5, 3.2]];
+  const centro = i => { const c = $('c' + i); return [c.offsetLeft + c.offsetWidth - 30, c.offsetTop + c.offsetHeight - 30]; };
+  window.render = t => {
+    t0 = t;
+    // El arcoíris del título corre, como en la app
+    $('titulo').style.backgroundPosition = `${(t * 50) % 300}% 0`;
+    aparece('lab', 0.1);
+    const k = back(fase(t, 0.25, 0.75));
+    $('titulo').style.transform = `scale(${0.3 + 0.7 * k})`; $('titulo').style.opacity = clamp(fase(t, 0.25, 0.4));
+    $('ico').style.opacity = clamp(fase(t, 0.35, 0.55)); $('ico').style.transform = `rotate(${-6 + 8 * Math.sin(t * 3)}deg)`;
+    // El sello cae grande y torcido, y se asienta
+    const s = fase(t, 0.85, 1.15);
+    $('sello').style.opacity = clamp(s * 2); $('sello').style.transform = `scale(${2.6 - 1.6 * out(s)}) rotate(${-16 + 7 * out(s)}deg)`;
+    aparece('l1', 1.2); aparece('l2', 1.5); aparece('sub', 1.9); aparece('pie', 2.2, 0);
+    // La pista llega y su palabra se descifra
+    const p = back(fase(t, 0.9, 1.3));
+    $('pista').style.opacity = clamp(fase(t, 0.9, 1.05)); $('pista').style.transform = `scale(${0.6 + 0.4 * p})`;
+    const fijas = Math.floor(3 * fase(t, 1.0, 1.6)), n = Math.round(t * 30);
+    $('pp').textContent = [...'MAR'].map((c, i) => (i < fijas ? c : letra(n, i))).join('');
+    // Las cartas, de a una
+    for (let i = 0; i < 6; i++) {
+      const c = $('c' + i), a = back(fase(t, 1.25 + i * 0.07, 1.6 + i * 0.07));
+      c.style.opacity = clamp(fase(t, 1.25 + i * 0.07, 1.4 + i * 0.07)); c.style.transform = `scale(${0.5 + 0.5 * a})`;
+      c.className = 'c';
+    }
+    // La lupa recorre: OLA, BARCO, ISLA (se destapan), y termina sobre RÍO, que se marca 📌
+    const ruta = [[1.75, centro(1)], ...AGENTES.map(([i, s]) => [s, centro(i)]), [3.75, centro(2)]];
+    let [x, y] = ruta[0][1];
+    for (let j = 1; j < ruta.length; j++) {
+      const [s, [x2, y2]] = ruta[j], [, [x1, y1]] = ruta[j - 1];
+      const m = out(fase(t, s - 0.45, s));
+      if (t >= s - 0.45) { x = x1 + (x2 - x1) * m; y = y1 + (y2 - y1) * m; }
+    }
+    $('lupa').style.opacity = Math.min(clamp(fase(t, 1.7, 1.9)), 1 - fase(t, 4.7, 4.85));
+    $('lupa').style.transform = `translate(${x}px, ${y}px) rotate(-12deg)`;
+    for (const [i, s] of AGENTES) if (t >= s + 0.1) { $('c' + i).classList.add('ag'); $('c' + i).style.transform = `scale(${1 + 0.12 * (1 - fase(t, s + 0.1, s + 0.45))})`; }
+    if (t >= 4.0) $('c2').classList.add('ma');
+    $('ojo').style.opacity = clamp(fase(t, 4.15, 4.4));
+    $('ojo').textContent = t < 4.85 ? '¿RÍO? 💀 Ojo, que puede ser el asesino…' : '💀 ¡Era el asesino! ¿Lo habrías visto?';
+    // RÍO era el asesino: se destapa con un destello y un temblor
+    if (t >= 4.85) { $('c2').className = 'c as'; $('c2').textContent = '💀 RÍO'; } else $('c2').textContent = 'RÍO';
+    const d = fase(t, 4.85, 5.4);
+    $('destello').style.opacity = t >= 4.85 ? Math.sin(d * Math.PI) : 0;
+    if (t >= 4.85 && t < 5.25) $('c2').style.transform = `translateX(${Math.sin(t * 90) * 4}px)`;
+    // El último cuarto de segundo se apaga, para que el bucle vuelva a empezar sin salto
+    $('t').style.filter = `brightness(${1 - 0.85 * fase(t, 5.7, 6)})`;
+  };
+  if (!location.search.includes('render')) {
+    const ini = performance.now(); const loop = () => { window.render(((performance.now() - ini) / 1000) % window.DURATION); requestAnimationFrame(loop); }; loop();
+  } else window.render(0);
+</script>
+</body>
+</html>
