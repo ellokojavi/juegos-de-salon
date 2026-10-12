@@ -1,5 +1,5 @@
 {
-  "revisadoHasta": null,
+  "revisadoHasta": "d667443",
   "patrones": [
     {
       "clave": "version-hacia-atras",
@@ -32,6 +32,18 @@
         "que": "documentar.test.mjs revisa docs/DECISIONES.md del repo en cada PR",
         "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/332"
       }
+    },
+    {
+      "clave": "captura-identica-atrasada",
+      "que": "Una captura rehecha que sale idéntica byte a byte no genera commit y readme.py revisar la sigue marcando como atrasada (batalla-naval, generala)",
+      "vistos": [
+        {
+          "fecha": "2026-10-12",
+          "que": "Una captura rehecha que sale idéntica byte a byte no genera commit y readme.py revisar la sigue marcando como atrasada (batalla-naval, generala)",
+          "commit": "d667443"
+        }
+      ],
+      "mecanismo": null
     }
   ],
   "mecanismos": [
@@ -49,6 +61,24 @@
     }
   ],
   "colaHecha": [],
-  "despachos": {},
-  "rondas": []
+  "despachos": {
+    "documentacion": {
+      "fecha": "2026-10-12",
+      "hasta": "d667443"
+    },
+    "usabilidad": {
+      "fecha": "2026-10-12",
+      "hasta": "d667443"
+    }
+  },
+  "rondas": [
+    {
+      "fecha": "2026-10-12",
+      "desde": null,
+      "hasta": "d667443",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/353",
+      "nota": "Despachados documentación (#354) y usabilidad (#353), revisados contra sus criterios. #321:3 sigue en cola: el permiso automático bloqueó editar las guías de los agentes."
+    }
+  ]
 }
