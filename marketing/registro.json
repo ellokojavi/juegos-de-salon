@@ -41,8 +41,8 @@
       ],
       "estado": "en YouTube (@eljotairi), no listado: 16:9 https://youtu.be/fQ4uFaPX_4g y Short https://youtube.com/shorts/RYAvj2MTRPQ",
       "revision": {
-        "fecha": "2026-10-09",
-        "app": "0.135.0",
+        "fecha": "2026-10-12",
+        "app": "0.163.1",
         "al_dia": false,
         "pendiente": [
           "Zip (escena de los cuatro juegos, ~14-16 s): el encabezado del video dice 'Nivel 1 · 4 × 4'; desde 0.130.0 (D-250) dice 'Nivel 1 de 10' (diez niveles fijos). Se corrige en la próxima vuelta, no amerita rehacer la v6.",
@@ -110,8 +110,8 @@
         "caso"
       ],
       "revision": {
-        "fecha": "2026-10-11",
-        "app": "0.147.2",
+        "fecha": "2026-10-12",
+        "app": "0.163.1",
         "al_dia": false,
         "pendiente": [
           "Muestra el prototipo, que se borró (D-267): hoy /labs/case/ abre primero una antesala ('El caso de hoy es el mismo para todos') y una cuenta 3, 2, 1, y la pantalla del caso es la de La Copa: arriba '‹ Laboratorio' y el reloj, sin el marcador '✅ 1/20 · 0 errores' del video, y el botón dice '💡 Ayuda (-15 puntos)' (D-263), no '💡 Ayuda'."
@@ -153,8 +153,8 @@
       "seleccion": true,
       "estado": "entregado al dueño",
       "revision": {
-        "fecha": "2026-10-11",
-        "app": "0.148.6",
+        "fecha": "2026-10-12",
+        "app": "0.163.1",
         "al_dia": true,
         "pendiente": []
       }
@@ -202,7 +202,16 @@
       "seleccion": true,
       "laboratorio": [
         "agentes"
-      ]
+      ],
+      "revision": {
+        "fecha": "2026-10-12",
+        "app": "0.163.1",
+        "al_dia": false,
+        "pendiente": [
+          "Dice 'Una pista. 15 palabras.', pero desde D-287 cada tablero trae 4 pistas que llegan de a una (la portada del juego: 'Llegan 4 pistas, de a una'); se ve en el JPG, el video y la vista previa del link de /labs/agents/.",
+          "No cuenta lo de los espías (D-288): la portada del juego y su ficha en el laboratorio abren con 'Cada palabra es el nombre en clave de un espía'. Menor: la tarjeta igual invita a buscar 'a tus agentes'."
+        ]
+      }
     }
   ]
 }
