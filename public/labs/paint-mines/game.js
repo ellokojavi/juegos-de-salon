@@ -31,7 +31,9 @@ const T = {
   ],
   empezar: '🖌️ Empezar', aJugar: '¡A pintar!',
   // El modo difícil: un interruptor de palanca que al activarse se electrifica (pedido del dueño)
-  dificil: 'Modo difícil', dificilEstado: ['Apagado', 'Encendido'], dificilSub: 'Dos colores · puntaje ×{x}', dificilJuego: '⚡ Modo difícil ×{x}',
+  // El rótulo dice el modo en que está la palanca (pedido del dueño): fácil o difícil
+  modo: [{ titulo: 'Modo fácil', sub: 'Un color · puntaje normal' }, { titulo: '⚡ Modo difícil', sub: 'Dos colores · puntaje ×{x}' }],
+  dificilJuego: '⚡ Modo difícil ×{x}',
   // Los pinceles (pedido del dueño): «Pinta» con el color del tablero, y «No pinta», gris como las que no se pintan
   tinta: 'Pinta {c}', fondo: 'No pinta', pincel: 'Pincel',
   errores: ['Sin errores', '1 error', '{n} errores'], quedan: 'Faltan {n}',
@@ -88,30 +90,59 @@ function grilla(t, { conocidas = new Set(t.sol.keys()), numeros = true, clase = 
   }));
 }
 
-// La portada: un tablero chico que se va pintando solo hasta mostrar su dibujo, y vuelve a empezar
+// La portada (pedido del dueño): una partida de verdad, en chico. Parte con las casillas dadas y se pinta
+// de a una casilla, en el orden en que un jugador las deduciría (el de la 💡 ayuda), cada una con su
+// número; al completarse aparece el dibujo, dice qué era y se marca terminada. Después, otro tablero.
 let demoVez = 0;
 function portada() {
-  const t = generar('portada-demo');
   const caja = el('div', { class: 'demo', 'aria-hidden': 'true' });
+  const rotulo = el('p', { class: 'demo-rotulo', 'aria-hidden': 'true' }, '');
   vista.replaceChildren(...[
-    el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), caja),
+    el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), caja, rotulo),
     el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
     interruptor(),
     SEMILLA_URL ? null : el('p', { class: 'muted center', style: 'margin:0' }, `📅 ${T.hoy}`),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
   ].filter(Boolean));
   pieComentario('portada');
+  // Con el modo difícil encendido, la partida de la portada es de dos colores: se ve a qué se enfrenta
+  // (pedido del dueño). Mover la palanca la vuelve a empezar con el modo nuevo
+  reiniciarDemo = () => partidaDemo(caja, rotulo);
+  reiniciarDemo();
+}
+
+let reiniciarDemo = null;
+function partidaDemo(caja, rotulo) {
+  const colores = P.dificil ? 2 : 1;
+  if (QUIETO) { const t = generar('portada-demo', { colores }); caja.replaceChildren(grilla(t, { clase: 'chica' })); return; }
   const vez = ++demoVez;
-  const orden = [...t.dadas, ...t.sol.keys()].filter((i, k, a) => a.indexOf(i) === k);
-  if (QUIETO) { caja.replaceChildren(grilla(t, { clase: 'chica' })); return; }
-  let n = t.dadas.length;
-  const paso = () => {
-    if (vez !== demoVez || !caja.isConnected) return;
-    caja.replaceChildren(grilla(t, { conocidas: new Set(orden.slice(0, n)), clase: `chica${n >= orden.length ? ' revelada' : ''}` }));
-    n = n >= orden.length ? t.dadas.length : n + 1;
-    setTimeout(paso, n === t.dadas.length ? 2600 : 90);
-  };
-  paso();
+  const sigue = () => vez === demoVez && caja.isConnected;
+  const espera = ms => new Promise(r => setTimeout(r, ms));
+  (async () => {
+    for (let ronda = 0; sigue(); ronda++) {
+      const t = generar(`portada-demo-${ronda % 6}`, { colores });
+      // El orden de una partida real: cada vez, la casilla que se puede deducir con lo que se ve
+      const sabidas = new Set(t.dadas), orden = [];
+      for (let a = ayuda(t.sol, sabidas); a; a = ayuda(t.sol, sabidas)) { orden.push(a.celda); sabidas.add(a.celda); }
+      const g = grilla(t, { conocidas: new Set(t.dadas), clase: 'chica entra' });
+      caja.replaceChildren(g);
+      rotulo.textContent = ''; rotulo.className = 'demo-rotulo';
+      await espera(900);
+      for (const i of orden) {
+        if (!sigue()) return;
+        const c = g.querySelector(`[data-i="${i}"]`);
+        c.className = `casilla${claseColor(t.sol[i])} pop`;
+        c.textContent = String(numero(t.sol, i));
+        await espera(230);
+      }
+      if (!sigue()) return;
+      // Terminada: se va el número, el dibujo brilla y se dice qué era
+      g.classList.add('revelada');
+      rotulo.textContent = `${t.dibujo.emoji} ${fmt(T.era, { d: t.dibujo.nombre.toLowerCase() })}`;
+      rotulo.className = 'demo-rotulo ve';
+      await espera(2800);
+    }
+  })();
 }
 
 /** El modo difícil también cambia el fondo de la página (pedido del dueño): de noche eléctrica. */
@@ -122,26 +153,42 @@ const fondoDificil = () => document.body.classList.toggle('modo-dificil', P.difi
  * (chispas y un brillo que titila) y el juego pasa a dos colores con el puntaje ×1.5.
  */
 function interruptor() {
-  // Lo que dice si está encendido: la palanca sola no lo deja claro
-  const estado = el('span', { class: 'estado', 'aria-hidden': 'true' }, T.dificilEstado[+P.dificil]);
+  // El rótulo cambia con la palanca: «Modo fácil» o «⚡ Modo difícil», con lo que trae cada uno
+  const titulo = el('b', {}), sub = el('span', { class: 'muted' });
+  const rotular = () => { titulo.textContent = T.modo[+P.dificil].titulo; sub.textContent = fmt(T.modo[+P.dificil].sub, { x: PREMIO_DIFICIL }); };
   const caja = el('button', {
-    type: 'button', class: `interruptor${P.dificil ? ' on' : ''}`, id: 'btn-dificil', role: 'switch', 'aria-checked': String(P.dificil),
+    type: 'button', class: `interruptor${P.dificil ? ' on' : ''}`, id: 'btn-dificil', role: 'switch', 'aria-checked': String(P.dificil), 'aria-label': T.modo[1].titulo,
     onClick: () => {
       P.dificil = !P.dificil;
       try { localStorage.setItem(GUARDADO, P.dificil ? '1' : '0'); } catch { /* sin almacenamiento: solo esta vez */ }
       caja.classList.toggle('on', P.dificil); caja.setAttribute('aria-checked', String(P.dificil));
+      rotular();
+      reiniciarDemo?.();
+      // Un destello corto en toda la vista marca el paso al modo difícil (pedido del dueño), y después sigue
+      // el brillo; volver al fácil no lleva destello
+      if (P.dificil) relampago();
       fondoDificil();
-      estado.textContent = T.dificilEstado[+P.dificil];
       if (P.dificil) { SFX.error(); vibrate([15, 30, 15, 30, 40]); caja.classList.remove('chispa'); void caja.offsetWidth; caja.classList.add('chispa'); parpadear(caja); }
       else { SFX.tap(); vibrate(10); }
     },
   },
   el('span', { class: 'placa', 'aria-hidden': 'true' },
+    // El recorrido de la bola, grabado en la placa (pedido del dueño): muestra hacia dónde se mueve la palanca
+    el('span', { class: 'recorrido', html: '<svg viewBox="0 0 70 60"><path class="ranura" d="M10.99 16.52 A39 39 0 0 1 59.01 16.52" /></svg>' }),
     el('span', { class: 'rayo r1' }, '⚡'), el('span', { class: 'rayo r2' }, '⚡'), el('span', { class: 'rayo r3' }, '⚡'),
     el('span', { class: 'palanca' }, el('span', { class: 'mango' })), el('span', { class: 'eje' })),
-  el('span', { class: 'rotulo' }, el('b', {}, `⚡ ${T.dificil}`), el('span', { class: 'muted' }, fmt(T.dificilSub, { x: PREMIO_DIFICIL })), estado));
+  el('span', { class: 'rotulo' }, titulo, sub));
+  rotular();
   if (P.dificil) parpadear(caja);
   return caja;
+}
+
+/** El destello de toda la vista al pasar al modo difícil, blanco y celeste. */
+function relampago() {
+  if (QUIETO) return;
+  const x = el('div', { class: 'relampago', 'aria-hidden': 'true' });
+  document.body.append(x);
+  setTimeout(() => x.remove(), 600);
 }
 
 /**

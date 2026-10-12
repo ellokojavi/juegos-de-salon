@@ -16,8 +16,7 @@ y lo dice en la portada y en el laboratorio.
 
 ## Portada
 
-El título con una 🖌️ que pinta, el lema («Pinta la grilla y descubre el dibujo escondido.»), el crédito, y un tablero chico que se pinta
-solo hasta mostrar su dibujo y vuelve a empezar (con movimiento reducido queda pintado). Después los
+El título con una 🖌️ que pinta, el lema («Pinta la grilla y descubre el dibujo escondido.»), el crédito, y una partida de verdad en chico: parte con las casillas dadas y se pinta de a una, en el orden en que un jugador las deduciría (el de la ayuda), cada una con su número; al completarse aparece el dibujo y dice qué era («🐟 ¡Era un pez!»), y sigue con otro tablero. Con el modo difícil encendido, la partida de la portada es de dos colores, y mover la palanca la vuelve a empezar con el modo nuevo
 tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
 
 ## Cómo se juega
@@ -46,8 +45,8 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
 
 ## Modo difícil (D-291)
 
-- **El interruptor:** en la portada, antes de Empezar, una palanca sobre una placa de metal («⚡ Modo
-  difícil · Dos colores · puntaje ×1.5»). Bajo el título dice «APAGADO» o «ENCENDIDO». Al subirla, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto (D-292; con movimiento reducido queda encendido y quieto), y la placa se electrifica: titila en celeste y
+- **El interruptor:** en la portada, antes de Empezar, una palanca sobre una placa de metal («Modo fácil · Un color · puntaje normal», y al subirla «⚡ Modo difícil · Dos colores · puntaje ×1.5»; la placa lleva grabado el recorrido de la bola
+  (una ranura oscura en arco), que muestra hacia dónde se mueve. Al pasar al modo difícil, un destello corto cubre toda la vista (volver al fácil no lleva destello). Al subirla, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto (D-292; con movimiento reducido queda encendido y quieto), y la placa se electrifica: titila en celeste y
   amarillo, saltan chispas ⚡, suena y vibra. Es un `role="switch"`; el celular recuerda su posición
   (`juegos-de-salon:pintaminas:dificil`) y el link lo trae con `?colors=2`.
 - **El fondo:** encendido, toda la página pasa de su morado de siempre a un azul noche con
