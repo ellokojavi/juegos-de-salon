@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.168.4 — 2026-10-12
+- **Portada: las píldoras de La Copa y Uno al día, abajo a la izquierda** (D-305). Los jugadores y
+  los días de La Copa, y la racha o cómo vas hoy en Uno al día, quedan al pie de cada tarjeta y a la
+  misma altura en las dos, aparte del texto de arriba.
+- **Uno al día: "Jugar el de hoy" pasa a "Jugar hoy"** (D-305), en la portada, en el desafío de un
+  amigo y en los juegos que abren con el de hoy. Cabe en la píldora también en un celular angosto.
+
 ## 0.168.3 — 2026-10-12
 - **🖌️ Pintaminas (laboratorio): cada dibujo con sus colores de verdad** (pedido del dueño): la luna
   amarilla, el cactus verde, la bota café, la frutilla roja con hojas verdes, el árbol verde con el

@@ -93,7 +93,7 @@ por la pantalla del pase.
 ### Uno al día: los dados sí salen de la semilla (`/liars-dice/?today`, D-230)
 
 Cuando Dudo es el juego de Uno al día, `/liars-dice/?today` no ofrece modos: la intro lleva la línea
-de Uno al día, "Todos parten con los mismos dados.", y un solo botón, **Jugar el de hoy**, que abre
+de Uno al día, "Todos parten con los mismos dados.", y un solo botón, **Jugar hoy**, que abre
 directo 🤖 Contra el celular, un rival, con los ajustes de siempre y el nombre que se recuerda (o
 "Jugador 1"). Ahí **los dados de cada ronda salen de la semilla del día**, la ronda y el rol
 (`azarDel(semilla, 'dudo:<ronda>:<rol>')`), y no de `rollDice`: contra el celular la partida es

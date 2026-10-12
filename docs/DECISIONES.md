@@ -61,8 +61,8 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -5399,3 +5399,19 @@ cambiar el azar del generador (rompía los links de tableros ya jugados).
 **Consecuencias:** `engine.test.mjs` exige que cada dibujo traiga sus colores (de `PALETA`, uno por
 color del dibujo, distintos, nunca amarillo con naranjo) y que el tablero salga con ellos. Un dibujo
 nuevo tiene que traer `colores`.
+
+## D-305 · Las píldoras de La Copa y Uno al día, abajo a la izquierda
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** completa D-239 (cómo se ordena la tarjeta de media fila)
+**Decisión:** en las dos tarjetas de media fila de la portada, las píldoras (👥 jugadores y ⏱ días
+en La Copa; la racha o cómo va hoy en Uno al día) van abajo a la izquierda de la tarjeta, aparte de
+la bajada. La última fila de la grilla (`grid-template-rows: auto auto 1fr`) se lleva el alto que
+sobra y las píldoras se apoyan en su borde de abajo (`align-self: end`), así quedan a la misma
+altura en las dos tarjetas aunque una bajada sea más larga que la otra. Lo pidió el dueño: antes la
+píldora de Uno al día quedaba pegada a su bajada, a media tarjeta, y se leía como parte del texto.
+- **"Jugar el de hoy" pasa a "Jugar hoy"** (EN *Play today*, PT *Jogar hoje*; el alemán ya decía
+  *Heute spielen*), también por pedido del dueño: a 320 px y con racha, "🔥 12 · Jugar el de hoy" no
+  cabía en la píldora y se partía en dos líneas. Es la misma clave (`uad.jugar`) en todas partes, así
+  que cambia también el botón del desafío de un amigo y el de los juegos que abren con `?today`
+  (Ahorcado, Generala, Batalla Naval y Dudo): una acción, una palabra (U-5).
+**Alternativas descartadas:** una línea o un fondo que separe las píldoras (más ruido en una
+tarjeta chica); igualar el largo de las bajadas (cambia con el idioma).
