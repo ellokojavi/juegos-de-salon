@@ -36,7 +36,7 @@ ok(!await ev(`document.getElementById('vista').textContent.includes('null')`), '
 await ev(`document.getElementById('btn-empezar').click(); 1`);
 // Antes del tablero, el 3, 2, 1 de La Copa (D-105)
 ok(await esperar(`/3|2|1/.test(document.querySelector('#cuenta .cuenta-num')?.textContent || '')`, 2000), 'Empezar abre la cuenta 3, 2, 1');
-ok(await esperar(`document.querySelectorAll('#tablero .carta').length === 12 && !document.getElementById('cuenta')`, 8000), 'y después el tablero de 12 cartas');
+ok(await esperar(`document.querySelectorAll('#tablero .carta').length === 15 && !document.getElementById('cuenta')`, 8000), 'y después el tablero de 15 cartas');
 const t = await ev(`JSON.stringify(window.__agentes.P.t)`).then(JSON.parse);
 const de = (p, tipo = 'agente') => t.cartas.map((c, i) => ({ ...c, i })).filter(c => c.tipo === tipo && (p == null || c.p === p)).map(c => c.i);
 const tocar = async i => { await ev(`document.querySelector('#tablero .carta[data-i="${i}"]').click(); 1`); await sleep(250); };
@@ -82,22 +82,26 @@ ok(await llega(1), 'y entra la siguiente');
 for (const i of de(1)) await tocar(i);
 ok(await sello() === 'Completa', 'completar la pista le pone el sello de Completa');
 ok(await llega(2), 'y pasa a la siguiente');
-// Pista 3: uno, el botón dice Terminar, y un neutral corta la última pista: se acaba
-await tocar(de(2)[1]);
+// Pista 3: sus dos que faltan la completan (uno ya se encontró en la pista 1)
+for (const i of de(2).slice(1)) await tocar(i);
+ok(await llega(3), 'un agente encontrado antes cuenta para su pista: con los otros dos se completa');
+// Pista 4, la última: uno, el botón dice Terminar, y un neutral corta la pista: se acaba
+await tocar(de(3)[0]);
 ok(/Terminar/.test(await ev(`document.getElementById('btn-pasar')?.textContent || ''`)), 'en la última pista el botón dice Terminar');
 await tocar(de(null, 'neutral')[0]);
 ok(await esperar(`document.querySelectorAll('#tablero .carta.sin-tocar').length > 0`, 3000), 'al terminar se destapan las cartas que nadie tocó');
 ok(await esperar(`!!document.getElementById('puntaje')`), 'un neutral corta la última pista y lleva al resultado');
 
-// El resultado: lo que dice el motor (6 agentes, 1 neutral, el asesino)
-const esp = Math.max(0, Math.round(100 * 6 / 9) - 15 - 40);
+// El resultado: lo que dice el motor (los agentes tocados, 1 neutral, el asesino)
+const total = t.pistas.reduce((a, p) => a + p.n, 0), hallados = 1 + t.pistas[1].n + t.pistas[2].n + 1;
+const esp = Math.max(0, Math.round(100 * hallados / total) - 15 - 40);
 ok(await esperar(`document.getElementById('puntaje').textContent === '${esp}/100'`, 4000), `el puntaje sube hasta el del motor (${esp}/100)`);
 ok(/descubrió el asesino/i.test(await ev(`document.querySelector('.sello-fin')?.textContent || ''`)), 'con el asesino, el final es el sello rojo "Te descubrió el asesino"');
 const trampa = await ev(`document.getElementById('trampa')?.textContent || ''`);
 const asesino = t.cartas.find(c => c.tipo === 'asesino');
 ok(trampa.includes(asesino.w) && trampa.includes(t.pistas[asesino.tienta].pista) && /Caíste/.test(trampa), `explica la trampa: ${trampa}`);
 ok((await ev(`[...document.querySelectorAll('#tablero-fin .carta.asesino .de-pista')].map(x => x.textContent).join()`)).includes(t.pistas[asesino.tienta].pista), 'y bajo el asesino, la pista con que tentaba');
-ok(await ev(`document.querySelectorAll('#tablero-fin .carta').length`) === 12, 'muestra el tablero entero destapado');
+ok(await ev(`document.querySelectorAll('#tablero-fin .carta').length`) === 15, 'muestra el tablero entero destapado');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
 const otro = await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`);
 ok(/seed=/.test(otro) && !otro.includes(SEMILLA), `"Otro tablero" abre uno nuevo (${otro})`);
