@@ -5,7 +5,7 @@
 // se unen todas las líneas, y el resultado da el puntaje según el mínimo, compartir, otro tablero y el
 // comentario tras una línea. Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
-import { girar, puntaje } from '../../../public/labs/routes/engine.js';
+import { girar, puntaje, puntajeTotal, ETAPAS } from '../../../public/labs/routes/engine.js';
 const OUT = process.argv[2] || '/tmp/rutas-lab';
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const ev = e => b.evaluate(e);
@@ -32,6 +32,8 @@ ok(await esperar(`/3|2|1/.test(document.querySelector('#cuenta .cuenta-num')?.te
 ok(await esperar(`document.querySelectorAll('#tablero .pieza').length === 9 && !document.getElementById('cuenta')`, 8000), 'y después el tablero');
 const t = await ev(`JSON.stringify(window.__rutas.P.t)`).then(JSON.parse);
 ok(/Mínimo: \d/.test(await ev(`document.getElementById('marcador').textContent`)), `el marcador dice el mínimo (${t.minimo})`);
+ok(/Etapa 1 de 5/.test(await ev(`document.getElementById('etapa').textContent`)) && t.minimo === ETAPAS[0].minimo, 'parte en la etapa 1 de 5, con su mínimo');
+ok(await ev(`document.getElementById('btn-reiniciar').disabled`), 'sin giros, Reiniciar está apagado');
 const lugares = () => ev(`JSON.stringify([...document.querySelectorAll('#tablero .pieza')].map(n => [+n.dataset.p, +n.dataset.lugar]))`).then(JSON.parse);
 // Lo que se ve es lo que dice el motor: cada pieza dada vuelta (v) se dibuja girada media vuelta
 const comoElMotor = async (sel, estado) => (await ev(`JSON.stringify([...document.querySelectorAll('${sel} .pieza')].map(n => [+n.dataset.lugar, Math.round(parseFloat(n.style.transform.slice(7)) / 180) % 2]))`).then(JSON.parse)).every(([l, v]) => estado[l].v === v);
@@ -47,11 +49,20 @@ ok(/Giros: 1/.test(await ev(`document.getElementById('marcador').textContent`)),
 await b.shot('02-juego');
 await ev(`document.getElementById('btn-reiniciar').click(); 1`); await sleep(500);
 ok(/Giros: 0/.test(await ev(`document.getElementById('marcador').textContent`)) && (await lugares()).every(([p, l]) => t.inicio[l].p === p) && await comoElMotor('#tablero', t.inicio), 'reiniciar vuelve al comienzo con 0 giros');
-// Deshacer la revuelta, al revés, une todas las líneas
-for (const r of [...t.revuelta].reverse()) { await ev(`document.getElementById('tablero').dispatchEvent(new CustomEvent('girar', { detail: ${JSON.stringify(r)} })); 1`); await sleep(80); }
-ok(await esperar(`document.getElementById('tablero')?.classList.contains('resuelto')`, 3000), 'deshaciendo la revuelta se unen todas las líneas');
-const esp = puntaje(t.revuelta.length, t.minimo);
-ok(await esperar(`document.getElementById('puntaje')?.textContent === '${esp}/100'`, 5000), `el resultado: ${esp}/100 con ${t.revuelta.length} giros y mínimo ${t.minimo}`);
+// Cada etapa: deshacer su revuelta al revés une todas las líneas, y pasa a la siguiente
+for (let k = 0; k < ETAPAS.length; k++) {
+  if (k) ok(await esperar(`document.getElementById('etapa')?.textContent.includes('Etapa ${k + 1} de 5')`, 5000), `llega la etapa ${k + 1}`);
+  await sleep(200);
+  const te = await ev(`JSON.stringify(window.__rutas.P.t)`).then(JSON.parse);
+  for (const r of [...te.revuelta].reverse()) { await ev(`document.getElementById('tablero').dispatchEvent(new CustomEvent('girar', { detail: ${JSON.stringify(r)} })); 1`); await sleep(60); }
+  ok(await esperar(`document.getElementById('tablero')?.classList.contains('resuelto')`, 3000), `etapa ${k + 1}: se unen todas las líneas (mínimo ${te.minimo}, ${te.colores.length} líneas)`);
+}
+// Una etapa puede resolverse antes de deshacer toda la revuelta: vale lo que el juego anotó
+const anotadas = await ev(`JSON.stringify(window.__rutas.P.hechas)`).then(JSON.parse);
+ok(anotadas.length === 5 && anotadas.every(h => h.puntaje === puntaje(h.giros, h.minimo)), `cada etapa anota sus giros y su puntaje (${anotadas.map(h => `${h.giros}/${h.minimo}`).join(' ')})`);
+const esp = puntajeTotal(anotadas.map(h => h.puntaje));
+ok(await esperar(`document.getElementById('puntaje')?.textContent === '${esp}/100'`, 6000), `el resultado: ${esp}/100, el promedio de las 5 etapas`);
+ok(await ev(`document.querySelectorAll('#desglose li').length`) >= 5, 'el desglose muestra cada etapa');
 ok(/Reiniciaste 1 vez/.test(await ev(`document.querySelector('.desglose').textContent`)), 'el desglose cuenta el reinicio');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
 ok(/seed=/.test(await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`)), '"Otro tablero" abre uno nuevo');

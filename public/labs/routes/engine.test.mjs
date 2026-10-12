@@ -2,7 +2,7 @@
 // mínimo es exacto (se compara con una búsqueda simple) y cada tablero es justo: no viene resuelto y su
 // mínimo está entre 3 y los giros con que se desordenó.
 import assert from 'node:assert/strict';
-import { generar, girar, resuelto, minimo, bordesUnidos, puntaje, RECTANGULOS, LADO, RESTA_GIRO, TODO } from './engine.js';
+import { generar, generarEtapa, girar, resuelto, minimo, bordesUnidos, puntaje, puntajeTotal, RECTANGULOS, LADO, RESTA_GIRO, TODO, ETAPAS } from './engine.js';
 
 assert.equal(RECTANGULOS.length, 36);
 const META = Array.from({ length: 9 }, (_, p) => ({ p, v: 0 }));
@@ -56,6 +56,15 @@ for (let n = 0; n < 12; n++) {
   }
 }
 console.log(`  (mínimo promedio: ${(suma / 60).toFixed(1)} giros)`);
+// Las etapas: cada una con su mínimo exacto y sus líneas, y la dificultad no baja
+for (let n = 0; n < 8; n++) for (let k = 0; k < ETAPAS.length; k++) {
+  const t = generarEtapa(`partida-${n}`, k);
+  assert.equal(t.minimo, ETAPAS[k].minimo, `partida-${n}, etapa ${k + 1}: mínimo ${t.minimo}`);
+  assert.equal(t.colores.length, ETAPAS[k].lineas);
+  assert.ok(resuelto(t.piezas, [...t.revuelta].reverse().reduce(girar, t.inicio)));
+}
+for (let k = 1; k < ETAPAS.length; k++) assert.ok(ETAPAS[k].minimo >= ETAPAS[k - 1].minimo && ETAPAS[k].lineas >= ETAPAS[k - 1].lineas, 'la dificultad baja');
+assert.equal(puntajeTotal([100, 100, 85, 70, 55]), 82);
 assert.equal(puntaje(4, 4), 100);
 assert.equal(puntaje(6, 4), 100 - 2 * RESTA_GIRO);
 assert.equal(puntaje(40, 4), 10);
