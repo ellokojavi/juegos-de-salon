@@ -18,14 +18,14 @@ laboratorio.
 
 El título con un 💥 que late, el lema («Haz estallar los números de a pares hasta dejar el tablero
 limpio.»), el crédito y un tablero chico de 2 filas que se juega solo, par por par en el orden del
-motor, hasta «💥 ¡Limpio!», grande y al centro del espacio del tablero, que conserva su alto de 2 filas (pedido del dueño); después sigue con otro (con movimiento reducido queda quieto). Después
+motor, hasta «¡Limpio!» (sin 💥: el título ya lo tiene), grande y al centro del espacio del tablero, que conserva su alto de 2 filas (pedido del dueño); después sigue con otro (con movimiento reducido queda quieto). Después
 los tres pasos, «📅 El tablero de hoy es el mismo para todos.» (sin `?seed=`) y «💥 Empezar», que
 pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`, «¡A estallar!»). Los pasos:
 
 1. 💥 Toca dos números iguales (7 y 7) o que sumen 10 (4 y 6): estallan.
-2. ↔️ Tienen que estar en línea: de lado, arriba o en diagonal, o al final de una fila y al comienzo
-   de la siguiente. Lo que ya estalló no estorba.
-3. ➕ Sin pares, ➕ copia abajo los que quedan. Cada ➕ que no uses suma 10.
+2. ↔️ Deben estar en línea (de lado, arriba, abajo o en diagonal) o al final de una fila y al inicio
+   de la siguiente. Lo estallado no estorba.
+3. ➕ Sin pares, ➕ copia abajo los que quedan (3 veces). Cada ➕ sin usar suma 10.
 
 La tarjeta del laboratorio: «Inspirado en Number Match: haz estallar de a pares los números iguales o
 que suman 10, si están juntos en línea, hasta dejar el tablero limpio. Si te quedas sin pares, ➕

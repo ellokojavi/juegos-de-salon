@@ -29,8 +29,8 @@ const T = {
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
     ['💥', 'Toca dos números iguales (7 y 7) o que sumen 10 (4 y 6): estallan.'],
-    ['↔️', 'Tienen que estar en línea: de lado, arriba o en diagonal, o al final de una fila y al comienzo de la siguiente. Lo que ya estalló no estorba.'],
-    ['➕', `Sin pares, ➕ copia abajo los que quedan. Cada ➕ que no uses suma ${PUNTOS_MAS}.`],
+    ['↔️', 'Deben estar en línea (de lado, arriba, abajo o en diagonal) o al final de una fila y al inicio de la siguiente. Lo estallado no estorba.'],
+    ['➕', `Sin pares, ➕ copia abajo los que quedan (${MAS} veces). Cada ➕ sin usar suma ${PUNTOS_MAS}.`],
   ],
   empezar: '💥 Empezar', aJugar: '¡A estallar!',
   quedan: ['Queda 1 número', 'Quedan {n} números'],
@@ -202,7 +202,8 @@ function partidaDemo(caja, rotulo) {
         await espera(380);
       }
       if (!sigue()) return;
-      rotulo.textContent = `💥 ${T.fin.limpio}`; rotulo.className = 'demo-rotulo ve';
+      // Sin 💥: el título ya lo tiene (pedido del dueño)
+      rotulo.textContent = T.fin.limpio; rotulo.className = 'demo-rotulo ve';
       estallar(rotulo, { fuerza: 0.5, color: '#ffd23f' });
       await espera(2200);
     }
