@@ -51,12 +51,13 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, pinceles, tablero sin adivinar, modo difícil, ayuda) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289 |
+| 🚇 Rutas, el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, puntaje tipo golf, cinco etapas) | `docs/games/routes.md` | D-293, D-294 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255 |
@@ -5246,3 +5247,54 @@ empezar (no ayuda a quien se traba a mitad de camino).
 **Consecuencias:** `engine.test.mjs` juega tableros de uno y dos colores solo con ayudas hasta el final
 (siempre hay una casilla que se puede deducir); `tools/e2e/paint-mines/lab.mjs` pide una ayuda y
 revisa el puntaje y el desglose.
+
+## D-293 · Rutas: girar rectángulos de un plano de metro hasta unir las líneas, en el mínimo de giros
+**Fecha:** 2026-10-12 · **Estado:** corregida por D-294 · **Relación:** amplía D-280 (un tercer proyecto activo)
+**Contexto:** el dueño pidió estudiar *Junction Nine* (Bricks and Chips): 9 piezas en 3×3 con tramos
+de líneas de colores; una jugada gira 180° cualquier rectángulo del tablero, y el desafío es unir todas
+las líneas en el mínimo de giros, que el juego conoce («185.794.560 tableros» = 9! × 2⁹). Pidió un
+prototipo y le puso el nombre: **Rutas**.
+**Decisión:** el motor arma un **plano de metro** al azar (4 líneas de colores que van de borde a borde
+del tablero, pasando de pieza en pieza por una de las dos puertas de cada lado, sin piezas vacías ni
+repetidas) y lo desordena con 5 giros al azar desde la meta. El **mínimo exacto** se calcula buscando
+desde los dos extremos a la vez (cada giro se deshace con el mismo giro), y un tablero vale si su
+mínimo es de 3 a 5. Se juega **arrastrando** de una pieza a otra: se marca el rectángulo en amarillo y
+al soltar gira media vuelta (las piezas viajan y se dan vuelta con animación); un toque gira una sola
+pieza. Se gana cuando todos los bordes entre piezas calzan, aunque sea en otro orden que el original.
+Arriba, «Giros: n · Mínimo: m»; **↺ Reiniciar** es gratis. Puntaje tipo golf: 100 si se iguala el
+mínimo, −15 por cada giro de más, nunca menos de 10. Como los demás proyectos: tablero del día, cuenta
+3, 2, 1, la línea antes del comentario y el crédito «Inspirado en Junction Nine, de Bricks and Chips.»
+con su link, en la portada y en el laboratorio. Solo en español.
+**Por qué:** es distinto a lo que hay (no se deduce: se planifica), dura un par de minutos y tiene un
+puntaje natural. Reiniciar gratis hace que buscar el mínimo se sienta como un golf y no como un castigo.
+**Alternativas descartadas:** botones para elegir esquinas en vez de arrastrar (más toques); contar
+los reinicios en el puntaje (castiga probar, que es el juego).
+**Consecuencias:** `public/labs/routes/engine.test.mjs` revisa los giros, el mínimo contra una búsqueda
+simple y 60 tableros (justos y con mínimo de 3 a 5); `tools/e2e/routes/lab.mjs` arrastra, reinicia y
+termina una partida.
+
+## D-294 · Rutas: cinco etapas de dificultad creciente
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-293
+**Contexto:** el dueño pidió que Rutas sea un juego de etapas con dificultad creciente, en vez de un
+solo tablero.
+**Decisión:** cada partida son **5 etapas** (`ETAPAS`): 3 líneas y mínimo 2; 4 líneas y mínimo 3;
+4 y 4; 5 y 4; 5 y 5. El mínimo de cada etapa es **exacto**: el generador rehace el tablero hasta que
+dé justo el que pide. Arriba, «Etapa n de 5», cinco puntos (verde la hecha en el mínimo, amarilla la
+hecha con giros de más, blanca la actual, como la tarjeta para compartir); el mínimo lo dice el
+marcador de abajo («Giros: n · Mínimo: m»). Al unir las líneas de una etapa se dice
+«🚇 ¡Etapa 2 lista!» (o «…en el mínimo!») y llega la siguiente. Cada etapa se puntúa como antes (100
+en el mínimo, −15 por giro de más, nunca menos de 10) y la partida vale **el promedio**. El resultado
+muestra cada etapa («🟨 Etapa 3: 5 giros (mínimo 4) · 85/100») y la tarjeta para compartir, una línea por
+etapa (🟩 en el mínimo, 🟨 si no) sin delatar los tableros. Cada etapa sale de la semilla de la
+partida con su número (`dia:<fecha>:etapa-3`). Además, de la revisión de usabilidad: el lema ya no
+repite el paso del mínimo, Reiniciar se apaga sin giros y se va al terminar la etapa, el marco que
+marca el rectángulo es blanco (el amarillo se confundía con la línea amarilla) y en los cruces hay una
+sola estación. Y el **mínimo cuenta las dos soluciones**: el tablero entero dado vuelta también une todas
+las líneas, así que la búsqueda hacia atrás parte de la meta y de esa otra (antes, en 8 de 60 tableros
+el mínimo dicho era un giro más que el real).
+**Por qué:** subir de a poco enseña a ver los giros antes de que lleguen los tableros difíciles, y el
+promedio premia jugar bien todas las etapas.
+**Alternativas descartadas:** sumar los puntajes (la escala dejaría de ser 0 a 100, como en La Copa);
+etapas con mínimo 6 o más (calcularlo exacto en el celular se pone lento).
+**Consecuencias:** `engine.test.mjs` revisa que cada etapa tenga su mínimo exacto y sus líneas, que
+la dificultad no baje y, a fuerza bruta, que con un giro menos no se llega a ninguna de las dos soluciones; `tools/e2e/routes/lab.mjs` juega las cinco etapas.
