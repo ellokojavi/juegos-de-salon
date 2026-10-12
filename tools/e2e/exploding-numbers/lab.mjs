@@ -79,7 +79,7 @@ for (const [a, c] of t.orden.slice(1)) {
   await sleep(40);
 }
 ok(filas > 0, `las filas tachadas enteras explotan y se van (${filas} veces)`);
-ok(await esperar(`document.getElementById('puntaje')?.textContent === '100/100'`, 6000), 'limpio y sin ➕: 100/100');
+ok(await esperar(`document.getElementById('puntaje')?.textContent === '100/100' && !document.getElementById('tablero')`, 1500), 'limpio y sin ➕: el resumen aparece de inmediato, sin otra pantalla antes: 100/100');
 ok(/Limpio/.test(await ev(`document.querySelector('.sello-ne').textContent`)), '«¡Limpio!»');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
 const otro = await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`);
