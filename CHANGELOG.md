@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.168.1 — 2026-10-12
+- **🖌️ Pintaminas (laboratorio): cada dibujo con sus colores de verdad** (pedido del dueño): la luna
+  amarilla, el cactus verde, la bota café, la frutilla roja con hojas verdes, el árbol verde con el
+  tronco café. Se suman el café, el blanco y el rosado. Los tableros (y sus links) son los mismos.
+
 ## 0.167.2 — 2026-10-12
 - **🖌️ Pintaminas (laboratorio):** en el modo difícil, las cerezas salen rojas con el tallo verde,
   como son; los otros dibujos siguen con colores al azar.
