@@ -13,16 +13,32 @@ dice en la portada, en el final y en el laboratorio.
 - **Estado:** proyecto activo desde v0.157.0, para probarlo con amigos. Si gusta, la idea es que
   entre a La Copa.
 
+## Portada
+
+El título con un 🕵️ que se mece y un sello rojo de **Clasificado** que cae al cargar. Debajo, una
+demostración que juega sola: llega una pista que se descifra letra a letra («MAR · 3»), una 🔍
+recorre las cartas y destapa a sus 3 agentes, y al final se destapa el asesino, que se parece a la
+pista (RÍO). Después, otra pista (NOCHE, CIRCO) y vuelve a empezar. Con movimiento reducido queda la
+primera, resuelta. Luego el lema, los tres pasos y Empezar.
+
 ## Cómo se juega
 
 - **Tablero:** 12 palabras: 9 agentes (3 pistas de 3), 2 neutrales y 1 asesino.
 - **Pistas:** llegan de a una, «MAR · 3». Tocar un agente de la pista suma; uno de otra pista
   también suma y no corta. Un neutral (−15) o el asesino (−40) cortan la pista y pasa la
   siguiente. "⏭️ Siguiente pista" se planta; en la última dice "🏁 Terminar", que si faltan agentes pregunta primero ("¿Terminas igual?", U-15).
+- **Entre pistas:** a la pista que se cierra le cae un sello (**Completa** en verde, **Cortada**
+  en rojo, **Pasada** en amarillo), se va girando hacia atrás y la siguiente llega girando, con su
+  palabra descifrándose. Un agente brilla al destaparse, un neutral se sacude, y el asesino sacude el
+  tablero con un destello rojo en la pantalla. Al terminar, las cartas que nadie tocó se destapan
+  de a una antes del resultado.
 - **Puntaje:** 100 × agentes encontrados / 9, menos las restas, nunca bajo 0.
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos. "🔁 Otro
   tablero" abre uno al azar con su semilla en el link, para compartirlo.
-- **El final:** el puntaje con su desglose, la tarjeta de emojis para compartir (🟩 agente, 🟨 el
+- **El final:** un sello grande según cómo salió: **¡Misión cumplida!** en verde, con confeti
+  (70 o más); **Misión a medias** en amarillo; **Misión fracasada** (menos de 35) o **Te descubrió
+  el asesino** en rojo, con destello y una falla de transmisión cada tanto. El puntaje sube desde 0,
+  y después vienen su desglose, la tarjeta de emojis para compartir (🟩 agente, 🟨 el
   que faltó, 🟥 neutral tocado, 💀 asesino tocado), el tablero entero destapado con la pista de
   cada agente, y el formulario de comentarios al final (D-265, D-268).
 

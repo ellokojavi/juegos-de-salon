@@ -31,7 +31,9 @@ const T = {
   quedan: ['Queda 1 agente sin encontrar. ¿Terminas igual?', 'Quedan {n} agentes sin encontrar. ¿Terminas igual?'],
   bien: '¡Bien! Es de los tuyos.', otra: '¡Es de los tuyos! Pero de otra pista: igual suma.',
   neutral: `Neutral: −${RESTA_NEUTRAL}. Se corta la pista.`, asesino: `¡El asesino! −${RESTA_ASESINO}. Se corta la pista.`,
-  fin: '¡Misión cumplida!', finMal: 'Misión terminada',
+  // El final tiene tres caras: victoria (70 o más), a medias y fracaso (el asesino, o menos de 35)
+  fin: { victoria: '¡Misión cumplida!', medias: 'Misión a medias', fracaso: 'Misión fracasada', asesino: 'Te descubrió el asesino' },
+  sello: { completa: 'Completa', cortada: 'Cortada', pasada: 'Pasada' }, clasificado: 'Clasificado',
   desglose: ['Encontraste {n} de {t} agentes: {pts} puntos.', ['Tocaste 1 neutral: −{pts}.', 'Tocaste {n} neutrales: −{pts}.'], 'Tocaste al asesino: −{pts}.'],
   tiempo: 'Tiempo: {t}.',
   otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
@@ -65,16 +67,76 @@ const credito = () => el('p', { class: 'credito' }, 'Inspirado en ',
   el('a', { href: CODENAMES, target: '_blank', rel: 'noopener', id: 'link-codenames' }, 'Codenames'),
   ', de Vlaada Chvátil (Czech Games Edition).');
 
+// La portada juega sola: llega una pista, la lupa encuentra a sus 3 agentes y al final se destapa el
+// asesino, que se parece a la pista. Después, otra pista. Con movimiento reducido queda la primera, resuelta
+const DEMO = [
+  { pista: 'MAR', cartas: ['LUNA', 'OLA', 'RÍO', 'BARCO', 'NUBE', 'ISLA'], agentes: [1, 3, 5], asesino: 2 },
+  { pista: 'NOCHE', cartas: ['VELA', 'PAN', 'BÚHO', 'AUTO', 'DÍA', 'LUNA'], agentes: [0, 2, 5], asesino: 4 },
+  { pista: 'CIRCO', cartas: ['TIGRE', 'PAYASO', 'MESA', 'CARPA', 'ZOO', 'LIBRO'], agentes: [1, 3, 0], asesino: 4 },
+];
+let demoVez = 0;
 function portada() {
-  const COLORES = ['#9dff3a', '#ffffff', '#9dff3a', '#ff6fa8', '#9dff3a', '#9dff3a'];
-  const demo = el('div', { class: 'demo-cartas', 'aria-hidden': 'true' },
-    ...['OLA', 'LUNA', 'BARCO', 'ARENA', 'ISLA', 'PUERTO'].map((w, k) => el('span', { style: `--k:${k};--c:${COLORES[k]}` }, w)));
-  vista.replaceChildren(
-    el('div', { class: 'portada' }, tituloJuego(), credito(), demo, el('p', { class: 'lead', style: 'margin:0' }, T.lema)),
+  const palabra = el('span', { class: 'dp-palabra' }, DEMO[0].pista);
+  const pistaDemo = el('div', { class: 'demo-pista' }, palabra, ' · ', el('b', {}, '3'));
+  const cartas = DEMO[0].cartas.map(w => el('span', { class: 'dc' }, w));
+  const lupa = el('span', { class: 'demo-lupa' }, '🔍');
+  const mesa = el('div', { class: 'demo-cartas' }, ...cartas, lupa);
+  const demo = el('div', { class: 'demo', 'aria-hidden': 'true' }, pistaDemo, mesa);
+  // replaceChildren escribe "null" si le llega un null: lo que no va se filtra
+  vista.replaceChildren(...[
+    el('div', { class: 'portada' },
+      el('div', { class: 'titulo-sello' }, tituloJuego(), el('span', { class: 'sello sello--rojo sello--titulo' }, T.clasificado)),
+      credito(), demo, el('p', { class: 'lead', style: 'margin:0' }, T.lema)),
     el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
     SEMILLA_URL ? null : el('p', { class: 'muted center', style: 'margin:0' }, `📅 ${T.hoy}`),
-    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar));
+    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
+  ].filter(Boolean));
   pieComentario('portada');
+  const vez = ++demoVez;
+  const sigue = () => vez === demoVez && demo.isConnected;
+  const espera = ms => new Promise(r => setTimeout(r, ms));
+  const ronda = async d => {
+    cartas.forEach((c, i) => { c.className = 'dc'; c.textContent = d.cartas[i]; });
+    lupa.classList.remove('ve');
+    await descifrar(palabra, d.pista);
+    for (const i of d.agentes) {
+      if (!sigue()) return;
+      lupa.style.left = `${cartas[i].offsetLeft + cartas[i].offsetWidth / 2}px`;
+      lupa.style.top = `${cartas[i].offsetTop + cartas[i].offsetHeight / 2}px`;
+      lupa.classList.add('ve');
+      await espera(650);
+      cartas[i].classList.add('agente', 'volteo');
+      await espera(350);
+    }
+    lupa.classList.remove('ve');
+    await espera(500);
+    if (!sigue()) return;
+    cartas[d.asesino].classList.add('asesino', 'volteo');
+    cartas[d.asesino].textContent = `💀 ${d.cartas[d.asesino]}`;
+    await espera(2200);
+  };
+  if (QUIETO) {
+    const d = DEMO[0];
+    d.agentes.forEach(i => cartas[i].classList.add('agente'));
+    cartas[d.asesino].classList.add('asesino'); cartas[d.asesino].textContent = `💀 ${d.cartas[d.asesino]}`;
+    return;
+  }
+  (async () => { for (let k = 0; sigue(); k++) { await ronda(DEMO[k % DEMO.length]); await espera(200); } })();
+}
+
+/** La palabra aparece descifrándose: letras al azar que se van fijando de izquierda a derecha. */
+function descifrar(nodo, palabra, ms = 650) {
+  if (QUIETO) { nodo.textContent = palabra; return Promise.resolve(); }
+  const ABC = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+  const t0 = performance.now();
+  return new Promise(listo => {
+    const paso = ahora => {
+      const fijas = Math.floor(palabra.length * Math.min(1, (ahora - t0) / ms));
+      nodo.textContent = [...palabra].map((c, i) => (i < fijas || c === ' ' ? c : ABC[Math.floor(Math.random() * ABC.length)])).join('');
+      if (fijas < palabra.length) requestAnimationFrame(paso); else listo();
+    };
+    requestAnimationFrame(paso);
+  });
 }
 
 function empezar() {
@@ -92,7 +154,8 @@ function jugar() {
   const caja = el('div', { class: 'pista', id: 'pista' });
   const botones = el('div', { class: 'stack' });
   const cartas = t.cartas.map((c, i) => el('button', { type: 'button', class: 'carta', 'data-i': i, style: `--n:${c.w.length}`, onClick: () => tocar(i) }, c.w));
-  let antes = 0;
+  let antes = -1;
+  const tablero = el('div', { class: 'tablero', id: 'tablero' }, ...cartas);
   // Terminar deja agentes sin encontrar y no se deshace: el primer toque avisa cuántos quedan y pide otro (U-15)
   let confirmando = false;
   const decir = (clase, texto) => { aviso.className = `aviso-ag ${clase}`; aviso.textContent = texto; };
@@ -103,15 +166,15 @@ function jugar() {
       b.disabled = tocada || e.fin;
       b.className = 'carta' + (tocada ? ` ${c.tipo}` : '');
     });
-    if (e.fin) return resultado();
-    if (e.actual !== antes || !caja.textContent) {
-      caja.classList.remove('entra'); void caja.offsetWidth; caja.classList.add('entra');
-      antes = e.actual;
-    }
+    if (e.fin) return revelar(e);
+    // Una pista nueva entra girando y su palabra se descifra
+    const nueva = e.actual !== antes;
+    if (nueva) { caja.className = 'pista'; void caja.offsetWidth; caja.classList.add('entra'); if (antes >= 0) decir('', ''); antes = e.actual; }
     const p = t.pistas[e.actual];
+    const palabra = el('span', { class: 'pp' }, p.pista);
     caja.replaceChildren(
       el('p', { class: 'de' }, fmt(T.pista, { n: e.actual + 1, t: t.pistas.length })),
-      el('p', { class: 'palabra' }, p.pista, ' · ', el('b', {}, String(p.n))),
+      el('p', { class: 'palabra' }, palabra, ' · ', el('b', {}, String(p.n))),
       el('p', { class: 'falta' }, e.faltan === 1 ? T.faltaUna : fmt(T.faltan, { n: e.faltan })));
     const ultima = e.actual === t.pistas.length - 1;
     confirmando = false;
@@ -124,26 +187,59 @@ function jugar() {
         boton.textContent = T.seguro;
         return;
       }
-      P.jugadas.push({ pasar: true }); decir('', ''); dibujar();
+      P.jugadas.push({ pasar: true }); decir('', ''); cerrarPista('pasada');
     } }, ultima ? T.terminar : T.pasar);
     botones.replaceChildren(boton);
+    if (nueva) descifrar(palabra, p.pista);
+  };
+  // Al cerrarse una pista le cae un sello (Completa, Cortada o Pasada), se va girando y llega la otra
+  const cerrarPista = motivo => {
+    cartas.forEach(b => { b.disabled = true; });
+    botones.querySelector('button')?.setAttribute('disabled', '');
+    caja.append(el('span', { class: `sello sello--pista sello--${motivo === 'completa' ? 'verde' : motivo === 'cortada' ? 'rojo' : 'amarillo'}` }, T.sello[motivo]));
+    if (motivo === 'completa') SFX.reveal(); else if (motivo === 'pasada') SFX.pass();
+    setTimeout(() => {
+      if (estado(t, P.jugadas).fin) return dibujar();
+      caja.classList.remove('entra'); caja.classList.add('sale');
+      setTimeout(dibujar, QUIETO ? 0 : 280);
+    }, 800);
+  };
+  // Al terminar, las cartas que nadie tocó se destapan de a una, y después el resultado
+  let revelando = false;
+  const revelar = e => {
+    if (revelando) return;
+    revelando = true;
+    const quedan = cartas.map((b, i) => i).filter(i => !e.tocadas.has(i));
+    quedan.forEach((i, k) => setTimeout(() => {
+      const c = t.cartas[i];
+      cartas[i].className = `carta ${c.tipo} sin-tocar${QUIETO ? '' : ' volteo'}`;
+      if (c.tipo === 'asesino') cartas[i].textContent = `💀 ${c.w}`;
+    }, QUIETO ? 0 : 120 * k));
+    if (quedan.length) SFX.flip();
+    setTimeout(resultado, (QUIETO ? 0 : 120 * quedan.length) + 1100);
   };
   const tocar = i => {
     const e0 = estado(t, P.jugadas);
     if (e0.fin || e0.tocadas.has(i)) return;
     const c = t.cartas[i];
     P.jugadas.push({ i });
-    cartas[i].classList.add('volteo');
+    const e1 = estado(t, P.jugadas);
+    const cambia = e1.fin || e1.actual !== e0.actual;
+    if (cambia) cartas[i].className = `carta ${c.tipo}`; else dibujar();
+    cartas[i].classList.add('volteo', c.tipo === 'agente' ? 'acierto' : 'falla');
     if (c.tipo === 'agente' && c.p === e0.actual) { SFX.letterHit(); vibrate(20); decir('bien', T.bien); }
     else if (c.tipo === 'agente') { SFX.letterHit(); vibrate(20); decir('otra', T.otra); }
     else if (c.tipo === 'neutral') { SFX.letterMiss(); vibrate([30, 30]); decir('mal', T.neutral); }
-    else { SFX.error(); vibrate([60, 40, 60]); decir('mal', T.asesino); }
-    // Si la pista se cortó o se completó, el cambio se ve un momento antes de la siguiente
-    const e1 = estado(t, P.jugadas);
-    if (e1.actual !== e0.actual) { cartas.forEach(b => { b.disabled = true; }); setTimeout(dibujar, QUIETO ? 0 : 900); }
-    else dibujar();
+    else {
+      SFX.error(); vibrate([60, 40, 60]); decir('mal', T.asesino);
+      cartas[i].textContent = `💀 ${c.w}`;
+      destello();
+      if (!QUIETO) { tablero.classList.add('tiembla'); setTimeout(() => tablero.classList.remove('tiembla'), 500); }
+    }
+    // Si la pista se cortó o se completó, el sello se ve un momento antes de la siguiente
+    if (cambia) cerrarPista(c.tipo === 'agente' ? 'completa' : 'cortada');
   };
-  vista.replaceChildren(tituloJuego(), caja, aviso, el('div', { class: 'tablero', id: 'tablero' }, ...cartas), botones);
+  vista.replaceChildren(tituloJuego(), caja, aviso, tablero, botones);
   dibujar();
   pieComentario('juego');
 }
@@ -153,23 +249,27 @@ function resultado() {
   const e = estado(t, P.jugadas);
   const s = puntaje(e), ms = Date.now() - P.desde;
   trackFinish({ detalle: `${s}/100 · ${e.encontrados}/${AGENTES} agentes · ${e.neutrales} neutrales${e.asesino ? ' · asesino' : ''} · ${mmss(ms)}` });
-  SFX.win();
-  if (!QUIETO && s >= 70) confetti({ count: 160, duration: 2400 });
+  // Tres caras: victoria, a medias y fracaso (con el asesino, o con muy poco)
+  const cara = s >= 70 ? 'victoria' : e.asesino ? 'asesino' : s < 35 ? 'fracaso' : 'medias';
+  const mal = cara === 'asesino' || cara === 'fracaso';
+  if (mal) { SFX.hang(); destello(); } else SFX.win();
+  if (!QUIETO && cara === 'victoria') confetti({ count: 180, duration: 2600 });
   pie.replaceChildren();
   const lineas = [fmt(T.desglose[0], { n: e.encontrados, t: AGENTES, pts: Math.round(100 * e.encontrados / AGENTES) })];
   if (e.neutrales) lineas.push(fmt(T.desglose[1][e.neutrales === 1 ? 0 : 1], { n: e.neutrales, pts: RESTA_NEUTRAL * e.neutrales }));
   if (e.asesino) lineas.push(fmt(T.desglose[2], { pts: RESTA_ASESINO }));
   // El tablero entero, con lo que era cada carta
-  const tablero = el('div', { class: 'tablero', id: 'tablero-fin' }, ...t.cartas.map((c, i) => el('div', {
+  const tablero = el('div', { class: 'tablero tablero--fin', id: 'tablero-fin' }, ...t.cartas.map((c, i) => el('div', {
     class: `carta ${c.tipo === 'agente' ? 'agente' : c.tipo}${e.tocadas.has(i) ? '' : ' sin-tocar'}`,
-    style: `--n:${c.w.length}`,
+    style: `--n:${c.w.length};--k:${i}`,
   }, c.tipo === 'asesino' ? `💀 ${c.w}` : c.w,
   // Bajo cada agente, su pista: así el tablero dice también cuáles eran las pistas
   c.tipo === 'agente' ? el('span', { class: 'de-pista' }, t.pistas[c.p].pista) : null)));
-  vista.replaceChildren(el('div', { class: 'resultado' },
-    el('div', { class: 'trofeo' }, e.asesino ? '💀' : s >= 70 ? '🏆' : '🕵️'),
-    el('h2', { class: 'display display--lg', style: 'margin:0' }, s >= 70 ? T.fin : T.finMal),
-    el('div', { class: 'score-big', id: 'puntaje' }, `${s}/100`),
+  const nodoPuntaje = el('div', { class: 'score-big', id: 'puntaje', 'data-final': s }, QUIETO ? `${s}/100` : '0/100');
+  vista.replaceChildren(el('div', { class: `resultado resultado--${cara}` },
+    el('div', { class: 'trofeo' }, { victoria: '🏆', medias: '🕵️', fracaso: '😵', asesino: '💀' }[cara]),
+    el('h2', { class: `sello-fin sello-fin--${mal ? 'mal' : cara}` }, T.fin[cara]),
+    nodoPuntaje,
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
     el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
     el('div', { class: 'tarjeta', 'aria-hidden': 'true' }, tarjeta(t, e)),
@@ -182,6 +282,26 @@ function resultado() {
     // El comentario va abierto y al final de todo (D-265, D-268)
     formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));
   scrollTo(0, 0);
+  if (!QUIETO) contar(nodoPuntaje, s);
+}
+
+/** El puntaje sube de 0 al final, frenando al llegar. */
+function contar(nodo, s, ms = 1100) {
+  const t0 = performance.now() + 450;
+  const paso = ahora => {
+    const x = Math.max(0, Math.min(1, (ahora - t0) / ms));
+    nodo.textContent = `${Math.round(s * (1 - (1 - x) ** 3))}/100`;
+    if (x < 1) requestAnimationFrame(paso);
+  };
+  requestAnimationFrame(paso);
+}
+
+/** Un destello rojo en toda la pantalla: el asesino, o una misión que fracasó. */
+function destello() {
+  if (QUIETO) return;
+  const x = el('div', { class: 'destello', 'aria-hidden': 'true' });
+  document.body.append(x);
+  setTimeout(() => x.remove(), 800);
 }
 
 document.getElementById('sound-slot').append(soundToggle());

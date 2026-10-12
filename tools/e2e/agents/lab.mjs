@@ -1,7 +1,7 @@
 // Agentes del laboratorio (D-286) de punta a punta, en /labs/agents/: el laboratorio lo ofrece en
 // Proyectos activos, la portada dice de dónde viene (Codenames, con su link), sin semilla es el
 // tablero de hoy; con semilla se juega entero: un agente suma, uno de otra pista suma sin cortar,
-// el asesino y los neutrales cortan la pista, completarla pasa a la siguiente, y el final muestra el puntaje que dice el
+// el asesino y los neutrales cortan la pista (sello Cortada), completarla pasa a la siguiente (sello Completa), y el final muestra el puntaje que dice el
 // motor, el tablero destapado, compartir y el comentario al final. Imprime ✗ si algo falla.
 import { launch, sleep } from '../cdp.mjs';
 const OUT = process.argv[2] || '/tmp/agentes-lab';
@@ -24,39 +24,50 @@ ok(await esperar(`!!document.getElementById('btn-empezar')`), 'la portada tiene 
 ok(await ev(`document.getElementById('link-codenames')?.href`) === 'https://czechgames.com/en/codenames/' && /Inspirado en Codenames/.test(await ev(`document.querySelector('.credito')?.textContent`)), 'la portada dice "Inspirado en Codenames", con el link a la página oficial');
 ok(/mismo para todos/.test(await ev(`document.body.textContent`)), 'sin semilla es el tablero de hoy, el mismo para todos');
 ok(await ev(`!!document.getElementById('btn-comentario')`), 'y termina con el link al comentario');
+ok(await ev(`/clasificado/i.test(document.querySelector('.sello--titulo')?.textContent || '')`), 'el título lleva el sello de Clasificado');
+// La portada juega sola: la lupa encuentra a los agentes de la pista y al final se destapa el asesino
+ok(await esperar(`document.querySelectorAll('.demo-cartas .dc.agente').length === 3 && !!document.querySelector('.demo-cartas .dc.asesino')`, 9000), 'la portada juega sola una pista: 3 agentes y el asesino');
 await b.shot('01-portada');
 
 // Con semilla: se juega entero, comparando con el motor
 await b.go(`${SITIO}/labs/agents/?seed=${SEMILLA}&test`, 1200);
 await esperar(`!!document.getElementById('btn-empezar')`);
+ok(!await ev(`document.getElementById('vista').textContent.includes('null')`), 'con semilla, la portada no escribe "null"');
 await ev(`document.getElementById('btn-empezar').click(); 1`);
 ok(await esperar(`document.querySelectorAll('#tablero .carta').length === 12`), 'Empezar abre el tablero de 12 cartas');
 const t = await ev(`JSON.stringify(window.__agentes.P.t)`).then(JSON.parse);
 const de = (p, tipo = 'agente') => t.cartas.map((c, i) => ({ ...c, i })).filter(c => c.tipo === tipo && (p == null || c.p === p)).map(c => c.i);
-const tocar = async i => { await ev(`document.querySelector('#tablero .carta[data-i="${i}"]').click(); 1`); await sleep(1100); };
+const tocar = async i => { await ev(`document.querySelector('#tablero .carta[data-i="${i}"]').click(); 1`); await sleep(250); };
 const pista = () => ev(`document.querySelector('#pista .palabra')?.textContent || ''`);
-ok((await pista()).startsWith(t.pistas[0].pista), `la primera pista es ${t.pistas[0].pista}`);
+// Una pista nueva entra descifrándose: se espera a que la palabra quede escrita
+const llega = n => esperar(`(document.querySelector('#pista .palabra')?.textContent || '').startsWith(${JSON.stringify(t.pistas[n].pista)} + ' ·')`, 4000);
+const sello = () => ev(`document.querySelector('#pista .sello--pista')?.textContent || ''`);
+ok(await llega(0), `la primera pista es ${t.pistas[0].pista}`);
 await b.shot('02-tablero');
 
 // Pista 1: un agente propio, uno de la pista 3 (suma sin cortar) y luego el asesino (corta)
 await tocar(de(0)[0]);
 ok(/de los tuyos/i.test(await ev(`document.querySelector('.aviso-ag').textContent`)), 'un agente de la pista suma');
 await tocar(de(2)[0]);
-ok(/otra pista/i.test(await ev(`document.querySelector('.aviso-ag').textContent`)) && (await pista()).startsWith(t.pistas[0].pista), 'uno de otra pista suma y no corta la pista');
+ok(/otra pista/i.test(await ev(`document.querySelector('.aviso-ag').textContent`)) && (await pista()).startsWith(t.pistas[0].pista) && !await sello(), 'uno de otra pista suma y no corta la pista');
 await tocar(de(null, 'asesino')[0]);
-ok(/asesino/i.test(await ev(`document.querySelector('.aviso-ag').textContent`)) && (await pista()).startsWith(t.pistas[1].pista), 'el asesino corta la pista');
+ok(/asesino/i.test(await ev(`document.querySelector('.aviso-ag').textContent`)) && await sello() === 'Cortada', 'el asesino corta la pista: le cae el sello de Cortada');
+ok(await llega(1), 'y entra la siguiente');
 // Pista 2: sus tres agentes la completan y pasa sola
 for (const i of de(1)) await tocar(i);
-ok((await pista()).startsWith(t.pistas[2].pista), 'completar la pista pasa a la siguiente');
+ok(await sello() === 'Completa', 'completar la pista le pone el sello de Completa');
+ok(await llega(2), 'y pasa a la siguiente');
 // Pista 3: uno, el botón dice Terminar, y un neutral corta la última pista: se acaba
 await tocar(de(2)[1]);
 ok(/Terminar/.test(await ev(`document.getElementById('btn-pasar')?.textContent || ''`)), 'en la última pista el botón dice Terminar');
 await tocar(de(null, 'neutral')[0]);
+ok(await esperar(`document.querySelectorAll('#tablero .carta.sin-tocar').length > 0`, 3000), 'al terminar se destapan las cartas que nadie tocó');
 ok(await esperar(`!!document.getElementById('puntaje')`), 'un neutral corta la última pista y lleva al resultado');
 
 // El resultado: lo que dice el motor (6 agentes, 1 neutral, el asesino)
 const esp = Math.max(0, Math.round(100 * 6 / 9) - 15 - 40);
-ok(await ev(`document.getElementById('puntaje').textContent`) === `${esp}/100`, `el puntaje es el del motor (${esp}/100)`);
+ok(await esperar(`document.getElementById('puntaje').textContent === '${esp}/100'`, 4000), `el puntaje sube hasta el del motor (${esp}/100)`);
+ok(/descubrió el asesino/i.test(await ev(`document.querySelector('.sello-fin')?.textContent || ''`)), 'con el asesino, el final es el sello rojo "Te descubrió el asesino"');
 ok(await ev(`document.querySelectorAll('#tablero-fin .carta').length`) === 12, 'muestra el tablero entero destapado');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
 const otro = await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`);
