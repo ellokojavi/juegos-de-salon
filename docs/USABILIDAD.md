@@ -115,6 +115,8 @@ nunca se usaron, y no se renumera.
 
 Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 
+- **Rutas en un celular chico** (#360, opción B): sin el título mientras se juega (la barra de arriba ya
+  muestra 🚇), y Reiniciar y Rendirse en una fila: a 320×568 los dos se ven sin bajar.
 - **Pintaminas: la 💡 Ayuda pide confirmar** (#351, opción A): como en El caso, el primer toque arma el
   botón («Toca de nuevo para usar la ayuda (−10)») y el segundo la cobra; una ayuda pagada se vuelve a
   ver gratis mientras su casilla siga sin pintar.
