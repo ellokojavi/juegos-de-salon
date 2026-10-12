@@ -164,7 +164,7 @@ function interruptor() {
   el('span', { class: 'placa', 'aria-hidden': 'true' },
     // En el modo fácil, una flecha curva muestra hacia dónde va la bola de la palanca: invita a tocarla
     // El recorrido de la bola, grabado en la placa (pedido del dueño); en el modo fácil, una flecha corre por él
-    el('span', { class: 'recorrido', html: '<svg viewBox="0 0 74 64"><path class="ranura" d="M13 15 A38 38 0 0 1 61 15" /><path class="flecha" d="M17 11.5 A38 38 0 0 1 56 11" /><path class="flecha punta" d="M50 7 L57.5 11.5 L50.5 15.5" /></svg>' }),
+    el('span', { class: 'recorrido', html: '<svg viewBox="0 0 74 64"><path class="ranura" d="M13.1 14.5 A38 38 0 0 1 60.9 14.5" /><path class="flecha" d="M18.0 11.1 A38 38 0 0 1 54.3 10.1" /><path class="flecha punta" d="M55.4 6.2 L57.9 12.2 L51.4 12.9" /></svg>' }),
     el('span', { class: 'rayo r1' }, '⚡'), el('span', { class: 'rayo r2' }, '⚡'), el('span', { class: 'rayo r3' }, '⚡'),
     el('span', { class: 'palanca' }, el('span', { class: 'mango' })), el('span', { class: 'eje' })),
   el('span', { class: 'rotulo' }, titulo, sub));
