@@ -38,9 +38,10 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
 - **El final:** un sello grande según cómo salió: **¡Misión cumplida!** en verde, con confeti
   (70 o más); **Misión a medias** en amarillo; **Misión fracasada** (menos de 35) o **Te descubrió
   el asesino** en rojo, con destello y una falla de transmisión cada tanto. El puntaje sube desde 0,
-  y después vienen su desglose, la tarjeta de emojis para compartir (🟩 agente, 🟨 el
-  que faltó, 🟥 neutral tocado, 💀 asesino tocado), el tablero entero destapado con la pista de
+  y después vienen su desglose, el tablero entero destapado con la pista de
   cada agente, y el formulario de comentarios al final (D-265, D-268).
+  La tarjeta de emojis (🟩 agente, 🟨 el que faltó, 🟥 neutral tocado, 💀 asesino tocado) va solo
+  en el mensaje de compartir: en pantalla repetía el tablero.
 
 ## Cómo funciona
 
