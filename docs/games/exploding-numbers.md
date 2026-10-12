@@ -25,7 +25,7 @@ pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`, «¡A es
 1. 💥 Toca dos números iguales (7 y 7) o que sumen 10 (4 y 6): estallan.
 2. ↔️ Deben estar en línea (de lado, arriba, abajo o en diagonal) o al final de una fila y al inicio
    de la siguiente. Lo estallado no estorba.
-3. ➕ Sin pares, ➕ copia abajo los que quedan (3 veces). Cada ➕ sin usar suma 10.
+3. ➕ ¿Sin pares? ➕ copia abajo los que quedan (3 veces). Cada ➕ sin usar suma 10.
 
 La tarjeta del laboratorio: «Inspirado en Number Match: haz estallar de a pares los números iguales o
 que suman 10, si están juntos en línea, hasta dejar el tablero limpio. Si te quedas sin pares, ➕

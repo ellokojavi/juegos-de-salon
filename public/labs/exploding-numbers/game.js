@@ -30,7 +30,7 @@ const T = {
   como: [
     ['💥', 'Toca dos números iguales (7 y 7) o que sumen 10 (4 y 6): estallan.'],
     ['↔️', 'Deben estar en línea (de lado, arriba, abajo o en diagonal) o al final de una fila y al inicio de la siguiente. Lo estallado no estorba.'],
-    ['➕', `Sin pares, ➕ copia abajo los que quedan (${MAS} veces). Cada ➕ sin usar suma ${PUNTOS_MAS}.`],
+    ['➕', `¿Sin pares? ➕ copia abajo los que quedan (${MAS} veces). Cada ➕ sin usar suma ${PUNTOS_MAS}.`],
   ],
   empezar: '💥 Empezar', aJugar: '¡A estallar!',
   quedan: ['Queda 1 número', 'Quedan {n} números'],
