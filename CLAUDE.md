@@ -47,9 +47,18 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo:
 - **Cada sesión trabaja en su propia copia** (`git worktree add ../juegos-de-salon-<tema> -b <rama>`),
   nunca en la carpeta principal: ahí los archivos sin commitear de una se cuelan en el commit de otra.
 - **Ramas con nombre de tema** (`copa-reglas-plegadas`, `tyf-jugar-solo`), no de versión.
-- **La versión se asigna al fusionar**, en el orden que decida el dueño: mientras los PR esperan,
-  numerarlos antes produce choques (dos "0.61"). Las decisiones (D-n) toman el número siguiente
-  al más alto en `main` **y en los PR abiertos** (`gh pr list`).
+- **La versión se asigna sola al fusionar** (D-300): el PR deja su entrada **sin número** en
+  `changelog/<rama>.md` (`node tools/release/changelog.mjs nueva [parche|menor]`), y el número sale
+  del orden en que los PR entran a `main`. `CHANGELOG.md` no se toca en un PR: ahí chocaban todos.
+  Un PR abierto antes de esto pasa su entrada con `node tools/release/changelog.mjs migrar`.
+- **Las decisiones (D-n) se reservan** antes de escribirlas (D-301):
+  `node tools/agents/decision.mjs reservar [--cuantas n]` sube una rama `reserva/D-n` que GitHub
+  niega si ya existe, así que dos sesiones nunca toman el mismo número. También deja configurado el
+  driver que fusiona `docs/DECISIONES.md` decisión por decisión al traer `main`
+  (`.gitattributes`; `decision.mjs instalar` en una copia que no reservó).
+- **Un solo push al terminar** (D-303): los commits se hacen en local y se suben juntos cuando el
+  trabajo, y el de los agentes, está listo. Cada push a un PR lanza los 58 guiones y cancela los
+  del anterior: un tercio del cómputo de la punta a punta se iba en corridas canceladas.
 - Antes de tocar la rama de otro PR, preguntarle a esa sesión (ListAgents / SendMessage).
 - **Al fusionar, la copia se borra**, en el mismo movimiento, desde la carpeta principal (D-206):
   ```bash
@@ -78,15 +87,24 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo:
 ## Si trabajas en un fork (D-189)
 
 Quien aporta desde afuera sigue [CONTRIBUTING.md](CONTRIBUTING.md): rama de tema y PR hacia
-`ellokojavi/juegos-de-salon`. Ahí Claude **no** estampa versión ni escribe el CHANGELOG, numera las
-decisiones como `D-??`, no publica reglas de Firebase ni lee el panel o los reportes (necesitan la
+`ellokojavi/juegos-de-salon`. Ahí Claude **no** estampa versión (su entrada va sin número en
+`changelog/`, como en todo PR), numera las decisiones como `D-??` (no puede reservar), no publica reglas de Firebase ni lee el panel o los reportes (necesitan la
 llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
 
 ## Antes de proponer una fusión
 
 1. **Los agentes de usabilidad y de documentación, a la vez**, en el mismo mensaje
    (`.claude/agents/usabilidad.md` y `documentacion.md`, D-132, D-172): uno mira la app y el otro
-   los documentos. Los dos arreglan en la rama del mismo PR (D-213).
+   los documentos. Los dos arreglan en la rama del mismo PR (D-213), en commits locales que la
+   sesión sube con los suyos en un solo push (D-303). Cuánta usabilidad, según la etapa del juego
+   (D-304); `node tools/agents/portadas.mjs revisar` la dice en su primera línea:
+   - **PR solo del laboratorio** (todo lo de `public/` en `public/labs/`): documentación, y
+     usabilidad corta: `portadas.mjs revisar` y las pantallas que cambiaron, a 320 px.
+   - **PR que saca un juego del laboratorio** (pierde `labs: true`, o su carpeta sale de
+     `public/labs/`): **pasada completa** de usabilidad al juego entero —todas sus pantallas, los
+     cuatro idiomas, 320 px, su portada y su lugar en la portada general— y documentación con el
+     README y la tarjeta social.
+   - **Todo lo demás:** los dos, como siempre.
 2. **¿Hay alguien jugando?** `node tools/firebase/en-curso.mjs` (sale con 3 si hay salas en vivo
    o copas en curso; necesita la llave del dueño).
 3. **No se fusiona sin ✅ en GitHub en `pruebas` y en `punta-a-punta`** (D-143,
@@ -96,8 +114,8 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
    no corre ningún guion y sale en verde igual; un guion que falla se repite una vez y, si pasa,
    deja un aviso "Intermitente" (D-299).
 4. **Auto-merge por defecto** (D-216, pedido del dueño): cuando el PR está listo para fusionarse
-   —los agentes terminaron y sus arreglos están subidos, y la entrada del `CHANGELOG.md` ya está
-   en la rama—, se activa el auto-merge de GitHub en vez de esperar el ✅ a mano:
+   —los agentes terminaron y sus arreglos están subidos, y la entrada de `changelog/<rama>.md` ya
+   está en la rama (D-300)—, se activa el auto-merge de GitHub en vez de esperar el ✅ a mano:
    ```bash
    gh pr merge <n> --auto --merge
    ```
@@ -107,18 +125,29 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
 5. **Monitor de CI** (D-218): junto con el auto-merge se activa el monitor del PR en la app
    (`set_monitor` con `auto_fix` y `address_comments`), que despierta a la sesión cuando una prueba
    falla, hay un conflicto o llega un comentario: lo único que necesita a alguien. Nunca se sondea
-   el CI. Lo de después de fusionar ya no espera a nadie: las reglas de Firebase las publica
-   `publicar.yml` y la copia la borra el hook de inicio de sesión.
+   el CI. Lo de después de fusionar ya no espera a nadie: `publicar.yml` corre las pruebas y la
+   punta a punta otra vez sobre `main`, publica las reglas de Firebase y el sitio (D-302), y la
+   copia la borra el hook de inicio de sesión.
 
-## Al fusionar y publicar (C-11, D-205)
+## Al fusionar y publicar (C-11, D-205, D-300, D-302)
 
-- Se escribe la entrada de la versión en `CHANGELOG.md` (`## X.Y.Z — fecha`). Las páginas de
-  `public/` no llevan `?v=` ni import map: `.github/workflows/publicar.yml` corre las pruebas,
-  estampa la versión en la copia que publica y comprueba que el sitio en línea la sirva.
+- La entrada va sin número en `changelog/<rama>.md` (D-300). La versión de hoy es la primera
+  entrada de `CHANGELOG.md` subida una vez por cada entrada de `changelog/` que todavía no se juntó,
+  en el orden en que llegaron a `main`; el agente de procesos las junta en `CHANGELOG.md`, con su
+  número, en su ronda (`juntar`), y eso no cambia la versión. El check `pruebas` frena un PR que
+  escribe una entrada con número en `CHANGELOG.md` y avisa si cambia `public/` sin entrada.
   ```bash
-  python3 tools/release/set-version.py --version             # la versión de hoy, la del CHANGELOG
+  node tools/release/changelog.mjs nueva [parche|menor]   # crea changelog/<rama>.md
+  node tools/release/changelog.mjs ver                    # las pendientes, con el número que les toca
+  node tools/release/changelog.mjs migrar                 # una entrada con número (de antes) → changelog/
+  node tools/release/changelog.mjs juntar                 # ronda de procesos: las pendientes a CHANGELOG.md
+  python3 tools/release/set-version.py --version             # la versión de hoy
   python3 tools/release/set-version.py --sitio /tmp/sitio    # estampa una copia, como al publicar
   ```
+- Las páginas de `public/` no llevan `?v=` ni import map: `.github/workflows/publicar.yml` corre
+  las pruebas **y la punta a punta entera** (D-302; si fallan dos veces, no publica y abre el issue
+  "main en rojo"), estampa la versión en la copia que publica y comprueba que el sitio en línea la
+  sirva.
 - Las reglas de Firebase las publica `publicar.yml` en cada fusión, antes que el sitio (D-218):
   no sube nada si ya están, y si Firebase las rechaza el sitio no se publica. Necesita el secreto
   `FIREBASE_ADMIN_JSON` en GitHub (la llave de la cuenta de servicio, que carga el dueño); sin él,
@@ -199,7 +228,9 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   README") se le piden a él: decide quién, lo lanza, comprueba y responde. Atiende el feedback 🐞,
   que `.github/workflows/feedback.yml` sube cada hora como issues `feedback` (`tools/agents/feedback.mjs`,
   con el nombre que puso el jugador y sin su navegador, D-279). Cierra lo que quedó abierto y
-  convierte un error que se repite en un mecanismo (un test antes que una instrucción). Lo que
+  convierte un error que se repite en un mecanismo (un test antes que una instrucción). En su
+  ronda junta las entradas de `changelog/` en `CHANGELOG.md` (D-300) y borra las reservas de
+  decisión que ya están en `main` (`decision.mjs limpiar`, D-301). Lo que
   necesita al dueño va en un issue `procesos` con casillas Sí/No, que abre el bot (`decidir.yml`) para
   que le llegue el correo: marcar una lo cumple al instante
   (`.github/workflows/aprobar.yml` → `tools/agents/aprobar.mjs`, con una lista cerrada de acciones).

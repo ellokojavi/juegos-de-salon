@@ -1,10 +1,5 @@
 # Changelog
 
-## 0.167.4 — 2026-10-12
-- **Herramientas:** las pruebas de punta a punta ya no corren en un PR que solo toca el taller de los
-  agentes, las reglas de Firebase o los otros workflows, y un guion que falla se repite una vez en su
-  job: si pasa, el check queda en verde con un aviso "Intermitente" que lo nombra (D-299).
-
 ## 0.167.3 — 2026-10-12
 - **🚇 Rutas pasa a llamarse Rutas rotas** (pedido del dueño): las líneas parten cortadas y hay que
   unirlas. Cambia el nombre en la portada, el laboratorio y lo que se comparte; el link

@@ -51,6 +51,12 @@ pasada de usabilidad de Reinas"), **tú respondes por el resultado** y el otro l
 4. **Le respondes al dueño** en tres líneas: qué se pidió, qué se hizo (con links) y con qué
    evidencia de que quedó bien. Nunca "el agente dice que…" sin haberlo comprobado.
 
+**Un PR, según la etapa del juego** (D-304): `node tools/agents/portadas.mjs revisar <base>` lo dice
+en su primera línea. Solo del laboratorio → documentación y usabilidad corta (portadas y las pantallas
+que cambiaron, a 320 px). Saca un juego del laboratorio → pasada completa de usabilidad al juego
+entero (todas sus pantallas, los cuatro idiomas, 320 px, su portada y su lugar en la portada
+general) y documentación con el README y la tarjeta social. Lo demás, los dos como siempre.
+
 ## Despacho (D-276)
 
 Los agentes de documentación y de usabilidad ya no tienen hora propia: **los lanzas tú** en tu
@@ -72,7 +78,9 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
   /private/tmp/usabilidad-<fecha>-capturas`. Cada Chrome muere con su guion (D-213); si quedara
   uno, búscalo por su perfil, nunca con `pkill` a secas. Si el guion se corta sin un ✗, otra
   sesión pudo matar Chrome: repítelo una vez. Al final detén el servidor y quita la copia (la
-  rama y el PR quedan). Sin versión ni CHANGELOG (D-205). Los reportes 🐞 son míos (D-275):
+  rama y el PR quedan). Sin versión: si arreglaste algo, tu PR lleva su entrada sin número en
+  `changelog/usabilidad-<fecha>.md` (D-300). Commits en local y un solo push al terminar (D-303).
+  Los reportes 🐞 son míos (D-275):
   míralos solo como contexto. Antes de abrir un dilema, `dilemas.mjs listar --todos`. La
   anotación de marketing (`marketing.mjs anotar`) va en tu PR; si no arreglaste nada y cambió
   esa anotación, abre uno solo con ella." Criterios: `torneo.mjs` sin ✗ (o cada ✗ explicado como
@@ -80,7 +88,7 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
   `main` y pruebas en verde (si arregló algo), cada dilema nuevo sin uno igual en `listar --todos`,
   `marketing.mjs revisar` y `og.mjs revisar` corridos y su anotación en el PR si cambió algo.
 - Al lanzarlos, anota el despacho (`despacho <agente> <commit de main>`). Va en `docs/procesos.json`:
-  una ronda que despachó deja PR aunque no tenga otra cosa (paso 8), o mañana `revisar` lo vuelve
+  una ronda que despachó deja PR aunque no tenga otra cosa (paso 9), o mañana `revisar` lo vuelve
   a pedir. Mientras corren, sigues
   con tu ronda; al final revisas lo que entregaron (paso 3 de los encargos) y lo cuentas en tu
   informe.
@@ -155,7 +163,13 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
    el Sí sea `fusionar`. `encolar` es para lo que no conviene hacer antes de saber la respuesta.
    Un dueño que contesta desde el celular: pocas decisiones (hasta cinco) y que se entiendan sin
    abrir nada más.
-8. **Cierra la ronda:** `node tools/agents/procesos.mjs anotar --hasta <commit> [--issue <url>]
+8. **El CHANGELOG y las reservas** (D-300, D-301), que `revisar` muestra: si `changelog/` de `main`
+   tiene entradas, `node tools/release/changelog.mjs juntar` en tu copia (con la historia completa)
+   y van en tu PR: las pasa a `CHANGELOG.md` con su número y la versión publicada no cambia.
+   `revisar` ya borró las reservas `reserva/D-n` que están en `main`; una que lleva más de una
+   semana sin PR se anota `## D-n · (número sin usar)` en tu PR y se borra
+   (`git push origin --delete reserva/D-n`).
+9. **Cierra la ronda:** `node tools/agents/procesos.mjs anotar --hasta <commit> [--issue <url>]
    [--pr <url>] [--nota "…"]`, en el commit de tu PR. Si la ronda no dejó PR ni despachó a
    nadie, no anotas: la siguiente parte del mismo commit y no se pierde nada.
 
@@ -163,12 +177,12 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
 
 **Tocas:** el taller (`tools/`, los tests, `.github/workflows/`), la guía de los agentes
 (`.claude/agents/`), `CLAUDE.md`, los cánones y las decisiones cuando construyes un mecanismo
-(una decisión nueva, D-n con el número siguiente al más alto en `main` y en los PR abiertos).
+(una decisión nueva, con su número reservado: `node tools/agents/decision.mjs reservar`, D-301).
 
 **El código de la app (`public/`), solo para el feedback 🐞** (paso 3) o para exportar un dato que
 necesite un mecanismo. Con los cánones (C-n), su lista de chequeo, los cuatro idiomas (C-3), la
-prueba de punta a punta del juego que tocaste en verde y la entrada del `CHANGELOG.md` con el parche
-siguiente al de `main` (D-205). Nunca cambias lo que una copa está jugando ese día (U-21).
+prueba de punta a punta del juego que tocaste en verde y su entrada sin número en
+`changelog/<rama>.md` (`changelog.mjs nueva`, D-300). Nunca cambias lo que una copa está jugando ese día (U-21).
 
 **No tocas:** el resto del código de los juegos y de la portada; las reglas de Firebase; los datos
 de copas; las ramas de otras sesiones. Nunca fusionas a mano un PR ajeno: eso lo hace el
@@ -181,6 +195,8 @@ Sí del dueño.
   (`git worktree add ../juegos-de-salon-procesos-<fecha> -b procesos-<fecha> origin/main`), que
   quitas al terminar si no dejó PR (D-252).
 - Pruebas sin navegador en verde. Si tocaste un workflow, que el YAML se lea.
+- Commits en local y **un solo push** al terminar (D-303): cada push a un PR relanza la punta a
+  punta entera.
 - Tu PR con auto-merge (`gh pr merge <n> --auto --merge`, D-216): lo tuyo no espera al dueño. Lo
   que necesita su opinión va en el issue de decisiones, no en el PR.
 - Si no hay nada que cerrar, ningún patrón nuevo, decisiones ni despachos: terminas sin PR ni issue, y lo dices en una línea.

@@ -216,13 +216,13 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 
 ## C-11 · Publicación y versionado
 
-- La versión de una publicación es la primera entrada de `CHANGELOG.md` (`## X.Y.Z — fecha`), que se escribe al fusionar. Las páginas en git no la llevan (D-205).
+- La versión de una publicación es la primera entrada de `CHANGELOG.md` (`## X.Y.Z — fecha`) subida una vez por cada entrada de `changelog/` que todavía no se juntó, en el orden en que llegaron a main (`tools/release/changelog.mjs`, D-300). Cada PR deja la suya sin número en `changelog/<rama>.md`. Las páginas en git no la llevan (D-205).
 - Al publicar, `publicar.yml` corre `set-version.py --sitio _site`: estampa `?v=X.Y.Z-<commit>` en los import maps, las hojas de estilo, los scripts clásicos (el vigía, D-251) y las imágenes de las tarjetas, y la versión en el pie del menú, solo en la copia que se sube. Así el navegador no mezcla archivos viejos y nuevos, y dos PR abiertos no chocan.
 - Que el README (C-13) y las tarjetas (D-181) no hayan quedado atrás lo frena el check `pruebas` de cada PR, y se vuelve a revisar antes de publicar.
 - Los módulos nuevos entran solos: el script recorre `**/*.js` del sitio y estampa toda página que cargue módulos (D-192).
-- Se publica solo `public/`, con `.github/workflows/publicar.yml`, en cada fusión a main y solo si las pruebas pasan (D-192).
+- Se publica solo `public/`, con `.github/workflows/publicar.yml`, en cada fusión a main y solo si pasan las pruebas y la punta a punta (D-192, D-302).
 - El menú dibuja la lista de juegos **antes** que cualquier adorno, y los adornos van en `try/catch`: un adorno roto no puede dejar la app vacía.
-- Cada cambio publicado entra en `CHANGELOG.md` con su versión.
+- Cada cambio publicado entra en `changelog/` sin número, y el agente de procesos lo junta en `CHANGELOG.md` con su versión (D-300).
 - Se verifica que el sitio publicado sirva la versión nueva antes de darla por lista: lo hace el último paso de `publicar.yml` (D-205).
 
 ## C-12 · Pruebas
@@ -454,7 +454,7 @@ Los nombres de antes se siguen leyendo como alias: un link que ya circula no se 
 - [ ] Los secretos se comprometen y verifican (C-10).
 - [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia (C-14).
 - [ ] Tests del motor y `node public/assets/js/games.test.mjs` en verde, y partida completa probada en cada modo, con capturas revisadas (C-12).
-- [ ] Lo que cambió, descrito en el PR para que quien fusiona escriba la entrada de `CHANGELOG.md` con su versión; publicada y comprobada en la URL pública por `publicar.yml` (C-11, D-205).
+- [ ] Lo que cambió, en `changelog/<rama>.md` sin número (`node tools/release/changelog.mjs nueva`); publicada y comprobada en la URL pública por `publicar.yml` (C-11, D-205, D-300).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
 - [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17).

@@ -13,7 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      # Con la historia (sin el contenido de los archivos viejos, que no hace falta): la versión
+      # sale del orden en que las entradas de changelog/ llegaron a main (D-300)
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
 
       - uses: actions/setup-node@v4
         with:
@@ -48,6 +53,12 @@ jobs:
         run: |
           cp -r public "$RUNNER_TEMP/sitio"
           python3 tools/release/set-version.py --sitio "$RUNNER_TEMP/sitio" --commit "$GITHUB_SHA"
+
+      # Las entradas de changelog/ se entienden, y un PR no trae una entrada con número en
+      # CHANGELOG.md, que es lo que hacía chocar a dos PR abiertos (D-300). En un PR, GitHub prueba
+      # el merge con main: su primer padre es la base. Un PR que cambia public/ sin entrada, aviso.
+      - name: CHANGELOG por archivo
+        run: node tools/release/changelog.mjs revisar ${{ github.event_name == 'pull_request' && '--base HEAD^1' || '' }}
 
       # El README y las tarjetas, al día: frenan el PR y la publicación (C-11, C-13, D-181)
       - name: README al día
