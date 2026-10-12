@@ -157,10 +157,21 @@ function crearTablero(t, { interactivo = false, alGirar } = {}) {
     caja.addEventListener('pointerup', soltar);
     caja.addEventListener('pointercancel', soltar);
   }
-  return { caja, poner, aplicar };
+  // Marcar un rectángulo sin el dedo (la portada lo usa para mostrar cada jugada antes de hacerla)
+  const marcar = r => {
+    if (!r) { marco.classList.remove('ve'); return; }
+    Object.assign(marco.style, { left: `${r.c1 * 100 / LADO}%`, top: `${r.f1 * 100 / LADO}%`, width: `${(r.c2 - r.c1 + 1) * 100 / LADO}%`, height: `${(r.f2 - r.f1 + 1) * 100 / LADO}%` });
+    marco.classList.add('ve');
+  };
+  return { caja, poner, aplicar, marcar };
 }
 
-// La portada: un tablero resuelto que gira solo una parte y la devuelve, una y otra vez
+// La portada (pedido del dueño): el tablero parte desordenado y se arma en 5 o 6 jugadas, mostrando las
+// dos clases de jugada: girar una carta sola (rotarla en su lugar) y girar dos vecinas (cambian de lugar).
+// Antes de cada una se marca el rectángulo, como cuando se arrastra. Al final la ruta se ilumina, y vuelve
+// a empezar con otro desorden.
+const UNA = [...Array(LADO * LADO).keys()].map(i => ({ f1: Math.floor(i / LADO), c1: i % LADO, f2: Math.floor(i / LADO), c2: i % LADO }));
+const PAR = RECTANGULOS.filter(r => (r.f2 - r.f1) + (r.c2 - r.c1) === 1);
 let demoVez = 0;
 function portada() {
   const t = generar('portada-demo', { giros: 3 });
@@ -174,19 +185,42 @@ function portada() {
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
   ].filter(Boolean));
   pieComentario('portada');
-  tab.poner(META, false);
-  if (QUIETO) return;
+  if (QUIETO) { tab.poner(META, false); tab.caja.classList.add('resuelto'); return; }
   const vez = ++demoVez;
-  let estado = META, ida = null;
-  const paso = () => {
-    if (vez !== demoVez || !tab.caja.isConnected) return;
-    // Un giro al azar, y después el mismo, que lo deshace
-    const r = ida || RECTANGULOS[Math.floor(Math.random() * RECTANGULOS.length)];
-    estado = tab.aplicar(estado, r);
-    ida = ida ? null : r;
-    setTimeout(paso, ida ? 1100 : 1700);
+  const sigue = () => vez === demoVez && tab.caja.isConnected;
+  const espera = ms => new Promise(r => setTimeout(r, ms));
+  // Un desorden de 5 o 6 jugadas, alternando una carta sola y un par, sin repetir la anterior
+  const desorden = () => {
+    const n = 5 + Math.floor(Math.random() * 2), jugadas = [];
+    for (let k = 0; k < n; k++) {
+      const lista = k % 2 ? PAR : UNA;
+      let r;
+      do r = lista[Math.floor(Math.random() * lista.length)]; while (r === jugadas[k - 1]);
+      jugadas.push(r);
+    }
+    return jugadas;
   };
-  setTimeout(paso, 900);
+  (async () => {
+    while (sigue()) {
+      const jugadas = desorden();
+      let estado = jugadas.reduce(girar, META);
+      if (resuelto(t.piezas, estado)) continue;
+      tab.caja.classList.remove('resuelto', 'aparece'); void tab.caja.offsetWidth; tab.caja.classList.add('aparece');
+      tab.poner(estado, false);
+      await espera(1100);
+      // Se arma deshaciendo el desorden al revés: se marca, se gira
+      for (const r of [...jugadas].reverse()) {
+        if (!sigue()) return;
+        tab.marcar(r); await espera(550);
+        if (!sigue()) return;
+        estado = tab.aplicar(estado, r); tab.marcar(null);
+        await espera(800);
+      }
+      if (!sigue()) return;
+      tab.caja.classList.add('resuelto');
+      await espera(2600);
+    }
+  })();
 }
 
 function empezar() {

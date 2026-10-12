@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.166.0 — 2026-10-12
+- **🚇 Rutas (laboratorio): la portada enseña a jugar.** El tablero parte desordenado y se arma en 5 o 6
+  jugadas, mostrando las dos clases: girar una carta sola o cambiar de lugar dos vecinas. Al armarse,
+  la ruta se ilumina.
+- **🖌️ Pintaminas (laboratorio): la portada juega una partida de verdad**, de a una casilla y en el
+  orden en que se deduciría, hasta mostrar el dibujo. La palanca dice «Modo fácil» o «⚡ Modo difícil»,
+  en el fácil una flecha grabada en la placa invita a moverla, y al moverla un destello cubre toda la vista.
+
 ## 0.165.1 — 2026-10-12
 - **🚇 Rutas (laboratorio):** mientras se juega no se muestra el título, y Reiniciar y Rendirse van en
   una fila, así se ven sin bajar en un celular chico. La tarjeta para compartir muestra también las
