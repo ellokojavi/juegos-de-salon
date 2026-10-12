@@ -31,9 +31,10 @@ await b.go(`${SITIO}/labs/paint-mines/?test`, 1200);
 ok(await ev(`document.getElementById('btn-dificil')?.getAttribute('aria-checked')`) === 'false', 'el modo difícil parte apagado');
 await ev(`document.getElementById('btn-dificil').click(); 1`); await sleep(200);
 ok(await ev(`document.getElementById('btn-dificil').getAttribute('aria-checked') === 'true' && document.getElementById('btn-dificil').classList.contains('on')`), 'el interruptor lo enciende y se electrifica');
+ok(await ev(`document.body.classList.contains('modo-dificil')`), 'y cambia el fondo de la página');
 await b.shot('01b-dificil');
 await ev(`document.getElementById('btn-dificil').click(); 1`); await sleep(100);
-ok(await ev(`document.getElementById('btn-dificil').getAttribute('aria-checked')`) === 'false', 'y lo apaga');
+ok(await ev(`document.getElementById('btn-dificil').getAttribute('aria-checked') === 'false' && !document.body.classList.contains('modo-dificil')`), 'y lo apaga, con el fondo de siempre');
 await b.shot('01-portada');
 
 await b.go(`${SITIO}/labs/paint-mines/?seed=${SEMILLA}&test`, 1200);
