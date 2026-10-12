@@ -164,7 +164,7 @@ function interruptor() {
   },
   el('span', { class: 'placa', 'aria-hidden': 'true' },
     // El recorrido de la bola, grabado en la placa (pedido del dueño): muestra hacia dónde se mueve la palanca
-    el('span', { class: 'recorrido', html: '<svg viewBox="0 0 74 64"><path class="ranura" d="M13.1 19.9 A38 38 0 0 1 60.9 19.9" /></svg>' }),
+    el('span', { class: 'recorrido', html: '<svg viewBox="0 0 70 60"><path class="ranura" d="M10.99 16.52 A39 39 0 0 1 59.01 16.52" /></svg>' }),
     el('span', { class: 'rayo r1' }, '⚡'), el('span', { class: 'rayo r2' }, '⚡'), el('span', { class: 'rayo r3' }, '⚡'),
     el('span', { class: 'palanca' }, el('span', { class: 'mango' })), el('span', { class: 'eje' })),
   el('span', { class: 'rotulo' }, titulo, sub));
