@@ -59,7 +59,8 @@ Un guion que falla se repite **una vez** en el mismo job (D-299). Si pasa al seg
 job queda en verde con un aviso ⚠️ **Intermitente** que lo nombra, y las capturas del primer intento
 quedan como artefacto: hay que mirar por qué falla a veces, no darlo por bueno. Si falla dos
 veces, el job sale en rojo. Si las pruebas salen
-en rojo en `main` (en un push o en una corrida a mano, como la que lanza una fusión de un toque),
+en rojo en `main` (dentro de `publicar.yml`, que las corre antes de publicar y no publica si fallan,
+D-302, o en una corrida a mano),
 el job `avisar` abre un issue "main en rojo: Punta a punta", y cuando `main` vuelve a verde el job
 `cerrar-aviso` lo cierra con el link a la corrida (D-273).
 
