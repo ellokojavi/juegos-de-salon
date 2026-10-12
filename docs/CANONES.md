@@ -368,7 +368,8 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   a la izquierda del título, la bajada y las píldoras de ancho entero, y el título en color: La
   Copa en dorado, Uno al día en celeste; los juegos van en blanco. Para que jugadores y duración
   quepan en una línea, la píldora dice "👥 2–10" y "jugadores" queda solo para el lector de
-  pantalla (`.unidad`); la tarjeta ancha de un juego sí lo muestra (D-239).
+  pantalla (`.unidad`); la tarjeta ancha de un juego sí lo muestra (D-239). Las píldoras van
+  abajo a la izquierda, aparte de la bajada y a la misma altura en las dos tarjetas (D-298).
 - **Se filtra por tipo o por favoritos, y por nada más.** Un tipo a la vez (`TIPOS`), que
   se prende y se apaga con un toque. Solo hay fichas de tipos que tienen algún juego que se
   puede abrir, así la lista nunca queda vacía. Cuántos juegan no se filtra: cada juego lo

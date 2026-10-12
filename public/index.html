@@ -264,7 +264,7 @@
     .fila-alta { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 10px; }
     /* El emoji va a la izquierda del título, y la bajada y las píldoras de borde a borde: la fila
        queda casi 90 px más baja que con el emoji arriba (D-239) */
-    .game-card.alta { position: relative; grid-template-columns: auto 1fr; grid-template-areas: "emoji h2" "tag tag" "meta meta"; column-gap: 8px; row-gap: 8px; align-items: center; align-content: start; justify-items: start; text-align: left; padding: 14px 12px; font: inherit; cursor: pointer; }
+    .game-card.alta { position: relative; grid-template-columns: auto 1fr; grid-template-rows: auto auto 1fr; grid-template-areas: "emoji h2" "tag tag" "meta meta"; column-gap: 8px; row-gap: 8px; align-items: center; justify-items: start; text-align: left; padding: 14px 12px; font: inherit; cursor: pointer; }
     .game-card.alta .emoji { width: 40px; height: 40px; font-size: 1.6rem; border-radius: 12px; }
     .game-card.alta .texto { display: contents; }
     .game-card.alta h2 { grid-area: h2; font-size: clamp(1.05rem, 5vw, 1.35rem); line-height: 1.05; }
@@ -273,6 +273,9 @@
     /* Jugadores y duración, en una sola línea: "👥 2–10 jugadores" no cabía al lado de "⏱ 7 días"
        en media fila, así que la palabra se esconde a la vista (el lector de pantalla la lee) */
     .game-card.alta .meta { flex-wrap: nowrap; gap: 5px; }
+    /* Las píldoras (jugadores y días; la racha o cómo va hoy) van abajo a la izquierda, aparte de la
+       bajada: la última fila se lleva el alto que sobra, así quedan a la misma altura en las dos tarjetas */
+    .game-card.alta .meta { align-self: end; padding-top: 4px; }
     .game-card.alta .meta span { font-size: 0.72rem; padding: 3px 7px; }
     .game-card.alta .meta span .unidad { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; }
     @media (max-width: 340px) { .game-card.alta .meta { gap: 4px; } .game-card.alta .meta span { padding: 3px 5px; font-size: 0.68rem; } }
