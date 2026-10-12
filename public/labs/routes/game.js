@@ -13,7 +13,7 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { generar, generarEtapa, girar, resuelto, bordesUnidos, puntajePartida, RECTANGULOS, LADO, ETAPAS, TIEMPO_S, PUNTOS_ETAPA } from './engine.js';
+import { generar, generarEtapa, girar, resuelto, bordesUnidos, puntajePartida, RECTANGULOS, LADO, ETAPAS, TIEMPO_S } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -35,7 +35,7 @@ const T = {
   filaEtapa: '{c} Etapa {n}: {g} giros (mínimo {m})',
   // El reloj y el puntaje por capas (D-295): completar, la rapidez y los giros
   reloj: '⏱ {t}', rendirse: '🏳️ Rendirse', rendirseSeguro: 'Toca de nuevo para rendirte',
-  capas: { etapas: '🚇 {n} de {t} etapas: {p} puntos ({e} cada una).', rapidez: '⏱ Rapidez ({t}): +{p}.', sinRapidez: '⏱ Rapidez: +0 (solo si completas las {t} etapas).', giros: '🔄 Giros ({g}; el mínimo era {m}): +{p}.' },
+  capas: { etapas: '🚇 Etapas ({n} de {t}): +{p}.', rapidez: '⏱ Rapidez ({t}): +{p}.', sinRapidez: '⏱ Rapidez: +0 (faltaron etapas).', giros: '🔄 Giros ({g}, mínimo {m}): +{p}.' },
   finPor: { tiempo: 'Se acabó el tiempo', rendido: 'Te rendiste' },
   marcador: 'Giros: {g} · Mínimo: {m}', reiniciar: '↺ Reiniciar', reiniciado: 'De vuelta al comienzo: los giros vuelven a 0.',
   unidas: '🚇 ¡Todas las líneas unidas!',
@@ -53,9 +53,15 @@ const vista = document.getElementById('vista');
 const pie = document.getElementById('pie');
 const params = new URLSearchParams(location.search);
 const SEMILLA_URL = (params.get('seed') || '').trim();
-const P = { semilla: '', etapa: 0, t: null, estado: null, giros: 0, reinicios: 0, hechas: [], desde: 0, terminado: false, acabado: false, segundos: 0, reloj: null };
+const P = { semilla: '', etapa: 0, t: null, estado: null, giros: 0, reinicios: 0, hechas: [], desde: 0, terminado: false, acabado: false, segundos: 0, reloj: null, oculto: 0 };
 // El tiempo de la partida; en el modo de prueba se puede acortar (?test&time=20) para probar el final por tiempo
 const LIMITE_S = params.has('test') && +params.get('time') > 0 ? +params.get('time') : TIEMPO_S;
+// El reloj se pausa con la pantalla oculta (U-20): el rato oculto se le descuenta al comienzo
+const usado = () => Math.max(0, ((P.oculto || Date.now()) - P.desde) / 1000);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { if (P.desde && !P.acabado) P.oculto = Date.now(); }
+  else if (P.oculto) { P.desde += Date.now() - P.oculto; P.oculto = 0; }
+});
 
 function pieComentario(pantalla) {
   pie.replaceChildren(el('button', {
@@ -207,8 +213,9 @@ function jugar() {
   const marcador = el('p', { class: 'marcador', id: 'marcador' });
   const reloj = el('p', { class: 'reloj-rt', id: 'reloj' });
   const tic = () => {
-    const quedan = Math.max(0, LIMITE_S - (Date.now() - P.desde) / 1000);
-    reloj.textContent = fmt(T.reloj, { t: mmss(quedan * 1000) });
+    const quedan = Math.max(0, LIMITE_S - usado());
+    // Hacia arriba, como toda cuenta atrás: el rojo parte en 1:00 y el 0:00 llega con el final
+    reloj.textContent = fmt(T.reloj, { t: mmss(Math.ceil(quedan) * 1000) });
     reloj.classList.toggle('poco', quedan <= 60);
     if (quedan <= 0) acabar('tiempo');
   };
@@ -249,9 +256,10 @@ function jugar() {
     P.terminado = true;
     P.hechas.push({ giros: P.giros, minimo: t.minimo });
     // La última: el reloj se detiene aquí, no cuando aparece el resultado
-    if (P.hechas.length === ETAPAS.length) { P.segundos = (Date.now() - P.desde) / 1000; clearInterval(P.reloj); }
+    if (P.hechas.length === ETAPAS.length) { P.segundos = usado(); clearInterval(P.reloj); }
     tab.caja.classList.add('bloqueado');
-    reiniciar.remove();
+    // Reiniciar y Rendirse se van con la etapa hecha: rendirse en la pausa no tiene sentido
+    reiniciar.remove(); rendirse.remove();
     setTimeout(() => {
       tab.caja.classList.add('resuelto');
       aviso.className = 'aviso-rt bien';
@@ -289,7 +297,7 @@ function acabar(motivo) {
   if (P.acabado) return;
   P.acabado = true; P.terminado = true;
   clearInterval(P.reloj);
-  if (motivo !== 'completa') P.segundos = Math.min(LIMITE_S, (Date.now() - P.desde) / 1000);
+  if (motivo !== 'completa') P.segundos = Math.min(LIMITE_S, usado());
   if (motivo === 'tiempo') { SFX.error(); vibrate([60, 40, 60]); }
   resultado(motivo);
 }
@@ -306,9 +314,10 @@ function resultado(motivo = 'completa') {
   pie.replaceChildren();
   const perfecto = r.completa && P.hechas.every(h => h.giros <= h.minimo);
   // Las tres capas del puntaje, y después cada etapa
-  const lineas = [fmt(T.capas.etapas, { n: P.hechas.length, t: ETAPAS.length, p: r.base, e: PUNTOS_ETAPA }),
+  const lineas = [fmt(T.capas.etapas, { n: P.hechas.length, t: ETAPAS.length, p: r.base }),
     r.completa ? fmt(T.capas.rapidez, { t: mmss(ms), p: r.ptsVelocidad }) : fmt(T.capas.sinRapidez, { t: ETAPAS.length })];
   if (P.hechas.length) lineas.push(fmt(T.capas.giros, { g: r.giros, m: r.minimos, p: r.ptsGiros }));
+  const capas = lineas.length;
   lineas.push(...P.hechas.map((h, k) => fmt(T.filaEtapa, { c: h.giros <= h.minimo ? '🟩' : '🟨', n: k + 1, g: h.giros, m: h.minimo })));
   if (P.reinicios) lineas.push(fmt(T.reinicios[P.reinicios === 1 ? 0 : 1], { n: P.reinicios }));
   const fin = crearTablero(t);
@@ -321,8 +330,10 @@ function resultado(motivo = 'completa') {
     fin.caja,
     el('p', { class: `sello-rt${motivo === 'completa' ? '' : ' mal'}` }, motivo === 'completa' ? (perfecto ? T.fin.perfecto : T.fin.listo) : T.finPor[motivo]),
     el('div', { class: 'score-big', id: 'puntaje' }, `${s}/100`),
-    el('ul', { class: 'desglose muted', id: 'desglose' }, ...lineas.map(x => el('li', {}, x))),
-    el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
+    // Las capas del puntaje, y aparte (con aire) el detalle de cada etapa
+    el('ul', { class: 'desglose muted', id: 'desglose' }, ...lineas.map((x, k) => el('li', { class: k === capas && k < lineas.length ? 'aparte' : '' }, x))),
+    // Completas, el tiempo ya lo dice la rapidez (U-8)
+    r.completa ? null : el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
     botonResultadoSolo({ C: COMMON.es, emoji: '🚇', juego: T.nombre, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta, url: `${SITIO}labs/routes/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: enlace(Math.random().toString(36).slice(2, 8)) }, T.otraVez),
     SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname }, T.deHoy) : null,
