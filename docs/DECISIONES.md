@@ -5087,7 +5087,7 @@ leer, a propósito); mostrar solo el aviso genérico de permiso (obligaba a busc
 escribir el PIN).
 
 ## D-286 · Agentes: un Codenames mini, para uno solo, en Proyectos activos del laboratorio
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-280 (el primer proyecto activo del laboratorio)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-287 · **Relación:** amplía D-280 (el primer proyecto activo del laboratorio)
 **Contexto:** el dueño pidió investigar *Codenames* (Vlaada Chvátil, Czech Games Edition, 2015) y
 ver si una versión mini podía entrar a La Copa. El original es de equipos: un jefe de espías da una
 palabra y un número, y su equipo busca a sus agentes entre 25 palabras sin tocar al asesino. En La
@@ -5113,3 +5113,28 @@ de que sean justas).
 **Consecuencias:** `public/labs/agents/engine.test.mjs` prueba la lista y que cada tablero sea
 justo; `tools/e2e/agents/lab.mjs`, la partida entera. Si a los amigos les gusta, el paso siguiente
 es llevarlo a La Copa en los cuatro idiomas (una lista de pistas por idioma).
+
+## D-287 · Agentes: 15 cartas, 4 pistas (una de 2), trampas que tientan y un color por pista
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-286 (el tablero y sus trampas)
+**Contexto:** el dueño, jugando el prototipo, lo encontró fácil: en 12 cartas, 9 eran agentes (75 %),
+y las 2 neutrales salían de pistas que no estaban en juego, así que se descartaban a primera vista.
+Probó en el teléfono, por Tailscale, una vuelta a la vez: una fila más, un grupo más, neutrales que
+tientan y una pista más corta.
+**Decisión:** un tablero de **15 cartas en 3×5** (las columnas siguen siendo 3, así que el ancho de
+las cartas no cambia): **4 pistas**, tres de 3 agentes y **una de 2** («· 2», cuál cambia cada
+tablero), **3 neutrales y 1 asesino**. Las neutrales salen ahora de las mismas tentaciones (`casi`)
+que el asesino, de preferencia de otra pista que la suya: las 4 cartas que no son tuyas se parecen a
+alguna pista, y cada una lleva `tienta`, que el tablero final muestra («≈ TREN»). **Cada pista tiene
+su color** (verde, celeste, rosado, violeta; ni amarillo, que es de las marcas, ni rojo, que es del
+asesino): el cartel de la pista en curso lo lleva, cada agente destapado toma el de su pista, y los
+de pistas ya cerradas se apagan, para que se vea que ya no cuentan para la jugada (pedido del dueño).
+Las restas siguen en −15 y −40; un agente vale 100/11. Las cartas bajan a 56 px de alto para que el
+tablero quepa en un celular común sin mover la pantalla.
+**Por qué:** 11 de 15 (73 %) obliga a dudar; que las trampas tienten hace que haya que pensar cada
+toque, y la pista corta quita la certeza de que siempre son 3. Los colores responden a que con 4
+pistas ya no se sabía qué agentes eran de la jugada actual.
+**Alternativas descartadas:** 5×5 (no cabe a lo ancho en un celular); 3 pistas y 5 neutrales (más
+difícil, pero las neutrales no tentaban); 2 asesinos (castiga demasiado: −80).
+**Consecuencias:** `engine.test.mjs` revisa en 300 tableros que cada pista tenga los agentes que dice,
+que sumen 11, y que el asesino y las neutrales tienten a la pista que dicen; `tools/e2e/agents/lab.mjs`
+juega una partida de 4 pistas. La tarjeta y el video de `marketing/agentes-tarjeta/` dicen 15 palabras.
