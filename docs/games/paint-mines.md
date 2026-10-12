@@ -63,7 +63,7 @@ La tarjeta del laboratorio agrega, desde v0.167.1, «Con un modo difícil de dos
   resplandores celestes (`body.modo-dificil`), en la portada, el juego y el resultado (pedido del dueño).
 - **La trama del segundo color** (#349): en el modo difícil, las casillas del segundo color y su pincel
   llevan rayas finas, para quien no distingue bien los colores; al revelarse el dibujo se van.
-- **El tablero:** dos colores al azar de `PALETA` (nunca amarillo con naranjo juntos: se confundían), con los dibujos de `DIBUJOS2` (de dos colores), un
+- **El tablero:** dos colores al azar de `PALETA` (nunca amarillo con naranjo juntos: se confundían; un dibujo puede traer los suyos en `colores`, y las cerezas salen siempre rojas con el tallo verde, desde v0.167.2, pedido del dueño), con los dibujos de `DIBUJOS2` (de dos colores), un
   borde eléctrico y tres pinceles («Pinta rojo», «Pinta verde», «No pinta»). El marcador dice
   «⚡ Modo difícil ×1.5». Un número cumplido ya no dice de qué color son las demás: solo que no son del
   suyo.
