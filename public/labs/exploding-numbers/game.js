@@ -29,18 +29,18 @@ const T = {
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
     ['💥', 'Toca dos números iguales (7 y 7) o que sumen 10 (4 y 6): estallan.'],
-    ['↔️', 'Tienen que estar juntos de lado, arriba o en diagonal, aunque haya estallados entre medio, o al final de una fila y al comienzo de la siguiente.'],
+    ['↔️', 'Tienen que estar en línea: de lado, arriba o en diagonal, o al final de una fila y al comienzo de la siguiente. Lo que ya estalló no estorba.'],
     ['➕', `Sin pares, ➕ copia abajo los que quedan. Cada ➕ que no uses suma ${PUNTOS_MAS}.`],
   ],
   empezar: '💥 Empezar', aJugar: '¡A estallar!',
-  quedan: ['Queda 1', 'Quedan {n}'],
-  mas: '➕ Agregar ({n})', masSeguro: 'Aún hay pares: toca de nuevo', masNada: '➕ Sin agregar',
+  quedan: ['Queda 1 número', 'Quedan {n} números'],
+  mas: '➕ Agregar ({n})', masSeguro: 'Hay pares: ¿seguro?', masNada: '➕ No quedan',
   ayuda: '💡 Ayuda (−{pts})', ayudaSeguro: 'Toca de nuevo (−{pts})', ayudaVer: '💡 Ver la ayuda', ayudaDice: '💡 Esos dos estallan juntos.',
   rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   no: {
     numeros: '{a} y {b} no son iguales ni suman 10.',
     tapado: 'Hay números entre medio: haz estallar esos primero.',
-    linea: 'No están juntos: de lado, arriba o en diagonal.',
+    linea: 'No están en línea: de lado, arriba o en diagonal.',
   },
   sinPares: '💥 No quedan pares: usa ➕.',
   fila: ['💥 ¡Fila!', '💥 ¡{n} filas!'],
@@ -359,7 +359,7 @@ function jugar() {
       // Todo explota
       SFX.win(); vibrate([40, 30, 40, 30, 120]);
       if (!QUIETO) {
-        const centro = el('span', { class: 'num', 'data-v': '5', style: 'position:fixed;left:50%;top:40%;width:60px;height:60px;opacity:0' });
+        const centro = el('span', { class: 'num', 'data-v': '5', style: 'position:fixed;left:calc(50% - 30px);top:calc(40% - 30px);width:60px;height:60px;opacity:0' });
         document.body.append(centro);
         for (let k = 0; k < 3; k++) setTimeout(() => estallar(centro, { fuerza: 2.4 - k * 0.5, color: ['#ffd23f', '#ff2e88', '#2ee6d6'][k] }), k * 160);
         setTimeout(() => centro.remove(), 1200);
