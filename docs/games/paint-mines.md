@@ -35,7 +35,7 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
   casilla se puede deducir: mira los números marcados.»). Las marcas se van con la jugada siguiente,
   y el botón, al terminar.
 - **Puntaje:** 100 − 15 por error − 10 por ayuda, nunca bajo 0. Con 70 o más, confeti.
-- **El final:** el dibujo, su nombre, un sello (¡Perfecto! sin errores, si no ¡Pintado!), el puntaje
+- **El final:** el dibujo, su nombre, un sello (¡Perfecto! sin errores ni ayudas, si no ¡Pintado!), el puntaje
   con su desglose, el tiempo, compartir, otro tablero, el de hoy (si se jugó con semilla) y, tras una
   línea, el formulario de comentarios (D-265, D-268).
 - **Compartir:** la tarjeta muestra dónde se equivocó (🟥 en una grilla de ⬛), no el dibujo, para no
