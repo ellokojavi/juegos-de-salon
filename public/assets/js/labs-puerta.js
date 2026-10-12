@@ -23,6 +23,7 @@
     'MI': 'f01eea37a3c990f60b252663ada208c1d8c83cb858d891b35bf3dee78a3e877d',
     'Chanicua': '441119bfd83362159a827adaabe0d71a43ec146fca8cb02109521fa624f8b874',
     'Pepembau': '5468c6279bf6e74a99b2edc3d4bce3fcb7bbfd3508dcc4442aaa21f33bbf9165',
+    'loco_Cris': '8ec321a014d83c5c51f3b2cd20feef15356712b908d05cd843cd66cc3b1a7700',
   };
   var GUARDADA = 'juegos-de-salon:labs-llave';
   var h = document.documentElement;
