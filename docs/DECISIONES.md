@@ -5062,7 +5062,8 @@ reproducir ni verificar fuera del celular); sumarlo a Tango en el mismo PR (qued
 **Decisión:** La puerta del laboratorio acepta una lista de llaves, una por persona, en vez de una
 sola: `HUELLAS` en `labs-puerta.js`, con una línea `'etiqueta': 'huella'` por cada una. Se dan y se
 quitan con `node tools/agents/llave-labs.mjs nueva <etiqueta> | quitar <etiqueta> | listar`: `nueva`
-crea una llave al azar, agrega su huella SHA-256 y muestra el link (`/labs/?key=…`) una sola vez;
+crea una llave al azar que empieza con la etiqueta (`ratoncito-…`, pedido del dueño: que cada uno
+reconozca su link), agrega su huella SHA-256 y muestra el link (`/labs/?key=…`) una sola vez;
 la llave no se guarda en ningún lado. La primera, además de la del dueño, es la de `MI`.
 **Por qué:** pedido del dueño, para darle acceso a otra persona con una URL única que ella guarde.
 Con una llave compartida, sacar a una persona obligaba a cambiarles la llave a todas; con una por

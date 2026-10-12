@@ -33,6 +33,8 @@ assert.throws(() => quitar(FUENTE, 'dueño'), /última llave/);
 const k = llaveNueva();
 assert.match(k, /^[a-z2-9]{20}$/);
 assert.notEqual(k, llaveNueva());
+assert.match(llaveNueva('ratoncito'), /^ratoncito-[a-z2-9]{20}$/, 'la llave empieza con la etiqueta');
+assert.match(llaveNueva('Dueño Mayor'), /^dueno_mayor-[a-z2-9]{20}$/, 'sin tildes, mayúsculas ni espacios en el link');
 
 // La puerta de verdad: su bloque se lee, con huellas distintas y etiquetas únicas
 const real = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../../public/assets/js/labs-puerta.js'), 'utf8');
