@@ -1,4 +1,4 @@
-# 🚇 Rutas (prototipo del laboratorio, en Proyectos activos)
+# 🚇 Rutas rotas (prototipo del laboratorio, en Proyectos activos)
 
 Nueve piezas de un plano de metro en 3×3 (D-293). Una jugada gira 180° cualquier rectángulo del
 tablero; se gana uniendo todas las líneas, y el desafío es hacerlo pronto y en el mínimo de giros, en cinco
@@ -12,6 +12,8 @@ portada y en el laboratorio.
   D-281, D-284). Id `rutas` en la señal de uso.
 - **Para quién:** uno solo. Solo en español (es un prototipo).
 - **Estado:** proyecto activo desde v0.164.0, para probarlo con amigos.
+- **Nombre:** se llamó *Rutas* hasta v0.167.3, cuando el dueño lo cambió a **Rutas rotas** (las líneas
+  parten cortadas y hay que unirlas, D-293). La carpeta (`/labs/routes/`) y el id `rutas` no cambiaron.
 
 ## Portada
 
