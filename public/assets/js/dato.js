@@ -27,11 +27,14 @@ export function bloqueDato(el, texto, { pausa = 0 } = {}) {
 /**
  * La franja del acierto, al principio de `fila` (la del botón de colocar, pegada abajo). No tapa
  * la línea ni la mano; un toque la cierra y repintar la fila no la borra (ver `conservarFranja`).
+ * `de` es el hito del que habla ("Violeta Parra graba Gracias a la vida"): cuando la franja
+ * aparece, el veredicto con la carta ya se cerró, y un dato sin sujeto no dice de quién es (U-1).
  */
-export function franjaDato(fila, el, texto, ms = FRANJA_MS) {
+export function franjaDato(fila, el, texto, { de = '', ms = FRANJA_MS } = {}) {
   fila.querySelector('.dato-franja')?.remove();
   if (!texto) return;
-  const f = el('button', { type: 'button', class: 'dato dato-franja', onClick: () => f.remove() }, `💡 ${texto}`);
+  const f = el('button', { type: 'button', class: 'dato dato-franja', onClick: () => f.remove() },
+    el('span', {}, '💡 ', de ? el('b', {}, `${de.replace(/[.!?]$/, '')}.`) : null, de ? ' ' : null, texto));
   fila.prepend(f);
   setTimeout(() => { f.classList.add('sale'); setTimeout(() => f.remove(), 400); }, ms);
 }
