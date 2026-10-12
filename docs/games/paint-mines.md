@@ -11,7 +11,7 @@ y lo dice en la portada y en el laboratorio.
   persona, D-281, D-284). Id `pintaminas` en la señal de uso.
 - **Para quién:** uno solo. Solo en español (es un prototipo).
 - **Estado:** proyecto activo desde v0.161.0 (los pinceles «Pinta» y «No pinta» desde v0.161.1, el
-  modo difícil desde v0.162.0), para probarlo con amigos. Si gusta, la idea es que
+  modo difícil desde v0.162.0, la ayuda 💡 desde v0.163.0), para probarlo con amigos. Si gusta, la idea es que
   entre a La Copa.
 
 ## Portada
@@ -31,7 +31,9 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
 - **Al terminar:** los números se van, las sin pintar se apagan, las pintadas brillan y se dice qué era
   («🐟 ¡Era un pez!»).
 - **💡 Ayuda (−10)** (D-292): bajo los pinceles. Marca, latiendo en amarillo, una casilla que se
-  puede deducir con lo que se ve, y los números que lo explican; no dice de qué color es.
+  puede deducir con lo que se ve, y los números que lo explican; no dice de qué color es («💡 Esta
+  casilla se puede deducir: mira los números marcados.»). Las marcas se van con la jugada siguiente,
+  y el botón, al terminar.
 - **Puntaje:** 100 − 15 por error − 10 por ayuda, nunca bajo 0. Con 70 o más, confeti.
 - **El final:** el dibujo, su nombre, un sello (¡Perfecto! sin errores, si no ¡Pintado!), el puntaje
   con su desglose, el tiempo, compartir, otro tablero, el de hoy (si se jugó con semilla) y, tras una
@@ -43,14 +45,14 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
 ## Modo difícil (D-291)
 
 - **El interruptor:** en la portada, antes de Empezar, una palanca sobre una placa de metal («⚡ Modo
-  difícil · Dos colores · puntaje ×1.5»). Bajo el título dice «APAGADO» o «ENCENDIDO». Al subirla, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto (D-292), y la placa se electrifica: titila en celeste y
+  difícil · Dos colores · puntaje ×1.5»). Bajo el título dice «APAGADO» o «ENCENDIDO». Al subirla, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto (D-292; con movimiento reducido queda encendido y quieto), y la placa se electrifica: titila en celeste y
   amarillo, saltan chispas ⚡, suena y vibra. Es un `role="switch"`; el celular recuerda su posición
   (`juegos-de-salon:pintaminas:dificil`) y el link lo trae con `?colors=2`.
 - **El tablero:** dos colores al azar de `PALETA` (nunca amarillo con naranjo juntos: se confundían), con los dibujos de `DIBUJOS2` (de dos colores), un
   borde eléctrico y tres pinceles («Pinta rojo», «Pinta verde», «No pinta»). El marcador dice
   «⚡ Modo difícil ×1.5». Un número cumplido ya no dice de qué color son las demás: solo que no son del
   suyo.
-- **El puntaje:** (100 − 15 por error) × 1,5, hasta 150. El desglose lo dice («⚡ Modo difícil: ×1.5.»),
+- **El puntaje:** (100 − 15 por error − 10 por ayuda) × 1,5, hasta 150. El desglose lo dice («⚡ Modo difícil: ×1.5.»),
   el confeti sale desde el 70 % del máximo y «Otro tablero» sigue en el modo difícil.
 
 ## Cómo funciona
@@ -67,12 +69,16 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
   `generar(semilla, { colores })` elige un dibujo (de `DIBUJOS2` con `colores: 2`; quizás espejado) y sus
   colores al azar de `PALETA`, agrega dadas al azar hasta que `resolver` lo
   termina y saca las que sobran (en promedio quedan 1 o 2: el resto se deduce en cadena).
-  `estado(t, jugadas)` reconstruye la partida desde las jugadas `{ i, color }`.
-  `puntaje(e, { colores })` aplica `PREMIO_DIFICIL` (×1.5) con dos colores, y `maximo(colores)` da
+  `ayuda(sol, conocidas)` usa la misma deducción y se detiene en la primera casilla que sabe: devuelve
+  `{ celda, por }` (la casilla y las conocidas cuyas reglas la dedujeron) o `null` (D-292).
+  `estado(t, jugadas)` reconstruye la partida desde las jugadas `{ i, color }` y cuenta las
+  `{ ayuda: true }` en `ayudas`. `puntaje(e, { colores })` resta `RESTA_ERROR` (15) por error y
+  `RESTA_AYUDA` (10) por ayuda, y aplica `PREMIO_DIFICIL` (×1.5) con dos colores, y `maximo(colores)` da
   100 o 150.
 - `engine.test.mjs` revisa los dibujos (irregulares), la paleta y 300 tableros de cada modo (se
-  resuelven sin adivinar, sin dadas de sobra, y el estado y el puntaje); `tools/e2e/paint-mines/lab.mjs`,
-  la partida entera, el interruptor y una partida difícil sin errores (150/150).
+  resuelven sin adivinar, sin dadas de sobra, y el estado y el puntaje) y tableros de uno y dos colores
+  jugados solo con ayudas hasta el final; `tools/e2e/paint-mines/lab.mjs`, la partida entera (con un
+  error y una ayuda: 75/100), el interruptor y una partida difícil sin errores (150/150).
 
 ## Excepciones a los cánones
 
