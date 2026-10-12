@@ -95,8 +95,11 @@ function crearTablero(t, { interactivo = false, alGirar } = {}) {
   const piezas = t.piezas.map((p, i) => el('div', { class: 'pieza', 'data-p': i }, dibujoPieza(p)));
   caja.append(...piezas, marco);
   const poner = (estado, animar = true) => {
-    estado.forEach(({ p }, lugar) => {
+    estado.forEach(({ p, v }, lugar) => {
       const n = piezas[p];
+      // Lo que se ve es lo que dice el motor: una pieza dada vuelta (v) se dibuja girada media vuelta,
+      // también al empezar (la revuelta deja piezas dadas vuelta), al reiniciar y en el tablero del final
+      if ((angulo[p] / 180) % 2 !== v) angulo[p] += 180;
       n.classList.toggle('sin-animar', !animar);
       n.style.left = `${(lugar % LADO) * 100 / LADO}%`;
       n.style.top = `${Math.floor(lugar / LADO) * 100 / LADO}%`;
