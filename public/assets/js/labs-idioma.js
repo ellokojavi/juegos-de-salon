@@ -37,7 +37,6 @@ const TEXTOS = {
     guardado: 'Gerade kein Netz: Dein Feedback ist auf dem Handy gespeichert und wird später automatisch gesendet.',
     error: 'Das hat nicht geklappt. Versuch es gleich nochmal.',
     cerrar: 'Schließen',
-    contexto: 'Das wird mitgeschickt',
   },
 };
 
@@ -79,7 +78,7 @@ export function iniciarLabs(idioma) {
   reenviarPendientes().catch(() => {});
 }
 
-/** Lo que se manda junto al comentario, a la vista de quien lo escribe. */
+/** Lo que se manda junto al comentario. No se muestra: es para el dueño, no para quien escribe. */
 function contexto(idioma) {
   const pantalla = document.querySelector('.screen.active')?.id || null;
   const titulo = (document.querySelector('.screen.active h1, .screen.active h2, h1')?.textContent || '').trim().slice(0, 60);
@@ -113,7 +112,7 @@ export function abrirComentario({ T, contexto: ctx, enviar = undefined }) {
  * El formulario de comentarios, para ponerlo donde se quiera: en la capa del 🐞 o al final de un
  * juego del laboratorio (El caso, D-265). `T` trae sus textos (`titulo`, `lead`, `ph`, `nombre`,
  * `enviar`, `enviando`, `vacio`, `gracias`, `guardado`, `error`, `contexto` y, si se puede cerrar,
- * `cancelar` y `cerrar`); `contexto` va adjunto a la vista de quien escribe. Sin `alCerrar` no tiene
+ * `cancelar` y `cerrar`); `contexto` va adjunto, sin mostrarse. Sin `alCerrar` no tiene
  * botón para cerrar: queda en la página, y después de enviar dice gracias en el mismo lugar.
  * `enviar` lo reemplaza el modo de prueba de La Copa, que guarda en el celular y no en Firebase.
  */
@@ -128,8 +127,7 @@ export function formularioComentario({ T, contexto: ctx, alCerrar = null, enviar
   const caja = el('div', { class: 'panel stack comentario', 'aria-label': T.titulo },
     el('h2', { class: 'display display--sm' }, `🐞 ${T.titulo}`),
     el('p', { class: 'muted', style: 'margin:0' }, T.lead),
-    texto, nombre, err, enviar, cancelar,
-    el('details', {}, el('summary', { class: 'muted' }, T.contexto), el('pre', { class: 'labs-contexto' }, JSON.stringify(ctx, null, 1))));
+    texto, nombre, err, enviar, cancelar);
   enviar.addEventListener('click', async () => {
     const t = texto.value.trim();
     if (!t) { err.textContent = T.vacio; return; }

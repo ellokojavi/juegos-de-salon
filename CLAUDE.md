@@ -226,7 +226,7 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   de documentación y de usabilidad cuando hay algo que revisar (`procesos.mjs revisar` dice a quién)
   y revisa lo que entregan. Los encargos del dueño que ejecuta otro agente ("revisa la frescura del
   README") se le piden a él: decide quién, lo lanza, comprueba y responde. Atiende el feedback 🐞,
-  que `.github/workflows/feedback.yml` sube cada hora como issues `feedback` (`tools/agents/feedback.mjs`,
+  que `.github/workflows/feedback.yml` sube cada 15 minutos como issues `feedback` (`tools/agents/feedback.mjs`,
   con el nombre que puso el jugador y sin su navegador, D-279). Cierra lo que quedó abierto y
   convierte un error que se repite en un mecanismo (un test antes que una instrucción). En su
   ronda junta las entradas de `changelog/` en `CHANGELOG.md` (D-300) y borra las reservas de
