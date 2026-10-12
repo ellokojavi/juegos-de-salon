@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.158.2 — 2026-10-11
+- **🕵️ Agentes (laboratorio): un toque que dura de más ya no confunde.** Mantener apretada una
+  carta la marca 📌 sin destaparla, y si el toque duraba un poco más de la cuenta la carta quedaba
+  marcada en silencio y parecía elegida: la pista no avanzaba. Ahora el borde se va llenando mientras
+  se aprieta, y al marcar el juego dice «📌 Marcada, sin destapar. Tócala para destaparla.».
+
 ## 0.158.1 — 2026-10-11
 - **🕵️ Agentes (laboratorio): la cuenta 3, 2, 1 antes de jugar**, la misma de La Copa, que ahora
   vive en `assets/js/cuenta-regresiva.js` para que la usen también los juegos del laboratorio.
