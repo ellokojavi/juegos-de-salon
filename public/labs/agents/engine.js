@@ -22,7 +22,8 @@ const barajar = (xs, r) => { const a = xs.slice(); for (let i = a.length - 1; i 
 
 /**
  * El tablero de una semilla: `pistas` (la palabra y cuántas van con ella) y `cartas` en el orden de
- * la grilla, cada una `{ w, tipo: 'agente'|'neutral'|'asesino', p }` (`p`: la pista del agente).
+ * la grilla, cada una `{ w, tipo: 'agente'|'neutral'|'asesino', p }` (`p`: la pista del agente; el asesino
+ * lleva además `tienta`: la pista a la que se parece).
  * Ningún agente va también con otra de las pistas del tablero, el asesino se le parece a una pero
  * no va con ninguna, y las neutrales no tientan.
  */
@@ -47,7 +48,8 @@ export function generar(semilla) {
     const asesino = barajar([...casi].filter(w => !si.has(w) && !usadas.has(w)), r)[0];
     if (!asesino) continue;
     usadas.add(asesino);
-    cartas.push({ w: asesino, tipo: 'asesino', p: null });
+    // `tienta`: la pista a la que se parece, para explicar la trampa al final
+    cartas.push({ w: asesino, tipo: 'asesino', p: null, tienta: elegidas.findIndex(x => x.casi.includes(asesino)) });
     // Las neutrales: de otras pistas, sin parecido con estas
     const otras = PISTAS.filter(x => !elegidas.includes(x)).flatMap(x => x.si).filter(w => !si.has(w) && !casi.has(w) && !usadas.has(w));
     const neutrales = barajar([...new Set(otras)], r).slice(0, NEUTRALES);
