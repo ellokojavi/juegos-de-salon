@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<!-- La tarjeta de Agentes (laboratorio, D-286): 600×315 CSS, se fotografía al doble (1200×630) -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@700;900&display=swap">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: #150726; }
+  #t { width: 600px; height: 315px; transform-origin: 0 0; font-family: 'Nunito', sans-serif; color: #fff; position: relative;
+    background: radial-gradient(circle at 78% 30%, rgba(255, 210, 63, 0.18), transparent 45%),
+      radial-gradient(circle at 15% 90%, rgba(46, 230, 214, 0.16), transparent 40%),
+      linear-gradient(160deg, #150726, #2a0a4a 55%, #0b1e3f); }
+  /* Puntitos de fondo, como los de la app */
+  .p { position: absolute; border-radius: 50%; opacity: 0.35; }
+  .izq { position: absolute; left: 30px; top: 34px; width: 300px; }
+  .lab { display: inline-block; font: 900 10px 'Nunito'; letter-spacing: 0.14em; text-transform: uppercase; color: #2ee6d6;
+    border: 1.5px solid rgba(46, 230, 214, 0.6); border-radius: 999px; padding: 3px 10px; }
+  .titulo { position: relative; display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .titulo .ico { font-size: 44px; transform: rotate(-6deg); }
+  .titulo h1 { font: 72px/0.95 'Bangers'; letter-spacing: 0.03em; padding-right: 4px;
+    background: linear-gradient(90deg, #ffd23f, #ff6fa8, #2ee6d6, #9dff3a); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 3px 0 rgba(0,0,0,0.35)); }
+  .sello { position: absolute; right: -14px; bottom: -6px; font: 15px 'Bangers'; letter-spacing: 0.14em; color: #ff4d5e;
+    border: 2.5px solid #ff4d5e; border-radius: 6px; padding: 2px 8px; transform: rotate(-9deg); background: rgba(22, 8, 48, 0.82); }
+  .lema { margin-top: 16px; font: 900 21px/1.2 'Nunito'; }
+  .lema b { color: #ffd23f; }
+  .sub { margin-top: 8px; font: 700 13px/1.35 'Nunito'; color: rgba(255,255,255,0.78); }
+  .pie { position: absolute; left: 30px; bottom: 22px; font: 700 11px 'Nunito'; color: rgba(255,255,255,0.6); }
+  .pie b { color: #fff; }
+  .der { position: absolute; right: 30px; top: 40px; width: 228px; }
+  .pista { text-align: center; font: 30px 'Bangers'; letter-spacing: 0.08em; border: 2.5px solid rgba(255, 210, 63, 0.8); border-radius: 12px;
+    background: rgba(255, 210, 63, 0.14); padding: 4px 0 2px; }
+  .pista b { color: #ffd23f; font-weight: normal; }
+  .mesa { margin-top: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; position: relative; }
+  .c { height: 50px; border-radius: 10px; display: grid; place-items: center; font: 900 12.5px 'Nunito'; letter-spacing: 0.02em;
+    background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.18); position: relative; }
+  .c.ag { background: rgba(157, 255, 58, 0.34); border-color: #9dff3a; color: #f2ffe0; }
+  .c.as { background: #0c0414; border-color: #ff3d3d; color: #ff8a8a; }
+  .c.ma::after { content: '📌'; position: absolute; top: -9px; right: -6px; font-size: 14px; }
+  .lupa { position: absolute; font-size: 34px; left: 150px; top: 22px; transform: rotate(-12deg); filter: drop-shadow(0 3px 4px rgba(0,0,0,0.5)); }
+  .ojo { margin-top: 9px; text-align: center; font: 900 11.5px 'Nunito'; color: #ff8a8a; }
+</style>
+</head>
+<body>
+<div id="t">
+  <span class="p" style="left:350px;top:22px;width:7px;height:7px;background:#ffd23f"></span>
+  <span class="p" style="left:300px;top:270px;width:10px;height:10px;background:#2ee6d6"></span>
+  <span class="p" style="left:560px;top:290px;width:6px;height:6px;background:#ff6fa8"></span>
+  <span class="p" style="left:20px;top:150px;width:5px;height:5px;background:#9dff3a"></span>
+  <div class="izq">
+    <span class="lab">🧪 Nuevo · en prueba</span>
+    <div class="titulo"><span class="ico">🕵️</span><h1>Agentes</h1><span class="sello">Clasificado</span></div>
+    <p class="lema">Una pista. 12 palabras.<br><b>Encuentra a tus agentes.</b></p>
+    <p class="sub">Y cuidado con el asesino: se parece a la pista. Un tablero nuevo cada día.</p>
+  </div>
+  <p class="pie"><b>juegosdesalon.cl</b> · Inspirado en Codenames</p>
+  <div class="der">
+    <div class="pista">MAR · <b>3</b></div>
+    <div class="mesa">
+      <span class="c ag">OLA</span><span class="c">LUNA</span><span class="c ma">RÍO</span>
+      <span class="c ag">BARCO</span><span class="c">NUBE</span><span class="c ag">ISLA</span>
+      <span class="lupa">🔍</span>
+    </div>
+    <p class="ojo">¿RÍO? 💀 Ojo, que puede ser el asesino…</p>
+  </div>
+</div>
+<!-- Escala al ancho de la ventana: así se fotografía igual en cualquier Chrome -->
+<script>document.getElementById('t').style.transform = `scale(${innerWidth / 600})`;</script>
+</body>
+</html>

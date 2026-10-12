@@ -9,7 +9,7 @@
 - **🕵️ Agentes (laboratorio):** el resultado ya no muestra la grilla de emojis, que repetía el
   tablero de abajo; va solo en el mensaje para compartir.
 - **🕵️ Agentes: la trampa, explicada.** Al final dice con qué pista tentaba el asesino («💀 Caíste
-  con RÍO: tentaba con MAR, pero no era de los tuyos.»), también si lo esquivaste, y la carta del
+  con RÍO: parecía de MAR, pero no era de los tuyos.»), también si lo esquivaste, y la carta del
   asesino lo dice debajo.
 
 ## 0.157.1 — 2026-10-11
