@@ -2,7 +2,8 @@
 # pruebas—: docs/, tools/, marketing/ y lo demás del repo no son parte del sitio. La versión se
 # estampa aquí, en la copia que se publica (D-205).
 # Antes corren las pruebas (pruebas.yml) y las de punta a punta (e2e.yml, D-302): con una en rojo,
-# el sitio publicado no cambia. La versión es la del CHANGELOG más las entradas de changelog/ que
+# el sitio publicado no cambia. La punta a punta no se repite si el árbol que se publica ya la pasó
+# en un PR, o si solo cambia lo que no llega al navegador sobre un árbol que la pasó (D-308). La versión es la del CHANGELOG más las entradas de changelog/ que
 # todavía no se juntaron, en el orden en que llegaron a main (D-300).
 #
 # Requiere, una sola vez, Settings → Pages → Source: "GitHub Actions" (no "Deploy from a branch").
@@ -30,9 +31,42 @@ jobs:
   pruebas:
     uses: ./.github/workflows/pruebas.yml
 
-  # Las de punta a punta, todas, sobre lo que se va a publicar (D-302): antes corrían aparte y el
-  # sitio salía aunque fallaran. Si fallan dos veces, su job `avisar` abre el issue "main en rojo".
+  # ¿Este árbol ya pasó la punta a punta? (D-308) Busca la marca que deja e2e.yml al pasar. Si
+  # algo falla al preguntar, dice que no, y la punta a punta corre entera.
+  ya-probado:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      probado: ${{ steps.ver.outputs.probado }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - id: ver
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/e2e/ya-probado.mjs
+      # Heredada del padre: deja su propia marca, para que el commit siguiente también pueda heredar
+      - if: steps.ver.outputs.heredado == 'true'
+        run: echo "heredado" > "$RUNNER_TEMP/marca"
+      - if: steps.ver.outputs.heredado == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-arbol-${{ steps.ver.outputs.arbol }}
+          path: ${{ runner.temp }}/marca
+          retention-days: 7
+
+  # Las de punta a punta, todas, sobre lo que se va a publicar (D-302), salvo que ya hayan pasado
+  # sobre este mismo árbol (D-308). Si fallan dos veces, su job `avisar` abre el issue "main en rojo".
   e2e:
+    needs: ya-probado
+    if: ${{ !cancelled() && needs.ya-probado.outputs.probado != 'true' }}
     uses: ./.github/workflows/e2e.yml
     permissions:
       contents: read
@@ -44,7 +78,9 @@ jobs:
   # si Firebase las rechaza, el sitio no se publica. Necesita el secreto FIREBASE_ADMIN_JSON (la
   # llave de la cuenta de servicio); sin él, avisa y sigue, y las reglas se publican a mano.
   reglas:
-    needs: [pruebas, e2e]
+    needs: [pruebas, ya-probado, e2e]
+    # Con las pruebas en verde y la punta a punta en verde, o saltada porque ya estaba probada
+    if: ${{ !cancelled() && needs.pruebas.result == 'success' && (needs.e2e.result == 'success' || (needs.e2e.result == 'skipped' && needs.ya-probado.outputs.probado == 'true')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -65,7 +101,8 @@ jobs:
           FIREBASE_LLAVE="$RUNNER_TEMP/llave.json" node tools/firebase/reglas.mjs publicar
 
   publicar:
-    needs: [pruebas, e2e, reglas]
+    needs: [pruebas, ya-probado, e2e, reglas]
+    if: ${{ !cancelled() && needs.reglas.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:

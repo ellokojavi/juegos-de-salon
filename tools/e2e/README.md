@@ -34,41 +34,60 @@ SITIO=http://localhost:8791 node tools/e2e/hangman/online.mjs /tmp/e2e
 del guion, por ejemplo): el primer Chrome del guion usa `PUERTO_CDP`, el segundo el siguiente, y
 así. Es opcional; sin él no hay nada que coordinar.
 
-## En GitHub (D-193)
+## En GitHub (D-193, D-307, D-308)
 
 `ci.mjs` corre los guiones que no tocan el Firebase de producción, y GitHub lo usa en cada PR
-(`.github/workflows/e2e.yml`, un job por guion). Un guion falla si sale con error, si imprime
-una línea con ✗ o ❌, o si pasa los 15 minutos (ahí `ci.mjs` le manda SIGTERM, para que cierre su
-Chrome, y SIGKILL si a los 5 s sigue vivo). Los que solo imprimen lo que ven igual caen si
-algo se rompe del todo. Los `online.mjs`, los `chat.mjs` y los de la lista `TAMBIEN_FIREBASE` de
-`ci.mjs` abren salas de verdad y siguen a mano. Los de `OBSOLETOS` prueban algo que ya no
-existe y esperan que alguien los reescriba.
+(`.github/workflows/e2e.yml`). Un guion falla si sale con error, si imprime una línea con ✗ o ❌, o
+si pasa los 15 minutos (ahí `ci.mjs` le manda SIGTERM, para que cierre su Chrome, y SIGKILL si a los
+5 s sigue vivo). Los que solo imprimen lo que ven igual caen si algo se rompe del todo. Los
+`online.mjs`, los `chat.mjs` y los de la lista `TAMBIEN_FIREBASE` de `ci.mjs` abren salas de verdad
+y siguen a mano. Los de `OBSOLETOS` prueban algo que ya no existe y esperan que alguien los reescriba.
 
-El check entero tarda lo que su job más lento, así que un guion que pase de unos 4 minutos se
-reparte en partes (`PARTES` en `ci.mjs`, D-204): `cup/torneo.mjs` en `copa`, `laboratorio` y `demos`, y
-`cup-games/idiomas.mjs` en un job por juego. Cada parte le llega al guion como `--parte <nombre>`;
-sin parte, el guion corre entero (así lo corren `readme.py capturas` y quien lo prueba a mano).
+**En grupos** (D-307): [`grupos.mjs`](grupos.mjs) reparte los guiones en grupos parejos según lo
+que tardó cada uno de verdad ([`duraciones.json`](duraciones.json), en segundos), para que ninguno
+pase de ~4,5 min y todos quepan de una en los 20 runners que GitHub da a la vez. Cada grupo es un
+job que corre sus guiones uno tras otro; el resumen de la corrida trae la tabla con cada guion, su
+tiempo y su resultado, y el artefacto `capturas-g<n>` trae, en una carpeta por guion, las capturas de
+lo que falló o pasó al segundo intento. Un guion nuevo entra solo, con 90 s supuestos hasta que se
+mida: cada job deja un aviso "Duraciones" con lo que tardó cada guion, y
+`node tools/e2e/grupos.mjs medir` lo pasa a `duraciones.json` (la ronda de procesos, cuando los
+grupos se desparejan). Un guion que pase de unos 4 minutos se reparte en partes (`PARTES` en
+`ci.mjs`, D-204): `cup/torneo.mjs` en `copa`, `laboratorio` y `demos`, y `cup-games/idiomas.mjs` en
+una por juego. Cada parte le llega al guion como `--parte <nombre>`; sin parte, el guion corre entero
+(así lo corren `readme.py capturas` y quien lo prueba a mano).
 
 Un PR que no toca nada del navegador (`docs/`, `marketing/`, `.claude/`, los `.md` fuera de `public/`
 y de esta carpeta, `tools/agents/`, `tools/firebase/`, `firebase/` y los workflows que no son
-`e2e.yml`) no corre ningún guion: `ci.mjs --lista --cambios <archivo>` sale vacía, y
+`e2e.yml`) no corre ningún guion: `ci.mjs --grupos --cambios <archivo>` sale vacía, y
 [`cambios.mjs`](cambios.mjs) decide qué cuenta (D-205, D-299; lo prueba
 `node tools/e2e/cambios.test.mjs`).
 
-Un guion que falla se repite **una vez** en el mismo job (D-299). Si pasa al segundo intento, el
-job queda en verde con un aviso ⚠️ **Intermitente** que lo nombra, y las capturas del primer intento
-quedan como artefacto: hay que mirar por qué falla a veces, no darlo por bueno. Si falla dos
-veces, el job sale en rojo. Si las pruebas salen
-en rojo en `main` (dentro de `publicar.yml`, que las corre antes de publicar y no publica si fallan,
-D-302, o en una corrida a mano),
-el job `avisar` abre un issue "main en rojo: Punta a punta", y cuando `main` vuelve a verde el job
-`cerrar-aviso` lo cierra con el link a la corrida (D-273).
+Un guion que falla se repite **una vez**, en el acto, dentro de su grupo (`CI_REINTENTOS=1`, D-299).
+Si pasa al segundo intento, queda en verde con un aviso ⚠️ **Intermitente** que lo nombra, y las
+capturas del primer intento quedan en el artefacto: hay que mirar por qué falla a veces, no darlo
+por bueno. Si falla dos veces, el grupo sale en rojo, con un aviso que nombra el guion.
+
+**Al publicar** (D-302, D-308): cada corrida que pasa con guiones deja una marca, el artefacto
+`e2e-arbol-<árbol>`, con el árbol que probó (en un PR, el merge de prueba con main). `publicar.yml`
+corre [`ya-probado.mjs`](ya-probado.mjs): si el árbol que va a publicar ya tiene marca, o solo
+cambia lo que no llega al navegador sobre un padre que la tiene, no repite la punta a punta. Si no,
+la corre entera, y si sale en rojo no publica y el job `avisar` abre un issue "main en rojo: Punta a
+punta"; cuando `main` vuelve a verde, `cerrar-aviso` lo cierra con el link a la corrida (D-273).
+
+**Esperar a una condición, no una pausa fija** (D-307): `cdp.mjs` tiene `abrir(url, tope)` (navega
+y espera el `load` y que la página se asiente), `asentar(tope)` (sin cambios en el DOM por 150 ms y
+las animaciones finitas terminadas) y `hasta(expr, tope)` (hasta que la expresión dé verdadero).
+El tope es la pausa fija de antes: nunca se espera más, y casi siempre mucho menos. Un guion nuevo
+usa estas en vez de `sleep` y de `go(url, ms)`; `sleep` queda para lo que de verdad depende del
+reloj (dejar correr un temporizador, un doble toque).
 
 ```bash
 node tools/e2e/ci.mjs              # todos los de CI, uno tras otro, con resumen
-node tools/e2e/ci.mjs --lista      # cuáles son (con sus partes)
+node tools/e2e/ci.mjs --grupos     # los grupos que correría GitHub (JSON)
+node tools/e2e/grupos.mjs ver      # los mismos, con su tiempo estimado
 node tools/e2e/ci.mjs cup/torneo.mjs   # solo ese
 node tools/e2e/ci.mjs cup/torneo.mjs:demos   # solo esa parte
+CI_REINTENTOS=1 node tools/e2e/ci.mjs a.mjs b.mjs   # como en GitHub: con segundo intento
 ```
 
 `mirar.mjs` no es una prueba: abre una pantalla suelta para revisarla de a una, sin jugar la
