@@ -38,7 +38,8 @@
 .reloj-rt { margin: 0; font: 800 1.05rem var(--font-num); font-variant-numeric: tabular-nums; }
 .reloj-rt.poco { color: #ff8a8a; animation: rt-pulso 1s ease-in-out infinite; }
 @keyframes rt-pulso { 50% { opacity: 0.55; } }
-.acciones-rt { display: grid; justify-items: center; gap: 2px; }
+/* Reiniciar y Rendirse en una fila: así los dos se ven sin bajar en un celular chico (#360) */
+.acciones-rt { display: flex; justify-content: center; align-items: center; gap: 18px; flex-wrap: wrap; }
 .rendirse { font-size: 0.9rem; }
 .rendirse.armado { color: #ff8a8a; text-decoration: none; font-weight: 800; }
 .sello-rt.mal { color: #ff8a8a; }
