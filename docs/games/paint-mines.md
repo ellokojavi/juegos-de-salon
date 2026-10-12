@@ -31,8 +31,8 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
 - **Al terminar:** los números se van, las sin pintar se apagan, las pintadas brillan y se dice qué era
   («🐟 ¡Era un pez!»).
 - **💡 Ayuda (−10)** (D-292): bajo los pinceles. Marca, latiendo en amarillo, una casilla que se
-  puede deducir con lo que se ve, y los números que lo explican; no dice de qué color es («💡 Esta
-  casilla se puede deducir: mira los números marcados.»). Las marcas se van con la jugada siguiente,
+  puede deducir con lo que se ve, y los números que lo explican; no dice de qué color es («💡 La casilla
+  que late se deduce de los números marcados.»). Las marcas se van con la jugada siguiente,
   y el botón, al terminar.
 - **Puntaje:** 100 − 15 por error − 10 por ayuda, nunca bajo 0. Con 70 o más, confeti.
 - **El final:** el dibujo, su nombre, un sello (¡Perfecto! sin errores ni ayudas, si no ¡Pintado!), el puntaje
