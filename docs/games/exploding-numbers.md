@@ -18,7 +18,7 @@ laboratorio.
 
 El título con un 💥 que late, el lema («Haz estallar los números de a pares hasta dejar el tablero
 limpio.»), el crédito y un tablero chico de 2 filas que se juega solo, par por par en el orden del
-motor, hasta «💥 ¡Limpio!»; después sigue con otro (con movimiento reducido queda quieto). Después
+motor, hasta «💥 ¡Limpio!», grande y al centro del espacio del tablero, que conserva su alto de 2 filas (pedido del dueño); después sigue con otro (con movimiento reducido queda quieto). Después
 los tres pasos, «📅 El tablero de hoy es el mismo para todos.» (sin `?seed=`) y «💥 Empezar», que
 pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`, «¡A estallar!»). Los pasos:
 
