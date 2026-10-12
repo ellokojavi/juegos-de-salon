@@ -92,7 +92,9 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
 3. **No se fusiona sin ✅ en GitHub en `pruebas` y en `punta-a-punta`** (D-143,
    D-193, D-213, D-216), aunque ya hayan pasado aquí. `main` exige los dos: `punta-a-punta` es el
    job que resume el workflow `Punta a punta` (un job por guion) y sale en rojo si alguno falla.
-   En un PR que solo trae documentación no corre ningún guion y sale en verde igual.
+   En un PR que no toca nada del navegador (documentación, `tools/agents/`, workflows, reglas)
+   no corre ningún guion y sale en verde igual; un guion que falla se repite una vez y, si pasa,
+   deja un aviso "Intermitente" (D-299).
 4. **Auto-merge por defecto** (D-216, pedido del dueño): cuando el PR está listo para fusionarse
    —los agentes terminaron y sus arreglos están subidos, y la entrada del `CHANGELOG.md` ya está
    en la rama—, se activa el auto-merge de GitHub en vez de esperar el ✅ a mano:
