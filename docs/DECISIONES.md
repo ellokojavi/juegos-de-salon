@@ -5279,11 +5279,12 @@ termina una partida.
 solo tablero.
 **Decisión:** cada partida son **5 etapas** (`ETAPAS`): 3 líneas y mínimo 2; 4 líneas y mínimo 3;
 4 y 4; 5 y 4; 5 y 5. El mínimo de cada etapa es **exacto**: el generador rehace el tablero hasta que
-dé justo el que pide. Arriba, «Etapa n de 5», cinco puntos (verde la hecha, dorada la hecha en el
-mínimo, blanca la actual) y «4 líneas · mínimo 3 giros». Al unir las líneas de una etapa se dice
+dé justo el que pide. Arriba, «Etapa n de 5», cinco puntos (verde la hecha en el mínimo, amarilla la
+hecha con giros de más, blanca la actual, como la tarjeta para compartir); el mínimo lo dice el
+marcador de abajo («Giros: n · Mínimo: m»). Al unir las líneas de una etapa se dice
 «🚇 ¡Etapa 2 lista!» (o «…en el mínimo!») y llega la siguiente. Cada etapa se puntúa como antes (100
 en el mínimo, −15 por giro de más, nunca menos de 10) y la partida vale **el promedio**. El resultado
-muestra cada etapa («Etapa 3: 5 giros (mínimo 4) · 85») y la tarjeta para compartir, una línea por
+muestra cada etapa («🟨 Etapa 3: 5 giros (mínimo 4) · 85/100») y la tarjeta para compartir, una línea por
 etapa (🟩 en el mínimo, 🟨 si no) sin delatar los tableros. Cada etapa sale de la semilla de la
 partida con su número (`dia:<fecha>:etapa-3`). Además, de la revisión de usabilidad: el lema ya no
 repite el paso del mínimo, Reiniciar se apaga sin giros y se va al terminar la etapa, el marco que
