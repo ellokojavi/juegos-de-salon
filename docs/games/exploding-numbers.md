@@ -23,8 +23,8 @@ los tres pasos, «📅 El tablero de hoy es el mismo para todos.» (sin `?seed=`
 pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`, «¡A estallar!»). Los pasos:
 
 1. 💥 Toca dos números iguales (7 y 7) o que sumen 10 (4 y 6): estallan.
-2. ↔️ Tienen que estar juntos de lado, arriba o en diagonal, aunque haya estallados entre medio, o
-   al final de una fila y al comienzo de la siguiente.
+2. ↔️ Tienen que estar en línea: de lado, arriba o en diagonal, o al final de una fila y al comienzo
+   de la siguiente. Lo que ya estalló no estorba.
 3. ➕ Sin pares, ➕ copia abajo los que quedan. Cada ➕ que no uses suma 10.
 
 La tarjeta del laboratorio: «Inspirado en Number Match: haz estallar de a pares los números iguales o
@@ -34,21 +34,21 @@ copia abajo los que quedan.».
 ## Cómo se juega
 
 - **Tablero:** 36 números en 4 filas de 9. Cada número lleva en el borde el color de su familia (1 y
-  9, 2 y 8, 3 y 7, 4 y 6, y el 5). Arriba, «Quedan n».
+  9, 2 y 8, 3 y 7, 4 y 6, y el 5). Arriba, «Quedan n números».
 - **Elegir:** se toca un número (queda marcado) y después otro. Tocar el mismo lo suelta.
 - **Juntos en línea:** de lado, de arriba abajo o en diagonal, con solo casillas estalladas entre
   medio (lo estallado no estorba), o en el orden de lectura: el último de una fila con el primero de
   la siguiente, también saltando estallados.
 - **Si no se unen:** los dos tiemblan, dice por qué y queda elegido el segundo: «3 y 4 no son iguales
-  ni suman 10.», «Hay números entre medio: haz estallar esos primero.» o «No están juntos: de lado,
+  ni suman 10.», «Hay números entre medio: haz estallar esos primero.» o «No están en línea: de lado,
   arriba o en diagonal.».
 - **Si se unen:** estallan con una onda, un destello, un 💥 de historieta, chispas de su color y
   pedazos del número, y el tablero tiembla.
 - **Una fila estallada entera se va:** explota de punta a punta y se aplasta («💥 ¡Fila!», o
   «💥 ¡2 filas!»); las de abajo suben.
 - **➕ Agregar (n):** copia al final, en orden, los números que quedan; 3 veces por partida, y sin
-  ninguno dice «➕ Sin agregar». Con pares a la vista pide un segundo toque («Aún hay pares: toca de
-  nuevo»); sin pares, el botón llama la atención y el aviso dice «💥 No quedan pares: usa ➕.».
+  ninguno dice «➕ No quedan». Con pares a la vista pide un segundo toque («Hay pares: ¿seguro?», 3
+  segundos); sin pares, el botón llama la atención y el aviso dice «💥 No quedan pares: usa ➕.».
 - **💡 Ayuda (−10):** pide un segundo toque («Toca de nuevo (−10)», 3 segundos) y marca el par más
   cercano que se puede hacer estallar («💡 Esos dos estallan juntos.»); mientras ese par siga en el
   tablero, «💡 Ver la ayuda» lo vuelve a marcar sin cobrar.
@@ -61,7 +61,7 @@ copia abajo los que quedan.».
   («💥 Tablero limpio: 70.», «➕ Sin usar: 2 × 10 = 20.», o «🧹 Estallaste el 40 %: 28 de 70.», y
   «💡 1 ayuda: −10.»), el tiempo, compartir, otro tablero, el de hoy (si se jugó con semilla), volver
   al laboratorio y, tras una línea, el formulario de comentarios (D-265, D-268).
-- **Compartir:** la tarjeta dice si quedó limpio («✨ Tablero limpio» o «🧹 40 % tachado»), los ➕
+- **Compartir:** la tarjeta dice si quedó limpio («✨ Tablero limpio» o «🧹 40 % estallado»), los ➕
   usados («➕➕⬜ 2 de 3 ➕») y las ayudas, sin delatar el tablero. El ➕ se dibuja con halo claro
   (`EMOJI_OSCUROS` en `compartir.js`, D-164).
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos.
