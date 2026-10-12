@@ -34,13 +34,13 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
 .marcador { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
 .aviso-pm { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; }
 .aviso-pm.mal { color: #ff8a8a; } .aviso-pm.era { color: var(--yellow); font-size: 1.2rem; }
-/* El pincel: tinta o fondo; el elegido se nota */
+/* El pincel: cada botón tiene el color que pinta (la tinta del dibujo o el gris del fondo), y el elegido se nota */
 .pinceles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.pincel { min-height: 54px; border-radius: 16px; border: 3px solid var(--glass-border); background: rgba(255,255,255,0.06); color: var(--ink);
-  font: 1.25rem var(--font-display); letter-spacing: 0.04em; cursor: pointer; opacity: 0.6; transition: opacity 0.2s, transform 0.15s; }
-.pincel[aria-pressed="true"] { opacity: 1; transform: translateY(-2px); }
-.pincel--tinta[aria-pressed="true"] { border-color: var(--tinta); box-shadow: 0 0 0 2px var(--tinta), 0 6px 18px rgba(0,0,0,0.3); }
-.pincel--fondo[aria-pressed="true"] { border-color: rgba(255,255,255,0.8); box-shadow: 0 0 0 2px rgba(255,255,255,0.8), 0 6px 18px rgba(0,0,0,0.3); }
+.pincel { min-height: 54px; border-radius: 16px; border: 3px solid transparent; color: var(--ink);
+  font: 1.25rem var(--font-display); letter-spacing: 0.04em; cursor: pointer; opacity: 0.45; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; }
+.pincel--tinta { background: var(--tinta); color: #160830; }
+.pincel--fondo { background: rgba(255,255,255,0.16); }
+.pincel[aria-pressed="true"] { opacity: 1; transform: translateY(-2px); border-color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,0.35), 0 6px 18px rgba(0,0,0,0.35); }
 
 .resultado { text-align: center; display: grid; gap: 10px; }
 .resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
