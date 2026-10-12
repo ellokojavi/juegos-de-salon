@@ -46,8 +46,7 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
 ## Modo difícil (D-291)
 
 - **El interruptor:** en la portada, antes de Empezar, una palanca sobre una placa de metal («Modo fácil · Un color · puntaje normal», y al subirla «⚡ Modo difícil · Dos colores · puntaje ×1.5»; la placa lleva grabado el recorrido de la bola
-  (una ranura en arco) y, en el modo fácil, una flecha amarilla corre por ella hacia donde va a ir, para
-  invitar a tocarla. Al moverla, un destello corto cubre toda la vista. Al subirla, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto (D-292; con movimiento reducido queda encendido y quieto), y la placa se electrifica: titila en celeste y
+  (una ranura oscura en arco), que muestra hacia dónde se mueve. Al moverla, un destello corto cubre toda la vista. Al subirla, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto (D-292; con movimiento reducido queda encendido y quieto), y la placa se electrifica: titila en celeste y
   amarillo, saltan chispas ⚡, suena y vibra. Es un `role="switch"`; el celular recuerda su posición
   (`juegos-de-salon:pintaminas:dificil`) y el link lo trae con `?colors=2`.
 - **El fondo:** encendido, toda la página pasa de su morado de siempre a un azul noche con
