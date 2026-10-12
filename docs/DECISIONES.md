@@ -4977,6 +4977,10 @@ confunde a quien prueba.
 **Consecuencias:** un proyecto nuevo entra en Proyectos activos (y el aviso de vacío se saca);
 uno que se abandona pasa a La Bodega moviendo su `<section class="seccion">`. Los dos siguen con
 `labs: true` en `games.js`. Lo verifican `tools/e2e/case/lab.mjs` y `tools/e2e/code/lab.mjs`.
+**La Bodega, plegada (v0.168.2, pedido del dueño):** cada juego de La Bodega se muestra solo con su
+título, dentro de un `<details class="plegada">` atenuado, y un toque lo abre con su descripción y
+su botón; los proyectos activos van abiertos. Así lo guardado no pesa lo mismo que lo vivo. Pasar
+un proyecto a La Bodega es, entonces, moverlo y envolverlo así. Lo verifica `tools/e2e/case/lab.mjs`.
 
 ## D-281 · El laboratorio tiene puerta: sin la llave se va al menú, y nada de él se indexa
 **Fecha:** 2026-10-11 · **Estado:** corregida por D-284 · **Relación:** corrige D-101
