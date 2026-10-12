@@ -1,6 +1,6 @@
 # 🕵️ Agentes (prototipo del laboratorio, en Proyectos activos)
 
-Un *Codenames* mini para uno solo (D-286): el juego da una pista con su número y el jugador
+Un *Codenames* mini para uno solo (D-286, D-287): el juego da una pista con su número y el jugador
 encuentra a sus agentes entre 15 palabras, sin tocar las neutrales ni al asesino. **Inspirado en
 [Codenames](https://czechgames.com/en/codenames/), de Vlaada Chvátil (Czech Games Edition)**, y lo
 dice en la portada, en el final y en el laboratorio.
@@ -51,15 +51,15 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
   palabra descifrándose. Un agente brilla al destaparse, un neutral se sacude, y el asesino sacude el
   tablero con un destello rojo en la pantalla. Al terminar, las cartas que nadie tocó se destapan
   de a una antes del resultado.
-- **Puntaje:** 100 × agentes encontrados / 9, menos las restas, nunca bajo 0.
+- **Puntaje:** 100 × agentes encontrados / 11, menos las restas, nunca bajo 0.
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos. "🔁 Otro
   tablero" abre uno al azar con su semilla en el link, para compartirlo.
 - **El final:** un sello grande según cómo salió: **¡Misión cumplida!** en verde, con confeti
   (70 o más); **Misión a medias** en amarillo; **Misión fracasada** (menos de 35) o **Te descubrió
   el asesino** en rojo, con destello y una falla de transmisión cada tanto. El puntaje sube desde 0,
   y después vienen su desglose, la trampa explicada («💀 Caíste con RÍO: parecía de MAR…», o
-  «Esquivaste al asesino…» si no lo tocaste; bajo la carta del asesino, «≈ MAR»), el tablero entero destapado con la pista de
-  cada agente, y el formulario de comentarios al final (D-265, D-268).
+  «Esquivaste al asesino…» si no lo tocaste), el tablero entero destapado con la pista de cada
+  agente y, bajo el asesino y cada neutral, la pista a la que se parecía («≈ MAR»), y el formulario de comentarios al final (D-265, D-268).
   La tarjeta de emojis (🟩 agente, 🟨 el que faltó, 🟥 neutral tocado, 💀 asesino tocado) va solo
   en el mensaje de compartir: en pantalla repetía el tablero.
 
@@ -67,11 +67,16 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
 
 - `pistas.js`: 40 pistas, cada una con 9 palabras que van con ella (`si`) y 3 tentaciones
   (`casi`). Una palabra nueva se piensa como jugador: que la asociación se vea sin explicarla.
-- `engine.js`: `generar(semilla)` elige 4 pistas que no se pisen (y cuál lleva un agente menos) (ninguna es palabra o tentación de
-  otra), 3 agentes de cada una que no sean de otra elegida, el asesino de las tentaciones (y que no
-  sea agente de ninguna; su carta lleva `tienta`, la pista a la que se parece) y los neutrales de otras pistas. Ninguna pista aparece en su propio tablero.
+- `engine.js`: `generar(semilla)` elige 4 pistas que no se pisen (ninguna es palabra o tentación de
+  otra) y, al azar, la que lleva un agente menos; los agentes de cada una (3, o 2 la corta) que no
+  sean de otra elegida; el asesino de las tentaciones, que no sea agente de ninguna, y los 3
+  neutrales también de las tentaciones, de preferencia de otra pista que la del asesino. El asesino
+  y los neutrales llevan `tienta`, la pista a la que se parecen. Ninguna pista aparece en su propio
+  tablero. Las cantidades son constantes (`POR_PISTA`, `CUANTAS`, `CORTAS`, `NEUTRALES`) y los
+  textos de la portada las toman de ahí.
   `estado(t, jugadas)` reconstruye la partida desde las jugadas (`{i}` o `{pasar:true}`).
-- `engine.test.mjs` revisa la lista y 300 tableros; `tools/e2e/agents/lab.mjs`, la partida entera.
+- `engine.test.mjs` revisa la lista y 300 tableros (cada pista con los agentes que dice, 11 en
+  total, y que el asesino y las neutrales tienten a la pista que dicen); `tools/e2e/agents/lab.mjs`, la partida entera.
 
 ## Excepciones a los cánones
 
