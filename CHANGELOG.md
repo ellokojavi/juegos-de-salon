@@ -1,8 +1,8 @@
 # Changelog
 
 ## 0.158.0 — 2026-10-11
-- **🕵️ Agentes: marcas antes de arriesgar.** Mantén apretada una carta para marcarla sin
-  destaparla: 📌 sospecha, otra vez 🚫 descartada (ya no se destapa por error), otra vez sin marca.
+- **🕵️ Agentes (laboratorio): marcas antes de arriesgar.** Mantén apretada una carta para marcarla
+  sin destaparla: 📌 sospecha, otra vez 🚫 descartada (así no la destapas por error), otra vez sin marca.
   Como las notas de Toque y Fama.
 
 ## 0.157.2 — 2026-10-11

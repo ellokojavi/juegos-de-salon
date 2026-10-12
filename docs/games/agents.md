@@ -27,7 +27,8 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
 - **Pistas:** llegan de a una, «MAR · 3». Tocar un agente de la pista suma; uno de otra pista
   también suma y no corta. Un neutral (−15) o el asesino (−40) cortan la pista y pasa la
   siguiente. "⏭️ Siguiente pista" se planta; en la última dice "🏁 Terminar", que si faltan agentes pregunta primero ("¿Terminas igual?", U-15).
-- **Marcas:** mantener apretada una carta (450 ms, como las notas de Toque y Fama) la marca sin
+- **Marcas:** mantener apretada una carta (450 ms, el gesto de las notas de Toque y Fama: no se
+  inventa UX, D-102) la marca sin
   destaparla: 📌 sospecha, otra vez 🚫 descartada, otra vez sin marca. Una 🚫 no se destapa al
   tocarla (se sacude), para no tocar por error al asesino que ya se adivinó. Bajo el tablero, una
   línea lo explica hasta la primera marca. La señal de uso cuenta cuántas marcas se hicieron.
