@@ -8,7 +8,7 @@
  * generador agrega casillas dadas hasta que `resolver` lo termina sin adivinar, y después saca las
  * que sobran: siempre se resuelve con lógica.
  */
-import { DIBUJOS } from './dibujos.js';
+import { DIBUJOS, PALETA } from './dibujos.js';
 
 export const LADO = 7;
 export const RESTA_ERROR = 15;
@@ -77,6 +77,7 @@ export function generar(semilla) {
   const r = azar(String(semilla));
   const d = DIBUJOS[Math.floor(r() * DIBUJOS.length)];
   const espejo = r() < 0.5;
+  const pintura = PALETA[Math.floor(r() * PALETA.length)];
   const sol = d.filas.flatMap(fila => [...(espejo ? [...fila].reverse().join('') : fila)].map(x => (x === '#' ? 1 : 0)));
   const todas = [...sol.keys()];
   // Se agregan dadas al azar hasta que se resuelve entero
@@ -91,7 +92,7 @@ export function generar(semilla) {
     dadas.delete(i);
     if (resolver(sol, dadas).size < sol.length) dadas.add(i);
   }
-  return { dibujo: { nombre: d.nombre, color: d.color, emoji: d.emoji, cuadro: d.cuadro }, sol, dadas: [...dadas].sort((a, b) => a - b) };
+  return { dibujo: { nombre: d.nombre, emoji: d.emoji, color: pintura.color, pintura: pintura.nombre, cuadro: pintura.cuadro }, sol, dadas: [...dadas].sort((a, b) => a - b) };
 }
 
 /**
