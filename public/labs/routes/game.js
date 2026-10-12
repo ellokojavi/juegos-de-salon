@@ -25,9 +25,9 @@ const T = {
   lema: 'Une todas las líneas del metro girando partes del tablero.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['🔄', 'Arrastra de una pieza a otra para marcar un rectángulo: al soltar, gira media vuelta. Un toque gira una sola pieza.'],
-    ['🚇', 'Une todas las líneas: cada una tiene que seguir sin cortes de pieza en pieza.'],
-    ['⛳', `Son ${ETAPAS.length} etapas, cada una más difícil, en ${TIEMPO_S / 60} minutos. Cuenta completarlas, después la rapidez y después el mínimo de giros.`],
+    ['🔄', 'Arrastra de una pieza a otra: el rectángulo da media vuelta y sus piezas quedan al revés. Un toque gira una sola.'],
+    ['🚇', 'Une todas las líneas, sin cortes de pieza en pieza.'],
+    ['⛳', `${ETAPAS.length} etapas, ${TIEMPO_S / 60} minutos. Cuenta completarlas, la rapidez y el mínimo de giros; deshacer y reiniciar son gratis.`],
   ],
   empezar: '🚇 Empezar', aJugar: '¡A girar!',
   // Las etapas (D-294): cinco tableros de dificultad creciente
