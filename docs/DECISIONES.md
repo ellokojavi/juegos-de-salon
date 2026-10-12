@@ -5274,7 +5274,7 @@ simple y 60 tableros (justos y con mínimo de 3 a 5); `tools/e2e/routes/lab.mjs`
 termina una partida.
 
 ## D-294 · Rutas: cinco etapas de dificultad creciente
-**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-293
+**Fecha:** 2026-10-12 · **Estado:** corregida por D-295 · **Relación:** corrige D-293
 **Contexto:** el dueño pidió que Rutas sea un juego de etapas con dificultad creciente, en vez de un
 solo tablero.
 **Decisión:** cada partida son **5 etapas** (`ETAPAS`): 3 líneas y mínimo 2; 4 líneas y mínimo 3;
@@ -5298,3 +5298,29 @@ promedio premia jugar bien todas las etapas.
 etapas con mínimo 6 o más (calcularlo exacto en el celular se pone lento).
 **Consecuencias:** `engine.test.mjs` revisa que cada etapa tenga su mínimo exacto y sus líneas, que
 la dificultad no baje y, a fuerza bruta, que con un giro menos no se llega a ninguna de las dos soluciones; `tools/e2e/routes/lab.mjs` juega las cinco etapas.
+
+## D-295 · Rutas: reloj de 7 minutos, puntaje por capas (completar, rapidez, giros) y rendirse
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-294 (el puntaje)
+**Contexto:** el dueño pidió que el puntaje premie, en este orden, completar las etapas, la rapidez y
+los giros, también pensando en La Copa: quien completa todas tiene que llevarse más que quien completa
+menos, aunque lo haga lento, y quien completa todas rápido y bien, lo máximo. Pidió un reloj de 7
+minutos para empezar y un botón para rendirse.
+**Decisión:** la partida tiene **7 minutos** (`TIEMPO_S`; arriba, «⏱ 6:42», en rojo el último
+minuto). El puntaje (`puntajePartida`) va **por capas**: **17 por etapa completada** (las cinco, 85) y
+un bono de hasta **15**, menor que una etapa, así que completar más siempre gana: hasta **10 por
+rapidez** (10 si las cinco se terminan en un minuto o menos, 0 al acabarse el reloj, en línea recta
+entre medio; solo si se completan todas) y hasta **5 por giros** (5 si todas las etapas hechas fueron
+en el mínimo, 0 con el doble o más). Al acabarse el reloj se acaba la partida y cuentan las etapas
+hechas. **🏳️ Rendirse** pide un segundo toque («Toca de nuevo para rendirte», como la ayuda de
+Pintaminas) y cuenta igual las etapas hechas. El resultado muestra las tres capas («🚇 5 de 5 etapas:
+85 puntos», «⏱ Rapidez (2:10): +8», «🔄 Giros (24; el mínimo era 18): +2») y cada etapa; el sello dice
+«Se acabó el tiempo» o «Te rendiste» si no se completó.
+**Por qué:** con el bono menor que una etapa, el orden completar > rapidez > giros se cumple siempre
+(4 etapas perfectas dan como máximo 83; 5 lentas y con el doble de giros, 85), y la rapidez pesa el
+doble que los giros. Reiniciar sigue gratis en puntos, pero el reloj corre.
+**Alternativas descartadas:** el promedio de puntajes por etapa (D-294: no premiaba la rapidez);
+bono de rapidez por etapa (se podía alcanzar a quien completaba más).
+**Consecuencias:** `engine.test.mjs` revisa los casos límite y que más rápido nunca dé menos;
+`tools/e2e/routes/lab.mjs` revisa el puntaje contra el motor, rendirse y el final por tiempo (con
+`?test&time=12`, que solo vale en el modo de prueba). En La Copa, con el mismo puntaje desempata quien
+terminó antes, como en Desenredo y Zip.

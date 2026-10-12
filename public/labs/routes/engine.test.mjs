@@ -2,7 +2,7 @@
 // mínimo es exacto (se compara con una búsqueda simple, contando el tablero entero dado vuelta como
 // solución), cada tablero es justo (no viene resuelto) y cada una de las cinco etapas da justo su mínimo.
 import assert from 'node:assert/strict';
-import { generar, generarEtapa, girar, resuelto, minimo, bordesUnidos, puntaje, puntajeTotal, RECTANGULOS, LADO, RESTA_GIRO, TODO, ETAPAS } from './engine.js';
+import { generar, generarEtapa, girar, resuelto, minimo, bordesUnidos, puntajePartida, RECTANGULOS, LADO, TODO, ETAPAS, TIEMPO_S, PUNTOS_ETAPA } from './engine.js';
 
 assert.equal(RECTANGULOS.length, 36);
 const META = Array.from({ length: 9 }, (_, p) => ({ p, v: 0 }));
@@ -64,8 +64,17 @@ for (let n = 0; n < 8; n++) for (let k = 0; k < ETAPAS.length; k++) {
   assert.ok(resuelto(t.piezas, [...t.revuelta].reverse().reduce(girar, t.inicio)));
 }
 for (let k = 1; k < ETAPAS.length; k++) assert.ok(ETAPAS[k].minimo >= ETAPAS[k - 1].minimo && ETAPAS[k].lineas >= ETAPAS[k - 1].lineas, 'la dificultad baja');
-assert.equal(puntajeTotal([100, 100, 85, 70, 55]), 82);
-assert.equal(puntaje(4, 4), 100);
-assert.equal(puntaje(6, 4), 100 - 2 * RESTA_GIRO);
-assert.equal(puntaje(40, 4), 10);
+// El puntaje por capas (D-295): completar manda, después la velocidad, después los giros
+const perfectas = ETAPAS.map(e => ({ giros: e.minimo, minimo: e.minimo }));
+const dobles = ETAPAS.map(e => ({ giros: 2 * e.minimo, minimo: e.minimo }));
+assert.equal(puntajePartida(perfectas, 50).total, 100, 'rápido y en el mínimo: 100');
+assert.equal(puntajePartida(perfectas, TIEMPO_S).total, 90, 'en el mínimo pero justo al final: 85 + 5');
+assert.equal(puntajePartida(dobles, TIEMPO_S).total, 85, 'completas, lento y con el doble de giros: 85');
+assert.equal(puntajePartida(dobles, 60).total, 95);
+// Con una etapa menos, ni siendo perfecto se alcanza a quien completa todas lento
+assert.ok(puntajePartida(perfectas.slice(0, 4), 30).total < puntajePartida(dobles, 10 * TIEMPO_S).total);
+assert.equal(puntajePartida(perfectas.slice(0, 4), 30).total, 4 * PUNTOS_ETAPA + 5, 'sin completar no hay bono de velocidad');
+assert.equal(puntajePartida([], 100).total, 0);
+// Más rápido nunca da menos, y más giros nunca da más
+for (let s = 60; s < TIEMPO_S; s += 15) assert.ok(puntajePartida(perfectas, s).total >= puntajePartida(perfectas, s + 15).total);
 console.log('✓ Rutas (labs)');
