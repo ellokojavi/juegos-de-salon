@@ -35,7 +35,10 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
   puede deducir con lo que se ve, y los números que lo explican; no dice de qué color es («💡 La casilla
   que late se deduce de los números marcados.»). Las marcas se van con la jugada siguiente,
   y el botón, al terminar.
-- **Puntaje:** 100 − 15 por error − 10 por ayuda, nunca bajo 0. Con 70 o más, confeti.
+- **🏳️ Rendirse** (D-296): junto a la ayuda, en una fila de dos botones iguales. Pide un segundo toque
+  («🏳️ ¿Seguro?»); al rendirse se destapa el dibujo (lo que faltaba, más apagado), el sello dice «Te
+  rendiste» y el puntaje vale la parte pintada.
+- **Puntaje:** 100 − 15 por error − 10 por ayuda, nunca bajo 0. Al rendirse, por la parte pintada. Con 70 o más, confeti.
 - **El final:** el dibujo, su nombre, un sello (¡Perfecto! sin errores ni ayudas, si no ¡Pintado!), el puntaje
   con su desglose, el tiempo, compartir, otro tablero, el de hoy (si se jugó con semilla) y, tras una
   línea, el formulario de comentarios (D-265, D-268).

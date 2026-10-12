@@ -41,7 +41,9 @@ const T = {
   // Como en El caso (D-263): el primer toque pide confirmar, y una ayuda pagada se vuelve a ver gratis (#351)
   ayuda: '💡 Ayuda (−{pts})', ayudaSeguro: 'Toca de nuevo para usar la ayuda (−{pts})', ayudaVer: '💡 Ver la ayuda', ayudaDice: '💡 La casilla que late se deduce de los números marcados.', ayudas: ['💡 1 ayuda: −{pts}.', '💡 {n} ayudas: −{pts}.'],
   mal: { 1: '❌ Se pintaba de {c}: −{pts}.', 0: '❌ No se pintaba: −{pts}.' },
-  fin: { perfecto: '¡Perfecto!', listo: '¡Pintado!' }, era: '¡Era {d}!',
+  fin: { perfecto: '¡Perfecto!', listo: '¡Pintado!', rendido: 'Te rendiste' },
+  // Rendirse (D-296): con un segundo toque, como en Rutas; cuenta la parte pintada
+  rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?', rendidoDice: '🏳️ Te rendiste con el {p} % pintado: el puntaje vale ese {p} %.', era: '¡Era {d}!',
   desglose: ['Sin errores: 100 puntos.', ['1 error: −{pts}.', '{n} errores: −{pts}.']], desglosePremio: '⚡ Modo difícil: ×{x}.',
   tiempo: 'Tiempo: {t}.',
   otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
@@ -216,7 +218,7 @@ function parpadear(caja) {
 function empezar() {
   P.semilla = SEMILLA_URL || `dia:${fechaLocal()}`;
   P.t = generar(P.semilla, { colores: colores() });
-  P.jugadas = [];
+  P.jugadas = []; P.rendido = false;
   P.pincel = 1;
   trackStart({ game: GAME_ID, mode: P.dificil ? 'dificil' : 'solo', players: 1 });
   // El 3, 2, 1 de La Copa (D-105): el tablero se arma con el "¡A pintar!", y el tiempo corre desde ahí
@@ -239,6 +241,21 @@ function jugar() {
   const pinceles = el('div', { class: `pinceles${t.colores === 2 ? ' tres' : ''}`, role: 'group', 'aria-label': T.pincel, style: estiloPinturas(t) },
     ...[...t.dibujo.pinturas.keys()].map(k => botonPincel(k + 1)), botonPincel(0));
   const botonAyuda = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-ayuda', onClick: () => pedirAyuda() }, fmt(T.ayuda, { pts: RESTA_AYUDA }));
+  let rArmado = false, rTimer = null;
+  const botonRendirse = el('button', { type: 'button', class: 'btn btn--ghost btn--sm rendirse', id: 'btn-rendirse', onClick: () => {
+    const e = estado(t, P.jugadas);
+    if (e.fin || P.rendido) return;
+    if (!rArmado) {
+      rArmado = true; SFX.tap(); vibrate(15); botonRendirse.textContent = T.rendirseSeguro; botonRendirse.classList.add('armado');
+      clearTimeout(rTimer);
+      rTimer = setTimeout(() => { rArmado = false; botonRendirse.textContent = T.rendirse; botonRendirse.classList.remove('armado'); }, 3000);
+      return;
+    }
+    clearTimeout(rTimer);
+    P.rendido = true;
+    revelar(e);
+  } }, T.rendirse);
+  const acciones = el('div', { class: 'acciones-pm' }, botonAyuda, botonRendirse);
   let armado = false, armadoTimer = null, pagada = null;   // pagada: la última ayuda cobrada ({ celda, por }), hasta que su casilla se pinte
   const textoAyuda = e => {
     const ver = pagada !== null && !e.conocidas.has(pagada.celda);
@@ -303,13 +320,15 @@ function jugar() {
   };
   // Al terminar: los números se van, el fondo se apaga, la tinta brilla y se dice qué era
   const revelar = e => {
+    // Al rendirse, se destapa también lo que faltaba: se ve qué era
+    if (P.rendido) casillas.forEach((b, i) => { if (!e.conocidas.has(i)) { b.className = `casilla${claseColor(t.sol[i])} sin-hacer`; b.disabled = true; } });
     tablero.classList.add('revelada');
-    pinceles.remove(); botonAyuda.remove();
+    pinceles.remove(); acciones.remove();
     aviso.className = 'aviso-pm era'; aviso.textContent = `${t.dibujo.emoji} ${fmt(T.era, { d: t.dibujo.nombre.toLowerCase() })}`;
-    SFX.reveal();
+    if (P.rendido) SFX.tap(); else SFX.reveal();
     setTimeout(() => resultado(e), QUIETO ? 600 : 2200);
   };
-  vista.replaceChildren(tituloJuego(), marcador, tablero, aviso, pinceles, botonAyuda);
+  vista.replaceChildren(tituloJuego(), marcador, tablero, aviso, pinceles, acciones);
   dibujar();
   pieComentario('juego');
 }
@@ -324,20 +343,21 @@ const enlace = semilla => {
 
 function resultado(e) {
   const { t } = P;
-  const s = puntaje(e, { colores: t.colores }), max = maximo(t.colores), ms = Date.now() - P.desde;
-  trackFinish({ detalle: `${s}/${max}${t.colores === 2 ? ' · difícil' : ''} · ${e.errores.size} errores · ${e.ayudas} ayudas · ${t.dibujo.nombre} · ${mmss(ms)}` });
-  SFX.win();
-  if (!QUIETO && s >= 0.7 * max) confetti({ count: 160, duration: 2400 });
+  const s = puntaje(e, { colores: t.colores, rendido: P.rendido }), max = maximo(t.colores), ms = Date.now() - P.desde;
+  trackFinish({ detalle: `${s}/${max}${t.colores === 2 ? ' · difícil' : ''}${P.rendido ? ` · rendido (${Math.round(100 * e.avance)} %)` : ''} · ${e.errores.size} errores · ${e.ayudas} ayudas · ${t.dibujo.nombre} · ${mmss(ms)}` });
+  if (!P.rendido) SFX.win();
+  if (!QUIETO && !P.rendido && s >= 0.7 * max) confetti({ count: 160, duration: 2400 });
   pie.replaceChildren();
   const n = e.errores.size;
   const lineas = [n === 0 ? T.desglose[0] : fmt(T.desglose[1][n === 1 ? 0 : 1], { n, pts: Math.min(100, RESTA_ERROR * n) })];
   if (e.ayudas) lineas.push(fmt(T.ayudas[e.ayudas === 1 ? 0 : 1], { n: e.ayudas, pts: RESTA_AYUDA * e.ayudas }));
   if (t.colores === 2) lineas.push(fmt(T.desglosePremio, { x: PREMIO_DIFICIL }));
+  if (P.rendido) lineas.push(fmt(T.rendidoDice, { p: Math.round(100 * e.avance) }));
   vista.replaceChildren(el('div', { class: 'resultado' },
     el('div', { class: 'dibujo-fin' }, grilla(t, { numeros: false, clase: 'revelada fin' })),
     el('h2', { class: 'display display--lg', style: 'margin:0' }, `${t.dibujo.emoji} ${t.dibujo.nombre}`),
     // ¡Perfecto! es sin errores y sin ayudas: con una ayuda no es perfecto (U-1)
-    el('p', { class: 'sello-pm' }, n === 0 && !e.ayudas ? T.fin.perfecto : T.fin.listo),
+    el('p', { class: `sello-pm${P.rendido ? ' mal' : ''}` }, P.rendido ? T.fin.rendido : n === 0 && !e.ayudas ? T.fin.perfecto : T.fin.listo),
     el('div', { class: 'score-big', id: 'puntaje' }, `${s}/${max}`),
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
     el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
