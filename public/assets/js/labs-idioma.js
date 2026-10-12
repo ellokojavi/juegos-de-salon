@@ -111,7 +111,7 @@ export function abrirComentario({ T, contexto: ctx, enviar = undefined }) {
 /**
  * El formulario de comentarios, para ponerlo donde se quiera: en la capa del 🐞 o al final de un
  * juego del laboratorio (El caso, D-265). `T` trae sus textos (`titulo`, `lead`, `ph`, `nombre`,
- * `enviar`, `enviando`, `vacio`, `gracias`, `guardado`, `error`, `contexto` y, si se puede cerrar,
+ * `enviar`, `enviando`, `vacio`, `gracias`, `guardado`, `error` y, si se puede cerrar,
  * `cancelar` y `cerrar`); `contexto` va adjunto, sin mostrarse. Sin `alCerrar` no tiene
  * botón para cerrar: queda en la página, y después de enviar dice gracias en el mismo lugar.
  * `enviar` lo reemplaza el modo de prueba de La Copa, que guarda en el celular y no en Firebase.
