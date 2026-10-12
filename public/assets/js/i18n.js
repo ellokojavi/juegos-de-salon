@@ -162,7 +162,7 @@ export const COMMON = {
     // Uno al día (D-230): el botón de la portada, el dado, la tarjeta del resultado y /today/
     uad: {
       nombre: 'Uno al día',
-      jugar: 'Jugar el de hoy',
+      jugar: 'Jugar hoy',
       listo: 'Listo',
       aria: 'Uno al día: abrir el juego de hoy',
       ariaListo: 'Uno al día: ver cómo te ha ido',
@@ -391,7 +391,7 @@ export const COMMON = {
     // One a Day (D-230): the home button, the die, the result card and /today/
     uad: {
       nombre: 'One a Day',
-      jugar: "Play today's",
+      jugar: 'Play today',
       listo: 'Done',
       aria: "One a Day: open today's game",
       ariaListo: "One a Day: see how you're doing",
@@ -619,7 +619,7 @@ export const COMMON = {
     // Um por dia (D-230): o botão da página inicial, o dado, o cartão do resultado e /today/
     uad: {
       nombre: 'Um por dia',
-      jugar: 'Jogar o de hoje',
+      jugar: 'Jogar hoje',
       listo: 'Feito',
       aria: 'Um por dia: abrir o jogo de hoje',
       ariaListo: 'Um por dia: ver como você está indo',

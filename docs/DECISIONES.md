@@ -5350,5 +5350,10 @@ la bajada. La última fila de la grilla (`grid-template-rows: auto auto 1fr`) se
 sobra y las píldoras se apoyan en su borde de abajo (`align-self: end`), así quedan a la misma
 altura en las dos tarjetas aunque una bajada sea más larga que la otra. Lo pidió el dueño: antes la
 píldora de Uno al día quedaba pegada a su bajada, a media tarjeta, y se leía como parte del texto.
+- **"Jugar el de hoy" pasa a "Jugar hoy"** (EN *Play today*, PT *Jogar hoje*; el alemán ya decía
+  *Heute spielen*), también por pedido del dueño: a 320 px y con racha, "🔥 12 · Jugar el de hoy" no
+  cabía en la píldora y se partía en dos líneas. Es la misma clave (`uad.jugar`) en todas partes, así
+  que cambia también el botón del desafío de un amigo y el de los juegos que abren con `?today`
+  (Ahorcado, Generala, Batalla Naval y Dudo): una acción, una palabra (U-5).
 **Alternativas descartadas:** una línea o un fondo que separe las píldoras (más ruido en una
 tarjeta chica); igualar el largo de las bajadas (cambia con el idioma).

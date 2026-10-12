@@ -101,7 +101,7 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 
 ### Día 2 en adelante: vuelve
 
-- **Por su cuenta:** abre la app y la tarjeta de Uno al día dice **🔥 1 · Jugar el de hoy**, con el
+- **Por su cuenta:** abre la app y la tarjeta de Uno al día dice **🔥 1 · Jugar hoy**, con el
   punto que brilla (D-239, ver "Lo que el PR 1 hizo").
 - **Con un aviso** a la hora que eligió: "📅 Uno al día n.° 13 ya está. 🔥 Racha: 1 día." (el de la tabla de
   avisos) Al tocarlo
@@ -182,7 +182,7 @@ cualquiera. El texto sigue el formato de U-30 (cabecera, una idea por línea y e
 
 > **🔥 Sara te desafía**
 > Sara lleva una racha de 33 días y está en el 10 % mejor de la semana. ¿Te atreves?
-> **Jugar el de hoy**
+> **Jugar hoy**
 
 Toca, rueda el dado y juega **el mismo desafío que Sara**. Al terminar, además de su resultado,
 ve el duelo: "**Tú 87 · Sara 92**. Mañana hay otro." Si Sara todavía no juega el de hoy, se dice
@@ -406,8 +406,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - **Dónde va en la portada** (D-239, decisión del dueño, 2026-10-06): en una tarjeta de media fila
   junto a La Copa, mitad y mitad, con el emoji a la izquierda del título y el título en celeste (el
   de La Copa, en dorado). Abajo a la izquierda, al pie de la tarjeta y a la misma altura que las de La
-  Copa (D-298), una píldora con el estado: **🔥 6 · Jugar el de hoy** (sin racha, solo
-  **Jugar el de hoy**), o **✅ Listo · 🔥 6** ya jugado. La forma de antes, un botón en la misma fila que Juego al azar (**🎲 Al azar** y
+  Copa (D-298), una píldora con el estado: **🔥 6 · Jugar hoy** (sin racha, solo
+  **Jugar hoy**), o **✅ Listo · 🔥 6** ya jugado. La forma de antes, un botón en la misma fila que Juego al azar (**🎲 Al azar** y
   **📅 Uno al día 🔥 6**), queda para probarla con `?daily=button` (el laboratorio la ofreció
   hasta D-262).
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
@@ -426,7 +426,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   `/battleship/?today`, `/liars-dice/?today`. El dado y `/today/` los nombran con su nombre y emoji
   de `games.js` (Batalla Naval es ⚓; el diseño decía 🚢).
 - **Abren directo el modo para uno**, sin elegir modo: la intro de siempre lleva la línea de Uno al
-  día y, en lugar de los modos, un solo botón **Jugar el de hoy**. El Ahorcado juega solo con el
+  día y, en lugar de los modos, un solo botón **Jugar hoy**. El Ahorcado juega solo con el
   mazo del celular; Batalla Naval y Dudo, contra el celular (Dudo, un rival). Los ajustes son los de
   siempre y el nombre, el que se recuerda o "Jugador 1": no se pide nada. En Batalla Naval el
   jugador igual coloca su flota (con **Al azar** a mano).
@@ -588,7 +588,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   en `JUEGOS_DIA`**. Al abrirla, entra con un `desde` que sea el primer día de un mazo que no
   haya empezado, para no cambiar días ya jugados (D-247), y su prueba en `uno-al-dia.test.mjs`.
   Lo de abajo ya está hecho en `/generala/`.
-- **`/generala/?today`** abre 🧍 Jugar solo, sin elegir modo, con el botón **Jugar el de hoy** y la
+- **`/generala/?today`** abre 🧍 Jugar solo, sin elegir modo, con el botón **Jugar hoy** y la
   línea "Los dados salen iguales para todos: lo que cambia es qué guardas." No tiene rival, así que
   ahí sí el desafío entero es el mismo para todos, no solo el punto de partida.
 - **Los dados salen de la semilla del día** (D-247): `azarDel(semilla, 'generala:<turno>:<tiro>')`,
@@ -627,11 +627,11 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 
 ## Textos para revisar (U-1, U-3, U-17)
 
-Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar el de hoy**, **Compartir**,
+Botones (caben en 320 px, unos 18 caracteres): **Uno al día**, **Jugar hoy**, **Compartir**,
 **🎲 Jugar otro**, **Invitar**, **Entrar**, **Ahora no**, **Mañana · 9:00**, **Almuerzo · 13:00**,
 **Tarde · 19:00**, **Silenciar** y **Probar los avisos** ("⏰ Agregar recordatorio", que pasaba de
 18 e iba en botón chico, se sacó: decisión 15). En la portada va una tarjeta al lado de La Copa
-(D-239), con su estado en una píldora: **🔥 6 · Jugar el de hoy** o **✅ Listo · 🔥 6**. Mientras falta
+(D-239), con su estado en una píldora: **🔥 6 · Jugar hoy** o **✅ Listo · 🔥 6**. Mientras falta
 jugar el de hoy brilla un punto; jugada, la tarjeta se pone cian. Con `?daily=button` se ve la forma de
 antes, un botón en una línea, **📅 Uno al día 🔥 6**, al lado de **🎲 Al azar**.
 Lo que hace cada estado va en su `aria-label`. "Racha", "comodín" y "Silenciar" se dicen siempre así (U-5). Los
@@ -641,7 +641,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 
 | Antes | Ahora | Por qué |
 |---|---|---|
-| **Juega el de hoy** (portada) y **Jugar el de hoy** (amigo) | **Jugar el de hoy** en los dos | Una acción, una palabra (U-5), y en infinitivo como los demás botones |
+| **Juega el de hoy** (portada) y **Jugar el de hoy** (amigo) | **Jugar hoy** en los dos (fue "Jugar el de hoy" hasta D-298, que lo acortó para que quepa en la píldora a 320 px) | Una acción, una palabra (U-5), y en infinitivo como los demás botones |
 | **¿Otro más?** | **🎲 Jugar otro** | Verbo y objeto (U-17); el dado dice que es al azar |
 | **Agregar a mi calendario** / **Al calendario** | **Agregar al calendario**, botón chico (desde el PR 6, **⏰ Agregar recordatorio**) | "Al calendario" no tiene verbo (U-17) |
 | "📅 Uno al día · el mismo desafío para todos hoy" | "📅 Uno al día: hoy todos juegan el mismo desafío." | Frase completa (U-1) |
