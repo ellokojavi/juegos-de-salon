@@ -11,12 +11,12 @@ import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
+import { LONG_PRESS_MS } from '../../assets/js/teclado.js';   // el toque largo de las notas de Toque y Fama
 import { generar, estado, puntaje, tarjeta, AGENTES, RESTA_NEUTRAL, RESTA_ASESINO } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
 const GAME_ID = 'agentes';
-const TOQUE_LARGO = 450;   // el mismo que las notas del teclado de Toque y Fama
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const CODENAMES = 'https://czechgames.com/en/codenames/';
 const T = {
@@ -31,8 +31,8 @@ const T = {
   pasar: '⏭️ Siguiente pista', terminar: '🏁 Terminar', seguro: '🏁 Sí, terminar',
   quedan: ['Queda 1 agente sin encontrar. ¿Terminas igual?', 'Quedan {n} agentes sin encontrar. ¿Terminas igual?'],
   // Las marcas (como las notas de Toque y Fama): un toque largo marca 📌, otro 🚫, otro la quita
-  marcas: 'Mantén apretada una carta para marcarla: 📌 sospecha, 🚫 descartada.',
-  descartada: 'La descartaste 🚫: mantenla apretada para cambiar la marca.',
+  marcas: '💡 Mantén apretada una carta para marcarla como sospecha 📌. Repite para descartarla 🚫 y otra vez para quitar la marca.',
+  descartada: 'La descartaste 🚫: mantenla apretada para quitarle la marca.',
   bien: '¡Bien! Es de los tuyos.', otra: '¡Es de los tuyos! Pero de otra pista: igual suma.',
   neutral: `Neutral: −${RESTA_NEUTRAL}. Se corta la pista.`, asesino: `¡El asesino! −${RESTA_ASESINO}. Se corta la pista.`,
   // El final tiene tres caras: victoria (70 o más), a medias y fracaso (el asesino, o menos de 35)
@@ -41,7 +41,7 @@ const T = {
   desglose: ['Encontraste {n} de {t} agentes: {pts} puntos.', ['Tocaste 1 neutral: −{pts}.', 'Tocaste {n} neutrales: −{pts}.'], 'Tocaste al asesino: −{pts}.'],
   tiempo: 'Tiempo: {t}.',
   // La trampa, explicada: con qué pista tentaba el asesino
-  trampa: ['💀 Caíste con {w}: tentaba con {p}, pero no era de los tuyos.', '💀 Esquivaste al asesino: {w}, que tentaba con {p}.'], tienta: '≈ {p}',
+  trampa: ['💀 Caíste con {w}: parecía de {p}, pero no era de los tuyos.', '💀 Esquivaste al asesino: {w}, que parecía de {p}.'], tienta: '≈ {p}',
   otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
   comentarAbrir: '💬 Dejar un comentario',
   comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si las pistas se entendían, si alguna palabra era injusta y qué le cambiarías.', ph: 'Por ejemplo: la pista FUEGO con BOMBERO me costó; el asesino me engañó.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
@@ -170,7 +170,7 @@ function jugar() {
       onClick: () => { if (largo) { largo = false; return; } tocar(i); },
       onPointerdown: () => {
         largo = false;
-        reloj = setTimeout(() => { reloj = null; largo = true; marcar(i); }, TOQUE_LARGO);
+        reloj = setTimeout(() => { reloj = null; largo = true; marcar(i); }, LONG_PRESS_MS);
       },
       onPointerup: corta, onPointerleave: corta, onPointercancel: corta,
       onContextmenu: ev => ev.preventDefault(),
