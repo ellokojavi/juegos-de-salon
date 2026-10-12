@@ -27,6 +27,18 @@
        morado y dentro de un párrafo apagado; sin negrita ni subrayado, como en las portadas de los juegos */
     .stack p a { color: #a8fff6; text-decoration: none; }
     .stack p a:active { color: #fff; }
+    /* La Bodega, plegada al título (pedido del dueño): no tiene la jerarquía de los proyectos activos.
+       Un toque la abre y muestra de qué se trata y su botón */
+    /* Toda la tarjeta se toca: el relleno va en el título, no en la tarjeta. Abierta, sin el apagado:
+       la opacidad de la tarjeta no la anula un hijo, por eso :has */
+    .plegada { padding: 0; opacity: 0.85; }
+    .plegada:has(details[open]) { opacity: 1; }
+    .plegada summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; min-height: 44px; padding: 12px 18px; }
+    .plegada summary::-webkit-details-marker { display: none; }
+    .plegada summary h2 { font-size: 1.25rem; }
+    .plegada .flecha { font: 900 1.9rem/1 var(--font-body); color: #fff; transition: transform 0.2s; }
+    .plegada details[open] .flecha { transform: rotate(90deg); }
+    .plegada .detalle { display: grid; gap: 10px; padding: 0 18px 18px; }
     .divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
   </style>
 </head>
@@ -86,17 +98,25 @@
       <section class="grupo" id="bodega">
         <h2>📦 La Bodega</h2>
         <p class="muted">Los proyectos que no prosperaron. Quedan guardados acá y se pueden seguir jugando, pero ya no se están trabajando.</p>
-        <section class="panel seccion" id="seccion-caso">
-          <h2>🔍 El caso</h2>
-          <p class="muted" style="margin:0">Un misterio al estilo de <i>Clues by Sam</i>: veinte sospechosos y pistas que siempre dicen la verdad. Descubre quién es criminal sin adivinar.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Es el caso del día, el mismo para todos; al terminar se puede jugar otro.</p>
-          <a class="btn btn--yellow" id="btn-caso" href="case/">🔍 Jugar El caso</a>
+        <section class="panel seccion plegada" id="seccion-caso">
+          <details>
+            <summary><h2>🔍 El caso</h2><span class="flecha" aria-hidden="true">›</span></summary>
+            <div class="detalle">
+              <p class="muted" style="margin:0">Un misterio al estilo de <i>Clues by Sam</i>: veinte sospechosos y pistas que siempre dicen la verdad. Descubre quién es criminal sin adivinar.</p>
+              <p class="muted" style="margin:0;font-size:0.85rem">Es el caso del día, el mismo para todos; al terminar se puede jugar otro.</p>
+              <a class="btn btn--yellow" id="btn-caso" href="case/">🔍 Jugar El caso</a>
+            </div>
+          </details>
         </section>
 
-        <section class="panel seccion" id="seccion-clave">
-          <h2>🔐 La clave</h2>
-          <p class="muted" style="margin:0">Unas cartas transparentes esconden una clave: una palabra de 5 letras (en español) o un código de 5 cifras. Hay que ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen la clave sin pisarse; en Palabra, cada carta tiene dos caras distintas.</p>
-          <a class="btn btn--yellow" id="btn-clave" href="code/">🔐 Jugar La clave</a>
+        <section class="panel seccion plegada" id="seccion-clave">
+          <details>
+            <summary><h2>🔐 La clave</h2><span class="flecha" aria-hidden="true">›</span></summary>
+            <div class="detalle">
+              <p class="muted" style="margin:0">Unas cartas transparentes esconden una clave: una palabra de 5 letras (en español) o un código de 5 cifras. Hay que ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen la clave sin pisarse; en Palabra, cada carta tiene dos caras distintas.</p>
+              <a class="btn btn--yellow" id="btn-clave" href="code/">🔐 Jugar La clave</a>
+            </div>
+          </details>
         </section>
       </section>
     </div>

@@ -29,7 +29,7 @@ La tarjeta del laboratorio agrega, desde v0.167.1, «Con un modo difícil de dos
 ## Cómo se juega
 
 - **Tablero:** 7×7. Algunas casillas vienen dadas, con su color y su número.
-- **Pincel:** dos botones, «Pinta {color}» (el color del dibujo: desde v0.168.1 cada dibujo se pinta con sus colores de verdad, `colores` en `dibujos.js`, D-298) y «No pinta»
+- **Pincel:** dos botones, «Pinta {color}» (el color del dibujo: desde v0.168.3 cada dibujo se pinta con sus colores de verdad, `colores` en `dibujos.js`, D-298) y «No pinta»
   (gris, como las casillas sin pintar); el elegido se nota. Tocar una
   casilla sin pintar la pinta con el pincel.
 - **Acertar:** aparece su número, que da más pistas. **Errar:** la casilla se destapa igual con su
@@ -63,7 +63,7 @@ La tarjeta del laboratorio agrega, desde v0.167.1, «Con un modo difícil de dos
   resplandores celestes (`body.modo-dificil`), en la portada, el juego y el resultado (pedido del dueño).
 - **La trama del segundo color** (#349): en el modo difícil, las casillas del segundo color y su pincel
   llevan rayas finas, para quien no distingue bien los colores; al revelarse el dibujo se van.
-- **El tablero:** los dos colores de verdad del dibujo (`colores`: la frutilla roja con hojas verdes, el árbol verde con el tronco café; nunca amarillo con naranjo juntos, se confunden; las cerezas desde v0.167.2 y todos desde v0.168.1, D-298), con los dibujos de `DIBUJOS2` (de dos colores), un
+- **El tablero:** los dos colores de verdad del dibujo (`colores`: la frutilla roja con hojas verdes, el árbol verde con el tronco café; nunca amarillo con naranjo juntos, se confunden; las cerezas desde v0.167.2 y todos desde v0.168.3, D-298), con los dibujos de `DIBUJOS2` (de dos colores), un
   borde eléctrico y tres pinceles (con la frutilla, «Pinta rojo», «Pinta verde», «No pinta»). El marcador dice
   «⚡ Modo difícil ×1.5». Un número cumplido ya no dice de qué color son las demás: solo que no son del
   suyo.
@@ -76,7 +76,7 @@ La tarjeta del laboratorio agrega, desde v0.167.1, «Con un modo difícil de dos
   irregulares: uno simétrico se adivina por espejo y el test lo rechaza (D-290). Un dibujo nuevo tiene
   que reconocerse a 7×7 y tener entre 12 y 40 pintadas. `DIBUJOS2`: los 10 del modo difícil (`#` y
   `+`, un color cada uno), también irregulares y con al menos 4 casillas de cada color (D-291).
-  `PALETA`: los 9 colores con su nombre y su emoji (café, blanco y rosado desde v0.168.1). Cada dibujo
+  `PALETA`: los 9 colores con su nombre y su emoji (café, blanco y rosado desde v0.168.3). Cada dibujo
   trae sus colores de verdad en `colores`, uno o dos de `PALETA`, nunca amarillo con naranjo (D-298).
 - `engine.js`: `resolver(sol, dadas)` deduce como un jugador, con los colores que todavía puede tener
   cada casilla (sirve para uno o dos colores): cada casilla conocida dice cuántas de sus
