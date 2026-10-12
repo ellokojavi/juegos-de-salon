@@ -33,7 +33,7 @@ const T = {
   quedan: ['Queda 1 agente sin encontrar. ¿Terminas igual?', 'Quedan {n} agentes sin encontrar. ¿Terminas igual?'],
   // Las marcas (como las notas de Toque y Fama): un toque largo marca 📌, otro 🚫, otro la quita
   marcas: '💡 Mantén apretada una carta para marcarla como sospecha 📌. Repite para descartarla 🚫 y otra vez para quitar la marca.',
-  descartada: 'La descartaste 🚫: mantenla apretada para quitarle la marca.',
+  descartada: '🚫 Descartada: mantenla apretada para quitarle la marca.',
   // Lo que dice cada marca al ponerla: un toque que duró de más marca en vez de destapar, y sin aviso parecía elegida
   marcada: { sospecha: '📌 Marcada, sin destapar. Tócala para destaparla.', descarte: '🚫 Descartada: así no la destapas por error.', nada: 'Sin marca.' },
   bien: '¡Bien! Es de los tuyos.', otra: '¡Es de los tuyos! Pero de otra pista: igual suma.',

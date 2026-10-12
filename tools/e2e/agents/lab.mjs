@@ -65,7 +65,7 @@ ok(await ev(`document.getElementById('ayuda-marcas').hidden`), 'y la ayuda se va
 await largo(m);
 ok(/marca-descarte/.test(await clase(m)), 'otro la pasa a 🚫');
 await ev(`document.querySelector('#tablero .carta[data-i="${m}"]').click(); 1`); await sleep(150);
-ok(!/neutral/.test(await clase(m)) && /descartaste/.test(await ev(`document.querySelector('.aviso-ag').textContent`)), 'una 🚫 no se destapa al tocarla');
+ok(!/neutral/.test(await clase(m)) && /Descartada: mantenla apretada/.test(await ev(`document.querySelector('.aviso-ag').textContent`)), 'una 🚫 no se destapa al tocarla');
 await largo(m);
 ok(!/marca-/.test(await clase(m)), 'y otro toque largo la deja sin marca');
 await largo(m); await largo(m);   // queda 🚫 hasta el final: así ningún toque del guion la destapa
