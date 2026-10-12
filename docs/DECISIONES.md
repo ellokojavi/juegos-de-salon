@@ -55,7 +55,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
-| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296 |
+| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
 | 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297 |
@@ -5197,7 +5197,7 @@ entera. Si gusta, el paso siguiente es La Copa (junto a Tango, que también es d
 que no se sientan repetidos).
 
 ## D-290 · Pintaminas: «Pinta» y «No pinta», un color al azar por tablero y dibujos irregulares
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-289
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-298 · **Relación:** corrige D-289; corregida por D-298 (el color ya no sale al azar: cada dibujo trae el suyo)
 **Contexto:** el dueño probó Pintaminas en el teléfono: «tinta o fondo» era un mal nombre, y los
 dibujos simétricos (corazón, estrella, árbol…) se adivinaban por espejo, sin deducir.
 **Decisión:** los pinceles se llaman **«Pinta {color}»**, con un color que cada tablero toma al azar
@@ -5212,7 +5212,7 @@ por el color); seguir llamándolos tinta y fondo.
 **Consecuencias:** `engine.test.mjs` revisa la paleta y la asimetría de cada dibujo.
 
 ## D-291 · Pintaminas: un modo difícil de dos colores, con un interruptor eléctrico y premio ×1.5
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-289; ampliada por D-292 (la ayuda y el brillo del interruptor)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-298 · **Relación:** amplía D-289; corregida por D-298 (los dos colores son los del dibujo, ya no al azar); ampliada por D-292 (la ayuda y el brillo del interruptor)
 **Contexto:** el dueño preguntó qué pasaría con un segundo color. Con dos colores, un número que se
 cumple solo dice que las demás vecinas *no son de ese color* (pueden ser del otro o sin pintar): hay
 que cruzar más números. Pidió probarlo como modo difícil, que se active con un interruptor eléctrico
@@ -5377,6 +5377,26 @@ limpiar), que no se compara entre amigos; ➕ sin límite (vuelve el tablero inf
 (pueden no tener salida).
 **Consecuencias:** `engine.test.mjs` limpia 400 tableros con su orden; `tools/e2e/exploding-numbers/lab.mjs`
 juega uno entero. Las casillas miden menos de 44 px a 375 px de ancho (9 columnas, como el original).
+
+## D-298 · Pintaminas: cada dibujo se pinta con sus colores de verdad
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-290 (un color al azar por tablero) y D-291 (dos colores al azar en el modo difícil)
+**Contexto:** desde v0.167.2 las cerezas salían rojas con el tallo verde, como son, y los otros
+dibujos seguían con colores al azar de `PALETA`: un cactus morado, una bota azul. El dueño pidió que
+todos salgan con sus colores de verdad.
+**Decisión:** cada dibujo de `DIBUJOS` y `DIBUJOS2` trae sus colores en `colores` (`dibujos.js`): uno
+en el modo normal, dos en el difícil (la luna amarilla, el cactus verde, la bota café; la frutilla
+roja con hojas verdes, el árbol verde con el tronco café). El tablero se pinta con ellos y el pincel
+dice ese color («Pinta café»). `PALETA` suma **café, blanco y rosado** (9 colores). Amarillo y
+naranjo siguen sin ir juntos en un dibujo: lo revisa el test, ya no el generador. Los tableros no
+cambian: `generar` sigue sacando la baraja de antes sin usarla, para que el azar de las dadas sea el
+mismo y los links de antes den el mismo tablero.
+**Por qué:** un dibujo con sus colores se reconoce y se disfruta más al destaparse. D-290 había
+descartado el color fijo porque delataba el dibujo; el dueño prefiere el dibujo reconocible.
+**Alternativas descartadas:** seguir al azar con excepciones dibujo por dibujo (como las cerezas);
+cambiar el azar del generador (rompía los links de tableros ya jugados).
+**Consecuencias:** `engine.test.mjs` exige que cada dibujo traiga sus colores (de `PALETA`, uno por
+color del dibujo, distintos, nunca amarillo con naranjo) y que el tablero salga con ellos. Un dibujo
+nuevo tiene que traer `colores`.
 
 ## D-299 · La punta a punta no corre en lo que no llega al navegador, y un guion que falla se repite una vez
 **Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-205; amplía D-193
