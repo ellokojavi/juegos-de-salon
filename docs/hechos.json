@@ -1,5 +1,5 @@
 {
-  "version": "0.159.0",
+  "version": "0.161.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -906,6 +906,9 @@
     "public/labs/code/engine-palabra.js",
     "public/labs/code/engine.js",
     "public/labs/code/game.js",
+    "public/labs/paint-mines/dibujos.js",
+    "public/labs/paint-mines/engine.js",
+    "public/labs/paint-mines/game.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -961,6 +964,7 @@
     "public/labs/agents/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
+    "public/labs/paint-mines/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
@@ -1032,6 +1036,7 @@
     "liars-dice/online.mjs",
     "memoria-de-partida.mjs",
     "mirar.mjs",
+    "paint-mines/lab.mjs",
     "sala-error.mjs",
     "sala-tope.mjs",
     "timeline/arrastre.mjs",
@@ -1138,6 +1143,10 @@
     {
       "ruta": "docs/games/liars-dice.md",
       "titulo": "Diseño: Dudo"
+    },
+    {
+      "ruta": "docs/games/paint-mines.md",
+      "titulo": "🖌️ Pintaminas (prototipo del laboratorio, en Proyectos activos)"
     },
     {
       "ruta": "docs/games/timeline.md",
