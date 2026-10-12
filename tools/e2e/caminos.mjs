@@ -143,6 +143,11 @@ export const CAMINOS = {
         db[code]._keys.javi02 = await hashPin(code, 'javi02', '4321'); db[code]._seats.javi02 = {};
         localStorage.setItem(k, JSON.stringify(db)); location.href='/cup/?'+code+'&test&day=4'})()`,
       `1`, `1`, `window.confirm=()=>true; document.getElementById('btn-empezar').click()`, `1`],
+    // El formulario 🐞 de La Copa, desde la pantalla de la copa (D-306: sin el desplegable del contexto)
+    reporte: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.getElementById('btn-reporte').click()`, `1`],
+    // El formulario de comentarios del laboratorio (labs-idioma.js), en la capa que abre el 🐞 o "Dejar un comentario"
+    comentario: [`(async()=>{const {LOCALES}=await import('/cup/rules.js');const {abrirComentario}=await import('/assets/js/labs-idioma.js');
+      const L=LOCALES[document.documentElement.lang]||LOCALES.es;abrirComentario({T:L.comentario,enviar:async()=>{},contexto:{}});})()`, `1`],
   },
   dudo: {
     intro: [],
