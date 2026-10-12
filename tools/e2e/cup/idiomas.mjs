@@ -35,22 +35,23 @@ const tiene = (texto, buscado) => texto.toLowerCase().includes(buscado.toLowerCa
 for (const [i, lang] of OTROS.entries()) {
   const T = LOCALES[lang];
   // Una copa nueva, creada con la pantalla en `lang`: sus palabras parten en ese idioma
-  await b.go(`${SITIO}/cup/?test&lang=${lang}`);
+  // Sin pausas fijas (D-307): cada espera termina al cumplirse, con la pausa de antes como tope
+  await b.abrir(`${SITIO}/cup/?test&lang=${lang}`, 1800);
   await ev(`sessionStorage.clear(); 1`);
-  await b.go(`${SITIO}/cup/?test`);
+  await b.abrir(`${SITIO}/cup/?test`, 1800);
   // Con varios Chrome a la vez (o el primero de un runner) la portada tarda más que la espera fija
   for (let k = 0; k < 40 && !(await ev(`!!document.getElementById('btn-crear')?.offsetParent && document.documentElement.lang === '${lang}'`)); k++) await sleep(250);
   ok(await ev(`document.documentElement.lang`) === lang, `${lang}: la página queda en el idioma pedido por el link`);
   const portada = await texto();
   ok(tiene(portada, sinEmoji(T.create)), `${lang}: la portada está traducida (${sinEmoji(T.create)})`);
   await revisar(`${lang}-00-portada`);
-  await ev(`document.getElementById('btn-crear').click(); 1`); await sleep(800);
+  await ev(`document.getElementById('btn-crear').click(); 1`); await b.hasta(`document.querySelectorAll('#crear-body input').length >= 4`, 800); await b.asentar(800);
   await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Copa ${lang}';i[1].value='Ana';i[2].value='1111';i[3].value='1111';return 1})()`);
   await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[1].click();o[3].click();return 1})()`);
   const idiomaElegido = await ev(`[...document.querySelectorAll('#crear-body .opcion.on')].map(x=>x.textContent).join('|')`);
   ok(tiene(idiomaElegido, T.langNames[lang]), `${lang}: el idioma de las palabras parte en el de quien crea (${idiomaElegido})`);
   await revisar(`${lang}-01-crear`);
-  await ev(`document.getElementById('btn-crear-go').click(); 1`); await sleep(1500);
+  await ev(`document.getElementById('btn-crear-go').click(); 1`); await b.hasta(`__copa.estado.copa?.meta`, 1500); await b.asentar(1500);
   const meta = await ev(`__copa.estado.copa.meta`);
   ok(meta?.lang === lang, `${lang}: la copa guarda meta.lang = ${meta?.lang}`);
   await revisar(`${lang}-02-admin`);
@@ -60,11 +61,11 @@ for (const [i, lang] of OTROS.entries()) {
   // Quien mira lo hace en otro idioma: el siguiente de la lista
   const otro = OTROS[(i + 1) % OTROS.length];
   await ev(`localStorage.setItem('juegos-de-salon:lang','${otro}'); 1`);
-  await b.go(`${SITIO}/cup/?test&${meta ? (await ev('__copa.estado.code')) : ''}`, 2500);
+  await b.abrir(`${SITIO}/cup/?test&${meta ? (await ev('__copa.estado.code')) : ''}`, 2500);
   await preparar();
   const enOtro = await texto();
   ok(tiene(enOtro, LOCALES[otro].tableTitle) || tiene(enOtro, LOCALES[otro].calendarTitle), `${lang}: la pantalla sigue el idioma de quien mira (${otro})`);
-  await ev(`(()=>{const b=document.getElementById('btn-invitar')||[...document.querySelectorAll('button')].find(x=>/📤/.test(x.textContent));b&&b.click();return 1})()`); await sleep(800);
+  await ev(`(()=>{const b=document.getElementById('btn-invitar')||[...document.querySelectorAll('button')].find(x=>/📤/.test(x.textContent));b&&b.click();return 1})()`); await b.hasta(`window.__compartido.length`, 800);
   const compartido = await ev(`JSON.stringify(window.__compartido.at(-1)||null)`);
   ok(compartido && (compartido.includes(T.title) || compartido.includes(T.ctxInvite)), `${lang}: lo compartido va en el idioma de la copa`);
   ok(compartido && compartido.includes(`lang=${lang}`), `${lang}: el link compartido lleva ?lang=${lang}`);
@@ -77,12 +78,14 @@ for (const [i, lang] of OTROS.entries()) {
 // recorre cup-games/idiomas.mjs; aquí, lo que depende del contenido de cada idioma.
 const SUELTO = Object.fromEntries(SUELTOS.map(m => [m.id, m]));
 for (const id of ['letras', 'conexiones', 'anio', 'reinas', 'donde']) for (const lang of OTROS) {
-  await b.go(`${SITIO}/${SUELTO[id].slug}/?test&lang=${lang}`, 2000);
+  await b.abrir(`${SITIO}/${SUELTO[id].slug}/?test&lang=${lang}`, 2000);
   const t = await texto();
   ok(tiene(t, SUELTO[id].name[lang]), `${id} (${lang}): la antesala está traducida (${SUELTO[id].name[lang]})`);
   ok(!t.includes(`🇪🇸 ${COMMON[lang].onlySpanish}`), `${id} (${lang}): sin la píldora de "solo en español"`);
   await revisar(`${lang}-suelto-${id}-antesala`);
-  await ev(`document.getElementById('btn-empezar').click(); 1`); await sleep(4800);
+  // La cuenta de 3 a 1 (D-105) dura lo que dura: se espera a que aparezca y se vaya, no 4,8 s fijos
+  await ev(`document.getElementById('btn-empezar').click(); 1`);
+  await b.hasta(`document.getElementById('cuenta')`, 1500); await b.hasta(`!document.getElementById('cuenta')`, 4800); await b.asentar(400);
   if (id === 'letras') ok(!(await ev(`[...document.querySelectorAll('.keypad button')].some(x=>x.textContent==='Ñ')`)), `letras (${lang}): el teclado no tiene Ñ`);
   if (id === 'conexiones') ok(await ev(`(async()=>{const m=await import('/cup/games/connections/grillas-${lang}.js');const w=[...document.querySelectorAll('#jugar-body button')].map(x=>x.textContent);return m.GRILLAS.some(g=>g.grupos.flatMap(x=>x.palabras).includes(w[0]))})()`), `conexiones (${lang}): la grilla es una de las de su idioma`);
   await revisar(`${lang}-suelto-${id}-juego`, { botones: false });
