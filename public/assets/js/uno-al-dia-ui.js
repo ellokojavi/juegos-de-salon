@@ -52,7 +52,7 @@ export async function tirarHoy({ lang, raiz = '' }) {
   });
 }
 
-/** Lo que dice el acceso según el día: si ya jugó, su racha y, para la tarjeta, la segunda línea ("🔥 1 · Jugar el de hoy" o "✅ Listo · 🔥 1"). */
+/** Lo que dice el acceso según el día: si ya jugó, su racha y, para la tarjeta, la segunda línea ("🔥 1 · Jugar hoy" o "✅ Listo · 🔥 1"). */
 function estadoAcceso(lang, raiz, alTocar) {
   const T = textos(lang).uad;
   const e = estado();
