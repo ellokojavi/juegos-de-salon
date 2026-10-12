@@ -45,6 +45,8 @@ for (let n = 0; n < 300; n++) {
   const t = generar(`dos-${n}`, { colores: 2 });
   assert.equal(t.dibujo.pinturas.length, 2);
   assert.notEqual(t.dibujo.pinturas[0].nombre, t.dibujo.pinturas[1].nombre);
+  // Amarillo y naranjo se confunden a simple vista: no comparten tablero
+  assert.notDeepEqual(t.dibujo.pinturas.map(p => p.nombre).sort(), ['amarillo', 'naranjo'], `dos-${n}: amarillo con naranjo`);
   assert.ok(t.sol.includes(2), `${n}: no hay segundo color`);
   const sabe = resolver(t.sol, t.dadas);
   assert.equal(sabe.size, t.sol.length, `dos-${n}: no se resuelve sin adivinar`);
