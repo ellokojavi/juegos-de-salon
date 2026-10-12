@@ -56,7 +56,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
-| 🚇 Rutas, el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
+| 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -5254,7 +5254,8 @@ revisa el puntaje y el desglose.
 **Contexto:** el dueño pidió estudiar *Junction Nine* (Bricks and Chips): 9 piezas en 3×3 con tramos
 de líneas de colores; una jugada gira 180° cualquier rectángulo del tablero, y el desafío es unir todas
 las líneas en el mínimo de giros, que el juego conoce («185.794.560 tableros» = 9! × 2⁹). Pidió un
-prototipo y le puso el nombre: **Rutas**.
+prototipo y le puso el nombre: **Rutas**. En v0.167.3 el dueño lo renombró **Rutas rotas** (las líneas parten
+cortadas y hay que unirlas); el link `/labs/routes/` y el id `rutas` siguen iguales.
 **Decisión:** el motor arma un **plano de metro** al azar (4 líneas de colores que van de borde a borde
 del tablero, pasando de pieza en pieza por una de las dos puertas de cada lado, sin piezas vacías ni
 repetidas) y lo desordena con 5 giros al azar desde la meta. El **mínimo exacto** se calcula buscando
