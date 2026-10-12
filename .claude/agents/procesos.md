@@ -103,7 +103,7 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
 2. **Lo aprobado en cola primero:** cada tarea que el dueño aprobó con un Sí se hace en esta ronda
    (en su PR, con auto-merge) y se anota con `anotar --cola <id>`.
 3. **El feedback 🐞.** Cada reporte que la gente manda desde la app llega como un issue con la
-   etiqueta `feedback` (lo sube `.github/workflows/feedback.yml` cada hora, D-275). A cada issue
+   etiqueta `feedback` (lo sube `.github/workflows/feedback.yml` cada 15 minutos, D-275, D-306). A cada issue
    abierto le das una de estas cuatro salidas y la dices en un comentario corto (qué haces y el
    link del PR o del issue que lo sigue). El que ya tiene tu comentario y no cambió, lo saltas:
    - **Un error o algo que no se entiende, con arreglo claro** (un botón que no responde, un texto

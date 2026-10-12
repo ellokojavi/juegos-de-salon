@@ -799,6 +799,9 @@
         "nombre": {
           ".validate": "newData.isString() && newData.val().length <= 40"
         },
+        "tester": {
+          ".validate": "newData.isString() && newData.val().length <= 24"
+        },
         "contexto": {
           ".validate": "newData.isString() && newData.val().length <= 500"
         },
