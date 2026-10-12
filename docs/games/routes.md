@@ -1,8 +1,8 @@
 # 🚇 Rutas (prototipo del laboratorio, en Proyectos activos)
 
 Nueve piezas de un plano de metro en 3×3 (D-293). Una jugada gira 180° cualquier rectángulo del
-tablero; se gana uniendo todas las líneas, y el desafío es hacerlo en el mínimo de giros, en cinco
-etapas cada vez más difíciles (D-294). **Inspirado
+tablero; se gana uniendo todas las líneas, y el desafío es hacerlo pronto y en el mínimo de giros, en cinco
+etapas cada vez más difíciles y con 7 minutos de reloj (D-294, D-295). **Inspirado
 en [Junction Nine](https://bricksandchips.co/junction-nine), de Bricks and Chips**, y lo dice en la
 portada y en el laboratorio.
 
@@ -25,7 +25,7 @@ la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
   4 y 4; 5 y 4; 5 y 5. Arriba, «Etapa n de 5», cinco puntos (verde la hecha en el mínimo, amarilla
   la hecha con giros de más, blanca la actual), como la tarjeta para compartir; el mínimo lo dice el
   marcador de abajo. Al unir una etapa, «🚇 ¡Etapa 2 lista!» y llega
-  la siguiente. La partida vale el promedio de las etapas.
+  la siguiente.
 
 - **Girar:** se arrastra de una pieza a otra y queda marcado en blanco el rectángulo entre las dos (el amarillo se confundía con la línea amarilla);
   al soltar, gira media vuelta: cada pieza viaja a su lugar espejo y se da vuelta. Un toque gira una
@@ -44,7 +44,7 @@ la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
   completando las cinco: 10 en un minuto o menos, 0 al acabarse el reloj) + hasta 5 por giros (5 en el
   mínimo, 0 con el doble o más). Completar más siempre gana. Con 70 o más, confeti.
 - **El final:** el último tablero, un sello (¡Todas en el mínimo!, ¡Rutas unidas!, Se acabó el tiempo o
-  Te rendiste), el puntaje, el desglose (las tres capas y cada etapa: «🟨 Etapa 3: 5 giros (mínimo 4) · 85/100», y cuántas veces reiniciaste),
+  Te rendiste), el puntaje, el desglose (las tres capas y cada etapa: «🚇 5 de 5 etapas: 85 puntos (17 cada una).», «⏱ Rapidez (2:10): +8.», «🔄 Giros (24; el mínimo era 18): +3.» y «🟨 Etapa 3: 5 giros (mínimo 4)»; sin las cinco, «⏱ Rapidez: +0 (solo si completas las 5 etapas).», y cuántas veces reiniciaste),
   el tiempo, compartir (una línea por etapa: «🟩 1: 2/2»), otro tablero, el de hoy (si se jugó con semilla) y, tras una línea, el
   formulario de comentarios (D-265, D-268).
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos.
@@ -60,13 +60,15 @@ la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
   busca desde los dos extremos a la vez, y hacia atrás parte de las dos soluciones: la meta y el
   tablero entero dado vuelta (`TODO`), que también une todas las líneas. `ETAPAS` dice líneas y mínimo
   de cada etapa, `generarEtapa(semilla, n)` arma la etapa con la semilla `<semilla>:etapa-<n>`, y
-  `puntajeTotal` promedia los puntajes de las etapas.
+  `puntajePartida(hechas, segundos)` da el puntaje por capas (`TIEMPO_S`, `PUNTOS_ETAPA`, `BONO_VELOCIDAD`,
+  `BONO_GIROS`) con cada capa por separado, para el desglose.
 - `game.js`: dibuja cada pieza en SVG (curvas de puerta a puerta, con una estación blanca en la mitad),
   la posiciona con left/top y la gira con rotate, acumulando el ángulo para que siempre dé media vuelta
   hacia el mismo lado.
 - `engine.test.mjs` revisa los giros, el mínimo contra una búsqueda simple (también que con un giro
-  menos no se llega a ninguna de las dos soluciones), 60 tableros y las cinco etapas;
-  `tools/e2e/routes/lab.mjs` arrastra, reinicia y juega las cinco etapas.
+  menos no se llega a ninguna de las dos soluciones), 60 tableros, las cinco etapas y los
+  casos límite del puntaje (más rápido nunca da menos); `tools/e2e/routes/lab.mjs` arrastra, reinicia, juega
+  las cinco etapas, se rinde y deja acabarse un reloj de prueba (`?test&time=12`, solo en el modo de prueba).
 
 ## Excepciones a los cánones
 
