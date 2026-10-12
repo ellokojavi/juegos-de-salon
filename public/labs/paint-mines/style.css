@@ -111,7 +111,8 @@ body.modo-dificil {
 .placa .flecha:not(.punta) { stroke-dasharray: 4 5; animation: pm-avanza 0.9s linear infinite; }
 .placa .flecha.punta { animation: pm-empuja 1.6s ease-in-out infinite; }
 @keyframes pm-avanza { to { stroke-dashoffset: -9; } }
-@keyframes pm-empuja { 0%, 100% { transform: none; } 50% { transform: translate(1.5px, 1px); } }
+/* La punta empuja en la dirección de la curva al final: abajo a la derecha */
+@keyframes pm-empuja { 0%, 100% { transform: none; } 50% { transform: translate(1.3px, 0.8px); } }
 .interruptor.on .flecha { opacity: 0; }
 /* El destello de toda la vista al mover la palanca */
 .relampago { position: fixed; inset: 0; z-index: 60; pointer-events: none; background: rgba(255, 255, 255, 0.55); animation: pm-relampago 0.55s ease-out forwards; }
