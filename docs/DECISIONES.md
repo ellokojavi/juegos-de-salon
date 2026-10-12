@@ -51,13 +51,14 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
-| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, pinceles, tablero sin adivinar, modo difícil, ayuda) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292 |
+| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293 |
+| 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255 |
@@ -5341,3 +5342,34 @@ Sin confeti.
 etapas hechas).
 **Consecuencias:** `engine.test.mjs` revisa el avance y el puntaje al rendirse;
 `tools/e2e/paint-mines/lab.mjs` se rinde a mitad de partida.
+
+## D-297 · Números explosivos: prototipo del laboratorio, inspirado en Number Match
+**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** como D-289 (Pintaminas) y D-293 (Rutas)
+**Contexto:** el dueño pidió evaluar Number Match (Easybrain, 50 M+ descargas) y, si valía la pena,
+hacer un prototipo; el nombre y las explosiones también los pidió él.
+**Decisión:** un juego para uno solo en `/labs/exploding-numbers/` (id `numeros-explosivos`), en
+Proyectos activos. Las reglas son las del juego de lápiz y papel del que viene Number Match (Take
+Ten): grilla de 9 columnas con números del 1 al 9; se tachan de a pares dos **iguales o que suman
+10**, si están **juntos de lado, de arriba abajo o en diagonal** (lo estallado no estorba) o uno al
+final de una fila y el otro al comienzo de la siguiente. Una fila estallada entera se va. **➕** copia
+al final los números que quedan, 3 veces por partida; con pares a la vista pide un segundo toque.
+- **Tablero del día** (36 números, 4 filas), el mismo para todos; `?seed=` da otro. Se arma con una
+  salida: sus pares van anidados como paréntesis en el orden de lectura, así que se limpia entero sin
+  ➕. Un mal orden igual puede trabarlo.
+- **Puntaje sobre 100:** limpiar vale 70 y cada ➕ sin usar 10; si no se limpia (rendirse, o sin
+  pares ni ➕), la parte estallada de los 70, contando lo agregado. La 💡 ayuda (dos toques, como en
+  Pintaminas) marca un par y resta 10. 🏳️ Rendirse con dos toques.
+- **Las explosiones** (pedido del dueño): cada par estalla con una onda, un destello, un 💥 de
+  historieta, chispas de su color y pedazos del número; el tablero tiembla. Una fila entera explota
+  de punta a punta y se aplasta; al limpiarlo todo, el resumen aparece de inmediato (una sola pantalla
+  final, como los otros juegos) y tres estallidos grandes salen de su puntaje, con confeti. Cada número
+  lleva en el borde el color de su familia (1 y 9, 2 y 8…). Con movimiento reducido, sin explosiones.
+- **La portada** juega sola un tablero chico de 2 filas en su orden, hasta «¡Limpio!».
+**Por qué:** es un solitario corto, de reglas que caben en tres líneas, que se juega con el pulgar y
+tiene la vuelta diaria de los otros del laboratorio. Las explosiones le dan lo que el original no
+tiene. Un tablero que siempre tiene salida evita la frustración de los tableros imposibles.
+**Alternativas descartadas:** el puntaje sin tope del original (+1 por par, +10 por fila, +150 al
+limpiar), que no se compara entre amigos; ➕ sin límite (vuelve el tablero infinito); tableros al azar
+(pueden no tener salida).
+**Consecuencias:** `engine.test.mjs` limpia 400 tableros con su orden; `tools/e2e/exploding-numbers/lab.mjs`
+juega uno entero. Las casillas miden menos de 44 px a 375 px de ancho (9 columnas, como el original).
