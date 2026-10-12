@@ -73,7 +73,7 @@ try {
   // Un choque de verdad queda en conflicto, con sus marcas
   g('checkout', '-qb', 'choque'); escribir('docs/DECISIONES.md', doc(cabA, d(1), d(2), d(3), d(4), d(5, 'una'))); g('commit', '-qam', 'D-5 una');
   g('checkout', '-q', 'main'); escribir('docs/DECISIONES.md', doc(cabA, d(1), d(2), d(3), d(4), d(5, 'otra'))); g('commit', '-qam', 'D-5 otra');
-  const m = spawnSync('git', ['merge', '-q', '-m', 'merge', 'choque'], { cwd: dir, encoding: 'utf8' });
+  const m = spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', 'merge', '-q', '-m', 'merge', 'choque'], { cwd: dir, encoding: 'utf8' });
   assert.notEqual(m.status, 0, 'D-5 en los dos lados no se junta solo');
   assert.match(readFileSync(join(dir, 'docs/DECISIONES.md'), 'utf8'), /<<<<<<< /);
 } finally { rmSync(dir, { recursive: true, force: true }); }
