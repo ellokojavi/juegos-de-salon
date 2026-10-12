@@ -1,5 +1,5 @@
 /**
- * Rutas — prototipo de laboratorio (D-293), inspirado en Junction Nine (Bricks and Chips): 9 piezas
+ * Rutas rotas — prototipo de laboratorio (D-293; se llamaba Rutas hasta v0.167.3), inspirado en Junction Nine (Bricks and Chips): 9 piezas
  * con tramos de líneas de metro; se arrastra de una pieza a otra para elegir un rectángulo y, al
  * soltar, gira media vuelta. Gana quien une todas las líneas, y el desafío es hacerlo en el mínimo de
  * giros (el motor lo calcula exacto). Reiniciar es gratis. Solo en español, para probar con amigos.
@@ -21,7 +21,7 @@ const GAME_ID = 'rutas';
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const JUNCTION = 'https://bricksandchips.co/junction-nine';
 const T = {
-  nombre: 'Rutas',
+  nombre: 'Rutas rotas',
   lema: 'Une todas las líneas del metro girando partes del tablero.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
@@ -253,7 +253,7 @@ function empezar() {
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
   // El 3, 2, 1 de La Copa (D-105): el tablero se arma con el "¡A girar!", y el tiempo corre desde ahí
   vista.replaceChildren(); pie.replaceChildren();
-  cuentaRegresiva({ titulo: '🚇 Rutas', ya: T.aJugar }).then(() => { P.desde = Date.now(); jugar(); });
+  cuentaRegresiva({ titulo: '🚇 Rutas rotas', ya: T.aJugar }).then(() => { P.desde = Date.now(); jugar(); });
 }
 
 /** Los puntos de las etapas: hechas (verde en el mínimo, amarilla con giros de más, como 🟩 y 🟨 al compartir), la actual y las que vienen. */
