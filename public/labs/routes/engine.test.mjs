@@ -1,6 +1,6 @@
-// Rutas (laboratorio, D-293): girar un rectángulo dos veces lo deja igual, la meta está resuelta, el
-// mínimo es exacto (se compara con una búsqueda simple) y cada tablero es justo: no viene resuelto y su
-// mínimo está entre 3 y los giros con que se desordenó.
+// Rutas (laboratorio, D-293, D-294): girar un rectángulo dos veces lo deja igual, la meta está resuelta, el
+// mínimo es exacto (se compara con una búsqueda simple, contando el tablero entero dado vuelta como
+// solución), cada tablero es justo (no viene resuelto) y cada una de las cinco etapas da justo su mínimo.
 import assert from 'node:assert/strict';
 import { generar, generarEtapa, girar, resuelto, minimo, bordesUnidos, puntaje, puntajeTotal, RECTANGULOS, LADO, RESTA_GIRO, TODO, ETAPAS } from './engine.js';
 
