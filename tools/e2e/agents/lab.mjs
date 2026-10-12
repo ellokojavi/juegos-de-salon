@@ -81,15 +81,18 @@ ok(await llega(1), 'y entra la siguiente');
 for (const i of de(1)) await tocar(i);
 ok(await sello() === 'Completa', 'completar la pista le pone el sello de Completa');
 ok(await llega(2), 'y pasa a la siguiente');
-// Pista 3: uno, el botón dice Terminar, y un neutral corta la última pista: se acaba
-await tocar(de(2)[1]);
+// Pista 3: sus dos que faltan la completan (uno ya se encontró en la pista 1)
+await tocar(de(2)[1]); await tocar(de(2)[2]);
+ok(await llega(3), 'un agente encontrado antes cuenta para su pista: con los otros dos se completa');
+// Pista 4, la última: uno, el botón dice Terminar, y un neutral corta la pista: se acaba
+await tocar(de(3)[0]);
 ok(/Terminar/.test(await ev(`document.getElementById('btn-pasar')?.textContent || ''`)), 'en la última pista el botón dice Terminar');
 await tocar(de(null, 'neutral')[0]);
 ok(await esperar(`document.querySelectorAll('#tablero .carta.sin-tocar').length > 0`, 3000), 'al terminar se destapan las cartas que nadie tocó');
 ok(await esperar(`!!document.getElementById('puntaje')`), 'un neutral corta la última pista y lleva al resultado');
 
-// El resultado: lo que dice el motor (6 agentes, 1 neutral, el asesino)
-const esp = Math.max(0, Math.round(100 * 6 / 9) - 15 - 40);
+// El resultado: lo que dice el motor (8 de 12 agentes, 1 neutral, el asesino)
+const esp = Math.max(0, Math.round(100 * 8 / 12) - 15 - 40);
 ok(await esperar(`document.getElementById('puntaje').textContent === '${esp}/100'`, 4000), `el puntaje sube hasta el del motor (${esp}/100)`);
 ok(/descubrió el asesino/i.test(await ev(`document.querySelector('.sello-fin')?.textContent || ''`)), 'con el asesino, el final es el sello rojo "Te descubrió el asesino"');
 const trampa = await ev(`document.getElementById('trampa')?.textContent || ''`);

@@ -2,7 +2,7 @@
 // tienta pero no va con ninguna, las neutrales no tientan— y el estado y el puntaje se calculan bien.
 import assert from 'node:assert/strict';
 import { PISTAS } from './pistas.js';
-import { generar, estado, puntaje, tarjeta, AGENTES, NEUTRALES } from './engine.js';
+import { generar, estado, puntaje, tarjeta, AGENTES, CUANTAS, NEUTRALES } from './engine.js';
 
 const nombres = PISTAS.map(x => x.pista);
 assert.equal(new Set(nombres).size, nombres.length, 'pistas repetidas');
@@ -33,7 +33,7 @@ const t = generar('prueba-estado');
 const de = p => t.cartas.map((c, i) => [c, i]).filter(([c]) => c.tipo === 'agente' && c.p === p).map(([, i]) => i);
 const neutral = t.cartas.findIndex(c => c.tipo === 'neutral'), asesino = t.cartas.findIndex(c => c.tipo === 'asesino');
 // Todo perfecto: 100
-const perfecto = [0, 1, 2].flatMap(p => de(p).map(i => ({ i })));
+const perfecto = [...Array(CUANTAS).keys()].flatMap(p => de(p).map(i => ({ i })));
 let e = estado(t, perfecto);
 assert.ok(e.fin && e.encontrados === AGENTES && puntaje(e) === 100);
 // Un agente de otra pista suma y no corta: queda menos para esa pista
@@ -46,7 +46,8 @@ assert.equal(e.actual, 1); assert.equal(e.neutrales, 1);
 e = estado(t, [{ pasar: true }]);
 assert.equal(e.actual, 1); assert.equal(puntaje(e), 0);
 // El asesino resta 40
-e = estado(t, [...de(0).map(i => ({ i })), ...de(1).map(i => ({ i })), { i: asesino }]);
-assert.ok(e.fin && e.asesino); assert.equal(puntaje(e), Math.round(100 * 6 / 9) - 40);
+// (todas las pistas menos la última completas, y en la última el asesino: se acaba)
+e = estado(t, [...[...Array(CUANTAS - 1).keys()].flatMap(p => de(p).map(i => ({ i }))), { i: asesino }]);
+assert.ok(e.fin && e.asesino); assert.equal(puntaje(e), Math.round(100 * (AGENTES - 3) / AGENTES) - 40);
 assert.equal(tarjeta(t, e).split('\n').length, (AGENTES + NEUTRALES + 1) / 3);
 console.log('✓ Agentes (labs)');
