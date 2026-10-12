@@ -20,6 +20,19 @@ for (const d of DIBUJOS2) {
   assert.ok(de('#') >= 4 && de('+') >= 4 && de('#') + de('+') >= 12 && de('#') + de('+') <= 40, `${d.nombre}: colores mal repartidos`);
   assert.ok(!d.filas.every(f => f === [...f].reverse().join('')) && d.filas.join() !== [...d.filas].reverse().join(), `${d.nombre}: es simétrico`);
 }
+// Los dibujos con colores propios nombran colores de PALETA, distintos, uno por color del dibujo
+for (const d of [...DIBUJOS, ...DIBUJOS2].filter(d => d.colores)) {
+  assert.ok(d.colores.every(n => PALETA.some(p => p.nombre === n)) && new Set(d.colores).size === d.colores.length, `${d.nombre}: colores`);
+}
+// Las cerezas salen rojas con el tallo verde (pedido del dueño)
+let cerezas = 0;
+for (let n = 0; cerezas < 3 && n < 500; n++) {
+  const t = generar(`cerezas-${n}`, { colores: 2 });
+  if (t.dibujo.emoji !== '🍒') continue;
+  cerezas++;
+  assert.deepEqual(t.dibujo.pinturas.map(p => p.nombre), ['rojo', 'verde'], 'las cerezas: fruta roja, tallo verde');
+}
+assert.equal(cerezas, 3, 'salen cerezas en el modo difícil');
 for (const p of PALETA) assert.ok(p.nombre && /^#[0-9a-f]{6}$/.test(p.color) && p.cuadro, `${p.nombre}: color`);
 assert.deepEqual(VECINAS[0].sort((a, b) => a - b), [1, 7, 8]);
 assert.equal(VECINAS[24].length, 8);

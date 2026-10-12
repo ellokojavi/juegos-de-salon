@@ -5,6 +5,9 @@
   pares los números iguales o que suman 10, si están juntos en línea, hasta dejar el tablero limpio.
   Sin pares, ➕ copia abajo los que quedan (3 por partida). Cada par estalla, una fila entera explota
   y se va, y al limpiarlo todo explota. El tablero del día siempre tiene salida.
+## 0.167.2 — 2026-10-12
+- **🖌️ Pintaminas (laboratorio):** en el modo difícil, las cerezas salen rojas con el tallo verde,
+  como son; los otros dibujos siguen con colores al azar.
 
 ## 0.167.1 — 2026-10-12
 - **🧪 Laboratorio: las portadas al día.** Pintaminas cuenta el modo de dos colores y la ayuda; Rutas,
