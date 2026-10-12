@@ -1,14 +1,17 @@
 /**
  * Agentes — el motor del prototipo de laboratorio (D-286): un Codenames de uno, donde el juego da
- * las pistas y tú adivinas. Un tablero de 15 palabras: 4 grupos de 3 agentes (uno por pista), 2
+ * las pistas y tú adivinas. Un tablero de 15 palabras: 4 grupos de agentes (uno por pista; tres de 3 y uno de 2, cuál cambia
+ * cada día), 3
  * neutrales y 1 asesino que tienta. Las pistas llegan de a una, con su número. Tocar un agente suma
  * (también si es de otra pista: es de los tuyos); una neutral o el asesino restan y cortan la pista.
  * Se puede pasar a la siguiente pista cuando quieras. Sin DOM: lo prueba engine.test.mjs.
  */
 import { PISTAS } from './pistas.js';
 
-export const POR_PISTA = 3, CUANTAS = 4, NEUTRALES = 2;
-export const AGENTES = POR_PISTA * CUANTAS;
+// Una de las pistas lleva un agente menos (CORTAS): no se sabe de antemano que todas son de 3, y queda
+// lugar para una trampa más
+export const POR_PISTA = 3, CUANTAS = 4, CORTAS = 1, NEUTRALES = 3;
+export const AGENTES = POR_PISTA * CUANTAS - CORTAS;
 export const RESTA_NEUTRAL = 15, RESTA_ASESINO = 40;
 
 /** Un azar que sale de la semilla: el mismo tablero para todos con la misma. */
@@ -38,10 +41,12 @@ export function generar(semilla) {
     const usadas = new Set(elegidas.map(x => x.pista));
     const cartas = [];
     let bien = true;
+    const corta = Math.floor(r() * CUANTAS);
+    const cuantos = p => POR_PISTA - (p === corta ? CORTAS : 0);
     elegidas.forEach((x, p) => {
       // Las suyas, que no vayan con ninguna otra de las elegidas
-      const propias = barajar(x.si.filter(w => !usadas.has(w) && elegidas.every((y, q) => q === p || !y.si.includes(w))), r).slice(0, POR_PISTA);
-      if (propias.length < POR_PISTA) bien = false;
+      const propias = barajar(x.si.filter(w => !usadas.has(w) && elegidas.every((y, q) => q === p || !y.si.includes(w))), r).slice(0, cuantos(p));
+      if (propias.length < cuantos(p)) bien = false;
       for (const w of propias) { usadas.add(w); cartas.push({ w, tipo: 'agente', p }); }
     });
     if (!bien) continue;
@@ -58,7 +63,7 @@ export function generar(semilla) {
     const neutrales = [...quedan.filter(w => tientaA(w) !== tientaA(asesino)), ...quedan.filter(w => tientaA(w) === tientaA(asesino))].slice(0, NEUTRALES);
     if (neutrales.length < NEUTRALES) continue;
     for (const w of neutrales) { usadas.add(w); cartas.push({ w, tipo: 'neutral', p: null, tienta: tientaA(w) }); }
-    return { pistas: elegidas.map(x => ({ pista: x.pista, n: POR_PISTA })), cartas: barajar(cartas, r) };
+    return { pistas: elegidas.map((x, p) => ({ pista: x.pista, n: cuantos(p) })), cartas: barajar(cartas, r) };
   }
   throw new Error('no se pudo armar un tablero');
 }

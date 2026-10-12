@@ -26,7 +26,9 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
 - **Al empezar:** la cuenta 3, 2, 1, ¡A jugar! de La Copa (D-105, `assets/js/cuenta-regresiva.js`);
   el tablero se arma con el "¡A jugar!" y el tiempo corre desde ahí.
 
-- **Tablero:** 12 palabras: 9 agentes (3 pistas de 3), 2 neutrales y 1 asesino.
+- **Tablero:** 15 palabras en 3×5: 11 agentes en 4 pistas (tres de 3 y una de 2, «· 2»; cuál cambia
+  cada tablero), 3 neutrales y 1 asesino. Las neutrales y el asesino salen de las tentaciones de las
+  pistas: las 4 cartas que no son tuyas se parecen a alguna.
 - **Pistas:** llegan de a una, «MAR · 3». Tocar un agente de la pista suma; uno de otra pista
   también suma y no corta. Un neutral (−15) o el asesino (−40) cortan la pista y pasa la
   siguiente. "⏭️ Siguiente pista" se planta; en la última dice "🏁 Terminar", que si faltan agentes pregunta primero ("¿Terminas igual?", U-15).
