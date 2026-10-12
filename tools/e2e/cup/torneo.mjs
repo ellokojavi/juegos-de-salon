@@ -61,33 +61,34 @@ async function revisarPantalla(nombre) {
 
 async function comoJugador(code) {
   await ev('sessionStorage.clear(); 1');
-  await b.go(`${BASE}?${code}&test`, 1200);
+  await b.abrir(`${BASE}?${code}&test`, 1200);
   await preparar();
 }
 
 async function inscribir(code, nombre, pin) {
   await comoJugador(code);
   ok(await pantalla() === 'entrar', `${nombre} llega a la invitación`);
-  await click('#tab-nuevo'); await sleep(150);
+  await click('#tab-nuevo'); await b.asentar(150);
   await ev(`(()=>{const i=[...document.querySelectorAll('#entrar-body input')];i[0].value=${JSON.stringify(nombre)};i[1].value='${pin}';i[2].value='${pin}';return 1})()`);
   if (nombre === 'Javi') await b.shot('00-invitacion');
-  await click('#btn-inscribir'); await sleep(500);
+  await click('#btn-inscribir'); await b.hasta(`__copa.estado.pantalla === 'tablero'`, 500, 30);
   ok(await pantalla() === 'tablero', `${nombre} queda inscrito y ve el tablero`);
 }
 
 async function sentarse(code, nombre, pin) {
   await comoJugador(code);
   if (await pantalla() === 'tablero') return;
-  await click('#tab-inscrito'); await sleep(150);
+  await click('#tab-inscrito'); await b.asentar(150);
   await ev(`[...document.querySelectorAll('.chip-btn')].find(x=>x.textContent===${JSON.stringify(nombre)}).click(); 1`);
   await ev(`document.querySelector('#entrar-body input.pin').value='${pin}'; 1`);
-  await click('#btn-sentarse'); await sleep(500);
+  await click('#btn-sentarse'); await b.hasta(`__copa.estado.pantalla === 'tablero'`, 500, 30);
 }
 
 /* ---------- Cómo juega cada uno cada juego. `nivel` de 0 (mal) a 2 (perfecto). ---------- */
 
 /** Cierra el veredicto de Línea (el acierto se cierra solo; el error espera un toque). */
-const cerrarVeredicto = async () => { await sleep(150); await ev(`(()=>{const h=document.getElementById('handoff');if(!h.hidden)h.click();return 1})()`); await sleep(380); };
+// Sin pausas fijas (D-307): se espera lo que se espera, con la pausa de antes como tope
+const cerrarVeredicto = async () => { await b.hasta(`!document.getElementById('handoff').hidden`, 150, 30); await ev(`(()=>{const h=document.getElementById('handoff');if(!h.hidden)h.click();return 1})()`); await b.hasta(`document.getElementById('handoff').hidden`, 380, 30); };
 
 const jugarLinea = async (nivel, { arrastrar = false } = {}) => {
   for (let k = 0; k < 12 && await ev(`!!document.querySelector('.hand .card')`); k++) {
@@ -294,7 +295,7 @@ async function esperarCuenta({ revisar = false } = {}) {
       'al empezar aparece la cuenta desde 3, con el tablero todavía oculto');
     await b.shot('cuenta');
   }
-  for (let i = 0; i < 80 && !(await ev(`!document.getElementById('cuenta') || document.getElementById('cuenta').classList.contains('ya')`)); i++) await sleep(100);
+  await b.hasta(`!document.getElementById('cuenta') || document.getElementById('cuenta').classList.contains('ya')`, 8000, 50);
   if (revisar) {
     ok(await ev(`document.getElementById('cuenta')?.textContent.includes('¡A jugar!') && !!document.querySelector('#jugar-body').children.length`), 'después de la cuenta dice ¡A jugar! y aparece el tablero');
     ok(/0:0[01]/.test(await ev(`document.querySelector('#jugar-head .cron')?.textContent || ''`)), 'el reloj parte en cero después de la cuenta');
@@ -303,7 +304,7 @@ async function esperarCuenta({ revisar = false } = {}) {
 }
 
 async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
-  await click(`[data-dia="${d}"]`); await sleep(300);
+  await click(`[data-dia="${d}"]`); await b.asentar(300);
   if (comodin) { await click('#btn-comodin'); await sleep(300); }
   if (capturar) await revisarPantalla(`antes-${d}`);
   if (capturar && d === 1) {
@@ -321,7 +322,7 @@ async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
     await b.shot('ensayo-fin');
     await click('#btn-volver-ensayo'); await sleep(300);
   }
-  await click('#btn-empezar'); await sleep(400); await esperarCuenta();
+  await click('#btn-empezar'); await b.hasta(`document.getElementById('cuenta')`, 400, 30); await esperarCuenta();
   if (!await ev('!!__copa.estado.juego')) {
     console.log('  diagnóstico día', d, await ev(`JSON.stringify({p:__copa.estado.pantalla, err:document.querySelector('.screen.active .form-error')?.textContent, btn:!!document.getElementById('btn-empezar'), texto:document.querySelector('.screen.active').innerText.slice(0,300)})`));
     await b.shot(`fallo-dia${d}`);
@@ -332,10 +333,10 @@ async function jugarDia(d, nivel, { capturar = false, comodin = false } = {}) {
   if (capturar) { await revisarPantalla(`juego-${id}`); if (TOMAS[id]) await b.shot(TOMAS[id]); }
   // El resultado sale apenas termina el tablero, antes de tocar "Ver resultado" (D-150)
   if (id !== 'final') {
-    await sleep(300);
+    await b.hasta(`!!__copa.estado.copa.results?.[${d}]?.[__copa.estado.yo]`, 300, 30);
     ok(await ev(`!!__copa.estado.copa.results?.[${d}]?.[__copa.estado.yo] && __copa.estado.pantalla === 'jugar'`), `día ${d} (${id}): el resultado queda en la copa antes de tocar "Ver resultado"`);
   }
-  await click('#btn-fin'); await sleep(700);
+  await click('#btn-fin'); await b.hasta(`__copa.estado.pantalla === 'resultado'`, 700, 30); await b.asentar(400);
   if (id === 'final') ok(await ev(`(()=>{const x=[...document.querySelectorAll('#resultado-body .md-x2')];return x.length>0 && x.every(c=>c.classList.contains('chip--final') && !c.classList.contains('chip--gold'))})()`), 'la final: en los resultados todos llevan el ×2 de la final, en cian y no en el dorado del comodín (D-151)');
   if (capturar) ok(await ev(`(document.querySelector('#explicacion')?.innerText || '').includes('Total:')`), `resultado del día ${d}: explica cómo se calculó el puntaje`);
   return id;
@@ -523,7 +524,7 @@ if (corre('copa')) {
   ok(/7 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)) || /3 días · Parte el .* · 3 jugadores inscritos/.test(await ev(`document.querySelector('#entrar-body .lead').textContent`)), 'la invitación dice días, cuándo parte y cuántos se inscribieron');
   await click('#tab-nuevo'); await sleep(100);
   await ev(`(()=>{const i=[...document.querySelectorAll('#entrar-body input')];i[0].value='javi';i[1].value='2222';i[2].value='2222';return 1})()`);
-  await click('#btn-inscribir'); await sleep(500);
+  await click('#btn-inscribir'); await b.hasta(`__copa.estado.pantalla === 'tablero'`, 500, 30);
   ok(await pantalla() === 'tablero' && await ev('__copa.estado.copa.players[__copa.estado.yo].name') === 'Javi', 'inscribirse con el nombre y el PIN de alguien ya inscrito lo hace entrar');
 
   const JUGADORES = [['Cata', '1111'], ['Javi', '2222'], ['Pancho', '3333']];
@@ -549,7 +550,8 @@ if (corre('copa')) {
       const id = await jugarDia(d, NIVELES[d - 1][j], { capturar, comodin: d === 2 && nombre === 'Javi' });
       if (capturar) await revisarPantalla(`resultado-${id}`);
       ok(await pantalla() === 'resultado', `${nombre} terminó el día ${d} (${id})`);
-      await click('#btn-tarjeta'); await sleep(800);
+      const compartidos = await ev('window.__compartido.length');
+      await click('#btn-tarjeta'); await b.hasta(`window.__compartido.length > ${compartidos}`, 800, 30);
       if (d === 1 && j === 0) {
         console.log('  tarjeta:', JSON.stringify(await ev('window.__compartido.at(-1)?.text')));
         // El juego, quién y el puntaje van en la imagen: el texto es la cabecera y el link (D-171)
@@ -560,7 +562,7 @@ if (corre('copa')) {
         ok(f && f.type === 'image/png' && f.size > 20000 && f.name === 'copa-oficina-dia-1-cata.png', `el resultado se comparte con su imagen (${f?.name})`);
         await guardarImagen('resultado-imagen');
       }
-      await click('#btn-volver'); await sleep(300);
+      await click('#btn-volver'); await b.asentar(300);
       // Resultados ocultos: quien jugó primero no ve cuánto sacaron los que todavía no juegan (LIG-13)
     }
     if (d === 1) {

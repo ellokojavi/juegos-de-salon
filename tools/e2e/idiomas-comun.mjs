@@ -117,7 +117,9 @@ export async function revisarIdiomas(juego, { dicts = [], port, pantallas, permi
       for (const paso of caminos[toma]) {
         try { await b.evaluate(`(()=>{ ${paso} ; return 1})()`); }
         catch (e) { ok(false, `${toma} · ${lang}: un paso del camino falló (${e.message.split('\n')[0]})`); }
-        await b.asentar(700);
+        // Un paso `1` es una espera a propósito (caminos.mjs): que pase el confeti, que el celular
+        // juegue. Esa sigue de 700 ms; las demás terminan cuando la pantalla se queda quieta
+        if (String(paso).trim() === '1') await sleep(700); else await b.asentar(700);
       }
       await b.asentar(500);
       const m = await b.evaluate(MEDIR);

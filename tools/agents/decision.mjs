@@ -212,7 +212,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     sh('git', ['fetch', '-q', 'origin', 'main']);
     const enMain = new Set(numeros(sh('git', ['show', `origin/main:${ARCHIVO}`])));
     for (const r of reservas()) {
-      if (cmd === 'limpiar' && enMain.has(r.n)) { sh('git', ['push', '-q', 'origin', '--delete', r.ref]); console.log(`D-${r.n}: ya está en main, reserva borrada`); }
+      if (cmd === 'limpiar' && enMain.has(r.n)) { try { sh('git', ['push', '-q', 'origin', '--delete', r.ref]); console.log(`D-${r.n}: ya está en main, reserva borrada`); }
+        catch (e) { console.log(`D-${r.n}: ya está en main; no se pudo borrar su reserva desde aquí (${String(e.stderr || e.message).split('\n').find(l => /error:|403|denied/i.test(l)) || 'sin permiso'})`); } }
       else if (!enMain.has(r.n)) console.log(`D-${r.n}: reservada, todavía no está en main`);
     }
   } else if (cmd === 'instalar') {

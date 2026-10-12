@@ -1,5 +1,5 @@
 {
-  "version": "0.168.5",
+  "version": "0.168.7",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -987,6 +987,8 @@
     "tools/agents/portadas.test.mjs",
     "tools/agents/procesos.test.mjs",
     "tools/e2e/cambios.test.mjs",
+    "tools/e2e/grupos.test.mjs",
+    "tools/e2e/ya-probado.test.mjs",
     "tools/firebase/rankings-historia.test.mjs",
     "tools/push/avisar.test.mjs",
     "tools/push/calendario.test.mjs",
@@ -1031,6 +1033,8 @@
     "generala/idiomas.mjs",
     "generala/local.mjs",
     "generala/online.mjs",
+    "grupos.mjs",
+    "grupos.test.mjs",
     "hangman/idiomas.mjs",
     "hangman/local.mjs",
     "hangman/online.mjs",
@@ -1068,7 +1072,9 @@
     "uno-al-dia-grupo.mjs",
     "uno-al-dia-jugador.mjs",
     "uno-al-dia.mjs",
-    "versionado.mjs"
+    "versionado.mjs",
+    "ya-probado.mjs",
+    "ya-probado.test.mjs"
   ],
   "documentos": [
     {
