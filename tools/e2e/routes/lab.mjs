@@ -33,17 +33,20 @@ ok(await esperar(`document.querySelectorAll('#tablero .pieza').length === 9 && !
 const t = await ev(`JSON.stringify(window.__rutas.P.t)`).then(JSON.parse);
 ok(/Mínimo: \d/.test(await ev(`document.getElementById('marcador').textContent`)), `el marcador dice el mínimo (${t.minimo})`);
 const lugares = () => ev(`JSON.stringify([...document.querySelectorAll('#tablero .pieza')].map(n => [+n.dataset.p, +n.dataset.lugar]))`).then(JSON.parse);
+// Lo que se ve es lo que dice el motor: cada pieza dada vuelta (v) se dibuja girada media vuelta
+const comoElMotor = async (sel, estado) => (await ev(`JSON.stringify([...document.querySelectorAll('${sel} .pieza')].map(n => [+n.dataset.lugar, Math.round(parseFloat(n.style.transform.slice(7)) / 180) % 2]))`).then(JSON.parse)).every(([l, v]) => estado[l].v === v);
+ok(await comoElMotor('#tablero', t.inicio), 'al empezar, cada pieza se dibuja como dice el motor (las dadas vuelta, giradas)');
 // Arrastrar de la esquina de arriba a la izquierda al centro: gira ese bloque de 2×2
 const arrastrar = (c1, f1, c2, f2) => ev(`(()=>{const t=document.getElementById('tablero'),b=t.getBoundingClientRect(),at=(c,f)=>({clientX:b.left+b.width*(c+0.5)/3,clientY:b.top+b.height*(f+0.5)/3,bubbles:true,pointerId:1});t.dispatchEvent(new PointerEvent('pointerdown',at(${c1},${f1})));t.dispatchEvent(new PointerEvent('pointermove',at(${c2},${f2})));t.dispatchEvent(new PointerEvent('pointerup',at(${c2},${f2})));return 1})()`);
 await arrastrar(0, 0, 1, 1);
 await sleep(600);
 const esperado = girar(t.inicio, { f1: 0, c1: 0, f2: 1, c2: 1 });
 const hay = await lugares();
-ok(hay.every(([p, l]) => esperado[l].p === p), 'arrastrar marca un rectángulo y al soltar gira: cada pieza queda donde dice el motor');
+ok(hay.every(([p, l]) => esperado[l].p === p) && await comoElMotor('#tablero', esperado), 'arrastrar marca un rectángulo y al soltar gira: cada pieza queda donde y como dice el motor');
 ok(/Giros: 1/.test(await ev(`document.getElementById('marcador').textContent`)), 'y cuenta el giro');
 await b.shot('02-juego');
 await ev(`document.getElementById('btn-reiniciar').click(); 1`); await sleep(500);
-ok(/Giros: 0/.test(await ev(`document.getElementById('marcador').textContent`)) && (await lugares()).every(([p, l]) => t.inicio[l].p === p), 'reiniciar vuelve al comienzo con 0 giros');
+ok(/Giros: 0/.test(await ev(`document.getElementById('marcador').textContent`)) && (await lugares()).every(([p, l]) => t.inicio[l].p === p) && await comoElMotor('#tablero', t.inicio), 'reiniciar vuelve al comienzo con 0 giros');
 // Deshacer la revuelta, al revés, une todas las líneas
 for (const r of [...t.revuelta].reverse()) { await ev(`document.getElementById('tablero').dispatchEvent(new CustomEvent('girar', { detail: ${JSON.stringify(r)} })); 1`); await sleep(80); }
 ok(await esperar(`document.getElementById('tablero')?.classList.contains('resuelto')`, 3000), 'deshaciendo la revuelta se unen todas las líneas');
