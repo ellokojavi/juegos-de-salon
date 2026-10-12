@@ -106,7 +106,8 @@ function deducir(sol, dadas, soloLaPrimera = false) {
 /**
  * El tablero de una semilla: `{ dibujo: { nombre, emoji, pinturas }, sol: [0..colores ×49], dadas }`.
  * Con `colores: 2` (el modo difícil) usa los dibujos de dos colores. El dibujo puede salir espejado,
- * y sus colores salen al azar de PALETA. Con las dadas se resuelve entero.
+ * y sus colores salen al azar de PALETA, salvo los dibujos con sus colores propios (`colores`). Con
+ * las dadas se resuelve entero.
  */
 /** Los pares de PALETA que no comparten tablero en el modo difícil. */
 const PARECIDOS = [['amarillo', 'naranjo']];
@@ -119,7 +120,9 @@ export function generar(semilla, { colores = 1 } = {}) {
   // Dos colores que se confunden a simple vista (amarillo y naranjo) no van juntos: el segundo es el
   // siguiente de la baraja que se distinga del primero
   const baraja = barajar(PALETA, r);
-  const pinturas = [baraja[0], ...baraja.slice(1).filter(p => !PARECIDOS.some(par => par.includes(p.nombre) && par.includes(baraja[0].nombre)))].slice(0, colores);
+  const azarosas = [baraja[0], ...baraja.slice(1).filter(p => !PARECIDOS.some(par => par.includes(p.nombre) && par.includes(baraja[0].nombre)))].slice(0, colores);
+  // Un dibujo con sus colores de verdad (las cerezas: rojas con el tallo verde) los usa siempre
+  const pinturas = d.colores ? d.colores.slice(0, colores).map(n => PALETA.find(p => p.nombre === n)) : azarosas;
   const valor = { '#': 1, '+': 2, '.': 0 };
   const sol = d.filas.flatMap(fila => [...(espejo ? [...fila].reverse().join('') : fila)].map(x => valor[x]));
   const todas = [...sol.keys()];
