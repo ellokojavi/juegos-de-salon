@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.157.2 — 2026-10-11
+- **🕵️ Agentes (laboratorio):** el resultado ya no muestra la grilla de emojis, que repetía el
+  tablero de abajo; va solo en el mensaje para compartir.
+
 ## 0.157.1 — 2026-10-11
 - **🕵️ Agentes (laboratorio): portada y animaciones.** La portada juega sola una pista: la lupa
   encuentra a los agentes y al final aparece el asesino. Entre pistas, a la que se cierra le cae un
@@ -7,7 +11,6 @@
   asesino sacude el tablero con un destello rojo. El final es un sello según cómo salió: ¡Misión
   cumplida! con confeti, Misión a medias, o en rojo Misión fracasada o Te descubrió el asesino. Y
   con un link de semilla, la portada ya no escribe "null".
-  El resultado ya no muestra la grilla de emojis, que repetía el tablero: va solo al compartir.
 
 ## 0.157.0 — 2026-10-11
 - **🕵️ Laboratorio: Agentes, un Codenames mini** (D-286), el primer proyecto activo. El juego te da
