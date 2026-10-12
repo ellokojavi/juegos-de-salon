@@ -1,0 +1,259 @@
+/**
+ * Rutas — prototipo de laboratorio (D-293), inspirado en Junction Nine (Bricks and Chips): 9 piezas
+ * con tramos de líneas de metro; se arrastra de una pieza a otra para elegir un rectángulo y, al
+ * soltar, gira media vuelta. Gana quien une todas las líneas, y el desafío es hacerlo en el mínimo de
+ * giros (el motor lo calcula exacto). Reiniciar es gratis. Solo en español, para probar con amigos.
+ * Sin `?seed=` es el tablero de hoy, el mismo para todos. El motor está en engine.js.
+ */
+import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
+import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
+import { COMMON, SITIO } from '../../assets/js/i18n.js';
+import { botonResultadoSolo } from '../../assets/js/compartir.js';
+import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
+import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
+import { fechaLocal } from '../../assets/js/uno-al-dia.js';
+import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
+import { generar, girar, resuelto, bordesUnidos, puntaje, RECTANGULOS, LADO, RESTA_GIRO } from './engine.js';
+
+trackVisit();   // el tráfico del sitio (D-208)
+
+const GAME_ID = 'rutas';
+const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const JUNCTION = 'https://bricksandchips.co/junction-nine';
+const T = {
+  nombre: 'Rutas',
+  lema: 'Une todas las líneas del metro girando partes del tablero, en el menor número de giros.',
+  hoy: 'El tablero de hoy es el mismo para todos.',
+  como: [
+    ['🔄', 'Arrastra de una pieza a otra para marcar un rectángulo: al soltar, gira media vuelta. Un toque gira una sola pieza.'],
+    ['🚇', 'Une todas las líneas: cada una tiene que seguir sin cortes de pieza en pieza.'],
+    ['⛳', `Hazlo en el mínimo de giros. Cada giro de más resta ${RESTA_GIRO}; reiniciar es gratis.`],
+  ],
+  empezar: '🚇 Empezar', aJugar: '¡A girar!',
+  marcador: 'Giros: {g} · Mínimo: {m}', reiniciar: '↺ Reiniciar', reiniciado: 'De vuelta al comienzo: los giros vuelven a 0.',
+  unidas: '🚇 ¡Todas las líneas unidas!',
+  fin: { perfecto: '¡Ruta perfecta!', listo: '¡Rutas unidas!' },
+  desglose: ['Lo hiciste en {g} giros; el mínimo era {m}.', 'Igualaste el mínimo: {m} giros.'], reinicios: ['Reiniciaste 1 vez.', 'Reiniciaste {n} veces.'],
+  tiempo: 'Tiempo: {t}.',
+  otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
+  comentarAbrir: '💬 Dejar un comentario',
+  comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendía cómo girar, si el mínimo te pareció justo y qué le cambiarías.', ph: 'Por ejemplo: me costó ver dónde quedaba cada pieza al girar.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', contexto: 'Lo que se envía junto', cancelar: 'Cancelar', cerrar: 'Cerrar' },
+};
+const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
+const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+
+const vista = document.getElementById('vista');
+const pie = document.getElementById('pie');
+const params = new URLSearchParams(location.search);
+const SEMILLA_URL = (params.get('seed') || '').trim();
+const P = { semilla: '', t: null, estado: null, giros: 0, reinicios: 0, desde: 0, terminado: false };
+
+function pieComentario(pantalla) {
+  pie.replaceChildren(el('button', {
+    type: 'button', class: 'link-btn', id: 'btn-comentario',
+    onClick: () => { SFX.tap(); abrirComentario({ T: T.comentario, contexto: contexto(pantalla) }); },
+  }, T.comentarAbrir));
+}
+const contexto = pantalla => ({
+  juego: GAME_ID, pantalla, semilla: P.semilla, giros: P.giros, minimo: P.t?.minimo, reinicios: P.reinicios,
+  url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
+});
+
+const tituloJuego = () => el('h1', { class: 'titulo-rt' },
+  el('span', { class: 'metro', 'aria-hidden': 'true' }, '🚇'), el('span', { class: 'display display--lg rainbow' }, T.nombre));
+/** De dónde viene el juego, con el link a su página (como Agentes y Pintaminas). */
+const credito = () => el('p', { class: 'credito' }, 'Inspirado en ',
+  el('a', { href: JUNCTION, target: '_blank', rel: 'noopener', id: 'link-junction' }, 'Junction Nine'), ', de Bricks and Chips.');
+
+// ——— Las piezas, en SVG: cada tramo une dos puertas con una curva, y en su mitad hay una estación ———
+const SVGNS = 'http://www.w3.org/2000/svg';
+const svg = (tag, attrs = {}) => { const n = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); return n; };
+const PUNTO = { N: k => [35 + 30 * k, 0], S: k => [35 + 30 * k, 100], O: k => [0, 35 + 30 * k], E: k => [100, 35 + 30 * k] };
+const ADENTRO = { N: [0, 1], S: [0, -1], O: [1, 0], E: [-1, 0] };
+function dibujoPieza(pieza) {
+  const s = svg('svg', { viewBox: '0 0 100 100', class: 'pieza-svg', 'aria-hidden': 'true' });
+  for (const { de, a, color } of pieza.tramos) {
+    const [x1, y1] = PUNTO[de.lado](de.k), [x2, y2] = PUNTO[a.lado](a.k);
+    const [dx1, dy1] = ADENTRO[de.lado], [dx2, dy2] = ADENTRO[a.lado];
+    const c1 = [x1 + dx1 * 45, y1 + dy1 * 45], c2 = [x2 + dx2 * 45, y2 + dy2 * 45];
+    s.append(svg('path', { d: `M${x1} ${y1} C${c1} ${c2} ${x2} ${y2}`, stroke: color, 'stroke-width': 9, fill: 'none', 'stroke-linecap': 'butt', class: 'tramo' }));
+    // La estación, en la mitad de la curva
+    const m = (u, v, w, z) => 0.125 * u + 0.375 * v + 0.375 * w + 0.125 * z;
+    s.append(svg('circle', { cx: m(x1, c1[0], c2[0], x2), cy: m(y1, c1[1], c2[1], y2), r: 5.5, class: 'estacion' }));
+  }
+  return s;
+}
+
+/**
+ * El tablero: una pieza por lugar, posicionada con left/top y girada con rotate. Cada pieza recuerda su
+ * ángulo acumulado, para que al girar siempre dé media vuelta hacia el mismo lado.
+ */
+function crearTablero(t, { interactivo = false, alGirar } = {}) {
+  const caja = el('div', { class: 'tablero-rt', id: interactivo ? 'tablero' : null });
+  const marco = el('div', { class: 'seleccion', 'aria-hidden': 'true' });
+  const angulo = t.piezas.map(() => 0);
+  const piezas = t.piezas.map((p, i) => el('div', { class: 'pieza', 'data-p': i }, dibujoPieza(p)));
+  caja.append(...piezas, marco);
+  const poner = (estado, animar = true) => {
+    estado.forEach(({ p }, lugar) => {
+      const n = piezas[p];
+      n.classList.toggle('sin-animar', !animar);
+      n.style.left = `${(lugar % LADO) * 100 / LADO}%`;
+      n.style.top = `${Math.floor(lugar / LADO) * 100 / LADO}%`;
+      n.style.transform = `rotate(${angulo[p]}deg)`;
+      n.dataset.lugar = lugar;
+    });
+  };
+  const aplicar = (estado, rect, animar = true) => {
+    const nuevo = girar(estado, rect);
+    for (let f = rect.f1; f <= rect.f2; f++) for (let c = rect.c1; c <= rect.c2; c++) angulo[estado[f * LADO + c].p] += 180;
+    poner(nuevo, animar && !QUIETO);
+    return nuevo;
+  };
+  if (interactivo) {
+    // Arrastrar de una pieza a otra marca el rectángulo; al soltar, gira
+    caja.style.touchAction = 'none';
+    let desde = null, hasta = null;
+    const lugarEn = ev => {
+      const b = caja.getBoundingClientRect();
+      const c = Math.min(LADO - 1, Math.max(0, Math.floor((ev.clientX - b.left) / (b.width / LADO))));
+      const f = Math.min(LADO - 1, Math.max(0, Math.floor((ev.clientY - b.top) / (b.height / LADO))));
+      return { f, c };
+    };
+    const rectDe = () => ({ f1: Math.min(desde.f, hasta.f), c1: Math.min(desde.c, hasta.c), f2: Math.max(desde.f, hasta.f), c2: Math.max(desde.c, hasta.c) });
+    const marcar = () => {
+      const r = rectDe();
+      Object.assign(marco.style, { left: `${r.c1 * 100 / LADO}%`, top: `${r.f1 * 100 / LADO}%`, width: `${(r.c2 - r.c1 + 1) * 100 / LADO}%`, height: `${(r.f2 - r.f1 + 1) * 100 / LADO}%` });
+      marco.classList.add('ve');
+    };
+    caja.addEventListener('pointerdown', ev => { if (caja.classList.contains('bloqueado')) return; desde = hasta = lugarEn(ev); try { caja.setPointerCapture(ev.pointerId); } catch { /* un toque simulado */ } marcar(); });
+    // Las pruebas giran sin arrastrar: el mismo camino que un arrastre
+    caja.addEventListener('girar', ev => { if (!caja.classList.contains('bloqueado')) alGirar?.(ev.detail); });
+    caja.addEventListener('pointermove', ev => { if (!desde) return; const l = lugarEn(ev); if (l.f !== hasta.f || l.c !== hasta.c) { hasta = l; marcar(); vibrate(5); } });
+    const soltar = ev => { if (!desde) return; const r = rectDe(); desde = hasta = null; marco.classList.remove('ve'); if (ev.type === 'pointerup') alGirar?.(r); };
+    caja.addEventListener('pointerup', soltar);
+    caja.addEventListener('pointercancel', soltar);
+  }
+  return { caja, poner, aplicar };
+}
+
+// La portada: un tablero resuelto que gira solo una parte y la devuelve, una y otra vez
+let demoVez = 0;
+function portada() {
+  const t = generar('portada-demo', { giros: 3 });
+  const META = t.piezas.map((_, p) => ({ p, v: 0 }));
+  const tab = crearTablero(t);
+  tab.caja.classList.add('chico');
+  vista.replaceChildren(...[
+    el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), tab.caja),
+    el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
+    SEMILLA_URL ? null : el('p', { class: 'muted center', style: 'margin:0' }, `📅 ${T.hoy}`),
+    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
+  ].filter(Boolean));
+  pieComentario('portada');
+  tab.poner(META, false);
+  if (QUIETO) return;
+  const vez = ++demoVez;
+  let estado = META, ida = null;
+  const paso = () => {
+    if (vez !== demoVez || !tab.caja.isConnected) return;
+    // Un giro al azar, y después el mismo, que lo deshace
+    const r = ida || RECTANGULOS[Math.floor(Math.random() * RECTANGULOS.length)];
+    estado = tab.aplicar(estado, r);
+    ida = ida ? null : r;
+    setTimeout(paso, ida ? 1100 : 1700);
+  };
+  setTimeout(paso, 900);
+}
+
+function empezar() {
+  P.semilla = SEMILLA_URL || `dia:${fechaLocal()}`;
+  P.t = generar(P.semilla);
+  P.estado = P.t.inicio; P.giros = 0; P.reinicios = 0; P.terminado = false;
+  trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
+  // El 3, 2, 1 de La Copa (D-105): el tablero se arma con el "¡A girar!", y el tiempo corre desde ahí
+  vista.replaceChildren(); pie.replaceChildren();
+  cuentaRegresiva({ titulo: '🚇 Rutas', ya: T.aJugar }).then(() => { P.desde = Date.now(); jugar(); });
+}
+
+function jugar() {
+  const { t } = P;
+  const marcador = el('p', { class: 'marcador', id: 'marcador' });
+  const aviso = el('p', { class: 'aviso-rt', 'aria-live': 'polite' }, '');
+  const pintarMarcador = () => { marcador.textContent = fmt(T.marcador, { g: P.giros, m: t.minimo }); };
+  // Los bordes que ya calzan se iluminan: se ve qué está unido
+  const unir = () => {
+    const unidos = new Set(bordesUnidos(t.piezas, P.estado).flat());
+    tab.caja.querySelectorAll('.pieza').forEach(n => n.classList.toggle('unida', unidos.has(+n.dataset.lugar)));
+  };
+  const tab = crearTablero(t, {
+    interactivo: true,
+    alGirar: r => {
+      if (P.terminado) return;
+      P.estado = tab.aplicar(P.estado, r);
+      P.giros++;
+      SFX.flip(); vibrate(15);
+      aviso.textContent = '';
+      pintarMarcador();
+      setTimeout(unir, QUIETO ? 0 : 450);
+      if (resuelto(t.piezas, P.estado)) terminar();
+    },
+  });
+  const reiniciar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-reiniciar', onClick: () => {
+    if (P.terminado || !P.giros) return;
+    SFX.tap(); vibrate(10);
+    P.estado = t.inicio; P.giros = 0; P.reinicios++;
+    tab.poner(P.estado, !QUIETO);
+    pintarMarcador(); unir();
+    aviso.textContent = T.reiniciado;
+  } }, T.reiniciar);
+  const terminar = () => {
+    P.terminado = true;
+    tab.caja.classList.add('bloqueado');
+    setTimeout(() => { tab.caja.classList.add('resuelto'); aviso.className = 'aviso-rt bien'; aviso.textContent = T.unidas; SFX.reveal(); }, QUIETO ? 0 : 500);
+    setTimeout(resultado, QUIETO ? 900 : 2300);
+  };
+  tab.poner(P.estado, false);
+  vista.replaceChildren(tituloJuego(), marcador, tab.caja, aviso, reiniciar);
+  pintarMarcador(); unir();
+  pieComentario('juego');
+}
+
+/** El link de un tablero: su semilla. */
+const enlace = semilla => (semilla ? `?seed=${encodeURIComponent(semilla)}` : '');
+
+function resultado() {
+  const { t } = P;
+  const s = puntaje(P.giros, t.minimo), ms = Date.now() - P.desde;
+  trackFinish({ detalle: `${s}/100 · ${P.giros} giros (mínimo ${t.minimo}) · ${P.reinicios} reinicios · ${mmss(ms)}` });
+  SFX.win();
+  if (!QUIETO && s >= 70) confetti({ count: 160, duration: 2400 });
+  pie.replaceChildren();
+  const perfecto = P.giros <= t.minimo;
+  const lineas = [perfecto ? fmt(T.desglose[1], { m: t.minimo }) : fmt(T.desglose[0], { g: P.giros, m: t.minimo })];
+  if (P.reinicios) lineas.push(fmt(T.reinicios[P.reinicios === 1 ? 0 : 1], { n: P.reinicios }));
+  const fin = crearTablero(t);
+  fin.caja.classList.add('chico', 'resuelto');
+  fin.poner(P.estado, false);
+  const tarjeta = `⛳ ${P.giros} giros · mínimo ${t.minimo}${perfecto ? ' · ¡perfecto!' : ''}`;
+  vista.replaceChildren(el('div', { class: 'resultado' },
+    fin.caja,
+    el('p', { class: 'sello-rt' }, perfecto ? T.fin.perfecto : T.fin.listo),
+    el('div', { class: 'score-big', id: 'puntaje' }, `${s}/100`),
+    el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
+    el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
+    botonResultadoSolo({ C: COMMON.es, emoji: '🚇', juego: T.nombre, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta, url: `${SITIO}labs/routes/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
+    el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: enlace(Math.random().toString(36).slice(2, 8)) }, T.otraVez),
+    SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname }, T.deHoy) : null,
+    el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
+    // Una línea separa lo del juego del comentario para quienes lo prueban, como en Agentes
+    el('hr', { class: 'divisor' }),
+    formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));
+  scrollTo(0, 0);
+}
+
+document.getElementById('sound-slot').append(soundToggle());
+initSound();
+sparkles();
+portada();
+window.__rutas = { P, girar: r => { /* para las pruebas: un giro como si se arrastrara */ document.getElementById('tablero')?.dispatchEvent(new CustomEvent('girar', { detail: r })); } };
