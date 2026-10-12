@@ -36,7 +36,8 @@ const T = {
   tinta: 'Pinta {c}', fondo: 'No pinta', pincel: 'Pincel',
   errores: ['Sin errores', '1 error', '{n} errores'], quedan: 'Faltan {n}',
   // La ayuda (D-292): señala una casilla que se puede deducir y los números que lo explican, sin decir el color
-  ayuda: '💡 Ayuda (−{pts})', ayudaDice: '💡 La casilla que late se deduce de los números marcados.', ayudas: ['💡 1 ayuda: −{pts}.', '💡 {n} ayudas: −{pts}.'],
+  // Como en El caso (D-263): el primer toque pide confirmar, y una ayuda pagada se vuelve a ver gratis (#351)
+  ayuda: '💡 Ayuda (−{pts})', ayudaSeguro: 'Toca de nuevo para usar la ayuda (−{pts})', ayudaVer: '💡 Ver la ayuda', ayudaDice: '💡 La casilla que late se deduce de los números marcados.', ayudas: ['💡 1 ayuda: −{pts}.', '💡 {n} ayudas: −{pts}.'],
   mal: { 1: '❌ Se pintaba de {c}: −{pts}.', 0: '❌ No se pintaba: −{pts}.' },
   fin: { perfecto: '¡Perfecto!', listo: '¡Pintado!' }, era: '¡Era {d}!',
   desglose: ['Sin errores: 100 puntos.', ['1 error: −{pts}.', '{n} errores: −{pts}.']], desglosePremio: '⚡ Modo difícil: ×{x}.',
@@ -191,6 +192,12 @@ function jugar() {
   const pinceles = el('div', { class: `pinceles${t.colores === 2 ? ' tres' : ''}`, role: 'group', 'aria-label': T.pincel, style: estiloPinturas(t) },
     ...[...t.dibujo.pinturas.keys()].map(k => botonPincel(k + 1)), botonPincel(0));
   const botonAyuda = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-ayuda', onClick: () => pedirAyuda() }, fmt(T.ayuda, { pts: RESTA_AYUDA }));
+  let armado = false, armadoTimer = null, pagada = null;   // pagada: la última ayuda cobrada ({ celda, por }), hasta que su casilla se pinte
+  const textoAyuda = e => {
+    const ver = pagada !== null && !e.conocidas.has(pagada.celda);
+    botonAyuda.classList.toggle('armado', armado && !ver);
+    botonAyuda.textContent = ver ? T.ayudaVer : armado ? fmt(T.ayudaSeguro, { pts: RESTA_AYUDA }) : fmt(T.ayuda, { pts: RESTA_AYUDA });
+  };
   const dibujar = () => {
     const e = estado(t, P.jugadas);
     casillas.forEach((b, i) => {
@@ -204,22 +211,33 @@ function jugar() {
     // Cada parte entera en su línea: a 320 px no se corta «Faltan 23» en dos
     const partes = [t.colores === 2 ? fmt(T.dificilJuego, { x: PREMIO_DIFICIL }) : null, nErrores(e.errores.size), fmt(T.quedan, { n: t.sol.length - e.conocidas.size })].filter(Boolean);
     marcador.replaceChildren(...partes.flatMap((x, j) => [j ? ' · ' : '', el('span', { class: 'parte' }, x)]));
+    textoAyuda(e);
     return e;
   };
   // La ayuda: marca la casilla que se puede deducir y los números que la explican, y resta
   const pedirAyuda = () => {
     const e0 = estado(t, P.jugadas);
     if (e0.fin) return;
-    const a = ayuda(t.sol, e0.conocidas);
+    const yaPagada = pagada !== null && !e0.conocidas.has(pagada.celda);
+    const a = yaPagada ? pagada : ayuda(t.sol, e0.conocidas);
     if (!a) return;
+    // El primer toque solo arma el botón (3 s); el segundo cobra. Una ayuda ya pagada se muestra gratis
+    if (!yaPagada && !armado) {
+      armado = true; SFX.tap(); vibrate(15); textoAyuda(e0);
+      clearTimeout(armadoTimer);
+      armadoTimer = setTimeout(() => { armado = false; textoAyuda(estado(t, P.jugadas)); }, 3000);
+      return;
+    }
+    clearTimeout(armadoTimer); armado = false;
     SFX.tap(); vibrate(10);
-    P.jugadas.push({ ayuda: true });
+    if (!yaPagada) { P.jugadas.push({ ayuda: true }); pagada = a; }
     dibujar();
     casillas[a.celda].classList.add('pista-objetivo');
     for (const i of a.por) casillas[i].classList.add('pista-razon');
     aviso.className = 'aviso-pm ayuda'; aviso.textContent = T.ayudaDice;
   };
   const tocar = i => {
+    if (armado) { armado = false; clearTimeout(armadoTimer); }
     const e0 = estado(t, P.jugadas);
     if (e0.fin || e0.conocidas.has(i)) return;
     P.jugadas.push({ i, color: P.pincel });

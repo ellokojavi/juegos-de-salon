@@ -30,7 +30,9 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
   color verdadero, con un borde rojo, y resta 15 («❌ Se pintaba de morado: −15.» o «❌ No se pintaba: −15.»). Arriba: errores y cuántas faltan.
 - **Al terminar:** los números se van, las sin pintar se apagan, las pintadas brillan y se dice qué era
   («🐟 ¡Era un pez!»).
-- **💡 Ayuda (−10)** (D-292): bajo los pinceles. Marca, latiendo en amarillo, una casilla que se
+- **💡 Ayuda (−10)** (D-292; desde v0.163.2 pide confirmar, #351): el primer toque cambia el botón a «Toca de
+  nuevo para usar la ayuda (−10)» por 3 segundos y el segundo la cobra, como en El caso; mientras la
+  casilla que señaló siga sin pintar, «💡 Ver la ayuda» la vuelve a mostrar sin cobrar. bajo los pinceles. Marca, latiendo en amarillo, una casilla que se
   puede deducir con lo que se ve, y los números que lo explican; no dice de qué color es («💡 La casilla
   que late se deduce de los números marcados.»). Las marcas se van con la jugada siguiente,
   y el botón, al terminar.
@@ -50,6 +52,8 @@ tres pasos y Empezar, que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuen
   (`juegos-de-salon:pintaminas:dificil`) y el link lo trae con `?colors=2`.
 - **El fondo:** encendido, toda la página pasa de su morado de siempre a un azul noche con
   resplandores celestes (`body.modo-dificil`), en la portada, el juego y el resultado (pedido del dueño).
+- **La trama del segundo color** (#349): en el modo difícil, las casillas del segundo color y su pincel
+  llevan rayas finas, para quien no distingue bien los colores; al revelarse el dibujo se van.
 - **El tablero:** dos colores al azar de `PALETA` (nunca amarillo con naranjo juntos: se confundían), con los dibujos de `DIBUJOS2` (de dos colores), un
   borde eléctrico y tres pinceles («Pinta rojo», «Pinta verde», «No pinta»). El marcador dice
   «⚡ Modo difícil ×1.5». Un número cumplido ya no dice de qué color son las demás: solo que no son del

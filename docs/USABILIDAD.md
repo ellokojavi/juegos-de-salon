@@ -115,6 +115,11 @@ nunca se usaron, y no se renumera.
 
 Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
 
+- **Pintaminas: la 💡 Ayuda pide confirmar** (#351, opción A): como en El caso, el primer toque arma el
+  botón («Toca de nuevo para usar la ayuda (−10)») y el segundo la cobra; una ayuda pagada se vuelve a
+  ver gratis mientras su casilla siga sin pintar.
+- **Pintaminas difícil: trama en el segundo color** (#349, opción A): rayas finas en las casillas del
+  segundo color y en su pincel, solo durante la partida, para quien no distingue bien los colores.
 - **El caso: las pistas usadas se tachan solas** (#302, opción A, D-282; reporte 🐞 #320): una pista
   se tacha sola cuando ya están marcados todos los que abarca, y se ve igual que una tachada a mano.
   El ✓ sigue para tachar antes y para destachar. No se tacha la que "ya no aporta" según el motor:
