@@ -1,0 +1,48 @@
+// Rutas (laboratorio, D-293): girar un rectángulo dos veces lo deja igual, la meta está resuelta, el
+// mínimo es exacto (se compara con una búsqueda simple) y cada tablero es justo: no viene resuelto y su
+// mínimo está entre 3 y los giros con que se desordenó.
+import assert from 'node:assert/strict';
+import { generar, girar, resuelto, minimo, bordesUnidos, puntaje, RECTANGULOS, LADO, RESTA_GIRO } from './engine.js';
+
+assert.equal(RECTANGULOS.length, 36);
+const META = Array.from({ length: 9 }, (_, p) => ({ p, v: 0 }));
+for (const r of RECTANGULOS) assert.deepEqual(girar(girar(META, r), r), META, 'girar dos veces deshace');
+// Una pieza sola: queda en su lugar, dada vuelta
+assert.deepEqual(girar(META, { f1: 1, c1: 1, f2: 1, c2: 1 })[4], { p: 4, v: 1 });
+// El tablero entero: la esquina va a la esquina opuesta
+assert.deepEqual(girar(META, { f1: 0, c1: 0, f2: 2, c2: 2 })[8], { p: 0, v: 1 });
+
+// El mínimo, contra una búsqueda simple hacia adelante
+const clave = e => e.map(x => x.p * 2 + x.v).join();
+function bfs(inicio, meta, tope) {
+  let frente = [inicio]; const vistos = new Set([clave(inicio)]);
+  for (let d = 0; d <= tope; d++) {
+    if (frente.some(e => clave(e) === clave(meta))) return d;
+    const sig = [];
+    for (const e of frente) for (const r of RECTANGULOS) { const n = girar(e, r), k = clave(n); if (!vistos.has(k)) { vistos.add(k); sig.push(n); } }
+    frente = sig;
+  }
+  return null;
+}
+let e = META;
+for (const r of [RECTANGULOS[3], RECTANGULOS[17], RECTANGULOS[30]]) e = girar(e, r);
+assert.equal(minimo(e, 6), bfs(e, META, 3));
+
+let suma = 0;
+for (let n = 0; n < 60; n++) {
+  const t = generar(`prueba-${n}`);
+  assert.deepEqual(generar(`prueba-${n}`), t, 'la misma semilla, el mismo tablero');
+  assert.equal(t.piezas.length, LADO * LADO);
+  assert.ok(t.piezas.every(p => p.tramos.length), `${n}: una pieza sin tramos`);
+  assert.ok(resuelto(t.piezas, META), `${n}: la meta no está resuelta`);
+  assert.equal(bordesUnidos(t.piezas, META).length, 12);
+  assert.ok(!resuelto(t.piezas, t.inicio), `${n}: viene resuelto`);
+  assert.ok(t.minimo >= 3 && t.minimo <= 5, `${n}: mínimo ${t.minimo}`);
+  assert.ok(resuelto(t.piezas, [...t.revuelta].reverse().reduce(girar, t.inicio)), `${n}: deshacer la revuelta no lo resuelve`);
+  suma += t.minimo;
+}
+console.log(`  (mínimo promedio: ${(suma / 60).toFixed(1)} giros)`);
+assert.equal(puntaje(4, 4), 100);
+assert.equal(puntaje(6, 4), 100 - 2 * RESTA_GIRO);
+assert.equal(puntaje(40, 4), 10);
+console.log('✓ Rutas (labs)');
