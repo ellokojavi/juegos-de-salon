@@ -15,8 +15,10 @@ portada y en el laboratorio.
 
 ## Portada
 
-El título con un 🚇 que anda, el lema («Une todas las líneas del metro girando partes del tablero.»), el crédito, y un tablero resuelto que gira solo una parte y la devuelve,
-una y otra vez (con movimiento reducido queda quieto). Después los tres pasos y Empezar, que pasa por
+El título con un 🚇 que anda, el lema («Une todas las líneas del metro girando partes del tablero.»), el crédito, y un tablero que parte desordenado y se arma en 5 o 6
+jugadas, alternando las dos clases de jugada: girar una carta sola (rotarla en su lugar) y girar dos
+vecinas (cambian de lugar); antes de cada una se marca el rectángulo, y al armarse la ruta se ilumina.
+Después vuelve a empezar con otro desorden (con movimiento reducido queda armado). Después los tres pasos y Empezar, que pasa por
 la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
 
 ## Cómo se juega
