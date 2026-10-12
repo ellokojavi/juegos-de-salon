@@ -46,7 +46,7 @@ let malo = null;
 for (let i = 0; i < 36 && !malo; i++) for (let j = i + 1; j < 36 && !malo; j++) if (!une(p0, i, j).ok) malo = [i, j, une(p0, i, j).motivo];
 await clic(malo[0]); await clic(malo[1]); await sleep(100);
 ok(await ev(`document.querySelector('#tablero [data-id="${malo[1]}"]').classList.contains('no')`) && /no son iguales|entre medio|No están en línea/.test(await aviso()), `un par que no se une tiembla y dice por qué (${malo[2]}: ${await aviso()})`);
-await clic(malo[1]); await sleep(50);   // lo deja sin elegir
+ok(await ev(`document.querySelectorAll('#tablero .num.sel').length`) === 0, 'y se sueltan los dos: la jugada siguiente parte de cero');
 
 // La ayuda: el primer toque pide confirmar; el segundo marca un par que se une
 await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(100);

@@ -39,7 +39,8 @@ copia abajo los que quedan.».
 - **Juntos en línea:** de lado, de arriba abajo o en diagonal, con solo casillas estalladas entre
   medio (lo estallado no estorba), o en el orden de lectura: el último de una fila con el primero de
   la siguiente, también saltando estallados.
-- **Si no se unen:** los dos tiemblan, dice por qué y queda elegido el segundo: «3 y 4 no son iguales
+- **Si no se unen:** los dos tiemblan, dice por qué y se sueltan los dos, para empezar la jugada de
+  nuevo (pedido del dueño: antes quedaba elegido el segundo): «3 y 4 no son iguales
   ni suman 10.», «Hay números entre medio: haz estallar esos primero.» o «No están en línea: de lado,
   arriba o en diagonal.».
 - **Si se unen:** estallan con una onda, un destello, un 💥 de historieta, chispas de su color y
