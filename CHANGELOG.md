@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.157.2 — 2026-10-11
+- **🕵️ Agentes (laboratorio):** el resultado ya no muestra la grilla de emojis, que repetía el
+  tablero de abajo; va solo en el mensaje para compartir.
+- **🕵️ Agentes: la trampa, explicada.** Al final dice con qué pista tentaba el asesino («💀 Caíste
+  con RÍO: tentaba con MAR, pero no era de los tuyos.»), también si lo esquivaste, y la carta del
+  asesino lo dice debajo.
+
 ## 0.157.1 — 2026-10-11
 - **🕵️ Agentes (laboratorio): portada y animaciones.** La portada juega sola una pista: la lupa
   encuentra a los agentes y al final aparece el asesino. Entre pistas, a la que se cierra le cae un

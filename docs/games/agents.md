@@ -38,9 +38,11 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
 - **El final:** un sello grande según cómo salió: **¡Misión cumplida!** en verde, con confeti
   (70 o más); **Misión a medias** en amarillo; **Misión fracasada** (menos de 35) o **Te descubrió
   el asesino** en rojo, con destello y una falla de transmisión cada tanto. El puntaje sube desde 0,
-  y después vienen su desglose, la tarjeta de emojis para compartir (🟩 agente, 🟨 el
-  que faltó, 🟥 neutral tocado, 💀 asesino tocado), el tablero entero destapado con la pista de
+  y después vienen su desglose, la trampa explicada («💀 Caíste con RÍO: tentaba con MAR…», o
+  «Esquivaste al asesino…» si no lo tocaste; bajo la carta del asesino, «≈ MAR»), el tablero entero destapado con la pista de
   cada agente, y el formulario de comentarios al final (D-265, D-268).
+  La tarjeta de emojis (🟩 agente, 🟨 el que faltó, 🟥 neutral tocado, 💀 asesino tocado) va solo
+  en el mensaje de compartir: en pantalla repetía el tablero.
 
 ## Cómo funciona
 
@@ -48,7 +50,7 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
   (`casi`). Una palabra nueva se piensa como jugador: que la asociación se vea sin explicarla.
 - `engine.js`: `generar(semilla)` elige 3 pistas que no se pisen (ninguna es palabra o tentación de
   otra), 3 agentes de cada una que no sean de otra elegida, el asesino de las tentaciones (y que no
-  sea agente de ninguna) y los neutrales de otras pistas. Ninguna pista aparece en su propio tablero.
+  sea agente de ninguna; su carta lleva `tienta`, la pista a la que se parece) y los neutrales de otras pistas. Ninguna pista aparece en su propio tablero.
   `estado(t, jugadas)` reconstruye la partida desde las jugadas (`{i}` o `{pasar:true}`).
 - `engine.test.mjs` revisa la lista y 300 tableros; `tools/e2e/agents/lab.mjs`, la partida entera.
 
