@@ -31,8 +31,8 @@ const T = {
   ],
   empezar: '🚇 Empezar', aJugar: '¡A girar!',
   // Las etapas (D-294): cinco tableros de dificultad creciente
-  etapa: 'Etapa {n} de {t}', etapaDe: '{l} líneas · mínimo {m} giros', etapaLista: '🚇 ¡Etapa {n} lista!', etapaPerfecta: '🚇 ¡Etapa {n} en el mínimo!',
-  filaEtapa: 'Etapa {n}: {g} giros (mínimo {m}) · {p}',
+  etapa: 'Etapa {n} de {t}', etapaLista: '🚇 ¡Etapa {n} lista!', etapaPerfecta: '🚇 ¡Etapa {n} en el mínimo!',
+  filaEtapa: '{c} Etapa {n}: {g} giros (mínimo {m}) · {p}/100',
   marcador: 'Giros: {g} · Mínimo: {m}', reiniciar: '↺ Reiniciar', reiniciado: 'De vuelta al comienzo: los giros vuelven a 0.',
   unidas: '🚇 ¡Todas las líneas unidas!',
   fin: { perfecto: '¡Todas en el mínimo!', listo: '¡Rutas unidas!' },
@@ -186,7 +186,7 @@ function empezar() {
   cuentaRegresiva({ titulo: '🚇 Rutas', ya: T.aJugar }).then(() => { P.desde = Date.now(); jugar(); });
 }
 
-/** Los puntos de las etapas: hechas (verde, dorada si fue en el mínimo), la actual y las que vienen. */
+/** Los puntos de las etapas: hechas (verde en el mínimo, amarilla con giros de más, como 🟩 y 🟨 al compartir), la actual y las que vienen. */
 const progreso = () => el('div', { class: 'etapas', 'aria-hidden': 'true' }, ...ETAPAS.map((_, k) => {
   const h = P.hechas[k];
   return el('span', { class: `punto${h ? (h.giros <= h.minimo ? ' perfecta' : ' hecha') : k === P.etapa ? ' actual' : ''}` });
@@ -196,8 +196,8 @@ function jugar() {
   const t = P.t = generarEtapa(P.semilla, P.etapa);
   P.estado = t.inicio; P.giros = 0; P.terminado = false;
   const cabeza = el('div', { class: 'cabeza-etapa entra', id: 'etapa' },
-    el('p', { class: 'n-etapa' }, fmt(T.etapa, { n: P.etapa + 1, t: ETAPAS.length })), progreso(),
-    el('p', { class: 'muted de-etapa' }, fmt(T.etapaDe, { l: ETAPAS[P.etapa].lineas, m: t.minimo })));
+    // El mínimo lo dice el marcador, justo debajo (U-8): una línea menos, y el aviso cabe a 320×568
+    el('p', { class: 'n-etapa' }, fmt(T.etapa, { n: P.etapa + 1, t: ETAPAS.length })), progreso());
   const marcador = el('p', { class: 'marcador', id: 'marcador' });
   const aviso = el('p', { class: 'aviso-rt', 'aria-live': 'polite' }, '');
   const pintar = () => {
@@ -264,7 +264,7 @@ function resultado() {
   if (!QUIETO && s >= 70) confetti({ count: 160, duration: 2400 });
   pie.replaceChildren();
   const perfecto = P.hechas.every(h => h.giros <= h.minimo);
-  const lineas = P.hechas.map((h, k) => fmt(T.filaEtapa, { n: k + 1, g: h.giros, m: h.minimo, p: h.giros <= h.minimo ? '⛳ 100' : h.puntaje }));
+  const lineas = P.hechas.map((h, k) => fmt(T.filaEtapa, { c: h.giros <= h.minimo ? '🟩' : '🟨', n: k + 1, g: h.giros, m: h.minimo, p: h.puntaje }));
   if (P.reinicios) lineas.push(fmt(T.reinicios[P.reinicios === 1 ? 0 : 1], { n: P.reinicios }));
   const fin = crearTablero(t);
   fin.caja.classList.add('chico', 'resuelto');
