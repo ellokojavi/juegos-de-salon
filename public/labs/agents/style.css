@@ -35,10 +35,11 @@
 .pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
 .paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
 /* La pista en curso */
-.pista { position: relative; text-align: center; padding: 12px 14px; border-radius: 18px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.18), rgba(46, 230, 214, 0.10)); border: 2px solid rgba(255, 210, 63, 0.7); }
+.pista { --g: 255, 210, 63; position: relative; text-align: center; padding: 12px 14px; border-radius: 18px; background: linear-gradient(160deg, rgba(var(--g), 0.2), rgba(var(--g), 0.06)); border: 2px solid rgba(var(--g), 0.85); transition: background 0.3s, border-color 0.3s; }
 .pista .de { margin: 0; font-weight: 800; color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .pista .palabra { margin: 2px 0 0; font-family: var(--font-display); font-size: 2.4rem; letter-spacing: 0.06em; line-height: 1; }
-.pista .palabra b { color: var(--yellow); }
+.pista .palabra b { color: rgb(var(--g)); }
+.pista .de { color: rgb(var(--g)); opacity: 0.85; }
 .pista .falta { margin: 4px 0 0; font-weight: 800; }
 .pista .pp { display: inline-block; min-width: 1ch; }
 /* Entre pistas: la que se cierra se va girando hacia atrás y la nueva llega girando */
@@ -70,7 +71,13 @@
 .carta.marca-descarte::after { content: '🚫'; }
 .ayuda-marcas { text-align: center; margin: 0; font-size: 0.85rem; }
 .carta:disabled { cursor: default; }
-.carta.agente { background: rgba(157, 255, 58, 0.34); border-color: var(--lime); color: #f2ffe0; }
+/* Un color por pista (--g): el cartel de la pista y sus agentes. Ni amarillo (las marcas) ni rojo (el asesino) */
+.carta.agente { --g: 157, 255, 58; background: rgba(var(--g), 0.34); border-color: rgb(var(--g)); color: #fff; }
+.carta.agente.g0, .pista.g0 { --g: 157, 255, 58; } .carta.agente.g1, .pista.g1 { --g: 46, 230, 214; }
+.carta.agente.g2, .pista.g2 { --g: 255, 111, 168; } .carta.agente.g3, .pista.g3 { --g: 180, 139, 255; }
+/* Los de una pista ya cerrada se apagan: no cuentan para la que se está jugando */
+.carta.agente.cerrada { opacity: 0.4; border-style: solid; }
+.carta.agente .de-pista { color: rgb(var(--g)); }
 .carta.otra { background: rgba(46, 230, 214, 0.3); border-color: var(--cyan); }
 .carta.neutral { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.4); color: var(--muted); }
 .carta.asesino { background: #0c0414; border-color: #ff3d3d; color: #ff8a8a; }

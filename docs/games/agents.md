@@ -39,6 +39,11 @@ primera, resuelta. Luego el lema, los tres pasos y Empezar.
   error.» o «Sin marca.»): un toque que duraba de más marcaba en silencio y la carta parecía
   elegida, así que la pista no avanzaba y no se entendía por qué. La sospecha va sin relleno, solo
   el borde punteado amarillo. Bajo el tablero, una línea lo explica hasta la primera marca. La señal de uso cuenta cuántas marcas se hicieron.
+- **Colores por pista:** cada pista tiene su color (verde, celeste, rosado, violeta; ni amarillo,
+  que es de las marcas, ni rojo, que es del asesino). El cartel de la pista en curso lo lleva, y cada
+  agente destapado toma el de su pista, también si se encontró antes de tiempo. Los de pistas ya
+  cerradas se apagan: no cuentan para la jugada actual (pedido del dueño). El tablero final usa los
+  mismos colores.
 - **Entre pistas:** a la pista que se cierra le cae un sello (**Completa** en verde, **Cortada**
   en rojo, **Pasada** en amarillo), se va girando hacia atrás y la siguiente llega girando, con su
   palabra descifrándose. Un agente brilla al destaparse, un neutral se sacude, y el asesino sacude el
