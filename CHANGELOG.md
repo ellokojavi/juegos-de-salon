@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.160.0 — 2026-10-11
+- **🕵️ Agentes (laboratorio): se entiende y varía** (D-288). La portada cuenta el juego en una
+  línea: «Cada palabra es el nombre en clave de un espía. Con las pistas, encuentra a los tuyos.»
+  Y hay 100 pistas en vez de 40: el tablero de cada día las recorre todas, y una pista no vuelve
+  antes de 15 días. El resultado ya no repite el crédito a Codenames, que sigue en la portada.
+
 ## 0.159.0 — 2026-10-11
 - **🕵️ Agentes (laboratorio): más difícil y con colores** (D-287). El tablero pasa a 15 cartas, con
   4 pistas, una de ellas de solo 2 agentes. Las 3 neutrales y el asesino se parecen a alguna pista,
