@@ -5215,7 +5215,8 @@ de palanca que se electrifique al activarse, y que pague 1,5 veces el puntaje.
 **Decisión:** en la portada, un **interruptor de palanca** («⚡ Modo difícil · Dos colores · puntaje
 ×1.5»): una placa de metal con una palanca de mango rojo; al subirla, la placa titila en celeste y
 amarillo y saltan chispas ⚡, con un zumbido y una vibración. Encendido, el tablero usa **dos colores**
-(dos de `PALETA` al azar) y 10 dibujos propios de dos colores (`DIBUJOS2`: una frutilla, unas cerezas,
+(dos de `PALETA` al azar; desde v0.167.2, un dibujo puede traer los suyos en `colores`, y las cerezas
+salen siempre rojas con el tallo verde, pedido del dueño) y 10 dibujos propios de dos colores (`DIBUJOS2`: una frutilla, unas cerezas,
 un helado…), con **tres pinceles** («Pinta rojo», «Pinta verde», «No pinta») y un borde eléctrico.
 El puntaje se multiplica por **1,5** (`PREMIO_DIFICIL`): sin errores son 150. El link lo lleva
 (`?colors=2`), «Otro tablero» lo conserva y el celular recuerda la posición del interruptor.
