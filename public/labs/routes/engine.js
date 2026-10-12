@@ -70,15 +70,18 @@ const clave = estado => estado.reduce((s, { p, v }) => s * 18 + p * 2 + v, 0);
 const META = Array.from({ length: LADO * LADO }, (_, p) => ({ p, v: 0 }));
 
 /**
- * El mínimo de giros de un estado a la meta (las piezas en su lugar y derechas), buscando desde los dos
- * lados a la vez: cada giro se deshace con el mismo giro, así que hacia atrás se busca igual. Hasta
- * `tope` giros (más allá devuelve null).
+ * El mínimo de giros de un estado a una solución, buscando desde los dos lados a la vez: cada giro se
+ * deshace con el mismo giro, así que hacia atrás se busca igual. Las soluciones son la meta (las piezas
+ * en su lugar y derechas) y el tablero entero dado vuelta, que también une todas las líneas; hacia
+ * atrás se parte de las dos. Hasta `tope` giros (más allá devuelve null).
  */
+export const TODO = { f1: 0, c1: 0, f2: LADO - 1, c2: LADO - 1 };
 export function minimo(estado, tope = 8) {
-  const ka = clave(estado), kb = clave(META);
-  if (ka === kb) return 0;
-  let desdeA = new Map([[ka, estado]]), desdeB = new Map([[kb, META]]);
-  const vistosA = new Map([[ka, 0]]), vistosB = new Map([[kb, 0]]);
+  const metas = [META, girar(META, TODO)];
+  const ka = clave(estado);
+  if (metas.some(m => clave(m) === ka)) return 0;
+  let desdeA = new Map([[ka, estado]]), desdeB = new Map(metas.map(m => [clave(m), m]));
+  const vistosA = new Map([[ka, 0]]), vistosB = new Map(metas.map(m => [clave(m), 0]));
   for (let pasos = 1, da = 0, db = 0; pasos <= tope; pasos++) {
     // Se expande el lado con menos estados
     const porA = desdeA.size <= desdeB.size;
