@@ -58,9 +58,18 @@ ok(await ev(`${casilla(libres[1])}.classList.contains('error') && ${casilla(libr
 ok(/(Se pintaba de \w+|No se pintaba): −15/.test(await ev(`document.querySelector('.aviso-pm').textContent`)) && /1 error/.test(await ev(`document.getElementById('marcador').textContent`)), 'y lo dice: −15, 1 error');
 // La ayuda: marca la casilla que se puede deducir y los números que lo explican, sin pintarla, y resta
 await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(150);
+// El primer toque solo pide confirmar (#351): no marca ni cobra
+ok(/Toca de nuevo/.test(await ev(`document.getElementById('btn-ayuda').textContent`)) && !await ev(`!!document.querySelector('#tablero .pista-objetivo')`), 'el primer toque de la ayuda pide confirmar, sin cobrar');
+await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(150);
 const objetivo = await ev(`[...document.querySelectorAll('#tablero .casilla.pista-objetivo')].map(b => +b.dataset.i)`);
 ok(objetivo.length === 1 && await ev(`document.querySelectorAll('#tablero .casilla.pista-razon').length`) > 0 && !await ev(`${casilla(objetivo[0] ?? 0)}.classList.contains('tinta') || ${casilla(objetivo[0] ?? 0)}.classList.contains('fondo')`), 'la ayuda marca una casilla sin pintar y los números que la explican');
 ok(/se deduce de los números marcados/.test(await ev(`document.querySelector('.aviso-pm').textContent`)), 'y lo dice');
+// Pintar otra casilla quita las marcas, y volver a verla no cobra de nuevo
+const otraLibre = libres.find(i => i !== objetivo[0] && !t.dadas.includes(i));
+await pintar(otraLibre, t.sol[otraLibre]);
+ok(/Ver la ayuda/.test(await ev(`document.getElementById('btn-ayuda').textContent`)), 'después, el botón ofrece ver la misma ayuda');
+await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(150);
+ok(await ev(`${casilla(objetivo[0])}.classList.contains('pista-objetivo')`) && /1 error|Sin errores/.test(await ev(`document.getElementById('marcador').textContent`)), 'y la muestra de nuevo sin cobrar otra');
 await b.shot('02-juego');
 for (const i of libres.slice(2)) await pintar(i, t.sol[i]);
 ok(await esperar(`document.getElementById('tablero')?.classList.contains('revelada')`, 2000), 'al terminar aparece el dibujo');
