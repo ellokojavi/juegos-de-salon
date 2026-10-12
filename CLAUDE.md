@@ -109,7 +109,7 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
    o copas en curso; necesita la llave del dueño).
 3. **No se fusiona sin ✅ en GitHub en `pruebas` y en `punta-a-punta`** (D-143,
    D-193, D-213, D-216), aunque ya hayan pasado aquí. `main` exige los dos: `punta-a-punta` es el
-   job que resume el workflow `Punta a punta` (un job por guion) y sale en rojo si alguno falla.
+   job que resume el workflow `Punta a punta` (los guiones en grupos parejos, D-307) y sale en rojo si alguno falla.
    En un PR que no toca nada del navegador (documentación, `tools/agents/`, workflows, reglas)
    no corre ningún guion y sale en verde igual; un guion que falla se repite una vez y, si pasa,
    deja un aviso "Intermitente" (D-299).
@@ -126,7 +126,7 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
    (`set_monitor` con `auto_fix` y `address_comments`), que despierta a la sesión cuando una prueba
    falla, hay un conflicto o llega un comentario: lo único que necesita a alguien. Nunca se sondea
    el CI. Lo de después de fusionar ya no espera a nadie: `publicar.yml` corre las pruebas y la
-   punta a punta otra vez sobre `main`, publica las reglas de Firebase y el sitio (D-302), y la
+   punta a punta sobre `main` (salvo que ese mismo árbol ya la haya pasado en el PR, D-308), publica las reglas de Firebase y el sitio (D-302), y la
    copia la borra el hook de inicio de sesión.
 
 ## Al fusionar y publicar (C-11, D-205, D-300, D-302)
@@ -146,7 +146,8 @@ llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
   ```
 - Las páginas de `public/` no llevan `?v=` ni import map: `.github/workflows/publicar.yml` corre
   las pruebas **y la punta a punta entera** (D-302; si fallan dos veces, no publica y abre el issue
-  "main en rojo"), estampa la versión en la copia que publica y comprueba que el sitio en línea la
+  "main en rojo"), salvo que el árbol que publica ya la haya pasado en un PR o solo cambie lo que no
+  llega al navegador sobre uno que la pasó (`tools/e2e/ya-probado.mjs`, D-308), estampa la versión en la copia que publica y comprueba que el sitio en línea la
   sirva.
 - Las reglas de Firebase las publica `publicar.yml` en cada fusión, antes que el sitio (D-218):
   no sube nada si ya están, y si Firebase las rechaza el sitio no se publica. Necesita el secreto

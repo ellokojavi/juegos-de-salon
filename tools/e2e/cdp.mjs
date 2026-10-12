@@ -69,8 +69,10 @@ export async function launch({ port: pedido, dir, out, width = 390, height = 844
   const ws = new WebSocket(targets.find(t => t.type === 'page').webSocketDebuggerUrl);
   await new Promise(r => ws.onopen = r);
   let id = 0; const pending = new Map(); const errors = []; const logs = [];
+  let cargas = 0; const alCargar = new Set(); // Page.loadEventFired: cuántas van, y quién espera la próxima
   ws.onmessage = e => {
     const m = JSON.parse(e.data);
+    if (m.method === 'Page.loadEventFired') { cargas++; for (const r of alCargar) r(); alCargar.clear(); }
     if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); }
     if (m.method === 'Runtime.exceptionThrown') errors.push(m.params.exceptionDetails.text + ' ' + (m.params.exceptionDetails.exception?.description || ''));
     if (m.method === 'Runtime.consoleAPICalled' && (m.params.type === 'error' || m.params.type === 'warning')) logs.push(m.params.args.map(a => a.value ?? a.description).join(' '));
@@ -85,6 +87,47 @@ export async function launch({ port: pedido, dir, out, width = 390, height = 844
     send, // CDP crudo, para lo que no tiene helper (por ejemplo cortarle la red a Firebase)
     evaluate: async expr => { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.result?.exceptionDetails) throw new Error(r.result.exceptionDetails.text + ' ' + (r.result.exceptionDetails.exception?.description || '')); return r.result?.result?.value; },
     go: async (url, wait = 1800) => { await send('Page.navigate', { url }); await sleep(wait); },
+    /**
+     * Como `go`, pero sin pausa fija: espera el `load` de la página nueva y que se asiente
+     * (`asentar`). `tope` es lo que esperaba `go` antes: nunca tarda más que eso, y casi siempre
+     * mucho menos. Pensado para los guiones que abren muchas páginas (los de idiomas, D-307).
+     */
+    abrir: async (url, tope = 1500) => {
+      const t0 = Date.now();
+      const cargo = new Promise(r => alCargar.add(r));
+      await send('Page.navigate', { url });
+      await Promise.race([cargo, sleep(tope)]);
+      await api.asentar(Math.max(0, tope - (Date.now() - t0)));
+    },
+    /** Espera hasta que `expr` (en la página) dé algo verdadero, mirando cada `cada` ms; `tope` como máximo. Devuelve si se cumplió. */
+    hasta: async (expr, tope = 3000, cada = 100) => {
+      const t0 = Date.now();
+      for (;;) {
+        try { if (await api.evaluate(`!!(${expr})`)) return true; } catch (_) { /* a mitad de una navegación */ }
+        if (Date.now() - t0 >= tope) return false;
+        await sleep(cada);
+      }
+    },
+    /**
+     * Espera a que la pantalla deje de cambiar: ninguna mutación del DOM durante `calma` ms (las
+     * animaciones infinitas no mutan el DOM) y las animaciones finitas terminadas, con `tope` como
+     * máximo. Reemplaza las pausas fijas entre paso y paso: si la pantalla ya está quieta, sigue al
+     * tiro; si algo llega tarde (un temporizador, una carga), lo espera, hasta el tope.
+     */
+    asentar: async (tope = 700, calma = 150) => {
+      if (tope <= 0) return;
+      const t0 = Date.now();
+      try {
+        await api.evaluate(`new Promise(listo => {
+          let reloj; const fin = () => { obs.disconnect(); clearTimeout(reloj); clearTimeout(tope); listo(1); };
+          const obs = new MutationObserver(() => { clearTimeout(reloj); reloj = setTimeout(fin, ${calma}); });
+          obs.observe(document, { subtree: true, childList: true, attributes: true, characterData: true });
+          reloj = setTimeout(fin, ${calma});
+          const tope = setTimeout(fin, ${tope});
+        })`);
+      } catch (_) { /* la página se fue a mitad (una navegación): lo que queda, de pausa */ await sleep(Math.max(0, tope - (Date.now() - t0))); return; }
+      await api.quieto(Math.max(0, Math.min(900, tope - (Date.now() - t0))));
+    },
     // Antes de disparar, esperar a que las animaciones de entrada se queden quietas: una
     // captura sacada a mitad de un `pop` congela las filas a distintas escalas y en el README
     // se ven desalineadas, como si el CSS estuviera malo (D-76). Las animaciones infinitas
