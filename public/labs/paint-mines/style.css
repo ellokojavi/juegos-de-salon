@@ -24,7 +24,10 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
 .casilla.error { box-shadow: inset 0 0 0 3px #ff4d5e; }
 /* La ayuda: la casilla que se puede deducir late en amarillo, y los números que lo explican se marcan */
 .casilla.pista-objetivo { box-shadow: 0 0 0 3px var(--yellow), 0 0 14px rgba(255, 210, 63, 0.7); animation: pm-late 1s ease-in-out infinite; }
-.casilla.pista-razon { box-shadow: inset 0 0 0 3px var(--yellow); }
+.casilla.pista-razon { box-shadow: inset 0 0 0 3px var(--yellow), inset 0 0 0 5px #160830; }
+/* Sobre una casilla pintada de amarillo, el borde amarillo no se ve: ahí lo marca la línea oscura de adentro.
+   Y un número con error sigue mostrando su rojo dentro del amarillo */
+.casilla.pista-razon.error { box-shadow: inset 0 0 0 3px var(--yellow), inset 0 0 0 6px #ff4d5e; }
 @keyframes pm-late { 50% { transform: scale(0.9); } }
 #btn-ayuda { justify-self: center; }
 .casilla.pop { animation: pop 0.35s ease-out; }
@@ -95,11 +98,6 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
 .interruptor.on .rayo { animation: pm-chispa 1.6s ease-out infinite; }
 .interruptor.on .r2 { animation-delay: 0.45s; } .interruptor.on .r3 { animation-delay: 0.9s; }
 .interruptor.chispa .placa { animation: pm-descarga 0.5s ease-out; }
-@keyframes pm-electrica {
-  0%, 100% { box-shadow: 0 0 10px #2ee6d6, 0 0 22px rgba(46, 230, 214, 0.5), inset 0 2px 4px rgba(255,255,255,0.15); }
-  20% { box-shadow: 0 0 4px #ffd23f, 0 0 12px rgba(255, 210, 63, 0.6), inset 0 0 8px rgba(255, 210, 63, 0.5); }
-  35% { box-shadow: 0 0 16px #8ff7ee, 0 0 30px rgba(46, 230, 214, 0.7), inset 0 2px 4px rgba(255,255,255,0.15); }
-  60% { box-shadow: 0 0 6px #2ee6d6, 0 0 14px rgba(46, 230, 214, 0.4), inset 0 2px 4px rgba(255,255,255,0.15); } }
 @keyframes pm-chispa { 0% { opacity: 0; transform: scale(0.4) rotate(-20deg); } 10% { opacity: 1; transform: scale(1.2) rotate(10deg); } 25%, 100% { opacity: 0; transform: scale(0.8); } }
 @keyframes pm-descarga { 0% { box-shadow: 0 0 0 0 rgba(143, 247, 238, 0.9); transform: translateX(-2px); } 20% { transform: translateX(3px); }
   40% { transform: translateX(-2px); } 100% { box-shadow: 0 0 0 26px rgba(143, 247, 238, 0); transform: none; } }

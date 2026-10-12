@@ -59,7 +59,7 @@ ok(/(Se pintaba de \w+|No se pintaba): −15/.test(await ev(`document.querySelec
 await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(150);
 const objetivo = await ev(`[...document.querySelectorAll('#tablero .casilla.pista-objetivo')].map(b => +b.dataset.i)`);
 ok(objetivo.length === 1 && await ev(`document.querySelectorAll('#tablero .casilla.pista-razon').length`) > 0 && !await ev(`${casilla(objetivo[0] ?? 0)}.classList.contains('tinta') || ${casilla(objetivo[0] ?? 0)}.classList.contains('fondo')`), 'la ayuda marca una casilla sin pintar y los números que la explican');
-ok(/se puede deducir/.test(await ev(`document.querySelector('.aviso-pm').textContent`)), 'y lo dice');
+ok(/se deduce de los números marcados/.test(await ev(`document.querySelector('.aviso-pm').textContent`)), 'y lo dice');
 await b.shot('02-juego');
 for (const i of libres.slice(2)) await pintar(i, t.sol[i]);
 ok(await esperar(`document.getElementById('tablero')?.classList.contains('revelada')`, 2000), 'al terminar aparece el dibujo');

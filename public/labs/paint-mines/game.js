@@ -36,7 +36,7 @@ const T = {
   tinta: 'Pinta {c}', fondo: 'No pinta', pincel: 'Pincel',
   errores: ['Sin errores', '1 error', '{n} errores'], quedan: 'Faltan {n}',
   // La ayuda (D-292): señala una casilla que se puede deducir y los números que lo explican, sin decir el color
-  ayuda: '💡 Ayuda (−{pts})', ayudaDice: '💡 Esta casilla se puede deducir: mira los números marcados.', ayudas: ['💡 1 ayuda: −{pts}.', '💡 {n} ayudas: −{pts}.'],
+  ayuda: '💡 Ayuda (−{pts})', ayudaDice: '💡 La casilla que late se deduce de los números marcados.', ayudas: ['💡 1 ayuda: −{pts}.', '💡 {n} ayudas: −{pts}.'],
   mal: { 1: '❌ Se pintaba de {c}: −{pts}.', 0: '❌ No se pintaba: −{pts}.' },
   fin: { perfecto: '¡Perfecto!', listo: '¡Pintado!' }, era: '¡Era {d}!',
   desglose: ['Sin errores: 100 puntos.', ['1 error: −{pts}.', '{n} errores: −{pts}.']], desglosePremio: '⚡ Modo difícil: ×{x}.',
@@ -267,7 +267,8 @@ function resultado(e) {
   vista.replaceChildren(el('div', { class: 'resultado' },
     el('div', { class: 'dibujo-fin' }, grilla(t, { numeros: false, clase: 'revelada fin' })),
     el('h2', { class: 'display display--lg', style: 'margin:0' }, `${t.dibujo.emoji} ${t.dibujo.nombre}`),
-    el('p', { class: 'sello-pm' }, n === 0 ? T.fin.perfecto : T.fin.listo),
+    // ¡Perfecto! es sin errores y sin ayudas: con una ayuda no es perfecto (U-1)
+    el('p', { class: 'sello-pm' }, n === 0 && !e.ayudas ? T.fin.perfecto : T.fin.listo),
     el('div', { class: 'score-big', id: 'puntaje' }, `${s}/${max}`),
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
     el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
