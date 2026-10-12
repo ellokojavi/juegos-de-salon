@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.167.1 — 2026-10-12
+- **🧪 Laboratorio: las portadas al día.** Pintaminas cuenta el modo de dos colores y la ayuda; Rutas,
+  que las piezas quedan al revés y que deshacer y reiniciar son gratis; Agentes, las marcas 📌. Las
+  tarjetas del laboratorio también.
+- **Herramientas:** `tools/agents/portadas.mjs revisar` muestra la portada de cada juego que toca un PR
+  y avisa si el juego cambió y su portada no; el agente de usabilidad lo corre en cada PR (U-36).
+
 ## 0.167.0 — 2026-10-12
 - **🖌️ Pintaminas (laboratorio): 🏳️ Rendirse** (D-296), junto a la ayuda. Pide un segundo toque,
   destapa el dibujo y el puntaje vale la parte que alcanzaste a pintar.

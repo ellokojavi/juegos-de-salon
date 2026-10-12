@@ -18,8 +18,15 @@ portada y en el laboratorio.
 El título con un 🚇 que anda, el lema («Une todas las líneas del metro girando partes del tablero.»), el crédito, y un tablero que parte desordenado y se arma en 5 o 6
 jugadas, alternando las dos clases de jugada: girar una carta sola (rotarla en su lugar) y girar dos
 vecinas (cambian de lugar); antes de cada una se marca el rectángulo, y al armarse la ruta se ilumina.
-Después vuelve a empezar con otro desorden (con movimiento reducido queda armado). Después los tres pasos y Empezar, que pasa por
-la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`).
+Después vuelve a empezar con otro desorden (con movimiento reducido queda armado). Después los tres
+pasos (desde v0.167.1, U-36) y Empezar, que pasa por la cuenta 3, 2, 1 compartida
+(`assets/js/cuenta-regresiva.js`):
+
+1. 🔄 Arrastra de una pieza a otra: el rectángulo da media vuelta y sus piezas quedan al revés. Un toque gira una sola.
+2. 🚇 Une todas las líneas, sin cortes de pieza en pieza.
+3. ⛳ Son 5 etapas en 7 minutos. Cuenta completarlas, luego la rapidez y los giros; deshacer y reiniciar son gratis.
+
+La tarjeta del laboratorio termina, desde v0.167.1, en «…en el mínimo de giros. Son cinco etapas contra el reloj.».
 
 ## Cómo se juega
 
