@@ -51,7 +51,7 @@
 .tablero { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; container-type: inline-size; }
 /* La letra se achica con el largo de la palabra (--n), para que ESPANTAPÁJAROS no se corte a la mitad a 320 px;
    si igual no cabe, parte con guion en una sílaba (hyphens) antes que en cualquier letra */
-.carta { min-height: 64px; border-radius: 14px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.07); color: var(--ink);
+.carta { min-height: 56px; border-radius: 14px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.07); color: var(--ink);
   font: 900 clamp(0.66rem, calc((33cqi - 18px) / (var(--n, 8) * 0.74)), 1rem) var(--font-body); letter-spacing: 0.01em; padding: 8px 4px; cursor: pointer;
   hyphens: auto; overflow-wrap: anywhere;
   transition: transform 0.12s, background 0.25s, border-color 0.25s; }

@@ -1,13 +1,13 @@
 /**
  * Agentes — el motor del prototipo de laboratorio (D-286): un Codenames de uno, donde el juego da
- * las pistas y tú adivinas. Un tablero de 12 palabras: 3 grupos de 3 agentes (uno por pista), 2
+ * las pistas y tú adivinas. Un tablero de 15 palabras: 3 grupos de 3 agentes (uno por pista), 5
  * neutrales y 1 asesino que tienta. Las pistas llegan de a una, con su número. Tocar un agente suma
  * (también si es de otra pista: es de los tuyos); una neutral o el asesino restan y cortan la pista.
  * Se puede pasar a la siguiente pista cuando quieras. Sin DOM: lo prueba engine.test.mjs.
  */
 import { PISTAS } from './pistas.js';
 
-export const POR_PISTA = 3, CUANTAS = 3, NEUTRALES = 2;
+export const POR_PISTA = 3, CUANTAS = 3, NEUTRALES = 5;
 export const AGENTES = POR_PISTA * CUANTAS;
 export const RESTA_NEUTRAL = 15, RESTA_ASESINO = 40;
 

@@ -2,7 +2,7 @@
 // tienta pero no va con ninguna, las neutrales no tientan— y el estado y el puntaje se calculan bien.
 import assert from 'node:assert/strict';
 import { PISTAS } from './pistas.js';
-import { generar, estado, puntaje, tarjeta, AGENTES } from './engine.js';
+import { generar, estado, puntaje, tarjeta, AGENTES, NEUTRALES } from './engine.js';
 
 const nombres = PISTAS.map(x => x.pista);
 assert.equal(new Set(nombres).size, nombres.length, 'pistas repetidas');
@@ -15,8 +15,8 @@ for (const x of PISTAS) {
 for (let n = 0; n < 300; n++) {
   const t = generar(`prueba-${n}`);
   assert.deepEqual(generar(`prueba-${n}`), t, 'la misma semilla, el mismo tablero');
-  assert.equal(t.cartas.length, 12);
-  assert.equal(new Set(t.cartas.map(c => c.w)).size, 12, `${n}: palabras repetidas`);
+  assert.equal(t.cartas.length, AGENTES + NEUTRALES + 1);
+  assert.equal(new Set(t.cartas.map(c => c.w)).size, AGENTES + NEUTRALES + 1, `${n}: palabras repetidas`);
   const elegidas = t.pistas.map(p => PISTAS.find(x => x.pista === p.pista));
   for (const c of t.cartas) {
     const van = elegidas.map((x, p) => (x.si.includes(c.w) ? p : -1)).filter(p => p >= 0);
@@ -48,5 +48,5 @@ assert.equal(e.actual, 1); assert.equal(puntaje(e), 0);
 // El asesino resta 40
 e = estado(t, [...de(0).map(i => ({ i })), ...de(1).map(i => ({ i })), { i: asesino }]);
 assert.ok(e.fin && e.asesino); assert.equal(puntaje(e), Math.round(100 * 6 / 9) - 40);
-assert.equal(tarjeta(t, e).split('\n').length, 4);
+assert.equal(tarjeta(t, e).split('\n').length, (AGENTES + NEUTRALES + 1) / 3);
 console.log('✓ Agentes (labs)');

@@ -13,7 +13,7 @@ import { formularioComentario, abrirComentario } from '../../assets/js/labs-idio
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { LONG_PRESS_MS } from '../../assets/js/teclado.js';   // el toque largo de las notas de Toque y Fama
-import { generar, estado, puntaje, tarjeta, AGENTES, RESTA_NEUTRAL, RESTA_ASESINO } from './engine.js';
+import { generar, estado, puntaje, tarjeta, AGENTES, NEUTRALES, RESTA_NEUTRAL, RESTA_ASESINO } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -21,11 +21,11 @@ const GAME_ID = 'agentes';
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const CODENAMES = 'https://czechgames.com/en/codenames/';
 const T = {
-  nombre: 'Agentes', lema: 'El juego te da una pista; tú encuentras a tus agentes entre 12 palabras.',
+  nombre: 'Agentes', lema: 'El juego te da una pista; tú encuentras a tus agentes entre 15 palabras.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
     ['🕵️', 'Toca las palabras que van con la pista: «MAR · 3» quiere decir que 3 van con MAR. Llegan 3 pistas, de a una.'],
-    ['⚠️', `Evita las 2 palabras neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}), que se parece a una pista: tocar uno corta la pista.`],
+    ['⚠️', `Evita las ${NEUTRALES} palabras neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}), que se parece a una pista: tocar uno corta la pista.`],
     ['⏭️', 'Si dudas, pasa a la siguiente pista. Cada agente suma, aunque sea de otra pista.'],
   ],
   empezar: '🕵️ Empezar', aJugar: '¡A jugar!', pista: 'Pista {n} de {t}', faltan: 'Te faltan {n}', faltaUna: 'Te falta 1',
