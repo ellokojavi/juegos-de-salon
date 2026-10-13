@@ -96,6 +96,9 @@ await ev(`document.getElementById('btn-borrar').click(); 1`); await sleep(80);
 ok(await lotes() === 0 && await ev(`document.getElementById('btn-borrar').disabled`), 'con el segundo, el tablero queda vacío y Borrar se apaga');
 await ev(`document.getElementById('btn-deshacer').click(); 1`); await sleep(80);
 ok(await lotes() === 2, 'Deshacer trae de vuelta lo borrado');
+await ev(`document.getElementById('btn-borrar').click(); document.getElementById('btn-rendirse').click(); 1`); await sleep(80);
+ok(await ev(`!document.getElementById('btn-borrar').classList.contains('armado') && document.getElementById('btn-rendirse').classList.contains('armado')`), 'un «¿Seguro?» a la vez: armar Rendirse desarma Borrar');
+await ev(`document.querySelector('#tablero').click(); 1`); await sleep(3100);
 
 // Con la solución del motor (otra partida, sin ayuda) se resuelven los cinco
 await empezar();
