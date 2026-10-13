@@ -3,7 +3,7 @@
 // pintan); Empezar pasa por la cuenta 3, 2, 1 y arma el tablero 1 de 3 con los números del motor; un
 // rectángulo sin número, con dos números o del área equivocada se rechaza (el marco tiembla en rojo) y
 // dice por qué; uno que vale se pinta de su color y tocarlo lo borra; la 💡 Ayuda pide un segundo toque
-// y pone un lote de la solución; Deshacer lo saca; con la solución del motor se resuelven los 3 tableros
+// y pone un lote de la solución; Deshacer lo saca; con la solución del motor se resuelven los 5 tableros
 // y el puntaje es el que dice el motor con el tiempo que anotó el juego; el resultado trae compartir,
 // otro tablero, el de hoy y el comentario tras una línea; rendirse pide un segundo toque y vale los
 // tableros hechos. Imprime ✗ si algo falla. `ANCHO=320` lo corre a 320 px.
@@ -50,7 +50,7 @@ ok(await (async () => {
   return esperar(`/3|2|1/.test(document.querySelector('#cuenta .cuenta-num')?.textContent || '')`, 2000);
 })(), 'Empezar abre la cuenta 3, 2, 1');
 ok(await esperar(`document.querySelectorAll('#tablero .num').length === 25 && !document.getElementById('cuenta')`, 8000), 'y después el tablero de 5×5');
-ok(/Tablero 1 de 3/.test(await ev(`document.getElementById('etapa').textContent`)), '«Tablero 1 de 3»');
+ok(/Tablero 1 de 5/.test(await ev(`document.getElementById('etapa').textContent`)), '«Tablero 1 de 5»');
 const t = generarEtapa(SEMILLA, 0);
 ok(JSON.stringify(await ev(`[...document.querySelectorAll('#tablero .num')].map(n => +n.textContent || 0)`)) === JSON.stringify(t.numeros), 'los números son los del motor');
 
@@ -86,18 +86,28 @@ const puesto = await ev(`JSON.stringify((({f1,c1,f2,c2}) => ({f1,c1,f2,c2}))(win
 ok(t.solucion.some(r => JSON.stringify(r) === puesto), 'ese lote es de la solución');
 await ev(`document.getElementById('btn-deshacer').click(); 1`); await sleep(60);
 ok(await lotes() === 0, 'Deshacer lo saca');
-ok(await ev(`[...document.querySelectorAll('.acciones-lt .btn')].map(b => b.id).join()`) === 'btn-deshacer,btn-ayuda,btn-rendirse', 'abajo: Deshacer, la ayuda y Rendirse, en una fila');
+ok(await ev(`[...document.querySelectorAll('.acciones-lt .btn')].map(b => b.id).join()`) === 'btn-deshacer,btn-borrar,btn-rendirse', 'abajo: Deshacer, Borrar y Rendirse, en una fila; la ayuda, aparte');
+// Borrar el tablero (pedido del dueño): con un segundo toque, y Deshacer lo trae de vuelta
+for (const r of t.solucion.slice(0, 2)) { await dibujar(r); await sleep(40); }
+ok(await lotes() === 2, 'dos lotes puestos');
+await ev(`document.getElementById('btn-borrar').click(); 1`); await sleep(80);
+ok(/Seguro/.test(await ev(`document.getElementById('btn-borrar').textContent`)) && await lotes() === 2, 'Borrar pide un segundo toque');
+await ev(`document.getElementById('btn-borrar').click(); 1`); await sleep(80);
+ok(await lotes() === 0 && await ev(`document.getElementById('btn-borrar').disabled`), 'con el segundo, el tablero queda vacío y Borrar se apaga');
+await ev(`document.getElementById('btn-deshacer').click(); 1`); await sleep(80);
+ok(await lotes() === 2, 'Deshacer trae de vuelta lo borrado');
 
-// Con la solución del motor (otra partida, sin ayuda) se resuelven los tres
+// Con la solución del motor (otra partida, sin ayuda) se resuelven los cinco
 await empezar();
 for (let n = 0; n < ETAPAS.length; n++) {
   const tt = generarEtapa(SEMILLA, n);
   ok(await esperar(`document.querySelectorAll('#tablero .num').length === ${tt.lado * tt.lado} && !window.__loteo.P.terminado`, 5000), `el tablero ${n + 1} es de ${tt.lado}×${tt.lado}`);
+  if (n === 4) await b.shot('02c-tablero-8x8');
   for (const r of tt.solucion) { await dibujar(r); await sleep(30); }
   ok(await esperar(`/listo/.test(document.getElementById('aviso')?.textContent || '') || !!document.getElementById('puntaje')`, 2000), `resuelto el tablero ${n + 1}`);
   if (n === 1) await b.shot('02b-tablero-listo');
 }
-ok(await esperar(`!!document.getElementById('puntaje')`, 4000), 'tras el tercero, directo al resultado');
+ok(await esperar(`!!document.getElementById('puntaje')`, 4000), 'tras el quinto, directo al resultado');
 const seg = await ev(`window.__loteo.P.segundos`);
 const esperado = puntajePartida(ETAPAS.length, seg, 0).total;
 ok(await ev(`document.getElementById('puntaje').textContent`) === `${esperado}/100`, `el puntaje es el del motor: ${esperado}/100 en ${seg.toFixed(1)} s`);
