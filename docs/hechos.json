@@ -1,5 +1,5 @@
 {
-  "version": "0.168.7",
+  "version": "0.169.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -911,6 +911,8 @@
     "public/labs/paint-mines/dibujos.js",
     "public/labs/paint-mines/engine.js",
     "public/labs/paint-mines/game.js",
+    "public/labs/plots/engine.js",
+    "public/labs/plots/game.js",
     "public/labs/routes/engine.js",
     "public/labs/routes/game.js",
     "public/liars-dice/engine.js",
@@ -970,6 +972,7 @@
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
     "public/labs/paint-mines/engine.test.mjs",
+    "public/labs/plots/engine.test.mjs",
     "public/labs/routes/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
@@ -1051,6 +1054,7 @@
     "memoria-de-partida.mjs",
     "mirar.mjs",
     "paint-mines/lab.mjs",
+    "plots/lab.mjs",
     "routes/lab.mjs",
     "sala-error.mjs",
     "sala-tope.mjs",
@@ -1168,6 +1172,10 @@
     {
       "ruta": "docs/games/paint-mines.md",
       "titulo": "🖌️ Pintaminas (prototipo del laboratorio, en Proyectos activos)"
+    },
+    {
+      "ruta": "docs/games/plots.md",
+      "titulo": "🧱 Loteo (prototipo del laboratorio, en Proyectos activos)"
     },
     {
       "ruta": "docs/games/routes.md",
