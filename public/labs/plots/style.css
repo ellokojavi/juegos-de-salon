@@ -21,6 +21,17 @@ body {
 .pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
 .paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
 
+/* El selector del modo (D-311): dos opciones en una cápsula, la elegida encendida */
+.selector-modo { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 2px auto 0; width: 100%; max-width: 360px; box-sizing: border-box;
+  border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border); }
+.opcion-modo { min-height: 46px; padding: 4px 8px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer;
+  font: 800 1rem var(--font-body); white-space: nowrap; transition: background 0.2s, color 0.2s, box-shadow 0.2s; -webkit-tap-highlight-color: transparent; }
+.opcion-modo.activa { background: var(--yellow); color: #1b1530; box-shadow: 0 3px 0 rgba(0,0,0,0.3); }
+.opcion-modo:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+/* «Lotes de n casillas»: arriba del tablero, junto al reloj (y sobre la demo de la portada) */
+.tam-lt { margin: 0; padding: 2px 12px; border-radius: 999px; font: 800 0.95rem var(--font-body); color: #1b1530; background: var(--lime); white-space: nowrap; }
+.demo-tam { justify-self: center; font-size: 0.85rem; }
+
 /* El tablero: el fondo cuadriculado, los lotes encima y los números arriba de todo */
 .tablero-lt { --lado: 7; position: relative; width: 100%; max-width: 440px; aspect-ratio: 1; margin: 0 auto; border-radius: 14px;
   background: rgba(10, 16, 28, 0.85); box-shadow: 0 0 0 2px rgba(255,255,255,0.14), 0 10px 30px rgba(0,0,0,0.4);
@@ -33,6 +44,8 @@ body {
 .num { display: grid; place-items: center; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,0.4);
   font: 900 calc(min(100vw - 40px, 440px) / var(--lado) * 0.5) var(--font-num); font-variant-numeric: tabular-nums; transition: color 0.2s; }
 .num.cubierto { color: #1b1530; text-shadow: none; }
+/* Los íconos del modo servicios: grandes, con una sombra que los despega del fondo y del lote */
+.num.icono { font-size: calc(min(100vw - 40px, 440px) / var(--lado) * 0.56); line-height: 1; text-shadow: none; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.55)); }
 /* Un lote: su color, con un borde que lo separa de los vecinos */
 .lote { position: absolute; box-sizing: border-box; padding: 0; border: 2.5px solid rgba(10, 16, 28, 0.9); border-radius: 10px;
   background: var(--c); box-shadow: inset 0 -4px 0 rgba(0,0,0,0.12), inset 0 3px 0 rgba(255,255,255,0.35); }
@@ -56,7 +69,7 @@ body {
 .aviso-lt.mal { color: #ff8a8a; } .aviso-lt.ayuda, .aviso-lt.ojo { color: var(--yellow); }
 .aviso-lt.medida { color: #fff; font: 900 1.15rem var(--font-num); }
 .aviso-lt.bien { color: var(--lime); font-size: 1.15rem; animation: pop 0.45s ease-out; }
-.fila-marcador { display: flex; justify-content: center; }
+.fila-marcador { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 6px 12px; }
 .reloj-lt { margin: 0; font: 800 1.05rem var(--font-num); font-variant-numeric: tabular-nums; }
 
 /* Deshacer, la ayuda y Rendirse: tres botones iguales en una fila, como en Rutas rotas */
@@ -82,6 +95,7 @@ body {
 /* La portada: un 5×5 que se resuelve solo, y el «¡Listo!» encima, al centro */
 .tablero-lt.chico { max-width: 200px; }
 .tablero-lt.chico .num { font-size: calc(200px / var(--lado) * 0.46); }
+.tablero-lt.chico .num.icono { font-size: calc(200px / var(--lado) * 0.5); }
 .tablero-lt.chico .lote { border-width: 2px; border-radius: 8px; }
 .tablero-lt.chico.entra { animation: lt-entra 0.4s ease-out; }
 @keyframes lt-entra { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
@@ -100,6 +114,7 @@ body {
 .sello-lt { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
   padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
 .sello-lt.mal { color: #ff8a8a; }
+.modo-fin { justify-self: center; margin: 0; font: 800 1rem var(--font-body); color: var(--lime); }
 .resultado .comentario { text-align: left; }
 .divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
 .desglose { text-align: left; margin: 0 auto; padding: 0; list-style: none; font-size: 0.95rem; }
@@ -109,6 +124,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .titulo-lt .ladrillo, .sello-lt, .cabeza-etapa.entra, .lote.nace, .tablero-lt.resuelto .lote, .seleccion.mal, .tablero-lt.chico.entra, .demo-rotulo.ve, .aviso-lt.bien { animation: none !important; }
   .seleccion { transition: none; }
+  .opcion-modo { transition: none; }
 }
 /* En un celular angosto, la demo un poco más chica: Empezar sube */
-@media (max-width: 360px) { .demo-caja, .demo-caja .tablero-lt.chico { max-width: 170px; } .demo-caja .tablero-lt.chico .num { font-size: calc(170px / var(--lado) * 0.46); } }
+@media (max-width: 360px) { .demo-caja, .demo-caja .tablero-lt.chico { max-width: 170px; } .demo-caja .tablero-lt.chico .num { font-size: calc(170px / var(--lado) * 0.46); } .demo-caja .tablero-lt.chico .num.icono { font-size: calc(170px / var(--lado) * 0.5); } }
