@@ -36,7 +36,7 @@ await ev(`document.getElementById('modo-servicios').click(); 1`); await sleep(20
 ok(await ev(`document.getElementById('modo-servicios').getAttribute('aria-checked')`) === 'true', 'tocar Servicios lo elige');
 ok(/⚡/.test(await ev(`document.getElementById('lema').textContent`)), 'el lema cambia');
 const pasosServicios = await pasos();
-ok(pasosServicios !== pasosNumeros && /exactamente un ⚡ y un 💧/.test(pasosServicios) && /mismo tamaño/.test(pasosServicios), `los pasos cambian (${pasosServicios})`);
+ok(pasosServicios !== pasosNumeros && /un ⚡ y un 💧, ni más ni menos/.test(pasosServicios) && /tamaño que dice arriba/.test(pasosServicios) && /deja a un ⚡ sin su 💧/.test(pasosServicios), `los pasos cambian (${pasosServicios})`);
 ok(await ev(`document.querySelectorAll('.pasos li').length`) === 3, 'tres pasos');
 ok(await ev(`location.search.includes('mode=utilities')`), 'el link dice el modo (?mode=utilities)');
 ok(await esperar(`document.querySelectorAll('.demo .num[data-servicio=luz]').length === 4`, 3000), 'la demo trae ⚡ y 💧 (4×4 en lotes de 4)');
@@ -90,6 +90,9 @@ for (let n = 0; n < ETAPAS_SERVICIOS.length; n++) {
   const tt = generarEtapaServicios(SEMILLA, n);
   ok(await esperar(`document.querySelectorAll('#tablero .num').length === ${tt.lado * tt.lado} && !window.__loteo.P.terminado && document.getElementById('tam')?.textContent === 'Lotes de ${tt.tam} casillas'`, 5000), `el tablero ${n + 1} es de ${tt.lado}×${tt.lado}, en lotes de ${tt.tam}`);
   if (n === 4) { await sleep(400); await b.shot('02c-tablero-dificil'); }
+  // Al llegar a los difíciles, el aviso dice cómo pensarlos (pedido del dueño)
+  if (n === 2) ok(/piensa un paso adelante/.test(await ev(`document.getElementById('aviso').textContent`)), 'el tablero 3 avisa que vienen los difíciles y cómo pensarlos');
+  if (n === 3) ok(!/piensa un paso adelante/.test(await ev(`document.getElementById('aviso').textContent`)), 'y solo al llegar a ellos');
   for (const r of tt.solucion) { await dibujar(r); await sleep(25); }
   ok(await esperar(`/listo/.test(document.getElementById('aviso')?.textContent || '') || !!document.getElementById('puntaje')`, 2000), `resuelto el tablero ${n + 1}`);
 }
