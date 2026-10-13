@@ -51,14 +51,14 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
 | 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
-| 📐 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, cinco tableros contra el reloj: dos para calentar y tres difíciles) | `docs/games/plots.md` | D-310 |
+| 📐 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, cinco tableros contra el reloj: dos para calentar y tres difíciles; el modo ⚡💧 Servicios, con lotes del mismo tamaño y un ⚡ y un 💧 en cada uno) | `docs/games/plots.md` | D-310, D-311 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -5723,3 +5723,50 @@ las difíciles pidan más rondas y dejen menos lotes a la vista que las fáciles
 juega los cinco de punta a punta y prueba Borrar. El
 nombre está en un solo lugar en `game.js` (`T.nombre`), además del título de la página, la tarjeta del
 laboratorio y los documentos.
+
+## D-311 · Loteo: el modo «Servicios», con lotes del mismo tamaño
+**Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** amplía D-310; el selector, con el espíritu de la palanca de Pintaminas (D-290)
+**Contexto:** el dueño pidió, en la portada de Loteo, un modo que se activa para jugarlo («Utilities»;
+en la app, «Servicios»): en vez de números, la grilla trae íconos de servicios, ⚡ luz y 💧 agua, y
+cada lote lleva exactamente un ⚡ y un 💧. Antes de construirlo se midió con lotes al azar y un ⚡ y un
+💧 al azar en cada uno: **sin un tamaño fijo, casi ningún tablero tiene solución única (1 a 2 %)**; con
+todos los lotes del mismo tamaño, sí. Con el generador de esta decisión (2000 tableros de cada uno):
+6×6 de 3, 81 % únicos; 6×6 de 4, 29 %; 6×6 de 6, 47 %; 8×8 de 4, 15 %; 8×8 de 8, 33 %. Todos los
+únicos se deducen sin adivinar.
+**Decisión:** un segundo modo de Loteo, con las mismas reglas de juego (dibujar, borrar, deshacer,
+🧹 Borrar, 🏳️ Rendirse, 💡 Ayuda, reloj, puntaje y final):
+- **Las reglas:** dividir el tablero entero en lotes rectangulares **todos del mismo tamaño**, que se
+  dice arriba del tablero («Lotes de 4 casillas», junto al reloj), y **cada lote con exactamente un ⚡
+  y un 💧**. Un lote que no vale tiembla en rojo y el aviso dice por qué: «Ese lote tiene 3 casillas;
+  cada lote tiene 4.», «Le falta 💧.» o «Tiene dos ⚡: cada lote lleva uno.».
+- **Cinco tableros**, como el modo de números (y el mismo puntaje): dos para calentar, 6×6 en lotes
+  de 3 y 6×6 en lotes de 4, y tres difíciles, 6×6 de 6, 8×8 de 4 y 8×8 de 8. Elegidos midiendo los
+  pasos de `deducirServicios` (rondas, y lotes a la vista de entrada, de 120 tableros por etapa):
+  2,9 y 9,9; 3,2 y 6,3; 5,3 y 1,4; 6,1 y 4,7; 4,7 y 1,9. Un tamaño distinto en cada tablero hace que
+  «Lotes de n casillas» diga algo nuevo cada vez.
+- **El generador** (`generarServicios`) parte la grilla en rectángulos del tamaño pedido (todas las
+  formas: 1×4, 2×2, 4×1…), pone en cada uno un ⚡ y un 💧 en casillas distintas (barajadas con
+  Fisher-Yates, determinista con la semilla) y se queda con uno de solución única (un resolvedor que
+  cuenta hasta 2) que `deducirServicios` resuelva sin adivinar: un ícono o una casilla que solo cabe en
+  un lote posible lo fija, y una casilla que solo alcanzan los lotes de un mismo ⚡ (o 💧) obliga a ese
+  lote a cubrirla. Los fáciles se quedan con el primero; los difíciles arman 20 y se quedan con el que
+  pide más pasos. Cada tablero tarda unos milisegundos.
+- **Sin 🌐 internet:** se midió un tercer servicio. Da más tableros únicos (8×8 de 4: 32 % en vez de
+  15 %), pero más fáciles (3,1 rondas y 12,8 lotes a la vista en vez de 4,0 y 9,1): no se usa.
+- **La portada:** un selector de dos opciones, «🔢 Números» y «⚡💧 Servicios», bajo el crédito. Al
+  cambiar, cambian el lema, los pasos y la demo (un 4×4 en lotes de 4, que se resuelve solo). El
+  celular recuerda el modo y el link lo dice: `?mode=utilities` (C-18; `?mode=numbers` fuerza el de
+  números). «Otro tablero» y «El de hoy» lo conservan.
+- **La señal de uso** cuenta las partidas de este modo como `mode: 'servicios'`; la tarjeta para
+  compartir y el final dicen «⚡💧 Servicios».
+**Por qué:** el tamaño fijo es lo que hace única la solución, y además es una regla que se entiende
+de un vistazo. Con él, el modo se juega con el mismo gesto y la misma pantalla que el de números.
+**Alternativas descartadas:** lotes de cualquier tamaño (1 a 2 % de tableros únicos, y la regla no
+dice cuántas casillas buscar); una palanca de encendido como la de Pintaminas (aquí no hay un modo
+«apagado»: son dos modos, y un selector de dos opciones dice cuál está elegido); el 🌐 en la última
+etapa (más fácil, no más difícil); dos tableros de 8×8 de 4 al final (uno de 8×8 de 8 deja menos lotes
+a la vista y cambia el tamaño).
+**Consecuencias:** `engine.test.mjs` genera 120 tableros de cada etapa del modo y comprueba que tengan
+una sola solución, que se deduzcan sin adivinar, que cada lote de la solución sea del tamaño justo con
+un ⚡ y un 💧, que las difíciles pidan más pasos que las fáciles, que tarden menos de 300 ms, la
+validación con sus motivos y la tarjeta; `tools/e2e/plots/servicios.mjs` juega el modo de punta a punta.

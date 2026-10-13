@@ -4,6 +4,9 @@
  * casillas tiene. Se arrastra de una esquina a otra para dibujar un lote; tocarlo lo borra. Son cinco
  * tableros (5×5 y 6×6 para calentar; 7×7, 7×7 y 8×8, difíciles) con el reloj corriendo. Solo en español, para probar con amigos. Sin
  * `?seed=` es el tablero de hoy, el mismo para todos. El motor está en engine.js.
+ *
+ * El modo «Servicios» (D-311), que se elige en la portada (`?mode=utilities`): en vez de números, ⚡ y 💧;
+ * los lotes son todos del mismo tamaño y cada uno lleva exactamente un ⚡ y un 💧.
  */
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
@@ -14,8 +17,8 @@ import { formularioComentario, abrirComentario } from '../../assets/js/labs-idio
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import {
-  generar, generarEtapa, validar, poner, resuelto, pista, puntajePartida, tarjeta, iguales, contiene, ancho, alto,
-  ETAPAS, MAXIMO, RESTA_AYUDA,
+  generar, generarEtapa, validar, poner, resuelto, pista, puntajePartida, tarjeta, iguales, contiene, ancho, alto, casillas,
+  generarServicios, generarEtapaServicios, ETAPAS, ETAPAS_SERVICIOS, ICONOS, MAXIMO, RESTA_AYUDA,
 } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
@@ -33,6 +36,21 @@ const T = {
     ['🔢', 'El número dice cuántas casillas tiene su lote: un 6 puede ser de 2×3 o de 1×6.'],
     ['👆', `Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son ${ETAPAS.length} tableros contra el reloj.`],
   ],
+  // El modo «Servicios» (D-311): los mismos lotes, con ⚡ y 💧 en vez de números
+  lemaServicios: 'Lotes del mismo tamaño, cada uno con su ⚡ y su 💧.',
+  comoServicios: [
+    ['📐', 'Divide el tablero en lotes del mismo tamaño: arriba dice cuántas casillas tiene cada uno.'],
+    ['⚡', 'Cada lote lleva exactamente un ⚡ y un 💧: ni más ni menos.'],
+    ['👆', `Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son ${ETAPAS_SERVICIOS.length} tableros contra el reloj.`],
+  ],
+  modos: { numeros: '🔢 Números', servicios: '⚡💧 Servicios', rotulo: 'Modo' },
+  servicios: '⚡💧 Servicios',
+  tam: 'Lotes de {n} casillas',
+  noServicios: {
+    tam: 'Ese lote tiene {a} {casillas}; cada lote tiene {n}.',
+    falta: 'Le falta {s}.',
+    sobra: 'Tiene {k} {s}: cada lote lleva uno.',
+  },
   empezar: '📐 Empezar', aJugar: '¡A lotear!',
   etapa: 'Tablero {n} de {t}', etapaLista: '📐 ¡Tablero {n} listo!',
   reloj: '⏱ {t}',
@@ -61,6 +79,8 @@ const T = {
   comentarAbrir: '💬 Dejar un comentario',
   comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendía cómo dibujar los lotes, si los tableros te parecieron justos y qué le cambiarías.', ph: 'Por ejemplo: me costó borrar un lote mal puesto.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
 };
+/** Cuántos, en palabras, para «Tiene dos ⚡». */
+const CUANTOS = { 2: 'dos', 3: 'tres', 4: 'cuatro', 5: 'cinco', 6: 'seis' };
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 const espera = ms => new Promise(r => setTimeout(r, ms));
@@ -72,9 +92,10 @@ const vecinos = (a, b) => {
   const filas = a.f1 <= b.f2 && b.f1 <= a.f2, cols = a.c1 <= b.c2 && b.c1 <= a.c2;
   return (filas && (a.c2 + 1 === b.c1 || b.c2 + 1 === a.c1)) || (cols && (a.f2 + 1 === b.f1 || b.f2 + 1 === a.f1));
 };
-/** El color de un lote nuevo: el de su número, salvo que un vecino ya lo tenga. */
+/** El color de un lote nuevo: el de su número (o su ⚡), salvo que un vecino ya lo tenga. */
 function colorPara(t, parcelas, r) {
-  const k = t.pistas.findIndex(p => contiene(r, Math.floor(p.i / t.lado), p.i % t.lado));
+  const k = t.iconos ? (casillas(r, t.lado).find(i => t.iconos[i] === 'luz') ?? 0)
+    : t.pistas.findIndex(p => contiene(r, Math.floor(p.i / t.lado), p.i % t.lado));
   const usados = new Set(parcelas.filter(p => vecinos(p, r)).map(p => p.color));
   for (let d = 0; d < PALETA.length; d++) { const c = PALETA[(Math.max(0, k) * 3 + d) % PALETA.length]; if (!usados.has(c)) return c; }
   return PALETA[0];
@@ -84,9 +105,27 @@ const vista = document.getElementById('vista');
 const pie = document.getElementById('pie');
 const params = new URLSearchParams(location.search);
 const SEMILLA_URL = (params.get('seed') || '').trim();
-const P = { semilla: '', etapa: 0, t: null, parcelas: [], historial: [], hechas: 0, ayudas: 0, desde: 0, segundos: 0, terminado: false, acabado: false, reloj: null, oculto: 0 };
+// El modo (D-311): viene en el link (`?mode=utilities` o `?mode=numbers`) o lo deja el selector; el celular lo recuerda
+const GUARDADO = 'juegos-de-salon:loteo:modo';
+const MODO_URL = { utilities: 'servicios', numbers: 'numeros' }[params.get('mode')] || null;
+const leerModo = () => { try { return localStorage.getItem(GUARDADO) === 'servicios' ? 'servicios' : 'numeros'; } catch { return 'numeros'; } };
+const P = { modo: MODO_URL || leerModo(), semilla: '', etapa: 0, t: null, parcelas: [], historial: [], hechas: 0, ayudas: 0, desde: 0, segundos: 0, terminado: false, acabado: false, reloj: null, oculto: 0 };
 // El reloj se pausa con la pantalla oculta (U-20): el rato oculto se le descuenta al comienzo
 const usado = () => Math.max(0, ((P.oculto || Date.now()) - P.desde) / 1000);
+const enServicios = () => P.modo === 'servicios';
+/** Las etapas y el tablero de una etapa, del modo elegido. */
+const etapas = () => (enServicios() ? ETAPAS_SERVICIOS : ETAPAS);
+const tableroDe = (semilla, n) => (enServicios() ? generarEtapaServicios(semilla, n) : generarEtapa(semilla, n));
+/** Cambia el modo: lo recuerda el celular y lo dice el link (para compartirlo o recargar). */
+function cambiarModo(modo) {
+  P.modo = modo;
+  try { localStorage.setItem(GUARDADO, modo); } catch { /* sin almacenamiento: solo esta vez */ }
+  try {
+    const u = new URL(location.href);
+    if (modo === 'servicios') u.searchParams.set('mode', 'utilities'); else u.searchParams.delete('mode');
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
+  } catch { /* sin historial */ }
+}
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { if (P.desde && !P.acabado) P.oculto = Date.now(); }
   else if (P.oculto) { P.desde += Date.now() - P.oculto; P.oculto = 0; }
@@ -99,7 +138,7 @@ function pieComentario(pantalla) {
   }, T.comentarAbrir));
 }
 const contexto = pantalla => ({
-  juego: GAME_ID, pantalla, semilla: P.semilla, etapa: P.etapa + 1, hechas: P.hechas, ayudas: P.ayudas, lotes: P.parcelas.length,
+  juego: GAME_ID, pantalla, modo: P.modo, semilla: P.semilla, etapa: P.etapa + 1, hechas: P.hechas, ayudas: P.ayudas, lotes: P.parcelas.length,
   url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
 });
 
@@ -126,9 +165,13 @@ const pos = (r, lado) => ({
 function crearTablero(t, { interactivo = false, alDibujar, alTocar, alMedir } = {}) {
   const { lado } = t;
   const caja = el('div', { class: 'tablero-lt', id: interactivo ? 'tablero' : null, 'data-tablero': 'loteo', style: `--lado:${lado}` });
-  const fondo = el('div', { class: 'fondo' }, ...t.numeros.map(() => el('span', { class: 'celda' })));
+  // Cada casilla: su número, o en el modo servicios su ícono (⚡, 💧)
+  const celdas = t.iconos || t.numeros;
+  const fondo = el('div', { class: 'fondo' }, ...celdas.map(() => el('span', { class: 'celda' })));
   const lotes = el('div', { class: 'lotes' });
-  const nums = el('div', { class: 'nums' }, ...t.numeros.map((n, i) => el('span', { class: 'num', 'data-i': i }, n ? String(n) : '')));
+  const nums = el('div', { class: `nums${t.iconos ? ' iconos' : ''}` }, ...celdas.map((n, i) => (t.iconos
+    ? el('span', { class: 'num icono', 'data-i': i, 'data-servicio': n || null }, n ? ICONOS[n] : '')
+    : el('span', { class: 'num', 'data-i': i }, n ? String(n) : ''))));
   const marco = el('div', { class: 'seleccion', 'aria-hidden': 'true' });
   caja.append(fondo, lotes, nums, marco);
 
@@ -203,15 +246,40 @@ function crearTablero(t, { interactivo = false, alDibujar, alTocar, alMedir } = 
 /* La portada                                                          */
 /* ------------------------------------------------------------------ */
 
-// La portada: un 5×5 que se resuelve solo, lote por lote: el marco crece de una esquina a la otra, como
-// cuando se arrastra, y el lote se pinta de su color. Al final, «¡Listo!» grande al centro, y otro tablero.
+/**
+ * El selector del modo (D-311): dos opciones, «🔢 Números» y «⚡💧 Servicios», como un interruptor de dos
+ * posiciones. Elegir una cambia la portada entera (lema, demo y pasos) al modo elegido.
+ */
+function selectorModo() {
+  const opcion = modo => el('button', {
+    type: 'button', role: 'radio', id: `modo-${modo}`, class: `opcion-modo${P.modo === modo ? ' activa' : ''}`, 'aria-checked': String(P.modo === modo),
+    onClick: () => {
+      if (P.modo === modo) return;
+      SFX.tap(); vibrate(10);
+      cambiarModo(modo);
+      portada();
+      document.getElementById(`modo-${modo}`)?.focus();
+    },
+  }, T.modos[modo]);
+  return el('div', { class: 'selector-modo', role: 'radiogroup', 'aria-label': T.modos.rotulo, id: 'selector-modo' }, opcion('numeros'), opcion('servicios'));
+}
+
+// La portada: un tablero que se resuelve solo, lote por lote (un 5×5 de números, o un 4×4 de servicios
+// en lotes de 4): el marco crece de una esquina a la otra, como cuando se arrastra, y el lote se pinta de
+// su color. Al final, «¡Listo!» grande al centro, y otro tablero.
 let demoVez = 0;
+const DEMO_SERVICIOS = { lado: 4, tam: 4 };
+const tableroDemo = ronda => (enServicios() ? generarServicios(`portada-demo-${ronda % 8}`, DEMO_SERVICIOS) : generar(`portada-demo-${ronda % 8}`, { lado: 5 }));
 function portada() {
   const caja = el('div', { class: 'demo', 'aria-hidden': 'true' });
   const rotulo = el('p', { class: 'demo-rotulo' }, T.listo);
+  const como = enServicios() ? T.comoServicios : T.como;
   vista.replaceChildren(...[
-    el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), el('div', { class: 'demo-caja' }, caja, rotulo)),
-    el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
+    el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0', id: 'lema' }, enServicios() ? T.lemaServicios : T.lema), credito(),
+      selectorModo(),
+      enServicios() ? el('p', { class: 'tam-lt demo-tam', 'aria-hidden': 'true' }, fmt(T.tam, { n: DEMO_SERVICIOS.tam })) : null,
+      el('div', { class: 'demo-caja' }, caja, rotulo)),
+    el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
     SEMILLA_URL ? null : el('p', { class: 'muted center', style: 'margin:0' }, `📅 ${T.hoy}`),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
   ].filter(Boolean));
@@ -220,7 +288,7 @@ function portada() {
   const sigue = () => vez === demoVez && caja.isConnected;
   const lotesDe = (t, rects) => rects.reduce((ps, r) => [...ps, { ...r, color: colorPara(t, ps, r) }], []);
   if (QUIETO) {
-    const t = generar('portada-demo-0', { lado: 5 });
+    const t = tableroDemo(0);
     const tab = crearTablero(t); tab.caja.classList.add('chico', 'resuelto');
     tab.pintar(lotesDe(t, t.solucion));
     caja.replaceChildren(tab.caja);
@@ -228,7 +296,7 @@ function portada() {
   }
   (async () => {
     for (let ronda = 0; sigue(); ronda++) {
-      const t = generar(`portada-demo-${ronda % 8}`, { lado: 5 });
+      const t = tableroDemo(ronda);
       const tab = crearTablero(t);
       tab.caja.classList.add('chico', 'entra');
       caja.replaceChildren(tab.caja);
@@ -267,21 +335,21 @@ function portada() {
 function empezar() {
   P.semilla = SEMILLA_URL || `dia:${fechaLocal()}`;
   P.etapa = 0; P.hechas = 0; P.ayudas = 0; P.acabado = false; P.segundos = 0;
-  trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
+  trackStart({ game: GAME_ID, mode: enServicios() ? 'servicios' : 'solo', players: 1 });
   // El 3, 2, 1 de La Copa (D-105): el tablero se arma con el "¡A lotear!", y el reloj corre desde ahí
   vista.replaceChildren(); pie.replaceChildren();
-  cuentaRegresiva({ titulo: `${EMOJI} ${T.nombre}`, ya: T.aJugar }).then(() => { P.desde = Date.now(); jugar(); });
+  cuentaRegresiva({ titulo: enServicios() ? `${EMOJI} ${T.nombre} · ${T.servicios}` : `${EMOJI} ${T.nombre}`, ya: T.aJugar }).then(() => { P.desde = Date.now(); jugar(); });
 }
 
 /** Los puntos de los tableros: hechos (verde), el actual y los que vienen. */
-const progreso = () => el('div', { class: 'etapas', 'aria-hidden': 'true' }, ...ETAPAS.map((_, k) =>
+const progreso = () => el('div', { class: 'etapas', 'aria-hidden': 'true' }, ...etapas().map((_, k) =>
   el('span', { class: `punto${k < P.hechas ? ' hecha' : k === P.etapa ? ' actual' : ''}` })));
 
 function jugar() {
-  const t = P.t = generarEtapa(P.semilla, P.etapa);
+  const t = P.t = tableroDe(P.semilla, P.etapa);
   P.parcelas = []; P.historial = []; P.terminado = false;
   const cabeza = el('div', { class: 'cabeza-etapa entra', id: 'etapa' },
-    el('p', { class: 'n-etapa' }, fmt(T.etapa, { n: P.etapa + 1, t: ETAPAS.length })), progreso());
+    el('p', { class: 'n-etapa' }, fmt(T.etapa, { n: P.etapa + 1, t: etapas().length })), progreso());
   const reloj = el('p', { class: 'reloj-lt', id: 'reloj' });
   const tic = () => { reloj.textContent = fmt(T.reloj, { t: mmss(usado() * 1000) }); };
   clearInterval(P.reloj); P.reloj = setInterval(tic, 250);
@@ -306,7 +374,9 @@ function jugar() {
       if (!v.ok) {
         SFX.error(); vibrate([40, 30, 40]);
         tab.rechazar(r);
-        decir(fmt(T.no[v.motivo], { k: v.cuantos, n: v.n, a: v.area, casillas: v.n === 1 ? 'casilla' : 'casillas' }), 'mal');
+        decir(t.iconos
+          ? fmt(T.noServicios[v.motivo], { n: v.tam, a: v.area, casillas: v.area === 1 ? 'casilla' : 'casillas', s: ICONOS[v.servicio], k: CUANTOS[v.cuantos] || v.cuantos })
+          : fmt(T.no[v.motivo], { k: v.cuantos, n: v.n, a: v.area, casillas: v.n === 1 ? 'casilla' : 'casillas' }), 'mal');
         return;
       }
       SFX.flip(); vibrate(15);
@@ -324,7 +394,7 @@ function jugar() {
         return;
       }
       // Un 1 se dibuja con un toque: es su propio lote
-      if (t.numeros[f * t.lado + c] === 1) { tab.caja.dispatchEvent(new CustomEvent('dibujar', { detail: { f1: f, c1: c, f2: f, c2: c } })); return; }
+      if (t.numeros?.[f * t.lado + c] === 1) { tab.caja.dispatchEvent(new CustomEvent('dibujar', { detail: { f1: f, c1: c, f2: f, c2: c } })); return; }
       decir(T.arrastra, 'ojo');
     },
   });
@@ -386,7 +456,7 @@ function jugar() {
   const terminar = () => {
     P.terminado = true;
     P.hechas++;
-    const ultimo = P.hechas === ETAPAS.length;
+    const ultimo = P.hechas === etapas().length;
     if (ultimo) { P.segundos = usado(); clearInterval(P.reloj); }
     tab.caja.classList.add('bloqueado', 'resuelto');
     [...acciones.querySelectorAll('button'), botonAyuda].forEach(b => { b.disabled = true; });
@@ -400,7 +470,9 @@ function jugar() {
   };
 
   const acciones = el('div', { class: 'acciones-lt' }, deshacer, botonBorrar, botonRendirse);
-  vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj), aviso, tab.caja, acciones, botonAyuda);
+  // En el modo servicios, el tamaño de los lotes va arriba del tablero, junto al reloj
+  const tam = t.tam ? el('p', { class: 'tam-lt', id: 'tam' }, fmt(T.tam, { n: t.tam })) : null;
+  vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj, tam), aviso, tab.caja, acciones, botonAyuda);
   tab.pintar(P.parcelas);
   tic(); pintarBotones();
   pieComentario('juego');
@@ -415,14 +487,17 @@ function acabar(motivo) {
   resultado(motivo);
 }
 
-/** El link de una partida: su semilla. */
-const enlace = semilla => (semilla ? `?seed=${encodeURIComponent(semilla)}` : '');
+/** El link de una partida: su semilla, y el modo si es el de servicios (`?mode=utilities`, C-18). */
+const enlace = semilla => {
+  const q = [semilla ? `seed=${encodeURIComponent(semilla)}` : null, enServicios() ? 'mode=utilities' : null].filter(Boolean);
+  return q.length ? `?${q.join('&')}` : '';
+};
 
 function resultado(motivo) {
   const r = puntajePartida(P.hechas, P.segundos, P.ayudas), s = r.total, ms = P.segundos * 1000;
-  trackFinish({ detalle: `${s}/${MAXIMO} · ${motivo} · ${P.hechas}/${ETAPAS.length} tableros · ${P.ayudas} ayudas · ${mmss(ms)}` });
+  trackFinish({ detalle: `${s}/${MAXIMO} · ${enServicios() ? 'servicios · ' : ''}${motivo} · ${P.hechas}/${etapas().length} tableros · ${P.ayudas} ayudas · ${mmss(ms)}` });
   pie.replaceChildren();
-  const lineas = [fmt(T.capas.etapas, { n: P.hechas, t: ETAPAS.length, p: r.base }),
+  const lineas = [fmt(T.capas.etapas, { n: P.hechas, t: etapas().length, p: r.base }),
     r.completa ? fmt(T.capas.rapidez, { t: mmss(ms), p: r.ptsRapidez }) : T.capas.sinRapidez];
   if (P.ayudas) lineas.push(fmt(T.capas.ayudas[P.ayudas === 1 ? 0 : 1], { n: P.ayudas, pts: r.resta }));
   // El último tablero: el del jugador si lo terminó; si se rindió, cómo se resolvía
@@ -435,14 +510,15 @@ function resultado(motivo) {
   vista.replaceChildren(el('div', { class: 'resultado' },
     fin.caja,
     completa ? null : el('p', { class: 'muted', style: 'margin:0' }, fmt(T.asiSe, { n: P.etapa + 1 })),
+    enServicios() ? el('p', { class: 'modo-fin', id: 'modo-fin' }, T.servicios) : null,
     el('p', { class: `sello-lt${completa ? '' : ' mal'}` }, T.fin[motivo]),
     el('div', { class: 'score-big', id: 'puntaje' }, `${s}/${MAXIMO}`),
     el('ul', { class: 'desglose muted', id: 'desglose' }, ...lineas.map(x => el('li', {}, x))),
     // Completos, el tiempo ya lo dice la rapidez (U-8)
     r.completa ? null : el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
-    botonResultadoSolo({ C: COMMON.es, emoji: EMOJI, juego: T.nombre, puntaje: `${s}/${MAXIMO}`, tiempo: mmss(ms), tarjeta: tarjeta(P.hechas, P.ayudas), url: `${SITIO}labs/plots/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
+    botonResultadoSolo({ C: COMMON.es, emoji: EMOJI, juego: T.nombre, puntaje: `${s}/${MAXIMO}`, tiempo: mmss(ms), tarjeta: tarjeta(P.hechas, P.ayudas, P.modo), url: `${SITIO}labs/plots/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: enlace(Math.random().toString(36).slice(2, 8)) }, T.otraVez),
-    SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname }, T.deHoy) : null,
+    SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname + enlace('') }, T.deHoy) : null,
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
     // Una línea separa lo del juego del comentario para quienes lo prueban, como en los otros del laboratorio
     el('hr', { class: 'divisor' }),
