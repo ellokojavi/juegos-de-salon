@@ -230,7 +230,7 @@ function jugar() {
   const { t } = P;
   const marcador = el('p', { class: 'marcador', id: 'marcador' });
   const aviso = el('p', { class: 'aviso-pm', 'aria-live': 'polite' }, '');
-  const tablero = el('div', { class: `grilla tablero${t.colores === 2 ? ' dificil' : ''}`, id: 'tablero', style: estiloPinturas(t) });
+  const tablero = el('div', { class: `grilla tablero${t.colores === 2 ? ' dificil' : ''}`, id: 'tablero', 'data-tablero': 'pinta', style: estiloPinturas(t) });
   const casillas = t.sol.map((_, i) => el('button', { type: 'button', class: 'casilla', 'data-i': i, onClick: () => tocar(i) }));
   tablero.append(...casillas);
   // Un pincel por color, y «No pinta» al final
@@ -354,7 +354,7 @@ function resultado(e) {
   if (t.colores === 2) lineas.push(fmt(T.desglosePremio, { x: PREMIO_DIFICIL }));
   if (P.rendido) lineas.push(fmt(T.rendidoDice, { p: Math.round(100 * e.avance) }));
   vista.replaceChildren(el('div', { class: 'resultado' },
-    el('div', { class: 'dibujo-fin' }, grilla(t, { numeros: false, clase: 'revelada fin' })),
+    el('div', { class: 'dibujo-fin', 'data-tablero': 'dibujo' }, grilla(t, { numeros: false, clase: 'revelada fin' })),
     el('h2', { class: 'display display--lg', style: 'margin:0' }, `${t.dibujo.emoji} ${t.dibujo.nombre}`),
     // ¡Perfecto! es sin errores y sin ayudas: con una ayuda no es perfecto (U-1)
     el('p', { class: `sello-pm${P.rendido ? ' mal' : ''}` }, P.rendido ? T.fin.rendido : n === 0 && !e.ayudas ? T.fin.perfecto : T.fin.listo),

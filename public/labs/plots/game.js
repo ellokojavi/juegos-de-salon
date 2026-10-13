@@ -125,7 +125,7 @@ const pos = (r, lado) => ({
  */
 function crearTablero(t, { interactivo = false, alDibujar, alTocar, alMedir } = {}) {
   const { lado } = t;
-  const caja = el('div', { class: 'tablero-lt', id: interactivo ? 'tablero' : null, style: `--lado:${lado}` });
+  const caja = el('div', { class: 'tablero-lt', id: interactivo ? 'tablero' : null, 'data-tablero': 'loteo', style: `--lado:${lado}` });
   const fondo = el('div', { class: 'fondo' }, ...t.numeros.map(() => el('span', { class: 'celda' })));
   const lotes = el('div', { class: 'lotes' });
   const nums = el('div', { class: 'nums' }, ...t.numeros.map((n, i) => el('span', { class: 'num', 'data-i': i }, n ? String(n) : '')));

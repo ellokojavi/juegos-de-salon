@@ -1002,6 +1002,7 @@
   ],
   "e2e": [
     "agents/lab.mjs",
+    "aire-comun.mjs",
     "battleship/alineacion.mjs",
     "battleship/chat.mjs",
     "battleship/colocacion.mjs",
