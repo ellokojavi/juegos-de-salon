@@ -9,12 +9,18 @@
  * esquina de arriba a la izquierda a la de abajo a la derecha.
  */
 
-/** Las etapas: tres tableros, cada uno más grande. */
-export const ETAPAS = [{ lado: 5 }, { lado: 6 }, { lado: 7 }];
-/** El puntaje: cada tablero resuelto vale 20; la rapidez, hasta 40 (solo con los tres); la ayuda resta 10. */
-export const PUNTOS_ETAPA = 20, BONO_RAPIDEZ = 40, RESTA_AYUDA = 10;
+/**
+ * Las etapas (pedido del dueño): dos para calentar los dedos y tres difíciles, cada una más grande.
+ * Las difíciles traen lotes más grandes, menos lotes que se ven de entrada y más pasos de deducción.
+ */
+export const ETAPAS = [
+  { lado: 5, dificil: false }, { lado: 6, dificil: false },
+  { lado: 7, dificil: true }, { lado: 7, dificil: true }, { lado: 8, dificil: true },
+];
+/** El puntaje: cada tablero resuelto vale 12; la rapidez, hasta 40 (solo con los cinco); la ayuda resta 10. */
+export const PUNTOS_ETAPA = 12, BONO_RAPIDEZ = 40, RESTA_AYUDA = 10;
 /** La rapidez: 40 en RAPIDO_S o menos, 0 en LENTO_S o más, en línea recta entre medio. */
-export const RAPIDO_S = 90, LENTO_S = 6 * 60;
+export const RAPIDO_S = 5 * 60, LENTO_S = 15 * 60;
 export const MAXIMO = PUNTOS_ETAPA * ETAPAS.length + BONO_RAPIDEZ;
 
 function azar(semilla) {
@@ -36,16 +42,19 @@ export function casillas(r, lado) {
   return out;
 }
 
-/** El tope de área de cada tamaño: los números caben en una cifra salvo en el 7×7, que llega a 10. */
-const TOPE = { 5: 8, 6: 9, 7: 10 };
-/** Cuánto gusta cada área al partir: las medianas (3 a 8) mucho, el 2 menos y el 1 casi nada. */
-const GUSTO = a => (a === 1 ? 0.04 : a === 2 ? 0.45 : a === 3 ? 0.8 : a <= 6 ? 1 : a <= 8 ? 0.95 : 0.6);
+/** El tope de área de cada tamaño. */
+const TOPE = { 5: 8, 6: 9, 7: 10, 8: 12 };
+/** Cuánto gusta cada área al partir: en los fáciles las medianas (3 a 8), el 2 menos y el 1 casi nada;
+ *  en los difíciles, lotes más grandes (4 a 10) y casi ningún 1 ni 2. */
+const GUSTO = (a, dificil) => (dificil
+  ? (a === 1 ? 0.01 : a === 2 ? 0.12 : a === 3 ? 0.4 : a <= 10 ? 1 : 0.7)
+  : (a === 1 ? 0.04 : a === 2 ? 0.45 : a === 3 ? 0.8 : a <= 6 ? 1 : a <= 8 ? 0.95 : 0.6));
 
 /**
  * Parte la grilla en rectángulos al azar: toma la primera casilla libre (en el orden de lectura) y le
  * pone un rectángulo que parte en ella, elegido según el gusto por su área. Devuelve los rectángulos.
  */
-function partir(r, lado) {
+function partir(r, lado, dificil = false) {
   const libre = new Uint8Array(lado * lado).fill(1);
   const rects = [];
   const tope = TOPE[lado] || 10;
@@ -62,9 +71,9 @@ function partir(r, lado) {
       if (!anchoMax) break;
       for (let ww = 1; ww <= anchoMax; ww++) if (h * ww <= tope) opciones.push({ f1: f, c1: c, f2: f + h - 1, c2: c + ww - 1 });
     }
-    const total = opciones.reduce((a, o) => a + GUSTO(area(o)), 0);
+    const total = opciones.reduce((a, o) => a + GUSTO(area(o), dificil), 0);
     let x = r() * total, elegido = opciones[0];
-    for (const o of opciones) { x -= GUSTO(area(o)); if (x <= 0) { elegido = o; break; } }
+    for (const o of opciones) { x -= GUSTO(area(o), dificil); if (x <= 0) { elegido = o; break; } }
     for (const k of casillas(elegido, lado)) libre[k] = 0;
     rects.push(elegido);
   }
@@ -145,28 +154,102 @@ function armar(lado, rects, lugares) {
 }
 
 /**
- * El tablero de una semilla, con solución única: parte la grilla al azar, pone cada número en una
- * casilla al azar de su rectángulo y revisa con `resolver` que no haya otra solución; si la hay, prueba
- * otros lugares para los números y, si no resulta, otra partición. Determinista con la semilla.
+ * Deduce el tablero como lo haría alguien, sin adivinar: en cada ronda, (1) la pista a la que le queda un
+ * solo rectángulo que cabe se pone, y (2) una casilla libre que solo una pista puede cubrir obliga a esa
+ * pista a cubrirla. Devuelve `{ resuelto, rondas, deEntrada }`: si llega al final, cuántas rondas le
+ * tomó y cuántos lotes se veían de entrada (los de un solo rectángulo posible). Mide la dificultad.
  */
-export function generar(semilla, { lado = 7 } = {}) {
-  const r = azar(String(semilla));
-  for (let intento = 0; intento < 400; intento++) {
-    const rects = partir(r, lado);
-    const unos = rects.filter(x => area(x) === 1).length;
-    if (unos > (lado >= 7 ? 2 : 1)) continue;
-    if (lado >= 7 && rects.filter(x => area(x) >= 6).length < 2) continue;
-    if (lado < 7 && rects.filter(x => area(x) >= 4).length < 2) continue;
-    for (let vez = 0; vez < 6; vez++) {
-      const lugares = rects.map(x => { const k = casillas(x, lado); return k[Math.floor(r() * k.length)]; });
-      const t = armar(lado, rects, lugares);
-      if (resolver(t, 2).n === 1) return { semilla: String(semilla), ...t };
+export function deducir(t) {
+  const { lado } = t;
+  let cand = candidatos(t).map(lista => lista.map(r => ({ r, k: casillas(r, lado) })));
+  const ocupada = new Uint8Array(lado * lado);
+  const puesta = new Array(cand.length).fill(false);
+  const deEntrada = cand.filter(l => l.length === 1).length;
+  let rondas = 0;
+  for (let cambio = true; cambio;) {
+    cambio = false; rondas++;
+    cand = cand.map((l, p) => (puesta[p] ? l : l.filter(x => x.k.every(k => !ocupada[k]))));
+    for (let p = 0; p < cand.length; p++) {
+      if (puesta[p] || cand[p].length !== 1) continue;
+      cand[p][0].k.forEach(k => { ocupada[k] = 1; });
+      puesta[p] = true; cambio = true;
+    }
+    if (cambio) continue;
+    for (let k = 0; k < lado * lado && !cambio; k++) {
+      if (ocupada[k]) continue;
+      const pueden = [];
+      cand.forEach((l, p) => { if (!puesta[p] && l.some(x => x.k.includes(k))) pueden.push(p); });
+      if (pueden.length === 1) {
+        const p = pueden[0], antes = cand[p].length;
+        cand[p] = cand[p].filter(x => x.k.includes(k));
+        if (cand[p].length < antes) cambio = true;
+      }
     }
   }
-  throw new Error('no se pudo armar el tablero');
+  return { resuelto: puesta.every(Boolean), rondas, deEntrada };
 }
 
-/** El tablero de una etapa (0 a 2) de una partida: la semilla de la partida, con su número. */
+/**
+ * Dónde va el número de cada lote: repartidos por la grilla (pedido del dueño), cada uno en la casilla
+ * de su lote más lejos de los ya puestos, y en los difíciles, lejos de las esquinas del lote (un número en
+ * la esquina deja menos rectángulos posibles). Un poco de azar entre las mejores, para variar.
+ */
+function repartir(r, lado, rects, dificil) {
+  // Barajar a mano (Fisher-Yates): un sort con comparador al azar da distinto en cada navegador
+  const orden = rects.map((x, k) => k);
+  for (let k = orden.length - 1; k > 0; k--) { const j = Math.floor(r() * (k + 1)); [orden[k], orden[j]] = [orden[j], orden[k]]; }
+  const lugares = new Array(rects.length);
+  const puestos = [];
+  const fc = i => [Math.floor(i / lado), i % lado];
+  for (const k of orden) {
+    const x = rects[k];
+    const op = casillas(x, lado).map(i => {
+      const [f, c] = fc(i);
+      const lejos = puestos.length ? Math.min(...puestos.map(j => { const [g, d] = fc(j); return Math.sqrt((f - g) ** 2 + (c - d) ** 2); })) : 3;
+      const vecino = puestos.some(j => { const [g, d] = fc(j); return Math.abs(f - g) + Math.abs(c - d) === 1; });
+      const adentro = Math.min(f - x.f1, x.f2 - f) + Math.min(c - x.c1, x.c2 - c);
+      return { i, v: Math.min(lejos, 3) - (vecino ? 1.5 : 0) + (dificil ? 0.4 * adentro : 0) + r() * 0.6 };
+    }).sort((a, b) => b.v - a.v);
+    lugares[k] = op[0].i;
+    puestos.push(op[0].i);
+  }
+  return lugares;
+}
+
+/** Qué tan difícil es un tablero que se deduce entero: más rondas y menos lotes a la vista, más difícil. */
+const dificultad = d => d.rondas - 1.5 * d.deEntrada;
+
+/**
+ * El tablero de una semilla, con solución única y que se deduce sin adivinar: parte la grilla al azar,
+ * reparte los números (`repartir`) y revisa con `resolver` que no haya otra solución. Los fáciles se
+ * quedan con el primero que sirve; los difíciles arman varios y se quedan con el más difícil
+ * (`deducir`). Determinista con la semilla.
+ */
+export function generar(semilla, { lado = 7, dificil = false } = {}) {
+  const r = azar(String(semilla));
+  const quiero = dificil ? 8 : 1;
+  let mejor = null, mejorD = -Infinity, hallados = 0;
+  for (let intento = 0; intento < 600 && hallados < quiero; intento++) {
+    const rects = partir(r, lado, dificil);
+    const unos = rects.filter(x => area(x) === 1).length;
+    if (unos > (dificil ? 0 : lado >= 7 ? 2 : 1)) continue;
+    if (lado >= 7 && rects.filter(x => area(x) >= 6).length < (dificil ? 3 : 2)) continue;
+    if (lado < 7 && rects.filter(x => area(x) >= 4).length < 2) continue;
+    for (let vez = 0; vez < 6; vez++) {
+      const t = armar(lado, rects, repartir(r, lado, rects, dificil));
+      if (resolver(t, 2).n !== 1) continue;
+      const d = deducir(t);
+      if (!d.resuelto) continue;
+      hallados++;
+      if (dificultad(d) > mejorD) { mejor = t; mejorD = dificultad(d); }
+      break;
+    }
+  }
+  if (!mejor) throw new Error('no se pudo armar el tablero');
+  return { semilla: String(semilla), ...mejor };
+}
+
+/** El tablero de una etapa (0 a 4) de una partida: la semilla de la partida, con su número. */
 export const generarEtapa = (semilla, n) => generar(`${semilla}:etapa-${n + 1}`, ETAPAS[n]);
 
 /** Los números que hay dentro de un rectángulo: `[{ i, n }]`. */
@@ -205,8 +288,8 @@ export function pista(t, parcelas) {
 }
 
 /**
- * El puntaje, sobre 100: 20 por tablero resuelto y, solo si se resuelven los tres, hasta 40 por rapidez
- * (40 en 90 s o menos, 0 en 6 minutos o más). Cada ayuda resta 10; nunca bajo 0.
+ * El puntaje, sobre 100: 12 por tablero resuelto y, solo si se resuelven los cinco, hasta 40 por rapidez
+ * (40 en 5 minutos o menos, 0 en 15 o más). Cada ayuda resta 10; nunca bajo 0.
  */
 export function puntajePartida(hechas, segundos, ayudas = 0) {
   const completa = hechas >= ETAPAS.length;

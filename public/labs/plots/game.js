@@ -1,8 +1,8 @@
 /**
  * Loteo — prototipo de laboratorio (D-310), inspirado en Shikaku (Nikoli, 1989): una grilla con algunos
  * números se divide entera en rectángulos (los lotes), cada uno con un solo número, que dice cuántas
- * casillas tiene. Se arrastra de una esquina a otra para dibujar un lote; tocarlo lo borra. Son tres
- * tableros (5×5, 6×6 y 7×7) con el reloj corriendo. Solo en español, para probar con amigos. Sin
+ * casillas tiene. Se arrastra de una esquina a otra para dibujar un lote; tocarlo lo borra. Son cinco
+ * tableros (5×5 y 6×6 para calentar; 7×7, 7×7 y 8×8, difíciles) con el reloj corriendo. Solo en español, para probar con amigos. Sin
  * `?seed=` es el tablero de hoy, el mismo para todos. El motor está en engine.js.
  */
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
@@ -46,6 +46,8 @@ const T = {
   borrado: 'Lote borrado.',
   deshacer: '↩ Deshacer', deshecho: 'Deshiciste la última jugada.',
   ayuda: '💡 Ayuda (−{pts})', ayudaSeguro: 'Toca de nuevo (−{pts})', ayudaDice: '💡 Ese lote va así.',
+  // Los controles (pedido del dueño): deshacer lo último, borrar el tablero o rendirse; la ayuda, aparte
+  borrar: '🧹 Borrar', borrarSeguro: '🧹 ¿Seguro?', borradoTodo: 'Borraste el tablero: ↩ Deshacer lo trae de vuelta.',
   rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   fin: { completa: '¡Todo loteado!', rendido: 'Te rendiste' },
   asiSe: 'Así se resolvía el tablero {n}.',
@@ -299,7 +301,7 @@ function jugar() {
     alMedir: r => decir(r ? fmt(T.medida, { w: ancho(r), h: alto(r), a: ancho(r) * alto(r) }) : '', 'medida'),
     alDibujar: r => {
       if (P.terminado) return;
-      desarmarAyuda();
+      desarmarAyuda(); desarmarBorrar();
       const v = validar(t, r);
       if (!v.ok) {
         SFX.error(); vibrate([40, 30, 40]);
@@ -313,7 +315,7 @@ function jugar() {
     },
     alTocar: (f, c) => {
       if (P.terminado) return;
-      desarmarAyuda();
+      desarmarAyuda(); desarmarBorrar();
       const lote = P.parcelas.find(p => contiene(p, f, c));
       if (lote) {
         SFX.tap(); vibrate(10);
@@ -345,13 +347,16 @@ function jugar() {
   };
   const deshacer = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-deshacer', onClick: () => {
     if (P.terminado || !P.historial.length) return;
-    SFX.tap(); vibrate(10); desarmarAyuda();
+    SFX.tap(); vibrate(10); desarmarAyuda(); desarmarBorrar();
     P.parcelas = P.historial.pop();
     tab.pintar(P.parcelas);
     pintarBotones();
     decir(T.deshecho);
   } }, T.deshacer);
-  const botonAyuda = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-ayuda' }, fmt(T.ayuda, { pts: RESTA_AYUDA }));
+  // La ayuda va aparte, más chica, bajo los tres controles: no es un control del tablero
+  const botonAyuda = el('button', { type: 'button', class: 'btn btn--ghost btn--sm ayuda-lt', id: 'btn-ayuda' }, fmt(T.ayuda, { pts: RESTA_AYUDA }));
+  // Borrar el tablero: con un segundo toque, y ↩ Deshacer lo trae de vuelta entero
+  const botonBorrar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-borrar' }, T.borrar);
   const botonRendirse = el('button', { type: 'button', class: 'btn btn--ghost btn--sm rendirse', id: 'btn-rendirse' }, T.rendirse);
   const desarmarAyuda = dosToques(botonAyuda, {
     listo: () => fmt(T.ayuda, { pts: RESTA_AYUDA }), seguro: () => fmt(T.ayudaSeguro, { pts: RESTA_AYUDA }),
@@ -364,8 +369,14 @@ function jugar() {
       jugada(poner(P.parcelas, { ...r, ayuda: true, color: colorPara(t, P.parcelas.filter(p => !iguales(p, r)), r) }), r);
     },
   });
+  const desarmarBorrar = dosToques(botonBorrar, { listo: () => T.borrar, seguro: () => T.borrarSeguro, accion: () => {
+    if (!P.parcelas.length) return;
+    SFX.flip(); vibrate([10, 20, 10]);
+    decir(T.borradoTodo);
+    jugada([]);
+  } });
   dosToques(botonRendirse, { listo: () => T.rendirse, seguro: () => T.rendirseSeguro, accion: () => acabar('rendido') });
-  const pintarBotones = () => { deshacer.disabled = !P.historial.length || P.terminado; };
+  const pintarBotones = () => { deshacer.disabled = !P.historial.length || P.terminado; botonBorrar.disabled = !P.parcelas.length || P.terminado; };
 
   // Tablero listo: brilla, y viene el siguiente o, tras el último, el resultado
   const terminar = () => {
@@ -374,7 +385,7 @@ function jugar() {
     const ultimo = P.hechas === ETAPAS.length;
     if (ultimo) { P.segundos = usado(); clearInterval(P.reloj); }
     tab.caja.classList.add('bloqueado', 'resuelto');
-    acciones.querySelectorAll('button').forEach(b => { b.disabled = true; });
+    [...acciones.querySelectorAll('button'), botonAyuda].forEach(b => { b.disabled = true; });
     decir(fmt(T.etapaLista, { n: P.etapa + 1 }), 'bien');
     cabeza.querySelector('.etapas').replaceWith(progreso());
     SFX.reveal(); vibrate([20, 30, 40]);
@@ -384,14 +395,14 @@ function jugar() {
     }, ultimo ? (QUIETO ? 300 : 700) : (QUIETO ? 900 : 1700));
   };
 
-  const acciones = el('div', { class: 'acciones-lt' }, deshacer, botonAyuda, botonRendirse);
-  vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj), aviso, tab.caja, acciones);
+  const acciones = el('div', { class: 'acciones-lt' }, deshacer, botonBorrar, botonRendirse);
+  vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj), aviso, tab.caja, acciones, botonAyuda);
   tab.pintar(P.parcelas);
   tic(); pintarBotones();
   pieComentario('juego');
 }
 
-/** Se acaba la partida: los tres tableros, o se rindió. */
+/** Se acaba la partida: los cinco tableros, o se rindió. */
 function acabar(motivo) {
   if (P.acabado) return;
   P.acabado = true; P.terminado = true;
