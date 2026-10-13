@@ -98,7 +98,7 @@ export function montar(raiz, ctx) {
     if (e.fin) ctx.pararReloj?.(e);
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack tango-juego' });
-    const grilla = el('div', { class: 'tan-grid' + (e.fin ? ' fin' : ''), style: `grid-template-columns: repeat(${n}, 1fr)` });
+    const grilla = el('div', { class: 'tan-grid' + (e.fin ? ' fin' : ''), 'data-tablero': 'tango', style: `grid-template-columns: repeat(${n}, 1fr)` });
     for (let i = 0; i < n * n; i++) {
       const v = e.g[i];
       const dada = motor.esDada(p, i), revelada = e.fijas.has(i);

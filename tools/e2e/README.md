@@ -94,7 +94,9 @@ CI_REINTENTOS=1 node tools/e2e/ci.mjs a.mjs b.mjs   # como en GitHub: con segund
 
 `mirar.mjs` no es una prueba: abre una pantalla suelta para revisarla de a una, sin jugar la
 partida. `node tools/e2e/mirar.mjs ahorcado juego --ancho 320` saca la captura y avisa si hay
-scroll horizontal o botones bajo 44 px (C-8). `--idioma de` (o `en`, `pt`) la abre en ese idioma. El
+scroll horizontal, botones bajo 44 px (C-8) y cuánto aire hay entre el tablero y sus botones (D-309).
+Además, **cada `b.shot()` de cualquier guion mide ese aire** (`aire-comun.mjs`) e imprime ✗ si un
+botón queda a menos de 24 px de un `data-tablero`: el guion sale en rojo. `--idioma de` (o `en`, `pt`) la abre en ese idioma. El
 panel se mira con datos sembrados: `mirar.mjs panel <toma>`, con `datos`, `ahora`, `torneo`, `juegos`,
 `audiencia`, `trafico`, `salud` (D-251), `copa-ficha`, `copa-dias`, `copa-historia`, `juego-ficha` o `sala-ficha` (D-207); `torneo` trae también una semana de avisos sembrados (D-233). Los
 caminos a cada pantalla están en [`caminos.mjs`](caminos.mjs), que comparte con las pruebas de idiomas.

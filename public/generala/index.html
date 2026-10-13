@@ -113,7 +113,7 @@
     <section class="screen" id="screen-play">
       <div class="marcador" id="marcador"></div>
       <div class="status"><div class="who" id="status-who"></div><div class="sub" id="status-sub"></div></div>
-      <div class="mesa" id="mesa"></div>
+      <div class="mesa" id="mesa" data-tablero="mesa"></div>
       <div class="actions-bar" id="actions"></div>
       <div class="planilla" id="planilla"></div>
     </section>
@@ -121,8 +121,8 @@
     <!-- RESULTADO -->
     <section class="screen" id="screen-result">
       <div class="result-hero"><span class="trophy" id="result-trophy">🏆</span><h2 class="display display--lg" id="result-title"></h2><p class="lead" id="result-sub"></p></div>
-      <div class="podio" id="result-podio"></div>
-      <div class="stack" style="margin-top:14px" id="result-actions"></div>
+      <div class="podio" id="result-podio" data-tablero="podio"></div>
+      <div class="stack" id="result-actions"></div>
       <details class="panel replay" id="result-cards">
         <summary data-i18n="cardsTitle">📋 Las planillas</summary>
         <div class="tabla-wrap" id="result-tabla"></div>

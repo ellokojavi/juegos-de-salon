@@ -229,7 +229,7 @@ function jugar() {
   const { p } = P;
   const marcador = el('p', { class: 'marcador', id: 'marcador' });
   const aviso = el('p', { class: 'aviso-ne', 'aria-live': 'polite' }, '');
-  const tablero = el('div', { class: 'tablero-ne', id: 'tablero' });
+  const tablero = el('div', { class: 'tablero-ne', id: 'tablero', 'data-tablero': 'numeros' });
   let sel = null, pagada = null;   // pagada: la última ayuda cobrada ({ a, b } ids), hasta que estallen
   P.ocupado = false;   // mientras una fila explota, los toques esperan
 

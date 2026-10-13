@@ -94,7 +94,7 @@ export function montar(raiz, ctx) {
   // La grilla se arma una vez: después solo cambian sus clases, así las animaciones no se cortan
   raiz.innerHTML = '';
   const caja = el('div', { class: 'stack cs-juego' });
-  const grilla = el('div', { class: 'cs-grilla', role: 'group', 'aria-label': T.casoSospechosos });
+  const grilla = el('div', { class: 'cs-grilla', 'data-tablero': 'caso', role: 'group', 'aria-label': T.casoSospechosos });
   const accion = el('div', { class: 'cs-accion', 'aria-live': 'polite' });
   const pie = el('div', { class: 'cs-pie' });
   const pistas = el('section', { class: 'cs-pistas' });

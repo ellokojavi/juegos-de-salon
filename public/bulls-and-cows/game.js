@@ -702,7 +702,7 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
       el('div', {}, el('small', {}, T.soloSecretWas), el('div', { class: 'n' }, p.secreto)),
       el('div', { class: 'tarjeta' + (n > 5 ? ' tarjeta--2' : ''), 'aria-hidden': 'true' }, ...t.split('\n').map(fila => el('span', {}, fila)))),
     // El repaso va colapsado para que los botones queden a la vista (C-8)
-    el('details', { class: 'panel replay' }, el('summary', {}, T.replayTitle),
+    el('details', { class: 'panel replay', 'data-tablero': 'repaso' }, el('summary', {}, T.replayTitle),
       uiNumero.tablero(el, { filas: estado.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) })),
     el('div', { class: 'stack', id: 'solo-actions' },
       // El mismo resultado que el juego de La Copa, con su imagen (D-165)
