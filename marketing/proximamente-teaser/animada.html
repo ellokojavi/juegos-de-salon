@@ -184,7 +184,7 @@
   // aparece mientras la anterior todavía juega; así los cuatro quedan a la vista, terminados, desde
   // los 3,5 s. Cada uno: [aparece, empieza su jugada, termina, cuánto se corre su reloj]
   const TURNO = { rutas: [0.15, 0.42, 1.5, 0], pinta: [0.85, 1.12, 2.3, 0.85], nums: [1.55, 1.85, 2.9, 1.43], lote: [2.25, 2.55, 3.45, 0] };
-  const FINAL = 4.6;
+  const FINAL = 4.6, QUIETO = 5.2;
   for (const id in BALDOSA) {
     const [x, y] = BALDOSA[id];
     $('b-' + id).style.left = x + 'px'; $('b-' + id).style.top = y + 'px';
@@ -204,7 +204,9 @@
     // El título
     const ti = fase(t, 0.05, 0.4);
     $('titulo').style.opacity = clamp(ti * 2);
-    $('titulo').style.transform = `scale(${lerp(0.4, 1, back(ti))}) rotate(${(1 - ti) * -6 + Math.sin(t * 3) * 1.2}deg)`;
+    // Desde los 5,2 s todo queda quieto: el video termina en un póster (pedido del dueño)
+    const tq = Math.min(t, QUIETO);
+    $('titulo').style.transform = `scale(${lerp(0.4, 1, back(ti))}) rotate(${(1 - ti) * -6 + Math.sin(tq * 3) * 1.2}deg)`;
 
     // La grilla: entra de a una baldosa; en su turno, cada una se enciende y crece un poco; al final, las
     // cuatro encendidas y la grilla se achica para dejar lugar a "Próximamente"
@@ -296,10 +298,10 @@
     // ----- El final: los cuatro encendidos, "Próximamente" y el sitio
     const pr = fase(t, FINAL + 0.15, FINAL + 0.4);
     $('pronto').style.opacity = clamp(pr * 2);
-    $('pronto').style.transform = `scale(${lerp(2.2, 1, out(pr))}) rotate(${lerp(-12, -3, out(pr)) + (pr >= 1 ? Math.sin(t * 6) * 1.2 : 0)}deg)`;
+    $('pronto').style.transform = `scale(${lerp(2.2, 1, out(pr))}) rotate(${lerp(-12, -3, out(pr)) + (pr >= 1 ? Math.sin(tq * 6) * 1.2 : 0)}deg)`;
     $('pie').style.opacity = clamp(fase(t, FINAL + 0.35, FINAL + 0.6));
-    // Fundido al color del fondo al principio y al final, para que se repita en bucle sin salto
-    $('negro').style.opacity = Math.max(1 - fase(t, 0, 0.12), fase(t, 5.78, 6.0));
+    // Entra desde el color del fondo; no se apaga al final: termina en el póster con todo a la vista
+    $('negro').style.opacity = 1 - fase(t, 0, 0.12);
   };
   window.render(0);
   if (!location.search.includes('render')) {

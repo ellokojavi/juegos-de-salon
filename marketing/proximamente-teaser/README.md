@@ -27,10 +27,12 @@ desde los 3,5 s; el que juega crece un poco:
 | 1,55 · 1,85 – 2,9 | abajo a la izquierda | 💥 Números explosivos | Una grilla de números con el borde de su color; el dedo une 7 y 3 (suman 10) y después 5 y 5: cada par estalla con un «¡BOOM!» y chispas, y el tablero tiembla |
 | 2,25 · 2,55 – 3,45 | abajo a la derecha | 📐 Loteo, modo ⚡💧 Servicios | Un 4×4 con tres lotes ya pintados, cada uno con su ⚡ y su 💧; el dedo arrastra el que falta (2×2, con su ⚡ y su 💧), se pinta y el tablero brilla |
 | 3,45 – 4,6 | los cuatro | — | Los cuatro terminados, a la vista |
-| 4,6 – 6,0 | los cuatro | — | La grilla se achica, cae «PRÓXIMAMENTE» y abajo `juegosdesalon.cl` |
+| 4,6 – 5,2 | los cuatro | — | La grilla se achica, cae «PRÓXIMAMENTE» y abajo `juegosdesalon.cl` |
+| 5,2 – 6,0 | los cuatro | — | El póster final, quieto |
 
-El primer y el último cuarto de segundo funden al color del fondo, para que se pueda repetir en
-bucle sin salto (el dueño hace el GIF desde el video).
+Entra desde el color del fondo y **termina en un póster** (pedido del dueño en la v2): desde los
+5,2 s todo queda quieto, con los cuatro tableros, «PRÓXIMAMENTE» y el sitio a la vista, hasta el
+último cuadro. Ya no se apaga al final: un GIF en bucle salta del póster al principio.
 
 **Muestra juegos que no están en la portada, a propósito** (`"laboratorio"` en `registro.json`, U-34).
 No son capturas de la app: los tableros se dibujan en la página, con los colores y la forma de cada
@@ -46,6 +48,7 @@ internas (pedido del dueño en la v2).
 - **Poca carga cognitiva** (v2): «not a lot of different scenes/movements»: una sola escena (la
   grilla de 2×2) donde cada juego hace una sola jugada, en vez de escenas en serie.
 - **Los cuatro a la vista el mayor tiempo posible** (v2): las baldosas aparecen y juegan entrelazadas.
+- **Termina en un póster** (v2): el último cuadro, quieto, con todo el contenido; no en un fondo vacío.
 - **Nada que suene a herramienta interna:** ni "laboratorio" ni "labs" (v2).
 - **Loteo, en una sola de sus versiones:** el modo ⚡💧 Servicios (v2).
 
@@ -89,4 +92,6 @@ corre como root y necesita `--no-sandbox`: un `chrome.sh` que lo agregue y `CHRO
   los cuatro juegos (con 📐 Loteo en su modo ⚡💧 Servicios) en una grilla de 2×2 fija; cada uno hace
   su jugada por turno. Después: «interlaza la aparición y animación de los recuadros, cosa de que el
   usuario pueda ver los cuatro desplegados por más tiempo»: cada baldosa aparece justo antes de su
-  jugada, encadenadas (un dedo por juego); los cuatro quedan a la vista desde los 3,5 s.
+  jugada, encadenadas (un dedo por juego); los cuatro quedan a la vista desde los 3,5 s. Y: «el video
+  no termina en un fondo vacío, sino en un frame estático con todo el contenido, como si fuese un
+  poster final»: sin fundido de salida, quieto desde los 5,2 s.
