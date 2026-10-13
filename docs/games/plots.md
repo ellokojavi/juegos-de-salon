@@ -16,7 +16,7 @@ Nikoli (1989)**, y lo dice en la portada y en el laboratorio. Se armó con el no
 ## Portada
 
 El título con un 📐 que salta, el lema («Cada número es un lote: dibújalo del tamaño justo.»), el
-crédito y un 5×5 que se resuelve solo, lote por lote: el marco crece de una esquina a la otra, como
+crédito, el selector de modo («🔢 Números» / «⚡💧 Servicios», ver abajo) y un 5×5 que se resuelve solo, lote por lote: el marco crece de una esquina a la otra, como
 cuando se arrastra, y el lote se pinta de su color. Al final el tablero se apaga y «¡Listo!» aparece
 grande al centro (sin emoji: el título ya lo tiene); después sigue con otro (con movimiento reducido
 queda resuelto y quieto). Después los tres pasos, «📅 El tablero de hoy es el mismo para todos.» (sin
@@ -30,7 +30,8 @@ queda resuelto y quieto). Después los tres pasos, «📅 El tablero de hoy es e
 
 La tarjeta del laboratorio: «Inspirado en Shikaku, de Nikoli: divide el tablero en rectángulos, cada
 uno con un solo número, que dice cuántas casillas tiene. Arrastra para dibujar cada lote. Son cinco
-tableros contra el reloj: dos para calentar y tres difíciles.».
+tableros contra el reloj: dos para calentar y tres difíciles. En el modo ⚡💧 Servicios, los lotes
+son todos del mismo tamaño y cada uno lleva un ⚡ y un 💧.».
 
 ## Cómo se juega
 
@@ -68,6 +69,33 @@ tableros contra el reloj: dos para calentar y tres difíciles.».
   tiempo, sin delatar la solución.
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos.
 
+## El modo ⚡💧 Servicios (D-311)
+
+Pedido del dueño («Utilities»; en la app, «Servicios»). Se elige en la portada con un selector de dos
+opciones bajo el crédito, «🔢 Números» y «⚡💧 Servicios» (cada una de 46 px de alto; la elegida, en
+amarillo). Al cambiar, cambian el lema («Lotes del mismo tamaño, cada uno con su ⚡ y su 💧.»), los
+pasos y la demo: un 4×4 en lotes de 4, con «Lotes de 4 casillas» arriba, que se resuelve solo como la
+de números. El celular recuerda el modo (`localStorage`, `juegos-de-salon:loteo:modo`) y el link lo
+dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los pasos:
+
+1. 📐 Divide el tablero en lotes del mismo tamaño: arriba dice cuántas casillas tiene cada uno.
+2. ⚡ Cada lote lleva exactamente un ⚡ y un 💧: ni más ni menos.
+3. 👆 Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son 5 tableros
+   contra el reloj.
+
+- **Las reglas:** en vez de números, la grilla trae ⚡ y 💧. Se divide entera en lotes rectangulares,
+  todos del tamaño que dice «Lotes de n casillas» (arriba del tablero, junto al reloj), y cada lote
+  lleva exactamente un ⚡ y un 💧. Solución única, que se deduce sin adivinar.
+- **Cinco tableros:** 6×6 en lotes de 3 y 6×6 en lotes de 4 para calentar; 6×6 de 6, 8×8 de 4 y 8×8
+  de 8, difíciles. La cuenta 3, 2, 1 dice «📐 Loteo · ⚡💧 Servicios».
+- **Los rechazos:** «Ese lote tiene 3 casillas; cada lote tiene 4.», «Le falta 💧.» y «Tiene dos ⚡:
+  cada lote lleva uno.» (primero el tamaño, después lo que sobra, después lo que falta).
+- **Todo lo demás es igual:** la medida en vivo, tocar para borrar, ↩ Deshacer, 🧹 Borrar,
+  🏳️ Rendirse, la 💡 Ayuda, el reloj, el puntaje y el resultado, que dice «⚡💧 Servicios» sobre el
+  sello. La tarjeta para compartir empieza con «⚡💧 Servicios»; «Otro tablero» y «El de hoy» llevan
+  `mode=utilities`. La señal de uso cuenta la partida con `mode: 'servicios'`.
+- **Sin 🌐:** se midió un tercer servicio, internet; da más tableros únicos pero más fáciles (D-311).
+
 ## Cómo funciona
 
 - `engine.js`: `generar(semilla, { lado, dificil })` parte la grilla al azar (la primera casilla
@@ -88,7 +116,15 @@ tableros contra el reloj: dos para calentar y tres difíciles.».
   área, que la contienen, sin otro número), y poda si una casilla libre ya no la puede cubrir nadie.
   `validar(t, r)` dice si un rectángulo vale (`sin-numero`, `dos-numeros` o `area`); `poner` agrega
   uno sacando los que pisa; `resuelto`, `pista` (la ayuda), `puntajePartida` y `tarjeta`.
-  `generarEtapa(semilla, n)` usa `<semilla>:etapa-<n>`. Constantes: `ETAPAS`, `PUNTOS_ETAPA` (12),
+  `generarEtapa(semilla, n)` usa `<semilla>:etapa-<n>`.
+  El modo servicios: `generarServicios(semilla, { lado, tam, servicios, dificil })` parte la grilla en
+  lotes de `tam` (`partirIguales`, con vuelta atrás), pone un ícono de cada servicio en casillas
+  distintas de cada lote (Fisher-Yates) y pide `resolverServicios(t, 2)` (cubrir la grilla con lotes
+  posibles: del tamaño justo y con uno de cada servicio) y `deducirServicios(t)`; los difíciles arman
+  20 y se quedan con el más difícil. Su tablero es `{ modo: 'servicios', lado, tam, servicios, iconos,
+  solucion }`. `validar` lo atiende con `validarServicios` (`tam`, `sobra`, `falta`); `resuelto` pide
+  lotes válidos que sumen la grilla, en los dos modos. `ETAPAS_SERVICIOS`, `ICONOS` y
+  `generarEtapaServicios`; `tarjeta(hechas, ayudas, modo)`. Constantes: `ETAPAS`, `PUNTOS_ETAPA` (12),
   `BONO_RAPIDEZ` (40), `RAPIDO_S` (300), `LENTO_S` (900), `RESTA_AYUDA` (10) y `MAXIMO` (100).
 - `game.js`: la portada, la partida y el resultado. El tablero tiene tres capas (el fondo
   cuadriculado, los lotes y los números) y el marco del arrastre encima; el arrastre es el de Rutas
@@ -102,6 +138,10 @@ tableros contra el reloj: dos para calentar y tres difíciles.».
   fáciles, la ayuda y el puntaje; `tools/e2e/plots/lab.mjs` juega de punta a punta (los tres rechazos,
   pintar y borrar, la ayuda, deshacer, Borrar con su segundo toque y Deshacer que lo trae de vuelta,
   los cinco tableros con la solución del motor, el resultado y rendirse). Con `ANCHO=320` corre a 320 px.
+  El modo servicios: 120 tableros de cada etapa con lotes del tamaño justo y un ⚡ y un 💧, únicos,
+  deducibles, en menos de 300 ms, y las difíciles más difíciles; `tools/e2e/plots/servicios.mjs` lo
+  juega de punta a punta (el selector, que se recuerda y va en el link, los tres rechazos, los cinco
+  tableros y el final).
 
 ## Excepciones a los cánones
 
