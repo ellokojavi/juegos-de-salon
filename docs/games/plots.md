@@ -1,4 +1,4 @@
-# 🧱 Loteo (prototipo del laboratorio, en Proyectos activos)
+# 📐 Loteo (prototipo del laboratorio, en Proyectos activos)
 
 Un puzzle de lógica para uno solo (D-310): una grilla con algunos números se divide entera en
 rectángulos, los **lotes**, cada uno con exactamente un número, que dice cuántas casillas tiene. Cada
@@ -15,15 +15,15 @@ Nikoli (1989)**, y lo dice en la portada y en el laboratorio. Se armó con el no
 
 ## Portada
 
-El título con un 🧱 que salta, el lema («Cada número es un lote: dibújalo del tamaño justo.»), el
+El título con un 📐 que salta, el lema («Cada número es un lote: dibújalo del tamaño justo.»), el
 crédito y un 5×5 que se resuelve solo, lote por lote: el marco crece de una esquina a la otra, como
 cuando se arrastra, y el lote se pinta de su color. Al final el tablero se apaga y «¡Listo!» aparece
 grande al centro (sin emoji: el título ya lo tiene); después sigue con otro (con movimiento reducido
 queda resuelto y quieto). Después los tres pasos, «📅 El tablero de hoy es el mismo para todos.» (sin
-`?seed=`) y «🧱 Empezar», que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`,
+`?seed=`) y «📐 Empezar», que pasa por la cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`,
 «¡A lotear!»). Los pasos:
 
-1. 🧱 Divide el tablero en lotes: rectángulos con un solo número cada uno.
+1. 📐 Divide el tablero en lotes: rectángulos con un solo número cada uno.
 2. 🔢 El número dice cuántas casillas tiene su lote: un 6 puede ser de 2×3 o de 1×6.
 3. 👆 Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son 5 tableros
    contra el reloj (el número sale de `ETAPAS`).
@@ -46,7 +46,7 @@ tableros contra el reloj: dos para calentar y tres difíciles.».
     «Tiene 2 números: cada uno va en su propio lote.» o «El 6 pide 6 casillas; ese tiene 4.».
 - **Tocar** un lote lo borra («Lote borrado.»); tocar un 1 lo dibuja (es su propio lote); tocar otra
   casilla recuerda el gesto («Arrastra de una esquina a otra para dibujar un lote.»).
-- **Tablero listo:** cuando los lotes lo cubren entero, brilla («🧱 ¡Tablero n listo!») y viene el
+- **Tablero listo:** cuando los lotes lo cubren entero, brilla («📐 ¡Tablero n listo!») y viene el
   siguiente; tras el quinto, directo al resultado, con confeti.
 - **Abajo, tres controles iguales en una fila** (pedido del dueño):
   - **↩ Deshacer:** vuelve atrás la última jugada (dibujar, borrar un lote, borrar el tablero o la
@@ -61,7 +61,7 @@ tableros contra el reloj: dos para calentar y tres difíciles.».
   5 minutos o menos, 0 en 15 o más, en línea recta entre medio). Cada ayuda resta 10; nunca bajo 0.
 - **El resultado:** una sola pantalla. El último tablero en chico (el del jugador si lo terminó; si se
   rindió, «Así se resolvía el tablero n.» con la solución), el sello («¡Todo loteado!» o «Te
-  rendiste»), el puntaje, el desglose («🧱 Tableros (5 de 5): +60.», «⏱ Rapidez (6:30): +34.», «💡 1
+  rendiste»), el puntaje, el desglose («📐 Tableros (5 de 5): +60.», «⏱ Rapidez (6:30): +34.», «💡 1
   ayuda: −10.»), el tiempo (si no los resolvió todos), compartir, otro tablero, el de hoy (si se jugó
   con semilla), volver al laboratorio y, tras una línea, el formulario de comentarios (D-265, D-268).
 - **Compartir:** la tarjeta dice qué tableros resolvió («✅ 5×5  ✅ 6×6  ⬛ 7×7  ⬛ 7×7  ⬛ 8×8»), las ayudas y el
