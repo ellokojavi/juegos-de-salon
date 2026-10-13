@@ -58,7 +58,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
 | 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
-| 📐 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, cinco tableros contra el reloj: dos para calentar y tres difíciles; el modo ⚡💧 Servicios, con lotes del mismo tamaño y un ⚡ y un 💧 en cada uno) | `docs/games/plots.md` | D-310, D-311 |
+| 📐 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, cinco tableros contra el reloj: dos para calentar y tres difíciles; el modo ⚡💧 Servicios, con lotes del mismo tamaño y un ⚡ y un 💧 en cada uno) | `docs/games/plots.md` | D-310, D-311, D-312 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -5725,7 +5725,7 @@ nombre está en un solo lugar en `game.js` (`T.nombre`), además del título de 
 laboratorio y los documentos.
 
 ## D-311 · Loteo: el modo «Servicios», con lotes del mismo tamaño
-**Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** amplía D-310; el selector, con el espíritu de la palanca de Pintaminas (D-290)
+**Fecha:** 2026-10-13 · **Estado:** corregida por D-312 (las etapas difíciles) · **Relación:** amplía D-310; el selector, con el espíritu de la palanca de Pintaminas (D-290); corregida por D-312 (los difíciles, más difíciles: ahora 6×6 de 6 y dos 8×8 de 8, sin el 8×8 de 4, con ningún lote a la vista de entrada y deducciones más profundas)
 **Contexto:** el dueño pidió, en la portada de Loteo, un modo que se activa para jugarlo («Utilities»;
 en la app, «Servicios»): en vez de números, la grilla trae íconos de servicios, ⚡ luz y 💧 agua, y
 cada lote lleva exactamente un ⚡ y un 💧. Antes de construirlo se midió con lotes al azar y un ⚡ y un
@@ -5770,3 +5770,33 @@ a la vista y cambia el tamaño).
 una sola solución, que se deduzcan sin adivinar, que cada lote de la solución sea del tamaño justo con
 un ⚡ y un 💧, que las difíciles pidan más pasos que las fáciles, que tarden menos de 300 ms, la
 validación con sus motivos y la tarjeta; `tools/e2e/plots/servicios.mjs` juega el modo de punta a punta.
+
+## D-312 · Loteo, modo Servicios: los difíciles, más difíciles
+**Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** corrige D-311 (sus etapas difíciles)
+**Contexto:** el dueño pasó el modo «⚡💧 Servicios» «con algo, pero no mucha, dificultad» y pidió
+endurecerlo con tres palancas: elegir mejor los tableros, exigir deducciones más profundas y poner los
+íconos donde confunden.
+**Decisión:** solo en los tres tableros difíciles (los dos de calentar quedan iguales, con los mismos
+tableros):
+- **Deducciones más profundas:** `deducirServicios` cuenta las veces que hace falta la regla (2) de
+  `propagar` (una casilla cuyos lotes posibles llevan todos el mismo ícono) y, si las reglas simples se
+  traban, mira un paso adelante (un lote que lleva a una casilla sin lote no va). Un difícil sirve solo si
+  no muestra ningún lote de entrada y pide al menos `exige` de esas deducciones (3, 4 y 6); de 8 que
+  sirvan, se queda con el más difícil.
+- **Íconos que confunden:** `ubicarIconos` los pone de preferencia en el borde del lote que toca a otro
+  lote, cerca de los íconos del vecino.
+- **Etapas:** 6×6 de 6 y dos 8×8 de 8. El 8×8 de 4 salió: con lotes tan chicos siempre dejaba lotes a
+  la vista (2,4 en promedio).
+- **La portada lo explica** («Si un lote deja una casilla sin lote posible, no va.», «los 3 últimos, difíciles»), y
+  al empezar el primer difícil el aviso dice «Difíciles: si un lote deja una casilla sin lote posible, no
+  va.» (en dos líneas a 320 px, para no mover el tablero).
+- `lotesPosibles` cuenta con sumas acumuladas: el generador tarda menos de 250 ms en el peor caso.
+**Medido** (promedio por tablero, antes → ahora): lotes a la vista de entrada 1,4 / 4,7 / 1,9 → 0 / 0 / 0;
+rondas de deducción ~5 → ~9; deducciones profundas → ~5 por tablero. Mirar un paso adelante casi
+nunca hace falta: la regla (2) ya es bastante exigente.
+**Alternativas descartadas:** tableros de 10×10 (no caben en un teléfono); un tercer servicio (hace los
+tableros más fáciles, D-311); terreno donde no se puede construir (cambia las reglas; queda para después
+si esto no alcanza).
+**Consecuencias:** `engine.test.mjs` exige que los difíciles no muestren lotes de entrada (85 % o más) y
+pidan 3 o más deducciones profundas por tablero; `tools/e2e/plots/servicios.mjs` revisa el aviso del
+tablero 3.

@@ -69,7 +69,7 @@ son todos del mismo tamaño y cada uno lleva un ⚡ y un 💧.».
   tiempo, sin delatar la solución.
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos.
 
-## El modo ⚡💧 Servicios (D-311)
+## El modo ⚡💧 Servicios (D-311, D-312)
 
 Pedido del dueño («Utilities»; en la app, «Servicios»). Se elige en la portada con un selector de dos
 opciones bajo el crédito, «🔢 Números» y «⚡💧 Servicios» (cada una de 46 px de alto; la elegida, en
@@ -78,16 +78,21 @@ pasos y la demo: un 4×4 en lotes de 4, con «Lotes de 4 casillas» arriba, que 
 de números. El celular recuerda el modo (`localStorage`, `juegos-de-salon:loteo:modo`) y el link lo
 dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los pasos:
 
-1. 📐 Divide el tablero en lotes del mismo tamaño: arriba dice cuántas casillas tiene cada uno.
-2. ⚡ Cada lote lleva exactamente un ⚡ y un 💧: ni más ni menos.
-3. 👆 Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son 5 tableros
-   contra el reloj.
+1. 📐 Divide el tablero en lotes, todos del tamaño que dice arriba.
+2. ⚡ Cada lote lleva un ⚡ y un 💧, ni más ni menos. Si un lote deja una casilla sin lote posible, no va.
+3. 👆 Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son 5 tableros;
+   los 3 últimos, difíciles.
 
 - **Las reglas:** en vez de números, la grilla trae ⚡ y 💧. Se divide entera en lotes rectangulares,
   todos del tamaño que dice «Lotes de n casillas» (arriba del tablero, junto al reloj), y cada lote
   lleva exactamente un ⚡ y un 💧. Solución única, que se deduce sin adivinar.
-- **Cinco tableros:** 6×6 en lotes de 3 y 6×6 en lotes de 4 para calentar; 6×6 de 6, 8×8 de 4 y 8×8
-  de 8, difíciles. La cuenta 3, 2, 1 dice «📐 Loteo · ⚡💧 Servicios».
+- **Cinco tableros:** 6×6 en lotes de 3 y 6×6 en lotes de 4 para calentar; 6×6 de 6 y dos 8×8 de 8,
+  difíciles (D-312, pedido del dueño): ninguno muestra un lote obvio de entrada, piden deducciones más
+  profundas y los íconos quedan cerca de los del lote vecino. La cuenta 3, 2, 1 dice «📐 Loteo ·
+  ⚡💧 Servicios».
+- **El aviso de los difíciles:** al empezar el tablero 3, el primero difícil, el aviso de arriba dice
+  «Difíciles: si un lote deja una casilla sin lote posible, no va.» (solo ahí, no en
+  los dos que siguen).
 - **Los rechazos:** «Ese lote tiene 3 casillas; cada lote tiene 4.», «Le falta 💧.» y «Tiene dos ⚡:
   cada lote lleva uno.» (primero el tamaño, después lo que sobra, después lo que falta).
 - **Todo lo demás es igual:** la medida en vivo, tocar para borrar, ↩ Deshacer, 🧹 Borrar,
@@ -117,11 +122,23 @@ dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los p
   `validar(t, r)` dice si un rectángulo vale (`sin-numero`, `dos-numeros` o `area`); `poner` agrega
   uno sacando los que pisa; `resuelto`, `pista` (la ayuda), `puntajePartida` y `tarjeta`.
   `generarEtapa(semilla, n)` usa `<semilla>:etapa-<n>`.
-  El modo servicios: `generarServicios(semilla, { lado, tam, servicios, dificil })` parte la grilla en
-  lotes de `tam` (`partirIguales`, con vuelta atrás), pone un ícono de cada servicio en casillas
-  distintas de cada lote (Fisher-Yates) y pide `resolverServicios(t, 2)` (cubrir la grilla con lotes
-  posibles: del tamaño justo y con uno de cada servicio) y `deducirServicios(t)`; los difíciles arman
-  20 y se quedan con el más difícil. Su tablero es `{ modo: 'servicios', lado, tam, servicios, iconos,
+  El modo servicios: `generarServicios(semilla, { lado, tam, servicios, dificil, exige })` parte la
+  grilla en lotes de `tam` (`partirIguales`, con vuelta atrás), pone un ícono de cada servicio en
+  casillas distintas de cada lote con `ubicarIconos` (en los fáciles, al azar con Fisher-Yates; en los
+  difíciles, de preferencia en el borde del lote que toca a otro, cerca de los íconos del vecino) y
+  pide `resolverServicios(t, 2)` (cubrir la grilla con lotes posibles: del tamaño justo y con uno de
+  cada servicio, que `lotesPosibles` cuenta con sumas acumuladas) y `deducirServicios`. Los fáciles se
+  quedan con el primero que salga con las reglas simples. Los difíciles (D-312) sirven solo si no
+  muestran ningún lote de entrada y piden al menos `exige` deducciones profundas (3, 4 y 6, en
+  `ETAPAS_SERVICIOS`); de 8 que sirvan (hasta 6000 intentos) se quedan con el más difícil, y si
+  ninguno sirve, con el mejor de reserva (uno sin lotes a la vista gana siempre).
+  `deducirServicios(t, { avanzado })` repite las reglas simples (`propagar`): (1) un ícono o una
+  casilla que solo cabe en un lote posible lo fija; (2) una casilla cuyos lotes posibles llevan todos
+  el mismo ⚡ (o 💧) obliga al lote de ese ícono a cubrirla. Con `avanzado` (por omisión), cuando se
+  traban mira un paso adelante: un lote que deja una casilla sin lote posible no va. Devuelve
+  `{ resuelto, rondas, deEntrada, avanzadas, intermedias }`: `intermedias` cuenta las veces que hizo
+  falta la regla (2) y `avanzadas` los lotes descartados mirando adelante; las dos son las
+  deducciones profundas. Su tablero es `{ modo: 'servicios', lado, tam, servicios, iconos,
   solucion }`. `validar` lo atiende con `validarServicios` (`tam`, `sobra`, `falta`); `resuelto` pide
   lotes válidos que sumen la grilla, en los dos modos. `ETAPAS_SERVICIOS`, `ICONOS` y
   `generarEtapaServicios`; `tarjeta(hechas, ayudas, modo)`. Constantes: `ETAPAS`, `PUNTOS_ETAPA` (12),
@@ -138,10 +155,12 @@ dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los p
   fáciles, la ayuda y el puntaje; `tools/e2e/plots/lab.mjs` juega de punta a punta (los tres rechazos,
   pintar y borrar, la ayuda, deshacer, Borrar con su segundo toque y Deshacer que lo trae de vuelta,
   los cinco tableros con la solución del motor, el resultado y rendirse). Con `ANCHO=320` corre a 320 px.
-  El modo servicios: 120 tableros de cada etapa con lotes del tamaño justo y un ⚡ y un 💧, únicos,
-  deducibles, en menos de 300 ms, y las difíciles más difíciles; `tools/e2e/plots/servicios.mjs` lo
-  juega de punta a punta (el selector, que se recuerda y va en el link, los tres rechazos, los cinco
-  tableros y el final).
+  El modo servicios: 120 tableros de cada etapa fácil y 40 de cada difícil, con lotes del tamaño
+  justo y un ⚡ y un 💧, únicos, deducibles, en menos de 300 ms; las fáciles salen con las reglas
+  simples, las difíciles no muestran lotes de entrada (85 % o más) y piden 3 o más deducciones
+  profundas por tablero, y son más difíciles que las fáciles; `tools/e2e/plots/servicios.mjs` lo
+  juega de punta a punta (el selector, que se recuerda y va en el link, los pasos, los tres rechazos,
+  los cinco tableros, el aviso del tablero 3 y el final).
 
 ## Excepciones a los cánones
 
