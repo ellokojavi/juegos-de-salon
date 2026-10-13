@@ -58,7 +58,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
 | 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
-| 🧱 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, tres tableros contra el reloj) | `docs/games/plots.md` | D-310 |
+| 🧱 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, cinco tableros contra el reloj: dos para calentar y tres difíciles) | `docs/games/plots.md` | D-310 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
@@ -5667,25 +5667,34 @@ exactamente un número, que es su área. Cada tablero tiene **solución única**
   reemplaza los lotes que pisa; si no, el marco tiembla en rojo y el aviso dice por qué (sin número,
   con dos números, o el área: «El 6 pide 6 casillas; ese tiene 4.»). Tocar un lote lo borra; tocar un
   1 lo dibuja.
-- **Tres tableros**, 5×5, 6×6 y 7×7, con el reloj subiendo (sin límite), como las etapas de Rutas
-  rotas. El de hoy (`dia:<fecha>`) es el mismo para todos; `?seed=` da otro.
-- **El generador** parte la grilla al azar (prefiere áreas de 3 a 8, pocas de 1 y, en el 7×7, algunas
-  de 6 o más), pone cada número en una casilla al azar de su rectángulo y le pide al resolvedor que no
-  haya otra solución; si la hay, prueba otros lugares y, si no, otra partición. Tarda menos de 2 ms.
-- **Puntaje sobre 100:** 20 por tablero resuelto y, solo con los tres, hasta 40 por rapidez (40 en
-  90 s o menos, 0 en 6 minutos o más, en línea recta entre medio). La 💡 ayuda (dos toques, como en
-  Pintaminas) pone un lote de la solución, con el borde punteado, y resta 10. ↩ Deshacer es gratis;
-  🏳️ Rendirse (dos toques) vale los tableros hechos y muestra cómo se resolvía el de ese momento.
+- **Cinco tableros** (pedido del dueño, antes de fusionar: eran tres), con el reloj subiendo (sin
+  límite), como las etapas de Rutas rotas: dos para calentar los dedos (5×5 y 6×6) y tres difíciles
+  (7×7, 7×7 y 8×8), con lotes más grandes, ninguno a la vista de entrada y más pasos de deducción. El
+  de hoy (`dia:<fecha>`) es el mismo para todos; `?seed=` da otro.
+- **El generador** parte la grilla al azar (en los fáciles prefiere áreas de 3 a 8 y pocas de 1; en
+  los difíciles, de 4 a 10, sin 1 y casi sin 2), reparte los números lejos entre sí (en los difíciles,
+  además, lejos de las esquinas de su lote) y le pide al resolvedor que no haya otra solución y a
+  `deducir` que se resuelva sin adivinar. Los fáciles se quedan con el primero que sirve; los difíciles
+  arman varios y se quedan con el que pide más rondas de deducción y deja menos lotes a la vista.
+- **Puntaje sobre 100:** 12 por tablero resuelto y, solo con los cinco, hasta 40 por rapidez (40 en
+  5 minutos o menos, 0 en 15 o más, en línea recta entre medio). La 💡 ayuda (dos toques, como en
+  Pintaminas) pone un lote de la solución, con el borde punteado, y resta 10.
+- **Los controles**, abajo en una fila (pedido del dueño): ↩ Deshacer (gratis), 🧹 Borrar (dos
+  toques; deja el tablero vacío y Deshacer lo trae de vuelta) y 🏳️ Rendirse (dos toques; vale los
+  tableros hechos y muestra cómo se resolvía el de ese momento). La 💡 ayuda va aparte, más chica,
+  debajo: no es un control del tablero.
 - **La portada** resuelve sola un 5×5, lote por lote, con el marco creciendo como cuando se arrastra,
   y al final dice «¡Listo!» grande sobre el tablero.
 **Por qué:** es un puzzle de lógica de reglas que caben en dos líneas, con un gesto que ya existe en
 el laboratorio, y la solución única hace que siempre se pueda deducir sin adivinar. Los colores
 convierten el tablero resuelto en un mosaico.
-**Alternativas descartadas:** un solo tablero grande (las tres etapas dan un comienzo fácil y una
-vuelta corta); un límite de tiempo como Rutas rotas (aquí el reloj solo paga la rapidez: un tablero de
+**Alternativas descartadas:** un solo tablero grande (las etapas dan un comienzo fácil); tres
+tableros de 5×5 a 7×7 (la primera versión: el dueño pidió más y más difíciles); un límite de tiempo como Rutas rotas (aquí el reloj solo paga la rapidez: un tablero de
 lógica a medias no se corta); validar el lote recién al terminar el tablero (el original no avisa,
 pero aquí el aviso enseña la regla mientras se juega).
-**Consecuencias:** `engine.test.mjs` genera 300 tableros de cada tamaño y comprueba que tengan una
-sola solución y que esta los resuelva; `tools/e2e/plots/lab.mjs` juega los tres de punta a punta. El
+**Consecuencias:** `engine.test.mjs` genera tableros de cada etapa y comprueba que tengan una sola
+solución, que se deduzcan sin adivinar, que esta los resuelva, que los números no queden pegados y que
+las difíciles pidan más rondas y dejen menos lotes a la vista que las fáciles; `tools/e2e/plots/lab.mjs`
+juega los cinco de punta a punta y prueba Borrar. El
 nombre está en un solo lugar en `game.js` (`T.nombre`), además del título de la página, la tarjeta del
 laboratorio y los documentos.
