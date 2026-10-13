@@ -1,9 +1,11 @@
 // Loteo del laboratorio (D-310) de punta a punta, en /labs/plots/: el laboratorio lo ofrece en
 // Proyectos activos con el crédito a Shikaku; la portada lo dice y su 5×5 se resuelve solo (los lotes se
-// pintan); Empezar pasa por la cuenta 3, 2, 1 y arma el tablero 1 de 3 con los números del motor; un
+// pintan); Empezar pasa por la cuenta 3, 2, 1 y arma el tablero 1 de 5 con los números del motor; un
 // rectángulo sin número, con dos números o del área equivocada se rechaza (el marco tiembla en rojo) y
 // dice por qué; uno que vale se pinta de su color y tocarlo lo borra; la 💡 Ayuda pide un segundo toque
-// y pone un lote de la solución; Deshacer lo saca; con la solución del motor se resuelven los 5 tableros
+// y pone un lote de la solución; Deshacer lo saca; Deshacer, Borrar y Rendirse van en una fila (la
+// ayuda aparte), Borrar pide un segundo toque, vacía el tablero y Deshacer lo trae de vuelta, y armar
+// uno de esos botones desarma los otros; con la solución del motor se resuelven los 5 tableros
 // y el puntaje es el que dice el motor con el tiempo que anotó el juego; el resultado trae compartir,
 // otro tablero, el de hoy y el comentario tras una línea; rendirse pide un segundo toque y vale los
 // tableros hechos. Imprime ✗ si algo falla. `ANCHO=320` lo corre a 320 px.
