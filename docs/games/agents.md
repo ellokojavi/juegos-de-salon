@@ -69,7 +69,8 @@ Los números salen de las constantes de `engine.js` (`CUANTAS`, `NEUTRALES`, `RE
   el asesino** en rojo, con destello y una falla de transmisión cada tanto. El puntaje sube desde 0,
   y después vienen su desglose, la trampa explicada («💀 Caíste con RÍO: parecía de MAR…», o
   «Esquivaste al asesino…» si no lo tocaste), el tablero entero destapado con la pista de cada
-  agente y, bajo el asesino y cada neutral, la pista a la que se parecía («≈ MAR»), y el formulario de comentarios al final (D-265, D-268), separado del juego por una línea.
+  agente y, bajo el asesino y cada neutral, la pista a la que se parecía («≈ MAR»), plegado en el
+  panel «🗺️ El tablero entero» para que los botones del final se vean sin desplazar (C-8, D-309), y el formulario de comentarios al final (D-265, D-268), separado del juego por una línea.
   La tarjeta de emojis (🟩 agente, 🟨 el que faltó, 🟥 neutral tocado, 💀 asesino tocado) va solo
   en el mensaje de compartir: en pantalla repetía el tablero.
 
