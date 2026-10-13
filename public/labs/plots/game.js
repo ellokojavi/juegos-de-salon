@@ -21,7 +21,7 @@ import {
 trackVisit();   // el tráfico del sitio (D-208)
 
 const GAME_ID = 'loteo';
-const EMOJI = '🧱';
+const EMOJI = '📐';
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const SHIKAKU = 'https://en.wikipedia.org/wiki/Shikaku';
 const T = {
@@ -29,12 +29,12 @@ const T = {
   lema: 'Cada número es un lote: dibújalo del tamaño justo.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['🧱', 'Divide el tablero en lotes: rectángulos con un solo número cada uno.'],
+    ['📐', 'Divide el tablero en lotes: rectángulos con un solo número cada uno.'],
     ['🔢', 'El número dice cuántas casillas tiene su lote: un 6 puede ser de 2×3 o de 1×6.'],
     ['👆', `Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son ${ETAPAS.length} tableros contra el reloj.`],
   ],
-  empezar: '🧱 Empezar', aJugar: '¡A lotear!',
-  etapa: 'Tablero {n} de {t}', etapaLista: '🧱 ¡Tablero {n} listo!',
+  empezar: '📐 Empezar', aJugar: '¡A lotear!',
+  etapa: 'Tablero {n} de {t}', etapaLista: '📐 ¡Tablero {n} listo!',
   reloj: '⏱ {t}',
   medida: '{w}×{h} = {a}',
   no: {
@@ -52,7 +52,7 @@ const T = {
   fin: { completa: '¡Todo loteado!', rendido: 'Te rendiste' },
   asiSe: 'Así se resolvía el tablero {n}.',
   capas: {
-    etapas: '🧱 Tableros ({n} de {t}): +{p}.', rapidez: '⏱ Rapidez ({t}): +{p}.', sinRapidez: '⏱ Rapidez: +0 (faltaron tableros).',
+    etapas: '📐 Tableros ({n} de {t}): +{p}.', rapidez: '⏱ Rapidez ({t}): +{p}.', sinRapidez: '⏱ Rapidez: +0 (faltaron tableros).',
     ayudas: ['💡 1 ayuda: −{pts}.', '💡 {n} ayudas: −{pts}.'],
   },
   tiempo: 'Tiempo: {t}.',
