@@ -8,7 +8,7 @@ vuelta se anota en [Historia](#historia) y en [`../registro.json`](../registro.j
 
 | | |
 |---|---|
-| Archivos | [`output/se-vienen-cositas-6s.mp4`](output/se-vienen-cositas-6s.mp4) (1080×1080, 6 s, 30 cuadros por segundo, sin audio) · [`output/se-vienen-cositas-6s.gif`](output/se-vienen-cositas-6s.gif) (540×540, 15 cuadros por segundo, en bucle) |
+| Archivos | [`output/se-vienen-cositas-6s.mp4`](output/se-vienen-cositas-6s.mp4) (1080×1080, 6 s, 30 cuadros por segundo, sin audio) |
 | Idioma | Español |
 | Dónde va | WhatsApp, estados y redes: un adelanto, sin link a ningún juego |
 | App que muestra | 0.168.10 |
@@ -24,8 +24,8 @@ de imágenes y acciones y no de explicar o nombrar los juegos»): arriba "🧪 D
 | 3,15 – 4,55 | 💥 Números explosivos | Una grilla de números con el borde de su color; el dedo une 7 y 3 (suman 10) y después 5 y 5: cada par estalla con un «¡BOOM!», chispas y el tablero tiembla |
 | 4,45 – 6,0 | Los tres | Los tres tableros, chicos y terminados, en fila; cae «PRÓXIMAMENTE» y abajo `juegosdesalon.cl` |
 
-El primer y el último cuarto de segundo funden al color del fondo, para que el GIF vuelva a
-empezar sin salto.
+El primer y el último cuarto de segundo funden al color del fondo, para que se pueda repetir en
+bucle sin salto (el dueño hace el GIF desde el video).
 
 **Muestra juegos que no están en la portada, a propósito** (`"laboratorio"` en `registro.json`, U-34).
 No son capturas de la app: los tres tableros se dibujan en la página, con los colores y la forma de
@@ -36,8 +36,8 @@ números con el borde de su color), para que la jugada sea clara en 1,5 s.
 
 - **Pistas, no explicaciones:** imágenes y acciones de los juegos, sin sus nombres ni sus reglas.
 - **"Se vienen cositas" y "Próximamente".**
-- **GIF, de 6 segundos como mucho**, con los tres juegos del laboratorio (juntos o en serie: aquí en
-  serie y al final juntos).
+- **Un video de 6 segundos como mucho, no un GIF: el GIF lo hace él**, con los tres juegos del
+  laboratorio (juntos o en serie: aquí en serie y al final juntos).
 
 ## Cómo se rehace
 
@@ -45,7 +45,7 @@ números con el borde de su color), para que la jugada sea clara en 1,5 s.
 sola, para mirarla). Usa las fuentes del sitio (Bangers y Nunito) desde Google Fonts.
 
 ```bash
-node marketing/proximamente-teaser/construir-video.mjs                     # el MP4 y el GIF de output/
+node marketing/proximamente-teaser/construir-video.mjs                     # el MP4 de output/
 node marketing/proximamente-teaser/construir-video.mjs --fotos 1.1,2.4,3.75  # cuadros sueltos, para mirar
 ```
 
@@ -64,4 +64,5 @@ corre como root y necesita `--no-sandbox`: un `chrome.sh` que lo agregue y `CHRO
 - **v1 (2026-10-13):** pedido del dueño: «una imagen promocional que, solo usando imágenes de los
   nuevos juegos que tenemos en Labs, diga próximamente y se vienen cositas… en vez de una imagen,
   un GIF… que no debe durar más de 6 segundos». Rutas rotas, Pintaminas y Números explosivos, en
-  serie y al final juntos.
+  serie y al final juntos. Primero salió también un GIF; el dueño pidió solo el video («Crea un
+  video, no un GIF. Yo crearé el GIF»), y el GIF se sacó.
