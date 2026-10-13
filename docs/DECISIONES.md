@@ -51,14 +51,15 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
 | 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297 |
+| 🧱 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, tres tableros contra el reloj) | `docs/games/plots.md` | D-310 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305 |
@@ -5653,3 +5654,38 @@ distintos con el mismo contenido).
 **Consecuencias:** publicar tarda ~2 min cuando el árbol ya pasó (lo de antes de D-302) y ~8 cuando
 no. Una marca dura 7 días: un PR que se fusiona más tarde sin volver a correr la punta a punta la
 corre en `main`. `ya-probado.test.mjs` prueba la decisión, y que una marca de un fork no vale.
+
+## D-310 · Loteo: prototipo del laboratorio, inspirado en Shikaku
+**Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** como D-289 (Pintaminas), D-293 (Rutas rotas) y D-297 (Números explosivos)
+**Contexto:** el dueño pidió un prototipo de Shikaku (Nikoli, 1989) para el laboratorio. Se armó con
+un nombre provisorio, «Parcelas», y antes de publicarlo eligió **Loteo**.
+**Decisión:** un juego para uno solo en `/labs/plots/` (id `loteo`), en Proyectos activos. Las reglas
+son las de Shikaku: una grilla con algunos números se divide entera en rectángulos, cada uno con
+exactamente un número, que es su área. Cada tablero tiene **solución única**.
+- **El gesto:** arrastrar de una esquina a otra dibuja un lote (el arrastre de Rutas rotas), con su
+  medida en vivo («2×3 = 6»). Si vale, se pinta de un color claro (dos vecinos nunca del mismo) y
+  reemplaza los lotes que pisa; si no, el marco tiembla en rojo y el aviso dice por qué (sin número,
+  con dos números, o el área: «El 6 pide 6 casillas; ese tiene 4.»). Tocar un lote lo borra; tocar un
+  1 lo dibuja.
+- **Tres tableros**, 5×5, 6×6 y 7×7, con el reloj subiendo (sin límite), como las etapas de Rutas
+  rotas. El de hoy (`dia:<fecha>`) es el mismo para todos; `?seed=` da otro.
+- **El generador** parte la grilla al azar (prefiere áreas de 3 a 8, pocas de 1 y, en el 7×7, algunas
+  de 6 o más), pone cada número en una casilla al azar de su rectángulo y le pide al resolvedor que no
+  haya otra solución; si la hay, prueba otros lugares y, si no, otra partición. Tarda menos de 2 ms.
+- **Puntaje sobre 100:** 20 por tablero resuelto y, solo con los tres, hasta 40 por rapidez (40 en
+  90 s o menos, 0 en 6 minutos o más, en línea recta entre medio). La 💡 ayuda (dos toques, como en
+  Pintaminas) pone un lote de la solución, con el borde punteado, y resta 10. ↩ Deshacer es gratis;
+  🏳️ Rendirse (dos toques) vale los tableros hechos y muestra cómo se resolvía el de ese momento.
+- **La portada** resuelve sola un 5×5, lote por lote, con el marco creciendo como cuando se arrastra,
+  y al final dice «¡Listo!» grande sobre el tablero.
+**Por qué:** es un puzzle de lógica de reglas que caben en dos líneas, con un gesto que ya existe en
+el laboratorio, y la solución única hace que siempre se pueda deducir sin adivinar. Los colores
+convierten el tablero resuelto en un mosaico.
+**Alternativas descartadas:** un solo tablero grande (las tres etapas dan un comienzo fácil y una
+vuelta corta); un límite de tiempo como Rutas rotas (aquí el reloj solo paga la rapidez: un tablero de
+lógica a medias no se corta); validar el lote recién al terminar el tablero (el original no avisa,
+pero aquí el aviso enseña la regla mientras se juega).
+**Consecuencias:** `engine.test.mjs` genera 300 tableros de cada tamaño y comprueba que tengan una
+sola solución y que esta los resuelva; `tools/e2e/plots/lab.mjs` juega los tres de punta a punta. El
+nombre está en un solo lugar en `game.js` (`T.nombre`), además del título de la página, la tarjeta del
+laboratorio y los documentos.
