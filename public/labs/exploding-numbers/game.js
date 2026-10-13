@@ -28,7 +28,7 @@ const T = {
   lema: 'Haz estallar los números de a pares hasta dejar el tablero limpio.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['💥', 'Toca dos números iguales (7 y 7) o que sumen 10 (4 y 6): estallan.'],
+    ['💥', 'Toca dos números iguales (7 y 7) o que sumen 10 (4 y 6): estallan.'],
     ['↔️', 'Deben estar en línea (de lado, arriba, abajo o en diagonal) o al final de una fila y al inicio de la siguiente. Lo estallado no estorba.'],
     ['➕', `¿Sin pares? ➕ copia abajo los que quedan (${MAS} veces). Cada ➕ sin usar suma ${PUNTOS_MAS}.`],
   ],
