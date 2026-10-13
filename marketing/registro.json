@@ -221,10 +221,10 @@
       "titulo": "Se vienen cositas (adelanto del laboratorio)",
       "carpeta": "marketing/proximamente-teaser/",
       "memoria": "marketing/proximamente-teaser/README.md",
-      "version": 1,
+      "version": 2,
       "fecha": "2026-10-13",
       "idioma": "es",
-      "app": "0.168.10",
+      "app": "0.170.2",
       "archivos": [
         {
           "ruta": "marketing/proximamente-teaser/output/se-vienen-cositas-6s.mp4",
@@ -240,13 +240,15 @@
       "juegos": [
         "rutas",
         "pintaminas",
-        "numeros-explosivos"
+        "numeros-explosivos",
+        "loteo"
       ],
       "seleccion": true,
       "laboratorio": [
         "rutas",
         "pintaminas",
-        "numeros-explosivos"
+        "numeros-explosivos",
+        "loteo"
       ]
     }
   ]
