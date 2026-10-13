@@ -1,5 +1,5 @@
 {
-  "revisadoHasta": "d667443",
+  "revisadoHasta": "68ecbf1",
   "patrones": [
     {
       "clave": "version-hacia-atras",
@@ -76,6 +76,71 @@
         "que": "CHANGELOG por archivo (D-300), reserva de D-n y driver de DECISIONES.md (D-301)",
         "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
       }
+    },
+    {
+      "clave": "decision-sin-marcar-corregida",
+      "que": "D-298 entró sin marcar D-290 y D-291 como corregidas ni sumarse al índice; lo arregló documentación después",
+      "vistos": [
+        {
+          "fecha": "2026-10-13",
+          "que": "D-298 entró sin marcar D-290 y D-291 como corregidas ni sumarse al índice; lo arregló documentación después",
+          "commit": "eb918052"
+        }
+      ],
+      "mecanismo": null
+    },
+    {
+      "clave": "readme-hechos-atrasado",
+      "que": "Tests nuevos (changelog.test.mjs, decision.test.mjs) entraron sin README ni hechos.json al día",
+      "vistos": [
+        {
+          "fecha": "2026-10-13",
+          "que": "Tests nuevos (changelog.test.mjs, decision.test.mjs) entraron sin README ni hechos.json al día",
+          "commit": "8a506a0d"
+        },
+        {
+          "fecha": "2026-10-13",
+          "que": "D-307 y D-308 (grupos.mjs, ya-probado.mjs, changelog/) entraron sin sumarse al árbol Layout del README: el chequeo 7 de readme.py buscaba '## Estructura' y no corría nunca",
+          "commit": "68ecbf1"
+        }
+      ],
+      "mecanismo": null
+    },
+    {
+      "clave": "portada-atrasada",
+      "que": "Portadas del laboratorio con reglas viejas (U-36); ya frenado por portadas.mjs",
+      "vistos": [
+        {
+          "fecha": "2026-10-13",
+          "que": "Portadas del laboratorio con reglas viejas (U-36); ya frenado por portadas.mjs",
+          "commit": "09a02a96"
+        }
+      ],
+      "mecanismo": null
+    },
+    {
+      "clave": "permiso-guias-agentes",
+      "que": "El permiso automático de la ronda niega editar .claude/agents/, juntar el CHANGELOG y cerrar issues: la tarea #321:3 aprobada sigue en cola por segundo día",
+      "vistos": [
+        {
+          "fecha": "2026-10-13",
+          "que": "El permiso automático de la ronda niega editar .claude/agents/, juntar el CHANGELOG y cerrar issues: la tarea #321:3 aprobada sigue en cola por segundo día",
+          "commit": null
+        }
+      ],
+      "mecanismo": null
+    },
+    {
+      "clave": "portadas-falso-aviso",
+      "que": "portadas.mjs revisar marca ⚠️ falso en La clave (labs/code): lee mal su estructura de cuatro idiomas y le saca 7 pasos (informe de usabilidad)",
+      "vistos": [
+        {
+          "fecha": "2026-10-13",
+          "que": "portadas.mjs revisar marca ⚠️ falso en La clave (labs/code): lee mal su estructura de cuatro idiomas y le saca 7 pasos (informe de usabilidad)",
+          "commit": "68ecbf1"
+        }
+      ],
+      "mecanismo": null
     }
   ],
   "mecanismos": [
@@ -107,12 +172,12 @@
   "colaHecha": [],
   "despachos": {
     "documentacion": {
-      "fecha": "2026-10-12",
-      "hasta": "d667443"
+      "fecha": "2026-10-13",
+      "hasta": "68ecbf1"
     },
     "usabilidad": {
-      "fecha": "2026-10-12",
-      "hasta": "d667443"
+      "fecha": "2026-10-13",
+      "hasta": "68ecbf1"
     }
   },
   "rondas": [
@@ -123,6 +188,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/353",
       "nota": "Despachados documentación (#354) y usabilidad (#353), revisados contra sus criterios. #321:3 sigue en cola: el permiso automático bloqueó editar las guías de los agentes."
+    },
+    {
+      "fecha": "2026-10-13",
+      "desde": "d667443",
+      "hasta": "68ecbf1",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/387",
+      "pr": null,
+      "nota": "Despachados documentación (#388) y usabilidad (#389), revisados. Cola #321:3 y juntar CHANGELOG bloqueados por el permiso automático."
     }
   ],
   "decisionesDelDueno": [
