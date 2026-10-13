@@ -10,6 +10,7 @@ rehacerse (D-178).
 | Tutorial: cómo compartir (iOS) | 1 · 2026-10-09 · 6,0 s, sin audio | [vertical](share-tutorial/output/compartir-vertical.mp4) · [16:9](share-tutorial/output/compartir-16x9.mp4) | [share-tutorial/README.md](share-tutorial/README.md) |
 | Teaser de El caso | 1 · 2026-10-10 · 6,0 s | [vertical](caso-teaser/output/el-caso-6s.mp4) · [GIF](caso-teaser/output/el-caso-6s.gif) | [caso-teaser/README.md](caso-teaser/README.md) |
 | Tarjeta de Agentes (imagen y video) | 2 · 2026-10-11 · 6,0 s, sin audio | [imagen 1200×630](agentes-tarjeta/output/agentes-1200x630.jpg) · [video](agentes-tarjeta/output/agentes-6s.mp4) · [GIF](agentes-tarjeta/output/agentes-6s.gif) | [agentes-tarjeta/README.md](agentes-tarjeta/README.md) |
+| Se vienen cositas (adelanto del laboratorio) | 1 · 2026-10-13 · 6,0 s, sin audio | [video 1:1](proximamente-teaser/output/se-vienen-cositas-6s.mp4) | [proximamente-teaser/README.md](proximamente-teaser/README.md) |
 
 [`registro.json`](registro.json) es la misma lista para leer con código: versión, fecha,
 archivos, formatos, duración y estado de cada asset, y qué juegos muestra: `juegos`, con

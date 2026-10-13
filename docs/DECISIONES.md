@@ -51,14 +51,15 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
 | 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
-| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297 |
+| 📐 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, cinco tableros contra el reloj: dos para calentar y tres difíciles) | `docs/games/plots.md` | D-310 |
+| Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305 |
@@ -5678,3 +5679,47 @@ un guion con caminos a cada pantalla (las capturas de los guiones de partida ya 
 uno nuevo se vigila solo).
 **Consecuencias:** un juego nuevo marca su tablero con `data-tablero` (C-8) y queda con el mismo aire;
 si un botón queda pegado, su guion sale en rojo.
+
+## D-310 · Loteo: prototipo del laboratorio, inspirado en Shikaku
+**Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** como D-289 (Pintaminas), D-293 (Rutas rotas) y D-297 (Números explosivos)
+**Contexto:** el dueño pidió un prototipo de Shikaku (Nikoli, 1989) para el laboratorio. Se armó con
+un nombre provisorio, «Parcelas», y antes de publicarlo eligió **Loteo**.
+**Decisión:** un juego para uno solo en `/labs/plots/` (id `loteo`), en Proyectos activos. Las reglas
+son las de Shikaku: una grilla con algunos números se divide entera en rectángulos, cada uno con
+exactamente un número, que es su área. Cada tablero tiene **solución única**.
+- **El gesto:** arrastrar de una esquina a otra dibuja un lote (el arrastre de Rutas rotas), con su
+  medida en vivo («2×3 = 6»). Si vale, se pinta de un color claro (dos vecinos nunca del mismo) y
+  reemplaza los lotes que pisa; si no, el marco tiembla en rojo y el aviso dice por qué (sin número,
+  con dos números, o el área: «El 6 pide 6 casillas; ese tiene 4.»). Tocar un lote lo borra; tocar un
+  1 lo dibuja.
+- **Cinco tableros** (pedido del dueño, antes de fusionar: eran tres), con el reloj subiendo (sin
+  límite), como las etapas de Rutas rotas: dos para calentar los dedos (5×5 y 6×6) y tres difíciles
+  (7×7, 7×7 y 8×8), con lotes más grandes, ninguno a la vista de entrada y más pasos de deducción. El
+  de hoy (`dia:<fecha>`) es el mismo para todos; `?seed=` da otro.
+- **El generador** parte la grilla al azar (en los fáciles prefiere áreas de 3 a 8 y pocas de 1; en
+  los difíciles, de 4 a 10, sin 1 y casi sin 2), reparte los números lejos entre sí (en los difíciles,
+  además, lejos de las esquinas de su lote) y le pide al resolvedor que no haya otra solución y a
+  `deducir` que se resuelva sin adivinar. Los fáciles se quedan con el primero que sirve; los difíciles
+  arman varios y se quedan con el que pide más rondas de deducción y deja menos lotes a la vista.
+- **Puntaje sobre 100:** 12 por tablero resuelto y, solo con los cinco, hasta 40 por rapidez (40 en
+  5 minutos o menos, 0 en 15 o más, en línea recta entre medio). La 💡 ayuda (dos toques, como en
+  Pintaminas) pone un lote de la solución, con el borde punteado, y resta 10.
+- **Los controles**, abajo en una fila (pedido del dueño): ↩ Deshacer (gratis), 🧹 Borrar (dos
+  toques; deja el tablero vacío y Deshacer lo trae de vuelta) y 🏳️ Rendirse (dos toques; vale los
+  tableros hechos y muestra cómo se resolvía el de ese momento). La 💡 ayuda va aparte, más chica,
+  debajo: no es un control del tablero.
+- **La portada** resuelve sola un 5×5, lote por lote, con el marco creciendo como cuando se arrastra,
+  y al final dice «¡Listo!» grande sobre el tablero.
+**Por qué:** es un puzzle de lógica de reglas que caben en dos líneas, con un gesto que ya existe en
+el laboratorio, y la solución única hace que siempre se pueda deducir sin adivinar. Los colores
+convierten el tablero resuelto en un mosaico.
+**Alternativas descartadas:** un solo tablero grande (las etapas dan un comienzo fácil); tres
+tableros de 5×5 a 7×7 (la primera versión: el dueño pidió más y más difíciles); un límite de tiempo como Rutas rotas (aquí el reloj solo paga la rapidez: un tablero de
+lógica a medias no se corta); validar el lote recién al terminar el tablero (el original no avisa,
+pero aquí el aviso enseña la regla mientras se juega).
+**Consecuencias:** `engine.test.mjs` genera tableros de cada etapa y comprueba que tengan una sola
+solución, que se deduzcan sin adivinar, que esta los resuelva, que los números no queden pegados y que
+las difíciles pidan más rondas y dejen menos lotes a la vista que las fáciles; `tools/e2e/plots/lab.mjs`
+juega los cinco de punta a punta y prueba Borrar. El
+nombre está en un solo lugar en `game.js` (`T.nombre`), además del título de la página, la tarjeta del
+laboratorio y los documentos.
