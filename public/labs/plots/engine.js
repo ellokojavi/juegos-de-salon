@@ -500,7 +500,7 @@ function propagar(t, estado) {
 
 /**
  * Deduce un tablero de servicios como lo haría alguien, sin adivinar. Con `avanzado: false`, solo las
- * reglas simples (`propagar`). Con `avanzado: true` (el modo difícil, D-311), cuando las simples se
+ * reglas simples (`propagar`). Con `avanzado: true` (los difíciles, D-312), cuando las simples se
  * traban, mira un paso adelante: si poner un lote posible y seguir con las reglas simples deja una
  * casilla sin lote, ese lote no va. Devuelve `{ resuelto, rondas, deEntrada, avanzadas, intermedias }`:
  * `avanzadas` cuenta los lotes descartados mirando adelante, e `intermedias` las veces que hizo falta la
@@ -534,7 +534,7 @@ export function deducirServicios(t, { avanzado = true } = {}) {
 }
 
 /**
- * Dónde van los íconos de un lote. En los fáciles, en casillas al azar. En los difíciles (D-311), de
+ * Dónde van los íconos de un lote. En los fáciles, en casillas al azar. En los difíciles (D-312), de
  * preferencia en el borde del lote que toca a otro lote: así cada ícono queda cerca de los del vecino y
  * hay varios emparejamientos que parecen posibles.
  */
@@ -565,14 +565,14 @@ const dificultadServicios = d => 5 * d.avanzadas + 2 * d.intermedias + d.rondas 
  * El tablero de servicios de una semilla: parte la grilla en lotes de `tam` (`partirIguales`), pone en
  * cada uno un ícono de cada servicio (`ubicarIconos`), y se queda con uno de solución única
  * (`resolverServicios`) que se deduzca sin adivinar (`deducirServicios`). Los fáciles: el primero que
- * sale con las reglas simples. Los difíciles (pedido del dueño, D-311): ninguno a la vista de entrada,
+ * sale con las reglas simples. Los difíciles (pedido del dueño, D-312): ninguno a la vista de entrada,
  * que las reglas simples no alcancen y haya que mirar un paso adelante; de muchos, el más difícil.
  * Determinista con la semilla.
  */
 export function generarServicios(semilla, { lado = 6, tam = 4, servicios = ['luz', 'agua'], dificil = false, exige = 3 } = {}) {
   if ((lado * lado) % tam || tam < servicios.length) throw new Error('tamaño imposible');
   const r = azar(`servicios:${semilla}`);
-  const quiero = dificil ? 12 : 1;
+  const quiero = dificil ? 8 : 1;
   let mejor = null, mejorD = -Infinity, hallados = 0, plan = null;
   for (let intento = 0; intento < (dificil ? 6000 : 3000) && hallados < quiero; intento++) {
     const rects = partirIguales(r, lado, tam);
