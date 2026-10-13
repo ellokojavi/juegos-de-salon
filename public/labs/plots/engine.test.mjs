@@ -129,8 +129,8 @@ const promS = [];
 ETAPAS_SERVICIOS.forEach((e, n) => {
   const { lado, tam, servicios } = e;
   assert.equal((lado * lado) % tam, 0, `${lado}×${lado} se divide en lotes de ${tam}`);
-  let lento = 0, rondas = 0, aLaVista = 0;
-  const cuantos = 120;
+  let lento = 0, rondas = 0, aLaVista = 0, profundas = 0, simples = 0;
+  const cuantos = e.dificil ? 40 : 120;
   for (let s = 0; s < cuantos; s++) {
     const t0 = performance.now();
     const t = generarServicios(`prueba-s${n}-${s}`, e);
@@ -140,7 +140,10 @@ ETAPAS_SERVICIOS.forEach((e, n) => {
     assert.equal(resolverServicios(t, 2).n, 1, `servicios ${n + 1}-${s}: una sola solución`);
     const d = deducirServicios(t);
     assert.ok(d.resuelto, `servicios ${n + 1}-${s}: se deduce sin adivinar`);
-    rondas += d.rondas; aLaVista += d.deEntrada;
+    rondas += d.rondas; aLaVista += d.deEntrada; profundas += d.intermedias + d.avanzadas;
+    // Los fáciles salen con las reglas simples; los difíciles no muestran lotes de entrada
+    if (!e.dificil) assert.ok(deducirServicios(t, { avanzado: false }).resuelto, `servicios ${n + 1}-${s}: fácil, con las reglas simples`);
+    else if (d.deEntrada === 0) simples++;
     assert.equal(t.solucion.length, lado * lado / tam);
     let ps = [];
     for (const r of t.solucion) {
@@ -155,7 +158,12 @@ ETAPAS_SERVICIOS.forEach((e, n) => {
     for (const x of servicios) assert.equal(t.iconos.filter(i => i === x).length, t.solucion.length);
   }
   assert.ok(lento < 300, `servicios ${lado}×${lado} de ${tam}: un tablero tarda ${lento.toFixed(0)} ms (máximo 300)`);
-  promS.push({ rondas: rondas / cuantos, aLaVista: aLaVista / cuantos, dificil: e.dificil });
+  promS.push({ rondas: rondas / cuantos, aLaVista: aLaVista / cuantos, profundas: profundas / cuantos, dificil: e.dificil });
+  // Las difíciles (pedido del dueño): casi siempre ninguno a la vista de entrada, y deducciones profundas
+  if (e.dificil) {
+    assert.ok(simples / cuantos >= 0.85, `servicios ${n + 1}: ${simples}/${cuantos} sin lotes a la vista de entrada`);
+    assert.ok(profundas / cuantos >= 3, `servicios ${n + 1}: ${(profundas / cuantos).toFixed(1)} deducciones profundas por tablero`);
+  }
 });
 // Las difíciles: más rondas de deducción y menos lotes a la vista de entrada que las fáciles
 for (const d of promS.filter(x => x.dificil)) for (const f of promS.filter(x => !x.dificil)) {
