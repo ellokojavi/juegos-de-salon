@@ -26,7 +26,7 @@ const T = {
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
     ['🔄', 'Arrastra de una pieza a otra: el rectángulo da media vuelta y sus piezas quedan al revés. Un toque gira una sola.'],
-    ['🚇', 'Une todas las líneas, sin cortes de pieza en pieza.'],
+    ['🚇', 'Une cada color en una línea, sin cortes entre piezas.'],
     ['⛳', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos. Cuenta completarlas, luego la rapidez y los giros; deshacer y reiniciar son gratis.`],
   ],
   empezar: '🚇 Empezar', aJugar: '¡A girar!',
