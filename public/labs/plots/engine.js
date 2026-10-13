@@ -328,16 +328,19 @@ export function tarjeta(hechas, ayudas = 0, modo = 'numeros') {
 export const ICONOS = { luz: '⚡', agua: '💧', red: '🌐' };
 
 /**
- * Las etapas del modo: dos para calentar (6×6 de 3 y 6×6 de 4) y tres difíciles (6×6 de 6, 8×8 de 4 y
- * 8×8 de 8), con lotes más grandes, menos a la vista de entrada y más pasos de deducción. Elegidas
+ * Las etapas del modo: dos para calentar (6×6 de 3 y 6×6 de 4) y tres difíciles (6×6 de 6 y dos 8×8 de
+ * 8), con lotes más grandes, ninguno a la vista de entrada y deducciones más profundas. Elegidas
  * midiendo (D-311). Sin 🌐: un tercer servicio da más tableros únicos, pero más fáciles.
  */
 export const ETAPAS_SERVICIOS = [
   { lado: 6, tam: 3, servicios: ['luz', 'agua'], dificil: false },
   { lado: 6, tam: 4, servicios: ['luz', 'agua'], dificil: false },
-  { lado: 6, tam: 6, servicios: ['luz', 'agua'], dificil: true },
-  { lado: 8, tam: 4, servicios: ['luz', 'agua'], dificil: true },
-  { lado: 8, tam: 8, servicios: ['luz', 'agua'], dificil: true },
+  // Las difíciles (pedido del dueño): ningún lote a la vista de entrada y al menos `exige` deducciones
+  // que no son las simples (la regla 2 de `propagar` o mirar un paso adelante). El 8×8 de 4 salió: con
+  // lotes tan chicos siempre deja lotes a la vista
+  { lado: 6, tam: 6, servicios: ['luz', 'agua'], dificil: true, exige: 3 },
+  { lado: 8, tam: 8, servicios: ['luz', 'agua'], dificil: true, exige: 4 },
+  { lado: 8, tam: 8, servicios: ['luz', 'agua'], dificil: true, exige: 6 },
 ];
 
 /** Las formas de un lote de `tam` casillas que caben en la grilla: `[alto, ancho]`. */
@@ -393,14 +396,27 @@ export function serviciosEn(t, r) {
   return cuenta;
 }
 
-/** Todos los lotes posibles de un tablero de servicios: del tamaño justo y con uno de cada servicio. */
+/**
+ * Todos los lotes posibles de un tablero de servicios: del tamaño justo y con uno de cada servicio.
+ * Cuenta los íconos de cada rectángulo con sumas acumuladas (es lo que más se repite al generar).
+ */
 export function lotesPosibles(t) {
-  const { lado, tam } = t, out = [];
+  const { lado, tam } = t, out = [], L = lado + 1;
+  const sumas = t.servicios.map(s => {
+    const a = new Int16Array(L * L);
+    for (let f = 0; f < lado; f++) for (let c = 0; c < lado; c++) {
+      a[(f + 1) * L + c + 1] = (t.iconos[f * lado + c] === s ? 1 : 0) + a[f * L + c + 1] + a[(f + 1) * L + c] - a[f * L + c];
+    }
+    return a;
+  });
+  const cuenta = (a, f1, c1, f2, c2) => a[(f2 + 1) * L + c2 + 1] - a[f1 * L + c2 + 1] - a[(f2 + 1) * L + c1] + a[f1 * L + c1];
   for (const [h, w] of formas(tam, lado)) {
     for (let f1 = 0; f1 + h <= lado; f1++) for (let c1 = 0; c1 + w <= lado; c1++) {
-      const r = { f1, c1, f2: f1 + h - 1, c2: c1 + w - 1 };
-      const cuenta = serviciosEn(t, r);
-      if (t.servicios.every(s => cuenta[s] === 1)) out.push({ r, k: casillas(r, lado) });
+      const f2 = f1 + h - 1, c2 = c1 + w - 1;
+      if (sumas.every(a => cuenta(a, f1, c1, f2, c2) === 1)) {
+        const r = { f1, c1, f2, c2 };
+        out.push({ r, k: casillas(r, lado) });
+      }
     }
   }
   return out;
@@ -440,80 +456,148 @@ export function resolverServicios(t, limite = 2) {
 }
 
 /**
- * Deduce un tablero de servicios como lo haría alguien, sin adivinar. En cada ronda: (1) un ícono o una
- * casilla libre que solo cabe en un lote posible fija ese lote; si ninguno, (2) una casilla libre cuyos
- * lotes posibles llevan todos el mismo ⚡ (o el mismo 💧…) obliga al lote de ese ícono a cubrirla: se
- * descartan sus otros lotes. Devuelve `{ resuelto, rondas, deEntrada }`, como `deducir`.
+ * Las reglas simples, hasta que no avanzan: (1) un ícono o una casilla libre que solo cabe en un lote
+ * posible fija ese lote; si ninguno, (2) una casilla libre cuyos lotes posibles llevan todos el mismo ⚡
+ * (o el mismo 💧…) obliga al lote de ese ícono a cubrirla. Cambia `estado` ({ vivos, ocupada }) y
+ * devuelve `{ rondas, deEntrada, intermedias, choque }`: `intermedias` cuenta las veces que hizo falta la
+ * regla (2), y `choque` si una casilla se quedó sin lote posible.
  */
-export function deducirServicios(t) {
-  const N = t.lado * t.lado;
-  // Cada lote posible, con el ícono de cada servicio que lleva
-  let vivos = lotesPosibles(t).map(x => ({ ...x, de: t.servicios.map(s => x.k.find(k => t.iconos[k] === s)) }));
-  const ocupada = new Uint8Array(N);
-  let rondas = 0, deEntrada = -1;
-  const cubrenA = k => vivos.filter(x => x.k.includes(k));
+function propagar(t, estado) {
+  const N = t.lado * t.lado, { ocupada } = estado;
+  let rondas = 0, deEntrada = -1, intermedias = 0;
+  const cubrenA = k => estado.vivos.filter(x => x.k.includes(k));
   for (let cambio = true; cambio;) {
     cambio = false; rondas++;
-    vivos = vivos.filter(x => x.k.every(k => !ocupada[k]));
-    // (1) Lo que solo cabe en un lote: lo fija
+    estado.vivos = estado.vivos.filter(x => x.k.every(k => !ocupada[k]));
     const fijos = new Set();
     for (let k = 0; k < N; k++) {
       if (ocupada[k]) continue;
       const c = cubrenA(k);
-      if (!c.length) return { resuelto: false, rondas, deEntrada: Math.max(0, deEntrada) };
+      if (!c.length) return { rondas, deEntrada: Math.max(0, deEntrada), intermedias, choque: true };
       if (c.length === 1) fijos.add(c[0]);
     }
     if (deEntrada < 0) deEntrada = fijos.size;
     for (const x of fijos) {
-      if (x.k.some(k => ocupada[k])) continue;
+      if (x.k.some(k => ocupada[k])) return { rondas, deEntrada, intermedias, choque: true };
       x.k.forEach(k => { ocupada[k] = 1; });
       cambio = true;
     }
     if (cambio) continue;
-    // (2) Una casilla que solo alcanza el lote de un ícono: ese lote la cubre
     for (let k = 0; k < N && !cambio; k++) {
       if (ocupada[k]) continue;
       const c = cubrenA(k);
       for (let s = 0; s < t.servicios.length && !cambio; s++) {
         const icono = c[0].de[s];
         if (!c.every(x => x.de[s] === icono)) continue;
-        const antes = vivos.length;
-        vivos = vivos.filter(x => x.de[s] !== icono || x.k.includes(k));
-        if (vivos.length < antes) cambio = true;
+        const antes = estado.vivos.length;
+        estado.vivos = estado.vivos.filter(x => x.de[s] !== icono || x.k.includes(k));
+        if (estado.vivos.length < antes) { cambio = true; intermedias++; }
       }
     }
   }
-  let todo = true;
-  for (let k = 0; k < N; k++) if (!ocupada[k]) todo = false;
-  return { resuelto: todo, rondas, deEntrada: Math.max(0, deEntrada) };
+  return { rondas, deEntrada: Math.max(0, deEntrada), intermedias, choque: false };
 }
 
 /**
- * El tablero de servicios de una semilla: parte la grilla en lotes de `tam` (`partirIguales`), pone en
- * cada uno un ícono de cada servicio en casillas distintas al azar, y se queda con uno de solución única
- * (`resolverServicios`) que se deduzca sin adivinar (`deducirServicios`). Los fáciles, el primero que
- * sirve; los difíciles arman varios y se quedan con el que pide más pasos. Determinista con la semilla.
+ * Deduce un tablero de servicios como lo haría alguien, sin adivinar. Con `avanzado: false`, solo las
+ * reglas simples (`propagar`). Con `avanzado: true` (los difíciles, D-312), cuando las simples se
+ * traban, mira un paso adelante: si poner un lote posible y seguir con las reglas simples deja una
+ * casilla sin lote, ese lote no va. Devuelve `{ resuelto, rondas, deEntrada, avanzadas, intermedias }`:
+ * `avanzadas` cuenta los lotes descartados mirando adelante, e `intermedias` las veces que hizo falta la
+ * regla (2) de `propagar`: las dos hacen difícil un tablero.
  */
-export function generarServicios(semilla, { lado = 6, tam = 4, servicios = ['luz', 'agua'], dificil = false } = {}) {
+export function deducirServicios(t, { avanzado = true } = {}) {
+  const N = t.lado * t.lado;
+  const estado = {
+    vivos: lotesPosibles(t).map(x => ({ ...x, de: t.servicios.map(s => x.k.find(k => t.iconos[k] === s)) })),
+    ocupada: new Uint8Array(N),
+  };
+  let rondas = 0, deEntrada = -1, avanzadas = 0, intermedias = 0;
+  for (;;) {
+    const p = propagar(t, estado);
+    rondas += p.rondas; intermedias += p.intermedias;
+    if (deEntrada < 0) deEntrada = p.deEntrada;
+    if (p.choque) return { resuelto: false, rondas, deEntrada, avanzadas, intermedias };
+    if (estado.ocupada.every(Boolean)) return { resuelto: true, rondas, deEntrada, avanzadas, intermedias };
+    if (!avanzado) return { resuelto: false, rondas, deEntrada, avanzadas, intermedias };
+    // Un paso adelante: descarta los lotes que llevan a un choque
+    let descarte = null;
+    for (const x of estado.vivos) {
+      const prueba = { vivos: estado.vivos.slice(), ocupada: estado.ocupada.slice() };
+      x.k.forEach(k => { prueba.ocupada[k] = 1; });
+      if (propagar(t, prueba).choque) { descarte = x; break; }
+    }
+    if (!descarte) return { resuelto: false, rondas, deEntrada, avanzadas, intermedias };
+    estado.vivos = estado.vivos.filter(x => x !== descarte);
+    avanzadas++; rondas++;
+  }
+}
+
+/**
+ * Dónde van los íconos de un lote. En los fáciles, en casillas al azar. En los difíciles (D-312), de
+ * preferencia en el borde del lote que toca a otro lote: así cada ícono queda cerca de los del vecino y
+ * hay varios emparejamientos que parecen posibles.
+ */
+function ubicarIconos(r, x, lado, dificil, n) {
+  const ks = barajar(r, casillas(x, lado));
+  if (!dificil) return ks.slice(0, n);
+  const peso = k => {
+    const f = Math.floor(k / lado), c = k % lado;
+    let p = 1;
+    if (f === x.f1 && f > 0) p += 2; if (f === x.f2 && f < lado - 1) p += 2;
+    if (c === x.c1 && c > 0) p += 2; if (c === x.c2 && c < lado - 1) p += 2;
+    return p;
+  };
+  const out = [], resto = ks.slice();
+  while (out.length < n) {
+    const total = resto.reduce((a, k) => a + peso(k), 0);
+    let v = r() * total, j = 0;
+    for (; j < resto.length - 1; j++) { v -= peso(resto[j]); if (v <= 0) break; }
+    out.push(resto.splice(j, 1)[0]);
+  }
+  return out;
+}
+
+/** Qué tan difícil es un tablero de servicios: lo que se descarta mirando adelante pesa más que las rondas. */
+const dificultadServicios = d => 5 * d.avanzadas + 2 * d.intermedias + d.rondas - 4 * d.deEntrada;
+
+/**
+ * El tablero de servicios de una semilla: parte la grilla en lotes de `tam` (`partirIguales`), pone en
+ * cada uno un ícono de cada servicio (`ubicarIconos`), y se queda con uno de solución única
+ * (`resolverServicios`) que se deduzca sin adivinar (`deducirServicios`). Los fáciles: el primero que
+ * sale con las reglas simples. Los difíciles (pedido del dueño, D-312): ninguno a la vista de entrada,
+ * que las reglas simples no alcancen y haya que mirar un paso adelante; de muchos, el más difícil.
+ * Determinista con la semilla.
+ */
+export function generarServicios(semilla, { lado = 6, tam = 4, servicios = ['luz', 'agua'], dificil = false, exige = 3 } = {}) {
   if ((lado * lado) % tam || tam < servicios.length) throw new Error('tamaño imposible');
   const r = azar(`servicios:${semilla}`);
-  const quiero = dificil ? 20 : 1;
-  let mejor = null, mejorD = -Infinity, hallados = 0;
-  for (let intento = 0; intento < 3000 && hallados < quiero; intento++) {
+  const quiero = dificil ? 8 : 1;
+  let mejor = null, mejorD = -Infinity, hallados = 0, plan = null;
+  for (let intento = 0; intento < (dificil ? 6000 : 3000) && hallados < quiero; intento++) {
     const rects = partirIguales(r, lado, tam);
     if (!rects) continue;
     const iconos = new Array(lado * lado).fill(null);
-    for (const x of rects) {
-      const ks = barajar(r, casillas(x, lado));
-      servicios.forEach((s, j) => { iconos[ks[j]] = s; });
-    }
+    for (const x of rects) ubicarIconos(r, x, lado, dificil, servicios.length).forEach((k, j) => { iconos[k] = servicios[j]; });
     const t = { modo: 'servicios', lado, tam, servicios: [...servicios], iconos, solucion: rects };
     if (resolverServicios(t, 2).n !== 1) continue;
-    const d = deducirServicios(t);
+    if (!dificil) {
+      if (!deducirServicios(t, { avanzado: false }).resuelto) continue;
+      mejor = t; hallados++;
+      break;
+    }
+    // Primero las reglas simples, que son baratas; mirar adelante solo si se traban
+    const simple = deducirServicios(t, { avanzado: false });
+    const d = simple.resuelto ? simple : deducirServicios(t);
     if (!d.resuelto) continue;
+    // Los que sí sirven pero se resuelven con las reglas simples o muestran lotes de entrada quedan de reserva
+    const bueno = d.deEntrada === 0 && d.avanzadas + d.intermedias >= exige;
+    // De reserva, el más difícil; uno sin lotes a la vista siempre gana a uno con
+    if (!bueno) { const v = dificultadServicios(d) - 100 * d.deEntrada; if (!plan || v > plan.d) plan = { t, d: v }; continue; }
     hallados++;
-    if (dificultad(d) > mejorD) { mejor = t; mejorD = dificultad(d); }
+    if (dificultadServicios(d) > mejorD) { mejor = t; mejorD = dificultadServicios(d); }
   }
+  if (!mejor && plan) mejor = plan.t;
   if (!mejor) throw new Error('no se pudo armar el tablero');
   return { semilla: String(semilla), ...mejor };
 }

@@ -39,10 +39,12 @@ const T = {
   // El modo «Servicios» (D-311): los mismos lotes, con ⚡ y 💧 en vez de números
   lemaServicios: 'Lotes del mismo tamaño, cada uno con su ⚡ y su 💧.',
   comoServicios: [
-    ['📐', 'Divide el tablero en lotes del mismo tamaño: arriba dice cuántas casillas tiene cada uno.'],
-    ['⚡', 'Cada lote lleva exactamente un ⚡ y un 💧: ni más ni menos.'],
-    ['👆', `Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son ${ETAPAS_SERVICIOS.length} tableros contra el reloj.`],
+    ['📐', 'Divide el tablero en lotes del tamaño que dice arriba.'],
+    ['⚡', 'Cada lote lleva un ⚡ y un 💧, ni más ni menos. Si un lote deja una casilla sin lote posible, no va.'],
+    ['👆', `Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son ${ETAPAS_SERVICIOS.length} tableros; los 3 últimos, difíciles.`],
   ],
+  // Al llegar a los difíciles del modo servicios, cómo pensarlos (pedido del dueño: explicarlo bien)
+  avisoDificil: 'Difíciles: si un lote deja una casilla sin lote posible, no va.',
   modos: { numeros: '🔢 Números', servicios: '⚡💧 Servicios', rotulo: 'Modo' },
   servicios: '⚡💧 Servicios',
   tam: 'Lotes de {n} casillas',
@@ -473,6 +475,7 @@ function jugar() {
   // En el modo servicios, el tamaño de los lotes va arriba del tablero, junto al reloj
   const tam = t.tam ? el('p', { class: 'tam-lt', id: 'tam' }, fmt(T.tam, { n: t.tam })) : null;
   vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj, tam), aviso, tab.caja, acciones, botonAyuda);
+  if (enServicios() && etapas()[P.etapa].dificil && !etapas()[P.etapa - 1]?.dificil) decir(T.avisoDificil, 'ojo');
   tab.pintar(P.parcelas);
   tic(); pintarBotones();
   pieComentario('juego');
