@@ -102,6 +102,11 @@ const asesino = t.cartas.find(c => c.tipo === 'asesino');
 ok(trampa.includes(asesino.w) && trampa.includes(t.pistas[asesino.tienta].pista) && /Caíste/.test(trampa), `explica la trampa: ${trampa}`);
 ok((await ev(`[...document.querySelectorAll('#tablero-fin .carta.asesino .de-pista')].map(x => x.textContent).join()`)).includes(t.pistas[asesino.tienta].pista), 'y bajo el asesino, la pista con que tentaba');
 ok(await ev(`document.querySelectorAll('#tablero-fin .carta').length`) === 15, 'muestra el tablero entero destapado');
+// Plegado por defecto, y los botones del final a la vista sin desplazar (C-8, D-309)
+ok(await ev(`!document.getElementById('repaso-agentes').open`), 'el tablero entero viene plegado');
+ok(await ev(`(()=>{const b=document.getElementById('btn-otro');window.scrollTo(0,0);return b.getBoundingClientRect().bottom <= innerHeight})()`), 'los botones del final se ven sin desplazar');
+await ev(`document.querySelector('#repaso-agentes summary').click(); 1`); await sleep(1800);
+ok(await ev(`document.getElementById('repaso-agentes').open && document.querySelector('#tablero-fin .carta').getBoundingClientRect().height > 0`), 'al tocarlo se abre con las 15 cartas');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
 const otro = await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`);
 ok(/seed=/.test(otro) && !otro.includes(SEMILLA), `"Otro tablero" abre uno nuevo (${otro})`);
