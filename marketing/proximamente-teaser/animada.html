@@ -13,9 +13,7 @@
       radial-gradient(circle at 12% 88%, rgba(46, 230, 214, 0.16), transparent 40%),
       linear-gradient(160deg, #1d0a36, #2a0a4a 55%, #0b1e3f); }
   .p { position: absolute; border-radius: 50%; opacity: 0.35; }
-  #lab { position: absolute; left: 50%; top: 20px; transform: translateX(-50%); font: 900 12px 'Nunito'; letter-spacing: 0.16em;
-    text-transform: uppercase; color: #2ee6d6; border: 1.5px solid rgba(46, 230, 214, 0.6); border-radius: 999px; padding: 4px 12px; white-space: nowrap; }
-  #titulo { position: absolute; left: 0; right: 0; top: 46px; text-align: center; font: 58px/1 'Bangers'; letter-spacing: 0.03em; white-space: nowrap; }
+  #titulo { position: absolute; left: 0; right: 0; top: 34px; text-align: center; font: 62px/1 'Bangers'; letter-spacing: 0.03em; white-space: nowrap; }
   #titulo span { background: linear-gradient(90deg, #ffd23f, #ff6fa8, #2ee6d6, #9dff3a); background-size: 100% 100%;
     -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 3px 0 rgba(0,0,0,0.4)); padding: 0 4px; }
   .esc { position: absolute; left: 105px; top: 122px; width: 330px; height: 330px; transform-origin: 50% 50%; }
@@ -27,7 +25,8 @@
   #pinta .grilla { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(7, 1fr); gap: 5px; }
   .cel { border-radius: 8px; border: 2px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.05);
     display: grid; place-items: center; font: 900 18px 'Nunito'; color: rgba(255,255,255,0.75); }
-  .cel.lleno { border-color: #ff8fa0; background: #ff4d6d; box-shadow: 0 0 10px rgba(255, 77, 109, 0.55); color: transparent; }
+  .cel.lleno { border-color: #ff8fa0; background: #ff3b4f; box-shadow: 0 0 10px rgba(255, 59, 79, 0.55); color: transparent; }
+  .cel.lleno.verde { border-color: #b6f07a; background: #5cc02a; box-shadow: 0 0 10px rgba(92, 192, 42, 0.55); }
   /* Números */
   #nums .grilla { position: absolute; inset: 20px 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; align-content: center; }
   .num { aspect-ratio: 1; border-radius: 10px; border: 3px solid; background: rgba(40, 10, 40, 0.75);
@@ -55,7 +54,6 @@
   <span class="p" style="left:490px;top:260px;width:10px;height:10px;background:#2ee6d6"></span>
   <span class="p" style="left:470px;top:470px;width:6px;height:6px;background:#ff6fa8"></span>
   <span class="p" style="left:60px;top:420px;width:6px;height:6px;background:#9dff3a"></span>
-  <span id="lab"><span style="font-size:15px">🧪</span> Desde el laboratorio</span>
   <div id="titulo"><span>¡Se vienen cositas!</span></div>
 
   <div class="esc" id="rutas"><div class="tablero"><svg viewBox="0 0 300 300" id="rsvg"></svg></div></div>
@@ -107,13 +105,15 @@
   for (const k of [100, 200]) { svg('line', { x1: k, y1: 0, x2: k, y2: 300, stroke: '#1d2333', 'stroke-width': 2.5 }, R); svg('line', { x1: 0, y1: k, x2: 300, y2: k, stroke: '#1d2333', 'stroke-width': 2.5 }, R); }
   const marco = svg('rect', { x: 102, y: 102, width: 96, height: 96, rx: 8, fill: 'rgba(255,210,63,0.12)', stroke: '#ffd23f', 'stroke-width': 4 }, R);
 
-  // ---------- Pintar: un corazón de 7×7; las casillas vacías dicen cuántas pintadas tocan
-  const CORAZON = ['.......', '.XX.XX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'];
+  // ---------- Pintar: dos cerezas en 7×7, rojas con el tallo verde (como en el modo difícil del juego);
+  // las casillas vacías dicen cuántas pintadas tocan
+  const CEREZA = ['...GG..', '..G..G.', '.G...G.', '.R...R.', 'RRR.RRR', 'RRR.RRR', '.R...R.'];
   const PG = $('pgrilla'), PCEL = [];
-  const esX = (r, c) => CORAZON[r]?.[c] === 'X';
+  const esX = (r, c) => /[RG]/.test(CEREZA[r]?.[c] || '');
   for (let r = 0; r < 7; r++) for (let c = 0; c < 7; c++) {
     let n = 0; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) if ((dr || dc) && esX(r + dr, c + dc)) n++;
     const e = document.createElement('div'); e.className = 'cel'; e.textContent = esX(r, c) ? '' : (n ? n : '');
+    if (CEREZA[r][c] === 'G') e.classList.add('verde');
     PG.appendChild(e); PCEL.push({ e, r, c, x: esX(r, c) });
   }
   // El orden en que se pintan: en serpentina, fila por fila
@@ -165,7 +165,6 @@
     const ti = fase(t, 0.05, 0.4);
     $('titulo').style.opacity = clamp(ti * 2);
     $('titulo').style.transform = `scale(${lerp(0.4, 1, back(ti))}) rotate(${(1 - ti) * -6 + Math.sin(t * 3) * 1.2}deg)`;
-    $('lab').style.opacity = clamp(fase(t, 0.3, 0.5));
 
     escena('rutas', t, 0.25, 1.85);
     escena('pinta', t, 1.75, 3.25);
@@ -178,7 +177,7 @@
     giro.setAttribute('transform', `rotate(${180 * (1 - gira)} 200 150)`);
     const listo = fase(t, 1.3, 1.5);
     $('rsvg').style.filter = listo > 0 ? `drop-shadow(0 0 ${8 * Math.sin(Math.PI * listo)}px rgba(255,255,255,0.7)) brightness(${1 + 0.35 * Math.sin(Math.PI * listo)})` : '';
-    // ----- Pintar: el dedo recorre el corazón y cada casilla se pinta al pasar
+    // ----- Pintar: el dedo recorre las cerezas y cada casilla se pinta al pasar
     const pin = fase(t, 2.0, 2.85), cuantas = Math.floor(pin * ORDEN.length + 0.001);
     ORDEN.forEach((p, i) => p.e.classList.toggle('lleno', i < cuantas));
     const latido = fase(t, 2.88, 3.12);
