@@ -415,7 +415,7 @@ export const CAMINOS = {
   /**
    * Los juegos del laboratorio que no son de La Copa se piden por su carpeta: `mirar` abre
    * `/<clave>/` cuando la clave no es un id del registro: la portada del laboratorio, Agentes
-   * (D-286), Pintaminas (D-289), Rutas rotas (D-293) y Números explosivos (D-297).
+   * (D-286), Pintaminas (D-289), Rutas rotas (D-293), Números explosivos (D-297) y Loteo (D-310).
    */
   labs: {
     intro: [],
@@ -436,6 +436,10 @@ export const CAMINOS = {
     juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
   },
   'labs/exploding-numbers': {
+    intro: [],
+    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+  },
+  'labs/plots': {
     intro: [],
     juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
   },
