@@ -48,9 +48,9 @@
   .licono { position: absolute; display: grid; place-items: center; font-size: 44px; line-height: 1; }
   #lmarco { position: absolute; border-radius: 14px; border: 4px solid #ffd23f; background: rgba(255,210,63,0.14); }
   /* El dedo */
-  #dedo { position: absolute; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: rgba(255,255,255,0.32);
+  .dedo { position: absolute; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: rgba(255,255,255,0.32);
     border: 3px solid rgba(255,255,255,0.95); box-shadow: 0 4px 14px rgba(0,0,0,0.45); pointer-events: none; z-index: 5; }
-  #onda { position: absolute; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; border: 3px solid #fff; pointer-events: none; z-index: 5; }
+  .onda { position: absolute; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; border: 3px solid #fff; pointer-events: none; z-index: 5; }
   /* El final */
   #pronto { position: absolute; left: 0; right: 0; top: 402px; text-align: center; font: 64px/1 'Bangers'; letter-spacing: 0.06em; color: #ffd23f;
     text-shadow: 0 4px 0 rgba(0,0,0,0.4), 0 0 24px rgba(255, 210, 63, 0.45); }
@@ -74,7 +74,6 @@
     <div class="baldosa" id="b-lote"><div class="esc" id="lote"><div class="tablero" id="ltablero"></div></div></div>
   </div>
 
-  <div id="dedo"></div><div id="onda"></div>
   <div id="pronto">Próximamente</div>
   <p id="pie">juegosdesalon.cl<small>Juegos de Salón</small></p>
   <div id="negro"></div>
@@ -151,12 +150,18 @@
     return { d, ch };
   });
 
-  const dedo = $('dedo'), onda = $('onda');
-  const ponerDedo = (x, y, vis, toque) => {
-    dedo.style.left = x + 'px'; dedo.style.top = y + 'px'; dedo.style.opacity = vis;
-    dedo.style.transform = `scale(${toque ? 0.82 : 1})`;
+  // Un dedo por juego (v2): las jugadas se encadenan y a ratos van dos a la vez
+  const DEDOS = {};
+  for (const id of ['rutas', 'pinta', 'nums', 'lote']) {
+    const d = document.createElement('div'), o = document.createElement('div');
+    d.className = 'dedo'; o.className = 'onda'; $('t').append(d, o); DEDOS[id] = { d, o };
+  }
+  const ponerDedo = (id, x, y, vis, toque) => {
+    const { d } = DEDOS[id];
+    d.style.left = x + 'px'; d.style.top = y + 'px'; d.style.opacity = vis;
+    d.style.transform = `scale(${toque ? 0.82 : 1})`;
   };
-  const ponerOnda = (x, y, k) => { onda.style.left = x + 'px'; onda.style.top = y + 'px'; onda.style.opacity = k > 0 && k < 1 ? 1 - k : 0; onda.style.transform = `scale(${1 + 1.4 * k})`; };
+  const ponerOnda = (id, x, y, k) => { const { o } = DEDOS[id]; o.style.left = x + 'px'; o.style.top = y + 'px'; o.style.opacity = k > 0 && k < 1 ? 1 - k : 0; o.style.transform = `scale(${1 + 1.4 * k})`; };
 
   // ---------- Loteo · Servicios: un 4×4 en lotes de 4; tres ya puestos y el dedo dibuja el último (2×2)
   const LT = $('ltablero'), LADO_L = 4, PASO = 330 / LADO_L, MARGEN = 6;
@@ -175,9 +180,11 @@
   // ---------- La grilla de 2×2: cada juego en su baldosa (196 px; el tablero mide 330 y se achica)
   const BAL = 196, ESC = BAL / 330;
   const BALDOSA = { rutas: [0, 0], pinta: [210, 0], nums: [0, 210], lote: [210, 210] };
-  // El turno de cada uno: cuándo está iluminado, y cuánto se corre su reloj para que su jugada caiga ahí
-  const TURNO = { rutas: [0.4, 1.55, 0], pinta: [1.55, 2.68, 0.42], nums: [2.68, 3.95, 0.58], lote: [3.95, 4.85, 0] };
-  const FINAL = 4.85;
+  // Entrelazado (pedido del dueño): cada baldosa aparece justo antes de su jugada, y la siguiente
+  // aparece mientras la anterior todavía juega; así los cuatro quedan a la vista, terminados, desde
+  // los 3,5 s. Cada uno: [aparece, empieza su jugada, termina, cuánto se corre su reloj]
+  const TURNO = { rutas: [0.15, 0.42, 1.5, 0], pinta: [0.85, 1.12, 2.3, 0.85], nums: [1.55, 1.85, 2.9, 1.43], lote: [2.25, 2.55, 3.45, 0] };
+  const FINAL = 4.6;
   for (const id in BALDOSA) {
     const [x, y] = BALDOSA[id];
     $('b-' + id).style.left = x + 'px'; $('b-' + id).style.top = y + 'px';
@@ -204,18 +211,19 @@
     const fin = fase(t, FINAL, FINAL + 0.35);
     G = lerp(1, 0.69, out(fin));
     $('grilla4').style.transform = `scale(${G})`;
-    Object.keys(BALDOSA).forEach((id, k) => {
-      const [a, b] = TURNO[id];
-      const entra = out(fase(t, 0.12 + 0.07 * k, 0.4 + 0.07 * k));
-      const luz = t >= FINAL ? 1 : clamp(Math.min(fase(t, a - 0.12, a + 0.05), 1 - fase(t, b - 0.08, b + 0.08)));
-      const z = 1 + 0.07 * luz * (t < FINAL ? 1 : 1 - fin);
+    Object.keys(BALDOSA).forEach(id => {
+      const [ap, a, b] = TURNO[id];
+      const entra = fase(t, ap, ap + 0.3);
+      // Mientras juega crece un poco; cuando termina, queda a la vista con los otros
+      const luz = clamp(Math.min(fase(t, a - 0.1, a + 0.05), 1 - fase(t, b - 0.05, b + 0.15)));
+      const z = 1 + 0.06 * luz;
       LUZ[id] = z;
       const e = $('b-' + id);
-      e.style.opacity = entra * (t >= FINAL ? lerp(0.45, 1, out(fin)) : lerp(0.45, 1, luz));
-      e.style.transform = `scale(${lerp(0.7, 1, entra) * z})`;
+      e.style.opacity = clamp(entra * 2.5);
+      e.style.transform = `scale(${lerp(0.55, 1, back(entra)) * z})`;
       e.style.zIndex = luz > 0.5 ? 2 : 1;
     });
-    const tP = t + TURNO.pinta[2], tN = t + TURNO.nums[2];
+    const tP = t + TURNO.pinta[3], tN = t + TURNO.nums[3];
 
     // ----- Rutas: el dedo arrastra del centro a la derecha, el rectángulo da media vuelta y todo calza
     const sel = fase(t, 0.55, 0.85), gira = inout(fase(t, 0.92, 1.3));
@@ -251,7 +259,7 @@
     const tiembla = Math.max(...PARES.map(p => tN >= p.tb + 0.02 ? 1 - fase(tN, p.tb + 0.02, p.tb + 0.25) : 0));
     $('ngrilla').style.transform = tiembla > 0 && t < FINAL ? `translate(${Math.sin(t * 90) * 5 * tiembla}px, ${Math.cos(t * 70) * 4 * tiembla}px)` : '';
     // ----- Loteo: el dedo arrastra de una esquina a la otra del lote que falta; se pinta y el tablero brilla
-    const LA = 4.08, LB = 4.45, arr = inout(fase(t, LA, LB));
+    const LA = 2.65, LB = 3.0, arr = inout(fase(t, LA, LB));
     const pintado = t >= LB + 0.05;
     LDIV.forEach((e, i) => { e.style.opacity = i < 3 ? 1 : (pintado ? out(fase(t, LB + 0.05, LB + 0.25)) : 0); e.style.transform = i === 3 && pintado ? `scale(${1 + 0.12 * Math.sin(Math.PI * fase(t, LB + 0.05, LB + 0.3))})` : ''; });
     // El marco crece con el dedo, de la primera casilla al lote entero
@@ -260,35 +268,30 @@
     const brillo = fase(t, LB + 0.15, LB + 0.45);
     LT.style.filter = brillo > 0 && brillo < 1 ? `drop-shadow(0 0 ${10 * Math.sin(Math.PI * brillo)}px rgba(255,255,255,0.7)) brightness(${1 + 0.3 * Math.sin(Math.PI * brillo)})` : '';
 
-    // ----- El dedo, en las coordenadas del tablero del turno y llevado a la página
-    let dv = 0, punto = null, tq = false, ondaEn = null, kOnda = 0;
+    // ----- Los dedos, en las coordenadas de su tablero y llevados a la página
+    const dedo = (id, vis, x, y, toque, onda) => {
+      if (vis > 0) { const [px, py] = aPagina(id, x, y); ponerDedo(id, px, py, vis, toque); } else ponerDedo(id, 0, 0, 0, false);
+      if (onda && onda[2] > 0) { const [px, py] = aPagina(id, onda[0], onda[1]); ponerOnda(id, px, py, onda[2]); } else ponerOnda(id, 0, 0, 0);
+    };
     const [c4x, c4y] = [105 + 165, 122 + 165], [c5x] = [105 + 275];
-    if (t >= 0.42 && t < 1.05) {
-      dv = clamp(fase(t, 0.42, 0.5)) * (1 - fase(t, 0.95, 1.05));
-      punto = ['rutas', lerp(c4x, c5x, out(sel)), c4y]; tq = t > 0.52 && t < 0.9; ondaEn = ['rutas', c4x, c4y]; kOnda = fase(t, 0.52, 0.8);
-    } else if (tP >= 1.92 && tP < 2.98) {
-      dv = clamp(fase(tP, 1.92, 2.0)) * (1 - fase(tP, 2.88, 2.98));
+    if (t >= 0.42 && t < 1.05) dedo('rutas', clamp(fase(t, 0.42, 0.5)) * (1 - fase(t, 0.95, 1.05)), lerp(c4x, c5x, out(sel)), c4y, t > 0.52 && t < 0.9, [c4x, c4y, fase(t, 0.52, 0.8)]);
+    else dedo('rutas', 0);
+    if (tP >= 1.92 && tP < 2.98) {
       const idx = Math.min(ORDEN.length - 1, Math.max(0, pin * ORDEN.length - 0.5)), i0 = Math.floor(idx), f = idx - i0;
       const a = celCentro(ORDEN[i0].r, ORDEN[i0].c), b = celCentro(ORDEN[Math.min(i0 + 1, ORDEN.length - 1)].r, ORDEN[Math.min(i0 + 1, ORDEN.length - 1)].c);
-      punto = ['pinta', lerp(a[0], b[0], f), lerp(a[1], b[1], f)]; tq = tP > 2.0 && tP < 2.86;
-      ondaEn = ['pinta', ...celCentro(ORDEN[0].r, ORDEN[0].c)]; kOnda = fase(tP, 2.0, 2.25);
-    } else if (tN >= 3.28 && tN < 4.3) {
-      dv = clamp(fase(tN, 3.28, 3.34)) * (1 - fase(tN, 4.18, 4.3));
+      dedo('pinta', clamp(fase(tP, 1.92, 2.0)) * (1 - fase(tP, 2.88, 2.98)), lerp(a[0], b[0], f), lerp(a[1], b[1], f), tP > 2.0 && tP < 2.86, [...celCentro(ORDEN[0].r, ORDEN[0].c), fase(tP, 2.0, 2.25)]);
+    } else dedo('pinta', 0);
+    if (tN >= 3.28 && tN < 4.3) {
       const pts = [[3.28, ...nCentro(1, 1)], [3.38, ...nCentro(1, 1)], [3.5, ...nCentro(1, 2)], [3.58, ...nCentro(1, 2)], [3.8, ...nCentro(2, 2)], [3.92, ...nCentro(2, 2)], [4.02, ...nCentro(3, 2)], [4.3, ...nCentro(3, 2)]];
       let x = pts[0][1], y = pts[0][2];
       for (let i = 0; i < pts.length - 1; i++) if (tN >= pts[i][0] && tN <= pts[i + 1][0]) { const k = inout(fase(tN, pts[i][0], pts[i + 1][0])); x = lerp(pts[i][1], pts[i + 1][1], k); y = lerp(pts[i][2], pts[i + 1][2], k); }
-      punto = ['nums', x, y];
       const toque = PARES.flatMap(p => [p.ta, p.tb]).find(v => tN >= v && tN < v + 0.25);
-      tq = toque !== undefined && tN < toque + 0.1;
-      if (toque !== undefined) { ondaEn = ['nums', x, y]; kOnda = fase(tN, toque, toque + 0.25); }
-    } else if (t >= 3.98 && t < LB + 0.25) {
-      dv = clamp(fase(t, 3.98, 4.05)) * (1 - fase(t, LB + 0.1, LB + 0.25));
+      dedo('nums', clamp(fase(tN, 3.28, 3.34)) * (1 - fase(tN, 4.18, 4.3)), x, y, toque !== undefined && tN < toque + 0.1, toque !== undefined ? [x, y, fase(tN, toque, toque + 0.25)] : null);
+    } else dedo('nums', 0);
+    if (t >= LA - 0.1 && t < LB + 0.25) {
       const [ax, ay] = lCentro(2, 1), [bx, by] = lCentro(3, 2);
-      punto = ['lote', lerp(ax, bx, arr), lerp(ay, by, arr)]; tq = t > LA && t < LB;
-      ondaEn = ['lote', ax, ay]; kOnda = fase(t, LA, LA + 0.25);
-    }
-    if (punto) { const [x, y] = aPagina(...punto); ponerDedo(x, y, dv, tq); } else ponerDedo(0, 0, 0, false);
-    if (ondaEn && kOnda > 0) { const [x, y] = aPagina(...ondaEn); ponerOnda(x, y, kOnda); } else ponerOnda(0, 0, 0);
+      dedo('lote', clamp(fase(t, LA - 0.1, LA - 0.03)) * (1 - fase(t, LB + 0.1, LB + 0.25)), lerp(ax, bx, arr), lerp(ay, by, arr), t > LA && t < LB, [ax, ay, fase(t, LA, LA + 0.25)]);
+    } else dedo('lote', 0);
 
     // ----- El final: los cuatro encendidos, "Próximamente" y el sitio
     const pr = fase(t, FINAL + 0.15, FINAL + 0.4);
