@@ -62,7 +62,7 @@
       "fecha": "2026-10-13",
       "desde": "d667443d855d1ed64b21243ccee903d06e2a7a12",
       "hasta": "68ecbf15bfb4afe794dfeb2ed4664765f40f8994",
-      "pr": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/388",
       "pendientes": [
         "Capturas de los juegos (cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa) marcadas viejas solo por CSS del formulario de comentarios (D-306) y 'Jugar hoy' (D-305), que no salen en ellas: no se rehicieron"
       ]
