@@ -214,6 +214,48 @@
           "No cuenta lo de los espías (D-288): la portada del juego y su ficha en el laboratorio abren con 'Cada palabra es el nombre en clave de un espía'. Menor: la tarjeta igual invita a buscar 'a tus agentes'."
         ]
       }
+    },
+    {
+      "id": "se-vienen-cositas",
+      "tipo": "video",
+      "titulo": "Se vienen cositas (adelanto del laboratorio)",
+      "carpeta": "marketing/proximamente-teaser/",
+      "memoria": "marketing/proximamente-teaser/README.md",
+      "version": 1,
+      "fecha": "2026-10-13",
+      "idioma": "es",
+      "app": "0.168.10",
+      "archivos": [
+        {
+          "ruta": "marketing/proximamente-teaser/output/se-vienen-cositas-6s.mp4",
+          "formato": "1:1",
+          "ancho": 1080,
+          "alto": 1080,
+          "segundos": 6,
+          "uso": "WhatsApp, estados, redes"
+        },
+        {
+          "ruta": "marketing/proximamente-teaser/output/se-vienen-cositas-6s.gif",
+          "formato": "1:1",
+          "ancho": 540,
+          "alto": 540,
+          "segundos": 6,
+          "uso": "GIF para WhatsApp"
+        }
+      ],
+      "fuente": "marketing/proximamente-teaser/animada.html",
+      "construir": "marketing/proximamente-teaser/construir-video.mjs",
+      "juegos": [
+        "rutas",
+        "pintaminas",
+        "numeros-explosivos"
+      ],
+      "seleccion": true,
+      "laboratorio": [
+        "rutas",
+        "pintaminas",
+        "numeros-explosivos"
+      ]
     }
   ]
 }
