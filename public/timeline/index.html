@@ -111,7 +111,7 @@
       <div class="score" id="score"></div>
       <div class="hand-title"><b id="hand-title"></b><small id="pool-left"></small></div>
       <div class="hand" id="hand"></div>
-      <div class="line-wrap" id="line-wrap"><div class="line" id="line"></div></div>
+      <div class="line-wrap" id="line-wrap" data-tablero="linea"><div class="line" id="line"></div></div>
       <div class="place-row" id="place-row"></div>
     </section>
 
@@ -130,15 +130,15 @@
         <p class="muted" id="sr-record"></p>
         <div class="tarjeta" id="sr-tarjeta"></div>
       </div>
-      <details class="panel replay" id="sr-replay"><summary data-i18n="finalLine"></summary><div class="line" id="sr-line"></div></details>
+      <details class="panel replay" id="sr-replay" data-tablero="repaso"><summary data-i18n="finalLine"></summary><div class="line" id="sr-line"></div></details>
       <div class="stack" id="sr-actions"></div>
     </section>
 
     <section class="screen" id="screen-result">
       <div class="result-hero"><span class="trophy" id="result-trophy">🏆</span><h2 class="display display--lg" id="result-title"></h2><p class="lead" id="result-sub"></p><p class="muted" id="result-note" hidden></p></div>
       <div class="panel"><p class="lead center" style="margin-bottom:4px" data-i18n="ranking"></p><ol class="ranking" id="result-ranking"></ol></div>
-      <details class="panel replay" id="result-replay"><summary data-i18n="finalLine"></summary><div class="line" id="result-line"></div></details>
-      <div class="stack" style="margin-top:14px" id="result-actions"></div>
+      <details class="panel replay" id="result-replay" data-tablero="repaso"><summary data-i18n="finalLine"></summary><div class="line" id="result-line"></div></details>
+      <div class="stack" id="result-actions"></div>
     </section>
   </main>
 

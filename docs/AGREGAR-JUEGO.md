@@ -24,7 +24,8 @@
    `createNameStore(GAME_ID)`, de `public/assets/js/session.js` (C-6).
 6. **Los módulos compartidos**, nunca uno propio: `handoff.js` para pasar el celular (C-9),
    `compartir.js` para todo lo que se comparte (C-7), `chat.js` en los modos de varios celulares
-   (C-15), `sound.js` (C-4) y `arrastre.js` si hay arrastre (C-8).
+   (C-15), `sound.js` (C-4) y `arrastre.js` si hay arrastre (C-8). El tablero lleva
+   `data-tablero`: así queda con el aire de todos hasta sus botones (D-309).
 7. **La señal para el panel** (C-7, D-210): en los modos sin red, `trackStart({ game, mode, players })`
    al empezar y `trackFinish({ ganador, empate, detalle })` al terminar, de
    `public/assets/js/transport/stats.js`. Las salas las apunta el transporte. Y en su `index.html`,

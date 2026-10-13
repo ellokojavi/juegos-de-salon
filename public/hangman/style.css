@@ -245,7 +245,8 @@
 .words .w .who { color: var(--muted); font-size: 0.75rem; font-weight: 800; display: block; text-transform: uppercase; letter-spacing: 0.06em; }
 .words .w .ver { font-size: 0.75rem; font-weight: 800; color: var(--lime); white-space: nowrap; }
 .words .w .ver.bad { color: var(--pink); }
-#screen-result .stack { margin-top: 12px !important; }
+/* El aire con lo de arriba lo da el repaso o el panel marcado con data-tablero (D-309) */
+#screen-result #result-actions { margin-top: 0; }
 
 /* ---------- Sala ---------- */
 .field input.code { text-transform: uppercase; letter-spacing: 0.4em; text-align: center; font-family: var(--font-display); font-size: 2rem; }
@@ -271,3 +272,6 @@ body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bo
 /* #chat cuelga del body y no de .app, así que no es hermano de las pantallas: se pregunta por
    la que está activa. Si un navegador no entiende :has(), la burbuja se queda abajo como siempre. */
 body:has(#screen-play.active #keyboard:not([hidden])) .chat-fab { bottom: auto; top: 32%; }
+
+/* La barra de confirmar ya separa 12 px (padding-top): el resto del aire lo pone el tablero (D-309) */
+#keyboard { --aire-ya: 12px; }

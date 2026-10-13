@@ -67,7 +67,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
-| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283 |
+| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
@@ -5654,6 +5654,31 @@ distintos con el mismo contenido).
 **Consecuencias:** publicar tarda ~2 min cuando el árbol ya pasó (lo de antes de D-302) y ~8 cuando
 no. Una marca dura 7 días: un PR que se fusiona más tarde sin volver a correr la punta a punta la
 corre en `main`. `ya-probado.test.mjs` prueba la decisión, y que una marca de un fork no vale.
+
+## D-309 · Aire entre el tablero y sus botones, igual en todos los juegos
+**Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** completa U-11 (que pedía botones "con aire" sin decir cuánto) y C-8
+**Contexto:** en Agentes, el tablero final quedaba a 10 px de "Compartir mi resultado". El
+inventario de los juegos mostró lo mismo en otros diez (Caso, Tango, Zip, Desenredar, la línea de
+Línea de Tiempo, Generala, el mar de Batalla Naval, y los repasos de las pantallas de resultado), y
+otros entre 13 y 26 px: cada juego había resuelto la separación por su cuenta, con márgenes
+sueltos, y nada lo verificaba.
+**Decisión:** todo tablero de juego —y el bloque que resume la partida en un resultado (un
+repaso, el podio, las palabras)— lleva `data-tablero`, y `base.css` le da `--aire-tablero`
+(**28 px**) hasta lo que viene debajo, y gana sobre el margen propio del juego (`!important`). Lo
+que ya separa se descuenta: el gap del contenedor (`--gap-contenedor`; el `.stack`, 12 px) y el
+relleno de la barra de botones de abajo (`--aire-ya`, que el juego declara en su tablero: 10 px en
+Línea de Tiempo, Batalla Naval y Generala, 12 en el Ahorcado, 20 en el Julepe). Uno dentro de otro no
+suma. Los márgenes sueltos que hacían lo mismo (`margin-top: 14px` en
+`#result-actions`, `margin-top: 12px !important`) salen. Lo verifica `tools/e2e/aire-comun.mjs`:
+**cada captura de cualquier guion** mide la distancia del tablero al primer botón de abajo y marca
+✗ si es menos de 24 px, y `mirar.mjs` la informa en cada pantalla.
+**Por qué:** pedido del dueño: "da un poco de aire entre el tablero de juego y los botones… que se
+convierta en algo estándar".
+**Alternativas descartadas:** arreglar cada juego con su margen (es lo que había y se desordenó);
+un guion con caminos a cada pantalla (las capturas de los guiones de partida ya pasan por todas, y
+uno nuevo se vigila solo).
+**Consecuencias:** un juego nuevo marca su tablero con `data-tablero` (C-8) y queda con el mismo aire;
+si un botón queda pegado, su guion sale en rojo.
 
 ## D-310 · Loteo: prototipo del laboratorio, inspirado en Shikaku
 **Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** como D-289 (Pintaminas), D-293 (Rutas rotas) y D-297 (Números explosivos)
