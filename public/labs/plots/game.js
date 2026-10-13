@@ -29,9 +29,9 @@ const T = {
   lema: 'Cada número es un lote: dibújalo del tamaño justo.',
   hoy: 'El tablero de hoy es el mismo para todos.',
   como: [
-    ['🧱', 'Divide el tablero en rectángulos, cada uno con un solo número.'],
-    ['🔢', 'El número es cuántas casillas tiene: un 6 puede ser de 2×3 o de 1×6.'],
-    ['👆', `Arrastra de una esquina a otra para dibujarlo; tócalo para borrarlo. Son ${ETAPAS.length} tableros contra el reloj.`],
+    ['🧱', 'Divide el tablero en lotes: rectángulos con un solo número cada uno.'],
+    ['🔢', 'El número dice cuántas casillas tiene su lote: un 6 puede ser de 2×3 o de 1×6.'],
+    ['👆', `Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son ${ETAPAS.length} tableros contra el reloj.`],
   ],
   empezar: '🧱 Empezar', aJugar: '¡A lotear!',
   etapa: 'Tablero {n} de {t}', etapaLista: '🧱 ¡Tablero {n} listo!',
@@ -39,10 +39,10 @@ const T = {
   medida: '{w}×{h} = {a}',
   no: {
     'sin-numero': 'Ese rectángulo no tiene número.',
-    'dos-numeros': 'Tiene {k} números: cada uno va en su propio rectángulo.',
-    area: 'El {n} pide {n} casillas; ese tiene {a}.',
+    'dos-numeros': 'Tiene {k} números: cada uno va en su propio lote.',
+    area: 'El {n} pide {n} {casillas}; ese tiene {a}.',
   },
-  arrastra: 'Arrastra de una esquina a otra para dibujar un rectángulo.',
+  arrastra: 'Arrastra de una esquina a otra para dibujar un lote.',
   borrado: 'Lote borrado.',
   deshacer: '↩ Deshacer', deshecho: 'Deshiciste la última jugada.',
   ayuda: '💡 Ayuda (−{pts})', ayudaSeguro: 'Toca de nuevo (−{pts})', ayudaDice: '💡 Ese lote va así.',
@@ -304,7 +304,7 @@ function jugar() {
       if (!v.ok) {
         SFX.error(); vibrate([40, 30, 40]);
         tab.rechazar(r);
-        decir(fmt(T.no[v.motivo], { k: v.cuantos, n: v.n, a: v.area }), 'mal');
+        decir(fmt(T.no[v.motivo], { k: v.cuantos, n: v.n, a: v.area, casillas: v.n === 1 ? 'casilla' : 'casillas' }), 'mal');
         return;
       }
       SFX.flip(); vibrate(15);

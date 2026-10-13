@@ -62,11 +62,11 @@ await dibujar(sinNumero); await sleep(60);
 ok(await ev(`document.querySelector('#tablero .seleccion').classList.contains('mal')`) && await aviso() === 'Ese rectángulo no tiene número.', `uno sin número tiembla en rojo y lo dice (${await aviso()})`);
 ok(await lotes() === 0, 'y no se pinta');
 await dibujar({ f1: 0, c1: 0, f2: L - 1, c2: L - 1 }); await sleep(60);
-ok(/^Tiene \d+ números: cada uno va en su propio rectángulo\.$/.test(await aviso()), `uno con varios números lo dice (${await aviso()})`);
+ok(/^Tiene \d+ números: cada uno va en su propio lote\.$/.test(await aviso()), `uno con varios números lo dice (${await aviso()})`);
 const malArea = todos.find(r => validar(t, r).motivo === 'area');
 const v = validar(t, malArea);
 await dibujar(malArea); await sleep(60);
-ok(await aviso() === `El ${v.n} pide ${v.n} casillas; ese tiene ${v.area}.`, `uno del área equivocada dice cuántas pide (${await aviso()})`);
+ok(await aviso() === `El ${v.n} pide ${v.n} ${v.n === 1 ? 'casilla' : 'casillas'}; ese tiene ${v.area}.`, `uno del área equivocada dice cuántas pide (${await aviso()})`);
 
 // Uno que vale se pinta; tocarlo lo borra
 const [s0] = t.solucion;
