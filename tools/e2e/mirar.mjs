@@ -10,7 +10,8 @@
  *   node tools/e2e/mirar.mjs linea-de-tiempo intro --idioma pt
  *
  * Saca la captura y, además, revisa lo que el canon pide mirar en cada pantalla (C-8):
- * que no haya scroll horizontal y que ningún botón quede por debajo de 44 px.
+ * que no haya scroll horizontal y que ningún botón quede por debajo de 44 px; y que el tablero
+ * tenga aire antes de sus botones (D-309, U-11).
  *
  * Nació de escribir ocho guiones descartables en /tmp para revisar una barra de botones.
  * Para probar que el juego funciona están los guiones de partida; esto es para mirar.
@@ -19,6 +20,7 @@ import { launch, sleep } from './cdp.mjs';
 import { EN_LABS, LABS_KEY } from '../../public/assets/js/i18n.js';
 import { gameById } from '../../public/assets/js/games.js';
 import { CAMINOS } from './caminos.mjs';
+import { medirAire, sinAire, AIRE_MIN } from './aire-comun.mjs';
 
 const args = process.argv.slice(2);
 const pos = args.filter(a => !a.startsWith('--'));
@@ -69,7 +71,9 @@ for (const paso of camino) { await b.evaluate(`(()=>{ ${paso} ; return 1})()`); 
 await sleep(400);
 
 const revision = await b.evaluate(`(()=>{
-  const chicos = [...document.querySelectorAll('.screen.active button, .confirm button')]
+  // Los juegos del laboratorio y de La Copa sueltos no tienen .screen: ahí se mira la página entera
+  const pant = document.querySelector('.screen') ? '.screen.active' : 'body';
+  const chicos = [...document.querySelectorAll(pant + ' button, .confirm button')]
     .filter(x => x.offsetParent !== null && x.getBoundingClientRect().height < 44)
     .map(x => (x.textContent || x.className).trim().slice(0, 18));
   return JSON.stringify({
@@ -88,11 +92,13 @@ const revision = await b.evaluate(`(()=>{
       try { return [...hoja.cssRules].some(r => (r.selectorText || '').includes('.app') && (r.style?.minHeight || '').includes('svh')); }
       catch { return false; }
     }),
-    fueraAbajo: [...new Set([...document.querySelectorAll('.screen.active .btn:not([aria-hidden="true"]), .confirm .btn')]
+    fueraAbajo: [...new Set([...document.querySelectorAll(pant + ' .btn:not([aria-hidden="true"]), .confirm .btn')]
       .filter(x => x.offsetParent !== null && x.getBoundingClientRect().bottom > innerHeight)
       .map(x => (x.textContent || x.className).trim().slice(0, 18)))],
   });
 })()`).then(JSON.parse);
+
+const aire = JSON.parse(await b.evaluate(medirAire));
 
 // Por si un día una entrada lleva una barra: la captura queda plana
 const nombre = `${juego.replace(/\//g, "-")}-${pantalla}-${ancho}`;
@@ -101,6 +107,7 @@ console.log(`${salida}/${nombre}.png · ${ancho}×${alto} · ${idioma}`);
 console.log(`  pantalla: ${revision.pantalla}`);
 console.log(`  scroll horizontal (C-8): ${revision.scrollHorizontal ? '⚠️  SÍ' : 'no'}`);
 console.log(`  botones bajo 44 px (C-8): ${revision.botonesChicos.length ? '⚠️  ' + revision.botonesChicos.join(', ') : 'ninguno'}`);
+console.log(`  aire tablero → botones (U-11, ${AIRE_MIN} px o más): ${!aire.length ? 'sin tablero marcado' : sinAire(aire).length ? '⚠️  ' + sinAire(aire).join(', ') : aire.map(f => `${f.aire} px`).join(', ')}`);
 console.log(`  la página se pasa del alto: ${revision.sobra > 0 ? `⚠️  ${revision.sobra} px` : 'no'}${muescas ? ' (con muescas)' : ''}`);
 console.log(`  botones fuera de pantalla: ${revision.fueraAbajo.length ? '⚠️  ' + revision.fueraAbajo.join(', ') : 'ninguno'}`);
 console.log(`  se arma con el alto chico (svh): ${revision.midePorElAltoChico ? 'sí' : '⚠️  NO (usa dvh: lo que se apoya abajo se va fuera en un celular)'}`);

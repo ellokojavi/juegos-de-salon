@@ -205,3 +205,6 @@
    cartas que tirar, que es cuando esa esquina es del juego (C-15, C-8). */
 body.chat-on #screen-play, body.chat-on #screen-lobby, body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
 body:has(#screen-play.active) .chat-fab { bottom: calc(112px + env(safe-area-inset-bottom, 0px)); }
+
+/* La barra de acciones ya separa 20 px (margin y padding): el resto del aire lo pone la mano (D-309) */
+#mine { --aire-ya: 20px; }

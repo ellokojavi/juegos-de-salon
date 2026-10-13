@@ -120,15 +120,15 @@
       <div class="seats" id="seats"></div>
       <div class="status"><div class="who" id="status-who"></div><div class="sub" id="status-sub"></div></div>
       <div class="trick" id="trick"></div>
-      <div class="mine" id="mine"></div>
+      <div class="mine" id="mine" data-tablero="mano"></div>
       <div class="actions-bar" id="actions"></div>
     </section>
 
     <!-- RESULTADO -->
     <section class="screen" id="screen-result">
       <div class="result-hero"><span class="trophy" id="result-trophy">🏆</span><h2 class="display display--lg" id="result-title"></h2><p class="lead" id="result-sub"></p></div>
-      <div class="panel" id="result-board"></div>
-      <div class="stack" style="margin-top:14px" id="result-actions"></div>
+      <div class="panel" id="result-board" data-tablero="resultado"></div>
+      <div class="stack" id="result-actions"></div>
       <details class="panel replay" id="result-history">
         <summary data-i18n="historyTitle">🍹 Mano por mano</summary>
         <ol class="hist" id="history-list"></ol>

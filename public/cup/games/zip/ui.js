@@ -63,7 +63,7 @@ export function montar(raiz, ctx) {
   const caja = el('div', { class: 'stack zip-juego' });
   const cabeza = el('div', { class: 'zip-cabeza' });
   const aviso = el('div', { class: 'stack zip-aviso' });
-  const grilla = el('div', { class: 'zip-grid' });
+  const grilla = el('div', { class: 'zip-grid', 'data-tablero': 'zip' });
   // Borrar todo, igual que en Tango: el primer toque lo arma y el segundo borra
   let armado = false, armadoTimer = null;
   const desarmar = () => { armado = false; clearTimeout(armadoTimer); };
