@@ -71,7 +71,9 @@ for (const paso of camino) { await b.evaluate(`(()=>{ ${paso} ; return 1})()`); 
 await sleep(400);
 
 const revision = await b.evaluate(`(()=>{
-  const chicos = [...document.querySelectorAll('.screen.active button, .confirm button')]
+  // Los juegos del laboratorio y de La Copa sueltos no tienen .screen: ahí se mira la página entera
+  const pant = document.querySelector('.screen') ? '.screen.active' : 'body';
+  const chicos = [...document.querySelectorAll(pant + ' button, .confirm button')]
     .filter(x => x.offsetParent !== null && x.getBoundingClientRect().height < 44)
     .map(x => (x.textContent || x.className).trim().slice(0, 18));
   return JSON.stringify({
@@ -90,7 +92,7 @@ const revision = await b.evaluate(`(()=>{
       try { return [...hoja.cssRules].some(r => (r.selectorText || '').includes('.app') && (r.style?.minHeight || '').includes('svh')); }
       catch { return false; }
     }),
-    fueraAbajo: [...new Set([...document.querySelectorAll('.screen.active .btn:not([aria-hidden="true"]), .confirm .btn')]
+    fueraAbajo: [...new Set([...document.querySelectorAll(pant + ' .btn:not([aria-hidden="true"]), .confirm .btn')]
       .filter(x => x.offsetParent !== null && x.getBoundingClientRect().bottom > innerHeight)
       .map(x => (x.textContent || x.className).trim().slice(0, 18)))],
   });
