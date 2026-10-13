@@ -104,7 +104,11 @@
           "commit": "68ecbf1"
         }
       ],
-      "mecanismo": null
+      "mecanismo": {
+        "fecha": "2026-10-13",
+        "que": "readme.py revisar vuelve a comparar el árbol de Layout con la raíz del repo (test en readme.test.py)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/390"
+      }
     },
     {
       "clave": "portada-atrasada",
@@ -167,6 +171,12 @@
       "clave": "conflicto-changelog-decision",
       "que": "CHANGELOG por archivo (D-300), reserva de D-n y driver de DECISIONES.md (D-301)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-13",
+      "clave": "readme-hechos-atrasado",
+      "que": "readme.py revisar vuelve a comparar el árbol de Layout con la raíz del repo (test en readme.test.py)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/390"
     }
   ],
   "colaHecha": [],
@@ -196,6 +206,14 @@
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/387",
       "pr": null,
       "nota": "Despachados documentación (#388) y usabilidad (#389), revisados. Cola #321:3 y juntar CHANGELOG bloqueados por el permiso automático."
+    },
+    {
+      "fecha": "2026-10-13",
+      "desde": "68ecbf1",
+      "hasta": "68ecbf1",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/390",
+      "nota": null
     }
   ],
   "decisionesDelDueno": [
