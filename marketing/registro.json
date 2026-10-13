@@ -233,14 +233,6 @@
           "alto": 1080,
           "segundos": 6,
           "uso": "WhatsApp, estados, redes"
-        },
-        {
-          "ruta": "marketing/proximamente-teaser/output/se-vienen-cositas-6s.gif",
-          "formato": "1:1",
-          "ancho": 540,
-          "alto": 540,
-          "segundos": 6,
-          "uso": "GIF para WhatsApp"
         }
       ],
       "fuente": "marketing/proximamente-teaser/animada.html",

@@ -1,6 +1,6 @@
 // "Se vienen cositas": dibuja animada.html cuadro a cuadro con Chrome (render(t) es determinista) y arma
-// con ffmpeg el MP4 (1080×1080, sin audio) y el GIF para WhatsApp.
-//   node marketing/proximamente-teaser/construir-video.mjs              # los dos archivos de output/
+// con ffmpeg el MP4 (1080×1080, sin audio). El GIF lo hace el dueño.
+//   node marketing/proximamente-teaser/construir-video.mjs              # el MP4 de output/
 //   node marketing/proximamente-teaser/construir-video.mjs --fotos 1.2,2.5   # cuadros sueltos, para mirar
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, copyFileSync } from 'node:fs';
@@ -27,11 +27,7 @@ if (fotos) {
   console.log(fotos.map(t => join(tmpdir(), `pronto-${t}.png`)).join('\n'));
   process.exit(0);
 }
-const mp4 = join(AQUI, 'output', 'se-vienen-cositas-6s.mp4'), gif = join(AQUI, 'output', 'se-vienen-cositas-6s.gif');
+const mp4 = join(AQUI, 'output', 'se-vienen-cositas-6s.mp4');
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', `${tmp}/f%04d.png`,
   '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', mp4]);
-// El GIF: 540 px, 15 cuadros por segundo, en bucle
-execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', mp4, '-vf',
-  'fps=15,scale=540:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=4',
-  '-loop', '0', gif]);
-console.log(`✓ ${mp4}\n✓ ${gif}`);
+console.log(`✓ ${mp4}`);
