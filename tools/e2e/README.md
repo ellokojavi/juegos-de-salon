@@ -46,7 +46,8 @@ y siguen a mano. Los de `OBSOLETOS` prueban algo que ya no existe y esperan que 
 **En grupos** (D-307): [`grupos.mjs`](grupos.mjs) reparte los guiones en grupos parejos según lo
 que tardó cada uno de verdad ([`duraciones.json`](duraciones.json), en segundos), para que ninguno
 pase de ~4,5 min y todos quepan de una en los 20 runners que GitHub da a la vez. Cada grupo es un
-job que corre sus guiones uno tras otro; el resumen de la corrida trae la tabla con cada guion, su
+job que corre sus guiones uno tras otro (que queden parejos y con cada guion una vez lo prueba
+`node tools/e2e/grupos.test.mjs`); el resumen de la corrida trae la tabla con cada guion, su
 tiempo y su resultado, y el artefacto `capturas-g<n>` trae, en una carpeta por guion, las capturas de
 lo que falló o pasó al segundo intento. Un guion nuevo entra solo, con 90 s supuestos hasta que se
 mida: cada job deja un aviso "Duraciones" con lo que tardó cada guion, y
@@ -71,7 +72,8 @@ por bueno. Si falla dos veces, el grupo sale en rojo, con un aviso que nombra el
 `e2e-arbol-<árbol>`, con el árbol que probó (en un PR, el merge de prueba con main). `publicar.yml`
 corre [`ya-probado.mjs`](ya-probado.mjs): si el árbol que va a publicar ya tiene marca, o solo
 cambia lo que no llega al navegador sobre un padre que la tiene, no repite la punta a punta. Si no,
-la corre entera, y si sale en rojo no publica y el job `avisar` abre un issue "main en rojo: Punta a
+la corre entera (cuándo no la repite lo prueba `node tools/e2e/ya-probado.test.mjs`), y si sale
+en rojo no publica y el job `avisar` abre un issue "main en rojo: Punta a
 punta"; cuando `main` vuelve a verde, `cerrar-aviso` lo cierra con el link a la corrida (D-273).
 
 **Esperar a una condición, no una pausa fija** (D-307): `cdp.mjs` tiene `abrir(url, tope)` (navega
