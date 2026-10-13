@@ -64,6 +64,10 @@ body {
 .acciones-lt .btn { width: 100%; min-width: 0; min-height: 44px; padding: 4px; font-size: 0.9rem; line-height: 1.15; }
 .acciones-lt .btn:disabled { opacity: 0.4; }
 .acciones-lt .btn.armado { border-color: var(--yellow); color: var(--yellow); }
+/* La ayuda, aparte y más chica, bajo los tres controles */
+.ayuda-lt { justify-self: center; width: fit-content; margin: 0 auto; min-height: 44px; padding: 4px 16px; font-size: 0.85rem; opacity: 0.85; }
+.ayuda-lt.armado { border-color: var(--yellow); color: var(--yellow); opacity: 1; }
+.ayuda-lt:disabled { opacity: 0.4; }
 .rendirse.armado { color: #ff8a8a !important; border-color: #ff8a8a !important; }
 
 /* El tablero: su número, los puntos del avance */
