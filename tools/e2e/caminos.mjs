@@ -426,6 +426,9 @@ export const CAMINOS = {
   'labs/agents': {
     intro: [],
     juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+    // El resultado (el caso que reportó el dueño, D-309): pasa las cuatro pistas y confirma Terminar
+    resultado: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`,
+      ...Array(14).fill(`document.getElementById('btn-pasar')?.click()`), `1`, `1`, `1`, `1`],
   },
   'labs/paint-mines': {
     intro: [],
