@@ -1,7 +1,7 @@
 /**
- * El aire entre un tablero y sus botones (D-309, U-11): lo que mide `aire.mjs` en cada juego y
- * lo que avisa `mirar.mjs` en cada pantalla. Va en un módulo aparte para que los guiones de
- * partida también lo puedan usar en su revisión de pantalla.
+ * El aire entre un tablero y sus botones (D-309, U-11): lo que mide cada captura de los guiones
+ * (`b.shot()` de cdp.mjs) y lo que avisa `mirar.mjs` en cada pantalla. Va en un módulo aparte
+ * para que los dos lo compartan.
  *
  * Un tablero es todo elemento visible con `data-tablero`. Su primer botón de abajo es el botón
  * visible (`.btn`, `button`, `a.btn`) más cercano que empieza por debajo de su borde y se le cruza
