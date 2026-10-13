@@ -25,7 +25,9 @@ pasos (desde v0.167.1, U-36) y Empezar, que pasa por la cuenta 3, 2, 1 compartid
 (`assets/js/cuenta-regresiva.js`):
 
 1. 🔄 Arrastra de una pieza a otra: el rectángulo da media vuelta y sus piezas quedan al revés. Un toque gira una sola.
-2. 🚇 Une todas las líneas, sin cortes de pieza en pieza.
+2. 🚇 Une cada color en una línea, sin cortes entre piezas.
+   Antes decía «Une todas las líneas, sin cortes»; un jugador no se dio cuenta de que el color
+   tenía que calzar ([#385](https://github.com/ellokojavi/juegos-de-salon/issues/385)).
 3. ⛳ Son 5 etapas en 7 minutos. Cuenta completarlas, luego la rapidez y los giros; deshacer y reiniciar son gratis.
 
 La tarjeta del laboratorio termina, desde v0.167.1, en «…en el mínimo de giros. Son cinco etapas contra el reloj.».
