@@ -79,7 +79,7 @@ de números. El celular recuerda el modo (`localStorage`, `juegos-de-salon:loteo
 dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los pasos:
 
 1. 📐 Divide el tablero en lotes, todos del tamaño que dice arriba.
-2. ⚡ Cada lote lleva un ⚡ y un 💧, ni más ni menos. Si un lote deja a un ⚡ sin su 💧, no va.
+2. ⚡ Cada lote lleva un ⚡ y un 💧, ni más ni menos. Si un lote deja una casilla sin lote posible, no va.
 3. 👆 Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son 5 tableros;
    los 3 últimos, difíciles.
 
@@ -91,7 +91,7 @@ dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los p
   profundas y los íconos quedan cerca de los del lote vecino. La cuenta 3, 2, 1 dice «📐 Loteo ·
   ⚡💧 Servicios».
 - **El aviso de los difíciles:** al empezar el tablero 3, el primero difícil, el aviso de arriba dice
-  «Ahora, difíciles: piensa un paso adelante. Si un lote deja un ⚡ sin 💧, no va.» (solo ahí, no en
+  «Difíciles: si un lote deja una casilla sin lote posible, no va.» (solo ahí, no en
   los dos que siguen).
 - **Los rechazos:** «Ese lote tiene 3 casillas; cada lote tiene 4.», «Le falta 💧.» y «Tiene dos ⚡:
   cada lote lleva uno.» (primero el tamaño, después lo que sobra, después lo que falta).
@@ -130,7 +130,7 @@ dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los p
   cada servicio, que `lotesPosibles` cuenta con sumas acumuladas) y `deducirServicios`. Los fáciles se
   quedan con el primero que salga con las reglas simples. Los difíciles (D-312) sirven solo si no
   muestran ningún lote de entrada y piden al menos `exige` deducciones profundas (3, 4 y 6, en
-  `ETAPAS_SERVICIOS`); de 12 que sirvan (hasta 6000 intentos) se quedan con el más difícil, y si
+  `ETAPAS_SERVICIOS`); de 8 que sirvan (hasta 6000 intentos) se quedan con el más difícil, y si
   ninguno sirve, con el mejor de reserva (uno sin lotes a la vista gana siempre).
   `deducirServicios(t, { avanzado })` repite las reglas simples (`propagar`): (1) un ícono o una
   casilla que solo cabe en un lote posible lo fija; (2) una casilla cuyos lotes posibles llevan todos

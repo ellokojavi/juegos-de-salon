@@ -5725,7 +5725,7 @@ nombre está en un solo lugar en `game.js` (`T.nombre`), además del título de 
 laboratorio y los documentos.
 
 ## D-311 · Loteo: el modo «Servicios», con lotes del mismo tamaño
-**Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** amplía D-310; el selector, con el espíritu de la palanca de Pintaminas (D-290); ampliada por D-312 (los difíciles, más difíciles: ahora 6×6 de 6 y dos 8×8 de 8, sin el 8×8 de 4, con ningún lote a la vista de entrada y deducciones más profundas)
+**Fecha:** 2026-10-13 · **Estado:** corregida por D-312 (las etapas difíciles) · **Relación:** amplía D-310; el selector, con el espíritu de la palanca de Pintaminas (D-290); corregida por D-312 (los difíciles, más difíciles: ahora 6×6 de 6 y dos 8×8 de 8, sin el 8×8 de 4, con ningún lote a la vista de entrada y deducciones más profundas)
 **Contexto:** el dueño pidió, en la portada de Loteo, un modo que se activa para jugarlo («Utilities»;
 en la app, «Servicios»): en vez de números, la grilla trae íconos de servicios, ⚡ luz y 💧 agua, y
 cada lote lleva exactamente un ⚡ y un 💧. Antes de construirlo se midió con lotes al azar y un ⚡ y un
@@ -5772,7 +5772,7 @@ un ⚡ y un 💧, que las difíciles pidan más pasos que las fáciles, que tard
 validación con sus motivos y la tarjeta; `tools/e2e/plots/servicios.mjs` juega el modo de punta a punta.
 
 ## D-312 · Loteo, modo Servicios: los difíciles, más difíciles
-**Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** amplía D-311
+**Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** corrige D-311 (sus etapas difíciles)
 **Contexto:** el dueño pasó el modo «⚡💧 Servicios» «con algo, pero no mucha, dificultad» y pidió
 endurecerlo con tres palancas: elegir mejor los tableros, exigir deducciones más profundas y poner los
 íconos donde confunden.
@@ -5781,14 +5781,15 @@ tableros):
 - **Deducciones más profundas:** `deducirServicios` cuenta las veces que hace falta la regla (2) de
   `propagar` (una casilla cuyos lotes posibles llevan todos el mismo ícono) y, si las reglas simples se
   traban, mira un paso adelante (un lote que lleva a una casilla sin lote no va). Un difícil sirve solo si
-  no muestra ningún lote de entrada y pide al menos `exige` de esas deducciones (3, 4 y 6); de 12 que
+  no muestra ningún lote de entrada y pide al menos `exige` de esas deducciones (3, 4 y 6); de 8 que
   sirvan, se queda con el más difícil.
 - **Íconos que confunden:** `ubicarIconos` los pone de preferencia en el borde del lote que toca a otro
   lote, cerca de los íconos del vecino.
 - **Etapas:** 6×6 de 6 y dos 8×8 de 8. El 8×8 de 4 salió: con lotes tan chicos siempre dejaba lotes a
   la vista (2,4 en promedio).
-- **La portada lo explica** («Si un lote deja a un ⚡ sin su 💧, no va.», «los 3 últimos, difíciles»), y
-  al empezar el primer difícil el aviso dice «Ahora, difíciles: piensa un paso adelante…».
+- **La portada lo explica** («Si un lote deja una casilla sin lote posible, no va.», «los 3 últimos, difíciles»), y
+  al empezar el primer difícil el aviso dice «Difíciles: si un lote deja una casilla sin lote posible, no
+  va.» (en dos líneas a 320 px, para no mover el tablero).
 - `lotesPosibles` cuenta con sumas acumuladas: el generador tarda menos de 250 ms en el peor caso.
 **Medido** (promedio por tablero, antes → ahora): lotes a la vista de entrada 1,4 / 4,7 / 1,9 → 0 / 0 / 0;
 rondas de deducción ~5 → ~9; deducciones profundas → ~5 por tablero. Mirar un paso adelante casi
