@@ -608,7 +608,7 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .cs-globo { max-width: 190px; padding: 8px 12px; border-radius: 14px 14px 14px 4px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255, 210, 63, 0.55); font-weight: 800; font-size: 0.85rem; line-height: 1.3; }
 
 /* La grilla: las letras y los números van dentro de la misma grilla (C-8) */
-.cs-juego { gap: 8px; }
+.cs-juego { gap: 8px; --gap-contenedor: 8px; }
 .cs-grilla { display: grid; grid-template-columns: 20px repeat(4, minmax(0, 1fr)); gap: 6px; width: 100%; max-width: 440px; margin: 0 auto; }
 /* Las letras y los números de la grilla, grandes: las pistas los nombran ("en la fila 3", "en la columna B") */
 .cs-grilla .etq { display: grid; place-items: center; font: 900 1.05rem var(--font-num); color: var(--ink); opacity: 0.85; }

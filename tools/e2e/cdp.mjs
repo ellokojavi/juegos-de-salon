@@ -1,6 +1,7 @@
 // Helper mínimo para manejar Chrome headless por CDP sin dependencias.
 import { spawn } from 'node:child_process';
 import { writeFileSync, readFileSync, rmSync, mkdirSync } from 'node:fs';
+import { medirAire, sinAire, AIRE_MIN } from './aire-comun.mjs';
 // CHROME: otra ruta al navegador (Linux, una sesión en la nube)
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -145,7 +146,19 @@ export async function launch({ port: pedido, dir, out, width = 390, height = 844
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       return 1;
     })()`),
-    shot: async name => { await api.quieto(); const r = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(`${out}/${name}.png`, Buffer.from(r.result.data, 'base64')); },
+    shot: async name => {
+      await api.quieto();
+      const r = await send('Page.captureScreenshot', { format: 'png' });
+      writeFileSync(`${out}/${name}.png`, Buffer.from(r.result.data, 'base64'));
+      // Cada captura revisa el aire entre el tablero y sus botones (D-309, U-11): así lo vigilan
+      // todos los guiones, en todas las pantallas que fotografían, sin caminos aparte
+      try {
+        const filas = JSON.parse(await api.evaluate(medirAire));
+        if (process.env.AIRE_INFORMAR && filas.length) console.log(`  aire ${name}: ${filas.map(f => `${f.tablero} ${f.aire}px`).join(', ')}`);
+        const malos = sinAire(filas);
+        if (malos.length) console.log(`✗ ${name}: botón sin aire bajo el tablero (U-11, ${AIRE_MIN} px o más): ${malos.join(', ')}`);
+      } catch (_) { /* una página sin la app (about:blank) no tiene tableros */ }
+    },
     close: () => { ws.close(); chrome.kill(); },
     /**
      * Entrada de verdad, por el navegador y no por `.click()`.

@@ -136,7 +136,7 @@ export function montar(raiz, ctx) {
     if (e.fin) ctx.pararReloj?.({ ...e, ms: ctx.tiempo?.() });
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack reinas-juego' });
-    const grilla = el('div', { class: 'rej-grid' + (e.fin ? ' fin' : ''), style: `grid-template-columns: repeat(${n}, 1fr)` });
+    const grilla = el('div', { class: 'rej-grid' + (e.fin ? ' fin' : ''), 'data-tablero': 'reinas', style: `grid-template-columns: repeat(${n}, 1fr)` });
     for (let i = 0; i < n * n; i++) {
       const r = Math.floor(i / n), c = i % n, z = zonas[i];
       const v = e.marcas[i];

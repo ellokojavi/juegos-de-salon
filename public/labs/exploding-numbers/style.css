@@ -107,7 +107,7 @@ button.num:not(:disabled):active { transform: scale(0.9); }
 .demo-rotulo.ve { opacity: 1; animation: ne-limpio 0.55s cubic-bezier(.3,1.6,.6,1); }
 @keyframes ne-limpio { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
 
-.resultado { text-align: center; display: grid; gap: 10px; }
+.resultado { text-align: center; display: grid; gap: 10px; --gap-contenedor: 10px; }
 .resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
 .sello-ne { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
   padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }

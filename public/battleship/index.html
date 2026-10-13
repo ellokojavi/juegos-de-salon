@@ -119,7 +119,7 @@
       <div class="status"><div class="who" id="status-who"></div><div class="sub" id="status-sub"></div></div>
       <div class="score" id="score"></div>
       <div class="board-title" id="enemy-title"></div>
-      <div id="enemy-grid" class="enemy"></div>
+      <div id="enemy-grid" class="enemy" data-tablero="mar"></div>
       <div class="fire-row" id="fire-row"></div>
       <div class="mine-wrap" id="mine-wrap"></div>
     </section>
@@ -127,8 +127,8 @@
     <section class="screen" id="screen-result">
       <div class="result-hero"><span class="trophy" id="result-trophy">🏆</span><h2 class="display display--lg" id="result-title"></h2><p class="lead" id="result-sub"></p></div>
       <div class="panel"><p class="lead center" style="margin-bottom:8px" data-i18n="fleetsWere"></p><div class="fleets" id="result-fleets"></div></div>
-      <details class="panel replay" id="result-replay"><summary data-i18n="replayTitle"></summary><div class="shots" id="result-shots"></div></details>
-      <div class="stack" style="margin-top:14px" id="result-actions"></div>
+      <details class="panel replay" id="result-replay" data-tablero="repaso"><summary data-i18n="replayTitle"></summary><div class="shots" id="result-shots"></div></details>
+      <div class="stack" id="result-actions"></div>
     </section>
   </main>
 

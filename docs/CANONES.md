@@ -174,6 +174,7 @@ modo que el juego piensa tener.
 - Si una lista puede crecer sin límite, el botón de confirmar va flotando (`position: sticky; bottom: 0`) con un degradado detrás, nunca al final del contenido.
 - Los bloques largos (repaso de la partida, reglas) van colapsados por defecto.
 - Sin scroll horizontal. Las grillas y tablas se adaptan al ancho.
+- **Aire entre el tablero y sus botones** (D-309): el tablero de juego, y lo que resume la partida en el resultado, lleva `data-tablero`; `base.css` le da 28 px (`--aire-tablero`) hasta lo de abajo, descontando el gap del contenedor (`--gap-contenedor`) y el relleno de la barra de botones (`--aire-ya`, que declara el juego). No se separa con márgenes sueltos. Cada captura de los guiones lo mide y marca ✗ bajo 24 px; `mirar.mjs` lo informa.
 - Las etiquetas de una grilla (letras, números) van **dentro** de la misma grilla CSS, como una fila y una columna más; nunca en un contenedor aparte que se alinea "a ojo", porque cada navegador lo estira distinto (pasó en Safari con Batalla Naval).
 - Se respeta `prefers-reduced-motion`.
 - Un toque fuera de un elemento seleccionado lo deselecciona.

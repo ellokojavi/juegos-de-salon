@@ -54,7 +54,8 @@ la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renu
 
 - **U-10 · Botones de 44 px o más** y sin scroll horizontal (C-8). Lo verifica `revisarPantalla`.
 - **U-11 · Botones con aire:** separados de lo que tienen arriba y centrados en su caja cuando van
-  solos. El botón que cierra un tablero va debajo de lo que resume, no encima (La Gran Final).
+  solos. Entre un tablero (o lo que resume la partida) y sus botones, **28 px**, con `data-tablero`
+  (D-309); bajo 24 px, las pruebas marcan ✗. El botón que cierra un tablero va debajo de lo que resume, no encima (La Gran Final).
 - **U-12 · Nada se encima:** nombres largos parten línea; etiquetas de empatados se apilan.
 - **U-13 · Lo que se muestra es lo que se juega:** el laboratorio tiene la misma UX que producción.
 - **U-14 · Cada cosa en su momento de la copa** (D-116): la invitación mientras se pueda

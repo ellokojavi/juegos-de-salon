@@ -111,7 +111,7 @@ function dibujoPieza(pieza) {
  * ángulo acumulado, para que al girar siempre dé media vuelta hacia el mismo lado.
  */
 function crearTablero(t, { interactivo = false, alGirar } = {}) {
-  const caja = el('div', { class: 'tablero-rt', id: interactivo ? 'tablero' : null });
+  const caja = el('div', { class: 'tablero-rt', id: interactivo ? 'tablero' : null, 'data-tablero': 'rutas' });
   const marco = el('div', { class: 'seleccion', 'aria-hidden': 'true' });
   const angulo = t.piezas.map(() => 0);
   const piezas = t.piezas.map((p, i) => el('div', { class: 'pieza', 'data-p': i }, dibujoPieza(p)));

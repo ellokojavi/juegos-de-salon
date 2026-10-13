@@ -77,7 +77,8 @@
 .ranking li.top { background: linear-gradient(90deg, rgba(255,210,63,0.28), rgba(255,46,136,0.28)); }
 .replay { margin-top: 10px; padding: 12px 16px; }
 .replay summary { font-size: 1rem; }
-#screen-result .stack { margin-top: 12px !important; }
+/* El aire con lo de arriba lo da el repaso o el panel marcado con data-tablero (D-309) */
+#screen-result #result-actions { margin-top: 0; }
 
 /* Sala (varios celulares) */
 #screen-lobby > h2 { margin-bottom: 16px; }

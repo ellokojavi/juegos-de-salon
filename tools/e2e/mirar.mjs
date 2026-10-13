@@ -10,7 +10,8 @@
  *   node tools/e2e/mirar.mjs linea-de-tiempo intro --idioma pt
  *
  * Saca la captura y, además, revisa lo que el canon pide mirar en cada pantalla (C-8):
- * que no haya scroll horizontal y que ningún botón quede por debajo de 44 px.
+ * que no haya scroll horizontal y que ningún botón quede por debajo de 44 px; y que el tablero
+ * tenga aire antes de sus botones (D-309, U-11).
  *
  * Nació de escribir ocho guiones descartables en /tmp para revisar una barra de botones.
  * Para probar que el juego funciona están los guiones de partida; esto es para mirar.
@@ -19,6 +20,7 @@ import { launch, sleep } from './cdp.mjs';
 import { EN_LABS, LABS_KEY } from '../../public/assets/js/i18n.js';
 import { gameById } from '../../public/assets/js/games.js';
 import { CAMINOS } from './caminos.mjs';
+import { medirAire, sinAire, AIRE_MIN } from './aire-comun.mjs';
 
 const args = process.argv.slice(2);
 const pos = args.filter(a => !a.startsWith('--'));
@@ -94,6 +96,8 @@ const revision = await b.evaluate(`(()=>{
   });
 })()`).then(JSON.parse);
 
+const aire = JSON.parse(await b.evaluate(medirAire));
+
 // Por si un día una entrada lleva una barra: la captura queda plana
 const nombre = `${juego.replace(/\//g, "-")}-${pantalla}-${ancho}`;
 await b.shot(nombre);
@@ -101,6 +105,7 @@ console.log(`${salida}/${nombre}.png · ${ancho}×${alto} · ${idioma}`);
 console.log(`  pantalla: ${revision.pantalla}`);
 console.log(`  scroll horizontal (C-8): ${revision.scrollHorizontal ? '⚠️  SÍ' : 'no'}`);
 console.log(`  botones bajo 44 px (C-8): ${revision.botonesChicos.length ? '⚠️  ' + revision.botonesChicos.join(', ') : 'ninguno'}`);
+console.log(`  aire tablero → botones (U-11, ${AIRE_MIN} px o más): ${!aire.length ? 'sin tablero marcado' : sinAire(aire).length ? '⚠️  ' + sinAire(aire).join(', ') : aire.map(f => `${f.aire} px`).join(', ')}`);
 console.log(`  la página se pasa del alto: ${revision.sobra > 0 ? `⚠️  ${revision.sobra} px` : 'no'}${muescas ? ' (con muescas)' : ''}`);
 console.log(`  botones fuera de pantalla: ${revision.fueraAbajo.length ? '⚠️  ' + revision.fueraAbajo.join(', ') : 'ninguno'}`);
 console.log(`  se arma con el alto chico (svh): ${revision.midePorElAltoChico ? 'sí' : '⚠️  NO (usa dvh: lo que se apoya abajo se va fuera en un celular)'}`);

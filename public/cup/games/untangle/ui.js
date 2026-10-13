@@ -88,7 +88,7 @@ export function montar(raiz, ctx) {
   const cabeza = el('div', { class: 'zip-cabeza' });
   const estado = el('p', { class: 'des-estado center', 'aria-live': 'polite' });
   const aviso = el('div', { class: 'stack zip-aviso' });
-  const tablero = svgEl('svg', { viewBox: `0 0 ${motor.LADO} ${motor.LADO}`, class: 'des-tablero', role: 'img' });
+  const tablero = svgEl('svg', { viewBox: `0 0 ${motor.LADO} ${motor.LADO}`, class: 'des-tablero', 'data-tablero': 'desenreda', role: 'img' });
   const capaHilos = svgEl('g', { class: 'des-hilos' });
   const capaNudos = svgEl('g', { class: 'des-nudos' });
   tablero.append(capaHilos, capaNudos);

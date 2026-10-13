@@ -194,7 +194,7 @@ function jugar() {
     dibujar();
   };
   let antes = -1;
-  const tablero = el('div', { class: 'tablero', id: 'tablero' }, ...cartas);
+  const tablero = el('div', { class: 'tablero', id: 'tablero', 'data-tablero': 'agentes' }, ...cartas);
   // Terminar deja agentes sin encontrar y no se deshace: el primer toque avisa cuántos quedan y pide otro (U-15)
   let confirmando = false;
   const decir = (clase, texto) => { aviso.className = `aviso-ag ${clase}`; aviso.textContent = texto; };
@@ -308,7 +308,7 @@ function resultado() {
   if (e.neutrales) lineas.push(fmt(T.desglose[1][e.neutrales === 1 ? 0 : 1], { n: e.neutrales, pts: RESTA_NEUTRAL * e.neutrales }));
   if (e.asesino) lineas.push(fmt(T.desglose[2], { pts: RESTA_ASESINO }));
   // El tablero entero, con lo que era cada carta
-  const tablero = el('div', { class: 'tablero tablero--fin', id: 'tablero-fin' }, ...t.cartas.map((c, i) => el('div', {
+  const tablero = el('div', { class: 'tablero tablero--fin', id: 'tablero-fin', 'data-tablero': 'agentes' }, ...t.cartas.map((c, i) => el('div', {
     class: `carta ${c.tipo === 'agente' ? `agente g${c.p}` : c.tipo}${e.tocadas.has(i) ? '' : ' sin-tocar'}`,
     style: `--n:${c.w.length};--k:${i}`,
   }, c.tipo === 'asesino' ? `💀 ${c.w}` : c.w,
