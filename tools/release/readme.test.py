@@ -61,6 +61,13 @@ assert readme.ESTAMPA.search('href="a.css?v=1.2.3"'), 'no reconoce ?v='
 assert readme.ESTAMPA.search('v0.25.2 · Juegos de Salón'), 'no reconoce la del pie'
 assert not readme.ESTAMPA.search('la versión 1.2.3 del juego'), 'reconoce de más'
 
+# El árbol de Layout se encuentra aunque haya prosa entre el título y el bloque, y lista solo la raíz
+# (antes buscaba "## Estructura" pegado al bloque y la comprobación no corría nunca)
+EJEMPLO = '## Layout\n\nLa raíz no es el sitio.\n\n```\npublic/   El sitio\n  index.html  Menú\ntools/\n```\n\n## Otra\n'
+assert readme.arbol_layout(EJEMPLO) == ['public/', 'tools/'], readme.arbol_layout(EJEMPLO)
+assert readme.arbol_layout('## Otra\n\n```\npublic/\n```\n') == [], 'toma un bloque de otra sección'
+assert 'public/' in readme.arbol_layout((RAIZ / 'README.md').read_text()), 'no encuentra el árbol del README'
+
 if fallas:
     sys.exit(f'readme: {fallas} caso(s) mal')
 print(f'readme: {len(CASOS)} casos de "esto es solo un estampado" en verde')

@@ -423,19 +423,20 @@ def cmd_revisar():
         if cosa in cuentas and NUMEROS[palabra] != cuentas[cosa]:
             avisos.append(f'el README dice "{palabra} {cosa}" y hay {cuentas[cosa]}')
 
-    # 7. El árbol de Estructura, contra lo que hay en el repo
-    arbol = re.search(r'## Estructura\n+```\n(.*?)```', texto, re.S)
-    if arbol:
-        listadas = [l.split()[0] for l in arbol.group(1).splitlines() if l.strip()]
+    # 7. El árbol de Layout, contra lo que hay en la raíz del repo (solo las líneas sin sangría:
+    # lo de adentro de cada carpeta es criterio de quien escribe)
+    listadas = arbol_layout(texto)
+    if listadas:
         for ruta in listadas:
             if not (RAIZ / ruta).exists():
-                avisos.append(f'el árbol de Estructura nombra {ruta} y no existe')
+                avisos.append(f'el árbol de Layout nombra {ruta} y no existe')
         for f in sorted(RAIZ.iterdir()):
             nombre = f.name + ('/' if f.is_dir() else '')
-            if f.name.startswith('.') or f.name in ('README.md', 'arte-original', 'CNAME', 'CHANGELOG.md', 'CLAUDE.md'):
+            if f.name.startswith('.') or f.name in ('README.md', 'arte-original', 'CNAME', 'CHANGELOG.md', 'CLAUDE.md',
+                                                      'CONTRIBUTING.md', 'LICENSE'):
                 continue
             if not any(l.startswith(nombre) or l.startswith(f.name) for l in listadas):
-                avisos.append(f'{nombre} no aparece en el árbol de Estructura')
+                avisos.append(f'{nombre} no aparece en el árbol de Layout')
 
     for a in avisos:
         print(f'  aviso · {a}')
@@ -447,6 +448,16 @@ def cmd_revisar():
     elif not problemas:
         print('README al día (los avisos de arriba son criterio, no error)')
     return 1 if problemas else 0
+
+
+def arbol_layout(texto):
+    """Lo que el árbol de la sección Layout lista en la raíz del repo (las líneas sin sangría).
+    Antes buscaba "## Estructura" pegado al bloque, y el README dice "## Layout" con prosa entre
+    medio: la comprobación no corría nunca (D-307 y D-308 entraron sin sumarse al árbol)."""
+    arbol = re.search(r'^## (?:Layout|Estructura)\n(?:(?!^## ).)*?^```\n(.*?)^```', texto, re.S | re.M)
+    if not arbol:
+        return []
+    return [l.split()[0] for l in arbol.group(1).splitlines() if l.strip() and not l[0].isspace()]
 
 
 # -------------------------------------------------------------------- capturas
