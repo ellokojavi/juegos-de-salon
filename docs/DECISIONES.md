@@ -5678,4 +5678,3 @@ un guion con caminos a cada pantalla (las capturas de los guiones de partida ya 
 uno nuevo se vigila solo).
 **Consecuencias:** un juego nuevo marca su tablero con `data-tablero` (C-8) y queda con el mismo aire;
 si un botón queda pegado, su guion sale en rojo.
-
