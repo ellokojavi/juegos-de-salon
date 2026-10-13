@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { portadaDe, juegosTocados, pasosResueltos, salidasDeLabs, etapa } from './portadas.mjs';
 
-for (const slug of ['agents', 'paint-mines', 'routes', 'exploding-numbers']) {
+for (const slug of ['agents', 'paint-mines', 'routes', 'exploding-numbers', 'plots']) {
   const { lema, pasos } = portadaDe(readFileSync(new URL(`../../public/labs/${slug}/game.js`, import.meta.url), 'utf8'));
   assert.ok(lema && lema.length > 10, `${slug}: sin lema`);
   assert.ok(pasos.length >= 2 && pasos.length <= 3, `${slug}: ${pasos.length} pasos (U-18: hasta 3)`);
