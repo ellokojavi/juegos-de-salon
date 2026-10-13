@@ -41,12 +41,14 @@
       ],
       "estado": "en YouTube (@eljotairi), no listado: 16:9 https://youtu.be/fQ4uFaPX_4g y Short https://youtube.com/shorts/RYAvj2MTRPQ",
       "revision": {
-        "fecha": "2026-10-12",
-        "app": "0.163.1",
+        "fecha": "2026-10-13",
+        "app": "0.168.9",
         "al_dia": false,
         "pendiente": [
           "Zip (escena de los cuatro juegos, ~14-16 s): el encabezado del video dice 'Nivel 1 · 4 × 4'; desde 0.130.0 (D-250) dice 'Nivel 1 de 10' (diez niveles fijos). Se corrige en la próxima vuelta, no amerita rehacer la v6.",
-          "Uno al día (~21 s, el dedo toca la tarjeta de la portada): bajo la fila de La Copa y Uno al día se ve Línea de Tiempo; desde D-255 la portada va por popularidad y ahí va Toque y Fama. Menor: se corrige en la próxima vuelta."
+          "Uno al día (~21 s, el dedo toca la tarjeta de la portada): bajo la fila de La Copa y Uno al día se ve Línea de Tiempo; desde D-255 la portada va por popularidad y ahí va Toque y Fama. Menor: se corrige en la próxima vuelta.",
+          "Uno al día (~21 s): la píldora de su tarjeta en la portada dice '🔥 10 · Jugar el de hoy'; desde D-305 dice 'Jugar hoy' (EN 'Play today', PT 'Jogar hoje').",
+          "Reinas (grilla '¡Y muchos más juegos!', ~20 s): bajo el tablero se ven 🧹 Borrar todo y 🏳️ Rendirse en una fila; desde D-283 la fila es ↩️ Deshacer y 🧹 Borrar todo, y Rendirse baja a su propia línea."
         ]
       },
       "seleccion": true,
@@ -110,8 +112,8 @@
         "caso"
       ],
       "revision": {
-        "fecha": "2026-10-12",
-        "app": "0.163.1",
+        "fecha": "2026-10-13",
+        "app": "0.168.9",
         "al_dia": false,
         "pendiente": [
           "Muestra el prototipo, que se borró (D-267): hoy /labs/case/ abre primero una antesala ('El caso de hoy es el mismo para todos') y una cuenta 3, 2, 1, y la pantalla del caso es la de La Copa: arriba '‹ Laboratorio' y el reloj, sin el marcador '✅ 1/20 · 0 errores' del video, y el botón dice '💡 Ayuda (-15 puntos)' (D-263), no '💡 Ayuda'."
@@ -153,8 +155,8 @@
       "seleccion": true,
       "estado": "entregado al dueño",
       "revision": {
-        "fecha": "2026-10-12",
-        "app": "0.163.1",
+        "fecha": "2026-10-13",
+        "app": "0.168.9",
         "al_dia": true,
         "pendiente": []
       }
@@ -204,8 +206,8 @@
         "agentes"
       ],
       "revision": {
-        "fecha": "2026-10-12",
-        "app": "0.163.1",
+        "fecha": "2026-10-13",
+        "app": "0.168.9",
         "al_dia": false,
         "pendiente": [
           "Dice 'Una pista. 15 palabras.', pero desde D-287 cada tablero trae 4 pistas que llegan de a una (la portada del juego: 'Llegan 4 pistas, de a una'); se ve en el JPG, el video y la vista previa del link de /labs/agents/.",
