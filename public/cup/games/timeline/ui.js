@@ -37,7 +37,7 @@ export function montar(raiz, ctx) {
   const abajo = !!ctx.cierreAbajo;
   raiz.append(el('div', { class: 'lt-juego' },
     el('div', { class: 'status' }, el('div', { class: 'sub' }, `${p.temaEmoji} ${p.temaNombre}`), estadoTxt),
-    abajo ? null : cierre, tituloMano, mano, el('div', { class: 'line-wrap' }, linea), fila, abajo ? cierre : null));
+    abajo ? null : cierre, tituloMano, mano, el('div', { class: 'line-wrap', 'data-tablero': 'linea' }, linea), fila, abajo ? cierre : null));
 
   const e = () => motor.estado(p, jugadas);
   const porId = id => p.mano.find(c => c.id === id) || (p.base.id === id ? p.base : null);

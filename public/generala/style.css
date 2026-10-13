@@ -143,3 +143,6 @@
 .tabla th:first-child, .tabla td:first-child { text-align: left; width: 34%; color: var(--muted); font-weight: 800; }
 .tabla td { font: 900 0.86rem var(--font-num); font-variant-numeric: tabular-nums; }
 .tabla tr.suma td { color: var(--yellow); border-bottom: 0; font-size: 1rem; }
+
+/* La barra de acciones ya separa 10 px (padding-top): el resto del aire lo pone la mesa (D-309) */
+#mesa { --aire-ya: 10px; }

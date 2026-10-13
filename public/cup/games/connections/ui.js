@@ -34,10 +34,10 @@ export function montar(raiz, ctx) {
     raiz.innerHTML = '';
     const caja = el('div', { class: 'stack conexiones-juego' });
     const resueltos = e.fin ? [...e.resueltos, ...p.grupos.map(g => g.nivel).filter(n => !e.resueltos.includes(n))] : e.resueltos;
-    poner(caja, el('div', { class: 'grupos' }, resueltos.map(n => grupo(p.grupos[n]))));
+    poner(caja, el('div', { class: 'grupos', 'data-tablero': 'conexiones' }, resueltos.map(n => grupo(p.grupos[n]))));
     if (!e.fin) {
       const quedan = orden.filter(w => e.restantes.includes(w));
-      poner(caja, el('div', { class: 'palabras' }, quedan.map(w => el('button', {
+      poner(caja, el('div', { class: 'palabras', 'data-tablero': 'conexiones' }, quedan.map(w => el('button', {
         type: 'button', class: 'palabra' + (sel.includes(w) ? ' on' : '') + (w.length > 9 ? ' larga' : ''), 'aria-pressed': sel.includes(w) ? 'true' : 'false',
         onClick: () => {
           SFX.tap(); aviso = null;

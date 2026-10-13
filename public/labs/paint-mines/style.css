@@ -71,7 +71,7 @@ button.casilla:not(:disabled):active { transform: scale(0.92); }
 .pincel--fondo { background: rgba(255,255,255,0.16); }
 .pincel[aria-pressed="true"] { opacity: 1; transform: translateY(-2px); border-color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,0.35), 0 6px 18px rgba(0,0,0,0.35); }
 
-.resultado { text-align: center; display: grid; gap: 10px; }
+.resultado { text-align: center; display: grid; gap: 10px; --gap-contenedor: 10px; }
 .resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
 .sello-pm { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
   padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }

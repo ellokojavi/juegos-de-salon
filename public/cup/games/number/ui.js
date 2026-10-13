@@ -41,7 +41,7 @@ export function tablero(el, { filas, largo, titulo, valor = f => f.v, completa =
   const TYF = tyf(lang);
   const tries = n => (n === 1 ? TYF.tryOne : TYF.tryMany);
   const lista = el('ol', {}, ...filas.map(f => el('li', { class: f.famas === largo ? 'hit' : '' }, valor(f), pistas(el, f, largo, false, completa, TYF))));
-  return el('div', { class: 'board turn board--solo' },
+  return el('div', { class: 'board turn board--solo', 'data-tablero': 'intentos' },
     el('h3', {}, titulo),
     el('div', { class: 'count' }, filas.length ? `${filas.length} ${tries(filas.length)}` : TYF.noGuesses),
     filas.length ? lista : el('div', { class: 'empty' }, '—'));

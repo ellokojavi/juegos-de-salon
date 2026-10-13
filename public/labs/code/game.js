@@ -330,7 +330,7 @@ function jugar() {
   brillosAlAzar(bandeja);
   vista.replaceChildren(
     tituloJuego(),
-    el('div', { class: 'tablero' }, el('div', { class: 'marco', id: 'marco' }, base)),
+    el('div', { class: 'tablero', 'data-tablero': 'codigo' }, el('div', { class: 'marco', id: 'marco' }, base)),
     titulo, controles,
     bandeja,
     pad, reglasPlegadas());
@@ -445,7 +445,7 @@ function jugarPalabra() {
   brillosAlAzar(bandeja);
   vista.replaceChildren(
     tituloJuego(),
-    el('div', { class: 'tablero palabra' }, el('div', { class: 'marco', id: 'marco' }, base)),
+    el('div', { class: 'tablero palabra', 'data-tablero': 'codigo' }, el('div', { class: 'marco', id: 'marco' }, base)),
     titulo, controles, bandeja, pad, reglasPlegadas());
   dibujar();
   pieComentario('juego-palabra');
