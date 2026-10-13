@@ -329,13 +329,17 @@ function jugar() {
     },
   });
 
-  /** Un botón que pide un segundo toque antes de algo que cuesta (como la ayuda de Pintaminas, #351). */
+  /** Un botón que pide un segundo toque antes de algo que cuesta (como la ayuda de Pintaminas, #351).
+   *  Uno armado a la vez: armar otro desarma el anterior, para que nunca queden dos «¿Seguro?». */
+  const armables = [];
   const dosToques = (boton, { listo, seguro, accion }) => {
     let armado = false, timer = null;
     const desarmar = () => { armado = false; clearTimeout(timer); boton.classList.remove('armado'); boton.textContent = listo(); };
+    armables.push(desarmar);
     boton.addEventListener('click', () => {
       if (P.terminado) return;
       if (!armado) {
+        armables.forEach(d => d !== desarmar && d());
         armado = true; SFX.tap(); vibrate(15); boton.textContent = seguro(); boton.classList.add('armado');
         timer = setTimeout(desarmar, 3000);
         return;
