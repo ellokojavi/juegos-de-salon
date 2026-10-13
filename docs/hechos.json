@@ -1,5 +1,5 @@
 {
-  "version": "0.169.0",
+  "version": "0.170.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1056,6 +1056,7 @@
     "mirar.mjs",
     "paint-mines/lab.mjs",
     "plots/lab.mjs",
+    "plots/servicios.mjs",
     "routes/lab.mjs",
     "sala-error.mjs",
     "sala-tope.mjs",

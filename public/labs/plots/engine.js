@@ -260,6 +260,7 @@ export const numerosEn = (t, r) => casillas(r, t.lado).filter(k => t.numeros[k])
  * (con cuántos tiene, `cuantos`) o 'area' (con el número `n` y el área que tiene, `area`).
  */
 export function validar(t, r) {
+  if (t.modo === 'servicios') return validarServicios(t, r);
   const nums = numerosEn(t, r);
   if (!nums.length) return { ok: false, motivo: 'sin-numero' };
   if (nums.length > 1) return { ok: false, motivo: 'dos-numeros', cuantos: nums.length };
@@ -274,9 +275,9 @@ export function validar(t, r) {
  */
 export const poner = (parcelas, r) => [...parcelas.filter(p => !seTocan(p, r)), r];
 
-/** ¿Está resuelto? Todas las parcelas valen, no se pisan y son tantas como números: cubren todo. */
+/** ¿Está resuelto? Todas las parcelas valen (en su modo), no se pisan y suman la grilla: la cubren entera. */
 export function resuelto(t, parcelas) {
-  if (parcelas.length !== t.pistas.length) return false;
+  if (parcelas.reduce((a, p) => a + area(p), 0) !== t.lado * t.lado) return false;
   if (!parcelas.every(p => validar(t, p).ok)) return false;
   for (let a = 0; a < parcelas.length; a++) for (let b = a + 1; b < parcelas.length; b++) if (seTocan(parcelas[a], parcelas[b])) return false;
   return true;
@@ -300,8 +301,237 @@ export function puntajePartida(hechas, segundos, ayudas = 0) {
   return { total: Math.max(0, base + ptsRapidez - resta), base, ptsRapidez, resta, completa };
 }
 
-/** La tarjeta para compartir: ✅ o ⬛ por tablero, con su tamaño, sin delatar la solución. */
-export function tarjeta(hechas, ayudas = 0) {
-  const filas = ETAPAS.map((e, k) => `${k < hechas ? '✅' : '⬛'} ${e.lado}×${e.lado}`).join('  ');
-  return [filas, ayudas ? `💡 ${ayudas}` : null].filter(Boolean).join('\n');
+/**
+ * La tarjeta para compartir: ✅ o ⬛ por tablero, con su tamaño, sin delatar la solución. En el modo
+ * servicios dice el modo arriba.
+ */
+export function tarjeta(hechas, ayudas = 0, modo = 'numeros') {
+  const servicios = modo === 'servicios';
+  const filas = (servicios ? ETAPAS_SERVICIOS : ETAPAS).map((e, k) => `${k < hechas ? '✅' : '⬛'} ${e.lado}×${e.lado}`).join('  ');
+  return [servicios ? `${ICONOS.luz}${ICONOS.agua} Servicios` : null, filas, ayudas ? `💡 ${ayudas}` : null].filter(Boolean).join('\n');
+}
+
+/* ------------------------------------------------------------------ */
+/* El modo «Servicios» (D-311)                                         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * En vez de números, la grilla trae íconos de servicios: ⚡ luz y 💧 agua (y 🌐 internet, si la etapa lo
+ * pide). Hay que dividirla entera en lotes rectangulares **todos del mismo tamaño** (`tam`, que se dice
+ * arriba del tablero) y cada lote lleva **exactamente uno de cada servicio**. Sin el tamaño fijo casi
+ * ningún tablero tiene solución única; con él, sí (lo que se midió está en la decisión).
+ *
+ * Un tablero de este modo es `{ modo: 'servicios', lado, tam, servicios, iconos, solucion }`: `iconos`
+ * tiene una casilla por lugar (por filas), con null o el servicio ('luz', 'agua', 'red'), y `solucion`
+ * los lotes, en el orden de lectura de su esquina de arriba a la izquierda.
+ */
+export const ICONOS = { luz: '⚡', agua: '💧', red: '🌐' };
+
+/**
+ * Las etapas del modo: dos para calentar (6×6 de 3 y 6×6 de 4) y tres difíciles (6×6 de 6, 8×8 de 4 y
+ * 8×8 de 8), con lotes más grandes, menos a la vista de entrada y más pasos de deducción. Elegidas
+ * midiendo (D-311). Sin 🌐: un tercer servicio da más tableros únicos, pero más fáciles.
+ */
+export const ETAPAS_SERVICIOS = [
+  { lado: 6, tam: 3, servicios: ['luz', 'agua'], dificil: false },
+  { lado: 6, tam: 4, servicios: ['luz', 'agua'], dificil: false },
+  { lado: 6, tam: 6, servicios: ['luz', 'agua'], dificil: true },
+  { lado: 8, tam: 4, servicios: ['luz', 'agua'], dificil: true },
+  { lado: 8, tam: 8, servicios: ['luz', 'agua'], dificil: true },
+];
+
+/** Las formas de un lote de `tam` casillas que caben en la grilla: `[alto, ancho]`. */
+const formas = (tam, lado) => {
+  const out = [];
+  for (let h = 1; h <= tam; h++) if (!(tam % h) && h <= lado && tam / h <= lado) out.push([h, tam / h]);
+  return out;
+};
+
+/** Baraja una lista en su lugar (Fisher-Yates): un sort con comparador al azar da distinto en cada navegador. */
+function barajar(r, lista) {
+  for (let k = lista.length - 1; k > 0; k--) { const j = Math.floor(r() * (k + 1)); [lista[k], lista[j]] = [lista[j], lista[k]]; }
+  return lista;
+}
+
+/**
+ * Parte la grilla en lotes de `tam` casillas, al azar: la primera casilla libre (en el orden de lectura)
+ * es la esquina de arriba a la izquierda de su lote, con una forma al azar entre las que caben; si
+ * ninguna cabe, vuelve atrás. Devuelve los lotes, o null si no se puede (no pasa con las etapas).
+ */
+function partirIguales(r, lado, tam) {
+  const libre = new Uint8Array(lado * lado).fill(1);
+  const fs = formas(tam, lado), rects = [];
+  let pasos = 0;
+  const cabe = (f, c, h, w) => {
+    if (f + h > lado || c + w > lado) return false;
+    for (let y = f; y < f + h; y++) for (let x = c; x < c + w; x++) if (!libre[y * lado + x]) return false;
+    return true;
+  };
+  const marcar = (x, v) => { for (const k of casillas(x, lado)) libre[k] = v; };
+  const paso = desde => {
+    let i = desde;
+    while (i < lado * lado && !libre[i]) i++;
+    if (i === lado * lado) return true;
+    if (++pasos > 5000) return false;
+    const f = Math.floor(i / lado), c = i % lado;
+    for (const [h, w] of barajar(r, fs.slice())) {
+      if (!cabe(f, c, h, w)) continue;
+      const x = { f1: f, c1: c, f2: f + h - 1, c2: c + w - 1 };
+      marcar(x, 0); rects.push(x);
+      if (paso(i + 1)) return true;
+      marcar(x, 1); rects.pop();
+    }
+    return false;
+  };
+  return paso(0) ? rects : null;
+}
+
+/** Cuántos íconos de cada servicio hay en un rectángulo: `{ luz: 1, agua: 0, … }`. */
+export function serviciosEn(t, r) {
+  const cuenta = Object.fromEntries(t.servicios.map(s => [s, 0]));
+  for (const k of casillas(r, t.lado)) if (t.iconos[k]) cuenta[t.iconos[k]]++;
+  return cuenta;
+}
+
+/** Todos los lotes posibles de un tablero de servicios: del tamaño justo y con uno de cada servicio. */
+export function lotesPosibles(t) {
+  const { lado, tam } = t, out = [];
+  for (const [h, w] of formas(tam, lado)) {
+    for (let f1 = 0; f1 + h <= lado; f1++) for (let c1 = 0; c1 + w <= lado; c1++) {
+      const r = { f1, c1, f2: f1 + h - 1, c2: c1 + w - 1 };
+      const cuenta = serviciosEn(t, r);
+      if (t.servicios.every(s => cuenta[s] === 1)) out.push({ r, k: casillas(r, lado) });
+    }
+  }
+  return out;
+}
+
+/**
+ * Cuántas soluciones tiene un tablero de servicios, hasta `limite`: cubrir la grilla con lotes posibles
+ * sin que se pisen, siempre por la casilla libre que menos lotes pueden cubrir. `{ n, solucion }`.
+ */
+export function resolverServicios(t, limite = 2) {
+  const N = t.lado * t.lado;
+  const lotes = lotesPosibles(t);
+  const cubren = Array.from({ length: N }, () => []);
+  lotes.forEach((x, j) => x.k.forEach(k => cubren[k].push(j)));
+  const ocupada = new Uint8Array(N);
+  const puestos = [];
+  let n = 0, primera = null;
+  const cabe = j => lotes[j].k.every(k => !ocupada[k]);
+  const paso = () => {
+    let mejor = -1, opciones = null;
+    for (let k = 0; k < N; k++) {
+      if (ocupada[k]) continue;
+      const o = cubren[k].filter(cabe);
+      if (!o.length) return;
+      if (!opciones || o.length < opciones.length) { mejor = k; opciones = o; if (o.length === 1) break; }
+    }
+    if (mejor < 0) { n++; if (!primera) primera = puestos.map(j => lotes[j].r); return; }
+    for (const j of opciones) {
+      lotes[j].k.forEach(k => { ocupada[k] = 1; }); puestos.push(j);
+      paso();
+      puestos.pop(); lotes[j].k.forEach(k => { ocupada[k] = 0; });
+      if (n >= limite) return;
+    }
+  };
+  paso();
+  return { n, solucion: primera };
+}
+
+/**
+ * Deduce un tablero de servicios como lo haría alguien, sin adivinar. En cada ronda: (1) un ícono o una
+ * casilla libre que solo cabe en un lote posible fija ese lote; si ninguno, (2) una casilla libre cuyos
+ * lotes posibles llevan todos el mismo ⚡ (o el mismo 💧…) obliga al lote de ese ícono a cubrirla: se
+ * descartan sus otros lotes. Devuelve `{ resuelto, rondas, deEntrada }`, como `deducir`.
+ */
+export function deducirServicios(t) {
+  const N = t.lado * t.lado;
+  // Cada lote posible, con el ícono de cada servicio que lleva
+  let vivos = lotesPosibles(t).map(x => ({ ...x, de: t.servicios.map(s => x.k.find(k => t.iconos[k] === s)) }));
+  const ocupada = new Uint8Array(N);
+  let rondas = 0, deEntrada = -1;
+  const cubrenA = k => vivos.filter(x => x.k.includes(k));
+  for (let cambio = true; cambio;) {
+    cambio = false; rondas++;
+    vivos = vivos.filter(x => x.k.every(k => !ocupada[k]));
+    // (1) Lo que solo cabe en un lote: lo fija
+    const fijos = new Set();
+    for (let k = 0; k < N; k++) {
+      if (ocupada[k]) continue;
+      const c = cubrenA(k);
+      if (!c.length) return { resuelto: false, rondas, deEntrada: Math.max(0, deEntrada) };
+      if (c.length === 1) fijos.add(c[0]);
+    }
+    if (deEntrada < 0) deEntrada = fijos.size;
+    for (const x of fijos) {
+      if (x.k.some(k => ocupada[k])) continue;
+      x.k.forEach(k => { ocupada[k] = 1; });
+      cambio = true;
+    }
+    if (cambio) continue;
+    // (2) Una casilla que solo alcanza el lote de un ícono: ese lote la cubre
+    for (let k = 0; k < N && !cambio; k++) {
+      if (ocupada[k]) continue;
+      const c = cubrenA(k);
+      for (let s = 0; s < t.servicios.length && !cambio; s++) {
+        const icono = c[0].de[s];
+        if (!c.every(x => x.de[s] === icono)) continue;
+        const antes = vivos.length;
+        vivos = vivos.filter(x => x.de[s] !== icono || x.k.includes(k));
+        if (vivos.length < antes) cambio = true;
+      }
+    }
+  }
+  let todo = true;
+  for (let k = 0; k < N; k++) if (!ocupada[k]) todo = false;
+  return { resuelto: todo, rondas, deEntrada: Math.max(0, deEntrada) };
+}
+
+/**
+ * El tablero de servicios de una semilla: parte la grilla en lotes de `tam` (`partirIguales`), pone en
+ * cada uno un ícono de cada servicio en casillas distintas al azar, y se queda con uno de solución única
+ * (`resolverServicios`) que se deduzca sin adivinar (`deducirServicios`). Los fáciles, el primero que
+ * sirve; los difíciles arman varios y se quedan con el que pide más pasos. Determinista con la semilla.
+ */
+export function generarServicios(semilla, { lado = 6, tam = 4, servicios = ['luz', 'agua'], dificil = false } = {}) {
+  if ((lado * lado) % tam || tam < servicios.length) throw new Error('tamaño imposible');
+  const r = azar(`servicios:${semilla}`);
+  const quiero = dificil ? 20 : 1;
+  let mejor = null, mejorD = -Infinity, hallados = 0;
+  for (let intento = 0; intento < 3000 && hallados < quiero; intento++) {
+    const rects = partirIguales(r, lado, tam);
+    if (!rects) continue;
+    const iconos = new Array(lado * lado).fill(null);
+    for (const x of rects) {
+      const ks = barajar(r, casillas(x, lado));
+      servicios.forEach((s, j) => { iconos[ks[j]] = s; });
+    }
+    const t = { modo: 'servicios', lado, tam, servicios: [...servicios], iconos, solucion: rects };
+    if (resolverServicios(t, 2).n !== 1) continue;
+    const d = deducirServicios(t);
+    if (!d.resuelto) continue;
+    hallados++;
+    if (dificultad(d) > mejorD) { mejor = t; mejorD = dificultad(d); }
+  }
+  if (!mejor) throw new Error('no se pudo armar el tablero');
+  return { semilla: String(semilla), ...mejor };
+}
+
+/** El tablero de una etapa (0 a 4) del modo servicios. */
+export const generarEtapaServicios = (semilla, n) => generarServicios(`${semilla}:etapa-${n + 1}`, ETAPAS_SERVICIOS[n]);
+
+/**
+ * ¿Vale un lote dibujado en el modo servicios? `{ ok: true }`, o `{ ok: false, motivo }`: 'tam' (con el
+ * tamaño pedido `tam` y el que tiene, `area`), 'sobra' (con el servicio y `cuantos`) o 'falta' (con el
+ * servicio).
+ */
+export function validarServicios(t, r) {
+  if (area(r) !== t.tam) return { ok: false, motivo: 'tam', tam: t.tam, area: area(r) };
+  const cuenta = serviciosEn(t, r);
+  const sobra = t.servicios.find(s => cuenta[s] > 1);
+  if (sobra) return { ok: false, motivo: 'sobra', servicio: sobra, cuantos: cuenta[sobra] };
+  const falta = t.servicios.find(s => !cuenta[s]);
+  if (falta) return { ok: false, motivo: 'falta', servicio: falta };
+  return { ok: true };
 }
