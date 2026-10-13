@@ -39,12 +39,12 @@ const T = {
   // El modo «Servicios» (D-311): los mismos lotes, con ⚡ y 💧 en vez de números
   lemaServicios: 'Lotes del mismo tamaño, cada uno con su ⚡ y su 💧.',
   comoServicios: [
-    ['📐', 'Divide el tablero en lotes, todos del tamaño que dice arriba.'],
-    ['⚡', 'Cada lote lleva un ⚡ y un 💧, ni más ni menos. Si un lote deja a un ⚡ sin su 💧, no va.'],
+    ['📐', 'Divide el tablero en lotes del tamaño que dice arriba.'],
+    ['⚡', 'Cada lote lleva un ⚡ y un 💧, ni más ni menos. Si un lote deja una casilla sin lote posible, no va.'],
     ['👆', `Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son ${ETAPAS_SERVICIOS.length} tableros; los 3 últimos, difíciles.`],
   ],
   // Al llegar a los difíciles del modo servicios, cómo pensarlos (pedido del dueño: explicarlo bien)
-  avisoDificil: 'Ahora, difíciles: piensa un paso adelante. Si un lote deja un ⚡ sin 💧, no va.',
+  avisoDificil: 'Difíciles: si un lote deja una casilla sin lote posible, no va.',
   modos: { numeros: '🔢 Números', servicios: '⚡💧 Servicios', rotulo: 'Modo' },
   servicios: '⚡💧 Servicios',
   tam: 'Lotes de {n} casillas',
