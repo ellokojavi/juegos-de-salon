@@ -94,7 +94,7 @@ body {
 .demo-rotulo.ve { opacity: 1; animation: lt-listo 0.55s cubic-bezier(.3,1.6,.6,1); }
 @keyframes lt-listo { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
 
-.resultado { text-align: center; display: grid; gap: 10px; }
+.resultado { text-align: center; display: grid; gap: 10px; --gap-contenedor: 10px; }
 .resultado .tablero-lt.chico { max-width: 200px; }
 .resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
 .sello-lt { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
