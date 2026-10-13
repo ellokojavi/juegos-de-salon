@@ -46,6 +46,7 @@ const T = {
   tiempo: 'Tiempo: {t}.',
   // La trampa, explicada: con qué pista tentaba el asesino
   trampa: ['💀 Caíste con {w}: parecía de {p}, pero no era de los tuyos.', '💀 Esquivaste al asesino: {w}, que parecía de {p}.'], tienta: '≈ {p}',
+  tableroEntero: '🗺️ El tablero entero',
   otraVez: '🔁 Otro tablero', deHoy: '📅 El de hoy', laboratorio: '‹ Volver al laboratorio',
   comentarAbrir: '💬 Dejar un comentario',
   comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si las pistas se entendían, si alguna palabra era injusta y qué le cambiarías.', ph: 'Por ejemplo: la pista FUEGO con BOMBERO me costó; el asesino me engañó.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
@@ -307,8 +308,9 @@ function resultado() {
   const lineas = [fmt(T.desglose[0], { n: e.encontrados, t: AGENTES, pts: Math.round(100 * e.encontrados / AGENTES) })];
   if (e.neutrales) lineas.push(fmt(T.desglose[1][e.neutrales === 1 ? 0 : 1], { n: e.neutrales, pts: RESTA_NEUTRAL * e.neutrales }));
   if (e.asesino) lineas.push(fmt(T.desglose[2], { pts: RESTA_ASESINO }));
-  // El tablero entero, con lo que era cada carta
-  const tablero = el('div', { class: 'tablero tablero--fin', id: 'tablero-fin', 'data-tablero': 'agentes' }, ...t.cartas.map((c, i) => el('div', {
+  // El tablero entero, con lo que era cada carta. Va plegado (C-8: los bloques largos, colapsados):
+  // abierto, sus 15 cartas dejaban los botones del final bajo el pliegue (D-309)
+  const tablero = el('div', { class: 'tablero tablero--fin', id: 'tablero-fin' }, ...t.cartas.map((c, i) => el('div', {
     class: `carta ${c.tipo === 'agente' ? `agente g${c.p}` : c.tipo}${e.tocadas.has(i) ? '' : ' sin-tocar'}`,
     style: `--n:${c.w.length};--k:${i}`,
   }, c.tipo === 'asesino' ? `💀 ${c.w}` : c.w,
@@ -326,7 +328,7 @@ function resultado() {
     asesino && t.pistas[asesino.tienta] ? el('p', { class: `trampa${e.asesino ? ' trampa--mal' : ''}`, id: 'trampa' },
       fmt(T.trampa[e.asesino ? 0 : 1], { w: asesino.w, p: t.pistas[asesino.tienta].pista })) : null,
     // La tarjeta de emojis va solo en el mensaje para compartir: aquí ya está el tablero con cada carta (pedido del dueño)
-    tablero,
+    el('details', { class: 'panel tablero-entero', id: 'repaso-agentes', 'data-tablero': 'agentes' }, el('summary', {}, T.tableroEntero), tablero),
     botonResultadoSolo({ C: COMMON.es, emoji: '🕵️', juego: T.nombre, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: tarjeta(t, e), url: `${SITIO}labs/agents/${SEMILLA_URL ? `?seed=${encodeURIComponent(SEMILLA_URL)}` : ''}`, alTocar: () => SFX.tap() }),
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: `?seed=${Math.random().toString(36).slice(2, 8)}` }, T.otraVez),
     SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname }, T.deHoy) : null,

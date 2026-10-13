@@ -132,3 +132,6 @@
   .titulo-agentes .lupa, .demo-cartas .dc, .pista.entra, .pista.sale, .carta.volteo, .tablero.tiembla, .sello, .carta::after, .sello-fin, .tablero--fin .carta,
   .resultado .trofeo { animation: none !important; }
 }
+
+/* El tablero entero del resultado, plegado como los repasos (base.css: details.panel): los botones del final a la vista (C-8, D-309) */
+.tablero-entero > summary { min-height: 44px; }
