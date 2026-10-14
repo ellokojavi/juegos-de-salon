@@ -1,6 +1,7 @@
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2];
+const OUT = salida();
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9354, dir: `${OUT}/p`, out: OUT });
 const urls = async () => b.evaluate(`performance.getEntriesByType('resource').map(r=>r.name.replace(location.origin,'')).filter(u=>/\\.(js|css)/.test(u))`);
 await b.go(`${SITIO}/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/`);

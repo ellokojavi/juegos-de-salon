@@ -1,8 +1,9 @@
 // Chat de sala en Batalla Naval: dos celulares contra Firebase real (canon C-15, D-138)
 // Uso: SITIO=http://localhost:87xx node tools/e2e/battleship/chat.mjs <salida>
 // Un Chrome por celular; sus puertos los elige el sistema (D-213), o PUERTO_CDP y el siguiente.
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2];
+const OUT = salida();
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 // Dos orígenes distintos para que cada celular tenga su propio localStorage
 const hosts = [SITIO, SITIO.replace('localhost', '127.0.0.1')];

@@ -17,6 +17,7 @@
  * Lo que ya está mal en español lo cuentan los guiones del juego; aquí solo se mira lo que
  * cambia con el idioma. Cada toma queda como captura: `<pantalla>-<idioma>.png`.
  */
+import { salida as carpetaSalida } from './salida.mjs';
 import { mkdirSync } from 'node:fs';
 import { launch, sleep } from './cdp.mjs';
 import { LANGS, EN_LABS, LABS_KEY, COMMON } from '../../public/assets/js/i18n.js';
@@ -80,7 +81,7 @@ const MEDIR = `(()=>{
  * @returns {Promise<number>} cuántos chequeos quedaron en rojo
  */
 export async function revisarIdiomas(juego, { dicts = [], port, pantallas, permitidos = [], ancho = 390, alto = 844, salida, consulta = '' }) {
-  const OUT = salida || process.argv[2] || `/tmp/idiomas-${juego}`;
+  const OUT = salida || carpetaSalida(`/tmp/idiomas-${juego}`);
   mkdirSync(OUT, { recursive: true });
   const caminos = CAMINOS[juego];
   if (!caminos) throw new Error(`No hay caminos para "${juego}" en caminos.mjs`);

@@ -3,15 +3,13 @@
 // el segundo intento como práctica, el botón "Listo" y la página /today/ con su racha, su
 // calendario y cómo le va en cada juego, a 320 px y en los cuatro idiomas. El reloj de la página se
 // fija en el 6 de octubre de 2026 a mediodía, el día n.° 1, cuando toca Desenredo.
-import { mkdtempSync } from 'node:fs';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 import { COMMON, IDIOMAS } from '../../public/assets/js/i18n.js';
 import { juegoDel, KEY } from '../../public/assets/js/uno-al-dia.js';
 
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2] || mkdtempSync(join(tmpdir(), 'uno-al-dia-'));
+const OUT = salida();
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 const HOY = '2026-10-06';
 if (juegoDel(HOY) !== 'desenredo') { console.log(`✗ el ${HOY} ya no toca Desenredo (toca ${juegoDel(HOY)}): cambia la fecha del guion`); process.exit(1); }

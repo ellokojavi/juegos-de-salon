@@ -2,10 +2,11 @@
 // sin cuenta regresiva ni solución a la vista, y el reloj de arriba queda quieto.
 //
 // Uso: python3 -m http.server 8765 -d public (en otra terminal) y node tools/e2e/cup/zip-diez.mjs <carpeta-salida>
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { mkdirSync } from 'node:fs';
 
-const OUT = process.argv[2] || '/tmp/zip-diez';
+const OUT = salida('/tmp/zip-diez');
 mkdirSync(OUT, { recursive: true });
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9391, dir: `${OUT}/perfil`, out: OUT });
 const SITIO = process.env.SITIO || 'http://localhost:8765';

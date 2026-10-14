@@ -5,15 +5,13 @@
 // se anote el puntaje de 0 a 100 de su fórmula y que la tarjeta vaya arriba de los botones del
 // juego. También, que un link de otro juego lleve al de hoy, que el segundo intento sea práctica y
 // que /today/ nombre el juego.
-import { mkdtempSync } from 'node:fs';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 import { COMMON } from '../../public/assets/js/i18n.js';
 import { juegoDel, sumarDias, LANZAMIENTO, KEY, puntajeAhorcado, puntajeNaval, puntajeDudo } from '../../public/assets/js/uno-al-dia.js';
 
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2] || mkdtempSync(join(tmpdir(), 'uno-al-dia-grupo-'));
+const OUT = salida();
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 const U = COMMON.es.uad;
 

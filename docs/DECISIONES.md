@@ -73,9 +73,9 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
-| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307 |
+| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
-| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313 |
+| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -5818,3 +5818,37 @@ decisión; entra ahora con número reservado (D-301).
 procesos fusione las rondas (un día más de atraso, y otro paso que puede fallar).
 **Consecuencias:** el dueño ve los arreglos de las rondas ya publicados y los corrige después,
 como con los textos (U-3).
+
+## D-315 · La carpeta de proyectos se limpia sola, también las ramas y la basura de pruebas
+**Fecha:** 2026-10-14 · **Estado:** vigente · **Relación:** completa D-252 (qué barre `limpiar-copias.mjs`) y D-276 (la ronda del agente de procesos); completa D-213 (los guiones de `tools/e2e/`)
+**Decisión:** Pedido del dueño: en el Mac mini, la carpeta de proyectos tiene `juegos-de-salon` y
+solo las copias con trabajo en curso, todos los días y no solo al abrir una sesión.
+- **La ronda diaria del agente de procesos corre `node tools/agents/limpiar-copias.mjs`** desde la
+  carpeta principal y cuenta en su informe qué borró, qué dejó y por qué. El hook de inicio de
+  sesión sigue igual.
+- **Ramas locales sin copia:** la herramienta borra las que ya entraron a `main` y las que no
+  tienen rama en GitHub (se borró al fusionar, o nunca se subió) pero cuyos commits están todos en
+  GitHub. Una con commits que no están en GitHub **se nombra y se deja**: no se sube, porque puede
+  ser historia de antes de una reescritura. Nunca `main`, la rama de una copia viva ni la de un PR
+  abierto; sin `gh`, solo las que ya entraron a `main`.
+- **Basura de pruebas:** una carpeta sin seguimiento en la raíz de una copia, con nombre de
+  argumento perdido (`undefined`, `null`, o que empieza con `-`) y dentro solo perfiles de Chrome
+  (una carpeta con `Local State`) y capturas o datos (`.png`, `.jpg`, `.webm`, `.json`, `.txt`,
+  `.log`), no cuenta como cambio sin commitear, y se borra con la copia. Cualquier otro archivo la
+  vuelve real, y los cambios reales siguen sin tocarse nunca.
+- **La causa se cierra en los guiones:** la carpeta de salida sale de `salida()`
+  (`tools/e2e/salida.mjs`), que acepta el primer argumento solo si es una carpeta de verdad; si no,
+  la que el guion da por defecto o una nueva en el directorio temporal. `launch` (`cdp.mjs`) se
+  niega a abrir Chrome con un perfil en `undefined/` o `--parte/`, y `tools/e2e/salida.test.mjs`
+  falla si un guion vuelve a leer `process.argv[2]` a mano.
+**Por qué:** en la limpieza del 13 de octubre quedaron vivas dos copias fusionadas
+(`caso-labs-portada`, `telemetria`) por carpetas `undefined/` (64 MB) y `--parte/` (75 MB): los
+guiones hacían `const OUT = process.argv[2]`, y corridos sin carpeta (`undefined`) o con un flag
+primero (`torneo.mjs --parte copa`) dejaban capturas y un perfil de Chrome dentro de la copia. Y
+había 74 ramas locales viejas en la carpeta principal, que nada borraba.
+**Alternativas descartadas:** limpiar a mano (vuelve a pasar); subir a GitHub las ramas con commits
+propios antes de borrarlas, como las copias abandonadas (tras la reescritura del 13 subiría historia
+vieja); ignorar `undefined/` en `.gitignore` (escondería la basura sin borrarla y sin arreglar la
+causa).
+**Consecuencias:** el informe de cada ronda de procesos dice cómo quedó la carpeta; un guion nuevo de
+punta a punta usa `salida()` (la prueba lo exige).

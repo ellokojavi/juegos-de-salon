@@ -3,9 +3,10 @@
 // "Compartir el video" manda el texto del video con su link de YouTube; en un computador, solo el texto copiado y
 // nada descargado. El video no se baja hasta que lo tocan.
 // Uso: node tools/e2e/compartir-portada.mjs /tmp/compartir-portada
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2] || '/tmp/compartir-portada';
+const OUT = salida('/tmp/compartir-portada');
 const b = await launch({ dir: `${OUT}/p`, out: OUT });
 let mal = 0;
 const ver = (ok, que) => { console.log(`${ok ? '✓' : '✗'} ${que}`); if (!ok) mal++; };
