@@ -29,7 +29,7 @@ for (const r of lista) {
   const donde = [ctx.labs && `🧪 labs ${ctx.labs}`, ctx.copa && `copa ${ctx.copa}`, ctx.dia && `día ${ctx.dia}`, ctx.juego, ctx.semilla && `semilla ${ctx.semilla}`,
     // Cómo le fue a quien comenta El caso (D-265)
     ctx.errores !== undefined && `${ctx.errores} errores`, ctx.ayudas !== undefined && `${ctx.ayudas} ayudas`, ctx.tiempo, ctx.url, ctx.pantalla, ctx.pantallaTam].filter(Boolean).join(' · ');
-  console.log(`── ${r.at ? fecha(r.at) : '(sin fecha)'} · ${r.nombre || 'anónimo'}${r.tester ? ` (llave ${r.tester})` : ''} · v${r.v || '?'}`);
+  console.log(`── ${r.at ? fecha(r.at) : '(sin fecha)'} · ${r.nombre || 'anónimo'}${r.tester ? ` (llave ${r.tester})` : ''}${r.correoMascara ? ` · 📧 ${r.correoMascara} (wants an email reply, D-317)` : ''} · v${r.v || '?'}`);
   if (donde) console.log(`   ${donde}`);
   console.log(`   ${String(r.texto || '').replace(/\n/g, '\n   ')}`);
   if (ctx.navegador) console.log(`   (${ctx.navegador.slice(0, 90)})`);
