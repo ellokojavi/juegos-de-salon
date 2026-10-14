@@ -4,14 +4,12 @@
 // Recorre la campana en sus estados, la tarjeta ("Avisarme" y "Ahora no"), el aviso de prueba, los
 // ajustes, silenciar, y el camino de iPhone: agregar a inicio, otra app, y la app instalada que
 // abre con el nombre ya elegido.
-import { mkdtempSync } from 'node:fs';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { parVapid } from '../../push/vapid.mjs';
 
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2] || mkdtempSync(join(tmpdir(), 'avisos-'));
+const OUT = salida();
 const BASE = `${SITIO}/cup/`;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 

@@ -4,10 +4,11 @@
 // final, las copas terminadas: con su etiqueta y escondidas hasta prender el interruptor (D-234).
 //
 // Uso: python3 -m http.server 8765 -d public (en otra terminal) y node tools/e2e/cup/copas-del-jugador.mjs <carpeta-salida>
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { mkdirSync } from 'node:fs';
 
-const OUT = process.argv[2] || '/tmp/copas-del-jugador';
+const OUT = salida('/tmp/copas-del-jugador');
 mkdirSync(OUT, { recursive: true });
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9393, dir: `${OUT}/perfil`, out: OUT });
 const SITIO = process.env.SITIO || 'http://localhost:8765';

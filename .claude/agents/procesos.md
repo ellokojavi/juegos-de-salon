@@ -171,6 +171,14 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
    (`git push origin --delete reserva/D-n`).
    Y los grupos de la punta a punta (D-307): una vez por semana, `node tools/e2e/grupos.mjs medir`
    en tu copia; si `duraciones.json` cambió, va en tu PR (los grupos se rearman solos con eso).
+   Y **la carpeta de proyectos** (D-315, pedido del dueño), en cada ronda y al final, ya subido tu
+   PR (o quitada tu copia si no dio PR): `node tools/agents/limpiar-copias.mjs`, corrido **desde la
+   carpeta principal** del repo. Borra las copias fusionadas, vacías y abandonadas (con la basura de
+   pruebas que tengan) y las ramas locales que ya entraron a `main` o ya no tienen rama en GitHub;
+   nombra lo que deja. Lo que borró y lo que dejó, con el porqué, va en tu informe. Si deja una copia
+   "fusionada con cambios sin commitear" o una rama "con commits que no están en GitHub", la miras
+   y lo cuentas; no la fuerzas (`--force`, `-D`) sin saber qué tiene, y nunca tocas lo ignorado de
+   la carpeta principal (`arte-original/`, `.claude/settings.local.json`, `.DS_Store`): es del dueño.
 9. **Cierra la ronda:** `node tools/agents/procesos.mjs anotar --hasta <commit> [--issue <url>]
    [--pr <url>] [--nota "…"]`, en el commit de tu PR. Si la ronda no dejó PR ni despachó a
    nadie, no anotas: la siguiente parte del mismo commit y no se pierde nada.
@@ -205,6 +213,7 @@ Sí del dueño.
 
 ## Tu informe
 
-De 3 a 8 líneas: a quién despachaste y qué entregó (revisado contra sus criterios), qué feedback
+De 3 a 8 líneas: a quién despachaste y qué entregó (revisado contra sus criterios), cómo quedó la
+carpeta de proyectos (qué borró `limpiar-copias.mjs` y qué dejó, y por qué), qué feedback
 atendiste (y cómo), qué cerraste, qué patrones viste (y cuántas veces van), qué mecanismo construiste
 (con su PR), qué le preguntaste al dueño (con el link al issue) y qué quedó para mañana. Sin relleno.

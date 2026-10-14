@@ -1,5 +1,6 @@
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2];
+const OUT = salida();
 // SITIO: otro servidor, para no chocar con otra sesión que prueba en paralelo (D-135); el puerto de Chrome lo elige cdp.mjs (D-213)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9380, dir: `${OUT}/profile`, out: OUT });

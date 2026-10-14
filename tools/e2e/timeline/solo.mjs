@@ -12,10 +12,11 @@
  *
  * Uso: SITIO=http://localhost:87xx node tools/e2e/timeline/solo.mjs <salida>
  */
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { LANGS } from '../../../public/assets/js/i18n.js';
 
-const OUT = process.argv[2] || '/tmp/ldt-solo';
+const OUT = salida('/tmp/ldt-solo');
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const CDP = Number(process.env.PUERTO_CDP) || 9456;
 const URL = `${SITIO}/timeline/`;

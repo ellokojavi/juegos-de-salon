@@ -1,10 +1,11 @@
 // Dos celulares: dos instancias de Chrome (orígenes distintos → localStorage separado) contra Firebase real.
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 // El otro celular entra por 127.0.0.1: otro origen, otro localStorage
 const SITIO_B = SITIO.replace('localhost', '127.0.0.1');
-const OUT = process.argv[2];
+const OUT = salida();
 const A = await launch({ port: 9424, dir: `${OUT}/pA`, out: OUT });
 const B = await launch({ port: 9425, dir: `${OUT}/pB`, out: OUT });
 await A.go(`${SITIO}/bulls-and-cows/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${SITIO}/bulls-and-cows/`);

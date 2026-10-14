@@ -1,7 +1,8 @@
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2];
+const OUT = salida();
 // mide, para cada grilla, el desfase vertical entre cada etiqueta de fila y su fila de casillas
 const measure = `(sel)=>{const out=[];for(const g of document.querySelectorAll(sel+' .grid')){const lbls=[...g.querySelectorAll('.lbl')].slice(11);let maxDelta=0;for(let r=0;r<10;r++){const l=lbls[r].getBoundingClientRect();const c=g.querySelector('.cell[data-r="'+r+'"][data-c="0"]').getBoundingClientRect();const d=Math.abs((l.top+l.bottom)/2-(c.top+c.bottom)/2);maxDelta=Math.max(maxDelta,d);}out.push({maxDeltaPx:Math.round(maxDelta*10)/10, cell:Math.round(g.querySelector('.cell').getBoundingClientRect().height)});}return JSON.stringify(out)}`;
 for (const [w, h, tag] of [[375, 812, 'iphone'], [320, 568, 'se'], [430, 932, 'promax']]) {

@@ -1,8 +1,9 @@
 // Chat de sala en Línea de Tiempo: dos celulares contra Firebase real (canon C-15)
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2];
+const OUT = salida();
 // Segundo argumento opcional: una base distinta (por ejemplo el sitio publicado), canon C-12.
 const BASE = process.argv[3];
 const hosts = BASE ? [BASE, BASE] : ['localhost', '127.0.0.1', '[::1]'].map(h => SITIO.replace('localhost', h)).slice(0, 2);

@@ -3,8 +3,9 @@
 // sin semilla es el tablero de hoy; con semilla se juega entero: un agente suma, uno de otra pista suma sin cortar,
 // el asesino y los neutrales cortan la pista (sello Cortada), completarla pasa a la siguiente (sello Completa), y el final muestra el puntaje que dice el
 // motor con su sello, el tablero destapado, compartir y el comentario al final. Imprime ✗ si algo falla.
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2] || '/tmp/agentes-lab';
+const OUT = salida('/tmp/agentes-lab');
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const ev = e => b.evaluate(e);
 const SITIO = process.env.SITIO || 'http://localhost:8765';

@@ -2,6 +2,7 @@
 // D-199), y con una salida (C-14, D-40).
 // Se le corta la red a la base (no al sitio), que es como se ve quedarse sin señal o toparse
 // con el tope de conexiones del plan gratuito.
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 import { LANGS } from '../../public/assets/js/i18n.js';
 import { gameById } from '../../public/assets/js/games.js';
@@ -13,7 +14,7 @@ import { LOCALES as DU } from '../../public/liars-dice/rules.js';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 
-const OUT = process.argv[2];
+const OUT = salida();
 const b = await launch({ port: 9442, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 
 await b.send('Network.enable');

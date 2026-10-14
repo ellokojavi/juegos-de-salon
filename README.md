@@ -661,6 +661,7 @@ node tools/agents/portadas.test.mjs
 node tools/agents/procesos.test.mjs
 node tools/e2e/cambios.test.mjs
 node tools/e2e/grupos.test.mjs
+node tools/e2e/salida.test.mjs
 node tools/e2e/ya-probado.test.mjs
 node tools/firebase/rankings-historia.test.mjs
 node tools/push/avisar.test.mjs
@@ -782,8 +783,8 @@ tools/
   release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + hechos.mjs (this README), og.mjs (social cards and bridge pages), iconos.mjs (the app icons, from assets/icon.svg), changelog.mjs (each PR's changelog entry, without a number, in changelog/; the version comes from the order PRs reach main, D-300)
   firebase/                   reglas.mjs (publish the rules), reportes.mjs (The Cup bug reports), en-curso.mjs (anyone playing?), rankings-historia.mjs (The Cup's history into the leaderboards, and each player's cups)
   generators/                 mapa.mjs (the world of Where is it?), flota.py (the Battleship fleet)
-  agents/                     dilemas.mjs (usability dilemmas as issues, D-132), decision.mjs (reserves decision numbers, so two sessions never take the same D-n, D-301), documentar.mjs (the documentation agent, D-172), limpiar-copias.mjs (removes merged, empty and abandoned worktrees at session start, D-218, D-252), procesos.mjs (the process agent, D-273), aprobar.mjs (one-tap Yes/No decisions in issues, D-273), feedback.mjs (players' 🐞 reports as issues, D-275), llave-labs.mjs (gives or takes away a person's own key to the lab, D-284), portadas.mjs (shows the cover of every game a PR touches and warns when a game changed but its cover did not, U-36)
-  e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here. grupos.mjs splits them into even groups for CI (D-307), and ya-probado.mjs lets publishing skip what already passed in the PR (D-308)
+  agents/                     dilemas.mjs (usability dilemmas as issues, D-132), decision.mjs (reserves decision numbers, so two sessions never take the same D-n, D-301), documentar.mjs (the documentation agent, D-172), limpiar-copias.mjs (removes merged, empty and abandoned worktrees, leftover test output and stale local branches, at session start and in the daily process round, D-218, D-252, D-315), procesos.mjs (the process agent, D-273), aprobar.mjs (one-tap Yes/No decisions in issues, D-273), feedback.mjs (players' 🐞 reports as issues, D-275), llave-labs.mjs (gives or takes away a person's own key to the lab, D-284), portadas.mjs (shows the cover of every game a PR touches and warns when a game changed but its cover did not, U-36)
+  e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here. grupos.mjs splits them into even groups for CI (D-307), ya-probado.mjs lets publishing skip what already passed in the PR (D-308), and salida.mjs picks each script's output folder, so a missing argument never leaves screenshots in the working copy (D-315)
 marketing/                  The promo video and its memory
 .claude/                    The project's agents (usabilidad, documentacion, procesos) and skills
 ```

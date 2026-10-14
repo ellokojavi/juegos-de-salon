@@ -13,9 +13,10 @@
  *
  * Uso: SITIO=http://localhost:87xx node tools/e2e/timeline/arrastre.mjs <salida>
  */
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 
-const out = process.argv[2] || '/tmp/ldt-arrastre';
+const out = salida('/tmp/ldt-arrastre');
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9231, dir: `${out}/p`, out, width: 375, height: 812 });
 const click = sel => b.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);

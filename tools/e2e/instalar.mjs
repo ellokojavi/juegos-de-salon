@@ -2,14 +2,12 @@
 // cada uno: los pasos de Safari y Chrome en iPhone, de Chrome y Samsung en Android, el diálogo
 // propio de Chrome, "abre el link en Safari" dentro de otra app, la ✕ que lo apaga para siempre, y
 // que a 320 px quepa en los cuatro idiomas.
-import { mkdtempSync } from 'node:fs';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 import { COMMON, IDIOMAS } from '../../public/assets/js/i18n.js';
 
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2] || mkdtempSync(join(tmpdir(), 'instalar-'));
+const OUT = salida();
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 
 const b = await launch({ port: 9498, dir: `${OUT}/p`, out: OUT });
