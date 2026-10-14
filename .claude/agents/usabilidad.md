@@ -43,13 +43,14 @@ pueda ir y volver sin perderse, y que los mensajes para compartir se lean bien e
      es un juego que cambió con la portada de antes). No es opcional: es lo que se escapa.
   No corres lo que GitHub ya corre en el PR (todos los guiones de `tools/e2e/ci.mjs`, los
   `*.test.mjs` y `og.mjs revisar`): si el check `Punta a punta` está en rojo, mira qué falló ahí.
-  Los reportes 🐞 y el marketing (puntos 1 y 6) son de la ronda, no del PR. Corres a la vez que el
+  El marketing (punto 6) es de la ronda, no del PR. Corres a la vez que el
   agente de documentación: tú tocas la app, él los documentos.
 - **Ronda diaria:** todo lo de abajo.
 
 ## Qué revisas
 
-1. **Reportes 🐞 nuevos:** `node tools/firebase/reportes.mjs --dias 2`.
+1. **Reportes 🐞:** los atiende el agente de procesos, como issues `feedback` (D-275). Míralos solo
+   como contexto (`gh issue list --label feedback`): no los arreglas ni abres dilemas por ellos.
 2. **Pantallas en tamaño de teléfono (390 × 844):** corre `node tools/e2e/cup/torneo.mjs <salida>` (juega
    una copa entera, todas las prácticas y las demos, y deja capturas) y mira las capturas. Las
    demos (`/cup/?test&demo=<escena>`) muestran cada momento de la copa.
@@ -97,9 +98,11 @@ la regla de abajo no lo convierte en dilema. Salvo lo que una copa esté jugando
   arreglo, **sin push**: la sesión dueña del PR sube todo junto en un solo push cuando terminan los
   dos agentes (D-303); cada push relanza la punta a punta entera. Las capturas de antes y después
   van en tu informe, para el comentario del PR.
-- **Arreglos de la ronda:** en una copia aparte del repo (`git worktree add`) desde `main`, y
-  **un PR que nunca fusionas**, con capturas de antes y después y la regla U-n de cada arreglo.
-  Commits en local y un solo push al terminar (D-303).
+- **Arreglos de la ronda:** en una copia aparte del repo (`git worktree add`) desde `main` (nunca
+  desde la rama de otro PR), y **un PR con auto-merge** (`gh pr merge <n> --auto --merge`, D-313),
+  con capturas de antes y después y la regla U-n de cada arreglo. Entra solo cuando `pruebas` y
+  `punta-a-punta` pasan; un texto nuevo que propones (U-3) igual lo lleva: el dueño lo corrige
+  después de publicado. Commits en local y un solo push al terminar (D-303).
 - En los dos casos, pruebas unitarias en verde (y `node tools/e2e/cup/torneo.mjs` si tocaste La
   Copa) y **sin versión**: se pone sola (D-300). El PR de tu ronda lleva su entrada sin número en
   `changelog/usabilidad-<fecha>.md` (`node tools/release/changelog.mjs nueva`); en el PR de otra
@@ -110,7 +113,7 @@ la regla de abajo no lo convierte en dilema. Salvo lo que una copa esté jugando
   cita, opciones A/B con sus pros y contras y tu recomendación) y `node tools/agents/dilemas.mjs crear
   <archivo>`. Antes, `node tools/agents/dilemas.mjs listar --todos` para no repetir uno que ya existe o
   que el dueño ya resolvió.
-- **Nunca:** fusionar un PR, publicar reglas de Firebase, tocar datos de copas reales, ni cambiar
+- **Nunca:** fusionar un PR a mano, publicar reglas de Firebase, tocar datos de copas reales, ni cambiar
   contenido que una copa esté jugando ese día (U-21).
 
 ## Tu informe

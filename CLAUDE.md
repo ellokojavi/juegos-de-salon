@@ -216,7 +216,8 @@ con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un ce
   que muestra el lema, los pasos y la tarjeta de cada juego que toca el PR y avisa ⚠️ si el juego
   cambió y su portada no (U-36).
 - **Documentación** (D-172): ronda cuando la lanza el agente de procesos (D-276), revisión de cada PR y a
-  pedido ("documenta lo último"). Nunca fusiona ni toca código, salvo los mensajes con que la app
+  pedido ("documenta lo último"). El PR de su ronda lleva auto-merge (D-313), como el de la ronda
+  de usabilidad; no toca código, salvo los mensajes con que la app
   se presenta (D-271, U-35). Su memoria es
   `docs/documentacion.json`: `node tools/agents/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial`;
   `revisar` termina mostrando esos mensajes (compartir la app, el video y la bajada de la tarjeta
