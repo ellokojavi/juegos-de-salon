@@ -20,7 +20,7 @@ En `output/` vive **solo la última versión**, y GitHub Pages la publica con el
 van al repo.
 
 **Muestra un juego que no está en la portada, a propósito** (`"laboratorio": ["caso"]` en
-`registro.json`, U-34): `node tools/agents/marketing.mjs revisar` no lo marca como "ya no está".
+`registro.json`, U-34): `node tools/agents/marketing.mjs check` no lo marca como "ya no está".
 Cuando El caso salga del laboratorio, se saca ese campo y el link pasa a la ruta del juego.
 
 ## Lo que el dueño quiere

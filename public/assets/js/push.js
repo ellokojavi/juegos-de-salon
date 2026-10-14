@@ -21,7 +21,7 @@ export const LABS_AVISOS_KEY = 'juegos-de-salon:labs-avisos';
 
 /**
  * La clave pública: la de vapid.js, o —solo en el sitio local— una de prueba guardada en el
- * navegador (`juegos-de-salon:vapid-prueba`), para probar sin la clave del dueño (tools/e2e/cup/avisos.mjs).
+ * navegador (`juegos-de-salon:vapid-prueba`), para probar sin la clave del dueño (tools/e2e/cup/notifications.mjs).
  */
 export const VAPID_PRUEBA_KEY = 'juegos-de-salon:vapid-prueba';
 export function clavePublica({ storage = globalThis.localStorage, loc = globalThis.location } = {}) {

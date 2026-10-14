@@ -1,573 +1,579 @@
 #!/usr/bin/env python3
 """
-El README, al día: bloques generados del código, capturas rehechas por el navegador.
+The README, up to date: blocks generated from the code, screenshots retaken by the browser.
 
-  python3 tools/release/readme.py revisar      ¿El README quedó viejo? (lo corre el check pruebas)
-  python3 tools/release/readme.py actualizar   Reescribe los bloques generados del README
-  python3 tools/release/readme.py capturas [seccion] [--sin-red]
-                                       Rehace las capturas con Chrome headless
-  python3 tools/release/readme.py sellar       "Ya revisé el README con estos hechos"
+  python3 tools/release/readme.py check        Did the README go stale? (the tests check runs it)
+  python3 tools/release/readme.py update       Rewrites the README's generated blocks
+  python3 tools/release/readme.py screenshots [section] [--offline]
+                                       Retakes the screenshots with headless Chrome
+  python3 tools/release/readme.py seal         "I already reviewed the README with these facts"
 
-Por qué existe: el README cuenta cosas que el código sabe —cuántos juegos hay, qué
-modos tiene cada uno, cuántas cartas trae cada temática, qué tests hay— y muestra
-capturas de pantallas que cambian. Nada de eso avisa cuando queda viejo. Acá:
+Why it exists: the README tells things the code knows —how many games there are, which
+modes each one has, how many cards each theme brings, which tests exist— and shows
+screenshots of screens that change. None of that warns when it goes stale. Here:
 
-  1. Lo que se puede derivar del código se genera. Entre las marcas
+  1. What can be derived from the code is generated. Between the markers
 
-         <!-- generado: juegos -->  ...  <!-- /generado -->
+         <!-- generated: games -->  ...  <!-- /generated -->
 
-     nadie edita a mano: `actualizar` lo reescribe desde `tools/release/hechos.mjs`, que
-     importa los módulos de verdad.
+     nobody edits by hand: `update` rewrites it from `tools/release/facts.mjs`, which
+     imports the real modules.
 
-  2. Lo que es prosa —cómo se juega, por qué está bueno— lo escribe una persona,
-     así que la herramienta no lo toca: lo delata. `revisar` compara los hechos de
-     hoy contra los del último sello (`docs/hechos.json`) y falla nombrando qué
-     cambió y qué sección hay que releer. Al terminar, `sellar` deja constancia.
+  2. What is prose —how it is played, why it is fun— is written by a person, so the
+     tool does not touch it: it tells on it. `check` compares today's facts against
+     those of the last seal (`docs/facts.json`) and fails naming what changed and which
+     section has to be reread. When done, `seal` records it.
 
-  3. Las capturas se rehacen solas: `docs/capturas.json` dice de qué guion de
-     tools/e2e/ y de qué toma sale cada imagen, y `capturas` corre los guiones y
-     copia los PNG a docs/screenshots/. Las que dependen de una sala de Firebase
-     van marcadas `"red": true` y se saltan con --sin-red.
+  3. The screenshots are retaken on their own: `docs/capturas.json` says which tools/e2e/
+     script and which shot each image comes from, and `screenshots` runs the scripts and
+     copies the PNGs to docs/screenshots/. The ones that depend on a Firebase room are
+     marked `"red": true` and are skipped with --offline.
 
-El gancho para que esto pase siempre y no cuando alguien se acuerde: el check `pruebas`
-corre `revisar` en cada PR y antes de cada publicación (C-11, D-205), y queda en rojo si
-el README quedó atrás.
+The hook so this always happens and not when someone remembers: the `tests` check
+runs `check` on every PR and before every publish (C-11, D-205), and goes red if
+the README fell behind.
 """
 import json, os, re, shutil, socket, subprocess, sys, tempfile, time, pathlib
 from concurrent.futures import ThreadPoolExecutor
 
-RAIZ = pathlib.Path(__file__).resolve().parents[2]
-README = RAIZ / 'README.md'
-CATALOGO = RAIZ / 'docs/capturas.json'
-SELLO = RAIZ / 'docs/hechos.json'
-# Con otra sesión sirviendo el 8765, cada una usa su puerto: PUERTO_SITIO=8770 (D-135)
-PUERTO = int(os.environ.get('PUERTO_SITIO', 8765))
-MARCA = re.compile(r'(<!-- generado: ([\w:-]+)[^>]*-->\n)(.*?)(<!-- /generado -->)', re.S)
+ROOT = pathlib.Path(__file__).resolve().parents[2]
+README = ROOT / 'README.md'
+CATALOG = ROOT / 'docs/capturas.json'
+SEAL = ROOT / 'docs/facts.json'
+# With another session serving 8765, each one uses its own port: SITE_PORT=8770 (D-135)
+PORT = int(os.environ.get('SITE_PORT') or os.environ.get('PUERTO_SITIO') or 8765)
+# The Spanish marker (`generado`) is still read, for branches opened before the switch to English (D-316)
+MARKER = re.compile(r'(<!-- (?:generated|generado): ([\w:-]+)[^>]*-->\n)(.*?)(<!-- /(?:generated|generado) -->)', re.S)
 
 
-def hechos():
-    """La hoja de hechos de la app, leída del código real."""
-    salida = subprocess.run(['node', str(RAIZ / 'tools/release/hechos.mjs')], cwd=RAIZ,
-                            capture_output=True, text=True)
-    if salida.returncode:
-        sys.exit(f'no se pudo leer los hechos de la app:\n{salida.stderr.strip()}')
-    return json.loads(salida.stdout)
+def facts():
+    """The app's fact sheet, read from the real code."""
+    out = subprocess.run(['node', str(ROOT / 'tools/release/facts.mjs')], cwd=ROOT,
+                         capture_output=True, text=True)
+    if out.returncode:
+        sys.exit(f'could not read the app facts:\n{out.stderr.strip()}')
+    return json.loads(out.stdout)
 
 
-def catalogo():
-    return json.loads(CATALOGO.read_text())
+def catalog():
+    return json.loads(CATALOG.read_text())
 
 
-def ancla(nombre):
-    """El ancla que GitHub le pone al encabezado '## 👑 Fourth King (Cuarto Rey)': el emoji se va
-    pero su espacio queda (por eso el guion del principio) y los paréntesis desaparecen."""
-    limpio = ''.join(c for c in nombre.lower() if c.isalnum() or c in ' -_')
-    return '#-' + re.sub(r'\s+', '-', limpio.strip())
+def anchor(name):
+    """The anchor GitHub gives the heading '## 👑 Fourth King (Cuarto Rey)': the emoji goes
+    but its space stays (hence the leading dash) and the parentheses disappear."""
+    clean = ''.join(c for c in name.lower() if c.isalnum() or c in ' -_')
+    return '#-' + re.sub(r'\s+', '-', clean.strip())
 
 
-def titulo_juego(j):
-    """Como se titula la sección del juego en el README: el nombre en inglés y, entre
-    paréntesis, el de verdad. De acá sale también el ancla, así que si cambia el título
-    cambia el enlace de la tabla y nunca quedan apuntando a distinto lado (D-78)."""
-    en, es = j['nombre']['en'], j['nombre']['es']
+def game_title(g):
+    """How the game's section is titled in the README: the English name and, in
+    parentheses, the real one. The anchor comes from here too, so if the title changes
+    the table's link changes and they never end up pointing to different places (D-78)."""
+    en, es = g['name']['en'], g['name']['es']
     return f'{en} ({es})' if en != es else es
 
 
-def sin_emoji(texto):
-    """El texto del modo sin su emoji y sin la aclaración que va tras la coma."""
-    t = re.sub(r'^[^\w¡¿]+', '', texto).split(',')[0].strip()
-    return t
+def without_emoji(text):
+    """The mode's text without its emoji and without the clarification after the comma."""
+    return re.sub(r'^[^\w¡¿]+', '', text).split(',')[0].strip()
 
 
-def anio(n):
+def year(n):
     return f'{abs(n)} BC' if n < 0 else str(n)
 
 
-# ------------------------------------------------------------- bloques generados
+# ------------------------------------------------------------- generated blocks
 
-# El README es la cara pública del proyecto y va en inglés; el resto de la documentación, en
-# español (D-78). Por eso los bloques generados salen del `en` de los módulos, no del `es`.
-def bloque_juegos(H, C):
-    filas = ['| Game | Players | Modes | Status |', '|---|---|---|---|']
-    for j in H['juegos']:
-        nombres = ' / '.join(dict.fromkeys([j['nombre']['en'], j['nombre']['es'], j['nombre']['pt']]))
-        modos = ' · '.join(sin_emoji(m['en']) for m in j['modos']) or 'One phone'
-        # Un juego con available:false sigue andando en su URL, pero no está en el menú: decirlo
-        # acá y no solo la versión, o el README sugiere que se puede jugar desde la portada (D-88).
-        # Fuera del menú: "paused" si alguna vez se publicó (tiene versión), "coming soon" si todavía no (D-248)
-        estado = ('🧪 lab' if j.get('labs') else ('⏸ paused' if j['estado'] else '🔜 coming soon') if not j['disponible']
-                  else (j['estado'] or '-'))
-        filas.append(f"| {j['emoji']} [{nombres}]({ancla(titulo_juego(j))}) | {j['jugadores']} "
-                     f"| {modos} | {estado} |")
-    # Los juegos de La Copa sueltos (D-142): uno solo, en su página, sin copa. El link va a
-    # la página jugable, porque no tienen sección propia en el README.
-    for m in H.get('sueltos', []):
-        nombres = ' / '.join(dict.fromkeys([m['nombre']['en'], m['nombre']['es'], m['nombre']['pt']]))
-        estado = '🧪 lab' if m['labs'] else 'Also in The Cup'
-        # Uno del laboratorio va sin link: el laboratorio no se anuncia (D-281)
-        nombre = nombres if m['labs'] else f"[{nombres}](https://juegosdesalon.cl/{m['path']})"
-        filas.append(f"| {m['emoji']} {nombre} | 1 "
-                     f"| Play alone | {estado} |")
-    return '\n'.join(filas) + '\n'
-
-
-def bloque_tematicas(H, C):
-    filas = ['| Theme | Cards | Years | What it covers |', '|---|---|---|---|']
-    for t in H['tematicas']:
-        filas.append(f"| {t['emoji']} {t['nombre']['en']} | {t['cartas']} | "
-                     f"{anio(t['desde'])} to {anio(t['hasta'])} | {t['pista']['en']} |")
-    filas.append(f"| **Total** | **{sum(t['cartas'] for t in H['tematicas'])}** | | |")
-    return '\n'.join(filas) + '\n'
+# The README is the project's public face and is in English (D-78). That is why the generated
+# blocks come from the modules' `en`, not from `es`.
+def block_games(F, C):
+    rows = ['| Game | Players | Modes | Status |', '|---|---|---|---|']
+    for g in F['games']:
+        names = ' / '.join(dict.fromkeys([g['name']['en'], g['name']['es'], g['name']['pt']]))
+        modes = ' · '.join(without_emoji(m['en']) for m in g['modes']) or 'One phone'
+        # A game with available:false still works at its URL, but is not on the menu: say so
+        # here and not only the version, or the README suggests it can be played from the home page (D-88).
+        # Off the menu: "paused" if it was ever published (it has a version), "coming soon" if not yet (D-248)
+        status = ('🧪 lab' if g.get('labs') else ('⏸ paused' if g['status'] else '🔜 coming soon') if not g['available']
+                  else (g['status'] or '-'))
+        rows.append(f"| {g['emoji']} [{names}]({anchor(game_title(g))}) | {g['players']} "
+                    f"| {modes} | {status} |")
+    # The Cup's games played standalone (D-142): one player, on its own page, no cup. The link
+    # goes to the playable page, because they have no section of their own in the README.
+    for m in F.get('standalone', []):
+        names = ' / '.join(dict.fromkeys([m['name']['en'], m['name']['es'], m['name']['pt']]))
+        status = '🧪 lab' if m['labs'] else 'Also in The Cup'
+        # One from the lab goes without a link: the lab is not announced (D-281)
+        name = names if m['labs'] else f"[{names}](https://juegosdesalon.cl/{m['path']})"
+        rows.append(f"| {m['emoji']} {name} | 1 "
+                    f"| Play alone | {status} |")
+    return '\n'.join(rows) + '\n'
 
 
-def bloque_idiomas(H, C):
-    filas = ['| Español | English | Português | Deutsch |', '|---|---|---|---|',
-             f"| {H['app']['es']} | {H['app']['en']} | {H['app']['pt']} | {H['app']['de']} |"]
-    for j in H['juegos'] + H.get('sueltos', []):
-        filas.append(f"| {j['nombre']['es']} | {j['nombre']['en']} | {j['nombre']['pt']} | {j['nombre']['de']} |")
-    return '\n'.join(filas) + '\n'
+def block_themes(F, C):
+    rows = ['| Theme | Cards | Years | What it covers |', '|---|---|---|---|']
+    for t in F['themes']:
+        rows.append(f"| {t['emoji']} {t['name']['en']} | {t['cards']} | "
+                    f"{year(t['from'])} to {year(t['to'])} | {t['hint']['en']} |")
+    rows.append(f"| **Total** | **{sum(t['cards'] for t in F['themes'])}** | | |")
+    return '\n'.join(rows) + '\n'
 
 
-def bloque_pruebas(H, C):
-    return '\n'.join(['```bash'] + [f'node {t}' for t in orden_tests(H['tests'])] + ['```']) + '\n'
+def block_languages(F, C):
+    rows = ['| Español | English | Português | Deutsch |', '|---|---|---|---|',
+            f"| {F['app']['es']} | {F['app']['en']} | {F['app']['pt']} | {F['app']['de']} |"]
+    for g in F['games'] + F.get('standalone', []):
+        rows.append(f"| {g['name']['es']} | {g['name']['en']} | {g['name']['pt']} | {g['name']['de']} |")
+    return '\n'.join(rows) + '\n'
 
 
-def orden_tests(tests):
-    """Primero los motores de los juegos, después lo compartido: se lee mejor."""
-    motores = [t for t in tests if t.endswith('engine.test.mjs')]
-    return motores + [t for t in tests if t not in motores]
+def block_tests(F, C):
+    return '\n'.join(['```bash'] + [f'node {t}' for t in test_order(F['tests'])] + ['```']) + '\n'
 
 
-# De lo general a lo particular: los documentos nuevos caen al final, donde se ven.
-ORDEN_DOCS = ['docs/CANONES.md', 'docs/REQUERIMIENTOS.md', 'docs/DECISIONES.md',
-              'docs/AGREGAR-JUEGO.md', 'docs/PANEL.md',
-              'tools/e2e/README.md', 'firebase/README.md']
+def test_order(tests):
+    """First the game engines, then the shared parts: it reads better."""
+    engines = [t for t in tests if t.endswith('engine.test.mjs')]
+    return engines + [t for t in tests if t not in engines]
 
 
-def bloque_documentacion(H, C):
-    def peso(d):
-        if d['ruta'] in ORDEN_DOCS:
-            return (0, ORDEN_DOCS.index(d['ruta']))
-        if d['ruta'].startswith('docs/games/'):
-            return (1, d['ruta'])
-        return (2, d['ruta'] != 'CHANGELOG.md', d['ruta'])
-    return '\n'.join(f"- [{d['titulo']}]({d['ruta']})" for d in sorted(H['documentos'], key=peso)) + '\n'
+# From the general to the particular: new documents fall at the end, where they are seen.
+# Both spellings of each document, while the docs are being renamed to English (D-316).
+DOC_ORDER = ['docs/CANONES.md', 'docs/CANONS.md', 'docs/REQUERIMIENTOS.md', 'docs/REQUIREMENTS.md',
+             'docs/DECISIONES.md', 'docs/DECISIONS.md', 'docs/AGREGAR-JUEGO.md', 'docs/ADD-GAME.md',
+             'docs/PANEL.md', 'tools/e2e/README.md', 'firebase/README.md']
 
 
-def ancho(C, seccion):
-    """Con cuántos píxeles muestra el README las imágenes de esa sección."""
-    return C['ancho']['portada'] if seccion == 'portada' else C['ancho']['galeria']
+def block_docs(F, C):
+    def weight(d):
+        if d['path'] in DOC_ORDER:
+            return (0, DOC_ORDER.index(d['path']))
+        if d['path'].startswith('docs/games/'):
+            return (1, d['path'])
+        return (2, d['path'] != 'CHANGELOG.md', d['path'])
+    return '\n'.join(f"- [{d['title']}]({d['path']})" for d in sorted(F['documents'], key=weight)) + '\n'
 
 
-def bloque_capturas(H, C, seccion):
-    tomas = [c for c in C['capturas'] if c['seccion'] == seccion]
-    if not tomas:
+def width(C, section):
+    """At how many pixels the README shows that section's images."""
+    return C['ancho']['portada'] if section == 'portada' else C['ancho']['galeria']
+
+
+def block_screenshots(F, C, section):
+    shots = [c for c in C['capturas'] if c['seccion'] == section]
+    if not shots:
         return ''
-    w = ancho(C, seccion)
-    if seccion == 'portada':
-        # El menú y, a su lado, lo que abre el botón de compartir (D-253)
-        return '<p align="center">' + '&nbsp;&nbsp;'.join(f'<img src="{c["imagen"]}" width="{w}" alt="{c["pie"]}">' for c in tomas) + '</p>\n'
-    filas = []
-    for i in range(0, len(tomas), 4):
-        celdas = [f'<td align="center"><img src="{c["imagen"]}" width="{w}" alt="{c["pie"]}">'
-                  f'<br><sub>{c["pie"]}</sub></td>' for c in tomas[i:i + 4]]
-        celdas += ['<td></td>'] * (4 - len(celdas))
-        filas.append('  <tr>\n' + '\n'.join('    ' + c for c in celdas) + '\n  </tr>')
-    return '<table>\n' + '\n'.join(filas) + '\n</table>\n'
+    w = width(C, section)
+    if section == 'portada':
+        # The menu and, next to it, what the share button opens (D-253)
+        return '<p align="center">' + '&nbsp;&nbsp;'.join(f'<img src="{c["imagen"]}" width="{w}" alt="{c["pie"]}">' for c in shots) + '</p>\n'
+    rows = []
+    for i in range(0, len(shots), 4):
+        cells = [f'<td align="center"><img src="{c["imagen"]}" width="{w}" alt="{c["pie"]}">'
+                 f'<br><sub>{c["pie"]}</sub></td>' for c in shots[i:i + 4]]
+        cells += ['<td></td>'] * (4 - len(cells))
+        rows.append('  <tr>\n' + '\n'.join('    ' + c for c in cells) + '\n  </tr>')
+    return '<table>\n' + '\n'.join(rows) + '\n</table>\n'
 
 
-def generar(nombre, H, C):
-    if nombre.startswith('capturas:'):
-        return bloque_capturas(H, C, nombre.split(':', 1)[1])
-    fn = {'juegos': bloque_juegos, 'tematicas': bloque_tematicas, 'idiomas': bloque_idiomas,
-          'pruebas': bloque_pruebas, 'documentacion': bloque_documentacion}.get(nombre)
-    return fn(H, C) if fn else None
+BLOCKS = {'games': block_games, 'themes': block_themes, 'languages': block_languages,
+          'tests': block_tests, 'docs': block_docs}
 
 
-def bloques_del_readme():
-    return [(m.group(2), m.group(3)) for m in MARCA.finditer(README.read_text())]
+def generate(name, F, C):
+    if name.startswith('screenshots:'):
+        return block_screenshots(F, C, name.split(':', 1)[1])
+    fn = BLOCKS.get(name)
+    return fn(F, C) if fn else None
 
 
-# ------------------------------------------------------------------- actualizar
+def readme_blocks():
+    return [(m.group(2), m.group(3)) for m in MARKER.finditer(README.read_text())]
 
-def cmd_actualizar():
-    H, C = hechos(), catalogo()
-    texto = README.read_text()
-    cambiados, desconocidos = [], []
 
-    def cambiar(m):
-        nombre, actual = m.group(2), m.group(3)
-        nuevo = generar(nombre, H, C)
-        if nuevo is None:
-            desconocidos.append(nombre)
+# ---------------------------------------------------------------------- update
+
+def cmd_update():
+    F, C = facts(), catalog()
+    text = README.read_text()
+    changed, unknown = [], []
+
+    def replace(m):
+        name, current = m.group(2), m.group(3)
+        new = generate(name, F, C)
+        if new is None:
+            unknown.append(name)
             return m.group(0)
-        if nuevo != actual:
-            cambiados.append(nombre)
-        return m.group(1) + nuevo + m.group(4)
+        if new != current:
+            changed.append(name)
+        return m.group(1) + new + m.group(4)
 
-    texto = MARCA.sub(cambiar, texto)
-    README.write_text(texto)
-    for d in desconocidos:
-        print(f'  ERROR · <!-- generado: {d} --> no lo sabe generar nadie')
-    if cambiados:
-        print('actualizado: ' + ', '.join(cambiados))
+    text = MARKER.sub(replace, text)
+    README.write_text(text)
+    for d in unknown:
+        print(f'  ERROR · <!-- generated: {d} --> nobody knows how to generate it')
+    if changed:
+        print('updated: ' + ', '.join(changed))
     else:
-        print('los bloques generados ya estaban al día')
-    print('\nLo que queda es prosa y no lo escribe una herramienta:\n'
-          '  [ ] La sección del juego que cambió: ¿sigue contando lo que hace hoy?\n'
-          '  [ ] python3 tools/release/readme.py capturas <seccion>  si cambió alguna pantalla\n'
-          '  [ ] python3 tools/release/readme.py sellar             cuando ya lo releíste')
-    return 1 if desconocidos else 0
+        print('the generated blocks were already up to date')
+    print('\nWhat is left is prose, and no tool writes it:\n'
+          '  [ ] The section of the game that changed: does it still tell what it does today?\n'
+          '  [ ] python3 tools/release/readme.py screenshots <section>  if any screen changed\n'
+          '  [ ] python3 tools/release/readme.py seal                   once you reread it')
+    return 1 if unknown else 0
 
 
-# ---------------------------------------------------------------------- sellar
+# ------------------------------------------------------------------------ seal
 
-def cmd_sellar():
-    H = hechos()
-    SELLO.write_text(json.dumps(H, ensure_ascii=False, indent=2) + '\n')
-    print(f'sellado: docs/hechos.json con los hechos de hoy '
-          f"({len(H['juegos'])} juegos, {len(H['tematicas'])} temáticas, v{H['version']})")
+def cmd_seal():
+    F = facts()
+    SEAL.write_text(json.dumps(F, ensure_ascii=False, indent=2) + '\n')
+    print(f'sealed: docs/facts.json with today\'s facts '
+          f"({len(F['games'])} games, {len(F['themes'])} themes, v{F['version']})")
     return 0
 
 
-# --------------------------------------------------------------------- revisar
+# ----------------------------------------------------------------------- check
 
-def diferencias(viejo, nuevo, ruta=''):
-    """Los caminos de la hoja de hechos que cambiaron, con su antes y después."""
-    if isinstance(viejo, dict) and isinstance(nuevo, dict):
+def differences(old, new, path=''):
+    """The paths of the fact sheet that changed, with their before and after."""
+    if isinstance(old, dict) and isinstance(new, dict):
         out = []
-        for k in dict.fromkeys(list(viejo) + list(nuevo)):
-            out += diferencias(viejo.get(k), nuevo.get(k), f'{ruta}.{k}' if ruta else k)
+        for k in dict.fromkeys(list(old) + list(new)):
+            out += differences(old.get(k), new.get(k), f'{path}.{k}' if path else k)
         return out
-    if isinstance(viejo, list) and isinstance(nuevo, list):
-        if all(isinstance(x, dict) and 'id' in x for x in viejo + nuevo):
+    if isinstance(old, list) and isinstance(new, list):
+        if all(isinstance(x, dict) and 'id' in x for x in old + new):
             out = []
-            for k in dict.fromkeys([x['id'] for x in viejo + nuevo]):
-                a = next((x for x in viejo if x['id'] == k), None)
-                b = next((x for x in nuevo if x['id'] == k), None)
-                out += diferencias(a, b, f'{ruta}.{k}')
+            for k in dict.fromkeys([x['id'] for x in old + new]):
+                a = next((x for x in old if x['id'] == k), None)
+                b = next((x for x in new if x['id'] == k), None)
+                out += differences(a, b, f'{path}.{k}')
             return out
-        if viejo != nuevo:
-            faltan, sobran = [x for x in viejo if x not in nuevo], [x for x in nuevo if x not in viejo]
-            return [(ruta, resumen(faltan), resumen(sobran))]
+        if old != new:
+            missing, extra = [x for x in old if x not in new], [x for x in new if x not in old]
+            return [(path, summary(missing), summary(extra))]
         return []
-    return [] if viejo == nuevo else [(ruta, resumen(viejo), resumen(nuevo))]
+    return [] if old == new else [(path, summary(old), summary(new))]
 
 
-def resumen(v):
+def summary(v):
     if isinstance(v, list):
-        return ', '.join(resumen(x) for x in v) if v else '—'
+        return ', '.join(summary(x) for x in v) if v else '—'
     if isinstance(v, dict):
-        if 'nombre' in v and 'cartas' in v:
-            return f"{v['nombre']['es']} ({v['cartas']} cartas)"
-        if 'nombre' in v:
-            return v['nombre'].get('es', '')
+        if 'name' in v and 'cards' in v:
+            return f"{v['name']['es']} ({v['cards']} cards)"
+        if 'name' in v:
+            return v['name'].get('es', '')
         return v.get('es') or v.get('id') or json.dumps(v, ensure_ascii=False)[:60]
     return '—' if v is None else str(v)
 
 
-def contar(ruta, antes, ahora):
-    """El cambio dicho como lo diría una persona: apareció, desapareció o cambió."""
-    if antes == '—':
-        return f'apareció {ruta}: {ahora}'
-    if ahora == '—':
-        return f'desapareció {ruta}: {antes}'
-    return f'cambió {ruta}: {antes} → {ahora}'
+def tell(path, before, now):
+    """The change said the way a person would say it: appeared, disappeared or changed."""
+    if before == '—':
+        return f'appeared {path}: {now}'
+    if now == '—':
+        return f'disappeared {path}: {before}'
+    return f'changed {path}: {before} → {now}'
 
 
-SECCIONES = {
-    'juegos': 'la sección del juego y la tabla de arriba',
-    'sueltos': 'la tabla de juegos, la portada y la sección de La Copa',
-    'tematicas': 'la sección de Línea de Tiempo (las temáticas se cuentan en la prosa)',
-    'idiomas': 'la sección Idiomas', 'frases': 'la sección Idiomas',
-    'app': 'la portada y la tabla de nombres', 'modulos': 'el árbol de Estructura',
-    'tests': 'la sección Correr en local',
-    'e2e': 'las pruebas de punta a punta (tools/e2e/README.md)',
-    'documentos': 'el índice de Documentación', 'capturas': 'las galerías de capturas',
+SECTIONS = {
+    'games': 'the game\'s section and the table at the top',
+    'standalone': 'the games table, the home page and The Cup\'s section',
+    'themes': 'the Timeline section (the themes are counted in the prose)',
+    'languages': 'the Languages section', 'phrases': 'the Languages section',
+    'app': 'the home page and the names table', 'modules': 'the Layout tree',
+    'tests': 'the Running locally section',
+    'e2e': 'the end-to-end tests (tools/e2e/README.md)',
+    'documents': 'the Documentation index', 'screenshots': 'the screenshot galleries',
 }
 
 
-COMMITS_MIRADOS = 40   # tope de commits que se revisan hacia atrás buscando uno de verdad
+COMMITS_LOOKED_AT = 40   # cap on commits looked at backwards searching for a real one
 
-#: Las marcas que estampaba set-version.py en git hasta D-205: `?v=0.25.2` en el import map, las
-#: hojas de estilo y las tarjetas, y `v0.25.2 ·` en el pie del menú. Hoy solo se estampa la copia
-#: que se publica, pero las capturas miran commits viejos.
-ESTAMPA = re.compile(r'\?v=\d+\.\d+\.\d+|v\d+\.\d+\.\d+ ·')
-#: La línea entera del import map: el commit que sacó la versión de git la borró (D-205)
+#: The stamps set-version.py put in git until D-205: `?v=0.25.2` in the import map, the
+#: stylesheets and the cards, and `v0.25.2 ·` in the menu footer. Today only the copy that gets
+#: published is stamped, but the screenshots look at old commits.
+STAMP = re.compile(r'\?v=\d+\.\d+\.\d+|v\d+\.\d+\.\d+ ·')
+#: The whole import map line: the commit that took the version out of git deleted it (D-205)
 IMPORT_MAP = re.compile(r'^\s*<script type="importmap" id="importmap">.*</script>\s*$')
 
 
-def git(*args, rutas=()):
-    """Un comando de git acotado a esos caminos, con la salida como texto."""
-    orden = ['git', *args] + (['--', *rutas] if rutas else [])
-    return subprocess.run(orden, cwd=RAIZ, capture_output=True, text=True).stdout
+def git(*args, paths=()):
+    """A git command limited to those paths, with its output as text."""
+    command = ['git', *args] + (['--', *paths] if paths else [])
+    return subprocess.run(command, cwd=ROOT, capture_output=True, text=True).stdout
 
 
-def solo_estampa(diff):
+def only_stamp(diff):
     """
-    ¿Ese diff no cambia nada más que la versión estampada?
+    Does that diff change nothing but the stamped version?
 
-    Se comparan las líneas quitadas contra las puestas con el número de versión borrado: si
-    quedan iguales, lo único que pasó fue una publicación. La línea del import map no cuenta:
-    es maquinaria de la versión, y el módulo nuevo que la cambia se ve en su propio archivo.
+    The removed lines are compared against the added ones with the version number erased: if
+    they come out equal, the only thing that happened was a publish. The import map line does
+    not count: it is version machinery, and the new module that changes it shows in its own file.
     """
-    mas, menos = [], []
-    for linea in diff.splitlines():
-        if linea.startswith(('+++', '---')):
+    plus, minus = [], []
+    for line in diff.splitlines():
+        if line.startswith(('+++', '---')):
             continue
-        if IMPORT_MAP.match(linea[1:]):
+        if IMPORT_MAP.match(line[1:]):
             continue
-        if linea.startswith('+'):
-            mas.append(ESTAMPA.sub('', linea[1:]))
-        elif linea.startswith('-'):
-            menos.append(ESTAMPA.sub('', linea[1:]))
-    return bool(mas or menos) and sorted(mas) == sorted(menos)
+        if line.startswith('+'):
+            plus.append(STAMP.sub('', line[1:]))
+        elif line.startswith('-'):
+            minus.append(STAMP.sub('', line[1:]))
+    return bool(plus or minus) and sorted(plus) == sorted(minus)
 
 
-def git_fecha(rutas):
+def git_date(paths):
     """
-    Cuándo cambió de verdad por última vez alguno de esos caminos (0 si nunca).
+    When any of those paths really changed for the last time (0 if never).
 
-    El estampado de versión no cuenta: hasta D-205 `set-version.py` reescribía todos los
-    `index.html` en cada publicación (C-11) y eso no cambia ninguna pantalla. Sin esta salvedad, publicar
-    dejaba "más viejas que el código" a las capturas de todos los juegos, incluidos los que
-    nadie tocó, y el aviso dejaba de querer decir algo (D-51).
+    Version stamping does not count: until D-205 `set-version.py` rewrote every
+    `index.html` on each publish (C-11) and that changes no screen. Without this exception,
+    publishing left the screenshots of every game "older than the code", including the ones
+    nobody touched, and the warning stopped meaning anything (D-51).
     """
-    rutas = [r for r in rutas if (RAIZ / r).exists()]
-    if not rutas:
+    paths = [p for p in paths if (ROOT / p).exists()]
+    if not paths:
         return 0
-    sucio = git('status', '--porcelain', rutas=rutas).strip()
-    # Un archivo nuevo sin commitear es un cambio de verdad; lo modificado se mira igual
-    # que un commit, porque ahí también puede haber solo un estampado a medio publicar.
-    if sucio and (any(l.startswith('??') for l in sucio.splitlines())
-                  or not solo_estampa(git('diff', 'HEAD', '-U0', rutas=rutas))):
-        return 10 ** 12  # sin commitear: más nuevo que cualquier commit
-    for linea in git('log', f'-{COMMITS_MIRADOS}', '--format=%H %ct', rutas=rutas).splitlines():
-        sha, fecha = linea.split()
-        if solo_estampa(git('show', sha, '-U0', '--format=', rutas=rutas)):
+    dirty = git('status', '--porcelain', paths=paths).strip()
+    # A new uncommitted file is a real change; a modified one is looked at the same as a
+    # commit, because it too may hold only a half-published stamp.
+    if dirty and (any(l.startswith('??') for l in dirty.splitlines())
+                  or not only_stamp(git('diff', 'HEAD', '-U0', paths=paths))):
+        return 10 ** 12  # uncommitted: newer than any commit
+    for line in git('log', f'-{COMMITS_LOOKED_AT}', '--format=%H %ct', paths=paths).splitlines():
+        sha, date = line.split()
+        if only_stamp(git('show', sha, '-U0', '--format=', paths=paths)):
             continue
-        return int(fecha)
+        return int(date)
     return 0
 
 
-NUMEROS = {'dos': 2, 'tres': 3, 'cuatro': 4, 'cinco': 5, 'seis': 6, 'siete': 7, 'ocho': 8}
+NUMBERS = {'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8}
 
 
-def cmd_revisar():
-    H, C = hechos(), catalogo()
-    texto = README.read_text()
-    problemas, avisos = [], []
+def cmd_check():
+    F, C = facts(), catalog()
+    text = README.read_text()
+    problems, warnings = [], []
 
-    # 1. Los bloques generados, al día con el código
-    esperados = {'juegos', 'tematicas', 'idiomas', 'pruebas', 'documentacion'}
-    esperados |= {f'capturas:{s}' for s in dict.fromkeys(c['seccion'] for c in C['capturas'])}
-    presentes = dict(bloques_del_readme())
-    for nombre in sorted(esperados - set(presentes)):
-        problemas.append(f'falta el bloque <!-- generado: {nombre} --> en el README')
-    for nombre, actual in presentes.items():
-        nuevo = generar(nombre, H, C)
-        if nuevo is None:
-            problemas.append(f'<!-- generado: {nombre} --> no lo sabe generar nadie')
-        elif nuevo != actual:
-            problemas.append(f'el bloque "{nombre}" quedó viejo  →  python3 tools/release/readme.py actualizar')
+    # 1. The generated blocks, up to date with the code
+    expected = set(BLOCKS)
+    expected |= {f'screenshots:{s}' for s in dict.fromkeys(c['seccion'] for c in C['capturas'])}
+    present = dict(readme_blocks())
+    for name in sorted(expected - set(present)):
+        problems.append(f'the README is missing the block <!-- generated: {name} -->')
+    for name, current in present.items():
+        new = generate(name, F, C)
+        if new is None:
+            problems.append(f'<!-- generated: {name} --> nobody knows how to generate it')
+        elif new != current:
+            problems.append(f'the block "{name}" went stale  →  python3 tools/release/readme.py update')
 
-    # 2. Los hechos, contra el último sello: lo que cambió pide releer prosa
-    if not SELLO.exists():
-        problemas.append('falta docs/hechos.json  →  python3 tools/release/readme.py sellar')
+    # 2. The facts, against the last seal: what changed asks for prose to be reread
+    if not SEAL.exists():
+        problems.append('docs/facts.json is missing  →  python3 tools/release/readme.py seal')
     else:
-        for ruta, antes, ahora in diferencias(json.loads(SELLO.read_text()), H):
-            raiz = ruta.split('.')[0]
-            if raiz == 'version':  # la versión es la del CHANGELOG (D-205); el README no la cita
+        for path, before, now in differences(json.loads(SEAL.read_text()), F):
+            root = path.split('.')[0]
+            if root == 'version':  # the version is the CHANGELOG's (D-205); the README does not quote it
                 continue
-            donde = SECCIONES.get(raiz, 'el README')
-            problemas.append(f'{contar(ruta, antes, ahora)}\n'
-                             f'           relee {donde}; después: python3 tools/release/readme.py sellar')
+            where = SECTIONS.get(root, 'the README')
+            problems.append(f'{tell(path, before, now)}\n'
+                            f'           reread {where}; then: python3 tools/release/readme.py seal')
 
-    # 3. Las capturas: catálogo, archivos y guiones que las sacan
-    en_catalogo = {c['imagen'] for c in C['capturas']}
+    # 3. The screenshots: catalog, files and the scripts that take them
+    in_catalog = {c['imagen'] for c in C['capturas']}
     for c in C['capturas']:
-        if not (RAIZ / c['imagen']).exists():
-            problemas.append(f"{c['imagen']} está en el catálogo pero no existe  →  "
-                             f"python3 tools/release/readme.py capturas {c['seccion']}")
-        guion = C['guiones'].get(c['guion'])
-        if not guion:
-            problemas.append(f"{c['imagen']} dice salir del guion \"{c['guion']}\", que no está en el catálogo")
-        elif f"'{c['toma']}'" not in (RAIZ / 'tools/e2e' / guion['archivo']).read_text():
-            problemas.append(f"{guion['archivo']} ya no saca la toma \"{c['toma']}\" que pide {c['imagen']}")
-    for png in sorted((RAIZ / 'docs/screenshots').rglob('*.png')):
-        rel = str(png.relative_to(RAIZ))
-        if rel not in en_catalogo:
-            avisos.append(f'{rel} no la usa el README ni está en el catálogo')
+        if not (ROOT / c['imagen']).exists():
+            problems.append(f"{c['imagen']} is in the catalog but does not exist  →  "
+                            f"python3 tools/release/readme.py screenshots {c['seccion']}")
+        script = C['guiones'].get(c['guion'])
+        if not script:
+            problems.append(f"{c['imagen']} says it comes from the script \"{c['guion']}\", which is not in the catalog")
+        elif f"'{c['toma']}'" not in (ROOT / 'tools/e2e' / script['archivo']).read_text():
+            problems.append(f"{script['archivo']} no longer takes the shot \"{c['toma']}\" that {c['imagen']} asks for")
+    for png in sorted((ROOT / 'docs/screenshots').rglob('*.png')):
+        rel = str(png.relative_to(ROOT))
+        if rel not in in_catalog:
+            warnings.append(f'{rel} is not used by the README nor in the catalog')
 
-    # 4. Capturas más viejas que lo que muestran
-    fuentes = C['fuentes']
-    for seccion in dict.fromkeys(c['seccion'] for c in C['capturas']):
-        codigo = git_fecha(fuentes.get(seccion, []) + fuentes['comunes'])
-        viejas = [c['imagen'] for c in C['capturas'] if c['seccion'] == seccion
-                  and (RAIZ / c['imagen']).exists() and git_fecha([c['imagen']]) < codigo]
-        if viejas:
-            avisos.append(f'{seccion}: {len(viejas)} captura(s) más viejas que el código que muestran  →  '
-                          f'python3 tools/release/readme.py capturas {seccion}')
+    # 4. Screenshots older than what they show
+    sources = C['fuentes']
+    for section in dict.fromkeys(c['seccion'] for c in C['capturas']):
+        code = git_date(sources.get(section, []) + sources['comunes'])
+        stale = [c['imagen'] for c in C['capturas'] if c['seccion'] == section
+                 and (ROOT / c['imagen']).exists() and git_date([c['imagen']]) < code]
+        if stale:
+            warnings.append(f'{section}: {len(stale)} screenshot(s) older than the code they show  →  '
+                            f'python3 tools/release/readme.py screenshots {section}')
 
-    # 5. Enlaces e imágenes del README que no existen
-    for ruta in set(re.findall(r'\]\(([^)#\s]+)\)', texto)) | set(re.findall(r'<img src="([^"]+)"', texto)):
-        if ruta.startswith(('http', 'mailto:', '#')):
+    # 5. README links and images that do not exist
+    for path in set(re.findall(r'\]\(([^)#\s]+)\)', text)) | set(re.findall(r'<img src="([^"]+)"', text)):
+        if path.startswith(('http', 'mailto:', '#')):
             continue
-        if not (RAIZ / ruta.split('#')[0]).exists():
-            problemas.append(f'el README enlaza {ruta} y no existe')
+        if not (ROOT / path.split('#')[0]).exists():
+            problems.append(f'the README links {path} and it does not exist')
 
-    # 6. Los números escritos con palabras, que ningún bloque generado vigila
-    cuentas = {'juegos': len(H['juegos']), 'mazos': len(H['tematicas']),
-               'temáticas': len(H['tematicas']), 'idiomas': len(H['idiomas'])}
-    for palabra, cosa in re.findall(r'\b(' + '|'.join(NUMEROS) + r')\s+(?:`?\w+\.js`?\s+de\s+)?(\w+)\b', texto):
-        if cosa in cuentas and NUMEROS[palabra] != cuentas[cosa]:
-            avisos.append(f'el README dice "{palabra} {cosa}" y hay {cuentas[cosa]}')
+    # 6. Numbers written as words, which no generated block watches
+    counts = {'games': len(F['games']), 'decks': len(F['themes']),
+              'themes': len(F['themes']), 'languages': len(F['languages'])}
+    for word, thing in re.findall(r'\b(' + '|'.join(NUMBERS) + r')\s+(?:`?\w+\.js`?\s+of\s+)?(\w+)\b', text):
+        if thing in counts and NUMBERS[word] != counts[thing]:
+            warnings.append(f'the README says "{word} {thing}" and there are {counts[thing]}')
 
-    # 7. El árbol de Layout, contra lo que hay en la raíz del repo (solo las líneas sin sangría:
-    # lo de adentro de cada carpeta es criterio de quien escribe)
-    listadas = arbol_layout(texto)
-    if listadas:
-        for ruta in listadas:
-            if not (RAIZ / ruta).exists():
-                avisos.append(f'el árbol de Layout nombra {ruta} y no existe')
-        for f in sorted(RAIZ.iterdir()):
-            nombre = f.name + ('/' if f.is_dir() else '')
+    # 7. The Layout tree, against what is in the repo root (only the unindented lines:
+    # what goes inside each folder is the writer's call)
+    listed = layout_tree(text)
+    if listed:
+        for path in listed:
+            if not (ROOT / path).exists():
+                warnings.append(f'the Layout tree names {path} and it does not exist')
+        for f in sorted(ROOT.iterdir()):
+            name = f.name + ('/' if f.is_dir() else '')
             if f.name.startswith('.') or f.name in ('README.md', 'arte-original', 'CNAME', 'CHANGELOG.md', 'CLAUDE.md',
                                                       'CONTRIBUTING.md', 'LICENSE'):
                 continue
-            if not any(l.startswith(nombre) or l.startswith(f.name) for l in listadas):
-                avisos.append(f'{nombre} no aparece en el árbol de Layout')
+            if not any(l.startswith(name) or l.startswith(f.name) for l in listed):
+                warnings.append(f'{name} does not appear in the Layout tree')
 
-    for a in avisos:
-        print(f'  aviso · {a}')
-    for p in problemas:
+    for w in warnings:
+        print(f'  warning · {w}')
+    for p in problems:
         print(f'  ERROR · {p}')
-    if not problemas and not avisos:
-        print(f"README al día · {len(H['juegos'])} juegos, {len(H['tematicas'])} temáticas, "
-              f"{len(C['capturas'])} capturas")
-    elif not problemas:
-        print('README al día (los avisos de arriba son criterio, no error)')
-    return 1 if problemas else 0
+    if not problems and not warnings:
+        print(f"README up to date · {len(F['games'])} games, {len(F['themes'])} themes, "
+              f"{len(C['capturas'])} screenshots")
+    elif not problems:
+        print('README up to date (the warnings above are judgment, not errors)')
+    return 1 if problems else 0
 
 
-def arbol_layout(texto):
-    """Lo que el árbol de la sección Layout lista en la raíz del repo (las líneas sin sangría).
-    Antes buscaba "## Estructura" pegado al bloque, y el README dice "## Layout" con prosa entre
-    medio: la comprobación no corría nunca (D-307 y D-308 entraron sin sumarse al árbol)."""
-    arbol = re.search(r'^## (?:Layout|Estructura)\n(?:(?!^## ).)*?^```\n(.*?)^```', texto, re.S | re.M)
-    if not arbol:
+def layout_tree(text):
+    """What the tree in the Layout section lists at the repo root (the unindented lines).
+    It used to look for "## Estructura" right before the block, and the README says "## Layout"
+    with prose in between: the check never ran (D-307 and D-308 got in without joining the tree)."""
+    tree = re.search(r'^## (?:Layout|Estructura)\n(?:(?!^## ).)*?^```\n(.*?)^```', text, re.S | re.M)
+    if not tree:
         return []
-    return [l.split()[0] for l in arbol.group(1).splitlines() if l.strip() and not l[0].isspace()]
+    return [l.split()[0] for l in tree.group(1).splitlines() if l.strip() and not l[0].isspace()]
 
 
-# -------------------------------------------------------------------- capturas
+# ----------------------------------------------------------------- screenshots
 
-def achicar(png, pixeles):
-    """La captura sale del navegador al doble de píxeles del celular emulado y pesa
-    medio mega. Se guarda al doble del ancho con que la muestra el README y con
-    paleta de 256 colores (con tramado, para que los degradados no hagan bandas):
-    unos 50 kB, que es lo que aguanta un repo al que se le rehacen las capturas
-    seguido. Con Pillow si está; si no, con sips, que viene en el Mac."""
+def shrink(png, pixels):
+    """The screenshot comes out of the browser at twice the pixels of the emulated phone and
+    weighs half a megabyte. It is saved at twice the width the README shows it at and with a
+    256-color palette (dithered, so gradients do not band): about 50 kB, which is what a repo
+    whose screenshots are retaken often can take. With Pillow if present; otherwise with sips,
+    which comes with the Mac."""
     try:
         from PIL import Image
     except ImportError:
         if shutil.which('sips'):
-            subprocess.run(['sips', '--resampleWidth', str(pixeles), str(png), '--out', str(png)],
+            subprocess.run(['sips', '--resampleWidth', str(pixels), str(png), '--out', str(png)],
                            capture_output=True)
         return
     im = Image.open(png).convert('RGB')
-    if im.width > pixeles:  # nunca agrandar: una captura vieja y chica quedaría borrosa
-        im = im.resize((pixeles, round(im.height * pixeles / im.width)), Image.LANCZOS)
+    if im.width > pixels:  # never enlarge: an old small screenshot would come out blurry
+        im = im.resize((pixels, round(im.height * pixels / im.width)), Image.LANCZOS)
     im.quantize(colors=256, method=Image.Quantize.MEDIANCUT,
                 dither=Image.Dither.FLOYDSTEINBERG).save(png, 'PNG', optimize=True)
 
 
-def servidor_vivo():
+def server_alive():
     with socket.socket() as s:
         s.settimeout(0.5)
-        return s.connect_ex(('127.0.0.1', PUERTO)) == 0
+        return s.connect_ex(('127.0.0.1', PORT)) == 0
 
 
-def cmd_capturas(seccion=None, sin_red=False):
-    C = catalogo()
-    tomas = [c for c in C['capturas'] if seccion in (None, c['seccion'])]
-    if seccion and not tomas:
-        sys.exit(f'no hay capturas de "{seccion}". Hay: ' +
+def cmd_screenshots(section=None, offline=False):
+    C = catalog()
+    shots = [c for c in C['capturas'] if section in (None, c['seccion'])]
+    if section and not shots:
+        sys.exit(f'there are no screenshots of "{section}". There are: ' +
                  ', '.join(dict.fromkeys(c['seccion'] for c in C['capturas'])))
-    guiones = dict.fromkeys(c['guion'] for c in tomas)
-    if sin_red:
-        guiones = [g for g in guiones if not C['guiones'][g]['red']]
-        tomas = [c for c in tomas if c['guion'] in guiones]
+    scripts = dict.fromkeys(c['guion'] for c in shots)
+    if offline:
+        scripts = [g for g in scripts if not C['guiones'][g]['red']]
+        shots = [c for c in shots if c['guion'] in scripts]
 
-    servidor = None
-    if not servidor_vivo():
-        servidor = subprocess.Popen([sys.executable, '-m', 'http.server', str(PUERTO), '-d', 'public'],
-                                    cwd=RAIZ, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    server = None
+    if not server_alive():
+        server = subprocess.Popen([sys.executable, '-m', 'http.server', str(PORT), '-d', 'public'],
+                                  cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         for _ in range(20):
-            if servidor_vivo():
+            if server_alive():
                 break
             time.sleep(0.2)
-        print(f'servidor propio en el puerto {PUERTO}')
+        print(f'own server on port {PORT}')
 
-    nuevas, iguales, fallaron = [], [], []
-    # Los guiones corren de a JUNTOS a la vez, cada uno con sus puertos de Chrome (D-135): seguidos,
-    # rehacer todas las secciones tomaba la suma de todos; así, poco más que el más largo
-    # (cup/torneo.mjs). Con una máquina cargada, CAPTURAS_JUNTOS=1 vuelve a uno por uno.
-    juntos = max(1, int(os.environ.get('CAPTURAS_JUNTOS', 3)))
-    base_cdp = int(os.environ.get('PUERTO_CDP') or 9600)
+    new, same, failed = [], [], []
+    # The scripts run TOGETHER at a time, each with its own Chrome ports (D-135): one after the
+    # other, retaking every section took the sum of all; this way, little more than the longest
+    # (cup/tournament.mjs). On a loaded machine, SCREENSHOTS_TOGETHER=1 goes back to one by one.
+    together = max(1, int(os.environ.get('SCREENSHOTS_TOGETHER') or os.environ.get('CAPTURAS_JUNTOS') or 3))
+    cdp_base = int(os.environ.get('CDP_PORT') or os.environ.get('PUERTO_CDP') or 9600)
 
-    def correr(i, g, tmp):
-        guion = C['guiones'][g]
-        env = {**os.environ, 'SITIO': os.environ.get('SITIO', f'http://localhost:{PUERTO}'),
-               'PUERTO_CDP': str(base_cdp + 10 * i)}
-        return subprocess.run(['node', f"tools/e2e/{guion['archivo']}", tmp], cwd=RAIZ, env=env,
+    def run(i, g, tmp):
+        script = C['guiones'][g]
+        site = os.environ.get('SITE') or os.environ.get('SITIO') or f'http://localhost:{PORT}'
+        port = str(cdp_base + 10 * i)
+        # The new and the old names, while the e2e scripts switch to English (D-316)
+        env = {**os.environ, 'SITE': site, 'SITIO': site, 'CDP_PORT': port, 'PUERTO_CDP': port}
+        return subprocess.run(['node', f"tools/e2e/{script['archivo']}", tmp], cwd=ROOT, env=env,
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
     try:
-        with tempfile.TemporaryDirectory() as raiz_tmp, ThreadPoolExecutor(juntos) as pool:
-            tmps = {g: pathlib.Path(raiz_tmp) / str(i) for i, g in enumerate(guiones)}
+        with tempfile.TemporaryDirectory() as tmp_root, ThreadPoolExecutor(together) as pool:
+            tmps = {g: pathlib.Path(tmp_root) / str(i) for i, g in enumerate(scripts)}
             for t in tmps.values():
                 t.mkdir()
-            # Los más largos primero (el largo del guion sirve de aproximación): si cup/torneo.mjs
-            # parte al último, todo espera a que termine
-            largo = lambda g: (RAIZ / 'tools/e2e' / C['guiones'][g]['archivo']).stat().st_size
-            corriendo = {g: pool.submit(correr, i, g, str(tmps[g]))
-                         for i, g in sorted(enumerate(guiones), key=lambda x: -largo(x[1]))}
-            for g in guiones:
-                guion = C['guiones'][g]
-                r = corriendo[g].result()
+            # The longest first (the script's length serves as an approximation): if
+            # cup/tournament.mjs starts last, everything waits for it to finish
+            length = lambda g: (ROOT / 'tools/e2e' / C['guiones'][g]['archivo']).stat().st_size
+            running = {g: pool.submit(run, i, g, str(tmps[g]))
+                       for i, g in sorted(enumerate(scripts), key=lambda x: -length(x[1]))}
+            for g in scripts:
+                script = C['guiones'][g]
+                r = running[g].result()
                 tmp = tmps[g]
-                print(f"\n▶ {guion['archivo']}  ({guion['que']}{', necesita internet' if guion['red'] else ''})")
+                print(f"\n▶ {script['archivo']}  ({script['que']}{', needs internet' if script['red'] else ''})")
                 print(r.stdout, end='')
                 if r.returncode:
-                    fallaron.append(guion['archivo'])
-                    puerto = str(base_cdp + 10 * list(guiones).index(g))
-                    print(f'  falló. Si quedó un Chrome vivo: pkill -f "remote-debugging-port={puerto[:-1]}[{puerto[-1]}]"')
+                    failed.append(script['archivo'])
+                    port = str(cdp_base + 10 * list(scripts).index(g))
+                    print(f'  failed. If a Chrome was left alive: pkill -f "remote-debugging-port={port[:-1]}[{port[-1]}]"')
                     continue
-                for c in [t for t in tomas if t['guion'] == g]:
-                    origen = tmp / f"{c['toma']}.png"
-                    if not origen.exists():
-                        fallaron.append(f"{guion['archivo']} → {c['toma']}")
-                        print(f"  sin toma \"{c['toma']}\": el guion no llegó hasta ahí")
+                for c in [t for t in shots if t['guion'] == g]:
+                    origin = tmp / f"{c['toma']}.png"
+                    if not origin.exists():
+                        failed.append(f"{script['archivo']} → {c['toma']}")
+                        print(f"  no shot \"{c['toma']}\": the script did not get that far")
                         continue
-                    destino = RAIZ / c['imagen']
-                    antes = destino.read_bytes() if destino.exists() else None
-                    destino.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copy2(origen, destino)
-                    achicar(destino, 2 * ancho(C, c['seccion']))
-                    igual = antes == destino.read_bytes()
-                    (iguales if igual else nuevas).append(c['imagen'])
-                    print(f"  {'=' if igual else '↻'} {c['imagen']}")
+                    target = ROOT / c['imagen']
+                    before = target.read_bytes() if target.exists() else None
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(origin, target)
+                    shrink(target, 2 * width(C, c['seccion']))
+                    equal = before == target.read_bytes()
+                    (same if equal else new).append(c['imagen'])
+                    print(f"  {'=' if equal else '↻'} {c['imagen']}")
     finally:
-        if servidor:
-            servidor.terminate()
+        if server:
+            server.terminate()
 
-    print(f'\n{len(nuevas)} captura(s) cambiadas, {len(iguales)} iguales'
-          + (f', {len(fallaron)} sin sacar' if fallaron else ''))
-    if nuevas:
-        print('Míralas antes de publicar (C-12: los problemas de diseño se ven, no se afirman):\n'
+    print(f'\n{len(new)} screenshot(s) changed, {len(same)} unchanged'
+          + (f', {len(failed)} not taken' if failed else ''))
+    if new:
+        print('Look at them before publishing (C-12: design problems are seen, not claimed):\n'
               '  git diff --stat docs/screenshots')
-    return 1 if fallaron else 0
+    return 1 if failed else 0
 
 
 # ----------------------------------------------------------------------------
@@ -576,15 +582,15 @@ def main(argv):
     if len(argv) < 2:
         sys.exit(__doc__)
     cmd = argv[1]
-    if cmd == 'revisar':
-        sys.exit(cmd_revisar())
-    elif cmd == 'actualizar':
-        sys.exit(cmd_actualizar())
-    elif cmd == 'sellar':
-        sys.exit(cmd_sellar())
-    elif cmd == 'capturas':
-        resto = [a for a in argv[2:] if a != '--sin-red']
-        sys.exit(cmd_capturas(resto[0] if resto else None, '--sin-red' in argv))
+    if cmd == 'check':
+        sys.exit(cmd_check())
+    elif cmd == 'update':
+        sys.exit(cmd_update())
+    elif cmd == 'seal':
+        sys.exit(cmd_seal())
+    elif cmd == 'screenshots':
+        rest = [a for a in argv[2:] if a != '--offline']
+        sys.exit(cmd_screenshots(rest[0] if rest else None, '--offline' in argv))
     else:
         sys.exit(__doc__)
 

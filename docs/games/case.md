@@ -67,7 +67,7 @@ El formulario de comentarios es `formularioComentario()` de `labs-idioma.js` y v
 juego que se juega desde el laboratorio, en vez del botón 🐞 de La Copa. Manda a `feedback/` el
 texto, un nombre opcional y el contexto (juego, semilla, puntaje, tiempo, URL, tamaño de pantalla y
 navegador), que no se muestra, y la etiqueta de la llave con que se entró al laboratorio (`tester`,
-D-306); se lee con `node tools/firebase/reportes.mjs`, y sin red queda en el celular y se
+D-306); se lee con `node tools/firebase/reports.mjs`, y sin red queda en el celular y se
 reenvía (D-104, D-109). En el modo de prueba (`?test`) queda en el almacén local, como los reportes de
 La Copa. La práctica de los otros juegos desde `/cup/?labs` sigue con su 🐞.
 Antes de terminar también se puede comentar: la antesala, la prueba y el juego terminan con
@@ -130,7 +130,7 @@ public/cup/games/case/ui.js       pantalla: grilla, pistas, sellos, portada de l
 public/cup/rules.js               casoTexto (las plantillas de cada pista) y los textos del caso, en los cuatro idiomas
 public/cup/game.js                lo de `diario`: el caso del día, seguir al recargar y el final
 public/cup/games/juegos.test.mjs  sus pruebas, con las de los demás juegos de La Copa
-public/labs/case/index.html       generada por node tools/release/og.mjs tarjetas desde public/cup/suelto/: no se edita
+public/labs/case/index.html       generada por node tools/release/og.mjs cards desde public/cup/suelto/: no se edita
 public/case/index.html            página puente a /labs/case/, también generada
 tools/e2e/case/lab.mjs            de punta a punta: el laboratorio lo ofrece, /case/ lleva ahí, el caso del día, marcar antes de tiempo, recargar, las pistas que se tachan solas y el ✓, resolverlo entero, compartir, otro caso, el de hoy y el comentario
 ```

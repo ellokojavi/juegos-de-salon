@@ -81,7 +81,7 @@ blanco. En `stats/<env>/days/<día>`:
   de copa) y del navegador solo su familia y versión mayor.
 - **Para las pruebas:** `window.__vigia.fallas` lista lo que se mandó en esa carga.
 
-Con `node tools/e2e/mirar.mjs panel salud` se ve con datos sembrados (errores de dos versiones,
+Con `node tools/e2e/look.mjs panel health` se ve con datos sembrados (errores de dos versiones,
 una página que no arrancó y tiempos por página).
 
 ## Uno al día (D-230)
@@ -101,15 +101,15 @@ En `#/games`, el bloque **📅 Uno al día**:
   `uadracha`, `uadsemana` y `uadadios`.
 
 Con `window.__panel.seed({ …, uad: { historia, invitados, rachas } })` se dibuja con datos sembrados
-(`node tools/e2e/mirar.mjs panel juegos` ya los trae).
+(`node tools/e2e/look.mjs panel games` ya los trae).
 
 ## Los avisos al celular (D-233)
 
 En `#/cup`, debajo de las cifras de las copas, el bloque **🔔 Avisos al celular**:
 
-- **Celulares con avisos:** las suscripciones vivas en la última vuelta de `tools/push/avisar.mjs`
+- **Celulares con avisos:** las suscripciones vivas en la última vuelta de `tools/push/notify.mjs`
   (`stats/prod/push/vivas`). Los celulares no se pueden leer uno por uno: `push/` no lo lee nadie.
-- **Mandados y tocados, por tipo:** `mandados/<tipo>` lo suma `avisar.mjs` (los que el servicio del
+- **Mandados y tocados, por tipo:** `mandados/<tipo>` lo suma `notify.mjs` (los que el servicio del
   celular aceptó); `aviso/<tipo>`, la página que abrió el aviso (`&notif=<tipo>` en su dirección, en inglés: `notif=deadline` se cuenta como `aviso/plazo`, D-266).
   El porcentaje es tocados sobre mandados en el rango. Los mandados son siempre del sitio publicado.
   Los tipos que no son de La Copa salen después, con su nombre: los de Uno al día son `uaddia`,
@@ -318,9 +318,9 @@ public/assets/js/transport/
 
 `window.__panel.seed({ rooms, days, torneos, push, vista })` dibuja el panel con datos sembrados sin
 entrar (gancho de solo lectura, C-14): sirve para probar la página sin cuenta ni base. `vista` es
-una ruta (`/torneo/OFICI`) y `push`, la última vuelta de los avisos (D-233). `node tools/e2e/mirar.mjs panel <toma>`
-lo siembra con copas armadas con el motor de verdad, una semana de avisos mandados y tocados, y abre esa vista. Las tomas: `ahora`, `torneo`, `copa-ficha`, `copa-dias`,
-`copa-historia`, `juegos`, `juego-ficha`, `sala-ficha`, `trafico`, `audiencia`, `salud` y `datos`.
+una ruta (`/torneo/OFICI`) y `push`, la última vuelta de los avisos (D-233). `node tools/e2e/look.mjs panel <toma>`
+lo siembra con copas armadas con el motor de verdad, una semana de avisos mandados y tocados, y abre esa vista. Las tomas: `now`, `tournament`, `cup-card`, `cup-days`,
+`cup-history`, `games`, `game-card`, `room-card`, `traffic`, `audience`, `health` y `data`.
 
 ## Cuando entra un juego, un modo o un idioma nuevo
 
@@ -335,7 +335,7 @@ nombre —`juego-nuevo`, un modo con `·` por ícono, un idioma que el navegador
 Pasa siempre, porque la app publicada empieza a mandar lo nuevo antes de que nadie mire el
 panel, y porque lo de un juego que ya se fue del menú queda guardado igual.
 
-- Para verlo: `node tools/e2e/mirar.mjs panel datos`, que siembra el panel con un juego, un
+- Para verlo: `node tools/e2e/look.mjs panel data`, que siembra el panel con un juego, un
   modo y un idioma que no existen en el registro.
 - Para que no se rompa: `node public/panel/adapta.test.mjs`, que falla si vuelve a aparecer una lista
   copiada en el panel o una enumeración en las reglas de la base.

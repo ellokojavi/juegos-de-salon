@@ -251,7 +251,7 @@ await test('avisos al celular: solo quien está sentado, y nadie los lee (D-223)
   assert.equal(reglas.pushCopa.$code.$pid.$subId['.read'], false);
   assert.match(reglas.pushCopa.$code.$pid.$subId['.write'], /torneoSeats/);
   assert.match(reglas.pushCopa.$code.$pid.$subId['.write'], /push\/' \+ \$subId \+ '\/uid/);
-  // Lo ya mandado lo anota solo tools/push/avisar.mjs, como administrador (D-224)
+  // Lo ya mandado lo anota solo tools/push/notify.mjs, como administrador (D-224)
   assert.deepEqual(reglas.pushEnviados, { '.read': false, '.write': false });
 });
 

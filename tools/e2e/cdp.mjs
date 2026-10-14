@@ -1,82 +1,83 @@
-// Helper mínimo para manejar Chrome headless por CDP sin dependencias.
+// Minimal helper to drive headless Chrome over CDP, with no dependencies.
 import { spawn } from 'node:child_process';
 import { writeFileSync, readFileSync, rmSync, mkdirSync } from 'node:fs';
-import { medirAire, sinAire, AIRE_MIN } from './aire-comun.mjs';
-import { esCarpeta } from './salida.mjs';
-// CHROME: otra ruta al navegador (Linux, una sesión en la nube)
+import { measureSpacing, lacksSpacing, MIN_SPACING } from './spacing-common.mjs';
+import { isFolder as isFolder } from './output.mjs';
+// CHROME: another path to the browser (Linux, a cloud session)
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 /**
- * Los puertos de Chrome los elige el sistema (D-213): nadie los escoge a mano. Chrome abre con
- * `--remote-debugging-port=0`, toma uno libre y lo escribe en `<dir>/DevToolsActivePort`, que
- * `launch` lee. Sin carrera entre sesiones: el puerto lo reserva Chrome mismo, no un tanteo previo.
- * El `port` que pasa cada guion queda solo como nombre de su Chrome y ya no se usa.
+ * Chrome's ports are chosen by the system (D-213): nobody picks them by hand. Chrome opens with
+ * `--remote-debugging-port=0`, takes a free one and writes it to `<dir>/DevToolsActivePort`, which
+ * `launch` reads. No race between sessions: Chrome itself reserves the port, not a probe beforehand.
+ * The `port` each script passes is only the name of its Chrome and is no longer used.
  *
- * Con PUERTO_CDP, como antes (D-135): el primer puerto distinto que pide un guion pasa a ser
- * PUERTO_CDP, el segundo PUERTO_CDP + 1, y así; pedir de nuevo el mismo puerto da el mismo.
- * Se lee al lanzar, para que un guion pueda fijarlo antes (`mirar.mjs --cdp`).
+ * With CDP_PORT, as before (D-135): the first distinct port a script asks for becomes CDP_PORT,
+ * the second CDP_PORT + 1, and so on; asking for the same port again gives the same one. It is
+ * read at launch, so a script can set it first (`look.mjs --cdp`). PUERTO_CDP, its old name,
+ * still works (D-316).
  */
-const asignados = new Map();
-const puertoFijo = port => {
-  const base = Number(process.env.PUERTO_CDP) || 0;
+const assigned = new Map();
+const fixedPort = port => {
+  const base = Number(process.env.CDP_PORT || process.env.PUERTO_CDP) || 0;
   if (!base) return 0;
-  if (!asignados.has(port)) asignados.set(port, base + asignados.size);
-  return asignados.get(port);
+  if (!assigned.has(port)) assigned.set(port, base + assigned.size);
+  return assigned.get(port);
 };
 
 /**
- * Cada Chrome muere con su guion, termine como termine (bien, con error, con Ctrl-C o con un
- * `kill`): así no quedan Chromes zombis y nadie necesita `pkill`. Solo un SIGKILL al guion se
- * salta esto; ahí el Chrome se busca por su perfil (README).
+ * Each Chrome dies with its script, however it ends (fine, with an error, with Ctrl-C or with a
+ * `kill`): so no zombie Chromes are left and nobody needs `pkill`. Only a SIGKILL to the script
+ * skips this; then the Chrome is found by its profile (README).
  */
-const vivos = new Set();
-const matarTodos = () => { for (const c of vivos) { try { c.kill('SIGKILL'); } catch (_) {} } vivos.clear(); };
-process.on('exit', matarTodos);
-for (const [senal, codigo] of [['SIGINT', 130], ['SIGTERM', 143], ['SIGHUP', 129]]) {
-  process.on(senal, () => { matarTodos(); process.exit(codigo); });
+const alive = new Set();
+const killAll = () => { for (const c of alive) { try { c.kill('SIGKILL'); } catch (_) {} } alive.clear(); };
+process.on('exit', killAll);
+for (const [signal, code] of [['SIGINT', 130], ['SIGTERM', 143], ['SIGHUP', 129]]) {
+  process.on(signal, () => { killAll(); process.exit(code); });
 }
-process.on('uncaughtException', e => { console.error(e); matarTodos(); process.exit(1); });
-process.on('unhandledRejection', e => { console.error(e); matarTodos(); process.exit(1); });
+process.on('uncaughtException', e => { console.error(e); killAll(); process.exit(1); });
+process.on('unhandledRejection', e => { console.error(e); killAll(); process.exit(1); });
 
-/** El puerto que Chrome escribió en su perfil, o 0 mientras no lo escribe. */
-const puertoEscrito = dir => {
+/** The port Chrome wrote in its profile, or 0 while it hasn't written it. */
+const writtenPort = dir => {
   try { const n = Number(readFileSync(`${dir}/DevToolsActivePort`, 'utf8').split('\n')[0]); return n > 0 ? n : 0; } catch { return 0; }
 };
 
-export async function launch({ port: pedido, dir, out, width = 390, height = 844 }) {
-  // Un perfil en `undefined/p` o `--parte/p` quedaba dentro de la copia de trabajo y frenaba su limpieza (D-315)
-  for (const [k, v] of [['dir', dir], ['out', out]]) if (v != null && !esCarpeta(String(v))) throw new Error(`launch: ${k} = "${v}" no es una carpeta de salida (usa salida() de tools/e2e/salida.mjs)`);
-  const fijo = puertoFijo(pedido);
+export async function launch({ port: requested, dir, out, width = 390, height = 844 }) {
+  // A profile in `undefined/p` or `--part/p` stayed inside the worktree and blocked its cleanup (D-315)
+  for (const [k, v] of [['dir', dir], ['out', out]]) if (v != null && !isFolder(String(v))) throw new Error(`launch: ${k} = "${v}" is not an output folder (use output() from tools/e2e/output.mjs)`);
+  const fixed = fixedPort(requested);
   mkdirSync(dir, { recursive: true });
-  // El de una corrida anterior con el mismo perfil diría un puerto que ya no es
+  // The one from an earlier run with the same profile would name a port that is gone
   rmSync(`${dir}/DevToolsActivePort`, { force: true });
-  const chrome = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${fijo}`, `--window-size=${width},${height + 60}`, '--hide-scrollbars', '--no-first-run', `--user-data-dir=${dir}`, 'about:blank'], { stdio: 'ignore' });
-  vivos.add(chrome);
-  let salio = false;
-  chrome.on('exit', () => { salio = true; vivos.delete(chrome); });
-  let port = fijo;
+  const chrome = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${fixed}`, `--window-size=${width},${height + 60}`, '--hide-scrollbars', '--no-first-run', `--user-data-dir=${dir}`, 'about:blank'], { stdio: 'ignore' });
+  alive.add(chrome);
+  let exited = false;
+  chrome.on('exit', () => { exited = true; alive.delete(chrome); });
+  let port = fixed;
   let targets;
-  // Hasta 60 s: el primer Chrome de una máquina recién encendida (un runner de GitHub, D-193) tarda
-  // más de 20 en abrir su puerto, y esperar de más no cuesta nada cuando abre rápido
-  for (let i = 0; i < 120 && !salio; i++) {
-    if (!port) port = puertoEscrito(dir);
+  // Up to 60 s: the first Chrome on a freshly booted machine (a GitHub runner, D-193) takes more
+  // than 20 to open its port, and waiting longer costs nothing when it opens fast
+  for (let i = 0; i < 120 && !exited; i++) {
+    if (!port) port = writtenPort(dir);
     if (port) { try { targets = await (await fetch(`http://localhost:${port}/json`)).json(); break; } catch {} }
     await sleep(500);
   }
   if (!targets) {
     try { chrome.kill('SIGKILL'); } catch (_) {}
-    throw new Error(salio
-      ? `Chrome se cerró al abrir (CHROME=${CHROME}). ¿Otro Chrome sigue usando el perfil ${dir}?`
-      : `Chrome no abrió ${port ? `el puerto ${port}` : 'su puerto'} en 60 s (CHROME=${CHROME})`);
+    throw new Error(exited
+      ? `Chrome closed while opening (CHROME=${CHROME}). Is another Chrome still using the profile ${dir}?`
+      : `Chrome didn't open ${port ? `port ${port}` : 'its port'} in 60 s (CHROME=${CHROME})`);
   }
   const ws = new WebSocket(targets.find(t => t.type === 'page').webSocketDebuggerUrl);
   await new Promise(r => ws.onopen = r);
   let id = 0; const pending = new Map(); const errors = []; const logs = [];
-  let cargas = 0; const alCargar = new Set(); // Page.loadEventFired: cuántas van, y quién espera la próxima
+  let loads = 0; const onLoad = new Set(); // Page.loadEventFired: how many so far, and who waits for the next one
   ws.onmessage = e => {
     const m = JSON.parse(e.data);
-    if (m.method === 'Page.loadEventFired') { cargas++; for (const r of alCargar) r(); alCargar.clear(); }
+    if (m.method === 'Page.loadEventFired') { loads++; for (const r of onLoad) r(); onLoad.clear(); }
     if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); }
     if (m.method === 'Runtime.exceptionThrown') errors.push(m.params.exceptionDetails.text + ' ' + (m.params.exceptionDetails.exception?.description || ''));
     if (m.method === 'Runtime.consoleAPICalled' && (m.params.type === 'error' || m.params.type === 'warning')) logs.push(m.params.args.map(a => a.value ?? a.description).join(' '));
@@ -86,110 +87,110 @@ export async function launch({ port: pedido, dir, out, width = 390, height = 844
   await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 2, mobile: true });
   const api = {
     errors, logs,
-    port, // el puerto de Chrome que se usó de verdad (el que eligió el sistema, o el de PUERTO_CDP)
+    port, // the Chrome port actually used (the one the system chose, or CDP_PORT's)
     dir,
-    send, // CDP crudo, para lo que no tiene helper (por ejemplo cortarle la red a Firebase)
+    send, // raw CDP, for what has no helper (for example cutting Firebase off the network)
     evaluate: async expr => { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.result?.exceptionDetails) throw new Error(r.result.exceptionDetails.text + ' ' + (r.result.exceptionDetails.exception?.description || '')); return r.result?.result?.value; },
     go: async (url, wait = 1800) => { await send('Page.navigate', { url }); await sleep(wait); },
     /**
-     * Como `go`, pero sin pausa fija: espera el `load` de la página nueva y que se asiente
-     * (`asentar`). `tope` es lo que esperaba `go` antes: nunca tarda más que eso, y casi siempre
-     * mucho menos. Pensado para los guiones que abren muchas páginas (los de idiomas, D-307).
+     * Like `go`, but without a fixed pause: waits for the new page's `load` and for it to settle
+     * (`settle`). `cap` is what `go` used to wait: it never takes longer than that, and almost
+     * always much less. Meant for the scripts that open many pages (the language ones, D-307).
      */
-    abrir: async (url, tope = 1500) => {
+    open: async (url, cap = 1500) => {
       const t0 = Date.now();
-      const cargo = new Promise(r => alCargar.add(r));
+      const loaded = new Promise(r => onLoad.add(r));
       await send('Page.navigate', { url });
-      await Promise.race([cargo, sleep(tope)]);
-      await api.asentar(Math.max(0, tope - (Date.now() - t0)));
+      await Promise.race([loaded, sleep(cap)]);
+      await api.settle(Math.max(0, cap - (Date.now() - t0)));
     },
-    /** Espera hasta que `expr` (en la página) dé algo verdadero, mirando cada `cada` ms; `tope` como máximo. Devuelve si se cumplió. */
-    hasta: async (expr, tope = 3000, cada = 100) => {
+    /** Waits until `expr` (in the page) is truthy, checking every `every` ms; `cap` at most. Returns whether it happened. */
+    until: async (expr, cap = 3000, every = 100) => {
       const t0 = Date.now();
       for (;;) {
-        try { if (await api.evaluate(`!!(${expr})`)) return true; } catch (_) { /* a mitad de una navegación */ }
-        if (Date.now() - t0 >= tope) return false;
-        await sleep(cada);
+        try { if (await api.evaluate(`!!(${expr})`)) return true; } catch (_) { /* in the middle of a navigation */ }
+        if (Date.now() - t0 >= cap) return false;
+        await sleep(every);
       }
     },
     /**
-     * Espera a que la pantalla deje de cambiar: ninguna mutación del DOM durante `calma` ms (las
-     * animaciones infinitas no mutan el DOM) y las animaciones finitas terminadas, con `tope` como
-     * máximo. Reemplaza las pausas fijas entre paso y paso: si la pantalla ya está quieta, sigue al
-     * tiro; si algo llega tarde (un temporizador, una carga), lo espera, hasta el tope.
+     * Waits for the screen to stop changing: no DOM mutation for `calm` ms (infinite animations
+     * don't mutate the DOM) and finite animations finished, with `cap` at most. Replaces the fixed
+     * pauses between steps: if the screen is already still, it moves on right away; if something
+     * arrives late (a timer, a load), it waits for it, up to the cap.
      */
-    asentar: async (tope = 700, calma = 150) => {
-      if (tope <= 0) return;
+    settle: async (cap = 700, calm = 150) => {
+      if (cap <= 0) return;
       const t0 = Date.now();
       try {
-        await api.evaluate(`new Promise(listo => {
-          let reloj; const fin = () => { obs.disconnect(); clearTimeout(reloj); clearTimeout(tope); listo(1); };
-          const obs = new MutationObserver(() => { clearTimeout(reloj); reloj = setTimeout(fin, ${calma}); });
+        await api.evaluate(`new Promise(done => {
+          let timer; const end = () => { obs.disconnect(); clearTimeout(timer); clearTimeout(cap); done(1); };
+          const obs = new MutationObserver(() => { clearTimeout(timer); timer = setTimeout(end, ${calm}); });
           obs.observe(document, { subtree: true, childList: true, attributes: true, characterData: true });
-          reloj = setTimeout(fin, ${calma});
-          const tope = setTimeout(fin, ${tope});
+          timer = setTimeout(end, ${calm});
+          const cap = setTimeout(end, ${cap});
         })`);
-      } catch (_) { /* la página se fue a mitad (una navegación): lo que queda, de pausa */ await sleep(Math.max(0, tope - (Date.now() - t0))); return; }
-      await api.quieto(Math.max(0, Math.min(900, tope - (Date.now() - t0))));
+      } catch (_) { /* the page went away midway (a navigation): what's left, as a pause */ await sleep(Math.max(0, cap - (Date.now() - t0))); return; }
+      await api.still(Math.max(0, Math.min(900, cap - (Date.now() - t0))));
     },
-    // Antes de disparar, esperar a que las animaciones de entrada se queden quietas: una
-    // captura sacada a mitad de un `pop` congela las filas a distintas escalas y en el README
-    // se ven desalineadas, como si el CSS estuviera malo (D-76). Las animaciones infinitas
-    // (burbujas, wiggle, shimmer) no se esperan nunca: no terminan. El tope es corto a propósito:
-    // varias pantallas se pasan solas a los 1,8 s, y una espera larga cambiaría la toma.
-    quieto: async (tope = 900) => api.evaluate(`(async()=>{
-      const finitas = () => document.getAnimations().filter(a => {
+    // Before shooting, wait for the entrance animations to stand still: a screenshot taken in the
+    // middle of a `pop` freezes the rows at different scales and in the README they look
+    // misaligned, as if the CSS were wrong (D-76). Infinite animations (bubbles, wiggle, shimmer)
+    // are never waited for: they don't end. The cap is short on purpose: several screens move on
+    // by themselves at 1.8 s, and a long wait would change the shot.
+    still: async (cap = 900) => api.evaluate(`(async()=>{
+      const finite = () => document.getAnimations().filter(a => {
         const t = a.effect && a.effect.getComputedTiming();
         return a.playState === 'running' && t && t.iterations !== Infinity;
       });
       await Promise.race([
-        Promise.all(finitas().map(a => a.finished.catch(() => {}))),
-        new Promise(r => setTimeout(r, ${tope})),
+        Promise.all(finite().map(a => a.finished.catch(() => {}))),
+        new Promise(r => setTimeout(r, ${cap})),
       ]);
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       return 1;
     })()`),
     shot: async name => {
-      await api.quieto();
+      await api.still();
       const r = await send('Page.captureScreenshot', { format: 'png' });
       writeFileSync(`${out}/${name}.png`, Buffer.from(r.result.data, 'base64'));
-      // Cada captura revisa el aire entre el tablero y sus botones (D-309, U-11): así lo vigilan
-      // todos los guiones, en todas las pantallas que fotografían, sin caminos aparte
+      // Every screenshot checks the space between the board and its buttons (D-309, U-11): that
+      // way every script watches it, on every screen it photographs, without separate paths
       try {
-        const filas = JSON.parse(await api.evaluate(medirAire));
-        if (process.env.AIRE_INFORMAR && filas.length) console.log(`  aire ${name}: ${filas.map(f => `${f.tablero} ${f.aire}px`).join(', ')}`);
-        const malos = sinAire(filas);
-        if (malos.length) console.log(`✗ ${name}: botón sin aire bajo el tablero (U-11, ${AIRE_MIN} px o más): ${malos.join(', ')}`);
-      } catch (_) { /* una página sin la app (about:blank) no tiene tableros */ }
+        const rows = JSON.parse(await api.evaluate(measureSpacing));
+        if ((process.env.SPACING_REPORT || process.env.AIRE_INFORMAR) && rows.length) console.log(`  spacing ${name}: ${rows.map(f => `${f.board} ${f.spacing}px`).join(', ')}`);
+        const bad = lacksSpacing(rows);
+        if (bad.length) console.log(`✗ ${name}: button without space below the board (U-11, ${MIN_SPACING} px or more): ${bad.join(', ')}`);
+      } catch (_) { /* a page without the app (about:blank) has no boards */ }
     },
     close: () => { ws.close(); chrome.kill(); },
     /**
-     * Entrada de verdad, por el navegador y no por `.click()`.
+     * Real input, through the browser and not through `.click()`.
      *
-     * Existe por un error que ningún `.click()` podía ver (D-90): tomar el puntero al apoyar
-     * el dedo le cambia el destino al `click` que Chrome fabrica después, y tocar un barco
-     * dejó de seleccionarlo. Un `elemento.click()` se salta esa cocina entera y pasaba en verde.
+     * It exists because of a bug no `.click()` could see (D-90): capturing the pointer when the
+     * finger touches down changes the target of the `click` Chrome builds afterwards, and tapping
+     * a ship stopped selecting it. An `element.click()` skips that whole kitchen and passed green.
      *
-     * `toque(x, y)` y `arrastre(x0, y0, x1, y1)` van en píxeles de la página (los de
-     * `getBoundingClientRect`), que es como los mide el guion.
+     * `tap(x, y)` (tap) and `drag(x0, y0, x1, y1)` (drag) take page pixels (those of
+     * `getBoundingClientRect`), which is how the script measures them.
      */
-    toque: async (x, y) => {
+    tap: async (x, y) => {
       const p = { x, y, button: 'left', clickCount: 1, buttons: 1, pointerType: 'mouse' };
       await send('Input.dispatchMouseEvent', { type: 'mousePressed', ...p });
       await send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...p, buttons: 0 });
       await sleep(120);
     },
-    arrastre: async (x0, y0, x1, y1, pasos = 6) => {
+    drag: async (x0, y0, x1, y1, steps = 6) => {
       await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: x0, y: y0, button: 'left', clickCount: 1, buttons: 1 });
-      for (let i = 1; i <= pasos; i++) {
-        await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: Math.round(x0 + (x1 - x0) * i / pasos), y: Math.round(y0 + (y1 - y0) * i / pasos), button: 'left', buttons: 1 });
+      for (let i = 1; i <= steps; i++) {
+        await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: Math.round(x0 + (x1 - x0) * i / steps), y: Math.round(y0 + (y1 - y0) * i / steps), button: 'left', buttons: 1 });
         await sleep(25);
       }
       await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x1, y: y1, button: 'left', clickCount: 1, buttons: 0 });
       await sleep(180);
     },
   };
-  // helpers del juego Toque y Fama
+  // Helpers for Toque y Fama (bulls and cows)
   api.press = d => api.evaluate(`(()=>{const b=[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent==='${d}');if(!b||b.disabled)return 'no';b.click();return 'ok'})()`);
   api.typeNum = async n => { for (const d of n) { const r = await api.press(d); if (r !== 'ok') return 'fail ' + d; } return api.evaluate(`(()=>{const b=document.querySelector('.screen.active .keypad .ok');if(!b)return 'no-ok';if(b.disabled)return 'ok-disabled';b.click();return 'ok'})()`); };
   api.active = () => api.evaluate(`document.querySelector('.screen.active').id`);

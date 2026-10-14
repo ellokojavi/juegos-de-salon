@@ -20,7 +20,7 @@ Las anteriores quedan en la historia de git. Ojo: GitHub Pages publica el repo e
 los mp4 también quedan en `juegosdesalon.cl/marketing/promo-video/output/…`.
 
 **Muestra una selección de juegos, no todos** (`"seleccion": true` en `registro.json`): un juego
-nuevo en la portada no deja atrás al video; `node tools/agents/marketing.mjs revisar` solo avisa si
+nuevo en la portada no deja atrás al video; `node tools/agents/marketing.mjs check` solo avisa si
 uno de los que salen ya no está, o si la app cambió de versión.
 
 ## Pendiente: versión 7
@@ -361,7 +361,7 @@ reinas y la racha), La Copa igual que en la v5, y un cierre con "📲 Agrégala 
 idiomas". Salen la grilla de "¡Y muchos más!" y la escena de modos; la canción ya no repite
 compases. Todo recapturado con la app 0.129.1 (textos cortos, Tango y Toque y Fama ya no salen).
 Se arregló `construir.sh`, que todavía buscaba `musica/` y `salida/` (las carpetas son `music/` y
-`output/` desde D-192), y `marketing.mjs revisar` aprendió `"seleccion": true`.
+`output/` desde D-192), y `marketing.mjs check` aprendió `"seleccion": true`.
 
 Segunda vuelta, el mismo día:
 > "Tanto Uno al Día como La Copa deben tener un tratamiento visual distinto (otros colores, por
