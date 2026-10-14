@@ -44,7 +44,9 @@ La tarjeta del laboratorio termina, desde v0.167.1, en «…en el mínimo de gir
   al soltar, gira media vuelta **como un solo bloque**, alrededor de su centro: cada pieza orbita a su lugar espejo y por eso queda dada vuelta (no gira por su cuenta mientras se desliza). Un toque gira una
   sola pieza (la deja dada vuelta en su lugar).
 - **La meta:** que todas las líneas sigan sin cortes de pieza en pieza. Vale cualquier orden en que
-  todos los bordes calcen, aunque no sea el original.
+  todos los bordes calcen, aunque no sea el original. **El tablero no marca qué bordes ya calzan**
+  ([#359](https://github.com/ellokojavi/juegos-de-salon/issues/359), pedido del dueño): las líneas
+  mismas muestran dónde siguen o se cortan, y leerlas es parte del juego.
 - **Arriba:** «Giros: n · Mínimo: m». **↺ Reiniciar** vuelve al tablero del comienzo de la etapa con 0
   giros, gratis; sin giros está apagado y al terminar la etapa se va.
 - **Al unirlas:** las líneas brillan, el tablero se marca en verde («🚇 ¡Etapa 2 lista!», o «🚇 ¡Etapa 2 en
