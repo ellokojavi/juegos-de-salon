@@ -1,8 +1,8 @@
 // Agentes (laboratorio, D-286): cada tablero es justo —cada agente va solo con su pista, el asesino
 // tienta pero no va con ninguna, las neutrales no tientan— y el estado y el puntaje se calculan bien.
 import assert from 'node:assert/strict';
-import { PISTAS } from './pistas.js';
-import { generar, estado, puntaje, tarjeta, AGENTES, CUANTAS, NEUTRALES, SIN_REPETIR, numeroDeDia, pistasDelDia } from './engine.js';
+import { PISTAS, CLASICAS, ABSTRACTAS } from './pistas.js';
+import { generar, estado, puntaje, tarjeta, AGENTES, CUANTAS, NEUTRALES, SIN_REPETIR, numeroDeDia, pistasDelDia, ABSTRACTAS_DESDE } from './engine.js';
 
 const nombres = PISTAS.map(x => x.pista);
 assert.equal(new Set(nombres).size, nombres.length, 'pistas repetidas');
@@ -47,6 +47,17 @@ for (let n = 0; n < 300; n++) {
     }
   }
   assert.equal(Object.keys(ultima).length, PISTAS.length, 'en un año salen todas las pistas');
+}
+
+// Las de ideas (#383) entran al calendario en ABSTRACTAS_DESDE: los días de antes, que ya se
+// jugaron, no cambian (solo tienen de las clásicas), y desde ahí salen en las dos semanas siguientes
+{
+  const clasicas = new Set(CLASICAS), ideas = new Set(ABSTRACTAS.map(x => x.pista));
+  assert.ok(ABSTRACTAS.length >= 15, 'pocas pistas de ideas');
+  for (let n = numeroDeDia('dia:2026-10-01'); n < ABSTRACTAS_DESDE; n++) assert.ok(pistasDelDia(n).every(x => clasicas.has(x)), `${n}: una pista de ideas antes de su día`);
+  const salen = new Set();
+  for (let n = ABSTRACTAS_DESDE; n < ABSTRACTAS_DESDE + 14; n++) for (const x of pistasDelDia(n)) if (ideas.has(x.pista)) salen.add(x.pista);
+  assert.ok(salen.size >= 5, `en las dos primeras semanas salen ${salen.size} pistas de ideas`);
 }
 
 // El estado y el puntaje

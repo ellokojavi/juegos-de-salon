@@ -61,7 +61,7 @@ Los números salen de las constantes de `engine.js` (`CUANTAS`, `NEUTRALES`, `RE
   de a una antes del resultado.
 - **Puntaje:** 100 × agentes encontrados / 11, menos las restas, nunca bajo 0.
 - **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos. Sus pistas salen
-  de un calendario (D-288): recorre las 100 en vueltas barajadas y una pista no vuelve antes de 15
+  de un calendario (D-288): recorre las 118 en vueltas barajadas y una pista no vuelve antes de 15
   días, para que quien juega todos los días no vea las mismas. "🔁 Otro tablero" abre uno al azar con
   su semilla en el link, para compartirlo.
 - **El final:** un sello grande según cómo salió: **¡Misión cumplida!** en verde, con confeti
@@ -77,8 +77,13 @@ Los números salen de las constantes de `engine.js` (`CUANTAS`, `NEUTRALES`, `RE
 
 ## Cómo funciona
 
-- `pistas.js`: 100 pistas (40 desde D-286 y 60 desde D-288), cada una con 9 o 10 palabras que van
-  con ella (`si`) y 3 tentaciones (`casi`). Una palabra nueva se piensa como jugador: que la asociación se vea sin explicarla.
+- `pistas.js`: 118 pistas, cada una con 9 o 10 palabras que van
+  con ella (`si`) y 3 tentaciones (`casi`): 100 de cosas concretas (`CLASICAS`: 40 desde D-286 y
+  60 desde D-288) y 18 de ideas (`ABSTRACTAS`: MIEDO, SUERTE, LIBERTAD…, pedido de Cris en #383,
+  que aprobó el dueño en #387), donde las palabras evocan la idea sin ser de su rubro (SUERTE →
+  TRÉBOL, SIETE; tienta GATO). Las de ideas entran al calendario el 16 de octubre de 2026
+  (`ABSTRACTAS_DESDE`), barajadas con la cola que quedaba: los días de antes no cambian. «Otro
+  tablero» las usa desde que se publicaron (los links con `?seed=` de antes abren otro tablero). Una palabra nueva se piensa como jugador: que la asociación se vea sin explicarla.
 - `engine.js`: `pistasDelDia(n)` es el calendario: camina día a día desde el 1 de octubre de 2026 con
   una cola de vueltas barajadas (`vuelta:<k>`) y deja fuera las pistas de los últimos `SIN_REPETIR`
   (15) días; `generar` la usa para las semillas `dia:<fecha>` y elige al azar si un día no se arma.
@@ -93,7 +98,7 @@ Los números salen de las constantes de `engine.js` (`CUANTAS`, `NEUTRALES`, `RE
   `estado(t, jugadas)` reconstruye la partida desde las jugadas (`{i}` o `{pasar:true}`).
 - `engine.test.mjs` revisa la lista y 300 tableros (cada pista con los agentes que dice, 11 en
   total, y que el asesino y las neutrales tienten a la pista que dicen), y un año de tableros del
-  día (todos con las pistas del calendario, ninguna antes de 15 días y las 100 en el año); `tools/e2e/agents/lab.mjs`, la partida entera.
+  día (todos con las pistas del calendario, ninguna antes de 15 días, todas en el año, ninguna de ideas antes de su día y varias en sus dos primeras semanas); `tools/e2e/agents/lab.mjs`, la partida entera.
 
 ## Excepciones a los cánones
 

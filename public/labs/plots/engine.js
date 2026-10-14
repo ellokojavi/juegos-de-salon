@@ -602,8 +602,23 @@ export function generarServicios(semilla, { lado = 6, tam = 4, servicios = ['luz
   return { semilla: String(semilla), ...mejor };
 }
 
-/** El tablero de una etapa (0 a 4) del modo servicios. */
-export const generarEtapaServicios = (semilla, n) => generarServicios(`${semilla}:etapa-${n + 1}`, ETAPAS_SERVICIOS[n]);
+/**
+ * El tablero de una etapa (0 a 4) del modo servicios. Los dos últimos (8×8 de 8) salen con las mismas
+ * reglas, y uno de cada cuatro días el cuarto resultaba más difícil que el quinto («El penúltimo me
+ * costó más que el último», #401): se arman los dos y el más difícil va al final.
+ */
+const finales = new Map();
+export function generarEtapaServicios(semilla, n) {
+  const etapa = k => generarServicios(`${semilla}:etapa-${k + 1}`, ETAPAS_SERVICIOS[k]);
+  const k = ETAPAS_SERVICIOS.length - 2;
+  if (n < k) return etapa(n);
+  if (!finales.has(semilla)) {
+    const par = [etapa(k), etapa(k + 1)];
+    const cuanto = t => dificultadServicios(deducirServicios(t));
+    finales.set(semilla, cuanto(par[0]) > cuanto(par[1]) ? [par[1], par[0]] : par);
+  }
+  return structuredClone(finales.get(semilla)[n - k]);
+}
 
 /**
  * ¿Vale un lote dibujado en el modo servicios? `{ ok: true }`, o `{ ok: false, motivo }`: 'tam' (con el

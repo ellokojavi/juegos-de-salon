@@ -174,6 +174,12 @@ for (const d of promS.filter(x => x.dificil)) for (const f of promS.filter(x => 
 assert.deepEqual(generarServicios('a', ETAPAS_SERVICIOS[1]).iconos, generarServicios('a', ETAPAS_SERVICIOS[1]).iconos);
 assert.notDeepEqual(generarServicios('a', ETAPAS_SERVICIOS[1]).iconos, generarServicios('b', ETAPAS_SERVICIOS[1]).iconos);
 assert.deepEqual(ETAPAS_SERVICIOS.map((_, n) => { const t = generarEtapaServicios('dia:2026-10-13', n); return [t.lado, t.tam]; }), ETAPAS_SERVICIOS.map(e => [e.lado, e.tam]));
+// El último tablero es el más difícil (#401): de los dos 8×8 de 8, el que pide más deducciones va al final
+for (let d = 10; d <= 21; d++) {
+  const [cuarto, quinto] = [3, 4].map(n => deducirServicios(generarEtapaServicios(`dia:2026-10-${d}`, n)));
+  const cuanto = x => 5 * x.avanzadas + 2 * x.intermedias + x.rondas - 4 * x.deEntrada;
+  assert.ok(cuanto(quinto) >= cuanto(cuarto), `dia:2026-10-${d}: el cuarto tablero (${cuanto(cuarto)}) es más difícil que el quinto (${cuanto(quinto)})`);
+}
 // Un tamaño que no divide la grilla no se arma
 assert.throws(() => generarServicios('x', { lado: 6, tam: 5 }));
 // La ayuda sirve igual: un lote de la solución que no está puesto
