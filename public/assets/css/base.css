@@ -266,6 +266,9 @@ details.panel summary::-webkit-details-marker { display: none; }
     radial-gradient(600px 500px at 50% 110%, rgba(46, 230, 214, 0.35), transparent 60%),
     linear-gradient(160deg, var(--bg1), var(--bg2) 60%, var(--bg3));
   animation: fadeIn 0.25s ease-out both; text-align: center;
+  /* En un celular bajo (320 × 568) el veredicto con su dato y el pase no caben: se desplaza, y el
+     botón de seguir se alcanza (U-11) */
+  overflow-y: auto; overscroll-behavior: contain;
 }
 .handoff.leaving { animation: fadeOut 0.3s ease-in both; pointer-events: none; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

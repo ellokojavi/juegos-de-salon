@@ -141,7 +141,7 @@ node tools/e2e/contacto.mjs cuarto-rey --salida /tmp/contacto
 | `timeline/online.mjs` | Three phones against real Firebase, reload and rematch |
 | `bulls-and-cows/chat.mjs` | Room chat in Toque y Fama: unread, label, and that it dies with the game |
 | `timeline/eleccion.mjs` | That the chosen card is placed and that without choosing nothing can be placed |
-| `timeline/dato.mjs` | Each card's fact in Línea Relámpago (D-277): the error tells it with the clock paused and a 6 s cap, the hit leaves it in a strip that goes away by itself, the end is the review, and in English |
+| `timeline/dato.mjs` | Each card's fact in Línea Relámpago (D-277, D-314): the error tells it with the clock paused and a 6 s cap, the hit too, and it closes by itself when the bar empties (D-314), the end is the review, and in English |
 | `timeline/veredicto.mjs` | That the verdict speaks in the third person when someone else was wrong |
 | `timeline/mazos.mjs` | All the themes and that ten games in a row don't repeat cards |
 | `timeline/pozo.mjs` | Common pool: draw of 6, refill from the end, goal and setting that travels in the room |

@@ -102,7 +102,8 @@ await cerrarVeredicto();
 const t1 = await tablero();
 console.log('tras el error:', JSON.stringify(t1));
 ok(t1.linea === 2 && t1.rojas === 1 && t1.mano === 8, 'la carta quedó en la línea, marcada en rojo');
-await jugar(true); await sleep(1600);
+// Con su dato, el acierto se queda los 6 s de su barra (D-314)
+await jugar(true); await sleep(6600);
 ok(await b.evaluate(`document.getElementById('handoff').hidden`), 'el acierto se cierra solo');
 
 /* 3 · Retomar ------------------------------------------------------------------- */
