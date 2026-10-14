@@ -125,9 +125,12 @@ export const EXECUTORS = ['documentation', 'usability'];
  * Whom to dispatch today and why: `[{ agent, reason }]`. `documentation` gets the main commits
  * since its `checkedUpTo`; `usability`, those that touched public/ since its last dispatch (or
  * `null` if it was never launched) and the days since then: once a week it goes anyway.
+ * `support`, the emails waiting in the hola@ inbox (D-318).
  */
-export function toDispatch({ docCommits, publicCommits, usabilityDays }) {
+export function toDispatch({ docCommits, publicCommits, usabilityDays, emails = 0 }) {
   const res = [];
+  // D-318: the support agent only when hola@ left emails in the inbox
+  if (emails > 0) res.push({ agent: 'support', reason: `${emails} email(s) in the hola@ inbox` });
   if (docCommits > 0) res.push({ agent: 'documentation', reason: `${docCommits} commit(s) on main since its last round` });
   if (publicCommits === null) res.push({ agent: 'usability', reason: 'it was never dispatched' });
   else if (publicCommits > 0) res.push({ agent: 'usability', reason: `${publicCommits} commit(s) that change public/ since its last dispatch` });
@@ -154,7 +157,7 @@ export const readMemory = () => (existsSync(MEMORY) ? { ...empty(), ...JSON.pars
 const save = m => writeFileSync(MEMORY, JSON.stringify(m, null, 2) + '\n');
 const today = () => new Date().toISOString().slice(0, 10);
 
-function check() {
+async function check() {
   const m = readMemory();
   sh('git', ['fetch', '-q', 'origin', 'main']);
   const tip = sh('git', ['rev-parse', 'origin/main']).trim();
@@ -223,8 +226,9 @@ function check() {
     docCommits: doc.checkedUpTo ? count(`${doc.checkedUpTo}..origin/main`) : 1,
     publicCommits: lastUsability ? count(`${lastUsability.to}..origin/main`, '--', 'public/') : null,
     usabilityDays: lastUsability ? Math.floor((Date.now() - Date.parse(lastUsability.date)) / DAY) : null,
+    emails: await import('./inbox.mjs').then(i => i.count()).catch(e => { console.log(`- (the hola@ inbox could not be read: ${e.message})`); return 0; }),
   });
-  for (const d of plan) console.log(`- ${d.agent}: ${d.reason} (when launching it: dispatch ${d.agent} ${tip.slice(0, 7)})`);
+  for (const d of plan) console.log(`- ${d.agent}: ${d.reason}${d.agent === 'support' ? '' : ` (when launching it: dispatch ${d.agent} ${tip.slice(0, 7)})`}`);
   if (!plan.length) console.log('Nobody: nothing changed that needs a review.');
 
   heading('Approved and queued');
@@ -315,5 +319,5 @@ function main([command, ...args]) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  try { main(process.argv.slice(2)); } catch (e) { console.error(e.message); process.exit(1); }
+  try { await main(process.argv.slice(2)); } catch (e) { console.error(e.message); process.exit(1); }
 }

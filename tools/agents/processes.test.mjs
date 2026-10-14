@@ -48,6 +48,8 @@ assert.ok(!FIX.test('Zip: ten new levels'));
 // Whom to dispatch (D-276)
 assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2 }), [], 'without changes nobody is launched');
 assert.deepEqual(toDispatch({ docCommits: 3, publicCommits: 0, usabilityDays: 2 }).map(d => d.agent), ['documentation']);
+assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2, emails: 2 }).map(d => d.agent), ['support'], 'emails at hola@ launch the support agent (D-318)');
+assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2, emails: null }), [], 'without the inbox user, nobody');
 assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 2, usabilityDays: 1 }).map(d => d.agent), ['usability']);
 assert.match(toDispatch({ docCommits: 0, publicCommits: null, usabilityDays: null })[0].reason, /never/);
 assert.match(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 7 })[0].reason, /week/);
