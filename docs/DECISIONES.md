@@ -5939,7 +5939,11 @@ whoever wants to can be told when we answer.
   in `~/.config/juegos-de-salon/mail.json`, never in the repo), in the language the feedback was
   written in, wrapped in one of ten friendly, grateful openings per language
   (`tools/agents/feedback-templates.mjs`; neutral language, no dashes as punctuation). Then it
-  deletes the address and notes it on the issue (`feedback.mjs reply`). **Destructive feedback**
+  deletes the address and notes it on the issue (`feedback.mjs reply`). **Several comments from the
+  same player go in one email** (owner's request, the same day: a long session leaves several, and
+  N emails for N comments is too many): the subject and the opening are plural, each answer goes
+  under the quote of its comment, and `feedback.mjs pending` groups the waiting reports by address.
+  **Destructive feedback**
   (insults, mockery, spam) gets no email: the address is only deleted (`feedback.mjs forget`).
   Honest criticism is not destructive.
 - The reply runs on the owner's Mac mini (the processes round), never in a workflow: Actions logs
