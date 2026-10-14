@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node tools/firebase/reglas.mjs:*)"
+      "Bash(node tools/firebase/reglas.mjs:*)",
+      "Bash(node tools/firebase/en-curso.mjs:*)",
+      "Bash(node tools/firebase/reportes.mjs:*)",
+      "WebFetch(domain:juegos-de-salon-default-rtdb.firebaseio.com)"
     ]
   },
   "hooks": {
