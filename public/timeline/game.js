@@ -22,7 +22,7 @@ import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../ass
 import { rankingsVisibles, leerYo } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { crearArrastre } from '../assets/js/arrastre.js';
-import { datoDe, bloqueDato, franjaDato, conservarFranja, conDato } from '../assets/js/dato.js';
+import { datoDe, bloqueDato, conDato, PAUSA_DATO_MS } from '../assets/js/dato.js';
 import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './engine.js';
 import { generar as generarLinea, CARTAS as CARTAS_SOLO } from '../cup/games/timeline/engine.js';
 import * as uiLinea from '../cup/games/timeline/ui.js';
@@ -313,9 +313,10 @@ function renderPlay(v) {
     const stage = verdictStage(last, v, null);
     const gen = (S.verdictGen = (S.verdictGen || 0) + 1);
     S.sticky = mine && !last.ok;
-    const next = showHandoff([stage], () => { if (S.verdictGen === gen) S.sticky = false; S.selCard = null; S.selSlot = null; render(); if (last.ok) franja(last, v); });
+    const next = showHandoff([stage], () => { if (S.verdictGen === gen) S.sticky = false; S.selCard = null; S.selSlot = null; render(); });
     // Solo el temporizador del veredicto vigente puede cerrarlo; un error propio se queda hasta tocar
-    if (!S.sticky) setTimeout(() => { if (S.verdictGen === gen && !$('#handoff').hidden) next(); }, 2400);
+    // Con dato, se queda hasta que su barra se vacía (D-314)
+    if (!S.sticky) setTimeout(() => { if (S.verdictGen === gen && !$('#handoff').hidden) next(); }, datoDe(v.byId[last.card], lang) ? PAUSA_DATO_MS : 2400);
     return;
   }
 
@@ -325,7 +326,7 @@ function renderPlay(v) {
     S.lastShown = v.history.length - 1;
     const turnPasses = v.current !== last.from;
     const stage = verdictStage(last, v, turnPasses ? M.names[v.current] : null);
-    showHandoff([stage], () => { S.uiRole = v.current; S.selCard = null; S.selSlot = null; render(); if (last.ok) franja(last, v); }, { tapAdvances: !turnPasses });
+    showHandoff([stage], () => { S.uiRole = v.current; S.selCard = null; S.selSlot = null; render(); }, { tapAdvances: !turnPasses });
     return;
   }
   if (S.mode === 'local' && S.uiRole !== v.current) {
@@ -538,7 +539,7 @@ function montarArrastre() {
 
 /** El botón que confirma: dice sobre qué carta actúa, nunca sólo la acción (C-8, D-38). */
 function pintarConfirmar(v, isLocalTurn) {
-  const row = $('#place-row'); conservarFranja(row);
+  const row = $('#place-row'); row.innerHTML = '';
   if (!isLocalTurn) return;
   const elegida = S.selCard ? v.byId[S.selCard] : null;
   row.append(el('button', { class: 'btn btn--yellow', disabled: S.selSlot === null || !S.selCard, onClick: () => {
@@ -546,12 +547,6 @@ function pintarConfirmar(v, isLocalTurn) {
     S.transport.send({ t: 'place', from: v.current, card: S.selCard, slot: S.selSlot, ms: S.turnStart ? Date.now() - S.turnStart : 0 });
     S.selCard = null; S.selSlot = null;
   } }, T.place, elegida && S.selSlot !== null ? el('small', {}, `${elegida.emoji} ${elegida[lang]}`) : null));
-}
-
-/** El dato de un acierto, en la franja sobre el botón: lo ven todos y no frena a nadie (D-277). */
-function franja(last, v) {
-  const c = v.byId[last.card];
-  if (c) franjaDato($('#place-row'), el, datoDe(c, lang), { de: c[lang] });
 }
 
 function playVerdictSound(ok) { if (ok) { SFX.reveal(); vibrate([30, 30]); } else { SFX.timeUp(); vibrate([120, 60, 120, 60, 200]); } }
@@ -577,9 +572,10 @@ function verdictStage(last, v, nextName) {
       el('div', { class: 'big ' + (last.ok ? 'ok' : 'no') }, titulo),
       el('div', { class: 'card-big' }, el('span', { class: 'em' }, c.emoji), el('span', { class: 't' }, c[lang]), el('span', { class: 'y' }, yearLabel(c.year, lang))),
       el('div', { class: 'note' }, last.ok ? `${quien} 👏` : (mine ? `${quien} · ${T.drewNew}` : `${quien} · ${T.drewNewOther}`)),
-      // El error cuenta el dato de la carta (D-277); una carta sin dato dice dónde iba
-      last.ok ? null : datoDe(c, lang) ? bloqueDato(el, datoDe(c, lang))
-        : el('div', { class: 'why', html: `${fmt(T.whyWrong, { year: `<b>${yearLabel(c.year, lang)}</b>`, where: whereText(last.correctBetween, v.byId) })}<br>${fmt(mine ? T.wherePlaced : T.wherePlacedOther, { where: whereText(last.placedBetween, v.byId) })}` }),
+      // El veredicto cuenta el dato de la carta, al errar y al acertar (D-277, D-314); un error
+      // con una carta sin dato dice dónde iba. En sala, la barra dice cuándo se cierra el que se cierra solo
+      datoDe(c, lang) ? bloqueDato(el, datoDe(c, lang), { pausa: S.mode === 'online' && (last.ok || !mine) ? PAUSA_DATO_MS : 0 })
+        : last.ok ? null : el('div', { class: 'why', html: `${fmt(T.whyWrong, { year: `<b>${yearLabel(c.year, lang)}</b>`, where: whereText(last.correctBetween, v.byId) })}<br>${fmt(mine ? T.wherePlaced : T.wherePlacedOther, { where: whereText(last.placedBetween, v.byId) })}` }),
     ),
   );
   // El fondo rojo del error es solo para el que se equivocó: al resto le llega como noticia

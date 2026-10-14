@@ -1,12 +1,12 @@
 /**
- * El dato de cada carta en ⏳ Línea Relámpago, el modo solo de Línea de Tiempo (D-277).
+ * El dato de cada carta en ⏳ Línea Relámpago, el modo solo de Línea de Tiempo (D-277, D-314).
  *
  *   1. al errar, el veredicto cuenta el dato (y ya no "iba entre…") y el reloj se pausa: ⏸ arriba,
  *      la barra que se vacía, y el tiempo quieto mientras se lee
  *   2. al cerrar el veredicto el reloj vuelve a andar
  *   3. la pausa tiene tope: con el veredicto abierto, a los 6 s el reloj sigue
- *   4. al acertar, el dato va en una franja sobre el botón: no frena, elegir otra carta no la borra
- *      y se va sola
+ *   4. al acertar, el veredicto también cuenta el dato, con el reloj en pausa y la barra (D-314):
+ *      se cierra solo cuando la barra se vacía, o antes con un toque
  *   5. al terminar, la línea es el repaso: los errores con su dato a la vista y el resto a un toque
  *   6. en inglés, el dato en inglés
  *
@@ -72,21 +72,24 @@ ok(Math.abs(a2 - a1) < 300, `mientras se lee, el tiempo no corre (${a1} → ${a2
 await cerrar();
 ok(!(await reloj()).pausa, 'al cerrarlo, el ⏸ se va');
 const t1 = await b.evaluate(`window.__ldt.solo().ms`);
+
+/* 4 · El acierto también cuenta su dato (D-314) ---------------------------------- */
 await jugar(true);   // guarda el tiempo con la jugada
 const t2 = await b.evaluate(`window.__ldt.solo().ms`);
 ok(t2 > t1, `y el reloj vuelve a andar (${t1} → ${t2} ms)`);
-
-/* 4 · El acierto: la franja ----------------------------------------------------- */
-await sleep(1600);
-const f = await b.evaluate(`JSON.stringify({ cerrado: document.getElementById('handoff').hidden, franja: document.querySelector('#solo-juego .place-row .dato-franja')?.textContent || '' })`).then(JSON.parse);
-console.log('acierto:', JSON.stringify(f));
-ok(f.cerrado && f.franja.startsWith('💡'), 'el acierto se cierra solo y deja el dato en una franja sobre el botón');
-await b.shot('dato-2-franja');
-await b.evaluate(`document.querySelector('#solo-juego .hand .card').click(); 1`); await sleep(200);
-ok(await b.evaluate(`!!document.querySelector('#solo-juego .place-row .dato-franja') && !!document.querySelector('#btn-colocar')`), 'elegir otra carta no la borra, y el botón sigue ahí');
-await b.evaluate(`document.querySelector('#solo-juego .hand .card').click(); 1`);
-await sleep(6000);
-ok(await b.evaluate(`!document.querySelector('#solo-juego .place-row .dato-franja')`), 'y se va sola');
+const v4 = await veredicto();
+console.log('acierto:', JSON.stringify(v4));
+ok(v4.visible && v4.dato.startsWith('💡') && v4.dato.length > 20 && v4.barra, 'el acierto también cuenta el dato, con la barra');
+ok((await reloj()).pausa, 'y el reloj en pausa mientras se lee');
+await b.shot('dato-2-acierto');
+await sleep(2500);
+ok((await veredicto()).visible, 'no se cierra antes de que se pueda leer');
+await sleep(4000);
+ok(!(await veredicto()).visible && !(await reloj()).pausa, 'se cierra solo cuando la barra se vacía, y el reloj sigue');
+await jugar(true);
+ok((await veredicto()).visible, 'otro acierto, otro dato');
+await cerrar();
+ok(!(await veredicto()).visible && !(await reloj()).pausa, 'un toque lo cierra antes');
 
 /* 3 · La pausa tiene tope -------------------------------------------------------- */
 await jugar(false);
