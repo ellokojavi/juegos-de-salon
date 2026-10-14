@@ -216,8 +216,12 @@ cleanup/
     rooms/ABCD: true         codes created that day
 ```
 
-- On creating or entering a room its code is written into its day's bucket (`lastAt` is overwritten with
-  the server time). Codes are only added: not overwritten or edited.
+- On creating a room its code is written into its day's bucket **in the same multi-path update that
+  creates the room** (D-321), with `lastAt` the same server stamp as the room's `createdAt`; entering
+  a room overwrites `lastAt` with the server time. Codes are only added: a note can be written
+  again (a code reused the same day) but never removed or changed.
+- A room that no bucket names is never swept. `node tools/firebase/unnoted-rooms.mjs` lists them
+  (admin key) and `--fix` deletes the expired ones and notes the live ones (D-321).
 - **A bucket can only be read and deleted 6 hours after its last entry.** That is the
   condition that keeps the trash bin from ever revealing a live room: when it opens, all the
   rooms it names have already expired, because none lasts over six hours (D-89). That's why `rooms/` still can't be listed.
@@ -357,9 +361,12 @@ NOW=$(($(date +%s)*1000))
 curl -X PATCH "$DB/rooms/ABCD.json" -d "{\"createdAt\":$NOW,\"game\":\"toque-y-fama\",\"config\":{\"digits\":4}}"
 curl -X PUT "$DB/rooms/ABCD/players/A.json" -d '{"name":"Javi","online":true}'
 
-# record the room in the trash bin (should pass) and try to open the bucket (should fail: just recorded)
+# record the room in the trash bin (should pass) and try to open the bucket (should fail: just recorded).
+# The app writes this note in the same root update that creates the room (D-321)
 DAY=$((NOW/86400000))
 curl -X PATCH "$DB/cleanup/days/$DAY.json" -d "{\"lastAt\":$NOW,\"rooms/ABCD\":true}"
+curl -X PUT "$DB/cleanup/days/$DAY/rooms/ABCD.json" -d 'true'    # noting it again: should pass (D-321)
+curl -X PUT "$DB/cleanup/days/$DAY/rooms/ABCD.json" -d 'false'   # -> Permission denied
 curl "$DB/cleanup/days/$DAY.json"   # -> Permission denied
 
 # delete the live room without saying goodbye (should fail), say goodbye and delete again (should pass)

@@ -56,3 +56,12 @@ export async function read(path, t) {
   if (!res.ok) fail(`Could not read ${path}/ (HTTP ${res.status}): ${(await res.text()).slice(0, 200)}`);
   return res.json();
 }
+
+/** Writes as administrator: `method` is PATCH, PUT or DELETE, as in the REST API. */
+export async function write(path, method, body, t) {
+  const res = await fetch(`${firebaseConfig.databaseURL}/${path}.json?access_token=${encodeURIComponent(t)}`, {
+    method, headers: { 'content-type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  if (!res.ok) fail(`Could not write ${path}/ (HTTP ${res.status}): ${(await res.text()).slice(0, 200)}`);
+  return res.json();
+}
