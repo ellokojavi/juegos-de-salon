@@ -2,9 +2,10 @@
 // "⭐ Favoritos" aparece con el primero y deja ver solo esos, se recuerdan al recargar, el dado
 // y Favoritos va en la fila de tipos donde cabe y en su línea donde no, en los cuatro idiomas.
 // Uso: node tools/e2e/favoritos.mjs /tmp/favoritos
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2] || '/tmp/favoritos';
+const OUT = salida('/tmp/favoritos');
 let mal = 0;
 const ver = (ok, que) => { console.log(`${ok ? '✓' : '✗'} ${que}`); if (!ok) mal++; };
 const b = await launch({ dir: `${OUT}/p`, out: OUT });

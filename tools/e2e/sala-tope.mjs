@@ -1,10 +1,11 @@
 // Tope de salas por celular (C-7, D-41): pasado el límite, el juego lo dice y no toca la red.
 // Se siembra el historial en localStorage en vez de abrir 20 salas de verdad contra Firebase.
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 
-const OUT = process.argv[2];
+const OUT = salida();
 const b = await launch({ port: 9443, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 
 const error = () => b.evaluate(`document.querySelector('#setup-error')?.textContent || ''`);
