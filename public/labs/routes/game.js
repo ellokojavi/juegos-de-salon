@@ -13,7 +13,7 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { generar, generarEtapa, girar, resuelto, bordesUnidos, puntajePartida, RECTANGULOS, LADO, ETAPAS, TIEMPO_S } from './engine.js';
+import { generar, generarEtapa, girar, resuelto, puntajePartida, RECTANGULOS, LADO, ETAPAS, TIEMPO_S } from './engine.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -284,11 +284,6 @@ function jugar() {
     reiniciar.disabled = !P.giros || P.terminado;
     deshacer.disabled = !historial.length || P.terminado;
   };
-  // Los bordes que ya calzan
-  const unir = () => {
-    const unidos = new Set(bordesUnidos(t.piezas, P.estado).flat());
-    tab.caja.querySelectorAll('.pieza').forEach(n => n.classList.toggle('unida', unidos.has(+n.dataset.lugar)));
-  };
   const tab = crearTablero(t, {
     interactivo: true,
     alGirar: r => {
@@ -298,7 +293,6 @@ function jugar() {
       SFX.flip(); vibrate(15);
       aviso.className = 'aviso-rt'; aviso.textContent = '';
       pintar();
-      setTimeout(unir, QUIETO ? 0 : 450);
       if (resuelto(t.piezas, P.estado)) terminar();
     },
   });
@@ -311,7 +305,6 @@ function jugar() {
     P.estado = tab.aplicar(P.estado, historial.pop());
     P.giros--;
     pintar();
-    setTimeout(unir, QUIETO ? 0 : 450);
     aviso.className = 'aviso-rt'; aviso.textContent = T.deshecho;
   } }, T.deshacer);
   const reiniciar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-reiniciar', onClick: () => {
@@ -319,7 +312,7 @@ function jugar() {
     SFX.tap(); vibrate(10);
     P.estado = t.inicio; P.giros = 0; P.reinicios++; historial.length = 0;
     tab.poner(P.estado, !QUIETO);
-    pintar(); unir();
+    pintar();
     aviso.className = 'aviso-rt'; aviso.textContent = T.reiniciado;
   } }, T.reiniciar);
   // Etapa lista: las líneas brillan, y viene la siguiente o el resultado
@@ -361,7 +354,7 @@ function jugar() {
   const acciones = el('div', { class: 'acciones-rt' }, deshacer, reiniciar, rendirse);
   vista.replaceChildren(cabeza, el('div', { class: 'fila-marcador' }, reloj, marcador), tab.caja, aviso, acciones);
   tic();
-  pintar(); unir();
+  pintar();
   pieComentario('juego');
 }
 

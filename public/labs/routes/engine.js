@@ -53,17 +53,6 @@ export function resuelto(piezas, estado) {
   return true;
 }
 
-/** Cuántos bordes calzan (de los 12 entre piezas): para ver de un vistazo qué ya está unido. */
-export function bordesUnidos(piezas, estado) {
-  const unidos = [];
-  for (let f = 0; f < LADO; f++) for (let c = 0; c < LADO; c++) {
-    const i = f * LADO + c;
-    const calza = (j, a, b) => [0, 1].every(k => puerta(piezas, estado[i], a, k) === puerta(piezas, estado[j], b, k));
-    if (c + 1 < LADO && calza(i + 1, 'E', 'O')) unidos.push([i, i + 1]);
-    if (f + 1 < LADO && calza(i + LADO, 'S', 'N')) unidos.push([i, i + LADO]);
-  }
-  return unidos;
-}
 
 const clave = estado => estado.reduce((s, { p, v }) => s * 18 + p * 2 + v, 0);
 const META = Array.from({ length: LADO * LADO }, (_, p) => ({ p, v: 0 }));

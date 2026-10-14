@@ -221,3 +221,6 @@ Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
   todo, sin confirmación, quita el último gesto (un arrastre entero es uno) hasta el comienzo; el
   reloj sigue. 🏳️ Rendirse baja a su propia línea. Tango y Zip pueden sumarlo con
   `public/cup/games/deshacer.js` para los días que todavía no empiezan (U-21).
+- **Rutas: el tablero no marca los bordes que calzan** (#359, opción A): ni las piezas ni los bordes
+  se iluminan al calzar con su vecina; las líneas ya muestran dónde se cortan, y una pista por borde
+  le haría daño a la dinámica del juego (invita a tantear). Solo al unirlas todas el tablero brilla.
