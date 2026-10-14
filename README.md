@@ -669,6 +669,7 @@ node tools/e2e/changes.test.mjs
 node tools/e2e/groups.test.mjs
 node tools/e2e/output.test.mjs
 node tools/firebase/rankings-history.test.mjs
+node tools/firebase/unnoted-rooms.test.mjs
 node tools/push/daily.test.mjs
 node tools/push/notify.test.mjs
 node tools/push/schedule.test.mjs
@@ -786,7 +787,7 @@ changelog/                  Each open PR's changelog entry, without a number, un
 tools/
   push/                       vapid.mjs (the notifications key pair, already run once: the public key is in assets/js/vapid.js, the private one a GitHub secret; D-223, D-225); notify.mjs sends the La Copa notifications every 15 minutes from notifications.yml and leaves what it sent for the dashboard (D-233), with schedule.mjs (what is due: at most 2 a day per cup, overlapping deadlines in one, the new days of several cups together; D-229) and webpush.mjs (encryption and VAPID, no dependencies; D-224); daily.mjs decides One a Day's, in the same run (D-230)
   release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + facts.mjs (this README), og.mjs (social cards and bridge pages), icons.mjs (the app icons, from assets/icon.svg), changelog.mjs (each PR's changelog entry, without a number, in changelog/; the version comes from the order PRs reach main, D-300)
-  firebase/                   rules.mjs (publish the rules), reports.mjs (The Cup bug reports), in-progress.mjs (anyone playing?), rankings-history.mjs (The Cup's history into the leaderboards, and each player's cups)
+  firebase/                   rules.mjs (publish the rules), reports.mjs (The Cup bug reports), in-progress.mjs (anyone playing?), rankings-history.mjs (The Cup's history into the leaderboards, and each player's cups), unnoted-rooms.mjs (rooms the trash bin would never sweep, D-321)
   generators/                 map.mjs (the world of Where is it?), fleet.py (the Battleship fleet)
   agents/                     dilemmas.mjs (usability dilemmas as issues, D-132), decision.mjs (reserves decision numbers, so two sessions never take the same D-n, D-301), document.mjs (the documentation agent, D-172), clean-worktrees.mjs (removes merged, empty and abandoned worktrees, leftover test output and stale local branches, at session start and in the daily process round, D-218, D-252, D-315), processes.mjs (the process agent, D-273), approve.mjs (one-tap Yes/No decisions in issues, D-273), feedback.mjs (players' 🐞 reports as issues, D-275, and the email reply to whoever left an address, with feedback-templates.mjs and send-mail.py, D-317), inbox.mjs (the hola@ inbox, for the support agent: list, ingest as a feedback report, or skip, signed in as the inbox user, D-318), labs-key.mjs (gives or takes away a person's own key to the lab, D-284), covers.mjs (shows the cover of every game a PR touches and warns when a game changed but its cover did not, U-36)
   cloudflare/                 inbox-worker.js (the Cloudflare Email Worker behind hola@juegosdesalon.cl: forwards a copy to the owner and keeps the text in Firebase buzon/; pasted in the Cloudflare dashboard, D-318)

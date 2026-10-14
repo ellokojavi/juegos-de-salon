@@ -361,9 +361,12 @@ NOW=$(($(date +%s)*1000))
 curl -X PATCH "$DB/rooms/ABCD.json" -d "{\"createdAt\":$NOW,\"game\":\"toque-y-fama\",\"config\":{\"digits\":4}}"
 curl -X PUT "$DB/rooms/ABCD/players/A.json" -d '{"name":"Javi","online":true}'
 
-# record the room in the trash bin (should pass) and try to open the bucket (should fail: just recorded)
+# record the room in the trash bin (should pass) and try to open the bucket (should fail: just recorded).
+# The app writes this note in the same root update that creates the room (D-321)
 DAY=$((NOW/86400000))
 curl -X PATCH "$DB/cleanup/days/$DAY.json" -d "{\"lastAt\":$NOW,\"rooms/ABCD\":true}"
+curl -X PUT "$DB/cleanup/days/$DAY/rooms/ABCD.json" -d 'true'    # noting it again: should pass (D-321)
+curl -X PUT "$DB/cleanup/days/$DAY/rooms/ABCD.json" -d 'false'   # -> Permission denied
 curl "$DB/cleanup/days/$DAY.json"   # -> Permission denied
 
 # delete the live room without saying goodbye (should fail), say goodbye and delete again (should pass)
