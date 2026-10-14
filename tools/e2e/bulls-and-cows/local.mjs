@@ -1,4 +1,4 @@
-import { salida } from '../salida.mjs';
+import { salida } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = salida();
 // SITIO: otro servidor, para no chocar con otra sesión que prueba en paralelo (D-135); el puerto de Chrome lo elige cdp.mjs (D-213)

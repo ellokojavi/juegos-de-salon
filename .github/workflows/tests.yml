@@ -1,0 +1,68 @@
+# Las pruebas sin navegador, en cada PR y en cada fusión a main (D-143). En main las llama
+# publish.yml antes de publicar (D-192): si no pasan, el sitio no cambia.
+# Las de punta a punta (tools/e2e/) corren aparte, en e2e.yml (D-193). Las capturas siguen a mano.
+
+name: Pruebas
+
+on:
+  pull_request:
+  workflow_call:
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Con la historia (sin el contenido de los archivos viejos, que no hace falta): la versión
+      # sale del orden en que las entradas de changelog/ llegaron a main (D-300)
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Todos los *.test.mjs del repo, sin lista que mantener: uno nuevo entra solo.
+      - name: Tests de node
+        run: |
+          fallas=0
+          for f in $(git ls-files '*.test.mjs'); do
+            echo "::group::$f"
+            if node "$f"; then echo "ok"; else echo "::error file=$f::falló $f"; fallas=1; fi
+            echo "::endgroup::"
+          done
+          exit $fallas
+
+      - name: Tests de python
+        run: |
+          fallas=0
+          for f in $(git ls-files '*.test.py'); do
+            python3 "$f" || { echo "::error file=$f::falló $f"; fallas=1; }
+          done
+          exit $fallas
+
+      # Lo que publish.yml hace con la versión, en una copia que se tira (D-205): si el estampado
+      # se rompe, se sabe en el PR y no al publicar
+      - name: Estampado de la versión
+        run: |
+          cp -r public "$RUNNER_TEMP/sitio"
+          python3 tools/release/set-version.py --sitio "$RUNNER_TEMP/sitio" --commit "$GITHUB_SHA"
+
+      # Las entradas de changelog/ se entienden, y un PR no trae una entrada con número en
+      # CHANGELOG.md, que es lo que hacía chocar a dos PR abiertos (D-300). En un PR, GitHub prueba
+      # el merge con main: su primer padre es la base. Un PR que cambia public/ sin entrada, aviso.
+      - name: CHANGELOG por archivo
+        run: node tools/release/changelog.mjs revisar ${{ github.event_name == 'pull_request' && '--base HEAD^1' || '' }}
+
+      # El README y las tarjetas, al día: frenan el PR y la publicación (C-11, C-13, D-181)
+      - name: README al día
+        run: python3 tools/release/readme.py revisar
+
+      - name: Tarjetas sociales al día
+        run: node tools/release/og.mjs revisar

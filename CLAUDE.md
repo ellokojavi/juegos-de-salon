@@ -80,7 +80,7 @@ Several Claude sessions may be working in this repo at the same time:
   With no pending work there is **a single** `juegos-de-salon` folder (`git worktree list`; if a
   folder was deleted by hand, `git worktree prune`). With auto-merge, the PR may merge while
   nobody is watching: **at the start of each session**, a hook (`.claude/settings.json`) runs
-  `node tools/agents/limpiar-copias.mjs`, which deletes the worktrees whose branch already reached `main` through a
+  `node tools/agents/clean-worktrees.mjs`, which deletes the worktrees whose branch already reached `main` through a
   merge and names those with uncommitted changes (D-218). GitHub deletes the remote branch on merge.
 - **No worktree is left unused** (D-252, the owner's request): the session that creates a worktree deletes it
   as soon as it knows it will not produce a PR (the work was already done, was discarded or was merged into another), without
@@ -111,18 +111,18 @@ owner's key) and does not merge. Everything else in this guide applies the same.
 ## Before proposing a merge
 
 1. **The usability and documentation agents, together**, in the same message
-   (`.claude/agents/usabilidad.md` and `documentacion.md`, D-132, D-172): one looks at the app and the other
+   (`.claude/agents/usability.md` and `documentation.md`, D-132, D-172): one looks at the app and the other
    at the documents. Both fix things on the same PR's branch (D-213), in local commits that the
    session pushes with its own in a single push (D-303). How much usability depends on the game's stage
-   (D-304); `node tools/agents/portadas.mjs revisar` says it on its first line:
+   (D-304); `node tools/agents/covers.mjs revisar` says it on its first line:
    - **Lab-only PR** (everything in `public/` is under `public/labs/`): documentation, and
-     short usability: `portadas.mjs revisar` and the screens that changed, at 320 px.
+     short usability: `covers.mjs revisar` and the screens that changed, at 320 px.
    - **PR that takes a game out of the lab** (it loses `labs: true`, or its folder leaves
      `public/labs/`): a **full usability pass** over the whole game —all its screens, the
      four languages, 320 px, its home page and its place on the main home page— and documentation with the
      README and the social card.
    - **Everything else:** both, as always.
-2. **Is anyone playing?** `node tools/firebase/en-curso.mjs` (exits with 3 if there are live rooms
+2. **Is anyone playing?** `node tools/firebase/in-progress.mjs` (exits with 3 if there are live rooms
    or Cups in progress; needs the owner's key).
 3. **No merge without ✅ on GitHub in `pruebas` and in `punta-a-punta`** (D-143,
    D-193, D-213, D-216), even if they already passed here. `main` requires both: `punta-a-punta` is the
@@ -142,7 +142,7 @@ owner's key) and does not merge. Everything else in this guide applies the same.
 5. **CI monitor** (D-218): along with auto-merge, the PR monitor in the app is turned on
    (`set_monitor` with `auto_fix` and `address_comments`), which wakes the session when a test
    fails, there is a conflict or a comment arrives: the only things that need someone. CI is never
-   polled. What happens after the merge no longer waits for anyone: `publicar.yml` runs the tests and the
+   polled. What happens after the merge no longer waits for anyone: `publish.yml` runs the tests and the
    end-to-end suite on `main` (unless that same tree already passed it in the PR, D-308), publishes the Firebase rules and the site (D-302), and the
    worktree is deleted by the session-start hook.
 
@@ -161,20 +161,20 @@ owner's key) and does not merge. Everything else in this guide applies the same.
   python3 tools/release/set-version.py --version             # today's version
   python3 tools/release/set-version.py --sitio /tmp/sitio    # stamps a copy, as when publishing
   ```
-- The pages in `public/` carry no `?v=` and no import map: `.github/workflows/publicar.yml` runs
+- The pages in `public/` carry no `?v=` and no import map: `.github/workflows/publish.yml` runs
   the tests **and the whole end-to-end suite** (D-302; if they fail twice, it does not publish and opens the
   "main is red" issue), unless the tree it publishes already passed it in a PR or only changes what does not
-  reach the browser on top of one that passed (`tools/e2e/ya-probado.mjs`, D-308), stamps the version on the copy it publishes and checks that the live site
+  reach the browser on top of one that passed (`tools/e2e/already-tested.mjs`, D-308), stamps the version on the copy it publishes and checks that the live site
   serves it.
-- The Firebase rules are published by `publicar.yml` on every merge, before the site (D-218):
+- The Firebase rules are published by `publish.yml` on every merge, before the site (D-218):
   it uploads nothing if they are already there, and if Firebase rejects them the site is not published. It needs the
   `FIREBASE_ADMIN_JSON` secret on GitHub (the service account key, loaded by the owner); without it,
   it warns and they are published by hand, as before (D-122; the key in `~/.config/juegos-de-salon/firebase-admin.json`):
   ```bash
-  node tools/firebase/reglas.mjs publicar     # uploads the rules and checks they took
-  node tools/firebase/reglas.mjs revisar      # is what is published what is in the repo?
+  node tools/firebase/rules.mjs publicar     # uploads the rules and checks they took
+  node tools/firebase/rules.mjs revisar      # is what is published what is in the repo?
   ```
-- The worktree and the branch are deleted on their own (above, D-218, D-252); to do it now, `node tools/agents/limpiar-copias.mjs`.
+- The worktree and the branch are deleted on their own (above, D-218, D-252); to do it now, `node tools/agents/clean-worktrees.mjs`.
 
 ## README, screenshots and social cards (C-13, D-51, D-181)
 
@@ -185,11 +185,11 @@ python3 tools/release/readme.py revisar        # is anything behind?
 python3 tools/release/readme.py actualizar     # rewrites the <!-- generado: ... --> blocks
 python3 tools/release/readme.py capturas <section> [--sin-red]   # redoes the screenshots with Chrome
 python3 tools/release/readme.py sellar         # "I reread the README with these facts"
-node tools/e2e/contacto.mjs <section> --salida /tmp/contacto      # look at them together (D-76)
+node tools/e2e/contact-sheet.mjs <section> --salida /tmp/contacto      # look at them together (D-76)
 node tools/release/og.mjs tarjetas | imagenes | revisar           # WhatsApp cards (D-72)
-node tools/release/iconos.mjs                                    # PNG icons for the installable app, from assets/icon.svg (D-221)
+node tools/release/icons.mjs                                    # PNG icons for the installable app, from assets/icon.svg (D-221)
 node tools/push/vapid.mjs                                        # the notifications key: already run (D-225), not redone
-node tools/push/avisar.mjs --simular | --prueba <code>           # which notifications it would send (Cups and Uno al día (One a Day)), or a test one to a Cup (D-224, D-230)
+node tools/push/notify.mjs --simular | --prueba <code>           # which notifications it would send (Cups and Uno al día (One a Day)), or a test one to a Cup (D-224, D-230)
 ```
 
 - **An out-of-date screenshot is a warning in an ordinary PR. "Actualiza el README" (update the README) is a full pass**,
@@ -198,11 +198,11 @@ node tools/push/avisar.mjs --simular | --prueba <code>           # which notific
 - Inside `<!-- generado: ... -->` nothing is edited by hand. Each screenshot declares in
   [docs/capturas.json](docs/capturas.json) which `tools/e2e/` script and which shot it comes from.
 - The card images are redone **from a branch up to date with `main`**; they only change if
-  a name, an emoji, a tagline or the design changes ([tools/release/og/tarjeta.html](tools/release/og/tarjeta.html)).
+  a name, an emoji, a tagline or the design changes ([tools/release/og/card.html](tools/release/og/card.html)).
 
 ## Tests (C-12)
 
-GitHub runs every `*.test.mjs` and `*.test.py` on each PR (`.github/workflows/pruebas.yml`), so
+GitHub runs every `*.test.mjs` and `*.test.py` on each PR (`.github/workflows/tests.yml`), so
 a new test is not added to any list: one that tests something special says so on its first
 line. Run them here anyway before opening the PR.
 
@@ -216,33 +216,33 @@ and GitHub runs on each PR every script except those that open rooms in the prod
 Firebase. For a script to fail red, it must print ✗ or ❌ or exit with an error.
 
 ```bash
-node tools/e2e/ci.mjs              # all the CI ones, with a summary; or: node tools/e2e/ci.mjs cup/torneo.mjs
-node tools/e2e/mirar.mjs ahorcado juego --ancho 320 [--idioma pt]   # a single screen (C-8)
-node tools/e2e/mirar.mjs panel datos --ancho 900                    # the panel, with seeded data
+node tools/e2e/ci.mjs              # all the CI ones, with a summary; or: node tools/e2e/ci.mjs cup/tournament.mjs
+node tools/e2e/look.mjs ahorcado juego --ancho 320 [--idioma pt]   # a single screen (C-8)
+node tools/e2e/look.mjs panel datos --ancho 900                    # the panel, with seeded data
 ```
 
-The paths to each screen are in `tools/e2e/caminos.mjs`: adding one is adding an entry, and
+The paths to each screen are in `tools/e2e/paths.mjs`: adding one is adding an entry, and
 with that the screen also enters the language tests. To see it on a real phone,
 `tailscale serve --bg 8765` (D-67; turned off with `tailscale serve --https=443 off`).
 
 ## The owner's agents and tools
 
 - **Usability** (D-132): reviews each PR and does its round when the processes agent launches it (D-276).
-  Dilemmas are GitHub issues: `node tools/agents/dilemas.mjs listar | ver <n> | crear <file.md> | resolver <n> "decision" | archivar <n> "reason" | reabrir <n>`;
-  what is resolved is recorded in `docs/USABILIDAD.md`. On each PR it runs `node tools/agents/portadas.mjs revisar [base]`,
+  Dilemmas are GitHub issues: `node tools/agents/dilemmas.mjs listar | ver <n> | crear <file.md> | resolver <n> "decision" | archivar <n> "reason" | reabrir <n>`;
+  what is resolved is recorded in `docs/USABILIDAD.md`. On each PR it runs `node tools/agents/covers.mjs revisar [base]`,
   which shows the motto, the steps and the card of each game the PR touches and warns ⚠️ if the game
   changed and its home page did not (U-36).
 - **Documentation** (D-172): a round when the processes agent launches it (D-276), a review of each PR, and on
   request ("documenta lo último", document the latest). Its round's PR gets auto-merge (D-313), like the usability
   round's; it does not touch code, except the messages with which the app
   presents itself (D-271, U-35). Its memory is
-  `docs/documentacion.json`: `node tools/agents/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial`;
+  `docs/documentation.json`: `node tools/agents/document.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial`;
   `revisar` ends by showing those messages (sharing the app, the video and the tagline of the link
   card) to read them against what landed, and the main things they name are in `LO_PRINCIPAL`
   (`public/assets/js/compartir.js`).
 - **Processes** (D-273, D-275, D-276): **the head of the agents.** Daily round at 4:30 Pacific
   time on the owner's Mac mini (a scheduled task in the app, not in the cloud): it launches the documentation
-  and usability agents when there is something to review (`procesos.mjs revisar` says which)
+  and usability agents when there is something to review (`processes.mjs revisar` says which)
   and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
   README", check how fresh the README is) are asked of it: it decides who, launches them, checks and replies. It handles the 🐞 feedback,
   which `.github/workflows/feedback.yml` uploads every 15 minutes as `feedback` issues (`tools/agents/feedback.mjs`,
@@ -250,17 +250,17 @@ with that the screen also enters the language tests. To see it on a real phone,
   turns a recurring error into a mechanism (a test before an instruction). In its
   round it collects the `changelog/` entries into `CHANGELOG.md` (D-300) and deletes the decision
   reservations that are already in `main` (`decision.mjs limpiar`, D-301). What
-  needs the owner goes in a `procesos` issue with Yes/No checkboxes, opened by the bot (`decidir.yml`) so
+  needs the owner goes in a `procesos` issue with Yes/No checkboxes, opened by the bot (`decide.yml`) so
   the owner gets the email: ticking one carries it out instantly
-  (`.github/workflows/aprobar.yml` → `tools/agents/aprobar.mjs`, with a closed list of actions).
-  Its memory is `docs/procesos.json`: `node tools/agents/procesos.mjs revisar | decidir <file.json> | patron <key> "…" | mecanismo <key> "…" --pr <url> | despacho <documentacion|usabilidad> <commit> | anotar --hasta <commit> | historial`
+  (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).
+  Its memory is `docs/processes.json`: `node tools/agents/processes.mjs revisar | decidir <file.json> | patron <key> "…" | mecanismo <key> "…" --pr <url> | despacho <documentacion|usabilidad> <commit> | anotar --hasta <commit> | historial`
   (`despacho` records up to which `main` commit it launched each executor).
 - **Marketing** (D-178): each asset lives in `marketing/<asset>/` with a README that is its memory.
   **Before working on the video, read `marketing/promo-video/README.md` in full** (the
   `promo-video` skill loads it) and when done, record the round there and in `marketing/registro.json`.
   `node tools/agents/marketing.mjs revisar` says which asset fell behind (U-34).
 - **Lab keys** (D-281, D-284): each person who enters `/labs/` has their own link.
-  `node tools/agents/llave-labs.mjs nueva <label> | quitar <label> | listar` edits `HUELLAS` in
+  `node tools/agents/labs-key.mjs nueva <label> | quitar <label> | listar` edits `HUELLAS` in
   `labs-puerta.js`; the link is shown only once and the key is not stored. The label is public
   (initials), and the change goes in through a PR. **Asking for a key is asking for it to work** (D-284, the
   owner's request): the same session creates the key, opens the PR and turns on auto-merge
@@ -268,14 +268,14 @@ with that the screen also enters the language tests. To see it on a real phone,
   link noting that it opens once the site is published.
 - **Panel** (`public/panel/`, D-44, D-207): `window.__panel.seed({ rooms, days, torneos, push, vista })`
   draws it with seeded data without logging in. See [docs/PANEL.md](docs/PANEL.md).
-- **La Copa (the Cup) reports** (D-104): `node tools/firebase/reportes.mjs [--dias 3] [--json]`.
+- **La Copa (the Cup) reports** (D-104): `node tools/firebase/reports.mjs [--dias 3] [--json]`.
 - **Rankings** (D-212): `records.js` (logic), `jugador.js` (the player and their store:
   `jugador-firebase.js`, or `jugador-local.js` in tests and with `?test`; `?records=firebase` forces
   Firebase) and `ranking.js` + `ranking.css` (screen). Open to everyone since D-217 (the lab
   gate, `RANKINGS_EN_LABS`, stays `false`). The
   history of La Copa (podiums, the "Copa" tab and each player's Cups for "Tus copas" (Your Cups), D-220,
   with inherited players that each one claims):
-  `node tools/firebase/rankings-historia.mjs [--con-laboratorio] [--escribir]`. Group games
+  `node tools/firebase/rankings-history.mjs [--con-laboratorio] [--escribir]`. Group games
   record wins with `finDePartida` (`ranking.js`) when they end, and show their table with
   `bloqueVictorias` in the intro (D-215); those played solo (Toque y Fama, Generala, Ahorcado (Hangman))
   put their `<id>_solo` table on top with `bloqueTabla` (D-274). With no player signed in, `finDePartida` and

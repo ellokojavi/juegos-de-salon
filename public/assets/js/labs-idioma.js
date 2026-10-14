@@ -11,7 +11,7 @@
  *   portada), dos pestañas al borde: 🧪 vuelve al laboratorio y 🐞.
  * - **Los comentarios** van a `feedback/` como los de La Copa (D-104), con el contexto de dónde
  *   se escribieron: página, pantalla, idioma que se veía, tamaño de la pantalla y versión. Se
- *   leen con `node tools/firebase/reportes.mjs`. Si no hay red, quedan guardados y se reenvían (D-109).
+ *   leen con `node tools/firebase/reports.mjs`. Si no hay red, quedan guardados y se reenvían (D-109).
  *
  * Los textos van en el idioma del laboratorio, que es el de quienes prueban.
  */

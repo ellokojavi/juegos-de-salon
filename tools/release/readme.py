@@ -16,12 +16,12 @@ capturas de pantallas que cambian. Nada de eso avisa cuando queda viejo. Acá:
 
          <!-- generado: juegos -->  ...  <!-- /generado -->
 
-     nadie edita a mano: `actualizar` lo reescribe desde `tools/release/hechos.mjs`, que
+     nadie edita a mano: `actualizar` lo reescribe desde `tools/release/facts.mjs`, que
      importa los módulos de verdad.
 
   2. Lo que es prosa —cómo se juega, por qué está bueno— lo escribe una persona,
      así que la herramienta no lo toca: lo delata. `revisar` compara los hechos de
-     hoy contra los del último sello (`docs/hechos.json`) y falla nombrando qué
+     hoy contra los del último sello (`docs/facts.json`) y falla nombrando qué
      cambió y qué sección hay que releer. Al terminar, `sellar` deja constancia.
 
   3. Las capturas se rehacen solas: `docs/capturas.json` dice de qué guion de
@@ -39,7 +39,7 @@ from concurrent.futures import ThreadPoolExecutor
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 README = RAIZ / 'README.md'
 CATALOGO = RAIZ / 'docs/capturas.json'
-SELLO = RAIZ / 'docs/hechos.json'
+SELLO = RAIZ / 'docs/facts.json'
 # Con otra sesión sirviendo el 8765, cada una usa su puerto: PUERTO_SITIO=8770 (D-135)
 PUERTO = int(os.environ.get('PUERTO_SITIO', 8765))
 MARCA = re.compile(r'(<!-- generado: ([\w:-]+)[^>]*-->\n)(.*?)(<!-- /generado -->)', re.S)
@@ -47,7 +47,7 @@ MARCA = re.compile(r'(<!-- generado: ([\w:-]+)[^>]*-->\n)(.*?)(<!-- /generado --
 
 def hechos():
     """La hoja de hechos de la app, leída del código real."""
-    salida = subprocess.run(['node', str(RAIZ / 'tools/release/hechos.mjs')], cwd=RAIZ,
+    salida = subprocess.run(['node', str(RAIZ / 'tools/release/facts.mjs')], cwd=RAIZ,
                             capture_output=True, text=True)
     if salida.returncode:
         sys.exit(f'no se pudo leer los hechos de la app:\n{salida.stderr.strip()}')
@@ -225,7 +225,7 @@ def cmd_actualizar():
 def cmd_sellar():
     H = hechos()
     SELLO.write_text(json.dumps(H, ensure_ascii=False, indent=2) + '\n')
-    print(f'sellado: docs/hechos.json con los hechos de hoy '
+    print(f'sellado: docs/facts.json con los hechos de hoy '
           f"({len(H['juegos'])} juegos, {len(H['tematicas'])} temáticas, v{H['version']})")
     return 0
 
@@ -373,7 +373,7 @@ def cmd_revisar():
 
     # 2. Los hechos, contra el último sello: lo que cambió pide releer prosa
     if not SELLO.exists():
-        problemas.append('falta docs/hechos.json  →  python3 tools/release/readme.py sellar')
+        problemas.append('falta docs/facts.json  →  python3 tools/release/readme.py sellar')
     else:
         for ruta, antes, ahora in diferencias(json.loads(SELLO.read_text()), H):
             raiz = ruta.split('.')[0]
@@ -512,7 +512,7 @@ def cmd_capturas(seccion=None, sin_red=False):
     nuevas, iguales, fallaron = [], [], []
     # Los guiones corren de a JUNTOS a la vez, cada uno con sus puertos de Chrome (D-135): seguidos,
     # rehacer todas las secciones tomaba la suma de todos; así, poco más que el más largo
-    # (cup/torneo.mjs). Con una máquina cargada, CAPTURAS_JUNTOS=1 vuelve a uno por uno.
+    # (cup/tournament.mjs). Con una máquina cargada, CAPTURAS_JUNTOS=1 vuelve a uno por uno.
     juntos = max(1, int(os.environ.get('CAPTURAS_JUNTOS', 3)))
     base_cdp = int(os.environ.get('PUERTO_CDP') or 9600)
 
@@ -528,7 +528,7 @@ def cmd_capturas(seccion=None, sin_red=False):
             tmps = {g: pathlib.Path(raiz_tmp) / str(i) for i, g in enumerate(guiones)}
             for t in tmps.values():
                 t.mkdir()
-            # Los más largos primero (el largo del guion sirve de aproximación): si cup/torneo.mjs
+            # Los más largos primero (el largo del guion sirve de aproximación): si cup/tournament.mjs
             # parte al último, todo espera a que termine
             largo = lambda g: (RAIZ / 'tools/e2e' / C['guiones'][g]['archivo']).stat().st_size
             corriendo = {g: pool.submit(correr, i, g, str(tmps[g]))

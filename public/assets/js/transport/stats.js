@@ -449,7 +449,7 @@ export function canalDe(search = '') {
 }
 
 /**
- * El aviso que abrió esta página (`?notif=day`, D-233, D-266): lo pone avisar.mjs en la
+ * El aviso que abrió esta página (`?notif=day`, D-233, D-266): lo pone notify.mjs en la
  * dirección de cada aviso, así el panel cuenta cuántos se tocan, por tipo. Devuelve la clave del
  * panel, que sigue siendo la de antes (`notif=deadline` → 'plazo'), y lee también los links viejos
  * (`?aviso=plazo`). Vacío si no viene de uno.

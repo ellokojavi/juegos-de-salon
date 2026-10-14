@@ -47,7 +47,7 @@ la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renu
   los tiempos de un juego, el mismo PR relee y corrige lo que el jugador lee antes de jugar: el lema,
   los pasos de «Cómo se juega» (U-18) y su tarjeta en el laboratorio o el menú. Pasó con Pintaminas:
   sumó un modo de dos colores, la ayuda y rendirse, y su portada siguió diciendo lo del primer día.
-  `node tools/agents/portadas.mjs revisar` muestra, por cada juego que toca el PR, su portada, y avisa
+  `node tools/agents/covers.mjs revisar` muestra, por cada juego que toca el PR, su portada, y avisa
   ⚠️ si el juego cambió y su portada no.
 
 ## Pantallas y botones

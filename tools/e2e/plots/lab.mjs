@@ -9,7 +9,7 @@
 // y el puntaje es el que dice el motor con el tiempo que anotó el juego; el resultado trae compartir,
 // otro tablero, el de hoy y el comentario tras una línea; rendirse pide un segundo toque y vale los
 // tableros hechos. Imprime ✗ si algo falla. `ANCHO=320` lo corre a 320 px.
-import { salida } from '../salida.mjs';
+import { salida } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = salida('/tmp/loteo-lab');
 const ANCHO = +process.env.ANCHO || 375;

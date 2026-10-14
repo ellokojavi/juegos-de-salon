@@ -4,7 +4,7 @@
 //
 // La versión de hoy = la primera entrada de CHANGELOG.md, subida una vez por cada entrada pendiente
 // de changelog/, en el orden en que llegaron a main (el commit de main que agregó cada archivo:
-// `git log --first-parent`). `publicar.yml` la estampa así; la ronda de procesos las junta en
+// `git log --first-parent`). `publish.yml` la estampa así; la ronda de procesos las junta en
 // CHANGELOG.md con su número (`juntar`) en un PR, y la versión no cambia al juntarlas.
 //
 // Uso:
@@ -94,7 +94,7 @@ export function calcular(changelog, lista) {
   return { base, entradas, version: v };
 }
 
-/** La versión de hoy: la que estampa publicar.yml (D-205, D-300). */
+/** La versión de hoy: la que estampa publish.yml (D-205, D-300). */
 export const versionHoy = (raiz = RAIZ) => calcular(readFileSync(join(raiz, 'CHANGELOG.md'), 'utf8'), pendientes(raiz)).version;
 
 /** El CHANGELOG con las entradas arriba, la más nueva primero. */

@@ -144,7 +144,7 @@ function listen() {
   // Las copas se bajan enteras: son pocas y cada una es chica. Cada resultado llega como delta,
   // así que "jugando ahora" y la tabla se mueven solos.
   S.unsubTorneos = onValue(ref(db, 'torneos'), snap => { S.torneos = snap.val() || {}; S.torneosLoaded = true; render(); }, denied);
-  // Lo que deja avisar.mjs en cada vuelta: la hora y las suscripciones vivas (D-233)
+  // Lo que deja notify.mjs en cada vuelta: la hora y las suscripciones vivas (D-233)
   S.unsubPush = onValue(ref(db, `stats/${S.env}/push`), snap => { S.push = snap.val() || {}; render(); }, denied);
   // Uno al día (D-230): son de todos los entornos (la historia vive fuera de stats/). Sin permiso
   // (reglas viejas), queda vacío y el resto del panel sigue

@@ -40,7 +40,7 @@ assert.equal(pr([{ estado: 'M', archivo: 'CHANGELOG.md' }], conVieja).errores.le
 assert.deepEqual(pr([{ estado: 'M', archivo: 'CHANGELOG.md' }, { estado: 'D', archivo: 'changelog/a.md' }], conVieja).errores, [], 'el PR que junta sí escribe números');
 assert.equal(pr([{ estado: 'M', archivo: 'public/index.html' }]).avisos.length, 1, 'public/ sin entrada: aviso');
 assert.deepEqual(pr([{ estado: 'M', archivo: 'public/index.html' }, { estado: 'A', archivo: 'changelog/x.md' }]), { errores: [], avisos: [] });
-assert.deepEqual(pr([{ estado: 'M', archivo: 'tools/agents/procesos.mjs' }]), { errores: [], avisos: [] }, 'sin public/, sin aviso');
+assert.deepEqual(pr([{ estado: 'M', archivo: 'tools/agents/processes.mjs' }]), { errores: [], avisos: [] }, 'sin public/, sin aviso');
 
 // El orden es el de llegada a main, no el del nombre ni el de creación
 const dir = mkdtempSync(join(tmpdir(), 'changelog-'));

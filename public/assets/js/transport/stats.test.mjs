@@ -389,7 +389,7 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   assert.equal(avisoDe('?pirata&day=3&notif=deadline'), 'plazo', 'en inglés en la URL, con la clave de siempre en el panel (D-266)');
   assert.equal(avisoDe('?pirata&dia=3&aviso=plazo'), 'plazo', 'un aviso de antes de D-266');
   assert.equal(avisoDe('?notif=final'), 'final');
-  assert.equal(avisoDe('?notif=otro'), '', 'solo los tipos que manda avisar.mjs');
+  assert.equal(avisoDe('?notif=otro'), '', 'solo los tipos que manda notify.mjs');
   assert.equal(avisoDe('?aviso=otro'), '');
   assert.equal(avisoDe(''), '');
   assert.equal(pwaDe('?pwa', 'Mozilla/5.0 (Linux; Android 14)'), 'android');

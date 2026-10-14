@@ -12,7 +12,7 @@
  *
  * Uso: SITIO=http://localhost:87xx node tools/e2e/timeline/solo.mjs <salida>
  */
-import { salida } from '../salida.mjs';
+import { salida } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { LANGS } from '../../../public/assets/js/i18n.js';
 

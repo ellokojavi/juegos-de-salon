@@ -1,0 +1,345 @@
+{
+  "revisadoHasta": "d7f7cdc",
+  "patrones": [
+    {
+      "clave": "version-hacia-atras",
+      "que": "Dos PR fusionados a la vez: 0.148.6 quedó arriba de 0.153.0 y el sitio se publicó con una versión hacia atrás",
+      "vistos": [
+        {
+          "fecha": "2026-10-11",
+          "que": "Dos PR fusionados a la vez: 0.148.6 quedó arriba de 0.153.0 y el sitio se publicó con una versión hacia atrás",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-11",
+        "que": "version.test.mjs exige que el CHANGELOG vaya de la versión más nueva a la más vieja",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/324"
+      }
+    },
+    {
+      "clave": "decision-repetida-o-desordenada",
+      "que": "Al resolver conflictos de dos PR, D-277 quedó repetida y D-282 antes de D-280",
+      "vistos": [
+        {
+          "fecha": "2026-10-11",
+          "que": "Al resolver conflictos de dos PR, D-277 quedó repetida y D-282 antes de D-280",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-11",
+        "que": "document.test.mjs revisa docs/DECISIONES.md del repo en cada PR",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/332"
+      }
+    },
+    {
+      "clave": "captura-identica-atrasada",
+      "que": "Una captura rehecha que sale idéntica byte a byte no genera commit y readme.py revisar la sigue marcando como atrasada (batalla-naval, generala)",
+      "vistos": [
+        {
+          "fecha": "2026-10-12",
+          "que": "Una captura rehecha que sale idéntica byte a byte no genera commit y readme.py revisar la sigue marcando como atrasada (batalla-naval, generala)",
+          "commit": "af149b1"
+        },
+        {
+          "fecha": "2026-10-14",
+          "que": "Otra vez (ronda de documentación del 14/10): battleship/04-pase.png y generala/07-servida.png salen idénticas al rehacerlas y readme.py revisar las sigue marcando por la fecha de su último commit",
+          "commit": null
+        }
+      ],
+      "mecanismo": null
+    },
+    {
+      "clave": "e2e-intermitente",
+      "que": "main en rojo por un guion que pasó en la corrida siguiente sin tocar su juego (5 de 7 rojos del 4 al 12/10: torneo:laboratorio, instalar, hangman/idiomas, uno-al-dia, generala/idiomas)",
+      "vistos": [
+        {
+          "fecha": "2026-10-12",
+          "que": "main en rojo por un guion que pasó en la corrida siguiente sin tocar su juego (5 de 7 rojos del 4 al 12/10: torneo:laboratorio, instalar, hangman/idiomas, uno-al-dia, generala/idiomas)",
+          "commit": "2380b40"
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-12",
+        "que": "e2e.yml repite una vez el guion que falla y deja un aviso Intermitente (D-299)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+      }
+    },
+    {
+      "clave": "conflicto-changelog-decision",
+      "que": "PR que tuvo que traer main y resolver a mano CHANGELOG (64) o DECISIONES (52) en 89 sincronizaciones del 3 al 12/10; 10 renumeraron D-n o versión; hoy #372 y #374 traen el mismo número de decisión",
+      "vistos": [
+        {
+          "fecha": "2026-10-12",
+          "que": "PR que tuvo que traer main y resolver a mano CHANGELOG (64) o DECISIONES (52) en 89 sincronizaciones del 3 al 12/10; 10 renumeraron D-n o versión; hoy #372 y #374 traen el mismo número de decisión",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-12",
+        "que": "CHANGELOG por archivo (D-300), reserva de D-n y driver de DECISIONES.md (D-301)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+      }
+    },
+    {
+      "clave": "decision-sin-marcar-corregida",
+      "que": "D-298 entró sin marcar D-290 y D-291 como corregidas ni sumarse al índice; lo arregló documentación después",
+      "vistos": [
+        {
+          "fecha": "2026-10-13",
+          "que": "D-298 entró sin marcar D-290 y D-291 como corregidas ni sumarse al índice; lo arregló documentación después",
+          "commit": "b38b4c35"
+        }
+      ],
+      "mecanismo": null
+    },
+    {
+      "clave": "readme-hechos-atrasado",
+      "que": "Tests nuevos (changelog.test.mjs, decision.test.mjs) entraron sin README ni facts.json al día",
+      "vistos": [
+        {
+          "fecha": "2026-10-13",
+          "que": "Tests nuevos (changelog.test.mjs, decision.test.mjs) entraron sin README ni facts.json al día",
+          "commit": "665de753"
+        },
+        {
+          "fecha": "2026-10-13",
+          "que": "D-307 y D-308 (groups.mjs, already-tested.mjs, changelog/) entraron sin sumarse al árbol Layout del README: el chequeo 7 de readme.py buscaba '## Estructura' y no corría nunca",
+          "commit": "de85baf"
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-13",
+        "que": "readme.py revisar vuelve a comparar el árbol de Layout con la raíz del repo (test en readme.test.py)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/390"
+      }
+    },
+    {
+      "clave": "portada-atrasada",
+      "que": "Portadas del laboratorio con reglas viejas (U-36); ya frenado por covers.mjs",
+      "vistos": [
+        {
+          "fecha": "2026-10-13",
+          "que": "Portadas del laboratorio con reglas viejas (U-36); ya frenado por covers.mjs",
+          "commit": "248ddece"
+        }
+      ],
+      "mecanismo": null
+    },
+    {
+      "clave": "permiso-guias-agentes",
+      "que": "El permiso automático de la ronda niega editar .claude/agents/, juntar el CHANGELOG y cerrar issues: la tarea #321:3 aprobada sigue en cola por segundo día",
+      "vistos": [
+        {
+          "fecha": "2026-10-13",
+          "que": "El permiso automático de la ronda niega editar .claude/agents/, juntar el CHANGELOG y cerrar issues: la tarea #321:3 aprobada sigue en cola por segundo día",
+          "commit": null
+        }
+      ],
+      "mecanismo": null
+    },
+    {
+      "clave": "portadas-falso-aviso",
+      "que": "covers.mjs revisar marca ⚠️ falso en La clave (labs/code): lee mal su estructura de cuatro idiomas y le saca 7 pasos (informe de usabilidad)",
+      "vistos": [
+        {
+          "fecha": "2026-10-13",
+          "que": "covers.mjs revisar marca ⚠️ falso en La clave (labs/code): lee mal su estructura de cuatro idiomas y le saca 7 pasos (informe de usabilidad)",
+          "commit": "de85baf"
+        }
+      ],
+      "mecanismo": null
+    },
+    {
+      "clave": "juntar-propia",
+      "que": "changelog.mjs juntar juntó también la entrada sin número de la propia rama de procesos (le dio un número que no era suyo); se notó al ver 13 entradas en vez de 12",
+      "vistos": [
+        {
+          "fecha": "2026-10-14",
+          "que": "changelog.mjs juntar juntó también la entrada sin número de la propia rama de procesos (le dio un número que no era suyo); se notó al ver 13 entradas en vez de 12",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-14",
+        "que": "changelog.mjs juntar deja en changelog/ la entrada de la rama que junta",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/405"
+      }
+    },
+    {
+      "clave": "basura-de-pruebas",
+      "que": "Guiones de tools/e2e corridos sin carpeta (o con --parte primero) dejaron undefined/ y --parte/ con perfil de Chrome dentro de dos copias fusionadas, que limpiar-copias no pudo borrar (limpieza del 13/10)",
+      "vistos": [
+        {
+          "fecha": "2026-10-14",
+          "que": "Guiones de tools/e2e corridos sin carpeta (o con --parte primero) dejaron undefined/ y --parte/ con perfil de Chrome dentro de dos copias fusionadas, que limpiar-copias no pudo borrar (limpieza del 13/10)",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-14",
+        "que": "salida() en tools/e2e/output.mjs + output.test.mjs (ningún guion lee process.argv[2] a mano) + launch se niega; limpiar-copias no cuenta la basura de pruebas como cambio (D-315)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/408"
+      }
+    },
+    {
+      "clave": "ramas-locales-acumuladas",
+      "que": "74 ramas locales viejas en la carpeta principal: nada borraba las ramas sin copia (limpieza del 13/10)",
+      "vistos": [
+        {
+          "fecha": "2026-10-14",
+          "que": "74 ramas locales viejas en la carpeta principal: nada borraba las ramas sin copia (limpieza del 13/10)",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-14",
+        "que": "clean-worktrees.mjs borra las ramas locales fusionadas o sin rama en GitHub, y la ronda diaria de procesos la corre (D-315)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/408"
+      }
+    }
+  ],
+  "mecanismos": [
+    {
+      "fecha": "2026-10-11",
+      "clave": "version-hacia-atras",
+      "que": "version.test.mjs exige que el CHANGELOG vaya de la versión más nueva a la más vieja",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/324"
+    },
+    {
+      "fecha": "2026-10-11",
+      "clave": "decision-repetida-o-desordenada",
+      "que": "document.test.mjs revisa docs/DECISIONES.md del repo en cada PR",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/332"
+    },
+    {
+      "fecha": "2026-10-12",
+      "clave": "e2e-intermitente",
+      "que": "e2e.yml repite una vez el guion que falla y deja un aviso Intermitente (D-299)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "clave": "conflicto-changelog-decision",
+      "que": "CHANGELOG por archivo (D-300), reserva de D-n y driver de DECISIONES.md (D-301)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-13",
+      "clave": "readme-hechos-atrasado",
+      "que": "readme.py revisar vuelve a comparar el árbol de Layout con la raíz del repo (test en readme.test.py)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/390"
+    },
+    {
+      "fecha": "2026-10-14",
+      "clave": "juntar-propia",
+      "que": "changelog.mjs juntar deja en changelog/ la entrada de la rama que junta",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/405"
+    },
+    {
+      "fecha": "2026-10-14",
+      "clave": "basura-de-pruebas",
+      "que": "salida() en tools/e2e/output.mjs + output.test.mjs (ningún guion lee process.argv[2] a mano) + launch se niega; limpiar-copias no cuenta la basura de pruebas como cambio (D-315)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/408"
+    },
+    {
+      "fecha": "2026-10-14",
+      "clave": "ramas-locales-acumuladas",
+      "que": "clean-worktrees.mjs borra las ramas locales fusionadas o sin rama en GitHub, y la ronda diaria de procesos la corre (D-315)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/408"
+    }
+  ],
+  "colaHecha": [
+    "#321:3",
+    "#387:1"
+  ],
+  "despachos": {
+    "documentacion": {
+      "fecha": "2026-10-14",
+      "hasta": "d7f7cdc"
+    },
+    "usabilidad": {
+      "fecha": "2026-10-14",
+      "hasta": "d7f7cdc"
+    }
+  },
+  "rondas": [
+    {
+      "fecha": "2026-10-12",
+      "desde": null,
+      "hasta": "af149b1",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/353",
+      "nota": "Despachados documentación (#354) y usabilidad (#353), revisados contra sus criterios. #321:3 sigue en cola: el permiso automático bloqueó editar las guías de los agentes."
+    },
+    {
+      "fecha": "2026-10-13",
+      "desde": "af149b1",
+      "hasta": "de85baf",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/387",
+      "pr": null,
+      "nota": "Despachados documentación (#388) y usabilidad (#389), revisados. Cola #321:3 y juntar CHANGELOG bloqueados por el permiso automático."
+    },
+    {
+      "fecha": "2026-10-13",
+      "desde": "de85baf",
+      "hasta": "de85baf",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/390",
+      "nota": null
+    },
+    {
+      "fecha": "2026-10-14",
+      "desde": "de85baf",
+      "hasta": "d7f7cdc",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/405",
+      "nota": "Despachó documentación y usabilidad (#404). Cola #387:1 hecha (Agentes, pistas de ideas). Feedback #383, #397, #401 en este PR."
+    }
+  ],
+  "decisionesDelDueno": [
+    {
+      "fecha": "2026-10-12",
+      "que": "CHANGELOG por archivo, versión al fusionar (D-300)",
+      "respuesta": "sí",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Reservar los números de decisión y driver de DECISIONES.md (D-301)",
+      "respuesta": "sí",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Un solo push al terminar, sin la espera de 3 min en lista (D-303)",
+      "respuesta": "sí (la espera, no por ahora)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Publicar espera la punta a punta de main (D-302)",
+      "respuesta": "sí",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Juntar los 58 guiones en ~14 grupos de hasta 5,5 min (8,2 → ~6 min por PR)",
+      "respuesta": "no por ahora",
+      "pr": null
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Agentes según la etapa del juego (D-304)",
+      "respuesta": "sí",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/375"
+    },
+    {
+      "fecha": "2026-10-12",
+      "que": "Elegir los guiones de punta a punta por juego según el diff (~6 % menos, con riesgo)",
+      "respuesta": "no por ahora",
+      "pr": null
+    }
+  ]
+}

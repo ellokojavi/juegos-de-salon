@@ -17,12 +17,12 @@
   },
   "guiones": {
     "versionado": {
-      "archivo": "versionado.mjs",
+      "archivo": "versioning.mjs",
       "red": false,
       "que": "menú principal"
     },
     "cuarto-rey": {
-      "archivo": "fourth-king/partida.mjs",
+      "archivo": "fourth-king/game.mjs",
       "red": false,
       "que": "partida completa de Cuarto Rey"
     },
@@ -57,12 +57,12 @@
       "que": "un celular y solitario"
     },
     "linea-de-tiempo-mesa": {
-      "archivo": "timeline/mesa.mjs",
+      "archivo": "timeline/table.mjs",
       "red": false,
       "que": "todas las cartas a la vista"
     },
     "linea-de-tiempo-pozo": {
-      "archivo": "timeline/pozo.mjs",
+      "archivo": "timeline/pool.mjs",
       "red": true,
       "que": "pozo común"
     },
@@ -117,7 +117,7 @@
       "que": "sala de tres celulares con reparto cerrado"
     },
     "copa": {
-      "archivo": "cup/torneo.mjs",
+      "archivo": "cup/tournament.mjs",
       "red": false,
       "que": "una Copa de 7 días con tres jugadores, el laboratorio y la práctica de cada juego"
     }

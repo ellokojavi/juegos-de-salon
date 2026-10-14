@@ -176,7 +176,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | LIG-39 | Gráfico de tu posición día a día. | ✅ v0.42 |
 | LIG-40 | El panel del dueño muestra las copas creadas y su progreso. | ✅ D-137; ficha de cada copa con D-207 |
 | LIG-41 | Práctica de cada juego suelto, con semilla repetible, desde el laboratorio (D-101). | ✅ v0.43 |
-| LIG-42 | Reportar un problema o dejar un comentario con su contexto, desde la práctica, el tablero y el resultado, sin cuenta (D-104). | ✅ v0.45 (se leen con `node tools/firebase/reportes.mjs`) |
+| LIG-42 | Reportar un problema o dejar un comentario con su contexto, desde la práctica, el tablero y el resultado, sin cuenta (D-104). | ✅ v0.45 (se leen con `node tools/firebase/reports.mjs`) |
 | LIG-43 | Laboratorio `/labs/`: La Copa sale del menú (Próximamente) y se prueba ahí, con la Copa de 3 días. | ✅ v0.43 |
 | LIG-44 | El panel del dueño muestra los reportes. | ⏳ pendiente |
 | LIG-45 | 〰️ Zip y ☀️ Tango en el laboratorio, con solución única, para decidir si entran al calendario. | ✅ v0.44 |
