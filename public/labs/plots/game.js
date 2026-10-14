@@ -81,8 +81,6 @@ const T = {
   comentarAbrir: '💬 Dejar un comentario',
   comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendía cómo dibujar los lotes, si los tableros te parecieron justos y qué le cambiarías.', ph: 'Por ejemplo: me costó borrar un lote mal puesto.', nombre: 'Tu nombre (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
 };
-/** Cuántos, en palabras, para «Tiene dos ⚡». */
-const CUANTOS = { 2: 'dos', 3: 'tres', 4: 'cuatro', 5: 'cinco', 6: 'seis' };
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 const espera = ms => new Promise(r => setTimeout(r, ms));
@@ -377,7 +375,7 @@ function jugar() {
         SFX.error(); vibrate([40, 30, 40]);
         tab.rechazar(r);
         decir(t.iconos
-          ? fmt(T.noServicios[v.motivo], { n: v.tam, a: v.area, casillas: v.area === 1 ? 'casilla' : 'casillas', s: ICONOS[v.servicio], k: CUANTOS[v.cuantos] || v.cuantos })
+          ? fmt(T.noServicios[v.motivo], { n: v.tam, a: v.area, casillas: v.area === 1 ? 'casilla' : 'casillas', s: ICONOS[v.servicio], k: v.cuantos })
           : fmt(T.no[v.motivo], { k: v.cuantos, n: v.n, a: v.area, casillas: v.n === 1 ? 'casilla' : 'casillas' }), 'mal');
         return;
       }

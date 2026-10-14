@@ -79,7 +79,7 @@ await dibujar(falta); await sleep(60);
 ok(await aviso() === `Le falta ${ICONOS[validar(t, falta).servicio]}.`, `uno al que le falta un servicio lo dice (${await aviso()})`);
 const sobra = todos.find(r => validar(t, r).motivo === 'sobra' && validar(t, r).cuantos === 2);
 await dibujar(sobra); await sleep(60);
-ok(await aviso() === `Tiene dos ${ICONOS[validar(t, sobra).servicio]}: cada lote lleva uno.`, `uno con dos del mismo lo dice (${await aviso()})`);
+ok(await aviso() === `Tiene 2 ${ICONOS[validar(t, sobra).servicio]}: cada lote lleva uno.`, `uno con dos del mismo lo dice (${await aviso()})`);
 await dibujar(t.solucion[0]); await sleep(80);
 ok(await lotes() === 1 && await ev(`!!document.querySelector('#tablero .lote').style.getPropertyValue('--c')`), 'uno que vale se pinta de su color');
 await b.shot('02-juego-servicios');
