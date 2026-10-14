@@ -7,7 +7,9 @@
  * con su respuesta y su arreglo.
  *
  *   node tools/agents/feedback.mjs sincronizar [--simular]   # crea los issues que faltan
- *   node tools/agents/feedback.mjs reply <issue> <answer.txt> --lang <es|en|pt|de> [--dry-run]   # emails the reply (D-317)
+ *   node tools/agents/feedback.mjs pending                                   # who is waiting, grouped by player (D-317)
+ *   node tools/agents/feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> [--dry-run | --test-to <address>]
+ *                                                                         # one email for all of a player's comments
  *   node tools/agents/feedback.mjs forget <issue> "<reason>"                 # deletes the address, no email
  *
  * Optional email (D-317): a player who wants to hear back leaves an address. The issue only shows
@@ -26,6 +28,7 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
+import { correoValido } from '../../public/cup/reportes.js';
 
 export const ETIQUETA = 'feedback';
 const REPO = process.env.GITHUB_REPOSITORY || 'ellokojavi/juegos-de-salon';
@@ -46,16 +49,33 @@ export const quiereCorreo = body => /^- \*\*Email:\*\* /m.test(body || '');
 /** Already emailed or forgotten? */
 export const atendido = comentarios => (comentarios || []).some(c => (c.body || '').includes(RESPONDIDO) || (c.body || '').includes(OLVIDADO));
 
-/** The agent's specific answer: plain text, and no dashes as punctuation (owner's request, D-317). */
-export function leerRespuesta(t) {
+/**
+ * The agent's answers, one per issue. With one issue, the file is just the answer; with several,
+ * each answer goes under a line `#<n>`. Plain text, and no dashes as punctuation (owner's request,
+ * D-317). Returns `{ <n>: answer }`.
+ */
+export function leerRespuestas(t, numeros) {
   const texto = String(t || '').trim();
   if (!texto) throw new Error('The answer file is empty.');
   if (/[—–]/.test(texto)) throw new Error('No em or en dashes in the reply: use a comma, a colon or a period.');
-  return texto;
+  const partes = texto.split(/^#(\d+)[ \t]*$/m);
+  if (partes.length === 1) {
+    if (numeros.length > 1) throw new Error(`Several issues: put each answer under a line "#<n>" (${numeros.map(n => `#${n}`).join(', ')}).`);
+    return { [numeros[0]]: texto };
+  }
+  if (partes[0].trim()) throw new Error('Text before the first "#<n>" line.');
+  const r = {};
+  for (let i = 1; i < partes.length; i += 2) r[partes[i]] = partes[i + 1].trim();
+  const faltan = numeros.filter(n => !r[n]), sobran = Object.keys(r).filter(n => !numeros.includes(n));
+  if (faltan.length || sobran.length) throw new Error(`Answers don't match the issues: missing ${faltan.map(n => `#${n}`).join(', ') || 'none'}, extra ${sobran.map(n => `#${n}`).join(', ') || 'none'}.`);
+  return r;
 }
 
-/** The name the player gave, from the issue (without the zero-width spaces of `inerte`). */
-export const nombreDe = body => (/^- \*\*Who:\*\* (.+)$/m.exec(body || '')?.[1] || '').replace(/\u200b/g, '').trim();
+/** What the player wrote, from the issue's quote (without the zero-width spaces of `inerte`). */
+export const textoDe = body => (body || '').split('\n').filter(l => l.startsWith('> ')).map(l => l.slice(2)).join(' ').replace(/\u200b/g, '').trim();
+
+/** The name the player gave, from the issue (`Who`, or `Quién` in the issues from before D-316; without the zero-width spaces of `inerte`). */
+export const nombreDe = body => (/^- \*\*(?:Who|Quién):\*\* (.+)$/m.exec(body || '')?.[1] || '').replace(/\u200b/g, '').trim();
 
 /** Los ids de reporte que ya tienen issue, leídos de los cuerpos. */
 export const subidos = issues => new Set(issues.flatMap(i => [...(i.body || '').matchAll(/<!-- feedback:([^\s>]+) -->/g)].map(m => m[1])));
@@ -123,18 +143,19 @@ async function sincronizar(simular) {
 /* The email reply (D-317): only on the owner's machine                */
 /* ------------------------------------------------------------------ */
 
-async function contactoDe(numero) {
-  const issue = JSON.parse(gh('issue', 'view', String(numero), '--json', 'body,comments,labels'));
+async function contactoDe(numero, t, prueba = false) {
+  const issue = JSON.parse(gh('issue', 'view', String(numero), '--json', 'body,comments,labels,state'));
   if (!issue.labels.some(l => l.name === ETIQUETA)) throw new Error(`#${numero} is not a feedback issue.`);
   const id = idDe(issue.body);
   if (!id) throw new Error(`#${numero} has no feedback marker.`);
-  if (!quiereCorreo(issue.body)) throw new Error(`#${numero}: the player left no email.`);
-  if (atendido(issue.comments)) throw new Error(`#${numero}: already emailed or the address was already deleted.`);
-  const { token, leer } = await import('../firebase/firebase-admin.mjs');
-  const t = await token();
-  const c = await leer(`feedbackContacto/${id}`, t);
-  return { id, t, correo: c?.correo || null, nombre: nombreDe(issue.body), mascara: /\*\*Email:\*\* `([^`]+)`/.exec(issue.body)?.[1] || '' };
+  // A test only needs the comment: it goes to the test address, not to the player
+  if (!prueba && !quiereCorreo(issue.body)) throw new Error(`#${numero}: the player left no email.`);
+  if (!prueba && atendido(issue.comments)) throw new Error(`#${numero}: already emailed or the address was already deleted.`);
+  const c = t ? await (await import('../firebase/firebase-admin.mjs')).leer(`feedbackContacto/${id}`, t) : null;
+  return { numero: String(numero), id, correo: c?.correo || null, nombre: nombreDe(issue.body), texto: textoDe(issue.body), estado: issue.state, mascara: /\*\*Email:\*\* `([^`]+)`/.exec(issue.body)?.[1] || '' };
 }
+
+const llave = async () => (await import('../firebase/firebase-admin.mjs')).token();
 
 async function borrar(id, t) {
   const { firebaseConfig: f } = await import('../../public/assets/js/firebase-config.js');
@@ -142,24 +163,67 @@ async function borrar(id, t) {
   if (!res.ok) throw new Error(`Could not delete feedbackContacto/${id} (HTTP ${res.status}).`);
 }
 
-async function responder(numero, archivo, idioma, simular) {
+/**
+ * One email for one or more comments of the same player (owner's request: a long session leaves
+ * several, and N emails for N comments is too many). Every issue must carry the same address.
+ * `prueba`: send it to that address instead, without reading or deleting any address or touching
+ * the issues (to see how a real reply looks).
+ */
+async function responder(lista, archivo, idioma, { simular, prueba }) {
   const { readFileSync } = await import('node:fs');
   const { armarCorreo } = await import('./feedback-plantillas.mjs');
-  const respuesta = leerRespuesta(readFileSync(archivo, 'utf8'));
-  const { id, t, correo, nombre, mascara } = await contactoDe(numero);
-  const { asunto, texto } = armarCorreo({ idioma, respuesta, nombre, n: Number(numero) });
-  if (!correo) throw new Error(`#${numero}: the address is not in feedbackContacto/${id} (already deleted?).`);
-  if (simular) { console.log(`To: ${mascara}\nSubject: ${asunto}\n\n${texto}`); return; }
+  const numeros = String(lista).split(',').map(x => x.trim().replace(/^#/, '')).filter(Boolean);
+  if (!numeros.length || numeros.some(n => !/^\d+$/.test(n))) throw new Error(`Issues as numbers separated by commas, not "${lista}".`);
+  const respuestas = leerRespuestas(readFileSync(archivo, 'utf8'), numeros);
+  if (prueba && !correoValido(prueba)) throw new Error(`--test-to needs an address, not "${prueba}".`);
+  const t = prueba ? null : await llave();
+  const todos = [];
+  for (const n of numeros) todos.push(await contactoDe(n, t, !!prueba));
+  if (!prueba) {
+    const sin = todos.filter(x => !x.correo);
+    if (sin.length) throw new Error(`No address in feedbackContacto/ for ${sin.map(x => `#${x.numero}`).join(', ')} (already deleted?).`);
+    if (new Set(todos.map(x => x.correo.toLowerCase())).size > 1) throw new Error(`Not the same player: ${todos.map(x => `#${x.numero} ${x.mascara}`).join(', ')}. One email per address.`);
+  }
+  const nombre = todos.map(x => x.nombre).find(Boolean) || '';
+  const { asunto, texto } = armarCorreo({ idioma, nombre, n: Number(numeros[0]), items: todos.map(x => ({ cita: x.texto, respuesta: respuestas[x.numero] })) });
+  const para = prueba || todos[0].correo;
+  if (simular) { console.log(`To: ${prueba || todos[0].mascara}\nSubject: ${asunto}\n\n${texto}`); return; }
   // Through stdin: the address never shows in a command line or a log
-  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to: correo, subject: asunto, text: texto }), stdio: ['pipe', 'inherit', 'inherit'] });
-  await borrar(id, t);
-  gh('issue', 'comment', String(numero), '--body', `📧 Reply emailed to \`${mascara}\`; the address was then deleted (D-317).\n${RESPONDIDO}`);
-  console.log(`#${numero}: emailed to ${mascara} and the address deleted.`);
+  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to: para, subject: prueba ? `[Test] ${asunto}` : asunto, text: texto }), stdio: ['pipe', 'inherit', 'inherit'] });
+  if (prueba) { console.log(`Test email with ${numeros.map(n => `#${n}`).join(', ')} sent to the test address; nothing else touched.`); return; }
+  for (const x of todos) {
+    await borrar(x.id, t);
+    const junto = todos.length > 1 ? ` in one email together with ${todos.filter(y => y !== x).map(y => `#${y.numero}`).join(', ')}` : '';
+    gh('issue', 'comment', x.numero, '--body', `📧 Reply emailed to \`${x.mascara}\`${junto}; the address was then deleted (D-317).\n${RESPONDIDO}`);
+  }
+  console.log(`${numeros.map(n => `#${n}`).join(', ')}: one email to ${todos[0].mascara}, addresses deleted.`);
+}
+
+/** Feedback issues waiting for an email reply, grouped by player (by the address, read with the key). */
+async function pendientesCorreo() {
+  const issues = JSON.parse(gh('issue', 'list', '--label', ETIQUETA, '--state', 'all', '--limit', '200', '--json', 'number,title,body,comments,state'))
+    .filter(i => quiereCorreo(i.body) && !atendido(i.comments));
+  if (!issues.length) return console.log('Nobody waiting for an email reply.');
+  const t = await llave();
+  const grupos = new Map();
+  for (const i of issues.reverse()) {
+    const c = await (await import('../firebase/firebase-admin.mjs')).leer(`feedbackContacto/${idDe(i.body)}`, t);
+    const clave = c?.correo?.toLowerCase() || `(no address) #${i.number}`;
+    if (!grupos.has(clave)) grupos.set(clave, []);
+    grupos.get(clave).push(i);
+  }
+  for (const [clave, lista] of grupos) {
+    const mascara = /\*\*Email:\*\* `([^`]+)`/.exec(lista[0].body)?.[1] || '?';
+    const abiertos = lista.filter(i => i.state === 'OPEN').length;
+    console.log(`- ${clave.startsWith('(') ? clave : mascara}${nombreDe(lista[0].body) ? ` (${nombreDe(lista[0].body)})` : ''}: ${lista.map(i => `#${i.number}${i.state === 'OPEN' ? ' (open)' : ''}`).join(', ')}`);
+    console.log(`  ${abiertos ? `${abiertos} still open: resolve them first, then` : 'all resolved:'} feedback.mjs reply ${lista.map(i => i.number).join(',')} <answer.txt> --lang <xx>`);
+  }
 }
 
 async function olvidar(numero, motivo) {
   if (!motivo) throw new Error('Say why there is no email (e.g. "destructive feedback").');
-  const { id, t, mascara } = await contactoDe(numero);
+  const t = await llave();
+  const { id, mascara } = await contactoDe(numero, t);
   await borrar(id, t);
   gh('issue', 'comment', String(numero), '--body', `No email reply (${inerte(motivo)}); the address \`${mascara}\` was deleted (D-317).\n${OLVIDADO}`);
   console.log(`#${numero}: address deleted, no email.`);
@@ -170,7 +234,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const opcion = n => (process.argv.includes(n) ? process.argv[process.argv.indexOf(n) + 1] : null);
   const fallar = e => { console.error(e.message); process.exit(1); };
   if (orden === 'sincronizar') sincronizar(process.argv.includes('--simular')).catch(fallar);
-  else if (orden === 'reply' && a && b && opcion('--lang')) responder(a, b, opcion('--lang'), process.argv.includes('--dry-run')).catch(fallar);
+  else if (orden === 'pending') pendientesCorreo().catch(fallar);
+  else if (orden === 'reply' && a && b && opcion('--lang')) responder(a, b, opcion('--lang'), { simular: process.argv.includes('--dry-run'), prueba: opcion('--test-to') }).catch(fallar);
   else if (orden === 'forget' && a) olvidar(a, b).catch(fallar);
-  else { console.error('Usage: node tools/agents/feedback.mjs sincronizar [--simular] | reply <issue> <answer.txt> --lang <es|en|pt|de> [--dry-run] | forget <issue> "<reason>"'); process.exit(2); }
+  else { console.error('Usage: node tools/agents/feedback.mjs sincronizar [--simular] | pending | reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> [--dry-run | --test-to <address>] | forget <issue> "<reason>"'); process.exit(2); }
 }
