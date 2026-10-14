@@ -51,7 +51,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
@@ -4627,7 +4627,7 @@ cuando más se acuerdan de dónde se trabaron.
 prueba con el envío interceptado, sin escribir en Firebase.
 
 ## D-266 · Las URL, en inglés: carpetas, parámetros y sus valores
-**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** sigue a D-192 (las carpetas) y D-214 (`?type=`); corrige D-29, D-100, D-110, D-142, D-164, D-207, D-208, D-229, D-230, D-233 y D-239 (el nombre de sus parámetros)
+**Fecha:** 2026-10-10 · **Estado:** corregida por D-316 · **Relación:** sigue a D-192 (las carpetas) y D-214 (`?type=`); corrige D-29, D-100, D-110, D-142, D-164, D-207, D-208, D-229, D-230, D-233 y D-239 (el nombre de sus parámetros)
 **Decisión:** Todo lo que se ve en una dirección va en inglés: las carpetas (ya desde D-192), los
 nombres de los parámetros y sus valores en palabras (C-18). Lo que la app escribe o genera (las
 invitaciones, los links que se comparten, los avisos al celular, los de Uno al día, lo que deja en
@@ -5854,7 +5854,7 @@ causa).
 punta a punta usa `salida()` (la prueba lo exige).
 
 ## D-316 · Repository language: English, for everything internal
-**Date:** 2026-10-14 · **Status:** current · **Relation:** amends D-78 (only the README was English) and C-13; extends D-192 and D-266 (folders and URLs were already English) to everything internal
+**Date:** 2026-10-14 · **Status:** current · **Relation:** amends D-78 (only the README was English), C-13 and D-266 (code variable names stayed Spanish); extends D-192 and D-266 (folders and URLs were already English) to everything internal
 **Decision:** Owner's request: everything internal to the repo is in English, content and names
 alike. That covers documents (canons, decisions, specs, requirements, changelog, agent and skill
 instructions, `CLAUDE.md`), code comments and identifiers, file and folder names, tool messages,
