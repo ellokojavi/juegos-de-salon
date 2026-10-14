@@ -233,6 +233,14 @@
           "alto": 1080,
           "segundos": 6,
           "uso": "WhatsApp, estados, redes"
+        },
+        {
+          "ruta": "marketing/proximamente-teaser/output/se-vienen-cositas-6s-3d.mp4",
+          "formato": "1:1",
+          "ancho": 1080,
+          "alto": 1080,
+          "segundos": 6,
+          "uso": "La variante en 3D: WhatsApp, estados, redes"
         }
       ],
       "fuente": "marketing/proximamente-teaser/animada.html",

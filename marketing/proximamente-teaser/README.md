@@ -8,7 +8,7 @@ vuelta se anota en [Historia](#historia) y en [`../registro.json`](../registro.j
 
 | | |
 |---|---|
-| Archivos | [`output/se-vienen-cositas-6s.mp4`](output/se-vienen-cositas-6s.mp4) (1080×1080, 6 s, 30 cuadros por segundo, sin audio) |
+| Archivos | [`output/se-vienen-cositas-6s.mp4`](output/se-vienen-cositas-6s.mp4) (1080×1080, 6 s, 30 cuadros por segundo, sin audio) · la variante en 3D, [`output/se-vienen-cositas-6s-3d.mp4`](output/se-vienen-cositas-6s-3d.mp4) |
 | Idioma | Español |
 | Dónde va | WhatsApp, estados y redes: un adelanto, sin link a ningún juego |
 | App que muestra | 0.170.2 |
@@ -33,6 +33,14 @@ desde los 3,5 s; el que juega crece un poco:
 Entra desde el color del fondo y **termina en un póster** (pedido del dueño en la v2): desde los
 5,2 s todo queda quieto, con los cuatro tableros, «PRÓXIMAMENTE» y el sitio a la vista, hasta el
 último cuadro. Ya no se apaga al final: un GIF en bucle salta del póster al principio.
+
+**La variante en 3D** (`animada-3d.html`, pedido del dueño: «darle relieve y 3D»): la misma escena y
+los mismos tiempos, con las baldosas como tarjetas gruesas (canto y sombra en el fondo) que entran
+cayendo desde la cámara y, al jugar, se levantan y se inclinan hacia el centro; letras en relieve
+(«¡Se vienen cositas!» y «PRÓXIMAMENTE»), casillas biseladas y piezas que sobresalen (lotes, casillas
+pintadas, números), y la grilla un poco inclinada hacia atrás que se mece despacio hasta el póster.
+El dedo y los estallidos viven dentro de su baldosa, así se inclinan con ella. Se descartó poner las
+baldosas sobre una mesa en perspectiva fuerte: las del fondo se achican y la jugada no se lee.
 
 **Muestra juegos que no están en la portada, a propósito** (`"laboratorio"` en `registro.json`, U-34).
 No son capturas de la app: los tableros se dibujan en la página, con los colores y la forma de cada
@@ -60,6 +68,7 @@ sola, para mirarla). Usa las fuentes del sitio (Bangers y Nunito) desde Google F
 ```bash
 node marketing/proximamente-teaser/construir-video.mjs                     # el MP4 de output/
 node marketing/proximamente-teaser/construir-video.mjs --fotos 0.95,2.3,3.3,4.3,5.6  # cuadros sueltos, para mirar
+node marketing/proximamente-teaser/construir-video.mjs --3d                     # la variante en 3D (animada-3d.html)
 ```
 
 Necesita Chrome (`CHROME=<ruta>`, como los guiones de `tools/e2e/`) y ffmpeg. En la nube, Chromium
@@ -74,6 +83,8 @@ corre como root y necesita `--no-sandbox`: un `chrome.sh` que lo agregue y `CHRO
   coordenadas a la página con la escala de la baldosa, la de su turno y la de la grilla al final.
   Cada juego corre con su reloj corrido (`TURNO`), para que su jugada caiga en su turno, y tiene su
   propio dedo: dos jugadas pueden ir a la vez.
+- **Las dos páginas comparten casi todo el código, copiado:** un cambio a las jugadas o a los tiempos
+  se hace en `animada.html` y en `animada-3d.html`.
 - El dibujo de cada juego es propio de esta página: si un juego cambia de colores o de forma, este
   adelanto no se entera solo (`marketing.mjs revisar` avisa de los commits que tocaron sus juegos).
 
@@ -94,4 +105,6 @@ corre como root y necesita `--no-sandbox`: un `chrome.sh` que lo agregue y `CHRO
   usuario pueda ver los cuatro desplegados por más tiempo»: cada baldosa aparece justo antes de su
   jugada, encadenadas (un dedo por juego); los cuatro quedan a la vista desde los 3,5 s. Y: «el video
   no termina en un fondo vacío, sino en un frame estático con todo el contenido, como si fuese un
-  poster final»: sin fundido de salida, quieto desde los 5,2 s.
+  poster final»: sin fundido de salida, quieto desde los 5,2 s. Después, «¿Hay alguna forma de darle
+  relieve y 3D al video?» → «Yeah, let's try a 3d variant»: `animada-3d.html` y su mp4 aparte (las
+  tarjetas, las letras y las casillas en relieve, y la grilla inclinada); la versión plana sigue.
