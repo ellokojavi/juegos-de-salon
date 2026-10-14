@@ -79,6 +79,10 @@ blanco. En `stats/<env>/days/<día>`:
   fetch cancelados, lo que pasa después de cerrar la pestaña, imágenes y audio que no cargaron, ni
   más de diez errores por carga. Las direcciones van sin `?` ni `#` (ahí van los códigos de sala y
   de copa) y del navegador solo su familia y versión mayor.
+- **Room writes nobody waits for don't reach Health** (D-320): the transport catches the rejections of
+  `send()` and the presence writes (`best-effort.js`). A denied resend after a reconnect is not a
+  failure and is dropped; any other failed write goes only to the console (`console.warn`), which the
+  vigía does not record.
 - **Para las pruebas:** `window.__vigia.fallas` lista lo que se mandó en esa carga.
 
 Con `node tools/e2e/look.mjs panel health` se ve con datos sembrados (errores de dos versiones,

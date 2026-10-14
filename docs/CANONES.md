@@ -153,6 +153,14 @@ modo que el juego piensa tener.
   en el `<head>`, antes de las hojas de estilo; no en el panel ni en las puente, D-251): anota lo que
   falla al cargar o al jugar para la sección Salud del panel. "Arrancó" lo avisa `trackVisit`, así que
   la página lo llama al cargar, como ya hacía. Lo comprueba `public/assets/js/vigia.test.mjs`.
+- **Room writes nobody waits for are handled in the transport** (`public/assets/js/transport/best-effort.js`,
+  D-320). The games fire `send()` and move on, and nobody awaits the presence writes either, so a
+  rejection there would reach the vigía as an unhandled one. `firebase.js` passes the `push` of
+  `send()` through `message()` and the presence writes and the background room note through
+  `quiet()`. A denied message that is already on the server is a resend after a reconnect (the SDK
+  sends again every write whose ack was lost, and a message can only be written once), so it is not
+  reported; anything else goes to `console.warn`. `send()` still returns the same promise.
+  `best-effort.test.mjs` fails on any Firebase call in `firebase.js` that nobody awaits, returns or catches.
 - **Irse a propósito cierra la sala.** `leave()` suelta los oyentes y deja la sala esperando; `dispose()` es la despedida: escribe `left` en el rol y borra la sala si con eso no queda nadie adentro (`public/assets/js/transport/dispose.js`, D-50). Lo llaman el botón de cancelar o salir de la sala del lobby, el de cambiar de modo al final y el cambio a la sala de la revancha. **Cerrar la pestaña o quedarse sin señal no es irse:** eso solo apaga `online`, porque esa partida se puede retomar (C-6), así que nada de esto cuelga de `pagehide`. Nunca lanza, lleva tope corto y, si falla, la sala queda marcada y la borra la papelera.
 - **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`) y de vez en cuando barre los días pendientes borrando lo vencido (`public/assets/js/transport/cleanup.js`, D-39). Nada de esto se le muestra al jugador ni puede voltear una partida: si falla, barre el celular siguiente.
 - Con más de dos jugadores, el reparto de roles es una carrera: se escribe el rol con un identificador de dispositivo y se relee para confirmar quién lo obtuvo. Nunca se asume que el primer rol libre que se leyó sigue libre.
