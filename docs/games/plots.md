@@ -93,7 +93,7 @@ dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los p
 - **El aviso de los difíciles:** al empezar el tablero 3, el primero difícil, el aviso de arriba dice
   «Difíciles: si un lote deja una casilla sin lote posible, no va.» (solo ahí, no en
   los dos que siguen).
-- **Los rechazos:** «Ese lote tiene 3 casillas; cada lote tiene 4.», «Le falta 💧.» y «Tiene dos ⚡:
+- **Los rechazos:** «Ese lote tiene 3 casillas; cada lote tiene 4.», «Le falta 💧.» y «Tiene 2 ⚡:
   cada lote lleva uno.» (primero el tamaño, después lo que sobra, después lo que falta).
 - **Todo lo demás es igual:** la medida en vivo, tocar para borrar, ↩ Deshacer, 🧹 Borrar,
   🏳️ Rendirse, la 💡 Ayuda, el reloj, el puntaje y el resultado, que dice «⚡💧 Servicios» sobre el
