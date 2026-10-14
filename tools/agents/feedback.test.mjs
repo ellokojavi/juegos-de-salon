@@ -55,4 +55,11 @@ assert.equal(nameOf('> hola\n\n- **Quién:** Cris\n- **Juego:** loteo'), 'Cris',
 assert.equal(nameOf(body({ ...r, nombre: '@cris' })), '@cris');
 assert.equal(nameOf(body({ ...r, nombre: '' })), '');
 
+// A report that arrived by email to hola@ (D-318) says so
+const byEmail = { ...r, contexto: JSON.stringify({ canal: 'email', idioma: 'es' }) };
+assert.equal(where(byEmail), 'email');
+assert.match(body(byEmail), /Arrived by email to hola@juegosdesalon\.cl/);
+assert.doesNotMatch(body(byEmail), /🐞 button/);
+assert.match(title(byEmail), /^🐞 email: /);
+
 console.log('feedback: ok');
