@@ -437,8 +437,9 @@ Los nombres de antes se siguen leyendo como alias: un link que ya circula no se 
 - **Una clave que se guarda no cambia por esto:** el panel sigue contando `aviso/plazo` aunque la URL
   diga `notif=deadline` (`AVISO_CLAVE`).
 - **Lo que no es palabra queda como es:** códigos (`?K7Q2X`, `?c=`), el link propio de una copa
-  (`?pirata`, que elige quien la crea; las palabras de las banderas están reservadas) y los nombres
-  de las variables del código, que siguen en español.
+  (`?pirata`, que elige quien la crea; las palabras de las banderas están reservadas).
+  Code variable names are no longer an exception: everything internal is English (D-316, which
+  amends D-266 here), renamed in phases.
 - **Lo frena una prueba:** `node public/assets/js/parametros.test.mjs` busca en `public/` y en
   `tools/push/` una URL armada con un nombre de antes.
 

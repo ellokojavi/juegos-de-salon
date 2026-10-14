@@ -29,7 +29,7 @@ language. Older Spanish content and Spanish file and identifier names are being 
 - New folders are in English, and **so is everything visible in a URL**: parameter names and
   their values (`?room=`, `?seed=`, `?test`, `&demo=podium`), read with
   `public/assets/js/parametros.js`, which keeps the old names as aliases (C-18, D-266). Everything
-  internal is English (D-316, which replaces D-78); the Spanish names that still exist are being
+  internal is English (D-316, which amends D-78); the Spanish names that still exist are being
   renamed in phases.
 
 ## Where each rule is (D-213)
