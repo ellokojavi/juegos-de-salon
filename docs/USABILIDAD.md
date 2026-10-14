@@ -84,6 +84,10 @@ la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renu
   intento sigue normal (D-123).
 - **U-23 · Lo que se escribe no se pierde** con una actualización de la pantalla (campos enfocados,
   reportes guardados).
+- **U-37 · Waiting on the network shows, and a room that doesn't open has a way out** (D-319):
+  while creating or joining a room the button says what it is doing ("Abriendo sala…") and the old
+  error goes away; if the room can't be reached, a "📱 Jugar en un celular" button goes under the
+  message. The create/join button is the retry; no reload link.
 
 ## Compartir
 

@@ -22,6 +22,7 @@
  * (jugar en un celular, C-5).
  *
  * Todo lo de afuera entra por parámetro para poder probar esto con node sin Firebase.
+ * `tryRoom` touches only the button and error element it is given, so a fake one is enough.
  */
 
 /** Espera de conexión antes de tocar la sala, y tope para la operación completa. */
@@ -69,6 +70,50 @@ export function errText(e, T) {
 export function failWith(e, T, fail) {
   if (!transportErrorKey(e)) console.error(e);
   fail(errText(e, T));
+}
+
+/**
+ * One attempt to create or join a room, from the button the player tapped (U-37).
+ *
+ * The wait can last up to CONNECT_MS + OP_MS, so the button says what is happening (`busy`) and
+ * the previous error goes away: an old "couldn't open the room" left on screen while the app is
+ * already retrying reads as a frozen app. If the attempt fails because the room can't be reached
+ * (`errOffline`), `local` (the game's own way into one-phone mode) is offered as a button under
+ * the error, the way out the text already names. The same button is how to retry, so there is no
+ * separate "retry" link; reloading would also lose the name and the settings.
+ *
+ * `opts`: { busy, err, fail, T, local, localLabel }. `err` is the game's error element.
+ */
+export async function tryRoom(btn, run, { busy, err, fail, T, local = null, localLabel = '' }) {
+  clearRoomError(err);
+  const label = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = busy;
+  btn.setAttribute('aria-busy', 'true');
+  try {
+    await run();
+  } catch (e) {
+    failWith(e, T, fail);
+    if (local && transportErrorKey(e) === 'errOffline') {
+      const b = err.ownerDocument.createElement('button');
+      b.type = 'button';
+      b.className = 'btn btn--ghost room-local';
+      b.textContent = localLabel;
+      b.addEventListener('click', local);
+      err.after(b);
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = label;
+    btn.removeAttribute('aria-busy');
+  }
+}
+
+/** Clears the error and the one-phone button that `tryRoom` may have left under it. */
+export function clearRoomError(err) {
+  err.textContent = '';
+  const next = err.nextElementSibling;
+  if (next && next.classList.contains('room-local')) next.remove();
 }
 
 /** La promesa, pero con tope: si no termina a tiempo, falla con `code`. */
