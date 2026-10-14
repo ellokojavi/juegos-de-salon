@@ -35,7 +35,7 @@ import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
-import { formularioComentario, abrirComentario } from '../assets/js/labs-idioma.js';
+import { formularioComentario, abrirComentario, campoCorreo } from '../assets/js/labs-idioma.js';
 import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
@@ -2502,19 +2502,22 @@ function reportar(extra = {}) {
   const body = $('#reporte-body');
   body.innerHTML = '';
   const err = el('div', { class: 'form-error', role: 'alert' });
-  const texto = el('textarea', { class: 'reporte-texto', maxlength: '1000', rows: '6', placeholder: T.reportPlaceholder, 'aria-label': T.reportTitle });
+  const texto = el('textarea', { class: 'reporte-texto', maxlength: '1000', rows: '3', placeholder: T.reportPlaceholder, 'aria-label': T.reportTitle });
   const nombre = el('input', { class: 'mini', id: 'reporte-nombre', maxlength: '40', autocomplete: 'name', placeholder: T.reportNamePh, value: nombreReporte.leer() || contexto.jugador || cuenta.nombre.get() || '', 'aria-label': T.reportNamePh });
+  const correo = campoCorreo({}, 'reporte-correo');
   const enviarBtn = el('button', { class: 'btn btn--yellow', id: 'btn-enviar-reporte' }, T.reportSend);
   enviarBtn.addEventListener('click', async () => {
     const t = texto.value.trim();
     if (!t) { avisoError(err, T.reportEmpty); return; }
+    const c = correo.valor();
+    if (c === null) { avisoError(err, correo.malo); correo.input.focus(); return; }
     nombreReporte.guardar(nombre.value.trim().slice(0, 40));
     enviarBtn.disabled = true; enviarBtn.textContent = T.sending2;
     try {
       // Sin cuenta (D-104): en la práctica no se abre el almacén ni su sesión anónima
       const reportar = PRUEBA ? (await abrirStore()).reportar : (await import('./reportes.js')).enviarReporte;
       await reportar({
-        texto: t.slice(0, 1000), nombre: nombre.value.trim().slice(0, 40),
+        texto: t.slice(0, 1000), nombre: nombre.value.trim().slice(0, 40), ...(c ? { correo: c } : {}),
         contexto: JSON.stringify(contexto).slice(0, 500),
         v: versionOf(document.getElementById('importmap')?.textContent || '') || 'dev',
       });
@@ -2539,7 +2542,7 @@ function reportar(extra = {}) {
     el('p', { class: 'muted' }, T.reportLead),
     el('div', { class: 'panel stack' }, texto,
       el('label', { class: 'lead', for: 'reporte-nombre', style: 'margin:0' }, T.reportNameLabel), nombre,
-      el('p', { class: 'muted', style: 'margin:0' }, T.reportNameKeep)),
+      el('p', { class: 'muted', style: 'margin:0' }, T.reportNameKeep), correo.input, correo.nota),
     err, enviarBtn,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { SFX.tap(); volver(); } }, T.reportCancel));
   texto.focus();

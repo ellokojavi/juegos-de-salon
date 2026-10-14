@@ -928,6 +928,7 @@ if (corre('laboratorio')) {
   // Un reporte desde la práctica
   await click('#btn-reporte'); await sleep(300);
   await ev(`document.querySelector('.reporte-texto').value='El barco no se veía bien'; document.querySelector('#reporte-nombre').value='Tester'; 1`);
+  ok(await ev(`(()=>{const c=document.getElementById('reporte-correo');return !!c && c.type==='email' && !c.value && !!document.getElementById('reporte-correo-nota')?.textContent})()`), 'the report has the optional email, empty, with what it is for (D-317)');
   await revisarPantalla('reporte');
   await b.shot('12-reporte');
   await click('#btn-enviar-reporte'); await sleep(400);
