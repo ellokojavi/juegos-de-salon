@@ -10,7 +10,7 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 <p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Main menu">&nbsp;&nbsp;<img src="docs/screenshots/compartir.png" width="220" alt="Share sheet with the promo video"></p>
 <!-- /generado -->
 
-> The app is Chilean and it is built in Spanish. This README is in English so anyone can read it. The rest of the documentation, linked at the end, is in Spanish, and the screenshots show the app in Spanish, which is its default language.
+> The app is Chilean and it is built in Spanish. Everything internal to the repository is in English (D-316): the rest of the documentation, linked at the end, is being moved from Spanish to English, so some documents are still in Spanish for now. The screenshots show the app in Spanish, which is its default language.
 
 ## Games
 
@@ -795,7 +795,7 @@ Fork the repo, work on a topic branch and open a pull request to `main`; the tes
 PR. `main` is protected and whatever lands there goes live at once, so nothing gets in without a
 PR. Your PR brings its changelog entry without a number in `changelog/<your-branch>.md`: the version
 number is assigned on merge (D-300), and the owner handles the Firebase rules. The
-guide, in Spanish like the rest of the docs, is [CONTRIBUTING.md](CONTRIBUTING.md) (D-189).
+guide is [CONTRIBUTING.md](CONTRIBUTING.md) (D-189).
 
 ## License
 
@@ -803,7 +803,7 @@ guide, in Spanish like the rest of the docs, is [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Documentation
 
-These documents are in Spanish, like the rest of the project.
+These documents are being moved to English (D-316); the ones with a Spanish title are still in Spanish.
 
 <!-- generado: documentacion · written by python3 tools/release/readme.py actualizar -->
 - [Cánones y estándares de Juegos de Salón](docs/CANONES.md)
@@ -811,7 +811,7 @@ These documents are in Spanish, like the rest of the project.
 - [Decisiones de diseño y arquitectura](docs/DECISIONES.md)
 - [Cómo agregar un juego nuevo](docs/AGREGAR-JUEGO.md)
 - [Panel del dueño](docs/PANEL.md)
-- [Pruebas de punta a punta (Chrome headless por CDP)](tools/e2e/README.md)
+- [End-to-end tests (headless Chrome over CDP)](tools/e2e/README.md)
 - [Firebase](firebase/README.md)
 - [🕵️ Agentes (prototipo del laboratorio, en Proyectos activos)](docs/games/agents.md)
 - [Diseño: Batalla Naval](docs/games/battleship.md)
