@@ -11,15 +11,63 @@ from the repo:
 
 `from` is the address players see; Gmail sends as it once it is added under
 Settings → Accounts → "Send mail as". Without it, the mail goes from `user`.
+
+Every email sent is logged in ~/.config/juegos-de-salon/mail-log.jsonl (or $JUEGOS_MAIL_LOG), on
+the owner's machine and never in the repo: date, the masked address, a hash of the address, the
+subject and the issues. Never the address itself (the form promises to delete it). And, owner's
+rule for prudence: **at most one email to the same address every 24 hours**; a second one is
+refused before connecting. `python3 tools/agents/send-mail.py --log` prints the log.
 """
+import hashlib
 import json
 import os
 import smtplib
 import sys
 from email.message import EmailMessage
+from datetime import datetime, timedelta, timezone
 from email.utils import formataddr, make_msgid
 
 CONFIG = os.environ.get('JUEGOS_MAIL') or os.path.expanduser('~/.config/juegos-de-salon/mail.json')
+LOG = os.environ.get('JUEGOS_MAIL_LOG') or os.path.expanduser('~/.config/juegos-de-salon/mail-log.jsonl')
+WINDOW = timedelta(hours=24)
+
+
+def fingerprint(to):
+    return hashlib.sha256(to.strip().lower().encode('utf-8')).hexdigest()
+
+
+def mask(to):
+    u, d = to.strip().split('@', 1)
+    return f'{u[0]}********@********{d[-1]}'
+
+
+def read_log(path=None):
+    path = path or LOG
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding='utf-8') as f:
+        return [json.loads(l) for l in f if l.strip()]
+
+
+def recent(to, now=None, path=None):
+    """The last email to this address within 24 hours, or None."""
+    now = now or datetime.now(timezone.utc)
+    h = fingerprint(to)
+    for e in reversed(read_log(path)):
+        if e.get('hash') == h and now - datetime.fromisoformat(e['at']) < WINDOW:
+            return e
+    return None
+
+
+def log_sent(m, now=None, path=None):
+    path = path or LOG
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    e = {'at': (now or datetime.now(timezone.utc)).isoformat(timespec='seconds'), 'to': mask(m['to']), 'hash': fingerprint(m['to']),
+         'subject': m['subject'], 'issues': m.get('issues') or [], 'test': bool(m.get('test'))}
+    with open(path, 'a', encoding='utf-8') as f:
+        f.write(json.dumps(e, ensure_ascii=False) + '\n')
+    os.chmod(path, 0o600)
+    return e
 
 
 def message(cfg, m):
@@ -37,6 +85,10 @@ def message(cfg, m):
 
 
 def main():
+    if '--log' in sys.argv:
+        for e in read_log():
+            print(f"{e['at']}  {e['to']}  {'[test] ' if e.get('test') else ''}{e['subject']}  {' '.join('#' + str(n) for n in e.get('issues') or [])}")
+        return
     if not os.path.exists(CONFIG):
         sys.exit(f'No mail account at {CONFIG}: see the setup in tools/agents/send-mail.py (D-317).')
     if os.stat(CONFIG).st_mode & 0o077:
@@ -45,9 +97,14 @@ def main():
     m = json.load(sys.stdin)
     if not all(m.get(k) for k in ('to', 'subject', 'text')):
         sys.exit('The message needs "to", "subject" and "text".')
+    prev = recent(m['to'])
+    if prev:
+        sys.exit(f"Not sent: {prev['to']} already got an email at {prev['at']} (\"{prev['subject']}\"). One email per address every 24 hours.")
     with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=30) as smtp:
         smtp.login(cfg['user'], cfg['appPassword'])
         smtp.send_message(message(cfg, m))
+    e = log_sent(m)
+    print(f"Sent to {e['to']}, logged in {LOG}.", file=sys.stderr)
 
 
 if __name__ == '__main__':

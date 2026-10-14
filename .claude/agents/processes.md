@@ -148,7 +148,10 @@ change), saying why.
       in `~/.config/juegos-de-salon/mail.json`), deletes the address from Firebase and notes it
       on each issue. It refuses issues that don't share the same address. `--test-to <address>`
       sends the same email to that address instead and touches nothing else (to show the owner
-      how it looks). Without the mail account it fails and sends nothing: say so in your report.
+      how it looks). **At most one email per address every 24 hours** (owner's rule):
+      `send-mail.py` refuses a second one, so answer everything a player has in that one email,
+      and if it refuses, wait for the next round. Every email sent is logged on the Mac mini,
+      without the address (`python3 tools/agents/send-mail.py --log`). Without the mail account it fails and sends nothing: say so in your report.
    3. **Destructive feedback** (insults, mockery, spam, hostility with nothing to act on): no
       email. `node tools/agents/feedback.mjs forget <n> "destructive feedback"` only deletes the
       address. Harsh but honest criticism is not destructive: it gets its thank-you.
