@@ -142,10 +142,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           CORRIDA: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          titulo="main en rojo: Punta a punta"
+          titulo="main is red: end-to-end"
           fallaron=$(gh run view "$GITHUB_RUN_ID" -R "$GITHUB_REPOSITORY" --json jobs \
             --jq '.jobs[] | select(.conclusion == "failure") | "- `" + .name + "`"')
-          cuerpo=$(printf 'Las pruebas de punta a punta fallaron en `main` después de fusionar %s.\n\n%s\n\nCorrida y capturas: %s\n\nSi corrió dentro de Publicar, el sitio no se publicó: sigue la versión anterior hasta que main vuelva a verde (D-302).' \
+          cuerpo=$(printf 'The end-to-end tests failed on `main` after merging %s.\n\n%s\n\nRun and screenshots: %s\n\nIf it ran inside Publicar, the site was not published: the previous version stays until main is green again (D-302).' \
             "${GITHUB_SHA:0:7}" "$fallaron" "$CORRIDA")
           abierto=$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$titulo\" in:title" --json number --jq '.[0].number // empty')
           if [ -n "$abierto" ]; then
@@ -166,7 +166,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           CORRIDA: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          titulo="main en rojo: Punta a punta"
-          for n in $(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$titulo\" in:title" --json number --jq '.[].number'); do
-            gh issue close "$n" -R "$GITHUB_REPOSITORY" --comment "main volvió a verde en ${GITHUB_SHA:0:7}: $CORRIDA"
+          # The Spanish title is the one used before D-316, so issues opened before it close too
+          for titulo in "main is red: end-to-end" "main en rojo: Punta a punta"; do
+            for n in $(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$titulo\" in:title" --json number --jq '.[].number'); do
+              gh issue close "$n" -R "$GITHUB_REPOSITORY" --comment "main is green again at ${GITHUB_SHA:0:7}: $CORRIDA"
+            done
           done

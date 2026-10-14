@@ -67,21 +67,27 @@ export const requerimientosRepetidos = texto => repetidosDe([...texto.matchAll(/
 /** Las reglas de USABILIDAD.md (`**U-n · …`) definidas dos veces. */
 export const usabilidadRepetidas = texto => repetidosDe([...texto.matchAll(/\*\*U-(\d+[a-z]?) ·/g)].map(m => `U-${m[1]}`));
 
-/** Cada "## D-n · título" con su Estado y su Relación (null si no los tiene). */
+/** Each "## D-n · title" with its Status and Relation (null if missing); Spanish or English labels (D-316). */
 export function entradas(decisiones) {
   const partes = decisiones.split(/^(?=## D-\d+\b)/m).filter(p => p.startsWith('## D-'));
   return partes.map(p => {
     const [titulo] = p.split('\n');
-    const campo = nombre => { const m = p.match(new RegExp(`\\*\\*${nombre}:\\*\\*[ \\t]*([^\\n]*?)[ \\t]*(?: · \\*\\*|$)`, 'm')); return m ? m[1] : null; };
-    return { n: Number(titulo.match(/D-(\d+)/)[1]), titulo, sinUsar: /\(número sin usar\)/.test(titulo), estado: campo('Estado'), relacion: campo('Relación') };
+    const campo = nombre => { const m = p.match(new RegExp(`\\*\\*(?:${nombre}):\\*\\*[ \\t]*([^\\n]*?)[ \\t]*(?: · \\*\\*|$)`, 'm')); return m ? m[1] : null; };
+    return { n: Number(titulo.match(/D-(\d+)/)[1]), titulo, sinUsar: /\(número sin usar\)/.test(titulo), estado: campo('Estado|Status'), relacion: campo('Relación|Relation') };
   });
 }
 
-/** El Estado, si es uno de los cuatro de D-213: `{ tipo, por }`, con los D-n que lo corrigen o reemplazan. */
+/**
+ * The Status, if it is one of the four of D-213: `{ tipo, por }`, with the D-n that amend or replace
+ * it. English (D-316) and Spanish both read; `tipo` is always the Spanish name.
+ */
+const EN = { current: 'vigente', revoked: 'derogada', amended: 'corregida', replaced: 'reemplazada' };
 export function leerEstado(estado) {
   if (estado === 'vigente' || estado === 'derogada') return { tipo: estado, por: [] };
-  const m = (estado || '').match(/^(corregida|reemplazada) por (D-\d+(?:, D-\d+)*)$/);
-  return m ? { tipo: m[1], por: [...m[2].matchAll(/D-(\d+)/g)].map(x => Number(x[1])) } : null;
+  if (estado === 'current' || estado === 'revoked') return { tipo: EN[estado], por: [] };
+  const m = (estado || '').match(/^(corregida|reemplazada|amended|replaced) (?:por|by) (D-\d+(?:, D-\d+)*)$/);
+  if (!m || (EN[m[1]] ? !/ by /.test(estado) : !/ por /.test(estado))) return null;
+  return { tipo: EN[m[1]] || m[1], por: [...m[2].matchAll(/D-(\d+)/g)].map(x => Number(x[1])) };
 }
 
 /**
@@ -89,14 +95,14 @@ export function leerEstado(estado) {
  * del verbo hasta el verbo siguiente o el punto y coma: "corrige D-75 (el alto) y ajusta D-76" es
  * solo D-75; "D-176 cambia la invitación" no es nada (ahí D-176 es quien cambia).
  */
-const VERBOS = /\b(cambia|corrige|reemplaza|amplía|ajusta|acota|completa|cierra|deroga|revisa|ordena|quita|saca|sube|es excepción)\b/;
+const VERBOS = /\b(cambia|corrige|reemplaza|amplía|ajusta|acota|completa|cierra|deroga|revisa|ordena|quita|saca|sube|es excepción|changes|amends|replaces|extends|adjusts|narrows|completes|closes|revokes|revises|reorders|removes|is an exception to)\b/;
 export function corregidas(relacion) {
   const n = new Set();
   for (const clausula of (relacion || '').split(';')) {
     const trozos = clausula.split(new RegExp(VERBOS.source, 'g'));
     // split con un grupo deja [antes, verbo, después, verbo, después…]
     for (let i = 1; i < trozos.length; i += 2) {
-      if (!/^(cambia|corrige|reemplaza)$/.test(trozos[i])) continue;
+      if (!/^(cambia|corrige|reemplaza|changes|amends|replaces)$/.test(trozos[i])) continue;
       for (const m of trozos[i + 1].matchAll(/\bD-(\d+)\b/g)) n.add(Number(m[1]));
     }
   }

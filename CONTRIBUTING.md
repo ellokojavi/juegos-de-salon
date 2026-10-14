@@ -1,57 +1,57 @@
-# Cómo aportar
+# How to contribute
 
-Gracias por querer sumar algo a Juegos de Salón. La app es HTML, CSS y JavaScript con módulos
-ES: sin build, sin npm y sin cuenta de nada para trabajar en ella.
+Thanks for wanting to add something to Juegos de Salón. The app is HTML, CSS and JavaScript with ES
+modules: no build, no npm and no account for anything to work on it.
 
-## El camino: fork y PR
+## The path: fork and PR
 
-1. Haz un **fork** de `ellokojavi/juegos-de-salon` en GitHub y clónalo.
-2. Crea una **rama con nombre de tema** (`dudo-modo-rapido`, no `v0-90`).
-3. Trabaja, prueba (abajo) y abre un **PR hacia `main`**. Las pruebas corren solas en el PR y
-   muestran ✅ o ❌ en dos checks, `pruebas` y `Punta a punta`; con uno en rojo no se fusiona.
-4. El dueño lo revisa, lo fusiona y lo publica. `main` está protegida: nada entra sin PR, y lo
-   que entra a `main` sale al tiro en https://juegosdesalon.cl/.
+1. **Fork** `ellokojavi/juegos-de-salon` on GitHub and clone it.
+2. Create a **branch named by topic** (`dudo-modo-rapido`, not `v0-90`).
+3. Work, test (below) and open a **PR to `main`**. The tests run on their own in the PR and
+   show ✅ or ❌ in two checks, `pruebas` and `Punta a punta`; with one red, it does not merge.
+4. The owner reviews it, merges it and publishes it. `main` is protected: nothing goes in without a PR, and
+   what goes into `main` goes out right away on https://juegosdesalon.cl/.
 
-Una idea grande (un juego nuevo, un cambio de reglas) conviene conversarla antes en un issue,
-para no hacer trabajo que después no calza.
+A big idea (a new game, a rules change) is worth discussing first in an issue,
+so as not to do work that later does not fit.
 
-## Levantarlo
+## Running it
 
 ```bash
-python3 -m http.server 8765 -d public   # el sitio es public/; los módulos ES necesitan HTTP
+python3 -m http.server 8765 -d public   # the site is public/; ES modules need HTTP
 ```
 
-y abrir http://localhost:8765/. Para mirarlo en el celular, cualquier forma de servir `public/`
-en la red local sirve.
+and open http://localhost:8765/. To look at it on your phone, any way of serving `public/`
+on the local network works.
 
-**Ojo:** los modos de varios celulares usan la base de Firebase **de producción** (la
-configuración pública está en `public/assets/js/firebase-config.js`). Una sala abierta desde tu
-computador es una sala de verdad: aparece en el panel del dueño. No rompe nada, pero ábrelas lo
-justo.
+**Careful:** the multi-phone modes use the **production** Firebase database (the
+public config is in `public/assets/js/firebase-config.js`). A room opened from your
+computer is a real room: it shows up in the owner panel. It breaks nothing, but open only as
+many as you need.
 
-## Antes de escribir código
+## Before writing code
 
-- **[docs/CANONES.md](docs/CANONES.md)**: las reglas de hoy de todos los juegos (idiomas, sonido, modos,
-  memoria de partida, interfaz táctil, anti-trampa, pruebas, documentación). Al final tiene una
-  lista de chequeo.
-- **[docs/USABILIDAD.md](docs/USABILIDAD.md)**: cómo se escriben los textos y dónde van los botones.
-- **[docs/AGREGAR-JUEGO.md](docs/AGREGAR-JUEGO.md)**, si es un juego nuevo.
-- **[docs/DECISIONES.md](docs/DECISIONES.md)**: por qué las cosas son como son. Antes de cambiar algo
-  que parece raro, búscalo ahí.
+- **[docs/CANONES.md](docs/CANONES.md)**: today's rules for every game (languages, sound, modes,
+  game memory, touch interface, anti-cheating, tests, documentation). At the end it has a
+  checklist.
+- **[docs/USABILIDAD.md](docs/USABILIDAD.md)**: how texts are written and where buttons go.
+- **[docs/AGREGAR-JUEGO.md](docs/AGREGAR-JUEGO.md)**, if it is a new game.
+- **[docs/DECISIONES.md](docs/DECISIONES.md)**: why things are the way they are. Before changing something
+  that looks odd, look it up there.
 
-Lo que más se olvida:
+What gets forgotten most:
 
-- **Todo texto va en español, inglés, portugués de Brasil y alemán**, con las mismas claves en
-  todos (C-3). Español chileno, tuteo. Los demás adaptados, no calcados. El glosario del alemán
-  está en [docs/ALEMAN.md](docs/ALEMAN.md).
-- **Reusar antes de inventar**: el arrastre, el teclado, el chat, las pantallas de pasar el
-  celular y lo que se comparte ya existen en `public/assets/` (D-102).
-- **Botones de 44 px y sin scroll horizontal** a 320 px de ancho (C-8).
+- **Every player-facing text goes in Spanish, English, Brazilian Portuguese and German**, with the same keys in
+  all of them (C-3). Chilean Spanish, informal "tú". The others adapted, not copied word for word. The German glossary
+  is in [docs/ALEMAN.md](docs/ALEMAN.md).
+- **Reuse before inventing**: drag and drop, the keyboard, the chat, the pass-the-phone
+  screens and what gets shared already exist in `public/assets/` (D-102).
+- **44 px buttons and no horizontal scroll** at 320 px width (C-8).
 
-## Pruebas
+## Tests
 
-GitHub corre en cada PR todos los `*.test.mjs` y `*.test.py` y revisa que el README esté al día.
-Lo mismo, en tu computador:
+GitHub runs every `*.test.mjs` and `*.test.py` on each PR and checks that the README is up to date.
+The same, on your computer:
 
 ```bash
 for f in $(git ls-files '*.test.mjs'); do node "$f" || echo "FALLA $f"; done
@@ -60,28 +60,28 @@ python3 tools/release/readme.py revisar
 node tools/release/og.mjs revisar
 ```
 
-Las pruebas de punta a punta (`tools/e2e/`) juegan partidas completas en Chrome; ver su README.
-Para mirar una pantalla suelta: `node tools/e2e/mirar.mjs <juego> <pantalla> --ancho 320`.
+The end-to-end tests (`tools/e2e/`) play complete games in Chrome; see their README.
+To look at a single screen: `node tools/e2e/mirar.mjs <game> <screen> --ancho 320`.
 
-## Lo que hace el dueño al fusionar (no lo hagas en tu PR)
+## What the owner does on merge (do not do it in your PR)
 
-- **El número de versión** (D-205, D-300): se asigna solo al fusionar, en el orden en que entran
-  los PR. Tu PR trae su entrada **sin número** en `changelog/<tu-rama>.md` (primera línea
-  `nivel: parche` o `nivel: menor`, y después las líneas `- …` que cuentan qué cambió); no toques
+- **The version number** (D-205, D-300): assigned on its own on merge, in the order the PRs
+  land. Your PR brings its entry **without a number** in `changelog/<your-branch>.md` (first line
+  `nivel: parche` or `nivel: menor`, and then `- …` lines that tell what changed); do not touch
   `CHANGELOG.md`.
-- **El número de las decisiones** (D-n): si tu cambio necesita una, escríbela como `D-??` y se
-  numera al fusionar.
-- **Publicar las reglas de Firebase** (`firebase/database.rules.json`): necesitan una llave que
-  solo tiene el dueño. Si tu PR las cambia, dilo en la descripción.
-- **El panel del dueño** (`public/panel/`) no se puede abrir sin su cuenta; para mirarlo hay datos
-  sembrados (`node tools/e2e/mirar.mjs panel datos`).
+- **The number of decisions** (D-n): if your change needs one, write it as `D-??` and it gets
+  numbered on merge.
+- **Publishing the Firebase rules** (`firebase/database.rules.json`): they need a key that
+  only the owner has. If your PR changes them, say so in the description.
+- **The owner panel** (`public/panel/`) cannot be opened without the owner's account; to look at it there is seeded
+  data (`node tools/e2e/mirar.mjs panel datos`).
 
-## Con Claude Code
+## With Claude Code
 
-Si trabajas con Claude Code, lee `CLAUDE.md` solo: ahí están las mismas reglas y las
-herramientas. Algunas partes son del dueño (fusionar, publicar reglas, leer reportes y el panel
-con su llave); en un fork, Claude se queda en abrir el PR.
+If you work with Claude Code, just read `CLAUDE.md`: it has the same rules and the
+tools. Some parts belong to the owner (merging, publishing rules, reading reports and the panel
+with the owner's key); in a fork, Claude stops at opening the PR.
 
-## Licencia
+## License
 
-Al aportar, aceptas que tu código se publique con la [licencia MIT](LICENSE) del proyecto.
+By contributing, you agree that your code is published under the project's [MIT license](LICENSE).

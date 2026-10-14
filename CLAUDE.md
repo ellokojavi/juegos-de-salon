@@ -1,279 +1,290 @@
-# Juegos de Salón — contexto para Claude
+# Juegos de Salón — context for Claude
 
-App web estática (HTML, CSS y JavaScript con módulos ES, sin build ni npm) con juegos de salón,
-publicada en GitHub Pages: https://juegosdesalon.cl/
+Static web app (HTML, CSS and JavaScript with ES modules, no build and no npm) with party games,
+published on GitHub Pages: https://juegosdesalon.cl/
 
-Esta guía es el índice y las reglas de sesión. **Las reglas de los juegos no se repiten aquí:
-viven en un solo lugar** (D-213), y este archivo dice dónde.
+This guide is the index and the session rules. **Game rules are not repeated here: they live in
+one place** (D-213), and this file says where.
 
-## Dónde está cada cosa (D-192)
+## Repository language: English (D-316)
 
-- **`public/` es el sitio**, tal como se sirve: carpeta = URL, en inglés (`public/hangman/` →
-  `/hangman/`). Es lo único que se publica. Se sirve con `python3 -m http.server 8765 -d public`.
-- **El id de un juego no es su carpeta**: `'ahorcado'` vive en `/hangman/`. El id lo guardan las
-  salas, el panel y el `localStorage`, y no se cambia. Las rutas viejas en español (`public/ahorcado/`,
-  `public/copa/`, `public/minijuegos/…`, `public/minigames/…`) son páginas puente generadas: no se editan.
-- **El taller**, al lado: `docs/`, `firebase/`, `marketing/` y `tools/` por función (`release/`,
-  `firebase/`, `generators/`, `agents/`, `e2e/<juego>/`).
-- Las carpetas nuevas van en inglés, y **todo lo que se ve en una URL también**: nombres de los
-  parámetros y sus valores (`?room=`, `?seed=`, `?test`, `&demo=podium`), leídos con
-  `public/assets/js/parametros.js`, que guarda los nombres de antes como alias (C-18, D-266). Los
-  nombres de las variables del código, la documentación, los mensajes y los nombres de archivo de
-  las herramientas siguen en español. El README va en inglés (C-13, D-78).
+Everything written inside the repo is in English: documents, decisions, canons, changelog entries,
+code comments, tool messages, commit messages, PR descriptions, issues and replies on GitHub. The
+owner may write instructions in Spanish or English; that does not change the language of what goes
+into the repo. Exceptions: what the player reads (the app stays in its four languages, Spanish by
+default, C-3), text written by people outside the team (player feedback), and persisted data keys
+(game ids like `'ahorcado'`, Firebase paths and fields, `localStorage` keys), which are data, not
+language. Older Spanish content and Spanish file and identifier names are being migrated in phases
+(D-316); until then, new text is English even inside a Spanish file.
 
-## Dónde está cada regla (D-213)
+## Where everything is (D-192)
 
-| Qué | Dónde | Cuándo se lee |
+- **`public/` is the site**, exactly as served: folder = URL, in English (`public/hangman/` →
+  `/hangman/`). It is the only thing that gets published. Serve it with `python3 -m http.server 8765 -d public`.
+- **A game's id is not its folder**: `'ahorcado'` lives in `/hangman/`. The id is stored by
+  rooms, the panel and `localStorage`, and it does not change. The old Spanish paths (`public/ahorcado/`,
+  `public/copa/`, `public/minijuegos/…`, `public/minigames/…`) are generated bridge pages: do not edit them.
+- **The workshop**, alongside: `docs/`, `firebase/`, `marketing/` and `tools/` by function (`release/`,
+  `firebase/`, `generators/`, `agents/`, `e2e/<game>/`).
+- New folders are in English, and **so is everything visible in a URL**: parameter names and
+  their values (`?room=`, `?seed=`, `?test`, `&demo=podium`), read with
+  `public/assets/js/parametros.js`, which keeps the old names as aliases (C-18, D-266). Everything
+  internal is English (D-316, which replaces D-78); the Spanish names that still exist are being
+  renamed in phases.
+
+## Where each rule is (D-213)
+
+| What | Where | When to read it |
 |---|---|---|
-| Cómo se construye un juego (C-n) | [docs/CANONES.md](docs/CANONES.md), con su lista de chequeo al final | Antes de construir o modificar un juego o la portada (C-17), y al terminar |
-| Textos, botones, compartir (U-n) | [docs/USABILIDAD.md](docs/USABILIDAD.md): U-1, U-8 y **U-18** antes de escribir instrucciones | Antes de escribir algo que el jugador lee |
-| Por qué es así (D-n) | [docs/DECISIONES.md](docs/DECISIONES.md), con un índice por tema arriba | Antes de cambiar algo que parece raro |
-| Un juego nuevo, paso a paso | [docs/AGREGAR-JUEGO.md](docs/AGREGAR-JUEGO.md) | Al empezar uno |
-| Cada juego | `docs/games/<carpeta>.md`, con sus excepciones a los cánones | Antes de tocarlo |
-| Qué se pidió (RP-n…) | [docs/REQUERIMIENTOS.md](docs/REQUERIMIENTOS.md) | Al cerrar uno |
-| Alemán | [docs/ALEMAN.md](docs/ALEMAN.md), el glosario | Al traducir |
-| Panel del dueño | [docs/PANEL.md](docs/PANEL.md) | Al tocar señales o el panel |
-| Pruebas de punta a punta | [tools/e2e/README.md](tools/e2e/README.md) | Al correr o escribir un guion |
-| Firebase | [firebase/README.md](firebase/README.md) | Al tocar las reglas |
+| How a game is built (C-n) | [docs/CANONES.md](docs/CANONES.md), with its checklist at the end | Before building or changing a game or the home page (C-17), and when done |
+| Texts, buttons, sharing (U-n) | [docs/USABILIDAD.md](docs/USABILIDAD.md): U-1, U-8 and **U-18** before writing instructions | Before writing anything the player reads |
+| Why it is this way (D-n) | [docs/DECISIONES.md](docs/DECISIONES.md), with a topic index at the top | Before changing something that looks odd |
+| A new game, step by step | [docs/AGREGAR-JUEGO.md](docs/AGREGAR-JUEGO.md) | When starting one |
+| Each game | `docs/games/<folder>.md`, with its exceptions to the canons | Before touching it |
+| What was requested (RP-n…) | [docs/REQUERIMIENTOS.md](docs/REQUERIMIENTOS.md) | When closing one |
+| German | [docs/ALEMAN.md](docs/ALEMAN.md), the glossary | When translating |
+| Owner panel | [docs/PANEL.md](docs/PANEL.md) | When touching signals or the panel |
+| End-to-end tests | [tools/e2e/README.md](tools/e2e/README.md) | When running or writing a script |
+| Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
 
-**Una regla que cambia se cambia en su lugar, en el mismo PR:** si una decisión nueva cambia un
-canon, el PR edita el canon y marca la decisión vieja (`corregida por` / `reemplazada por`). Un
-canon que contradice a una decisión vigente es un error, no historia.
+**A rule that changes is changed in its place, in the same PR:** if a new decision changes a
+canon, the PR edits the canon and marks the old decision (`corregida por` / `reemplazada por`). A
+canon that contradicts a decision in force is a bug, not history.
 
-## Varias sesiones a la vez (D-135)
+## Several sessions at once (D-135)
 
-Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo:
+Several Claude sessions may be working in this repo at the same time:
 
-- **Cada sesión trabaja en su propia copia** (`git worktree add ../juegos-de-salon-<tema> -b <rama>`),
-  nunca en la carpeta principal: ahí los archivos sin commitear de una se cuelan en el commit de otra.
-- **Ramas con nombre de tema** (`copa-reglas-plegadas`, `tyf-jugar-solo`), no de versión.
-- **La versión se asigna sola al fusionar** (D-300): el PR deja su entrada **sin número** en
-  `changelog/<rama>.md` (`node tools/release/changelog.mjs nueva [parche|menor]`), y el número sale
-  del orden en que los PR entran a `main`. `CHANGELOG.md` no se toca en un PR: ahí chocaban todos.
-  Un PR abierto antes de esto pasa su entrada con `node tools/release/changelog.mjs migrar`.
-- **Las decisiones (D-n) se reservan** antes de escribirlas (D-301):
-  `node tools/agents/decision.mjs reservar [--cuantas n]` sube una rama `reserva/D-n` que GitHub
-  niega si ya existe, así que dos sesiones nunca toman el mismo número. También deja configurado el
-  driver que fusiona `docs/DECISIONES.md` decisión por decisión al traer `main`
-  (`.gitattributes`; `decision.mjs instalar` en una copia que no reservó).
-- **Un solo push al terminar** (D-303): los commits se hacen en local y se suben juntos cuando el
-  trabajo, y el de los agentes, está listo. Cada push a un PR lanza los 58 guiones y cancela los
-  del anterior: un tercio del cómputo de la punta a punta se iba en corridas canceladas.
-- Antes de tocar la rama de otro PR, preguntarle a esa sesión (ListAgents / SendMessage).
-- **Al fusionar, la copia se borra**, en el mismo movimiento, desde la carpeta principal (D-206):
+- **Each session works in its own worktree** (`git worktree add ../juegos-de-salon-<topic> -b <branch>`),
+  never in the main folder: there, one session's uncommitted files leak into another's commit.
+- **Branches named by topic** (`copa-reglas-plegadas`, `tyf-jugar-solo`), not by version.
+- **The version is assigned on merge** (D-300): the PR leaves its entry **without a number** in
+  `changelog/<branch>.md` (`node tools/release/changelog.mjs nueva [parche|menor]`), and the number comes
+  from the order in which PRs land on `main`. `CHANGELOG.md` is not touched in a PR: that is where they all collided.
+  A PR opened before this moves its entry over with `node tools/release/changelog.mjs migrar`.
+- **Decisions (D-n) are reserved** before they are written (D-301):
+  `node tools/agents/decision.mjs reservar [--cuantas n]` pushes a `reserva/D-n` branch that GitHub
+  rejects if it already exists, so two sessions never take the same number. It also configures the
+  driver that merges `docs/DECISIONES.md` decision by decision when pulling `main`
+  (`.gitattributes`; `decision.mjs instalar` in a worktree that did not reserve).
+- **A single push at the end** (D-303): commits are made locally and pushed together when the
+  work, including the agents' work, is ready. Each push to a PR launches the 58 scripts and cancels
+  the previous run's: a third of the end-to-end compute was going to canceled runs.
+- Before touching another PR's branch, ask that session (ListAgents / SendMessage).
+- **On merge, the worktree is deleted**, in the same move, from the main folder (D-206):
   ```bash
-  git worktree remove ../juegos-de-salon-<tema>   # se niega si quedó algo sin commitear
-  git branch -d <rama>                            # se niega si la rama no estaba fusionada
+  git worktree remove ../juegos-de-salon-<topic>   # refuses if anything is left uncommitted
+  git branch -d <branch>                           # refuses if the branch was not merged
   ```
-  Si alguno se niega, hay trabajo que no está en `main`: se mira antes de forzar (`--force`, `-D`).
-  Sin trabajo pendiente se ve **una sola** carpeta `juegos-de-salon` (`git worktree list`; si una
-  carpeta se borró a mano, `git worktree prune`). Con el auto-merge, el PR puede fusionarse cuando
-  nadie mira: **al empezar cada sesión**, un hook (`.claude/settings.json`) corre
-  `node tools/agents/limpiar-copias.mjs`, que borra las copias cuya rama ya entró a `main` por un
-  merge y nombra las que tienen cambios sin commitear (D-218). GitHub borra la rama remota al fusionar.
-- **Ninguna copia queda sin uso** (D-252, pedido del dueño): la sesión que crea una copia la borra
-  apenas sabe que no va a dar PR (el trabajo ya estaba hecho, se descartó o se juntó con otro), sin
-  esperar al hook, y al terminar su trabajo solo quedan las copias con PR abierto. El hook barre
-  lo que se escape, también las copias que crea la app de Claude (en .claude/worktrees): las **vacías** (sin commits
-  propios, de más de un día) y las **abandonadas** (commits fuera de `main`, sin PR abierto y
-  quietas más de tres días), que antes de borrarse suben su rama a GitHub para no perder nada.
-  Nunca toca una copia con cambios sin commitear; la **basura de pruebas** (`undefined/`,
-  `--parte/` con solo perfiles de Chrome y capturas) no cuenta como cambio y se va con la copia.
-  También borra las **ramas locales** sin copia que ya entraron a `main` o que ya no tienen rama
-  en GitHub con todos sus commits allá; una con commits que solo están aquí se nombra y se deja.
-  Además del hook, **la corre cada día la ronda del agente de procesos** y la cuenta en su informe
-  (D-315). Los guiones de `tools/e2e/` toman su carpeta de salida con `salida()`, nunca de
-  `process.argv[2]` a mano.
-- **Pruebas en paralelo:** cada sesión sirve su copia en su puerto (`python3 -m http.server 87xx -d public`),
-  y corre los guiones con `SITIO=http://localhost:87xx`. Los puertos de Chrome no se eligen: cada
-  Chrome toma uno libre y muere con su guion, también si el guion falla o se corta (`cdp.mjs`,
-  D-213). Si alguno quedara vivo, se busca por su perfil, no por el puerto, y nunca con
-  `pkill -f remote-debugging-port` a secas. Detalle en [tools/e2e/README.md](tools/e2e/README.md).
+  If either refuses, there is work that is not in `main`: look at it before forcing (`--force`, `-D`).
+  With no pending work there is **a single** `juegos-de-salon` folder (`git worktree list`; if a
+  folder was deleted by hand, `git worktree prune`). With auto-merge, the PR may merge while
+  nobody is watching: **at the start of each session**, a hook (`.claude/settings.json`) runs
+  `node tools/agents/limpiar-copias.mjs`, which deletes the worktrees whose branch already reached `main` through a
+  merge and names those with uncommitted changes (D-218). GitHub deletes the remote branch on merge.
+- **No worktree is left unused** (D-252, the owner's request): the session that creates a worktree deletes it
+  as soon as it knows it will not produce a PR (the work was already done, was discarded or was merged into another), without
+  waiting for the hook, and when its work is done only worktrees with an open PR remain. The hook sweeps
+  whatever slips through, including the worktrees the Claude app creates (in .claude/worktrees): the **empty** ones (no commits
+  of their own, older than a day) and the **abandoned** ones (commits outside `main`, no open PR and
+  idle for more than three days), which push their branch to GitHub before being deleted so nothing is lost.
+  It never touches a worktree with uncommitted changes; **test junk** (`undefined/`,
+  `--parte/` with only Chrome profiles and screenshots) does not count as a change and goes with the worktree.
+  It also deletes **local branches** without a worktree that already reached `main` or that no longer have a branch
+  on GitHub holding all their commits; one with commits that exist only here is named and left alone.
+  Besides the hook, **the processes agent's round runs it every day** and counts it in its report
+  (D-315). The scripts in `tools/e2e/` take their output folder with `salida()`, never from
+  `process.argv[2]` by hand.
+- **Tests in parallel:** each session serves its worktree on its own port (`python3 -m http.server 87xx -d public`),
+  and runs the scripts with `SITIO=http://localhost:87xx`. Chrome ports are not chosen: each
+  Chrome takes a free one and dies with its script, also if the script fails or is cut off (`cdp.mjs`,
+  D-213). If one were left alive, look for it by its profile, not by the port, and never with a bare
+  `pkill -f remote-debugging-port`. Details in [tools/e2e/README.md](tools/e2e/README.md).
 
-## Si trabajas en un fork (D-189)
+## If you work in a fork (D-189)
 
-Quien aporta desde afuera sigue [CONTRIBUTING.md](CONTRIBUTING.md): rama de tema y PR hacia
-`ellokojavi/juegos-de-salon`. Ahí Claude **no** estampa versión (su entrada va sin número en
-`changelog/`, como en todo PR), numera las decisiones como `D-??` (no puede reservar), no publica reglas de Firebase ni lee el panel o los reportes (necesitan la
-llave del dueño) y no fusiona. Todo lo demás de esta guía vale igual.
+Outside contributors follow [CONTRIBUTING.md](CONTRIBUTING.md): topic branch and PR to
+`ellokojavi/juegos-de-salon`. There Claude does **not** stamp a version (its entry goes without a number in
+`changelog/`, as in every PR), numbers decisions as `D-??` (it cannot reserve), does not publish Firebase rules or read the panel or the reports (they need the
+owner's key) and does not merge. Everything else in this guide applies the same.
 
-## Antes de proponer una fusión
+## Before proposing a merge
 
-1. **Los agentes de usabilidad y de documentación, a la vez**, en el mismo mensaje
-   (`.claude/agents/usabilidad.md` y `documentacion.md`, D-132, D-172): uno mira la app y el otro
-   los documentos. Los dos arreglan en la rama del mismo PR (D-213), en commits locales que la
-   sesión sube con los suyos en un solo push (D-303). Cuánta usabilidad, según la etapa del juego
-   (D-304); `node tools/agents/portadas.mjs revisar` la dice en su primera línea:
-   - **PR solo del laboratorio** (todo lo de `public/` en `public/labs/`): documentación, y
-     usabilidad corta: `portadas.mjs revisar` y las pantallas que cambiaron, a 320 px.
-   - **PR que saca un juego del laboratorio** (pierde `labs: true`, o su carpeta sale de
-     `public/labs/`): **pasada completa** de usabilidad al juego entero —todas sus pantallas, los
-     cuatro idiomas, 320 px, su portada y su lugar en la portada general— y documentación con el
-     README y la tarjeta social.
-   - **Todo lo demás:** los dos, como siempre.
-2. **¿Hay alguien jugando?** `node tools/firebase/en-curso.mjs` (sale con 3 si hay salas en vivo
-   o copas en curso; necesita la llave del dueño).
-3. **No se fusiona sin ✅ en GitHub en `pruebas` y en `punta-a-punta`** (D-143,
-   D-193, D-213, D-216), aunque ya hayan pasado aquí. `main` exige los dos: `punta-a-punta` es el
-   job que resume el workflow `Punta a punta` (los guiones en grupos parejos, D-307) y sale en rojo si alguno falla.
-   En un PR que no toca nada del navegador (documentación, `tools/agents/`, workflows, reglas)
-   no corre ningún guion y sale en verde igual; un guion que falla se repite una vez y, si pasa,
-   deja un aviso "Intermitente" (D-299).
-4. **Auto-merge por defecto** (D-216, pedido del dueño): cuando el PR está listo para fusionarse
-   —los agentes terminaron y sus arreglos están subidos, y la entrada de `changelog/<rama>.md` ya
-   está en la rama (D-300)—, se activa el auto-merge de GitHub en vez de esperar el ✅ a mano:
+1. **The usability and documentation agents, together**, in the same message
+   (`.claude/agents/usabilidad.md` and `documentacion.md`, D-132, D-172): one looks at the app and the other
+   at the documents. Both fix things on the same PR's branch (D-213), in local commits that the
+   session pushes with its own in a single push (D-303). How much usability depends on the game's stage
+   (D-304); `node tools/agents/portadas.mjs revisar` says it on its first line:
+   - **Lab-only PR** (everything in `public/` is under `public/labs/`): documentation, and
+     short usability: `portadas.mjs revisar` and the screens that changed, at 320 px.
+   - **PR that takes a game out of the lab** (it loses `labs: true`, or its folder leaves
+     `public/labs/`): a **full usability pass** over the whole game —all its screens, the
+     four languages, 320 px, its home page and its place on the main home page— and documentation with the
+     README and the social card.
+   - **Everything else:** both, as always.
+2. **Is anyone playing?** `node tools/firebase/en-curso.mjs` (exits with 3 if there are live rooms
+   or Cups in progress; needs the owner's key).
+3. **No merge without ✅ on GitHub in `pruebas` and in `punta-a-punta`** (D-143,
+   D-193, D-213, D-216), even if they already passed here. `main` requires both: `punta-a-punta` is the
+   job that summarizes the `Punta a punta` workflow (the scripts in even groups, D-307) and goes red if any fails.
+   In a PR that touches nothing in the browser (documentation, `tools/agents/`, workflows, rules)
+   no script runs and it goes green anyway; a failing script is retried once and, if it passes,
+   leaves an "Intermitente" (flaky) notice (D-299).
+4. **Auto-merge by default** (D-216, the owner's request): when the PR is ready to merge
+   —the agents are done and their fixes are pushed, and the `changelog/<branch>.md` entry is already
+   on the branch (D-300)—, GitHub's auto-merge is turned on instead of waiting for the ✅ by hand:
    ```bash
    gh pr merge <n> --auto --merge
    ```
-   GitHub lo fusiona solo cuando `pruebas` y `punta-a-punta` pasan; si fallan o hay conflicto,
-   no fusiona y hay que arreglarlo. Un PR que no está listo (un borrador, uno que espera una
-   decisión del dueño) no lleva auto-merge.
-5. **Monitor de CI** (D-218): junto con el auto-merge se activa el monitor del PR en la app
-   (`set_monitor` con `auto_fix` y `address_comments`), que despierta a la sesión cuando una prueba
-   falla, hay un conflicto o llega un comentario: lo único que necesita a alguien. Nunca se sondea
-   el CI. Lo de después de fusionar ya no espera a nadie: `publicar.yml` corre las pruebas y la
-   punta a punta sobre `main` (salvo que ese mismo árbol ya la haya pasado en el PR, D-308), publica las reglas de Firebase y el sitio (D-302), y la
-   copia la borra el hook de inicio de sesión.
+   GitHub merges it on its own when `pruebas` and `punta-a-punta` pass; if they fail or there is a conflict,
+   it does not merge and it has to be fixed. A PR that is not ready (a draft, one waiting for a
+   decision from the owner) does not get auto-merge.
+5. **CI monitor** (D-218): along with auto-merge, the PR monitor in the app is turned on
+   (`set_monitor` with `auto_fix` and `address_comments`), which wakes the session when a test
+   fails, there is a conflict or a comment arrives: the only things that need someone. CI is never
+   polled. What happens after the merge no longer waits for anyone: `publicar.yml` runs the tests and the
+   end-to-end suite on `main` (unless that same tree already passed it in the PR, D-308), publishes the Firebase rules and the site (D-302), and the
+   worktree is deleted by the session-start hook.
 
-## Al fusionar y publicar (C-11, D-205, D-300, D-302)
+## On merge and publish (C-11, D-205, D-300, D-302)
 
-- La entrada va sin número en `changelog/<rama>.md` (D-300). La versión de hoy es la primera
-  entrada de `CHANGELOG.md` subida una vez por cada entrada de `changelog/` que todavía no se juntó,
-  en el orden en que llegaron a `main`; el agente de procesos las junta en `CHANGELOG.md`, con su
-  número, en su ronda (`juntar`), y eso no cambia la versión. El check `pruebas` frena un PR que
-  escribe una entrada con número en `CHANGELOG.md` y avisa si cambia `public/` sin entrada.
+- The entry goes without a number in `changelog/<branch>.md` (D-300). Today's version is the first
+  entry of `CHANGELOG.md` bumped once for each `changelog/` entry not yet collected,
+  in the order they reached `main`; the processes agent collects them into `CHANGELOG.md`, with their
+  number, in its round (`juntar`), and that does not change the version. The `pruebas` check blocks a PR that
+  writes a numbered entry in `CHANGELOG.md` and warns if it changes `public/` without an entry.
   ```bash
-  node tools/release/changelog.mjs nueva [parche|menor]   # crea changelog/<rama>.md
-  node tools/release/changelog.mjs ver                    # las pendientes, con el número que les toca
-  node tools/release/changelog.mjs migrar                 # una entrada con número (de antes) → changelog/
-  node tools/release/changelog.mjs juntar                 # ronda de procesos: las pendientes a CHANGELOG.md
-  python3 tools/release/set-version.py --version             # la versión de hoy
-  python3 tools/release/set-version.py --sitio /tmp/sitio    # estampa una copia, como al publicar
+  node tools/release/changelog.mjs nueva [parche|menor]   # creates changelog/<branch>.md
+  node tools/release/changelog.mjs ver                    # the pending ones, with the number each gets
+  node tools/release/changelog.mjs migrar                 # a numbered entry (from before) → changelog/
+  node tools/release/changelog.mjs juntar                 # processes round: the pending ones into CHANGELOG.md
+  python3 tools/release/set-version.py --version             # today's version
+  python3 tools/release/set-version.py --sitio /tmp/sitio    # stamps a copy, as when publishing
   ```
-- Las páginas de `public/` no llevan `?v=` ni import map: `.github/workflows/publicar.yml` corre
-  las pruebas **y la punta a punta entera** (D-302; si fallan dos veces, no publica y abre el issue
-  "main en rojo"), salvo que el árbol que publica ya la haya pasado en un PR o solo cambie lo que no
-  llega al navegador sobre uno que la pasó (`tools/e2e/ya-probado.mjs`, D-308), estampa la versión en la copia que publica y comprueba que el sitio en línea la
-  sirva.
-- Las reglas de Firebase las publica `publicar.yml` en cada fusión, antes que el sitio (D-218):
-  no sube nada si ya están, y si Firebase las rechaza el sitio no se publica. Necesita el secreto
-  `FIREBASE_ADMIN_JSON` en GitHub (la llave de la cuenta de servicio, que carga el dueño); sin él,
-  avisa y se publican a mano, como antes (D-122; la llave en `~/.config/juegos-de-salon/firebase-admin.json`):
+- The pages in `public/` carry no `?v=` and no import map: `.github/workflows/publicar.yml` runs
+  the tests **and the whole end-to-end suite** (D-302; if they fail twice, it does not publish and opens the
+  "main is red" issue), unless the tree it publishes already passed it in a PR or only changes what does not
+  reach the browser on top of one that passed (`tools/e2e/ya-probado.mjs`, D-308), stamps the version on the copy it publishes and checks that the live site
+  serves it.
+- The Firebase rules are published by `publicar.yml` on every merge, before the site (D-218):
+  it uploads nothing if they are already there, and if Firebase rejects them the site is not published. It needs the
+  `FIREBASE_ADMIN_JSON` secret on GitHub (the service account key, loaded by the owner); without it,
+  it warns and they are published by hand, as before (D-122; the key in `~/.config/juegos-de-salon/firebase-admin.json`):
   ```bash
-  node tools/firebase/reglas.mjs publicar     # sube las reglas y verifica que quedaron
-  node tools/firebase/reglas.mjs revisar      # ¿lo publicado es lo del repo?
+  node tools/firebase/reglas.mjs publicar     # uploads the rules and checks they took
+  node tools/firebase/reglas.mjs revisar      # is what is published what is in the repo?
   ```
-- La copia y la rama se borran solas (arriba, D-218, D-252); si se quiere ya, `node tools/agents/limpiar-copias.mjs`.
+- The worktree and the branch are deleted on their own (above, D-218, D-252); to do it now, `node tools/agents/limpiar-copias.mjs`.
 
-## README, capturas y tarjetas sociales (C-13, D-51, D-181)
+## README, screenshots and social cards (C-13, D-51, D-181)
 
-El check `pruebas` de cada PR frena un README o una tarjeta atrasados.
+The `pruebas` check on each PR blocks an out-of-date README or card.
 
 ```bash
-python3 tools/release/readme.py revisar        # ¿quedó algo atrás?
-python3 tools/release/readme.py actualizar     # reescribe los bloques <!-- generado: ... -->
-python3 tools/release/readme.py capturas <seccion> [--sin-red]   # rehace las capturas con Chrome
-python3 tools/release/readme.py sellar         # "ya releí el README con estos hechos"
-node tools/e2e/contacto.mjs <seccion> --salida /tmp/contacto      # mirarlas juntas (D-76)
-node tools/release/og.mjs tarjetas | imagenes | revisar           # tarjetas de WhatsApp (D-72)
-node tools/release/iconos.mjs                                    # íconos PNG de la app instalable, desde assets/icon.svg (D-221)
-node tools/push/vapid.mjs                                        # la clave de los avisos: ya se corrió (D-225), no se rehace
-node tools/push/avisar.mjs --simular | --prueba <código>         # qué avisos mandaría (copas y Uno al día), o uno de prueba a una copa (D-224, D-230)
+python3 tools/release/readme.py revisar        # is anything behind?
+python3 tools/release/readme.py actualizar     # rewrites the <!-- generado: ... --> blocks
+python3 tools/release/readme.py capturas <section> [--sin-red]   # redoes the screenshots with Chrome
+python3 tools/release/readme.py sellar         # "I reread the README with these facts"
+node tools/e2e/contacto.mjs <section> --salida /tmp/contacto      # look at them together (D-76)
+node tools/release/og.mjs tarjetas | imagenes | revisar           # WhatsApp cards (D-72)
+node tools/release/iconos.mjs                                    # PNG icons for the installable app, from assets/icon.svg (D-221)
+node tools/push/vapid.mjs                                        # the notifications key: already run (D-225), not redone
+node tools/push/avisar.mjs --simular | --prueba <code>           # which notifications it would send (Cups and Uno al día (One a Day)), or a test one to a Cup (D-224, D-230)
 ```
 
-- **Una captura atrasada es un aviso en un PR común. "Actualiza el README" es una pasada entera**,
-  por pedido del dueño: bloques generados, prosa **y todas las capturas** que `revisar` marque, miradas
-  en la hoja de contacto y recién ahí selladas; no se entrega con avisos pendientes (D-213).
-- Dentro de `<!-- generado: ... -->` no se edita a mano. Cada captura declara en
-  [docs/capturas.json](docs/capturas.json) de qué guion de `tools/e2e/` y de qué toma sale.
-- Las imágenes de las tarjetas se rehacen **desde una rama al día con `main`**; solo cambian si
-  cambia un nombre, un emoji, una bajada o el diseño ([tools/release/og/tarjeta.html](tools/release/og/tarjeta.html)).
+- **An out-of-date screenshot is a warning in an ordinary PR. "Actualiza el README" (update the README) is a full pass**,
+  at the owner's request: generated blocks, prose **and every screenshot** that `revisar` flags, looked at
+  on the contact sheet and only then sealed; it is not delivered with pending warnings (D-213).
+- Inside `<!-- generado: ... -->` nothing is edited by hand. Each screenshot declares in
+  [docs/capturas.json](docs/capturas.json) which `tools/e2e/` script and which shot it comes from.
+- The card images are redone **from a branch up to date with `main`**; they only change if
+  a name, an emoji, a tagline or the design changes ([tools/release/og/tarjeta.html](tools/release/og/tarjeta.html)).
 
-## Pruebas (C-12)
+## Tests (C-12)
 
-GitHub corre todos los `*.test.mjs` y `*.test.py` en cada PR (`.github/workflows/pruebas.yml`), así
-que un test nuevo no se agrega a ninguna lista: lo que pruebe algo especial lo dice en su primera
-línea. Igual se corren aquí antes de abrir el PR.
+GitHub runs every `*.test.mjs` and `*.test.py` on each PR (`.github/workflows/pruebas.yml`), so
+a new test is not added to any list: one that tests something special says so on its first
+line. Run them here anyway before opening the PR.
 
 ```bash
 for f in $(git ls-files '*.test.mjs'); do node "$f" || echo "FALLA $f"; done
 for f in $(git ls-files '*.test.py'); do python3 "$f" || echo "FALLA $f"; done
 ```
 
-**Punta a punta** (D-193, D-199, D-204): `tools/e2e/` juega partidas completas en Chrome headless,
-y GitHub corre en cada PR todos los guiones menos los que abren salas en el Firebase de
-producción. Para que un guion falle en rojo, que imprima ✗ o ❌ o salga con error.
+**End-to-end** (D-193, D-199, D-204): `tools/e2e/` plays complete games in headless Chrome,
+and GitHub runs on each PR every script except those that open rooms in the production
+Firebase. For a script to fail red, it must print ✗ or ❌ or exit with an error.
 
 ```bash
-node tools/e2e/ci.mjs              # todos los de CI, con resumen; o: node tools/e2e/ci.mjs cup/torneo.mjs
-node tools/e2e/mirar.mjs ahorcado juego --ancho 320 [--idioma pt]   # una pantalla suelta (C-8)
-node tools/e2e/mirar.mjs panel datos --ancho 900                    # el panel, con datos sembrados
+node tools/e2e/ci.mjs              # all the CI ones, with a summary; or: node tools/e2e/ci.mjs cup/torneo.mjs
+node tools/e2e/mirar.mjs ahorcado juego --ancho 320 [--idioma pt]   # a single screen (C-8)
+node tools/e2e/mirar.mjs panel datos --ancho 900                    # the panel, with seeded data
 ```
 
-Los caminos a cada pantalla están en `tools/e2e/caminos.mjs`: agregar uno es sumar una entrada, y
-con eso la pantalla entra también a las pruebas de idiomas. Para verlo en un celular de verdad,
-`tailscale serve --bg 8765` (D-67; se apaga con `tailscale serve --https=443 off`).
+The paths to each screen are in `tools/e2e/caminos.mjs`: adding one is adding an entry, and
+with that the screen also enters the language tests. To see it on a real phone,
+`tailscale serve --bg 8765` (D-67; turned off with `tailscale serve --https=443 off`).
 
-## Agentes y herramientas del dueño
+## The owner's agents and tools
 
-- **Usabilidad** (D-132): revisa cada PR y hace su ronda cuando la lanza el agente de procesos (D-276).
-  Los dilemas son issues de GitHub: `node tools/agents/dilemas.mjs listar | ver <n> | crear <archivo.md> | resolver <n> "decisión" | archivar <n> "motivo" | reabrir <n>`;
-  lo resuelto se anota en `docs/USABILIDAD.md`. En cada PR corre `node tools/agents/portadas.mjs revisar [base]`,
-  que muestra el lema, los pasos y la tarjeta de cada juego que toca el PR y avisa ⚠️ si el juego
-  cambió y su portada no (U-36).
-- **Documentación** (D-172): ronda cuando la lanza el agente de procesos (D-276), revisión de cada PR y a
-  pedido ("documenta lo último"). El PR de su ronda lleva auto-merge (D-313), como el de la ronda
-  de usabilidad; no toca código, salvo los mensajes con que la app
-  se presenta (D-271, U-35). Su memoria es
+- **Usability** (D-132): reviews each PR and does its round when the processes agent launches it (D-276).
+  Dilemmas are GitHub issues: `node tools/agents/dilemas.mjs listar | ver <n> | crear <file.md> | resolver <n> "decision" | archivar <n> "reason" | reabrir <n>`;
+  what is resolved is recorded in `docs/USABILIDAD.md`. On each PR it runs `node tools/agents/portadas.mjs revisar [base]`,
+  which shows the motto, the steps and the card of each game the PR touches and warns ⚠️ if the game
+  changed and its home page did not (U-36).
+- **Documentation** (D-172): a round when the processes agent launches it (D-276), a review of each PR, and on
+  request ("documenta lo último", document the latest). Its round's PR gets auto-merge (D-313), like the usability
+  round's; it does not touch code, except the messages with which the app
+  presents itself (D-271, U-35). Its memory is
   `docs/documentacion.json`: `node tools/agents/documentar.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial`;
-  `revisar` termina mostrando esos mensajes (compartir la app, el video y la bajada de la tarjeta
-  del link) para leerlos contra lo que entró, y lo principal que nombran está en `LO_PRINCIPAL`
+  `revisar` ends by showing those messages (sharing the app, the video and the tagline of the link
+  card) to read them against what landed, and the main things they name are in `LO_PRINCIPAL`
   (`public/assets/js/compartir.js`).
-- **Procesos** (D-273, D-275, D-276): **el jefe de los agentes.** Ronda diaria a las 4:30 hora del
-  Pacífico en el Mac mini del dueño (tarea programada de la app, no en la nube): lanza a los agentes
-  de documentación y de usabilidad cuando hay algo que revisar (`procesos.mjs revisar` dice a quién)
-  y revisa lo que entregan. Los encargos del dueño que ejecuta otro agente ("revisa la frescura del
-  README") se le piden a él: decide quién, lo lanza, comprueba y responde. Atiende el feedback 🐞,
-  que `.github/workflows/feedback.yml` sube cada 15 minutos como issues `feedback` (`tools/agents/feedback.mjs`,
-  con el nombre que puso el jugador y sin su navegador, D-279). Cierra lo que quedó abierto y
-  convierte un error que se repite en un mecanismo (un test antes que una instrucción). En su
-  ronda junta las entradas de `changelog/` en `CHANGELOG.md` (D-300) y borra las reservas de
-  decisión que ya están en `main` (`decision.mjs limpiar`, D-301). Lo que
-  necesita al dueño va en un issue `procesos` con casillas Sí/No, que abre el bot (`decidir.yml`) para
-  que le llegue el correo: marcar una lo cumple al instante
-  (`.github/workflows/aprobar.yml` → `tools/agents/aprobar.mjs`, con una lista cerrada de acciones).
-  Su memoria es `docs/procesos.json`: `node tools/agents/procesos.mjs revisar | decidir <archivo.json> | patron <clave> "…" | mecanismo <clave> "…" --pr <url> | despacho <documentacion|usabilidad> <commit> | anotar --hasta <commit> | historial`
-  (`despacho` anota hasta qué commit de `main` lanzó a cada ejecutor).
-- **Marketing** (D-178): cada asset vive en `marketing/<asset>/` con un README que es su memoria.
-  **Antes de trabajar en el video se lee `marketing/promo-video/README.md` entero** (el skill
-  `promo-video` lo carga) y al terminar se anota la vuelta ahí y en `marketing/registro.json`.
-  `node tools/agents/marketing.mjs revisar` dice qué asset quedó atrás (U-34).
-- **Llaves del laboratorio** (D-281, D-284): cada persona que entra a `/labs/` tiene su link.
-  `node tools/agents/llave-labs.mjs nueva <etiqueta> | quitar <etiqueta> | listar` edita `HUELLAS` en
-  `labs-puerta.js`; el link sale una sola vez y la llave no se guarda. La etiqueta es pública
-  (iniciales), y el cambio entra con un PR. **Pedir una llave es pedir que funcione** (D-284, pedido
-  del dueño): la misma sesión crea la llave, abre el PR y le activa el auto-merge
-  (`gh pr merge <n> --auto --merge`) sin esperar otra orden, sin CHANGELOG ni agentes, y entrega el
-  link avisando que abre cuando el sitio se publique.
+- **Processes** (D-273, D-275, D-276): **the head of the agents.** Daily round at 4:30 Pacific
+  time on the owner's Mac mini (a scheduled task in the app, not in the cloud): it launches the documentation
+  and usability agents when there is something to review (`procesos.mjs revisar` says which)
+  and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
+  README", check how fresh the README is) are asked of it: it decides who, launches them, checks and replies. It handles the 🐞 feedback,
+  which `.github/workflows/feedback.yml` uploads every 15 minutes as `feedback` issues (`tools/agents/feedback.mjs`,
+  with the name the player entered and without their browser, D-279). It closes what was left open and
+  turns a recurring error into a mechanism (a test before an instruction). In its
+  round it collects the `changelog/` entries into `CHANGELOG.md` (D-300) and deletes the decision
+  reservations that are already in `main` (`decision.mjs limpiar`, D-301). What
+  needs the owner goes in a `procesos` issue with Yes/No checkboxes, opened by the bot (`decidir.yml`) so
+  the owner gets the email: ticking one carries it out instantly
+  (`.github/workflows/aprobar.yml` → `tools/agents/aprobar.mjs`, with a closed list of actions).
+  Its memory is `docs/procesos.json`: `node tools/agents/procesos.mjs revisar | decidir <file.json> | patron <key> "…" | mecanismo <key> "…" --pr <url> | despacho <documentacion|usabilidad> <commit> | anotar --hasta <commit> | historial`
+  (`despacho` records up to which `main` commit it launched each executor).
+- **Marketing** (D-178): each asset lives in `marketing/<asset>/` with a README that is its memory.
+  **Before working on the video, read `marketing/promo-video/README.md` in full** (the
+  `promo-video` skill loads it) and when done, record the round there and in `marketing/registro.json`.
+  `node tools/agents/marketing.mjs revisar` says which asset fell behind (U-34).
+- **Lab keys** (D-281, D-284): each person who enters `/labs/` has their own link.
+  `node tools/agents/llave-labs.mjs nueva <label> | quitar <label> | listar` edits `HUELLAS` in
+  `labs-puerta.js`; the link is shown only once and the key is not stored. The label is public
+  (initials), and the change goes in through a PR. **Asking for a key is asking for it to work** (D-284, the
+  owner's request): the same session creates the key, opens the PR and turns on auto-merge
+  (`gh pr merge <n> --auto --merge`) without waiting for another order, without CHANGELOG or agents, and delivers the
+  link noting that it opens once the site is published.
 - **Panel** (`public/panel/`, D-44, D-207): `window.__panel.seed({ rooms, days, torneos, push, vista })`
-  lo dibuja con datos sembrados sin entrar. Ver [docs/PANEL.md](docs/PANEL.md).
-- **Reportes de La Copa** (D-104): `node tools/firebase/reportes.mjs [--dias 3] [--json]`.
-- **Rankings** (D-212): `records.js` (lógica), `jugador.js` (el jugador y su almacén:
-  `jugador-firebase.js`, o `jugador-local.js` en pruebas y con `?test`; `?records=firebase` fuerza
-  Firebase) y `ranking.js` + `ranking.css` (pantalla). Abiertos a todos desde D-217 (la puerta del
-  laboratorio, `RANKINGS_EN_LABS`, queda en `false`). La
-  historia de La Copa (podios, la pestaña "Copa" y las copas de cada jugador para "Tus copas", D-220,
-con jugadores heredados que cada uno reclama):
-  `node tools/firebase/rankings-historia.mjs [--con-laboratorio] [--escribir]`. Los juegos de grupo
-  anotan victorias con `finDePartida` (`ranking.js`) al terminar, y muestran su tabla con
-  `bloqueVictorias` en la intro (D-215); los que se juegan solos (Toque y Fama, Generala, Ahorcado)
-  ponen arriba su tabla `<id>_solo` con `bloqueTabla` (D-274). Sin jugador abierto, `finDePartida` y
-  `avisoPartida` ofrecen al final, después de los botones, entrar para que esa partida cuente (D-274). Uno al día (D-230) anota con `anotarDia` de `jugador.js` en
-  `unoAlDia/<jid>/<n>` y en las tablas `uno-al-dia` (período del día `d<n>` y semana) y
-  `uno-al-dia-racha`; su red (invitaciones, el dato de quien invita) está en `uno-al-dia-red.js`.
+  draws it with seeded data without logging in. See [docs/PANEL.md](docs/PANEL.md).
+- **La Copa (the Cup) reports** (D-104): `node tools/firebase/reportes.mjs [--dias 3] [--json]`.
+- **Rankings** (D-212): `records.js` (logic), `jugador.js` (the player and their store:
+  `jugador-firebase.js`, or `jugador-local.js` in tests and with `?test`; `?records=firebase` forces
+  Firebase) and `ranking.js` + `ranking.css` (screen). Open to everyone since D-217 (the lab
+  gate, `RANKINGS_EN_LABS`, stays `false`). The
+  history of La Copa (podiums, the "Copa" tab and each player's Cups for "Tus copas" (Your Cups), D-220,
+  with inherited players that each one claims):
+  `node tools/firebase/rankings-historia.mjs [--con-laboratorio] [--escribir]`. Group games
+  record wins with `finDePartida` (`ranking.js`) when they end, and show their table with
+  `bloqueVictorias` in the intro (D-215); those played solo (Toque y Fama, Generala, Ahorcado (Hangman))
+  put their `<id>_solo` table on top with `bloqueTabla` (D-274). With no player signed in, `finDePartida` and
+  `avisoPartida` offer at the end, after the buttons, to sign in so that game counts (D-274). Uno al día (D-230) records with `anotarDia` from `jugador.js` in
+  `unoAlDia/<jid>/<n>` and in the `uno-al-dia` tables (the day period `d<n>` and the week) and
+  `uno-al-dia-racha`; its network (invitations, the data of who invites) is in `uno-al-dia-red.js`.
 
-## Idiomas (C-3, D-197)
+## Languages (C-3, D-197)
 
-Español por defecto; inglés, portugués y alemán se eligen a mano. Un texto nuevo para el jugador
-va en los cuatro: la prueba de paridad lo exige. Un idioma nuevo entra por el laboratorio
-(`EN_LABS` en `i18n.js`, hoy vacío; D-191).
+Spanish by default; English, Portuguese and German are chosen by hand. A new text for the player
+goes in all four: the parity test requires it. A new language comes in through the lab
+(`EN_LABS` in `i18n.js`, empty today; D-191).

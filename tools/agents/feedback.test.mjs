@@ -9,13 +9,13 @@ const r = {
 };
 
 const c = cuerpo(r);
-assert.match(c, /\*\*Quién:\*\* Tu admirador secreto/, 'con el nombre, para el seguimiento (D-279)');
-assert.doesNotMatch(cuerpo({ ...r, nombre: undefined }), /Quién/, 'sin nombre, sin la línea');
-assert.match(cuerpo({ ...r, tester: 'ratoncito' }), /\*\*Llave:\*\* ratoncito/, 'con la etiqueta de la llave del laboratorio (D-306)');
+assert.match(c, /\*\*Who:\*\* Tu admirador secreto/, 'con el nombre, para el seguimiento (D-279)');
+assert.doesNotMatch(cuerpo({ ...r, nombre: undefined }), /Who/, 'sin nombre, sin la línea');
+assert.match(cuerpo({ ...r, tester: 'ratoncito' }), /\*\*Key:\*\* ratoncito/, 'con la etiqueta de la llave del laboratorio (D-306)');
 assert.doesNotMatch(c, /Mozilla|Android/, 'sin el navegador');
 assert.match(c, /^> Se podrian auto tachar/, 'el texto tal cual, citado');
-assert.match(c, /\*\*Juego:\*\* caso/);
-assert.match(c, /\*\*Versión:\*\* v0\.144\.0/);
+assert.match(c, /\*\*Game:\*\* caso/);
+assert.match(c, /\*\*Version:\*\* v0\.144\.0/);
 assert.match(c, /2026-10-10 18:28 UTC/);
 assert.ok(c.endsWith(marca('-P3bm')));
 assert.doesNotMatch(c, /@alguien|#12/, 'un @ o un # del jugador no menciona ni enlaza');
@@ -23,8 +23,8 @@ assert.match(titulo(r), /^🐞 caso: Se podrian/);
 assert.ok(titulo({ ...r, texto: 'x'.repeat(200) }).length < 90, 'el título se corta');
 
 // Dónde, con lo que haya
-assert.equal(donde({ contexto: '{"labs":"de"}' }), 'laboratorio de');
-assert.equal(donde({ contexto: 'no es json' }), 'la app');
+assert.equal(donde({ contexto: '{"labs":"de"}' }), 'lab de');
+assert.equal(donde({ contexto: 'no es json' }), 'the app');
 
 // Nunca dos veces, ni vacíos, del más viejo al más nuevo
 const ya = subidos([{ body: `algo\n${marca('a')}` }, { body: null }]);
