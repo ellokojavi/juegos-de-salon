@@ -253,13 +253,13 @@ Con cada juego o cambio relevante se actualiza:
 - `README.md`: sección del juego con capturas, **en inglés** (ver abajo).
 - `CHANGELOG.md`: qué cambió, en qué versión.
 
-**El README va en inglés; el resto de la documentación, en español** (D-78). Es la única página
-del proyecto que lee gente de cualquier parte: la app es chilena y se construye en español, pero
-quien llega al repositorio desde afuera llega ahí. Eso alcanza también a lo que el README muestra
-generado: los modos salen del `en` de cada `rules.js`, las temáticas del `en` de los mazos y los
-pies de foto de `docs/capturas.json` se escriben en inglés. Los cánones, las decisiones, las
-especificaciones y los mensajes de las herramientas siguen en español, que es el idioma en que se
-piensa este proyecto.
+**Everything internal is in English** (D-316, which amends D-78): documents, decisions, specs,
+changelog entries, code comments and identifiers, file names, tool messages, commits, PRs and
+GitHub issues. Only what the player reads stays in the app's languages (C-3), and persisted data
+keys keep their names. The README is the first door for people from anywhere: what it shows
+generated is English too (modes from the `en` of each `rules.js`, themes from the `en` of the decks,
+captions in `docs/capturas.json`). Spanish text and names still in the repo are migrated in phases
+(D-316); new text is English even inside a file that is still Spanish.
 
 El README no se mantiene a pulso: `python3 tools/release/readme.py` lo sostiene.
 

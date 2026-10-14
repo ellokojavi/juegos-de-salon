@@ -24,10 +24,11 @@
  *   - a quién despachar hoy (D-276): al agente de documentación si entró algo a main desde su
  *     última ronda, y al de usabilidad si cambió algo de public/ desde la última vez que se lo lanzó.
  *
- * `decidir` recibe `{ titulo, resumen, decisiones: [{ pregunta, contexto?, si: [acciones], no?: [acciones] }] }`
- * y abre un issue con una casilla Sí y una No por decisión; marcar una la cumple al instante
- * (tools/agents/aprobar.mjs, .github/workflows/aprobar.yml). Las acciones son las de la lista
- * cerrada de aprobar.mjs: preparar el trabajo antes, para que el Sí solo tenga que fusionarlo.
+ * `decidir` takes `{ titulo, resumen, decisiones: [{ pregunta, contexto?, si: [acciones], no?: [acciones] }] }`
+ * and opens an issue with a Yes and a No checkbox per decision; checking one carries it out at once
+ * (tools/agents/aprobar.mjs, .github/workflows/aprobar.yml). The actions are those of aprobar.mjs's
+ * closed list: prepare the work beforehand, so the Yes only has to merge it. The issue is written
+ * in English (D-316), like everything the repo writes on GitHub; the markers stay as they were.
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -47,40 +48,40 @@ export const ARREGLO = /quedó atrás|quedaba atrás|atrasad|desactualizad|falta
 /* Lo puro (lo prueban aprobar.test.mjs y procesos.test.mjs)          */
 /* ------------------------------------------------------------------ */
 
-/** Qué hace una opción, en palabras, para la casilla: "fusiona #300", o '' si solo se anota. */
+/** What an option does, in words, for the checkbox: "merges #300", or '' if it is only noted. */
 export function queHace(lista = []) {
   const frases = lista.map(a => {
     switch (a.tipo) {
-      case 'fusionar': return `fusiona #${a.pr}`;
-      case 'cerrar-pr': return `cierra #${a.pr}`;
-      case 'cerrar-issue': return `cierra #${a.issue}`;
-      case 'comentar': return `comenta en #${a.en}`;
-      case 'correr': return a.workflow === 'publicar.yml' ? 'publica el sitio' : 'corre las pruebas de punta a punta';
-      case 'encolar': return 'queda para la próxima ronda';
+      case 'fusionar': return `merges #${a.pr}`;
+      case 'cerrar-pr': return `closes #${a.pr}`;
+      case 'cerrar-issue': return `closes #${a.issue}`;
+      case 'comentar': return `comments on #${a.en}`;
+      case 'correr': return a.workflow === 'publicar.yml' ? 'publishes the site' : 'runs the end-to-end tests';
+      case 'encolar': return 'queued for the next round';
       default: return '';
     }
   }).filter(Boolean);
-  return frases.length > 1 ? `${frases.slice(0, -1).join(', ')} y ${frases.at(-1)}` : frases[0] || '';
+  return frases.length > 1 ? `${frases.slice(0, -1).join(', ')} and ${frases.at(-1)}` : frases[0] || '';
 }
 
-/** El cuerpo del issue de decisiones: casillas `<!-- op:n:si -->` y el bloque de acciones al final. */
+/** The decisions issue body: `<!-- op:n:si -->` checkboxes and the actions block at the end. */
 export function cuerpoDecisiones({ resumen = '', decisiones }) {
-  if (!decisiones?.length) throw new Error('No hay decisiones.');
+  if (!decisiones?.length) throw new Error('No decisions.');
   const acciones = {}, partes = [];
   if (resumen) partes.push(resumen.trim(), '');
-  partes.push('Marca **Sí** o **No** en cada una. Lo que marcas se hace en el momento y no se deshace; el resultado queda anotado al lado.', '');
+  partes.push('Check **Yes** or **No** on each one. What you check happens right away and cannot be undone; the result is noted next to it.', '');
   decisiones.forEach((d, i) => {
     const n = i + 1;
     for (const op of ['si', 'no']) {
       const lista = d[op]?.length ? d[op] : [{ tipo: 'nada' }];
       const mala = lista.map(invalida).find(Boolean);
-      if (mala) throw new Error(`Decisión ${n}, ${op}: ${mala}`);
+      if (mala) throw new Error(`Decision ${n}, ${op}: ${mala}`);
       acciones[`${n}:${op}`] = lista;
     }
     partes.push(`### ${n}. ${d.pregunta}`);
     if (d.contexto) partes.push(d.contexto.trim());
     const casilla = (op, nombre) => { const q = queHace(acciones[`${n}:${op}`]); return `- [ ] ${nombre}${q ? `: ${q}` : ''} <!-- op:${n}:${op} -->`; };
-    partes.push(casilla('si', 'Sí'), casilla('no', 'No'), '');
+    partes.push(casilla('si', 'Yes'), casilla('no', 'No'), '');
   });
   partes.push(`<!-- acciones ${JSON.stringify(acciones)} -->`);
   return partes.join('\n');
@@ -180,11 +181,11 @@ function revisar() {
   const issues = gh('issue', 'list', '--state', 'open', '--limit', '100', '--json', 'number,title,createdAt,labels,body');
   // En main, la punta a punta corre dentro de publicar.yml (D-302): su última corrida terminada dice si main está en verde
   const verdeE2E = gh('run', 'list', '--workflow', 'publicar.yml', '--branch', 'main', '--status', 'completed', '--limit', '1', '--json', 'conclusion')[0]?.conclusion === 'success';
-  for (const i of issues.filter(i => /^main en rojo/.test(i.title)))
+  for (const i of issues.filter(i => /^main (en rojo|is red)/.test(i.title)))
     console.log(`- #${i.number} ${i.title} (${i.createdAt.slice(0, 10)})${verdeE2E ? ': main ya está en verde, se puede cerrar' : ': sigue en rojo'}`);
   const dilemas = issues.filter(i => i.labels.some(l => l.name === 'usabilidad') && Date.now() - Date.parse(i.createdAt) > 3 * DIA);
   for (const i of dilemas) console.log(`- dilema #${i.number} espera al dueño desde ${i.createdAt.slice(0, 10)}: ${i.title}`);
-  if (!dilemas.length && !issues.some(i => /^main en rojo/.test(i.title))) console.log('Nada atrasado.');
+  if (!dilemas.length && !issues.some(i => /^main (en rojo|is red)/.test(i.title))) console.log('Nada atrasado.');
 
   titulo('Feedback 🐞 sin atender');
   const feedback = issues.filter(i => i.labels.some(l => l.name === 'feedback'));
@@ -228,13 +229,13 @@ function revisar() {
 }
 
 function decidir(archivo) {
-  if (!archivo) throw new Error('Uso: node tools/agents/procesos.mjs decidir <archivo.json>');
+  if (!archivo) throw new Error('Usage: node tools/agents/procesos.mjs decidir <file.json>');
   const d = JSON.parse(readFileSync(archivo, 'utf8'));
   const cuerpo = cuerpoDecisiones(d);
   const hay = gh('label', 'list', '--limit', '200', '--json', 'name').some(l => l.name === ETIQUETA);
-  if (!hay) sh('gh', ['label', 'create', ETIQUETA, '-R', REPO, '--color', '5319e7', '--description', 'Decisiones de un toque del agente de procesos (D-273)']);
-  // Lo abre el bot (decidir.yml): GitHub no le avisa a nadie de lo que hace su propia cuenta, y
-  // los agentes usan la del dueño. Con --directo, lo abre esa cuenta (sin correo).
+  if (!hay) sh('gh', ['label', 'create', ETIQUETA, '-R', REPO, '--color', '5319e7', '--description', 'One-tap decisions from the processes agent (D-273)']);
+  // The bot opens it (decidir.yml): GitHub notifies no one of what their own account does, and
+  // the agents use the owner's. With --directo, that account opens it (no email).
   if (process.argv.includes('--directo')) return console.log(sh('gh', ['issue', 'create', '-R', REPO, '--title', d.titulo, '--label', ETIQUETA, '--body', cuerpo]).trim());
   const antes = new Date().toISOString();
   sh('gh', ['workflow', 'run', 'decidir.yml', '-R', REPO, '--ref', 'main', '-f', `titulo=${d.titulo}`, '-f', `cuerpo=${cuerpo}`]);
@@ -243,7 +244,7 @@ function decidir(archivo) {
     const [nuevo] = gh('issue', 'list', '--label', ETIQUETA, '--state', 'all', '--limit', '5', '--json', 'url,title,createdAt').filter(x => x.title === d.titulo && x.createdAt >= antes.slice(0, 19));
     if (nuevo) return console.log(nuevo.url);
   }
-  throw new Error('decidir.yml no abrió el issue en dos minutos: mira Actions → Decidir.');
+  throw new Error('decidir.yml did not open the issue within two minutes: check Actions → Decidir.');
 }
 
 const valor = (args, flag) => { const i = args.indexOf(flag); return i >= 0 ? args[i + 1] : null; };

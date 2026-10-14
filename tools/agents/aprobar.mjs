@@ -1,90 +1,87 @@
 #!/usr/bin/env node
 /**
- * Las decisiones de un toque (D-273): el agente de procesos abre un issue con casillas "Sí" y
- * "No", y cuando el dueño marca una, `.github/workflows/aprobar.yml` corre esto y hace lo que esa
- * casilla dice, sin un modelo de por medio.
+ * One-tap decisions (D-273): the processes agent opens an issue with "Yes" and "No" checkboxes,
+ * and when the owner checks one, `.github/workflows/aprobar.yml` runs this and does what that
+ * checkbox says, with no model in between.
  *
- *   node tools/agents/aprobar.mjs                     # en GitHub Actions: lee $GITHUB_EVENT_PATH
- *   node tools/agents/aprobar.mjs --simular <evento.json>   # dice qué haría, sin hacer nada
+ *   node tools/agents/aprobar.mjs                     # in GitHub Actions: reads $GITHUB_EVENT_PATH
+ *   node tools/agents/aprobar.mjs --simular <event.json>   # says what it would do, does nothing
  *
- * El issue lleva cada opción en una línea `- [ ] Sí <!-- op:1:si -->` y, al final, las acciones
- * de cada opción en un bloque `<!-- acciones {...} -->` (lo escribe `procesos.mjs decidir`).
- * Solo se obedece si:
- *   - quien marcó la casilla es el dueño (DUENO), el issue tiene la etiqueta `procesos` y lo abrió
- *     el bot de los workflows (`decidir.yml`, para que GitHub le avise al dueño por correo) o el dueño;
- *   - el bloque de acciones no cambió en la misma edición (una casilla marcada no puede traer
- *     acciones nuevas);
- *   - la decisión no se había tomado antes (`<!-- hecho:1 -->`);
- *   - cada acción es de la lista cerrada ACCIONES.
- * Al terminar, anota el resultado en la línea de la decisión y comenta el issue. Esas ediciones
- * las hace el token del workflow, que no despierta a otro workflow.
+ * The issue carries each option on a line `- [ ] Yes <!-- op:1:si -->` and, at the end, the
+ * actions of each option in a `<!-- acciones {...} -->` block (written by `procesos.mjs decidir`).
+ * The markers (`op:n:si`, `op:n:no`, `hecho:n`, `acciones`) and the action types stay in Spanish:
+ * parsing depends only on them, so issues opened before D-316 (in Spanish) still work.
+ * It only obeys if:
+ *   - whoever checked the box is the owner (DUENO), the issue has the `procesos` label and was
+ *     opened by the workflows bot (`decidir.yml`, so GitHub emails the owner) or by the owner;
+ *   - the actions block did not change in the same edit (a checked box cannot bring new actions);
+ *   - the decision had not been made before (`<!-- hecho:1 -->`);
+ *   - each action is in the closed list (`invalida`).
+ * When done, it writes the result on the decision's line and comments on the issue. Those edits
+ * are made with the workflow token, which does not wake another workflow.
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 export const DUENO = 'ellokojavi';
-/** Quién puede abrir un issue de decisiones: el bot (así GitHub le avisa al dueño) o el dueño. */
+/** Who may open a decisions issue: the bot (so GitHub notifies the owner) or the owner. */
 export const AUTORES = [DUENO, 'github-actions[bot]', 'app/github-actions'];
 export const ETIQUETA = 'procesos';
-/** Los workflows que una casilla puede volver a correr en main. */
+/** The workflows a checkbox may re-run on main. */
 export const WORKFLOWS = ['e2e.yml', 'publicar.yml'];
 
 /* ------------------------------------------------------------------ */
-/* Lo puro (lo prueba tools/agents/aprobar.test.mjs)                  */
+/* Pure logic (tested by tools/agents/aprobar.test.mjs)               */
 /* ------------------------------------------------------------------ */
 
-/** El bloque de acciones del issue: `{ "1:si": [ {tipo, …} ], … }`, o null si no está o no se lee. */
+/** The issue's actions block: `{ "1:si": [ {tipo, …} ], … }`, or null if missing or unreadable. */
 export function leerAcciones(cuerpo = '') {
   const m = cuerpo.match(/<!-- acciones (\{[\s\S]*?\}) -->/);
   if (!m) return null;
   try { return JSON.parse(m[1]); } catch { return null; }
 }
 
-/** Las casillas del issue: `{ "1:si": true, "1:no": false, … }`. */
+/** The issue's checkboxes: `{ "1:si": true, "1:no": false, … }`. */
 export function casillas(cuerpo = '') {
   const res = {};
   for (const m of cuerpo.matchAll(/^\s*[-*] \[( |x|X)\] .*?<!-- op:(\d+:[a-z]+) -->/gm)) res[m[2]] = m[1] !== ' ';
   return res;
 }
 
-/** Las decisiones ya cumplidas (`<!-- hecho:1 -->`). */
+/** The decisions already carried out (`<!-- hecho:1 -->`). */
 export const hechas = (cuerpo = '') => new Set([...cuerpo.matchAll(/<!-- hecho:(\d+) -->/g)].map(m => m[1]));
 
-/** El texto de la pregunta n (`### n. …`), para que el comentario se entienda sin abrir el issue. */
+/** The text of question n (`### n. …`), so the comment makes sense without opening the issue. */
 export function pregunta(cuerpo = '', n) {
-  return cuerpo.match(new RegExp(`^###\\s+${n}\\.\\s+(.+)$`, 'm'))?.[1].trim() || `Decisión ${n}`;
+  return cuerpo.match(new RegExp(`^###\\s+${n}\\.\\s+(.+)$`, 'm'))?.[1].trim() || `Decision ${n}`;
 }
 
-/** Las opciones que pasaron de vacías a marcadas entre dos versiones del cuerpo. */
+/** The options that went from empty to checked between two versions of the body. */
 export function recienMarcadas(antes, despues) {
   const a = casillas(antes), d = casillas(despues);
   return Object.keys(d).filter(k => d[k] && !a[k]);
 }
 
-/** Por qué una acción no es de la lista cerrada, o null si lo es. */
+/** Why an action is not in the closed list, or null if it is. */
 export function invalida(acc) {
   const n = x => Number.isInteger(x) && x > 0;
-  if (!acc || typeof acc !== 'object') return 'no es una acción';
+  if (!acc || typeof acc !== 'object') return 'not an action';
   switch (acc.tipo) {
-    case 'fusionar': case 'cerrar-pr': return n(acc.pr) ? null : `${acc.tipo} sin número de PR`;
-    case 'cerrar-issue': return n(acc.issue) ? null : 'cerrar-issue sin número de issue';
-    case 'comentar': return n(acc.en) && typeof acc.texto === 'string' && acc.texto.trim() ? null : 'comentar sin dónde o sin texto';
-    case 'correr': return WORKFLOWS.includes(acc.workflow) ? null : `correr: solo ${WORKFLOWS.join(' o ')}`;
-    case 'encolar': return typeof acc.tarea === 'string' && acc.tarea.trim() ? null : 'encolar sin tarea';
+    case 'fusionar': case 'cerrar-pr': return n(acc.pr) ? null : `${acc.tipo} without a PR number`;
+    case 'cerrar-issue': return n(acc.issue) ? null : 'cerrar-issue without an issue number';
+    case 'comentar': return n(acc.en) && typeof acc.texto === 'string' && acc.texto.trim() ? null : 'comentar without a target or text';
+    case 'correr': return WORKFLOWS.includes(acc.workflow) ? null : `correr: only ${WORKFLOWS.join(' or ')}`;
+    case 'encolar': return typeof acc.tarea === 'string' && acc.tarea.trim() ? null : 'encolar without a task';
     case 'nada': return null;
-    default: return `acción desconocida: ${acc.tipo}`;
+    default: return `unknown action: ${acc.tipo}`;
   }
 }
 
 /**
- * Qué hacer con un evento `issues.edited`: `{ ignorar: motivo }` o `{ planes: [{ decision, opcion,
- * acciones }], avisos: [] }`. No toca nada: lo que decide se puede probar con eventos inventados.
- */
-/**
- * Las casillas marcadas que todavía no tienen resultado al lado: las de una corrida que GitHub
- * canceló. Con tres casillas marcadas casi juntas, GitHub deja una corrida en curso y una en espera,
- * y cancela las del medio: sin esto, esas decisiones se perdían.
+ * The checked boxes that still have no result next to them: those of a run GitHub cancelled.
+ * With three boxes checked almost at once, GitHub keeps one run in progress and one pending, and
+ * cancels the ones in between: without this, those decisions were lost.
  */
 export function marcadasSinResultado(cuerpo = '') {
   const res = [];
@@ -93,42 +90,44 @@ export function marcadasSinResultado(cuerpo = '') {
 }
 
 /**
- * `actual` es el cuerpo como está al correr (puede ser más nuevo que el del evento): de ahí salen
- * las decisiones ya tomadas y las casillas que quedaron sin resultado.
+ * What to do with an `issues.edited` event: `{ ignorar: reason }` or `{ planes: [{ decision, opcion,
+ * acciones }], avisos: [] }`. It touches nothing: its choices can be tested with made-up events.
+ * `actual` is the body as it is when running (it may be newer than the event's): the decisions
+ * already made and the boxes left without a result come from it.
  */
 export function planear(evento, dueno = DUENO, actual = evento?.issue?.body) {
   const { action, issue, sender, changes } = evento || {};
-  if (action !== 'edited') return { ignorar: 'no es una edición' };
-  if (!issue?.labels?.some(l => l.name === ETIQUETA)) return { ignorar: `el issue no tiene la etiqueta ${ETIQUETA}` };
-  if (issue.state !== 'open') return { ignorar: 'el issue está cerrado' };
-  if (sender?.login !== dueno) return { ignorar: `lo editó ${sender?.login}, no ${dueno}` };
-  if (![dueno, ...AUTORES.slice(1)].includes(issue.user?.login)) return { ignorar: `el issue es de ${issue.user?.login}: solo valen los que abre el bot o ${dueno}` };
+  if (action !== 'edited') return { ignorar: 'not an edit' };
+  if (!issue?.labels?.some(l => l.name === ETIQUETA)) return { ignorar: `the issue does not have the ${ETIQUETA} label` };
+  if (issue.state !== 'open') return { ignorar: 'the issue is closed' };
+  if (sender?.login !== dueno) return { ignorar: `edited by ${sender?.login}, not ${dueno}` };
+  if (![dueno, ...AUTORES.slice(1)].includes(issue.user?.login)) return { ignorar: `the issue was opened by ${issue.user?.login}: only those opened by the bot or ${dueno} count` };
   const antes = changes?.body?.from;
-  if (typeof antes !== 'string') return { ignorar: 'la edición no cambió el cuerpo' };
+  if (typeof antes !== 'string') return { ignorar: 'the edit did not change the body' };
   const acciones = leerAcciones(issue.body);
-  if (!acciones) return { ignorar: 'el issue no tiene bloque de acciones' };
-  if (JSON.stringify(leerAcciones(antes)) !== JSON.stringify(acciones)) return { ignorar: 'el bloque de acciones cambió en la misma edición' };
+  if (!acciones) return { ignorar: 'the issue has no actions block' };
+  if (JSON.stringify(leerAcciones(antes)) !== JSON.stringify(acciones)) return { ignorar: 'the actions block changed in the same edit' };
 
   const yaHechas = new Set([...hechas(antes), ...hechas(actual)]), planes = [], avisos = [], tomadas = new Set();
   const ops = [...new Set([...recienMarcadas(antes, issue.body), ...marcadasSinResultado(actual)])];
   for (const op of ops) {
     const [decision, opcion] = op.split(':');
-    if (yaHechas.has(decision) || tomadas.has(decision)) { avisos.push(`${pregunta(antes, decision)}: ya estaba respondida, así que el ${opcion === 'si' ? 'Sí' : 'No'} nuevo no se hizo.`); continue; }
+    if (yaHechas.has(decision) || tomadas.has(decision)) { avisos.push(`${pregunta(antes, decision)}: already answered, so the new ${opcion === 'si' ? 'Yes' : 'No'} was not carried out.`); continue; }
     const lista = acciones[op];
-    if (!Array.isArray(lista)) { avisos.push(`${pregunta(antes, decision)}: el ${opcion === 'si' ? 'Sí' : 'No'} no tiene acciones.`); continue; }
+    if (!Array.isArray(lista)) { avisos.push(`${pregunta(antes, decision)}: the ${opcion === 'si' ? 'Yes' : 'No'} has no actions.`); continue; }
     const malas = lista.map(invalida).filter(Boolean);
-    if (malas.length) { avisos.push(`${pregunta(antes, decision)}: el ${opcion === 'si' ? 'Sí' : 'No'} no se hizo (${malas.join('; ')}).`); continue; }
+    if (malas.length) { avisos.push(`${pregunta(antes, decision)}: the ${opcion === 'si' ? 'Yes' : 'No'} was not carried out (${malas.join('; ')}).`); continue; }
     tomadas.add(decision);
     planes.push({ decision, opcion, acciones: lista });
   }
-  if (!planes.length && !avisos.length) return { ignorar: 'no se marcó ninguna casilla nueva' };
+  if (!planes.length && !avisos.length) return { ignorar: 'no new checkbox was checked' };
   return { planes, avisos };
 }
 
 /**
- * El cuerpo con el resultado al final de la línea de la opción (en lugar del de un intento
- * anterior). Si salió bien, la decisión queda tomada (`<!-- hecho:n -->`); si falló, no: desmarcar
- * y volver a marcar la casilla la reintenta.
+ * The body with the result at the end of the option's line (replacing that of an earlier
+ * attempt). If it succeeded, the decision is made (`<!-- hecho:n -->`); if it failed, it is not:
+ * unchecking and checking the box again retries it.
  */
 export function anotarHecho(cuerpo, decision, opcion, resultado, tomada = true) {
   const re = new RegExp(`^(\\s*[-*] \\[[xX ]\\] .*?<!-- op:${decision}:${opcion} -->).*$`, 'm');
@@ -136,53 +135,53 @@ export function anotarHecho(cuerpo, decision, opcion, resultado, tomada = true) 
 }
 
 /* ------------------------------------------------------------------ */
-/* Lo que toca GitHub                                                  */
+/* What touches GitHub                                                */
 /* ------------------------------------------------------------------ */
 
 const gh = (...args) => execFileSync('gh', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 45 * 60 * 1000 });
 
 /**
- * Una acción, con el token del workflow. Un merge hecho con ese token no despierta a publicar.yml
- * (GitHub no encadena workflows con él), así que `fusionar` lo corre a mano después; publicar.yml
- * ya corre la punta a punta antes de publicar (D-302).
+ * One action, with the workflow token. A merge made with that token does not wake publicar.yml
+ * (GitHub does not chain workflows with it), so `fusionar` runs it by hand afterwards; publicar.yml
+ * already runs the end-to-end tests before publishing (D-302).
  */
 function hacer(acc, repo) {
   const R = ['-R', repo];
   switch (acc.tipo) {
     case 'fusionar': {
       const pr = JSON.parse(gh('pr', 'view', String(acc.pr), ...R, '--json', 'state,baseRefName'));
-      if (pr.state === 'MERGED') return `#${acc.pr} ya estaba fusionado`;
-      if (pr.state !== 'OPEN') throw new Error(`#${acc.pr} está cerrado: no se fusionó`);
-      if (pr.baseRefName !== 'main') throw new Error(`#${acc.pr} apunta a ${pr.baseRefName}, no a main`);
-      // Espera los checks obligatorios (pruebas y punta-a-punta, D-216); si uno falla, no fusiona.
+      if (pr.state === 'MERGED') return `#${acc.pr} was already merged`;
+      if (pr.state !== 'OPEN') throw new Error(`#${acc.pr} is closed: not merged`);
+      if (pr.baseRefName !== 'main') throw new Error(`#${acc.pr} targets ${pr.baseRefName}, not main`);
+      // Waits for the required checks (pruebas and punta-a-punta, D-216); if one fails, it does not merge.
       try { gh('pr', 'checks', String(acc.pr), ...R, '--required', '--watch', '--fail-fast', '--interval', '30'); }
-      catch (e) { throw new Error(`los checks de #${acc.pr} no pasaron`); }
-      // Sin --delete-branch: la rama la borra GitHub (el repo lo tiene activado) y así pasa a main
-      // los PR montados sobre ella. Borrada a mano, GitHub los cierra (le pasó al #303).
-      // Un conflicto con main se dice como tal: antes salía "Command failed" sin la causa (#331).
+      catch (e) { throw new Error(`the checks of #${acc.pr} did not pass`); }
+      // No --delete-branch: GitHub deletes the branch (the repo has it enabled) and so retargets
+      // the PRs stacked on it to main. Deleted by hand, GitHub closes them (it happened to #303).
+      // A conflict with main is reported as such: it used to say "Command failed" without the cause (#331).
       const estado = JSON.parse(gh('pr', 'view', String(acc.pr), ...R, '--json', 'mergeable')).mergeable;
-      if (estado === 'CONFLICTING') throw new Error(`#${acc.pr} tiene conflicto con main: hay que ponerlo al día`);
+      if (estado === 'CONFLICTING') throw new Error(`#${acc.pr} conflicts with main: it needs updating`);
       gh('pr', 'merge', String(acc.pr), ...R, '--merge');
-      // publicar.yml corre las pruebas y la punta a punta antes de publicar (D-302): con eso basta
+      // publicar.yml runs the tests and the end-to-end suite before publishing (D-302): that is enough
       gh('workflow', 'run', 'publicar.yml', ...R, '--ref', 'main');
-      return `#${acc.pr} fusionado; se está publicando el sitio`;
+      return `#${acc.pr} merged; the site is being published`;
     }
     case 'cerrar-pr':
       gh('pr', 'close', String(acc.pr), ...R, ...(acc.motivo ? ['--comment', acc.motivo] : []));
-      return `#${acc.pr} cerrado`;
+      return `#${acc.pr} closed`;
     case 'cerrar-issue':
       gh('issue', 'close', String(acc.issue), ...R, ...(acc.motivo ? ['--comment', acc.motivo] : []));
-      return `#${acc.issue} cerrado`;
+      return `#${acc.issue} closed`;
     case 'comentar':
       gh('issue', 'comment', String(acc.en), ...R, '--body', acc.texto);
-      return `comentado en #${acc.en}`;
+      return `commented on #${acc.en}`;
     case 'correr':
       gh('workflow', 'run', acc.workflow, ...R, '--ref', 'main');
-      return acc.workflow === 'publicar.yml' ? 'se está publicando el sitio' : 'corriendo las pruebas de punta a punta';
+      return acc.workflow === 'publicar.yml' ? 'the site is being published' : 'running the end-to-end tests';
     case 'encolar':
-      return `en cola para la próxima ronda: ${acc.tarea}`;
+      return `queued for the next round: ${acc.tarea}`;
     case 'nada':
-      return 'anotado';
+      return 'noted';
   }
 }
 
@@ -190,12 +189,12 @@ function principal() {
   const i = process.argv.indexOf('--simular');
   const simular = i > 0;
   const ruta = simular ? process.argv[i + 1] : process.env.GITHUB_EVENT_PATH;
-  if (!ruta) { console.error('Uso: node tools/agents/aprobar.mjs [--simular <evento.json>]'); process.exit(2); }
+  if (!ruta) { console.error('Usage: node tools/agents/aprobar.mjs [--simular <event.json>]'); process.exit(2); }
   const evento = JSON.parse(readFileSync(ruta, 'utf8'));
-  // El cuerpo de ahora: una corrida anterior pudo anotar resultados después de este evento
+  // The current body: an earlier run may have written results after this event
   const actual = simular ? evento.issue.body : JSON.parse(gh('issue', 'view', String(evento.issue.number), '-R', process.env.GITHUB_REPOSITORY, '--json', 'body')).body;
   const plan = planear(evento, DUENO, actual);
-  if (plan.ignorar) { console.log(`Nada que hacer: ${plan.ignorar}.`); return; }
+  if (plan.ignorar) { console.log(`Nothing to do: ${plan.ignorar}.`); return; }
   if (simular) { console.log(JSON.stringify(plan, null, 2)); return; }
 
   const repo = process.env.GITHUB_REPOSITORY, n = String(evento.issue.number);
@@ -209,16 +208,16 @@ function principal() {
       resultado = `✅ ${hechos.join('; ')}`;
     } catch (e) {
       fallo = true; bien = false;
-      // El porqué está en lo que gh escribió en stderr, no en "Command failed: …"
+      // The reason is in what gh wrote to stderr, not in "Command failed: …"
       const porque = String(e.stderr || '').trim().split('\n').filter(Boolean).pop() || String(e.message || e).split('\n')[0];
       resultado = `❌ ${[...hechos, porque].join('; ')}`;
     }
-    lineas.push(`**${pregunta(evento.issue.body, decision)}** ${opcion === 'si' ? 'Sí' : 'No'}. ${resultado}`);
-    // Se relee el cuerpo antes de anotar: otra casilla pudo marcarse mientras esto corría.
+    lineas.push(`**${pregunta(evento.issue.body, decision)}** ${opcion === 'si' ? 'Yes' : 'No'}. ${resultado}`);
+    // Re-read the body before writing: another box may have been checked while this ran.
     const cuerpo = JSON.parse(gh('issue', 'view', n, '-R', repo, '--json', 'body')).body;
     gh('issue', 'edit', n, '-R', repo, '--body', anotarHecho(cuerpo, decision, opcion, resultado.split(';')[0], bien));
   }
-  if (fallo) lineas.push('', 'Para reintentar lo que falló, desmarca la casilla y vuelve a marcarla.');
+  if (fallo) lineas.push('', 'To retry what failed, uncheck the box and check it again.');
   gh('issue', 'comment', n, '-R', repo, '--body', lineas.join('\n'));
   console.log(lineas.join('\n'));
   if (fallo) process.exit(1);
