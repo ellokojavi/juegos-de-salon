@@ -267,8 +267,8 @@ El README no se mantiene a pulso: `python3 tools/release/readme.py` lo sostiene.
   por idioma, tests, índice de documentos y galerías de capturas— vive entre marcas
   `<!-- generated: ... -->` y lo reescribe `update` desde `tools/release/facts.mjs`, que importa
   los módulos de verdad. Dentro de esas marcas no se edita a mano.
-- La prosa la escribe una persona. `revisar` compara los hechos de hoy contra el último sello
-  (`docs/facts.json`) y nombra qué cambió y qué sección hay que releer; `sellar` lo anota
+- La prosa la escribe una persona. `check` compara los hechos de hoy contra el último sello
+  (`docs/facts.json`) y nombra qué cambió y qué sección hay que releer; `seal` lo anota
   cuando ya se releyó. Un cambio material que no pasó por ahí no llega a publicarse:
   el check `tests` corre `readme.py check` en cada PR y antes de publicar (C-11, D-205).
 - Las capturas salen de los guiones de `tools/e2e/`: `docs/capturas.json` dice de qué guion y

@@ -193,7 +193,7 @@ node tools/push/notify.mjs --dry-run | --test <code>           # which notificat
 ```
 
 - **An out-of-date screenshot is a warning in an ordinary PR. "Actualiza el README" (update the README) is a full pass**,
-  at the owner's request: generated blocks, prose **and every screenshot** that `revisar` flags, looked at
+  at the owner's request: generated blocks, prose **and every screenshot** that `check` flags, looked at
   on the contact sheet and only then sealed; it is not delivered with pending warnings (D-213).
 - Inside `<!-- generated: ... -->` nothing is edited by hand. Each screenshot declares in
   [docs/capturas.json](docs/capturas.json) which `tools/e2e/` script and which shot it comes from.
@@ -237,7 +237,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   round's; it does not touch code, except the messages with which the app
   presents itself (D-271, U-35). Its memory is
   `docs/documentation.json`: `node tools/agents/document.mjs check [--from <commit>] | record --to <commit> [--pr <url>] [--pending "…"] | history`;
-  `revisar` ends by showing those messages (sharing the app, the video and the tagline of the link
+  `check` ends by showing those messages (sharing the app, the video and the tagline of the link
   card) to read them against what landed, and the main things they name are in `LO_PRINCIPAL`
   (`public/assets/js/compartir.js`).
 - **Processes** (D-273, D-275, D-276): **the head of the agents.** Daily round at 4:30 Pacific
@@ -254,7 +254,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   the owner gets the email: ticking one carries it out instantly
   (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).
   Its memory is `docs/processes.json`: `node tools/agents/processes.mjs check | decide <file.json> | pattern <key> "…" | mechanism <key> "…" --pr <url> | dispatch <documentation|usability> <commit> | record --to <commit> | history`
-  (`despacho` records up to which `main` commit it launched each executor).
+  (`dispatch` records up to which `main` commit it launched each executor).
 - **Marketing** (D-178): each asset lives in `marketing/<asset>/` with a README that is its memory.
   **Before working on the video, read `marketing/promo-video/README.md` in full** (the
   `promo-video` skill loads it) and when done, record the round there and in `marketing/registro.json`.

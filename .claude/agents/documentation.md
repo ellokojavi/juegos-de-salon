@@ -90,7 +90,7 @@ changelog entries are written in English, even inside files that are still in Sp
      that brought it;
    - write its line in `shareApp.lines` of `public/assets/js/i18n.js` in all **four** languages
      (U-30: one emoji at the start, one idea; German, with [ALEMAN.md](../../docs/ALEMAN.md));
-   - if what the app is changes, also `shareSheet.videoLines` and `ADEMAS` in
+   - if what the app is changes, also `shareSheet.videoLines` and `ALSO` in
      `tools/release/og.mjs` (afterwards, `node tools/release/og.mjs cards`);
    - run `node public/assets/js/compartir.test.mjs`, and in the PR show the message before and after.
    A new game is not something main: the header already counts it and the card names it. If it is not

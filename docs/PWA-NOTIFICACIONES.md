@@ -400,7 +400,7 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 - `tools/push/notify.mjs` lee `pushCopa`, `push` y `pushEnviados`, manda, y anota cada aviso
   entregado en `pushEnviados/<código>/<subId>/<clave>` (`dia:3`, `plazo:3`, `final`, `fin`,
   `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente. Antes de mandar, junta
-  en un aviso los días nuevos de varias copas para un mismo celular (`juntar` de `schedule.mjs`,
+  en un aviso los días nuevos de varias copas para un mismo celular (`merge` de `schedule.mjs`,
   D-229) y lo anota en cada copa.
 - Si el servicio responde 404 o 410, la suscripción murió: se borra, con sus copas. Lo de una copa
   borrada o terminada hace más de una semana se limpia.

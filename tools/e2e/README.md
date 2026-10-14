@@ -204,7 +204,7 @@ name, and `python3 tools/release/readme.py screenshots <section>` runs the scrip
 copies the PNGs to `docs/screenshots/` (see D-51). So, when renaming or removing a shot from
 a script, it is worth running `python3 tools/release/readme.py check`: it warns if it left an orphan image.
 
-Redoing them is not reviewing them: after `capturas`, the contact sheet (`contact-sheet.mjs`) puts them
+Redoing them is not reviewing them: after `screenshots`, the contact sheet (`contact-sheet.mjs`) puts them
 together, and there you see what a single image doesn't give away —a row wider than the one above,
 a screen that doesn't match the caption, something covered by the confetti— (D-76).
 
