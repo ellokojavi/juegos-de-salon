@@ -5725,7 +5725,7 @@ nombre está en un solo lugar en `game.js` (`T.nombre`), además del título de 
 laboratorio y los documentos.
 
 ## D-311 · Loteo: el modo «Servicios», con lotes del mismo tamaño
-**Fecha:** 2026-10-13 · **Estado:** corregida por D-312 (las etapas difíciles) · **Relación:** amplía D-310; el selector, con el espíritu de la palanca de Pintaminas (D-290); corregida por D-312 (los difíciles, más difíciles: ahora 6×6 de 6 y dos 8×8 de 8, sin el 8×8 de 4, con ningún lote a la vista de entrada y deducciones más profundas)
+**Fecha:** 2026-10-13 · **Estado:** corregida por D-312 · **Relación:** amplía D-310; el selector, con el espíritu de la palanca de Pintaminas (D-290); corregida por D-312 (los difíciles, más difíciles: ahora 6×6 de 6 y dos 8×8 de 8, sin el 8×8 de 4, con ningún lote a la vista de entrada y deducciones más profundas)
 **Contexto:** el dueño pidió, en la portada de Loteo, un modo que se activa para jugarlo («Utilities»;
 en la app, «Servicios»): en vez de números, la grilla trae íconos de servicios, ⚡ luz y 💧 agua, y
 cada lote lleva exactamente un ⚡ y un 💧. Antes de construirlo se midió con lotes al azar y un ⚡ y un

@@ -1,8 +1,6 @@
 {
-  "revisadoHasta": "de85baf351bca0bf030c79758e5e52daec9f326f",
-  "pendientes": [
-    "Capturas de los juegos (cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa) marcadas viejas solo por CSS del formulario de comentarios (D-306) y 'Jugar hoy' (D-305), que no salen en ellas: no se rehicieron"
-  ],
+  "revisadoHasta": "d7f7cdc3797175082ba362f5154c3a4b555db20f",
+  "pendientes": [],
   "conocidos": [],
   "rondas": [
     {
@@ -66,6 +64,13 @@
       "pendientes": [
         "Capturas de los juegos (cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa) marcadas viejas solo por CSS del formulario de comentarios (D-306) y 'Jugar hoy' (D-305), que no salen en ellas: no se rehicieron"
       ]
+    },
+    {
+      "fecha": "2026-10-14",
+      "desde": "de85baf351bca0bf030c79758e5e52daec9f326f",
+      "hasta": "d7f7cdc3797175082ba362f5154c3a4b555db20f",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/406",
+      "pendientes": []
     }
   ],
   "nota": "Memoria del agente de documentación (D-172). La lee y la escribe tools/documentar.mjs: hasta qué commit de main se revisó, lo que quedó pendiente, los problemas ya conocidos que esperan al dueño y las rondas anteriores."
