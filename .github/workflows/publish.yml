@@ -1,20 +1,21 @@
-# Publica el sitio en GitHub Pages en cada fusión a main (D-192). Se publica solo public/ —sin las
-# pruebas—: docs/, tools/, marketing/ y lo demás del repo no son parte del sitio. La versión se
-# estampa aquí, en la copia que se publica (D-205).
-# Antes corren las pruebas (tests.yml) y las de punta a punta (e2e.yml, D-302): con una en rojo,
-# el sitio publicado no cambia. La punta a punta no se repite si el árbol que se publica ya la pasó
-# en un PR, o si solo cambia lo que no llega al navegador sobre un árbol que la pasó (D-308). La versión es la del CHANGELOG más las entradas de changelog/ que
-# todavía no se juntaron, en el orden en que llegaron a main (D-300).
+# Publishes the site on GitHub Pages on every merge to main (D-192). Only public/ is published
+# —without the tests—: docs/, tools/, marketing/ and the rest of the repo are not part of the site.
+# The version is stamped here, on the copy that gets published (D-205).
+# First the tests (tests.yml) and the end-to-end tests (e2e.yml, D-302) run: with one red, the
+# published site does not change. The end-to-end run is not repeated if the tree being published
+# already passed it in a PR, or if it only changes what doesn't reach the browser on top of a tree
+# that passed it (D-308). The version is the CHANGELOG's plus the changelog/ entries not yet
+# collected, in the order they reached main (D-300).
 #
-# Requiere, una sola vez, Settings → Pages → Source: "GitHub Actions" (no "Deploy from a branch").
-# El dominio juegosdesalon.cl se configura ahí mismo y se mantiene; public/CNAME queda por si acaso.
+# Requires, once, Settings → Pages → Source: "GitHub Actions" (not "Deploy from a branch").
+# The juegosdesalon.cl domain is set up there and kept; public/CNAME stays just in case.
 
-name: Publicar
+name: Publish
 
 on:
   push:
     branches: [main]
-  # Para volver a publicar a mano (Actions → Publicar → Run workflow)
+  # To publish again by hand (Actions → Publish → Run workflow)
   workflow_dispatch:
 
 permissions:
@@ -22,25 +23,25 @@ permissions:
   pages: write
   id-token: write
 
-# Una publicación a la vez, y la que está saliendo no se corta
+# One publication at a time, and the one going out is not cut short
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  pruebas:
+  tests:
     uses: ./.github/workflows/tests.yml
 
-  # ¿Este árbol ya pasó la punta a punta? (D-308) Busca la marca que deja e2e.yml al pasar. Si
-  # algo falla al preguntar, dice que no, y la punta a punta corre entera.
-  ya-probado:
+  # Did this tree already pass the end-to-end run? (D-308) Looks for the mark e2e.yml leaves when it
+  # passes. If asking fails, it says no, and the end-to-end run goes whole.
+  already-tested:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
       contents: read
       actions: read
     outputs:
-      probado: ${{ steps.ver.outputs.probado }}
+      tested: ${{ steps.check.outputs.tested }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,39 +49,40 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - id: ver
+      - id: check
         env:
           GH_TOKEN: ${{ github.token }}
         run: node tools/e2e/already-tested.mjs
-      # Heredada del padre: deja su propia marca, para que el commit siguiente también pueda heredar
-      - if: steps.ver.outputs.heredado == 'true'
-        run: echo "heredado" > "$RUNNER_TEMP/marca"
-      - if: steps.ver.outputs.heredado == 'true'
+      # Inherited from the parent: it leaves its own mark, so the next commit can inherit too
+      - if: steps.check.outputs.inherited == 'true'
+        run: echo "inherited" > "$RUNNER_TEMP/mark"
+      - if: steps.check.outputs.inherited == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-arbol-${{ steps.ver.outputs.arbol }}
-          path: ${{ runner.temp }}/marca
+          name: e2e-tree-${{ steps.check.outputs.tree }}
+          path: ${{ runner.temp }}/mark
           retention-days: 7
 
-  # Las de punta a punta, todas, sobre lo que se va a publicar (D-302), salvo que ya hayan pasado
-  # sobre este mismo árbol (D-308). Si fallan dos veces, su job `avisar` abre el issue "main is red".
+  # All the end-to-end tests, on what is about to be published (D-302), unless they already passed
+  # on this same tree (D-308). If they fail twice, its `notify` job opens the "main is red" issue.
   e2e:
-    needs: ya-probado
-    if: ${{ !cancelled() && needs.ya-probado.outputs.probado != 'true' }}
+    needs: already-tested
+    if: ${{ !cancelled() && needs.already-tested.outputs.tested != 'true' }}
     uses: ./.github/workflows/e2e.yml
     permissions:
       contents: read
       actions: read
       issues: write
 
-  # Las reglas de Firebase se publican solas (D-218), antes que el sitio: el código nuevo puede
-  # necesitarlas. `rules.mjs publicar` no sube nada si ya están, y las verifica después de subirlas;
-  # si Firebase las rechaza, el sitio no se publica. Necesita el secreto FIREBASE_ADMIN_JSON (la
-  # llave de la cuenta de servicio); sin él, avisa y sigue, y las reglas se publican a mano.
-  reglas:
-    needs: [pruebas, ya-probado, e2e]
-    # Con las pruebas en verde y la punta a punta en verde, o saltada porque ya estaba probada
-    if: ${{ !cancelled() && needs.pruebas.result == 'success' && (needs.e2e.result == 'success' || (needs.e2e.result == 'skipped' && needs.ya-probado.outputs.probado == 'true')) }}
+  # The Firebase rules publish themselves (D-218), before the site: the new code may need them.
+  # `rules.mjs publish` uploads nothing if they are already there, and verifies them after
+  # uploading; if Firebase rejects them, the site is not published. It needs the
+  # FIREBASE_ADMIN_JSON secret (the service account key); without it, it warns and goes on, and
+  # the rules are published by hand.
+  rules:
+    needs: [tests, already-tested, e2e]
+    # With the tests green and the end-to-end run green, or skipped because it was already tested
+    if: ${{ !cancelled() && needs.tests.result == 'success' && (needs.e2e.result == 'success' || (needs.e2e.result == 'skipped' && needs.already-tested.outputs.tested == 'true')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -88,26 +90,26 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Publicar las reglas de Firebase
+      - name: Publish the Firebase rules
         env:
-          LLAVE_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+          KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
         run: |
-          if [ -z "$LLAVE_JSON" ]; then
-            echo "::warning::Falta el secreto FIREBASE_ADMIN_JSON: si este cambio tocó las reglas, publícalas a mano (node tools/firebase/rules.mjs publicar)"
+          if [ -z "$KEY_JSON" ]; then
+            echo "::warning::The FIREBASE_ADMIN_JSON secret is missing: if this change touched the rules, publish them by hand (node tools/firebase/rules.mjs publish)"
             exit 0
           fi
           umask 077
-          printf '%s' "$LLAVE_JSON" > "$RUNNER_TEMP/llave.json"
-          FIREBASE_LLAVE="$RUNNER_TEMP/llave.json" node tools/firebase/rules.mjs publicar
+          printf '%s' "$KEY_JSON" > "$RUNNER_TEMP/key.json"
+          FIREBASE_KEY="$RUNNER_TEMP/key.json" node tools/firebase/rules.mjs publish
 
-  publicar:
-    needs: [pruebas, ya-probado, e2e, reglas]
-    if: ${{ !cancelled() && needs.reglas.result == 'success' }}
+  publish:
+    needs: [tests, already-tested, e2e, rules]
+    if: ${{ !cancelled() && needs.rules.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
       name: github-pages
-      url: ${{ steps.publicar.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -118,16 +120,16 @@ jobs:
         with:
           node-version: 24
 
-      - name: Armar el sitio (public/ sin las pruebas)
+      - name: Build the site (public/ without the tests)
         run: rsync -a --exclude='*.test.mjs' public/ _site/
 
-      # La versión no está en git: se estampa aquí, solo en la copia que se publica (D-205). El
-      # número es la primera entrada de CHANGELOG.md subida por las pendientes de changelog/ (D-300),
-      # y la clave de caché lleva el commit. El resumen de la corrida dice qué número le tocó a cada una.
-      - name: Estampar la versión
+      # The version is not in git: it is stamped here, only on the copy that gets published (D-205).
+      # The number is CHANGELOG.md's first entry bumped by the pending changelog/ entries (D-300),
+      # and the cache key carries the commit. The run summary says which number each one got.
+      - name: Stamp the version
         run: |
-          python3 tools/release/set-version.py --sitio _site --commit "$GITHUB_SHA"
-          node tools/release/changelog.mjs ver >> "$GITHUB_STEP_SUMMARY"
+          python3 tools/release/set-version.py --site _site --commit "$GITHUB_SHA"
+          node tools/release/changelog.mjs show >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/configure-pages@v5
 
@@ -135,19 +137,19 @@ jobs:
         with:
           path: _site
 
-      - id: publicar
+      - id: deploy
         uses: actions/deploy-pages@v4
 
-      # C-11: se da por publicada cuando el sitio sirve la versión nueva, no cuando termina la subida
-      - name: Comprobar que el sitio sirve la versión nueva
+      # C-11: it counts as published when the site serves the new version, not when the upload ends
+      - name: Check that the site serves the new version
         env:
-          URL: ${{ steps.publicar.outputs.page_url }}
+          URL: ${{ steps.deploy.outputs.page_url }}
         run: |
-          clave="$(python3 tools/release/set-version.py --version)-${GITHUB_SHA:0:7}"
+          key="$(python3 tools/release/set-version.py --version)-${GITHUB_SHA:0:7}"
           for i in $(seq 1 20); do
-            if curl -sfL "${URL}?t=$(date +%s)" | grep -q "base.css?v=$clave"; then
-              echo "publicada: $clave"; exit 0
+            if curl -sfL "${URL}?t=$(date +%s)" | grep -q "base.css?v=$key"; then
+              echo "published: $key"; exit 0
             fi
             sleep 15
           done
-          echo "::error::$URL no sirve $clave después de 5 minutos"; exit 1
+          echo "::error::$URL does not serve $key after 5 minutes"; exit 1

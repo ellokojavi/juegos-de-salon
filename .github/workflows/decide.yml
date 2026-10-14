@@ -1,16 +1,16 @@
 # Opens the processes agent's one-tap decisions issue (D-273) with the workflows bot, not the
 # owner's account: GitHub notifies no one of what their own account does, and this way the owner
-# gets the email. Launched by `node tools/agents/processes.mjs decidir <file.json>`.
+# gets the email. Launched by `node tools/agents/processes.mjs decide <file.json>`.
 
-name: Decidir
+name: Decide
 
 on:
   workflow_dispatch:
     inputs:
-      titulo:
+      title:
         description: 'Issue title'
         required: true
-      cuerpo:
+      body:
         description: 'Body, with the checkboxes and the actions block (built by processes.mjs)'
         required: true
 
@@ -18,13 +18,13 @@ permissions:
   issues: write
 
 jobs:
-  abrir:
+  open:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
       # The texts go through environment variables, never pasted into the script
       - env:
           GH_TOKEN: ${{ github.token }}
-          TITULO: ${{ inputs.titulo }}
-          CUERPO: ${{ inputs.cuerpo }}
-        run: gh issue create -R "$GITHUB_REPOSITORY" --title "$TITULO" --label procesos --body "$CUERPO"
+          TITLE: ${{ inputs.title }}
+          BODY: ${{ inputs.body }}
+        run: gh issue create -R "$GITHUB_REPOSITORY" --title "$TITLE" --label processes --body "$BODY"

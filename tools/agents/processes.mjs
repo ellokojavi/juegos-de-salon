@@ -1,305 +1,310 @@
 #!/usr/bin/env node
 /**
- * La memoria y las señales del agente de procesos (D-273): el que cierra lo que quedó abierto y
- * convierte un error que se repite en un mecanismo que lo frena solo.
+ * The memory and the signals of the processes agent (D-273): the one that closes what was left
+ * open and turns a recurring error into a mechanism that stops it on its own.
  *
- *   node tools/agents/processes.mjs revisar                  # las señales de hoy
- *   node tools/agents/processes.mjs decidir <archivo.json> [--directo]   # abre el issue de decisiones de un toque
- *   node tools/agents/processes.mjs patron <clave> "qué pasó" [--commit <sha>]   # anota una vez que se vio
- *   node tools/agents/processes.mjs mecanismo <clave> "qué lo frena ahora" --pr <url>
- *   node tools/agents/processes.mjs despacho <documentacion|usabilidad> <commit>   # lo lanzó hasta ese commit de main
- *   node tools/agents/processes.mjs anotar --hasta <commit> [--issue <url>] [--pr <url>] [--nota "…"]
- *   node tools/agents/processes.mjs historial
+ *   node tools/agents/processes.mjs check                       # today's signals
+ *   node tools/agents/processes.mjs decide <file.json> [--direct]   # opens the one-tap decisions issue
+ *   node tools/agents/processes.mjs pattern <key> "what happened" [--commit <sha>]   # records one sighting
+ *   node tools/agents/processes.mjs mechanism <key> "what stops it now" --pr <url>
+ *   node tools/agents/processes.mjs dispatch <documentation|usability> <commit>   # launched it up to that main commit
+ *   node tools/agents/processes.mjs record --to <commit> [--issue <url>] [--pr <url>] [--note "…"]
+ *   node tools/agents/processes.mjs record --queue <#n:d>      # an approved queued task is done
+ *   node tools/agents/processes.mjs history
  *
- * `revisar` junta, sin opinar, lo que el agente tiene que mirar:
- *   - los PR abiertos que esperan: sin auto-merge, apilados sobre otra rama, con conflicto o en rojo;
- *   - los issues "main en rojo" cuando main ya está en verde (nadie los cerró);
- *   - la última corrida de cada workflow en main;
- *   - los dilemas de usabilidad que esperan al dueño hace más de tres días;
- *   - lo que la memoria del agente de documentación arrastra de una ronda a otra;
- *   - los commits de main desde la última ronda que arreglan algo que quedó atrás;
- *   - el feedback 🐞 sin atender (issues `feedback` abiertos, D-275);
- *   - las decisiones que el dueño aprobó como "en cola" y siguen sin hacerse;
- *   - los patrones vistos dos veces o más que todavía no tienen mecanismo;
- *   - a quién despachar hoy (D-276): al agente de documentación si entró algo a main desde su
- *     última ronda, y al de usabilidad si cambió algo de public/ desde la última vez que se lo lanzó.
+ * `check` gathers, without judging, what the agent has to look at:
+ *   - the open PRs that are waiting: without auto-merge, stacked on another branch, conflicting or red;
+ *   - the "main is red" issues when main is already green (nobody closed them);
+ *   - the last run of each workflow on main;
+ *   - the usability dilemmas waiting for the owner for more than three days;
+ *   - what the documentation agent's memory carries over from one round to the next;
+ *   - the main commits since the last round that fix something that fell behind;
+ *   - the unhandled 🐞 feedback (open `feedback` issues, D-275);
+ *   - the decisions the owner approved as "queued" that are still not done;
+ *   - the patterns seen twice or more that still have no mechanism;
+ *   - whom to dispatch today (D-276): the documentation agent if something entered main since its
+ *     last round, and the usability agent if something in public/ changed since it was last launched.
  *
- * `decidir` takes `{ titulo, resumen, decisiones: [{ pregunta, contexto?, si: [acciones], no?: [acciones] }] }`
+ * `decide` takes `{ title, summary, decisions: [{ question, context?, yes: [actions], no?: [actions] }] }`
  * and opens an issue with a Yes and a No checkbox per decision; checking one carries it out at once
  * (tools/agents/approve.mjs, .github/workflows/approve.yml). The actions are those of approve.mjs's
- * closed list: prepare the work beforehand, so the Yes only has to merge it. The issue is written
+ * closed list (`{ type: 'merge', pr }`, `close-pr`, `close-issue`, `comment`, `run`, `queue`,
+ * `nothing`): prepare the work beforehand, so the Yes only has to merge it. The issue is written
  * in English (D-316), like everything the repo writes on GitHub; the markers stay as they were.
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { invalida, casillas, hechas, leerAcciones, ETIQUETA } from './approve.mjs';
+import { invalidAction, checkboxes, doneSet, readActions, normalizeAction, LABEL } from './approve.mjs';
 
-export const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-export const MEMORIA = join(RAIZ, 'docs/processes.json');
+export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+export const MEMORY = join(ROOT, 'docs/processes.json');
 const REPO = 'ellokojavi/juegos-de-salon';
-const DIA = 24 * 3600 * 1000;
+const DAY = 24 * 3600 * 1000;
 
-/** Los asuntos de commit que delatan algo que se atrasó o se olvidó. */
-export const ARREGLO = /quedó atrás|quedaba atrás|atrasad|desactualizad|faltaba|se olvid|no se actualiz|(?<!Uno )al día con|estaba mal|corrige|arregla/i;
+/** Commit subjects that give away something that fell behind or was forgotten (Spanish history and English). */
+export const FIX = /quedó atrás|quedaba atrás|atrasad|desactualizad|faltaba|se olvid|no se actualiz|(?<!Uno )al día con|estaba mal|corrige|arregla|fell behind|was behind|out of date|outdated|was missing|forgot|up to date with|was wrong|\bfix(es|ed)?\b/i;
 
 /* ------------------------------------------------------------------ */
-/* Lo puro (lo prueban approve.test.mjs y processes.test.mjs)          */
+/* Pure logic (tested by approve.test.mjs and processes.test.mjs)     */
 /* ------------------------------------------------------------------ */
 
 /** What an option does, in words, for the checkbox: "merges #300", or '' if it is only noted. */
-export function queHace(lista = []) {
-  const frases = lista.map(a => {
-    switch (a.tipo) {
-      case 'fusionar': return `merges #${a.pr}`;
-      case 'cerrar-pr': return `closes #${a.pr}`;
-      case 'cerrar-issue': return `closes #${a.issue}`;
-      case 'comentar': return `comments on #${a.en}`;
-      case 'correr': return a.workflow === 'publish.yml' ? 'publishes the site' : 'runs the end-to-end tests';
-      case 'encolar': return 'queues it for the next round';
+export function describeActions(list = []) {
+  const phrases = list.map(normalizeAction).map(a => {
+    switch (a.type) {
+      case 'merge': return `merges #${a.pr}`;
+      case 'close-pr': return `closes #${a.pr}`;
+      case 'close-issue': return `closes #${a.issue}`;
+      case 'comment': return `comments on #${a.on}`;
+      case 'run': return a.workflow === 'publish.yml' ? 'publishes the site' : 'runs the end-to-end tests';
+      case 'queue': return 'queues it for the next round';
       default: return '';
     }
   }).filter(Boolean);
-  return frases.length > 1 ? `${frases.slice(0, -1).join(', ')} and ${frases.at(-1)}` : frases[0] || '';
+  return phrases.length > 1 ? `${phrases.slice(0, -1).join(', ')} and ${phrases.at(-1)}` : phrases[0] || '';
 }
 
 /** The decisions issue body: `<!-- op:n:si -->` checkboxes and the actions block at the end. */
-export function cuerpoDecisiones({ resumen = '', decisiones }) {
-  if (!decisiones?.length) throw new Error('No decisions.');
-  const acciones = {}, partes = [];
-  if (resumen) partes.push(resumen.trim(), '');
-  partes.push('Check **Yes** or **No** on each one. What you check happens right away and cannot be undone; the result is noted next to it.', '');
-  decisiones.forEach((d, i) => {
+export function decisionsBody({ summary = '', decisions }) {
+  if (!decisions?.length) throw new Error('No decisions.');
+  const actions = {}, parts = [];
+  if (summary) parts.push(summary.trim(), '');
+  parts.push('Check **Yes** or **No** on each one. What you check happens right away and cannot be undone; the result is noted next to it.', '');
+  decisions.forEach((d, i) => {
     const n = i + 1;
-    for (const op of ['si', 'no']) {
-      const lista = d[op]?.length ? d[op] : [{ tipo: 'nada' }];
-      const mala = lista.map(invalida).find(Boolean);
-      if (mala) throw new Error(`Decision ${n}, ${op}: ${mala}`);
-      acciones[`${n}:${op}`] = lista;
+    // The markers keep their Spanish option names (`si`, `no`): approve.mjs reads old issues too
+    for (const [op, key] of [['si', 'yes'], ['no', 'no']]) {
+      const list = (d[key]?.length ? d[key] : [{ type: 'nothing' }]).map(normalizeAction);
+      const bad = list.map(invalidAction).find(Boolean);
+      if (bad) throw new Error(`Decision ${n}, ${key}: ${bad}`);
+      actions[`${n}:${op}`] = list;
     }
-    partes.push(`### ${n}. ${d.pregunta}`);
-    if (d.contexto) partes.push(d.contexto.trim());
-    const casilla = (op, nombre) => { const q = queHace(acciones[`${n}:${op}`]); return `- [ ] ${nombre}${q ? `: ${q}` : ''} <!-- op:${n}:${op} -->`; };
-    partes.push(casilla('si', 'Yes'), casilla('no', 'No'), '');
+    parts.push(`### ${n}. ${d.question}`);
+    if (d.context) parts.push(d.context.trim());
+    const box = (op, name) => { const q = describeActions(actions[`${n}:${op}`]); return `- [ ] ${name}${q ? `: ${q}` : ''} <!-- op:${n}:${op} -->`; };
+    parts.push(box('si', 'Yes'), box('no', 'No'), '');
   });
-  partes.push(`<!-- acciones ${JSON.stringify(acciones)} -->`);
-  return partes.join('\n');
+  parts.push(`<!-- acciones ${JSON.stringify(actions)} -->`);
+  return parts.join('\n');
 }
 
-/** Las decisiones aprobadas que piden trabajo a la ronda siguiente: `[{ id: "#n:d", tarea }]`. */
-export function enCola(issues) {
+/** The approved decisions that ask the next round for work: `[{ id: "#n:d", task }]`. */
+export function queued(issues) {
   const res = [];
   for (const { number, body } of issues) {
-    const acc = leerAcciones(body) || {}, marcadas = casillas(body), listas = hechas(body);
-    for (const [op, lista] of Object.entries(acc)) {
+    const acts = readActions(body) || {}, checked = checkboxes(body), done = doneSet(body);
+    for (const [op, list] of Object.entries(acts)) {
       const [d] = op.split(':');
-      if (!marcadas[op] || !listas.has(d)) continue;
-      for (const a of lista) if (a.tipo === 'encolar') res.push({ id: `#${number}:${d}`, tarea: a.tarea });
+      if (!checked[op] || !done.has(d)) continue;
+      for (const a of list) if (a.type === 'queue') res.push({ id: `#${number}:${d}`, task: a.task });
     }
   }
   return res;
 }
 
-/** Lo que un PR abierto espera, o [] si nada: cada motivo, una frase. */
-export function esperas(pr, ahora = Date.now()) {
+/** What an open PR is waiting for, or [] if nothing: each reason, one sentence. */
+export function waits(pr, now = Date.now()) {
   const m = [];
-  const dias = Math.floor((ahora - Date.parse(pr.createdAt)) / DIA);
+  const days = Math.floor((now - Date.parse(pr.createdAt)) / DAY);
   if (pr.isDraft) return m;
-  if (pr.baseRefName !== 'main') m.push(`apilado sobre ${pr.baseRefName}: no entra a main hasta que entre esa`);
-  if (pr.mergeable === 'CONFLICTING') m.push('tiene conflicto con su base');
-  const rojos = (pr.statusCheckRollup || []).filter(c => ['FAILURE', 'TIMED_OUT', 'CANCELLED'].includes(c.conclusion)).map(c => c.name);
-  if (rojos.length) m.push(`en rojo: ${[...new Set(rojos)].join(', ')}`);
-  if (!pr.autoMergeRequest && dias >= 1) m.push(`sin auto-merge hace ${dias} día${dias === 1 ? '' : 's'}`);
+  if (pr.baseRefName !== 'main') m.push(`stacked on ${pr.baseRefName}: it does not reach main until that one does`);
+  if (pr.mergeable === 'CONFLICTING') m.push('conflicts with its base');
+  const red = (pr.statusCheckRollup || []).filter(c => ['FAILURE', 'TIMED_OUT', 'CANCELLED'].includes(c.conclusion)).map(c => c.name);
+  if (red.length) m.push(`red: ${[...new Set(red)].join(', ')}`);
+  if (!pr.autoMergeRequest && days >= 1) m.push(`no auto-merge for ${days} day${days === 1 ? '' : 's'}`);
   return m;
 }
 
-/** Los ejecutores (D-276). */
-export const EJECUTORES = ['documentacion', 'usabilidad'];
+/** The executors (D-276). */
+export const EXECUTORS = ['documentation', 'usability'];
 
 /**
- * A quién despachar hoy y por qué: `[{ agente, motivo }]`. `documentacion` recibe los commits de
- * main desde su `revisadoHasta`; `usabilidad`, los que tocaron public/ desde su último despacho
- * (o `null` si nunca se lo lanzó) y los días desde entonces: una vez por semana va igual.
+ * Whom to dispatch today and why: `[{ agent, reason }]`. `documentation` gets the main commits
+ * since its `checkedUpTo`; `usability`, those that touched public/ since its last dispatch (or
+ * `null` if it was never launched) and the days since then: once a week it goes anyway.
  */
-export function porDespachar({ commitsDoc, commitsPublic, diasUsabilidad }) {
+export function toDispatch({ docCommits, publicCommits, usabilityDays }) {
   const res = [];
-  if (commitsDoc > 0) res.push({ agente: 'documentacion', motivo: `${commitsDoc} commit(s) en main desde su última ronda` });
-  if (commitsPublic === null) res.push({ agente: 'usabilidad', motivo: 'nunca se lo despachó' });
-  else if (commitsPublic > 0) res.push({ agente: 'usabilidad', motivo: `${commitsPublic} commit(s) que cambian public/ desde su último despacho` });
-  else if (diasUsabilidad >= 7) res.push({ agente: 'usabilidad', motivo: `una semana sin ronda (${diasUsabilidad} días)` });
+  if (docCommits > 0) res.push({ agent: 'documentation', reason: `${docCommits} commit(s) on main since its last round` });
+  if (publicCommits === null) res.push({ agent: 'usability', reason: 'it was never dispatched' });
+  else if (publicCommits > 0) res.push({ agent: 'usability', reason: `${publicCommits} commit(s) that change public/ since its last dispatch` });
+  else if (usabilityDays >= 7) res.push({ agent: 'usability', reason: `a week without a round (${usabilityDays} days)` });
   return res;
 }
 
-/** Anota que un patrón se vio otra vez (o la primera). Devuelve cuántas veces va. */
-export function anotarPatron(memoria, clave, que, { fecha, commit = null }) {
-  let p = memoria.patrones.find(x => x.clave === clave);
-  if (!p) memoria.patrones.push(p = { clave, que, vistos: [], mecanismo: null });
-  if (!p.vistos.some(v => v.commit && v.commit === commit)) p.vistos.push({ fecha, que, commit });
-  return p.vistos.length;
+/** Records that a pattern was seen again (or the first time). Returns how many times so far. */
+export function recordPattern(memory, key, what, { date, commit = null }) {
+  let p = memory.patterns.find(x => x.key === key);
+  if (!p) memory.patterns.push(p = { key, what, seen: [], mechanism: null });
+  if (!p.seen.some(v => v.commit && v.commit === commit)) p.seen.push({ date, what, commit });
+  return p.seen.length;
 }
 
 /* ------------------------------------------------------------------ */
-/* Lo que lee el repo y GitHub                                         */
+/* What reads the repo and GitHub                                     */
 /* ------------------------------------------------------------------ */
 
-const sh = (cmd, args) => execFileSync(cmd, args, { cwd: RAIZ, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+const sh = (cmd, args) => execFileSync(cmd, args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 const gh = (...args) => JSON.parse(sh('gh', [...args, '-R', REPO]));
-const vacia = () => ({ revisadoHasta: null, patrones: [], mecanismos: [], colaHecha: [], despachos: {}, rondas: [] });
-export const leerMemoria = () => (existsSync(MEMORIA) ? { ...vacia(), ...JSON.parse(readFileSync(MEMORIA, 'utf8')) } : vacia());
-const guardar = m => writeFileSync(MEMORIA, JSON.stringify(m, null, 2) + '\n');
-const hoy = () => new Date().toISOString().slice(0, 10);
+const empty = () => ({ checkedUpTo: null, patterns: [], mechanisms: [], queueDone: [], dispatches: {}, rounds: [] });
+export const readMemory = () => (existsSync(MEMORY) ? { ...empty(), ...JSON.parse(readFileSync(MEMORY, 'utf8')) } : empty());
+const save = m => writeFileSync(MEMORY, JSON.stringify(m, null, 2) + '\n');
+const today = () => new Date().toISOString().slice(0, 10);
 
-function revisar() {
-  const m = leerMemoria();
+function check() {
+  const m = readMemory();
   sh('git', ['fetch', '-q', 'origin', 'main']);
-  const punta = sh('git', ['rev-parse', 'origin/main']).trim();
-  const titulo = t => console.log(`\n## ${t}`);
-  console.log(`# Procesos · ${hoy()} · main en ${punta.slice(0, 7)}${m.revisadoHasta ? ` · última ronda hasta ${m.revisadoHasta.slice(0, 7)}` : ' · primera ronda'}`);
+  const tip = sh('git', ['rev-parse', 'origin/main']).trim();
+  const heading = t => console.log(`\n## ${t}`);
+  console.log(`# Processes · ${today()} · main at ${tip.slice(0, 7)}${m.checkedUpTo ? ` · last round up to ${m.checkedUpTo.slice(0, 7)}` : ' · first round'}`);
 
-  titulo('PR que esperan');
+  heading('Waiting PRs');
   const prs = gh('pr', 'list', '--state', 'open', '--limit', '100', '--json', 'number,title,createdAt,baseRefName,isDraft,mergeable,autoMergeRequest,statusCheckRollup,headRefName');
   let n = 0;
   for (const pr of prs) {
-    const e = esperas(pr);
-    if (e.length) { n++; console.log(`- #${pr.number} ${pr.title} (${pr.createdAt.slice(0, 10)}): ${e.join('; ')}`); }
+    const w = waits(pr);
+    if (w.length) { n++; console.log(`- #${pr.number} ${pr.title} (${pr.createdAt.slice(0, 10)}): ${w.join('; ')}`); }
   }
-  if (!n) console.log('Ninguno.');
+  if (!n) console.log('None.');
 
-  titulo('Workflows en main');
+  heading('Workflows on main');
   for (const w of ['publish.yml', 'e2e.yml', 'notifications.yml']) {
     const [r] = gh('run', 'list', '--workflow', w, '--branch', 'main', '--limit', '1', '--json', 'conclusion,status,createdAt,url');
-    console.log(`- ${w}: ${r ? `${r.conclusion || r.status} (${r.createdAt.slice(0, 16)})${r.conclusion === 'failure' ? ` ${r.url}` : ''}` : 'sin corridas'}`);
+    console.log(`- ${w}: ${r ? `${r.conclusion || r.status} (${r.createdAt.slice(0, 16)})${r.conclusion === 'failure' ? ` ${r.url}` : ''}` : 'no runs'}`);
   }
 
-  titulo('CHANGELOG por juntar y reservas de decisión (D-300, D-301)');
-  const porJuntar = sh('git', ['ls-tree', '--name-only', 'origin/main', 'changelog/']).split('\n').filter(f => f.endsWith('.md') && !f.endsWith('README.md'));
-  console.log(porJuntar.length ? `- ${porJuntar.length} entrada(s) en changelog/ de main: júntalas en tu PR (node tools/release/changelog.mjs juntar)` : '- changelog/ de main, vacío.');
-  try { console.log(sh('node', [join(RAIZ, 'tools/agents/decision.mjs'), 'limpiar']).trim() || '- Sin reservas abiertas.'); } catch (e) { console.log(`- reservas: ${String(e.message).split('\n')[0]}`); }
+  heading('CHANGELOG to collect and decision reservations (D-300, D-301)');
+  const toCollect = sh('git', ['ls-tree', '--name-only', 'origin/main', 'changelog/']).split('\n').filter(f => f.endsWith('.md') && !f.endsWith('README.md'));
+  console.log(toCollect.length ? `- ${toCollect.length} entry(ies) in main's changelog/: collect them in your PR (node tools/release/changelog.mjs collect)` : "- main's changelog/ is empty.");
+  try { console.log(sh('node', [join(ROOT, 'tools/agents/decision.mjs'), 'clean']).trim() || '- No open reservations.'); } catch (e) { console.log(`- reservations: ${String(e.message).split('\n')[0]}`); }
 
-  titulo('Issues');
+  heading('Issues');
   const issues = gh('issue', 'list', '--state', 'open', '--limit', '100', '--json', 'number,title,createdAt,labels,body');
-  // En main, la punta a punta corre dentro de publish.yml (D-302): su última corrida terminada dice si main está en verde
-  const verdeE2E = gh('run', 'list', '--workflow', 'publish.yml', '--branch', 'main', '--status', 'completed', '--limit', '1', '--json', 'conclusion')[0]?.conclusion === 'success';
-  for (const i of issues.filter(i => /^main (en rojo|is red)/.test(i.title)))
-    console.log(`- #${i.number} ${i.title} (${i.createdAt.slice(0, 10)})${verdeE2E ? ': main ya está en verde, se puede cerrar' : ': sigue en rojo'}`);
-  const dilemas = issues.filter(i => i.labels.some(l => l.name === 'usabilidad') && Date.now() - Date.parse(i.createdAt) > 3 * DIA);
-  for (const i of dilemas) console.log(`- dilema #${i.number} espera al dueño desde ${i.createdAt.slice(0, 10)}: ${i.title}`);
-  if (!dilemas.length && !issues.some(i => /^main (en rojo|is red)/.test(i.title))) console.log('Nada atrasado.');
+  // On main, the end-to-end tests run inside publish.yml (D-302): its last finished run says whether main is green
+  const greenE2E = gh('run', 'list', '--workflow', 'publish.yml', '--branch', 'main', '--status', 'completed', '--limit', '1', '--json', 'conclusion')[0]?.conclusion === 'success';
+  const redIssues = issues.filter(i => /^main (en rojo|is red)/.test(i.title));
+  for (const i of redIssues) console.log(`- #${i.number} ${i.title} (${i.createdAt.slice(0, 10)})${greenE2E ? ': main is already green, it can be closed' : ': still red'}`);
+  const dilemmas = issues.filter(i => i.labels.some(l => ['usability', 'usabilidad'].includes(l.name)) && Date.now() - Date.parse(i.createdAt) > 3 * DAY);
+  for (const i of dilemmas) console.log(`- dilemma #${i.number} waiting for the owner since ${i.createdAt.slice(0, 10)}: ${i.title}`);
+  if (!dilemmas.length && !redIssues.length) console.log('Nothing overdue.');
 
-  titulo('Feedback 🐞 sin atender');
+  heading('Unhandled 🐞 feedback');
   const feedback = issues.filter(i => i.labels.some(l => l.name === 'feedback'));
   for (const i of feedback.reverse()) console.log(`- #${i.number} (${i.createdAt.slice(0, 10)}) ${i.title}`);
-  if (!feedback.length) console.log('Nada.');
+  if (!feedback.length) console.log('Nothing.');
 
-  titulo('Lo que el agente de documentación arrastra');
-  const doc = JSON.parse(readFileSync(join(RAIZ, 'docs/documentation.json'), 'utf8'));
-  const ultima = doc.rondas.at(-1);
-  console.log(`Última ronda anotada: ${ultima?.fecha || 'ninguna'}.`);
-  for (const p of doc.pendientes || []) console.log(`- ${p.slice(0, 220)}${p.length > 220 ? '…' : ''}`);
+  heading('What the documentation agent carries over');
+  const doc = JSON.parse(readFileSync(join(ROOT, 'docs/documentation.json'), 'utf8'));
+  const last = doc.rounds.at(-1);
+  console.log(`Last recorded round: ${last?.date || 'none'}.`);
+  for (const p of doc.pending || []) console.log(`- ${p.slice(0, 220)}${p.length > 220 ? '…' : ''}`);
 
-  titulo(`Commits que arreglan algo que quedó atrás${m.revisadoHasta ? ` (desde ${m.revisadoHasta.slice(0, 7)})` : ' (últimos 7 días)'}`);
-  const rango = m.revisadoHasta ? [`${m.revisadoHasta}..origin/main`] : ['--since=7.days', 'origin/main'];
-  const commits = sh('git', ['log', '--no-merges', '--format=%h %ad %s', '--date=short', ...rango]).split('\n').filter(l => ARREGLO.test(l));
+  heading(`Commits that fix something that fell behind${m.checkedUpTo ? ` (since ${m.checkedUpTo.slice(0, 7)})` : ' (last 7 days)'}`);
+  const range = m.checkedUpTo ? [`${m.checkedUpTo}..origin/main`] : ['--since=7.days', 'origin/main'];
+  const commits = sh('git', ['log', '--no-merges', '--format=%h %ad %s', '--date=short', ...range]).split('\n').filter(l => FIX.test(l));
   for (const c of commits) console.log(`- ${c}`);
-  if (!commits.length) console.log('Ninguno.');
+  if (!commits.length) console.log('None.');
 
-  titulo('A quién despachar hoy (D-276)');
-  const cuenta = (...a) => Number(sh('git', ['rev-list', '--count', ...a]).trim());
-  const ultimo = m.despachos.usabilidad;
-  const plan = porDespachar({
-    commitsDoc: doc.revisadoHasta ? cuenta(`${doc.revisadoHasta}..origin/main`) : 1,
-    commitsPublic: ultimo ? cuenta(`${ultimo.hasta}..origin/main`, '--', 'public/') : null,
-    diasUsabilidad: ultimo ? Math.floor((Date.now() - Date.parse(ultimo.fecha)) / DIA) : null,
+  heading('Whom to dispatch today (D-276)');
+  const count = (...a) => Number(sh('git', ['rev-list', '--count', ...a]).trim());
+  const lastUsability = m.dispatches.usability;
+  const plan = toDispatch({
+    docCommits: doc.checkedUpTo ? count(`${doc.checkedUpTo}..origin/main`) : 1,
+    publicCommits: lastUsability ? count(`${lastUsability.to}..origin/main`, '--', 'public/') : null,
+    usabilityDays: lastUsability ? Math.floor((Date.now() - Date.parse(lastUsability.date)) / DAY) : null,
   });
-  for (const d of plan) console.log(`- ${d.agente}: ${d.motivo}  (al lanzarlo: despacho ${d.agente} ${punta.slice(0, 7)})`);
-  if (!plan.length) console.log('Nadie: no cambió nada que revisar.');
+  for (const d of plan) console.log(`- ${d.agent}: ${d.reason}  (when launching it: dispatch ${d.agent} ${tip.slice(0, 7)})`);
+  if (!plan.length) console.log('Nobody: nothing changed that needs a review.');
 
-  titulo('Aprobado y en cola');
-  const procesos = gh('issue', 'list', '--label', ETIQUETA, '--state', 'all', '--limit', '30', '--json', 'number,body');
-  const cola = enCola(procesos).filter(c => !m.colaHecha.includes(c.id));
-  for (const c of cola) console.log(`- ${c.id}: ${c.tarea}  (al terminar: anotar --cola ${c.id})`);
-  if (!cola.length) console.log('Nada.');
+  heading('Approved and queued');
+  const decisionIssues = gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '30', '--json', 'number,body');
+  const queue = queued(decisionIssues).filter(c => !m.queueDone.includes(c.id));
+  for (const c of queue) console.log(`- ${c.id}: ${c.task}  (when done: record --queue ${c.id})`);
+  if (!queue.length) console.log('Nothing.');
 
-  titulo('Patrones');
-  for (const p of m.patrones) console.log(`- ${p.clave} · ${p.vistos.length} vez/veces · ${p.mecanismo ? `frenado: ${p.mecanismo.que}` : p.vistos.length >= 2 ? '⚠️ LISTO PARA MECANISMO' : 'en observación'}: ${p.que}`);
-  if (!m.patrones.length) console.log('Todavía no hay.');
+  heading('Patterns');
+  for (const p of m.patterns) console.log(`- ${p.key} · seen ${p.seen.length} time(s) · ${p.mechanism ? `stopped: ${p.mechanism.what}` : p.seen.length >= 2 ? '⚠️ READY FOR A MECHANISM' : 'under observation'}: ${p.what}`);
+  if (!m.patterns.length) console.log('None yet.');
 
-  console.log(`\nAl cerrar: node tools/agents/processes.mjs anotar --hasta ${punta.slice(0, 7)} [--issue <url>] [--pr <url>] [--nota "…"]`);
+  console.log(`\nWhen closing: node tools/agents/processes.mjs record --to ${tip.slice(0, 7)} [--issue <url>] [--pr <url>] [--note "…"]`);
 }
 
-function decidir(archivo) {
-  if (!archivo) throw new Error('Usage: node tools/agents/processes.mjs decidir <file.json>');
-  const d = JSON.parse(readFileSync(archivo, 'utf8'));
-  const cuerpo = cuerpoDecisiones(d);
-  const hay = gh('label', 'list', '--limit', '200', '--json', 'name').some(l => l.name === ETIQUETA);
-  if (!hay) sh('gh', ['label', 'create', ETIQUETA, '-R', REPO, '--color', '5319e7', '--description', 'One-tap decisions from the processes agent (D-273)']);
+function decide(file) {
+  if (!file) throw new Error('Usage: node tools/agents/processes.mjs decide <file.json>');
+  const d = JSON.parse(readFileSync(file, 'utf8'));
+  const body = decisionsBody(d);
+  const exists = gh('label', 'list', '--limit', '200', '--json', 'name').some(l => l.name === LABEL);
+  if (!exists) sh('gh', ['label', 'create', LABEL, '-R', REPO, '--color', '5319e7', '--description', 'One-tap decisions from the processes agent (D-273)']);
   // The bot opens it (decide.yml): GitHub notifies no one of what their own account does, and
-  // the agents use the owner's. With --directo, that account opens it (no email).
-  if (process.argv.includes('--directo')) return console.log(sh('gh', ['issue', 'create', '-R', REPO, '--title', d.titulo, '--label', ETIQUETA, '--body', cuerpo]).trim());
-  const antes = new Date().toISOString();
-  sh('gh', ['workflow', 'run', 'decide.yml', '-R', REPO, '--ref', 'main', '-f', `titulo=${d.titulo}`, '-f', `cuerpo=${cuerpo}`]);
+  // the agents use the owner's. With --direct, that account opens it (no email).
+  if (process.argv.includes('--direct')) return console.log(sh('gh', ['issue', 'create', '-R', REPO, '--title', d.title, '--label', LABEL, '--body', body]).trim());
+  const before = new Date().toISOString();
+  sh('gh', ['workflow', 'run', 'decide.yml', '-R', REPO, '--ref', 'main', '-f', `title=${d.title}`, '-f', `body=${body}`]);
   for (let i = 0; i < 24; i++) {
     execFileSync('sleep', ['5']);
-    const [nuevo] = gh('issue', 'list', '--label', ETIQUETA, '--state', 'all', '--limit', '5', '--json', 'url,title,createdAt').filter(x => x.title === d.titulo && x.createdAt >= antes.slice(0, 19));
-    if (nuevo) return console.log(nuevo.url);
+    const [created] = gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '5', '--json', 'url,title,createdAt').filter(x => x.title === d.title && x.createdAt >= before.slice(0, 19));
+    if (created) return console.log(created.url);
   }
-  throw new Error('decide.yml did not open the issue within two minutes: check Actions → Decidir.');
+  throw new Error('decide.yml did not open the issue within two minutes: check Actions → Decide.');
 }
 
-const valor = (args, flag) => { const i = args.indexOf(flag); return i >= 0 ? args[i + 1] : null; };
+const flag = (args, name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : null; };
 
-function anotar(args) {
-  const m = leerMemoria(), hasta = valor(args, '--hasta'), cola = valor(args, '--cola');
-  if (cola) { if (!m.colaHecha.includes(cola)) m.colaHecha.push(cola); }
-  if (hasta) {
-    m.rondas.push({ fecha: hoy(), desde: m.revisadoHasta, hasta, issue: valor(args, '--issue'), pr: valor(args, '--pr'), nota: valor(args, '--nota') });
-    m.revisadoHasta = hasta;
+function record(args) {
+  const m = readMemory(), to = flag(args, '--to'), queue = flag(args, '--queue');
+  if (queue) { if (!m.queueDone.includes(queue)) m.queueDone.push(queue); }
+  if (to) {
+    m.rounds.push({ date: today(), from: m.checkedUpTo, to, issue: flag(args, '--issue'), pr: flag(args, '--pr'), note: flag(args, '--note') });
+    m.checkedUpTo = to;
   }
-  if (!hasta && !cola) throw new Error('Uso: anotar --hasta <commit> [--issue <url>] [--pr <url>] [--nota "…"] | anotar --cola <#n:d>');
-  guardar(m);
-  console.log('Anotado en docs/processes.json.');
+  if (!to && !queue) throw new Error('Usage: record --to <commit> [--issue <url>] [--pr <url>] [--note "…"] | record --queue <#n:d>');
+  save(m);
+  console.log('Recorded in docs/processes.json.');
 }
 
-function principal([orden, ...args]) {
-  const m = leerMemoria();
-  switch (orden) {
-    case 'revisar': return revisar();
-    case 'decidir': return decidir(args[0]);
-    case 'patron': {
-      const [clave, que] = args;
-      if (!clave || !que) throw new Error('Uso: patron <clave> "qué pasó" [--commit <sha>]');
-      const veces = anotarPatron(m, clave, que, { fecha: hoy(), commit: valor(args, '--commit') });
-      guardar(m);
-      return console.log(`${clave}: ${veces} vez/veces.${veces >= 2 ? ' Ya merece un mecanismo.' : ''}`);
+const USAGE = 'Usage: node tools/agents/processes.mjs check | decide <file.json> [--direct] | pattern <key> "…" [--commit <sha>] | mechanism <key> "…" --pr <url> | dispatch <agent> <commit> | record --to <commit> | record --queue <#n:d> | history';
+
+function main([command, ...args]) {
+  const m = readMemory();
+  switch (command) {
+    case 'check': return check();
+    case 'decide': return decide(args[0]);
+    case 'pattern': {
+      const [key, what] = args;
+      if (!key || !what) throw new Error('Usage: pattern <key> "what happened" [--commit <sha>]');
+      const times = recordPattern(m, key, what, { date: today(), commit: flag(args, '--commit') });
+      save(m);
+      return console.log(`${key}: seen ${times} time(s).${times >= 2 ? ' It deserves a mechanism now.' : ''}`);
     }
-    case 'mecanismo': {
-      const [clave, que] = args, pr = valor(args, '--pr');
-      const p = m.patrones.find(x => x.clave === clave);
-      if (!p || !que || !pr) throw new Error('Uso: mecanismo <clave existente> "qué lo frena" --pr <url>');
-      p.mecanismo = { fecha: hoy(), que, pr };
-      m.mecanismos.push({ fecha: hoy(), clave, que, pr });
-      guardar(m);
-      return console.log(`${clave}: frenado por ${que}.`);
+    case 'mechanism': {
+      const [key, what] = args, pr = flag(args, '--pr');
+      const p = m.patterns.find(x => x.key === key);
+      if (!p || !what || !pr) throw new Error('Usage: mechanism <existing key> "what stops it" --pr <url>');
+      p.mechanism = { date: today(), what, pr };
+      m.mechanisms.push({ date: today(), key, what, pr });
+      save(m);
+      return console.log(`${key}: stopped by ${what}.`);
     }
-    case 'despacho': {
-      const [agente, hasta] = args;
-      if (!EJECUTORES.includes(agente) || !hasta) throw new Error(`Uso: despacho <${EJECUTORES.join('|')}> <commit>`);
-      m.despachos[agente] = { fecha: hoy(), hasta };
-      guardar(m);
-      return console.log(`${agente}: despachado hasta ${hasta}.`);
+    case 'dispatch': {
+      const [agent, to] = args;
+      if (!EXECUTORS.includes(agent) || !to) throw new Error(`Usage: dispatch <${EXECUTORS.join('|')}> <commit>`);
+      m.dispatches[agent] = { date: today(), to };
+      save(m);
+      return console.log(`${agent}: dispatched up to ${to}.`);
     }
-    case 'anotar': return anotar(args);
-    case 'historial':
-      for (const r of m.rondas) console.log(`${r.fecha} · ${r.desde?.slice(0, 7) || '—'}..${r.hasta.slice(0, 7)}${r.issue ? ` · ${r.issue}` : ''}${r.pr ? ` · ${r.pr}` : ''}${r.nota ? ` · ${r.nota}` : ''}`);
-      for (const x of m.mecanismos) console.log(`mecanismo ${x.fecha} · ${x.clave}: ${x.que} (${x.pr})`);
+    case 'record': return record(args);
+    case 'history':
+      for (const r of m.rounds) console.log(`${r.date} · ${r.from?.slice(0, 7) || '—'}..${r.to.slice(0, 7)}${r.issue ? ` · ${r.issue}` : ''}${r.pr ? ` · ${r.pr}` : ''}${r.note ? ` · ${r.note}` : ''}`);
+      for (const x of m.mechanisms) console.log(`mechanism ${x.date} · ${x.key}: ${x.what} (${x.pr})`);
       return;
     default:
-      console.error('Uso: node tools/agents/processes.mjs revisar | decidir <archivo.json> | patron <clave> "…" | mecanismo <clave> "…" --pr <url> | despacho <agente> <commit> | anotar --hasta <commit> | historial');
+      console.error(USAGE);
       process.exit(2);
   }
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  try { principal(process.argv.slice(2)); } catch (e) { console.error(e.message); process.exit(1); }
+  try { main(process.argv.slice(2)); } catch (e) { console.error(e.message); process.exit(1); }
 }

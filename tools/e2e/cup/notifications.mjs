@@ -1,26 +1,26 @@
-// Los avisos de La Copa en Chrome (D-223), con el almacén de prueba (?test) y sin red. La clave
-// VAPID es la de vapid.js (D-225; si estuviera vacía, una de prueba), y el
-// servicio de avisos del navegador se reemplaza por uno falso: ninguna suscripción sale del Chrome.
-// Recorre la campana en sus estados, la tarjeta ("Avisarme" y "Ahora no"), el aviso de prueba, los
-// ajustes, silenciar, y el camino de iPhone: agregar a inicio, otra app, y la app instalada que
-// abre con el nombre ya elegido.
-import { salida } from '../output.mjs';
+// La Copa's notifications in Chrome (D-223), with the test store (?test) and no network. The VAPID
+// key is the one in vapid.js (D-225; if it were empty, a test one), and the browser's push
+// service is replaced by a fake one: no subscription leaves Chrome.
+// Walks through the bell in its states, the card ("Avisarme" and "Ahora no"), the test notification,
+// the settings, muting, and the iPhone path: add to home screen, another app, and the installed app
+// that opens with the name already picked.
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-import { parVapid } from '../../push/vapid.mjs';
+import { vapidPair } from '../../push/vapid.mjs';
 
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = salida();
-const BASE = `${SITIO}/cup/`;
+const SITE = process.env.SITE || 'http://localhost:8765';
+const OUT = output();
+const BASE = `${SITE}/cup/`;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 
 const b = await launch({ port: 9497, dir: `${OUT}/p`, out: OUT });
 const ev = x => b.evaluate(x);
 const click = sel => ev(`(()=>{const e=document.querySelector(${JSON.stringify(sel)});if(!e)return false;e.click();return true})()`);
-const texto = sel => ev(`document.querySelector(${JSON.stringify(sel)})?.innerText || ''`);
-const hoja = () => ev(`document.querySelector('.hoja')?.id || null`);
-const estadoCampana = () => ev(`document.getElementById('btn-avisos')?.dataset.estado || null`);
+const text = sel => ev(`document.querySelector(${JSON.stringify(sel)})?.innerText || ''`);
+const sheet = () => ev(`document.querySelector('.hoja')?.id || null`);
+const bellState = () => ev(`document.getElementById('btn-avisos')?.dataset.estado || null`);
 
-const { publica } = parVapid();
+const { publicKey: publica } = vapidPair();
 const UA = {
   android: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Mobile Safari/537.36',
   iphone: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Mobile/15E148 Safari/604.1',
@@ -28,125 +28,125 @@ const UA = {
 };
 
 /**
- * Antes de cada página: la clave de prueba, el servicio de avisos falso y, para el iPhone, un
- * navegador sin avisos (Safari fuera de la app instalada no tiene PushManager).
+ * Before each page: the test key, the fake push service and, for the iPhone, a browser without
+ * notifications (Safari outside the installed app has no PushManager).
  */
 await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `
   try { localStorage.setItem('juegos-de-salon:vapid-prueba', ${JSON.stringify(publica)}); } catch (_) {}
   (() => {
-    const sub = { endpoint: 'https://fcm.googleapis.com/fcm/send/prueba-e2e', async unsubscribe() { sessionStorage.removeItem('e2e:suscrito'); sessionStorage.setItem('e2e:anulada', '1'); return true; }, toJSON() { return { endpoint: this.endpoint, expirationTime: null, keys: { p256dh: 'BPRUEBA', auth: 'aPRUEBA' } }; } };
-    const k = 'e2e:suscrito';
+    const sub = { endpoint: 'https://fcm.googleapis.com/fcm/send/test-e2e', async unsubscribe() { sessionStorage.removeItem('e2e:subscribed'); sessionStorage.setItem('e2e:revoked', '1'); return true; }, toJSON() { return { endpoint: this.endpoint, expirationTime: null, keys: { p256dh: 'BTEST', auth: 'aTEST' } }; } };
+    const k = 'e2e:subscribed';
     if (window.PushManager) {
-      PushManager.prototype.subscribe = async function (op) { sessionStorage.setItem('e2e:veces', String(Number(sessionStorage.getItem('e2e:veces') || 0) + 1)); sessionStorage.setItem('e2e:clave', String(op && op.applicationServerKey && op.applicationServerKey.length)); sessionStorage.setItem(k, '1'); return sub; };
+      PushManager.prototype.subscribe = async function (op) { sessionStorage.setItem('e2e:times', String(Number(sessionStorage.getItem('e2e:times') || 0) + 1)); sessionStorage.setItem('e2e:key', String(op && op.applicationServerKey && op.applicationServerKey.length)); sessionStorage.setItem(k, '1'); return sub; };
       PushManager.prototype.getSubscription = async function () { return sessionStorage.getItem(k) ? sub : null; };
     }
     if (/iPhone/.test(navigator.userAgent) && !/standalone/.test(location.search)) { delete window.PushManager; }
     if (/standalone/.test(location.search)) Object.defineProperty(navigator, 'standalone', { get: () => true });
   })();
 ` });
-const permitir = () => b.send('Browser.grantPermissions', { origin: SITIO, permissions: ['notifications'] });
-const como = ua => b.send('Emulation.setUserAgentOverride', { userAgent: ua });
-const preparar = () => ev(`(()=>{const st=document.createElement('style');st.textContent='.prueba-barra{display:none!important}';document.head.append(st);return 1})()`);
+const allow = () => b.send('Browser.grantPermissions', { origin: SITE, permissions: ['notifications'] });
+const as = ua => b.send('Emulation.setUserAgentOverride', { userAgent: ua });
+const prepare = () => ev(`(()=>{const st=document.createElement('style');st.textContent='.prueba-barra{display:none!important}';document.head.append(st);return 1})()`);
 
-/* ---------- Android: antes de que parta, la tarjeta y "Ahora no" ---------- */
-await como(UA.android);
-await b.go(`${BASE}?test&demo=waiting`, 2000); await preparar();
-ok(await estadoCampana() === 'apagado', 'antes de partir: la campana dice "Activar avisos"');
-ok(/parte el/i.test(await texto('#aviso-oferta')), 'antes de partir: la tarjeta ofrece avisar el día que parte');
-const codeEspera = await ev('__copa.estado.code');
+/* ---------- Android: before it starts, the card and "Ahora no" ---------- */
+await as(UA.android);
+await b.go(`${BASE}?test&demo=waiting`, 2000); await prepare();
+ok(await bellState() === 'apagado', 'before it starts: the bell says "Activar avisos"');
+ok(/parte el/i.test(await text('#aviso-oferta')), 'before it starts: the card offers to notify on the day it starts');
+const waitingCode = await ev('__copa.estado.code');
 await click('#btn-ahora-no'); await sleep(400);
-ok(!await ev(`!!document.getElementById('aviso-oferta')`), '"Ahora no" saca la tarjeta');
-await b.go(`${BASE}?test&${codeEspera}`, 1800); await preparar();
-ok(!await ev(`!!document.getElementById('aviso-oferta')`) && await estadoCampana() === 'apagado', 'la tarjeta no vuelve en esa copa, la campana sigue');
+ok(!await ev(`!!document.getElementById('aviso-oferta')`), '"Ahora no" removes the card');
+await b.go(`${BASE}?test&${waitingCode}`, 1800); await prepare();
+ok(!await ev(`!!document.getElementById('aviso-oferta')`) && await bellState() === 'apagado', 'the card does not come back in that cup, the bell stays');
 
-/* ---------- Android: activar desde la campana ---------- */
-await permitir();
-await b.go(`${BASE}?test&demo=player`, 2000); await preparar();
-ok(await estadoCampana() === 'apagado', 'día 4: la campana parte apagada');
+/* ---------- Android: turning them on from the bell ---------- */
+await allow();
+await b.go(`${BASE}?test&demo=player`, 2000); await prepare();
+ok(await bellState() === 'apagado', 'day 4: the bell starts off');
 await click('#btn-avisos'); await sleep(1500);
-ok(await estadoCampana() === 'activo', 'con el permiso dado, un toque activa los avisos');
-ok(await ev(`sessionStorage.getItem('e2e:clave')`) === '65', 'la suscripción usa la clave VAPID (65 bytes)');
-const avisosGuardados = await ev(`(async()=>JSON.stringify(await __copa.store.avisosDe(__copa.estado.code)))()`).catch(() => null);
-ok(avisosGuardados && /"dia":true/.test(avisosGuardados) && /prueba-e2e/.test(avisosGuardados), 'la copa anota la suscripción con sus dos avisos');
-const notis = await ev(`(async()=>{const r=await navigator.serviceWorker.ready;return (await r.getNotifications()).map(n=>n.title+' | '+n.body)})()`);
-ok(notis.some(n => /La Copa/.test(n) && /Listo/.test(n)), `llega el aviso de confirmación (${notis.join(' / ') || 'ninguno'})`);
-await b.shot('campana-activa');
+ok(await bellState() === 'activo', 'with permission granted, one tap turns notifications on');
+ok(await ev(`sessionStorage.getItem('e2e:key')`) === '65', 'the subscription uses the VAPID key (65 bytes)');
+const savedNotifications = await ev(`(async()=>JSON.stringify(await __copa.store.avisosDe(__copa.estado.code)))()`).catch(() => null);
+ok(savedNotifications && /"dia":true/.test(savedNotifications) && /test-e2e/.test(savedNotifications), 'the cup records the subscription with its two notifications');
+const shown = await ev(`(async()=>{const r=await navigator.serviceWorker.ready;return (await r.getNotifications()).map(n=>n.title+' | '+n.body)})()`);
+ok(shown.some(n => /La Copa/.test(n) && /Listo/.test(n)), `the confirmation notification arrives (${shown.join(' / ') || 'none'})`);
+await b.shot('bell-active');
 
-/* ---------- La base rechaza la suscripción (otra identidad del mismo celular): se pide otra ---------- */
-await b.go(`${BASE}?test&demo=player`, 2000); await preparar();
-await ev(`(()=>{sessionStorage.setItem('e2e:veces','0');const st=__copa.store;const orig=st.guardarAvisos.bind(st);let una=true;st.guardarAvisos=async(...a)=>{if(una){una=false;throw Object.assign(new Error('permiso'),{code:'permiso'})}return orig(...a)};return 1})()`);
+/* ---------- The database rejects the subscription (another identity on the same phone): another one is requested ---------- */
+await b.go(`${BASE}?test&demo=player`, 2000); await prepare();
+await ev(`(()=>{sessionStorage.setItem('e2e:times','0');const st=__copa.store;const orig=st.guardarAvisos.bind(st);let once=true;st.guardarAvisos=async(...a)=>{if(once){once=false;throw Object.assign(new Error('permiso'),{code:'permiso'})}return orig(...a)};return 1})()`);
 await click('#btn-avisos'); await sleep(1500);
-ok(await estadoCampana() === 'activo' && await ev(`sessionStorage.getItem('e2e:anulada')`) === '1' && Number(await ev(`sessionStorage.getItem('e2e:veces')`)) >= 1, 'si la base rechaza la suscripción, se anula, se pide otra y queda activa');
+ok(await bellState() === 'activo' && await ev(`sessionStorage.getItem('e2e:revoked')`) === '1' && Number(await ev(`sessionStorage.getItem('e2e:times')`)) >= 1, 'if the database rejects the subscription, it is revoked, another is requested and it ends up active');
 
-/* ---------- Los ajustes ---------- */
+/* ---------- The settings ---------- */
 await click('#btn-avisos'); await sleep(400);
-ok(await hoja() === 'hoja-ajustes', 'la campana activa abre los ajustes');
-await b.shot('hoja-ajustes');
+ok(await sheet() === 'hoja-ajustes', 'the active bell opens the settings');
+await b.shot('sheet-settings');
 await click('#av-plazo'); await sleep(800);
-const tras = await ev(`(async()=>JSON.stringify(await __copa.store.avisosDe(__copa.estado.code)))()`).catch(() => '');
-ok(/"plazo":false/.test(tras), 'apagar "Antes del cierre" queda anotado');
+const after = await ev(`(async()=>JSON.stringify(await __copa.store.avisosDe(__copa.estado.code)))()`).catch(() => '');
+ok(/"plazo":false/.test(after), 'turning off "Antes del cierre" is recorded');
 await click('#btn-silenciar'); await sleep(800);
-ok(await hoja() === null && await estadoCampana() === 'apagado', '"Silenciar esta copa" la apaga');
+ok(await sheet() === null && await bellState() === 'apagado', '"Silenciar esta copa" turns it off');
 
-/* ---------- Lo que abre un aviso (D-229): el día, o silenciar desde el botón de Android ---------- */
-const codeAviso = await ev('__copa.estado.code');
-const hoyDemo = await ev(`(()=>{const m=__copa.estado.copa.meta;return Object.keys(m.win).map(Number).find(k=>Date.now()>=m.win[k].a&&Date.now()<m.win[k].b&&!(__copa.estado.copa.results?.[k]?.[__copa.estado.yo]))||0})()`).catch(() => 0);
-await b.go(`${BASE}?test&${codeAviso}&day=${hoyDemo}`, 2000); await preparar();
-ok(hoyDemo && await ev('__copa.estado.pantalla') === 'jugar', `el aviso del día ${hoyDemo} abre ese día, listo para empezar`);
-await b.shot('aviso-dia');
-ok(!/[?&](day|mute|dia|silenciar)\b/.test(await ev('location.search')), 'la dirección ya no lleva el día del aviso: recargar no lo repite');
-// Con el nombre de antes de D-266 (`&dia=`): un aviso viejo se lee igual
-await b.go(`${BASE}?test&${codeAviso}&dia=99`, 2000); await preparar();
-ok(await ev('__copa.estado.pantalla') === 'tablero', 'un día que no se puede jugar abre el tablero');
+/* ---------- What a notification opens (D-229): the day, or muting from the Android button ---------- */
+const notificationCode = await ev('__copa.estado.code');
+const demoToday = await ev(`(()=>{const m=__copa.estado.copa.meta;return Object.keys(m.win).map(Number).find(k=>Date.now()>=m.win[k].a&&Date.now()<m.win[k].b&&!(__copa.estado.copa.results?.[k]?.[__copa.estado.yo]))||0})()`).catch(() => 0);
+await b.go(`${BASE}?test&${notificationCode}&day=${demoToday}`, 2000); await prepare();
+ok(demoToday && await ev('__copa.estado.pantalla') === 'jugar', `the day ${demoToday} notification opens that day, ready to start`);
+await b.shot('notification-day');
+ok(!/[?&](day|mute|dia|silenciar)\b/.test(await ev('location.search')), 'the address no longer carries the notification\'s day: reloading does not repeat it');
+// With the name from before D-266 (`&dia=`): an old notification still reads the same
+await b.go(`${BASE}?test&${notificationCode}&dia=99`, 2000); await prepare();
+ok(await ev('__copa.estado.pantalla') === 'tablero', 'a day that cannot be played opens the board');
 await click('#btn-avisos'); await sleep(1500);
-ok(await estadoCampana() === 'activo', 'se vuelven a activar');
-await b.go(`${BASE}?test&${codeAviso}&mute`, 2000); await preparar(); await sleep(600);
-await b.shot('aviso-silenciar');
-ok(await estadoCampana() === 'apagado' && await ev('__copa.estado.pantalla') === 'tablero', 'el botón "Silenciar esta copa" del aviso la silencia');
+ok(await bellState() === 'activo', 'they are turned on again');
+await b.go(`${BASE}?test&${notificationCode}&mute`, 2000); await prepare(); await sleep(600);
+await b.shot('notification-mute');
+ok(await bellState() === 'apagado' && await ev('__copa.estado.pantalla') === 'tablero', 'the notification\'s "Silenciar esta copa" button mutes it');
 
-/* ---------- Bloqueados ---------- */
+/* ---------- Blocked ---------- */
 await b.send('Browser.resetPermissions');
-await b.send('Browser.setPermission', { origin: SITIO, permission: { name: 'notifications' }, setting: 'denied' });
-await b.go(`${BASE}?test&demo=player`, 2000); await preparar();
-ok(await estadoCampana() === 'bloqueado', 'con el permiso negado, la campana dice "Avisos bloqueados"');
+await b.send('Browser.setPermission', { origin: SITE, permission: { name: 'notifications' }, setting: 'denied' });
+await b.go(`${BASE}?test&demo=player`, 2000); await prepare();
+ok(await bellState() === 'bloqueado', 'with permission denied, the bell says "Avisos bloqueados"');
 await click('#btn-avisos'); await sleep(400);
-ok(await hoja() === 'hoja-bloqueados' && /Permisos/.test(await texto('.hoja')), 'y explica cómo desbloquearlos en Android');
-await b.shot('hoja-bloqueados');
+ok(await sheet() === 'hoja-bloqueados' && /Permisos/.test(await text('.hoja')), 'and explains how to unblock them on Android');
+await b.shot('sheet-blocked');
 await b.send('Browser.resetPermissions');
 
-/* ---------- iPhone en Safari: agregar a inicio ---------- */
-await como(UA.iphone);
-await b.go(`${BASE}?test&demo=player`, 2000); await preparar();
-ok(await estadoCampana() === 'apagado', 'iPhone en Safari: la campana se ofrece');
+/* ---------- iPhone in Safari: add to home screen ---------- */
+await as(UA.iphone);
+await b.go(`${BASE}?test&demo=player`, 2000); await prepare();
+ok(await bellState() === 'apagado', 'iPhone in Safari: the bell is offered');
 await click('#btn-avisos'); await sleep(400);
-ok(await hoja() === 'hoja-instalar', 'el toque abre los pasos para agregar a inicio');
-ok((await texto('.hoja')).includes(await ev('__copa.estado.code')), 'los pasos dan el código de la copa: iOS abre la app en la portada (D-227)');
-ok(/[?&]app=[a-z0-9]{6}/.test(await ev('location.search')), 'la dirección lleva al jugador para la app instalada (sin el PIN)');
-await b.shot('hoja-instalar');
+ok(await sheet() === 'hoja-instalar', 'the tap opens the steps to add to home screen');
+ok((await text('.hoja')).includes(await ev('__copa.estado.code')), 'the steps give the cup code: iOS opens the app on the home page (D-227)');
+ok(/[?&]app=[a-z0-9]{6}/.test(await ev('location.search')), 'the address carries the player for the installed app (without the PIN)');
+await b.shot('sheet-install');
 await click('#btn-ya-agregue'); await sleep(300);
-ok(/PIN/.test(await texto('.hoja')), '"Ya la agregué" dice que la app pedirá el PIN');
+ok(/PIN/.test(await text('.hoja')), '"Ya la agregué" says the app will ask for the PIN');
 
-/* ---------- iPhone dentro de Instagram ---------- */
-await como(UA.instagram);
-await b.go(`${BASE}?test&demo=player`, 2000); await preparar();
+/* ---------- iPhone inside Instagram ---------- */
+await as(UA.instagram);
+await b.go(`${BASE}?test&demo=player`, 2000); await prepare();
 await click('#btn-avisos'); await sleep(400);
-ok(await hoja() === 'hoja-otra-app' && /Safari/.test(await texto('.hoja')), 'dentro de otra app: pide abrir en Safari');
-await b.shot('hoja-otra-app');
+ok(await sheet() === 'hoja-otra-app' && /Safari/.test(await text('.hoja')), 'inside another app: asks to open in Safari');
+await b.shot('sheet-other-app');
 
-/* ---------- La app instalada: abre con el nombre elegido y ofrece los avisos ---------- */
-await como(UA.iphone);
+/* ---------- The installed app: opens with the name picked and offers notifications ---------- */
+await as(UA.iphone);
 await b.go(`${BASE}?test&demo=player`, 2000);
 const code = await ev('__copa.estado.code'), pid = await ev('__copa.estado.yo');
-// Un celular nuevo: sin asiento en la copa (la app instalada no ve lo que guardó Safari)
-// En el modo de prueba, la sesión y el uid de cada "celular" viven en sessionStorage
+// A new phone: no seat in the cup (the installed app does not see what Safari saved)
+// In test mode, each "phone"'s session and uid live in sessionStorage
 await ev(`(()=>{sessionStorage.clear();return 1})()`);
-await b.go(`${BASE}?test&${code}&app=${pid}&standalone`, 2200); await preparar();
-ok(await ev('__copa.estado.pantalla') === 'entrar', 'la app instalada, sin asiento, pide entrar');
-const elegido = await ev(`document.querySelector('.chip-btn.on')?.dataset.pid || null`);
-ok(elegido === pid, 'la app instalada abre "Ya estoy inscrito" con su nombre elegido: falta solo el PIN');
-ok(/PIN/.test(await texto('#bienvenida-app')), 'y lo dice: "Eres … en esta copa. Escribe tu PIN para seguir."');
+await b.go(`${BASE}?test&${code}&app=${pid}&standalone`, 2200); await prepare();
+ok(await ev('__copa.estado.pantalla') === 'entrar', 'the installed app, without a seat, asks to sign in');
+const picked = await ev(`document.querySelector('.chip-btn.on')?.dataset.pid || null`);
+ok(picked === pid, 'the installed app opens "Ya estoy inscrito" with their name picked: only the PIN is missing');
+ok(/PIN/.test(await text('#bienvenida-app')), 'and says so: "Eres … en esta copa. Escribe tu PIN para seguir."');
 
-const errores = b.errors.filter(e => !/firebase|gstatic/i.test(e));
-ok(!errores.length, `sin errores en la página${errores.length ? ': ' + errores.join(' | ') : ''}`);
+const errors = b.errors.filter(e => !/firebase|gstatic/i.test(e));
+ok(!errors.length, `no errors on the page${errors.length ? ': ' + errors.join(' | ') : ''}`);
 b.close();
-if (!process.exitCode) console.log('✓ avisos de La Copa: campana, tarjeta, hojas y app instalada');
+if (!process.exitCode) console.log('✓ La Copa notifications: bell, card, sheets and installed app');

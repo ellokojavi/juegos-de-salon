@@ -1,145 +1,146 @@
-// El caso del laboratorio (D-267) de punta a punta, en /labs/case/: el laboratorio lo ofrece y
-// /case/ lleva ahí; sin semilla es el caso del día (el link queda limpio); se juega con la pantalla
-// de La Copa (D-257), marcar antes de tiempo cuenta como error (D-261), al recargar sigue donde iba,
-// las pistas usadas se tachan solas (D-282), se resuelve entero sin adivinar y el final ofrece
-// compartir el mismo caso, otro caso, el de hoy y el comentario (D-265), que en el modo de prueba
-// queda en el celular. Imprime ✗ si algo falla.
-import { salida } from '../output.mjs';
+// El caso in the lab (D-267) end to end, at /labs/case/: the lab offers it and /case/ leads there;
+// without a seed it's today's case (the link stays clean); it plays with La Copa's screen (D-257),
+// marking too early counts as an error (D-261), reloading picks up where it was, the clues used get
+// crossed out by themselves (D-282), it's solved entirely without guessing and the end offers sharing
+// the same case, another case, today's and the comment (D-265), which in test mode stays on the phone.
+// Prints ✗ if anything fails.
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = salida('/tmp/caso-lab');
+const OUT = output('/tmp/case-lab');
 const b = await launch({ port: 9392, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const ev = e => b.evaluate(e);
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-let fallas = 0;
-const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) fallas++; };
-const esperar = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
-const SEMILLA = 'KQRST';
-const CLAVE = `juegos-de-salon:diario:caso:${SEMILLA}`;
-// Lo que se puede deducir ahora, con el motor y las jugadas que guardó la página
-const deducibles = () => ev(`(async()=>{const m=await import('/cup/games/case/engine.js');const p=m.generar('${SEMILLA}',1);const j=(JSON.parse(localStorage.getItem('${CLAVE}')||'null')||{}).jugadas||[];const e=m.estado(p,j);return JSON.stringify({d:m.deducibles(e.pistas,e.x),fin:e.fin,errores:e.errores})})()`).then(JSON.parse);
+const SITE = process.env.SITE || 'http://localhost:8765';
+let failures = 0;
+const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) failures++; };
+const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
+const SEED = 'KQRST';
+const KEY = `juegos-de-salon:diario:caso:${SEED}`;
+// What can be deduced now, with the engine and the moves the page saved
+const deducible = () => ev(`(async()=>{const m=await import('/cup/games/case/engine.js');const p=m.generar('${SEED}',1);const j=(JSON.parse(localStorage.getItem('${KEY}')||'null')||{}).jugadas||[];const e=m.estado(p,j);return JSON.stringify({d:m.deducibles(e.pistas,e.x),done:e.fin,errors:e.errores})})()`).then(JSON.parse);
 const visible = sel => `(()=>{const x=document.querySelector('${sel}');return !!x&&x.offsetParent!==null})()`;
-let enLaCuenta = null;
-const empezar = async () => {
-  await esperar(`!!document.getElementById('btn-empezar')`);
+let duringCountdown = null;
+const start = async () => {
+  await waitFor(`!!document.getElementById('btn-empezar')`);
   await ev(`document.getElementById('btn-empezar').click(); 1`);
-  // Durante la cuenta del 3, 2, 1 no está el link al comentario (D-268)
-  if (await esperar(`!!document.getElementById('cuenta')`, 3000)) enLaCuenta = await ev(visible('#btn-comentario'));
-  return esperar(`document.querySelectorAll('.cs-persona').length === 20 && !document.getElementById('cuenta')`, 12000);
+  // During the 3, 2, 1 countdown the comment link is not there (D-268)
+  if (await waitFor(`!!document.getElementById('cuenta')`, 3000)) duringCountdown = await ev(visible('#btn-comentario'));
+  return waitFor(`document.querySelectorAll('.cs-persona').length === 20 && !document.getElementById('cuenta')`, 12000);
 };
-const marcar = async (i, v) => {
+const mark = async (i, v) => {
   await ev(`document.querySelector('.cs-persona[data-i="${i}"]').click(); 1`); await sleep(80);
   await ev(`document.getElementById('${v ? 'btn-criminal' : 'btn-inocente'}').click(); 1`); await sleep(120);
 };
 
-// El laboratorio lo ofrece, y /case/ (el link de antes) lleva a /labs/case/
-await b.go(`${SITIO}/labs/`);
-ok(await ev(`document.getElementById('btn-caso')?.getAttribute('href')`) === 'case/', 'el laboratorio ofrece El caso en /labs/case/');
-// Dos grupos (D-280): Proyectos activos y La Bodega, donde quedó El caso
-ok(await ev(`!!document.querySelector('#bodega #seccion-caso') && !document.querySelector('#activos #seccion-caso')`), 'El caso está en La Bodega, no en Proyectos activos');
-// La Bodega va plegada al título (pedido del dueño): un toque la abre y muestra su botón
-ok(await ev(`[...document.querySelectorAll('#bodega details')].every(d => !d.open) && !document.getElementById('btn-caso').checkVisibility()`), 'La Bodega viene plegada: solo los títulos');
-ok(await ev(`[...document.querySelectorAll('#activos .seccion')].every(x => !x.querySelector('details'))`), 'los proyectos activos van abiertos');
+// The lab offers it, and /case/ (the old link) leads to /labs/case/
+await b.go(`${SITE}/labs/`);
+ok(await ev(`document.getElementById('btn-caso')?.getAttribute('href')`) === 'case/', 'the lab offers El caso at /labs/case/');
+// Two groups (D-280): Active projects and La Bodega, where El caso ended up
+ok(await ev(`!!document.querySelector('#bodega #seccion-caso') && !document.querySelector('#activos #seccion-caso')`), 'El caso is in La Bodega, not in Active projects');
+// La Bodega comes folded to the title (owner's request): one tap opens it and shows its button
+ok(await ev(`[...document.querySelectorAll('#bodega details')].every(d => !d.open) && !document.getElementById('btn-caso').checkVisibility()`), 'La Bodega comes folded: only the titles');
+ok(await ev(`[...document.querySelectorAll('#activos .seccion')].every(x => !x.querySelector('details'))`), 'the active projects come open');
 await ev(`document.querySelector('#seccion-caso summary').click(); 1`); await sleep(100);
-ok(await ev(`document.querySelector('#seccion-caso details').open && document.getElementById('btn-caso').checkVisibility()`), 'un toque en el título la abre y muestra Jugar');
-await b.go(`${SITIO}/case/`, 1500);
-ok(await ev(`location.pathname`) === '/labs/case/', `/case/ lleva a /labs/case/ (${await ev('location.pathname')})`);
+ok(await ev(`document.querySelector('#seccion-caso details').open && document.getElementById('btn-caso').checkVisibility()`), 'one tap on the title opens it and shows Jugar');
+await b.go(`${SITE}/case/`, 1500);
+ok(await ev(`location.pathname`) === '/labs/case/', `/case/ leads to /labs/case/ (${await ev('location.pathname')})`);
 
-// Sin semilla: el caso del día, y el link queda limpio
+// Without a seed: today's case, and the link stays clean
 await ev(`localStorage.clear(); 1`);
-await b.go(`${SITIO}/labs/case/`, 1500);
-ok(await esperar(`!!document.getElementById('diario-intro')`), 'sin semilla, la antesala dice que es el caso de hoy, el mismo para todos');
-ok(await ev(`location.search`) === '', 'y el link queda sin semilla');
-ok((await ev(`document.getElementById('btn-menu')?.href || ''`)).endsWith('/labs/'), 'el botón de arriba vuelve al laboratorio');
-// El link al comentario, al final de la antesala, abre el formulario en una capa (D-268)
-ok(await ev(visible('#btn-comentario')) && await ev(`(()=>{const b=document.getElementById('btn-comentario'),y=b.getBoundingClientRect().top+scrollY;return [...document.querySelectorAll('#screen-jugar button, #screen-jugar a')].every(x=>x===b||x.offsetParent===null||x.getBoundingClientRect().top+scrollY<=y)})()`), 'la antesala termina con el link al comentario');
+await b.go(`${SITE}/labs/case/`, 1500);
+ok(await waitFor(`!!document.getElementById('diario-intro')`), 'without a seed, the lobby says it is today\'s case, the same for everyone');
+ok(await ev(`location.search`) === '', 'and the link has no seed');
+ok((await ev(`document.getElementById('btn-menu')?.href || ''`)).endsWith('/labs/'), 'the top button goes back to the lab');
+// The comment link, at the end of the lobby, opens the form in an overlay (D-268)
+ok(await ev(visible('#btn-comentario')) && await ev(`(()=>{const b=document.getElementById('btn-comentario'),y=b.getBoundingClientRect().top+scrollY;return [...document.querySelectorAll('#screen-jugar button, #screen-jugar a')].every(x=>x===b||x.offsetParent===null||x.getBoundingClientRect().top+scrollY<=y)})()`), 'the lobby ends with the comment link');
 await ev(`document.getElementById('btn-comentario').click(); 1`); await sleep(200);
-ok(await ev(`!!document.querySelector('.labs-capa .comentario textarea')`), 'y abre el formulario');
+ok(await ev(`!!document.querySelector('.labs-capa .comentario textarea')`), 'and it opens the form');
 await ev(`document.querySelector('.labs-capa').click(); 1`); await sleep(150);
-ok(!await ev(`!!document.querySelector('.labs-capa')`), 'que se cierra tocando fuera');
-await b.shot('01-antesala');
+ok(!await ev(`!!document.querySelector('.labs-capa')`), 'which closes by tapping outside');
+await b.shot('01-lobby');
 
-// Con semilla: el mismo caso para quien recibe el link
-await b.go(`${SITIO}/labs/case/?seed=${SEMILLA}&test`, 1500);
-ok(!await ev(`!!document.getElementById('diario-intro')`), 'con semilla no es el de hoy');
-ok(await empezar(), 'Empezar abre el caso después de la cuenta');
-ok(enLaCuenta === false, 'durante la cuenta no está el link al comentario');
-ok(await ev(visible('#btn-comentario')), 'y en el juego vuelve, al final');
-await b.shot('02-caso');
+// With a seed: the same case for whoever gets the link
+await b.go(`${SITE}/labs/case/?seed=${SEED}&test`, 1500);
+ok(!await ev(`!!document.getElementById('diario-intro')`), 'with a seed it is not today\'s');
+ok(await start(), 'Empezar opens the case after the countdown');
+ok(duringCountdown === false, 'during the countdown the comment link is not there');
+ok(await ev(visible('#btn-comentario')), 'and in the game it comes back, at the end');
+await b.shot('02-case');
 
-// Antes de tiempo: cuenta como error
-let { d } = await deducibles();
-const nose = await ev(`(async()=>{const m=await import('/cup/games/case/engine.js');const p=m.generar('${SEMILLA}',1);const e=m.estado(p,[]);const d=m.deducibles(e.pistas,e.x);return [...Array(20).keys()].find(i=>e.x[i]===-1&&!(i in d))})()`);
-if (nose !== null && nose !== undefined) {
-  await marcar(nose, 1);
-  ok((await deducibles()).errores === 1, 'marcar antes de tiempo cuenta como error (D-261)');
+// Too early: counts as an error
+let { d } = await deducible();
+const unknown = await ev(`(async()=>{const m=await import('/cup/games/case/engine.js');const p=m.generar('${SEED}',1);const e=m.estado(p,[]);const d=m.deducibles(e.pistas,e.x);return [...Array(20).keys()].find(i=>e.x[i]===-1&&!(i in d))})()`);
+if (unknown !== null && unknown !== undefined) {
+  await mark(unknown, 1);
+  ok((await deducible()).errors === 1, 'marking too early counts as an error (D-261)');
 }
 const [i0, v0] = Object.entries(d)[0];
-await marcar(i0, v0);
-ok(await ev(`document.querySelectorAll('.cs-persona.marcada').length`) === 2, 'marcar bien suma a la persona');
+await mark(i0, v0);
+ok(await ev(`document.querySelectorAll('.cs-persona.marcada').length`) === 2, 'marking correctly adds the person');
 
-// Recargar: sigue donde iba, sin la cuenta
-await b.go(`${SITIO}/labs/case/?seed=${SEMILLA}&test`, 1500);
-await esperar(`!!document.getElementById('btn-empezar')`);
+// Reload: picks up where it was, without the countdown
+await b.go(`${SITE}/labs/case/?seed=${SEED}&test`, 1500);
+await waitFor(`!!document.getElementById('btn-empezar')`);
 await ev(`document.getElementById('btn-empezar').click(); 1`); await sleep(600);
-ok(await ev(`document.querySelectorAll('.cs-persona.marcada').length`) === 2 && !await ev(`!!document.getElementById('cuenta')`), 'al recargar sigue donde iba, sin la cuenta (D-267)');
+ok(await ev(`document.querySelectorAll('.cs-persona.marcada').length`) === 2 && !await ev(`!!document.getElementById('cuenta')`), 'on reload it picks up where it was, without the countdown (D-267)');
 
-// Las pistas usadas se tachan solas (D-282): las que ya tienen marcado todo lo que abarcan, según
-// el motor y lo que la página guardó. El ✓ tacha a mano una que no lo está, y destacha una tachada sola
-const usadas = () => ev(`(async()=>{const m=await import('/cup/games/case/engine.js');const p=m.generar('${SEMILLA}',1);const j=(JSON.parse(localStorage.getItem('${CLAVE}')||'null')||{}).jugadas||[];return [...m.usadas(p,m.estado(p,j).x)]})()`);
-const tachadasDom = () => ev(`[...document.querySelectorAll('.cs-pista.tachada')].map(x => +x.dataset.de).sort((a, b) => a - b)`);
-const tocarTachar = i => ev(`document.querySelector('.cs-pista[data-de="${i}"] .tachar').click(); 1`);
-const libre = (await ev(`[...document.querySelectorAll('.cs-pista:not(.tachada)')].map(x => +x.dataset.de)`))[0];
-const usadasAntes = await usadas();
-const aMano = usadasAntes.includes(libre) ? null : libre;
-if (aMano !== null && aMano !== undefined) {
-  await tocarTachar(aMano); await sleep(80);
-  ok((await tachadasDom()).includes(aMano) && await ev(`document.querySelector('.cs-pista[data-de="${aMano}"] .tachar').getAttribute('aria-pressed')`) === 'true', 'el ✓ tacha a mano una pista');
+// The clues used get crossed out by themselves (D-282): those that already have everything they cover
+// marked, according to the engine and what the page saved. The ✓ crosses out by hand one that isn't,
+// and un-crosses one crossed out by itself
+const used = () => ev(`(async()=>{const m=await import('/cup/games/case/engine.js');const p=m.generar('${SEED}',1);const j=(JSON.parse(localStorage.getItem('${KEY}')||'null')||{}).jugadas||[];return [...m.usadas(p,m.estado(p,j).x)]})()`);
+const crossedInDom = () => ev(`[...document.querySelectorAll('.cs-pista.tachada')].map(x => +x.dataset.de).sort((a, b) => a - b)`);
+const tapCross = i => ev(`document.querySelector('.cs-pista[data-de="${i}"] .tachar').click(); 1`);
+const free = (await ev(`[...document.querySelectorAll('.cs-pista:not(.tachada)')].map(x => +x.dataset.de)`))[0];
+const usedBefore = await used();
+const byHand = usedBefore.includes(free) ? null : free;
+if (byHand !== null && byHand !== undefined) {
+  await tapCross(byHand); await sleep(80);
+  ok((await crossedInDom()).includes(byHand) && await ev(`document.querySelector('.cs-pista[data-de="${byHand}"] .tachar').getAttribute('aria-pressed')`) === 'true', 'the ✓ crosses out a clue by hand');
 }
-let destachada = null, solas = 0, desfases = [];
-const revisarTachadas = async () => {
-  const u = await usadas();
-  if (destachada === null) {
-    const otra = u.find(i => i !== aMano);
-    if (otra !== undefined) {
-      await tocarTachar(otra); await sleep(80);
-      destachada = otra;
-      ok(!(await tachadasDom()).includes(otra), 'el ✓ destacha una pista tachada sola');
+let uncrossed = null, automatic = 0, mismatches = [];
+const checkCrossed = async () => {
+  const u = await used();
+  if (uncrossed === null) {
+    const other = u.find(i => i !== byHand);
+    if (other !== undefined) {
+      await tapCross(other); await sleep(80);
+      uncrossed = other;
+      ok(!(await crossedInDom()).includes(other), 'the ✓ un-crosses a clue crossed out by itself');
     }
   }
-  solas = Math.max(solas, u.filter(i => i !== destachada && i !== aMano).length);
-  const espera = [...new Set([...u.filter(i => i !== destachada), ...(aMano != null ? [aMano] : [])])].sort((a, b) => a - b);
-  const hay = await tachadasDom();
-  if (JSON.stringify(espera) !== JSON.stringify(hay)) desfases.push({ espera, hay });
+  automatic = Math.max(automatic, u.filter(i => i !== uncrossed && i !== byHand).length);
+  const expected = [...new Set([...u.filter(i => i !== uncrossed), ...(byHand != null ? [byHand] : [])])].sort((a, b) => a - b);
+  const actual = await crossedInDom();
+  if (JSON.stringify(expected) !== JSON.stringify(actual)) mismatches.push({ expected, actual });
 };
 
-// Resolverlo entero, siempre con lo que se puede deducir
+// Solve it entirely, always with what can be deduced
 for (let g = 0; g < 40; g++) {
-  const s = await deducibles();
-  if (s.fin || !Object.keys(s.d).length) break;
-  for (const [i, v] of Object.entries(s.d)) { await marcar(i, v); await revisarTachadas(); }
+  const s = await deducible();
+  if (s.done || !Object.keys(s.d).length) break;
+  for (const [i, v] of Object.entries(s.d)) { await mark(i, v); await checkCrossed(); }
 }
-ok(solas > 0 && !desfases.length, `las pistas usadas se tachan solas, y las de a mano y la destachada quedan como las dejó el jugador (${solas} solas a la vez; ${JSON.stringify(desfases.slice(0, 2))})`);
-ok(await esperar(`!!document.getElementById('btn-fin')`), 'el caso se resuelve sin adivinar');
+ok(automatic > 0 && !mismatches.length, `the clues used get crossed out by themselves, and the hand-crossed and the un-crossed stay as the player left them (${automatic} automatic at once; ${JSON.stringify(mismatches.slice(0, 2))})`);
+ok(await waitFor(`!!document.getElementById('btn-fin')`), 'the case is solved without guessing');
 await ev(`document.getElementById('btn-fin').click(); 1`);
-ok(await esperar(`!!document.querySelector('.score-big')`), `el resultado: ${await ev(`document.querySelector('.score-big')?.textContent`)}`);
+ok(await waitFor(`!!document.querySelector('.score-big')`), `the result: ${await ev(`document.querySelector('.score-big')?.textContent`)}`);
 
-// El final: compartir el mismo caso, otro caso, el de hoy y el comentario
-ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
-const otra = await ev(`document.getElementById('btn-otra')?.getAttribute('href') || ''`);
-ok(/seed=[A-Z]{5}/.test(otra) && !otra.includes(SEMILLA) && /Otro caso/.test(await ev(`document.getElementById('btn-otra').textContent`)), `"Otro caso" abre uno nuevo (${otra})`);
-ok(await ev(`!!document.getElementById('btn-de-hoy')`), 'y como no era el de hoy, ofrece el caso de hoy');
-ok(await ev(`!!document.querySelector('.comentario textarea')`), 'al final está el formulario de comentarios (D-265)');
-ok(await ev(`(()=>{const k=[...document.getElementById('resultado-body').children].filter(x=>x.offsetParent!==null);return k.at(-1)?.classList.contains('comentario')})()`), 'y es lo último del resultado (D-268)');
-await ev(`window.__enviados = []; window.fetch = async (u, o) => { window.__enviados.push({ u: String(u), o }); return { ok: true }; }; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(200);
-ok(/Escribe algo/.test(await ev(`document.querySelector('.comentario .labs-error').textContent`)), 'vacío no se envía');
+// The end: share the same case, another case, today's and the comment
+ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'the result can be shared');
+const another = await ev(`document.getElementById('btn-otra')?.getAttribute('href') || ''`);
+ok(/seed=[A-Z]{5}/.test(another) && !another.includes(SEED) && /Otro caso/.test(await ev(`document.getElementById('btn-otra').textContent`)), `"Otro caso" opens a new one (${another})`);
+ok(await ev(`!!document.getElementById('btn-de-hoy')`), 'and since it was not today\'s, it offers today\'s case');
+ok(await ev(`!!document.querySelector('.comentario textarea')`), 'at the end there is the comment form (D-265)');
+ok(await ev(`(()=>{const k=[...document.getElementById('resultado-body').children].filter(x=>x.offsetParent!==null);return k.at(-1)?.classList.contains('comentario')})()`), 'and it is the last thing in the result (D-268)');
+await ev(`window.__sent = []; window.fetch = async (u, o) => { window.__sent.push({ u: String(u), o }); return { ok: true }; }; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(200);
+ok(/Escribe algo/.test(await ev(`document.querySelector('.comentario .labs-error').textContent`)), 'empty is not sent');
 await ev(`document.querySelector('.comentario textarea').value = 'Me trabé con una pista'; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(400);
-// En el modo de prueba queda en el almacén local, como los reportes de La Copa, y no sale nada a la red
-const guardados = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:copa:prueba:reportes') || '[]')`);
-ok(guardados.length === 1 && guardados[0].texto === 'Me trabé con una pista' && /"juego":"caso"/.test(guardados[0].contexto) && guardados[0].contexto.includes(SEMILLA), `el comentario se guarda con el caso (${guardados[0]?.contexto?.slice(0, 80)})`);
-ok(!await ev(`window.__enviados.some(x => x.u.includes('feedback'))`), 'y en el modo de prueba no va a Firebase');
-ok(/Gracias/.test(await ev(`document.querySelector('.comentario').textContent`)), 'y da las gracias en el mismo lugar');
+// In test mode it stays in local storage, like La Copa's reports, and nothing goes out to the network
+const saved = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:copa:prueba:reportes') || '[]')`);
+ok(saved.length === 1 && saved[0].texto === 'Me trabé con una pista' && /"juego":"caso"/.test(saved[0].contexto) && saved[0].contexto.includes(SEED), `the comment is saved with the case (${saved[0]?.contexto?.slice(0, 80)})`);
+ok(!await ev(`window.__sent.some(x => x.u.includes('feedback'))`), 'and in test mode it does not go to Firebase');
+ok(/Gracias/.test(await ev(`document.querySelector('.comentario').textContent`)), 'and it says thanks in the same place');
 await b.shot('03-final');
-ok(!b.errors.length, `sin errores en la página ${JSON.stringify(b.errors)}`);
+ok(!b.errors.length, `no errors on the page ${JSON.stringify(b.errors)}`);
 b.close();
-if (fallas) { console.log(`✗ ${fallas} fallas`); process.exit(1); }
+if (failures) { console.log(`✗ ${failures} failures`); process.exit(1); }
 console.log('✓ el caso (labs)');

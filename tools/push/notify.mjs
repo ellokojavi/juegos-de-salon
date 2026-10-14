@@ -1,146 +1,149 @@
 #!/usr/bin/env node
 /**
- * Manda los avisos de La Copa que tocan ahora (D-224). Lo corre `.github/workflows/notifications.yml`
- * cada 15 minutos; también se puede correr a mano:
+ * Sends the La Copa notifications that are due now (D-224). `.github/workflows/notifications.yml`
+ * runs it every 15 minutes; it can also be run by hand:
  *
- *   node tools/push/notify.mjs             # manda lo que toca
- *   node tools/push/notify.mjs --simular   # dice qué mandaría, sin mandar ni anotar nada
- *   node tools/push/notify.mjs --prueba KQRST   # un aviso de prueba a cada celular de esa copa
+ *   node tools/push/notify.mjs                # sends what is due
+ *   node tools/push/notify.mjs --dry-run      # says what it would send, without sending or recording anything
+ *   node tools/push/notify.mjs --test KQRST   # a test notification to each phone of that cup
  *
- * Entra a la base como administrador (la llave de la cuenta de servicio, D-122) y lee quién quiere
- * avisos (`pushCopa`), las suscripciones (`push`) y lo ya mandado (`pushEnviados`). Qué toca lo
- * decide schedule.mjs; cómo se manda, webpush.mjs. Después:
- * - junta en un aviso los días nuevos de varias copas para un mismo celular (D-229);
- * - anota cada aviso entregado en `pushEnviados/<código>/<subId>/<clave>`, para no repetirlo;
- * - borra las suscripciones que el servicio dio por muertas (404 o 410) y sus copas;
- * - limpia lo de las copas que terminaron hace más de una semana o que ya no existen;
- * - manda también los de Uno al día (`pushDia`, daily.mjs, D-230) y los anota en
- *   `pushEnviadosDia/<subId>/<clave>`;
- * - suma lo entregado por día y tipo en `stats/prod/days/<día>/mandados/<tipo>` y deja en
- *   `stats/prod/push` la hora de la vuelta y cuántas suscripciones siguen vivas (D-233): el panel
- *   los muestra, y si la hora se atrasa, GitHub dejó de correr el workflow.
+ * It signs in to the database as administrator (the service account key, D-122) and reads who
+ * wants notifications (`pushCopa`), the subscriptions (`push`) and what was already sent
+ * (`pushEnviados`). What is due is decided by schedule.mjs; how it is sent, by webpush.mjs. Then:
+ * - it merges into one notification the new days of several cups for the same phone (D-229);
+ * - it records each delivered notification in `pushEnviados/<code>/<subId>/<key>`, so as not to repeat it;
+ * - it deletes the subscriptions the service declared dead (404 or 410) and their cups;
+ * - it cleans what belongs to cups that ended more than a week ago or no longer exist;
+ * - it also sends One a Day's (`pushDia`, daily.mjs, D-230) and records them in
+ *   `pushEnviadosDia/<subId>/<key>`;
+ * - it adds up what was delivered per day and kind in `stats/prod/days/<day>/mandados/<kind>` and
+ *   leaves in `stats/prod/push` the round's time and how many subscriptions are still alive
+ *   (D-233): the dashboard shows them, and if the time falls behind, GitHub stopped running the workflow.
+ * The Firebase paths and fields named here are persisted data: they keep their Spanish names (D-316).
  *
- * La clave privada VAPID viene de $VAPID_PRIVADA (el secreto de GitHub); la pública, de vapid.js.
- * Sin alguna de las dos no hay nada que mandar, y sale sin error.
+ * The VAPID private key comes from $VAPID_PRIVADA (the GitHub secret, a name the owner decided to
+ * keep); the public one, from vapid.js. Without either there is nothing to send, and it exits
+ * without error.
  */
 import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 import { VAPID_PUBLICA } from '../../public/assets/js/vapid.js';
-import { avisosDeCopa, avisosDePrueba, juntar } from './schedule.mjs';
-import { avisosUnoAlDia, viejos } from './daily.mjs';
-import { mandar } from './webpush.mjs';
+import { cupNotifications, testNotifications, merge } from './schedule.mjs';
+import { dailyNotifications, stale } from './daily.mjs';
+import { send } from './webpush.mjs';
 
-const SEMANA = 7 * 24 * 3600e3;
-const DIA = 24 * 3600e3;
-/** Las señales de los avisos van con las del sitio publicado (D-44): `stats/prod`. */
-export const ENV_STATS = 'prod';
+const WEEK = 7 * 24 * 3600e3;
+const DAY = 24 * 3600e3;
+/** The notifications' signals go with the published site's (D-44): `stats/prod`. */
+export const STATS_ENV = 'prod';
 
 /**
- * Una vuelta completa, con la base y el envío inyectables (las pruebas no tocan la red).
- * `db.leer(ruta)` y `db.cambiar({ ruta: valor|null })`; `envio(sub, aviso)` → { estado, muerta }.
+ * A full round, with the database and the sending injectable (the tests do not touch the network).
+ * `db.read(path)` and `db.update({ path: value|null })`; `deliver(sub, notification)` → { status, dead, text }.
  */
-export async function vuelta({ db, envio, now = Date.now(), simular = false, prueba = '', log = console.log }) {
-  const [quiereTodo, subs, enviadosTodo] = await Promise.all([db.leer('pushCopa'), db.leer('push'), db.leer('pushEnviados')]);
-  const resumen = { copas: 0, avisos: 0, entregados: 0, muertas: 0, fallas: 0, limpiadas: 0 };
-  const cambios = {};
-  const muertas = new Set();
-  const todos = [], nombres = {}, porTipo = {};
-  for (const [code, quiere] of Object.entries(quiereTodo || {})) {
-    if (prueba && code !== prueba) continue;
-    const copa = await db.leer(`torneos/${code}`);
-    // Una copa borrada, o que terminó hace más de una semana: sus avisos ya no sirven
-    if (!prueba && (!copa?.meta || now - (copa.fin || copa.meta.end) > SEMANA)) {
-      cambios[`pushCopa/${code}`] = null;
-      cambios[`pushEnviados/${code}`] = null;
-      resumen.limpiadas++;
+export async function round({ db, deliver, now = Date.now(), dryRun = false, testCode = '', log = console.log }) {
+  const [allWants, subs, allSent] = await Promise.all([db.read('pushCopa'), db.read('push'), db.read('pushEnviados')]);
+  const summary = { cups: 0, notifications: 0, delivered: 0, dead: 0, failures: 0, cleaned: 0 };
+  const changes = {};
+  const dead = new Set();
+  const all = [], names = {}, byKind = {};
+  for (const [code, wants] of Object.entries(allWants || {})) {
+    if (testCode && code !== testCode) continue;
+    const cup = await db.read(`torneos/${code}`);
+    // A deleted cup, or one that ended more than a week ago: its notifications are no longer useful
+    if (!testCode && (!cup?.meta || now - (cup.fin || cup.meta.end) > WEEK)) {
+      changes[`pushCopa/${code}`] = null;
+      changes[`pushEnviados/${code}`] = null;
+      summary.cleaned++;
       continue;
     }
-    resumen.copas++;
-    nombres[code] = copa.meta.name;
-    todos.push(...(prueba ? avisosDePrueba({ code, copa, quiere, subs: subs || {} }) : avisosDeCopa({ code, copa, quiere, subs: subs || {}, enviados: enviadosTodo?.[code] || {}, now })));
+    summary.cups++;
+    names[code] = cup.meta.name;
+    all.push(...(testCode ? testNotifications({ code, cup, wants, subs: subs || {} }) : cupNotifications({ code, cup, wants, subs: subs || {}, sent: allSent?.[code] || {}, now })));
   }
-  for (const p of juntar(todos, subs || {}, nombres)) {
-    resumen.avisos++;
-    log(`${simular ? '· mandaría' : '→'} ${p.code} ${p.pid} ${p.subId.slice(0, 8)} [${p.claves.join(',')}] ${p.aviso.body}`);
-    if (simular) continue;
+  for (const p of merge(all, subs || {}, names)) {
+    summary.notifications++;
+    log(`${dryRun ? '· would send' : '→'} ${p.code} ${p.pid} ${p.subId.slice(0, 8)} [${p.keys.join(',')}] ${p.notification.body}`);
+    if (dryRun) continue;
     let r;
-    try { r = await envio(subs[p.subId], p.aviso); } catch (e) { r = { estado: 0, texto: String(e?.message || e) }; }
-    if (r.estado >= 200 && r.estado < 300) {
-      resumen.entregados++;
-      porTipo[p.tipo] = (porTipo[p.tipo] || 0) + 1;
-      for (const { code, claves } of p.porCopa) for (const c of claves) cambios[`pushEnviados/${code}/${p.subId}/${c}`] = now;
-    } else if (r.muerta) {
-      resumen.muertas++;
-      muertas.add(p.subId);
+    try { r = await deliver(subs[p.subId], p.notification); } catch (e) { r = { status: 0, text: String(e?.message || e) }; }
+    if (r.status >= 200 && r.status < 300) {
+      summary.delivered++;
+      byKind[p.kind] = (byKind[p.kind] || 0) + 1;
+      for (const { code, keys } of p.perCup) for (const k of keys) changes[`pushEnviados/${code}/${p.subId}/${k}`] = now;
+    } else if (r.dead) {
+      summary.dead++;
+      dead.add(p.subId);
     } else {
-      resumen.fallas++;
-      log(`  ✗ ${r.estado} ${r.texto || ''}`);
+      summary.failures++;
+      log(`  ✗ ${r.status} ${r.text || ''}`);
     }
   }
-  // Uno al día (D-230): no van con la prueba de una copa
-  if (!prueba) {
-    const [quiereDia, enviadosDia] = await Promise.all([db.leer('pushDia'), db.leer('pushEnviadosDia')]);
-    for (const p of avisosUnoAlDia({ quiere: quiereDia || {}, subs: subs || {}, enviados: enviadosDia || {}, now })) {
-      resumen.avisos++;
-      log(`${simular ? '· mandaría' : '→'} uno-al-día ${p.subId.slice(0, 8)} [${p.clave}] ${p.aviso.body}`);
-      if (simular) continue;
+  // One a Day (D-230): they do not go with a cup's test
+  if (!testCode) {
+    const [dailyWants, dailySent] = await Promise.all([db.read('pushDia'), db.read('pushEnviadosDia')]);
+    for (const p of dailyNotifications({ wants: dailyWants || {}, subs: subs || {}, sent: dailySent || {}, now })) {
+      summary.notifications++;
+      log(`${dryRun ? '· would send' : '→'} one-a-day ${p.subId.slice(0, 8)} [${p.key}] ${p.notification.body}`);
+      if (dryRun) continue;
       let r;
-      try { r = await envio(subs[p.subId], p.aviso); } catch (e) { r = { estado: 0, texto: String(e?.message || e) }; }
-      if (r.estado >= 200 && r.estado < 300) {
-        resumen.entregados++;
-        porTipo[`uad${p.tipo}`] = (porTipo[`uad${p.tipo}`] || 0) + 1;
-        cambios[`pushEnviadosDia/${p.subId}/${p.clave}`] = now;
-        if (p.borrar) { cambios[`pushDia/${p.subId}`] = null; cambios[`pushEnviadosDia/${p.subId}`] = null; }
-      } else if (r.muerta) { resumen.muertas++; muertas.add(p.subId); } else { resumen.fallas++; log(`  ✗ ${r.estado} ${r.texto || ''}`); }
+      try { r = await deliver(subs[p.subId], p.notification); } catch (e) { r = { status: 0, text: String(e?.message || e) }; }
+      if (r.status >= 200 && r.status < 300) {
+        summary.delivered++;
+        byKind[`uad${p.kind}`] = (byKind[`uad${p.kind}`] || 0) + 1;
+        changes[`pushEnviadosDia/${p.subId}/${p.key}`] = now;
+        if (p.remove) { changes[`pushDia/${p.subId}`] = null; changes[`pushEnviadosDia/${p.subId}`] = null; }
+      } else if (r.dead) { summary.dead++; dead.add(p.subId); } else { summary.failures++; log(`  ✗ ${r.status} ${r.text || ''}`); }
     }
-    for (const ruta of viejos(enviadosDia || {}, now)) if (!(ruta in cambios)) cambios[ruta] = null;
-    // Lo de Uno al día de una suscripción que ya no existe
-    for (const subId of Object.keys(quiereDia || {})) if (!subs?.[subId]) cambios[`pushDia/${subId}`] = null;
+    for (const path of stale(dailySent || {}, now)) if (!(path in changes)) changes[path] = null;
+    // One a Day's data of a subscription that no longer exists
+    for (const subId of Object.keys(dailyWants || {})) if (!subs?.[subId]) changes[`pushDia/${subId}`] = null;
   }
-  // Una suscripción muerta se borra, con todas las copas que la usaban
-  for (const subId of muertas) {
-    cambios[`push/${subId}`] = null;
-    cambios[`pushDia/${subId}`] = null;
-    for (const [code, quiere] of Object.entries(quiereTodo || {})) {
-      for (const [pid, porSub] of Object.entries(quiere || {})) if (porSub?.[subId]) cambios[`pushCopa/${code}/${pid}/${subId}`] = null;
+  // A dead subscription is deleted, with every cup that used it
+  for (const subId of dead) {
+    changes[`push/${subId}`] = null;
+    changes[`pushDia/${subId}`] = null;
+    for (const [code, wants] of Object.entries(allWants || {})) {
+      for (const [pid, bySub] of Object.entries(wants || {})) if (bySub?.[subId]) changes[`pushCopa/${code}/${pid}/${subId}`] = null;
     }
   }
-  // Lo que mira el panel (D-233): lo entregado hoy por tipo, la hora de esta vuelta y las suscripciones vivas
-  const dia = Math.floor(now / DIA);
-  for (const [tipo, k] of Object.entries(porTipo)) cambios[`stats/${ENV_STATS}/days/${dia}/mandados/${tipo}`] = { '.sv': { increment: k } };
-  cambios[`stats/${ENV_STATS}/push/vuelta`] = now;
-  cambios[`stats/${ENV_STATS}/push/vivas`] = Object.keys(subs || {}).filter(s => !muertas.has(s)).length;
-  cambios[`stats/${ENV_STATS}/push/torneos`] = resumen.copas;
-  if (!simular) await db.cambiar(cambios);
-  return resumen;
+  // What the dashboard looks at (D-233): what was delivered today by kind, this round's time and the live subscriptions
+  const day = Math.floor(now / DAY);
+  for (const [kind, k] of Object.entries(byKind)) changes[`stats/${STATS_ENV}/days/${day}/mandados/${kind}`] = { '.sv': { increment: k } };
+  changes[`stats/${STATS_ENV}/push/vuelta`] = now;
+  changes[`stats/${STATS_ENV}/push/vivas`] = Object.keys(subs || {}).filter(s => !dead.has(s)).length;
+  changes[`stats/${STATS_ENV}/push/torneos`] = summary.cups;
+  if (!dryRun) await db.update(changes);
+  return summary;
 }
 
-/** La base por REST, como administrador (los demás tools/firebase hacen lo mismo). */
-async function baseReal() {
-  const { token, leer } = await import('../firebase/firebase-admin.mjs');
+/** The database over REST, as administrator (the other tools/firebase do the same). */
+async function realDb() {
+  const { token, read } = await import('../firebase/firebase-admin.mjs');
   const t = await token();
   return {
-    leer: ruta => leer(ruta, t),
-    async cambiar(cambios) {
-      const res = await fetch(`${firebaseConfig.databaseURL}/.json?access_token=${encodeURIComponent(t)}`, { method: 'PATCH', body: JSON.stringify(cambios) });
-      if (!res.ok) throw new Error(`No se pudo anotar en la base (HTTP ${res.status}): ${(await res.text()).slice(0, 200)}`);
+    read: path => read(path, t),
+    async update(changes) {
+      const res = await fetch(`${firebaseConfig.databaseURL}/.json?access_token=${encodeURIComponent(t)}`, { method: 'PATCH', body: JSON.stringify(changes) });
+      if (!res.ok) throw new Error(`Could not record in the database (HTTP ${res.status}): ${(await res.text()).slice(0, 200)}`);
     },
   };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const simular = process.argv.includes('--simular');
-  const i = process.argv.indexOf('--prueba');
-  const prueba = i > 0 ? String(process.argv[i + 1] || '').trim().toUpperCase() : '';
-  if (i > 0 && !/^[A-HJ-NP-Z]{5}$/.test(prueba)) { console.error('Uso: node tools/push/notify.mjs --prueba <código de la copa, 5 letras>'); process.exit(2); }
-  const privada = process.env.VAPID_PRIVADA || '';
-  if (!VAPID_PUBLICA || (!privada && !simular)) {
-    console.log(`Sin clave VAPID ${VAPID_PUBLICA ? 'privada ($VAPID_PRIVADA)' : 'pública (vapid.js)'}: no hay avisos que mandar. Ver tools/push/vapid.mjs.`);
+  // --simular and --prueba: the names from before D-316
+  const dryRun = process.argv.includes('--dry-run') || process.argv.includes('--simular');
+  const i = Math.max(process.argv.indexOf('--test'), process.argv.indexOf('--prueba'));
+  const testCode = i > 0 ? String(process.argv[i + 1] || '').trim().toUpperCase() : '';
+  if (i > 0 && !/^[A-HJ-NP-Z]{5}$/.test(testCode)) { console.error('Usage: node tools/push/notify.mjs --test <cup code, 5 letters>'); process.exit(2); }
+  const privateKey = process.env.VAPID_PRIVADA || '';
+  if (!VAPID_PUBLICA || (!privateKey && !dryRun)) {
+    console.log(`No ${VAPID_PUBLICA ? 'private ($VAPID_PRIVADA)' : 'public (vapid.js)'} VAPID key: no notifications to send. See tools/push/vapid.mjs.`);
     process.exit(0);
   }
-  const db = await baseReal();
-  const envio = (sub, aviso) => mandar(sub, aviso, { publica: VAPID_PUBLICA, privada });
-  const r = await vuelta({ db, envio, simular, prueba });
-  if (prueba && !r.avisos) console.log(`La copa ${prueba} no tiene celulares con avisos activos.`);
-  console.log(`${simular ? 'Simulación: ' : ''}${r.copas} copas con avisos · ${r.avisos} ${simular ? 'por mandar' : `mandados (${r.entregados} entregados, ${r.muertas} suscripciones muertas, ${r.fallas} fallas)`} · ${r.limpiadas} copas limpiadas`);
-  if (r.fallas && r.fallas === r.avisos) process.exit(1);
+  const db = await realDb();
+  const deliver = (sub, notification) => send(sub, notification, { publicKey: VAPID_PUBLICA, privateKey });
+  const r = await round({ db, deliver, dryRun, testCode });
+  if (testCode && !r.notifications) console.log(`Cup ${testCode} has no phones with notifications on.`);
+  console.log(`${dryRun ? 'Dry run: ' : ''}${r.cups} cups with notifications · ${r.notifications} ${dryRun ? 'to send' : `sent (${r.delivered} delivered, ${r.dead} dead subscriptions, ${r.failures} failures)`} · ${r.cleaned} cups cleaned`);
+  if (r.failures && r.failures === r.notifications) process.exit(1);
 }

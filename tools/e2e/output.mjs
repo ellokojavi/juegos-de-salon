@@ -1,24 +1,25 @@
 /**
- * La carpeta de salida de un guion de punta a punta (capturas y el perfil de Chrome), D-315.
+ * The output folder of an end-to-end script (screenshots and the Chrome profile), D-315.
  *
- * Antes cada guion hacía `const OUT = process.argv[2]`: corrido sin carpeta quedaba `undefined/`, y
- * corrido con un flag primero (`tournament.mjs --parte copa`) quedaba `--parte/`, las dos dentro de la
- * copia de trabajo, con un perfil de Chrome de decenas de MB que dejaba la copia "con cambios" y
- * frenaba su limpieza (`clean-worktrees.mjs`). Ahora la salida es el primer argumento solo si es una
- * carpeta de verdad; si no, la que el guion dé por defecto o una nueva en el directorio temporal.
+ * Each script used to do `const OUT = process.argv[2]`: run without a folder it left `undefined/`,
+ * and run with a flag first (`tournament.mjs --part cup`) it left `--part/`, both inside the
+ * worktree, with a Chrome profile of tens of MB that left the worktree "with changes" and blocked
+ * its cleanup (`clean-worktrees.mjs`). Now the output is the first argument only if it is a real
+ * folder; otherwise the script's default, or a new one in the temp directory.
  *
- *   const OUT = salida();              // argv[2], o /tmp/<guion>-XXXX
- *   const OUT = salida('/tmp/copa');   // argv[2], o /tmp/copa
+ *   const OUT = output();              // argv[2], or /tmp/<script>-XXXX
+ *   const OUT = output('/tmp/cup');    // argv[2], or /tmp/cup
+ *
  */
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename } from 'node:path';
 
-/** ¿Sirve como carpeta de salida? No vacía, no un flag, no `undefined`/`null` hechos texto. */
-export const esCarpeta = a => typeof a === 'string' && a.trim() !== '' && !a.startsWith('-') && !/(^|\/)(undefined|null)(\/|$)/.test(a);
+/** Does it work as an output folder? Not empty, not a flag, not `undefined`/`null` turned into text. */
+export const isFolder = a => typeof a === 'string' && a.trim() !== '' && !a.startsWith('-') && !/(^|\/)(undefined|null)(\/|$)/.test(a);
 
-export function salida(porDefecto = null, argv = process.argv) {
-  if (esCarpeta(argv[2])) return argv[2];
-  if (porDefecto) return porDefecto;
+export function output(fallback = null, argv = process.argv) {
+  if (isFolder(argv[2])) return argv[2];
+  if (fallback) return fallback;
   return mkdtempSync(`${tmpdir()}/${basename(argv[1] || 'e2e', '.mjs')}-`);
 }

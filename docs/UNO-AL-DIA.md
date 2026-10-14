@@ -515,7 +515,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   jugó la semana anterior; el del día, desde su hora si no ha jugado, día por medio después de 14
   días sin jugar. A los 30 días sin jugar llega el de despedida (`adios`, con su mejor racha) y se
   borran `pushDia/<subId>` y lo mandado. Si la suscripción muere o desaparece, `pushDia` se borra
-  con ella. Los avisos no van con `--prueba <código>` (esa es la de una copa).
+  con ella. Los avisos no van con `--test <código>` (esa es la de una copa).
 - **En el panel:** cada aviso abre `today/?notif=daily<tipo>` (`dailyday`, `dailystreak`, `dailyweek`,
   `dailybye`, D-266; el panel los cuenta como `uaddia`, `uadracha`, `uadsemana` y `uadadios`), para que no se junte con el `dia` de La Copa, y `notify.mjs` suma los entregados en
   `mandados/uad<tipo>`: salen como filas propias en el bloque "🔔 Avisos al celular" (D-233), con sus

@@ -1,59 +1,59 @@
-// La app instalable (D-221): en cada página con manifest, Chrome registra /sw.js con alcance en la
-// raíz, lee el manifest sin errores y no encuentra nada que impida instalar la app. Y la app se llama
-// como en el idioma elegido, en el manifest y para el iPhone (D-222).
-// Con SITIO apuntando a una copia estampada (set-version.py --sitio) prueba también el import map.
-import { salida } from './output.mjs';
+// The installable app (D-221): on every page with a manifest, Chrome registers /sw.js with its
+// scope at the root, reads the manifest without errors and finds nothing that prevents installing
+// the app. And the app is named as in the chosen language, in the manifest and for the iPhone (D-222).
+// With SITE pointing at a stamped copy (set-version.py --site) it also tests the import map.
+import { output as output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-// Sin carpeta de salida usa una temporal: así no queda un perfil de Chrome en `undefined/`
-const OUT = salida();
-const mal = msg => { console.log(`✗ ${msg}`); process.exitCode = 1; };
+const SITE = process.env.SITE || process.env.SITIO || 'http://localhost:8765';
+// Without an output folder it uses a temporary one: so no Chrome profile is left in `undefined/`
+const OUT = output();
+const bad = msg => { console.log(`✗ ${msg}`); process.exitCode = 1; };
 const b = await launch({ port: 9496, dir: `${OUT}/p`, out: OUT });
 
 import { COMMON, IDIOMAS } from '../../public/assets/js/i18n.js';
-const PAGINAS = ['/', '/hangman/', '/cup/', '/cup/suelto/?practice=connections', '/records/'];
+const PAGES = ['/', '/hangman/', '/cup/', '/cup/suelto/?practice=connections', '/records/'];
 
-/** El nombre con que se instalaría la app: el del manifest que Chrome leyó y el del iPhone. */
-const nombres = async () => {
+/** The name the app would be installed with: the one in the manifest Chrome read and the iPhone's. */
+const names = async () => {
   const m = (await b.send('Page.getAppManifest')).result || {};
-  let datos = {};
-  try { datos = JSON.parse(m.data || '{}'); } catch (_) { /* queda vacío */ }
+  let data = {};
+  try { data = JSON.parse(m.data || '{}'); } catch (_) { /* stays empty */ }
   const iphone = await b.evaluate(`document.querySelector('meta[name="apple-mobile-web-app-title"]')?.content || ''`);
-  return { url: m.url || '', name: datos.name, short: datos.short_name, iphone };
+  return { url: m.url || '', name: data.name, short: data.short_name, iphone };
 };
 
-for (const ruta of PAGINAS) {
-  await b.go(`${SITIO}${ruta}`, 1500);
+for (const route of PAGES) {
+  await b.go(`${SITE}${route}`, 1500);
   const sw = await b.evaluate(`(async () => {
     const r = await Promise.race([navigator.serviceWorker.ready, new Promise(ok => setTimeout(() => ok(null), 4000))]);
-    return r ? { alcance: new URL(r.scope).pathname, script: new URL(r.active.scriptURL).pathname } : null;
+    return r ? { scope: new URL(r.scope).pathname, script: new URL(r.active.scriptURL).pathname } : null;
   })()`);
-  if (!sw) { mal(`${ruta}: no se registró el service worker`); continue; }
-  if (sw.alcance !== '/' || sw.script !== '/sw.js') mal(`${ruta}: service worker ${JSON.stringify(sw)}, se esperaba /sw.js con alcance /`);
+  if (!sw) { bad(`${route}: the service worker was not registered`); continue; }
+  if (sw.scope !== '/' || sw.script !== '/sw.js') bad(`${route}: service worker ${JSON.stringify(sw)}, expected /sw.js with scope /`);
   const manifest = (await b.send('Page.getAppManifest')).result || {};
-  if (!/\/manifest(\.\w+)?\.webmanifest$/.test(manifest.url || '')) mal(`${ruta}: Chrome no encontró el manifest`);
-  if (manifest.errors?.length) mal(`${ruta}: errores en el manifest: ${JSON.stringify(manifest.errors)}`);
+  if (!/\/manifest(\.\w+)?\.webmanifest$/.test(manifest.url || '')) bad(`${route}: Chrome didn't find the manifest`);
+  if (manifest.errors?.length) bad(`${route}: errors in the manifest: ${JSON.stringify(manifest.errors)}`);
   const inst = (await b.send('Page.getInstallabilityErrors')).result?.installabilityErrors || [];
-  if (inst.length) mal(`${ruta}: Chrome no la deja instalar: ${inst.map(e => e.errorId).join(', ')}`);
-  console.log(`${ruta.padEnd(36)} → sw ${sw.script} (alcance ${sw.alcance}) · instalable: ${inst.length ? 'no' : 'sí'}`);
+  if (inst.length) bad(`${route}: Chrome doesn't let it be installed: ${inst.map(e => e.errorId).join(', ')}`);
+  console.log(`${route.padEnd(36)} → sw ${sw.script} (scope ${sw.scope}) · installable: ${inst.length ? 'no' : 'yes'}`);
 }
 
-// El nombre en cada idioma, en la portada y en un juego: el idioma se elige con ?lang= (D-74)
+// The name in each language, on the home page and in a game: the language is chosen with ?lang= (D-74)
 for (const lang of IDIOMAS) {
-  for (const ruta of ['/', '/hangman/']) {
-    await b.go(`${SITIO}${ruta}?lang=${lang}`, 1500);
-    const esperado = COMMON[lang].appTitle;
-    // instalable.js cambia el manifest al cargar, y Chrome lo vuelve a leer un poco después: se
-    // espera hasta 5 s a que lo tenga (al instalar, la persona toca el botón mucho más tarde)
-    let n = await nombres();
-    for (let i = 0; i < 10 && n.name !== esperado; i++) { await sleep(500); n = await nombres(); }
-    console.log(`${lang} ${ruta.padEnd(10)} → ${n.url.split('/').pop()} · ${n.name} / ${n.short} · iPhone: ${n.iphone}`);
-    if (n.name !== esperado || n.short !== esperado || n.iphone !== esperado) mal(`${lang} ${ruta}: la app se llamaría "${n.name}" / "${n.short}" / "${n.iphone}", y debe llamarse "${esperado}"`);
+  for (const route of ['/', '/hangman/']) {
+    await b.go(`${SITE}${route}?lang=${lang}`, 1500);
+    const expected = COMMON[lang].appTitle;
+    // instalable.js changes the manifest on load, and Chrome reads it again a little later: it
+    // waits up to 5 s for it to have it (when installing, the person taps the button much later)
+    let n = await names();
+    for (let i = 0; i < 10 && n.name !== expected; i++) { await sleep(500); n = await names(); }
+    console.log(`${lang} ${route.padEnd(10)} → ${n.url.split('/').pop()} · ${n.name} / ${n.short} · iPhone: ${n.iphone}`);
+    if (n.name !== expected || n.short !== expected || n.iphone !== expected) bad(`${lang} ${route}: the app would be named "${n.name}" / "${n.short}" / "${n.iphone}", and must be named "${expected}"`);
   }
 }
-await b.go(`${SITIO}/?lang=es`, 800);
+await b.go(`${SITE}/?lang=es`, 800);
 
 await sleep(200);
-if (b.errors.length) mal(`errores de la página: ${JSON.stringify(b.errors)}`);
+if (b.errors.length) bad(`page errors: ${JSON.stringify(b.errors)}`);
 b.close();
-if (!process.exitCode) console.log('✓ la app se puede instalar desde todas las páginas probadas');
+if (!process.exitCode) console.log('✓ the app can be installed from every page tested');

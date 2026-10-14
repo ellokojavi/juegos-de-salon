@@ -1,81 +1,82 @@
 /**
- * Web Push sin dependencias (D-224): cifrar un aviso para un celular (RFC 8291, `aes128gcm`) y
- * firmar quién lo manda (VAPID, RFC 8292). Solo `node:crypto` y `fetch`, como el resto de tools/.
+ * Web Push with no dependencies (D-224): encrypting a notification for a phone (RFC 8291,
+ * `aes128gcm`) and signing who sends it (VAPID, RFC 8292). Only `node:crypto` and `fetch`, like the
+ * rest of tools/.
  *
- *   const r = await mandar(suscripcion, { title, body, url, tag }, { publica, privada });
- *   r.estado  → 201 entregado al servicio · 404/410 la suscripción murió (se borra) · otro: falla
+ *   const r = await send(subscription, { title, body, url, tag }, { publicKey, privateKey });
+ *   r.status  → 201 delivered to the service · 404/410 the subscription died (it is deleted) · other: failure
  *
- * El servicio de avisos (el de Google para Chrome, el de Apple para Safari, el de Mozilla…) solo ve
- * bytes cifrados: el texto lo descifra el celular con las claves de su suscripción.
+ * The push service (Google's for Chrome, Apple's for Safari, Mozilla's…) only sees encrypted
+ * bytes: the phone decrypts the text with its subscription's keys.
  */
 import { createECDH, createHmac, createCipheriv, randomBytes, createPrivateKey, sign } from 'node:crypto';
 
 const b64u = b => Buffer.from(b).toString('base64url');
-const deB64u = s => Buffer.from(String(s), 'base64url');
-const hmac = (clave, ...datos) => { const h = createHmac('sha256', clave); for (const d of datos) h.update(d); return h.digest(); };
-/** HKDF-Expand de un solo bloque (todo lo que se pide aquí mide 32 bytes o menos). */
-const expandir = (prk, info, largo) => hmac(prk, info, Buffer.from([1])).subarray(0, largo);
+const fromB64u = s => Buffer.from(String(s), 'base64url');
+const hmac = (key, ...data) => { const h = createHmac('sha256', key); for (const d of data) h.update(d); return h.digest(); };
+/** Single-block HKDF-Expand (everything asked for here is 32 bytes or less). */
+const expand = (prk, info, length) => hmac(prk, info, Buffer.from([1])).subarray(0, length);
 
-/** Tamaño de registro: los avisos caben en uno solo (el texto va muy por debajo de 4 KB). */
+/** Record size: notifications fit in a single one (the text is far below 4 KB). */
 const RS = 4096;
 
 /**
- * El cuerpo cifrado de un aviso (RFC 8291 §3 y §4). `efimera` (la clave del que manda, de un solo
- * uso) y `salt` se pasan solo en las pruebas, para comparar con el ejemplo del RFC.
+ * A notification's encrypted body (RFC 8291 §3 and §4). `ephemeral` (the sender's single-use key)
+ * and `salt` are only passed in the tests, to compare with the RFC's example.
  */
-export function cifrar(texto, { p256dh, auth }, { efimera = null, salt = randomBytes(16) } = {}) {
-  const uaPublica = deB64u(p256dh);
-  const secretoAuth = deB64u(auth);
-  if (uaPublica.length !== 65 || secretoAuth.length !== 16) throw new Error('suscripción con claves inválidas');
+export function encrypt(text, { p256dh, auth }, { ephemeral = null, salt = randomBytes(16) } = {}) {
+  const uaPublic = fromB64u(p256dh);
+  const authSecret = fromB64u(auth);
+  if (uaPublic.length !== 65 || authSecret.length !== 16) throw new Error('subscription with invalid keys');
   const ecdh = createECDH('prime256v1');
-  if (efimera) ecdh.setPrivateKey(deB64u(efimera)); else ecdh.generateKeys();
-  const asPublica = ecdh.getPublicKey();
-  const compartido = ecdh.computeSecret(uaPublica);
+  if (ephemeral) ecdh.setPrivateKey(fromB64u(ephemeral)); else ecdh.generateKeys();
+  const asPublic = ecdh.getPublicKey();
+  const shared = ecdh.computeSecret(uaPublic);
 
-  // §3.4: la clave de entrada sale del secreto ECDH, el secreto de autenticación y las dos públicas
-  const prkClave = hmac(secretoAuth, compartido);
-  const ikm = expandir(prkClave, Buffer.concat([Buffer.from('WebPush: info\0'), uaPublica, asPublica]), 32);
-  // RFC 8188 §2.2: la clave del contenido y el nonce del único registro
+  // §3.4: the input key comes from the ECDH secret, the authentication secret and both public keys
+  const prkKey = hmac(authSecret, shared);
+  const ikm = expand(prkKey, Buffer.concat([Buffer.from('WebPush: info\0'), uaPublic, asPublic]), 32);
+  // RFC 8188 §2.2: the content key and the nonce of the only record
   const prk = hmac(salt, ikm);
-  const cek = expandir(prk, Buffer.from('Content-Encoding: aes128gcm\0'), 16);
-  const nonce = expandir(prk, Buffer.from('Content-Encoding: nonce\0'), 12);
+  const cek = expand(prk, Buffer.from('Content-Encoding: aes128gcm\0'), 16);
+  const nonce = expand(prk, Buffer.from('Content-Encoding: nonce\0'), 12);
 
-  const cifrador = createCipheriv('aes-128-gcm', cek, nonce);
-  // El último (y único) registro termina en 0x02 (RFC 8188 §2)
-  const cuerpo = Buffer.concat([cifrador.update(Buffer.concat([Buffer.from(texto), Buffer.from([2])])), cifrador.final(), cifrador.getAuthTag()]);
-  const cabeza = Buffer.alloc(21);
-  Buffer.from(salt).copy(cabeza, 0);
-  cabeza.writeUInt32BE(RS, 16);
-  cabeza.writeUInt8(asPublica.length, 20);
-  return Buffer.concat([cabeza, asPublica, cuerpo]);
+  const cipher = createCipheriv('aes-128-gcm', cek, nonce);
+  // The last (and only) record ends in 0x02 (RFC 8188 §2)
+  const body = Buffer.concat([cipher.update(Buffer.concat([Buffer.from(text), Buffer.from([2])])), cipher.final(), cipher.getAuthTag()]);
+  const head = Buffer.alloc(21);
+  Buffer.from(salt).copy(head, 0);
+  head.writeUInt32BE(RS, 16);
+  head.writeUInt8(asPublic.length, 20);
+  return Buffer.concat([head, asPublic, body]);
 }
 
-/** La firma VAPID (RFC 8292): un JWT ES256 para el origen del servicio, válido 12 horas. */
-export function firmaVapid(endpoint, { publica, privada, contacto = 'https://juegosdesalon.cl/', ahora = Date.now() }) {
-  const pub = deB64u(publica);
-  const clave = createPrivateKey({ key: { kty: 'EC', crv: 'P-256', d: privada, x: b64u(pub.subarray(1, 33)), y: b64u(pub.subarray(33, 65)) }, format: 'jwk' });
-  const cabeza = b64u(JSON.stringify({ typ: 'JWT', alg: 'ES256' }));
-  const cuerpo = b64u(JSON.stringify({ aud: new URL(endpoint).origin, exp: Math.floor(ahora / 1000) + 12 * 3600, sub: contacto }));
-  const firma = sign('sha256', Buffer.from(`${cabeza}.${cuerpo}`), { key: clave, dsaEncoding: 'ieee-p1363' });
-  return `vapid t=${cabeza}.${cuerpo}.${b64u(firma)}, k=${publica}`;
+/** The VAPID signature (RFC 8292): an ES256 JWT for the service's origin, valid for 12 hours. */
+export function vapidAuth(endpoint, { publicKey, privateKey, contact = 'https://juegosdesalon.cl/', now = Date.now() }) {
+  const pub = fromB64u(publicKey);
+  const key = createPrivateKey({ key: { kty: 'EC', crv: 'P-256', d: privateKey, x: b64u(pub.subarray(1, 33)), y: b64u(pub.subarray(33, 65)) }, format: 'jwk' });
+  const head = b64u(JSON.stringify({ typ: 'JWT', alg: 'ES256' }));
+  const body = b64u(JSON.stringify({ aud: new URL(endpoint).origin, exp: Math.floor(now / 1000) + 12 * 3600, sub: contact }));
+  const signature = sign('sha256', Buffer.from(`${head}.${body}`), { key, dsaEncoding: 'ieee-p1363' });
+  return `vapid t=${head}.${body}.${b64u(signature)}, k=${publicKey}`;
 }
 
 /**
- * Manda un aviso. `aviso` es lo que lee sw.js: `{ title, body, url, tag }`. Un aviso que no se
- * entrega en 12 horas ya no sirve (`TTL`): el día ya cambió.
+ * Sends a notification. `notification` is what sw.js reads: `{ title, body, url, tag, acciones? }`.
+ * A notification not delivered within 12 hours is no longer useful (`TTL`): the day already changed.
  */
-export async function mandar(sub, aviso, vapid, { hacer = globalThis.fetch, ttl = 12 * 3600 } = {}) {
-  const cuerpo = cifrar(JSON.stringify(aviso), sub.keys);
-  const res = await hacer(sub.endpoint, {
+export async function send(sub, notification, vapid, { doFetch = globalThis.fetch, ttl = 12 * 3600 } = {}) {
+  const body = encrypt(JSON.stringify(notification), sub.keys);
+  const res = await doFetch(sub.endpoint, {
     method: 'POST',
     headers: {
-      Authorization: firmaVapid(sub.endpoint, vapid),
+      Authorization: vapidAuth(sub.endpoint, vapid),
       'Content-Encoding': 'aes128gcm',
       'Content-Type': 'application/octet-stream',
       TTL: String(ttl),
       Urgency: 'normal',
     },
-    body: cuerpo,
+    body,
   });
-  return { estado: res.status, muerta: res.status === 404 || res.status === 410, texto: res.ok ? '' : (await res.text().catch(() => '')).slice(0, 200) };
+  return { status: res.status, dead: res.status === 404 || res.status === 410, text: res.ok ? '' : (await res.text().catch(() => '')).slice(0, 200) };
 }

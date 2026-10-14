@@ -1,125 +1,125 @@
 /**
- * Arrastrar la carta a la línea (D-85): el gesto de verdad, con eventos de puntero.
+ * Dragging the card onto the line (D-85): the real gesture, with pointer events.
  *
- * Los demás guiones eligen con `el.click()`, que nunca pasa por `pointerdown` y por lo tanto
- * no ejercita nada de esto. Aquí se prueba lo que el jugador hace con el dedo:
- *   1. arrastrar desde la mano hasta una ranura deja la carta elegida, **sin colocarla**
- *   2. retomar la carta ya puesta y llevarla a otra ranura
- *   3. soltarla fuera de la línea la devuelve a la mano
- *   4. un desliz lateral en la mano es scroll, y no elige nada (D-38)
+ * The other scripts choose with `el.click()`, which never goes through `pointerdown` and so
+ * exercises none of this. Here we test what the player does with a finger:
+ *   1. dragging from the hand to a slot leaves the card chosen, **without placing it**
+ *   2. picking the placed card up again and taking it to another slot
+ *   3. dropping it off the line sends it back to the hand
+ *   4. a sideways swipe on the hand is a scroll, and chooses nothing (D-38)
  *
- * Se juega en el modo solo, que es la ⏳ Línea Relámpago de La Copa (D-142): el mismo arrastre
- * de assets/js/arrastre.js, montado por cup/games/timeline/ui.js, y sin pases de por medio.
+ * Played in solo mode, which is The Cup's ⏳ Lightning Line (D-142): the same drag from
+ * assets/js/arrastre.js, mounted by cup/games/timeline/ui.js, and with no handoffs in between.
  *
- * Uso: SITIO=http://localhost:87xx node tools/e2e/timeline/drag.mjs <salida>
+ * Usage: SITE=http://localhost:87xx node tools/e2e/timeline/drag.mjs <output>
  */
-import { salida } from '../output.mjs';
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 
-const out = salida('/tmp/ldt-arrastre');
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9231, dir: `${out}/p`, out, width: 375, height: 812 });
+const out = output('/tmp/timeline-drag');
+const SITE = process.env.SITE || 'http://localhost:8765';
+const b = await launch({ port: Number(process.env.CDP_PORT) || 9231, dir: `${out}/p`, out, width: 375, height: 812 });
 const click = sel => b.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);
 const clickText = (sel, re) => b.evaluate(`(()=>{const x=[...document.querySelectorAll('${sel}')].find(e=>new RegExp('${re}','i').test(e.textContent));if(!x)return 'no';x.click();return 'ok'})()`);
-// La selección vive en la pantalla del juego: se lee de la carta marcada y la ranura abierta
+// The selection lives on the game screen: read from the marked card and the open slot
 const sel = () => b.evaluate(`(()=>{const c=document.querySelector('#solo-juego .hand .card.sel');const r=document.querySelector('#solo-juego .line .slot.on');return JSON.stringify({card:c?c.dataset.card:null,slot:r?+r.dataset.slot:null})})()`).then(JSON.parse);
-const jugadas = () => b.evaluate(`window.__ldt.solo().jugadas.length`);
-const centro = s => b.evaluate(`(()=>{const x=document.querySelector('${s}');if(!x)return null;const r=x.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)})})()`).then(v => (v ? JSON.parse(v) : null));
+const moves = () => b.evaluate(`window.__ldt.solo().jugadas.length`);
+const center = s => b.evaluate(`(()=>{const x=document.querySelector('${s}');if(!x)return null;const r=x.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)})})()`).then(v => (v ? JSON.parse(v) : null));
 
 /**
- * Un arrastre con un dedo de verdad, en varios pasos.
- * Tiene que ser `dispatchTouchEvent`: `dispatchMouseEvent` no genera eventos de puntero en
- * este Chrome, así que el gesto entero pasaría de largo sin que nada falle a la vista.
+ * A drag with a real finger, in several steps.
+ * It has to be `dispatchTouchEvent`: `dispatchMouseEvent` does not generate pointer events in
+ * this Chrome, so the whole gesture would go by without anything visibly failing.
  */
-const dedo = (type, p) => b.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x: p.x, y: p.y, id: 1 }] });
-async function arrastrar(desde, hasta, { pasos = 10, tiron = true, soltar = true } = {}) {
-  await dedo('touchStart', desde);
-  // Primero se tira la carta hacia abajo y recién después se lleva al destino, que es como
-  // se hace con el dedo. Un tirón en diagonal desde la mano es desliz lateral, y el módulo
-  // lo deja pasar como scroll de la tira a propósito (D-38): el guion tiene que imitar el gesto.
-  if (tiron) { await dedo('touchMove', { x: desde.x, y: desde.y + (hasta.y < desde.y ? -20 : 20) }); await sleep(16); }
-  for (let i = 1; i <= pasos; i++) {
-    await dedo('touchMove', { x: Math.round(desde.x + (hasta.x - desde.x) * i / pasos), y: Math.round(desde.y + (hasta.y - desde.y) * i / pasos) });
+const finger = (type, p) => b.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x: p.x, y: p.y, id: 1 }] });
+async function drag(from, to, { steps = 10, tug = true, release = true } = {}) {
+  await finger('touchStart', from);
+  // First the card is tugged downwards and only then taken to its destination, which is how
+  // it's done with a finger. A diagonal tug from the hand is a sideways swipe, and the module
+  // lets it through as a scroll of the strip on purpose (D-38): the script has to mimic the gesture.
+  if (tug) { await finger('touchMove', { x: from.x, y: from.y + (to.y < from.y ? -20 : 20) }); await sleep(16); }
+  for (let i = 1; i <= steps; i++) {
+    await finger('touchMove', { x: Math.round(from.x + (to.x - from.x) * i / steps), y: Math.round(from.y + (to.y - from.y) * i / steps) });
     await sleep(16);
   }
-  if (soltar) { await dedo('touchEnd', hasta); await sleep(250); }
+  if (release) { await finger('touchEnd', to); await sleep(250); }
 }
 
-await b.go(`${SITIO}/timeline/`); await b.evaluate(`localStorage.clear(); 1`);
-await b.go(`${SITIO}/timeline/`);
+await b.go(`${SITE}/timeline/`); await b.evaluate(`localStorage.clear(); 1`);
+await b.go(`${SITE}/timeline/`);
 
-// Jugar solo: la pantalla de juego sin pases de por medio
+// Play solo: the game screen with no handoffs in between
 await b.evaluate(`[...document.querySelectorAll('.mode')].find(m=>/solo/i.test(m.textContent)).click(); 1`); await sleep(300);
 await clickText('.theme-card', 'Historia'); await sleep(100);
 await click('#btn-solo-empezar'); await sleep(900);
-console.log('pantalla:', await b.evaluate(`document.querySelector('.screen.active').id`));
+console.log('screen:', await b.evaluate(`document.querySelector('.screen.active').id`));
 
-/* 0 · Elegir no puede reconstruir la línea: las filas se quedan donde están ----- */
-// Se marcan las filas de hitos; si alguna se reemplaza, el marcador se pierde y además la
-// fila reproduce de nuevo su animación de entrada, que es el salto que se veía (D-87).
-await b.evaluate(`document.querySelectorAll('#solo-juego .line .event').forEach((e,i)=>e.__marca=i); 1`);
-const marcadas = await b.evaluate(`document.querySelectorAll('#solo-juego .line .event').length`);
+/* 0 · Choosing must not rebuild the line: the rows stay where they are ---------- */
+// The milestone rows are tagged; if any gets replaced, the tag is lost and the row also
+// replays its entrance animation, which was the jump that could be seen (D-87).
+await b.evaluate(`document.querySelectorAll('#solo-juego .line .event').forEach((e,i)=>e.__mark=i); 1`);
+const tagged = await b.evaluate(`document.querySelectorAll('#solo-juego .line .event').length`);
 await b.evaluate(`document.querySelector('#solo-juego .hand .card').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})); 1`); await sleep(120);
-const sobreviven = await b.evaluate(`[...document.querySelectorAll('#solo-juego .line .event')].filter(e=>e.__marca!==undefined).length`);
-console.log('filas de la línea:', marcadas, '· siguen siendo las mismas tras apretar una carta:', sobreviven);
-console.log('  ' + (sobreviven === marcadas && marcadas > 0 ? '✅' : '❌') + ' elegir no reconstruye la línea (D-87)');
-// Con `animation-fill-mode: both` la animación terminada sigue adjunta, así que no sirve
-// contarlas: lo que delata el redibujo es que alguna vuelva a estar corriendo.
-const corriendo = await b.evaluate(`[...document.querySelectorAll('#solo-juego .line .event')].filter(e=>e.getAnimations().some(a=>a.playState==='running')).length`);
-console.log('  ' + (corriendo === 0 ? '✅' : '❌') + ` y ninguna fila volvió a reproducir su animación de entrada (${corriendo} corriendo)`);
+const survivors = await b.evaluate(`[...document.querySelectorAll('#solo-juego .line .event')].filter(e=>e.__mark!==undefined).length`);
+console.log('line rows:', tagged, '· still the same ones after pressing a card:', survivors);
+console.log('  ' + (survivors === tagged && tagged > 0 ? '✅' : '❌') + ' choosing does not rebuild the line (D-87)');
+// With `animation-fill-mode: both` the finished animation stays attached, so counting them
+// is no use: what gives the redraw away is one of them running again.
+const running = await b.evaluate(`[...document.querySelectorAll('#solo-juego .line .event')].filter(e=>e.getAnimations().some(a=>a.playState==='running')).length`);
+console.log('  ' + (running === 0 ? '✅' : '❌') + ` and no row replayed its entrance animation (${running} running)`);
 
-/* 1 · De la mano a una ranura: elige, no coloca -------------------------------- */
-const carta = await centro('#solo-juego .hand .card');
-const ranura = await centro('#solo-juego .line .slot');
-const antes = await jugadas();
-console.log('  (carta', JSON.stringify(carta), '→ ranura', JSON.stringify(ranura), ')');
-// A mitad del gesto, con la carta en el aire: es la única toma que muestra lo que se arrastra
-await arrastrar(carta, ranura, { soltar: false });
-console.log('con la carta en el aire:',
-  await b.evaluate(`JSON.stringify({vilo: !!document.querySelector('.vilo.on'), texto: document.querySelector('.vilo-carta .t')?.textContent, ancho: Math.round(document.querySelector('.vilo-carta')?.getBoundingClientRect().width), tapado: document.body.classList.contains('arrastrando'), destino: !!document.querySelector('#solo-juego .line .slot.on')})`));
-await b.shot('arrastre-0-en-vilo');
-await dedo('touchEnd', ranura); await sleep(250);
-const trasSoltar = await sel();
-console.log('tras arrastrar a la ranura:', JSON.stringify(trasSoltar), '· jugadas:', await jugadas(), `(antes ${antes})`);
-console.log('  ' + (trasSoltar.card && trasSoltar.slot !== null ? '✅' : '❌') + ' soltar deja la carta y el lugar elegidos');
-console.log('  ' + ((await jugadas()) === antes ? '✅' : '❌') + ' soltar NO coloca: eso lo hace el botón (C-8)');
-console.log('  ' + (await b.evaluate(`!!document.querySelector('#solo-juego .line .slot.on .ghost')`) ? '✅' : '❌') + ' la ranura quedó abierta con la carta dentro');
-console.log('  ' + (await b.evaluate(`!document.querySelector('#btn-colocar').disabled`) ? '✅' : '❌') + ' el botón de confirmar quedó habilitado');
-await b.shot('arrastre-1-elegida');
+/* 1 · From the hand to a slot: chooses, does not place ------------------------- */
+const card = await center('#solo-juego .hand .card');
+const slot = await center('#solo-juego .line .slot');
+const before = await moves();
+console.log('  (card', JSON.stringify(card), '→ slot', JSON.stringify(slot), ')');
+// Mid-gesture, with the card in the air: the only shot that shows what is being dragged
+await drag(card, slot, { release: false });
+console.log('with the card in the air:',
+  await b.evaluate(`JSON.stringify({lifted: !!document.querySelector('.vilo.on'), text: document.querySelector('.vilo-carta .t')?.textContent, width: Math.round(document.querySelector('.vilo-carta')?.getBoundingClientRect().width), covered: document.body.classList.contains('arrastrando'), target: !!document.querySelector('#solo-juego .line .slot.on')})`));
+await b.shot('drag-0-lifted');
+await finger('touchEnd', slot); await sleep(250);
+const afterDrop = await sel();
+console.log('after dragging to the slot:', JSON.stringify(afterDrop), '· moves:', await moves(), `(before ${before})`);
+console.log('  ' + (afterDrop.card && afterDrop.slot !== null ? '✅' : '❌') + ' dropping leaves the card and the place chosen');
+console.log('  ' + ((await moves()) === before ? '✅' : '❌') + ' dropping does NOT place: the button does that (C-8)');
+console.log('  ' + (await b.evaluate(`!!document.querySelector('#solo-juego .line .slot.on .ghost')`) ? '✅' : '❌') + ' the slot was left open with the card inside');
+console.log('  ' + (await b.evaluate(`!document.querySelector('#btn-colocar').disabled`) ? '✅' : '❌') + ' the confirm button was left enabled');
+await b.shot('drag-1-chosen');
 
-/* 2 · Retomar la carta puesta y llevarla a otra ranura ------------------------- */
-const fantasma = await centro('#solo-juego .line .slot.on .ghost');
-const otra = await b.evaluate(`(()=>{const s=[...document.querySelectorAll('#solo-juego .line .slot')];const i=s.findIndex(x=>x.classList.contains('on'));const o=s[i===s.length-1?i-1:i+1];if(!o)return null;const r=o.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2),i:+o.dataset.slot})})()`).then(v => (v ? JSON.parse(v) : null));
-await arrastrar(fantasma, otra);
-const trasMover = await sel();
-console.log('tras retomarla y moverla:', JSON.stringify(trasMover), '· esperado slot', otra.i);
-console.log('  ' + (trasMover.slot !== null && trasMover.card ? '✅' : '❌') + ' la carta puesta se puede retomar y cambiar de lugar');
+/* 2 · Pick the placed card up and take it to another slot ---------------------- */
+const ghost = await center('#solo-juego .line .slot.on .ghost');
+const other = await b.evaluate(`(()=>{const s=[...document.querySelectorAll('#solo-juego .line .slot')];const i=s.findIndex(x=>x.classList.contains('on'));const o=s[i===s.length-1?i-1:i+1];if(!o)return null;const r=o.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2),i:+o.dataset.slot})})()`).then(v => (v ? JSON.parse(v) : null));
+await drag(ghost, other);
+const afterMove = await sel();
+console.log('after picking it up and moving it:', JSON.stringify(afterMove), '· expected slot', other.i);
+console.log('  ' + (afterMove.slot !== null && afterMove.card ? '✅' : '❌') + ' the placed card can be picked up and moved');
 
-/* 3 · Soltarla fuera de la línea la devuelve a la mano ------------------------- */
-const fantasma2 = await centro('#solo-juego .line .slot.on .ghost');
-await arrastrar(fantasma2, { x: fantasma2.x, y: 30 }, { pasos: 4 });
-const trasBotar = await sel();
-console.log('tras soltarla fuera:', JSON.stringify(trasBotar));
-console.log('  ' + (trasBotar.card === null && trasBotar.slot === null ? '✅' : '❌') + ' soltada fuera de la línea vuelve a la mano sin elegir');
+/* 3 · Dropping it off the line sends it back to the hand ----------------------- */
+const ghost2 = await center('#solo-juego .line .slot.on .ghost');
+await drag(ghost2, { x: ghost2.x, y: 30 }, { steps: 4 });
+const afterDiscard = await sel();
+console.log('after dropping it outside:', JSON.stringify(afterDiscard));
+console.log('  ' + (afterDiscard.card === null && afterDiscard.slot === null ? '✅' : '❌') + ' dropped off the line it goes back to the hand, unchosen');
 
-/* 4 · Un desliz lateral en la mano es scroll, no elección (D-38) --------------- */
+/* 4 · A sideways swipe on the hand is a scroll, not a choice (D-38) ------------ */
 await b.evaluate(`window.scrollTo(0,0); 1`); await sleep(150);
-const carta2 = await centro('#solo-juego .hand .card');
-await arrastrar(carta2, { x: carta2.x - 90, y: carta2.y }, { pasos: 6, tiron: false });
-const trasDesliz = await sel();
-console.log('tras deslizar la mano a lo ancho:', JSON.stringify(trasDesliz));
-console.log('  ' + (trasDesliz.card === null ? '✅' : '❌') + ' el desliz lateral no elige carta (D-38)');
+const card2 = await center('#solo-juego .hand .card');
+await drag(card2, { x: card2.x - 90, y: card2.y }, { steps: 6, tug: false });
+const afterSwipe = await sel();
+console.log('after swiping the hand sideways:', JSON.stringify(afterSwipe));
+console.log('  ' + (afterSwipe.card === null ? '✅' : '❌') + ' the sideways swipe does not choose a card (D-38)');
 
-/* 5 · Y el botón sigue siendo el que coloca ----------------------------------- */
-// La tira quedó corrida por el desliz: se toma la primera carta que se ve entera
-const carta3 = await b.evaluate(`(()=>{const x=[...document.querySelectorAll('#solo-juego .hand .card')].find(c=>{const r=c.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth});const r=x.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)})})()`).then(JSON.parse);
-const ranura3 = await centro('#solo-juego .line .slot');
-await arrastrar(carta3, ranura3);
-const antesDeColocar = await jugadas();
+/* 5 · And the button is still what places ------------------------------------- */
+// The strip was shifted by the swipe: take the first fully visible card
+const card3 = await b.evaluate(`(()=>{const x=[...document.querySelectorAll('#solo-juego .hand .card')].find(c=>{const r=c.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth});const r=x.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)})})()`).then(JSON.parse);
+const slot3 = await center('#solo-juego .line .slot');
+await drag(card3, slot3);
+const beforePlacing = await moves();
 await click('#btn-colocar'); await sleep(700);
-console.log('tras confirmar:', 'jugadas', await jugadas(), `(antes ${antesDeColocar})`);
-console.log('  ' + ((await jugadas()) === antesDeColocar + 1 ? '✅' : '❌') + ' el botón sí coloca');
-await b.shot('arrastre-2-colocada');
+console.log('after confirming:', 'moves', await moves(), `(before ${beforePlacing})`);
+console.log('  ' + ((await moves()) === beforePlacing + 1 ? '✅' : '❌') + ' the button does place');
+await b.shot('drag-2-placed');
 
 console.log('errors:', b.errors, b.logs);
 process.exit(0);

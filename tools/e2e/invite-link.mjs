@@ -1,39 +1,38 @@
-// Quien llega por un enlace de sala solo puede entrar a esa sala: nada de crear otra.
-import { salida } from './output.mjs';
+// Whoever arrives by a room link can only join that room: no creating another one.
+import { output as output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
-const OUT = salida();
-const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
+const OUT = output();
+const BASE = process.argv[3] || process.env.SITE || process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: 9484, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
-const JUEGOS = ['toque-y-fama', 'batalla-naval', 'linea-de-tiempo', 'ahorcado', 'dudo'];
+const GAMES = ['toque-y-fama', 'batalla-naval', 'linea-de-tiempo', 'ahorcado', 'dudo'];
 const CODE = 'ZQTE';
 
-const pantalla = () => b.evaluate(`(()=>{
+const screen = () => b.evaluate(`(()=>{
   const acc = [...document.querySelectorAll('#setup-actions .btn')].map(x=>x.textContent.trim());
   const code = document.querySelector('#setup-actions input.code');
   return JSON.stringify({
-    pantalla: document.querySelector('.screen.active')?.id,
-    titulo: document.querySelector('#screen-setup h2')?.textContent,
-    botones: acc,
-    crear: acc.some(t=>/crear|create/i.test(t)),
-    invitacion: document.querySelector('#setup-actions .lead')?.textContent || '',
-    codigo: code ? code.value : null,
-    soloLectura: code ? code.readOnly : null,
+    screen: document.querySelector('.screen.active')?.id,
+    title: document.querySelector('#screen-setup h2')?.textContent,
+    buttons: acc,
+    create: acc.some(t=>/crear|create/i.test(t)),
+    invitation: document.querySelector('#setup-actions .lead')?.textContent || '',
+    code: code ? code.value : null,
+    readOnly: code ? code.readOnly : null,
   })})()`).then(JSON.parse);
 
-for (const juego of JUEGOS) {
-  await b.go(`${BASE}/${juego}/`, 1200); await b.evaluate(`localStorage.clear(); 1`);
-  // con enlace: solo unirse
-  await b.go(`${BASE}/${juego}/?room=${CODE}`, 1800);
-  const invitado = await pantalla();
-  console.log(`${juego} con enlace →`, JSON.stringify(invitado));
-  if (invitado.crear) console.log('  ⚠️ todavía ofrece crear sala');
-  await b.shot(`invitacion-${juego}`);
-  // sin enlace: el modo de varios celulares sigue ofreciendo crear
-  await b.go(`${BASE}/${juego}/`, 1500);
-  const modo = juego === 'linea-de-tiempo' ? 1 : 1;
-  await b.evaluate(`document.querySelectorAll('.mode')[${modo}].click(); 1`); await sleep(500);
-  const normal = await pantalla();
-  console.log(`${juego} sin enlace →`, JSON.stringify({ crear: normal.crear, botones: normal.botones, soloLectura: normal.soloLectura }));
+for (const game of GAMES) {
+  await b.go(`${BASE}/${game}/`, 1200); await b.evaluate(`localStorage.clear(); 1`);
+  // with a link: only join
+  await b.go(`${BASE}/${game}/?room=${CODE}`, 1800);
+  const guest = await screen();
+  console.log(`${game} with a link →`, JSON.stringify(guest));
+  if (guest.create) console.log('  ⚠️ still offers to create a room');
+  await b.shot(`invite-${game}`);
+  // without a link: the several-phones mode still offers to create
+  await b.go(`${BASE}/${game}/`, 1500);
+  await b.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(500);
+  const normal = await screen();
+  console.log(`${game} without a link →`, JSON.stringify({ create: normal.create, buttons: normal.buttons, readOnly: normal.readOnly }));
 }
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();

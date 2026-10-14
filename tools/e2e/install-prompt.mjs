@@ -1,21 +1,21 @@
-// El globo de la portada que invita a agregar la app a inicio (D-232), en Chrome con el celular de
-// cada uno: los pasos de Safari y Chrome en iPhone, de Chrome y Samsung en Android, el diálogo
-// propio de Chrome, "abre el link en Safari" dentro de otra app, la ✕ que lo apaga para siempre, y
-// que a 320 px quepa en los cuatro idiomas.
-import { salida } from './output.mjs';
+// The home page bubble that invites adding the app to the home screen (D-232), in Chrome with each
+// person's phone: the steps for Safari and Chrome on iPhone, for Chrome and Samsung on Android,
+// Chrome's own dialog, "open the link in Safari" inside another app, the ✕ that turns it off for
+// good, and that it fits at 320 px in the four languages.
+import { output as output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
 import { COMMON, IDIOMAS } from '../../public/assets/js/i18n.js';
 
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = salida();
+const SITE = process.env.SITE || process.env.SITIO || 'http://localhost:8765';
+const OUT = output();
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 
 const b = await launch({ port: 9498, dir: `${OUT}/p`, out: OUT });
 const ev = x => b.evaluate(x);
 const click = sel => ev(`(()=>{const e=document.querySelector(${JSON.stringify(sel)});if(!e)return false;e.click();return true})()`);
-const texto = sel => ev(`document.querySelector(${JSON.stringify(sel)})?.innerText || ''`);
-const globo = () => ev(`document.getElementById('globo-instalar')?.dataset.pasos || null`);
-const hoja = () => ev(`document.querySelector('.hoja')?.id || null`);
+const text = sel => ev(`document.querySelector(${JSON.stringify(sel)})?.innerText || ''`);
+const bubble = () => ev(`document.getElementById('globo-instalar')?.dataset.pasos || null`);
+const sheet = () => ev(`document.querySelector('.hoja')?.id || null`);
 
 const UA = {
   iphone: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Mobile/15E148 Safari/604.1',
@@ -25,101 +25,101 @@ const UA = {
   samsung: 'Mozilla/5.0 (Linux; Android 14; SM-S921B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0 Mobile Safari/537.36',
   mac: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36',
 };
-const como = ua => b.send('Emulation.setUserAgentOverride', { userAgent: ua });
-/** Un celular nuevo: sin la ✕ de antes ni idioma elegido, en la portada, y el globo ya salió. */
-const portada = async (ua, q = '') => {
-  await como(ua);
-  await b.go(`${SITIO}/${q}`, 600);
+const as = ua => b.send('Emulation.setUserAgentOverride', { userAgent: ua });
+/** A new phone: without the earlier ✕ or a chosen language, on the home page, and the bubble already showed. */
+const home = async (ua, q = '') => {
+  await as(ua);
+  await b.go(`${SITE}/${q}`, 600);
   await ev(`(()=>{localStorage.removeItem('juegos-de-salon:instalar:no');localStorage.removeItem('juegos-de-salon:lang');return 1})()`);
-  await b.go(`${SITIO}/${q}`, 3400);
+  await b.go(`${SITE}/${q}`, 3400);
 };
 
-/* ---------- iPhone con Safari ---------- */
-await portada(UA.iphone);
-ok(await globo() === 'ios-safari', 'iPhone con Safari: el globo sale a los segundos');
-ok(/como app/.test(await texto('#globo-instalar')), 'y dice "Juegos de Salón como app"');
-await b.shot('globo-iphone');
+/* ---------- iPhone with Safari ---------- */
+await home(UA.iphone);
+ok(await bubble() === 'ios-safari', 'iPhone with Safari: the bubble shows after a few seconds');
+ok(/como app/.test(await text('#globo-instalar')), 'and says "Juegos de Salón como app"');
+await b.shot('bubble-iphone');
 await click('#btn-globo-agregar'); await sleep(400);
-ok(await hoja() === 'hoja-agregar', '"Agregar" abre la hoja con los pasos');
-const pasosSafari = await texto('.hoja');
-ok(await ev(`document.querySelectorAll('.hoja .hoja-paso').length`) === 3, 'son tres pasos');
-ok(/Compartir/.test(pasosSafari) && /Safari/.test(pasosSafari) && /Agregar a inicio/.test(pasosSafari) && /iOS 26/.test(pasosSafari), 'los de Safari: Compartir, Agregar a inicio, y el ⋯ de iOS 26');
-await b.shot('hoja-iphone');
+ok(await sheet() === 'hoja-agregar', '"Agregar" opens the sheet with the steps');
+const safariSteps = await text('.hoja');
+ok(await ev(`document.querySelectorAll('.hoja .hoja-paso').length`) === 3, 'there are three steps');
+ok(/Compartir/.test(safariSteps) && /Safari/.test(safariSteps) && /Agregar a inicio/.test(safariSteps) && /iOS 26/.test(safariSteps), "Safari's: Compartir, Agregar a inicio, and iOS 26's ⋯");
+await b.shot('sheet-iphone');
 await click('.hoja-fondo'); await sleep(300);
-ok(await hoja() === null && await globo() === 'ios-safari', 'cerrar la hoja deja el globo');
+ok(await sheet() === null && await bubble() === 'ios-safari', 'closing the sheet leaves the bubble');
 await click('#btn-globo-agregar'); await sleep(300);
 await click('#btn-ya-agregue'); await sleep(400);
-ok(/ícono/.test(await texto('.hoja')) && !await ev(`!!document.getElementById('btn-ya-agregue')`), '"Ya la agregué" dice que se abre con el ícono');
-ok(await globo() === null || await sleep(300) || await globo() === null, 'y el globo se va');
-await b.go(`${SITIO}/`, 3400);
-ok(await globo() === null, 'no vuelve después de "Ya la agregué"');
+ok(/ícono/.test(await text('.hoja')) && !await ev(`!!document.getElementById('btn-ya-agregue')`), '"Ya la agregué" says it opens from the icon');
+ok(await bubble() === null || await sleep(300) || await bubble() === null, 'and the bubble goes away');
+await b.go(`${SITE}/`, 3400);
+ok(await bubble() === null, 'it doesn\'t come back after "Ya la agregué"');
 
-/* ---------- La ✕ ---------- */
-await portada(UA.iphone);
+/* ---------- The ✕ ---------- */
+await home(UA.iphone);
 await click('#btn-globo-cerrar'); await sleep(400);
-ok(await globo() === null, 'la ✕ lo saca');
-ok(await ev(`localStorage.getItem('juegos-de-salon:instalar:no')`) === '1', 'y queda anotado en el celular');
-await b.go(`${SITIO}/`, 3400);
-ok(await globo() === null, 'no vuelve a salir después de la ✕');
-await b.go(`${SITIO}/?lang=en`, 3400);
-ok(await globo() === null, 'tampoco en otro idioma');
+ok(await bubble() === null, 'the ✕ removes it');
+ok(await ev(`localStorage.getItem('juegos-de-salon:instalar:no')`) === '1', 'and it stays recorded on the phone');
+await b.go(`${SITE}/`, 3400);
+ok(await bubble() === null, "it doesn't show again after the ✕");
+await b.go(`${SITE}/?lang=en`, 3400);
+ok(await bubble() === null, 'not in another language either');
 
-/* ---------- iPhone con Chrome ---------- */
-await portada(UA.iphoneChrome);
-ok(await globo() === 'ios-chrome', 'iPhone con Chrome: sale con sus propios pasos');
+/* ---------- iPhone with Chrome ---------- */
+await home(UA.iphoneChrome);
+ok(await bubble() === 'ios-chrome', 'iPhone with Chrome: it shows with its own steps');
 await click('#btn-globo-agregar'); await sleep(300);
-ok(/barra de direcciones/.test(await texto('.hoja')), 'Compartir está en la barra de direcciones');
+ok(/barra de direcciones/.test(await text('.hoja')), 'Compartir is in the address bar');
 
-/* ---------- iPhone dentro de WhatsApp ---------- */
-await portada(UA.whatsapp);
-ok(await globo() === 'otra-app-ios', 'dentro de WhatsApp: sale igual');
+/* ---------- iPhone inside WhatsApp ---------- */
+await home(UA.whatsapp);
+ok(await bubble() === 'otra-app-ios', 'inside WhatsApp: it shows anyway');
 await click('#btn-globo-agregar'); await sleep(300);
-ok(await hoja() === 'hoja-otra-app-portada' && /Safari/.test(await texto('.hoja')), 'y pide abrir el link en Safari');
-ok((await texto('.hoja-link')) === 'juegosdesalon.cl/', `con el link de la portada (${await texto('.hoja-link')})`);
-await b.shot('hoja-otra-app');
+ok(await sheet() === 'hoja-otra-app-portada' && /Safari/.test(await text('.hoja')), 'and asks to open the link in Safari');
+ok((await text('.hoja-link')) === 'juegosdesalon.cl/', `with the home page link (${await text('.hoja-link')})`);
+await b.shot('sheet-other-app');
 
-/* ---------- Android con Chrome: sin y con el diálogo propio ---------- */
-await portada(UA.android);
-ok(await globo() === 'android', 'Android con Chrome: sale');
+/* ---------- Android with Chrome: without and with its own dialog ---------- */
+await home(UA.android);
+ok(await bubble() === 'android', 'Android with Chrome: it shows');
 await click('#btn-globo-agregar'); await sleep(300);
-ok(/⋮/.test(await texto('.hoja')) && /Instalar/.test(await texto('.hoja')), 'sin el diálogo de Chrome, los pasos del menú ⋮');
-await b.shot('hoja-android');
+ok(/⋮/.test(await text('.hoja')) && /Instalar/.test(await text('.hoja')), "without Chrome's dialog, the steps of the ⋮ menu");
+await b.shot('sheet-android');
 await click('.hoja-fondo'); await sleep(300);
-// Chrome ofrece instalar: "Agregar" abre su diálogo, y si se acepta, el globo se va para siempre
+// Chrome offers to install: "Agregar" opens its dialog, and if accepted, the bubble goes away for good
 await ev(`(()=>{const e=new Event('beforeinstallprompt');e.prompt=async()=>{window.__dialogo=true};e.userChoice=Promise.resolve({outcome:'accepted'});window.dispatchEvent(e);return 1})()`);
 await click('#btn-globo-agregar'); await sleep(500);
-ok(await ev('window.__dialogo === true') && await hoja() === null, 'con el diálogo de Chrome, "Agregar" abre ese diálogo');
-ok(await globo() === null && await ev(`localStorage.getItem('juegos-de-salon:instalar:no')`) === '1', 'instalada desde el diálogo, el globo se va para siempre');
+ok(await ev('window.__dialogo === true') && await sheet() === null, 'with Chrome\'s dialog, "Agregar" opens that dialog');
+ok(await bubble() === null && await ev(`localStorage.getItem('juegos-de-salon:instalar:no')`) === '1', 'installed from the dialog, the bubble goes away for good');
 
 /* ---------- Samsung ---------- */
-await portada(UA.samsung);
+await home(UA.samsung);
 await click('#btn-globo-agregar'); await sleep(300);
-ok(await globo() === 'samsung' && /☰/.test(await texto('.hoja')), 'Samsung Internet: los pasos de su menú ☰');
+ok(await bubble() === 'samsung' && /☰/.test(await text('.hoja')), "Samsung Internet: the steps of its ☰ menu");
 
-/* ---------- Computador y app instalada: no sale ---------- */
-await portada(UA.mac);
-ok(await globo() === null, 'en el computador no sale');
-await como(UA.iphone);
+/* ---------- Computer and installed app: it doesn't show ---------- */
+await home(UA.mac);
+ok(await bubble() === null, "on the computer it doesn't show");
+await as(UA.iphone);
 await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `if (/standalone/.test(location.search)) Object.defineProperty(navigator, 'standalone', { get: () => true });` });
-await portada(UA.iphone, '?standalone');
-ok(await globo() === null, 'en la app ya instalada no sale');
+await home(UA.iphone, '?standalone');
+ok(await bubble() === null, "in the already installed app it doesn't show");
 
-/* ---------- Los cuatro idiomas a 320 px ---------- */
+/* ---------- The four languages at 320 px ---------- */
 await b.send('Emulation.setDeviceMetricsOverride', { width: 320, height: 640, deviceScaleFactor: 2, mobile: true });
 for (const lang of IDIOMAS) {
-  await portada(UA.iphone, `?lang=${lang}`);
-  const m = await ev(`(()=>{const g=document.getElementById('globo-instalar');if(!g)return null;const r=g.getBoundingClientRect();const bs=[...g.querySelectorAll('button')].map(x=>x.getBoundingClientRect());return {izq:r.left,der:r.right,ancho:innerWidth,scroll:document.documentElement.scrollWidth,botones:bs.map(x=>Math.round(Math.min(x.width,x.height)))}})()`);
-  ok(m && m.izq >= 0 && m.der <= m.ancho && m.scroll <= m.ancho, `${lang}: el globo cabe a 320 px sin scroll de lado`);
-  ok(m && m.botones.every(x => x >= 44), `${lang}: sus botones miden 44 px o más (${m?.botones})`);
-  ok((await texto('#globo-instalar')).includes(COMMON[lang].ins.title), `${lang}: "${COMMON[lang].ins.title}"`);
-  await b.shot(`globo-320-${lang}`);
+  await home(UA.iphone, `?lang=${lang}`);
+  const m = await ev(`(()=>{const g=document.getElementById('globo-instalar');if(!g)return null;const r=g.getBoundingClientRect();const bs=[...g.querySelectorAll('button')].map(x=>x.getBoundingClientRect());return {left:r.left,right:r.right,width:innerWidth,scroll:document.documentElement.scrollWidth,buttons:bs.map(x=>Math.round(Math.min(x.width,x.height)))}})()`);
+  ok(m && m.left >= 0 && m.right <= m.width && m.scroll <= m.width, `${lang}: the bubble fits at 320 px without sideways scroll`);
+  ok(m && m.buttons.every(x => x >= 44), `${lang}: its buttons measure 44 px or more (${m?.buttons})`);
+  ok((await text('#globo-instalar')).includes(COMMON[lang].ins.title), `${lang}: "${COMMON[lang].ins.title}"`);
+  await b.shot(`bubble-320-${lang}`);
   await click('#btn-globo-agregar'); await sleep(400);
-  const h = await ev(`(()=>{const p=document.querySelector('.hoja');return p?{scroll:document.documentElement.scrollWidth,ancho:innerWidth,alto:p.scrollHeight,ve:p.clientHeight}:null})()`);
-  ok(h && h.scroll <= h.ancho, `${lang}: la hoja cabe a 320 px`);
-  if (lang === 'de') await b.shot('hoja-320-de');
+  const h = await ev(`(()=>{const p=document.querySelector('.hoja');return p?{scroll:document.documentElement.scrollWidth,width:innerWidth,height:p.scrollHeight,seen:p.clientHeight}:null})()`);
+  ok(h && h.scroll <= h.width, `${lang}: the sheet fits at 320 px`);
+  if (lang === 'de') await b.shot('sheet-320-de');
 }
 
-const errores = b.errors.filter(e => !/firebase|gstatic/i.test(e));
-ok(!errores.length, `sin errores en la página${errores.length ? ': ' + errores.join(' | ') : ''}`);
+const errors = b.errors.filter(e => !/firebase|gstatic/i.test(e));
+ok(!errors.length, `no page errors${errors.length ? ': ' + errors.join(' | ') : ''}`);
 b.close();
-if (!process.exitCode) console.log(`✓ el globo de agregar a inicio: pasos de cada celular, la ✕ y los idiomas (capturas en ${OUT})`);
+if (!process.exitCode) console.log(`✓ the add-to-home-screen bubble: each phone's steps, the ✕ and the languages (screenshots in ${OUT})`);

@@ -1,115 +1,115 @@
-// Números explosivos del laboratorio (D-297) de punta a punta, en /labs/exploding-numbers/: el
-// laboratorio lo ofrece en Proyectos activos con el crédito a Number Match; la portada lo dice y se
-// juega sola (los pares estallan); Empezar pasa por la cuenta 3, 2, 1 y arma el tablero de 4 filas;
-// un par que no se une tiembla y dice por qué; uno que se une estalla (chispas y 💥); la ayuda pide un
-// segundo toque y marca un par; ➕ con pares a la vista pide un segundo toque y copia abajo los que
-// quedan; con el orden del motor se limpia entero, las filas se van y paga 100/100; el resultado trae
-// compartir, otro tablero, el de hoy y el comentario tras una línea; rendirse pide un segundo toque y
-// vale la parte estallada. Imprime ✗ si algo falla.
-import { salida } from '../output.mjs';
+// Números explosivos in the lab (D-297) end to end, at /labs/exploding-numbers/: the lab offers it
+// under Active projects with the credit to Number Match; the cover says so and plays by itself (the
+// pairs explode); Empezar goes through the 3, 2, 1 countdown and builds the 4-row board; a pair that
+// doesn't join shakes and says why; one that joins explodes (sparks and 💥); the hint asks for a second
+// tap and marks a pair; ➕ with pairs in view asks for a second tap and copies the remaining ones below;
+// with the engine's order it's cleared entirely, the rows go away and it pays 100/100; the result has
+// share, another board, today's and the comment after a line; giving up asks for a second tap and is
+// worth the exploded part. Prints ✗ if anything fails.
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = salida('/tmp/explosivos-lab');
+const OUT = output('/tmp/exploding-numbers-lab');
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const ev = e => b.evaluate(e);
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-let fallas = 0;
-const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) fallas++; };
-const esperar = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
-const SEMILLA = 'e2e1';
+const SITE = process.env.SITE || 'http://localhost:8765';
+let failures = 0;
+const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) failures++; };
+const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
+const SEED = 'e2e1';
 const { generar, nuevaPartida, une, pares, indice, quitar, PUNTOS_LIMPIO } = await import('../../../public/labs/exploding-numbers/engine.js');
-const clic = id => ev(`document.querySelector('#tablero [data-id="${id}"]').click(); 1`);
-const aviso = () => ev(`document.querySelector('.aviso-ne').textContent`);
+const click = id => ev(`document.querySelector('#tablero [data-id="${id}"]').click(); 1`);
+const notice = () => ev(`document.querySelector('.aviso-ne').textContent`);
 
-await b.go(`${SITIO}/labs/`);
-ok(await ev(`document.querySelector('#activos #seccion-explosivos #btn-explosivos')?.getAttribute('href')`) === 'exploding-numbers/', 'el laboratorio ofrece Números explosivos en Proyectos activos');
-ok(await ev(`/Number Match/.test(document.querySelector('#seccion-explosivos a[href*="numbermatch"]')?.textContent || '')`), 'y dice que está inspirado en Number Match, con su link');
+await b.go(`${SITE}/labs/`);
+ok(await ev(`document.querySelector('#activos #seccion-explosivos #btn-explosivos')?.getAttribute('href')`) === 'exploding-numbers/', 'the lab offers Números explosivos under Active projects');
+ok(await ev(`/Number Match/.test(document.querySelector('#seccion-explosivos a[href*="numbermatch"]')?.textContent || '')`), 'and says it is inspired by Number Match, with its link');
 
-await b.go(`${SITIO}/labs/exploding-numbers/?test`, 1200);
-ok(await esperar(`!!document.getElementById('btn-empezar')`), 'la portada tiene Empezar');
-ok(/Inspirado en Number Match/.test(await ev(`document.querySelector('.credito')?.textContent || ''`)) && !!await ev(`document.getElementById('link-number-match')?.href`), 'la portada da el crédito a Number Match con su link');
-ok(await esperar(`document.querySelectorAll('.demo .num.fuera').length >= 2`, 8000), 'el tablero de la portada se juega solo: los pares estallan');
-ok(/mismo para todos/.test(await ev(`document.body.textContent`)), 'sin semilla es el tablero de hoy');
-ok(await ev(`document.querySelectorAll('.pasos li').length`) === 3, 'tres pasos');
-await b.shot('01-portada');
+await b.go(`${SITE}/labs/exploding-numbers/?test`, 1200);
+ok(await waitFor(`!!document.getElementById('btn-empezar')`), 'the cover has Empezar');
+ok(/Inspirado en Number Match/.test(await ev(`document.querySelector('.credito')?.textContent || ''`)) && !!await ev(`document.getElementById('link-number-match')?.href`), 'the cover credits Number Match with its link');
+ok(await waitFor(`document.querySelectorAll('.demo .num.fuera').length >= 2`, 8000), 'the cover board plays by itself: the pairs explode');
+ok(/mismo para todos/.test(await ev(`document.body.textContent`)), 'without a seed it is today\'s board');
+ok(await ev(`document.querySelectorAll('.pasos li').length`) === 3, 'three steps');
+await b.shot('01-cover');
 
-await b.go(`${SITIO}/labs/exploding-numbers/?seed=${SEMILLA}&test`, 1200);
-await esperar(`!!document.getElementById('btn-empezar')`);
+await b.go(`${SITE}/labs/exploding-numbers/?seed=${SEED}&test`, 1200);
+await waitFor(`!!document.getElementById('btn-empezar')`);
 await ev(`document.getElementById('btn-empezar').click(); 1`);
-ok(await esperar(`/3|2|1/.test(document.querySelector('#cuenta .cuenta-num')?.textContent || '')`, 2000), 'Empezar abre la cuenta 3, 2, 1');
-ok(await esperar(`document.querySelectorAll('#tablero .num').length === 36 && !document.getElementById('cuenta')`, 8000), 'y después el tablero de 4 filas de 9');
-const t = generar(SEMILLA);
-ok(JSON.stringify(await ev(`[...document.querySelectorAll('#tablero .num')].map(n => +n.textContent)`)) === JSON.stringify(t.numeros), 'los números son los del motor');
-ok(/Quedan 36/.test(await ev(`document.getElementById('marcador').textContent`)), 'el marcador: Quedan 36');
+ok(await waitFor(`/3|2|1/.test(document.querySelector('#cuenta .cuenta-num')?.textContent || '')`, 2000), 'Empezar opens the 3, 2, 1 countdown');
+ok(await waitFor(`document.querySelectorAll('#tablero .num').length === 36 && !document.getElementById('cuenta')`, 8000), 'and then the board of 4 rows of 9');
+const t = generar(SEED);
+ok(JSON.stringify(await ev(`[...document.querySelectorAll('#tablero .num')].map(n => +n.textContent)`)) === JSON.stringify(t.numeros), 'the numbers are the engine\'s');
+ok(/Quedan 36/.test(await ev(`document.getElementById('marcador').textContent`)), 'the scoreboard: Quedan 36');
 
-// Un par que no se une: tiembla y dice por qué
+// A pair that doesn't join: shakes and says why
 const p0 = nuevaPartida(t);
-let malo = null;
-for (let i = 0; i < 36 && !malo; i++) for (let j = i + 1; j < 36 && !malo; j++) if (!une(p0, i, j).ok) malo = [i, j, une(p0, i, j).motivo];
-await clic(malo[0]); await clic(malo[1]); await sleep(100);
-ok(await ev(`document.querySelector('#tablero [data-id="${malo[1]}"]').classList.contains('no')`) && /no son iguales|entre medio|No están en línea/.test(await aviso()), `un par que no se une tiembla y dice por qué (${malo[2]}: ${await aviso()})`);
-ok(await ev(`document.querySelectorAll('#tablero .num.sel').length`) === 0, 'y se sueltan los dos: la jugada siguiente parte de cero');
+let bad = null;
+for (let i = 0; i < 36 && !bad; i++) for (let j = i + 1; j < 36 && !bad; j++) if (!une(p0, i, j).ok) bad = [i, j, une(p0, i, j).motivo];
+await click(bad[0]); await click(bad[1]); await sleep(100);
+ok(await ev(`document.querySelector('#tablero [data-id="${bad[1]}"]').classList.contains('no')`) && /no son iguales|entre medio|No están en línea/.test(await notice()), `a pair that doesn't join shakes and says why (${bad[2]}: ${await notice()})`);
+ok(await ev(`document.querySelectorAll('#tablero .num.sel').length`) === 0, 'and both are released: the next move starts from scratch');
 
-// La ayuda: el primer toque pide confirmar; el segundo marca un par que se une
+// The hint: the first tap asks to confirm; the second marks a pair that joins
 await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(100);
-ok(/Toca de nuevo/.test(await ev(`document.getElementById('btn-ayuda').textContent`)) && !await ev(`!!document.querySelector('#tablero .pista')`), 'el primer toque de la ayuda pide confirmar, sin cobrar');
+ok(/Toca de nuevo/.test(await ev(`document.getElementById('btn-ayuda').textContent`)) && !await ev(`!!document.querySelector('#tablero .pista')`), 'the first hint tap asks to confirm, without charging');
 await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(150);
-const pista = await ev(`[...document.querySelectorAll('#tablero .num.pista')].map(n => +n.dataset.i)`);
-ok(pista.length === 2 && une(p0, pista[0], pista[1]).ok, 'el segundo marca dos que se unen');
-ok(/estallan juntos/.test(await aviso()) && await ev(`window.__explosivos.P.p.ayudas`) === 1, 'y lo dice, y cuenta una ayuda');
+const hint = await ev(`[...document.querySelectorAll('#tablero .num.pista')].map(n => +n.dataset.i)`);
+ok(hint.length === 2 && une(p0, hint[0], hint[1]).ok, 'the second marks two that join');
+ok(/estallan juntos/.test(await notice()) && await ev(`window.__explosivos.P.p.ayudas`) === 1, 'and says so, and counts one hint');
 
-// ➕ con pares a la vista pide un segundo toque
+// ➕ with pairs in view asks for a second tap
 await ev(`document.getElementById('btn-mas').click(); 1`); await sleep(100);
-ok(/Hay pares: ¿seguro\?/.test(await ev(`document.getElementById('btn-mas').textContent`)) && await ev(`document.querySelectorAll('#tablero .num').length`) === 36, '➕ con pares a la vista pide un segundo toque');
+ok(/Hay pares: ¿seguro\?/.test(await ev(`document.getElementById('btn-mas').textContent`)) && await ev(`document.querySelectorAll('#tablero .num').length`) === 36, '➕ with pairs in view asks for a second tap');
 
-// Con el orden del motor (en otra partida, sin ayuda ni ➕) se limpia entero
-await b.go(`${SITIO}/labs/exploding-numbers/?seed=${SEMILLA}&test`, 1200);
-await esperar(`!!document.getElementById('btn-empezar')`);
+// With the engine's order (in another game, no hint or ➕) it's cleared entirely
+await b.go(`${SITE}/labs/exploding-numbers/?seed=${SEED}&test`, 1200);
+await waitFor(`!!document.getElementById('btn-empezar')`);
 await ev(`document.getElementById('btn-empezar').click(); 1`);
-await esperar(`document.querySelectorAll('#tablero .num').length === 36 && !document.getElementById('cuenta')`, 8000);
+await waitFor(`document.querySelectorAll('#tablero .num').length === 36 && !document.getElementById('cuenta')`, 8000);
 const [a0, b0] = t.orden[0];
-await clic(a0); await clic(b0); await sleep(60);
-ok(await ev(`document.querySelectorAll('.chispas .chispa').length > 5 && !!document.querySelector('.chispas .kaboom')`), 'un par que se une estalla: chispas y 💥');
-ok(await ev(`document.querySelector('#tablero [data-id="${a0}"]').classList.contains('fuera')`) && /Quedan 34/.test(await ev(`document.getElementById('marcador').textContent`)), 'queda su sombra y el marcador baja a 34');
-await b.shot('02-juego');
-let filas = 0;
+await click(a0); await click(b0); await sleep(60);
+ok(await ev(`document.querySelectorAll('.chispas .chispa').length > 5 && !!document.querySelector('.chispas .kaboom')`), 'a pair that joins explodes: sparks and 💥');
+ok(await ev(`document.querySelector('#tablero [data-id="${a0}"]').classList.contains('fuera')`) && /Quedan 34/.test(await ev(`document.getElementById('marcador').textContent`)), 'its shadow remains and the scoreboard drops to 34');
+await b.shot('02-game');
+let rows = 0;
 for (const [a, c] of t.orden.slice(1)) {
-  await esperar(`!!document.querySelector('#tablero [data-id="${a}"]:not(.fuera)') && !window.__explosivos.P.ocupado`, 2000);
-  await clic(a); await clic(c);
+  await waitFor(`!!document.querySelector('#tablero [data-id="${a}"]:not(.fuera)') && !window.__explosivos.P.ocupado`, 2000);
+  await click(a); await click(c);
   await sleep(20);
-  if (await ev(`window.__explosivos.P.ocupado`)) filas++;
+  if (await ev(`window.__explosivos.P.ocupado`)) rows++;
   await sleep(40);
 }
-ok(filas > 0, `las filas tachadas enteras explotan y se van (${filas} veces)`);
-ok(await esperar(`document.getElementById('puntaje')?.textContent === '100/100' && !document.getElementById('tablero')`, 1500), 'limpio y sin ➕: el resumen aparece de inmediato, sin otra pantalla antes: 100/100');
+ok(rows > 0, `fully crossed-out rows explode and go away (${rows} times)`);
+ok(await waitFor(`document.getElementById('puntaje')?.textContent === '100/100' && !document.getElementById('tablero')`, 1500), 'clean and without ➕: the summary appears right away, with no other screen before: 100/100');
 ok(/Limpio/.test(await ev(`document.querySelector('.sello-ne').textContent`)), '«¡Limpio!»');
-ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'se puede compartir el resultado');
-const otro = await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`);
-ok(/seed=/.test(otro) && !otro.includes(SEMILLA), `"Otro tablero" abre uno nuevo (${otro})`);
-ok(await ev(`!!document.getElementById('btn-de-hoy')`), 'y como no era el de hoy, ofrece el de hoy');
-ok(await ev(`(()=>{const k=[...document.querySelector('.resultado').children].filter(x=>x.offsetParent!==null);return k.at(-1)?.classList.contains('comentario') && k.at(-2)?.classList.contains('divisor')})()`), 'el comentario es lo último, separado por una línea');
-ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), 'sin scroll de lado a 375 px');
+ok(await ev(`!!document.getElementById('btn-compartir-resultado')`), 'the result can be shared');
+const another = await ev(`document.getElementById('btn-otro')?.getAttribute('href') || ''`);
+ok(/seed=/.test(another) && !another.includes(SEED), `"Otro tablero" opens a new one (${another})`);
+ok(await ev(`!!document.getElementById('btn-de-hoy')`), 'and since it was not today\'s, it offers today\'s');
+ok(await ev(`(()=>{const k=[...document.querySelector('.resultado').children].filter(x=>x.offsetParent!==null);return k.at(-1)?.classList.contains('comentario') && k.at(-2)?.classList.contains('divisor')})()`), 'the comment comes last, separated by a line');
+ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), 'no sideways scroll at 375 px');
 await b.shot('03-final');
 
-// ➕ sin pares a la vista, y rendirse: un segundo toque, y vale la parte estallada
-await b.go(`${SITIO}/labs/exploding-numbers/?seed=${SEMILLA}&test`, 1200);
-await esperar(`!!document.getElementById('btn-empezar')`);
+// ➕ with no pairs in view, and giving up: a second tap, and it's worth the exploded part
+await b.go(`${SITE}/labs/exploding-numbers/?seed=${SEED}&test`, 1200);
+await waitFor(`!!document.getElementById('btn-empezar')`);
 await ev(`document.getElementById('btn-empezar').click(); 1`);
-await esperar(`document.querySelectorAll('#tablero .num').length === 36 && !document.getElementById('cuenta')`, 8000);
+await waitFor(`document.querySelectorAll('#tablero .num').length === 36 && !document.getElementById('cuenta')`, 8000);
 const p = nuevaPartida(t);
-for (const [a, c] of t.orden.slice(0, 5)) { await esperar(`!window.__explosivos.P.ocupado`, 2000); await clic(a); await clic(c); quitar(p, indice(p, a), indice(p, c)); await sleep(40); }
-await esperar(`!window.__explosivos.P.ocupado`, 2000);
+for (const [a, c] of t.orden.slice(0, 5)) { await waitFor(`!window.__explosivos.P.ocupado`, 2000); await click(a); await click(c); quitar(p, indice(p, a), indice(p, c)); await sleep(40); }
+await waitFor(`!window.__explosivos.P.ocupado`, 2000);
 await ev(`document.getElementById('btn-mas').click(); 1`); await sleep(80);
 if (pares(p).length) await ev(`document.getElementById('btn-mas').click(); 1`);
 await sleep(200);
 const n = p.celdas.filter(c => !c.fuera).length;
-ok(await ev(`document.querySelectorAll('#tablero .num').length`) === p.celdas.length + n && /Agregar \(2\)/.test(await ev(`document.getElementById('btn-mas').textContent`)), `➕ copia abajo los ${n} que quedan y quedan 2`);
-ok(await ev(`[...document.querySelectorAll('.acciones-ne .btn')].map(b => b.id).join()`) === 'btn-mas,btn-ayuda,btn-rendirse', 'abajo: ➕, la ayuda y Rendirse, en una fila');
+ok(await ev(`document.querySelectorAll('#tablero .num').length`) === p.celdas.length + n && /Agregar \(2\)/.test(await ev(`document.getElementById('btn-mas').textContent`)), `➕ copies the ${n} remaining below and 2 are left`);
+ok(await ev(`[...document.querySelectorAll('.acciones-ne .btn')].map(b => b.id).join()`) === 'btn-mas,btn-ayuda,btn-rendirse', 'below: ➕, the hint and Give up, in one row');
 await ev(`document.getElementById('btn-rendirse').click(); 1`); await sleep(100);
-ok(/Seguro/.test(await ev(`document.getElementById('btn-rendirse').textContent`)), 'rendirse pide un segundo toque');
+ok(/Seguro/.test(await ev(`document.getElementById('btn-rendirse').textContent`)), 'giving up asks for a second tap');
 await ev(`document.getElementById('btn-rendirse').click(); 1`);
-const esperado = Math.round(PUNTOS_LIMPIO * (10 / (36 + n)));
-ok(await esperar(`document.getElementById('puntaje')?.textContent === '${esperado}/100'`, 6000) && /Te rendiste/.test(await ev(`document.querySelector('.sello-ne').textContent`)), `vale la parte estallada, con lo agregado: ${esperado}/100, «Te rendiste»`);
-ok(!b.errors.length, `sin errores en la página ${JSON.stringify(b.errors)}`);
+const expected = Math.round(PUNTOS_LIMPIO * (10 / (36 + n)));
+ok(await waitFor(`document.getElementById('puntaje')?.textContent === '${expected}/100'`, 6000) && /Te rendiste/.test(await ev(`document.querySelector('.sello-ne').textContent`)), `worth the exploded part, including what was added: ${expected}/100, «Te rendiste»`);
+ok(!b.errors.length, `no errors on the page ${JSON.stringify(b.errors)}`);
 b.close();
-if (fallas) { console.log(`✗ ${fallas} fallas`); process.exit(1); }
+if (failures) { console.log(`✗ ${failures} failures`); process.exit(1); }
 console.log('✓ números explosivos (labs)');

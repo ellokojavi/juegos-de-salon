@@ -1,65 +1,66 @@
-# Las pruebas de punta a punta en Chrome, en cada PR y en cada fusión a main (D-193). En main las
-# llama publish.yml antes de publicar (D-302): si fallan, el sitio no cambia.
-# Los guiones van en grupos parejos (D-307), un job por grupo y todos a la vez: los arma
-# tools/e2e/groups.mjs con lo que tardó cada guion (durations.json), para que ninguno pase de
-# ~4,5 min y quepan de una en los 20 runners. Dentro del grupo, cada guion corre solo, con su
-# segundo intento si falla (D-299) y su fila en la tabla del resumen. Los que abren salas en el
-# Firebase de producción quedan fuera y siguen a mano: la lista la decide tools/e2e/ci.mjs, así
-# que un guion nuevo entra solo. Cada corrida que pasa deja la marca del árbol que probó, para
-# que publish.yml no lo pruebe dos veces (D-308).
+# The end-to-end tests in Chrome, on every PR and on every merge to main (D-193). On main
+# publish.yml calls them before publishing (D-302): if they fail, the site does not change.
+# The scripts go in even groups (D-307), one job per group and all at once: tools/e2e/groups.mjs
+# builds them with how long each script took (durations.json), so none goes over ~4.5 min and they
+# fit at once in the 20 runners. Within the group, each script runs alone, with its second attempt
+# if it fails (D-299) and its row in the summary table. Those that open rooms in the production
+# Firebase stay out and are run by hand: tools/e2e/ci.mjs decides the list, so a new script gets
+# in by itself. Each passing run leaves the mark of the tree it tested, so publish.yml does not
+# test it twice (D-308).
+# The job `end-to-end` is a required check on main (D-216).
 
-name: Punta a punta
+name: End to end
 
 on:
   pull_request:
   workflow_call:
   workflow_dispatch:
 
-# Un push nuevo al mismo PR cancela la corrida anterior. Llamado desde publish.yml, `github.workflow`
-# es "Publicar": así una corrida a mano en main no cancela la que está por publicar
+# A new push to the same PR cancels the previous run. Called from publish.yml, `github.workflow`
+# is "Publish": that way a manual run on main does not cancel the one about to publish
 concurrency:
   group: e2e-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  lista:
+  list:
     runs-on: ubuntu-latest
     outputs:
-      grupos: ${{ steps.lista.outputs.grupos }}
-      arbol: ${{ steps.lista.outputs.arbol }}
+      groups: ${{ steps.list.outputs.groups }}
+      tree: ${{ steps.list.outputs.tree }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      # En un PR que no toca nada del navegador (documentación, marketing, los agentes, el taller que
-      # ningún guion importa, las reglas y los otros workflows; tools/e2e/changes.mjs) no hay grupos
-      # y no corre ningún guion: el check queda en verde en segundos (D-205, D-299). El árbol es el
-      # de lo que se prueba (en un PR, el merge de prueba con main que arma GitHub)
-      - id: lista
+      # In a PR that touches nothing of the browser (documentation, marketing, the agents, the
+      # workshop no script imports, the rules and the other workflows; tools/e2e/changes.mjs) there
+      # are no groups and no script runs: the check goes green in seconds (D-205, D-299). The tree
+      # is that of what is tested (in a PR, the test merge with main that GitHub builds)
+      - id: list
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
         run: |
-          echo "arbol=$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
+          echo "tree=$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
           if [ -n "$PR" ]; then
-            gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' > "$RUNNER_TEMP/cambios"
-            echo "grupos=$(node tools/e2e/ci.mjs --grupos --cambios "$RUNNER_TEMP/cambios")" >> "$GITHUB_OUTPUT"
+            gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' > "$RUNNER_TEMP/changes"
+            echo "groups=$(node tools/e2e/ci.mjs --groups --changes "$RUNNER_TEMP/changes")" >> "$GITHUB_OUTPUT"
           else
-            echo "grupos=$(node tools/e2e/ci.mjs --grupos)" >> "$GITHUB_OUTPUT"
+            echo "groups=$(node tools/e2e/ci.mjs --groups)" >> "$GITHUB_OUTPUT"
           fi
 
   e2e:
-    needs: lista
-    if: needs.lista.outputs.grupos != '[]'
+    needs: list
+    if: needs.list.outputs.groups != '[]'
     runs-on: ubuntu-latest
-    # Un grupo dura ~4,5 min; el tope deja lugar para un segundo intento largo
+    # A group takes ~4.5 min; the cap leaves room for a long second attempt
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        grupo: ${{ fromJson(needs.lista.outputs.grupos) }}
-    name: ${{ matrix.grupo.nombre }}
+        group: ${{ fromJson(needs.list.outputs.groups) }}
+    name: ${{ matrix.group.name }}
     steps:
       - uses: actions/checkout@v4
 
@@ -67,71 +68,71 @@ jobs:
         with:
           node-version: 24
 
-      # Los guiones tienen fijo el puerto 8765 (los módulos ES necesitan HTTP, no file://).
-      # El sitio es public/ (D-192)
-      - name: Servir el sitio
+      # The scripts have port 8765 fixed (ES modules need HTTP, not file://).
+      # The site is public/ (D-192)
+      - name: Serve the site
         run: |
           python3 -m http.server 8765 -d public > /dev/null 2>&1 &
           for i in $(seq 1 20); do curl -sf http://localhost:8765/ > /dev/null && exit 0; sleep 0.5; done
-          echo "::error::el servidor no levantó"; exit 1
+          echo "::error::the server did not come up"; exit 1
 
-      # El Chrome del runner; sin sandbox porque Ubuntu 24.04 no deja crear el suyo sin root
+      # The runner's Chrome; without a sandbox because Ubuntu 24.04 does not let it create its own without root
       - name: Chrome
         run: |
           printf '#!/bin/sh\nexec google-chrome --no-sandbox "$@"\n' > "$RUNNER_TEMP/chrome"
           chmod +x "$RUNNER_TEMP/chrome"
           echo "CHROME=$RUNNER_TEMP/chrome" >> "$GITHUB_ENV"
-          # El primer arranque en un runner recién encendido es lento: se paga aquí, no en la prueba
+          # The first start on a freshly booted runner is slow: it is paid here, not in the test
           timeout 60 "$RUNNER_TEMP/chrome" --headless=new --dump-dom about:blank > /dev/null 2>&1 || true
 
-      # Uno tras otro, cada uno con su segundo intento si falla (CI_REINTENTOS, D-299): si pasa al
-      # segundo, queda en verde con un aviso ⚠️ "Intermitente" que lo nombra. El resumen de la
-      # corrida trae la tabla con cada guion, su tiempo y su resultado.
-      - name: Guiones
+      # One after another, each with its second attempt if it fails (CI_RETRIES, D-299): if it
+      # passes on the second, it stays green with a ⚠️ "Flaky" warning naming it. The run summary
+      # has the table with each script, its time and its result.
+      - name: Scripts
         env:
-          SALIDA_E2E: ${{ runner.temp }}/e2e
-          CI_REINTENTOS: 1
-          GUIONES: ${{ matrix.grupo.guiones }}
-        run: node tools/e2e/ci.mjs $GUIONES
+          E2E_OUT: ${{ runner.temp }}/e2e
+          CI_RETRIES: 1
+          SCRIPTS: ${{ matrix.group.scripts }}
+        run: node tools/e2e/ci.mjs $SCRIPTS
 
-      # Las capturas de lo que falló o pasó al segundo intento, cada guion en su carpeta (ci.mjs
-      # borra las de lo que pasó al primero), para mirarlas sin repetir la corrida
+      # The screenshots of what failed or passed on the second attempt, each script in its folder
+      # (ci.mjs deletes those of what passed on the first), to look at them without repeating the run
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: capturas-g${{ strategy.job-index }}
+          name: screenshots-g${{ strategy.job-index }}
           path: ${{ runner.temp }}/e2e
           if-no-files-found: ignore
           retention-days: 7
 
-  # Un solo check que resume todos los guiones (D-216): es el que `main` exige junto a `pruebas`,
-  # así el auto-merge de un PR espera a que pasen todos. Sin guiones (un PR que solo trae
-  # documentación), basta con que `lista` salga en verde.
-  punta-a-punta:
-    needs: [lista, e2e]
+  # A single check that sums up all the scripts (D-216): it is the one `main` requires alongside
+  # `tests`, so a PR's auto-merge waits for all of them to pass. Without scripts (a PR that only
+  # brings documentation), it is enough for `list` to come out green.
+  end-to-end:
+    needs: [list, e2e]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "lista: ${{ needs.lista.result }} · guiones: ${{ needs.e2e.result }}"
-          [ "${{ needs.lista.result }}" = success ] || exit 1
+          echo "list: ${{ needs.list.result }} · scripts: ${{ needs.e2e.result }}"
+          [ "${{ needs.list.result }}" = success ] || exit 1
           case "${{ needs.e2e.result }}" in success|skipped) ;; *) exit 1 ;; esac
-          echo "probado" > "$RUNNER_TEMP/marca"
-      # La marca del árbol que pasó, con guiones de verdad: publish.yml la busca para no repetir
-      # la punta a punta sobre lo mismo (tools/e2e/already-tested.mjs, D-308)
+          echo "tested" > "$RUNNER_TEMP/mark"
+      # The mark of the tree that passed, with real scripts: publish.yml looks for it so as not to
+      # repeat the end-to-end run on the same thing (tools/e2e/already-tested.mjs, D-308)
       - if: needs.e2e.result == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-arbol-${{ needs.lista.outputs.arbol }}
-          path: ${{ runner.temp }}/marca
+          name: e2e-tree-${{ needs.list.outputs.tree }}
+          path: ${{ runner.temp }}/mark
           retention-days: 7
 
-  # En main nadie mira el check: si sale en rojo, abre un issue (o comenta el que ya está abierto)
-  # con los guiones que fallaron y el link a la corrida, donde están sus capturas (D-205). En main
-  # corre dentro de publish.yml, así que ese rojo también frena la publicación (D-302). También
-  # en una corrida a mano (Actions → Punta a punta → Run workflow).
-  avisar:
-    needs: [lista, e2e]
+  # On main nobody watches the check: if it comes out red, it opens an issue (or comments on the
+  # one already open) with the scripts that failed and the link to the run, where their
+  # screenshots are (D-205). On main it runs inside publish.yml, so that red also stops the
+  # publication (D-302). Also on a manual run (Actions → End to end → Run workflow).
+  notify:
+    needs: [list, e2e]
     if: failure() && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
@@ -140,23 +141,23 @@ jobs:
     steps:
       - env:
           GH_TOKEN: ${{ github.token }}
-          CORRIDA: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          titulo="main is red: end-to-end"
-          fallaron=$(gh run view "$GITHUB_RUN_ID" -R "$GITHUB_REPOSITORY" --json jobs \
+          title="main is red: end-to-end"
+          failed=$(gh run view "$GITHUB_RUN_ID" -R "$GITHUB_REPOSITORY" --json jobs \
             --jq '.jobs[] | select(.conclusion == "failure") | "- `" + .name + "`"')
-          cuerpo=$(printf 'The end-to-end tests failed on `main` after merging %s.\n\n%s\n\nRun and screenshots: %s\n\nIf it ran inside Publicar, the site was not published: the previous version stays until main is green again (D-302).' \
-            "${GITHUB_SHA:0:7}" "$fallaron" "$CORRIDA")
-          abierto=$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$titulo\" in:title" --json number --jq '.[0].number // empty')
-          if [ -n "$abierto" ]; then
-            gh issue comment "$abierto" -R "$GITHUB_REPOSITORY" --body "$cuerpo"
+          body=$(printf 'The end-to-end tests failed on `main` after merging %s.\n\n%s\n\nRun and screenshots: %s\n\nIf it ran inside Publish, the site was not published: the previous version stays until main is green again (D-302).' \
+            "${GITHUB_SHA:0:7}" "$failed" "$RUN_URL")
+          open=$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" -R "$GITHUB_REPOSITORY" --body "$body"
           else
-            gh issue create -R "$GITHUB_REPOSITORY" --title "$titulo" --body "$cuerpo"
+            gh issue create -R "$GITHUB_REPOSITORY" --title "$title" --body "$body"
           fi
 
-  # Y si main vuelve a verde, cierra ese issue: antes quedaba abierto días después de arreglado (D-273).
-  cerrar-aviso:
-    needs: [lista, e2e]
+  # And if main goes green again, it closes that issue: it used to stay open days after being fixed (D-273).
+  close-notice:
+    needs: [list, e2e]
     if: needs.e2e.result == 'success' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
@@ -164,11 +165,11 @@ jobs:
     steps:
       - env:
           GH_TOKEN: ${{ github.token }}
-          CORRIDA: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           # The Spanish title is the one used before D-316, so issues opened before it close too
-          for titulo in "main is red: end-to-end" "main en rojo: Punta a punta"; do
-            for n in $(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$titulo\" in:title" --json number --jq '.[].number'); do
-              gh issue close "$n" -R "$GITHUB_REPOSITORY" --comment "main is green again at ${GITHUB_SHA:0:7}: $CORRIDA"
+          for title in "main is red: end-to-end" "main en rojo: Punta a punta"; do
+            for n in $(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number --jq '.[].number'); do
+              gh issue close "$n" -R "$GITHUB_REPOSITORY" --comment "main is green again at ${GITHUB_SHA:0:7}: $RUN_URL"
             done
           done

@@ -1,49 +1,49 @@
 #!/usr/bin/env node
 /**
- * Publica las reglas de Realtime Database sin pasar por la consola (D-122).
+ * Publishes the Realtime Database rules without going through the console (D-122).
  *
- *   node tools/firebase/rules.mjs revisar     # ¿las reglas publicadas son las del repo?
- *   node tools/firebase/rules.mjs publicar    # sube firebase/database.rules.json y verifica que quedó
+ *   node tools/firebase/rules.mjs check      # are the published rules the repo's?
+ *   node tools/firebase/rules.mjs publish    # uploads firebase/database.rules.json and verifies it took
  *
- * Entra como administrador con la llave de la cuenta de servicio (ver tools/firebase/firebase-admin.mjs)
- * y escribe `<databaseURL>/.settings/rules.json`, que es lo mismo que el botón Publicar de la consola.
+ * It signs in as administrator with the service account key (see tools/firebase/firebase-admin.mjs)
+ * and writes `<databaseURL>/.settings/rules.json`, which is the same as the console's Publish button.
  */
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
-import { token, salir } from './firebase-admin.mjs';
+import { token, fail } from './firebase-admin.mjs';
 
-const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const REGLAS = join(RAIZ, 'firebase/database.rules.json');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const RULES = join(ROOT, 'firebase/database.rules.json');
 
 const url = t => `${firebaseConfig.databaseURL}/.settings/rules.json?access_token=${encodeURIComponent(t)}`;
-const normal = texto => JSON.stringify(JSON.parse(texto));
+const normal = text => JSON.stringify(JSON.parse(text));
 
-async function publicadas(t) {
+async function published(t) {
   const res = await fetch(url(t));
-  const texto = await res.text();
-  if (!res.ok) salir(`No se pudieron leer las reglas publicadas (HTTP ${res.status}): ${texto.slice(0, 200)}`);
-  return texto;
+  const text = await res.text();
+  if (!res.ok) fail(`Could not read the published rules (HTTP ${res.status}): ${text.slice(0, 200)}`);
+  return text;
 }
 
-const accion = process.argv[2];
-if (!['revisar', 'publicar'].includes(accion)) salir('Uso: node tools/firebase/rules.mjs revisar | publicar', 2);
+const action = process.argv[2];
+if (!['check', 'publish'].includes(action)) fail('Usage: node tools/firebase/rules.mjs check | publish', 2);
 
-const locales = readFileSync(REGLAS, 'utf8');
-normal(locales); // que el archivo del repo sea JSON válido antes de tocar nada
+const local = readFileSync(RULES, 'utf8');
+normal(local); // the repo file must be valid JSON before touching anything
 const t = await token();
-const antes = await publicadas(t);
-const iguales = normal(antes) === normal(locales);
+const before = await published(t);
+const same = normal(before) === normal(local);
 
-if (accion === 'revisar') {
-  console.log(iguales ? '✓ Las reglas publicadas son las del repo.' : '✗ Las reglas publicadas NO son las del repo: falta publicar (node tools/firebase/rules.mjs publicar).');
-  process.exit(iguales ? 0 : 1);
+if (action === 'check') {
+  console.log(same ? '✓ The published rules are the repo\'s.' : '✗ The published rules are NOT the repo\'s: they still need publishing (node tools/firebase/rules.mjs publish).');
+  process.exit(same ? 0 : 1);
 }
 
-if (iguales) { console.log('✓ Ya estaban publicadas: no hay nada que subir.'); process.exit(0); }
-const res = await fetch(url(t), { method: 'PUT', headers: { 'content-type': 'application/json' }, body: locales });
-if (!res.ok) salir(`Firebase rechazó las reglas (HTTP ${res.status}): ${(await res.text()).slice(0, 500)}`);
-const despues = await publicadas(t);
-if (normal(despues) !== normal(locales)) salir('Se subieron, pero al leerlas de vuelta no coinciden con las del repo. Revisa la consola.');
-console.log(`✓ Reglas publicadas y verificadas (${firebaseConfig.projectId}).`);
+if (same) { console.log('✓ They were already published: nothing to upload.'); process.exit(0); }
+const res = await fetch(url(t), { method: 'PUT', headers: { 'content-type': 'application/json' }, body: local });
+if (!res.ok) fail(`Firebase rejected the rules (HTTP ${res.status}): ${(await res.text()).slice(0, 500)}`);
+const after = await published(t);
+if (normal(after) !== normal(local)) fail('They were uploaded, but reading them back they do not match the repo\'s. Check the console.');
+console.log(`✓ Rules published and verified (${firebaseConfig.projectId}).`);

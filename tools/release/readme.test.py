@@ -1,34 +1,34 @@
 #!/usr/bin/env python3
 """
-Qué cuenta como cambio para las capturas del README (D-51).
-Ejecutar: python3 tools/release/readme.test.py
+What counts as a change for the README screenshots (D-51).
+Run: python3 tools/release/readme.test.py
 
-Prueba la parte de `tools/release/readme.py` que decide si un cambio cuenta o no: el estampado de
-versión tocaba todos los `index.html` en cada publicación (C-11) y no cambia ninguna pantalla,
-así que no puede envejecer las capturas (D-51). Desde D-205 la versión ya no está en git, pero los
-commits viejos que miran las capturas siguen trayendo esos estampados.
+Tests the part of `tools/release/readme.py` that decides whether a change counts: version
+stamping touched every `index.html` on each publish (C-11) and changes no screen, so it cannot
+age the screenshots (D-51). Since D-205 the version is no longer in git, but the old commits the
+screenshots look at still carry those stamps.
 """
 import importlib.util, pathlib, sys
 
-RAIZ = pathlib.Path(__file__).resolve().parents[2]
-spec = importlib.util.spec_from_file_location('readme', RAIZ / 'tools/release/readme.py')
+ROOT = pathlib.Path(__file__).resolve().parents[2]
+spec = importlib.util.spec_from_file_location('readme', ROOT / 'tools/release/readme.py')
 readme = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(readme)
 
-CASOS = [
-    # (qué es, diff, ¿es solo estampado?)
-    ('la hoja de estilos re-estampada',
+CASES = [
+    # (what it is, diff, is it only a stamp?)
+    ('the stylesheet re-stamped',
      '--- a/index.html\n+++ b/index.html\n'
      '-  <link rel="stylesheet" href="style.css?v=0.25.2">\n'
      '+  <link rel="stylesheet" href="style.css?v=0.25.3">', True),
-    ('la versión del pie del menú',
+    ('the version in the menu footer',
      '-  <p class="pie">v0.25.2 · hecho con cariño</p>\n'
      '+  <p class="pie">v0.25.3 · hecho con cariño</p>', True),
-    ('el import map entero, con varios módulos',
+    ('the whole import map, with several modules',
      '-{"a.js": "a.js?v=0.25.2", "b.js": "b.js?v=0.25.2"}\n'
      '+{"a.js": "a.js?v=0.25.3", "b.js": "b.js?v=0.25.3"}', True),
-    # El día que la versión salió de git (D-205): el import map se fue entero y las marcas, sin número
-    ('la versión sacada de las páginas',
+    # The day the version left git (D-205): the import map went away whole and the stamps, without a number
+    ('the version taken out of the pages',
      '-  <script type="importmap" id="importmap">{"imports": {"./a.js": "./a.js?v=0.98.1"}}</script>\n'
      '-  <link rel="stylesheet" href="style.css?v=0.98.1">\n'
      '+  <link rel="stylesheet" href="style.css">\n'
@@ -36,38 +36,43 @@ CASOS = [
      '+  <meta property="og:image" content="https://x.cl/assets/og/menu.jpg">\n'
      '-  <p class="pie">v0.98.1 · hecho con cariño</p>\n'
      '+  <p class="pie">v0.0.0 · hecho con cariño</p>', True),
-    # Lo que sí es un cambio, aunque la línea lleve un ?v= al lado
-    ('un módulo nuevo en el import map',
+    # What is a change, even if the line carries a ?v= next to it
+    ('a new module in the import map',
      '-{"a.js": "a.js?v=0.25.2"}\n'
      '+{"a.js": "a.js?v=0.25.3", "b.js": "b.js?v=0.25.3"}', False),
-    ('texto cambiado en la misma línea que la marca',
+    ('text changed on the same line as the stamp',
      '-<p data-v="0.25.2">Toca para sacar carta</p>\n'
      '+<p data-v="0.25.3">Toca para dar vuelta la carta</p>', False),
-    ('una pantalla nueva',
+    ('a new screen',
      '+  <section class="screen" id="screen-nueva"></section>', False),
-    ('un diff vacío', '', False),
-    ('solo imágenes', 'Binary files a/x.png and b/x.png differ', False),
+    ('an empty diff', '', False),
+    ('only images', 'Binary files a/x.png and b/x.png differ', False),
 ]
 
-fallas = 0
-for nombre, diff, esperado in CASOS:
-    obtenido = readme.solo_estampa(diff)
-    if obtenido != esperado:
-        fallas += 1
-        print(f'  ✗ {nombre}: devolvió {obtenido} y se esperaba {esperado}')
+failures = 0
+for name, diff, expected in CASES:
+    got = readme.only_stamp(diff)
+    if got != expected:
+        failures += 1
+        print(f'  ✗ {name}: returned {got} and {expected} was expected')
 
-# La marca reconoce las dos formas que estampaba set-version.py, y ninguna otra versión suelta
-assert readme.ESTAMPA.search('href="a.css?v=1.2.3"'), 'no reconoce ?v='
-assert readme.ESTAMPA.search('v0.25.2 · Juegos de Salón'), 'no reconoce la del pie'
-assert not readme.ESTAMPA.search('la versión 1.2.3 del juego'), 'reconoce de más'
+# The stamp recognizes the two forms set-version.py stamped, and no other loose version
+assert readme.STAMP.search('href="a.css?v=1.2.3"'), 'does not recognize ?v='
+assert readme.STAMP.search('v0.25.2 · Juegos de Salón'), 'does not recognize the footer one'
+assert not readme.STAMP.search('la versión 1.2.3 del juego'), 'recognizes too much'
 
-# El árbol de Layout se encuentra aunque haya prosa entre el título y el bloque, y lista solo la raíz
-# (antes buscaba "## Estructura" pegado al bloque y la comprobación no corría nunca)
-EJEMPLO = '## Layout\n\nLa raíz no es el sitio.\n\n```\npublic/   El sitio\n  index.html  Menú\ntools/\n```\n\n## Otra\n'
-assert readme.arbol_layout(EJEMPLO) == ['public/', 'tools/'], readme.arbol_layout(EJEMPLO)
-assert readme.arbol_layout('## Otra\n\n```\npublic/\n```\n') == [], 'toma un bloque de otra sección'
-assert 'public/' in readme.arbol_layout((RAIZ / 'README.md').read_text()), 'no encuentra el árbol del README'
+# The Layout tree is found even with prose between the heading and the block, and lists only the root
+# (it used to look for "## Estructura" right before the block and the check never ran)
+EXAMPLE = '## Layout\n\nThe root is not the site.\n\n```\npublic/   The site\n  index.html  Menu\ntools/\n```\n\n## Other\n'
+assert readme.layout_tree(EXAMPLE) == ['public/', 'tools/'], readme.layout_tree(EXAMPLE)
+assert readme.layout_tree('## Other\n\n```\npublic/\n```\n') == [], 'takes a block from another section'
+assert 'public/' in readme.layout_tree((ROOT / 'README.md').read_text()), 'does not find the README tree'
 
-if fallas:
-    sys.exit(f'readme: {fallas} caso(s) mal')
-print(f'readme: {len(CASOS)} casos de "esto es solo un estampado" en verde')
+# The generated-block marker, in English and in the Spanish of branches opened before D-316
+for marker in ('generated', 'generado'):
+    m = readme.MARKER.search(f'<!-- {marker}: games · x -->\nbody\n<!-- /{marker} -->')
+    assert m and m.group(2) == 'games' and m.group(3) == 'body\n', marker
+
+if failures:
+    sys.exit(f'readme: {failures} case(s) wrong')
+print(f'readme: {len(CASES)} "this is only a stamp" cases green')

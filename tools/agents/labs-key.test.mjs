@@ -1,46 +1,46 @@
-// Las llaves del laboratorio (D-284): leer, agregar y quitar huellas de labs-puerta.js sin romperlo,
-// y que la puerta del repo tenga su bloque en la forma que la herramienta sabe editar.
+// The lab keys (D-284): reading, adding and removing fingerprints from labs-puerta.js without
+// breaking it, and that the repo's door has its block in the shape the tool knows how to edit.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { leer, agregar, quitar, huella, llaveNueva } from './labs-key.mjs';
+import { readKeys, add, remove, fingerprint, newKey } from './labs-key.mjs';
 
 const H1 = 'a'.repeat(64);
-const FUENTE = `(function () {
-  // comentario
+const SOURCE = `(function () {
+  // comment
   var HUELLAS = {
     'dueño': '${H1}',
   };
-  var OTRA = 1;
+  var OTHER = 1;
 })();
 `;
 
-assert.deepEqual(leer(FUENTE), [{ etiqueta: 'dueño', huella: H1 }]);
+assert.deepEqual(readKeys(SOURCE), [{ label: 'dueño', fingerprint: H1 }]);
 
-const con = agregar(FUENTE, 'MI', 'llave-de-mi');
-assert.deepEqual(leer(con), [{ etiqueta: 'dueño', huella: H1 }, { etiqueta: 'MI', huella: huella('llave-de-mi') }]);
-assert.ok(!con.includes('llave-de-mi'), 'la llave no queda escrita, solo su huella');
-assert.ok(con.includes('  var OTRA = 1;'), 'lo demás queda igual');
-assert.equal(quitar(con, 'mi'), FUENTE, 'quitar deja la fuente como estaba (sin importar mayúsculas)');
+const withKey = add(SOURCE, 'MI', 'key-of-mi');
+assert.deepEqual(readKeys(withKey), [{ label: 'dueño', fingerprint: H1 }, { label: 'MI', fingerprint: fingerprint('key-of-mi') }]);
+assert.ok(!withKey.includes('key-of-mi'), 'the key is not written, only its fingerprint');
+assert.ok(withKey.includes('  var OTHER = 1;'), 'the rest stays the same');
+assert.equal(remove(withKey, 'mi'), SOURCE, 'removing leaves the source as it was (case-insensitive)');
 
-assert.throws(() => agregar(con, 'Mi', 'otra'), /ya tiene llave/);
-assert.throws(() => agregar(FUENTE, "O'Brien", 'x'), /etiqueta no válida/);
-assert.throws(() => agregar(FUENTE, '', 'x'), /etiqueta no válida/);
-assert.throws(() => quitar(FUENTE, 'nadie'), /no tiene llave/);
-assert.throws(() => quitar(FUENTE, 'dueño'), /última llave/);
+assert.throws(() => add(withKey, 'Mi', 'other'), /already has a key/);
+assert.throws(() => add(SOURCE, "O'Brien", 'x'), /invalid label/);
+assert.throws(() => add(SOURCE, '', 'x'), /invalid label/);
+assert.throws(() => remove(SOURCE, 'nobody'), /has no key/);
+assert.throws(() => remove(SOURCE, 'dueño'), /last key/);
 
-const k = llaveNueva();
+const k = newKey();
 assert.match(k, /^[a-z2-9]{20}$/);
-assert.notEqual(k, llaveNueva());
-assert.match(llaveNueva('ratoncito'), /^ratoncito-[a-z2-9]{20}$/, 'la llave empieza con la etiqueta');
-assert.match(llaveNueva('Dueño Mayor'), /^dueno_mayor-[a-z2-9]{20}$/, 'sin tildes, mayúsculas ni espacios en el link');
+assert.notEqual(k, newKey());
+assert.match(newKey('ratoncito'), /^ratoncito-[a-z2-9]{20}$/, 'the key starts with the label');
+assert.match(newKey('Dueño Mayor'), /^dueno_mayor-[a-z2-9]{20}$/, 'no accents, capitals or spaces in the link');
 
-// La puerta de verdad: su bloque se lee, con huellas distintas y etiquetas únicas
+// The real door: its block reads, with distinct fingerprints and unique labels
 const real = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../../public/assets/js/labs-puerta.js'), 'utf8');
-const llaves = leer(real);
-assert.ok(llaves.length >= 1, 'la puerta tiene al menos una llave');
-assert.equal(new Set(llaves.map(l => l.huella)).size, llaves.length, 'cada llave es distinta');
-assert.equal(new Set(llaves.map(l => l.etiqueta.toLowerCase())).size, llaves.length, 'cada etiqueta es única');
+const keys = readKeys(real);
+assert.ok(keys.length >= 1, 'the door has at least one key');
+assert.equal(new Set(keys.map(l => l.fingerprint)).size, keys.length, 'each key is different');
+assert.equal(new Set(keys.map(l => l.label.toLowerCase())).size, keys.length, 'each label is unique');
 
-console.log(`✓ llaves del laboratorio · ${llaves.length} en la puerta`);
+console.log(`✓ lab keys · ${keys.length} in the door`);

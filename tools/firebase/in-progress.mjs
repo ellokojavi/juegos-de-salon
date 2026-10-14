@@ -1,92 +1,92 @@
 #!/usr/bin/env node
 /**
- * ¿Hay alguien jugando ahora? Salas en vivo y copas en curso, leídas de Firebase como
- * administrador (solo lectura). Sirve para decidir cuándo fusionar a main sin cortarle una
- * partida a nadie.
+ * Is anyone playing right now? Live rooms and running cups, read from Firebase as administrator
+ * (read only). It helps decide when to merge to main without cutting anyone's game short.
  *
- *   node tools/firebase/in-progress.mjs            el resumen
- *   node tools/firebase/in-progress.mjs --todo     también las salas abandonadas y las copas terminadas
- *   node tools/firebase/in-progress.mjs --json     tal cual, para procesarlo
+ *   node tools/firebase/in-progress.mjs            the summary
+ *   node tools/firebase/in-progress.mjs --all      also the abandoned rooms and the finished cups
+ *   node tools/firebase/in-progress.mjs --json     as is, to process it
  *
- * Sale con 0 si no hay nada en juego y con 3 si lo hay (1 y 2 quedan para los errores).
- * Necesita la llave de la cuenta de servicio (ver tools/firebase/firebase-admin.mjs).
+ * Exits with 0 if nothing is being played and with 3 if something is (1 and 2 are left for errors).
+ * Needs the service account key (see tools/firebase/firebase-admin.mjs).
  */
-import { token, leer } from './firebase-admin.mjs';
+import { token, read } from './firebase-admin.mjs';
 import { GAMES } from '../../public/assets/js/games.js';
 import { IDLE_TTL, ROOM_TTL } from '../../public/assets/js/transport/cleanup.js';
 import { diaActual, juegoDelDia, terminada, inscripcionAbierta } from '../../public/cup/engine.js';
 import { JUEGOS_COPA } from '../../public/cup/rules.js';
 
-/** Una sala sin jugadas hace menos de esto cuenta como partida viva; más, como pausa. */
-const JUGANDO_MS = 5 * 60 * 1000;
+/** A room with a move less than this long ago counts as a live game; longer, as a pause. */
+const PLAYING_MS = 5 * 60 * 1000;
 
 const args = process.argv.slice(2);
-const todo = args.includes('--todo');
+const all = args.includes('--all') || args.includes('--todo'); // --todo: the name from before D-316
 const t = await token();
-const [rooms, torneos] = await Promise.all([leer('rooms', t), leer('torneos', t)]);
-const ahora = Date.now();
+// `torneos` is the Firebase path (persisted, D-316 section 6)
+const [rooms, cupsData] = await Promise.all([read('rooms', t), read('torneos', t)]);
+const now = Date.now();
 
-const hace = ms => {
-  const m = Math.round((ahora - ms) / 60000);
-  if (m < 1) return 'recién';
-  if (m < 90) return `hace ${m} min`;
+const ago = ms => {
+  const m = Math.round((now - ms) / 60000);
+  if (m < 1) return 'just now';
+  if (m < 90) return `${m} min ago`;
   const h = Math.round(m / 60);
-  return h < 48 ? `hace ${h} h` : `hace ${Math.round(h / 24)} días`;
+  return h < 48 ? `${h} h ago` : `${Math.round(h / 24)} days ago`;
 };
-// El último día de la copa en su propia zona: `end` es la medianoche en que ya terminó.
-const ultimoDia = (end, tz) => new Intl.DateTimeFormat('es-CL', { timeZone: tz, weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(end - 1));
-const nombreJuego = id => GAMES.find(g => g.id === id)?.name.es || id || '(sin juego)';
+// The cup's last day in its own zone: `end` is the midnight at which it already finished.
+const lastDay = (end, tz) => new Intl.DateTimeFormat('en-GB', { timeZone: tz, weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(end - 1));
+const gameName = id => GAMES.find(g => g.id === id)?.name.es || id || '(no game)';
 
-// Salas: viva mientras la limpieza no pueda borrarla (misma cuenta que cleanup.js y las reglas).
-const salas = Object.entries(rooms || {}).map(([codigo, r]) => {
-  const ultima = r.lastAt || r.createdAt || 0;
-  const presentes = Object.values(r.players || {}).filter(p => !p.left);
-  const muerta = !presentes.length || ahora - (r.createdAt || 0) > ROOM_TTL || ahora - ultima > IDLE_TTL;
-  const estado = muerta ? 'abandonada' : ahora - ultima < JUGANDO_MS ? 'jugando' : 'en pausa';
-  return { codigo, juego: r.game, estado, ultima, jugadores: presentes.length, conectados: presentes.filter(p => p.online).length };
-}).sort((a, b) => b.ultima - a.ultima);
+// Rooms: alive while the cleanup cannot delete them (same count as cleanup.js and the rules).
+const roomList = Object.entries(rooms || {}).map(([code, r]) => {
+  const last = r.lastAt || r.createdAt || 0;
+  const present = Object.values(r.players || {}).filter(p => !p.left);
+  const dead = !present.length || now - (r.createdAt || 0) > ROOM_TTL || now - last > IDLE_TTL;
+  const status = dead ? 'abandoned' : now - last < PLAYING_MS ? 'playing' : 'paused';
+  return { code, game: r.game, status, last, players: present.length, online: present.filter(p => p.online).length };
+}).sort((a, b) => b.last - a.last);
 
-// Copas: en curso hasta que termina el último día, aunque nadie haya jugado todavía hoy.
-const copas = Object.entries(torneos || {}).filter(([, x]) => x.meta?.win).map(([codigo, x]) => {
+// Cups: running until the last day ends, even if nobody has played yet today.
+const cups = Object.entries(cupsData || {}).filter(([, x]) => x.meta?.win).map(([code, x]) => {
   const m = x.meta;
-  const dia = diaActual(m, ahora);
-  const hoy = dia >= 1 && dia <= m.days ? juegoDelDia(m, dia) : null;
-  const jugadores = Object.values(x.players || {}).filter(p => !p.out);
-  const hechos = Object.keys(x.results?.[dia] || {}).length;
-  const marcas = Object.values(x.results || {}).flatMap(d => Object.values(d || {}).map(r => r?.at || 0));
+  const day = diaActual(m, now);
+  const today = day >= 1 && day <= m.days ? juegoDelDia(m, day) : null;
+  const players = Object.values(x.players || {}).filter(p => !p.out);
+  const done = Object.keys(x.results?.[day] || {}).length;
+  const stamps = Object.values(x.results || {}).flatMap(d => Object.values(d || {}).map(r => r?.at || 0));
   return {
-    codigo, nombre: m.name, alias: m.alias || null, prueba: !!m.lab, dias: m.days, dia,
-    estado: terminada(m, ahora) ? 'terminada' : dia === 0 ? 'por empezar' : 'en curso',
-    hoy, hoyNombre: hoy ? JUEGOS_COPA[hoy]?.nombre || hoy : null,
-    jugadores: jugadores.length, jugaronHoy: hechos, inscripcion: inscripcionAbierta(m, ahora),
-    termina: m.end, tz: m.tz, ultimo: Math.max(0, ...marcas) || null,
+    code, name: m.name, alias: m.alias || null, test: !!m.lab, days: m.days, day,
+    status: terminada(m, now) ? 'finished' : day === 0 ? 'not started' : 'running',
+    today, todayName: today ? JUEGOS_COPA[today]?.nombre || today : null,
+    players: players.length, playedToday: done, registration: inscripcionAbierta(m, now),
+    ends: m.end, tz: m.tz, lastResult: Math.max(0, ...stamps) || null,
   };
-}).sort((a, b) => a.termina - b.termina);
+}).sort((a, b) => a.ends - b.ends);
 
-const salasEnJuego = salas.filter(s => s.estado !== 'abandonada');
-const copasEnJuego = copas.filter(c => c.estado !== 'terminada');
-const hayAlgo = salasEnJuego.length + copasEnJuego.length > 0;
+const liveRooms = roomList.filter(s => s.status !== 'abandoned');
+const liveCups = cups.filter(c => c.status !== 'finished');
+const anything = liveRooms.length + liveCups.length > 0;
 
 if (args.includes('--json')) {
-  console.log(JSON.stringify({ ahora, salas: todo ? salas : salasEnJuego, copas: todo ? copas : copasEnJuego }, null, 2));
-  process.exit(hayAlgo ? 3 : 0);
+  console.log(JSON.stringify({ now, rooms: all ? roomList : liveRooms, cups: all ? cups : liveCups }, null, 2));
+  process.exit(anything ? 3 : 0);
 }
 
-const verSalas = todo ? salas : salasEnJuego;
-const dormidas = salas.length - salasEnJuego.length;
-console.log(`Salas en vivo: ${salasEnJuego.length}${dormidas && !todo ? ` (y ${dormidas} abandonada(s) que la limpieza va a borrar)` : ''}`);
-for (const s of verSalas) {
-  console.log(`  ${s.codigo}  ${nombreJuego(s.juego).padEnd(16)} ${s.estado.padEnd(10)} última jugada ${hace(s.ultima)} · ${s.jugadores} jugador(es), ${s.conectados} conectado(s)`);
+const shownRooms = all ? roomList : liveRooms;
+const asleep = roomList.length - liveRooms.length;
+console.log(`Live rooms: ${liveRooms.length}${asleep && !all ? ` (and ${asleep} abandoned one(s) the cleanup will delete)` : ''}`);
+for (const s of shownRooms) {
+  console.log(`  ${s.code}  ${gameName(s.game).padEnd(16)} ${s.status.padEnd(10)} last move ${ago(s.last)} · ${s.players} player(s), ${s.online} online`);
 }
 
-const verCopas = todo ? copas : copasEnJuego;
-const pasadas = copas.length - copasEnJuego.length;
-console.log(`\nCopas en curso: ${copasEnJuego.length}${pasadas && !todo ? ` (y ${pasadas} terminada(s))` : ''}`);
-for (const c of verCopas) {
-  const cuando = c.estado === 'en curso' ? `día ${c.dia} de ${c.dias}: ${c.hoyNombre}, jugaron ${c.jugaronHoy} de ${c.jugadores}` : c.estado;
-  console.log(`  ${c.codigo}  ${c.nombre}${c.prueba ? ' · laboratorio' : ''}${c.alias ? ` · /${c.alias}` : ''}`);
-  console.log(`         ${cuando} · último día ${ultimoDia(c.termina, c.tz)} (${c.tz}) · último resultado ${c.ultimo ? hace(c.ultimo) : 'ninguno'}${c.inscripcion && c.estado !== 'terminada' ? ' · inscripción abierta' : ''}`);
+const shownCups = all ? cups : liveCups;
+const past = cups.length - liveCups.length;
+console.log(`\nRunning cups: ${liveCups.length}${past && !all ? ` (and ${past} finished)` : ''}`);
+for (const c of shownCups) {
+  const when = c.status === 'running' ? `day ${c.day} of ${c.days}: ${c.todayName}, ${c.playedToday} of ${c.players} played` : c.status;
+  console.log(`  ${c.code}  ${c.name}${c.test ? ' · lab' : ''}${c.alias ? ` · /${c.alias}` : ''}`);
+  console.log(`         ${when} · last day ${lastDay(c.ends, c.tz)} (${c.tz}) · last result ${c.lastResult ? ago(c.lastResult) : 'none'}${c.registration && c.status !== 'finished' ? ' · registration open' : ''}`);
 }
 
-console.log(`\n${hayAlgo ? '⚠ Hay gente jugando: fusionar a main les cambia la app a mitad de partida.' : '✓ No hay nada en juego.'}`);
-process.exit(hayAlgo ? 3 : 0);
+console.log(`\n${anything ? '⚠ People are playing: merging to main changes their app mid-game.' : '✓ Nothing is being played.'}`);
+process.exit(anything ? 3 : 0);

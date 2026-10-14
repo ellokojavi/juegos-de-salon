@@ -1,22 +1,22 @@
-// Todas las cartas a la vista: mesa completa desde el primer turno y sin reposición (D-43)
-import { salida } from '../output.mjs';
+// All cards face up: full table from the first turn and no refills (D-43)
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = salida();
-const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
+const OUT = output();
+const BASE = process.argv[3] || process.env.SITE || 'http://localhost:8765';
 const b = await launch({ port: 9498, dir: `${OUT}/m`, out: OUT, width: 375, height: 812 });
-const v = () => b.evaluate(`(()=>{const s=window.__ldt.view();return JSON.stringify({done:s.done,current:s.current,shared:s.shared,target:s.target,mesa:s.table,scores:s.scores,winner:s.winner})})()`).then(JSON.parse);
-const pantalla = () => b.evaluate(`JSON.stringify({
-  titulo: document.getElementById('hand-title')?.textContent,
-  cartas: document.querySelectorAll('#hand .card').length,
-  quedan: document.getElementById('pool-left')?.textContent,
-  ancho: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+const v = () => b.evaluate(`(()=>{const s=window.__ldt.view();return JSON.stringify({done:s.done,current:s.current,shared:s.shared,target:s.target,table:s.table,scores:s.scores,winner:s.winner})})()`).then(JSON.parse);
+const screen = () => b.evaluate(`JSON.stringify({
+  title: document.getElementById('hand-title')?.textContent,
+  cards: document.querySelectorAll('#hand .card').length,
+  left: document.getElementById('pool-left')?.textContent,
+  width: document.documentElement.scrollWidth - document.documentElement.clientWidth,
 })`).then(JSON.parse);
 const closeOverlay = async () => { await b.evaluate(`(()=>{const h=document.getElementById('handoff');if(h.hidden)return;const btn=h.querySelector('.btn');if(btn)btn.click();else h.click();})()`); await sleep(450); };
-/** Coloca la primera carta de la mesa; con `bien: false` la pone a propósito en la ranura equivocada. */
-const play = async (bien = true) => {
-  const info = await b.evaluate(`(()=>{const s=window.__ldt.view();const card=s.hands[s.current][0];let at=0;const y=s.byId[card].year;while(at<s.line.length&&s.byId[s.line[at]].year<y)at++;return JSON.stringify({at,mal:at===0?s.line.length:0,card,p:s.current})})()`).then(JSON.parse);
+/** Places the first card on the table; with `right: false` it deliberately puts it in the wrong slot. */
+const play = async (right = true) => {
+  const info = await b.evaluate(`(()=>{const s=window.__ldt.view();const card=s.hands[s.current][0];let at=0;const y=s.byId[card].year;while(at<s.line.length&&s.byId[s.line[at]].year<y)at++;return JSON.stringify({at,wrong:at===0?s.line.length:0,card,p:s.current})})()`).then(JSON.parse);
   await b.evaluate(`document.querySelectorAll('#hand .card')[0].click(); 1`); await sleep(120);
-  await b.evaluate(`document.querySelectorAll('#line .slot')[${bien ? info.at : info.mal}]?.click(); 1`); await sleep(120);
+  await b.evaluate(`document.querySelectorAll('#line .slot')[${right ? info.at : info.wrong}]?.click(); 1`); await sleep(120);
   await b.evaluate(`(()=>{const x=document.querySelector('#place-row .btn');if(x&&!x.disabled)x.click();})(); 1`);
   await sleep(900); await closeOverlay();
   return info;
@@ -25,41 +25,41 @@ const play = async (bien = true) => {
 await b.go(`${BASE}/timeline/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
 await b.go(`${BASE}/timeline/`, 1500);
 await b.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
-console.log('el setup abre en →', await b.evaluate(`document.querySelector('#setup-form .seg--cards button.on')?.textContent`), '(debe ser todas a la vista)');
-console.log('opciones de cartas:', await b.evaluate(`[...document.querySelectorAll('#setup-form .seg--cards button')].map(x=>x.textContent).join(' | ')`));
-console.log('etiqueta del tamaño:', await b.evaluate(`[...document.querySelectorAll('#setup-form label')].map(l=>l.textContent).join(' | ')`));
-const pista = () => b.evaluate(`document.querySelector('#setup-form p.muted')?.textContent`);
-console.log('pista con meta 5:', await pista());
+console.log('setup opens on →', await b.evaluate(`document.querySelector('#setup-form .seg--cards button.on')?.textContent`), '(must be all face up)');
+console.log('card options:', await b.evaluate(`[...document.querySelectorAll('#setup-form .seg--cards button')].map(x=>x.textContent).join(' | ')`));
+console.log('size label:', await b.evaluate(`[...document.querySelectorAll('#setup-form label')].map(l=>l.textContent).join(' | ')`));
+const hint = () => b.evaluate(`document.querySelector('#setup-form p.muted')?.textContent`);
+console.log('hint with target 5:', await hint());
 await b.evaluate(`(()=>{const x=[...document.querySelectorAll('#setup-form .seg button')].find(e=>/7$/.test(e.textContent.trim()));x.click();return 1})()`); await sleep(200);
-console.log('pista con meta 7 (debe decir 14):', await pista());
-await b.shot('mesa-01-setup');
+console.log('hint with target 7 (must say 14):', await hint());
+await b.shot('table-01-setup');
 
-// Dos jugadores, meta 3 → mesa de 6
+// Two players, target 3 → table of 6
 await b.evaluate(`(()=>{const x=[...document.querySelectorAll('#setup-form .seg button')].find(e=>/3$/.test(e.textContent.trim()));x.click();return 1})()`); await sleep(150);
 await b.evaluate(`(()=>{const xs=document.querySelectorAll('#setup-form .player-row input');['Javi','Cata'].forEach((n,i)=>{xs[i].value=n;xs[i].dispatchEvent(new Event('input',{bubbles:true}))});return 1})()`);
 await b.evaluate(`[...document.querySelectorAll('#setup-actions .btn')][0].click(); 1`); await sleep(1200);
 await closeOverlay();
 
 let s = await v();
-console.log('empieza → meta:', s.target, '| cartas en la mesa:', s.mesa.length, '(debe ser 6)');
-console.log('pantalla →', JSON.stringify(await pantalla()));
-await b.shot('mesa-02-mesa-completa');
+console.log('starts → target:', s.target, '| cards on the table:', s.table.length, '(must be 6)');
+console.log('screen →', JSON.stringify(await screen()));
+await b.shot('table-02-full-table');
 
-// Un acierto y un error: las dos veces la mesa se achica y no entra nada nuevo
-const antes = s.mesa.slice();
-const ok = await play(true);
+// One hit and one miss: both times the table shrinks and nothing new comes in
+const before = s.table.slice();
+const hit = await play(true);
 s = await v();
-console.log('tras acertar → mesa:', s.mesa.length, '| no entró ninguna carta nueva:', s.mesa.every(c => antes.includes(c)),
-  '| las que quedan mantienen el orden:', JSON.stringify(s.mesa) === JSON.stringify(antes.filter(c => c !== ok.card)));
-const antes2 = s.mesa.slice();
-const mal = await play(false);
+console.log('after a hit → table:', s.table.length, '| no new card came in:', s.table.every(c => before.includes(c)),
+  '| the remaining ones keep their order:', JSON.stringify(s.table) === JSON.stringify(before.filter(c => c !== hit.card)));
+const before2 = s.table.slice();
+const miss = await play(false);
 s = await v();
-console.log('tras fallar → mesa:', s.mesa.length, '| la fallada no vuelve:', !s.mesa.includes(mal.card),
-  '| no entró ninguna nueva:', s.mesa.every(c => antes2.includes(c)), '| marcador:', JSON.stringify(s.scores));
-console.log('pantalla →', JSON.stringify(await pantalla()));
-await b.shot('mesa-03-achicada');
+console.log('after a miss → table:', s.table.length, '| the missed one doesn\'t come back:', !s.table.includes(miss.card),
+  '| no new one came in:', s.table.every(c => before2.includes(c)), '| score:', JSON.stringify(s.scores));
+console.log('screen →', JSON.stringify(await screen()));
+await b.shot('table-03-shrunk');
 
-// Hasta el final: o alguien llega a la meta, o se vacía la mesa
+// To the end: either someone reaches the target, or the table runs empty
 let guard = 0;
 while (guard++ < 20) {
   s = await v();
@@ -68,12 +68,12 @@ while (guard++ < 20) {
   await play(true);
 }
 s = await v();
-console.log('final → done:', s.done, '| mesa:', s.mesa.length, '| marcador:', JSON.stringify(s.scores), '| ganó:', JSON.stringify(s.winner));
-console.log('pantalla:', await b.active());
+console.log('final → done:', s.done, '| table:', s.table.length, '| score:', JSON.stringify(s.scores), '| winner:', JSON.stringify(s.winner));
+console.log('screen:', await b.active());
 console.log('ranking:', await b.evaluate(`[...document.querySelectorAll('#result-ranking li')].map(li=>li.innerText.replace(/\\n/g,' · ')).join(' | ')`));
-await b.shot('mesa-04-resultado');
+await b.shot('table-04-result');
 
-// El solitario de todas a la vista se fue: jugar solo es ahora la ⏳ Línea Relámpago (D-142),
-// que tiene su propio guion (linea-de-tiempo-solo.mjs).
+// The all-face-up solitaire is gone: playing solo is now ⏳ Línea Relámpago (D-142),
+// which has its own script (timeline/solo.mjs).
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();

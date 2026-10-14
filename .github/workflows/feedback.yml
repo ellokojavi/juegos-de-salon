@@ -1,14 +1,15 @@
-# El feedback 🐞 como issues (D-275): cada 15 minutos sube a GitHub los reportes nuevos de `feedback/`
-# en Firebase, con la etiqueta `feedback`, para que el agente de procesos los atienda en su ronda.
-# Como issue, cada reporte le llega por correo al dueño y queda enlazado con su respuesta y su
-# arreglo, aunque la ronda (en el Mac mini, D-276) podría leer Firebase directo. El nodo se lee sin llave.
+# The 🐞 feedback as issues (D-275): every 15 minutes it uploads to GitHub the new reports of
+# `feedback/` in Firebase, with the `feedback` label, so the processes agent handles them in its
+# round. As an issue, each report reaches the owner by email and stays linked to its reply and its
+# fix, even though the round (on the Mac mini, D-276) could read Firebase directly. The node is
+# read without a key.
 
 name: Feedback
 
 on:
   schedule:
-    # GitHub atrasa y a veces se salta los horarios (con '41 * * * *' corría unas 4 veces al día):
-    # pedirlo cada 15 minutos lo deja en un rato, no en horas (D-306)
+    # GitHub delays and sometimes skips schedules (with '41 * * * *' it ran about 4 times a day):
+    # asking every 15 minutes leaves it at a while, not hours (D-306)
     - cron: '7,22,37,52 * * * *'
   workflow_dispatch:
 
@@ -21,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  sincronizar:
+  sync:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -31,4 +32,4 @@ jobs:
           node-version: 24
       - env:
           GH_TOKEN: ${{ github.token }}
-        run: node tools/agents/feedback.mjs sincronizar
+        run: node tools/agents/feedback.mjs sync

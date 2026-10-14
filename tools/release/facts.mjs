@@ -1,140 +1,141 @@
 /**
- * Hoja de hechos de la app: lo que el README afirma, leído del código real.
+ * The app's fact sheet: what the README claims, read from the real code.
  *
- *   node tools/release/facts.mjs            imprime el JSON
+ *   node tools/release/facts.mjs            prints the JSON
  *
- * No inventa nada ni describe: solo junta los datos que el README cuenta
- * (juegos, modos, temáticas, idiomas, módulos, tests, documentos, capturas)
- * importando los módulos de verdad. De acá
- * salen los bloques generados del README y la comparación que hace
- * `tools/release/readme.py revisar` para avisar que un cambio dejó el texto viejo.
+ * It makes nothing up and describes nothing: it only gathers the data the README tells
+ * (games, modes, themes, languages, modules, tests, documents, screenshots) by importing
+ * the real modules. The README's generated blocks come from here, and so does the
+ * comparison `tools/release/readme.py check` makes to warn that a change left the text stale.
  *
- * Regla de qué entra acá: un dato que, si cambia, obliga a mirar el README.
- * Los textos de ayuda y las bajadas quedan fuera a propósito: cambian seguido
- * y no se citan en el README, y un soplón que grita por todo no lo mira nadie.
+ * Rule for what goes in here: a fact that, if it changes, forces a look at the README.
+ * Help texts and taglines stay out on purpose: they change often and the README does not
+ * quote them, and a tattletale that shouts about everything is one nobody looks at.
+ *
+ * The keys are the ones sealed in docs/facts.json: renaming one means migrating that file too.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { versionHoy } from './version.mjs';
+import { todayVersion } from './version.mjs';
 
-const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const leer = r => readFileSync(join(RAIZ, r), 'utf8');
-const hay = r => { try { statSync(join(RAIZ, r)); return true; } catch { return false; } };
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const read = r => readFileSync(join(ROOT, r), 'utf8');
+const exists = r => { try { statSync(join(ROOT, r)); return true; } catch { return false; } };
 
-const IGNORA = new Set(['.git', '.claude', 'node_modules', 'arte-original']);
-function archivos(dir = '', filtro = () => true) {
+const IGNORE = new Set(['.git', '.claude', 'node_modules', 'arte-original']);
+function files(dir = '', filter = () => true) {
   const out = [];
-  // Un juego recién agregado todavía no tiene carpeta de capturas: eso es cero capturas,
-  // no una falla de la herramienta.
-  if (!hay(dir)) return out;
-  for (const nombre of readdirSync(join(RAIZ, dir))) {
-    if (nombre.startsWith('.') || IGNORA.has(nombre)) continue;
-    const rel = dir ? `${dir}/${nombre}` : nombre;
-    if (statSync(join(RAIZ, rel)).isDirectory()) out.push(...archivos(rel, filtro));
-    else if (filtro(rel)) out.push(rel);
+  // A newly added game has no screenshot folder yet: that is zero screenshots,
+  // not a failure of the tool.
+  if (!exists(dir)) return out;
+  for (const name of readdirSync(join(ROOT, dir))) {
+    if (name.startsWith('.') || IGNORE.has(name)) continue;
+    const rel = dir ? `${dir}/${name}` : name;
+    if (statSync(join(ROOT, rel)).isDirectory()) out.push(...files(rel, filter));
+    else if (filter(rel)) out.push(rel);
   }
   return out.sort();
 }
 
-// ------------------------------------------------------------------ juegos
+// ------------------------------------------------------------------ games
 
-const { GAMES, SUELTOS } = await import(join(RAIZ, 'public/assets/js/games.js'));
-const { DECKS } = await import(join(RAIZ, 'public/timeline/decks/index.js'));
-const { LANGS, COMMON } = await import(join(RAIZ, 'public/assets/js/i18n.js'));
-const { FRASES } = await import(join(RAIZ, 'public/assets/js/frases.js'));
+const { GAMES, SUELTOS } = await import(join(ROOT, 'public/assets/js/games.js'));
+const { DECKS } = await import(join(ROOT, 'public/timeline/decks/index.js'));
+const { LANGS, COMMON } = await import(join(ROOT, 'public/assets/js/i18n.js'));
+const { FRASES } = await import(join(ROOT, 'public/assets/js/frases.js'));
 
-/** El estado publicado del juego, según la cabecera de su especificación. */
-function estado(g) {
-  const ruta = `docs/games/${carpeta(g)}.md`;
-  if (!hay(ruta)) return null;
-  const cabecera = leer(ruta).split('\n').slice(0, 6).join(' ');
-  const m = cabecera.match(/\(v(\d+\.\d+)[^)]*\)/) || cabecera.match(/\*\*Versión:\*\*\s*(\d+\.\d+)/);
+/** The game's published status, according to the header of its spec. */
+function status(g) {
+  const path = `docs/games/${folder(g)}.md`;
+  if (!exists(path)) return null;
+  const header = read(path).split('\n').slice(0, 6).join(' ');
+  const m = header.match(/\(v(\d+\.\d+)[^)]*\)/) || header.match(/\*\*Versi[oó]n:\*\*\s*(\d+\.\d+)/);
   return m ? `v${m[1]}` : null;
 }
 
-/** Los modos de juego: las claves modeX que tienen su modeXHint al lado.
-    Van en los dos idiomas porque el README es en inglés y la tabla de juegos sale de acá (D-78). */
-function modos(L, EN) {
+/** The game modes: the modeX keys that have their modeXHint next to them.
+    They go in both languages because the README is in English and the games table comes from here (D-78). */
+function modes(L, EN) {
   return Object.keys(L).filter(k => /^mode[A-Z]/.test(k) && L[k + 'Hint'] !== undefined)
-    .map(k => ({ clave: k, es: L[k], en: EN[k] || L[k] }));
+    .map(k => ({ key: k, es: L[k], en: EN[k] || L[k] }));
 }
 
-/** Las variantes de un juego: claves modeX sin ayuda propia (el reparto de Línea de Tiempo). */
-function variantes(L, EN) {
+/** A game's variants: modeX keys without their own hint (the deal in Timeline). */
+function variants(L, EN) {
   return Object.keys(L).filter(k => /^mode[A-Z]/.test(k) && !k.endsWith('Hint') && L[k + 'Hint'] === undefined)
-    .map(k => ({ clave: k, es: L[k], en: EN[k] || L[k] }));
+    .map(k => ({ key: k, es: L[k], en: EN[k] || L[k] }));
 }
 
-/** La carpeta del juego, que es su URL y no su id (D-192): 'ahorcado' vive en public/hangman/. */
-const carpeta = g => g.path.replace(/\/$/, '');
+/** The game's folder, which is its URL and not its id (D-192): 'ahorcado' lives in public/hangman/. */
+const folder = g => g.path.replace(/\/$/, '');
 
-const juegos = [];
+const games = [];
 for (const g of GAMES) {
-  const { LOCALES } = await import(join(RAIZ, 'public', g.path, 'rules.js'));
-  // Hay dos formas de escribir un rules.js: los textos sueltos (El Ahorcado) o dentro de `ui`
-  // (Cuarto Rey, Dudo). Se miran las dos, o los modos de esos juegos no se ven desde acá.
+  const { LOCALES } = await import(join(ROOT, 'public', g.path, 'rules.js'));
+  // There are two ways to write a rules.js: loose texts (Hangman) or inside `ui`
+  // (Fourth King, Dudo). Both are looked at, or those games' modes are not seen from here.
   const es = { ...LOCALES.es, ...(LOCALES.es.ui || {}) };
-  const EN = LOCALES.en || LOCALES.es; // La Copa va solo en español por ahora (D-98)
+  const EN = LOCALES.en || LOCALES.es; // The Cup is Spanish only for now (D-98)
   const en = { ...EN, ...(EN.ui || {}) };
-  const html = leer(`public/${g.path}index.html`);
-  juegos.push({
+  const html = read(`public/${g.path}index.html`);
+  games.push({
     id: g.id,
     emoji: g.emoji,
-    nombre: g.name,
-    jugadores: g.players.replace('–', ' to '),   // "1 to 6": lo lee la tabla del README, que es en inglés
-    duracion: g.duration,
-    disponible: g.available,
+    name: g.name,
+    players: g.players.replace('–', ' to '),   // "1 to 6": read by the README table, which is in English
+    duration: g.duration,
+    available: g.available,
     labs: !!g.labs,
-    estado: estado(g),
-    modos: g.formato ? [{ clave: 'formato', es: g.formato.es, en: g.formato.en }] : modos(es, en),
-    variantes: variantes(es, en),
-    pantallas: [...html.matchAll(/id="screen-([a-z-]+)"/g)].map(m => m[1]),
+    status: status(g),
+    modes: g.formato ? [{ key: 'formato', es: g.formato.es, en: g.formato.en }] : modes(es, en),
+    variants: variants(es, en),
+    screens: [...html.matchAll(/id="screen-([a-z-]+)"/g)].map(m => m[1]),
     chat: /id="chat"/.test(html),
-    archivos: archivos(`public/${carpeta(g)}`, r => !r.endsWith('.test.mjs')),
+    files: files(`public/${folder(g)}`, r => !r.endsWith('.test.mjs')),
   });
 }
 
-// Los juegos de La Copa que se juegan sueltos desde la portada (D-142): van en la tabla de
-// juegos del README, aparte, porque no tienen rules.js ni modos.
-const sueltos = SUELTOS.map(m => ({
-  id: m.id, emoji: m.emoji, nombre: m.name, tipos: m.tipos, duracion: m.duration, labs: !!m.labs, path: m.path,
+// The Cup's games played standalone from the home page (D-142): they go in the README's games
+// table, apart, because they have no rules.js nor modes.
+const standalone = SUELTOS.map(m => ({
+  id: m.id, emoji: m.emoji, name: m.name, kinds: m.tipos, duration: m.duration, labs: !!m.labs, path: m.path,
 }));
 
-// ------------------------------------------------------------- lo compartido
+// ------------------------------------------------------------- the shared parts
 
-const anios = cartas => [Math.min(...cartas.map(c => c.year)), Math.max(...cartas.map(c => c.year))];
-const tematicas = DECKS.map(d => ({
-  id: d.id, emoji: d.emoji, nombre: d.name, pista: d.hint, cartas: d.cards.length, desde: anios(d.cards)[0], hasta: anios(d.cards)[1],
+const years = cards => [Math.min(...cards.map(c => c.year)), Math.max(...cards.map(c => c.year))];
+const themes = DECKS.map(d => ({
+  id: d.id, emoji: d.emoji, name: d.name, hint: d.hint, cards: d.cards.length, from: years(d.cards)[0], to: years(d.cards)[1],
 }));
 
-// Todos entran solos al import map (set-version.py, D-192): ya no hay "sin versionar" que vigilar
-const modulos = archivos('public', r => r.endsWith('.js'));
-const tests = archivos('', r => r.endsWith('.test.mjs'));
-const e2e = archivos('tools/e2e', r => r.endsWith('.mjs') && !r.endsWith('cdp.mjs')).map(r => r.replace('tools/e2e/', ''));
+// They all go into the import map on their own (set-version.py, D-192): no more "unversioned" to watch
+const modules = files('public', r => r.endsWith('.js'));
+const tests = files('', r => r.endsWith('.test.mjs'));
+const e2e = files('tools/e2e', r => r.endsWith('.mjs') && !r.endsWith('cdp.mjs')).map(r => r.replace('tools/e2e/', ''));
 
-// El título es el H1 del documento, sin el emoji con que termina.
-const titulo = ruta => (leer(ruta).match(/^#\s+(.+)$/m) || [, ruta])[1]
+// The title is the document's H1, without the emoji it ends with.
+const title = path => (read(path).match(/^#\s+(.+)$/m) || [, path])[1]
   .replace(/[\p{Extended_Pictographic}\uFE0F\s]+$/u, '').trim();
-const documentos = [
-  ...archivos('docs', r => r.endsWith('.md')),
+const documents = [
+  ...files('docs', r => r.endsWith('.md')),
   'firebase/README.md', 'tools/e2e/README.md', 'CHANGELOG.md',
-].filter(hay).map(ruta => ({ ruta, titulo: titulo(ruta) }));
+].filter(exists).map(path => ({ path, title: title(path) }));
 
-const capturas = Object.fromEntries(GAMES.map(g => [g.id, archivos(`docs/screenshots/${carpeta(g)}`, r => r.endsWith('.png')).length]));
+const screenshots = Object.fromEntries(GAMES.map(g => [g.id, files(`docs/screenshots/${folder(g)}`, r => r.endsWith('.png')).length]));
 
 console.log(JSON.stringify({
-  version: versionHoy(),
+  version: todayVersion(),
   app: Object.fromEntries(LANGS.map(l => [l, COMMON[l].appTitle])),
-  idiomas: LANGS,
-  frases: Object.fromEntries(LANGS.map(l => [l, FRASES[l].length])),
-  clavesComunes: Object.keys(COMMON.es).length,
-  juegos,
-  sueltos,
-  tematicas,
-  modulos,
+  languages: LANGS,
+  phrases: Object.fromEntries(LANGS.map(l => [l, FRASES[l].length])),
+  commonKeys: Object.keys(COMMON.es).length,
+  games,
+  standalone,
+  themes,
+  modules,
   tests,
   e2e,
-  documentos,
-  capturas,
+  documents,
+  screenshots,
 }, null, 2));

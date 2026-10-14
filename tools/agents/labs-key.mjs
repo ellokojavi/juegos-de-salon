@@ -1,89 +1,90 @@
 /**
- * Las llaves del laboratorio (D-281, D-284). Cada persona que entra a /labs/ tiene su llave y su
- * link; en public/assets/js/labs-puerta.js solo queda la huella de cada una, con una etiqueta.
+ * The lab keys (D-281, D-284). Each person who enters /labs/ has their key and their link; in
+ * public/assets/js/labs-puerta.js only each key's fingerprint is kept, with a label.
  *
- *   node tools/agents/labs-key.mjs nueva <etiqueta>    crea una llave y muestra su link (una sola vez)
- *   node tools/agents/labs-key.mjs quitar <etiqueta>   saca a esa persona; las demás siguen entrando
- *   node tools/agents/labs-key.mjs listar              quién tiene llave
+ *   node tools/agents/labs-key.mjs new <label>      creates a key and shows its link (only once)
+ *   node tools/agents/labs-key.mjs remove <label>   takes that person out; the others keep entering
+ *   node tools/agents/labs-key.mjs list             who has a key
  *
- * La llave no se guarda en ningún lado: se muestra una vez y la guarda quien la recibe. Si se
- * pierde, se quita y se crea otra. La etiqueta es pública (el repo lo es): iniciales o un apodo.
- * El cambio a labs-puerta.js entra con un PR, y la llave abre recién cuando el sitio se publica.
+ * The key is not saved anywhere: it is shown once and whoever receives it keeps it. If it is lost,
+ * it is removed and another is created. The label is public (the repo is): initials or a nickname.
+ * The change to labs-puerta.js goes in with a PR, and the key opens only when the site is published.
+ * The block it edits in labs-puerta.js is `var HUELLAS = { 'label': 'fingerprint', … };`.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash, randomInt } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-const PUERTA = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'public', 'assets', 'js', 'labs-puerta.js');
-export const SITIO = 'https://juegosdesalon.cl';
+const DOOR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'public', 'assets', 'js', 'labs-puerta.js');
+export const SITE = 'https://juegosdesalon.cl';
 
-const BLOQUE = /( *)var HUELLAS = \{\n([\s\S]*?)\n?\1\};/;
-const LINEA = /^ *'([^']+)': '([0-9a-f]{64})',$/;
-const ETIQUETA = /^[\p{L}\p{N}][\p{L}\p{N} ._-]{0,23}$/u;
+const BLOCK = /( *)var HUELLAS = \{\n([\s\S]*?)\n?\1\};/;
+const LINE = /^ *'([^']+)': '([0-9a-f]{64})',$/;
+const LABEL = /^[\p{L}\p{N}][\p{L}\p{N} ._-]{0,23}$/u;
 
-/** Las llaves que la puerta acepta: [{ etiqueta, huella }]. Puro: se prueba sin disco. */
-export function leer(fuente) {
-  const m = fuente.match(BLOQUE);
-  if (!m) throw new Error('labs-puerta.js no tiene el bloque `var HUELLAS = { … };`');
+/** The keys the door accepts: [{ label, fingerprint }]. Pure: tested without disk. */
+export function readKeys(source) {
+  const m = source.match(BLOCK);
+  if (!m) throw new Error('labs-puerta.js does not have the `var HUELLAS = { … };` block');
   return m[2].split('\n').filter(l => l.trim()).map(l => {
-    const x = l.match(LINEA);
-    if (!x) throw new Error(`línea que no entiendo en HUELLAS: ${l.trim()}`);
-    return { etiqueta: x[1], huella: x[2] };
+    const x = l.match(LINE);
+    if (!x) throw new Error(`line in HUELLAS I do not understand: ${l.trim()}`);
+    return { label: x[1], fingerprint: x[2] };
   });
 }
 
-function escribir(fuente, llaves) {
-  return fuente.replace(BLOQUE, (_, sangria) =>
-    `${sangria}var HUELLAS = {\n${llaves.map(l => `${sangria}  '${l.etiqueta}': '${l.huella}',`).join('\n')}\n${sangria}};`);
+function write(source, keys) {
+  return source.replace(BLOCK, (_, indent) =>
+    `${indent}var HUELLAS = {\n${keys.map(k => `${indent}  '${k.label}': '${k.fingerprint}',`).join('\n')}\n${indent}};`);
 }
 
-export const huella = llave => createHash('sha256').update(llave).digest('hex');
+export const fingerprint = key => createHash('sha256').update(key).digest('hex');
 
-/** Una llave al azar: 20 letras y números en minúscula, fácil de copiar y sin ambigüedad de mayúsculas.
- *  Con etiqueta, la llave empieza con ella (`ratoncito-…`), para que cada uno reconozca su link. */
-export function llaveNueva(etiqueta = '') {
+/** A random key: 20 lowercase letters and digits, easy to copy and without case ambiguity.
+ *  With a label, the key starts with it (`ratoncito-…`), so each person recognizes their link. */
+export function newKey(label = '') {
   const A = 'abcdefghijkmnpqrstuvwxyz23456789';
-  const azar = Array.from({ length: 20 }, () => A[randomInt(A.length)]).join('');
-  const prefijo = etiqueta.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9_.-]+/g, '_');
-  return prefijo ? `${prefijo}-${azar}` : azar;
+  const random = Array.from({ length: 20 }, () => A[randomInt(A.length)]).join('');
+  const prefix = label.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9_.-]+/g, '_');
+  return prefix ? `${prefix}-${random}` : random;
 }
 
-export function agregar(fuente, etiqueta, llave) {
-  if (!ETIQUETA.test(etiqueta)) throw new Error(`etiqueta no válida: "${etiqueta}" (letras, números, espacio, . _ -; hasta 24)`);
-  const llaves = leer(fuente);
-  const ya = llaves.find(l => l.etiqueta.toLowerCase() === etiqueta.toLowerCase());
-  if (ya) throw new Error(`"${ya.etiqueta}" ya tiene llave: quítala antes de darle otra`);
-  return escribir(fuente, [...llaves, { etiqueta, huella: huella(llave) }]);
+export function add(source, label, key) {
+  if (!LABEL.test(label)) throw new Error(`invalid label: "${label}" (letters, digits, space, . _ -; up to 24)`);
+  const keys = readKeys(source);
+  const existing = keys.find(k => k.label.toLowerCase() === label.toLowerCase());
+  if (existing) throw new Error(`"${existing.label}" already has a key: remove it before giving them another`);
+  return write(source, [...keys, { label, fingerprint: fingerprint(key) }]);
 }
 
-export function quitar(fuente, etiqueta) {
-  const llaves = leer(fuente);
-  const quedan = llaves.filter(l => l.etiqueta.toLowerCase() !== etiqueta.toLowerCase());
-  if (quedan.length === llaves.length) throw new Error(`"${etiqueta}" no tiene llave (listar dice quién sí)`);
-  if (!quedan.length) throw new Error('es la última llave: sin ninguna, nadie entra al laboratorio');
-  return escribir(fuente, quedan);
+export function remove(source, label) {
+  const keys = readKeys(source);
+  const left = keys.filter(k => k.label.toLowerCase() !== label.toLowerCase());
+  if (left.length === keys.length) throw new Error(`"${label}" has no key (list says who does)`);
+  if (!left.length) throw new Error('it is the last key: without any, nobody enters the lab');
+  return write(source, left);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const [cmd, ...resto] = process.argv.slice(2);
-  const etiqueta = resto.join(' ').trim();
-  const fuente = readFileSync(PUERTA, 'utf8');
+  const [cmd, ...rest] = process.argv.slice(2);
+  const label = rest.join(' ').trim();
+  const source = readFileSync(DOOR, 'utf8');
   try {
-    if (cmd === 'listar') {
-      for (const l of leer(fuente)) console.log(`${l.etiqueta.padEnd(24)} ${l.huella.slice(0, 12)}…`);
-    } else if (cmd === 'nueva' && etiqueta) {
-      const llave = llaveNueva(etiqueta);
-      writeFileSync(PUERTA, agregar(fuente, etiqueta, llave));
-      console.log(`Llave para ${etiqueta}. Se muestra solo esta vez: cópiala ahora.\n`);
-      console.log(`  ${SITIO}/labs/?key=${llave}\n`);
-      console.log('El link abre recién cuando el cambio a public/assets/js/labs-puerta.js entre con un PR y el sitio se publique.');
-    } else if (cmd === 'quitar' && etiqueta) {
-      const nombre = leer(fuente).find(l => l.etiqueta.toLowerCase() === etiqueta.toLowerCase())?.etiqueta ?? etiqueta;
-      writeFileSync(PUERTA, quitar(fuente, etiqueta));
-      console.log(`Llave de ${nombre} quitada. Deja de entrar cuando el cambio a public/assets/js/labs-puerta.js entre con un PR y el sitio se publique.`);
+    if (cmd === 'list') {
+      for (const k of readKeys(source)) console.log(`${k.label.padEnd(24)} ${k.fingerprint.slice(0, 12)}…`);
+    } else if (cmd === 'new' && label) {
+      const key = newKey(label);
+      writeFileSync(DOOR, add(source, label, key));
+      console.log(`Key for ${label}. It is shown only this time: copy it now.\n`);
+      console.log(`  ${SITE}/labs/?key=${key}\n`);
+      console.log('The link opens only when the change to public/assets/js/labs-puerta.js goes in with a PR and the site is published.');
+    } else if (cmd === 'remove' && label) {
+      const name = readKeys(source).find(k => k.label.toLowerCase() === label.toLowerCase())?.label ?? label;
+      writeFileSync(DOOR, remove(source, label));
+      console.log(`Key of ${name} removed. It stops entering when the change to public/assets/js/labs-puerta.js goes in with a PR and the site is published.`);
     } else {
-      console.log('Uso: node tools/agents/labs-key.mjs nueva <etiqueta> | quitar <etiqueta> | listar');
+      console.log('Usage: node tools/agents/labs-key.mjs new <label> | remove <label> | list');
       process.exit(cmd ? 1 : 0);
     }
   } catch (e) {

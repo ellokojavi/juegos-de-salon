@@ -59,7 +59,7 @@ corre como root y necesita `--no-sandbox`: un `chrome.sh` que lo agregue y `CHRO
 - **Las filas de la grilla de 7×7 se aplastan** si no llevan `grid-template-rows`: las casillas
   pintadas no tienen texto y su fila se encoge.
 - El dibujo de cada juego es propio de esta página: si un juego cambia de colores o de forma, este
-  adelanto no se entera solo (`marketing.mjs revisar` avisa de los commits que tocaron sus juegos).
+  adelanto no se entera solo (`marketing.mjs check` avisa de los commits que tocaron sus juegos).
 
 ## Historia
 

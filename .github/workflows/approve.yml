@@ -1,12 +1,12 @@
 # One-tap decisions (D-273): the processes agent opens an issue with Yes/No checkboxes
-# (`procesos` label); when the owner checks one, this does what the checkbox says, with no model
+# (`processes` label); when the owner checks one, this does what the checkbox says, with no model
 # in between. The rules of who and what are in tools/agents/approve.mjs and its test.
 #
-# A merge made with the workflow token does not wake publish.yml: that is why `fusionar` runs it
+# A merge made with the workflow token does not wake publish.yml: that is why `merge` runs it
 # by hand afterwards (workflow_dispatch does work with this token), and publish.yml runs the
 # end-to-end tests before publishing (D-302).
 
-name: Aprobar
+name: Approve
 
 on:
   issues:
@@ -22,13 +22,14 @@ permissions:
 
 # One decision at a time per issue, and the running one is not cancelled
 concurrency:
-  group: aprobar-${{ github.event.issue.number }}
+  group: approve-${{ github.event.issue.number }}
   cancel-in-progress: false
 
 jobs:
-  aprobar:
-    # The first filter, so as not to start a machine for every edit of any issue
-    if: github.event.sender.login == 'ellokojavi' && contains(github.event.issue.labels.*.name, 'procesos')
+  approve:
+    # The first filter, so as not to start a machine for every edit of any issue. `procesos` is
+    # the label's name before D-316, for issues opened before it was renamed
+    if: github.event.sender.login == 'ellokojavi' && (contains(github.event.issue.labels.*.name, 'processes') || contains(github.event.issue.labels.*.name, 'procesos'))
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:

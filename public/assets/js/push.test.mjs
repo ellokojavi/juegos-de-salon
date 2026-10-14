@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { webcrypto } from 'node:crypto';
 import { AVISOS_EN_LABS, celular, camino, avisosVisibles, activarAvisos, bytesDeClave, subIdDe, paraGuardar, permiso, clavePublica, LABS_AVISOS_KEY, VAPID_PRUEBA_KEY } from './push.js';
 import { VAPID_PUBLICA } from './vapid.js';
-import { parVapid, conClave } from '../../../tools/push/vapid.mjs';
+import { vapidPair, withKey } from '../../../tools/push/vapid.mjs';
 
 let n = 0;
 const caso = async (nombre, fn) => { await fn(); n++; };
@@ -62,20 +62,20 @@ await caso('la clave de vapid.js manda; sin ella, la de prueba vale solo en el s
 });
 
 await caso('la clave de vapid.mjs: 65 bytes que un navegador acepta (P-256 sin comprimir)', async () => {
-  const { publica, privada } = parVapid();
+  const { publicKey: publica, privateKey: privada } = vapidPair();
   const bytes = bytesDeClave(publica);
   assert.equal(bytes.length, 65);
   assert.equal(bytes[0], 4);
   assert.equal(Buffer.from(privada, 'base64url').length, 32);
   // La misma importación que hace el navegador al suscribirse
   await webcrypto.subtle.importKey('raw', bytes, { name: 'ECDSA', namedCurve: 'P-256' }, true, ['verify']);
-  assert.notEqual(parVapid().publica, publica, 'cada par es nuevo');
+  assert.notEqual(vapidPair().publicKey, publica, 'cada par es nuevo');
 });
 
 await caso('vapid.js: una línea con la pública, y vapid.mjs solo cambia esa línea', () => {
   const texto = readFileSync(new URL('./vapid.js', import.meta.url), 'utf8');
   assert.match(texto, /export const VAPID_PUBLICA = '[A-Za-z0-9_-]*';/);
-  const otro = conClave(texto, 'ABC_-1');
+  const otro = withKey(texto, 'ABC_-1');
   assert.ok(otro.includes("export const VAPID_PUBLICA = 'ABC_-1';"));
   assert.equal(otro.split('\n').length, texto.split('\n').length);
 });

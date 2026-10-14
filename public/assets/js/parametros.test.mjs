@@ -105,7 +105,7 @@ for (const s of [...Object.values(SLUGS_SIN_PAGINA), ...[...GAMES, ...SUELTOS].m
       if (statSync(p).isDirectory()) { recorrer(p); continue; }
       if (!/\.(js|mjs|html)$/.test(f) || /\.test\.mjs$/.test(f)) continue;
       const texto = readFileSync(p, 'utf8');
-      if (texto.includes('Página puente (D-192)')) continue;
+      if (texto.includes('Bridge page (D-192)') || texto.includes('Página puente (D-192)')) continue;
       texto.split('\n').forEach((linea, i) => {
         const codigo = linea.replace(/^\s*(\/\/|\*|\/\*).*$/, '').replace(/\s\/\/\s.*$/, '');
         if (VIEJOS.test(codigo)) malos.push(`${p.slice(RAIZ.length)}:${i + 1}`);

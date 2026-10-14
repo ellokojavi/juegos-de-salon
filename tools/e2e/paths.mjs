@@ -1,186 +1,186 @@
 /**
- * Cómo llegar a cada pantalla de cada juego, sin jugar la partida entera. Lo usan `look.mjs`
- * (una pantalla, para mirarla) y las pruebas de idiomas (todas, en cada idioma: D-199).
+ * How to reach each screen of each game, without playing the whole game. Used by `look.mjs` (one
+ * screen, to look at it) and by the language tests (all of them, in each language: D-199).
  *
- * Cada camino es una lista de trocitos de JS que se corren en la página, uno cada 700 ms; un
- * paso `1` es solo una espera. Se arma con el id del juego ('ahorcado'), no con su carpeta.
+ * Each path is a list of JS snippets run in the page, one every 700 ms; a `1` step is just a
+ * wait. It is keyed by the game's id ('ahorcado'), not by its folder.
  */
 import { SUELTOS } from '../../public/assets/js/games.js';
 
-/* --- Trozos de camino de Batalla Naval (ver el comentario de su entrada) --- */
-const BN_CPU = [
+/* --- Path pieces for Batalla Naval (see the comment on its entry) --- */
+const BS_CPU = [
   `document.querySelectorAll('.mode')[2].click()`,
   `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
   `document.querySelector('#setup-actions .btn--yellow').click()`,
 ];
-const BN_ZARPA = [
+const BS_SAIL = [
   `[...document.querySelectorAll('#place-actions .btn')].find(b=>/azar|random|aleat|zufällig/i.test(b.textContent)).click()`,
   `document.querySelector('#place-sail .btn').click()`,
 ];
-const BN_FRENA = `(()=>{const S=window.__bn.session();clearTimeout(S.cpuTimer);S.cpuTimer='frenado';})()`;
-const BN_FALLA = rol => `(()=>{const S=window.__bn.session(),L=S.layouts['${rol === 'A' ? 'B' : 'A'}'].layout,
+const BS_HOLD = `(()=>{const S=window.__bn.session();clearTimeout(S.cpuTimer);S.cpuTimer='frenado';})()`;
+const BS_MISS = role => `(()=>{const S=window.__bn.session(),L=S.layouts['${role === 'A' ? 'B' : 'A'}'].layout,
   T={carrier:5,battleship:4,cruiser:3,submarine:3,destroyer:2},o=new Set();
   for(const [id,p] of Object.entries(L)) for(let i=0;i<T[id];i++) o.add((p.dir==='h'?p.r:p.r+i)+','+(p.dir==='h'?p.c+i:p.c));
-  for(let r=0;r<10;r++) for(let c=0;c<10;c++) if(!o.has(r+','+c)) return S.transport.send({t:'shot',from:'${rol}',cell:'ABCDEFGHIJ'[c]+(r+1)});})()`;
+  for(let r=0;r<10;r++) for(let c=0;c<10;c++) if(!o.has(r+','+c)) return S.transport.send({t:'shot',from:'${role}',cell:'ABCDEFGHIJ'[c]+(r+1)});})()`;
 
-/* --- La Copa: "Tus copas" sembrada en el almacén de prueba, y la portada con `?test` (D-234) --- */
-const MIAS_SEMBRAR = `const D=864e5, ahora=Date.now(); sessionStorage.setItem('juegos-de-salon:copa:prueba:mias', JSON.stringify([
-  {code:'FGHIJ',nombre:'Javiera',copa:'Los primos de Valparaíso, edición invierno',fin:ahora-2*D},
-  {code:'ABCDE',nombre:'Javiera',copa:'Piratotes 1983',fin:ahora + 3 * D},
-  {code:'KLMNO',nombre:'Javi',copa:'Copa del finde',fin:ahora-5*D}])); location.href='/cup/?test'`;
+/* --- La Copa: "Tus copas" seeded in the test store, and the home page with `?test` (D-234) --- */
+const MINE_SEED = `const D=864e5, now=Date.now(); sessionStorage.setItem('juegos-de-salon:copa:prueba:mias', JSON.stringify([
+  {code:'FGHIJ',nombre:'Javiera',copa:'Los primos de Valparaíso, edición invierno',fin:now-2*D},
+  {code:'ABCDE',nombre:'Javiera',copa:'Piratotes 1983',fin:now + 3 * D},
+  {code:'KLMNO',nombre:'Javi',copa:'Copa del finde',fin:now-5*D}])); location.href='/cup/?test'`;
 
-/* --- Tango: empezar y llenar el tablero con el motor de verdad (ver su entrada) --- */
-const TAN_EMPEZAR = `document.getElementById('btn-empezar').click()`;
-const TAN_LLENAR = choque => `(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
-  const L=p.sol.map((v,i)=>i).filter(i=>p.dadas[i]===undefined), u=${choque}?L.filter(i=>p.sol[i]===2).at(-1):L.at(-1);
+/* --- Tango: start and fill the board with the real engine (see its entry) --- */
+const START = `document.getElementById('btn-empezar').click()`;
+const TANGO_FILL = clash => `(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
+  const L=p.sol.map((v,i)=>i).filter(i=>p.dadas[i]===undefined), u=${clash}?L.filter(i=>p.sol[i]===2).at(-1):L.at(-1);
   const c=i=>document.querySelector('.tan[data-i="'+i+'"]');
   for(const i of L){if(i===u)continue;for(let k=0;k<3&&Number(c(i).dataset.v)!==p.sol[i];k++)c(i).click();}
-  if(${choque})c(u).click();})()`;
+  if(${clash})c(u).click();})()`;
 
 /**
- * Cómo llegar a cada pantalla. Cada paso es un trocito de JS que se corre en la página;
- * si un juego necesita otra cosa, se suma acá y no en un guion nuevo.
+ * How to reach each screen. Each step is a JS snippet run in the page; if a game needs something
+ * else, it is added here and not in a new script.
  */
-/** Siembra el panel con salas, señales y copas, y abre la vista pedida (ver `panel` abajo). */
-const SEMBRAR_PANEL = vista => `(async()=>{const DIA=86400000,ahora=Date.now(),hoy=Math.floor(ahora/DIA);
-      const rooms={ABCD:{createdAt:ahora-4*60000,lastAt:ahora-60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:ahora-4*60000},m2:{t:'bid',at:ahora-60000}}},EFGH:{createdAt:ahora-2*3600000,lastAt:ahora-12*60000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};
-      // Una Batalla Naval como la que confundió al panel (D-138): cada disparo trae su respuesta
-      // automática, y hay dos mensajes de chat. Debe decir 40 jugadas y 2 mensajes de chat.
-      const nave={createdAt:ahora-24*60000,lastAt:ahora-16*60000,game:'batalla-naval',players:{A:{name:'Tomiguel',online:false},B:{name:'SVS',online:false}},messages:{}};
-      for(let i=0;i<40;i++){nave.messages['s'+i]={t:'shot',at:ahora-40*60000+i*30000};nave.messages['r'+i]={t:'reply',at:ahora-40*60000+i*30000+500};}
-      nave.messages.c1={t:'chat',at:ahora-17*60000,text:'x'};nave.messages.c2={t:'chat',at:ahora-16*60000,text:'y'};
-      rooms.CPSV=nave;
-      // Salas jugadas de varios días, con país y ganador, para ver la bitácora y su paginado (D-79).
-      // Van a propósito: un empate, una sala sin registro de ganador (de antes de que se anotara),
-      // una donde nunca entró nadie más y nombres de varios países.
-      const gente=[['Javi','CL'],['Cata','CL'],['Pancho','CL'],['Fran','AR'],['Ana','BR'],['Leo','ES'],['Nico','MX'],['Sofi','PE']];
-      const juegos=['dudo','ahorcado','linea-de-tiempo','toque-y-fama','batalla-naval'];
-      const dias={};
+/** Seeds the panel with rooms, signals and cups, and opens the requested view (see `panel` below). */
+const SEED_PANEL = view => `(async()=>{const DAY=86400000,now=Date.now(),today=Math.floor(now/DAY);
+      const rooms={ABCD:{createdAt:now-4*60000,lastAt:now-60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:now-4*60000},m2:{t:'bid',at:now-60000}}},EFGH:{createdAt:now-2*3600000,lastAt:now-12*60000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};
+      // A Batalla Naval like the one that confused the panel (D-138): each shot brings its automatic
+      // reply, and there are two chat messages. It must say 40 moves and 2 chat messages.
+      const ship={createdAt:now-24*60000,lastAt:now-16*60000,game:'batalla-naval',players:{A:{name:'Tomiguel',online:false},B:{name:'SVS',online:false}},messages:{}};
+      for(let i=0;i<40;i++){ship.messages['s'+i]={t:'shot',at:now-40*60000+i*30000};ship.messages['r'+i]={t:'reply',at:now-40*60000+i*30000+500};}
+      ship.messages.c1={t:'chat',at:now-17*60000,text:'x'};ship.messages.c2={t:'chat',at:now-16*60000,text:'y'};
+      rooms.CPSV=ship;
+      // Rooms played over several days, with country and winner, to see the log and its paging (D-79).
+      // On purpose: a tie, a room with no recorded winner (from before it was recorded), one nobody
+      // else ever joined, and names from several countries.
+      const people=[['Javi','CL'],['Cata','CL'],['Pancho','CL'],['Fran','AR'],['Ana','BR'],['Leo','ES'],['Nico','MX'],['Sofi','PE']];
+      const games=['dudo','ahorcado','linea-de-tiempo','toque-y-fama','batalla-naval'];
+      const byDay={};
       for(let k=0;k<26;k++){
-        const d=hoy-(k%7), code=String.fromCharCode(65+k%26)+'BCD'.slice(0,3);
-        const a=gente[k%gente.length], b=gente[(k+3)%gente.length];
+        const d=today-(k%7), code=String.fromCharCode(65+k%26)+'BCD'.slice(0,3);
+        const a=people[k%people.length], b=people[(k+3)%people.length];
         const lg=k%4===1?'pt':k%4===2?'en':'es';
-        const r={game:juegos[k%juegos.length],at:(d*DIA)+((10+k%12)*3600000),v:'0.33.6',players:{A:a[0],B:b[0]},co:{A:a[1],B:b[1]},...(k%5===4?{}:{l:{A:lg,B:k%6===0?'pt':lg}})};
+        const r={game:games[k%games.length],at:(d*DAY)+((10+k%12)*3600000),v:'0.33.6',players:{A:a[0],B:b[0]},co:{A:a[1],B:b[1]},...(k%5===4?{}:{l:{A:lg,B:k%6===0?'pt':lg}})};
         if(k%7===3) r.end={winner:'tie',at:r.at};
         else if(k%5!==1) r.end={winner:k%2?'A':'B',name:k%2?a[0]:b[0],at:r.at};
         if(k%9===4){ delete r.players.B; delete r.co.B; delete r.end; }
-        (dias[d]=dias[d]||{rooms:{}}).rooms[code]=r;
+        (byDay[d]=byDay[d]||{rooms:{}}).rooms[code]=r;
       }
-      const days={...dias};
-      days[hoy]={...(days[hoy]||{}),rooms:{...((days[hoy]||{}).rooms||{}),ABCD:{game:'dudo',at:ahora-4*60000,players:{A:'Javi',B:'Cata'},co:{A:'CL',B:'CL'},l:{A:'es',B:'pt'},end:{winner:'A',name:'Javi',at:ahora}},EFGH:{game:'juego-nuevo',at:ahora-2*3600000,players:{A:'Fausto'},co:{A:'UY'}},CPSV:{game:'batalla-naval',at:ahora-24*60000,players:{A:'Tomiguel',B:'SVS'},co:{A:'CL',B:'CL'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}};
-      days[hoy-1]={...(days[hoy-1]||{}),local:{'linea-de-tiempo':{solo:{1:7}}},origin:{America__Santiago:5},lang:{'es-CL':5},applang:{es:5},hour:{20:5}};
+      const days={...byDay};
+      days[today]={...(days[today]||{}),rooms:{...((days[today]||{}).rooms||{}),ABCD:{game:'dudo',at:now-4*60000,players:{A:'Javi',B:'Cata'},co:{A:'CL',B:'CL'},l:{A:'es',B:'pt'},end:{winner:'A',name:'Javi',at:now}},EFGH:{game:'juego-nuevo',at:now-2*3600000,players:{A:'Fausto'},co:{A:'UY'}},CPSV:{game:'batalla-naval',at:now-24*60000,players:{A:'Tomiguel',B:'SVS'},co:{A:'CL',B:'CL'}}},local:{dudo:{local:{4:6},cpu:{1:3}},'juego-nuevo':{equipos:{6:5}},ahorcado:{local:{3:4}}},origin:{America__Santiago:12,Europe__Madrid:2},lang:{'es-CL':12,'pt-BR':2},applang:{es:11,pt:2,fr:1},hour:{14:4,21:9}};
+      days[today-1]={...(days[today-1]||{}),local:{'linea-de-tiempo':{solo:{1:7}}},origin:{America__Santiago:5},lang:{'es-CL':5},applang:{es:5},hour:{20:5}};
       
       const {nuevaMeta}=await import('/cup/engine.js');
-      const Z='America/Santiago', fecha=k=>new Date(ahora-k*DIA).toLocaleDateString('en-CA',{timeZone:Z});
-      const nombres=['Javi','Cata','Pancho','Fran','Sofi','Nico','Leo'];
-      const copa=(nombre,dias,hace,n,{lab=false,alias=null,lang='es'}={})=>{
-        const pids=nombres.slice(0,n).map((g,i)=>'p'+String(i).padStart(5,'0'));
-        const meta=nuevaMeta({nombre,dias,inicio:fecha(hace),tz:Z,admin:pids[0],creada:ahora-(Math.max(hace,0)+1)*DIA,lab,alias,lang});
-        // El país de cada inscrito (D-207); el último, de antes de que se guardara, va sin bandera
+      const Z='America/Santiago', dateOf=k=>new Date(now-k*DAY).toLocaleDateString('en-CA',{timeZone:Z});
+      const names=['Javi','Cata','Pancho','Fran','Sofi','Nico','Leo'];
+      const cup=(name,numDays,ago,n,{lab=false,alias=null,lang='es'}={})=>{
+        const pids=names.slice(0,n).map((g,i)=>'p'+String(i).padStart(5,'0'));
+        const meta=nuevaMeta({nombre:name,dias:numDays,inicio:dateOf(ago),tz:Z,admin:pids[0],creada:now-(Math.max(ago,0)+1)*DAY,lab,alias,lang});
+        // Each entrant's country (D-207); the last one, from before it was saved, has no flag
         const co=['CL','CL','AR','CL','PE','MX','ES'];
-        const players=Object.fromEntries(pids.map((p,i)=>[p,{name:nombres[i],at:ahora-(Math.max(hace,0)+1)*DIA+(i+1)*3600000,...(i<n-1?{co:co[i]}:{})}]));
+        const players=Object.fromEntries(pids.map((p,i)=>[p,{name:names[i],at:now-(Math.max(ago,0)+1)*DAY+(i+1)*3600000,...(i<n-1?{co:co[i]}:{})}]));
         const started=[null],results=[null];
-        for(let d=1;d<=dias;d++){
+        for(let d=1;d<=numDays;d++){
           started[d]={};results[d]={};
-          if(ahora<meta.win[d].a)continue;
+          if(now<meta.win[d].a)continue;
           pids.forEach((p,i)=>{
-            const k=(d*7+i*3)%10, hoyDia=ahora<meta.win[d].h;
-            if(hoyDia&&i>=n-2&&k%3===0)return;                         // todavía no lo juega
-            const t0=Math.min(ahora-60000,meta.win[d].a+(2+i+d)*3600000);
+            const k=(d*7+i*3)%10, isToday=now<meta.win[d].h;
+            if(isToday&&i>=n-2&&k%3===0)return;                         // hasn't played it yet
+            const t0=Math.min(now-60000,meta.win[d].a+(2+i+d)*3600000);
             started[d][p]=t0;
-            if(hoyDia&&i===n-1){started[d][p]=ahora-4*60000;return;}  // lo está jugando ahora
-            if(k===7)return;                                           // lo dejó sin terminar
+            if(isToday&&i===n-1){started[d][p]=now-4*60000;return;}  // playing it right now
+            if(k===7)return;                                           // left it unfinished
             const s=[100,89,78,67,56,44,30,20,11,0][k];
             results[d][p]={s,ms:40000+k*23000+i*7000,at:t0+60000+k*20000,r:s+'/100',t:''};
           });
         }
         return {meta,players,started,results};
       };
-      const torneos={OFICI:copa('Copa de la oficina',7,2,5,{alias:'oficina'}),PRIMO:copa('Los primos',3,0,3,{lang:'pt'}),LABOR:copa('Prueba del laboratorio',3,1,2,{lab:true}),AGOST:copa('Copa de agosto',7,20,6,{alias:'agosto'}),FINDE:copa('Copa del finde',3,-2,2)};
-      // En la oficina, Cata jugó el día 2 de comodín y el admin cerró la inscripción: la historia los muestra sin hora
-      torneos.OFICI.wild={p00001:'2'};torneos.OFICI.closed=true;
-      // Partidas sin red con hora (D-140), para la ficha de un juego
-      // Tráfico del sitio (D-208): una semana de visitas, con orígenes, links marcados y páginas
-      for(let k=0;k<7;k++){const d=hoy-k,f=7-k;days[d]=days[d]||{};Object.assign(days[d],{vistas:{inicio:9*f,cup:6*f,hangman:2*f,connections:f,labs:1},entradas:{inicio:5*f,cup:3*f,hangman:f,connections:1},juegan:{inicio:2*f,cup:2*f,hangman:1},ref:{directo:5*f,google_com:2*f,google_cl:f,instagram_com:f,chatgpt_com:1},via:{link:3*f,instagram:1},retorno:{nueva:4*f,vuelve:5*f},disp:{celular:7*f,computador:2*f},pais:{CL:7*f,AR:f,ES:1}});}
-      // Con nombre y final desde D-210: uno jugando, uno que ganó, un solitario terminado y uno sin nombre
-      days[hoy].live={k3p9aaaaaa:{game:'dudo',mode:'cpu',n:1,co:'CL',l:'es',name:'Javi',v:'0.93.0',at:ahora-15*60000,beat:ahora-60000},q8w7aaaaaa:{game:'dudo',mode:'local',n:4,co:'AR',name:'Fran, Leo, Ana, Bia',v:'0.92.1',at:ahora-5*3600000,beat:ahora-4*3600000,fin:{at:ahora-4*3600000,g:'Leo',d:'9 rondas'}},t1t2aaaaaa:{game:'toque-y-fama',mode:'solo',n:1,co:'MX',l:'en',name:'Nico',v:'0.99.0',at:ahora-3*3600000,beat:ahora-3*3600000+120000,fin:{at:ahora-3*3600000+150000,d:'80/100 · 6 intentos · 2:30'}},s0s0aaaaaa:{game:'ahorcado',mode:'solo',n:1,co:'PE',v:'0.90.0',at:ahora-2*DIA,beat:ahora-2*DIA+300000}};
-      // Los días de copa también mandan su señal: el panel no los cuenta entre las partidas de los juegos
-      days[hoy].local.copa={copa:{1:9}};
-      // Los avisos al celular (D-233): mandados por notify.mjs, tocados y aperturas de la app instalada
-      for(let k=0;k<7;k++){const d=hoy-k;Object.assign(days[d],{mandados:{dia:6,plazo:3,...(k===0?{final:4}:{})},aviso:{dia:3,plazo:2},pwa:{android:2,ios:k%2}});}
-      const push={vuelta:ahora-9*60000,vivas:7,torneos:2};
-      // Uno al día (D-230): partidas del modo uno-al-dia y la historia de tres jugadores, con rachas e invitaciones
-      const uad={historia:{},invitados:{sara0001:{u1:{d:hoy-2},u2:{d:hoy-1}}},rachas:{sara0001:{s:9},pedro001:{s:3},ana00001:{s:1},leo00001:{s:31}}};
-      for(let k=0;k<10;k++){const b=(days[hoy-k] ||= {});b.uad={boton:9+k,dado:8+k,jugado:7,repite:2,compartir:3,otro:4,invitar:2,invitacion:1,aceptada:k%2,oferta:2,hora:1,activos:1,ahorano:1,silencio:k%3?0:1};b.vistas={...(b.vistas||{}),today:12+k};b.entradas={...(b.entradas||{}),today:3};b.local ||= {};const g=['reinas','conexiones','dudo','anio'][k%4];((b.local[g] ||= {})['uno-al-dia'] ||= {})[1]=3+(k%3);}
-      for(const [jid,nd] of [['sara0001',9],['pedro001',4],['ana00001',2]])for(let k=0;k<nd;k++)(uad.historia[jid] ||= {})[hoy-k]={j:'reinas',s:60+k};
-      // Salud (D-251): fallas por tipo, errores con su detalle (uno de una versión vieja) y lo que tardó cada página
-      for(let k=0;k<7;k++){const b=days[hoy-k];b.vistas={...(b.vistas||{}),where:8};b.falla={alguna:{cup:2+k%3,hangman:1,...(k===1?{where:3}:{})},js:{cup:1+k%2,hangman:1},promesa:{cup:1},...(k===1?{arranque:{where:2},recurso:{where:3}}:{})};b.listo={inicio:{s1:30,s3:12,s6:3},cup:{s1:10,s3:6,s6:2,s10:1},hangman:{s1:4,s3:2},where:{s3:2,s6:3,s10:2,mas:1}};}
-      const errDe=(k,m,f,p,b,v,n)=>({n,d:{k,m,f,p,b,v,at:ahora}});
-      days[hoy].err={a1:errDe('js',"TypeError: Cannot read properties of undefined (reading 'dia')",'/cup/game.js:1840','cup','chrome129','0.130.0',4),a2:errDe('js',"TypeError: undefined is not an object (evaluating 'c.dia')",'/cup/game.js:1840','cup','ios16','0.130.0',2),b1:errDe('promesa','PERMISSION_DENIED: Permission denied','/cup/store.js:212','cup','safari17','0.130.0',1),c1:errDe('js','ReferenceError: palabras is not defined','/hangman/game.js:88','hangman','samsung25','0.130.0',1)};
-      days[hoy-1].err={d1:errDe('recurso','módulo que no cargó (el de la página)','/where/','where','instagram','0.129.0',3),e1:errDe('js',"SyntaxError: Unexpected token '.'",'/cup/games/where/ui.js:12','where','ios13','0.129.0',2)};
-      days[hoy-3].err={f1:errDe('js','RangeError: Maximum call stack size exceeded','/zip/x.js:5','zip','chrome128','0.128.0',6)};
-      window.__panel.seed({rooms,days,torneos,push,uad,vista:'${vista}'});})()`;
+      const cups={OFICI:cup('Copa de la oficina',7,2,5,{alias:'oficina'}),PRIMO:cup('Los primos',3,0,3,{lang:'pt'}),LABOR:cup('Prueba del laboratorio',3,1,2,{lab:true}),AGOST:cup('Copa de agosto',7,20,6,{alias:'agosto'}),FINDE:cup('Copa del finde',3,-2,2)};
+      // In the office cup, Cata played day 2 with a wildcard and the admin closed sign-up: the history shows them without a time
+      cups.OFICI.wild={p00001:'2'};cups.OFICI.closed=true;
+      // Offline games with a time (D-140), for a game's card
+      // Site traffic (D-208): a week of visits, with origins, tagged links and pages
+      for(let k=0;k<7;k++){const d=today-k,f=7-k;days[d]=days[d]||{};Object.assign(days[d],{vistas:{inicio:9*f,cup:6*f,hangman:2*f,connections:f,labs:1},entradas:{inicio:5*f,cup:3*f,hangman:f,connections:1},juegan:{inicio:2*f,cup:2*f,hangman:1},ref:{directo:5*f,google_com:2*f,google_cl:f,instagram_com:f,chatgpt_com:1},via:{link:3*f,instagram:1},retorno:{nueva:4*f,vuelve:5*f},disp:{celular:7*f,computador:2*f},pais:{CL:7*f,AR:f,ES:1}});}
+      // With name and ending since D-210: one playing, one that won, a finished solo game and one without a name
+      days[today].live={k3p9aaaaaa:{game:'dudo',mode:'cpu',n:1,co:'CL',l:'es',name:'Javi',v:'0.93.0',at:now-15*60000,beat:now-60000},q8w7aaaaaa:{game:'dudo',mode:'local',n:4,co:'AR',name:'Fran, Leo, Ana, Bia',v:'0.92.1',at:now-5*3600000,beat:now-4*3600000,fin:{at:now-4*3600000,g:'Leo',d:'9 rondas'}},t1t2aaaaaa:{game:'toque-y-fama',mode:'solo',n:1,co:'MX',l:'en',name:'Nico',v:'0.99.0',at:now-3*3600000,beat:now-3*3600000+120000,fin:{at:now-3*3600000+150000,d:'80/100 · 6 intentos · 2:30'}},s0s0aaaaaa:{game:'ahorcado',mode:'solo',n:1,co:'PE',v:'0.90.0',at:now-2*DAY,beat:now-2*DAY+300000}};
+      // Cup days also send their signal: the panel doesn't count them among the games' matches
+      days[today].local.copa={copa:{1:9}};
+      // Phone notifications (D-233): sent by notify.mjs, tapped, and openings of the installed app
+      for(let k=0;k<7;k++){const d=today-k;Object.assign(days[d],{mandados:{dia:6,plazo:3,...(k===0?{final:4}:{})},aviso:{dia:3,plazo:2},pwa:{android:2,ios:k%2}});}
+      const push={vuelta:now-9*60000,vivas:7,torneos:2};
+      // Uno al día (D-230): games in the uno-al-dia mode and the history of three players, with streaks and invitations
+      const uad={historia:{},invitados:{sara0001:{u1:{d:today-2},u2:{d:today-1}}},rachas:{sara0001:{s:9},pedro001:{s:3},ana00001:{s:1},leo00001:{s:31}}};
+      for(let k=0;k<10;k++){const b=(days[today-k] ||= {});b.uad={boton:9+k,dado:8+k,jugado:7,repite:2,compartir:3,otro:4,invitar:2,invitacion:1,aceptada:k%2,oferta:2,hora:1,activos:1,ahorano:1,silencio:k%3?0:1};b.vistas={...(b.vistas||{}),today:12+k};b.entradas={...(b.entradas||{}),today:3};b.local ||= {};const g=['reinas','conexiones','dudo','anio'][k%4];((b.local[g] ||= {})['uno-al-dia'] ||= {})[1]=3+(k%3);}
+      for(const [jid,nd] of [['sara0001',9],['pedro001',4],['ana00001',2]])for(let k=0;k<nd;k++)(uad.historia[jid] ||= {})[today-k]={j:'reinas',s:60+k};
+      // Health (D-251): failures by type, errors with their detail (one from an old version) and how long each page took
+      for(let k=0;k<7;k++){const b=days[today-k];b.vistas={...(b.vistas||{}),where:8};b.falla={alguna:{cup:2+k%3,hangman:1,...(k===1?{where:3}:{})},js:{cup:1+k%2,hangman:1},promesa:{cup:1},...(k===1?{arranque:{where:2},recurso:{where:3}}:{})};b.listo={inicio:{s1:30,s3:12,s6:3},cup:{s1:10,s3:6,s6:2,s10:1},hangman:{s1:4,s3:2},where:{s3:2,s6:3,s10:2,mas:1}};}
+      const errOf=(k,m,f,p,b,v,n)=>({n,d:{k,m,f,p,b,v,at:now}});
+      days[today].err={a1:errOf('js',"TypeError: Cannot read properties of undefined (reading 'dia')",'/cup/game.js:1840','cup','chrome129','0.130.0',4),a2:errOf('js',"TypeError: undefined is not an object (evaluating 'c.dia')",'/cup/game.js:1840','cup','ios16','0.130.0',2),b1:errOf('promesa','PERMISSION_DENIED: Permission denied','/cup/store.js:212','cup','safari17','0.130.0',1),c1:errOf('js','ReferenceError: palabras is not defined','/hangman/game.js:88','hangman','samsung25','0.130.0',1)};
+      days[today-1].err={d1:errOf('recurso','módulo que no cargó (el de la página)','/where/','where','instagram','0.129.0',3),e1:errOf('js',"SyntaxError: Unexpected token '.'",'/cup/games/where/ui.js:12','where','ios13','0.129.0',2)};
+      days[today-3].err={f1:errOf('js','RangeError: Maximum call stack size exceeded','/zip/x.js:5','zip','chrome128','0.128.0',6)};
+      window.__panel.seed({rooms,days,torneos:cups,push,uad,vista:'${view}'});})()`;
 
-export const CAMINOS = {
-  /** La Copa con el almacén de prueba (`?test`): la portada y el formulario para crear una. */
+export const PATHS = {
+  /** La Copa with the test store (`?test`): the home page and the form to create one. */
   copa: {
     intro: [],
-    crear: [`document.getElementById('btn-crear').click()`],
-    // "Tus copas" con una en curso y dos terminadas: el interruptor apagado y prendido (D-234)
-    mias: [MIAS_SEMBRAR, `1`],
-    'mias-terminadas': [MIAS_SEMBRAR, `1`, `document.getElementById('ver-terminadas').click()`],
-    // Todas terminadas: "No tienes copas en curso." sobre el interruptor
-    'mias-ninguna': [MIAS_SEMBRAR.replace('ahora + 3 * D', 'ahora - 1 * D'), `1`],
-    // La tabla del día de La Gran Final, con la tarjeta de cinco rondas de cada uno (#259)
-    'final-tabla': [`location.href='/cup/?test&demo=full'`, `1`, `1`,
+    create: [`document.getElementById('btn-crear').click()`],
+    // "Tus copas" with one in progress and two finished: the switch off and on (D-234)
+    mine: [MINE_SEED, `1`],
+    'mine-finished': [MINE_SEED, `1`, `document.getElementById('ver-terminadas').click()`],
+    // All finished: "No tienes copas en curso." above the switch
+    'mine-none': [MINE_SEED.replace('now + 3 * D', 'now - 1 * D'), `1`],
+    // The day table of La Gran Final, with each one's five-round card (#259)
+    'final-table': [`location.href='/cup/?test&demo=full'`, `1`, `1`,
       `[...document.querySelectorAll('.md-fila')].pop().click()`,
       `document.querySelector('.screen.active .fila')?.scrollIntoView({ block: 'start' })`],
-    // Un celular que perdió su asiento con el día abierto: Empezar lo lleva a escribir su PIN,
-    // con su nombre ya elegido (D-285; la prueba entera es cup/seat.mjs)
-    'sentarse-de-nuevo': [`location.href='/cup/?test&demo=player'`, `1`, `1`,
+    // A phone that lost its seat with the day open: Start takes it to type its PIN, with its name
+    // already chosen (D-285; the whole test is cup/seat.mjs)
+    reseat: [`location.href='/cup/?test&demo=player'`, `1`, `1`,
       `(async()=>{const { hashPin } = await import('/cup/engine.js'); const code=__copa.estado.code;
         const k='juegos-de-salon:copa:prueba', db=JSON.parse(localStorage.getItem(k));
         db[code]._keys.javi02 = await hashPin(code, 'javi02', '4321'); db[code]._seats.javi02 = {};
         localStorage.setItem(k, JSON.stringify(db)); location.href='/cup/?'+code+'&test&day=4'})()`,
       `1`, `1`, `window.confirm=()=>true; document.getElementById('btn-empezar').click()`, `1`],
-    // El formulario 🐞 de La Copa, desde la pantalla de la copa (D-306: sin el desplegable del contexto)
-    reporte: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.getElementById('btn-reporte').click()`, `1`],
-    // El formulario de comentarios del laboratorio (labs-idioma.js), en la capa que abre el 🐞 o "Dejar un comentario"
-    comentario: [`(async()=>{const {LOCALES}=await import('/cup/rules.js');const {abrirComentario}=await import('/assets/js/labs-idioma.js');
+    // La Copa's 🐞 form, from the cup's screen (D-306: without the context dropdown)
+    report: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.getElementById('btn-reporte').click()`, `1`],
+    // The lab's feedback form (labs-idioma.js), in the layer the 🐞 or "Dejar un comentario" opens
+    feedback: [`(async()=>{const {LOCALES}=await import('/cup/rules.js');const {abrirComentario}=await import('/assets/js/labs-idioma.js');
       const L=LOCALES[document.documentElement.lang]||LOCALES.es;abrirComentario({T:L.comentario,enviar:async()=>{},contexto:{}});})()`, `1`],
   },
   dudo: {
     intro: [],
-    configuracion: [`document.querySelectorAll('.mode')[0].click()`],
-    // Contra el celular se llega a la mesa sin pantalla de pase de por medio
-    juego: [
+    setup: [`document.querySelectorAll('.mode')[0].click()`],
+    // Against the phone the table is reached without a handoff screen in between
+    game: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
       `document.querySelector('#setup-actions .btn--yellow').click()`,
     ],
-    // Con la pinta elegida aparece el selector de cantidad, que es la parte apretada de la barra
-    apuesta: [
+    // With the face chosen the count selector appears, which is the tight part of the bar
+    bid: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
       `document.querySelector('#setup-actions .btn--yellow').click()`,
       `document.querySelectorAll('.pinta')[4].click()`,
     ],
-    // Se destapa la mesa: se apuesta un disparate y se duda de la respuesta del celular
-    destape: [
+    // The table is revealed: bid something absurd and doubt the phone's answer
+    reveal: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
       `document.querySelector('#setup-actions .btn--yellow').click()`,
       `document.querySelectorAll('.pinta')[5].click()`,
       `document.querySelector('#actions .btn--yellow').click()`,
-      `1`,   // el celular se demora en cantar su apuesta: un paso de espera
+      `1`,   // the phone takes a while to call its bid: a wait step
       `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar|Duvido|Zweifeln/i.test(b.textContent))?.click()`,
     ],
   },
   generala: {
     intro: [],
-    configuracion: [`document.querySelector('[data-mode=local]').click()`],
-    // Jugando solo se llega a la mesa sin pase: un tiro, dos dados guardados y una casilla elegida
-    juego: [
+    setup: [`document.querySelector('[data-mode=local]').click()`],
+    // Playing solo the table is reached without a handoff: a roll, two dice kept and a box chosen
+    game: [
       `document.querySelector('[data-mode=solo]').click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
       `document.getElementById('btn-empezar').click()`,
@@ -188,8 +188,8 @@ export const CAMINOS = {
       `(()=>{const d=document.querySelectorAll('.dado-btn');d[0].click();d[3].click()})()`,
       `document.querySelector('.casilla.libre.vale')?.click() || document.querySelector('.casilla.libre').click()`,
     ],
-    // En un celular: lo que anotó uno y el pase al siguiente (C-9)
-    pase: [
+    // On one phone: what one scored and the handoff to the next (C-9)
+    handoff: [
       `document.querySelector('[data-mode=local]').click()`,
       `(()=>{const n=['Javi','Cata'];[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))})})()`,
       `document.getElementById('btn-empezar').click()`,
@@ -198,15 +198,15 @@ export const CAMINOS = {
       `document.querySelector('.casilla.libre').click()`,
       `document.getElementById('btn-anotar').click()`,
     ],
-    // La generala servida, con dados puestos a mano: gana al tiro
-    servida: [
+    // The generala on the first roll, with dice set by hand: it wins right away
+    served: [
       `document.querySelector('[data-mode=local]').click()`,
       `(()=>{const n=['Javi','Cata'];[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))})})()`,
       `document.getElementById('btn-empezar').click()`,
       `document.querySelector('#handoff .btn').click()`,
       `__generala.session().transport.send({t:'roll',from:'A',d:'44444',k:'00000'})`,
     ],
-    // El final de jugar solo: once turnos anotados en la primera casilla libre
+    // The end of playing solo: eleven turns scored in the first free box
     final: [
       `document.querySelector('[data-mode=solo]').click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
@@ -217,22 +217,22 @@ export const CAMINOS = {
   },
   'cuarto-rey': {
     intro: [],
-    jugadores: [`document.getElementById('btn-go-setup').click()`],
-    // Con seis filas se ve si la lista crece pareja y si la barra de abajo sigue alcanzando
-    'jugadores-6': [
+    players: [`document.getElementById('btn-go-setup').click()`],
+    // With six rows you can see whether the list grows evenly and the bottom bar still fits
+    'players-6': [
       `document.getElementById('btn-go-setup').click()`,
       `document.getElementById('btn-add-player').click()`,
       `document.getElementById('btn-add-player').click()`,
     ],
-    mesa: [
+    table: [
       `document.getElementById('btn-go-setup').click()`,
       `[...document.querySelectorAll('#players-form input')].forEach((i,k)=>{i.value=['Javi','Cata','Pancho','Fran'][k];i.dispatchEvent(new Event('input',{bubbles:true}))})`,
       `document.getElementById('btn-start').click()`,
     ],
-    // El pase (C-9): "¡Salud!" y "Pásale el celular a X" en una sola pantalla. El peor caso: un As
-    // con seis jugadores de nombre largo, que son seis fichas más el pase. Se deja una partida
-    // guardada con el As arriba del mazo y se retoma.
-    pase: [
+    // The handoff (C-9): "¡Salud!" and "Pásale el celular a X" on a single screen. The worst case:
+    // an Ace with six long-named players, which is six chips plus the handoff. A saved game is
+    // left with the Ace on top of the deck and resumed.
+    handoff: [
       `(()=>{const n=['Francisca','Maximiliano','Catalina','Sebastián','Valentina','Bartolomé'];const deck=[{rank:'5',suit:'♣',color:'black'},{rank:'A',suit:'♥',color:'red'}];localStorage.setItem('juegos-de-salon:cuarto-rey:session',JSON.stringify({v:1,game:'cuarto-rey',at:Date.now(),mode:'local',state:{players:n.map((name,i)=>({name,gender:'mfx'[i%3]})),deck,turn:0,kings:0,drawn:0,sorbos:n.map(()=>0),fondos:n.map(()=>0),history:[],current:null,finished:false,victim:null,startedAt:Date.now()}}));location.reload()})()`,
       `document.querySelector('#resume-slot .btn--cyan').click()`,
       `document.getElementById('card').click()`,
@@ -242,16 +242,16 @@ export const CAMINOS = {
   },
   julepe: {
     intro: [],
-    configuracion: [`document.querySelectorAll('.mode')[0].click()`],
-    // Contra el celular se llega a la mesa sin pantalla de pase de por medio
-    declaracion: [
+    setup: [`document.querySelectorAll('.mode')[0].click()`],
+    // Against the phone the table is reached without a handoff screen in between
+    declaration: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
       `document.querySelector('#setup-actions .btn--yellow').click()`,
     ],
-    // El cambio: con una carta marcada, que es cuando la mano se ve más cargada. Los pasos `1`
-    // son esperas: los rivales del aparato declaran y cambian antes, y se demoran a propósito.
-    cambio: [
+    // The swap: with one card marked, which is when the hand looks most crowded. The `1` steps are
+    // waits: the device's rivals declare and swap first, and take their time on purpose.
+    swap: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
       `document.querySelector('#setup-actions .btn--yellow').click()`,
@@ -259,8 +259,8 @@ export const CAMINOS = {
       `1`, `1`, `1`,
       `document.querySelectorAll('#mine .pcard')[0]?.click()`,
     ],
-    // La baza: hasta la primera carta, donde aparecen las apagadas y el porqué de abajo
-    baza: [
+    // The trick: up to the first card, where the dimmed ones and the why below show up
+    trick: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
       `document.querySelector('#setup-actions .btn--yellow').click()`,
@@ -273,31 +273,31 @@ export const CAMINOS = {
   },
   ahorcado: {
     intro: [],
-    configuracion: [`document.querySelectorAll('.mode')[0].click()`],
-    escribir: [
+    setup: [`document.querySelectorAll('.mode')[0].click()`],
+    write: [
       `document.querySelectorAll('.mode')[0].click()`,
       `[...document.querySelectorAll('#setup-form .player-row input')].forEach((i,k)=>{i.value=['Javi','Cata'][k];i.dispatchEvent(new Event('input',{bubbles:true}))})`,
       `document.querySelector('#setup-actions .btn').click()`,
       `document.querySelector('#cover button')?.click()`,
     ],
-    juego: [
+    game: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
       `document.querySelector('#setup-actions .btn').click()`,
     ],
-    'juego-chat': [
+    'game-chat': [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
       `document.querySelector('#setup-actions .btn').click()`,
-      // La sala trae chat; acá se enciende a mano para mirar cómo convive con la barra
+      // The room brings chat; here it is turned on by hand to see how it lives with the bar
       `(()=>{document.body.classList.add('chat-on');const m=document.getElementById('chat');m.className='chat';m.hidden=false;m.innerHTML='<button class="chat-fab">💬</button>'})()`,
     ],
-    resultado: [
+    result: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
       `document.querySelector('#setup-actions .btn').click()`,
-      // Se juega sola hasta el final: acá interesa la pantalla, no la partida. Cada jugada lleva
-      // su número, que es lo que el reductor usa para descartar repetidas.
+      // It plays itself to the end: what matters here is the screen, not the game. Each move
+      // carries its number, which is what the reducer uses to discard repeats.
       `(()=>{const s=window.__ahorcado.view();const w=(s.words.A||'').toUpperCase();
         let n=0; for (const l of new Set(w.split(''))) if (l!==' ')
           window.__ahorcado.session().transport.send({t:'guess',from:'A',letter:l,n:n++,ms:100});})()`,
@@ -305,153 +305,153 @@ export const CAMINOS = {
     ],
   },
   /**
-   * Batalla Naval contra el celular: el celular es siempre quien abre (`starter` es B), así que
-   * para mirar una pantalla concreta hay que mover el turno a mano. `BN_FRENA` le corta el reloj
-   * del disparo y se lo deja tomado, para que no se vuelva a armar; `BN_FALLA(rol)` dispara al
-   * agua del otro, que se sabe dónde está porque las dos flotas viven en la sesión. Así las dos
-   * pantallas de turno salen siempre iguales en vez de depender de dónde apuntó el bot.
+   * Batalla Naval against the phone: the phone always opens (`starter` is B), so to look at a
+   * specific screen the turn has to be moved by hand. `BS_HOLD` cuts the shot timer and leaves it
+   * taken, so it isn't armed again; `BS_MISS(role)` shoots at the other's water, which is known
+   * because both fleets live in the session. That way both turn screens always come out the
+   * same instead of depending on where the bot aimed.
    */
   'batalla-naval': {
     intro: [],
-    // Contra el celular se llega al tablero sin pantalla de pase de por medio
-    colocacion: [...BN_CPU],
-    // Mi turno: la barra en lima y el tablero del rival encendido (D-92)
-    juego: [...BN_CPU, ...BN_ZARPA, BN_FRENA, BN_FALLA('B')],
-    // El turno del rival: la barra apagada y el tablero también (D-92)
-    espera: [...BN_CPU, ...BN_ZARPA, BN_FRENA, BN_FALLA('B'), BN_FALLA('A')],
+    // Against the phone the board is reached without a handoff screen in between
+    placement: [...BS_CPU],
+    // My turn: the bar in lime and the rival's board lit (D-92)
+    game: [...BS_CPU, ...BS_SAIL, BS_HOLD, BS_MISS('B')],
+    // The rival's turn: the bar off and the board too (D-92)
+    waiting: [...BS_CPU, ...BS_SAIL, BS_HOLD, BS_MISS('B'), BS_MISS('A')],
   },
   /**
-   * Toque y Fama jugando solo: el juego 🔢 de La Copa (D-142). Para el resultado se juega
-   * sola: un intento errado y el bueno, que sale del código guardado con el mismo motor.
+   * Toque y Fama playing solo: La Copa's 🔢 game (D-142). For the result it plays itself: one
+   * wrong guess and the right one, which comes from the saved code with the same engine.
    */
   'toque-y-fama': {
     intro: [],
     solo: [`document.querySelectorAll('.mode')[2].click()`],
-    'solo-juego': [`document.querySelectorAll('.mode')[2].click()`, `document.getElementById('btn-solo-empezar').click()`],
-    'solo-resultado': [
+    'solo-game': [`document.querySelectorAll('.mode')[2].click()`, `document.getElementById('btn-solo-empezar').click()`],
+    'solo-result': [
       `document.querySelectorAll('.mode')[2].click()`,
       `document.getElementById('btn-solo-empezar').click()`,
       `(async()=>{const m=await import('../cup/games/number/engine.js');const s=m.generar(__tyf.guardada().codigo,1).secreto;
-        const probar=n=>{for(const d of n)[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent===d).click();document.querySelector('.screen.active .keypad .ok').click()};
-        probar(s==='0123'?'4567':'0123');probar(s);})()`,
+        const guess=n=>{for(const d of n)[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent===d).click();document.querySelector('.screen.active .keypad .ok').click()};
+        guess(s==='0123'?'4567':'0123');guess(s);})()`,
       `document.getElementById('btn-fin').click()`,
-      `1`, `1`, `1`, `1`,   // que pase el confeti
+      `1`, `1`, `1`, `1`,   // let the confetti pass
     ],
   },
   /**
-   * Línea de Tiempo jugando solo: la ⏳ Línea Relámpago de La Copa (D-142). Para el resultado
-   * se juega entera, la primera carta mal y el resto bien, con el mismo motor que la reparte.
+   * Línea de Tiempo playing solo: La Copa's ⏳ Línea Relámpago (D-142). For the result it is
+   * played whole, the first card wrong and the rest right, with the same engine that deals it.
    */
   'linea-de-tiempo': {
     intro: [],
     solo: [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`],
-    'solo-juego': [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`, `document.getElementById('btn-solo-empezar').click()`],
-    'solo-resultado': [
+    'solo-game': [`[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`, `document.getElementById('btn-solo-empezar').click()`],
+    'solo-result': [
       `[...document.querySelectorAll('.mode')].find(m=>/solo|alone|sozinho|allein/i.test(m.textContent)).click()`,
       `document.getElementById('btn-solo-empezar').click()`,
       `(async()=>{const L=await import('../cup/games/timeline/engine.js');const s=__ldt.solo();const p=L.generar(s.codigo,1,{tema:s.tema,excluir:s.skip});
-        let j=[];for(const c of p.mano){const l=L.estado(p,j).linea;const bien=L.huecoCorrecto(l,c);j=[...j,{c:c.id,at:j.length?bien:(bien?0:l.length)}];}
-        const esperar=async f=>{for(let i=0;i<40&&!f();i++)await new Promise(r=>setTimeout(r,50));return f();};
-        for(const x of j){(await esperar(()=>document.getElementById('handoff').hidden&&document.querySelector('#solo-juego .hand .card[data-card="'+x.c+'"]'))).click();
+        let j=[];for(const c of p.mano){const l=L.estado(p,j).linea;const right=L.huecoCorrecto(l,c);j=[...j,{c:c.id,at:j.length?right:(right?0:l.length)}];}
+        const waitFor=async f=>{for(let i=0;i<40&&!f();i++)await new Promise(r=>setTimeout(r,50));return f();};
+        for(const x of j){(await waitFor(()=>document.getElementById('handoff').hidden&&document.querySelector('#solo-juego .hand .card[data-card="'+x.c+'"]'))).click();
           document.querySelector('#solo-juego .line .slot[data-slot="'+x.at+'"]').click();document.getElementById('btn-colocar').click();document.getElementById('handoff').click();}})()`,
-      `1`, `1`, `1`, `1`,   // las nueve jugadas siguen solas mientras tanto
+      `1`, `1`, `1`, `1`,   // the nine moves keep going on their own meanwhile
       `document.getElementById('btn-fin').click()`,
-      `1`, `1`, `1`, `1`,   // que pase el confeti
+      `1`, `1`, `1`, `1`,   // let the confetti pass
     ],
   },
   /**
-   * Tango suelto, el juego ☀️ de La Copa. `juego` es el tablero lleno menos una casilla,
-   * para comparar el sol dado con el jugado (#61); `choque`, lleno con un último sol que choca,
-   * que es el único choque que se ve sin tocar otra casilla (#135).
+   * Tango standalone, La Copa's ☀️ game. `game` is the board full but one cell, to compare the
+   * given sun with the played one (#61); `clash`, full with a last sun that clashes, which is the
+   * only clash visible without touching another cell (#135).
    */
   tango: {
     intro: [],
-    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(false)],
-    choque: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, TAN_LLENAR(true)],
+    game: [START, `1`, `1`, `1`, `1`, TANGO_FILL(false)],
+    clash: [START, `1`, `1`, `1`, `1`, TANGO_FILL(true)],
   },
   /**
-   * 🔍 El caso del día. `pistas` es el caso a medio resolver, con lo que se puede deducir marcado
-   * hasta que hay pistas tachadas solas (D-282) y una más tachada a mano con el ✓.
+   * 🔍 The case of the day. `clues` is the case half solved, with what can be deduced marked
+   * until there are clues crossed out on their own (D-282) and one more crossed out by hand with the ✓.
    */
   caso: {
     intro: [],
-    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
-    pistas: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`,
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
+    clues: [START, `1`, `1`, `1`, `1`, `1`, `1`,
       `(async()=>{const m=await import('/cup/games/case/engine.js');const s=__copa.estado.juego.semilla;const p=m.generar(s,1);
-        const jug=()=>(JSON.parse(localStorage.getItem('juegos-de-salon:diario:caso:'+s)||'null')||{}).jugadas||[];
-        for(let k=0;k<12;k++){const e=m.estado(p,jug());if(m.usadas(p,e.x).size>=3)break;const d=m.deducibles(e.pistas,e.x);const [i,v]=Object.entries(d)[0]||[];if(i===undefined)break;
+        const plays=()=>(JSON.parse(localStorage.getItem('juegos-de-salon:diario:caso:'+s)||'null')||{}).jugadas||[];
+        for(let k=0;k<12;k++){const e=m.estado(p,plays());if(m.usadas(p,e.x).size>=3)break;const d=m.deducibles(e.pistas,e.x);const [i,v]=Object.entries(d)[0]||[];if(i===undefined)break;
           document.querySelector('.cs-persona[data-i="'+i+'"]').click();document.getElementById(+v?'btn-criminal':'btn-inocente').click();}
         [...document.querySelectorAll('.cs-pista:not(.tachada) .tachar')].at(-1)?.click();document.body.click();})()`,
-      `1`, `1`, `1`, `1`,   // que se vayan el sello y el mensaje del acierto
+      `1`, `1`, `1`, `1`,   // let the stamp and the hit message go away
     ],
   },
   /**
-   * El panel del dueño no es un juego, pero se mira igual: `window.__panel.seed` lo dibuja
-   * con datos sembrados, sin entrar con Google ni tocar la base (C-14). Los datos traen a
-   * propósito un juego (`juego-nuevo`), un modo (`equipos`) y un idioma (`fr`) que no están
-   * en el registro: así se ve de una que el panel los muestra igual (C-16).
+   * The owner's panel is not a game, but it is looked at the same way: `window.__panel.seed`
+   * draws it with seeded data, without signing in with Google or touching the database (C-14).
+   * The data deliberately bring a game (`juego-nuevo`), a mode (`equipos`) and a language (`fr`)
+   * that are not in the registry: so you can see at once that the panel shows them anyway (C-16).
    *
-   * Las copas se arman con el motor de verdad (`nuevaMeta`): una a media semana con alguien
-   * jugando ahora, una que empieza hoy, una de laboratorio, una terminada y una por empezar.
-   * Cada toma abre una sección o una ficha por su ruta (D-207); `datos` es la de audiencia.
+   * The cups are built with the real engine (`nuevaMeta`): one mid-week with someone playing
+   * now, one starting today, a lab one, a finished one and one yet to start. Each shot opens a
+   * section or a card by its route (D-207); `data` is the audience one.
    */
   panel: {
-    ...Object.fromEntries([['datos', '/audience'], ['ahora', '/now'], ['resumen', '/now'], ['torneo', '/cup'], ['juegos', '/games'], ['audiencia', '/audience'],
-      ['copa-ficha', '/cup/OFICI'], ['juego-ficha', '/game/liars-dice'], ['sala-ficha', '/room/CPSV'], ['trafico', '/traffic'], ['salud', '/health']].map(([toma, vista]) => [toma, [SEMBRAR_PANEL(vista)]])),
-    // Las otras dos pestañas de la ficha de una copa (D-207)
-    'copa-dias': [SEMBRAR_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
-    'copa-historia': [SEMBRAR_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
+    ...Object.fromEntries([['data', '/audience'], ['now', '/now'], ['summary', '/now'], ['tournament', '/cup'], ['games', '/games'], ['audience', '/audience'],
+      ['cup-card', '/cup/OFICI'], ['game-card', '/game/liars-dice'], ['room-card', '/room/CPSV'], ['traffic', '/traffic'], ['health', '/health']].map(([shot, view]) => [shot, [SEED_PANEL(view)]])),
+    // The other two tabs of a cup's card (D-207)
+    'cup-days': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
+    'cup-history': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
   },
   /**
-   * Reinas, además del tablero recién empezado: con dos jugadas, para ver la fila de ↩️ Deshacer,
-   * 🧹 Borrar todo y 🏳️ Rendirse prendida (D-283), y con Borrar todo armado, su texto más largo.
+   * Reinas, besides the freshly started board: with two moves, to see the row of ↩️ Deshacer,
+   * 🧹 Borrar todo and 🏳️ Rendirse lit (D-283), and with Borrar todo armed, its longest text.
    */
   reinas: {
     intro: [],
-    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
-    jugadas: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.querySelector('.rej[data-i="3"]').click()`],
-    borrar: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.getElementById('btn-borrar').click()`],
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
+    moves: [START, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.querySelector('.rej[data-i="3"]').click()`],
+    clear: [START, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.getElementById('btn-borrar').click()`],
   },
   /**
-   * Los juegos del laboratorio que no son de La Copa se piden por su carpeta: `mirar` abre
-   * `/<clave>/` cuando la clave no es un id del registro: la portada del laboratorio, Agentes
-   * (D-286), Pintaminas (D-289), Rutas rotas (D-293), Números explosivos (D-297) y Loteo (D-310).
+   * The lab games that are not La Copa's are asked for by their folder: `look` opens `/<key>/`
+   * when the key is not an id in the registry: the lab's home page, Agents (D-286), Paint mines
+   * (D-289), Broken routes (D-293), Exploding numbers (D-297) and Plots (D-310).
    */
   labs: {
     intro: [],
-    // La Bodega plegada al título, y con El caso abierto
-    bodega: [`document.getElementById('bodega').scrollIntoView(); 1`],
-    'bodega-abierta': [`document.querySelector('#seccion-caso summary').click(); document.getElementById('bodega').scrollIntoView(); 1`],
+    // La Bodega folded to its title, and with El caso open
+    cellar: [`document.getElementById('bodega').scrollIntoView(); 1`],
+    'cellar-open': [`document.querySelector('#seccion-caso summary').click(); document.getElementById('bodega').scrollIntoView(); 1`],
   },
   'labs/agents': {
     intro: [],
-    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
-    // El resultado (el caso que reportó el dueño, D-309): pasa las cuatro pistas y confirma Terminar
-    resultado: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`,
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
+    // The result (the case the owner reported, D-309): passes the four clues and confirms Terminar
+    result: [START, `1`, `1`, `1`, `1`, `1`, `1`,
       ...Array(14).fill(`document.getElementById('btn-pasar')?.click()`), `1`, `1`, `1`, `1`],
   },
   'labs/paint-mines': {
     intro: [],
-    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
   },
   'labs/routes': {
     intro: [],
-    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
   },
   'labs/exploding-numbers': {
     intro: [],
-    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
   },
   'labs/plots': {
     intro: [],
-    juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`],
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
   },
 };
 
 /**
- * Los juegos sueltos de La Copa que no tienen camino propio (D-199): la antesala y el juego
- * recién empezado. Con esto las pruebas de idiomas recorren todos, y `mirar` también los abre.
+ * La Copa's standalone games that have no path of their own (D-199): the lobby and the freshly
+ * started game. With this the language tests go through all of them, and `look` opens them too.
  */
 for (const { id } of SUELTOS) {
-  CAMINOS[id] ||= { intro: [], juego: [TAN_EMPEZAR, `1`, `1`, `1`, `1`, `1`, `1`] };
+  PATHS[id] ||= { intro: [], game: [START, `1`, `1`, `1`, `1`, `1`, `1`] };
 }

@@ -1,8 +1,8 @@
-import { salida } from '../output.mjs';
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = salida();
+// With several sessions at once, each serves its copy on its own port (D-135)
+const SITE = process.env.SITE || 'http://localhost:8765';
+const OUT = output();
 const b = await launch({ port: 9381, dir: `${OUT}/p`, out: OUT });
 const bv = () => b.evaluate(`JSON.stringify(window.__bn.view())`).then(JSON.parse);
 const click = sel => b.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);
@@ -13,48 +13,48 @@ const shipCells = async role => b.evaluate(`(()=>{const L=__bn.session().layouts
 const missCell = async role => { const cells = await shipCells(role); for (let r = 0; r < 10; r++) for (let c = 0; c < 10; c++) { const n = 'ABCDEFGHIJ'[c] + (r + 1); if (!cells.includes(n)) return n; } };
 const handoffBtn = async () => { await b.evaluate(`document.querySelector('#handoff .btn')?.click(); 1`); await sleep(450); };
 
-await b.go(`${SITIO}/battleship/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/battleship/`);
-console.log('modos:', await b.evaluate(`[...document.querySelectorAll('.mode')].map(m=>m.disabled?'off':'on').join(',')`)); await b.shot('01-intro');
+await b.go(`${SITE}/battleship/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITE}/battleship/`);
+console.log('modes:', await b.evaluate(`[...document.querySelectorAll('.mode')].map(m=>m.disabled?'off':'on').join(',')`)); await b.shot('01-intro');
 // ---- LOCAL ----
 await click('.mode'); await sleep(300); await b.shot('02-setup');
 await b.evaluate(`(()=>{const i=document.querySelectorAll('#setup-form input');i[0].value='Javi';i[1].value='Cata';return 1})()`);
 await click('#setup-actions .btn'); await sleep(400); await b.shot('03-cover');
 await b.cover(); await sleep(200); await b.shot('04-place-empty');
-// colocar a mano el portaaviones en A1 horizontal, girar el siguiente y ponerlo vertical, luego al azar el resto
-console.log('tap A1 (portaaviones):', await tapCell('#place-grid', 'A1'), '| colocados:', await b.evaluate(`document.getElementById('place-count').textContent`));
-await clickText('#place-actions .btn', 'Girar'); console.log('tap A3 vertical (acorazado):', await tapCell('#place-grid', 'A3'), '| colocados:', await b.evaluate(`document.getElementById('place-count').textContent`));
-console.log('tap inválido A2 (superpuesto por el acorazado vertical A3..A6? no, A2 libre) →', await tapCell('#place-grid', 'J10'), 'colocados:', await b.evaluate(`document.getElementById('place-count').textContent`));
+// place the carrier by hand at A1 horizontal, rotate the next one and put it vertical, then the rest at random
+console.log('tap A1 (carrier):', await tapCell('#place-grid', 'A1'), '| placed:', await b.evaluate(`document.getElementById('place-count').textContent`));
+await clickText('#place-actions .btn', 'Girar'); console.log('tap A3 vertical (battleship):', await tapCell('#place-grid', 'A3'), '| placed:', await b.evaluate(`document.getElementById('place-count').textContent`));
+console.log('invalid tap A2 (overlapped by the vertical battleship A3..A6? no, A2 is free) →', await tapCell('#place-grid', 'J10'), 'placed:', await b.evaluate(`document.getElementById('place-count').textContent`));
 await b.shot('05-place-partial');
-// levantar el portaaviones tocándolo y volver a ponerlo en C8
-console.log('levantar A1:', await tapCell('#place-grid', 'B1'), '→', await b.evaluate(`document.getElementById('place-count').textContent`), '| sel:', await b.evaluate(`document.querySelector('.ship-chip.sel')?.textContent`));
-await clickText('#place-actions .btn', 'Girar'); console.log('poner en C8 horizontal:', await tapCell('#place-grid', 'C8'), '→', await b.evaluate(`document.getElementById('place-count').textContent`));
-await clickText('#place-actions .btn', 'azar'); await sleep(200); console.log('al azar →', await b.evaluate(`document.getElementById('place-count').textContent`), '| zarpar habilitado:', await b.evaluate(`!document.querySelector('#place-sail .btn').disabled`));
+// pick up the carrier by tapping it and put it back at C8
+console.log('pick up A1:', await tapCell('#place-grid', 'B1'), '→', await b.evaluate(`document.getElementById('place-count').textContent`), '| sel:', await b.evaluate(`document.querySelector('.ship-chip.sel')?.textContent`));
+await clickText('#place-actions .btn', 'Girar'); console.log('put at C8 horizontal:', await tapCell('#place-grid', 'C8'), '→', await b.evaluate(`document.getElementById('place-count').textContent`));
+await clickText('#place-actions .btn', 'azar'); await sleep(200); console.log('at random →', await b.evaluate(`document.getElementById('place-count').textContent`), '| set sail enabled:', await b.evaluate(`!document.querySelector('#place-sail .btn').disabled`));
 await b.shot('06-place-full');
 await click('#place-sail .btn'); await sleep(600); await b.shot('07-cover-B');
 await b.cover(); await clickText('#place-actions .btn', 'azar'); await click('#place-sail .btn'); await sleep(800);
-console.log('fase:', (await bv()).phase, '| tirador:', (await bv()).shooter, '| handoff visible:', await b.evaluate(`!document.getElementById('handoff').hidden`));
+console.log('phase:', (await bv()).phase, '| shooter:', (await bv()).shooter, '| handoff visible:', await b.evaluate(`!document.getElementById('handoff').hidden`));
 await b.shot('08-handoff-start'); await handoffBtn(); await b.shot('09-play');
-// B (Cata) parte: falla a propósito → pasa a A
+// B (Cata) starts: misses on purpose → passes to A
 let v = await bv(); const missB = await missCell('A');
-console.log('B dispara agua a', missB, await fireAt(missB)); await sleep(500); await b.shot('10-result-pass');
-console.log('handoff texto:', JSON.stringify(await b.evaluate(`document.getElementById('handoff').innerText.replace(/\\n/g,' | ')`)));
-await handoffBtn(); v = await bv(); console.log('ahora tira:', v.shooter);
-const missA = await missCell('B'); console.log('A dispara agua a', missA, await fireAt(missA)); await sleep(500); await handoffBtn();
-// B hunde todo con tiro extra
+console.log('B fires a miss at', missB, await fireAt(missB)); await sleep(500); await b.shot('10-result-pass');
+console.log('handoff text:', JSON.stringify(await b.evaluate(`document.getElementById('handoff').innerText.replace(/\\n/g,' | ')`)));
+await handoffBtn(); v = await bv(); console.log('now shooting:', v.shooter);
+const missA = await missCell('B'); console.log('A fires a miss at', missA, await fireAt(missA)); await sleep(500); await handoffBtn();
+// B sinks everything with extra shots
 const targets = await shipCells('A');
-for (const t of targets) { const r = await fireAt(t); if (r !== 'ok') { console.log('fallo al disparar', t, r); break; } await sleep(150); const vv = await bv(); if (vv.phase !== 'play') break; }
+for (const t of targets) { const r = await fireAt(t); if (r !== 'ok') { console.log('failed to fire', t, r); break; } await sleep(150); const vv = await bv(); if (vv.phase !== 'play') break; }
 await sleep(1200); await b.shot('11-result');
-console.log('resultado:', await b.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent`), '| fase:', (await bv()).phase);
+console.log('result:', await b.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent`), '| phase:', (await bv()).phase);
 await b.evaluate(`document.getElementById('handoff').click(); 1`); await sleep(500);
-console.log('tras cerrar el resultado del último disparo → pantalla:', await b.active());
+console.log('after closing the last shot\'s result → screen:', await b.active());
 await b.evaluate(`document.querySelector('#result-replay summary').click(); 1`); await sleep(300); await b.shot('12-result-replay');
 // ---- CPU ----
-await b.go(`${SITIO}/battleship/`); await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
+await b.go(`${SITE}/battleship/`); await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
 await b.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
 await click('#setup-actions .btn'); await sleep(400); await clickText('#place-actions .btn', 'azar'); await click('#place-sail .btn'); await sleep(2500);
-console.log('cpu: fase', (await bv()).phase, 'tirador', (await bv()).shooter, 'disparos', await b.evaluate(`__bn.match().shots.length`));
+console.log('cpu: phase', (await bv()).phase, 'shooter', (await bv()).shooter, 'shots', await b.evaluate(`__bn.match().shots.length`));
 await b.shot('13-cpu-play');
-// el humano alterna: un acierto (según la flota del bot), luego un fallo, para que el bot juegue
+// the human alternates: a hit (from the bot's fleet), then a miss, so the bot gets to play
 const botCells = await shipCells('B'); let hitIdx = 0; let guard = 0; let missR = 0;
 while (guard++ < 400) {
   const vv = await bv(); if (vv.phase !== 'play') break;
@@ -65,10 +65,10 @@ while (guard++ < 400) {
   else { do { cell = 'ABCDEFGHIJ'[missR % 10] + (Math.floor(missR / 10) + 1); missR++; } while (botCells.includes(cell) || (await b.evaluate(`__bn.match().shots.some(s=>s.from==='A'&&s.cell==='${cell}')`))); }
   await fireAt(cell); await sleep(300);
 }
-// La espera es larga a propósito: el último barco tarda 1,4 s en hundirse antes de que aparezca
-// el resultado (D-93), y encima caen 3,5 s de confeti. El confeti se pinta en un canvas, así que
-// `quieto()` no lo ve y la toma salía con la pantalla tapada de papelitos (D-76).
+// The wait is long on purpose: the last ship takes 1.4 s to sink before the result shows up
+// (D-93), and on top of that 3.5 s of confetti fall. The confetti is painted on a canvas, so
+// `quieto()` doesn't see it and the shot came out with the screen covered in paper bits (D-76).
 await sleep(6000); await b.shot('14-cpu-result');
-console.log('cpu resultado:', await b.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent`), '| disparos totales:', await b.evaluate(`__bn.match().shots.length`));
+console.log('cpu result:', await b.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent`), '| total shots:', await b.evaluate(`__bn.match().shots.length`));
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();

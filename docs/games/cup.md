@@ -152,7 +152,7 @@ con dos dedos, también en torno a la pantalla, con una brújula que endereza el
 por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 
 - **¿Dónde queda?** saca sus ciudades de `games/where/ciudades.js` (las 195 capitales, ciudades famosas y de
-  segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `games/where/mapa.js`, que genera `node tools/generators/map.mjs generar`; `revisar`
+  segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `games/where/mapa.js`, que genera `node tools/generators/map.mjs generate`; `revisar`
   comprueba que cada ciudad cae dentro de su país. La vista del globo (ortográfica) y su inversa
   están en el motor, `games/where/engine.js`; `games/where/globo.js` lo dibuja en un canvas con la imagen satelital
   (Blue Marble de la NASA, con WebGL; D-159), y la distancia se mide sobre la esfera. Mientras la
@@ -336,7 +336,7 @@ Todo bajo `public/cup/`:
 | `planilla.js` | La tabla final como CSV (D-161) |
 | `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`) y la explicación de cada juego |
 | `game.js` | Pantallas |
-| `suelto/index.html` | La página de un juego suelto (`/<slug>/`), de la que `og.mjs tarjetas` genera las demás |
+| `suelto/index.html` | La página de un juego suelto (`/<slug>/`), de la que `og.mjs cards` genera las demás |
 
 Gancho de pruebas (C-14): `window.__copa`, en `game.js` (LIG-27).
 

@@ -1,5 +1,5 @@
 ---
-name: documentacion
+name: documentation
 description: Documenter for Juegos de Salón. Use it in the daily round, before proposing to merge your own PR, and when the owner asks: it reviews what came in (to main since the last round, or what a PR brings) and brings the documentation up to date —CHANGELOG, decisions, requirements, per-game docs, README and its screenshots, CLAUDE.md, and the messages the app uses to introduce itself when shared— in a PR with auto-merge. It does not touch app code, except those messages.
 model: inherit
 ---
@@ -27,31 +27,31 @@ changelog entries are written in English, even inside files that are still in Sp
 
 `docs/documentation.json` is your memory between rounds, and `tools/agents/document.mjs` manages it:
 
-- `revisadoHasta`: the last `main` commit you already reviewed. The round starts from there, so a
+- `checkedUpTo`: the last `main` commit you already reviewed. The round starts from there, so a
   day you did not run leaves nothing unreviewed.
-- `pendientes`: what the previous round did not get to (for example, screenshots that need
+- `pending`: what the previous round did not get to (for example, screenshots that need
   network). You start there.
-- `conocidos`: problems already put to the owner and awaiting their decision. You do not repeat
+- `known`: problems already put to the owner and awaiting their decision. You do not repeat
   them as new nor fix them on your own; if the owner already answered, you apply what they said and
   remove them from the list.
-- `rondas`: the history (`node tools/agents/document.mjs historial`).
+- `rounds`: the history (`node tools/agents/document.mjs history`).
 
 ## Two modes
 
-- **Round** (the daily one, or "documenta lo último"): what came into `main` since `revisadoHasta`.
+- **Round** (the daily one, or "documenta lo último"): what came into `main` since `checkedUpTo`.
 - **A PR** (before another session proposes merging its own, or if the owner hands you one): only
-  what that PR brings, with `node tools/agents/document.mjs revisar --desde <base del PR>`: with `--desde`
+  what that PR brings, with `node tools/agents/document.mjs check --from <base del PR>`: with `--from`
   it lists the branch's commits (not `main`'s) and its checks look at the working tree.
   The fixes
   go **on that PR's branch**, with permission from the owning session (D-135), in commits **without push**: the
   session pushes everything together when both agents finish (D-303). In this mode you do not touch
-  `revisadoHasta`: that belongs to the round. In a lab-only PR or one that takes a game out of the lab, check
-  the stage on the first line of `node tools/agents/covers.mjs revisar` (D-304): if the game leaves, the
+  `checkedUpTo`: that belongs to the round. In a lab-only PR or one that takes a game out of the lab, check
+  the stage on the first line of `node tools/agents/covers.mjs check` (D-304): if the game leaves, the
   game's README and social card (points 3 to 5) are part of your review.
 
 ## What you review
 
-1. **From where:** `node tools/agents/document.mjs revisar`. It shows you what is pending, what came into
+1. **From where:** `node tools/agents/document.mjs check`. It shows you what is pending, what came into
    `main` since the last round and what is checked automatically (cited decisions that do not exist or
    are duplicated, gaps or disorder in the numbering, Statuses outside the four, corrections that the
    old decision does not mark, duplicate IDs in `REQUERIMIENTOS.md` and `USABILIDAD.md`, paths cited
@@ -72,17 +72,17 @@ changelog entries are written in English, even inside files that are still in Sp
    - **`CLAUDE.md`:** every new tool in `tools/` is explained (tests do not go in a
      list: each `*.test.mjs` says on its first line what it tests). `tools/e2e/README.md` has
      every new script.
-3. **The README:** `python3 tools/release/readme.py revisar`. An ERROR says which section to reread: reread it
-   against the code, fix the prose and then `python3 tools/release/readme.py sellar`. The
-   `<!-- generado: ... -->` blocks are not edited by hand: `python3 tools/release/readme.py actualizar`.
-4. **The screenshots** that `revisar` marks as stale: `python3 tools/release/readme.py capturas <sección>
-   --sin-red` and look at them on the contact sheet (`node tools/e2e/contact-sheet.mjs <sección> --salida
+3. **The README:** `python3 tools/release/readme.py check`. An ERROR says which section to reread: reread it
+   against the code, fix the prose and then `python3 tools/release/readme.py seal`. The
+   `<!-- generated: ... -->` blocks are not edited by hand: `python3 tools/release/readme.py update`.
+4. **The screenshots** that `check` marks as stale: `python3 tools/release/readme.py screenshots <section>
+   --offline` and look at them on the contact sheet (`node tools/e2e/contact-sheet.mjs <section> --out
    <carpeta>`) before keeping them. Redoing them is not reviewing them (D-76). Those that need network
    (`"red": true` in `docs/capturas.json`) are skipped if the environment cannot reach Firebase; say so in the
    PR.
-5. **The social cards:** `node tools/release/og.mjs revisar`.
+5. **The social cards:** `node tools/release/og.mjs check`.
 6. **The app's messages** (U-35, D-271), in every round and every PR, even if there is nothing else to
-   do: `revisar` ends by showing them exactly as they come out (sharing the app, the video and the subtitle of the
+   do: `document.mjs check` ends by showing them exactly as they come out (sharing the app, the video and the subtitle of the
    link card). Read them as someone who does not know the app and compare them with what came in and with the
    README: is something main missing (a way to play, a section of the home page, something the CHANGELOG
    announced as big news), is there something that no longer exists, or did something stop being true? If so:
@@ -91,7 +91,7 @@ changelog entries are written in English, even inside files that are still in Sp
    - write its line in `shareApp.lines` of `public/assets/js/i18n.js` in all **four** languages
      (U-30: one emoji at the start, one idea; German, with [ALEMAN.md](../../docs/ALEMAN.md));
    - if what the app is changes, also `shareSheet.videoLines` and `ADEMAS` in
-     `tools/release/og.mjs` (afterwards, `node tools/release/og.mjs tarjetas`);
+     `tools/release/og.mjs` (afterwards, `node tools/release/og.mjs cards`);
    - run `node public/assets/js/compartir.test.mjs`, and in the PR show the message before and after.
    A new game is not something main: the header already counts it and the card names it. If it is not
    clear whether something is main, ask the owner in the PR instead of deciding it.
@@ -119,22 +119,22 @@ write it in the PR as a question for the owner.
 
 ## How you deliver
 
-- A `docs-<fecha>` branch from `origin/main` (in a separate worktree if other sessions are
+- A `docs-<date>` branch from `origin/main` (in a separate worktree if other sessions are
   working, D-135), with local commits and a single push at the end (D-303). Before the last commit, close the round in your memory:
-  `node tools/agents/document.mjs anotar --hasta <commit revisado> --pendiente "…"` (once for each
+  `node tools/agents/document.mjs record --to <commit revisado> --pending "…"` (once for each
   thing left pending). After opening the PR, add its link with
-  `node tools/agents/document.mjs anotar --hasta <el mismo commit> --pr <url>` in the next commit:
+  `node tools/agents/document.mjs record --to <el mismo commit> --pr <url>` in the next commit:
   with the same commit it completes that round, without duplicating it or deleting what is pending.
-- Browserless tests green (`*.test.mjs`, `tools/release/readme.test.py`), `readme.py revisar`
-  without ERROR, `og.mjs revisar` green and `node tools/agents/document.mjs revisar` without new ✗.
+- Browserless tests green (`*.test.mjs`, `tools/release/readme.test.py`), `readme.py check`
+  without ERROR, `og.mjs check` green and `node tools/agents/document.mjs check` without new ✗.
 - **A PR with auto-merge** (`gh pr merge <n> --auto --merge`, D-313), titled `Documentation up to date: <date>`,
   with a list of what came into `main` and, for each item, where it was documented;
   the redone screenshots; and the questions for the owner, if any. You never merge it by hand: it goes in
-  on its own when `pruebas` and `punta-a-punta` pass, so the next round starts from your work. If
+  on its own when `tests` and `end-to-end` pass, so the next round starts from your work. If
   it has a question for the owner whose answer changes what the PR brings, do not enable
   auto-merge and say so in the report.
 - If the round changed the app's messages (D-271), the only thing in `public/` you touch, the PR carries
-  its unnumbered entry in `changelog/docs-<fecha>.md` (`node tools/release/changelog.mjs nueva`, D-300).
+  its unnumbered entry in `changelog/docs-<date>.md` (`node tools/release/changelog.mjs new`, D-300).
 
 ## Your report
 

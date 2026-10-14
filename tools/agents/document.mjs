@@ -1,28 +1,29 @@
 #!/usr/bin/env node
 /**
- * La memoria y las comprobaciones del agente de documentación (D-172). Lo usa el agente en su
- * ronda diaria y lo puede correr cualquier sesión antes de proponer una fusión.
+ * The memory and the checks of the documentation agent (D-172). The agent uses it in its daily
+ * round, and any session can run it before proposing a merge.
  *
- *   node tools/agents/document.mjs revisar [--desde <commit>]   # qué entró y qué falta documentar
- *   node tools/agents/document.mjs anotar --hasta <commit> [--pr <url>] [--pendiente "texto"]…
- *   node tools/agents/document.mjs historial                    # las rondas anteriores y lo pendiente
+ *   node tools/agents/document.mjs check [--from <commit>]   # what came in and what is left to document
+ *   node tools/agents/document.mjs record --to <commit> [--pr <url>] [--pending "text"]…
+ *   node tools/agents/document.mjs history                  # the previous rounds and what is pending
  *
- * `revisar` parte del commit guardado en docs/documentation.json (o de `--desde`), lista lo que
- * entró a main y comprueba lo que se puede comprobar sin leer prosa:
- *   - cada D-n citado en el repo existe en docs/DECISIONES.md, y ninguno está dos veces;
- *   - las decisiones van en orden y sin huecos (un número vacío se anota "(número sin usar)");
- *   - cada decisión tiene un Estado de los cuatro (D-213), y lo que su Estado cita existe;
- *   - si una decisión cambia, corrige o reemplaza a otra, el Estado de la otra la nombra;
- *   - ningún ID de docs/REQUERIMIENTOS.md ni U-n de docs/USABILIDAD.md está dos veces;
- *   - las rutas entre comillas invertidas de las guías (no de la historia) existen;
- *   - cada guion de tools/e2e/ aparece en tools/e2e/README.md;
- *   - la versión publicada tiene su entrada en CHANGELOG.md.
- * Lo demás (que la prosa diga lo que el código hace) lo lee el agente. Sale con 1 si algo falta.
- * Al final muestra los mensajes con que la app se presenta (compartirla, el video y la tarjeta del
- * link, D-271) tal como salen, para que el agente los lea contra lo que entró.
+ * `check` starts from the commit saved in docs/documentation.json (or from `--from`), lists what
+ * came into main and checks what can be checked without reading prose:
+ *   - each D-n cited in the repo exists in docs/DECISIONES.md, and none is there twice;
+ *   - the decisions are in order and without gaps (an empty number is written "(número sin usar)"
+ *     or "(unused number)");
+ *   - each decision has one of the four Statuses (D-213), and what its Status cites exists;
+ *   - if a decision changes, amends or replaces another, the other's Status names it;
+ *   - no ID of docs/REQUERIMIENTOS.md nor U-n of docs/USABILIDAD.md is there twice;
+ *   - the backquoted paths of the guides (not of the history) exist;
+ *   - each script of tools/e2e/ appears in tools/e2e/README.md;
+ *   - the published version has its entry in CHANGELOG.md.
+ * The rest (that the prose says what the code does) the agent reads. Exits with 1 if something is missing.
+ * At the end it shows the messages the app introduces itself with (sharing it, the video and the
+ * link card, D-271) as they come out, so the agent reads them against what came in.
  *
- * `anotar` cierra una ronda: guarda hasta dónde se revisó, el PR y lo que quedó pendiente, que la
- * ronda siguiente muestra primero. Así el agente recuerda lo que no alcanzó a hacer.
+ * `record` closes a round: it saves how far it checked, the PR and what was left pending, which the
+ * next round shows first. That way the agent remembers what it did not get to.
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -32,309 +33,314 @@ import { compartirApp, LO_PRINCIPAL } from '../../public/assets/js/compartir.js'
 import { COMMON } from '../../public/assets/js/i18n.js';
 import { PORTADA } from '../../public/assets/js/games.js';
 
-export const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-export const MEMORIA = join(RAIZ, 'docs/documentation.json');
+export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+export const MEMORY = join(ROOT, 'docs/documentation.json');
 
 /* ------------------------------------------------------------------ */
-/* Comprobaciones puras (las prueba tools/agents/document.test.mjs)         */
+/* Pure checks (tested by tools/agents/document.test.mjs)             */
 /* ------------------------------------------------------------------ */
+
+/** A heading for a number that was never used, in Spanish (before D-316) or English. */
+const UNUSED = /\((número sin usar|unused number)\)/;
 
 /**
- * Los números de decisión que tienen su título "## D-n" en DECISIONES.md, los repetidos, los que
- * faltan entre D-1 y el más alto, y los que llegan fuera de orden (`[n, el anterior]`).
+ * The decision numbers that have their "## D-n" heading in DECISIONES.md, the repeated ones, those
+ * missing between D-1 and the highest, and those that come out of order (`[n, the previous one]`).
  */
-export function decisionesEscritas(decisiones) {
-  const vistos = new Set(), repetidos = new Set(), desordenados = [];
-  let anterior = 0;
-  for (const m of decisiones.matchAll(/^## D-(\d+)\b/gm)) {
+export function writtenDecisions(decisions) {
+  const seen = new Set(), repeated = new Set(), outOfOrder = [];
+  let previous = 0;
+  for (const m of decisions.matchAll(/^## D-(\d+)\b/gm)) {
     const n = Number(m[1]);
-    if (vistos.has(n)) repetidos.add(n);
-    else if (n < anterior) desordenados.push([n, anterior]);
-    vistos.add(n);
-    anterior = Math.max(anterior, n);
+    if (seen.has(n)) repeated.add(n);
+    else if (n < previous) outOfOrder.push([n, previous]);
+    seen.add(n);
+    previous = Math.max(previous, n);
   }
-  const huecos = [];
-  for (let i = 1; i < anterior; i++) if (!vistos.has(i)) huecos.push(i);
-  return { escritas: vistos, repetidos: [...repetidos].sort((a, b) => a - b), huecos, desordenados };
+  const gaps = [];
+  for (let i = 1; i < previous; i++) if (!seen.has(i)) gaps.push(i);
+  return { written: seen, repeated: [...repeated].sort((a, b) => a - b), gaps, outOfOrder };
 }
 
-/** Los IDs repetidos de una lista, en el orden en que se repiten. */
-const repetidosDe = ids => [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
+/** The repeated IDs of a list, in the order they repeat. */
+const repeatedIn = ids => [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
 
-/** Los IDs de REQUERIMIENTOS.md (la primera columna, `| RP-01 |`) que están en más de una fila. */
-export const requerimientosRepetidos = texto => repetidosDe([...texto.matchAll(/^\|\s*([A-Z]+-\d+[a-z]?)\s*\|/gm)].map(m => m[1]));
+/** The IDs of REQUERIMIENTOS.md (the first column, `| RP-01 |`) that are in more than one row. */
+export const repeatedRequirements = text => repeatedIn([...text.matchAll(/^\|\s*([A-Z]+-\d+[a-z]?)\s*\|/gm)].map(m => m[1]));
 
-/** Las reglas de USABILIDAD.md (`**U-n · …`) definidas dos veces. */
-export const usabilidadRepetidas = texto => repetidosDe([...texto.matchAll(/\*\*U-(\d+[a-z]?) ·/g)].map(m => `U-${m[1]}`));
+/** The rules of USABILIDAD.md (`**U-n · …`) defined twice. */
+export const repeatedUsabilityRules = text => repeatedIn([...text.matchAll(/\*\*U-(\d+[a-z]?) ·/g)].map(m => `U-${m[1]}`));
 
 /** Each "## D-n · title" with its Status and Relation (null if missing); Spanish or English labels (D-316). */
-export function entradas(decisiones) {
-  const partes = decisiones.split(/^(?=## D-\d+\b)/m).filter(p => p.startsWith('## D-'));
-  return partes.map(p => {
-    const [titulo] = p.split('\n');
-    const campo = nombre => { const m = p.match(new RegExp(`\\*\\*(?:${nombre}):\\*\\*[ \\t]*([^\\n]*?)[ \\t]*(?: · \\*\\*|$)`, 'm')); return m ? m[1] : null; };
-    return { n: Number(titulo.match(/D-(\d+)/)[1]), titulo, sinUsar: /\(número sin usar\)/.test(titulo), estado: campo('Estado|Status'), relacion: campo('Relación|Relation') };
+export function entries(decisions) {
+  const parts = decisions.split(/^(?=## D-\d+\b)/m).filter(p => p.startsWith('## D-'));
+  return parts.map(p => {
+    const [title] = p.split('\n');
+    const field = name => { const m = p.match(new RegExp(`\\*\\*(?:${name}):\\*\\*[ \\t]*([^\\n]*?)[ \\t]*(?: · \\*\\*|$)`, 'm')); return m ? m[1] : null; };
+    return { n: Number(title.match(/D-(\d+)/)[1]), title, unused: UNUSED.test(title), status: field('Estado|Status'), relation: field('Relación|Relation') };
   });
 }
 
 /**
- * The Status, if it is one of the four of D-213: `{ tipo, por }`, with the D-n that amend or replace
- * it. English (D-316) and Spanish both read; `tipo` is always the Spanish name.
+ * The Status, if it is one of the four of D-213: `{ type, by }`, with the D-n that amend or replace
+ * it. English (D-316) and Spanish both read; `type` is always the English name.
  */
-const EN = { current: 'vigente', revoked: 'derogada', amended: 'corregida', replaced: 'reemplazada' };
-export function leerEstado(estado) {
-  if (estado === 'vigente' || estado === 'derogada') return { tipo: estado, por: [] };
-  if (estado === 'current' || estado === 'revoked') return { tipo: EN[estado], por: [] };
-  const m = (estado || '').match(/^(corregida|reemplazada|amended|replaced) (?:por|by) (D-\d+(?:, D-\d+)*)$/);
-  if (!m || (EN[m[1]] ? !/ by /.test(estado) : !/ por /.test(estado))) return null;
-  return { tipo: EN[m[1]] || m[1], por: [...m[2].matchAll(/D-(\d+)/g)].map(x => Number(x[1])) };
+const ES = { vigente: 'current', derogada: 'revoked', corregida: 'amended', reemplazada: 'replaced' };
+export function readStatus(status) {
+  if (status === 'current' || status === 'revoked') return { type: status, by: [] };
+  if (status === 'vigente' || status === 'derogada') return { type: ES[status], by: [] };
+  const m = (status || '').match(/^(corregida|reemplazada|amended|replaced) (?:por|by) (D-\d+(?:, D-\d+)*)$/);
+  if (!m || (ES[m[1]] ? !/ por /.test(status) : !/ by /.test(status))) return null;
+  return { type: ES[m[1]] || m[1], by: [...m[2].matchAll(/D-(\d+)/g)].map(x => Number(x[1])) };
 }
 
 /**
- * Las decisiones que una Relación dice que cambia, corrige o reemplaza. Cuenta lo que viene después
- * del verbo hasta el verbo siguiente o el punto y coma: "corrige D-75 (el alto) y ajusta D-76" es
- * solo D-75; "D-176 cambia la invitación" no es nada (ahí D-176 es quien cambia).
+ * The decisions a Relation says it changes, amends or replaces. It counts what comes after the
+ * verb up to the next verb or the semicolon: "corrige D-75 (el alto) y ajusta D-76" is only D-75;
+ * "D-176 cambia la invitación" is nothing (there D-176 is the one that changes).
  */
-const VERBOS = /\b(cambia|corrige|reemplaza|amplía|ajusta|acota|completa|cierra|deroga|revisa|ordena|quita|saca|sube|es excepción|changes|amends|replaces|extends|adjusts|narrows|completes|closes|revokes|revises|reorders|removes|is an exception to)\b/;
-export function corregidas(relacion) {
+const VERBS = /\b(cambia|corrige|reemplaza|amplía|ajusta|acota|completa|cierra|deroga|revisa|ordena|quita|saca|sube|es excepción|changes|amends|replaces|extends|adjusts|narrows|completes|closes|revokes|revises|reorders|removes|is an exception to)\b/;
+export function amendedBy(relation) {
   const n = new Set();
-  for (const clausula of (relacion || '').split(';')) {
-    const trozos = clausula.split(new RegExp(VERBOS.source, 'g'));
-    // split con un grupo deja [antes, verbo, después, verbo, después…]
-    for (let i = 1; i < trozos.length; i += 2) {
-      if (!/^(cambia|corrige|reemplaza|changes|amends|replaces)$/.test(trozos[i])) continue;
-      for (const m of trozos[i + 1].matchAll(/\bD-(\d+)\b/g)) n.add(Number(m[1]));
+  for (const clause of (relation || '').split(';')) {
+    const pieces = clause.split(new RegExp(VERBS.source, 'g'));
+    // split with a group leaves [before, verb, after, verb, after…]
+    for (let i = 1; i < pieces.length; i += 2) {
+      if (!/^(cambia|corrige|reemplaza|changes|amends|replaces)$/.test(pieces[i])) continue;
+      for (const m of pieces[i + 1].matchAll(/\bD-(\d+)\b/g)) n.add(Number(m[1]));
     }
   }
   return [...n];
 }
 
-/** Lo que está mal en los Estados y Relaciones de DECISIONES.md (D-213). */
-export function problemasDeEstado(decisiones) {
-  const todas = entradas(decisiones), problemas = [];
-  const porNumero = new Map(todas.map(e => [e.n, e]));
-  for (const e of todas) {
-    if (e.sinUsar) continue;
-    const estado = leerEstado(e.estado);
-    if (e.estado === null) problemas.push(`D-${e.n} no tiene **Estado:** en docs/DECISIONES.md`);
-    else if (!estado) problemas.push(`D-${e.n} tiene un Estado que no es de los cuatro: "${e.estado}"`);
-    else for (const x of estado.por) if (!porNumero.has(x) || porNumero.get(x).sinUsar) problemas.push(`D-${e.n} está ${estado.tipo} por D-${x}, que no existe`);
-    for (const x of corregidas(e.relacion)) {
-      const otra = porNumero.get(x);
-      if (!otra || otra.sinUsar || x === e.n) continue;
-      const suyo = leerEstado(otra.estado);
-      if (!suyo || !['corregida', 'reemplazada'].includes(suyo.tipo) || !suyo.por.includes(e.n)) {
-        problemas.push(`D-${e.n} cambia, corrige o reemplaza D-${x}, y el Estado de D-${x} no la nombra ("${otra.estado}")`);
+/** What is wrong in the Statuses and Relations of DECISIONES.md (D-213). */
+export function statusProblems(decisions) {
+  const all = entries(decisions), problems = [];
+  const byNumber = new Map(all.map(e => [e.n, e]));
+  for (const e of all) {
+    if (e.unused) continue;
+    const status = readStatus(e.status);
+    if (e.status === null) problems.push(`D-${e.n} has no **Status:** in docs/DECISIONES.md`);
+    else if (!status) problems.push(`D-${e.n} has a Status that is not one of the four: "${e.status}"`);
+    else for (const x of status.by) if (!byNumber.has(x) || byNumber.get(x).unused) problems.push(`D-${e.n} is ${status.type} by D-${x}, which does not exist`);
+    for (const x of amendedBy(e.relation)) {
+      const other = byNumber.get(x);
+      if (!other || other.unused || x === e.n) continue;
+      const its = readStatus(other.status);
+      if (!its || !['amended', 'replaced'].includes(its.type) || !its.by.includes(e.n)) {
+        problems.push(`D-${e.n} changes, amends or replaces D-${x}, and the Status of D-${x} does not name it ("${other.status}")`);
       }
     }
   }
-  return problemas;
+  return problems;
 }
 
 /**
- * Las rutas del repo citadas entre comillas invertidas: empiezan por una carpeta del repo y no son
- * moldes (`<carpeta>`, `*`, `{a,b}`, `…`) ni frases. Sin `:línea`, `#ancla` ni `?consulta`. Los
- * bloques de código no cuentan: ahí van comandos, no citas.
+ * The repo paths cited between backquotes: they start with a repo folder and are not templates
+ * (`<folder>`, `*`, `{a,b}`, `…`) nor phrases. Without `:line`, `#anchor` or `?query`. Code
+ * blocks do not count: commands go there, not citations.
  */
-const CARPETAS = /^(public|tools|docs|firebase|marketing|\.github|\.claude)\//;
-export const rutasCitadas = texto => [...new Set([...texto.replace(/```[\s\S]*?```/g, '').matchAll(/`([^`\n]+)`/g)]
+const FOLDERS = /^(public|tools|docs|firebase|marketing|\.github|\.claude)\//;
+export const citedPaths = text => [...new Set([...text.replace(/```[\s\S]*?```/g, '').matchAll(/`([^`\n]+)`/g)]
   .map(m => m[1])
-  .filter(r => CARPETAS.test(r) && !/[\s<*{…]/.test(r))
+  .filter(r => FOLDERS.test(r) && !/[\s<*{…]/.test(r))
   .map(r => r.replace(/[?#].*$/, '').replace(/:\d.*$/, '')))];
 
-/** Los D-n citados en un texto. */
-export const decisionesCitadas = texto => new Set([...texto.matchAll(/\bD-(\d+)\b/g)].map(m => Number(m[1])));
+/** The D-n cited in a text. */
+export const citedDecisions = text => new Set([...text.matchAll(/\bD-(\d+)\b/g)].map(m => Number(m[1])));
 
-/** Lo que falta de `lista` en `texto` (por nombre de archivo, con o sin ruta). */
-// Un guion de punta a punta se nombra desde tools/e2e/ ("hangman/local.mjs"); los demás, por su ruta o su nombre
-const corto = f => (f.startsWith('tools/e2e/') ? f.slice('tools/e2e/'.length) : f.split('/').pop());
-export const sinMencionar = (lista, texto) => lista.filter(f => !texto.includes(f) && !texto.includes(corto(f)));
+/** What is missing from `list` in `text` (by file name, with or without the path). */
+// An end-to-end script is named from tools/e2e/ ("hangman/local.mjs"); the others, by their path or name
+const short = f => (f.startsWith('tools/e2e/') ? f.slice('tools/e2e/'.length) : f.split('/').pop());
+export const notMentioned = (list, text) => list.filter(f => !text.includes(f) && !text.includes(short(f)));
 
-/** ¿CHANGELOG.md tiene la entrada "## <versión>"? */
-export const changelogTiene = (changelog, version) => new RegExp(`^## ${version.replace(/\./g, '\\.')}\\b`, 'm').test(changelog);
+/** Does CHANGELOG.md have the entry "## <version>"? */
+export const changelogHas = (changelog, version) => new RegExp(`^## ${version.replace(/\./g, '\\.')}\\b`, 'm').test(changelog);
 
-/** La versión estampada en el importmap de la portada (`?v=0.81.0`). */
-export const versionDe = html => (html.match(/\?v=(\d+\.\d+\.\d+)/) || [])[1] || null;
+/** The version stamped in the cover page's importmap (`?v=0.81.0`). */
+export const versionOf = html => (html.match(/\?v=(\d+\.\d+\.\d+)/) || [])[1] || null;
 
-/** Una memoria vacía, para la primera ronda. */
-export const memoriaNueva = () => ({ revisadoHasta: null, pendientes: [], conocidos: [], rondas: [] });
+/** An empty memory, for the first round. */
+export const newMemory = () => ({ checkedUpTo: null, pending: [], known: [], rounds: [] });
 
-/** Separa lo nuevo de lo ya conocido: `conocidos` son problemas anotados que esperan al dueño. */
-export const separar = (problemas, conocidos = []) => ({
-  nuevos: problemas.filter(p => !conocidos.includes(p)),
-  viejos: problemas.filter(p => conocidos.includes(p)),
+/** Separates the new from the already known: `known` are recorded problems waiting for the owner. */
+export const split = (problems, known = []) => ({
+  fresh: problems.filter(p => !known.includes(p)),
+  old: problems.filter(p => known.includes(p)),
 });
 
 /**
- * Cierra una ronda: avanza hasta dónde se revisó y reemplaza lo pendiente. Si la última ronda ya
- * llegó a ese mismo commit, es la misma ronda: se completa (el link del PR, que se sabe después de
- * abrirlo) en vez de duplicarse, y lo pendiente solo cambia si se anota algo.
+ * Closes a round: advances how far it checked and replaces what is pending. If the last round
+ * already reached that same commit, it is the same round: it is completed (the PR link, which is
+ * known after opening it) instead of duplicated, and what is pending only changes if something is recorded.
  */
-export function anotarRonda(memoria, { fecha, desde, hasta, pr = null, pendientes = [] }) {
-  const rondas = memoria.rondas || [];
-  const ultima = rondas.at(-1);
-  if (ultima && ultima.hasta === hasta) {
-    const suyos = pendientes.length ? pendientes : ultima.pendientes || [];
+export function recordRound(memory, { date, from, to, pr = null, pending = [] }) {
+  const rounds = memory.rounds || [];
+  const last = rounds.at(-1);
+  if (last && last.to === to) {
+    const its = pending.length ? pending : last.pending || [];
     return {
-      ...memoria,
-      revisadoHasta: hasta,
-      pendientes: pendientes.length ? pendientes : memoria.pendientes || [],
-      rondas: [...rondas.slice(0, -1), { ...ultima, pr: pr || ultima.pr, pendientes: suyos }],
+      ...memory,
+      checkedUpTo: to,
+      pending: pending.length ? pending : memory.pending || [],
+      rounds: [...rounds.slice(0, -1), { ...last, pr: pr || last.pr, pending: its }],
     };
   }
   return {
-    ...memoria,
-    revisadoHasta: hasta,
-    pendientes,
-    rondas: [...rondas, { fecha, desde, hasta, pr, pendientes }].slice(-60),
+    ...memory,
+    checkedUpTo: to,
+    pending,
+    rounds: [...rounds, { date, from, to, pr, pending }].slice(-60),
   };
 }
 
-/** Lo que muestra `revisar`: una ronda mira main desde la memoria; un PR, su rama desde la base. */
-export const rango = ({ desde, memoria, main, head }) => (desde
-  ? { inicio: desde, punta: head, donde: 'esta rama' }
-  : { inicio: memoria.revisadoHasta, punta: main, donde: 'main' });
+/** What `check` shows: a round looks at main from the memory; a PR, its branch from the base. */
+export const range = ({ from, memory, main, head }) => (from
+  ? { start: from, tip: head, where: 'this branch' }
+  : { start: memory.checkedUpTo, tip: main, where: 'main' });
 
 /* ------------------------------------------------------------------ */
-/* Con el repo                                                         */
+/* With the repo                                                       */
 /* ------------------------------------------------------------------ */
 
-const git = (...args) => execFileSync('git', args, { cwd: RAIZ, encoding: 'utf8' }).trim();
-const leer = f => readFileSync(join(RAIZ, f), 'utf8');
+const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
+const read = f => readFileSync(join(ROOT, f), 'utf8');
 
-export function leerMemoria() {
-  if (!existsSync(MEMORIA)) return memoriaNueva();
-  const m = JSON.parse(readFileSync(MEMORIA, 'utf8'));
-  return { ...memoriaNueva(), ...m };
+export function readMemory() {
+  if (!existsSync(MEMORY)) return newMemory();
+  const m = JSON.parse(readFileSync(MEMORY, 'utf8'));
+  return { ...newMemory(), ...m };
 }
-const guardarMemoria = m => writeFileSync(MEMORIA, JSON.stringify(m, null, 2) + '\n');
+const saveMemory = m => writeFileSync(MEMORY, JSON.stringify(m, null, 2) + '\n');
 
-/** La punta de main: la remota si existe (lo que está publicado), si no la local. */
-function puntaMain() {
-  for (const r of ['origin/main', 'main']) { try { return git('rev-parse', r); } catch (_) { /* la siguiente */ } }
+/** The tip of main: the remote one if it exists (what is published), otherwise the local one. */
+function mainTip() {
+  for (const r of ['origin/main', 'main']) { try { return git('rev-parse', r); } catch (_) { /* the next one */ } }
   return git('rev-parse', 'HEAD');
 }
 
-/** Todo lo que se puede comprobar sin leer prosa. Devuelve una lista de problemas. */
-export function comprobar() {
-  const problemas = [];
-  const archivos = git('ls-files').split('\n');
-  const textos = archivos.filter(f => /\.(js|mjs|py|md|json|html|css)$/.test(f) && !f.startsWith('docs/screenshots/'));
+/** Everything that can be checked without reading prose. Returns a list of problems. */
+export function runChecks() {
+  const problems = [];
+  const files = git('ls-files').split('\n');
+  const texts = files.filter(f => /\.(js|mjs|py|md|json|html|css)$/.test(f) && !f.startsWith('docs/screenshots/'));
 
-  // Decisiones citadas que no existen, y repetidas
-  const { escritas, repetidos } = decisionesEscritas(leer('docs/DECISIONES.md'));
-  for (const n of repetidos) problemas.push(`D-${n} está dos veces en docs/DECISIONES.md`);
-  const faltan = new Map();
-  for (const f of textos) {
-    for (const n of decisionesCitadas(leer(f))) if (!escritas.has(n)) faltan.set(n, [...(faltan.get(n) || []), f]);
+  // Cited decisions that do not exist, and repeated ones
+  const { written, repeated } = writtenDecisions(read('docs/DECISIONES.md'));
+  for (const n of repeated) problems.push(`D-${n} is twice in docs/DECISIONES.md`);
+  const missing = new Map();
+  for (const f of texts) {
+    for (const n of citedDecisions(read(f))) if (!written.has(n)) missing.set(n, [...(missing.get(n) || []), f]);
   }
-  for (const [n, fs] of [...faltan].sort((a, b) => a[0] - b[0])) problemas.push(`D-${n} se cita (${fs.slice(0, 3).join(', ')}${fs.length > 3 ? '…' : ''}) y no está en docs/DECISIONES.md`);
+  for (const [n, fs] of [...missing].sort((a, b) => a[0] - b[0])) problems.push(`D-${n} is cited (${fs.slice(0, 3).join(', ')}${fs.length > 3 ? '…' : ''}) and is not in docs/DECISIONES.md`);
 
-  // Numeración, Estados y correcciones sin marcar (D-213)
-  const { huecos, desordenados } = decisionesEscritas(leer('docs/DECISIONES.md'));
-  // Un número que falta aquí puede ser el de un PR abierto (CLAUDE.md, D-135): ese no es un hueco
-  const ramas = git('for-each-ref', '--format=%(refname)', 'refs/remotes').split('\n').filter(r => r && !r.endsWith('/HEAD'));
-  // …o uno reservado con `decision.mjs reservar` (D-301): su rama `reserva/D-n` dice que alguien lo está escribiendo
-  const enOtraRama = n => ramas.some(r => r.endsWith(`/reserva/D-${n}`)) || (() => { try { return !!git('grep', '-l', '-E', `^## D-[0]*${n} `, ...ramas, '--', 'docs/DECISIONES.md'); } catch (_) { return false; } })();
-  for (const n of huecos.filter(n => !enOtraRama(n))) problemas.push(`D-${n} falta en docs/DECISIONES.md: un número que no se usó se anota "## D-${n} · (número sin usar)"`);
-  for (const [n, antes] of desordenados) problemas.push(`D-${n} está fuera de orden en docs/DECISIONES.md (viene después de D-${antes})`);
-  problemas.push(...problemasDeEstado(leer('docs/DECISIONES.md')));
+  // Numbering, Statuses and unmarked amendments (D-213)
+  const { gaps, outOfOrder } = writtenDecisions(read('docs/DECISIONES.md'));
+  // A number missing here may be that of an open PR (CLAUDE.md, D-135): that is not a gap
+  const branches = git('for-each-ref', '--format=%(refname)', 'refs/remotes').split('\n').filter(r => r && !r.endsWith('/HEAD'));
+  // …or one reserved with `decision.mjs reserve` (D-301): its `reserve/D-n` branch (`reserva/D-n`
+  // before D-316) says someone is writing it
+  const inOtherBranch = n => branches.some(r => r.endsWith(`/reserve/D-${n}`) || r.endsWith(`/reserva/D-${n}`)) || (() => { try { return !!git('grep', '-l', '-E', `^## D-[0]*${n} `, ...branches, '--', 'docs/DECISIONES.md'); } catch (_) { return false; } })();
+  for (const n of gaps.filter(n => !inOtherBranch(n))) problems.push(`D-${n} is missing from docs/DECISIONES.md: a number that was not used is written "## D-${n} · (unused number)"`);
+  for (const [n, before] of outOfOrder) problems.push(`D-${n} is out of order in docs/DECISIONES.md (it comes after D-${before})`);
+  problems.push(...statusProblems(read('docs/DECISIONES.md')));
 
-  // IDs repetidos
-  for (const id of requerimientosRepetidos(leer('docs/REQUERIMIENTOS.md'))) problemas.push(`${id} está en más de una fila de docs/REQUERIMIENTOS.md`);
-  for (const id of usabilidadRepetidas(leer('docs/USABILIDAD.md'))) problemas.push(`${id} está dos veces en docs/USABILIDAD.md`);
+  // Repeated IDs
+  for (const id of repeatedRequirements(read('docs/REQUERIMIENTOS.md'))) problems.push(`${id} is in more than one row of docs/REQUERIMIENTOS.md`);
+  for (const id of repeatedUsabilityRules(read('docs/USABILIDAD.md'))) problems.push(`${id} is twice in docs/USABILIDAD.md`);
 
-  // Rutas que no existen, en las guías de hoy (DECISIONES, CHANGELOG y REQUERIMIENTOS son historia)
-  const guias = archivos.filter(f => /^(CLAUDE\.md|CONTRIBUTING\.md|docs\/(CANONES|AGREGAR-JUEGO|USABILIDAD|PANEL)\.md|docs\/games\/[^/]+\.md|\.claude\/agents\/[^/]+\.md)$/.test(f));
-  for (const f of guias) {
-    for (const r of rutasCitadas(leer(f))) if (!existsSync(join(RAIZ, r))) problemas.push(`${f} cita \`${r}\`, que no existe`);
+  // Paths that do not exist, in today's guides (DECISIONES, CHANGELOG and REQUERIMIENTOS are history)
+  const guides = files.filter(f => /^(CLAUDE\.md|CONTRIBUTING\.md|docs\/(CANONES|AGREGAR-JUEGO|USABILIDAD|PANEL)\.md|docs\/games\/[^/]+\.md|\.claude\/agents\/[^/]+\.md)$/.test(f));
+  for (const f of guides) {
+    for (const r of citedPaths(read(f))) if (!existsSync(join(ROOT, r))) problems.push(`${f} cites \`${r}\`, which does not exist`);
   }
 
-  // Guiones de punta a punta que su README no nombra
-  const guiones = archivos.filter(f => /^tools\/e2e\/.+\.mjs$/.test(f) && !/cdp\.mjs$/.test(f));
-  for (const f of sinMencionar(guiones, leer('tools/e2e/README.md'))) problemas.push(`el guion ${f} no está en tools/e2e/README.md`);
+  // End-to-end scripts that its README does not name
+  const scripts = files.filter(f => /^tools\/e2e\/.+\.mjs$/.test(f) && !/cdp\.mjs$/.test(f));
+  for (const f of notMentioned(scripts, read('tools/e2e/README.md'))) problems.push(`the script ${f} is not in tools/e2e/README.md`);
 
-  // La versión publicada tiene su entrada
-  const version = versionDe(leer('public/index.html'));
-  if (version && !changelogTiene(leer('CHANGELOG.md'), version)) problemas.push(`la versión ${version} no tiene entrada en CHANGELOG.md`);
+  // The published version has its entry
+  const version = versionOf(read('public/index.html'));
+  if (version && !changelogHas(read('CHANGELOG.md'), version)) problems.push(`version ${version} has no entry in CHANGELOG.md`);
 
-  return problemas;
+  return problems;
 }
 
 /**
- * Los mensajes con que la app se presenta, tal como salen en español (D-271): el de compartirla
- * (el mismo en el celular y en el computador), el del video y la bajada de la tarjeta del link. Si
- * entró algo principal que no nombran, se suma a LO_PRINCIPAL y a los cuatro idiomas.
+ * The messages the app introduces itself with, as they come out in Spanish (D-271): the one for
+ * sharing it (the same on the phone and on the computer), the video's and the link card's
+ * subtitle. If something main came in that they do not name, it is added to LO_PRINCIPAL and to
+ * the four languages.
  */
-function mensajesApp() {
+function appMessages() {
   const C = COMMON.es;
-  const { texto } = compartirApp({ C, lang: 'es', juegos: PORTADA.filter(g => g.available).length });
-  const bajada = readFileSync(join(RAIZ, 'public/index.html'), 'utf8').match(/<meta name="description" content="([^"]*)"/)?.[1];
-  const sangria = t => t.split('\n').map(l => `    ${l}`).join('\n');
-  console.log('\nAsí se presenta la app (D-271). ¿Entró algo principal que no nombra?');
-  console.log(`  Lo principal: ${LO_PRINCIPAL.map(p => `${p.emoji} ${p.que}`).join(' · ')}`);
-  console.log(`  Compartir la app (shareApp en i18n.js):\n${sangria(texto)}`);
-  console.log(`  El video (shareSheet.videoLines):\n${sangria(C.shareSheet.videoLines.join('\n'))}`);
-  console.log(`  La tarjeta del link (og.mjs):\n${sangria(bajada || '(sin bajada)')}`);
+  const { texto: text } = compartirApp({ C, lang: 'es', juegos: PORTADA.filter(g => g.available).length });
+  const subtitle = readFileSync(join(ROOT, 'public/index.html'), 'utf8').match(/<meta name="description" content="([^"]*)"/)?.[1];
+  const indent = t => t.split('\n').map(l => `    ${l}`).join('\n');
+  console.log('\nThis is how the app introduces itself (D-271). Did something main come in that it does not name?');
+  console.log(`  The main things: ${LO_PRINCIPAL.map(p => `${p.emoji} ${p.que}`).join(' · ')}`);
+  console.log(`  Sharing the app (shareApp in i18n.js):\n${indent(text)}`);
+  console.log(`  The video (shareSheet.videoLines):\n${indent(C.shareSheet.videoLines.join('\n'))}`);
+  console.log(`  The link card (og.mjs):\n${indent(subtitle || '(no subtitle)')}`);
 }
 
-function revisar(desde) {
-  const m = leerMemoria();
-  // Con --desde es el modo PR: lo que trae esta rama desde su base, no lo que entró a main
-  const { inicio: pedido, punta, donde } = rango({ desde, memoria: m, main: puntaMain(), head: git('rev-parse', 'HEAD') });
-  const inicio = pedido ? git('rev-parse', pedido) : null;
-  if (m.pendientes?.length) {
-    console.log('Pendiente de la ronda anterior:');
-    for (const p of m.pendientes) console.log(`  · ${p}`);
+function check(from) {
+  const m = readMemory();
+  // With --from it is PR mode: what this branch brings since its base, not what came into main
+  const { start: asked, tip, where } = range({ from, memory: m, main: mainTip(), head: git('rev-parse', 'HEAD') });
+  const start = asked ? git('rev-parse', asked) : null;
+  if (m.pending?.length) {
+    console.log('Pending from the previous round:');
+    for (const p of m.pending) console.log(`  · ${p}`);
     console.log('');
   }
-  if (inicio) {
-    const log = git('log', '--first-parent', '--format=%h %ad %s', '--date=short', `${inicio}..${punta}`);
-    console.log(log ? `Entró a ${donde} desde ${inicio.slice(0, 7)}:\n${log.split('\n').map(l => `  ${l}`).join('\n')}\n` : `Nada nuevo en ${donde} desde ${inicio.slice(0, 7)}.\n`);
+  if (start) {
+    const log = git('log', '--first-parent', '--format=%h %ad %s', '--date=short', `${start}..${tip}`);
+    console.log(log ? `Came into ${where} since ${start.slice(0, 7)}:\n${log.split('\n').map(l => `  ${l}`).join('\n')}\n` : `Nothing new in ${where} since ${start.slice(0, 7)}.\n`);
     if (log) {
-      const tocados = git('diff', '--stat=120', `${inicio}..${punta}`).split('\n').slice(-1)[0];
-      console.log(`  (${tocados.trim()})\n`);
+      const touched = git('diff', '--stat=120', `${start}..${tip}`).split('\n').slice(-1)[0];
+      console.log(`  (${touched.trim()})\n`);
     }
-  } else console.log('Primera ronda: no hay commit guardado. Revisa desde donde corresponda con --desde.\n');
-  const { nuevos, viejos } = separar(comprobar(), m.conocidos);
-  if (nuevos.length) {
-    console.log('Falta documentar:');
-    for (const p of nuevos) console.log(`  ✗ ${p}`);
-  } else console.log('✓ Decisiones, IDs, rutas, guiones y CHANGELOG al día.');
-  if (viejos.length) {
-    console.log('\nYa conocidos (esperan al dueño, en "conocidos" de docs/documentation.json):');
-    for (const p of viejos) console.log(`  · ${p}`);
+  } else console.log('First round: there is no saved commit. Check from where it makes sense with --from.\n');
+  const { fresh, old } = split(runChecks(), m.known);
+  if (fresh.length) {
+    console.log('Left to document:');
+    for (const p of fresh) console.log(`  ✗ ${p}`);
+  } else console.log('✓ Decisions, IDs, paths, scripts and CHANGELOG up to date.');
+  if (old.length) {
+    console.log('\nAlready known (waiting for the owner, in "known" of docs/documentation.json):');
+    for (const p of old) console.log(`  · ${p}`);
   }
-  mensajesApp();
-  if (!desde) console.log(`\nAl cerrar la ronda: node tools/agents/document.mjs anotar --hasta ${punta.slice(0, 7)} [--pendiente "…"], y con el PR abierto: anotar --hasta ${punta.slice(0, 7)} --pr <url>`);
-  return nuevos.length ? 1 : 0;
+  appMessages();
+  if (!from) console.log(`\nWhen closing the round: node tools/agents/document.mjs record --to ${tip.slice(0, 7)} [--pending "…"], and with the PR open: record --to ${tip.slice(0, 7)} --pr <url>`);
+  return fresh.length ? 1 : 0;
 }
 
-function anotar(args) {
-  const valor = n => { const i = args.indexOf(n); return i < 0 ? null : args[i + 1]; };
-  const pendientes = args.flatMap((a, i) => (a === '--pendiente' ? [args[i + 1]] : []));
-  const m = leerMemoria();
-  const hasta = valor('--hasta') ? git('rev-parse', valor('--hasta')) : puntaMain();
-  const nueva = anotarRonda(m, { fecha: new Date().toISOString().slice(0, 10), desde: m.revisadoHasta, hasta, pr: valor('--pr'), pendientes });
-  guardarMemoria(nueva);
-  console.log(`Anotado: revisado hasta ${hasta.slice(0, 7)}${pendientes.length ? `, ${pendientes.length} pendiente(s)` : ''}. Va en el PR de la ronda.`);
+function record(args) {
+  const value = n => { const i = args.indexOf(n); return i < 0 ? null : args[i + 1]; };
+  const pending = args.flatMap((a, i) => (a === '--pending' ? [args[i + 1]] : []));
+  const m = readMemory();
+  const to = value('--to') ? git('rev-parse', value('--to')) : mainTip();
+  const updated = recordRound(m, { date: new Date().toISOString().slice(0, 10), from: m.checkedUpTo, to, pr: value('--pr'), pending });
+  saveMemory(updated);
+  console.log(`Recorded: checked up to ${to.slice(0, 7)}${pending.length ? `, ${pending.length} pending` : ''}. It goes in the round's PR.`);
   return 0;
 }
 
-function historial() {
-  const m = leerMemoria();
-  for (const r of m.rondas || []) console.log(`${r.fecha}  ${(r.desde || '—').slice(0, 7)}..${(r.hasta || '').slice(0, 7)}  ${r.pr || 'sin PR'}${r.pendientes?.length ? `  (${r.pendientes.length} pendiente/s)` : ''}`);
-  if (!m.rondas?.length) console.log('Todavía no hay rondas anotadas.');
-  if (m.pendientes?.length) { console.log('\nPendiente:'); for (const p of m.pendientes) console.log(`  · ${p}`); }
+function history() {
+  const m = readMemory();
+  for (const r of m.rounds || []) console.log(`${r.date}  ${(r.from || '—').slice(0, 7)}..${(r.to || '').slice(0, 7)}  ${r.pr || 'no PR'}${r.pending?.length ? `  (${r.pending.length} pending)` : ''}`);
+  if (!m.rounds?.length) console.log('No rounds recorded yet.');
+  if (m.pending?.length) { console.log('\nPending:'); for (const p of m.pending) console.log(`  · ${p}`); }
   return 0;
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const [orden, ...resto] = process.argv.slice(2);
-  const i = resto.indexOf('--desde');
-  const codigo = orden === 'revisar' ? revisar(i < 0 ? null : resto[i + 1])
-    : orden === 'anotar' ? anotar(resto)
-    : orden === 'historial' ? historial()
-    : (console.error('Uso: node tools/agents/document.mjs revisar [--desde <commit>] | anotar --hasta <commit> [--pr <url>] [--pendiente "…"] | historial'), 2);
-  process.exit(codigo);
+  const [command, ...rest] = process.argv.slice(2);
+  const i = rest.indexOf('--from');
+  const code = command === 'check' ? check(i < 0 ? null : rest[i + 1])
+    : command === 'record' ? record(rest)
+    : command === 'history' ? history()
+    : (console.error('Usage: node tools/agents/document.mjs check [--from <commit>] | record --to <commit> [--pr <url>] [--pending "…"] | history'), 2);
+  process.exit(code);
 }

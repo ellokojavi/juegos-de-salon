@@ -1,6 +1,6 @@
-// El Ahorcado en todos los idiomas que se ofrecen (D-199): cada pantalla de paths.mjs, en cada
-// uno, contra el español. Uso: node tools/e2e/hangman/languages.mjs <carpeta-salida>
-import { revisarIdiomas } from '../languages-common.mjs';
+// Hangman in every offered language (D-199): each screen in paths.mjs, in each one, against
+// Spanish. Usage: node tools/e2e/hangman/languages.mjs <output-folder>
+import { checkLanguages } from '../languages-common.mjs';
 import { LOCALES } from '../../../public/hangman/rules.js';
 
-await revisarIdiomas('ahorcado', { dicts: [LOCALES], port: 9461 });
+await checkLanguages('ahorcado', { dicts: [LOCALES], port: 9461 });

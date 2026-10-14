@@ -110,7 +110,7 @@ Ganador, disparos totales y precisión de cada uno, ambas flotas reveladas (con 
 - Grilla táctil: casillas mínimas de 30 px en 375 px de ancho. Es una sola grilla CSS de 11×11 donde la primera fila y la primera columna son las etiquetas, así números y letras quedan alineados con las casillas en todos los navegadores (v0.9.4). Sin scroll horizontal.
 - Todo en español, inglés, portugués y alemán (“Battleship”, “Batalha Naval”, “Schiffe versenken”): agua/miss/água/Wasser, tocado/hit/acertou/Treffer, hundido/sunk/afundou/versenkt, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar! (D-191, D-197).
 - Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
-- Las dos pantallas de turno se miran sin jugar una partida: `node tools/e2e/look.mjs batalla-naval juego` y `… espera`.
+- Las dos pantallas de turno se miran sin jugar una partida: `node tools/e2e/look.mjs batalla-naval game` y `… waiting`.
 - El hundimiento no se mira con una captura sino con varias seguidas: el guion que las saca vive en la historia de D-93.
 - Las casillas que se leen (el aviso de cada disparo y la casilla grande del resultado) van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden y se dispara al lugar equivocado (D-30, canon C-1). Los números de fila de la grilla ya estaban en Nunito.
 
