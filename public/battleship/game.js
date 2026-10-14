@@ -10,7 +10,7 @@ import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { failWith } from '../assets/js/transport/errors.js';
+import { clearRoomError, tryRoom } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
@@ -903,7 +903,7 @@ function renderSetup(mode, prefillCode = '') {
   const config = { ...DEFAULT_CONFIG };
   const savedName = names_.get();
   const form = $('#setup-form'); form.innerHTML = '';
-  const err = $('#setup-error'); err.textContent = '';
+  const err = $('#setup-error'); clearRoomError(err);
   const inputs = {};
   const nameField = (key, label, value = '') => { inputs[key] = el('input', { type: 'text', maxlength: 14, placeholder: label, value, autocomplete: 'off' }); return el('div', { class: 'field' }, el('label', {}, label), inputs[key]); };
   if (mode === 'local') form.append(nameField('A', T.p1), nameField('B', T.p2)); else form.append(nameField('A', T.yourName, savedName));
@@ -911,20 +911,21 @@ function renderSetup(mode, prefillCode = '') {
   // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
   if (!prefillCode) form.append(sw('extraShot', T.extraShot, T.extraShotHint), sw('confirmShot', T.confirmShot, T.confirmShotHint));
   const actions = $('#setup-actions'); actions.innerHTML = '';
-  const fail = msg => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
+  const fail = msg => { clearRoomError(err); err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const getName = k => inputs[k].value.trim();
   const remember = n => names_.set(n);
   if (mode === 'local') actions.append(el('button', { class: 'btn btn--yellow', onClick: () => { const a = getName('A'), b = getName('B'); if (!a || !b || a.toLowerCase() === b.toLowerCase()) return fail(T.errNames); SFX.tap(); startLocalMode('local', { A: a, B: b }, config); } }, T.start));
   else if (mode === 'cpu') actions.append(el('button', { class: 'btn btn--yellow', onClick: () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); startLocalMode('cpu', { A: a, B: T.cpuName }, config); } }, T.start));
   else {
     const codeInput = el('input', { type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: prefillCode, autocapitalize: 'characters', autocomplete: 'off' });
-    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); createBtn.disabled = true; try { await createOnline(a, config); } catch (e) { failWith(e, T, fail); } createBtn.disabled = false; } }, T.create);
+    const C = COMMON[lang];
+    const roomOpts = { err, fail, T, local: () => { SFX.tap(); renderSetup('local'); }, localLabel: C.playOnePhone };
+    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); await tryRoom(createBtn, () => createOnline(a, config), { busy: C.opening, ...roomOpts }); } }, T.create);
     const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
       const a = getName('A'); const code = codeInput.value.trim().toUpperCase();
       if (!a) return fail(T.errName); if (!/^[A-Z]{4}$/.test(code)) return fail(T.errCode);
-      remember(a); SFX.tap(); joinBtn.disabled = true;
-      try { await joinOnline(code, a); } catch (e) { failWith(e, T, fail); }
-      joinBtn.disabled = false;
+      remember(a); SFX.tap();
+      await tryRoom(joinBtn, () => joinOnline(code, a), { busy: C.joining, ...roomOpts });
     } }, T.join);
     // Con un enlace de sala solo se puede entrar a ESA sala: crear otra desde aquí confunde.
     const joinPanel = extra => el('div', { class: 'panel' }, extra, el('div', { class: 'field' }, codeInput), joinBtn);

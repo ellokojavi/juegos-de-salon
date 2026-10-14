@@ -11,7 +11,7 @@ import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { failWith } from '../assets/js/transport/errors.js';
+import { clearRoomError, tryRoom } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
@@ -945,7 +945,7 @@ function renderSetup(mode, prefillCode = '') {
   // Jugando solo la palabra sale siempre del mazo: no hay a quién pedirle que la escriba
   const config = { ...DEFAULT_CONFIG, source: mode === 'solo' ? 'deck' : DEFAULT_CONFIG.source };
   const form = $('#setup-form'); form.innerHTML = '';
-  const err = $('#setup-error'); err.textContent = '';
+  const err = $('#setup-error'); clearRoomError(err);
   let draft = mode === 'local' ? ['', ''] : [nameStore.get()];
   const invitado = !!prefillCode;
 
@@ -1009,23 +1009,23 @@ function renderSetup(mode, prefillCode = '') {
   const sw = el('button', { type: 'button', class: 'switch' + (config.buy ? ' on' : ''), 'aria-label': T.buyLabel, 'aria-pressed': String(config.buy), onClick: () => { config.buy = !config.buy; sw.classList.toggle('on', config.buy); sw.setAttribute('aria-pressed', String(config.buy)); SFX.tap(); } });
   if (!invitado) form.append(el('div', { class: 'field' }, el('div', { class: 'toggle-row' }, el('div', { class: 'txt' }, el('b', {}, T.buyLabel), el('small', {}, T.buyHint)), sw)));
 
-  const fail = msg => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
+  const fail = msg => { clearRoomError(err); err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
+  const C = COMMON[lang];
+  const roomOpts = { err, fail, T, local: () => { SFX.tap(); renderSetup('local'); }, localLabel: C.playOnePhone };
   const actions = $('#setup-actions'); actions.innerHTML = '';
   if (mode === 'online') {
     const codeInput = el('input', { type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: prefillCode, autocapitalize: 'characters', autocomplete: 'off' });
     const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => {
       const name = draft[0].trim(); if (!name) return fail(T.errName);
-      nameStore.set(name); SFX.tap(); createBtn.disabled = true;
-      try { await createOnline(name, { ...config, seed: randomSeed() }); } catch (e) { failWith(e, T, fail); }
-      createBtn.disabled = false;
+      nameStore.set(name); SFX.tap();
+      await tryRoom(createBtn, () => createOnline(name, { ...config, seed: randomSeed() }), { busy: C.opening, ...roomOpts });
     } }, T.create);
     const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
       const name = draft[0].trim(); const code = codeInput.value.trim().toUpperCase();
       if (!name) return fail(T.errName);
       if (!/^[A-Z]{4}$/.test(code)) return fail(T.errCode);
-      nameStore.set(name); SFX.tap(); joinBtn.disabled = true;
-      try { await joinOnline(code, name); } catch (e) { failWith(e, T, fail); }
-      joinBtn.disabled = false;
+      nameStore.set(name); SFX.tap();
+      await tryRoom(joinBtn, () => joinOnline(code, name), { busy: C.joining, ...roomOpts });
     } }, T.join);
     const joinPanel = extra => el('div', { class: 'panel' }, extra, el('div', { class: 'field' }, codeInput), joinBtn);
     if (prefillCode) {

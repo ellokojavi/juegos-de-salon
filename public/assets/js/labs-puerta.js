@@ -12,12 +12,12 @@
  * Va como script clásico y primero en el <head>, para que la página no se alcance a ver. En
  * localhost (los guiones de punta a punta) y en Tailscale (D-67) se abre sola.
  *
- * Las llaves se dan y se quitan con `node tools/agents/llave-labs.mjs nueva <etiqueta> | quitar
- * <etiqueta> | listar`, que edita HUELLAS: aquí solo está la huella SHA-256 de cada llave, nunca la
+ * Las llaves se dan y se quitan con `node tools/agents/labs-key.mjs new <label> | remove
+ * <label> | list`, que edita HUELLAS: aquí solo está la huella SHA-256 de cada llave, nunca la
  * llave. La etiqueta es pública (el repo lo es): iniciales o un apodo, no un nombre completo.
  */
 (function () {
-  // Una línea por persona: 'etiqueta': 'huella'. La edita llave-labs.mjs
+  // Una línea por persona: 'etiqueta': 'huella'. La edita labs-key.mjs
   var HUELLAS = {
     'dueño': '867ef25adf5e043b13378e8c3ca53f1b53b5dc4ee8df926e74b7448b2f5b7417',
     'MI': 'f01eea37a3c990f60b252663ada208c1d8c83cb858d891b35bf3dee78a3e877d',

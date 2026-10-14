@@ -145,7 +145,7 @@ terminar se anota el puntaje del día, **las vidas que quedan llevadas a 100** (
 `puntajeAhorcado` en `uno-al-dia.js`), y la tarjeta de Uno al día va arriba de los botones del
 resultado. El primer intento cuenta; los siguientes son práctica. No hay revancha (#226): la
 tarjeta ya ofrece 🎲 Jugar otro y Repetir el de hoy. Si hoy toca otro juego, la página se va al de hoy. Se prueba con
-`tools/e2e/uno-al-dia-grupo.mjs`.
+`tools/e2e/daily-group.mjs`.
 
 ## Flujo
 

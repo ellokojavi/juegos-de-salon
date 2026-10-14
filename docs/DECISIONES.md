@@ -42,6 +42,7 @@ viven hoy. Las rutas viejas de las páginas siguen funcionando como páginas pue
 | `tools/e2e/<juego>-<guion>.mjs` | `tools/e2e/<carpeta>/<guion>.mjs` (`linea-de-tiempo-veredicto.mjs` → `timeline/veredicto.mjs`; `copa.mjs` → `cup/torneo.mjs`) |
 | `marketing/video-promo/` | `marketing/promo-video/` |
 | `.claude/skills/video-promo/` | `.claude/skills/promo-video/` |
+| `tools/agents/procesos.mjs`, `tools/e2e/caminos.mjs`, `.github/workflows/publicar.yml` and the rest of the workshop's Spanish names | their English names (D-316: `processes.mjs`, `paths.mjs`, `publish.yml`, `timeline/verdict.mjs`, `cup/tournament.mjs`…) |
 | `lab/`, `tools/lab.py`, `tools/diccionario/`, `tools/diag/` | ya no existen (D-67, D-65, D-77) |
 
 ## Índice por tema
@@ -64,13 +65,13 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305 |
-| Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
+| Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309 |
-| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314 |
+| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
-| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318 |
+| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
@@ -238,7 +239,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Fecha:** 2026-09-09 · **Estado:** corregida por D-266
 **Decisión:** Al abrir un enlace `?sala=CÓDIGO`, la pantalla de datos se titula "¡Invitado a jugar!" y muestra únicamente el bloque para unirse a esa sala: sin botón de "Crear sala", con el código fijo y de solo lectura, y sin los ajustes de la partida. Vale para los tres juegos con salas.
 **Por qué:** Quien recibe una invitación veía la misma pantalla que quien empieza de cero, con "Crear sala" arriba y el código abajo. Tocar el botón de arriba abre una sala **distinta**, y los dos quedan esperándose en salas separadas sin entender por qué. Los ajustes (dígitos, temática, cartas en mano, reglas de disparo) tenían el mismo problema al revés: se podían tocar y no hacían nada, porque la configuración es la del anfitrión.
-**Consecuencias:** Queda en el canon C-7. La pantalla del invitado dice de quién es la sala y que la partida la configura quien invitó. Prueba: `tools/e2e/enlace-invitacion.mjs`.
+**Consecuencias:** Queda en el canon C-7. La pantalla del invitado dice de quién es la sala y que la partida la configura quien invitó. Prueba: `tools/e2e/invite-link.mjs`.
 
 ## D-30 · Las cifras no van en Bangers
 **Fecha:** 2026-09-09 · **Estado:** vigente
@@ -308,12 +309,12 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** La marca de agua es pública y cualquiera puede adelantarla, por eso el barrido siempre repasa los últimos 8 días aunque la marca diga lo contrario. Un balde que no se deja leer o cuyas salas no se dejan borrar corta el barrido y queda para la próxima: nunca se salta un balde. Todo esto es "mejor esfuerzo": si falla, la partida sigue igual y barre el celular siguiente. Las salas creadas antes de esta versión no están apuntadas en ningún balde; se borran una sola vez a mano desde la consola de Firebase. Módulo `assets/js/transport/cleanup.js`, con tests en `cleanup.test.mjs`; reglas en `firebase/database.rules.json`.
 
 ## D-40 · Una falla de red no se cuenta como "no hay internet"
-**Fecha:** 2026-09-10 · **Estado:** vigente
+**Fecha:** 2026-09-10 · **Estado:** vigente · **Relación:** extended by D-319 (the button says it is waiting, and the one-phone way out is a button under the message)
 **Decisión:** Crear o entrar a una sala espera primero la conexión con la base (`.info/connected`, 8 s) y después corre con tope (12 s). Los códigos `offline`, `busy` y `no-code` comparten un texto nuevo (`errOffline`) que nombra las dos causas posibles sin elegir una, y ofrece el modo de un solo celular. El mapa de código a texto, que estaba copiado igual en los tres juegos, vive ahora en `assets/js/transport/errors.js`.
 **Por qué:** `join` distinguía sus errores, pero `create` mandaba todo a `errNet` — *"No se pudo conectar. ¿Hay internet?"*. El plan gratuito tiene techo de conexiones simultáneas: cuando se llena, el jugador leía que su internet estaba mala. Además, sin espera ni tope, quedarse sin señal se veía como un botón pegado para siempre, que es lo que C-14 prohíbe.
 **Por qué un solo texto para tres causas:** desde el navegador no se pueden distinguir. Quedarse sin señal y toparse con el tope de conexiones producen exactamente el mismo síntoma: `.info/connected` nunca pasa a `true`. Inventar una causa sería mentirle al jugador con más precisión que antes, no con más verdad. El texto dice lo que se sabe ("puede ser tu internet o que haya mucha gente jugando") y da la salida que la app ya tenía.
 **Lo que apareció al probarlo:** bloquear la URL de Firebase no sirve para provocar el error — el canal de RTDB es un WebSocket y se cuela igual. Hay que emular la red caída, y recién después de precargar el módulo del transporte: si no, lo que falla es la descarga del SDK desde gstatic y nunca se llega a probar la espera de conexión. Eso obligó a exponer el CDP crudo en `tools/e2e/cdp.mjs`.
-**Consecuencias:** Los errores previstos ya no van a la consola; solo los inesperados (`failWith`), que es lo que hace útil el criterio de "consola limpia" de C-12. Módulo `assets/js/transport/errors.js` con tests en `errors.test.mjs`; prueba de punta a punta en `tools/e2e/sala-error.mjs`, que verifica el mensaje en los tres juegos y en los dos idiomas.
+**Consecuencias:** Los errores previstos ya no van a la consola; solo los inesperados (`failWith`), que es lo que hace útil el criterio de "consola limpia" de C-12. Módulo `assets/js/transport/errors.js` con tests en `errors.test.mjs`; prueba de punta a punta en `tools/e2e/room-error.mjs`, que verifica el mensaje en los tres juegos y en los dos idiomas.
 
 ## D-41 · Tope de salas por celular, sabiendo que no ataja al que quiere abusar
 **Fecha:** 2026-09-10 · **Estado:** vigente
@@ -322,7 +323,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Lo que no hace, dicho claro:** no frena a nadie decidido. Quien quiera abusar le pega a la REST API con `curl` y jamás carga este módulo. Cerrar esa puerta de verdad pide autenticación anónima y reglas con `auth != null`: otro modelo de seguridad y otra decisión. Si alguna vez el uso muestra tráfico que no se reconoce, ese es el paso siguiente — no subir este tope.
 **Por qué 20 y no 6:** la revancha abre una sala nueva (C-7) y una partida dura minutos, así que quien juega en serie abre muchas salas seguidas siendo legítimo. Un tope pensado para el promedio habría dejado afuera a los que más juegan. Un bucle descontrolado abre miles por hora: la distancia es tan grande que no hace falta afinar el número.
 **Por qué falla abierto:** dejar pasar a un abusivo es barato; dejar a un jugador legítimo sin poder jugar porque su navegador está en modo privado, no. Es la misma postura que C-6 toma con la memoria de partida.
-**Consecuencias:** El tope se revisa antes de la red, así que avisa al instante y no gasta una conexión para después descartarla. Solo cuenta la sala que quedó creada de verdad, no el intento. Módulo `assets/js/transport/ratelimit.js` con tests en `ratelimit.test.mjs`; prueba de punta a punta en `tools/e2e/sala-tope.mjs`, que siembra el historial en vez de abrir 20 salas contra Firebase.
+**Consecuencias:** El tope se revisa antes de la red, así que avisa al instante y no gasta una conexión para después descartarla. Solo cuenta la sala que quedó creada de verdad, no el intento. Módulo `assets/js/transport/ratelimit.js` con tests en `ratelimit.test.mjs`; prueba de punta a punta en `tools/e2e/room-cap.mjs`, que siembra el historial en vez de abrir 20 salas contra Firebase.
 
 ## D-42 · Un laboratorio con URL propia para probar interfaz
 **Fecha:** 2026-09-11 · **Estado:** derogada · **Relación:** la derogó D-67
@@ -382,7 +383,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Fecha:** 2026-09-11 · **Estado:** corregida por D-197, D-222
 **Decisión:** La app se puede jugar entera en portugués: menú, frases del pie, los cuatro juegos con sus modos, salas, chat, errores de transporte, pantallas de pase y las cartas de los cuatro mazos de Línea de Tiempo. Es portugués **de Brasil**, informal ("você", "celular", "bora jogar", "vira, vira, vira"), y se agrega como un tercer diccionario `pt` con exactamente las mismas claves que `es` y `en`: en `COMMON` de `i18n.js`, en `games.js`, en `FRASES`, en `LOCALES` de cada `rules.js`, en el nombre y la pista de cada mazo y en cada carta. Los nombres de los juegos se traducen, como ya se hacía en inglés: Quarto Rei, Toque e Fama, Batalha Naval, Linha do Tempo; los mini-juegos de Cuarto Rey pasan a Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco y Eu Nunca; los sorbos son "goles", la penitencia es "prenda".
 **Por qué:** Brasil es el vecino más grande y el panel ya mostraba celulares en `pt-BR` (D-44). Se elige la variante brasileña y no la europea porque es la que van a leer casi todos los que toquen el botón, y porque las dos difieren justo en las palabras que la app más usa ("celular" contra "telemóvel", "você" contra "tu"). Un solo diccionario con las mismas claves, y no un idioma "parcial" que caiga al inglés donde falte, porque una pantalla a medias en dos idiomas se ve peor que no ofrecer el idioma: C-3 dice que toda la experiencia va en el idioma elegido.
-**Cómo:** `LANGS = ['es', 'en', 'pt']` y una etiqueta 🇧🇷 PT en el toggle; `yearLabel` de Línea de Tiempo usa "a.C." para español y portugués y "BC" solo para inglés; el test del motor exige `pt` en cada carta y rechaza apóstrofos rectos dentro del texto. `sala-error.mjs` prueba el mensaje de sala caída también en portugués. Las traducciones se adaptan (C-3): las comunas de Santiago son bairros, los equipos chilenos son times brasileiros, y las frases del pie se reescribieron con humor de rolê.
+**Cómo:** `LANGS = ['es', 'en', 'pt']` y una etiqueta 🇧🇷 PT en el toggle; `yearLabel` de Línea de Tiempo usa "a.C." para español y portugués y "BC" solo para inglés; el test del motor exige `pt` en cada carta y rechaza apóstrofos rectos dentro del texto. `room-error.mjs` prueba el mensaje de sala caída también en portugués. Las traducciones se adaptan (C-3): las comunas de Santiago son bairros, los equipos chilenos son times brasileiros, y las frases del pie se reescribieron con humor de rolê.
 **Consecuencias:** Cada texto nuevo se escribe tres veces, y las claves tienen que coincidir en los tres diccionarios (`assets/js/i18n.test.mjs` lo verifica: claves, largo de listas, `{llaves}` y textos vacíos). El panel del dueño sigue en español (excepción anotada en PANEL.md) pero etiqueta `pt` en "Idioma elegido para jugar". El `manifest.webmanifest` sigue en español: es uno solo para la app y no cambia con el toggle. Una partida guardada en un idioma se retoma en el idioma activo, como ya pasaba entre español e inglés (D-16).
 
 ## D-49 · Las frases del pie dejan el humor de carrete por chistes genéricos de sobremesa
@@ -402,7 +403,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 ## D-51 · El README se sostiene solo: lo derivable se genera, lo escrito se delata, las capturas se rehacen
 **Fecha:** 2026-09-11 · **Estado:** corregida por D-205 · **Relación:** desde D-205 `revisar` lo corre el check `pruebas`, no `set-version.py`
-**Decisión:** El README deja de mantenerse a pulso. `tools/release/hechos.mjs` importa los módulos reales y arma una hoja de hechos (juegos, modos, temáticas con su cuenta de cartas, idiomas, módulos, tests, documentos, capturas). `tools/release/readme.py` la usa para tres cosas: **generar** lo derivable dentro de marcas `<!-- generado: ... -->`; **delatar** lo que cambió desde el último sello (`docs/hechos.json`) nombrando qué sección de prosa hay que releer, con `sellar` para anotar que se releyó; y **rehacer las capturas** corriendo los guiones de `tools/e2e/` según el catálogo `docs/capturas.json`, que dice de qué guion y de qué toma sale cada imagen. `set-version.py` corre `revisar` antes de estampar, así que un README viejo frena la publicación (C-11, C-13).
+**Decisión:** El README deja de mantenerse a pulso. `tools/release/facts.mjs` importa los módulos reales y arma una hoja de hechos (juegos, modos, temáticas con su cuenta de cartas, idiomas, módulos, tests, documentos, capturas). `tools/release/readme.py` la usa para tres cosas: **generar** lo derivable dentro de marcas `<!-- generado: ... -->`; **delatar** lo que cambió desde el último sello (`docs/facts.json`) nombrando qué sección de prosa hay que releer, con `sellar` para anotar que se releyó; y **rehacer las capturas** corriendo los guiones de `tools/e2e/` según el catálogo `docs/capturas.json`, que dice de qué guion y de qué toma sale cada imagen. `set-version.py` corre `revisar` antes de estampar, así que un README viejo frena la publicación (C-11, C-13).
 **Por qué:** El README es la cara del proyecto y la única documentación que lee alguien de afuera, y se pudre en silencio. Al escribir esto decía "las cartas de los cuatro mazos" cuando había seis, daba a Cuarto Rey una versión que su propia especificación no reconocía, y sus capturas eran de pantallas que ya habían cambiado. Nada de eso lo avisa un test: son datos repetidos a mano en prosa. Repetidos a mano y sin dueño, cada cambio de la app los deja un poco más falsos.
 **Por qué no generarlo todo:** Porque lo que hace bueno a este README es lo que no se puede derivar: por qué el juego está entretenido, qué se siente al pasar el celular, el chiste de las temáticas. Un README generado entero sería un listado correcto que no lee nadie. Por eso la herramienta se parte en dos: escribe las tablas y deja la prosa en paz, pero no deja que la prosa envejezca callada.
 **Por qué el sello y no la fecha del commit:** Comparar fechas de git (¿el README es más nuevo que el código?) grita con cualquier cambio, hasta el de una coma, y a un soplón que grita por todo no lo mira nadie. El sello compara **hechos**: las claves de los modos, los mazos, los tests. Un texto de ayuda que se corrige no molesta a nadie; un modo nuevo sí, y es el que efectivamente obliga a releer.
@@ -530,7 +531,7 @@ haría falta saber si algún día vuelve a hacer falta un diccionario grande.
 
 ## D-67 · El laboratorio se va: se sirve el árbol de trabajo
 **Fecha:** 2026-09-12 · **Estado:** vigente · **Relación:** deroga D-42; derogó solo el laboratorio de interfaz: D-101 (La Copa) y D-191 (idiomas) crearon otros laboratorios, con otro fin
-**Decisión:** Se sacan `lab/` y `tools/lab.py`. Para mirar un cambio de interfaz en un celular de verdad se sirve el árbol de trabajo con `tailscale serve --bg 8765`, que da una URL `https://<equipo>.<tailnet>.ts.net/` alcanzable desde cualquier aparato del tailnet. Para revisar una pantalla suelta sin jugar una partida entera está `tools/e2e/mirar.mjs`.
+**Decisión:** Se sacan `lab/` y `tools/lab.py`. Para mirar un cambio de interfaz en un celular de verdad se sirve el árbol de trabajo con `tailscale serve --bg 8765`, que da una URL `https://<equipo>.<tailnet>.ts.net/` alcanzable desde cualquier aparato del tailnet. Para revisar una pantalla suelta sin jugar una partida entera está `tools/e2e/look.mjs`.
 **Por qué:** D-42 lo dijo con todas las letras: el laboratorio existía porque «la única forma era publicar el cambio y arriesgarse, o dejarlo en local y no probarlo nunca en el aparato donde se juega». Eso dejó de ser cierto: servir el árbol de trabajo por Tailscale da lo mismo y mejor, porque es **la app entera** y no un espejo, con HTTPS —así que sirven también los modos que necesitan contexto seguro— y sin nada que mantener al día.
 **Lo que costaba:** los espejos son copias del `index.html` de cada juego, y envejecen. Pasó el mismo día que se sacó: al sumarle dos `id` al HTML del resultado, `lab.py revisar` empezó a fallar. Es un aviso útil, pero de un problema que el laboratorio se inventa a sí mismo. En su vida útil nunca se promovió un experimento: `lab.css` estuvo vacío desde el principio y el único que hubo se descartó.
 **Lo que se pierde:** comparar app y experimento lado a lado en dos pestañas, y aislar un cambio de estilo en un archivo que se borra de una. Si alguna vez hace falta, sale más barato volver a armarlo que mantenerlo vacío por si acaso.
@@ -616,14 +617,14 @@ retoma con los nombres encendidos, que es el valor por defecto.
 **Por qué rutas y no subdominios:** `pt.juegosdesalon.cl` es lo más bonito de leer, pero GitHub Pages sirve **un** dominio por repositorio (el `CNAME`), así que cada subdominio necesitaría otro destino de publicación o un proxy delante. Por una etiqueta de idioma es mucha máquina. Las carpetas cuestan dos archivos y no tocan la infraestructura.
 **Por qué se saca el parámetro de la URL:** lo que circula tiene que ser la dirección de siempre —la que está en las tarjetas sociales, la que indexa el buscador, la que la gente copia—. El idioma ya quedó guardado, así que el parámetro no tiene nada más que hacer ahí; y donde sí hace falta que viaje, que es la invitación, lo pone el juego a propósito con `withLang()`.
 **Las puertas también se comparten:** `/pt/` y `/en/` llevan sus propias etiquetas Open Graph y su propia imagen de 1200×630 en su idioma (D-72), y las tres se anuncian entre sí con `hreflang`. Pegar `juegosdesalon.cl/pt/` en un grupo de Brasil muestra la tarjeta en portugués.
-**Consecuencias:** las páginas de los juegos no tienen una URL por idioma: adentro el idioma se elige y se guarda, así que no hay tres direcciones que ofrecerle al buscador. El panel es español solo y el parámetro no le hace nada. Prueba de punta a punta en `tools/e2e/idioma-por-url.mjs`.
+**Consecuencias:** las páginas de los juegos no tienen una URL por idioma: adentro el idioma se elige y se guarda, así que no hay tres direcciones que ofrecerle al buscador. El panel es español solo y el parámetro no le hace nada. Prueba de punta a punta en `tools/e2e/lang-from-url.mjs`.
 
 ## D-75 · La app mide lo que se ve, no lo que la pantalla dice que mide
 **Fecha:** 2026-09-13 · **Estado:** corregida por D-77
 **Decisión:** `.app` pide `calc(100dvh - var(--safe-top) - var(--safe-bottom))` y no `100dvh`. El `body` ya reserva las muescas con su `padding`, así que pedir la pantalla entera adentro de una caja que ya se achicó dejaba la página **más alta que el celular por exactamente el alto de las muescas**: 81 px en un iPhone con muesca (47 arriba, 34 abajo).
 **Cómo se vio:** en Dudo, la barra de apostar se apoya en el borde de abajo (`margin-top: auto`), así que se iba fuera de la pantalla con medio celular vacío más arriba. En los otros juegos el contenido baja desde arriba y esos 81 px de más solo se notaban como un scroll de la nada. Es un error del armazón compartido, no de Dudo: se arregla una vez en `base.css` y vale para los seis juegos, el menú y el panel.
 **Por qué ninguna prueba lo vio:** en Chrome headless `env(safe-area-inset-*)` vale 0, así que la página medía exactamente lo que tenía que medir y todo pasaba. El error solo existe en un celular con muesca, que es justo donde se juega.
-**Lo que queda para que no vuelva:** `node tools/e2e/mirar.mjs <juego> <pantalla> --muescas` simula 47 y 34, y el informe ahora dice dos cosas más: cuánto se pasa la página del alto del celular y qué botones caen por debajo del borde. Con el error puesto de vuelta, avisa "⚠️ 81 px" y nombra el botón de apostar.
+**Lo que queda para que no vuelva:** `node tools/e2e/look.mjs <juego> <pantalla> --muescas` simula 47 y 34, y el informe ahora dice dos cosas más: cuánto se pasa la página del alto del celular y qué botones caen por debajo del borde. Con el error puesto de vuelta, avisa "⚠️ 81 px" y nombra el botón de apostar.
 
 ---
 
@@ -651,7 +652,7 @@ nueva. Eso se veía en el celular, no solo en la captura, y ninguna espera lo ar
 320 px el campo quedaba en dos letras—. Bajo 400 px la fila se aprieta (número, separaciones y
 botones) y bajo 340 px el selector se baja entero a una segunda línea, a lo ancho. Los botones de
 género y la ✕ miden 44 px de alto, con área táctil ampliada la ✕ (C-8).
-**Consecuencias:** hay una hoja de contacto, `node tools/e2e/contacto.mjs [seccion]`, que arma un
+**Consecuencias:** hay una hoja de contacto, `node tools/e2e/contact-sheet.mjs [seccion]`, que arma un
 PNG con todas las capturas de una sección al tamaño en que el README las muestra. Mirarla es parte
 de publicar: las capturas se rehacen solas, pero nadie las revisaba de a una. Mirándola se
 encontraron dos más —el ranking final y el "¡Cuarto Rey!" tapados por el confeti, y un "¡Salud!"
@@ -663,7 +664,7 @@ que en realidad decía "¡Cumplida!"—, que se arreglaron en el guion, no en el
 **Fecha:** 2026-09-13 · **Estado:** vigente · **Relación:** corrige D-75 (el alto) y ajusta D-76
 **Decisión:** `.app` mide `calc(100svh - muescas)`, no `100dvh`. `svh` es el **alto chico**: el que
 queda cuando el navegador muestra toda su interfaz. El `body` sigue pintando `100dvh` para que el
-fondo llegue al borde. Y `mirar.mjs --muescas` dejó de simular las muescas con variables CSS: ahora
+fondo llegue al borde. Y `look.mjs --muescas` dejó de simular las muescas con variables CSS: ahora
 se las pide a Chrome (`Emulation.setSafeAreaInsetsOverride`), que es lo que la página lee con
 `env(safe-area-inset-*)`.
 **Por qué:** la barra de apostar de Dudo seguía saliéndose de la pantalla en un Android con la app
@@ -683,7 +684,7 @@ sobreescribía `--safe-top` y `--safe-bottom`—, y un sustituto no mueve el vie
 eso daba verde con el error puesto. Con muescas de verdad la página mide exactamente el alto de la
 pantalla, o sea que el error nunca estuvo ahí. Los números que lo decidieron no los tenía ninguna
 prueba: los tenía el celular, y hubo que ir a buscarlos.
-**Consecuencias:** `mirar.mjs` agrega una línea al informe —"se arma con el alto chico (svh)"— que
+**Consecuencias:** `look.mjs` agrega una línea al informe —"se arma con el alto chico (svh)"— que
 revisa la **regla**, no la medida, porque en Chrome headless `dvh` y `svh` valen lo mismo y una
 medida nunca vería la diferencia. `tools/diag/` se publicó mientras duró el diagnóstico y se borró
 apenas el celular confirmó el arreglo: era la única página del sitio que no es la app. Si vuelve a
@@ -713,7 +714,7 @@ llama en la app y lo que va a ver en pantalla. La tabla de arriba muestra los tr
 (`#-fourth-king-cuarto-rey`) y la arma `titulo_juego()` en `tools/release/readme.py`, la misma función que
 dicta cómo se titula la sección: si cambia el título cambia el enlace, y no hay forma de que queden
 apuntando a distinto lado.
-**Consecuencias:** `tools/release/hechos.mjs` guarda los modos en los dos idiomas, no solo en español, y
+**Consecuencias:** `tools/release/facts.mjs` guarda los modos en los dos idiomas, no solo en español, y
 `jugadores` viaja como "1 to 6". Al agregar un juego hay un paso más explícito en
 `docs/AGREGAR-JUEGO.md`: la sección del README y el `pie` de las capturas van en inglés.
 
@@ -1046,7 +1047,7 @@ Línea de Tiempo: el puntero lo toma el contenedor, no lo que se arrastra.
 y proa. Todos **empiezan y terminan en punta**, cada clase tiene su silueta y sus detalles
 (portaaviones con pista y aviones, acorazado con torretas de cañones amarillos, submarino cilíndrico
 con el periscopio arriba), y el agua es **una sola baldosa repetida** en todas las casillas, como un
-tileset. Vive en `batalla-naval/flota.js`, que **genera** `python3 tools/flota.py`.
+tileset. Vive en `batalla-naval/flota.js`, que **genera** `python3 tools/fleet.py`.
 
 **Por qué:** el tablero era un damero de rectángulos idénticos; la flota no se leía como flota y las
 cinco clases de barco solo se distinguían por el largo. Con la silueta, el jugador ve de un vistazo
@@ -1324,7 +1325,7 @@ es uno solo. Y un tablero que no dice por qué no terminó parece roto.
 **Fecha:** 2026-09-23 · **Estado:** vigente
 **Decisión:** El botón 🐞 de La Copa manda el reporte por REST a `feedback/`, sin sesión anónima ni
 PIN (`copa/reportes.js`). Las reglas dejan escribir a cualquiera (una sola vez por reporte, con el
-largo validado) y **leer a cualquiera**, para que `node tools/reportes.mjs` los traiga sin la
+largo validado) y **leer a cualquiera**, para que `node tools/reports.mjs` los traiga sin la
 cuenta del dueño y se puedan revisar en la conversación.
 **Por qué:** el reporte fallaba con "Vuelve a entrar con tu nombre y tu PIN" (las reglas del nodo
 no estaban publicadas, y además el envío dependía del acceso anónimo). El dueño pidió que fuera
@@ -1461,7 +1462,7 @@ la primera hace que el tablero parezca imposible.
 
 ## D-114 · La tarjeta bajo el puntaje, y TORRE en vez de DAMA
 **Fecha:** 2026-09-24 · **Estado:** vigente
-**Decisión:** De los primeros reportes del laboratorio (`node tools/reportes.mjs`):
+**Decisión:** De los primeros reportes del laboratorio (`node tools/reports.mjs`):
 - En el resultado del día y de la práctica, **la tarjeta para compartir va justo bajo el
   puntaje**, y la línea del tiempo (⏱) se muestra solo si la tarjeta no lo trae: en Reinas
   (`👑 ⏱ 1:23 ✅`) el tiempo aparecía dos veces.
@@ -1564,7 +1565,7 @@ su código al azar, y `torneoAlias/<alias>` = `{ code, hasta }` apunta a ella.
 
 ## D-122 · Las reglas de Firebase se publican con un script
 **Fecha:** 2026-09-24 · **Estado:** corregida por D-218
-**Decisión:** `node tools/firebase/reglas.mjs publicar` sube `firebase/database.rules.json` y la vuelve a
+**Decisión:** `node tools/firebase/rules.mjs publicar` sube `firebase/database.rules.json` y la vuelve a
 leer para verificar que quedó; `revisar` dice si lo publicado es lo del repo. Usa una **llave de
 cuenta de servicio** que el dueño genera una vez en la consola y guarda fuera del repo
 (`~/.config/juegos-de-salon/firebase-admin.json`, carpeta 700, archivo 600; `.gitignore` la
@@ -1692,7 +1693,7 @@ no abre. Una leyenda debajo explica los estados.
 
 ## D-132 · Un agente de usabilidad con ronda diaria y dilemas como issues
 **Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213, D-275, D-276, D-303, D-304, D-313
-**Decisión:** Un subagente (`.claude/agents/usabilidad.md`) revisa solo usabilidad: textos,
+**Decisión:** Un subagente (`.claude/agents/usability.md`) revisa solo usabilidad: textos,
 botones, interacciones, navegación y mensajes para compartir, con la guía `docs/USABILIDAD.md`
 (reglas U-n, que crecen con cada decisión del dueño).
 - **Cuándo:** cada PR que abre Claude pasa por él antes de mostrárselo al dueño, y hay una **ronda
@@ -1703,8 +1704,8 @@ botones, interacciones, navegación y mensajes para compartir, con la guía `doc
 - **Qué pregunta:** textos nuevos, puntajes, reglas, funciones, rediseños y todo lo discutible,
   como **issues de GitHub** con la etiqueta `usabilidad` (estados `pendiente` → `resuelto` o
   `archivado`). Se crean, resuelven, archivan y reabren desde la conversación con
-  `node tools/agents/dilemas.mjs`; la decisión se anota en la guía.
-- Los guiones `copa.mjs` y `mirar.mjs` aceptan `SITIO=http://localhost:<puerto>` para probar una
+  `node tools/agents/dilemmas.mjs`; la decisión se anota en la guía.
+- Los guiones `copa.mjs` y `look.mjs` aceptan `SITIO=http://localhost:<puerto>` para probar una
   copia aparte del repo sin chocar con la que está sirviendo el puerto 8765.
 **Por qué:** pedido del dueño: bugs como el reloj de Conexiones o los textos rebuscados se
 tienen que encontrar solos, y las dudas llegarle ordenadas.
@@ -1904,7 +1905,7 @@ uso, y una partida guardada del solitario viejo no se ofrece para retomar.
 
 ## D-143 · Las pruebas sin navegador corren solas en GitHub
 **Fecha:** 2026-09-25 · **Estado:** corregida por D-193, D-216
-**Decisión:** `.github/workflows/pruebas.yml` corre en cada PR y en cada fusión a main:
+**Decisión:** `.github/workflows/tests.yml` corre en cada PR y en cada fusión a main:
 todos los `*.test.mjs` y `*.test.py` del repo (los busca con `git ls-files`, sin lista),
 `tools/readme.py revisar` y `tools/og.mjs revisar`. El PR muestra ✅ o ❌ antes de fusionar.
 Las pruebas de punta a punta (`tools/e2e/`), las capturas y la revisión de usabilidad siguen a
@@ -2000,7 +2001,7 @@ cambiarlo no rompe nada de lo que ya se compartió.
 compartió con ese nombre y el podio quedaría con otro.
 **Consecuencias:** los mensajes que ya se mandaron por WhatsApp siguen con el nombre viejo. La
 confirmación para eliminar la copa pide escribir el nombre de ese momento. Hay que publicar las
-reglas (`node tools/reglas.mjs publicar`) para que el botón funcione en las copas de verdad; en las
+reglas (`node tools/rules.mjs publicar`) para que el botón funcione en las copas de verdad; en las
 de prueba (almacén local) funciona sin eso.
 
 ## D-149 · La portada se filtra solo por tipo, y los minijuegos sueltos salen de /copa/
@@ -2124,7 +2125,7 @@ puntaje es el promedio de las cinco (D-113). La tarjeta usa las marcas de ¿En q
   Paz (Bolivia) y Ámsterdam (Países Bajos); en el resto, la sede del gobierno (Jerusalén para
   Israel, Ramala para Palestina, Sri Jayawardenepura Kotte para Sri Lanka).
 - **El mapa es propio y sin nombres** (`copa/juegos/mapa.js`, 90 KB): Natural Earth 1:50m, de
-  dominio público, en proyección de Miller, generado por `node tools/mapa.mjs generar`. `revisar`
+  dominio público, en proyección de Miller, generado por `node tools/map.mjs generar`. `revisar`
   comprueba que cada ciudad cae dentro de su país. Tuvalu no trae bordes en esa escala y va como
   un rombo en su capital.
 - **Gestos:** arrastrar corre el mapa, pellizcar o tocar dos veces lo acerca (también la rueda y
@@ -2185,7 +2186,7 @@ Trujillo, Bilbao, Gdansk, Chengdú, Luxor, Mombasa o Queenstown. Van casi todas 
 capitales y ciudades famosas, la mediana y la difícil eran casi siempre una capital: se aprendían
 rápido o eran islas imposibles. Ahora la difícil puede ser Portland o Breslavia, que se saben más
 o menos dónde quedan pero no con precisión.
-**Consecuencias:** `tools/mapa.mjs revisar` comprueba que las 529 caen dentro de su país. Chile
+**Consecuencias:** `tools/map.mjs revisar` comprueba que las 529 caen dentro de su país. Chile
 suma 13 (Copiapó, Calama, Rancagua, Talca, Chillán, Los Ángeles, Osorno, Castro, Puerto Natales,
 Ovalle, Vallenar, Tocopilla y Pucón): de a una por partida, porque cada partida es de países
 distintos.
@@ -2194,7 +2195,7 @@ distintos.
 **Fecha:** 2026-09-29 · **Estado:** vigente
 **Decisión:** El globo deja de trazar los bordes de los países: la tierra es un solo relleno
 verde sobre el mar, y lo único que la separa del agua es el color. Vale para el juego y para la
-portada. El mapa (`mapa.js`) sigue siendo por país, porque `tools/mapa.mjs revisar` y las pruebas
+portada. El mapa (`mapa.js`) sigue siendo por país, porque `tools/map.mjs revisar` y las pruebas
 comprueban cada ciudad contra su país.
 **Por qué:** lo pidió el dueño. Sin fronteras, ubicar una ciudad dentro de su país deja de ser
 calcar un contorno y pasa a depender de saber dónde queda el país: más incertidumbre, en la línea
@@ -2220,7 +2221,7 @@ la Antártica como hielo. Sin nombres ni fronteras (D-158).
 - **Dos imágenes** en `assets/img/`: una de 2048 px de ancho (0,5 MB) que llega rápido y otra de
   4096 px (1,6 MB) que la reemplaza al bajar, si el celular la acepta. El nombre lleva el mes de
   la imagen, porque `set-version.py` no estampa imágenes. Las rehace
-  `node tools/mapa.mjs satelite` (necesita internet y `sips`, de macOS).
+  `node tools/map.mjs satelite` (necesita internet y `sips`, de macOS).
 - **Sin WebGL, o si ninguna imagen llega,** el globo se dibuja como antes, con el mapa vectorial
   verde. Mientras baja la primera, el globo espera vacío (D-245). El mapa vectorial (`mapa.js`)
   queda también para las pruebas: cada ciudad cae en su país y sobre tierra.
@@ -2250,7 +2251,7 @@ bajaría todo el mundo); la imagen completa como una sola textura (no cabe en la
 celulares).
 **Consecuencias:** el repo suma 30 MB de teselas, unos 235 KB cada una; un jugador que acerca en
 una ciudad baja entre 1 y 9. Sin mipmap en las teselas (solo se usan acercando, y así no hay
-costura en la línea de cambio de fecha). Las rehace `node tools/mapa.mjs satelite`.
+costura en la línea de cambio de fecha). Las rehace `node tools/map.mjs satelite`.
 
 ## D-161 · El admin puede terminar la copa antes, y la tabla final se exporta
 **Fecha:** 2026-09-29 · **Estado:** vigente
@@ -2272,7 +2273,7 @@ la inscripción y el nombre) y deja a la vista que la copa se cerró antes y cu�
 moverla sin empezar, y abrirlas para esto abre también mover fechas a media copa); dejar que
 terminarla antes vuelva a abrirse (el podio ya se compartió); una planilla por hoja en .xlsx
 (necesita una biblioteca; el CSV abre igual en Excel y en Google Sheets).
-**Consecuencias:** cambio de reglas: publicar con `node tools/reglas.mjs publicar`. Si la final no
+**Consecuencias:** cambio de reglas: publicar con `node tools/rules.mjs publicar`. Si la final no
 alcanzó a abrirse, nadie tiene días ×2 salvo el comodín. Quien está jugando cuando el admin la
 termina ve "El tiempo para jugar este día ya se terminó" al enviar. El CSV va separado por punto y
 coma y con BOM, para que Excel en español lo abra en columnas y con acentos. Nueva demo del
@@ -2533,7 +2534,7 @@ cómo se juega, puntaje) viven en `LOCALES[lang].juegos` y las rondas de la fina
 `LOCALES[lang].rondas`; `MINIJUEGOS` sigue exportado en español para el panel y las herramientas.
 Los motores reciben `lang` (textos) y `palabras` (idioma de la copa) en `generar` y `ensayo`.
 Las reglas de Firebase aceptan `meta.lang` y no dejan cambiarlo. Una copa nueva en inglés o
-portugués necesita las reglas publicadas (`node tools/reglas.mjs publicar`, D-122).
+portugués necesita las reglas publicadas (`node tools/rules.mjs publicar`, D-122).
 
 ## D-171 · Con imagen, el texto no repite lo que la imagen dice
 **Fecha:** 2026-10-01 · **Estado:** vigente · **Relación:** cambia la regla 2 de D-165
@@ -2566,18 +2567,18 @@ descarga y el texto se copia igual: la imagen sigue llegando.
 
 ## D-172 · Un agente de documentación con ronda diaria en la nube
 **Fecha:** 2026-10-02 · **Estado:** corregida por D-276, D-303, D-304, D-313
-**Decisión:** Un subagente (`.claude/agents/documentacion.md`) revisa una vez al día lo que entró
+**Decisión:** Un subagente (`.claude/agents/documentation.md`) revisa una vez al día lo que entró
 a `main` y deja la documentación al día: `CHANGELOG.md`, decisiones, requerimientos, la doc de
 cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
-- **Memoria:** `docs/documentacion.json` guarda hasta qué commit de `main` revisó, lo que quedó
+- **Memoria:** `docs/documentation.json` guarda hasta qué commit de `main` revisó, lo que quedó
   pendiente, los problemas que ya se le preguntaron al dueño (`conocidos`) y el historial de
   rondas. Cada ronda parte de ahí, así que un día que no corre no deja nada sin revisar, y lo que no
   alcanzó a hacer no se olvida.
-- **Herramienta:** `tools/agents/documentar.mjs` (`revisar`, `anotar`, `historial`) lista lo que entró y
+- **Herramienta:** `tools/agents/document.mjs` (`revisar`, `anotar`, `historial`) lista lo que entró y
   comprueba lo que no necesita leer prosa: decisiones citadas que no existen o repetidas, huecos
   o desorden en la numeración, Estados fuera de los cuatro de D-213 y correcciones sin marcar, IDs
   repetidos en requerimientos y usabilidad, rutas citadas en las guías que no existen, guiones que
-  `tools/e2e/README.md` no nombra y la versión sin entrada en el CHANGELOG. Su prueba es `tools/agents/documentar.test.mjs`. Cualquier sesión la puede correr.
+  `tools/e2e/README.md` no nombra y la versión sin entrada en el CHANGELOG. Su prueba es `tools/agents/document.test.mjs`. Cualquier sesión la puede correr.
 - **No es solo la ronda:** como el de usabilidad, revisa cada PR antes de proponer su fusión (lo que
   trae y sus comprobaciones, con `revisar --desde <base>`, que mira la rama; los arreglos, en la
   rama del PR) y se le puede pedir a mano.
@@ -2940,8 +2941,8 @@ traducir: la prueba de paridad no lo vería).
 ## D-192 · El sitio en `public/`, las carpetas en inglés y el taller ordenado
 **Fecha:** 2026-10-03 · **Estado:** corregida por D-198, D-205 · **Relación:** reemplaza D-13 y corrige D-02
 **Decisión:** La raíz del repo deja de ser la raíz del sitio. Todo lo que se sirve vive en
-**`public/`** y es lo único que se publica: `.github/workflows/publicar.yml` lo sube a GitHub Pages
-en cada fusión a main (sin los `*.test.mjs`), después de correr `pruebas.yml`; si una prueba falla,
+**`public/`** y es lo único que se publica: `.github/workflows/publish.yml` lo sube a GitHub Pages
+en cada fusión a main (sin los `*.test.mjs`), después de correr `tests.yml`; si una prueba falla,
 el sitio no cambia. Las **carpetas van en inglés**, también las que son URL: `/hangman/`, `/cup/`,
 `/timeline/`, `/bulls-and-cows/`, `/liars-dice/`, `/battleship/`, `/julep/`, `/fourth-king/` y
 `/minigames/<slug>/` (`connections`, `word`, `year`, `queens`, `tango`, `zip`, `untangle`, `where`).
@@ -3093,20 +3094,20 @@ parecer menos, y la URL `/minigames/` lo repetía en cada link compartido.
 **Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** complementa C-3, C-12, D-193 y D-197
 **Decisión:** Las pruebas de punta a punta recorren **todos los idiomas de `LANGS`**, no una lista
 escrita en cada guion:
-- **Cada juego tiene su prueba de idiomas**, `tools/e2e/<carpeta>/idiomas.mjs` (y
-  `cup-games/idiomas.mjs` para los juegos de La Copa que se juegan sueltos). Recorre cada pantalla
-  de `tools/e2e/caminos.mjs` en cada idioma y la compara con la misma en español: la página en
+- **Cada juego tiene su prueba de idiomas**, `tools/e2e/<carpeta>/languages.mjs` (y
+  `cup-games/languages.mjs` para los juegos de La Copa que se juegan sueltos). Recorre cada pantalla
+  de `tools/e2e/paths.mjs` en cada idioma y la compara con la misma en español: la página en
   ese idioma y en la misma pantalla, nada a medio armar (`undefined`, `NaN`, `{marcador}`), nada
   en español (ni un texto de los diccionarios que en ese idioma diga otra cosa, ni una línea larga
   idéntica a la de la pantalla en español) y nada que el texto más largo rompa (scroll
   horizontal, botones bajo 44 px o que se salgan por abajo y que el español no tenga). La lógica
-  es una sola, `tools/e2e/idiomas-comun.mjs`; GitHub corre cada juego en su propio job (D-193).
-- **Los caminos a cada pantalla salen de `mirar.mjs`** a `tools/e2e/caminos.mjs`, que comparten:
+  es una sola, `tools/e2e/languages-common.mjs`; GitHub corre cada juego en su propio job (D-193).
+- **Los caminos a cada pantalla salen de `look.mjs`** a `tools/e2e/paths.mjs`, que comparten:
   una pantalla nueva para mirar queda también probada en todos los idiomas. Se sumaron La Copa
   (portada y formulario, con `?prueba`) y los juegos sueltos que no tenían camino (antesala y
   juego empezado).
-- **Los guiones que miran algo de un idioma** —`cup/idiomas.mjs`, la parte en otros idiomas de
-  `timeline/solo.mjs`, `sala-error.mjs` e `idioma-por-url.mjs`— recorren `LANGS` y sacan lo que
+- **Los guiones que miran algo de un idioma** —`cup/languages.mjs`, la parte en otros idiomas de
+  `timeline/solo.mjs`, `room-error.mjs` e `lang-from-url.mjs`— recorren `LANGS` y sacan lo que
   esperan de los diccionarios (`LOCALES`, `SUELTOS`), no de textos copiados al guion. `sala-error`
   ahora falla en rojo si un juego no muestra su `errOffline`; antes solo lo imprimía.
 **Por qué:** lo pidió el dueño: "Guiones de La Copa y de Línea de Tiempo, así como todo juego
@@ -3140,8 +3141,8 @@ que todos conocen de los mapas (no reinventar, D-102), y la brújula, la forma c
 
 ## D-201 · Las teselas satelitales se cortan con PIL, no con sips
 **Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** corrige D-160
-**Decisión:** `node tools/generators/mapa.mjs satelite` corta las 128 teselas con
-`tools/generators/teselas.py` (PIL, que el repo ya usa en `readme.py`) y no con sips. Las teselas
+**Decisión:** `node tools/generators/map.mjs satelite` corta las 128 teselas con
+`tools/generators/tiles.py` (PIL, que el repo ya usa en `readme.py`) y no con sips. Las teselas
 se rehicieron: ahora cada `fila-columna.jpg` es de verdad su cuadrado de 22,5°.
 **Por qué:** el dueño vio otra vez el polo norte "mal parchado": al acercarse, encima del Ártico
 aparecía un abanico estirado con los lagos de África. sips tiene dos trampas: con
@@ -3193,19 +3194,19 @@ devuelve a la pantalla de jugar. Si no cabe, `ajustarCabeza` deja la píldora de
 ## D-204 · Publicar más rápido: los guiones largos en partes y la revisión de un PR, acotada
 **Fecha:** 2026-10-04 · **Estado:** corregida por D-213, D-304, D-307 · **Relación:** amplía D-132, D-172 y D-193
 **Decisión:** Lo que hace esperar un PR se acorta sin sacar ninguna revisión:
-- **CI en partes.** El check `Punta a punta` tarda lo que su job más lento. `cup/torneo.mjs`
-  (9 min) se corre en tres jobs (`--parte copa`, `laboratorio`, `demos`) y `cup-games/idiomas.mjs`
+- **CI en partes.** El check `Punta a punta` tarda lo que su job más lento. `cup/tournament.mjs`
+  (9 min) se corre en tres jobs (`--parte copa`, `laboratorio`, `demos`) y `cup-games/languages.mjs`
   (7 min) en uno por juego. La lista de partes vive en `PARTES` de `tools/e2e/ci.mjs`; sin parte,
   cada guion sigue corriendo entero.
 - **El agente de usabilidad, en un PR, mira solo lo que el PR cambia**: si no toca nada visible
-  termina sin correr nada; si toca un juego, mira sus pantallas con `mirar.mjs`; si toca La
+  termina sin correr nada; si toca un juego, mira sus pantallas con `look.mjs`; si toca La
   Copa, corre solo la parte del torneo que le toca. No repite lo que GitHub ya corre. Los reportes
   🐞, el marketing (U-34) y la copa entera quedan para la ronda diaria.
 - **Usabilidad y documentación se lanzan a la vez** antes de proponer una fusión, no una después
   de la otra: uno toca la app (en su propio PR) y el otro los documentos (en la rama del PR).
 - **`readme.py capturas` corre los guiones de a tres a la vez** (`CAPTURAS_JUNTOS`), cada uno con
   sus puertos de Chrome (D-135) y el más largo primero: rehacer todas las secciones tarda poco más
-  que `cup/torneo.mjs`, no la suma de todos los guiones.
+  que `cup/tournament.mjs`, no la suma de todos los guiones.
 **Por qué:** Pedido del dueño: las publicaciones se demoraban, sobre todo por las revisiones de
 usabilidad y las imágenes. Medido en GitHub: `Pruebas` tarda 25 s y `Publicar` 1 min, pero
 `Punta a punta` ~10 min, y dos guiones explicaban todo (los demás terminan antes de 3,5 min). La
@@ -3219,15 +3220,15 @@ poder correr solas, sin depender del estado que dejó la anterior.
 hojas de estilo y las imágenes de las tarjetas, y el pie del menú dice `v0.0.0`.
 - **El número es la primera entrada de `CHANGELOG.md`** (`## X.Y.Z — fecha`), que se escribe al
   fusionar, como antes. `tools/release/version.mjs` y `set-version.py --version` lo leen de ahí.
-- **`publicar.yml` estampa la copia que sube** (`set-version.py --sitio _site`), con la clave de
+- **`publish.yml` estampa la copia que sube** (`set-version.py --sitio _site`), con la clave de
   caché `X.Y.Z-<commit>`: cada publicación invalida la caché aunque alguien fusione sin subir la
   versión. Después comprueba que el sitio en línea sirva esa clave (C-11), hasta 5 minutos.
-  `pruebas.yml` estampa una copia que se tira en cada PR, para que un estampado roto se vea ahí.
+  `tests.yml` estampa una copia que se tira en cada PR, para que un estampado roto se vea ahí.
 - **El README y las tarjetas atrasados los frena el check `pruebas`** de cada PR y de cada
   publicación, ya no `set-version.py`.
 - **Un PR que solo trae documentación** (`docs/`, `marketing/`, `.claude/` y los `.md` fuera de
   `public/` y `tools/e2e/`) **no corre las pruebas de punta a punta**: la lista de `ci.mjs --lista
-  --cambios` sale vacía (`tools/e2e/cambios.mjs`). El check queda en verde en segundos.
+  --cambios` sale vacía (`tools/e2e/changes.mjs`). El check queda en verde en segundos.
 - **Si `Punta a punta` sale en rojo en `main`**, el job `avisar` abre un issue "main en rojo: Punta
   a punta" con los guiones que fallaron y el link a la corrida, o comenta el que ya esté abierto.
   La publicación no lo espera.
@@ -3408,7 +3409,7 @@ juega igual y nada sale del celular.
   que los activaron en `/labs/` (una marca en el `localStorage`) y siempre en pruebas. Así se
   prueban contra las reglas y el Firebase de verdad, con amigos, antes de abrirlos a todos. Las
   copas terminadas guardan su podio desde ya.
-- **La historia de La Copa** (`node tools/firebase/rankings-historia.mjs`, que sin `--escribir`
+- **La historia de La Copa** (`node tools/firebase/rankings-history.mjs`, que sin `--escribir`
   solo muestra lo que haría): el podio de cada copa terminada y el mejor día de cada persona en
   cada juego suelto, en la pestaña "Copa". Quien jugó antes de los rankings queda como **jugador
   heredado**, uno por nombre, sin PIN (`jugadores/<jid>.legado`, con un jid que sale del nombre:
@@ -3427,7 +3428,7 @@ contra un atacante, y la pantalla pide no usar el del banco. Olvidar el PIN no t
 se crea otro jugador. En localhost y con `?prueba` el almacén es el de prueba
 (`jugador-local.js`, que hace cumplir lo mismo que las reglas), para que los guiones no escriban
 en los rankings de verdad; `?records=firebase` fuerza Firebase. Hay que **publicar las reglas**
-(`node tools/firebase/reglas.mjs publicar`); el acceso anónimo ya está habilitado por D-96.
+(`node tools/firebase/rules.mjs publicar`); el acceso anónimo ya está habilitado por D-96.
 
 ## D-213 · Una fuente por regla: los cánones dicen la regla de hoy
 **Fecha:** 2026-10-04 · **Estado:** vigente · **Relación:** corrige D-132, D-135 y D-204; completa D-189; sube a los cánones lo que vivía solo en D-56, D-60, D-70, D-77, D-81, D-86, D-92 y D-123
@@ -3473,7 +3474,7 @@ cada canon a las decisiones que lo explican. Las decisiones viejas no se reescri
 Estado y se pusieron al día solo los comandos de las que siguen siendo procedimiento (D-51, D-72,
 D-78, D-122, D-132, D-172 y D-181). D-180, que nunca se usó, queda como número vacío, y D-173 pasó
 a su lugar en el orden. Quedan para PR aparte: llevar Cuarto Rey al canon, y los guardianes
-automáticos (`games.test.mjs`, un `documentar.mjs` más estricto y el puerto libre en `cdp.mjs`).
+automáticos (`games.test.mjs`, un `document.mjs` más estricto y el puerto libre en `cdp.mjs`).
 Al llevar Cuarto Rey al canon, su partida también avisa cómo terminó (`trackFinish`), sin
 ganador: el cuarto rey es un castigo, así que solo va el detalle (`👑 Javi · 29 cartas`). Eso
 corrige lo que D-210 decía de él ("manda los nombres, no el final"). Y su pase ya no es el overlay
@@ -3481,7 +3482,7 @@ de dos etapas de D-14: el "¡Salud!" y "Pásale el celular a X" van en una sola 
 `handoff.js`, que solo avanza con el botón (C-9).
 **Actualización 2026-10-05:** los guardianes llegaron en su PR. `public/assets/js/games.test.mjs`
 exige a cada juego de `GAMES` motor, tests, gancho `window.__…` y especificación con la plantilla
-de C-13, o una excepción que cite su decisión; `documentar.mjs` revisa además la numeración, los
+de C-13, o una excepción que cite su decisión; `document.mjs` revisa además la numeración, los
 Estados, las correcciones sin marcar, los IDs repetidos y las rutas citadas en las guías, y ya no
 pide la lista de pruebas en `CLAUDE.md` (GitHub las corre todas); `cdp.mjs` toma un puerto libre
 para cada Chrome y lo cierra con su guion, y `ci.mjs` le pasa SIGTERM antes de SIGKILL.
@@ -3555,11 +3556,11 @@ Las reglas de Firebase no cambian.
 **Fecha:** 2026-10-05 · **Estado:** corregida por D-252 · **Relación:** completa D-216; corrige D-122 y D-206 (quién publica las reglas y borra la copia)
 **Decisión:** Con el auto-merge (D-216) un PR se fusiona cuando nadie mira, así que lo que venía
 después pasa a hacerse solo:
-- **Las reglas de Firebase** las publica `publicar.yml` en cada fusión, en un job `reglas` que
-  corre antes del sitio: `reglas.mjs publicar` no sube nada si ya están y verifica lo que sube; si
+- **Las reglas de Firebase** las publica `publish.yml` en cada fusión, en un job `reglas` que
+  corre antes del sitio: `rules.mjs publicar` no sube nada si ya están y verifica lo que sube; si
   Firebase las rechaza, el sitio no se publica. Usa el secreto `FIREBASE_ADMIN_JSON` (la llave de
   la cuenta de servicio, que carga el dueño en GitHub); sin él, avisa y se publican a mano.
-- **Las copias de trabajo** las borra `tools/agents/limpiar-copias.mjs` al empezar cada sesión
+- **Las copias de trabajo** las borra `tools/agents/clean-worktrees.mjs` al empezar cada sesión
   (hook SessionStart de `.claude/settings.json`): las que tienen su rama en `main` por un merge y
   nada sin commitear. Nombra las fusionadas con cambios pendientes y las que siguen en curso. Nunca
   toca la carpeta principal, la copia desde donde se corre, las de la app (`.claude/worktrees/`) ni
@@ -3595,10 +3596,10 @@ lo que quede sin commitear se respeta.
   cada uno (el de la copa).
 **Por qué:** Lo pidió el dueño: la página tenía todo, pero en una sola columna larga, sin
 separar juegos de copas, y sin saber de dónde es cada uno.
-**Consecuencias:** `rankings-historia.mjs` completa lo de antes: la bandera de los jugadores
+**Consecuencias:** `rankings-history.mjs` completa lo de antes: la bandera de los jugadores
 heredados, sus récords y los podios (desde las copas), y la tabla de partidas con lo que cada
 jugador ya había jugado. Reglas nuevas: `jugadores/<jid>/co`, `co` en las filas y en los podios,
-y `partidas` entre las tablas que suben de a uno; las publica `publicar.yml` (D-218).
+y `partidas` entre las tablas que suben de a uno; las publica `publish.yml` (D-218).
 
 ## D-220 · "Tus copas" sigue al jugador, no solo al celular
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-212 y la cuenta de La Copa (C-6)
@@ -3617,9 +3618,9 @@ las del jugador que entró con nombre y PIN, de cualquier celular:
 **Por qué:** El dueño entró con su jugador y no vio una copa que jugaba en otro celular: la lista
 vivía solo en el `localStorage`, y el jugador no sabía en qué copas estaba (la copa sí sabía qué
 jugador tenía).
-**Consecuencias:** Regla nueva, `jugadorCopas`; la publica `publicar.yml` (D-218). Las copas ya
+**Consecuencias:** Regla nueva, `jugadorCopas`; la publica `publish.yml` (D-218). Las copas ya
 enlazadas antes de esto entran a la lista la próxima vez que se abren con el jugador, o de una con
-`node tools/firebase/rankings-historia.mjs --escribir`, que las anota a su jugador enlazado o, si
+`node tools/firebase/rankings-history.mjs --escribir`, que las anota a su jugador enlazado o, si
 no lo hay, al heredado de su nombre (también las del laboratorio).
 
 ## D-221 · La app se instala de verdad, y La Copa avisará al celular a quien lo pida
@@ -3629,7 +3630,7 @@ celular (Web Push) para La Copa, solo para quien los active. El plan, la experie
 la arquitectura están en [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md). Va en cuatro PR; este
 trae el primero:
 - **Instalable:** íconos PNG de 192, 512 y `maskable`, y el `apple-touch-icon` del iPhone
-  (`public/assets/icons/`, se rehacen con `node tools/release/iconos.mjs`); el manifest con `id`,
+  (`public/assets/icons/`, se rehacen con `node tools/release/icons.mjs`); el manifest con `id`,
   `scope` y esos íconos; y un service worker en la raíz (`public/sw.js`) que **no toca la red**:
   sin evento `fetch`, nada se guarda en caché y ningún celular puede quedar con una versión vieja.
 - Cada página de la app (las que llevan el manifest) agrega el `apple-touch-icon` y registra el
@@ -3669,7 +3670,7 @@ en el iPhone el nombre del juego que estaba abierto.
 **Consecuencias:** El nombre se elige al instalar: quien cambia de idioma después conserva el de
 entonces hasta reinstalar (Android puede ofrecer actualizarlo solo). En algunos Android un nombre
 largo se corta bajo el ícono ("Juegos de Sa…"). `instalable.test.mjs` exige que cada manifest calce
-con `COMMON` de `i18n.js`, y `tools/e2e/instalable.mjs` revisa el nombre en los cuatro idiomas.
+con `COMMON` de `i18n.js`, y `tools/e2e/installable.mjs` revisa el nombre en los cuatro idiomas.
 
 ## D-223 · Los avisos de La Copa se activan con la campana, primero en el laboratorio
 **Fecha:** 2026-10-05 · **Estado:** corregida por D-224, D-227 · **Relación:** completa D-221
@@ -3702,14 +3703,14 @@ prometería algo que no llega; en el laboratorio se prueba en iPhones reales, qu
 automatizar.
 **Consecuencias:** El PR 3 abre los avisos a todos (`AVISOS_EN_LABS = false`) cuando mande el
 primero (corregida por D-224: se abren cuando el dueño confirme que llegó uno de verdad). Si la base rechaza una suscripción porque quedó a nombre de otra identidad anónima del
-mismo celular, el celular la anula y pide otra, que sí puede guardar. `tools/e2e/cup/avisos.mjs` recorre todo en Chrome con un servicio de avisos falso; la
+mismo celular, el celular la anula y pide otra, que sí puede guardar. `tools/e2e/cup/notifications.mjs` recorre todo en Chrome con un servicio de avisos falso; la
 prueba en iPhone queda como lista de pasos en PWA-NOTIFICACIONES.md.
 
 ## D-224 · Los avisos de La Copa los manda GitHub cada 15 minutos, sin dependencias
 **Fecha:** 2026-10-05 · **Estado:** corregida por D-228, D-229 · **Relación:** completa D-221 y D-223; corrige las consecuencias de D-223
 **Decisión:** El PR 3 del plan de avisos ([PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md)): el
-workflow `.github/workflows/avisos.yml` corre `tools/push/avisar.mjs` cuatro veces por hora.
-- **Qué toca** lo decide `tools/push/calendario.mjs` con la lógica de la copa (`cup/engine.js`):
+workflow `.github/workflows/notifications.yml` corre `tools/push/notify.mjs` cuatro veces por hora.
+- **Qué toca** lo decide `tools/push/schedule.mjs` con la lógica de la copa (`cup/engine.js`):
   **se abrió el día** (desde las 9:00, si pidió "Cuando se abre un día" y no lo ha jugado), **se
   te acaba el plazo** (4 horas antes del cierre, o desde las 20:00 si cierra de noche; solo a quien
   no lo jugó), **La Gran Final** (con su lugar en la tabla), **terminó la copa** (quién ganó, durante
@@ -3728,7 +3729,7 @@ workflow `.github/workflows/avisos.yml` corre `tools/push/avisar.mjs` cuatro vec
 - **Para probar:** `--simular` dice qué mandaría sin mandar ni anotar; `--prueba <código>` manda
   un aviso de prueba a cada celular con avisos en esa copa. Los dos están en el botón *Run
   workflow* de Actions → Avisos.
-- **Necesita dos secretos**: `FIREBASE_ADMIN_JSON` (el de `publicar.yml`, D-218) y `VAPID_PRIVADA`
+- **Necesita dos secretos**: `FIREBASE_ADMIN_JSON` (el de `publish.yml`, D-218) y `VAPID_PRIVADA`
   (lo carga `node tools/push/vapid.mjs`, D-223). Sin ellos, avisa y termina en verde.
 - **Siguen en el laboratorio** (`AVISOS_EN_LABS = true`): se abren a todos con un cambio de una
   línea cuando el dueño confirme, con `--prueba`, que un aviso de verdad llega a su Android y a su
@@ -3760,7 +3761,7 @@ prueba con `--prueba`.
 **Por qué:** Lo pidió el dueño, para hacer la prueba real en su iPhone antes de abrir los avisos a
 todos (D-224).
 **Consecuencias:** Cuando `AVISOS_EN_LABS` pase a `false`, la herencia deja de hacer falta y no hace
-nada. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` la prueban (y que un link con `&app=` en una
+nada. `push.test.mjs` y `tools/e2e/cup/notifications.mjs` la prueban (y que un link con `&app=` en una
 pestaña no la active).
 
 ## D-226 · Compartir la app lleva su tarjeta como imagen, en el idioma en que se mira
@@ -3792,7 +3793,7 @@ resultados, que sin imagen no dicen nada; la app sí).
 tarjeta de la portada cambia (`og.mjs imagenes`), cambia también lo que se comparte. La huella de esa
 tarjeta (D-181) mira ahora solo los textos que dibuja (`appTitle` y `appSub`), no todo `COMMON`:
 sumar el texto de compartir la daba por atrasada sin que cambiara un píxel. Lo prueban
-`compartir.test.mjs` y `tools/e2e/compartir-portada.mjs` (los cuatro idiomas, y el computador).
+`compartir.test.mjs` y `tools/e2e/share-home.mjs` (los cuatro idiomas, y el computador).
 
 ## D-227 · En la app instalada del iPhone, los avisos se ven sin el laboratorio
 **Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** corrige D-225 (la herencia del laboratorio) y D-223 (la app instalada abre en la copa)
@@ -3812,7 +3813,7 @@ iPhone recibe avisos.
 **Por qué:** Lo vio el dueño en su iPhone; la prueba real de los avisos (D-224) necesita la campana
 dentro de la app instalada.
 **Consecuencias:** Quien instala la app en un iPhone ve los avisos antes de que se abran a todos.
-Son pocos y es justo lo que se quiere probar. `push.test.mjs` y `tools/e2e/cup/avisos.mjs` lo
+Son pocos y es justo lo que se quiere probar. `push.test.mjs` y `tools/e2e/cup/notifications.mjs` lo
 prueban.
 
 ## D-228 · Los avisos de La Copa se abren a todos
@@ -3825,15 +3826,15 @@ y entonces valen otra vez `/labs/` (con `activarAvisos`) y la app instalada del 
 workflow* con **prueba** en su copa mandó "Así se verán los avisos de esta copa." y llegó a su
 Android (Chrome, sin instalar) y a su iPhone (la app agregada a inicio, D-227). Era la condición
 de D-224 para abrirlos.
-**Consecuencias:** Desde ahora cualquier inscrito puede pedir avisos, y el workflow `avisos.yml`
+**Consecuencias:** Desde ahora cualquier inscrito puede pedir avisos, y el workflow `notifications.yml`
 los manda cada 15 minutos sin que nadie mire. Lo que falta medir (cuántos los activan, cuántos se
-tocan) es el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md). `tools/e2e/cup/avisos.mjs` no
+tocan) es el PR 4 de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md). `tools/e2e/cup/notifications.mjs` no
 cambia: en el sitio local los avisos ya se veían sin el laboratorio.
 
 ## D-229 · Los avisos: tope de 2 al día, empates en plural, el día exacto, botones y copas juntas
 **Fecha:** 2026-10-05 · **Estado:** corregida por D-266 · **Relación:** corrige D-224 (sin tope, un ganador, abría el tablero, sin botones ni copas juntas)
 **Decisión:** Lo que D-224 dejó afuera del plan de [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md),
-en `tools/push/calendario.mjs`, `avisar.mjs`, `public/sw.js` y la copa:
+en `tools/push/schedule.mjs`, `notify.mjs`, `public/sw.js` y la copa:
 - **Tope:** a lo más **2 avisos por copa y celular en un día** de quien recibe (`TOPE`). Cuenta
   entregas, no claves: el aviso de dos inscritos es uno. Si se vencen dos plazos a la vez (la final
   y el día anterior, la noche del último día), van en un aviso: "Te quedan 4 horas para jugar los
@@ -3854,8 +3855,8 @@ en `tools/push/calendario.mjs`, `avisar.mjs`, `public/sw.js` y la copa:
 **Por qué:** El dueño lo pidió después de ver llegar los avisos a su Android y su iPhone ("ejecuta
 las 3 pendientes"). El tope y los plazos juntos evitan el aviso de más que hace que alguien los
 apague; el día exacto y los botones ahorran toques; el empate no deja a un ganador afuera.
-**Consecuencias:** `calendario.test.mjs` y `avisar.test.mjs` prueban el tope, los plazos juntos, el
-empate y las copas juntas; `tools/e2e/cup/avisos.mjs`, `&dia=` y `&silenciar`. Los botones se
+**Consecuencias:** `schedule.test.mjs` y `notify.test.mjs` prueban el tope, los plazos juntos, el
+empate y las copas juntas; `tools/e2e/cup/notifications.mjs`, `&dia=` y `&silenciar`. Los botones se
 prueban a mano en Android: Chrome headless no los muestra. Si con el tope se pierde un plazo (dos
 avisos ya ese día), el del día siguiente o el de gracia lo cubren.
 
@@ -3906,8 +3907,8 @@ el celular: un tramposo podría inflar su racha o anotar otro día. Se aceptó e
 laboratorio (y el PR 6 lo dejó así); si molesta, el workflow de los avisos puede recalcular las rachas desde la historia.
 Al entrar, los días viejos del celular suben solo a la historia, sin sus rankings.
 Detalle en "Lo que el PR 3 hizo" de [UNO-AL-DIA.md](UNO-AL-DIA.md). El PR 4 (v0.118.0) suma los avisos: cada celular
-guarda lo que pidió y su último día y racha en `pushDia/<subId>`, y `tools/push/uno-al-dia.mjs` los
-decide dentro de la vuelta de `avisar.mjs` (lo mandado, en `pushEnviadosDia`); abren
+guarda lo que pidió y su último día y racha en `pushDia/<subId>`, y `tools/push/daily.mjs` los
+decide dentro de la vuelta de `notify.mjs` (lo mandado, en `pushEnviadosDia`); abren
 `today/?aviso=uad<tipo>` y se cuentan en el panel como `uaddia`, `uadracha`, `uadsemana` y
 `uadadios` (sin guion: las reglas de las señales piden solo letras). Quedó distinto del diseño: no se juntan con los de La Copa en un solo aviso (cada uno
 lleva su tope de 2 al día), y el de la semana dice solo cuántos días jugó, sin puesto ni "donde más
@@ -3974,7 +3975,7 @@ después instrucciones claras para Safari y Chrome en iPhone y Android, que se p
 vuelva. La app instalada (D-221) es la que recibe los avisos en iPhone y se abre de un toque.
 **Consecuencias:** Para abrirlo a todos basta `INSTALAR_EN_LABS = false`. Los nombres de los menús
 de cada navegador cambian con sus versiones: si un paso deja de calzar, se corrige en
-`COMMON[lang].ins` (i18n.js). Lo prueban `instalar.test.mjs` y `tools/e2e/instalar.mjs` (cada
+`COMMON[lang].ins` (i18n.js). Lo prueban `instalar.test.mjs` y `tools/e2e/install-prompt.mjs` (cada
 celular, la ✕, el diálogo de Chrome y los cuatro idiomas a 320 px); en iPhones y Android reales se
 prueba a mano desde `/labs/`. **Sale del laboratorio en v0.121.0** (decisión del dueño, 2026-10-06): `INSTALAR_EN_LABS = false`, así que el globo sale en la portada de todos los celulares donde se puede agregar la app; en `/labs/` queda solo el botón para volver a mostrarlo después de cerrarlo con la ✕.
 
@@ -3987,7 +3988,7 @@ prueba a mano desde `/labs/`. **Sale del laboratorio en v0.121.0** (decisión de
 - **La app instalada:** el `start_url` de los cuatro manifests pasa a `./?pwa` (el `id` no cambia:
   sigue siendo la misma app). Se cuenta en `pwa/<sistema>` (`android`, `ios`, `otro`) y sale de la
   dirección igual.
-- **Mandados:** `avisar.mjs` suma los entregados de cada vuelta por día y tipo en
+- **Mandados:** `notify.mjs` suma los entregados de cada vuelta por día y tipo en
   `stats/prod/days/<día>/mandados/<tipo>` (`pushEnviados` se limpia a la semana) y deja en
   `stats/prod/push` la hora de la vuelta, las suscripciones vivas y las copas con avisos. `--prueba`
   suma en `mandados/prueba`; `--simular` no escribe nada.
@@ -4009,7 +4010,7 @@ todas terminaron, la lista dice "No tienes copas en curso." sobre el interruptor
 una semana después de terminar, como antes.
 **Por qué:** El dueño, con su jugador, veía las copas terminadas igual que las en curso y no
 distinguía cuáles quedaban por jugar.
-**Consecuencias:** `tools/e2e/cup/copas-del-jugador.mjs` prueba que el interruptor parte apagado,
+**Consecuencias:** `tools/e2e/cup/player-cups.mjs` prueba que el interruptor parte apagado,
 que esconde la terminada y que al prenderlo aparece con su etiqueta. Una copa del celular cerrada
 antes de tiempo se marca al llegar a su `fin` planeado: el celular guarda `meta.end`.
 
@@ -4108,7 +4109,7 @@ siempre los mismos dos o tres. Los tipos agrupan por género, no por gusto.
 - **Guardarlos con el jugador (D-212), para que lo sigan entre celulares:** queda para después.
   El `localStorage` alcanza, y no obliga a tener nombre y PIN.
 **Consecuencias:** con un favorito marcado, los filtros ocupan una línea más, también cuando van
-pegados arriba (D-196; desde D-241, solo donde la ficha no cabe en la fila de los tipos). `tools/e2e/favoritos.mjs` lo prueba de punta a punta. Su chequeo a 320 px
+pegados arriba (D-196; desde D-241, solo donde la ficha no cabe en la fila de los tipos). `tools/e2e/favorites.mjs` lo prueba de punta a punta. Su chequeo a 320 px
 encontró que la portada ya se corría de lado en alemán en el Chrome de Linux, que no sabe partir
 "Galgenmännchen": la columna de `.games` crecía hasta la palabra entera. Ahora la columna no pasa
 del ancho de la pantalla (`minmax(0, 1fr)`) y el nombre se parte aunque falte el diccionario.
@@ -4133,7 +4134,7 @@ fila de dos tarjetas (`.fila-alta`, `.game-card.alta`).
 el mismo peso que a La Copa. Se probó con el emoji arriba, como los juegos, y el emoji a la
 izquierda ganó porque ahorra alto sin achicar el texto.
 **Consecuencias:** `formaAcceso()` devuelve `'tarjeta'` por defecto; el laboratorio guarda
-`'boton'` si alguien elige la otra. `tools/e2e/uno-al-dia.mjs` mira la fila, las píldoras en una
+`'boton'` si alguien elige la otra. `tools/e2e/daily.mjs` mira la fila, las píldoras en una
 línea a 320 px en los cuatro idiomas y la forma de `/labs/`.
 
 ## D-240 · La portada tiene su canon: C-17
@@ -4171,7 +4172,7 @@ nombre (en inglés, desde 375). A 320 px solo cabe en inglés. Los celulares de 
   de cada celular (en el Chrome de Linux, otras medidas). Medir en el momento no se equivoca.
 - **La ⭐ al lado de Juego al azar:** cabía siempre, pero no quedaba pegada arriba con los filtros
   al bajar (D-196) y juntaba un botón que hace algo con uno que filtra.
-**Consecuencias:** `tools/e2e/favoritos.mjs` mira dónde va a 320, 390 y 900 px en los cuatro
+**Consecuencias:** `tools/e2e/favorites.mjs` mira dónde va a 320, 390 y 900 px en los cuatro
 idiomas, que la fila de tipos siga en una línea y que nada se salga.
 
 ## D-242 · El botón de compartir de la portada usa el ícono de los sistemas operativos
@@ -4188,7 +4189,7 @@ bandeja de salida, no "compartir"; la flecha que sale de la caja es la que la ge
 - **Cambiar también el 📤 de los botones con texto** ("📤 Compartir link"): ahí el texto ya dice la
   acción y el emoji al inicio sigue U-2; el pedido era el botón redondo, que no tiene texto.
 **Consecuencias:** el 📤 queda en los botones con texto de los juegos y de La Copa.
-`tools/e2e/compartir-portada.mjs` sigue mirando que el botón diga ✅ al copiar.
+`tools/e2e/share-home.mjs` sigue mirando que el botón diga ✅ al copiar.
 
 ## D-243 · El ícono de compartir va en los colores de la página
 **Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** corrige D-242 (el color del ícono)
@@ -4376,14 +4377,14 @@ con su hora, en vez de cuentas por día: crece sin tope y no responde mejor la p
 dónde y cuánto?"). Medir LCP u otras métricas web: "cuánto tardó en poder jugar" es lo que siente
 quien juega y sale de una sola resta.
 **Consecuencias:** las reglas tienen tres categorías nuevas (`falla`, `listo`, `err`), que publica
-`publicar.yml` al fusionar. Un juego nuevo lleva la línea del vigía en su `index.html`: lo exige
+`publish.yml` al fusionar. Un juego nuevo lleva la línea del vigía en su `index.html`: lo exige
 `vigia.test.mjs`. `window.__vigia.fallas` dice lo que se mandó en esa carga, para las pruebas (C-14).
 
 ## D-252 · Ninguna copia de trabajo queda sin uso
 **Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** corrige D-218 (qué copias borra el hook); completa D-135 y D-206
 **Decisión:** Una copia de trabajo (worktree) vive mientras tiene trabajo en curso o un PR abierto.
 La sesión que la crea la borra apenas sabe que no va a dar PR, y al terminar deja solo las copias
-con PR abierto. `tools/agents/limpiar-copias.mjs`, que corre al empezar cada sesión, barre además:
+con PR abierto. `tools/agents/clean-worktrees.mjs`, que corre al empezar cada sesión, barre además:
 - las **fusionadas**, como antes, ahora también las de la app (`.claude/worktrees/`);
 - las **vacías**: sin commits propios ni cambios, creadas hace más de un día;
 - las **abandonadas**: con commits fuera de `main`, sin PR abierto y sin moverse hace más de tres
@@ -4577,10 +4578,10 @@ al día guardada en el celular: queda `?uad=boton|no` en el link. `?labs` en `/c
 Copa de 3 días; sigue con `?tres` y en el modo de prueba (D-100).
 **Por qué:** lo pidió el dueño: lo que ya está en producción no se necesita en el laboratorio.
 **Alternativas descartadas:** borrar también las demos. Siguen en el código, sin link, porque las
-usan las pruebas de punta a punta (`cup/torneo.mjs`, `cup/avisos.mjs`, `idioma-por-url.mjs`) y las
+usan las pruebas de punta a punta (`cup/tournament.mjs`, `cup/notifications.mjs`, `lang-from-url.mjs`) y las
 capturas del README (`?prueba&demo=<escena>`).
-**Consecuencias:** `cup/torneo.mjs` (parte `laboratorio`) prueba que la página tenga solo El caso;
-`uno-al-dia.mjs` prueba el botón al lado del dado con `?uad=boton`. Un juego nuevo que se pruebe
+**Consecuencias:** `cup/tournament.mjs` (parte `laboratorio`) prueba que la página tenga solo El caso;
+`daily.mjs` prueba el botón al lado del dado con `?uad=boton`. Un juego nuevo que se pruebe
 antes de salir vuelve a tener su sección en `/labs/` y se saca al salir.
 
 ## D-263 · El caso: comparaciones sin grupos que se cruzan, y una ayuda que cuesta 15
@@ -4623,7 +4624,7 @@ comentarios del laboratorio del alemán, que pasa a ser `formularioComentario()`
 errores, ayudas y tiempo.
 **Por qué:** lo pidió el dueño, para que los amigos que lo prueban comenten. Recién terminado es
 cuando más se acuerdan de dónde se trabaron.
-**Consecuencias:** se lee con `node tools/firebase/reportes.mjs`. `tools/e2e/case/lab.mjs` lo
+**Consecuencias:** se lee con `node tools/firebase/reports.mjs`. `tools/e2e/case/lab.mjs` lo
 prueba con el envío interceptado, sin escribir en Firebase.
 
 ## D-266 · Las URL, en inglés: carpetas, parámetros y sus valores
@@ -4671,7 +4672,7 @@ Con una tabla de alias no se rompe ningún link que ya circula.
 juegos, y además busca en `public/` y `tools/push/` una URL armada con un nombre de antes. Los
 nombres de las variables del código siguen en español: la regla es sobre lo que se ve en la URL.
 Las páginas puente no cambian (pasan la búsqueda tal cual y la página nueva la traduce), ni el
-`?juego=` de `tools/release/og/tarjeta.html`, que es una herramienta y no una página del sitio.
+`?juego=` de `tools/release/og/card.html`, que es una herramienta y no una página del sitio.
 
 ## D-267 · El caso se prueba en un solo lugar: /labs/case/, con el juego completo
 **Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** reemplaza el prototipo de D-256; corrige D-257 (dónde vive), D-265 (el comentario va en la pantalla de La Copa)
@@ -4751,7 +4752,7 @@ los cuatro idiomas: 🏆 La Copa, 📅 Uno al día, 👥 jugar en grupo, 🧩 ju
 mensaje al que le falte una o que tenga una línea que la lista no conoce. El mensaje del video
 (`shareSheet.videoLines`) suma "un desafío nuevo cada día", y la bajada de la tarjeta del link
 (`og.mjs`), que se armaba solo con los juegos de grupo, suma Uno al día y los minijuegos para jugar
-solo. **El agente de documentación los mantiene** (U-35): `documentar.mjs revisar` los muestra tal
+solo. **El agente de documentación los mantiene** (U-35): `document.mjs revisar` los muestra tal
 como salen, y si entró algo principal que no nombran, los actualiza en los cuatro idiomas, en su
 PR, aunque sean textos de la app.
 **Por qué:** lo pidió el dueño: revisar los textos de compartir y "asegúrate que el agente de
@@ -4764,7 +4765,7 @@ detectar sola una "novedad principal" en los commits (no hay cómo distinguirla 
 lo decide el agente, y la lista lo obliga a decirlo en un solo lugar). Un juego nuevo no es algo
 principal: ya lo cuenta la cabecera ("15 juegos para el celular") y lo nombra la tarjeta.
 **Consecuencias:** el mensaje pasa de 4 a 6 líneas. La regla es U-35; el agente la sigue desde
-`.claude/agents/documentacion.md`, como excepción a "no tocas código de la app".
+`.claude/agents/documentation.md`, como excepción a "no tocas código de la app".
 
 ## D-272 · Lo principal también es la app instalable con sus avisos y los cuatro idiomas
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-271 (la lista de lo principal); usa D-221, D-224, D-230, D-232 y C-3
@@ -4783,26 +4784,26 @@ dice "sin instalar", que se refiere a que no hay que bajar nada de una tienda.
 
 ## D-273 · Un agente de procesos, y decisiones de un toque
 **Fecha:** 2026-10-11 · **Estado:** corregida por D-275, D-276, D-302 · **Relación:** completa D-132 y D-172 (los agentes de usabilidad y de documentación) y D-216 (el auto-merge)
-**Decisión:** Un tercer agente (`.claude/agents/procesos.md`) corre una vez al día y no arregla
+**Decisión:** Un tercer agente (`.claude/agents/processes.md`) corre una vez al día y no arregla
 cosas sueltas: **cierra lo que quedó abierto** (PR que esperan, issues viejos, lo que los otros
 agentes arrastran de una ronda a otra) y **convierte cada error que se repite en un mecanismo**
 que lo frena solo. Una vez es un accidente; dos veces, un patrón. Construye a lo más un mecanismo
 por ronda, de preferencia un test, y si no, un dato leído del código, una comprobación, un paso de
 un workflow y, solo al final, una instrucción. Toca el taller (`tools/`, tests, workflows, guías
 de agentes), no el código de los juegos.
-- **Memoria:** `docs/procesos.json` (hasta qué commit miró, los patrones con sus veces, los
-  mecanismos con su PR y lo aprobado que ya hizo). **Señales:** `tools/agents/procesos.mjs revisar`.
+- **Memoria:** `docs/processes.json` (hasta qué commit miró, los patrones con sus veces, los
+  mecanismos con su PR y lo aprobado que ya hizo). **Señales:** `tools/agents/processes.mjs revisar`.
 - **Decisiones de un toque:** lo que necesita al dueño va en **un** issue con la etiqueta
-  `procesos` y una casilla Sí y una No por decisión (`procesos.mjs decidir`). GitHub se lo manda
-  al correo; marcar una casilla despierta `.github/workflows/aprobar.yml`, que corre
-  `tools/agents/aprobar.mjs` y hace al instante lo que esa casilla dice, sin un modelo de por medio,
+  `procesos` y una casilla Sí y una No por decisión (`processes.mjs decidir`). GitHub se lo manda
+  al correo; marcar una casilla despierta `.github/workflows/approve.yml`, que corre
+  `tools/agents/approve.mjs` y hace al instante lo que esa casilla dice, sin un modelo de por medio,
   y anota el resultado al lado. Solo obedece al dueño, en un issue suyo, si el bloque de acciones
   no cambió en la misma edición, una vez por decisión y con acciones de una lista cerrada:
   `fusionar`, `cerrar-pr`, `cerrar-issue`, `comentar`, `correr` (e2e o publicar), `encolar` (para
   la ronda siguiente) y `nada`. El agente deja el trabajo hecho antes de preguntar, para que el Sí
   casi siempre sea "fusiónalo". Si una acción falla, la decisión no queda tomada: desmarcar y
   volver a marcar la reintenta.
-- **Fusionar con el token del workflow** no despierta a `publicar.yml` ni a `e2e.yml` (GitHub no
+- **Fusionar con el token del workflow** no despierta a `publish.yml` ni a `e2e.yml` (GitHub no
   encadena workflows con ese token): `fusionar` espera los checks obligatorios, fusiona y los
   corre a mano. Por eso el aviso de `e2e.yml` ya no exige un push.
 - **El aviso "main en rojo" se cierra solo** cuando `main` vuelve a verde (`e2e.yml`, job
@@ -4860,15 +4861,15 @@ entrada del `CHANGELOG.md`.
   Firebase (el proxy responde 403); GitHub sí llega. Además, cada reporte queda con su respuesta y
   su arreglo enlazados.
 **Por qué:** lo pidió el dueño: que el agente de procesos "evalúe y resuelva los ítems de feedback
-que vayan llegando". Hasta ahora los leía la ronda de usabilidad (`reportes.mjs --dias 2`), sin
+que vayan llegando". Hasta ahora los leía la ronda de usabilidad (`reports.mjs --dias 2`), sin
 registro de cuáles se atendieron: un reporte de un día sin ronda se perdía.
 **Alternativas descartadas:** el resumen del reporte en vez del texto (exige que la ronda corra en
 el Mac del dueño, con la app abierta); el texto con el nombre del jugador (el dueño prefirió dejarlo
 fuera).
 - **Los issues los abre el bot de los workflows, no la cuenta del dueño:** GitHub no avisa a
   nadie de lo que hace su propia cuenta, y los agentes usan la del dueño. Por eso el feedback lo
-  sube `feedback.yml` y las decisiones de un toque las abre `decidir.yml` (que lanza
-  `procesos.mjs decidir`); `aprobar.mjs` acepta los issues del bot. El primer issue de decisiones
+  sube `feedback.yml` y las decisiones de un toque las abre `decide.yml` (que lanza
+  `processes.mjs decidir`); `approve.mjs` acepta los issues del bot. El primer issue de decisiones
   (#310) lo abrió la cuenta del dueño y no le llegó.
 **Consecuencias:** al empezar, los nueve reportes que ya había se suben juntos y la primera ronda
 cierra los que ya se resolvieron. GitHub le avisa al dueño por correo de cada issue nuevo.
@@ -4884,7 +4885,7 @@ usabilidad, que **ejecutan**:
 - **Despacho:** los otros dos ya no tienen hora propia. La ronda diaria del de procesos los lanza
   cuando hay algo que revisar: a documentación si entró algo a `main` desde su última ronda; a
   usabilidad si cambió algo de `public/` desde su último despacho, y una vez por semana aunque no
-  (`procesos.mjs revisar` lo calcula; `procesos.mjs despacho` lo anota). Revisa lo que entregan.
+  (`processes.mjs revisar` lo calcula; `processes.mjs despacho` lo anota). Revisa lo que entregan.
 - **Dónde:** una sola tarea programada de la app de Claude en el Mac mini del dueño, a las 4:30 hora
   del Pacífico, en vez de tres rutinas (documentación en la nube a las 3:54, usabilidad en el Mac a
   las 5:07 y procesos en la nube a las 4:30). Las otras se apagan.
@@ -4965,7 +4966,7 @@ estaban se completaron con su nombre.
 que me ayudaría para hacer follow-up personal". El repo es público, así que el nombre queda a la
 vista, pero el nodo `feedback/` de Firebase ya se lee sin llave (`.read: true`): el issue no expone
 nada que no se pudiera ver. El nombre es opcional y lo elige el jugador (40 caracteres como mucho).
-**Alternativas descartadas:** dejarlo solo en `reportes.mjs` o en el panel (el dueño tendría que ir
+**Alternativas descartadas:** dejarlo solo en `reports.mjs` o en el panel (el dueño tendría que ir
 a buscarlo; el correo del issue es donde lee el reporte).
 **Después:** D-306 suma la etiqueta de la llave del laboratorio, que llega aunque no se escriba nombre.
 
@@ -5029,7 +5030,7 @@ entiende sola: pasa justo al marcar a alguien, U-8).
 2") se tachan tarde. Una pista tachada sola nunca es de las que nombra la ayuda. Las tachadas siguen
 sin guardarse al recargar, pero las que se tachan solas vuelven solas. `juegos.test.mjs` prueba
 `usadas()`; `tools/e2e/case/lab.mjs`, el tachado solo, el ✓ a mano y el destachar, y
-`tools/e2e/caminos.mjs` suma la toma `caso pistas`.
+`tools/e2e/paths.mjs` suma la toma `caso pistas`.
 
 ## D-283 · Reinas: ↩️ Deshacer el último gesto
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-169 · cierra el dilema #301 (reporte 🐞 #319)
@@ -5064,7 +5065,7 @@ reproducir ni verificar fuera del celular); sumarlo a Tango en el mismo PR (qued
 **Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-281
 **Decisión:** La puerta del laboratorio acepta una lista de llaves, una por persona, en vez de una
 sola: `HUELLAS` en `labs-puerta.js`, con una línea `'etiqueta': 'huella'` por cada una. Se dan y se
-quitan con `node tools/agents/llave-labs.mjs nueva <etiqueta> | quitar <etiqueta> | listar`: `nueva`
+quitan con `node tools/agents/labs-key.mjs nueva <etiqueta> | quitar <etiqueta> | listar`: `nueva`
 crea una llave al azar que empieza con la etiqueta (`ratoncito-…`, pedido del dueño: que cada uno
 reconozca su link), agrega su huella SHA-256 y muestra el link (`/labs/?key=…`) una sola vez;
 la llave no se guarda en ningún lado. La primera, además de la del dueño, es la de `MI`.
@@ -5077,7 +5078,7 @@ rige cuando el sitio se publica. Pedir una llave es pedir que funcione (pedido d
 2026-10-12): quien la crea abre ese PR y le activa el auto-merge en el mismo movimiento, sin
 esperar otra orden; un PR de solo llaves no lleva CHANGELOG ni pasa por los agentes. La etiqueta es pública (el repo lo es): iniciales o un apodo, no un
 nombre completo. Una llave perdida no se recupera: se quita y se da otra.
-`tools/agents/llave-labs.test.mjs` prueba la herramienta, y `labs-puerta.test.mjs` que cada persona
+`tools/agents/labs-key.test.mjs` prueba la herramienta, y `labs-puerta.test.mjs` que cada persona
 entre con la suya y que una quitada ya no abra.
 
 ## D-285 · La Copa: un celular que perdió su asiento vuelve a entrar con su PIN
@@ -5095,7 +5096,7 @@ es el asiento (`permiso`), y la pantalla lleva a **Ya estoy inscrito** con el no
 elegido y la frase "Este celular dejó de entrar como {name}. Escribe tu PIN para seguir jugando."
 Con el PIN vuelve al tablero y juega; un resultado que no alcanzó a enviarse sigue guardado en el
 celular y se reenvía al volver al día. Si el día de verdad se cerró, el mensaje es el de siempre.
-Lo prueba `tools/e2e/cup/asiento.mjs`.
+Lo prueba `tools/e2e/cup/seat.mjs`.
 **Alternativas descartadas:** leer el asiento antes de cada escritura (`torneoSeats` no se puede
 leer, a propósito); mostrar solo el aviso genérico de permiso (obligaba a buscar a mano dónde
 escribir el PIN).
@@ -5413,7 +5414,7 @@ corrieron los 58 guiones sin tocar nada que un guion mire (`tools/agents/`, work
 Firebase). Y de las 7 veces que `main` salió en rojo, 5 volvieron a verde en la corrida siguiente
 sin que nadie tocara ese juego: cada una abrió un issue "main en rojo" y se investigó a mano.
 **Decisión:**
-- **`tools/e2e/cambios.mjs` (`sinNavegador`) salta también** `tools/agents/`, `tools/firebase/`,
+- **`tools/e2e/changes.mjs` (`sinNavegador`) salta también** `tools/agents/`, `tools/firebase/`,
   `firebase/` (los guiones de CI no abren salas, D-193) y `.github/` salvo `e2e.yml`. El resto del
   taller (`tools/e2e/`, `tools/release/`, `tools/push/`, `tools/generators/`) sigue corriendo todo:
   ante la duda, se corren.
@@ -5429,7 +5430,7 @@ corrida entera desde un workflow (58 jobs por un guion); elegir los guiones por 
 (de 195 PR desde el 3 de octubre, solo 11 tocaban juegos aislados sin nada compartido: queda como
 opción para el dueño, con sus riesgos).
 **Consecuencias:** un aviso "Intermitente" es un guion para arreglar: el agente de procesos los cuenta
-como patrón (`e2e-intermitente-<guion>`). `cambios.test.mjs` fija qué se salta y qué no.
+como patrón (`e2e-intermitente-<guion>`). `changes.test.mjs` fija qué se salta y qué no.
 
 ## D-300 · El CHANGELOG por archivo: cada PR deja su entrada sin número y la versión se pone sola
 **Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-205 y D-135 (la versión se asigna al fusionar)
@@ -5443,23 +5444,23 @@ en 64 se resolvió a mano un choque en la primera línea de `CHANGELOG.md`, porq
   `node tools/release/changelog.mjs nueva [nivel]` la crea.
 - **La versión de hoy** es la primera entrada de `CHANGELOG.md` subida una vez por cada entrada de
   `changelog/`, en el orden en que llegaron a `main`: manda el commit de la línea principal que
-  agregó cada archivo (`git log --first-parent`). `set-version.py --version` y `publicar.yml` la
-  leen de `changelog.mjs version`; `publicar.yml` deja en el resumen de la corrida qué número le
+  agregó cada archivo (`git log --first-parent`). `set-version.py --version` y `publish.yml` la
+  leen de `changelog.mjs version`; `publish.yml` deja en el resumen de la corrida qué número le
   tocó a cada entrada (`changelog.mjs ver`). Una sola cuenta, en `changelog.mjs`.
 - **El agente de procesos las junta** en su ronda (`changelog.mjs juntar`, en su PR): pasan a
   `CHANGELOG.md` con su número y su fecha, y se borran de `changelog/`. La versión publicada no
   cambia al fusionar eso, aunque otro PR haya entrado entretanto (lo prueba `changelog.test.mjs`).
 - **El check `pruebas`** (`changelog.mjs revisar --base HEAD^1`) frena una entrada de `changelog/`
   que no se entiende y un PR que agrega un `## X.Y.Z` a `CHANGELOG.md` (salvo el que junta), y
-  avisa sin frenar si el PR cambia `public/` sin entrada. Necesita la historia: `pruebas.yml` y
-  `publicar.yml` sacan el repo con `fetch-depth: 0` y `filter: blob:none` (los commits y los
+  avisa sin frenar si el PR cambia `public/` sin entrada. Necesita la historia: `tests.yml` y
+  `publish.yml` sacan el repo con `fetch-depth: 0` y `filter: blob:none` (los commits y los
   árboles, no el contenido de los archivos viejos).
 - **Un PR abierto de antes**, con su entrada numerada en `CHANGELOG.md`, la pasa a `changelog/`
   con `node tools/release/changelog.mjs migrar` antes de traer `main`: deja `CHANGELOG.md` como
   estaba en su base y escribe `changelog/<rama>.md` con el nivel que tenía.
 **Por qué:** dos archivos nuevos distintos nunca chocan, y el número que dependía del orden de
 fusión ahora sale de ese orden en vez de adivinarlo antes.
-**Alternativas descartadas:** que `publicar.yml` escriba `CHANGELOG.md` en `main` (la rama exige
+**Alternativas descartadas:** que `publish.yml` escriba `CHANGELOG.md` en `main` (la rama exige
 los checks y el token del workflow no los dispara); `merge=union` en `CHANGELOG.md` (junta las
 dos entradas, pero con el mismo número); ordenar por nombre o por fecha de creación (un PR creado
 antes y fusionado después movería versiones ya publicadas).
@@ -5478,7 +5479,7 @@ al final o dos números sumados a la misma fila del índice.
 - **El número se reserva antes de escribirlo:** `node tools/agents/decision.mjs reservar [--cuantas n]`
   toma el siguiente libre (en `main`, en los PR abiertos y en las reservas) y lo sube como rama
   `reserva/D-n` con `git push --force-with-lease=<rama>:` (vacío: "que no exista"); GitHub la niega
-  si otra sesión llegó antes, y se prueba el siguiente. `documentar.mjs revisar` no cuenta como
+  si otra sesión llegó antes, y se prueba el siguiente. `document.mjs revisar` no cuenta como
   hueco un número reservado. La ronda de procesos borra las reservas que ya están en `main`
   (`decision.mjs limpiar`) y anota "número sin usar" las abandonadas.
 - **`docs/DECISIONES.md` tiene su driver de fusión** (`.gitattributes`: `merge=decisiones`,
@@ -5501,21 +5502,21 @@ por decisión (el cambio más grande, y el índice seguiría siendo uno).
 ## D-302 · Publicar espera la punta a punta de main
 **Fecha:** 2026-10-12 · **Estado:** corregida por D-308 · **Relación:** corrige D-205 y D-193 (la punta a punta de `main` corría aparte y no frenaba la publicación) y D-273 (la fusión de un toque corría los dos workflows)
 **Contexto:** `main` no exige estar al día antes de fusionar, así que lo fusionado se prueba de
-verdad recién en `main`, y `publicar.yml` no lo esperaba: de los 7 rojos de `main` del 4 al 12 de
+verdad recién en `main`, y `publish.yml` no lo esperaba: de los 7 rojos de `main` del 4 al 12 de
 octubre, los 7 se publicaron igual. Con el segundo intento de D-299, un rojo ya no es una falla
 pasajera, y esperar cuesta lo que tarda la punta a punta (~8 min).
-**Decisión:** `publicar.yml` llama a `e2e.yml` (`workflow_call`) junto con `pruebas.yml`, y las
+**Decisión:** `publish.yml` llama a `e2e.yml` (`workflow_call`) junto con `tests.yml`, y las
 reglas de Firebase y el sitio se publican solo si pasan las dos. `e2e.yml` ya no corre por su cuenta
 en cada push a `main` (sería la misma corrida dos veces); sigue en cada PR y a mano. Su job
 `avisar` abre el issue "main en rojo" desde dentro de Publicar, y `cerrar-aviso` lo cierra cuando
-vuelve a verde. La fusión de un toque (`aprobar.mjs fusionar`) corre solo `publicar.yml`.
+vuelve a verde. La fusión de un toque (`approve.mjs fusionar`) corre solo `publish.yml`.
 **Por qué:** pedido del dueño: que lo que se publica esté probado entero.
-**Alternativas descartadas:** `workflow_run` (correría el `publicar.yml` de `main` sobre otro
+**Alternativas descartadas:** `workflow_run` (correría el `publish.yml` de `main` sobre otro
 commit, y una fusión de un toque no lo despierta); exigir que la rama esté al día antes de
 fusionar (cada PR tendría que traer `main` y correr todo de nuevo).
 **Consecuencias:** publicar tarda unos 8 minutos más. Un rojo de verdad deja el sitio en la versión
-anterior hasta que `main` vuelva a verde. `procesos.mjs revisar` mira la última corrida de
-`publicar.yml` para saber si `main` está en verde.
+anterior hasta que `main` vuelva a verde. `processes.mjs revisar` mira la última corrida de
+`publish.yml` para saber si `main` está en verde.
 
 ## D-303 · Un solo push al terminar
 **Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** corrige D-135 (cómo se trabaja en una rama), D-132 y D-172 (los agentes subían sus arreglos al PR cada uno)
@@ -5538,7 +5539,7 @@ descartó por ahora: suma 3 minutos a cada PR).
 que lo saca. En los del laboratorio (35 de 119 PR del sitio desde el 5 de octubre) el juego cambia
 mucho y lo juega poca gente; en el que lo saca, el agente revisaba un diff de una línea (`labs:
 true`) justo cuando el juego llega a todos.
-**Decisión:** `node tools/agents/portadas.mjs revisar` dice la etapa en su primera línea:
+**Decisión:** `node tools/agents/covers.mjs revisar` dice la etapa en su primera línea:
 - **🧪 Solo del laboratorio** (todo lo de `public/` está en `public/labs/`): documentación y
   usabilidad corta: la revisión de portadas (U-36) y las pantallas que cambiaron, a 320 px.
 - **🎓 Saca un juego del laboratorio** (pierde `labs: true` en `games.js` o en `cup/rules.js`, o su
@@ -5549,7 +5550,7 @@ true`) justo cuando el juego llega a todos.
 **Por qué:** pedido del dueño: la revisión fuerte va donde el juego llega a todos. En el
 laboratorio no se saca del todo: 8 de los ~15 PR con arreglos de usabilidad de esos días eran del
 laboratorio, casi siempre de portadas y de textos cortados a 320 px, que la revisión corta mira.
-**Consecuencias:** `portadas.test.mjs` prueba la etapa y la salida del laboratorio (por la bandera y
+**Consecuencias:** `covers.test.mjs` prueba la etapa y la salida del laboratorio (por la bandera y
 por la carpeta). Las guías de usabilidad, documentación y procesos lo dicen en su modo PR.
 
 ## D-305 · Las píldoras de La Copa y Uno al día, abajo a la izquierda
@@ -5575,7 +5576,7 @@ tarjeta chica); igualar el largo de las bajadas (cambia con el idioma).
   puerta, `labs-puerta.js` guarda su etiqueta (`juegos-de-salon:labs-quien`, nunca la llave) y
   `enviarReporte` (`cup/reportes.js`) la agrega al reporte como `tester`, en todos los formularios
   (el 🐞, el del final de cada juego del laboratorio y el de La Copa). El issue la muestra en una
-  línea **Llave** y `reportes.mjs` entre paréntesis. Las reglas de `feedback/` aceptan `tester`
+  línea **Llave** y `reports.mjs` entre paréntesis. Las reglas de `feedback/` aceptan `tester`
   (hasta 24 letras, como una etiqueta).
 - **El formulario ya no muestra el contexto.** El desplegable "Lo que se envía junto" mostraba el
   JSON tal cual (`labs`, `pantallaTam`, `navegador`…): la estructura interna, en una pantalla que
@@ -5598,14 +5599,14 @@ página y el tamaño de la pantalla"), que suma texto a un formulario que debe s
 **Contexto:** el dueño pidió acelerar el CI. Medido en las últimas 60 corridas de PR: la punta a
 punta tardaba 9,7 min de mediana (16,9 en el p90). Eran 58 jobs, uno por guion, para 20 runners: la
 mitad esperaba en la cola, y cada job pagaba ~17 s de preparación. Y el camino crítico eran dos
-guiones de 5 min (`cup/idiomas.mjs` y `cup/torneo.mjs:copa`), hechos casi todo de pausas fijas
-(`sleep`, `go(url, 1500)`, 700 ms entre paso y paso de `caminos.mjs`).
+guiones de 5 min (`cup/languages.mjs` y `cup/tournament.mjs:copa`), hechos casi todo de pausas fijas
+(`sleep`, `go(url, 1500)`, 700 ms entre paso y paso de `paths.mjs`).
 **Decisión:**
-- **Grupos:** `tools/e2e/grupos.mjs` reparte los guiones en grupos parejos según lo que tardó cada
-  uno (`tools/e2e/duraciones.json`): el más largo primero, al grupo más liviano, los grupos que hagan
+- **Grupos:** `tools/e2e/groups.mjs` reparte los guiones en grupos parejos según lo que tardó cada
+  uno (`tools/e2e/durations.json`): el más largo primero, al grupo más liviano, los grupos que hagan
   falta para no pasar de ~4,5 min (o del guion más largo), hasta 18. `e2e.yml` corre un job por
   grupo (`ci.mjs --grupos`), todos a la vez. Cada job deja un aviso "Duraciones" con lo que tardó
-  cada guion, y `grupos.mjs medir` lo pasa a `duraciones.json` (la ronda de procesos, una vez por
+  cada guion, y `groups.mjs medir` lo pasa a `durations.json` (la ronda de procesos, una vez por
   semana). Un guion nuevo cuenta como 90 s hasta que se mide.
 - **Dentro del grupo, lo de cada guion:** la tabla del resumen nombra cada guion con su tiempo y su
   resultado (⚠️ si pasó al segundo intento); el segundo intento es por guion, en el acto
@@ -5615,18 +5616,18 @@ guiones de 5 min (`cup/idiomas.mjs` y `cup/torneo.mjs:copa`), hechos casi todo d
 - **Esperas por condición:** `cdp.mjs` suma `abrir(url, tope)` (navega, espera el `load` y que la
   página se asiente), `asentar(tope)` (sin cambios en el DOM por 150 ms y las animaciones finitas
   terminadas) y `hasta(expr, tope)`. El tope es la pausa de antes: nunca se espera más, y casi
-  siempre mucho menos. Los usan los guiones de idiomas (`idiomas-comun.mjs`), `cup/idiomas.mjs` y la
-  vuelta de cada día de `cup/torneo.mjs`. Un paso `1` de `caminos.mjs` sigue siendo una espera de
+  siempre mucho menos. Los usan los guiones de idiomas (`languages-common.mjs`), `cup/languages.mjs` y la
+  vuelta de cada día de `cup/tournament.mjs`. Un paso `1` de `paths.mjs` sigue siendo una espera de
   700 ms a propósito (que pase el confeti, que el celular juegue). Ningún chequeo se sacó.
 **Por qué:** pedido del dueño; los números van en Consecuencias.
 **Alternativas descartadas:** un job por guion con más runners (GitHub da 20 a un repo gratis);
 acortar la cuenta de 3 a 1 en el modo de prueba (es código de la app, y la cuenta es parte de lo
 que se prueba); cambiar `go()` para todos los guiones de una vez (algunos esperan a propósito a que
 pase algo con el reloj: se cambian de a uno, mirándolos).
-**Consecuencias:** medido aquí, guion por guion: `cup/torneo.mjs:copa` de 294 a 237 s,
-`cup/idiomas.mjs` de 304 a 173 s, `hangman/idiomas.mjs` de 128 a 61 s, `generala/idiomas.mjs` de
-162 a 90 s, `cup-games/idiomas.mjs:queens` de 117 a 81 s; los 221 chequeos de la copa y los de cada
-idioma, iguales. Los 59 trabajos quedan en 13 grupos de ~4,4 min (`grupos.mjs ver`): 13 jobs en vez
+**Consecuencias:** medido aquí, guion por guion: `cup/tournament.mjs:copa` de 294 a 237 s,
+`cup/languages.mjs` de 304 a 173 s, `hangman/languages.mjs` de 128 a 61 s, `generala/languages.mjs` de
+162 a 90 s, `cup-games/languages.mjs:queens` de 117 a 81 s; los 221 chequeos de la copa y los de cada
+idioma, iguales. Los 59 trabajos quedan en 13 grupos de ~4,4 min (`groups.mjs ver`): 13 jobs en vez
 de 58, todos de una en los runners. Lo medido en GitHub antes y después va en el PR.
 Un guion nuevo usa `abrir`, `asentar` y `hasta`; `sleep` queda para lo que de verdad depende del reloj.
 
@@ -5639,10 +5640,10 @@ que su punta a punta ya había pasado (`main` no exige ramas al día, así que e
 guiones `main` había avanzado entre la prueba y la fusión; en los 8 restantes, el PR no tenía
 guiones o no tenía corrida).
 **Decisión:** cada corrida de `e2e.yml` que pasa con guiones sube una marca, el artefacto
-`e2e-arbol-<árbol>` (7 días), con el SHA del árbol que probó. `publicar.yml` corre primero
-`tools/e2e/ya-probado.mjs`: si el árbol del commit que publica tiene marca de una corrida de este
+`e2e-arbol-<árbol>` (7 días), con el SHA del árbol que probó. `publish.yml` corre primero
+`tools/e2e/already-tested.mjs`: si el árbol del commit que publica tiene marca de una corrida de este
 repo (no de un fork, que corre su propia versión del workflow), salta la punta a punta; si solo
-cambia lo que no llega al navegador (`cambios.mjs`) sobre un padre con marca, también, y deja la
+cambia lo que no llega al navegador (`changes.mjs`) sobre un padre con marca, también, y deja la
 suya. Si no, o si algo falla al preguntar, la corre entera, como en D-302. Las pruebas sin
 navegador corren siempre.
 **Por qué:** pedido del dueño: no pagar dos veces la misma prueba, sin publicar nada que no se haya
@@ -5653,7 +5654,7 @@ comparar el commit del PR en vez del árbol (un merge de prueba y la fusión de 
 distintos con el mismo contenido).
 **Consecuencias:** publicar tarda ~2 min cuando el árbol ya pasó (lo de antes de D-302) y ~8 cuando
 no. Una marca dura 7 días: un PR que se fusiona más tarde sin volver a correr la punta a punta la
-corre en `main`. `ya-probado.test.mjs` prueba la decisión, y que una marca de un fork no vale.
+corre en `main`. `already-tested.test.mjs` prueba la decisión, y que una marca de un fork no vale.
 
 ## D-309 · Aire entre el tablero y sus botones, igual en todos los juegos
 **Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** completa U-11 (que pedía botones "con aire" sin decir cuánto) y C-8
@@ -5669,9 +5670,9 @@ que ya separa se descuenta: el gap del contenedor (`--gap-contenedor`; el `.stac
 relleno de la barra de botones de abajo (`--aire-ya`, que el juego declara en su tablero: 10 px en
 Línea de Tiempo, Batalla Naval y Generala, 12 en el Ahorcado, 20 en el Julepe). Uno dentro de otro no
 suma. Los márgenes sueltos que hacían lo mismo (`margin-top: 14px` en
-`#result-actions`, `margin-top: 12px !important`) salen. Lo verifica `tools/e2e/aire-comun.mjs`:
+`#result-actions`, `margin-top: 12px !important`) salen. Lo verifica `tools/e2e/spacing-common.mjs`:
 **cada captura de cualquier guion** mide la distancia del tablero al primer botón de abajo y marca
-✗ si es menos de 24 px, y `mirar.mjs` la informa en cada pantalla.
+✗ si es menos de 24 px, y `look.mjs` la informa en cada pantalla.
 **Por qué:** pedido del dueño: "da un poco de aire entre el tablero de juego y los botones… que se
 convierta en algo estándar".
 **Alternativas descartadas:** arreglar cada juego con su margen (es lo que había y se desordenó);
@@ -5769,7 +5770,7 @@ a la vista y cambia el tamaño).
 **Consecuencias:** `engine.test.mjs` genera 120 tableros de cada etapa del modo y comprueba que tengan
 una sola solución, que se deduzcan sin adivinar, que cada lote de la solución sea del tamaño justo con
 un ⚡ y un 💧, que las difíciles pidan más pasos que las fáciles, que tarden menos de 300 ms, la
-validación con sus motivos y la tarjeta; `tools/e2e/plots/servicios.mjs` juega el modo de punta a punta.
+validación con sus motivos y la tarjeta; `tools/e2e/plots/utilities.mjs` juega el modo de punta a punta.
 
 ## D-312 · Loteo, modo Servicios: los difíciles, más difíciles
 **Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** corrige D-311 (sus etapas difíciles)
@@ -5798,7 +5799,7 @@ nunca hace falta: la regla (2) ya es bastante exigente.
 tableros más fáciles, D-311); terreno donde no se puede construir (cambia las reglas; queda para después
 si esto no alcanza).
 **Consecuencias:** `engine.test.mjs` exige que los difíciles no muestren lotes de entrada (85 % o más) y
-pidan 3 o más deducciones profundas por tablero; `tools/e2e/plots/servicios.mjs` revisa el aviso del
+pidan 3 o más deducciones profundas por tablero; `tools/e2e/plots/utilities.mjs` revisa el aviso del
 tablero 3.
 
 ## D-313 · Los PR de las rondas de usabilidad y documentación se fusionan solos
@@ -5834,14 +5835,14 @@ abajo y pasajera no se notaba, y el dato de un acierto es igual de interesante q
 cuando el jugador ya mira la carta siguiente); cerrar el acierto con un toque siempre (sin barra
 no se sabe que se cierra solo, y en Relámpago frenaría a quien no quiere leer).
 **Consecuencias:** cada acierto con dato frena el juego hasta 6 s, que no cuentan en el reloj. El
-guion `tools/e2e/timeline/dato.mjs` revisa que el acierto muestre el dato, pause el reloj y se
+guion `tools/e2e/timeline/fact.mjs` revisa que el acierto muestre el dato, pause el reloj y se
 cierre solo o con un toque.
 
 ## D-315 · La carpeta de proyectos se limpia sola, también las ramas y la basura de pruebas
-**Fecha:** 2026-10-14 · **Estado:** vigente · **Relación:** completa D-252 (qué barre `limpiar-copias.mjs`) y D-276 (la ronda del agente de procesos); completa D-213 (los guiones de `tools/e2e/`)
+**Fecha:** 2026-10-14 · **Estado:** vigente · **Relación:** completa D-252 (qué barre `clean-worktrees.mjs`) y D-276 (la ronda del agente de procesos); completa D-213 (los guiones de `tools/e2e/`)
 **Decisión:** Pedido del dueño: en el Mac mini, la carpeta de proyectos tiene `juegos-de-salon` y
 solo las copias con trabajo en curso, todos los días y no solo al abrir una sesión.
-- **La ronda diaria del agente de procesos corre `node tools/agents/limpiar-copias.mjs`** desde la
+- **La ronda diaria del agente de procesos corre `node tools/agents/clean-worktrees.mjs`** desde la
   carpeta principal y cuenta en su informe qué borró, qué dejó y por qué. El hook de inicio de
   sesión sigue igual.
 - **Ramas locales sin copia:** la herramienta borra las que ya entraron a `main` y las que no
@@ -5855,14 +5856,14 @@ solo las copias con trabajo en curso, todos los días y no solo al abrir una ses
   `.log`), no cuenta como cambio sin commitear, y se borra con la copia. Cualquier otro archivo la
   vuelve real, y los cambios reales siguen sin tocarse nunca.
 - **La causa se cierra en los guiones:** la carpeta de salida sale de `salida()`
-  (`tools/e2e/salida.mjs`), que acepta el primer argumento solo si es una carpeta de verdad; si no,
+  (`tools/e2e/output.mjs`), que acepta el primer argumento solo si es una carpeta de verdad; si no,
   la que el guion da por defecto o una nueva en el directorio temporal. `launch` (`cdp.mjs`) se
-  niega a abrir Chrome con un perfil en `undefined/` o `--parte/`, y `tools/e2e/salida.test.mjs`
+  niega a abrir Chrome con un perfil en `undefined/` o `--parte/`, y `tools/e2e/output.test.mjs`
   falla si un guion vuelve a leer `process.argv[2]` a mano.
 **Por qué:** en la limpieza del 13 de octubre quedaron vivas dos copias fusionadas
 (`caso-labs-portada`, `telemetria`) por carpetas `undefined/` (64 MB) y `--parte/` (75 MB): los
 guiones hacían `const OUT = process.argv[2]`, y corridos sin carpeta (`undefined`) o con un flag
-primero (`torneo.mjs --parte copa`) dejaban capturas y un perfil de Chrome dentro de la copia. Y
+primero (`tournament.mjs --parte copa`) dejaban capturas y un perfil de Chrome dentro de la copia. Y
 había 74 ramas locales viejas en la carpeta principal, que nada borraba.
 **Alternativas descartadas:** limpiar a mano (vuelve a pasar); subir a GitHub las ramas con commits
 propios antes de borrarlas, como las copias abandonadas (tras la reescritura del 13 subiría historia
@@ -5899,7 +5900,7 @@ goes into the repo.
   migration script and the old name kept as an alias. When nothing is left, that task is deleted
   and replaced by a weekly sanity review that looks for Spanish creeping back into internal text.
 - **Until each phase lands,** new text is English even inside a file that is still Spanish, and
-  tools read both: `tools/agents/documentar.mjs` accepts `**Status:**` / `**Relation:**` with
+  tools read both: `tools/agents/document.mjs` accepts `**Status:**` / `**Relation:**` with
   `current`, `amended by`, `replaced by` and `revoked` alongside the Spanish fields.
 **Why:** the owner wants the repository to read as international: anyone reviewing the code, the
 decisions or the messages should be able to follow them. Before this, only the README was English
@@ -5910,7 +5911,15 @@ cannot be reviewed); renaming the persisted keys together with the code (risks l
 name).
 **Consequences:** decisions, canons and changelog entries written from now on are English; until
 phase 5 the documents are bilingual. Each phase marks itself done here, in its own PR: phase 1 is
-done (v0.170.x, this PR).
+done (v0.170.x); phase 3 is done: 97 workshop files, their commands and flags (`revisar` → `check`,
+`--desde` → `--from`…), the workflows and their required checks (`pruebas` → `tests`,
+`punta-a-punta` → `end-to-end`), the agents (`processes`, `documentation`, `usability`) and their
+labels, with environment variables read under both names for a while (`SITE` or `SITIO`).
+- **Owner's answers to the scan (phase 2):** the GitHub secret `VAPID_PRIVADA` keeps its name (a
+  secret cannot be renamed, only saved again); `/cup/suelto/` moves to `/cup/standalone/` with a
+  bridge page, as every renamed URL (phase 4); shared images get English names
+  (`tarjeta.jpg` → `card.jpg`), the pages point to the new ones and the old files stay as obsolete
+  copies until the weekly review removes them (phase 4).
 
 ## D-317 · Feedback: an optional email, kept private, and a friendly reply when it's resolved
 **Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows)
@@ -5929,7 +5938,7 @@ whoever wants to can be told when we answer.
   `hola@juegosdesalon.cl` (the owner's choice, sent through Gmail's SMTP with an app password kept
   in `~/.config/juegos-de-salon/mail.json`, never in the repo), in the language the feedback was
   written in, wrapped in one of ten friendly, grateful openings per language
-  (`tools/agents/feedback-plantillas.mjs`; neutral language, no dashes as punctuation). Then it
+  (`tools/agents/feedback-templates.mjs`; neutral language, no dashes as punctuation). Then it
   deletes the address and notes it on the issue (`feedback.mjs reply`). **Several comments from the
   same player go in one email** (owner's request, the same day: a long session leaves several, and
   N emails for N comments is too many): the subject and the opening are plural, each answer goes
@@ -5951,17 +5960,17 @@ address in `feedback/` (readable by anyone); drafts in the owner's Gmail (every 
 the owner); a mail service with its own account and domain verification (more setup for the same
 result).
 **Consequences:** `firebase/database.rules.json` gains `feedbackContacto` and `feedback/*/correoMascara`
-(published with the merge, D-218); `procesos.mjs revisar` lists the reports with an email still
+(published with the merge, D-218); `processes.mjs check` lists the reports with an email still
 waiting for a reply (📧). Until the owner sets up `hola@juegosdesalon.cl` and `mail.json`, `reply`
 fails without sending anything and the round says so.
 
 ## D-318 · hola@juegosdesalon.cl: a Cloudflare Worker, a narrow inbox user and a support agent
 **Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-317 (the email reply) and D-275 (feedback as issues); adds an agent to D-276
 **Decision:** Owner's request: what people write to hola@juegosdesalon.cl enters the same pipeline
-as the app's 🐞, triaged by a **support agent** (`.claude/agents/atencion.md`) that the processes
+as the app's 🐞, triaged by a **support agent** (`.claude/agents/support.md`) that the processes
 agent launches when there are emails.
 - **No mailbox:** Cloudflare Email Routing hands each email to a Worker
-  (`tools/cloudflare/hola-worker.js`, pasted in the dashboard, free plan), which forwards a copy to
+  (`tools/cloudflare/inbox-worker.js`, pasted in the dashboard, free plan), which forwards a copy to
   the owner's Gmail and keeps sender, subject and text in Firebase `buzon/<id>`.
 - **A narrow user, not the admin key:** the Worker and the agent's tool (`tools/agents/inbox.mjs`)
   sign in as `buzon@juegosdesalon.cl`, a Firebase Auth user (UID in the rules) that can only read
@@ -5981,7 +5990,57 @@ reading in a box the rules enforce.
 reading the owner's personal Gmail (the credential opens all their mail); a service account with
 limited IAM (the Realtime Database has no per-path IAM: any service account bypasses the rules);
 the processes agent reading the inbox itself (too many powers next to untrusted text).
-**Consequences:** `firebase/database.rules.json` gains `buzon` (only that UID); `procesos.mjs
-revisar` counts the emails and dispatches `atencion` when there are some; issues from email say
+**Consequences:** `firebase/database.rules.json` gains `buzon` (only that UID); `processes.mjs
+check` counts the emails and dispatches `support` when there are some; issues from email say
 "Arrived by email to hola@" and are titled `🐞 email: …`. The owner sets up the Worker in
-Cloudflare once (`tools/cloudflare/hola-worker.js` says how).
+Cloudflare once (`tools/cloudflare/inbox-worker.js` says how).
+
+## D-319 · A room that doesn't open: the button says it's trying, and one tap goes to one phone
+**Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-40 (one text for a room that can't be reached) and C-14 (a clear way out)
+**Decision:** Owner's request, after a player saw "No se pudo abrir la sala…" in Batalla Naval and
+was left looking at it. Creating or joining a room goes through `tryRoom` in
+`public/assets/js/transport/errors.js`, in every game with rooms (Ahorcado, Batalla Naval, Dudo,
+Generala, Julepe, Línea de Tiempo, Toque y Fama):
+- **While it waits** (up to 20 s: 8 to connect, 12 for the operation), the button says
+  "Abriendo sala…" or "Entrando…" (`COMMON.opening`/`joining`, `aria-busy`) and the previous error
+  is cleared. Before, the button only went dim and the old message stayed on screen, so a retry in
+  progress looked like a frozen app (the player's screenshot showed exactly that).
+- **When it fails with `errOffline`**, a "📱 Jugar en un celular" button (`COMMON.playOnePhone`)
+  goes under the message and opens the game's own one-phone setup. The text no longer says "in a
+  few minutes": it says to try again or play on one phone, and the same create/join button is the
+  retry. The other errors (full, expired, not found) get no such button: one phone doesn't fix them.
+**Why:** the message already named the way out (one phone needs no internet) but left the player
+to find it through the menu; and a retry has to show it is happening. A separate "retry" or
+"reload" link was discarded: it would do what the button already does, and reloading would lose
+the name and the settings.
+**Consequences:** `tools/e2e/room-error.mjs` checks the waiting label, the button coming back, the
+way out and the clean one-phone screen, now also in Generala and Julepe. U-37 in USABILIDAD.md.
+
+## D-320 · Room writes nobody waits for are caught in the transport, and a denied resend is not a failure
+**Date:** 2026-10-14 · **Status:** current · **Relation:** completes C-7, C-12 and the vigía (D-251) for room games
+**Context:** the vigía recorded the only PERMISSION_DENIED in a week as an unhandled rejection in
+Batalla Naval (room CUFM, 21:02:01 UTC, chrome155, no file: the stack is all in the Firebase SDK).
+The message format comes from the SDK's write callback (`set`/`update`/`push`/`onDisconnect`); a
+denied read says `permission_denied at /path`. The room's messages show both phones silent for
+four minutes after B sent its fleet, then the rejection 5 s before B's first shot, and every write
+that room made at that time passed the published rules. What was denied was a resend: when the
+connection drops before the server's ack arrives, the SDK sends every write still waiting for one
+again after reconnecting, and `rooms/<CODE>/messages/<id>` can only be written once
+(`!data.exists()`). The message was already in the room, so the game went on, but `send()` returned
+the promise and none of the seven room games awaits it.
+**Decision:** the transport handles what it fires and forgets
+(`public/assets/js/transport/best-effort.js`):
+- `send()` passes its `push` through `message()`: a denied write whose message is already on the
+  server is a resend and is not reported. Any other failure is a move that didn't get through, so
+  it is raised again and the vigía still counts it on the Health panel. It still returns the same
+  promise, so a caller that awaits it sees the error.
+- The presence writes (`onDisconnect(...).update`, the `update` on reconnect) and the background
+  note of a new room go through `quiet()`. They can be denied for real when a phone wakes up on a
+  room that expired (30 minutes without moves), and that is not something the player can act on.
+- `best-effort.test.mjs` scans `firebase.js`: a Firebase call nobody awaits, returns or catches
+  fails the test.
+**Why not the rules:** a message that can only be written once is what keeps the room append-only,
+and the rules cannot tell an identical resend from a new write over an existing id.
+**Consequences:** the Health panel stops counting resends as failures. Rooms that are created but
+never noted in the cleanup bucket (the page dies between the two writes, as with MBGJ and HBHV that
+same day) are a separate problem, handled in their own PR.

@@ -94,7 +94,7 @@ for (const p of paginas) {
 const puentes = [];
 const buscar = d => { for (const f of readdirSync(d)) { const p = join(d, f); if (statSync(p).isDirectory()) { if (f !== 'labs') buscar(p); } else if (f === 'index.html') puentes.push(p); } };
 buscar(PUBLIC);
-const aLabs = puentes.filter(p => /Página puente[^>]*se mudó a \/labs\//.test(readFileSync(p, 'utf8')));
+const aLabs = puentes.filter(p => /(?:Bridge page|Página puente)[^>]*(?:moved to|se mudó a) \/labs\//.test(readFileSync(p, 'utf8')));
 assert.ok(aLabs.length >= 1, 'hay puentes al laboratorio');
 for (const p of aLabs) assert.match(readFileSync(p, 'utf8'), /<meta name="robots" content="noindex, nofollow">/, `${p.slice(PUBLIC.length)} no se indexa`);
 

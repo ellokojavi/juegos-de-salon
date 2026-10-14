@@ -1,30 +1,26 @@
-// Qué cuenta como marketing atrasado (U-34). Ejecutar: node tools/agents/marketing.test.mjs
+// What counts as outdated marketing (U-34). Run: node tools/agents/marketing.test.mjs
 import assert from 'node:assert/strict';
-import { atrasos } from './marketing.mjs';
+import { behind } from './marketing.mjs';
 
 const asset = { app: '0.82.x', juegos: ['tango', 'zip'], grilla_mas: ['letras'] };
 
-// Al día: mismos juegos (la copa no cuenta: es la vitrina, no un juego de la grilla) y misma versión.
-assert.deepEqual(atrasos(asset, { portada: ['copa', 'tango', 'zip', 'letras'], version: '0.82.3' }), []);
+// Up to date: same games (the cup does not count: it is the showcase, not a grid game) and same version.
+assert.deepEqual(behind(asset, { cover: ['copa', 'tango', 'zip', 'letras'], version: '0.82.3' }), []);
 
-// Un juego nuevo en la portada, uno que salió y una versión menor más nueva.
-assert.deepEqual(atrasos(asset, { portada: ['tango', 'letras', 'desenredo'], version: '0.88.0' }), [
-  'juegos de la portada que no salen: desenredo',
-  'salen juegos que ya no están en la portada: zip',
-  'muestra la app 0.82.x; hoy es 0.88.0',
+// A new game on the cover page, one that left and a newer minor version.
+assert.deepEqual(behind(asset, { cover: ['tango', 'letras', 'desenredo'], version: '0.88.0' }), [
+  'cover-page games that do not appear: desenredo',
+  'games that are no longer on the cover page appear: zip',
+  'shows app 0.82.x; today it is 0.88.0',
 ]);
 
-// Un parche no envejece el asset.
-// Un asset que muestra una selección no echa de menos los juegos nuevos, pero sí avisa si uno ya no está
-assert.deepEqual(atrasos({ juegos: ['zip', 'reinas'], seleccion: true }, { portada: ['zip', 'reinas', 'desenredo'], version: '0.1.0' }), []);
-assert.deepEqual(atrasos({ juegos: ['zip', 'viejo'], seleccion: true }, { portada: ['zip'], version: '0.1.0' }), ['salen juegos que ya no están en la portada: viejo']);
-assert.deepEqual(atrasos({ app: '0.88.0' }, { portada: [], version: '0.88.4' }), []);
+// An asset that shows a selection does not miss the new games, but does warn if one is gone
+assert.deepEqual(behind({ juegos: ['zip', 'reinas'], seleccion: true }, { cover: ['zip', 'reinas', 'desenredo'], version: '0.1.0' }), []);
+assert.deepEqual(behind({ juegos: ['zip', 'viejo'], seleccion: true }, { cover: ['zip'], version: '0.1.0' }), ['games that are no longer on the cover page appear: viejo']);
+// A patch does not age the asset.
+assert.deepEqual(behind({ app: '0.88.0' }, { cover: [], version: '0.88.4' }), []);
+
+// A lab game that appears on purpose is not flagged as "no longer on the cover page"
+assert.deepEqual(behind({ juegos: ['caso'], laboratorio: ['caso'], seleccion: true }, { cover: ['ahorcado'], version: null }), [], 'labs: it should not warn');
 
 console.log('marketing: ok');
-
-// Un juego del laboratorio que sale a propósito no se marca como "ya no está en la portada"
-{
-  const av = atrasos({ juegos: ['caso'], laboratorio: ['caso'], seleccion: true }, { portada: ['ahorcado'], version: null });
-  assert.deepEqual(av, [], 'laboratorio: no debería avisar');
-  console.log('marketing: un juego del laboratorio no avisa');
-}

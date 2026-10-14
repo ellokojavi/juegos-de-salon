@@ -1,9 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node tools/firebase/reglas.mjs:*)",
-      "Bash(node tools/firebase/en-curso.mjs:*)",
-      "Bash(node tools/firebase/reportes.mjs:*)",
+      "Bash(node tools/firebase/rules.mjs:*)",
+      "Bash(node tools/firebase/in-progress.mjs:*)",
+      "Bash(node tools/firebase/reports.mjs:*)",
       "WebFetch(domain:juegos-de-salon-default-rtdb.firebaseio.com)"
     ]
   },
@@ -13,9 +13,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && [ -f tools/agents/limpiar-copias.mjs ] && node tools/agents/limpiar-copias.mjs --hook || true",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && [ -f tools/agents/clean-worktrees.mjs ] && node tools/agents/clean-worktrees.mjs --hook || true",
             "timeout": 60,
-            "statusMessage": "Revisando copias de trabajo fusionadas…"
+            "statusMessage": "Checking merged worktrees…"
           }
         ]
       }

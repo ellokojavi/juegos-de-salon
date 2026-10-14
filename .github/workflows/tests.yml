@@ -1,0 +1,69 @@
+# The browserless tests, on every PR and on every merge to main (D-143). On main publish.yml calls
+# them before publishing (D-192): if they don't pass, the site doesn't change.
+# The end-to-end ones (tools/e2e/) run separately, in e2e.yml (D-193). Screenshots stay manual.
+# The job `tests` is a required check on main (D-216).
+
+name: Tests
+
+on:
+  pull_request:
+  workflow_call:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # With the history (without the old files' contents, which aren't needed): the version comes
+      # from the order in which the changelog/ entries reached main (D-300)
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Every *.test.mjs in the repo, with no list to maintain: a new one gets in by itself.
+      - name: Node tests
+        run: |
+          failures=0
+          for f in $(git ls-files '*.test.mjs'); do
+            echo "::group::$f"
+            if node "$f"; then echo "ok"; else echo "::error file=$f::$f failed"; failures=1; fi
+            echo "::endgroup::"
+          done
+          exit $failures
+
+      - name: Python tests
+        run: |
+          failures=0
+          for f in $(git ls-files '*.test.py'); do
+            python3 "$f" || { echo "::error file=$f::$f failed"; failures=1; }
+          done
+          exit $failures
+
+      # What publish.yml does with the version, on a throwaway copy (D-205): if stamping breaks,
+      # it shows up in the PR and not when publishing
+      - name: Version stamping
+        run: |
+          cp -r public "$RUNNER_TEMP/site"
+          python3 tools/release/set-version.py --site "$RUNNER_TEMP/site" --commit "$GITHUB_SHA"
+
+      # The changelog/ entries parse, and a PR doesn't bring a numbered entry in CHANGELOG.md,
+      # which is what made two open PRs clash (D-300). On a PR, GitHub tests the merge with main:
+      # its first parent is the base. A PR that changes public/ without an entry gets a warning.
+      - name: CHANGELOG per file
+        run: node tools/release/changelog.mjs check ${{ github.event_name == 'pull_request' && '--base HEAD^1' || '' }}
+
+      # The README and the cards, up to date: they stop the PR and the publication (C-11, C-13, D-181)
+      - name: README up to date
+        run: python3 tools/release/readme.py check
+
+      - name: Social cards up to date
+        run: node tools/release/og.mjs check

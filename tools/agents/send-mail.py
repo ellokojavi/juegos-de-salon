@@ -29,44 +29,44 @@ from email.utils import formataddr, make_msgid
 
 CONFIG = os.environ.get('JUEGOS_MAIL') or os.path.expanduser('~/.config/juegos-de-salon/mail.json')
 LOG = os.environ.get('JUEGOS_MAIL_LOG') or os.path.expanduser('~/.config/juegos-de-salon/mail-log.jsonl')
-VENTANA = timedelta(hours=24)
+WINDOW = timedelta(hours=24)
 
 
-def huella(to):
+def fingerprint(to):
     return hashlib.sha256(to.strip().lower().encode('utf-8')).hexdigest()
 
 
-def mascara(to):
+def mask(to):
     u, d = to.strip().split('@', 1)
     return f'{u[0]}********@********{d[-1]}'
 
 
-def leer_log(ruta=None):
-    ruta = ruta or LOG
-    if not os.path.exists(ruta):
+def read_log(path=None):
+    path = path or LOG
+    if not os.path.exists(path):
         return []
-    with open(ruta, encoding='utf-8') as f:
+    with open(path, encoding='utf-8') as f:
         return [json.loads(l) for l in f if l.strip()]
 
 
-def reciente(to, ahora=None, ruta=None):
+def recent(to, now=None, path=None):
     """The last email to this address within 24 hours, or None."""
-    ahora = ahora or datetime.now(timezone.utc)
-    h = huella(to)
-    for e in reversed(leer_log(ruta)):
-        if e.get('hash') == h and ahora - datetime.fromisoformat(e['at']) < VENTANA:
+    now = now or datetime.now(timezone.utc)
+    h = fingerprint(to)
+    for e in reversed(read_log(path)):
+        if e.get('hash') == h and now - datetime.fromisoformat(e['at']) < WINDOW:
             return e
     return None
 
 
-def anotar(m, ahora=None, ruta=None):
-    ruta = ruta or LOG
-    os.makedirs(os.path.dirname(ruta), exist_ok=True)
-    e = {'at': (ahora or datetime.now(timezone.utc)).isoformat(timespec='seconds'), 'to': mascara(m['to']), 'hash': huella(m['to']),
+def log_sent(m, now=None, path=None):
+    path = path or LOG
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    e = {'at': (now or datetime.now(timezone.utc)).isoformat(timespec='seconds'), 'to': mask(m['to']), 'hash': fingerprint(m['to']),
          'subject': m['subject'], 'issues': m.get('issues') or [], 'test': bool(m.get('test'))}
-    with open(ruta, 'a', encoding='utf-8') as f:
+    with open(path, 'a', encoding='utf-8') as f:
         f.write(json.dumps(e, ensure_ascii=False) + '\n')
-    os.chmod(ruta, 0o600)
+    os.chmod(path, 0o600)
     return e
 
 
@@ -86,7 +86,7 @@ def message(cfg, m):
 
 def main():
     if '--log' in sys.argv:
-        for e in leer_log():
+        for e in read_log():
             print(f"{e['at']}  {e['to']}  {'[test] ' if e.get('test') else ''}{e['subject']}  {' '.join('#' + str(n) for n in e.get('issues') or [])}")
         return
     if not os.path.exists(CONFIG):
@@ -97,13 +97,13 @@ def main():
     m = json.load(sys.stdin)
     if not all(m.get(k) for k in ('to', 'subject', 'text')):
         sys.exit('The message needs "to", "subject" and "text".')
-    antes = reciente(m['to'])
-    if antes:
-        sys.exit(f"Not sent: {antes['to']} already got an email at {antes['at']} (\"{antes['subject']}\"). One email per address every 24 hours.")
+    prev = recent(m['to'])
+    if prev:
+        sys.exit(f"Not sent: {prev['to']} already got an email at {prev['at']} (\"{prev['subject']}\"). One email per address every 24 hours.")
     with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=30) as smtp:
         smtp.login(cfg['user'], cfg['appPassword'])
         smtp.send_message(message(cfg, m))
-    e = anotar(m)
+    e = log_sent(m)
     print(f"Sent to {e['to']}, logged in {LOG}.", file=sys.stderr)
 
 

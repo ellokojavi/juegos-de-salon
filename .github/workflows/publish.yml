@@ -1,0 +1,155 @@
+# Publishes the site on GitHub Pages on every merge to main (D-192). Only public/ is published
+# —without the tests—: docs/, tools/, marketing/ and the rest of the repo are not part of the site.
+# The version is stamped here, on the copy that gets published (D-205).
+# First the tests (tests.yml) and the end-to-end tests (e2e.yml, D-302) run: with one red, the
+# published site does not change. The end-to-end run is not repeated if the tree being published
+# already passed it in a PR, or if it only changes what doesn't reach the browser on top of a tree
+# that passed it (D-308). The version is the CHANGELOG's plus the changelog/ entries not yet
+# collected, in the order they reached main (D-300).
+#
+# Requires, once, Settings → Pages → Source: "GitHub Actions" (not "Deploy from a branch").
+# The juegosdesalon.cl domain is set up there and kept; public/CNAME stays just in case.
+
+name: Publish
+
+on:
+  push:
+    branches: [main]
+  # To publish again by hand (Actions → Publish → Run workflow)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One publication at a time, and the one going out is not cut short
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    uses: ./.github/workflows/tests.yml
+
+  # Did this tree already pass the end-to-end run? (D-308) Looks for the mark e2e.yml leaves when it
+  # passes. If asking fails, it says no, and the end-to-end run goes whole.
+  already-tested:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      tested: ${{ steps.check.outputs.tested }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/e2e/already-tested.mjs
+      # Inherited from the parent: it leaves its own mark, so the next commit can inherit too
+      - if: steps.check.outputs.inherited == 'true'
+        run: echo "inherited" > "$RUNNER_TEMP/mark"
+      - if: steps.check.outputs.inherited == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-tree-${{ steps.check.outputs.tree }}
+          path: ${{ runner.temp }}/mark
+          retention-days: 7
+
+  # All the end-to-end tests, on what is about to be published (D-302), unless they already passed
+  # on this same tree (D-308). If they fail twice, its `notify` job opens the "main is red" issue.
+  e2e:
+    needs: already-tested
+    if: ${{ !cancelled() && needs.already-tested.outputs.tested != 'true' }}
+    uses: ./.github/workflows/e2e.yml
+    permissions:
+      contents: read
+      actions: read
+      issues: write
+
+  # The Firebase rules publish themselves (D-218), before the site: the new code may need them.
+  # `rules.mjs publish` uploads nothing if they are already there, and verifies them after
+  # uploading; if Firebase rejects them, the site is not published. It needs the
+  # FIREBASE_ADMIN_JSON secret (the service account key); without it, it warns and goes on, and
+  # the rules are published by hand.
+  rules:
+    needs: [tests, already-tested, e2e]
+    # With the tests green and the end-to-end run green, or skipped because it was already tested
+    if: ${{ !cancelled() && needs.tests.result == 'success' && (needs.e2e.result == 'success' || (needs.e2e.result == 'skipped' && needs.already-tested.outputs.tested == 'true')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Publish the Firebase rules
+        env:
+          KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+        run: |
+          if [ -z "$KEY_JSON" ]; then
+            echo "::warning::The FIREBASE_ADMIN_JSON secret is missing: if this change touched the rules, publish them by hand (node tools/firebase/rules.mjs publish)"
+            exit 0
+          fi
+          umask 077
+          printf '%s' "$KEY_JSON" > "$RUNNER_TEMP/key.json"
+          FIREBASE_KEY="$RUNNER_TEMP/key.json" node tools/firebase/rules.mjs publish
+
+  publish:
+    needs: [tests, already-tested, e2e, rules]
+    if: ${{ !cancelled() && needs.rules.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Build the site (public/ without the tests)
+        run: rsync -a --exclude='*.test.mjs' public/ _site/
+
+      # The version is not in git: it is stamped here, only on the copy that gets published (D-205).
+      # The number is CHANGELOG.md's first entry bumped by the pending changelog/ entries (D-300),
+      # and the cache key carries the commit. The run summary says which number each one got.
+      - name: Stamp the version
+        run: |
+          python3 tools/release/set-version.py --site _site --commit "$GITHUB_SHA"
+          node tools/release/changelog.mjs show >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+      # C-11: it counts as published when the site serves the new version, not when the upload ends
+      - name: Check that the site serves the new version
+        env:
+          URL: ${{ steps.deploy.outputs.page_url }}
+        run: |
+          key="$(python3 tools/release/set-version.py --version)-${GITHUB_SHA:0:7}"
+          for i in $(seq 1 20); do
+            if curl -sfL "${URL}?t=$(date +%s)" | grep -q "base.css?v=$key"; then
+              echo "published: $key"; exit 0
+            fi
+            sleep 15
+          done
+          echo "::error::$URL does not serve $key after 5 minutes"; exit 1

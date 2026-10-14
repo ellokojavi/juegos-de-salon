@@ -105,7 +105,7 @@ Puntaje del día (`puntajeDudo` en `uno-al-dia.js`): ganar vale 60 y cada dado q
 (100 sin perder ninguno); perdiendo, 10 por ronda aguantada (todas menos la que te dejó sin dados),
 hasta 50. La tarjeta de Uno al día va arriba de los botones del resultado; el primer intento cuenta
 y los siguientes son práctica. No hay revancha (#226): la tarjeta ya ofrece 🎲 Jugar otro y Repetir
-el de hoy. Se prueba con `tools/e2e/uno-al-dia-grupo.mjs`.
+el de hoy. Se prueba con `tools/e2e/daily-group.mjs`.
 
 ### Cómo juega el celular
 

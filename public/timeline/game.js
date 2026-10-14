@@ -13,7 +13,7 @@ import { gameById } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { failWith } from '../assets/js/transport/errors.js';
+import { clearRoomError, tryRoom } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
@@ -747,7 +747,7 @@ function renderSetup(mode, prefillCode = '') {
   $('#screen-setup h2').textContent = prefillCode ? T.invitedTitle : T.setupTitle;
   const config = { ...DEFAULT_CONFIG };
   const form = $('#setup-form'); form.innerHTML = '';
-  const err = $('#setup-error'); err.textContent = '';
+  const err = $('#setup-error'); clearRoomError(err);
   let draft = mode === 'local' ? ['', ''] : [nameStore.get()];
 
   // Temática
@@ -800,23 +800,23 @@ function renderSetup(mode, prefillCode = '') {
   paintCards();
   if (!invitado) form.append(el('div', { class: 'field' }, sizeLabel, seg));
 
-  const fail = msg => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
+  const fail = msg => { clearRoomError(err); err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
+  const C = COMMON[lang];
+  const roomOpts = { err, fail, T, local: () => { SFX.tap(); renderSetup('local'); }, localLabel: C.playOnePhone };
   const actions = $('#setup-actions'); actions.innerHTML = '';
   if (mode === 'online') {
     const codeInput = el('input', { type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: prefillCode, autocapitalize: 'characters', autocomplete: 'off' });
     const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => {
       const name = draft[0].trim(); if (!name) return fail(T.errName);
-      nameStore.set(name); SFX.tap(); createBtn.disabled = true;
-      try { await createOnline(name, freshConfig(config)); } catch (e) { failWith(e, T, fail); }
-      createBtn.disabled = false;
+      nameStore.set(name); SFX.tap();
+      await tryRoom(createBtn, () => createOnline(name, freshConfig(config)), { busy: C.opening, ...roomOpts });
     } }, T.create);
     const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
       const name = draft[0].trim(); const code = codeInput.value.trim().toUpperCase();
       if (!name) return fail(T.errName);
       if (!/^[A-Z]{4}$/.test(code)) return fail(T.errCode);
-      nameStore.set(name); SFX.tap(); joinBtn.disabled = true;
-      try { await joinOnline(code, name); } catch (e) { failWith(e, T, fail); }
-      joinBtn.disabled = false;
+      nameStore.set(name); SFX.tap();
+      await tryRoom(joinBtn, () => joinOnline(code, name), { busy: C.joining, ...roomOpts });
     } }, T.join);
     // Con un enlace de sala solo se puede entrar a ESA sala: crear otra desde aquí confunde.
     const joinPanel = extra => el('div', { class: 'panel' }, extra, el('div', { class: 'field' }, codeInput), joinBtn);
@@ -874,7 +874,7 @@ function renderSoloSetup() {
   $('#screen-setup h2').textContent = T.setupTitle;
   const config = { theme: DEFAULT_CONFIG.theme };
   const form = $('#setup-form'); form.innerHTML = '';
-  $('#setup-error').textContent = '';
+  clearRoomError($('#setup-error'));
   form.append(
     el('div', { class: 'field' }, el('label', {}, T.theme), selectorDeTematica(config)),
     // Las reglas van plegadas (C-8), salvo para quien todavía no termina ninguna partida sola:
