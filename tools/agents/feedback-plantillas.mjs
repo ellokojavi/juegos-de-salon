@@ -47,7 +47,7 @@ export const PLANTILLAS = {
     asunto: 'Sobre o seu comentário no Juegos de Salón',
     saludo: n => (n ? `Olá, ${n}!` : 'Olá!'),
     aperturas: [
-      'Você tirou um tempo para comentar algo sobre o Juegos de Salón, então lhe devíamos uma resposta.',
+      'Você tirou um tempo para comentar algo sobre o Juegos de Salón, então te devíamos uma resposta.',
       'Obrigado por nos escrever. Cada comentário nos ajuda a melhorar os jogos, e o seu não foi exceção.',
       'Lemos o seu comentário com muita atenção e queríamos contar o que fizemos com ele.',
       'Que bom que você nos escreveu. Os comentários de quem joga são o que mais nos ajuda.',

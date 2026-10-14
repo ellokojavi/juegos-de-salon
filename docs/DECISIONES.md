@@ -5917,8 +5917,8 @@ done (v0.170.x, this PR).
 **Decision:** Owner's request: every feedback form (the 🐞 in the lab and in La Copa, the "¿Qué te
 pareció?" at the end of each lab game and La Copa's report screen) gets an optional email field, so
 whoever wants to can be told when we answer.
-- **The form says what it's for:** "Only to let you know when we reply. We don't use it for anything
-  else, it's never published, and we delete it afterwards" (in the four languages,
+- **The form says what it's for:** "Only so we can reply to you. We don't use it for anything else,
+  it's never published, and we delete it afterwards" (in the four languages,
   `campoCorreo` in `labs-idioma.js`). It is not saved on the device.
 - **The address never reaches the public repo:** `feedback/<id>` (readable by anyone) gets only the
   mask `j********@********m` (`correoMascara`, first letter of the address and last of the domain),
