@@ -132,10 +132,15 @@ ok(await ev(`!!document.querySelector('.comentario textarea')`), 'al final está
 ok(await ev(`(()=>{const k=[...document.getElementById('resultado-body').children].filter(x=>x.offsetParent!==null);return k.at(-1)?.classList.contains('comentario')})()`), 'y es lo último del resultado (D-268)');
 await ev(`window.__enviados = []; window.fetch = async (u, o) => { window.__enviados.push({ u: String(u), o }); return { ok: true }; }; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(200);
 ok(/Escribe algo/.test(await ev(`document.querySelector('.comentario .labs-error').textContent`)), 'vacío no se envía');
-await ev(`document.querySelector('.comentario textarea').value = 'Me trabé con una pista'; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(400);
+// The optional email (D-317): it says what it's for, and a malformed one doesn't go
+ok(await ev(`(()=>{const c=document.querySelector('.comentario input[type=email]');return !!c && c.offsetParent!==null && /opcional/.test(c.placeholder) && /para nada más/.test(document.getElementById(c.getAttribute('aria-describedby'))?.textContent||'')})()`), 'the form has the optional email, with what it is for');
+await ev(`document.querySelector('.comentario textarea').value = 'Me trabé con una pista'; document.querySelector('.comentario input[type=email]').value = 'ana@'; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(200);
+ok(/correo/.test(await ev(`document.querySelector('.comentario .labs-error').textContent`)), 'a malformed email is not sent');
+await ev(`document.querySelector('.comentario input[type=email]').value = 'ana@correo.cl'; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(400);
 // En el modo de prueba queda en el almacén local, como los reportes de La Copa, y no sale nada a la red
 const guardados = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:copa:prueba:reportes') || '[]')`);
 ok(guardados.length === 1 && guardados[0].texto === 'Me trabé con una pista' && /"juego":"caso"/.test(guardados[0].contexto) && guardados[0].contexto.includes(SEMILLA), `el comentario se guarda con el caso (${guardados[0]?.contexto?.slice(0, 80)})`);
+ok(guardados[0]?.correo === 'ana@correo.cl', 'with the email');
 ok(!await ev(`window.__enviados.some(x => x.u.includes('feedback'))`), 'y en el modo de prueba no va a Firebase');
 ok(/Gracias/.test(await ev(`document.querySelector('.comentario').textContent`)), 'y da las gracias en el mismo lugar');
 await b.shot('03-final');
