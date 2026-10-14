@@ -69,7 +69,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309 |
-| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314 |
+| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
@@ -309,7 +309,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** La marca de agua es pública y cualquiera puede adelantarla, por eso el barrido siempre repasa los últimos 8 días aunque la marca diga lo contrario. Un balde que no se deja leer o cuyas salas no se dejan borrar corta el barrido y queda para la próxima: nunca se salta un balde. Todo esto es "mejor esfuerzo": si falla, la partida sigue igual y barre el celular siguiente. Las salas creadas antes de esta versión no están apuntadas en ningún balde; se borran una sola vez a mano desde la consola de Firebase. Módulo `assets/js/transport/cleanup.js`, con tests en `cleanup.test.mjs`; reglas en `firebase/database.rules.json`.
 
 ## D-40 · Una falla de red no se cuenta como "no hay internet"
-**Fecha:** 2026-09-10 · **Estado:** vigente
+**Fecha:** 2026-09-10 · **Estado:** vigente · **Relación:** extended by D-319 (the button says it is waiting, and the one-phone way out is a button under the message)
 **Decisión:** Crear o entrar a una sala espera primero la conexión con la base (`.info/connected`, 8 s) y después corre con tope (12 s). Los códigos `offline`, `busy` y `no-code` comparten un texto nuevo (`errOffline`) que nombra las dos causas posibles sin elegir una, y ofrece el modo de un solo celular. El mapa de código a texto, que estaba copiado igual en los tres juegos, vive ahora en `assets/js/transport/errors.js`.
 **Por qué:** `join` distinguía sus errores, pero `create` mandaba todo a `errNet` — *"No se pudo conectar. ¿Hay internet?"*. El plan gratuito tiene techo de conexiones simultáneas: cuando se llena, el jugador leía que su internet estaba mala. Además, sin espera ni tope, quedarse sin señal se veía como un botón pegado para siempre, que es lo que C-14 prohíbe.
 **Por qué un solo texto para tres causas:** desde el navegador no se pueden distinguir. Quedarse sin señal y toparse con el tope de conexiones producen exactamente el mismo síntoma: `.info/connected` nunca pasa a `true`. Inventar una causa sería mentirle al jugador con más precisión que antes, no con más verdad. El texto dice lo que se sabe ("puede ser tu internet o que haya mucha gente jugando") y da la salida que la app ya tenía.
@@ -5994,3 +5994,24 @@ the processes agent reading the inbox itself (too many powers next to untrusted 
 check` counts the emails and dispatches `support` when there are some; issues from email say
 "Arrived by email to hola@" and are titled `🐞 email: …`. The owner sets up the Worker in
 Cloudflare once (`tools/cloudflare/inbox-worker.js` says how).
+
+## D-319 · A room that doesn't open: the button says it's trying, and one tap goes to one phone
+**Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-40 (one text for a room that can't be reached) and C-14 (a clear way out)
+**Decision:** Owner's request, after a player saw "No se pudo abrir la sala…" in Batalla Naval and
+was left looking at it. Creating or joining a room goes through `tryRoom` in
+`public/assets/js/transport/errors.js`, in every game with rooms (Ahorcado, Batalla Naval, Dudo,
+Generala, Julepe, Línea de Tiempo, Toque y Fama):
+- **While it waits** (up to 20 s: 8 to connect, 12 for the operation), the button says
+  "Abriendo sala…" or "Entrando…" (`COMMON.opening`/`joining`, `aria-busy`) and the previous error
+  is cleared. Before, the button only went dim and the old message stayed on screen, so a retry in
+  progress looked like a frozen app (the player's screenshot showed exactly that).
+- **When it fails with `errOffline`**, a "📱 Jugar en un celular" button (`COMMON.playOnePhone`)
+  goes under the message and opens the game's own one-phone setup. The text no longer says "in a
+  few minutes": it says to try again or play on one phone, and the same create/join button is the
+  retry. The other errors (full, expired, not found) get no such button: one phone doesn't fix them.
+**Why:** the message already named the way out (one phone needs no internet) but left the player
+to find it through the menu; and a retry has to show it is happening. A separate "retry" or
+"reload" link was discarded: it would do what the button already does, and reloading would lose
+the name and the settings.
+**Consequences:** `tools/e2e/room-error.mjs` checks the waiting label, the button coming back, the
+way out and the clean one-phone screen, now also in Generala and Julepe. U-37 in USABILIDAD.md.

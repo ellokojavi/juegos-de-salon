@@ -292,6 +292,7 @@ regla: quien cambia algo lo documenta en su mismo PR.
 - Los errores previsibles se muestran al jugador en su idioma, con una salida clara; nunca una pantalla en blanco.
 - **El mensaje no inventa la causa.** Si desde el navegador no se puede distinguir entre dos causas (quedarse sin señal y toparse con el tope de conexiones se ven igual), el texto las nombra a las dos en vez de elegir una. Precisión falsa es peor que vaguedad honesta (D-40).
 - Los errores del transporte se traducen con `errText`/`failWith` de `public/assets/js/transport/errors.js`, nunca con un mapa propio en cada juego.
+- Creating or joining a room goes through `tryRoom` (same module): the button says it is waiting, and a room that can't be reached offers one-phone mode under the message (U-37, D-319).
 - **Un reintento nunca traba** (U-22, D-123): si una escritura que se hace una sola vez choca al reintentar, primero se mira si la anterior llegó (aunque el celular haya mostrado error); si llegó, se sigue como si hubiera salido bien.
 - **A la consola solo va lo inesperado.** Un error previsto que ya se le mostró al jugador no se registra: si la consola se llena de fallas normales, "consola sin errores" deja de servir como criterio (C-12).
 
@@ -455,7 +456,7 @@ Los nombres de antes se siguen leyendo como alias: un link que ya circula no se 
 - [ ] Los botones tienen 44 px, los botones finales se ven sin desplazar y no hay scroll horizontal (C-8).
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).
 - [ ] Los secretos se comprometen y verifican (C-10).
-- [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia (C-14).
+- [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia; creating or joining a room goes through `tryRoom` (C-14, U-37).
 - [ ] Tests del motor y `node public/assets/js/games.test.mjs` en verde, y partida completa probada en cada modo, con capturas revisadas (C-12).
 - [ ] Lo que cambió, en `changelog/<rama>.md` sin número (`node tools/release/changelog.mjs new`); publicada y comprobada en la URL pública por `publish.yml` (C-11, D-205, D-300).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).

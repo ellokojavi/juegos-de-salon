@@ -16,7 +16,7 @@ import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js
 import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
-import { failWith } from '../assets/js/transport/errors.js';
+import { clearRoomError, tryRoom } from '../assets/js/transport/errors.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
@@ -960,7 +960,7 @@ function renderSetup(mode, codigoInvitado = '') {
     },
   }, T.start));
   acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => showScreen('screen-intro') }, T.menu));
-  $('#setup-error').textContent = '';
+  clearRoomError($('#setup-error'));
   showScreen('screen-setup');
 }
 
@@ -974,7 +974,7 @@ function renderSetupOnline(codigoInvitado = '') {
   $('#screen-setup h2').textContent = invitado ? T.invitedTitle : T.setupOnline;
   $('.setup-hint').textContent = invitado ? T.invitedHint : T.setupHint;
   const form = $('#setup-form'); form.innerHTML = '';
-  const err = $('#setup-error'); err.textContent = '';
+  const err = $('#setup-error'); clearRoomError(err);
   let nombre = nameStore.get() || '';
   let manos = DEFAULT_CONFIG.manos;
 
@@ -989,9 +989,11 @@ function renderSetupOnline(codigoInvitado = '') {
   if (!invitado) form.append(selectorManos(manos, v => { manos = v; }));
 
   const fallar = msg => {
-    err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake');
+    clearRoomError(err); err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake');
     SFX.error(); vibrate([30, 30, 30]);
   };
+  const C = COMMON[lang];
+  const roomOpts = { err, fail: fallar, T, local: () => { SFX.tap(); renderSetup('local'); }, localLabel: C.playOnePhone };
   const acciones = $('#setup-actions'); acciones.innerHTML = '';
   const codigo = el('input', {
     type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: codigoInvitado,
@@ -1001,9 +1003,8 @@ function renderSetupOnline(codigoInvitado = '') {
     const n = nombre.trim(), c = codigo.value.trim().toUpperCase();
     if (!n) return fallar(T.errName);
     if (!/^[A-Z]{4}$/.test(c)) return fallar(T.errCode);
-    nameStore.set(n); SFX.tap(); entrar.disabled = true;
-    try { await joinOnline(c, n); } catch (e) { failWith(e, T, fallar); }
-    entrar.disabled = false;
+    nameStore.set(n); SFX.tap();
+    await tryRoom(entrar, () => joinOnline(c, n), { busy: C.joining, ...roomOpts });
   } }, T.join);
 
   if (invitado) {
@@ -1014,10 +1015,8 @@ function renderSetupOnline(codigoInvitado = '') {
     const crear = el('button', { class: 'btn btn--yellow', onClick: async () => {
       const n = nombre.trim();
       if (!n) return fallar(T.errName);
-      nameStore.set(n); SFX.tap(); crear.disabled = true;
-      try { await createOnline(n, { ...DEFAULT_CONFIG, manos, players: null }); }
-      catch (e) { failWith(e, T, fallar); }
-      crear.disabled = false;
+      nameStore.set(n); SFX.tap();
+      await tryRoom(crear, () => createOnline(n, { ...DEFAULT_CONFIG, manos, players: null }), { busy: C.opening, ...roomOpts });
     } }, T.create);
     acciones.append(crear, el('div', { class: 'or' }, `— ${COMMON[lang].or} —`),
       el('div', { class: 'panel' },

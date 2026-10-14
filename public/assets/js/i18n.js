@@ -114,6 +114,8 @@ export const COMMON = {
     favorites: 'Favoritos', favorite: 'Marcar {juego} como favorito',
     onlySpanish: 'En español',
     code: 'código en GitHub', menu: 'Menú', soon: 'Próximamente', or: 'o',
+    // Creating or joining a room (U-37): the button while it waits, and the way out when it can't
+    opening: 'Abriendo sala…', joining: 'Entrando…', playOnePhone: '📱 Jugar en un celular',
     share: 'Compartir Juegos de Salón',
     // Compartir la app (D-226): va con la tarjeta de la portada, que ya dice el nombre, la bajada,
     // "gratis, sin instalar" y el link. El texto cuenta lo demás, una idea por línea (U-30), y nombra
@@ -352,6 +354,7 @@ export const COMMON = {
     favorites: 'Favorites', favorite: 'Mark {juego} as a favorite',
     onlySpanish: 'In Spanish',
     code: 'code on GitHub', menu: 'Menu', soon: 'Coming soon', or: 'or',
+    opening: 'Opening room…', joining: 'Joining…', playOnePhone: '📱 Play on one phone',
     share: 'Share Party Games',
     shareApp: {
       context: '{n} games for your phone',
@@ -580,6 +583,7 @@ export const COMMON = {
     favorites: 'Favoritos', favorite: 'Marcar {juego} como favorito',
     onlySpanish: 'Em espanhol',
     code: 'código no GitHub', menu: 'Menu', soon: 'Em breve', or: 'ou',
+    opening: 'Abrindo sala…', joining: 'Entrando…', playOnePhone: '📱 Jogar em um celular',
     share: 'Compartilhar Jogos de Salão',
     shareApp: {
       context: '{n} jogos para o celular',
@@ -808,6 +812,7 @@ export const COMMON = {
     favorites: 'Favoriten', favorite: '{juego} als Favorit markieren',
     onlySpanish: 'Auf Spanisch',
     code: 'Code auf GitHub', menu: 'Menü', soon: 'Demnächst', or: 'oder',
+    opening: 'Raum wird geöffnet…', joining: 'Beitritt läuft…', playOnePhone: '📱 Mit einem Handy spielen',
     share: 'Salonspiele teilen',
     shareApp: {
       context: '{n} Spiele fürs Handy',
