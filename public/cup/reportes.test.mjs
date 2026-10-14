@@ -1,6 +1,7 @@
 // Tests de los reportes sin cuenta (D-104, D-109): node public/cup/reportes.test.mjs
 import assert from 'node:assert/strict';
-import { enviarReporte, reenviarPendientes } from './reportes.js';
+import { readFileSync } from 'node:fs';
+import { enviarReporte, reenviarPendientes, correoValido, enmascarar } from './reportes.js';
 
 const almacen = () => { const m = new Map(); return { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: k => m.delete(k) }; };
 const falla = async () => ({ ok: false, status: 401 });
@@ -34,5 +35,47 @@ assert.ok(!JSON.stringify(conTester[0]).includes('secreta'), 'la llave no viaja'
 const sinTester = [];
 await enviarReporte({ texto: 'hola' }, anda(sinTester), almacen());
 assert.ok(!('tester' in sinTester[0]), 'sin llave, no va el campo');
+
+// The optional email (D-317): the public node only gets the mask; the address goes to the private node
+assert.equal(enmascarar('jirigoyen@gmail.com'), 'j********@********m');
+assert.equal(correoValido(' ana@correo.cl '), 'ana@correo.cl');
+for (const malo of ['', 'ana', 'ana@correo', '@correo.cl', 'a b@correo.cl', `${'a'.repeat(110)}@correo.cl`]) assert.equal(correoValido(malo), '', malo);
+{
+  const pedidos = [];
+  const red = async (url, o) => { pedidos.push({ url, o, body: JSON.parse(o.body) }); return { ok: true, json: async () => ({ name: '-Nabc' }) }; };
+  await enviarReporte({ texto: 'hola', correo: 'ana@correo.cl' }, red, almacen());
+  assert.equal(pedidos.length, 2);
+  assert.match(pedidos[0].url, /\/feedback\.json$/);
+  assert.ok(!JSON.stringify(pedidos[0].body).includes('ana@'), 'the address never reaches the public node');
+  assert.equal(pedidos[0].body.correoMascara, 'a********@********l');
+  assert.match(pedidos[1].url, /\/feedbackContacto\/-Nabc\.json$/);
+  assert.equal(pedidos[1].o.method, 'PUT');
+  assert.equal(pedidos[1].body.correo, 'ana@correo.cl');
+  // Without an address (or with a bad one), one request and no mask
+  pedidos.length = 0;
+  await enviarReporte({ texto: 'hola', correo: 'nada' }, red, almacen());
+  assert.equal(pedidos.length, 1);
+  assert.ok(!('correoMascara' in pedidos[0].body) && !('correo' in pedidos[0].body));
+  // If only the address fails, the report counts as sent and only the address is retried
+  const a2 = almacen();
+  const soloReporte = async url => (url.includes('feedbackContacto') ? { ok: false } : { ok: true, json: async () => ({ name: '-Nxyz' }) });
+  await enviarReporte({ texto: 'hola', correo: 'ana@correo.cl' }, soloReporte, a2);
+  assert.deepEqual(JSON.parse(a2.getItem('juegos-de-salon:copa:reportes-pendientes')), [{ contactoDe: '-Nxyz', correo: 'ana@correo.cl' }]);
+  pedidos.length = 0;
+  assert.equal(await reenviarPendientes(red, a2), 1);
+  assert.deepEqual(pedidos.map(p => p.url.split('/').slice(-2).join('/')), ['feedbackContacto/-Nxyz.json']);
+  assert.equal(a2.getItem('juegos-de-salon:copa:reportes-pendientes'), null);
+}
+
+// The rules keep it that way: the address node is never readable without the owner's key, and
+// the public node only takes the mask (D-317)
+{
+  const reglas = JSON.parse(readFileSync(new URL('../../firebase/database.rules.json', import.meta.url), 'utf8')).rules;
+  assert.equal(reglas.feedbackContacto['.read'], false);
+  assert.ok(!JSON.stringify(reglas.feedbackContacto).includes('".read":true'));
+  const mascara = new RegExp(reglas.feedback.$id.correoMascara['.validate'].match(/matches\(\/(.*)\/\)/)[1]);
+  assert.ok(mascara.test(enmascarar('jirigoyen@gmail.com')) && !mascara.test('jirigoyen@gmail.com'));
+  assert.ok(!('correo' in reglas.feedback.$id), 'the public node has no field for the address');
+}
 
 console.log('copa/reportes: OK');

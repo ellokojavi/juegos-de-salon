@@ -1,6 +1,6 @@
 // El feedback 🐞 como issues (D-275, D-279): con el nombre y sin el navegador, sin menciones, y nunca dos veces el mismo reporte.
 import assert from 'node:assert/strict';
-import { titulo, cuerpo, pendientes, subidos, marca, donde } from './feedback.mjs';
+import { titulo, cuerpo, pendientes, subidos, marca, donde, idDe, quiereCorreo, atendido, leerRespuesta, nombreDe, RESPONDIDO, OLVIDADO } from './feedback.mjs';
 
 const r = {
   id: '-P3bm', at: Date.parse('2026-10-10T18:28:23Z'), v: '0.144.0', nombre: 'Tu admirador secreto',
@@ -31,5 +31,19 @@ const ya = subidos([{ body: `algo\n${marca('a')}` }, { body: null }]);
 assert.deepEqual([...ya], ['a']);
 const lista = [{ id: 'a', texto: 'x', at: 1 }, { id: 'c', texto: 'z', at: 3 }, { id: 'b', texto: 'y', at: 2 }, { id: 'd', texto: '  ', at: 4 }];
 assert.deepEqual(pendientes(lista, ya).map(x => x.id), ['b', 'c']);
+
+// The optional email (D-317): the issue shows the mask, never an address, and says it wants a reply
+const conCorreo = cuerpo({ ...r, correoMascara: 'j********@********m' });
+assert.match(conCorreo, /^- \*\*Email:\*\* `j\*{8}@\*{8}m`/m);
+assert.ok(quiereCorreo(conCorreo) && !quiereCorreo(c));
+assert.equal(idDe(conCorreo), '-P3bm');
+assert.ok(!atendido([]) && !atendido([{ body: 'thanks' }]));
+assert.ok(atendido([{ body: `📧 sent\n${RESPONDIDO}` }]) && atendido([{ body: OLVIDADO }]));
+assert.equal(leerRespuesta('  Ya está arreglado.\n'), 'Ya está arreglado.');
+assert.throws(() => leerRespuesta('Ya está — arreglado.'), /dash/);
+assert.throws(() => leerRespuesta('   '));
+assert.equal(nombreDe(conCorreo), 'Tu admirador secreto');
+assert.equal(nombreDe(cuerpo({ ...r, nombre: '@cris' })), '@cris');
+assert.equal(nombreDe(cuerpo({ ...r, nombre: '' })), '');
 
 console.log('feedback: ok');

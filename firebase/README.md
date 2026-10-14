@@ -190,6 +190,12 @@ Every 15 minutes, `.github/workflows/feedback.yml` (`tools/agents/feedback.mjs`)
 GitHub issues with the `feedback` label, with the name and the key (D-279, D-306) and without the
 browser, and the processes agent handles them (D-275).
 
+**The optional email (D-317):** `feedback/<id>` may carry `correoMascara` (`j********@********m`),
+never the address. The address goes to `feedbackContacto/<id>` (`correo`, up to 120, and server
+`at`): written once, only when `feedback/<id>` exists, and **never readable without the owner's
+key**. `tools/agents/feedback.mjs reply` reads it with the key, emails the reply and deletes it;
+`forget` deletes it without emailing.
+
 ## The trash bin (`cleanup`)
 
 Nobody deletes their room when they finish playing, so the same phones that play do the cleanup
