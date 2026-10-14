@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Sends one plain-text email through Gmail's SMTP (D-317). Used by `feedback.mjs reply`.
 
-The message comes as JSON on stdin ({"to", "subject", "text"}), so the address never shows in a
+The message comes as JSON on stdin ({"to", "subject", "text", and optionally "html", sent as
+the alternative that mail apps show; the text stays for the ones that don't}), so the address never shows in a
 command line. The account comes from ~/.config/juegos-de-salon/mail.json (or $JUEGOS_MAIL), never
 from the repo:
 
@@ -30,6 +31,8 @@ def message(cfg, m):
     msg['Reply-To'] = sender
     msg['Message-ID'] = make_msgid(domain=sender.split('@')[-1])
     msg.set_content(m['text'])
+    if m.get('html'):
+        msg.add_alternative(m['html'], subtype='html')
     return msg
 
 

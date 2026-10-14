@@ -10,7 +10,7 @@ export const PLANTILLAS = {
   es: {
     asunto: 'Sobre tu comentario en Juegos de Salón',
     asuntoVarios: 'Sobre tus comentarios en Juegos de Salón',
-    sobre: t => `Sobre «${t}»:`,
+    comillas: t => `«${t}»`,
     saludo: n => (n ? `Hola, ${n}:` : 'Hola:'),
     aperturas: [
       'Te diste el tiempo de comentar algo sobre Juegos de Salón, así que te debíamos una respuesta.',
@@ -42,7 +42,7 @@ export const PLANTILLAS = {
   en: {
     asunto: 'About your comment on Juegos de Salón',
     asuntoVarios: 'About your comments on Juegos de Salón',
-    sobre: t => `About "${t}":`,
+    comillas: t => `"${t}"`,
     saludo: n => (n ? `Hi ${n},` : 'Hi,'),
     aperturas: [
       'You took the time to tell us something about Juegos de Salón, so we owed you a reply.',
@@ -74,7 +74,7 @@ export const PLANTILLAS = {
   pt: {
     asunto: 'Sobre o seu comentário no Juegos de Salón',
     asuntoVarios: 'Sobre os seus comentários no Juegos de Salón',
-    sobre: t => `Sobre "${t}":`,
+    comillas: t => `"${t}"`,
     saludo: n => (n ? `Olá, ${n}!` : 'Olá!'),
     aperturas: [
       'Você tirou um tempo para comentar algo sobre o Juegos de Salón, então te devíamos uma resposta.',
@@ -106,7 +106,7 @@ export const PLANTILLAS = {
   de: {
     asunto: 'Zu deinem Kommentar bei Juegos de Salón',
     asuntoVarios: 'Zu deinen Kommentaren bei Juegos de Salón',
-    sobre: t => `Zu „${t}“:`,
+    comillas: t => `„${t}“`,
     saludo: n => (n ? `Hallo ${n},` : 'Hallo,'),
     aperturas: [
       'Du hast dir die Zeit genommen, uns etwas zu Juegos de Salón zu schreiben, also schulden wir dir eine Antwort.',
@@ -139,19 +139,27 @@ export const PLANTILLAS = {
 
 export const IDIOMAS = Object.keys(PLANTILLAS);
 
-/** The start of what the player wrote, to say which comment each answer is about. */
-export function cita(texto, largo = 70) {
-  const t = String(texto || '').replace(/\u200b/g, '').replace(/\s+/g, ' ').trim();
-  return t.length > largo ? `${t.slice(0, largo - 1).trimEnd()}…` : t;
-}
+/** What the player wrote, whole (owner's request: quotes are not cut), with their line breaks. */
+export const cita = texto => String(texto || '').replace(/\u200b/g, '').split('\n').map(l => l.replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n');
+
+const SITIO = 'https://juegosdesalon.cl/';
+/** The header: the menu card's icons and title, the same in every language (`og.mjs cabecera`). */
+export const CABECERA = `${SITIO}assets/email/header.jpg`;
+
+const html = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const P_ = 'margin:0 0 16px';
+const parrafos = (t, estilo = P_) => String(t).split(/\n{2,}/).map(p => `<p style="${estilo}">${html(p).replace(/\n/g, '<br>')}</p>`).join('');
+/** The quote in grey italics (owner's request), right above its answer. */
+const CITA = 'margin:0 0 6px;color:#6b6b6b;font-style:italic';
 
 /**
  * The email: `idioma` is the feedback's language, `items` one `{ cita, respuesta }` per comment
- * (the start of what the player wrote, and the agent's specific answer to it), `nombre` the name
- * the player gave (if any), and `n` picks the opening (the issue number, so two replies in a row
- * don't open the same way). One comment or several (a player who sent many in one sitting gets a
- * single email, owner's request): with several, the subject and the opening are plural and each
- * answer goes under the quote of its comment.
+ * (what the player wrote, and the agent's specific answer to it), `nombre` the name the player
+ * gave (if any), and `n` picks the opening (the issue number, so two replies in a row don't open
+ * the same way). One comment or several (a player who sent many in one sitting gets a single
+ * email, owner's request): with several, the subject and the opening are plural. Each answer goes
+ * under the whole quote of its comment. Returns the plain text and the HTML version: the site's
+ * card on top, the quotes in grey italics. The email carries both.
  */
 export function armarCorreo({ idioma, items, nombre = '', n = 0 }) {
   const P = PLANTILLAS[idioma];
@@ -161,9 +169,24 @@ export function armarCorreo({ idioma, items, nombre = '', n = 0 }) {
   const varios = lista.length > 1;
   const aperturas = varios ? P.aperturasVarias : P.aperturas;
   const apertura = aperturas[((n % aperturas.length) + aperturas.length) % aperturas.length];
-  const cuerpo = lista.map(x => (x.cita ? `${P.sobre(x.cita)}\n${x.respuesta}` : x.respuesta)).join('\n\n');
+  const saludo = P.saludo(String(nombre || '').trim());
+  const asunto = varios ? P.asuntoVarios : P.asunto;
+  const cuerpo = lista.map(x => (x.cita ? `${P.comillas(x.cita)}\n${x.respuesta}` : x.respuesta)).join('\n\n');
+  const cuerpoHtml = lista.map(x => `${x.cita ? `<p style="${CITA}">${html(P.comillas(x.cita)).replace(/\n/g, '<br>')}</p>` : ''}${parrafos(x.respuesta, 'margin:0 0 22px')}`).join('');
   return {
-    asunto: varios ? P.asuntoVarios : P.asunto,
-    texto: `${P.saludo(String(nombre || '').trim())}\n\n${apertura}\n\n${cuerpo}\n\n${P.cierre}\n\n${P.firma}\nhttps://juegosdesalon.cl/\n`,
+    asunto,
+    texto: `${saludo}\n\n${apertura}\n\n${cuerpo}\n\n${P.cierre}\n\n${P.firma}\n${SITIO}\n`,
+    // Tables and inline styles: what mail apps understand
+    html: `<!doctype html><html lang="${idioma}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${html(asunto)}</title></head>
+<body style="margin:0;padding:0;background:#efe9f7">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#efe9f7"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:14px;overflow:hidden">
+<tr><td><a href="${SITIO}"><img src="${CABECERA}" width="560" alt="Juegos de Salón" style="display:block;width:100%;height:auto;border:0"></a></td></tr>
+<tr><td style="padding:28px 28px 8px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.55;color:#222222">
+${parrafos(saludo)}${parrafos(apertura, 'margin:0 0 24px')}${cuerpoHtml}${parrafos(P.cierre)}
+<p style="margin:0 0 24px">${html(P.firma)}<br><a href="${SITIO}" style="color:#8a4dff;font-weight:bold;text-decoration:none">juegosdesalon.cl</a></p>
+</td></tr></table>
+</td></tr></table>
+</body></html>`,
   };
 }
