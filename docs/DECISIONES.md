@@ -5891,4 +5891,5 @@ and renaming everything in one PR (hundreds of files at once collide with every 
 cannot be reviewed); renaming the persisted keys together with the code (risks live data for a
 name).
 **Consequences:** decisions, canons and changelog entries written from now on are English; until
-phase 5 the documents are bilingual. Each phase updates this decision's checklist in its own PR.
+phase 5 the documents are bilingual. Each phase marks itself done here, in its own PR: phase 1 is
+done (v0.170.x, this PR).
