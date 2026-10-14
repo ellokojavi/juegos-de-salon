@@ -189,7 +189,7 @@ async function responder(lista, archivo, idioma, { simular, prueba }) {
   const para = prueba || todos[0].correo;
   if (simular) { console.log(`To: ${prueba || todos[0].mascara}\nSubject: ${asunto}\n\n${texto}`); return; }
   // Through stdin: the address never shows in a command line or a log
-  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to: para, subject: prueba ? `[Test] ${asunto}` : asunto, text: texto, html }), stdio: ['pipe', 'inherit', 'inherit'] });
+  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to: para, subject: prueba ? `[Test] ${asunto}` : asunto, text: texto, html, issues: numeros.map(Number), test: !!prueba }), stdio: ['pipe', 'inherit', 'inherit'] });
   if (prueba) { console.log(`Test email with ${numeros.map(n => `#${n}`).join(', ')} sent to the test address; nothing else touched.`); return; }
   for (const x of todos) {
     await borrar(x.id, t);
