@@ -507,8 +507,9 @@ How it is put together (canon C-3):
 - `public/assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
   🇪🇸 ES · 🇬🇧 EN · 🇧🇷 PT · 🇩🇪 DE toggle and holds the shared text (`COMMON`): the menu and what goes out
   when somebody shares the app, plus the strings every game repeats word for word — the room
-  invitation (D-173, D-165), the "or" between creating a room and joining one, and the shared
-  result of playing a game alone.
+  invitation (D-173, D-165), the "or" between creating a room and joining one, what the button
+  says while a room opens or is joined and the "📱 Play on one phone" way out when it can't be
+  reached (D-319), and the shared result of playing a game alone.
 - Each game keeps its text in `LOCALES = { es, en, pt, de }` inside its `rules.js`. There is not a
   single literal string in `game.js`. Fixed HTML text is marked with `data-i18n`.
 - The menu registry (`games.js`), the 100 footer lines (`frases.js`) and every Timeline card
