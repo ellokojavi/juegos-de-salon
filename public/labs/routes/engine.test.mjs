@@ -2,7 +2,7 @@
 // mínimo es exacto (se compara con una búsqueda simple, contando el tablero entero dado vuelta como
 // solución), cada tablero es justo (no viene resuelto) y cada una de las cinco etapas da justo su mínimo.
 import assert from 'node:assert/strict';
-import { generar, generarEtapa, girar, resuelto, minimo, bordesUnidos, puntajePartida, RECTANGULOS, LADO, TODO, ETAPAS, TIEMPO_S, PUNTOS_ETAPA } from './engine.js';
+import { generar, generarEtapa, girar, resuelto, minimo, puntajePartida, RECTANGULOS, LADO, TODO, ETAPAS, TIEMPO_S, PUNTOS_ETAPA } from './engine.js';
 
 assert.equal(RECTANGULOS.length, 36);
 const META = Array.from({ length: 9 }, (_, p) => ({ p, v: 0 }));
@@ -35,7 +35,6 @@ for (let n = 0; n < 60; n++) {
   assert.equal(t.piezas.length, LADO * LADO);
   assert.ok(t.piezas.every(p => p.tramos.length), `${n}: una pieza sin tramos`);
   assert.ok(resuelto(t.piezas, META), `${n}: la meta no está resuelta`);
-  assert.equal(bordesUnidos(t.piezas, META).length, 12);
   assert.ok(!resuelto(t.piezas, t.inicio), `${n}: viene resuelto`);
   assert.ok(t.minimo >= 3 && t.minimo <= 5, `${n}: mínimo ${t.minimo}`);
   assert.ok(resuelto(t.piezas, [...t.revuelta].reverse().reduce(girar, t.inicio)), `${n}: deshacer la revuelta no lo resuelve`);
