@@ -4,14 +4,12 @@
 // hora, y silencia; un iPhone sin la app instalada ve los pasos para agregarla, dentro de WhatsApp se
 // pide abrir en Safari, y con los avisos bloqueados se explica cómo desbloquearlos. El reloj se fija
 // en el 6 de octubre de 2026, el día n.° 1, cuando toca Desenredo.
-import { mkdtempSync } from 'node:fs';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 import { juegoDel } from '../../public/assets/js/uno-al-dia.js';
 
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2] || mkdtempSync(join(tmpdir(), 'uno-al-dia-avisos-'));
+const OUT = salida();
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 const DB = 'juegos-de-salon:prueba:records-db';
 if (juegoDel('2026-10-06') !== 'desenredo') { console.log('✗ el 2026-10-06 ya no toca Desenredo: cambia la fecha del guion'); process.exit(1); }

@@ -5,6 +5,7 @@
 // juegos sueltos. Los textos esperados salen de los diccionarios: un idioma nuevo entra solo.
 //
 // Uso: python3 -m http.server 8765 (en otra terminal) y node tools/e2e/cup/idiomas.mjs <carpeta-salida>
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { revisarIdiomas } from '../idiomas-comun.mjs';
 import { mkdirSync } from 'node:fs';
@@ -12,7 +13,7 @@ import { LANGS, COMMON } from '../../../public/assets/js/i18n.js';
 import { SUELTOS } from '../../../public/assets/js/games.js';
 import { LOCALES } from '../../../public/cup/rules.js';
 
-const OUT = process.argv[2] || '/tmp/copa-idiomas';
+const OUT = salida('/tmp/copa-idiomas');
 mkdirSync(OUT, { recursive: true });
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9378, dir: `${OUT}/perfil`, out: OUT });
 const SITIO = process.env.SITIO || 'http://localhost:8765';

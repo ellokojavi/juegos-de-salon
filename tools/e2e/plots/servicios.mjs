@@ -5,8 +5,9 @@
 // o al que le sobra uno se rechaza con su aviso; uno que vale se pinta; con la solución del motor se
 // resuelven los 5 tableros, el puntaje es el del motor y el final dice el modo; «Otro tablero» y «El de
 // hoy» lo conservan. Imprime ✗ si algo falla. `ANCHO=320` lo corre a 320 px.
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2] || '/tmp/loteo-servicios';
+const OUT = salida('/tmp/loteo-servicios');
 const ANCHO = +process.env.ANCHO || 375;
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: ANCHO, height: 812 });
 const ev = e => b.evaluate(e);

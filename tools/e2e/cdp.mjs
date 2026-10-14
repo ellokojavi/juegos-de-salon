@@ -2,6 +2,7 @@
 import { spawn } from 'node:child_process';
 import { writeFileSync, readFileSync, rmSync, mkdirSync } from 'node:fs';
 import { medirAire, sinAire, AIRE_MIN } from './aire-comun.mjs';
+import { esCarpeta } from './salida.mjs';
 // CHROME: otra ruta al navegador (Linux, una sesión en la nube)
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -44,6 +45,8 @@ const puertoEscrito = dir => {
 };
 
 export async function launch({ port: pedido, dir, out, width = 390, height = 844 }) {
+  // Un perfil en `undefined/p` o `--parte/p` quedaba dentro de la copia de trabajo y frenaba su limpieza (D-315)
+  for (const [k, v] of [['dir', dir], ['out', out]]) if (v != null && !esCarpeta(String(v))) throw new Error(`launch: ${k} = "${v}" no es una carpeta de salida (usa salida() de tools/e2e/salida.mjs)`);
   const fijo = puertoFijo(pedido);
   mkdirSync(dir, { recursive: true });
   // El de una corrida anterior con el mismo perfil diría un puerto que ya no es

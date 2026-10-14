@@ -1,6 +1,7 @@
 // Temáticas de Línea de Tiempo: que se elijan fácil y que no se repitan las cartas (D-34)
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2];
+const OUT = salida();
 const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: Number(process.env.PUERTO_CDP) || 9498, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 

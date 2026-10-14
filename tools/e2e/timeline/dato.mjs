@@ -12,9 +12,10 @@
  *
  * Uso: SITIO=http://localhost:87xx node tools/e2e/timeline/dato.mjs <salida>
  */
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 
-const OUT = process.argv[2] || '/tmp/ldt-dato';
+const OUT = salida('/tmp/ldt-dato');
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 const URL = `${SITIO}/timeline/`;
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
