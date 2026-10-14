@@ -1,5 +1,5 @@
 {
-  "version": "0.170.0",
+  "version": "0.170.4",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -991,6 +991,7 @@
     "tools/agents/procesos.test.mjs",
     "tools/e2e/cambios.test.mjs",
     "tools/e2e/grupos.test.mjs",
+    "tools/e2e/salida.test.mjs",
     "tools/e2e/ya-probado.test.mjs",
     "tools/firebase/rankings-historia.test.mjs",
     "tools/push/avisar.test.mjs",
@@ -1060,6 +1061,8 @@
     "routes/lab.mjs",
     "sala-error.mjs",
     "sala-tope.mjs",
+    "salida.mjs",
+    "salida.test.mjs",
     "timeline/arrastre.mjs",
     "timeline/chat.mjs",
     "timeline/dato.mjs",
