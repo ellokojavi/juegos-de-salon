@@ -5,7 +5,7 @@
 // abre; el link al comentario va al final de cada vista y el resultado termina con el formulario.
 // Y Palabra (solo en español): voltear muestra la otra cara y la palabra abre.
 // A 320 px y en los cuatro idiomas, sin desbordar. Imprime ✗ si algo falla.
-import { salida } from '../salida.mjs';
+import { salida } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = salida('/tmp/clave-lab');
 const b = await launch({ port: 9394, dir: `${OUT}/p`, out: OUT, width: 320, height: 760 });

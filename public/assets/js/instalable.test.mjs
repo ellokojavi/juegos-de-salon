@@ -1,6 +1,6 @@
 // La app instalable (D-221): el manifest con sus íconos PNG, el service worker en la raíz, y cada
 // página de la app con el ícono del iPhone y el registro del service worker después de sus hojas
-// de estilo (el import map que pone publicar.yml va antes de la primera; un módulo antes de él lo
+// de estilo (el import map que pone publish.yml va antes de la primera; un módulo antes de él lo
 // dejaría sin efecto).
 // Uso: node public/assets/js/instalable.test.mjs
 import assert from 'node:assert/strict';
@@ -9,7 +9,7 @@ import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { registrar, nombrar, manifestDe } from './instalable.js';
 import { COMMON, IDIOMAS } from './i18n.js';
-import { ICONOS } from '../../../tools/release/iconos.mjs';
+import { ICONOS } from '../../../tools/release/icons.mjs';
 import { GAMES, SUELTOS } from './games.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -38,7 +38,7 @@ await caso('el manifest trae los PNG que Android pide para instalar, con su medi
   }
 });
 
-await caso('los íconos de tools/release/iconos.mjs están todos, con su medida', () => {
+await caso('los íconos de tools/release/icons.mjs están todos, con su medida', () => {
   for (const i of ICONOS) assert.deepEqual(medida(join(PUBLIC, 'assets/icons', i.archivo)), [i.lado, i.lado], i.archivo);
 });
 

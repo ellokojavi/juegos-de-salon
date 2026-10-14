@@ -41,7 +41,7 @@ que los amigos del dueño van a corregir.
 ## Lo que se arregló para el alemán (y de paso para todos)
 
 Medido con un pseudo-alemán (el inglés alargado ~40 % con diéresis y palabras soldadas) en todas
-las pantallas de `tools/e2e/mirar.mjs` a 320 px, y después con los textos alemanes de verdad.
+las pantallas de `tools/e2e/look.mjs` a 320 px, y después con los textos alemanes de verdad.
 
 - **Los acentos de los títulos con degradado salían cortados** (`.rainbow`, `base.css`): la Ó de
   SALÓN y la Ã de SALÃO ya se veían a medias; en alemán desaparecían las diéresis de casi cada
@@ -57,8 +57,8 @@ las pantallas de `tools/e2e/mirar.mjs` a 320 px, y después con los textos alema
   alfabeto y las frecuencias del Ahorcado, el teclado QWERTZ de Palabra, las grillas y las
   palabras de La Copa, y los nombres de ¿Dónde queda?.
 - **Firebase**: una copa con palabras en alemán guarda `lang: "de"`, que las reglas no dejaban
-  escribir. Se publican después de fusionar con `node tools/firebase/reglas.mjs publicar` (D-122).
-- `mirar.mjs --idioma de` funciona: pone la marca del laboratorio igual que lo hacía `/labs/de/`.
+  escribir. Se publican después de fusionar con `node tools/firebase/rules.mjs publicar` (D-122).
+- `look.mjs --idioma de` funciona: pone la marca del laboratorio igual que lo hacía `/labs/de/`.
 
 ## Decidido con el dueño (D-194)
 
@@ -73,7 +73,7 @@ las pantallas de `tools/e2e/mirar.mjs` a 320 px, y después con los textos alema
 
 Los pasos que este documento dejaba anotados, y cómo quedaron:
 
-- Hecho: sacarlo de `EN_LABS`, la puerta `/de/` con su tarjeta (`og.mjs` y `og/tarjeta.html`), el README, C-3 en CANONES, el CONTRIBUTING y el guion `idioma-por-url.mjs` (prueba `/de/` y el puente de `/labs/de/`).
+- Hecho: sacarlo de `EN_LABS`, la puerta `/de/` con su tarjeta (`og.mjs` y `og/tarjeta.html`), el README, C-3 en CANONES, el CONTRIBUTING y el guion `lang-from-url.mjs` (prueba `/de/` y el puente de `/labs/de/`).
 - Revisado el 4 de octubre: **las imágenes que se comparten** (punto 4) caben en alemán. La tabla de
   La Copa (a mitad de semana y la final de 10 jugadores con podio) y los resultados, con el
   minijuego de nombre más largo ("Bullen und Kühe: Zahl knacken"), se ven bien y las diéresis no se
@@ -95,7 +95,7 @@ Ordenado por lo que más se nota.
    brasileñas de Línea de Tiempo (que se entiendan sin contexto).
 2. **Sacarlo de `EN_LABS`** en `i18n.js`: con eso aparece para todos en el toggle.
 3. **La puerta `/de/`** con su tarjeta social: `de/index.html` (copia de `public/en/`), `og.mjs`
-   (`PUERTAS`, `GRATIS`, la conjunción "und", `LOCALE` `de_DE`), `tools/release/og/tarjeta.html`
+   (`PUERTAS`, `GRATIS`, la conjunción "und", `LOCALE` `de_DE`), `tools/release/og/card.html`
    (`GRATIS`) y `node tools/release/og.mjs imagenes --todas` en el Mac del dueño. En `og/tarjeta.html` el
    nombre va en Bangers 52 px sin ayuda para cortar: "SCHIFFE VERSENKEN" no cabe en una línea.
    `homeUrl('de')` pasa a ser `/de/`.
@@ -103,11 +103,11 @@ Ordenado por lo que más se nota.
    canvas no corta líneas. Los textos se achican hasta un mínimo y después se dibujan igual; la
    leyenda de la tabla no mide su ancho total. Revisar con textos alemanes largos.
 5. **El README** (en inglés): la tabla de idiomas (`tools/release/readme.py`, `bloque_idiomas`), "three
-   languages", la estructura con `de/`; regenerar `docs/hechos.json`. También C-3 en CANONES, el
+   languages", la estructura con `de/`; regenerar `docs/facts.json`. También C-3 en CANONES, el
    CONTRIBUTING y el video promocional ("tres idiomas", las tres banderas).
 6. **Guiones de punta a punta** que asumen dos idiomas extra: `copa-idiomas.mjs` (las
-   comprobaciones son `lang === 'en' ? … : <portugués>`), `sala-error.mjs`,
-   `linea-de-tiempo-solo.mjs`, `idioma-por-url.mjs` (la puerta `/de/`).
+   comprobaciones son `lang === 'en' ? … : <portugués>`), `room-error.mjs`,
+   `linea-de-tiempo-solo.mjs`, `lang-from-url.mjs` (la puerta `/de/`).
 7. **Decisiones de producto**, no de código:
    - **Un público `de`** (como `cl` y `br`, D-187) solo si se escribe contenido propio de
      Alemania: un mazo alemán de Línea de Tiempo, grillas o palabras solo para alemanes.

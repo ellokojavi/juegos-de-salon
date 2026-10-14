@@ -1,12 +1,12 @@
 # Las pruebas de punta a punta en Chrome, en cada PR y en cada fusión a main (D-193). En main las
-# llama publicar.yml antes de publicar (D-302): si fallan, el sitio no cambia.
+# llama publish.yml antes de publicar (D-302): si fallan, el sitio no cambia.
 # Los guiones van en grupos parejos (D-307), un job por grupo y todos a la vez: los arma
-# tools/e2e/grupos.mjs con lo que tardó cada guion (duraciones.json), para que ninguno pase de
+# tools/e2e/groups.mjs con lo que tardó cada guion (durations.json), para que ninguno pase de
 # ~4,5 min y quepan de una en los 20 runners. Dentro del grupo, cada guion corre solo, con su
 # segundo intento si falla (D-299) y su fila en la tabla del resumen. Los que abren salas en el
 # Firebase de producción quedan fuera y siguen a mano: la lista la decide tools/e2e/ci.mjs, así
 # que un guion nuevo entra solo. Cada corrida que pasa deja la marca del árbol que probó, para
-# que publicar.yml no lo pruebe dos veces (D-308).
+# que publish.yml no lo pruebe dos veces (D-308).
 
 name: Punta a punta
 
@@ -15,7 +15,7 @@ on:
   workflow_call:
   workflow_dispatch:
 
-# Un push nuevo al mismo PR cancela la corrida anterior. Llamado desde publicar.yml, `github.workflow`
+# Un push nuevo al mismo PR cancela la corrida anterior. Llamado desde publish.yml, `github.workflow`
 # es "Publicar": así una corrida a mano en main no cancela la que está por publicar
 concurrency:
   group: e2e-${{ github.workflow }}-${{ github.ref }}
@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: 24
       # En un PR que no toca nada del navegador (documentación, marketing, los agentes, el taller que
-      # ningún guion importa, las reglas y los otros workflows; tools/e2e/cambios.mjs) no hay grupos
+      # ningún guion importa, las reglas y los otros workflows; tools/e2e/changes.mjs) no hay grupos
       # y no corre ningún guion: el check queda en verde en segundos (D-205, D-299). El árbol es el
       # de lo que se prueba (en un PR, el merge de prueba con main que arma GitHub)
       - id: lista
@@ -117,8 +117,8 @@ jobs:
           [ "${{ needs.lista.result }}" = success ] || exit 1
           case "${{ needs.e2e.result }}" in success|skipped) ;; *) exit 1 ;; esac
           echo "probado" > "$RUNNER_TEMP/marca"
-      # La marca del árbol que pasó, con guiones de verdad: publicar.yml la busca para no repetir
-      # la punta a punta sobre lo mismo (tools/e2e/ya-probado.mjs, D-308)
+      # La marca del árbol que pasó, con guiones de verdad: publish.yml la busca para no repetir
+      # la punta a punta sobre lo mismo (tools/e2e/already-tested.mjs, D-308)
       - if: needs.e2e.result == 'success'
         uses: actions/upload-artifact@v4
         with:
@@ -128,7 +128,7 @@ jobs:
 
   # En main nadie mira el check: si sale en rojo, abre un issue (o comenta el que ya está abierto)
   # con los guiones que fallaron y el link a la corrida, donde están sus capturas (D-205). En main
-  # corre dentro de publicar.yml, así que ese rojo también frena la publicación (D-302). También
+  # corre dentro de publish.yml, así que ese rojo también frena la publicación (D-302). También
   # en una corrida a mano (Actions → Punta a punta → Run workflow).
   avisar:
     needs: [lista, e2e]

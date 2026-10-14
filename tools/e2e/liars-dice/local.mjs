@@ -2,7 +2,7 @@
 // Comprueba que la apuesta suba de verdad, que el destape cuente bien, que el celular nunca
 // haga una jugada ilegal y que la partida se pueda retomar (C-6). Las tomas llevan el nombre
 // de las capturas del README (docs/capturas.json).
-import { salida } from '../salida.mjs';
+import { salida } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = salida();
 const b = await launch({ port: 9385, dir: `${OUT}/p`, out: OUT });

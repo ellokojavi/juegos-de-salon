@@ -152,7 +152,7 @@ con dos dedos, también en torno a la pantalla, con una brújula que endereza el
 por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 
 - **¿Dónde queda?** saca sus ciudades de `games/where/ciudades.js` (las 195 capitales, ciudades famosas y de
-  segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `games/where/mapa.js`, que genera `node tools/generators/mapa.mjs generar`; `revisar`
+  segunda línea, 529 en total, con nivel y código ISO; D-157) y su mapa de `games/where/mapa.js`, que genera `node tools/generators/map.mjs generar`; `revisar`
   comprueba que cada ciudad cae dentro de su país. La vista del globo (ortográfica) y su inversa
   están en el motor, `games/where/engine.js`; `games/where/globo.js` lo dibuja en un canvas con la imagen satelital
   (Blue Marble de la NASA, con WebGL; D-159), y la distancia se mide sobre la esfera. Mientras la
@@ -248,7 +248,7 @@ resultado de la copa) guarda en `feedback/<id>`, por REST y sin cuenta (D-104), 
 y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y navegador. El contexto
 no se muestra en el formulario, y quien entró al laboratorio con su llave manda también su etiqueta
 (`tester`, nunca la llave; D-306). Se leen con
-`node tools/firebase/reportes.mjs`; en `?test` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
+`node tools/firebase/reports.mjs`; en `?test` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 
 ### Avisos al celular (D-223, D-224, D-225, D-227, D-228)
 
@@ -271,8 +271,8 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   en la dirección (nunca el PIN); la app instalada abre en "Ya estoy inscrito" con ese nombre
   elegido, si iOS la respetara. No la respeta: la app instalada abre en la portada, así que los
   pasos dan el código de la copa (D-227). Dentro de WhatsApp o Instagram, pide abrir el link en Safari.
-- **Lo que llega** (D-224): `.github/workflows/avisos.yml` corre `tools/push/avisar.mjs` cada 15
-  minutos, y `tools/push/calendario.mjs` decide con `engine.js` qué toca, en la hora y el idioma
+- **Lo que llega** (D-224): `.github/workflows/notifications.yml` corre `tools/push/notify.mjs` cada 15
+  minutos, y `tools/push/schedule.mjs` decide con `engine.js` qué toca, en la hora y el idioma
   del celular y nunca entre las 22:00 y las 8:00: **se abrió el día** (desde las 9:00, si no lo ha
   jugado ni empezado), **se te acaba el plazo** (4 horas antes del cierre, o desde las 20:00 si
   cierra de noche), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
@@ -309,7 +309,7 @@ torneos/<código>/fin                hora del servidor en que el admin la termin
 torneoKeys/<código>/<pid>           hash del PIN (ilegible)
 torneoSeats/<código>/<pid>/<uid>    el mismo hash: el celular uid puede escribir por pid (ilegible)
 pushCopa/<código>/<pid>/<subId>     { dia, plazo, at }: qué avisos quiere ese celular (ilegible, D-223); la suscripción va en push/<subId>
-pushEnviados/<código>/<subId>/<clave>  hora en que se entregó ese aviso (dia:3, plazo:3, final, fin, insc:<pid>); solo la toca avisar.mjs (D-224)
+pushEnviados/<código>/<subId>/<clave>  hora en que se entregó ese aviso (dia:3, plazo:3, final, fin, insc:<pid>); solo la toca notify.mjs (D-224)
 ```
 
 Las reglas imponen: escribir una sola vez, las ventanas de cada día con la hora del servidor, el
@@ -348,11 +348,11 @@ node public/cup/games/juegos.test.mjs
 node public/cup/store.test.mjs
 node public/cup/planilla.test.mjs
 node public/cup/reportes.test.mjs
-node tools/e2e/cup/torneo.mjs /tmp/copa            # Copa de 3 días, tres jugadores
-node tools/e2e/cup/torneo.mjs /tmp/copa --siete    # los siete juegos
-node tools/e2e/cup/avisos.mjs /tmp/avisos          # los avisos al celular, con un servicio falso (D-223)
-node tools/push/calendario.test.mjs                # qué aviso toca y cuándo, con relojes inventados (D-224)
-node tools/push/avisar.test.mjs                    # una vuelta del envío, con una base falsa
+node tools/e2e/cup/tournament.mjs /tmp/copa            # Copa de 3 días, tres jugadores
+node tools/e2e/cup/tournament.mjs /tmp/copa --siete    # los siete juegos
+node tools/e2e/cup/notifications.mjs /tmp/avisos          # los avisos al celular, con un servicio falso (D-223)
+node tools/push/schedule.test.mjs                # qué aviso toca y cuándo, con relojes inventados (D-224)
+node tools/push/notify.test.mjs                    # una vuelta del envío, con una base falsa
 node tools/push/webpush.test.mjs                   # el cifrado y la firma, contra el ejemplo del RFC 8291
 ```
 

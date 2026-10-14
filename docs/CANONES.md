@@ -166,7 +166,7 @@ modo que el juego piensa tener.
 ## C-8 · Interfaz táctil
 
 - Objetivos táctiles de 44 px como mínimo; los controles pequeños llevan área táctil ampliada invisible.
-- `.app` mide `calc(100svh - muescas)`, el alto chico de la pantalla, no `100dvh`: lo que se apoya abajo tiene que verse también cuando el navegador muestra toda su interfaz. Se revisa con `node tools/e2e/mirar.mjs <juego> <pantalla> --muescas` (D-77).
+- `.app` mide `calc(100svh - muescas)`, el alto chico de la pantalla, no `100dvh`: lo que se apoya abajo tiene que verse también cuando el navegador muestra toda su interfaz. Se revisa con `node tools/e2e/look.mjs <juego> <pantalla> --muescas` (D-77).
 - Las acciones irreversibles se confirman: seleccionar y luego confirmar (por ejemplo elegir casilla y tocar "¡Fuego!").
 - **Nada se preselecciona** en una jugada que se confirma. La app no elige por el jugador: sin selección explícita, el botón de confirmar va deshabilitado. En una lista que se desplaza, un toque puede irse en scroll y no llegar nunca; si había algo preseleccionado, el jugador termina confirmando lo que no eligió (D-38). Un ajuste de la partida sí puede venir con un valor por defecto, si se ve y se puede cambiar antes de empezar (D-213). **Jugada** es lo que se elige durante la partida y se confirma con un botón (una casilla, una carta, una apuesta, una respuesta). **Ajuste** es lo que se elige antes de que la partida empiece y vale para toda ella (jugadores, mazo, temática, número de rondas, el género en Cuarto Rey, las opciones de una copa al crearla o inscribirse), aunque se elija entre una partida y la siguiente.
 - El botón que confirma **dice sobre qué actúa** ("Colocar aquí · 🔍 Se funda Google"), no solo la acción.
@@ -174,7 +174,7 @@ modo que el juego piensa tener.
 - Si una lista puede crecer sin límite, el botón de confirmar va flotando (`position: sticky; bottom: 0`) con un degradado detrás, nunca al final del contenido.
 - Los bloques largos (repaso de la partida, reglas) van colapsados por defecto.
 - Sin scroll horizontal. Las grillas y tablas se adaptan al ancho.
-- **Aire entre el tablero y sus botones** (D-309): el tablero de juego, y lo que resume la partida en el resultado, lleva `data-tablero`; `base.css` le da 28 px (`--aire-tablero`) hasta lo de abajo, descontando el gap del contenedor (`--gap-contenedor`) y el relleno de la barra de botones (`--aire-ya`, que declara el juego). No se separa con márgenes sueltos. Cada captura de los guiones lo mide y marca ✗ bajo 24 px; `mirar.mjs` lo informa.
+- **Aire entre el tablero y sus botones** (D-309): el tablero de juego, y lo que resume la partida en el resultado, lleva `data-tablero`; `base.css` le da 28 px (`--aire-tablero`) hasta lo de abajo, descontando el gap del contenedor (`--gap-contenedor`) y el relleno de la barra de botones (`--aire-ya`, que declara el juego). No se separa con márgenes sueltos. Cada captura de los guiones lo mide y marca ✗ bajo 24 px; `look.mjs` lo informa.
 - Las etiquetas de una grilla (letras, números) van **dentro** de la misma grilla CSS, como una fila y una columna más; nunca en un contenedor aparte que se alinea "a ojo", porque cada navegador lo estira distinto (pasó en Safari con Batalla Naval).
 - Se respeta `prefers-reduced-motion`.
 - Un toque fuera de un elemento seleccionado lo deselecciona.
@@ -218,13 +218,13 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 ## C-11 · Publicación y versionado
 
 - La versión de una publicación es la primera entrada de `CHANGELOG.md` (`## X.Y.Z — fecha`) subida una vez por cada entrada de `changelog/` que todavía no se juntó, en el orden en que llegaron a main (`tools/release/changelog.mjs`, D-300). Cada PR deja la suya sin número en `changelog/<rama>.md`. Las páginas en git no la llevan (D-205).
-- Al publicar, `publicar.yml` corre `set-version.py --sitio _site`: estampa `?v=X.Y.Z-<commit>` en los import maps, las hojas de estilo, los scripts clásicos (el vigía, D-251) y las imágenes de las tarjetas, y la versión en el pie del menú, solo en la copia que se sube. Así el navegador no mezcla archivos viejos y nuevos, y dos PR abiertos no chocan.
+- Al publicar, `publish.yml` corre `set-version.py --sitio _site`: estampa `?v=X.Y.Z-<commit>` en los import maps, las hojas de estilo, los scripts clásicos (el vigía, D-251) y las imágenes de las tarjetas, y la versión en el pie del menú, solo en la copia que se sube. Así el navegador no mezcla archivos viejos y nuevos, y dos PR abiertos no chocan.
 - Que el README (C-13) y las tarjetas (D-181) no hayan quedado atrás lo frena el check `pruebas` de cada PR, y se vuelve a revisar antes de publicar.
 - Los módulos nuevos entran solos: el script recorre `**/*.js` del sitio y estampa toda página que cargue módulos (D-192).
-- Se publica solo `public/`, con `.github/workflows/publicar.yml`, en cada fusión a main y solo si pasan las pruebas y la punta a punta (D-192, D-302).
+- Se publica solo `public/`, con `.github/workflows/publish.yml`, en cada fusión a main y solo si pasan las pruebas y la punta a punta (D-192, D-302).
 - El menú dibuja la lista de juegos **antes** que cualquier adorno, y los adornos van en `try/catch`: un adorno roto no puede dejar la app vacía.
 - Cada cambio publicado entra en `changelog/` sin número, y el agente de procesos lo junta en `CHANGELOG.md` con su versión (D-300).
-- Se verifica que el sitio publicado sirva la versión nueva antes de darla por lista: lo hace el último paso de `publicar.yml` (D-205).
+- Se verifica que el sitio publicado sirva la versión nueva antes de darla por lista: lo hace el último paso de `publish.yml` (D-205).
 
 ## C-12 · Pruebas
 
@@ -233,11 +233,11 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 - Antes de publicar se prueba el juego de punta a punta en Chrome headless: partida completa en cada modo, con recarga a mitad de partida y revancha.
 - El modo de dos celulares se prueba con dos instancias del navegador, y al menos una vez contra la URL publicada.
 - Un cambio en un módulo compartido obliga a repetir la regresión de **todos** los juegos.
-- Se revisan capturas reales de cada pantalla, no solo el resultado de los asertos: los problemas de diseño se ven, no se afirman. Rehacerlas no es revisarlas: antes de publicar se mira la hoja de contacto (`node tools/e2e/contacto.mjs <seccion>`), que las pone juntas al tamaño del README (D-76).
+- Se revisan capturas reales de cada pantalla, no solo el resultado de los asertos: los problemas de diseño se ven, no se afirman. Rehacerlas no es revisarlas: antes de publicar se mira la hoja de contacto (`node tools/e2e/contact-sheet.mjs <seccion>`), que las pone juntas al tamaño del README (D-76).
 - Una captura se saca con la pantalla quieta. Congelada a media animación, una lista con entradas escalonadas se fotografía con las filas a distintos anchos y parece un error de CSS que no existe (D-76).
 - Consola sin errores es parte del criterio de aceptación.
-- **Cada pantalla se prueba en todos los idiomas que se ofrecen** (D-199): el `idiomas.mjs` de cada
-  juego en `tools/e2e/` recorre las pantallas de `caminos.mjs` en cada idioma de `LANGS` contra
+- **Cada pantalla se prueba en todos los idiomas que se ofrecen** (D-199): el `languages.mjs` de cada
+  juego en `tools/e2e/` recorre las pantallas de `paths.mjs` en cada idioma de `LANGS` contra
   el español. Un guion que mira algo de un idioma recorre `LANGS`, no una lista escrita a mano, y
   saca del diccionario lo que espera: así un idioma nuevo queda probado el día que entra.
 
@@ -265,10 +265,10 @@ El README no se mantiene a pulso: `python3 tools/release/readme.py` lo sostiene.
 
 - Lo derivable del código —tabla de juegos, modos, temáticas con su cuenta de cartas, nombres
   por idioma, tests, índice de documentos y galerías de capturas— vive entre marcas
-  `<!-- generado: ... -->` y lo reescribe `actualizar` desde `tools/release/hechos.mjs`, que importa
+  `<!-- generado: ... -->` y lo reescribe `actualizar` desde `tools/release/facts.mjs`, que importa
   los módulos de verdad. Dentro de esas marcas no se edita a mano.
 - La prosa la escribe una persona. `revisar` compara los hechos de hoy contra el último sello
-  (`docs/hechos.json`) y nombra qué cambió y qué sección hay que releer; `sellar` lo anota
+  (`docs/facts.json`) y nombra qué cambió y qué sección hay que releer; `sellar` lo anota
   cuando ya se releyó. Un cambio material que no pasó por ahí no llega a publicarse:
   el check `pruebas` corre `revisar` en cada PR y antes de publicar (C-11, D-205).
 - Las capturas salen de los guiones de `tools/e2e/`: `docs/capturas.json` dice de qué guion y
@@ -280,7 +280,7 @@ El README no se mantiene a pulso: `python3 tools/release/readme.py` lo sostiene.
 
 Lo que se atrasa igual lo recoge el agente `documentacion` (D-172): una ronda sobre lo que
 entró a `main`, que lanza el agente de procesos los días que entró algo (D-276), y una revisión de cada PR antes de proponer su fusión, con
-`node tools/agents/documentar.mjs revisar` y su memoria en `docs/documentacion.json`. No reemplaza esta
+`node tools/agents/document.mjs revisar` y su memoria en `docs/documentation.json`. No reemplaza esta
 regla: quien cambia algo lo documenta en su mismo PR.
 
 ## C-14 · Robustez
@@ -339,7 +339,7 @@ como un error: se lee como que nadie jugó.
   con `·` mientras nadie le elija emoji, nunca gris ni invisible.
 - **Lo vigila un test, no la memoria:** `node public/panel/adapta.test.mjs` inventa un juego, un modo y
   una partida más numerosa, y exige que lleguen hasta la barra; además falla si el panel o las
-  reglas vuelven a nombrar un juego o un modo. Para mirarlo: `node tools/e2e/mirar.mjs panel datos`,
+  reglas vuelven a nombrar un juego o un modo. Para mirarlo: `node tools/e2e/look.mjs panel datos`,
   que siembra el panel con un juego y un modo que no existen.
 - **Lo que sí hay que tocar a mano:** una **categoría** de señal nueva (algo que no sea juego,
   modo, jugadores, zona horaria, idioma ni hora) necesita su línea en las reglas, su sección en
@@ -413,9 +413,9 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   El globo que invita a agregar la app a inicio sale abajo, solo en los celulares donde se puede
   agregar (no en el computador ni en la app ya instalada), y la ✕ lo apaga para siempre en ese
   navegador (D-232).
-- **Se prueba entera en Chrome:** `tools/e2e/favoritos.mjs` (filtros, favoritos y 320 px en los
-  cuatro idiomas), `compartir-portada.mjs`, `instalar.mjs`, `uno-al-dia.mjs` e
-  `idioma-por-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los
+- **Se prueba entera en Chrome:** `tools/e2e/favorites.mjs` (filtros, favoritos y 320 px en los
+  cuatro idiomas), `share-home.mjs`, `install-prompt.mjs`, `daily.mjs` e
+  `lang-from-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los
   favoritos. Un cambio que se ve rehace la captura `docs/screenshots/menu.png` (C-13).
 
 ## C-18 · Las URL, en inglés
@@ -450,20 +450,20 @@ Los nombres de antes se siguen leyendo como alias: un link que ya circula no se 
 - [ ] Los modos que ofrece (los tres, si es para dos) funcionan y la partida se puede retomar en **todos** (C-5, C-6).
 - [ ] Las instrucciones siguen U-18: la meta primero, a lo más 3 puntos, sin repetir el dibujo de ejemplo (C-1).
 - [ ] Todo el texto está en español, inglés, portugués y alemán (el de `IDIOMAS`, también el del laboratorio), con las mismas claves en todos, sin cadenas sueltas en el código (C-3, D-191).
-- [ ] Sus pantallas están en `tools/e2e/caminos.mjs` y su `idiomas.mjs` pasa en todos los idiomas (C-12, D-199).
+- [ ] Sus pantallas están en `tools/e2e/paths.mjs` y su `languages.mjs` pasa en todos los idiomas (C-12, D-199).
 - [ ] Hay sonido y vibración en las acciones clave, con botón de silencio (C-4).
 - [ ] Los botones tienen 44 px, los botones finales se ven sin desplazar y no hay scroll horizontal (C-8).
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).
 - [ ] Los secretos se comprometen y verifican (C-10).
 - [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia (C-14).
 - [ ] Tests del motor y `node public/assets/js/games.test.mjs` en verde, y partida completa probada en cada modo, con capturas revisadas (C-12).
-- [ ] Lo que cambió, en `changelog/<rama>.md` sin número (`node tools/release/changelog.mjs nueva`); publicada y comprobada en la URL pública por `publicar.yml` (C-11, D-205, D-300).
+- [ ] Lo que cambió, en `changelog/<rama>.md` sin número (`node tools/release/changelog.mjs nueva`); publicada y comprobada en la URL pública por `publish.yml` (C-11, D-205, D-300).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
 - [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
 - [ ] Sus URL van en inglés: carpeta, parámetros y valores, leídos con `parametros.js`, con los nombres de antes como alias (C-18).
 - [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).
-- [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/mirar.mjs panel datos` (C-16).
+- [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/look.mjs panel datos` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py revisar` en verde (C-13).
-- [ ] `node tools/agents/documentar.mjs revisar --desde origin/main` sin ✗ nuevos: decisiones, pruebas, guiones y CHANGELOG al día (D-172).
+- [ ] `node tools/agents/document.mjs revisar --desde origin/main` sin ✗ nuevos: decisiones, pruebas, guiones y CHANGELOG al día (D-172).

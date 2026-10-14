@@ -2,7 +2,7 @@
 // partida (C-6) y la generala servida. Comprueba que nada venga elegido (C-8), que los dados
 // guardados no cambien al tirar, que el puntaje anotado sea el que la planilla mostraba y que la
 // partida terminada no se ofrezca para retomar. Imprime ✗ si algo falla.
-import { salida } from '../salida.mjs';
+import { salida } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = salida();
 const b = await launch({ port: 9389, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });

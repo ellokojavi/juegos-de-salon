@@ -1,6 +1,6 @@
 // El Ahorcado con tres celulares contra Firebase real: cadena, todos adivinando a la vez,
 // reconexión a mitad y revancha.
-import { salida } from '../salida.mjs';
+import { salida } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';

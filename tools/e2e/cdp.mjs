@@ -1,8 +1,8 @@
 // Helper mínimo para manejar Chrome headless por CDP sin dependencias.
 import { spawn } from 'node:child_process';
 import { writeFileSync, readFileSync, rmSync, mkdirSync } from 'node:fs';
-import { medirAire, sinAire, AIRE_MIN } from './aire-comun.mjs';
-import { esCarpeta } from './salida.mjs';
+import { medirAire, sinAire, AIRE_MIN } from './spacing-common.mjs';
+import { esCarpeta } from './output.mjs';
 // CHROME: otra ruta al navegador (Linux, una sesión en la nube)
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -15,7 +15,7 @@ export const sleep = ms => new Promise(r => setTimeout(r, ms));
  *
  * Con PUERTO_CDP, como antes (D-135): el primer puerto distinto que pide un guion pasa a ser
  * PUERTO_CDP, el segundo PUERTO_CDP + 1, y así; pedir de nuevo el mismo puerto da el mismo.
- * Se lee al lanzar, para que un guion pueda fijarlo antes (`mirar.mjs --cdp`).
+ * Se lee al lanzar, para que un guion pueda fijarlo antes (`look.mjs --cdp`).
  */
 const asignados = new Map();
 const puertoFijo = port => {
@@ -46,7 +46,7 @@ const puertoEscrito = dir => {
 
 export async function launch({ port: pedido, dir, out, width = 390, height = 844 }) {
   // Un perfil en `undefined/p` o `--parte/p` quedaba dentro de la copia de trabajo y frenaba su limpieza (D-315)
-  for (const [k, v] of [['dir', dir], ['out', out]]) if (v != null && !esCarpeta(String(v))) throw new Error(`launch: ${k} = "${v}" no es una carpeta de salida (usa salida() de tools/e2e/salida.mjs)`);
+  for (const [k, v] of [['dir', dir], ['out', out]]) if (v != null && !esCarpeta(String(v))) throw new Error(`launch: ${k} = "${v}" no es una carpeta de salida (usa salida() de tools/e2e/output.mjs)`);
   const fijo = puertoFijo(pedido);
   mkdirSync(dir, { recursive: true });
   // El de una corrida anterior con el mismo perfil diría un puerto que ya no es

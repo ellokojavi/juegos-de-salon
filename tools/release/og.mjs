@@ -98,7 +98,7 @@ const paginas = () => [...PUERTAS.map(portada), ...conTarjeta.map(g => ({
 }))];
 
 /**
- * La huella de una imagen (D-181): lo que la dibuja (tools/release/og/tarjeta.html) y lo que dice (el
+ * La huella de una imagen (D-181): lo que la dibuja (tools/release/og/card.html) y lo que dice (el
  * juego en games.js, o los textos de la portada). Cada imagen guarda la suya en
  * public/assets/og/huellas.json al hacerse, y `revisar` la compara con la de hoy: así una imagen hecha
  * con el dibujo viejo, o antes de cambiar una bajada, no pasa como si estuviera al día. Antes solo
@@ -122,7 +122,7 @@ function huella(p) {
   const dato = juego
     ? { emoji: juego.emoji, name: enTarjetas(juego.name), tagline: enTarjetas(juego.tagline), players: juego.players, duration: juego.duration, durationUnit: enTarjetas(juego.durationUnit) }
     : { lang: p.lang, textos: textosTarjeta(p.lang), juegos: disponibles.map(g => [g.id, g.emoji]) };
-  return createHash('sha256').update(readFileSync(join(RAIZ, 'tools/release/og/tarjeta.html'), 'utf8')).update(JSON.stringify(dato)).digest('hex').slice(0, 16);
+  return createHash('sha256').update(readFileSync(join(RAIZ, 'tools/release/og/card.html'), 'utf8')).update(JSON.stringify(dato)).digest('hex').slice(0, 16);
 }
 /** ¿La imagen falta, o se hizo con otro dibujo u otros textos? */
 const atrasada = (p, huellas = leerHuellas()) => !existsSync(join(RAIZ, `public/assets/og/${p.imagen}.jpg`)) || huellas[p.imagen] !== huella(p);
@@ -354,7 +354,7 @@ async function cmdImagenes() {
       // El `t` es para que Chrome no reuse la tarjeta de la vuelta pasada: sin eso, un cambio
       // en el dibujo o en base.css se fotografía viejo y no hay forma de darse cuenta.
       const q = `?t=${Date.now()}${p.juego ? `&juego=${p.juego}` : ''}&lang=${p.lang}`;
-      await b.go(`http://localhost:${PUERTO}/tools/release/og/tarjeta.html${q}`, 1200);
+      await b.go(`http://localhost:${PUERTO}/tools/release/og/card.html${q}`, 1200);
       // Sin esperar a las fuentes, el título sale en la tipografía de reemplazo
       for (let i = 0; i < 20 && !(await b.evaluate(`document.body.dataset.listo === '1'`)); i++) await sleep(200);
       await sleep(300);

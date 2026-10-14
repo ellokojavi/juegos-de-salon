@@ -64,7 +64,7 @@ Puntaje del día (`puntajeNaval` en `uno-al-dia.js`): ganando, 100 con 17 dispar
 hasta 40 con los 100 del tablero; perdiendo, 6 por casilla de barco acertada, hasta 39 (siempre
 menos que ganar). La tarjeta de Uno al día va arriba de los botones del resultado; el primer
 intento cuenta y los siguientes son práctica. No hay revancha (#226): la tarjeta ya ofrece 🎲 Jugar
-otro y Repetir el de hoy. Se prueba con `tools/e2e/uno-al-dia-grupo.mjs`.
+otro y Repetir el de hoy. Se prueba con `tools/e2e/daily-group.mjs`.
 
 ## Flujo
 
@@ -75,7 +75,7 @@ Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR +
 
 ### Colocar flota (la pantalla clave)
 - Grilla 10×10 grande (casillas de ~32 px) con letras y números.
-- Los barcos se dibujan en **pixel art visto desde arriba** (D-91): cada casilla pinta un trozo de 16×16 y juntos arman el barco; el agua es una baldosa repetida. Sale de `flota.js`, que **genera** `tools/generators/flota.py`.
+- Los barcos se dibujan en **pixel art visto desde arriba** (D-91): cada casilla pinta un trozo de 16×16 y juntos arman el barco; el agua es una baldosa repetida. Sale de `flota.js`, que **genera** `tools/generators/fleet.py`.
 - Lista de barcos debajo como fichas, en tres columnas (el barco en chico arriba del nombre, para que las cinco quepan en dos filas sin desplazar): 🚢 5 · 4 · 3 · 3 · 2. Se toca una ficha (queda seleccionada) y luego una casilla de la grilla: el barco se coloca desde esa casilla hacia la derecha (horizontal) o hacia abajo (vertical). La ficha también se puede **arrastrar** hasta el tablero y soltarla ahí (D-90).
 - Tocar un barco ya puesto lo **selecciona** (queda amarillo) y muestra un botón **↻** en su esquina superior derecha para girarlo ahí mismo: gira sobre su proa y, si ahí no cabe, gira igual y se acomoda en el lugar libre más cercano, a lo más una casilla más allá de lo que cubría (D-136); solo si cerca no hay espacio no gira y la casilla parpadea. Con un barco seleccionado, tocar una casilla vacía lo **mueve** y **arrastrarlo** también. Arrastrar cualquier barco —desde su ficha o desde el tablero— lo deja seleccionado, así que nunca se mueve uno mientras hay otro en amarillo (D-90). Tocarlo de nuevo lo deselecciona; seleccionar otro quita el color y el botón. El botón inferior **Girar ↔/↕** sirve además para elegir la orientación antes de colocar.
 - Casillas inválidas (fuera de borde o superpuestas) se muestran en rojo y no se aceptan.
@@ -110,7 +110,7 @@ Ganador, disparos totales y precisión de cada uno, ambas flotas reveladas (con 
 - Grilla táctil: casillas mínimas de 30 px en 375 px de ancho. Es una sola grilla CSS de 11×11 donde la primera fila y la primera columna son las etiquetas, así números y letras quedan alineados con las casillas en todos los navegadores (v0.9.4). Sin scroll horizontal.
 - Todo en español, inglés, portugués y alemán (“Battleship”, “Batalha Naval”, “Schiffe versenken”): agua/miss/água/Wasser, tocado/hit/acertou/Treffer, hundido/sunk/afundou/versenkt, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar! (D-191, D-197).
 - Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
-- Las dos pantallas de turno se miran sin jugar una partida: `node tools/e2e/mirar.mjs batalla-naval juego` y `… espera`.
+- Las dos pantallas de turno se miran sin jugar una partida: `node tools/e2e/look.mjs batalla-naval juego` y `… espera`.
 - El hundimiento no se mira con una captura sino con varias seguidas: el guion que las saca vive en la historia de D-93.
 - Las casillas que se leen (el aviso de cada disparo y la casilla grande del resultado) van en Nunito 900, no en Bangers: ahí el 1 y el 7 se confunden y se dispara al lugar equivocado (D-30, canon C-1). Los números de fila de la grilla ya estaban en Nunito.
 
@@ -138,7 +138,7 @@ Sala en Firebase: mismas reglas de seguridad (el campo `game` distingue el juego
 public/battleship/
   index.html · style.css · rules.js (LOCALES es/en/pt/de, FLEET, config por defecto)
   engine.js · engine.test.mjs
-  flota.js (pixel art de los barcos; lo genera tools/generators/flota.py)
+  flota.js (pixel art de los barcos; lo genera tools/generators/fleet.py)
   game.js (reductor, agentes, bot, render: colocación y batalla)
 public/assets/js/transport/ (local.js, firebase.js con parámetro game) · public/assets/js/handoff.js
 ```

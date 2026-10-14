@@ -61,7 +61,7 @@ node tools/release/og.mjs revisar
 ```
 
 The end-to-end tests (`tools/e2e/`) play complete games in Chrome; see their README.
-To look at a single screen: `node tools/e2e/mirar.mjs <game> <screen> --ancho 320`.
+To look at a single screen: `node tools/e2e/look.mjs <game> <screen> --ancho 320`.
 
 ## What the owner does on merge (do not do it in your PR)
 
@@ -74,7 +74,7 @@ To look at a single screen: `node tools/e2e/mirar.mjs <game> <screen> --ancho 32
 - **Publishing the Firebase rules** (`firebase/database.rules.json`): they need a key that
   only the owner has. If your PR changes them, say so in the description.
 - **The owner panel** (`public/panel/`) cannot be opened without the owner's account; to look at it there is seeded
-  data (`node tools/e2e/mirar.mjs panel datos`).
+  data (`node tools/e2e/look.mjs panel datos`).
 
 ## With Claude Code
 

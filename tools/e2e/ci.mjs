@@ -5,8 +5,8 @@
 //   node tools/e2e/ci.mjs --lista         # los guiones que corren, en JSON (para la matriz de GitHub)
 //   node tools/e2e/ci.mjs --lista --cambios <archivo>   # [] si el PR no toca nada del navegador (D-205, D-299)
 //   node tools/e2e/ci.mjs --grupos [--cambios <archivo>] # lo mismo, en grupos parejos para la matriz (D-307)
-//   node tools/e2e/ci.mjs cup/torneo.mjs  # solo esos (la ruta desde tools/e2e/)
-//   node tools/e2e/ci.mjs cup/torneo.mjs:copa   # solo una parte de un guion largo (ver PARTES)
+//   node tools/e2e/ci.mjs cup/tournament.mjs  # solo esos (la ruta desde tools/e2e/)
+//   node tools/e2e/ci.mjs cup/tournament.mjs:copa   # solo una parte de un guion largo (ver PARTES)
 //
 // Necesita el sitio servido en http://localhost:8765 (los guiones lo tienen fijo) y Chrome en
 // CHROME. Un guion falla si sale con error, si imprime una línea con ✗ o ❌, o si no termina en
@@ -17,24 +17,24 @@ import { readdirSync, readFileSync, statSync, mkdirSync, appendFileSync, rmSync 
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SUELTOS } from '../../public/assets/js/games.js';
-import { sinNavegador } from './cambios.mjs';
-import { agrupar, leerDuraciones, AVISO } from './grupos.mjs';
+import { sinNavegador } from './changes.mjs';
+import { agrupar, leerDuraciones, AVISO } from './groups.mjs';
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const SALIDA = process.env.SALIDA_E2E || '/tmp/e2e';
 const TOPE_MS = 15 * 60 * 1000;
 
 // No son pruebas: miran o arman hojas de capturas
-const HERRAMIENTAS = new Set(['cdp.mjs', 'ci.mjs', 'mirar.mjs', 'aire-comun.mjs', 'contacto.mjs', 'caminos.mjs', 'idiomas-comun.mjs', 'cambios.mjs', 'grupos.mjs', 'ya-probado.mjs']);
+const HERRAMIENTAS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs']);
 // Abren salas o se unen a ellas en el Firebase de producción: siguen a mano
 const CON_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
 const TAMBIEN_FIREBASE = new Set([
-  'versionado.mjs',                // abre una sala para ver que firebase.js carga versionado
-  'compartir-sala.mjs',            // abre una sala de Línea de Tiempo
-  'enlace-invitacion.mjs',         // entra a ?room= en los cuatro juegos con sala
-  'idioma-por-url.mjs',            // abre /liars-dice/?room=WFBN
-  'timeline/veredicto.mjs',        // dos celulares en una sala
-  'timeline/pozo.mjs',             // la segunda mitad juega en una sala
+  'versioning.mjs',                // abre una sala para ver que firebase.js carga versionado
+  'share-room.mjs',            // abre una sala de Línea de Tiempo
+  'invite-link.mjs',         // entra a ?room= en los cuatro juegos con sala
+  'lang-from-url.mjs',            // abre /liars-dice/?room=WFBN
+  'timeline/verdict.mjs',        // dos celulares en una sala
+  'timeline/pool.mjs',             // la segunda mitad juega en una sala
 ]);
 
 // Prueban algo que ya no existe: quedan fuera hasta que alguien los reescriba
@@ -46,8 +46,8 @@ const OBSOLETOS = new Set([
 // marca cuánto tarda el check entero. Cada parte llega al guion como `--parte <nombre>`. Aquí,
 // sin parte, se corren enteros.
 const PARTES = {
-  'cup/torneo.mjs': ['copa', 'laboratorio', 'demos'],
-  'cup-games/idiomas.mjs': SUELTOS.map(m => m.slug),
+  'cup/tournament.mjs': ['copa', 'laboratorio', 'demos'],
+  'cup-games/languages.mjs': SUELTOS.map(m => m.slug),
 };
 
 /** Los guiones, con su ruta desde tools/e2e/: los de cada juego van en su carpeta (D-192). */
@@ -62,7 +62,7 @@ export const guiones = () => todos()
   .sort();
 
 /**
- * Lo que corre GitHub: cada guion, o cada parte de los que tienen (`cup/torneo.mjs:copa`). Los más
+ * Lo que corre GitHub: cada guion, o cada parte de los que tienen (`cup/tournament.mjs:copa`). Los más
  * largos primero (el tamaño del guion sirve de aproximación): GitHub corre unos veinte jobs a la
  * vez y arranca la matriz en orden, así que un largo al final de la lista espera en la cola y
  * alarga todo el check.
@@ -156,7 +156,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.log('\n' + resumen);
     if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, resumen + '\n');
     if (process.env.GITHUB_ACTIONS) {
-      // Lo que tardó cada guion, para que `grupos.mjs medir` rearme los grupos con datos (D-307)
+      // Lo que tardó cada guion, para que `groups.mjs medir` rearme los grupos con datos (D-307)
       const durs = Object.fromEntries(resultados.filter(r => r.ok && !r.intermitente).map(r => [r.guion, Math.round(r.ms / 1000)]));
       console.log(`::notice title=${AVISO}::${JSON.stringify(durs)}`);
       // Las capturas que sirven son las de lo que falló o pasó al segundo intento: el resto no sube

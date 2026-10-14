@@ -61,7 +61,7 @@ Lo que **no** se avisa, a propósito:
   sobra y obligaría a un servidor en tiempo real.
 - **Marketing** ("¡vuelve a jugar!", "hay un juego nuevo"): un aviso que no sirve a quien lo recibe
   hace que desactive todos. Si alguna vez se quiere, va con su propia casilla, apagada por defecto.
-- **Los de Uno al día** (D-230, desde v0.118.0 en el laboratorio y para todos desde v0.121.0; los decide `tools/push/uno-al-dia.mjs`) no son de este tipo: el jugador los activa a
+- **Los de Uno al día** (D-230, desde v0.118.0 en el laboratorio y para todos desde v0.121.0; los decide `tools/push/daily.mjs`) no son de este tipo: el jugador los activa a
   propósito, elige la hora, tienen sus propias casillas y se calman solos si no los usa. Respetan
   la misma noche sin avisos y un tope de 2 al día propio, que no se suma al de las copas; el
   detalle está en
@@ -217,7 +217,7 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
 - El ícono es el de la app. En Android además va una silueta blanca para la barra de estado.
 - **Idioma de quien lo recibe**, en los cuatro (C-3); el nombre de la copa va tal cual.
 
-**Lo que el PR 3 hizo distinto de este plan** (D-224; lo que manda `tools/push/calendario.mjs`):
+**Lo que el PR 3 hizo distinto de este plan** (D-224; lo que manda `tools/push/schedule.mjs`):
 
 - El de la mañana sale **desde las 9:00**, en la primera vuelta que lo encuentre sin jugar (no solo
   entre 9:00 y 10:00), y no sale si el jugador ya tocó Empezar ese día. El del plazo dice las horas
@@ -268,7 +268,7 @@ bloqueados. Con eso se ve dónde se cae la gente y si el esfuerzo en iPhone vale
 
 - **Android y computador**: los guiones de `tools/e2e/` ya manejan Chrome. Chrome puede dar el
   permiso por su cuenta y recibir un aviso de prueba, así que el camino completo entra a CI.
-- **La hoja de iPhone y los estados del botón**: con `mirar.mjs` imitando un iPhone (el
+- **La hoja de iPhone y los estados del botón**: con `look.mjs` imitando un iPhone (el
   identificador del navegador y el tamaño de pantalla), a 320 px y en los cuatro idiomas (C-8).
 - **iPhone de verdad**: no se puede automatizar. El PR 2 trae una lista de pasos para probar a mano
   en iOS 17, 18 y 26, y el dueño la corre antes de fusionar.
@@ -278,7 +278,7 @@ bloqueados. Con eso se ve dónde se cae la gente y si el esfuerzo en iPhone vale
 ```
 Celular                                   Realtime Database                 GitHub Actions (cada 15 min)
 ───────                                   ─────────────────                 ────────────────────────────
-/sw.js (service worker)                   push/<subId>  (nadie lo lee)      tools/push/avisar.mjs
+/sw.js (service worker)                   push/<subId>  (nadie lo lee)      tools/push/notify.mjs
   · evento push → showNotification          endpoint, keys, idioma, zona, uid · token admin (firebase-admin.mjs)
   · notificationclick → abre la URL       pushCopa/<código>/<pid>/<subId>     · lee torneos en curso
                                             (quién quiere avisos de qué)      · decide qué aviso toca
@@ -295,7 +295,7 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
   requisito.
 - **Primera versión sin evento `fetch`**: no guarda nada en caché. Así no hay riesgo de que un
   celular quede pegado con una versión vieja del sitio (el sitio cambia varias veces por semana y
-  `publicar.yml` estampa la versión en cada publicación). El modo sin conexión (RP-13) es un paso
+  `publish.yml` estampa la versión en cada publicación). El modo sin conexión (RP-13) es un paso
   aparte y opcional, con su propio cuidado.
 - **Hecho en el PR 2:** maneja `push` (muestra el aviso que llega como JSON `{ title, body, url, tag }`,
   con el ícono de la app; si no lo entiende, no muestra nada) y `notificationclick` (enfoca la
@@ -312,7 +312,7 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
 
 - **Hecho en el PR 1:** íconos PNG de 192 y 512 px, uno `maskable` y el `apple-touch-icon` de 180
   px, en `public/assets/icons/`. El SVG solo no basta para que Android ofrezca instalar ni para el
-  ícono de iPhone. Se rehacen desde `assets/icon.svg` con `node tools/release/iconos.mjs`.
+  ícono de iPhone. Se rehacen desde `assets/icon.svg` con `node tools/release/icons.mjs`.
 - **Hecho:** el manifest lleva `id`, `scope` y los íconos. Hay uno por idioma, con el nombre de la app en ese idioma, y el iPhone lo toma de `apple-mobile-web-app-title` (D-222). Desde el PR 4 el `start_url`
   es `./?pwa`, y el panel cuenta cuántos abren desde la app instalada (D-233).
 - **Hecho:** las 19 páginas de la app (las que ya tenían manifest) llevan el `apple-touch-icon` y
@@ -323,7 +323,7 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
   (Safari o Chrome en iPhone, Chrome o Samsung Internet en Android; dentro de WhatsApp, abrir el
   link en el navegador) en la misma hoja de abajo que los avisos, que por eso vive en `base.css`.
   Los pasos del iPhone dicen lo mismo que los de la campana. Lo prueban `instalar.test.mjs` y
-  `tools/e2e/instalar.mjs`.
+  `tools/e2e/install-prompt.mjs`.
 
 ### 3. Suscribirse (`public/assets/js/push.js`, `public/cup/avisos.js`) — hecho en el PR 2
 
@@ -359,7 +359,7 @@ push.js (en la página)                    pushEnviados/<código>/<subId>/<clave
   y solo con una suscripción suya. El admin la borra entera al eliminar la copa.
 
 El `endpoint` de una suscripción no identifica a la persona, pero sí permite mandarle avisos: por
-eso nadie lo lee. Las reglas se publican solas con `publicar.yml` (D-218).
+eso nadie lo lee. Las reglas se publican solas con `publish.yml` (D-218).
 
 ### Prueba a mano en iPhone (la corre el dueño)
 
@@ -383,28 +383,28 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 10. Desde WhatsApp, abre el link de la copa sin pasar a Safari y toca la campana: debe decir
     **Ábrela en Safari**.
 
-### 5. El que manda (`tools/push/avisar.mjs` + `.github/workflows/avisos.yml`) — hecho en el PR 3 (D-224)
+### 5. El que manda (`tools/push/notify.mjs` + `.github/workflows/notifications.yml`) — hecho en el PR 3 (D-224)
 
 - Sin dependencias, como el resto de `tools/firebase/`: `tools/push/webpush.mjs` cifra con
   `aes128gcm` (RFC 8291; la prueba calza con el ejemplo del RFC byte a byte) y firma con VAPID
   ES256 (RFC 8292), con `node:crypto`.
-- `tools/push/calendario.mjs` decide qué toca, con `engine.js` (el mismo que usa la app, así el
+- `tools/push/schedule.mjs` decide qué toca, con `engine.js` (el mismo que usa la app, así el
   "qué día es" no se duplica): en la hora de quien recibe, nunca antes de las 8:00 ni desde las
   22:00; el del día desde las 9:00; el del plazo cuando faltan 4 horas o menos, o desde las 20:00
   si el cierre cae de noche. A lo más uno por copa y celular en cada vuelta y dos por copa en el
   día de quien recibe (`TOPE`, D-229); dos plazos que se vencen a la vez van en uno, y el del día,
   el plazo y la final llevan `&day=<d>` y los botones de Android (`acciones`).
-- `tools/push/uno-al-dia.mjs` decide los de Uno al día (D-230) con `pushDia` (lo que pidió cada
-  celular y su último día y racha); avisar.mjs los manda en la misma vuelta y los anota en
+- `tools/push/daily.mjs` decide los de Uno al día (D-230) con `pushDia` (lo que pidió cada
+  celular y su último día y racha); notify.mjs los manda en la misma vuelta y los anota en
   `pushEnviadosDia`.
-- `tools/push/avisar.mjs` lee `pushCopa`, `push` y `pushEnviados`, manda, y anota cada aviso
+- `tools/push/notify.mjs` lee `pushCopa`, `push` y `pushEnviados`, manda, y anota cada aviso
   entregado en `pushEnviados/<código>/<subId>/<clave>` (`dia:3`, `plazo:3`, `final`, `fin`,
   `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente. Antes de mandar, junta
-  en un aviso los días nuevos de varias copas para un mismo celular (`juntar` de `calendario.mjs`,
+  en un aviso los días nuevos de varias copas para un mismo celular (`juntar` de `schedule.mjs`,
   D-229) y lo anota en cada copa.
 - Si el servicio responde 404 o 410, la suscripción murió: se borra, con sus copas. Lo de una copa
   borrada o terminada hace más de una semana se limpia.
-- `node tools/push/avisar.mjs --simular` imprime qué mandaría sin mandar nada.
+- `node tools/push/notify.mjs --simular` imprime qué mandaría sin mandar nada.
   `--prueba <código>` manda un aviso de prueba a cada celular con avisos en esa copa. Los dos
   están en Actions → Avisos → *Run workflow*.
 - Workflow a los minutos 7, 22, 37 y 52 de cada hora, y `workflow_dispatch`. Necesita los secretos
@@ -427,7 +427,7 @@ fondo: si los avisos de verdad traen gente de vuelta.
   saca de la dirección, para que recargar no lo sume otra vez.
 - **App instalada:** el `start_url` de los manifests es `./?pwa`; se cuenta en `pwa/<sistema>`
   (`android`, `ios`, `otro`) y también sale de la dirección.
-- **Mandados:** `avisar.mjs` suma los entregados por día y tipo en `mandados/<tipo>` (con
+- **Mandados:** `notify.mjs` suma los entregados por día y tipo en `mandados/<tipo>` (con
   `pushEnviados`, que se limpia cada semana, no se podía ver la historia) y deja en
   `stats/prod/push` la hora de la vuelta, las suscripciones vivas y las copas con avisos.
 - El embudo de activación de la campana (se ofreció → Avisarme → permiso) no se mide todavía.
@@ -449,7 +449,7 @@ fondo: si los avisos de verdad traen gente de vuelta.
 |---|---|---|
 | **1. Instalable de verdad** ✅ v0.105.0 | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), ícono de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra y que Chrome deja instalar | Avisos |
 | **2. Suscribirse** ✅ v0.107.0, en el laboratorio | Primero, la prueba en iPhones reales de cómo abre la app instalada (la lista de arriba). Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
-| **3. Mandar** ✅ v0.108.0 (D-224), abierto a todos en v0.110.0 (D-228) | `tools/push/` (webpush, calendario, avisar con `--simular` y `--prueba`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `avisos.yml`. Los avisos se abren a todos cuando el dueño vea llegar uno de prueba | — |
+| **3. Mandar** ✅ v0.108.0 (D-224), abierto a todos en v0.110.0 (D-228) | `tools/push/` (webpush, calendario, avisar con `--simular` y `--prueba`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `notifications.yml`. Los avisos se abren a todos cuando el dueño vea llegar uno de prueba | — |
 | **4. Medir** ✅ v0.112.0 (D-233) | Fila del panel, `?notif=` en las señales, `?pwa` en el inicio, mandados por día y tipo | — |
 | *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone | — |
 

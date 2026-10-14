@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Estampa la versión en la copia del sitio que se publica, para evitar caché mezclada (HTML nuevo con
-JS viejo). Lo corre `.github/workflows/publicar.yml` en cada fusión a main, sobre `_site/` (D-205):
+JS viejo). Lo corre `.github/workflows/publish.yml` en cada fusión a main, sobre `_site/` (D-205):
 las páginas de `public/` en git no llevan versión, así que dos PR abiertos ya no chocan en los
 cincuenta `index.html` que antes se reestampaban en cada uno.
 
@@ -18,7 +18,7 @@ invalida la caché aunque alguien fusione sin subir la versión. `versionOf` (st
 X.Y.Z del principio.
 
 Que el README y las tarjetas estén al día ya no se pregunta aquí: lo frena el check `pruebas` de
-cada PR, y publicar.yml lo vuelve a correr antes de publicar (C-11, C-13, D-181).
+cada PR, y publish.yml lo vuelve a correr antes de publicar (C-11, C-13, D-181).
 
 Uso:
   python3 tools/release/set-version.py --sitio _site [--commit <sha>]   estampa esa copia
@@ -86,7 +86,7 @@ def main(args):
         return
     if '--sitio' not in args or args.index('--sitio') + 1 >= len(args):
         sys.exit(__doc__ + '\nLa versión ya no se estampa en public/ antes de commitear (D-205): '
-                 'se escribe la entrada en changelog/<rama>.md y publicar.yml estampa al publicar (D-300).')
+                 'se escribe la entrada en changelog/<rama>.md y publish.yml estampa al publicar (D-300).')
     sitio = pathlib.Path(args[args.index('--sitio') + 1]).resolve()
     if sitio == (ROOT / 'public').resolve():
         sys.exit('public/ no se estampa: es lo que está en git (D-205). Copia el sitio y estampa la copia.')

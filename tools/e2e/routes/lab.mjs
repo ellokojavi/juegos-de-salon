@@ -6,7 +6,7 @@
 // y el resultado da el puntaje por capas del motor, el desglose, compartir, otro tablero y el comentario
 // tras una línea; rendirse pide un segundo toque, y con un reloj de prueba de 12 s cuentan las etapas
 // hechas. Imprime ✗ si algo falla.
-import { salida } from '../salida.mjs';
+import { salida } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { girar, puntajePartida, ETAPAS, PUNTOS_ETAPA } from '../../../public/labs/routes/engine.js';
 const OUT = salida('/tmp/rutas-lab');
