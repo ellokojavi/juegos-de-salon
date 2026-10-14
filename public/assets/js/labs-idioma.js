@@ -44,13 +44,13 @@ const NOMBRE = 'juegos-de-salon:copa:reporte-nombre';
 
 /**
  * The optional email field (D-317), the same in every feedback form, in the page's language. It says
- * plainly what the address is for: only to tell the player we replied. Not saved on the device.
+ * plainly what the address is for: only to reply to the player. Not saved on the device.
  */
 const CORREO = {
-  es: { correo: 'Tu correo (opcional)', correoNota: 'Solo para avisarte cuando respondamos. No lo usamos para nada más, no se publica y después lo borramos.', correoMalo: 'Revisa el correo: parece incompleto.' },
-  en: { correo: 'Your email (optional)', correoNota: "Only to let you know when we reply. We don't use it for anything else, it's never published, and we delete it afterwards.", correoMalo: 'Check your email: it looks incomplete.' },
-  pt: { correo: 'Seu e-mail (opcional)', correoNota: 'Só para avisar quando respondermos. Não usamos para mais nada, não é publicado e depois o apagamos.', correoMalo: 'Confira o e-mail: parece incompleto.' },
-  de: { correo: 'Deine E-Mail (optional)', correoNota: 'Nur, um dir Bescheid zu geben, wenn wir antworten. Wir nutzen sie für nichts anderes, sie wird nicht veröffentlicht und danach gelöscht.', correoMalo: 'Prüf deine E-Mail-Adresse: Sie scheint unvollständig.' },
+  es: { correo: 'Tu correo (opcional)', correoNota: 'Solo para responderte. No lo usamos para nada más, no se publica y después lo borramos.', correoMalo: 'Revisa el correo: parece incompleto.' },
+  en: { correo: 'Your email (optional)', correoNota: "Only so we can reply to you. We don't use it for anything else, it's never published, and we delete it afterwards.", correoMalo: 'Check your email: it looks incomplete.' },
+  pt: { correo: 'Seu e-mail (opcional)', correoNota: 'Só para te responder. Não usamos para mais nada, não é publicado e depois o apagamos.', correoMalo: 'Confira o e-mail: parece incompleto.' },
+  de: { correo: 'Deine E-Mail (optional)', correoNota: 'Nur, damit wir dir antworten können. Wir nutzen sie für nichts anderes, sie wird nicht veröffentlicht und danach gelöscht.', correoMalo: 'Prüf deine E-Mail-Adresse: Sie scheint unvollständig zu sein.' },
 };
 export const textosCorreo = (idioma = (typeof document !== 'undefined' && document.documentElement.lang) || 'es') => CORREO[String(idioma).slice(0, 2)] || CORREO.es;
 export const IDIOMAS_CORREO = Object.keys(CORREO);
