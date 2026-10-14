@@ -11,6 +11,8 @@
     images` photographs it at 1200×630. It is not opened by hand: it is looked at through the screenshot.
       /tools/release/og/card.html?game=dudo   one card per game (or per standalone game: ?game=reinas)
       /tools/release/og/card.html             the menu's
+      /tools/release/og/card.html?email       the header of the feedback reply email (D-317): only
+                                              the icons and the title, 1200×340 (`og.mjs header`)
   -->
   <link rel="stylesheet" href="/public/assets/css/base.css">
   <style>
@@ -49,6 +51,11 @@
     .menu .row { display: flex; gap: 12px; font-size: 38px; line-height: 1; }
     .menu .row span { filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45)); }
 
+    /* The email header (D-317, owner's request): only the icons and the title, in a low strip.
+       Mail apps show the whole image, so it needs no safe margin on the sides */
+    html.email, html.email body, html.email .card { height: 170px; }
+    html.email .card { padding: 16px 24px; gap: 6px; }
+
     .footer { position: absolute; left: 72px; right: 72px; bottom: 18px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 15px; color: var(--muted); }
     .footer .domain { color: var(--yellow); letter-spacing: 0.04em; }
     /* The gradient animation leaves the title a different color in each photo */
@@ -57,8 +64,10 @@
       The gradient is painted only inside the title's box (background-clip: text), and with a line
       height under 1 the box does not reach the accents of the capitals: the Ó in SALÓN and the Ñ
       in AÑO came out cut. Padding on top so they fit and a negative margin so nothing moves.
+      The same on the sides: the typeface is slanted and the last letter goes out of the box on
+      the right (the N in SALÓN came out cut, seen in the feedback reply email, D-317).
     */
-    .name.rainbow, .app-title.rainbow { padding-top: 0.2em; margin-top: -0.2em; }
+    .name.rainbow, .app-title.rainbow { padding: 0.2em 0.12em 0; margin: -0.2em -0.12em 0; }
   </style>
 </head>
 <body>
@@ -69,6 +78,7 @@
     import { con } from '/public/assets/js/ui.js';
 
     const id = new URLSearchParams(location.search).get('game');
+    const email = new URLSearchParams(location.search).has('email');
     // The language is asked for with ?lang= in the URL, but read with getLang(): i18n.js applies
     // it on load and removes the parameter from the bar, so by the time this runs it is gone (D-74).
     const lang = getLang();
@@ -87,7 +97,13 @@
       return p;
     };
 
-    if (id) {
+    if (email) {
+      document.documentElement.classList.add('email');
+      box.classList.add('menu');
+      const row = el('div', 'row');
+      GAMES.filter(g => g.available).forEach(g => row.append(el('span', null, g.emoji)));
+      box.append(row, el('h1', 'app-title rainbow', COMMON[lang].appTitle));
+    } else if (id) {
       const g = [...GAMES, ...SUELTOS].find(x => x.id === id);
       if (!g) throw new Error(`There is no game "${id}"`);
       box.classList.add('game');

@@ -48,6 +48,7 @@ assert.throws(() => readAnswers('Una sola para dos', ['1', '2']), /#<n>/);
 assert.throws(() => readAnswers('#1\nUno.', ['1', '2']), /missing #2/);
 assert.throws(() => readAnswers('#1\nUno.\n#3\nTres.', ['1']), /extra #3/);
 assert.throws(() => readAnswers('Hola\n#1\nUno.', ['1']), /before/);
+assert.equal(textOf('> uno\n> dos\n\n- x'), 'uno\ndos');
 assert.equal(textOf(c), 'Se podrian auto tachar las pistas ya usadas. @alguien mira el #12');
 assert.equal(nameOf(withEmail), 'Tu admirador secreto');
 assert.equal(nameOf('> hola\n\n- **Quién:** Cris\n- **Juego:** loteo'), 'Cris', 'issues from before D-316 say Quién');

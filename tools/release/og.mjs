@@ -6,6 +6,8 @@
  *   node tools/release/og.mjs cards    rewrites the <!-- generated: og --> block of each page,
  *                                generates the page of each of The Cup's games (public/<slug>/)
  *                                and the bridge pages of the old routes (D-192, D-198)
+ *   node tools/release/og.mjs header   the header of the feedback reply email (D-317), 1200×340,
+ *                                in public/assets/email/header.jpg
  *   node tools/release/og.mjs images   retakes with Chrome the 1200×630 images that fell behind
  *                                (needs internet: the fonts come from Google Fonts).
  *                                With --all, retakes them all
@@ -422,11 +424,38 @@ function cmdCheck() {
   return problems.length ? 1 : 0;
 }
 
+/** The email header (D-317): the menu card's icons and title only, the same in every language. */
+async function cmdHeader() {
+  const { launch, sleep } = await import('../e2e/cdp.mjs');
+  const out = join(ROOT, 'public/assets/email');
+  mkdirSync(out, { recursive: true });
+  const tmp = join(tmpdir(), 'juegos-de-salon-header');
+  rmSync(tmp, { recursive: true, force: true });
+  mkdirSync(tmp, { recursive: true });
+  const server = spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
+  await sleep(800);
+  if (server.exitCode !== null) throw new Error(`port ${PORT} is taken: PORT=87xx node tools/release/og.mjs header`);
+  try {
+    const b = await launch({ port: CDP_PORT, dir: `${tmp}/profile`, out: tmp, width: 600, height: 170 });
+    await b.go(`http://localhost:${PORT}/tools/release/og/card.html?t=${Date.now()}&email&lang=es`, 1200);
+    for (let i = 0; i < 20 && !(await b.evaluate(`document.body.dataset.ready === '1'`)); i++) await sleep(200);
+    await sleep(300);
+    await b.shot('header');
+    await jpeg(join(tmp, 'header.png'), join(out, 'header.jpg'));
+    b.close();
+  } finally {
+    server.kill();
+    try { rmSync(tmp, { recursive: true, force: true }); } catch (_) { /* nothing */ }
+  }
+  console.log('public/assets/email/header.jpg ↻ (1200×340): look at it before publishing');
+}
+
 const cmd = process.argv[2];
 if (cmd === 'cards') cmdCards();
 else if (cmd === 'images') await cmdImages();
+else if (cmd === 'header') await cmdHeader();
 else if (cmd === 'check') process.exit(cmdCheck());
 else {
-  console.error('Usage: node tools/release/og.mjs cards | images [--all] | check');
+  console.error('Usage: node tools/release/og.mjs cards | images [--all] | header | check');
   process.exit(1);
 }
