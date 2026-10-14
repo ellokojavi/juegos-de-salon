@@ -42,6 +42,8 @@ assert.ok(!ARREGLO.test('Uno al día con jugador: historia en Firebase'));
 // A quién despachar (D-276)
 assert.deepEqual(porDespachar({ commitsDoc: 0, commitsPublic: 0, diasUsabilidad: 2 }), [], 'sin cambios no se lanza a nadie');
 assert.deepEqual(porDespachar({ commitsDoc: 3, commitsPublic: 0, diasUsabilidad: 2 }).map(d => d.agente), ['documentacion']);
+assert.deepEqual(porDespachar({ commitsDoc: 0, commitsPublic: 0, diasUsabilidad: 2, correos: 2 }).map(d => d.agente), ['atencion'], 'emails at hola@ launch the support agent (D-318)');
+assert.deepEqual(porDespachar({ commitsDoc: 0, commitsPublic: 0, diasUsabilidad: 2, correos: null }), [], 'without the inbox user, nobody');
 assert.deepEqual(porDespachar({ commitsDoc: 0, commitsPublic: 2, diasUsabilidad: 1 }).map(d => d.agente), ['usabilidad']);
 assert.match(porDespachar({ commitsDoc: 0, commitsPublic: null, diasUsabilidad: null })[0].motivo, /nunca/);
 assert.match(porDespachar({ commitsDoc: 0, commitsPublic: 0, diasUsabilidad: 7 })[0].motivo, /semana/);
