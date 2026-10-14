@@ -54,9 +54,9 @@ export function cuerpo(r) {
   const c = contexto(r);
   const fecha = r.at ? new Date(r.at).toISOString().slice(0, 16).replace('T', ' ') + ' UTC' : 'no date';
   const datos = [
-    ['Who', r.nombre && String(r.nombre).trim()], ['Key', r.tester && String(r.tester).trim()], ['Game', c.juego], ['Lab', c.labs], ['Cup', c.copa], ['Day', c.dia], ['Seed', c.semilla],
+    ['Who', r.nombre && String(r.nombre).trim()], ['Lab key', r.tester && String(r.tester).trim()], ['Game', c.juego], ['Lab', c.labs], ['Cup', c.copa], ['Day', c.dia], ['Seed', c.semilla],
     ['Result', c.resumen ?? c.puntaje], ['Mistakes', c.errores], ['Hints', c.ayudas], ['Time', c.tiempo],
-    ['Page', c.url && (String(c.url).startsWith('/') ? `${SITIO}${c.url}` : c.url)], ['Screen', c.pantalla], ['Window', c.pantallaTam], ['Version', r.v && `v${r.v}`], ['Date', fecha],
+    ['Page', c.url && (String(c.url).startsWith('/') ? `${SITIO}${c.url}` : c.url)], ['Screen', c.pantalla], ['Window size', c.pantallaTam], ['Version', r.v && `v${r.v}`], ['Date', fecha],
   ].filter(([, v]) => v !== undefined && v !== null && v !== '');
   return [
     inerte(String(r.texto).trim()).split('\n').map(l => `> ${l}`).join('\n'),

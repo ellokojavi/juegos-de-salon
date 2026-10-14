@@ -57,7 +57,7 @@ export function queHace(lista = []) {
       case 'cerrar-issue': return `closes #${a.issue}`;
       case 'comentar': return `comments on #${a.en}`;
       case 'correr': return a.workflow === 'publicar.yml' ? 'publishes the site' : 'runs the end-to-end tests';
-      case 'encolar': return 'queued for the next round';
+      case 'encolar': return 'queues it for the next round';
       default: return '';
     }
   }).filter(Boolean);

@@ -24,7 +24,7 @@ const aprobado = anotarHecho(cuerpo.replace(/- \[ \](.*?<!-- op:1:si -->)/, '- [
 assert.deepEqual(enCola([{ number: 5, body: aprobado }]), [{ id: '#5:1', tarea: 'escribir mensajes.test.mjs' }]);
 
 // Each checkbox says what it does; one that does nothing, just Yes or No
-assert.match(cuerpo, /^- \[ \] Yes: queued for the next round <!-- op:1:si -->$/m);
+assert.match(cuerpo, /^- \[ \] Yes: queues it for the next round <!-- op:1:si -->$/m);
 assert.match(cuerpo, /^- \[ \] No <!-- op:1:no -->$/m);
 
 // Un patrón cuenta una vez por commit
