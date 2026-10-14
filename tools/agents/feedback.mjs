@@ -72,7 +72,7 @@ export function readAnswers(t, numbers) {
 }
 
 /** What the player wrote, from the issue's quote (without the zero-width spaces of `inert`). */
-export const textOf = body => (body || '').split('\n').filter(l => l.startsWith('> ')).map(l => l.slice(2)).join(' ').replace(/\u200b/g, '').trim();
+export const textOf = body => (body || '').split('\n').filter(l => l.startsWith('> ')).map(l => l.slice(2)).join('\n').replace(/\u200b/g, '').trim();
 
 /** The name the player gave, from the issue (`Who`, or `Quién` in the issues from before D-316; without the zero-width spaces of `inert`). */
 export const nameOf = body => (/^- \*\*(?:Who|Quién):\*\* (.+)$/m.exec(body || '')?.[1] || '').replace(/\u200b/g, '').trim();
@@ -184,11 +184,11 @@ async function reply(list, file, lang, { dryRun, testTo }) {
     if (new Set(all.map(x => x.email.toLowerCase())).size > 1) throw new Error(`Not the same player: ${all.map(x => `#${x.number} ${x.mask}`).join(', ')}. One email per address.`);
   }
   const name = all.map(x => x.name).find(Boolean) || '';
-  const { subject, text } = buildEmail({ lang, name, n: Number(numbers[0]), items: all.map(x => ({ quote: x.text, answer: answers[x.number] })) });
+  const { subject, text, html } = buildEmail({ lang, name, n: Number(numbers[0]), items: all.map(x => ({ quote: x.text, answer: answers[x.number] })) });
   const to = testTo || all[0].email;
   if (dryRun) { console.log(`To: ${testTo || all[0].mask}\nSubject: ${subject}\n\n${text}`); return; }
   // Through stdin: the address never shows in a command line or a log
-  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to, subject: testTo ? `[Test] ${subject}` : subject, text }), stdio: ['pipe', 'inherit', 'inherit'] });
+  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to, subject: testTo ? `[Test] ${subject}` : subject, text, html }), stdio: ['pipe', 'inherit', 'inherit'] });
   if (testTo) { console.log(`Test email with ${numbers.map(n => `#${n}`).join(', ')} sent to the test address; nothing else touched.`); return; }
   for (const x of all) {
     await remove(x.id, t);
