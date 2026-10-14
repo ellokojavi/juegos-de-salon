@@ -41,6 +41,11 @@
           "fecha": "2026-10-12",
           "que": "Una captura rehecha que sale idéntica byte a byte no genera commit y readme.py revisar la sigue marcando como atrasada (batalla-naval, generala)",
           "commit": "af149b1"
+        },
+        {
+          "fecha": "2026-10-14",
+          "que": "Otra vez (ronda de documentación del 14/10): battleship/04-pase.png y generala/07-servida.png salen idénticas al rehacerlas y readme.py revisar las sigue marcando por la fecha de su último commit",
+          "commit": null
         }
       ],
       "mecanismo": null
