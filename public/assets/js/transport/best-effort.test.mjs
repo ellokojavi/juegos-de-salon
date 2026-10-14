@@ -21,38 +21,38 @@ const denied = () => Object.assign(new Error('PERMISSION_DENIED: Permission deni
   assert.deepEqual(warned, [], 'a resend of a message that is in the room is not reported');
 }
 
-/* Denied and not in the room: a real failure, logged but not left unhandled */
+/* Denied and not in the room: a move that didn't get through still reaches the vigía, once */
 {
-  warned.length = 0;
-  message(Promise.reject(denied()), async () => false);
+  const e = denied();
+  message(Promise.reject(e), async () => false);
   await settle();
-  assert.deepEqual(unhandled, []);
-  assert.equal(warned.length, 1);
+  assert.deepEqual(unhandled.splice(0), [e]);
 }
 
-/* Reading it back fails too: logged, still handled */
+/* Reading it back fails too: can't tell it's a resend, so it is reported */
 {
-  warned.length = 0;
-  message(Promise.reject(denied()), async () => { throw new Error('offline'); });
+  const e = denied();
+  message(Promise.reject(e), async () => { throw new Error('offline'); });
   await settle();
-  assert.deepEqual(unhandled, []);
-  assert.equal(warned.length, 1);
+  assert.deepEqual(unhandled.splice(0), [e]);
 }
 
-/* Another error: logged without reading back */
+/* Another error: reported without reading back */
 {
-  warned.length = 0;
   let read = false;
-  message(Promise.reject(new Error('network')), async () => { read = true; return true; });
+  const e = new Error('network');
+  message(Promise.reject(e), async () => { read = true; return true; });
   await settle();
   assert.equal(read, false);
-  assert.equal(warned.length, 1);
+  assert.deepEqual(unhandled.splice(0), [e]);
 }
 
 /* A caller that awaits still sees the error */
 {
   const p = message(Promise.reject(denied()), async () => true);
   await assert.rejects(p, /PERMISSION_DENIED/);
+  await settle();
+  assert.deepEqual(unhandled, []);
 }
 
 /* quiet: a presence write on a room that expired */

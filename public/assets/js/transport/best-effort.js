@@ -25,18 +25,20 @@ export function quiet(p, what = 'write') {
 
 /**
  * A room message. A denied write whose message is already on the server (`exists` reads it back)
- * is a resend after a reconnect: it went through the first time, so it is not reported. Anything
- * else is logged. The same promise is returned, so a caller that does await it still sees the error.
+ * is a resend after a reconnect: it went through the first time, so it is not reported. Any other
+ * failure is a move that really didn't get through: it is raised again, unhandled, so the vigía
+ * still counts it on the Health panel. The same promise is returned, so a caller that does await
+ * it sees the error too.
  */
 export function message(p, exists) {
   if (p && typeof p.catch === 'function') {
     p.catch(async e => {
       if (denied(e)) {
         let there = false;
-        try { there = await exists(); } catch (_) { /* can't tell: log it */ }
+        try { there = await exists(); } catch (_) { /* can't tell: report it */ }
         if (there) return;
       }
-      console.warn('[room] message not sent:', e?.message || e);
+      throw e;
     });
   }
   return p;
