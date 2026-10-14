@@ -48,6 +48,7 @@ assert.throws(() => leerRespuestas('Una sola para dos', ['1', '2']), /#<n>/);
 assert.throws(() => leerRespuestas('#1\nUno.', ['1', '2']), /missing #2/);
 assert.throws(() => leerRespuestas('#1\nUno.\n#3\nTres.', ['1']), /extra #3/);
 assert.throws(() => leerRespuestas('Hola\n#1\nUno.', ['1']), /before/);
+assert.equal(textoDe('> uno\n> dos\n\n- x'), 'uno\ndos');
 assert.equal(textoDe(c), 'Se podrian auto tachar las pistas ya usadas. @alguien mira el #12');
 assert.equal(nombreDe(conCorreo), 'Tu admirador secreto');
 assert.equal(nombreDe('> hola\n\n- **Quién:** Cris\n- **Juego:** loteo'), 'Cris', 'issues from before D-316 say Quién');

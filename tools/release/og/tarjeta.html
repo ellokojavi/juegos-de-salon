@@ -11,6 +11,8 @@
     imagenes` la fotografía a 1200×630. No se abre a mano: se mira con la captura.
       /tools/release/og/tarjeta.html?juego=dudo   una tarjeta por juego (o por juego suelto: ?juego=reinas)
       /tools/release/og/tarjeta.html              la del menú
+      /tools/release/og/tarjeta.html?correo       the header of the feedback reply email (D-317): only
+                                                  the icons and the title, 1200×340 (`og.mjs cabecera`)
   -->
   <link rel="stylesheet" href="/public/assets/css/base.css">
   <style>
@@ -49,6 +51,11 @@
     .menu .fila { display: flex; gap: 12px; font-size: 38px; line-height: 1; }
     .menu .fila span { filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45)); }
 
+    /* The email header (D-317, owner's request): only the icons and the title, in a low strip.
+       Mail apps show the whole image, so it needs no safe margin on the sides */
+    html.correo, html.correo body, html.correo .tarjeta { height: 170px; }
+    html.correo .tarjeta { padding: 16px 24px; gap: 6px; }
+
     .pie { position: absolute; left: 72px; right: 72px; bottom: 18px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 15px; color: var(--muted); }
     .pie .dominio { color: var(--yellow); letter-spacing: 0.04em; }
     /* La animación del degradado deja el título de un color distinto en cada foto */
@@ -57,8 +64,10 @@
       El degradado se pinta solo dentro de la caja del título (background-clip: text), y con alto
       de línea bajo 1 la caja no alcanza a los acentos de las mayúsculas: la Ó de SALÓN y la Ñ de
       AÑO salían cortadas. Relleno arriba para que entren y margen negativo para no mover nada.
+      Lo mismo a los lados: la fuente es inclinada y la última letra sale de la caja por la
+      derecha (la N de SALÓN salía cortada, visto en el correo de respuesta al feedback, D-317).
     */
-    .nombre.rainbow, .titulo.rainbow { padding-top: 0.2em; margin-top: -0.2em; }
+    .nombre.rainbow, .titulo.rainbow { padding: 0.2em 0.12em 0; margin: -0.2em -0.12em 0; }
   </style>
 </head>
 <body>
@@ -69,6 +78,7 @@
     import { con } from '/public/assets/js/ui.js';
 
     const id = new URLSearchParams(location.search).get('juego');
+    const correo = new URLSearchParams(location.search).has('correo');
     // El idioma se pide con ?lang= en la URL, pero se lee con getLang(): i18n.js lo aplica al
     // cargar y saca el parámetro de la barra, así que para cuando corre esto ya no está (D-74).
     const lang = getLang();
@@ -87,7 +97,13 @@
       return p;
     };
 
-    if (id) {
+    if (correo) {
+      document.documentElement.classList.add('correo');
+      caja.classList.add('menu');
+      const fila = el('div', 'fila');
+      GAMES.filter(g => g.available).forEach(g => fila.append(el('span', null, g.emoji)));
+      caja.append(fila, el('h1', 'titulo rainbow', COMMON[lang].appTitle));
+    } else if (id) {
       const g = [...GAMES, ...SUELTOS].find(x => x.id === id);
       if (!g) throw new Error(`No existe el juego "${id}"`);
       caja.classList.add('juego');
