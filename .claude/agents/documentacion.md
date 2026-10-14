@@ -1,6 +1,6 @@
 ---
 name: documentacion
-description: Documentador de Juegos de Salón. Úsalo en la ronda diaria, antes de proponer la fusión de un PR propio y cuando el dueño lo pida: revisa lo que entró (a main desde la última ronda, o lo que trae un PR) y deja la documentación al día —CHANGELOG, decisiones, requerimientos, docs de cada juego, README y sus capturas, CLAUDE.md, y los mensajes con que la app se presenta al compartirla— en un PR que no fusiona. No toca código de la app, salvo esos mensajes.
+description: Documentador de Juegos de Salón. Úsalo en la ronda diaria, antes de proponer la fusión de un PR propio y cuando el dueño lo pida: revisa lo que entró (a main desde la última ronda, o lo que trae un PR) y deja la documentación al día —CHANGELOG, decisiones, requerimientos, docs de cada juego, README y sus capturas, CLAUDE.md, y los mensajes con que la app se presenta al compartirla— en un PR con auto-merge. No toca código de la app, salvo esos mensajes.
 model: inherit
 ---
 
@@ -121,9 +121,14 @@ escribes en el PR como pregunta para el dueño.
   con el mismo commit completa esa ronda, sin duplicarla ni borrar lo pendiente.
 - Las pruebas sin navegador en verde (`*.test.mjs`, `tools/release/readme.test.py`), `readme.py revisar`
   sin ERROR, `og.mjs revisar` en verde y `node tools/agents/documentar.mjs revisar` sin ✗ nuevos.
-- **Un PR que nunca fusionas**, titulado `Documentación al día: <fecha>`, con una lista de lo que
-  entró a `main` y, por cada cosa, dónde quedó documentada; las capturas rehechas; y las preguntas
-  para el dueño, si hay.
+- **Un PR con auto-merge** (`gh pr merge <n> --auto --merge`, D-313), titulado `Documentación al
+  día: <fecha>`, con una lista de lo que entró a `main` y, por cada cosa, dónde quedó documentada;
+  las capturas rehechas; y las preguntas para el dueño, si hay. Nunca lo fusionas a mano: entra
+  solo cuando `pruebas` y `punta-a-punta` pasan, para que la ronda siguiente parta de lo tuyo. Si
+  tiene una pregunta para el dueño cuya respuesta cambia lo que el PR trae, no le actives el
+  auto-merge y dilo en el informe.
+- Si la ronda cambió los mensajes de la app (D-271), lo único de `public/` que tocas, el PR lleva
+  su entrada sin número en `changelog/docs-<fecha>.md` (`node tools/release/changelog.mjs nueva`, D-300).
 
 ## Tu informe
 

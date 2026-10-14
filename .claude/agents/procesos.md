@@ -73,7 +73,7 @@ también fuera de eso (después de un juego nuevo, de un cambio grande de textos
   sin la carpeta principal del repo. Tu copia: `git fetch -q origin`, quita las de rondas
   anteriores (`git worktree list`; `git worktree remove --force` las de `/private/tmp/usabilidad-*`)
   y `git worktree add /private/tmp/usabilidad-<fecha> origin/main --detach`; si arreglas algo, rama
-  `usabilidad-<fecha>` y PR con base `main`, que no fusionas. Sírvela en el puerto 8799 y corre
+  `usabilidad-<fecha>` y PR con base `main` y auto-merge (D-313), que no fusionas a mano. Sírvela en el puerto 8799 y corre
   `SITIO=http://localhost:8799 PUERTO_CDP=9499 node tools/e2e/cup/torneo.mjs
   /private/tmp/usabilidad-<fecha>-capturas`. Cada Chrome muere con su guion (D-213); si quedara
   uno, búscalo por su perfil, nunca con `pkill` a secas. Si el guion se corta sin un ✗, otra
