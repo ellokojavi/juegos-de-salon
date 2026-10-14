@@ -9,7 +9,7 @@ import {
   getDatabase, ref, get, set, update, push, onChildAdded, onValue, onDisconnect, serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../firebase-config.js';
-import { IDLE_TTL, ROOM_TTL, dueForSweep, markSwept, noteRoom, sweep } from './cleanup.js';
+import { IDLE_TTL, ROOM_TTL, dayOf, dueForSweep, markSwept, noteRoom, roomCreation, sweep } from './cleanup.js';
 import { message, quiet } from './best-effort.js';
 import { disposeRoom } from './dispose.js';
 import { CONNECT_MS, LEAVE_MS, OP_MS, waitConnected, withTimeout } from './errors.js';
@@ -70,14 +70,27 @@ function record(game, code, createdAt, { role, name, created }) {
 }
 
 /**
- * Apunta la sala en la papelera y, si a este celular le toca, barre las salas vencidas
- * (canon C-7). No se espera ni se muestra: si algo falla, la partida sigue igual.
+ * The server clock as this phone estimates it. `.info/serverTimeOffset` is local to the SDK and
+ * known once connected: it puts a new room's note in the server's day even if the phone's clock
+ * is off (D-321).
  */
-async function cleanup(d, code, createdAt, { note = true } = {}) {
-  try { await noteRoom(dbApi(d), code, createdAt, { note }); } catch (_) { /* mejor esfuerzo */ }
+const serverNow = d => new Promise(resolve => onValue(ref(d, '.info/serverTimeOffset'),
+  s => resolve(Date.now() + (Number(s.val()) || 0)), { onlyOnce: true }));
+
+/** Si a este celular le toca, barre las salas vencidas en segundo plano (canon C-7). */
+function sweepIfDue(d) {
   if (!dueForSweep()) return;
   markSwept();
   setTimeout(() => { sweep(dbApi(d)).catch(() => { /* nada */ }); }, 10000); // primero que arranque la partida
+}
+
+/**
+ * El que entra a una sala ajena refresca la marca de su balde y, si le toca, barre (canon C-7).
+ * No se espera ni se muestra: si algo falla, la partida sigue igual.
+ */
+async function cleanup(d, code, createdAt) {
+  try { await noteRoom(dbApi(d), code, createdAt, { note: false }); } catch (_) { /* mejor esfuerzo */ }
+  sweepIfDue(d);
 }
 
 export function createFirebaseTransport({ game, maxPlayers = 2 }) {
@@ -136,14 +149,17 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
           if (roomExpired(snap.val())) { try { await set(roomRef, null); } catch (_) { continue; } }
           else continue;
         }
-        await update(roomRef, { createdAt: serverTimestamp(), game, config });
+        // The room and its note in the cleanup bucket in one write: a room that exists is
+        // always noted, even if the page dies right after (D-321).
+        const day = dayOf(await serverNow(d));
+        await update(ref(d), roomCreation(code, { game, config, day, stamp: serverTimestamp() }));
         await this._enter(code, 'A', name);
-        // La hora la pone el servidor: si el reloj del celular está corrido, el apunte
-        // igual cae en el balde correcto. En segundo plano, la sala ya está lista.
+        // La hora la pone el servidor: el panel la usa para su registro. En segundo plano,
+        // la sala ya está lista.
         quiet(get(ref(d, `rooms/${code}/createdAt`)).then(snap => {
           const createdAt = snap.val() || Date.now();
           this.createdAt = createdAt;
-          cleanup(d, code, createdAt);
+          sweepIfDue(d);
           record(game, code, createdAt, { role: 'A', name, created: true });
         }), 'room note');
         return code;
@@ -174,7 +190,7 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       // El que entra no vuelve a apuntar el código (las reglas no dejan pisar el apunte):
       // solo refresca la marca del balde y, si le toca, barre.
       this.createdAt = room.createdAt || 0;
-      cleanup(d, code, room.createdAt, { note: false });
+      cleanup(d, code, room.createdAt);
       // Solo cuenta la entrada nueva: retomar la partida no es empezar otra.
       if (!previousRole) record(game, code, room.createdAt, { role, name, created: false });
       return { role, config: room.config, players };
