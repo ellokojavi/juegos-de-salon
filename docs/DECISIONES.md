@@ -75,7 +75,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
-| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306 |
+| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -1691,7 +1691,7 @@ no abre. Una leyenda debajo explica los estados.
 **Por qué:** pedido del dueño: que cada uno vea su grilla completa y qué le queda.
 
 ## D-132 · Un agente de usabilidad con ronda diaria y dilemas como issues
-**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213, D-275, D-276, D-303, D-304
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-204, D-213, D-275, D-276, D-303, D-304, D-313
 **Decisión:** Un subagente (`.claude/agents/usabilidad.md`) revisa solo usabilidad: textos,
 botones, interacciones, navegación y mensajes para compartir, con la guía `docs/USABILIDAD.md`
 (reglas U-n, que crecen con cada decisión del dueño).
@@ -2565,7 +2565,7 @@ el resumen final no repitan la imagen. Si la imagen no se puede compartir (un co
 descarga y el texto se copia igual: la imagen sigue llegando.
 
 ## D-172 · Un agente de documentación con ronda diaria en la nube
-**Fecha:** 2026-10-02 · **Estado:** corregida por D-276, D-303, D-304
+**Fecha:** 2026-10-02 · **Estado:** corregida por D-276, D-303, D-304, D-313
 **Decisión:** Un subagente (`.claude/agents/documentacion.md`) revisa una vez al día lo que entró
 a `main` y deja la documentación al día: `CHANGELOG.md`, decisiones, requerimientos, la doc de
 cada juego, `CLAUDE.md`, el README con sus capturas y las tarjetas sociales.
@@ -5800,3 +5800,21 @@ si esto no alcanza).
 **Consecuencias:** `engine.test.mjs` exige que los difíciles no muestren lotes de entrada (85 % o más) y
 pidan 3 o más deducciones profundas por tablero; `tools/e2e/plots/servicios.mjs` revisa el aviso del
 tablero 3.
+
+## D-313 · Los PR de las rondas de usabilidad y documentación se fusionan solos
+**Fecha:** 2026-10-13 · **Estado:** vigente · **Relación:** corrige D-132 y D-172 (sus PR "no se fusionan"); extiende D-216 (auto-merge por defecto) a las rondas que lanza el agente de procesos (D-276)
+**Decisión:** El PR de cada ronda de usabilidad y de documentación lleva auto-merge, como todo PR
+listo (D-216): entra solo cuando `pruebas` y `punta-a-punta` pasan. La ronda parte siempre de
+`main`, nunca de la rama de otro PR. Si cambia algo de `public/`, lleva su entrada sin número en
+`changelog/` (D-300). Un PR con una pregunta cuya respuesta cambia lo que trae no lleva
+auto-merge. Los reportes 🐞 dejan de ser de la ronda de usabilidad (ya eran del agente de
+procesos desde D-275): su guía lo dice.
+**Por qué:** había seis PR de rondas esperando, el más viejo del 5 de octubre: la documentación
+quedaba atrás aunque el agente ya la había escrito, cada ronda partía de una base vieja y los PR
+chocaban entre ellos. Lo aprobó el dueño el 11 de octubre (issue #321, decisión 3). El cambio se
+escribió ese día como "D-274" en una copia que nunca llegó a GitHub, y ese número lo tomó otra
+decisión; entra ahora con número reservado (D-301).
+**Alternativas descartadas:** seguir revisando cada ronda a mano (se acumulaban); que el agente de
+procesos fusione las rondas (un día más de atraso, y otro paso que puede fallar).
+**Consecuencias:** el dueño ve los arreglos de las rondas ya publicados y los corrige después,
+como con los textos (U-3).

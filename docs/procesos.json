@@ -179,7 +179,9 @@
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/390"
     }
   ],
-  "colaHecha": [],
+  "colaHecha": [
+    "#321:3"
+  ],
   "despachos": {
     "documentacion": {
       "fecha": "2026-10-13",
