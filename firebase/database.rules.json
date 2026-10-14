@@ -819,6 +819,13 @@
         }
       }
     },
+    "buzon": {
+      ".read": "auth != null && auth.uid === '12ld0xRh0CM3BodWvKh8bCRmZ232'",
+      "$id": {
+        ".write": "auth != null && auth.uid === '12ld0xRh0CM3BodWvKh8bCRmZ232'",
+        ".validate": "!newData.exists() || (newData.hasChildren(['de', 'texto', 'at']) && newData.child('de').isString() && newData.child('de').val().length <= 200 && newData.child('texto').isString() && newData.child('texto').val().length <= 10001 && newData.child('at').isNumber() && newData.child('at').val() <= now + 60000)"
+      }
+    },
     "feedbackContacto": {
       ".read": false,
       "$id": {
