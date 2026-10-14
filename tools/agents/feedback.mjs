@@ -6,6 +6,16 @@
  * minutes: that way each report reaches the owner by email and stays linked to its reply and its fix.
  *
  *   node tools/agents/feedback.mjs sync [--dry-run]   # creates the missing issues
+ *   node tools/agents/feedback.mjs reply <issue> <answer.txt> --lang <es|en|pt|de> [--dry-run]   # emails the reply (D-317)
+ *   node tools/agents/feedback.mjs forget <issue> "<reason>"                 # deletes the address, no email
+ *
+ * Optional email (D-317): a player who wants to hear back leaves an address. The issue only shows
+ * its mask (`j********@********m`); the address lives in `feedbackContacto/<id>`, readable only
+ * with the owner's key, so `reply` and `forget` run on the owner's Mac mini (the processes round),
+ * never in a workflow (its logs are public). `reply` sends the message through Gmail's SMTP
+ * (`send-mail.py`), wrapped in one of the friendly templates of `feedback-templates.mjs`, in the
+ * language the feedback was written in, deletes the address and notes it on the issue; `forget` (destructive feedback,
+ * no email) only deletes it. Either way the address is gone after the issue is resolved.
  *
  * The repo is public: the issue carries the text as is, the game, the version and the screen, and
  * the name the player gave, so the owner can follow up (D-279), but not their browser. Each issue
@@ -26,6 +36,26 @@ const SITE = 'https://juegosdesalon.cl';
 /* ------------------------------------------------------------------ */
 
 export const marker = id => `<!-- feedback:${id} -->`;
+/** Notes on the issue that the address was used and deleted, or deleted without an email (D-317). */
+export const EMAILED = '<!-- feedback-emailed -->', FORGOTTEN = '<!-- feedback-address-deleted -->';
+
+/** The report id of an issue, from its marker. */
+export const idOf = body => /<!-- feedback:([^\s>]+) -->/.exec(body || '')?.[1] || null;
+/** Does the issue's player want an email reply? (the issue shows the mask) */
+export const wantsEmail = body => /^- \*\*Email:\*\* /m.test(body || '');
+/** Already emailed or forgotten? */
+export const handled = comments => (comments || []).some(c => (c.body || '').includes(EMAILED) || (c.body || '').includes(FORGOTTEN));
+
+/** The agent's specific answer: plain text, and no dashes as punctuation (owner's request, D-317). */
+export function readAnswer(t) {
+  const text = String(t || '').trim();
+  if (!text) throw new Error('The answer file is empty.');
+  if (/[—–]/.test(text)) throw new Error('No em or en dashes in the reply: use a comma, a colon or a period.');
+  return text;
+}
+
+/** The name the player gave, from the issue (without the zero-width spaces of `inert`). */
+export const nameOf = body => (/^- \*\*Who:\*\* (.+)$/m.exec(body || '')?.[1] || '').replace(/\u200b/g, '').trim();
 
 /** The report ids that already have an issue, read from the bodies. */
 export const uploaded = issues => new Set(issues.flatMap(i => [...(i.body || '').matchAll(/<!-- feedback:([^\s>]+) -->/g)].map(m => m[1])));
@@ -49,6 +79,9 @@ export function title(r) {
   return `🐞 ${where(r)}: ${t.length > 70 ? `${t.slice(0, 69)}…` : t}`;
 }
 
+/** The mask as the rules let it in (D-317), inside a code span: it can't mention or link anything. */
+const mask = m => (/^.\*{8}@\*{8}.$/u.test(String(m || '')) ? String(m).replace(/`/g, "'") : null);
+
 /** The body: the text as is, who sent it and the context, without the browser. */
 export function body(r) {
   const c = context(r);
@@ -57,11 +90,12 @@ export function body(r) {
     ['Who', r.nombre && String(r.nombre).trim()], ['Lab key', r.tester && String(r.tester).trim()], ['Game', c.juego], ['Lab', c.labs], ['Cup', c.copa], ['Day', c.dia], ['Seed', c.semilla],
     ['Result', c.resumen ?? c.puntaje], ['Mistakes', c.errores], ['Hints', c.ayudas], ['Time', c.tiempo],
     ['Page', c.url && (String(c.url).startsWith('/') ? `${SITE}${c.url}` : c.url)], ['Screen', c.pantalla], ['Window size', c.pantallaTam], ['Version', r.v && `v${r.v}`], ['Date', date],
+    ['Email', mask(r.correoMascara) && `\`${mask(r.correoMascara)}\` (wants a reply by email: the processes agent sends it when resolving, D-317)`],
   ].filter(([, v]) => v !== undefined && v !== null && v !== '');
   return [
     inert(String(r.texto).trim()).split('\n').map(l => `> ${l}`).join('\n'),
     '',
-    data.map(([k, v]) => `- **${k}:** ${inert(v)}`).join('\n'),
+    data.map(([k, v]) => `- **${k}:** ${k === 'Email' ? v : inert(v)}`).join('\n'),
     '',
     'Sent with the app\'s 🐞 button (D-275). The processes agent handles it in its round.',
     marker(r.id),
@@ -85,8 +119,57 @@ async function sync(dryRun) {
   for (const r of fresh) console.log(gh('issue', 'create', '--title', title(r), '--label', LABEL, '--body', body(r)).trim());
 }
 
+/* ------------------------------------------------------------------ */
+/* The email reply (D-317): only on the owner's machine                */
+/* ------------------------------------------------------------------ */
+
+async function contactOf(number) {
+  const issue = JSON.parse(gh('issue', 'view', String(number), '--json', 'body,comments,labels'));
+  if (!issue.labels.some(l => l.name === LABEL)) throw new Error(`#${number} is not a feedback issue.`);
+  const id = idOf(issue.body);
+  if (!id) throw new Error(`#${number} has no feedback marker.`);
+  if (!wantsEmail(issue.body)) throw new Error(`#${number}: the player left no email.`);
+  if (handled(issue.comments)) throw new Error(`#${number}: already emailed or the address was already deleted.`);
+  const { token, read } = await import('../firebase/firebase-admin.mjs');
+  const t = await token();
+  const c = await read(`feedbackContacto/${id}`, t);
+  return { id, t, email: c?.correo || null, name: nameOf(issue.body), mask: /\*\*Email:\*\* `([^`]+)`/.exec(issue.body)?.[1] || '' };
+}
+
+async function remove(id, t) {
+  const res = await fetch(`${firebaseConfig.databaseURL}/feedbackContacto/${encodeURIComponent(id)}.json?access_token=${encodeURIComponent(t)}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error(`Could not delete feedbackContacto/${id} (HTTP ${res.status}).`);
+}
+
+async function reply(number, file, lang, dryRun) {
+  const { readFileSync } = await import('node:fs');
+  const { buildEmail } = await import('./feedback-templates.mjs');
+  const answer = readAnswer(readFileSync(file, 'utf8'));
+  const { id, t, email, name, mask } = await contactOf(number);
+  const { subject, text } = buildEmail({ lang, answer, name, n: Number(number) });
+  if (!email) throw new Error(`#${number}: the address is not in feedbackContacto/${id} (already deleted?).`);
+  if (dryRun) { console.log(`To: ${mask}\nSubject: ${subject}\n\n${text}`); return; }
+  // Through stdin: the address never shows in a command line or a log
+  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to: email, subject, text }), stdio: ['pipe', 'inherit', 'inherit'] });
+  await remove(id, t);
+  gh('issue', 'comment', String(number), '--body', `📧 Reply emailed to \`${mask}\`; the address was then deleted (D-317).\n${EMAILED}`);
+  console.log(`#${number}: emailed to ${mask} and the address deleted.`);
+}
+
+async function forget(number, reason) {
+  if (!reason) throw new Error('Say why there is no email (e.g. "destructive feedback").');
+  const { id, t, mask } = await contactOf(number);
+  await remove(id, t);
+  gh('issue', 'comment', String(number), '--body', `No email reply (${inert(reason)}); the address \`${mask}\` was deleted (D-317).\n${FORGOTTEN}`);
+  console.log(`#${number}: address deleted, no email.`);
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const [command] = process.argv.slice(2);
-  if (command !== 'sync') { console.error('Usage: node tools/agents/feedback.mjs sync [--dry-run]'); process.exit(2); }
-  sync(process.argv.includes('--dry-run')).catch(e => { console.error(e.message); process.exit(1); });
+  const [command, a, b] = process.argv.slice(2);
+  const option = n => (process.argv.includes(n) ? process.argv[process.argv.indexOf(n) + 1] : null);
+  const fail = e => { console.error(e.message); process.exit(1); };
+  if (command === 'sync') sync(process.argv.includes('--dry-run')).catch(fail);
+  else if (command === 'reply' && a && b && option('--lang')) reply(a, b, option('--lang'), process.argv.includes('--dry-run')).catch(fail);
+  else if (command === 'forget' && a) forget(a, b).catch(fail);
+  else { console.error('Usage: node tools/agents/feedback.mjs sync [--dry-run] | reply <issue> <answer.txt> --lang <es|en|pt|de> [--dry-run] | forget <issue> "<reason>"'); process.exit(2); }
 }

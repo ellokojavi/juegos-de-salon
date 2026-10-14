@@ -71,12 +71,12 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
-| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
+| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
-| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315 |
+| Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -5920,3 +5920,38 @@ labels, with environment variables read under both names for a while (`SITE` or 
   bridge page, as every renamed URL (phase 4); shared images get English names
   (`tarjeta.jpg` → `card.jpg`), the pages point to the new ones and the old files stay as obsolete
   copies until the weekly review removes them (phase 4).
+
+## D-317 · Feedback: an optional email, kept private, and a friendly reply when it's resolved
+**Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows)
+**Decision:** Owner's request: every feedback form (the 🐞 in the lab and in La Copa, the "¿Qué te
+pareció?" at the end of each lab game and La Copa's report screen) gets an optional email field, so
+whoever wants to can be told when we answer.
+- **The form says what it's for:** "Only so we can reply to you. We don't use it for anything else,
+  it's never published, and we delete it afterwards" (in the four languages,
+  `campoCorreo` in `labs-idioma.js`). It is not saved on the device.
+- **The address never reaches the public repo:** `feedback/<id>` (readable by anyone) gets only the
+  mask `j********@********m` (`correoMascara`, first letter of the address and last of the domain),
+  which the GitHub issue shows so the owner recognizes it. The address goes to
+  `feedbackContacto/<id>`, write-once, only next to an existing report, and **readable only with the
+  owner's key** (`.read: false`; `public/cup/reportes.test.mjs` checks the rules keep it that way).
+- **The reply:** when the processes agent resolves the report, it emails the player from
+  `hola@juegosdesalon.cl` (the owner's choice, sent through Gmail's SMTP with an app password kept
+  in `~/.config/juegos-de-salon/mail.json`, never in the repo), in the language the feedback was
+  written in, wrapped in one of ten friendly, grateful openings per language
+  (`tools/agents/feedback-templates.mjs`; neutral language, no dashes as punctuation). Then it
+  deletes the address and notes it on the issue (`feedback.mjs reply`). **Destructive feedback**
+  (insults, mockery, spam) gets no email: the address is only deleted (`feedback.mjs forget`).
+  Honest criticism is not destructive.
+- The reply runs on the owner's Mac mini (the processes round), never in a workflow: Actions logs
+  are public.
+**Why:** a player who took the time to write deserves to hear back, but the repo and its issues are
+public, so the address can't live there; and the promise in the form (only for this, then deleted)
+has to be kept by the tools, not by memory.
+**Alternatives discarded:** emailing from GitHub (it can only notify GitHub users); keeping the
+address in `feedback/` (readable by anyone); drafts in the owner's Gmail (every reply would wait for
+the owner); a mail service with its own account and domain verification (more setup for the same
+result).
+**Consequences:** `firebase/database.rules.json` gains `feedbackContacto` and `feedback/*/correoMascara`
+(published with the merge, D-218); `processes.mjs check` lists the reports with an email still
+waiting for a reply (📧). Until the owner sets up `hola@juegosdesalon.cl` and `mail.json`, `reply`
+fails without sending anything and the round says so.

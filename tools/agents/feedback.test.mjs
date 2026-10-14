@@ -1,6 +1,6 @@
 // The 🐞 feedback as issues (D-275, D-279): with the name and without the browser, without mentions, and never the same report twice.
 import assert from 'node:assert/strict';
-import { title, body, pending, uploaded, marker, where } from './feedback.mjs';
+import { title, body, pending, uploaded, marker, where, idOf, wantsEmail, handled, readAnswer, nameOf, EMAILED, FORGOTTEN } from './feedback.mjs';
 
 const r = {
   id: '-P3bm', at: Date.parse('2026-10-10T18:28:23Z'), v: '0.144.0', nombre: 'Tu admirador secreto',
@@ -31,5 +31,19 @@ const already = uploaded([{ body: `something\n${marker('a')}` }, { body: null }]
 assert.deepEqual([...already], ['a']);
 const list = [{ id: 'a', texto: 'x', at: 1 }, { id: 'c', texto: 'z', at: 3 }, { id: 'b', texto: 'y', at: 2 }, { id: 'd', texto: '  ', at: 4 }];
 assert.deepEqual(pending(list, already).map(x => x.id), ['b', 'c']);
+
+// The optional email (D-317): the issue shows the mask, never an address, and says it wants a reply
+const withEmail = body({ ...r, correoMascara: 'j********@********m' });
+assert.match(withEmail, /^- \*\*Email:\*\* `j\*{8}@\*{8}m`/m);
+assert.ok(wantsEmail(withEmail) && !wantsEmail(c));
+assert.equal(idOf(withEmail), '-P3bm');
+assert.ok(!handled([]) && !handled([{ body: 'thanks' }]));
+assert.ok(handled([{ body: `📧 sent\n${EMAILED}` }]) && handled([{ body: FORGOTTEN }]));
+assert.equal(readAnswer('  Ya está arreglado.\n'), 'Ya está arreglado.');
+assert.throws(() => readAnswer('Ya está — arreglado.'), /dash/);
+assert.throws(() => readAnswer('   '));
+assert.equal(nameOf(withEmail), 'Tu admirador secreto');
+assert.equal(nameOf(body({ ...r, nombre: '@cris' })), '@cris');
+assert.equal(nameOf(body({ ...r, nombre: '' })), '');
 
 console.log('feedback: ok');
