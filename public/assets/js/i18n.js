@@ -812,7 +812,7 @@ export const COMMON = {
     favorites: 'Favoriten', favorite: '{juego} als Favorit markieren',
     onlySpanish: 'Auf Spanisch',
     code: 'Code auf GitHub', menu: 'Menü', soon: 'Demnächst', or: 'oder',
-    opening: 'Raum wird geöffnet…', joining: 'Beitreten…', playOnePhone: '📱 Mit einem Handy spielen',
+    opening: 'Raum wird geöffnet…', joining: 'Beitritt läuft…', playOnePhone: '📱 Mit einem Handy spielen',
     share: 'Salonspiele teilen',
     shareApp: {
       context: '{n} Spiele fürs Handy',
