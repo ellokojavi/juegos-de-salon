@@ -63,7 +63,7 @@ jobs:
           retention-days: 7
 
   # Las de punta a punta, todas, sobre lo que se va a publicar (D-302), salvo que ya hayan pasado
-  # sobre este mismo árbol (D-308). Si fallan dos veces, su job `avisar` abre el issue "main en rojo".
+  # sobre este mismo árbol (D-308). Si fallan dos veces, su job `avisar` abre el issue "main is red".
   e2e:
     needs: ya-probado
     if: ${{ !cancelled() && needs.ya-probado.outputs.probado != 'true' }}

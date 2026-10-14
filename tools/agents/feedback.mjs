@@ -38,7 +38,7 @@ const contexto = r => { try { return JSON.parse(r.contexto || '{}') || {}; } cat
 /** Dónde se escribió, en pocas palabras: el juego o la página. */
 export function donde(r) {
   const c = contexto(r);
-  return c.juego || (c.labs && `laboratorio ${c.labs}`) || (c.copa && `copa ${c.copa}`) || c.pantalla || c.url || 'la app';
+  return c.juego || (c.labs && `lab ${c.labs}`) || (c.copa && `cup ${c.copa}`) || c.pantalla || c.url || 'the app';
 }
 
 /** Un @ o un # del jugador no menciona a nadie ni enlaza nada. */
@@ -52,18 +52,18 @@ export function titulo(r) {
 /** El cuerpo: el texto tal cual, quién lo mandó y el contexto, sin el navegador. */
 export function cuerpo(r) {
   const c = contexto(r);
-  const fecha = r.at ? new Date(r.at).toISOString().slice(0, 16).replace('T', ' ') + ' UTC' : 'sin fecha';
+  const fecha = r.at ? new Date(r.at).toISOString().slice(0, 16).replace('T', ' ') + ' UTC' : 'no date';
   const datos = [
-    ['Quién', r.nombre && String(r.nombre).trim()], ['Llave', r.tester && String(r.tester).trim()], ['Juego', c.juego], ['Laboratorio', c.labs], ['Copa', c.copa], ['Día', c.dia], ['Semilla', c.semilla],
-    ['Resultado', c.resumen ?? c.puntaje], ['Errores', c.errores], ['Ayudas', c.ayudas], ['Tiempo', c.tiempo],
-    ['Página', c.url && (String(c.url).startsWith('/') ? `${SITIO}${c.url}` : c.url)], ['Pantalla', c.pantalla], ['Ventana', c.pantallaTam], ['Versión', r.v && `v${r.v}`], ['Fecha', fecha],
+    ['Who', r.nombre && String(r.nombre).trim()], ['Lab key', r.tester && String(r.tester).trim()], ['Game', c.juego], ['Lab', c.labs], ['Cup', c.copa], ['Day', c.dia], ['Seed', c.semilla],
+    ['Result', c.resumen ?? c.puntaje], ['Mistakes', c.errores], ['Hints', c.ayudas], ['Time', c.tiempo],
+    ['Page', c.url && (String(c.url).startsWith('/') ? `${SITIO}${c.url}` : c.url)], ['Screen', c.pantalla], ['Window size', c.pantallaTam], ['Version', r.v && `v${r.v}`], ['Date', fecha],
   ].filter(([, v]) => v !== undefined && v !== null && v !== '');
   return [
     inerte(String(r.texto).trim()).split('\n').map(l => `> ${l}`).join('\n'),
     '',
     datos.map(([k, v]) => `- **${k}:** ${inerte(v)}`).join('\n'),
     '',
-    'Llegó por el botón 🐞 de la app (D-275). Lo atiende el agente de procesos en su ronda.',
+    'Sent with the app\'s 🐞 button (D-275). The processes agent handles it in its round.',
     marca(r.id),
   ].join('\n');
 }

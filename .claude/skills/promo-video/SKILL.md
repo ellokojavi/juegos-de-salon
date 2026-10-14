@@ -1,33 +1,35 @@
 ---
 name: promo-video
-description: El video promocional de Juegos de Salón (y cualquier asset de marketing). Úsalo siempre que se trabaje en el video, sea una versión nueva, un cambio a la existente, sus textos para YouTube, su música o un video nuevo desde cero, antes de tocar nada. Trae la memoria completa del video, lo que el dueño ya pidió, cómo se rehace y cómo dejar anotada la vuelta.
+description: The Juegos de Salón promo video (and any marketing asset). Use it whenever working on the video, whether a new version, a change to the existing one, its YouTube texts, its music or a new video from scratch, before touching anything. It brings the video's full memory, what the owner has already asked for, how it is remade and how to record the iteration.
 ---
 
-# Video promocional
+# Promo video
 
-El video y su memoria viven en `marketing/promo-video/` (D-178).
+The video and its memory live in `marketing/promo-video/` (D-178).
 
-1. **Lee entero `marketing/promo-video/README.md` antes de proponer o tocar nada.** Ahí está lo
-   que el dueño quiere (sus pedidos de cada versión), el guion actual, cómo está hecho, la
-   canción, las trampas conocidas y la historia. Lee también `marketing/README.md` (las reglas
-   de los assets) y `marketing/registro.json`. Un video nuevo desde cero parte igual: lo que el
-   dueño quiere vale para todos.
-   **Si el asset es otro** (`marketing/share-tutorial/`, `marketing/caso-teaser/`…), su README es la
-   memoria que se lee entero; `promo-video/render.mjs --pagina <página>` renderiza cualquiera que
-   cumpla el mismo contrato (`render(t)`, `DURATION`, `FPS`, `#stage`).
-2. **Trabaja como dice el README:** `jugar.mjs` para las jugadas (azar fijo, se revisa con
-   `hoja.py`), `promo.html` para el guion, `render.mjs --fotos … --tiempos …` para mirar cuadros
-   sueltos de **las dos versiones** (vertical y `--wide`) antes de renderizar completo, y
-   `construir.sh` para el final. Sirve el sitio en un puerto propio si hay otras sesiones (D-135).
-3. **Entrega los dos mp4** al dueño y di qué revisaste y qué no (por ejemplo, la música no se
-   puede escuchar desde acá).
-4. **Para subirlo a YouTube** (el canal del dueño, @eljotairi) se sigue "Para YouTube" del README:
-   archivos de menos de 10 MB, Claude in Chrome, todo lleno y en *Unlisted*, y **"Save" lo aprieta el
-   dueño**. Lo subido se anota en "Lo subido", y el 16:9 nuevo pasa a la portada: su id en `TRAILERS`, en la
-   entrada de su idioma (`public/assets/js/compartir-portada.js`, D-254) y su miniatura en `public/assets/img/trailer.jpg` (D-253).
-5. **Al cerrar la vuelta, anótala** antes de abrir el PR:
-   - una entrada nueva en "Historia" del README, con lo que pidió el dueño (en sus palabras cuando
-     importa) y lo que se hizo;
-   - "Hoy", "Lo que el dueño quiere", "El guion" y "Trampas conocidas" al día;
-   - `marketing/registro.json` y la tabla de `marketing/README.md` con la versión nueva;
-   - los mp4 de `salida/` reemplazados (solo la última versión vive en el repo).
+**Language (D-316):** notes written to `marketing/promo-video/README.md` and `marketing/registro.json` are in English; YouTube texts for the public stay in whatever language the owner chooses.
+
+1. **Read `marketing/promo-video/README.md` in full before proposing or touching anything.** It has
+   what the owner wants (their requests for each version), the current script, how it is made, the
+   song, the known pitfalls and the history. Also read `marketing/README.md` (the rules
+   for assets) and `marketing/registro.json`. A new video from scratch starts the same way: what the
+   owner wants applies to all of them.
+   **If the asset is a different one** (`marketing/share-tutorial/`, `marketing/caso-teaser/`…), its README is the
+   memory to read in full; `promo-video/render.mjs --pagina <página>` renders any page that
+   meets the same contract (`render(t)`, `DURATION`, `FPS`, `#stage`).
+2. **Work as the README says:** `jugar.mjs` for the plays (fixed randomness, checked with
+   `hoja.py`), `promo.html` for the script, `render.mjs --fotos … --tiempos …` to look at single
+   frames of **both versions** (vertical and `--wide`) before rendering in full, and
+   `construir.sh` for the final one. Serve the site on its own port if there are other sessions (D-135).
+3. **Deliver both mp4s** to the owner and say what you checked and what you didn't (for example, the music
+   cannot be listened to from here).
+4. **To upload it to YouTube** (the owner's channel, @eljotairi) follow "Para YouTube" in the README:
+   files under 10 MB, Claude in Chrome, everything filled in and set to *Unlisted*, and **the owner presses
+   "Save"**. What was uploaded is recorded in "Lo subido", and the new 16:9 goes to the home page: its id in `TRAILERS`, in the
+   entry for its language (`public/assets/js/compartir-portada.js`, D-254) and its thumbnail in `public/assets/img/trailer.jpg` (D-253).
+5. **When closing the iteration, record it** before opening the PR:
+   - a new entry in the README's "Historia", with what the owner asked for (in their own words when
+     it matters) and what was done;
+   - "Hoy", "Lo que el dueño quiere", "El guion" and "Trampas conocidas" up to date;
+   - `marketing/registro.json` and the table in `marketing/README.md` with the new version;
+   - the mp4s in `salida/` replaced (only the latest version lives in the repo).

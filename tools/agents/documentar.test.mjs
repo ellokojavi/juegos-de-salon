@@ -60,6 +60,22 @@ caso('el Estado es uno de los cuatro', () => {
   for (const malo of ['vigente (en parte)', 'corregida', 'corregida por D-66 y D-77', 'superada por D-5', 'Vigente', null]) assert.equal(leerEstado(malo), null, String(malo));
 });
 
+caso('the Status also reads in English (D-316)', () => {
+  assert.deepEqual(leerEstado('current'), { tipo: 'vigente', por: [] });
+  assert.deepEqual(leerEstado('revoked'), { tipo: 'derogada', por: [] });
+  assert.deepEqual(leerEstado('amended by D-66, D-77'), { tipo: 'corregida', por: [66, 77] });
+  assert.deepEqual(leerEstado('replaced by D-213'), { tipo: 'reemplazada', por: [213] });
+  for (const malo of ['amended por D-5', 'corregida by D-5', 'Current', 'superseded by D-5']) assert.equal(leerEstado(malo), null, malo);
+  const mixto = [
+    '## D-01 · Uno', '**Fecha:** x · **Estado:** reemplazada por D-02', '',
+    '## D-02 · Two', '**Date:** x · **Status:** current · **Relation:** replaces D-01; amends D-03', '',
+    '## D-03 · Three', '**Date:** x · **Status:** current', '',
+  ].join('\n');
+  assert.deepEqual(entradas(mixto)[1].relacion, 'replaces D-01; amends D-03');
+  assert.deepEqual(corregidas('replaces D-01; amends D-03 and extends D-04'), [1, 3]);
+  assert.deepEqual(problemasDeEstado(mixto), ['D-2 cambia, corrige o reemplaza D-3, y el Estado de D-3 no la nombra ("current")']);
+});
+
 caso('lo que una Relación cambia, corrige o reemplaza', () => {
   assert.deepEqual(corregidas('corrige D-53 y D-59'), [53, 59]);
   assert.deepEqual(corregidas('corrige D-75 (el alto) y ajusta D-76'), [75], 'lo que ajusta no cuenta');

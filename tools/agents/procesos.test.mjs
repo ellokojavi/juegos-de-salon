@@ -14,7 +14,7 @@ assert.match(esperas(pr({ mergeable: 'CONFLICTING' }), ahora)[0], /conflicto/);
 assert.match(esperas(pr({ statusCheckRollup: [{ name: 'pruebas', conclusion: 'FAILURE' }] }), ahora)[0], /en rojo: pruebas/);
 assert.deepEqual(esperas(pr({ isDraft: true, mergeable: 'CONFLICTING' }), ahora), [], 'un borrador no espera a nadie');
 
-// Lo aprobado con "encolar" queda en cola solo si se marcó y se cumplió
+// What was approved with "encolar" stays queued only if it was checked and carried out
 const cuerpo = cuerpoDecisiones({ decisiones: [
   { pregunta: 'Test para el mensaje de compartir', si: [{ tipo: 'encolar', tarea: 'escribir mensajes.test.mjs' }] },
   { pregunta: 'Otra', si: [{ tipo: 'encolar', tarea: 'no aprobada' }] },
@@ -23,8 +23,8 @@ assert.deepEqual(enCola([{ number: 5, body: cuerpo }]), []);
 const aprobado = anotarHecho(cuerpo.replace(/- \[ \](.*?<!-- op:1:si -->)/, '- [x]$1'), '1', 'si', '✅');
 assert.deepEqual(enCola([{ number: 5, body: aprobado }]), [{ id: '#5:1', tarea: 'escribir mensajes.test.mjs' }]);
 
-// Cada casilla dice qué hace; la que no hace nada, solo Sí o No
-assert.match(cuerpo, /^- \[ \] Sí: queda para la próxima ronda <!-- op:1:si -->$/m);
+// Each checkbox says what it does; one that does nothing, just Yes or No
+assert.match(cuerpo, /^- \[ \] Yes: queues it for the next round <!-- op:1:si -->$/m);
 assert.match(cuerpo, /^- \[ \] No <!-- op:1:no -->$/m);
 
 // Un patrón cuenta una vez por commit

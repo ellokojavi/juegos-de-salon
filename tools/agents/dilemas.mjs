@@ -61,15 +61,15 @@ switch (accion) {
     const titulo = primera.replace(/^#\s*/, '').trim();
     if (!titulo) salir('La primera línea del archivo tiene que ser el título ("# …").', 2);
     asegurarEtiquetas();
-    const cuerpo = `${resto.join('\n').trim()}\n\n---\n_Dilema del agente de usabilidad (D-132). Se decide en la conversación con Claude._`;
-    console.log(gh('issue', 'create', '-R', REPO, '--title', `Usabilidad: ${titulo}`, '--body', cuerpo, '--label', 'usabilidad', '--label', 'pendiente').trim());
+    const cuerpo = `${resto.join('\n').trim()}\n\n---\n_Usability agent dilemma (D-132). Decided in the conversation with Claude._`;
+    console.log(gh('issue', 'create', '-R', REPO, '--title', `Usability: ${titulo}`, '--body', cuerpo, '--label', 'usabilidad', '--label', 'pendiente').trim());
     break;
   }
   case 'resolver': {
     const n = numero(a1);
     if (!a2) salir('Uso: node tools/agents/dilemas.mjs resolver <n> "decisión"', 2);
     asegurarEtiquetas();
-    gh('issue', 'comment', n, '-R', REPO, '--body', `✅ **Decisión del dueño:** ${a2}\n\n_Queda anotada en docs/USABILIDAD.md._`);
+    gh('issue', 'comment', n, '-R', REPO, '--body', `✅ **Owner's decision:** ${a2}\n\n_Recorded in docs/USABILIDAD.md._`);
     gh('issue', 'edit', n, '-R', REPO, '--add-label', 'resuelto', '--remove-label', 'pendiente');
     gh('issue', 'close', n, '-R', REPO, '--reason', 'completed');
     console.log(`#${n} resuelto. Falta anotar la decisión en docs/USABILIDAD.md (sección "Resuelto con el dueño").`);
@@ -78,7 +78,7 @@ switch (accion) {
   case 'archivar': {
     const n = numero(a1);
     asegurarEtiquetas();
-    gh('issue', 'comment', n, '-R', REPO, '--body', `🗄️ **Archivado:** ${a2 || 'se descarta.'}`);
+    gh('issue', 'comment', n, '-R', REPO, '--body', `🗄️ **Archived:** ${a2 || 'discarded.'}`);
     gh('issue', 'edit', n, '-R', REPO, '--add-label', 'archivado', '--remove-label', 'pendiente');
     gh('issue', 'close', n, '-R', REPO, '--reason', 'not planned');
     console.log(`#${n} archivado.`);

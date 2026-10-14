@@ -1,5 +1,5 @@
 {
-  "version": "0.170.4",
+  "version": "0.170.6",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1196,7 +1196,7 @@
     },
     {
       "ruta": "tools/e2e/README.md",
-      "titulo": "Pruebas de punta a punta (Chrome headless por CDP)"
+      "titulo": "End-to-end tests (headless Chrome over CDP)"
     },
     {
       "ruta": "CHANGELOG.md",
