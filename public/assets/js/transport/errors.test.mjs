@@ -1,6 +1,6 @@
 // Ejecutar: node public/assets/js/transport/errors.test.mjs
 import assert from 'node:assert/strict';
-import { errText, failWith, transportErrorKey, waitConnected, withTimeout } from './errors.js';
+import { clearRoomError, errText, failWith, transportErrorKey, tryRoom, waitConnected, withTimeout } from './errors.js';
 
 /** LOCALES de mentira, con las mismas claves que usan los tres juegos. */
 const T = {
@@ -110,6 +110,78 @@ assert.equal(despues, antes, 'no queda un setTimeout colgando');
   const watch = f => { cb = f; return () => {}; };
   await assert.rejects(waitConnected(watch, 20), /offline/);
   cb(true); // no debe reventar ni cambiar nada
+}
+
+// --- tryRoom: the button while it waits, and the way out when the room can't be reached (U-37) ---
+
+/** Just enough DOM: a button, and an error element with a parent to insert after it. */
+function fakeDom() {
+  const parent = { kids: [] };
+  const node = (tag) => {
+    const n = {
+      tag, textContent: '', disabled: false, attrs: {}, listeners: {}, classes: new Set(),
+      ownerDocument: doc,
+      get className() { return [...this.classes].join(' '); },
+      set className(v) { this.classes = new Set(v.split(' ').filter(Boolean)); },
+      get classList() { return { contains: c => n.classes.has(c) }; },
+      setAttribute(k, v) { this.attrs[k] = v; },
+      removeAttribute(k) { delete this.attrs[k]; },
+      addEventListener(t, f) { this.listeners[t] = f; },
+      after(x) { parent.kids.splice(parent.kids.indexOf(this) + 1, 0, x); },
+      remove() { parent.kids.splice(parent.kids.indexOf(this), 1); },
+      get nextElementSibling() { return parent.kids[parent.kids.indexOf(this) + 1] || null; },
+    };
+    return n;
+  };
+  const doc = { createElement: node };
+  const err = node('div');
+  const btn = node('button');
+  btn.textContent = 'Crear sala';
+  parent.kids.push(err, btn);
+  return { parent, err, btn };
+}
+
+{
+  const { parent, err, btn } = fakeDom();
+  err.textContent = 'el error de antes';
+  let seen = null;
+  let local = 0;
+  const opts = { busy: 'Abriendo sala…', err, fail: m => { err.textContent = m; }, T, local: () => { local++; }, localLabel: '📱 Un celular' };
+  await tryRoom(btn, async () => {
+    seen = { text: btn.textContent, disabled: btn.disabled, busy: btn.attrs['aria-busy'], err: err.textContent };
+    throw new Error('offline');
+  }, opts);
+  assert.deepEqual(seen, { text: 'Abriendo sala…', disabled: true, busy: 'true', err: '' }, 'while waiting: says so, and the old error is gone');
+  assert.equal(btn.textContent, 'Crear sala', 'the button comes back as it was: it is the retry');
+  assert.equal(btn.disabled, false);
+  assert.equal(btn.attrs['aria-busy'], undefined);
+  assert.equal(err.textContent, 'ahora no se puede');
+  const way = err.nextElementSibling;
+  assert.ok(way && way.classList.contains('room-local'), 'offline: the one-phone button goes under the error');
+  assert.equal(way.textContent, '📱 Un celular');
+  way.listeners.click();
+  assert.equal(local, 1, 'and it takes the game into one-phone mode');
+
+  // A second failure does not stack a second button.
+  await tryRoom(btn, async () => { throw new Error('busy'); }, opts);
+  assert.equal(parent.kids.filter(k => k.classList.contains('room-local')).length, 1);
+
+  // An error that one phone would not fix (the room is full) offers no way out, and clears the old one.
+  await tryRoom(btn, async () => { throw new Error('full'); }, opts);
+  assert.equal(err.textContent, 'llena');
+  assert.equal(parent.kids.filter(k => k.classList.contains('room-local')).length, 0);
+
+  // Success leaves nothing behind.
+  err.textContent = 'algo';
+  await tryRoom(btn, async () => {}, opts);
+  assert.equal(err.textContent, '');
+  assert.equal(btn.disabled, false);
+
+  // clearRoomError on its own: the screen is redrawn.
+  await tryRoom(btn, async () => { throw new Error('offline'); }, opts);
+  clearRoomError(err);
+  assert.equal(err.textContent, '');
+  assert.equal(err.nextElementSibling, btn);
 }
 
 console.log('errors: todo en verde');

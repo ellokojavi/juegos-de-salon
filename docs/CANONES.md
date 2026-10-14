@@ -292,6 +292,7 @@ regla: quien cambia algo lo documenta en su mismo PR.
 - Los errores previsibles se muestran al jugador en su idioma, con una salida clara; nunca una pantalla en blanco.
 - **El mensaje no inventa la causa.** Si desde el navegador no se puede distinguir entre dos causas (quedarse sin señal y toparse con el tope de conexiones se ven igual), el texto las nombra a las dos en vez de elegir una. Precisión falsa es peor que vaguedad honesta (D-40).
 - Los errores del transporte se traducen con `errText`/`failWith` de `public/assets/js/transport/errors.js`, nunca con un mapa propio en cada juego.
+- Creating or joining a room goes through `tryRoom` (same module): the button says it is waiting, and a room that can't be reached offers one-phone mode under the message (U-37, D-319).
 - **Un reintento nunca traba** (U-22, D-123): si una escritura que se hace una sola vez choca al reintentar, primero se mira si la anterior llegó (aunque el celular haya mostrado error); si llegó, se sigue como si hubiera salido bien.
 - **A la consola solo va lo inesperado.** Un error previsto que ya se le mostró al jugador no se registra: si la consola se llena de fallas normales, "consola sin errores" deja de servir como criterio (C-12).
 

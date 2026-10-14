@@ -147,6 +147,8 @@ p { line-height: 1.5; margin: 0 0 12px; }
 }
 .btn--ghost:active { transform: translateY(2px); box-shadow: none; }
 .btn--sm { font-size: 1.05rem; min-height: 44px; padding: 10px 16px; width: auto; }
+/* The way out under "couldn't open the room" (U-37, tryRoom in transport/errors.js) */
+.btn.room-local { margin: 4px 0 18px; }
 .btn-row { display: flex; gap: 10px; }
 .btn-row .btn { flex: 1; }
 .stack { display: flex; flex-direction: column; gap: 12px; }
