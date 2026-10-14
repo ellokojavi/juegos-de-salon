@@ -4,8 +4,9 @@
 // las pistas usadas se tachan solas (D-282), se resuelve entero sin adivinar y el final ofrece
 // compartir el mismo caso, otro caso, el de hoy y el comentario (D-265), que en el modo de prueba
 // queda en el celular. Imprime ✗ si algo falla.
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2] || '/tmp/caso-lab';
+const OUT = salida('/tmp/caso-lab');
 const b = await launch({ port: 9392, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const ev = e => b.evaluate(e);
 const SITIO = process.env.SITIO || 'http://localhost:8765';

@@ -1,8 +1,9 @@
 // Cuarto Rey de punta a punta: mazo completo hasta el cuarto rey, botón de sonido
 // y el idioma inglés. Las tomas llevan el nombre de las capturas del README
 // (docs/capturas.json), así `python3 tools/release/readme.py capturas cuarto-rey` las rehace.
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2];
+const OUT = salida();
 const b = await launch({ port: 9341, dir: `${OUT}/p`, out: OUT });
 const ev = e => b.evaluate(e);
 const SITIO = process.env.SITIO || 'http://localhost:8765';

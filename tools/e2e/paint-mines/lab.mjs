@@ -6,8 +6,9 @@
 // difícil (D-291): el interruptor lo enciende, y con dos colores y sin errores paga 150. La ayuda
 // (D-292) marca una casilla deducible y resta 10. Imprime ✗ si
 // algo falla.
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2] || '/tmp/pintaminas-lab';
+const OUT = salida('/tmp/pintaminas-lab');
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const ev = e => b.evaluate(e);
 const SITIO = process.env.SITIO || 'http://localhost:8765';

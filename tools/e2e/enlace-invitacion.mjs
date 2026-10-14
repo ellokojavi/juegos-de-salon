@@ -1,6 +1,7 @@
 // Quien llega por un enlace de sala solo puede entrar a esa sala: nada de crear otra.
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
-const OUT = process.argv[2];
+const OUT = salida();
 const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: 9484, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const JUEGOS = ['toque-y-fama', 'batalla-naval', 'linea-de-tiempo', 'ahorcado', 'dudo'];

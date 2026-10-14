@@ -1,8 +1,9 @@
 // Botón de compartir en la sala: diálogo nativo si existe navigator.share, copiar si no.
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2];
+const OUT = salida();
 const b = await launch({ port: 9480, dir: `${OUT}/p`, out: OUT });
 const btnText = () => b.evaluate(`document.querySelector('#lobby-box .btn--cyan')?.textContent`);
 await b.go(`${SITIO}/timeline/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/timeline/`);

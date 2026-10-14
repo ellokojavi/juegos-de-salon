@@ -1,7 +1,8 @@
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2];
+const OUT = salida();
 const b = await launch({ port: 9371, dir: `${OUT}/p`, out: OUT });
 const click = sel => b.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);
 const clickText = (sel, re) => b.evaluate(`(()=>{const x=[...document.querySelectorAll('${sel}')].find(e=>new RegExp('${re}').test(e.textContent));if(!x)return 'no';x.click();return 'ok'})()`);
