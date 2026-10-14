@@ -93,7 +93,7 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
 - Los mazos temáticos (Brasil, Fútbol) pueden repetir hitos de otros mazos (el Maracanazo, el Mundial
   del 62): cada mazo se juega solo, así que no hay choque de ids mientras lleven su prefijo (`br-`, `fut-`).
 
-#### El dato de cada carta (D-277)
+#### El dato de cada carta (D-277, D-314)
 Cada carta puede llevar un `dato` en los cuatro idiomas: una frase, un porqué o una anécdota, que se
 lee en unos 3 segundos. Decir entre qué hitos iba una carta no enseña nada (el año grande ya lo
 dice); el dato deja algo aprendido en cada jugada, también en ¿En qué año? y en La Copa.
@@ -102,12 +102,12 @@ dice); el dato deja algo aprendido en cada jugada, también en ¿En qué año? y
 { id: 'muro', year: 1989, …, dato: { es: 'Lo abrió un error: un vocero anunció en la tele que la frontera se abría «de inmediato».', en: '…', pt: '…', de: '…' } }
 ```
 
-- **Dónde se ve** (`public/assets/js/dato.js`): al **errar**, en el veredicto, que se queda hasta
-  tocarlo; al **acertar**, en una franja sobre el botón de colocar que no frena nada, sobrevive a
-  elegir la carta siguiente y se va sola a los 6 s (un toque la cierra antes); al **terminar**, en la
+- **Dónde se ve** (`public/assets/js/dato.js`): en el **veredicto**, al errar y al acertar (D-314).
+  El de un error se queda hasta tocarlo; el de un acierto se cierra solo cuando se vacía su barra
+  de 6 s, o antes con un toque (jugando en un solo celular, con un toque, como siempre). Al **terminar**, en la
   línea como quedó: los errores con su dato a la vista y el resto a un toque. En ¿En qué año? va bajo
   el año de cada hito.
-- **El reloj se pausa mientras se lee un error** en Línea Relámpago (solo, práctica, Uno al día y
+- **El reloj se pausa mientras se lee el dato** en Línea Relámpago (solo, práctica, Uno al día y
   copa) y en cada hito de ¿En qué año?: el reloj de arriba marca ⏸ y una barra bajo el dato se vacía. La pausa tiene
   **tope de 6 s** (`PAUSA_DATO_MS`) para que no sirva de tiempo para pensar; el veredicto tapa el
   tablero, así que tampoco hay nada que estudiar. En el juego en grupo (un celular o varios) no hace
@@ -225,8 +225,8 @@ Jugar solo: Intro → Temática y cómo se juega → Juego (screen-solo) → Res
 - El veredicto se dirige a quien jugó: “¡Te equivocaste!” para el que falló y “¡Cata se equivocó!” para el resto, con el fondo rojo solo en la pantalla del que falló (D-36).
 - Nada viene preseleccionado: hasta que el jugador toca una carta, las ranuras no reaccionan y el botón de confirmar está deshabilitado (D-38). El botón nombra la carta que va a colocar.
 - La carta se enciende **al apretar**, no al soltar el dedo. La carta elegida se marca en la propia mano (borde amarillo, el resto atenuado) y aparece dibujada dentro de la ranura elegida antes de confirmar. Se toca una ranura y luego **📍 Colocar aquí** (C-8), botón que flota abajo. Hubo una barra aparte que repetía la carta elegida sobre la línea; se quitó por redundante (D-33).
-- Al confirmar, la carta se revela con su año. Un **acierto** se muestra un par de segundos y se cierra solo,
-  y deja el dato de la carta en una franja sobre el botón de colocar (ver “El dato de cada carta”).
+- Al confirmar, la carta se revela con su año. Un **acierto** cuenta el dato de la carta y se cierra solo
+  cuando se vacía su barra (ver “El dato de cada carta”); sin dato, a los dos segundos.
   Un **error** tiñe la pantalla de rojo, sacude la carta, suena distinto y cuenta el dato de la carta (si
   la carta no tiene, explica entre qué hitos iba y entre cuáles se puso); se queda hasta que el jugador toca. Mientras tanto, el celular no juega y las jugadas de
   otros esperan.

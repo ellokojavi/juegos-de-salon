@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 |---|---|---|
 | Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
-| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278 |
+| Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309 |
-| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277 |
+| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
@@ -4902,7 +4902,7 @@ Los días sin cambios, los ejecutores no corren. Revisar un PR antes de fusionar
 sesión dueña lanza a los dos agentes (CLAUDE.md).
 
 ## D-277 · El veredicto de una carta con fecha cuenta su dato, y leerlo no cuesta tiempo
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** excepción a C-8b (la explicación del error); completa D-95 (el tiempo activo) y D-278
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-314 · **Relación:** excepción a C-8b (la explicación del error); completa D-95 (el tiempo activo) y D-278
 **Decisión:** Cada carta de los mazos de Línea de Tiempo puede llevar un **dato** en los cuatro
 idiomas (un porqué o una anécdota de hasta 110 caracteres, sin años), y el veredicto lo cuenta en
 vez de decir entre qué hitos iba la carta:
@@ -5818,6 +5818,24 @@ decisión; entra ahora con número reservado (D-301).
 procesos fusione las rondas (un día más de atraso, y otro paso que puede fallar).
 **Consecuencias:** el dueño ve los arreglos de las rondas ya publicados y los corrige después,
 como con los textos (U-3).
+
+## D-314 · El acierto también cuenta el dato de la carta, en el veredicto
+**Fecha:** 2026-10-14 · **Estado:** vigente · **Relación:** corrige D-277 (la franja del acierto); toma una de sus alternativas descartadas
+**Decisión:** En Línea de Tiempo y ⏳ Línea Relámpago (solo, práctica, Uno al día y copa), el
+veredicto de un **acierto** cuenta el dato de la carta igual que el de un error, bajo la carta con
+su año. Se cierra solo cuando se vacía la barra de 6 s (`PAUSA_DATO_MS`), o antes con un toque; en
+Línea Relámpago el reloj se pausa mientras tanto, como en el error. En sala (varios celulares), la
+jugada de otro con dato también espera los 6 s, con la barra; en un celular el veredicto se cierra
+con un toque, como antes. Una carta sin dato cierra el acierto como antes (1,4 s en Relámpago,
+2,4 s en sala). La franja sobre el botón de colocar desaparece.
+**Por qué:** lo pidió el dueño: el dato "solo aparece cuando el usuario pierde". La franja chica,
+abajo y pasajera no se notaba, y el dato de un acierto es igual de interesante que el de un error.
+**Alternativas descartadas:** dejar la franja y hacerla más grande o más larga (sigue apareciendo
+cuando el jugador ya mira la carta siguiente); cerrar el acierto con un toque siempre (sin barra
+no se sabe que se cierra solo, y en Relámpago frenaría a quien no quiere leer).
+**Consecuencias:** cada acierto con dato frena el juego hasta 6 s, que no cuentan en el reloj. El
+guion `tools/e2e/timeline/dato.mjs` revisa que el acierto muestre el dato, pause el reloj y se
+cierre solo o con un toque.
 
 ## D-315 · La carpeta de proyectos se limpia sola, también las ramas y la basura de pruebas
 **Fecha:** 2026-10-14 · **Estado:** vigente · **Relación:** completa D-252 (qué barre `limpiar-copias.mjs`) y D-276 (la ronda del agente de procesos); completa D-213 (los guiones de `tools/e2e/`)
