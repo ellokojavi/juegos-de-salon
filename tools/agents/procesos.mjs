@@ -194,9 +194,10 @@ function revisar() {
   if (!feedback.length) console.log('Nada.');
   // D-317: a resolved report whose player left an email gets a reply (or, if destructive, only the
   // address deleted). Open ones get it when they're resolved, in this same round
-  const cerrados = gh('issue', 'list', '--label', 'feedback', '--state', 'closed', '--limit', '60', '--json', 'number,title,body,comments');
+  const cerrados = gh('issue', 'list', '--label', 'feedback', '--state', 'closed', '--limit', '60', '--json', 'number,title,body,comments,state');
   const sinRespuesta = [...feedback.filter(i => quiereCorreo(i.body)), ...cerrados.filter(i => quiereCorreo(i.body) && !atendido(i.comments))];
-  for (const i of sinRespuesta) console.log(`- 📧 #${i.number} left an email: when resolved, feedback.mjs reply ${i.number} <answer.txt> --lang <its language> (or forget, if destructive)`);
+  for (const i of sinRespuesta) console.log(`- 📧 #${i.number}${i.state === 'CLOSED' ? ' (resolved)' : ''} left an email (${/\*\*Email:\*\* `([^`]+)`/.exec(i.body)?.[1] || '?'})`);
+  if (sinRespuesta.length) console.log('  One email per player for all their comments: node tools/agents/feedback.mjs pending groups them and says what to run (or forget, if destructive).');
 
   titulo('Lo que el agente de documentación arrastra');
   const doc = JSON.parse(readFileSync(join(RAIZ, 'docs/documentacion.json'), 'utf8'));

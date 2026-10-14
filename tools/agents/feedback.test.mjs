@@ -1,6 +1,6 @@
 // El feedback 🐞 como issues (D-275, D-279): con el nombre y sin el navegador, sin menciones, y nunca dos veces el mismo reporte.
 import assert from 'node:assert/strict';
-import { titulo, cuerpo, pendientes, subidos, marca, donde, idDe, quiereCorreo, atendido, leerRespuesta, nombreDe, RESPONDIDO, OLVIDADO } from './feedback.mjs';
+import { titulo, cuerpo, pendientes, subidos, marca, donde, idDe, quiereCorreo, atendido, leerRespuestas, textoDe, nombreDe, RESPONDIDO, OLVIDADO } from './feedback.mjs';
 
 const r = {
   id: '-P3bm', at: Date.parse('2026-10-10T18:28:23Z'), v: '0.144.0', nombre: 'Tu admirador secreto',
@@ -39,10 +39,18 @@ assert.ok(quiereCorreo(conCorreo) && !quiereCorreo(c));
 assert.equal(idDe(conCorreo), '-P3bm');
 assert.ok(!atendido([]) && !atendido([{ body: 'thanks' }]));
 assert.ok(atendido([{ body: `📧 sent\n${RESPONDIDO}` }]) && atendido([{ body: OLVIDADO }]));
-assert.equal(leerRespuesta('  Ya está arreglado.\n'), 'Ya está arreglado.');
-assert.throws(() => leerRespuesta('Ya está — arreglado.'), /dash/);
-assert.throws(() => leerRespuesta('   '));
+// One answer, or one per issue under "#<n>" (several comments of a player in one email)
+assert.deepEqual(leerRespuestas('  Ya está arreglado.\n', ['383']), { 383: 'Ya está arreglado.' });
+assert.deepEqual(leerRespuestas('#383\nUno.\n\n#401\nDos,\nen dos líneas.\n', ['383', '401']), { 383: 'Uno.', 401: 'Dos,\nen dos líneas.' });
+assert.throws(() => leerRespuestas('Ya está — arreglado.', ['1']), /dash/);
+assert.throws(() => leerRespuestas('   ', ['1']));
+assert.throws(() => leerRespuestas('Una sola para dos', ['1', '2']), /#<n>/);
+assert.throws(() => leerRespuestas('#1\nUno.', ['1', '2']), /missing #2/);
+assert.throws(() => leerRespuestas('#1\nUno.\n#3\nTres.', ['1']), /extra #3/);
+assert.throws(() => leerRespuestas('Hola\n#1\nUno.', ['1']), /before/);
+assert.equal(textoDe(c), 'Se podrian auto tachar las pistas ya usadas. @alguien mira el #12');
 assert.equal(nombreDe(conCorreo), 'Tu admirador secreto');
+assert.equal(nombreDe('> hola\n\n- **Quién:** Cris\n- **Juego:** loteo'), 'Cris', 'issues from before D-316 say Quién');
 assert.equal(nombreDe(cuerpo({ ...r, nombre: '@cris' })), '@cris');
 assert.equal(nombreDe(cuerpo({ ...r, nombre: '' })), '');
 

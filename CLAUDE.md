@@ -247,7 +247,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   README", check how fresh the README is) are asked of it: it decides who, launches them, checks and replies. It handles the 🐞 feedback,
   which `.github/workflows/feedback.yml` uploads every 15 minutes as `feedback` issues (`tools/agents/feedback.mjs`,
   with the name the player entered and without their browser, D-279); a player who left an email gets a
-  templated reply in their language when the report is resolved (`feedback.mjs reply <n> <answer.txt> --lang <xx>`,
+  templated reply in their language when the report is resolved (`feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <xx>`, one email per player for all their comments, grouped by `feedback.mjs pending`,
   through `send-mail.py`; `forget` only deletes the address of destructive feedback; D-317). It closes what was left open and
   turns a recurring error into a mechanism (a test before an instruction). In its
   round it collects the `changelog/` entries into `CHANGELOG.md` (D-300) and deletes the decision
