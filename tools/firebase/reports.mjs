@@ -32,7 +32,7 @@ for (const r of list) {
   const where = [ctx.labs && `🧪 labs ${ctx.labs}`, ctx.copa && `cup ${ctx.copa}`, ctx.dia && `day ${ctx.dia}`, ctx.juego, ctx.semilla && `seed ${ctx.semilla}`,
     // How the commenter did on The Case (D-265)
     ctx.errores !== undefined && `${ctx.errores} errors`, ctx.ayudas !== undefined && `${ctx.ayudas} hints`, ctx.tiempo, ctx.url, ctx.pantalla, ctx.pantallaTam].filter(Boolean).join(' · ');
-  console.log(`── ${r.at ? date(r.at) : '(no date)'} · ${r.nombre || 'anonymous'}${r.tester ? ` (key ${r.tester})` : ''} · v${r.v || '?'}`);
+  console.log(`── ${r.at ? date(r.at) : '(no date)'} · ${r.nombre || 'anonymous'}${r.tester ? ` (key ${r.tester})` : ''}${r.correoMascara ? ` · 📧 ${r.correoMascara} (wants an email reply, D-317)` : ''} · v${r.v || '?'}`);
   if (where) console.log(`   ${where}`);
   console.log(`   ${String(r.texto || '').replace(/\n/g, '\n   ')}`);
   if (ctx.navegador) console.log(`   (${ctx.navegador.slice(0, 90)})`);

@@ -18,7 +18,7 @@
 import { el } from './ui.js';
 import { LABS_IDIOMA, getLang } from './i18n.js';
 import { versionOf } from './transport/stats.js';
-import { enviarReporte, reenviarPendientes } from '../../cup/reportes.js';
+import { enviarReporte, reenviarPendientes, correoValido } from '../../cup/reportes.js';
 
 const TEXTOS = {
   de: {
@@ -41,6 +41,28 @@ const TEXTOS = {
 };
 
 const NOMBRE = 'juegos-de-salon:copa:reporte-nombre';
+
+/**
+ * The optional email field (D-317), the same in every feedback form, in the page's language. It says
+ * plainly what the address is for: only to reply to the player. Not saved on the device.
+ */
+const CORREO = {
+  es: { correo: 'Tu correo (opcional)', correoNota: 'Solo para responderte. No lo usamos para nada más, no se publica y después lo borramos.', correoMalo: 'Revisa el correo: parece incompleto.' },
+  en: { correo: 'Your email (optional)', correoNota: "Only so we can reply to you. We don't use it for anything else, it's never published, and we delete it afterwards.", correoMalo: 'Check your email: it looks incomplete.' },
+  pt: { correo: 'Seu e-mail (opcional)', correoNota: 'Só para te responder. Não usamos para mais nada, não é publicado e depois o apagamos.', correoMalo: 'Confira o e-mail: parece incompleto.' },
+  de: { correo: 'Deine E-Mail (optional)', correoNota: 'Nur, damit wir dir antworten können. Wir nutzen sie für nichts anderes, sie wird nicht veröffentlicht und danach gelöscht.', correoMalo: 'Prüf deine E-Mail-Adresse: Sie scheint unvollständig zu sein.' },
+};
+export const textosCorreo = (idioma = (typeof document !== 'undefined' && document.documentElement.lang) || 'es') => CORREO[String(idioma).slice(0, 2)] || CORREO.es;
+export const IDIOMAS_CORREO = Object.keys(CORREO);
+
+/** The email input and its note; `valor()` is the address, '' if empty, or null if it's malformed. */
+export function campoCorreo(T = {}, id = 'feedback-correo') {
+  const C = { ...textosCorreo(), ...T };
+  const input = el('input', { class: 'labs-nombre labs-correo', id, type: 'email', inputmode: 'email', maxlength: '120', autocomplete: 'email', placeholder: C.correo, 'aria-label': C.correo, 'aria-describedby': `${id}-nota` });
+  const nota = el('p', { class: 'muted labs-correo-nota', id: `${id}-nota`, style: 'margin:0;font-size:.85em' }, C.correoNota);
+  const valor = () => { const t = input.value.trim(); return t ? (correoValido(t) || null) : ''; };
+  return { input, nota, valor, malo: C.correoMalo };
+}
 
 export function iniciarLabs(idioma) {
   const T = TEXTOS[idioma];
@@ -122,15 +144,18 @@ export function formularioComentario({ T, contexto: ctx, alCerrar = null, enviar
   const err = el('div', { class: 'labs-error', role: 'alert' });
   const texto = el('textarea', { class: 'labs-texto', maxlength: '1000', rows: '5', placeholder: T.ph, 'aria-label': T.titulo });
   const nombre = el('input', { class: 'labs-nombre', maxlength: '40', autocomplete: 'name', placeholder: T.nombre, 'aria-label': T.nombre, value: nombreGuardado });
+  const correo = campoCorreo(T);
   const enviar = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-enviar-comentario' }, T.enviar);
   const cancelar = alCerrar ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm', onClick: alCerrar }, T.cancelar) : null;
   const caja = el('div', { class: 'panel stack comentario', 'aria-label': T.titulo },
     el('h2', { class: 'display display--sm' }, `🐞 ${T.titulo}`),
     el('p', { class: 'muted', style: 'margin:0' }, T.lead),
-    texto, nombre, err, enviar, cancelar);
+    texto, nombre, correo.input, correo.nota, err, enviar, cancelar);
   enviar.addEventListener('click', async () => {
     const t = texto.value.trim();
     if (!t) { err.textContent = T.vacio; return; }
+    const c = correo.valor();
+    if (c === null) { err.textContent = correo.malo; correo.input.focus(); return; }
     const n = nombre.value.trim().slice(0, 40);
     try { if (n) localStorage.setItem(NOMBRE, n); } catch (_) { /* nada */ }
     enviar.disabled = true; enviar.textContent = T.enviando;
@@ -138,7 +163,7 @@ export function formularioComentario({ T, contexto: ctx, alCerrar = null, enviar
       alCerrar ? el('button', { type: 'button', class: 'btn btn--yellow', onClick: alCerrar }, T.cerrar) : '');
     try {
       await mandar({
-        texto: t.slice(0, 1000), nombre: n, contexto: JSON.stringify(ctx).slice(0, 500),
+        texto: t.slice(0, 1000), nombre: n, ...(c ? { correo: c } : {}), contexto: JSON.stringify(ctx).slice(0, 500),
         v: versionOf(document.getElementById('importmap')?.textContent || '') || 'dev',
       });
       fin(T.gracias);

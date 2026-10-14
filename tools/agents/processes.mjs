@@ -37,6 +37,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { invalidAction, checkboxes, doneSet, readActions, normalizeAction, LABEL } from './approve.mjs';
+import { wantsEmail, handled } from './feedback.mjs';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const MEMORY = join(ROOT, 'docs/processes.json');
@@ -196,6 +197,11 @@ function check() {
   const feedback = issues.filter(i => i.labels.some(l => l.name === 'feedback'));
   for (const i of feedback.reverse()) console.log(`- #${i.number} (${i.createdAt.slice(0, 10)}) ${i.title}`);
   if (!feedback.length) console.log('Nothing.');
+  // D-317: a resolved report whose player left an email gets a reply (or, if destructive, only the
+  // address deleted). Open ones get it when they're resolved, in this same round
+  const closed = gh('issue', 'list', '--label', 'feedback', '--state', 'closed', '--limit', '60', '--json', 'number,title,body,comments');
+  const unanswered = [...feedback.filter(i => wantsEmail(i.body)), ...closed.filter(i => wantsEmail(i.body) && !handled(i.comments))];
+  for (const i of unanswered) console.log(`- 📧 #${i.number} left an email: when resolved, feedback.mjs reply ${i.number} <answer.txt> --lang <its language> (or forget, if destructive)`);
 
   heading('What the documentation agent carries over');
   const doc = JSON.parse(readFileSync(join(ROOT, 'docs/documentation.json'), 'utf8'));
