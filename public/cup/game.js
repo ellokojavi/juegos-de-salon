@@ -35,7 +35,7 @@ import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
-import { formularioComentario, abrirComentario, campoCorreo, textosCorreo } from '../assets/js/labs-idioma.js';
+import { formularioComentario, abrirComentario, campoCorreo } from '../assets/js/labs-idioma.js';
 import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
@@ -2502,7 +2502,7 @@ function reportar(extra = {}) {
   const body = $('#reporte-body');
   body.innerHTML = '';
   const err = el('div', { class: 'form-error', role: 'alert' });
-  const texto = el('textarea', { class: 'reporte-texto', maxlength: '1000', rows: '6', placeholder: T.reportPlaceholder, 'aria-label': T.reportTitle });
+  const texto = el('textarea', { class: 'reporte-texto', maxlength: '1000', rows: '3', placeholder: T.reportPlaceholder, 'aria-label': T.reportTitle });
   const nombre = el('input', { class: 'mini', id: 'reporte-nombre', maxlength: '40', autocomplete: 'name', placeholder: T.reportNamePh, value: nombreReporte.leer() || contexto.jugador || cuenta.nombre.get() || '', 'aria-label': T.reportNamePh });
   const correo = campoCorreo({}, 'reporte-correo');
   const enviarBtn = el('button', { class: 'btn btn--yellow', id: 'btn-enviar-reporte' }, T.reportSend);
@@ -2542,8 +2542,7 @@ function reportar(extra = {}) {
     el('p', { class: 'muted' }, T.reportLead),
     el('div', { class: 'panel stack' }, texto,
       el('label', { class: 'lead', for: 'reporte-nombre', style: 'margin:0' }, T.reportNameLabel), nombre,
-      el('p', { class: 'muted', style: 'margin:0' }, T.reportNameKeep),
-      el('label', { class: 'lead', for: 'reporte-correo', style: 'margin:0' }, textosCorreo().correo), correo.input, correo.nota),
+      el('p', { class: 'muted', style: 'margin:0' }, T.reportNameKeep), correo.input, correo.nota),
     err, enviarBtn,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { SFX.tap(); volver(); } }, T.reportCancel));
   texto.focus();
