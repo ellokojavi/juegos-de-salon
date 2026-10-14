@@ -11,7 +11,8 @@
  *       lastAt: <marca del último apunte> el reloj del servidor, no el del celular
  *       rooms/<CÓDIGO>: true
  *
- * Al crear (y al entrar a) una sala se apunta su código en el balde de su día. Las reglas
+ * Al crear una sala se apunta su código en el balde de su día, en la misma escritura que la
+ * crea (D-321); al entrar a una sala se refresca la marca del balde. Las reglas
  * solo dejan leer un balde cuando pasaron 6 horas desde su último apunte: como ninguna sala
  * pasa de seis horas (ROOM_TTL, el tope duro), cuando el balde se puede leer todas sus salas
  * están vencidas y el índice nunca revela una sala viva.
@@ -59,14 +60,35 @@ export function daysToSweep(sweptDay, today) {
 
 /**
  * Apunta una sala en la papelera, en el balde del día en que se creó.
- * Las reglas solo dejan escribir un código que no está (`!data.exists()`), así que el apunte
- * va aparte del `lastAt`: si la sala ya estaba apuntada, el rechazo no arrastra al resto.
+ * The app no longer notes a new room here: it does it in the write that creates it
+ * (`roomCreation`, D-321). The note still goes apart from `lastAt`, as it did when the rules
+ * would not take a code twice: if it is rejected, the rejection does not drag `lastAt` with it.
  * `note: false` es para el que entra a una sala ajena: solo refresca la marca del balde.
  */
 export async function noteRoom(api, code, createdAt, { note = true } = {}) {
   const day = `cleanup/days/${dayOf(createdAt)}`;
   await api.update(day, { lastAt: api.stamp() });
   if (note) await api.update(day, { [`rooms/${code}`]: true });
+}
+
+/**
+ * The writes that create a room, for a single multi-path update from the root (D-321): the room
+ * and its note in the bucket land together or not at all. A note written afterwards was lost
+ * whenever the page died or the connection dropped in between, and an unnoted room is never swept.
+ *
+ * `day` comes from the phone's estimate of the server clock, so near midnight (UTC) the note can
+ * land in the bucket next to the one of `createdAt`. That is harmless: the bucket's `lastAt` is
+ * the same server stamp as `createdAt`, and `lastAt` is what keeps a bucket closed while a room
+ * in it can still be alive.
+ */
+export function roomCreation(code, { game, config, day, stamp }) {
+  return {
+    [`rooms/${code}/createdAt`]: stamp,
+    [`rooms/${code}/game`]: game,
+    [`rooms/${code}/config`]: config,
+    [`cleanup/days/${day}/lastAt`]: stamp,
+    [`cleanup/days/${day}/rooms/${code}`]: true,
+  };
 }
 
 /**

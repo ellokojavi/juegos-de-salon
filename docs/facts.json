@@ -1,5 +1,5 @@
 {
-  "version": "0.171.4",
+  "version": "0.171.5",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -999,6 +999,7 @@
     "tools/e2e/groups.test.mjs",
     "tools/e2e/output.test.mjs",
     "tools/firebase/rankings-history.test.mjs",
+    "tools/firebase/unnoted-rooms.test.mjs",
     "tools/push/daily.test.mjs",
     "tools/push/notify.test.mjs",
     "tools/push/schedule.test.mjs",

@@ -1,6 +1,6 @@
 // Ejecutar: node public/assets/js/transport/cleanup.test.mjs
 import assert from 'node:assert/strict';
-import { ROOM_TTL, dayOf, daysToSweep, noteRoom, sweep } from './cleanup.js';
+import { ROOM_TTL, dayOf, daysToSweep, noteRoom, roomCreation, sweep } from './cleanup.js';
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -34,7 +34,7 @@ function fakeDb(now) {
       for (const [k, v] of Object.entries(changes)) {
         if (api.strictNotes && k.startsWith('rooms/')) {
           const [n, key] = walk(`${path}/${k}`);
-          if (n && n[key] !== undefined) throw new Error('permission-denied'); // no se pisa un apunte
+          if (n && n[key] !== undefined && v !== true) throw new Error('permission-denied'); // a note is never removed (D-321)
         }
         const [node, key] = walk(`${path}/${k}`, true);
         node[key] = v;
@@ -51,6 +51,12 @@ function fakeDb(now) {
       return Promise.resolve();
     },
     stamp: () => now,
+    /** A multi-path update from the root: every path lands, or none (as in Firebase). */
+    atomic(changes) {
+      if (api.failNext) { api.failNext = false; return Promise.reject(new Error('disconnected')); }
+      for (const [k, v] of Object.entries(changes)) { const [node, key] = walk(k, true); node[key] = v; }
+      return Promise.resolve();
+    },
     data,
   };
   return api;
@@ -82,10 +88,10 @@ assert.deepEqual(db.data.rooms, {}, 'la sala vencida se borró');
 assert.equal(db.data.cleanup.days[dayOf(t0)], undefined, 'el balde se borró');
 assert.equal(db.data.cleanup.sweptDay, dayOf(t0));
 
-// Apuntar dos veces la misma sala no puede romper el apunte (las reglas rechazan pisar el código)
+// Apuntar dos veces la misma sala no puede romper el apunte
 const dbDoble = fakeDb(t0);
 await noteRoom(dbDoble, 'ABCD', t0);
-dbDoble.strictNotes = true;                 // como las reglas: el código no se puede pisar
+dbDoble.strictNotes = true;                 // como las reglas: el apunte no se puede borrar
 await noteRoom(dbDoble, 'ABCD', t0, { note: false });
 assert.deepEqual(dbDoble.data.cleanup.days[dayOf(t0)], { lastAt: t0, rooms: { ABCD: true } });
 
@@ -127,6 +133,43 @@ const r3 = await sweep(db, t0);
 assert.deepEqual(r3, { days: 0, rooms: 0 });
 assert.ok(db.data.rooms.ABCD, 'no se toca lo que no se puede leer');
 assert.equal(db.data.cleanup.sweptDay, dayOf(t0 - DAY) - 1, 'la marca se queda antes del balde que no se pudo leer');
+
+// D-321: the room and its note are one write. The page that dies right after creating the room
+// (the 2026-10-14 case, MBGJ and HBHV) no longer leaves a room that no bucket names.
+db = fakeDb(t0);
+await db.atomic(roomCreation('MBGJ', { game: 'batalla-naval', config: {}, day: dayOf(t0), stamp: db.stamp() }));
+db.data.rooms.MBGJ.players = { A: { name: 'Tomáximo', online: true } };
+// …and here the page dies: nothing else from create() runs
+assert.deepEqual(db.data.cleanup.days[dayOf(t0)], { lastAt: t0, rooms: { MBGJ: true } }, 'noted with the room');
+assert.equal(db.data.rooms.MBGJ.createdAt, db.data.cleanup.days[dayOf(t0)].lastAt, 'the same server stamp');
+assert.deepEqual(await sweep(fakeMove(db, mañana), mañana), { days: 1, rooms: 1 }, 'the next day it is swept');
+assert.deepEqual(db.data.rooms, {});
+
+// A write that never reaches the server leaves neither the room nor the note
+db = fakeDb(t0);
+db.failNext = true;
+await assert.rejects(db.atomic(roomCreation('HBHV', { game: 'batalla-naval', config: {}, day: dayOf(t0), stamp: t0 })));
+assert.equal(db.data.rooms, undefined);
+assert.equal(db.data.cleanup, undefined);
+
+// Near midnight the phone's estimate can pick the bucket before createdAt's day: the room is still
+// swept, because the bucket opens 6 hours after its lastAt, which is the room's own createdAt
+const medianoche = (dayOf(t0) + 1) * DAY + 500;
+db = fakeDb(medianoche);
+await db.atomic(roomCreation('NOCH', { game: 'generala', config: {}, day: dayOf(medianoche) - 1, stamp: medianoche }));
+const temprano = medianoche + 5 * 60 * 60 * 1000;
+assert.deepEqual(await sweep(fakeMove(db, temprano), temprano), { days: 0, rooms: 0 }, 'closed while the room can be alive');
+assert.ok(db.data.rooms.NOCH);
+const tarde = medianoche + ROOM_TTL + 1000;
+assert.deepEqual(await sweep(fakeMove(db, tarde), tarde), { days: 1, rooms: 1 }, 'and swept once it expired');
+
+// A code reused the same day (its expired room was deleted) is noted again without being rejected
+db = fakeDb(t0);
+await noteRoom(db, 'ABCD', t0);
+db.strictNotes = true;
+await db.update(`cleanup/days/${dayOf(t0)}`, { 'rooms/ABCD': true });
+await assert.rejects(async () => db.update(`cleanup/days/${dayOf(t0)}`, { 'rooms/ABCD': null }), 'but a note is never removed');
+assert.equal(db.data.cleanup.days[dayOf(t0)].rooms.ABCD, true);
 
 /** La misma base, pero con el reloj movido (las reglas miran `now`). */
 function fakeMove(db, now) {

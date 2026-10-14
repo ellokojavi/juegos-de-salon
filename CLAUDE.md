@@ -173,6 +173,7 @@ owner's key) and does not merge. Everything else in this guide applies the same.
   ```bash
   node tools/firebase/rules.mjs publish     # uploads the rules and checks they took
   node tools/firebase/rules.mjs check      # is what is published what is in the repo?
+  node tools/firebase/unnoted-rooms.mjs [--fix]   # rooms no cleanup bucket names, so never swept (D-321)
   ```
 - The worktree and the branch are deleted on their own (above, D-218, D-252); to do it now, `node tools/agents/clean-worktrees.mjs`.
 

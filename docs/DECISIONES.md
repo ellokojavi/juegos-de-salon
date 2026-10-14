@@ -65,7 +65,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305 |
-| Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320 |
+| Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309 |
@@ -301,12 +301,12 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** Un toque perdido ya no coloca nada: el jugador ve que no pasó nada y vuelve a tocar. El botón nombrando la carta cierra el caso contrario (haber elegido otra sin darse cuenta), y se suma a las dos señales que ya existían: el borde amarillo en la tira y el fantasma de la carta dentro de la ranura. Regla general: **ninguna acción irreversible puede ejecutarse sobre algo que el jugador no eligió explícitamente** (canon C-8). Prueba: `tools/e2e/linea-de-tiempo-eleccion.mjs`.
 
 ## D-39 · Las salas vencidas se barren con una papelera pública
-**Fecha:** 2026-09-10 · **Estado:** vigente
+**Fecha:** 2026-09-10 · **Estado:** vigente · **Relación:** corregida por D-321 (the note goes in the write that creates the room)
 **Decisión:** Firebase gana un nodo `cleanup` que es el índice de salas por borrar: `cleanup/days/<día>` junta los códigos creados ese día y `cleanup/sweptDay` es la marca de agua de lo ya barrido. Al crear o entrar a una sala, el celular apunta su código en el balde del día; además, como mucho una vez cada 6 horas, barre en segundo plano los baldes pendientes (siempre los últimos 8 días, y hasta 30 si venía atrasado) borrando esas salas y el balde. Un balde solo se puede leer y borrar 6 horas después de su último apunte.
 **Por qué:** Una sala vence a las 6 horas pero nadie la borraba: el que la creó ya cerró el navegador, y la limpieza solo ocurría por casualidad, cuando una sala nueva sacaba el mismo código de cuatro letras que una vencida. La base crecía para siempre con partidas y chats muertos. El plan gratuito no tiene Cloud Functions, así que el barrendero tiene que ser el mismo celular que juega.
 **Por qué un índice y no listar `rooms/`:** dejar leer `rooms/` entero regalaría los códigos de todas las salas **vivas**, y con el código se lee el chat (C-15). La condición de las 6 horas sobre el último apunte hace que un balde solo se pueda abrir cuando todas sus salas ya vencieron: el índice nunca delata una sala en juego.
 **Dos cosas que aparecieron al probarlo contra Firebase de verdad:** las reglas no dejan borrar una sala que no existe, y eso es un caso corriente (un barrido anterior que se cortó, o un código reusado), así que un solo apunte huérfano habría dejado su balde —y todos los días siguientes— sin barrer para siempre: ahora un apunte sin sala cuenta como trabajo hecho. Y tampoco dejan pisar un código ya apuntado, así que el apunte va en una escritura separada del `lastAt`; si no, cada jugador que entraba a una sala dejaba un `permission_denied` en la consola. El que crea la sala la apunta con la hora del servidor, no con la del celular.
-**Consecuencias:** La marca de agua es pública y cualquiera puede adelantarla, por eso el barrido siempre repasa los últimos 8 días aunque la marca diga lo contrario. Un balde que no se deja leer o cuyas salas no se dejan borrar corta el barrido y queda para la próxima: nunca se salta un balde. Todo esto es "mejor esfuerzo": si falla, la partida sigue igual y barre el celular siguiente. Las salas creadas antes de esta versión no están apuntadas en ningún balde; se borran una sola vez a mano desde la consola de Firebase. Módulo `assets/js/transport/cleanup.js`, con tests en `cleanup.test.mjs`; reglas en `firebase/database.rules.json`.
+**Consecuencias:** (Amended by D-321: the creator notes the room in the same write that creates it, and a code can be noted again.) La marca de agua es pública y cualquiera puede adelantarla, por eso el barrido siempre repasa los últimos 8 días aunque la marca diga lo contrario. Un balde que no se deja leer o cuyas salas no se dejan borrar corta el barrido y queda para la próxima: nunca se salta un balde. Todo esto es "mejor esfuerzo": si falla, la partida sigue igual y barre el celular siguiente. Las salas creadas antes de esta versión no están apuntadas en ningún balde; se borran una sola vez a mano desde la consola de Firebase. Módulo `assets/js/transport/cleanup.js`, con tests en `cleanup.test.mjs`; reglas en `firebase/database.rules.json`.
 
 ## D-40 · Una falla de red no se cuenta como "no hay internet"
 **Fecha:** 2026-09-10 · **Estado:** vigente · **Relación:** extended by D-319 (the button says it is waiting, and the one-phone way out is a button under the message)
@@ -6043,4 +6043,44 @@ the promise and none of the seven room games awaits it.
 and the rules cannot tell an identical resend from a new write over an existing id.
 **Consequences:** the Health panel stops counting resends as failures. Rooms that are created but
 never noted in the cleanup bucket (the page dies between the two writes, as with MBGJ and HBHV that
-same day) are a separate problem, handled in their own PR.
+same day) are a separate problem, handled in D-321.
+
+## D-321 · A new room and its cleanup note are one write
+**Date:** 2026-10-14 · **Status:** current · **Relation:** corrects D-39; completes C-7
+**Context:** rooms MBGJ and HBHV (Batalla Naval, created 20:50:04 UTC, player A online, no moves)
+were in `rooms/` but in no `cleanup/days/<day>` bucket. They came from two create attempts that
+timed out on a bad connection before the player's third attempt (CUFM) worked. `create()` wrote the
+room, then the player, and only afterwards, in the background, read the server `createdAt` and
+noted the code in that day's bucket. When the page died or the connection dropped in between, the
+room existed and nothing named it, and the sweep only deletes what a bucket names: that room would
+stay in the database forever.
+**Decision:**
+- The creator writes the room (`createdAt`, `game`, `config`) and its note
+  (`cleanup/days/<day>/lastAt` and `rooms/<CODE>`) in **one multi-path update** from the root
+  (`roomCreation` in `cleanup.js`). Firebase applies it whole or not at all, so a room that exists is
+  always noted. `lastAt` and `createdAt` are the same `serverTimestamp()`.
+- The bucket's day can no longer come from the server `createdAt`, which only exists after the write:
+  it comes from the phone's estimate of the server clock (`Date.now()` plus
+  `.info/serverTimeOffset`, known once connected).
+- The rules let a code be noted again (`!data.exists() || newData.val() == true`), so the update is
+  not rejected when a code is reused the same day after its expired room was deleted. A note still
+  cannot be removed or changed.
+- The creator no longer runs `noteRoom` afterwards; whoever joins still refreshes the bucket's
+  `lastAt`, as before.
+- `node tools/firebase/unnoted-rooms.mjs` (admin key) lists the rooms that no bucket names, and
+  `--fix` deletes the expired ones and notes the live ones. It is the net for the rooms that leaked
+  before this change.
+**The trade-off:** near midnight UTC, the estimate can pick the bucket next to the one of
+`createdAt` (an offset error of a few hundred ms, or a write that waits in the SDK queue). That does
+not break the bucket's promise: what keeps a bucket closed is its `lastAt`, and here it is the same
+stamp as the room's `createdAt`, so the bucket opens exactly when the room has expired, whichever day
+it is filed under. The panel does not read `cleanup/` (its record is `stats/`, by `createdAt`, D-44),
+so it is unaffected. Noting before creating, in two writes, was discarded: a note with no room is
+harmless, but `lastAt` would be a few seconds older than the room, and the sweep would find a
+bucket open with a room it cannot delete yet.
+**Why the net is a tool and not part of the sweep:** finding an unnoted room means listing `rooms/`,
+which only the owner can read (listing it would hand out the codes of live rooms, D-39). A phone
+cannot do it.
+**Consequences:** `cleanup.test.mjs` creates a room with the atomic write, lets the page "die", and
+sweeps it the next day; it also covers the midnight case and a reused code. `unnoted-rooms.test.mjs`
+covers the tool's pure part. The rules change is published on merge, before the site (D-218).
