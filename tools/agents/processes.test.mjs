@@ -1,49 +1,61 @@
-// El agente de procesos (D-273): qué PR cuentan como "esperando", la cola de lo aprobado y los patrones.
+// The processes agent (D-273): which PRs count as "waiting", the queue of what was approved and the patterns.
 import assert from 'node:assert/strict';
-import { esperas, enCola, anotarPatron, cuerpoDecisiones, ARREGLO, porDespachar } from './processes.mjs';
-import { anotarHecho } from './approve.mjs';
+import { readFileSync } from 'node:fs';
+import { waits, queued, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS } from './processes.mjs';
+import { recordDone } from './approve.mjs';
 
-const ahora = Date.parse('2026-10-11T12:00:00Z');
+const now = Date.parse('2026-10-11T12:00:00Z');
 const pr = x => ({ createdAt: '2026-10-11T10:00:00Z', baseRefName: 'main', mergeable: 'MERGEABLE', autoMergeRequest: null, statusCheckRollup: [], ...x });
 
-assert.deepEqual(esperas(pr({}), ahora), [], 'un PR de hoy no espera todavía');
-assert.match(esperas(pr({ createdAt: '2026-10-08T10:00:00Z' }), ahora)[0], /sin auto-merge hace 3 días/);
-assert.deepEqual(esperas(pr({ createdAt: '2026-10-08T10:00:00Z', autoMergeRequest: {} }), ahora), []);
-assert.match(esperas(pr({ baseRefName: 'docs-2026-10-11' }), ahora)[0], /apilado/);
-assert.match(esperas(pr({ mergeable: 'CONFLICTING' }), ahora)[0], /conflicto/);
-assert.match(esperas(pr({ statusCheckRollup: [{ name: 'pruebas', conclusion: 'FAILURE' }] }), ahora)[0], /en rojo: pruebas/);
-assert.deepEqual(esperas(pr({ isDraft: true, mergeable: 'CONFLICTING' }), ahora), [], 'un borrador no espera a nadie');
+assert.deepEqual(waits(pr({}), now), [], 'a PR from today is not waiting yet');
+assert.match(waits(pr({ createdAt: '2026-10-08T10:00:00Z' }), now)[0], /no auto-merge for 3 days/);
+assert.deepEqual(waits(pr({ createdAt: '2026-10-08T10:00:00Z', autoMergeRequest: {} }), now), []);
+assert.match(waits(pr({ baseRefName: 'docs-2026-10-11' }), now)[0], /stacked/);
+assert.match(waits(pr({ mergeable: 'CONFLICTING' }), now)[0], /conflicts/);
+assert.match(waits(pr({ statusCheckRollup: [{ name: 'tests', conclusion: 'FAILURE' }] }), now)[0], /red: tests/);
+assert.deepEqual(waits(pr({ isDraft: true, mergeable: 'CONFLICTING' }), now), [], 'a draft waits for nobody');
 
-// What was approved with "encolar" stays queued only if it was checked and carried out
-const cuerpo = cuerpoDecisiones({ decisiones: [
-  { pregunta: 'Test para el mensaje de compartir', si: [{ tipo: 'encolar', tarea: 'escribir mensajes.test.mjs' }] },
-  { pregunta: 'Otra', si: [{ tipo: 'encolar', tarea: 'no aprobada' }] },
+// What was approved with "queue" stays queued only if it was checked and carried out
+const body = decisionsBody({ decisions: [
+  { question: 'Test for the share message', yes: [{ type: 'queue', task: 'write messages.test.mjs' }] },
+  { question: 'Another', yes: [{ type: 'queue', task: 'not approved' }] },
 ] });
-assert.deepEqual(enCola([{ number: 5, body: cuerpo }]), []);
-const aprobado = anotarHecho(cuerpo.replace(/- \[ \](.*?<!-- op:1:si -->)/, '- [x]$1'), '1', 'si', '✅');
-assert.deepEqual(enCola([{ number: 5, body: aprobado }]), [{ id: '#5:1', tarea: 'escribir mensajes.test.mjs' }]);
+assert.deepEqual(queued([{ number: 5, body }]), []);
+const approved = recordDone(body.replace(/- \[ \](.*?<!-- op:1:si -->)/, '- [x]$1'), '1', 'si', '✅');
+assert.deepEqual(queued([{ number: 5, body: approved }]), [{ id: '#5:1', task: 'write messages.test.mjs' }]);
+// An issue from before D-316, with a Spanish "encolar", is still read
+const old = `- [x] Sí <!-- op:1:si --> — ✅ <!-- hecho:1 -->\n<!-- acciones ${JSON.stringify({ '1:si': [{ tipo: 'encolar', tarea: 'vieja' }] })} -->`;
+assert.deepEqual(queued([{ number: 3, body: old }]), [{ id: '#3:1', task: 'vieja' }]);
 
 // Each checkbox says what it does; one that does nothing, just Yes or No
-assert.match(cuerpo, /^- \[ \] Yes: queues it for the next round <!-- op:1:si -->$/m);
-assert.match(cuerpo, /^- \[ \] No <!-- op:1:no -->$/m);
+assert.match(body, /^- \[ \] Yes: queues it for the next round <!-- op:1:si -->$/m);
+assert.match(body, /^- \[ \] No <!-- op:1:no -->$/m);
 
-// Un patrón cuenta una vez por commit
-const m = { patrones: [] };
-assert.equal(anotarPatron(m, 'mensaje-compartir', 'el mensaje no nombraba Uno al día', { fecha: 'a', commit: 'abc' }), 1);
-assert.equal(anotarPatron(m, 'mensaje-compartir', 'otra vez', { fecha: 'b', commit: 'abc' }), 1);
-assert.equal(anotarPatron(m, 'mensaje-compartir', 'otra vez', { fecha: 'b', commit: 'def' }), 2);
+// A pattern counts once per commit
+const m = { patterns: [] };
+assert.equal(recordPattern(m, 'share-message', 'the message did not name One a day', { date: 'a', commit: 'abc' }), 1);
+assert.equal(recordPattern(m, 'share-message', 'again', { date: 'b', commit: 'abc' }), 1);
+assert.equal(recordPattern(m, 'share-message', 'again', { date: 'b', commit: 'def' }), 2);
 
-// Los asuntos que delatan algo atrasado
-assert.ok(ARREGLO.test('Marketing: el video quedó atrás de ¿Dónde queda?'));
-assert.ok(ARREGLO.test('Ronda de usabilidad: marketing al día con D-203'));
-assert.ok(!ARREGLO.test('Zip: diez niveles nuevos'));
-assert.ok(!ARREGLO.test('Uno al día con jugador: historia en Firebase'));
+// The subjects that give away something that fell behind (the history is in Spanish)
+assert.ok(FIX.test('Marketing: el video quedó atrás de ¿Dónde queda?'));
+assert.ok(FIX.test('Ronda de usabilidad: marketing al día con D-203'));
+assert.ok(FIX.test('Marketing: the video fell behind Where is it?'));
+assert.ok(!FIX.test('Zip: diez niveles nuevos'));
+assert.ok(!FIX.test('Uno al día con jugador: historia en Firebase'));
+assert.ok(!FIX.test('Zip: ten new levels'));
 
-// A quién despachar (D-276)
-assert.deepEqual(porDespachar({ commitsDoc: 0, commitsPublic: 0, diasUsabilidad: 2 }), [], 'sin cambios no se lanza a nadie');
-assert.deepEqual(porDespachar({ commitsDoc: 3, commitsPublic: 0, diasUsabilidad: 2 }).map(d => d.agente), ['documentacion']);
-assert.deepEqual(porDespachar({ commitsDoc: 0, commitsPublic: 2, diasUsabilidad: 1 }).map(d => d.agente), ['usabilidad']);
-assert.match(porDespachar({ commitsDoc: 0, commitsPublic: null, diasUsabilidad: null })[0].motivo, /nunca/);
-assert.match(porDespachar({ commitsDoc: 0, commitsPublic: 0, diasUsabilidad: 7 })[0].motivo, /semana/);
+// Whom to dispatch (D-276)
+assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2 }), [], 'without changes nobody is launched');
+assert.deepEqual(toDispatch({ docCommits: 3, publicCommits: 0, usabilityDays: 2 }).map(d => d.agent), ['documentation']);
+assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 2, usabilityDays: 1 }).map(d => d.agent), ['usability']);
+assert.match(toDispatch({ docCommits: 0, publicCommits: null, usabilityDays: null })[0].reason, /never/);
+assert.match(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 7 })[0].reason, /week/);
 
-console.log('procesos: ok');
+// The repo's memory has the shape the tool reads (keys in English since D-316)
+const memory = JSON.parse(readFileSync(MEMORY, 'utf8'));
+for (const k of ['checkedUpTo', 'patterns', 'mechanisms', 'queueDone', 'dispatches', 'rounds']) assert.ok(k in memory, `docs/processes.json without "${k}"`);
+for (const k of Object.keys(memory.dispatches)) assert.ok(EXECUTORS.includes(k), `unknown executor in dispatches: ${k}`);
+for (const p of memory.patterns) assert.ok(p.key && p.what && Array.isArray(p.seen), `pattern without key, what or seen: ${JSON.stringify(p).slice(0, 80)}`);
+
+console.log('processes: ok');

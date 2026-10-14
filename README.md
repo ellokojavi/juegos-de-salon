@@ -6,9 +6,9 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 
 **Play:** https://juegosdesalon.cl/
 
-<!-- generado: capturas:portada · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:portada · written by python3 tools/release/readme.py update -->
 <p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Main menu">&nbsp;&nbsp;<img src="docs/screenshots/compartir.png" width="220" alt="Share sheet with the promo video"></p>
-<!-- /generado -->
+<!-- /generated -->
 
 > The app is Chilean and it is built in Spanish. Everything internal to the repository is in English (D-316): the rest of the documentation, linked at the end, is being moved from Spanish to English, so some documents are still in Spanish for now. The screenshots show the app in Spanish, which is its default language.
 
@@ -16,7 +16,7 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 
 The games with their own section below come first; after them, the one-player games that also make up The Cup, each opening on its own page.
 
-<!-- generado: juegos · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: games · written by python3 tools/release/readme.py update -->
 | Game | Players | Modes | Status |
 |---|---|---|---|
 | 🏆 [The Cup / La Copa / A Copa](#-the-cup-la-copa) | 2 to 10 | Each on their own phone | v0.83 |
@@ -37,7 +37,7 @@ The games with their own section below come first; after them, the one-player ga
 | 🧶 [Untangle / Desenredo / Desenrola](https://juegosdesalon.cl/untangle/) | 1 | Play alone | Also in The Cup |
 | 📍 [Where Is It? / ¿Dónde queda? / Onde fica?](https://juegosdesalon.cl/where/) | 1 | Play alone | Also in The Cup |
 | 🔍 The Case / El caso / O Caso | 1 | Play alone | 🧪 lab |
-<!-- /generado -->
+<!-- /generated -->
 
 ---
 
@@ -45,7 +45,7 @@ The games with their own section below come first; after them, the one-player ga
 
 The classic drinking card game. The phone is the deck: each player draws a card and the phone says what to do. It names who drinks, runs the minigames (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it drinks everything left in their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it. After each card, who drinks and "pass the phone to X" share one screen, and only the next player's button moves on.
 
-<!-- generado: capturas:cuarto-rey · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:cuarto-rey · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/fourth-king/02-intro.png" width="180" alt="Intro and rules"><br><sub>Intro and rules</sub></td>
@@ -66,7 +66,7 @@ The classic drinking card game. The phone is the deck: each player draws a card 
     <td></td>
   </tr>
 </table>
-<!-- /generado -->
+<!-- /generated -->
 
 Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 
@@ -79,7 +79,7 @@ Each player picks a secret number with no repeated digits and tries to crack the
 - **🧍 Play alone:** The Cup's number game. The phone picks a 4-digit number and you get 10 guesses: 100 points on the first one and 10 less for each extra guess, with a clock and a record for your best score. Clues are spelled out in full ("2 famas, 1 toque").
 - **💬 Room chat:** on two phones there is a chat to trash-talk while guessing, and it stays alive on the final screen to celebrate or ask for a rematch. New messages peek out next to the bubble.
 
-<!-- generado: capturas:toque-y-fama · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:toque-y-fama · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/bulls-and-cows/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
@@ -100,7 +100,7 @@ Each player picks a secret number with no repeated digits and tries to crack the
     <td></td>
   </tr>
 </table>
-<!-- /generado -->
+<!-- /generated -->
 
 Spec: [docs/games/bulls-and-cows.md](docs/games/bulls-and-cows.md) · Feasibility study: [docs/games/bulls-and-cows-factibilidad.md](docs/games/bulls-and-cows-factibilidad.md)
 
@@ -125,7 +125,7 @@ a chime, a buzz and the tab title announce your turn when the phone is face down
 - **📡 Two phones:** a room with a code, a QR and chat. Each phone answers the shots against its own fleet, and at the end both fleets are revealed and verified. The chat steps aside while you place your own fleet, which fills the whole screen, and comes back with its unread badge once you are waiting for the rival (D-138).
 - **🤖 Versus the phone:** an AI that hunts by parity and chases after a hit. It sinks a fleet in about 50 shots.
 
-<!-- generado: capturas:batalla-naval · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:batalla-naval · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/battleship/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
@@ -140,7 +140,7 @@ a chime, a buzz and the tab title announce your turn when the phone is face down
     <td></td>
   </tr>
 </table>
-<!-- /generado -->
+<!-- /generated -->
 
 Spec and design: [docs/games/battleship.md](docs/games/battleship.md)
 
@@ -148,7 +148,7 @@ Spec and design: [docs/games/battleship.md](docs/games/battleship.md)
 
 You get events with no date on them and place them in the right spot on a shared timeline. Get it right and the card stays. Get it wrong and it is discarded (with your own hand, you draw another one). The first player to correctly place the cards needed to win takes the game; with your own hand, the first to run out of cards. The round is always played to the end, and on a tie the fastest player wins. The rules on the game's front page are folded, one tap away (D-177). The theme is picked at the start, and adding a new one is just a data file. Cards do not repeat across back-to-back games: each phone remembers the ones it has already shown.
 
-<!-- generado: tematicas · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: themes · written by python3 tools/release/readme.py update -->
 | Theme | Cards | Years | What it covers |
 |---|---|---|---|
 | 📜 History | 96 | 2560 BC to 2022 | Milestones of humankind |
@@ -158,7 +158,7 @@ You get events with no date on them and place them in the right spot on a shared
 | 🇧🇷 Brazil | 139 | 1500 to 2025 | From Cabral to COP30, telenovelas and carnival included |
 | ⚽ Soccer | 121 | 1863 to 2025 | World Cups, clubs, goals and transfers |
 | **Total** | **675** | | |
-<!-- /generado -->
+<!-- /generated -->
 
 - **📱 One phone:** two to six players, passing the phone around.
 - **📡 Several phones:** a room with a code and a QR, up to six players. The host starts the game once everyone is in, and each player sees their own hand.
@@ -169,7 +169,7 @@ You get events with no date on them and place them in the right spot on a shared
 - **💬 Room chat:** on several phones there is a chat to comment on the plays while waiting for your turn, and it stays alive on the final screen. New messages peek out for a few seconds next to the bubble.
 - **Drag a card into place.** Pull a card down out of your hand and drop it where you think it goes. While it travels it is drawn large and above your finger: in the hand a card is 130px wide and its title sits at 11px, which is unreadable on a narrow phone exactly when you have to decide. A card you already placed can be picked up again and moved, or dropped outside the timeline to send it back to your hand. Dropping only **chooses** — the yellow button is still the one that places it, so nothing irreversible happens by accident, and tapping works exactly as before.
 
-<!-- generado: capturas:linea-de-tiempo · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:linea-de-tiempo · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/timeline/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
@@ -190,7 +190,7 @@ You get events with no date on them and place them in the right spot on a shared
     <td></td>
   </tr>
 </table>
-<!-- /generado -->
+<!-- /generated -->
 
 Spec and design: [docs/games/timeline.md](docs/games/timeline.md)
 
@@ -198,7 +198,7 @@ Spec and design: [docs/games/timeline.md](docs/games/timeline.md)
 
 ## 🪢 Hangman (El Ahorcado)
 
-<!-- generado: capturas:ahorcado · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:ahorcado · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/hangman/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
@@ -219,7 +219,7 @@ Spec and design: [docs/games/timeline.md](docs/games/timeline.md)
     <td></td>
   </tr>
 </table>
-<!-- /generado -->
+<!-- /generated -->
 
 The classic word game, with the fix it has always needed: **nobody sits and watches**. Instead of one bored executioner and one guesser, every player writes the word for the next one, the last one writes for the first, and everyone guesses their own. Two players make a duel, six make a race. Your score is **the lives you had left**, so cracking the word is not enough: you have to crack it cheap. Setting an impossible word earns nothing, and the player next to you writes yours anyway.
 
@@ -243,7 +243,7 @@ Spec and design: [docs/games/hangman.md](docs/games/hangman.md)
 
 ## 🎲 Liar's Dice (Dudo)
 
-<!-- generado: capturas:dudo · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:dudo · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/liars-dice/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
@@ -264,7 +264,7 @@ Spec and design: [docs/games/hangman.md](docs/games/hangman.md)
     <td></td>
   </tr>
 </table>
-<!-- /generado -->
+<!-- /generated -->
 
 The classic dice game from bars and long dinners. Everyone rolls five dice and **only looks at their own**. You bet how many dice of one face are on **the whole table** ("four fives"), and the next player either raises or calls **dudo**. On a call everything is revealed and counted: if there were as many as claimed or more, the caller loses a die; if there were fewer, the bidder does. **Aces are wild**. A player with no dice left is out, and the last one with dice wins.
 
@@ -282,7 +282,7 @@ Spec and design: [docs/games/liars-dice.md](docs/games/liars-dice.md)
 
 ## 📝 Generala
 
-<!-- generado: capturas:generala · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:generala · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/generala/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
@@ -297,7 +297,7 @@ Spec and design: [docs/games/liars-dice.md](docs/games/liars-dice.md)
     <td align="center"><img src="docs/screenshots/generala/03-final-solo.png" width="180" alt="Solo score and record"><br><sub>Solo score and record</sub></td>
   </tr>
 </table>
-<!-- /generado -->
+<!-- /generated -->
 
 The dice game of every Latin American after-dinner table. On your turn you roll five dice **up to three times**, tapping the ones you want to keep between rolls, and then you score the result in a free box of your card, or cross one out with a 0. There are eleven boxes, so there are eleven turns, and the highest total wins: ones to sixes add up their face, a straight is worth 20, a full house 30, four of a kind 40 (five more if they come on the first roll), a generala 50 and a double generala 100. A **generala on the first roll wins the game on the spot**; that rule ships on and can be turned off before starting.
 
@@ -315,7 +315,7 @@ Spec and design: [docs/games/generala.md](docs/games/generala.md)
 
 ## 🍹 Julep (Julepe)
 
-<!-- generado: capturas:julepe · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:julepe · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/julep/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
@@ -336,7 +336,7 @@ Spec and design: [docs/games/generala.md](docs/games/generala.md)
     <td></td>
   </tr>
 </table>
-<!-- /generado -->
+<!-- /generated -->
 
 > **Paused for now.** Several rounds of rewriting the rules text still did not make the game land
 > — not even for the person writing them. The home page shows it as "Coming soon", at the end of the
@@ -362,7 +362,7 @@ Spec and design: [docs/games/julep.md](docs/games/julep.md)
 
 ## 🏆 The Cup (La Copa)
 
-<!-- generado: capturas:copa · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:copa · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/cup/00-invitacion.png" width="180" alt="The invite: your name and a 4-digit PIN"><br><sub>The invite: your name and a 4-digit PIN</sub></td>
@@ -383,7 +383,7 @@ Spec and design: [docs/games/julep.md](docs/games/julep.md)
     <td></td>
   </tr>
 </table>
-<!-- /generado -->
+<!-- /generated -->
 
 **On the menu since D-175**, after a stint in the lab (D-101). The 3-day cup, for testing with close friends, is offered with `?three` in the link. A 🐞 button sends bug reports and comments with their context, no login needed.
 
@@ -478,7 +478,7 @@ Spec and design: [docs/games/cup.md](docs/games/cup.md)
 
 The whole experience is translated: the menu and its footer lines, every game with all its modes, the rooms, the chat, the transport errors, the "pass the phone" screens and the cards of every Timeline theme. Portuguese is the Brazilian one, informal; German is standard German for Germany, Austria and Switzerland (D-194). The names are translated the same way in every language:
 
-<!-- generado: idiomas · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: languages · written by python3 tools/release/readme.py update -->
 | Español | English | Português | Deutsch |
 |---|---|---|---|
 | Juegos de Salón | Party Games | Jogos de Salão | Salonspiele |
@@ -500,7 +500,7 @@ The whole experience is translated: the menu and its footer lines, every game wi
 | Desenredo | Untangle | Desenrola | Entwirren |
 | ¿Dónde queda? | Where Is It? | Onde fica? | Wo liegt das? |
 | El caso | The Case | O Caso | Der Fall |
-<!-- /generado -->
+<!-- /generated -->
 
 How it is put together (canon C-3):
 
@@ -543,7 +543,7 @@ How it is put together (canon C-3):
   app, instead, is named in the player's language: there is one manifest per language, and
   `instalable.js` picks it, along with the iPhone's `apple-mobile-web-app-title` (D-222).
 
-<!-- generado: capturas:idiomas · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: screenshots:idiomas · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/fourth-king/11-menu-en.png" width="180" alt="Menu in English"><br><sub>Menu in English</sub></td>
@@ -552,7 +552,7 @@ How it is put together (canon C-3):
     <td></td>
   </tr>
 </table>
-<!-- /generado -->
+<!-- /generated -->
 
 ## Owner dashboard
 
@@ -603,7 +603,7 @@ python3 -m http.server 8765 -d public
 
 Then open http://localhost:8765 (ES modules have to be served over HTTP). Tests for the engines, the languages and the shared modules:
 
-<!-- generado: pruebas · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: tests · written by python3 tools/release/readme.py update -->
 ```bash
 node public/battleship/engine.test.mjs
 node public/bulls-and-cows/engine.test.mjs
@@ -651,36 +651,36 @@ node public/panel/aggregate.test.mjs
 node public/panel/copas.test.mjs
 node public/panel/rutas.test.mjs
 node tools/agents/approve.test.mjs
+node tools/agents/clean-worktrees.test.mjs
+node tools/agents/covers.test.mjs
 node tools/agents/decision.test.mjs
 node tools/agents/document.test.mjs
 node tools/agents/feedback.test.mjs
-node tools/agents/clean-worktrees.test.mjs
 node tools/agents/labs-key.test.mjs
 node tools/agents/marketing.test.mjs
-node tools/agents/covers.test.mjs
 node tools/agents/processes.test.mjs
+node tools/e2e/already-tested.test.mjs
 node tools/e2e/changes.test.mjs
 node tools/e2e/groups.test.mjs
 node tools/e2e/output.test.mjs
-node tools/e2e/already-tested.test.mjs
 node tools/firebase/rankings-history.test.mjs
+node tools/push/daily.test.mjs
 node tools/push/notify.test.mjs
 node tools/push/schedule.test.mjs
-node tools/push/daily.test.mjs
 node tools/push/webpush.test.mjs
 node tools/release/changelog.test.mjs
 node tools/release/version.test.mjs
 ```
-<!-- /generado -->
+<!-- /generated -->
 
 ## Looking at one screen
 
 To check how a single screen turned out, without playing a whole game:
 
 ```bash
-node tools/e2e/look.mjs ahorcado juego --ancho 320
-node tools/e2e/look.mjs ahorcado resultado --idioma pt
-node tools/e2e/look.mjs panel datos --ancho 900
+node tools/e2e/look.mjs ahorcado game --width 320
+node tools/e2e/look.mjs ahorcado result --lang pt
+node tools/e2e/look.mjs panel data --width 900
 ```
 
 It takes the screenshot and reports horizontal scroll, buttons under 44 px and anything that falls below the bottom edge, which is what the canon asks you to look at on every screen. The path to each screen lives in `tools/e2e/paths.mjs`: adding one is adding an entry, not writing a new script, and the screen is then tested in every language too.
@@ -688,7 +688,7 @@ It takes the screenshot and reports horizontal scroll, buttons under 44 px and a
 To look at **all** the screenshots in this README at once, before publishing them, the contact sheet puts them side by side at the size they will be seen:
 
 ```bash
-node tools/e2e/contact-sheet.mjs cuarto-rey --salida /tmp/contacto
+node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 ```
 
 Retaking them is not reviewing them. Together they show what a single image hides. That is how we found the Cuarto Rey player list photographed halfway through its entrance animation, with rows at different widths, as if the grid were broken (D-76).
@@ -707,7 +707,7 @@ It is the whole app over HTTPS, so the modes that need a secure context work too
 Each pull request leaves its changelog entry, without a number, in `changelog/<branch>.md`; the version is the top entry of `CHANGELOG.md` bumped once per pending entry, in the order the pull requests reached `main`, so it is assigned on merge. Pages in git carry no version: the publish workflow stamps it into the copy it uploads (import maps, stylesheets and social card images get `?v=<version>-<commit>`), so the browser never mixes old and new files and two open pull requests never clash over it. To try the stamp locally, on a copy:
 
 ```bash
-python3 tools/release/set-version.py --sitio /tmp/site
+python3 tools/release/set-version.py --site /tmp/site
 ```
 
 ## Keeping this README current
@@ -715,30 +715,30 @@ python3 tools/release/set-version.py --sitio /tmp/site
 This file states things the code already knows (how many games there are, what modes each one has, how many cards each theme carries, which tests run) and shows screenshots of screens that change. None of that announces when it goes stale, so there is a tool:
 
 ```bash
-python3 tools/release/readme.py revisar          # did anything fall behind the code?
-python3 tools/release/readme.py actualizar       # rewrites the generated blocks
-python3 tools/release/readme.py capturas <section> [--sin-red]   # retakes the screenshots
-python3 tools/release/readme.py sellar           # "I have read it again against these facts"
+python3 tools/release/readme.py check            # did anything fall behind the code?
+python3 tools/release/readme.py update           # rewrites the generated blocks
+python3 tools/release/readme.py screenshots <section> [--offline]   # retakes the screenshots
+python3 tools/release/readme.py seal             # "I have read it again against these facts"
 ```
 
-- **Anything derivable is generated.** Everything between `<!-- generado: ... -->` and
-  `<!-- /generado -->` is written by `actualizar` from [`tools/release/facts.mjs`](tools/release/facts.mjs),
+- **Anything derivable is generated.** Everything between `<!-- generated: ... -->` and
+  `<!-- /generated -->` is written by `update` from [`tools/release/facts.mjs`](tools/release/facts.mjs),
   which imports the real modules (`games.js`, the `rules.js` files, `decks/index.js`). Nothing in
   there is edited by hand: the games table, the themes, the names per language, the tests, the
   document index and the screenshot galleries.
 - **Prose is written by a person**, and the tool does not touch it. It reports on it instead.
-  `revisar` compares today's facts against the last seal (`docs/facts.json`) and names what
-  changed and which section to read again. Once it has been read, `sellar` records that.
+  `check` compares today's facts against the last seal (`docs/facts.json`) and names what
+  changed and which section to read again. Once it has been read, `seal` records that.
 - **Screenshots are retaken automatically.** [`docs/capturas.json`](docs/capturas.json) says which
   script in [`tools/e2e/`](tools/e2e/README.md) each image comes from and which shot it is.
-  `capturas` runs the scripts in headless Chrome, copies the PNGs and saves them at twice the width
-  they are shown at. The ones that need a Firebase room are marked and skipped with `--sin-red`.
+  `screenshots` runs the scripts in headless Chrome, copies the PNGs and saves them at twice the width
+  they are shown at. The ones that need a Firebase room are marked and skipped with `--offline`.
   Look at them before publishing: design problems are seen, not asserted (C-12).
-- **The hook that makes it happen** is the `pruebas` check on every pull request and before every
-  publish (C-11): it runs `revisar` and stays red if the README fell behind.
+- **The hook that makes it happen** is the `tests` check on every pull request and before every
+  publish (C-11): it runs `check` and stays red if the README fell behind.
 
 To add a screen to this README: take the shot in the e2e script, add the entry to
-`docs/capturas.json`, then run `capturas` and `actualizar`.
+`docs/capturas.json`, then run `screenshots` and `update`.
 
 ## Layout
 
@@ -805,7 +805,7 @@ guide is [CONTRIBUTING.md](CONTRIBUTING.md) (D-189).
 
 These documents are being moved to English (D-316); the ones with a Spanish title are still in Spanish.
 
-<!-- generado: documentacion · written by python3 tools/release/readme.py actualizar -->
+<!-- generated: docs · written by python3 tools/release/readme.py update -->
 - [Cánones y estándares de Juegos de Salón](docs/CANONES.md)
 - [Requerimientos](docs/REQUERIMIENTOS.md)
 - [Decisiones de diseño y arquitectura](docs/DECISIONES.md)
@@ -835,4 +835,4 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
 - [Uno al día](docs/UNO-AL-DIA.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
-<!-- /generado -->
+<!-- /generated -->

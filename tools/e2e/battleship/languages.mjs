@@ -1,6 +1,6 @@
-// Batalla Naval en todos los idiomas que se ofrecen (D-199): cada pantalla de paths.mjs, en cada uno,
-// contra el español. Uso: node tools/e2e/battleship/languages.mjs <carpeta-salida>
-import { revisarIdiomas } from '../languages-common.mjs';
+// Battleship in every language offered (D-199): each screen in paths.mjs, in each one,
+// against Spanish. Usage: node tools/e2e/battleship/languages.mjs <output-folder>
+import { checkLanguages } from '../languages-common.mjs';
 import { LOCALES } from '../../../public/battleship/rules.js';
 
-await revisarIdiomas('batalla-naval', { dicts: [LOCALES], port: 9463 });
+await checkLanguages('batalla-naval', { dicts: [LOCALES], port: 9463 });

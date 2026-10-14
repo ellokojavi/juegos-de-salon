@@ -1,14 +1,14 @@
-import { salida } from '../output.mjs';
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = salida();
+// With several sessions at once, each serves its copy on its own port (D-135)
+const SITE = process.env.SITE || 'http://localhost:8765';
+const OUT = output();
 const b = await launch({ port: 9391, dir: `${OUT}/p`, out: OUT });
 const click = sel => b.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);
 const clickText = (sel, re) => b.evaluate(`(()=>{const x=[...document.querySelectorAll('${sel}')].find(e=>new RegExp('${re}','i').test(e.textContent));if(!x)return 'no';x.click();return 'ok'})()`);
 const v = () => b.evaluate(`(()=>{const s=window.__ldt.view();return JSON.stringify({current:s.current,line:s.line.length,hands:Object.fromEntries(Object.entries(s.hands).map(([k,h])=>[k,h.length])),pool:s.poolLeft,done:s.done,winner:s.winner})})()`).then(JSON.parse);
 const handoff = async () => { await b.evaluate(`document.querySelector('#handoff .btn')?.click() ?? document.getElementById('handoff').click(); 1`); await sleep(500); };
-// juega el turno actual acertando o fallando a propósito
+// plays the current turn, getting it right or wrong on purpose
 const playTurn = async (correct = true) => {
   const info = await b.evaluate(`(()=>{const s=window.__ldt.view();const me=s.current;const card=s.hands[me][0];
     let at=0; const y=s.byId[card].year; while(at<s.line.length && s.byId[s.line[at]].year<y) at++;
@@ -26,10 +26,10 @@ const playTurn = async (correct = true) => {
   return 'ok';
 };
 
-await b.go(`${SITIO}/timeline/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITIO}/timeline/`);
-console.log('modos:', await b.evaluate(`[...document.querySelectorAll('.mode')].map(m=>m.disabled?'off':'on').join(',')`));
+await b.go(`${SITE}/timeline/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITE}/timeline/`);
+console.log('modes:', await b.evaluate(`[...document.querySelectorAll('.mode')].map(m=>m.disabled?'off':'on').join(',')`));
 await b.shot('01-intro');
-// ---------- UN CELULAR, 3 jugadores, música ----------
+// ---------- ONE PHONE, 3 players, music ----------
 await click('.mode'); await sleep(300);
 await clickText('.theme-card', 'Música'); await sleep(100);
 await clickText('#setup-form .btn', 'Agregar'); await sleep(100);
@@ -38,33 +38,33 @@ await b.evaluate(`(()=>{const x=[...document.querySelectorAll('#setup-form .seg 
 await clickText('#setup-form .seg button', 'Corta'); await sleep(100);
 await b.shot('02-setup');
 await click('#setup-actions .btn'); await sleep(700);
-console.log('inicio:', JSON.stringify(await v()), '| handoff:', await b.evaluate(`!document.getElementById('handoff').hidden`));
+console.log('start:', JSON.stringify(await v()), '| handoff:', await b.evaluate(`!document.getElementById('handoff').hidden`));
 await handoff(); await sleep(300); await b.shot('03-play');
-console.log('turno 1 (acierto):', await playTurn(true)); await b.shot('04-verdict');
-console.log('tras acertar:', JSON.stringify(await v()));
+console.log('turn 1 (hit):', await playTurn(true)); await b.shot('04-verdict');
+console.log('after a hit:', JSON.stringify(await v()));
 await handoff(); await sleep(300);
-console.log('turno 2 (error):', await playTurn(false)); await sleep(200); await b.shot('05-verdict-error');
-console.log('tras fallar:', JSON.stringify(await v()));
+console.log('turn 2 (miss):', await playTurn(false)); await sleep(200); await b.shot('05-verdict-error');
+console.log('after a miss:', JSON.stringify(await v()));
 await handoff(); await sleep(300);
-// persistencia a mitad
-console.log('guardado:', await b.evaluate(`(()=>{const d=JSON.parse(localStorage.getItem('juegos-de-salon:linea-de-tiempo:session'));return JSON.stringify({mode:d.mode,msgs:d.messages.length,theme:d.config.theme,players:d.config.players,done:d.done})})()`));
-await b.go(`${SITIO}/timeline/`, 1200);
-console.log('tras recargar → continuar:', await b.evaluate(`!!document.querySelector('#resume-slot .btn')`));
+// persistence mid-game
+console.log('saved:', await b.evaluate(`(()=>{const d=JSON.parse(localStorage.getItem('juegos-de-salon:linea-de-tiempo:session'));return JSON.stringify({mode:d.mode,msgs:d.messages.length,theme:d.config.theme,players:d.config.players,done:d.done})})()`));
+await b.go(`${SITE}/timeline/`, 1200);
+console.log('after reloading → continue:', await b.evaluate(`!!document.querySelector('#resume-slot .btn')`));
 await click('#resume-slot .btn'); await sleep(900);
-console.log('retomado:', JSON.stringify(await v()), '| pantalla:', await b.active());
+console.log('resumed:', JSON.stringify(await v()), '| screen:', await b.active());
 await handoff(); await sleep(300);
-// terminar la partida acertando siempre
+// finish the game, always getting it right
 let guard = 0;
 while (guard++ < 60) {
   const s = await v(); if (s.done) break;
   const r = await playTurn(true);
-  if (r !== 'ok') { console.log('corte:', r, JSON.stringify(s)); break; }
+  if (r !== 'ok') { console.log('stopped:', r, JSON.stringify(s)); break; }
   await handoff(); await sleep(150);
 }
-const fin = await v();
-console.log('fin local:', JSON.stringify(fin), '| pantalla:', await b.active());
+const end = await v();
+console.log('local end:', JSON.stringify(end), '| screen:', await b.active());
 await sleep(800); await b.shot('06-result');
-console.log('resultado:', await b.evaluate(`document.getElementById('result-title').textContent+' | '+document.getElementById('result-sub').textContent+' | '+document.getElementById('result-ranking').innerText.replace(/\\n/g,' · ')`));
-// Jugar solo tiene su propio guion (linea-de-tiempo-solo.mjs): es la ⏳ Línea Relámpago (D-142)
+console.log('result:', await b.evaluate(`document.getElementById('result-title').textContent+' | '+document.getElementById('result-sub').textContent+' | '+document.getElementById('result-ranking').innerText.replace(/\\n/g,' · ')`));
+// Playing solo has its own script (timeline/solo.mjs): it's ⏳ Línea Relámpago (D-142)
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();

@@ -1,24 +1,27 @@
-"""Dibuja la flota y el agua de Batalla Naval, y escribe `public/battleship/flota.js`.
+"""Draws Battleship's fleet and water, and writes `public/battleship/flota.js`.
 
-    python3 tools/generators/fleet.py        # rehace el módulo con los mapas
+    python3 tools/generators/fleet.py        # remakes the module with the maps
 
-El módulo que sale es **generado**: para cambiar un barco se toca este archivo y se vuelve a
-correr, no se editan los mapas a mano (se perderían en la siguiente pasada).
+The module it writes is **generated**: to change a ship you touch this file and run it again;
+the maps are not edited by hand (they would be lost on the next run).
 
-Los mapas son de 16×16 píxeles por casilla, vistos desde arriba y con la proa a la derecha;
-vertical es el mismo dibujo rotado 90°.
+The maps are 16×16 pixels per square, seen from above with the bow to the right; vertical is
+the same drawing rotated 90°.
 
-Dos reglas mandan sobre todo lo demás:
-  1. Un barco **empieza y termina en punta**: proa afilada y popa más angosta que el centro.
-     El contorno es lo único que se lee de verdad a 30 px.
-  2. El detalle se estampa con funciones (torretas, puentes, escotillas, remaches), para que
-     todos los barcos tengan la misma mano, las mismas luces y el mismo grosor de línea.
+Two rules rule over everything else:
+  1. A ship **begins and ends in a point**: a sharp bow and a stern narrower than the middle.
+     The outline is the only thing really read at 30 px.
+  2. The detail is stamped with functions (turrets, bridges, hatches, rivets), so every ship has
+     the same hand, the same highlights and the same line weight.
+
+The JavaScript it writes (HEAD, TAIL and the comments inside the module) is the app's code and
+stays as the app names it until the app itself switches to English (D-316, phase 4).
 """
 import random
 
 N = 16
 
-def lienzo():
+def canvas():
     return [['.'] * N for _ in range(N)]
 
 def px(m, x, y, ch):
@@ -30,44 +33,44 @@ def rect(m, x0, y0, x1, y1, ch):
         for x in range(x0, x1 + 1):
             px(m, x, y, ch)
 
-def linea_h(m, x0, x1, y, ch):
+def hline(m, x0, x1, y, ch):
     rect(m, x0, y, x1, y, ch)
 
-# ---------------------------------------------------------------- el agua
-def agua(semilla=7):
-    """Una sola baldosa, repetida en todas las casillas: rayas horizontales cortas en cuatro
-    tonos, como el mar visto desde muy arriba. Los trazos no tocan los bordes verticales para
-    que al repetirse no se arme una raya infinita."""
-    r = random.Random(semilla)
+# ---------------------------------------------------------------- the water
+def water(seed=7):
+    """A single tile, repeated in every square: short horizontal strokes in four shades, like
+    the sea seen from high above. The strokes do not touch the vertical edges so that, repeated,
+    they do not form an endless line."""
+    r = random.Random(seed)
     m = [['1'] * N for _ in range(N)]
     for y in range(N):
         for _ in range(r.randint(1, 3)):
-            largo = r.randint(2, 5)
-            x = r.randint(0, N - largo)
-            tono = r.choice('2223')
-            for i in range(largo):
-                m[y][x + i] = tono
-    for _ in range(3):                        # algunos brillos, pocos y cortos
+            length = r.randint(2, 5)
+            x = r.randint(0, N - length)
+            shade = r.choice('2223')
+            for i in range(length):
+                m[y][x + i] = shade
+    for _ in range(3):                        # a few highlights, few and short
         y = r.randrange(N); x = r.randrange(N - 3)
         for i in range(r.randint(2, 3)):
             m[y][x + i] = '4'
     return m
 
-# ---------------------------------------------------------------- casco
-def limites(top, bot, forma, y):
-    """De qué columna a qué columna llega el casco en esta fila."""
-    centro = (top + bot) / 2
-    d = abs(y - centro)
-    if forma == 'proa':
+# ---------------------------------------------------------------- hull
+def bounds(top, bot, shape, y):
+    """From which column to which column the hull reaches in this row."""
+    center = (top + bot) / 2
+    d = abs(y - center)
+    if shape == 'bow':
         return 0, max(2, int(round((N - 1) - d * 1.85)))
-    if forma == 'popa':
+    if shape == 'stern':
         return min(N - 3, int(round(d * 1.15))), N - 1
     return 0, N - 1
 
-def casco(m, top, bot, forma='medio', relleno='#'):
-    centro = (top + bot) / 2
+def hull(m, top, bot, shape='middle', fill='#'):
+    center = (top + bot) / 2
     for y in range(top, bot + 1):
-        x0, x1 = limites(top, bot, forma, y)
+        x0, x1 = bounds(top, bot, shape, y)
         if y in (top, bot):
             ch = 'o'
         elif y == top + 1:
@@ -75,240 +78,240 @@ def casco(m, top, bot, forma='medio', relleno='#'):
         elif y == bot - 1:
             ch = 's'
         else:
-            ch = relleno
-        linea_h(m, x0, x1, y, ch)
-        if ch != 'o':                       # el filo del casco, siempre oscuro
-            if forma == 'proa':
+            ch = fill
+        hline(m, x0, x1, y, ch)
+        if ch != 'o':                       # the hull's edge, always dark
+            if shape == 'bow':
                 px(m, x1, y, 'o')
-            if forma == 'popa':
+            if shape == 'stern':
                 px(m, x0, y, 'o')
-        if ch == relleno and abs(y - centro) < 1:
-            linea_h(m, x0 + 1, x1 - 1, y, 'm')   # junta de cubierta, a lo largo
+        if ch == fill and abs(y - center) < 1:
+            hline(m, x0 + 1, x1 - 1, y, 'm')   # deck seam, lengthwise
 
 
-def casco_sub(m, top, bot, forma):
-    """El submarino no es una caja con puntas: es un cilindro. El casco se sombrea de arriba
-    abajo (luz, casco, oscuro) para que se lea redondo, y las puntas son casquetes de círculo
-    en vez de cuñas: la proa termina roma, como un puro."""
+def sub_hull(m, top, bot, shape):
+    """The submarine is not a box with points: it is a cylinder. The hull is shaded top to
+    bottom (light, hull, dark) so it reads round, and the ends are circle caps instead of
+    wedges: the bow ends blunt, like a cigar."""
     h = (bot - top) / 2
     c = (top + bot) / 2
-    tonos = ['o', '+', '#', 'm', 's', 'o']
+    shades = ['o', '+', '#', 'm', 's', 'o']
     for y in range(top, bot + 1):
         d = abs(y - c)
-        casquete = int(round(h - (max(h * h - d * d, 0)) ** 0.5))
-        if forma == 'proa':
-            x0, x1 = 0, (N - 1) - casquete
-        elif forma == 'popa':
-            x0, x1 = casquete, N - 1
+        cap = int(round(h - (max(h * h - d * d, 0)) ** 0.5))
+        if shape == 'bow':
+            x0, x1 = 0, (N - 1) - cap
+        elif shape == 'stern':
+            x0, x1 = cap, N - 1
         else:
             x0, x1 = 0, N - 1
-        ch = tonos[int(round((y - top) / (bot - top) * (len(tonos) - 1)))]
-        linea_h(m, x0, x1, y, ch)
-        if forma == 'proa':
+        ch = shades[int(round((y - top) / (bot - top) * (len(shades) - 1)))]
+        hline(m, x0, x1, y, ch)
+        if shape == 'bow':
             px(m, x1, y, 'o')
-        if forma == 'popa':
+        if shape == 'stern':
             px(m, x0, y, 'o')
 
-def remaches(m, top, bot, forma, cols=(3, 8, 13)):
-    """Costuras del casco: una marca corta en cada cuaderna."""
+def rivets(m, top, bot, shape, cols=(3, 8, 13)):
+    """Hull seams: a short mark at each frame."""
     for x in cols:
         for y in (top + 2, bot - 2):
-            x0, x1 = limites(top, bot, forma, y)
+            x0, x1 = bounds(top, bot, shape, y)
             if x0 + 1 <= x <= x1 - 1:
                 px(m, x, y, 'm')
 
-def escotillas(m, xs, y, ancho=2):
+def hatches(m, xs, y, width=2):
     for x in xs:
-        rect(m, x, y, x + ancho - 1, y, 'o')
+        rect(m, x, y, x + width - 1, y, 'o')
         px(m, x, y - 1, '+')
 
-def espuma_proa(m, top, bot, forma='proa'):
-    centro = int((top + bot) / 2)
-    for y, dx in ((centro - 1, 1), (centro, 2), (centro + 1, 1)):
-        x0, x1 = limites(top, bot, forma, y)
+def bow_foam(m, top, bot, shape='bow'):
+    center = int((top + bot) / 2)
+    for y, dx in ((center - 1, 1), (center, 2), (center + 1, 1)):
+        x0, x1 = bounds(top, bot, shape, y)
         px(m, min(N - 1, x1 + dx), y, 'w')
 
-def estela(m, top, bot):
-    """Agua revuelta detrás de la popa."""
-    centro = int((top + bot) / 2)
-    for y in (centro - 2, centro + 2):
+def wake(m, top, bot):
+    """Churned water behind the stern."""
+    center = int((top + bot) / 2)
+    for y in (center - 2, center + 2):
         px(m, 0, y, 'w')
-    px(m, 1, centro, 'w')
+    px(m, 1, center, 'w')
 
-# ---------------------------------------------------------------- piezas
-def torreta(m, x, y, largo=5, barriles=(-2, 1), hacia=1):
-    """Torreta: base oscura, techo claro y cañones gruesos. `hacia=-1` apunta a la popa."""
+# ---------------------------------------------------------------- parts
+def turret(m, x, y, length=5, barrels=(-2, 1), facing=1):
+    """Turret: dark base, light roof and thick guns. `facing=-1` points to the stern."""
     rect(m, x, y - 3, x + 4, y + 3, 'o')
     rect(m, x + 1, y - 2, x + 4, y + 2, 'm')
     rect(m, x + 1, y - 1, x + 3, y + 1, '+')
     px(m, x + 2, y, 'o')
-    for dy in barriles:
-        a = x + 5 if hacia > 0 else x - largo
-        b = a + largo - 1
+    for dy in barrels:
+        a = x + 5 if facing > 0 else x - length
+        b = a + length - 1
         rect(m, a, y + dy, b, y + dy + 1, 'o')
-        punta = b if hacia > 0 else a
-        px(m, punta, y + dy, 'y'); px(m, punta, y + dy + 1, 'y')
+        tip = b if facing > 0 else a
+        px(m, tip, y + dy, 'y'); px(m, tip, y + dy + 1, 'y')
 
-def puente(m, x, y, alto=7, ancho=6):
-    rect(m, x, y - alto // 2, x + ancho - 1, y + alto // 2, 'o')
-    rect(m, x, y - alto // 2 + 1, x + ancho - 2, y + alto // 2 - 1, 'm')
-    rect(m, x + 1, y - alto // 2 + 2, x + ancho - 3, y + alto // 2 - 2, '+')
-    linea_h(m, x + 1, x + ancho - 3, y, 'o')          # ventanas
-    px(m, x + ancho - 2, y - 1, '+')
+def bridge(m, x, y, height=7, width=6):
+    rect(m, x, y - height // 2, x + width - 1, y + height // 2, 'o')
+    rect(m, x, y - height // 2 + 1, x + width - 2, y + height // 2 - 1, 'm')
+    rect(m, x + 1, y - height // 2 + 2, x + width - 3, y + height // 2 - 2, '+')
+    hline(m, x + 1, x + width - 3, y, 'o')          # windows
+    px(m, x + width - 2, y - 1, '+')
 
-def chimenea(m, x, y, humo=True):
+def funnel(m, x, y, smoke=True):
     rect(m, x, y - 3, x + 3, y + 3, 'o')
     rect(m, x, y - 2, x + 2, y + 2, 'm')
     rect(m, x + 1, y - 1, x + 2, y + 1, 'o')
-    if humo:
+    if smoke:
         px(m, x + 1, y - 5, 'w'); px(m, x + 2, y - 6, 'w')
 
 def radar(m, x, y):
     rect(m, x - 1, y, x + 1, y, 'c'); px(m, x, y + 1, 'c')
     px(m, x, y + 2, '+'); px(m, x, y + 3, '+')
 
-def mastil(m, x, y0, y1):
+def mast(m, x, y0, y1):
     rect(m, x, y0, x, y1, 'm')
     px(m, x - 1, y0 + 1, '+'); px(m, x + 1, y0 + 1, '+')
     px(m, x, y0, 'y')
 
-def botes(m, xs, top, bot):
+def boats(m, xs, top, bot):
     for x in xs:
         rect(m, x, top + 2, x + 1, top + 2, 'w')
         rect(m, x, bot - 2, x + 1, bot - 2, 'w')
 
-def helipuerto(m, cx, cy, r=3):
+def helipad(m, cx, cy, r=3):
     rect(m, cx - r, cy - r, cx + r, cy + r, 'o')
     rect(m, cx - r + 1, cy - r + 1, cx + r - 1, cy + r - 1, 'm')
     px(m, cx - 1, cy - 1, '+'); px(m, cx + 1, cy - 1, '+')
     px(m, cx - 1, cy, '+');     px(m, cx, cy, '+');      px(m, cx + 1, cy, '+')
-    px(m, cx - 1, cy + 1, '+'); px(m, cx + 1, cy + 1, '+')       # la H
+    px(m, cx - 1, cy + 1, '+'); px(m, cx + 1, cy + 1, '+')       # the H
 
-def ancla(m, x, y):
+def anchor(m, x, y):
     px(m, x, y, 'o'); px(m, x, y + 1, 'o'); px(m, x + 1, y, 'm')
 
-def tubos(m, x, y, n=3):
+def tubes(m, x, y, n=3):
     for i in range(n):
         rect(m, x, y + i * 2, x + 1, y + i * 2, 'o')
 
-def texto(m):
+def rows(m):
     return ["'" + ''.join(f) + "'" for f in m]
 
-FLOTA = {}
+FLEET = {}
 
-# ---------------- Portaaviones (5): el más ancho, cubierta de pista ----------------
+# ---------------- Carrier (5): the widest, a runway deck ----------------
 CT, CB = 1, 14
-def cubierta(m, forma='medio'):
-    casco(m, CT, CB, forma, relleno='d')
+def deck(m, shape='middle'):
+    hull(m, CT, CB, shape, fill='d')
     y = (CT + CB) // 2
-    for x in range(1, N - 1, 5):                       # eje de la pista
+    for x in range(1, N - 1, 5):                       # runway centerline
         rect(m, x, y, x + 2, y, 'y')
-    for borde in (CT + 2, CB - 2):                     # bordes de la pista
-        x0, x1 = limites(CT, CB, forma, borde)
-        linea_h(m, x0 + 1, x1 - 1, borde, 'm')
-    remaches(m, CT, CB, forma, cols=(2, 7, 12))
+    for edge in (CT + 2, CB - 2):                     # runway edges
+        x0, x1 = bounds(CT, CB, shape, edge)
+        hline(m, x0 + 1, x1 - 1, edge, 'm')
+    rivets(m, CT, CB, shape, cols=(2, 7, 12))
 
 car = []
-m = lienzo(); cubierta(m, 'popa')
-for x in (4, 7, 10):                                    # cables de frenado
+m = canvas(); deck(m, 'stern')
+for x in (4, 7, 10):                                    # arresting wires
     rect(m, x, CT + 3, x, CB - 3, 'm')
-estela(m, CT, CB); car.append(m)
+wake(m, CT, CB); car.append(m)
 
-m = lienzo(); cubierta(m)
-rect(m, 6, 6, 11, 9, 'c'); rect(m, 4, 7, 12, 8, 'c')    # caza cian
+m = canvas(); deck(m)
+rect(m, 6, 6, 11, 9, 'c'); rect(m, 4, 7, 12, 8, 'c')    # cyan fighter
 px(m, 13, 7, '+'); px(m, 13, 8, '+'); px(m, 5, 5, 'c'); px(m, 5, 10, 'c')
 px(m, 12, 6, 'o'); px(m, 12, 9, 'o')
 car.append(m)
 
-m = lienzo(); cubierta(m)
+m = canvas(); deck(m)
 rect(m, 6, 0, 11, 5, 'o'); rect(m, 6, 1, 10, 4, 'm'); rect(m, 7, 2, 9, 3, '+')
-linea_h(m, 7, 9, 3, 'o')                                 # ventanas de la isla
-radar(m, 8, 0); px(m, 12, 1, 'r'); px(m, 12, 2, 'r'); mastil(m, 11, 0, 3)
+hline(m, 7, 9, 3, 'o')                                 # the island's windows
+radar(m, 8, 0); px(m, 12, 1, 'r'); px(m, 12, 2, 'r'); mast(m, 11, 0, 3)
 car.append(m)
 
-m = lienzo(); cubierta(m)
-rect(m, 4, 5, 9, 8, 's'); rect(m, 3, 6, 10, 7, '+')      # avión gris plegado
-rect(m, 11, 11, 15, 14, 'o'); rect(m, 12, 12, 14, 13, 'm')   # ascensor de cubierta
+m = canvas(); deck(m)
+rect(m, 4, 5, 9, 8, 's'); rect(m, 3, 6, 10, 7, '+')      # folded grey plane
+rect(m, 11, 11, 15, 14, 'o'); rect(m, 12, 12, 14, 13, 'm')   # deck elevator
 car.append(m)
 
-m = lienzo(); cubierta(m, 'proa')
-for y in (6, 9):                                          # catapultas
-    linea_h(m, 2, 11, y, 'm')
-espuma_proa(m, CT, CB); car.append(m)
-FLOTA['carrier'] = car
+m = canvas(); deck(m, 'bow')
+for y in (6, 9):                                          # catapults
+    hline(m, 2, 11, y, 'm')
+bow_foam(m, CT, CB); car.append(m)
+FLEET['carrier'] = car
 
-# ---------------- Acorazado (4) ----------------
+# ---------------- Battleship (4) ----------------
 BT, BB = 2, 13
 bat = []
-m = lienzo(); casco(m, BT, BB, 'popa'); remaches(m, BT, BB, 'popa')
-torreta(m, 7, 8, largo=3, barriles=(-2, 1), hacia=-1)     # torreta de popa, mirando atrás
-escotillas(m, (12,), 5); estela(m, BT, BB); bat.append(m)
+m = canvas(); hull(m, BT, BB, 'stern'); rivets(m, BT, BB, 'stern')
+turret(m, 7, 8, length=3, barrels=(-2, 1), facing=-1)     # stern turret, facing back
+hatches(m, (12,), 5); wake(m, BT, BB); bat.append(m)
 
-m = lienzo(); casco(m, BT, BB); remaches(m, BT, BB, 'medio')
-torreta(m, 3, 8); botes(m, (1, 13), BT, BB); escotillas(m, (11,), 4); bat.append(m)
+m = canvas(); hull(m, BT, BB); rivets(m, BT, BB, 'middle')
+turret(m, 3, 8); boats(m, (1, 13), BT, BB); hatches(m, (11,), 4); bat.append(m)
 
-m = lienzo(); casco(m, BT, BB); remaches(m, BT, BB, 'medio')
-puente(m, 5, 8, 9, 6); chimenea(m, 1, 8); radar(m, 8, 0); mastil(m, 12, 3, 7)
-botes(m, (13,), BT, BB); bat.append(m)
+m = canvas(); hull(m, BT, BB); rivets(m, BT, BB, 'middle')
+bridge(m, 5, 8, 9, 6); funnel(m, 1, 8); radar(m, 8, 0); mast(m, 12, 3, 7)
+boats(m, (13,), BT, BB); bat.append(m)
 
-m = lienzo(); casco(m, BT, BB, 'proa'); remaches(m, BT, BB, 'proa', cols=(3, 7))
-torreta(m, 1, 8, largo=3); ancla(m, 9, 4); espuma_proa(m, BT, BB); bat.append(m)
-FLOTA['battleship'] = bat
+m = canvas(); hull(m, BT, BB, 'bow'); rivets(m, BT, BB, 'bow', cols=(3, 7))
+turret(m, 1, 8, length=3); anchor(m, 9, 4); bow_foam(m, BT, BB); bat.append(m)
+FLEET['battleship'] = bat
 
-# ---------------- Crucero (3) ----------------
+# ---------------- Cruiser (3) ----------------
 RT, RB = 3, 12
 cru = []
-m = lienzo(); casco(m, RT, RB, 'popa'); remaches(m, RT, RB, 'popa')
-helipuerto(m, 10, 8, 3); estela(m, RT, RB); cru.append(m)
-m = lienzo(); casco(m, RT, RB); remaches(m, RT, RB, 'medio')
-puente(m, 4, 8, 7, 6); chimenea(m, 11, 8); radar(m, 8, 0); botes(m, (1,), RT, RB); cru.append(m)
-m = lienzo(); casco(m, RT, RB, 'proa'); remaches(m, RT, RB, 'proa', cols=(3, 7))
-torreta(m, 1, 8, largo=4, barriles=(-1,)); tubos(m, 2, 4, 2); ancla(m, 9, 5)
-espuma_proa(m, RT, RB); cru.append(m)
-FLOTA['cruiser'] = cru
+m = canvas(); hull(m, RT, RB, 'stern'); rivets(m, RT, RB, 'stern')
+helipad(m, 10, 8, 3); wake(m, RT, RB); cru.append(m)
+m = canvas(); hull(m, RT, RB); rivets(m, RT, RB, 'middle')
+bridge(m, 4, 8, 7, 6); funnel(m, 11, 8); radar(m, 8, 0); boats(m, (1,), RT, RB); cru.append(m)
+m = canvas(); hull(m, RT, RB, 'bow'); rivets(m, RT, RB, 'bow', cols=(3, 7))
+turret(m, 1, 8, length=4, barrels=(-1,)); tubes(m, 2, 4, 2); anchor(m, 9, 5)
+bow_foam(m, RT, RB); cru.append(m)
+FLEET['cruiser'] = cru
 
-# ---------------- Destructor (2) ----------------
+# ---------------- Destroyer (2) ----------------
 DT, DB = 3, 12
 des = []
-m = lienzo(); casco(m, DT, DB, 'popa'); remaches(m, DT, DB, 'popa')
-chimenea(m, 7, 8); puente(m, 11, 8, 7, 5); radar(m, 13, 0); tubos(m, 3, 6, 2)
-estela(m, DT, DB); des.append(m)
-m = lienzo(); casco(m, DT, DB, 'proa'); remaches(m, DT, DB, 'proa', cols=(3, 7))
-torreta(m, 1, 8, largo=4, barriles=(-1,)); ancla(m, 9, 5); espuma_proa(m, DT, DB); des.append(m)
-FLOTA['destroyer'] = des
+m = canvas(); hull(m, DT, DB, 'stern'); rivets(m, DT, DB, 'stern')
+funnel(m, 7, 8); bridge(m, 11, 8, 7, 5); radar(m, 13, 0); tubes(m, 3, 6, 2)
+wake(m, DT, DB); des.append(m)
+m = canvas(); hull(m, DT, DB, 'bow'); rivets(m, DT, DB, 'bow', cols=(3, 7))
+turret(m, 1, 8, length=4, barrels=(-1,)); anchor(m, 9, 5); bow_foam(m, DT, DB); des.append(m)
+FLEET['destroyer'] = des
 
-# ---------------- Submarino (3): delgado, cilíndrico, romo ----------------
-# Visto desde arriba, la vela es un bloque CHICO sobre el casco, no una cruz: lo que sube por
-# fuera de la silueta es el periscopio, que es justo lo que se ve de un submarino asomado.
+# ---------------- Submarine (3): thin, cylindrical, blunt ----------------
+# Seen from above, the sail is a SMALL block on the hull, not a cross: what rises outside the
+# silhouette is the periscope, which is exactly what is seen of a surfacing submarine.
 ST, SB = 5, 10
 sub = []
-m = lienzo(); casco_sub(m, ST, SB, 'popa')                  # popa: timones y hélice
-# Los timones van en tono medio, no en contorno: sobre agua oscura, lo oscuro no existe.
-rect(m, 4, ST - 2, 8, ST - 1, 'm'); linea_h(m, 4, 8, ST - 2, 's')        # timón de arriba
-rect(m, 4, SB + 1, 8, SB + 2, 'm'); linea_h(m, 4, 8, SB + 2, 's')        # timón de abajo
+m = canvas(); sub_hull(m, ST, SB, 'stern')                  # stern: rudders and propeller
+# The rudders go in mid shade, not outline: on dark water, dark does not exist.
+rect(m, 4, ST - 2, 8, ST - 1, 'm'); hline(m, 4, 8, ST - 2, 's')        # top rudder
+rect(m, 4, SB + 1, 8, SB + 2, 'm'); hline(m, 4, 8, SB + 2, 's')        # bottom rudder
 rect(m, 2, 7, 4, 8, 'm'); rect(m, 1, 6, 1, 9, 'o'); px(m, 0, 7, 'w'); px(m, 0, 8, 'w')
 sub.append(m)
 
-m = lienzo(); casco_sub(m, ST, SB, 'medio')                 # vela, periscopio y escotillas
+m = canvas(); sub_hull(m, ST, SB, 'middle')                 # sail, periscope and hatches
 rect(m, 6, ST + 1, 10, SB - 1, 'm'); rect(m, 7, ST + 1, 9, SB - 1, '+')
-rect(m, 8, 1, 8, ST, 'y')                                    # periscopio asomado
-px(m, 9, 2, 'c'); px(m, 9, 3, 'c'); px(m, 10, 2, 'c')        # antena
-rect(m, 2, 7, 3, 7, 'o'); rect(m, 12, 7, 13, 7, 'o')         # escotillas
+rect(m, 8, 1, 8, ST, 'y')                                    # raised periscope
+px(m, 9, 2, 'c'); px(m, 9, 3, 'c'); px(m, 10, 2, 'c')        # antenna
+rect(m, 2, 7, 3, 7, 'o'); rect(m, 12, 7, 13, 7, 'o')         # hatches
 sub.append(m)
 
-m = lienzo(); casco_sub(m, ST, SB, 'proa')                  # proa roma y tubos
-rect(m, 12, 7, 13, 7, 'o'); rect(m, 12, 8, 13, 8, 'o')       # tubos de torpedo
-rect(m, 3, ST - 1, 6, ST - 1, 'm')                                       # planos de inmersión
+m = canvas(); sub_hull(m, ST, SB, 'bow')                  # blunt bow and tubes
+rect(m, 12, 7, 13, 7, 'o'); rect(m, 12, 8, 13, 8, 'o')       # torpedo tubes
+rect(m, 3, ST - 1, 6, ST - 1, 'm')                                       # diving planes
 rect(m, 3, SB + 1, 6, SB + 1, 'm')
-px(m, 15, 7, 'w'); px(m, 15, 8, 'w')                         # espuma en la nariz
+px(m, 15, 7, 'w'); px(m, 15, 8, 'w')                         # foam at the nose
 sub.append(m)
-FLOTA['submarine'] = sub
+FLEET['submarine'] = sub
 
-# ---------------- salida: el módulo del juego ----------------
-NOMBRES = {'carrier': 'Portaaviones (5)', 'battleship': 'Acorazado (4)', 'cruiser': 'Crucero (3)',
+# ---------------- output: the game's module ----------------
+NAMES = {'carrier': 'Portaaviones (5)', 'battleship': 'Acorazado (4)', 'cruiser': 'Crucero (3)',
            'submarine': 'Submarino (3)', 'destroyer': 'Destructor (2)'}
 
-CABEZA = """/**
+HEAD = """/**
  * La flota y el agua, en pixel art (D-91).
  *
  * **Generado por `tools/generators/fleet.py`.** Para cambiar un barco se edita ese script y se vuelve a
@@ -336,7 +339,7 @@ const PALETA = {
 const AGUA_TONOS = { 1: '#132a45', 2: '#1a3757', 3: '#24476a', 4: '#3f6f9e' };
 """
 
-COLA = """
+TAIL = """
 /** Un mapa a <svg>: cada corrida de píxeles iguales es un <rect>, que son muchos menos. */
 function svgDe(mapa, paleta, fondo = false) {
   let r = '';
@@ -399,22 +402,22 @@ export function barcoEntero(id) {
 }
 """
 
-partes = [CABEZA, f"\nexport const LADO = {N};\n",
+parts = [HEAD, f"\nexport const LADO = {N};\n",
           "\n/** El agua: una sola baldosa, repetida. */\nexport const AGUA = [\n  " +
-          ',\n  '.join(texto(agua())) + ',\n];\n',
+          ',\n  '.join(rows(water())) + ',\n];\n',
           "\n/** Cuántas casillas ocupa cada barco (lo mismo que dice el motor). */\nexport const TAMANOS = { " +
-          ', '.join(f"{k}: {len(v)}" for k, v in FLOTA.items()) + " };\n",
+          ', '.join(f"{k}: {len(v)}" for k, v in FLEET.items()) + " };\n",
           "\n/** Los trozos de cada barco, de popa a proa. */\nexport const PIEZAS = {\n"]
 for k in ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer']:
-    partes.append(f"  // {NOMBRES[k]}\n  {k}: [\n")
-    for m in FLOTA[k]:
-        partes.append('    [' + ', '.join(texto(m)) + '],\n')
-    partes.append('  ],\n')
-partes.append('};\n')
-partes.append(COLA)
+    parts.append(f"  // {NAMES[k]}\n  {k}: [\n")
+    for m in FLEET[k]:
+        parts.append('    [' + ', '.join(rows(m)) + '],\n')
+    parts.append('  ],\n')
+parts.append('};\n')
+parts.append(TAIL)
 
 import pathlib
-RAIZ = pathlib.Path(__file__).resolve().parents[2]
-destino = RAIZ / 'public' / 'battleship' / 'flota.js'
-destino.write_text(''.join(partes), encoding='utf-8')
-print(f'escrito: {destino.relative_to(RAIZ)} ({len(FLOTA)} barcos, {sum(len(v) for v in FLOTA.values())} trozos)')
+ROOT = pathlib.Path(__file__).resolve().parents[2]
+target = ROOT / 'public' / 'battleship' / 'flota.js'
+target.write_text(''.join(parts), encoding='utf-8')
+print(f'written: {target.relative_to(ROOT)} ({len(FLEET)} ships, {sum(len(v) for v in FLEET.values())} pieces)')

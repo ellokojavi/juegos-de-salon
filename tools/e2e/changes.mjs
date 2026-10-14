@@ -1,24 +1,24 @@
-// ¿Un PR puede saltarse las pruebas de punta a punta? Solo si no toca nada que llegue al navegador
-// (D-205, D-299): documentación, marketing, los agentes, el taller que ningún guion ni página
-// importa (`tools/agents/`, `tools/firebase/`), las reglas de Firebase (los guiones de CI no abren
-// salas en él, D-193), los workflows que no son el de estas pruebas y los .md fuera del sitio.
-// Ante la duda, se corren. Lo usa `ci.mjs --lista --cambios <archivo>` en el workflow de GitHub.
+// Can a PR skip the end-to-end tests? Only if it touches nothing that reaches the browser
+// (D-205, D-299): documentation, marketing, the agents, the workshop that no script or page
+// imports (`tools/agents/`, `tools/firebase/`), the Firebase rules (the CI scripts don't open
+// rooms in it, D-193), the workflows other than this one and the .md files outside the site.
+// When in doubt, they run. Used by `ci.mjs --groups --changes <file>` in the GitHub workflow.
 
-/** Lo que ninguna prueba de punta a punta mira. */
-const SIN_NAVEGADOR = [
+/** What no end-to-end test looks at. */
+const NO_BROWSER = [
   r => r.startsWith('docs/'),
   r => r.startsWith('marketing/'),
   r => r.startsWith('.claude/'),
   r => r.endsWith('.md') && !r.startsWith('public/') && !r.startsWith('tools/e2e/'),
-  // D-299: el taller del que el sitio y los guiones no dependen (lo importan a ellos, no al revés)
+  // D-299: the workshop the site and the scripts don't depend on (it imports them, not the other way round)
   r => r.startsWith('tools/agents/'),
   r => r.startsWith('tools/firebase/'),
   r => r.startsWith('firebase/'),
   r => r.startsWith('.github/') && r !== '.github/workflows/e2e.yml',
 ];
 
-/** true si la lista no está vacía y nada de ella llega al navegador. */
-export const sinNavegador = archivos => {
-  const lista = archivos.map(a => a.trim()).filter(Boolean);
-  return lista.length > 0 && lista.every(r => SIN_NAVEGADOR.some(f => f(r)));
+/** true if the list is not empty and nothing in it reaches the browser. */
+export const noBrowser = files => {
+  const list = files.map(a => a.trim()).filter(Boolean);
+  return list.length > 0 && list.every(r => NO_BROWSER.some(f => f(r)));
 };

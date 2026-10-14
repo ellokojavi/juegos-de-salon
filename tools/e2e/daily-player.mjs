@@ -1,115 +1,115 @@
-// Uno al día con jugador (D-230), de punta a punta y con el almacén de prueba (el sitio local no
-// escribe en Firebase): Sara juega el de hoy, entra con nombre y PIN y su día sube a la historia y a
-// los rankings (del día, de la semana y de rachas); invita a un amigo y el texto lleva su link; Pedro,
-// en "otro celular", abre la invitación, ve "🔥 Sara te desafía", juega el mismo desafío, ve el duelo
-// y le da a Sara un comodín, que ella ve al volver. El reloj se fija en el 6 de octubre de 2026, el
-// día n.° 1, cuando toca Desenredo.
-import { salida } from './output.mjs';
+// Uno al día with a player (D-230), end to end and with the test store (the local site doesn't
+// write to Firebase): Sara plays today's, signs in with name and PIN and her day goes up to the
+// history and the rankings (the day's, the week's and streaks'); she invites a friend and the
+// text carries her link; Pedro, on "another phone", opens the invitation, sees "🔥 Sara te
+// desafía", plays the same challenge, sees the duel and gives Sara a wildcard, which she sees when
+// she comes back. The clock is fixed on October 6, 2026, day no. 1, when Desenredo is due.
+import { output as output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
-import { juegoDel, numDia } from '../../public/assets/js/uno-al-dia.js';
+import { juegoDel as gameOf, numDia as dayNumber } from '../../public/assets/js/uno-al-dia.js';
 
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = salida();
+const SITE = process.env.SITE || process.env.SITIO || 'http://localhost:8765';
+const OUT = output();
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
-const HOY = '2026-10-06', N = numDia(HOY), DB = 'juegos-de-salon:prueba:records-db';
-if (juegoDel(HOY) !== 'desenredo') { console.log(`✗ el ${HOY} ya no toca Desenredo: cambia la fecha del guion`); process.exit(1); }
+const TODAY = '2026-10-06', N = dayNumber(TODAY), DB = 'juegos-de-salon:prueba:records-db';
+if (gameOf(TODAY) !== 'desenredo') { console.log(`✗ ${TODAY} no longer gets Desenredo: change the script's date`); process.exit(1); }
 
 const b = await launch({ port: 9521, dir: `${OUT}/p`, out: OUT });
 const ev = x => b.evaluate(x);
 const click = sel => ev(`(()=>{const e=document.querySelector(${JSON.stringify(sel)});if(!e)return false;e.click();return true})()`);
-const texto = sel => ev(`document.querySelector(${JSON.stringify(sel)})?.innerText || ''`);
-const esperar = async (cond, tope = 40) => { for (let i = 0; i < tope && !await ev(cond); i++) await sleep(250); return ev(cond); };
+const text = sel => ev(`document.querySelector(${JSON.stringify(sel)})?.innerText || ''`);
+const waitFor = async (cond, cap = 40) => { for (let i = 0; i < cap && !await ev(cond); i++) await sleep(250); return ev(cond); };
 const db = () => ev(`JSON.parse(localStorage.getItem('${DB}')||'{}')`);
 
 await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{const D=Date,dif=new D(2026,9,6,12,0,0).getTime()-D.now();
   class F extends D{constructor(...a){a.length?super(...a):super(D.now()+dif)} static now(){return D.now()+dif}}
   window.Date=F;window.__compartido=[];navigator.share=async d=>{window.__compartido.push(d)};navigator.canShare=()=>true;})()` });
 
-/** Juega el de hoy hasta el resultado (el reloj de Desenredo, acortado, se acaba). */
-const jugar = async (extra = '') => {
-  await b.go(`${SITIO}/untangle/?today&test&timer=3${extra}`, 1200);
-  await esperar(`!!document.getElementById('btn-empezar')`);
+/** Plays today's up to the result (Desenredo's clock, shortened, runs out). */
+const play = async (extra = '') => {
+  await b.go(`${SITE}/untangle/?today&test&timer=3${extra}`, 1200);
+  await waitFor(`!!document.getElementById('btn-empezar')`);
   await click('#btn-empezar');
-  await esperar(`!!document.getElementById('btn-fin')`, 80);
+  await waitFor(`!!document.getElementById('btn-fin')`, 80);
   await click('#btn-fin');
-  return esperar(`!!document.getElementById('uad-tarjeta')`, 20);
+  return waitFor(`!!document.getElementById('uad-tarjeta')`, 20);
 };
-/** Cambia de "celular": se guarda todo lo del que estaba y queda solo la base de prueba compartida. */
-const celulares = {};
-const cambiarA = async (quien, de) => {
-  if (de) celulares[de] = await ev(`JSON.stringify(Object.fromEntries(Object.entries(localStorage)))`);
+/** Switches "phone": everything of the current one is saved and only the shared test database stays. */
+const phones = {};
+const switchTo = async (who, from) => {
+  if (from) phones[from] = await ev(`JSON.stringify(Object.fromEntries(Object.entries(localStorage)))`);
   await ev(`(()=>{const db=localStorage.getItem('${DB}');localStorage.clear();if(db)localStorage.setItem('${DB}',db);
     localStorage.setItem('juegos-de-salon:instalar:no','1');
-    const g=${JSON.stringify(celulares[quien] || null)};if(g){const o=JSON.parse(g);for(const [k,v] of Object.entries(o)) if(k!=='${DB}') localStorage.setItem(k,v)}return 1})()`);
+    const g=${JSON.stringify(phones[who] || null)};if(g){const o=JSON.parse(g);for(const [k,v] of Object.entries(o)) if(k!=='${DB}') localStorage.setItem(k,v)}return 1})()`);
 };
 
-/* ---------- Sara juega y entra ---------- */
-await b.go(`${SITIO}/`, 600);
+/* ---------- Sara plays and signs in ---------- */
+await b.go(`${SITE}/`, 600);
 await ev(`localStorage.clear(); 1`);
-await cambiarA('sara');
-ok(await jugar(), 'Sara juega el de hoy');
-ok(await esperar(`!!document.getElementById('uad-entrar')`), 'sin jugador, la tarjeta le ofrece guardar la racha con nombre y PIN');
-ok(/Guarda tu racha/.test(await texto('#uad-entrar')), `"${(await texto('#uad-entrar')).split('\n')[0]}"`);
+await switchTo('sara');
+ok(await play(), "Sara plays today's");
+ok(await waitFor(`!!document.getElementById('uad-entrar')`), 'without a player, the card offers to save the streak with name and PIN');
+ok(/Guarda tu racha/.test(await text('#uad-entrar')), `"${(await text('#uad-entrar')).split('\n')[0]}"`);
 await ev(`(async()=>{const J=await (await import('/assets/js/jugador.js')).jugador();await J.crear('Sara','1111');return 1})()`);
 const sara = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:jugador')).jid`);
-ok(await esperar(`!!JSON.parse(localStorage.getItem('${DB}')||'{}').unoAlDia?.['${sara}']?.['${N}']`), 'al entrar, el de hoy sube a la historia');
+ok(await waitFor(`!!JSON.parse(localStorage.getItem('${DB}')||'{}').unoAlDia?.['${sara}']?.['${N}']`), "on signing in, today's goes up to the history");
 let d = await db();
-ok(d.records?.['uno-al-dia']?.[`d${N}`]?.[sara]?.s === d.unoAlDia[sara][N].s, 'y al ranking del día, con el puntaje de la historia');
-ok(d.records?.['uno-al-dia-racha']?.siempre?.[sara]?.s === 1, 'y a la tabla de rachas');
-ok(await esperar(`/^🧊 Si tu amigo termina/.test(document.getElementById('uad-inv-linea')?.textContent||'') && /Sara/.test(document.querySelector('#uad-tarjeta .rk-lista')?.innerText||'')`), 'y bajo el resultado, invitar ya no le pide entrar y el ranking la muestra');
-await b.shot('sara-resultado');
+ok(d.records?.['uno-al-dia']?.[`d${N}`]?.[sara]?.s === d.unoAlDia[sara][N].s, "and to the day's ranking, with the history's score");
+ok(d.records?.['uno-al-dia-racha']?.siempre?.[sara]?.s === 1, 'and to the streaks table');
+ok(await waitFor(`/^🧊 Si tu amigo termina/.test(document.getElementById('uad-inv-linea')?.textContent||'') && /Sara/.test(document.querySelector('#uad-tarjeta .rk-lista')?.innerText||'')`), 'and under the result, inviting no longer asks to sign in and the ranking shows her');
+await b.shot('sara-result');
 
-/* ---------- /today/ con jugador: ranking e invitar ---------- */
-await b.go(`${SITIO}/today/`, 1800);
-ok(await esperar(`!!document.querySelector('.rk-ranking[data-tabla="uno-al-dia"]')`), '/today/ trae el ranking de Uno al día');
-ok(await esperar(`/Sara/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'')`), 'con Sara en "Hoy"');
-const pestanas = await ev(`[...document.querySelectorAll('.rk-ranking[data-tabla="uno-al-dia"] .rk-seg button')].map(b=>b.textContent).join(' · ')`);
-ok(pestanas === 'Hoy · Semana · Rachas · Amigos', `pestañas: ${pestanas}`);
+/* ---------- /today/ with a player: ranking and invite ---------- */
+await b.go(`${SITE}/today/`, 1800);
+ok(await waitFor(`!!document.querySelector('.rk-ranking[data-tabla="uno-al-dia"]')`), "/today/ brings Uno al día's ranking");
+ok(await waitFor(`/Sara/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'')`), 'with Sara in "Hoy"');
+const tabs = await ev(`[...document.querySelectorAll('.rk-ranking[data-tabla="uno-al-dia"] .rk-seg button')].map(b=>b.textContent).join(' · ')`);
+ok(tabs === 'Hoy · Semana · Rachas · Amigos', `tabs: ${tabs}`);
 await ev(`document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] [data-p="rachas"]').click(); 1`);
-ok(await esperar(`/🔥/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'')`), 'Rachas muestra la racha con 🔥');
-ok(/comodín/.test(await texto('#uad-invitar')), `invitar dice qué se gana (${(await texto('#uad-invitar')).replace(/\n/g, ' / ')})`);
-ok(/salva tu racha el día que no juegas/.test(await texto('#uad-comodines-texto')) && /Tienes 0 de 2/.test(await texto('#uad-comodines-texto')), 'y los comodines dicen para qué sirven y cuántos tiene');
+ok(await waitFor(`/🔥/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'')`), 'Rachas shows the streak with 🔥');
+ok(/comodín/.test(await text('#uad-invitar')), `inviting says what you win (${(await text('#uad-invitar')).replace(/\n/g, ' / ')})`);
+ok(/salva tu racha el día que no juegas/.test(await text('#uad-comodines-texto')) && /Tienes 0 de 2/.test(await text('#uad-comodines-texto')), 'and the wildcards say what they are for and how many she has');
 await click('#btn-uad-invitar');
-await esperar(`window.__compartido.length > 0`, 20);
+await waitFor(`window.__compartido.length > 0`, 20);
 const inv = await ev(`window.__compartido[0]?.text || ''`);
-ok(inv.includes(`today/?inv=${sara}`), `el mensaje lleva su link (${inv.replace(/\n/g, ' / ')})`);
-ok(/Te desafío/.test(inv) && /¿Te atreves\?/.test(inv) && /primer Uno al día/.test(inv), 'en primera persona, con su dato');
-ok(!/comodín/.test(inv), 'y sin decir nada del comodín');
+ok(inv.includes(`today/?inv=${sara}`), `the message carries her link (${inv.replace(/\n/g, ' / ')})`);
+ok(/Te desafío/.test(inv) && /¿Te atreves\?/.test(inv) && /primer Uno al día/.test(inv), 'in the first person, with her fact');
+ok(!/comodín/.test(inv), 'and without saying anything about the wildcard');
 await b.shot('sara-today');
-// En otro idioma el link ya trae `?lang=`: el invitador tiene que ir como un parámetro más
+// In another language the link already brings `?lang=`: the inviter has to go as one more parameter
 await ev(`localStorage.setItem('juegos-de-salon:lang','de'); 1`);
-await b.go(`${SITIO}/today/`, 1800);
-await esperar(`!!document.getElementById('btn-uad-invitar')`);
+await b.go(`${SITE}/today/`, 1800);
+await waitFor(`!!document.getElementById('btn-uad-invitar')`);
 await click('#btn-uad-invitar');
-await esperar(`window.__compartido.length > 0`, 20);
+await waitFor(`window.__compartido.length > 0`, 20);
 const linkDe = (await ev(`window.__compartido[0]?.text || ''`)).match(/🔗 (\S+)/)?.[1] || '';
-ok(new URL(linkDe || 'about:blank').searchParams.get('inv') === sara && new URL(linkDe || 'about:blank').searchParams.get('lang') === 'de', `en alemán, el link lleva idioma e invitador (${linkDe})`);
+ok(new URL(linkDe || 'about:blank').searchParams.get('inv') === sara && new URL(linkDe || 'about:blank').searchParams.get('lang') === 'de', `in German, the link carries language and inviter (${linkDe})`);
 await ev(`localStorage.setItem('juegos-de-salon:lang','es'); 1`);
 
-/* ---------- Pedro abre la invitación en otro celular ---------- */
-await cambiarA('pedro', 'sara');
-await b.go(`${SITIO}/today/?inv=${sara}`, 2000);
-ok(await esperar(`!!document.getElementById('uad-desafio')`), 'Pedro ve la tarjeta del desafío antes del dado');
-const des = await texto('#uad-desafio');
-ok(/🔥 Sara te desafía/.test(des) && /Sara ya jugó su primer Uno al día\. ¿Te atreves\?/.test(des), `en tercera persona (${des.replace(/\n/g, ' / ')})`);
-await b.shot('pedro-desafio');
-ok(await jugar(), 'Pedro juega el mismo desafío');
-ok(await esperar(`!!document.getElementById('uad-duelo')`), 'y ve el duelo');
-ok(/^Tú \d+ · Sara \d+\. Mañana hay otro\.$/.test(await texto('#uad-duelo')), `"${await texto('#uad-duelo')}"`);
-ok(await esperar(`Object.keys(JSON.parse(localStorage.getItem('${DB}')||'{}').invitados?.['${sara}']||{}).length === 1`), 'su primer Uno al día le da un comodín a Sara');
-await b.shot('pedro-resultado');
-await jugar();
+/* ---------- Pedro opens the invitation on another phone ---------- */
+await switchTo('pedro', 'sara');
+await b.go(`${SITE}/today/?inv=${sara}`, 2000);
+ok(await waitFor(`!!document.getElementById('uad-desafio')`), "Pedro sees the challenge card before the die");
+const challenge = await text('#uad-desafio');
+ok(/🔥 Sara te desafía/.test(challenge) && /Sara ya jugó su primer Uno al día\. ¿Te atreves\?/.test(challenge), `in the third person (${challenge.replace(/\n/g, ' / ')})`);
+await b.shot('pedro-challenge');
+ok(await play(), 'Pedro plays the same challenge');
+ok(await waitFor(`!!document.getElementById('uad-duelo')`), 'and sees the duel');
+ok(/^Tú \d+ · Sara \d+\. Mañana hay otro\.$/.test(await text('#uad-duelo')), `"${await text('#uad-duelo')}"`);
+ok(await waitFor(`Object.keys(JSON.parse(localStorage.getItem('${DB}')||'{}').invitados?.['${sara}']||{}).length === 1`), 'his first Uno al día gives Sara a wildcard');
+await b.shot('pedro-result');
+await play();
 d = await db();
-ok(Object.keys(d.invitados[sara]).length === 1, 'jugar de nuevo no suma otro');
+ok(Object.keys(d.invitados[sara]).length === 1, "playing again doesn't add another");
 
-/* ---------- Sara vuelve ---------- */
-await cambiarA('sara', 'pedro');
-await b.go(`${SITIO}/today/`, 2200);
-ok(await esperar(`/aceptó tu desafío: ganaste un comodín/.test(document.querySelector('[data-aviso="aceptado"]')?.innerText||'')`), `Sara ve que aceptaron su desafío (${await texto('[data-aviso="aceptado"]')})`);
-ok(/🧊 1/.test(await texto('#uad-comodines')), 'y tiene un comodín');
-await b.go(`${SITIO}/today/`, 2200);
-ok(!await ev(`!!document.querySelector('[data-aviso="aceptado"]')`), 'el aviso sale una sola vez');
-await b.shot('sara-comodin');
+/* ---------- Sara comes back ---------- */
+await switchTo('sara', 'pedro');
+await b.go(`${SITE}/today/`, 2200);
+ok(await waitFor(`/aceptó tu desafío: ganaste un comodín/.test(document.querySelector('[data-aviso="aceptado"]')?.innerText||'')`), `Sara sees her challenge was accepted (${await text('[data-aviso="aceptado"]')})`);
+ok(/🧊 1/.test(await text('#uad-comodines')), 'and has a wildcard');
+await b.go(`${SITE}/today/`, 2200);
+ok(!await ev(`!!document.querySelector('[data-aviso="aceptado"]')`), 'the notice shows only once');
+await b.shot('sara-wildcard');
 
 await b.close?.();
-console.log(`Capturas en ${OUT}`);
+console.log(`Screenshots in ${OUT}`);

@@ -1,11 +1,11 @@
-// Batalla Naval, dos celulares: dos instancias de Chrome contra Firebase real
-import { salida } from '../output.mjs';
+// Batalla Naval, two phones: two Chrome instances against real Firebase
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-// El otro celular entra por 127.0.0.1: otro origen, otro localStorage
-const SITIO_B = SITIO.replace('localhost', '127.0.0.1');
-const OUT = salida();
+// With several sessions at once, each serves its copy on its own port (D-135)
+const SITE = process.env.SITE || 'http://localhost:8765';
+// The other phone comes in through 127.0.0.1: another origin, another localStorage
+const SITE_B = SITE.replace('localhost', '127.0.0.1');
+const OUT = output();
 const A = await launch({ port: 9422, dir: `${OUT}/pA`, out: OUT });
 const B = await launch({ port: 9423, dir: `${OUT}/pB`, out: OUT });
 const bv = d => d.evaluate(`JSON.stringify(window.__bn.view())`).then(JSON.parse);
@@ -16,37 +16,37 @@ const fireAt = async (d, name) => { await tapCell(d, '#enemy-grid', name); const
 const shipCells = (d, role) => d.evaluate(`(()=>{const L=__bn.session().layouts['${role}'].layout;const S={carrier:5,battleship:4,cruiser:3,submarine:3,destroyer:2};const out=[];for(const [id,p] of Object.entries(L)){for(let i=0;i<S[id];i++){const r=p.dir==='h'?p.r:p.r+i,c=p.dir==='h'?p.c+i:p.c;out.push('ABCDEFGHIJ'[c]+(r+1))}}return JSON.stringify(out)})()`).then(JSON.parse);
 const missCell = async (d, role) => { const cells = await shipCells(d, role); for (let r = 0; r < 10; r++) for (let c = 0; c < 10; c++) { const n = 'ABCDEFGHIJ'[c] + (r + 1); if (!cells.includes(n)) return n; } };
 
-await A.go(`${SITIO}/battleship/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${SITIO}/battleship/`);
-await B.go(`${SITIO_B}/battleship/`); await B.evaluate(`localStorage.clear(); 1`);
+await A.go(`${SITE}/battleship/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${SITE}/battleship/`);
+await B.go(`${SITE_B}/battleship/`); await B.evaluate(`localStorage.clear(); 1`);
 await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(300); await A.shot('20-setup-online');
 await A.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
 await clickText(A, '#setup-actions .btn', 'Crear'); await sleep(4000);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
-console.log('sala:', code, '| A:', await A.active()); await A.shot('21-lobby');
-await B.go(`${SITIO_B}/battleship/?room=${code}`, 1500);
+console.log('room:', code, '| A:', await A.active()); await A.shot('21-lobby');
+await B.go(`${SITE_B}/battleship/?room=${code}`, 1500);
 await B.evaluate(`(()=>{document.querySelector('#setup-form input').value='Cata';return 1})()`);
 await clickText(B, '#setup-actions .btn', 'Unirse'); await sleep(4000);
-console.log('tras unirse → A:', await A.active(), 'B:', await B.active());
-// flotas al azar
+console.log('after joining → A:', await A.active(), 'B:', await B.active());
+// fleets at random
 await clickText(A, '#place-actions .btn', 'azar'); await click(A, '#place-sail .btn'); await sleep(1500); await A.shot('22-waiting-fleet-A');
-console.log('A esperando:', await A.evaluate(`document.getElementById('place-status').textContent`));
+console.log('A waiting:', await A.evaluate(`document.getElementById('place-status').textContent`));
 await clickText(B, '#place-actions .btn', 'azar'); await click(B, '#place-sail .btn'); await sleep(3500);
 console.log('A:', JSON.stringify(await bv(A)), '\nB:', JSON.stringify(await bv(B)));
 await A.shot('23-play-A'); await B.shot('23-play-B');
-// B parte: falla; A falla; luego B hunde todo con tiro extra (conoce la flota de A a través de A)
+// B starts: misses; A misses; then B sinks everything with extra shots (knows A's fleet through A)
 const targetsA = await shipCells(A, 'A'); const targetsB = await shipCells(B, 'B');
-console.log('B agua:', await fireAt(B, await missCell(A, 'A'))); await sleep(3000);
-console.log('turno →', (await bv(A)).shooter);
-console.log('A agua:', await fireAt(A, await missCell(B, 'B'))); await sleep(3000);
-// reconexión de B a mitad de partida
-await B.go(`${SITIO_B}/battleship/?room=${code}`, 6000);
-console.log('B tras recargar:', await B.active(), JSON.stringify(await bv(B)), '| flota guardada:', await B.evaluate(`!!__bn.session()?.layouts?.B`));
+console.log('B miss:', await fireAt(B, await missCell(A, 'A'))); await sleep(3000);
+console.log('turn →', (await bv(A)).shooter);
+console.log('A miss:', await fireAt(A, await missCell(B, 'B'))); await sleep(3000);
+// B reconnects mid-game
+await B.go(`${SITE_B}/battleship/?room=${code}`, 6000);
+console.log('B after reloading:', await B.active(), JSON.stringify(await bv(B)), '| fleet saved:', await B.evaluate(`!!__bn.session()?.layouts?.B`));
 await B.shot('24-reloaded-B');
 let guard = 0;
 for (const t of targetsA) {
   const v = await bv(B); if (v.phase !== 'play') break;
-  if (v.shooter !== 'B') { console.log('turno inesperado', v.shooter); break; }
-  const r = await fireAt(B, t); if (r !== 'ok') { console.log('fallo disparo', t, r); break; }
+  if (v.shooter !== 'B') { console.log('unexpected turn', v.shooter); break; }
+  const r = await fireAt(B, t); if (r !== 'ok') { console.log('shot failed', t, r); break; }
   await sleep(2500);
   if (++guard === 3) { await A.shot('25-mid-A'); await B.shot('25-mid-B'); }
 }
@@ -54,9 +54,9 @@ await sleep(6000);
 console.log('final A:', await A.active(), await A.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent + ' | ' + [...document.querySelectorAll('#result-fleets small')].map(x=>x.textContent).join(' / ')`));
 console.log('final B:', await B.active(), await B.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent`));
 await A.shot('26-result-A'); await B.shot('26-result-B');
-// revancha propuesta por A (perdedor); B se une sola
+// rematch proposed by A (loser); B joins by itself
 await click(A, '#result-actions .btn'); await sleep(8000);
-console.log('rematch → A:', await A.active(), JSON.stringify(await bv(A)), 'code:', await A.evaluate(`__bn.session().code`), 'rol:', await A.evaluate(`__bn.session().role`));
-console.log('rematch → B:', await B.active(), JSON.stringify(await bv(B)), 'code:', await B.evaluate(`__bn.session().code`), 'rol:', await B.evaluate(`__bn.session().role`));
+console.log('rematch → A:', await A.active(), JSON.stringify(await bv(A)), 'code:', await A.evaluate(`__bn.session().code`), 'role:', await A.evaluate(`__bn.session().role`));
+console.log('rematch → B:', await B.active(), JSON.stringify(await bv(B)), 'code:', await B.evaluate(`__bn.session().code`), 'role:', await B.evaluate(`__bn.session().role`));
 console.log('errors A:', JSON.stringify(A.errors), JSON.stringify(A.logs), '\nerrors B:', JSON.stringify(B.errors), JSON.stringify(B.logs));
 A.close(); B.close();

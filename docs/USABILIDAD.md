@@ -47,7 +47,7 @@ la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renu
   los tiempos de un juego, el mismo PR relee y corrige lo que el jugador lee antes de jugar: el lema,
   los pasos de «Cómo se juega» (U-18) y su tarjeta en el laboratorio o el menú. Pasó con Pintaminas:
   sumó un modo de dos colores, la ayuda y rendirse, y su portada siguió diciendo lo del primer día.
-  `node tools/agents/covers.mjs revisar` muestra, por cada juego que toca el PR, su portada, y avisa
+  `node tools/agents/covers.mjs check` muestra, por cada juego que toca el PR, su portada, y avisa
   ⚠️ si el juego cambió y su portada no.
 
 ## Pantallas y botones
@@ -111,7 +111,7 @@ la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renu
 - **U-34 · El marketing muestra la app de hoy:** cada asset de `marketing/` (el video y lo que
   venga) y las tarjetas sociales enseñan los juegos que hay, con sus nombres, emojis, textos y
   pantallas actuales. Un juego nuevo que no sale, uno que ya no está, un nombre o un texto viejo o
-  una pantalla que cambió se anotan como pendiente del asset (`node tools/agents/marketing.mjs anotar`).
+  una pantalla que cambió se anotan como pendiente del asset (`node tools/agents/marketing.mjs record`).
   Rehacerlo lo decide el dueño: el revisor anota, no rehace. Un asset que muestra a propósito
   solo algunos juegos (`"seleccion": true` en `marketing/registro.json`; el video desde la v6, que
   el dueño pidió corto y con pocos juegos) no queda atrás porque falte uno nuevo, pero sí si sale
@@ -121,7 +121,7 @@ la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renu
 
 ## Resuelto con el dueño
 
-Las respuestas a dilemas (issues con la etiqueta `usabilidad`) se anotan aquí:
+Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
 
 - **Rutas en un celular chico** (#360, opción B): sin el título mientras se juega (la barra de arriba ya
   muestra 🚇), y Reiniciar y Rendirse en una fila: a 320×568 los dos se ven sin bajar.

@@ -1,36 +1,39 @@
 #!/usr/bin/env node
 /**
- * Los reportes y comentarios que la gente mandó desde La Copa (D-104) y el laboratorio (D-191, D-265), leídos de `feedback/` en
- * Firebase. Sin cuenta: el nodo se lee libre.
+ * The reports and comments people sent from The Cup (D-104) and the lab (D-191, D-265), read from
+ * `feedback/` in Firebase. No account: the node is readable by anyone.
  *
- *   node tools/firebase/reports.mjs              todos, del más nuevo al más viejo
- *   node tools/firebase/reports.mjs --dias 3     solo los de los últimos 3 días
- *   node tools/firebase/reports.mjs --json       tal cual, para procesarlos
+ *   node tools/firebase/reports.mjs              all of them, newest to oldest
+ *   node tools/firebase/reports.mjs --days 3     only those from the last 3 days
+ *   node tools/firebase/reports.mjs --json       as is, to process them
  */
 import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 
 const args = process.argv.slice(2);
-const dias = Number(args[args.indexOf('--dias') + 1]) || (args.includes('--dias') ? 1 : 0);
+// --dias: the name from before D-316
+const flag = args.includes('--days') ? '--days' : args.includes('--dias') ? '--dias' : null;
+const days = flag ? Number(args[args.indexOf(flag) + 1]) || 1 : 0;
 const res = await fetch(`${firebaseConfig.databaseURL}/feedback.json`);
 if (!res.ok) {
-  console.error(`No se pudo leer feedback/ (HTTP ${res.status}). ¿Están publicadas las reglas nuevas? Ver firebase/README.md.`);
+  console.error(`Could not read feedback/ (HTTP ${res.status}). Are the new rules published? See firebase/README.md.`);
   process.exit(1);
 }
-const todo = Object.entries((await res.json()) || {}).map(([id, r]) => ({ id, ...r }));
-const desde = dias ? Date.now() - dias * 864e5 : 0;
-const lista = todo.filter(r => (r.at || 0) >= desde).sort((a, b) => (b.at || 0) - (a.at || 0));
-if (args.includes('--json')) { console.log(JSON.stringify(lista, null, 2)); process.exit(0); }
-if (!lista.length) { console.log(dias ? `Sin reportes en los últimos ${dias} días.` : 'Sin reportes todavía.'); process.exit(0); }
-const fecha = ms => new Intl.DateTimeFormat('es-CL', { timeZone: 'America/Santiago', dateStyle: 'medium', timeStyle: 'short' }).format(new Date(ms));
-console.log(`${lista.length} reporte(s)${dias ? ` en los últimos ${dias} días` : ''}\n`);
-for (const r of lista) {
+// The fields (texto, nombre, contexto…) are the ones stored in Firebase: persisted, not renamed (D-316)
+const all = Object.entries((await res.json()) || {}).map(([id, r]) => ({ id, ...r }));
+const since = days ? Date.now() - days * 864e5 : 0;
+const list = all.filter(r => (r.at || 0) >= since).sort((a, b) => (b.at || 0) - (a.at || 0));
+if (args.includes('--json')) { console.log(JSON.stringify(list, null, 2)); process.exit(0); }
+if (!list.length) { console.log(days ? `No reports in the last ${days} days.` : 'No reports yet.'); process.exit(0); }
+const date = ms => new Intl.DateTimeFormat('es-CL', { timeZone: 'America/Santiago', dateStyle: 'medium', timeStyle: 'short' }).format(new Date(ms));
+console.log(`${list.length} report(s)${days ? ` in the last ${days} days` : ''}\n`);
+for (const r of list) {
   let ctx = {};
-  try { ctx = JSON.parse(r.contexto || '{}'); } catch (_) { /* nada */ }
-  const donde = [ctx.labs && `🧪 labs ${ctx.labs}`, ctx.copa && `copa ${ctx.copa}`, ctx.dia && `día ${ctx.dia}`, ctx.juego, ctx.semilla && `semilla ${ctx.semilla}`,
-    // Cómo le fue a quien comenta El caso (D-265)
-    ctx.errores !== undefined && `${ctx.errores} errores`, ctx.ayudas !== undefined && `${ctx.ayudas} ayudas`, ctx.tiempo, ctx.url, ctx.pantalla, ctx.pantallaTam].filter(Boolean).join(' · ');
-  console.log(`── ${r.at ? fecha(r.at) : '(sin fecha)'} · ${r.nombre || 'anónimo'}${r.tester ? ` (llave ${r.tester})` : ''} · v${r.v || '?'}`);
-  if (donde) console.log(`   ${donde}`);
+  try { ctx = JSON.parse(r.contexto || '{}'); } catch (_) { /* nothing */ }
+  const where = [ctx.labs && `🧪 labs ${ctx.labs}`, ctx.copa && `cup ${ctx.copa}`, ctx.dia && `day ${ctx.dia}`, ctx.juego, ctx.semilla && `seed ${ctx.semilla}`,
+    // How the commenter did on The Case (D-265)
+    ctx.errores !== undefined && `${ctx.errores} errors`, ctx.ayudas !== undefined && `${ctx.ayudas} hints`, ctx.tiempo, ctx.url, ctx.pantalla, ctx.pantallaTam].filter(Boolean).join(' · ');
+  console.log(`── ${r.at ? date(r.at) : '(no date)'} · ${r.nombre || 'anonymous'}${r.tester ? ` (key ${r.tester})` : ''} · v${r.v || '?'}`);
+  if (where) console.log(`   ${where}`);
   console.log(`   ${String(r.texto || '').replace(/\n/g, '\n   ')}`);
   if (ctx.navegador) console.log(`   (${ctx.navegador.slice(0, 90)})`);
   console.log('');

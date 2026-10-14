@@ -1,104 +1,105 @@
-// Los favoritos de la portada (D-238): la ⭐ de cada tarjeta marca sin abrir el juego, la ficha
-// "⭐ Favoritos" aparece con el primero y deja ver solo esos, se recuerdan al recargar, el dado
-// y Favoritos va en la fila de tipos donde cabe y en su línea donde no, en los cuatro idiomas.
-// Uso: node tools/e2e/favorites.mjs /tmp/favoritos
-import { salida } from './output.mjs';
+// The home page favorites (D-238): each card's ⭐ marks without opening the game, the
+// "⭐ Favoritos" chip appears with the first one and shows only those, they are remembered on
+// reload, and the die and Favoritos go in the type row where it fits and on their own line where
+// it doesn't, in the four languages.
+// Usage: node tools/e2e/favorites.mjs /tmp/favorites
+import { output as output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = salida('/tmp/favoritos');
-let mal = 0;
-const ver = (ok, que) => { console.log(`${ok ? '✓' : '✗'} ${que}`); if (!ok) mal++; };
+const SITE = process.env.SITE || process.env.SITIO || 'http://localhost:8765';
+const OUT = output('/tmp/favorites');
+let bad = 0;
+const check = (ok, what) => { console.log(`${ok ? '✓' : '✗'} ${what}`); if (!ok) bad++; };
 const b = await launch({ dir: `${OUT}/p`, out: OUT });
-const leer = () => b.evaluate(`JSON.stringify({
-  ficha: !document.querySelector('.ficha-fav').hidden,
+const read = () => b.evaluate(`JSON.stringify({
+  chip: !document.querySelector('.ficha-fav').hidden,
   on: document.querySelector('.ficha-fav').getAttribute('aria-pressed'),
-  filtro: __portada.filtro.tipo, visibles: __portada.visibles, favoritos: __portada.favoritos,
-  cuenta: document.getElementById('filtros-cuenta').hidden ? '' : document.getElementById('filtros-cuenta').textContent,
+  filter: __portada.filtro.tipo, visible: __portada.visibles, favorites: __portada.favoritos,
+  count: document.getElementById('filtros-cuenta').hidden ? '' : document.getElementById('filtros-cuenta').textContent,
   url: location.search,
 })`).then(JSON.parse);
-// La ⭐ se toca con el dedo de verdad: si quedara dentro del link, el toque abriría el juego
-const tocarEstrella = async id => {
+// The ⭐ is tapped with a real finger: if it stayed inside the link, the tap would open the game
+const tapStar = async id => {
   const r = await b.evaluate(`(() => { const e = document.querySelector('.fav[data-id="${id}"]'); e.scrollIntoView({ block: 'center' }); const r = e.getBoundingClientRect(); return JSON.stringify({ x: r.x + r.width / 2, y: r.y + r.height / 2, w: r.width, h: r.height }); })()`).then(JSON.parse);
-  await b.toque(r.x, r.y); await sleep(300);
+  await b.tap(r.x, r.y); await sleep(300);
   return r;
 };
 
-await b.go(`${SITIO}/`, 1500);
+await b.go(`${SITE}/`, 1500);
 await b.evaluate(`localStorage.removeItem('juegos-de-salon:favoritos'); 1`);
-await b.go(`${SITIO}/`, 1500);
-let e = await leer();
-ver(!e.ficha && !e.favoritos.length, 'sin favoritos, la ficha ⭐ Favoritos no está');
+await b.go(`${SITE}/`, 1500);
+let e = await read();
+check(!e.chip && !e.favorites.length, 'without favorites, the ⭐ Favoritos chip is not there');
 const n = await b.evaluate(`document.querySelectorAll('.fav').length`);
-const copa = await b.evaluate(`!!document.querySelector('.game-card.torneo').closest('.game-slot')`);
-ver(n >= 10 && !copa, `cada juego lleva su ⭐ (${n}) y La Copa no`);
+const cup = await b.evaluate(`!!document.querySelector('.game-card.torneo').closest('.game-slot')`);
+check(n >= 10 && !cup, `each game has its ⭐ (${n}) and La Copa doesn't`);
 
-const r = await tocarEstrella('ahorcado');
-ver(r.w >= 44 && r.h >= 44, `la ⭐ mide 44 px de toque (${r.w}×${r.h})`);
-e = await leer();
-ver(e.url === '' && e.favoritos.join() === 'ahorcado', 'tocar la ⭐ marca el juego y no lo abre');
-ver(e.ficha, 'con el primer favorito aparece la ficha ⭐ Favoritos');
-ver(await b.evaluate(`document.querySelector('.fav[data-id="ahorcado"]').getAttribute('aria-pressed')`) === 'true', 'la ⭐ marcada dice aria-pressed="true"');
-await tocarEstrella('dudo');
+const r = await tapStar('ahorcado');
+check(r.w >= 44 && r.h >= 44, `the ⭐ has a 44 px tap target (${r.w}×${r.h})`);
+e = await read();
+check(e.url === '' && e.favorites.join() === 'ahorcado', 'tapping the ⭐ marks the game and does not open it');
+check(e.chip, 'with the first favorite the ⭐ Favoritos chip appears');
+check(await b.evaluate(`document.querySelector('.fav[data-id="ahorcado"]').getAttribute('aria-pressed')`) === 'true', 'the marked ⭐ says aria-pressed="true"');
+await tapStar('dudo');
 
 await b.evaluate(`document.querySelector('.ficha-fav').click(); 1`); await sleep(400);
-e = await leer();
-ver(e.filtro === 'favorites' && e.visibles.join() === 'ahorcado,dudo', `con ⭐ Favoritos se ven solo los dos (${e.visibles.join()})`);
-ver(/2/.test(e.cuenta) && e.url === '?type=favorites', `la cuenta dice cuántos y el filtro va en la URL (${e.cuenta} · ${e.url})`);
+e = await read();
+check(e.filter === 'favorites' && e.visible.join() === 'ahorcado,dudo', `with ⭐ Favoritos only the two show (${e.visible.join()})`);
+check(/2/.test(e.count) && e.url === '?type=favorites', `the count says how many and the filter goes in the URL (${e.count} · ${e.url})`);
 
-// Al desmarcar estando en Favoritos, la tarjeta sigue a la vista: se puede volver a marcar
-await tocarEstrella('dudo');
-e = await leer();
-ver(e.visibles.includes('dudo') && e.favoritos.join() === 'ahorcado', 'desmarcar en Favoritos no la saca de la vista');
-await tocarEstrella('dudo');
+// Unmarking while in Favoritos, the card stays in view: it can be marked again
+await tapStar('dudo');
+e = await read();
+check(e.visible.includes('dudo') && e.favorites.join() === 'ahorcado', 'unmarking in Favoritos does not take it out of view');
+await tapStar('dudo');
 
-// Se recuerdan al recargar, y el link con ?type=favorites vuelve filtrado
-await b.go(`${SITIO}/?type=favorites`, 1500);
-e = await leer();
-ver(e.favoritos.join() === 'ahorcado,dudo' && e.filtro === 'favorites' && e.visibles.join() === 'ahorcado,dudo', 'al recargar siguen marcados y filtrados');
+// They are remembered on reload, and the link with ?type=favorites comes back filtered
+await b.go(`${SITE}/?type=favorites`, 1500);
+e = await read();
+check(e.favorites.join() === 'ahorcado,dudo' && e.filter === 'favorites' && e.visible.join() === 'ahorcado,dudo', 'on reload they stay marked and filtered');
 
-// Desmarcar el último estando en Favoritos: se ven todos y la ficha se va
-await tocarEstrella('ahorcado'); await tocarEstrella('dudo');
-e = await leer();
-ver(!e.ficha && !e.filtro && e.visibles.length > 10 && e.url === '', 'sin favoritos que mostrar, se ven todos y se va la ficha');
+// Unmarking the last one while in Favoritos: all show and the chip goes away
+await tapStar('ahorcado'); await tapStar('dudo');
+e = await read();
+check(!e.chip && !e.filter && e.visible.length > 10 && e.url === '', 'with no favorites to show, all show and the chip goes away');
 
-// Un link ?type=favorites en un celular sin favoritos: todos, sin ruido
-await b.go(`${SITIO}/?type=favorites`, 1500);
-e = await leer();
-ver(!e.filtro && e.visibles.length > 10 && e.cuenta === '', '?type=favorites sin favoritos muestra todos');
+// A ?type=favorites link on a phone without favorites: all of them, no noise
+await b.go(`${SITE}/?type=favorites`, 1500);
+e = await read();
+check(!e.filter && e.visible.length > 10 && e.count === '', '?type=favorites without favorites shows all');
 b.close();
 
-// Dónde va ⭐ Favoritos (D-241), en cada idioma: a 390 px y en un computador (la portada no pasa
-// del ancho de un celular), primera en la fila de tipos; a 320 px, donde quepa (el inglés cabe en
-// la fila; los otros tres, en su línea). Siempre los tipos van en una fila y nada se sale.
-const ANCHOS = [[320, 'donde quepa'], [390, 'fila'], [900, 'fila']];
-const a320 = [];
-for (const [ancho, espera] of ANCHOS) for (const lang of ['es', 'en', 'pt', 'de']) {
-  const c = await launch({ dir: `${OUT}/p${ancho}${lang}`, out: OUT, width: ancho, height: 700 });
-  await c.go(`${SITIO}/?lang=${lang}`, 1500);
+// Where ⭐ Favoritos goes (D-241), in each language: at 390 px and on a computer (the home page
+// doesn't go wider than a phone), first in the type row; at 320 px, where it fits (English fits
+// in the row; the other three, on their own line). The types always go in one row and nothing overflows.
+const WIDTHS = [[320, 'where it fits'], [390, 'row'], [900, 'row']];
+const at320 = [];
+for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt', 'de']) {
+  const c = await launch({ dir: `${OUT}/p${width}${lang}`, out: OUT, width, height: 700 });
+  await c.go(`${SITE}/?lang=${lang}`, 1500);
   await c.evaluate(`localStorage.setItem('juegos-de-salon:favoritos', '["ahorcado","tango"]'); 1`);
-  await c.go(`${SITIO}/?lang=${lang}&type=favorites`, 1500);
-  const f = await c.evaluate(`JSON.stringify((() => { const tipos = document.querySelector('.filtros .tipos');
-    const bs = [...tipos.querySelectorAll('button')].filter(x => !x.hidden);
-    const fav = document.querySelector('.ficha-fav'), rf = fav.getBoundingClientRect(), fila = tipos.getBoundingClientRect();
+  await c.go(`${SITE}/?lang=${lang}&type=favorites`, 1500);
+  const f = await c.evaluate(`JSON.stringify((() => { const types = document.querySelector('.filtros .tipos');
+    const bs = [...types.querySelectorAll('button')].filter(x => !x.hidden);
+    const fav = document.querySelector('.ficha-fav'), rf = fav.getBoundingClientRect(), row = types.getBoundingClientRect();
     const tops = new Set(bs.map(x => Math.round(x.getBoundingClientRect().top)));
-    const enFila = fav.parentNode === tipos, nombre = getComputedStyle(fav.lastChild).display !== 'none';
-    return { forma: enFila ? (nombre ? 'fila con nombre' : 'fila') : 'linea', primera: !enFila || bs[0] === fav,
-      arriba: enFila || rf.bottom <= fila.top, toque: rf.height >= 44 && rf.width >= 44,
-      filas: tops.size, sale: bs.some(x => x.getBoundingClientRect().right > fila.right + 1), ancho: document.documentElement.scrollWidth,
-      // Si algo se sale de la pantalla, cuál (contra el ancho pedido y no innerWidth: en un celular
-      // emulado, la pantalla se ensancha con lo que se sale). Los brillos del fondo no cuentan
-      fuera: [...document.querySelectorAll('body *')].filter(x => x.getBoundingClientRect().right > ${ancho} + 0.5 && !x.closest('[hidden], .bg-sparkles'))
-        .map(x => (x.id ? '#' + x.id : x.className ? '.' + String(x.className).split(' ')[0] : x.tagName) + ' «' + x.textContent.trim().slice(0, 24) + '» en ' + (x.parentElement.className || x.parentElement.tagName) + ':' + Math.round(x.getBoundingClientRect().right)
-          + ' fuente ' + getComputedStyle(x).fontFamily.slice(0, 30)).slice(0, 6) };
+    const inRow = fav.parentNode === types, named = getComputedStyle(fav.lastChild).display !== 'none';
+    return { shape: inRow ? (named ? 'row with name' : 'row') : 'line', first: !inRow || bs[0] === fav,
+      above: inRow || rf.bottom <= row.top, tap: rf.height >= 44 && rf.width >= 44,
+      rows: tops.size, overflows: bs.some(x => x.getBoundingClientRect().right > row.right + 1), width: document.documentElement.scrollWidth,
+      // If something overflows the screen, which (against the requested width and not innerWidth:
+      // on an emulated phone, the screen widens with what overflows). The background sparkles don't count
+      outside: [...document.querySelectorAll('body *')].filter(x => x.getBoundingClientRect().right > ${width} + 0.5 && !x.closest('[hidden], .bg-sparkles'))
+        .map(x => (x.id ? '#' + x.id : x.className ? '.' + String(x.className).split(' ')[0] : x.tagName) + ' «' + x.textContent.trim().slice(0, 24) + '» in ' + (x.parentElement.className || x.parentElement.tagName) + ':' + Math.round(x.getBoundingClientRect().right)
+          + ' font ' + getComputedStyle(x).fontFamily.slice(0, 30)).slice(0, 6) };
   })())`).then(JSON.parse);
-  const forma = espera === 'fila' ? f.forma.startsWith('fila') : true;
-  if (ancho === 320) a320.push(f.forma);
-  ver(forma && f.primera && f.arriba && f.toque && f.filas === 1 && !f.sale && f.ancho <= ancho,
-    `${lang} a ${ancho} px: ⭐ Favoritos en ${espera}, los tipos en una fila y nada se sale (${JSON.stringify(f)})`);
+  const shape = expect === 'row' ? f.shape.startsWith('row') : true;
+  if (width === 320) at320.push(f.shape);
+  check(shape && f.first && f.above && f.tap && f.rows === 1 && !f.overflows && f.width <= width,
+    `${lang} at ${width} px: ⭐ Favoritos ${expect === 'row' ? 'in the row' : 'where it fits'}, the types in one row and nothing overflows (${JSON.stringify(f)})`);
   await c.evaluate(`scrollTo(0, 0); 1`);
-  await c.shot(`portada-${ancho}-${lang}`);
-  ver(!c.errors.length, `${lang} a ${ancho} px: sin errores en la consola ${JSON.stringify(c.errors)}`);
+  await c.shot(`home-${width}-${lang}`);
+  check(!c.errors.length, `${lang} at ${width} px: no console errors ${JSON.stringify(c.errors)}`);
   c.close();
 }
-ver(a320.includes('linea'), `a 320 px, donde no cabe en la fila, va en su línea (${a320.join(', ')})`);
-if (mal) process.exit(1);
+check(at320.includes('line'), `at 320 px, where it doesn't fit in the row, it goes on its own line (${at320.join(', ')})`);
+if (bad) process.exit(1);

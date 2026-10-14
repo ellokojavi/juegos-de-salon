@@ -12,8 +12,8 @@
  * Va como script clásico y primero en el <head>, para que la página no se alcance a ver. En
  * localhost (los guiones de punta a punta) y en Tailscale (D-67) se abre sola.
  *
- * Las llaves se dan y se quitan con `node tools/agents/labs-key.mjs nueva <etiqueta> | quitar
- * <etiqueta> | listar`, que edita HUELLAS: aquí solo está la huella SHA-256 de cada llave, nunca la
+ * Las llaves se dan y se quitan con `node tools/agents/labs-key.mjs new <label> | remove
+ * <label> | list`, que edita HUELLAS: aquí solo está la huella SHA-256 de cada llave, nunca la
  * llave. La etiqueta es pública (el repo lo es): iniciales o un apodo, no un nombre completo.
  */
 (function () {

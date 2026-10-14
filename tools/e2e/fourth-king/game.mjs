@@ -1,76 +1,76 @@
-// Cuarto Rey de punta a punta: mazo completo hasta el cuarto rey, botón de sonido
-// y el idioma inglés. Las tomas llevan el nombre de las capturas del README
-// (docs/capturas.json), así `python3 tools/release/readme.py capturas cuarto-rey` las rehace.
-import { salida } from '../output.mjs';
+// Fourth King end to end: the whole deck up to the fourth king, the sound button
+// and English. Shots are named after the README screenshots
+// (docs/capturas.json), so `python3 tools/release/readme.py screenshots cuarto-rey` redoes them.
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = salida();
+const OUT = output();
 const b = await launch({ port: 9341, dir: `${OUT}/p`, out: OUT });
 const ev = e => b.evaluate(e);
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const sacadas = new Set();
-const toma = async nombre => { if (!sacadas.has(nombre)) { sacadas.add(nombre); await b.shot(nombre); } };
+const SITE = process.env.SITE || 'http://localhost:8765';
+const taken = new Set();
+const shot = async name => { if (!taken.has(name)) { taken.add(name); await b.shot(name); } };
 
-const GENEROS = ['m', 'f', 'm', 'f']; // Javi, Cata, Pancho, Fran
-const jugar = async (nombres, tomaMesa) => {
+const GENDERS = ['m', 'f', 'm', 'f']; // Javi, Cata, Pancho, Fran
+const play = async (names, tableShot) => {
   await ev(`document.getElementById('btn-go-setup').click(); 1`); await sleep(300);
-  await toma('03-jugadores');
-  // La mesa recordada puede traer más filas que nombres (la mudanza de abajo deja cinco): se
-  // quitan las que sobran antes de llenar, para que ninguna entre vacía o como "undefined".
-  await ev(`(()=>{const n=${nombres.length};const filas=()=>document.querySelectorAll('#players-form .player-row');while(filas().length>n){const d=[...filas()].at(-1).querySelector('.del');if(d.disabled)break;d.click();}while(filas().length<n&&!document.getElementById('btn-add-player').disabled)document.getElementById('btn-add-player').click();return 1})()`);
-  await ev(`(()=>{const n=${JSON.stringify(nombres)};[...document.querySelectorAll('#players-form input')].forEach((inp,i)=>{inp.value=n[i];inp.dispatchEvent(new Event('input',{bubbles:true}));});return 1})()`);
-  // El género también se fija: la mesa recordada (la mudanza) trae otros, y la captura en inglés
-  // saldría con "Javi ♀" y "Pancho ⚧".
-  await ev(`(()=>{const g=${JSON.stringify(GENEROS)};[...document.querySelectorAll('#players-form .player-row')].forEach((f,i)=>f.querySelector('.gender button[data-g="'+g[i%g.length]+'"]').click());return 1})()`);
+  await shot('03-players');
+  // The remembered table may bring more rows than names (the migration below leaves five): the
+  // extra ones are removed before filling, so none goes in empty or as "undefined".
+  await ev(`(()=>{const n=${names.length};const rows=()=>document.querySelectorAll('#players-form .player-row');while(rows().length>n){const d=[...rows()].at(-1).querySelector('.del');if(d.disabled)break;d.click();}while(rows().length<n&&!document.getElementById('btn-add-player').disabled)document.getElementById('btn-add-player').click();return 1})()`);
+  await ev(`(()=>{const n=${JSON.stringify(names)};[...document.querySelectorAll('#players-form input')].forEach((inp,i)=>{inp.value=n[i];inp.dispatchEvent(new Event('input',{bubbles:true}));});return 1})()`);
+  // Gender is set too: the remembered table (the migration) brings others, and the English
+  // screenshot would come out with "Javi ♀" and "Pancho ⚧".
+  await ev(`(()=>{const g=${JSON.stringify(GENDERS)};[...document.querySelectorAll('#players-form .player-row')].forEach((f,i)=>f.querySelector('.gender button[data-g="'+g[i%g.length]+'"]').click());return 1})()`);
   await ev(`document.getElementById('btn-start').click(); 1`); await sleep(500);
-  const mesa = await ev(`JSON.stringify(__cuartoRey.state().players.map(p=>p.name))`);
-  const generos = await ev(`__cuartoRey.state().players.map(p=>p.gender).join('')`);
-  const esperados = nombres.map((_, i) => GENEROS[i % GENEROS.length]).join('');
-  console.log(generos === esperados ? `✓ los géneros son los del guion (${generos})` : `✗ los géneros no son los del guion: ${generos}, se esperaba ${esperados}`);
-  console.log(mesa === JSON.stringify(nombres) ? `✓ la mesa son los ${nombres.length} nombres del guion` : `✗ la mesa no son los nombres del guion: ${mesa}`);
-  await toma(tomaMesa);
+  const table = await ev(`JSON.stringify(__cuartoRey.state().players.map(p=>p.name))`);
+  const genders = await ev(`__cuartoRey.state().players.map(p=>p.gender).join('')`);
+  const expected = names.map((_, i) => GENDERS[i % GENDERS.length]).join('');
+  console.log(genders === expected ? `✓ the genders are the script's (${genders})` : `✗ the genders are not the script's: ${genders}, expected ${expected}`);
+  console.log(table === JSON.stringify(names) ? `✓ the table is the script's ${names.length} names` : `✗ the table is not the script's names: ${table}`);
+  await shot(tableShot);
 };
 
-await b.go(`${SITIO}/`); await ev(`localStorage.clear(); 1`); await b.go(`${SITIO}/`);
+await b.go(`${SITE}/`); await ev(`localStorage.clear(); 1`); await b.go(`${SITE}/`);
 console.log('menu sound btn:', await ev(`document.querySelector('.sound-toggle')?.textContent`));
 await ev(`document.querySelector('.sound-toggle').click(); 1`);
 console.log('after toggle:', await ev(`document.querySelector('.sound-toggle').textContent + ' muted=' + localStorage.getItem('juegos-de-salon:muted')`));
 await ev(`document.querySelector('.sound-toggle').click(); 1`);
 
-await b.go(`${SITIO}/fourth-king/`);
+await b.go(`${SITE}/fourth-king/`);
 console.log('game sound btn:', await ev(`document.querySelector('.sound-toggle')?.textContent`), 'audio ctx ok:', await ev(`typeof AudioContext`));
-await toma('02-intro');
-await jugar(['Javi', 'Cata', 'Pancho', 'Fran'], '04-mesa');
+await shot('02-intro');
+await play(['Javi', 'Cata', 'Pancho', 'Fran'], '04-table');
 
-let pasePrueba = false;
+let handoffTested = false;
 for (let i = 0; i < 60; i++) {
   const active = await ev(`document.querySelector('.screen.active').id`);
   if (active !== 'screen-play') break;
   await ev(`document.getElementById('card').click(); 1`); await sleep(1300);
   const kind = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:session')).state.current?.card?.rank`);
-  // El cuarto rey es el único que se anuncia en grande, con confeti y sin botón de "siguiente"
-  // El confeti recién lanzado tapa la carta, los nombres y la instrucción: se espera a que
-  // termine (3,5 s), porque en Chrome headless cae más lento y a medio camino tapa las letras.
-  // La pantalla espera al toque del jugador, así que no se pasa sola.
-  if (await ev(`!!document.querySelector('#result .display--lg')`)) { await sleep(3000); await toma('09-cuarto-rey'); }
-  else if (await ev(`!!document.querySelector('#result .helper')`)) await toma('06-minijuego');
-  else if (['A', '2', '3', '10', 'J', 'Q'].includes(kind)) await toma('05-carta');
+  // The fourth king is the only one announced big, with confetti and no "next" button.
+  // Freshly launched confetti covers the card, the names and the instruction: wait for it to
+  // finish (3.5 s), because in headless Chrome it falls slower and halfway through covers the text.
+  // The screen waits for the player's tap, so it doesn't move on by itself.
+  if (await ev(`!!document.querySelector('#result .display--lg')`)) { await sleep(3000); await shot('09-fourth-king'); }
+  else if (await ev(`!!document.querySelector('#result .helper')`)) await shot('06-minigame');
+  else if (['A', '2', '3', '10', 'J', 'Q'].includes(kind)) await shot('05-card');
   if (kind === '4') { await ev(`[...document.querySelectorAll('#result .helper button')][0].click(); 1`); await sleep(1500); }
   if (kind === '5' || kind === '7') { await ev(`[...document.querySelectorAll('#result button')].find(b=>/Otra/.test(b.textContent)).click(); 1`); }
   const ok = await ev(`(()=>{const res=document.getElementById('result');const btns=[...res.querySelectorAll('button')];let b=btns.find(x=>/siguiente|Cumplida|Nadie perdió|Ver el resultado/i.test(x.textContent));if(!b&&'${kind}'==='8'){const pk=res.querySelectorAll('.picker button');pk[0].click();pk[1].click();b=btns.find(x=>/Regalados/.test(x.textContent));}if(!b)return 'NO BUTTON';b.click();return 'ok'})()`);
   if (ok !== 'ok') { console.log('FAIL at', kind, ok); break; }
   await sleep(200);
   if ((await ev(`document.getElementById('handoff').hidden`)) === false) {
-    // El pase es una sola pantalla (C-9): arriba "¡Salud!" con quiénes toman, debajo "pásale el
-    // celular a X" con su botón. Solo el botón avanza: ni un toque fuera de él ni el tiempo (D-213).
-    // Solo sirve el "¡Salud!" con gente tomando: el mismo bloque .cheers también dice
-    // "¡Cumplida!" sin fichas, y esa toma no ilustra el pie de la captura ("¡Salud!").
-    if (await ev(`document.querySelectorAll('#handoff .drinkers .chip').length > 1`)) await toma('07-salud');
-    await toma('08-pasale');
-    if (!pasePrueba) {
-      pasePrueba = true;
+    // The handoff is a single screen (C-9): on top "¡Salud!" with who drinks, below "pásale el
+    // celular a X" with its button. Only the button advances: neither a tap outside it nor time (D-213).
+    // Only a "¡Salud!" with people drinking will do: the same .cheers block also says
+    // "¡Cumplida!" without chips, and that shot doesn't illustrate the screenshot caption ("¡Salud!").
+    if (await ev(`document.querySelectorAll('#handoff .drinkers .chip').length > 1`)) await shot('07-cheers');
+    await shot('08-pass');
+    if (!handoffTested) {
+      handoffTested = true;
       await ev(`document.getElementById('handoff').click(); 1`); await sleep(3200);
-      const sigue = await ev(`!document.getElementById('handoff').hidden && !!document.querySelector('#handoff .next-name')`);
-      console.log(sigue ? '✓ el pase sigue en pantalla tras un toque fuera del botón y 3 s' : '✗ el pase se cerró sin tocar el botón (C-9)');
+      const stays = await ev(`!document.getElementById('handoff').hidden && !!document.querySelector('#handoff .next-name')`);
+      console.log(stays ? '✓ the handoff stays on screen after a tap outside the button and 3 s' : '✗ the handoff closed without tapping the button (C-9)');
     }
     await ev(`document.querySelector('#handoff .btn')?.click(); 1`); await sleep(450);
   }
@@ -78,40 +78,40 @@ for (let i = 0; i < 60; i++) {
 await sleep(600);
 const final = await ev(`document.querySelector('.screen.active').id`);
 if (final === 'screen-end') {
-  const cr = await ev(`JSON.stringify({ fin: __cuartoRey.state().finished, reyes: __cuartoRey.state().kings, pantalla: __cuartoRey.screen() })`);
-  console.log('gancho __cuartoRey:', cr);
-  if (!/"fin":true/.test(cr) || !/"reyes":4/.test(cr)) console.log('✗ el gancho no ve la partida terminada en el cuarto rey');
-  await sleep(4200); // el confeti dura 4 s y taparía el ranking y la lista entera
-  await toma('10-final');
-  // El historial (CR-18) va plegado: se abre para la captura y para contar si anotó todas las cartas.
+  const cr = await ev(`JSON.stringify({ finished: __cuartoRey.state().finished, kings: __cuartoRey.state().kings, screen: __cuartoRey.screen() })`);
+  console.log('__cuartoRey hook:', cr);
+  if (!/"finished":true/.test(cr) || !/"kings":4/.test(cr)) console.log('✗ the hook does not see the game finished on the fourth king');
+  await sleep(4200); // the confetti lasts 4 s and would cover the ranking and the whole list
+  await shot('10-final');
+  // The history (CR-18) is folded: it's opened for the screenshot and to count whether it logged every card.
   await ev(`(()=>{const d=document.getElementById('end-history');d.open=true;d.scrollIntoView({block:'start'});return 1})()`); await sleep(400);
-  console.log('historial:',
-    await ev(`document.querySelectorAll('#history-list li').length`), 'de',
-    await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:session')).state.drawn`), 'cartas | primera:',
-    await ev(`document.querySelector('#history-list li')?.innerText.replace(/\\n/g, ' · ')`), '| última:',
+  console.log('history:',
+    await ev(`document.querySelectorAll('#history-list li').length`), 'of',
+    await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:session')).state.drawn`), 'cards | first:',
+    await ev(`document.querySelector('#history-list li')?.innerText.replace(/\\n/g, ' · ')`), '| last:',
     await ev(`[...document.querySelectorAll('#history-list li')].at(-1)?.innerText.replace(/\\n/g, ' · ')`));
-  await toma('13-historial');
+  await shot('13-history');
 }
-console.log('final screen:', final, '| capturas:', [...sacadas].sort().join(' '));
+console.log('final screen:', final, '| screenshots:', [...taken].sort().join(' '));
 
-// ---- la mesa recordada se muda de juegos-de-salon:players a createNameStore (C-6) ----
-await b.go(`${SITIO}/fourth-king/`);
+// ---- the remembered table migrates from juegos-de-salon:players to createNameStore (C-6) ----
+await b.go(`${SITE}/fourth-king/`);
 await ev(`localStorage.clear(); localStorage.setItem('juegos-de-salon:players', JSON.stringify([{name:'Ana',gender:'f'},{name:'Beto',gender:'m'},{name:'Cami',gender:'x'},{name:'Dani',gender:'f'},{name:'Eli',gender:'m'}])); 1`);
-await b.go(`${SITIO}/fourth-king/`);
+await b.go(`${SITE}/fourth-king/`);
 await ev(`document.getElementById('btn-go-setup').click(); 1`); await sleep(300);
-const mudada = await ev(`JSON.stringify({ filas: [...document.querySelectorAll('#players-form input')].map(i=>i.value), generos: [...document.querySelectorAll('#players-form .gender .on')].map(x=>x.dataset.g).join(''), nueva: JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:names')||'[]').length, vieja: localStorage.getItem('juegos-de-salon:players') })`);
-console.log('mesa mudada:', mudada);
-console.log(mudada === JSON.stringify({ filas: ['Ana', 'Beto', 'Cami', 'Dani', 'Eli'], generos: 'fmxfm', nueva: 5, vieja: null })
-  ? '✓ la mesa vieja se mudó a juegos-de-salon:cuarto-rey:names' : '✗ la mesa vieja no se mudó entera');
+const migrated = await ev(`JSON.stringify({ rows: [...document.querySelectorAll('#players-form input')].map(i=>i.value), genders: [...document.querySelectorAll('#players-form .gender .on')].map(x=>x.dataset.g).join(''), newStore: JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:names')||'[]').length, oldStore: localStorage.getItem('juegos-de-salon:players') })`);
+console.log('migrated table:', migrated);
+console.log(migrated === JSON.stringify({ rows: ['Ana', 'Beto', 'Cami', 'Dani', 'Eli'], genders: 'fmxfm', newStore: 5, oldStore: null })
+  ? '✓ the old table migrated to juegos-de-salon:cuarto-rey:names' : '✗ the old table did not migrate whole');
 
-// ---- inglés: el toggle del menú manda en todas las pantallas (C-3) ----
-await b.go(`${SITIO}/`); await ev(`localStorage.removeItem('juegos-de-salon:cuarto-rey:session'); 1`);
+// ---- English: the menu toggle rules every screen (C-3) ----
+await b.go(`${SITE}/`); await ev(`localStorage.removeItem('juegos-de-salon:cuarto-rey:session'); 1`);
 await ev(`[...document.querySelectorAll('.lang-toggle button')].find(x=>/EN/.test(x.textContent)).click(); 1`); await sleep(1200);
-console.log('menú en inglés:', await ev(`document.querySelector('.game-card')?.innerText.replace(/\\n/g,' | ')`));
-await toma('11-menu-en');
-await b.go(`${SITIO}/fourth-king/`);
-await jugar(['Javi', 'Cata', 'Pancho', 'Fran'], '12-mesa-en');
-console.log('mesa en inglés:', await ev(`[...document.querySelectorAll('#screen-play .deck-count, #screen-play .tap')].map(x=>x.textContent.trim()).join(' | ')`));
+console.log('menu in English:', await ev(`document.querySelector('.game-card')?.innerText.replace(/\\n/g,' | ')`));
+await shot('11-menu-en');
+await b.go(`${SITE}/fourth-king/`);
+await play(['Javi', 'Cata', 'Pancho', 'Fran'], '12-table-en');
+console.log('table in English:', await ev(`[...document.querySelectorAll('#screen-play .deck-count, #screen-play .tap')].map(x=>x.textContent.trim()).join(' | ')`));
 
 console.log('errors:', JSON.stringify(b.errors), 'console errors:', JSON.stringify(b.logs));
 b.close();

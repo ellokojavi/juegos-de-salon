@@ -1,15 +1,15 @@
-// Línea de Tiempo con pozo común: una sola tira a la vista de todos (D-32)
-import { salida } from '../output.mjs';
+// Línea de Tiempo with a shared pool: a single strip in everyone's view (D-32)
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = salida();
-const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
+const OUT = output();
+const BASE = process.argv[3] || process.env.SITE || 'http://localhost:8765';
 const b = await launch({ port: 9496, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
-const v = () => b.evaluate(`(()=>{const s=window.__ldt.view();return JSON.stringify({done:s.done,current:s.current,shared:s.shared,target:s.target,mesa:s.table,scores:s.scores,winner:s.winner,pozo:s.poolLeft})})()`).then(JSON.parse);
-const pantalla = () => b.evaluate(`JSON.stringify({
-  titulo: document.getElementById('hand-title')?.textContent,
-  cartas: document.querySelectorAll('#hand .card').length,
-  marcador: [...document.querySelectorAll('#score .p')].map(x=>x.textContent),
-  mazo: document.getElementById('pool-left')?.textContent,
+const v = () => b.evaluate(`(()=>{const s=window.__ldt.view();return JSON.stringify({done:s.done,current:s.current,shared:s.shared,target:s.target,table:s.table,scores:s.scores,winner:s.winner,pool:s.poolLeft})})()`).then(JSON.parse);
+const screen = () => b.evaluate(`JSON.stringify({
+  title: document.getElementById('hand-title')?.textContent,
+  cards: document.querySelectorAll('#hand .card').length,
+  score: [...document.querySelectorAll('#score .p')].map(x=>x.textContent),
+  deck: document.getElementById('pool-left')?.textContent,
 })`).then(JSON.parse);
 const closeOverlay = async () => { await b.evaluate(`(()=>{const h=document.getElementById('handoff');if(h.hidden)return;const btn=h.querySelector('.btn');if(btn)btn.click();else h.click();})()`); await sleep(450); };
 const play = async () => {
@@ -23,16 +23,16 @@ const play = async () => {
 await b.go(`${BASE}/timeline/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
 await b.go(`${BASE}/timeline/`, 1500);
 await b.evaluate(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(400);
-// El setup abre en "todas a la vista" (D-43): hay que pedir mano propia a propósito
+// Setup opens on "all face up" (D-43): own hand has to be asked for on purpose
 await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/Mano propia|Own hand/.test(e.textContent));x.click();return 1})()`); await sleep(300);
-console.log('setup con mano propia → etiquetas:', await b.evaluate(`[...document.querySelectorAll('#setup-form label')].map(l=>l.textContent).join(' | ')`));
-await b.shot('pozo-01-setup-mano');
-// Cambiar a pozo común
+console.log('setup with own hand → labels:', await b.evaluate(`[...document.querySelectorAll('#setup-form label')].map(l=>l.textContent).join(' | ')`));
+await b.shot('pool-01-setup-hand');
+// Switch to shared pool
 await b.evaluate(`(()=>{const b=[...document.querySelectorAll('.seg button')].find(x=>/Pozo|Shared/.test(x.textContent));b.click();return 1})()`); await sleep(300);
-console.log('con pozo común → etiquetas:', await b.evaluate(`[...document.querySelectorAll('#setup-form label')].map(l=>l.textContent).join(' | ')`));
-console.log('pista:', await b.evaluate(`[...document.querySelectorAll('#setup-form p.muted')].map(p=>p.textContent).join(' ')`));
-await b.shot('pozo-02-setup-pozo');
-// Tres jugadores, meta 3
+console.log('with shared pool → labels:', await b.evaluate(`[...document.querySelectorAll('#setup-form label')].map(l=>l.textContent).join(' | ')`));
+console.log('hint:', await b.evaluate(`[...document.querySelectorAll('#setup-form p.muted')].map(p=>p.textContent).join(' ')`));
+await b.shot('pool-02-setup-pool');
+// Three players, target 3
 await b.evaluate(`(()=>{document.querySelector('#setup-form .btn--ghost').click();return 1})()`); await sleep(200);
 await b.evaluate(`(()=>{const xs=document.querySelectorAll('#setup-form input');['Javi','Cata','Nico'].forEach((n,i)=>{xs[i].value=n;xs[i].dispatchEvent(new Event('input',{bubbles:true}))});return 1})()`);
 await b.evaluate(`(()=>{const x=[...document.querySelectorAll('.seg button')].find(e=>/3$/.test(e.textContent.trim()));if(x)x.click();return 1})()`);
@@ -40,16 +40,16 @@ await b.evaluate(`[...document.querySelectorAll('#setup-actions .btn')][0].click
 await closeOverlay();
 
 let s = await v();
-console.log('empieza →', JSON.stringify({ shared: s.shared, target: s.target, mesa: s.mesa.length, pozo: s.pozo }));
-console.log('pantalla →', JSON.stringify(await pantalla()));
-await b.shot('pozo-03-mesa');
-const mesaAntes = s.mesa.slice();
-const jugada = await play(); await sleep(1000); await closeOverlay();
+console.log('starts →', JSON.stringify({ shared: s.shared, target: s.target, table: s.table.length, pool: s.pool }));
+console.log('screen →', JSON.stringify(await screen()));
+await b.shot('pool-03-table');
+const tableBefore = s.table.slice();
+const played = await play(); await sleep(1000); await closeOverlay();
 s = await v();
-console.log('tras jugar', jugada.p, '→ la carta salió de la mesa:', !s.mesa.includes(jugada.card), '| tamaño:', s.mesa.length,
-  '| las demás siguen en el mismo orden:', JSON.stringify(s.mesa.slice(0, 5)) === JSON.stringify(mesaAntes.filter(c => c !== jugada.card)),
-  '| la nueva entró al final:', !mesaAntes.includes(s.mesa[5]));
-console.log('marcador:', JSON.stringify((await pantalla()).marcador));
+console.log('after', played.p, 'plays → the card left the table:', !s.table.includes(played.card), '| size:', s.table.length,
+  '| the others keep the same order:', JSON.stringify(s.table.slice(0, 5)) === JSON.stringify(tableBefore.filter(c => c !== played.card)),
+  '| the new one came in at the end:', !tableBefore.includes(s.table[5]));
+console.log('score:', JSON.stringify((await screen()).score));
 
 let guard = 0;
 while (guard++ < 20) {
@@ -59,12 +59,12 @@ while (guard++ < 20) {
   await play(); await sleep(900); await closeOverlay();
 }
 s = await v();
-console.log('final →', JSON.stringify({ done: s.done, scores: s.scores, winner: s.winner, mesa: s.mesa.length }));
-console.log('pantalla:', await b.active());
+console.log('final →', JSON.stringify({ done: s.done, scores: s.scores, winner: s.winner, table: s.table.length }));
+console.log('screen:', await b.active());
 console.log('ranking:', await b.evaluate(`[...document.querySelectorAll('#result-ranking li')].map(li=>li.innerText.replace(/\\n/g,' · ')).join(' | ')`));
-await b.shot('pozo-04-resultado');
+await b.shot('pool-04-result');
 
-// --- El ajuste viaja en la sala: el que se une juega con el pozo del anfitrión ---
+// --- The setting travels with the room: whoever joins plays with the host's pool ---
 const B = await launch({ port: 9497, dir: `${OUT}/pB`, out: OUT, width: 375, height: 812 });
 const hostBase = BASE, guestBase = BASE.includes('localhost') ? BASE.replace('localhost', '127.0.0.1') : BASE;
 await b.go(`${hostBase}/timeline/`, 1500); await b.evaluate(`localStorage.clear(); 1`);
@@ -81,12 +81,12 @@ await B.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>
 await b.evaluate(`[...document.querySelectorAll('#lobby-box .btn')].find(x=>/Empezar|Start/.test(x.textContent))?.click(); 1`); await sleep(4000);
 const cfgA = await b.evaluate(`JSON.stringify(window.__ldt.match().config)`);
 const cfgB = await B.evaluate(`JSON.stringify(window.__ldt.match().config)`);
-const mesaA = await b.evaluate(`JSON.stringify(window.__ldt.view().table)`);
-const mesaB = await B.evaluate(`JSON.stringify(window.__ldt.view().table)`);
-console.log('sala:', code, '| el anfitrión eligió pozo común:', JSON.parse(cfgA).shared, '| el que se unió recibió:', JSON.parse(cfgB).shared);
-console.log('los dos ven la misma tira:', mesaA === mesaB, '|', mesaA);
-console.log('título en el que se unió:', await B.evaluate(`document.getElementById('hand-title')?.textContent`));
-await B.shot('pozo-05-online-invitado');
+const tableA = await b.evaluate(`JSON.stringify(window.__ldt.view().table)`);
+const tableB = await B.evaluate(`JSON.stringify(window.__ldt.view().table)`);
+console.log('room:', code, '| the host chose a shared pool:', JSON.parse(cfgA).shared, '| the one who joined got:', JSON.parse(cfgB).shared);
+console.log('both see the same strip:', tableA === tableB, '|', tableA);
+console.log('title for the one who joined:', await B.evaluate(`document.getElementById('hand-title')?.textContent`));
+await B.shot('pool-05-online-guest');
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 console.log('errors B:', JSON.stringify(B.errors), JSON.stringify(B.logs));
 b.close(); B.close();

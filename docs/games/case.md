@@ -130,7 +130,7 @@ public/cup/games/case/ui.js       pantalla: grilla, pistas, sellos, portada de l
 public/cup/rules.js               casoTexto (las plantillas de cada pista) y los textos del caso, en los cuatro idiomas
 public/cup/game.js                lo de `diario`: el caso del día, seguir al recargar y el final
 public/cup/games/juegos.test.mjs  sus pruebas, con las de los demás juegos de La Copa
-public/labs/case/index.html       generada por node tools/release/og.mjs tarjetas desde public/cup/suelto/: no se edita
+public/labs/case/index.html       generada por node tools/release/og.mjs cards desde public/cup/suelto/: no se edita
 public/case/index.html            página puente a /labs/case/, también generada
 tools/e2e/case/lab.mjs            de punta a punta: el laboratorio lo ofrece, /case/ lleva ahí, el caso del día, marcar antes de tiempo, recargar, las pistas que se tachan solas y el ✓, resolverlo entero, compartir, otro caso, el de hoy y el comentario
 ```

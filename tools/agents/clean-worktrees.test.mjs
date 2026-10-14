@@ -1,163 +1,163 @@
-// Ejecutar: node tools/agents/clean-worktrees.test.mjs
-// Borrar las copias de trabajo que ya no se usan (D-218, D-252), en un repositorio de prueba de verdad.
+// Run: node tools/agents/clean-worktrees.test.mjs
+// Removing the worktrees that are no longer used (D-218, D-252), in a real test repository.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, writeFileSync, existsSync, mkdirSync, rmSync, utimesSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { leerCopias, clasificar, clasificarRamas, leerEstado, esBasura } from './clean-worktrees.mjs';
+import { readWorktrees, classify, classifyBranches, readStatus, isLitter } from './clean-worktrees.mjs';
 
-const GUION = join(dirname(fileURLToPath(import.meta.url)), 'clean-worktrees.mjs');
+const SCRIPT = join(dirname(fileURLToPath(import.meta.url)), 'clean-worktrees.mjs');
 
-// El formato de git worktree list --porcelain
-const copias = leerCopias('worktree /r/main\nHEAD a\nbranch refs/heads/main\n\nworktree /r/x\nHEAD b\nbranch refs/heads/tema\n\nworktree /r/y\nHEAD c\ndetached\n');
-assert.deepEqual(copias, [
-  { ruta: '/r/main', rama: 'main', separada: false },
-  { ruta: '/r/x', rama: 'tema', separada: false },
-  { ruta: '/r/y', rama: null, separada: true },
+// The format of git worktree list --porcelain
+const worktrees = readWorktrees('worktree /r/main\nHEAD a\nbranch refs/heads/main\n\nworktree /r/x\nHEAD b\nbranch refs/heads/tema\n\nworktree /r/y\nHEAD c\ndetached\n');
+assert.deepEqual(worktrees, [
+  { path: '/r/main', branch: 'main', detached: false },
+  { path: '/r/x', branch: 'tema', detached: false },
+  { path: '/r/y', branch: null, detached: true },
 ]);
-const plan = clasificar([...copias, { ruta: '/r/main/.claude/worktrees/w', rama: 'w', separada: false }], { aqui: '/r/main', fusionada: () => true, sucia: () => false });
-assert.deepEqual(plan.map(c => c.que), ['principal', 'borrar', 'separada', 'borrar'], 'las de la app también se borran al fusionarse');
+const plan = classify([...worktrees, { path: '/r/main/.claude/worktrees/w', branch: 'w', detached: false }], { here: '/r/main', merged: () => true, dirty: () => false });
+assert.deepEqual(plan.map(c => c.what), ['main', 'remove', 'detached', 'remove'], "the app's ones are removed too when merged");
 
-// Las no fusionadas: según sus commits propios, sus días quieta, su PR y sus cambios
-const una = (o) => clasificar([copias[0], { ruta: '/r/z', rama: 'z', separada: false }], {
-  aqui: '/r/main', fusionada: () => false, sucia: () => !!o.sucia, propios: () => o.propios, dias: () => o.dias, conPr: () => o.pr,
-})[1].que;
-assert.equal(una({ propios: 0, dias: 2, pr: false }), 'vacia');
-assert.equal(una({ propios: 0, dias: 2, pr: null }), 'vacia', 'vacía se sabe sin gh');
-assert.equal(una({ propios: 0, dias: 0.5, pr: false }), 'abierta', 'recién creada: otra sesión está empezando');
-assert.equal(una({ propios: 2, dias: 5, pr: false }), 'abandonada');
-assert.equal(una({ propios: 2, dias: 1, pr: false }), 'abierta', 'se movió hace poco');
-assert.equal(una({ propios: 2, dias: 5, pr: true }), 'abierta', 'con PR abierto');
-assert.equal(una({ propios: 2, dias: 5, pr: null }), 'abierta', 'sin gh no se da por abandonada');
-assert.equal(una({ propios: 0, dias: 9, pr: false, sucia: true }), 'abierta', 'con cambios sin commitear, nunca');
+// The unmerged ones: by their own commits, their days still, their PR and their changes
+const one = (o) => classify([worktrees[0], { path: '/r/z', branch: 'z', detached: false }], {
+  here: '/r/main', merged: () => false, dirty: () => !!o.dirty, ownCommits: () => o.own, days: () => o.days, hasPr: () => o.pr,
+})[1].what;
+assert.equal(one({ own: 0, days: 2, pr: false }), 'empty');
+assert.equal(one({ own: 0, days: 2, pr: null }), 'empty', 'empty is known without gh');
+assert.equal(one({ own: 0, days: 0.5, pr: false }), 'open', 'just created: another session is starting');
+assert.equal(one({ own: 2, days: 5, pr: false }), 'abandoned');
+assert.equal(one({ own: 2, days: 1, pr: false }), 'open', 'it moved recently');
+assert.equal(one({ own: 2, days: 5, pr: true }), 'open', 'with an open PR');
+assert.equal(one({ own: 2, days: 5, pr: null }), 'open', 'without gh it is not considered abandoned');
+assert.equal(one({ own: 0, days: 9, pr: false, dirty: true }), 'open', 'with uncommitted changes, never');
 
-// Las ramas locales sin copia (D-315)
-const ramas = clasificarRamas(['main', 'viva', 'pr', 'vieja', 'gh', 'sola', 'respaldo'], {
-  enCopia: r => r === 'viva', fusionada: r => r === 'vieja', conPr: r => r === 'pr',
-  enGithub: r => r === 'gh', sinSubir: r => (r === 'sola' ? 2 : 0),
+// The local branches without a worktree (D-315)
+const branches = classifyBranches(['main', 'viva', 'pr', 'vieja', 'gh', 'sola', 'respaldo'], {
+  inWorktree: r => r === 'viva', merged: r => r === 'vieja', hasPr: r => r === 'pr',
+  onGithub: r => r === 'gh', unpushed: r => (r === 'sola' ? 2 : 0),
 });
-assert.deepEqual(ramas.map(r => r.que), ['main', 'en-copia', 'abierta', 'fusionada', 'en-github', 'sin-subir', 'sin-remota']);
-const sinGh = clasificarRamas(['vieja', 'respaldo'], { enCopia: () => false, fusionada: r => r === 'vieja', enGithub: () => false, sinSubir: () => 0 });
-assert.deepEqual(sinGh.map(r => r.que), ['fusionada', 'sin-saber'], 'sin gh, solo las fusionadas');
+assert.deepEqual(branches.map(r => r.what), ['main', 'in-worktree', 'open', 'merged', 'on-github', 'unpushed', 'no-remote']);
+const noGh = classifyBranches(['vieja', 'respaldo'], { inWorktree: () => false, merged: r => r === 'vieja', onGithub: () => false, unpushed: () => 0 });
+assert.deepEqual(noGh.map(r => r.what), ['merged', 'unknown'], 'without gh, only the merged ones');
 
-// La basura de pruebas (D-315): solo con nombre de argumento perdido y solo perfiles y capturas
-const estado = leerEstado(' M a.js\n?? undefined/\n?? --parte/\n?? notas/\n?? null/\n', '/r', (_, n) => n !== 'notas' && n !== 'null');
-assert.deepEqual(estado, { reales: [' M a.js', '?? notas/', '?? null/'], basura: ['undefined', '--parte'] });
+// Test litter (D-315): only with a lost-argument name and only profiles and screenshots
+const status = readStatus(' M a.js\n?? undefined/\n?? --parte/\n?? notas/\n?? null/\n', '/r', (_, n) => n !== 'notas' && n !== 'null');
+assert.deepEqual(status, { real: [' M a.js', '?? notas/', '?? null/'], litter: ['undefined', '--parte'] });
 
-// Un repositorio de verdad: un origin, la carpeta principal y cuatro copias
+// A real repository: an origin, the main folder and four worktrees
 const base = mkdtempSync(join(tmpdir(), 'limpiar-'));
 const g = (cwd, ...a) => execFileSync('git', a, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 try {
-  const origen = join(base, 'origen.git');
-  g(base, 'init', '-q', '--bare', '-b', 'main', origen);
-  const raiz = join(base, 'juegos');
-  g(base, 'clone', '-q', origen, raiz);
-  for (const [k, v] of [['user.email', 't@t'], ['user.name', 't'], ['commit.gpgsign', 'false']]) g(raiz, 'config', k, v);
-  writeFileSync(join(raiz, 'a.txt'), 'a');
-  g(raiz, 'add', '.'); g(raiz, 'commit', '-qm', 'uno'); g(raiz, 'push', '-q', 'origin', 'main');
-  const copia = (nombre, rama, commit) => {
-    const ruta = join(base, nombre);
-    g(raiz, 'worktree', 'add', '-q', ruta, '-b', rama);
-    if (commit) { writeFileSync(join(ruta, `${rama}.txt`), rama); g(ruta, 'add', '.'); g(ruta, 'commit', '-qm', rama); }
-    return ruta;
+  const origin = join(base, 'origen.git');
+  g(base, 'init', '-q', '--bare', '-b', 'main', origin);
+  const root = join(base, 'juegos');
+  g(base, 'clone', '-q', origin, root);
+  for (const [k, v] of [['user.email', 't@t'], ['user.name', 't'], ['commit.gpgsign', 'false']]) g(root, 'config', k, v);
+  writeFileSync(join(root, 'a.txt'), 'a');
+  g(root, 'add', '.'); g(root, 'commit', '-qm', 'uno'); g(root, 'push', '-q', 'origin', 'main');
+  const makeWorktree = (name, branch, commit) => {
+    const wtPath = join(base, name);
+    g(root, 'worktree', 'add', '-q', wtPath, '-b', branch);
+    if (commit) { writeFileSync(join(wtPath, `${branch}.txt`), branch); g(wtPath, 'add', '.'); g(wtPath, 'commit', '-qm', branch); }
+    return wtPath;
   };
-  const fusionada = copia('juegos-fusionada', 'fusionada', true);
-  const enCurso = copia('juegos-en-curso', 'en-curso', true);
-  const sucia = copia('juegos-sucia', 'sucia', true);
-  // Recién creada desde main, sin commits propios: es trabajo que empieza, no se borra
-  const nueva = copia('juegos-nueva', 'nueva', false);
-  // Sin commits ni PR desde hace días: vacía, se borra; con commits: abandonada, se sube y se borra
-  const viejo = (Date.now() - 5 * 864e5) / 1000;
-  const envejecer = ruta => utimesSync(join(g(ruta, 'rev-parse', '--absolute-git-dir'), 'HEAD'), viejo, viejo);
-  const vacia = copia('juegos-vacia', 'vacia', false);
-  envejecer(vacia);
-  const abandonada = join(base, 'juegos-abandonada');
-  g(raiz, 'worktree', 'add', '-q', abandonada, '-b', 'abandonada');
-  writeFileSync(join(abandonada, 'b.txt'), 'b'); g(abandonada, 'add', '.');
-  execFileSync('git', ['commit', '-qm', 'abandonada'], { cwd: abandonada, env: { ...process.env, GIT_COMMITTER_DATE: `@${Math.round(viejo)}`, GIT_AUTHOR_DATE: `@${Math.round(viejo)}` } });
-  envejecer(abandonada);
-  // Con commits viejos pero con PR abierto: se deja
-  const conPr = join(base, 'juegos-con-pr');
-  g(raiz, 'worktree', 'add', '-q', conPr, '-b', 'con-pr');
-  writeFileSync(join(conPr, 'c.txt'), 'c'); g(conPr, 'add', '.');
-  execFileSync('git', ['commit', '-qm', 'con-pr'], { cwd: conPr, env: { ...process.env, GIT_COMMITTER_DATE: `@${Math.round(viejo)}`, GIT_AUTHOR_DATE: `@${Math.round(viejo)}` } });
-  envejecer(conPr);
-  // La app de Claude crea las suyas dentro de .claude/worktrees: fusionadas, se borran igual
-  mkdirSync(join(raiz, '.claude', 'worktrees'), { recursive: true });
-  const app = join(raiz, '.claude', 'worktrees', 'app');
-  g(raiz, 'worktree', 'add', '-q', app, '-b', 'app');
+  const mergedWt = makeWorktree('juegos-fusionada', 'fusionada', true);
+  const inProgress = makeWorktree('juegos-en-curso', 'en-curso', true);
+  const dirtyWt = makeWorktree('juegos-sucia', 'sucia', true);
+  // Just created from main, no commits of its own: it is work starting, not removed
+  const fresh = makeWorktree('juegos-nueva', 'nueva', false);
+  // No commits nor PR for days: empty, removed; with commits: abandoned, pushed and removed
+  const old = (Date.now() - 5 * 864e5) / 1000;
+  const age = wtPath => utimesSync(join(g(wtPath, 'rev-parse', '--absolute-git-dir'), 'HEAD'), old, old);
+  const emptyWt = makeWorktree('juegos-vacia', 'vacia', false);
+  age(emptyWt);
+  const abandonedWt = join(base, 'juegos-abandonada');
+  g(root, 'worktree', 'add', '-q', abandonedWt, '-b', 'abandonada');
+  writeFileSync(join(abandonedWt, 'b.txt'), 'b'); g(abandonedWt, 'add', '.');
+  execFileSync('git', ['commit', '-qm', 'abandonada'], { cwd: abandonedWt, env: { ...process.env, GIT_COMMITTER_DATE: `@${Math.round(old)}`, GIT_AUTHOR_DATE: `@${Math.round(old)}` } });
+  age(abandonedWt);
+  // With old commits but with an open PR: left
+  const withPr = join(base, 'juegos-con-pr');
+  g(root, 'worktree', 'add', '-q', withPr, '-b', 'con-pr');
+  writeFileSync(join(withPr, 'c.txt'), 'c'); g(withPr, 'add', '.');
+  execFileSync('git', ['commit', '-qm', 'con-pr'], { cwd: withPr, env: { ...process.env, GIT_COMMITTER_DATE: `@${Math.round(old)}`, GIT_AUTHOR_DATE: `@${Math.round(old)}` } });
+  age(withPr);
+  // The Claude app creates its own inside .claude/worktrees: merged, they are removed too
+  mkdirSync(join(root, '.claude', 'worktrees'), { recursive: true });
+  const app = join(root, '.claude', 'worktrees', 'app');
+  g(root, 'worktree', 'add', '-q', app, '-b', 'app');
   writeFileSync(join(app, 'app.txt'), 'app'); g(app, 'add', '.'); g(app, 'commit', '-qm', 'app');
-  // Se fusionan en main con commit de merge, como el botón de GitHub (--merge), y se suben
-  g(raiz, 'merge', '-q', '--no-ff', '--no-edit', 'fusionada'); g(raiz, 'merge', '-q', '--no-ff', '--no-edit', 'sucia'); g(raiz, 'merge', '-q', '--no-ff', '--no-edit', 'app');
-  g(raiz, 'push', '-q', 'origin', 'main');
-  writeFileSync(join(sucia, 'pendiente.txt'), 'sin commitear');
+  // They are merged into main with a merge commit, like GitHub's button (--merge), and pushed
+  g(root, 'merge', '-q', '--no-ff', '--no-edit', 'fusionada'); g(root, 'merge', '-q', '--no-ff', '--no-edit', 'sucia'); g(root, 'merge', '-q', '--no-ff', '--no-edit', 'app');
+  g(root, 'push', '-q', 'origin', 'main');
+  writeFileSync(join(dirtyWt, 'pending.txt'), 'uncommitted');
 
-  // Basura de pruebas: la fusionada tiene un perfil de Chrome y capturas en undefined/, y una copia
-  // en curso un --parte/ con perfil; en otra, un undefined/ con código no es basura
-  const basura = (ruta, nombre, extra) => {
-    mkdirSync(join(ruta, nombre, 'p', 'Default'), { recursive: true });
-    writeFileSync(join(ruta, nombre, 'p', 'Local State'), '{}'); writeFileSync(join(ruta, nombre, 'p', 'Default', 'Cookies'), 'x');
-    writeFileSync(join(ruta, nombre, '01-inicio.png'), 'png');
-    if (extra) writeFileSync(join(ruta, nombre, extra), 'real');
+  // Test litter: the merged one has a Chrome profile and screenshots in undefined/, and a worktree
+  // in progress a --parte/ with a profile; in another, an undefined/ with code is not litter
+  const litter = (wtPath, name, extra) => {
+    mkdirSync(join(wtPath, name, 'p', 'Default'), { recursive: true });
+    writeFileSync(join(wtPath, name, 'p', 'Local State'), '{}'); writeFileSync(join(wtPath, name, 'p', 'Default', 'Cookies'), 'x');
+    writeFileSync(join(wtPath, name, '01-inicio.png'), 'png');
+    if (extra) writeFileSync(join(wtPath, name, extra), 'real');
   };
-  basura(fusionada, 'undefined');
-  basura(conPr, '--parte');
-  assert.equal(esBasura(fusionada, 'undefined'), true);
-  assert.equal(esBasura(fusionada, 'p'), false, 'un nombre normal nunca es basura');
-  const conCodigo = join(base, 'con-codigo'); mkdirSync(conCodigo); basura(conCodigo, 'undefined', 'juego.mjs');
-  assert.equal(esBasura(conCodigo, 'undefined'), false, 'con algo que no es de pruebas, es real');
+  litter(mergedWt, 'undefined');
+  litter(withPr, '--parte');
+  assert.equal(isLitter(mergedWt, 'undefined'), true);
+  assert.equal(isLitter(mergedWt, 'p'), false, 'un nombre normal nunca es basura');
+  const withCode = join(base, 'con-codigo'); mkdirSync(withCode); litter(withCode, 'undefined', 'juego.mjs');
+  assert.equal(isLitter(withCode, 'undefined'), false, 'with something that is not from tests, it is real');
 
-  // Ramas locales sin copia: una ya fusionada, una cuya rama de GitHub se borró (su commit está en
-  // otra), una con un commit que solo está aquí, una con su rama en GitHub y una con PR abierto
-  g(raiz, 'branch', 'vieja', 'fusionada');
-  g(raiz, 'branch', 'otra', 'con-pr'); g(raiz, 'push', '-q', 'origin', 'otra');
-  g(raiz, 'branch', 'respaldo', 'otra'); g(raiz, 'push', '-q', 'origin', 'respaldo'); g(raiz, 'branch', '-u', 'origin/respaldo', 'respaldo');
-  g(origen, 'branch', '-D', 'respaldo');
-  g(raiz, 'branch', 'sola', 'en-curso');
-  g(raiz, 'branch', 'pr-sin-copia', 'en-curso');
+  // Local branches without a worktree: one already merged, one whose GitHub branch was deleted (its
+  // commit is in another), one with a commit that is only here, one with its branch on GitHub and one with an open PR
+  g(root, 'branch', 'vieja', 'fusionada');
+  g(root, 'branch', 'otra', 'con-pr'); g(root, 'push', '-q', 'origin', 'otra');
+  g(root, 'branch', 'respaldo', 'otra'); g(root, 'push', '-q', 'origin', 'respaldo'); g(root, 'branch', '-u', 'origin/respaldo', 'respaldo');
+  g(origin, 'branch', '-D', 'respaldo');
+  g(root, 'branch', 'sola', 'en-curso');
+  g(root, 'branch', 'pr-sin-copia', 'en-curso');
 
-  const env = { ...process.env, LIMPIAR_PRS_ABIERTOS: 'con-pr,en-curso,sucia,pr-sin-copia' };
-  const ver = execFileSync('node', [GUION, '--ver'], { cwd: raiz, encoding: 'utf8', env });
-  assert.match(ver, /juegos-fusionada \(fusionada\)/);
-  assert.ok(existsSync(fusionada), '--ver no borra nada');
+  const env = { ...process.env, CLEAN_OPEN_PRS: 'con-pr,en-curso,sucia,pr-sin-copia' };
+  const shown = execFileSync('node', [SCRIPT, '--show'], { cwd: root, encoding: 'utf8', env });
+  assert.match(shown, /juegos-fusionada \(fusionada\)/);
+  assert.ok(existsSync(mergedWt), '--show removes nothing');
 
-  assert.match(ver, /subiría su rama a GitHub[\s\S]*juegos-abandonada/);
-  assert.match(ver, /Basura de pruebas en juegos-fusionada: undefined/);
-  assert.match(ver, /Basura de pruebas en juegos-con-pr: --parte \(no cuenta como cambio\)/);
-  assert.match(ver, /Ramas locales que borraría: .*vieja/);
-  assert.ok(g(raiz, 'branch', '--list', 'vieja'), '--ver no borra ramas');
-  const salida = execFileSync('node', [GUION, '--hook'], { cwd: raiz, encoding: 'utf8', env });
-  assert.match(salida, /borré 3 copia\(s\) fusionada\(s\) o vacía\(s\): .*juegos-fusionada/);
-  assert.match(salida, /abandonada\(s\), con su rama subida a GitHub: juegos-abandonada/);
-  assert.ok(!existsSync(vacia) && !existsSync(app), 'la vacía y la de la app fusionada se borraron');
-  assert.ok(!existsSync(abandonada), 'la abandonada se borró');
-  assert.ok(g(origen, 'branch', '--list', 'abandonada'), 'y su rama quedó en el origin');
-  assert.ok(existsSync(conPr), 'la que tiene PR abierto queda');
-  assert.ok(existsSync(join(conPr, '--parte')), 'y su basura también: la copia sigue viva');
-  assert.match(salida, /basura de pruebas \(undefined\)/);
-  assert.match(salida, /borré 2 rama\(s\) local\(es\)[^·]*: (respaldo, vieja|vieja, respaldo)/);
-  assert.match(salida, /no están en GitHub \(se dejan\): sola/);
-  for (const r of ['vieja', 'respaldo']) assert.ok(!g(raiz, 'branch', '--list', r), `la rama ${r} se borró`);
-  for (const r of ['main', 'otra', 'sola', 'pr-sin-copia', 'en-curso', 'nueva']) assert.ok(g(raiz, 'branch', '--list', r), `la rama ${r} queda`);
-  assert.match(salida, /cambios sin commitear: juegos-sucia/);
-  assert.match(salida, /en curso: .*juegos-en-curso/);
-  assert.ok(!existsSync(fusionada), 'la fusionada se borró');
-  assert.ok(!g(raiz, 'branch', '--list', 'fusionada'), 'y su rama también');
-  assert.ok(existsSync(enCurso) && existsSync(sucia), 'las demás quedan');
-  assert.ok(existsSync(nueva), 'la recién creada, sin commits, queda');
-  assert.match(salida, /en curso: .*juegos-nueva/);
+  assert.match(shown, /would push their branch to GitHub[\s\S]*juegos-abandonada/);
+  assert.match(shown, /Test litter in juegos-fusionada: undefined/);
+  assert.match(shown, /Test litter in juegos-con-pr: --parte \(does not count as a change\)/);
+  assert.match(shown, /Local branches it would delete: .*vieja/);
+  assert.ok(g(root, 'branch', '--list', 'vieja'), '--show deletes no branches');
+  const output = execFileSync('node', [SCRIPT, '--hook'], { cwd: root, encoding: 'utf8', env });
+  assert.match(output, /removed 3 merged or empty worktree\(s\): .*juegos-fusionada/);
+  assert.match(output, /abandoned worktree\(s\), with their branch pushed to GitHub: juegos-abandonada/);
+  assert.ok(!existsSync(emptyWt) && !existsSync(app), 'the empty one and the merged app one were removed');
+  assert.ok(!existsSync(abandonedWt), 'the abandoned one was removed');
+  assert.ok(g(origin, 'branch', '--list', 'abandonada'), 'and its branch stayed on the origin');
+  assert.ok(existsSync(withPr), 'the one with an open PR stays');
+  assert.ok(existsSync(join(withPr, '--parte')), 'and its litter too: the worktree is still alive');
+  assert.match(output, /test litter \(undefined\)/);
+  assert.match(output, /deleted 2 local branch\(es\)[^·]*: (respaldo, vieja|vieja, respaldo)/);
+  assert.match(output, /not on GitHub \(left\): sola/);
+  for (const r of ['vieja', 'respaldo']) assert.ok(!g(root, 'branch', '--list', r), `branch ${r} was deleted`);
+  for (const r of ['main', 'otra', 'sola', 'pr-sin-copia', 'en-curso', 'nueva']) assert.ok(g(root, 'branch', '--list', r), `la rama ${r} queda`);
+  assert.match(output, /uncommitted changes: juegos-sucia/);
+  assert.match(output, /in progress: .*juegos-en-curso/);
+  assert.ok(!existsSync(mergedWt), 'the merged one was removed');
+  assert.ok(!g(root, 'branch', '--list', 'fusionada'), 'and its branch too');
+  assert.ok(existsSync(inProgress) && existsSync(dirtyWt), 'the others stay');
+  assert.ok(existsSync(fresh), 'the one just created, without commits, stays');
+  assert.match(output, /in progress: .*juegos-nueva/);
 
-  // Desde dentro de una copia, esa copia no se borra aunque esté fusionada
-  g(raiz, 'merge', '-q', '--no-ff', '--no-edit', 'en-curso'); g(raiz, 'push', '-q', 'origin', 'main');
-  execFileSync('node', [GUION, '--hook'], { cwd: enCurso, encoding: 'utf8', env });
-  assert.ok(existsSync(enCurso), 'la copia desde donde se corre no se borra');
-  // Fuera de un repositorio, el hook no frena la sesión
-  const fuera = execFileSync('node', [GUION, '--hook'], { cwd: tmpdir(), encoding: 'utf8' });
-  assert.match(fuera, /no pude revisarlas/);
+  // From inside a worktree, that worktree is not removed even if merged
+  g(root, 'merge', '-q', '--no-ff', '--no-edit', 'en-curso'); g(root, 'push', '-q', 'origin', 'main');
+  execFileSync('node', [SCRIPT, '--hook'], { cwd: inProgress, encoding: 'utf8', env });
+  assert.ok(existsSync(inProgress), 'the worktree it runs from is not removed');
+  // Outside a repository, the hook does not stop the session
+  const outside = execFileSync('node', [SCRIPT, '--hook'], { cwd: tmpdir(), encoding: 'utf8' });
+  assert.match(outside, /could not check them/);
 } finally {
   rmSync(base, { recursive: true, force: true });
 }
 
-console.log('limpiar-copias: ok');
+console.log('clean-worktrees: ok');

@@ -1,115 +1,115 @@
 /**
- * Mirar una pantalla concreta, rápido, sin jugar una partida entera.
+ * Look at one specific screen, fast, without playing a whole game.
  *
- *   node tools/e2e/look.mjs <juego> <pantalla> [--ancho 390] [--alto 844] [--idioma es] [--salida /tmp/mirar]
+ *   node tools/e2e/look.mjs <game> <screen> [--width 390] [--height 844] [--lang es] [--out /tmp/look]
  *
- * Ejemplos:
- *   node tools/e2e/look.mjs ahorcado juego --ancho 320
- *   node tools/e2e/look.mjs dudo apuesta --muescas      (celular con muesca: 47 arriba, 34 abajo)
- *   node tools/e2e/look.mjs ahorcado resultado
- *   node tools/e2e/look.mjs linea-de-tiempo intro --idioma pt
+ * Examples:
+ *   node tools/e2e/look.mjs ahorcado game --width 320
+ *   node tools/e2e/look.mjs dudo bid --notches      (phone with a notch: 47 on top, 34 at the bottom)
+ *   node tools/e2e/look.mjs ahorcado result
+ *   node tools/e2e/look.mjs linea-de-tiempo intro --lang pt
  *
- * Saca la captura y, además, revisa lo que el canon pide mirar en cada pantalla (C-8):
- * que no haya scroll horizontal y que ningún botón quede por debajo de 44 px; y que el tablero
- * tenga aire antes de sus botones (D-309, U-11).
+ * It takes the screenshot and also checks what the canon asks to look at on every screen (C-8):
+ * no horizontal scroll and no button under 44 px; and that the board has space before its
+ * buttons (D-309, U-11).
  *
- * Nació de escribir ocho guiones descartables en /tmp para revisar una barra de botones.
- * Para probar que el juego funciona están los guiones de partida; esto es para mirar.
+ * It was born from writing eight throwaway scripts in /tmp to review a button bar. To test that
+ * the game works there are the game scripts; this is for looking.
  */
 import { launch, sleep } from './cdp.mjs';
 import { EN_LABS, LABS_KEY } from '../../public/assets/js/i18n.js';
 import { gameById } from '../../public/assets/js/games.js';
-import { CAMINOS } from './paths.mjs';
-import { medirAire, sinAire, AIRE_MIN } from './spacing-common.mjs';
+import { PATHS } from './paths.mjs';
+import { measureSpacing, lacksSpacing, MIN_SPACING } from './spacing-common.mjs';
 
 const args = process.argv.slice(2);
 const pos = args.filter(a => !a.startsWith('--'));
 const flag = (n, def) => { const i = args.indexOf('--' + n); return i < 0 ? def : args[i + 1]; };
-const [juego, pantalla = 'intro'] = pos;
-const ancho = Number(flag('ancho', 390));
-const alto = Number(flag('alto', 844));
-const idioma = flag('idioma', 'es');
-const salida = flag('salida', '/tmp/mirar');
+const [game, screen = 'intro'] = pos;
+const width = Number(flag('width', 390));
+const height = Number(flag('height', 844));
+const lang = flag('lang', 'es');
+const out = flag('out', '/tmp/look');
 /**
- * `--muescas` simula un celular con muesca (47 px arriba, 34 abajo). Importa porque en Chrome
- * headless esos márgenes valen 0, así que un error de alto que solo aparece con muescas pasa
- * por delante de todas las pruebas sin que nadie lo vea (D-75).
+ * `--notches` simulates a phone with a notch (47 px on top, 34 at the bottom). It matters
+ * because in headless Chrome those margins are 0, so a height bug that only shows with notches
+ * goes past every test without anyone seeing it (D-75).
  */
-const muescas = args.includes('--muescas');
-const base = flag('base', process.env.SITIO || 'http://localhost:8765');
+const notches = args.includes('--notches');
+const base = flag('base', process.env.SITE || process.env.SITIO || 'http://localhost:8765');
 
-if (!juego) {
-  console.error('Falta el juego. Ej: node tools/e2e/look.mjs ahorcado juego --ancho 320');
+if (!game) {
+  console.error('Missing the game. E.g.: node tools/e2e/look.mjs ahorcado game --width 320');
   process.exit(1);
 }
 
-const camino = CAMINOS[juego]?.[pantalla];
-// Se pide por el id ('ahorcado') y se abre su carpeta ('/hangman/'): no son lo mismo (D-192).
-// Lo que no es un juego (el panel) es su propia carpeta.
-const ruta = gameById(juego)?.path || `${juego}/`;
-if (!camino) {
-  const hay = Object.keys(CAMINOS[juego] || {});
-  console.error(hay.length ? `No conozco "${pantalla}". Hay: ${hay.join(', ')}` : `No conozco el juego "${juego}". Hay: ${Object.keys(CAMINOS).join(', ')}`);
+const path = PATHS[game]?.[screen];
+// It is asked for by id ('ahorcado') and opens its folder ('/hangman/'): they are not the same (D-192).
+// What is not a game (the panel) is its own folder.
+const route = gameById(game)?.path || `${game}/`;
+if (!path) {
+  const known = Object.keys(PATHS[game] || {});
+  console.error(known.length ? `Unknown screen "${screen}". There are: ${known.join(', ')}` : `Unknown game "${game}". There are: ${Object.keys(PATHS).join(', ')}`);
   process.exit(1);
 }
 
-// El puerto de Chrome lo elige el sistema (D-213); `--cdp` o PUERTO_CDP lo fijan, si alguien lo quiere fijo
-if (flag('cdp', '')) process.env.PUERTO_CDP = flag('cdp', '');
-const b = await launch({ port: 9451, dir: `${salida}/perfil`, out: salida, width: ancho, height: alto });
-await b.go(`${base}/${ruta}`, 1500);
-// El idioma se guarda como texto pelado: getLang() compara contra ['es','en','pt'] y un
-// JSON.stringify le dejaba las comillas dentro, así que --idioma no hacía nada.
-// Un idioma del laboratorio (D-191) se ofrece solo con su marca puesta, como al entrar por su puerta del laboratorio
-const labs = EN_LABS.includes(idioma) ? `localStorage.setItem('${LABS_KEY}', '${idioma}');` : '';
-await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${idioma}'); ${labs} 1`);
-await b.go(`${base}/${ruta}`, 1500);
-// Muescas de verdad: Chrome fija los insets del sistema y la página los lee con
-// env(safe-area-inset-*), igual que en un celular. Sobreescribir las variables CSS —como se
-// hacía antes— no es lo mismo: pinta los márgenes pero no cambia el viewport (D-77).
-if (muescas) await b.send('Emulation.setSafeAreaInsetsOverride', { insets: { top: 47, bottom: 34, left: 0, right: 0 } });
-for (const paso of camino) { await b.evaluate(`(()=>{ ${paso} ; return 1})()`); await sleep(700); }
+// The Chrome port is chosen by the system (D-213); `--cdp` or CDP_PORT fix it, if someone wants it fixed
+if (flag('cdp', '')) process.env.CDP_PORT = flag('cdp', '');
+const b = await launch({ port: 9451, dir: `${out}/profile`, out, width, height });
+await b.go(`${base}/${route}`, 1500);
+// The language is stored as bare text: getLang() compares against ['es','en','pt'] and a
+// JSON.stringify left the quotes inside, so --lang did nothing.
+// A lab language (D-191) is offered only with its mark set, as when entering through its lab door
+const labs = EN_LABS.includes(lang) ? `localStorage.setItem('${LABS_KEY}', '${lang}');` : '';
+await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${lang}'); ${labs} 1`);
+await b.go(`${base}/${route}`, 1500);
+// Real notches: Chrome sets the system insets and the page reads them with
+// env(safe-area-inset-*), just like on a phone. Overriding the CSS variables —as was done
+// before— is not the same: it paints the margins but doesn't change the viewport (D-77).
+if (notches) await b.send('Emulation.setSafeAreaInsetsOverride', { insets: { top: 47, bottom: 34, left: 0, right: 0 } });
+for (const step of path) { await b.evaluate(`(()=>{ ${step} ; return 1})()`); await sleep(700); }
 await sleep(400);
 
-const revision = await b.evaluate(`(()=>{
-  // Los juegos del laboratorio y de La Copa sueltos no tienen .screen: ahí se mira la página entera
-  const pant = document.querySelector('.screen') ? '.screen.active' : 'body';
-  const chicos = [...document.querySelectorAll(pant + ' button, .confirm button')]
+const review = await b.evaluate(`(()=>{
+  // The lab games and La Copa's standalone games have no .screen: there the whole page is checked
+  const scr = document.querySelector('.screen') ? '.screen.active' : 'body';
+  const small = [...document.querySelectorAll(scr + ' button, .confirm button')]
     .filter(x => x.offsetParent !== null && x.getBoundingClientRect().height < 44)
     .map(x => (x.textContent || x.className).trim().slice(0, 18));
   return JSON.stringify({
-    pantalla: document.querySelector('.screen.active')?.id,
-    scrollHorizontal: document.documentElement.scrollWidth > innerWidth,
-    botonesChicos: [...new Set(chicos)],
-    alto: document.documentElement.scrollHeight,
-    // Lo que queda fuera de la pantalla sin que nada lo anuncie: la página más alta que el
-    // celular, y los botones que caen por debajo del borde de abajo (D-75)
-    sobra: document.documentElement.scrollHeight - innerHeight,
-    // El alto con el que la app se arma no puede ser el del instante (dvh): tiene que ser el
-    // chico (svh), el que queda con toda la interfaz del navegador a la vista. En un celular
-    // los dos valores se separan —dvh 1016, svh 960— y lo que se apoya abajo cae fuera (D-77).
-    // En Chrome headless valen lo mismo, así que acá se revisa la regla, no la medida.
-    midePorElAltoChico: [...document.styleSheets].some(hoja => {
-      try { return [...hoja.cssRules].some(r => (r.selectorText || '').includes('.app') && (r.style?.minHeight || '').includes('svh')); }
+    screen: document.querySelector('.screen.active')?.id,
+    horizontalScroll: document.documentElement.scrollWidth > innerWidth,
+    smallButtons: [...new Set(small)],
+    height: document.documentElement.scrollHeight,
+    // What stays off screen with nothing announcing it: the page taller than the phone, and
+    // the buttons that fall below the bottom edge (D-75)
+    excess: document.documentElement.scrollHeight - innerHeight,
+    // The height the app is built with can't be the instant one (dvh): it has to be the small
+    // one (svh), the one left with the whole browser interface in view. On a phone the two
+    // values drift apart —dvh 1016, svh 960— and what rests at the bottom falls off (D-77).
+    // In headless Chrome they are the same, so here the rule is checked, not the measure.
+    usesSmallHeight: [...document.styleSheets].some(sheet => {
+      try { return [...sheet.cssRules].some(r => (r.selectorText || '').includes('.app') && (r.style?.minHeight || '').includes('svh')); }
       catch { return false; }
     }),
-    fueraAbajo: [...new Set([...document.querySelectorAll(pant + ' .btn:not([aria-hidden="true"]), .confirm .btn')]
+    belowBottom: [...new Set([...document.querySelectorAll(scr + ' .btn:not([aria-hidden="true"]), .confirm .btn')]
       .filter(x => x.offsetParent !== null && x.getBoundingClientRect().bottom > innerHeight)
       .map(x => (x.textContent || x.className).trim().slice(0, 18)))],
   });
 })()`).then(JSON.parse);
 
-const aire = JSON.parse(await b.evaluate(medirAire));
+const spacing = JSON.parse(await b.evaluate(measureSpacing));
 
-// Por si un día una entrada lleva una barra: la captura queda plana
-const nombre = `${juego.replace(/\//g, "-")}-${pantalla}-${ancho}`;
-await b.shot(nombre);
-console.log(`${salida}/${nombre}.png · ${ancho}×${alto} · ${idioma}`);
-console.log(`  pantalla: ${revision.pantalla}`);
-console.log(`  scroll horizontal (C-8): ${revision.scrollHorizontal ? '⚠️  SÍ' : 'no'}`);
-console.log(`  botones bajo 44 px (C-8): ${revision.botonesChicos.length ? '⚠️  ' + revision.botonesChicos.join(', ') : 'ninguno'}`);
-console.log(`  aire tablero → botones (U-11, ${AIRE_MIN} px o más): ${!aire.length ? 'sin tablero marcado' : sinAire(aire).length ? '⚠️  ' + sinAire(aire).join(', ') : aire.map(f => `${f.aire} px`).join(', ')}`);
-console.log(`  la página se pasa del alto: ${revision.sobra > 0 ? `⚠️  ${revision.sobra} px` : 'no'}${muescas ? ' (con muescas)' : ''}`);
-console.log(`  botones fuera de pantalla: ${revision.fueraAbajo.length ? '⚠️  ' + revision.fueraAbajo.join(', ') : 'ninguno'}`);
-console.log(`  se arma con el alto chico (svh): ${revision.midePorElAltoChico ? 'sí' : '⚠️  NO (usa dvh: lo que se apoya abajo se va fuera en un celular)'}`);
-if (b.errors.length) console.log('  errores de consola:', JSON.stringify(b.errors.slice(0, 2)));
+// In case an entry ever carries a slash: the screenshot stays flat
+const name = `${game.replace(/\//g, "-")}-${screen}-${width}`;
+await b.shot(name);
+console.log(`${out}/${name}.png · ${width}×${height} · ${lang}`);
+console.log(`  screen: ${review.screen}`);
+console.log(`  horizontal scroll (C-8): ${review.horizontalScroll ? '⚠️  YES' : 'no'}`);
+console.log(`  buttons under 44 px (C-8): ${review.smallButtons.length ? '⚠️  ' + review.smallButtons.join(', ') : 'none'}`);
+console.log(`  board → buttons spacing (U-11, ${MIN_SPACING} px or more): ${!spacing.length ? 'no marked board' : lacksSpacing(spacing).length ? '⚠️  ' + lacksSpacing(spacing).join(', ') : spacing.map(f => `${f.spacing} px`).join(', ')}`);
+console.log(`  the page is taller than the screen: ${review.excess > 0 ? `⚠️  ${review.excess} px` : 'no'}${notches ? ' (with notches)' : ''}`);
+console.log(`  buttons off screen: ${review.belowBottom.length ? '⚠️  ' + review.belowBottom.join(', ') : 'none'}`);
+console.log(`  built with the small height (svh): ${review.usesSmallHeight ? 'yes' : '⚠️  NO (uses dvh: what rests at the bottom falls off on a phone)'}`);
+if (b.errors.length) console.log('  console errors:', JSON.stringify(b.errors.slice(0, 2)));
 b.close();

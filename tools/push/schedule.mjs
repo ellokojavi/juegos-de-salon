@@ -1,229 +1,232 @@
 /**
- * Qué aviso de La Copa toca mandar ahora, y a quién (D-224). Función pura: recibe la copa, quién
- * quiere avisos, las suscripciones y lo ya mandado, y devuelve la lista. notify.mjs la corre cada
- * 15 minutos; las pruebas, con relojes inventados. Usa la lógica de la copa (cup/engine.js): los
- * días, sus ventanas y la tabla son los mismos que ve el jugador.
+ * Which La Copa notification is due now, and to whom (D-224). A pure function: it takes the cup,
+ * who wants notifications, the subscriptions and what was already sent, and returns the list.
+ * notify.mjs runs it every 15 minutes; the tests, with made-up clocks. It uses the cup's logic
+ * (cup/engine.js): the days, their windows and the table are the same the player sees.
  *
- * Los avisos (docs/PWA-NOTIFICACIONES.md):
- *   dia:<d>     se abrió el día d (no la final)            si pidió "Cuando se abre un día"
- *   plazo:<d>   se va a cerrar el día d y no lo ha jugado   si pidió "Antes del cierre"
- *   final       hoy es La Gran Final                        siempre, con su lugar en la tabla
- *   fin         terminó la copa                             siempre, con quién ganó
- *   insc:<pid>  alguien se inscribió (solo al admin)        siempre
+ * The notifications (docs/PWA-NOTIFICACIONES.md), by kind (the kinds and keys are stored in
+ * Firebase and counted by the dashboard: they keep their Spanish names, D-316):
+ *   dia:<d>     day d opened (not the final)                if they asked for "When a day opens"
+ *   plazo:<d>   day d is about to close and they have not played it   if they asked for "Before closing"
+ *   final       today is The Grand Final                    always, with their place in the table
+ *   fin         the cup ended                               always, with who won
+ *   insc:<pid>  someone signed up (only to the admin)       always
  *
- * Cuándo: en la hora de quien lo recibe (su zona va con la suscripción), nunca de noche
- * (antes de las 8:00 ni desde las 22:00). El del día, desde las 9:00; el del plazo, cuando
- * faltan 4 horas o menos, o desde las 20:00 si el cierre cae de noche para él. Cada vuelta manda
- * a lo más uno por copa y celular: el siguiente sale en la vuelta que viene.
+ * When: in the recipient's time (their zone comes with the subscription), never at night
+ * (before 8:00 or from 22:00). The day's one, from 9:00; the deadline's, when 4 hours or less are
+ * left, or from 20:00 if the closing falls at night for them. Each round sends at most one per
+ * cup and phone: the next one goes out in the following round.
  *
- * D-229: a lo más TOPE avisos por copa y celular en un mismo día de quien recibe; si se vencen dos
- * plazos a la vez, van en un solo aviso. Un empate en el primer lugar nombra a todos los que ganaron.
- * El del día, el plazo y la final abren ese día de la copa (`&day=<d>`), y en Android traen los
- * botones Jugar y Silenciar esta copa (`acciones`). Los días nuevos de varias copas a la vez se
- * juntan en un aviso (`juntar`, lo usa notify.mjs).
+ * D-229: at most CAP notifications per cup and phone on the same day of the recipient; if two
+ * deadlines expire at once, they go in a single notification. A tie for first place names everyone
+ * who won. The day's, the deadline's and the final's open that day of the cup (`&day=<d>`), and on
+ * Android they bring the Play and Mute this cup buttons (`acciones`, the key sw.js reads). The new
+ * days of several cups at once are merged into one notification (`merge`, used by notify.mjs).
  */
 import { conCierre, diaActual, esFinal, anulado, tabla, juegoDelDia, terminada } from '../../public/cup/engine.js';
 import { LOCALES, juegosCopa } from '../../public/cup/rules.js';
 import { VALORES } from '../../public/assets/js/parametros.js';
 
-/** El aviso en la URL, en inglés (`notif=deadline`, D-266); el panel lo cuenta con su tipo de siempre. */
-const notif = tipo => `notif=${VALORES.notif[tipo] || tipo}`;
+/** The notification in the URL, in English (`notif=deadline`, D-266); the dashboard counts it with its usual kind. */
+const notif = kind => `notif=${VALORES.notif[kind] || kind}`;
 
-export const SITIO = 'https://juegosdesalon.cl/';
-export const DESDE = 8, HASTA = 22, MANANA = 9, NOCHE = 20;
-const HORA = 60 * 60 * 1000;
-export const PLAZO_MS = 4 * HORA;
-export const PLAZO_NOCHE_MS = 10 * HORA;
-export const VIGENCIA_FIN = 24 * HORA;
-/** A lo más estos avisos por copa y celular en un mismo día de quien recibe (D-229). */
-export const TOPE = 2;
-/** El orden en que se prefieren, si en una vuelta toca más de uno. */
-const PRIORIDAD = ['fin', 'plazo', 'final', 'dia', 'insc'];
+export const SITE = 'https://juegosdesalon.cl/';
+export const FROM_HOUR = 8, TO_HOUR = 22, MORNING = 9, EVENING = 20;
+const HOUR = 60 * 60 * 1000;
+export const DEADLINE_MS = 4 * HOUR;
+export const DEADLINE_NIGHT_MS = 10 * HOUR;
+export const END_VALIDITY = 24 * HOUR;
+/** At most this many notifications per cup and phone on the same day of the recipient (D-229). */
+export const CAP = 2;
+/** The order they are preferred in, if more than one is due in a round. */
+const PRIORITY = ['fin', 'plazo', 'final', 'dia', 'insc'];
 
 const fmt = (s, v = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (v[k] !== undefined ? v[k] : `{${k}}`));
 
-/** "Ana y Beto", "Ana, Beto y Caro": la lista en el idioma de quien recibe. */
-export const lista = (nombres, lang) => {
-  try { return new Intl.ListFormat(lang, { type: 'conjunction' }).format(nombres); } catch (_) { return nombres.join(', '); }
+/** "Ana y Beto", "Ana, Beto y Caro": the list in the recipient's language. */
+export const listOf = (names, lang) => {
+  try { return new Intl.ListFormat(lang, { type: 'conjunction' }).format(names); } catch (_) { return names.join(', '); }
 };
 
-/** La fecha (aaaa-mm-dd) en la zona de quien recibe; una zona inválida cuenta como UTC. */
-export function fechaLocal(t, tz) {
+/** The date (yyyy-mm-dd) in the recipient's zone; an invalid zone counts as UTC. */
+export function localDate(t, tz) {
   const f = z => new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: z }).format(t);
   try { return f(tz || 'UTC'); } catch (_) { return f('UTC'); }
 }
 
-/** Cuántos avisos de esta copa le llegaron hoy (en su zona) a este celular: una entrega, un aviso. */
-export function mandadosHoy(enviadosSub = {}, now, tz) {
-  const hoy = fechaLocal(now, tz);
-  return new Set(Object.values(enviadosSub || {}).filter(t => typeof t === 'number' && fechaLocal(t, tz) === hoy)).size;
+/** How many of this cup's notifications reached this phone today (in its zone): one delivery, one notification. */
+export function sentToday(sentToSub = {}, now, tz) {
+  const today = localDate(now, tz);
+  return new Set(Object.values(sentToSub || {}).filter(t => typeof t === 'number' && localDate(t, tz) === today)).size;
 }
 
-/** La hora (0–23) en la zona de quien recibe el aviso; una zona inválida cuenta como UTC. */
-export function horaLocal(now, tz) {
+/** The hour (0–23) in the recipient's zone; an invalid zone counts as UTC. */
+export function localHour(now, tz) {
   const f = z => Number(new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: z }).format(now));
   try { return f(tz || 'UTC'); } catch (_) { return f('UTC'); }
 }
 
 /**
- * @param {string} code  el código de la copa
- * @param {object} copa  torneos/<código> tal como está en la base
- * @param {object} quiere  pushCopa/<código>: { <pid>: { <subId>: { dia, plazo, at } } }
+ * @param {string} code  the cup's code
+ * @param {object} cup   torneos/<code> as it is in the database
+ * @param {object} wants pushCopa/<code>: { <pid>: { <subId>: { dia, plazo, at } } }
  * @param {object} subs  push: { <subId>: { endpoint, keys, lang, tz, uid, at } }
- * @param {object} enviados  pushEnviados/<código>: { <subId>: { <clave>: at } }
+ * @param {object} sent  pushEnviados/<code>: { <subId>: { <key>: at } }
  * @param {number} now
- * @returns {{ subId, pid, code, tipo, claves: string[], aviso: { title, body, url, tag, acciones? } }[]}
+ * @returns {{ subId, pid, code, kind, keys: string[], notification: { title, body, url, tag, acciones? } }[]}
  */
-export function avisosDeCopa({ code, copa, quiere = {}, subs = {}, enviados = {}, now }) {
-  if (!copa?.meta) return [];
-  const L = conCierre(copa);
+export function cupNotifications({ code, cup, wants = {}, subs = {}, sent = {}, now }) {
+  if (!cup?.meta) return [];
+  const L = conCierre(cup);
   const { meta } = L;
-  const url = `${SITIO}cup/?${meta.alias || code}`;
+  const url = `${SITE}cup/?${meta.alias || code}`;
   const out = [];
-  for (const [pid, porSub] of Object.entries(quiere || {})) {
-    const jugador = L.players?.[pid];
-    if (!jugador || jugador.out) continue;
-    for (const [subId, pref] of Object.entries(porSub || {})) {
+  for (const [pid, bySub] of Object.entries(wants || {})) {
+    const player = L.players?.[pid];
+    if (!player || player.out) continue;
+    for (const [subId, pref] of Object.entries(bySub || {})) {
       const sub = subs[subId];
       if (!sub) continue;
-      const h = horaLocal(now, sub.tz);
-      if (h < DESDE || h >= HASTA) continue;
-      if (mandadosHoy(enviados?.[subId], now, sub.tz) >= TOPE) continue;
-      const ya = clave => !!enviados?.[subId]?.[clave];
+      const h = localHour(now, sub.tz);
+      if (h < FROM_HOUR || h >= TO_HOUR) continue;
+      if (sentToday(sent?.[subId], now, sub.tz) >= CAP) continue;
+      const already = key => !!sent?.[subId]?.[key];
       const lang = LOCALES[sub.lang] ? sub.lang : 'es';
       const T = LOCALES[lang];
-      const titulo = `🏆 ${fmt(T.shareHead, { copa: meta.name })}`;
-      const candidatos = [];
+      const title = `🏆 ${fmt(T.shareHead, { copa: meta.name })}`;
+      const candidates = [];
       const ord = n => fmt(T.ord, { n });
 
       if (terminada(meta, now)) {
-        // Terminó: quién ganó y en qué lugar quedó, una vez y durante el día siguiente
-        if (now - meta.end <= VIGENCIA_FIN && !ya('fin')) {
-          const filas = tabla(L, pid, now);
-          const mia = filas.find(f => f.pid === pid);
-          if (filas.length && mia) {
-            // Empate en el primer lugar (mismos puntos, días ganados y final): ganaron todos (D-229)
-            const ganadores = filas.filter(f => f.lugar === 1);
-            const otros = ganadores.filter(f => f.pid !== pid).map(f => f.name);
-            const body = mia.lugar === 1
-              ? (otros.length ? fmt(T.avMsgWinTie, { names: lista(otros, lang) }) : T.avMsgWin)
-              : ganadores.length > 1 ? fmt(T.avMsgEndMany, { names: lista(ganadores.map(f => f.name), lang), pos: ord(mia.lugar) })
-              : fmt(T.avMsgEnd, { name: filas[0].name, pos: ord(mia.lugar) });
-            candidatos.push({ tipo: 'fin', claves: ['fin'], body, tag: `copa-${code}-fin` });
+        // It ended: who won and in which place they finished, once and during the next day
+        if (now - meta.end <= END_VALIDITY && !already('fin')) {
+          const rows = tabla(L, pid, now);
+          const mine = rows.find(f => f.pid === pid);
+          if (rows.length && mine) {
+            // A tie for first place (same points, days won and final): they all won (D-229)
+            const winners = rows.filter(f => f.lugar === 1);
+            const others = winners.filter(f => f.pid !== pid).map(f => f.name);
+            const body = mine.lugar === 1
+              ? (others.length ? fmt(T.avMsgWinTie, { names: listOf(others, lang) }) : T.avMsgWin)
+              : winners.length > 1 ? fmt(T.avMsgEndMany, { names: listOf(winners.map(f => f.name), lang), pos: ord(mine.lugar) })
+              : fmt(T.avMsgEnd, { name: rows[0].name, pos: ord(mine.lugar) });
+            candidates.push({ kind: 'fin', keys: ['fin'], body, tag: `copa-${code}-fin` });
           }
         }
       } else {
         const d = diaActual(meta, now);
-        const jugo = k => !!L.results?.[k]?.[pid];
-        if (d >= 1 && d <= meta.days && !anulado(meta, d) && h >= MANANA && !jugo(d) && !L.started?.[d]?.[pid]) {
+        const played = k => !!L.results?.[k]?.[pid];
+        if (d >= 1 && d <= meta.days && !anulado(meta, d) && h >= MORNING && !played(d) && !L.started?.[d]?.[pid]) {
           if (esFinal(meta, d)) {
-            if (!ya('final')) {
-              const filas = tabla(L, pid, now);
-              const mia = filas.find(f => f.pid === pid);
-              if (mia) {
-                const lider = filas[0];
-                const pts = lider.total - mia.total;
-                // Con desempate, el 2.º puede tener los mismos puntos que el 1.º (U-6: "1 punto")
+            if (!already('final')) {
+              const rows = tabla(L, pid, now);
+              const mine = rows.find(f => f.pid === pid);
+              if (mine) {
+                const leader = rows[0];
+                const pts = leader.total - mine.total;
+                // With a tiebreak, 2nd may have the same points as 1st (U-6: "1 point")
                 const msg = pts === 0 ? T.avMsgFinalTie : pts === 1 ? T.avMsgFinalOne : T.avMsgFinal;
-                const body = mia.lugar === 1 ? fmt(T.avMsgFinalLead, { pos: ord(1) })
-                  : fmt(msg, { pos: ord(mia.lugar), pts, lider: lider.name });
-                candidatos.push({ tipo: 'final', claves: ['final'], body, tag: `copa-${code}-d${d}`, dia: d });
+                const body = mine.lugar === 1 ? fmt(T.avMsgFinalLead, { pos: ord(1) })
+                  : fmt(msg, { pos: ord(mine.lugar), pts, lider: leader.name });
+                candidates.push({ kind: 'final', keys: ['final'], body, tag: `copa-${code}-d${d}`, day: d });
               }
             }
-          } else if (pref.dia !== false && !ya(`dia:${d}`)) {
+          } else if (pref.dia !== false && !already(`dia:${d}`)) {
             const J = juegosCopa(lang)[juegoDelDia(meta, d)] || {};
-            candidatos.push({ tipo: 'dia', claves: [`dia:${d}`], body: fmt(T.avMsgDay, { emoji: J.emoji || '🏆', d, juego: J.nombre || '' }), tag: `copa-${code}-d${d}`, dia: d });
+            candidates.push({ kind: 'dia', keys: [`dia:${d}`], body: fmt(T.avMsgDay, { emoji: J.emoji || '🏆', d, juego: J.nombre || '' }), tag: `copa-${code}-d${d}`, day: d });
           }
         }
-        // El plazo: el día de hoy y el de ayer (que sigue en su día de gracia). Si se vencen los
-        // dos a la vez (la final y el día anterior), van juntos en un aviso (D-229)
+        // The deadline: today's day and yesterday's (still in its grace day). If both expire at
+        // once (the final and the day before), they go together in one notification (D-229)
         if (pref.plazo !== false) {
-          const vencen = [];
+          const expiring = [];
           for (const k of [d - 1, d]) {
             const w = meta.win[k];
-            if (!w || anulado(meta, k) || jugo(k) || now < w.a || now >= w.b || ya(`plazo:${k}`)) continue;
-            const quedan = w.b - now;
-            if (quedan <= PLAZO_MS || (h >= NOCHE && quedan <= PLAZO_NOCHE_MS)) vencen.push({ k, horas: Math.ceil(quedan / HORA) });
+            if (!w || anulado(meta, k) || played(k) || now < w.a || now >= w.b || already(`plazo:${k}`)) continue;
+            const left = w.b - now;
+            if (left <= DEADLINE_MS || (h >= EVENING && left <= DEADLINE_NIGHT_MS)) expiring.push({ k, hours: Math.ceil(left / HOUR) });
           }
-          if (vencen.length) {
-            const horas = Math.min(...vencen.map(v => v.horas)), k = vencen[0].k;
-            const body = vencen.length > 1
-              ? fmt(horas <= 1 ? T.avMsgDueManyOne : T.avMsgDueMany, { h: horas, dias: lista(vencen.map(v => String(v.k)), lang) })
-              : fmt(horas <= 1 ? T.avMsgDueOne : T.avMsgDue, { h: horas, d: k });
-            candidatos.push({ tipo: 'plazo', claves: vencen.map(v => `plazo:${v.k}`), body, tag: `copa-${code}-d${vencen[vencen.length - 1].k}`, dia: k });
+          if (expiring.length) {
+            const hours = Math.min(...expiring.map(v => v.hours)), k = expiring[0].k;
+            const body = expiring.length > 1
+              ? fmt(hours <= 1 ? T.avMsgDueManyOne : T.avMsgDueMany, { h: hours, dias: listOf(expiring.map(v => String(v.k)), lang) })
+              : fmt(hours <= 1 ? T.avMsgDueOne : T.avMsgDue, { h: hours, d: k });
+            candidates.push({ kind: 'plazo', keys: expiring.map(v => `plazo:${v.k}`), body, tag: `copa-${code}-d${expiring[expiring.length - 1].k}`, day: k });
           }
         }
-        // Al admin: quién se inscribió desde que pidió avisos (en el último día)
+        // To the admin: who signed up since they asked for notifications (in the last day)
         if (pid === meta.admin) {
-          const nuevos = Object.entries(L.players || {})
-            .filter(([p, x]) => p !== pid && x && !x.out && (x.at || 0) > (pref.at || 0) && now - (x.at || 0) <= VIGENCIA_FIN && !ya(`insc:${p}`))
+          const joined = Object.entries(L.players || {})
+            .filter(([p, x]) => p !== pid && x && !x.out && (x.at || 0) > (pref.at || 0) && now - (x.at || 0) <= END_VALIDITY && !already(`insc:${p}`))
             .sort((a, b) => (a[1].at || 0) - (b[1].at || 0));
-          if (nuevos.length) {
+          if (joined.length) {
             const n = Object.values(L.players).filter(x => x && !x.out).length;
-            const nombres = nuevos.map(([, x]) => x.name);
-            const body = nombres.length === 1 ? fmt(T.avMsgJoin, { name: nombres[0], n }) : fmt(T.avMsgJoinMany, { names: lista(nombres, lang), n });
-            candidatos.push({ tipo: 'insc', claves: nuevos.map(([p]) => `insc:${p}`), body, tag: `copa-${code}-insc` });
+            const names = joined.map(([, x]) => x.name);
+            const body = names.length === 1 ? fmt(T.avMsgJoin, { name: names[0], n }) : fmt(T.avMsgJoinMany, { names: listOf(names, lang), n });
+            candidates.push({ kind: 'insc', keys: joined.map(([p]) => `insc:${p}`), body, tag: `copa-${code}-insc` });
           }
         }
       }
-      if (!candidatos.length) continue;
-      candidatos.sort((a, b) => PRIORIDAD.indexOf(a.tipo) - PRIORIDAD.indexOf(b.tipo));
-      const c = candidatos[0];
-      // `&notif=<tipo>`: la página lo cuenta al abrirse, y el panel ve cuántos se tocan (D-233)
-      const aviso = { title: titulo, body: c.body, url: `${url}&${notif(c.tipo)}`, tag: c.tag };
-      if (c.dia) {
-        // Abre ese día de la copa, y en Android trae los botones (D-229)
-        aviso.url = `${url}&day=${c.dia}&${notif(c.tipo)}`;
-        aviso.acciones = [
-          { action: 'jugar', title: T.play, url: aviso.url },
+      if (!candidates.length) continue;
+      candidates.sort((a, b) => PRIORITY.indexOf(a.kind) - PRIORITY.indexOf(b.kind));
+      const c = candidates[0];
+      // `&notif=<kind>`: the page counts it when it opens, and the dashboard sees how many are tapped (D-233)
+      const notification = { title, body: c.body, url: `${url}&${notif(c.kind)}`, tag: c.tag };
+      if (c.day) {
+        // It opens that day of the cup, and on Android brings the buttons (D-229)
+        notification.url = `${url}&day=${c.day}&${notif(c.kind)}`;
+        notification.acciones = [
+          { action: 'jugar', title: T.play, url: notification.url },
           { action: 'silenciar', title: T.avMute, url: `${url}&mute` },
         ];
       }
-      out.push({ subId, pid, code, tipo: c.tipo, claves: c.claves, aviso });
+      out.push({ subId, pid, code, kind: c.kind, keys: c.keys, notification });
     }
   }
   return out;
 }
 
 /**
- * Los días nuevos de varias copas que le tocan a un mismo celular en la misma vuelta van en un
- * solo aviso (D-229): "Tienes un día nuevo en 2 copas: Los Primos y La Oficina." Abre la portada de
- * La Copa, con "Tus copas". Lo demás pasa igual. Cada uno lleva `porCopa`: qué anotar en cada copa.
+ * The new days of several cups due to the same phone in the same round go in a single
+ * notification (D-229): "Tienes un día nuevo en 2 copas: Los Primos y La Oficina." It opens The
+ * Cup's home page, with "Tus copas". The rest passes as is. Each one carries `perCup`: what to
+ * record in each cup.
  */
-export function juntar(pendientes, subs = {}, nombres = {}) {
-  const out = [], dias = new Map();
-  for (const p of pendientes) {
-    if (p.tipo === 'dia') { if (!dias.has(p.subId)) dias.set(p.subId, []); dias.get(p.subId).push(p); }
-    else out.push({ ...p, porCopa: [{ code: p.code, claves: p.claves }] });
+export function merge(pending, subs = {}, names = {}) {
+  const out = [], days = new Map();
+  for (const p of pending) {
+    if (p.kind === 'dia') { if (!days.has(p.subId)) days.set(p.subId, []); days.get(p.subId).push(p); }
+    else out.push({ ...p, perCup: [{ code: p.code, keys: p.keys }] });
   }
-  for (const [subId, ps] of dias) {
-    if (ps.length === 1) { out.push({ ...ps[0], porCopa: [{ code: ps[0].code, claves: ps[0].claves }] }); continue; }
+  for (const [subId, ps] of days) {
+    if (ps.length === 1) { out.push({ ...ps[0], perCup: [{ code: ps[0].code, keys: ps[0].keys }] }); continue; }
     const lang = LOCALES[subs[subId]?.lang] ? subs[subId].lang : 'es';
     const T = LOCALES[lang];
-    const copas = lista(ps.map(p => nombres[p.code] || p.code), lang);
+    const cups = listOf(ps.map(p => names[p.code] || p.code), lang);
     out.push({
-      subId, pid: ps.map(p => p.pid).join(','), code: ps.map(p => p.code).join(','), tipo: 'dia',
-      claves: ps.flatMap(p => p.claves),
-      porCopa: ps.map(p => ({ code: p.code, claves: p.claves })),
-      aviso: { title: T.chip, body: fmt(T.avMsgDayMany, { n: ps.length, copas }), url: `${SITIO}cup/?${notif('copas')}`, tag: 'copas-dia' },
+      subId, pid: ps.map(p => p.pid).join(','), code: ps.map(p => p.code).join(','), kind: 'dia',
+      keys: ps.flatMap(p => p.keys),
+      perCup: ps.map(p => ({ code: p.code, keys: p.keys })),
+      notification: { title: T.chip, body: fmt(T.avMsgDayMany, { n: ps.length, copas: cups }), url: `${SITE}cup/?${notif('copas')}`, tag: 'copas-dia' },
     });
   }
   return out;
 }
 
 /**
- * El aviso de prueba que manda el servidor (`notify.mjs --prueba <código>`): uno a cada celular con
- * avisos de esa copa, a cualquier hora y sin anotarlo. Sirve para ver que el envío de verdad llega.
+ * The test notification the server sends (`notify.mjs --test <code>`): one to each phone with
+ * notifications for that cup, at any time and without recording it. It shows that the real
+ * sending arrives.
  */
-export function avisosDePrueba({ code, copa, quiere = {}, subs = {} }) {
-  if (!copa?.meta) return [];
+export function testNotifications({ code, cup, wants = {}, subs = {} }) {
+  if (!cup?.meta) return [];
   const out = [];
-  for (const [pid, porSub] of Object.entries(quiere || {})) {
-    for (const subId of Object.keys(porSub || {})) {
+  for (const [pid, bySub] of Object.entries(wants || {})) {
+    for (const subId of Object.keys(bySub || {})) {
       const sub = subs[subId];
       if (!sub) continue;
       const T = LOCALES[sub.lang] || LOCALES.es;
-      out.push({ subId, pid, code, tipo: 'prueba', claves: [], aviso: { title: `🏆 ${fmt(T.shareHead, { copa: copa.meta.name })}`, body: T.avTestBody, url: `${SITIO}cup/?${copa.meta.alias || code}&${notif('prueba')}`, tag: `copa-${code}-prueba` } });
+      out.push({ subId, pid, code, kind: 'prueba', keys: [], notification: { title: `🏆 ${fmt(T.shareHead, { copa: cup.meta.name })}`, body: T.avTestBody, url: `${SITE}cup/?${cup.meta.alias || code}&${notif('prueba')}`, tag: `copa-${code}-prueba` } });
     }
   }
   return out;

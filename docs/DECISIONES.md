@@ -42,6 +42,7 @@ viven hoy. Las rutas viejas de las páginas siguen funcionando como páginas pue
 | `tools/e2e/<juego>-<guion>.mjs` | `tools/e2e/<carpeta>/<guion>.mjs` (`linea-de-tiempo-veredicto.mjs` → `timeline/veredicto.mjs`; `copa.mjs` → `cup/torneo.mjs`) |
 | `marketing/video-promo/` | `marketing/promo-video/` |
 | `.claude/skills/video-promo/` | `.claude/skills/promo-video/` |
+| `tools/agents/procesos.mjs`, `tools/e2e/caminos.mjs`, `.github/workflows/publicar.yml` and the rest of the workshop's Spanish names | their English names (D-316: `processes.mjs`, `paths.mjs`, `publish.yml`…) |
 | `lab/`, `tools/lab.py`, `tools/diccionario/`, `tools/diag/` | ya no existen (D-67, D-65, D-77) |
 
 ## Índice por tema
@@ -5910,4 +5911,12 @@ cannot be reviewed); renaming the persisted keys together with the code (risks l
 name).
 **Consequences:** decisions, canons and changelog entries written from now on are English; until
 phase 5 the documents are bilingual. Each phase marks itself done here, in its own PR: phase 1 is
-done (v0.170.x, this PR).
+done (v0.170.x); phase 3 is done: 97 workshop files, their commands and flags (`revisar` → `check`,
+`--desde` → `--from`…), the workflows and their required checks (`pruebas` → `tests`,
+`punta-a-punta` → `end-to-end`), the agents (`processes`, `documentation`, `usability`) and their
+labels, with environment variables read under both names for a while (`SITE` or `SITIO`).
+- **Owner's answers to the scan (phase 2):** the GitHub secret `VAPID_PRIVADA` keeps its name (a
+  secret cannot be renamed, only saved again); `/cup/suelto/` moves to `/cup/standalone/` with a
+  bridge page, as every renamed URL (phase 4); shared images get English names
+  (`tarjeta.jpg` → `card.jpg`), the pages point to the new ones and the old files stay as obsolete
+  copies until the weekly review removes them (phase 4).

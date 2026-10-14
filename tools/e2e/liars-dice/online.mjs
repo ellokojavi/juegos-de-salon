@@ -1,144 +1,144 @@
-// Dudo con tres celulares contra Firebase real: sala, apuestas por turnos, destape verificado
-// (C-10), reconexión a mitad de partida y revancha.
+// Liar's Dice with three phones against real Firebase: room, turn-based bids, verified reveal
+// (C-10), reconnection mid-game and rematch.
 //
-// Cada "celular" es un Chrome con su propio perfil y su propio origen, para que no compartan
-// localStorage (ver el README de esta carpeta).
-import { salida } from '../output.mjs';
+// Each "phone" is a Chrome with its own profile and its own origin, so they don't share
+// localStorage (see this folder's README).
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = salida();
-const hosts = ['localhost', '127.0.0.1', '[::1]'].map(h => SITIO.replace('localhost', h));
+// With several sessions at once, each one serves its copy on its own port (D-135)
+const SITE = process.env.SITE || 'http://localhost:8765';
+const OUT = output();
+const hosts = ['localhost', '127.0.0.1', '[::1]'].map(h => SITE.replace('localhost', h));
 const A = await launch({ port: 9386, dir: `${OUT}/pA`, out: OUT, width: 375, height: 812 });
 const B = await launch({ port: 9387, dir: `${OUT}/pB`, out: OUT, width: 375, height: 812 });
 const C = await launch({ port: 9388, dir: `${OUT}/pC`, out: OUT, width: 375, height: 812 });
 const devs = { A, B, C };
-const NOMBRE = { A: 'Javi', B: 'Cata', C: 'Nico' };
+const NAME = { A: 'Javi', B: 'Cata', C: 'Nico' };
 
 const click = (d, sel) => d.evaluate(`(()=>{const x=document.querySelector('${sel}');if(!x)return 'no';x.click();return 'ok'})()`);
 const setName = (d, n) => d.evaluate(`(()=>{const i=document.querySelector('#setup-form input');i.value='${n}';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
-const pantalla = d => d.evaluate(`document.querySelector('.screen.active')?.id`);
-const estado = d => d.evaluate(`(()=>{const s=window.__dudo?.view();if(!s)return JSON.stringify({nada:true});
+const screen = d => d.evaluate(`document.querySelector('.screen.active')?.id`);
+const state = d => d.evaluate(`(()=>{const s=window.__dudo?.view();if(!s)return JSON.stringify({none:true});
   if(s.lobby)return JSON.stringify({lobby:true});
   return JSON.stringify({phase:s.phase,current:s.current,round:s.round,done:s.done,winner:s.winner,
     bid:s.bid?s.bid.n+'×'+s.bid.p:null,waiting:s.waiting,
-    dados:Object.fromEntries(Object.entries(s.st).map(([r,x])=>[r,x.dice]))})})()`).then(JSON.parse);
+    dice:Object.fromEntries(Object.entries(s.st).map(([r,x])=>[r,x.dice]))})})()`).then(JSON.parse);
 const overlay = d => d.evaluate(`(()=>{const h=document.getElementById('handoff');return h.hidden?'':h.innerText.replace(/\\n/g,' | ').slice(0,120)})()`);
-const cerrarOverlay = async d => { await d.evaluate(`(()=>{const h=document.getElementById('handoff');if(h.hidden)return 'nada';const b=h.querySelector('.btn');b?b.click():h.click();return 'ok'})()`); await sleep(400); };
+const closeOverlay = async d => { await d.evaluate(`(()=>{const h=document.getElementById('handoff');if(h.hidden)return 'none';const b=h.querySelector('.btn');b?b.click():h.click();return 'ok'})()`); await sleep(400); };
 
-/** La jugada de quien tiene el turno: apuesta lo mínimo con la primera pinta disponible, o duda. */
-const jugar = async (d, dudar = false) => d.evaluate(`(()=>{
-  if (${dudar}) { const b=[...document.querySelectorAll('#actions .btn')].find(x=>/Dudo/i.test(x.textContent)); if(!b)return 'sin dudo'; b.click(); return 'dudo'; }
-  const p=[...document.querySelectorAll('.pinta')].filter(x=>!x.disabled); if(!p.length)return 'sin pintas';
+/** The move of whoever has the turn: bids the minimum with the first available face, or doubts. */
+const play = async (d, doubt = false) => d.evaluate(`(()=>{
+  if (${doubt}) { const b=[...document.querySelectorAll('#actions .btn')].find(x=>/Dudo/i.test(x.textContent)); if(!b)return 'no doubt button'; b.click(); return 'doubted'; }
+  const p=[...document.querySelectorAll('.pinta')].filter(x=>!x.disabled); if(!p.length)return 'no faces';
   p[0].click();
-  const ok=document.querySelector('#actions .btn--yellow'); if(!ok||ok.disabled)return 'sin boton';
+  const ok=document.querySelector('#actions .btn--yellow'); if(!ok||ok.disabled)return 'no button';
   const t=ok.textContent; ok.click(); return t;
 })()`);
 
-/* ---------------- Sala ---------------- */
+/* ---------------- Room ---------------- */
 await A.go(`${hosts[0]}/liars-dice/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${hosts[0]}/liars-dice/`);
 await click(A, '.modes .mode:nth-child(2)'); await sleep(400);
-await setName(A, NOMBRE.A);
+await setName(A, NAME.A);
 await click(A, '#setup-actions .btn--yellow'); await sleep(5000);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
-console.log('sala:', code, '| pantalla de A:', await pantalla(A));
+console.log('room:', code, '| A screen:', await screen(A));
 
-for (const [rol, dev] of [['B', B], ['C', C]]) {
-  const host = hosts[rol === 'B' ? 1 : 2];
-  // Entra por el enlace de invitación, que es como llega de verdad (RP-18)
+for (const [role, dev] of [['B', B], ['C', C]]) {
+  const host = hosts[role === 'B' ? 1 : 2];
+  // Joins through the invitation link, which is how it really arrives (RP-18)
   await dev.go(`${host}/liars-dice/?room=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
   await dev.go(`${host}/liars-dice/?room=${code}`); await sleep(1200);
-  await setName(dev, NOMBRE[rol]);
+  await setName(dev, NAME[role]);
   await dev.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse|Join|Entrar/i.test(x.textContent)).click(); 1`);
   await sleep(4500);
-  console.log(`${rol} entró →`, await pantalla(dev), '· rol:', await dev.evaluate(`window.__dudo.session().role`));
+  console.log(`${role} joined →`, await screen(dev), '· role:', await dev.evaluate(`window.__dudo.session().role`));
 }
 await sleep(1200);
-console.log('en la sala:', await A.evaluate(`document.querySelectorAll('#lobby-box .lobby-players .p').length`), 'jugadores');
-await A.shot('online-01-sala');
+console.log('in the room:', await A.evaluate(`document.querySelectorAll('#lobby-box .lobby-players .p').length`), 'players');
+await A.shot('online-01-room');
 
-// Solo el anfitrión parte la partida
+// Only the host starts the game
 await A.evaluate(`[...document.querySelectorAll('#lobby-box .btn--yellow')][0].click(); 1`); await sleep(2500);
-console.log('partió →', JSON.stringify(await estado(A)));
+console.log('started →', JSON.stringify(await state(A)));
 
-/* ---------------- Una partida ---------------- */
-let vueltas = 0, destapes = 0, verificados = 0, reconectado = false;
-while (vueltas++ < 80) {
-  const s = await estado(A);
+/* ---------------- One game ---------------- */
+let turns = 0, reveals = 0, verified = 0, reconnected = false;
+while (turns++ < 80) {
+  const s = await state(A);
   if (s.done) break;
-  // El destape se mira en los tres y se cierra en los tres
-  for (const [rol, dev] of Object.entries(devs)) {
+  // The reveal is looked at on all three and closed on all three
+  for (const [role, dev] of Object.entries(devs)) {
     const o = await overlay(dev);
     if (o) {
-      if (rol === 'A' && !destapes) { await dev.shot('online-02-destape'); console.log('destape:', o); }
-      if (/✅/.test(o)) verificados++;
-      if (rol === 'A') destapes++;
-      await cerrarOverlay(dev);
+      if (role === 'A' && !reveals) { await dev.shot('online-02-reveal'); console.log('reveal:', o); }
+      if (/✅/.test(o)) verified++;
+      if (role === 'A') reveals++;
+      await closeOverlay(dev);
     }
   }
-  const v = await estado(A);
+  const v = await state(A);
   if (v.done) break;
-  // A mitad de partida, un celular recarga: tiene que volver a su sala con los dados que tenía
-  if (!reconectado && v.round >= 3 && v.phase === 'bid') {
-    reconectado = true;
+  // Mid-game, a phone reloads: it has to go back to its room with the dice it had
+  if (!reconnected && v.round >= 3 && v.phase === 'bid') {
+    reconnected = true;
     await B.go(`${hosts[1]}/liars-dice/?room=${code}`); await sleep(4500);
-    const vuelto = await estado(B);
-    console.log('B recargó a mitad →', await pantalla(B), '· ronda', vuelto.round, '· sus dados:',
-      await B.evaluate(`(()=>{const s=window.__dudo.session();const v=window.__dudo.view();return (s.secrets[v.round]?.dice||[]).join(',')||'(los tira de nuevo)'})()`));
+    const back = await state(B);
+    console.log('B reloaded mid-game →', await screen(B), '· round', back.round, '· its dice:',
+      await B.evaluate(`(()=>{const s=window.__dudo.session();const v=window.__dudo.view();return (s.secrets[v.round]?.dice||[]).join(',')||'(rolls them again)'})()`));
   }
   if (v.phase !== 'bid' || !v.current) { await sleep(500); continue; }
-  const turno = devs[v.current];
-  const r = await jugar(turno, vueltas % 3 === 0);
-  if (/sin /.test(r)) await jugar(turno, true);
+  const onTurn = devs[v.current];
+  const r = await play(onTurn, turns % 3 === 0);
+  if (/^no /.test(r)) await play(onTurn, true);
   await sleep(900);
 }
-const fin = await estado(A);
-console.log('partida →', JSON.stringify({ done: fin.done, winner: fin.winner, rondas: fin.round, destapes, verificados }));
+const end = await state(A);
+console.log('game →', JSON.stringify({ done: end.done, winner: end.winner, rounds: end.round, reveals, verified }));
 
-/* ---------------- El aviso del ganador al panel (D-79) ---------------- */
-// Se espía el transporte, que es hasta donde llega el juego: que la base acepte el campo
-// depende de las reglas, que se publican a mano en la consola. Lo que esta prueba cuida es
-// que el juego avise, que avise una sola vez y que nombre al que ganó.
+/* ---------------- The winner notice to the panel (D-79) ---------------- */
+// The transport is spied on, since that's as far as the game goes: whether the database accepts
+// the field depends on the rules, which are published by hand in the console. What this test
+// guards is that the game notifies, that it notifies only once and that it names the winner.
 for (const dev of Object.values(devs)) {
-  await dev.evaluate(`(()=>{const t=window.__dudo.session().transport;window.__ganador=[];
-    const orig=t.noteWinner.bind(t);t.noteWinner=x=>{window.__ganador.push(x||{});return orig(x)};return 1})()`);
+  await dev.evaluate(`(()=>{const t=window.__dudo.session().transport;window.__winnerNotes=[];
+    const orig=t.noteWinner.bind(t);t.noteWinner=x=>{window.__winnerNotes.push(x||{});return orig(x)};return 1})()`);
 }
 
-/* ---------------- Hasta el final ---------------- */
+/* ---------------- To the end ---------------- */
 let g2 = 0;
 while (g2++ < 160) {
-  for (const dev of Object.values(devs)) { if (await overlay(dev)) await cerrarOverlay(dev); }
-  const v = await estado(A);
+  for (const dev of Object.values(devs)) { if (await overlay(dev)) await closeOverlay(dev); }
+  const v = await state(A);
   if (v.done) break;
   if (v.phase !== 'bid' || !v.current) { await sleep(400); continue; }
-  const r = await jugar(devs[v.current], g2 % 2 === 0);
-  if (/sin /.test(r)) await jugar(devs[v.current], true);
+  const r = await play(devs[v.current], g2 % 2 === 0);
+  if (/^no /.test(r)) await play(devs[v.current], true);
   await sleep(700);
 }
-const s3 = await estado(A);
-console.log('final →', JSON.stringify({ done: s3.done, winner: s3.winner, pantalla: await pantalla(A) }));
+const s3 = await state(A);
+console.log('final →', JSON.stringify({ done: s3.done, winner: s3.winner, screen: await screen(A) }));
 {
-  const avisos = JSON.parse(await A.evaluate(`JSON.stringify(window.__ganador || [])`));
-  const bien = avisos.length === 1 && avisos[0]?.role === s3.winner;
-  console.log('aviso del ganador al panel (D-79) →', JSON.stringify(avisos),
-    bien ? '· una sola vez y es el que ganó' : '⚠️  no calza con el ganador');
+  const notices = JSON.parse(await A.evaluate(`JSON.stringify(window.__winnerNotes || [])`));
+  const good = notices.length === 1 && notices[0]?.role === s3.winner;
+  console.log('winner notice to the panel (D-79) →', JSON.stringify(notices),
+    good ? '· only once and it is the winner' : '⚠️  does not match the winner');
 }
-if (s3.done) await A.shot('online-03-resultado');
+if (s3.done) await A.shot('online-03-result');
 
-/* ---------------- Revancha: sala nueva y todos adentro ---------------- */
+/* ---------------- Rematch: new room and everyone in ---------------- */
 if (s3.done) {
   await A.evaluate(`document.querySelector('#result-actions .btn--yellow').click(); 1`); await sleep(6000);
-  const nuevo = await A.evaluate(`window.__dudo.session()?.code`);
-  console.log('revancha → sala nueva:', nuevo, '· distinta de la primera:', nuevo !== code, '· pantalla:', await pantalla(A));
+  const fresh = await A.evaluate(`window.__dudo.session()?.code`);
+  console.log('rematch → new room:', fresh, '· different from the first:', fresh !== code, '· screen:', await screen(A));
   await sleep(3000);
-  for (const [rol, dev] of [['B', B], ['C', C]]) {
+  for (const [role, dev] of [['B', B], ['C', C]]) {
     await dev.evaluate(`document.querySelector('#result-actions .btn--yellow')?.click(); 1`); await sleep(4000);
-    console.log(`${rol} en la revancha →`, await pantalla(dev), '· sala:', await dev.evaluate(`window.__dudo.session()?.code`));
+    console.log(`${role} in the rematch →`, await screen(dev), '· room:', await dev.evaluate(`window.__dudo.session()?.code`));
   }
 }
 
-for (const [rol, dev] of Object.entries(devs)) {
+for (const [role, dev] of Object.entries(devs)) {
   const errs = dev.errors.concat(dev.logs.filter(l => !/vibrate|permission_denied/i.test(l)));
-  console.log(`errores en ${rol}:`, JSON.stringify(errs.slice(0, 2)));
+  console.log(`errors in ${role}:`, JSON.stringify(errs.slice(0, 2)));
 }
 A.close(); B.close(); C.close();

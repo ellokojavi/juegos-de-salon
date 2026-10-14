@@ -6,7 +6,7 @@ leaves PNG screenshots, and prints to the console what it checked.
 
 ## Requirements
 
-- Google Chrome installed at `/Applications/Google Chrome.app` (path in `cdp.mjs`), or another browser with `CHROME=/ruta/al/chrome`.
+- Google Chrome installed at `/Applications/Google Chrome.app` (path in `cdp.mjs`), or another browser with `CHROME=/path/to/chrome`.
 - Node 20 or later (uses native `fetch` and `WebSocket`).
 - The site served at `http://localhost:8765`:
 
@@ -21,17 +21,17 @@ mkdir -p /tmp/e2e && node tools/e2e/battleship/local.mjs /tmp/e2e
 ```
 
 With another session testing at the same time (D-135), each one serves its worktree on its own port and
-passes it to the scripts in `SITIO` (**all** of them read it; without it, 8765). Chrome ports are not
+passes it to the scripts in `SITE` (**all** of them read it; without it, 8765; `SITIO`, its old name, still works). Chrome ports are not
 chosen: `cdp.mjs` opens each Chrome with `--remote-debugging-port=0`, the system gives it a free one and
 `launch` reads it from the profile's `DevToolsActivePort` file (D-213). Two sessions, or two scripts
 of the same one, run at once without stepping on each other. The port each Chrome actually used is in `b.port`.
 
 ```bash
-SITIO=http://localhost:8791 node tools/e2e/hangman/online.mjs /tmp/e2e
+SITE=http://localhost:8791 node tools/e2e/hangman/online.mjs /tmp/e2e
 ```
 
-`PUERTO_CDP` still exists for anyone who wants fixed ports (to connect by hand to one of the
-script's Chromes, for example): the script's first Chrome uses `PUERTO_CDP`, the second the next one, and
+`CDP_PORT` (formerly `PUERTO_CDP`) still exists for anyone who wants fixed ports (to connect by hand to one of the
+script's Chromes, for example): the script's first Chrome uses `CDP_PORT`, the second the next one, and
 so on. It is optional; without it there is nothing to coordinate.
 
 ## On GitHub (D-193, D-307, D-308)
@@ -40,73 +40,75 @@ so on. It is optional; without it there is nothing to coordinate.
 (`.github/workflows/e2e.yml`). A script fails if it exits with an error, if it prints a line with ✗ or ❌, or
 if it goes over 15 minutes (then `ci.mjs` sends it SIGTERM, so it closes its Chrome, and SIGKILL if it is
 still alive after 5 s). The ones that only print what they see still fail if something breaks completely. The
-`online.mjs`, the `chat.mjs` and the ones in the `TAMBIEN_FIREBASE` list in `ci.mjs` open real rooms
-and are still run by hand. The ones in `OBSOLETOS` test something that no longer exists and wait for someone to rewrite them.
+`online.mjs`, the `chat.mjs` and the ones in the `ALSO_FIREBASE` list in `ci.mjs` open real rooms
+and are still run by hand. The ones in `OBSOLETE` test something that no longer exists and wait for someone to rewrite them.
 
 **In groups** (D-307): [`groups.mjs`](groups.mjs) splits the scripts into even groups based on
 how long each one actually took ([`durations.json`](durations.json), in seconds), so that none
 goes over ~4.5 min and all fit at once in the 20 runners GitHub gives at a time. Each group is a
 job that runs its scripts one after another (that they stay even and each script appears once is tested by
 `node tools/e2e/groups.test.mjs`); the run summary has the table with each script, its
-time and its result, and the `capturas-g<n>` artifact has, in one folder per script, the screenshots of
+time and its result, and the `screenshots-g<n>` artifact has, in one folder per script, the screenshots of
 what failed or passed on the second attempt. A new script gets in on its own, with an assumed 90 s until it is
-measured: each job leaves a "Duraciones" notice with how long each script took, and
-`node tools/e2e/groups.mjs medir` moves it into `durations.json` (the processes round, when the
-groups get uneven). A script that goes over about 4 minutes is split into parts (`PARTES` in
-`ci.mjs`, D-204): `cup/tournament.mjs` into `copa`, `laboratorio` and `demos`, and `cup-games/languages.mjs` into
-one per game. Each part reaches the script as `--parte <nombre>`; without a part, the script runs whole
-(that is how `readme.py capturas` runs it, and anyone testing it by hand).
+measured: each job leaves a "Durations" notice with how long each script took, and
+`node tools/e2e/groups.mjs measure` moves it into `durations.json` (the processes round, when the
+groups get uneven). A script that goes over about 4 minutes is split into parts (`PARTS` in
+`ci.mjs`, D-204): `cup/tournament.mjs` into `cup`, `labs` and `demos`, and `cup-games/languages.mjs` into
+one per game. Each part reaches the script as `--part <name>`; without a part, the script runs whole
+(that is how `readme.py screenshots` runs it, and anyone testing it by hand).
 
 A PR that touches nothing in the browser (`docs/`, `marketing/`, `.claude/`, the `.md` files outside `public/`
 and this folder, `tools/agents/`, `tools/firebase/`, `firebase/` and the workflows other than
-`e2e.yml`) runs no script: `ci.mjs --grupos --cambios <archivo>` comes out empty, and
+`e2e.yml`) runs no script: `ci.mjs --groups --changes <file>` comes out empty, and
 [`changes.mjs`](changes.mjs) decides what counts (D-205, D-299; tested by
 `node tools/e2e/changes.test.mjs`).
 
-A script that fails is repeated **once**, right away, inside its group (`CI_REINTENTOS=1`, D-299).
-If it passes on the second attempt, it stays green with a ⚠️ **Intermitente** notice that names it, and the
+A script that fails is repeated **once**, right away, inside its group (`CI_RETRIES=1`, D-299).
+If it passes on the second attempt, it stays green with a ⚠️ **Flaky** notice that names it, and the
 screenshots of the first attempt stay in the artifact: you have to look at why it sometimes fails, not take it
 as good. If it fails twice, the group goes red, with a notice that names the script.
 
 **On publishing** (D-302, D-308): each run that passes with scripts leaves a mark, the artifact
-`e2e-arbol-<árbol>`, with the tree it tested (on a PR, the test merge with main). `publish.yml`
+`e2e-tree-<tree>`, with the tree it tested (on a PR, the test merge with main). `publish.yml`
 runs [`already-tested.mjs`](already-tested.mjs): if the tree it is about to publish already has a mark, or only
 changes what doesn't reach the browser over a parent that has one, it doesn't repeat the end-to-end run. Otherwise,
 it runs it whole (when it doesn't repeat it is tested by `node tools/e2e/already-tested.test.mjs`), and if it comes out
-red it doesn't publish and the `avisar` job opens a "main is red:
-end-to-end" issue; when `main` is green again, `cerrar-aviso` closes it with the link to the run (D-273).
+red it doesn't publish and the `notify` job opens a "main is red:
+end-to-end" issue; when `main` is green again, `close-notice` closes it with the link to the run (D-273).
 
-**Wait for a condition, not a fixed pause** (D-307): `cdp.mjs` has `abrir(url, tope)` (navigates
-and waits for `load` and for the page to settle), `asentar(tope)` (no DOM changes for 150 ms and
-finite animations finished) and `hasta(expr, tope)` (until the expression is true).
+**Wait for a condition, not a fixed pause** (D-307): `cdp.mjs` has `abrir(url, cap)` (opens: navigates
+and waits for `load` and for the page to settle), `asentar(cap)` (settles: no DOM changes for 150 ms and
+finite animations finished) and `hasta(expr, cap)` (until the expression is true); their English names come
+with the game scripts' rename (D-316).
 The cap is the old fixed pause: it never waits longer, and almost always much less. A new script
 uses these instead of `sleep` and `go(url, ms)`; `sleep` remains for what really depends on the
 clock (letting a timer run, a double tap).
 
 ```bash
 node tools/e2e/ci.mjs              # all the CI ones, one after another, with a summary
-node tools/e2e/ci.mjs --grupos     # the groups GitHub would run (JSON)
-node tools/e2e/groups.mjs ver      # the same, with their estimated time
+node tools/e2e/ci.mjs --groups     # the groups GitHub would run (JSON)
+node tools/e2e/groups.mjs show     # the same, with their estimated time
 node tools/e2e/ci.mjs cup/tournament.mjs   # just that one
 node tools/e2e/ci.mjs cup/tournament.mjs:demos   # just that part
-CI_REINTENTOS=1 node tools/e2e/ci.mjs a.mjs b.mjs   # as on GitHub: with a second attempt
+CI_RETRIES=1 node tools/e2e/ci.mjs a.mjs b.mjs     # as on GitHub: with a second attempt
 ```
 
 `look.mjs` is not a test: it opens a single screen to review it one at a time, without playing the
-game. `node tools/e2e/look.mjs ahorcado juego --ancho 320` takes the screenshot and warns if there is
+game. `node tools/e2e/look.mjs ahorcado game --width 320` takes the screenshot and warns if there is
 horizontal scroll, buttons under 44 px (C-8) and how much space there is between the board and its buttons (D-309).
 Also, **every `b.shot()` of any script measures that space** (`spacing-common.mjs`) and prints ✗ if a
-button is less than 24 px from a `data-tablero`: the script goes red (with `AIRE_INFORMAR=1`
-it prints the space of every screenshot, even when it passes). `--idioma de` (or `en`, `pt`) opens it in that language. The
-panel is viewed with seeded data: `look.mjs panel <toma>`, with `datos`, `ahora`, `torneo`, `juegos`,
-`audiencia`, `trafico`, `salud` (D-251), `copa-ficha`, `copa-dias`, `copa-historia`, `juego-ficha` or `sala-ficha` (D-207); `torneo` also brings a week of seeded notifications (D-233). The
+button is less than 24 px from a `data-tablero`: the script goes red (with `SPACING_REPORT=1`
+it prints the space of every screenshot, even when it passes). `--lang de` (or `en`, `pt`) opens it in that language;
+`--height`, `--notches` (a phone with a notch) and `--out <folder>` are the other options. The
+panel is viewed with seeded data: `look.mjs panel <shot>`, with `data`, `now`, `tournament`, `games`,
+`audience`, `traffic`, `health` (D-251), `cup-card`, `cup-days`, `cup-history`, `game-card` or `room-card` (D-207); `tournament` also brings a week of seeded notifications (D-233). The
 paths to each screen are in [`paths.mjs`](paths.mjs), which it shares with the language tests.
 
 `contact-sheet.mjs` isn't one either: it builds a sheet with **all** the README screenshots of a section,
 at the size the README shows them, to look at them together before publishing (D-76).
 
 ```bash
-node tools/e2e/contact-sheet.mjs cuarto-rey --salida /tmp/contacto
+node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 ```
 
 | Script | What it tests |
@@ -150,8 +152,8 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --salida /tmp/contacto
 | `timeline/tie.mjs` | That the round ends and that the tie is won by the fastest |
 | `timeline/chat.mjs` | Room chat: unread, spam brake, verdict covering it, reconnection and death at the end |
 | `game-memory.mjs` | Saving and resuming in the three games (canon C-6) |
-| `versioning.mjs` | That all modules load with the import map's `?v=`. Since D-205 `public/` doesn't carry it: run it against a stamped copy (`set-version.py --sitio /tmp/sitio`, served and passed in `SITIO`) |
-| `installable.mjs` | The installable app (D-221): on the home page, a game, La Copa, a standalone game and `/records/`, Chrome registers `/sw.js` with scope `/`, reads the manifest without errors and allows installing. In the four languages, on the home page and in a game, checks that the app is named with the language's `appTitle`, in the manifest and in `apple-mobile-web-app-title` (D-222). Against a stamped copy (`SITIO`) it also checks that the import map doesn't break |
+| `versioning.mjs` | That all modules load with the import map's `?v=`. Since D-205 `public/` doesn't carry it: run it against a stamped copy (`set-version.py --site /tmp/site`, served and passed in `SITE`) |
+| `installable.mjs` | The installable app (D-221): on the home page, a game, La Copa, a standalone game and `/records/`, Chrome registers `/sw.js` with scope `/`, reads the manifest without errors and allows installing. In the four languages, on the home page and in a game, checks that the app is named with the language's `appTitle`, in the manifest and in `apple-mobile-web-app-title` (D-222). Against a stamped copy (`SITE`) it also checks that the import map doesn't break |
 | `install-prompt.mjs` | The home page bubble that invites adding the app to the home screen (D-232): with each person's phone (Safari and Chrome on iPhone, Chrome and Samsung on Android, WhatsApp), checks the sheet's steps, Chrome's own dialog, that the ✕ and "Ya la agregué" turn it off for good, that it doesn't show on a computer or in the installed app, and that it fits at 320 px in the four languages |
 | `daily.mjs` | Uno al día (D-230): with the clock fixed on day no. 1, the home page card next to La Copa (D-239: the pills of both on one line, the die that says "Juego al azar" again and the button next to the die from `/labs/`), the die that lands on today's game, the intro line, a link to another game that goes to today's, the result card (streak, sharing without naming the game, with image), without the game's ranking, the second attempt as practice, the "Listo" button and `/today/` with its streak ("Hoy jugaste" with the game's emoji and "Próximo juego en…"), its calendar (the emoji and the score in a pill) and each game's trend, at 320 px and in the four languages |
 | `daily-player.mjs` | Uno al día with a player (D-230), with the test store: Sara plays today's, signs in and her day goes up to the history and the rankings (daily and streaks); `/today/` shows the ranking with its four tabs and the wildcards say what they are for; inviting sends her link in the first person; Pedro, on another "phone", sees "🔥 Sara te desafía", plays, sees the duel and gives Sara a wildcard, which she sees once when she comes back |
@@ -176,13 +178,13 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --salida /tmp/contacto
 
 ## All languages (D-199)
 
-Each game has its `<carpeta>/languages.mjs` (`hangman/`, `battleship/`, `bulls-and-cows/`,
+Each game has its `<folder>/languages.mjs` (`hangman/`, `battleship/`, `bulls-and-cows/`,
 `timeline/`, `liars-dice/`, `generala/`, `julep/`, `fourth-king/`, and `cup-games/` for the La Copa games
 played standalone). They go through each screen in [`paths.mjs`](paths.mjs) in each language of
 `LANGS` —a new language gets in on its own— and compare it with the same screen in Spanish:
 
 - the page is in that language (`<html lang>`) and reaches the same screen;
-- no `undefined`, `NaN`, `[object …]` or unreplaced `{marcador}` shows up;
+- no `undefined`, `NaN`, `[object …]` or unreplaced `{placeholder}` shows up;
 - nothing was left in Spanish: neither a text from the dictionaries (the game's `LOCALES` and `COMMON`) that
   says something else in that language, nor a long line identical to the one on the Spanish screen, which
   is how a text written by hand outside the dictionaries gives itself away;
@@ -190,7 +192,7 @@ played standalone). They go through each screen in [`paths.mjs`](paths.mjs) in e
   buttons overflowing at the bottom that the Spanish one doesn't have.
 
 The logic lives in [`languages-common.mjs`](languages-common.mjs), and each shot is saved as a screenshot
-`<pantalla>-<idioma>.png`. A new screen to check in all languages is added to
+`<screen>-<lang>.png`. A new screen to check in all languages is added to
 `paths.mjs`, the same catalog `look.mjs` uses; a new game, with a three-line
 `languages.mjs`. `cup/languages.mjs` does the same with La Copa's home page and its form.
 
@@ -198,9 +200,9 @@ The logic lives in [`languages-common.mjs`](languages-common.mjs), and each shot
 
 Several of these shots are the images the README shows. The catalog
 [`docs/capturas.json`](../../docs/capturas.json) says which comes from which script and with what
-name, and `python3 tools/release/readme.py capturas <seccion>` runs the scripts needed and
+name, and `python3 tools/release/readme.py screenshots <section>` runs the scripts needed and
 copies the PNGs to `docs/screenshots/` (see D-51). So, when renaming or removing a shot from
-a script, it is worth running `python3 tools/release/readme.py revisar`: it warns if it left an orphan image.
+a script, it is worth running `python3 tools/release/readme.py check`: it warns if it left an orphan image.
 
 Redoing them is not reviewing them: after `capturas`, the contact sheet (`contact-sheet.mjs`) puts them
 together, and there you see what a single image doesn't give away —a row wider than the one above,
@@ -215,10 +217,10 @@ Firebase project, so they need internet and leave test rooms that expire after h
 
 ## Caveats
 
-- **The output folder** (D-315): `const OUT = salida()` (or `salida('/tmp/<guion>')` with a
-  default one), from `tools/e2e/output.mjs`. It takes the first argument only if it is a real folder:
-  run without a folder or with a flag first (`tournament.mjs --parte copa`), the script no longer leaves
-  `undefined/` or `--parte/` with a Chrome profile inside the worktree. `output.test.mjs` fails if
+- **The output folder** (D-315): `const OUT = output()` (or `output('/tmp/<script>')` with a
+  default one; `output()` once the game scripts are renamed, D-316), from `tools/e2e/output.mjs`. It takes the first argument only if it is a real folder:
+  run without a folder or with a flag first (`tournament.mjs --part cup`), the script no longer leaves
+  `undefined/` or `--part/` with a Chrome profile inside the worktree. `output.test.mjs` fails if
   a script reads `process.argv[2]` by hand, and `launch` doesn't open Chrome with a profile like that.
 - **Zombie Chromes:** each Chrome dies with its script, however it ends: fine, with an
   exception, with Ctrl-C or with a `kill` (SIGINT, SIGTERM, SIGHUP; `cdp.mjs`). No need for
@@ -228,37 +230,37 @@ Firebase project, so they need internet and leave test rooms that expire after h
   kill it (with the bracket: without it, the pattern matches the shell itself). Never
   `pkill -f remote-debugging-port` alone, which kills every session's tests. A live Chrome
   with the same profile makes the next one fail to open: `launch` says so in the error.
-- The `port` each script passes to `launch` is no longer a port: only `PUERTO_CDP` uses it to
+- The `port` each script passes to `launch` is no longer a port: only `CDP_PORT` uses it to
   know which Chrome is which. A script that needs the port reads it from `b.port`.
 - In a hidden tab the browser throttles timers differently; the waits
   (`sleep`) are calibrated for headless.
 
 ## La Copa
 
-`node tools/e2e/cup/tournament.mjs <salida> [--siete]` plays a 3-day Cup (or the 7-day one with `--siete`) with
+`node tools/e2e/cup/tournament.mjs <output> [--siete]` plays a 3-day Cup (or the 7-day one with `--siete`) with
 three players in a single Chrome, with the test store and the clock moved forward day by day. Each
 player is the same tab with `sessionStorage` cleared. On each screen it checks that there is no
 horizontal scroll or buttons under 44 px (C-8), and captures the reminder, the partial standings and the
 summary the admin would share.
 
-`node tools/e2e/cup/languages.mjs <salida>` creates a cup in each language other than Spanish
+`node tools/e2e/cup/languages.mjs <output>` creates a cup in each language other than Spanish
 (D-170, D-199): it checks that the cup saves the language of its words, that the screen follows the language
 of whoever is looking (another one, the next in the list) and that what is shared to the group comes out in the
 cup's language, with its `?lang=`. Then it opens five standalone games in each language (the Palabra keyboard without
 Ñ, the Conexiones grid of the language) and goes through the home page and the create form against the
 Spanish one. The expected texts come from the dictionaries, they aren't written in the script.
 
-`node tools/e2e/cup/player-cups.mjs <salida>` tests that "Tus copas" follows the player (D-220):
+`node tools/e2e/cup/player-cups.mjs <output>` tests that "Tus copas" follows the player (D-220):
 one phone signs in with its player and opens a cup where it is seated; another phone, which never saw it,
 signs in with the same player, finds it on the home page and on opening it has its name already chosen.
 It uses the cup's test store and the players' one.
 
-`node tools/e2e/cup/zip-ten.mjs <salida>` plays the ten Zip levels in practice, with the
+`node tools/e2e/cup/zip-ten.mjs <output>` plays the ten Zip levels in practice, with the
 fixed seed, and checks that the game ends there, before the clock (D-250): the notice "¡Resolviste
 los 10 niveles!" with no extra text, no countdown or solution in view, the top clock
 still and 100 points in the result.
 
-`node tools/e2e/cup/notifications.mjs [salida]` goes through La Copa's notifications (D-223) with the test
+`node tools/e2e/cup/notifications.mjs [output]` goes through La Copa's notifications (D-223) with the test
 store, the VAPID key from `vapid.js` (D-225) and a fake notification service (nothing leaves Chrome): the card and
 "Ahora no", the bell that turns on notifications and the confirmation notification, the settings and "Silenciar
 esta copa", blocked notifications, and the iPhone path (add to home screen, inside Instagram, and
@@ -268,7 +270,7 @@ notification opens (D-229): `&day=<d>` starts on that day ready to begin (or on 
 played) and `&mute` mutes the cup. The notification's buttons on Android are tested by hand: headless
 Chrome doesn't show them. It leaves screenshots of each sheet.
 
-`node tools/e2e/cup/seat.mjs [salida]` takes the seat away from the phone of the `player` demo (as
+`node tools/e2e/cup/seat.mjs [output]` takes the seat away from the phone of the `player` demo (as
 when it loses its Firebase session or the admin gives a new PIN), enters through the day's notification and taps
 Start: it checks that it doesn't say the day closed, that it asks for the PIN with the name already chosen and that,
 with the PIN, the day starts (D-285).

@@ -1,6 +1,6 @@
-// Toque y Fama en todos los idiomas que se ofrecen (D-199): cada pantalla de paths.mjs, en cada uno,
-// contra el español. Uso: node tools/e2e/bulls-and-cows/languages.mjs <carpeta-salida>
-import { revisarIdiomas } from '../languages-common.mjs';
+// Bulls and Cows in every language offered (D-199): each screen in paths.mjs, in each one,
+// against Spanish. Usage: node tools/e2e/bulls-and-cows/languages.mjs <output-folder>
+import { checkLanguages } from '../languages-common.mjs';
 import { LOCALES } from '../../../public/bulls-and-cows/rules.js';
 
-await revisarIdiomas('toque-y-fama', { dicts: [LOCALES], port: 9464 });
+await checkLanguages('toque-y-fama', { dicts: [LOCALES], port: 9464 });

@@ -9,7 +9,7 @@ import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { registrar, nombrar, manifestDe } from './instalable.js';
 import { COMMON, IDIOMAS } from './i18n.js';
-import { ICONOS } from '../../../tools/release/icons.mjs';
+import { ICONS } from '../../../tools/release/icons.mjs';
 import { GAMES, SUELTOS } from './games.js';
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -39,7 +39,7 @@ await caso('el manifest trae los PNG que Android pide para instalar, con su medi
 });
 
 await caso('los íconos de tools/release/icons.mjs están todos, con su medida', () => {
-  for (const i of ICONOS) assert.deepEqual(medida(join(PUBLIC, 'assets/icons', i.archivo)), [i.lado, i.lado], i.archivo);
+  for (const i of ICONS) assert.deepEqual(medida(join(PUBLIC, 'assets/icons', i.file)), [i.size, i.size], i.file);
 });
 
 await caso('el service worker vive en la raíz y no toca la red (sin evento fetch)', () => {

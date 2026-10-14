@@ -67,16 +67,16 @@ own tree because they last a week and rooms die after half an hour (D-89).
 ## Publishing the rules (D-122, D-218)
 
 They are published on their own on every merge to `main`: the `reglas` job in `.github/workflows/publish.yml`
-runs `rules.mjs publicar` with the GitHub secret `FIREBASE_ADMIN_JSON`, before publishing the
+runs `rules.mjs publish` with the GitHub secret `FIREBASE_ADMIN_JSON`, before publishing the
 site. By hand, to check or if the secret is missing:
 
 ```bash
-node tools/firebase/rules.mjs publicar    # uploads database.rules.json and verifies it took
-node tools/firebase/rules.mjs revisar     # is what's published what's in the repo?
+node tools/firebase/rules.mjs publish    # uploads database.rules.json and verifies it took
+node tools/firebase/rules.mjs check      # is what's published what's in the repo?
 ```
 
 It uses a service account key stored outside the repo at
-`~/.config/juegos-de-salon/firebase-admin.json` (or `FIREBASE_LLAVE=/ruta`). It is created once in
+`~/.config/juegos-de-salon/firebase-admin.json` (or `FIREBASE_KEY=/path`). It is created once in
 [Service accounts](https://console.firebase.google.com/u/0/project/juegos-de-salon/settings/serviceaccounts/adminsdk)
 → Generate new private key. It gives admin access to the whole project: it isn't shared, and if
 it leaks it is revoked right there. Without the key, you can still paste by hand in the console.
@@ -135,7 +135,7 @@ The same mechanism as La Copa, for the whole app:
 
 A **legacy player** (`jugadores/<jid>.legado = true`, from La Copa's history) has no
 PIN: `jugadorKeys/<jid>` can be created for them, once, and whoever claims it deletes `legado` in the
-same write, seated with that PIN. They are loaded by `node tools/firebase/rankings-history.mjs --escribir`.
+same write, seated with that PIN. They are loaded by `node tools/firebase/rankings-history.mjs --write`.
 
 The owner (their UID) can write and delete in all these branches, to moderate.
 
@@ -185,7 +185,7 @@ pareció?" at the end of the lab's El caso (D-265) write to `feedback/<id>` **ov
 `texto` (up to 1000 characters), optional `nombre`, `tester` (the label of the lab key
 used to enter, up to 24; never the key, D-306), `contexto` (JSON, up to 500), `v` and server `at`.
 It is written only once and **read without an account**: `node tools/firebase/reports.mjs` shows them
-(`--dias 3` for recent ones). They carry no PIN or account data.
+(`--days 3` for recent ones). They carry no PIN or account data.
 Every 15 minutes, `.github/workflows/feedback.yml` (`tools/agents/feedback.mjs`) uploads the new ones as
 GitHub issues with the `feedback` label, with the name and the key (D-279, D-306) and without the
 browser, and the processes agent handles them (D-275).

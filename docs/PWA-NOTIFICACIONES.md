@@ -404,8 +404,8 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
   D-229) y lo anota en cada copa.
 - Si el servicio responde 404 o 410, la suscripción murió: se borra, con sus copas. Lo de una copa
   borrada o terminada hace más de una semana se limpia.
-- `node tools/push/notify.mjs --simular` imprime qué mandaría sin mandar nada.
-  `--prueba <código>` manda un aviso de prueba a cada celular con avisos en esa copa. Los dos
+- `node tools/push/notify.mjs --dry-run` imprime qué mandaría sin mandar nada.
+  `--test <código>` manda un aviso de prueba a cada celular con avisos en esa copa. Los dos
   están en Actions → Avisos → *Run workflow*.
 - Workflow a los minutos 7, 22, 37 y 52 de cada hora, y `workflow_dispatch`. Necesita los secretos
   `FIREBASE_ADMIN_JSON` y `VAPID_PRIVADA`; sin ellos avisa y termina en verde. GitHub no garantiza la hora
@@ -449,7 +449,7 @@ fondo: si los avisos de verdad traen gente de vuelta.
 |---|---|---|
 | **1. Instalable de verdad** ✅ v0.105.0 | Íconos PNG, manifest completo, `sw.js` mínimo (sin caché, sin push), ícono de Apple, prueba de que todas las páginas los llevan, guion e2e que verifica que el SW se registra y que Chrome deja instalar | Avisos |
 | **2. Suscribirse** ✅ v0.107.0, en el laboratorio | Primero, la prueba en iPhones reales de cómo abre la app instalada (la lista de arriba). Después: `push.js`, la tarjeta y el botón 🔔 de La Copa con sus cuatro estados, la hoja de iPhone, el "escribe tu PIN" de la app instalada, el aviso de confirmación, reglas `push` y `pushCopa`, textos en 4 idiomas y la lista de pasos para probar a mano en iPhone | Mandar nada (se ve la suscripción guardada y llega el aviso de confirmación) |
-| **3. Mandar** ✅ v0.108.0 (D-224), abierto a todos en v0.110.0 (D-228) | `tools/push/` (webpush, calendario, avisar con `--simular` y `--prueba`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `notifications.yml`. Los avisos se abren a todos cuando el dueño vea llegar uno de prueba | — |
+| **3. Mandar** ✅ v0.108.0 (D-224), abierto a todos en v0.110.0 (D-228) | `tools/push/` (webpush, calendario, avisar con `--dry-run` y `--test`; `vapid.mjs` ya entró en el PR 2), pruebas unitarias del cifrado contra los vectores del RFC 8291 y del calendario de avisos contra `engine.js`, workflow `notifications.yml`. Los avisos se abren a todos cuando el dueño vea llegar uno de prueba | — |
 | **4. Medir** ✅ v0.112.0 (D-233) | Fila del panel, `?notif=` en las señales, `?pwa` en el inicio, mandados por día y tipo | — |
 | *(después)* | Modo sin conexión (RP-13), Declarative Web Push para iPhone | — |
 

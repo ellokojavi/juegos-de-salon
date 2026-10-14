@@ -57,8 +57,8 @@ las pantallas de `tools/e2e/look.mjs` a 320 px, y después con los textos aleman
   alfabeto y las frecuencias del Ahorcado, el teclado QWERTZ de Palabra, las grillas y las
   palabras de La Copa, y los nombres de ¿Dónde queda?.
 - **Firebase**: una copa con palabras en alemán guarda `lang: "de"`, que las reglas no dejaban
-  escribir. Se publican después de fusionar con `node tools/firebase/rules.mjs publicar` (D-122).
-- `look.mjs --idioma de` funciona: pone la marca del laboratorio igual que lo hacía `/labs/de/`.
+  escribir. Se publican después de fusionar con `node tools/firebase/rules.mjs publish` (D-122).
+- `look.mjs --lang de` funciona: pone la marca del laboratorio igual que lo hacía `/labs/de/`.
 
 ## Decidido con el dueño (D-194)
 
@@ -96,7 +96,7 @@ Ordenado por lo que más se nota.
 2. **Sacarlo de `EN_LABS`** en `i18n.js`: con eso aparece para todos en el toggle.
 3. **La puerta `/de/`** con su tarjeta social: `de/index.html` (copia de `public/en/`), `og.mjs`
    (`PUERTAS`, `GRATIS`, la conjunción "und", `LOCALE` `de_DE`), `tools/release/og/card.html`
-   (`GRATIS`) y `node tools/release/og.mjs imagenes --todas` en el Mac del dueño. En `og/tarjeta.html` el
+   (`GRATIS`) y `node tools/release/og.mjs images --all` en el Mac del dueño. En `og/tarjeta.html` el
    nombre va en Bangers 52 px sin ayuda para cortar: "SCHIFFE VERSENKEN" no cabe en una línea.
    `homeUrl('de')` pasa a ser `/de/`.
 4. **Imágenes que se comparten** (`compartir.js`, la imagen de la tabla en `public/cup/game.js`): el

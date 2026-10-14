@@ -1,71 +1,72 @@
-// El botón de compartir de la portada (D-226, D-242): en español abre una hoja con el video y dos opciones (D-253);
-// en los idiomas sin video comparte directo, como antes (D-254). En cada idioma, la invitación manda, con un celular que comparte archivos, la tarjeta social de ese idioma junto al texto, y
-// "Compartir el video" manda el texto del video con su link de YouTube; en un computador, solo el texto copiado y
-// nada descargado. El video no se baja hasta que lo tocan.
-// Uso: node tools/e2e/share-home.mjs /tmp/compartir-portada
-import { salida } from './output.mjs';
+// The home page share button (D-226, D-242): in Spanish it opens a sheet with the video and two
+// options (D-253); in the languages without a video it shares directly, as before (D-254). In each
+// language, the invitation sends, with a phone that shares files, that language's social card along
+// with the text, and "Compartir el video" sends the video's text with its YouTube link; on a
+// computer, only the copied text and nothing downloaded. The video isn't loaded until it is tapped.
+// Usage: node tools/e2e/share-home.mjs /tmp/share-home
+import { output as output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = salida('/tmp/compartir-portada');
+const SITE = process.env.SITE || process.env.SITIO || 'http://localhost:8765';
+const OUT = output('/tmp/share-home');
 const b = await launch({ dir: `${OUT}/p`, out: OUT });
-let mal = 0;
-const ver = (ok, que) => { console.log(`${ok ? '✓' : '✗'} ${que}`); if (!ok) mal++; };
-const ESPERADO = {
-  es: { foto: 'menu.jpg', cab: '🎲 *Juegos de Salón* · ', archivo: 'juegos-de-salon.jpg' },
-  en: { foto: 'menu-en.jpg', cab: '🎲 *Party Games* · ', archivo: 'party-games.jpg' },
-  pt: { foto: 'menu-pt.jpg', cab: '🎲 *Jogos de Salão* · ', archivo: 'jogos-de-salao.jpg' },
-  de: { foto: 'menu-de.jpg', cab: '🎲 *Salonspiele* · ', archivo: 'salonspiele.jpg' },
+let bad = 0;
+const check = (ok, what) => { console.log(`${ok ? '✓' : '✗'} ${what}`); if (!ok) bad++; };
+const EXPECTED = {
+  es: { photo: 'menu.jpg', head: '🎲 *Juegos de Salón* · ', file: 'juegos-de-salon.jpg' },
+  en: { photo: 'menu-en.jpg', head: '🎲 *Party Games* · ', file: 'party-games.jpg' },
+  pt: { photo: 'menu-pt.jpg', head: '🎲 *Jogos de Salão* · ', file: 'jogos-de-salao.jpg' },
+  de: { photo: 'menu-de.jpg', head: '🎲 *Salonspiele* · ', file: 'salonspiele.jpg' },
 };
-// Un celular que comparte archivos: guarda lo que llegó al menú y cuántas tarjetas se pidieron
-const CELULAR = `(() => {
+// A phone that shares files: keeps what reached the menu and how many cards were requested
+const PHONE = `(() => {
   window.__fotos = performance.getEntriesByType('resource').filter(e => /assets\\/og\\//.test(e.name)).map(e => e.name);
   navigator.canShare = d => true;
   navigator.share = async d => { window.__menu = { text: d.text, files: (d.files || []).map(f => ({ name: f.name, type: f.type, size: f.size })) }; };
   return 1;
 })()`;
-for (const [lang, e] of Object.entries(ESPERADO)) {
-  await b.go(`${SITIO}/?lang=${lang}`, 1500);
-  await b.evaluate(CELULAR);
-  // La foto se baja al tocar, si no se bajó antes; el toque espera a tenerla
+for (const [lang, e] of Object.entries(EXPECTED)) {
+  await b.go(`${SITE}/?lang=${lang}`, 1500);
+  await b.evaluate(PHONE);
+  // The photo is fetched on tap, if it wasn't fetched before; the tap waits for it
   await b.evaluate(`document.querySelector('#share-slot button').click(); 1`); await sleep(lang === 'es' ? 500 : 1200);
   if (lang === 'es') {
-    // En español, la hoja con el video (D-253)
-    ver(await b.evaluate(`!!document.querySelector('#hoja-compartir .hoja-video-play img') && !document.querySelector('#hoja-compartir iframe')`), `${lang}: el botón abre la hoja, con la miniatura del video y sin cargarlo`);
+    // In Spanish, the sheet with the video (D-253)
+    check(await b.evaluate(`!!document.querySelector('#hoja-compartir .hoja-video-play img') && !document.querySelector('#hoja-compartir iframe')`), `${lang}: the button opens the sheet, with the video thumbnail and without loading it`);
     await b.evaluate(`document.getElementById('btn-compartir-video').click(); 1`); await sleep(600);
     const v = await b.evaluate(`JSON.stringify(window.__menu || null)`).then(JSON.parse);
-    ver(v && v.text.startsWith('🎬 ') && /^🔗 https:\/\/youtu\.be\/[\w-]+$/.test(v.text.trim().split('\n').pop()) && !v.files.length, `${lang}: "Compartir el video" manda su texto con el link de YouTube al final (${v?.text?.split('\n').pop()})`);
+    check(v && v.text.startsWith('🎬 ') && /^🔗 https:\/\/youtu\.be\/[\w-]+$/.test(v.text.trim().split('\n').pop()) && !v.files.length, `${lang}: "Compartir el video" sends its text with the YouTube link at the end (${v?.text?.split('\n').pop()})`);
     await b.evaluate(`window.__menu = null; document.getElementById('btn-invitar-portada').click(); 1`); await sleep(1200);
   } else {
-    // En un idioma sin video, el botón comparte directo, como antes (D-254)
-    ver(await b.evaluate(`!document.getElementById('hoja-compartir')`), `${lang}: sin video en su idioma, no hay hoja`);
+    // In a language without a video, the button shares directly, as before (D-254)
+    check(await b.evaluate(`!document.getElementById('hoja-compartir')`), `${lang}: without a video in its language, there is no sheet`);
   }
   const m = await b.evaluate(`JSON.stringify(window.__menu || null)`).then(JSON.parse);
-  ver(m, `${lang}: ${lang === 'es' ? '"Invitar a jugar"' : 'el botón'} abre el menú del sistema`);
+  check(m, `${lang}: ${lang === 'es' ? '"Invitar a jugar"' : 'the button'} opens the system menu`);
   if (!m) continue;
-  ver(m.files.length === 1 && m.files[0].name === e.archivo && m.files[0].type === 'image/jpeg' && m.files[0].size > 50000, `${lang}: va la tarjeta como imagen (${JSON.stringify(m.files[0])})`);
-  const fotos = await b.evaluate(`JSON.stringify(performance.getEntriesByType('resource').filter(e => /assets\\/og\\//.test(e.name)).map(e => e.name.split('/').pop()))`).then(JSON.parse);
-  ver(fotos.length === 1 && fotos[0] === e.foto, `${lang}: la tarjeta es la de su idioma (${fotos.join(', ')})`);
-  ver(m.text.startsWith(e.cab) && /\d+/.test(m.text.split('\n')[0]), `${lang}: el texto abre con la cabecera y cuántos juegos hay`);
+  check(m.files.length === 1 && m.files[0].name === e.file && m.files[0].type === 'image/jpeg' && m.files[0].size > 50000, `${lang}: the card goes as an image (${JSON.stringify(m.files[0])})`);
+  const photos = await b.evaluate(`JSON.stringify(performance.getEntriesByType('resource').filter(e => /assets\\/og\\//.test(e.name)).map(e => e.name.split('/').pop()))`).then(JSON.parse);
+  check(photos.length === 1 && photos[0] === e.photo, `${lang}: the card is its language's (${photos.join(', ')})`);
+  check(m.text.startsWith(e.head) && /\d+/.test(m.text.split('\n')[0]), `${lang}: the text opens with the header and how many games there are`);
   const link = m.text.trim().split('\n').pop();
-  ver(link === `🔗 https://juegosdesalon.cl/${lang === 'es' ? '' : `${lang}/`}?from=link`, `${lang}: el link a la portada del idioma, solo en la última línea (${link})`);
+  check(link === `🔗 https://juegosdesalon.cl/${lang === 'es' ? '' : `${lang}/`}?from=link`, `${lang}: the link to the language's home page, only on the last line (${link})`);
   console.log(m.text.replace(/^/gm, '    '));
 }
-// Un computador: sin menú, el texto queda copiado, el botón dice ✅ y no se baja ninguna imagen.
-// Chrome headless sí tiene navigator.canShare: se lo quita antes de que cargue la página, o la
-// portada baja la tarjeta por adelantado y la cuenta de imágenes sale mal
+// A computer: no menu, the text gets copied, the button says ✅ and no image is fetched.
+// Headless Chrome does have navigator.canShare: it is removed before the page loads, or the
+// home page fetches the card ahead of time and the image count comes out wrong
 await b.send('Page.addScriptToEvaluateOnNewDocument', { source: 'navigator.canShare = undefined; navigator.share = undefined;' });
-await b.go(`${SITIO}/?lang=es`, 1500);
+await b.go(`${SITE}/?lang=es`, 1500);
 await b.evaluate(`(() => { navigator.canShare = undefined; navigator.share = undefined; window.__copiado = null;
   navigator.clipboard.writeText = async t => { window.__copiado = t; };
   window.__descargas = 0; const c = HTMLAnchorElement.prototype.click; HTMLAnchorElement.prototype.click = function () { if (this.download) window.__descargas++; else c.call(this); };
   return 1; })()`);
 await b.evaluate(`(() => { const x = document.querySelector('#share-slot button'); x.focus(); x.click(); return 1; })()`); await sleep(400);
 await b.evaluate(`document.getElementById('btn-invitar-portada').click(); 1`); await sleep(600);
-const pc = await b.evaluate(`JSON.stringify({ copiado: window.__copiado, descargas: window.__descargas, boton: document.querySelector('#btn-invitar-portada b').textContent, fotos: performance.getEntriesByType('resource').filter(e => /assets\\/og\\//.test(e.name)).length })`).then(JSON.parse);
-ver(pc.copiado?.startsWith('🎲 *Juegos de Salón*') && pc.boton === '✅ Copiado', `computador: el texto queda copiado y la opción dice ✅ Copiado (${pc.boton})`);
+const pc = await b.evaluate(`JSON.stringify({ copied: window.__copiado, downloads: window.__descargas, button: document.querySelector('#btn-invitar-portada b').textContent, photos: performance.getEntriesByType('resource').filter(e => /assets\\/og\\//.test(e.name)).length })`).then(JSON.parse);
+check(pc.copied?.startsWith('🎲 *Juegos de Salón*') && pc.button === '✅ Copiado', `computer: the text gets copied and the option says ✅ Copiado (${pc.button})`);
 await b.evaluate(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); 1`); await sleep(200);
-ver(await b.evaluate(`!document.getElementById('hoja-compartir') && document.activeElement?.id === 'btn-compartir-portada'`), 'Escape cierra la hoja y el foco vuelve al botón');
-ver(pc.descargas === 0 && pc.fotos === 0, 'computador: no se baja ni se descarga ninguna imagen');
-ver(!b.errors.length, `sin errores en la consola ${JSON.stringify(b.errors)}`);
+check(await b.evaluate(`!document.getElementById('hoja-compartir') && document.activeElement?.id === 'btn-compartir-portada'`), 'Escape closes the sheet and focus goes back to the button');
+check(pc.downloads === 0 && pc.photos === 0, 'computer: no image is fetched or downloaded');
+check(!b.errors.length, `no console errors ${JSON.stringify(b.errors)}`);
 b.close();
-if (mal) process.exit(1);
+if (bad) process.exit(1);

@@ -2,13 +2,13 @@
   "_": [
     "Catálogo de las capturas del README: qué muestra cada una y de dónde sale.",
     "Cada entrada dice el guion de tools/e2e/ y el nombre de la toma que ese guion",
-    "saca, así `python3 tools/release/readme.py capturas` las rehace todas sin que nadie",
+    "saca, así `python3 tools/release/readme.py screenshots` las rehace todas sin que nadie",
     "tenga que acordarse de la secuencia de toques. El pie es el texto que va",
     "debajo de la imagen en el README; las galerías se generan desde acá.",
     "El pie va en inglés, porque el README es en inglés (D-78); el resto de este",
     "catálogo, como el resto de la documentación, va en español.",
     "Al agregar una pantalla al README: sumar la toma al guion, la entrada acá,",
-    "correr `capturas` y después `actualizar`."
+    "correr `screenshots` y después `update`."
   ],
   "ancho": {
     "_": "Ancho con que el README muestra cada imagen. El PNG se guarda al doble, para que se vea nítido en pantallas retina sin engordar el repo.",
@@ -135,7 +135,7 @@
       "imagen": "docs/screenshots/compartir.png",
       "pie": "Share sheet with the promo video",
       "guion": "versionado",
-      "toma": "compartir"
+      "toma": "share"
     },
     {
       "seccion": "cuarto-rey",
@@ -149,49 +149,49 @@
       "imagen": "docs/screenshots/fourth-king/03-jugadores.png",
       "pie": "Players and gender",
       "guion": "cuarto-rey",
-      "toma": "03-jugadores"
+      "toma": "03-players"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/fourth-king/04-mesa.png",
       "pie": "Tap to draw a card",
       "guion": "cuarto-rey",
-      "toma": "04-mesa"
+      "toma": "04-table"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/fourth-king/05-carta.png",
       "pie": "Card and instruction",
       "guion": "cuarto-rey",
-      "toma": "05-carta"
+      "toma": "05-card"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/fourth-king/06-minijuego.png",
       "pie": "Minigame with prompts",
       "guion": "cuarto-rey",
-      "toma": "06-minijuego"
+      "toma": "06-minigame"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/fourth-king/07-salud.png",
       "pie": "Who drinks",
       "guion": "cuarto-rey",
-      "toma": "07-salud"
+      "toma": "07-cheers"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/fourth-king/08-pasale.png",
       "pie": "Pass the phone",
       "guion": "cuarto-rey",
-      "toma": "08-pasale"
+      "toma": "08-pass"
     },
     {
       "seccion": "cuarto-rey",
       "imagen": "docs/screenshots/fourth-king/09-cuarto-rey.png",
       "pie": "Fourth King!",
       "guion": "cuarto-rey",
-      "toma": "09-cuarto-rey"
+      "toma": "09-fourth-king"
     },
     {
       "seccion": "cuarto-rey",
@@ -205,7 +205,7 @@
       "imagen": "docs/screenshots/fourth-king/13-historial.png",
       "pie": "Every card that came up",
       "guion": "cuarto-rey",
-      "toma": "13-historial"
+      "toma": "13-history"
     },
     {
       "seccion": "toque-y-fama",
@@ -233,7 +233,7 @@
       "imagen": "docs/screenshots/bulls-and-cows/04-pasale.png",
       "pie": "Answer and handoff on one screen",
       "guion": "toque-y-fama-local",
-      "toma": "08-respuesta-y-pase"
+      "toma": "08-reply-and-pass"
     },
     {
       "seccion": "toque-y-fama",
@@ -268,7 +268,7 @@
       "imagen": "docs/screenshots/bulls-and-cows/09-chat.png",
       "pie": "Room chat",
       "guion": "toque-y-fama-chat",
-      "toma": "tyf-chat-03-partida"
+      "toma": "tyf-chat-03-game"
     },
     {
       "seccion": "batalla-naval",
@@ -373,28 +373,28 @@
       "imagen": "docs/screenshots/timeline/08-chat.png",
       "pie": "Room chat",
       "guion": "linea-de-tiempo-chat",
-      "toma": "chat-03-abierto"
+      "toma": "chat-03-open"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/timeline/09-chat-aviso.png",
       "pie": "New message label",
       "guion": "linea-de-tiempo-chat",
-      "toma": "chat-04b-etiqueta"
+      "toma": "chat-04b-label"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/timeline/10-pozo-comun.png",
       "pie": "Shared pool",
       "guion": "linea-de-tiempo-pozo",
-      "toma": "pozo-03-mesa"
+      "toma": "pool-03-table"
     },
     {
       "seccion": "linea-de-tiempo",
       "imagen": "docs/screenshots/timeline/11-todas-a-la-vista.png",
       "pie": "All cards on the table",
       "guion": "linea-de-tiempo-mesa",
-      "toma": "mesa-02-mesa-completa"
+      "toma": "table-02-full-table"
     },
     {
       "seccion": "dudo",
@@ -408,56 +408,56 @@
       "imagen": "docs/screenshots/liars-dice/02-configuracion.png",
       "pie": "Who plays and whether calzar is on",
       "guion": "dudo-local",
-      "toma": "02-configuracion"
+      "toma": "02-setup"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/liars-dice/03-mesa.png",
       "pie": "Your dice and the table",
       "guion": "dudo-local",
-      "toma": "03-mesa"
+      "toma": "03-table"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/liars-dice/04-apuesta.png",
       "pie": "Pick face and count",
       "guion": "dudo-local",
-      "toma": "04-apuesta"
+      "toma": "04-bid"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/liars-dice/05-destape.png",
       "pie": "The table opens up and counts",
       "guion": "dudo-local",
-      "toma": "05-destape"
+      "toma": "05-reveal"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/liars-dice/07-pase.png",
       "pie": "Pass the phone",
       "guion": "dudo-local",
-      "toma": "07-pase"
+      "toma": "07-handoff"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/liars-dice/08-sala.png",
       "pie": "Room with code and QR",
       "guion": "dudo-online",
-      "toma": "online-01-sala"
+      "toma": "online-01-room"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/liars-dice/09-destape-verificado.png",
       "pie": "The table opens up and verifies",
       "guion": "dudo-online",
-      "toma": "online-02-destape"
+      "toma": "online-02-reveal"
     },
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/liars-dice/06-resultado.png",
       "pie": "Who won and how it went",
       "guion": "dudo-local",
-      "toma": "06-resultado"
+      "toma": "06-result"
     },
     {
       "seccion": "generala",
@@ -471,35 +471,35 @@
       "imagen": "docs/screenshots/generala/04-configuracion.png",
       "pie": "Who plays and whether a rolled generala wins",
       "guion": "generala-local",
-      "toma": "04-configuracion"
+      "toma": "04-setup"
     },
     {
       "seccion": "generala",
       "imagen": "docs/screenshots/generala/02-mesa.png",
       "pie": "Keep dice and pick a box",
       "guion": "generala-local",
-      "toma": "02-mesa"
+      "toma": "02-table"
     },
     {
       "seccion": "generala",
       "imagen": "docs/screenshots/generala/05-pase.png",
       "pie": "What was scored, then pass the phone",
       "guion": "generala-local",
-      "toma": "05-pase"
+      "toma": "05-handoff"
     },
     {
       "seccion": "generala",
       "imagen": "docs/screenshots/generala/online-02-mirando.png",
       "pie": "Several phones: watching who rolls",
       "guion": "generala-online",
-      "toma": "online-02-mirando"
+      "toma": "online-02-watching"
     },
     {
       "seccion": "generala",
       "imagen": "docs/screenshots/generala/07-servida.png",
       "pie": "Generala on the first roll wins",
       "guion": "generala-local",
-      "toma": "07-servida"
+      "toma": "07-served"
     },
     {
       "seccion": "generala",
@@ -527,7 +527,7 @@
       "imagen": "docs/screenshots/fourth-king/12-mesa-en.png",
       "pie": "Table in English",
       "guion": "cuarto-rey",
-      "toma": "12-mesa-en"
+      "toma": "12-table-en"
     },
     {
       "seccion": "ahorcado",
@@ -555,7 +555,7 @@
       "imagen": "docs/screenshots/hangman/04-juego.png",
       "pie": "Gallows, clue, word and keyboard",
       "guion": "ahorcado-local",
-      "toma": "07-play-medio"
+      "toma": "07-play-middle"
     },
     {
       "seccion": "ahorcado",
@@ -604,28 +604,28 @@
       "imagen": "docs/screenshots/julep/02-configuracion.png",
       "pie": "How many rivals and how many hands",
       "guion": "julepe-local",
-      "toma": "02-configuracion"
+      "toma": "02-setup"
     },
     {
       "seccion": "julepe",
       "imagen": "docs/screenshots/julep/03-declaracion.png",
       "pie": "In or out, taking turns",
       "guion": "julepe-local",
-      "toma": "03-declaracion"
+      "toma": "03-declaration"
     },
     {
       "seccion": "julepe",
       "imagen": "docs/screenshots/julep/04-cambio.png",
       "pie": "Swap up to three cards",
       "guion": "julepe-local",
-      "toma": "04-cambio"
+      "toma": "04-exchange"
     },
     {
       "seccion": "julepe",
       "imagen": "docs/screenshots/julep/05-baza.png",
       "pie": "Illegal cards are dimmed",
       "guion": "julepe-local",
-      "toma": "05-baza"
+      "toma": "05-trick"
     },
     {
       "seccion": "julepe",
@@ -639,91 +639,91 @@
       "imagen": "docs/screenshots/julep/07-reparto.png",
       "pie": "Handing out the sips you won",
       "guion": "julepe-local",
-      "toma": "07-reparto"
+      "toma": "07-handout"
     },
     {
       "seccion": "julepe",
       "imagen": "docs/screenshots/julep/09-pase.png",
       "pie": "Pass the phone",
       "guion": "julepe-local",
-      "toma": "09-pase"
+      "toma": "09-handoff"
     },
     {
       "seccion": "julepe",
       "imagen": "docs/screenshots/julep/online-01-sala.png",
       "pie": "Room with code and QR",
       "guion": "julepe-online",
-      "toma": "online-01-sala"
+      "toma": "online-01-room"
     },
     {
       "seccion": "julepe",
       "imagen": "docs/screenshots/julep/08-resultado.png",
       "pie": "Who drank the least",
       "guion": "julepe-local",
-      "toma": "08-resultado"
+      "toma": "08-result"
     },
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/cup/00-invitacion.png",
       "pie": "The invite: your name and a 4-digit PIN",
       "guion": "copa",
-      "toma": "00-invitacion"
+      "toma": "00-invitation"
     },
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/cup/01-tablero.png",
       "pie": "Your days: past ones done, today open",
       "guion": "copa",
-      "toma": "01-tablero"
+      "toma": "01-board"
     },
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/cup/02-numero.png",
       "pie": "Day 2: Bulls and Cows, guess the number",
       "guion": "copa",
-      "toma": "02-numero"
+      "toma": "02-number"
     },
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/cup/03-conexiones.png",
       "pie": "Day 3: Connections, with red herrings",
       "guion": "copa",
-      "toma": "03-conexiones"
+      "toma": "03-connections"
     },
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/cup/04-reinas.png",
       "pie": "Day 4: Queens",
       "guion": "copa",
-      "toma": "04-reinas"
+      "toma": "04-queens"
     },
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/cup/05-letras.png",
       "pie": "Day 5: Bulls and Cows: Word",
       "guion": "copa",
-      "toma": "05-letras"
+      "toma": "05-letters"
     },
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/cup/06-anio.png",
       "pie": "Day 6: What year was it?",
       "guion": "copa",
-      "toma": "06-anio"
+      "toma": "06-year"
     },
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/cup/07-grafico.png",
       "pie": "Everyone's place, day by day",
       "guion": "copa",
-      "toma": "07-grafico"
+      "toma": "07-chart"
     },
     {
       "seccion": "copa",
       "imagen": "docs/screenshots/cup/08-podio.png",
       "pie": "Podium and medals",
       "guion": "copa",
-      "toma": "08-podio"
+      "toma": "08-podium"
     },
     {
       "seccion": "copa",
@@ -737,7 +737,7 @@
       "imagen": "docs/screenshots/cup/10-semana.png",
       "pie": "Creating a cup: drag the games into the week",
       "guion": "copa",
-      "toma": "10-semana"
+      "toma": "10-week"
     }
   ],
   "fuentes": {

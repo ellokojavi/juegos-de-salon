@@ -1,33 +1,33 @@
-// Dos celulares: dos instancias de Chrome (orígenes distintos → localStorage separado) contra Firebase real.
-import { salida } from '../output.mjs';
+// Two phones: two Chrome instances (different origins → separate localStorage) against real Firebase.
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-// Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-// El otro celular entra por 127.0.0.1: otro origen, otro localStorage
-const SITIO_B = SITIO.replace('localhost', '127.0.0.1');
-const OUT = salida();
+// With several sessions at once, each one serves its copy on its own port (D-135)
+const SITE = process.env.SITE || 'http://localhost:8765';
+// The other phone comes in through 127.0.0.1: another origin, another localStorage
+const SITE_B = SITE.replace('localhost', '127.0.0.1');
+const OUT = output();
 const A = await launch({ port: 9424, dir: `${OUT}/pA`, out: OUT });
 const B = await launch({ port: 9425, dir: `${OUT}/pB`, out: OUT });
-await A.go(`${SITIO}/bulls-and-cows/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${SITIO}/bulls-and-cows/`);
-await B.go(`${SITIO_B}/bulls-and-cows/`); await B.evaluate(`localStorage.clear(); 1`); await B.go(`${SITIO_B}/bulls-and-cows/`);
-// A crea sala
+await A.go(`${SITE}/bulls-and-cows/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${SITE}/bulls-and-cows/`);
+await B.go(`${SITE_B}/bulls-and-cows/`); await B.evaluate(`localStorage.clear(); 1`); await B.go(`${SITE_B}/bulls-and-cows/`);
+// A creates a room
 await A.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(300); await A.shot('20-setup-online');
 await A.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
 await A.evaluate(`document.querySelectorAll('#setup-actions .btn')[0].click(); 1`); await sleep(4000);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
-console.log('sala creada:', code, 'screen A:', await A.active()); await A.shot('21-lobby-A');
-// B se une por URL con ?room=
-await B.go(`${SITIO_B}/bulls-and-cows/?room=${code}`, 1500); await B.shot('22-join-B');
+console.log('room created:', code, 'screen A:', await A.active()); await A.shot('21-lobby-A');
+// B joins by URL with ?room=
+await B.go(`${SITE_B}/bulls-and-cows/?room=${code}`, 1500); await B.shot('22-join-B');
 await B.evaluate(`(()=>{document.querySelector('#setup-form input').value='Cata';return 1})()`);
 await B.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(b=>/Unirse|Join/.test(b.textContent)).click(); 1`); await sleep(4000);
 console.log('B screen:', await B.active(), 'A screen:', await A.active()); await A.shot('23-lobby-A-joined'); await B.shot('23-secret-B');
-// Secretos
+// Secrets
 await sleep(1500);
 console.log('A secret:', await A.typeNum('1234')); await sleep(1000); await A.shot('24-waiting-A');
 console.log('B secret:', await B.typeNum('5678')); await sleep(3500);
 console.log('A:', JSON.stringify(await A.view()), '\nB:', JSON.stringify(await B.view()));
 await A.shot('25-play-A'); await B.shot('25-play-B');
-// Turnos alternados hasta terminar
+// Alternating turns until the end
 let guard = 0;
 while (guard++ < 16) {
   const vA = await A.view(); if (!vA || vA.phase === 'done') break;
@@ -40,9 +40,9 @@ while (guard++ < 16) {
   await sleep(3500);
   if (guard === 2) {
     await A.shot('26-mid-A'); await B.shot('26-mid-B');
-    // Reconexión a mitad de partida: A recarga y debe retomar con su secreto
-    await A.go(`${SITIO}/bulls-and-cows/?room=${code}`, 6000);
-    console.log('A tras recargar a mitad:', await A.active(), JSON.stringify(await A.view()), 'secreto guardado:', await A.evaluate(`!!__tyf.session()?.secrets?.A`));
+    // Reconnection mid-game: A reloads and must resume with its secret
+    await A.go(`${SITE}/bulls-and-cows/?room=${code}`, 6000);
+    console.log('A after reloading mid-game:', await A.active(), JSON.stringify(await A.view()), 'secret saved:', await A.evaluate(`!!__tyf.session()?.secrets?.A`));
     await A.shot('26-reloaded-A');
   }
 }
@@ -50,12 +50,12 @@ await sleep(4000);
 console.log('final A:', await A.active(), await A.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent + ' | ' + document.getElementById('result-secrets').innerText.replace(/\\n/g,' ')`));
 console.log('final B:', await B.active(), await B.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent + ' | ' + document.getElementById('result-secrets').innerText.replace(/\\n/g,' ')`));
 await A.shot('27-result-A'); await B.shot('27-result-B');
-// Revancha: B propone, A acepta automáticamente
+// Rematch: B proposes, A accepts automatically
 await B.evaluate(`document.querySelector('#result-actions .btn').click(); 1`); await sleep(7000);
 console.log('rematch → A:', await A.active(), JSON.stringify(await A.view()), 'code A:', await A.evaluate(`__tyf.session().code`));
 console.log('rematch → B:', await B.active(), JSON.stringify(await B.view()), 'code B:', await B.evaluate(`__tyf.session().code`));
 await A.shot('28-rematch-A'); await B.shot('28-rematch-B');
-// En la sala nueva: B propuso (es A ahora), A entró como B. Juegan secretos y un turno.
+// In the new room: B proposed (it's A now), A came in as B. They play secrets and one turn.
 console.log('new-room roles → A:', await A.evaluate(`__tyf.session().role`), 'B:', await B.evaluate(`__tyf.session().role`));
 console.log('secret A2:', await A.typeNum('2468'), 'secret B2:', await B.typeNum('1357')); await sleep(3500);
 const v2 = await A.view(); console.log('new game view:', JSON.stringify(v2));
