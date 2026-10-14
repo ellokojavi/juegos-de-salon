@@ -88,6 +88,7 @@ const contexto = r => { try { return JSON.parse(r.contexto || '{}') || {}; } cat
 /** Dónde se escribió, en pocas palabras: el juego o la página. */
 export function donde(r) {
   const c = contexto(r);
+  if (c.canal === 'email') return 'email';
   return c.juego || (c.labs && `lab ${c.labs}`) || (c.copa && `cup ${c.copa}`) || c.pantalla || c.url || 'the app';
 }
 
@@ -117,7 +118,9 @@ export function cuerpo(r) {
     '',
     datos.map(([k, v]) => `- **${k}:** ${k === 'Email' ? v : inerte(v)}`).join('\n'),
     '',
-    'Sent with the app\'s 🐞 button (D-275). The processes agent handles it in its round.',
+    c.canal === 'email'
+      ? 'Arrived by email to hola@juegosdesalon.cl (D-318): the text above is the support agent\'s quote or summary of it. The processes agent handles it in its round.'
+      : 'Sent with the app\'s 🐞 button (D-275). The processes agent handles it in its round.',
     marca(r.id),
   ].join('\n');
 }

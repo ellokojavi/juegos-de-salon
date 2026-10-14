@@ -122,9 +122,12 @@ export const EJECUTORES = ['documentacion', 'usabilidad'];
  * A quién despachar hoy y por qué: `[{ agente, motivo }]`. `documentacion` recibe los commits de
  * main desde su `revisadoHasta`; `usabilidad`, los que tocaron public/ desde su último despacho
  * (o `null` si nunca se lo lanzó) y los días desde entonces: una vez por semana va igual.
+ * `atencion`, los correos que esperan en el buzón de hola@ (D-318).
  */
-export function porDespachar({ commitsDoc, commitsPublic, diasUsabilidad }) {
+export function porDespachar({ commitsDoc, commitsPublic, diasUsabilidad, correos = 0 }) {
   const res = [];
+  // D-318: the support agent only when hola@ left emails in the inbox
+  if (correos > 0) res.push({ agente: 'atencion', motivo: `${correos} correo(s) en el buzón de hola@` });
   if (commitsDoc > 0) res.push({ agente: 'documentacion', motivo: `${commitsDoc} commit(s) en main desde su última ronda` });
   if (commitsPublic === null) res.push({ agente: 'usabilidad', motivo: 'nunca se lo despachó' });
   else if (commitsPublic > 0) res.push({ agente: 'usabilidad', motivo: `${commitsPublic} commit(s) que cambian public/ desde su último despacho` });
@@ -151,7 +154,7 @@ export const leerMemoria = () => (existsSync(MEMORIA) ? { ...vacia(), ...JSON.pa
 const guardar = m => writeFileSync(MEMORIA, JSON.stringify(m, null, 2) + '\n');
 const hoy = () => new Date().toISOString().slice(0, 10);
 
-function revisar() {
+async function revisar() {
   const m = leerMemoria();
   sh('git', ['fetch', '-q', 'origin', 'main']);
   const punta = sh('git', ['rev-parse', 'origin/main']).trim();
@@ -218,8 +221,9 @@ function revisar() {
     commitsDoc: doc.revisadoHasta ? cuenta(`${doc.revisadoHasta}..origin/main`) : 1,
     commitsPublic: ultimo ? cuenta(`${ultimo.hasta}..origin/main`, '--', 'public/') : null,
     diasUsabilidad: ultimo ? Math.floor((Date.now() - Date.parse(ultimo.fecha)) / DIA) : null,
+    correos: await import('./inbox.mjs').then(m => m.contar()).catch(e => { console.log(`- (el buzón de hola@ no se pudo leer: ${e.message})`); return 0; }),
   });
-  for (const d of plan) console.log(`- ${d.agente}: ${d.motivo}  (al lanzarlo: despacho ${d.agente} ${punta.slice(0, 7)})`);
+  for (const d of plan) console.log(`- ${d.agente}: ${d.motivo}${d.agente === 'atencion' ? '' : `  (al lanzarlo: despacho ${d.agente} ${punta.slice(0, 7)})`}`);
   if (!plan.length) console.log('Nadie: no cambió nada que revisar.');
 
   titulo('Aprobado y en cola');
@@ -308,5 +312,5 @@ function principal([orden, ...args]) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  try { principal(process.argv.slice(2)); } catch (e) { console.error(e.message); process.exit(1); }
+  try { await principal(process.argv.slice(2)); } catch (e) { console.error(e.message); process.exit(1); }
 }

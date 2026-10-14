@@ -196,6 +196,13 @@ never the address. The address goes to `feedbackContacto/<id>` (`correo`, up to 
 key**. `tools/agents/feedback.mjs reply` reads it with the key, emails the reply and deletes it;
 `forget` deletes it without emailing.
 
+**The hola@ inbox (D-318):** `buzon/<id>` keeps each email sent to hola@juegosdesalon.cl (`de`,
+`nombre`, `asunto`, `texto` up to 10000, `idMensaje`, `automatico`, server `at`), written by the
+Cloudflare Worker (`tools/cloudflare/hola-worker.js`). **Only the inbox user** (Firebase Auth
+`buzon@juegosdesalon.cl`, its UID in the rules) reads it or writes in it; not even anonymous
+players. The support agent turns each email into a `feedback/` report with
+`tools/agents/inbox.mjs` and deletes it.
+
 ## The trash bin (`cleanup`)
 
 Nobody deletes their room when they finish playing, so the same phones that play do the cleanup

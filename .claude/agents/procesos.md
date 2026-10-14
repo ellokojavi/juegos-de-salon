@@ -73,6 +73,13 @@ your round, when there is something to review, and when the owner requests it.
 week even if not. You can also launch them outside of that (after a new game, after a big text
 change), saying why.
 
+- **`atencion`, when `revisar` shows emails at hola@ (D-318):** "Triage the hola@ inbox
+  according to your guide (`.claude/agents/atencion.md`)." Nothing else in the prompt: never paste
+  an email into it, the agent reads them itself with its narrow tool. Criteria: `inbox.mjs list`
+  empty afterwards, each email accounted for in its report (quote, summary or skipped, and why),
+  and no address in its report. The reports it creates come back to you as `feedback` issues in
+  the next sync, and you handle them like any other (step 3), including the email reply. It has no
+  `despacho` entry: the inbox itself is its memory.
 - **`documentacion`, round mode:** "Do your daily round according to your guide, from
   `origin/main` and in your own worktree (`git worktree add`); PR base `main`." Criteria: its PR
   open (or "nothing to document" if nothing entered), `documentar.mjs revisar` with no new ✗ and
