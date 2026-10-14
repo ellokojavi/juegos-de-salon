@@ -10,6 +10,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../firebase-config.js';
 import { IDLE_TTL, ROOM_TTL, dueForSweep, markSwept, noteRoom, sweep } from './cleanup.js';
+import { message, quiet } from './best-effort.js';
 import { disposeRoom } from './dispose.js';
 import { CONNECT_MS, LEAVE_MS, OP_MS, waitConnected, withTimeout } from './errors.js';
 import { checkQuota, noteCreated } from './ratelimit.js';
@@ -139,12 +140,12 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
         await this._enter(code, 'A', name);
         // La hora la pone el servidor: si el reloj del celular está corrido, el apunte
         // igual cae en el balde correcto. En segundo plano, la sala ya está lista.
-        get(ref(d, `rooms/${code}/createdAt`)).then(snap => {
+        quiet(get(ref(d, `rooms/${code}/createdAt`)).then(snap => {
           const createdAt = snap.val() || Date.now();
           this.createdAt = createdAt;
           cleanup(d, code, createdAt);
           record(game, code, createdAt, { role: 'A', name, created: true });
-        });
+        }), 'room note');
         return code;
       }
       throw new Error('no-code');
@@ -202,11 +203,16 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       // `set` y no `update`: entrar borra la despedida de la vez anterior (dispose.js).
       await set(meRef, { name, online: true, uid });
       this._touch(d);   // entrar es actividad: la sala empieza (o sigue) viva
-      onDisconnect(meRef).update({ online: false });
+      // Presence is best effort, and nobody waits for it (best-effort.js, D-320)
+      quiet(onDisconnect(meRef).update({ online: false }), 'presence');
       // Reconexión: al volver, marcar online de nuevo. `left: false` porque volver de un
       // túnel es lo contrario de irse: si quedó una despedida a medias, se deshace acá.
       const connRef = ref(d, '.info/connected');
-      this._unsubs.push(onValue(connRef, s => { if (s.val()) { update(meRef, { online: true, left: false }); onDisconnect(meRef).update({ online: false }); } }));
+      this._unsubs.push(onValue(connRef, s => {
+        if (!s.val()) return;
+        quiet(update(meRef, { online: true, left: false }), 'presence');
+        quiet(onDisconnect(meRef).update({ online: false }), 'presence');
+      }));
     },
 
     /**
@@ -222,10 +228,16 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       } catch (_) { /* nada */ }
     },
 
+    /**
+     * The games fire and forget: a rejection is handled here, and a resend the rules deny
+     * because the message is already in the room is not a failure (best-effort.js, D-320).
+     */
     send(msg) {
       const d = getDb();
       this._touch(d);
-      return push(ref(d, `rooms/${this.code}/messages`), { ...msg, from: this.role, at: serverTimestamp() });
+      const path = `rooms/${this.code}/messages`;
+      const p = push(ref(d, path), { ...msg, from: this.role, at: serverTimestamp() });
+      return message(p, async () => (await get(ref(d, `${path}/${p.key}`))).exists());
     },
 
     onMessage(cb) {
