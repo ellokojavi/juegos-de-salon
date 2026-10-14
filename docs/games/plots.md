@@ -161,7 +161,7 @@ dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los p
   El modo servicios: 120 tableros de cada etapa fácil y 40 de cada difícil, con lotes del tamaño
   justo y un ⚡ y un 💧, únicos, deducibles, en menos de 300 ms; las fáciles salen con las reglas
   simples, las difíciles no muestran lotes de entrada (85 % o más) y piden 3 o más deducciones
-  profundas por tablero, y son más difíciles que las fáciles; `tools/e2e/plots/servicios.mjs` lo
+  profundas por tablero, y son más difíciles que las fáciles; `tools/e2e/plots/utilities.mjs` lo
   juega de punta a punta (el selector, que se recuerda y va en el link, los pasos, los tres rechazos,
   los cinco tableros, el aviso del tablero 3 y el final).
 

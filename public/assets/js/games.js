@@ -6,7 +6,7 @@
  * El `id` y la carpeta son dos cosas (D-192): el id es un dato —lo guardan las salas de Firebase, el
  * panel y el localStorage— y no cambia nunca; la carpeta es la URL (`path`) y va en inglés. Los
  * juegos de antes conservan su id en español ('ahorcado' vive en /hangman/) y su ruta vieja
- * (/<id>/) queda como página puente, que genera `node tools/release/og.mjs tarjetas`.
+ * (/<id>/) queda como página puente, que genera `node tools/release/og.mjs cards`.
  */
 export const GAMES = [
   {
@@ -136,7 +136,7 @@ export const GAMES = [
  * La Copa con un link que no dice "copa": no cuenta para ninguna copa y, si hay jugador, va a los rankings (D-212). Van aparte
  * de GAMES solo por cómo están hechos: no son una carpeta con su `rules.js` (su motor y su pantalla
  * viven en cup/games/), así que el README y las pruebas de idioma de los juegos no los recorren. Su
- * página y su tarjeta social las genera `node tools/release/og.mjs tarjetas` a partir de cup/suelto/index.html.
+ * página y su tarjeta social las genera `node tools/release/og.mjs cards` a partir de cup/suelto/index.html.
  *
  * Uno con `labs: true` todavía no va en la portada, pero su link ya se comparte: tiene página y
  * tarjeta igual (como La Copa, D-101).

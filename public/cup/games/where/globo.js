@@ -309,7 +309,7 @@ void main() {
 
 /**
  * Las teselas nítidas: la imagen de 21600 × 10800 en 16 × 8 cuadrados de 22,5° (los genera
- * `tools/generators/mapa.mjs satelite`). Se bajan una vez y las comparten todos los globos de la página.
+ * `tools/generators/map.mjs satellite`). Se bajan una vez y las comparten todos los globos de la página.
  */
 const TESELAS = { columnas: 16, filas: 8, lado: 1350, guardar: 36, dir: new URL('../../../assets/img/earth-2004-09/', import.meta.url).href };
 const bajadas = new Map();

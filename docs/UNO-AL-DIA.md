@@ -344,7 +344,7 @@ semilla elegida en el link. Todos los intentos se cuentan en `partidas` (D-219).
 **Avisos:** `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`, al lado de `push/<subId>`
 (que ya trae idioma y zona horaria), y nadie lo lee. El último día jugado (`u`) y la racha los
 escribe el celular al terminar, así que el aviso sabe si ya jugó aunque no tenga jugador.
-`tools/push/uno-al-dia.mjs` decide los avisos dentro de la vuelta de `avisar.mjs`, cada 15 minutos
+`tools/push/daily.mjs` decide los avisos dentro de la vuelta de `notify.mjs`, cada 15 minutos
 (detalle en "Lo que el PR 4 hizo").
 
 ## Qué se mide (panel, D-44)
@@ -414,7 +414,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   El paso del dado al juego es el de Juego al azar (D-237): el juego abre con el mismo dado encima
   y el dado se desvanece cuando el juego está dibujado (`llegada.js`).
 - Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
-  `tools/e2e/uno-al-dia.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
+  `tools/e2e/daily.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
 
 ### Lo que el PR 2 hizo (v0.116.0)
 
@@ -451,7 +451,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - **Sin rankings del día** todavía (PR 3), y estos tres no anotan en el ranking normal jugando solo
   o contra el celular más que lo de siempre (las victorias contra el celular, D-215).
 - Se prueba con `uno-al-dia.test.mjs` (el mazo con 10 juegos, los días anteriores sin cambios, las
-  fórmulas, la flota con semilla) y `tools/e2e/uno-al-dia-grupo.mjs` (cada juego jugado hasta el
+  fórmulas, la flota con semilla) y `tools/e2e/daily-group.mjs` (cada juego jugado hasta el
   resultado con el reloj en un día en que le toca).
 
 ### Lo que el PR 3 hizo (v0.117.0)
@@ -485,7 +485,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - **El dato de quien invita** sale de `datosDe` (uno-al-dia-red.js), con las reglas de la tabla de
   arriba. Para quien recién empieza: "Ya jugué mi primer Uno al día".
 - Se prueba con `uno-al-dia-jugador.test.mjs` (contra el almacén de prueba, que repite las reglas) y
-  `tools/e2e/uno-al-dia-jugador.mjs` (Sara juega y entra, invita; Pedro acepta en otro celular).
+  `tools/e2e/daily-player.mjs` (Sara juega y entra, invita; Pedro acepta en otro celular).
 
 ### Lo que el PR 4 hizo (v0.118.0)
 
@@ -494,8 +494,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   último día jugado (`u`, número de día), su racha y comodines de ese día, su mejor racha y cuántos
   días jugó esa semana. Lo escribe el celular dueño de la suscripción (`push/<subId>`, la misma de La
   Copa) al activarlos y después de cada Uno al día; nadie lo lee. No hace falta jugador.
-- **Quién decide** es `tools/push/uno-al-dia.mjs` (puro, con prueba), dentro de la vuelta de
-  `avisar.mjs` cada 15 minutos. Lo mandado va a `pushEnviadosDia/<subId>/<clave>` y se limpia a la
+- **Quién decide** es `tools/push/daily.mjs` (puro, con prueba), dentro de la vuelta de
+  `notify.mjs` cada 15 minutos. Lo mandado va a `pushEnviadosDia/<subId>/<clave>` y se limpia a la
   semana. La racha del aviso es la que sigue viva hoy: la del último día si fue ayer, o anteayer con
   un comodín.
 - **Lo que quedó distinto del diseño:** no se juntan con los de La Copa en un aviso ("…y tu Uno al
@@ -515,14 +515,14 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   jugó la semana anterior; el del día, desde su hora si no ha jugado, día por medio después de 14
   días sin jugar. A los 30 días sin jugar llega el de despedida (`adios`, con su mejor racha) y se
   borran `pushDia/<subId>` y lo mandado. Si la suscripción muere o desaparece, `pushDia` se borra
-  con ella. Los avisos no van con `--prueba <código>` (esa es la de una copa).
+  con ella. Los avisos no van con `--test <código>` (esa es la de una copa).
 - **En el panel:** cada aviso abre `today/?notif=daily<tipo>` (`dailyday`, `dailystreak`, `dailyweek`,
-  `dailybye`, D-266; el panel los cuenta como `uaddia`, `uadracha`, `uadsemana` y `uadadios`), para que no se junte con el `dia` de La Copa, y `avisar.mjs` suma los entregados en
+  `dailybye`, D-266; el panel los cuenta como `uaddia`, `uadracha`, `uadsemana` y `uadadios`), para que no se junte con el `dia` de La Copa, y `notify.mjs` suma los entregados en
   `mandados/uad<tipo>`: salen como filas propias en el bloque "🔔 Avisos al celular" (D-233), con sus
   tocados (`TIPOS_AVISO` en `stats.js` los conoce). Sin guion, porque las reglas de `aviso/<tipo>`
   y `mandados/<tipo>` piden solo letras.
-- Se prueba con `tools/push/uno-al-dia.test.mjs`, el caso nuevo de `avisar.test.mjs`,
-  `uno-al-dia-avisos.test.mjs` y `tools/e2e/uno-al-dia-avisos.mjs` (con un servicio de avisos falso).
+- Se prueba con `tools/push/daily.test.mjs`, el caso nuevo de `notify.test.mjs`,
+  `uno-al-dia-avisos.test.mjs` y `tools/e2e/daily-notifications.mjs` (con un servicio de avisos falso).
 
 ### Lo que el PR 5 hizo (v0.119.0)
 

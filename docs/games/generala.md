@@ -156,7 +156,7 @@ public/generala/index.html · public/generala/style.css · public/generala/rules
 public/generala/engine.js · public/generala/engine.test.mjs
 tools/e2e/generala/local.mjs    jugar solo, tres en un celular con recarga y la generala servida
 tools/e2e/generala/online.mjs   dos celulares contra Firebase real, con recarga y revancha
-tools/e2e/generala/idiomas.mjs  cada pantalla de caminos.mjs en los cuatro idiomas
+tools/e2e/generala/languages.mjs  cada pantalla de paths.mjs en los cuatro idiomas
 ```
 
 Gancho de pruebas (C-14): `window.__generala` (`view`, `match`, `session`).

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <!-- Without this, Chrome in mobile mode assumes a 980 px window and shrinks the card -->
+  <meta name="viewport" content="width=600, initial-scale=1">
+  <title>Social card</title>
+  <!--
+    The image seen when someone pastes a link to the app in WhatsApp or in a chat.
+    It is drawn here with the real styles and data (public/assets/js/games.js), and `node tools/release/og.mjs
+    images` photographs it at 1200×630. It is not opened by hand: it is looked at through the screenshot.
+      /tools/release/og/card.html?game=dudo   one card per game (or per standalone game: ?game=reinas)
+      /tools/release/og/card.html             the menu's
+      /tools/release/og/card.html?email       the header of the feedback reply email (D-317): only
+                                              the icons and the title, 1200×340 (`og.mjs header`)
+  -->
+  <link rel="stylesheet" href="/public/assets/css/base.css">
+  <style>
+    /* The canvas is 600×315 and is photographed at double: 1200×630, the size the networks ask for */
+    html, body { margin: 0; padding: 0; width: 600px; height: 315px; overflow: hidden; }
+    body { display: grid; place-items: center; }
+    /*
+      The side margin is 12% and not a couple of pixels because **the image is not seen whole**:
+      each chat crops it to the height of its own little window, and what gets eaten are the
+      sides. With 1200×630 (1.91:1) cropped to 1.5:1, 127 px go on each side, and that is where
+      the title's last letter ended up just fitting. Everything that has to be read lives inside
+      that band; the background gradient is the only thing that may get lost.
+    */
+    .card { width: 600px; height: 315px; padding: 30px 72px; box-sizing: border-box; display: grid; align-content: center; gap: 10px; position: relative; }
+
+    /* ---- A game's card: the emoji leads and next to it goes what it is about ---- */
+    .game { grid-template-columns: 118px 1fr; align-items: center; gap: 22px; align-content: center; }
+    .game .emoji { font-size: 100px; line-height: 1; text-align: center; filter: drop-shadow(0 0 26px rgba(255, 210, 63, 0.55)); }
+    /* An almost black emoji (〰️, EMOJI_OSCUROS in ui.js): light outline on top of the glow */
+    .game .emoji.emoji-claro { filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 0 26px rgba(255, 210, 63, 0.55)); }
+    .game .name { font-family: var(--font-display); font-size: 52px; line-height: 0.92; letter-spacing: 0.03em; margin: 0 0 8px; }
+    .game .tagline { color: var(--ink); font-weight: 800; font-size: 17px; line-height: 1.3; margin: 0 0 12px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    /*
+      The emoji goes in its own box: with the text on the same line, the emoji font stretches
+      the line and pushes the text down, differently in each pill (👥 more than ⏱️). With flex
+      and line height 1 both end up centered alike.
+    */
+    .chip2 { display: inline-flex; align-items: center; gap: 6px; font-weight: 900; font-size: 14px; line-height: 1; padding: 7px 12px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); }
+    .chip2 .icon { font-size: 14px; line-height: 1; }
+
+    /* ---- The menu's card: the app's name and the games there are ---- */
+    .menu { justify-items: center; text-align: center; gap: 14px; }
+    .menu .app-title { font-family: var(--font-display); font-size: 60px; line-height: 0.9; letter-spacing: 0.02em; margin: 0; }
+    .menu .tagline { color: var(--ink); font-weight: 800; font-size: 18px; margin: 0; text-wrap: balance; }
+    .menu .row { display: flex; gap: 12px; font-size: 38px; line-height: 1; }
+    .menu .row span { filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45)); }
+
+    /* The email header (D-317, owner's request): only the icons and the title, in a low strip.
+       Mail apps show the whole image, so it needs no safe margin on the sides */
+    html.email, html.email body, html.email .card { height: 170px; }
+    html.email .card { padding: 16px 24px; gap: 6px; }
+
+    .footer { position: absolute; left: 72px; right: 72px; bottom: 18px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 15px; color: var(--muted); }
+    .footer .domain { color: var(--yellow); letter-spacing: 0.04em; }
+    /* The gradient animation leaves the title a different color in each photo */
+    .rainbow { animation: none; }
+    /*
+      The gradient is painted only inside the title's box (background-clip: text), and with a line
+      height under 1 the box does not reach the accents of the capitals: the Ó in SALÓN and the Ñ
+      in AÑO came out cut. Padding on top so they fit and a negative margin so nothing moves.
+      The same on the sides: the typeface is slanted and the last letter goes out of the box on
+      the right (the N in SALÓN came out cut, seen in the feedback reply email, D-317).
+    */
+    .name.rainbow, .app-title.rainbow { padding: 0.2em 0.12em 0; margin: -0.2em -0.12em 0; }
+  </style>
+</head>
+<body>
+  <div class="card" id="card"></div>
+  <script type="module">
+    import { GAMES, SUELTOS } from '/public/assets/js/games.js';
+    import { COMMON, getLang } from '/public/assets/js/i18n.js';
+    import { con } from '/public/assets/js/ui.js';
+
+    const id = new URLSearchParams(location.search).get('game');
+    const email = new URLSearchParams(location.search).has('email');
+    // The language is asked for with ?lang= in the URL, but read with getLang(): i18n.js applies
+    // it on load and removes the parameter from the bar, so by the time this runs it is gone (D-74).
+    const lang = getLang();
+    const box = document.getElementById('card');
+    const el = (tag, cls, ...children) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      children.forEach(h => n.append(h));
+      return n;
+    };
+    // The same phrase as the footer of each game's card, in every language
+    const FREE = { es: 'Gratis y sin instalar', en: 'Free, no install', pt: 'De graça, sem instalar', de: 'Kostenlos, ohne Installation' };
+    const footer = (left) => {
+      const p = el('div', 'footer');
+      p.append(el('span', null, left), el('span', 'domain', 'juegosdesalon.cl'));
+      return p;
+    };
+
+    if (email) {
+      document.documentElement.classList.add('email');
+      box.classList.add('menu');
+      const row = el('div', 'row');
+      GAMES.filter(g => g.available).forEach(g => row.append(el('span', null, g.emoji)));
+      box.append(row, el('h1', 'app-title rainbow', COMMON[lang].appTitle));
+    } else if (id) {
+      const g = [...GAMES, ...SUELTOS].find(x => x.id === id);
+      if (!g) throw new Error(`There is no game "${id}"`);
+      box.classList.add('game');
+      const text = el('div');
+      text.append(
+        el('h1', 'name rainbow', g.name[lang]),
+        el('p', 'tagline', g.tagline[lang]),
+      );
+      const chips = el('div', 'chips');
+      // ⏱️ with its variation selector (FE0F): without it, Chrome draws it as a text symbol
+      const chip = (icon, label) => el('span', 'chip2', el('span', 'icon', icon), el('span', null, label));
+      chips.append(
+        chip('👥', `${g.players} ${g.players === '1' ? COMMON[lang].player : COMMON[lang].players}`),
+        chip('⏱️', `${g.duration} ${g.durationUnit ? g.durationUnit[lang] : COMMON[lang].minutes}`),
+      );
+      text.append(chips);
+      box.append(el('div', con('emoji', g.emoji), g.emoji), text, footer(FREE[lang]));
+    } else {
+      box.classList.add('menu');
+      const row = el('div', 'row');
+      GAMES.filter(g => g.available).forEach(g => row.append(el('span', null, g.emoji)));
+      box.append(
+        row,
+        el('h1', 'app-title rainbow', COMMON[lang].appTitle),
+        el('p', 'tagline', COMMON[lang].appSub.replace(/\.$/, '')),
+        footer(FREE[lang]),
+      );
+    }
+    document.fonts.ready.then(() => { document.body.dataset.ready = '1'; });
+  </script>
+</body>
+</html>

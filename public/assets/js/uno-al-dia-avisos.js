@@ -2,7 +2,7 @@
  * Los avisos de Uno al día en la pantalla (D-230): la oferta con la hora, la campana de /today/ y sus
  * hojas y el globo del ícono. El recordatorio de cada día es el aviso diario, a la hora que elige
  * el jugador (D-230): no hay recordatorio en el calendario. La lógica del navegador es la de La Copa
- * (push.js); lo que decide cuándo llega cada aviso, tools/push/uno-al-dia.mjs.
+ * (push.js); lo que decide cuándo llega cada aviso, tools/push/daily.mjs.
  *
  * Reglas de la experiencia (las de D-221, docs/PWA-NOTIFICACIONES.md):
  * - El permiso se pide solo después de un toque en una hora: el "No" del sistema es definitivo.

@@ -36,18 +36,18 @@
    sale de `public/cup/suelto/index.html`, que ya carga `ranking.css`. Un juego de salón no anota
    récords; si uno nuevo debería, es una decisión para el dueño, no algo que se agrega de pasada.
 8. **Las pruebas de punta a punta** (C-12): las pantallas del juego como entradas en
-   `tools/e2e/caminos.mjs`, su `tools/e2e/<carpeta>/idiomas.mjs` y los guiones de partida en
-   `tools/e2e/<carpeta>/`. `node tools/e2e/mirar.mjs <juego> <pantalla> --ancho 320` para mirar.
+   `tools/e2e/paths.mjs`, su `tools/e2e/<carpeta>/languages.mjs` y los guiones de partida en
+   `tools/e2e/<carpeta>/`. `node tools/e2e/look.mjs <juego> <pantalla> --width 320` para mirar.
 9. **La especificación** en `docs/games/<carpeta>.md`, con la plantilla de C-13 (incluidas las
    excepciones a los cánones y el gancho `window.__…`), más requerimientos y decisiones.
 10. **El README**, en inglés (C-13): la sección del juego, sus tomas en `docs/capturas.json` y
-    después `python3 tools/release/readme.py capturas <seccion>`, `actualizar` y, ya releído,
-    `sellar`. Las capturas se miran juntas con `node tools/e2e/contacto.mjs <seccion>`. La tarjeta
-    social sale con `node tools/release/og.mjs tarjetas` e `imagenes`.
+    después `python3 tools/release/readme.py screenshots <seccion>`, `update` y, ya releído,
+    `seal`. Las capturas se miran juntas con `node tools/e2e/contact-sheet.mjs <seccion>`. La tarjeta
+    social sale con `node tools/release/og.mjs cards` e `images`.
 11. **La lista de chequeo** del final de los cánones, entera. La parte que se puede contar la
     cuenta `node public/assets/js/games.test.mjs`: motor, tests, gancho y especificación (C-12).
 
 La versión no la escribe quien hace el juego: su entrada va sin número en `changelog/<rama>.md`
-(`node tools/release/changelog.mjs nueva menor`), el número se pone solo al fusionar y
-`publicar.yml` hace el resto (C-11, D-205, D-300). Un juego entra al laboratorio con documentación y
+(`node tools/release/changelog.mjs new minor`), el número se pone solo al fusionar y
+`publish.yml` hace el resto (C-11, D-205, D-300). Un juego entra al laboratorio con documentación y
 una revisión corta de usabilidad; el PR que lo saca lleva la pasada completa (D-304).
