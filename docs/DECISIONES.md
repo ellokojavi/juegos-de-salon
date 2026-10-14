@@ -5943,6 +5943,10 @@ whoever wants to can be told when we answer.
   same player go in one email** (owner's request, the same day: a long session leaves several, and
   N emails for N comments is too many): the subject and the opening are plural, each answer goes
   under the quote of its comment, and `feedback.mjs pending` groups the waiting reports by address.
+  **At most one email to the same address every 24 hours** (owner's rule, for prudence):
+  `send-mail.py` checks it before connecting, against a log of every email sent kept on the owner's
+  machine (`~/.config/juegos-de-salon/mail-log.jsonl`: date, masked address, a hash of it,
+  subject, issues; never the address, which the form promises to delete).
   **Destructive feedback**
   (insults, mockery, spam) gets no email: the address is only deleted (`feedback.mjs forget`).
   Honest criticism is not destructive.

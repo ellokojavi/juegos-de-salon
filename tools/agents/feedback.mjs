@@ -188,7 +188,7 @@ async function reply(list, file, lang, { dryRun, testTo }) {
   const to = testTo || all[0].email;
   if (dryRun) { console.log(`To: ${testTo || all[0].mask}\nSubject: ${subject}\n\n${text}`); return; }
   // Through stdin: the address never shows in a command line or a log
-  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to, subject: testTo ? `[Test] ${subject}` : subject, text, html }), stdio: ['pipe', 'inherit', 'inherit'] });
+  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to, subject: testTo ? `[Test] ${subject}` : subject, text, html, issues: numbers.map(Number), test: !!testTo }), stdio: ['pipe', 'inherit', 'inherit'] });
   if (testTo) { console.log(`Test email with ${numbers.map(n => `#${n}`).join(', ')} sent to the test address; nothing else touched.`); return; }
   for (const x of all) {
     await remove(x.id, t);
