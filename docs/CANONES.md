@@ -159,7 +159,8 @@ modo que el juego piensa tener.
   `send()` through `message()` and the presence writes and the background room note through
   `quiet()`. A denied message that is already on the server is a resend after a reconnect (the SDK
   sends again every write whose ack was lost, and a message can only be written once), so it is not
-  reported; anything else goes to `console.warn`. `send()` still returns the same promise.
+  reported; any other failed message is raised again so the vigía still counts it, and a failed
+  presence write or room note only goes to `console.warn`. `send()` still returns the same promise.
   `best-effort.test.mjs` fails on any Firebase call in `firebase.js` that nobody awaits, returns or catches.
 - **Irse a propósito cierra la sala.** `leave()` suelta los oyentes y deja la sala esperando; `dispose()` es la despedida: escribe `left` en el rol y borra la sala si con eso no queda nadie adentro (`public/assets/js/transport/dispose.js`, D-50). Lo llaman el botón de cancelar o salir de la sala del lobby, el de cambiar de modo al final y el cambio a la sala de la revancha. **Cerrar la pestaña o quedarse sin señal no es irse:** eso solo apaga `online`, porque esa partida se puede retomar (C-6), así que nada de esto cuelga de `pagehide`. Nunca lanza, lleva tope corto y, si falla, la sala queda marcada y la borra la papelera.
 - **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`) y de vez en cuando barre los días pendientes borrando lo vencido (`public/assets/js/transport/cleanup.js`, D-39). Nada de esto se le muestra al jugador ni puede voltear una partida: si falla, barre el celular siguiente.

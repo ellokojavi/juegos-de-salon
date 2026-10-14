@@ -6031,8 +6031,9 @@ the promise and none of the seven room games awaits it.
 **Decision:** the transport handles what it fires and forgets
 (`public/assets/js/transport/best-effort.js`):
 - `send()` passes its `push` through `message()`: a denied write whose message is already on the
-  server is a resend and is not reported, anything else is logged with `console.warn`. It still
-  returns the same promise, so a caller that awaits it sees the error.
+  server is a resend and is not reported. Any other failure is a move that didn't get through, so
+  it is raised again and the vigía still counts it on the Health panel. It still returns the same
+  promise, so a caller that awaits it sees the error.
 - The presence writes (`onDisconnect(...).update`, the `update` on reconnect) and the background
   note of a new room go through `quiet()`. They can be denied for real when a phone wakes up on a
   room that expired (30 minutes without moves), and that is not something the player can act on.
