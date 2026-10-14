@@ -6,7 +6,7 @@
  * (también si es de otra pista: es de los tuyos); una neutral o el asesino restan y cortan la pista.
  * Se puede pasar a la siguiente pista cuando quieras. Sin DOM: lo prueba engine.test.mjs.
  */
-import { PISTAS } from './pistas.js';
+import { PISTAS, CLASICAS, ABSTRACTAS } from './pistas.js';
 
 // Una de las pistas lleva un agente menos (CORTAS): no se sabe de antemano que todas son de 3, y queda
 // lugar para una trampa más
@@ -45,12 +45,17 @@ const sePisan = grupo => {
  */
 export const SIN_REPETIR = 15;
 const ANCLA = Math.floor(Date.UTC(2026, 9, 1) / 864e5);
+// Las de ideas (ABSTRACTAS, #383) entran al calendario este día, barajadas con las que quedaban en
+// la cola: los días de antes siguen siendo los que se jugaron
+export const ABSTRACTAS_DESDE = Math.floor(Date.UTC(2026, 9, 16) / 864e5);
 export function pistasDelDia(n) {
   if (n < ANCLA) return null;
   let cola = [], vuelta = 0, grupo = null;
   const recientes = [];
   for (let d = ANCLA; d <= n; d++) {
-    if (cola.length < PISTAS.length / 2) cola = cola.concat(barajar(PISTAS, azar(`vuelta:${vuelta++}`)).filter(x => !cola.includes(x)));
+    const todas = d < ABSTRACTAS_DESDE ? CLASICAS : PISTAS;
+    if (d === ABSTRACTAS_DESDE) cola = barajar([...cola, ...ABSTRACTAS], azar('abstractas'));
+    if (cola.length < todas.length / 2) cola = cola.concat(barajar(todas, azar(`vuelta:${vuelta++}`)).filter(x => !cola.includes(x)));
     const bloqueadas = new Set(recientes.flat());
     grupo = [];
     for (const x of cola) { if (grupo.length === CUANTAS) break; if (!bloqueadas.has(x) && !sePisan([...grupo, x])) grupo.push(x); }

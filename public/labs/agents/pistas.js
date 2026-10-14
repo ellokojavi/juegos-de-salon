@@ -1,12 +1,13 @@
 /**
- * Las pistas de Agentes (laboratorio, D-286, D-288), en español de Chile: 100. Cada una trae:
+ * Las pistas de Agentes (laboratorio, D-286, D-288), en español de Chile: 100 de cosas concretas y
+ * 18 de ideas (ABSTRACTAS, #383), que salen en el calendario desde ABSTRACTAS_DESDE. Cada una trae:
  *  - `si`: palabras que van claramente con la pista (de aquí salen las del tablero).
  *  - `casi`: palabras que se le parecen pero no van: de aquí sale el asesino, que tienta.
  *
  * Una palabra puede estar en varias pistas: el generador nunca pone en un tablero una palabra
  * que vaya con dos de sus pistas, ni un asesino que vaya de verdad con alguna.
  */
-export const PISTAS = [
+export const CLASICAS = [
   { pista: 'MAR', si: ['OLA', 'BARCO', 'SAL', 'PLAYA', 'ANCLA', 'ISLA', 'MAREA', 'PUERTO', 'TIBURÓN'], casi: ['RÍO', 'LAGO', 'PISCINA'] },
   { pista: 'NAVIDAD', si: ['REGALO', 'ÁRBOL', 'VIEJITO', 'PESEBRE', 'CENA', 'ESTRELLA', 'CAMPANA', 'DICIEMBRE', 'RENO'], casi: ['CUMPLEAÑOS', 'PASCUA', 'TORTA'] },
   { pista: 'FÚTBOL', si: ['ARCO', 'PELOTA', 'GOL', 'ÁRBITRO', 'CANCHA', 'PENAL', 'CAMISETA', 'ESTADIO', 'HINCHA'], casi: ['TENIS', 'RED', 'RAQUETA'] },
@@ -109,3 +110,31 @@ export const PISTAS = [
   { pista: 'JAPÓN', si: ['SUSHI', 'SAMURÁI', 'KIMONO', 'TOKIO', 'ORIGAMI', 'ANIME', 'BONSÁI', 'KARATE', 'NINJA', 'FUJI'], casi: ['CHINA', 'COREA', 'TAILANDIA'] },
   { pista: 'ITALIA', si: ['PIZZA', 'ROMA', 'PASTA', 'VENECIA', 'GÓNDOLA', 'COLISEO', 'ESPAGUETI', 'LASAÑA', 'VESPA', 'TIRAMISÚ'], casi: ['ESPAÑA', 'FRANCIA', 'GRECIA'] },
 ];
+
+/**
+ * Las de ideas (#383, pedido de Cris): la pista es un concepto y sus palabras son cosas que lo
+ * evocan sin ser de su mismo rubro (SUERTE → TRÉBOL, HERRADURA, SIETE), así que hay que pensar
+ * un poco más. Sus tentaciones también lo evocan, pero al revés o de lado (SUERTE → GATO, MARTES).
+ */
+export const ABSTRACTAS = [
+  { pista: 'MIEDO', si: ['OSCURIDAD', 'ARAÑA', 'PESADILLA', 'GRITO', 'SOMBRA', 'ALTURA', 'TRUENO', 'CALAVERA', 'ESCALOFRÍO'], casi: ['SORPRESA', 'NERVIOS', 'VERGÜENZA'] },
+  { pista: 'SILENCIO', si: ['BIBLIOTECA', 'MIMO', 'MADRUGADA', 'SECRETO', 'MONJE', 'NIEVE', 'CEMENTERIO', 'DEDO', 'ESPACIO'], casi: ['RUIDO', 'MÚSICA', 'ECO'] },
+  { pista: 'VELOCIDAD', si: ['RAYO', 'GUEPARDO', 'COHETE', 'BALA', 'FLECHA', 'HALCÓN', 'CARRERA', 'LUZ', 'TURBO'], casi: ['TORTUGA', 'CARACOL', 'SEMÁFORO'] },
+  { pista: 'LIBERTAD', si: ['PÁJARO', 'ALAS', 'LLAVE', 'BANDERA', 'VACACIONES', 'HORIZONTE', 'VELERO', 'ESTATUA', 'CABALLO'], casi: ['CÁRCEL', 'JAULA', 'CANDADO'] },
+  { pista: 'AMOR', si: ['CORAZÓN', 'ROSA', 'BESO', 'ANILLO', 'FLECHA', 'CARTA', 'CHOCOLATE', 'ABRAZO', 'CUPIDO', 'POEMA'], casi: ['AMISTAD', 'CELOS', 'DIVORCIO'] },
+  { pista: 'PODER', si: ['CORONA', 'TRONO', 'ESPADA', 'ENERGÍA', 'PALACIO', 'ÁGUILA', 'LEÓN', 'ENCHUFE', 'PRESIDENTE'], casi: ['FAMA', 'SUERTE', 'GOBIERNO'] },
+  { pista: 'SUERTE', si: ['TRÉBOL', 'DADO', 'HERRADURA', 'LOTERÍA', 'MONEDA', 'CASINO', 'SIETE', 'AMULETO', 'RULETA'], casi: ['GATO', 'ESPEJO', 'MARTES'] },
+  { pista: 'LUZ', si: ['SOL', 'AMPOLLETA', 'VELA', 'FARO', 'LINTERNA', 'RAYO', 'LUCIÉRNAGA', 'LÁMPARA', 'FLASH'], casi: ['SOMBRA', 'NOCHE', 'ESPEJO'] },
+  { pista: 'ALTURA', si: ['JIRAFA', 'RASCACIELOS', 'ESCALERA', 'AVIÓN', 'GLOBO', 'CÓNDOR', 'TORRE', 'NUBE', 'VÉRTIGO'], casi: ['POZO', 'SUBMARINO', 'CUEVA'] },
+  { pista: 'FAMA', si: ['ESTRELLA', 'ALFOMBRA', 'AUTÓGRAFO', 'FOTÓGRAFO', 'ESCENARIO', 'APLAUSO', 'PREMIO', 'PAPARAZZI', 'SELFIE'], casi: ['DINERO', 'PODER', 'ÉXITO'] },
+  { pista: 'INFANCIA', si: ['COLUMPIO', 'JUGUETE', 'CHUPETE', 'TOBOGÁN', 'CUENTO', 'TRICICLO', 'ESCONDIDA', 'VOLANTÍN', 'DIBUJO'], casi: ['VEJEZ', 'ADOLESCENCIA', 'NOSTALGIA'] },
+  { pista: 'GUERRA', si: ['TANQUE', 'SOLDADO', 'BOMBA', 'TRINCHERA', 'MEDALLA', 'ESCUDO', 'CAÑÓN', 'GENERAL', 'ARMADURA'], casi: ['PAZ', 'PALOMA', 'AJEDREZ'] },
+  { pista: 'PAZ', si: ['PALOMA', 'OLIVO', 'ABRAZO', 'TREGUA', 'CALMA', 'YOGA', 'LAGO', 'NOBEL', 'BLANCO'], casi: ['GUERRA', 'SILENCIO', 'SUEÑO'] },
+  { pista: 'SECRETO', si: ['DIARIO', 'CANDADO', 'SUSURRO', 'CLAVE', 'CÓDIGO', 'TESORO', 'MAPA', 'SOBRE', 'CONTRASEÑA'], casi: ['CHISME', 'MENTIRA', 'SORPRESA'] },
+  { pista: 'VIDA', si: ['SEMILLA', 'HUEVO', 'CUNA', 'LATIDO', 'RAÍZ', 'PRIMAVERA', 'PULMÓN', 'BROTE', 'AGUA'], casi: ['MUERTE', 'TIEMPO', 'SALUD'] },
+  { pista: 'DULCE', si: ['MIEL', 'AZÚCAR', 'CARAMELO', 'TORTA', 'MANJAR', 'ALGODÓN', 'KUCHEN', 'HELADO', 'ABEJA'], casi: ['SALADO', 'AMARGO', 'LIMÓN'] },
+  { pista: 'RUIDO', si: ['TRUENO', 'BOCINA', 'TALADRO', 'TAMBOR', 'SIRENA', 'PETARDO', 'MOTO', 'GRITO', 'CONCIERTO'], casi: ['SILENCIO', 'MÚSICA', 'ECO'] },
+  { pista: 'VERDAD', si: ['ESPEJO', 'JURAMENTO', 'TESTIGO', 'CONFESIÓN', 'JUEZ', 'PRUEBA', 'HUELLA', 'DETECTOR', 'CIENCIA'], casi: ['MENTIRA', 'SECRETO', 'RUMOR'] },
+];
+
+export const PISTAS = [...CLASICAS, ...ABSTRACTAS];

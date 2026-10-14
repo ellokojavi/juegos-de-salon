@@ -194,7 +194,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     writeFileSync(join(RAIZ, 'CHANGELOG.md'), nuevas.reduce((t, e) => t.replace(e.bloque, ''), ahora));
     console.log(`${nuevas.map(e => e.version).join(', ')} → ${f} (nivel: ${nivel}). Revisa, haz commit y trae main: CHANGELOG.md ya no choca.`);
   } else if (cmd === 'juntar') {
-    const lista = pendientes();
+    // La entrada de la rama que junta no es de main todavía: si se juntara, tomaría un número que
+    // puede ser de otro PR que entre antes (pasó en la ronda del 14/10). Queda en changelog/
+    const propia = nombreDe(rama());
+    const lista = pendientes().filter(e => e.archivo !== propia);
+    if (existsSync(join(RAIZ, propia))) console.log(`${propia} es de esta rama: queda sin número hasta que entre a main.`);
     const malas = lista.filter(e => e.error);
     if (malas.length) { for (const e of malas) console.error(`✗ ${e.archivo}: ${e.error}`); process.exit(1); }
     if (superficial()) { console.error('✗ copia sin historia completa: el orden no sería el de main (git fetch --unshallow)'); process.exit(1); }
