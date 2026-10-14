@@ -9,6 +9,8 @@
 export const TEMPLATES = {
   es: {
     subject: 'Sobre tu comentario en Juegos de Salón',
+    subjectMany: 'Sobre tus comentarios en Juegos de Salón',
+    about: t => `Sobre «${t}»:`,
     greeting: n => (n ? `Hola, ${n}:` : 'Hola:'),
     openings: [
       'Te diste el tiempo de comentar algo sobre Juegos de Salón, así que te debíamos una respuesta.',
@@ -22,11 +24,25 @@ export const TEMPLATES = {
       'Muchas gracias por tu comentario. Nos encanta saber cómo se viven los juegos del otro lado de la pantalla.',
       'Detrás de cada cambio en Juegos de Salón hay alguien que se tomó un minuto para escribir, como tú. Gracias.',
     ],
+    openingsMany: [
+      'Te diste el tiempo de dejarnos varios comentarios sobre Juegos de Salón, así que te debíamos una respuesta.',
+      'Gracias por escribirnos más de una vez. Cada comentario nos ayuda a que los juegos queden mejor, y los tuyos no fueron la excepción.',
+      'Leímos tus comentarios con mucha atención y queríamos contarte qué hicimos con cada uno.',
+      'Qué bueno que nos escribiste. Los comentarios de quienes juegan son lo que más nos sirve, y nos dejaste varios.',
+      'Tus comentarios llegaron y los revisamos uno por uno. Muchas gracias por ayudarnos a mejorar.',
+      'Gracias por jugar y, sobre todo, por contarnos tanto sobre lo que te pareció.',
+      'Nos alegra mucho recibir mensajes como los tuyos. Aquí van nuestras respuestas, todas juntas.',
+      'Te prometimos responderte, y aquí van todas las respuestas en un solo correo.',
+      'Muchas gracias por tus comentarios. Nos encanta saber cómo se viven los juegos del otro lado de la pantalla.',
+      'Detrás de cada cambio en Juegos de Salón hay alguien que se tomó un minuto para escribir, y tú te tomaste varios. Gracias.',
+    ],
     closing: 'Si se te ocurre algo más, el botón 🐞 sigue ahí. ¡Que sigas disfrutando los juegos!',
     signature: 'El equipo de Juegos de Salón',
   },
   en: {
     subject: 'About your comment on Juegos de Salón',
+    subjectMany: 'About your comments on Juegos de Salón',
+    about: t => `About "${t}":`,
     greeting: n => (n ? `Hi ${n},` : 'Hi,'),
     openings: [
       'You took the time to tell us something about Juegos de Salón, so we owed you a reply.',
@@ -40,11 +56,25 @@ export const TEMPLATES = {
       'Thank you so much for your comment. We love hearing how the games feel on the other side of the screen.',
       'Behind every change in Juegos de Salón there is someone who took a minute to write, just like you. Thank you.',
     ],
+    openingsMany: [
+      'You took the time to send us several comments about Juegos de Salón, so we owed you a reply.',
+      'Thanks for writing to us more than once. Every comment helps us make the games better, and yours were no exception.',
+      'We read your comments carefully and wanted to tell you what we did with each one.',
+      "We're really glad you wrote. Comments from the people who play are what helps us most, and you left us several.",
+      'Your comments arrived and we went through them one by one. Thank you so much for helping us improve.',
+      'Thanks for playing and, above all, for telling us so much about what you thought.',
+      "It makes our day to get messages like yours. Here are our replies, all together.",
+      'We promised to get back to you, and here are all our replies in a single email.',
+      'Thank you so much for your comments. We love hearing how the games feel on the other side of the screen.',
+      'Behind every change in Juegos de Salón there is someone who took a minute to write, and you took several. Thank you.',
+    ],
     closing: "If anything else comes to mind, the 🐞 button is still there. Enjoy the games!",
     signature: 'The Juegos de Salón team',
   },
   pt: {
     subject: 'Sobre o seu comentário no Juegos de Salón',
+    subjectMany: 'Sobre os seus comentários no Juegos de Salón',
+    about: t => `Sobre "${t}":`,
     greeting: n => (n ? `Olá, ${n}!` : 'Olá!'),
     openings: [
       'Você tirou um tempo para comentar algo sobre o Juegos de Salón, então te devíamos uma resposta.',
@@ -58,11 +88,25 @@ export const TEMPLATES = {
       'Muito obrigado pelo seu comentário. Adoramos saber como os jogos são vividos do outro lado da tela.',
       'Por trás de cada mudança no Juegos de Salón há alguém que tirou um minuto para escrever, como você. Obrigado.',
     ],
+    openingsMany: [
+      'Você tirou um tempo para nos deixar vários comentários sobre o Juegos de Salón, então te devíamos uma resposta.',
+      'Obrigado por nos escrever mais de uma vez. Cada comentário nos ajuda a melhorar os jogos, e os seus não foram exceção.',
+      'Lemos os seus comentários com muita atenção e queríamos contar o que fizemos com cada um.',
+      'Que bom que você nos escreveu. Os comentários de quem joga são o que mais nos ajuda, e você nos deixou vários.',
+      'Os seus comentários chegaram e nós os analisamos um por um. Muito obrigado por nos ajudar a melhorar.',
+      'Obrigado por jogar e, principalmente, por nos contar tanta coisa sobre o que achou.',
+      'Ficamos muito felizes ao receber mensagens como as suas. Aqui vão as nossas respostas, todas juntas.',
+      'Prometemos te responder, e aqui estão todas as respostas em um só e-mail.',
+      'Muito obrigado pelos seus comentários. Adoramos saber como os jogos são vividos do outro lado da tela.',
+      'Por trás de cada mudança no Juegos de Salón há alguém que tirou um minuto para escrever, e você tirou vários. Obrigado.',
+    ],
     closing: 'Se pensar em mais alguma coisa, o botão 🐞 continua lá. Continue aproveitando os jogos!',
     signature: 'A equipe do Juegos de Salón',
   },
   de: {
     subject: 'Zu deinem Kommentar bei Juegos de Salón',
+    subjectMany: 'Zu deinen Kommentaren bei Juegos de Salón',
+    about: t => `Zu „${t}“:`,
     greeting: n => (n ? `Hallo ${n},` : 'Hallo,'),
     openings: [
       'Du hast dir die Zeit genommen, uns etwas zu Juegos de Salón zu schreiben, also schulden wir dir eine Antwort.',
@@ -76,6 +120,18 @@ export const TEMPLATES = {
       'Vielen Dank für deinen Kommentar. Wir finden es toll zu erfahren, wie sich die Spiele auf der anderen Seite des Bildschirms anfühlen.',
       'Hinter jeder Änderung bei Juegos de Salón steckt jemand, der sich wie du eine Minute zum Schreiben genommen hat. Danke.',
     ],
+    openingsMany: [
+      'Du hast dir die Zeit genommen, uns mehrere Kommentare zu Juegos de Salón zu schreiben, also schulden wir dir eine Antwort.',
+      'Danke, dass du uns mehr als einmal geschrieben hast. Jeder Kommentar hilft uns, die Spiele besser zu machen, und deine ganz besonders.',
+      'Wir haben deine Kommentare aufmerksam gelesen und möchten dir erzählen, was wir mit jedem davon gemacht haben.',
+      'Schön, dass du uns geschrieben hast. Die Rückmeldungen der Leute, die spielen, helfen uns am meisten, und du hast uns gleich mehrere geschickt.',
+      'Deine Kommentare sind angekommen und wir haben sie uns einzeln angeschaut. Vielen Dank, dass du uns hilfst, besser zu werden.',
+      'Danke fürs Spielen und vor allem dafür, dass du uns so viel darüber erzählt hast, wie es dir gefallen hat.',
+      'Über Nachrichten wie deine freuen wir uns sehr. Hier sind unsere Antworten, alle zusammen.',
+      'Wir haben dir versprochen zu antworten, und hier sind alle Antworten in einer einzigen E-Mail.',
+      'Vielen Dank für deine Kommentare. Wir finden es toll zu erfahren, wie sich die Spiele auf der anderen Seite des Bildschirms anfühlen.',
+      'Hinter jeder Änderung bei Juegos de Salón steckt jemand, der sich eine Minute zum Schreiben genommen hat, und du hast dir gleich mehrere genommen. Danke.',
+    ],
     closing: 'Wenn dir noch etwas einfällt, der 🐞-Knopf ist weiterhin da. Viel Spaß weiterhin beim Spielen!',
     signature: 'Das Team von Juegos de Salón',
   },
@@ -83,19 +139,31 @@ export const TEMPLATES = {
 
 export const LANGUAGES = Object.keys(TEMPLATES);
 
+/** The start of what the player wrote, to say which comment each answer is about. */
+export function quote(text, max = 70) {
+  const t = String(text || '').replace(/\u200b/g, '').replace(/\s+/g, ' ').trim();
+  return t.length > max ? `${t.slice(0, max - 1).trimEnd()}…` : t;
+}
+
 /**
- * The email: `lang` is the feedback's language, `answer` the agent's specific answer, `name` the
- * name the player gave (if any), and `n` picks the opening (the issue number, so two replies in a
- * row don't open the same way).
+ * The email: `lang` is the feedback's language, `items` one `{ quote, answer }` per comment (the
+ * start of what the player wrote, and the agent's specific answer to it), `name` the name the
+ * player gave (if any), and `n` picks the opening (the issue number, so two replies in a row don't
+ * open the same way). One comment or several (a player who sent many in one sitting gets a single
+ * email, owner's request): with several, the subject and the opening are plural and each answer
+ * goes under the quote of its comment.
  */
-export function buildEmail({ lang, answer, name = '', n = 0 }) {
+export function buildEmail({ lang, items, name = '', n = 0 }) {
   const T = TEMPLATES[lang];
   if (!T) throw new Error(`No templates for "${lang}": ${LANGUAGES.join(', ')}.`);
-  const text = String(answer || '').trim();
-  if (!text) throw new Error('The reply needs the specific answer.');
-  const opening = T.openings[((n % T.openings.length) + T.openings.length) % T.openings.length];
+  const list = (items || []).map(x => ({ quote: quote(x.quote), answer: String(x.answer || '').trim() }));
+  if (!list.length || list.some(x => !x.answer)) throw new Error('Each comment needs its specific answer.');
+  const many = list.length > 1;
+  const openings = many ? T.openingsMany : T.openings;
+  const opening = openings[((n % openings.length) + openings.length) % openings.length];
+  const body = list.map(x => (x.quote ? `${T.about(x.quote)}\n${x.answer}` : x.answer)).join('\n\n');
   return {
-    subject: T.subject,
-    text: `${T.greeting(String(name || '').trim())}\n\n${opening}\n\n${text}\n\n${T.closing}\n\n${T.signature}\nhttps://juegosdesalon.cl/\n`,
+    subject: many ? T.subjectMany : T.subject,
+    text: `${T.greeting(String(name || '').trim())}\n\n${opening}\n\n${body}\n\n${T.closing}\n\n${T.signature}\nhttps://juegosdesalon.cl/\n`,
   };
 }

@@ -1,6 +1,6 @@
 // The 🐞 feedback as issues (D-275, D-279): with the name and without the browser, without mentions, and never the same report twice.
 import assert from 'node:assert/strict';
-import { title, body, pending, uploaded, marker, where, idOf, wantsEmail, handled, readAnswer, nameOf, EMAILED, FORGOTTEN } from './feedback.mjs';
+import { title, body, pending, uploaded, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN } from './feedback.mjs';
 
 const r = {
   id: '-P3bm', at: Date.parse('2026-10-10T18:28:23Z'), v: '0.144.0', nombre: 'Tu admirador secreto',
@@ -39,10 +39,18 @@ assert.ok(wantsEmail(withEmail) && !wantsEmail(c));
 assert.equal(idOf(withEmail), '-P3bm');
 assert.ok(!handled([]) && !handled([{ body: 'thanks' }]));
 assert.ok(handled([{ body: `📧 sent\n${EMAILED}` }]) && handled([{ body: FORGOTTEN }]));
-assert.equal(readAnswer('  Ya está arreglado.\n'), 'Ya está arreglado.');
-assert.throws(() => readAnswer('Ya está — arreglado.'), /dash/);
-assert.throws(() => readAnswer('   '));
+// One answer, or one per issue under "#<n>" (several comments of a player in one email)
+assert.deepEqual(readAnswers('  Ya está arreglado.\n', ['383']), { 383: 'Ya está arreglado.' });
+assert.deepEqual(readAnswers('#383\nUno.\n\n#401\nDos,\nen dos líneas.\n', ['383', '401']), { 383: 'Uno.', 401: 'Dos,\nen dos líneas.' });
+assert.throws(() => readAnswers('Ya está — arreglado.', ['1']), /dash/);
+assert.throws(() => readAnswers('   ', ['1']));
+assert.throws(() => readAnswers('Una sola para dos', ['1', '2']), /#<n>/);
+assert.throws(() => readAnswers('#1\nUno.', ['1', '2']), /missing #2/);
+assert.throws(() => readAnswers('#1\nUno.\n#3\nTres.', ['1']), /extra #3/);
+assert.throws(() => readAnswers('Hola\n#1\nUno.', ['1']), /before/);
+assert.equal(textOf(c), 'Se podrian auto tachar las pistas ya usadas. @alguien mira el #12');
 assert.equal(nameOf(withEmail), 'Tu admirador secreto');
+assert.equal(nameOf('> hola\n\n- **Quién:** Cris\n- **Juego:** loteo'), 'Cris', 'issues from before D-316 say Quién');
 assert.equal(nameOf(body({ ...r, nombre: '@cris' })), '@cris');
 assert.equal(nameOf(body({ ...r, nombre: '' })), '');
 
