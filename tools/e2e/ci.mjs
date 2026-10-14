@@ -125,7 +125,7 @@ async function runAll(chosen, retries) {
       console.log(`::warning title=Flaky::${g} failed on the first attempt (${r.reason}); repeating it once (D-299)`);
       console.log(`\n▶ ${g} (second attempt)`);
       const again = await run(g, 'second-attempt');
-      if (again.ok) console.log(`::warning title=Flaky::${g} passed on the second attempt: it fails sometimes (screenshots of the first in the artifact)`);
+      if (again.ok) console.log(`::warning title=Flaky::${g} passed on the second attempt: it fails sometimes (the first attempt's screenshots are in the artifact)`);
       r = { ...again, flaky: again.ok, first: r };
     }
     if (!r.ok) console.log(`::error title=Failed ${g}::${r.reason}${r.bad[0] ? ': ' + r.bad[0].slice(0, 200) : ''}`);

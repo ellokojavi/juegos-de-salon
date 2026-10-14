@@ -171,19 +171,21 @@ function check() {
 
   heading('Workflows on main');
   for (const w of ['publish.yml', 'e2e.yml', 'notifications.yml']) {
-    const [r] = gh('run', 'list', '--workflow', w, '--branch', 'main', '--limit', '1', '--json', 'conclusion,status,createdAt,url');
+    let r;
+    try { [r] = gh('run', 'list', '--workflow', w, '--branch', 'main', '--limit', '1', '--json', 'conclusion,status,createdAt,url'); } catch (_) { console.log(`- ${w}: not found on main`); continue; }
     console.log(`- ${w}: ${r ? `${r.conclusion || r.status} (${r.createdAt.slice(0, 16)})${r.conclusion === 'failure' ? ` ${r.url}` : ''}` : 'no runs'}`);
   }
 
   heading('CHANGELOG to collect and decision reservations (D-300, D-301)');
   const toCollect = sh('git', ['ls-tree', '--name-only', 'origin/main', 'changelog/']).split('\n').filter(f => f.endsWith('.md') && !f.endsWith('README.md'));
-  console.log(toCollect.length ? `- ${toCollect.length} entry(ies) in main's changelog/: collect them in your PR (node tools/release/changelog.mjs collect)` : "- main's changelog/ is empty.");
+  console.log(toCollect.length ? `- ${toCollect.length} ${toCollect.length === 1 ? 'entry' : 'entries'} in main's changelog/: collect them in your PR (node tools/release/changelog.mjs collect)` : "- main's changelog/ is empty.");
   try { console.log(sh('node', [join(ROOT, 'tools/agents/decision.mjs'), 'clean']).trim() || '- No open reservations.'); } catch (e) { console.log(`- reservations: ${String(e.message).split('\n')[0]}`); }
 
   heading('Issues');
   const issues = gh('issue', 'list', '--state', 'open', '--limit', '100', '--json', 'number,title,createdAt,labels,body');
   // On main, the end-to-end tests run inside publish.yml (D-302): its last finished run says whether main is green
-  const greenE2E = gh('run', 'list', '--workflow', 'publish.yml', '--branch', 'main', '--status', 'completed', '--limit', '1', '--json', 'conclusion')[0]?.conclusion === 'success';
+  let greenE2E = false;
+  try { greenE2E = gh('run', 'list', '--workflow', 'publish.yml', '--branch', 'main', '--status', 'completed', '--limit', '1', '--json', 'conclusion')[0]?.conclusion === 'success'; } catch (_) { /* publish.yml not on main yet */ }
   const redIssues = issues.filter(i => /^main (en rojo|is red)/.test(i.title));
   for (const i of redIssues) console.log(`- #${i.number} ${i.title} (${i.createdAt.slice(0, 10)})${greenE2E ? ': main is already green, it can be closed' : ': still red'}`);
   const dilemmas = issues.filter(i => i.labels.some(l => ['usability', 'usabilidad'].includes(l.name)) && Date.now() - Date.parse(i.createdAt) > 3 * DAY);
@@ -215,7 +217,7 @@ function check() {
     publicCommits: lastUsability ? count(`${lastUsability.to}..origin/main`, '--', 'public/') : null,
     usabilityDays: lastUsability ? Math.floor((Date.now() - Date.parse(lastUsability.date)) / DAY) : null,
   });
-  for (const d of plan) console.log(`- ${d.agent}: ${d.reason}  (when launching it: dispatch ${d.agent} ${tip.slice(0, 7)})`);
+  for (const d of plan) console.log(`- ${d.agent}: ${d.reason} (when launching it: dispatch ${d.agent} ${tip.slice(0, 7)})`);
   if (!plan.length) console.log('Nobody: nothing changed that needs a review.');
 
   heading('Approved and queued');
