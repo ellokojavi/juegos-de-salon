@@ -42,7 +42,7 @@ viven hoy. Las rutas viejas de las páginas siguen funcionando como páginas pue
 | `tools/e2e/<juego>-<guion>.mjs` | `tools/e2e/<carpeta>/<guion>.mjs` (`linea-de-tiempo-veredicto.mjs` → `timeline/veredicto.mjs`; `copa.mjs` → `cup/torneo.mjs`) |
 | `marketing/video-promo/` | `marketing/promo-video/` |
 | `.claude/skills/video-promo/` | `.claude/skills/promo-video/` |
-| `tools/agents/procesos.mjs`, `tools/e2e/caminos.mjs`, `.github/workflows/publicar.yml` and the rest of the workshop's Spanish names | their English names (D-316: `processes.mjs`, `paths.mjs`, `publish.yml`…) |
+| `tools/agents/procesos.mjs`, `tools/e2e/caminos.mjs`, `.github/workflows/publicar.yml` and the rest of the workshop's Spanish names | their English names (D-316: `processes.mjs`, `paths.mjs`, `publish.yml`, `timeline/verdict.mjs`, `cup/tournament.mjs`…) |
 | `lab/`, `tools/lab.py`, `tools/diccionario/`, `tools/diag/` | ya no existen (D-67, D-65, D-77) |
 
 ## Índice por tema

@@ -42,7 +42,7 @@
    excepciones a los cánones y el gancho `window.__…`), más requerimientos y decisiones.
 10. **El README**, en inglés (C-13): la sección del juego, sus tomas en `docs/capturas.json` y
     después `python3 tools/release/readme.py screenshots <seccion>`, `update` y, ya releído,
-    `sellar`. Las capturas se miran juntas con `node tools/e2e/contact-sheet.mjs <seccion>`. La tarjeta
+    `seal`. Las capturas se miran juntas con `node tools/e2e/contact-sheet.mjs <seccion>`. La tarjeta
     social sale con `node tools/release/og.mjs cards` e `images`.
 11. **La lista de chequeo** del final de los cánones, entera. La parte que se puede contar la
     cuenta `node public/assets/js/games.test.mjs`: motor, tests, gancho y especificación (C-12).

@@ -73,7 +73,7 @@ las pantallas de `tools/e2e/look.mjs` a 320 px, y después con los textos aleman
 
 Los pasos que este documento dejaba anotados, y cómo quedaron:
 
-- Hecho: sacarlo de `EN_LABS`, la puerta `/de/` con su tarjeta (`og.mjs` y `og/tarjeta.html`), el README, C-3 en CANONES, el CONTRIBUTING y el guion `lang-from-url.mjs` (prueba `/de/` y el puente de `/labs/de/`).
+- Hecho: sacarlo de `EN_LABS`, la puerta `/de/` con su tarjeta (`og.mjs` y `og/card.html`), el README, C-3 en CANONES, el CONTRIBUTING y el guion `lang-from-url.mjs` (prueba `/de/` y el puente de `/labs/de/`).
 - Revisado el 4 de octubre: **las imágenes que se comparten** (punto 4) caben en alemán. La tabla de
   La Copa (a mitad de semana y la final de 10 jugadores con podio) y los resultados, con el
   minijuego de nombre más largo ("Bullen und Kühe: Zahl knacken"), se ven bien y las diéresis no se
@@ -95,19 +95,19 @@ Ordenado por lo que más se nota.
    brasileñas de Línea de Tiempo (que se entiendan sin contexto).
 2. **Sacarlo de `EN_LABS`** en `i18n.js`: con eso aparece para todos en el toggle.
 3. **La puerta `/de/`** con su tarjeta social: `de/index.html` (copia de `public/en/`), `og.mjs`
-   (`PUERTAS`, `GRATIS`, la conjunción "und", `LOCALE` `de_DE`), `tools/release/og/card.html`
-   (`GRATIS`) y `node tools/release/og.mjs images --all` en el Mac del dueño. En `og/tarjeta.html` el
+   (`DOORS`, `FREE`, la conjunción "und", `LOCALE` `de_DE`), `tools/release/og/card.html`
+   (`FREE`) y `node tools/release/og.mjs images --all` en el Mac del dueño. En `og/card.html` el
    nombre va en Bangers 52 px sin ayuda para cortar: "SCHIFFE VERSENKEN" no cabe en una línea.
    `homeUrl('de')` pasa a ser `/de/`.
 4. **Imágenes que se comparten** (`compartir.js`, la imagen de la tabla en `public/cup/game.js`): el
    canvas no corta líneas. Los textos se achican hasta un mínimo y después se dibujan igual; la
    leyenda de la tabla no mide su ancho total. Revisar con textos alemanes largos.
-5. **El README** (en inglés): la tabla de idiomas (`tools/release/readme.py`, `bloque_idiomas`), "three
+5. **El README** (en inglés): la tabla de idiomas (`tools/release/readme.py`, `block_languages`), "three
    languages", la estructura con `de/`; regenerar `docs/facts.json`. También C-3 en CANONES, el
    CONTRIBUTING y el video promocional ("tres idiomas", las tres banderas).
-6. **Guiones de punta a punta** que asumen dos idiomas extra: `copa-idiomas.mjs` (las
+6. **Guiones de punta a punta** que asumen dos idiomas extra: `cup/languages.mjs` (las
    comprobaciones son `lang === 'en' ? … : <portugués>`), `room-error.mjs`,
-   `linea-de-tiempo-solo.mjs`, `lang-from-url.mjs` (la puerta `/de/`).
+   `timeline/solo.mjs`, `lang-from-url.mjs` (la puerta `/de/`).
 7. **Decisiones de producto**, no de código:
    - **Un público `de`** (como `cl` y `br`, D-187) solo si se escribe contenido propio de
      Alemania: un mazo alemán de Línea de Tiempo, grillas o palabras solo para alemanes.
