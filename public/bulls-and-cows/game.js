@@ -14,7 +14,7 @@ import { gameById } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { failWith } from '../assets/js/transport/errors.js';
+import { clearRoomError, tryRoom } from '../assets/js/transport/errors.js';
 import { score, isValid, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
 import { createChat } from '../assets/js/chat.js';
@@ -759,7 +759,7 @@ function renderSetup(mode, prefillCode = '') {
   const config = { ...DEFAULT_CONFIG };
   const savedName = names_.get();
   const form = $('#setup-form'); form.innerHTML = '';
-  const err = $('#setup-error'); err.textContent = '';
+  const err = $('#setup-error'); clearRoomError(err);
   const inputs = {};
   const nameField = (key, label, value = '') => { inputs[key] = el('input', { type: 'text', maxlength: 14, placeholder: label, value, autocomplete: 'off' }); return el('div', { class: 'field' }, el('label', {}, label), inputs[key]); };
   if (mode === 'local') form.append(nameField('A', T.p1), nameField('B', T.p2));
@@ -770,21 +770,21 @@ function renderSetup(mode, prefillCode = '') {
   // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
   if (!prefillCode) form.append(el('div', { class: 'field' }, el('label', {}, T.digits), seg), sw('replica', T.replica, T.replicaHint), sw('zeroFirst', T.zeroFirst));
   const actions = $('#setup-actions'); actions.innerHTML = '';
-  const fail = (msg) => { err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
+  const fail = (msg) => { clearRoomError(err); err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const getName = k => inputs[k].value.trim();
   const remember = n => names_.set(n);
   if (mode === 'local') {
     actions.append(el('button', { class: 'btn btn--yellow', onClick: () => { const a = getName('A'), b = getName('B'); if (!a || !b || a.toLowerCase() === b.toLowerCase()) return fail(T.errNames); SFX.tap(); startLocalMode('local', { A: a, B: b }, config); } }, T.start));
   } else {
     const codeInput = el('input', { type: 'text', class: 'code', maxlength: 4, placeholder: T.codePlaceholder, value: prefillCode, autocapitalize: 'characters', autocomplete: 'off' });
-    const busy = (b, on) => { b.disabled = on; };
-    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); busy(createBtn, true); try { await createOnline(a, config); } catch (e) { failWith(e, T, fail); } busy(createBtn, false); } }, T.create);
+    const C = COMMON[lang];
+    const roomOpts = { err, fail, T, local: () => { SFX.tap(); renderSetup('local'); }, localLabel: C.playOnePhone };
+    const createBtn = el('button', { class: 'btn btn--yellow', onClick: async () => { const a = getName('A'); if (!a) return fail(T.errName); remember(a); SFX.tap(); await tryRoom(createBtn, () => createOnline(a, config), { busy: C.opening, ...roomOpts }); } }, T.create);
     const joinBtn = el('button', { class: 'btn btn--cyan', onClick: async () => {
       const a = getName('A'); const code = codeInput.value.trim().toUpperCase();
       if (!a) return fail(T.errName); if (!/^[A-Z]{4}$/.test(code)) return fail(T.errCode);
-      remember(a); SFX.tap(); busy(joinBtn, true);
-      try { await joinOnline(code, a); } catch (e) { failWith(e, T, fail); }
-      busy(joinBtn, false);
+      remember(a); SFX.tap();
+      await tryRoom(joinBtn, () => joinOnline(code, a), { busy: C.joining, ...roomOpts });
     } }, T.join);
     // Con un enlace de sala solo se puede entrar a ESA sala: crear otra desde aquí confunde.
     const joinPanel = extra => el('div', { class: 'panel' }, extra, el('div', { class: 'field' }, codeInput), joinBtn);

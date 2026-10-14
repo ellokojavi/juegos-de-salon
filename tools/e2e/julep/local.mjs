@@ -1,151 +1,151 @@
-// Julepe de punta a punta, sin red: mesa de tres contra el celular y partida en un celular.
-// Comprueba que nadie pueda tirar una carta ilegal, que el plato se acumule con cada julepe,
-// que el reparto de tragos cuadre y que la partida se pueda retomar (C-6). Las tomas llevan el
-// nombre de las capturas del README (docs/capturas.json).
-import { salida } from '../salida.mjs';
+// Julepe end to end, no network: a table of three against the phone and a game on one phone.
+// Checks that nobody can play an illegal card, that the pot builds up with each julepe,
+// that the drinks handed out add up and that the game can be resumed (C-6). The shots carry the
+// names of the README screenshots (docs/capturas.json).
+import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = salida();
+const OUT = output();
 const b = await launch({ port: 9387, dir: `${OUT}/p`, out: OUT });
 const ev = e => b.evaluate(e);
-const SITIO = process.env.SITIO || 'http://localhost:8765';
-const sacadas = new Set();
-const toma = async nombre => { if (!sacadas.has(nombre)) { sacadas.add(nombre); await b.shot(nombre); } };
-const pantalla = () => ev(`document.querySelector('.screen.active').id`);
+const SITE = process.env.SITE || 'http://localhost:8765';
+const taken = new Set();
+const shot = async name => { if (!taken.has(name)) { taken.add(name); await b.shot(name); } };
+const screen = () => ev(`document.querySelector('.screen.active').id`);
 const overlay = () => ev(`document.getElementById('handoff').hidden === false`);
-const vista = () => ev(`JSON.stringify(window.__julepe.view() || null)`).then(t => JSON.parse(t || 'null'));
-const guardado = () => ev(`JSON.parse(localStorage.getItem('juegos-de-salon:julepe:session') || 'null')`);
-const seguir = () => ev(`(()=>{const h=document.getElementById('handoff');if(h.hidden)return 'no';const b=h.querySelector('.btn');b?b.click():h.click();return 'ok'})()`);
+const view = () => ev(`JSON.stringify(window.__julepe.view() || null)`).then(t => JSON.parse(t || 'null'));
+const saved = () => ev(`JSON.parse(localStorage.getItem('juegos-de-salon:julepe:session') || 'null')`);
+const proceed = () => ev(`(()=>{const h=document.getElementById('handoff');if(h.hidden)return 'no';const b=h.querySelector('.btn');b?b.click():h.click();return 'ok'})()`);
 
-/** El turno del jugador humano, sea cual sea la fase. Siempre va, nunca se pasa. */
-const jugar = () => ev(`(()=>{
-  const v = window.__julepe.view(); if (!v) return 'sin partida';
+/** The human player's turn, whatever the phase. Always goes in, never passes. */
+const play = () => ev(`(()=>{
+  const v = window.__julepe.view(); if (!v) return 'no game';
   const btn = () => document.querySelector('#actions .btn--yellow');
-  if (v.phase === 'declara') { const b = btn(); if (!b) return 'no'; b.click(); return 'voy'; }
+  if (v.phase === 'declara') { const b = btn(); if (!b) return 'no'; b.click(); return 'go'; }
   if (v.phase === 'cambia') {
     const c = document.querySelector('#mine .pcard'); if (c) c.click();
-    const b = btn(); if (!b) return 'no'; b.click(); return 'cambia';
+    const b = btn(); if (!b) return 'no'; b.click(); return 'exchange';
   }
   if (v.phase === 'baza') {
-    const c = document.querySelector('#mine .pcard:not(.off)'); if (!c) return 'sin carta';
+    const c = document.querySelector('#mine .pcard:not(.off)'); if (!c) return 'no card';
     c.click();
-    const b = btn(); if (!b || b.disabled) return 'sin boton';
+    const b = btn(); if (!b || b.disabled) return 'no button';
     const t = b.textContent.trim(); b.click(); return t;
   }
   if (v.phase === 'regala') {
     for (let i = 0; i < 12; i++) {
-      const b = btn(); if (b && !b.disabled) { b.click(); return 'regala'; }
-      const mas = [...document.querySelectorAll('.give-pm button')].filter(x => x.textContent === '+' && !x.disabled)[0];
-      if (!mas) return 'sin mas';
-      mas.click();
+      const b = btn(); if (b && !b.disabled) { b.click(); return 'give'; }
+      const plus = [...document.querySelectorAll('.give-pm button')].filter(x => x.textContent === '+' && !x.disabled)[0];
+      if (!plus) return 'no plus';
+      plus.click();
     }
   }
-  return 'nada';
+  return 'none';
 })()`);
 
-/** ¿Alguna carta apagada podría tirarse de verdad? Es la pregunta que vale del juego. */
-const legalesOk = () => ev(`(()=>{
+/** Could any greyed-out card really be played? That is the question that matters in this game. */
+const legalOk = () => ev(`(()=>{
   const v = window.__julepe.view();
   if (!v || v.phase !== 'baza') return 'n/a';
-  const yo = window.__julepe.session().mode === 'online' ? window.__julepe.session().role : (window.__julepe.session().uiRole || 'A');
-  if (v.turno !== yo || !v.cartas[yo]) return 'n/a';
-  const puestas = [...document.querySelectorAll('#mine .pcard')].map(c => c.getAttribute('aria-label'));
-  const apagadas = [...document.querySelectorAll('#mine .pcard.off')].length;
-  return puestas.length - apagadas;
+  const me = window.__julepe.session().mode === 'online' ? window.__julepe.session().role : (window.__julepe.session().uiRole || 'A');
+  if (v.turno !== me || !v.cartas[me]) return 'n/a';
+  const shown = [...document.querySelectorAll('#mine .pcard')].map(c => c.getAttribute('aria-label'));
+  const greyed = [...document.querySelectorAll('#mine .pcard.off')].length;
+  return shown.length - greyed;
 })()`);
 
-await b.go(`${SITIO}/`);
+await b.go(`${SITE}/`);
 await ev(`localStorage.clear(); 1`);
-await b.go(`${SITIO}/julep/`);
-await toma('01-intro');
-console.log('modos:', await ev(`[...document.querySelectorAll('.mode')].map(m=>m.innerText.split('\\n')[0]).join(' | ')`));
+await b.go(`${SITE}/julep/`);
+await shot('01-intro');
+console.log('modes:', await ev(`[...document.querySelectorAll('.mode')].map(m=>m.innerText.split('\\n')[0]).join(' | ')`));
 
-/* ---------------- Contra el celular ---------------- */
+/* ---------------- Against the phone ---------------- */
 await ev(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(400);
-await toma('02-configuracion');
+await shot('02-setup');
 await ev(`(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 await ev(`document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(700);
 {
-  const v = await vista();
-  console.log('mano 1 · plato:', v.plato, '· triunfo:', v.triunfo, '· mis cartas:', v.cartas.A?.join(' '));
+  const v = await view();
+  console.log('hand 1 · pot:', v.plato, '· trump:', v.triunfo, '· my cards:', v.cartas.A?.join(' '));
 }
 
-let vueltas = 0, julepes = 0, ilegal = 0, platoMax = 0;
-while ((await pantalla()) !== 'screen-result' && vueltas++ < 400) {
+let rounds = 0, julepes = 0, illegal = 0, maxPot = 0;
+while ((await screen()) !== 'screen-result' && rounds++ < 400) {
   if (await overlay()) {
-    if (await ev(`!!document.querySelector('#handoff .julepe')`)) { julepes++; await toma('06-julepe'); }
-    await seguir(); await sleep(300); continue;
+    if (await ev(`!!document.querySelector('#handoff .julepe')`)) { julepes++; await shot('06-julepe'); }
+    await proceed(); await sleep(300); continue;
   }
-  const v = await vista();
+  const v = await view();
   if (!v) { await sleep(200); continue; }
-  platoMax = Math.max(platoMax, v.plato);
-  if (v.phase === 'declara' && v.turno === 'A') await toma('03-declaracion');
-  if (v.phase === 'cambia' && v.turno === 'A') await toma('04-cambio');
-  if (v.phase === 'baza' && v.turno === 'A' && v.bazas.length >= 1) await toma('05-baza');
-  if (v.phase === 'regala' && v.turno === 'A') await toma('07-reparto');
+  maxPot = Math.max(maxPot, v.plato);
+  if (v.phase === 'declara' && v.turno === 'A') await shot('03-declaration');
+  if (v.phase === 'cambia' && v.turno === 'A') await shot('04-exchange');
+  if (v.phase === 'baza' && v.turno === 'A' && v.bazas.length >= 1) await shot('05-trick');
+  if (v.phase === 'regala' && v.turno === 'A') await shot('07-handout');
   if (v.turno !== 'A') { await sleep(250); continue; }
-  const legales = await legalesOk();
-  if (legales === 0) ilegal++;
-  const r = await jugar();
-  if (r === 'sin carta' || r === 'sin boton' || r === 'sin mas') { console.log('⚠️ turno pegado:', r, v.phase); break; }
+  const legal = await legalOk();
+  if (legal === 0) illegal++;
+  const r = await play();
+  if (r === 'no card' || r === 'no button' || r === 'no plus') { console.log('⚠️ turn stuck:', r, v.phase); break; }
   await sleep(220);
 }
 {
-  const v = await vista();
-  console.log('contra el celular →', await pantalla(), '·', await ev(`document.getElementById('result-title').textContent`));
-  console.log('manos:', v.historia.length, '· julepes vistos:', julepes, '· plato más alto:', platoMax, '· turnos sin carta legal:', ilegal);
-  const bebido = v.players.reduce((a, p) => a + v.st[p].tragos, 0);
-  const salido = v.historia.reduce((a, h) => a + (h.vacia ? 0 : h.plato * h.julepes.length + Object.values(h.regalos).flat().length * 2), 0);
-  console.log('tragos tomados:', bebido, '· tragos repartidos por las reglas:', salido, bebido === salido ? '(cuadra)' : '⚠️ NO CUADRA');
+  const v = await view();
+  console.log('against the phone →', await screen(), '·', await ev(`document.getElementById('result-title').textContent`));
+  console.log('hands:', v.historia.length, '· julepes seen:', julepes, '· highest pot:', maxPot, '· turns with no legal card:', illegal);
+  const drunk = v.players.reduce((a, p) => a + v.st[p].tragos, 0);
+  const dealt = v.historia.reduce((a, h) => a + (h.vacia ? 0 : h.plato * h.julepes.length + Object.values(h.regalos).flat().length * 2), 0);
+  console.log('drinks taken:', drunk, '· drinks handed out by the rules:', dealt, drunk === dealt ? '(adds up)' : '⚠️ DOES NOT ADD UP');
 }
 await ev(`document.getElementById('result-history').open = true; 1`); await sleep(300);
-await sleep(4200);   // el confeti dura 4 s y taparía el título de la captura (D-76)
-await toma('08-resultado');
+await sleep(4200);   // the confetti lasts 4 s and would cover the screenshot's title (D-76)
+await shot('08-result');
 
-/* ---------------- Tres en un celular ---------------- */
-await b.go(`${SITIO}/julep/`); await ev(`localStorage.clear(); 1`); await b.go(`${SITIO}/julep/`);
+/* ---------------- Three on one phone ---------------- */
+await b.go(`${SITE}/julep/`); await ev(`localStorage.clear(); 1`); await b.go(`${SITE}/julep/`);
 await ev(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(300);
 await ev(`(()=>{const n=['Javi','Cata','Nico'];[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))});return 1})()`);
-await ev(`document.querySelectorAll('.largos button')[0].click(); 1`);   // partida corta
+await ev(`document.querySelectorAll('.largos button')[0].click(); 1`);   // short game
 await ev(`document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(600);
-// El reparto tarda un parpadeo, así que se espera a que aparezca la pantalla de pase en vez
-// de mirar una sola vez: sin eso, la prueba decía "no" según cómo hubiera caído el reloj.
-let apareceElPase = false;
-for (let i = 0; i < 12 && !apareceElPase; i++) { apareceElPase = await overlay(); if (!apareceElPase) await sleep(250); }
-await toma('09-pase');
-console.log('en un celular, antes de mirar las cartas se pide el pase:', apareceElPase ? 'sí' : '⚠️ no');
+// Dealing takes a blink, so wait for the handoff screen to appear instead of looking
+// just once: without that, the test said "no" depending on how the clock had fallen.
+let handoffAppears = false;
+for (let i = 0; i < 12 && !handoffAppears; i++) { handoffAppears = await overlay(); if (!handoffAppears) await sleep(250); }
+await shot('09-handoff');
+console.log('on one phone, the handoff is asked for before looking at the cards:', handoffAppears ? 'yes' : '⚠️ no');
 
-let pases = 0, retomada = false;
-vueltas = 0;
-while ((await pantalla()) !== 'screen-result' && vueltas++ < 500) {
-  if (await overlay()) { pases++; await seguir(); await sleep(260); continue; }
-  const v = await vista();
+let handoffs = 0, resumed = false;
+rounds = 0;
+while ((await screen()) !== 'screen-result' && rounds++ < 500) {
+  if (await overlay()) { handoffs++; await proceed(); await sleep(260); continue; }
+  const v = await view();
   if (!v) { await sleep(200); continue; }
-  // A mitad de la segunda mano se recarga: la partida tiene que volver donde estaba (C-6)
-  if (!retomada && v.manoN === 1 && v.phase === 'baza') {
-    retomada = true;
-    const antes = JSON.stringify(v.historia.length) + '/' + v.manoN;
-    await b.go(`${SITIO}/julep/`); await sleep(400);
+  // Halfway through the second hand it reloads: the game has to come back where it was (C-6)
+  if (!resumed && v.manoN === 1 && v.phase === 'baza') {
+    resumed = true;
+    const before = JSON.stringify(v.historia.length) + '/' + v.manoN;
+    await b.go(`${SITE}/julep/`); await sleep(400);
     await ev(`(()=>{const b=[...document.querySelectorAll('#resume-slot .btn')][0]; if(b) b.click(); return 1})()`);
     await sleep(700);
-    const ahora = await vista();
-    console.log('retomada:', antes, '→', ahora ? `${ahora.historia.length}/${ahora.manoN}` : '⚠️ no volvió', '· guardada:', !!(await guardado()));
+    const now = await view();
+    console.log('resumed:', before, '→', now ? `${now.historia.length}/${now.manoN}` : '⚠️ did not come back', '· saved:', !!(await saved()));
     continue;
   }
-  const r = await jugar();
-  if (r === 'sin carta' || r === 'sin boton' || r === 'sin mas') { console.log('⚠️ turno pegado:', r, v.phase); break; }
+  const r = await play();
+  if (r === 'no card' || r === 'no button' || r === 'no plus') { console.log('⚠️ turn stuck:', r, v.phase); break; }
   await sleep(200);
 }
 {
-  const v = await vista();
-  console.log('en un celular →', await pantalla(), '· manos:', v?.historia.length, '· pantallas de pase:', pases);
-  console.log('tabla final:', v?.players.map(p => `${p}:${v.st[p].tragos}`).join(' '), '· ganan:', v?.ganadores.join(', '));
+  const v = await view();
+  console.log('on one phone →', await screen(), '· hands:', v?.historia.length, '· handoff screens:', handoffs);
+  console.log('final table:', v?.players.map(p => `${p}:${v.st[p].tragos}`).join(' '), '· winners:', v?.ganadores.join(', '));
 }
 await sleep(4200);
-await toma('10-tabla');
+await shot('10-table');
 
-// Consola limpia es criterio de aceptación (C-12): si el aparato se traba, acá queda el porqué
-console.log('errores de consola:', b.errors.length ? b.errors.join(' | ') : 'ninguno');
-if (b.logs.length) console.log('avisos de consola:', b.logs.slice(0, 5).join(' | '));
+// A clean console is an acceptance criterion (C-12): if the device locks up, the why stays here
+console.log('console errors:', b.errors.length ? b.errors.join(' | ') : 'none');
+if (b.logs.length) console.log('console warnings:', b.logs.slice(0, 5).join(' | '));
 
 await b.close();
-console.log('julepe (sin red): listo');
+console.log('julepe (no network): done');

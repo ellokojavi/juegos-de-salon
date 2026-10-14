@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 /**
- * El par de claves VAPID de los avisos al celular (D-223). Lo corre el dueño **una sola vez**:
+ * The VAPID key pair for phone notifications (D-223). The owner runs it **only once**:
  *
- *   node tools/push/vapid.mjs            # genera el par, escribe la pública y carga la privada
- *   node tools/push/vapid.mjs --forzar   # lo rehace (borra en la práctica todas las suscripciones)
+ *   node tools/push/vapid.mjs            # generates the pair, writes the public key and uploads the private one
+ *   node tools/push/vapid.mjs --force    # remakes it (in practice deletes every subscription)
  *
- * - La pública va a `public/assets/js/vapid.js` (es pública: se commitea).
- * - La privada nunca se muestra. Con la CLI de GitHub (`gh`) se carga directo como el secreto
- *   `VAPID_PRIVADA`, que usará el workflow que manda los avisos. Sin `gh`, queda en
- *   ~/.config/juegos-de-salon/vapid-privada.txt (solo legible por ti) con el comando para cargarla.
+ * - The public key goes to `public/assets/js/vapid.js` (it is public: it gets committed).
+ * - The private key is never shown. With the GitHub CLI (`gh`) it is uploaded directly as the
+ *   secret `VAPID_PRIVADA` (the owner decided to keep that name, D-316), used by the workflow that
+ *   sends the notifications. Without `gh`, it stays in ~/.config/juegos-de-salon/vapid-privada.txt
+ *   (readable only by you) with the command to upload it.
  *
- * Cambiar el par invalida las suscripciones que ya existen: los navegadores las atan a la pública.
- * Por eso, si ya hay una, se niega sin --forzar.
+ * Changing the pair invalidates the existing subscriptions: browsers tie them to the public key.
+ * That is why, if there already is one, it refuses without --force.
  */
 import { generateKeyPairSync } from 'node:crypto';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -20,39 +21,42 @@ import { homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const ARCHIVO = join(RAIZ, 'public/assets/js/vapid.js');
-const RESPALDO = join(homedir(), '.config/juegos-de-salon/vapid-privada.txt');
-const salir = (msg, code = 1) => { console.error(msg); process.exit(code); };
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const FILE = join(ROOT, 'public/assets/js/vapid.js');
+const BACKUP = join(homedir(), '.config/juegos-de-salon/vapid-privada.txt');
+const SECRET = 'VAPID_PRIVADA';
+const fail = (msg, code = 1) => { console.error(msg); process.exit(code); };
 
-/** El par en el formato de Web Push: la pública sin comprimir (65 bytes) y la privada (32), en base64url. */
-export function parVapid() {
+/** The pair in Web Push format: the uncompressed public key (65 bytes) and the private one (32), in base64url. */
+export function vapidPair() {
   const { publicKey, privateKey } = generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
   const pub = publicKey.export({ format: 'jwk' });
   const priv = privateKey.export({ format: 'jwk' });
   const bytes = Buffer.concat([Buffer.from([4]), Buffer.from(pub.x, 'base64url'), Buffer.from(pub.y, 'base64url')]);
-  return { publica: bytes.toString('base64url'), privada: priv.d };
+  return { publicKey: bytes.toString('base64url'), privateKey: priv.d };
 }
 
-/** El archivo de la pública con otra clave adentro. */
-export const conClave = (texto, clave) => texto.replace(/export const VAPID_PUBLICA = '[^']*';/, `export const VAPID_PUBLICA = '${clave}';`);
+/** The public key's file with another key inside (`VAPID_PUBLICA` is the app's name, phase 4). */
+export const withKey = (text, key) => text.replace(/export const VAPID_PUBLICA = '[^']*';/, `export const VAPID_PUBLICA = '${key}';`);
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const actual = readFileSync(ARCHIVO, 'utf8');
-  if (!/export const VAPID_PUBLICA = '[^']*';/.test(actual)) salir(`${ARCHIVO} no tiene la línea VAPID_PUBLICA.`);
-  if (!/VAPID_PUBLICA = '';/.test(actual) && !process.argv.includes('--forzar')) {
-    salir('Ya hay una clave VAPID. Rehacerla deja sin avisos a todos los suscritos; si de verdad hace falta: --forzar', 2);
+  const current = readFileSync(FILE, 'utf8');
+  if (!/export const VAPID_PUBLICA = '[^']*';/.test(current)) fail(`${FILE} has no VAPID_PUBLICA line.`);
+  // --forzar: the name from before D-316
+  const force = process.argv.includes('--force') || process.argv.includes('--forzar');
+  if (!/VAPID_PUBLICA = '';/.test(current) && !force) {
+    fail('There already is a VAPID key. Remaking it leaves every subscriber without notifications; if it is really needed: --force', 2);
   }
-  const { publica, privada } = parVapid();
-  const gh = spawnSync('gh', ['secret', 'set', 'VAPID_PRIVADA'], { cwd: RAIZ, input: privada, encoding: 'utf8' });
+  const { publicKey, privateKey } = vapidPair();
+  const gh = spawnSync('gh', ['secret', 'set', SECRET], { cwd: ROOT, input: privateKey, encoding: 'utf8' });
   if (gh.status === 0) {
-    console.log('✓ La privada quedó como el secreto VAPID_PRIVADA de GitHub.');
+    console.log(`✓ The private key is now GitHub's ${SECRET} secret.`);
   } else {
-    mkdirSync(dirname(RESPALDO), { recursive: true });
-    writeFileSync(RESPALDO, privada + '\n', { mode: 0o600 });
-    console.log(`No se pudo cargar el secreto con gh (${(gh.stderr || gh.error?.message || '').trim().split('\n')[0] || 'sin gh'}).`);
-    console.log(`La privada quedó en ${RESPALDO}. Cárgala con:\n  gh secret set VAPID_PRIVADA < "${RESPALDO}"`);
+    mkdirSync(dirname(BACKUP), { recursive: true });
+    writeFileSync(BACKUP, privateKey + '\n', { mode: 0o600 });
+    console.log(`Could not upload the secret with gh (${(gh.stderr || gh.error?.message || '').trim().split('\n')[0] || 'no gh'}).`);
+    console.log(`The private key is in ${BACKUP}. Upload it with:\n  gh secret set ${SECRET} < "${BACKUP}"`);
   }
-  writeFileSync(ARCHIVO, conClave(actual, publica));
-  console.log(`✓ La pública quedó en public/assets/js/vapid.js. Commitea ese archivo: con él, los avisos se ofrecen en las copas.`);
+  writeFileSync(FILE, withKey(current, publicKey));
+  console.log('✓ The public key is in public/assets/js/vapid.js. Commit that file: with it, the cups offer notifications.');
 }

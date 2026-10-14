@@ -147,6 +147,8 @@ p { line-height: 1.5; margin: 0 0 12px; }
 }
 .btn--ghost:active { transform: translateY(2px); box-shadow: none; }
 .btn--sm { font-size: 1.05rem; min-height: 44px; padding: 10px 16px; width: auto; }
+/* The way out under "couldn't open the room" (U-37, tryRoom in transport/errors.js) */
+.btn.room-local { margin: 4px 0 18px; }
 .btn-row { display: flex; gap: 10px; }
 .btn-row .btn { flex: 1; }
 .stack { display: flex; flex-direction: column; gap: 12px; }
@@ -156,7 +158,7 @@ p { line-height: 1.5; margin: 0 0 12px; }
    borde, en todos los juegos igual. Lo que ya separa se descuenta: el gap del contenedor
    (--gap-contenedor; el .stack, 12 px) y el relleno de la barra de botones de abajo (--aire-ya, que
    declara el juego en su tablero). Gana sobre el margen propio del juego (!important): es la
-   medida de todos. Cada captura de los guiones lo mide (tools/e2e/aire-comun.mjs), y mirar.mjs
+   medida de todos. Cada captura de los guiones lo mide (tools/e2e/spacing-common.mjs), y look.mjs
    lo informa. */
 :root { --aire-tablero: 28px; }
 .stack { --gap-contenedor: 12px; }

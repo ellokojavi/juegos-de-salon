@@ -8,7 +8,7 @@ modules: no build, no npm and no account for anything to work on it.
 1. **Fork** `ellokojavi/juegos-de-salon` on GitHub and clone it.
 2. Create a **branch named by topic** (`dudo-modo-rapido`, not `v0-90`).
 3. Work, test (below) and open a **PR to `main`**. The tests run on their own in the PR and
-   show ✅ or ❌ in two checks, `pruebas` and `Punta a punta`; with one red, it does not merge.
+   show ✅ or ❌ in two checks, `tests` and `end-to-end`; with one red, it does not merge.
 4. The owner reviews it, merges it and publishes it. `main` is protected: nothing goes in without a PR, and
    what goes into `main` goes out right away on https://juegosdesalon.cl/.
 
@@ -56,25 +56,25 @@ The same, on your computer:
 ```bash
 for f in $(git ls-files '*.test.mjs'); do node "$f" || echo "FALLA $f"; done
 for f in $(git ls-files '*.test.py'); do python3 "$f" || echo "FALLA $f"; done
-python3 tools/release/readme.py revisar
-node tools/release/og.mjs revisar
+python3 tools/release/readme.py check
+node tools/release/og.mjs check
 ```
 
 The end-to-end tests (`tools/e2e/`) play complete games in Chrome; see their README.
-To look at a single screen: `node tools/e2e/mirar.mjs <game> <screen> --ancho 320`.
+To look at a single screen: `node tools/e2e/look.mjs <game> <screen> --width 320`.
 
 ## What the owner does on merge (do not do it in your PR)
 
 - **The version number** (D-205, D-300): assigned on its own on merge, in the order the PRs
   land. Your PR brings its entry **without a number** in `changelog/<your-branch>.md` (first line
-  `nivel: parche` or `nivel: menor`, and then `- …` lines that tell what changed); do not touch
+  `level: patch` or `level: minor`, and then `- …` lines that tell what changed); do not touch
   `CHANGELOG.md`.
 - **The number of decisions** (D-n): if your change needs one, write it as `D-??` and it gets
   numbered on merge.
 - **Publishing the Firebase rules** (`firebase/database.rules.json`): they need a key that
   only the owner has. If your PR changes them, say so in the description.
 - **The owner panel** (`public/panel/`) cannot be opened without the owner's account; to look at it there is seeded
-  data (`node tools/e2e/mirar.mjs panel datos`).
+  data (`node tools/e2e/look.mjs panel data`).
 
 ## With Claude Code
 

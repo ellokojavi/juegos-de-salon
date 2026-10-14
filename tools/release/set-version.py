@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
 """
-Estampa la versión en la copia del sitio que se publica, para evitar caché mezclada (HTML nuevo con
-JS viejo). Lo corre `.github/workflows/publicar.yml` en cada fusión a main, sobre `_site/` (D-205):
-las páginas de `public/` en git no llevan versión, así que dos PR abiertos ya no chocan en los
-cincuenta `index.html` que antes se reestampaban en cada uno.
+Stamps the version on the copy of the site that gets published, to avoid a mixed cache (new HTML
+with old JS). `.github/workflows/publish.yml` runs it on every merge to main, on `_site/` (D-205):
+the pages of `public/` in git carry no version, so two open PRs no longer collide on the fifty
+`index.html` files that used to be re-stamped in each one.
 
-- Escribe un <script type="importmap"> en cada página que carga módulos, que mapea TODOS los módulos
-  JS del sitio (**/*.js, D-192) a la misma ruta con ?v=CLAVE. Los import maps se aplican también a
-  los imports anidados (un módulo que importa a otro) y a los import() dinámicos.
-- Agrega ?v=CLAVE a las hojas de estilo, a los scripts clásicos del sitio (`vigia.js`, D-251) y a las imágenes de las tarjetas sociales (og:image,
-  twitter:image), para que un cambio de dibujo no se quede pegado en la caché de WhatsApp (D-72).
-- Pone el número de versión en el pie del menú.
+- Writes a <script type="importmap"> in every page that loads modules, mapping ALL the site's JS
+  modules (**/*.js, D-192) to the same path with ?v=KEY. Import maps also apply to nested imports
+  (a module that imports another) and to dynamic import().
+- Adds ?v=KEY to the stylesheets, to the site's classic scripts (`vigia.js`, D-251) and to the
+  social card images (og:image, twitter:image), so a change of drawing does not get stuck in
+  WhatsApp's cache (D-72).
+- Puts the version number in the menu footer.
 
-El número es la primera entrada de CHANGELOG.md (`## X.Y.Z — fecha`) subida por cada entrada de
-changelog/ que todavía no se juntó, en el orden en que entraron a main (D-300). La CLAVE de caché es ese número más el commit (`0.98.1-09eb4db`): cada publicación
-invalida la caché aunque alguien fusione sin subir la versión. `versionOf` (stats.js) lee igual el
-X.Y.Z del principio.
+The number is the first entry of CHANGELOG.md (`## X.Y.Z — date`) bumped by each entry in
+changelog/ not yet collected, in the order they reached main (D-300). The cache KEY is that number
+plus the commit (`0.98.1-09eb4db`): every publish invalidates the cache even if someone merges
+without bumping the version. `versionOf` (stats.js) still reads the leading X.Y.Z.
 
-Que el README y las tarjetas estén al día ya no se pregunta aquí: lo frena el check `pruebas` de
-cada PR, y publicar.yml lo vuelve a correr antes de publicar (C-11, C-13, D-181).
+Whether the README and the cards are up to date is no longer asked here: the `tests` check of each
+PR blocks it, and publish.yml runs it again before publishing (C-11, C-13, D-181).
 
-Uso:
-  python3 tools/release/set-version.py --sitio _site [--commit <sha>]   estampa esa copia
-  python3 tools/release/set-version.py --version                        imprime X.Y.Z
+Usage:
+  python3 tools/release/set-version.py --site _site [--commit <sha>]   stamps that copy
+  python3 tools/release/set-version.py --version                       prints X.Y.Z
 """
 import re, sys, json, pathlib, subprocess
 
@@ -32,68 +33,70 @@ OG = re.compile(r'(/assets/og/[^"?]+\.jpg)(\?v=[^"]*)?"')
 
 
 def version():
-    """La de hoy (D-300): la primera entrada del CHANGELOG (`## 0.98.1 — 2026-10-04`) subida por las
-    entradas pendientes de changelog/, en el orden en que llegaron a main. La calcula
-    tools/release/changelog.mjs, para que haya una sola cuenta."""
+    """Today's (D-300): the first entry of the CHANGELOG (`## 0.98.1 — 2026-10-04`) bumped by the
+    pending entries in changelog/, in the order they reached main. tools/release/changelog.mjs
+    computes it, so there is a single count."""
     if not re.search(r'^## (\d+\.\d+\.\d+)\b', CHANGELOG.read_text(), re.M):
-        sys.exit('CHANGELOG.md no tiene ninguna entrada "## X.Y.Z — fecha"')
+        sys.exit('CHANGELOG.md has no "## X.Y.Z — date" entry')
     r = subprocess.run(['node', str(ROOT / 'tools/release/changelog.mjs'), 'version'], cwd=ROOT, capture_output=True, text=True)
     if r.returncode or not re.fullmatch(r'\d+\.\d+\.\d+', r.stdout.strip()):
-        sys.exit(f'changelog.mjs version falló: {r.stderr.strip() or r.stdout.strip()}')
+        sys.exit(f'changelog.mjs version failed: {r.stderr.strip() or r.stdout.strip()}')
     if r.stderr.strip():
         print(r.stderr.strip(), file=sys.stderr)
     return r.stdout.strip()
 
 
-def modulos(sitio):
-    """Todos los módulos JS del sitio (D-192): uno nuevo entra solo, sin lista que mantener."""
-    return sorted(str(f.relative_to(sitio)) for f in sitio.rglob('*.js'))
+def modules(site):
+    """All the site's JS modules (D-192): a new one gets in on its own, with no list to maintain."""
+    return sorted(str(f.relative_to(site)) for f in site.rglob('*.js'))
 
 
-def estampar(sitio, numero, clave):
-    mods = modulos(sitio)
-    paginas = 0
-    for path in sorted(sitio.rglob('index.html')):
+def stamp(site, number, key):
+    mods = modules(site)
+    pages = 0
+    for path in sorted(site.rglob('index.html')):
         html = original = path.read_text()
-        # Las tarjetas sociales están también en las páginas puente, que no cargan módulos
-        html = OG.sub(lambda m: f'{m.group(1)}?v={clave}"', html)
+        # The social cards are also in the bridge pages, which load no modules
+        html = OG.sub(lambda m: f'{m.group(1)}?v={key}"', html)
         if 'type="module"' in html:
-            prefix = '../' * (len(path.relative_to(sitio).parts) - 1) or './'
-            imports = {f'{prefix}{m}': f'{prefix}{m}?v={clave}' for m in mods}
+            prefix = '../' * (len(path.relative_to(site).parts) - 1) or './'
+            imports = {f'{prefix}{m}': f'{prefix}{m}?v={key}' for m in mods}
             block = '<script type="importmap" id="importmap">' + json.dumps({'imports': imports}, ensure_ascii=False) + '</script>'
             if 'id="importmap"' in html:
                 html = re.sub(r'<script type="importmap" id="importmap">.*?</script>', lambda _: block, html, flags=re.S)
             else:
-                # antes de la primera hoja de estilos (y por lo tanto antes de cualquier módulo)
+                # before the first stylesheet (and therefore before any module)
                 if '  <link rel="stylesheet"' not in html:
-                    sys.exit(f'{path}: carga módulos y no tiene hoja de estilos antes de la cual poner el import map')
+                    sys.exit(f'{path}: it loads modules and has no stylesheet to put the import map before')
                 html = html.replace('  <link rel="stylesheet"', '  ' + block + '\n  <link rel="stylesheet"', 1)
-            html = re.sub(r'(<link rel="stylesheet" href="[^"?]+)(\?v=[^"]*)?"', lambda m: f'{m.group(1)}?v={clave}"', html)
-            # Los scripts clásicos del sitio (el vigía, D-251): el import map no los alcanza
-            html = re.sub(r'(<script src="(?![a-z]+:|//)[^"?]+\.js)(\?v=[^"]*)?"', lambda m: f'{m.group(1)}?v={clave}"', html)
-            html = re.sub(r'v\d+\.\d+\.\d+ ·', f'v{numero} ·', html)
-            paginas += 1
+            html = re.sub(r'(<link rel="stylesheet" href="[^"?]+)(\?v=[^"]*)?"', lambda m: f'{m.group(1)}?v={key}"', html)
+            # The site's classic scripts (the watchdog, D-251): the import map does not reach them
+            html = re.sub(r'(<script src="(?![a-z]+:|//)[^"?]+\.js)(\?v=[^"]*)?"', lambda m: f'{m.group(1)}?v={key}"', html)
+            html = re.sub(r'v\d+\.\d+\.\d+ ·', f'v{number} ·', html)
+            pages += 1
         if html != original:
             path.write_text(html)
-    if not paginas:
-        sys.exit(f'{sitio}: ninguna página carga módulos; ¿es la carpeta del sitio?')
-    print(f'{sitio}: {paginas} páginas con import map de {len(mods)} módulos · versión {numero} · caché {clave}')
+    if not pages:
+        sys.exit(f'{site}: no page loads modules; is it the site folder?')
+    print(f'{site}: {pages} pages with an import map of {len(mods)} modules · version {number} · cache {key}')
 
 
 def main(args):
     if args == ['--version']:
         print(version())
         return
-    if '--sitio' not in args or args.index('--sitio') + 1 >= len(args):
-        sys.exit(__doc__ + '\nLa versión ya no se estampa en public/ antes de commitear (D-205): '
-                 'se escribe la entrada en changelog/<rama>.md y publicar.yml estampa al publicar (D-300).')
-    sitio = pathlib.Path(args[args.index('--sitio') + 1]).resolve()
-    if sitio == (ROOT / 'public').resolve():
-        sys.exit('public/ no se estampa: es lo que está en git (D-205). Copia el sitio y estampa la copia.')
+    # `--sitio` is the name from before the switch to English (D-316): still accepted
+    flag = next((f for f in ('--site', '--sitio') if f in args), None)
+    if not flag or args.index(flag) + 1 >= len(args):
+        sys.exit(__doc__ + '\nThe version is no longer stamped in public/ before committing (D-205): '
+                 'write the entry in changelog/<branch>.md and publish.yml stamps at publish time (D-300).')
+    site = pathlib.Path(args[args.index(flag) + 1]).resolve()
+    if site == (ROOT / 'public').resolve():
+        sys.exit('public/ is not stamped: it is what is in git (D-205). Copy the site and stamp the copy.')
     commit = args[args.index('--commit') + 1] if '--commit' in args else \
         subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True).stdout.strip()
-    numero = version()
-    estampar(sitio, numero, f'{numero}-{commit[:7]}' if commit else numero)
+    number = version()
+    stamp(site, number, f'{number}-{commit[:7]}' if commit else number)
 
 
 if __name__ == '__main__':

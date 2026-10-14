@@ -66,17 +66,17 @@ own tree because they last a week and rooms die after half an hour (D-89).
 
 ## Publishing the rules (D-122, D-218)
 
-They are published on their own on every merge to `main`: the `reglas` job in `.github/workflows/publicar.yml`
-runs `reglas.mjs publicar` with the GitHub secret `FIREBASE_ADMIN_JSON`, before publishing the
+They are published on their own on every merge to `main`: the `reglas` job in `.github/workflows/publish.yml`
+runs `rules.mjs publish` with the GitHub secret `FIREBASE_ADMIN_JSON`, before publishing the
 site. By hand, to check or if the secret is missing:
 
 ```bash
-node tools/firebase/reglas.mjs publicar    # uploads database.rules.json and verifies it took
-node tools/firebase/reglas.mjs revisar     # is what's published what's in the repo?
+node tools/firebase/rules.mjs publish    # uploads database.rules.json and verifies it took
+node tools/firebase/rules.mjs check      # is what's published what's in the repo?
 ```
 
 It uses a service account key stored outside the repo at
-`~/.config/juegos-de-salon/firebase-admin.json` (or `FIREBASE_LLAVE=/ruta`). It is created once in
+`~/.config/juegos-de-salon/firebase-admin.json` (or `FIREBASE_KEY=/path`). It is created once in
 [Service accounts](https://console.firebase.google.com/u/0/project/juegos-de-salon/settings/serviceaccounts/adminsdk)
 → Generate new private key. It gives admin access to the whole project: it isn't shared, and if
 it leaks it is revoked right there. Without the key, you can still paste by hand in the console.
@@ -135,7 +135,7 @@ The same mechanism as La Copa, for the whole app:
 
 A **legacy player** (`jugadores/<jid>.legado = true`, from La Copa's history) has no
 PIN: `jugadorKeys/<jid>` can be created for them, once, and whoever claims it deletes `legado` in the
-same write, seated with that PIN. They are loaded by `node tools/firebase/rankings-historia.mjs --escribir`.
+same write, seated with that PIN. They are loaded by `node tools/firebase/rankings-history.mjs --write`.
 
 The owner (their UID) can write and delete in all these branches, to moderate.
 
@@ -157,7 +157,7 @@ The owner (their UID) can write and delete in all these branches, to moderate.
 
 - `push/<subId>` = `{ endpoint, keys: { p256dh, auth }, lang, tz, uid, at }`: a phone's Web
   Push subscription. `subId` is 32 hex characters (the first ones of the endpoint's
-  sha256). **Nobody reads it**: only the service account that sends the notifications (`tools/push/avisar.mjs`, D-224), which doesn't go through
+  sha256). **Nobody reads it**: only the service account that sends the notifications (`tools/push/notify.mjs`, D-224), which doesn't go through
   the rules. Only the phone of that `uid` writes and deletes it, with the shape validated (`endpoint`
   https, `lang` among the four languages, `at` not later than the server time).
 - `pushCopa/<código>/<pid>/<subId>` = `{ dia, plazo, at }`: which notifications that player wants in that
@@ -167,7 +167,7 @@ The owner (their UID) can write and delete in all these branches, to moderate.
   whole, and only whole, when deleting the cup.
 - `pushEnviados/<código>/<subId>/<clave>` = the time that notification was delivered (`dia:3`,
   `plazo:3`, `final`, `fin`, `insc:<pid>`), so it isn't repeated. Nobody reads or writes it: only
-  `tools/push/avisar.mjs`, with the service account (D-224), which also cleans it up.
+  `tools/push/notify.mjs`, with the service account (D-224), which also cleans it up.
 - `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`: what that phone asked for from the Uno al día
   notifications (the hour `h`, 0 to 23, and whether it wants the daily one, the streak one and the week one) and,
   for the text, its last day played `u`, its streak, wildcards (0 to 2) and best streak, and the week of
@@ -175,7 +175,7 @@ The owner (their UID) can write and delete in all these branches, to moderate.
   (`auth.uid`) is the one in `push/<subId>/uid`, which can go in the same write. Any other field
   is rejected.
 - `pushEnviadosDia/<subId>/<clave>` = delivery time (`dia:<n>`, `racha:<n>`, `semana:<s>`, `adios`):
-  written and cleaned only by `tools/push/avisar.mjs`, with the service account.
+  written and cleaned only by `tools/push/notify.mjs`, with the service account.
 - Here the owner has no exception: their UID neither reads nor writes these branches.
 
 ## Reports (`feedback`)
@@ -184,8 +184,8 @@ La Copa's 🐞 button (D-101, D-104), the one in a language's lab (D-191) and th
 pareció?" at the end of the lab's El caso (D-265) write to `feedback/<id>` **over REST and without an account**:
 `texto` (up to 1000 characters), optional `nombre`, `tester` (the label of the lab key
 used to enter, up to 24; never the key, D-306), `contexto` (JSON, up to 500), `v` and server `at`.
-It is written only once and **read without an account**: `node tools/firebase/reportes.mjs` shows them
-(`--dias 3` for recent ones). They carry no PIN or account data.
+It is written only once and **read without an account**: `node tools/firebase/reports.mjs` shows them
+(`--days 3` for recent ones). They carry no PIN or account data.
 Every 15 minutes, `.github/workflows/feedback.yml` (`tools/agents/feedback.mjs`) uploads the new ones as
 GitHub issues with the `feedback` label, with the name and the key (D-279, D-306) and without the
 browser, and the processes agent handles them (D-275).
@@ -198,7 +198,7 @@ key**. `tools/agents/feedback.mjs reply` reads it with the key, emails the reply
 
 **The hola@ inbox (D-318):** `buzon/<id>` keeps each email sent to hola@juegosdesalon.cl (`de`,
 `nombre`, `asunto`, `texto` up to 10000, `idMensaje`, `automatico`, server `at`), written by the
-Cloudflare Worker (`tools/cloudflare/hola-worker.js`). **Only the inbox user** (Firebase Auth
+Cloudflare Worker (`tools/cloudflare/inbox-worker.js`). **Only the inbox user** (Firebase Auth
 `buzon@juegosdesalon.cl`, its UID in the rules) reads it or writes in it; not even anonymous
 players. The support agent turns each email into a `feedback/` report with
 `tools/agents/inbox.mjs` and deletes it.
@@ -264,11 +264,11 @@ stats/prod/days/20342/
   aviso/dia: 3                         La Copa notifications tapped, by type (D-233)
   uad/dado: 9                          what is done in Uno al día, by event (D-230)
   pwa/android: 2                       opens from the installed app (?pwa), by system
-  mandados/plazo: 4                    notifications delivered, by type: only avisar.mjs writes them
+  mandados/plazo: 4                    notifications delivered, by type: only notify.mjs writes them
   falla/js/cup: 3                      loads with failures, by type and page: recorded by vigia.js (D-251)
   err/a1b2c3/n: 2                      how many loads saw that error; err/<firma>/d, its detail
   listo/cup/s3: 6                      how long the page took to start, by bucket
-stats/prod/push: { vuelta, vivas, torneos }   avisar.mjs's last run and how many subscriptions are still alive
+stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many subscriptions are still alive
 ```
 
 - `rooms/<CÓDIGO>` is created only once; each `players/<rol>` too. Nothing is edited or deleted.
@@ -287,7 +287,7 @@ stats/prod/push: { vuelta, vivas, torneos }   avisar.mjs's last run and how many
   `rooms`, `local`, `origin`, `lang`, `applang`, `hour` or the ones below), because `$other` rejects them.
 - Notifications (D-233): `aviso/<tipo>` and `pwa/<sistema>` are uploaded by phones, by one; the key
   is validated by shape (`^[a-z]{1,12}$`), and the list of types lives in `stats.js` (`TIPOS_AVISO`).
-  `mandados/<tipo>` and `stats/<env>/push` aren't written by any phone: only `avisar.mjs`, with the
+  `mandados/<tipo>` and `stats/<env>/push` aren't written by any phone: only `notify.mjs`, with the
   service account, which doesn't go through the rules.
 - Uno al día (D-230): `uad/<evento>` is uploaded by phones (`trackUnoAlDia` in `stats.js`): the
   event is validated by shape (`^[a-z]{1,16}$`) and the value can only start at 1 or go up by exactly

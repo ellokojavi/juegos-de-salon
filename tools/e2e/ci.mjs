@@ -1,167 +1,169 @@
-// Corre las pruebas de punta a punta que no tocan el Firebase de producción (D-193).
+// Runs the end-to-end tests that don't touch the production Firebase (D-193).
 //
-// Uso:
-//   node tools/e2e/ci.mjs                 # todas, una tras otra, con el resumen al final
-//   node tools/e2e/ci.mjs --lista         # los guiones que corren, en JSON (para la matriz de GitHub)
-//   node tools/e2e/ci.mjs --lista --cambios <archivo>   # [] si el PR no toca nada del navegador (D-205, D-299)
-//   node tools/e2e/ci.mjs --grupos [--cambios <archivo>] # lo mismo, en grupos parejos para la matriz (D-307)
-//   node tools/e2e/ci.mjs cup/torneo.mjs  # solo esos (la ruta desde tools/e2e/)
-//   node tools/e2e/ci.mjs cup/torneo.mjs:copa   # solo una parte de un guion largo (ver PARTES)
+// Usage:
+//   node tools/e2e/ci.mjs                 # all of them, one after another, with the summary at the end
+//   node tools/e2e/ci.mjs --list          # the scripts that run, in JSON
+//   node tools/e2e/ci.mjs --list --changes <file>      # [] if the PR touches nothing in the browser (D-205, D-299)
+//   node tools/e2e/ci.mjs --groups [--changes <file>]  # the same, in even groups for GitHub's matrix (D-307)
+//   node tools/e2e/ci.mjs cup/tournament.mjs        # only those (the path from tools/e2e/)
+//   node tools/e2e/ci.mjs cup/tournament.mjs:cup    # only one part of a long script (see PARTS)
 //
-// Necesita el sitio servido en http://localhost:8765 (los guiones lo tienen fijo) y Chrome en
-// CHROME. Un guion falla si sale con error, si imprime una línea con ✗ o ❌, o si no termina en
-// TOPE_MS. Muchos guiones solo imprimen lo que ven, para que lo lea una persona: en CI igual
-// pillan lo que se rompe del todo (un botón que ya no está hace caer el guion).
+// Needs the site served at http://localhost:8765 (or in SITE) and Chrome in CHROME. A script
+// fails if it exits with an error, if it prints a line with ✗ or ❌, or if it doesn't finish in
+// CAP_MS. Many scripts only print what they see, for a person to read: in CI they still catch
+// what breaks completely (a button that is no longer there makes the script crash).
 import { spawn } from 'node:child_process';
 import { readdirSync, readFileSync, statSync, mkdirSync, appendFileSync, rmSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SUELTOS } from '../../public/assets/js/games.js';
-import { sinNavegador } from './cambios.mjs';
-import { agrupar, leerDuraciones, AVISO } from './grupos.mjs';
+import { noBrowser } from './changes.mjs';
+import { group, readDurations, NOTICE } from './groups.mjs';
 
-const AQUI = dirname(fileURLToPath(import.meta.url));
-const SALIDA = process.env.SALIDA_E2E || '/tmp/e2e';
-const TOPE_MS = 15 * 60 * 1000;
+const HERE = dirname(fileURLToPath(import.meta.url));
+// E2E_OUT; SALIDA_E2E is its old name (D-316)
+const OUT = process.env.E2E_OUT || process.env.SALIDA_E2E || '/tmp/e2e';
+const CAP_MS = 15 * 60 * 1000;
 
-// No son pruebas: miran o arman hojas de capturas
-const HERRAMIENTAS = new Set(['cdp.mjs', 'ci.mjs', 'mirar.mjs', 'aire-comun.mjs', 'contacto.mjs', 'caminos.mjs', 'idiomas-comun.mjs', 'cambios.mjs', 'grupos.mjs', 'ya-probado.mjs']);
-// Abren salas o se unen a ellas en el Firebase de producción: siguen a mano
-const CON_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
-const TAMBIEN_FIREBASE = new Set([
-  'versionado.mjs',                // abre una sala para ver que firebase.js carga versionado
-  'compartir-sala.mjs',            // abre una sala de Línea de Tiempo
-  'enlace-invitacion.mjs',         // entra a ?room= en los cuatro juegos con sala
-  'idioma-por-url.mjs',            // abre /liars-dice/?room=WFBN
-  'timeline/veredicto.mjs',        // dos celulares en una sala
-  'timeline/pozo.mjs',             // la segunda mitad juega en una sala
+// Not tests: they look at screens or build screenshot sheets
+const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs']);
+// They open rooms or join them in the production Firebase: still run by hand
+const WITH_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
+const ALSO_FIREBASE = new Set([
+  'versioning.mjs',              // opens a room to see that firebase.js loads versioned
+  'share-room.mjs',              // opens a Línea de Tiempo room
+  'invite-link.mjs',             // enters ?room= in the four games with rooms
+  'lang-from-url.mjs',           // opens /liars-dice/?room=WFBN
+  'timeline/verdict.mjs',        // two phones in a room
+  'timeline/pool.mjs',           // the second half plays in a room
 ]);
 
-// Prueban algo que ya no existe: quedan fuera hasta que alguien los reescriba
-const OBSOLETOS = new Set([
-  'timeline/error.mjs',            // jugaba contra el celular, un modo que Línea de Tiempo ya no tiene (D-142)
+// They test something that no longer exists: left out until someone rewrites them
+const OBSOLETE = new Set([
+  'timeline/error.mjs',          // played against the phone, a mode Línea de Tiempo no longer has (D-142)
 ]);
 
-// Los guiones largos se reparten en partes, cada una en su propio job de GitHub: el más lento
-// marca cuánto tarda el check entero. Cada parte llega al guion como `--parte <nombre>`. Aquí,
-// sin parte, se corren enteros.
-const PARTES = {
-  'cup/torneo.mjs': ['copa', 'laboratorio', 'demos'],
-  'cup-games/idiomas.mjs': SUELTOS.map(m => m.slug),
+// The long scripts are split into parts, each in its own GitHub job: the slowest sets how long
+// the whole check takes. Each part reaches the script as `--part <name>`. Here, without a part,
+// they run whole.
+const PARTS = {
+  'cup/tournament.mjs': ['cup', 'labs', 'demos'],
+  'cup-games/languages.mjs': SUELTOS.map(m => m.slug),
 };
 
-/** Los guiones, con su ruta desde tools/e2e/: los de cada juego van en su carpeta (D-192). */
-const todos = (dir = '') => readdirSync(join(AQUI, dir)).flatMap(f => {
+/** The scripts, with their path from tools/e2e/: each game's go in its folder (D-192). */
+const all = (dir = '') => readdirSync(join(HERE, dir)).flatMap(f => {
   const rel = dir ? `${dir}/${f}` : f;
-  return statSync(join(AQUI, rel)).isDirectory() ? todos(rel) : [rel];
+  return statSync(join(HERE, rel)).isDirectory() ? all(rel) : [rel];
 });
 
-export const guiones = () => todos()
+export const scripts = () => all()
   .filter(f => f.endsWith('.mjs') && !f.endsWith('.test.mjs'))
-  .filter(f => !HERRAMIENTAS.has(f) && !CON_FIREBASE.test(f) && !TAMBIEN_FIREBASE.has(f) && !OBSOLETOS.has(f))
+  .filter(f => !TOOLS.has(f) && !WITH_FIREBASE.test(f) && !ALSO_FIREBASE.has(f) && !OBSOLETE.has(f))
   .sort();
 
 /**
- * Lo que corre GitHub: cada guion, o cada parte de los que tienen (`cup/torneo.mjs:copa`). Los más
- * largos primero (el tamaño del guion sirve de aproximación): GitHub corre unos veinte jobs a la
- * vez y arranca la matriz en orden, así que un largo al final de la lista espera en la cola y
- * alarga todo el check.
+ * What GitHub runs: each script, or each part of those that have them (`cup/tournament.mjs:cup`).
+ * The longest first (the script's size works as an approximation): GitHub runs about twenty jobs
+ * at a time and starts the matrix in order, so a long one at the end of the list waits in the
+ * queue and stretches the whole check.
  */
-export const trabajos = () => guiones()
-  .sort((a, b) => statSync(join(AQUI, b)).size - statSync(join(AQUI, a)).size)
-  .flatMap(g => PARTES[g] ? PARTES[g].map(p => `${g}:${p}`) : [g]);
+export const jobs = () => scripts()
+  .sort((a, b) => statSync(join(HERE, b)).size - statSync(join(HERE, a)).size)
+  .flatMap(g => PARTS[g] ? PARTS[g].map(p => `${g}:${p}`) : [g]);
 
-// Si a ci.mjs lo cortan, se lo pasa a sus guiones, que cierran su Chrome antes de salir
-const vivos = new Set();
-for (const s of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.on(s, () => { for (const p of vivos) p.kill(s); process.exit(128 + { SIGINT: 2, SIGTERM: 15, SIGHUP: 1 }[s]); });
+// If ci.mjs is cut, it passes it to its scripts, which close their Chrome before exiting
+const alive = new Set();
+for (const s of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.on(s, () => { for (const p of alive) p.kill(s); process.exit(128 + { SIGINT: 2, SIGTERM: 15, SIGHUP: 1 }[s]); });
 
-/** La carpeta de capturas de un guion o de una parte suya. */
-const carpeta = guion => { const [archivo, parte] = guion.split(':'); return join(SALIDA, archivo.replace(/\.mjs$/, ''), parte || ''); };
+/** The screenshot folder of a script or of one of its parts. */
+const folder = script => { const [file, part] = script.split(':'); return join(OUT, file.replace(/\.mjs$/, ''), part || ''); };
 
-/** Corre un guion o una parte suya (`guion:parte`); resuelve con { ok, motivo, ms, salida }. */
-function correr(guion, sufijo = '') {
-  const [archivo, parte] = guion.split(':');
-  const dir = join(carpeta(guion), sufijo);
+/** Runs a script or one of its parts (`script:part`); resolves with { ok, reason, ms, bad }. */
+function run(script, suffix = '') {
+  const [file, part] = script.split(':');
+  const dir = join(folder(script), suffix);
   mkdirSync(dir, { recursive: true });
   const t0 = Date.now();
   return new Promise(ok => {
-    const p = spawn(process.execPath, [join(AQUI, archivo), dir, ...(parte ? ['--parte', parte] : [])], { stdio: ['ignore', 'pipe', 'pipe'] });
-    let salida = '';
-    const anotar = d => { salida += d; process.stdout.write(d); };
-    p.stdout.on('data', anotar);
-    p.stderr.on('data', anotar);
-    // Primero SIGTERM, para que el guion alcance a cerrar su Chrome (cdp.mjs); si no sale, SIGKILL
-    let vencido = false, rematar;
-    const reloj = setTimeout(() => { vencido = true; p.kill('SIGTERM'); rematar = setTimeout(() => p.kill('SIGKILL'), 5000); }, TOPE_MS);
-    vivos.add(p);
-    p.on('close', (codigo, senal) => {
-      clearTimeout(reloj); clearTimeout(rematar); vivos.delete(p);
-      const malas = salida.split('\n').filter(l => /✗|❌/.test(l));
-      const motivo = vencido || senal ? `no terminó en ${TOPE_MS / 60000} min`
-        : codigo ? `salió con ${codigo}`
-        : malas.length ? `${malas.length} chequeo(s) en rojo` : '';
-      ok({ guion, ok: !motivo, motivo, malas, ms: Date.now() - t0 });
+    const p = spawn(process.execPath, [join(HERE, file), dir, ...(part ? ['--part', part] : [])], { stdio: ['ignore', 'pipe', 'pipe'] });
+    let output = '';
+    const record = d => { output += d; process.stdout.write(d); };
+    p.stdout.on('data', record);
+    p.stderr.on('data', record);
+    // SIGTERM first, so the script gets to close its Chrome (cdp.mjs); if it doesn't exit, SIGKILL
+    let expired = false, finish;
+    const timer = setTimeout(() => { expired = true; p.kill('SIGTERM'); finish = setTimeout(() => p.kill('SIGKILL'), 5000); }, CAP_MS);
+    alive.add(p);
+    p.on('close', (code, signal) => {
+      clearTimeout(timer); clearTimeout(finish); alive.delete(p);
+      const bad = output.split('\n').filter(l => /✗|❌/.test(l));
+      const reason = expired || signal ? `didn't finish in ${CAP_MS / 60000} min`
+        : code ? `exited with ${code}`
+        : bad.length ? `${bad.length} check(s) red` : '';
+      ok({ script, ok: !reason, reason, bad, ms: Date.now() - t0 });
     });
   });
 }
 
-/** Lo que corre GitHub, en grupos (D-307); [] si el PR no toca nada del navegador. */
-export function grupos(cambios = null) {
-  if (cambios && sinNavegador(cambios)) return [];
-  return agrupar(trabajos(), leerDuraciones());
+/** What GitHub runs, in groups (D-307); [] if the PR touches nothing in the browser. */
+export function groups(changes = null) {
+  if (changes && noBrowser(changes)) return [];
+  return group(jobs(), readDurations());
 }
 
 /**
- * Corre los elegidos uno tras otro. Con `reintentos` (CI_REINTENTOS en GitHub, D-299), un guion que
- * falla se repite en el acto: si pasa, queda en verde como intermitente, con un aviso que lo nombra.
+ * Runs the chosen ones one after another. With `retries` (CI_RETRIES on GitHub, D-299), a script
+ * that fails is repeated on the spot: if it passes, it stays green as flaky, with a notice that names it.
  */
-async function correrTodos(elegidos, reintentos) {
-  const resultados = [];
-  for (const g of elegidos) {
+async function runAll(chosen, retries) {
+  const results = [];
+  for (const g of chosen) {
     console.log(`\n▶ ${g}`);
-    let r = await correr(g);
-    if (!r.ok && reintentos > 0) {
-      console.log(`::warning title=Intermitente::${g} falló al primer intento (${r.motivo}); se repite una vez (D-299)`);
-      console.log(`\n▶ ${g} (segundo intento)`);
-      const otra = await correr(g, 'segundo-intento');
-      if (otra.ok) console.log(`::warning title=Intermitente::${g} pasó al segundo intento: falla a veces (capturas del primero en el artefacto)`);
-      r = { ...otra, intermitente: otra.ok, primero: r };
+    let r = await run(g);
+    if (!r.ok && retries > 0) {
+      console.log(`::warning title=Flaky::${g} failed on the first attempt (${r.reason}); repeating it once (D-299)`);
+      console.log(`\n▶ ${g} (second attempt)`);
+      const again = await run(g, 'second-attempt');
+      if (again.ok) console.log(`::warning title=Flaky::${g} passed on the second attempt: it fails sometimes (the first attempt's screenshots are in the artifact)`);
+      r = { ...again, flaky: again.ok, first: r };
     }
-    if (!r.ok) console.log(`::error title=Falló ${g}::${r.motivo}${r.malas[0] ? ': ' + r.malas[0].slice(0, 200) : ''}`);
-    resultados.push(r);
+    if (!r.ok) console.log(`::error title=Failed ${g}::${r.reason}${r.bad[0] ? ': ' + r.bad[0].slice(0, 200) : ''}`);
+    results.push(r);
   }
-  return resultados;
+  return results;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
-  const cambiosDe = () => args.includes('--cambios') ? readFileSync(args[args.indexOf('--cambios') + 1], 'utf8').split('\n') : null;
-  if (args.includes('--grupos')) {
-    const gs = grupos(cambiosDe());
-    if (!gs.length) console.error('el PR no toca nada que llegue al navegador: sin pruebas de punta a punta (D-205, D-299)');
-    console.log(JSON.stringify(gs.map(g => ({ nombre: g.nombre, guiones: g.guiones.join(' ') }))));
-  } else if (args.includes('--lista')) {
-    // Los archivos que trae el PR, uno por línea: si nada llega al navegador, no hay qué correr
-    const cambios = args.includes('--cambios') ? readFileSync(args[args.indexOf('--cambios') + 1], 'utf8').split('\n') : null;
-    if (cambios && sinNavegador(cambios)) {
-      console.error('el PR no toca nada que llegue al navegador: sin pruebas de punta a punta (D-205, D-299)');
+  // The PR's files, one per line: if nothing reaches the browser, there is nothing to run
+  const changesOf = () => args.includes('--changes') ? readFileSync(args[args.indexOf('--changes') + 1], 'utf8').split('\n') : null;
+  if (args.includes('--groups')) {
+    const gs = groups(changesOf());
+    if (!gs.length) console.error('the PR touches nothing that reaches the browser: no end-to-end tests (D-205, D-299)');
+    console.log(JSON.stringify(gs.map(g => ({ name: g.name, scripts: g.scripts.join(' ') }))));
+  } else if (args.includes('--list')) {
+    const changes = changesOf();
+    if (changes && noBrowser(changes)) {
+      console.error('the PR touches nothing that reaches the browser: no end-to-end tests (D-205, D-299)');
       console.log('[]');
-    } else console.log(JSON.stringify(trabajos()));
+    } else console.log(JSON.stringify(jobs()));
   } else {
-    const elegidos = args.length ? args : guiones();
-    const resultados = await correrTodos(elegidos, Number(process.env.CI_REINTENTOS || 0));
-    const filas = resultados.map(r => `| ${r.ok ? (r.intermitente ? '⚠️' : '✅') : '❌'} | \`${r.guion}\` | ${Math.round(r.ms / 1000)} s | ${r.intermitente ? `pasó al segundo intento (el primero: ${r.primero.motivo})` : r.motivo || ''} |`);
-    const resumen = ['| | Guion | Tiempo | |', '|---|---|---|---|', ...filas,
-      ...resultados.filter(r => r.malas.length).flatMap(r => ['', `**${r.guion}**`, '```', ...r.malas.slice(0, 30), '```'])].join('\n');
-    console.log('\n' + resumen);
-    if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, resumen + '\n');
+    const chosen = args.length ? args : scripts();
+    // CI_RETRIES; CI_REINTENTOS is its old name (D-316)
+    const results = await runAll(chosen, Number(process.env.CI_RETRIES || process.env.CI_REINTENTOS || 0));
+    const rows = results.map(r => `| ${r.ok ? (r.flaky ? '⚠️' : '✅') : '❌'} | \`${r.script}\` | ${Math.round(r.ms / 1000)} s | ${r.flaky ? `passed on the second attempt (the first: ${r.first.reason})` : r.reason || ''} |`);
+    const summary = ['| | Script | Time | |', '|---|---|---|---|', ...rows,
+      ...results.filter(r => r.bad.length).flatMap(r => ['', `**${r.script}**`, '```', ...r.bad.slice(0, 30), '```'])].join('\n');
+    console.log('\n' + summary);
+    if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary + '\n');
     if (process.env.GITHUB_ACTIONS) {
-      // Lo que tardó cada guion, para que `grupos.mjs medir` rearme los grupos con datos (D-307)
-      const durs = Object.fromEntries(resultados.filter(r => r.ok && !r.intermitente).map(r => [r.guion, Math.round(r.ms / 1000)]));
-      console.log(`::notice title=${AVISO}::${JSON.stringify(durs)}`);
-      // Las capturas que sirven son las de lo que falló o pasó al segundo intento: el resto no sube
-      for (const r of resultados) if (r.ok && !r.intermitente) rmSync(carpeta(r.guion), { recursive: true, force: true });
+      // How long each script took, so `groups.mjs measure` rebuilds the groups with data (D-307)
+      const durs = Object.fromEntries(results.filter(r => r.ok && !r.flaky).map(r => [r.script, Math.round(r.ms / 1000)]));
+      console.log(`::notice title=${NOTICE}::${JSON.stringify(durs)}`);
+      // The useful screenshots are those of what failed or passed on the second attempt: the rest isn't uploaded
+      for (const r of results) if (r.ok && !r.flaky) rmSync(folder(r.script), { recursive: true, force: true });
     }
-    process.exitCode = resultados.every(r => r.ok) ? 0 : 1;
+    process.exitCode = results.every(r => r.ok) ? 0 : 1;
   }
 }

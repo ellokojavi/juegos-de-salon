@@ -1,11 +1,11 @@
 /**
- * Entrar a Firebase como administrador desde las herramientas (D-122), sin dependencias: solo
- * `node:crypto` y `fetch`.
+ * Signing in to Firebase as an administrator from the tools (D-122), with no dependencies: only
+ * `node:crypto` and `fetch`.
  *
- * Usa una llave de cuenta de servicio del proyecto (un JSON que el dueño genera una vez en
- * Configuración del proyecto → Cuentas de servicio → Generar nueva clave privada). La llave NO va
- * en el repo: se lee de $FIREBASE_LLAVE o de ~/.config/juegos-de-salon/firebase-admin.json.
- * Con ella se pide un token de Google (JWT firmado con la llave), que pasa por encima de las reglas.
+ * It uses a service account key of the project (a JSON the owner generates once in Project
+ * settings → Service accounts → Generate new private key). The key is NOT in the repo: it is read
+ * from $FIREBASE_KEY (or the old $FIREBASE_LLAVE) or from ~/.config/juegos-de-salon/firebase-admin.json.
+ * With it a Google token is requested (a JWT signed with the key), which goes over the rules.
  */
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { createSign } from 'node:crypto';
@@ -13,46 +13,46 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 
-export const LLAVE = process.env.FIREBASE_LLAVE || join(homedir(), '.config/juegos-de-salon/firebase-admin.json');
+export const KEY = process.env.FIREBASE_KEY || process.env.FIREBASE_LLAVE || join(homedir(), '.config/juegos-de-salon/firebase-admin.json');
 const SCOPES = 'https://www.googleapis.com/auth/firebase.database https://www.googleapis.com/auth/userinfo.email';
 
-export const salir = (msg, code = 1) => { console.error(msg); process.exit(code); };
+export const fail = (msg, code = 1) => { console.error(msg); process.exit(code); };
 
-export function leerLlave() {
-  if (!existsSync(LLAVE)) {
-    salir(`No encuentro la llave de la cuenta de servicio en ${LLAVE}.
-Para crearla (una sola vez), con la cuenta dueña del proyecto:
+export function readKey() {
+  if (!existsSync(KEY)) {
+    fail(`The service account key is not at ${KEY}.
+To create it (only once), with the account that owns the project:
   https://console.firebase.google.com/u/0/project/${firebaseConfig.projectId}/settings/serviceaccounts/adminsdk
-  → "Generar nueva clave privada" y guarda el archivo en ${LLAVE}
-  (o indica otra ruta con FIREBASE_LLAVE=/ruta/al/archivo.json).`);
+  → "Generate new private key" and save the file at ${KEY}
+  (or give another path with FIREBASE_KEY=/path/to/file.json).`);
   }
-  const modo = statSync(LLAVE).mode & 0o777;
-  if (modo & 0o077) console.warn(`Aviso: ${LLAVE} lo pueden leer otros usuarios del equipo. Sugerencia: chmod 600 "${LLAVE}"`);
-  const k = JSON.parse(readFileSync(LLAVE, 'utf8'));
-  if (!k.client_email || !k.private_key) salir(`${LLAVE} no parece una llave de cuenta de servicio (faltan client_email o private_key).`);
-  if (k.project_id && k.project_id !== firebaseConfig.projectId) salir(`La llave es del proyecto "${k.project_id}", no de "${firebaseConfig.projectId}".`);
+  const mode = statSync(KEY).mode & 0o777;
+  if (mode & 0o077) console.warn(`Warning: other users on this machine can read ${KEY}. Suggestion: chmod 600 "${KEY}"`);
+  const k = JSON.parse(readFileSync(KEY, 'utf8'));
+  if (!k.client_email || !k.private_key) fail(`${KEY} does not look like a service account key (client_email or private_key is missing).`);
+  if (k.project_id && k.project_id !== firebaseConfig.projectId) fail(`The key belongs to project "${k.project_id}", not "${firebaseConfig.projectId}".`);
   return k;
 }
 
 const b64url = x => Buffer.from(x).toString('base64').replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
 
-export async function token(k = leerLlave()) {
-  const ahora = Math.floor(Date.now() / 1000);
-  const cabeza = b64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
-  const cuerpo = b64url(JSON.stringify({ iss: k.client_email, scope: SCOPES, aud: 'https://oauth2.googleapis.com/token', iat: ahora, exp: ahora + 3600 }));
-  const firma = createSign('RSA-SHA256').update(`${cabeza}.${cuerpo}`).sign(k.private_key);
+export async function token(k = readKey()) {
+  const now = Math.floor(Date.now() / 1000);
+  const head = b64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const body = b64url(JSON.stringify({ iss: k.client_email, scope: SCOPES, aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 }));
+  const signature = createSign('RSA-SHA256').update(`${head}.${body}`).sign(k.private_key);
   const res = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: `${cabeza}.${cuerpo}.${b64url(firma)}` }),
+    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: `${head}.${body}.${b64url(signature)}` }),
   });
   const j = await res.json();
-  if (!res.ok || !j.access_token) salir(`Google no entregó el token (HTTP ${res.status}): ${j.error_description || j.error || ''}`);
+  if (!res.ok || !j.access_token) fail(`Google did not hand over the token (HTTP ${res.status}): ${j.error_description || j.error || ''}`);
   return j.access_token;
 }
 
-/** Lee un nodo de la base como administrador; `null` si no hay nada. */
-export async function leer(ruta, t) {
-  const res = await fetch(`${firebaseConfig.databaseURL}/${ruta}.json?access_token=${encodeURIComponent(t)}`);
-  if (!res.ok) salir(`No se pudo leer ${ruta}/ (HTTP ${res.status}): ${(await res.text()).slice(0, 200)}`);
+/** Reads a node of the database as administrator; `null` if there is nothing. */
+export async function read(path, t) {
+  const res = await fetch(`${firebaseConfig.databaseURL}/${path}.json?access_token=${encodeURIComponent(t)}`);
+  if (!res.ok) fail(`Could not read ${path}/ (HTTP ${res.status}): ${(await res.text()).slice(0, 200)}`);
   return res.json();
 }

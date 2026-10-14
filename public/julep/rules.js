@@ -65,7 +65,7 @@ const ES = {
     errNotFound: 'No existe esa sala. Revisa el código.', errFull: 'La sala ya está llena.',
     errExpired: 'Esa sala ya venció.', errOtherGame: 'Ese código es de otro juego.',
     errNet: 'No se pudo conectar. ¿Hay internet?',
-    errOffline: 'No se pudo abrir la sala. Puede ser tu internet o que haya mucha gente jugando. Intenta nuevamente en unos minutos o juega en modo de un solo celular sin conexión a internet.',
+    errOffline: 'No se pudo abrir la sala. Puede ser tu internet o que haya mucha gente jugando. Vuelve a intentarlo o juega en un solo celular, que no necesita internet.',
     errTooMany: 'Abriste muchas salas seguidas. Espera un ratito y prueba de nuevo.',
     errSecure: 'Para jugar en varios celulares hace falta una conexión segura (https).',
 
@@ -198,7 +198,7 @@ const EN = {
     errNotFound: 'No such room. Check the code.', errFull: 'That room is full.',
     errExpired: 'That room has expired.', errOtherGame: 'That code belongs to another game.',
     errNet: 'Could not connect. Is there internet?',
-    errOffline: 'The room could not be opened. It may be your internet or too many people playing. Try again in a few minutes or play in the one phone mode, which needs no internet.',
+    errOffline: 'Couldn\'t open the room. It might be your connection or too many people playing. Try again, or play on one phone, which needs no internet.',
     errTooMany: 'You opened too many rooms in a row. Wait a bit and try again.',
     errSecure: 'Playing on several phones needs a secure connection (https).',
 
@@ -321,7 +321,7 @@ const PT = {
     errNotFound: 'Essa sala não existe. Confere o código.', errFull: 'A sala já está cheia.',
     errExpired: 'Essa sala já venceu.', errOtherGame: 'Esse código é de outro jogo.',
     errNet: 'Não deu pra conectar. Tem internet?',
-    errOffline: 'Não deu pra abrir a sala. Pode ser sua internet ou muita gente jogando. Tente novamente em alguns minutos ou jogue no modo de um celular só, que não precisa de internet.',
+    errOffline: 'Não foi possível abrir a sala. Pode ser a sua internet ou muita gente jogando ao mesmo tempo. Tente de novo ou jogue em um celular só, que não precisa de internet.',
     errTooMany: 'Você abriu muitas salas seguidas. Espera um pouquinho e tenta de novo.',
     errSecure: 'Pra jogar em vários celulares precisa de uma conexão segura (https).',
 
@@ -444,7 +444,7 @@ const DE = {
     errNotFound: 'Diesen Raum gibt es nicht. Prüf den Code.', errFull: 'Der Raum ist schon voll.',
     errExpired: 'Dieser Raum ist abgelaufen.', errOtherGame: 'Dieser Code gehört zu einem anderen Spiel.',
     errNet: 'Keine Verbindung. Hast du Internet?',
-    errOffline: 'Der Raum ließ sich nicht öffnen. Vielleicht liegt es an deinem Internet oder es spielen gerade sehr viele. Versuch es in ein paar Minuten nochmal oder spiel auf einem Handy ganz ohne Internet.',
+    errOffline: 'Der Raum ließ sich nicht öffnen. Vielleicht liegt es an deinem Internet oder es spielen gerade sehr viele. Versuch es nochmal oder spiel mit einem Handy, dafür brauchst du kein Internet.',
     errTooMany: 'Du hast zu viele Räume hintereinander geöffnet. Warte kurz und versuch es nochmal.',
     errSecure: 'Für mehrere Handys braucht es eine sichere Verbindung (https).',
 

@@ -571,7 +571,7 @@ export function origenesAgrupados(ref) {
 }
 
 /**
- * Los avisos de La Copa en el rango (D-233): los que mandó avisar.mjs (`mandados/<tipo>`), los que
+ * Los avisos de La Copa en el rango (D-233): los que mandó notify.mjs (`mandados/<tipo>`), los que
  * se tocaron (`aviso/<tipo>`, la página que abrió el aviso) y las aperturas desde la app instalada
  * (`pwa/<sistema>`). Por tipo, y el total de cada uno.
  */

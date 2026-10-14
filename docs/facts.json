@@ -1,0 +1,1222 @@
+{
+  "version": "0.171.4",
+  "app": {
+    "es": "Juegos de Salón",
+    "en": "Party Games",
+    "pt": "Jogos de Salão",
+    "de": "Salonspiele"
+  },
+  "languages": [
+    "es",
+    "en",
+    "pt",
+    "de"
+  ],
+  "phrases": {
+    "es": 100,
+    "en": 100,
+    "pt": 100,
+    "de": 100
+  },
+  "commonKeys": 32,
+  "games": [
+    {
+      "id": "copa",
+      "emoji": "🏆",
+      "name": {
+        "es": "La Copa",
+        "en": "The Cup",
+        "pt": "A Copa",
+        "de": "Der Pokal"
+      },
+      "players": "2 to 10",
+      "duration": "7",
+      "available": true,
+      "labs": false,
+      "status": "v0.83",
+      "modes": [
+        {
+          "key": "formato",
+          "es": "Cada uno en su celular, un juego por día",
+          "en": "Each on their own phone, one game a day"
+        }
+      ],
+      "variants": [],
+      "screens": [
+        "intro",
+        "crear",
+        "entrar",
+        "tablero",
+        "jugar",
+        "resultado",
+        "admin",
+        "reporte",
+        "espera"
+      ],
+      "chat": false,
+      "files": [
+        "public/cup/avisos.js",
+        "public/cup/cuenta.js",
+        "public/cup/demo.js",
+        "public/cup/desglose.js",
+        "public/cup/engine.js",
+        "public/cup/game.js",
+        "public/cup/games/audiencia.js",
+        "public/cup/games/case/engine.js",
+        "public/cup/games/case/ui.js",
+        "public/cup/games/connections/engine.js",
+        "public/cup/games/connections/grillas-de.js",
+        "public/cup/games/connections/grillas-en.js",
+        "public/cup/games/connections/grillas-pt.js",
+        "public/cup/games/connections/grillas.js",
+        "public/cup/games/connections/ui.js",
+        "public/cup/games/deshacer.js",
+        "public/cup/games/final/engine.js",
+        "public/cup/games/final/ui.js",
+        "public/cup/games/index.js",
+        "public/cup/games/mazos.js",
+        "public/cup/games/number/engine.js",
+        "public/cup/games/number/ui.js",
+        "public/cup/games/queens/engine.js",
+        "public/cup/games/queens/ui.js",
+        "public/cup/games/semilla.js",
+        "public/cup/games/solo.js",
+        "public/cup/games/tango/engine.js",
+        "public/cup/games/tango/ui.js",
+        "public/cup/games/timeline/engine.js",
+        "public/cup/games/timeline/ui.js",
+        "public/cup/games/untangle/engine.js",
+        "public/cup/games/untangle/ui.js",
+        "public/cup/games/where/ciudades.js",
+        "public/cup/games/where/engine.js",
+        "public/cup/games/where/globo.js",
+        "public/cup/games/where/mapa.js",
+        "public/cup/games/where/nombres.js",
+        "public/cup/games/where/ui.js",
+        "public/cup/games/word/engine.js",
+        "public/cup/games/word/palabras.js",
+        "public/cup/games/word/ui.js",
+        "public/cup/games/year/engine.js",
+        "public/cup/games/year/ui.js",
+        "public/cup/games/zip/engine.js",
+        "public/cup/games/zip/ui.js",
+        "public/cup/index.html",
+        "public/cup/planilla.js",
+        "public/cup/reportes.js",
+        "public/cup/rules.js",
+        "public/cup/store-firebase.js",
+        "public/cup/store-local.js",
+        "public/cup/style.css",
+        "public/cup/suelto/index.html"
+      ]
+    },
+    {
+      "id": "linea-de-tiempo",
+      "emoji": "⏳",
+      "name": {
+        "es": "Línea de Tiempo",
+        "en": "Timeline",
+        "pt": "Linha do Tempo",
+        "de": "Zeitstrahl"
+      },
+      "players": "1 to 6",
+      "duration": "10–20",
+      "available": true,
+      "labs": false,
+      "status": "v0.9",
+      "modes": [
+        {
+          "key": "modeLocal",
+          "es": "📱 Un celular, hasta 6",
+          "en": "📱 One phone, up to 6"
+        },
+        {
+          "key": "modeOnline",
+          "es": "📡 Varios celulares",
+          "en": "📡 Several phones"
+        },
+        {
+          "key": "modeSolo",
+          "es": "🧍 Jugar solo",
+          "en": "🧍 Play alone"
+        }
+      ],
+      "variants": [
+        {
+          "key": "modeOwn",
+          "es": "Mano propia",
+          "en": "Own hand"
+        },
+        {
+          "key": "modeShared",
+          "es": "Pozo común",
+          "en": "Shared pool"
+        },
+        {
+          "key": "modeAll",
+          "es": "Todas a la vista",
+          "en": "All on the table"
+        }
+      ],
+      "screens": [
+        "intro",
+        "setup",
+        "lobby",
+        "play",
+        "solo",
+        "solo-result",
+        "result"
+      ],
+      "chat": true,
+      "files": [
+        "public/timeline/decks/brasil.js",
+        "public/timeline/decks/chile.js",
+        "public/timeline/decks/futbol.js",
+        "public/timeline/decks/historia.js",
+        "public/timeline/decks/index.js",
+        "public/timeline/decks/musica.js",
+        "public/timeline/decks/pop.js",
+        "public/timeline/engine.js",
+        "public/timeline/game.js",
+        "public/timeline/index.html",
+        "public/timeline/rules.js",
+        "public/timeline/style.css"
+      ]
+    },
+    {
+      "id": "toque-y-fama",
+      "emoji": "🔢",
+      "name": {
+        "es": "Toque y Fama",
+        "en": "Bulls and Cows",
+        "pt": "Toque e Fama",
+        "de": "Bullen und Kühe"
+      },
+      "players": "1 to 2",
+      "duration": "5–12",
+      "available": true,
+      "labs": false,
+      "status": "v0.4",
+      "modes": [
+        {
+          "key": "modeLocal",
+          "es": "📱 Un celular, dos jugadores",
+          "en": "📱 One phone, two players"
+        },
+        {
+          "key": "modeOnline",
+          "es": "📡 Dos celulares",
+          "en": "📡 Two phones"
+        },
+        {
+          "key": "modeSolo",
+          "es": "🧍 Jugar solo",
+          "en": "🧍 Play alone"
+        }
+      ],
+      "variants": [],
+      "screens": [
+        "intro",
+        "setup",
+        "lobby",
+        "secret",
+        "play",
+        "result",
+        "solo-intro",
+        "solo",
+        "solo-result"
+      ],
+      "chat": true,
+      "files": [
+        "public/bulls-and-cows/engine.js",
+        "public/bulls-and-cows/game.js",
+        "public/bulls-and-cows/index.html",
+        "public/bulls-and-cows/rules.js",
+        "public/bulls-and-cows/style.css"
+      ]
+    },
+    {
+      "id": "ahorcado",
+      "emoji": "🪢",
+      "name": {
+        "es": "El Ahorcado",
+        "en": "Hangman",
+        "pt": "Forca",
+        "de": "Galgenmännchen"
+      },
+      "players": "1 to 6",
+      "duration": "5–12",
+      "available": true,
+      "labs": false,
+      "status": "v0.26",
+      "modes": [
+        {
+          "key": "modeLocal",
+          "es": "📱 Un celular",
+          "en": "📱 One phone"
+        },
+        {
+          "key": "modeOnline",
+          "es": "📡 Varios celulares",
+          "en": "📡 Several phones"
+        },
+        {
+          "key": "modeSolo",
+          "es": "🧍 Jugar solo",
+          "en": "🧍 Play alone"
+        }
+      ],
+      "variants": [],
+      "screens": [
+        "intro",
+        "setup",
+        "lobby",
+        "word",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "files": [
+        "public/hangman/decks/animales.js",
+        "public/hangman/decks/chile.js",
+        "public/hangman/decks/cine.js",
+        "public/hangman/decks/comida.js",
+        "public/hangman/decks/deportes.js",
+        "public/hangman/decks/index.js",
+        "public/hangman/engine.js",
+        "public/hangman/game.js",
+        "public/hangman/index.html",
+        "public/hangman/rules.js",
+        "public/hangman/style.css"
+      ]
+    },
+    {
+      "id": "dudo",
+      "emoji": "🎲",
+      "name": {
+        "es": "Dudo",
+        "en": "Liar's Dice",
+        "pt": "Dado Mentiroso",
+        "de": "Lügenwürfel"
+      },
+      "players": "1 to 6",
+      "duration": "10–20",
+      "available": true,
+      "labs": false,
+      "status": "v0.32",
+      "modes": [
+        {
+          "key": "modeLocal",
+          "es": "📱 Un celular",
+          "en": "📱 One phone"
+        },
+        {
+          "key": "modeOnline",
+          "es": "📡 Varios celulares",
+          "en": "📡 Several phones"
+        },
+        {
+          "key": "modeCpu",
+          "es": "🤖 Contra el celular",
+          "en": "🤖 Versus the phone"
+        }
+      ],
+      "variants": [],
+      "screens": [
+        "intro",
+        "setup",
+        "lobby",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "files": [
+        "public/liars-dice/engine.js",
+        "public/liars-dice/game.js",
+        "public/liars-dice/index.html",
+        "public/liars-dice/rules.js",
+        "public/liars-dice/style.css"
+      ]
+    },
+    {
+      "id": "generala",
+      "emoji": "📝",
+      "name": {
+        "es": "Generala",
+        "en": "Generala",
+        "pt": "General",
+        "de": "Generala"
+      },
+      "players": "1 to 6",
+      "duration": "15–30",
+      "available": false,
+      "labs": false,
+      "status": null,
+      "modes": [
+        {
+          "key": "modeLocal",
+          "es": "📱 Un celular",
+          "en": "📱 One phone"
+        },
+        {
+          "key": "modeOnline",
+          "es": "📡 Varios celulares",
+          "en": "📡 Several phones"
+        },
+        {
+          "key": "modeSolo",
+          "es": "🧍 Jugar solo",
+          "en": "🧍 Play solo"
+        }
+      ],
+      "variants": [],
+      "screens": [
+        "intro",
+        "setup",
+        "lobby",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "files": [
+        "public/generala/engine.js",
+        "public/generala/game.js",
+        "public/generala/index.html",
+        "public/generala/rules.js",
+        "public/generala/style.css"
+      ]
+    },
+    {
+      "id": "batalla-naval",
+      "emoji": "⚓",
+      "name": {
+        "es": "Batalla Naval",
+        "en": "Battleship",
+        "pt": "Batalha Naval",
+        "de": "Schiffe versenken"
+      },
+      "players": "1 to 2",
+      "duration": "10–20",
+      "available": true,
+      "labs": false,
+      "status": "v0.6",
+      "modes": [
+        {
+          "key": "modeLocal",
+          "es": "📱 Un celular, dos jugadores",
+          "en": "📱 One phone, two players"
+        },
+        {
+          "key": "modeOnline",
+          "es": "📡 Dos celulares",
+          "en": "📡 Two phones"
+        },
+        {
+          "key": "modeCpu",
+          "es": "🤖 Contra el celular",
+          "en": "🤖 Versus the phone"
+        }
+      ],
+      "variants": [],
+      "screens": [
+        "intro",
+        "setup",
+        "lobby",
+        "place",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "files": [
+        "public/battleship/engine.js",
+        "public/battleship/flota.js",
+        "public/battleship/game.js",
+        "public/battleship/index.html",
+        "public/battleship/rules.js",
+        "public/battleship/style.css"
+      ]
+    },
+    {
+      "id": "julepe",
+      "emoji": "🍹",
+      "name": {
+        "es": "Julepe",
+        "en": "Julep",
+        "pt": "Paga o Bolo",
+        "de": "Julepe"
+      },
+      "players": "1 to 6",
+      "duration": "15–30",
+      "available": false,
+      "labs": false,
+      "status": "v0.34",
+      "modes": [
+        {
+          "key": "modeLocal",
+          "es": "📱 Un celular",
+          "en": "📱 One phone"
+        },
+        {
+          "key": "modeOnline",
+          "es": "📡 Varios celulares",
+          "en": "📡 Several phones"
+        },
+        {
+          "key": "modeCpu",
+          "es": "🤖 Contra el celular",
+          "en": "🤖 Versus the phone"
+        }
+      ],
+      "variants": [],
+      "screens": [
+        "intro",
+        "setup",
+        "lobby",
+        "play",
+        "result"
+      ],
+      "chat": true,
+      "files": [
+        "public/julep/engine.js",
+        "public/julep/game.js",
+        "public/julep/index.html",
+        "public/julep/rules.js",
+        "public/julep/style.css"
+      ]
+    },
+    {
+      "id": "cuarto-rey",
+      "emoji": "👑",
+      "name": {
+        "es": "Cuarto Rey",
+        "en": "Fourth King",
+        "pt": "Quarto Rei",
+        "de": "Der vierte König"
+      },
+      "players": "4 to 6",
+      "duration": "20–40",
+      "available": true,
+      "labs": false,
+      "status": "v0.27",
+      "modes": [],
+      "variants": [],
+      "screens": [
+        "intro",
+        "setup",
+        "play",
+        "end"
+      ],
+      "chat": false,
+      "files": [
+        "public/fourth-king/engine.js",
+        "public/fourth-king/game.js",
+        "public/fourth-king/index.html",
+        "public/fourth-king/rules.js",
+        "public/fourth-king/style.css"
+      ]
+    }
+  ],
+  "standalone": [
+    {
+      "id": "conexiones",
+      "emoji": "🔗",
+      "name": {
+        "es": "Conexiones",
+        "en": "Connections",
+        "pt": "Conexões",
+        "de": "Verbindungen"
+      },
+      "kinds": [
+        "words",
+        "trivia"
+      ],
+      "duration": "3–8",
+      "labs": false,
+      "path": "connections/"
+    },
+    {
+      "id": "letras",
+      "emoji": "🔤",
+      "name": {
+        "es": "Toque y Fama: Palabra",
+        "en": "Bulls and Cows: Word",
+        "pt": "Toque e Fama: Palavra",
+        "de": "Bullen und Kühe: Wort"
+      },
+      "kinds": [
+        "words",
+        "logic"
+      ],
+      "duration": "3–8",
+      "labs": false,
+      "path": "word/"
+    },
+    {
+      "id": "anio",
+      "emoji": "📅",
+      "name": {
+        "es": "¿En qué año?",
+        "en": "What Year?",
+        "pt": "Em que ano?",
+        "de": "Welches Jahr?"
+      },
+      "kinds": [
+        "trivia"
+      ],
+      "duration": "2–5",
+      "labs": false,
+      "path": "year/"
+    },
+    {
+      "id": "reinas",
+      "emoji": "👑",
+      "name": {
+        "es": "Reinas",
+        "en": "Queens",
+        "pt": "Rainhas",
+        "de": "Damen"
+      },
+      "kinds": [
+        "logic"
+      ],
+      "duration": "2–5",
+      "labs": false,
+      "path": "queens/"
+    },
+    {
+      "id": "tango",
+      "emoji": "☀️",
+      "name": {
+        "es": "Tango",
+        "en": "Tango",
+        "pt": "Tango",
+        "de": "Tango"
+      },
+      "kinds": [
+        "logic"
+      ],
+      "duration": "3–8",
+      "labs": false,
+      "path": "tango/"
+    },
+    {
+      "id": "zip",
+      "emoji": "〰️",
+      "name": {
+        "es": "Zip",
+        "en": "Zip",
+        "pt": "Zip",
+        "de": "Zip"
+      },
+      "kinds": [
+        "logic"
+      ],
+      "duration": "3",
+      "labs": false,
+      "path": "zip/"
+    },
+    {
+      "id": "desenredo",
+      "emoji": "🧶",
+      "name": {
+        "es": "Desenredo",
+        "en": "Untangle",
+        "pt": "Desenrola",
+        "de": "Entwirren"
+      },
+      "kinds": [
+        "logic"
+      ],
+      "duration": "4",
+      "labs": false,
+      "path": "untangle/"
+    },
+    {
+      "id": "donde",
+      "emoji": "📍",
+      "name": {
+        "es": "¿Dónde queda?",
+        "en": "Where Is It?",
+        "pt": "Onde fica?",
+        "de": "Wo liegt das?"
+      },
+      "kinds": [
+        "trivia"
+      ],
+      "duration": "2–5",
+      "labs": false,
+      "path": "where/"
+    },
+    {
+      "id": "caso",
+      "emoji": "🔍",
+      "name": {
+        "es": "El caso",
+        "en": "The Case",
+        "pt": "O Caso",
+        "de": "Der Fall"
+      },
+      "kinds": [
+        "logic"
+      ],
+      "duration": "5–10",
+      "labs": true,
+      "path": "labs/case/"
+    }
+  ],
+  "themes": [
+    {
+      "id": "historia",
+      "emoji": "📜",
+      "name": {
+        "es": "Historia",
+        "en": "History",
+        "pt": "História",
+        "de": "Geschichte"
+      },
+      "hint": {
+        "es": "Hitos de la humanidad",
+        "en": "Milestones of humankind",
+        "pt": "Marcos da humanidade",
+        "de": "Meilensteine der Menschheit"
+      },
+      "cards": 96,
+      "from": -2560,
+      "to": 2022
+    },
+    {
+      "id": "musica",
+      "emoji": "🎵",
+      "name": {
+        "es": "Música",
+        "en": "Music",
+        "pt": "Música",
+        "de": "Musik"
+      },
+      "hint": {
+        "es": "De Beethoven a Taylor Swift",
+        "en": "From Beethoven to Taylor Swift",
+        "pt": "De Beethoven até Taylor Swift",
+        "de": "Von Beethoven bis Taylor Swift"
+      },
+      "cards": 91,
+      "from": 1600,
+      "to": 2023
+    },
+    {
+      "id": "chile",
+      "emoji": "🇨🇱",
+      "name": {
+        "es": "Chile",
+        "en": "Chile",
+        "pt": "Chile",
+        "de": "Chile"
+      },
+      "hint": {
+        "es": "Del terremoto del 60 al estallido",
+        "en": "From the 1960 quake to the uprising",
+        "pt": "Do terremoto de 1960 aos protestos de 2019",
+        "de": "Vom Erdbeben 1960 bis zu den Protesten 2019"
+      },
+      "cards": 120,
+      "from": 1520,
+      "to": 2023
+    },
+    {
+      "id": "pop",
+      "emoji": "🍿",
+      "name": {
+        "es": "Cultura pop",
+        "en": "Pop culture",
+        "pt": "Cultura pop",
+        "de": "Popkultur"
+      },
+      "hint": {
+        "es": "Cine, memes y videojuegos",
+        "en": "Movies, memes and video games",
+        "pt": "Cinema, memes e videogames",
+        "de": "Filme, Memes und Videospiele"
+      },
+      "cards": 108,
+      "from": 1928,
+      "to": 2023
+    },
+    {
+      "id": "brasil",
+      "emoji": "🇧🇷",
+      "name": {
+        "es": "Brasil",
+        "en": "Brazil",
+        "pt": "Brasil",
+        "de": "Brasilien"
+      },
+      "hint": {
+        "es": "De Cabral a la COP30, con novelas y carnaval",
+        "en": "From Cabral to COP30, telenovelas and carnival included",
+        "pt": "De Cabral à COP30, com novela e carnaval",
+        "de": "Von Cabral bis zur COP30, mit Telenovelas und Karneval"
+      },
+      "cards": 139,
+      "from": 1500,
+      "to": 2025
+    },
+    {
+      "id": "futbol",
+      "emoji": "⚽",
+      "name": {
+        "es": "Fútbol",
+        "en": "Soccer",
+        "pt": "Futebol",
+        "de": "Fußball"
+      },
+      "hint": {
+        "es": "Mundiales, clubes, goles y fichajes",
+        "en": "World Cups, clubs, goals and transfers",
+        "pt": "Copas, clubes, gols e contratações",
+        "de": "WMs, Vereine, Tore und Transfers"
+      },
+      "cards": 121,
+      "from": 1863,
+      "to": 2025
+    }
+  ],
+  "modules": [
+    "public/assets/js/arrastre.js",
+    "public/assets/js/azar.js",
+    "public/assets/js/chat.js",
+    "public/assets/js/compartir-portada.js",
+    "public/assets/js/compartir.js",
+    "public/assets/js/cuenta-regresiva.js",
+    "public/assets/js/dado3d.js",
+    "public/assets/js/dato.js",
+    "public/assets/js/favoritos.js",
+    "public/assets/js/firebase-config.js",
+    "public/assets/js/frases.js",
+    "public/assets/js/games.js",
+    "public/assets/js/handoff.js",
+    "public/assets/js/i18n.js",
+    "public/assets/js/instalable.js",
+    "public/assets/js/instalar.js",
+    "public/assets/js/jugador-firebase.js",
+    "public/assets/js/jugador-local.js",
+    "public/assets/js/jugador.js",
+    "public/assets/js/labs-idioma.js",
+    "public/assets/js/labs-puerta.js",
+    "public/assets/js/llegada.js",
+    "public/assets/js/parametros.js",
+    "public/assets/js/push.js",
+    "public/assets/js/ranking.js",
+    "public/assets/js/records.js",
+    "public/assets/js/session.js",
+    "public/assets/js/sobre.js",
+    "public/assets/js/sound.js",
+    "public/assets/js/teclado.js",
+    "public/assets/js/transport/best-effort.js",
+    "public/assets/js/transport/cleanup.js",
+    "public/assets/js/transport/dispose.js",
+    "public/assets/js/transport/errors.js",
+    "public/assets/js/transport/firebase.js",
+    "public/assets/js/transport/local.js",
+    "public/assets/js/transport/ratelimit.js",
+    "public/assets/js/transport/stats.js",
+    "public/assets/js/ui.js",
+    "public/assets/js/uno-al-dia-avisos.js",
+    "public/assets/js/uno-al-dia-red.js",
+    "public/assets/js/uno-al-dia-ui.js",
+    "public/assets/js/uno-al-dia.js",
+    "public/assets/js/vapid.js",
+    "public/assets/js/vigia.js",
+    "public/battleship/engine.js",
+    "public/battleship/flota.js",
+    "public/battleship/game.js",
+    "public/battleship/rules.js",
+    "public/bulls-and-cows/engine.js",
+    "public/bulls-and-cows/game.js",
+    "public/bulls-and-cows/rules.js",
+    "public/cup/avisos.js",
+    "public/cup/cuenta.js",
+    "public/cup/demo.js",
+    "public/cup/desglose.js",
+    "public/cup/engine.js",
+    "public/cup/game.js",
+    "public/cup/games/audiencia.js",
+    "public/cup/games/case/engine.js",
+    "public/cup/games/case/ui.js",
+    "public/cup/games/connections/engine.js",
+    "public/cup/games/connections/grillas-de.js",
+    "public/cup/games/connections/grillas-en.js",
+    "public/cup/games/connections/grillas-pt.js",
+    "public/cup/games/connections/grillas.js",
+    "public/cup/games/connections/ui.js",
+    "public/cup/games/deshacer.js",
+    "public/cup/games/final/engine.js",
+    "public/cup/games/final/ui.js",
+    "public/cup/games/index.js",
+    "public/cup/games/mazos.js",
+    "public/cup/games/number/engine.js",
+    "public/cup/games/number/ui.js",
+    "public/cup/games/queens/engine.js",
+    "public/cup/games/queens/ui.js",
+    "public/cup/games/semilla.js",
+    "public/cup/games/solo.js",
+    "public/cup/games/tango/engine.js",
+    "public/cup/games/tango/ui.js",
+    "public/cup/games/timeline/engine.js",
+    "public/cup/games/timeline/ui.js",
+    "public/cup/games/untangle/engine.js",
+    "public/cup/games/untangle/ui.js",
+    "public/cup/games/where/ciudades.js",
+    "public/cup/games/where/engine.js",
+    "public/cup/games/where/globo.js",
+    "public/cup/games/where/mapa.js",
+    "public/cup/games/where/nombres.js",
+    "public/cup/games/where/ui.js",
+    "public/cup/games/word/engine.js",
+    "public/cup/games/word/palabras.js",
+    "public/cup/games/word/ui.js",
+    "public/cup/games/year/engine.js",
+    "public/cup/games/year/ui.js",
+    "public/cup/games/zip/engine.js",
+    "public/cup/games/zip/ui.js",
+    "public/cup/planilla.js",
+    "public/cup/reportes.js",
+    "public/cup/rules.js",
+    "public/cup/store-firebase.js",
+    "public/cup/store-local.js",
+    "public/fourth-king/engine.js",
+    "public/fourth-king/game.js",
+    "public/fourth-king/rules.js",
+    "public/generala/engine.js",
+    "public/generala/game.js",
+    "public/generala/rules.js",
+    "public/hangman/decks/animales.js",
+    "public/hangman/decks/chile.js",
+    "public/hangman/decks/cine.js",
+    "public/hangman/decks/comida.js",
+    "public/hangman/decks/deportes.js",
+    "public/hangman/decks/index.js",
+    "public/hangman/engine.js",
+    "public/hangman/game.js",
+    "public/hangman/rules.js",
+    "public/julep/engine.js",
+    "public/julep/game.js",
+    "public/julep/rules.js",
+    "public/labs/agents/engine.js",
+    "public/labs/agents/game.js",
+    "public/labs/agents/pistas.js",
+    "public/labs/code/engine-palabra.js",
+    "public/labs/code/engine.js",
+    "public/labs/code/game.js",
+    "public/labs/exploding-numbers/engine.js",
+    "public/labs/exploding-numbers/game.js",
+    "public/labs/paint-mines/dibujos.js",
+    "public/labs/paint-mines/engine.js",
+    "public/labs/paint-mines/game.js",
+    "public/labs/plots/engine.js",
+    "public/labs/plots/game.js",
+    "public/labs/routes/engine.js",
+    "public/labs/routes/game.js",
+    "public/liars-dice/engine.js",
+    "public/liars-dice/game.js",
+    "public/liars-dice/rules.js",
+    "public/panel/aggregate.js",
+    "public/panel/copas.js",
+    "public/panel/panel.js",
+    "public/panel/rutas.js",
+    "public/sw.js",
+    "public/timeline/decks/brasil.js",
+    "public/timeline/decks/chile.js",
+    "public/timeline/decks/futbol.js",
+    "public/timeline/decks/historia.js",
+    "public/timeline/decks/index.js",
+    "public/timeline/decks/musica.js",
+    "public/timeline/decks/pop.js",
+    "public/timeline/engine.js",
+    "public/timeline/game.js",
+    "public/timeline/rules.js"
+  ],
+  "tests": [
+    "public/assets/js/arrastre.test.mjs",
+    "public/assets/js/compartir.test.mjs",
+    "public/assets/js/favoritos.test.mjs",
+    "public/assets/js/games.test.mjs",
+    "public/assets/js/i18n.test.mjs",
+    "public/assets/js/instalable.test.mjs",
+    "public/assets/js/instalar.test.mjs",
+    "public/assets/js/labs-puerta.test.mjs",
+    "public/assets/js/parametros.test.mjs",
+    "public/assets/js/push.test.mjs",
+    "public/assets/js/records.test.mjs",
+    "public/assets/js/transport/best-effort.test.mjs",
+    "public/assets/js/transport/cleanup.test.mjs",
+    "public/assets/js/transport/dispose.test.mjs",
+    "public/assets/js/transport/errors.test.mjs",
+    "public/assets/js/transport/ratelimit.test.mjs",
+    "public/assets/js/transport/stats.test.mjs",
+    "public/assets/js/uno-al-dia-avisos.test.mjs",
+    "public/assets/js/uno-al-dia-jugador.test.mjs",
+    "public/assets/js/uno-al-dia.test.mjs",
+    "public/assets/js/vigia.test.mjs",
+    "public/battleship/engine.test.mjs",
+    "public/bulls-and-cows/engine.test.mjs",
+    "public/cup/engine.test.mjs",
+    "public/cup/games/deshacer.test.mjs",
+    "public/cup/games/juegos.test.mjs",
+    "public/cup/planilla.test.mjs",
+    "public/cup/reportes.test.mjs",
+    "public/cup/store.test.mjs",
+    "public/fourth-king/engine.test.mjs",
+    "public/generala/engine.test.mjs",
+    "public/hangman/engine.test.mjs",
+    "public/julep/engine.test.mjs",
+    "public/labs/agents/engine.test.mjs",
+    "public/labs/code/engine-palabra.test.mjs",
+    "public/labs/code/engine.test.mjs",
+    "public/labs/exploding-numbers/engine.test.mjs",
+    "public/labs/paint-mines/engine.test.mjs",
+    "public/labs/plots/engine.test.mjs",
+    "public/labs/routes/engine.test.mjs",
+    "public/liars-dice/engine.test.mjs",
+    "public/panel/adapta.test.mjs",
+    "public/panel/aggregate.test.mjs",
+    "public/panel/copas.test.mjs",
+    "public/panel/rutas.test.mjs",
+    "public/timeline/engine.test.mjs",
+    "tools/agents/approve.test.mjs",
+    "tools/agents/clean-worktrees.test.mjs",
+    "tools/agents/covers.test.mjs",
+    "tools/agents/decision.test.mjs",
+    "tools/agents/document.test.mjs",
+    "tools/agents/feedback-templates.test.mjs",
+    "tools/agents/feedback.test.mjs",
+    "tools/agents/inbox.test.mjs",
+    "tools/agents/labs-key.test.mjs",
+    "tools/agents/marketing.test.mjs",
+    "tools/agents/processes.test.mjs",
+    "tools/cloudflare/inbox-worker.test.mjs",
+    "tools/e2e/already-tested.test.mjs",
+    "tools/e2e/changes.test.mjs",
+    "tools/e2e/groups.test.mjs",
+    "tools/e2e/output.test.mjs",
+    "tools/firebase/rankings-history.test.mjs",
+    "tools/push/daily.test.mjs",
+    "tools/push/notify.test.mjs",
+    "tools/push/schedule.test.mjs",
+    "tools/push/webpush.test.mjs",
+    "tools/release/changelog.test.mjs",
+    "tools/release/version.test.mjs"
+  ],
+  "e2e": [
+    "agents/lab.mjs",
+    "already-tested.mjs",
+    "already-tested.test.mjs",
+    "battleship/alignment.mjs",
+    "battleship/chat.mjs",
+    "battleship/languages.mjs",
+    "battleship/local.mjs",
+    "battleship/online.mjs",
+    "battleship/placement.mjs",
+    "bulls-and-cows/chat.mjs",
+    "bulls-and-cows/languages.mjs",
+    "bulls-and-cows/local.mjs",
+    "bulls-and-cows/online.mjs",
+    "case/lab.mjs",
+    "changes.mjs",
+    "changes.test.mjs",
+    "ci.mjs",
+    "code/lab.mjs",
+    "contact-sheet.mjs",
+    "cup-games/languages.mjs",
+    "cup/languages.mjs",
+    "cup/notifications.mjs",
+    "cup/player-cups.mjs",
+    "cup/seat.mjs",
+    "cup/tournament.mjs",
+    "cup/zip-ten.mjs",
+    "daily-group.mjs",
+    "daily-notifications.mjs",
+    "daily-player.mjs",
+    "daily.mjs",
+    "exploding-numbers/lab.mjs",
+    "favorites.mjs",
+    "fourth-king/game.mjs",
+    "fourth-king/languages.mjs",
+    "game-memory.mjs",
+    "generala/languages.mjs",
+    "generala/local.mjs",
+    "generala/online.mjs",
+    "groups.mjs",
+    "groups.test.mjs",
+    "hangman/languages.mjs",
+    "hangman/local.mjs",
+    "hangman/online.mjs",
+    "install-prompt.mjs",
+    "installable.mjs",
+    "invite-link.mjs",
+    "julep/languages.mjs",
+    "julep/local.mjs",
+    "julep/online.mjs",
+    "lang-from-url.mjs",
+    "languages-common.mjs",
+    "liars-dice/languages.mjs",
+    "liars-dice/local.mjs",
+    "liars-dice/online.mjs",
+    "look.mjs",
+    "output.mjs",
+    "output.test.mjs",
+    "paint-mines/lab.mjs",
+    "paths.mjs",
+    "plots/lab.mjs",
+    "plots/utilities.mjs",
+    "room-cap.mjs",
+    "room-error.mjs",
+    "routes/lab.mjs",
+    "share-home.mjs",
+    "share-room.mjs",
+    "spacing-common.mjs",
+    "timeline/chat.mjs",
+    "timeline/choice.mjs",
+    "timeline/decks.mjs",
+    "timeline/drag.mjs",
+    "timeline/error.mjs",
+    "timeline/fact.mjs",
+    "timeline/languages.mjs",
+    "timeline/local.mjs",
+    "timeline/online.mjs",
+    "timeline/pool.mjs",
+    "timeline/solo.mjs",
+    "timeline/table.mjs",
+    "timeline/tie.mjs",
+    "timeline/verdict.mjs",
+    "versioning.mjs"
+  ],
+  "documents": [
+    {
+      "path": "docs/AGREGAR-JUEGO.md",
+      "title": "Cómo agregar un juego nuevo"
+    },
+    {
+      "path": "docs/ALEMAN.md",
+      "title": "El alemán"
+    },
+    {
+      "path": "docs/CANONES.md",
+      "title": "Cánones y estándares de Juegos de Salón"
+    },
+    {
+      "path": "docs/DECISIONES.md",
+      "title": "Decisiones de diseño y arquitectura"
+    },
+    {
+      "path": "docs/PANEL.md",
+      "title": "Panel del dueño"
+    },
+    {
+      "path": "docs/PWA-NOTIFICACIONES.md",
+      "title": "App instalable y avisos al celular (PWA + Web Push)"
+    },
+    {
+      "path": "docs/REQUERIMIENTOS.md",
+      "title": "Requerimientos"
+    },
+    {
+      "path": "docs/UNO-AL-DIA.md",
+      "title": "Uno al día"
+    },
+    {
+      "path": "docs/USABILIDAD.md",
+      "title": "Guía de usabilidad"
+    },
+    {
+      "path": "docs/games/agents.md",
+      "title": "🕵️ Agentes (prototipo del laboratorio, en Proyectos activos)"
+    },
+    {
+      "path": "docs/games/battleship.md",
+      "title": "Diseño: Batalla Naval"
+    },
+    {
+      "path": "docs/games/bulls-and-cows-factibilidad.md",
+      "title": "Toque y Fama: estudio de factibilidad y propuesta de mecánica"
+    },
+    {
+      "path": "docs/games/bulls-and-cows.md",
+      "title": "Especificación: Toque y Fama"
+    },
+    {
+      "path": "docs/games/case.md",
+      "title": "El caso"
+    },
+    {
+      "path": "docs/games/code.md",
+      "title": "🔐 La clave (prototipo del laboratorio, en La Bodega)"
+    },
+    {
+      "path": "docs/games/cup.md",
+      "title": "La Copa"
+    },
+    {
+      "path": "docs/games/exploding-numbers.md",
+      "title": "💥 Números explosivos (prototipo del laboratorio, en Proyectos activos)"
+    },
+    {
+      "path": "docs/games/fourth-king.md",
+      "title": "Especificación: Cuarto Rey"
+    },
+    {
+      "path": "docs/games/generala.md",
+      "title": "Diseño: Generala"
+    },
+    {
+      "path": "docs/games/hangman.md",
+      "title": "Diseño: El Ahorcado"
+    },
+    {
+      "path": "docs/games/julep.md",
+      "title": "Diseño: Julepe"
+    },
+    {
+      "path": "docs/games/liars-dice.md",
+      "title": "Diseño: Dudo"
+    },
+    {
+      "path": "docs/games/paint-mines.md",
+      "title": "🖌️ Pintaminas (prototipo del laboratorio, en Proyectos activos)"
+    },
+    {
+      "path": "docs/games/plots.md",
+      "title": "📐 Loteo (prototipo del laboratorio, en Proyectos activos)"
+    },
+    {
+      "path": "docs/games/routes.md",
+      "title": "🚇 Rutas rotas (prototipo del laboratorio, en Proyectos activos)"
+    },
+    {
+      "path": "docs/games/timeline.md",
+      "title": "Diseño: Línea de Tiempo"
+    },
+    {
+      "path": "firebase/README.md",
+      "title": "Firebase"
+    },
+    {
+      "path": "tools/e2e/README.md",
+      "title": "End-to-end tests (headless Chrome over CDP)"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "title": "Changelog"
+    }
+  ],
+  "screenshots": {
+    "copa": 11,
+    "linea-de-tiempo": 11,
+    "toque-y-fama": 9,
+    "ahorcado": 9,
+    "dudo": 9,
+    "generala": 8,
+    "batalla-naval": 7,
+    "julepe": 10,
+    "cuarto-rey": 12
+  }
+}
