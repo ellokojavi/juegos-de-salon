@@ -808,6 +808,25 @@
         "v": {
           ".validate": "newData.isString() && newData.val().length <= 16"
         },
+        "correoMascara": {
+          ".validate": "newData.isString() && newData.val().matches(/^.[*][*][*][*][*][*][*][*]@[*][*][*][*][*][*][*][*].$/)"
+        },
+        "at": {
+          ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "feedbackContacto": {
+      ".read": false,
+      "$id": {
+        ".write": "!data.exists() && newData.exists() && root.child('feedback/' + $id).exists()",
+        ".validate": "newData.hasChildren(['correo', 'at'])",
+        "correo": {
+          ".validate": "newData.isString() && newData.val().length <= 120 && newData.val().matches(/^[^ @]+@[^ @]+[.][^ @]+$/)"
+        },
         "at": {
           ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
         },
