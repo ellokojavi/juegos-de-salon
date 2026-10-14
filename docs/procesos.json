@@ -1,5 +1,5 @@
 {
-  "revisadoHasta": "68ecbf1",
+  "revisadoHasta": "de85baf",
   "patrones": [
     {
       "clave": "version-hacia-atras",
@@ -40,7 +40,7 @@
         {
           "fecha": "2026-10-12",
           "que": "Una captura rehecha que sale idéntica byte a byte no genera commit y readme.py revisar la sigue marcando como atrasada (batalla-naval, generala)",
-          "commit": "d667443"
+          "commit": "af149b1"
         }
       ],
       "mecanismo": null
@@ -52,7 +52,7 @@
         {
           "fecha": "2026-10-12",
           "que": "main en rojo por un guion que pasó en la corrida siguiente sin tocar su juego (5 de 7 rojos del 4 al 12/10: torneo:laboratorio, instalar, hangman/idiomas, uno-al-dia, generala/idiomas)",
-          "commit": "5c8ba02"
+          "commit": "2380b40"
         }
       ],
       "mecanismo": {
@@ -84,7 +84,7 @@
         {
           "fecha": "2026-10-13",
           "que": "D-298 entró sin marcar D-290 y D-291 como corregidas ni sumarse al índice; lo arregló documentación después",
-          "commit": "eb918052"
+          "commit": "b38b4c35"
         }
       ],
       "mecanismo": null
@@ -96,12 +96,12 @@
         {
           "fecha": "2026-10-13",
           "que": "Tests nuevos (changelog.test.mjs, decision.test.mjs) entraron sin README ni hechos.json al día",
-          "commit": "8a506a0d"
+          "commit": "665de753"
         },
         {
           "fecha": "2026-10-13",
           "que": "D-307 y D-308 (grupos.mjs, ya-probado.mjs, changelog/) entraron sin sumarse al árbol Layout del README: el chequeo 7 de readme.py buscaba '## Estructura' y no corría nunca",
-          "commit": "68ecbf1"
+          "commit": "de85baf"
         }
       ],
       "mecanismo": {
@@ -117,7 +117,7 @@
         {
           "fecha": "2026-10-13",
           "que": "Portadas del laboratorio con reglas viejas (U-36); ya frenado por portadas.mjs",
-          "commit": "09a02a96"
+          "commit": "248ddece"
         }
       ],
       "mecanismo": null
@@ -141,7 +141,7 @@
         {
           "fecha": "2026-10-13",
           "que": "portadas.mjs revisar marca ⚠️ falso en La clave (labs/code): lee mal su estructura de cuatro idiomas y le saca 7 pasos (informe de usabilidad)",
-          "commit": "68ecbf1"
+          "commit": "de85baf"
         }
       ],
       "mecanismo": null
@@ -183,34 +183,34 @@
   "despachos": {
     "documentacion": {
       "fecha": "2026-10-13",
-      "hasta": "68ecbf1"
+      "hasta": "de85baf"
     },
     "usabilidad": {
       "fecha": "2026-10-13",
-      "hasta": "68ecbf1"
+      "hasta": "de85baf"
     }
   },
   "rondas": [
     {
       "fecha": "2026-10-12",
       "desde": null,
-      "hasta": "d667443",
+      "hasta": "af149b1",
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/353",
       "nota": "Despachados documentación (#354) y usabilidad (#353), revisados contra sus criterios. #321:3 sigue en cola: el permiso automático bloqueó editar las guías de los agentes."
     },
     {
       "fecha": "2026-10-13",
-      "desde": "d667443",
-      "hasta": "68ecbf1",
+      "desde": "af149b1",
+      "hasta": "de85baf",
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/387",
       "pr": null,
       "nota": "Despachados documentación (#388) y usabilidad (#389), revisados. Cola #321:3 y juntar CHANGELOG bloqueados por el permiso automático."
     },
     {
       "fecha": "2026-10-13",
-      "desde": "68ecbf1",
-      "hasta": "68ecbf1",
+      "desde": "de85baf",
+      "hasta": "de85baf",
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/390",
       "nota": null
