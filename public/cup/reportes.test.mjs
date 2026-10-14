@@ -72,6 +72,12 @@ for (const malo of ['', 'ana', 'ana@correo', '@correo.cl', 'a b@correo.cl', `${'
 {
   const reglas = JSON.parse(readFileSync(new URL('../../firebase/database.rules.json', import.meta.url), 'utf8')).rules;
   assert.equal(reglas.feedbackContacto['.read'], false);
+  // The emails to hola@ (D-318): only the owner's key reads or writes them
+  // Only the inbox user, never anyone else, and never the whole tree
+  const BUZON = "auth != null && auth.uid === '12ld0xRh0CM3BodWvKh8bCRmZ232'";
+  assert.equal(reglas.buzon['.read'], BUZON);
+  assert.equal(reglas.buzon.$id['.write'], BUZON);
+  assert.ok(!('.write' in reglas.buzon), 'nobody writes the whole inbox at once');
   assert.ok(!JSON.stringify(reglas.feedbackContacto).includes('".read":true'));
   const mascara = new RegExp(reglas.feedback.$id.correoMascara['.validate'].match(/matches\(\/(.*)\/\)/)[1]);
   assert.ok(mascara.test(enmascarar('jirigoyen@gmail.com')) && !mascara.test('jirigoyen@gmail.com'));

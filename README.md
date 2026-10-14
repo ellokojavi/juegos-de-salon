@@ -655,11 +655,13 @@ node tools/agents/decision.test.mjs
 node tools/agents/documentar.test.mjs
 node tools/agents/feedback-plantillas.test.mjs
 node tools/agents/feedback.test.mjs
+node tools/agents/inbox.test.mjs
 node tools/agents/limpiar-copias.test.mjs
 node tools/agents/llave-labs.test.mjs
 node tools/agents/marketing.test.mjs
 node tools/agents/portadas.test.mjs
 node tools/agents/procesos.test.mjs
+node tools/cloudflare/hola-worker.test.mjs
 node tools/e2e/cambios.test.mjs
 node tools/e2e/grupos.test.mjs
 node tools/e2e/salida.test.mjs
