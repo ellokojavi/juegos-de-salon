@@ -51,7 +51,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
@@ -72,7 +72,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
-| README y capturas | C-13 | D-51, D-76, D-78, D-213 |
+| README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
 | Agentes (usabilidad, documentación, procesos) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315 |
@@ -694,7 +694,7 @@ buscar al aparato cuando una pantalla se corta y en el escritorio se ve bien.
 ---
 
 ## D-78 · El README en inglés, el resto en español
-**Fecha:** 2026-09-13 · **Estado:** vigente
+**Fecha:** 2026-09-13 · **Estado:** corregida por D-316
 **Decisión:** `README.md` se escribe en inglés. Todo lo demás sigue en español: los cánones, las
 decisiones, las especificaciones de cada juego, los comentarios del código y los mensajes de las
 herramientas. Lo que el README muestra generado también sale en inglés: los modos se leen del `en`
@@ -4627,7 +4627,7 @@ cuando más se acuerdan de dónde se trabaron.
 prueba con el envío interceptado, sin escribir en Firebase.
 
 ## D-266 · Las URL, en inglés: carpetas, parámetros y sus valores
-**Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** sigue a D-192 (las carpetas) y D-214 (`?type=`); corrige D-29, D-100, D-110, D-142, D-164, D-207, D-208, D-229, D-230, D-233 y D-239 (el nombre de sus parámetros)
+**Fecha:** 2026-10-10 · **Estado:** corregida por D-316 · **Relación:** sigue a D-192 (las carpetas) y D-214 (`?type=`); corrige D-29, D-100, D-110, D-142, D-164, D-207, D-208, D-229, D-230, D-233 y D-239 (el nombre de sus parámetros)
 **Decisión:** Todo lo que se ve en una dirección va en inglés: las carpetas (ya desde D-192), los
 nombres de los parámetros y sus valores en palabras (C-18). Lo que la app escribe o genera (las
 invitaciones, los links que se comparten, los avisos al celular, los de Uno al día, lo que deja en
@@ -5870,3 +5870,44 @@ vieja); ignorar `undefined/` en `.gitignore` (escondería la basura sin borrarla
 causa).
 **Consecuencias:** el informe de cada ronda de procesos dice cómo quedó la carpeta; un guion nuevo de
 punta a punta usa `salida()` (la prueba lo exige).
+
+## D-316 · Repository language: English, for everything internal
+**Date:** 2026-10-14 · **Status:** current · **Relation:** amends D-78 (only the README was English), C-13 and D-266 (code variable names stayed Spanish); extends D-192 and D-266 (folders and URLs were already English) to everything internal
+**Decision:** Owner's request: everything internal to the repo is in English, content and names
+alike. That covers documents (canons, decisions, specs, requirements, changelog, agent and skill
+instructions, `CLAUDE.md`), code comments and identifiers, file and folder names, tool messages,
+commit messages, PR titles and bodies, and everything written on GitHub (issues, replies, the bots'
+templates). The owner keeps giving instructions in Spanish or English; that does not change what
+goes into the repo.
+- **What stays as it is:** what the player reads (the app keeps its four languages, Spanish by
+  default, C-3, D-47), and text written by people outside the team (a player's feedback is quoted
+  as is; the reply is in English).
+- **Persisted data keys are not renamed in the bulk phases:** game ids (`'ahorcado'`), Firebase
+  paths and fields (`unoAlDia/…`, rankings, cups) and their rules, and `localStorage` keys. They are
+  data, and renaming them means migrating live data; a mistake loses rankings, Uno al día streaks
+  and saved games.
+- **It is done in phases, not retroactively in one go:** (1) this rule, the living instructions
+  translated (`CLAUDE.md`, the agents, the skill, `CONTRIBUTING.md`, the READMEs of `tools/e2e/` and
+  `firebase/`), the bots' GitHub templates in English, and the decision checker reading English
+  fields; (2) a scan that lists every Spanish name with its English replacement, shown to the owner
+  before renaming; (3) the workshop (`tools/`, `.github/`, `firebase/`, `marketing/`, the agents and
+  their labels, the session hook, the scheduled task); (4) the app code in `public/`, in parts, each
+  one with the full end-to-end run; (5) the documents, renamed and translated, keeping every D-n,
+  C-n and U-n number. The renaming PRs go when no other PR is open, so they don't collide.
+- **Then a scheduled task finishes it gradually:** what is sensitive to data loss (the persisted
+  keys above) is migrated one at a time by a periodic task, each step with a Firebase backup, a
+  migration script and the old name kept as an alias. When nothing is left, that task is deleted
+  and replaced by a weekly sanity review that looks for Spanish creeping back into internal text.
+- **Until each phase lands,** new text is English even inside a file that is still Spanish, and
+  tools read both: `tools/agents/documentar.mjs` accepts `**Status:**` / `**Relation:**` with
+  `current`, `amended by`, `replaced by` and `revoked` alongside the Spanish fields.
+**Why:** the owner wants the repository to read as international: anyone reviewing the code, the
+decisions or the messages should be able to follow them. Before this, only the README was English
+(D-78) and everything else, including file names, was Spanish.
+**Alternatives discarded:** only new text in English (leaves the repo mixed for good); translating
+and renaming everything in one PR (hundreds of files at once collide with every open branch and
+cannot be reviewed); renaming the persisted keys together with the code (risks live data for a
+name).
+**Consequences:** decisions, canons and changelog entries written from now on are English; until
+phase 5 the documents are bilingual. Each phase marks itself done here, in its own PR: phase 1 is
+done (v0.170.x, this PR).

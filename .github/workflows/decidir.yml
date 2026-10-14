@@ -1,6 +1,6 @@
-# Abre el issue de decisiones de un toque del agente de procesos (D-273), con el bot de los
-# workflows y no con la cuenta del dueño: GitHub no avisa a nadie de lo que hace su propia cuenta,
-# y así el dueño recibe el correo. Lo lanza `node tools/agents/procesos.mjs decidir <archivo.json>`.
+# Opens the processes agent's one-tap decisions issue (D-273) with the workflows bot, not the
+# owner's account: GitHub notifies no one of what their own account does, and this way the owner
+# gets the email. Launched by `node tools/agents/procesos.mjs decidir <file.json>`.
 
 name: Decidir
 
@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       titulo:
-        description: 'Título del issue'
+        description: 'Issue title'
         required: true
       cuerpo:
-        description: 'Cuerpo, con las casillas y el bloque de acciones (lo arma procesos.mjs)'
+        description: 'Body, with the checkboxes and the actions block (built by procesos.mjs)'
         required: true
 
 permissions:
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
-      # Los textos pasan por variables de entorno, nunca pegados en el script
+      # The texts go through environment variables, never pasted into the script
       - env:
           GH_TOKEN: ${{ github.token }}
           TITULO: ${{ inputs.titulo }}

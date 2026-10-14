@@ -1,398 +1,398 @@
 # Firebase
 
-Proyecto: `juegos-de-salon` (plan Spark, gratuito). Creado el 2026-09-08.
+Project: `juegos-de-salon` (Spark plan, free). Created on 2026-09-08.
 
-> **Ojo con la cuenta.** El proyecto está a nombre de **`la cuenta de la máquina`**, la cuenta de
-> la máquina, que **no** es la identidad con la que se commitea (`la cuenta de administrador`, GitHub
-> `ellokojavi`). Entrar a la consola con la cuenta equivocada hace que el proyecto no aparezca
-> en la lista, que es exactamente lo que parece una cuenta sin proyectos. Para cualquier cambio
-> en la consola —reglas, Authentication, borrar datos— hay que entrar con `la cuenta de la máquina`.
+> **Watch the account.** The project belongs to **`la cuenta de la máquina`**, the machine's
+> account, which is **not** the identity used to commit (`la cuenta de administrador`, GitHub
+> `ellokojavi`). Signing in to the console with the wrong account makes the project not show up
+> in the list, which looks exactly like an account with no projects. For any change
+> in the console —rules, Authentication, deleting data— you have to sign in with `la cuenta de la máquina`.
 
 - **Realtime Database:** `https://juegos-de-salon-default-rtdb.firebaseio.com` (us-central1).
-- **Reglas de seguridad:** [database.rules.json](database.rules.json). Son la copia de lo publicado en la consola; si se cambian, hay que volver a publicarlas en *Realtime Database → Rules*.
-- **App web:** `juegos-de-salon-web`. Su configuración pública está en `public/assets/js/firebase-config.js`.
-- Google Analytics y Gemini quedaron desactivados (no se necesitan).
+- **Security rules:** [database.rules.json](database.rules.json). They are the copy of what is published in the console; if they change, they have to be published again in *Realtime Database → Rules*.
+- **Web app:** `juegos-de-salon-web`. Its public config is in `public/assets/js/firebase-config.js`.
+- Google Analytics and Gemini were left off (not needed).
 
-## Publicar las reglas
+## Publishing the rules
 
-Las reglas de [`database.rules.json`](database.rules.json) **no se publican solas**: no hay
-deploy que las suba. Se pegan a mano y se toca *Publish*, con la cuenta dueña del proyecto
+The rules in [`database.rules.json`](database.rules.json) **are not published on their own**: there is no
+deploy that uploads them. They are pasted by hand and *Publish* is pressed, with the account that owns the project
 (`la cuenta de la máquina`):
 
 <https://console.firebase.google.com/u/0/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/rules>
 
-Mientras un cambio en el archivo no esté publicado, las escrituras nuevas se rechazan y nadie
-se entera: el transporte y las señales de uso son mejor esfuerzo y fallan callados.
+While a change in the file isn't published, new writes are rejected and nobody
+notices: the transport and the usage signals are best-effort and fail silently.
 
-## Qué permiten las reglas
+## What the rules allow
 
-- Existen tres nodos: `rooms/<CODIGO>` (las salas), `cleanup` (la papelera que las borra) y
-  `stats` (las señales de uso que lee el panel del dueño, D-44).
-- El código de sala son 4 letras mayúsculas.
-- Cualquiera con el código puede leer la sala.
-- `createdAt`, `game` y `config` se escriben una sola vez (al crear la sala).
-- **Una sala está viva mientras late** (D-89): `lastAt` es la hora del servidor de la última
-  jugada, la refresca cualquiera que esté adentro y vale media hora. Pasada esa media hora —o las
-  seis horas desde `createdAt`, que son el tope duro— la sala no acepta nada más. Una sala sin
-  `lastAt` es de antes del latido: vale el tope de seis horas.
-- `players/A` a `players/F` se pueden actualizar mientras la sala esté viva (hasta seis jugadores).
-  Ahí va también `left` (booleano): la despedida de quien se fue a propósito (D-50).
-- `messages/<id>` son de solo agregar (no se editan ni borran) y deben traer `t`, `from` (de A a F) y `at`.
-- Una sala vencida (media hora sin latido, o más de 6 horas) puede ser borrada por cualquiera (limpieza).
-- Una sala **viva** solo se puede borrar cuando todos los jugadores que están adentro tienen
-  `left: true`: es la sala cancelada, que se cierra en el acto en vez de esperar a que venza.
-  Una sala sin ningún jugador apuntado no se puede borrar.
-- Cualquier otro campo se rechaza.
-- **Solo el dueño** (su UID en las reglas) puede listar `rooms/` entero y leer `stats/`.
-  Nadie más: ni con el código de una sala se llega a `stats/`.
+- There are three nodes: `rooms/<CODIGO>` (the rooms), `cleanup` (the trash bin that deletes them) and
+  `stats` (the usage signals the owner's panel reads, D-44).
+- The room code is 4 uppercase letters.
+- Anyone with the code can read the room.
+- `createdAt`, `game` and `config` are written only once (when creating the room).
+- **A room is alive while it beats** (D-89): `lastAt` is the server time of the last
+  move, anyone inside refreshes it and it lasts half an hour. After that half hour —or the
+  six hours since `createdAt`, which is the hard cap— the room accepts nothing more. A room without
+  `lastAt` predates the heartbeat: the six-hour cap applies.
+- `players/A` to `players/F` can be updated while the room is alive (up to six players).
+  `left` (boolean) also goes there: the goodbye of whoever left on purpose (D-50).
+- `messages/<id>` are append-only (not edited or deleted) and must carry `t`, `from` (A to F) and `at`.
+- An expired room (half an hour without a heartbeat, or more than 6 hours) can be deleted by anyone (cleanup).
+- A **live** room can only be deleted when all the players inside have
+  `left: true`: it is the cancelled room, closed on the spot instead of waiting for it to expire.
+  A room with no player signed up can't be deleted.
+- Any other field is rejected.
+- **Only the owner** (their UID in the rules) can list all of `rooms/` and read `stats/`.
+  Nobody else: not even with a room's code can you reach `stats/`.
 
-## La Copa (`torneos`, `torneoKeys`, `torneoSeats`)
+## La Copa (the Cup) (`torneos`, `torneoKeys`, `torneoSeats`)
 
-Los torneos de varios días (D-94, [docs/games/cup.md](../docs/games/cup.md)) viven en su
-propio árbol porque duran una semana y las salas mueren a la media hora (D-89).
+Multi-day tournaments (D-94, [docs/games/cup.md](../docs/games/cup.md)) live in their
+own tree because they last a week and rooms die after half an hour (D-89).
 
-- **Necesitan el acceso anónimo de Firebase Auth** (D-96): *Authentication → Sign-in method →
-  Anonymous → Enable*. Cada navegador entra anónimo, y las reglas usan su `auth.uid`.
-- `torneos/<código>` (5 letras sin I ni O) lo lee quien tenga el código; `torneos/` entero, solo el dueño.
-- `meta` se escribe una vez y trae las ventanas de cada día ya calculadas (`win/<d>/{a,b,h}`),
-  `joinUntil` y `final`: las reglas comparan `now` contra números, no saben de zonas horarias.
-- `players/<pid>` lo crea el propio jugador antes de la final; después solo lo cambia el admin.
-- `started`, `results` y `wild` se escriben una sola vez, por el jugador sentado y dentro de la
-  ventana de su día. El comodín, además, solo antes de `started` y nunca el día de la final.
-- `torneoKeys/<código>/<pid>` guarda el hash del PIN y `torneoSeats/<código>/<pid>/<uid>` los
-  celulares sentados como ese jugador. **Ninguna de las dos se puede leer**: sentarse exige mandar
-  el mismo hash. El admin puede cambiar el hash y borrar los asientos (PIN nuevo).
-- Las copas no se borran todavía (LIG-31).
+- **They need Firebase Auth anonymous sign-in** (D-96): *Authentication → Sign-in method →
+  Anonymous → Enable*. Each browser signs in anonymously, and the rules use its `auth.uid`.
+- `torneos/<código>` (5 letters without I or O) is readable by whoever has the code; all of `torneos/`, only by the owner.
+- `meta` is written once and carries each day's windows already computed (`win/<d>/{a,b,h}`),
+  `joinUntil` and `final`: the rules compare `now` against numbers, they know nothing about time zones.
+- `players/<pid>` is created by the player themselves before the final; afterwards only the admin changes it.
+- `started`, `results` and `wild` are written only once, by the seated player and within the
+  window of their day. The wildcard, also, only before `started` and never on the final's day.
+- `torneoKeys/<código>/<pid>` stores the PIN hash and `torneoSeats/<código>/<pid>/<uid>` the
+  phones seated as that player. **Neither can be read**: sitting down requires sending
+  the same hash. The admin can change the hash and delete the seats (new PIN).
+- Cups aren't deleted yet (LIG-31).
 
-## Publicar las reglas (D-122, D-218)
+## Publishing the rules (D-122, D-218)
 
-Se publican solas en cada fusión a `main`: el job `reglas` de `.github/workflows/publicar.yml`
-corre `reglas.mjs publicar` con el secreto `FIREBASE_ADMIN_JSON` de GitHub, antes de publicar el
-sitio. A mano, para revisar o si falta el secreto:
+They are published on their own on every merge to `main`: the `reglas` job in `.github/workflows/publicar.yml`
+runs `reglas.mjs publicar` with the GitHub secret `FIREBASE_ADMIN_JSON`, before publishing the
+site. By hand, to check or if the secret is missing:
 
 ```bash
-node tools/firebase/reglas.mjs publicar    # sube database.rules.json y verifica que quedó
-node tools/firebase/reglas.mjs revisar     # ¿lo publicado es lo del repo?
+node tools/firebase/reglas.mjs publicar    # uploads database.rules.json and verifies it took
+node tools/firebase/reglas.mjs revisar     # is what's published what's in the repo?
 ```
 
-Usa la llave de una cuenta de servicio guardada fuera del repo en
-`~/.config/juegos-de-salon/firebase-admin.json` (o `FIREBASE_LLAVE=/ruta`). Se crea una vez en
-[Cuentas de servicio](https://console.firebase.google.com/u/0/project/juegos-de-salon/settings/serviceaccounts/adminsdk)
-→ Generar nueva clave privada. Da acceso de administrador a todo el proyecto: no se comparte, y si
-se filtra se revoca ahí mismo. Sin la llave, se sigue pudiendo pegar a mano en la consola.
+It uses a service account key stored outside the repo at
+`~/.config/juegos-de-salon/firebase-admin.json` (or `FIREBASE_LLAVE=/ruta`). It is created once in
+[Service accounts](https://console.firebase.google.com/u/0/project/juegos-de-salon/settings/serviceaccounts/adminsdk)
+→ Generate new private key. It gives admin access to the whole project: it isn't shared, and if
+it leaks it is revoked right there. Without the key, you can still paste by hand in the console.
 
-## La Copa: inscripción cerrada e inicio movible (D-110)
+## La Copa: closed sign-up and movable start (D-110)
 
-- `torneos/<code>/closed` (`true` o nada): solo lo escribe el celular sentado como admin. Con la
-  copa cerrada, las reglas no dejan crear jugadores nuevos.
-- `torneos/<code>/meta` se escribe al crear y, después, **solo el admin puede reescribirlo** para
-  mover el inicio: sin ningún `started`, con el mismo nombre, días, calendario, admin y
-  `createdAt`, y con la ventana del día 1 todavía abierta y empezando antes de 32 días.
-- Una copa del laboratorio (`meta/lab = true`, D-115) se puede reescribir aunque ya se haya
-  jugado: así su admin la pasa al día siguiente. La marca `lab` no se puede quitar ni poner después.
-- `torneos/<code>/meta/name` lo puede cambiar solo el admin, en cualquier momento antes de que la
-  copa termine (`now < meta/end`), con el mismo largo de 1 a 40 (D-148).
+- `torneos/<code>/closed` (`true` or nothing): only the phone seated as admin writes it. With the
+  cup closed, the rules don't allow creating new players.
+- `torneos/<code>/meta` is written on creation and, afterwards, **only the admin can rewrite it** to
+  move the start: with no `started`, with the same name, days, schedule, admin and
+  `createdAt`, and with day 1's window still open and starting within 32 days.
+- A lab cup (`meta/lab = true`, D-115) can be rewritten even if it has already been
+  played: that's how its admin moves it to the next day. The `lab` mark can't be removed or added afterwards.
+- `torneos/<code>/meta/name` can be changed only by the admin, at any time before the
+  cup ends (`now < meta/end`), with the same length of 1 to 40 (D-148).
 
-- `torneos/<code>/fin` (D-161): la hora del servidor en que el admin terminó la copa antes. Solo lo
-  escribe el celular sentado como admin, **una vez**, con la copa ya partida y sin terminar. Desde ahí
-  las reglas no dejan escribir `started`, `results` ni `wild`, inscribirse, renombrar la copa ni
-  reescribir `meta`.
+- `torneos/<code>/fin` (D-161): the server time when the admin ended the cup early. Only the
+  phone seated as admin writes it, **once**, with the cup already started and not finished. From then on
+  the rules don't allow writing `started`, `results` or `wild`, signing up, renaming the cup or
+  rewriting `meta`.
 
-- **Eliminar la copa** (D-117): el celular sentado como admin puede borrar de una vez
-  `torneos/<code>`, `torneoKeys/<code>` y `torneoSeats/<code>` (solo el nodo entero, nunca a medias).
+- **Deleting the cup** (D-117): the phone seated as admin can delete at once
+  `torneos/<code>`, `torneoKeys/<code>` and `torneoSeats/<code>` (only the whole node, never partially).
 
-## La Copa: el link propio (`torneoAlias`, D-121)
+## La Copa: its own link (`torneoAlias`, D-121)
 
-`torneoAlias/<alias>` = `{ code, hasta }`. Se lee sin cuenta (solo dice a qué código apunta). Se
-escribe si no existe, si venció (`hasta < now`) o si apunta a la misma copa, y siempre por el
-admin de esa copa y con `meta/alias` igual al alias; se borra solo por ese admin. `hasta` es el fin
-de la copa más 7 días.
+`torneoAlias/<alias>` = `{ code, hasta }`. It is read without an account (it only says which code it points to). It is
+written if it doesn't exist, if it expired (`hasta < now`) or if it points to the same cup, and always by the
+admin of that cup and with `meta/alias` equal to the alias; it is deleted only by that admin. `hasta` is the end
+of the cup plus 7 days.
 
-## Jugadores y rankings (`jugadores`, `jugadorKeys`, `jugadorSeats`, `jugadorNombres`, `jugadorCopas`, `records`, `torneoPodios`, D-212)
+## Players and rankings (`jugadores`, `jugadorKeys`, `jugadorSeats`, `jugadorNombres`, `jugadorCopas`, `records`, `torneoPodios`, D-212)
 
-El mismo mecanismo que La Copa, para toda la app:
+The same mechanism as La Copa, for the whole app:
 
-- `jugadores/<jid>` = `{ n, at, juegos: { <juego>: { n, at } } }`. Se lee sin cuenta por jid (no se
-  lista). Se crea una vez, con el asiento en la misma escritura; `juegos/<juego>/n` solo sube de a uno.
-- `jugadorKeys/<jid>`: sha256 del PIN. Nadie lo lee. Se crea con el jugador; lo cambia quien está sentado.
-- `jugadorSeats/<jid>/<uid>`: el celular `uid` escribe por `jid` si trae el hash de `jugadorKeys`.
-  Quien está sentado puede reemplazar todos los asientos (cambiar el PIN saca a los demás).
-- `jugadorNombres/<clave>/<jid>` = `true`: quiénes usan ese nombre. Se lee por clave, para entrar.
-- `records/<tabla>/<período>/<jid>` = `{ s, ms, k, at, n }`, con `.indexOn: k`. Se lee sin cuenta.
-  Escribe solo el jugador sentado, con `k` recalculado, `n` igual a su nombre y `k` menor que el
-  guardado. La tabla y el período se validan por forma, sin nombrar juegos (C-16). Una tabla que
-  termina en `_victorias` (D-215), y la de `partidas` (D-219), además exige `ms` = 0 y que `s` suba
-  exactamente de a uno. Cada fila puede llevar `co`, el país del jugador (dos letras, D-219).
-- `jugadores/<jid>/co`: el país del jugador, una vez, por quien está sentado (D-219).
-- `torneoPodios/<código>`: el podio de una copa terminada, con `.indexOn: end`. Se lee sin cuenta.
-  Lo escribe una vez alguien sentado en esa copa (`por`), con la copa terminada, sin `lab`, y con
-  los nombres y `j` que la copa tiene.
-- `torneos/<código>/players/<pid>/j`: el jugador de los rankings detrás del de la copa. Lo escribe
-  quien está sentado como los dos.
-- `jugadorCopas/<jid>/<código>` = `{ p, at }`: las copas del jugador, para "Tus copas" en cualquier
-  celular (D-220). Solo la leen sus celulares. La escribe quien está sentado como el jugador y como
-  `p` en la copa, con `players/<p>/j` igual al jugador; la borra quien está sentado como el jugador.
+- `jugadores/<jid>` = `{ n, at, juegos: { <juego>: { n, at } } }`. Read without an account by jid (not
+  listed). Created once, with the seat in the same write; `juegos/<juego>/n` only goes up by one.
+- `jugadorKeys/<jid>`: sha256 of the PIN. Nobody reads it. Created with the player; changed by whoever is seated.
+- `jugadorSeats/<jid>/<uid>`: the `uid` phone writes as `jid` if it brings the hash from `jugadorKeys`.
+  Whoever is seated can replace all the seats (changing the PIN kicks out the others).
+- `jugadorNombres/<clave>/<jid>` = `true`: who uses that name. Read by key, to sign in.
+- `records/<tabla>/<período>/<jid>` = `{ s, ms, k, at, n }`, with `.indexOn: k`. Read without an account.
+  Only the seated player writes, with `k` recomputed, `n` equal to their name and `k` lower than the
+  stored one. The table and period are validated by shape, without naming games (C-16). A table that
+  ends in `_victorias` (D-215), and the `partidas` one (D-219), also requires `ms` = 0 and that `s` go up
+  by exactly one. Each row can carry `co`, the player's country (two letters, D-219).
+- `jugadores/<jid>/co`: the player's country, once, by whoever is seated (D-219).
+- `torneoPodios/<código>`: the podium of a finished cup, with `.indexOn: end`. Read without an account.
+  Written once by someone seated in that cup (`por`), with the cup finished, without `lab`, and with
+  the names and `j` the cup has.
+- `torneos/<código>/players/<pid>/j`: the rankings player behind the cup's one. Written by
+  whoever is seated as both.
+- `jugadorCopas/<jid>/<código>` = `{ p, at }`: the player's cups, for "Tus copas" on any
+  phone (D-220). Only their phones read it. Written by whoever is seated as the player and as
+  `p` in the cup, with `players/<p>/j` equal to the player; deleted by whoever is seated as the player.
 
-Un **jugador heredado** (`jugadores/<jid>.legado = true`, de la historia de La Copa) no tiene
-PIN: `jugadorKeys/<jid>` se puede crear para él, una vez, y quien lo reclama borra `legado` en la
-misma escritura, sentado con ese PIN. Los carga `node tools/firebase/rankings-historia.mjs --escribir`.
+A **legacy player** (`jugadores/<jid>.legado = true`, from La Copa's history) has no
+PIN: `jugadorKeys/<jid>` can be created for them, once, and whoever claims it deletes `legado` in the
+same write, seated with that PIN. They are loaded by `node tools/firebase/rankings-historia.mjs --escribir`.
 
-El dueño (su UID) puede escribir y borrar en todas estas ramas, para moderar.
+The owner (their UID) can write and delete in all these branches, to moderate.
 
 ## Uno al día (`unoAlDia`, `invitados`, D-230)
 
-- `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w? }`: el primer intento de Uno al día del día `n` (días
-  desde 1970). Lo escribe una vez quien está sentado como ese jugador; `w` (la marca de que ya se
-  sumó a la semana) se agrega una vez. La lee cualquiera.
-- `invitados/<jid>/<uid>` = `{ d, at, j? }`: el celular `uid` terminó su primer Uno al día con una
-  invitación de `jid`. Lo escribe ese celular, una vez, y no si está sentado como `jid`. Solo lo lee
-  el jugador `jid`.
-- En `records`, el período puede ser también un día (`d20731`). Para la tabla `uno-al-dia`, el
-  puntaje del día tiene que ser el de su historia, y la semana suma un día de la historia (`u`) que
-  todavía no tenía `w`. Detalle y límites en [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
-- El dueño lee `unoAlDia/` e `invitados/` enteros, para el bloque de Uno al día del panel, y
-  puede escribir y borrar en las dos, para moderar.
+- `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w? }`: the first Uno al día attempt of day `n` (days
+  since 1970). Written once by whoever is seated as that player; `w` (the mark that it was already
+  added to the week) is added once. Anyone can read it.
+- `invitados/<jid>/<uid>` = `{ d, at, j? }`: the `uid` phone finished its first Uno al día with an
+  invitation from `jid`. Written by that phone, once, and not if it is seated as `jid`. Only the
+  player `jid` reads it.
+- In `records`, the period can also be a day (`d20731`). For the `uno-al-dia` table, the
+  day's score has to be the one in its history, and the week adds a day from the history (`u`) that
+  didn't have `w` yet. Details and limits in [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
+- The owner reads all of `unoAlDia/` and `invitados/`, for the panel's Uno al día block, and
+  can write and delete in both, to moderate.
 
-## Avisos al celular (`push`, `pushCopa`, `pushEnviados`, `pushDia`, `pushEnviadosDia`, D-223, D-224, D-230)
+## Phone notifications (`push`, `pushCopa`, `pushEnviados`, `pushDia`, `pushEnviadosDia`, D-223, D-224, D-230)
 
-- `push/<subId>` = `{ endpoint, keys: { p256dh, auth }, lang, tz, uid, at }`: la suscripción Web
-  Push de un celular. `subId` son 32 caracteres hexadecimales (los primeros del sha256 del
-  endpoint). **Nadie la lee**: solo la cuenta de servicio que manda los avisos (`tools/push/avisar.mjs`, D-224), que no pasa por
-  las reglas. La escribe y la borra solo el celular de ese `uid`, con la forma validada (`endpoint`
-  https, `lang` entre los cuatro idiomas, `at` no posterior a la hora del servidor).
-- `pushCopa/<código>/<pid>/<subId>` = `{ dia, plazo, at }`: qué avisos quiere ese jugador en esa
-  copa. Nadie la lee. La escribe quien está sentado como el jugador, y solo con una suscripción
-  suya (`push/<subId>/uid`, que puede ir en la misma escritura); la borra quien está sentado como
-  el jugador ("Silenciar esta copa"). Quien está sentado como el admin borra `pushCopa/<código>`
-  entera, y solo entera, al eliminar la copa.
-- `pushEnviados/<código>/<subId>/<clave>` = la hora en que se entregó ese aviso (`dia:3`,
-  `plazo:3`, `final`, `fin`, `insc:<pid>`), para no repetirlo. Nadie la lee ni la escribe: solo
-  `tools/push/avisar.mjs`, con la cuenta de servicio (D-224), que también la limpia.
-- `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`: lo que pidió ese celular de los avisos
-  de Uno al día (la hora `h`, de 0 a 23, y si quiere el diario, el de la racha y el de la semana) y,
-  para el texto, su último día jugado `u`, su racha, comodines (0 a 2) y mejor racha, y la semana de
-  ese día con cuántos días jugó (D-230). Nadie lo lee; lo escribe el celular cuya identidad
-  (`auth.uid`) es la de `push/<subId>/uid`, que puede ir en la misma escritura. Cualquier otro campo
-  se rechaza.
-- `pushEnviadosDia/<subId>/<clave>` = hora de entrega (`dia:<n>`, `racha:<n>`, `semana:<s>`, `adios`):
-  los escribe y limpia solo `tools/push/avisar.mjs`, con la cuenta de servicio.
-- Aquí el dueño no tiene excepción: su UID no lee ni escribe estas ramas.
+- `push/<subId>` = `{ endpoint, keys: { p256dh, auth }, lang, tz, uid, at }`: a phone's Web
+  Push subscription. `subId` is 32 hex characters (the first ones of the endpoint's
+  sha256). **Nobody reads it**: only the service account that sends the notifications (`tools/push/avisar.mjs`, D-224), which doesn't go through
+  the rules. Only the phone of that `uid` writes and deletes it, with the shape validated (`endpoint`
+  https, `lang` among the four languages, `at` not later than the server time).
+- `pushCopa/<código>/<pid>/<subId>` = `{ dia, plazo, at }`: which notifications that player wants in that
+  cup. Nobody reads it. Written by whoever is seated as the player, and only with a subscription
+  of their own (`push/<subId>/uid`, which can go in the same write); deleted by whoever is seated as
+  the player ("Silenciar esta copa"). Whoever is seated as the admin deletes `pushCopa/<código>`
+  whole, and only whole, when deleting the cup.
+- `pushEnviados/<código>/<subId>/<clave>` = the time that notification was delivered (`dia:3`,
+  `plazo:3`, `final`, `fin`, `insc:<pid>`), so it isn't repeated. Nobody reads or writes it: only
+  `tools/push/avisar.mjs`, with the service account (D-224), which also cleans it up.
+- `pushDia/<subId>` = `{ h, d, r, w, u, c, k, m, sp, sn, at }`: what that phone asked for from the Uno al día
+  notifications (the hour `h`, 0 to 23, and whether it wants the daily one, the streak one and the week one) and,
+  for the text, its last day played `u`, its streak, wildcards (0 to 2) and best streak, and the week of
+  that day with how many days it played (D-230). Nobody reads it; it is written by the phone whose identity
+  (`auth.uid`) is the one in `push/<subId>/uid`, which can go in the same write. Any other field
+  is rejected.
+- `pushEnviadosDia/<subId>/<clave>` = delivery time (`dia:<n>`, `racha:<n>`, `semana:<s>`, `adios`):
+  written and cleaned only by `tools/push/avisar.mjs`, with the service account.
+- Here the owner has no exception: their UID neither reads nor writes these branches.
 
-## Reportes (`feedback`)
+## Reports (`feedback`)
 
-El botón 🐞 de La Copa (D-101, D-104), el del laboratorio de un idioma (D-191) y el "¿Qué te
-pareció?" del final de El caso del laboratorio (D-265) escriben en `feedback/<id>` **por REST y sin cuenta**:
-`texto` (hasta 1000 caracteres), `nombre` opcional, `tester` (la etiqueta de la llave del laboratorio
-con que se entró, hasta 24; nunca la llave, D-306), `contexto` (JSON, hasta 500), `v` y `at` del
-servidor. Se escribe una sola vez y **se lee sin cuenta**: `node tools/firebase/reportes.mjs` los muestra
-(`--dias 3` para los recientes). No llevan PIN ni datos de la cuenta.
-Cada 15 minutos, `.github/workflows/feedback.yml` (`tools/agents/feedback.mjs`) sube los nuevos como
-issues de GitHub con la etiqueta `feedback`, con el nombre y la llave (D-279, D-306) y sin el
-navegador, y el agente de procesos los atiende (D-275).
+La Copa's 🐞 button (D-101, D-104), the one in a language's lab (D-191) and the "¿Qué te
+pareció?" at the end of the lab's El caso (D-265) write to `feedback/<id>` **over REST and without an account**:
+`texto` (up to 1000 characters), optional `nombre`, `tester` (the label of the lab key
+used to enter, up to 24; never the key, D-306), `contexto` (JSON, up to 500), `v` and server `at`.
+It is written only once and **read without an account**: `node tools/firebase/reportes.mjs` shows them
+(`--dias 3` for recent ones). They carry no PIN or account data.
+Every 15 minutes, `.github/workflows/feedback.yml` (`tools/agents/feedback.mjs`) uploads the new ones as
+GitHub issues with the `feedback` label, with the name and the key (D-279, D-306) and without the
+browser, and the processes agent handles them (D-275).
 
-## La papelera (`cleanup`)
+## The trash bin (`cleanup`)
 
-Nadie borra su sala al terminar de jugar, así que los mismos celulares que juegan hacen el aseo
-(D-39, canon C-7). El plan gratuito no tiene Cloud Functions: no hay dónde correr un cron.
+Nobody deletes their room when they finish playing, so the same phones that play do the cleanup
+(D-39, canon C-7). The free plan has no Cloud Functions: there's nowhere to run a cron.
 
 ```
 cleanup/
-  sweptDay: 20341            día ya barrido (marca de agua pública)
+  sweptDay: 20341            day already swept (public watermark)
   days/20342/
-    lastAt: 1757500000000    marca del último apunte, con el reloj del servidor
-    rooms/ABCD: true         códigos creados ese día
+    lastAt: 1757500000000    mark of the last entry, with the server clock
+    rooms/ABCD: true         codes created that day
 ```
 
-- Al crear o entrar a una sala se apunta su código en el balde de su día (`lastAt` se pisa con
-  la hora del servidor). Los códigos solo se agregan: no se pisan ni se editan.
-- **Un balde solo se puede leer y borrar 6 horas después de su último apunte.** Esa es la
-  condición que hace que la papelera nunca delate una sala viva: cuando se abre, todas las
-  salas que nombra ya vencieron, porque ninguna pasa de seis horas (D-89). Por eso `rooms/` sigue sin poder listarse.
-- Barrer es leer los baldes de los días anteriores a hoy, borrar esas salas y borrar el balde.
-  Lo hace un celular cada vez que crea o entra a una sala, como mucho una vez cada 6 horas.
-- `sweptDay` evita repetir trabajo, pero cualquiera puede adelantarla (solo hacia adelante y
-  nunca más allá de hoy), así que el barrido siempre repasa los últimos 8 días igual.
+- On creating or entering a room its code is written into its day's bucket (`lastAt` is overwritten with
+  the server time). Codes are only added: not overwritten or edited.
+- **A bucket can only be read and deleted 6 hours after its last entry.** That is the
+  condition that keeps the trash bin from ever revealing a live room: when it opens, all the
+  rooms it names have already expired, because none lasts over six hours (D-89). That's why `rooms/` still can't be listed.
+- Sweeping is reading the buckets of the days before today, deleting those rooms and deleting the bucket.
+  A phone does it each time it creates or enters a room, at most once every 6 hours.
+- `sweptDay` avoids repeating work, but anyone can move it forward (only forward and
+  never past today), so the sweep always goes over the last 8 days anyway.
 
-Lógica y tests: [`public/assets/js/transport/cleanup.js`](../public/assets/js/transport/cleanup.js) ·
+Logic and tests: [`public/assets/js/transport/cleanup.js`](../public/assets/js/transport/cleanup.js) ·
 `node public/assets/js/transport/cleanup.test.mjs`.
 
-## La despedida (`left`)
+## The goodbye (`left`)
 
-La papelera es la puerta de atrás: recién puede tocar una sala cuando venció. La de adelante
-es la despedida (D-50, canon C-7): quien se va **a propósito** —cancela la sala en el lobby,
-se sale, cambia de modo, se muda a la sala de la revancha— escribe `left: true` en su rol y,
-si al releer no queda nadie sin despedirse, borra la sala en el acto.
+The trash bin is the back door: it can only touch a room once it expired. The front one
+is the goodbye (D-50, canon C-7): whoever leaves **on purpose** —cancels the room in the lobby,
+exits, changes mode, moves to the rematch room— writes `left: true` in their role and,
+if on rereading nobody is left without saying goodbye, deletes the room on the spot.
 
-- `online: false` no alcanza: eso es quedarse sin señal o cerrar la pestaña, y esa partida se
-  puede retomar mientras la sala viva (C-6). Al reconectar, `left` vuelve a `false`.
-- Son dos escrituras y en ese orden, porque las reglas miran la sala **antes** del borrado.
-- La regla enumera los seis roles: las reglas de Firebase no saben recorrer hijos.
+- `online: false` isn't enough: that's losing signal or closing the tab, and that game can
+  be resumed while the room lives (C-6). On reconnecting, `left` goes back to `false`.
+- They are two writes and in that order, because the rules look at the room **before** the deletion.
+- The rule lists the six roles: Firebase rules can't iterate over children.
 
-Lógica y tests: [`public/assets/js/transport/dispose.js`](../public/assets/js/transport/dispose.js) ·
+Logic and tests: [`public/assets/js/transport/dispose.js`](../public/assets/js/transport/dispose.js) ·
 `node public/assets/js/transport/dispose.test.mjs`.
 
-> **Una sola vez, al publicar esto:** las salas creadas antes de la papelera no están apuntadas
-> en ningún balde y nadie las va a barrer. Se borran a mano desde *Realtime Database → Datos*,
-> eliminando el nodo `rooms` completo (no hay partidas en curso que valgan más de 6 horas).
+> **Only once, when publishing this:** rooms created before the trash bin aren't recorded
+> in any bucket and nobody will sweep them. They are deleted by hand from *Realtime Database → Data*,
+> removing the whole `rooms` node (there are no games in progress worth more than 6 hours).
 
-## Las señales de uso (`stats`)
+## Usage signals (`stats`)
 
-Lo que los juegos apuntan para el panel del dueño ([docs/PANEL.md](../docs/PANEL.md)),
-por entorno (`prod`, `lab`, `dev`) y por día:
+What the games record for the owner's panel ([docs/PANEL.md](../docs/PANEL.md)),
+by environment (`prod`, `lab`, `dev`) and by day:
 
 ```
 stats/prod/days/20342/
-  rooms/ABCD: { game, at, v, players: { A: "Javi", B: "Cata" } }   dos celulares
-  local/toque-y-fama/cpu/1: 7          partidas sin red: juego / modo / jugadores → cuántas
-  origin/America__Santiago: 12         celulares que empezaron o entraron a una partida
-  lang/es-CL: 12                      idioma del navegador
-  applang/en: 4                       idioma elegido en el juego (D-46)
-  hour/21: 5                           hora local del celular
-  aviso/dia: 3                         avisos de La Copa tocados, por tipo (D-233)
-  uad/dado: 9                          lo que se hace en Uno al día, por evento (D-230)
-  pwa/android: 2                       aperturas desde la app instalada (?pwa), por sistema
-  mandados/plazo: 4                    avisos entregados, por tipo: solo los escribe avisar.mjs
-  falla/js/cup: 3                      cargas con fallas, por tipo y página: las anota vigia.js (D-251)
-  err/a1b2c3/n: 2                      cuántas cargas vieron ese error; err/<firma>/d, su detalle
-  listo/cup/s3: 6                      cuánto tardó la página en arrancar, por tramo
-stats/prod/push: { vuelta, vivas, torneos }   la última vuelta de avisar.mjs y cuántas suscripciones siguen vivas
+  rooms/ABCD: { game, at, v, players: { A: "Javi", B: "Cata" } }   two phones
+  local/toque-y-fama/cpu/1: 7          offline games: game / mode / players → how many
+  origin/America__Santiago: 12         phones that started or joined a game
+  lang/es-CL: 12                      browser language
+  applang/en: 4                       language chosen in the game (D-46)
+  hour/21: 5                           phone's local hour
+  aviso/dia: 3                         La Copa notifications tapped, by type (D-233)
+  uad/dado: 9                          what is done in Uno al día, by event (D-230)
+  pwa/android: 2                       opens from the installed app (?pwa), by system
+  mandados/plazo: 4                    notifications delivered, by type: only avisar.mjs writes them
+  falla/js/cup: 3                      loads with failures, by type and page: recorded by vigia.js (D-251)
+  err/a1b2c3/n: 2                      how many loads saw that error; err/<firma>/d, its detail
+  listo/cup/s3: 6                      how long the page took to start, by bucket
+stats/prod/push: { vuelta, vivas, torneos }   avisar.mjs's last run and how many subscriptions are still alive
 ```
 
-- `rooms/<CÓDIGO>` se crea una sola vez; cada `players/<rol>` también. Nada se edita ni se borra.
-- Los contadores solo aceptan **subir exactamente en uno**: los celulares mandan
-  `{".sv": {"increment": 1}}` por REST y las reglas rechazan cualquier otro valor.
-- La zona horaria va con `__` en vez de `/` (`America__Sao_Paulo`), porque la barra no
-  puede ir en una clave y el guion bajo ya lo usan los nombres.
-- `stats/` no entra en la papelera: son unos cientos de bytes por partida.
-- **Las claves se validan por forma, no por lista** (canon C-16, D-73): el juego
-  (`^[a-z-]{1,40}$`), el modo (`^[a-z][a-z-]{0,15}$`, la misma forma que `MODE_KEY` en
-  `public/assets/js/games.js`), la cantidad de jugadores (`^[1-9][0-9]?$`) y el entorno
-  (`^[a-z]{2,10}$`). Así un juego o un modo nuevo empieza a contarse el día que sale
-  publicado, sin tener que acordarse de venir a republicar las reglas. Una lista acá rechaza
-  la señal en el servidor, la partida ni se entera y el dato no existe nunca más.
-- Lo que **sí** obliga a tocar las reglas: una categoría de señal nueva (cualquier cosa que no
-  sea `rooms`, `local`, `origin`, `lang`, `applang`, `hour` ni las de abajo), porque `$other` las rechaza.
-- Los avisos (D-233): `aviso/<tipo>` y `pwa/<sistema>` los suben los celulares, en uno; la clave
-  se valida por forma (`^[a-z]{1,12}$`), y la lista de tipos vive en `stats.js` (`TIPOS_AVISO`).
-  `mandados/<tipo>` y `stats/<env>/push` no los escribe ningún celular: solo `avisar.mjs`, con la
-  cuenta de servicio, que no pasa por las reglas.
-- Uno al día (D-230): `uad/<evento>` lo suben los celulares (`trackUnoAlDia` en `stats.js`): el
-  evento se valida por forma (`^[a-z]{1,16}$`) y el valor solo puede nacer en 1 o subir exactamente
-  en uno. La lista de eventos vive en `stats.js` (`EVENTOS_UAD`); no dice quién.
+- `rooms/<CÓDIGO>` is created only once; each `players/<rol>` too. Nothing is edited or deleted.
+- Counters only accept **going up by exactly one**: phones send
+  `{".sv": {"increment": 1}}` over REST and the rules reject any other value.
+- The time zone goes with `__` instead of `/` (`America__Sao_Paulo`), because the slash can't
+  go in a key and names already use the underscore.
+- `stats/` doesn't go in the trash bin: it's a few hundred bytes per game.
+- **Keys are validated by shape, not by list** (canon C-16, D-73): the game
+  (`^[a-z-]{1,40}$`), the mode (`^[a-z][a-z-]{0,15}$`, the same shape as `MODE_KEY` in
+  `public/assets/js/games.js`), the number of players (`^[1-9][0-9]?$`) and the environment
+  (`^[a-z]{2,10}$`). That way a new game or mode starts being counted the day it is
+  published, without having to remember to come back and republish the rules. A list here rejects
+  the signal on the server, the game doesn't even notice and the data never exists.
+- What **does** force touching the rules: a new signal category (anything that isn't
+  `rooms`, `local`, `origin`, `lang`, `applang`, `hour` or the ones below), because `$other` rejects them.
+- Notifications (D-233): `aviso/<tipo>` and `pwa/<sistema>` are uploaded by phones, by one; the key
+  is validated by shape (`^[a-z]{1,12}$`), and the list of types lives in `stats.js` (`TIPOS_AVISO`).
+  `mandados/<tipo>` and `stats/<env>/push` aren't written by any phone: only `avisar.mjs`, with the
+  service account, which doesn't go through the rules.
+- Uno al día (D-230): `uad/<evento>` is uploaded by phones (`trackUnoAlDia` in `stats.js`): the
+  event is validated by shape (`^[a-z]{1,16}$`) and the value can only start at 1 or go up by exactly
+  one. The list of events lives in `stats.js` (`EVENTOS_UAD`); it doesn't say who.
 
-- Salud (D-251): `falla/<tipo>/<página>`, `listo/<página>/<tramo>` y `err/<firma>/n` los sube
-  `public/assets/js/vigia.js`, en uno; tipo, página, tramo y firma se validan por forma. El detalle,
-  `err/<firma>/d` (`{ k, p, m, f, b, v, at }`), se escribe **una sola vez** (`!data.exists()`), con el
-  mensaje acotado a 160 caracteres y la hora dentro de un minuto de la del servidor; por eso la cuenta
-  y el detalle van en dos envíos: en un PATCH atómico, el rechazo del detalle se llevaría la cuenta.
+- Health (D-251): `falla/<tipo>/<página>`, `listo/<página>/<tramo>` and `err/<firma>/n` are uploaded by
+  `public/assets/js/vigia.js`, by one; type, page, bucket and signature are validated by shape. The detail,
+  `err/<firma>/d` (`{ k, p, m, f, b, v, at }`), is written **only once** (`!data.exists()`), with the
+  message capped at 160 characters and the time within a minute of the server's; that's why the count
+  and the detail go in two requests: in an atomic PATCH, rejecting the detail would take the count with it.
 
-Módulo y tests: [`public/assets/js/transport/stats.js`](../public/assets/js/transport/stats.js) ·
-`node public/assets/js/transport/stats.test.mjs` · `node public/panel/adapta.test.mjs` (compara la forma de
-las reglas con la del código).
+Module and tests: [`public/assets/js/transport/stats.js`](../public/assets/js/transport/stats.js) ·
+`node public/assets/js/transport/stats.test.mjs` · `node public/panel/adapta.test.mjs` (compares the shape of
+the rules with the code's).
 
-## El panel: Authentication y el UID del dueño (una sola vez)
+## The panel: Authentication and the owner's UID (only once)
 
-**Acá se cruzan dos cuentas y el orden importa.** El trabajo de consola va con la cuenta dueña
-del proyecto (`la cuenta de la máquina`); el UID que va en las reglas es el de la cuenta con la
-que se quiere *mirar* el panel (`la cuenta de administrador`). Son distintas a propósito: la regla
-compara el UID de Firebase Authentication, no el permiso de Google Cloud, así que para pasar la
-regla no hace falta ser propietario del proyecto.
+**Two accounts cross here and the order matters.** Console work is done with the account that owns
+the project (`la cuenta de la máquina`); the UID that goes in the rules is the one of the account
+you want to *view* the panel with (`la cuenta de administrador`). They are different on purpose: the rule
+compares the Firebase Authentication UID, not the Google Cloud permission, so passing the
+rule doesn't require being the project's owner.
 
-La consola de Firebase de esta cuenta está **en inglés**, así que los nombres de abajo van
-como aparecen en pantalla. Traducirlos al español manda a buscar menús que no existen.
+This account's Firebase console is **in English**, so the names below are written
+as they appear on screen. Translating them to Spanish sends you looking for menus that don't exist.
 
-1. Con `la cuenta de la máquina`: **Authentication → Sign-in method → Google → Enable.**
-   Pide un *Support email for project*: sirve la misma cuenta dueña.
-2. Con `la cuenta de la máquina`: **Authentication → Settings → Authorized domains → Add
-   domain:** agregar `juegosdesalon.cl`, que es donde vive el sitio. No sirve autorizar
-   `ellokojavi.github.io`: redirige con un 301 y el acceso con Google ocurre en el
-   dominio final.
-3. Entrar a `/panel/` **con `la cuenta de administrador`**: como las reglas todavía no conocen ese
-   UID, la página lo muestra en pantalla en vez de dejar pasar.
-4. Poner ese UID en las dos líneas `.read` de [database.rules.json](database.rules.json)
-   (`rooms` y `stats`) y publicar las reglas con `la cuenta de la máquina` en
+1. With `la cuenta de la máquina`: **Authentication → Sign-in method → Google → Enable.**
+   It asks for a *Support email for project*: the same owner account works.
+2. With `la cuenta de la máquina`: **Authentication → Settings → Authorized domains → Add
+   domain:** add `juegosdesalon.cl`, which is where the site lives. Authorizing
+   `ellokojavi.github.io` doesn't work: it redirects with a 301 and Google sign-in happens on the
+   final domain.
+3. Go to `/panel/` **with `la cuenta de administrador`**: since the rules don't know that
+   UID yet, the page shows it on screen instead of letting you in.
+4. Put that UID in the two `.read` lines of [database.rules.json](database.rules.json)
+   (`rooms` and `stats`) and publish the rules with `la cuenta de la máquina` in
    *Realtime Database → Rules → Publish*.
 
-**Los pasos 1 a 4 ya están hechos**, con el UID de `la cuenta de administrador`. Quedan escritos por
-si hay que cambiar de cuenta alguna vez. El UID no es un secreto: no sirve para entrar a
-ninguna parte, solo dice qué usuario ya autenticado puede leer.
+**Steps 1 to 4 are already done**, with the UID of `la cuenta de administrador`. They stay written in case
+the account ever has to change. The UID isn't a secret: it doesn't get you into
+anything, it only says which already-authenticated user can read.
 
-Mientras el UID no esté, las reglas fallan cerradas: nadie lee `stats/` ni lista `rooms/`.
-Los jugadores no se autentican nunca; activar Google no les cambia nada.
+While the UID isn't there, the rules fail closed: nobody reads `stats/` or lists `rooms/`.
+Players never authenticate; turning on Google changes nothing for them.
 
-Si algún día hacen falta dos cuentas, la regla deja de ser una comparación y pasa a ser una
-lista: `auth != null && (auth.uid === 'UNO' || auth.uid === 'OTRO')`, en los dos lugares.
+If two accounts are ever needed, the rule stops being a comparison and becomes a
+list: `auth != null && (auth.uid === 'UNO' || auth.uid === 'OTRO')`, in both places.
 
-> **Dos propietarios, a propósito.** El proyecto lo creó `la cuenta de la máquina`, una cuenta
-> de máquina, y durante un tiempo fue la única propietaria: perder su acceso habría sido
-> perder la base de datos de la app publicada. Desde el 2026-09-11 `la cuenta de administrador`
-> también es *Propietario* en
-> [IAM](https://console.cloud.google.com/iam-admin/iam?project=juegos-de-salon). Si alguna vez
-> queda una sola de nuevo, vale la pena volver a sumar la segunda.
+> **Two owners, on purpose.** The project was created by `la cuenta de la máquina`, a machine
+> account, and for a while it was the only owner: losing its access would have meant
+> losing the published app's database. Since 2026-09-11 `la cuenta de administrador`
+> is also *Owner* in
+> [IAM](https://console.cloud.google.com/iam-admin/iam?project=juegos-de-salon). If there is ever
+> only one again, it's worth adding the second one back.
 >
-> Ser propietario en IAM y poder entrar al panel son cosas distintas: el panel compara el UID
-> de Authentication, no el permiso de IAM. Agregar un propietario **no** le da acceso al panel,
-> y quitarlo no se lo saca.
+> Being owner in IAM and being able to enter the panel are different things: the panel compares the
+> Authentication UID, not the IAM permission. Adding an owner does **not** give them access to the panel,
+> and removing one doesn't take it away.
 
-## Probar las reglas por REST
+## Testing the rules over REST
 
 ```bash
 DB=https://juegos-de-salon-default-rtdb.firebaseio.com
 NOW=$(($(date +%s)*1000))
-# la sala y el jugador van en dos pasos: las reglas de `players/` miran el `createdAt` que ya
-# está en la base, así que en una sola escritura todavía no existe y se rechaza
+# the room and the player go in two steps: the `players/` rules look at the `createdAt` already
+# in the database, so in a single write it doesn't exist yet and is rejected
 curl -X PATCH "$DB/rooms/ABCD.json" -d "{\"createdAt\":$NOW,\"game\":\"toque-y-fama\",\"config\":{\"digits\":4}}"
 curl -X PUT "$DB/rooms/ABCD/players/A.json" -d '{"name":"Javi","online":true}'
 
-# apuntar la sala en la papelera (debe pasar) y tratar de abrir el balde (debe fallar: recién apuntado)
+# record the room in the trash bin (should pass) and try to open the bucket (should fail: just recorded)
 DAY=$((NOW/86400000))
 curl -X PATCH "$DB/cleanup/days/$DAY.json" -d "{\"lastAt\":$NOW,\"rooms/ABCD\":true}"
 curl "$DB/cleanup/days/$DAY.json"   # -> Permission denied
 
-# borrar la sala viva sin despedirse (debe fallar), despedirse y volver a borrar (debe pasar)
+# delete the live room without saying goodbye (should fail), say goodbye and delete again (should pass)
 curl -X DELETE "$DB/rooms/ABCD.json"                                           # -> Permission denied
 curl -X PATCH "$DB/rooms/ABCD/players/A.json" -d '{"online":false,"left":true}'
 curl -X DELETE "$DB/rooms/ABCD.json"                                           # -> null
 
-# señales de uso: subir un contador de a uno (debe pasar), pisarlo con otro valor (debe fallar), leer (debe fallar)
+# usage signals: bump a counter by one (should pass), overwrite it with another value (should fail), read (should fail)
 curl -X PATCH "$DB/stats/dev/days/$DAY.json" -d '{"local/toque-y-fama/cpu/1":{".sv":{"increment":1}},"origin/America__Santiago":{".sv":{"increment":1}}}'
 curl -X PUT "$DB/stats/dev/days/$DAY/local/toque-y-fama/cpu/1.json" -d '50'   # -> Permission denied
 curl "$DB/stats/dev/days/$DAY.json"                                            # -> Permission denied
 ```
 
-## Cuotas y límites del plan Spark
+## Spark plan quotas and limits
 
-La app es estática: no hay servidor propio, así que lo multijugador entero depende de esta
-base. El techo no viene del diseño estático sino del plan gratuito:
+The app is static: there is no server of its own, so all of multiplayer depends on this
+database. The ceiling doesn't come from the static design but from the free plan:
 
-| Recurso | Tope habitual | Qué significa jugando |
+| Resource | Usual cap | What it means when playing |
 |---|---|---|
-| Conexiones simultáneas | ~100 | ≈50 partidas de dos celulares, ≈16 de seis |
-| Descarga | ~10 GB/mes | |
-| Almacenamiento | 1 GB | Poco relevante desde D-39: la papelera borra lo vencido |
+| Simultaneous connections | ~100 | ≈50 two-phone games, ≈16 six-phone ones |
+| Download | ~10 GB/month | |
+| Storage | 1 GB | Barely relevant since D-39: the trash bin deletes what expired |
 
-**No hay alerta de facturación que poner: el plan Spark no tiene facturación.** Pasado el
-tope, Firebase rechaza conexiones nuevas y el jugador no puede entrar a la sala; no se
-degrada con elegancia, se cae. Desde v0.18 al menos se le dice al jugador (D-40).
+**There is no billing alert to set: the Spark plan has no billing.** Past the
+cap, Firebase rejects new connections and the player can't enter the room; it doesn't
+degrade gracefully, it goes down. Since v0.18 at least the player is told (D-40).
 
-Confirmar los números en la consola antes de fijar umbrales: Google los ha cambiado.
+Confirm the numbers in the console before setting thresholds: Google has changed them.
 
-### Vigilarlo (RP-22)
+### Watching it (RP-22)
 
-1. **Firebase Console → Realtime Database → Uso**: línea base de conexiones, almacenamiento
-   y descarga con el tráfico real.
-2. **Alerta de conexiones, en Google Cloud Monitoring** (creada el 2026-10-12): la política
+1. **Firebase Console → Realtime Database → Usage**: baseline of connections, storage
+   and download with real traffic.
+2. **Connections alert, in Google Cloud Monitoring** (created on 2026-10-12): the policy
    [Firebase: 80 de 100 conexiones](https://console.cloud.google.com/monitoring/alerting/policies/2345084699692281801?project=juegos-de-salon)
-   mira `firebasedatabase.googleapis.com/network/active_connections` y avisa por correo
-   (canal "JBot Mac Mini GCloud Notification") cuando pasa de 80. Se creó a mano en la consola: la
-   llave de la cuenta de servicio es para la base, no para configurar Google Cloud.
-3. **Descarga mensual: sin alerta todavía.**
+   watches `firebasedatabase.googleapis.com/network/active_connections` and alerts by email
+   (channel "JBot Mac Mini GCloud Notification") when it goes over 80. It was created by hand in the console: the
+   service account key is for the database, not for configuring Google Cloud.
+3. **Monthly download: no alert yet.**
 
-### Si el uso crece de verdad
+### If usage really grows
 
-El tope de salas por celular (D-41) ataja el abuso accidental, no al decidido: quien quiera
-abusar le pega a la REST API con `curl`. Lo único que cierra esa puerta es **autenticación
-anónima** (`signInAnonymously`) con reglas que exijan `auth != null`, que además permitiría
-reglas por usuario en vez de "cualquiera con el código". Es otro modelo de seguridad y
-merece su propia decisión; el paso a Blaze resuelve el techo pero abre la puerta a una
-boleta por abuso, así que pide tope de gasto.
+The cap on rooms per phone (D-41) stops accidental abuse, not the determined kind: whoever wants to
+abuse hits the REST API with `curl`. The only thing that closes that door is **anonymous
+authentication** (`signInAnonymously`) with rules that require `auth != null`, which would also allow
+per-user rules instead of "anyone with the code". It's another security model and
+deserves its own decision; moving to Blaze solves the ceiling but opens the door to a
+bill from abuse, so it calls for a spending cap.
