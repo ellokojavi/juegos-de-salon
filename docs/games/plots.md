@@ -78,7 +78,7 @@ pasos y la demo: un 4×4 en lotes de 4, con «Lotes de 4 casillas» arriba, que 
 de números. El celular recuerda el modo (`localStorage`, `juegos-de-salon:loteo:modo`) y el link lo
 dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los pasos:
 
-1. 📐 Divide el tablero en lotes, todos del tamaño que dice arriba.
+1. 📐 Divide el tablero en lotes rectangulares del tamaño que dice arriba (desde #397, como el de números).
 2. ⚡ Cada lote lleva un ⚡ y un 💧, ni más ni menos. Si un lote deja una casilla sin lote posible, no va.
 3. 👆 Arrastra de una esquina a otra para dibujar un lote; tócalo para borrarlo. Son 5 tableros;
    los 3 últimos, difíciles.
@@ -132,6 +132,9 @@ dice: `?mode=utilities` entra directo (y `?mode=numbers`, al de números). Los p
   muestran ningún lote de entrada y piden al menos `exige` deducciones profundas (3, 4 y 6, en
   `ETAPAS_SERVICIOS`); de 8 que sirvan (hasta 6000 intentos) se quedan con el más difícil, y si
   ninguno sirve, con el mejor de reserva (uno sin lotes a la vista gana siempre).
+  `generarEtapaServicios` arma juntos los dos 8×8 del final y pone el más difícil
+  (`dificultadServicios`) quinto: uno de cada cuatro días el cuarto salía más difícil («El penúltimo
+  me costó más que el último», #401); lo prueba `engine.test.mjs` con doce días.
   `deducirServicios(t, { avanzado })` repite las reglas simples (`propagar`): (1) un ícono o una
   casilla que solo cabe en un lote posible lo fija; (2) una casilla cuyos lotes posibles llevan todos
   el mismo ⚡ (o 💧) obliga al lote de ese ícono a cubrirla. Con `avanzado` (por omisión), cuando se

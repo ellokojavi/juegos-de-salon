@@ -145,6 +145,18 @@
         }
       ],
       "mecanismo": null
+    },
+    {
+      "clave": "juntar-propia",
+      "que": "changelog.mjs juntar juntó también la entrada sin número de la propia rama de procesos (le dio un número que no era suyo); se notó al ver 13 entradas en vez de 12",
+      "vistos": [
+        {
+          "fecha": "2026-10-14",
+          "que": "changelog.mjs juntar juntó también la entrada sin número de la propia rama de procesos (le dio un número que no era suyo); se notó al ver 13 entradas en vez de 12",
+          "commit": null
+        }
+      ],
+      "mecanismo": null
     }
   ],
   "mecanismos": [
@@ -180,16 +192,17 @@
     }
   ],
   "colaHecha": [
-    "#321:3"
+    "#321:3",
+    "#387:1"
   ],
   "despachos": {
     "documentacion": {
-      "fecha": "2026-10-13",
-      "hasta": "de85baf"
+      "fecha": "2026-10-14",
+      "hasta": "d7f7cdc"
     },
     "usabilidad": {
-      "fecha": "2026-10-13",
-      "hasta": "de85baf"
+      "fecha": "2026-10-14",
+      "hasta": "d7f7cdc"
     }
   },
   "rondas": [
