@@ -72,7 +72,7 @@ export function leerRespuestas(t, numeros) {
 }
 
 /** What the player wrote, from the issue's quote (without the zero-width spaces of `inerte`). */
-export const textoDe = body => (body || '').split('\n').filter(l => l.startsWith('> ')).map(l => l.slice(2)).join(' ').replace(/\u200b/g, '').trim();
+export const textoDe = body => (body || '').split('\n').filter(l => l.startsWith('> ')).map(l => l.slice(2)).join('\n').replace(/\u200b/g, '').trim();
 
 /** The name the player gave, from the issue (`Who`, or `Quién` in the issues from before D-316; without the zero-width spaces of `inerte`). */
 export const nombreDe = body => (/^- \*\*(?:Who|Quién):\*\* (.+)$/m.exec(body || '')?.[1] || '').replace(/\u200b/g, '').trim();
@@ -185,11 +185,11 @@ async function responder(lista, archivo, idioma, { simular, prueba }) {
     if (new Set(todos.map(x => x.correo.toLowerCase())).size > 1) throw new Error(`Not the same player: ${todos.map(x => `#${x.numero} ${x.mascara}`).join(', ')}. One email per address.`);
   }
   const nombre = todos.map(x => x.nombre).find(Boolean) || '';
-  const { asunto, texto } = armarCorreo({ idioma, nombre, n: Number(numeros[0]), items: todos.map(x => ({ cita: x.texto, respuesta: respuestas[x.numero] })) });
+  const { asunto, texto, html } = armarCorreo({ idioma, nombre, n: Number(numeros[0]), items: todos.map(x => ({ cita: x.texto, respuesta: respuestas[x.numero] })) });
   const para = prueba || todos[0].correo;
   if (simular) { console.log(`To: ${prueba || todos[0].mascara}\nSubject: ${asunto}\n\n${texto}`); return; }
   // Through stdin: the address never shows in a command line or a log
-  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to: para, subject: prueba ? `[Test] ${asunto}` : asunto, text: texto }), stdio: ['pipe', 'inherit', 'inherit'] });
+  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to: para, subject: prueba ? `[Test] ${asunto}` : asunto, text: texto, html }), stdio: ['pipe', 'inherit', 'inherit'] });
   if (prueba) { console.log(`Test email with ${numeros.map(n => `#${n}`).join(', ')} sent to the test address; nothing else touched.`); return; }
   for (const x of todos) {
     await borrar(x.id, t);

@@ -6,6 +6,8 @@
  *   node tools/release/og.mjs tarjetas   reescribe el bloque <!-- generado: og --> de cada página,
  *                                genera la página de cada juego de La Copa (public/<slug>/)
  *                                y las páginas puente de las rutas viejas (D-192, D-198)
+ *   node tools/release/og.mjs cabecera   the header of the feedback reply email (D-317), 1200×340,
+ *                                        in public/assets/email/header.jpg
  *   node tools/release/og.mjs imagenes   rehace con Chrome las imágenes de 1200×630 que quedaron atrás
  *                                (necesita internet: las fuentes vienen de Google Fonts).
  *                                Con --todas, las rehace todas
@@ -382,6 +384,32 @@ async function cmdImagenes() {
   console.log('Míralas antes de publicar (C-12): git diff --stat public/assets/og');
 }
 
+/** The email header (D-317): the menu card's icons and title only, the same in every language. */
+async function cmdCabecera() {
+  const { launch, sleep } = await import('../e2e/cdp.mjs');
+  const salida = join(RAIZ, 'public/assets/email');
+  mkdirSync(salida, { recursive: true });
+  const tmp = join(tmpdir(), 'juegos-de-salon-cabecera');
+  rmSync(tmp, { recursive: true, force: true });
+  mkdirSync(tmp, { recursive: true });
+  const servidor = spawn('python3', ['-m', 'http.server', String(PUERTO)], { cwd: RAIZ, stdio: 'ignore' });
+  await sleep(800);
+  if (servidor.exitCode !== null) throw new Error(`el puerto ${PUERTO} está ocupado: PUERTO=87xx node tools/release/og.mjs cabecera`);
+  try {
+    const b = await launch({ port: PUERTO_CDP, dir: `${tmp}/perfil`, out: tmp, width: 600, height: 170 });
+    await b.go(`http://localhost:${PUERTO}/tools/release/og/tarjeta.html?t=${Date.now()}&correo&lang=es`, 1200);
+    for (let i = 0; i < 20 && !(await b.evaluate(`document.body.dataset.listo === '1'`)); i++) await sleep(200);
+    await sleep(300);
+    await b.shot('header');
+    await jpeg(join(tmp, 'header.png'), join(salida, 'header.jpg'));
+    b.close();
+  } finally {
+    servidor.kill();
+    try { rmSync(tmp, { recursive: true, force: true }); } catch (_) { /* nada */ }
+  }
+  console.log('public/assets/email/header.jpg ↻ (1200×340): míralo antes de publicar');
+}
+
 /* ------------------------------------------------------------------ */
 /* Revisión                                                            */
 /* ------------------------------------------------------------------ */
@@ -422,6 +450,7 @@ function cmdRevisar() {
 const cmd = process.argv[2];
 if (cmd === 'tarjetas') cmdTarjetas();
 else if (cmd === 'imagenes') await cmdImagenes();
+else if (cmd === 'cabecera') await cmdCabecera();
 else if (cmd === 'revisar') process.exit(cmdRevisar());
 else {
   console.error('Uso: node tools/release/og.mjs tarjetas | imagenes | revisar');
