@@ -3,12 +3,13 @@
 // español. Uno nuevo en SUELTOS entra solo. Uso: node tools/e2e/cup-games/idiomas.mjs <carpeta-salida>
 // Con --parte <carpeta> revisa solo ese juego (queens, tango…): GitHub corre uno por job, en
 // paralelo, porque todos seguidos eran el guion más lento de CI.
+import { salida } from '../salida.mjs';
 import { revisarIdiomas } from '../idiomas-comun.mjs';
 import { SUELTOS } from '../../../public/assets/js/games.js';
 import { IDIOMAS } from '../../../public/assets/js/i18n.js';
 import { LOCALES } from '../../../public/cup/rules.js';
 
-const OUT = process.argv[2] || '/tmp/idiomas-juegos-copa';
+const OUT = salida('/tmp/idiomas-juegos-copa');
 // Lo que el registro dice de cada uno (nombre y bajada) también se muestra en la antesala
 const REGISTRO = Object.fromEntries(IDIOMAS.map(l => [l, Object.fromEntries(SUELTOS.map(m => [m.id, { name: m.name[l], tagline: m.tagline[l] }]))]));
 

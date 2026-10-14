@@ -1,6 +1,7 @@
 // Línea de Tiempo: la ronda se termina y el empate lo gana quien respondió más rápido (D-31)
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2];
+const OUT = salida();
 const BASE = process.argv[3] || process.env.SITIO || 'http://localhost:8765';
 const b = await launch({ port: 9494, dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const v = () => b.evaluate(`(()=>{const s=window.__ldt.view();return JSON.stringify({done:s.done,current:s.current,mano:Object.fromEntries(Object.entries(s.hands).map(([k,h])=>[k,h.length])),winner:s.winner,times:s.times})})()`).then(JSON.parse);

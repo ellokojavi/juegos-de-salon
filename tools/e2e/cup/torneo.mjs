@@ -7,12 +7,13 @@
 // Con --parte copa|laboratorio|demos corre solo esa parte: son independientes, y GitHub corre
 // cada una en su propio job para que el PR no espere el guion entero (ci.mjs).
 // De acá salen las capturas del README (docs/capturas.json): las tomas con nombre fijo.
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { mkdirSync } from 'node:fs';
 import { POZO } from '../../../public/cup/engine.js';
 import { slugDe } from '../../../public/assets/js/games.js';
 
-const OUT = process.argv[2] || '/tmp/copa';
+const OUT = salida('/tmp/copa');
 const SIETE = !process.argv.includes('--tres');
 const PARTE = process.argv.includes('--parte') ? process.argv[process.argv.indexOf('--parte') + 1] : null;
 if (PARTE && !['copa', 'laboratorio', 'demos'].includes(PARTE)) throw new Error(`--parte ${PARTE}: es copa, laboratorio o demos`);

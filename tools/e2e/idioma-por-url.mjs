@@ -1,10 +1,11 @@
 // El idioma que viene en el link (D-74), en todos los que se ofrecen (D-199): /?lang=pt, la puerta /pt/, y la invitación a una sala
 // que llega en el idioma de quien la mandó. Sin red: no se abre ninguna sala de verdad.
+import { salida } from './salida.mjs';
 import { launch, sleep } from './cdp.mjs';
 import { LANGS } from '../../public/assets/js/i18n.js';
 const OTROS = LANGS.filter(l => l !== 'es');   // todos los que se ofrecen (D-199)
 const mal = msg => { console.log(`✗ ${msg}`); process.exitCode = 1; };
-const OUT = process.argv[2];
+const OUT = salida();
 const b = await launch({ port: 9495, dir: `${OUT}/p`, out: OUT });
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 

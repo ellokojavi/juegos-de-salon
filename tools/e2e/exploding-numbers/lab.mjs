@@ -6,8 +6,9 @@
 // quedan; con el orden del motor se limpia entero, las filas se van y paga 100/100; el resultado trae
 // compartir, otro tablero, el de hoy y el comentario tras una línea; rendirse pide un segundo toque y
 // vale la parte estallada. Imprime ✗ si algo falla.
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = process.argv[2] || '/tmp/explosivos-lab';
+const OUT = salida('/tmp/explosivos-lab');
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const ev = e => b.evaluate(e);
 const SITIO = process.env.SITIO || 'http://localhost:8765';

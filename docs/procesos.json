@@ -166,6 +166,38 @@
         "que": "changelog.mjs juntar deja en changelog/ la entrada de la rama que junta",
         "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/405"
       }
+    },
+    {
+      "clave": "basura-de-pruebas",
+      "que": "Guiones de tools/e2e corridos sin carpeta (o con --parte primero) dejaron undefined/ y --parte/ con perfil de Chrome dentro de dos copias fusionadas, que limpiar-copias no pudo borrar (limpieza del 13/10)",
+      "vistos": [
+        {
+          "fecha": "2026-10-14",
+          "que": "Guiones de tools/e2e corridos sin carpeta (o con --parte primero) dejaron undefined/ y --parte/ con perfil de Chrome dentro de dos copias fusionadas, que limpiar-copias no pudo borrar (limpieza del 13/10)",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-14",
+        "que": "salida() en tools/e2e/salida.mjs + salida.test.mjs (ningún guion lee process.argv[2] a mano) + launch se niega; limpiar-copias no cuenta la basura de pruebas como cambio (D-315)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/408"
+      }
+    },
+    {
+      "clave": "ramas-locales-acumuladas",
+      "que": "74 ramas locales viejas en la carpeta principal: nada borraba las ramas sin copia (limpieza del 13/10)",
+      "vistos": [
+        {
+          "fecha": "2026-10-14",
+          "que": "74 ramas locales viejas en la carpeta principal: nada borraba las ramas sin copia (limpieza del 13/10)",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-14",
+        "que": "limpiar-copias.mjs borra las ramas locales fusionadas o sin rama en GitHub, y la ronda diaria de procesos la corre (D-315)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/408"
+      }
     }
   ],
   "mecanismos": [
@@ -204,6 +236,18 @@
       "clave": "juntar-propia",
       "que": "changelog.mjs juntar deja en changelog/ la entrada de la rama que junta",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/405"
+    },
+    {
+      "fecha": "2026-10-14",
+      "clave": "basura-de-pruebas",
+      "que": "salida() en tools/e2e/salida.mjs + salida.test.mjs (ningún guion lee process.argv[2] a mano) + launch se niega; limpiar-copias no cuenta la basura de pruebas como cambio (D-315)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/408"
+    },
+    {
+      "fecha": "2026-10-14",
+      "clave": "ramas-locales-acumuladas",
+      "que": "limpiar-copias.mjs borra las ramas locales fusionadas o sin rama en GitHub, y la ronda diaria de procesos la corre (D-315)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/408"
     }
   ],
   "colaHecha": [

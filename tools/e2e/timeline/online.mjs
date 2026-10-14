@@ -1,8 +1,9 @@
 // Línea de Tiempo con tres celulares contra Firebase real
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2];
+const OUT = salida();
 const hosts = ['localhost', '127.0.0.1', '[::1]'].map(h => SITIO.replace('localhost', h));
 const A = await launch({ port: 9452, dir: `${OUT}/pA`, out: OUT, width: 375, height: 812 });
 const B = await launch({ port: 9453, dir: `${OUT}/pB`, out: OUT, width: 375, height: 812 });

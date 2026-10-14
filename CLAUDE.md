@@ -77,7 +77,13 @@ Puede haber varias sesiones de Claude trabajando en este repo al mismo tiempo:
   lo que se escape, también las copias que crea la app de Claude (en .claude/worktrees): las **vacías** (sin commits
   propios, de más de un día) y las **abandonadas** (commits fuera de `main`, sin PR abierto y
   quietas más de tres días), que antes de borrarse suben su rama a GitHub para no perder nada.
-  Nunca toca una copia con cambios sin commitear.
+  Nunca toca una copia con cambios sin commitear; la **basura de pruebas** (`undefined/`,
+  `--parte/` con solo perfiles de Chrome y capturas) no cuenta como cambio y se va con la copia.
+  También borra las **ramas locales** sin copia que ya entraron a `main` o que ya no tienen rama
+  en GitHub con todos sus commits allá; una con commits que solo están aquí se nombra y se deja.
+  Además del hook, **la corre cada día la ronda del agente de procesos** y la cuenta en su informe
+  (D-315). Los guiones de `tools/e2e/` toman su carpeta de salida con `salida()`, nunca de
+  `process.argv[2]` a mano.
 - **Pruebas en paralelo:** cada sesión sirve su copia en su puerto (`python3 -m http.server 87xx -d public`),
   y corre los guiones con `SITIO=http://localhost:87xx`. Los puertos de Chrome no se eligen: cada
   Chrome toma uno libre y muere con su guion, también si el guion falla o se corta (`cdp.mjs`,

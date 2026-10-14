@@ -1,10 +1,11 @@
 // Batalla Naval, dos celulares: dos instancias de Chrome contra Firebase real
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 // Con varias sesiones a la vez, cada una sirve su copia en su puerto (D-135)
 const SITIO = process.env.SITIO || 'http://localhost:8765';
 // El otro celular entra por 127.0.0.1: otro origen, otro localStorage
 const SITIO_B = SITIO.replace('localhost', '127.0.0.1');
-const OUT = process.argv[2];
+const OUT = salida();
 const A = await launch({ port: 9422, dir: `${OUT}/pA`, out: OUT });
 const B = await launch({ port: 9423, dir: `${OUT}/pB`, out: OUT });
 const bv = d => d.evaluate(`JSON.stringify(window.__bn.view())`).then(JSON.parse);

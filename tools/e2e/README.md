@@ -215,6 +215,11 @@ Firebase real, así que necesitan internet y dejan salas de prueba que caducan a
 
 ## Cuidados
 
+- **La carpeta de salida** (D-315): `const OUT = salida()` (o `salida('/tmp/<guion>')` con una por
+  defecto), de `tools/e2e/salida.mjs`. Toma el primer argumento solo si es una carpeta de verdad:
+  corrido sin carpeta o con un flag primero (`torneo.mjs --parte copa`), el guion ya no deja
+  `undefined/` ni `--parte/` con un perfil de Chrome dentro de la copia. `salida.test.mjs` falla si
+  un guion lee `process.argv[2]` a mano, y `launch` no abre Chrome con un perfil así.
 - **Chromes zombis:** cada Chrome muere con su guion, termine como termine: bien, con una
   excepción, con Ctrl-C o con un `kill` (SIGINT, SIGTERM, SIGHUP; `cdp.mjs`). No hace falta
   `pkill`. La única salida que se lo salta es un `kill -9` al proceso de node. Si alguna vez queda

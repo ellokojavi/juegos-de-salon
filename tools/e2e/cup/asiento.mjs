@@ -3,13 +3,11 @@
 // Le pide el PIN con su nombre ya elegido, y con eso juega. Almacén de prueba (?test), sin red.
 //
 // Uso: python3 -m http.server 8765 -d public (en otra terminal) y node tools/e2e/cup/asiento.mjs [carpeta]
-import { mkdtempSync } from 'node:fs';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
+import { salida } from '../salida.mjs';
 import { launch, sleep } from '../cdp.mjs';
 
 const SITIO = process.env.SITIO || 'http://localhost:8765';
-const OUT = process.argv[2] || mkdtempSync(join(tmpdir(), 'asiento-'));
+const OUT = salida();
 const BASE = `${SITIO}/cup/`;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
 
