@@ -216,8 +216,12 @@ cleanup/
     rooms/ABCD: true         codes created that day
 ```
 
-- On creating or entering a room its code is written into its day's bucket (`lastAt` is overwritten with
-  the server time). Codes are only added: not overwritten or edited.
+- On creating a room its code is written into its day's bucket **in the same multi-path update that
+  creates the room** (D-321), with `lastAt` the same server stamp as the room's `createdAt`; entering
+  a room overwrites `lastAt` with the server time. Codes are only added: a note can be written
+  again (a code reused the same day) but never removed or changed.
+- A room that no bucket names is never swept. `node tools/firebase/unnoted-rooms.mjs` lists them
+  (admin key) and `--fix` deletes the expired ones and notes the live ones (D-321).
 - **A bucket can only be read and deleted 6 hours after its last entry.** That is the
   condition that keeps the trash bin from ever revealing a live room: when it opens, all the
   rooms it names have already expired, because none lasts over six hours (D-89). That's why `rooms/` still can't be listed.

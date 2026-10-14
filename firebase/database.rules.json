@@ -61,7 +61,7 @@
           },
           "rooms": {
             "$code": {
-              ".write": "$code.matches(/^[A-Z]{4}$/) && !data.exists()",
+              ".write": "$code.matches(/^[A-Z]{4}$/) && (!data.exists() || newData.val() == true)",
               ".validate": "newData.isBoolean() && newData.val() == true"
             }
           },
