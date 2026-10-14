@@ -65,13 +65,13 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305 |
-| Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138 |
+| Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
-| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318 |
+| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
@@ -6015,3 +6015,32 @@ to find it through the menu; and a retry has to show it is happening. A separate
 the name and the settings.
 **Consequences:** `tools/e2e/room-error.mjs` checks the waiting label, the button coming back, the
 way out and the clean one-phone screen, now also in Generala and Julepe. U-37 in USABILIDAD.md.
+
+## D-320 · Room writes nobody waits for are caught in the transport, and a denied resend is not a failure
+**Date:** 2026-10-14 · **Status:** current · **Relation:** completes C-7, C-12 and the vigía (D-251) for room games
+**Context:** the vigía recorded the only PERMISSION_DENIED in a week as an unhandled rejection in
+Batalla Naval (room CUFM, 21:02:01 UTC, chrome155, no file: the stack is all in the Firebase SDK).
+The message format comes from the SDK's write callback (`set`/`update`/`push`/`onDisconnect`); a
+denied read says `permission_denied at /path`. The room's messages show both phones silent for
+four minutes after B sent its fleet, then the rejection 5 s before B's first shot, and every write
+that room made at that time passed the published rules. What was denied was a resend: when the
+connection drops before the server's ack arrives, the SDK sends every write still waiting for one
+again after reconnecting, and `rooms/<CODE>/messages/<id>` can only be written once
+(`!data.exists()`). The message was already in the room, so the game went on, but `send()` returned
+the promise and none of the seven room games awaits it.
+**Decision:** the transport handles what it fires and forgets
+(`public/assets/js/transport/best-effort.js`):
+- `send()` passes its `push` through `message()`: a denied write whose message is already on the
+  server is a resend and is not reported. Any other failure is a move that didn't get through, so
+  it is raised again and the vigía still counts it on the Health panel. It still returns the same
+  promise, so a caller that awaits it sees the error.
+- The presence writes (`onDisconnect(...).update`, the `update` on reconnect) and the background
+  note of a new room go through `quiet()`. They can be denied for real when a phone wakes up on a
+  room that expired (30 minutes without moves), and that is not something the player can act on.
+- `best-effort.test.mjs` scans `firebase.js`: a Firebase call nobody awaits, returns or catches
+  fails the test.
+**Why not the rules:** a message that can only be written once is what keeps the room append-only,
+and the rules cannot tell an identical resend from a new write over an existing id.
+**Consequences:** the Health panel stops counting resends as failures. Rooms that are created but
+never noted in the cleanup bucket (the page dies between the two writes, as with MBGJ and HBHV that
+same day) are a separate problem, handled in their own PR.
