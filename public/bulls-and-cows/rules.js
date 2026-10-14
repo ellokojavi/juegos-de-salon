@@ -21,7 +21,7 @@ const ES = {
   start: '¡A jugar!', create: 'Crear sala', joinTitle: 'Unirse a una sala', codePlaceholder: 'CÓDIGO', join: 'Unirse',
   errName: 'Falta el nombre.', errNames: 'Faltan nombres o están repetidos.', errCode: 'El código tiene 4 letras.',
   errNotFound: 'No existe esa sala. Revisa el código.', errFull: 'La sala ya está llena.', errExpired: 'Esa sala ya venció.', errOtherGame: 'Ese código es de otro juego.', errNet: 'No se pudo conectar. ¿Hay internet?',
-  errOffline: 'No se pudo abrir la sala. Puede ser tu internet o que haya mucha gente jugando. Intenta nuevamente en unos minutos o jugar en modo de un solo celular sin conexión a internet.',
+  errOffline: 'No se pudo abrir la sala. Puede ser tu internet o que haya mucha gente jugando. Vuelve a intentarlo o juega en un solo celular, que no necesita internet.',
   errTooMany: 'Abriste muchas salas seguidas. Espera un ratito y prueba de nuevo.',
   // lobby
   chatTitle: 'Chat de la sala', chatOpen: 'Abrir el chat', chatClose: 'Cerrar el chat', chatSend: 'Enviar',
@@ -78,7 +78,7 @@ const EN = {
   start: 'Let\'s play!', create: 'Create room', joinTitle: 'Join a room', codePlaceholder: 'CODE', join: 'Join',
   errName: 'Name missing.', errNames: 'Names missing or repeated.', errCode: 'The code has 4 letters.',
   errNotFound: 'That room doesn\'t exist. Check the code.', errFull: 'That room is full.', errExpired: 'That room has expired.', errOtherGame: 'That code belongs to another game.', errNet: 'Could not connect. Is there internet?',
-  errOffline: 'Couldn\'t open the room. It might be your connection or too many people playing. Try again in a few minutes, or play in one-phone mode, which needs no internet.',
+  errOffline: 'Couldn\'t open the room. It might be your connection or too many people playing. Try again, or play on one phone, which needs no internet.',
   errTooMany: 'You\'ve opened a lot of rooms in a row. Wait a bit and try again.',
   chatTitle: 'Room chat', chatOpen: 'Open the chat', chatClose: 'Close the chat', chatSend: 'Send',
   chatPlaceholder: 'Say something…', chatEmpty: 'Trash talk while you guess. It disappears when the game ends.',
@@ -131,7 +131,7 @@ const PT = {
   start: 'Bora jogar!', create: 'Criar sala', joinTitle: 'Entrar em uma sala', codePlaceholder: 'CÓDIGO', join: 'Entrar',
   errName: 'Falta o nome.', errNames: 'Faltam nomes ou estão repetidos.', errCode: 'O código tem 4 letras.',
   errNotFound: 'Essa sala não existe. Confira o código.', errFull: 'A sala já está cheia.', errExpired: 'Essa sala já expirou.', errOtherGame: 'Esse código é de outro jogo.', errNet: 'Não foi possível conectar. Tem internet?',
-  errOffline: 'Não foi possível abrir a sala. Pode ser a sua internet ou muita gente jogando ao mesmo tempo. Tente de novo em alguns minutos ou jogue no modo de um celular só, que não precisa de internet.',
+  errOffline: 'Não foi possível abrir a sala. Pode ser a sua internet ou muita gente jogando ao mesmo tempo. Tente de novo ou jogue em um celular só, que não precisa de internet.',
   errTooMany: 'Você abriu muitas salas seguidas. Espere um pouquinho e tente de novo.',
   // sala
   chatTitle: 'Chat da sala', chatOpen: 'Abrir o chat', chatClose: 'Fechar o chat', chatSend: 'Enviar',
@@ -189,7 +189,7 @@ const DE = {
   start: 'Los geht’s!', create: 'Raum erstellen', joinTitle: 'Einem Raum beitreten', codePlaceholder: 'CODE', join: 'Beitreten',
   errName: 'Der Name fehlt.', errNames: 'Namen fehlen oder sind doppelt.', errCode: 'Der Code hat 4 Buchstaben.',
   errNotFound: 'Diesen Raum gibt es nicht. Prüf den Code.', errFull: 'Der Raum ist schon voll.', errExpired: 'Dieser Raum ist abgelaufen.', errOtherGame: 'Dieser Code gehört zu einem anderen Spiel.', errNet: 'Keine Verbindung. Hast du Internet?',
-  errOffline: 'Der Raum ließ sich nicht öffnen. Vielleicht liegt es an deinem Internet oder es spielen gerade sehr viele. Versuch es in ein paar Minuten nochmal oder spiel mit einem Handy, dafür brauchst du kein Internet.',
+  errOffline: 'Der Raum ließ sich nicht öffnen. Vielleicht liegt es an deinem Internet oder es spielen gerade sehr viele. Versuch es nochmal oder spiel mit einem Handy, dafür brauchst du kein Internet.',
   errTooMany: 'Du hast viele Räume hintereinander geöffnet. Warte kurz und versuch es nochmal.',
   // Raum
   chatTitle: 'Raum-Chat', chatOpen: 'Chat öffnen', chatClose: 'Chat schließen', chatSend: 'Senden',
