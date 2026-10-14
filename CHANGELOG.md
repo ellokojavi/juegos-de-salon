@@ -1,5 +1,75 @@
 # Changelog
 
+## 0.170.2 — 2026-10-13
+- **📐 Loteo (laboratorio), modo ⚡💧 Servicios más difícil** (D-312): los tres últimos tableros ya no
+  muestran ningún lote obvio de entrada y piden deducciones más profundas; los íconos quedan cerca de
+  los del lote vecino. La portada lo explica, y al llegar a los difíciles un aviso dice cómo pensarlos:
+  si un lote deja una casilla sin lote posible, no va.
+
+## 0.170.1 — 2026-10-13
+- **Agentes: los botones del resultado, a la vista:** el tablero destapado ahora va plegado en el panel «🗺️ El tablero entero», como los repasos de los otros juegos. Abierto, sus 15 cartas dejaban «Compartir mi resultado» y «Otro tablero» bajo el pliegue del celular (C-8, D-309).
+
+## 0.170.0 — 2026-10-13
+- **📐 Loteo: el modo ⚡💧 Servicios (laboratorio)** (D-311). En la portada, un selector cambia de
+  🔢 Números a ⚡💧 Servicios: la grilla trae ⚡ y 💧, y hay que dividirla en lotes todos del mismo
+  tamaño (arriba dice cuántas casillas), cada uno con exactamente un ⚡ y un 💧. Son cinco tableros
+  contra el reloj, de 6×6 en lotes de 3 a 8×8 en lotes de 8, cada uno con una sola solución que se
+  deduce sin adivinar. El celular recuerda el modo y el link lo lleva (`?mode=utilities`).
+
+## 0.169.2 — 2026-10-13
+- **Aire entre el tablero y los botones, en todos los juegos:** el primer botón queda a la misma distancia del tablero (o del resumen de la partida) en todas las pantallas. Antes, en Agentes, Caso, Tango, Zip, Desenredar, Línea de Tiempo, Generala, Batalla Naval y en varias pantallas de resultado, los botones quedaban casi pegados (U-11, D-309).
+
+## 0.169.1 — 2026-10-13
+- **📐 Loteo (laboratorio):** su emoji pasa a ser la escuadra 📐, en la portada, el laboratorio y lo
+  que se comparte (pedido del dueño).
+
+## 0.169.0 — 2026-10-13
+- **📐 Loteo (laboratorio, nuevo)** (D-310), inspirado en Shikaku: divide el tablero en rectángulos,
+  cada uno con un solo número, que dice cuántas casillas tiene. Se arrastra de una esquina a otra
+  para dibujar cada lote, y tocarlo lo borra. Son cinco tableros contra el reloj: dos para calentar
+  (5×5 y 6×6) y tres difíciles (7×7, 7×7 y 8×8), cada uno con una sola solución que se deduce sin
+  adivinar; el de hoy es el mismo para todos. Abajo, ↩ Deshacer, 🧹 Borrar y 🏳️ Rendirse.
+
+## 0.168.10 — 2026-10-13
+- **Números explosivos (laboratorio):** en «Cómo se juega», los pares de ejemplo «(7 y 7)» y «(4 y 6)» ya no se parten entre dos líneas en un celular chico (U-12).
+- **Marketing:** revisión del 2026-10-13. El video promocional suma dos pendientes: la tarjeta de Uno al día dice «Jugar el de hoy» (hoy «Jugar hoy», D-305) y Reinas no muestra ↩️ Deshacer (D-283) (U-34).
+
+## 0.168.9 — 2026-10-12
+- **🚇 Rutas rotas (laboratorio): la portada dice que cada línea se une con su mismo color**
+  («Une cada color en una línea, sin cortes entre piezas.»), y la tarjeta del laboratorio también.
+  Un jugador no se había dado cuenta de que el color tenía que calzar.
+
+## 0.168.8 — 2026-10-12
+- **💥 Números explosivos (laboratorio): un par que no se une se suelta entero** (pedido del dueño).
+  Tiemblan los dos y dice por qué, como antes, pero ya no queda elegido el segundo: la jugada
+  siguiente parte de cero.
+
+## 0.168.7 — 2026-10-12
+- **Herramientas: CI y publicación más rápidos.** Las pruebas de punta a punta corren en grupos
+  parejos según lo que tarda cada guion, todos a la vez, con el segundo intento y las capturas por
+  guion dentro del grupo; los guiones esperan a que la pantalla esté lista en vez de pausas fijas
+  (D-307). Y publicar no repite la punta a punta si el árbol que llega a main ya la pasó en su PR
+  (D-308).
+
+## 0.168.6 — 2026-10-12
+- **🐞 El formulario de comentarios ya no muestra lo que se envía por dentro** (D-306): se fue el
+  desplegable "Lo que se envía junto", que mostraba los datos técnicos tal cual. Se siguen mandando
+  igual, para entender el reporte.
+- **Laboratorio: cada comentario dice con qué llave se entró** (D-306), aunque no se escriba el
+  nombre: así el dueño sabe a quién preguntarle. Nunca viaja la llave, solo su nombre.
+- **Herramientas:** el feedback llega como issue en GitHub cada 15 minutos, no cada hora.
+
+## 0.168.5 — 2026-10-12
+- **Herramientas: publicar sin choques ni sorpresas.** La entrada del CHANGELOG de cada PR va sin
+  número en `changelog/<rama>.md` y la versión se pone sola al fusionar (D-300); los números de
+  decisión se reservan con `tools/agents/decision.mjs reservar` y `DECISIONES.md` se junta sola al
+  traer main (D-301); el sitio se publica solo si la punta a punta de main pasa (D-302); un solo
+  push al terminar (D-303); y la revisión de usabilidad según la etapa del juego: corta en el
+  laboratorio y completa en el PR que lo saca (D-304).
+- **Pruebas de punta a punta:** no corren en un PR que solo toca el taller de los agentes, las
+  reglas de Firebase o los otros workflows, y un guion que falla se repite una vez: si pasa, el
+  check queda en verde con un aviso "Intermitente" que lo nombra (D-299).
+
 ## 0.168.4 — 2026-10-12
 - **Portada: las píldoras de La Copa y Uno al día, abajo a la izquierda** (D-305). Los jugadores y
   los días de La Copa, y la racha o cómo vas hoy en Uno al día, quedan al pie de cada tarjeta y a la

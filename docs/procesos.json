@@ -1,5 +1,5 @@
 {
-  "revisadoHasta": "de85baf",
+  "revisadoHasta": "d7f7cdc",
   "patrones": [
     {
       "clave": "version-hacia-atras",
@@ -145,6 +145,22 @@
         }
       ],
       "mecanismo": null
+    },
+    {
+      "clave": "juntar-propia",
+      "que": "changelog.mjs juntar juntó también la entrada sin número de la propia rama de procesos (le dio un número que no era suyo); se notó al ver 13 entradas en vez de 12",
+      "vistos": [
+        {
+          "fecha": "2026-10-14",
+          "que": "changelog.mjs juntar juntó también la entrada sin número de la propia rama de procesos (le dio un número que no era suyo); se notó al ver 13 entradas en vez de 12",
+          "commit": null
+        }
+      ],
+      "mecanismo": {
+        "fecha": "2026-10-14",
+        "que": "changelog.mjs juntar deja en changelog/ la entrada de la rama que junta",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/405"
+      }
     }
   ],
   "mecanismos": [
@@ -177,19 +193,26 @@
       "clave": "readme-hechos-atrasado",
       "que": "readme.py revisar vuelve a comparar el árbol de Layout con la raíz del repo (test en readme.test.py)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/390"
+    },
+    {
+      "fecha": "2026-10-14",
+      "clave": "juntar-propia",
+      "que": "changelog.mjs juntar deja en changelog/ la entrada de la rama que junta",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/405"
     }
   ],
   "colaHecha": [
-    "#321:3"
+    "#321:3",
+    "#387:1"
   ],
   "despachos": {
     "documentacion": {
-      "fecha": "2026-10-13",
-      "hasta": "de85baf"
+      "fecha": "2026-10-14",
+      "hasta": "d7f7cdc"
     },
     "usabilidad": {
-      "fecha": "2026-10-13",
-      "hasta": "de85baf"
+      "fecha": "2026-10-14",
+      "hasta": "d7f7cdc"
     }
   },
   "rondas": [
@@ -216,6 +239,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/390",
       "nota": null
+    },
+    {
+      "fecha": "2026-10-14",
+      "desde": "de85baf",
+      "hasta": "d7f7cdc",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/405",
+      "nota": "Despachó documentación y usabilidad (#404). Cola #387:1 hecha (Agentes, pistas de ideas). Feedback #383, #397, #401 en este PR."
     }
   ],
   "decisionesDelDueno": [
