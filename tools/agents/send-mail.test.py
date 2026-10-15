@@ -28,4 +28,6 @@ assert mod.recent(' ANA@correo.cl', t0 + timedelta(hours=23, minutes=59), path),
 assert mod.recent('ana@correo.cl', t0 + timedelta(hours=24), path) is None, 'after 24 hours it can go'
 assert mod.recent('otra@correo.cl', t0 + timedelta(minutes=1), path) is None, 'another address is not blocked'
 assert oct(os.stat(path).st_mode & 0o777) == '0o600'
+assert mod.unlimited({'noLimit': ['Owner@Gmail.com']}, ' owner@gmail.com'), 'noLimit skips the 24-hour rule (D-327)'
+assert not mod.unlimited({'noLimit': ['owner@gmail.com']}, 'ana@correo.cl') and not mod.unlimited({}, 'ana@correo.cl')
 print('send-mail: ok')
