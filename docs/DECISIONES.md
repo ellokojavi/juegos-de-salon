@@ -75,7 +75,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325 |
 | Agentes (usabilidad, documentación, procesos, atención) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -6153,3 +6153,23 @@ Liar's Dice) stays as flavor, tagged and optional where it is local (D-186).
 is for. Saying it is "for Chileans" turns a feature into a restriction.
 **Consequences:** the README note and C-1 say so. D-47 and D-78 keep their decisions; only the
 "the audience is Chilean" part of their reasoning is corrected.
+
+## D-325 · ¿En qué año? scores on a soft curve with a wider margin
+**Date:** 2026-10-15 · **Status:** current · **Relation:** changes the margin of ¿En qué año? (`docs/games/cup.md`)
+**Context:** players wrote that the game punishes too hard: a near miss scored 0. The margin was
+`max(8, (2026 − year) / 4)` and the score fell in a straight line to 0 at its edge. For old years
+that was already generous (600 BC answered as 800 BC gave 70), but 70 % of the cards are from 1950
+on, where the margin was 8 to 19 years: 1990 answered as 1980 gave 0, and so did 1950 as 1970.
+The one ancient case reported (800 for 600 BC scoring 0) was the a. C. switch left off, which the
+reveal now makes visible ("Tu respuesta: …").
+**Decision:** the margin is `max(12, (2026 − year) / 3)` and the score is
+`round(100 / (1 + (2·distance / margin)²))`: 100 for the exact year, 50 at half the margin, 20 at
+its edge, and past it a tail that keeps falling (about 6 at twice the margin) instead of a cut to 0.
+The card marks keep their thresholds (🟩 ≥ 80, 🟨 ≥ 50, 🟧 ≥ 20, ⬛ below).
+**Why:** getting closer should always be worth something, at every age; the relative margin already
+scales with how old the event is, so it only needed to be wider and without the cliff.
+**Alternatives discarded:** offering dates to anchor on (multiple choice): it turns "write the year"
+into picking by elimination, and ordering events is already Línea Relámpago's job.
+**Consequences:** results saved before the change keep their score; the day's breakdown recomputes
+each event with the new curve, so for a day played before the change it can differ by a few points
+from the saved total. `juegos.test.mjs` pins the 50 and 20 points and the tail.
