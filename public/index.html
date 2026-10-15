@@ -124,9 +124,10 @@
     }
     /* "New" (D-333): a sticker stuck on the card, a bit tilted, with a white edge and its shadow; the
        title's rainbow flows through it (`shimmer`, base.css), a glow breathes and now and then it
-       wobbles around its tilt. Dark text: it reads on every color of the rainbow. */
+       wobbles around its tilt. Dark text: it reads on every color of the rainbow. The 4 px above and
+       below keep its tilted corners off the name and the description, also mid-wobble (U-11). */
     .game-card h2 .nuevo {
-      --giro: -6deg;
+      --giro: -6deg; margin-block: 4px;
       font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
       padding: 3px 9px; border-radius: 999px; color: #1a0b2e;
       border: 2px solid rgba(255, 255, 255, 0.92);
