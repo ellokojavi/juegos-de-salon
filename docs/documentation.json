@@ -1,6 +1,8 @@
 {
-  "checkedUpTo": "d7f7cdc3797175082ba362f5154c3a4b555db20f",
-  "pending": [],
+  "checkedUpTo": "29db9b32b2b8b23c8483901ef49fb1df0e30e84d",
+  "pending": [
+    "generala/07-servida.png and hangman/05-veredicto.png still flagged stale: redone byte-identical, so git sees no newer commit (captura-identica-atrasada, third time)"
+  ],
   "known": [],
   "rounds": [
     {
@@ -71,6 +73,15 @@
       "to": "d7f7cdc3797175082ba362f5154c3a4b555db20f",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/406",
       "pending": []
+    },
+    {
+      "date": "2026-10-15",
+      "from": "d7f7cdc3797175082ba362f5154c3a4b555db20f",
+      "to": "29db9b32b2b8b23c8483901ef49fb1df0e30e84d",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/424",
+      "pending": [
+        "generala/07-servida.png and hangman/05-veredicto.png still flagged stale: redone byte-identical, so git sees no newer commit (captura-identica-atrasada, third time)"
+      ]
     }
   ],
   "note": "Memoria del agente de documentación (D-172). La lee y la escribe tools/document.mjs: hasta qué commit de main se revisó, lo que quedó pendiente, los problemas ya conocidos que esperan al dueño y las rondas anteriores."

@@ -5911,7 +5911,7 @@ cannot be reviewed); renaming the persisted keys together with the code (risks l
 name).
 **Consequences:** decisions, canons and changelog entries written from now on are English; until
 phase 5 the documents are bilingual. Each phase marks itself done here, in its own PR: phase 1 is
-done (v0.170.x); phase 3 is done: 97 workshop files, their commands and flags (`revisar` → `check`,
+done (v0.170.7); phase 3 is done (v0.171.2): 97 workshop files, their commands and flags (`revisar` → `check`,
 `--desde` → `--from`…), the workflows and their required checks (`pruebas` → `tests`,
 `punta-a-punta` → `end-to-end`), the agents (`processes`, `documentation`, `usability`) and their
 labels, with environment variables read under both names for a while (`SITE` or `SITIO`).
