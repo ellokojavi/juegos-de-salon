@@ -5219,7 +5219,7 @@ por el color); seguir llamándolos tinta y fondo.
 **Consecuencias:** `engine.test.mjs` revisa la paleta y la asimetría de cada dibujo.
 
 ## D-291 · Pintaminas: un modo difícil de dos colores, con un interruptor eléctrico y premio ×1.5
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-298 y D-332 · **Relación:** amplía D-289; corregida por D-298 (los dos colores son los del dibujo, ya no al azar) y por D-332 (sin el premio ×1.5: el difícil también va de 0 a 100); ampliada por D-292 (la ayuda y el brillo del interruptor)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-298, D-332 · **Relación:** amplía D-289; corregida por D-298 (los dos colores son los del dibujo, ya no al azar) y por D-332 (sin el premio ×1.5: el difícil también va de 0 a 100); ampliada por D-292 (la ayuda y el brillo del interruptor)
 **Contexto:** el dueño preguntó qué pasaría con un segundo color. Con dos colores, un número que se
 cumple solo dice que las demás vecinas *no son de ese color* (pueden ser del otro o sin pintar): hay
 que cruzar más números. Pidió probarlo como modo difícil, que se active con un interruptor eléctrico

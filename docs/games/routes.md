@@ -9,13 +9,13 @@ in its how-to.
 ## Summary
 
 - **Where:** its own page, `https://juegosdesalon.cl/routes/` (generated from `public/cup/suelto/index.html`),
-  on the home page, and as a La Copa game: a cup week can pick it (it is in `POZO`, D-331). It is not a
+  on the home page, and as a La Copa game: a cup week can pick it (it is in `POZO`, D-332). It is not a
   round of the Grand Final. Id `rutas` (cups, rankings, the usage signal); folder `routes`.
 - **Names (C-3):** Rutas rotas · Broken Routes · Rotas Quebradas · Kaputte Linien.
 - **For whom:** one player. No variants.
 - **History:** a lab prototype from v0.164.0, Spanish only, played with friends at `/labs/routes/`. It was
   called *Rutas* until v0.167.3, when the owner renamed it **Rutas rotas** (the lines start broken and have
-  to be joined, D-293). It left the lab with Loteo and Pintaminas (D-331): the lab page is now a bridge to
+  to be joined, D-293). It left the lab with Loteo and Pintaminas (D-332): the lab page is now a bridge to
   `/routes/`, and the lab's own page (`game.js`, `style.css`), its comment form (D-265, D-268), "back to
   the lab" and "today's board" went away. The engine moved to `public/cup/games/routes/`.
 
