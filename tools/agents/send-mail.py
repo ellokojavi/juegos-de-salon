@@ -84,6 +84,10 @@ def message(cfg, m):
     msg['Subject'] = m['subject']
     msg['Reply-To'] = sender
     msg['Message-ID'] = make_msgid(domain=sender.split('@')[-1])
+    if m.get('inReplyTo'):
+        # In the sender's own thread (D-327)
+        msg['In-Reply-To'] = m['inReplyTo']
+        msg['References'] = m['inReplyTo']
     msg.set_content(m['text'])
     if m.get('html'):
         msg.add_alternative(m['html'], subtype='html')

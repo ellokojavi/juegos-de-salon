@@ -155,7 +155,7 @@ async function contactOf(number, t, test = false) {
   if (!test && !wantsEmail(issue.body)) throw new Error(`#${number}: the player left no email.`);
   if (!test && handled(issue.comments)) throw new Error(`#${number}: already emailed or the address was already deleted.`);
   const c = t ? await (await import('../firebase/firebase-admin.mjs')).read(`feedbackContacto/${id}`, t) : null;
-  return { number: String(number), id, email: c?.correo || null, name: nameOf(issue.body), text: textOf(issue.body), state: issue.state, mask: /\*\*Email:\*\* `([^`]+)`/.exec(issue.body)?.[1] || '' };
+  return { number: String(number), id, email: c?.correo || null, name: nameOf(issue.body), text: textOf(issue.body), thread: c?.idMensaje ? { id: c.idMensaje, subject: c.asunto || '' } : null, state: issue.state, mask: /\*\*Email:\*\* `([^`]+)`/.exec(issue.body)?.[1] || '' };
 }
 
 const adminToken = async () => (await import('../firebase/firebase-admin.mjs')).token();
@@ -189,9 +189,12 @@ async function reply(list, file, lang, { dryRun, testTo }) {
   const name = all.map(x => x.name).find(Boolean) || '';
   const { subject, text, html } = buildEmail({ lang, name, n: Number(numbers[0]), items: all.map(x => ({ quote: x.text, answer: answers[x.number] })) });
   const to = testTo || all[0].email;
-  if (dryRun) { console.log(`To: ${testTo || all[0].mask}\nSubject: ${subject}\n\n${text}`); return; }
+  // An emailed report: answer in the sender's own thread (D-327)
+  const thread = testTo ? null : all.map(x => x.thread).find(Boolean);
+  const finalSubject = thread?.subject ? (/^re:/i.test(thread.subject) ? thread.subject : `Re: ${thread.subject}`) : subject;
+  if (dryRun) { console.log(`To: ${testTo || all[0].mask}\nSubject: ${testTo ? subject : finalSubject}${thread ? `\nIn-Reply-To: ${thread.id}` : ''}\n\n${text}`); return; }
   // Through stdin: the address never shows in a command line or a log
-  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to, subject: testTo ? `[Test] ${subject}` : subject, text, html, issues: numbers.map(Number), test: !!testTo }), stdio: ['pipe', 'inherit', 'inherit'] });
+  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to, subject: testTo ? `[Test] ${subject}` : finalSubject, inReplyTo: thread?.id || null, text, html, issues: numbers.map(Number), test: !!testTo }), stdio: ['pipe', 'inherit', 'inherit'] });
   if (testTo) { console.log(`Test email with ${numbers.map(n => `#${n}`).join(', ')} sent to the test address; nothing else touched.`); return; }
   for (const x of all) {
     await remove(x.id, t);
