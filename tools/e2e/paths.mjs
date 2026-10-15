@@ -419,8 +419,10 @@ export const PATHS = {
   anio: {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
-    bc: [START, `1`, `1`, `1`, `1`, `1`, `1`, ...'622'.split('').map(d => `document.querySelector('.keypad [data-d="${d}"]').click()`), `document.getElementById('btn-ac').click()`],
-    reveal: [START, `1`, `1`, `1`, `1`, `1`, `1`, ...'622'.split('').map(d => `document.querySelector('.keypad [data-d="${d}"]').click()`), `document.getElementById('btn-ac').click()`, `document.querySelector('.keypad .ok').click()`, `1`, `1`],
+    // HAAAA draws Historia, the only theme with the a. C. switch (D-326)
+    bc: [`location.search = '?seed=HAAAA'`, `1`, `1`, `1`, `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, ...'622'.split('').map(d => `document.querySelector('.keypad [data-d="${d}"]').click()`), `document.getElementById('btn-ac').click()`],
+    // HAAAA draws Historia, the only theme with the a. C. switch (D-326)
+    reveal: [`location.search = '?seed=HAAAA'`, `1`, `1`, `1`, `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, ...'622'.split('').map(d => `document.querySelector('.keypad [data-d="${d}"]').click()`), `document.getElementById('btn-ac').click()`, `document.querySelector('.keypad .ok').click()`, `1`, `1`],
   },
   /**
    * The lab games that are not La Copa's are asked for by their folder: `look` opens `/<key>/`

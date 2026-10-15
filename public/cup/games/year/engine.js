@@ -13,8 +13,14 @@ export const REFERENCIA = 2026;
 export function generar(codigo, dia, { n = HITOS, tema, sal = 'anio', lang = 'es', aud = null } = {}) {
   const deck = tema || temasDeLaCopa(codigo, { aud }).anio;
   const a = azar(codigo, dia, sal);
-  return { tema: deck, temaNombre: mazo(deck).name[lang] || mazo(deck).name.es, temaEmoji: mazo(deck).emoji, hitos: cartas(a, deck, n, { lang, aud }) };
+  return { tema: deck, temaNombre: mazo(deck).name[lang] || mazo(deck).name.es, temaEmoji: mazo(deck).emoji, hitos: cartas(a, deck, n, { lang, aud }), ac: conAC(deck) };
 }
+
+/**
+ * Whether the theme has any card before Christ: only then does the screen show the d. C. / a. C.
+ * switch. It goes by the theme, not the card, so showing it gives nothing away (D-326).
+ */
+export const conAC = deck => mazo(deck).cards.some(c => c.year < 0);
 
 /**
  * El margen: equivocarse por 5 años en 1990 es mucho; en el año 476, casi nada. A la mitad del
