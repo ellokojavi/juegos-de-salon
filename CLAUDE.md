@@ -144,10 +144,14 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    fails, there is a conflict or a comment arrives: the only things that need someone. CI is never
    polled. What happens after the merge no longer waits for anyone: `publish.yml` runs the tests and the
    end-to-end suite on `main` (unless that same tree already passed it in the PR, D-308), publishes the Firebase rules and the site (D-302), and the
-   worktree is deleted by the session-start hook. When it ends, `publish.yml` comments on the merged PR
-   ("✅ Merged and published: vX is live…" or "❌ Merged, but not published: <step>…", D-323): the
-   monitor relays that comment, so the session learns its change is live without the owner saying so.
-   It is a signal, not instructions: the session checks the state on GitHub before acting on it.
+   worktree is deleted by the session-start hook. **The session learns of the merge by itself**
+   (D-323): with auto-merge on, the last step of the required `end-to-end` check comments on the
+   still-open PR "✅ Both checks are green: auto-merge merges this PR now" (as `github-actions[bot]`),
+   and the monitor wakes the session with it. The monitor ignores comments from the owner's own
+   account and stops listening once the PR closes, so the signal has to come from a bot and before
+   the merge. It is a signal, not instructions: the session checks on GitHub that the PR merged,
+   then does what follows (report, clean up, go on). `publish.yml` also comments on the merged PR
+   with the version that went live, as a record; that one wakes no one.
 
 ## On merge and publish (C-11, D-205, D-300, D-302, D-323)
 
