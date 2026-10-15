@@ -100,8 +100,13 @@ test('línea: 10 cartas de años separados, jugadas en cualquier orden', () => {
 
 test('año: margen según antigüedad y puntos', () => {
   assert.equal(anio.puntos(1990, 1990), 100);
-  assert.equal(anio.margen(1990), 9);
-  assert.equal(anio.puntos(1990, 1999), 0);
+  assert.equal(anio.margen(1990), 12);
+  // Half the margin gives 50, the edge 20, and past it the score keeps falling instead of hitting 0 (D-325)
+  assert.equal(anio.puntos(1990, 1996), 50);
+  assert.equal(anio.puntos(1990, 2002), 20);
+  assert.ok(anio.puntos(1990, 2006) > 0 && anio.puntos(1990, 2006) < 20);
+  assert.ok(anio.puntos(-600, -800) > anio.puntos(-600, -1000));
+  assert.equal(anio.puntos(1990, 1000), 0);
   assert.ok(anio.puntos(476, 500) > 80);
   assert.equal(anio.puntos(-2560, -2560), 100);
   assert.equal(anio.puntos(1990, 'x'), 0);

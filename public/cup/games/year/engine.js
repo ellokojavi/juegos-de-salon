@@ -17,15 +17,16 @@ export function generar(codigo, dia, { n = HITOS, tema, sal = 'anio', lang = 'es
 }
 
 /**
- * El margen: equivocarse por 5 años en 1990 es mucho; en el año 476, casi nada. Con este
- * margen, a los `margen` años de distancia ya no hay puntos.
+ * El margen: equivocarse por 5 años en 1990 es mucho; en el año 476, casi nada. A la mitad del
+ * margen se ganan 50 puntos y en el borde 20; de ahí en adelante el puntaje sigue bajando de a
+ * poco en vez de cortarse en 0, así que acercarse siempre cuenta (D-325).
  */
-export const margen = year => Math.max(8, Math.round((REFERENCIA - year) / 4));
+export const margen = year => Math.max(12, Math.round((REFERENCIA - year) / 3));
 
 export function puntos(year, respuesta) {
   const d = Math.abs(Number(respuesta) - year);
   if (!Number.isFinite(d)) return 0;
-  return Math.max(0, Math.round(100 * (1 - d / margen(year))));
+  return Math.round(100 / (1 + (2 * d / margen(year)) ** 2));
 }
 
 /** 🎯 exacto · 🟩 cerca · 🟨 más o menos · 🟧 lejos · ⬛ muy lejos. */
