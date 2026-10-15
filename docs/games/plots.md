@@ -18,7 +18,8 @@ chose Loteo before publishing it.
 - **Two variants** (D-331): 🔢 **Numbers** (`numbers`, the default) and ⚡💧 **Utilities**
   (`utilities`, D-311). Standalone, the player picks one in the waiting room; the phone remembers it
   (`juegos-de-salon:loteo:variant`) and `?mode=utilities` / `?mode=numbers` in the link goes straight
-  to it. Each variant ranks in its own table (`loteo` and `loteo_utilities`).
+  to it. Each variant ranks in its own table (`loteo` and `loteo_utilities`). In Uno al día
+  (`?today`, D-334) it is always Numbers, with no picker, and the phone keeps the remembered variant.
 - **For whom:** one player.
 
 ## The waiting room

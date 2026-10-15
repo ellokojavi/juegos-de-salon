@@ -14,7 +14,8 @@ by ARRKKA**, and the waiting room says so, with the link.
 - **For whom:** one player.
 - **Variants** (D-331): `easy` (one color, the default) and `hard` (⚡ two colors). Standalone, the
   player picks one with the lever in the waiting room; in a cup, the admin picks one for that day
-  and everyone plays it.
+  and everyone plays it. In Uno al día (`?today`, D-334) it is always easy, with no lever, and the
+  phone keeps the variant picked standalone.
 - **History:** a lab prototype from v0.161.0 (D-289): the brushes from v0.161.1, the hard mode
   from v0.162.0 (D-291), the 💡 hint from v0.163.0 (D-292), giving up (D-296), the drawings' real
   colors from v0.168.3 (D-298). It left the lab with Rutas rotas and Loteo (D-332): the lab page
