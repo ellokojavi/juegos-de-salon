@@ -164,6 +164,12 @@ change), saying why.
    answer with one or two warm, simple sentences; **actionable** ones (a bug, a suggestion) go
    through the paths above like any 🐞; **negative or destructive** ones get no email (`forget`).
    The reply lands in the sender's own thread, as an answer to their email (`feedback.mjs` does it).
+   **When you are not sure how to answer** (a complaint you can't judge, a sensitive or personal
+   email, a request only the owner can decide, D-328): don't send anything. Write the doubt and
+   your draft reply in a file and run `node tools/agents/feedback.mjs doubt <n> <notes.txt>`: the
+   details go only to the owner's email, and a public `support-doubt` issue points to it with a
+   Gmail link (no private detail in it: the repo is public). `processes.mjs check` lists the open
+   ones (❓); when the owner answers there, carry it out (`reply` or `forget`) and close it.
    3. **Destructive feedback** (insults, mockery, spam, hostility with nothing to act on): no
       email. `node tools/agents/feedback.mjs forget <n> "destructive feedback"` only deletes the
       address. Harsh but honest criticism is not destructive: it gets its thank-you.
@@ -279,6 +285,7 @@ that.
 
 3 to 8 lines: whom you dispatched and what they delivered (reviewed against their criteria), how
 the projects folder ended up (what `clean-worktrees.mjs` deleted and what it left, and why), which
-feedback you handled (and how), what you closed, which patterns you saw (and how many times they've
+feedback you handled (and how), **support in one line** (emails to hola@: how many, how many
+kudos answered, issues opened, left unanswered and doubts sent to the owner, D-328), what you closed, which patterns you saw (and how many times they've
 occurred), which mechanism you built (with its PR), what you asked the owner (with the link to the
 issue) and what's left for tomorrow. No filler.
