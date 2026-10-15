@@ -251,7 +251,7 @@ export const SUELTOS = [
     slug: 'plots',
     emoji: '📐',
     name: { es: 'Loteo', en: 'Plots', pt: 'Loteamento', de: 'Parzellen' },
-    tagline: { es: 'Divide el tablero en lotes: cada número dice cuántas casillas tiene el suyo.', en: 'Split the board into plots: each number says how many squares its plot has.', pt: 'Divida o tabuleiro em lotes: cada número diz quantas casas tem o seu.', de: 'Teil das Brett in Parzellen: Jede Zahl sagt, wie viele Felder ihre hat.' },
+    tagline: { es: 'Divide el tablero en lotes: cada número dice cuántas casillas tiene el suyo.', en: 'Split the board into plots: each number says how many squares its plot has.', pt: 'Divida o tabuleiro em lotes: cada número diz quantas casas tem o seu.', de: 'Teil das Brett in Parzellen auf: Jede Zahl sagt, wie viele Felder ihre hat.' },
     tipos: ['logic'],
     duration: '5–15',
     deLabs: true,
