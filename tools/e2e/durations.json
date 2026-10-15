@@ -24,6 +24,7 @@
  "cup/tournament.mjs:cup": 239,
  "cup/tournament.mjs:demos": 52,
  "cup/tournament.mjs:labs": 200,
+ "cup/variants.mjs": 40,
  "cup/zip-ten.mjs": 15,
  "daily-group.mjs": 48,
  "daily-notifications.mjs": 20,
