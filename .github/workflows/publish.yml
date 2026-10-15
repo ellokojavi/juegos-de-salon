@@ -110,6 +110,9 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
+    outputs:
+      version: ${{ steps.served.outputs.version }}
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -142,14 +145,42 @@ jobs:
 
       # C-11: it counts as published when the site serves the new version, not when the upload ends
       - name: Check that the site serves the new version
+        id: served
         env:
           URL: ${{ steps.deploy.outputs.page_url }}
         run: |
           key="$(python3 tools/release/set-version.py --version)-${GITHUB_SHA:0:7}"
           for i in $(seq 1 20); do
             if curl -sfL "${URL}?t=$(date +%s)" | grep -q "base.css?v=$key"; then
-              echo "published: $key"; exit 0
+              echo "published: $key"; echo "version=$(python3 tools/release/set-version.py --version)" >> "$GITHUB_OUTPUT"; exit 0
             fi
             sleep 15
           done
           echo "::error::$URL does not serve $key after 5 minutes"; exit 1
+
+  # Tells the merged PR how it went, with a comment (D-323): the session that opened it has the
+  # app's CI monitor on, which wakes it on a new comment but not when everything goes well. So it
+  # learns that its change is live, or which step stopped it, without the owner having to say so.
+  # Always, also when a job failed; only for a push to main (a manual run is not a merge), and a
+  # push without a PR comments nothing.
+  report:
+    needs: [tests, already-tested, e2e, rules, publish]
+    if: ${{ always() && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Comment on the merged PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESULTS: ${{ toJSON(needs) }}
+          VERSION: ${{ needs.publish.outputs.version }}
+          SITE_URL: ${{ needs.publish.outputs.url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: node tools/release/merge-report.mjs

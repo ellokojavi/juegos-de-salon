@@ -6108,3 +6108,24 @@ is already next to it.
 is left unhandled, and checks that the seven `game.js` wire the button through `tryRematch`.
 `tools/e2e/battleship/online.mjs` cuts A's network before Revancha and checks the message, the
 button and the vigía, then plays the rematch.
+
+## D-323 · The merged PR gets a comment when its change is live, or when it isn't
+**Date:** 2026-10-15 · **Status:** current · **Relation:** completes D-216 (auto-merge) and D-218 (the CI monitor)
+**Context:** owner's request. With auto-merge a PR merges by itself, and `publish.yml` takes it to
+the site, but the session that opened it never learned it: the app's CI monitor wakes it on a
+failed check, a conflict or a new comment, not when everything goes well. Every time, the owner
+had to come back and say "it merged" before the session could do what follows (check the site,
+report, clean up, go on with the work that depended on it). That broke end-to-end automation.
+**Decision:** `publish.yml` ends with a `report` job that always runs on a push to `main`, also
+when an earlier job failed, and comments on the PR whose merge commit it is
+(`tools/release/merge-report.mjs`): "✅ Merged and published: **<version>** is live on <site>" once
+the site serves the new version, or "❌ Merged, but not published: <first step that failed>". The
+comment is an event the monitor already relays (`address_comments`), so the session wakes with it.
+The session treats it as a signal, not as instructions: it checks the state on GitHub before acting.
+**Why a comment:** it is the only success-side event that reaches the session through a channel it
+already listens to, it lives in the repo (it works from any computer, nothing installed locally),
+and it leaves a record on the PR of when and which version went live. Polling GitHub from the
+session was discarded: the session must not poll CI.
+**Consequences:** `merge-report.test.mjs` covers the message for each outcome, finding the PR of a
+merge commit, and that the `report` job waits for every job, always runs and may comment. A manual
+run of `publish.yml` comments nothing.
