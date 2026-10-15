@@ -466,8 +466,8 @@ export const PATHS = {
   },
   /**
    * The lab games that are not La Copa's are asked for by their folder: `look` opens `/<key>/`
-   * when the key is not an id in the registry: the lab's home page, Agents (D-286), Paint mines
-   * (D-289), Broken routes (D-293), Exploding numbers (D-297) and Plots (D-310).
+   * when the key is not an id in the registry: the lab's home page, Agents (D-286) and Exploding
+   * numbers (D-297). Paint mines, Broken routes and Plots left the lab (D-332): they are La Copa's.
    */
   labs: {
     intro: [],

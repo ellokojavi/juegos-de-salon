@@ -11,7 +11,7 @@ chose Loteo before publishing it.
 
 - **Where:** its own page, `https://juegosdesalon.cl/plots/`, on the home page (logic, 5–15 min), in
   the four languages (C-3). Id `loteo` (rooms, rankings, signals, `localStorage`), folder and slug
-  `plots`. It left the lab in D-331: `/labs/plots/` and `/minigames/plots/`, `/minijuegos/loteo/`
+  `plots`. It left the lab in D-332: `/labs/plots/` and `/minigames/plots/`, `/minijuegos/loteo/`
   are bridges to `/plots/`.
 - **In La Copa:** it is in `POZO`, so a week can pick it; it is not part of the Gran Final. The admin
   picks the variant for that day below the week (`loteo` or `loteo:utilities` in the calendar, D-331).
