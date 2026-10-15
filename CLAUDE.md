@@ -174,7 +174,8 @@ owner's key) and does not merge. Everything else in this guide applies the same.
   reach the browser on top of one that passed (`tools/e2e/already-tested.mjs`, D-308), stamps the version on the copy it publishes and checks that the live site
   serves it. Its last job, `report`, always runs on a push to `main` (also when an earlier job failed) and
   comments on the merged PR with the version that went live or the first step that stopped it
-  (`tools/release/merge-report.mjs`, D-323); a manual run comments nothing.
+  (`tools/release/merge-report.mjs`, D-323): a record, not the wake-up (that is the `end-to-end`
+  comment before the merge, point 5 above); a manual run comments nothing.
 - The Firebase rules are published by `publish.yml` on every merge, before the site (D-218):
   it uploads nothing if they are already there, and if Firebase rejects them the site is not published. It needs the
   `FIREBASE_ADMIN_JSON` secret on GitHub (the service account key, loaded by the owner); without it,
