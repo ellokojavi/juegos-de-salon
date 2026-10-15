@@ -120,6 +120,26 @@
       "archivo": "cup/tournament.mjs",
       "red": false,
       "que": "una Copa de 7 días con tres jugadores, el laboratorio y la práctica de cada juego"
+    },
+    "rutas": {
+      "archivo": "routes/game.mjs",
+      "red": false,
+      "que": "Rutas rotas: las cinco etapas, rendirse y el tiempo"
+    },
+    "loteo-numeros": {
+      "archivo": "plots/numbers.mjs",
+      "red": false,
+      "que": "Loteo en Números: los cinco tableros"
+    },
+    "loteo-servicios": {
+      "archivo": "plots/utilities.mjs",
+      "red": false,
+      "que": "Loteo en Servicios: los cinco tableros"
+    },
+    "pintaminas": {
+      "archivo": "paint-mines/game.mjs",
+      "red": false,
+      "que": "Pintaminas fácil y difícil"
     }
   },
   "capturas": [
@@ -738,6 +758,62 @@
       "pie": "Creating a cup: drag the games into the week",
       "guion": "copa",
       "toma": "10-week"
+    },
+    {
+      "seccion": "cup-new-games",
+      "imagen": "docs/screenshots/cup-new-games/01-routes-waiting.png",
+      "pie": "Broken Routes: the waiting room",
+      "guion": "rutas",
+      "toma": "01-waiting-room"
+    },
+    {
+      "seccion": "cup-new-games",
+      "imagen": "docs/screenshots/cup-new-games/02-routes-game.png",
+      "pie": "Broken Routes: turn rectangles until every line joins",
+      "guion": "rutas",
+      "toma": "02-game"
+    },
+    {
+      "seccion": "cup-new-games",
+      "imagen": "docs/screenshots/cup-new-games/03-routes-result.png",
+      "pie": "Broken Routes: five stages, turns against the minimum",
+      "guion": "rutas",
+      "toma": "05-result"
+    },
+    {
+      "seccion": "cup-new-games",
+      "imagen": "docs/screenshots/cup-new-games/04-plots-numbers.png",
+      "pie": "Plots in Numbers: each number, a plot that size",
+      "guion": "loteo-numeros",
+      "toma": "02-game"
+    },
+    {
+      "seccion": "cup-new-games",
+      "imagen": "docs/screenshots/cup-new-games/05-plots-utilities.png",
+      "pie": "Plots in Utilities: one ⚡ and one 💧 per plot",
+      "guion": "loteo-servicios",
+      "toma": "02-game-utilities"
+    },
+    {
+      "seccion": "cup-new-games",
+      "imagen": "docs/screenshots/cup-new-games/06-paint-mines-hard.png",
+      "pie": "Paint Mines: the lever picks hard, two colors",
+      "guion": "pintaminas",
+      "toma": "02-lobby-hard"
+    },
+    {
+      "seccion": "cup-new-games",
+      "imagen": "docs/screenshots/cup-new-games/07-paint-mines-hint.png",
+      "pie": "Paint Mines: a 💡 hint marks a cell to deduce",
+      "guion": "pintaminas",
+      "toma": "03-game-hint"
+    },
+    {
+      "seccion": "cup-new-games",
+      "imagen": "docs/screenshots/cup-new-games/08-paint-mines-drawing.png",
+      "pie": "Painted whole, the drawing shows",
+      "guion": "pintaminas",
+      "toma": "05-revealed"
     }
   ],
   "fuentes": {
@@ -778,6 +854,14 @@
     "julepe": [
       "public/julep/",
       "public/assets/js/sobre.js"
+    ],
+    "cup-new-games": [
+      "public/cup/games/routes/",
+      "public/cup/games/plots/",
+      "public/cup/games/paint-mines/",
+      "public/cup/game.js",
+      "public/cup/suelto/",
+      "public/cup/style.css"
     ]
   }
 }

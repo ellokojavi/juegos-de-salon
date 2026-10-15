@@ -2,7 +2,7 @@
 
 Mobile-first web app with party games to play with friends: card games, drinking games, guessing games. Open it on a phone or tablet, pick a game from the menu, type in the players, and the phone runs the game. In Spanish, English, Portuguese and German.
 
-The menu can be filtered by kind of game (words, logic, trivia, cards and dice); how many are playing is chosen inside each game. The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. Each game card has a ☆ in its corner to mark it as a favorite; once there is one, a ⭐ **Favorites** chip at the start of the kinds (or just above them, on a narrow phone) shows only those. Favorites stay in that browser, with no account (D-238). A 🎲 **Random game** button rolls a 3D die over the menu, one game per face, and opens whichever lands on top: never The Cup, and only the filtered kind if a filter is on (D-188). At the top, 📅 **One a Day** shares a row with The Cup, each in a half-width card: it opens today's game, a surprise game every day, the same challenge for everyone (D-230, D-239; see below). The games The Cup is made of (Connections, Bulls and Cows: Word, What Year?, Where Is It?, Queens, Tango, Zip and Untangle) are on the menu too, as games like any other: one player, in all four languages (D-198).
+The menu can be filtered by kind of game (words, logic, trivia, cards and dice); how many are playing is chosen inside each game. The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. Each game card has a ☆ in its corner to mark it as a favorite; once there is one, a ⭐ **Favorites** chip at the start of the kinds (or just above them, on a narrow phone) shows only those. Favorites stay in that browser, with no account (D-238). A 🎲 **Random game** button rolls a 3D die over the menu, one game per face, and opens whichever lands on top: never The Cup, and only the filtered kind if a filter is on (D-188). At the top, 📅 **One a Day** shares a row with The Cup, each in a half-width card: it opens today's game, a surprise game every day, the same challenge for everyone (D-230, D-239; see below). The games The Cup is made of (Connections, Bulls and Cows: Word, What Year?, Where Is It?, Queens, Tango, Zip, Untangle, Broken Routes, Plots and Paint Mines) are on the menu too, as games like any other: one player, in all four languages (D-198, D-332). A game that just arrived says **New** next to its name on its card for two weeks (D-333).
 
 **Play:** https://juegosdesalon.cl/
 
@@ -39,6 +39,9 @@ The games with their own section below come first; after them, the one-player ga
 | 🧶 [Untangle / Desenredo / Desenrola](https://juegosdesalon.cl/untangle/) | 1 | Play alone | Also in The Cup |
 | 📍 [Where Is It? / ¿Dónde queda? / Onde fica?](https://juegosdesalon.cl/where/) | 1 | Play alone | Also in The Cup |
 | 🔍 The Case / El caso / O Caso | 1 | Play alone | 🧪 lab |
+| 🚇 [Broken Routes / Rutas rotas / Rotas Quebradas](https://juegosdesalon.cl/routes/) | 1 | Play alone | Also in The Cup |
+| 📐 [Plots / Loteo / Loteamento](https://juegosdesalon.cl/plots/) | 1 | Play alone | Also in The Cup |
+| 🖌️ [Paint Mines / Pintaminas / Pinta-Minas](https://juegosdesalon.cl/paint-mines/) | 1 | Play alone | Also in The Cup |
 <!-- /generated -->
 
 ---
@@ -393,7 +396,7 @@ Not a game but a **tournament that lasts a week**. Someone creates a cup and sha
 
 It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. The games reuse the engines, decks and screens this app already had where it can.
 
-**The admin picks the week** (D-163): when creating the cup, which games go in and in what order, starting from a random proposal (no two days of the same skill in a row) for anyone who would rather not think about it. It is Timeline's hand and line: drag a day to another spot in the week, or drag a game from the hand onto the day it replaces. There are ten to choose from: the six below plus Zip, Tango, Where is it? and Untangle. The Grand Final always closes the cup and does not change. Without a choice, this is the classic week:
+**The admin picks the week** (D-163): when creating the cup, which games go in and in what order, starting from a random proposal (no two days of the same skill in a row) for anyone who would rather not think about it. It is Timeline's hand and line: drag a day to another spot in the week, or drag a game from the hand onto the day it replaces. There are thirteen to choose from: the six below plus Zip, Tango, Where is it?, Untangle, Broken Routes, Plots and Paint Mines. The Grand Final always closes the cup and does not change. Without a choice, this is the classic week:
 
 | Day | Game | Skill |
 |---|---|---|
@@ -405,7 +408,7 @@ It borrows what makes daily puzzles work (Wordle, Connections): same challenge f
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: five short rounds, one of each, worth double | everything |
 
-The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and **🧶 Untangle**. Untangle is Simon Tatham's puzzle, where you drag knots until no thread crosses another, in ten levels of 6 to 15 knots against a four-minute clock, like Zip. The tangle is built from an untangled drawing, so it always has a solution, and a thread running over a knot counts as a crossing, so piling the knots up doesn't help (D-179). 🔄 Restart level puts the knots back where the level began: like Clear all in Queens and Zip, the first tap arms it, the second does it, and the clock keeps running. Where is it? gives you five cities, each with its country, and you drop a pin on a satellite-image globe with no names on it (NASA's Blue Marble, so deserts, jungles and ice look like themselves), which spins endlessly as you drag it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous and second-tier ones (529 in all), and the borders used to check them come from Natural Earth via `tools/generators/map.mjs` (D-155, D-159). **The games also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all four languages, and the other eight (all but the final) have their own card, Where is it? included since D-174 and Untangle since D-190, open at `/<slug>/` like any other game (`/queens/`, `/tango/`…; no "cup" in a link that has nothing to do with one, D-149, D-198) and play in the player's language. Each of those pages is generated by `tools/release/og.mjs` with its own social card, so a link pasted in WhatsApp shows the game, not the cup (D-162). **🔍 The Case** is a finished cup game that stayed in the lab and, since it didn't take off, now sits in the lab's Storeroom, still playable but no longer worked on (D-257, D-280): a deduction mystery in the style of *Clues by Sam*, with 20 suspects and clues that always tell the truth, generated so you never have to guess; if you get stuck, 💡 Hint tells you whom to look at and which clues to put together, for 15 points (D-263). It plays at `/labs/case/` (`/case/` redirects there), behind the lab's door, where each invited person has their own key (D-281, D-284), in all four languages, with an animated cover of cards flipping under a magnifying glass: with no seed in the link it's the case of the day, the same for everyone, it picks up where you left off after a reload, and the end offers sharing that same case, another one, today's, and a comment form (D-267). A cup can't pick it. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `public/assets/`.
+The other seven are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?**, **🧶 Untangle** and the three that left the lab in D-332, below. Untangle is Simon Tatham's puzzle, where you drag knots until no thread crosses another, in ten levels of 6 to 15 knots against a four-minute clock, like Zip. The tangle is built from an untangled drawing, so it always has a solution, and a thread running over a knot counts as a crossing, so piling the knots up doesn't help (D-179). 🔄 Restart level puts the knots back where the level began: like Clear all in Queens and Zip, the first tap arms it, the second does it, and the clock keeps running. Where is it? gives you five cities, each with its country, and you drop a pin on a satellite-image globe with no names on it (NASA's Blue Marble, so deserts, jungles and ice look like themselves), which spins endlessly as you drag it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous and second-tier ones (529 in all), and the borders used to check them come from Natural Earth via `tools/generators/map.mjs` (D-155, D-159). **The games also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all four languages, and the other eleven (all but the final) have their own card, Where is it? included since D-174, Untangle since D-190 and the three below since D-332, open at `/<slug>/` like any other game (`/queens/`, `/tango/`…; no "cup" in a link that has nothing to do with one, D-149, D-198) and play in the player's language. Each of those pages is generated by `tools/release/og.mjs` with its own social card, so a link pasted in WhatsApp shows the game, not the cup (D-162). **🔍 The Case** is a finished cup game that stayed in the lab and, since it didn't take off, now sits in the lab's Storeroom, still playable but no longer worked on (D-257, D-280): a deduction mystery in the style of *Clues by Sam*, with 20 suspects and clues that always tell the truth, generated so you never have to guess; if you get stuck, 💡 Hint tells you whom to look at and which clues to put together, for 15 points (D-263). It plays at `/labs/case/` (`/case/` redirects there), behind the lab's door, where each invited person has their own key (D-281, D-284), in all four languages, with an animated cover of cards flipping under a magnifying glass: with no seed in the link it's the case of the day, the same for everyone, it picks up where you left off after a reload, and the end offers sharing that same case, another one, today's, and a comment form (D-267). A cup can't pick it. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `public/assets/`.
 
 - **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
 - **A day stays open until the next midnight** (a grace day), except the final. **Late sign-ups** are open until the final unless the admin closes them or the cup is full (ten players); a late player gets 0 for the days already closed, and the warning shows from day 3 on, because on day 2 day 1 is still in its grace day (D-177). Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95).
@@ -423,6 +426,35 @@ The other four are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** and *
 - A 3-day cup exists for testing with `?three` (D-100), and `?test` plays a cup with no Firebase, which is what the demos (`?test&demo=<scene>`, no longer linked from the lab since D-262), the README screenshots and the end-to-end scripts use.
 
 Spec and design: [docs/games/cup.md](docs/games/cup.md)
+
+### 🚇 Broken Routes, 📐 Plots and 🖌️ Paint Mines
+
+<!-- generated: screenshots:cup-new-games · written by python3 tools/release/readme.py update -->
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/cup-new-games/01-routes-waiting.png" width="180" alt="Broken Routes: the waiting room"><br><sub>Broken Routes: the waiting room</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/02-routes-game.png" width="180" alt="Broken Routes: turn rectangles until every line joins"><br><sub>Broken Routes: turn rectangles until every line joins</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/03-routes-result.png" width="180" alt="Broken Routes: five stages, turns against the minimum"><br><sub>Broken Routes: five stages, turns against the minimum</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/04-plots-numbers.png" width="180" alt="Plots in Numbers: each number, a plot that size"><br><sub>Plots in Numbers: each number, a plot that size</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/cup-new-games/05-plots-utilities.png" width="180" alt="Plots in Utilities: one ⚡ and one 💧 per plot"><br><sub>Plots in Utilities: one ⚡ and one 💧 per plot</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/06-paint-mines-hard.png" width="180" alt="Paint Mines: the lever picks hard, two colors"><br><sub>Paint Mines: the lever picks hard, two colors</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/07-paint-mines-hint.png" width="180" alt="Paint Mines: a 💡 hint marks a cell to deduce"><br><sub>Paint Mines: a 💡 hint marks a cell to deduce</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/08-paint-mines-drawing.png" width="180" alt="Painted whole, the drawing shows"><br><sub>Painted whole, the drawing shows</sub></td>
+  </tr>
+</table>
+<!-- /generated -->
+
+Three one-player games that were tried out with friends in the lab and left it together (D-332): each one is on the home page in the four languages, at its own page, and in The Cup's pool, so the admin can put it in the week (not in The Grand Final, which keeps its five fixed rounds). Like the other cup games, the same screen serves the standalone page and the cup day (D-198): the waiting room, the 3-2-1 countdown, the clock, the result with its breakdown, sharing, the 🐞 report and the leaderboards are the cup's. Standalone, every game is a new random board; in a cup, the code and the day decide it, so everyone plays the same one.
+
+- **🚇 Broken Routes** (Rutas rotas, `/routes/`; inspired by *Junction Nine*, by Bricks and Chips): nine pieces of a metro map on a 3×3 board. Drag from one piece to another and the rectangle between them turns half a turn as one block, its pieces ending up flipped; a tap turns a single piece. Join every color into one unbroken line, in five stages that get harder, against a 7-minute clock. Each stage is worth 17 points; with all five, up to 10 more for speed and up to 5 for using the fewest turns. Undo and restart are free; 🏳️ Give up asks for a second tap and keeps the stages already done (D-293 to D-295).
+- **📐 Plots** (Loteo, `/plots/`; inspired by Nikoli's *Shikaku*): split the grid into rectangles by dragging from corner to corner, each holding exactly one number, which is its area; every board has a single solution you reach without guessing. Five boards against the clock, two to warm up and three hard ones; each is worth 12 points, and with all five, speed adds up to 40; each 💡 hint takes 10 (D-310, D-312).
+- **🖌️ Paint Mines** (Pintaminas, `/paint-mines/`; inspired by *ColorSweeper*, by ARRKKA): a color Minesweeper on a 7×7 grid where each cell is painted or not, and its number counts how many of its 8 neighbors are like it. Paint it all without guessing and a drawing shows up, in its real colors. A miss costs 15 and a 💡 hint 10, from 100; giving up is worth the painted share (D-289, D-290, D-292, D-296, D-298).
+
+**Variants** (D-331): Plots comes in 🔢 **Numbers** and ⚡💧 **Utilities** (all plots the same size, each with exactly one ⚡ and one 💧), and Paint Mines in **easy** (one color) and ⚡ **hard** (two colors). Standalone, the player picks one in the waiting room, right under the game's name (Paint Mines' own lever, two buttons for Plots); the phone remembers it, a link can say it (`?mode=hard`, `?mode=utilities`) and each variant has its own leaderboard. In a cup everyone has to play the same thing, so the admin picks the variant of each of those days below the week when creating the cup, and the day's card, its waiting room and its rules say it under the game's name. Every variant scores 0 to 100, so the hard mode's old ×1.5 from the lab is gone (D-332).
+
+Spec and design: [docs/games/routes.md](docs/games/routes.md), [docs/games/plots.md](docs/games/plots.md), [docs/games/paint-mines.md](docs/games/paint-mines.md)
 
 ---
 
@@ -502,6 +534,9 @@ The whole experience is translated: the menu and its footer lines, every game wi
 | Desenredo | Untangle | Desenrola | Entwirren |
 | ¿Dónde queda? | Where Is It? | Onde fica? | Wo liegt das? |
 | El caso | The Case | O Caso | Der Fall |
+| Rutas rotas | Broken Routes | Rotas Quebradas | Kaputte Linien |
+| Loteo | Plots | Loteamento | Parzellen |
+| Pintaminas | Paint Mines | Pinta-Minas | Malminen |
 <!-- /generated -->
 
 How it is put together (canon C-3):
@@ -611,6 +646,9 @@ Then open http://localhost:8765 (ES modules have to be served over HTTP). Tests 
 node public/battleship/engine.test.mjs
 node public/bulls-and-cows/engine.test.mjs
 node public/cup/engine.test.mjs
+node public/cup/games/paint-mines/engine.test.mjs
+node public/cup/games/plots/engine.test.mjs
+node public/cup/games/routes/engine.test.mjs
 node public/fourth-king/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
@@ -618,9 +656,6 @@ node public/julep/engine.test.mjs
 node public/labs/agents/engine.test.mjs
 node public/labs/code/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
-node public/labs/paint-mines/engine.test.mjs
-node public/labs/plots/engine.test.mjs
-node public/labs/routes/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node public/assets/js/arrastre.test.mjs
@@ -762,7 +797,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   index.html                  Main menu (generated from assets/js/games.js)
   en/ · pt/ · de/             Language doors: they set the language and send you to the menu
   cup/                        The Cup: tournament engine, avisos.js (the notifications bell and sheets, D-223), stores (Firebase and local test), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos)
-    games/                    The games: one folder each (engine.js + ui.js + its own word content in each language); solo.js mounts one as the play-alone mode of another game; deshacer.js is the shared ↩️ Undo button
+    games/                    The games: one folder each (engine.js + ui.js + its own word content in each language; texts.js and style.css when a game brings its own texts and styles, D-331); solo.js mounts one as the play-alone mode of another game; deshacer.js is the shared ↩️ Undo button
   timeline/                   Timeline (engine.js + tests, game.js, rules.js, decks/)
   bulls-and-cows/             Bulls and Cows (engine.js + tests, game.js, rules.js)
   hangman/                    Hangman (engine.js + tests, game.js, rules.js, decks/)
@@ -772,7 +807,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   julep/                      Julep (engine.js + tests, game.js, rules.js)
   fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
-  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed, and behind a key: each invited person gets their own link, and without one every lab page sends you to the menu, D-281, D-284), in two groups, Active projects, today 🕵️ Agentes (labs/agents/: a mini Codenames for one player, where the game gives the clues and you find your agents among 15 words, D-286, D-287), and 🖌️ Pintaminas (labs/paint-mines/: a color Minesweeper where every number counts the neighbours that share its color, and painting the grid without guessing reveals a drawing; a switch turns on a two-color hard mode worth ×1.5, D-289, D-290, D-291), and 🚇 Rutas rotas (labs/routes/: nine tiles of a metro map; drag to mark a rectangle and spin it half a turn until each color joins into one unbroken line, in the fewest spins, across five stages that get harder, D-293, D-294), and 💥 Números explosivos (labs/exploding-numbers/: a Number Match-style solitaire on a 9-column grid; pop pairs of equal numbers or numbers that add up to 10 when they line up, a fully popped row explodes and goes away, and ➕ copies the numbers left to the bottom, three times a game, D-297), and 📐 Loteo (labs/plots/: a Shikaku-style logic puzzle; split the grid into rectangles, each holding one number that is its area, by dragging from corner to corner, over five boards against the clock, two to warm up (5×5 and 6×6) and three hard ones (7×7, 7×7 and 8×8), each with a single solution you can reach without guessing, D-310; a selector switches to the ⚡💧 Utilities mode, where all plots are the same size and each holds exactly one ⚡ and one 💧, D-311), and the Storeroom, for the ones that didn't take off, each folded to its title until you tap it (D-280): El caso (labs/case/, D-267) and The Code (labs/code/: 4 see-through cards that, laid on a base and each turned the right way, show a 5-digit code, or in Spanish a 5-letter word, D-270); each ends with a "What did you think?" form for the friends testing them (D-265, D-268)
+  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed, and behind a key: each invited person gets their own link, and without one every lab page sends you to the menu, D-281, D-284), in two groups, Active projects, today 🕵️ Agentes (labs/agents/: a mini Codenames for one player, where the game gives the clues and you find your agents among 15 words, D-286, D-287), and 💥 Números explosivos (labs/exploding-numbers/: a Number Match-style solitaire on a 9-column grid; pop pairs of equal numbers or numbers that add up to 10 when they line up, a fully popped row explodes and goes away, and ➕ copies the numbers left to the bottom, three times a game, D-297), and the Storeroom, for the ones that didn't take off, each folded to its title until you tap it (D-280): El caso (labs/case/, D-267) and The Code (labs/code/: 4 see-through cards that, laid on a base and each turned the right way, show a 5-digit code, or in Spanish a 5-letter word, D-270); each ends with a "What did you think?" form for the friends testing them (D-265, D-268); labs/paint-mines/, labs/routes/ and labs/plots/ are now bridges to the games that left the lab (D-332)
     case/                     The Case: a mystery in the style of Clues by Sam, the full game in all four languages; today's case is the same for everyone (D-256, D-267)
     code/                     The Code: a base and 4 see-through cards; put each one on, turn (↻) and flip (⇋) it until the strokes form a 5-digit code with no stroke on top of another (an overlap shows striped), typed on a keypad; in Spanish there is also Word, with 14-segment letters and two-sided cards (flipping shows the other side); all four languages, its texts in game.js (D-270)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
@@ -837,9 +872,9 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Diseño: El Ahorcado](docs/games/hangman.md)
 - [Diseño: Julepe](docs/games/julep.md)
 - [Diseño: Dudo](docs/games/liars-dice.md)
-- [🖌️ Pintaminas (prototipo del laboratorio, en Proyectos activos)](docs/games/paint-mines.md)
-- [📐 Loteo (prototipo del laboratorio, en Proyectos activos)](docs/games/plots.md)
-- [🚇 Rutas rotas (prototipo del laboratorio, en Proyectos activos)](docs/games/routes.md)
+- [🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)](docs/games/paint-mines.md)
+- [📐 Loteo (Plots · Loteamento · Parzellen)](docs/games/plots.md)
+- [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
 - [Changelog](CHANGELOG.md)
 - [El alemán](docs/ALEMAN.md)
