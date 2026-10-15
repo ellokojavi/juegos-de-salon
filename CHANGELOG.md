@@ -1,5 +1,50 @@
 # Changelog
 
+## 0.171.5 — 2026-10-14
+- **Rooms no longer leak:** a new room and its note in the cleanup index are now one write, so a room created on a bad connection (the create timed out and the player tried again) is still deleted once it expires; before, it could stay in the database forever. New `tools/firebase/unnoted-rooms.mjs` finds the rooms that leaked before this, and the rules let a code be noted again the same day (D-321).
+
+## 0.171.4 — 2026-10-14
+- **Rooms after a dropped connection:** when a phone locks or loses signal right after a move, Firebase sends that move again on reconnecting, and the room turned the repeat away because it already had it. The game never noticed, but the page counted it as a failure, and it showed up on the owner's Health panel as a Batalla Naval "PERMISSION_DENIED". Now that repeat is no longer counted as a failure (a move that really didn't get through still is), and the presence writes no longer leave errors unhandled either (D-320).
+
+## 0.171.3 — 2026-10-14
+- **A room that won't open:** in every game with rooms, the button now says "Abriendo sala…" or "Entrando…" while it tries, and the previous error goes away; before, it only went dim with the old message still on screen and looked frozen. If the room can't be reached, a "📱 Jugar en un celular" button under the message goes straight to one-phone mode, and tapping create or join again tries once more (D-319).
+
+## 0.171.2 — 2026-10-14
+- **The workshop speaks English** (D-316, phase 3): the tools, the end-to-end scripts, the
+  workflows, the agents and their GitHub labels have English names, commands, messages and
+  comments (`tools/agents/processes.mjs check`, `tools/release/readme.py check`,
+  `tools/e2e/look.mjs … --width 320`, the `tests` and `end-to-end` checks). Nothing changes for
+  players.
+
+## 0.171.1 — 2026-10-14
+- **Link previews:** the title on the cards that WhatsApp and other chats show for a link is no longer cut on the right (the N of SALÓN).
+- **🐞 Feedback replies:** the email shows the game's header, quotes each comment whole in grey italics above its answer, and keeps a plain-text version for mail apps without images (D-317).
+
+## 0.171.0 — 2026-10-14
+- **🐞 Feedback with an optional email:** every comment form (lab, La Copa and the end of each lab game) has an optional "Your email" field, which says it's only used to reply to you, that it's never published and that it's deleted afterwards. When the comment is resolved, the player gets a friendly email in their language from hola@juegosdesalon.cl (D-317).
+
+## 0.170.7 — 2026-10-14
+- **The repository speaks English** (D-316): everything internal (documents, decisions, code,
+  tool messages, commits, PRs and GitHub issues) is now written in English, at the owner's request.
+  This first step translates the living instructions (`CLAUDE.md`, the three agents, the
+  promo-video skill, `CONTRIBUTING.md`, the READMEs of `tools/e2e/` and `firebase/`) and the texts
+  the bots post on GitHub (feedback, dilemmas, one-tap decisions, "main is red"). Nothing changes
+  for players: the app keeps its four languages, Spanish by default.
+
+## 0.170.6 — 2026-10-14
+- **Línea de Tiempo y ⏳ Línea Relámpago:** el acierto también cuenta el dato de la carta, en el veredicto bajo la carta con su año, como el error; se cierra solo cuando se vacía su barra de 6 s (o antes con un toque) y en Línea Relámpago el reloj se pausa mientras se lee. Sale la franja chica sobre el botón de colocar, que no se notaba (pedido del dueño, D-314).
+
+## 0.170.5 — 2026-10-14
+- **🚇 Rutas (laboratorio):** el tablero no marca qué piezas o bordes ya calzan: las líneas mismas muestran dónde se cortan, y descubrirlo es parte del juego (#359). Se quita la marca `.unida`, que no tenía estilo.
+
+## 0.170.4 — 2026-10-14
+- **🕵️ Agentes (laboratorio):** 18 pistas nuevas de ideas (MIEDO, SUERTE, LIBERTAD, SILENCIO…), con palabras que las evocan sin ser de su rubro, para pensar un poco más (pedido de Cris, #383). Entran al tablero del día desde el 16 de octubre; los días anteriores no cambian.
+- **📐 Loteo (laboratorio), modo ⚡💧 Servicios:** el último tablero es siempre el más difícil de los dos 8×8 (#401), y el primer paso dice que los lotes son rectangulares (#397).
+
+## 0.170.3 — 2026-10-14
+- **📐 Loteo, modo ⚡💧 Servicios (laboratorio):** el aviso de un lote con dos íconos iguales dice la cantidad en cifras, «Tiene 2 ⚡: cada lote lleva uno.», como el de números («Tiene 2 números…») (U-5).
+- **Marketing:** revisión del 2026-10-14; «Se vienen cositas» al día y los demás assets con los mismos pendientes de ayer (U-34).
+
 ## 0.170.2 — 2026-10-13
 - **📐 Loteo (laboratorio), modo ⚡💧 Servicios más difícil** (D-312): los tres últimos tableros ya no
   muestran ningún lote obvio de entrada y piden deducciones más profundas; los íconos quedan cerca de
