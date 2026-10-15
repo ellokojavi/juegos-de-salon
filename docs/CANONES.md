@@ -374,6 +374,9 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   y si el juego no está en el idioma elegido lo dice antes de abrirlo ("🇪🇸 En español",
   `idiomas` en `games.js`; hoy ninguno lo declara, D-170). Uno de `SUELTOS` con `labs: true` no
   sale en la portada, aunque su link ya se comparta.
+- **A new game says "New" for two weeks** (D-333): next to its name, like "Próximamente", from its
+  `nuevoDesde` date in `games.js` for `DIAS_NUEVO` days (`esNuevo`). Every game that reaches the
+  home page brings that date; `games.test.mjs` stops one that doesn't.
 - **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar, bajo la bajada, sale
   de las tarjetas que se ven y se pueden abrir, nunca de La Copa (D-188), y abre el juego con el
   dado encima (D-237). Uno al día es una tarjeta de media fila al lado de La Copa: los dos pesan
@@ -473,7 +476,7 @@ Los nombres de antes se siguen leyendo como alias: un link que ya circula no se 
 - [ ] Lo que cambió, en `changelog/<rama>.md` sin número (`node tools/release/changelog.mjs new`); publicada y comprobada en la URL pública por `publish.yml` (C-11, D-205, D-300).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
-- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17).
+- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17). A new one brings `nuevoDesde` for its "New" label (D-333).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
 - [ ] Sus URL van en inglés: carpeta, parámetros y valores, leídos con `parametros.js`, con los nombres de antes como alias (C-18).
 - [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).

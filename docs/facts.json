@@ -1,5 +1,5 @@
 {
-  "version": "0.171.13",
+  "version": "0.172.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -18,7 +18,7 @@
     "pt": 100,
     "de": 100
   },
-  "commonKeys": 32,
+  "commonKeys": 33,
   "games": [
     {
       "id": "copa",
@@ -77,8 +77,21 @@
         "public/cup/games/mazos.js",
         "public/cup/games/number/engine.js",
         "public/cup/games/number/ui.js",
+        "public/cup/games/paint-mines/dibujos.js",
+        "public/cup/games/paint-mines/engine.js",
+        "public/cup/games/paint-mines/style.css",
+        "public/cup/games/paint-mines/texts.js",
+        "public/cup/games/paint-mines/ui.js",
+        "public/cup/games/plots/engine.js",
+        "public/cup/games/plots/style.css",
+        "public/cup/games/plots/texts.js",
+        "public/cup/games/plots/ui.js",
         "public/cup/games/queens/engine.js",
         "public/cup/games/queens/ui.js",
+        "public/cup/games/routes/engine.js",
+        "public/cup/games/routes/style.css",
+        "public/cup/games/routes/texts.js",
+        "public/cup/games/routes/ui.js",
         "public/cup/games/semilla.js",
         "public/cup/games/solo.js",
         "public/cup/games/tango/engine.js",
@@ -662,6 +675,54 @@
       "duration": "5–10",
       "labs": true,
       "path": "labs/case/"
+    },
+    {
+      "id": "rutas",
+      "emoji": "🚇",
+      "name": {
+        "es": "Rutas rotas",
+        "en": "Broken Routes",
+        "pt": "Rotas Quebradas",
+        "de": "Kaputte Linien"
+      },
+      "kinds": [
+        "logic"
+      ],
+      "duration": "7",
+      "labs": false,
+      "path": "routes/"
+    },
+    {
+      "id": "loteo",
+      "emoji": "📐",
+      "name": {
+        "es": "Loteo",
+        "en": "Plots",
+        "pt": "Loteamento",
+        "de": "Parzellen"
+      },
+      "kinds": [
+        "logic"
+      ],
+      "duration": "5–15",
+      "labs": false,
+      "path": "plots/"
+    },
+    {
+      "id": "pintaminas",
+      "emoji": "🖌️",
+      "name": {
+        "es": "Pintaminas",
+        "en": "Paint Mines",
+        "pt": "Pinta-Minas",
+        "de": "Malminen"
+      },
+      "kinds": [
+        "logic"
+      ],
+      "duration": "3–6",
+      "labs": false,
+      "path": "paint-mines/"
     }
   ],
   "themes": [
@@ -855,8 +916,18 @@
     "public/cup/games/mazos.js",
     "public/cup/games/number/engine.js",
     "public/cup/games/number/ui.js",
+    "public/cup/games/paint-mines/dibujos.js",
+    "public/cup/games/paint-mines/engine.js",
+    "public/cup/games/paint-mines/texts.js",
+    "public/cup/games/paint-mines/ui.js",
+    "public/cup/games/plots/engine.js",
+    "public/cup/games/plots/texts.js",
+    "public/cup/games/plots/ui.js",
     "public/cup/games/queens/engine.js",
     "public/cup/games/queens/ui.js",
+    "public/cup/games/routes/engine.js",
+    "public/cup/games/routes/texts.js",
+    "public/cup/games/routes/ui.js",
     "public/cup/games/semilla.js",
     "public/cup/games/solo.js",
     "public/cup/games/tango/engine.js",
@@ -909,13 +980,6 @@
     "public/labs/code/game.js",
     "public/labs/exploding-numbers/engine.js",
     "public/labs/exploding-numbers/game.js",
-    "public/labs/paint-mines/dibujos.js",
-    "public/labs/paint-mines/engine.js",
-    "public/labs/paint-mines/game.js",
-    "public/labs/plots/engine.js",
-    "public/labs/plots/game.js",
-    "public/labs/routes/engine.js",
-    "public/labs/routes/game.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -962,6 +1026,9 @@
     "public/cup/engine.test.mjs",
     "public/cup/games/deshacer.test.mjs",
     "public/cup/games/juegos.test.mjs",
+    "public/cup/games/paint-mines/engine.test.mjs",
+    "public/cup/games/plots/engine.test.mjs",
+    "public/cup/games/routes/engine.test.mjs",
     "public/cup/planilla.test.mjs",
     "public/cup/reportes.test.mjs",
     "public/cup/store.test.mjs",
@@ -973,9 +1040,6 @@
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
-    "public/labs/paint-mines/engine.test.mjs",
-    "public/labs/plots/engine.test.mjs",
-    "public/labs/routes/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
@@ -1037,6 +1101,7 @@
     "cup/player-cups.mjs",
     "cup/seat.mjs",
     "cup/tournament.mjs",
+    "cup/variants.mjs",
     "cup/zip-ten.mjs",
     "daily-group.mjs",
     "daily-notifications.mjs",
@@ -1069,13 +1134,13 @@
     "look.mjs",
     "output.mjs",
     "output.test.mjs",
-    "paint-mines/lab.mjs",
+    "paint-mines/game.mjs",
     "paths.mjs",
-    "plots/lab.mjs",
+    "plots/numbers.mjs",
     "plots/utilities.mjs",
     "room-cap.mjs",
     "room-error.mjs",
-    "routes/lab.mjs",
+    "routes/game.mjs",
     "share-home.mjs",
     "share-room.mjs",
     "spacing-common.mjs",
@@ -1186,15 +1251,15 @@
     },
     {
       "path": "docs/games/paint-mines.md",
-      "title": "🖌️ Pintaminas (prototipo del laboratorio, en Proyectos activos)"
+      "title": "🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)"
     },
     {
       "path": "docs/games/plots.md",
-      "title": "📐 Loteo (prototipo del laboratorio, en Proyectos activos)"
+      "title": "📐 Loteo (Plots · Loteamento · Parzellen)"
     },
     {
       "path": "docs/games/routes.md",
-      "title": "🚇 Rutas rotas (prototipo del laboratorio, en Proyectos activos)"
+      "title": "🚇 Rutas rotas (Broken Routes)"
     },
     {
       "path": "docs/games/timeline.md",

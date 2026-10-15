@@ -1,0 +1,101 @@
+/* 📐 Loteo (D-331; born in the lab, D-310). Every selector starts with .lt-: the cup's style.css is shared. */
+
+/* The waiting room: the name with its credit, and the board that solves itself */
+.lt-titulo { display: grid; justify-items: center; gap: 2px; }
+.lt-titulo h2 { margin: 4px 0 0; }
+.lt-credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.lt-credito a { color: var(--cyan); }
+.lt-portada { display: grid; justify-items: center; gap: 8px; margin: 0 auto 4px; }
+.lt-demo-caja { position: relative; width: 180px; max-width: 100%; margin: 0 auto; }
+.lt-demo-caja .lt-tablero { transition: opacity 0.4s; }
+.lt-demo-caja:has(.lt-demo-rotulo.ve) .lt-tablero { opacity: 0.35; }
+.lt-demo-rotulo { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; pointer-events: none; z-index: 4;
+  font: 2.7rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); text-shadow: 0 3px 0 rgba(0,0,0,0.45), 0 0 18px rgba(255, 210, 63, 0.45);
+  opacity: 0; transition: opacity 0.3s; }
+.lt-demo-rotulo.ve { opacity: 1; animation: lt-listo 0.55s cubic-bezier(.3,1.6,.6,1); }
+@keyframes lt-listo { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
+.lt-demo-tam { font-size: 0.85rem; }
+
+/* The board: the squared background, the plots on top and the numbers above everything.
+   Its own width sizes the numbers (container units), so the same rules serve the small boards */
+.lt-tablero { --lado: 7; position: relative; width: 100%; max-width: 440px; aspect-ratio: 1; margin: 0 auto; border-radius: 14px; container-type: inline-size;
+  background: rgba(10, 16, 28, 0.85); box-shadow: 0 0 0 2px rgba(255,255,255,0.14), 0 10px 30px rgba(0,0,0,0.4);
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; transition: box-shadow 0.4s; }
+.lt-tablero#lt-tablero { touch-action: none; }
+.lt-tablero .lt-fondo, .lt-tablero .lt-nums { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--lado), 1fr); grid-template-rows: repeat(var(--lado), 1fr); }
+.lt-tablero .lt-fondo { border-radius: inherit; overflow: hidden; }
+.lt-celda { border: 1px solid rgba(255,255,255,0.07); }
+.lt-tablero .lt-lotes { position: absolute; inset: 0; pointer-events: none; }
+.lt-tablero .lt-nums { pointer-events: none; z-index: 2; }
+.lt-num { display: grid; place-items: center; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,0.4); line-height: 1;
+  font: 900 calc(100cqw / var(--lado) * 0.5) var(--font-num); font-variant-numeric: tabular-nums; transition: color 0.2s; }
+.lt-num.cubierto { color: #1b1530; text-shadow: none; }
+/* The Utilities icons: big, with a shadow that lifts them off the background and the plot */
+.lt-num.lt-icono { font-size: calc(100cqw / var(--lado) * 0.56); text-shadow: none; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.55)); }
+/* A plot: its color, with a border that sets it apart from its neighbours */
+.lt-lote { position: absolute; box-sizing: border-box; border: 2.5px solid rgba(10, 16, 28, 0.9); border-radius: 10px;
+  background: var(--c); box-shadow: inset 0 -4px 0 rgba(0,0,0,0.12), inset 0 3px 0 rgba(255,255,255,0.35); }
+.lt-lote.nace { animation: lt-nace 0.32s cubic-bezier(.3,1.6,.6,1); }
+@keyframes lt-nace { from { transform: scale(0.82); opacity: 0.4; } to { transform: none; opacity: 1; } }
+/* The one the hint placed: a dashed border */
+.lt-lote.ayudado { border-style: dashed; border-color: rgba(255, 255, 255, 0.95); }
+/* The rectangle being drawn; red and shaking if it is not valid */
+.lt-seleccion { position: absolute; z-index: 3; box-sizing: border-box; border: 3px solid #fff; border-radius: 10px; background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.45); pointer-events: none; opacity: 0; transition: opacity 0.12s, left 0.1s, top 0.1s, width 0.1s, height 0.1s; }
+.lt-seleccion.ve { opacity: 1; }
+.lt-seleccion.mal { border-color: #ff4d5e; background: rgba(255, 77, 94, 0.25); box-shadow: 0 0 16px rgba(255, 77, 94, 0.6); animation: lt-no 0.4s ease-in-out; transition: opacity 0.12s; }
+@keyframes lt-no { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+/* Solved: it shines, and the plots jump */
+.lt-tablero.resuelto { box-shadow: 0 0 0 2px rgba(157, 255, 58, 0.8), 0 0 26px rgba(157, 255, 58, 0.5); }
+.lt-tablero.resuelto .lt-lote { animation: lt-ola 0.6s ease-out; }
+@keyframes lt-ola { 40% { transform: scale(1.05); filter: brightness(1.15); } }
+
+/* Small boards: the demo, the drawing in "How to play" */
+.lt-tablero.chico, .lt-tablero.ej { border-radius: 10px; }
+.lt-tablero.chico .lt-lote, .lt-tablero.ej .lt-lote { border-width: 2px; border-radius: 7px; }
+.lt-tablero.chico.entra { animation: lt-entra 0.4s ease-out; }
+@keyframes lt-entra { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+.lt-ejemplo .lt-tablero.ej { width: 112px; }
+.lt-ejemplo .lt-tablero.ej-mal { width: 56px; box-shadow: 0 0 0 2px rgba(255, 77, 94, 0.7); }
+.lt-tablero.ej.resuelto .lt-lote { animation: none; }
+
+/* «Plots of n squares»: above the board (and above the demo) */
+.lt-tam { margin: 0; padding: 2px 12px; border-radius: 999px; font: 800 0.95rem var(--font-body); color: #1b1530; background: var(--lime); white-space: nowrap; }
+
+/* The board's number and the dots of the progress */
+.lt-juego { gap: 10px; }
+.lt-cabeza { display: grid; justify-items: center; gap: 6px; }
+.lt-n-etapa { margin: 0; font: 1.35rem var(--font-display); letter-spacing: 0.06em; }
+.lt-etapas { display: flex; gap: 8px; }
+.lt-punto { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.35); box-sizing: border-box; }
+.lt-punto.actual { border-color: #fff; background: rgba(255,255,255,0.25); box-shadow: 0 0 8px rgba(255,255,255,0.5); }
+.lt-punto.hecha { background: var(--lime); border-color: var(--lime); }
+
+/* Two lines tall always: a long notice does not push the board while playing (U-12) */
+.lt-aviso { margin: 0; min-height: 2.6em; line-height: 1.3; display: grid; place-items: center; text-align: center; font-weight: 800; color: var(--muted); }
+.lt-aviso.mal { color: #ff8a8a; } .lt-aviso.ayuda, .lt-aviso.ojo { color: var(--yellow); }
+.lt-aviso.medida { color: #fff; font: 900 1.15rem var(--font-num); }
+.lt-aviso.bien { color: var(--lime); font-size: 1.15rem; animation: pop 0.45s ease-out; }
+
+/* Undo, Clear and Give up: three equal buttons in one row; the hint apart, smaller, below them */
+.lt-acciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.lt-acciones .btn { width: 100%; min-width: 0; min-height: 44px; margin: 0; padding: 4px; font-size: 0.9rem; line-height: 1.15; }
+.lt-acciones .btn:disabled, .lt-ayuda:disabled { opacity: 0.4; }
+.lt-acciones .btn.armado, .lt-ayuda.armado { border-color: var(--yellow); color: var(--yellow); }
+.lt-acciones .lt-rendirse.armado { color: #ff8a8a; border-color: #ff8a8a; }
+.lt-ayuda { justify-self: center; width: fit-content; margin: 0 auto; min-height: 44px; padding: 4px 16px; font-size: 0.85rem; opacity: 0.85; }
+.lt-ayuda.armado { opacity: 1; }
+
+/* The end: the stamp and "See result", above the board */
+.lt-cierre { justify-items: center; gap: 8px; }
+.lt-cierre .btn { width: 100%; }
+.lt-sello { justify-self: center; align-self: center; width: fit-content; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-4deg); animation: pop 0.5s ease-out 0.2s both; }
+.lt-sello.mal { color: #ff8a8a; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lt-lote.nace, .lt-tablero.resuelto .lt-lote, .lt-seleccion.mal, .lt-tablero.chico.entra, .lt-demo-rotulo.ve, .lt-aviso.bien, .lt-sello { animation: none !important; }
+  .lt-seleccion, .lt-num, .lt-tablero, .lt-demo-caja .lt-tablero { transition: none; }
+}
+/* On a narrow phone, the demo a little smaller: Start comes up */
+@media (max-width: 360px) { .lt-demo-caja { width: 150px; } }

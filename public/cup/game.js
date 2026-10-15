@@ -18,12 +18,12 @@ import { trackStart, versionOf, countryOf, trackVisit, trackFinish } from '../as
 import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug } from '../assets/js/games.js';
 import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../assets/js/parametros.js';
 import {
-  POZO, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
+  POZO, VARIANTES, entradaCal, varianteDelDia, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
-import { GAME_ID, LOCALES, juegosCopa, rondasFinal, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
+import { GAME_ID, LOCALES, juegosCopa, rondasFinal, conVariante, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { createCuenta, juntarCopas } from './cuenta.js';
 import { JUEGOS } from './games/index.js';
 import { audienciaDe } from './games/audiencia.js';
@@ -94,11 +94,11 @@ const HOY = SUELTO && tiene('today');
  * también se juega ahí (D-164), con `?labs` y su semilla: así el link que se copia de la barra
  * trae la tarjeta del juego y no la de La Copa.
  */
-const paginaSuelta = (id, { semilla, zipSeg } = {}) => {
-  const q = [LABS && !gameById(id)?.labs && 'labs', PRUEBA && 'test', semilla && `seed=${semilla}`, zipSeg && `timer=${zipSeg}`].filter(Boolean).join('&');
+const paginaSuelta = (id, { semilla, zipSeg, modo } = {}) => {
+  const q = [LABS && !gameById(id)?.labs && 'labs', PRUEBA && 'test', semilla && `seed=${semilla}`, modo && `mode=${modo}`, zipSeg && `timer=${zipSeg}`].filter(Boolean).join('&');
   return gameById(id)?.suelto ? `${RAIZ}${gameById(id).path}${q ? `?${q}` : ''}` : `${RAIZ}cup/suelto/?${[slugDe(id), q].filter(Boolean).join('&')}`;
 };
-const semillaUrl = { semilla: SEMILLA, zipSeg: param('timer') };
+const semillaUrl = { semilla: SEMILLA, zipSeg: param('timer'), modo: param('mode') };
 // Un link viejo (/cup/?practica=reinas, o /cup/suelto/?reinas) se va a su lugar nuevo. Los del
 // laboratorio que no tienen página (Línea Relámpago, el número, la final) siguen en /cup/.
 if (!SUELTO && PRACTICA && (!LABS || gameById(PRACTICA)?.suelto)) location.replace(paginaSuelta(PRACTICA, semillaUrl));
@@ -324,9 +324,19 @@ function opciones(items, onChange, { inicial = null } = {}) {
       botones.forEach((b, i) => { const on = items[i].valor === valor; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
       onChange?.(valor);
     },
-  }, el('b', {}, it.titulo), it.sub ? el('small', {}, it.sub) : null));
+  }, el('b', {}, it.emoji ? el('span', { class: 'opcion-emoji' }, it.emoji) : null, it.titulo), it.sub ? el('small', {}, it.sub) : null));
   return { nodo: el('div', { class: 'opciones' }, botones), get valor() { return valor; } };
 }
+
+/**
+ * A game's variants as options (D-331). The name's emoji goes on a line of its own in both cards,
+ * so «⚡💧 Servicios» and «🔢 Números» look alike at 320 px instead of one wrapping its emoji (U-12).
+ */
+const opcionesVariante = (J, vs) => vs.map(v => {
+  const nombre = J.variantes?.[v]?.nombre || v;
+  const [, emoji, titulo] = nombre.match(/^([\p{Extended_Pictographic}\uFE0F\u200D]+)\s+(.+)$/u) || [null, null, nombre];
+  return { valor: v, emoji, titulo, sub: J.variantes?.[v]?.sub };
+});
 
 /** Un selector de fecha, de hoy a 30 días más (D-115). Parte oculto. */
 function campoFecha(hoy) {
@@ -347,6 +357,8 @@ function elegirJuegos() {
   // `sel`: lo elegido, { zona: 'dia' | 'fuera', id }. `destino`: dónde va ('s<k>' la ranura k,
   // al tocar; 'm<k>' el lugar k de la semana, al arrastrar un día; 'r<i>' el día i que se reemplaza)
   let cal = [], sel = null, destino = null, arrastrando = false;
+  // The variant of each game that has them (D-331): it goes with the game, not with the day, so moving a day keeps it
+  const variantes = {};
   // La familia se compara en español: la misma semana al azar cualquiera sea el idioma
   const familia = id => JUEGOS_COPA_ES[id].habilidad;
   // La ayuda larga no cambia; lo que cambia con lo elegido es una línea de alto fijo: si la
@@ -414,15 +426,37 @@ function elegirJuegos() {
     linea.append(el('div', { class: 'event fija' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: cal.length })),
       el('span', { class: 'em' }, JUEGOS_COPA.final.emoji), nombreJ('final', T.gamesFinal)));
     marcar();
+    pintarVariantes();
     const ayuda = !sel ? 'nada' : arrastrando ? `arr-${sel.zona}` : sel.zona;
     estado.querySelectorAll('[data-ayuda]').forEach(x => x.classList.toggle('oculta', x.dataset.ayuda !== ayuda));
   }
   const sortear = n => { cal = calendarioAlAzar(n, { familia }); sel = null; pintar(); };
 
+  // Below the week, one row per game of the week that has variants (D-331): the admin picks which
+  // one everybody plays that day. Not inside the day's card, which is a button that is dragged.
+  const cajaVariantes = el('div', { class: 'cal-variantes', id: 'cal-variantes' });
+  function pintarVariantes() {
+    const conV = dias().map((id, i) => ({ id, i })).filter(x => VARIANTES[x.id]);
+    cajaVariantes.replaceChildren();
+    cajaVariantes.hidden = !conV.length;
+    if (!conV.length) return;
+    cajaVariantes.append(el('div', { class: 'field' }, el('label', {}, T.gamesVariants), el('small', { class: 'muted' }, T.gamesVariantsHint)));
+    for (const { id, i } of conV) {
+      const J = JUEGOS_COPA[id];
+      const o = opciones(opcionesVariante(J, VARIANTES[id]),
+        v => { variantes[id] = v; }, { inicial: variantes[id] || VARIANTES[id][0] });
+      o.nodo.classList.add('dos', 'variantes');
+      o.nodo.dataset.variantes = id;
+      cajaVariantes.append(el('div', { class: 'cal-variante' },
+        el('p', { class: 'cal-variante-t' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), ' ', conEmoji(J.emoji, J.nombre)), o.nodo));
+    }
+  }
+
   const nodo = el('div', { class: 'panel', id: 'crear-juegos', hidden: true },
     el('div', { class: 'field' }, el('label', {}, T.fGames), el('small', { class: 'muted' }, T.gamesHint)), estado,
     el('div', { class: 'hand-title' }, el('b', {}, T.gamesOut)), mano,
     el('div', { class: 'line-wrap' }, linea),
+    cajaVariantes,
     el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-azar', onClick: () => { SFX.tap(); sortear(cal.length); } }, T.gamesShuffle));
 
   // Arrastrar es elegir y soltar (D-85): el mismo estado al que se llega tocando. Nada se
@@ -451,7 +485,7 @@ function elegirJuegos() {
   // Un toque fuera de la lista suelta lo elegido (C-8). Con la ruta del evento, no con
   // `contains`: el botón tocado ya se redibujó y quedó fuera del árbol.
   document.addEventListener('click', ev => { if (sel && nodo.isConnected && !ev.composedPath().includes(nodo)) { sel = null; pintar(); } });
-  return { nodo, sortear, get cal() { return [...cal]; } };
+  return { nodo, sortear, get cal() { return cal.map(id => entradaCal(id, variantes[id])); } };
 }
 
 function crearCopa() {
@@ -841,7 +875,7 @@ const claseX2 = final => `chip ${final ? 'chip--final' : 'chip--gold'}`;
 
 function tarjetaDia(d, rotulo) {
   const Lc = L(), { meta } = Lc;
-  const id = juegoDelDia(meta, d), J = JUEGOS_COPA[id];
+  const id = juegoDelDia(meta, d), J = juegoDia(meta, d);
   const now = ahora();
   const est = estadoDia(Lc, d, S.yo, now);
   const x2 = multiplicador(Lc, d, S.yo) === 2;
@@ -858,7 +892,7 @@ function tarjetaDia(d, rotulo) {
       el('span', { class: 'chip' + (rotulo === T.today ? ' chip--hot' : '') }, rotulo),
       el('span', { class: 'muted' }, `${fmt(T.dayOf, { d, n: meta.days })} · ${fechaCorta(meta.win[d].a, meta.tz)}`),
       x2 ? el('span', { class: claseX2(esFinal(meta, d)) }, esFinal(meta, d) ? T.x2 : `${T.x2} ${T.wildUsed}`) : null),
-    el('div', { class: 'dia-juego' }, el('span', { class: con('dia-emoji', J.emoji) }, J.emoji), el('div', {}, el('b', {}, J.nombre), el('small', { class: 'muted' }, hastaCuando(d, est, now)))),
+    el('div', { class: 'dia-juego' }, el('span', { class: con('dia-emoji', J.emoji) }, J.emoji), el('div', {}, el('b', {}, J.nombre, J.varianteNombre ? el('span', { class: 'dia-variante' }, ` · ${J.varianteNombre}`) : null), el('small', { class: 'muted' }, hastaCuando(d, est, now)))),
     est === 'jugado' ? el('p', { class: 'ok' }, `✅ ${T.played}`) : null,
     accion,
     el('p', { class: 'muted quienes' }, jugaron.length ? fmt(T.whoPlayed, { names: jugaron.map(j => j.name).join(', ') }) : T.nobodyPlayed),
@@ -1791,7 +1825,7 @@ function eliminada(nombre) {
 
 function antesDeJugar(d) {
   const Lc = L(), { meta } = Lc;
-  const id = juegoDelDia(meta, d), J = JUEGOS_COPA[id];
+  const id = juegoDelDia(meta, d), J = juegoDia(meta, d), variante = varianteDelDia(meta, d);
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
   const body = $('#jugar-body');
@@ -1816,8 +1850,8 @@ function antesDeJugar(d) {
   const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar', disabled: sinGente }, `${J.emoji} ${T.start}`);
   if (sinGente) avisoError(err, T.needSecond);
   precalentar(id,
-    () => JUEGOS[id].generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta) }),
-    () => JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta) }));
+    () => JUEGOS[id].generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante }),
+    () => JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante }));
   empezar.addEventListener('click', async () => {
     SFX.tap();
     empezar.disabled = true;
@@ -1835,9 +1869,9 @@ function antesDeJugar(d) {
   poner(body, el('div', { class: 'stack' },
     el('div', { class: 'intro-hero' }, heroe(id, J),
       el('p', { class: 'muted', style: 'margin:0' }, fmt(T.dayOf, { d, n: meta.days })),
-      tituloAntesala(id, J)),
+      tituloAntesala(id, J), rotuloVariante(J)),
     CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
+    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
@@ -1867,7 +1901,7 @@ const avisoPalabras = meta => (palabrasDe(meta) === LANG ? null
   : el('p', { class: 'muted center aviso-palabras', style: 'margin:0' }, fmt(T.wordsIn, { idioma: T.langNames[palabrasDe(meta)] })));
 
 /** Lo de arriba de la antesala: la portada animada del juego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
-const heroe = (id, J) => JUEGOS[id]?.portada?.() ?? el('span', { class: con('icon', J.emoji) }, J.emoji);
+const heroe = (id, J) => JUEGOS[id]?.portada?.({ variante: J.variante || null }) ?? el('span', { class: con('icon', J.emoji) }, J.emoji);
 
 /**
  * Un juego que tarda en armarse (`caro`, El caso, D-260) se arma mientras se lee la antesala, sin
@@ -1880,6 +1914,16 @@ function precalentar(id, ...armar) {
   for (const f of armar) luego(() => { try { f(); } catch (_) { /* se arma al empezar */ } });
 }
 
+/** How the score was reached (D-106): the game's own breakdown if it brings one (D-331), if not desglose.js. */
+const detalle = (id, estado, o) => (JUEGOS[id]?.desglose && estado ? JUEGOS[id].desglose(estado, o) : desglose(id, estado, o));
+
+/**
+ * The game of day d as it is played that day (D-331): with its variant's steps and scoring.
+ */
+const juegoDia = (meta, d) => conVariante(JUEGOS_COPA[juegoDelDia(meta, d)], varianteDelDia(meta, d));
+/** The variant's name under the game's name in the waiting room, if it has one. */
+const rotuloVariante = J => (J?.varianteNombre ? el('p', { class: 'variante-dia', id: 'variante-dia' }, J.varianteNombre) : null);
+
 /** Lo que dice la antesala de la prueba: en El caso no es más corta, es un caso completo. */
 const notaPrueba = id => (JUEGOS[id]?.pruebaCompleta ? T.trialNoteFull : T.trialNote);
 
@@ -1887,7 +1931,7 @@ const notaPrueba = id => (JUEGOS[id]?.pruebaCompleta ? T.trialNoteFull : T.trial
 const tituloAntesala = (id, J) => JUEGOS[id]?.titulo?.({ el, J }) ?? el('h2', { class: 'display display--lg' }, J.nombre);
 
 /** El dibujo que explica el juego antes del texto, si lo tiene (Reinas, Tango y Zip). */
-const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
+const dibujo = (id, variante = null) => JUEGOS[id]?.ejemplo?.({ el, T, variante }) ?? null;
 
 /**
  * Las reglas del juego, plegadas debajo del tablero (D-133): no molestan mientras se juega y
@@ -1897,8 +1941,8 @@ const dibujo = id => JUEGOS[id]?.ejemplo?.({ el, T }) ?? null;
 /** Cómo se puntúa; el desempate solo dentro de una copa, donde hay con quién empatar (dilema #72). */
 const puntajeTexto = (J, copa = true) => (copa && J.desempate ? `${J.puntaje} ${J.desempate}` : J.puntaje);
 
-function panelReglas(id, { copa = true, prueba = false } = {}) {
-  const J = JUEGOS_COPA[id];
+function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) {
+  const J = conVariante(JUEGOS_COPA[id], variante);
   const caja = $('#jugar-reglas');
   caja.innerHTML = '';
   if (!J) return;
@@ -1906,7 +1950,8 @@ function panelReglas(id, { copa = true, prueba = false } = {}) {
     el('summary', {}, `📖 ${fmt(T.rulesOf, { juego: J.nombre })}`),
     // En la sesión de prueba de un día, que es más corta y no cuenta
     prueba ? el('p', { class: 'muted', id: 'nota-ensayo' }, notaPrueba(id)) : null,
-    dibujo(id),
+    rotuloVariante(J),
+    dibujo(id, variante),
     el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
     id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds),
       el('ul', { class: 'como' }, Object.entries(RONDAS_FINAL).map(([r, x]) => el('li', {}, `${JUEGOS_COPA[r].emoji} ${JUEGOS_COPA[r].nombre}: ${x}`)))] : null,
@@ -1928,7 +1973,7 @@ function cuentaRegresiva(J) {
 
 async function jugar(d) {
   const Lc = L(), { meta } = Lc;
-  const id = juegoDelDia(meta, d), J = JUEGOS_COPA[id], mod = JUEGOS[id];
+  const id = juegoDelDia(meta, d), J = juegoDia(meta, d), mod = JUEGOS[id], variante = varianteDelDia(meta, d);
   const guardado = cuenta.intento.leer(S.code, d, S.yo) || {};
   // Si ya había terminado pero no se alcanzó a guardar el resultado, se reintenta de una
   if (guardado.fin) { enviar(d, guardado.fin); return; }
@@ -1939,7 +1984,7 @@ async function jugar(d) {
   // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
   // Los textos en el idioma de quien juega y las palabras en el de la copa (D-170)
   // El público de la copa decide qué contenido local entra (D-187)
-  const p = mod.generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), ...(id === 'conexiones' ? { desde: meta.win[d].a } : {}) });
+  const p = mod.generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, ...(id === 'conexiones' ? { desde: meta.win[d].a } : {}) });
   const now = ahora();
   // El reloj se detiene cuando el tablero termina, no cuando se toca "Ver resultado" (D-130).
   // Detenido, queda así aunque se recargue la página.
@@ -1954,7 +1999,7 @@ async function jugar(d) {
   const persistir = () => cuenta.intento.guardar(S.code, d, S.yo, { jugadas, reloj: reloj.pausar(rel, ahora()), detenido, ...(fin ? { fin } : {}) });
   const cerrar = estado => {
     const r = mod.resultado(estado);
-    fin = { s: r.s, ms: r.ms ?? Math.round(reloj.leer(rel, ahora())), t: r.t, resumen: r.resumen, det: desglose(id, estado, { T, fmt, mmss, lang: LANG }) };
+    fin = { s: r.s, ms: r.ms ?? Math.round(reloj.leer(rel, ahora())), t: r.t, resumen: r.resumen, det: detalle(id, estado, { T, fmt, mmss, lang: LANG }) };
     persistir();
     envio = mandar(d, fin);
     // Si falla, "Ver resultado" lo reintenta y lo dice en pantalla; aquí no hay nada que mostrar
@@ -1980,7 +2025,7 @@ async function jugar(d) {
 
   const body = $('#jugar-body');
   body.innerHTML = '';
-  panelReglas(id);
+  panelReglas(id, { variante });
   S.juego = { d, id };
   pantallaCompleta(mod.pantallaCompleta);
   mod.montar(body, {
@@ -2063,7 +2108,7 @@ function resultado(d, { recien = false, det = null } = {}) {
   if (!mio) { tablero(); return; }
   S.verDia = d;
   mostrar('resultado');
-  const id = juegoDelDia(meta, d), J = JUEGOS_COPA[id];
+  const id = juegoDelDia(meta, d), J = juegoDia(meta, d);
   const now = ahora();
   const jug = activos(Lc);
   const pos = posicionesDelDia(Lc.results[d], jug.map(j => j.pid));
@@ -2171,9 +2216,43 @@ const volverDePractica = () => (LABS
   ? el('a', { class: 'btn btn--ghost btn--sm', href: `${RAIZ}labs/` }, T.backToLabs)
   : el('a', { class: 'btn btn--ghost btn--sm', href: RAIZ }, T.backToMenu));
 
-function practica(id) {
+/**
+ * The variant of a standalone game (D-331): the link's (`?mode=hard`; Pintaminas' `?colors=2`
+ * from the lab too), or the one this phone remembers, or the default one.
+ */
+const claveVariante = id => `juegos-de-salon:${id}:variant`;
+function varianteSuelta(id) {
+  const vs = JUEGOS[id]?.variantes;
+  if (!vs) return null;
+  const url = param('mode') || (id === 'pintaminas' && param('colors') === '2' ? 'hard' : null);
+  if (vs.includes(url)) { guardarVariante(id, url); return url; }
+  let guardada = null;
+  try { guardada = localStorage.getItem(claveVariante(id)); } catch (_) { /* sin almacenamiento: la de siempre */ }
+  return vs.includes(guardada) ? guardada : vs[0];
+}
+function guardarVariante(id, v) { try { localStorage.setItem(claveVariante(id), v); } catch (_) { /* solo esta vez */ } }
+/** The ranking table of a variant (D-331): the default one is the game's own, the others go apart. */
+const varianteRk = (id, v) => (v && v !== JUEGOS[id]?.variantes?.[0] ? v : '');
+
+/**
+ * The variant picker of the waiting room (D-331): the game's own if it brings one (Pintaminas' lever),
+ * if not two buttons like the cup's options. Picking one redraws the waiting room with its steps.
+ */
+function selectorVariante(id, variante, cambiar) {
   const J = JUEGOS_COPA[id], mod = JUEGOS[id];
-  if (!J || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
+  const propio = mod.selector?.({ el, T, SFX, vibrate, variante, cambiar });
+  if (propio) return propio;
+  const o = opciones(opcionesVariante(J, mod.variantes), cambiar, { inicial: variante });
+  o.nodo.classList.add('dos', 'variantes');
+  o.nodo.id = 'selector-variante';
+  return o.nodo;
+}
+
+function practica(id, varianteElegida = null) {
+  const mod = JUEGOS[id];
+  if (!JUEGOS_COPA[id] || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
+  const variante = varianteElegida || varianteSuelta(id);
+  const J = conVariante(JUEGOS_COPA[id], variante);
   // La página propia de un juego (también la del laboratorio, /labs/case/) lleva su nombre en la pestaña
   if (!LABS || SUELTO) document.title = `${J.nombre} ${J.emoji} · ${(COMMON[LANG] || COMMON.es).appTitle}`;
   // En el laboratorio, "‹ Laboratorio" es largo: bajo 400 px el chip queda solo con el emoji (U-12)
@@ -2187,14 +2266,14 @@ function practica(id) {
   // Un juego `diario` (El caso, D-267), sin semilla en el link, es el del día: el mismo para todos
   const delDia = !HOY && !esCodigo(SEMILLA) && !!gameById(id)?.diario;
   const semilla = HOY ? semillaDel(S.hoy.fecha) : esCodigo(SEMILLA) ? SEMILLA : delDia ? semillaDel(fechaLocal()) : codigoAlAzar();
-  precalentar(id, () => JUEGOS[id].generar(semilla, 1, { lang: LANG }), () => JUEGOS[id].ensayo?.(semilla, 1, { lang: LANG }));
+  precalentar(id, () => JUEGOS[id].generar(semilla, 1, { lang: LANG, variante }), () => JUEGOS[id].ensayo?.(semilla, 1, { lang: LANG, variante }));
   const zipSeg = param('timer');
   // Suelto, la semilla no va a la vista (D-142): el link queda en /queens/. Desde el
   // laboratorio sí, para poder repetir la partida.
   // El del día no: el link queda limpio y mañana abre el de mañana
-  if (SUELTO && LABS && !HOY && !delDia) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg }));
+  if (SUELTO && LABS && !HOY && !delDia) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg, modo: varianteRk(id, variante) }));
   else if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practice=${slugDe(id)}&seed=${semilla}${PRUEBA ? '&test' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&timer=${zipSeg}` : ''}`);
-  S.juego = { d: 1, id, practica: true, semilla };
+  S.juego = { d: 1, id, practica: true, semilla, variante };
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
   $('#jugar-reglas').innerHTML = ''; // en la antesala las reglas ya están a la vista
@@ -2205,22 +2284,24 @@ function practica(id) {
       // En el laboratorio no se rotula "Práctica en el laboratorio": el chip y el botón de volver ya lo dicen
       tituloAntesala(id, J),
       el('div', { style: 'margin-top:6px' }, langToggle())),
+    // The variant is picked here, before the steps, which are the variant's (D-331)
+    variante ? selectorVariante(id, variante, v => { guardarVariante(id, v); SFX.tap(); practica(id, v); }) : null,
     // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
     HOY ? el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
     delDia ? el('p', { class: 'aviso uad-intro', id: 'diario-intro' }, `📅 ${T.casoDelDia}`) : null,
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
+    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J, false))),
     // La misma antesala que un día de la copa (D-109): la sesión de prueba se elige antes de jugar
-    mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla); } }, `🧪 ${T.tryFirst}`) : null,
+    mod.ensayo && LABS ? el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayoPractica(id, semilla, variante); } }, `🧪 ${T.tryFirst}`) : null,
     // Suelto no hace falta decir que no cuenta para una copa: no hay copa a la vista
     // Un juego `diario` (El caso, D-267) no: lo abre un amigo que no sabe de copas, y arriba ya dice qué caso es (U-8)
     LABS && !gameById(id)?.diario ? el('p', { class: 'muted center' }, T.practiceHint) : null,
-    el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla); } }, `${J.emoji} ${T.start}`),
+    el('button', { class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); jugarPractica(id, semilla, variante); } }, `${J.emoji} ${T.start}`),
     volverDePractica(),
     // Entrar, pegado a Empezar y a Volver (D-249): sin jugador, la partida no queda en ningún
     // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
     rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
-    rankea(id) ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
+    rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });
 }
 
@@ -2229,22 +2310,25 @@ function practica(id) {
  * cualquiera los juega: sin el laboratorio y sin una semilla elegida, que dejaría repetir el mismo
  * tablero hasta sacarle el máximo.
  */
+/** The table a standalone game ranks in (D-331): `pintaminas`, or `pintaminas_hard` for its other variant. */
+const tablaRk = (id, v) => (varianteRk(id, v) ? `${id}_${varianteRk(id, v)}` : id);
+const tituloRk = J => fmt(RK.titleOf, { game: J.varianteNombre ? `${J.nombre} · ${J.varianteNombre}` : J.nombre });
 const rankea = id => !LABS && !SEMILLA && !(HOY && S.hoy?.ya) && !!gameById(id)?.suelto && rankingsVisibles();
 /** Los textos de Uno al día, en el idioma de quien juega. */
 const UAD = () => (COMMON[LANG] || COMMON.es).uad;
 
-function jugarPractica(id, semilla) {
+function jugarPractica(id, semilla, variante = null) {
   // Suelto, todo va en el idioma de quien juega: no hay con quién jugar lo mismo (D-170)
-  const p = JUEGOS[id].generar(semilla, 1, { lang: LANG });
-  // Solo en el modo de prueba: `&timer=8` acorta el reloj de Zip y de Desenredo para los guiones de punta a punta
+  const p = JUEGOS[id].generar(semilla, 1, { lang: LANG, variante });
+  // Solo en el modo de prueba: `&timer=8` acorta el reloj de Zip, Desenredo y Rutas rotas para los guiones de punta a punta
   const seg = Number(param('timer'));
-  if (PRUEBA && (id === 'zip' || id === 'desenredo') && seg > 0) p.tiempo = seg * 1000;
+  if (PRUEBA && (id === 'zip' || id === 'desenredo' || id === 'rutas') && seg > 0) p.tiempo = seg * 1000;
   // Señal de uso para el panel (D-44): el suelto se cuenta como su propio juego; el laboratorio no
   // El caso cuenta también desde el laboratorio: es lo que se quiere medir (D-267)
   if ((!LABS || gameById(id)?.diario) && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
   // Un juego `diario` sigue donde iba al recargar (D-267): las jugadas y el tiempo, por caso
   const guardado = gameById(id)?.diario && !HOY ? partidaGuardada(id, semilla) : null;
-  jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r), guardado ? { guardado } : {});
+  jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r, variante), { variante, ...(guardado ? { guardado } : {}) });
 }
 
 /**
@@ -2296,8 +2380,8 @@ const chipPrueba = () => {
  * Juega un juego sin que cuente: la práctica del laboratorio y la sesión de prueba antes de
  * un día de la copa (D-103). Nada se guarda ni se envía; el reloj corre igual, para que se vea.
  */
-async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = null } = {}) {
-  const J = JUEGOS_COPA[id], mod = JUEGOS[id];
+async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = null, variante = null } = {}) {
+  const J = conVariante(JUEGOS_COPA[id], variante), mod = JUEGOS[id];
   // Una partida a medias sigue sin la cuenta ni la entrada: el tablero ya se conoce (D-267)
   const sigue = !!guardado?.jugadas;
   pieComentario(null);   // durante la cuenta, nada más que la cuenta
@@ -2317,7 +2401,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   document.addEventListener('visibilitychange', S.visibilidad);
   const body = $('#jugar-body');
   body.innerHTML = '';
-  panelReglas(id, { copa: false, prueba: ensayo && !S.juego?.practica });
+  panelReglas(id, { copa: false, prueba: ensayo && !S.juego?.practica, variante });
   pantallaCompleta(mod.pantallaCompleta);
   mod.montar(body, {
     p, jugadas: guardado?.jugadas, T, fmt, el, SFX, vibrate, lang: LANG,
@@ -2342,7 +2426,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
       clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
       const r = mod.resultado(estado);
-      alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: desglose(id, estado, { T, fmt, mmss, copa: false, lang: LANG }) });
+      alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: detalle(id, estado, { T, fmt, mmss, copa: false, lang: LANG }) });
     },
   });
   pieComentario(S.juego?.practica ? { juego: id, semilla: S.juego.semilla, pantalla: ensayo ? 'prueba' : 'juego' } : null);
@@ -2350,21 +2434,21 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
 
 /** La sesión de prueba de un día: otro contenido, la misma mecánica, y de vuelta a Empezar. */
 function ensayo(d) {
-  const id = juegoDelDia(L().meta, d);
+  const id = juegoDelDia(L().meta, d), variante = varianteDelDia(L().meta, d);
   mostrar('jugar');
   S.juego = { d, id, ensayo: true };
-  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(L().meta), aud: audienciaDe(L().meta) }), r => resultadoEnsayo(id, r, () => antesDeJugar(d)), { ensayo: true });
+  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(L().meta), aud: audienciaDe(L().meta), variante }), r => resultadoEnsayo(id, r, () => antesDeJugar(d), variante), { ensayo: true, variante });
 }
 
 /** La sesión de prueba desde la práctica del laboratorio: la misma que antes de un día (D-109). */
-function ensayoPractica(id, semilla) {
+function ensayoPractica(id, semilla, variante = null) {
   mostrar('jugar');
-  S.juego = { d: 1, id, practica: true, ensayo: true, semilla };
-  jugarSinPuntaje(id, JUEGOS[id].ensayo(semilla, 1, { lang: LANG }), r => resultadoEnsayo(id, r, () => practica(id)), { ensayo: true });
+  S.juego = { d: 1, id, practica: true, ensayo: true, semilla, variante };
+  jugarSinPuntaje(id, JUEGOS[id].ensayo(semilla, 1, { lang: LANG, variante }), r => resultadoEnsayo(id, r, () => practica(id, variante), variante), { ensayo: true, variante });
 }
 
 /** Fin de la sesión de prueba: cómo le fue, cómo se calcula, y de vuelta a la antesala. */
-function resultadoEnsayo(id, r, volver) {
+function resultadoEnsayo(id, r, volver, variante = null) {
   mostrar('resultado');
   SFX.reveal();
   const body = $('#resultado-body');
@@ -2373,25 +2457,25 @@ function resultadoEnsayo(id, r, volver) {
     el('div', { class: 'result-hero' }, el('span', { class: 'trophy pop' }, '🧪'),
       el('h2', { class: 'display display--md' }, T.trialDoneTitle)),
     el('div', { class: 'aviso' }, fmt(T.trialDone, { resumen: r.resumen || r.s })),
-    explicacion(JUEGOS_COPA[id], { s: r.s, ms: r.ms, det: r.det, copa: false }),
+    explicacion(conVariante(JUEGOS_COPA[id], variante), { s: r.s, ms: r.ms, det: r.det, copa: false }),
     el('button', { class: 'btn btn--yellow', id: 'btn-volver-ensayo', onClick: () => { SFX.tap(); volver(); } }, T.trialBack));
 }
 
-function resultadoPractica(id, semilla, r) {
-  const J = JUEGOS_COPA[id];
+function resultadoPractica(id, semilla, r, variante = null) {
+  const J = conVariante(JUEGOS_COPA[id], variante), rk = varianteRk(id, variante);
   // Uno al día: el primer intento queda como el resultado de hoy; los demás son práctica
   const hoy = HOY ? anotarUnoAlDia(S.hoy.fecha, { j: id, s: r.s, ms: r.ms }) : null;
   // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta.
   // De Uno al día, solo el primer intento: después el tablero ya se conoce (D-230)
   const cuentaRk = rankea(id) && (!hoy || hoy.primera);
   // En Uno al día, el ranking que se ve es el de Uno al día (su tarjeta): el del juego no se muestra
-  const ranking = cuentaRk && !hoy ? bloqueRanking({ juego: id, titulo: fmt(RK.titleOf, { game: J.nombre }), pestanas: ['semana', 'siempre', 'amigos'], alTocar: () => SFX.tap() }) : null;
+  const ranking = cuentaRk && !hoy ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: ['semana', 'siempre', 'amigos'], alTocar: () => SFX.tap() }) : null;
   const aviso = el('div', {});
   let anotada = false;
   const anotar = () => {
     if (!cuentaRk || anotada || !leerYo()) return;
     anotada = true;
-    aviso.replaceChildren(avisoPartida({ juego: id, s: r.s, ms: r.ms, alAnotar: () => ranking?.recargar() }));
+    aviso.replaceChildren(avisoPartida({ juego: id, variante: rk, s: r.s, ms: r.ms, alAnotar: () => ranking?.recargar() }));
   };
   if (cuentaRk) {
     // Plegado: los botones del final tienen que verse sin desplazar (C-8)
@@ -2399,7 +2483,8 @@ function resultadoPractica(id, semilla, r) {
     if (leerYo()) anotar(); else if (!hoy) aviso.append(bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }));
     jugador().then(Jg => { const off = Jg.escuchar(() => { if (S.pantalla !== 'resultado') { off(); return; } anotar(); }); }).catch(() => {});
   }
-  trackFinish({ detalle: `${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });   // cómo salió, para el panel (D-210)
+  // How it went, for the panel (D-210); with the variant first when the game has one (D-331): "hard · 80/100 · 2:30"
+  trackFinish({ detalle: `${variante ? `${variante} · ` : ''}${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });
   mostrar('resultado');
   SFX.win();
   // Un juego `diario` (D-267): "otra" es otro caso al azar, y si no era el de hoy, se ofrece el de hoy
@@ -2425,7 +2510,7 @@ function resultadoPractica(id, semilla, r) {
     LABS && !hoy && !diario ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
     // Suelto se comparte como cualquier juego jugado solo, con su página (D-162, D-165)
     // El de un juego `diario` lleva su semilla: quien lo recibe juega el mismo caso, también mañana
-    (!LABS || diario) && !hoy && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}${gameById(id).path}${diario ? `?seed=${semilla}` : ''}`, LANG), alTocar: () => SFX.tap() }) : null,
+    (!LABS || diario) && !hoy && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.varianteNombre ? `${J.nombre} · ${J.varianteNombre}` : J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}${gameById(id).path}${[diario && `seed=${semilla}`, rk && `mode=${rk}`].filter(Boolean).join('&').replace(/^./, c => `?${c}`)}`, LANG), alTocar: () => SFX.tap() }) : null,
     hoy ? null : el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, diario ? T.casoOtro : T.practiceAgain),
     deHoy ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: paginaSuelta(id) }, `📅 ${T.casoDeHoy}`) : null,
     LABS && !hoy && !diario ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}${otra.includes('?') ? '&' : '?'}seed=${semilla}` }, T.practiceSame) : null,

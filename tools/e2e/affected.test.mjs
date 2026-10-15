@@ -57,7 +57,7 @@ assert.deepEqual(chooseJobs(['cup-games/languages.mjs:hangman', 'cup-games/langu
 // The real site: a lab game's change stays in the lab; La Copa's styles don't reach Generala
 const real = siteGraph();
 assert.ok(Object.keys(real).length > 20 && real.cup.size > 20, 'the graph reads the site');
-const jobs = ['labs/routes.mjs', 'routes/lab.mjs', 'generala/local.mjs', 'cup/seat.mjs'];
-assert.deepEqual(affectedJobs(jobs, ['public/labs/routes/engine.js'], shared), ['routes/lab.mjs']);
+const jobs = ['labs/routes.mjs', 'exploding-numbers/lab.mjs', 'generala/local.mjs', 'cup/seat.mjs'];
+assert.deepEqual(affectedJobs(jobs, ['public/labs/exploding-numbers/engine.js'], shared), ['exploding-numbers/lab.mjs']);
 assert.deepEqual(affectedJobs(jobs, ['public/cup/style.css'], shared), ['cup/seat.mjs']);
 console.log('affected: which end-to-end scripts a PR needs, green');

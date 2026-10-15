@@ -925,7 +925,8 @@ if (runs('labs')) {
     if (['reinas', 'zip', 'desenredo', 'tango', 'letras', 'donde'].includes(id)) await b.shot(`practice-${id}`);
     if (id === 'reinas') { await checkScreen('practice-result'); await b.shot('11-practice'); }
   }
-  // A report from practice
+  // A report from practice (the reports of an earlier run on the same profile don't count)
+  await ev(`localStorage.removeItem('juegos-de-salon:copa:prueba:reportes'); 1`);
   await click('#btn-reporte'); await sleep(300);
   await ev(`document.querySelector('.reporte-texto').value='El barco no se veía bien'; document.querySelector('#reporte-nombre').value='Tester'; 1`);
   ok(await ev(`(()=>{const c=document.getElementById('reporte-correo');return !!c && c.type==='email' && !c.value && !!document.getElementById('reporte-correo-nota')?.textContent})()`), 'the report has the optional email, empty, with what it is for (D-317)');
@@ -933,7 +934,7 @@ if (runs('labs')) {
   await b.shot('12-report');
   await click('#btn-enviar-reporte'); await sleep(400);
   const reports = await ev(`JSON.parse(localStorage.getItem('juegos-de-salon:copa:prueba:reportes')||'[]')`);
-  ok(reports.length === 1 && reports[0].texto === 'El barco no se veía bien' && /"juego":"final"/.test(reports[0].contexto), 'the report is saved with its context');
+  ok(reports.length === 1 && reports[0].texto === 'El barco no se veía bien' && /"juego":"final"/.test(reports[0].contexto), `the report is saved with its context${reports.length === 1 ? '' : ` (${reports.length} reports: ${JSON.stringify(reports).slice(0, 300)})`}`);
   ok(reports[0].nombre === 'Tester', 'the report carries the typed name');
   await click('#btn-reporte-volver'); await sleep(300);
   await click('#btn-reporte'); await sleep(300);

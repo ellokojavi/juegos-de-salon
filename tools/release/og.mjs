@@ -180,6 +180,9 @@ const bridges = () => [
   // A lab game lives in /labs/<slug>/ (D-267): /<slug>/ leads there until it graduates
   ...pages().filter(p => p.standalone && p.route !== `/${p.slug}/`)
     .map(p => ({ ...p, old: `public/${p.slug}/index.html`, to: `..${p.route}` })),
+  // A game that left the lab (`deLabs`, D-332): its old /labs/<slug>/ leads to /<slug>/
+  ...pages().filter(p => p.standalone && SUELTOS.find(m => m.id === p.game)?.deLabs)
+    .map(p => ({ ...p, old: `public/labs/${p.slug}/index.html`, to: `../..${p.route}` })),
   // The generic pages (/minijuegos/?reinas, /minigames/?reinas): the template sends each link to its place
   { old: 'public/minijuegos/index.html', to: '../cup/suelto/', title: 'Juegos de Salón 🎲' },
   { old: 'public/minigames/index.html', to: '../cup/suelto/', title: 'Juegos de Salón 🎲' },

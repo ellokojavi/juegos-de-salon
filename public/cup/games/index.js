@@ -22,6 +22,9 @@ import * as final from './final/engine.js';
 import * as donde from './where/engine.js';
 import * as desenredo from './untangle/engine.js';
 import * as caso from './case/engine.js';
+import * as rutas from './routes/engine.js';
+import * as loteo from './plots/engine.js';
+import * as pintaminas from './paint-mines/engine.js';
 import * as uiLinea from './timeline/ui.js';
 import * as uiNumero from './number/ui.js';
 import * as uiConexiones from './connections/ui.js';
@@ -34,9 +37,12 @@ import * as uiFinal from './final/ui.js';
 import * as uiDonde from './where/ui.js';
 import * as uiDesenredo from './untangle/ui.js';
 import * as uiCaso from './case/ui.js';
+import * as uiRutas from './routes/ui.js';
+import * as uiLoteo from './plots/ui.js';
+import * as uiPintaminas from './paint-mines/ui.js';
 
 import { temasDeLaCopa, decksDe } from './mazos.js';
-import { LETRAS } from '../engine.js';
+import { LETRAS, VARIANTES } from '../engine.js';
 
 /**
  * El código con que se arma la sesión de prueba (D-103): otro, derivado del de la copa, para que
@@ -49,6 +55,21 @@ const temaLibre = (codigo, aud = null) => {
   const usados = Object.values(temasDeLaCopa(codigo, { aud }));
   return decksDe({ aud }).map(d => d.id).find(id => !usados.includes(id));
 };
+
+/**
+ * The games that came from the lab (D-331). Their engine brings `generarDia(código, día, { variante, sal, lang })`
+ * and their screen, besides the usual, may bring `desglose(estado, { T, fmt, mmss, copa })` (how the score
+ * was reached) and `selector({ el, T, SFX, variante, cambiar })` (its own way of choosing the variant in
+ * the waiting room; without it, the usual buttons). `portada({ variante })` and `ejemplo({ el, T, variante })`
+ * get the variant too. The trial (D-103) is the same game with another code: `ensayo: true` lets the engine
+ * make it shorter.
+ */
+const delLab = (id, motor, ui) => ({
+  ...juego(motor, ui),
+  generar: (c, d, o = {}) => motor.generarDia(c, d, o),
+  ensayo: (c, d, o = {}) => motor.generarDia(codigoEnsayo(c), d, { ...o, sal: 'ensayo', ensayo: true }),
+  variantes: VARIANTES[id] || null, selector: ui.selector, desglose: ui.desglose,
+});
 
 const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.montar, resultado: ui.resultado, ejemplo: ui.ejemplo, portada: ui.portada, titulo: ui.titulo, entrada: ui.entrada, pruebaCompleta: !!ui.pruebaCompleta, caro: !!ui.caro, pantallaCompleta: !!ui.pantallaCompleta, ensayo });
 
@@ -76,5 +97,8 @@ export const JUEGOS = {
   donde: juego(donde, uiDonde, (c, d, o = {}) => donde.generar(codigoEnsayo(c), d, { niveles: [1, 2], sal: 'ensayo', aud: o.aud, sin: donde.generar(c, d, { aud: o.aud }).ciudades })),
   // En el laboratorio (D-257): se juega suelto y en la práctica, pero no está en POZO, así que una copa todavía no lo elige
   caso: juego(caso, uiCaso, (c, d) => caso.generar(codigoEnsayo(c), d, { sal: 'ensayo' })),
+  rutas: delLab('rutas', rutas, uiRutas),
+  loteo: delLab('loteo', loteo, uiLoteo),
+  pintaminas: delLab('pintaminas', pintaminas, uiPintaminas),
   final: juego(final, uiFinal, (c, d, o) => final.generar(codigoEnsayo(c), d, o)),
 };

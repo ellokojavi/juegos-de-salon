@@ -122,6 +122,10 @@
       font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
       padding: 3px 9px; border-radius: 999px; background: var(--yellow); color: #3a1200;
     }
+    .game-card h2 .nuevo {
+      font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
+      padding: 3px 9px; border-radius: 999px; background: var(--cyan, #2ee6d6); color: #06222a;
+    }
     /* Filtros (D-142, D-149): el tipo de juego, en fichas que se prenden y se apagan. */
     .filtros { display: grid; gap: 10px; margin-top: 4px; }
     .filtros > * { min-width: 0; }
@@ -329,7 +333,7 @@
   </main>
 
   <script type="module">
-    import { PORTADA, TIPOS, TIPOS_VIEJOS, rangoJugadores } from './assets/js/games.js';
+    import { PORTADA, TIPOS, TIPOS_VIEJOS, rangoJugadores, esNuevo } from './assets/js/games.js';
     import { sparkles, el, con, shareButton, ICONO_COMPARTIR } from './assets/js/ui.js';
     import { botonCompartirPortada, trailerDe } from './assets/js/compartir-portada.js';
     import { compartirApp, comparteArchivos } from './assets/js/compartir.js';
@@ -398,7 +402,9 @@
         el('div', { class: 'emoji' }, el('span', { class: con('', g.emoji) }, g.emoji)),
         el('div', { class: 'texto' },
           // "Próximamente" va pegado al nombre: abajo, entre las píldoras, no se veía
-          el('h2', {}, el('span', {}, pickLang(g.name, lang)), !g.available && el('span', { class: 'proximamente' }, T.soon)),
+          el('h2', {}, el('span', {}, pickLang(g.name, lang)), !g.available && el('span', { class: 'proximamente' }, T.soon),
+            // A new game says so for two weeks (D-333)
+            g.available && esNuevo(g) && el('span', { class: 'nuevo' }, T.newGame)),
           el('div', { class: 'tag' }, pickLang(g.tagline, lang)),
         ),
         el('div', { class: 'meta' },

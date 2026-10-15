@@ -203,8 +203,14 @@ const modeColor = mode => PALETA[Math.max(0, MODOS.indexOf(mode)) % PALETA.lengt
 const C_TOTAL = 'var(--cyan)', C_SIN_RED = 'var(--yellow)', C_IDIOMA = 'var(--lime)', C_TORNEO = 'var(--pink)';
 
 /** Un juego de la copa con su emoji y su nombre, del registro de la copa; uno que no está, por su clave. */
-const miniLabel = id => (JUEGOS_COPA[id] ? `${JUEGOS_COPA[id].emoji} ${JUEGOS_COPA[id].nombre}` : String(id || '?'));
-const miniEmoji = id => JUEGOS_COPA[id]?.emoji || '·';
+// A cup game may come with its variant, 'pintaminas:hard' (D-331): "🖌️ Pintaminas · ⚡ Difícil"
+const miniLabel = x => {
+  const [id, v] = String(x || '?').split(':');
+  const J = JUEGOS_COPA[id];
+  if (!J) return String(x || '?');
+  return `${J.emoji} ${J.nombre}${v ? ` · ${J.variantes?.[v]?.nombre || v}` : ''}`;
+};
+const miniEmoji = id => JUEGOS_COPA[String(id).split(':')[0]]?.emoji || '·';
 const esJuego = id => !isTorneo(id);
 const torneoNombre = TORNEO ? TORNEO.name.es : 'el torneo';
 const torneoLabel = TORNEO ? gameLabel(TORNEO.id) : '🏆 Torneo';

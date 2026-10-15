@@ -233,6 +233,42 @@ export const SUELTOS = [
     labs: true,
     diario: true,
   },
+  {
+    // Out of the lab since D-332, with Loteo and Pintaminas: their page was /labs/<slug>/, now a bridge (`deLabs`)
+    id: 'rutas',
+    slug: 'routes',
+    emoji: '🚇',
+    name: { es: 'Rutas rotas', en: 'Broken Routes', pt: 'Rotas Quebradas', de: 'Kaputte Linien' },
+    tagline: { es: 'Une todas las líneas del metro girando partes del tablero.', en: 'Join every subway line by flipping parts of the board.', pt: 'Ligue todas as linhas do metrô girando partes do tabuleiro.', de: 'Verbinde alle U-Bahn-Linien, indem du Teile des Bretts drehst.' },
+    tipos: ['logic'],
+    duration: '7',
+    deLabs: true,
+    nuevoDesde: '2026-10-15',
+  },
+  {
+    // Two variants (D-331): 🔢 Numbers and ⚡💧 Utilities, picked in the waiting room
+    id: 'loteo',
+    slug: 'plots',
+    emoji: '📐',
+    name: { es: 'Loteo', en: 'Plots', pt: 'Loteamento', de: 'Parzellen' },
+    tagline: { es: 'Divide el tablero en lotes: cada número dice cuántas casillas tiene el suyo.', en: 'Split the board into plots: each number says how many squares its plot has.', pt: 'Divida o tabuleiro em lotes: cada número diz quantas casas tem o seu.', de: 'Teil das Brett in Parzellen auf: Jede Zahl sagt, wie viele Felder ihre hat.' },
+    tipos: ['logic'],
+    duration: '5–15',
+    deLabs: true,
+    nuevoDesde: '2026-10-15',
+  },
+  {
+    // Two variants (D-331): easy (one color) and hard (two colors), picked in the waiting room
+    id: 'pintaminas',
+    slug: 'paint-mines',
+    emoji: '🖌️',
+    name: { es: 'Pintaminas', en: 'Paint Mines', pt: 'Pinta-Minas', de: 'Malminen' },
+    tagline: { es: 'Pinta la grilla y descubre el dibujo escondido.', en: 'Paint the grid and uncover the hidden picture.', pt: 'Pinte a grade e descubra o desenho escondido.', de: 'Mal das Raster aus und entdeck das versteckte Bild.' },
+    tipos: ['logic'],
+    duration: '3–6',
+    deLabs: true,
+    nuevoDesde: '2026-10-15',
+  },
   // Los del laboratorio viven en /labs/<slug>/ (D-267): al salir pasan a /<slug>/
 ].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true }));
 
@@ -266,6 +302,18 @@ const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULAR
  */
 const OFRECIDOS = [...GAMES, ...SUELTOS.filter(m => !m.labs)].sort((a, b) => puesto(a.id) - puesto(b.id));
 export const PORTADA = [...OFRECIDOS.filter(g => g.available), ...OFRECIDOS.filter(g => !g.available)];
+
+/**
+ * A new game carries a "New" label on its home card for a while (D-333, the owner's request): from
+ * `nuevoDesde`, the day it reached the home page, for DIAS_NUEVO days. Every game added after D-333
+ * brings its date, and games.test.mjs stops one that doesn't (YA_ESTABAN is the list from before).
+ */
+export const DIAS_NUEVO = 14;
+export const esNuevo = (g, hoy = new Date()) => {
+  if (!g?.nuevoDesde) return false;
+  const desde = Date.parse(`${g.nuevoDesde}T00:00:00`);
+  return hoy.getTime() >= desde && hoy.getTime() < desde + DIAS_NUEVO * 24 * 60 * 60 * 1000;
+};
 
 /** Cuántos juegan como mínimo y como máximo ("1–6" → [1, 6]; "1" → [1, 1]). */
 export function rangoJugadores(players) {

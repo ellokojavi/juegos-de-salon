@@ -1,0 +1,148 @@
+/* 🖌️ Pintaminas in La Copa and on its standalone page (D-331), ported from the lab (D-289).
+   The cup's style.css is shared: every rule here hangs from a .pm- class, except the hard variant's
+   page background (body.modo-dificil, which ui.js sets and clears). */
+
+/* The waiting room: the title with a brush that paints, the cover game, the credit */
+.pm-titulo { display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+.pm-titulo .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.pm-titulo .pm-brocha { font-size: 2.3rem; display: inline-block; animation: pm-pinta 2.8s ease-in-out infinite; }
+@keyframes pm-pinta { 0%, 100% { transform: rotate(-12deg) translateX(-2px); } 50% { transform: rotate(10deg) translateX(3px); } }
+.pm-portada { display: grid; gap: 6px; justify-items: center; }
+.pm-demo { width: 100%; }
+.pm-demo-rotulo { margin: 0; min-height: 1.6em; font: 1.2rem var(--font-display); letter-spacing: 0.04em; color: var(--yellow); opacity: 0; transition: opacity 0.3s; }
+.pm-demo-rotulo.ve { opacity: 1; animation: pop 0.5s ease-out; }
+.pm-credito { flex-basis: 100%; margin: 0; font-size: 0.85rem; color: var(--muted); text-align: center; }
+.pm-credito a { color: var(--cyan); }
+
+/* The grid: 7×7. Unknown is dark; painted cells take the drawing's color (--c) and unpainted is light grey */
+.pm-grilla { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: 100%; max-width: 360px; margin: 0 auto; }
+.pm-casilla { aspect-ratio: 1; border-radius: 8px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.05);
+  display: grid; place-items: center; font: 900 1.05rem var(--font-num); color: var(--ink); padding: 0; min-width: 0;
+  -webkit-user-select: none; user-select: none; transition: background 0.25s, border-color 0.25s, opacity 0.6s; }
+button.pm-casilla { cursor: pointer; }
+button.pm-casilla:not(:disabled):active { transform: scale(0.92); }
+/* Each painted color: --p1 and, in the hard variant, --p2 (the grid sets them) */
+.pm-p1 { --c: var(--p1); } .pm-p2 { --c: var(--p2); }
+.pm-casilla.tinta { background: var(--c); border-color: var(--c); color: #160830; }
+.pm-casilla.fondo { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.22); color: rgba(255,255,255,0.85); }
+.pm-casilla.error { box-shadow: inset 0 0 0 3px #ff4d5e; }
+/* The hint: the cell that can be deduced pulses in yellow, and the numbers that explain it are marked */
+.pm-casilla.pm-pista-objetivo { box-shadow: 0 0 0 3px var(--yellow), 0 0 14px rgba(255, 210, 63, 0.7); animation: pm-late 1s ease-in-out infinite; }
+.pm-casilla.pm-pista-razon { box-shadow: inset 0 0 0 3px var(--yellow), inset 0 0 0 5px #160830; }
+/* On a yellow cell the yellow border does not show: the dark inner line marks it there. And a number
+   that was a mistake keeps its red inside the yellow */
+.pm-casilla.pm-pista-razon.error { box-shadow: inset 0 0 0 3px var(--yellow), inset 0 0 0 6px #ff4d5e; }
+@keyframes pm-late { 50% { transform: scale(0.9); } }
+.pm-casilla.pm-pop { animation: pop 0.35s ease-out; }
+.pm-casilla.pm-shake { animation: shake 0.45s ease-in-out; }
+/* Stripes on the second color, for those who can't tell colors apart well (#349): on its cells and its
+   brush, only while playing (when the drawing is revealed they go) */
+.pm-grilla.tablero:not(.revelada) .pm-casilla.pm-p2, .pm-pincel--tinta.pm-p2 {
+  background-image: repeating-linear-gradient(45deg, rgba(22, 8, 48, 0.28) 0 3px, transparent 3px 8px); }
+/* The end: the numbers go, the unpainted cells dim and the paint glows: the drawing appears */
+.pm-grilla.revelada .pm-casilla { color: transparent; }
+.pm-grilla.revelada .pm-casilla.fondo { opacity: 0.12; border-color: transparent; }
+.pm-grilla.revelada .pm-casilla.tinta { box-shadow: 0 0 12px var(--c); animation: pm-brilla 0.6s ease-out both; animation-delay: calc(var(--k, 0) * 12ms); }
+/* Giving up uncovers what was not painted yet, dimmer */
+.pm-grilla.revelada .pm-casilla.sin-hacer { opacity: 0.45; }
+@keyframes pm-brilla { 0% { transform: scale(0.6); } 70% { transform: scale(1.08); } 100% { transform: none; } }
+.pm-grilla.chica { max-width: 210px; gap: 3px; }
+.pm-grilla.chica .pm-casilla { font-size: 0.72rem; border-radius: 5px; border-width: 1px; }
+.pm-grilla.chica.entra { animation: pm-entra 0.4s ease-out; }
+@keyframes pm-entra { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+/* The how-to drawing: a cell and its neighbors, the numbered one highlighted */
+.pm-grilla.pm-ejemplo { grid-template-columns: repeat(3, 34px); width: auto; gap: 3px; }
+.pm-grilla.pm-ejemplo .pm-casilla { border-radius: 6px; font-size: 1rem; }
+.pm-grilla.pm-ejemplo .pm-centro { box-shadow: 0 0 0 2px #fff; }
+.pm-grilla.pm-ejemplo.tablero .pm-casilla.pm-p2 { background-image: repeating-linear-gradient(45deg, rgba(22, 8, 48, 0.28) 0 3px, transparent 3px 8px); }
+
+/* The game */
+.pm-juego { --gap-contenedor: 12px; }
+.pm-marcador { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
+.pm-marcador .parte { white-space: nowrap; }
+.pm-aviso { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; }
+.pm-aviso.mal { color: #ff8a8a; } .pm-aviso.ayuda { color: var(--yellow); } .pm-aviso.era { color: var(--yellow); font-size: 1.2rem; }
+/* The brushes: each button has the color it paints (the drawing's or the unpainted grey), and the chosen one shows */
+.pm-pinceles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pm-pinceles.tres { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.pm-pinceles.tres .pm-pincel { font-size: 1rem; padding: 0 4px; }
+.pm-pincel { min-height: 54px; min-width: 0; border-radius: 16px; border: 3px solid transparent; color: var(--ink); overflow-wrap: anywhere;
+  font: 1.25rem var(--font-display); letter-spacing: 0.04em; line-height: 1.1; cursor: pointer; opacity: 0.65; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; }
+.pm-pincel--tinta { background: var(--c); color: #160830; }
+.pm-pincel--fondo { background: rgba(255,255,255,0.16); }
+.pm-pincel[aria-pressed="true"] { opacity: 1; transform: translateY(-2px); border-color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,0.35), 0 6px 18px rgba(0,0,0,0.35); }
+/* The hint and Give up, in a row of two equal buttons */
+.pm-acciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.pm-acciones .btn { width: 100%; min-width: 0; min-height: 44px; padding: 4px 6px; font-size: 0.92rem; line-height: 1.15; }
+.pm-acciones #btn-ayuda.armado { border-color: var(--yellow); color: var(--yellow); }
+.pm-acciones .pm-rendirse.armado { color: #ff8a8a; border-color: #ff8a8a; }
+.pm-fin { display: grid; gap: 12px; justify-items: center; }
+.pm-fin:empty { display: none; }
+.pm-fin .btn { width: 100%; }
+.pm-sello { margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+.pm-sello.mal { color: #ff8a8a; }
+/* The hard board has an electric border */
+.pm-grilla.tablero.dificil { padding: 6px; border-radius: 14px; box-shadow: 0 0 0 2px rgba(46, 230, 214, 0.6), 0 0 18px rgba(46, 230, 214, 0.35); }
+
+/* The hard variant changes the whole page's background: night blue with cyan glows and a touch of
+   yellow, like an electric panel. It changes at once, like switching on a light */
+body.modo-dificil {
+  --bg1: #020c1c; --bg2: #06263a; --bg3: #120836;
+  --fondo:
+    radial-gradient(1100px 600px at 10% -10%, rgba(46, 230, 214, 0.32), transparent 60%),
+    radial-gradient(900px 500px at 110% 15%, rgba(255, 210, 63, 0.16), transparent 60%),
+    radial-gradient(800px 600px at 50% 120%, rgba(77, 163, 255, 0.35), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+}
+
+/* The hard variant's switch: a lever on a metal plate. Up, it electrifies */
+.pm-interruptor { display: grid; grid-template-columns: 74px 1fr; gap: 14px; align-items: center; width: 100%; text-align: left; cursor: pointer;
+  padding: 10px 14px; border-radius: 18px; border: 2px solid var(--glass-border); background: rgba(255,255,255,0.05); color: var(--ink); font: inherit; }
+.pm-interruptor .pm-rotulo { display: grid; gap: 2px; min-width: 0; }
+.pm-interruptor .pm-rotulo b { font: 1.25rem var(--font-display); letter-spacing: 0.05em; }
+.pm-interruptor .pm-rotulo .muted { font-size: 0.85rem; }
+.pm-placa { position: relative; width: 74px; height: 64px; border-radius: 12px; background: linear-gradient(160deg, #4a4f5c, #23262e);
+  border: 2px solid #6b7180; box-shadow: inset 0 2px 4px rgba(255,255,255,0.15), inset 0 -3px 6px rgba(0,0,0,0.5); }
+/* Centered on the plate: the track (ui.js) is an arc with the same center (the lever's base) and the
+   same radius (39 px) as the ball's path, so the ball always runs along the middle of the groove */
+.pm-placa .pm-eje { position: absolute; left: 50%; bottom: 4.75px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #d9dde5, #7b8190); box-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+.pm-placa .pm-palanca { position: absolute; left: 50%; bottom: 12.75px; width: 8px; height: 38px; margin-left: -4px; border-radius: 4px;
+  background: linear-gradient(90deg, #aeb4c0, #e6e9ef, #9aa0ad); transform-origin: 50% 100%; transform: rotate(-38deg);
+  transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.pm-placa .pm-mango { position: absolute; left: 50%; top: -9px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ff8a8a, #c4142b); box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
+.pm-placa .pm-rayo { position: absolute; font-size: 1rem; opacity: 0; pointer-events: none; }
+.pm-placa .pm-recorrido { position: absolute; inset: 0; pointer-events: none; }
+.pm-placa .pm-recorrido svg { width: 100%; height: 100%; display: block; }
+.pm-placa .pm-ranura { fill: none; stroke: rgba(0, 0, 0, 0.5); stroke-width: 7; stroke-linecap: round; filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.18)); }
+.pm-placa .r1 { top: -10px; left: -8px; } .pm-placa .r2 { top: 6px; right: -12px; } .pm-placa .r3 { bottom: -8px; left: 6px; }
+/* The flash over the whole view when switching to hard (not back to easy) */
+.pm-relampago { position: fixed; inset: 0; z-index: 60; pointer-events: none; animation: pm-relampago 0.55s ease-out forwards;
+  background: radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.95), rgba(46, 230, 214, 0.75) 45%, rgba(46, 230, 214, 0.35)); }
+@keyframes pm-relampago { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
+/* On, the whole rectangle glows and flickers at random, like a light with a bad contact: ui.js moves
+   --brillo (0 to 1) out of step, and here it becomes glow and border */
+.pm-interruptor.on { --brillo: 0.7; background: rgba(46, 230, 214, calc(0.04 + 0.08 * var(--brillo)));
+  border-color: rgba(143, 247, 238, calc(0.35 + 0.65 * var(--brillo)));
+  box-shadow: 0 0 calc(4px + 26px * var(--brillo)) rgba(46, 230, 214, calc(0.15 + 0.7 * var(--brillo))),
+    0 0 calc(2px + 6px * var(--brillo)) rgba(255, 210, 63, calc(0.4 * var(--brillo))) inset;
+  transition: box-shadow 0.05s, border-color 0.05s, background 0.05s; }
+.pm-interruptor.on .pm-palanca { transform: rotate(38deg); }
+.pm-interruptor.on .pm-placa { border-color: #8ff7ee; }
+.pm-interruptor.on .pm-rayo { animation: pm-chispa 1.6s ease-out infinite; }
+.pm-interruptor.on .r2 { animation-delay: 0.45s; } .pm-interruptor.on .r3 { animation-delay: 0.9s; }
+.pm-interruptor.chispa .pm-placa { animation: pm-descarga 0.5s ease-out; }
+@keyframes pm-chispa { 0% { opacity: 0; transform: scale(0.4) rotate(-20deg); } 10% { opacity: 1; transform: scale(1.2) rotate(10deg); } 25%, 100% { opacity: 0; transform: scale(0.8); } }
+@keyframes pm-descarga { 0% { box-shadow: 0 0 0 0 rgba(143, 247, 238, 0.9); transform: translateX(-2px); } 20% { transform: translateX(3px); }
+  40% { transform: translateX(-2px); } 100% { box-shadow: 0 0 0 26px rgba(143, 247, 238, 0); transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pm-interruptor.on .pm-placa, .pm-interruptor.on .pm-rayo, .pm-interruptor.chispa .pm-placa { animation: none !important; }
+  .pm-interruptor.on .pm-placa { box-shadow: 0 0 10px #2ee6d6; }
+  .pm-interruptor.on .pm-rayo { opacity: 1; }
+  .pm-placa .pm-palanca { transition: none; }
+  .pm-casilla.pm-pista-objetivo, .pm-titulo .pm-brocha, .pm-casilla.pm-pop, .pm-casilla.pm-shake,
+  .pm-grilla.revelada .pm-casilla.tinta, .pm-sello, .pm-demo-rotulo.ve, .pm-grilla.chica.entra { animation: none !important; }
+}

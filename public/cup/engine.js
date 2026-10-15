@@ -20,13 +20,30 @@ export const CALENDARIOS = {
 export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
 
 /** Los juegos que el admin puede poner en los días antes de la final (D-163). */
-export const POZO = ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo'];
+export const POZO = ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo', 'rutas', 'loteo', 'pintaminas'];
+
+/**
+ * The variants a game can be played in (D-331), the first one being the default. In a cup the admin
+ * picks one per day and everyone plays it; standalone, the player picks it in the waiting room. A day
+ * is written `id` (the default) or `id:variant` in `meta.cal`, so the cups from before read the same.
+ */
+export const VARIANTES = { pintaminas: ['easy', 'hard'], loteo: ['numbers', 'utilities'] };
+/** A calendar entry split into its game and its variant: `'loteo:utilities'` → `{ id: 'loteo', variante: 'utilities' }`. */
+export function diaDeCal(x) {
+  const [id, v] = String(x || '').split(':');
+  const vs = VARIANTES[id];
+  return { id, variante: vs ? (vs.includes(v) ? v : vs[0]) : null };
+}
+/** The calendar entry for a game and a variant: the default one is written without it. */
+export const entradaCal = (id, variante = null) => (VARIANTES[id] && variante && variante !== VARIANTES[id][0] ? `${id}:${variante}` : id);
 
 /** ¿Es un calendario que se puede jugar? Juegos del pozo sin repetir, y la final al último. */
 export function calendarioValido(cal, dias) {
   if (!Array.isArray(cal) || cal.length !== dias || cal[dias - 1] !== 'final') return false;
   const dia = cal.slice(0, -1);
-  return dia.every(id => POZO.includes(id)) && new Set(dia).size === dia.length;
+  const ids = dia.map(x => String(x).split(':')[0]);
+  const variantesOk = dia.every(x => { const [id, v] = String(x).split(':'); return v === undefined || (VARIANTES[id] || []).includes(v); });
+  return variantesOk && ids.every(id => POZO.includes(id)) && new Set(ids).size === ids.length;
 }
 
 /**
@@ -205,8 +222,11 @@ export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab 
 
 /** Los juegos que salieron (D-102) se juegan como sus reemplazos, para no romper copas viejas. */
 const REEMPLAZOS = { solitario: 'reinas', dudo: 'letras' };
-export const calendario = meta => String(meta.cal || '').split(',').map(id => REEMPLAZOS[id] || id);
+// The game of each day, without its variant (D-331): everything that names a day's game reads this
+export const calendario = meta => String(meta.cal || '').split(',').map(x => { const id = x.split(':')[0]; return REEMPLAZOS[id] || id; });
 export const juegoDelDia = (meta, d) => calendario(meta)[d - 1] || null;
+/** The variant a day is played in (D-331), or `null` if its game has none. */
+export const varianteDelDia = (meta, d) => { const x = String(meta.cal || '').split(',')[d - 1]; return x ? diaDeCal(x).variante : null; };
 export const esFinal = (meta, d) => d === meta.days;
 
 /** El número de día que se vive en `now`: 0 antes de empezar, `days + 1` después de terminar. */
