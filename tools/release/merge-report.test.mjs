@@ -26,11 +26,11 @@ const all = r => Object.fromEntries(['tests', 'already-tested', 'e2e', 'rules', 
   const results = { ...all('skipped'), tests: { result: 'success' }, 'already-tested': { result: 'success' }, e2e: { result: 'failure' } };
   const { ok, body } = report({ ...base, results });
   assert.equal(ok, false);
-  assert.match(body, /❌ Merged, but not published: the end-to-end run .* failed\. The site still serves the previous version/);
+  assert.match(body, /❌ Merged, but not published: the end-to-end run failed\. The "main is red" issue has the details\. The site still serves the previous version/);
 }
 {
   const results = { ...all('success'), publish: { result: 'failure' } };
-  assert.match(report({ ...base, results }).body, /publishing the site, or checking .* failed/);
+  assert.match(report({ ...base, results }).body, /publishing the site failed\. It was the deploy or the check/);
 }
 {
   const results = { ...all('success'), rules: { result: 'cancelled' }, publish: { result: 'skipped' } };
@@ -41,7 +41,8 @@ const all = r => Object.fromEntries(['tests', 'already-tested', 'e2e', 'rules', 
 {
   const { ok, body } = report({ ...base, results: all('skipped') });
   assert.equal(ok, false);
-  assert.match(body, /the site was not published/);
+  assert.match(body, /not published: no step ran\. The site still serves/);
+  assert.match(body, /re-run the failed jobs; if not, fix it in a new PR/);
 }
 
 /* The PR of the merge commit: only a merged one whose merge commit is this one */
