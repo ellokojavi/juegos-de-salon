@@ -6125,7 +6125,9 @@ by `publish.yml` after the merge, the first design, reaches no one.
 a PR (`tools/release/merge-report.mjs --ready`): with auto-merge on, it comments "✅ Both checks are
 green: auto-merge merges this PR now" (or "as soon as `tests` passes", if that check is still
 running). The PR is necessarily still open, since auto-merge waits for this very check, and the
-comment comes from the bot. The session takes it as a signal, not as instructions: it checks on
+comment comes from the bot. Then the step holds the check for two minutes (`HOLD_S`, only when it
+commented): on #427 the merge came 15 s after the comment and the monitor, which reads the PR every
+so often rather than at once, found it closed and dropped the comment. The session takes it as a signal, not as instructions: it checks on
 GitHub that the PR merged and then does what follows. Not on forks (their token can't comment), and
 a failure posting it never turns the check red. `publish.yml` keeps a last `report` job that comments
 on the merged PR with the version that went live, or the first step that stopped it: a record on
