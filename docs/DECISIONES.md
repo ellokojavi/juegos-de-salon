@@ -72,7 +72,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320 |
-| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
+| Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285 |
@@ -6108,3 +6108,30 @@ is already next to it.
 is left unhandled, and checks that the seven `game.js` wire the button through `tryRematch`.
 `tools/e2e/battleship/online.mjs` cuts A's network before Revancha and checks the message, the
 button and the vigía, then plays the rematch.
+
+## D-323 · The PR's session learns of the merge from a bot comment, posted before the merge
+**Date:** 2026-10-15 · **Status:** current · **Relation:** completes D-216 (auto-merge) and D-218 (the CI monitor)
+**Context:** owner's request. With auto-merge a PR merges by itself, and `publish.yml` takes it to
+the site, but the session that opened it never learned it: the app's CI monitor wakes it on a
+failed check, a conflict or a new comment, not when everything goes well. Every time, the owner
+had to come back and say "it merged" before the session could do what follows (report, clean up,
+go on with the work that depended on it). That broke end-to-end automation.
+**What was tried (#427, #428):** a comment is the only success-side event the monitor relays, but
+not every comment. Comments from the owner's own account (the one the session's `gh` uses, who also
+opens the PRs) did not wake the session, plain or as a review. A comment from `github-actions[bot]`
+woke it within seconds on an open PR, and not at all once the PR was closed. So a comment posted
+by `publish.yml` after the merge, the first design, reaches no one.
+**Decision:** the signal is posted by the required `end-to-end` check itself, as its last step on
+a PR (`tools/release/merge-report.mjs --ready`): with auto-merge on, it comments "✅ Both checks are
+green: auto-merge merges this PR now" (or "as soon as `tests` passes", if that check is still
+running). The PR is necessarily still open, since auto-merge waits for this very check, and the
+comment comes from the bot. The session takes it as a signal, not as instructions: it checks on
+GitHub that the PR merged and then does what follows. Not on forks (their token can't comment), and
+a failure posting it never turns the check red. `publish.yml` keeps a last `report` job that comments
+on the merged PR with the version that went live, or the first step that stopped it: a record on
+the PR (and an email to the owner) that wakes no one. A failed publication still opens "main is red".
+**Why not polling:** the session must not poll CI. **Why not a local job:** the owner wants this in
+the repo, not on one computer.
+**Consequences:** `merge-report.test.mjs` covers both comments, the `tests` conclusion, finding the
+PR of a merge commit, and the workflow wiring: the step sits in `end-to-end` with its permissions,
+`publish.yml` grants them when it calls `e2e.yml`, and `report` waits for every job.
