@@ -89,7 +89,7 @@ console.log(`games: los ${GAMES.length} juegos tienen motor, tests, gancho y esp
 
 // The "New" label (D-333): every game on the home page that was not there before D-333 brings the day it arrived
 {
-  const { PORTADA, esNuevo, DIAS_NUEVO } = await import('./games.js');
+  const { PORTADA, esNuevo, DIAS_NUEVO, ordenPortada } = await import('./games.js');
   const YA_ESTABAN = ['copa', 'ahorcado', 'batalla-naval', 'toque-y-fama', 'linea-de-tiempo', 'dudo', 'julepe', 'cuarto-rey', 'generala',
     'conexiones', 'letras', 'anio', 'reinas', 'tango', 'zip', 'desenredo', 'donde', 'caso'];
   const sinFecha = PORTADA.filter(g => g.available && !YA_ESTABAN.includes(g.id) && !/^\d{4}-\d{2}-\d{2}$/.test(g.nuevoDesde || ''));
@@ -100,5 +100,15 @@ console.log(`games: los ${GAMES.length} juegos tienen motor, tests, gancho y esp
   assert.ok(!esNuevo(g, new Date('2026-10-29T01:00:00')), 'and not after');
   assert.ok(!esNuevo(g, new Date('2026-10-14T23:00:00')), 'nor before');
   assert.ok(!esNuevo({}, new Date()), 'without a date it is not new');
+  // D-335: while new, a game goes right after La Copa; afterwards, back to its place by popularity
+  const juego = { id: 'zzz-nuevo', available: true, nuevoDesde: '2030-01-01' };
+  const { GAMES: G } = await import('./games.js');
+  G.push(juego);
+  try {
+    const dentro = ordenPortada(new Date('2030-01-02T12:00:00')).map(x => x.id);
+    assert.deepEqual(dentro.slice(0, 2), ['copa', 'zzz-nuevo'], 'a new game goes right after La Copa');
+    const despues = ordenPortada(new Date('2030-02-01T12:00:00')).map(x => x.id);
+    assert.ok(despues.indexOf('zzz-nuevo') > 1, 'when the label goes, it goes back to its place by popularity');
+  } finally { G.pop(); }
   console.log('games: the new ones carry their date for the "New" label (D-333)');
 }
