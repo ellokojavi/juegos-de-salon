@@ -121,7 +121,26 @@ const SEED_PANEL = view => `(async()=>{const DAY=86400000,now=Date.now(),today=M
       days[today-3].err={f1:errOf('js','RangeError: Maximum call stack size exceeded','/zip/x.js:5','zip','chrome128','0.128.0',6)};
       window.__panel.seed({rooms,days,torneos:cups,push,uad,vista:'${view}'});})()`;
 
+/* --- Pintaminas: the variant the phone remembers, and painting the whole board with the engine's solution --- */
+const PM_VARIANT = v => `localStorage.setItem('juegos-de-salon:pintaminas:variant','${v}'); location.reload()`;
+const PM_SOLVE = `(()=>{const {p}=window.__pintaminas;const k=c=>c===0?'btn-fondo':c===1?'btn-tinta':'btn-tinta2';
+  p.sol.forEach((c,i)=>{if(p.dadas.includes(i))return;document.getElementById(k(c)).click();document.querySelector('#pm-tablero .pm-casilla[data-i="'+i+'"]').click();});})()`;
+
 export const PATHS = {
+  /**
+   * 🖌️ Pintaminas (D-331). The phone remembers the variant, so each path sets it first (the lever's
+   * shot leaves it in hard). `hint` is the 💡 hint paid (the cell that pulses and its numbers);
+   * `revealed`, a hard board painted whole (the drawing and «Ver resultado»); `result`, its result.
+   */
+  pintaminas: {
+    intro: [PM_VARIANT('easy'), `1`, `1`],
+    'intro-hard': [PM_VARIANT('easy'), `1`, `1`, `document.getElementById('btn-dificil').click()`, `1`, `1`],
+    game: [PM_VARIANT('easy'), `1`, START, `1`, `1`, `1`, `1`, `1`, `1`],
+    hint: [PM_VARIANT('easy'), `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, `document.getElementById('btn-ayuda').click()`, `document.getElementById('btn-ayuda').click()`],
+    'game-hard': [PM_VARIANT('hard'), `1`, START, `1`, `1`, `1`, `1`, `1`, `1`],
+    revealed: [PM_VARIANT('hard'), `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, PM_SOLVE, `1`, `1`, `1`],
+    result: [PM_VARIANT('hard'), `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, PM_SOLVE, `1`, `1`, `document.getElementById('btn-fin').click()`, `1`, `1`, `1`],
+  },
   /** La Copa with the test store (`?test`): the home page and the form to create one. */
   copa: {
     intro: [],
@@ -441,10 +460,6 @@ export const PATHS = {
     // The result (the case the owner reported, D-309): passes the four clues and confirms Terminar
     result: [START, `1`, `1`, `1`, `1`, `1`, `1`,
       ...Array(14).fill(`document.getElementById('btn-pasar')?.click()`), `1`, `1`, `1`, `1`],
-  },
-  'labs/paint-mines': {
-    intro: [],
-    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
   },
   'labs/routes': {
     intro: [],

@@ -44,7 +44,7 @@
  "julep/local.mjs": 185,
  "liars-dice/languages.mjs": 50,
  "liars-dice/local.mjs": 58,
- "paint-mines/lab.mjs": 41,
+ "paint-mines/game.mjs": 41,
  "room-cap.mjs": 29,
  "room-error.mjs": 107,
  "routes/lab.mjs": 51,

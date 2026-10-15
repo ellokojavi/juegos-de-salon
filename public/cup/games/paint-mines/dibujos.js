@@ -1,58 +1,60 @@
 /**
- * Los dibujos de Pintaminas (D-289): 7×7, `#` se pinta y `.` no. Al resolver el tablero aparece el
- * dibujo y su nombre ("¡Era un pez!"). Son irregulares a propósito: uno simétrico se adivina por
- * espejo (el test los rechaza). Cada dibujo se pinta con sus colores de verdad (`colores`, nombres de
- * PALETA; pedido del dueño): la luna amarilla, el cactus verde, la bota café.
- * Un dibujo nuevo: que se reconozca a 7×7, entre 12 y 40 casillas pintadas, su nombre con artículo y
- * sus colores.
+ * The Pintaminas drawings (D-289): 7×7, `#` is painted and `.` is not. Solving the board reveals the
+ * drawing and what it was ("🐟 ¡Era un pez!"). They are irregular on purpose: a symmetric one can be
+ * guessed by mirroring (the test rejects them). Each drawing is painted in its real colors (`colores`,
+ * ids from PALETA; the owner's request): the yellow moon, the green cactus, the brown boot.
+ * The data is language-free (D-331): `id` names the drawing, and its words ("¡Era un pez!") live in
+ * texts.js (`pmDibujos`), like the color names (`pmColores`).
+ * A new drawing: recognizable at 7×7, between 12 and 40 painted cells, its colors, and its sentence
+ * in the four languages in texts.js.
  */
 export const DIBUJOS = [
-  { nombre: 'Un pez', emoji: '🐟', colores: ['azul'], filas: ['.......', '.####.#', '#.#####', '#######', '.####.#', '.......', '.......'] },
-  { nombre: 'Una luna', emoji: '🌙', colores: ['amarillo'], filas: ['..###..', '.##....', '##.....', '##.....', '###...#', '.######', '..####.'] },
-  { nombre: 'Un velero', emoji: '⛵', colores: ['blanco'], filas: ['...#...', '...##..', '...###.', '...#...', '#######', '.#####.', '..###..'] },
-  { nombre: 'Una bota', emoji: '👢', colores: ['café'], filas: ['.###...', '.###...', '.###...', '.###...', '.#####.', '.######', '.######'] },
-  { nombre: 'Una llave', emoji: '🔑', colores: ['amarillo'], filas: ['.......', '###....', '#.#####', '###.#.#', '.......', '.......', '.......'] },
-  { nombre: 'Una nota musical', emoji: '🎵', colores: ['azul'], filas: ['...###.', '...#.##', '...#..#', '...#...', '.###...', '####...', '.##....'] },
-  { nombre: 'Un rayo', emoji: '⚡', colores: ['amarillo'], filas: ['....##.', '...##..', '..##...', '.#####.', '...##..', '..##...', '.##....'] },
-  { nombre: 'Un pato', emoji: '🦆', colores: ['amarillo'], filas: ['....##.', '...####', '....##.', '.#####.', '#######', '.#####.', '.......'] },
-  { nombre: 'Un perro', emoji: '🐕', colores: ['café'], filas: ['.##....', '####...', '.###...', '.######', '.######', '.#...#.', '.#...#.'] },
-  { nombre: 'Un cohete', emoji: '🚀', colores: ['blanco'], filas: ['.....##', '....###', '...###.', '.####..', '..##...', '.#.#...', '#......'] },
-  { nombre: 'Un signo de pregunta', emoji: '❓', colores: ['rojo'], filas: ['.####..', '##..##.', '....##.', '...##..', '..##...', '.......', '..##...'] },
-  { nombre: 'Un plátano', emoji: '🍌', colores: ['amarillo'], filas: ['......#', '.....##', '.....##', '....###', '#..###.', '#####..', '.###...'] },
-  { nombre: 'Un cactus', emoji: '🌵', colores: ['verde'], filas: ['...#...', '#..#...', '#..#..#', '####..#', '...####', '...#...', '..###..'] },
-  { nombre: 'Una guitarra', emoji: '🎸', colores: ['naranjo'], filas: ['......#', '.....#.', '....#..', '.###...', '#####..', '####...', '.##....'] },
-  { nombre: 'Un martillo', emoji: '🔨', colores: ['café'], filas: ['#####..', '#####..', '..#....', '..#....', '..#....', '..#....', '..#....'] },
-  { nombre: 'Una bandera', emoji: '🚩', colores: ['rojo'], filas: ['#......', '#####..', '######.', '#####..', '#......', '#......', '#......'] },
-  { nombre: 'Una taza', emoji: '☕', colores: ['blanco'], filas: ['.......', '#####..', '######.', '#####.#', '######.', '#####..', '.###...'] },
+  { id: 'pez', emoji: '🐟', colores: ['azul'], filas: ['.......', '.####.#', '#.#####', '#######', '.####.#', '.......', '.......'] },
+  { id: 'luna', emoji: '🌙', colores: ['amarillo'], filas: ['..###..', '.##....', '##.....', '##.....', '###...#', '.######', '..####.'] },
+  { id: 'velero', emoji: '⛵', colores: ['blanco'], filas: ['...#...', '...##..', '...###.', '...#...', '#######', '.#####.', '..###..'] },
+  { id: 'bota', emoji: '👢', colores: ['café'], filas: ['.###...', '.###...', '.###...', '.###...', '.#####.', '.######', '.######'] },
+  { id: 'llave', emoji: '🔑', colores: ['amarillo'], filas: ['.......', '###....', '#.#####', '###.#.#', '.......', '.......', '.......'] },
+  { id: 'nota', emoji: '🎵', colores: ['azul'], filas: ['...###.', '...#.##', '...#..#', '...#...', '.###...', '####...', '.##....'] },
+  { id: 'rayo', emoji: '⚡', colores: ['amarillo'], filas: ['....##.', '...##..', '..##...', '.#####.', '...##..', '..##...', '.##....'] },
+  { id: 'pato', emoji: '🦆', colores: ['amarillo'], filas: ['....##.', '...####', '....##.', '.#####.', '#######', '.#####.', '.......'] },
+  { id: 'perro', emoji: '🐕', colores: ['café'], filas: ['.##....', '####...', '.###...', '.######', '.######', '.#...#.', '.#...#.'] },
+  { id: 'cohete', emoji: '🚀', colores: ['blanco'], filas: ['.....##', '....###', '...###.', '.####..', '..##...', '.#.#...', '#......'] },
+  { id: 'pregunta', emoji: '❓', colores: ['rojo'], filas: ['.####..', '##..##.', '....##.', '...##..', '..##...', '.......', '..##...'] },
+  { id: 'platano', emoji: '🍌', colores: ['amarillo'], filas: ['......#', '.....##', '.....##', '....###', '#..###.', '#####..', '.###...'] },
+  { id: 'cactus', emoji: '🌵', colores: ['verde'], filas: ['...#...', '#..#...', '#..#..#', '####..#', '...####', '...#...', '..###..'] },
+  { id: 'guitarra', emoji: '🎸', colores: ['naranjo'], filas: ['......#', '.....#.', '....#..', '.###...', '#####..', '####...', '.##....'] },
+  { id: 'martillo', emoji: '🔨', colores: ['café'], filas: ['#####..', '#####..', '..#....', '..#....', '..#....', '..#....', '..#....'] },
+  { id: 'bandera', emoji: '🚩', colores: ['rojo'], filas: ['#......', '#####..', '######.', '#####..', '#......', '#......', '#......'] },
+  { id: 'taza', emoji: '☕', colores: ['blanco'], filas: ['.......', '#####..', '######.', '#####.#', '######.', '#####..', '.###...'] },
 ];
 
 /**
- * Los del modo difícil (D-291): dos colores, `#` el primero y `+` el segundo. También irregulares, con
- * al menos 4 casillas de cada color. Sus `colores`, en el orden `#`, `+`, son los de verdad y se
- * distinguen bien entre sí (nunca amarillo con naranjo: se confunden).
+ * The hard variant's drawings (D-291): two colors, `#` the first and `+` the second. Also irregular,
+ * with at least 4 cells of each color. Their `colores`, in the order `#`, `+`, are the real ones and
+ * are easy to tell apart (never yellow with orange: they get mixed up).
  */
 export const DIBUJOS2 = [
-  { nombre: 'Una frutilla', emoji: '🍓', colores: ['rojo', 'verde'], filas: ['...+...', '.+++.+.', '.#####.', '#######', '.######', '..###..', '...#...'] },
-  { nombre: 'Un pez', emoji: '🐠', colores: ['azul', 'amarillo'], filas: ['..++...', '.###..+', '#.####+', '######+', '.###..+', '..++...', '.......'] },
-  { nombre: 'Unas cerezas', emoji: '🍒', colores: ['rojo', 'verde'], filas: ['.....+.', '....++.', '...+.+.', '..+..+.', '###.###', '###.###', '.#...#.'] },
-  { nombre: 'Un helado', emoji: '🍦', colores: ['rosado', 'café'], filas: ['..##...', '.####..', '######.', '.+++++.', '..+++..', '..++...', '...+...'] },
-  { nombre: 'Un árbol', emoji: '🌳', colores: ['verde', 'café'], filas: ['..###..', '.#####.', '######.', '.####..', '...+...', '...+...', '..+++..'] },
-  { nombre: 'Un cohete', emoji: '🚀', colores: ['blanco', 'naranjo'], filas: ['.....##', '....###', '...###.', '.####..', '..##...', '.++#...', '++.....'] },
-  { nombre: 'Una casa', emoji: '🏠', colores: ['amarillo', 'rojo'], filas: ['.....#.', '..+++#.', '.+++++.', '+++++++', '.#####.', '.##.##.', '.##.##.'] },
-  { nombre: 'Un pato', emoji: '🦆', colores: ['blanco', 'naranjo'], filas: ['...##..', '..###++', '...##..', '.#####.', '#######', '.#####.', '..+.+..'] },
-  { nombre: 'Un lápiz', emoji: '✏️', colores: ['amarillo', 'café'], filas: ['......+', '....#+.', '...###.', '..###..', '.###...', '+##....', '++.....'] },
-  { nombre: 'Una zanahoria', emoji: '🥕', colores: ['naranjo', 'verde'], filas: ['....+.+', '....++.', '...##..', '..###..', '..##...', '.##....', '#......'] },
+  { id: 'frutilla', emoji: '🍓', colores: ['rojo', 'verde'], filas: ['...+...', '.+++.+.', '.#####.', '#######', '.######', '..###..', '...#...'] },
+  { id: 'pez', emoji: '🐠', colores: ['azul', 'amarillo'], filas: ['..++...', '.###..+', '#.####+', '######+', '.###..+', '..++...', '.......'] },
+  { id: 'cerezas', emoji: '🍒', colores: ['rojo', 'verde'], filas: ['.....+.', '....++.', '...+.+.', '..+..+.', '###.###', '###.###', '.#...#.'] },
+  { id: 'helado', emoji: '🍦', colores: ['rosado', 'café'], filas: ['..##...', '.####..', '######.', '.+++++.', '..+++..', '..++...', '...+...'] },
+  { id: 'arbol', emoji: '🌳', colores: ['verde', 'café'], filas: ['..###..', '.#####.', '######.', '.####..', '...+...', '...+...', '..+++..'] },
+  { id: 'cohete', emoji: '🚀', colores: ['blanco', 'naranjo'], filas: ['.....##', '....###', '...###.', '.####..', '..##...', '.++#...', '++.....'] },
+  { id: 'casa', emoji: '🏠', colores: ['amarillo', 'rojo'], filas: ['.....#.', '..+++#.', '.+++++.', '+++++++', '.#####.', '.##.##.', '.##.##.'] },
+  { id: 'pato', emoji: '🦆', colores: ['blanco', 'naranjo'], filas: ['...##..', '..###++', '...##..', '.#####.', '#######', '.#####.', '..+.+..'] },
+  { id: 'lapiz', emoji: '✏️', colores: ['amarillo', 'café'], filas: ['......+', '....#+.', '...###.', '..###..', '.###...', '+##....', '++.....'] },
+  { id: 'zanahoria', emoji: '🥕', colores: ['naranjo', 'verde'], filas: ['....+.+', '....++.', '...##..', '..###..', '..##...', '.##....', '#......'] },
 ];
 
-/** Los colores con que se pinta, por su nombre (los usa `colores` de cada dibujo). `cuadro` es su emoji. */
+/** The paint colors, by id (each drawing's `colores` uses them). `cuadro` is its emoji square. The ids are data, not words. */
 export const PALETA = [
-  { nombre: 'azul', color: '#4da3ff', cuadro: '🟦' },
-  { nombre: 'rojo', color: '#ff4d5e', cuadro: '🟥' },
-  { nombre: 'verde', color: '#7ddc3a', cuadro: '🟩' },
-  { nombre: 'amarillo', color: '#ffd23f', cuadro: '🟨' },
-  { nombre: 'naranjo', color: '#ff9f1c', cuadro: '🟧' },
-  { nombre: 'morado', color: '#b48bff', cuadro: '🟪' },
-  { nombre: 'café', color: '#b8773f', cuadro: '🟫' },
-  { nombre: 'blanco', color: '#f2eee4', cuadro: '⬜' },
-  { nombre: 'rosado', color: '#ff7eb6', cuadro: '🩷' },
+  { id: 'azul', color: '#4da3ff', cuadro: '🟦' },
+  { id: 'rojo', color: '#ff4d5e', cuadro: '🟥' },
+  { id: 'verde', color: '#7ddc3a', cuadro: '🟩' },
+  { id: 'amarillo', color: '#ffd23f', cuadro: '🟨' },
+  { id: 'naranjo', color: '#ff9f1c', cuadro: '🟧' },
+  { id: 'morado', color: '#b48bff', cuadro: '🟪' },
+  { id: 'café', color: '#b8773f', cuadro: '🟫' },
+  { id: 'blanco', color: '#f2eee4', cuadro: '⬜' },
+  { id: 'rosado', color: '#ff7eb6', cuadro: '🩷' },
 ];
