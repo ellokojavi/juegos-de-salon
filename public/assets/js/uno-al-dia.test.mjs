@@ -3,7 +3,7 @@
 // y los puntajes de los juegos de grupo (El Ahorcado, Batalla Naval, Dudo).
 import assert from 'node:assert/strict';
 import {
-  JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
+  JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, DESDE_MAS, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
   fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, formaAcceso, KEY,
 } from './uno-al-dia.js';
 import { JUEGOS } from '../../cup/games/index.js';
@@ -30,7 +30,14 @@ for (const j of JUEGOS_DIA) {
   if (GRUPO.includes(j.id)) assert.ok(GAMES.find(g => g.id === j.id)?.available, `${j.id}: no está en games.js`);
   else assert.ok(JUEGOS[j.id]?.generar, `${j.id}: no está en cup/games`);
 }
-assert.equal(JUEGOS_DIA.length, 10, 'son 10 juegos: 7 solitarios y 3 de grupo');
+assert.equal(JUEGOS_DIA.length, 16, '16 games: 13 solo and 3 group ones (D-334)');
+// D-334: the six that join on DESDE_MAS do not change any day before it, and each one comes out in the next two decks
+{
+  const antes = crearCalendario(JUEGOS_DIA.filter(j => j.desde < DESDE_MAS));
+  for (const f of fechas(LANZAMIENTO, diasEntre(LANZAMIENTO, DESDE_MAS))) assert.equal(juegoDel(f), antes.juegoDel(f), `${f} changed its game`);
+  const despues = fechas(DESDE_MAS, 2 * JUEGOS_DIA.length + 10).map(juegoDel);
+  for (const j of JUEGOS_DIA.filter(x => x.desde === DESDE_MAS)) assert.ok(despues.includes(j.id), `${j.id} never comes out after ${DESDE_MAS}`);
+}
 assert.ok(JUEGOS_DIA.every(j => j.desde >= LANZAMIENTO), 'ningún juego entra antes del lanzamiento');
 const dias = fechas(LANZAMIENTO, 400);
 for (const f of dias.slice(0, 30)) {
@@ -44,7 +51,7 @@ assert.notEqual(semillaDel('2026-10-05'), semillaDel('2026-10-06'));
 
 // El mazo: cada juego una vez antes de repetir, y ninguno vuelve antes de tiempo. Cada mazo tiene
 // los juegos que ya habían entrado al barajarlo: el primero, los 7 solitarios; desde el segundo, los
-// 10, y con 10 la espera es de 7 días.
+// 10, y con 10 la espera es de 7 días. From the third (2026-10-23), the 16 of D-334.
 const salidos = dias.map(juegoDel);
 const mazos = [];
 for (let k = 0; k < salidos.length;) {
@@ -54,7 +61,8 @@ for (let k = 0; k < salidos.length;) {
   if (mazo.length === n) assert.equal(new Set(mazo).size, n, `el mazo que empieza el ${dias[k]} repite un juego`);
   k += n;
 }
-assert.deepEqual(mazos.slice(0, 3).map(m => m.n), [7, 10, 10], 'el primer mazo trae 7 juegos y los siguientes, 10');
+assert.deepEqual(mazos.slice(0, 4).map(m => m.n), [7, 10, 16, 16], 'the first deck has 7 games, the second 10 and, from the one shuffled on 2026-10-23, 16 (D-334)');
+assert.equal(dias[mazos[2].k], '2026-10-23', 'the six games of D-334 enter with the deck shuffled on 2026-10-23');
 assert.equal(mazos[1].espera, 7, 'con 10 juegos, ninguno vuelve antes de 7 días');
 for (const { k, n, espera } of mazos) {
   for (let i = k; i < Math.min(k + n, salidos.length); i++) {

@@ -24,6 +24,9 @@ export const LANZAMIENTO = '2026-10-06';
 /** El día en que entran El Ahorcado, Batalla Naval y Dudo (PR 2 de Uno al día). */
 export const DESDE_GRUPO = '2026-10-07';
 
+/** The day Rutas rotas, Loteo, Pintaminas, Zip, Tango and ¿Dónde queda? enter (D-334): they join the next deck shuffled from then. */
+export const DESDE_MAS = '2026-10-16';
+
 /**
  * Los juegos que pueden salir y la fecha desde la que entran. Los solitarios van con su id de La
  * Copa (`cup/games/`); los de grupo, con el de la portada (`games.js`), que es el de su página.
@@ -41,6 +44,13 @@ export const JUEGOS_DIA = [
   { id: 'ahorcado', emoji: '🪢', desde: DESDE_GRUPO },
   { id: 'batalla-naval', emoji: '⚓', desde: DESDE_GRUPO },
   { id: 'dudo', emoji: '🎲', desde: DESDE_GRUPO },
+  // D-334: the three that left the lab (D-332) and the solo games that were missing, from the next deck on
+  { id: 'rutas', emoji: '🚇', desde: DESDE_MAS },
+  { id: 'loteo', emoji: '📐', desde: DESDE_MAS },
+  { id: 'pintaminas', emoji: '🖌️', desde: DESDE_MAS },
+  { id: 'zip', emoji: '〰️', desde: DESDE_MAS },
+  { id: 'tango', emoji: '☀️', desde: DESDE_MAS },
+  { id: 'donde', emoji: '📍', desde: DESDE_MAS },
 ];
 /** Los de grupo: tienen su propio motor y su modo para uno (contra el celular o con su mazo). */
 export const GRUPO = ['ahorcado', 'batalla-naval', 'dudo'];
