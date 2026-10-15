@@ -137,7 +137,7 @@ cuenta para la copa" (`trialNote`, D-177).
 
 Al crear la copa, apenas se elige la duración aparece **¿Qué se juega cada día?** con una propuesta
 al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`: los seis de siempre
-más Zip, Tango, ¿Dónde queda? y Desenredo), sin dos días seguidos de la misma habilidad. Es la mano y la línea
+más Zip, Tango, ¿Dónde queda?, Desenredo and, since D-332, 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas), sin dos días seguidos de la misma habilidad. Es la mano y la línea
 de Línea de Tiempo con su arrastre: un día se arrastra a otro lugar de la semana (en un celular,
 por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando se llega a lo mismo
 (el juego y después la ranura o el día). 🎲 propone otro orden. La final queda fija al último. El calendario se guarda en
@@ -145,7 +145,7 @@ por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando s
 (las demos) se usa el de siempre, `CALENDARIOS`: Línea, Toque y Fama, Conexiones, Reinas, Palabra,
 Año y la final; o Línea, Conexiones y la final en la de 3 días (D-163).
 
-Los tres juegos más nuevos del pozo son **〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles: diez, de 4 × 4 a 7 × 7, en tres minutos; con los diez son 100 y la partida termina ahí, y entre quienes los resuelven todos gana quien terminó antes, D-250) y **☀️ Tango**
+Los otros juegos del pozo, antes de los tres de D-332, son **〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles: diez, de 4 × 4 a 7 × 7, en tres minutos; con los diez son 100 y la partida termina ahí, y entre quienes los resuelven todos gana quien terminó antes, D-250) y **☀️ Tango**
 (soles y lunas, mitad y mitad por línea, nunca tres seguidos, con marcas = y ×), y **📍 ¿Dónde
 queda?** (cinco ciudades con su país, un alfiler en un globo sin nombres que se gira sin fin y,
 con dos dedos, también en torno a la pantalla, con una brújula que endereza el norte; 100 puntos
@@ -236,6 +236,18 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   report: 622 with a. C. on looked like a bug).
 - Las copas creadas antes de D-102 con el Solitario o Dudo en el calendario juegan Reinas y Toque y
   Fama: Palabra en esos días.
+
+- **Variants** (D-331): Pintaminas (easy / ⚡ hard) and Loteo (🔢 Numbers / ⚡💧 Utilities) are
+  played in one variant per day. When the week has one of them, a row below the week ("¿En qué
+  versión?") lets the admin pick it; the random week and the default pick the first one.
+  `meta.cal` writes the day as `id` or `id:variant` (`pintaminas:hard`); `calendario()` and
+  `juegoDelDia()` name the game without it, `varianteDelDia()` gives it. The day's card, its
+  waiting room, its rules and the trial say the variant and play it. Standalone, the player picks it
+  in the waiting room (`?mode=`), with one ranking table per variant.
+- **🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas** (D-332) came from the lab; each one's page is
+  [routes.md](routes.md), [plots.md](plots.md) and [paint-mines.md](paint-mines.md). They bring their
+  texts (`games/<slug>/texts.js`, merged into `rules.js`), their styles (`games/<slug>/style.css`)
+  and their score breakdown (`desglose()` in their `ui.js`). They are not rounds of the Gran Final.
 
 ## Modos
 

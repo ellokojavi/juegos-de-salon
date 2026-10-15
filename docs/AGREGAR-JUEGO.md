@@ -16,6 +16,8 @@
    filtros de la portada aparece (D-214); lo demás que la portada le pide está en C-17.
    Su `id` va también en `POPULARIDAD`, el orden de la portada (D-255): sin partidas que contar,
    al final de los disponibles; si no está en la lista, igual queda al final.
+   It also brings `nuevoDesde: 'YYYY-MM-DD'`, the day it reaches the home page: its card says
+   "New" for two weeks (D-333).
    Si estrena un modo, se agrega a `MODES` y basta.
 4. **Los modos** que le tocan según C-5, con el transporte de C-7 (`create`, `join`, `send`,
    `onMessage`, `onPresence`, `leave`, `dispose`) y, si tiene sala, sus reglas en
@@ -38,6 +40,10 @@
 8. **Las pruebas de punta a punta** (C-12): las pantallas del juego como entradas en
    `tools/e2e/paths.mjs`, su `tools/e2e/<carpeta>/languages.mjs` y los guiones de partida en
    `tools/e2e/<carpeta>/`. `node tools/e2e/look.mjs <juego> <pantalla> --width 320` para mirar.
+8b. **Variants** (D-331): if a one-player game of La Copa can be played in more than one way, its
+   variants go in `VARIANTES` (`public/cup/engine.js`, the default first), its engine's
+   `generarDia` takes `variante`, and its `texts.js` names each one (`variantes`). The waiting room
+   offers them standalone and the cup's admin picks one per day, without anything else to do.
 9. **La especificación** en `docs/games/<carpeta>.md`, con la plantilla de C-13 (incluidas las
    excepciones a los cánones y el gancho `window.__…`), más requerimientos y decisiones.
 10. **El README**, en inglés (C-13): la sección del juego, sus tomas en `docs/capturas.json` y

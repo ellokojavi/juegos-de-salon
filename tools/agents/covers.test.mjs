@@ -4,7 +4,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { coverOf, touchedGames, resolvedSteps, labsExits, stage } from './covers.mjs';
 
-for (const slug of ['agents', 'paint-mines', 'routes', 'exploding-numbers', 'plots']) {
+// Pintaminas, Rutas rotas and Loteo left the lab (D-332): their steps are in La Copa's texts now
+for (const slug of ['agents', 'exploding-numbers']) {
   const { tagline, steps } = coverOf(readFileSync(new URL(`../../public/labs/${slug}/game.js`, import.meta.url), 'utf8'));
   assert.ok(tagline && tagline.length > 10, `${slug}: no tagline`);
   assert.ok(steps.length >= 2 && steps.length <= 3, `${slug}: ${steps.length} steps (U-18: up to 3)`);

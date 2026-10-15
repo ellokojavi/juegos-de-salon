@@ -6,12 +6,39 @@ import {
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
-  cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar,
+  cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
 } from './engine.js';
 
 let n = 0;
 const test = (name, fn) => { fn(); n++; };
 const H = 60 * 60 * 1000;
+
+test('variants (D-331): a day is `id` or `id:variant`, and the default one is written bare', () => {
+  for (const [id, vs] of Object.entries(VARIANTES)) {
+    assert.ok(POZO.includes(id), `${id} is in the pool`);
+    assert.ok(vs.length >= 2, `${id} has at least two variants`);
+    assert.equal(entradaCal(id, vs[0]), id, 'the default one goes bare');
+    assert.equal(entradaCal(id, vs[1]), `${id}:${vs[1]}`);
+    assert.deepEqual(diaDeCal(entradaCal(id, vs[1])), { id, variante: vs[1] });
+    assert.deepEqual(diaDeCal(id), { id, variante: vs[0] });
+  }
+  assert.deepEqual(diaDeCal('reinas'), { id: 'reinas', variante: null }, 'a game without variants has none');
+  assert.equal(entradaCal('reinas', 'hard'), 'reinas');
+  assert.ok(calendarioValido(['pintaminas:hard', 'loteo:utilities', 'final'], 3));
+  assert.ok(calendarioValido(['pintaminas', 'loteo', 'final'], 3));
+  assert.ok(!calendarioValido(['pintaminas:hard', 'pintaminas', 'final'], 3), 'one day per game, whatever its variant');
+  assert.ok(!calendarioValido(['pintaminas:x', 'loteo', 'final'], 3), 'only its own variants');
+  assert.ok(!calendarioValido(['reinas:hard', 'loteo', 'final'], 3), 'a game without variants takes none');
+  const meta = { cal: 'pintaminas:hard,loteo,rutas,final' };
+  assert.deepEqual(calendario(meta), ['pintaminas', 'loteo', 'rutas', 'final'], 'the calendar names the games, without variants');
+  assert.equal(juegoDelDia(meta, 1), 'pintaminas');
+  assert.equal(varianteDelDia(meta, 1), 'hard');
+  assert.equal(varianteDelDia(meta, 2), 'numbers');
+  assert.equal(varianteDelDia(meta, 3), null);
+  // The longest week still fits the 100 characters the Firebase rules allow for `cal`
+  const largo = [...POZO].sort((a, b) => entradaCal(b, VARIANTES[b]?.at(-1)).length - entradaCal(a, VARIANTES[a]?.at(-1)).length).slice(0, 6).map(id => entradaCal(id, VARIANTES[id]?.at(-1)));
+  assert.ok([...largo, 'final'].join(',').length <= 100, [...largo, 'final'].join(','));
+});
 
 test('calendarios: la final siempre al final', () => {
   assert.deepEqual(CALENDARIOS[3], ['linea', 'conexiones', 'final']);

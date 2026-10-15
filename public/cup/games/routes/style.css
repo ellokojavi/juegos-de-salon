@@ -1,0 +1,73 @@
+/* 🚇 Rutas rotas (D-331; from the lab, D-293). Every selector starts with .rr-: the cup's style.css is shared. */
+
+/* The board: 3×3 dark pieces, like a subway map at night */
+.rr-tablero { position: relative; width: 100%; max-width: 360px; aspect-ratio: 1; margin: 0 auto; border-radius: 16px; touch-action: none;
+  background: #0b0f1d; box-shadow: 0 0 0 2px rgba(255,255,255,0.12), 0 10px 30px rgba(0,0,0,0.4); overflow: hidden; -webkit-user-select: none; user-select: none; }
+.rr-tablero.rr-portada { width: 150px; max-width: 150px; border-radius: 12px; margin: 0 auto 4px; touch-action: auto; }
+.rr-tablero.rr-ej { width: 108px; max-width: 108px; border-radius: 10px; touch-action: auto; }
+.rr-tablero .rr-pieza { position: absolute; width: calc(100% / 3); height: calc(100% / 3); box-sizing: border-box; border: 1px solid rgba(255,255,255,0.07);
+  transition: transform 0.45s cubic-bezier(0.5, 0, 0.3, 1); }
+/* While it turns, the piece goes above the others: the block is seen whole */
+.rr-tablero .rr-pieza.girando { z-index: 1; }
+.rr-tablero .rr-pieza.sin-animar { transition: none; }
+.rr-pieza-svg { width: 100%; height: 100%; display: block; }
+.rr-tablero .rr-tramo { opacity: 0.9; }
+.rr-tablero .rr-estacion { fill: #fff; stroke: #0b0f1d; stroke-width: 2; }
+/* The rectangle being marked: white, the yellow one was confused with the yellow line */
+.rr-seleccion { position: absolute; border: 3px solid #fff; border-radius: 10px; background: rgba(255, 255, 255, 0.12); box-sizing: border-box;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.45); pointer-events: none; opacity: 0; transition: opacity 0.12s; z-index: 2; }
+.rr-seleccion.ve { opacity: 1; }
+.rr-ej .rr-seleccion { border-width: 2px; border-radius: 6px; }
+/* Solved: the lines glow */
+.rr-tablero.resuelto .rr-tramo { opacity: 1; filter: drop-shadow(0 0 4px currentColor); }
+.rr-tablero.resuelto { box-shadow: 0 0 0 2px rgba(157, 255, 58, 0.7), 0 0 26px rgba(157, 255, 58, 0.45); }
+/* The waiting room's board: the scramble comes in, and when solved it lights up with a pulse */
+.rr-tablero.aparece { animation: rr-aparece 0.4s ease-out; }
+@keyframes rr-aparece { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+.rr-tablero.rr-portada.resuelto { animation: rr-ilumina 1.2s ease-out; }
+@keyframes rr-ilumina { 0% { box-shadow: 0 0 0 2px rgba(157, 255, 58, 0.7), 0 0 0 rgba(157, 255, 58, 0); } 40% { box-shadow: 0 0 0 3px rgba(157, 255, 58, 1), 0 0 40px rgba(157, 255, 58, 0.8); } 100% { box-shadow: 0 0 0 2px rgba(157, 255, 58, 0.7), 0 0 26px rgba(157, 255, 58, 0.45); } }
+
+.rr-credito { margin: 0; font-size: 0.85rem; color: var(--muted); text-align: center; }
+.rr-credito a { color: var(--cyan); }
+.rr-ejemplo .rej-ejemplo { margin-bottom: 6px; flex-wrap: nowrap; gap: 12px 16px; }
+.rr-ejemplo figcaption { max-width: 112px; }
+.rr-ejemplo { margin: 0 0 12px; }
+
+/* The stage: its number and the dots of the progress */
+.rr-juego { gap: 10px; --gap-contenedor: 10px; }
+/* The stage's number and its dots in one row, so the board and its buttons fit at 320×568 */
+.rr-cabeza { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 12px; }
+.rr-cabeza.entra { animation: pop 0.45s ease-out both; }
+.rr-n-etapa { margin: 0; font: 1.4rem var(--font-display); letter-spacing: 0.06em; }
+.rr-etapas { display: flex; gap: 8px; }
+.rr-punto { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.35); box-sizing: border-box; }
+.rr-punto.actual { border-color: #fff; background: rgba(255,255,255,0.25); box-shadow: 0 0 8px rgba(255,255,255,0.5); }
+/* Like the share card: 🟩 at the minimum, 🟨 with extra turns */
+.rr-punto.hecha { background: var(--yellow); border-color: var(--yellow); }
+.rr-punto.perfecta { background: var(--lime); border-color: var(--lime); }
+
+/* The clock of the 7 minutes, next to the scoreboard; red in the last minute */
+.rr-fila { display: flex; justify-content: center; align-items: baseline; gap: 2px 12px; flex-wrap: wrap; }
+/* The board in play gives way on a short screen: the buttons under it stay in view (C-8) */
+.rr-juego .rr-tablero[data-tablero] { width: min(100%, 360px, max(220px, calc(100svh - 310px))); }
+.rr-marcador { margin: 0; text-align: center; font-weight: 800; font-size: 1rem; }
+.rr-reloj { margin: 0; font: 800 1rem var(--font-num); font-variant-numeric: tabular-nums; }
+.rr-reloj.poco { color: #ff8a8a; animation: pulse 1s ease-in-out infinite; }
+.rr-aviso { margin: 0; min-height: 1.5em; text-align: center; font-weight: 800; color: var(--muted); }
+.rr-aviso.bien { color: var(--lime); font-size: 1.15rem; }
+
+/* Undo, Restart and Give up: three equal buttons in one row, so all three show without scrolling on a small phone (#360) */
+.rr-acciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.rr-acciones .btn { width: 100%; min-width: 0; min-height: 44px; padding: 4px; font-size: 0.92rem; white-space: normal; line-height: 1.15; }
+.rr-acciones .btn:disabled { opacity: 0.4; }
+.rr-acciones .btn.armado { color: #ff8a8a; border-color: #ff8a8a; background: rgba(255, 138, 138, 0.12); }
+
+/* The end: the stamp */
+.rr-sello { justify-self: center; align-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; text-align: center; }
+.rr-sello.mal { color: #ff8a8a; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rr-sello, .rr-cabeza.entra, .rr-reloj.poco, .rr-tablero.aparece, .rr-tablero.rr-portada.resuelto { animation: none !important; }
+  .rr-tablero .rr-pieza { transition: none; }
+}

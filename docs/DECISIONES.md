@@ -56,14 +56,14 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184, D-324 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
-| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
-| 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295 |
+| 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298, D-332 |
+| 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295, D-332 |
 | 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
-| 📐 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, cinco tableros contra el reloj: dos para calentar y tres difíciles; el modo ⚡💧 Servicios, con lotes del mismo tamaño y un ⚡ y un 💧 en cada uno) | `docs/games/plots.md` | D-310, D-311, D-312 |
+| 📐 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, cinco tableros contra el reloj: dos para calentar y tres difíciles; el modo ⚡💧 Servicios, con lotes del mismo tamaño y un ⚡ y un 💧 en cada uno) | `docs/games/plots.md` | D-310, D-311, D-312, D-332 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
@@ -75,7 +75,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332 |
 | Agentes (usabilidad, documentación, procesos, atención) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -5219,7 +5219,7 @@ por el color); seguir llamándolos tinta y fondo.
 **Consecuencias:** `engine.test.mjs` revisa la paleta y la asimetría de cada dibujo.
 
 ## D-291 · Pintaminas: un modo difícil de dos colores, con un interruptor eléctrico y premio ×1.5
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-298 · **Relación:** amplía D-289; corregida por D-298 (los dos colores son los del dibujo, ya no al azar); ampliada por D-292 (la ayuda y el brillo del interruptor)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-298, D-332 · **Relación:** amplía D-289; corregida por D-298 (los dos colores son los del dibujo, ya no al azar) y por D-332 (sin el premio ×1.5: el difícil también va de 0 a 100); ampliada por D-292 (la ayuda y el brillo del interruptor)
 **Contexto:** el dueño preguntó qué pasaría con un segundo color. Con dos colores, un número que se
 cumple solo dice que las demás vecinas *no son de ese color* (pueden ser del otro o sin pintar): hay
 que cruzar más números. Pidió probarlo como modo difícil, que se active con un interruptor eléctrico
@@ -6242,3 +6242,64 @@ everything again on `main` after a narrowed PR (it would give back most of the s
 **Consequences:** the mark of a tested tree (D-308) is also left by a narrowed run, so `publish.yml`
 trusts the graph; what the graph can't see is what "when in doubt" sends to the full run.
 `affected.test.mjs` pins the rules and checks them against the real site.
+
+## D-331 · Game variants: the player picks one standalone, the admin picks one per cup day
+**Date:** 2026-10-15 · **Status:** current · **Relation:** extends D-163 (the admin builds the week) and D-198 (one screen for the standalone game and the cup day)
+**Decision:** Owner's request, with Rutas rotas, Loteo and Pintaminas leaving the lab (D-332). A game
+can have **variants** (`VARIANTES` in `public/cup/engine.js`, the first one being the default):
+Pintaminas `easy` / `hard`, Loteo `numbers` / `utilities`.
+- **Standalone**, the waiting room shows a picker right under the game's name (the game's own if it
+  brings `selector()`, Pintaminas' lever; if not, two buttons). The steps, the drawing and the
+  demo on top are the variant's. The phone remembers it (`juegos-de-salon:<id>:variant`) and the
+  link says it (`?mode=hard`; the lab's `?colors=2` still opens hard). Each variant has its own
+  ranking table: the default one is the game's (`pintaminas`), the other goes apart
+  (`pintaminas_hard`, without the Cup tab), and the panel sees it in the finished game's detail ("hard · 80/100 · 2:30"; the mode stays `solo`, so the panel's modes do not multiply).
+- **In a cup**, below the week, one row per game of the week that has variants: the admin picks
+  which one everybody plays that day. `meta.cal` writes the day as `id` (the default, so the cups
+  from before read the same) or `id:variant` (`loteo:utilities`). `calendario()` and `juegoDelDia()`
+  keep naming games without the variant, so the board, the panel, the reports and the push
+  notifications did not change; `varianteDelDia()` gives it. The day's card, its waiting room and
+  its rules say the variant under the game's name.
+- **Each game brings its own texts** (`public/cup/games/<slug>/texts.js`, merged into `rules.js`),
+  its own styles (`games/<slug>/style.css`) and, if it wants, its own score breakdown (`desglose()`):
+  three games ported at once could not share the three big shared files.
+**Why:** the owner wants the player to choose when playing alone, and the person who organizes the
+week to choose for everybody, since in a cup everyone has to play the same thing.
+**Alternatives discarded:** one card per variant in the hand of games (fifteen cards, and nothing
+stops two Pintaminas the same week); a variant button inside each day's card (the card is a button
+that is dragged; one inside the other is invalid and gets in the way of the drag); each player
+picking their variant in a cup (scores would not compare).
+**Consequences:** the longest week fits the 100 characters the rules allow for `cal`
+(`engine.test.mjs` checks it). The all-rounder table (`todoterreno`) adds the default variant's best.
+
+## D-332 · Rutas rotas, Loteo and Pintaminas leave the lab: home page and La Copa
+**Date:** 2026-10-15 · **Status:** current · **Relation:** follows D-289, D-293 and D-310; corrects D-291 (no ×1.5); applies D-331
+**Decision:** Owner's request. The three lab games become standalone games on the home page
+(`/routes/`, `/plots/`, `/paint-mines/`, in the four languages) and join the cup's pool (`POZO`).
+- **Built like the other one-player games** (D-198): the engine and the screen live in
+  `public/cup/games/<slug>/` and the same screen serves the standalone page and the cup day. The
+  waiting room, the countdown, the clock, the result, sharing, the 🐞 report and the rankings are
+  the framework's; the lab's comments form and "back to the lab" went away.
+- **A random board every time standalone**, like the others: the lab's "board of the day" goes
+  away (Uno al día is the daily challenge). In a cup, the code, the day and the variant decide it.
+- **0 to 100 in every variant** (owner's answer): in a cup everybody plays the same variant, and
+  standalone each variant has its own table, so Pintaminas' hard ×1.5 (D-291) adds nothing.
+- **Not in the Gran Final** (owner's answer): the final plays its five fixed rounds, which today
+  ignore the week's games anyway; making it follow the week is a separate change.
+- Their old `/labs/<slug>/` pages are bridges to the new ones (`deLabs` in `games.js`, generated by
+  `og.mjs cards`), and the lab's index no longer lists them.
+**Why:** they were tested with friends, the owner liked them, and the cup needed more variety.
+**Alternatives discarded:** keeping each lab page and writing a second screen for the cup (two
+versions of each game to keep alike).
+
+## D-333 · A new game says "New" on its home card for two weeks
+**Date:** 2026-10-15 · **Status:** current · **Relation:** extends C-17 (the home page)
+**Decision:** Owner's request: every new game carries a "New" label (Nuevo, New, Novo, Neu) next to
+its name on the home card for a set time, today **two weeks** (`DIAS_NUEVO = 14` in
+`public/assets/js/games.js`). The game says when it arrived with `nuevoDesde: 'YYYY-MM-DD'`, and
+`esNuevo(g)` decides. Rutas rotas, Loteo and Pintaminas are the first.
+**Why:** a returning player should see at a glance what is new, without the label staying forever.
+**Mechanism:** `games.test.mjs` stops a game on the home page that was not there before D-333 and has
+no `nuevoDesde`, so the step cannot be forgotten.
+**Consequences:** the date is the day the game reached `main`; if it is published later, the label
+lasts a little less.

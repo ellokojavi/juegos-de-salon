@@ -82,6 +82,8 @@ assert.ok(paginas.length >= 3, 'el laboratorio tiene sus páginas');
 for (const p of paginas) {
   const html = readFileSync(p, 'utf8');
   const rel = p.slice(PUBLIC.length);
+  // A game that left the lab (D-332) leaves a bridge to its public page: that one has no door
+  if (/Bridge page \(D-192\): this route moved to \/(?!labs\/)/.test(html)) continue;
   const puerta = html.search(/<script src="(\.\.\/)+assets\/js\/labs-puerta\.js"><\/script>/);
   assert.ok(puerta > 0, `${rel} carga la puerta`);
   const primerScript = html.search(/<script[\s>]/);

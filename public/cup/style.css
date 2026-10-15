@@ -48,6 +48,10 @@
 }
 .opciones.dos .opcion { text-align: center; }
 .opcion b { display: block; font-size: 1.05rem; font-weight: 900; }
+.opcion .opcion-emoji { display: block; }
+/* A variant's name in one piece at 320 px, also «Anschlüsse» inside the cup's form (U-12) */
+.opciones.variantes .opcion { padding-left: 6px; padding-right: 6px; }
+.opciones.variantes .opcion b { hyphens: manual; }
 .opcion small { color: var(--muted); font-weight: 700; }
 .opcion.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 
@@ -97,6 +101,14 @@ ol.como li { line-height: 1.45; }
 /* Por el agarre se arrastra en un celular: el resto de la fila deja desplazar la página */
 .cal-linea .agarre { color: var(--muted); font-size: 1.2rem; text-align: center; padding: 10px 0; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
 .cal-linea .slot { min-height: 44px; }
+/* The variant of each game of the week that has them (D-331), below the week */
+.cal-variantes { display: grid; gap: 10px; margin: 12px 0 10px; }
+.cal-variantes .field { margin: 0; }
+.cal-variante-t { margin: 0 0 6px; font-weight: 900; }
+.cal-variante-t .y { color: var(--muted); font-size: 0.85rem; font-weight: 700; }
+.variante-dia { margin: 2px 0 0; color: var(--yellow); font-weight: 900; }
+.dia-variante { font-weight: 700; color: var(--muted); }
+#selector-variante { margin-top: 2px; }
 
 /* Tablero */
 .copa-head { text-align: center; display: grid; gap: 8px; }

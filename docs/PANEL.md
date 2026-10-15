@@ -21,7 +21,7 @@ Los enlaces de antes (`#torneo`, `#resumen`, `#juegos`) siguen sirviendo.
 | Dirección | Qué muestra |
 |---|---|
 | `#/now` | Lo que está en juego, sin depender del rango: salas en juego, partidas sin red, copas en curso y celulares conectados. Cada cifra filtra la lista de abajo, que junta copas, salas y partidas sin red de lo más reciente a lo más quieto. Debajo, las copas por empezar. |
-| `#/cup` | Cifras de La Copa en el rango, la lista de copas con filtro por estado (en curso, por empezar, terminadas, laboratorio), por juego y por día. |
+| `#/cup` | Cifras de La Copa en el rango, la lista de copas con filtro por estado (en curso, por empezar, terminadas, laboratorio), por juego y por día. By game, a variant other than the default counts apart (`🖌️ Pintaminas · ⚡ Difícil`, D-331). |
 | `#/cup/<CÓDIGO>` | **Ficha de copa.** Cabecera (link propio, admin, idioma, audiencia, días, cuándo cierra cada día abierto, inscripción) y tres pestañas: **Tabla** completa, incluidos los días que los jugadores todavía no ven; **Día a día**, la grilla jugador × día con puntaje, tiempo, puntos, jugando ahora, sin terminar, no jugó, comodín y ×2; **Historia**, evento por evento (creada, inscripciones, empezó y terminó cada día, sin terminar, abrió y cerró cada día, fin), y aparte lo que la base guarda sin hora (comodín, retiros, inscripción cerrada). |
 | `#/games` | Los juegos de una partida: cifras, partidas por juego y modo (cada barra abre su ficha), jugadores por partida, por día y la bitácora de salas. |
 | `#/game/<juego>` | **Ficha de juego.** Partidas, en dos celulares, sin red, salas sin rival y duración típica de sus salas; por modo, por día, sus salas y sus partidas sin red con hora, quién jugó y cómo terminó (D-140, D-210). |
@@ -221,6 +221,8 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   (`name`: los nombres de la partida, o el último que la persona escribió en la app; si nunca
   puso uno, nada) y cómo terminó (`fin`: quién ganó, empate o un detalle como "80/100 · 2:30"; Cuarto Rey, que no
   tiene ganador, manda solo el detalle: `👑 Javi · 29 cartas`).
+  A game played in a variant (D-331) keeps the `solo` mode and starts its detail with the variant
+  (`hard · 80/100 · 2:30`), so the panel's modes do not multiply.
 - **Cualquier modo:** contador de zona horaria, idioma del navegador, idioma elegido en el
   juego y hora local.
 - **Cualquier página que se abra** (D-208): `vistas/<página>`; y una vez por pestaña,

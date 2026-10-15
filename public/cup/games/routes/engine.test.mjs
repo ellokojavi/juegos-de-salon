@@ -1,8 +1,8 @@
-// Rutas (laboratorio, D-293, D-294): girar un rectángulo dos veces lo deja igual, la meta está resuelta, el
+// Rutas rotas (D-293, D-294; in La Copa since D-331): girar un rectángulo dos veces lo deja igual, la meta está resuelta, el
 // mínimo es exacto (se compara con una búsqueda simple, contando el tablero entero dado vuelta como
 // solución), cada tablero es justo (no viene resuelto) y cada una de las cinco etapas da justo su mínimo.
 import assert from 'node:assert/strict';
-import { generar, generarEtapa, girar, resuelto, minimo, puntajePartida, RECTANGULOS, LADO, TODO, ETAPAS, TIEMPO_S, PUNTOS_ETAPA } from './engine.js';
+import { generar, generarEtapa, generarDia, tarjeta, girar, resuelto, minimo, puntajePartida, RECTANGULOS, LADO, TODO, ETAPAS, TIEMPO_S, TIEMPO_ENSAYO_S, PUNTOS_ETAPA } from './engine.js';
 
 assert.equal(RECTANGULOS.length, 36);
 const META = Array.from({ length: 9 }, (_, p) => ({ p, v: 0 }));
@@ -76,4 +76,33 @@ assert.equal(puntajePartida(perfectas.slice(0, 4), 30).total, 4 * PUNTOS_ETAPA +
 assert.equal(puntajePartida([], 100).total, 0);
 // Más rápido nunca da menos, y más giros nunca da más
 for (let s = 60; s < TIEMPO_S; s += 15) assert.ok(puntajePartida(perfectas, s).total >= puntajePartida(perfectas, s + 15).total);
-console.log('✓ Rutas (labs)');
+// A La Copa day (D-331): the same code and day give the same game to everyone, another day or code another one
+assert.deepEqual(generarDia('KQRST', 3), generarDia('KQRST', 3));
+assert.notEqual(generarDia('KQRST', 3).semilla, generarDia('KQRST', 4).semilla);
+assert.notEqual(generarDia('KQRST', 3).semilla, generarDia('KQRSA', 3).semilla);
+{
+  const dia = generarDia('KQRST', 3);
+  assert.equal(dia.etapas, ETAPAS.length);
+  assert.equal(dia.tiempo, TIEMPO_S * 1000);
+  assert.deepEqual(generarEtapa(dia.semilla, 0), generarEtapa(generarDia('KQRST', 3).semilla, 0), 'the same board for everyone');
+  // The trial (D-103): other boards (its own salt), the same mechanics, shorter
+  const ensayo = generarDia('XYZAB', 3, { sal: 'ensayo', ensayo: true });
+  assert.ok(ensayo.etapas < dia.etapas && ensayo.tiempo < dia.tiempo, 'the trial is shorter');
+  assert.equal(ensayo.etapas, 2); assert.equal(ensayo.tiempo, TIEMPO_ENSAYO_S * 1000);
+  assert.notEqual(ensayo.semilla, dia.semilla);
+  assert.equal(generarEtapa(ensayo.semilla, 1).minimo, ETAPAS[1].minimo);
+}
+// A shorter game scales the same layers: both trial stages fast and at the minimum give 100, one gives half the stages' points
+{
+  const dos = ETAPAS.slice(0, 2).map(e => ({ giros: e.minimo, minimo: e.minimo }));
+  const o = { etapas: 2, tiempo: TIEMPO_ENSAYO_S };
+  assert.equal(puntajePartida(dos, 10, o).total, 100);
+  assert.equal(puntajePartida(dos.slice(0, 1), 10, o).base, 43);
+  assert.equal(puntajePartida(dos, TIEMPO_ENSAYO_S, o).total, 90);
+  // The defaults are the five stages and the 7 minutes
+  assert.deepEqual(puntajePartida(perfectas, 200, { etapas: ETAPAS.length, tiempo: TIEMPO_S }), puntajePartida(perfectas, 200));
+}
+// The share card: one line per stage, ⬛ the ones not reached
+assert.equal(tarjeta([{ giros: 2, minimo: 2 }, { giros: 5, minimo: 3 }]), '🟩 1: 2/2\n🟨 2: 5/3\n⬛ 3: —\n⬛ 4: —\n⬛ 5: —');
+assert.equal(tarjeta([], 2), '⬛ 1: —\n⬛ 2: —');
+console.log('✓ Rutas rotas');
