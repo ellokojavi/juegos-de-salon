@@ -5943,7 +5943,8 @@ whoever wants to can be told when we answer.
   same player go in one email** (owner's request, the same day: a long session leaves several, and
   N emails for N comments is too many): the subject and the opening are plural, each answer goes
   under the quote of its comment, and `feedback.mjs pending` groups the waiting reports by address.
-  **At most one email to the same address every 24 hours** (owner's rule, for prudence):
+  **At most one email to the same address every 24 hours** (owner's rule, for prudence; except the
+  addresses in `noLimit`, D-327):
   `send-mail.py` checks it before connecting, against a log of every email sent kept on the owner's
   machine (`~/.config/juegos-de-salon/mail-log.jsonl`: date, masked address, a hash of it,
   subject, issues; never the address, which the form promises to delete).
@@ -6187,3 +6188,23 @@ nothing about which event is BC. A dropdown was considered and discarded: on a p
 and a small target, and it hides the option exactly where it is needed.
 **Consequences:** a new deck with a BC card gets the switch with no other change.
 `juegos.test.mjs` checks that only Historia has it today.
+
+## D-327 · Emails to hola@: replies in the sender's thread, by kind, and an exempt list
+**Date:** 2026-10-15 · **Status:** current · **Relation:** amends D-317 (one email per address every 24 hours)
+**Decision:** Owner's requests, the day hola@ started working (D-318):
+- **The reply lands in the sender's thread.** The Worker already keeps the email's Message-ID;
+  `inbox.mjs ingest` sends it, with the subject, next to the private address
+  (`feedbackContacto/<id>`: `idMensaje`, `asunto`; never in the public `feedback/`), and
+  `feedback.mjs reply` answers with `Re: <subject>`, `In-Reply-To` and `References`.
+- **By kind:** kudos get a short, simple reply; actionable emails become issues like any 🐞 (the
+  sync already opens them); negative or destructive ones get no reply (`forget`).
+- **The closing invites a reply:** "responde este correo o usa el botón 🐞", in the four languages.
+- **An exempt list:** `mail.json` takes a `noLimit` list of addresses that `send-mail.py`
+emails at any frequency. Today it holds only the owner's own address, so their test emails to
+hola@ (D-318) get their reply the same day.
+**Why:** the 24-hour rule protects players from being flooded; the owner testing the pipeline is not
+a player, and a test sent the day after another one was blocked.
+**Alternatives discarded:** the list in the repo (it is public, and the addresses are private);
+a flag on `reply` (any session could skip the rule for anyone).
+**Consequences:** the list lives only on the owner's machine; every email is still logged.
+`send-mail.test.py` checks the exemption is case-insensitive and only for listed addresses.

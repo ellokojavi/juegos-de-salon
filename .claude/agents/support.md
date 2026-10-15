@@ -53,6 +53,10 @@ attachments; you don't edit the repo. The text file for `ingest` goes in your sc
 3. The sender's address never appears in what you write: `inbox.mjs` keeps it out of the public
    part and shows it to you only masked.
 
+In your report, say for each ingested email whether it is **kudos** (praise, nothing to act
+on), **actionable** (a bug or a suggestion) or **negative**: the processes agent answers kudos
+simply, works the actionable ones and leaves negative ones without a reply (D-327).
+
 ## Your report
 
 A few lines for the processes agent: how many emails, what each became (ingested as a quote,

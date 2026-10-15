@@ -7,7 +7,8 @@ command line. The account comes from ~/.config/juegos-de-salon/mail.json (or $JU
 from the repo:
 
     {"user": "the Gmail account", "appPassword": "a Gmail app password",
-     "from": "hola@juegosdesalon.cl", "name": "Juegos de Salón"}
+     "from": "hola@juegosdesalon.cl", "name": "Juegos de Salón",
+     "noLimit": ["addresses the 24-hour rule does not apply to, e.g. the owner's own, for tests"]}
 
 `from` is the address players see; Gmail sends as it once it is added under
 Settings → Accounts → "Send mail as". Without it, the mail goes from `user`.
@@ -16,7 +17,7 @@ Every email sent is logged in ~/.config/juegos-de-salon/mail-log.jsonl (or $JUEG
 the owner's machine and never in the repo: date, the masked address, a hash of the address, the
 subject and the issues. Never the address itself (the form promises to delete it). And, owner's
 rule for prudence: **at most one email to the same address every 24 hours**; a second one is
-refused before connecting. `python3 tools/agents/send-mail.py --log` prints the log.
+refused before connecting, except to the addresses in `noLimit` (D-327). `python3 tools/agents/send-mail.py --log` prints the log.
 """
 import hashlib
 import json
@@ -59,6 +60,11 @@ def recent(to, now=None, path=None):
     return None
 
 
+def unlimited(cfg, to):
+    """An address in the config's `noLimit` list skips the 24-hour rule (D-327)."""
+    return to.strip().lower() in {a.strip().lower() for a in cfg.get('noLimit') or []}
+
+
 def log_sent(m, now=None, path=None):
     path = path or LOG
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -78,6 +84,10 @@ def message(cfg, m):
     msg['Subject'] = m['subject']
     msg['Reply-To'] = sender
     msg['Message-ID'] = make_msgid(domain=sender.split('@')[-1])
+    if m.get('inReplyTo'):
+        # In the sender's own thread (D-327)
+        msg['In-Reply-To'] = m['inReplyTo']
+        msg['References'] = m['inReplyTo']
     msg.set_content(m['text'])
     if m.get('html'):
         msg.add_alternative(m['html'], subtype='html')
@@ -97,7 +107,7 @@ def main():
     m = json.load(sys.stdin)
     if not all(m.get(k) for k in ('to', 'subject', 'text')):
         sys.exit('The message needs "to", "subject" and "text".')
-    prev = recent(m['to'])
+    prev = None if unlimited(cfg, m['to']) else recent(m['to'])
     if prev:
         sys.exit(f"Not sent: {prev['to']} already got an email at {prev['at']} (\"{prev['subject']}\"). One email per address every 24 hours.")
     with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=30) as smtp:

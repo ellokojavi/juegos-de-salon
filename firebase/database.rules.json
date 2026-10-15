@@ -814,6 +814,12 @@
         "at": {
           ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
         },
+        "idMensaje": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
+        "asunto": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
         "$other": {
           ".validate": false
         }
@@ -836,6 +842,12 @@
         },
         "at": {
           ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+        },
+        "idMensaje": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
+        "asunto": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
         },
         "$other": {
           ".validate": false
