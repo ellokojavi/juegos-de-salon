@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<!-- The 6-second video (D-332): tarjeta.html with render(t), drawn frame by frame by construir-video.mjs.
+     Frames 0 and the last show everything at rest, for the frozen thumbnail (owner's request). -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@700;900&display=swap">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: #150726; }
+  #t { width: 540px; height: 540px; transform-origin: 0 0; font-family: 'Nunito', sans-serif; color: #fff; position: relative; padding: 30px 26px 0;
+    background: radial-gradient(circle at 80% 12%, rgba(255, 210, 63, 0.22), transparent 42%),
+      radial-gradient(circle at 10% 95%, rgba(46, 230, 214, 0.18), transparent 45%),
+      linear-gradient(160deg, #1a0830, #2a0a4a 55%, #0b1e3f); }
+  .tag { text-align: center; }
+  .tag span { display: inline-block; font: 900 12px 'Nunito'; letter-spacing: 0.16em; text-transform: uppercase; color: #9dff3a;
+    border: 1.5px solid rgba(157, 255, 58, 0.65); border-radius: 999px; padding: 4px 12px; }
+  h1 { text-align: center; font: 96px/0.95 'Bangers'; letter-spacing: 0.03em; margin-top: 10px; transform: rotate(-3deg);
+    background: linear-gradient(90deg, #ffd23f, #ff6fa8, #2ee6d6, #9dff3a); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 4px 0 rgba(0,0,0,0.4)); padding: 0 6px; }
+  .sub { text-align: center; font: 900 19px/1.2 'Nunito'; margin-top: 10px; }
+  .sub b { color: #ffd23f; }
+  .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+  .g { text-align: center; }
+  .g img { width: 100%; aspect-ratio: 1; border-radius: 14px; display: block; box-shadow: 0 8px 22px rgba(0,0,0,0.45); }
+  .g:nth-child(1) img { transform: rotate(-4deg); }
+  .g:nth-child(3) img { transform: rotate(4deg); }
+  .n { margin-top: 12px; font: 26px/1 'Bangers'; letter-spacing: 0.04em; white-space: nowrap; }
+  .d { margin-top: 4px; font: 700 12px/1.25 'Nunito'; color: rgba(255,255,255,0.8); }
+  .pie { position: absolute; left: 0; right: 0; bottom: 20px; text-align: center; font: 900 20px 'Nunito'; letter-spacing: 0.04em; color: #ffd23f; }
+  .g { position: relative; will-change: transform; }
+  .glow { position: absolute; inset: -10px -8px auto; height: calc(100% + 20px); border-radius: 22px; opacity: 0; pointer-events: none;
+    background: radial-gradient(circle, rgba(255,210,63,0.55), transparent 70%); z-index: -1; }
+  .pie small { display: block; font: 700 12px 'Nunito'; color: rgba(255,255,255,0.65); letter-spacing: 0; margin-bottom: 3px; }
+</style>
+</head>
+<body>
+<div id="t">
+  <div class="tag"><span>✨ Nuevos en Juegos de Salón</span></div>
+  <h1>Upa, papá!</h1>
+  <p class="sub">Tres juegos de lógica, <b>gratis</b> y en el celular</p>
+  <div class="row">
+    <div class="g"><div class="glow"></div><img src="img/rutas.png" alt=""><p class="n">🚇 Rutas rotas</p><p class="d">Une las líneas del metro girando el tablero</p></div>
+    <div class="g"><div class="glow"></div><img src="img/loteo.png" alt=""><p class="n">📐 Loteo</p><p class="d">Divide el tablero en lotes del tamaño justo</p></div>
+    <div class="g"><div class="glow"></div><img src="img/pintaminas.png" alt=""><p class="n">🖌️ Pintaminas</p><p class="d">Pinta la grilla y descubre el dibujo</p></div>
+  </div>
+  <p class="pie"><small>Un tablero nuevo cada vez</small>juegosdesalon.cl</p>
+</div>
+<script>
+document.getElementById('t').style.transform = `scale(${innerWidth / 540})`;
+window.FPS = 30; window.DURATION = 6;
+const cards = [...document.querySelectorAll('.g')], h1 = document.querySelector('h1');
+const tilt = [-4, 0, 4];
+const ease = x => x < 0 ? 0 : x > 1 ? 1 : x * x * (3 - 2 * x);
+// How much card i is in the spotlight at time t: 0.6 s to 5.0 s, about 1.45 s each, eased in and out
+const focus = (i, t) => { const a = 0.6 + i * 1.45; return ease((t - a) / 0.35) * (1 - ease((t - a - 1.15) / 0.35)); };
+window.render = t => {
+  const any = Math.max(...cards.map((_, i) => focus(i, t)));
+  cards.forEach((c, i) => {
+    const f = focus(i, t), wob = Math.sin(t * 9) * 2 * f;
+    c.style.transform = `translateY(${4 * f}px) scale(${1 + 0.1 * f})`;
+    c.style.zIndex = f > 0.01 ? 2 : 1;
+    c.style.opacity = String(1 - 0.5 * (any - f));
+    c.querySelector('img').style.transform = `rotate(${tilt[i] * (1 - f) + wob}deg)`;
+    c.querySelector('.glow').style.opacity = String(f);
+  });
+  // The title bounces once at the start of each spotlight and settles before the end
+  const b = [0.6, 2.05, 3.5].reduce((m, a) => m + Math.max(0, Math.sin(Math.min(1, Math.max(0, (t - a) / 0.4)) * Math.PI)) * 0.06, 0);
+  h1.style.transform = `rotate(-3deg) scale(${1 + b})`;
+};
+window.render(0);
+if (!location.search.includes('render')) { const ini = performance.now(); const loop = () => { window.render(((performance.now() - ini) / 1000) % window.DURATION); requestAnimationFrame(loop); }; loop(); }
+</script>
+</body>
+</html>
