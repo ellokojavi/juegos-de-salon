@@ -69,7 +69,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309 |
-| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319 |
+| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
@@ -5996,7 +5996,7 @@ check` counts the emails and dispatches `support` when there are some; issues fr
 Cloudflare once (`tools/cloudflare/inbox-worker.js` says how).
 
 ## D-319 · A room that doesn't open: the button says it's trying, and one tap goes to one phone
-**Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-40 (one text for a room that can't be reached) and C-14 (a clear way out)
+**Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-40 (one text for a room that can't be reached) and C-14 (a clear way out); completed by D-322 (the rematch button)
 **Decision:** Owner's request, after a player saw "No se pudo abrir la sala…" in Batalla Naval and
 was left looking at it. Creating or joining a room goes through `tryRoom` in
 `public/assets/js/transport/errors.js`, in every game with rooms (Ahorcado, Batalla Naval, Dudo,
@@ -6107,4 +6107,3 @@ is already next to it.
 is left unhandled, and checks that the seven `game.js` wire the button through `tryRematch`.
 `tools/e2e/battleship/online.mjs` cuts A's network before Revancha and checks the message, the
 button and the vigía, then plays the rematch.
-

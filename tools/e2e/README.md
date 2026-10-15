@@ -119,7 +119,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `battleship/local.mjs` | Placement, battle on one phone and against the phone |
 | `battleship/placement.mjs` | Selecting, rotating, moving and deselecting ships on the grid |
 | `battleship/alignment.mjs` | That row numbers line up with the cells at three widths |
-| `battleship/online.mjs` | Two phones against real Firebase, with reload and rematch |
+| `battleship/online.mjs` | Two phones against real Firebase, with reload and rematch; first a rematch without network, which must show the room text under the button and give the button back (D-322) |
 | `battleship/chat.mjs` | Room chat: saved when placing your own fleet, bubble and label, doesn't move the game, comes back on reload and stays in the result. |
 | `hangman/local.mjs` | Chain of three on one phone, buying a letter, resuming and solitaire |
 | `hangman/online.mjs` | Three phones against real Firebase: chain, reconnection midway and rematch |
