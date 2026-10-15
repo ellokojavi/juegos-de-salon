@@ -63,8 +63,8 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -4437,7 +4437,7 @@ basta el compartir de siempre hasta que haya versiones del video en otros idioma
 D-253; no le sirve a quien no habla español).
 
 ## D-255 · La portada, de lo más jugado a lo menos
-**Fecha:** 2026-10-09 · **Estado:** vigente · **Relación:** cambia el orden de D-142 y D-149 (primero `GAMES`, después `SUELTOS`)
+**Fecha:** 2026-10-09 · **Estado:** corregida por D-335 · **Relación:** cambia el orden de D-142 y D-149 (primero `GAMES`, después `SUELTOS`); corregida por D-335 (un juego nuevo va arriba mientras dice "Nuevo")
 **Decisión:** Los juegos disponibles de la portada van ordenados por cuántas partidas se jugaron,
 de más a menos, con los de `GAMES` y los de La Copa sueltos mezclados. El orden es una lista fija,
 `POPULARIDAD` en `games.js`; los que vienen "Próximamente" siguen al final. La primera vuelta
@@ -5922,7 +5922,7 @@ labels, with environment variables read under both names for a while (`SITE` or 
   copies until the weekly review removes them (phase 4).
 
 ## D-317 · Feedback: an optional email, kept private, and a friendly reply when it's resolved
-**Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows)
+**Date:** 2026-10-14 · **Status:** amended by D-327 · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
 **Decision:** Owner's request: every feedback form (the 🐞 in the lab and in La Copa, the "¿Qué te
 pareció?" at the end of each lab game and La Copa's report screen) gets an optional email field, so
 whoever wants to can be told when we answer.
@@ -6303,3 +6303,26 @@ its name on the home card for a set time, today **two weeks** (`DIAS_NUEVO = 14`
 no `nuevoDesde`, so the step cannot be forgotten.
 **Consequences:** the date is the day the game reached `main`; if it is published later, the label
 lasts a little less.
+
+## D-334 · Uno al día adds six games: the three from the lab, Zip, Tango and ¿Dónde queda?
+**Date:** 2026-10-15 · **Status:** current · **Relation:** extends D-230 (the daily deck); applies D-331 and D-332
+**Decision:** Owner's request, once Rutas rotas, Loteo and Pintaminas reached the home page (D-332):
+they join Uno al día, and so do Zip, Tango and ¿Dónde queda?, which had been left out. They enter
+with `desde: '2026-10-16'` (`DESDE_MAS` in `uno-al-dia.js`): the deck being played (October 13 to
+22) does not change, and they come out from the deck shuffled on October 23. With 16 games the wait
+before a game comes back stays at 7 days. A game with variants plays its **default variant** in Uno
+al día, without the picker (Pintaminas easy, Loteo Numbers): the daily challenge is the same for
+everyone.
+**Why:** every one-player game was meant to be in Uno al día (D-230); these had waited for the lab.
+**Mechanism:** `uno-al-dia.test.mjs` checks no day before `DESDE_MAS` changes and each new game comes
+out in the next two decks; `tools/e2e/daily-variants.mjs` plays Loteo and Pintaminas on their day.
+
+## D-335 · A new game goes on top of the home page while it is new
+**Date:** 2026-10-15 · **Status:** current · **Relation:** amends D-255 (the home page order) and extends D-333; resolves dilemma #443
+**Decision:** Owner's request: while a game carries its "New" label (D-333, two weeks), its card goes
+right after La Copa, before the games ordered by popularity (`ordenPortada` in `games.js`). When the
+label goes, it goes back to its place by popularity.
+**Why:** ordered by plays, a new game has none and lands last, where a returning player would not see
+it; the label alone did not help if the card was at the bottom.
+**Consequences:** the 🎲 random game, Uno al día's "play another" and the tools read the same order.
+`games.test.mjs` checks a new game goes right after La Copa and back to its place afterwards.

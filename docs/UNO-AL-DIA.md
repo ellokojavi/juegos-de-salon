@@ -1,7 +1,7 @@
 # Uno al día
 
 **Estado:** **para todos desde v0.121.0** (el n.° 1 es el 6 de octubre de 2026); construido en 7 PR y abierto en el octavo (ver "Lo que el PR N hizo") · **Fecha:** 2026-10-05 ·
-**Toca:** RP-44, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
+**Toca:** RP-44, RP-63, D-334, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
 juego, el mismo desafío para todos, y lleva la cuenta de cuántos días seguidos juega cada uno, cómo
@@ -42,7 +42,7 @@ el contenido del día:
 
 | Juego | Modo | El desafío común del día | Puntaje del día (0 a 100) |
 |---|---|---|---|
-| ⏳ Línea Relámpago, 🔢 Toque y Fama: adivina el número, 🔗 Conexiones, 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
+| ⏳ Línea Relámpago, 🔢 Toque y Fama: adivina el número, 🔗 Conexiones, 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo; since D-334 also 🚇 Rutas rotas, 📐 Loteo, 🖌️ Pintaminas, 〰️ Zip, ☀️ Tango and 📍 ¿Dónde queda? (in their default variant: 🔢 Numbers, easy) | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
 | 🪢 El Ahorcado | 🎴 Mazo del celular, con 1 jugador | La palabra (ya sale de la semilla del mazo) | Las vidas que quedan, llevadas a 100, y el tiempo desempata |
 | ⚓ Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan las casillas de barco que acertaste |
 | 🎲 Dudo | 🤖 Contra el celular | Los dados de cada ronda | Ganar vale 60, y cada dado que te queda suma; perder suma por las rondas que aguantaste |
@@ -51,15 +51,16 @@ el contenido del día:
 - **Cuarto Rey no entra:** es un juego de mesa para 4 a 6 personas y no tiene modo para uno (su
   documento lo explica). **Julepe** tampoco, porque hoy no se ofrece en la portada; si vuelve,
   entra con su modo contra el celular.
-- Zip, Tango y ¿Dónde queda? entran al salir del laboratorio.
+- Zip, Tango and ¿Dónde queda? came in with D-334, together with the three that left the lab (D-332): 16 games from the deck shuffled on October 23, 2026 (`DESDE_MAS`).
+- **A game with variants** (D-331) plays its default one in Uno al día, with no picker: the challenge is the same for everyone. The phone keeps the variant picked standalone for the next standalone game.
 - En Dudo y Batalla Naval el rival responde a lo que haces, así que lo común es el punto de partida
   (los dados, la flota) y no la partida entera. Igual se pueden comparar, y lo dicen la intro (desde el PR 2)
   y el ranking del día: "Todos parten con los mismos dados."
 - **🎲 Jugar otro** (abajo) ofrece cualquier juego de la portada, también Cuarto Rey.
 
-**La rotación:** son 10 juegos, así que no cabe uno por día de la semana. Funciona como un mazo: se
+**La rotación:** son 16 juegos since D-334 (10 before), así que no cabe uno por día de la semana. Funciona como un mazo: se
 barajan todos con la semilla `uno-al-dia:ciclo:<n>` y salen de a uno por día, sin repetir, hasta
-que se acaba el mazo (10 días). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
+que se acaba el mazo (16 days since D-334; 10 before). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
 días desde la última vez. Cada juego lleva la fecha desde la que entra a Uno al día. Así un juego
 nuevo se suma en el mazo siguiente y los días ya pasados no cambian. El contenido del día sale de
 `uno-al-dia:2026-10-05`, convertida en un código de copa de 5 letras (ver "Lo que el PR 1 hizo"). Es una semilla distinta de las
@@ -666,3 +667,15 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 | "Mismos dados de partida para todos" | "Todos parten con los mismos dados." | Frase completa (U-1) |
 | "…mejor que el 64 %" con cualquier cantidad de jugadores | Solo con 20 o más, y sin porcentaje con más de 100 | Con 1 jugador, "mejor que el 0 %"; con más de 100 el total no se conoce |
 | Tarjeta para compartir con todo en el texto, sin 🔗 | Cabecera de U-30, racha y 🔗; el puntaje va en la imagen | U-30, U-33 y D-171 |
+
+### What D-334 did
+
+- **Six more games** enter the deck with `desde: '2026-10-16'` (`DESDE_MAS`), at the owner's request once
+  Rutas rotas, Loteo and Pintaminas reached the home page: those three plus Zip, Tango and ¿Dónde queda?.
+  The deck being played (October 13 to 22) does not change, so they come out from the one shuffled on
+  October 23 (Loteo is its first day). With 16 games the wait stays at 7 days.
+- `?today` on a game with variants plays the default one and hides the picker (`practica()` in
+  `public/cup/game.js`).
+- Tested by `uno-al-dia.test.mjs` (16 games, no day before `DESDE_MAS` changes, each new one comes
+  out in the next two decks) and `tools/e2e/daily-variants.mjs` (Loteo on October 23 and Pintaminas
+  on October 30 play their default variant with no picker, even when the phone remembers the other).

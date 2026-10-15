@@ -29,6 +29,7 @@
  "daily-group.mjs": 48,
  "daily-notifications.mjs": 20,
  "daily-player.mjs": 37,
+ "daily-variants.mjs": 25,
  "daily.mjs": 48,
  "exploding-numbers/lab.mjs": 28,
  "favorites.mjs": 60,

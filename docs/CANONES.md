@@ -377,6 +377,9 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **A new game says "New" for two weeks** (D-333): next to its name, like "Próximamente", from its
   `nuevoDesde` date in `games.js` for `DIAS_NUEVO` days (`esNuevo`). Every game that reaches the
   home page brings that date; `games.test.mjs` stops one that doesn't.
+  While it says "New" it also goes **on top of the list, right after La Copa** (`ordenPortada`,
+  D-335): with no plays yet, by popularity it would be last. When the label goes, it goes back to
+  its place in `POPULARIDAD`.
 - **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar, bajo la bajada, sale
   de las tarjetas que se ven y se pueden abrir, nunca de La Copa (D-188), y abre el juego con el
   dado encima (D-237). Uno al día es una tarjeta de media fila al lado de La Copa: los dos pesan

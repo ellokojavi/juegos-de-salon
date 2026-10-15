@@ -129,6 +129,8 @@ la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renu
 
 Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
 
+- **New games on top of the home page** (#443, D-335): while a game carries its "New" label it goes
+  right after La Copa; when the label goes, back to its place by popularity.
 - **Rutas en un celular chico** (#360, opción B): sin el título mientras se juega (la barra de arriba ya
   muestra 🚇), y Reiniciar y Rendirse en una fila: a 320×568 los dos se ven sin bajar.
 - **Pintaminas: la 💡 Ayuda pide confirmar** (#351, opción A): como en El caso, el primer toque arma el
