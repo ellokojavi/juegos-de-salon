@@ -122,6 +122,8 @@ const SEED_PANEL = view => `(async()=>{const DAY=86400000,now=Date.now(),today=M
       window.__panel.seed({rooms,days,torneos:cups,push,uad,vista:'${view}'});})()`;
 
 /* --- Pintaminas: the variant the phone remembers, and painting the whole board with the engine's solution --- */
+/* --- Loteo: the phone remembers the variant too, so each path starts from Numbers --- */
+const LT_NUMBERS = `localStorage.setItem('juegos-de-salon:loteo:variant','numbers'); location.reload()`;
 const PM_VARIANT = v => `localStorage.setItem('juegos-de-salon:pintaminas:variant','${v}'); location.reload()`;
 const PM_SOLVE = `(()=>{const {p}=window.__pintaminas;const k=c=>c===0?'btn-fondo':c===1?'btn-tinta':'btn-tinta2';
   p.sol.forEach((c,i)=>{if(p.dadas.includes(i))return;document.getElementById(k(c)).click();document.querySelector('#pm-tablero .pm-casilla[data-i="'+i+'"]').click();});})()`;
@@ -139,6 +141,17 @@ export const PATHS = {
     moves: [START, `1`, `1`, `1`, `1`, `1`, `1`, `window.__rutas.girar({f1:0,c1:0,f2:1,c2:1})`, `window.__rutas.girar({f1:2,c1:2,f2:2,c2:2})`, `document.getElementById('btn-rendirse').click()`],
     // Stage 1 solved: the glow and «¡Etapa 1 lista!»
     stage: [START, `1`, `1`, `1`, `1`, `1`, `1`, `(async()=>{for(const r of [...window.__rutas.t.revuelta].reverse()){window.__rutas.girar(r);await new Promise(x=>setTimeout(x,60));}})()`, `1`],
+  },
+  /** 📐 Loteo: a board, a rejected rectangle, Utilities (picked in the waiting room), all solved, and given up. */
+  loteo: {
+    intro: [LT_NUMBERS, `1`, `1`],
+    game: [LT_NUMBERS, `1`, START, `1`, `1`, `1`, `1`, `1`, `1`],
+    error: [LT_NUMBERS, `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, `(()=>{const t=__loteo.P.t;__loteo.dibujar({f1:0,c1:0,f2:t.lado-1,c2:t.lado-1})})()`],
+    utilities: [LT_NUMBERS, `1`, `document.querySelectorAll('#selector-variante .opcion')[1].click()`, `1`, START, `1`, `1`, `1`, `1`, `1`, `1`],
+    end: [LT_NUMBERS, `1`, START, `1`, `1`, `1`, `1`, `1`, `1`,
+      `(async()=>{for(let k=0;k<5;k++){for(const r of __loteo.P.t.solucion)__loteo.dibujar(r);await new Promise(r=>setTimeout(r,2000));}})()`,
+      ...Array(12).fill(`1`)],
+    gaveup: [LT_NUMBERS, `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, `document.getElementById('btn-rendirse').click()`, `document.getElementById('btn-rendirse').click()`, `1`],
   },
   pintaminas: {
     intro: [PM_VARIANT('easy'), `1`, `1`],
@@ -470,10 +483,6 @@ export const PATHS = {
       ...Array(14).fill(`document.getElementById('btn-pasar')?.click()`), `1`, `1`, `1`, `1`],
   },
   'labs/exploding-numbers': {
-    intro: [],
-    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
-  },
-  'labs/plots': {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
   },

@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import {
   generar, generarEtapa, resolver, deducir, validar, poner, resuelto, pista, puntajePartida, tarjeta, area, casillas,
-  ETAPAS, MAXIMO, PUNTOS_ETAPA, RESTA_AYUDA,
+  ETAPAS, MAXIMO, PUNTOS_ETAPA, RESTA_AYUDA, generarDia, partida, jugada, etapasDe,
   generarServicios, generarEtapaServicios, resolverServicios, deducirServicios, validarServicios, serviciosEn, ETAPAS_SERVICIOS,
 } from './engine.js';
 
@@ -188,8 +188,69 @@ assert.throws(() => generarServicios('x', { lado: 6, tam: 5 }));
   assert.deepEqual(pista(t, []), t.solucion[0]);
   assert.equal(pista(t, t.solucion), null);
 }
-// La tarjeta dice el modo
-assert.equal(tarjeta(2, 0, 'servicios'), '⚡💧 Servicios\n✅ 6×6  ✅ 6×6  ⬛ 6×6  ⬛ 8×8  ⬛ 8×8');
+// The card follows the variant's boards; the variant's name goes with the game's name in the message (D-331)
+assert.equal(tarjeta(2, 0, ETAPAS_SERVICIOS), '✅ 6×6  ✅ 6×6  ⬛ 6×6  ⬛ 8×8  ⬛ 8×8');
 console.log(`✓ loteo servicios: ${JSON.stringify(promS.map(x => [+x.rondas.toFixed(1), +x.aLaVista.toFixed(1)]))} (rondas, a la vista)`);
+
+// A day of La Copa (D-331): the same for everyone with the same code, day and variant; the variant
+// changes the boards; the trial (D-103) is shorter, with other boards; quick enough to build in the waiting room
+{
+  const t0 = performance.now();
+  const n = generarDia('KQRST', 2), s = generarDia('KQRST', 2, { variante: 'utilities' });
+  const lento = performance.now() - t0;
+  assert.ok(lento < 2500, `a cup day takes ${lento.toFixed(0)} ms`);
+  assert.equal(n.variante, 'numbers'); assert.equal(s.variante, 'utilities');
+  assert.deepEqual(generarDia('KQRST', 2), n, 'deterministic');
+  assert.deepEqual(generarDia('KQRST', 2, { variante: 'nope' }), n, 'an unknown variant is the default one');
+  assert.notDeepEqual(generarDia('KQRST', 3).tableros[0].numeros, n.tableros[0].numeros, 'another day, other boards');
+  assert.notDeepEqual(generarDia('KQRSU', 2).tableros[0].numeros, n.tableros[0].numeros, 'another cup, other boards');
+  assert.deepEqual(n.tableros.map(t => t.lado), ETAPAS.map(e => e.lado));
+  assert.deepEqual(s.tableros.map(t => [t.lado, t.tam, t.modo]), ETAPAS_SERVICIOS.map(e => [e.lado, e.tam, 'servicios']), 'the variant changes the boards');
+  assert.deepEqual(n.tableros.map(t => t.dificil), ETAPAS.map(e => e.dificil));
+  const e = generarDia('KQRST', 2, { sal: 'ensayo', ensayo: true });
+  assert.equal(e.tableros.length, 2, 'the trial is the two warm-up boards');
+  assert.ok(e.tableros.every(t => !t.dificil));
+  assert.notDeepEqual(e.tableros[0].numeros, n.tableros[0].numeros, 'the trial has other boards');
+  assert.equal(generarDia('KQRST', 2, { variante: 'utilities', ensayo: true, sal: 'ensayo' }).tableros.length, 2);
+  assert.deepEqual(etapasDe('utilities', true), ETAPAS_SERVICIOS.slice(0, 2));
+  // The trial's score: the same 60 and 40, shared between its two boards
+  assert.equal(puntajePartida(2, 60, 0, 2).total, 100);
+  assert.equal(puntajePartida(1, 60, 0, 2).total, 30);
+  assert.equal(puntajePartida(2, 360, 0, 2).total, 60, 'the speed limits shrink with the boards');
+}
+
+// The game rebuilt from its moves: draw, erase, hint, clear, undo, give up, and boards that move on
+{
+  const p = generarDia('KQRST', 4);
+  const sol = k => p.tableros[k].solucion.map(jugada.dibujar);
+  let e = partida(p, []);
+  assert.equal(e.k, 0); assert.equal(e.hechas, 0); assert.ok(!e.fin);
+  const t0 = p.tableros[0], r0 = t0.solucion[0];
+  e = partida(p, [jugada.dibujar(r0)]);
+  assert.equal(e.parcelas.length, 1); assert.equal(e.historial.length, 1);
+  assert.equal(partida(p, [jugada.dibujar({ f1: 0, c1: 0, f2: t0.lado - 1, c2: t0.lado - 1 })]).parcelas.length, 0, 'an invalid draw is skipped');
+  assert.equal(partida(p, ['d:9,9,99,99', 'zz', 'e:4,4']).historial.length, 0, 'nonsense is skipped');
+  e = partida(p, [jugada.dibujar(r0), jugada.borrar(r0.f1, r0.c1)]);
+  assert.equal(e.parcelas.length, 0, 'tapping a plot erases it');
+  e = partida(p, [jugada.dibujar(r0), jugada.borrar(r0.f1, r0.c1), jugada.DESHACER]);
+  assert.equal(e.parcelas.length, 1, 'undo brings it back');
+  e = partida(p, [jugada.dibujar(r0), jugada.LIMPIAR, jugada.DESHACER]);
+  assert.equal(e.parcelas.length, 1, 'undo brings a cleared board back');
+  e = partida(p, [jugada.AYUDA, jugada.DESHACER, jugada.DESHACER]);
+  assert.equal(e.ayudas, 1, 'undoing a hint does not give its points back'); assert.equal(e.parcelas.length, 0);
+  e = partida(p, sol(0));
+  assert.equal(e.hechas, 1); assert.equal(e.k, 1); assert.equal(e.parcelas.length, 0, 'a solved board moves on');
+  e = partida(p, [...sol(0), jugada.DESHACER]);
+  assert.equal(e.k, 1, 'undo does not go back to a solved board');
+  e = partida(p, [...sol(0), ...sol(1), jugada.RENDIRSE, ...sol(2)]);
+  assert.ok(e.fin && e.rendido); assert.equal(e.hechas, 2); assert.equal(e.k, 2, 'nothing counts after giving up');
+  e = partida(p, p.tableros.flatMap((_, k) => sol(k)));
+  assert.ok(e.fin && !e.rendido); assert.equal(e.hechas, 5); assert.equal(e.k, 4);
+  assert.ok(resuelto(e.t, e.parcelas), 'the last board stays as it was solved');
+  // Utilities too, with the colors the screen gives
+  const s = generarDia('KQRST', 4, { variante: 'utilities' });
+  e = partida(s, s.tableros.flatMap(t => t.solucion.map(jugada.dibujar)), { color: () => '#fff' });
+  assert.equal(e.hechas, 5); assert.ok(e.parcelas.every(q => q.color === '#fff'));
+}
 
 console.log(`✓ loteo: validación, resolvedor, tableros de solución única que se deducen, las difíciles más difíciles, ayuda y puntaje ${JSON.stringify(prom)}`);
