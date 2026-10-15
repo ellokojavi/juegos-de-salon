@@ -97,6 +97,14 @@ ol.como li { line-height: 1.45; }
 /* Por el agarre se arrastra en un celular: el resto de la fila deja desplazar la página */
 .cal-linea .agarre { color: var(--muted); font-size: 1.2rem; text-align: center; padding: 10px 0; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
 .cal-linea .slot { min-height: 44px; }
+/* The variant of each game of the week that has them (D-331), below the week */
+.cal-variantes { display: grid; gap: 10px; margin: 12px 0 10px; }
+.cal-variantes .field { margin: 0; }
+.cal-variante-t { margin: 0 0 6px; font-weight: 900; }
+.cal-variante-t .y { color: var(--muted); font-size: 0.85rem; font-weight: 700; }
+.variante-dia { margin: 2px 0 0; color: var(--yellow); font-weight: 900; }
+.dia-variante { font-weight: 700; color: var(--muted); }
+#selector-variante { margin-top: 2px; }
 
 /* Tablero */
 .copa-head { text-align: center; display: grid; gap: 8px; }

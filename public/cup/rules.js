@@ -7,6 +7,11 @@
  */
 export const GAME_ID = 'copa';
 
+// The games that came from the lab bring their texts in their own folder (D-331): rules.js merges them
+import RUTAS from './games/routes/texts.js';
+import LOTEO from './games/plots/texts.js';
+import PINTAMINAS from './games/paint-mines/texts.js';
+
 /**
  * Lo que un juego es en cualquier idioma: su emoji y si está en el laboratorio. El nombre,
  * cómo se juega y cómo se puntúa van en `juegos` de cada idioma (D-170).
@@ -23,6 +28,9 @@ const BASE = {
   donde: { emoji: '📍', labs: true },
   caso: { emoji: '🔍', labs: true },
   desenredo: { emoji: '🧶' },
+  rutas: { emoji: '🚇' },
+  loteo: { emoji: '📐' },
+  pintaminas: { emoji: '🖌️' },
   final: { emoji: '🏁' },
 };
 
@@ -196,6 +204,8 @@ const ES = {
   gamesFinal: 'Va siempre al final y vale doble',
   gamesOut: 'Quedan fuera',
   gamesShuffle: '🎲 Otro orden al azar',
+  gamesVariants: '¿En qué versión?',
+  gamesVariantsHint: 'Todos juegan esa versión ese día.',
   fStart: '¿Cuándo parte?',
   startToday: 'Hoy',
   startTomorrow: 'Mañana',
@@ -982,6 +992,8 @@ const EN = {
   gamesFinal: 'Always goes last and is worth double',
   gamesOut: 'Left out',
   gamesShuffle: '🎲 Another random order',
+  gamesVariants: 'Which version?',
+  gamesVariantsHint: 'Everyone plays that version that day.',
   fStart: 'When does it start?',
   startToday: 'Today',
   startTomorrow: 'Tomorrow',
@@ -1758,6 +1770,8 @@ const PT = {
   gamesFinal: 'Vai sempre no fim e vale o dobro',
   gamesOut: 'Ficam de fora',
   gamesShuffle: '🎲 Outra ordem ao acaso',
+  gamesVariants: 'Qual versão?',
+  gamesVariantsHint: 'Todos jogam essa versão nesse dia.',
   fStart: 'Quando começa?',
   startToday: 'Hoje',
   startTomorrow: 'Amanhã',
@@ -2534,6 +2548,8 @@ const DE = {
   gamesFinal: 'Kommt immer zum Schluss und zählt doppelt',
   gamesOut: 'Nicht dabei',
   gamesShuffle: '🎲 Neu mischen',
+  gamesVariants: 'Welche Version?',
+  gamesVariantsHint: 'An dem Tag spielen alle diese Version.',
   fStart: 'Wann geht’s los?',
   startToday: 'Heute',
   startTomorrow: 'Morgen',
@@ -3145,6 +3161,26 @@ const DE = {
 };
 
 export const LOCALES = { es: ES, en: EN, pt: PT, de: DE };
+// Each game's own texts (D-331): its entry in `juegos` and the keys its screen reads
+for (const [id, textos] of Object.entries({ rutas: RUTAS, loteo: LOTEO, pintaminas: PINTAMINAS })) {
+  for (const [lang, L] of Object.entries(LOCALES)) {
+    const t = textos[lang] || textos.es;
+    L.juegos[id] = t.juego;
+    for (const [k, v] of Object.entries(t.ui || {})) {
+      if (k in L) throw new Error(`rules.js: ${id} repeats the key ${k}`);
+      L[k] = v;
+    }
+  }
+}
+
+/**
+ * A game as it is played in a variant (D-331): its name stays, and its steps and its scoring are the
+ * variant's own when it brings them. Without a variant, or for a game that has none, the game itself.
+ */
+export const conVariante = (J, v) => {
+  const x = v && J?.variantes?.[v];
+  return x ? { ...J, como: x.como || J.como, puntaje: x.puntaje || J.puntaje, desempate: x.desempate || J.desempate, variante: v, varianteNombre: x.nombre } : J;
+};
 
 /** Los juegos en un idioma: lo de BASE más sus textos. */
 export const juegosCopa = (lang = 'es') => {

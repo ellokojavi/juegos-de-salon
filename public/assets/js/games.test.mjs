@@ -86,3 +86,19 @@ for (const g of GAMES) {
 
 assert.deepEqual(fallas, [], `${malos.length} juego(s) se saltan el canon: ${malos.join(', ')}`);
 console.log(`games: los ${GAMES.length} juegos tienen motor, tests, gancho y especificación (o una excepción con su decisión)`);
+
+// The "New" label (D-333): every game on the home page that was not there before D-333 brings the day it arrived
+{
+  const { PORTADA, esNuevo, DIAS_NUEVO } = await import('./games.js');
+  const YA_ESTABAN = ['copa', 'ahorcado', 'batalla-naval', 'toque-y-fama', 'linea-de-tiempo', 'dudo', 'julepe', 'cuarto-rey', 'generala',
+    'conexiones', 'letras', 'anio', 'reinas', 'tango', 'zip', 'desenredo', 'donde', 'caso'];
+  const sinFecha = PORTADA.filter(g => g.available && !YA_ESTABAN.includes(g.id) && !/^\d{4}-\d{2}-\d{2}$/.test(g.nuevoDesde || ''));
+  assert.deepEqual(sinFecha.map(g => g.id), [], 'a new game on the home page brings `nuevoDesde: \'YYYY-MM-DD\'` (D-333)');
+  const g = { nuevoDesde: '2026-10-15' };
+  assert.ok(esNuevo(g, new Date('2026-10-15T09:00:00')), 'new from its day');
+  assert.ok(esNuevo(g, new Date('2026-10-28T23:00:00')), `and for ${DIAS_NUEVO} days`);
+  assert.ok(!esNuevo(g, new Date('2026-10-29T01:00:00')), 'and not after');
+  assert.ok(!esNuevo(g, new Date('2026-10-14T23:00:00')), 'nor before');
+  assert.ok(!esNuevo({}, new Date()), 'without a date it is not new');
+  console.log('games: the new ones carry their date for the "New" label (D-333)');
+}
