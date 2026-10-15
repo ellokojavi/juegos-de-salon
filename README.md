@@ -675,6 +675,7 @@ node tools/push/notify.test.mjs
 node tools/push/schedule.test.mjs
 node tools/push/webpush.test.mjs
 node tools/release/changelog.test.mjs
+node tools/release/merge-report.test.mjs
 node tools/release/version.test.mjs
 ```
 <!-- /generated -->
@@ -710,7 +711,7 @@ It is the whole app over HTTPS, so the modes that need a secure context work too
 
 ## Publishing a version
 
-Each pull request leaves its changelog entry, without a number, in `changelog/<branch>.md`; the version is the top entry of `CHANGELOG.md` bumped once per pending entry, in the order the pull requests reached `main`, so it is assigned on merge. Pages in git carry no version: the publish workflow stamps it into the copy it uploads (import maps, stylesheets and social card images get `?v=<version>-<commit>`), so the browser never mixes old and new files and two open pull requests never clash over it. To try the stamp locally, on a copy:
+Each pull request leaves its changelog entry, without a number, in `changelog/<branch>.md`; the version is the top entry of `CHANGELOG.md` bumped once per pending entry, in the order the pull requests reached `main`, so it is assigned on merge. Pages in git carry no version: the publish workflow stamps it into the copy it uploads (import maps, stylesheets and social card images get `?v=<version>-<commit>`), so the browser never mixes old and new files and two open pull requests never clash over it. When the workflow ends, it comments on the merged pull request: the version that went live, or the step that stopped it (D-323). To try the stamp locally, on a copy:
 
 ```bash
 python3 tools/release/set-version.py --site /tmp/site
@@ -786,7 +787,7 @@ firebase/                   Realtime Database security rules and notes
 changelog/                  Each open PR's changelog entry, without a number, until it is merged into CHANGELOG.md (D-300)
 tools/
   push/                       vapid.mjs (the notifications key pair, already run once: the public key is in assets/js/vapid.js, the private one a GitHub secret; D-223, D-225); notify.mjs sends the La Copa notifications every 15 minutes from notifications.yml and leaves what it sent for the dashboard (D-233), with schedule.mjs (what is due: at most 2 a day per cup, overlapping deadlines in one, the new days of several cups together; D-229) and webpush.mjs (encryption and VAPID, no dependencies; D-224); daily.mjs decides One a Day's, in the same run (D-230)
-  release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + facts.mjs (this README), og.mjs (social cards and bridge pages), icons.mjs (the app icons, from assets/icon.svg), changelog.mjs (each PR's changelog entry, without a number, in changelog/; the version comes from the order PRs reach main, D-300)
+  release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + facts.mjs (this README), og.mjs (social cards and bridge pages), icons.mjs (the app icons, from assets/icon.svg), changelog.mjs (each PR's changelog entry, without a number, in changelog/; the version comes from the order PRs reach main, D-300), merge-report.mjs (the comment that tells a merged PR whether its change went live, D-323)
   firebase/                   rules.mjs (publish the rules), reports.mjs (The Cup bug reports), in-progress.mjs (anyone playing?), rankings-history.mjs (The Cup's history into the leaderboards, and each player's cups), unnoted-rooms.mjs (rooms the trash bin would never sweep, D-321)
   generators/                 map.mjs (the world of Where is it?), fleet.py (the Battleship fleet)
   agents/                     dilemmas.mjs (usability dilemmas as issues, D-132), decision.mjs (reserves decision numbers, so two sessions never take the same D-n, D-301), document.mjs (the documentation agent, D-172), clean-worktrees.mjs (removes merged, empty and abandoned worktrees, leftover test output and stale local branches, at session start and in the daily process round, D-218, D-252, D-315), processes.mjs (the process agent, D-273), approve.mjs (one-tap Yes/No decisions in issues, D-273), feedback.mjs (players' 🐞 reports as issues, D-275, and the email reply to whoever left an address, with feedback-templates.mjs and send-mail.py, D-317), inbox.mjs (the hola@ inbox, for the support agent: list, ingest as a feedback report, or skip, signed in as the inbox user, D-318), labs-key.mjs (gives or takes away a person's own key to the lab, D-284), covers.mjs (shows the cover of every game a PR touches and warns when a game changed but its cover did not, U-36)

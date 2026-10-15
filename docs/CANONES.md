@@ -234,6 +234,7 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 - El menú dibuja la lista de juegos **antes** que cualquier adorno, y los adornos van en `try/catch`: un adorno roto no puede dejar la app vacía.
 - Cada cambio publicado entra en `changelog/` sin número, y el agente de procesos lo junta en `CHANGELOG.md` con su versión (D-300).
 - Se verifica que el sitio publicado sirva la versión nueva antes de darla por lista: lo hace el último paso de `publish.yml` (D-205).
+- The merged PR learns how it went: the `report` job, last in `publish.yml`, comments on it "✅ Merged and published" with the version once the site serves it, or "❌ Merged, but not published" with the step that stopped it (`tools/release/merge-report.mjs`, D-323). That comment is what wakes the session that opened the PR (its CI monitor relays comments, D-218).
 
 ## C-12 · Pruebas
 
