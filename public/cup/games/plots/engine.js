@@ -1,5 +1,5 @@
 /**
- * Loteo — el motor (laboratorio, D-310). Inspirado en Shikaku (Nikoli, 1989):
+ * Loteo — the engine (born in the lab, D-310; a La Copa game since D-331). Inspired by Shikaku (Nikoli, 1989):
  * una grilla con algunos números; hay que dividirla entera en rectángulos, cada uno con exactamente un
  * número, y ese número es su área. Cada tablero tiene solución única.
  *
@@ -289,26 +289,28 @@ export function pista(t, parcelas) {
 }
 
 /**
- * El puntaje, sobre 100: 12 por tablero resuelto y, solo si se resuelven los cinco, hasta 40 por rapidez
- * (40 en 5 minutos o menos, 0 en 15 o más). Cada ayuda resta 10; nunca bajo 0.
+ * The score, out of 100: 12 per solved board and, only with all five, up to 40 for speed (40 in 5
+ * minutes or less, 0 at 15 or more). Each hint takes 10; never below 0. With `total` boards (the trial
+ * session has 2, D-103) the same 60 and 40 are shared among them and the speed limits shrink in proportion.
  */
-export function puntajePartida(hechas, segundos, ayudas = 0) {
-  const completa = hechas >= ETAPAS.length;
-  const base = PUNTOS_ETAPA * Math.min(hechas, ETAPAS.length);
-  const rapidez = completa ? Math.max(0, Math.min(1, (LENTO_S - segundos) / (LENTO_S - RAPIDO_S))) : 0;
+export function puntajePartida(hechas, segundos, ayudas = 0, total = ETAPAS.length) {
+  const completa = hechas >= total;
+  const porTablero = (PUNTOS_ETAPA * ETAPAS.length) / total, escala = total / ETAPAS.length;
+  const base = Math.round(porTablero * Math.min(hechas, total));
+  const rapido = RAPIDO_S * escala, lento = LENTO_S * escala;
+  const rapidez = completa ? Math.max(0, Math.min(1, (lento - segundos) / (lento - rapido))) : 0;
   const ptsRapidez = Math.round(BONO_RAPIDEZ * rapidez);
   const resta = RESTA_AYUDA * ayudas;
   return { total: Math.max(0, base + ptsRapidez - resta), base, ptsRapidez, resta, completa };
 }
 
 /**
- * La tarjeta para compartir: ✅ o ⬛ por tablero, con su tamaño, sin delatar la solución. En el modo
- * servicios dice el modo arriba.
+ * The card to share: ✅ or ⬛ per board, with its size, without giving the solution away, and the hints.
+ * The variant's name already goes with the game's name in the shared message (D-331), so it is not here.
  */
-export function tarjeta(hechas, ayudas = 0, modo = 'numeros') {
-  const servicios = modo === 'servicios';
-  const filas = (servicios ? ETAPAS_SERVICIOS : ETAPAS).map((e, k) => `${k < hechas ? '✅' : '⬛'} ${e.lado}×${e.lado}`).join('  ');
-  return [servicios ? `${ICONOS.luz}${ICONOS.agua} Servicios` : null, filas, ayudas ? `💡 ${ayudas}` : null].filter(Boolean).join('\n');
+export function tarjeta(hechas, ayudas = 0, etapas = ETAPAS) {
+  const filas = etapas.map((e, k) => `${k < hechas ? '✅' : '⬛'} ${e.lado}×${e.lado}`).join('  ');
+  return [filas, ayudas ? `💡 ${ayudas}` : null].filter(Boolean).join('\n');
 }
 
 /* ------------------------------------------------------------------ */
@@ -633,4 +635,93 @@ export function validarServicios(t, r) {
   const falta = t.servicios.find(s => !cuenta[s]);
   if (falta) return { ok: false, motivo: 'falta', servicio: falta };
   return { ok: true };
+}
+
+/* ------------------------------------------------------------------ */
+/* A day of La Copa, or a standalone game (D-331)                       */
+/* ------------------------------------------------------------------ */
+
+/** The variants (D-331): 🔢 Numbers, the default, and ⚡💧 Utilities. */
+export const VARIANTES = ['numbers', 'utilities'];
+/** The boards of a variant: the five, or only the two warm-up ones in the trial session (D-103). */
+export const etapasDe = (variante, ensayo = false) => {
+  const todas = variante === 'utilities' ? ETAPAS_SERVICIOS : ETAPAS;
+  return ensayo ? todas.filter(e => !e.dificil) : todas;
+};
+
+/**
+ * The game of a cup day (or of a standalone seed, with day 1): the boards of its variant, the same for
+ * every player with the same code, day and variant. Building the hard Utilities boards takes about half a
+ * second, so the waiting room builds it ahead (`caro` in ui.js) and this keeps what it built.
+ * Returns `{ semilla, variante, ensayo, tableros }`; each board carries its `dificil` flag.
+ */
+const hechos = new Map();
+export function generarDia(codigo, dia, { variante = 'numbers', sal = '', ensayo = false } = {}) {
+  const v = VARIANTES.includes(variante) ? variante : VARIANTES[0];
+  const semilla = `${codigo}:${dia}${sal ? `:${sal}` : ''}`;
+  const clave = `${semilla}|${v}|${ensayo ? 1 : 0}`;
+  if (!hechos.has(clave)) {
+    const etapas = etapasDe(v, ensayo);
+    const tableros = etapas.map((e, n) => ({ ...(v === 'utilities' ? generarEtapaServicios(semilla, n) : generarEtapa(semilla, n)), dificil: !!e.dificil }));
+    hechos.set(clave, { semilla, variante: v, ensayo: !!ensayo, tableros });
+  }
+  return structuredClone(hechos.get(clave));
+}
+
+/** A move as it is saved: `d:f1,c1,f2,c2` draw, `e:f,c` erase the plot there, `a` hint, `x` clear the board, `u` undo, `r` give up. */
+export const jugada = {
+  dibujar: r => `d:${r.f1},${r.c1},${r.f2},${r.c2}`,
+  borrar: (f, c) => `e:${f},${c}`,
+  AYUDA: 'a', LIMPIAR: 'x', DESHACER: 'u', RENDIRSE: 'r',
+};
+
+/**
+ * The game rebuilt from its moves (so a reloaded cup day resumes where it was). Moves that do nothing
+ * (a draw that is not valid, undo with nothing to undo) are skipped. A board that ends covered moves on
+ * to the next one. `color(t, parcelas, r)`, if given, colors each new plot. Returns
+ * `{ k, t, parcelas, historial, hechas, ayudas, rendido, fin, n, ultima }`: the current board (`k`, `t`),
+ * its plots, the earlier states for undo, the boards solved, the hints, whether it ended, and the plots
+ * of the last board solved (to show it shining while the next one comes).
+ */
+export function partida(p, jugadas = [], { color = null } = {}) {
+  const tabs = p.tableros, n = tabs.length;
+  let k = 0, parcelas = [], historial = [], hechas = 0, ayudas = 0, rendido = false, ultima = null;
+  const conColor = (t, r, extra = {}) => ({ ...r, ...extra, ...(color ? { color: color(t, parcelas.filter(q => !iguales(q, r)), r) } : {}) });
+  for (const j of jugadas) {
+    if (rendido || hechas >= n) break;
+    const t = tabs[k];
+    const [tipo, datos = ''] = String(j).split(':');
+    const x = datos.split(',').map(Number);
+    let sig = null;
+    if (tipo === 'd') {
+      const [f1, c1, f2, c2] = x, r = { f1, c1, f2, c2 };
+      if (x.length !== 4 || x.some(v => !Number.isInteger(v) || v < 0 || v >= t.lado) || f1 > f2 || c1 > c2 || !validar(t, r).ok) continue;
+      sig = poner(parcelas, conColor(t, r));
+    } else if (tipo === 'e') {
+      const lote = parcelas.find(q => contiene(q, x[0], x[1]));
+      if (!lote) continue;
+      sig = parcelas.filter(q => q !== lote);
+    } else if (tipo === 'a') {
+      const r = pista(t, parcelas);
+      if (!r) continue;
+      ayudas++;
+      sig = poner(parcelas, conColor(t, r, { ayuda: true }));
+    } else if (tipo === 'x') {
+      if (!parcelas.length) continue;
+      sig = [];
+    } else if (tipo === 'u') {
+      if (historial.length) parcelas = historial.pop();
+      continue;
+    } else if (tipo === 'r') {
+      rendido = true;
+      break;
+    } else continue;
+    historial.push(parcelas);
+    parcelas = sig;
+    if (resuelto(t, parcelas)) {
+      hechas++; ultima = parcelas;
+      if (hechas < n) { k++; parcelas = []; historial = []; }
+    }
+  }
+  return { k, t: tabs[k], parcelas, historial, hechas, ayudas, rendido, fin: rendido || hechas >= n, n, ultima };
 }
