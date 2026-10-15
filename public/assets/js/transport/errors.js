@@ -130,15 +130,22 @@ export function clearRoomError(err) {
  * (the game moves to the new room, or redraws the result with "waiting for…"); if it fails, `reset` undoes
  * what the game marked (the "switching" flag), the button comes back, and the error goes in a line
  * under it, with the same texts as joining a room (`errText`). Tapping again is the retry.
- * The button is taken before any await, so a re-render can't lose it.
+ * The button is taken before any await, so a re-render can't lose it. While it waits (up to
+ * CONNECT_MS + OP_MS) it says so with `busy` ("Abriendo sala…"), like `tryRoom` (U-37): a dim
+ * "Revancha" for twenty seconds reads as a frozen app.
  */
-export async function tryRematch(btn, run, { T, reset = () => {} }) {
+export async function tryRematch(btn, run, { T, busy = '', reset = () => {} }) {
   btn.disabled = true;
+  const label = btn.textContent;
+  if (busy) { btn.textContent = busy; btn.setAttribute('aria-busy', 'true'); }
   const old = btn.nextElementSibling;
   if (old && old.classList.contains('rematch-error')) old.remove();
+  const done = () => { if (busy) { btn.textContent = label; btn.removeAttribute('aria-busy'); } };
   try {
     await run();
+    done();
   } catch (e) {
+    done();
     try { reset(); } catch (_) { /* the message still has to show */ }
     if (!transportErrorKey(e)) console.error(e);
     const p = btn.ownerDocument.createElement('p');
