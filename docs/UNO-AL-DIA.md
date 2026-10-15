@@ -1,7 +1,7 @@
 # Uno al día
 
 **Estado:** **para todos desde v0.121.0** (el n.° 1 es el 6 de octubre de 2026); construido en 7 PR y abierto en el octavo (ver "Lo que el PR N hizo") · **Fecha:** 2026-10-05 ·
-**Toca:** RP-44, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
+**Toca:** RP-44, RP-63, D-334, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
 juego, el mismo desafío para todos, y lleva la cuenta de cuántos días seguidos juega cada uno, cómo
@@ -60,7 +60,7 @@ el contenido del día:
 
 **La rotación:** son 16 juegos since D-334 (10 before), así que no cabe uno por día de la semana. Funciona como un mazo: se
 barajan todos con la semilla `uno-al-dia:ciclo:<n>` y salen de a uno por día, sin repetir, hasta
-que se acaba el mazo (10 días). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
+que se acaba el mazo (16 days since D-334; 10 before). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
 días desde la última vez. Cada juego lleva la fecha desde la que entra a Uno al día. Así un juego
 nuevo se suma en el mazo siguiente y los días ya pasados no cambian. El contenido del día sale de
 `uno-al-dia:2026-10-05`, convertida en un código de copa de 5 letras (ver "Lo que el PR 1 hizo"). Es una semilla distinta de las

@@ -70,6 +70,8 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-60 | **Rutas rotas, Loteo and Pintaminas leave the lab**: on the home page (`/routes/`, `/plots/`, `/paint-mines/`) in the four languages and in the pool of La Copa, outside the Gran Final (D-332). | ✅ on merge of `lab-graduation` (its version: `changelog/lab-graduation.md`) |
 | RP-61 | **Variants**: standalone, the player picks the variant in the waiting room (Pintaminas easy / hard, Loteo Numbers / Utilities); in a cup, the admin picks one per day for everyone. Every variant scores 0 to 100 (D-331). | ✅ on merge of `lab-graduation` (its version: `changelog/lab-graduation.md`) |
 | RP-62 | A new game shows a "New" label on its home card for two weeks (D-333). | ✅ on merge of `lab-graduation` (its version: `changelog/lab-graduation.md`) |
+| RP-63 | **Uno al día with every one-player game**: Rutas rotas, Loteo, Pintaminas, Zip, Tango and ¿Dónde queda? join the daily deck (16 games) from the deck shuffled on October 23, 2026, without changing the days already set; a game with variants plays its default one, with no picker (D-334). | ✅ on merge of `daily-more-games` (its version: `changelog/daily-more-games.md`) |
+| RP-64 | While a game carries its "New" label, its card goes right after La Copa on the home page; when the label goes, back to its place by popularity (D-335, dilemma #443). | ✅ on merge of `daily-more-games` (its version: `changelog/daily-more-games.md`) |
 
 ## Cuarto Rey (CR)
 
