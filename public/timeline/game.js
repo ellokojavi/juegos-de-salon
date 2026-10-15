@@ -13,7 +13,7 @@ import { gameById } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { clearRoomError, tryRoom } from '../assets/js/transport/errors.js';
+import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
@@ -652,7 +652,7 @@ function renderResult(v) {
     if (proposed && proposed !== S.code) { S.switching = true; joinOnline(proposed, M.names[S.role]).catch(e => { console.error(e); S.switching = false; }); }
   }
   box.append(
-    el('button', { class: 'btn btn--yellow', onClick: rematch }, T.rematch),
+    el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, reset: () => { S.switching = false; } }) }, T.rematch),
     el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
   );

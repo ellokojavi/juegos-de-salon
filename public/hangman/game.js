@@ -11,7 +11,7 @@ import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { clearRoomError, tryRoom } from '../assets/js/transport/errors.js';
+import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
 import { showHandoff, passBlock, showCover } from '../assets/js/handoff.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
@@ -854,7 +854,7 @@ function renderResult(v) {
   }
   box.append(
     // En Uno al día no hay revancha: la tarjeta ya ofrece jugar otro o repetir el de hoy (#226)
-    S.hoy && soloYo ? null : el('button', { class: 'btn btn--yellow', onClick: rematch }, T.rematch),
+    S.hoy && soloYo ? null : el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, reset: () => { S.switching = false; } }) }, T.rematch),
     S.mode === 'online' ? el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode) : el('button', { class: 'btn btn--ghost', onClick: () => { clearSession(); location.href = location.pathname; } }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
   );

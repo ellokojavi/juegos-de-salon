@@ -16,7 +16,7 @@ import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js
 import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
-import { clearRoomError, tryRoom } from '../assets/js/transport/errors.js';
+import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
@@ -673,8 +673,7 @@ function renderResult(v) {
       class: 'btn btn--yellow',
       onClick: e => {
         if (S.mode !== 'online') return startMatch(S.mode, M.names, M.config);
-        e.currentTarget.disabled = true;
-        rematchOnline().catch(err => { console.error(err); e.currentTarget.disabled = false; });
+        tryRematch(e.currentTarget, rematchOnline, { T });
       },
     }, S.mode === 'online' ? T.rematch : T.endAgain),
     el('div', { class: 'btn-row' },
