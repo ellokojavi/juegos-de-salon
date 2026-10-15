@@ -1,21 +1,25 @@
 /**
- * Pintaminas — el motor (laboratorio, D-289). Inspirado en ColorSweeper (ARRKKA): un Buscaminas en que
- * cada casilla es de tinta o de fondo, y su número dice cuántas de sus 8 vecinas son de su mismo color.
- * Al resolverlo, la tinta forma un dibujo (lo que toma de los nonogramas).
+ * Pintaminas — the engine (D-289; out of the lab and into La Copa since D-331). Inspired by
+ * ColorSweeper (ARRKKA): a Minesweeper where each cell is painted or not, and its number says how
+ * many of its 8 neighbors are like it. Once solved, the paint makes a drawing (the nonogram part).
  *
- * El tablero se arma desde un dibujo de 7×7: se dan algunas casillas con su color y su número, y el
- * resto se deduce. Cada casilla que el jugador acierta muestra su número, que da más pistas. El
- * generador agrega casillas dadas hasta que `resolver` lo termina sin adivinar, y después saca las
- * que sobran: siempre se resuelve con lógica.
+ * The board is built from a 7×7 drawing: some cells are given with their color and number, and the
+ * rest is deduced. Each cell the player gets right shows its number, which gives more clues. The
+ * generator adds given cells until `resolver` finishes it without guessing, and then removes the
+ * extra ones: it is always solved with logic.
+ *
+ * Two variants (D-331): `easy` (one color) and `hard` (two colors). Both score 0 to 100.
  */
 import { DIBUJOS, DIBUJOS2, PALETA } from './dibujos.js';
 
 export const LADO = 7;
 export const RESTA_ERROR = 15;
-/** Lo que cuesta cada ayuda 💡 (D-292). */
+/** What each 💡 hint costs (D-292). */
 export const RESTA_AYUDA = 10;
-/** El premio del modo difícil (dos colores): el puntaje se multiplica (pedido del dueño). */
-export const PREMIO_DIFICIL = 1.5;
+/** The variants (D-331, the same list as VARIANTES.pintaminas in ../../engine.js): the first one is the default. */
+export const VARIANTES = ['easy', 'hard'];
+/** How many cells the trial session (D-103) leaves to paint: the same game, shorter. */
+export const LIBRES_ENSAYO = 15;
 
 function azar(semilla) {
   let h = 1779033703 ^ semilla.length;
@@ -24,7 +28,7 @@ function azar(semilla) {
 }
 const barajar = (xs, r) => { const a = xs.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
-/** Las vecinas de cada casilla (hasta 8). */
+/** Each cell's neighbors (up to 8). */
 export const VECINAS = Array.from({ length: LADO * LADO }, (_, i) => {
   const f = Math.floor(i / LADO), c = i % LADO, v = [];
   for (let df = -1; df <= 1; df++) for (let dc = -1; dc <= 1; dc++) {
@@ -35,23 +39,22 @@ export const VECINAS = Array.from({ length: LADO * LADO }, (_, i) => {
   return v;
 });
 
-/** El número de una casilla: cuántas de sus vecinas son de su mismo color. */
+/** A cell's number: how many of its neighbors are the same color as it. */
 export const numero = (sol, i) => VECINAS[i].filter(j => sol[j] === sol[i]).length;
 
 /**
- * Lo que se puede deducir desde las casillas conocidas, como lo haría un jugador. Cada casilla lleva
- * los colores que todavía puede tener (0 es sin pintar; 1, y 2 en el modo de dos colores). Cada
- * casilla conocida de color v dice cuántas de sus vecinas son v: si ya están todas, las demás no son
- * v; si las que pueden serlo son justo las que faltan, lo son. Y si las vecinas posibles de una
- * casilla están todas entre las de otra (para el mismo color), la diferencia también dice algo (como
- * en el Buscaminas). Una casilla con un solo color posible se conoce, muestra su número y se sigue.
- * Devuelve el mapa de conocidas.
+ * What can be deduced from the known cells, the way a player would. Each cell carries the colors it
+ * can still have (0 is unpainted; 1, and 2 in the two-color variant). Each known cell of color v says
+ * how many of its neighbors are v: if they are all there, the rest are not v; if the ones that can be
+ * are exactly the ones missing, they are. And if a cell's possible neighbors are all among another's
+ * (for the same color), the difference says something too (as in Minesweeper). A cell with a single
+ * possible color is known, shows its number, and it goes on. Returns the map of known cells.
  */
 export const resolver = (sol, dadas) => deducir(sol, dadas).sabe;
 
 /**
- * La ayuda (D-292): la primera casilla que se puede deducir desde las conocidas, y los números que la
- * explican (las casillas conocidas cuyas reglas la tocaron). `null` si ya no queda nada por deducir.
+ * The hint (D-292): the first cell that can be deduced from the known ones, and the numbers that
+ * explain it (the known cells whose rules touched it). `null` if there is nothing left to deduce.
  */
 export function ayuda(sol, conocidas) {
   const { primera } = deducir(sol, conocidas, true);
@@ -79,7 +82,7 @@ function deducir(sol, dadas, soloLaPrimera = false) {
   const poner = (des, v, de) => { for (const j of des) if (!sabe.has(j)) { posibles[j] = 1 << v; anotar(j, de); conocer(j); cambio = true; } };
   while (cambio && !primera) {
     cambio = false;
-    // Cada conocida: sus vecinas que todavía pueden ser de su color, y cuántas de ellas lo son
+    // Each known cell: its neighbors that can still be its color, and how many of them are
     const reglas = [];
     for (const [i, v] of sabe) {
       const des = VECINAS[i].filter(j => !sabe.has(j) && (posibles[j] >> v) & 1);
@@ -92,7 +95,7 @@ function deducir(sol, dadas, soloLaPrimera = false) {
       else if (r.n === r.des.length) poner(r.des, r.v, [r.i]);
     }
     if (cambio) continue;
-    // Una dentro de otra, para el mismo color: lo que sobra de la grande tiene la diferencia
+    // One inside another, for the same color: what is left of the bigger one holds the difference
     for (const a of reglas) for (const b of reglas) {
       if (primera || a === b || a.v !== b.v || a.des.length >= b.des.length || !a.des.every(j => b.des.includes(j))) continue;
       const resto = b.des.filter(j => !a.des.includes(j)), n = b.n - a.n;
@@ -104,61 +107,92 @@ function deducir(sol, dadas, soloLaPrimera = false) {
 }
 
 /**
- * El tablero de una semilla: `{ dibujo: { nombre, emoji, pinturas }, sol: [0..colores ×49], dadas }`.
- * Con `colores: 2` (el modo difícil) usa los dibujos de dos colores. El dibujo puede salir espejado,
- * y se pinta con sus colores de verdad (`colores` de cada dibujo). Con las dadas se resuelve entero.
+ * The board of a seed: `{ dibujo: { id, emoji, pinturas }, colores, sol: [0..colores ×49], dadas }`.
+ * With `colores: 2` (the hard variant) it uses the two-color drawings. The drawing may come out
+ * mirrored, and it is painted in its real colors (each drawing's `colores`). With the given cells it
+ * is solved whole.
  */
 export function generar(semilla, { colores = 1 } = {}) {
   const r = azar(String(semilla));
   const lista = colores === 2 ? DIBUJOS2 : DIBUJOS;
   const d = lista[Math.floor(r() * lista.length)];
   const espejo = r() < 0.5;
-  // Cada dibujo con sus colores de verdad (pedido del dueño). La baraja de antes se sigue sacando, sin
-  // usarla, para que el azar de lo que viene (las dadas) no cambie: los links de antes dan el mismo tablero
-  barajar(PALETA.slice(0, 6), r);   // los 6 colores que había entonces
-  const pinturas = d.colores.slice(0, colores).map(n => PALETA.find(p => p.nombre === n));
+  // Each drawing in its real colors (the owner's request). The old color shuffle is still drawn, unused,
+  // so the randomness of what follows (the given cells) does not change: old seeds give the same board
+  barajar(PALETA.slice(0, 6), r);   // the 6 colors there were then
+  const pinturas = d.colores.slice(0, colores).map(n => PALETA.find(p => p.id === n));
   const valor = { '#': 1, '+': 2, '.': 0 };
   const sol = d.filas.flatMap(fila => [...(espejo ? [...fila].reverse().join('') : fila)].map(x => valor[x]));
   const todas = [...sol.keys()];
-  // Se agregan dadas al azar hasta que se resuelve entero
+  // Given cells are added at random until it is solved whole
   const dadas = new Set(barajar(todas, r).slice(0, 3));
   while (resolver(sol, dadas).size < sol.length) {
     const sabe = resolver(sol, dadas);
     const faltan = todas.filter(i => !sabe.has(i));
     dadas.add(faltan[Math.floor(r() * faltan.length)]);
   }
-  // Y se sacan las que no hacen falta: más deducción, menos regalo
+  // And the ones that are not needed are removed: more deduction, fewer gifts
   for (const i of barajar([...dadas], r)) {
     dadas.delete(i);
     if (resolver(sol, dadas).size < sol.length) dadas.add(i);
   }
-  return { dibujo: { nombre: d.nombre, emoji: d.emoji, pinturas }, colores, sol, dadas: [...dadas].sort((a, b) => a - b) };
+  return { dibujo: { id: d.id, emoji: d.emoji, pinturas }, colores, sol, dadas: [...dadas].sort((a, b) => a - b) };
 }
 
 /**
- * El estado tras las jugadas (`{ i, color }`, en orden): qué casillas se conocen (las dadas, las
- * acertadas y las erradas, que se destapan con su color verdadero), cuáles fueron error, y si terminó.
+ * The board of a cup day or a standalone game (D-331): the same for everyone with the same code, day
+ * and variant. `hard` is two colors. The trial (`ensayo: true`, D-103) is another board with more
+ * given cells, so only LIBRES_ENSAYO are left to paint: the same mechanics, shorter.
+ */
+export function generarDia(codigo, dia, { variante = VARIANTES[0], sal = '', ensayo = false } = {}) {
+  const v = VARIANTES.includes(variante) ? variante : VARIANTES[0];
+  const semilla = `${codigo}:${dia}:${v}${sal ? `:${sal}` : ''}`;
+  const t = generar(semilla, { colores: v === 'hard' ? 2 : 1 });
+  if (ensayo) {
+    const r = azar(`${semilla}:mas`);
+    const dadas = new Set(t.dadas);
+    for (const i of barajar([...t.sol.keys()].filter(i => !dadas.has(i)), r)) {
+      if (t.sol.length - dadas.size <= LIBRES_ENSAYO) break;
+      dadas.add(i);
+    }
+    t.dadas = [...dadas].sort((a, b) => a - b);
+  }
+  return { ...t, variante: v, ensayo: !!ensayo };
+}
+
+/**
+ * The state after the moves, in order: `{ i, color }` paints a cell, `{ ayuda: true, c }` is a paid
+ * hint (D-292; `c`, the cell it pointed at, so a reloaded cup day can show it again for free) and
+ * `{ rendido: true }` is giving up (D-296). Which cells are known (the given ones, the right ones and
+ * the wrong ones, which are uncovered with their true color), which were mistakes, and whether it
+ * ended: `fin` is the board painted whole, `terminado` that or given up.
  */
 export function estado(t, jugadas = []) {
   const conocidas = new Set(t.dadas), errores = new Set();
-  let ayudas = 0;
-  for (const { i, color, ayuda: pedida } of jugadas) {
-    if (pedida) { ayudas++; continue; }
-    if (conocidas.has(i)) continue;
+  let ayudas = 0, rendido = false, pista = null;
+  for (const j of jugadas) {
+    if (rendido) break;
+    if (j.rendido) { rendido = true; continue; }
+    if (j.ayuda) { ayudas++; pista = Number.isInteger(j.c) ? j.c : null; continue; }
+    const { i, color } = j;
+    if (!Number.isInteger(i) || i < 0 || i >= t.sol.length || conocidas.has(i)) continue;
     conocidas.add(i);
     if (t.sol[i] !== color) errores.add(i);
   }
-  // avance: qué parte de lo que había que pintar ya se pintó (para quien se rinde)
+  const fin = conocidas.size === t.sol.length;
+  // avance: how much of what had to be painted was painted (for whoever gives up)
   const avance = (conocidas.size - t.dadas.length) / Math.max(1, t.sol.length - t.dadas.length);
-  return { conocidas, errores, ayudas, avance, fin: conocidas.size === t.sol.length };
+  // The last paid hint, while its cell is still unpainted: seeing it again is free (#351)
+  const pagada = pista !== null && !conocidas.has(pista) ? pista : null;
+  return { conocidas, errores, ayudas, avance, pagada, fin, rendido: rendido && !fin, terminado: fin || rendido };
 }
 
-/** De 0 a 100: cada error resta RESTA_ERROR. */
-// Quien se rinde se lleva la parte que pintó: el puntaje vale ese avance (D-296)
-export const puntaje = (e, { colores = 1, rendido = false } = {}) => Math.round(Math.max(0, 100 - RESTA_ERROR * e.errores.size - RESTA_AYUDA * (e.ayudas || 0)) * (rendido ? e.avance : 1) * (colores === 2 ? PREMIO_DIFICIL : 1));
-/** El máximo posible: 100, o 150 en el modo difícil. */
-export const maximo = colores => Math.round(100 * (colores === 2 ? PREMIO_DIFICIL : 1));
+/**
+ * From 0 to 100, in both variants (D-113, D-331): each mistake subtracts RESTA_ERROR and each hint
+ * RESTA_AYUDA. Whoever gives up takes the part they painted: the score is worth that much (D-296).
+ */
+export const puntaje = (e, { rendido = !!e.rendido } = {}) => Math.round(Math.max(0, 100 - RESTA_ERROR * e.errores.size - RESTA_AYUDA * (e.ayudas || 0)) * (rendido ? e.avance : 1));
 
-/** La tarjeta para compartir, sin delatar el dibujo: dónde se equivocó (🟥) en la grilla. */
-export const tarjeta = (t, e) => Array.from({ length: LADO }, (_, f) =>
+/** The share card, without giving the drawing away: where the mistakes were (🟥) on the grid. */
+export const tarjeta = e => Array.from({ length: LADO }, (_, f) =>
   Array.from({ length: LADO }, (_, c) => (e.errores.has(f * LADO + c) ? '🟥' : '⬛')).join('')).join('\n');

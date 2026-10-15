@@ -1,102 +1,135 @@
-# 🖌️ Pintaminas (prototipo del laboratorio, en Proyectos activos)
+# 🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)
 
-Un Buscaminas de colores para uno solo (D-289): cada casilla **se pinta** (del color del dibujo,
-D-298) **o no**, y su número dice cuántas de sus 8 vecinas son como ella (D-290). Al pintarlo entero aparece un dibujo.
-**Inspirado en [ColorSweeper](https://store.steampowered.com/app/3128730/ColorSweeper/), de ARRKKA**,
-y lo dice en la portada y en el laboratorio.
+A one-player color Minesweeper (D-289): each cell **is painted** (in the drawing's real color, D-298)
+**or not**, and its number says how many of its 8 neighbors are like it (D-290). Painted whole, it
+reveals a drawing. **Inspired by [ColorSweeper](https://store.steampowered.com/app/3128730/ColorSweeper/),
+by ARRKKA**, and the waiting room says so, with the link.
 
-## Resumen
+## Summary
 
-- **Dónde:** `https://juegosdesalon.cl/labs/paint-mines/`, en el laboratorio (con la llave de cada
-  persona, D-281, D-284). Id `pintaminas` en la señal de uso.
-- **Para quién:** uno solo. Solo en español (es un prototipo).
-- **Estado:** proyecto activo desde v0.161.0 (los pinceles «Pinta» y «No pinta» desde v0.161.1, el
-  modo difícil desde v0.162.0, la ayuda 💡 desde v0.163.0), para probarlo con amigos. Si gusta, la idea es que
-  entre a La Copa.
+- **Where:** its own page, `https://juegosdesalon.cl/paint-mines/` (generated from
+  `public/cup/suelto/index.html`), on the home page in the four languages, and a day of La Copa:
+  it is in the cup's pool (`POZO`), not in the Gran Final (D-332). Id `pintaminas` (rooms, rankings,
+  `localStorage`, the panel); the folder and the URL are `paint-mines`.
+- **For whom:** one player.
+- **Variants** (D-331): `easy` (one color, the default) and `hard` (⚡ two colors). Standalone, the
+  player picks one with the lever in the waiting room; in a cup, the admin picks one for that day
+  and everyone plays it.
+- **History:** a lab prototype from v0.161.0 (D-289): the brushes from v0.161.1, the hard mode
+  from v0.162.0 (D-291), the 💡 hint from v0.163.0 (D-292), giving up (D-296), the drawings' real
+  colors from v0.168.3 (D-298). It left the lab with Rutas rotas and Loteo (D-332): the lab page
+  `/labs/paint-mines/` is now a bridge to `/paint-mines/`.
 
-## Portada
+## Rules
 
-El título con una 🖌️ que pinta, el lema («Pinta la grilla y descubre el dibujo escondido.»), el crédito, y una partida de verdad en chico: parte con las casillas dadas y se pinta de a una, en el orden en que un jugador las deduciría (el de la ayuda), cada una con su número; al completarse aparece el dibujo y dice qué era («🐟 ¡Era un pez!»), y sigue con otro tablero. Con el modo difícil encendido, la partida de la portada es de dos colores, y mover la palanca la vuelve a empezar con el modo nuevo.
-Después los tres pasos (desde v0.167.1, U-36), la palanca del modo difícil y Empezar, que pasa por la
-cuenta 3, 2, 1 compartida (`assets/js/cuenta-regresiva.js`). Los pasos:
+- **Board:** 7×7. Some cells come given, with their color and their number (on average 1 or 2 in
+  easy and 5 in hard: the rest follows by deduction). It is always solved without guessing.
+- **Brushes:** «Pinta {color}» (the drawing's color) and «No pinta» (grey, like unpainted cells);
+  three in hard («Pinta rojo», «Pinta verde», «No pinta»). The chosen one shows. Tapping an unknown
+  cell paints it with the brush.
+- **A hit** shows its number, which gives more clues. **A miss** uncovers the cell anyway with its
+  true color and a red border, and subtracts 15 («❌ Se pintaba de rojo: −15.» / «❌ No se pintaba: −15.»).
+  On top: the mistakes and how many cells are left.
+- **💡 Hint (−10)** (D-292, #351): the first tap turns the button into «Toca de nuevo para usar la
+  ayuda (−10)» for 3 seconds and the second one charges it, as in El caso. It marks, pulsing in
+  yellow, a cell that can be deduced from what is visible, and the numbers that explain it; it does
+  not say its color. While that cell stays unpainted, «💡 Ver la ayuda» shows it again for free
+  (also after reloading a cup day: the move keeps the cell).
+- **🏳️ Give up** (D-296): next to the hint, in a row of two equal buttons; it asks for a second tap
+  («🏳️ ¿Seguro?»). The drawing is uncovered, with what was missing dimmed.
+- **The end:** the numbers go, the unpainted cells dim, the paint glows and it says what it was
+  («🐟 ¡Era un pez!»), with a stamp (¡Perfecto! with no mistakes and no hints, ¡Pintado! otherwise,
+  Te rendiste) and «Ver resultado».
+- **Score: 0 to 100 in both variants** (D-113, D-332): 100 − 15 per mistake − 10 per hint, never
+  below 0. Giving up, it is worth the painted part (painted 40 % → 40 % of that). The lab's ×1.5 of
+  the hard mode (D-291) is gone: in a cup everyone plays the same variant, and standalone each
+  variant has its own ranking table. Tie-break in a cup: the faster player.
+- **Sharing:** the card shows where the mistakes were (🟥 on a ⬛ grid), not the drawing, so as not
+  to spoil it for whoever plays the same board.
 
-1. 🔢 Cada número dice cuántas de sus 8 vecinas son iguales a ella: del mismo color, o sin pintar.
-2. 🖌️ Elige «Pinta» o «No pinta» y toca una casilla. Si aciertas, aparece su número.
-3. 🧠 Nunca hay que adivinar. Cada error resta 15; si te trabas, la 💡 ayuda muestra dónde mirar.
+## Modes
 
-La tarjeta del laboratorio agrega, desde v0.167.1, «Con un modo difícil de dos colores.».
+- **Standalone** (`/paint-mines/`): a random board every time (the framework's seed); the lab's
+  "board of the day" went away (D-332). The waiting room, top to bottom: the cover (a real game in
+  small that paints itself one cell at a time, in the order a player would deduce them, and says
+  «🐟 ¡Era un pez!», in the variant's colors), the title with the 🖌️ that paints, the languages,
+  **the lever**, «Cómo se juega» (the example drawing, the steps, the ColorSweeper credit) and the
+  scoring, Start (through the 3, 2, 1 countdown), the player and the ranking.
+- **The lever** (D-291, D-292): a lever on a metal plate with the ball's track engraved, a
+  `role="switch"`. «Modo fácil · Un color» / «⚡ Modo difícil · Dos colores». Up: a short flash
+  over the whole view (not when going back to easy), the plate electrifies (it flickers cyan and
+  yellow, ⚡ sparks), sound and vibration, and the whole rectangle glows and flickers at random like
+  a light with a bad contact (still with reduced motion). Flipping it redraws the waiting room with
+  the variant's steps and cover; the new lever swings from the old position. The phone remembers it
+  (`juegos-de-salon:pintaminas:variant`) and the link says it (`?mode=hard`; the lab's `?colors=2`
+  still opens hard).
+- **The hard variant:** the drawings of `DIBUJOS2` in their two real colors, three brushes and an
+  electric border on the board; a fulfilled number no longer says what color the rest are, only that
+  they are not its own. The second color carries thin stripes on its cells and brush (#349), until
+  the drawing is revealed. The **page background** turns night blue (`body.modo-dificil`, the
+  owner's request) in the waiting room, the game and the result, and goes back to the usual purple
+  anywhere else.
+- **La Copa:** the board comes from the cup's code, the day and the variant, the same for everyone.
+  The day's card, its waiting room and its rules say the variant under the game's name («Fácil» /
+  «⚡ Difícil»). The moves are saved as they are played: a reloaded day resumes where it was.
+- **Trial session** (D-103): the same variant, another board, with given cells added until only
+  15 are left to paint.
+- **Rankings** (D-331): `pintaminas` for easy (with the Cup tab) and `pintaminas_hard` for hard.
 
-## Cómo se juega
+## Flow
 
-- **Tablero:** 7×7. Algunas casillas vienen dadas, con su color y su número.
-- **Pincel:** dos botones, «Pinta {color}» (el color del dibujo: desde v0.168.3 cada dibujo se pinta con sus colores de verdad, `colores` en `dibujos.js`, D-298) y «No pinta»
-  (gris, como las casillas sin pintar); el elegido se nota. Tocar una
-  casilla sin pintar la pinta con el pincel.
-- **Acertar:** aparece su número, que da más pistas. **Errar:** la casilla se destapa igual con su
-  color verdadero, con un borde rojo, y resta 15 («❌ Se pintaba de morado: −15.» o «❌ No se pintaba: −15.»). Arriba: errores y cuántas faltan.
-- **Al terminar:** los números se van, las sin pintar se apagan, las pintadas brillan y se dice qué era
-  («🐟 ¡Era un pez!»).
-- **💡 Ayuda (−10)** (D-292; desde v0.163.2 pide confirmar, #351): el primer toque cambia el botón a «Toca de
-  nuevo para usar la ayuda (−10)» por 3 segundos y el segundo la cobra, como en El caso; mientras la
-  casilla que señaló siga sin pintar, «💡 Ver la ayuda» la vuelve a mostrar sin cobrar. bajo los pinceles. Marca, latiendo en amarillo, una casilla que se
-  puede deducir con lo que se ve, y los números que lo explican; no dice de qué color es («💡 La casilla
-  que late se deduce de los números marcados.»). Las marcas se van con la jugada siguiente,
-  y el botón, al terminar.
-- **🏳️ Rendirse** (D-296): junto a la ayuda, en una fila de dos botones iguales. Pide un segundo toque
-  («🏳️ ¿Seguro?»); al rendirse se destapa el dibujo (lo que faltaba, más apagado), el sello dice «Te
-  rendiste» y el puntaje vale la parte pintada.
-- **Puntaje:** 100 − 15 por error − 10 por ayuda, nunca bajo 0. Al rendirse, por la parte pintada. Con 70 o más, confeti.
-- **El final:** el dibujo, su nombre, un sello (¡Perfecto! sin errores ni ayudas, si no ¡Pintado!), el puntaje
-  con su desglose, el tiempo, compartir, otro tablero, el de hoy (si se jugó con semilla) y, tras una
-  línea, el formulario de comentarios (D-265, D-268).
-- **Compartir:** la tarjeta muestra dónde se equivocó (🟥 en una grilla de ⬛), no el dibujo, para no
-  arruinárselo a quien juega el mismo tablero.
-- **El día:** sin `?seed=` es el tablero de hoy (`dia:<fecha>`), el mismo para todos.
+1. Waiting room → Start → 3, 2, 1 → the board (the clock starts when the board shows).
+2. Each move goes through `ctx.guardar`. Painted whole (or given up), the clock stops at that moment
+   (`ctx.pararReloj`, D-130) and, in a cup, the result is sent right then (D-150).
+3. «Ver resultado» (or «Terminar la prueba» in the trial) → the framework's result: the score, the
+   card, the time, the breakdown («Partes con 100 puntos. · 1 error: −15. · 💡 1 ayuda: −10. ·
+   Total: 75 puntos.»), share, play again, report a problem and the ranking.
 
-## Modo difícil (D-291)
+## Message protocol
 
-- **El interruptor:** en la portada, antes de Empezar, una palanca sobre una placa de metal («Modo fácil · Un color · puntaje normal», y al subirla «⚡ Modo difícil · Dos colores · puntaje ×1.5»; la placa lleva grabado el recorrido de la bola
-  (una ranura oscura en arco), que muestra hacia dónde se mueve. Al pasar al modo difícil, un destello corto cubre toda la vista (volver al fácil no lleva destello). Al subirla, el rectángulo entero brilla y parpadea al azar, como una luz con mal contacto (D-292; con movimiento reducido queda encendido y quieto), y la placa se electrifica: titila en celeste y
-  amarillo, saltan chispas ⚡, suena y vibra. Es un `role="switch"`; el celular recuerda su posición
-  (`juegos-de-salon:pintaminas:dificil`) y el link lo trae con `?colors=2`.
-- **El fondo:** encendido, toda la página pasa de su morado de siempre a un azul noche con
-  resplandores celestes (`body.modo-dificil`), en la portada, el juego y el resultado (pedido del dueño).
-- **La trama del segundo color** (#349): en el modo difícil, las casillas del segundo color y su pincel
-  llevan rayas finas, para quien no distingue bien los colores; al revelarse el dibujo se van.
-- **El tablero:** los dos colores de verdad del dibujo (`colores`: la frutilla roja con hojas verdes, el árbol verde con el tronco café; nunca amarillo con naranjo juntos, se confunden; las cerezas desde v0.167.2 y todos desde v0.168.3, D-298), con los dibujos de `DIBUJOS2` (de dos colores), un
-  borde eléctrico y tres pinceles (con la frutilla, «Pinta rojo», «Pinta verde», «No pinta»). El marcador dice
-  «⚡ Modo difícil ×1.5». Un número cumplido ya no dice de qué color son las demás: solo que no son del
-  suyo.
-- **El puntaje:** (100 − 15 por error − 10 por ayuda) × 1,5, hasta 150. El desglose lo dice («⚡ Modo difícil: ×1.5.»),
-  el confeti sale desde el 70 % del máximo y «Otro tablero» sigue en el modo difícil.
+None: one player, one phone. In a cup the result goes to Firebase like every cup game
+(`{ s, ms, t, r }`), and the moves stay in the attempt (`intento`) on the phone.
 
-## Cómo funciona
+## Files
 
-- `dibujos.js`: 17 dibujos de 7×7 (`#` se pinta, `.` no), cada uno con nombre y emoji, todos
-  irregulares: uno simétrico se adivina por espejo y el test lo rechaza (D-290). Un dibujo nuevo tiene
-  que reconocerse a 7×7 y tener entre 12 y 40 pintadas. `DIBUJOS2`: los 10 del modo difícil (`#` y
-  `+`, un color cada uno), también irregulares y con al menos 4 casillas de cada color (D-291).
-  `PALETA`: los 9 colores con su nombre y su emoji (café, blanco y rosado desde v0.168.3). Cada dibujo
-  trae sus colores de verdad en `colores`, uno o dos de `PALETA`, nunca amarillo con naranjo (D-298).
-- `engine.js`: `resolver(sol, dadas)` deduce como un jugador, con los colores que todavía puede tener
-  cada casilla (sirve para uno o dos colores): cada casilla conocida dice cuántas de sus
-  vecinas desconocidas se pintan; si son todas o ninguna, se saben; y si las desconocidas de una
-  están todas entre las de otra, la diferencia también. Cada deducida suma su número y se sigue.
-  `generar(semilla, { colores })` elige un dibujo (de `DIBUJOS2` con `colores: 2`; quizás espejado) y
-  sus colores (`colores`; saca igual la baraja de colores de antes, sin usarla, para que los links
-  viejos den el mismo tablero), agrega dadas al azar hasta que `resolver` lo
-  termina y saca las que sobran (en promedio quedan 1 o 2: el resto se deduce en cadena).
-  `ayuda(sol, conocidas)` usa la misma deducción y se detiene en la primera casilla que sabe: devuelve
-  `{ celda, por }` (la casilla y las conocidas cuyas reglas la dedujeron) o `null` (D-292).
-  `estado(t, jugadas)` reconstruye la partida desde las jugadas `{ i, color }` y cuenta las
-  `{ ayuda: true }` en `ayudas`. `puntaje(e, { colores })` resta `RESTA_ERROR` (15) por error y
-  `RESTA_AYUDA` (10) por ayuda, y aplica `PREMIO_DIFICIL` (×1.5) con dos colores, y `maximo(colores)` da
-  100 o 150.
-- `engine.test.mjs` revisa los dibujos (irregulares), la paleta y 300 tableros de cada modo (se
-  resuelven sin adivinar, sin dadas de sobra, y el estado y el puntaje) y tableros de uno y dos colores
-  jugados solo con ayudas hasta el final; `tools/e2e/paint-mines/lab.mjs`, la partida entera (con un
-  error y una ayuda: 75/100), el interruptor y una partida difícil sin errores (150/150).
+- `public/cup/games/paint-mines/dibujos.js`: 17 one-color drawings of 7×7 (`#` painted, `.` not)
+  and the 10 two-color ones of `DIBUJOS2` (`#` and `+`, at least 4 of each), each with an `id`, an
+  emoji and its real `colores`; all irregular (a symmetric one can be guessed by mirroring and the
+  test rejects it, D-290), between 12 and 40 painted cells. `PALETA`: the 9 colors, by id, with their
+  hex and emoji square; never yellow with orange together (D-298). The data is language-free: a new
+  drawing also needs its sentence in `texts.js`.
+- `public/cup/games/paint-mines/engine.js`: `resolver(sol, dadas)` deduces like a player, with the
+  colors each cell can still have (one or two colors): each known cell says how many of its unknown
+  neighbors are its color; if all or none, they are known; and if one cell's unknowns are all among
+  another's, the difference too. `generar(seed, { colores })` picks a drawing (maybe mirrored), adds
+  given cells at random until `resolver` finishes it and removes the extra ones. `generarDia(code,
+  day, { variante, sal, ensayo })` is the cup's and the standalone page's board (D-331), the trial
+  with `LIBRES_ENSAYO` (15) cells to paint. `ayuda(sol, known)` stops at the first deducible cell:
+  `{ celda, por }` or `null`. `estado(t, moves)` rebuilds the game from `{ i, color }`,
+  `{ ayuda: true, c }` and `{ rendido: true }`; `puntaje(e)` and `tarjeta(e)`.
+- `public/cup/games/paint-mines/ui.js`: `montar` (the board), `resultado`, `desglose`, `portada`,
+  `titulo`, `ejemplo` and `selector` (the lever). It also keeps the hard background in step with
+  the screen (`fondo()`, one `MutationObserver`). Test hook: `window.__pintaminas`
+  (`{ p, jugadas(), estado() }`).
+- `public/cup/games/paint-mines/texts.js`: the steps, scoring and variants in `juegos`, and the
+  screen's keys (`pm…`), the drawings' sentences (`pmDibujos`) and the colors (`pmColores`), in
+  es, en, pt and de.
+- `public/cup/games/paint-mines/style.css`: every rule under a `.pm-` class, plus
+  `body.modo-dificil`.
+- Tests: `public/cup/games/paint-mines/engine.test.mjs` (the drawings, 300 boards of each variant
+  solved without guessing and without extra given cells, hints until the end, the state, the score
+  0 to 100 in both variants, giving up as a move, `generarDia` deterministic per code, day and
+  variant, hard in two colors and the trial shorter); `tools/e2e/paint-mines/game.mjs` plays the
+  standalone page: the lever, a game with one mistake and one hint (75/100), 320 px, a hard game
+  with no mistakes (100/100) and giving up.
 
-## Excepciones a los cánones
+## Exceptions to the canons
 
-- Solo en español (C-3): es un prototipo del laboratorio, como permite D-191.
+- **The page background changes with the variant** (D-291, the owner's request): the only game
+  that recolors the whole page. It is scoped to this game's screens: `fondo()` clears it on any
+  screen that does not show it.
+- **The waiting room has its own variant picker** (the lever, D-331) instead of the usual two
+  buttons.
+- **The cells are under 44 px at 320 px** (C-8): seven across do not fit 44 px each in 288 px
+  (about 38 px each), as in the lab. `look.mjs` flags it; the brushes and the buttons are 44 px or
+  more.
