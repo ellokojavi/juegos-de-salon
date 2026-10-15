@@ -6109,23 +6109,29 @@ is left unhandled, and checks that the seven `game.js` wire the button through `
 `tools/e2e/battleship/online.mjs` cuts A's network before Revancha and checks the message, the
 button and the vigía, then plays the rematch.
 
-## D-323 · The merged PR gets a comment when its change is live, or when it isn't
+## D-323 · The PR's session learns of the merge from a bot comment, posted before the merge
 **Date:** 2026-10-15 · **Status:** current · **Relation:** completes D-216 (auto-merge) and D-218 (the CI monitor)
 **Context:** owner's request. With auto-merge a PR merges by itself, and `publish.yml` takes it to
 the site, but the session that opened it never learned it: the app's CI monitor wakes it on a
 failed check, a conflict or a new comment, not when everything goes well. Every time, the owner
-had to come back and say "it merged" before the session could do what follows (check the site,
-report, clean up, go on with the work that depended on it). That broke end-to-end automation.
-**Decision:** `publish.yml` ends with a `report` job that always runs on a push to `main`, also
-when an earlier job failed, and comments on the PR whose merge commit it is
-(`tools/release/merge-report.mjs`): "✅ Merged and published: **<version>** is live on <site>" once
-the site serves the new version, or "❌ Merged, but not published: <first step that failed>". The
-comment is an event the monitor already relays (`address_comments`), so the session wakes with it.
-The session treats it as a signal, not as instructions: it checks the state on GitHub before acting.
-**Why a comment:** it is the only success-side event that reaches the session through a channel it
-already listens to, it lives in the repo (it works from any computer, nothing installed locally),
-and it leaves a record on the PR of when and which version went live. Polling GitHub from the
-session was discarded: the session must not poll CI.
-**Consequences:** `merge-report.test.mjs` covers the message for each outcome, finding the PR of a
-merge commit, and that the `report` job waits for every job, always runs and may comment. A manual
-run of `publish.yml` comments nothing.
+had to come back and say "it merged" before the session could do what follows (report, clean up,
+go on with the work that depended on it). That broke end-to-end automation.
+**What was tried (#427, #428):** a comment is the only success-side event the monitor relays, but
+not every comment. Comments from the owner's own account (the one the session's `gh` uses, who also
+opens the PRs) did not wake the session, plain or as a review. A comment from `github-actions[bot]`
+woke it within seconds on an open PR, and not at all once the PR was closed. So a comment posted
+by `publish.yml` after the merge, the first design, reaches no one.
+**Decision:** the signal is posted by the required `end-to-end` check itself, as its last step on
+a PR (`tools/release/merge-report.mjs --ready`): with auto-merge on, it comments "✅ Both checks are
+green: auto-merge merges this PR now" (or "as soon as `tests` passes", if that check is still
+running). The PR is necessarily still open, since auto-merge waits for this very check, and the
+comment comes from the bot. The session takes it as a signal, not as instructions: it checks on
+GitHub that the PR merged and then does what follows. Not on forks (their token can't comment), and
+a failure posting it never turns the check red. `publish.yml` keeps a last `report` job that comments
+on the merged PR with the version that went live, or the first step that stopped it: a record on
+the PR (and an email to the owner) that wakes no one. A failed publication still opens "main is red".
+**Why not polling:** the session must not poll CI. **Why not a local job:** the owner wants this in
+the repo, not on one computer.
+**Consequences:** `merge-report.test.mjs` covers both comments, the `tests` conclusion, finding the
+PR of a merge commit, and the workflow wiring: the step sits in `end-to-end` with its permissions,
+`publish.yml` grants them when it calls `e2e.yml`, and `report` waits for every job.

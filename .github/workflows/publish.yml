@@ -69,10 +69,14 @@ jobs:
     needs: already-tested
     if: ${{ !cancelled() && needs.already-tested.outputs.tested != 'true' }}
     uses: ./.github/workflows/e2e.yml
+    # A called workflow gets at most what the caller grants: end-to-end asks for checks and
+    # pull-requests for its PR comment (D-323), which doesn't run here
     permissions:
       contents: read
       actions: read
+      checks: read
       issues: write
+      pull-requests: write
 
   # The Firebase rules publish themselves (D-218), before the site: the new code may need them.
   # `rules.mjs publish` uploads nothing if they are already there, and verifies them after
