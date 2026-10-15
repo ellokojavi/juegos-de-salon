@@ -78,7 +78,7 @@
       "date": "2026-10-15",
       "from": "d7f7cdc3797175082ba362f5154c3a4b555db20f",
       "to": "29db9b32b2b8b23c8483901ef49fb1df0e30e84d",
-      "pr": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/424",
       "pending": [
         "generala/07-servida.png and hangman/05-veredicto.png still flagged stale: redone byte-identical, so git sees no newer commit (captura-identica-atrasada, third time)"
       ]
