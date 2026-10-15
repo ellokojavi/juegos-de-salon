@@ -37,6 +37,8 @@ export const LANGUAGES = ['es', 'en', 'pt', 'de'];
 /* Pure (tested by inbox.test.mjs)                                     */
 /* ------------------------------------------------------------------ */
 
+const clip = v => String(v || '').trim().slice(0, 200);
+
 /** The report for an email, from the text the agent chose: what `enviarReporte` sends. */
 export function report(email, text, lang) {
   const t = String(text || '').trim();
@@ -51,6 +53,8 @@ export function report(email, text, lang) {
     // Not the subject: it can carry what the summary left out
     contexto: JSON.stringify({ canal: 'email', idioma: lang }),
     v: 'email',
+    // Private, next to the address: the reply goes in the sender's thread (D-327)
+    ...(address && clip(email.idMensaje) ? { hilo: { idMensaje: clip(email.idMensaje), asunto: clip(email.asunto) } } : {}),
   };
 }
 

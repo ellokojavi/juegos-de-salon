@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { report, show } from './inbox.mjs';
+import { enviarReporte } from '../../public/cup/reportes.js';
 
 const email = { de: 'Ana@Correo.cl', nombre: 'Ana Pérez de la Fuente Larguísima y Más', asunto: 'Mi teléfono es 555', texto: 'Hola\nel botón no responde', at: Date.parse('2026-10-14T20:00:00Z') };
 const r = report(email, '  El botón de Enviar no responde en La Copa.\n', 'es');
@@ -23,4 +24,12 @@ assert.ok(m.includes('⚠️ automatic sender') && m.includes('  el botón no re
 // Never the admin key: the inbox user only
 const source = readFileSync(new URL('./inbox.mjs', import.meta.url), 'utf8');
 assert.ok(!/firebase-admin|access_token/.test(source), 'inbox.mjs must not use the owner\'s admin key');
+// The reply goes in the sender's thread (D-327): Message-ID and subject travel only with the private address
+const threaded = report({ de: 'ana@correo.cl', nombre: 'Ana', asunto: 'Hola', idMensaje: '<x@mail.cl>' }, 'Me gustó', 'es');
+assert.deepEqual(threaded.hilo, { idMensaje: '<x@mail.cl>', asunto: 'Hola' });
+assert.equal(report({ de: 'ana@correo.cl', asunto: 'Hola' }, 'Me gustó', 'es').hilo, undefined);
+const sent = [];
+await enviarReporte(threaded, async (url, o) => { sent.push({ url, body: JSON.parse(o.body) }); return { ok: true, json: async () => ({ name: 'r1' }) }; }, null);
+assert.ok(!('hilo' in sent[0].body) && !JSON.stringify(sent[0].body).includes('x@mail.cl'), 'the thread never goes in the public report');
+assert.ok(sent[1].url.includes('feedbackContacto/r1') && sent[1].body.idMensaje === '<x@mail.cl>' && sent[1].body.asunto === 'Hola');
 console.log('inbox: ok');

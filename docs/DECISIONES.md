@@ -6189,9 +6189,17 @@ and a small target, and it hides the option exactly where it is needed.
 **Consequences:** a new deck with a BC card gets the switch with no other change.
 `juegos.test.mjs` checks that only Historia has it today.
 
-## D-327 · Addresses exempt from the 24-hour email rule
+## D-327 · Emails to hola@: replies in the sender's thread, by kind, and an exempt list
 **Date:** 2026-10-15 · **Status:** current · **Relation:** amends D-317 (one email per address every 24 hours)
-**Decision:** Owner's request: `mail.json` takes a `noLimit` list of addresses that `send-mail.py`
+**Decision:** Owner's requests, the day hola@ started working (D-318):
+- **The reply lands in the sender's thread.** The Worker already keeps the email's Message-ID;
+  `inbox.mjs ingest` sends it, with the subject, next to the private address
+  (`feedbackContacto/<id>`: `idMensaje`, `asunto`; never in the public `feedback/`), and
+  `feedback.mjs reply` answers with `Re: <subject>`, `In-Reply-To` and `References`.
+- **By kind:** kudos get a short, simple reply; actionable emails become issues like any 🐞 (the
+  sync already opens them); negative or destructive ones get no reply (`forget`).
+- **The closing invites a reply:** "responde este correo o usa el botón 🐞", in the four languages.
+- **An exempt list:** `mail.json` takes a `noLimit` list of addresses that `send-mail.py`
 emails at any frequency. Today it holds only the owner's own address, so their test emails to
 hola@ (D-318) get their reply the same day.
 **Why:** the 24-hour rule protects players from being flooded; the owner testing the pipeline is not
