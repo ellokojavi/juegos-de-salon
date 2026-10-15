@@ -48,6 +48,10 @@
 }
 .opciones.dos .opcion { text-align: center; }
 .opcion b { display: block; font-size: 1.05rem; font-weight: 900; }
+.opcion .opcion-emoji { display: block; }
+/* A variant's name in one piece at 320 px, also «Anschlüsse» inside the cup's form (U-12) */
+.opciones.variantes .opcion { padding-left: 6px; padding-right: 6px; }
+.opciones.variantes .opcion b { hyphens: manual; }
 .opcion small { color: var(--muted); font-weight: 700; }
 .opcion.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 

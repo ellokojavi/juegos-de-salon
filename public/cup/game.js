@@ -324,9 +324,19 @@ function opciones(items, onChange, { inicial = null } = {}) {
       botones.forEach((b, i) => { const on = items[i].valor === valor; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
       onChange?.(valor);
     },
-  }, el('b', {}, it.titulo), it.sub ? el('small', {}, it.sub) : null));
+  }, el('b', {}, it.emoji ? el('span', { class: 'opcion-emoji' }, it.emoji) : null, it.titulo), it.sub ? el('small', {}, it.sub) : null));
   return { nodo: el('div', { class: 'opciones' }, botones), get valor() { return valor; } };
 }
+
+/**
+ * A game's variants as options (D-331). The name's emoji goes on a line of its own in both cards,
+ * so «⚡💧 Servicios» and «🔢 Números» look alike at 320 px instead of one wrapping its emoji (U-12).
+ */
+const opcionesVariante = (J, vs) => vs.map(v => {
+  const nombre = J.variantes?.[v]?.nombre || v;
+  const [, emoji, titulo] = nombre.match(/^([\p{Extended_Pictographic}\uFE0F\u200D]+)\s+(.+)$/u) || [null, null, nombre];
+  return { valor: v, emoji, titulo, sub: J.variantes?.[v]?.sub };
+});
 
 /** Un selector de fecha, de hoy a 30 días más (D-115). Parte oculto. */
 function campoFecha(hoy) {
@@ -433,9 +443,9 @@ function elegirJuegos() {
     cajaVariantes.append(el('div', { class: 'field' }, el('label', {}, T.gamesVariants), el('small', { class: 'muted' }, T.gamesVariantsHint)));
     for (const { id, i } of conV) {
       const J = JUEGOS_COPA[id];
-      const o = opciones(VARIANTES[id].map(v => ({ valor: v, titulo: J.variantes?.[v]?.nombre || v, sub: J.variantes?.[v]?.sub })),
+      const o = opciones(opcionesVariante(J, VARIANTES[id]),
         v => { variantes[id] = v; }, { inicial: variantes[id] || VARIANTES[id][0] });
-      o.nodo.classList.add('dos');
+      o.nodo.classList.add('dos', 'variantes');
       o.nodo.dataset.variantes = id;
       cajaVariantes.append(el('div', { class: 'cal-variante' },
         el('p', { class: 'cal-variante-t' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), ' ', conEmoji(J.emoji, J.nombre)), o.nodo));
@@ -2232,8 +2242,8 @@ function selectorVariante(id, variante, cambiar) {
   const J = JUEGOS_COPA[id], mod = JUEGOS[id];
   const propio = mod.selector?.({ el, T, SFX, vibrate, variante, cambiar });
   if (propio) return propio;
-  const o = opciones(mod.variantes.map(v => ({ valor: v, titulo: J.variantes?.[v]?.nombre || v, sub: J.variantes?.[v]?.sub })), cambiar, { inicial: variante });
-  o.nodo.classList.add('dos');
+  const o = opciones(opcionesVariante(J, mod.variantes), cambiar, { inicial: variante });
+  o.nodo.classList.add('dos', 'variantes');
   o.nodo.id = 'selector-variante';
   return o.nodo;
 }
