@@ -854,7 +854,7 @@ function renderResult(v) {
   }
   box.append(
     // En Uno al día no hay revancha: la tarjeta ya ofrece jugar otro o repetir el de hoy (#226)
-    S.hoy && soloYo ? null : el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, reset: () => { S.switching = false; } }) }, T.rematch),
+    S.hoy && soloYo ? null : el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, busy: COMMON[lang].opening, reset: () => { S.switching = false; } }) }, T.rematch),
     S.mode === 'online' ? el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode) : el('button', { class: 'btn btn--ghost', onClick: () => { clearSession(); location.href = location.pathname; } }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
   );

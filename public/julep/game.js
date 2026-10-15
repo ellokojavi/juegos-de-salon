@@ -673,7 +673,7 @@ function renderResult(v) {
       class: 'btn btn--yellow',
       onClick: e => {
         if (S.mode !== 'online') return startMatch(S.mode, M.names, M.config);
-        tryRematch(e.currentTarget, rematchOnline, { T });
+        tryRematch(e.currentTarget, rematchOnline, { T, busy: COMMON[lang].opening });
       },
     }, S.mode === 'online' ? T.rematch : T.endAgain),
     el('div', { class: 'btn-row' },

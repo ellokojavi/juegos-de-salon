@@ -229,6 +229,15 @@ function fakeDom() {
   await new Promise(r => setTimeout(r, 10));
   process.off('unhandledRejection', onUnhandled);
   assert.deepEqual(unhandled, [], 'a failed rematch never leaves an unhandled rejection');
+
+  // While it waits, the button says what it is doing, and gets its label back after (U-37)
+  btn.disabled = false;
+  let shown = null, busyAttr = null;
+  await tryRematch(btn, async () => { shown = btn.textContent; busyAttr = btn.attrs['aria-busy']; throw new Error('offline'); }, { T, busy: 'Abriendo sala…' });
+  assert.equal(shown, 'Abriendo sala…');
+  assert.equal(busyAttr, 'true');
+  assert.equal(btn.textContent, 'Revancha');
+  assert.equal(btn.attrs['aria-busy'], undefined);
 }
 
 /* Every room game wires its rematch button through tryRematch (D-322) */
@@ -236,7 +245,7 @@ function fakeDom() {
   const { readFileSync } = await import('node:fs');
   for (const g of ['battleship', 'bulls-and-cows', 'hangman', 'timeline', 'generala', 'julep', 'liars-dice']) {
     const src = readFileSync(new URL(`../../../${g}/game.js`, import.meta.url), 'utf8');
-    assert.match(src, /tryRematch\(e\.currentTarget, (rematch|rematchOnline),/, `${g}: the rematch button goes through tryRematch`);
+    assert.match(src, /tryRematch\(e\.currentTarget, (rematch|rematchOnline), \{ T, busy: COMMON\[lang\]\.opening/, `${g}: the rematch button goes through tryRematch, saying it is opening the room (U-37)`);
     assert.doesNotMatch(src, /onClick: rematch\b|rematchOnline\(\)\.catch/, `${g}: no rematch outside tryRematch`);
   }
 }

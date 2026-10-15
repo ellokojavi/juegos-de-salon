@@ -416,7 +416,7 @@ function renderResult(v) {
       onClick: e => {
         if (S.mode !== 'online') return startMatch(S.mode, M.names, M.config);
         // La revancha abre una sala nueva: mientras se arma, el botón queda esperando
-        tryRematch(e.currentTarget, rematchOnline, { T });
+        tryRematch(e.currentTarget, rematchOnline, { T, busy: COMMON[lang].opening });
       },
     }, S.mode === 'online' ? T.rematch : T.endAgain),
     el('div', { class: 'btn-row' },
