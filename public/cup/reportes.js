@@ -41,8 +41,9 @@ const escribir = (almacen, lista) => {
 
 async function publicar(r, doFetch) {
   // A contact left over from a report that already went out (the address alone failed): only that
-  if (r.contactoDe) return guardarContacto(r.contactoDe, r.correo, doFetch);
-  const { correo: c, ...publico } = r;
+  if (r.contactoDe) return guardarContacto(r.contactoDe, r.correo, doFetch, r.hilo);
+  // `hilo` (an email's Message-ID and subject, D-327) goes only with the private address
+  const { correo: c, hilo, ...publico } = r;
   const correo = correoValido(c);
   if (correo) publico.correoMascara = enmascarar(correo);
   let res = null;
@@ -57,15 +58,21 @@ async function publicar(r, doFetch) {
   try { id = (await res.json())?.name || null; } catch (_) { /* no id: nothing to attach the address to */ }
   if (!id) return true;
   // The report is out: if the address fails, only the address is retried later
-  return (await guardarContacto(id, correo, doFetch)) || { contactoDe: id, correo };
+  return (await guardarContacto(id, correo, doFetch, hilo)) || { contactoDe: id, correo, ...(hilo ? { hilo } : {}) };
 }
 
+/** The thread of the email a report came from, so the reply lands in it (D-327). */
+const hiloDe = h => {
+  const idMensaje = String(h?.idMensaje || '').trim().slice(0, 200);
+  return idMensaje ? { idMensaje, asunto: String(h.asunto || '').slice(0, 200) } : {};
+};
+
 /** The address, in the private node, under the report's id (D-317). */
-async function guardarContacto(id, correo, doFetch) {
+async function guardarContacto(id, correo, doFetch, hilo = null) {
   let res = null;
   try {
     res = await withTimeout(doFetch(`${firebaseConfig.databaseURL}/feedbackContacto/${encodeURIComponent(id)}.json`, {
-      method: 'PUT', body: JSON.stringify({ correo, at: { '.sv': 'timestamp' } }),
+      method: 'PUT', body: JSON.stringify({ correo, at: { '.sv': 'timestamp' }, ...hiloDe(hilo) }),
     }), OP_MS);
   } catch (_) { /* abajo */ }
   return !!(res && res.ok);

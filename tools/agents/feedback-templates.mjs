@@ -36,7 +36,7 @@ export const TEMPLATES = {
       'Muchas gracias por tus comentarios. Nos encanta saber cómo se viven los juegos del otro lado de la pantalla.',
       'Detrás de cada cambio en Juegos de Salón hay alguien que se tomó un minuto para escribir, y tú te tomaste varios. Gracias.',
     ],
-    closing: 'Si se te ocurre algo más, el botón 🐞 sigue ahí. ¡Que sigas disfrutando los juegos!',
+    closing: 'Si se te ocurre algo más, responde este correo o usa el botón 🐞 en los juegos. ¡Que sigas disfrutando!',
     signature: 'El equipo de Juegos de Salón',
   },
   en: {
@@ -68,7 +68,7 @@ export const TEMPLATES = {
       'Thank you so much for your comments. We love hearing how the games feel on the other side of the screen.',
       'Behind every change in Juegos de Salón there is someone who took a minute to write, and you took several. Thank you.',
     ],
-    closing: "If anything else comes to mind, the 🐞 button is still there. Enjoy the games!",
+    closing: "If anything else comes to mind, just reply to this email or use the 🐞 button in the games. Enjoy!",
     signature: 'The Juegos de Salón team',
   },
   pt: {
@@ -100,7 +100,7 @@ export const TEMPLATES = {
       'Muito obrigado pelos seus comentários. Adoramos saber como os jogos são vividos do outro lado da tela.',
       'Por trás de cada mudança no Juegos de Salón há alguém que tirou um minuto para escrever, e você tirou vários. Obrigado.',
     ],
-    closing: 'Se pensar em mais alguma coisa, o botão 🐞 continua lá. Continue aproveitando os jogos!',
+    closing: 'Se pensar em mais alguma coisa, responda este e-mail ou use o botão 🐞 nos jogos. Continue aproveitando!',
     signature: 'A equipe do Juegos de Salón',
   },
   de: {
@@ -132,7 +132,7 @@ export const TEMPLATES = {
       'Vielen Dank für deine Kommentare. Wir finden es toll zu erfahren, wie sich die Spiele auf der anderen Seite des Bildschirms anfühlen.',
       'Hinter jeder Änderung bei Juegos de Salón steckt jemand, der sich eine Minute zum Schreiben genommen hat, und du hast dir gleich mehrere genommen. Danke.',
     ],
-    closing: 'Wenn dir noch etwas einfällt, der 🐞-Knopf ist weiterhin da. Viel Spaß weiterhin beim Spielen!',
+    closing: 'Wenn dir noch etwas einfällt, antworte einfach auf diese E-Mail oder nutze den 🐞-Knopf in den Spielen. Viel Spaß weiterhin!',
     signature: 'Das Team von Juegos de Salón',
   },
 };
