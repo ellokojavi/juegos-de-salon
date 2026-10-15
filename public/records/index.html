@@ -88,6 +88,8 @@
     import { bloqueJugador, bloqueRanking, bloqueCampeones } from '../assets/js/ranking.js';
     import { jugador, leerYo } from '../assets/js/jugador.js';
     import { TODOTERRENO, PARTIDAS } from '../assets/js/records.js';
+    import { VARIANTES } from '../cup/engine.js';
+    import { juegosCopa } from '../cup/rules.js';
 
     trackVisit(); // el tráfico del sitio (D-208)
     initSound();
@@ -140,7 +142,13 @@
     // Los juegos de grupo que también se juegan solos, con su tabla `<id>_solo` (Ahorcado desde D-274)
     const conSolo = ['toque-y-fama', 'ahorcado', 'generala'].map(gameById).filter(g => g?.available);
     const deUno = [
-      ...juegos.map(g => ({ id: g.id, emoji: g.emoji, nombre: pickLang(g.name, lang) })),
+      // A game with variants has one table per variant (D-331): the default one is the game's, the others `<id>_<variant>`
+      ...juegos.flatMap(g => {
+        const conV = v => `${pickLang(g.name, lang)} · ${juegosCopa(lang)[g.id]?.variantes?.[v]?.nombre || v}`;
+        const vs = VARIANTES[g.id] || [];
+        return [{ id: g.id, emoji: g.emoji, nombre: vs.length ? conV(vs[0]) : pickLang(g.name, lang) },
+          ...vs.slice(1).map(v => ({ id: `${g.id}_${v}`, emoji: g.emoji, nombre: conV(v) }))];
+      }),
       ...conSolo.map(g => ({ id: `${g.id}_solo`, emoji: g.emoji, nombre: pickLang(g.name, lang) })),
       // Línea Relámpago es una ficha; sus temáticas se eligen adentro (una tabla por temática)
       ...(DECKS.length ? [{ id: 'linea-de-tiempo_rel', emoji: '⏳', nombre: relampago, temas: true }] : []),

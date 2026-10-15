@@ -6234,7 +6234,7 @@ Pintaminas `easy` / `hard`, Loteo `numbers` / `utilities`.
   demo on top are the variant's. The phone remembers it (`juegos-de-salon:<id>:variant`) and the
   link says it (`?mode=hard`; the lab's `?colors=2` still opens hard). Each variant has its own
   ranking table: the default one is the game's (`pintaminas`), the other goes apart
-  (`pintaminas_hard`, without the Cup tab), and the usage signal counts it as `solo-hard`.
+  (`pintaminas_hard`, without the Cup tab), and the panel sees it in the finished game's detail ("hard · 80/100 · 2:30"; the mode stays `solo`, so the panel's modes do not multiply).
 - **In a cup**, below the week, one row per game of the week that has variants: the admin picks
   which one everybody plays that day. `meta.cal` writes the day as `id` (the default, so the cups
   from before read the same) or `id:variant` (`loteo:utilities`). `calendario()` and `juegoDelDia()`

@@ -11,7 +11,7 @@
  * `torneos/` no está separado por entorno como `stats/`: una copa de prueba es tan real como
  * la de un grupo de amigos. Por eso cada copa trae su marca de laboratorio.
  */
-import { juegoDelDia, diaActual, terminada, abierto, cerrado, activos, tabla, inscripcionAbierta, calendario, cerrarEn, comodinDe, esFinal } from '../cup/engine.js';
+import { juegoDelDia, varianteDelDia, VARIANTES, diaActual, terminada, abierto, cerrado, activos, tabla, inscripcionAbierta, calendario, cerrarEn, comodinDe, esFinal } from '../cup/engine.js';
 import { dayOf } from './aggregate.js';
 
 /**
@@ -118,6 +118,8 @@ export function estadoCopa(L, now = Date.now()) {
     jugadores: jug.length, inscripcion: estado !== 'terminada' && inscripcionAbierta(m, now, L.closed),
     participacion: { jugado, esperado }, primero, ultimo: ultimoResultado(L),
     calendario: calendario(m),
+    // The variant of each day, or null (D-331)
+    variantes: calendario(m).map((_, i) => varianteDelDia(m, i + 1)),
   };
 }
 
@@ -166,7 +168,9 @@ export function resumenCopas(torneos, { from, to }, now = Date.now()) {
     const m = L.meta;
     const pids = new Set(activos(L).map(j => j.pid));
     for (let d = 1; d <= m.days; d++) {
-      const id = juegoDelDia(m, d) || '?';
+      // A variant other than the default one counts apart (D-331): 'pintaminas:hard'
+      const base = juegoDelDia(m, d) || '?', v = varianteDelDia(m, d);
+      const id = v && v !== VARIANTES[base]?.[0] ? `${base}:${v}` : base;
       for (const [pid, r] of Object.entries(L.results[d] || {})) {
         if (!r || !enElRango(r.at)) continue;
         const c = caja(id);
