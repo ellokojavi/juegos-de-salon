@@ -75,7 +75,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326 |
 | Agentes (usabilidad, documentación, procesos, atención) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -6173,3 +6173,17 @@ into picking by elimination, and ordering events is already Línea Relámpago's 
 **Consequences:** results saved before the change keep their score; the day's breakdown recomputes
 each event with the new curve, so for a day played before the change it can differ by a few points
 from the saved total. `juegos.test.mjs` pins the 50 and 20 points and the tail.
+
+## D-326 · The a. C. switch shows only in themes that need it
+**Date:** 2026-10-15 · **Status:** current · **Relation:** follows the a. C. label of PR #431 and D-325
+**Context:** only Historia has events before Christ (11 of about 675 cards), yet every ¿En qué año?
+board showed the d. C. / a. C. switch. Everywhere else it was clutter and a way to answer BC by
+mistake, which is how a friend lost the Hegira.
+**Decision:** `generar` marks `ac` when the theme has any card with a negative year (`conAC`), and
+the screen draws the switch only then. Without it, every answer is AD. The rules keep "if it was
+before Christ, tap a. C.", since any Cup can draw Historia.
+**Why:** it goes by the theme, not by the card: the theme is already on screen, so the switch says
+nothing about which event is BC. A dropdown was considered and discarded: on a phone it is two taps
+and a small target, and it hides the option exactly where it is needed.
+**Consequences:** a new deck with a BC card gets the switch with no other change.
+`juegos.test.mjs` checks that only Historia has it today.

@@ -24,7 +24,7 @@ import * as GRILLAS_PT from './connections/grillas-pt.js';
 import * as GRILLAS_DE from './connections/grillas-de.js';
 import { PAISES, CIUDADES as NOMBRES_CIUDADES } from './where/nombres.js';
 import { JUEGOS } from './index.js';
-import { temasDeLaCopa } from './mazos.js';
+import { temasDeLaCopa, DECKS } from './mazos.js';
 import { camino } from './queens/ui.js';
 
 let n = 0;
@@ -110,6 +110,10 @@ test('año: margen según antigüedad y puntos', () => {
   assert.ok(anio.puntos(476, 500) > 80);
   assert.equal(anio.puntos(-2560, -2560), 100);
   assert.equal(anio.puntos(1990, 'x'), 0);
+  // The a. C. switch only shows in themes with cards before Christ (D-326)
+  assert.equal(anio.conAC('historia'), true);
+  assert.ok(DECKS.filter(d => d.id !== 'historia').every(d => !anio.conAC(d.id)));
+  assert.equal(anio.generar('abcdef', 1, { tema: 'historia' }).ac, true);
   assert.equal(anio.marca(1990, 1990), '🎯');
   assert.equal(anio.marca(1990, 1991), '🟩');
   assert.equal(anio.marca(1990, 2030), '⬛');

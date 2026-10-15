@@ -54,7 +54,7 @@ export function montar(raiz, ctx) {
     const conEra = kb => { kb.querySelector('.entry')?.append(etiquetaEra); return kb; };
     poner(caja, el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.yearOf, { i: e.filas.length + 1, n: p.hitos.length })),
       el('div', { class: 'carta actual pop' }, el('span', { class: 'carta-emoji' }, h.emoji), el('b', {}, h.texto)),
-      era,
+      p.ac === false ? null : era,
       conEra(teclado({
         largo: 4, teclas: CIFRAS, submitLabel: T.confirmShort,
         valido: v => v.length >= 1 && v[0] !== '0',
