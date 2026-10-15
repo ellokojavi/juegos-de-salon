@@ -2310,9 +2310,9 @@ const UAD = () => (COMMON[LANG] || COMMON.es).uad;
 function jugarPractica(id, semilla, variante = null) {
   // Suelto, todo va en el idioma de quien juega: no hay con quién jugar lo mismo (D-170)
   const p = JUEGOS[id].generar(semilla, 1, { lang: LANG, variante });
-  // Solo en el modo de prueba: `&timer=8` acorta el reloj de Zip y de Desenredo para los guiones de punta a punta
+  // Solo en el modo de prueba: `&timer=8` acorta el reloj de Zip, Desenredo y Rutas rotas para los guiones de punta a punta
   const seg = Number(param('timer'));
-  if (PRUEBA && (id === 'zip' || id === 'desenredo') && seg > 0) p.tiempo = seg * 1000;
+  if (PRUEBA && (id === 'zip' || id === 'desenredo' || id === 'rutas') && seg > 0) p.tiempo = seg * 1000;
   // Señal de uso para el panel (D-44): el suelto se cuenta como su propio juego; el laboratorio no
   // El caso cuenta también desde el laboratorio: es lo que se quiere medir (D-267)
   if ((!LABS || gameById(id)?.diario) && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
