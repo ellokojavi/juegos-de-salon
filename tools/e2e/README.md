@@ -63,6 +63,18 @@ and this folder, `tools/agents/`, `tools/firebase/`, `firebase/` and the workflo
 [`changes.mjs`](changes.mjs) decides what counts (D-205, D-299; tested by
 `node tools/e2e/changes.test.mjs`).
 
+Any other PR runs **only the scripts whose pages load what it changed** (D-329,
+[`affected.mjs`](affected.mjs), tested by `node tools/e2e/affected.test.mjs`). There is no build, so
+the graph is read straight from the files: each `index.html`, what it links, and what that imports.
+A script's pages come from its `${SITE}/…` addresses, its folder (`hangman/` → `/hangman/`,
+`case/` → `/labs/case/`) and the page names it lists when it builds its routes; a part named after a
+game (`cup-games/languages.mjs:year`) runs only with that game. **When in doubt, everything runs:**
+a file in `public/` that no page loads (`sw.js`, an image fetched at run time), `tools/e2e/`'s shared
+code, `e2e.yml`, a tool a script imports, a file at the root, or a script that builds routes without
+naming them. A changed script always runs itself. `node tools/e2e/ci.mjs --list --changes <file>`
+shows what a list of files would run. A push to `main` (`publish.yml`) still runs everything unless
+that tree already passed (D-308).
+
 A script that fails is repeated **once**, right away, inside its group (`CI_RETRIES=1`, D-299).
 If it passes on the second attempt, it stays green with a ⚠️ **Flaky** notice that names it, and the
 screenshots of the first attempt stay in the artifact: you have to look at why it sometimes fails, not take it

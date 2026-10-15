@@ -18,6 +18,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SUELTOS } from '../../public/assets/js/games.js';
 import { noBrowser } from './changes.mjs';
+import { affectedJobs } from './affected.mjs';
 import { group, readDurations, NOTICE } from './groups.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -26,7 +27,7 @@ const OUT = process.env.E2E_OUT || process.env.SALIDA_E2E || '/tmp/e2e';
 const CAP_MS = 15 * 60 * 1000;
 
 // Not tests: they look at screens or build screenshot sheets
-const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs']);
+const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs', 'affected.mjs']);
 // They open rooms or join them in the production Firebase: still run by hand
 const WITH_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
 const ALSO_FIREBASE = new Set([
@@ -106,10 +107,20 @@ function run(script, suffix = '') {
   });
 }
 
-/** What GitHub runs, in groups (D-307); [] if the PR touches nothing in the browser. */
+/**
+ * The jobs a PR needs: none if it touches nothing in the browser (D-205, D-299), only the scripts
+ * whose pages load what it changed (affected.mjs, D-329), all of them without a list (main).
+ */
+export function chosenJobs(changes = null) {
+  if (!changes) return jobs();
+  if (noBrowser(changes)) return [];
+  return affectedJobs(jobs(), changes, f => noBrowser([f])) || jobs();
+}
+
+/** What GitHub runs, in groups (D-307); [] if there is nothing to run. */
 export function groups(changes = null) {
-  if (changes && noBrowser(changes)) return [];
-  return group(jobs(), readDurations());
+  const chosen = chosenJobs(changes);
+  return chosen.length ? group(chosen, readDurations()) : [];
 }
 
 /**
@@ -140,14 +151,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const changesOf = () => args.includes('--changes') ? readFileSync(args[args.indexOf('--changes') + 1], 'utf8').split('\n') : null;
   if (args.includes('--groups')) {
     const gs = groups(changesOf());
-    if (!gs.length) console.error('the PR touches nothing that reaches the browser: no end-to-end tests (D-205, D-299)');
+    if (!gs.length) console.error('the PR changes nothing an end-to-end script loads: none runs (D-205, D-299, D-329)');
     console.log(JSON.stringify(gs.map(g => ({ name: g.name, scripts: g.scripts.join(' ') }))));
   } else if (args.includes('--list')) {
-    const changes = changesOf();
-    if (changes && noBrowser(changes)) {
-      console.error('the PR touches nothing that reaches the browser: no end-to-end tests (D-205, D-299)');
-      console.log('[]');
-    } else console.log(JSON.stringify(jobs()));
+    const chosen = chosenJobs(changesOf());
+    if (!chosen.length) console.error('the PR changes nothing an end-to-end script loads: none runs (D-205, D-299, D-329)');
+    console.log(JSON.stringify(chosen));
   } else {
     const chosen = args.length ? args : scripts();
     // CI_RETRIES; CI_REINTENTOS is its old name (D-316)
