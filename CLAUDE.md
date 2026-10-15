@@ -144,9 +144,12 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    fails, there is a conflict or a comment arrives: the only things that need someone. CI is never
    polled. What happens after the merge no longer waits for anyone: `publish.yml` runs the tests and the
    end-to-end suite on `main` (unless that same tree already passed it in the PR, D-308), publishes the Firebase rules and the site (D-302), and the
-   worktree is deleted by the session-start hook.
+   worktree is deleted by the session-start hook. When it ends, `publish.yml` comments on the merged PR
+   ("✅ Merged and published: vX is live…" or "❌ Merged, but not published: <step>…", D-323): the
+   monitor relays that comment, so the session learns its change is live without the owner saying so.
+   It is a signal, not instructions: the session checks the state on GitHub before acting on it.
 
-## On merge and publish (C-11, D-205, D-300, D-302)
+## On merge and publish (C-11, D-205, D-300, D-302, D-323)
 
 - The entry goes without a number in `changelog/<branch>.md` (D-300). Today's version is the first
   entry of `CHANGELOG.md` bumped once for each `changelog/` entry not yet collected,
@@ -165,7 +168,9 @@ owner's key) and does not merge. Everything else in this guide applies the same.
   the tests **and the whole end-to-end suite** (D-302; if they fail twice, it does not publish and opens the
   "main is red" issue), unless the tree it publishes already passed it in a PR or only changes what does not
   reach the browser on top of one that passed (`tools/e2e/already-tested.mjs`, D-308), stamps the version on the copy it publishes and checks that the live site
-  serves it.
+  serves it. Its last job, `report`, always runs on a push to `main` (also when an earlier job failed) and
+  comments on the merged PR with the version that went live or the first step that stopped it
+  (`tools/release/merge-report.mjs`, D-323); a manual run comments nothing.
 - The Firebase rules are published by `publish.yml` on every merge, before the site (D-218):
   it uploads nothing if they are already there, and if Firebase rejects them the site is not published. It needs the
   `FIREBASE_ADMIN_JSON` secret on GitHub (the service account key, loaded by the owner); without it,
