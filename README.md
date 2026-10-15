@@ -666,6 +666,7 @@ node tools/agents/labs-key.test.mjs
 node tools/agents/marketing.test.mjs
 node tools/agents/processes.test.mjs
 node tools/cloudflare/inbox-worker.test.mjs
+node tools/e2e/affected.test.mjs
 node tools/e2e/already-tested.test.mjs
 node tools/e2e/changes.test.mjs
 node tools/e2e/groups.test.mjs
@@ -794,7 +795,7 @@ tools/
   generators/                 map.mjs (the world of Where is it?), fleet.py (the Battleship fleet)
   agents/                     dilemmas.mjs (usability dilemmas as issues, D-132), decision.mjs (reserves decision numbers, so two sessions never take the same D-n, D-301), document.mjs (the documentation agent, D-172), clean-worktrees.mjs (removes merged, empty and abandoned worktrees, leftover test output and stale local branches, at session start and in the daily process round, D-218, D-252, D-315), processes.mjs (the process agent, D-273), approve.mjs (one-tap Yes/No decisions in issues, D-273), feedback.mjs (players' 🐞 reports as issues, D-275, and the email reply to whoever left an address, with feedback-templates.mjs and send-mail.py, D-317), inbox.mjs (the hola@ inbox, for the support agent: list, ingest as a feedback report, or skip, signed in as the inbox user, D-318), labs-key.mjs (gives or takes away a person's own key to the lab, D-284), covers.mjs (shows the cover of every game a PR touches and warns when a game changed but its cover did not, U-36)
   cloudflare/                 inbox-worker.js (the Cloudflare Email Worker behind hola@juegosdesalon.cl: forwards a copy to the owner and keeps the text in Firebase buzon/; pasted in the Cloudflare dashboard, D-318)
-  e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here. groups.mjs splits them into even groups for CI (D-307), already-tested.mjs lets publishing skip what already passed in the PR (D-308), and output.mjs picks each script's output folder, so a missing argument never leaves screenshots in the working copy (D-315)
+  e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here. groups.mjs splits them into even groups for CI (D-307), affected.mjs keeps only the scripts whose pages load what a PR changed (D-329), already-tested.mjs lets publishing skip what already passed in the PR (D-308), and output.mjs picks each script's output folder, so a missing argument never leaves screenshots in the working copy (D-315)
 marketing/                  The promo video and its memory
 .claude/                    The project's agents (usability, documentation, processes, support) and skills
 ```
