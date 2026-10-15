@@ -6208,3 +6208,18 @@ a player, and a test sent the day after another one was blocked.
 a flag on `reply` (any session could skip the rule for anyone).
 **Consequences:** the list lives only on the owner's machine; every email is still logged.
 `send-mail.test.py` checks the exemption is case-insensitive and only for listed addresses.
+
+## D-328 · Support: a doubt goes to the owner's email, with a public pointer
+**Date:** 2026-10-15 · **Status:** current · **Relation:** follows D-317, D-318 and D-327
+**Decision:** Owner's request: when the processes agent isn't sure how to answer a report, it sends
+nothing to the player. `feedback.mjs doubt <n> <notes.txt>` emails the owner (their own account in
+`mail.json`, outside the 24-hour rule) with the doubt, a draft and the report, under the subject
+`[JdS duda <n>] …`, and opens a public `support-doubt` issue that says only that, with a Gmail search
+link (`subject:"JdS duda <n>"`) that opens that email. The owner answers in the issue without
+private details; the next round carries it out and closes it. `processes.mjs check` lists the open
+ones, and the processes report has a support line (emails, kudos answered, issues, unanswered,
+doubts).
+**Why:** the repo is public, so its issues are too; the communication stays in email, and the issue
+is only what makes it visible and gives the round something to wait on.
+**Alternatives discarded:** a private repository for doubts (one more place to look); email alone
+(no record for the round to follow up).
