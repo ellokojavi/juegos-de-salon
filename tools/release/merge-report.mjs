@@ -10,12 +10,12 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-/** The jobs of publish.yml, in the order they run, and what each one means if it fails. */
+/** The jobs of publish.yml, in the order they run: what each one is, and where to look if it fails. */
 export const STEPS = [
-  ['tests', 'the tests'],
-  ['e2e', 'the end-to-end run (the "main is red" issue has the details)'],
-  ['rules', 'publishing the Firebase rules'],
-  ['publish', 'publishing the site, or checking that it serves the new version'],
+  ['tests', 'the tests', ''],
+  ['e2e', 'the end-to-end run', ' The "main is red" issue has the details.'],
+  ['rules', 'publishing the Firebase rules', ''],
+  ['publish', 'publishing the site', ' It was the deploy or the check that the site serves the new version.'],
 ];
 
 export const MARKER = '<!-- merge-report -->';
@@ -31,9 +31,13 @@ export function report({ results, version, siteUrl, runUrl }) {
   }
   const failed = STEPS.find(([job]) => ['failure', 'cancelled'].includes(results[job]?.result));
   const why = failed
-    ? `${failed[1]} ${results[failed[0]].result === 'cancelled' ? 'was cancelled' : 'failed'}`
-    : 'the site was not published';
-  return { ok: false, body: `${MARKER}\n❌ Merged, but not published: ${why}. The site still serves the previous version${run}.` };
+    ? `${failed[1]} ${results[failed[0]].result === 'cancelled' ? 'was cancelled' : 'failed'}.${failed[2]}`
+    : 'no step ran.';
+  return {
+    ok: false,
+    body: `${MARKER}\n❌ Merged, but not published: ${why} The site still serves the previous version${run}.\n\n`
+      + 'If it was intermittent, re-run the failed jobs; if not, fix it in a new PR, whose merge publishes this change too.',
+  };
 }
 
 /** The PR that merged this commit, or null (a push straight to main, or a manual run). */
