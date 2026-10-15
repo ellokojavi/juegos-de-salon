@@ -122,7 +122,7 @@ const DE = {
     nombre: 'Kaputte Linien', habilidad: 'Raumgefühl',
     como: [
       'Verbinde jede Farbe zu einer Linie, ohne Lücken zwischen den Teilen.',
-      'Zieh von einem Teil zu einem anderen: Das Rechteck dazwischen dreht sich halb um, und seine Teile stehen kopf. Ein Tipp dreht nur eins.',
+      'Zieh von einem Teil zu einem anderen: Das Rechteck dazwischen dreht sich halb um, und seine Teile stehen kopf. Antippen dreht nur ein Teil.',
       'Es sind 5 Etappen in 7 Minuten. Rückgängig und Neustart sind gratis.',
     ],
     puntaje: 'Jede Etappe bringt 17 Punkte. Mit allen fünf bis zu 10 mehr fürs Tempo und bis zu 5 für die wenigsten Drehungen.',

@@ -232,7 +232,7 @@ const DE = {
     ltSure: 'Sicher?',
     ltHelp: '💡 Tipp (−{pts})',
     ltHelpSure: 'Nochmal tippen (−{pts})',
-    ltHelpSays: '💡 Diese Parzelle gehört so.',
+    ltHelpSays: '💡 So liegt diese Parzelle richtig.',
     ltAllDone: 'Alles parzelliert!',
     ltGaveUp: 'Du hast aufgegeben.',
     ltSolvedWas: 'So war Brett {n} zu lösen.',
