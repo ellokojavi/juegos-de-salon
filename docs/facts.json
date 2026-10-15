@@ -1,5 +1,5 @@
 {
-  "version": "0.172.1",
+  "version": "0.173.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1106,6 +1106,7 @@
     "daily-group.mjs",
     "daily-notifications.mjs",
     "daily-player.mjs",
+    "daily-variants.mjs",
     "daily.mjs",
     "exploding-numbers/lab.mjs",
     "favorites.mjs",

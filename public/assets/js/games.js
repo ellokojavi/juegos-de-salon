@@ -297,13 +297,6 @@ export const POPULARIDAD = ['copa', 'toque-y-fama', 'linea-de-tiempo', 'reinas',
 const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
 
 /**
- * Todo lo que ofrece la portada, de lo más jugado a lo menos (D-255). Los que vienen
- * "Próximamente" van al final, con y sin filtro: no se abren y no deben tapar a los que sí.
- */
-const OFRECIDOS = [...GAMES, ...SUELTOS.filter(m => !m.labs)].sort((a, b) => puesto(a.id) - puesto(b.id));
-export const PORTADA = [...OFRECIDOS.filter(g => g.available), ...OFRECIDOS.filter(g => !g.available)];
-
-/**
  * A new game carries a "New" label on its home card for a while (D-333, the owner's request): from
  * `nuevoDesde`, the day it reached the home page, for DIAS_NUEVO days. Every game added after D-333
  * brings its date, and games.test.mjs stops one that doesn't (YA_ESTABAN is the list from before).
@@ -314,6 +307,20 @@ export const esNuevo = (g, hoy = new Date()) => {
   const desde = Date.parse(`${g.nuevoDesde}T00:00:00`);
   return hoy.getTime() >= desde && hoy.getTime() < desde + DIAS_NUEVO * 24 * 60 * 60 * 1000;
 };
+
+/**
+ * Todo lo que ofrece la portada, de lo más jugado a lo menos (D-255). Los que vienen
+ * "Próximamente" van al final, con y sin filtro: no se abren y no deben tapar a los que sí.
+ * While a game carries its "New" label it goes on top, right after La Copa (D-335, the owner's
+ * request: it has no plays yet, so by popularity it would be last); when the label goes, so does that.
+ */
+export function ordenPortada(hoy = new Date()) {
+  const ofrecidos = [...GAMES, ...SUELTOS.filter(m => !m.labs)].sort((a, b) => puesto(a.id) - puesto(b.id));
+  const arriba = g => (g.torneo ? 0 : esNuevo(g, hoy) ? 1 : 2);
+  const disponibles = ofrecidos.filter(g => g.available).sort((a, b) => arriba(a) - arriba(b));
+  return [...disponibles, ...ofrecidos.filter(g => !g.available)];
+}
+export const PORTADA = ordenPortada();
 
 /** Cuántos juegan como mínimo y como máximo ("1–6" → [1, 6]; "1" → [1, 1]). */
 export function rangoJugadores(players) {

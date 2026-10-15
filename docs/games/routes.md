@@ -10,7 +10,8 @@ in its how-to.
 
 - **Where:** its own page, `https://juegosdesalon.cl/routes/` (generated from `public/cup/suelto/index.html`),
   on the home page, and as a La Copa game: a cup week can pick it (it is in `POZO`, D-332). It is not a
-  round of the Grand Final. Id `rutas` (cups, rankings, the usage signal); folder `routes`.
+  round of the Grand Final. Id `rutas` (cups, rankings, the usage signal); folder `routes`. In Uno al
+  día's deck since the deck shuffled on October 23, 2026 (D-334).
 - **Names (C-3):** Rutas rotas · Broken Routes · Rotas Quebradas · Kaputte Linien.
 - **For whom:** one player. No variants.
 - **History:** a lab prototype from v0.164.0, Spanish only, played with friends at `/labs/routes/`. It was
