@@ -377,6 +377,9 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **A new game says "New" for two weeks** (D-333): next to its name, like "Próximamente", from its
   `nuevoDesde` date in `games.js` for `DIAS_NUEVO` days (`esNuevo`). Every game that reaches the
   home page brings that date; `games.test.mjs` stops one that doesn't.
+  Unlike the plain yellow "Próximamente" pill, it shines: the title's rainbow flows through it
+  (`shimmer`), with a breathing glow and a little wobble now and then, and stands still with
+  reduced motion (owner's request).
   While it says "New" it also goes **on top of the list, right after La Copa** (`ordenPortada`,
   D-335): with no plays yet, by popularity it would be last. When the label goes, it goes back to
   its place in `POPULARIDAD`.
