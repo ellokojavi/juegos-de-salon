@@ -379,13 +379,13 @@ export function montar(raiz, ctx) {
       anotar(motor.jugada.RENDIRSE);
       terminar();
     } });
-    const acciones = el('div', { class: 'lt-acciones' }, deshacer(), botonBorrar, botonRendirse);
+    const acciones = el('div', { class: 'lt-acciones' }, deshacer(), botonBorrar, botonAyuda, botonRendirse);
     const pintar = (nuevo = null) => {
       tab.pintar(e.parcelas, { nuevo });
       acciones.firstChild.replaceWith(deshacer());
       botonBorrar.disabled = !e.parcelas.length;
     };
-    caja.replaceChildren(cabeza, aviso, tab.caja, acciones, botonAyuda);
+    caja.replaceChildren(cabeza, aviso, tab.caja, acciones);
     vista = { t, tab, decir, pintar, cabeza, aviso, acciones, botonAyuda, bloqueado: false };
     // The first hard board of Utilities says how to think them (the owner's request)
     if (ut && t.dificil && !tableros[k - 1]?.dificil) decir(T.ltHardNotice, 'ojo');
