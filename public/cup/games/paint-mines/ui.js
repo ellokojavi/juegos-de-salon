@@ -43,16 +43,20 @@ async function enLaPagina(n) {
 /**
  * The page goes night blue while the hard variant is on screen (D-291): in the waiting room, the
  * game and its result. Every piece of this game drawn in the hard variant carries `.pm-dificil`, and
- * the background follows the active screen: on if it shows one of them; kept on the result (it is the
- * result of the game that was on screen) and while the game screen is empty (the 3, 2, 1 countdown
+ * the background follows the active screen: on if it shows one of them; on the result, the last game's
+ * (also back from the 🐞 report) and while the game screen is empty (the 3, 2, 1 countdown
  * clears it); off anywhere else (another game, the cup board). One observer watches the screens, so
  * nothing has to remember to clear it.
  */
+let ultimaDificil = false;
 function fondo() {
   const activa = document.querySelector('.screen.active');
-  if (activa?.id === 'screen-resultado') return;
+  // The result is the last game's, also when coming back to it from another screen (the 🐞 report)
+  if (activa?.id === 'screen-resultado') { document.body.classList.toggle('modo-dificil', ultimaDificil); return; }
   if (activa?.id === 'screen-jugar' && !activa.querySelector('#jugar-body')?.children.length) return;
-  document.body.classList.toggle('modo-dificil', !!activa?.querySelector('.pm-dificil'));
+  const dificil = !!activa?.querySelector('.pm-dificil');
+  if (activa?.id === 'screen-jugar') ultimaDificil = dificil;
+  document.body.classList.toggle('modo-dificil', dificil);
 }
 let vigia = null;
 function vigilarFondo() {
