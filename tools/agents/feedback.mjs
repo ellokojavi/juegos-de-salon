@@ -235,6 +235,36 @@ async function forget(number, reason) {
   console.log(`#${number}: address deleted, no email.`);
 }
 
+/* ------------------------------------------------------------------ */
+/* A doubt about the reply (D-328): details by email, a public pointer */
+/* ------------------------------------------------------------------ */
+
+export const DOUBT_LABEL = 'support-doubt';
+/** The subject of the owner's email, and the Gmail search that finds it: no private detail in either. */
+export const doubtSubject = n => `[JdS duda ${n}] ¿Cómo respondemos este reporte?`;
+export const gmailSearch = n => `https://mail.google.com/mail/u/0/#search/${encodeURIComponent(`subject:"JdS duda ${n}"`)}`;
+
+/**
+ * The processes agent doesn't know how to answer a report: the doubt, its draft and the report's
+ * text go privately to the owner's email (the issue is public), and a public issue only points to
+ * it, with a Gmail link that opens that email.
+ */
+async function doubt(number, file) {
+  const { readFileSync } = await import('node:fs');
+  const notes = readFileSync(file, 'utf8').trim();
+  if (!notes) throw new Error('Write the doubt and your draft reply in the file.');
+  const { text } = await contactOf(number, null, true);
+  const n = String(number);
+  const body = `${notes}\n\n---\nEl reporte #${n}:\n«${text}»\n\nhttps://github.com/${REPO}/issues/${n}\n\nResponde en el issue de la duda (sin detalles privados: "envía el borrador", "no respondas" o un texto nuevo), o díselo a una sesión de Claude.`;
+  execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ toOwner: true, subject: doubtSubject(n), text: body, issues: [Number(n)] }), stdio: ['pipe', 'inherit', 'inherit'] });
+  const labels = JSON.parse(gh('label', 'list', '--limit', '200', '--json', 'name'));
+  if (!labels.some(l => l.name === DOUBT_LABEL)) gh('label', 'create', DOUBT_LABEL, '--color', 'fbca04', '--description', 'How to answer a report: details in the owner\'s email (D-328)');
+  const url = gh('issue', 'create', '--label', DOUBT_LABEL, '--title', `Support doubt: how to answer #${n}`, '--body',
+    `The processes agent isn't sure how to answer #${n}. The details (the doubt, a draft and the report) went to the owner's email, not here: this repo is public (D-328).\n\n📧 [Open the email in Gmail](${gmailSearch(n)})\n\nAnswer here without private details ("send the draft", "don't reply", or a new text); the next round carries it out and closes this issue.`).trim();
+  gh('issue', 'comment', n, '--body', `Waiting for the owner on how to answer: ${url}`);
+  console.log(`#${n}: doubt emailed to the owner; ${url}`);
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [command, a, b] = process.argv.slice(2);
   const option = n => (process.argv.includes(n) ? process.argv[process.argv.indexOf(n) + 1] : null);
@@ -243,5 +273,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   else if (command === 'pending') pendingEmails().catch(fail);
   else if (command === 'reply' && a && b && option('--lang')) reply(a, b, option('--lang'), { dryRun: process.argv.includes('--dry-run'), testTo: option('--test-to') }).catch(fail);
   else if (command === 'forget' && a) forget(a, b).catch(fail);
-  else { console.error('Usage: node tools/agents/feedback.mjs sync [--dry-run] | pending | reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> [--dry-run | --test-to <address>] | forget <issue> "<reason>"'); process.exit(2); }
+  else if (command === 'doubt' && a && b) doubt(a, b).catch(fail);
+  else { console.error('Usage: node tools/agents/feedback.mjs sync [--dry-run] | pending | reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> [--dry-run | --test-to <address>] | forget <issue> "<reason>" | doubt <issue> <notes.txt>'); process.exit(2); }
 }

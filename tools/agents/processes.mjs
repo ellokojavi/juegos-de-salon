@@ -205,6 +205,9 @@ async function check() {
   const closed = gh('issue', 'list', '--label', 'feedback', '--state', 'closed', '--limit', '60', '--json', 'number,title,body,comments,state');
   const unanswered = [...feedback.filter(i => wantsEmail(i.body)), ...closed.filter(i => wantsEmail(i.body) && !handled(i.comments))];
   for (const i of unanswered) console.log(`- 📧 #${i.number}${i.state === 'CLOSED' ? ' (resolved)' : ''} left an email (${/\*\*Email:\*\* `([^`]+)`/.exec(i.body)?.[1] || '?'})`);
+  // D-328: doubts about how to answer, waiting for the owner (details in their email)
+  const doubts = gh('issue', 'list', '--label', 'support-doubt', '--state', 'open', '--limit', '30', '--json', 'number,title,comments');
+  for (const i of doubts) console.log(`- ❓ #${i.number} ${i.title}${(i.comments || []).length ? ` (${i.comments.length} comment(s): read the owner's answer)` : ' (no answer yet)'}`);
   if (unanswered.length) console.log('  One email per player for all their comments: node tools/agents/feedback.mjs pending groups them and says what to run (or forget, if destructive).');
 
   heading('What the documentation agent carries over');
