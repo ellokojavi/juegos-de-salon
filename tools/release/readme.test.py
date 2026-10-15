@@ -73,6 +73,16 @@ for marker in ('generated', 'generado'):
     m = readme.MARKER.search(f'<!-- {marker}: games · x -->\nbody\n<!-- /{marker} -->')
     assert m and m.group(2) == 'games' and m.group(3) == 'body\n', marker
 
+# An identical retake counts as fresh while the file keeps that hash (pattern captura-identica-atrasada:
+# a byte-identical retake leaves no commit, and check kept flagging it as stale)
+IMAGE = 'README.md'  # any tracked file serves: the hash is what matters
+real = readme.sha256(ROOT / IMAGE)
+assert readme.verified_date(IMAGE, {IMAGE: {'sha256': real, 'date': 4102444800}}) == 4102444800, 'ignores the record'
+assert readme.verified_date(IMAGE, {IMAGE: {'sha256': '0' * 64, 'date': 4102444800}}) == 0, 'trusts a stale hash'
+assert readme.verified_date(IMAGE, {}) == 0, 'invents a date'
+assert readme.screenshot_date(IMAGE, {IMAGE: {'sha256': real, 'date': 4102444800}}) == 4102444800
+assert readme.screenshot_date(IMAGE, {}) == readme.git_date([IMAGE])
+
 if failures:
     sys.exit(f'readme: {failures} case(s) wrong')
 print(f'readme: {len(CASES)} "this is only a stamp" cases green')

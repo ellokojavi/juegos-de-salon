@@ -27,19 +27,24 @@ screenshots of screens that change. None of that warns when it goes stale. Here:
   3. The screenshots are retaken on their own: `docs/capturas.json` says which tools/e2e/
      script and which shot each image comes from, and `screenshots` runs the scripts and
      copies the PNGs to docs/screenshots/. The ones that depend on a Firebase room are
-     marked `"red": true` and are skipped with --offline.
+     marked `"red": true` and are skipped with --offline. A retake that comes out identical
+     byte for byte leaves no commit, so `screenshots` records its hash and date in
+     `docs/screenshots/verified.json`: while the file still has that hash, it counts as
+     fresh from that date (otherwise `check` kept flagging it as stale forever).
 
 The hook so this always happens and not when someone remembers: the `tests` check
 runs `check` on every PR and before every publish (C-11, D-205), and goes red if
 the README fell behind.
 """
-import json, os, re, shutil, socket, subprocess, sys, tempfile, time, pathlib
+import hashlib, json, os, re, shutil, socket, subprocess, sys, tempfile, time, pathlib
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 README = ROOT / 'README.md'
 CATALOG = ROOT / 'docs/capturas.json'
 SEAL = ROOT / 'docs/facts.json'
+#: Screenshots retaken identical: { image: { sha256, date } } (see point 3 above)
+VERIFIED = ROOT / 'docs/screenshots/verified.json'
 # With another session serving 8765, each one uses its own port: SITE_PORT=8770 (D-135)
 PORT = int(os.environ.get('SITE_PORT') or os.environ.get('PUERTO_SITIO') or 8765)
 # The Spanish marker (`generado`) is still read, for branches opened before the switch to English (D-316)
@@ -354,6 +359,28 @@ def git_date(paths):
     return 0
 
 
+def sha256(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def verified():
+    return json.loads(VERIFIED.read_text()) if VERIFIED.exists() else {}
+
+
+def verified_date(image, seen):
+    """When that image was last retaken and came out identical (0 if never, or if it changed since)."""
+    entry = seen.get(image)
+    path = ROOT / image
+    if not entry or not path.exists() or sha256(path) != entry.get('sha256'):
+        return 0
+    return int(entry.get('date', 0))
+
+
+def screenshot_date(image, seen):
+    """When that screenshot was last known to show the screen as it is: its commit or its identical retake."""
+    return max(git_date([image]), verified_date(image, seen))
+
+
 NUMBERS = {'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8}
 
 
@@ -405,10 +432,11 @@ def cmd_check():
 
     # 4. Screenshots older than what they show
     sources = C['fuentes']
+    seen = verified()
     for section in dict.fromkeys(c['seccion'] for c in C['capturas']):
         code = git_date(sources.get(section, []) + sources['comunes'])
         stale = [c['imagen'] for c in C['capturas'] if c['seccion'] == section
-                 and (ROOT / c['imagen']).exists() and git_date([c['imagen']]) < code]
+                 and (ROOT / c['imagen']).exists() and screenshot_date(c['imagen'], seen) < code]
         if stale:
             warnings.append(f'{section}: {len(stale)} screenshot(s) older than the code they show  →  '
                             f'python3 tools/release/readme.py screenshots {section}')
@@ -514,6 +542,7 @@ def cmd_screenshots(section=None, offline=False):
         print(f'own server on port {PORT}')
 
     new, same, failed = [], [], []
+    seen = verified()
     # The scripts run TOGETHER at a time, each with its own Chrome ports (D-135): one after the
     # other, retaking every section took the sum of all; this way, little more than the longest
     # (cup/tournament.mjs). On a loaded machine, SCREENSHOTS_TOGETHER=1 goes back to one by one.
@@ -563,12 +592,19 @@ def cmd_screenshots(section=None, offline=False):
                     shrink(target, 2 * width(C, c['seccion']))
                     equal = before == target.read_bytes()
                     (same if equal else new).append(c['imagen'])
+                    if equal:  # no commit will date it: the record does (D-51)
+                        seen[c['imagen']] = {'sha256': sha256(target), 'date': int(time.time())}
+                    else:      # its own commit dates it from now on
+                        seen.pop(c['imagen'], None)
                     print(f"  {'=' if equal else '↻'} {c['imagen']}")
     finally:
         if server:
             server.terminate()
+        if seen != verified():
+            VERIFIED.write_text(json.dumps(dict(sorted(seen.items())), indent=2) + '\n')
 
     print(f'\n{len(new)} screenshot(s) changed, {len(same)} unchanged'
+          + (f' (recorded in {VERIFIED.relative_to(ROOT)}: commit it)' if same else '')
           + (f', {len(failed)} not taken' if failed else ''))
     if new:
         print('Look at them before publishing (C-12: design problems are seen, not claimed):\n'
