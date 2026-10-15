@@ -122,10 +122,26 @@
       font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
       padding: 3px 9px; border-radius: 999px; background: var(--yellow); color: #3a1200;
     }
+    /* "New" (D-333): the title's rainbow flowing through it (`shimmer`, base.css), a glow that breathes
+       and a little wobble now and then. Dark text: it reads on every color of the rainbow. */
     .game-card h2 .nuevo {
       font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
-      padding: 3px 9px; border-radius: 999px; background: var(--cyan, #2ee6d6); color: #06222a;
+      padding: 3px 9px; border-radius: 999px; color: #1a0b2e;
+      background: linear-gradient(90deg, var(--yellow), var(--pink), var(--cyan), var(--lime), var(--yellow));
+      background-size: 300% 100%;
+      animation: shimmer 4s linear infinite, nuevoBrillo 2.4s ease-in-out infinite, nuevoBaile 5s ease-in-out infinite;
     }
+    @keyframes nuevoBrillo {
+      0%, 100% { box-shadow: 0 0 6px rgba(255, 46, 136, 0.5); }
+      50% { box-shadow: 0 0 14px rgba(46, 230, 214, 0.85), 0 0 22px rgba(255, 210, 63, 0.35); }
+    }
+    @keyframes nuevoBaile {
+      0%, 84%, 100% { transform: rotate(0) scale(1); }
+      88% { transform: rotate(-6deg) scale(1.1); }
+      92% { transform: rotate(5deg) scale(1.1); }
+      96% { transform: rotate(-2deg) scale(1.04); }
+    }
+    @media (prefers-reduced-motion: reduce) { .game-card h2 .nuevo { animation: none; background-position: 30% 0; } }
     /* Filtros (D-142, D-149): el tipo de juego, en fichas que se prenden y se apagan. */
     .filtros { display: grid; gap: 10px; margin-top: 4px; }
     .filtros > * { min-width: 0; }
