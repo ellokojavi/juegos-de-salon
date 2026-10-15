@@ -373,7 +373,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** Las reglas tienen que aceptar la clave nueva, y **hay que republicarlas a mano en la consola**. Hasta que eso pase, la escritura se rechaza y no se entera nadie —el registro es mejor esfuerzo y falla callado (D-44)—, así que la sección aparece vacía. Por eso su texto de vacío dice "se empieza a contar desde esta versión" y no "nada todavía": distingue no tener datos de estar roto.
 
 ## D-47 · Español por defecto; inglés y portugués, solo a pedido
-**Fecha:** 2026-09-11 · **Estado:** corregida por D-197 y D-324
+**Fecha:** 2026-09-11 · **Estado:** corregida por D-197, D-324
 **Decisión:** Quien entra a juegosdesalon.cl ve la app en español mientras no elija otra cosa. El idioma del navegador (`navigator.language`) no se usa para elegir: sirve como señal de uso (D-46), nunca para decidir qué se muestra. Inglés y portugués son opcionales: se activan solo con el toggle del menú o de la intro de cada juego, y la elección queda en `localStorage` del dispositivo. Con la llegada del portugués, el juego ofrece tres idiomas y no dos, lo que corrige el detalle de D-46.
 **Por qué:** El público es chileno y las mesas son de habla hispana; el humor, las referencias y las cartas están pensados primero en español (C-1). Detectar el idioma del teléfono parece amable pero falla en la mesa: un celular configurado en inglés en manos de alguien que juega en español muestra chistes traducidos que nadie pidió, y en una mesa el que sostiene el teléfono no siempre es el dueño. Un valor fijo y predecible (español) más un toggle a la vista es más simple de explicar y de probar que una heurística.
 **Cómo:** `getLang()` devuelve lo guardado si es un idioma conocido y, si no, `'es'`. Ningún módulo lee `navigator.language` para decidir textos; solo `stats.js` lo registra como contador. Cada `index.html` declara `lang="es"` y el idioma elegido se aplica sobre `document.documentElement.lang` al cargar.
@@ -695,7 +695,7 @@ buscar al aparato cuando una pantalla se corta y en el escritorio se ve bien.
 ---
 
 ## D-78 · El README en inglés, el resto en español
-**Fecha:** 2026-09-13 · **Estado:** corregida por D-316 y D-324
+**Fecha:** 2026-09-13 · **Estado:** corregida por D-316, D-324
 **Decisión:** `README.md` se escribe en inglés. Todo lo demás sigue en español: los cánones, las
 decisiones, las especificaciones de cada juego, los comentarios del código y los mensajes de las
 herramientas. Lo que el README muestra generado también sale en inglés: los modos se leen del `en`
