@@ -10,7 +10,9 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 <p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Main menu">&nbsp;&nbsp;<img src="docs/screenshots/compartir.png" width="220" alt="Share sheet with the promo video"></p>
 <!-- /generated -->
 
-> The app is Chilean and it is built in Spanish. Everything internal to the repository is in English (D-316): the rest of the documentation, linked at the end, is being moved from Spanish to English, so some documents are still in Spanish for now. The screenshots show the app in Spanish, which is its default language.
+> The app was first made for Chilean players and is now for everyone, in four languages. Spanish is the default and the language the games are written in first; English, Portuguese and German are adaptations, not literal translations, and content only Chileans or Brazilians would know is tagged so a global Cup can leave it out (D-186, D-324).
+>
+> Everything internal to the repository is in English (D-316): the rest of the documentation, linked at the end, is being moved from Spanish to English, so some documents are still in Spanish for now. The screenshots show the app in Spanish, which is its default language.
 
 ## Games
 
@@ -270,7 +272,7 @@ The classic dice game from bars and long dinners. Everyone rolls five dice and *
 
 Here the phone does what a real table does badly: it rolls the dice, it **refuses illegal bids** (a raise is more dice, or the same number with a higher face, and aces count double in both directions), and it counts instantly, which is exactly what people argue about. **Calzar** means claiming the count is exact: get it right and you win a die back, get it wrong and you lose one. It is available from half the dice on the table and **only with three players or more**. In a duel there is a single hidden hand, so the exact count is arithmetic, not a risk (D-71).
 
-In Spanish the faces are called the way they are called at a Chilean table (**ases, tontos, trenes, cuadras, quintas, sextas**), which is how the game is actually played here: "cuatro quintas", not "cuatro cincos". It ships on, and it can be turned off in settings to go back to numbers. In English and Portuguese the faces go by their number and the switch is not offered.
+In Spanish the faces are called the way they are called at a Chilean table (**ases, tontos, trenes, cuadras, quintas, sextas**), which is how the game is actually played in Chile: "cuatro quintas", not "cuatro cincos". It ships on, and it can be turned off in settings to go back to numbers. In English, Portuguese and German the faces go by their number and the switch is not offered.
 
 - **📱 One phone:** two to six players. The phone is passed around and each player sees their dice behind a handoff screen (C-9).
 - **🤖 Versus the phone:** a duel. The phone bets on probability and **only looks at its own dice**: the decision comes from how many unknown dice are left and how likely they are to cover the bid, not from peeking at yours.
