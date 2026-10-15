@@ -29,7 +29,7 @@ export function montar(raiz, ctx) {
       poner(caja, el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.yearOf, { i: revelado + 1, n: p.hitos.length })),
         el('div', { class: 'carta actual' }, el('span', { class: 'carta-emoji' }, f.hito.emoji), el('b', {}, f.hito.texto)),
         el('div', { class: 'aviso ' + (f.pts >= 50 ? 'bien' : 'mal') }, `${motor.marca(f.hito.year, f.r)} ${fmt(f.pts === 1 ? T.yearWasOne : T.yearWas, { v: motor.anioLabel(f.hito.year, ctx.lang), pts: f.pts })}`),
-        el('p', { class: 'muted center' }, `${T.yearPh}: ${motor.anioLabel(f.r, ctx.lang)}`),
+        el('p', { class: 'muted center' }, `${T.yearAnswer}: ${motor.anioLabel(f.r, ctx.lang)}`),
         bloqueDato(el, f.hito.dato, { pausa: seguir ? PAUSA_DATO_MS : 0 }),
         e.fin
           ? el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults)
@@ -39,12 +39,23 @@ export function montar(raiz, ctx) {
     }
     if (e.fin) { revelado = e.filas.length - 1; dibujar(); return; }
     const h = e.actual;
+    // Switching the era changes the buttons and the label in place, so what was typed stays (no redraw)
+    const botonEra = (bc, texto, id) => el('button', { type: 'button', ...(id ? { id } : {}), onClick: () => { SFX.tap(); ac = bc; marcarEra(); } }, texto);
+    const btnDc = botonEra(false, T.dc), btnAc = botonEra(true, T.bc, 'btn-ac');
+    const era = el('div', { class: 'seg anio-era' }, btnDc, btnAc);
+    // With a. C. on, it shows next to the boxes too: four boxes alone read as "this year" (player feedback)
+    const etiquetaEra = el('span', { class: 'anio-era-marca', 'aria-hidden': 'true' }, T.bc);
+    const marcarEra = () => {
+      for (const [b, on] of [[btnDc, !ac], [btnAc, ac]]) { b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); }
+      etiquetaEra.hidden = !ac;
+    };
+    marcarEra();
+    // The label goes inside the row of boxes, after the last one
+    const conEra = kb => { kb.querySelector('.entry')?.append(etiquetaEra); return kb; };
     poner(caja, el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.yearOf, { i: e.filas.length + 1, n: p.hitos.length })),
       el('div', { class: 'carta actual pop' }, el('span', { class: 'carta-emoji' }, h.emoji), el('b', {}, h.texto)),
-      el('div', { class: 'seg anio-era' },
-        el('button', { type: 'button', class: ac ? '' : 'on', 'aria-pressed': ac ? 'false' : 'true', onClick: () => { SFX.tap(); ac = false; dibujar(); } }, T.dc),
-        el('button', { type: 'button', id: 'btn-ac', class: ac ? 'on' : '', 'aria-pressed': ac ? 'true' : 'false', onClick: () => { SFX.tap(); ac = true; dibujar(); } }, T.bc)),
-      teclado({
+      era,
+      conEra(teclado({
         largo: 4, teclas: CIFRAS, submitLabel: T.confirmShort,
         valido: v => v.length >= 1 && v[0] !== '0',
         puede: (v, d) => v.length < 4 && !(v.length === 0 && d === '0'),
@@ -60,7 +71,7 @@ export function montar(raiz, ctx) {
           if (pts >= 80) SFX.reveal(); else if (pts >= 20) SFX.tap(); else SFX.error();
           dibujar();
         },
-      }));
+      })));
     poner(raiz, caja);
   };
   dibujar();
