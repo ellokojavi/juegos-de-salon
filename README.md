@@ -10,7 +10,7 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 <p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Main menu">&nbsp;&nbsp;<img src="docs/screenshots/compartir.png" width="220" alt="Share sheet with the promo video"></p>
 <!-- /generated -->
 
-> The app is Chilean and it is built in Spanish. Everything internal to the repository is in English (D-316): the rest of the documentation, linked at the end, is being moved from Spanish to English, so some documents are still in Spanish for now. The screenshots show the app in Spanish, which is its default language.
+> The app was first made for Chilean tables and is now for everyone, in four languages. Spanish is the default and the language the games are written in first; English, Portuguese and German are adaptations, not literal translations, and content only Chileans or Brazilians would know is tagged so a global Cup can leave it out (D-186, D-324). Everything internal to the repository is in English (D-316): the rest of the documentation, linked at the end, is being moved from Spanish to English, so some documents are still in Spanish for now. The screenshots show the app in Spanish, which is its default language.
 
 ## Games
 
