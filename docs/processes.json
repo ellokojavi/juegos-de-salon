@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "d7f7cdc",
+  "checkedUpTo": "29db9b3",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -46,9 +46,18 @@
           "date": "2026-10-14",
           "what": "Otra vez (ronda de documentación del 14/10): battleship/04-pase.png y generala/07-servida.png salen idénticas al rehacerlas y readme.py revisar las sigue marcando por la fecha de su último commit",
           "commit": null
+        },
+        {
+          "date": "2026-10-15",
+          "what": "Third time (documentation round 2026-10-15): generala/07-servida.png and hangman/05-veredicto.png retaken identical, still flagged; stopped from this round on by docs/screenshots/verified.json",
+          "commit": null
         }
       ],
-      "mechanism": null
+      "mechanism": {
+        "date": "2026-10-15",
+        "what": "readme.py screenshots records byte-identical retakes in docs/screenshots/verified.json and check dates them from the retake (readme.test.py)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/425"
+      }
     },
     {
       "key": "e2e-intermitente",
@@ -210,6 +219,18 @@
         }
       ],
       "mechanism": null
+    },
+    {
+      "key": "doble-push-documentacion",
+      "what": "The documentation guide asks for the PR link in a commit after opening the PR, which forces a second push (D-303 asks for one)",
+      "seen": [
+        {
+          "date": "2026-10-15",
+          "what": "The documentation guide asks for the PR link in a commit after opening the PR, which forces a second push (D-303 asks for one)",
+          "commit": null
+        }
+      ],
+      "mechanism": null
     }
   ],
   "mechanisms": [
@@ -260,6 +281,12 @@
       "key": "ramas-locales-acumuladas",
       "what": "clean-worktrees.mjs borra las ramas locales fusionadas o sin rama en GitHub, y la ronda diaria de procesos la corre (D-315)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/408"
+    },
+    {
+      "date": "2026-10-15",
+      "key": "captura-identica-atrasada",
+      "what": "readme.py screenshots records byte-identical retakes in docs/screenshots/verified.json and check dates them from the retake (readme.test.py)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/425"
     }
   ],
   "queueDone": [
@@ -308,6 +335,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/405",
       "note": "Despachó documentación y usabilidad (#404). Cola #387:1 hecha (Agentes, pistas de ideas). Feedback #383, #397, #401 en este PR."
+    },
+    {
+      "date": "2026-10-15",
+      "from": "d7f7cdc",
+      "to": "29db9b3",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/422",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/425",
+      "note": "Dispatched documentation (#424) and usability (#423); collected 11 changelog entries; mechanism for captura-identica-atrasada; #400 conflicting, decision in #422"
     }
   ],
   "ownerDecisions": [
