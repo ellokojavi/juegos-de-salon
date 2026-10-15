@@ -1,0 +1,19 @@
+# Throwaway probe for D-323 (never merged): does the app's CI monitor relay a comment written by
+# github-actions[bot]? Labeling the PR "probe-comment" posts a plain comment; "probe-review" posts
+# a review comment.
+name: Signal probe
+on:
+  pull_request:
+    types: [labeled]
+permissions:
+  pull-requests: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - if: github.event.label.name == 'probe-comment'
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "Probe (bot, plain comment) at $(date -u +%H:%M:%S). No action needed."
+      - if: github.event.label.name == 'probe-review'
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment --body "Probe (bot, review comment) at $(date -u +%H:%M:%S). No action needed."
