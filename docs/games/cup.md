@@ -229,7 +229,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 - **¿En qué año?** has a margin that grows with the event's age: `max(12, (2026 − year) / 3)` years
   (D-325). The score is `100 / (1 + (2·distance / margin)²)`: 50 at half the margin, 20 at its
   edge, and from there it keeps falling slowly instead of dropping to 0.
-  The answer is typed in four boxes with a d. C. / a. C. switch; while a. C. is on, its label also
+  The answer is typed in four boxes with a d. C. / a. C. switch, shown only when the theme has a
+  card before Christ (today only Historia, D-326); while a. C. is on, its label also
   shows next to the boxes, switching the era keeps the digits already typed, and the reveal says
   "Tu respuesta: …" (`yearAnswer`) so the player's answer is not read as the real year (a friend's
   report: 622 with a. C. on looked like a bug).
