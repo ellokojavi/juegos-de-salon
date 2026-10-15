@@ -234,7 +234,7 @@ export const SUELTOS = [
     diario: true,
   },
   {
-    // Out of the lab since D-331, with Loteo and Pintaminas: their page was /labs/<slug>/, now a bridge (`deLabs`)
+    // Out of the lab since D-332, with Loteo and Pintaminas: their page was /labs/<slug>/, now a bridge (`deLabs`)
     id: 'rutas',
     slug: 'routes',
     emoji: '🚇',
