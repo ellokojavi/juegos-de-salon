@@ -162,9 +162,10 @@ jobs:
           done
           echo "::error::$URL does not serve $key after 5 minutes"; exit 1
 
-  # Tells the merged PR how it went, with a comment (D-323): the session that opened it has the
-  # app's CI monitor on, which wakes it on a new comment but not when everything goes well. So it
-  # learns that its change is live, or which step stopped it, without the owner having to say so.
+  # Tells the merged PR how it went, with a comment (D-323): the version that went live, or the
+  # step that stopped it. A record on the PR (and an email to the owner), not a wake-up: the app's
+  # CI monitor stops listening once a PR is closed, so the session is woken by the end-to-end
+  # check's comment before the merge (e2e.yml, merge-report.mjs --ready).
   # Always, also when a job failed; only for a push to main (a manual run is not a merge), and a
   # push without a PR comments nothing.
   report:
