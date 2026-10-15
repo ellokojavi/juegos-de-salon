@@ -198,6 +198,18 @@
         "what": "clean-worktrees.mjs borra las ramas locales fusionadas o sin rama en GitHub, y la ronda diaria de procesos la corre (D-315)",
         "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/408"
       }
+    },
+    {
+      "key": "pr-esperando-en-conflicto",
+      "what": "A PR waiting for the owner (#400, the teaser) went into conflict with main in marketing/registro.json while it waited; the round cannot push to another session's branch, so the owner's Yes has to queue the fix instead of merging",
+      "seen": [
+        {
+          "date": "2026-10-15",
+          "what": "A PR waiting for the owner (#400, the teaser) went into conflict with main in marketing/registro.json while it waited; the round cannot push to another session's branch, so the owner's Yes has to queue the fix instead of merging",
+          "commit": null
+        }
+      ],
+      "mechanism": null
     }
   ],
   "mechanisms": [
