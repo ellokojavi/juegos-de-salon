@@ -226,7 +226,7 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   fila empieza en su letra (`alfabeto(lang)` en `games/word/engine.js`, D-170, D-191).
   Cada letra se pinta verde si está en su lugar (fama) y amarilla si está en otro (toque), como en
   Wordle; la tarjeta usa 🟩 y 🟨 (#196).
-- **¿En qué año?** tiene un margen que crece con la antigüedad: `max(12, (2026 − año) / 3)` years
+- **¿En qué año?** has a margin that grows with the event's age: `max(12, (2026 − year) / 3)` years
   (D-325). The score is `100 / (1 + (2·distance / margin)²)`: 50 at half the margin, 20 at its
   edge, and from there it keeps falling slowly instead of dropping to 0.
   The answer is typed in four boxes with a d. C. / a. C. switch; while a. C. is on, its label also
