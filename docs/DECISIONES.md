@@ -6096,7 +6096,8 @@ Dudo, Generala and Julepe the catch re-enabled the button through `e.currentTarg
 already null after the await, so the catch itself threw and the button stayed disabled.
 **Decision:** every rematch button goes through `tryRematch(btn, run, { T, reset })` in
 `public/assets/js/transport/errors.js`. The button is taken before any await and is disabled while
-the rematch runs (and stays so when it works, until the game moves on). If it fails, `reset` clears
+the rematch runs, saying "Abriendo sala…" (`COMMON.opening`, like `tryRoom`, U-37), and stays
+disabled when it works, until the game moves on. If it fails, `reset` clears
 the game's switching flag, the error shows in a `.form-error` line under the button with the same
 texts as creating or joining a room (`errText`), and the button comes back: tapping again is the
 retry. Only unexpected errors go to the console (C-14).
