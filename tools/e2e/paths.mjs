@@ -413,6 +413,16 @@ export const PATHS = {
     clear: [START, `1`, `1`, `1`, `1`, `1`, `document.querySelector('.rej[data-i="0"]').click()`, `document.getElementById('btn-borrar').click()`],
   },
   /**
+   * ¿En qué año?: the board, the year typed with a. C. on (its label after the boxes) and the
+   * reveal of that answer ("Tu respuesta: 622 a. C.", the friend's report that led to it).
+   */
+  anio: {
+    intro: [],
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
+    bc: [START, `1`, `1`, `1`, `1`, `1`, `1`, ...'622'.split('').map(d => `document.querySelector('.keypad [data-d="${d}"]').click()`), `document.getElementById('btn-ac').click()`],
+    reveal: [START, `1`, `1`, `1`, `1`, `1`, `1`, ...'622'.split('').map(d => `document.querySelector('.keypad [data-d="${d}"]').click()`), `document.getElementById('btn-ac').click()`, `document.querySelector('.keypad .ok').click()`, `1`, `1`],
+  },
+  /**
    * The lab games that are not La Copa's are asked for by their folder: `look` opens `/<key>/`
    * when the key is not an id in the registry: the lab's home page, Agents (D-286), Paint mines
    * (D-289), Broken routes (D-293), Exploding numbers (D-297) and Plots (D-310).
