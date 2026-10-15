@@ -258,7 +258,7 @@
     },
     {
       "id": "tres-nuevos",
-      "tipo": "imagen y mensaje",
+      "tipo": "imagen, video y mensaje",
       "titulo": "¡Upa, papá! Tres juegos nuevos",
       "carpeta": "marketing/tres-nuevos/",
       "memoria": "marketing/tres-nuevos/README.md",
@@ -272,6 +272,14 @@
           "formato": "1:1",
           "ancho": 1080,
           "alto": 1080,
+          "uso": "WhatsApp, estados, redes"
+        },
+        {
+          "ruta": "marketing/tres-nuevos/output/tres-nuevos-6s.mp4",
+          "formato": "1:1",
+          "ancho": 1080,
+          "alto": 1080,
+          "segundos": 6,
           "uso": "WhatsApp, estados, redes"
         },
         {
