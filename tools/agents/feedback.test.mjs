@@ -63,3 +63,11 @@ assert.doesNotMatch(body(byEmail), /🐞 button/);
 assert.match(title(byEmail), /^🐞 email: /);
 
 console.log('feedback: ok');
+
+// D-328: the doubt's public pointer carries no private detail, only the issue number
+{
+  const { doubtSubject, gmailSearch } = await import('./feedback.mjs');
+  if (!doubtSubject(435).startsWith('[JdS duda 435]')) throw new Error('doubt subject');
+  if (decodeURIComponent(gmailSearch(435).split('#search/')[1]) !== 'subject:"JdS duda 435"') throw new Error('gmail search');
+  console.log('feedback doubt: ok');
+}

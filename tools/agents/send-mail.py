@@ -105,6 +105,10 @@ def main():
         print(f'Warning: other users can read {CONFIG}. Suggestion: chmod 600 "{CONFIG}"', file=sys.stderr)
     cfg = json.load(open(CONFIG, encoding='utf-8'))
     m = json.load(sys.stdin)
+    if m.get('toOwner'):
+        # A doubt for the owner (D-328): to their own account, never limited
+        m['to'] = cfg.get('owner') or cfg['user']
+        cfg = {**cfg, 'noLimit': [*(cfg.get('noLimit') or []), m['to']]}
     if not all(m.get(k) for k in ('to', 'subject', 'text')):
         sys.exit('The message needs "to", "subject" and "text".')
     prev = None if unlimited(cfg, m['to']) else recent(m['to'])
