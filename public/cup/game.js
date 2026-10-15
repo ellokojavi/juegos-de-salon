@@ -2315,8 +2315,7 @@ function jugarPractica(id, semilla, variante = null) {
   if (PRUEBA && (id === 'zip' || id === 'desenredo') && seg > 0) p.tiempo = seg * 1000;
   // Señal de uso para el panel (D-44): el suelto se cuenta como su propio juego; el laboratorio no
   // El caso cuenta también desde el laboratorio: es lo que se quiere medir (D-267)
-  // A variant other than the default one is counted as its own mode (D-331): `solo-hard`
-  if ((!LABS || gameById(id)?.diario) && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : varianteRk(id, variante) ? `solo-${variante}` : 'solo', players: 1 });
+  if ((!LABS || gameById(id)?.diario) && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
   // Un juego `diario` sigue donde iba al recargar (D-267): las jugadas y el tiempo, por caso
   const guardado = gameById(id)?.diario && !HOY ? partidaGuardada(id, semilla) : null;
   jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r, variante), { variante, ...(guardado ? { guardado } : {}) });
@@ -2474,7 +2473,8 @@ function resultadoPractica(id, semilla, r, variante = null) {
     if (leerYo()) anotar(); else if (!hoy) aviso.append(bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }));
     jugador().then(Jg => { const off = Jg.escuchar(() => { if (S.pantalla !== 'resultado') { off(); return; } anotar(); }); }).catch(() => {});
   }
-  trackFinish({ detalle: `${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });   // cómo salió, para el panel (D-210)
+  // How it went, for the panel (D-210); with the variant first when the game has one (D-331): "hard · 80/100 · 2:30"
+  trackFinish({ detalle: `${variante ? `${variante} · ` : ''}${r.s}/100${r.ms ? ` · ${mmss(r.ms)}` : ''}` });
   mostrar('resultado');
   SFX.win();
   // Un juego `diario` (D-267): "otra" es otro caso al azar, y si no era el de hoy, se ofrece el de hoy
