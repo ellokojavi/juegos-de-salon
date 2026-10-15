@@ -69,7 +69,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309 |
-| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319 |
+| Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308 |
@@ -5996,7 +5996,7 @@ check` counts the emails and dispatches `support` when there are some; issues fr
 Cloudflare once (`tools/cloudflare/inbox-worker.js` says how).
 
 ## D-319 · A room that doesn't open: the button says it's trying, and one tap goes to one phone
-**Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-40 (one text for a room that can't be reached) and C-14 (a clear way out)
+**Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-40 (one text for a room that can't be reached) and C-14 (a clear way out); completed by D-322 (the rematch button)
 **Decision:** Owner's request, after a player saw "No se pudo abrir la sala…" in Batalla Naval and
 was left looking at it. Creating or joining a room goes through `tryRoom` in
 `public/assets/js/transport/errors.js`, in every game with rooms (Ahorcado, Batalla Naval, Dudo,
@@ -6084,3 +6084,27 @@ cannot do it.
 **Consequences:** `cleanup.test.mjs` creates a room with the atomic write, lets the page "die", and
 sweeps it the next day; it also covers the midnight case and a reused code. `unnoted-rooms.test.mjs`
 covers the tool's pure part. The rules change is published on merge, before the site (D-218).
+
+## D-322 · A rematch that fails says so under its button
+**Date:** 2026-10-15 · **Status:** current · **Relation:** completes C-14 and D-319 (rooms that don't open) for the rematch
+**Context:** looking for the same pattern as D-320 (a Firebase failure nobody catches) across the
+games: the rematch button of the seven room games opens a new room (or joins the one the other
+player opened) from an async click handler. In Ahorcado, Batalla Naval, Línea de Tiempo and Toque y
+Fama nothing caught it: a failure (no signal, too many rooms) was an unhandled rejection on the
+Health panel, the game stayed marked as switching rooms, and the button did nothing visible. In
+Dudo, Generala and Julepe the catch re-enabled the button through `e.currentTarget`, which is
+already null after the await, so the catch itself threw and the button stayed disabled.
+**Decision:** every rematch button goes through `tryRematch(btn, run, { T, reset })` in
+`public/assets/js/transport/errors.js`. The button is taken before any await and is disabled while
+the rematch runs, saying "Abriendo sala…" (`COMMON.opening`, like `tryRoom`, U-37), and stays
+disabled when it works, until the game moves on. If it fails, `reset` clears
+the game's switching flag, the error shows in a `.form-error` line under the button with the same
+texts as creating or joining a room (`errText`), and the button comes back: tapping again is the
+retry. Only unexpected errors go to the console (C-14).
+**Why:** a rematch is creating or joining a room, so it gets the same texts and the same rule as
+the setup screen (D-40, D-319); the one-phone way out isn't offered here, because "Cambiar modo"
+is already next to it.
+**Consequences:** `errors.test.mjs` covers the button, the message, the retry and that no rejection
+is left unhandled, and checks that the seven `game.js` wire the button through `tryRematch`.
+`tools/e2e/battleship/online.mjs` cuts A's network before Revancha and checks the message, the
+button and the vigía, then plays the rematch.

@@ -1,6 +1,7 @@
 // Batalla Naval, two phones: two Chrome instances against real Firebase
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
+import { LOCALES as BS } from '../../../public/battleship/rules.js';
 // With several sessions at once, each serves its copy on its own port (D-135)
 const SITE = process.env.SITE || 'http://localhost:8765';
 // The other phone comes in through 127.0.0.1: another origin, another localStorage
@@ -54,8 +55,24 @@ await sleep(6000);
 console.log('final A:', await A.active(), await A.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent + ' | ' + [...document.querySelectorAll('#result-fleets small')].map(x=>x.textContent).join(' / ')`));
 console.log('final B:', await B.active(), await B.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent`));
 await A.shot('26-result-A'); await B.shot('26-result-B');
+// A rematch that can't open its room (D-322): A loses the network and taps Revancha. The room
+// text shows under the button, the button comes back, and the vigía sees no unhandled rejection.
+const network = on => A.send('Network.emulateNetworkConditions', { offline: !on, latency: 0, downloadThroughput: on ? -1 : 0, uploadThroughput: on ? -1 : 0 });
+await A.send('Network.enable');
+await network(false); await sleep(1500);
+await click(A, '#result-actions .btn');
+let failed = '';
+for (let i = 0; i < 20 && !failed; i++) { await sleep(1000); failed = await A.evaluate(`document.querySelector('#result-actions .rematch-error')?.textContent || ''`); }
+const rematchBack = await A.evaluate(`(()=>{const b=document.querySelector('#result-actions .btn');return !!b && !b.disabled})()`);
+const promises = await A.evaluate(`JSON.stringify((window.__vigia?.fallas || []).filter(f => f.tipo === 'promesa'))`);
+console.log('rematch offline → message:', JSON.stringify(failed), '| button back:', rematchBack, '| unhandled:', promises);
+if (failed !== BS.es.errOffline || !rematchBack || promises !== '[]') console.log('✗ a rematch without network must say so, give the button back and leave nothing unhandled');
+await A.shot('27-rematch-offline-A');
+await network(true); await sleep(6000);
 // rematch proposed by A (loser); B joins by itself
 await click(A, '#result-actions .btn'); await sleep(8000);
+const leftover = await A.evaluate(`document.querySelector('.rematch-error')?.textContent || ''`);
+if (leftover) console.log('✗ the rematch error is still on screen after a rematch that worked:', JSON.stringify(leftover));
 console.log('rematch → A:', await A.active(), JSON.stringify(await bv(A)), 'code:', await A.evaluate(`__bn.session().code`), 'role:', await A.evaluate(`__bn.session().role`));
 console.log('rematch → B:', await B.active(), JSON.stringify(await bv(B)), 'code:', await B.evaluate(`__bn.session().code`), 'role:', await B.evaluate(`__bn.session().role`));
 console.log('errors A:', JSON.stringify(A.errors), JSON.stringify(A.logs), '\nerrors B:', JSON.stringify(B.errors), JSON.stringify(B.logs));

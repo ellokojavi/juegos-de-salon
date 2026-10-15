@@ -87,7 +87,9 @@ la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renu
 - **U-37 · Waiting on the network shows, and a room that doesn't open has a way out** (D-319):
   while creating or joining a room the button says what it is doing ("Abriendo sala…") and the old
   error goes away; if the room can't be reached, a "📱 Jugar en un celular" button goes under the
-  message. The create/join button is the retry; no reload link.
+  message. The create/join button is the retry; no reload link. The rematch button follows the
+  same rule: the room text under it and the button back as the retry, without the one-phone button,
+  since "Cambiar modo" is already next to it (D-322).
 
 ## Compartir
 
