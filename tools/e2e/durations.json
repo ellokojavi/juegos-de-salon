@@ -47,7 +47,7 @@
  "paint-mines/game.mjs": 41,
  "room-cap.mjs": 29,
  "room-error.mjs": 107,
- "routes/lab.mjs": 51,
+ "routes/game.mjs": 120,
  "share-home.mjs": 15,
  "timeline/choice.mjs": 8,
  "timeline/decks.mjs": 31,

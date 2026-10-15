@@ -132,6 +132,14 @@ export const PATHS = {
    * shot leaves it in hard). `hint` is the 💡 hint paid (the cell that pulses and its numbers);
    * `revealed`, a hard board painted whole (the drawing and «Ver resultado»); `result`, its result.
    */
+  rutas: {
+    intro: [],
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
+    // Two turns done and Give up armed: Undo and Restart lit, the longest button text
+    moves: [START, `1`, `1`, `1`, `1`, `1`, `1`, `window.__rutas.girar({f1:0,c1:0,f2:1,c2:1})`, `window.__rutas.girar({f1:2,c1:2,f2:2,c2:2})`, `document.getElementById('btn-rendirse').click()`],
+    // Stage 1 solved: the glow and «¡Etapa 1 lista!»
+    stage: [START, `1`, `1`, `1`, `1`, `1`, `1`, `(async()=>{for(const r of [...window.__rutas.t.revuelta].reverse()){window.__rutas.girar(r);await new Promise(x=>setTimeout(x,60));}})()`, `1`],
+  },
   pintaminas: {
     intro: [PM_VARIANT('easy'), `1`, `1`],
     'intro-hard': [PM_VARIANT('easy'), `1`, `1`, `document.getElementById('btn-dificil').click()`, `1`, `1`],
@@ -460,10 +468,6 @@ export const PATHS = {
     // The result (the case the owner reported, D-309): passes the four clues and confirms Terminar
     result: [START, `1`, `1`, `1`, `1`, `1`, `1`,
       ...Array(14).fill(`document.getElementById('btn-pasar')?.click()`), `1`, `1`, `1`, `1`],
-  },
-  'labs/routes': {
-    intro: [],
-    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
   },
   'labs/exploding-numbers': {
     intro: [],

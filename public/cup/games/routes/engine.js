@@ -1,5 +1,5 @@
 /**
- * Rutas — el motor (laboratorio, D-293). Inspirado en Junction Nine (Bricks and Chips): un tablero de
+ * Rutas rotas — el motor (from the lab, D-293; a La Copa game and the standalone /routes/ since D-331). Inspirado en Junction Nine (Bricks and Chips): un tablero de
  * 3×3 piezas con tramos de líneas de metro. Una jugada gira 180° cualquier rectángulo del tablero (una
  * pieza, una fila, un bloque de 2×2, el tablero entero…): sus piezas cambian de lugar como en un
  * espejo y quedan dadas vuelta. Se gana cuando todas las líneas siguen sin cortes de pieza en pieza, y
@@ -196,16 +196,40 @@ export const generarEtapa = (semilla, n) => generar(`${semilla}:etapa-${n + 1}`,
  * en RAPIDO_S o menos, 0 si se acaba el reloj, en línea recta entre medio; solo si se completan todas)
  * y hasta 5 por giros (5 si todas las etapas hechas fueron en el mínimo, 0 con el doble o más).
  * `hechas`: [{ giros, minimo }] de las etapas completadas; `segundos`: el tiempo usado.
+ * A shorter game (the trial session, D-103: `etapas` 2 and its own `tiempo` in seconds) scales the
+ * same layers: the stages share the 85 points and the fast mark shrinks with the stages.
  */
 export const TIEMPO_S = 7 * 60, RAPIDO_S = 60;
 export const PUNTOS_ETAPA = 17, BONO_VELOCIDAD = 10, BONO_GIROS = 5;
 const entre01 = x => Math.max(0, Math.min(1, x));
-export function puntajePartida(hechas, segundos) {
-  const completa = hechas.length === ETAPAS.length;
-  const base = PUNTOS_ETAPA * hechas.length;
-  const velocidad = completa ? entre01((TIEMPO_S - segundos) / (TIEMPO_S - RAPIDO_S)) : 0;
+export function puntajePartida(hechas, segundos, { etapas = ETAPAS.length, tiempo = TIEMPO_S } = {}) {
+  const completa = hechas.length >= etapas;
+  const base = Math.round((PUNTOS_ETAPA * ETAPAS.length * Math.min(hechas.length, etapas)) / etapas);
+  const rapido = Math.min(tiempo / 2, (RAPIDO_S * etapas) / ETAPAS.length);
+  const velocidad = completa ? entre01((tiempo - segundos) / (tiempo - rapido)) : 0;
   const giros = hechas.reduce((a, h) => a + h.giros, 0), minimos = hechas.reduce((a, h) => a + h.minimo, 0);
   const eficiencia = hechas.length ? entre01((minimos / giros - 0.5) / 0.5) : 0;
   const ptsVelocidad = Math.round(BONO_VELOCIDAD * velocidad), ptsGiros = Math.round(BONO_GIROS * eficiencia);
   return { total: base + ptsVelocidad + ptsGiros, base, ptsVelocidad, ptsGiros, giros, minimos, completa };
 }
+
+/**
+ * A La Copa day or a standalone game (D-331): what `montar` receives. The boards are built stage by
+ * stage on screen from `semilla`, the same for everyone with the same cup code and day (the
+ * standalone page gets a random code each time). The trial session (`ensayo`, D-103) has the same
+ * mechanics with other boards (`sal`), only the first two stages and 2 minutes. `tiempo` is in ms,
+ * like Zip's, so the test clock (`?test&timer=12`) can shorten it.
+ */
+export const TIEMPO_ENSAYO_S = 2 * 60;
+export function generarDia(codigo, dia, { sal = '', ensayo = false } = {}) {
+  return { semilla: `${codigo}:${dia}${sal ? `:${sal}` : ''}`, etapas: ensayo ? 2 : ETAPAS.length, tiempo: 1000 * (ensayo ? TIEMPO_ENSAYO_S : TIEMPO_S) };
+}
+
+/**
+ * The share card (D-295): one line per stage, the turns against the minimum, without giving the boards
+ * away; 🟩 at the minimum, 🟨 with extra turns and ⬛ the stages not reached.
+ */
+export const tarjeta = (hechas, etapas = ETAPAS.length) => Array.from({ length: etapas }, (_, k) => {
+  const h = hechas[k];
+  return h ? `${h.giros <= h.minimo ? '🟩' : '🟨'} ${k + 1}: ${h.giros}/${h.minimo}` : `⬛ ${k + 1}: —`;
+}).join('\n');
