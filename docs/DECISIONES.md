@@ -53,7 +53,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
 | Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316 |
-| Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184 |
+| Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184, D-324 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298 |
@@ -373,7 +373,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** Las reglas tienen que aceptar la clave nueva, y **hay que republicarlas a mano en la consola**. Hasta que eso pase, la escritura se rechaza y no se entera nadie —el registro es mejor esfuerzo y falla callado (D-44)—, así que la sección aparece vacía. Por eso su texto de vacío dice "se empieza a contar desde esta versión" y no "nada todavía": distingue no tener datos de estar roto.
 
 ## D-47 · Español por defecto; inglés y portugués, solo a pedido
-**Fecha:** 2026-09-11 · **Estado:** corregida por D-197
+**Fecha:** 2026-09-11 · **Estado:** corregida por D-197, D-324
 **Decisión:** Quien entra a juegosdesalon.cl ve la app en español mientras no elija otra cosa. El idioma del navegador (`navigator.language`) no se usa para elegir: sirve como señal de uso (D-46), nunca para decidir qué se muestra. Inglés y portugués son opcionales: se activan solo con el toggle del menú o de la intro de cada juego, y la elección queda en `localStorage` del dispositivo. Con la llegada del portugués, el juego ofrece tres idiomas y no dos, lo que corrige el detalle de D-46.
 **Por qué:** El público es chileno y las mesas son de habla hispana; el humor, las referencias y las cartas están pensados primero en español (C-1). Detectar el idioma del teléfono parece amable pero falla en la mesa: un celular configurado en inglés en manos de alguien que juega en español muestra chistes traducidos que nadie pidió, y en una mesa el que sostiene el teléfono no siempre es el dueño. Un valor fijo y predecible (español) más un toggle a la vista es más simple de explicar y de probar que una heurística.
 **Cómo:** `getLang()` devuelve lo guardado si es un idioma conocido y, si no, `'es'`. Ningún módulo lee `navigator.language` para decidir textos; solo `stats.js` lo registra como contador. Cada `index.html` declara `lang="es"` y el idioma elegido se aplica sobre `document.documentElement.lang` al cargar.
@@ -695,7 +695,7 @@ buscar al aparato cuando una pantalla se corta y en el escritorio se ve bien.
 ---
 
 ## D-78 · El README en inglés, el resto en español
-**Fecha:** 2026-09-13 · **Estado:** corregida por D-316
+**Fecha:** 2026-09-13 · **Estado:** corregida por D-316, D-324
 **Decisión:** `README.md` se escribe en inglés. Todo lo demás sigue en español: los cánones, las
 decisiones, las especificaciones de cada juego, los comentarios del código y los mensajes de las
 herramientas. Lo que el README muestra generado también sale en inglés: los modos se leen del `en`
@@ -6135,3 +6135,19 @@ the repo, not on one computer.
 **Consequences:** `merge-report.test.mjs` covers both comments, the `tests` conclusion, finding the
 PR of a merge commit, and the workflow wiring: the step sits in `end-to-end` with its permissions,
 `publish.yml` grants them when it calls `e2e.yml`, and `report` waits for every job.
+
+## D-324 · First made for Chile, now for everyone
+**Date:** 2026-10-15 · **Status:** current · **Relation:** corrects the reasoning of D-47 and D-78; amends C-1
+**Context:** owner's request. The README said "The app is Chilean", and D-47 ("el público es
+chileno") and D-78 ("la app es chilena") gave the same reading. That was the original idea, but
+the app now plays in four languages, Cups choose a Global, Chile or Brazil audience (D-186,
+D-187), and the owner does not want it read as being for Chilean audiences only. "Made in Chile"
+is not accurate either: the owner is Chilean but lives in the US.
+**Decision:** the app is described as first made for Chilean audiences and now for everyone, in
+four languages. What does not change: Spanish stays the default (C-3, D-47), the Spanish texts
+keep the informal Chilean voice (C-1), and Chilean content (the Chile decks, the dice names in
+Liar's Dice) stays as flavor, tagged and optional where it is local (D-186).
+**Why:** the origin explains the voice and the Spanish default; it no longer limits who the app
+is for. Saying it is "for Chileans" turns a feature into a restriction.
+**Consequences:** the README note and C-1 say so. D-47 and D-78 keep their decisions; only the
+"the audience is Chilean" part of their reasoning is corrected.
