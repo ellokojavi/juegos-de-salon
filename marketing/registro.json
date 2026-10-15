@@ -255,6 +255,45 @@
         "al_dia": true,
         "pendiente": []
       }
+    },
+    {
+      "id": "tres-nuevos",
+      "tipo": "imagen y mensaje",
+      "titulo": "¡Upa, papá! Tres juegos nuevos",
+      "carpeta": "marketing/tres-nuevos/",
+      "memoria": "marketing/tres-nuevos/README.md",
+      "version": 1,
+      "fecha": "2026-10-15",
+      "idioma": "es",
+      "app": "0.172.0",
+      "archivos": [
+        {
+          "ruta": "marketing/tres-nuevos/output/tres-nuevos-1080.jpg",
+          "formato": "1:1",
+          "ancho": 1080,
+          "alto": 1080,
+          "uso": "WhatsApp, estados, redes"
+        },
+        {
+          "ruta": "marketing/tres-nuevos/whatsapp.txt",
+          "formato": "texto",
+          "uso": "Mensaje de WhatsApp con los links"
+        }
+      ],
+      "fuente": "marketing/tres-nuevos/tarjeta.html",
+      "construir": "marketing/tres-nuevos/construir.mjs",
+      "juegos": [
+        "rutas",
+        "loteo",
+        "pintaminas"
+      ],
+      "seleccion": true,
+      "revision": {
+        "fecha": "2026-10-15",
+        "app": "0.172.0",
+        "al_dia": true,
+        "pendiente": []
+      }
     }
   ]
 }

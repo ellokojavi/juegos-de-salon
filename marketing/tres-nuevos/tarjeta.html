@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<!-- The three games out of the lab (D-332): 540×540 CSS, photographed at double (1080×1080) by construir.mjs -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@700;900&display=swap">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: #150726; }
+  #t { width: 540px; height: 540px; transform-origin: 0 0; font-family: 'Nunito', sans-serif; color: #fff; position: relative; padding: 30px 26px 0;
+    background: radial-gradient(circle at 80% 12%, rgba(255, 210, 63, 0.22), transparent 42%),
+      radial-gradient(circle at 10% 95%, rgba(46, 230, 214, 0.18), transparent 45%),
+      linear-gradient(160deg, #1a0830, #2a0a4a 55%, #0b1e3f); }
+  .tag { text-align: center; }
+  .tag span { display: inline-block; font: 900 12px 'Nunito'; letter-spacing: 0.16em; text-transform: uppercase; color: #9dff3a;
+    border: 1.5px solid rgba(157, 255, 58, 0.65); border-radius: 999px; padding: 4px 12px; }
+  h1 { text-align: center; font: 96px/0.95 'Bangers'; letter-spacing: 0.03em; margin-top: 10px; transform: rotate(-3deg);
+    background: linear-gradient(90deg, #ffd23f, #ff6fa8, #2ee6d6, #9dff3a); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 4px 0 rgba(0,0,0,0.4)); padding: 0 6px; }
+  .sub { text-align: center; font: 900 19px/1.2 'Nunito'; margin-top: 10px; }
+  .sub b { color: #ffd23f; }
+  .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+  .g { text-align: center; }
+  .g img { width: 100%; aspect-ratio: 1; border-radius: 14px; display: block; box-shadow: 0 8px 22px rgba(0,0,0,0.45); }
+  .g:nth-child(1) img { transform: rotate(-4deg); }
+  .g:nth-child(3) img { transform: rotate(4deg); }
+  .n { margin-top: 12px; font: 26px/1 'Bangers'; letter-spacing: 0.04em; white-space: nowrap; }
+  .d { margin-top: 4px; font: 700 12px/1.25 'Nunito'; color: rgba(255,255,255,0.8); }
+  .pie { position: absolute; left: 0; right: 0; bottom: 20px; text-align: center; font: 900 20px 'Nunito'; letter-spacing: 0.04em; color: #ffd23f; }
+  .pie small { display: block; font: 700 12px 'Nunito'; color: rgba(255,255,255,0.65); letter-spacing: 0; margin-bottom: 3px; }
+</style>
+</head>
+<body>
+<div id="t">
+  <div class="tag"><span>✨ Nuevos en Juegos de Salón</span></div>
+  <h1>Upa, papá!</h1>
+  <p class="sub">Tres juegos de lógica, <b>gratis</b> y en el celular</p>
+  <div class="row">
+    <div class="g"><img src="img/rutas.png" alt=""><p class="n">🚇 Rutas rotas</p><p class="d">Une las líneas del metro girando el tablero</p></div>
+    <div class="g"><img src="img/loteo.png" alt=""><p class="n">📐 Loteo</p><p class="d">Divide el tablero en lotes del tamaño justo</p></div>
+    <div class="g"><img src="img/pintaminas.png" alt=""><p class="n">🖌️ Pintaminas</p><p class="d">Pinta la grilla y descubre el dibujo</p></div>
+  </div>
+  <p class="pie"><small>Un tablero nuevo cada vez</small>juegosdesalon.cl</p>
+</div>
+<script>document.getElementById('t').style.transform = `scale(${innerWidth / 540})`;</script>
+</body>
+</html>
