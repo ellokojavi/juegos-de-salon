@@ -116,6 +116,40 @@ export function clearRoomError(err) {
   if (next && next.classList.contains('room-local')) next.remove();
 }
 
+/**
+ * The rematch button of a room game (D-322).
+ *
+ * A rematch opens a new room (or joins the one the other player opened), so it can fail like
+ * creating or joining one: no signal, too many rooms, a room that filled up. The button used to
+ * run that from an async click handler with nothing to catch it, so the failure became an
+ * unhandled rejection, the game kept believing it was switching rooms and the button did nothing
+ * visible. Three games did catch it, but in a handler that read `e.currentTarget` after the
+ * await, when it is already null, so the catch itself threw.
+ *
+ * `run` does the game's rematch. The button is disabled while it runs and stays so when it works
+ * (the game moves to the new room, or redraws the result with "waiting for…"); if it fails, `reset` undoes
+ * what the game marked (the "switching" flag), the button comes back, and the error goes in a line
+ * under it, with the same texts as joining a room (`errText`). Tapping again is the retry.
+ * The button is taken before any await, so a re-render can't lose it.
+ */
+export async function tryRematch(btn, run, { T, reset = () => {} }) {
+  btn.disabled = true;
+  const old = btn.nextElementSibling;
+  if (old && old.classList.contains('rematch-error')) old.remove();
+  try {
+    await run();
+  } catch (e) {
+    try { reset(); } catch (_) { /* the message still has to show */ }
+    if (!transportErrorKey(e)) console.error(e);
+    const p = btn.ownerDocument.createElement('p');
+    p.className = 'form-error rematch-error';
+    p.setAttribute('role', 'alert');
+    p.textContent = errText(e, T);
+    btn.after(p);
+    btn.disabled = false;
+  }
+}
+
 /** La promesa, pero con tope: si no termina a tiempo, falla con `code`. */
 export function withTimeout(p, ms = OP_MS, code = 'busy') {
   let timer = null;
