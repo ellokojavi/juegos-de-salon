@@ -2,7 +2,8 @@
 // (D-205, D-299): documentation, marketing, the agents, the workshop that no script or page
 // imports (`tools/agents/`, `tools/firebase/`), the Firebase rules (the CI scripts don't open
 // rooms in it, D-193), the workflows other than this one and the .md files outside the site.
-// When in doubt, they run. Used by `ci.mjs --groups --changes <file>` in the GitHub workflow.
+// When in doubt, they run. Used by `ci.mjs --groups --changes <file>` in the GitHub workflow; the
+// PRs that do reach the browser run only the scripts their changes reach (affected.mjs, D-329).
 
 /** What no end-to-end test looks at. */
 const NO_BROWSER = [
