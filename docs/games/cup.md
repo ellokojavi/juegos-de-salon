@@ -227,6 +227,10 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   Cada letra se pinta verde si está en su lugar (fama) y amarilla si está en otro (toque), como en
   Wordle; la tarjeta usa 🟩 y 🟨 (#196).
 - **¿En qué año?** tiene un margen que crece con la antigüedad: `max(8, (2026 − año) / 4)` años.
+  The answer is typed in four boxes with a d. C. / a. C. switch; while a. C. is on, its label also
+  shows next to the boxes, switching the era keeps the digits already typed, and the reveal says
+  "Tu respuesta: …" (`yearAnswer`) so the player's answer is not read as the real year (a friend's
+  report: 622 with a. C. on looked like a bug).
 - Las copas creadas antes de D-102 con el Solitario o Dudo en el calendario juegan Reinas y Toque y
   Fama: Palabra en esos días.
 
