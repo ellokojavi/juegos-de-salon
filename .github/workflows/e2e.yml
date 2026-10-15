@@ -112,6 +112,10 @@ jobs:
     needs: [list, e2e]
     if: always()
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: write
     steps:
       - run: |
           echo "list: ${{ needs.list.result }} · scripts: ${{ needs.e2e.result }}"
@@ -126,6 +130,24 @@ jobs:
           name: e2e-tree-${{ needs.list.outputs.tree }}
           path: ${{ runner.temp }}/mark
           retention-days: 7
+      # Wakes the PR's session (D-323): with auto-merge on, this check passing is the merge, so it
+      # comments that it merges now. It has to be here, inside the check: the PR is still open
+      # (auto-merge waits for it), and the app's monitor stops listening once a PR is closed. Not
+      # on forks (their token can't comment), and a failure here never turns the check red.
+      - if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        continue-on-error: true
+        uses: actions/checkout@v4
+      - if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        continue-on-error: true
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: node tools/release/merge-report.mjs --ready
 
   # On main nobody watches the check: if it comes out red, it opens an issue (or comments on the
   # one already open) with the scripts that failed and the link to the run, where their
