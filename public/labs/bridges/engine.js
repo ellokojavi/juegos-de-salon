@@ -1,0 +1,156 @@
+/**
+ * 🚂 Tren en Vilo — pure engine (lab prototype). A bridge of beams between grid points over a gap;
+ * then a train crosses. Beams are springs that snap when stretched or squeezed too much.
+ *
+ * Coordinates are in grid units, y up; the deck is y = 0. The simulation uses a fixed step and only
+ * + − × ÷ and sqrt, so the same bridge gives the same result in every browser.
+ */
+
+/** The stages: gap width, anchors (besides the two cliff edges) and the budget in beams. */
+export const ETAPAS = [
+  { ancho: 4, anclas: [[0, -1], [4, -1]], presupuesto: 11 },
+  { ancho: 5, anclas: [[0, -1], [5, -1]], presupuesto: 17 },
+  { ancho: 6, anclas: [[0, -1], [6, -1], [3, -3]], presupuesto: 21 },
+  { ancho: 7, anclas: [[0, -1], [7, -1]], presupuesto: 25 },
+  { ancho: 8, anclas: [[0, -1], [8, -1], [4, -3]], presupuesto: 29 },
+];
+export const TIEMPO_S = 7 * 60;
+export const LARGO_MAX = 2.25;     // the longest beam: two squares, or a 1 × 2 diagonal
+export const ALTO = [-3, 3];       // where nodes may go, from y = −3 to y = 3
+
+/** The fixed nodes of a stage: the deck's edges at both cliffs plus the extra anchors. */
+export const fijos = e => [[0, 0], [e.ancho, 0], ...e.anclas];
+const clave = (x, y) => `${x},${y}`;
+export const esFijo = (e, x, y) => fijos(e).some(([a, b]) => a === x && b === y);
+
+/** May a beam go from (x1,y1) to (x2,y2)? Inside the area, not too long, not repeated, not zero. */
+export function vigaValida(e, vigas, a, b) {
+  if (a[0] === b[0] && a[1] === b[1]) return 'cero';
+  for (const [x, y] of [a, b]) if (x < 0 || x > e.ancho || y < ALTO[0] || y > ALTO[1]) return 'fuera';
+  if (Math.hypot(b[0] - a[0], b[1] - a[1]) > LARGO_MAX + 1e-9) return 'larga';
+  const k = clave(...a) + '|' + clave(...b), k2 = clave(...b) + '|' + clave(...a);
+  if (vigas.some(v => { const s = clave(...v.a) + '|' + clave(...v.b); return s === k || s === k2; })) return 'repetida';
+  return null;
+}
+
+/** A beam is road when both its ends are on the deck (y = 0): the train runs on those. */
+export const esCamino = v => v.a[1] === 0 && v.b[1] === 0;
+
+/* ------------------------------------------------------------------ */
+/* The simulation                                                      */
+/* ------------------------------------------------------------------ */
+
+/** The physics, tuned so a bare deck sags and snaps and a truss holds (engine.test.mjs checks both). */
+export const FISICA = {
+  g: 9.8,
+  masaNudo: 0.2, masaViga: 0.2,     // per beam, split between its two ends
+  rigidez: 30000,                  // spring force per unit of strain
+  amort: 0.985,                    // velocity kept each step
+  quiebre: 0.007,                  // strain at which a beam snaps
+  tren: 50,                        // the train's weight, applied at its wheels
+  velTren: 1.6,                    // grid units per second
+};
+export let DT = 1 / 960;
+export const fijarDT = x => { DT = x; };
+
+/**
+ * Builds the simulation of a bridge. Returns a state you advance with `paso(s)`;
+ * `s.nudos` [{x,y,fijo}], `s.vigas` [{i,j,largo,rota,tension}], `s.tren` {x,y,cayo,llego}.
+ */
+export function crearSim(e, vigas) {
+  const idx = new Map(), nudos = [];
+  const nudo = ([x, y]) => {
+    const k = clave(x, y);
+    if (!idx.has(k)) { idx.set(k, nudos.length); nudos.push({ x, y, px: x, py: y, m: FISICA.masaNudo, fijo: esFijo(e, x, y), x0: x, y0: y }); }
+    return idx.get(k);
+  };
+  for (const f of fijos(e)) nudo(f);
+  const vs = vigas.map(v => {
+    const i = nudo(v.a), j = nudo(v.b);
+    nudos[i].m += FISICA.masaViga / 2; nudos[j].m += FISICA.masaViga / 2;
+    return { i, j, largo: Math.hypot(v.b[0] - v.a[0], v.b[1] - v.a[1]), rota: false, tension: 0, camino: esCamino(v) };
+  });
+  return { e, nudos, vigas: vs, t: 0, tren: { x: -1.2, y: 0, cayo: false, llego: false }, fin: false };
+}
+
+/** The road beam under the train, and where along it (0..1), or null if there is none. */
+function bajoTren(s, x) {
+  let mejor = null;
+  for (const v of s.vigas) {
+    if (v.rota || !v.camino) continue;
+    const a = s.nudos[v.i], b = s.nudos[v.j];
+    const [p, q] = a.x0 <= b.x0 ? [a, b] : [b, a];
+    if (x < p.x0 - 1e-9 || x > q.x0 + 1e-9) continue;
+    const u = (x - p.x0) / (q.x0 - p.x0 || 1);
+    const y = p.y + (q.y - p.y) * u;
+    if (!mejor || y > mejor.y) mejor = { p, q, u, y };
+  }
+  return mejor;
+}
+
+/** One fixed step of the simulation. */
+export function paso(s) {
+  if (s.fin) return s;
+  const { nudos, vigas } = s;
+  const fx = new Float64Array(nudos.length), fy = new Float64Array(nudos.length);
+  for (let k = 0; k < nudos.length; k++) fy[k] -= nudos[k].m * FISICA.g;
+  for (const v of vigas) {
+    if (v.rota) continue;
+    const a = nudos[v.i], b = nudos[v.j];
+    const dx = b.x - a.x, dy = b.y - a.y, l = Math.sqrt(dx * dx + dy * dy) || 1e-9;
+    const deform = (l - v.largo) / v.largo;
+    v.tension = deform;
+    if (deform > FISICA.quiebre || deform < -FISICA.quiebre) { v.rota = true; continue; }
+    const f = FISICA.rigidez * deform, ux = dx / l, uy = dy / l;
+    fx[v.i] += f * ux; fy[v.i] += f * uy; fx[v.j] -= f * ux; fy[v.j] -= f * uy;
+  }
+  // The train: on the cliffs the ground holds it; over the gap, the road beam under it does
+  const tr = s.tren;
+  if (s.t > 0.6) tr.x += FISICA.velTren * DT;
+  if (tr.x <= 0 || tr.x >= s.e.ancho) tr.y = 0;
+  else {
+    const b = bajoTren(s, tr.x);
+    if (!b || b.y < -1.5) { tr.cayo = true; s.fin = true; }
+    else {
+      tr.y = b.y;
+      fy[nudos.indexOf(b.p)] -= FISICA.tren * (1 - b.u);
+      fy[nudos.indexOf(b.q)] -= FISICA.tren * b.u;
+    }
+  }
+  if (tr.x > s.e.ancho + 1.2) { tr.llego = true; s.fin = true; }
+  for (let k = 0; k < nudos.length; k++) {
+    const n = nudos[k];
+    if (n.fijo) continue;
+    // While the bridge settles (before the train starts) it is damped hard: it sags into place without swinging
+    const am = s.t < 0.6 ? 0.9 : FISICA.amort;
+    const vx = (n.x - n.px) * am, vy = (n.y - n.py) * am;
+    n.px = n.x; n.py = n.y;
+    n.x += vx + (fx[k] / n.m) * DT * DT;
+    n.y += vy + (fy[k] / n.m) * DT * DT;
+  }
+  s.t += DT;
+  if (s.t > 30) s.fin = true;
+  return s;
+}
+
+/** Runs a bridge to the end, without drawing. `{ llego, cayo, rotas, t }`. */
+export function probar(e, vigas, maxPasos = Math.ceil(30 / DT)) {
+  const s = crearSim(e, vigas);
+  for (let k = 0; k < maxPasos && !s.fin; k++) paso(s);
+  return { llego: s.tren.llego, cayo: s.tren.cayo, rotas: s.vigas.filter(v => v.rota).length, t: s.t };
+}
+
+/* ------------------------------------------------------------------ */
+/* The score, by layers, like Rutas rotas (D-295)                      */
+/* ------------------------------------------------------------------ */
+
+export const PUNTOS_ETAPA = 16;    // 80 for the five
+export const BONO_RAPIDEZ = 20;    // only with the five done: 20 in 1 minute or less, 0 when time runs out
+
+export function puntajePartida(hechas, segundos) {
+  const etapas = PUNTOS_ETAPA * hechas;
+  const rapidez = hechas === ETAPAS.length
+    ? Math.round(BONO_RAPIDEZ * Math.min(1, Math.max(0, (TIEMPO_S - segundos) / (TIEMPO_S - 60))))
+    : 0;
+  return { etapas, rapidez, total: etapas + rapidez };
+}
