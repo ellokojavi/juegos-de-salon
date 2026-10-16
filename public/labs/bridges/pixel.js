@@ -325,3 +325,52 @@ export const TOPO_MIEDO = [
   ['k.........k', 'bk..kkk..kb', '.bkkBBBkkb.', ...MIEDO_CARA],
   ['...........', 'k...kkk...k', 'bkkkBBBkkkb', ...MIEDO_CARA],
 ];
+
+/* The wake visitor's green boat (a deep petrol green, the owner's sample): side view, facing right, 16 × 6, the driver at the wheel */
+export const PALETA_LANCHA = { k: '#0a1a12', g: '#2f6570', G: '#4a8a96', d: '#1a363c', w: '#ffffff', s: '#ffd0a0', h: '#ff5a3d', c: '#9be8ff' };
+export const LANCHA = [
+  '.......h.c......',
+  '.......sc.......',
+  '..kkkkkdkkkkk...',
+  '.kGGGGGGGGGGGGk.',
+  '.kggwwwwwgggggk.',
+  '..kdddddddddkk..',
+];
+
+/* The wake rider on the board, facing right, 7 × 9: standing tall and crouched to carve, and falling */
+export const PALETA_SURFISTA = { k: '#14081f', s: '#ffd0a0', y: '#ffd23f', r: '#ff3d7f', b: '#2b2b3a', o: '#ff8a3d' };
+export const SURFISTA = {
+  arriba: [
+    '...k...',
+    '..ksk..',
+    '..ryr..',
+    '.sryrs.',
+    '..ryr..',
+    '..b.b..',
+    '..b.b..',
+    'kooooo.',
+    '.kkkkk.',
+  ],
+  agachado: [
+    '.......',
+    '.......',
+    '...k...',
+    '..ksk..',
+    '.sryrs.',
+    '..ryr..',
+    '.bb.bb.',
+    'kooooo.',
+    '.kkkkk.',
+  ],
+  cae: [
+    '.......',
+    '.......',
+    '.......',
+    's..k..s',
+    '.rrsk..',
+    '.ryyrbb',
+    '..rr..b',
+    '.......',
+    '.......',
+  ],
+};
