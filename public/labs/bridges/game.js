@@ -530,7 +530,9 @@ const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
  * the five fixed stages.
  */
 let CATALOGO = null;
-fetch(new URL('./catalogo.json', import.meta.url)).then(r => (r.ok ? r.json() : null)).then(c => { CATALOGO = Array.isArray(c) && c.length ? c : null; }).catch(() => {});
+// `?catalogo=prueba`: the tighter catalog under evaluation
+const ARCHIVO_CATALOGO = new URLSearchParams(location.search).get('catalogo') === 'prueba' ? './catalogo-prueba.json' : './catalogo.json';
+fetch(new URL(ARCHIVO_CATALOGO, import.meta.url)).then(r => (r.ok ? r.json() : null)).then(c => { CATALOGO = Array.isArray(c) && c.length ? c : null; }).catch(() => {});
 function sortearEtapas() {
   if (!CATALOGO) return ETAPAS;
   return [1, 2, 3, 4, 5].map((nivel, k) => {
