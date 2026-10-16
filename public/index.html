@@ -122,20 +122,25 @@
       font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
       padding: 3px 9px; border-radius: 999px; background: var(--yellow); color: #3a1200;
     }
-    /* "New" (D-333): a sticker stuck on the card, a bit tilted, with a white edge and its shadow; the
-       title's rainbow flows through it (`shimmer`, base.css), a glow breathes and now and then it
-       wobbles around its tilt. Dark text: it reads on every color of the rainbow. The 4 px above and
-       below keep its tilted corners off the name and the description, also mid-wobble (U-11). */
+    /* "New" (D-333): a dark sticker stuck on the card, a bit tilted, with a white edge and its shadow;
+       the title's rainbow runs through its letters (`shimmer`, base.css), one gradient across the
+       word, like the home page title. A glow breathes and now and then it wobbles around its tilt.
+       The 4 px above and below keep its tilted corners off the name and the description, also
+       mid-wobble (U-11). */
     .game-card h2 .nuevo {
       --giro: -6deg; margin-block: 4px;
       font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
-      padding: 3px 9px; border-radius: 999px; color: #1a0b2e;
+      padding: 3px 9px; border-radius: 999px; background: #1a0b2e;
       border: 2px solid rgba(255, 255, 255, 0.92);
-      background: linear-gradient(90deg, var(--yellow), var(--pink), var(--cyan), var(--lime), var(--yellow));
-      background-size: 300% 100%;
       transform: rotate(var(--giro));
       filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.35));
-      animation: shimmer 4s linear infinite, nuevoBrillo 2.4s ease-in-out infinite, nuevoBaile 5s ease-in-out infinite;
+      animation: nuevoBrillo 2.4s ease-in-out infinite, nuevoBaile 5s ease-in-out infinite;
+    }
+    .game-card h2 .nuevo > span {
+      background: linear-gradient(90deg, var(--yellow), var(--pink), var(--cyan), var(--lime), var(--yellow));
+      background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shimmer 4s linear infinite;
     }
     @keyframes nuevoBrillo {
       0%, 100% { box-shadow: 0 0 6px rgba(255, 46, 136, 0.5); }
@@ -147,7 +152,7 @@
       92% { transform: rotate(calc(var(--giro) + 5deg)) scale(1.1); }
       96% { transform: rotate(calc(var(--giro) - 2deg)) scale(1.04); }
     }
-    @media (prefers-reduced-motion: reduce) { .game-card h2 .nuevo { animation: none; background-position: 30% 0; } }
+    @media (prefers-reduced-motion: reduce) { .game-card h2 .nuevo, .game-card h2 .nuevo > span { animation: none; } }
     /* Filtros (D-142, D-149): el tipo de juego, en fichas que se prenden y se apagan. */
     .filtros { display: grid; gap: 10px; margin-top: 4px; }
     .filtros > * { min-width: 0; }
@@ -426,7 +431,7 @@
           // "Próximamente" va pegado al nombre: abajo, entre las píldoras, no se veía
           el('h2', {}, el('span', {}, pickLang(g.name, lang)), !g.available && el('span', { class: 'proximamente' }, T.soon),
             // A new game says so for two weeks (D-333)
-            g.available && esNuevo(g) && el('span', { class: 'nuevo' }, T.newGame)),
+            g.available && esNuevo(g) && el('span', { class: 'nuevo' }, el('span', {}, T.newGame))),
           el('div', { class: 'tag' }, pickLang(g.tagline, lang)),
         ),
         el('div', { class: 'meta' },
