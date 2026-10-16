@@ -407,7 +407,7 @@ export const PATHS = {
   tango: {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, TANGO_FILL(false)],
-    clash: [START, `1`, `1`, `1`, `1`, TANGO_FILL(true)],
+    clash: [START, `1`, `1`, `1`, `1`, TANGO_FILL(true), `new Promise(r => setTimeout(r, 1700))`],
   },
   /**
    * 🔍 The case of the day. `clues` is the case half solved, with what can be deduced marked
