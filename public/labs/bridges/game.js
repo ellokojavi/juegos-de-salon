@@ -21,8 +21,9 @@ const BALLENA_YA = new URLSearchParams(location.search).has('ballena');
 const TOPO_YA = new URLSearchParams(location.search).has('topo');
 // `?ballena=salto` or `?ballena=chorro` picks the whale's act; without it, chance picks one
 const BALLENA_MODO = new URLSearchParams(location.search).get('ballena') || '';
-// `?wake`: the green boat and its wake rider cross right away; `?wake=carve|jump|fall` picks the act
+// `?wake`: the green boat and its wake rider cross right away; `?wake=carve|jump|fall|sink` picks the act
 const WAKE_YA = new URLSearchParams(location.search).has('wake');
+// `?wake=sink`: the rider sinks, only the head pops up, and the boat comes back with an orange flag raised
 const WAKE_MODO = new URLSearchParams(location.search).get('wake') || '';
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
 const T = {
@@ -320,7 +321,7 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
       w.x += w.dir * V * dt;
       if (w.fase === 'cruza') {
         // Carving: the rider slides up the wave and back down it, crouched while going down
-        if (w.modo === 'carve' || w.modo === 'jump' && w.salto === 0 && Math.abs(w.x - mitad) > 8 || w.modo === 'fall' && Math.abs(w.x - mitad) > 8) {
+        if (w.modo === 'carve' || w.modo === 'jump' && w.salto === 0 && Math.abs(w.x - mitad) > 8 || (w.modo === 'fall' || w.modo === 'sink') && Math.abs(w.x - mitad) > 8) {
           const prev = w.d; w.d = 9 + Math.sin(w.t * 2.2) * 3.5;
           dibujaOla(); lancha();
           const rx = popa() - w.dir * w.d, ry = yAgua - ola(w.d) + 1;
@@ -343,12 +344,30 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
       } else if (w.fase === 'cae') {
         w.ct += dt;
         if (w.ct < 0.5) r.sprite(SURFISTA.cae, PALETA_SURFISTA, w.cx, yAgua + 1 + w.ct * 8, { cortarY: yAgua });
+        else if (w.modo === 'sink') {
+          // Sinking: the rider goes under, a few bubbles, and only the head pops back up; the board drifts off
+          r.rect(w.cx + 4 + w.ct * 2, yAgua - 1, 4, 1, PALETA_SURFISTA.o);
+          if (w.ct < 1.8) { if (Math.random() < 0.25) esc.parts.agregar({ x: w.cx + (Math.random() - 0.5) * 3, y: yAgua, vx: 0, vy: -8 - Math.random() * 6, g: 20, vida: 0.4, colores: ['#ffffff', AGUA[0]] }); }
+          else {
+            const b = Math.round(Math.sin(ahora * 3)), asoma = Math.min(3, Math.floor((w.ct - 1.8) * 6));
+            if (asoma >= 1) r.punto(w.cx, yAgua - 1 + b, PALETA_SURFISTA.k);
+            if (asoma >= 2) r.rect(w.cx, yAgua - 1 + b, 2, 1, PALETA_SURFISTA.s), r.punto(w.cx, yAgua - 2 + b, PALETA_SURFISTA.k), r.punto(w.cx + 1, yAgua - 2 + b, PALETA_SURFISTA.k);
+            if (asoma >= 3) r.rect(w.cx, yAgua - 2 + b, 2, 1, PALETA_SURFISTA.s), r.rect(w.cx, yAgua - 3 + b, 2, 1, PALETA_SURFISTA.k);
+          }
+        }
         // The rider bobbing in the water, the board floating beside
         else { const b = Math.round(Math.sin(ahora * 4)); r.punto(w.cx, yAgua - 1 + b, PALETA_SURFISTA.s); r.punto(w.cx, yAgua - 2 + b, PALETA_SURFISTA.k); r.rect(w.cx + 3, yAgua - 1, 4, 1, PALETA_SURFISTA.o); }
-        if (Math.abs(w.x - w.cx) > 40 && w.dir * (w.x - w.cx) > 0) { w.dir = -w.dir; }
+        if (Math.abs(w.x - w.cx) > 40 && w.dir * (w.x - w.cx) > 0) { w.dir = -w.dir; w.vuelve = true; }
         else if (w.dir * (w.x - w.cx) > -3 && w.dir * (w.x - w.cx) < 0 && w.ct > 1.5) { w.fase = 'recoge'; }
         if (w.ct < 1.2) dibujaOla();
         lancha();
+        // Going back for a sunk rider, a small orange flag raised on a pole over the tower roof: rider down
+        if (w.modo === 'sink' && w.vuelve) {
+          const fx = w.x - w.dir * 4, ondea = Math.floor(ahora * 6) % 2;
+          r.rect(fx, yAgua - 11, 1, 5, '#0a0a0a');
+          r.rect(w.dir > 0 ? fx - 3 : fx + 1, yAgua - 11, 3, 2 - ondea, '#ff7a1a');
+          if (ondea) r.punto(w.dir > 0 ? fx - 2 : fx + 2, yAgua - 9, '#ff7a1a');
+        }
       } else {
         // Picked up: the rider is aboard, and the boat goes back the way it came, slow, no wave to ride
         lancha(true);
@@ -647,7 +666,7 @@ function empezar() {
       modo: ['salto', 'chorro'].includes(BALLENA_MODO) ? BALLENA_MODO : Math.random() < 0.5 ? 'salto' : 'chorro' };
     P.topo = { etapa: quien === 'topo' ? etapaSorteada : -1, retraso, visto: quien !== 'topo' };
     P.wake = { etapa: quien === 'wake' ? etapaSorteada : -1, retraso, visto: quien !== 'wake',
-      modo: ['carve', 'jump', 'fall'].includes(WAKE_MODO) ? WAKE_MODO : ['carve', 'jump', 'fall'][Math.floor(Math.random() * 3)] };
+      modo: ['carve', 'jump', 'fall', 'sink'].includes(WAKE_MODO) ? WAKE_MODO : ['carve', 'jump', 'fall', 'sink'][Math.floor(Math.random() * 4)] };
     P.etapas = sortearEtapas();
     Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
     jugar();
