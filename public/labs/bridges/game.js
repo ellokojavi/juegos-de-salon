@@ -15,6 +15,8 @@ const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const OVNI_YA = new URLSearchParams(location.search).has('ovni');
 // `?ballena`: the whale jumps right away
 const BALLENA_YA = new URLSearchParams(location.search).has('ballena');
+// `?ballena=salto` or `?ballena=chorro` picks the whale's act; without it, chance picks one
+const BALLENA_MODO = new URLSearchParams(location.search).get('ballena') || '';
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
 const T = {
   nombre: 'Tren en Vilo',
@@ -125,9 +127,18 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     const x = Math.floor(ruido(k, 1) * W), y = Math.floor(ruido(k, 2) * H * 0.45);
     if (Math.sin(ahora * (1 + ruido(k, 3) * 2) + k) > -0.3) r.punto(x, y, ruido(k, 4) > 0.5 ? '#fff3a0' : '#ffffff');
   }
-  for (let k = 0; k < 2; k++) {
-    const x = ((ahora * (3 + 2 * k) + k * W * 0.6) % (W + 40)) - 20, y = H * (0.12 + 0.12 * k);
-    for (const [dx, dy, rr] of [[0, 0, 4], [5, -2, 5], [10, 0, 4], [5, 1, 4]]) r.circulo(x + dx, y + dy, rr, 'rgba(255,255,255,0.10)');
+  // Clouds, each with its own shape (puffs of different sizes drawn once per scene), height and speed;
+  // the top of each puff a little lighter
+  esc.nubes ||= Array.from({ length: 3 }, (_, k) => {
+    const n = 3 + Math.floor(Math.random() * 4), puffs = [];
+    let x = 0;
+    for (let i = 0; i < n; i++) { const rr = 2 + Math.floor(Math.random() * 4); puffs.push([x, -Math.floor(Math.random() * 3), rr]); x += rr + Math.floor(Math.random() * 3); }
+    return { puffs, ancho: x + 4, y: H * (0.06 + 0.13 * k + Math.random() * 0.05), v: 1.5 + Math.random() * 3, desfase: Math.random() * (W + 60) };
+  });
+  for (const nb of esc.nubes) {
+    const x = ((ahora * nb.v + nb.desfase) % (W + nb.ancho + 20)) - nb.ancho - 10;
+    for (const [dx, dy, rr] of nb.puffs) r.circulo(x + dx, nb.y + dy, rr, 'rgba(255,255,255,0.08)');
+    for (const [dx, dy, rr] of nb.puffs) r.circulo(x + dx, nb.y + dy - 1, Math.max(1, rr - 1), 'rgba(255,255,255,0.05)');
   }
 
   // Visitors, only in the game (never on the cover: they are a surprise). `visitas` comes from the game:
@@ -143,7 +154,9 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     if (esc.pajaros) {
       for (const p of esc.pajaros) {
         p.x += p.v * dt; p.fase += dt;
-        r.sprite(PAJARO[Math.floor(p.fase * 4) % 2], PALETA_PAJARO, p.x, p.y + Math.sin(p.fase * 1.6) * 1.5, { voltear: p.v < 0 });
+        // Wings up, spread, down, spread; it barely rises on the downstroke, no waving
+        const ala = [0, 1, 2, 1][Math.floor(p.fase * 7) % 4];
+        r.sprite(PAJARO[ala], PALETA_PAJARO, p.x, p.y - (ala === 2 ? 1 : 0), { voltear: p.v < 0 });
       }
       if (esc.pajaros.every(p => p.x < -20 || p.x > W + 20)) { esc.pajaros = null; esc.proximoPajaro = ahora + 14 + Math.random() * 14; }
     }
@@ -187,24 +200,37 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     const [gx0] = A(0, 0), [gx1] = A(e.ancho, 0);
     esc.proximaBallena ??= ahora + (BALLENA_YA ? 1 : 10 + Math.random() * 15);
     if (!esc.ballena && ahora >= esc.proximaBallena && gx1 - gx0 > 60) {
-      const dir = Math.random() < 0.5 ? 1 : -1, largo = Math.min(56, (gx1 - gx0) * 0.55);
+      const dir = Math.random() < 0.5 ? 1 : -1, largo = Math.min(30, (gx1 - gx0) * 0.35);
       const x = dir > 0 ? gx0 + 14 + Math.random() * (gx1 - gx0 - largo - 28) : gx1 - 14 - Math.random() * (gx1 - gx0 - largo - 28);
-      esc.ballena = { x, dir, largo, alto: 44 + Math.random() * 16, t: 0, dura: 2.1, salpicoSalida: false, salpicoEntrada: false };
+      const modo = ['salto', 'chorro'].includes(BALLENA_MODO) ? BALLENA_MODO : Math.random() < 0.5 ? 'salto' : 'chorro';
+      esc.ballena = { modo, x, dir, largo, alto: 12 + Math.random() * 6, t: 0, dura: modo === 'chorro' ? 3 : 1.15, salpicoSalida: false, salpicoEntrada: false };
     }
     if (esc.ballena) {
       const b = esc.ballena; b.t += dt;
       const u = Math.min(1, b.t / b.dura);
-      const bx = b.x + b.dir * b.largo * u, by = yAgua + 9 - b.alto * Math.sin(Math.PI * u);
-      const salpica = xx => { for (let n = 0; n < 16; n++) esc.parts.agregar({ x: xx + (Math.random() - 0.5) * 10, y: yAgua, vx: (Math.random() - 0.5) * 50, vy: -30 - Math.random() * 45, g: 150, vida: 0.9, colores: AGUA }); };
+      if (b.modo === 'chorro') {
+        // It surfaces with half its body out, blows a spout from its head, and sinks back
+        const sale = Math.min(1, b.t / 0.6), entra = Math.max(0, (b.t - 2.3) / 0.7);
+        const asoma = 7 * sale * (1 - Math.min(1, entra));
+        const bx = b.x, by = yAgua + 9 - asoma;
+        if (!b.salpicoSalida && b.t > 0.15) { b.salpicoSalida = true; for (let n = 0; n < 8; n++) esc.parts.agregar({ x: bx + (Math.random() - 0.5) * 18, y: yAgua, vx: (Math.random() - 0.5) * 20, vy: -12 - Math.random() * 12, g: 90, vida: 0.6, colores: AGUA }); }
+        // The spout: drops that shoot up from the blowhole and fan out, while it is up
+        if (b.t > 0.75 && b.t < 2) {
+          const hx = bx + b.dir * 4, hy = by - 8;
+          for (let n = 0; n < 3; n++) esc.parts.agregar({ x: hx + (Math.random() - 0.5) * 2, y: hy, vx: (Math.random() - 0.5) * 18, vy: -48 - Math.random() * 18, g: 95, vida: 0.75, colores: AGUA });
+        }
+        if (b.t < 3) r.sprite(BALLENA.arriba, PALETA_BALLENA, bx, by, { voltear: b.dir < 0, cortarY: yAgua });
+        if (b.t > 3.6) { esc.ballena = null; esc.proximaBallena = ahora + 18 + Math.random() * 20; }
+      } else {
+      const bx = b.x + b.dir * b.largo * u, by = yAgua + 8 - b.alto * Math.sin(Math.PI * u);
+      const salpica = xx => { for (let n = 0; n < 10; n++) esc.parts.agregar({ x: xx + (Math.random() - 0.5) * 8, y: yAgua, vx: (Math.random() - 0.5) * 36, vy: -22 - Math.random() * 28, g: 150, vida: 0.9, colores: AGUA }); };
       if (!b.salpicoSalida && u > 0.06) { b.salpicoSalida = true; salpica(b.x); }
       if (!b.salpicoEntrada && u > 0.94) { b.salpicoEntrada = true; salpica(b.x + b.dir * b.largo); }
-      // The tilt follows the arc: nose up going out, flat at the top, nose down coming back
-      const pendiente = Math.cos(Math.PI * u);
-      if (u < 1) {
-        // Cut at the surface: what is still under the water is not drawn
-        r.sprite(BALLENA, PALETA_BALLENA, bx, by, { voltear: b.dir > 0, inclinar: b.dir * pendiente * 1.1, cortarY: yAgua });
-      }
+      // A drawn frame for each part of the jump: head up going out, level at the top, head down coming back
+      const cuadroB = u < 0.38 ? BALLENA.sube : u < 0.62 ? BALLENA.arriba : BALLENA.baja;
+      if (u < 1) r.sprite(cuadroB, PALETA_BALLENA, bx, by, { voltear: b.dir < 0, cortarY: yAgua });
       if (b.t > b.dura + 0.8) { esc.ballena = null; esc.proximaBallena = ahora + 18 + Math.random() * 20; }
+      }
     }
   }
 
