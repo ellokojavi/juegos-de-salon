@@ -143,9 +143,15 @@ const enlace = code => (S.code === code && S.L?.meta?.alias) || code;
 const urlCopa = code => `${location.origin}${location.pathname}?${enlace(code)}${PRUEBA ? '&test' : ''}`;
 const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/cup/?${enlace(code)}`);
 
+// On a day's cover the top-left button goes back to the cup, and says so ("‹ La Copa")
+function rotuloMenu() {
+  $('#btn-menu').textContent = S.antesala ? `‹\u00a0${T.toBoard}` : LABS ? T.backToLabsShort : T.menu;
+}
+
 function mostrar(id) {
   S.pantalla = id;
   S.antesala = false;
+  rotuloMenu();
   // Cada juego a pantalla completa (¿Dónde queda?) la pide de nuevo al montarse
   pantallaCompleta(false);
   $$('.screen').forEach(s => s.classList.toggle('active', s.id === `screen-${id}`));
@@ -1829,6 +1835,7 @@ function antesDeJugar(d) {
   const id = juegoDelDia(meta, d), J = juegoDia(meta, d), variante = varianteDelDia(meta, d);
   mostrar('jugar');
   S.antesala = true;
+  rotuloMenu();
   $('#jugar-head').innerHTML = '';
   const body = $('#jugar-body');
   body.innerHTML = '';
