@@ -15,12 +15,16 @@ const SOLO = Number(arg('--nivel')) || 0;
 const CARPETA = new URL('../../public/labs/bridges/', import.meta.url);
 if (process.argv.includes('--juntar')) {
   const todo = [];
-  for (let n = 1; n <= 5; n++) { const f = new URL(`catalogo-${n}.json`, CARPETA); if (existsSync(f)) { todo.push(...JSON.parse(readFileSync(f, 'utf8'))); rmSync(f); } }
-  writeFileSync(new URL('catalogo.json', CARPETA), JSON.stringify(todo) + '\n');
-  console.log(`✓ ${todo.length} crossings in public/labs/bridges/catalogo.json`);
+  const base = `catalogo${process.argv.includes('--prueba') ? '-prueba' : ''}`;
+  for (let n = 1; n <= 5; n++) { const f = new URL(`${base}-${n}.json`, CARPETA); if (existsSync(f)) { todo.push(...JSON.parse(readFileSync(f, 'utf8'))); rmSync(f); } }
+  writeFileSync(new URL(`${base}.json`, CARPETA), JSON.stringify(todo) + '\n');
+  console.log(`✓ ${todo.length} crossings in public/labs/bridges/${base}.json`);
   process.exit(0);
 }
-const HOLGURA = [3, 3, 2, 1, 0];
+// `--prueba`: the tighter version under evaluation (catalogo-prueba.json): fewer spare beams, one helper
+// per crossing (mixed ones only at levels 4 and 5) and a stronger search
+const PRUEBA = process.argv.includes('--prueba');
+const HOLGURA = PRUEBA ? [2, 1, 1, 0, 0] : [3, 3, 2, 1, 0];
 const ANCHOS = [[4, 5], [5, 6], [6, 7], [7, 8], [8, 8]];   // at 9 wide the search left bridges of 33 to 40 beams: too long to build
 let semilla = 20261016 + (Number(process.argv[process.argv.indexOf('--nivel') + 1]) || 0) * 7919;
 const rnd = () => ((semilla = (semilla * 16807) % 2147483647) / 2147483647);
@@ -31,16 +35,18 @@ const llega = (e, v) => probar(e, v).llego;
 /** A crossing of one kind: its anchors, besides the deck's two edges. */
 function cruce(nivel) {
   const W = entre(...ANCHOS[nivel]);
-  const tipos = nivel === 0 ? ['bajo', 'torres'] : ['bajo', 'torres', 'pilar', 'pilar-lado', 'mixto'];
+  const tipos = PRUEBA ? (nivel >= 3 ? ['bajo', 'torres', 'pilar', 'pilar-lado', 'mixto'] : ['bajo', 'torres', 'pilar', 'pilar-lado'])
+    : nivel === 0 ? ['bajo', 'torres'] : ['bajo', 'torres', 'pilar', 'pilar-lado', 'mixto'];
   const tipo = tipos[Math.floor(rnd() * tipos.length)];
   const anclas = [];
   const bajos = () => { anclas.push([0, -entre(1, 2)], [W, -entre(1, 2)]); };
   const torres = () => { anclas.push([0, 2], [W, 2]); };
   const pilar = lado => { const k = lado ? (rnd() < 0.5 ? 2 : W - 2) : Math.round(W / 2); anclas.push([k, -entre(2, 3)]); };
   if (tipo === 'bajo') bajos();
-  if (tipo === 'torres') { torres(); if (rnd() < 0.5) anclas.push([0, -1], [W, -1]); }
-  if (tipo === 'pilar') { pilar(false); anclas.push([0, -1], [W, -1]); }
-  if (tipo === 'pilar-lado') { pilar(true); anclas.push([0, -1], [W, -1]); }
+  // In the test version each crossing has a single helper: the towers alone, the pillar alone
+  if (tipo === 'torres') { torres(); if (!PRUEBA && rnd() < 0.5) anclas.push([0, -1], [W, -1]); }
+  if (tipo === 'pilar') { pilar(false); if (!PRUEBA) anclas.push([0, -1], [W, -1]); }
+  if (tipo === 'pilar-lado') { pilar(true); if (!PRUEBA) anclas.push([0, -1], [W, -1]); }
   if (tipo === 'mixto') { torres(); pilar(rnd() < 0.5); }
   return { ancho: W, anclas, tipo, nivel: nivel + 1 };
 }
@@ -86,6 +92,19 @@ function minimo(e, intentos = 12) {
     for (const b of barajar(base)) { const sin = conectadas(e, v.filter(x => x !== b)); if (sin.length < v.length && llega(e, sin)) v = sin; }
     if (!mejor || v.length < mejor.length) mejor = v;
   }
+  // Stronger search (test version): from the best, try taking two beams out and putting one back
+  if (PRUEBA && mejor) {
+    const todas = rico(e);
+    for (let it = 0; it < 120; it++) {
+      const [x, y] = barajar(mejor).slice(0, 2);
+      const sin = mejor.filter(b => b !== x && b !== y);
+      for (const c of barajar(todas).slice(0, 15)) {
+        if (sin.some(b => (b.a + '|' + b.b) === (c.a + '|' + c.b))) continue;
+        const prueba = conectadas(e, [...sin, c]);
+        if (prueba.length < mejor.length && llega(e, prueba)) { mejor = prueba; break; }
+      }
+    }
+  }
   return mejor;
 }
 
@@ -104,6 +123,6 @@ for (let nivel = 0; nivel < 5; nivel++) {
     console.log(`level ${nivel + 1}: ${e.tipo} ancho ${e.ancho} → ${sol.length} beams`);
   }
 }
-const archivo = SOLO ? `catalogo-${SOLO}.json` : 'catalogo.json';
+const archivo = `catalogo${PRUEBA ? '-prueba' : ''}${SOLO ? `-${SOLO}` : ''}.json`;
 writeFileSync(new URL(archivo, CARPETA), JSON.stringify(catalogo) + '\n');
 console.log(`✓ ${catalogo.length} crossings in public/labs/bridges/${archivo}`);
