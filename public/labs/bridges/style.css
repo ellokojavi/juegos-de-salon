@@ -58,9 +58,9 @@
 
 /* The score's table: one row per stage, numbers aligned on the right */
 .tv-tabla-caja { overflow-x: auto; }
-.tv-tabla { width: 100%; border-collapse: collapse; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
-.tv-tabla th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 800; padding: 4px 6px; text-align: left; }
-.tv-tabla td { padding: 5px 6px; border-top: 1px solid var(--glass-border); white-space: nowrap; }
+.tv-tabla { width: 100%; border-collapse: collapse; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+.tv-tabla th { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 800; padding: 4px 3px; text-align: left; }
+.tv-tabla td { padding: 5px 3px; border-top: 1px solid var(--glass-border); white-space: nowrap; }
 .tv-tabla .num { text-align: right; }
 .tv-tabla tr.no td { color: var(--muted); }
 .tv-tabla tfoot td { font-weight: 900; border-top: 2px solid var(--glass-border); }
@@ -70,3 +70,8 @@
 @media (prefers-reduced-motion: reduce) { .tv-letrero { animation: none; display: none; } }
 
 .tv-letrero .tv-carga { color: #ff8a3d; }
+/* The result's "how it could be crossed": the known bridge with the train looping over it */
+.tv-solucion { display: grid; gap: 8px; text-align: left; }
+.tv-solucion p { margin: 0; }
+/* On a narrow phone the table drops the "Mín." column so it fits without scrolling; the note still names the minimum */
+@media (max-width: 380px) { .tv-tabla { font-size: 0.8rem; } .tv-tabla th:nth-child(4), .tv-tabla td:nth-child(4) { display: none; } }

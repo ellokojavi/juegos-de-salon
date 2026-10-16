@@ -45,12 +45,14 @@ const T = {
   cuenta: {
     titulo: '🧮 Cómo se calculó',
     cabeza: ['Etapa', '', 'Vigas', 'Mín.', 'Etapa', 'Ahorro'], madera: 'Madera (m)',
+    notaAhorroMadera: 'Cada etapa pasada vale 12. El ahorro da hasta {u} por etapa: todo si usaste la madera mínima conocida, nada si usaste toda.',
     subtotal: 'Suma',
     notaAhorro: 'Cada etapa pasada vale 12. El ahorro da hasta {u} por etapa: todo si usaste lo mínimo conocido, nada si usaste todas las vigas.',
     rapidez: '⏱ Rapidez ({t})',
     notaRapidez: 'Hasta {u}: todo en {rapido} o menos, nada a los {max}. Te tocó el {f}, por {n} de {total} etapas.',
     total: 'Total: {a} + {b} + {c}',
   },
+  solucion: '💡 Así se podía cruzar la etapa {n}', solucionMadera: 'Usa {n} m de madera de los {max} m que tenías.', solucionVigas: 'Usa {n} vigas de las {max} que tenías.',
   otraVez: '🔁 Jugar otra vez', laboratorio: '‹ Volver al laboratorio',
 };
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
@@ -749,6 +751,36 @@ const pct = x => `${Math.round(x * 100)} %`;
  * The result: the score, and under it the arithmetic as a table, one row per stage (passed or
  * not, with its beams and its points), then the three parts and the total.
  */
+/**
+ * The stage where the game stopped (not crossed): a bridge that works, with the train crossing it over
+ * and over, so the player learns how it could be done. It is the catalog's own solution for that crossing.
+ */
+function solucionVista() {
+  if (P.hechas >= P.etapas.length) return null;
+  const e = P.etapas[P.hechas];
+  if (!e?.solucion?.length) return null;
+  const vigas = e.solucion.map(([a, b]) => ({ a, b }));
+  const c = lienzo(e);
+  const caja = el('div', { class: 'panel tv-solucion', id: 'solucion' },
+    el('p', { class: 'lead' }, fmt(T.solucion, { n: P.hechas + 1 })),
+    el('div', { class: 'tv-tablero' }, c),
+    el('p', { class: 'muted tv-nota' }, e.madera ? fmt(T.solucionMadera, { n: num(costo(e, vigas)), max: num(e.presupuesto) }) : fmt(T.solucionVigas, { n: vigas.length, max: e.presupuesto })));
+  requestAnimationFrame(() => {
+    c._ajustar();
+    let sim = crearSim(e, vigas);
+    if (QUIETO) { dibujar(c, e, { vigas }); return; }
+    const cuadro = () => {
+      if (!c.isConnected) return;
+      for (let k = 0; k < Math.round(1 / 60 / DT); k++) paso(sim);
+      dibujar(c, e, { sim });
+      if (sim.fin && (sim.tren.cayo || fueraDeEscena(sim, e))) sim = crearSim(e, vigas);
+      requestAnimationFrame(cuadro);
+    };
+    requestAnimationFrame(cuadro);
+  });
+  return caja;
+}
+
 function resultado() {
   const { motivo, segundos: seg } = P.fin;
   const p = puntajePartida(P.usadas, seg, P.etapas);
@@ -758,7 +790,7 @@ function resultado() {
     const a = p.ahorros[k];
     return el('tr', { class: a ? '' : 'no' },
       td(`${k + 1}`, 'num'), td(a ? '✅' : '⬛'),
-      td(a ? `${num(a.usadas)} / ${num(e.presupuesto)}` : '—', 'num'), td(`${num(e.minimo)}`, 'num muted'),
+      td(a ? `${num(a.usadas)}/${num(e.presupuesto)}` : '—', 'num'), td(`${num(e.minimo)}`, 'num muted'),
       td(a ? `+${PUNTOS_ETAPA}` : '0', 'num'), td(a ? `+${num(a.puntos)}` : '0', 'num'));
   });
   const tabla = el('table', { class: 'tv-tabla' },
@@ -768,7 +800,7 @@ function resultado() {
   const cuenta = el('div', { class: 'panel tv-cuenta-final', id: 'cuenta' },
     el('p', { class: 'lead' }, C.titulo),
     el('div', { class: 'tv-tabla-caja' }, tabla),
-    el('p', { class: 'muted tv-nota' }, fmt(C.notaAhorro, { u: PUNTOS_AHORRO })),
+    el('p', { class: 'muted tv-nota' }, fmt(P.etapas.some(e => e.madera) ? C.notaAhorroMadera : C.notaAhorro, { u: PUNTOS_AHORRO })),
     el('div', { class: 'tv-linea' }, el('span', {}, fmt(C.rapidez, { t: mmss(seg) })), el('b', {}, `+${p.rapidez}`)),
     el('p', { class: 'muted tv-nota' }, fmt(C.notaRapidez, { u: BONO_RAPIDEZ, rapido: mmss(RAPIDO_S), max: mmss(TIEMPO_S), f: pct(p.fraccionTiempo), n: p.pasadas, total: P.etapas.length })),
     el('div', { class: 'tv-linea total' }, el('span', {}, fmt(C.total, { a: p.etapas, b: p.ahorro, c: p.rapidez })), el('b', {}, `${p.total}`)));
@@ -777,6 +809,7 @@ function resultado() {
     el('p', { class: `tv-sello${todas ? '' : ' mal'}` }, T.fin[motivo]),
     el('div', { class: 'score-big', id: 'puntaje' }, `${p.total}/100`),
     cuenta,
+    solucionVista(),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otro', onClick: () => { SFX.tap(); empezar(); } }, T.otraVez),
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio)));
   scrollTo(0, 0);
