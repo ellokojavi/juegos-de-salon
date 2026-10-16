@@ -49,8 +49,9 @@ Pixel art from `pixel.js` (sprites, particles): the train with smoke, steam and 
 when a beam snaps, a splash when something falls, birds now and then. One character per game, at a
 random stage and moment: a flying saucer (`?ovni`, `?ovni=mira|pesca`), a whale (`?ballena`,
 `?ballena=salto|chorro`) a mole that tunnels through a cliff (`?topo`, `?topo=anteojos|minero`), or a petrol-green boat
-with a wakeboarder towed from its tower roof by a black rope, riding its wave (`?wake`, `?wake=carve|jump|fall`: carving the wave, a jump off its
-crest, or a fall and the boat turning back to pick the rider up).
+with a wakeboarder towed from its tower roof by a black rope, riding its wave (`?wake`, `?wake=carve|jump|fall|sink`: carving the wave, a jump off its
+crest, a fall and the boat turning back to pick the rider up, or the rider sinking, only the head popping up,
+and the boat coming back with a small orange flag raised).
 These only appear in the game, never on the cover.
 
 ## Exceptions to the canons (while in the lab)
