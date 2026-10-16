@@ -75,9 +75,9 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336 |
 | Agentes (usabilidad, documentación, procesos, atención) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
@@ -3602,7 +3602,7 @@ jugador ya había jugado. Reglas nuevas: `jugadores/<jid>/co`, `co` en las filas
 y `partidas` entre las tablas que suben de a uno; las publica `publish.yml` (D-218).
 
 ## D-220 · "Tus copas" sigue al jugador, no solo al celular
-**Fecha:** 2026-10-05 · **Estado:** vigente · **Relación:** amplía D-212 y la cuenta de La Copa (C-6)
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-336 · **Relación:** amplía D-212 y la cuenta de La Copa (C-6)
 **Decisión:** La lista "Tus copas" de la portada de La Copa suma, a las que recuerda este celular,
 las del jugador que entró con nombre y PIN, de cualquier celular:
 - Cada vez que un celular con jugador abre una copa en que está sentado, además de enlazar al
@@ -6326,3 +6326,14 @@ label goes, it goes back to its place by popularity.
 it; the label alone did not help if the card was at the bottom.
 **Consequences:** the 🎲 random game, Uno al día's "play another" and the tools read the same order.
 `games.test.mjs` checks a new game goes right after La Copa and back to its place afterwards.
+
+## D-336 · "Tus copas" keeps the finished cups, behind the switch
+**Date:** 2026-10-16 · **Status:** current · **Relation:** amends D-220
+**Decision:** Owner's request: a finished cup no longer leaves "Tus copas" a week after it ends. It
+stays behind the "Mostrar copas terminadas (n)" switch, newest first, both the ones this phone
+remembers (now up to 50, before 10) and the player's from any phone (`jugadorCopas`, D-220).
+**Why:** the owner signed in with their player and saw only one finished cup out of the many they
+had played: the week limit made the list look like it had lost them.
+**Consequences:** the cups played before D-220 only show up once they are noted to their player
+(`node tools/firebase/rankings-history.mjs --write`). A separate history (place, winner) is left
+for later, if the list grows too long.
