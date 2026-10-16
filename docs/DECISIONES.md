@@ -4001,7 +4001,7 @@ El embudo de la campana (se ofreció → Avisarme → permiso) no se mide todav�
 deja de existir sin que el servicio lo diga sigue contando como viva hasta que un envío falle.
 
 ## D-234 · "Tus copas" marca las terminadas y las esconde tras un interruptor
-**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** amplía D-220
+**Fecha:** 2026-10-06 · **Estado:** corregida por D-336 · **Relación:** amplía D-220
 **Decisión:** En la lista "Tus copas" de la portada de La Copa, una copa cuyo `fin` ya pasó lleva
 la etiqueta **Terminó** (el texto `mineOver`, que no se usaba) y un fondo más apagado. Las
 terminadas no se ven de entrada: si hay alguna, al pie de la lista va el interruptor **Mostrar
@@ -6328,7 +6328,7 @@ it; the label alone did not help if the card was at the bottom.
 `games.test.mjs` checks a new game goes right after La Copa and back to its place afterwards.
 
 ## D-336 · "Tus copas" keeps the finished cups, behind the switch
-**Date:** 2026-10-16 · **Status:** current · **Relation:** amends D-220
+**Date:** 2026-10-16 · **Status:** current · **Relation:** amends D-220 and D-234
 **Decision:** Owner's request: a finished cup no longer leaves "Tus copas" a week after it ends. It
 stays behind the "Mostrar copas terminadas (n)" switch, newest first, both the ones this phone
 remembers (now up to 50, before 10) and the player's from any phone (`jugadorCopas`, D-220).
