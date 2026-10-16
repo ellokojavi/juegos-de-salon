@@ -11,9 +11,11 @@ import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim,
 import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, PALETA_LANCHA, SURFISTA, PALETA_SURFISTA } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
-// The visitors' parameters are internal (the owner's request): they only work in the workshop (a local
-// server, or the Tailscale link for a phone), never on the published site, so players cannot call them
-const INTERNO = /^(localhost|127\.0\.0\.1|\[::1\])$|\.localhost$|\.ts\.net$/.test(location.hostname);
+// The visitors' parameters are internal (the owner's request): they work in the workshop (a local server,
+// or the Tailscale link for a phone) and on the site only for someone who came in with a lab key
+// (labs-puerta.js keeps it), never for a player without one
+const CON_LLAVE = (() => { try { return !!localStorage.getItem('juegos-de-salon:labs-llave'); } catch { return false; } })();
+const INTERNO = CON_LLAVE || /^(localhost|127\.0\.0\.1|\[::1\])$|\.localhost$|\.ts\.net$/.test(location.hostname);
 const URL_INTERNA = new URLSearchParams(INTERNO ? location.search : '');
 // `?ovni`: the saucer comes right away (to look at it without waiting for chance)
 const OVNI_YA = URL_INTERNA.has('ovni');
