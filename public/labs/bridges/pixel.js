@@ -158,3 +158,25 @@ export const VAGON = [
   [...VAGON_CUERPO, '..kSSk....kSSk..', '.kSsSSk..kSsSSk.', '..kkkk....kkkk..'],
   [...VAGON_CUERPO, '..kSSk....kSSk..', '.kSSsSk..kSSsSk.', '..kkkk....kkkk..'],
 ];
+
+/* ------------------------------------------------------------------ */
+/* A bird, flapping: two frames, wings up and wings down, facing right */
+/* ------------------------------------------------------------------ */
+
+export const PALETA_PAJARO = { k: '#14081f', w: '#f0eaff', g: '#b9b0d6', o: '#ffb43a' };
+export const PAJARO = [
+  [
+    'k.....k.',
+    'wk...kw.',
+    '.wk.kw..',
+    '..wkwko.',
+    '...gg...',
+  ],
+  [
+    '........',
+    '........',
+    '..kwwko.',
+    '.kwggwk.',
+    'kw....wk',
+  ],
+];

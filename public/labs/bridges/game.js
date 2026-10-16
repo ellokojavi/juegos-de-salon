@@ -8,7 +8,7 @@ import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
-import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN } from './pixel.js';
+import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
@@ -110,7 +110,7 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   const ahora = performance.now() / 1000;
   const esc = c._esc ||= { parts: particulas(), ultimo: ahora, humo: 0, rotas: new Set(), caida: null, sim: null };
   const dt = Math.min(0.05, ahora - esc.ultimo); esc.ultimo = ahora;
-  if (esc.sim !== sim) { esc.sim = sim; esc.rotas = new Set(); esc.caida = null; }
+  if (esc.sim !== sim) { esc.sim = sim; esc.rotas = new Set(); esc.caida = null; esc.sueltos = new Set(); }
   const A = (x, y) => { const [px, py] = aPantalla(c, x, y); return [px / r.px, py / r.px]; };
   const u = ARTE;                        // art pixels per grid unit
   const { W, H } = r;
@@ -124,6 +124,22 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   for (let k = 0; k < 2; k++) {
     const x = ((ahora * (3 + 2 * k) + k * W * 0.6) % (W + 40)) - 20, y = H * (0.12 + 0.12 * k);
     for (const [dx, dy, rr] of [[0, 0, 4], [5, -2, 5], [10, 0, 4], [5, 1, 4]]) r.circulo(x + dx, y + dy, rr, 'rgba(255,255,255,0.10)');
+  }
+
+  // Now and then a bird (or a small flock) crosses the sky, flapping, and is gone on the other side
+  if (!QUIETO) {
+    esc.proximoPajaro ??= ahora + 3 + Math.random() * 5;
+    if (!esc.pajaros && ahora >= esc.proximoPajaro) {
+      const izq = Math.random() < 0.5, n = 1 + Math.floor(Math.random() * 3), y = H * (0.08 + Math.random() * 0.3);
+      esc.pajaros = Array.from({ length: n }, (_, k) => ({ x: izq ? -10 - k * 9 : W + 10 + k * 9, y: y + (k % 2) * 5, fase: Math.random() * 6, v: (izq ? 1 : -1) * (16 + Math.random() * 8) }));
+    }
+    if (esc.pajaros) {
+      for (const p of esc.pajaros) {
+        p.x += p.v * dt; p.fase += dt;
+        r.sprite(PAJARO[Math.floor(p.fase * 6) % 2], PALETA_PAJARO, p.x, p.y + Math.sin(p.fase * 2.2) * 2, { voltear: p.v < 0 });
+      }
+      if (esc.pajaros.every(p => p.x < -20 || p.x > W + 20)) { esc.pajaros = null; esc.proximoPajaro = ahora + 7 + Math.random() * 8; }
+    }
   }
 
   // The water, with waves that run and glint
@@ -216,7 +232,17 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     if (esc.caida) { esc.caida.vy += 220 * dt; esc.caida.dy += esc.caida.vy * dt; }
     // The couplings first, under the bodies: a short dark bar between each pair, at wheel height
     const en = piezas.map(p => { const h = alturaCamino(sim, p.x); const [px, py] = A(p.x, h ?? tr.y); return [px, py + (esc.caida && (h === null || p.k === tr.cayoPieza) ? esc.caida.dy : 0)]; });
-    for (let k = 1; k < en.length; k++) r.linea(en[k][0] + 6, en[k][1] - 4, en[k - 1][0] - 9, en[k - 1][1] - 4, '#14081f', 2);
+    // A coupling is rigid: if two pieces part (one falls), it snaps for good, with a spark, and each falls on its own
+    esc.sueltos ||= new Set();
+    for (let k = 1; k < en.length; k++) {
+      if (esc.sueltos.has(k)) continue;
+      if (Math.abs(en[k][1] - en[k - 1][1]) > 3) {
+        esc.sueltos.add(k);
+        if (!QUIETO) for (let n = 0; n < 8; n++) esc.parts.agregar({ x: en[k][0] + 10, y: en[k][1] - 4, vx: (Math.random() - 0.5) * 50, vy: -Math.random() * 40, g: 120, vida: 0.45, colores: CHISPAS });
+        continue;
+      }
+      r.linea(en[k][0] + 6, en[k][1] - 4, en[k - 1][0] - 9, en[k - 1][1] - 4, '#14081f', 2);
+    }
     // Departure: steam puffs from under the wheels while it starts
     if (!QUIETO && sim.t < 1.2 && Math.random() < 0.5) for (const sx of [-1, 1]) esc.parts.agregar({ x: en[0][0] + sx * 9, y: en[0][1] - 2, vx: sx * (10 + Math.random() * 10), vy: -4, vida: 0.8, radio: 1, crece: 3, colores: HUMO });
     // The headlight: a soft cone ahead of the locomotive
