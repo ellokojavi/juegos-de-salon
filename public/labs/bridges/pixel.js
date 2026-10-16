@@ -254,3 +254,12 @@ function inclinarColumnas(filas, paso) {
   return out.map(r => r.join(''));
 }
 export const BALLENA = { sube: inclinarColumnas(ARRIBA, 0.14), arriba: ARRIBA, baja: inclinarColumnas(ARRIBA, -0.14) };
+
+/* A little fish (the saucer's catch): 7 × 4, facing right */
+export const PALETA_PEZ = { k: '#14081f', o: '#ff8a3d', y: '#ffd23f', w: '#ffffff' };
+export const PEZ = [
+  '.k..kk.',
+  'koookwk',
+  'kooyook',
+  '.k..kk.',
+];
