@@ -229,19 +229,22 @@ export const PREGUNTA = [
 /* ------------------------------------------------------------------ */
 
 export const PALETA_BALLENA = { k: '#0b1430', b: '#3d5a9e', B: '#5b7cc4', l: '#b9c8ee', w: '#ffffff' };
+// The same girth as the level frame (about 6 pixels across the body), only on a diagonal
 const SUBE = [
-  '..........kk..',
-  '.........kBBk.',
-  '........kBwBk.',
-  '.......kBBBBk.',
-  '......kbBBBk..',
-  '.....kbbbbk...',
-  '....kbbbbbk...',
-  '...kllbbbk....',
-  '..kllllbk.....',
-  '.kkkllbk......',
-  'kbk.kkk.......',
-  '.kk...........',
+  '...........kkk..',
+  '..........kBBBk.',
+  '.........kBBBBBk',
+  '........kBBBBwBk',
+  '.......kbBBBBBBk',
+  '......kbbBBBBBk.',
+  '.....kbbbbBBBk..',
+  '....kllbbbbbk...',
+  '...kllllbbbk....',
+  '..kllllllbk.....',
+  '.kkllllllk......',
+  'kbkkllllk.......',
+  'kbbkkkkk........',
+  '.kk.............',
 ];
 const ARRIBA = [
   '..........kkkkkk......',
