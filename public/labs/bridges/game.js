@@ -315,19 +315,24 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
         r.sprite(LANCHA, PALETA_LANCHA, w.x, yAgua + 2, { voltear: w.dir < 0, cortarY: yAgua + 1 });
         if (conJinete) { r.punto(w.x - w.dir * 4, yAgua - 4, PALETA_SURFISTA.s); r.punto(w.x - w.dir * 4, yAgua - 5, PALETA_SURFISTA.k); }
       };
+      // The black tow rope, from the rear top corner of the wake tower's roof, at the stern to the rider's front hand
+      const cuerda = (rx, ry) => r.linea(w.x - w.dir * 6, yAgua - 6, rx + w.dir * 2, ry - 6, '#0a0a0a');
       w.x += w.dir * V * dt;
       if (w.fase === 'cruza') {
         // Carving: the rider slides up the wave and back down it, crouched while going down
         if (w.modo === 'carve' || w.modo === 'jump' && w.salto === 0 && Math.abs(w.x - mitad) > 8 || w.modo === 'fall' && Math.abs(w.x - mitad) > 8) {
           const prev = w.d; w.d = 9 + Math.sin(w.t * 2.2) * 3.5;
           dibujaOla(); lancha();
-          r.sprite(w.d > prev ? SURFISTA.arriba : SURFISTA.agachado, PALETA_SURFISTA, popa() - w.dir * w.d, yAgua - ola(w.d) + 1, { voltear: w.dir < 0 });
+          const rx = popa() - w.dir * w.d, ry = yAgua - ola(w.d) + 1;
+          cuerda(rx, ry);
+          r.sprite(w.d > prev ? SURFISTA.arriba : SURFISTA.agachado, PALETA_SURFISTA, rx, ry, { voltear: w.dir < 0 });
         } else if (w.modo === 'jump') {
           // The jump: off the crest, up, a spin of the board in the air, and back down onto the wave
           if (w.salto === 0) { w.salto = 1; w.alto = 0; w.vy = -46; }
           w.vy += 120 * dt; w.alto = Math.min(0, w.alto + w.vy * dt);
           dibujaOla(); lancha();
           const enAire = w.alto < 0 || w.vy < 0;
+          cuerda(popa() - w.dir * 7, yAgua - ola(7) + 1 + w.alto);
           r.sprite(enAire && w.vy < 10 ? SURFISTA.arriba : SURFISTA.agachado, PALETA_SURFISTA, popa() - w.dir * 7, yAgua - ola(7) + 1 + w.alto, { voltear: (w.dir < 0) !== (enAire && Math.floor(w.t * 8) % 2 === 1) });
           if (!enAire) { w.salto = 2; w.modo = 'carve'; for (let n = 0; n < 8; n++) esc.parts.agregar({ x: popa() - w.dir * 7, y: yAgua - 2, vx: (Math.random() - 0.5) * 30, vy: -14 - Math.random() * 14, g: 100, vida: 0.5, colores: AGUA }); }
         } else {
