@@ -7,7 +7,7 @@
 // whose bare deck falls. The budget is that minimum plus the level's spare beams (3, 3, 2, 1, 0).
 // Each game draws one crossing per level, so a regular player rarely meets the same five.
 import { writeFileSync, readFileSync, existsSync, rmSync } from 'node:fs';
-import { probar, vigaValida, fijos } from '../../public/labs/bridges/engine.js';
+import { probar, vigaValida, fijos, costo, fijarDT, DT } from '../../public/labs/bridges/engine.js';
 
 const arg = n => (process.argv.includes(n) ? process.argv[process.argv.indexOf(n) + 1] : null);
 const POR_NIVEL = Number(arg('--por-nivel')) || 12;
@@ -15,7 +15,7 @@ const SOLO = Number(arg('--nivel')) || 0;
 const CARPETA = new URL('../../public/labs/bridges/', import.meta.url);
 if (process.argv.includes('--juntar')) {
   const todo = [];
-  const base = `catalogo${process.argv.includes('--prueba') ? '-prueba' : ''}`;
+  const base = `catalogo${process.argv.includes('--madera') ? '-madera' : process.argv.includes('--prueba') ? '-prueba' : ''}`;
   for (let n = 1; n <= 5; n++) { const f = new URL(`${base}-${n}.json`, CARPETA); if (existsSync(f)) { todo.push(...JSON.parse(readFileSync(f, 'utf8'))); rmSync(f); } }
   writeFileSync(new URL(`${base}.json`, CARPETA), JSON.stringify(todo) + '\n');
   console.log(`✓ ${todo.length} crossings in public/labs/bridges/${base}.json`);
@@ -23,7 +23,9 @@ if (process.argv.includes('--juntar')) {
 }
 // `--prueba`: the tighter version under evaluation (catalogo-prueba.json): fewer spare beams, one helper
 // per crossing (mixed ones only at levels 4 and 5) and a stronger search
-const PRUEBA = process.argv.includes('--prueba');
+// `--madera`: the budget in wood (each beam costs its length), set by a build-up search that minimizes wood
+const MADERA = process.argv.includes('--madera');
+const PRUEBA = process.argv.includes('--prueba') || MADERA;
 const HOLGURA = PRUEBA ? [2, 1, 1, 0, 0] : [3, 3, 2, 1, 0];
 const ANCHOS = [[4, 5], [5, 6], [6, 7], [7, 8], [8, 8]];   // at 9 wide the search left bridges of 33 to 40 beams: too long to build
 let semilla = 20261016 + (Number(process.argv[process.argv.indexOf('--nivel') + 1]) || 0) * 7919;
@@ -35,7 +37,7 @@ const llega = (e, v) => probar(e, v).llego;
 /** A crossing of one kind: its anchors, besides the deck's two edges. */
 function cruce(nivel) {
   // The test version: with the heavy train, the last levels are narrower, so the load forces the shape, not the length
-  const W = entre(...(PRUEBA ? [[4, 5], [5, 6], [6, 7], [6, 7], [6, 7]] : ANCHOS)[nivel]);
+  const W = entre(...(MADERA ? ANCHOS_MADERA : PRUEBA ? [[4, 5], [5, 6], [6, 7], [6, 7], [6, 7]] : ANCHOS)[nivel]);
   const tipos = PRUEBA ? (nivel >= 3 ? ['bajo', 'torres', 'pilar', 'pilar-lado', 'mixto'] : ['bajo', 'torres', 'pilar', 'pilar-lado'])
     : nivel === 0 ? ['bajo', 'torres'] : ['bajo', 'torres', 'pilar', 'pilar-lado', 'mixto'];
   const tipo = tipos[Math.floor(rnd() * tipos.length)];
@@ -50,7 +52,7 @@ function cruce(nivel) {
   if (tipo === 'pilar-lado') { pilar(true); if (!PRUEBA) anclas.push([0, -1], [W, -1]); }
   if (tipo === 'mixto') { torres(); pilar(rnd() < 0.5); }
   // The test version loads the train more at each level: ×1 to ×2
-  return { ancho: W, anclas, tipo, nivel: nivel + 1, ...(PRUEBA ? { carga: [1, 1.25, 1.5, 1.75, 2][nivel] } : {}) };
+  return { ancho: W, anclas, tipo, nivel: nivel + 1, ...(PRUEBA ? { carga: [1, 1.25, 1.5, 1.75, 2][nivel] } : {}), ...(MADERA ? { madera: true } : {}) };
 }
 
 /** Every valid beam up to 1.5 long between grid points from y = −3 to 2: the rich start of the search. */
@@ -110,6 +112,48 @@ function minimo(e, intentos = 12) {
   return mejor;
 }
 
+/**
+ * Build-up search (with `--madera`): from the bare deck, add the beam that takes the train farthest
+ * (sampling the candidates), until it crosses; then drop whatever is left over, the longest first.
+ * It explores with a coarser step and confirms with the game's own.
+ */
+function todasLasVigas(e) {
+  const pts = []; for (let x = 0; x <= e.ancho; x++) for (let y = -3; y <= 3; y++) pts.push([x, y]);
+  const v = [];
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) if (!vigaValida(e, v, pts[i], pts[j])) v.push(V(pts[i], pts[j]));
+  return v;
+}
+const clave = b => b.a + '|' + b.b;
+function crecer(e, azar) {
+  const todas = todasLasVigas(e);
+  let v = cubierta(e.ancho);
+  const nota = w => { const r = probar(e, w); return r.llego ? 1e6 - costo(e, w) : r.x * 100 - r.rotas; };
+  for (let paso = 0; paso < 40 && !probar(e, v).llego; paso++) {
+    const usados = new Set([...fijos(e).map(p => p.join(',')), ...v.flatMap(b => [b.a.join(','), b.b.join(',')])]);
+    const tiene = new Set(v.map(clave));
+    const opciones = barajar(todas.filter(c => !tiene.has(clave(c)) && (usados.has(c.a.join(',')) || usados.has(c.b.join(','))))).slice(0, 70);
+    const puntuadas = opciones.map(c => [nota([...v, c]), c]).sort((p, q) => q[0] - p[0]);
+    if (!puntuadas.length) return null;
+    v = [...v, puntuadas[Math.min(puntuadas.length - 1, Math.floor(rnd() * azar))][1]];
+  }
+  if (!probar(e, v).llego) return null;
+  for (const b of [...v].sort((p, q) => Math.hypot(q.b[0] - q.a[0], q.b[1] - q.a[1]) - Math.hypot(p.b[0] - p.a[0], p.b[1] - p.a[1]))) {
+    const sin = conectadas(e, v.filter(x => x !== b));
+    if (probar(e, sin).llego) v = sin;
+  }
+  return v;
+}
+function minimoMadera(e, intentos = 4) {
+  const fino = DT;
+  fijarDT(1 / 480);
+  let mejor = null;
+  for (let k = 0; k < intentos; k++) { const v = crecer(e, k === 0 ? 1 : 2); if (v && (!mejor || costo(e, v) < costo(e, mejor))) mejor = v; }
+  fijarDT(fino);
+  return mejor && probar(e, mejor).llego ? mejor : null;   // confirmed with the game's step
+}
+const HOLGURA_MADERA = [1.5, 1, 0.5, 0, 0];
+const ANCHOS_MADERA = [[4, 5], [5, 6], [6, 7], [6, 7], [7, 8]];
+
 const catalogo = [];
 for (let nivel = 0; nivel < 5; nivel++) {
   if (SOLO && nivel !== SOLO - 1) continue;
@@ -118,13 +162,16 @@ for (let nivel = 0; nivel < 5; nivel++) {
     intentos++;
     const e = cruce(nivel);
     if (llega(e, cubierta(e.ancho))) continue;                    // a bare deck must fall
-    const sol = minimo(e, nivel >= 3 ? 24 : 12);
+    const sol = MADERA ? minimoMadera(e) : minimo(e, nivel >= 3 ? 24 : 12);
     if (!sol) continue;
-    catalogo.push({ ...e, minimo: sol.length, presupuesto: sol.length + HOLGURA[nivel], solucion: sol.map(v => [v.a, v.b]) });
+    if (MADERA) {
+      const min = Math.ceil(costo(e, sol) * 10) / 10;
+      catalogo.push({ ...e, minimo: min, presupuesto: Math.round((min + HOLGURA_MADERA[nivel]) * 10) / 10, solucion: sol.map(v => [v.a, v.b]) });
+    } else catalogo.push({ ...e, minimo: sol.length, presupuesto: sol.length + HOLGURA[nivel], solucion: sol.map(v => [v.a, v.b]) });
     hechos++;
-    console.log(`level ${nivel + 1}: ${e.tipo} ancho ${e.ancho} → ${sol.length} beams`);
+    console.log(`level ${nivel + 1}: ${e.tipo} ancho ${e.ancho} → ${sol.length} beams${MADERA ? `, ${costo(e, sol).toFixed(1)} m of wood` : ''}`);
   }
 }
-const archivo = `catalogo${PRUEBA ? '-prueba' : ''}${SOLO ? `-${SOLO}` : ''}.json`;
+const archivo = `catalogo${MADERA ? '-madera' : PRUEBA ? '-prueba' : ''}${SOLO ? `-${SOLO}` : ''}.json`;
 writeFileSync(new URL(archivo, CARPETA), JSON.stringify(catalogo) + '\n');
 console.log(`✓ ${catalogo.length} crossings in public/labs/bridges/${archivo}`);

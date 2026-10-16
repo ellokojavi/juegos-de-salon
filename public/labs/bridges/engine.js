@@ -37,6 +37,15 @@ export function vigaValida(e, vigas, a, b) {
   return null;
 }
 
+/**
+ * What a bridge costs. A crossing with `madera` measures its budget in wood: each beam costs its
+ * length (a two-square beam costs double), so a few long beams are no longer a free trick. Without it,
+ * one beam is one unit, as in the first stages.
+ */
+export const largoViga = v => Math.hypot(v.b[0] - v.a[0], v.b[1] - v.a[1]);
+export const costoViga = (e, v) => (e.madera ? largoViga(v) : 1);
+export const costo = (e, vigas) => vigas.reduce((s, v) => s + costoViga(e, v), 0);
+
 /** A beam is road when both its ends are on the deck (y = 0): the train runs on those. */
 export const esCamino = v => v.a[1] === 0 && v.b[1] === 0;
 
@@ -164,7 +173,8 @@ export function paso(s) {
 export function probar(e, vigas, maxPasos = Math.ceil(30 / DT)) {
   const s = crearSim(e, vigas);
   for (let k = 0; k < maxPasos && !s.fin; k++) paso(s);
-  return { llego: s.tren.llego, cayo: s.tren.cayo, rotas: s.vigas.filter(v => v.rota).length, t: s.t };
+  // `x`: how far the train got (for a search that builds bridges up)
+  return { llego: s.tren.llego, cayo: s.tren.cayo, rotas: s.vigas.filter(v => v.rota).length, t: s.t, x: s.tren.x };
 }
 
 /* ------------------------------------------------------------------ */

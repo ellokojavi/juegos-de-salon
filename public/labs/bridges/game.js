@@ -7,7 +7,7 @@
 import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
+import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S, costo, costoViga } from './engine.js';
 import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -31,20 +31,20 @@ const T = {
     ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con pocas vigas. Suman las etapas que pasa el tren, las vigas que te sobran y la rapidez.`],
   ],
   empezar: '🚂 Empezar', aJugar: '¡A construir!',
-  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', letrero: '{n} vigas para cruzar', carga: '🚂 Tren {x} más pesado',
+  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', madera: 'Madera: {n} de {max} m', letrero: '{n} vigas para cruzar', letreroMadera: '{n} m de madera para cruzar', carga: '🚂 Tren {x} más pesado',
   probar: '🚂 Probar', arreglar: '✏️ Arreglar', deshacer: '↩ Deshacer', borrar: '🧹 Borrar', borrarSeguro: '🧹 ¿Seguro?',
   rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   aviso: {
     inicio: 'Arrastra desde un punto marcado: las orillas o una viga que ya pusiste.',
     larga: 'Muy larga: una viga mide hasta 2 cuadros.', fuera: 'Fuera del área de construcción.',
-    repetida: 'Ya hay una viga ahí.', presupuesto: 'No te quedan vigas: quita alguna.', suelta: 'Empieza en un punto marcado.',
+    repetida: 'Ya hay una viga ahí.', presupuesto: 'No te quedan vigas: quita alguna.', sinMadera: 'No te alcanza la madera: quita alguna viga.', suelta: 'Empieza en un punto marcado.',
     quitada: 'Viga quitada.', borrado: 'Borraste el puente: ↩ Deshacer lo trae de vuelta.',
     cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.',
   },
   fin: { todas: '¡Todos los puentes en pie!', tiempo: 'Se acabó el tiempo', rendido: 'Te rendiste' },
   cuenta: {
     titulo: '🧮 Cómo se calculó',
-    cabeza: ['Etapa', '', 'Vigas', 'Mín.', 'Etapa', 'Ahorro'],
+    cabeza: ['Etapa', '', 'Vigas', 'Mín.', 'Etapa', 'Ahorro'], madera: 'Madera (m)',
     subtotal: 'Suma',
     notaAhorro: 'Cada etapa pasada vale 12. El ahorro da hasta {u} por etapa: todo si usaste lo mínimo conocido, nada si usaste todas las vigas.',
     rapidez: '⏱ Rapidez ({t})',
@@ -530,8 +530,8 @@ const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
  * the five fixed stages.
  */
 let CATALOGO = null;
-// `?catalogo=prueba`: the tighter catalog under evaluation
-const ARCHIVO_CATALOGO = new URLSearchParams(location.search).get('catalogo') === 'prueba' ? './catalogo-prueba.json' : './catalogo.json';
+// `?catalogo=prueba` or `?catalogo=madera`: a catalog under evaluation (the second one budgets wood)
+const ARCHIVO_CATALOGO = { prueba: './catalogo-prueba.json', madera: './catalogo-madera.json' }[new URLSearchParams(location.search).get('catalogo')] || './catalogo.json';
 fetch(new URL(ARCHIVO_CATALOGO, import.meta.url)).then(r => (r.ok ? r.json() : null)).then(c => { CATALOGO = Array.isArray(c) && c.length ? c : null; }).catch(() => {});
 function sortearEtapas() {
   if (!CATALOGO) return ETAPAS;
@@ -612,15 +612,16 @@ function jugar() {
       el('span', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })), puntos,
       el('span', { class: 'tv-reloj', id: 'tv-reloj' }, `⏱ ${mmss(Math.max(0, TIEMPO_S - segundos()))}`)),
     el('div', { class: 'tv-tablero' }, c,
-      el('div', { class: 'tv-letrero', 'aria-hidden': 'true' }, el('b', {}, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })), el('span', {}, fmt(T.letrero, { n: e.presupuesto })), e.carga > 1 ? el('span', { class: 'tv-carga' }, fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` })) : null)),
+      el('div', { class: 'tv-letrero', 'aria-hidden': 'true' }, el('b', {}, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })), el('span', {}, e.madera ? fmt(T.letreroMadera, { n: num(e.presupuesto) }) : fmt(T.letrero, { n: e.presupuesto })), e.carga > 1 ? el('span', { class: 'tv-carga' }, fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` })) : null)),
     el('div', { class: 'tv-barra' }, cuenta, aviso),
     botonProbar, fila);
   c._ajustar();
 
   const usados = () => new Set([...fijos(e).map(([x, y]) => `${x},${y}`), ...P.vigas.flatMap(v => [v.a.join(','), v.b.join(',')])]);
   function repintar(arrastre = null) {
-    cuenta.textContent = fmt(T.vigas, { n: P.vigas.length, max: e.presupuesto });
-    cuenta.classList.toggle('lleno', P.vigas.length >= e.presupuesto);
+    const gastado = costo(e, P.vigas);
+    cuenta.textContent = e.madera ? fmt(T.madera, { n: num(gastado), max: num(e.presupuesto) }) : fmt(T.vigas, { n: P.vigas.length, max: e.presupuesto });
+    cuenta.classList.toggle('lleno', gastado >= e.presupuesto - 0.05);
     botonDeshacer.disabled = !P.historial.length || P.simulando;
     botonProbar.disabled = P.simulando || !P.vigas.length;
     botonBorrar.disabled = P.simulando || !P.vigas.length;
@@ -653,7 +654,7 @@ function jugar() {
     const m = punto(ev), g = cercano(m);
     const hasta = cerca(m, g) ? g : m;
     const motivo = Array.isArray(hasta) && Number.isInteger(hasta[0]) && Number.isInteger(hasta[1]) ? vigaValida(e, P.vigas, desde, hasta) : 'suelta';
-    ultimoArrastre = { a: desde, b: hasta, ok: !motivo && P.vigas.length < e.presupuesto };
+    ultimoArrastre = { a: desde, b: hasta, ok: !motivo && costo(e, P.vigas) + costoViga(e, { a: desde, b: hasta }) <= e.presupuesto + 1e-9 };
     repintar(ultimoArrastre);
   });
   c.addEventListener('pointerup', ev => {
@@ -668,7 +669,7 @@ function jugar() {
     }
     if (desde) {
       const hasta = cerca(m, g) ? g : null;
-      const motivo = !hasta ? 'fuera' : P.vigas.length >= e.presupuesto ? 'presupuesto' : vigaValida(e, P.vigas, desde, hasta);
+      const motivo = !hasta ? 'fuera' : costo(e, P.vigas) + costoViga(e, { a: desde, b: hasta }) > e.presupuesto + 1e-9 ? (e.madera ? 'sinMadera' : 'presupuesto') : vigaValida(e, P.vigas, desde, hasta);
       if (motivo) { if (motivo !== 'cero') { aviso.textContent = T.aviso[motivo] || T.aviso.fuera; SFX.error(); vibrate([30, 30, 30]); } }
       else { P.historial.push(P.vigas); P.vigas = [...P.vigas, { a: desde, b: hasta }]; SFX.tap(); vibrate(10); aviso.textContent = ''; }
     }
@@ -706,7 +707,7 @@ function jugar() {
       if (!sim.fin) { requestAnimationFrame(cuadro); return; }
       // It made it: the notice now, and the scene runs on until the last wagon leaves the screen
       if (sim.tren.llego) {
-        if (!avisado) { avisado = true; aviso.textContent = T.aviso.paso; SFX.win(); vibrate([30, 50, 30]); P.hechas++; P.usadas.push(P.vigas.length); P.rotasAntes = new Set(); }
+        if (!avisado) { avisado = true; aviso.textContent = T.aviso.paso; SFX.win(); vibrate([30, 50, 30]); P.hechas++; P.usadas.push(costo(e, P.vigas)); P.rotasAntes = new Set(); }
         if (!fueraDeEscena(sim, e)) { requestAnimationFrame(cuadro); return; }
         setTimeout(() => {
           if (P.fin) return;
@@ -757,11 +758,11 @@ function resultado() {
     const a = p.ahorros[k];
     return el('tr', { class: a ? '' : 'no' },
       td(`${k + 1}`, 'num'), td(a ? '✅' : '⬛'),
-      td(a ? `${a.usadas} / ${e.presupuesto}` : '—', 'num'), td(`${e.minimo}`, 'num muted'),
+      td(a ? `${num(a.usadas)} / ${num(e.presupuesto)}` : '—', 'num'), td(`${num(e.minimo)}`, 'num muted'),
       td(a ? `+${PUNTOS_ETAPA}` : '0', 'num'), td(a ? `+${num(a.puntos)}` : '0', 'num'));
   });
   const tabla = el('table', { class: 'tv-tabla' },
-    el('thead', {}, el('tr', {}, ...C.cabeza.map((x, k) => el('th', { class: k > 1 ? 'num' : '' }, x)))),
+    el('thead', {}, el('tr', {}, ...C.cabeza.map((x, k) => el('th', { class: k > 1 ? 'num' : '' }, k === 2 && P.etapas.some(e => e.madera) ? C.madera : x)))),
     el('tbody', {}, ...filas),
     el('tfoot', {}, el('tr', {}, el('td', { colspan: '4' }, C.subtotal), td(`${p.etapas}`, 'num'), td(`${p.ahorro}`, 'num'))));
   const cuenta = el('div', { class: 'panel tv-cuenta-final', id: 'cuenta' },
