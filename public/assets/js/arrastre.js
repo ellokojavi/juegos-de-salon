@@ -237,12 +237,15 @@ export function crearArrastre({ fuentes, activo, avatar, medir, sobre, apretar, 
     };
 
     const onDown = ev => {
-      if (gesto?.alzada || !activo()) return;
+      if (!activo()) return;
       const item = ev.target.closest(selector);
       if (!item || !contenedor.contains(item)) return;
-      // A press whose finger was never heard lifting (it only pressed, nothing is in the air):
-      // the new one replaces it, or it would block every drag after it
-      if (gesto) { const g = gesto; g.quitar(); gesto = null; if (abandonar) abandonar(g.item, g.nombre); }
+      // A gesture whose finger was never heard lifting: a new press replaces it, or it would
+      // block every drag after it. If its card was in the air, it goes back first.
+      if (gesto) {
+        const g = gesto; g.quitar();
+        if (g.alzada) bajar(true); else { gesto = null; if (abandonar) abandonar(g.item, g.nombre); }
+      }
       gesto = { item, nombre, quitar, puntero: ev.pointerId, inicio: { x: ev.clientX, y: ev.clientY }, clientY: ev.clientY, alzada: false, muerto: false, clave: null, destinos: [] };
       if (apretar) apretar(item, nombre);
       pulsado = ev.target;
