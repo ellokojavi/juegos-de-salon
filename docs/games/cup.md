@@ -215,8 +215,9 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   (D-283). El botón y sus pasos están en `games/deshacer.js`, listos para Tango y Zip.
 - **Tango** no cuenta como error pasar por el sol para llegar a la luna: solo dejar la casilla
   rompiendo una regla (D-102). La pantalla dice lo mismo: el choque se pinta en rojo recién cuando
-  el jugador toca otra casilla, nunca por tiempo; con el tablero lleno se muestra sin contarse,
-  para que se vea qué arreglar (#135). La casilla con sol es ámbar y la de luna azul noche, con la luna
+  el jugador toca otra casilla (never on a timer alone); con el tablero lleno se muestra sin contarse,
+  para que se vea qué arreglar (#135). In both cases the red, its sound and the counter wait 1.5 s
+  (`ROJO_MS`, restarted by each tap, D-337), because players found the instant red too abrupt. La casilla con sol es ámbar y la de luna azul noche, con la luna
   plateada: los dos emojis son amarillos y así no se confunden (D-146). Las dadas llevan su color más
   vivo (el sol, además, el borde entero) y un candado chico (#61).
 - **Toque y Fama: Palabra** acepta cualquier combinación de 5 letras distintas como intento, sin
@@ -310,7 +311,7 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
 ## Flujo
 
 `intro` (portada: crear, tus copas —las de este celular y, con jugador, las suyas de otros
-celulares, D-220; las terminadas con su etiqueta y escondidas tras "Mostrar copas terminadas", D-234—,
+celulares, D-220; las terminadas con su etiqueta y escondidas tras "Mostrar copas terminadas", D-234, all of them, newest first, D-336—,
 tengo un código) → `crear` → `entrar` (invitación: Soy nuevo
 / Ya estoy inscrito) → `tablero` → `jugar` (primero Cómo se juega y el comodín) → `resultado` →
 `admin`. En el tablero van **tus días** (los pasados con su resultado y deshabilitados, el de hoy
@@ -387,3 +388,6 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
   la semilla; la protección contra trampas está en las reglas de Firebase (ventanas con la hora del
   servidor, una sola escritura, el asiento con el hash del PIN, D-96). La verificación cruzada de
   puntajes sigue pendiente (LIG-30).
+- **The top-left button on a day's cover is "‹ Volver a la copa" and goes to the cup's board**, not to the app's menu: there
+  the cup is the menu, and the button replaces the "Volver a la copa" that used to close that screen.
+  Everywhere else in the cup it goes to the app's menu (or to the lab, with `?labs`).

@@ -41,12 +41,12 @@
       ],
       "estado": "en YouTube (@eljotairi), no listado: 16:9 https://youtu.be/fQ4uFaPX_4g y Short https://youtube.com/shorts/RYAvj2MTRPQ",
       "revision": {
-        "fecha": "2026-10-15",
-        "app": "0.171.5",
+        "fecha": "2026-10-16",
+        "app": "0.173.3",
         "al_dia": false,
         "pendiente": [
           "Zip (escena de los cuatro juegos, ~14-16 s): el encabezado del video dice 'Nivel 1 · 4 × 4'; desde 0.130.0 (D-250) dice 'Nivel 1 de 10' (diez niveles fijos). Se corrige en la próxima vuelta, no amerita rehacer la v6.",
-          "Uno al día (~21 s, el dedo toca la tarjeta de la portada): bajo la fila de La Copa y Uno al día se ve Línea de Tiempo; desde D-255 la portada va por popularidad y ahí va Toque y Fama. Menor: se corrige en la próxima vuelta.",
+          "Uno al día (~21 s, the finger taps the home card): under the La Copa and Uno al día row the video shows Línea de Tiempo; today, while the New label lasts (D-333, D-335, until 2026-10-29), Rutas rotas with its dark rainbow 'Nuevo' sticker goes there, and after that Toque y Fama by popularity (D-255). Minor: fixed on the next pass.",
           "Uno al día (~21 s): la píldora de su tarjeta en la portada dice '🔥 10 · Jugar el de hoy'; desde D-305 dice 'Jugar hoy' (EN 'Play today', PT 'Jogar hoje').",
           "Reinas (grilla '¡Y muchos más juegos!', ~20 s): bajo el tablero se ven 🧹 Borrar todo y 🏳️ Rendirse en una fila; desde D-283 la fila es ↩️ Deshacer y 🧹 Borrar todo, y Rendirse baja a su propia línea.",
           "Línea de Tiempo (~6-8 s, the '¡Correcto!' verdict): the card shows only its emoji, text and year (622); since D-314 a correct guess also tells the card's fact under it, with a bar that empties before it closes."
@@ -156,10 +156,13 @@
       "seleccion": true,
       "estado": "entregado al dueño",
       "revision": {
-        "fecha": "2026-10-15",
-        "app": "0.171.5",
-        "al_dia": true,
-        "pendiente": []
+        "fecha": "2026-10-16",
+        "app": "0.173.3",
+        "al_dia": false,
+        "pendiente": [
+          "Step 1 (0-1.3 s, the home page in the iPhone): the Uno al día card's pill says 'Jugar el de hoy'; since D-305 it says 'Jugar hoy'.",
+          "Step 1 (0-1.3 s): under the La Copa and Uno al día row the home page shows Línea de Tiempo; today Rutas rotas goes there with its dark rainbow 'Nuevo' sticker (D-333, D-335, until 2026-10-29), and Toque y Fama after that (D-255). Minor: a retake with capturar.mjs fixes both."
+        ]
       }
     },
     {
@@ -250,8 +253,8 @@
         "numeros-explosivos"
       ],
       "revision": {
-        "fecha": "2026-10-15",
-        "app": "0.171.5",
+        "fecha": "2026-10-16",
+        "app": "0.173.3",
         "al_dia": true,
         "pendiente": []
       }
@@ -297,8 +300,8 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-15",
-        "app": "0.172.0",
+        "fecha": "2026-10-16",
+        "app": "0.173.3",
         "al_dia": true,
         "pendiente": []
       }

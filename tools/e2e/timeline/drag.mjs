@@ -7,6 +7,7 @@
  *   2. picking the placed card up again and taking it to another slot
  *   3. dropping it off the line sends it back to the hand
  *   4. a sideways swipe on the hand is a scroll, and chooses nothing (D-38)
+ *   4b. a finger lifted outside the strip, with no pointer capture, still drops the card
  *
  * Played in solo mode, which is The Cup's ⏳ Lightning Line (D-142): the same drag from
  * assets/js/arrastre.js, mounted by cup/games/timeline/ui.js, and with no handoffs in between.
@@ -109,6 +110,29 @@ await drag(card2, { x: card2.x - 90, y: card2.y }, { steps: 6, tug: false });
 const afterSwipe = await sel();
 console.log('after swiping the hand sideways:', JSON.stringify(afterSwipe));
 console.log('  ' + (afterSwipe.card === null ? '✅' : '❌') + ' the sideways swipe does not choose a card (D-38)');
+
+/* 4b · A finger lifted where the strip can't hear it still drops the card ------- */
+// Synthetic pointer events: the browser has no such pointer, so `setPointerCapture` fails,
+// as it can on a phone when the first redraw destroys the touched card. The finger then
+// lifts over the page, not over the strip. Before, the card stayed floating over every later
+// screen (Pintaminas over La Copa's Administrar).
+await b.evaluate(`window.scrollTo(0,0); 1`); await sleep(150);
+const stuck = await b.evaluate(`(async()=>{
+  const c=document.querySelector('#solo-juego .hand .card'); const r=c.getBoundingClientRect();
+  const x=r.left+r.width/2, y=r.top+r.height/2, o={bubbles:true,cancelable:true,pointerId:77,pointerType:'touch',isPrimary:true};
+  c.dispatchEvent(new PointerEvent('pointerdown',{...o,clientX:x,clientY:y}));
+  for (let i=1;i<=4;i++){ document.querySelector('#solo-juego .hand').dispatchEvent(new PointerEvent('pointermove',{...o,clientX:x,clientY:y+12*i})); await new Promise(f=>setTimeout(f,16)); }
+  const lifted=!!document.querySelector('.vilo.on');
+  // A second finger lifting elsewhere does not end the first one's drag
+  document.body.dispatchEvent(new PointerEvent('pointerup',{...o,pointerId:78,clientX:5,clientY:5}));
+  const stillLifted=!!document.querySelector('.vilo.on');
+  document.body.dispatchEvent(new PointerEvent('pointerup',{...o,clientX:x,clientY:y+48}));
+  await new Promise(f=>setTimeout(f,100));
+  return JSON.stringify({lifted, stillLifted, after: !!document.querySelector('.vilo.on'), covered: document.body.classList.contains('arrastrando')});
+})()`).then(JSON.parse);
+console.log('lifted outside the strip:', JSON.stringify(stuck));
+console.log('  ' + (stuck.lifted && stuck.stillLifted ? '✅' : '❌') + ' the card lifts, and another finger lifting does not drop it');
+console.log('  ' + (!stuck.after && !stuck.covered ? '✅' : '❌') + ' lifting the finger outside the strip drops the card: it does not stay floating');
 
 /* 5 · And the button is still what places ------------------------------------- */
 // The strip was shifted by the swipe: take the first fully visible card
