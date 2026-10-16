@@ -83,8 +83,8 @@ export function montar(raiz, ctx) {
       if (armado === clave) { armado = null; clearTimeout(armadoTimer); accion(); return; }
       armado = clave; SFX.tap(); vibrate(15);
       clearTimeout(armadoTimer);
-      armadoTimer = setTimeout(() => { armado = null; if (raiz.isConnected) dibujar(); }, CONFIRMAR_MS);
-      dibujar();
+      armadoTimer = setTimeout(() => { armado = null; if (raiz.isConnected) dibujar(false, false); }, CONFIRMAR_MS);
+      dibujar(false, false);
     },
   }, armado === clave ? rotuloArmado : rotulo);
 
@@ -95,7 +95,7 @@ export function montar(raiz, ctx) {
     dibujar(true);
   };
 
-  const dibujar = (ahora = false) => {
+  const dibujar = (ahora = false, reiniciar = true) => {
     const e = motor.estado(p, jugadas);
     // El último toque rompió una regla, pero todavía se perdona si se vuelve a tocar la misma
     // casilla: no se cuenta ni se pinta lo que trajo ese toque, solo lo que ya estaba en rojo.
@@ -111,9 +111,12 @@ export function montar(raiz, ctx) {
     // A new red cell waits ROJO_MS (restarted by each tap) before it is painted and counted on screen
     if (ahora || e.fin || [...mal].every(i => visto.has(i))) {
       clearTimeout(rojoTimer); rojoTimer = null;
+      // Fixed (or cleared) before the red showed: a clash already counted still sounds, now
+      if (sonar && !ahora) { sonar = false; if (errores > erroresVistos) avisar(); }
       visto = mal; erroresVistos = errores;
     } else {
-      clearTimeout(rojoTimer); rojoTimer = setTimeout(revelar, ROJO_MS);
+      // Arming a two-tap button is not a cell tap: it does not restart the wait
+      if (reiniciar || !rojoTimer) { clearTimeout(rojoTimer); rojoTimer = setTimeout(revelar, ROJO_MS); }
       visto = new Set([...mal].filter(i => visto.has(i)));
       mal = visto; errores = erroresVistos;
     }
