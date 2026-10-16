@@ -1,5 +1,5 @@
 {
-  "version": "0.173.7",
+  "version": "0.173.10",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -975,6 +975,9 @@
     "public/labs/agents/engine.js",
     "public/labs/agents/game.js",
     "public/labs/agents/pistas.js",
+    "public/labs/bridges/engine.js",
+    "public/labs/bridges/game.js",
+    "public/labs/bridges/pixel.js",
     "public/labs/code/engine-palabra.js",
     "public/labs/code/engine.js",
     "public/labs/code/game.js",
@@ -1037,6 +1040,7 @@
     "public/hangman/engine.test.mjs",
     "public/julep/engine.test.mjs",
     "public/labs/agents/engine.test.mjs",
+    "public/labs/bridges/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
@@ -1205,6 +1209,10 @@
     {
       "path": "docs/games/battleship.md",
       "title": "Diseño: Batalla Naval"
+    },
+    {
+      "path": "docs/games/bridges.md",
+      "title": "🚂 Tren en Vilo (bridge builder, lab)"
     },
     {
       "path": "docs/games/bulls-and-cows-factibilidad.md",
