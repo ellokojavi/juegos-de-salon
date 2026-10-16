@@ -315,8 +315,16 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     }
     if (esc.topo && !esc.topo.fuera) {
       const tp = esc.topo, dir = tp.izq ? 1 : -1; tp.t += dt;
-      // The tunnel: every point it dug through, kept and drawn for the rest of the stage
-      for (const [cx, cy] of tp.camino) r.rect(cx - 1, cy - 6, 3, 7, 'rgba(26,11,46,0.92)');
+      // The tunnel: every point it dug through. About 2.5 s after the fall the earth fills it back in,
+      // from the edge inward, with some loose dirt where it closes
+      const relleno = tp.fase === 'cae' ? Math.max(0, Math.min(1, (tp.t - 2.5) / 1.4)) : 0;
+      const abiertos = Math.round(tp.camino.length * (1 - relleno));
+      for (let k = 0; k < abiertos; k++) { const [cx, cy] = tp.camino[k]; r.rect(cx - 1, cy - 6, 3, 7, 'rgba(26,11,46,0.92)'); }
+      if (relleno > 0 && relleno < 1 && abiertos > 0 && Math.random() < 0.5) {
+        const [cx, cy] = tp.camino[abiertos - 1];
+        esc.parts.agregar({ x: cx, y: cy - 3 + (Math.random() - 0.5) * 6, vx: (Math.random() - 0.5) * 10, vy: -4 - Math.random() * 6, g: 60, vida: 0.4, colores: ['#9a6440', '#7a4a2a', '#5a3a20'] });
+      }
+      if (relleno >= 1) tp.fuera = true;
       if (tp.fase === 'cava') {
         tp.x += dir * 11 * dt;
         // Erratic: every few pixels it picks a new height (up or down, within 4 of where it started)
@@ -520,7 +528,7 @@ function empezar() {
     const forzado = OVNI_YA || BALLENA_YA || TOPO_YA;
     const quien = OVNI_YA ? 'ovni' : BALLENA_YA ? 'ballena' : TOPO_YA ? 'topo' : ['ovni', 'ballena', 'topo'][Math.floor(Math.random() * 3)];
     const etapaSorteada = forzado ? 0 : Math.floor(Math.random() * ETAPAS.length);
-    const retraso = forzado ? 0.8 : 5 + Math.random() * 15;
+    const retraso = forzado ? 0.8 : 5 + Math.random() * 55;   // between 5 s and 1 minute into its stage
     P.ovni = { etapa: quien === 'ovni' ? etapaSorteada : -1, retraso, visto: quien !== 'ovni',
       modo: ['mira', 'pesca'].includes(OVNI_MODO) ? OVNI_MODO : Math.random() < 0.5 ? 'mira' : 'pesca' };
     P.ballena = { etapa: quien === 'ballena' ? etapaSorteada : -1, retraso, visto: quien !== 'ballena',
