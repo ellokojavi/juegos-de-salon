@@ -168,21 +168,30 @@ export const VAGON = [
 /* ------------------------------------------------------------------ */
 
 // Muted on purpose: a bird should pass almost unnoticed, close to the night sky's colors
-export const PALETA_PAJARO = { k: '#1d0d33', w: '#6a5a8e', g: '#54467a', o: '#8a6a5a' };
+export const PALETA_PAJARO = { k: '#7d6aa8', o: '#c49a5a' };
+// Three wing positions (up, spread, down), with a body, a head and a beak: it reads as a bird, not a squiggle.
+// Played up → spread → down → spread. 11 × 5, facing right.
 export const PAJARO = [
   [
-    'k.....k.',
-    'wk...kw.',
-    '.wk.kw..',
-    '..wkwko.',
-    '...gg...',
+    '.k.......k.',
+    '..k.....k..',
+    '...k...k...',
+    '....kkkkko.',
+    '.....kk....',
   ],
   [
-    '........',
-    '........',
-    '..kwwko.',
-    '.kwggwk.',
-    'kw....wk',
+    '...........',
+    '...........',
+    'kkk.....kkk',
+    '...kkkkkko.',
+    '.....kk....',
+  ],
+  [
+    '...........',
+    '...........',
+    '....kkkkko.',
+    '...k.kk.k..',
+    '..k.....k..',
   ],
 ];
 
@@ -215,18 +224,33 @@ export const PREGUNTA = [
 ];
 
 /* ------------------------------------------------------------------ */
-/* A whale that breaches: one body, tilted by its flight (`inclinar`)    */
+/* A whale that breaches: three drawn frames, all facing right — going  */
+/* up (head up), at the top (level) and coming down (head down)          */
 /* ------------------------------------------------------------------ */
 
 export const PALETA_BALLENA = { k: '#0b1430', b: '#3d5a9e', B: '#5b7cc4', l: '#b9c8ee', w: '#ffffff' };
-// Facing left: the head (with its eye) on the left, the tail flukes on the right — 22 × 8
-export const BALLENA = [
-  '......kkkkkk..........',
-  '....kkBBBBBBkk........',
-  '..kkBBBBBBBBBBkk...k.k',
-  '.kbBwBBBBBBBBBBbkkkbbk',
-  'kbbbbbbbbbbbbbbbbbbbk.',
-  'kblllllllbbbbbbbbbk...',
-  '.kllllllllllbbbkkk....',
-  '..kkkkkkkkkkkk........',
+const SUBE = [
+  '..........kk..',
+  '.........kBBk.',
+  '........kBwBk.',
+  '.......kBBBBk.',
+  '......kbBBBk..',
+  '.....kbbbbk...',
+  '....kbbbbbk...',
+  '...kllbbbk....',
+  '..kllllbk.....',
+  '.kkkllbk......',
+  'kbk.kkk.......',
+  '.kk...........',
 ];
+const ARRIBA = [
+  '..........kkkkkk......',
+  '........kkBBBBBBkk....',
+  'k.k...kkBBBBBBBBBBkk..',
+  'kbbkkkbBBBBBBBBBBwBbk.',
+  '.kbbbbbbbbbbbbbbbbbbbk',
+  '...kbbbbbbbbblllllllbk',
+  '....kkkbbbllllllllllk.',
+  '........kkkkkkkkkkkk..',
+];
+export const BALLENA = { sube: SUBE, arriba: ARRIBA, baja: [...SUBE].reverse() };
