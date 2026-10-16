@@ -303,10 +303,17 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     esc.inicio ??= ahora;
     if (visitas.topo && !esc.topo && ahora - esc.inicio >= visitas.retrasoTopo) {
       visitas.verTopo();
-      const izq = Math.random() < 0.5, y = Math.round(y0 + 20 + Math.random() * Math.max(4, (yAgua - y0) - 38));
+      // Only through earth: its height keeps the whole tunnel (with its wobble) clear of the anchors
+      // and their ledges on that cliff, and of the deck's plate at the top
+      const izq = Math.random() < 0.5, xc = izq ? 0 : e.ancho;
+      const ocupados = [[xc, 0], ...e.anclas.filter(([ax]) => ax === xc)].map(([ax, ay]) => A(ax, ay)[1]);
+      const libre = yy => ocupados.every(py => yy - 12 > py + 8 || yy + 5 < py - 4);
+      let y = null;
+      for (let k = 0; k < 40 && y === null; k++) { const c = Math.round(y0 + 14 + Math.random() * Math.max(4, (yAgua - y0) - 24)); if (libre(c)) y = c; }
+      if (y === null) { esc.topo = { fuera: true }; } else
       esc.topo = { izq, x: izq ? -6 : W + 6, borde: izq ? x0 - 2 : x1 + 2, y, y0: y, t: 0, fase: 'cava', vy: 0, rumbo: 0, camino: [] };
     }
-    if (esc.topo) {
+    if (esc.topo && !esc.topo.fuera) {
       const tp = esc.topo, dir = tp.izq ? 1 : -1; tp.t += dt;
       // The tunnel: every point it dug through, kept and drawn for the rest of the stage
       for (const [cx, cy] of tp.camino) r.rect(cx - 1, cy - 6, 3, 7, 'rgba(26,11,46,0.92)');
@@ -315,7 +322,7 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
         // Wobbly: the heading drifts up and down, kept within a few pixels of where it started
         tp.rumbo += (Math.random() - 0.5) * 3 * dt;
         tp.rumbo = Math.max(-0.5, Math.min(0.5, tp.rumbo - (tp.y - tp.y0) * 0.02));
-        tp.y += tp.rumbo * 11 * dt;
+        tp.y = Math.max(tp.y0 - 4, Math.min(tp.y0 + 4, tp.y + tp.rumbo * 11 * dt));
         const ultimo = tp.camino[tp.camino.length - 1];
         if (!ultimo || Math.abs(ultimo[0] - tp.x) >= 1) tp.camino.push([Math.round(tp.x), Math.round(tp.y)]);
         if (Math.random() < 0.35) esc.parts.agregar({ x: tp.x + dir * 5, y: tp.y - 3, vx: -dir * (8 + Math.random() * 14), vy: -6 - Math.random() * 10, g: 70, vida: 0.5, colores: ['#9a6440', '#7a4a2a', '#5a3a20'] });
