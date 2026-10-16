@@ -7,6 +7,7 @@
  * cuenta el puntaje (motor.estado), así lo rojo es exactamente lo que se cobra (#135). Con el
  * tablero lleno no queda otra casilla que tocar: ahí el choque se muestra, sin sonar ni contarse,
  * para que el jugador vea qué arreglar.
+ * Either way the red, its sound and the counter wait ROJO_MS (1.5 s) after the tap that brings them.
  *
  * Además (D-103): **borrar todo**, que pide un segundo toque para confirmar; una **pista** que
  * revela una casilla y cuesta 15 puntos, también con segundo toque; y **consejos** para cuando
@@ -19,6 +20,8 @@ const CLASE = { [motor.SOL]: 'sol', [motor.LUNA]: 'luna' };
 /** Los dos emojis son amarillos: la casilla de noche y la luna plateada los separan (D-146). */
 const icono = (el, v) => el('span', { class: `tan-ico ${CLASE[v]}` }, ICONO[v]);
 const CONFIRMAR_MS = 3000;
+/** A clash turns red (and sounds) this long after it would count, so the player can finish the thought. */
+const ROJO_MS = 1500;
 
 /**
  * El dibujo de las reglas, como el de Reinas (D-134): un tablero de 6 × 6 resuelto, con una
@@ -53,6 +56,9 @@ export function montar(raiz, ctx) {
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.slice() : [];
   let armado = null;          // qué acción espera su segundo toque: 'borrar' | 'pista'
   let armadoTimer = null;
+  let visto = new Set();      // cells already painted red
+  let erroresVistos = 0;      // the error count already shown
+  let rojoTimer = null, sonar = false;
   const { n } = p;
 
   const avisar = () => { SFX.error(); vibrate([40, 40, 40]); };
@@ -63,9 +69,10 @@ export function montar(raiz, ctx) {
     const x = motor.estado(p, jugadas);
     // Dejó atrás una casilla en choque: ahora sí cuenta, y ahora se ve y suena
     const dejado = antes.pendiente >= 0 && antes.pendiente !== j;
-    if (dejado) avisar();
-    if (x.fin) { SFX.win(); vibrate([30, 50, 30]); }
-    else if (!dejado) SFX.tap();
+    // The red and its sound wait ROJO_MS: see dibujar
+    if (dejado) sonar = true;
+    if (x.fin) { sonar = false; SFX.win(); vibrate([30, 50, 30]); }
+    else SFX.tap();
     dibujar();
   };
 
@@ -81,7 +88,14 @@ export function montar(raiz, ctx) {
     },
   }, armado === clave ? rotuloArmado : rotulo);
 
-  const dibujar = () => {
+  const revelar = () => {
+    rojoTimer = null;
+    if (!raiz.isConnected) return;
+    if (sonar) { sonar = false; avisar(); }
+    dibujar(true);
+  };
+
+  const dibujar = (ahora = false) => {
     const e = motor.estado(p, jugadas);
     // El último toque rompió una regla, pero todavía se perdona si se vuelve a tocar la misma
     // casilla: no se cuenta ni se pinta lo que trajo ese toque, solo lo que ya estaba en rojo.
@@ -93,6 +107,15 @@ export function montar(raiz, ctx) {
         const previo = motor.estado(p, jugadas.slice(0, -1)).mal;
         mal = new Set([...e.mal].filter(i => previo.has(i)));
       }
+    }
+    // A new red cell waits ROJO_MS (restarted by each tap) before it is painted and counted on screen
+    if (ahora || e.fin || [...mal].every(i => visto.has(i))) {
+      clearTimeout(rojoTimer); rojoTimer = null;
+      visto = mal; erroresVistos = errores;
+    } else {
+      clearTimeout(rojoTimer); rojoTimer = setTimeout(revelar, ROJO_MS);
+      visto = new Set([...mal].filter(i => visto.has(i)));
+      mal = visto; errores = erroresVistos;
     }
     // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
     if (e.fin) ctx.pararReloj?.(e);
@@ -136,7 +159,7 @@ export function montar(raiz, ctx) {
     }
     raiz.append(caja);
   };
-  dibujar();
+  dibujar(true);
 }
 
 export const resultado = e => ({ s: motor.puntaje(e), t: motor.tarjeta(e), resumen: `${motor.puntaje(e)}/100` });
