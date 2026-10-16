@@ -23,7 +23,7 @@
 .tv-puntos span.hecha { background: var(--lime); border-color: var(--lime); }
 .tv-puntos span.actual { background: #fff; border-color: #fff; }
 .tv-puntos.grande span { width: 18px; height: 18px; }
-.tv-tablero { width: 100%; max-width: 560px; margin: 0 auto; border-radius: 16px; overflow: hidden;
+.tv-tablero { position: relative; width: 100%; max-width: 560px; margin: 0 auto; border-radius: 16px; overflow: hidden;
   background: linear-gradient(180deg, rgba(138, 77, 255, 0.18), rgba(11, 30, 63, 0.35)); border: 1px solid var(--glass-border); }
 .tv-lienzo { display: block; touch-action: none; user-select: none; -webkit-user-select: none; }
 .tv-barra { display: grid; gap: 2px; text-align: center; min-height: 3.2em; }
@@ -47,3 +47,24 @@
 .tv-total { font-weight: 900; font-size: 1.1rem; color: var(--yellow); border-top: 1px solid var(--glass-border); padding-top: 6px; }
 
 @media (prefers-reduced-motion: reduce) { .titulo-tv .tren, .tv-sello { animation: none; } }
+
+/* The stage's sign: it slides in over the board, holds and goes */
+.tv-letrero { position: absolute; left: 50%; top: 14%; transform: translateX(-50%); display: grid; gap: 2px; text-align: center; pointer-events: none;
+  padding: 8px 16px; border-radius: 12px; background: rgba(20, 8, 31, 0.86); border: 2px solid var(--yellow); white-space: nowrap;
+  animation: tv-letrero 2s ease-in-out forwards; }
+.tv-letrero b { font: 1.4rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+.tv-letrero span { font-size: 0.85rem; font-weight: 800; }
+@keyframes tv-letrero { 0% { opacity: 0; transform: translate(-50%, -14px); } 15%, 75% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -8px); visibility: hidden; } }
+
+/* The score's table: one row per stage, numbers aligned on the right */
+.tv-tabla-caja { overflow-x: auto; }
+.tv-tabla { width: 100%; border-collapse: collapse; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+.tv-tabla th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 800; padding: 4px 6px; text-align: left; }
+.tv-tabla td { padding: 5px 6px; border-top: 1px solid var(--glass-border); white-space: nowrap; }
+.tv-tabla .num { text-align: right; }
+.tv-tabla tr.no td { color: var(--muted); }
+.tv-tabla tfoot td { font-weight: 900; border-top: 2px solid var(--glass-border); }
+.tv-nota { font-size: 0.82rem; margin: 0; }
+.tv-linea { display: flex; justify-content: space-between; gap: 10px; font-weight: 800; }
+.tv-linea.total { font-size: 1.1rem; color: var(--yellow); border-top: 2px solid var(--glass-border); padding-top: 8px; }
+@media (prefers-reduced-motion: reduce) { .tv-letrero { animation: none; display: none; } }
