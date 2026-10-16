@@ -11,20 +11,24 @@ import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim,
 import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, PALETA_LANCHA, SURFISTA, PALETA_SURFISTA } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// The visitors' parameters are internal (the owner's request): they only work in the workshop (a local
+// server, or the Tailscale link for a phone), never on the published site, so players cannot call them
+const INTERNO = /^(localhost|127\.0\.0\.1|\[::1\])$|\.localhost$|\.ts\.net$/.test(location.hostname);
+const URL_INTERNA = new URLSearchParams(INTERNO ? location.search : '');
 // `?ovni`: the saucer comes right away (to look at it without waiting for chance)
-const OVNI_YA = new URLSearchParams(location.search).has('ovni');
+const OVNI_YA = URL_INTERNA.has('ovni');
 // `?ovni=mira` or `?ovni=pesca` picks the saucer's act; without it, chance picks one
-const OVNI_MODO = new URLSearchParams(location.search).get('ovni') || '';
+const OVNI_MODO = URL_INTERNA.get('ovni') || '';
 // `?ballena`: the whale jumps right away
-const BALLENA_YA = new URLSearchParams(location.search).has('ballena');
+const BALLENA_YA = URL_INTERNA.has('ballena');
 // `?topo`: the mole comes right away
-const TOPO_YA = new URLSearchParams(location.search).has('topo');
+const TOPO_YA = URL_INTERNA.has('topo');
 // `?ballena=salto` or `?ballena=chorro` picks the whale's act; without it, chance picks one
-const BALLENA_MODO = new URLSearchParams(location.search).get('ballena') || '';
+const BALLENA_MODO = URL_INTERNA.get('ballena') || '';
 // `?wake`: the green boat and its wake rider cross right away; `?wake=carve|jump|fall|sink` picks the act
-const WAKE_YA = new URLSearchParams(location.search).has('wake');
+const WAKE_YA = URL_INTERNA.has('wake');
 // `?wake=sink`: the rider sinks, only the head pops up, and the boat comes back with an orange flag raised
-const WAKE_MODO = new URLSearchParams(location.search).get('wake') || '';
+const WAKE_MODO = URL_INTERNA.get('wake') || '';
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
 const T = {
   nombre: 'Tren en Vilo',
