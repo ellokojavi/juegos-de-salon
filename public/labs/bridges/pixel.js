@@ -297,3 +297,16 @@ export const TOPO = [
     '..kk.k.kk.c',
   ],
 ];
+
+/* A "!" (the mole's surprise at the edge): 4 × 9 */
+export const EXCLAMACION = [
+  '.kk.',
+  'kyyk',
+  'kyyk',
+  'kyyk',
+  'kyyk',
+  '.kk.',
+  '.kk.',
+  'kyyk',
+  '.kk.',
+];

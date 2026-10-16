@@ -8,7 +8,7 @@ import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
-import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO } from './pixel.js';
+import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, EXCLAMACION } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // `?ovni`: the saucer comes right away (to look at it without waiting for chance)
@@ -296,32 +296,41 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     r.rect(xa, y0 - 1, xb - xa, 2, '#6fd42a'); r.rect(xa, y0 - 2, xb - xa, 1, '#9dff3a');
     for (let x = Math.floor(xa); x < xb; x += 3) if (ruido(x, 7) > 0.5) r.punto(x, y0 - 3, '#9dff3a');
   }
-  // The mole: it comes in through the earth from the outer side of a cliff, digging a tunnel toward the
-  // gap; at the edge it tumbles out and falls into the water. The tunnel fades a while later
+  // The mole: it comes in through the earth from the outer side of a cliff, digging a wobbly tunnel
+  // toward the gap (a little up, a little down); at the edge it peeks out, a "!" pops up, and it falls
+  // into the water. The tunnel stays where it was dug
   if (visitas && !QUIETO) {
     esc.inicio ??= ahora;
     if (visitas.topo && !esc.topo && ahora - esc.inicio >= visitas.retrasoTopo) {
       visitas.verTopo();
-      const izq = Math.random() < 0.5;
-      esc.topo = { izq, x: izq ? -6 : W + 6, borde: izq ? x0 - 2 : x1 + 2, y: Math.round(y0 + 18 + Math.random() * Math.max(4, (yAgua - y0) - 34)), t: 0, fase: 'cava', vy: 0, giro: 0 };
+      const izq = Math.random() < 0.5, y = Math.round(y0 + 20 + Math.random() * Math.max(4, (yAgua - y0) - 38));
+      esc.topo = { izq, x: izq ? -6 : W + 6, borde: izq ? x0 - 2 : x1 + 2, y, y0: y, t: 0, fase: 'cava', vy: 0, rumbo: 0, camino: [] };
     }
-    if (esc.topo && !esc.topo.fuera) {
+    if (esc.topo) {
       const tp = esc.topo, dir = tp.izq ? 1 : -1; tp.t += dt;
-      // The tunnel: dark from where it came in to where it is, fading once the mole is gone
-      const desde = tp.izq ? 0 : W, hasta = tp.fase === 'cava' ? tp.x : tp.borde;
-      const sombra = tp.fase === 'cae' ? Math.max(0, 1 - tp.caido / 2.5) : 1;
-      if (sombra > 0) r.rect(Math.min(desde, hasta), tp.y - 6, Math.abs(hasta - desde), 7, `rgba(26,11,46,${0.9 * sombra})`);
+      // The tunnel: every point it dug through, kept and drawn for the rest of the stage
+      for (const [cx, cy] of tp.camino) r.rect(cx - 1, cy - 6, 3, 7, 'rgba(26,11,46,0.92)');
       if (tp.fase === 'cava') {
         tp.x += dir * 11 * dt;
+        // Wobbly: the heading drifts up and down, kept within a few pixels of where it started
+        tp.rumbo += (Math.random() - 0.5) * 3 * dt;
+        tp.rumbo = Math.max(-0.5, Math.min(0.5, tp.rumbo - (tp.y - tp.y0) * 0.02));
+        tp.y += tp.rumbo * 11 * dt;
+        const ultimo = tp.camino[tp.camino.length - 1];
+        if (!ultimo || Math.abs(ultimo[0] - tp.x) >= 1) tp.camino.push([Math.round(tp.x), Math.round(tp.y)]);
         if (Math.random() < 0.35) esc.parts.agregar({ x: tp.x + dir * 5, y: tp.y - 3, vx: -dir * (8 + Math.random() * 14), vy: -6 - Math.random() * 10, g: 70, vida: 0.5, colores: ['#9a6440', '#7a4a2a', '#5a3a20'] });
         r.sprite(TOPO[Math.floor(tp.t * 6) % 2], PALETA_TOPO, tp.x, tp.y, { voltear: dir < 0 });
-        if ((dir > 0 && tp.x >= tp.borde) || (dir < 0 && tp.x <= tp.borde)) { tp.fase = 'cae'; tp.caido = 0; tp.vy = -20; }
-      } else {
+        if ((dir > 0 && tp.x >= tp.borde) || (dir < 0 && tp.x <= tp.borde)) { tp.fase = 'sorpresa'; tp.t = 0; }
+      } else if (tp.fase === 'sorpresa') {
+        // At the edge, half out over the gap: a "!" pops up and it freezes a moment
+        r.sprite(TOPO[0], PALETA_TOPO, tp.x, tp.y, { voltear: dir < 0 });
+        if (tp.t > 0.15) r.sprite(EXCLAMACION, PALETA_PLATILLO, tp.x + dir * 2, tp.y - 8 - (tp.t < 0.3 ? 2 : 0));
+        if (tp.t > 0.9) { tp.fase = 'cae'; tp.t = 0; tp.vy = -18; }
+      } else if (tp.fase === 'cae') {
         // It tumbles: forward a little, down with gravity, turning over, and splashes in the water
-        tp.caido += dt; tp.vy += 160 * dt; tp.x += dir * 10 * dt; tp.y += tp.vy * dt;
-        if (tp.y < yAgua + 2) r.sprite(TOPO[0], PALETA_TOPO, tp.x, tp.y, { voltear: (Math.floor(tp.caido * 8) % 2 === 0) === (dir < 0) });
+        tp.vy += 160 * dt; tp.x += dir * 10 * dt; tp.y += tp.vy * dt;
+        if (tp.y < yAgua + 2) r.sprite(TOPO[0], PALETA_TOPO, tp.x, tp.y, { voltear: (Math.floor(tp.t * 8) % 2 === 0) === (dir < 0) });
         else if (!tp.salpico) { tp.salpico = true; for (let n = 0; n < 12; n++) esc.parts.agregar({ x: tp.x, y: yAgua, vx: (Math.random() - 0.5) * 36, vy: -24 - Math.random() * 26, g: 130, vida: 0.8, colores: AGUA }); }
-        if (tp.caido > 2.6) tp.fuera = true;
       }
     }
   }
