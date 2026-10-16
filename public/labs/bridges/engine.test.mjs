@@ -1,6 +1,7 @@
 // Tren en Vilo (lab): the physics is tuned so a bare deck falls and a truss holds, in every stage
 import assert from 'node:assert/strict';
-import { ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, PUNTOS_ETAPA, BONO_RAPIDEZ, TIEMPO_S } from './engine.js';
+import { ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S } from './engine.js';
+import { readFileSync } from 'node:fs';
 
 const V = (a, b) => ({ a, b });
 const cubierta = W => Array.from({ length: W }, (_, i) => V([i, 0], [i + 1, 0]));
@@ -14,21 +15,19 @@ const cercha = W => {
   return v;
 };
 
-/** A cheaper bridge: the deck held from below by the anchors under each cliff. */
-const desdeAbajo = W => [...cubierta(W), V([0, -1], [1, 0]), V([W, -1], [W - 1, 0]), V([0, -1], [1, -1]), V([W, -1], [W - 1, -1]), V([1, -1], [1, 0]), V([W - 1, -1], [W - 1, 0])];
-/** The known solution of each stage, so every stage can be done within its budget. */
-const SOLUCION = [desdeAbajo, cercha, cercha, cercha, cercha];
+// The cheapest known bridge of each stage (found by search): it passes and sets `minimo`
+const SOLUCIONES = JSON.parse(readFileSync(new URL('./soluciones.json', import.meta.url), 'utf8')).map(s => s.map(([a, b]) => V(a, b)));
 
 ETAPAS.forEach((e, k) => {
   assert.ok(!probar(e, cubierta(e.ancho)).llego, `stage ${k + 1}: a bare deck must fall`);
-  const c = SOLUCION[k](e.ancho);
-  assert.ok(c.length <= e.presupuesto, `stage ${k + 1}: the known solution (${c.length}) fits the budget (${e.presupuesto})`);
-  const r = probar(e, c);
-  assert.ok(r.llego && r.rotas === 0, `stage ${k + 1}: the known solution holds (${JSON.stringify(r)})`);
-  // Every beam of the truss is one the player could lay
+  const c = SOLUCIONES[k];
+  assert.equal(c.length, e.minimo, `stage ${k + 1}: minimo is the known solution's beams`);
+  assert.ok(e.presupuesto >= e.minimo, `stage ${k + 1}: the budget fits the known solution`);
+  assert.ok(probar(e, c).llego, `stage ${k + 1}: the known solution passes`);
   const puestas = [];
   for (const v of c) { assert.equal(vigaValida(e, puestas, v.a, v.b), null, `stage ${k + 1}: ${JSON.stringify(v)}`); puestas.push(v); }
 });
+assert.equal(ETAPAS.at(-1).presupuesto, ETAPAS.at(-1).minimo, 'the last stage leaves no room: it is the hard one');
 
 // The same bridge, the same result: the simulation is deterministic
 const e = ETAPAS[2], c = cercha(e.ancho);
@@ -43,11 +42,13 @@ assert.equal(vigaValida(e0, [], [0, 0], [-1, 0]), 'fuera');
 assert.equal(vigaValida(e0, [V([0, 0], [1, 0])], [1, 0], [0, 0]), 'repetida');
 assert.equal(vigaValida(e0, [], [0, 0], [1, 2]), null, 'a 1 × 2 diagonal is allowed');
 
-// The score by layers: completing more always wins, and the speed bonus only with all five
-const todas = ETAPAS.length;
-assert.equal(puntajePartida(todas, 60).total, PUNTOS_ETAPA * todas + BONO_RAPIDEZ);
-assert.equal(puntajePartida(todas, TIEMPO_S).rapidez, 0);
-assert.equal(puntajePartida(todas - 1, 30).rapidez, 0);
-assert.ok(puntajePartida(todas, TIEMPO_S).total > puntajePartida(todas - 1, 10).total);
-assert.equal(puntajePartida(todas, 60).total, 100);
+// The score: stages, savings and time; 100 only with all five at the minimum and fast
+const minimos = ETAPAS.map(e => e.minimo), topes = ETAPAS.map(e => e.presupuesto);
+assert.equal(puntajePartida(minimos, 60).total, 100);
+assert.equal(puntajePartida(topes, TIEMPO_S).total, 65, 'all five at the budget and out of time: the stages, plus the savings of stage 5, whose budget is its minimum');
+assert.equal(puntajePartida([], 30).total, 0);
+assert.ok(puntajePartida(topes.slice(0, 4), TIEMPO_S).total < puntajePartida(topes, TIEMPO_S).total, 'one more stage always wins');
+assert.equal(puntajePartida(minimos.slice(0, 2), 60).rapidez, 6, 'speed scales with the stages passed: 15 × 2/5');
+const p = puntajePartida([7, 9], 200);
+assert.equal(p.ahorros[0].fraccion, 2 / 3); assert.equal(p.ahorros[1].fraccion, 0);
 console.log('✓ Tren en Vilo (labs)');

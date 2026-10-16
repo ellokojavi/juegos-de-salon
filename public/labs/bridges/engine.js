@@ -6,13 +6,17 @@
  * + − × ÷ and sqrt, so the same bridge gives the same result in every browser.
  */
 
-/** The stages: gap width, anchors (besides the two cliff edges) and the budget in beams. */
+/**
+ * The stages: gap width, anchors (besides the two cliff edges), the budget in beams and the fewest
+ * beams a known bridge needs (`minimo`, from soluciones.json, which engine.test.mjs runs). The
+ * budget leaves room in the first ones and none in the last: stage 5 is meant to stop most players.
+ */
 export const ETAPAS = [
-  { ancho: 4, anclas: [[0, -1], [4, -1]], presupuesto: 11 },
-  { ancho: 5, anclas: [[0, -1], [5, -1]], presupuesto: 17 },
-  { ancho: 6, anclas: [[0, -1], [6, -1], [3, -3]], presupuesto: 21 },
-  { ancho: 7, anclas: [[0, -1], [7, -1]], presupuesto: 25 },
-  { ancho: 8, anclas: [[0, -1], [8, -1], [4, -3]], presupuesto: 29 },
+  { ancho: 4, anclas: [[0, -1], [4, -1]], presupuesto: 9, minimo: 6 },
+  { ancho: 5, anclas: [[0, -1], [5, -1]], presupuesto: 9, minimo: 6 },
+  { ancho: 6, anclas: [[0, -1], [6, -1], [3, -3]], presupuesto: 13, minimo: 11 },
+  { ancho: 7, anclas: [[0, -1], [7, -1]], presupuesto: 12, minimo: 10 },
+  { ancho: 8, anclas: [[0, -1], [8, -1], [4, -3]], presupuesto: 14, minimo: 14 },
 ];
 export const TIEMPO_S = 7 * 60;
 export const LARGO_MAX = 2.25;     // the longest beam: two squares, or a 1 × 2 diagonal
@@ -151,16 +155,30 @@ export function probar(e, vigas, maxPasos = Math.ceil(30 / DT)) {
 }
 
 /* ------------------------------------------------------------------ */
-/* The score, by layers, like Rutas rotas (D-295)                      */
+/* The score: stages passed, beams saved and time                      */
 /* ------------------------------------------------------------------ */
 
-export const PUNTOS_ETAPA = 16;    // 80 for the five
-export const BONO_RAPIDEZ = 20;    // only with the five done: 20 in 1 minute or less, 0 when time runs out
+export const PUNTOS_ETAPA = 12;       // 60 for the five
+export const PUNTOS_AHORRO = 5;       // per stage passed, all of it at the known minimum: 25 for the five
+export const BONO_RAPIDEZ = 15;       // all of it in 1:30 or less, none when time runs out; scaled by stages passed
+export const RAPIDO_S = 90;
 
-export function puntajePartida(hechas, segundos) {
-  const etapas = PUNTOS_ETAPA * hechas;
-  const rapidez = hechas === ETAPAS.length
-    ? Math.round(BONO_RAPIDEZ * Math.min(1, Math.max(0, (TIEMPO_S - segundos) / (TIEMPO_S - 60))))
-    : 0;
-  return { etapas, rapidez, total: etapas + rapidez };
+const entre01 = x => Math.min(1, Math.max(0, x));
+
+/**
+ * The score of a game, by layers, with each part separate for the breakdown. `usadas` is the beams
+ * of the bridge that passed in each stage done (its length is the stages passed).
+ */
+export function puntajePartida(usadas, segundos) {
+  const pasadas = usadas.length;
+  const etapas = PUNTOS_ETAPA * pasadas;
+  const ahorros = usadas.map((n, k) => {
+    const e = ETAPAS[k], margen = e.presupuesto - e.minimo;
+    const fraccion = margen > 0 ? entre01((e.presupuesto - n) / margen) : 1;
+    return { etapa: k + 1, usadas: n, presupuesto: e.presupuesto, minimo: e.minimo, fraccion, puntos: PUNTOS_AHORRO * fraccion };
+  });
+  const ahorro = Math.round(ahorros.reduce((s, a) => s + a.puntos, 0));
+  const fraccionTiempo = entre01((TIEMPO_S - segundos) / (TIEMPO_S - RAPIDO_S));
+  const rapidez = Math.round(BONO_RAPIDEZ * fraccionTiempo * (pasadas / ETAPAS.length));
+  return { pasadas, etapas, ahorros, ahorro, fraccionTiempo, rapidez, total: etapas + ahorro + rapidez };
 }

@@ -40,5 +40,10 @@
   padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
 .tv-sello.mal { color: #ff8a8a; }
 .desglose { text-align: left; margin: 0 auto; padding-left: 1.2em; }
+/* The score's arithmetic, line by line, on the result */
+.tv-cuenta-final { text-align: left; display: grid; gap: 6px; }
+.tv-cuenta-final p { margin: 0; }
+.tv-cuenta-final .desglose { font-size: 0.9rem; padding-left: 1.1em; }
+.tv-total { font-weight: 900; font-size: 1.1rem; color: var(--yellow); border-top: 1px solid var(--glass-border); padding-top: 6px; }
 
 @media (prefers-reduced-motion: reduce) { .titulo-tv .tren, .tv-sello { animation: none; } }
