@@ -151,7 +151,7 @@ function minimoMadera(e, intentos = 4) {
   fijarDT(fino);
   return mejor && probar(e, mejor).llego ? mejor : null;   // confirmed with the game's step
 }
-const HOLGURA_MADERA = [1.5, 1, 0.5, 0, 0];
+const HOLGURA_MADERA = [2.5, 2, 1.5, 1, 0.5];   // a little more room than the first test (+1 m per level): there was too little to try things
 const ANCHOS_MADERA = [[4, 5], [5, 6], [6, 7], [6, 7], [7, 8]];
 
 const catalogo = [];
