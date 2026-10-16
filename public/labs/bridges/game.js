@@ -170,7 +170,10 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     if (visitas.ovni && !esc.ovni && ahora - esc.inicio >= visitas.retraso) {
       visitas.verOvni();
       const izq = Math.random() < 0.5;
-      esc.ovni = { modo: visitas.modoOvni, x: izq ? -12 : W + 12, y: Math.max(26, H * 0.2), destino: W * (0.35 + Math.random() * 0.3), dir: izq ? 1 : -1, fase: 'llega', t: 0 };
+      // Fishing, it stays near the cliff it came from, not in the middle: the bridge keeps the attention
+      const [gx0] = A(0, 0), [gx1] = A(e.ancho, 0);
+      const destino = visitas.modoOvni === 'pesca' ? (izq ? gx0 + 12 : gx1 - 12) : W * (0.35 + Math.random() * 0.3);
+      esc.ovni = { modo: visitas.modoOvni, x: izq ? -12 : W + 12, y: Math.max(26, H * 0.2), destino, dir: izq ? 1 : -1, fase: 'llega', t: 0 };
     }
     if (esc.ovni && !esc.ovni.fuera) {
       const o = esc.ovni;
