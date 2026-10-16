@@ -88,6 +88,16 @@ function bajoTren(s, x) {
   return mejor;
 }
 
+/**
+ * The deck's height at `x` (for drawing the wagons on it): 0 on the cliffs, the road beam's
+ * height over the gap, or null where there is no road (a gap, or a beam that snapped).
+ */
+export function alturaCamino(s, x) {
+  if (x <= 0 || x >= s.e.ancho) return 0;
+  const b = bajoTren(s, x);
+  return b ? b.y : null;
+}
+
 /** One fixed step of the simulation. */
 export function paso(s) {
   if (s.fin) return s;

@@ -7,7 +7,8 @@
 import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { ETAPAS, TIEMPO_S, LARGO_MAX, ALTO, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, PUNTOS_ETAPA } from './engine.js';
+import { ETAPAS, TIEMPO_S, ALTO, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino } from './engine.js';
+import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
@@ -63,6 +64,7 @@ function lienzo(e, { arriba = ARRIBA, abajo = ABAJO } = {}) {
     c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
     c.style.width = `${w}px`; c.style.height = `${h}px`;
     c._m = { escala, dpr, w, h };
+    c._r = pixelado(c, { px: PX });
   };
   c._ajustar = ajustar;
   return c;
@@ -70,83 +72,152 @@ function lienzo(e, { arriba = ARRIBA, abajo = ABAJO } = {}) {
 const aPantalla = (c, x, y) => [(x + MARGEN) * c._m.escala, (c._v.arriba - y) * c._m.escala];
 const aMundo = (c, px, py) => [px / c._m.escala - MARGEN, c._v.arriba - py / c._m.escala];
 
-/** The color of a beam by how stretched or squeezed it is, from green through yellow to red. */
-function colorTension(t) {
-  const r = Math.min(1, Math.abs(t) / FISICA.quiebre);
-  const h = 120 - 120 * r;
-  return `hsl(${h}, 90%, ${55 - 5 * r}%)`;
-}
+/** Screen pixels per art pixel: the size of the pixel-art grid. */
+const PX = 3;
+
+/** The color of a beam by how stretched or squeezed it is: wood that warms to red, in steps. */
+const TENSION = ['#c8874a', '#d9a23a', '#e8b13a', '#f08a2c', '#ff5a3c', '#ff2e4a'];
+const colorTension = t => TENSION[Math.min(TENSION.length - 1, Math.floor((Math.abs(t) / FISICA.quiebre) * TENSION.length))];
+
+const CIELO = ['#1d0838', '#26093f', '#2f0c48', '#3a1152', '#46175c', '#521e66', '#5e2670'];
+const ROCA = { base: '#5a2f8a', claro: '#7444a8', oscuro: '#3d1d63', borde: '#25103f' };
+const MADERA = { borde: '#3a1d10', riel: '#e6e6f0' };
+const HUMO = ['rgba(255,255,255,0.95)', 'rgba(235,232,245,0.85)', 'rgba(200,196,220,0.7)', 'rgba(160,156,188,0.5)', 'rgba(130,126,160,0.3)'];
+const CHISPAS = ['#fff3a0', '#ffd23f', '#ff8a3d', '#ff2e4a'];
+const ASTILLAS = ['#e8b070', '#c8874a', '#8a5a30'];
+const AGUA = ['#bff8ff', '#7af0ff', '#2ec4d6'];
+
+/** A fixed pseudo-random number for a position: the stars and the rock grain don't flicker. */
+const ruido = (x, y) => { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return n - Math.floor(n); };
 
 /**
- * Draws a stage: sky, cliffs and water, the grid (while building), the beams and the train.
- * `sim` (while it runs) gives the positions and tensions; without it, the beams as laid.
+ * Draws a stage in pixel art: sky, clouds, cliffs, water, the grid (while building), the beams and
+ * the train with its smoke. `sim` (while it runs) gives positions and tensions; without it, the
+ * beams as laid. The scene keeps its own particles and clock on the canvas (`c._esc`).
  */
 function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set() } = {}) {
-  const ctx = c.getContext('2d'), { escala: s, dpr, w, h } = c._m;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, w, h);
-  // Water at the bottom of the gap
-  const [, yAgua] = aPantalla(c, 0, c._v.abajo + 0.7);
-  const agua = ctx.createLinearGradient(0, yAgua, 0, h);
-  agua.addColorStop(0, 'rgba(46, 230, 214, 0.45)'); agua.addColorStop(1, 'rgba(11, 30, 63, 0.9)');
-  ctx.fillStyle = agua; ctx.fillRect(0, yAgua, w, h - yAgua);
-  // The two cliffs, down from the deck
-  const [x0, y0] = aPantalla(c, 0, 0), [x1] = aPantalla(c, e.ancho, 0);
-  ctx.fillStyle = '#6b3fa0';
-  ctx.fillRect(0, y0, x0, h - y0); ctx.fillRect(x1, y0, w - x1, h - y0);
-  ctx.fillStyle = '#9dff3a'; ctx.fillRect(0, y0 - 3, x0, 4); ctx.fillRect(x1, y0 - 3, w - x1, 4);
-  // The anchors under the deck are rock ledges: drawn as small blocks
-  for (const [ax, ay] of e.anclas) {
-    const [px, py] = aPantalla(c, ax, ay);
-    ctx.fillStyle = '#6b3fa0'; ctx.fillRect(px - s * 0.35, py, s * 0.7, s * 0.35);
+  const r = c._r;
+  if (!r) return;
+  const ahora = performance.now() / 1000;
+  const esc = c._esc ||= { parts: particulas(), ultimo: ahora, humo: 0, rotas: new Set(), caida: null, sim: null };
+  const dt = Math.min(0.05, ahora - esc.ultimo); esc.ultimo = ahora;
+  if (esc.sim !== sim) { esc.sim = sim; esc.rotas = new Set(); esc.caida = null; }
+  const A = (x, y) => { const [px, py] = aPantalla(c, x, y); return [px / PX, py / PX]; };
+  const u = c._m.escala / PX;            // art pixels per grid unit
+  const { W, H } = r;
+
+  // The sky, in bands, with stars that twinkle and two clouds drifting by
+  for (let y = 0; y < H; y++) r.rect(0, y, W, 1, CIELO[Math.min(CIELO.length - 1, Math.floor((y / H) * CIELO.length * 1.3))]);
+  for (let k = 0; k < 26; k++) {
+    const x = Math.floor(ruido(k, 1) * W), y = Math.floor(ruido(k, 2) * H * 0.45);
+    if (Math.sin(ahora * (1 + ruido(k, 3) * 2) + k) > -0.3) r.punto(x, y, ruido(k, 4) > 0.5 ? '#fff3a0' : '#ffffff');
   }
-  // The grid of points where a beam can go
-  if (grilla) {
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
-    for (let x = 0; x <= e.ancho; x++) for (let y = ALTO[0]; y <= ALTO[1]; y++) {
-      const [px, py] = aPantalla(c, x, y);
-      ctx.beginPath(); ctx.arc(px, py, Math.max(1.6, s * 0.045), 0, 2 * Math.PI); ctx.fill();
+  for (let k = 0; k < 2; k++) {
+    const x = ((ahora * (3 + 2 * k) + k * W * 0.6) % (W + 40)) - 20, y = H * (0.12 + 0.12 * k);
+    for (const [dx, dy, rr] of [[0, 0, 4], [5, -2, 5], [10, 0, 4], [5, 1, 4]]) r.circulo(x + dx, y + dy, rr, 'rgba(255,255,255,0.10)');
+  }
+
+  // The water, with waves that run and glint
+  const [, yAgua] = A(0, c._v.abajo + 0.7);
+  r.rect(0, yAgua, W, H - yAgua, '#11415e');
+  r.rect(0, yAgua + 3, W, H - yAgua, '#0b2c48');
+  for (let x = 0; x < W; x++) {
+    const ola = Math.round(Math.sin(x * 0.35 + ahora * 2.2) * 1.2);
+    r.punto(x, yAgua + ola, AGUA[1]);
+    if (ruido(x, Math.floor(ahora * 3)) > 0.93) r.punto(x, yAgua + 2 + ola, AGUA[0]);
+  }
+
+  // The cliffs: rock with grain, an outline and grass on top
+  const [x0, y0] = A(0, 0), [x1] = A(e.ancho, 0);
+  const roca = (xa, xb) => {
+    r.rect(xa, y0, xb - xa, H - y0, ROCA.base);
+    for (let y = Math.ceil(y0) + 2; y < H; y++) for (let x = Math.floor(xa); x < xb; x++) {
+      const n = ruido(x, y);
+      if (n > 0.9) r.punto(x, y, ROCA.claro); else if (n < 0.08) r.punto(x, y, ROCA.oscuro);
     }
+  };
+  roca(0, x0); roca(x1, W);
+  r.rect(x0 - 1, y0, 1, H - y0, ROCA.borde); r.rect(x1, y0, 1, H - y0, ROCA.borde);
+  for (const [xa, xb] of [[0, x0], [x1, W]]) {
+    r.rect(xa, y0 - 1, xb - xa, 2, '#6fd42a'); r.rect(xa, y0 - 2, xb - xa, 1, '#9dff3a');
+    for (let x = Math.floor(xa); x < xb; x += 3) if (ruido(x, 7) > 0.5) r.punto(x, y0 - 3, '#9dff3a');
   }
-  // The beams: from the simulation if it runs, if not as laid
-  const grosor = Math.max(3, s * 0.11);
-  ctx.lineCap = 'round';
+  for (const [ax, ay] of e.anclas) {
+    const [px, py] = A(ax, ay);
+    r.rect(px - u * 0.35, py, u * 0.7, u * 0.35, ROCA.base); r.rect(px - u * 0.35, py, u * 0.7, 1, ROCA.claro);
+  }
+
+  // The grid of points where a beam can go
+  if (grilla) for (let x = 0; x <= e.ancho; x++) for (let y = ALTO[0]; y <= ALTO[1]; y++) { const [px, py] = A(x, y); r.punto(px, py, 'rgba(255,255,255,0.45)'); }
+
+  // The beams as planks: a dark edge, the wood (warming to red with the strain), rails on the road
+  const grosor = Math.max(2, Math.round(u * 0.14));
   const pos = sim ? i => [sim.nudos[i].x, sim.nudos[i].y] : null;
-  const lista = sim ? sim.vigas.map(v => ({ a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino }))
+  const lista = sim ? sim.vigas.map((v, k) => ({ k, a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino }))
     : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0 }));
   for (const v of lista) {
     if (v.rota) continue;
-    const [ax, ay] = aPantalla(c, ...v.a), [bx, by] = aPantalla(c, ...v.b);
-    ctx.strokeStyle = sim ? colorTension(v.t) : v.camino ? '#ffd23f' : '#e8c8a0';
-    ctx.lineWidth = v.camino ? grosor * 1.25 : grosor;
-    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+    const [ax, ay] = A(...v.a), [bx, by] = A(...v.b), g = v.camino ? grosor + 1 : grosor;
+    r.linea(ax, ay, bx, by, MADERA.borde, g + 2);
+    r.linea(ax, ay, bx, by, sim ? colorTension(v.t) : '#c8874a', g);
+    if (v.camino) r.linea(ax, ay - Math.ceil(g / 2), bx, by - Math.ceil(g / 2), MADERA.riel, 1);
   }
-  // The joints: fixed ones as squares, the rest as circles
+  // A beam that just snapped throws sparks and splinters
+  if (sim) for (const v of lista) {
+    if (!v.rota || esc.rotas.has(v.k)) continue;
+    esc.rotas.add(v.k);
+    const [ax, ay] = A(...v.a), [bx, by] = A(...v.b), mx = (ax + bx) / 2, my = (ay + by) / 2;
+    if (!QUIETO) {
+      for (let n = 0; n < 12; n++) esc.parts.agregar({ x: mx, y: my, vx: (Math.random() - 0.5) * 70, vy: -Math.random() * 60, g: 120, vida: 0.5 + Math.random() * 0.4, colores: CHISPAS });
+      for (let n = 0; n < 6; n++) esc.parts.agregar({ x: mx, y: my, vx: (Math.random() - 0.5) * 40, vy: -Math.random() * 30, g: 160, vida: 1.2, radio: 1, colores: ASTILLAS });
+    }
+  }
+  // The joints: bolts; the fixed ones are pink plates
   const nudos = sim ? sim.nudos.map(n => ({ x: n.x, y: n.y, fijo: n.fijo })) : [...fijos(e).map(([x, y]) => ({ x, y, fijo: true })),
     ...[...usados].map(k => k.split(',').map(Number)).filter(([x, y]) => !fijos(e).some(([a, b]) => a === x && b === y)).map(([x, y]) => ({ x, y }))];
   for (const n of nudos) {
-    const [px, py] = aPantalla(c, n.x, n.y);
-    ctx.fillStyle = n.fijo ? '#ff2e88' : '#ffffff';
-    ctx.strokeStyle = '#1a0b2e'; ctx.lineWidth = 2;
-    const r = Math.max(4, s * 0.11);
-    if (n.fijo) { ctx.fillRect(px - r, py - r, 2 * r, 2 * r); ctx.strokeRect(px - r, py - r, 2 * r, 2 * r); }
-    else { ctx.beginPath(); ctx.arc(px, py, r * 0.85, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); }
+    const [px, py] = A(n.x, n.y);
+    if (n.fijo) { r.rect(px - 2, py - 2, 5, 5, '#25103f'); r.rect(px - 1, py - 1, 3, 3, '#ff2e88'); r.punto(px - 1, py - 1, '#ff9cc8'); }
+    else { r.circulo(px, py, 2, '#25103f'); r.circulo(px, py, 1, '#e6e6f0'); }
   }
-  // The beam being dragged: green if it can go, red if not
+  // The beam being dragged: dashes, green if it can go, red if not
   if (arrastre) {
-    const [ax, ay] = aPantalla(c, ...arrastre.a), [bx, by] = aPantalla(c, ...arrastre.b);
-    ctx.strokeStyle = arrastre.ok ? 'rgba(157, 255, 58, 0.9)' : 'rgba(255, 46, 136, 0.9)';
-    ctx.setLineDash([grosor * 1.4, grosor]); ctx.lineWidth = grosor;
-    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]);
+    const [ax, ay] = A(...arrastre.a), [bx, by] = A(...arrastre.b), col = arrastre.ok ? '#9dff3a' : '#ff2e88';
+    const n = Math.max(1, Math.round(Math.hypot(bx - ax, by - ay) / 3));
+    for (let k = 0; k < n; k += 2) r.linea(ax + (bx - ax) * k / n, ay + (by - ay) * k / n, ax + (bx - ax) * Math.min(1, (k + 1) / n), ay + (by - ay) * Math.min(1, (k + 1) / n), col, grosor);
   }
-  // The train, an emoji riding on the deck (or tumbling into the water)
+
+  // The train: the locomotive and two wagons, each on the deck where it is, with smoke from the chimney
   if (sim) {
-    const tr = sim.tren;
-    const [px, py] = aPantalla(c, tr.x, tr.cayo ? tr.y - 1.2 : tr.y);
-    ctx.font = `${Math.round(s * 0.95)}px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-    ctx.save(); ctx.translate(px, py); ctx.scale(-1, 1); ctx.fillText('🚂', 0, 2); ctx.restore();
+    // The wheel frame, from the distance run (positive also while the train is still left of the gap)
+    const tr = sim.tren, cuadro = ((Math.floor(tr.x * 7) % 6) + 6) % 6;
+    const piezas = [{ x: tr.x, spr: LOCO[(cuadro + 3) % 3], loco: true }, { x: tr.x - 1.15, spr: VAGON[cuadro % 2] }, { x: tr.x - 2.15, spr: VAGON[(cuadro + 1) % 2] }];
+    if (tr.cayo && !esc.caida) esc.caida = { dy: 0, vy: 0, salpico: false };
+    if (esc.caida) { esc.caida.vy += 220 * dt; esc.caida.dy += esc.caida.vy * dt; }
+    for (const p of piezas) {
+      const h = alturaCamino(sim, p.x);
+      let [px, py] = A(p.x, h ?? tr.y);
+      if (esc.caida && (h === null || p.loco)) py += esc.caida.dy;
+      if (py > yAgua + 4) {
+        if (p.loco && !esc.caida.salpico && !QUIETO) {
+          esc.caida.salpico = true;
+          for (let n = 0; n < 22; n++) esc.parts.agregar({ x: px, y: yAgua, vx: (Math.random() - 0.5) * 60, vy: -40 - Math.random() * 50, g: 140, vida: 1, colores: AGUA });
+        }
+        continue;
+      }
+      r.sprite(p.spr, PALETA_TREN, px, py - 1);
+      if (p.loco && !tr.cayo && !QUIETO) {
+        esc.humo += dt;
+        if (esc.humo > 0.09) {
+          esc.humo = 0;
+          esc.parts.agregar({ x: px + CHIMENEA.dx, y: py + CHIMENEA.dy, vx: -8 - Math.random() * 8, vy: -16 - Math.random() * 6, vida: 1.5, radio: 1, crece: 2.6, colores: HUMO });
+        }
+      }
+    }
   }
+  esc.parts.paso(dt);
+  esc.parts.dibujar(r);
+  r.volcar();
 }
 
 /* ------------------------------------------------------------------ */
@@ -172,6 +243,7 @@ function portada() {
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); parar(); empezar(); } }, T.empezar));
   c._ajustar();
   let sim = crearSim(e, DEMO), vivo = true;
+  window.__portada = () => sim;
   const parar = () => { vivo = false; };
   if (QUIETO) { dibujar(c, e, { vigas: DEMO }); return; }
   const cuadro = () => {
@@ -252,6 +324,14 @@ function jugar() {
     dibujar(c, e, { vigas: P.vigas, grilla: !P.simulando, arrastre, usados: usados() });
   }
   repintar();
+  // While building, the scene stays alive (clouds, water, stars): repaint every frame
+  let ultimoArrastre = null;
+  const vivo = () => {
+    if (!c.isConnected || P.fin) return;
+    if (!P.simulando) dibujar(c, e, { vigas: P.vigas, grilla: true, arrastre: ultimoArrastre, usados: usados() });
+    requestAnimationFrame(vivo);
+  };
+  if (!QUIETO) requestAnimationFrame(vivo);
 
   // Dragging from a joint in use to any grid point lays a beam; a tap on a beam removes it
   const punto = ev => { const r = c.getBoundingClientRect(); return aMundo(c, ev.clientX - r.left, ev.clientY - r.top); };
@@ -270,7 +350,8 @@ function jugar() {
     const m = punto(ev), g = cercano(m);
     const hasta = cerca(m, g) ? g : m;
     const motivo = Array.isArray(hasta) && Number.isInteger(hasta[0]) && Number.isInteger(hasta[1]) ? vigaValida(e, P.vigas, desde, hasta) : 'suelta';
-    repintar({ a: desde, b: hasta, ok: !motivo && P.vigas.length < e.presupuesto });
+    ultimoArrastre = { a: desde, b: hasta, ok: !motivo && P.vigas.length < e.presupuesto };
+    repintar(ultimoArrastre);
   });
   c.addEventListener('pointerup', ev => {
     const m = punto(ev), g = cercano(m);
@@ -280,7 +361,7 @@ function jugar() {
       const i = vigaBajo(m);
       if (i >= 0) { P.historial.push(P.vigas); P.vigas = P.vigas.filter((_, k) => k !== i); SFX.tap(); aviso.textContent = T.aviso.quitada; }
       else if (!desde) aviso.textContent = T.aviso.suelta;
-      desde = null; repintar(); return;
+      desde = null; ultimoArrastre = null; repintar(); return;
     }
     if (desde) {
       const hasta = cerca(m, g) ? g : null;
@@ -288,7 +369,7 @@ function jugar() {
       if (motivo) { if (motivo !== 'cero') { aviso.textContent = T.aviso[motivo] || T.aviso.fuera; SFX.error(); vibrate([30, 30, 30]); } }
       else { P.historial.push(P.vigas); P.vigas = [...P.vigas, { a: desde, b: hasta }]; SFX.tap(); vibrate(10); aviso.textContent = ''; }
     }
-    desde = null; repintar();
+    desde = null; ultimoArrastre = null; repintar();
   });
   function vigaBajo([x, y]) {
     let mejor = -1, d = 0.22;
@@ -312,7 +393,7 @@ function jugar() {
     aviso.textContent = T.aviso.cruza;
     repintar();
     const sim = crearSim(e, P.vigas);
-    let rotas = 0;
+    let rotas = 0, cierre = 0, avisado = false;
     const cuadro = () => {
       if (!P.simulando || !c.isConnected || P.fin) return;
       for (let k = 0; k < Math.round(1 / 60 / DT); k++) paso(sim);
@@ -320,6 +401,11 @@ function jugar() {
       if (ahora > rotas) { rotas = ahora; SFX.error(); vibrate(40); }
       dibujar(c, e, { sim });
       if (!sim.fin) { requestAnimationFrame(cuadro); return; }
+      // After it ends, the scene keeps moving a moment: the train falls and splashes, the smoke clears
+      if (!cierre) { cierre = performance.now(); }
+      if (performance.now() - cierre < 1800 && !sim.tren.llego) { requestAnimationFrame(cuadro); if (avisado) return; }
+      if (avisado) return;
+      avisado = true;
       if (sim.tren.llego) {
         aviso.textContent = T.aviso.paso; SFX.win(); vibrate([30, 50, 30]);
         P.hechas++;
