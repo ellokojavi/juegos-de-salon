@@ -1,0 +1,77 @@
+/* 🚂 Tren en Vilo (lab demo): the cover, the board on a canvas, its bar and the result */
+.portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
+.titulo-tv { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; text-align: center; }
+.titulo-tv .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-tv .tren { font-size: 2.3rem; display: inline-block; animation: tv-vaiven 1.4s ease-in-out infinite; }
+.titulo-tv.chico .display { font-size: 1.6rem; }
+.titulo-tv.chico .tren { font-size: 1.5rem; }
+@keyframes tv-vaiven { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-4px) rotate(3deg); } }
+.credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.credito a { color: var(--cyan); }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+.tv-demo { width: 100%; max-width: 360px; margin: 0 auto; }
+
+/* The game: the stage, its dots and the countdown on top; the canvas; the beams left and the notice */
+.tv-cabeza { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font-weight: 900; }
+.tv-etapa { font-size: 0.95rem; }
+.tv-reloj { font-variant-numeric: tabular-nums; }
+.tv-reloj.apurado { color: #ff6b8b; }
+.tv-puntos { display: flex; gap: 6px; justify-content: center; }
+.tv-puntos span { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.55); }
+.tv-puntos span.hecha { background: var(--lime); border-color: var(--lime); }
+.tv-puntos span.actual { background: #fff; border-color: #fff; }
+.tv-puntos.grande span { width: 18px; height: 18px; }
+.tv-tablero { position: relative; width: 100%; max-width: 560px; margin: 0 auto; border-radius: 16px; overflow: hidden;
+  background: linear-gradient(180deg, rgba(138, 77, 255, 0.18), rgba(11, 30, 63, 0.35)); border: 1px solid var(--glass-border); }
+.tv-lienzo { display: block; touch-action: none; user-select: none; -webkit-user-select: none; }
+.tv-barra { display: grid; gap: 2px; text-align: center; min-height: 3.2em; }
+.tv-cuenta { font-weight: 900; font-variant-numeric: tabular-nums; }
+.tv-cuenta.lleno { color: var(--yellow); }
+.tv-aviso { margin: 0; color: var(--muted); font-size: 0.92rem; }
+.tv-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tv-acciones .btn { padding-inline: 6px; }
+.btn.armado { border-color: var(--yellow); color: var(--yellow); }
+
+.resultado { text-align: center; display: grid; gap: 10px; }
+.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.tv-sello { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+.tv-sello.mal { color: #ff8a8a; }
+.desglose { text-align: left; margin: 0 auto; padding-left: 1.2em; }
+/* The score's arithmetic, line by line, on the result */
+.tv-cuenta-final { text-align: left; display: grid; gap: 6px; }
+.tv-cuenta-final p { margin: 0; }
+.tv-cuenta-final .desglose { font-size: 0.9rem; padding-left: 1.1em; }
+.tv-total { font-weight: 900; font-size: 1.1rem; color: var(--yellow); border-top: 1px solid var(--glass-border); padding-top: 6px; }
+
+@media (prefers-reduced-motion: reduce) { .titulo-tv .tren, .tv-sello { animation: none; } }
+
+/* The stage's sign: it slides in over the board, holds and goes */
+.tv-letrero { position: absolute; left: 50%; top: 14%; transform: translateX(-50%); display: grid; gap: 2px; text-align: center; pointer-events: none;
+  padding: 8px 16px; border-radius: 12px; background: rgba(20, 8, 31, 0.86); border: 2px solid var(--yellow); white-space: nowrap;
+  animation: tv-letrero 2s ease-in-out forwards; }
+.tv-letrero b { font: 1.4rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+.tv-letrero span { font-size: 0.85rem; font-weight: 800; }
+@keyframes tv-letrero { 0% { opacity: 0; transform: translate(-50%, -14px); } 15%, 75% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -8px); visibility: hidden; } }
+
+/* The score's table: one row per stage, numbers aligned on the right */
+.tv-tabla-caja { overflow-x: auto; }
+.tv-tabla { width: 100%; border-collapse: collapse; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+.tv-tabla th { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 800; padding: 4px 3px; text-align: left; }
+.tv-tabla td { padding: 5px 3px; border-top: 1px solid var(--glass-border); white-space: nowrap; }
+.tv-tabla .num { text-align: right; }
+.tv-tabla tr.no td { color: var(--muted); }
+.tv-tabla tfoot td { font-weight: 900; border-top: 2px solid var(--glass-border); }
+.tv-nota { font-size: 0.82rem; margin: 0; }
+.tv-linea { display: flex; justify-content: space-between; gap: 10px; font-weight: 800; }
+.tv-linea.total { font-size: 1.1rem; color: var(--yellow); border-top: 2px solid var(--glass-border); padding-top: 8px; }
+@media (prefers-reduced-motion: reduce) { .tv-letrero { animation: none; display: none; } }
+
+.tv-letrero .tv-carga { color: #ff8a3d; }
+/* The result's "how it could be crossed": the known bridge with the train looping over it */
+.tv-solucion { display: grid; gap: 8px; text-align: left; }
+.tv-solucion p { margin: 0; }
+/* On a narrow phone the table drops the "Mín." column so it fits without scrolling; the note still names the minimum */
+@media (max-width: 380px) { .tv-tabla { font-size: 0.8rem; } .tv-tabla th:nth-child(4), .tv-tabla td:nth-child(4) { display: none; } }
