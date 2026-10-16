@@ -20,18 +20,19 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
 - 🚂 Test sends the train (`PIEZAS`: the engine and two wagons that weigh); ✏️ Fix goes back to
   building, with the snapped beams marked. A stage passes when the train crosses and the bridge is
   still standing.
-- Each stage has a budget of beams (or, in the wood catalog, metres of wood) and a sign with it; heavy
+- Each stage has a budget of metres of wood (each beam costs its length; the old catalog counted beams) and a sign with it; heavy
   levels say how much heavier the train is.
 
 ## Crossings and catalogs
 
-- Each game draws one crossing per level (1 to 5) from `catalogo.json`: low anchors on the cliff faces,
+- Each game draws one crossing per level (1 to 5) from `catalogo-madera.json`: low anchors on the cliff faces,
   stone towers, rock pillars in the water, or a mix. Its budget is the cheapest bridge a search found
   plus the level's spare beams.
 - `tools/generators/bridges.mjs` builds the catalog (`--nivel n` per level in parallel, `--juntar` to
   join them; `--prueba` / `--madera` for the catalogs under evaluation).
-- `?catalogo=prueba` (tighter budgets, a heavier train per level) and `?catalogo=madera` (each beam
-  costs its length) load the catalogs being evaluated.
+- The wood catalog is the default since the owner chose it over counting beams. `?catalogo=vigas`
+  (the beam-count catalog) and `?catalogo=prueba` (tighter budgets, a heavier train per level) load
+  the others for comparison.
 - `soluciones.json` holds known bridges for the fixed stages; `engine.test.mjs` runs them through the
   physics.
 

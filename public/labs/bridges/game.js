@@ -532,8 +532,9 @@ const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
  * the five fixed stages.
  */
 let CATALOGO = null;
-// `?catalogo=prueba` or `?catalogo=madera`: a catalog under evaluation (the second one budgets wood)
-const ARCHIVO_CATALOGO = { prueba: './catalogo-prueba.json', madera: './catalogo-madera.json' }[new URLSearchParams(location.search).get('catalogo')] || './catalogo.json';
+// The wood catalog (each beam costs its length) is the game; `?catalogo=vigas` loads the old beam-count
+// one and `?catalogo=prueba` the heavier-train one, kept for comparison
+const ARCHIVO_CATALOGO = { prueba: './catalogo-prueba.json', vigas: './catalogo.json' }[new URLSearchParams(location.search).get('catalogo')] || './catalogo-madera.json';
 fetch(new URL(ARCHIVO_CATALOGO, import.meta.url)).then(r => (r.ok ? r.json() : null)).then(c => { CATALOGO = Array.isArray(c) && c.length ? c : null; }).catch(() => {});
 function sortearEtapas() {
   if (!CATALOGO) return ETAPAS;
