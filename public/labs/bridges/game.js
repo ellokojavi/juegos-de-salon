@@ -293,12 +293,14 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     esc.inicio ??= ahora;
     if (visitas.wake && !esc.wake && ahora - esc.inicio >= visitas.retrasoWake) {
       visitas.verWake();
-      const dir = Math.random() < 0.5 ? 1 : -1;
-      esc.wake = { modo: visitas.modoWake, dir, x: dir > 0 ? -30 : W + 30, t: 0, fase: 'cruza', d: 9, salto: 0, vy: 0, giro: 0 };
+      // It comes out from just behind a cliff, not from the screen's edge: on a phone the water is narrow
+      const dir = Math.random() < 0.5 ? 1 : -1, [gx0] = A(0, 0), [gx1] = A(e.ancho, 0);
+      esc.wake = { modo: visitas.modoWake, dir, x: dir > 0 ? gx0 - 6 : gx1 + 6, sale: dir > 0 ? gx1 + 30 : gx0 - 30, t: 0, fase: 'cruza', d: 9, salto: 0, vy: 0, giro: 0 };
     }
     if (esc.wake && !esc.wake.fuera) {
       const w = esc.wake; w.t += dt;
-      const V = 26, mitad = W / 2;
+      const [gx0] = A(0, 0), [gx1] = A(e.ancho, 0);
+      const V = 15, mitad = (gx0 + gx1) / 2;
       // The wave's height `d` art pixels behind the stern: it rises off the hull, peaks, and fades
       const ola = d => d < 2 ? 0 : d < 6 ? (d - 2) * 0.8 : Math.max(0, 3.2 - (d - 6) * 0.22);
       const popa = () => w.x - w.dir * 8;
@@ -346,7 +348,8 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
         // Picked up: the rider is aboard, and the boat goes back the way it came, slow, no wave to ride
         lancha(true);
       }
-      if (w.x < -40 || w.x > W + 40) w.fuera = true;
+      // Gone once it is behind a cliff again (after a pick-up it goes back the way it came)
+      if (w.x < Math.min(gx0 - 30, -40) || w.x > Math.max(gx1 + 30, W + 40) || w.fase === 'cruza' && w.dir * (w.x - w.sale) > 0) w.fuera = true;
     }
   }
 
