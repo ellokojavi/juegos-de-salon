@@ -8,11 +8,13 @@ import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
-import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA } from './pixel.js';
+import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // `?ovni`: the saucer comes right away (to look at it without waiting for chance)
 const OVNI_YA = new URLSearchParams(location.search).has('ovni');
+// `?ovni=mira` or `?ovni=pesca` picks the saucer's act; without it, chance picks one
+const OVNI_MODO = new URLSearchParams(location.search).get('ovni') || '';
 // `?ballena`: the whale jumps right away
 const BALLENA_YA = new URLSearchParams(location.search).has('ballena');
 // `?ballena=salto` or `?ballena=chorro` picks the whale's act; without it, chance picks one
@@ -165,22 +167,49 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     if (visitas.ovni && !esc.ovni && ahora - esc.inicio >= visitas.retraso) {
       visitas.verOvni();
       const izq = Math.random() < 0.5;
-      esc.ovni = { x: izq ? -12 : W + 12, y: Math.max(26, H * 0.2), destino: W * (0.35 + Math.random() * 0.3), dir: izq ? 1 : -1, fase: 'llega', t: 0 };
+      esc.ovni = { modo: visitas.modoOvni, x: izq ? -12 : W + 12, y: Math.max(26, H * 0.2), destino: W * (0.35 + Math.random() * 0.3), dir: izq ? 1 : -1, fase: 'llega', t: 0 };
     }
     if (esc.ovni && !esc.ovni.fuera) {
       const o = esc.ovni;
       o.t += dt;
-      if (o.fase === 'llega') {
-        o.x += o.dir * 34 * dt;
-        if ((o.dir > 0 && o.x >= o.destino) || (o.dir < 0 && o.x <= o.destino)) { o.fase = 'mira'; o.t = 0; }
-      } else if (o.fase === 'mira') {
-        if (o.t > 2.6) { o.fase = 'se va'; o.t = 0; }
-      } else { o.x += o.dir * 90 * o.t * dt * 4; o.y -= 60 * o.t * dt * 3; }
       const vuelo = Math.sin(ahora * 3) * 1.5;
-      if (o.fase === 'mira' && o.t > 0.3) for (let k = 0; k < 18; k++) r.rect(o.x - 2 - k / 3, o.y + 3 + k * 2, 4 + (2 * k) / 3, 2, `rgba(155,232,255,${0.16 - k * 0.008})`);
-      r.sprite(PLATILLO[Math.floor(ahora * 5) % 2], PALETA_PLATILLO, o.x, o.y + vuelo);
-      if (o.fase === 'mira' && o.t > 0.7 && o.t < 2.4) r.sprite(PREGUNTA, PALETA_PLATILLO, o.x, o.y + vuelo - 10 - Math.round(Math.sin(o.t * 6)));
-      if (o.y < -20 || o.x < -40 || o.x > W + 40) o.fuera = true;
+      if (o.modo === 'pesca') {
+        // Act two, "the catch": it comes down over the gap, lowers its beam to the water, a fish rises
+        // spinning up the light into the saucer, and it leaves in a zigzag
+        const [, yAguaO] = A(0, c._v.abajo + 0.7), bajo = yAguaO - 60;
+        if (o.fase === 'llega') {
+          o.x += o.dir * 34 * dt; o.y += (bajo - o.y) * Math.min(1, dt * 1.5);
+          if ((o.dir > 0 && o.x >= o.destino) || (o.dir < 0 && o.x <= o.destino)) { o.fase = 'pesca'; o.t = 0; }
+        } else if (o.fase === 'pesca') {
+          if (o.t > 3.2) { o.fase = 'se va'; o.t = 0; }
+        } else { o.x += o.dir * 70 * dt; o.y -= 40 * dt; o.zz = Math.sin(o.t * 14) * 4; }
+        const oy = o.y + vuelo, ox = o.x + (o.zz || 0);
+        if (o.fase === 'pesca' && o.t > 0.3) {
+          const largo = yAguaO - oy - 3;
+          for (let k = 0; k < largo; k += 2) r.rect(ox - 2 - k / 6, oy + 3 + k, 4 + k / 3, 2, `rgba(155,232,255,${0.2 - (k / largo) * 0.12})`);
+          // The fish: it leaps out of the water and rises up the beam, flipping as it goes
+          const k = Math.min(1, Math.max(0, (o.t - 0.9) / 1.8));
+          if (k > 0 && k < 1) {
+            const fy = yAguaO - k * (yAguaO - oy - 4);
+            r.sprite(PEZ, PALETA_PEZ, ox + Math.sin(k * 12) * 2, fy, { voltear: Math.floor(k * 10) % 2 === 1 });
+            if (!o.salpico) { o.salpico = true; if (!QUIETO) for (let n = 0; n < 8; n++) esc.parts.agregar({ x: ox, y: yAguaO, vx: (Math.random() - 0.5) * 30, vy: -20 - Math.random() * 20, g: 110, vida: 0.6, colores: AGUA }); }
+          }
+        }
+        r.sprite(PLATILLO[Math.floor(ahora * 5) % 2], PALETA_PLATILLO, ox, oy);
+        if (o.y < -20 || o.x < -40 || o.x > W + 40) o.fuera = true;
+      } else {
+        // Act one, "the look": it glides in, stops above the bridge with a beam, shows a "?", and shoots off
+        if (o.fase === 'llega') {
+          o.x += o.dir * 34 * dt;
+          if ((o.dir > 0 && o.x >= o.destino) || (o.dir < 0 && o.x <= o.destino)) { o.fase = 'mira'; o.t = 0; }
+        } else if (o.fase === 'mira') {
+          if (o.t > 2.6) { o.fase = 'se va'; o.t = 0; }
+        } else { o.x += o.dir * 90 * o.t * dt * 4; o.y -= 60 * o.t * dt * 3; }
+        if (o.fase === 'mira' && o.t > 0.3) for (let k = 0; k < 18; k++) r.rect(o.x - 2 - k / 3, o.y + 3 + k * 2, 4 + (2 * k) / 3, 2, `rgba(155,232,255,${0.16 - k * 0.008})`);
+        r.sprite(PLATILLO[Math.floor(ahora * 5) % 2], PALETA_PLATILLO, o.x, o.y + vuelo);
+        if (o.fase === 'mira' && o.t > 0.7 && o.t < 2.4) r.sprite(PREGUNTA, PALETA_PLATILLO, o.x, o.y + vuelo - 10 - Math.round(Math.sin(o.t * 6)));
+        if (o.y < -20 || o.x < -40 || o.x > W + 40) o.fuera = true;
+      }
     }
   }
 
@@ -198,14 +227,15 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   // its flight, and falls back in, with a splash on the way out and on the way in
   if (visitas && !QUIETO) {
     const [gx0] = A(0, 0), [gx1] = A(e.ancho, 0);
-    esc.proximaBallena ??= ahora + (BALLENA_YA ? 1 : 10 + Math.random() * 15);
-    if (!esc.ballena && ahora >= esc.proximaBallena && gx1 - gx0 > 60) {
+    esc.inicio ??= ahora;
+    if (visitas.ballena && !esc.ballena && ahora - esc.inicio >= visitas.retrasoBallena && gx1 - gx0 > 60) {
+      visitas.verBallena();
       const dir = Math.random() < 0.5 ? 1 : -1, largo = Math.min(30, (gx1 - gx0) * 0.35);
       const x = dir > 0 ? gx0 + 14 + Math.random() * (gx1 - gx0 - largo - 28) : gx1 - 14 - Math.random() * (gx1 - gx0 - largo - 28);
-      const modo = BALLENA_MODO === 'salto' ? 'salto' : 'chorro';   // the spout is the whale's act; the jump only with ?ballena=salto
+      const modo = visitas.modoBallena;
       esc.ballena = { modo, x, dir, largo, alto: 12 + Math.random() * 6, t: 0, dura: modo === 'chorro' ? 3 : 1.15, salpicoSalida: false, salpicoEntrada: false };
     }
-    if (esc.ballena) {
+    if (esc.ballena && !esc.ballena.fuera) {
       const b = esc.ballena; b.t += dt;
       const u = Math.min(1, b.t / b.dura);
       if (b.modo === 'chorro') {
@@ -231,7 +261,7 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
           for (let n = 0; n < 3; n++) esc.parts.agregar({ x: hx + (Math.random() - 0.5) * 2, y: hy, vx: (Math.random() - 0.5) * 18, vy: -48 - Math.random() * 18, g: 95, vida: 0.75, colores: AGUA });
         }
         if (b.t < T3) r.sprite(cuadroB, PALETA_BALLENA, bx, by, { voltear: b.dir < 0, cortarY: yAgua });
-        if (b.t > T3 + 0.7) { esc.ballena = null; esc.proximaBallena = ahora + 18 + Math.random() * 20; }
+        if (b.t > T3 + 0.7) { esc.ballena = { fuera: true }; }
       } else {
       const bx = b.x + b.dir * b.largo * u, by = yAgua + 8 - b.alto * Math.sin(Math.PI * u);
       const salpica = xx => { for (let n = 0; n < 10; n++) esc.parts.agregar({ x: xx + (Math.random() - 0.5) * 8, y: yAgua, vx: (Math.random() - 0.5) * 36, vy: -22 - Math.random() * 28, g: 150, vida: 0.9, colores: AGUA }); };
@@ -240,7 +270,7 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
       // A drawn frame for each part of the jump: head up going out, level at the top, head down coming back
       const cuadroB = u < 0.38 ? BALLENA.sube : u < 0.62 ? BALLENA.arriba : BALLENA.baja;
       if (u < 1) r.sprite(cuadroB, PALETA_BALLENA, bx, by, { voltear: b.dir < 0, cortarY: yAgua });
-      if (b.t > b.dura + 0.8) { esc.ballena = null; esc.proximaBallena = ahora + 18 + Math.random() * 20; }
+      if (b.t > b.dura + 0.8) { esc.ballena = { fuera: true }; }
       }
     }
   }
@@ -404,16 +434,30 @@ function portada() {
 /* The game                                                            */
 /* ------------------------------------------------------------------ */
 
-const P = { ovni: { etapa: -1, retraso: 0, visto: true }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
+const P = { ovni: { etapa: -1, retraso: 0, visto: true, modo: 'mira' }, ballena: { etapa: -1, retraso: 0, visto: true, modo: 'chorro' }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
 const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
 
-/** What may visit the current stage: the saucer only in the one drawn at the start, once. */
-const visitasDe = () => ({ ovni: P.ovni.etapa === P.etapa && !P.ovni.visto, retraso: P.ovni.retraso, verOvni: () => { P.ovni.visto = true; } });
+/**
+ * What may visit the current stage. One character per game, drawn at the start: the saucer (it looks
+ * and asks, or it fishes) or the whale (it jumps, or it blows its spout), once, in one stage. Birds
+ * and clouds are the background: they come and go on their own.
+ */
+const visitasDe = () => ({
+  ovni: P.ovni.etapa === P.etapa && !P.ovni.visto, retraso: P.ovni.retraso, modoOvni: P.ovni.modo, verOvni: () => { P.ovni.visto = true; },
+  ballena: P.ballena.etapa === P.etapa && !P.ballena.visto, retrasoBallena: P.ballena.retraso, modoBallena: P.ballena.modo, verBallena: () => { P.ballena.visto = true; },
+});
 
 function empezar() {
   cuentaRegresiva({ titulo: `🚂 ${T.nombre}`, ya: T.aJugar }).then(() => {
-    // The saucer's stage and moment, drawn once per game (`?ovni`: stage 1, right away)
-    P.ovni = { etapa: OVNI_YA ? 0 : Math.floor(Math.random() * ETAPAS.length), retraso: OVNI_YA ? 0.5 : 5 + Math.random() * 15, visto: false };
+    // One character per game, drawn at the start: the saucer or the whale (never both), with its act,
+    // its stage and its moment. `?ovni[=mira|pesca]` or `?ballena[=salto|chorro]` picks it, in stage 1
+    const quien = OVNI_YA ? 'ovni' : BALLENA_YA ? 'ballena' : Math.random() < 0.5 ? 'ovni' : 'ballena';
+    const etapaSorteada = OVNI_YA || BALLENA_YA ? 0 : Math.floor(Math.random() * ETAPAS.length);
+    const retraso = OVNI_YA || BALLENA_YA ? 0.8 : 5 + Math.random() * 15;
+    P.ovni = { etapa: quien === 'ovni' ? etapaSorteada : -1, retraso, visto: quien !== 'ovni',
+      modo: ['mira', 'pesca'].includes(OVNI_MODO) ? OVNI_MODO : Math.random() < 0.5 ? 'mira' : 'pesca' };
+    P.ballena = { etapa: quien === 'ballena' ? etapaSorteada : -1, retraso, visto: quien !== 'ballena',
+      modo: ['salto', 'chorro'].includes(BALLENA_MODO) ? BALLENA_MODO : Math.random() < 0.5 ? 'salto' : 'chorro' };
     Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
     jugar();
     clearInterval(P.reloj);
