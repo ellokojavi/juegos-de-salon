@@ -19,7 +19,6 @@
 (function () {
   // Una línea por persona: 'etiqueta': 'huella'. La edita labs-key.mjs
   var HUELLAS = {
-    'dueño': '867ef25adf5e043b13378e8c3ca53f1b53b5dc4ee8df926e74b7448b2f5b7417',
     'MI': 'f01eea37a3c990f60b252663ada208c1d8c83cb858d891b35bf3dee78a3e877d',
     'Chanicua': '441119bfd83362159a827adaabe0d71a43ec146fca8cb02109521fa624f8b874',
     'Pepembau': '5468c6279bf6e74a99b2edc3d4bce3fcb7bbfd3508dcc4442aaa21f33bbf9165',
@@ -27,6 +26,7 @@
     'ratoncito': '6a35ce1320faf96bdfdd1ecf882119353a7d7b72b67302786b546a9d48274a77',
     'el_mas_lindo': 'dc1e85d247f1ace88abd7129c0fdba64e43bd78d27b60c4761f5c125900d3734',
     'jiri': '5c6c52c8e92cc8699a9db6e0ff740df96c901c2f7387f7d7cb921fb070d77f77',
+    'dueño': 'bcbb9b6dfeb8c5dffd7bc49e9b936387966725f0ef035ba67912d28622a786d6',
   };
   var GUARDADA = 'juegos-de-salon:labs-llave';
   // La etiqueta de esa llave, para que el feedback 🐞 diga quién lo manda (cup/reportes.js)
