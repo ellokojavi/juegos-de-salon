@@ -8,9 +8,11 @@ import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
-import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO } from './pixel.js';
+import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// `?ovni`: the saucer comes right away (to look at it without waiting for chance)
+const OVNI_YA = new URLSearchParams(location.search).has('ovni');
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
 const T = {
   nombre: 'Tren en Vilo',
@@ -104,7 +106,7 @@ const ruido = (x, y) => { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453
  * the train with its smoke. `sim` (while it runs) gives positions and tensions; without it, the
  * beams as laid. The scene keeps its own particles and clock on the canvas (`c._esc`).
  */
-function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set() } = {}) {
+function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set(), visitas = false } = {}) {
   const r = c._r;
   if (!r) return;
   const ahora = performance.now() / 1000;
@@ -126,10 +128,16 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     for (const [dx, dy, rr] of [[0, 0, 4], [5, -2, 5], [10, 0, 4], [5, 1, 4]]) r.circulo(x + dx, y + dy, rr, 'rgba(255,255,255,0.10)');
   }
 
-  // Now and then a bird (or a small flock) crosses the sky, flapping, and is gone on the other side
-  if (!QUIETO) {
-    esc.proximoPajaro ??= ahora + 3 + Math.random() * 5;
-    if (!esc.pajaros && ahora >= esc.proximoPajaro) {
+  // Now and then a bird (or a small flock) crosses the sky, flapping, and is gone on the other side.
+  // Only in the game (`visitas`), never on the cover: they are a surprise for whoever plays
+  if (visitas && !QUIETO) {
+    esc.proximoPajaro ??= ahora + (OVNI_YA ? 0.5 : 3 + Math.random() * 5);
+    // One time in four, instead of birds, a flying saucer comes to look at the bridge
+    if (!esc.pajaros && !esc.ovni && ahora >= esc.proximoPajaro && (OVNI_YA || Math.random() < 0.25)) {
+      const izq = Math.random() < 0.5;
+      esc.ovni = { x: izq ? -12 : W + 12, y: Math.max(26, H * 0.2), destino: W * (0.35 + Math.random() * 0.3), dir: izq ? 1 : -1, fase: 'llega', t: 0 };
+    }
+    if (!esc.pajaros && !esc.ovni && ahora >= esc.proximoPajaro) {
       const izq = Math.random() < 0.5, n = 1 + Math.floor(Math.random() * 3), y = H * (0.08 + Math.random() * 0.3);
       esc.pajaros = Array.from({ length: n }, (_, k) => ({ x: izq ? -10 - k * 9 : W + 10 + k * 9, y: y + (k % 2) * 5, fase: Math.random() * 6, v: (izq ? 1 : -1) * (16 + Math.random() * 8) }));
     }
@@ -139,6 +147,23 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
         r.sprite(PAJARO[Math.floor(p.fase * 6) % 2], PALETA_PAJARO, p.x, p.y + Math.sin(p.fase * 2.2) * 2, { voltear: p.v < 0 });
       }
       if (esc.pajaros.every(p => p.x < -20 || p.x > W + 20)) { esc.pajaros = null; esc.proximoPajaro = ahora + 7 + Math.random() * 8; }
+    }
+    // The saucer: it glides in, stops above the bridge bobbing, shows a "?", and shoots off up and away
+    if (esc.ovni) {
+      const o = esc.ovni;
+      o.t += dt;
+      if (o.fase === 'llega') {
+        o.x += o.dir * 34 * dt;
+        if ((o.dir > 0 && o.x >= o.destino) || (o.dir < 0 && o.x <= o.destino)) { o.fase = 'mira'; o.t = 0; }
+      } else if (o.fase === 'mira') {
+        if (o.t > 2.6) { o.fase = 'se va'; o.t = 0; }
+      } else { o.x += o.dir * 90 * o.t * dt * 4; o.y -= 60 * o.t * dt * 3; }
+      const vuelo = Math.sin(ahora * 3) * 1.5;
+      // While it looks, a faint beam of light falls toward the bridge
+      if (o.fase === 'mira' && o.t > 0.3) for (let k = 0; k < 18; k++) r.rect(o.x - 2 - k / 3, o.y + 3 + k * 2, 4 + (2 * k) / 3, 2, `rgba(155,232,255,${0.16 - k * 0.008})`);
+      r.sprite(PLATILLO[Math.floor(ahora * 5) % 2], PALETA_PLATILLO, o.x, o.y + vuelo);
+      if (o.fase === 'mira' && o.t > 0.7 && o.t < 2.4) r.sprite(PREGUNTA, PALETA_PLATILLO, o.x, o.y + vuelo - 10 - Math.round(Math.sin(o.t * 6)));
+      if (o.y < -20 || o.x < -40 || o.x > W + 40) { esc.ovni = null; esc.proximoPajaro = ahora + 9 + Math.random() * 8; }
     }
   }
 
@@ -373,14 +398,14 @@ function jugar() {
     botonDeshacer.disabled = !P.historial.length || P.simulando;
     botonProbar.disabled = P.simulando || !P.vigas.length;
     botonBorrar.disabled = P.simulando || !P.vigas.length;
-    dibujar(c, e, { vigas: P.vigas, grilla: !P.simulando, arrastre, usados: usados(), rotasAntes: P.rotasAntes });
+    dibujar(c, e, { vigas: P.vigas, grilla: !P.simulando, arrastre, usados: usados(), rotasAntes: P.rotasAntes, visitas: true });
   }
   repintar();
   // While building, the scene stays alive (clouds, water, stars): repaint every frame
   let ultimoArrastre = null;
   const vivo = () => {
     if (!c.isConnected || P.fin) return;
-    if (!P.simulando) dibujar(c, e, { vigas: P.vigas, grilla: true, arrastre: ultimoArrastre, usados: usados(), rotasAntes: P.rotasAntes });
+    if (!P.simulando) dibujar(c, e, { vigas: P.vigas, grilla: true, arrastre: ultimoArrastre, usados: usados(), rotasAntes: P.rotasAntes, visitas: true });
     requestAnimationFrame(vivo);
   };
   if (!QUIETO) requestAnimationFrame(vivo);
@@ -451,7 +476,7 @@ function jugar() {
       for (let k = 0; k < Math.round(1 / 60 / DT); k++) paso(sim);
       const ahora = sim.vigas.filter(v => v.rota).length;
       if (ahora > rotas) { rotas = ahora; SFX.error(); vibrate(40); }
-      dibujar(c, e, { sim });
+      dibujar(c, e, { sim, visitas: true });
       if (!sim.fin) { requestAnimationFrame(cuadro); return; }
       // It made it: the notice now, and the scene runs on until the last wagon leaves the screen
       if (sim.tren.llego) {

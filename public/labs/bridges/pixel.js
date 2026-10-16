@@ -180,3 +180,31 @@ export const PAJARO = [
     'kw....wk',
   ],
 ];
+
+/* ------------------------------------------------------------------ */
+/* A flying saucer (two frames: its lights blink) and its "?"           */
+/* ------------------------------------------------------------------ */
+
+export const PALETA_PLATILLO = { k: '#14081f', d: '#9be8ff', D: '#e6fbff', s: '#c9c9d6', S: '#6c6c80', y: '#ffd23f', p: '#ff2e88', c: '#2ee6d6' };
+const PLATILLO_CUERPO = [
+  '.....kkkk.....',
+  '....kdDdDk....',
+  '...kdddddDk...',
+  '.kkkkkkkkkkkk.',
+  'kssssssssssssk',
+];
+export const PLATILLO = [
+  [...PLATILLO_CUERPO, 'kSySSpSScSSySk', '.kkkkkkkkkkkk.', '....kkkkkk....'],
+  [...PLATILLO_CUERPO, 'kSpSScSSySSpSk', '.kkkkkkkkkkkk.', '....kkkkkk....'],
+];
+export const PREGUNTA = [
+  '.kkkk.',
+  'kyyyyk',
+  'kykkyk',
+  '.k.kyk',
+  '..kyk.',
+  '..kyk.',
+  '..kk..',
+  '..kyk.',
+  '..kk..',
+];
