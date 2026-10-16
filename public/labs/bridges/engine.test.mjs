@@ -51,4 +51,25 @@ assert.ok(puntajePartida(topes.slice(0, 4), TIEMPO_S).total < puntajePartida(top
 assert.equal(puntajePartida(minimos.slice(0, 2), 60).rapidez, 6, 'speed scales with the stages passed: 15 × 2/5');
 const p = puntajePartida([8, 14], 200);   // stage 1: 2 of 3 spare beams saved; stage 2: at its budget
 assert.equal(p.ahorros[0].fraccion, 2 / 3); assert.equal(p.ahorros[1].fraccion, 0);
+// The catalog of crossings (tools/generators/bridges.mjs): each one has a solution that passes, at its
+// minimum and within its budget, a bare deck that falls, and the level's spare beams
+{
+  const url = new URL('./catalogo.json', import.meta.url);
+  const { existsSync } = await import('node:fs');
+  if (existsSync(url)) {
+    const cat = JSON.parse(readFileSync(url, 'utf8'));
+    const HOLGURA = [3, 3, 2, 1, 0];
+    for (const nivel of [1, 2, 3, 4, 5]) assert.ok(cat.some(c => c.nivel === nivel), `the catalog has crossings of level ${nivel}`);
+    for (const c of cat) {
+      const sol = c.solucion.map(([a, b]) => V(a, b));
+      assert.equal(sol.length, c.minimo, `${c.tipo} ${c.ancho}: minimo is its solution's beams`);
+      assert.equal(c.presupuesto, c.minimo + HOLGURA[c.nivel - 1], `${c.tipo} ${c.ancho}: the level's spare beams`);
+      assert.ok(probar(c, sol).llego, `${c.tipo} ${c.ancho} (level ${c.nivel}): its solution passes`);
+      assert.ok(!probar(c, cubierta(c.ancho)).llego, `${c.tipo} ${c.ancho}: a bare deck falls`);
+      const puestas = [];
+      for (const v of sol) { assert.equal(vigaValida(c, puestas, v.a, v.b), null, `${c.tipo} ${c.ancho}: ${JSON.stringify(v)}`); puestas.push(v); }
+    }
+    console.log(`  catalog: ${cat.length} crossings, each with a solution that passes`);
+  }
+}
 console.log('✓ Tren en Vilo (labs)');

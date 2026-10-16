@@ -181,16 +181,16 @@ const entre01 = x => Math.min(1, Math.max(0, x));
  * The score of a game, by layers, with each part separate for the breakdown. `usadas` is the beams
  * of the bridge that passed in each stage done (its length is the stages passed).
  */
-export function puntajePartida(usadas, segundos) {
+export function puntajePartida(usadas, segundos, lista = ETAPAS) {
   const pasadas = usadas.length;
   const etapas = PUNTOS_ETAPA * pasadas;
   const ahorros = usadas.map((n, k) => {
-    const e = ETAPAS[k], margen = e.presupuesto - e.minimo;
+    const e = lista[k], margen = e.presupuesto - e.minimo;
     const fraccion = margen > 0 ? entre01((e.presupuesto - n) / margen) : 1;
     return { etapa: k + 1, usadas: n, presupuesto: e.presupuesto, minimo: e.minimo, fraccion, puntos: PUNTOS_AHORRO * fraccion };
   });
   const ahorro = Math.round(ahorros.reduce((s, a) => s + a.puntos, 0));
   const fraccionTiempo = entre01((TIEMPO_S - segundos) / (TIEMPO_S - RAPIDO_S));
-  const rapidez = Math.round(BONO_RAPIDEZ * fraccionTiempo * (pasadas / ETAPAS.length));
+  const rapidez = Math.round(BONO_RAPIDEZ * fraccionTiempo * (pasadas / lista.length));
   return { pasadas, etapas, ahorros, ahorro, fraccionTiempo, rapidez, total: etapas + ahorro + rapidez };
 }
