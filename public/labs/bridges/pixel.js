@@ -326,11 +326,14 @@ export const TOPO_MIEDO = [
   ['...........', 'k...kkk...k', 'bkkkBBBkkkb', ...MIEDO_CARA],
 ];
 
-/* The wake visitor's green boat (a deep petrol green, the owner's sample): side view, facing right, 16 × 6, the driver at the wheel */
+/* The wake visitor's green boat (a deep petrol green, the owner's sample): side view, facing right, 16 × 8, the driver at the wheel and the wake tower at the
+   stern (the roof the rider's rope hangs from: its rear top corner is 6 px behind the centre, 8 px up) */
 export const PALETA_LANCHA = { k: '#0a1a12', g: '#2f6570', G: '#4a8a96', d: '#1a363c', w: '#ffffff', s: '#ffd0a0', h: '#ff5a3d', c: '#9be8ff' };
 export const LANCHA = [
-  '.......h.c......',
-  '.......sc.......',
+  '..kkkkk.........',
+  '..k...k.........',
+  '..k...k.h.c.....',
+  '..k...k.sc......',
   '..kkkkkdkkkkk...',
   '.kGGGGGGGGGGGGk.',
   '.kggwwwwwgggggk.',
