@@ -132,7 +132,12 @@ export function paso(s) {
     const dx = b.x - a.x, dy = b.y - a.y, l = Math.sqrt(dx * dx + dy * dy) || 1e-9;
     const deform = (l - v.largo) / v.largo;
     v.tension = deform;
-    if (deform > FISICA.quiebre || deform < -FISICA.quiebre) { v.rota = true; continue; }
+    if (deform > FISICA.quiebre || deform < -FISICA.quiebre) {
+      v.rota = true;
+      // A crossing with `firme` asks for a bridge that stays standing: the first beam that snaps ends the test
+      if (s.e.firme) { s.cortada = true; s.fin = true; }
+      continue;
+    }
     const f = FISICA.rigidez * deform, ux = dx / l, uy = dy / l;
     fx[v.i] += f * ux; fy[v.i] += f * uy; fx[v.j] -= f * ux; fy[v.j] -= f * uy;
   }
