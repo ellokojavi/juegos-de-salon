@@ -8,11 +8,13 @@ import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
-import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA } from './pixel.js';
+import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // `?ovni`: the saucer comes right away (to look at it without waiting for chance)
 const OVNI_YA = new URLSearchParams(location.search).has('ovni');
+// `?ballena`: the whale jumps right away
+const BALLENA_YA = new URLSearchParams(location.search).has('ballena');
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
 const T = {
   nombre: 'Tren en Vilo',
@@ -106,7 +108,7 @@ const ruido = (x, y) => { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453
  * the train with its smoke. `sim` (while it runs) gives positions and tensions; without it, the
  * beams as laid. The scene keeps its own particles and clock on the canvas (`c._esc`).
  */
-function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set(), visitas = false } = {}) {
+function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set(), visitas = null } = {}) {
   const r = c._r;
   if (!r) return;
   const ahora = performance.now() / 1000;
@@ -128,28 +130,31 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     for (const [dx, dy, rr] of [[0, 0, 4], [5, -2, 5], [10, 0, 4], [5, 1, 4]]) r.circulo(x + dx, y + dy, rr, 'rgba(255,255,255,0.10)');
   }
 
-  // Now and then a bird (or a small flock) crosses the sky, flapping, and is gone on the other side.
-  // Only in the game (`visitas`), never on the cover: they are a surprise for whoever plays
+  // Visitors, only in the game (never on the cover: they are a surprise). `visitas` comes from the game:
+  // { ovni: may the saucer come in this stage, retraso: after how long, verOvni(): it came }
   if (visitas && !QUIETO) {
-    esc.proximoPajaro ??= ahora + (OVNI_YA ? 0.5 : 3 + Math.random() * 5);
-    // One time in four, instead of birds, a flying saucer comes to look at the bridge
-    if (!esc.pajaros && !esc.ovni && ahora >= esc.proximoPajaro && (OVNI_YA || Math.random() < 0.25)) {
-      const izq = Math.random() < 0.5;
-      esc.ovni = { x: izq ? -12 : W + 12, y: Math.max(26, H * 0.2), destino: W * (0.35 + Math.random() * 0.3), dir: izq ? 1 : -1, fase: 'llega', t: 0 };
-    }
-    if (!esc.pajaros && !esc.ovni && ahora >= esc.proximoPajaro) {
-      const izq = Math.random() < 0.5, n = 1 + Math.floor(Math.random() * 3), y = H * (0.08 + Math.random() * 0.3);
-      esc.pajaros = Array.from({ length: n }, (_, k) => ({ x: izq ? -10 - k * 9 : W + 10 + k * 9, y: y + (k % 2) * 5, fase: Math.random() * 6, v: (izq ? 1 : -1) * (16 + Math.random() * 8) }));
+    esc.inicio ??= ahora;
+    // A bird, now and then: high, muted, slow, so it hardly takes the eye off the bridge
+    esc.proximoPajaro ??= ahora + 6 + Math.random() * 8;
+    if (!esc.pajaros && ahora >= esc.proximoPajaro) {
+      const izq = Math.random() < 0.5, n = Math.random() < 0.7 ? 1 : 2, y = H * (0.05 + Math.random() * 0.15);
+      esc.pajaros = Array.from({ length: n }, (_, k) => ({ x: izq ? -10 - k * 10 : W + 10 + k * 10, y: y + k * 4, fase: Math.random() * 6, v: (izq ? 1 : -1) * (11 + Math.random() * 5) }));
     }
     if (esc.pajaros) {
       for (const p of esc.pajaros) {
         p.x += p.v * dt; p.fase += dt;
-        r.sprite(PAJARO[Math.floor(p.fase * 6) % 2], PALETA_PAJARO, p.x, p.y + Math.sin(p.fase * 2.2) * 2, { voltear: p.v < 0 });
+        r.sprite(PAJARO[Math.floor(p.fase * 4) % 2], PALETA_PAJARO, p.x, p.y + Math.sin(p.fase * 1.6) * 1.5, { voltear: p.v < 0 });
       }
-      if (esc.pajaros.every(p => p.x < -20 || p.x > W + 20)) { esc.pajaros = null; esc.proximoPajaro = ahora + 7 + Math.random() * 8; }
+      if (esc.pajaros.every(p => p.x < -20 || p.x > W + 20)) { esc.pajaros = null; esc.proximoPajaro = ahora + 14 + Math.random() * 14; }
     }
-    // The saucer: it glides in, stops above the bridge bobbing, shows a "?", and shoots off up and away
-    if (esc.ovni) {
+    // The saucer: once in the whole game, in the stage drawn at the start. It glides in, stops above
+    // the bridge with a beam of light, shows a "?", and shoots off up and away
+    if (visitas.ovni && !esc.ovni && ahora - esc.inicio >= visitas.retraso) {
+      visitas.verOvni();
+      const izq = Math.random() < 0.5;
+      esc.ovni = { x: izq ? -12 : W + 12, y: Math.max(26, H * 0.2), destino: W * (0.35 + Math.random() * 0.3), dir: izq ? 1 : -1, fase: 'llega', t: 0 };
+    }
+    if (esc.ovni && !esc.ovni.fuera) {
       const o = esc.ovni;
       o.t += dt;
       if (o.fase === 'llega') {
@@ -159,11 +164,10 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
         if (o.t > 2.6) { o.fase = 'se va'; o.t = 0; }
       } else { o.x += o.dir * 90 * o.t * dt * 4; o.y -= 60 * o.t * dt * 3; }
       const vuelo = Math.sin(ahora * 3) * 1.5;
-      // While it looks, a faint beam of light falls toward the bridge
       if (o.fase === 'mira' && o.t > 0.3) for (let k = 0; k < 18; k++) r.rect(o.x - 2 - k / 3, o.y + 3 + k * 2, 4 + (2 * k) / 3, 2, `rgba(155,232,255,${0.16 - k * 0.008})`);
       r.sprite(PLATILLO[Math.floor(ahora * 5) % 2], PALETA_PLATILLO, o.x, o.y + vuelo);
       if (o.fase === 'mira' && o.t > 0.7 && o.t < 2.4) r.sprite(PREGUNTA, PALETA_PLATILLO, o.x, o.y + vuelo - 10 - Math.round(Math.sin(o.t * 6)));
-      if (o.y < -20 || o.x < -40 || o.x > W + 40) { esc.ovni = null; esc.proximoPajaro = ahora + 9 + Math.random() * 8; }
+      if (o.y < -20 || o.x < -40 || o.x > W + 40) o.fuera = true;
     }
   }
 
@@ -175,6 +179,33 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     const ola = Math.round(Math.sin(x * 0.35 + ahora * 2.2) * 1.2);
     r.punto(x, yAgua + ola, AGUA[1]);
     if (ruido(x, Math.floor(ahora * 3)) > 0.93) r.punto(x, yAgua + 2 + ola, AGUA[0]);
+  }
+
+  // A whale, now and then (in the game only): it breaches out of the water in an arc, tilting with
+  // its flight, and falls back in, with a splash on the way out and on the way in
+  if (visitas && !QUIETO) {
+    const [gx0] = A(0, 0), [gx1] = A(e.ancho, 0);
+    esc.proximaBallena ??= ahora + (BALLENA_YA ? 1 : 10 + Math.random() * 15);
+    if (!esc.ballena && ahora >= esc.proximaBallena && gx1 - gx0 > 60) {
+      const dir = Math.random() < 0.5 ? 1 : -1, largo = Math.min(56, (gx1 - gx0) * 0.55);
+      const x = dir > 0 ? gx0 + 14 + Math.random() * (gx1 - gx0 - largo - 28) : gx1 - 14 - Math.random() * (gx1 - gx0 - largo - 28);
+      esc.ballena = { x, dir, largo, alto: 44 + Math.random() * 16, t: 0, dura: 2.1, salpicoSalida: false, salpicoEntrada: false };
+    }
+    if (esc.ballena) {
+      const b = esc.ballena; b.t += dt;
+      const u = Math.min(1, b.t / b.dura);
+      const bx = b.x + b.dir * b.largo * u, by = yAgua + 9 - b.alto * Math.sin(Math.PI * u);
+      const salpica = xx => { for (let n = 0; n < 16; n++) esc.parts.agregar({ x: xx + (Math.random() - 0.5) * 10, y: yAgua, vx: (Math.random() - 0.5) * 50, vy: -30 - Math.random() * 45, g: 150, vida: 0.9, colores: AGUA }); };
+      if (!b.salpicoSalida && u > 0.06) { b.salpicoSalida = true; salpica(b.x); }
+      if (!b.salpicoEntrada && u > 0.94) { b.salpicoEntrada = true; salpica(b.x + b.dir * b.largo); }
+      // The tilt follows the arc: nose up going out, flat at the top, nose down coming back
+      const pendiente = Math.cos(Math.PI * u);
+      if (u < 1) {
+        // Cut at the surface: what is still under the water is not drawn
+        r.sprite(BALLENA, PALETA_BALLENA, bx, by, { voltear: b.dir > 0, inclinar: b.dir * pendiente * 1.1, cortarY: yAgua });
+      }
+      if (b.t > b.dura + 0.8) { esc.ballena = null; esc.proximaBallena = ahora + 18 + Math.random() * 20; }
+    }
   }
 
   // The cliffs: rock with grain, an outline and grass on top
@@ -336,11 +367,16 @@ function portada() {
 /* The game                                                            */
 /* ------------------------------------------------------------------ */
 
-const P = { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
+const P = { ovni: { etapa: -1, retraso: 0, visto: true }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
 const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
+
+/** What may visit the current stage: the saucer only in the one drawn at the start, once. */
+const visitasDe = () => ({ ovni: P.ovni.etapa === P.etapa && !P.ovni.visto, retraso: P.ovni.retraso, verOvni: () => { P.ovni.visto = true; } });
 
 function empezar() {
   cuentaRegresiva({ titulo: `🚂 ${T.nombre}`, ya: T.aJugar }).then(() => {
+    // The saucer's stage and moment, drawn once per game (`?ovni`: stage 1, right away)
+    P.ovni = { etapa: OVNI_YA ? 0 : Math.floor(Math.random() * ETAPAS.length), retraso: OVNI_YA ? 0.5 : 5 + Math.random() * 15, visto: false };
     Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
     jugar();
     clearInterval(P.reloj);
@@ -398,14 +434,14 @@ function jugar() {
     botonDeshacer.disabled = !P.historial.length || P.simulando;
     botonProbar.disabled = P.simulando || !P.vigas.length;
     botonBorrar.disabled = P.simulando || !P.vigas.length;
-    dibujar(c, e, { vigas: P.vigas, grilla: !P.simulando, arrastre, usados: usados(), rotasAntes: P.rotasAntes, visitas: true });
+    dibujar(c, e, { vigas: P.vigas, grilla: !P.simulando, arrastre, usados: usados(), rotasAntes: P.rotasAntes, visitas: visitasDe() });
   }
   repintar();
   // While building, the scene stays alive (clouds, water, stars): repaint every frame
   let ultimoArrastre = null;
   const vivo = () => {
     if (!c.isConnected || P.fin) return;
-    if (!P.simulando) dibujar(c, e, { vigas: P.vigas, grilla: true, arrastre: ultimoArrastre, usados: usados(), rotasAntes: P.rotasAntes, visitas: true });
+    if (!P.simulando) dibujar(c, e, { vigas: P.vigas, grilla: true, arrastre: ultimoArrastre, usados: usados(), rotasAntes: P.rotasAntes, visitas: visitasDe() });
     requestAnimationFrame(vivo);
   };
   if (!QUIETO) requestAnimationFrame(vivo);
@@ -476,7 +512,7 @@ function jugar() {
       for (let k = 0; k < Math.round(1 / 60 / DT); k++) paso(sim);
       const ahora = sim.vigas.filter(v => v.rota).length;
       if (ahora > rotas) { rotas = ahora; SFX.error(); vibrate(40); }
-      dibujar(c, e, { sim, visitas: true });
+      dibujar(c, e, { sim, visitas: visitasDe() });
       if (!sim.fin) { requestAnimationFrame(cuadro); return; }
       // It made it: the notice now, and the scene runs on until the last wagon leaves the screen
       if (sim.tren.llego) {

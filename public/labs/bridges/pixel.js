@@ -49,11 +49,15 @@ export function pixelado(canvas, { px = 3 } = {}) {
      * A sprite from text rows: each character is a palette key, '.' is empty. Anchored at its
      * bottom-centre (`x`, `y`), so a vehicle sits on the line it rides.
      */
-    sprite(filas, paleta, x, y, { voltear = false } = {}) {
+    sprite(filas, paleta, x, y, { voltear = false, inclinar = 0, cortarY = Infinity } = {}) {
       const h = filas.length, w = filas[0].length;
-      const x0 = Math.round(x - w / 2), y0 = Math.round(y - h);
+      const y0 = Math.round(y - h);
       for (let j = 0; j < h; j++) {
         const fila = filas[j];
+        // `inclinar`: each row shifts that many pixels from the middle row, a pixel-art tilt
+        const x0 = Math.round(x - w / 2 + (j - h / 2) * inclinar);
+        // `cortarY`: rows below that line are not drawn (a whale under the water's surface)
+        if (y0 + j > cortarY) continue;
         for (let i = 0; i < w; i++) {
           const c = fila[voltear ? w - 1 - i : i];
           if (c === '.' || c === ' ') continue;
@@ -163,7 +167,8 @@ export const VAGON = [
 /* A bird, flapping: two frames, wings up and wings down, facing right */
 /* ------------------------------------------------------------------ */
 
-export const PALETA_PAJARO = { k: '#14081f', w: '#f0eaff', g: '#b9b0d6', o: '#ffb43a' };
+// Muted on purpose: a bird should pass almost unnoticed, close to the night sky's colors
+export const PALETA_PAJARO = { k: '#1d0d33', w: '#6a5a8e', g: '#54467a', o: '#8a6a5a' };
 export const PAJARO = [
   [
     'k.....k.',
@@ -207,4 +212,21 @@ export const PREGUNTA = [
   '..kk..',
   '..kyk.',
   '..kk..',
+];
+
+/* ------------------------------------------------------------------ */
+/* A whale that breaches: one body, tilted by its flight (`inclinar`)    */
+/* ------------------------------------------------------------------ */
+
+export const PALETA_BALLENA = { k: '#0b1430', b: '#3d5a9e', B: '#5b7cc4', l: '#b9c8ee', w: '#ffffff' };
+// Facing left: the head (with its eye) on the left, the tail flukes on the right — 22 × 8
+export const BALLENA = [
+  '......kkkkkk..........',
+  '....kkBBBBBBkk........',
+  '..kkBBBBBBBBBBkk...k.k',
+  '.kbBwBBBBBBBBBBbkkkbbk',
+  'kbbbbbbbbbbbbbbbbbbbk.',
+  'kblllllllbbbbbbbbbk...',
+  '.kllllllllllbbbkkk....',
+  '..kkkkkkkkkkkk........',
 ];
