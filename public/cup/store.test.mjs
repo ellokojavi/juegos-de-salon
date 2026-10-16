@@ -198,7 +198,8 @@ await test('cuenta: sesión por copa y copas de prueba aparte', async () => {
   assert.equal(c.quien('ABCDE'), 'aaaaaa');
   assert.equal(cp.quien('ABCDE'), null);
   assert.equal(c.mias().length, 1);
-  assert.equal(c.mias(Date.now() + 8 * DIA_MS).length, 0);
+  // A finished cup stays in "Tus copas", behind the switch (D-336)
+  assert.equal(c.mias().length, 1);
   c.intento.guardar('ABCDE', 1, 'aaaaaa', { jugadas: [1] });
   assert.deepEqual(c.intento.leer('ABCDE', 1, 'aaaaaa'), { jugadas: [1] });
   c.olvidar('ABCDE');
@@ -213,8 +214,8 @@ await test('"Tus copas" suma las del jugador que este celular no conoce, sin rep
     { code: 'FGHJK', nombre: 'Cata', copa: 'Piratas', fin: now + DIA_MS },
     { code: 'LMNPQ', nombre: 'Cata', copa: 'Vieja', fin: now - 8 * DIA_MS },
   ];
-  assert.deepEqual(juntarCopas(mias, delJugador, now).map(c => c.code), ['ABCDE', 'FGHJK']);
-  assert.deepEqual(juntarCopas([], [null, delJugador[1]], now).map(c => c.code), ['FGHJK']);
+  assert.deepEqual(juntarCopas(mias, delJugador).map(c => c.code), ['ABCDE', 'FGHJK', 'LMNPQ']);
+  assert.deepEqual(juntarCopas([], [null, delJugador[1]]).map(c => c.code), ['FGHJK']);
 });
 
 await test('el país de cada jugador: al crear, al inscribirse y, para los de antes, una vez después (D-207, D-209)', async () => {

@@ -10,18 +10,16 @@
  * en Firebase (`juntarCopas`, D-220).
  */
 const PREFIJO = 'juegos-de-salon:copa:';
-const SEMANA = 7 * 24 * 60 * 60 * 1000;
-
-/** Una copa sigue en "Tus copas" hasta una semana después de terminar. */
-const vigente = (c, now) => !c.fin || now < c.fin + SEMANA;
+// How many cups this phone remembers: the finished ones stay in "Tus copas", behind the switch (D-336)
+const RECORDADAS = 50;
 
 /**
  * "Tus copas": las de este celular y, detrás, las del jugador que entró (D-220) que este celular
  * no conoce, ya con `{ code, nombre, copa, fin }`. Una copa no se repite.
  */
-export function juntarCopas(mias, delJugador, now = Date.now()) {
+export function juntarCopas(mias, delJugador) {
   const ya = new Set(mias.map(c => c.code));
-  return [...mias, ...delJugador.filter(c => c && !ya.has(c.code) && vigente(c, now))];
+  return [...mias, ...delJugador.filter(c => c && !ya.has(c.code))];
 }
 
 export function createCuenta({ prueba = false } = {}) {
@@ -39,7 +37,7 @@ export function createCuenta({ prueba = false } = {}) {
       escribir(`${p}sesion:${code}`, { pid });
       const mias = (leer(`${p}mias`) || []).filter(c => c.code !== code);
       mias.unshift({ code, nombre, copa, fin });
-      escribir(`${p}mias`, mias.slice(0, 10));
+      escribir(`${p}mias`, mias.slice(0, RECORDADAS));
     },
     olvidar(code) {
       borrar(`${p}sesion:${code}`);
@@ -47,8 +45,8 @@ export function createCuenta({ prueba = false } = {}) {
       escribir(`${p}mias`, (leer(`${p}mias`) || []).filter(c => c.code !== code));
     },
     /** Las copas en que este celular participa, para ofrecerlas en la portada. */
-    mias(now = Date.now()) {
-      return (leer(`${p}mias`) || []).filter(c => vigente(c, now));
+    mias() {
+      return leer(`${p}mias`) || [];
     },
     intento: {
       leer: (code, dia, pid) => leer(`${p}intento:${code}:${dia}:${pid}`),
