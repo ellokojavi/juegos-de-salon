@@ -49,7 +49,20 @@ export function pixelado(canvas, { px = 3 } = {}) {
      * A sprite from text rows: each character is a palette key, '.' is empty. Anchored at its
      * bottom-centre (`x`, `y`), so a vehicle sits on the line it rides.
      */
-    sprite(filas, paleta, x, y, { voltear = false, inclinar = 0, cortarY = Infinity } = {}) {
+    sprite(filas, paleta, x, y, { voltear = false, inclinar = 0, cortarY = Infinity, escala = 1 } = {}) {
+      // `escala` < 1: drawn smaller, sampling the nearest source pixel, so it stays crisp (going away into the distance)
+      if (escala !== 1) {
+        const h0 = filas.length, w0 = filas[0].length, w = Math.max(1, Math.round(w0 * escala)), h = Math.max(1, Math.round(h0 * escala));
+        const x0 = Math.round(x - w / 2), y0 = Math.round(y - h);
+        for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+          const si = Math.min(w0 - 1, Math.floor(i / escala)), sj = Math.min(h0 - 1, Math.floor(j / escala));
+          const c = filas[sj][voltear ? w0 - 1 - si : si];
+          if (c === '.' || c === ' ') continue;
+          b.fillStyle = paleta[c] || '#f0f';
+          b.fillRect(x0 + i, y0 + j, 1, 1);
+        }
+        return;
+      }
       const h = filas.length, w = filas[0].length;
       const y0 = Math.round(y - h);
       for (let j = 0; j < h; j++) {
