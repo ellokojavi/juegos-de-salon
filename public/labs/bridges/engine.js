@@ -12,11 +12,11 @@
  * budget leaves room in the first ones and none in the last: stage 5 is meant to stop most players.
  */
 export const ETAPAS = [
-  { ancho: 4, anclas: [[0, -1], [4, -1]], presupuesto: 9, minimo: 6 },
-  { ancho: 5, anclas: [[0, -1], [5, -1]], presupuesto: 9, minimo: 6 },
-  { ancho: 6, anclas: [[0, -1], [6, -1], [3, -3]], presupuesto: 13, minimo: 11 },
-  { ancho: 7, anclas: [[0, -1], [7, -1]], presupuesto: 12, minimo: 10 },
-  { ancho: 8, anclas: [[0, -1], [8, -1], [4, -3]], presupuesto: 14, minimo: 14 },
+  { ancho: 4, anclas: [[0, -1], [4, -1]], presupuesto: 10, minimo: 7 },
+  { ancho: 5, anclas: [[0, -1], [5, -1]], presupuesto: 14, minimo: 11 },
+  { ancho: 6, anclas: [[0, -1], [6, -1], [3, -3]], presupuesto: 17, minimo: 15 },
+  { ancho: 7, anclas: [[0, -1], [7, -1]], presupuesto: 19, minimo: 17 },
+  { ancho: 8, anclas: [[0, -1], [8, -1], [4, -3]], presupuesto: 21, minimo: 21 },
 ];
 export const TIEMPO_S = 7 * 60;
 export const LARGO_MAX = 2.25;     // the longest beam: two squares, or a 1 × 2 diagonal
@@ -51,11 +51,19 @@ export const FISICA = {
   rigidez: 30000,                  // spring force per unit of strain
   amort: 0.985,                    // velocity kept each step
   quiebre: 0.007,                  // strain at which a beam snaps
-  tren: 50,                        // the train's weight, applied at its wheels
+  tren: 50,                        // the locomotive's weight, applied at its wheels
+  vagon: 12,                       // each wagon's
   velTren: 1.6,                    // grid units per second
 };
 export let DT = 1 / 960;
 export const fijarDT = x => { DT = x; };
+
+/**
+ * The train: the locomotive and two wagons behind it, coupled, at fixed distances in grid units
+ * (the sprites are drawn at 16 art pixels per unit, so they touch). Each one weighs on the deck.
+ */
+export const PIEZAS = [{ dx: 0, peso: 'tren' }, { dx: -1.25, peso: 'vagon' }, { dx: -2.31, peso: 'vagon' }];
+const COLA = PIEZAS[PIEZAS.length - 1].dx;
 
 /**
  * Builds the simulation of a bridge. Returns a state you advance with `paso(s)`;
@@ -104,7 +112,8 @@ export function alturaCamino(s, x) {
 
 /** One fixed step of the simulation. */
 export function paso(s) {
-  if (s.fin) return s;
+  // Decided: if it made it, the train keeps rolling (only for the eye) until it leaves the scene
+  if (s.fin) { if (s.tren.llego) { s.tren.x += FISICA.velTren * DT; s.t += DT; } return s; }
   const { nudos, vigas } = s;
   const fx = new Float64Array(nudos.length), fy = new Float64Array(nudos.length);
   for (let k = 0; k < nudos.length; k++) fy[k] -= nudos[k].m * FISICA.g;
@@ -119,19 +128,22 @@ export function paso(s) {
     fx[v.i] += f * ux; fy[v.i] += f * uy; fx[v.j] -= f * ux; fy[v.j] -= f * uy;
   }
   // The train: on the cliffs the ground holds it; over the gap, the road beam under it does
+  // Every piece of the train over the gap weighs on the road beam under it; with none, it falls
   const tr = s.tren;
   if (s.t > 0.6) tr.x += FISICA.velTren * DT;
-  if (tr.x <= 0 || tr.x >= s.e.ancho) tr.y = 0;
-  else {
-    const b = bajoTren(s, tr.x);
-    if (!b || b.y < -1.5) { tr.cayo = true; s.fin = true; }
-    else {
-      tr.y = b.y;
-      fy[nudos.indexOf(b.p)] -= FISICA.tren * (1 - b.u);
-      fy[nudos.indexOf(b.q)] -= FISICA.tren * b.u;
-    }
+  tr.y = 0;
+  for (const [k, pz] of PIEZAS.entries()) {
+    const x = tr.x + pz.dx;
+    if (x <= 0 || x >= s.e.ancho) continue;
+    const b = bajoTren(s, x);
+    if (!b || b.y < -1.5) { tr.cayo = true; tr.cayoPieza = k; s.fin = true; break; }
+    if (k === 0) tr.y = b.y;
+    const peso = FISICA[pz.peso];
+    fy[nudos.indexOf(b.p)] -= peso * (1 - b.u);
+    fy[nudos.indexOf(b.q)] -= peso * b.u;
   }
-  if (tr.x > s.e.ancho + 1.2) { tr.llego = true; s.fin = true; }
+  // It made it when the last wagon is on the far cliff
+  if (!s.fin && tr.x + COLA > s.e.ancho + 0.4) { tr.llego = true; s.fin = true; }
   for (let k = 0; k < nudos.length; k++) {
     const n = nudos[k];
     if (n.fijo) continue;

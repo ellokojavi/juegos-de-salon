@@ -7,7 +7,7 @@
 import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { ETAPAS, TIEMPO_S, ALTO, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
+import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
 import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -21,7 +21,7 @@ const T = {
     ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con pocas vigas. Suman las etapas que pasa el tren, las vigas que te sobran y la rapidez.`],
   ],
   empezar: '🚂 Empezar', aJugar: '¡A construir!',
-  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}',
+  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', letrero: '{n} vigas para cruzar',
   probar: '🚂 Probar', arreglar: '✏️ Arreglar', deshacer: '↩ Deshacer', borrar: '🧹 Borrar', borrarSeguro: '🧹 ¿Seguro?',
   rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   aviso: {
@@ -34,13 +34,12 @@ const T = {
   fin: { todas: '¡Todos los puentes en pie!', tiempo: 'Se acabó el tiempo', rendido: 'Te rendiste' },
   cuenta: {
     titulo: '🧮 Cómo se calculó',
-    etapas: '🌉 Etapas: {n} de {total} × {u} = {pts}',
-    ahorroTitulo: '🪵 Vigas que te sobraron (hasta {u} por etapa):',
-    ahorroEtapa: 'Etapa {k}: usaste {n} de {max} (lo mínimo conocido: {min}) → {u} × {f} = {pts}',
-    ahorroTotal: 'Ahorro: {pts}',
-    rapidez: '⏱ Rapidez: {u} × {f} del tiempo × {n}/{total} etapas = {pts}',
-    rapidezNota: 'Tardaste {t}: todo el bono en {rapido} o menos, nada a los {max}.',
-    total: '= {a} + {b} + {c} = {s} puntos',
+    cabeza: ['Etapa', '', 'Vigas', 'Mín.', 'Etapa', 'Ahorro'],
+    subtotal: 'Suma',
+    notaAhorro: 'Cada etapa pasada vale 12. El ahorro da hasta {u} por etapa: todo si usaste lo mínimo conocido, nada si usaste todas las vigas.',
+    rapidez: '⏱ Rapidez ({t})',
+    notaRapidez: 'Hasta {u}: todo en {rapido} o menos, nada a los {max}. Te tocó el {f}, por {n} de {total} etapas.',
+    total: 'Total: {a} + {b} + {c}',
   },
   otraVez: '🔁 Jugar otra vez', laboratorio: '‹ Volver al laboratorio',
 };
@@ -73,7 +72,8 @@ function lienzo(e, { arriba = ARRIBA, abajo = ABAJO } = {}) {
     c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
     c.style.width = `${w}px`; c.style.height = `${h}px`;
     c._m = { escala, dpr, w, h };
-    c._r = pixelado(c, { px: PX });
+    // A fixed 16 art pixels per grid unit: the train is the same size on every stage, its wagons coupled
+    c._r = pixelado(c, { px: escala / ARTE });
   };
   c._ajustar = ajustar;
   return c;
@@ -82,7 +82,7 @@ const aPantalla = (c, x, y) => [(x + MARGEN) * c._m.escala, (c._v.arriba - y) * 
 const aMundo = (c, px, py) => [px / c._m.escala - MARGEN, c._v.arriba - py / c._m.escala];
 
 /** Screen pixels per art pixel: the size of the pixel-art grid. */
-const PX = 3;
+const ARTE = 16;
 
 /** The color of a beam by how stretched or squeezed it is: wood that warms to red, in steps. */
 const TENSION = ['#c8874a', '#d9a23a', '#e8b13a', '#f08a2c', '#ff5a3c', '#ff2e4a'];
@@ -104,15 +104,15 @@ const ruido = (x, y) => { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453
  * the train with its smoke. `sim` (while it runs) gives positions and tensions; without it, the
  * beams as laid. The scene keeps its own particles and clock on the canvas (`c._esc`).
  */
-function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set() } = {}) {
+function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set() } = {}) {
   const r = c._r;
   if (!r) return;
   const ahora = performance.now() / 1000;
   const esc = c._esc ||= { parts: particulas(), ultimo: ahora, humo: 0, rotas: new Set(), caida: null, sim: null };
   const dt = Math.min(0.05, ahora - esc.ultimo); esc.ultimo = ahora;
   if (esc.sim !== sim) { esc.sim = sim; esc.rotas = new Set(); esc.caida = null; }
-  const A = (x, y) => { const [px, py] = aPantalla(c, x, y); return [px / PX, py / PX]; };
-  const u = c._m.escala / PX;            // art pixels per grid unit
+  const A = (x, y) => { const [px, py] = aPantalla(c, x, y); return [px / r.px, py / r.px]; };
+  const u = ARTE;                        // art pixels per grid unit
   const { W, H } = r;
 
   // The sky, in bands, with stars that twinkle and two clouds drifting by
@@ -157,7 +157,12 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   }
 
   // The grid of points where a beam can go
-  if (grilla) for (let x = 0; x <= e.ancho; x++) for (let y = ALTO[0]; y <= ALTO[1]; y++) { const [px, py] = A(x, y); r.punto(px, py, 'rgba(255,255,255,0.45)'); }
+  // While dragging, the points the beam can reach light up, and a ring marks where it will land
+  if (grilla) for (let x = 0; x <= e.ancho; x++) for (let y = ALTO[0]; y <= ALTO[1]; y++) {
+    const [px, py] = A(x, y);
+    const alcanza = arrastre && Math.hypot(x - arrastre.a[0], y - arrastre.a[1]) <= LARGO_MAX + 1e-9 && !(x === arrastre.a[0] && y === arrastre.a[1]);
+    if (alcanza) r.rect(px - 1, py - 1, 2, 2, 'rgba(157,255,58,0.85)'); else r.punto(px, py, arrastre ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.45)');
+  }
 
   // The beams as planks: a dark edge, the wood (warming to red with the strain), rails on the road
   // Thin planks: on a phone the grid is small, and a thick beam hides where it starts and ends
@@ -165,9 +170,12 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   const pos = sim ? i => [sim.nudos[i].x, sim.nudos[i].y] : null;
   const lista = sim ? sim.vigas.map((v, k) => ({ k, a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino }))
     : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0 }));
+  const parpadeo = Math.sin(ahora * 8) > 0;
   for (const v of lista) {
     if (v.rota) continue;
     const [ax, ay] = A(...v.a), [bx, by] = A(...v.b), g = v.camino ? grosor + 1 : grosor;
+    // A beam that snapped in the last test glows red while you fix the bridge
+    if (!sim && rotasAntes.has(`${v.a}|${v.b}`) && parpadeo) r.linea(ax, ay, bx, by, '#ff2e4a', g + 3);
     r.linea(ax, ay, bx, by, MADERA.borde, g + 1);
     r.linea(ax, ay, bx, by, sim ? colorTension(v.t) : '#c8874a', g);
     if (v.camino) r.linea(ax, ay - Math.ceil(g / 2), bx, by - Math.ceil(g / 2), MADERA.riel, 1);
@@ -176,6 +184,7 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   if (sim) for (const v of lista) {
     if (!v.rota || esc.rotas.has(v.k)) continue;
     esc.rotas.add(v.k);
+    if (!QUIETO) c.animate([{ transform: 'translate(0,0)' }, { transform: 'translate(-3px,2px)' }, { transform: 'translate(3px,-1px)' }, { transform: 'translate(-1px,1px)' }, { transform: 'translate(0,0)' }], { duration: 240 });
     const [ax, ay] = A(...v.a), [bx, by] = A(...v.b), mx = (ax + bx) / 2, my = (ay + by) / 2;
     if (!QUIETO) {
       for (let n = 0; n < 12; n++) esc.parts.agregar({ x: mx, y: my, vx: (Math.random() - 0.5) * 70, vy: -Math.random() * 60, g: 120, vida: 0.5 + Math.random() * 0.4, colores: CHISPAS });
@@ -193,6 +202,7 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   // The beam being dragged: dashes, green if it can go, red if not
   if (arrastre) {
     const [ax, ay] = A(...arrastre.a), [bx, by] = A(...arrastre.b), col = arrastre.ok ? '#9dff3a' : '#ff2e88';
+    if (Number.isInteger(arrastre.b[0]) && Number.isInteger(arrastre.b[1])) { r.circulo(bx, by, 4, col); r.circulo(bx, by, 3, 'rgba(20,8,31,0.9)'); }
     const n = Math.max(1, Math.round(Math.hypot(bx - ax, by - ay) / 3));
     for (let k = 0; k < n; k += 2) r.linea(ax + (bx - ax) * k / n, ay + (by - ay) * k / n, ax + (bx - ax) * Math.min(1, (k + 1) / n), ay + (by - ay) * Math.min(1, (k + 1) / n), col, grosor);
   }
@@ -201,15 +211,20 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   if (sim) {
     // The wheel frame, from the distance run (positive also while the train is still left of the gap)
     const tr = sim.tren, cuadro = ((Math.floor(tr.x * 7) % 6) + 6) % 6;
-    const piezas = [{ x: tr.x, spr: LOCO[(cuadro + 3) % 3], loco: true }, { x: tr.x - 1.15, spr: VAGON[cuadro % 2] }, { x: tr.x - 2.15, spr: VAGON[(cuadro + 1) % 2] }];
+    const piezas = PIEZAS.map((pz, k) => ({ x: tr.x + pz.dx, k, loco: k === 0, spr: k === 0 ? LOCO[cuadro % 3] : VAGON[(cuadro + k) % 2] }));
     if (tr.cayo && !esc.caida) esc.caida = { dy: 0, vy: 0, salpico: false };
     if (esc.caida) { esc.caida.vy += 220 * dt; esc.caida.dy += esc.caida.vy * dt; }
+    // The couplings first, under the bodies: a short dark bar between each pair, at wheel height
+    const en = piezas.map(p => { const h = alturaCamino(sim, p.x); const [px, py] = A(p.x, h ?? tr.y); return [px, py + (esc.caida && (h === null || p.k === tr.cayoPieza) ? esc.caida.dy : 0)]; });
+    for (let k = 1; k < en.length; k++) r.linea(en[k][0] + 6, en[k][1] - 4, en[k - 1][0] - 9, en[k - 1][1] - 4, '#14081f', 2);
+    // Departure: steam puffs from under the wheels while it starts
+    if (!QUIETO && sim.t < 1.2 && Math.random() < 0.5) for (const sx of [-1, 1]) esc.parts.agregar({ x: en[0][0] + sx * 9, y: en[0][1] - 2, vx: sx * (10 + Math.random() * 10), vy: -4, vida: 0.8, radio: 1, crece: 3, colores: HUMO });
+    // The headlight: a soft cone ahead of the locomotive
+    if (!tr.cayo) for (let k = 0; k < 10; k++) r.rect(en[0][0] + 12 + k, en[0][1] - 9 - k / 4, 1, 2 + k / 2, `rgba(255,243,160,${0.32 - k * 0.03})`);
     for (const p of piezas) {
-      const h = alturaCamino(sim, p.x);
-      let [px, py] = A(p.x, h ?? tr.y);
-      if (esc.caida && (h === null || p.loco)) py += esc.caida.dy;
+      let [px, py] = en[p.k];
       if (py > yAgua + 4) {
-        if (p.loco && !esc.caida.salpico && !QUIETO) {
+        if (!esc.caida.salpico && !QUIETO) {
           esc.caida.salpico = true;
           for (let n = 0; n < 22; n++) esc.parts.agregar({ x: px, y: yAgua, vx: (Math.random() - 0.5) * 60, vy: -40 - Math.random() * 50, g: 140, vida: 1, colores: AGUA });
         }
@@ -260,7 +275,7 @@ function portada() {
     if (!vivo || !c.isConnected) return;
     for (let k = 0; k < Math.round(1 / 60 / DT); k++) paso(sim);
     dibujar(c, e, { sim });
-    if (sim.fin) sim = crearSim(e, DEMO);
+    if (sim.fin && (sim.tren.cayo || fueraDeEscena(sim, e))) sim = crearSim(e, DEMO);
     requestAnimationFrame(cuadro);
   };
   requestAnimationFrame(cuadro);
@@ -270,12 +285,12 @@ function portada() {
 /* The game                                                            */
 /* ------------------------------------------------------------------ */
 
-const P = { etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
+const P = { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
 const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
 
 function empezar() {
   cuentaRegresiva({ titulo: `🚂 ${T.nombre}`, ya: T.aJugar }).then(() => {
-    Object.assign(P, { etapa: 0, hechas: 0, usadas: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
+    Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
     jugar();
     clearInterval(P.reloj);
     P.reloj = setInterval(() => {
@@ -319,7 +334,8 @@ function jugar() {
     el('div', { class: 'tv-cabeza' },
       el('span', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: ETAPAS.length })), puntos,
       el('span', { class: 'tv-reloj', id: 'tv-reloj' }, `⏱ ${mmss(Math.max(0, TIEMPO_S - segundos()))}`)),
-    el('div', { class: 'tv-tablero' }, c),
+    el('div', { class: 'tv-tablero' }, c,
+      el('div', { class: 'tv-letrero', 'aria-hidden': 'true' }, el('b', {}, fmt(T.etapa, { n: P.etapa + 1, total: ETAPAS.length })), el('span', {}, fmt(T.letrero, { n: e.presupuesto })))),
     el('div', { class: 'tv-barra' }, cuenta, aviso),
     botonProbar, fila);
   c._ajustar();
@@ -331,14 +347,14 @@ function jugar() {
     botonDeshacer.disabled = !P.historial.length || P.simulando;
     botonProbar.disabled = P.simulando || !P.vigas.length;
     botonBorrar.disabled = P.simulando || !P.vigas.length;
-    dibujar(c, e, { vigas: P.vigas, grilla: !P.simulando, arrastre, usados: usados() });
+    dibujar(c, e, { vigas: P.vigas, grilla: !P.simulando, arrastre, usados: usados(), rotasAntes: P.rotasAntes });
   }
   repintar();
   // While building, the scene stays alive (clouds, water, stars): repaint every frame
   let ultimoArrastre = null;
   const vivo = () => {
     if (!c.isConnected || P.fin) return;
-    if (!P.simulando) dibujar(c, e, { vigas: P.vigas, grilla: true, arrastre: ultimoArrastre, usados: usados() });
+    if (!P.simulando) dibujar(c, e, { vigas: P.vigas, grilla: true, arrastre: ultimoArrastre, usados: usados(), rotasAntes: P.rotasAntes });
     requestAnimationFrame(vivo);
   };
   if (!QUIETO) requestAnimationFrame(vivo);
@@ -411,28 +427,33 @@ function jugar() {
       if (ahora > rotas) { rotas = ahora; SFX.error(); vibrate(40); }
       dibujar(c, e, { sim });
       if (!sim.fin) { requestAnimationFrame(cuadro); return; }
-      // After it ends, the scene keeps moving a moment: the train falls and splashes, the smoke clears
-      if (!cierre) { cierre = performance.now(); }
-      if (performance.now() - cierre < 1800 && !sim.tren.llego) { requestAnimationFrame(cuadro); if (avisado) return; }
-      if (avisado) return;
-      avisado = true;
+      // It made it: the notice now, and the scene runs on until the last wagon leaves the screen
       if (sim.tren.llego) {
-        aviso.textContent = T.aviso.paso; SFX.win(); vibrate([30, 50, 30]);
-        P.hechas++; P.usadas.push(P.vigas.length);
+        if (!avisado) { avisado = true; aviso.textContent = T.aviso.paso; SFX.win(); vibrate([30, 50, 30]); P.hechas++; P.usadas.push(P.vigas.length); P.rotasAntes = new Set(); }
+        if (!fueraDeEscena(sim, e)) { requestAnimationFrame(cuadro); return; }
         setTimeout(() => {
           if (P.fin) return;
           P.simulando = false;
           if (P.hechas >= ETAPAS.length) { terminar('todas'); return; }
           P.etapa++; P.vigas = []; P.historial = []; jugar();
-        }, 1300);
-      } else {
-        aviso.textContent = T.aviso.cayo;
-        botonProbar.disabled = false;
+        }, 350);
+        return;
       }
+      // It fell: the scene keeps moving a moment (the fall, the splash, the smoke clearing)
+      if (!cierre) cierre = performance.now();
+      if (!avisado) {
+        avisado = true; aviso.textContent = T.aviso.cayo; botonProbar.disabled = false;
+        // The beams that snapped stay marked while you fix the bridge
+        P.rotasAntes = new Set(sim.vigas.map((v, k) => (v.rota ? `${P.vigas[k].a}|${P.vigas[k].b}` : null)).filter(Boolean));
+      }
+      if (performance.now() - cierre < 1800) requestAnimationFrame(cuadro);
     };
     requestAnimationFrame(cuadro);
   }
 }
+
+/** Has the last wagon left the screen, past the right cliff? */
+const fueraDeEscena = (sim, e) => sim.tren.x + PIEZAS[PIEZAS.length - 1].dx - 0.6 > e.ancho + MARGEN;
 
 function terminar(motivo) {
   if (P.fin) return;
@@ -446,25 +467,37 @@ function terminar(motivo) {
 const num = x => (Math.round(x * 10) / 10).toString().replace('.', ',');
 const pct = x => `${Math.round(x * 100)} %`;
 
+/**
+ * The result: the score, and under it the arithmetic as a table, one row per stage (passed or
+ * not, with its beams and its points), then the three parts and the total.
+ */
 function resultado() {
   const { motivo, segundos: seg } = P.fin;
   const p = puntajePartida(P.usadas, seg);
   const todas = P.hechas === ETAPAS.length, C = T.cuenta;
+  const td = (x, cls = '') => el('td', { class: cls }, x);
+  const filas = ETAPAS.map((e, k) => {
+    const a = p.ahorros[k];
+    return el('tr', { class: a ? '' : 'no' },
+      td(`${k + 1}`, 'num'), td(a ? '✅' : '⬛'),
+      td(a ? `${a.usadas} / ${e.presupuesto}` : '—', 'num'), td(`${e.minimo}`, 'num muted'),
+      td(a ? `+${PUNTOS_ETAPA}` : '0', 'num'), td(a ? `+${num(a.puntos)}` : '0', 'num'));
+  });
+  const tabla = el('table', { class: 'tv-tabla' },
+    el('thead', {}, el('tr', {}, ...C.cabeza.map((x, k) => el('th', { class: k > 1 ? 'num' : '' }, x)))),
+    el('tbody', {}, ...filas),
+    el('tfoot', {}, el('tr', {}, el('td', { colspan: '4' }, C.subtotal), td(`${p.etapas}`, 'num'), td(`${p.ahorro}`, 'num'))));
   const cuenta = el('div', { class: 'panel tv-cuenta-final', id: 'cuenta' },
     el('p', { class: 'lead' }, C.titulo),
-    el('p', {}, fmt(C.etapas, { n: p.pasadas, total: ETAPAS.length, u: PUNTOS_ETAPA, pts: p.etapas })),
-    p.ahorros.length ? el('div', {},
-      el('p', { style: 'margin-bottom:4px' }, fmt(C.ahorroTitulo, { u: PUNTOS_AHORRO })),
-      el('ul', { class: 'desglose muted' }, ...p.ahorros.map(a => el('li', {}, fmt(C.ahorroEtapa, { k: a.etapa, n: a.usadas, max: a.presupuesto, min: a.minimo, u: PUNTOS_AHORRO, f: pct(a.fraccion), pts: num(a.puntos) })))),
-      el('p', {}, fmt(C.ahorroTotal, { pts: p.ahorro }))) : null,
-    el('p', {}, fmt(C.rapidez, { u: BONO_RAPIDEZ, f: pct(p.fraccionTiempo), n: p.pasadas, total: ETAPAS.length, pts: p.rapidez })),
-    el('p', { class: 'muted', style: 'font-size:0.88rem' }, fmt(C.rapidezNota, { t: mmss(seg), rapido: mmss(RAPIDO_S), max: mmss(TIEMPO_S) })),
-    el('p', { class: 'tv-total' }, fmt(C.total, { a: p.etapas, b: p.ahorro, c: p.rapidez, s: p.total })));
+    el('div', { class: 'tv-tabla-caja' }, tabla),
+    el('p', { class: 'muted tv-nota' }, fmt(C.notaAhorro, { u: PUNTOS_AHORRO })),
+    el('div', { class: 'tv-linea' }, el('span', {}, fmt(C.rapidez, { t: mmss(seg) })), el('b', {}, `+${p.rapidez}`)),
+    el('p', { class: 'muted tv-nota' }, fmt(C.notaRapidez, { u: BONO_RAPIDEZ, rapido: mmss(RAPIDO_S), max: mmss(TIEMPO_S), f: pct(p.fraccionTiempo), n: p.pasadas, total: ETAPAS.length })),
+    el('div', { class: 'tv-linea total' }, el('span', {}, fmt(C.total, { a: p.etapas, b: p.ahorro, c: p.rapidez })), el('b', {}, `${p.total}`)));
   vista.replaceChildren(el('div', { class: 'resultado' },
     tituloJuego(true),
     el('p', { class: `tv-sello${todas ? '' : ' mal'}` }, T.fin[motivo]),
     el('div', { class: 'score-big', id: 'puntaje' }, `${p.total}/100`),
-    el('div', { class: 'tv-puntos grande', 'aria-hidden': 'true' }, ...ETAPAS.map((_, k) => el('span', { class: k < P.hechas ? 'hecha' : '' }))),
     cuenta,
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otro', onClick: () => { SFX.tap(); empezar(); } }, T.otraVez),
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio)));

@@ -49,6 +49,6 @@ assert.equal(puntajePartida(topes, TIEMPO_S).total, 65, 'all five at the budget 
 assert.equal(puntajePartida([], 30).total, 0);
 assert.ok(puntajePartida(topes.slice(0, 4), TIEMPO_S).total < puntajePartida(topes, TIEMPO_S).total, 'one more stage always wins');
 assert.equal(puntajePartida(minimos.slice(0, 2), 60).rapidez, 6, 'speed scales with the stages passed: 15 × 2/5');
-const p = puntajePartida([7, 9], 200);
+const p = puntajePartida([8, 14], 200);   // stage 1: 2 of 3 spare beams saved; stage 2: at its budget
 assert.equal(p.ahorros[0].fraccion, 2 / 3); assert.equal(p.ahorros[1].fraccion, 0);
 console.log('✓ Tren en Vilo (labs)');
