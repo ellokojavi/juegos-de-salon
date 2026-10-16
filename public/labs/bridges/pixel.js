@@ -263,3 +263,30 @@ export const PEZ = [
   'kooyook',
   '.k..kk.',
 ];
+
+/* A mole that lives in the cliff's rock: with glasses, or with a miner's helmet and lamp. 10 × 9, facing right */
+export const PALETA_TOPO = { k: '#1a0b14', b: '#7a4a2a', B: '#9a6440', w: '#9be8ff', p: '#ff8aa8', y: '#ffd23f', l: '#fff8d0' };
+export const TOPO = {
+  anteojos: [
+    '...kkkk...',
+    '..kBBBBk..',
+    '.kbBBBBbk.',
+    'kkkkbbkkkk',
+    'kwwkbbkwwk',
+    'kkkkbbkkkk',
+    'kbbbbbbppk',
+    'kbbbbbbbbk',
+    'kbbbbbbbbk',
+  ],
+  minero: [
+    '...kkkk...',
+    '..kyyyyk..',
+    '.kyyyyllk.',
+    'kkkkkkkkkk',
+    'kbkbbbbkbk',
+    'kbbbbbbbbk',
+    'kbbbbbbppk',
+    'kbbbbbbbbk',
+    'kbbbbbbbbk',
+  ],
+};
