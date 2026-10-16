@@ -193,7 +193,7 @@ const playTango = async level => {
   const free = p.sol.map((v, i) => i).filter(i => p.dadas[i] === undefined);
   if (level < 2) {
     // A sun on its way to moon flags nothing: the clash is marked only when another cell is tapped,
-    // just as the score counts it, and never by time (#135)
+    // just as the score counts it, and shown 1.5 s later; never by time alone (#135)
     // A cell where the sun clashes, with a sun placed first if needed (the board is random)
     const [before, step] = await ev(`(async()=>{const m=await import('/cup/games/tango/engine.js');const p=window.__playing.p;
       const L=[${free}], clashes=(pre,i)=>p.sol[i]===m.LUNA&&m.estado(p,[...pre,i]).mal.size>m.estado(p,pre).mal.size;
@@ -214,7 +214,9 @@ const playTango = async level => {
       await t(step); await t(step);
       const other = free.find(i => i !== step && i !== before);
       await t(other);
-      ok(await clashCount() > 0 && /1/.test(await counter()), 'Tango: a sun left in place is marked and counted when another cell is tapped');
+      ok(await clashCount() === 0, 'Tango: a sun left in place is not marked the instant another cell is tapped');
+      await sleep(1700);
+      ok(await clashCount() > 0 && /1/.test(await counter()), 'Tango: a sun left in place is marked and counted 1.5 s after another cell is tapped');
     }
     // Clear all (two taps) and a hint (two taps), the helpers of D-103
     await t(free[0]);

@@ -215,8 +215,9 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   (D-283). El botón y sus pasos están en `games/deshacer.js`, listos para Tango y Zip.
 - **Tango** no cuenta como error pasar por el sol para llegar a la luna: solo dejar la casilla
   rompiendo una regla (D-102). La pantalla dice lo mismo: el choque se pinta en rojo recién cuando
-  el jugador toca otra casilla, nunca por tiempo; con el tablero lleno se muestra sin contarse,
-  para que se vea qué arreglar (#135). La casilla con sol es ámbar y la de luna azul noche, con la luna
+  el jugador toca otra casilla (never on a timer alone); con el tablero lleno se muestra sin contarse,
+  para que se vea qué arreglar (#135). In both cases the red, its sound and the counter wait 1.5 s
+  (`ROJO_MS`, restarted by each tap), because players found the instant red too abrupt. La casilla con sol es ámbar y la de luna azul noche, con la luna
   plateada: los dos emojis son amarillos y así no se confunden (D-146). Las dadas llevan su color más
   vivo (el sol, además, el borde entero) y un candado chico (#61).
 - **Toque y Fama: Palabra** acepta cualquier combinación de 5 letras distintas como intento, sin
