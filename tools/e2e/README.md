@@ -161,7 +161,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `timeline/decks.mjs` | All the themes and that ten games in a row don't repeat cards |
 | `timeline/pool.mjs` | Common pool: draw of 6, refill from the end, goal and setting that travels in the room |
 | `timeline/table.mjs` | All in view: table of twice the goal and no refill |
-| `timeline/drag.mjs` | The drag gesture with touch events: choosing without placing, resuming, dropping outside and side swipe |
+| `timeline/drag.mjs` | The drag gesture with touch events: choosing without placing, resuming, dropping outside, side swipe, and a finger lifted outside the strip still dropping the card |
 | `timeline/tie.mjs` | That the round ends and that the tie is won by the fastest |
 | `timeline/chat.mjs` | Room chat: unread, spam brake, verdict covering it, reconnection and death at the end |
 | `game-memory.mjs` | Saving and resuming in the three games (canon C-6) |

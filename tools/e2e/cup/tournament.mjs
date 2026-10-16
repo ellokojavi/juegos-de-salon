@@ -193,7 +193,7 @@ const playTango = async level => {
   const free = p.sol.map((v, i) => i).filter(i => p.dadas[i] === undefined);
   if (level < 2) {
     // A sun on its way to moon flags nothing: the clash is marked only when another cell is tapped,
-    // just as the score counts it, and never by time (#135)
+    // just as the score counts it, and shown 1.5 s later; never by time alone (#135)
     // A cell where the sun clashes, with a sun placed first if needed (the board is random)
     const [before, step] = await ev(`(async()=>{const m=await import('/cup/games/tango/engine.js');const p=window.__playing.p;
       const L=[${free}], clashes=(pre,i)=>p.sol[i]===m.LUNA&&m.estado(p,[...pre,i]).mal.size>m.estado(p,pre).mal.size;
@@ -214,7 +214,9 @@ const playTango = async level => {
       await t(step); await t(step);
       const other = free.find(i => i !== step && i !== before);
       await t(other);
-      ok(await clashCount() > 0 && /1/.test(await counter()), 'Tango: a sun left in place is marked and counted when another cell is tapped');
+      ok(await clashCount() === 0, 'Tango: a sun left in place is not marked the instant another cell is tapped');
+      await sleep(1700);
+      ok(await clashCount() > 0 && /1/.test(await counter()), 'Tango: a sun left in place is marked and counted 1.5 s after another cell is tapped');
     }
     // Clear all (two taps) and a hint (two taps), the helpers of D-103
     await t(free[0]);
@@ -415,6 +417,24 @@ if (runs('cup')) {
       await withFinger(from, [from[0], topLast - 6]);
       const after = await cal();
       ok(after[n - 2] === before[0] && JSON.stringify(after.slice(0, -1)) === JSON.stringify(before.slice(1)), `with a finger, a day is dragged from its grip (${before[0]} to day ${n - 1})`);
+    }
+    // A finger on a day's body, not its grip: the page may take it as a scroll, and Chrome sends
+    // that cancel to the pressed node, which the first redraw already took out of the page.
+    // Before, the card stayed floating over every later screen (Pintaminas over Administrar)
+    {
+      const before = await cal();
+      const [x, y] = await center('#cal-elegir .event[data-dia="0"] .t');
+      await withFinger([x, y], [x, y + 120]);
+      const stuck = await ev(`JSON.stringify({floating: !!document.querySelector('.vilo.on'), covered: document.body.classList.contains('arrastrando')})`);
+      ok(stuck === '{"floating":false,"covered":false}', `a finger dragging a day by its body leaves no card floating (${stuck})`);
+      // And it doesn't block the next drag: back to how it was, by its grip if it moved
+      const now = await cal();
+      if (JSON.stringify(now) !== JSON.stringify(before)) await arrange(before, false);
+      const from = await center('#cal-elegir .event[data-dia="0"] .agarre');
+      const [, , topLast] = await center('#cal-elegir .fija');
+      await withFinger(from, [from[0], topLast - 6]);
+      ok((await cal())[n - 2] === before[0], 'and the next drag by the grip still works');
+      await arrange(before, false);
     }
     // And with a finger: a game from the hand onto day 1, which goes outside
     {

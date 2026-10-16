@@ -143,8 +143,15 @@ const enlace = code => (S.code === code && S.L?.meta?.alias) || code;
 const urlCopa = code => `${location.origin}${location.pathname}?${enlace(code)}${PRUEBA ? '&test' : ''}`;
 const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/cup/?${enlace(code)}`);
 
+// On a day's cover the top-left button goes back to the cup, and says so ("‹ La Copa")
+function rotuloMenu() {
+  $('#btn-menu').textContent = S.antesala ? `‹\u00a0${T.toBoard}` : LABS ? T.backToLabsShort : T.menu;
+}
+
 function mostrar(id) {
   S.pantalla = id;
+  S.antesala = false;
+  rotuloMenu();
   // Cada juego a pantalla completa (¿Dónde queda?) la pide de nuevo al montarse
   pantallaCompleta(false);
   $$('.screen').forEach(s => s.classList.toggle('active', s.id === `screen-${id}`));
@@ -239,7 +246,7 @@ function portada() {
     const terminada = c => !!c.fin && ahora >= c.fin;
     const nTerminadas = lista.filter(terminada).length;
     // Prendido, las terminadas van al pie, junto al interruptor: las en curso no se mueven
-    const visibles = [...lista.filter(c => !terminada(c)), ...(verTerminadas ? lista.filter(terminada) : [])];
+    const visibles = [...lista.filter(c => !terminada(c)), ...(verTerminadas ? lista.filter(terminada).sort((a, b) => b.fin - a.fin) : [])];
     const interruptor = el('input', { type: 'checkbox', role: 'switch', id: 'ver-terminadas' });
     interruptor.checked = verTerminadas;
     interruptor.addEventListener('change', () => { SFX.tap(); verTerminadas = interruptor.checked; pintarMias(lista); document.getElementById('ver-terminadas')?.focus(); });
@@ -1827,6 +1834,8 @@ function antesDeJugar(d) {
   const Lc = L(), { meta } = Lc;
   const id = juegoDelDia(meta, d), J = juegoDia(meta, d), variante = varianteDelDia(meta, d);
   mostrar('jugar');
+  S.antesala = true;
+  rotuloMenu();
   $('#jugar-head').innerHTML = '';
   const body = $('#jugar-body');
   body.innerHTML = '';
@@ -1876,8 +1885,7 @@ function antesDeJugar(d) {
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
       el('p', { class: 'muted center', id: 'nota-ensayo', style: 'margin:0' }, notaPrueba(id))] : null,
-    el('p', { class: 'muted center' }, T.startWarn), err, empezar,
-    el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { SFX.tap(); tablero(); } }, T.toBoard)));
+    el('p', { class: 'muted center' }, T.startWarn), err, empezar));
 }
 
 /* ------------------------------------------------------------------ */
@@ -2649,6 +2657,14 @@ if (LABS) {
   $('#btn-menu').setAttribute('href', `${RAIZ}labs/`);
   $('#btn-menu').textContent = T.backToLabsShort;
 }
+// In a day's cover (before playing), the top-left button goes back to the cup's board, not to
+// the app's menu: it replaces the "Back to the cup" button that closed the screen
+$('#btn-menu').addEventListener('click', ev => {
+  if (S.pantalla !== 'jugar' || !S.antesala) return;
+  ev.preventDefault();
+  SFX.tap();
+  tablero();
+});
 // Los reportes que no alcanzaron a enviarse se reintentan al abrir (D-109). En el modo de prueba
 // no hay barra para adelantar el reloj (D-112): las demos y los guiones lo hacen por su cuenta.
 if (!PRUEBA) import('./reportes.js').then(m => m.reenviarPendientes()).catch(() => { /* la próxima vez */ });
