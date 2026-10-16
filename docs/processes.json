@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "29db9b3",
+  "checkedUpTo": "69e969a",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -231,6 +231,18 @@
         }
       ],
       "mechanism": null
+    },
+    {
+      "key": "timed-unit-test",
+      "what": "public/cup/games/plots/engine.test.mjs fails 1 run in 3 on the Mac mini under load (agents' Chrome, load 6): a Utilities 8x8 board took 1357 ms against its 1000 ms wall-clock limit; passes alone",
+      "seen": [
+        {
+          "date": "2026-10-16",
+          "what": "public/cup/games/plots/engine.test.mjs fails 1 run in 3 on the Mac mini under load (agents' Chrome, load 6): a Utilities 8x8 board took 1357 ms against its 1000 ms wall-clock limit; passes alone",
+          "commit": null
+        }
+      ],
+      "mechanism": null
     }
   ],
   "mechanisms": [
@@ -295,12 +307,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-15",
-      "to": "29db9b3"
+      "date": "2026-10-16",
+      "to": "69e969a"
     },
     "usability": {
-      "date": "2026-10-15",
-      "to": "29db9b3"
+      "date": "2026-10-16",
+      "to": "69e969a"
     }
   },
   "rounds": [
@@ -343,6 +355,14 @@
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/422",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/425",
       "note": "Dispatched documentation (#424) and usability (#423); collected 11 changelog entries; mechanism for captura-identica-atrasada; #400 conflicting, decision in #422"
+    },
+    {
+      "date": "2026-10-16",
+      "from": "29db9b3",
+      "to": "69e969a",
+      "issue": null,
+      "pr": null,
+      "note": "Dispatched documentation and usability; collected 13 changelog entries (up to 0.173.3); measured e2e durations; closed #422 (fulfilled)."
     }
   ],
   "ownerDecisions": [

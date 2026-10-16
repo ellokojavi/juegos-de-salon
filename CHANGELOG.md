@@ -1,5 +1,48 @@
 # Changelog
 
+## 0.173.3 — 2026-10-15
+- **The "New" sticker turns around:** it is now dark, with the home page title's rainbow running through its letters; it keeps its white edge, glow and wobble.
+
+## 0.173.2 — 2026-10-15
+- **The "New" label is a sticker:** on the home page it now sits a bit tilted, with a white edge and a shadow, as if stuck on the card; it keeps its rainbow, glow and wobble.
+
+## 0.173.1 — 2026-10-15
+- **The "New" label shines:** on the home page it now carries the title's flowing rainbow, with a soft glow and a little wobble now and then (still, with reduced motion).
+
+## 0.173.0 — 2026-10-15
+- **Uno al día has 16 games:** 🚇 Rutas rotas, 📐 Loteo, 🖌️ Pintaminas, 〰️ Zip, ☀️ Tango and 📍 ¿Dónde queda? join the daily challenge from October 23 (the days already set don't change). A game with versions is played in its usual one, the same for everyone (D-334).
+- **New games on top:** while a game says "New", its card is right after La Copa on the home page, instead of last (D-335).
+
+## 0.172.0 — 2026-10-15
+- **Three new games out of the lab: 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas**, now on the home page in the four languages and in La Copa (D-332). Rutas rotas joins every subway line by turning parts of the board, Loteo splits the board into plots, and Pintaminas paints the grid to uncover a hidden picture. Each one plays a new board every time, with rankings, sharing and the 🐞 report like the other games.
+- **Pick the version you play:** Pintaminas has easy and ⚡ hard (two colors), and Loteo has 🔢 Numbers and ⚡💧 Utilities. On their own page you pick it before Start, the phone remembers it, a link can say it (`?mode=hard`), and each version has its own ranking. Both versions score from 0 to 100 (D-331).
+- **La Copa chooses the version for everyone:** when the week has Pintaminas or Loteo, whoever creates the cup picks below the week which version everybody plays that day, and the day says it under the game's name (D-331).
+- **"New" on the home page:** a new game says so next to its name for two weeks (D-333).
+
+## 0.171.13 — 2026-10-15
+- **Faster checks on pull requests:** the end-to-end tests now run only the scripts whose pages load what a PR changed; a change to one lab game runs one to three scripts instead of 61, and anything shared or unclear still runs them all (D-329).
+
+## 0.171.12 — 2026-10-15
+- **Support doubts stay private:** when the team isn't sure how to answer a player's email, the details go to the owner's inbox and only a pointer with a Gmail link is public (D-328).
+
+## 0.171.11 — 2026-10-15
+- **Emails to hola@juegosdesalon.cl get their answer in the same thread:** the reply to someone who wrote by email now arrives as a reply to their own message, and every reply invites them to answer that email or use the 🐞 button. Kind emails get a short thank-you; the owner's own address can be listed (privately, off the repo) to skip the one-email-a-day limit while testing (D-327).
+
+## 0.171.10 — 2026-10-15
+- **📅 ¿En qué año? (What Year?): the d. C. / a. C. switch only shows when the theme has events before Christ**, today only Historia. In every other theme the year is always AD and there is one less thing on screen (D-326).
+
+## 0.171.9 — 2026-10-15
+- **📅 ¿En qué año? (What Year?):** the "a. C." label next to the boxes has a bit more room from the last digit.
+
+## 0.171.8 — 2026-10-15
+- **📅 ¿En qué año? (What Year?): getting close always counts.** The margin is wider (a third of the event's age, at least 12 years) and the score no longer drops to 0 at its edge: half the margin is worth 50 points, the edge 20, and beyond it a few more. 1990 answered as 1980 now gives 26 points instead of 0 (D-325).
+
+## 0.171.7 — 2026-10-15
+- **📅 ¿En qué año? (What Year?): a BC answer can no longer slip by.** With a. C. on, it shows next to the boxes before OK; switching between d. C. and a. C. keeps the year already typed; and the reveal says "Tu respuesta: 622 a. C." instead of "Año: …", so the player's answer is not mistaken for the real year (a friend's report: "Año: 622 a. C." looked like a wrong year).
+
+## 0.171.6 — 2026-10-15
+- **A rematch that can't open its room says so:** in every game with rooms (Ahorcado, Batalla Naval, Dudo, Generala, Julepe, Línea de Tiempo, Toque y Fama), the Revancha button says "Abriendo sala…" while the new room opens, and if it fails, for example without signal, the room's message now shows under the button and the button works again to retry. Before, nothing visible happened: in some games the button stayed dead, and the failure showed up on the owner's Health panel as an unhandled error (D-322).
+
 ## 0.171.5 — 2026-10-14
 - **Rooms no longer leak:** a new room and its note in the cleanup index are now one write, so a room created on a bad connection (the create timed out and the player tried again) is still deleted once it expires; before, it could stay in the database forever. New `tools/firebase/unnoted-rooms.mjs` finds the rooms that leaked before this, and the rules let a code be noted again the same day (D-321).
 
