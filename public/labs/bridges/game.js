@@ -180,15 +180,15 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
       const vuelo = Math.sin(ahora * 3) * 1.5;
       if (o.modo === 'pesca') {
         // Act two, "the catch": it comes down over the gap, lowers its beam to the water, a fish rises
-        // spinning up the light into the saucer, and it leaves in a zigzag
+        // spinning up the light into the saucer, and it goes away into the distance
         const [, yAguaO] = A(0, c._v.abajo + 0.7), bajo = yAguaO - 60;
         if (o.fase === 'llega') {
           o.x += o.dir * 34 * dt; o.y += (bajo - o.y) * Math.min(1, dt * 1.5);
           if ((o.dir > 0 && o.x >= o.destino) || (o.dir < 0 && o.x <= o.destino)) { o.fase = 'pesca'; o.t = 0; }
         } else if (o.fase === 'pesca') {
           if (o.t > 3.2) { o.fase = 'se va'; o.t = 0; }
-        } else { o.x += o.dir * 70 * dt; o.y -= 40 * dt; o.zz = Math.sin(o.t * 14) * 4; }
-        const oy = o.y + vuelo, ox = o.x + (o.zz || 0);
+        } else { o.x += o.dir * 14 * dt; o.y -= 18 * dt; o.escala = Math.max(0, 1 - o.t / 1.1); }
+        const oy = o.y + vuelo, ox = o.x;
         if (o.fase === 'pesca' && o.t > 0.3) {
           const largo = yAguaO - oy - 3;
           for (let k = 0; k < largo; k += 2) r.rect(ox - 2 - k / 6, oy + 3 + k, 4 + k / 3, 2, `rgba(155,232,255,${0.2 - (k / largo) * 0.12})`);
@@ -200,8 +200,9 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
             if (!o.salpico) { o.salpico = true; if (!QUIETO) for (let n = 0; n < 8; n++) esc.parts.agregar({ x: ox, y: yAguaO, vx: (Math.random() - 0.5) * 30, vy: -20 - Math.random() * 20, g: 110, vida: 0.6, colores: AGUA }); }
           }
         }
-        r.sprite(PLATILLO[Math.floor(ahora * 5) % 2], PALETA_PLATILLO, ox, oy);
-        if (o.y < -20 || o.x < -40 || o.x > W + 40) o.fuera = true;
+        // Leaving, it goes away into the distance: smaller and smaller, drifting up on a diagonal, until it is gone
+        if ((o.escala ?? 1) > 0.08) r.sprite(PLATILLO[Math.floor(ahora * 5) % 2], PALETA_PLATILLO, ox, oy, { escala: o.escala ?? 1 });
+        else o.fuera = true;
       } else {
         // Act one, "the look": it glides in, stops above the bridge with a beam, shows a "?", and shoots off
         if (o.fase === 'llega') {
