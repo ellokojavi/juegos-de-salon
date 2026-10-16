@@ -229,23 +229,6 @@ export const PREGUNTA = [
 /* ------------------------------------------------------------------ */
 
 export const PALETA_BALLENA = { k: '#0b1430', b: '#3d5a9e', B: '#5b7cc4', l: '#b9c8ee', w: '#ffffff' };
-// The same girth as the level frame (about 6 pixels across the body), only on a diagonal
-const SUBE = [
-  '...........kkk..',
-  '..........kBBBk.',
-  '.........kBBBBBk',
-  '........kBBBBwBk',
-  '.......kbBBBBBBk',
-  '......kbbBBBBBk.',
-  '.....kbbbbBBBk..',
-  '....kllbbbbbk...',
-  '...kllllbbbk....',
-  '..kllllllbk.....',
-  '.kkllllllk......',
-  'kbkkllllk.......',
-  'kbbkkkkk........',
-  '.kk.............',
-];
 const ARRIBA = [
   '..........kkkkkk......',
   '........kkBBBBBBkk....',
@@ -256,4 +239,18 @@ const ARRIBA = [
   '....kkkbbbllllllllllk.',
   '........kkkkkkkkkkkk..',
 ];
-export const BALLENA = { sube: SUBE, arriba: ARRIBA, baja: [...SUBE].reverse() };
+
+/**
+ * The level whale, tilted by shifting each column up or down (more toward the head, on the right):
+ * the hump and the outline stay as drawn, it only leans. `paso` is rows per column; > 0 raises the head.
+ */
+function inclinarColumnas(filas, paso) {
+  const h = filas.length, w = filas[0].length, extra = Math.ceil(Math.abs(paso) * w);
+  const out = Array.from({ length: h + extra }, () => Array(w).fill('.'));
+  for (let i = 0; i < w; i++) {
+    const d = Math.round(paso > 0 ? (w - 1 - i) * paso : (i * -paso));
+    for (let j = 0; j < h; j++) if (filas[j][i] !== '.') out[j + d][i] = filas[j][i];
+  }
+  return out.map(r => r.join(''));
+}
+export const BALLENA = { sube: inclinarColumnas(ARRIBA, 0.14), arriba: ARRIBA, baja: inclinarColumnas(ARRIBA, -0.14) };
