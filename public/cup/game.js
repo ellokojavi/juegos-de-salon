@@ -246,7 +246,7 @@ function portada() {
     const terminada = c => !!c.fin && ahora >= c.fin;
     const nTerminadas = lista.filter(terminada).length;
     // Prendido, las terminadas van al pie, junto al interruptor: las en curso no se mueven
-    const visibles = [...lista.filter(c => !terminada(c)), ...(verTerminadas ? lista.filter(terminada) : [])];
+    const visibles = [...lista.filter(c => !terminada(c)), ...(verTerminadas ? lista.filter(terminada).sort((a, b) => b.fin - a.fin) : [])];
     const interruptor = el('input', { type: 'checkbox', role: 'switch', id: 'ver-terminadas' });
     interruptor.checked = verTerminadas;
     interruptor.addEventListener('change', () => { SFX.tap(); verTerminadas = interruptor.checked; pintarMias(lista); document.getElementById('ver-terminadas')?.focus(); });
