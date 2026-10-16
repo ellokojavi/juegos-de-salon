@@ -22,8 +22,12 @@
  *    capture fails or is lost (the touched card is destroyed by the first redraw, and with it the
  *    browser's implicit capture), the finger lifts over something else and the container never
  *    hears it: the card stayed floating over every later screen (Pintaminas over La Copa's
- *    Administrar). For the same reason the card also comes down if the page is hidden or the
- *    drag stops being `activo` (the screen changed underneath it).
+ *    Administrar). They are also heard on the node the finger landed on: once a redraw takes it
+ *    out of the page, Chrome keeps sending that finger's events to it, detached, and they never
+ *    reach `window`. That is how the card got stuck: on La Copa's week the day's body lets the page
+ *    scroll (only the ⠿ grip has `touch-action: none`), so the browser takes the gesture over with
+ *    a `pointercancel` sent to the detached node. For the same reason the card also comes down if
+ *    the page is hidden or the drag stops being `activo` (the screen changed underneath it).
  *
  * La carta en vilo sigue al dedo a lo ancho, pero nunca se sale de la pantalla (`xDentro`): con
  * el dedo en la primera carta de la mano, centrada en él se cortaba por la izquierda.
@@ -181,8 +185,14 @@ export function crearArrastre({ fuentes, activo, avatar, medir, sobre, apretar, 
   for (const f of fuentes) {
     const { contenedor, item: selector, eje = 'libre', nombre = '' } = f;
 
+    // The same event can reach both the pressed node and `window` (it bubbles while the node is
+    // still in the page): each one is handled once
+    const marca = Symbol('arrastre');
+    const visto = ev => { if (!ev) return false; if (ev[marca]) return true; ev[marca] = true; return false; };
+    let pulsado = null;      // the node the finger landed on: see point 4
+
     const onMove = ev => {
-      if (!gesto || gesto.muerto || ev.pointerId !== gesto.puntero) return;
+      if (visto(ev) || !gesto || gesto.muerto || ev.pointerId !== gesto.puntero) return;
       if (gesto.alzada && !activo()) { onCancel(); return; }
       const dx = Math.abs(ev.clientX - gesto.inicio.x), dy = Math.abs(ev.clientY - gesto.inicio.y);
       if (!gesto.alzada) {
@@ -204,21 +214,25 @@ export function crearArrastre({ fuentes, activo, avatar, medir, sobre, apretar, 
       ev.preventDefault();
     };
     const onUp = ev => {
-      if (!gesto || ev.pointerId !== gesto.puntero) return;
+      if (visto(ev) || !gesto || ev.pointerId !== gesto.puntero) return;
       quitar();
       if (gesto.alzada) { bajar(false); ev.preventDefault(); }
       else { const g = gesto; gesto = null; if (toque) toque(g.item, g.nombre); }
     };
     // Una llamada entrante, un gesto del sistema: la carta vuelve a donde estaba.
     const onCancel = ev => {
-      if (!gesto || (ev?.pointerId !== undefined && ev.pointerId !== gesto.puntero)) return;
+      if (visto(ev) || !gesto || (ev?.pointerId !== undefined && ev.pointerId !== gesto.puntero)) return;
       quitar(); if (gesto.alzada) bajar(true); else gesto = null;
     };
     const onOculta = () => { if (document.hidden) onCancel(); };
     const quitar = () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('pointercancel', onCancel);
+      for (const t of [window, pulsado]) {
+        if (!t) continue;
+        t.removeEventListener('pointermove', onMove);
+        t.removeEventListener('pointerup', onUp);
+        t.removeEventListener('pointercancel', onCancel);
+      }
+      pulsado = null;
       document.removeEventListener('visibilitychange', onOculta);
     };
 
@@ -231,9 +245,12 @@ export function crearArrastre({ fuentes, activo, avatar, medir, sobre, apretar, 
       if (gesto) { const g = gesto; g.quitar(); gesto = null; if (abandonar) abandonar(g.item, g.nombre); }
       gesto = { item, nombre, quitar, puntero: ev.pointerId, inicio: { x: ev.clientX, y: ev.clientY }, clientY: ev.clientY, alzada: false, muerto: false, clave: null, destinos: [] };
       if (apretar) apretar(item, nombre);
-      window.addEventListener('pointermove', onMove);
-      window.addEventListener('pointerup', onUp);
-      window.addEventListener('pointercancel', onCancel);
+      pulsado = ev.target;
+      for (const t of [window, pulsado]) {
+        t.addEventListener('pointermove', onMove);
+        t.addEventListener('pointerup', onUp);
+        t.addEventListener('pointercancel', onCancel);
+      }
       document.addEventListener('visibilitychange', onOculta);
     };
     contenedor.addEventListener('pointerdown', onDown);
