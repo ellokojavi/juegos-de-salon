@@ -362,9 +362,24 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     }
   }
 
+  // The anchors, each on what holds it: a stone tower above the deck, a rock pillar rising out of the
+  // water in the gap, or a ledge on the cliff's face
   for (const [ax, ay] of e.anclas) {
     const [px, py] = A(ax, ay);
-    r.rect(px - u * 0.35, py, u * 0.7, u * 0.35, ROCA.base); r.rect(px - u * 0.35, py, u * 0.7, 1, ROCA.claro);
+    const enOrilla = ax === 0 || ax === e.ancho;
+    if (enOrilla && ay > 0) {
+      const ancho = Math.round(u * 0.5), xa = Math.round(px - ancho / 2);
+      r.rect(xa, py, ancho, y0 - py, '#8a7aa8');
+      for (let yy = Math.round(py) + 3; yy < y0; yy += 4) r.rect(xa, yy, ancho, 1, '#5e5080');
+      r.rect(xa - 1, py - 1, ancho + 2, 2, '#b9aed6');
+    } else if (!enOrilla) {
+      const ancho = Math.round(u * 0.7), xa = Math.round(px - ancho / 2);
+      r.rect(xa, py, ancho, yAgua - py + 6, ROCA.base);
+      for (let yy = Math.round(py) + 2; yy < yAgua; yy++) for (let xx = xa; xx < xa + ancho; xx++) { const n = ruido(xx, yy); if (n > 0.88) r.punto(xx, yy, ROCA.claro); else if (n < 0.1) r.punto(xx, yy, ROCA.oscuro); }
+      r.rect(xa, py, ancho, 1, ROCA.claro); r.rect(xa - 1, py, 1, yAgua - py, ROCA.borde); r.rect(xa + ancho, py, 1, yAgua - py, ROCA.borde);
+    } else {
+      r.rect(px - u * 0.35, py, u * 0.7, u * 0.35, ROCA.base); r.rect(px - u * 0.35, py, u * 0.7, 1, ROCA.claro);
+    }
   }
 
   // The grid of points where a beam can go
@@ -506,8 +521,23 @@ function portada() {
 /* The game                                                            */
 /* ------------------------------------------------------------------ */
 
-const P = { topo: { etapa: -1, retraso: 0, visto: true }, ovni: { etapa: -1, retraso: 0, visto: true, modo: 'mira' }, ballena: { etapa: -1, retraso: 0, visto: true, modo: 'chorro' }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
+const P = { etapas: ETAPAS, topo: { etapa: -1, retraso: 0, visto: true }, ovni: { etapa: -1, retraso: 0, visto: true, modo: 'mira' }, ballena: { etapa: -1, retraso: 0, visto: true, modo: 'chorro' }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
 const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
+
+/**
+ * The game's five crossings: one per level, drawn from the catalog (catalogo.json, made by
+ * tools/generators/bridges.mjs), so a regular player rarely meets the same ones. Without the catalog,
+ * the five fixed stages.
+ */
+let CATALOGO = null;
+fetch(new URL('./catalogo.json', import.meta.url)).then(r => (r.ok ? r.json() : null)).then(c => { CATALOGO = Array.isArray(c) && c.length ? c : null; }).catch(() => {});
+function sortearEtapas() {
+  if (!CATALOGO) return ETAPAS;
+  return [1, 2, 3, 4, 5].map((nivel, k) => {
+    const de = CATALOGO.filter(c => c.nivel === nivel);
+    return de.length ? de[Math.floor(Math.random() * de.length)] : ETAPAS[k];
+  });
+}
 
 /**
  * What may visit the current stage. One character per game, drawn at the start: the saucer (it looks
@@ -527,13 +557,14 @@ function empezar() {
     // its stage and its moment. `?ovni[=mira|pesca]` or `?ballena[=salto|chorro]` picks it, in stage 1
     const forzado = OVNI_YA || BALLENA_YA || TOPO_YA;
     const quien = OVNI_YA ? 'ovni' : BALLENA_YA ? 'ballena' : TOPO_YA ? 'topo' : ['ovni', 'ballena', 'topo'][Math.floor(Math.random() * 3)];
-    const etapaSorteada = forzado ? 0 : Math.floor(Math.random() * ETAPAS.length);
+    const etapaSorteada = forzado ? 0 : Math.floor(Math.random() * P.etapas.length);
     const retraso = forzado ? 0.8 : 5 + Math.random() * 55;   // between 5 s and 1 minute into its stage
     P.ovni = { etapa: quien === 'ovni' ? etapaSorteada : -1, retraso, visto: quien !== 'ovni',
       modo: ['mira', 'pesca'].includes(OVNI_MODO) ? OVNI_MODO : Math.random() < 0.5 ? 'mira' : 'pesca' };
     P.ballena = { etapa: quien === 'ballena' ? etapaSorteada : -1, retraso, visto: quien !== 'ballena',
       modo: ['salto', 'chorro'].includes(BALLENA_MODO) ? BALLENA_MODO : Math.random() < 0.5 ? 'salto' : 'chorro' };
     P.topo = { etapa: quien === 'topo' ? etapaSorteada : -1, retraso, visto: quien !== 'topo' };
+    P.etapas = sortearEtapas();
     Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
     jugar();
     clearInterval(P.reloj);
@@ -547,11 +578,11 @@ function empezar() {
 }
 
 function jugar() {
-  const e = ETAPAS[P.etapa];
+  const e = P.etapas[P.etapa];
   const c = lienzo(e);
   const aviso = el('p', { class: 'tv-aviso', 'aria-live': 'polite' }, T.aviso.inicio);
   const puntos = el('div', { class: 'tv-puntos', 'aria-hidden': 'true' },
-    ...ETAPAS.map((_, k) => el('span', { class: k < P.hechas ? 'hecha' : k === P.etapa ? 'actual' : '' })));
+    ...P.etapas.map((_, k) => el('span', { class: k < P.hechas ? 'hecha' : k === P.etapa ? 'actual' : '' })));
   const cuenta = el('span', { class: 'tv-cuenta', id: 'tv-cuenta' });
   const botonProbar = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-probar', onClick: () => probarPuente() }, T.probar);
   const armados = {};
@@ -576,10 +607,10 @@ function jugar() {
 
   vista.replaceChildren(
     el('div', { class: 'tv-cabeza' },
-      el('span', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: ETAPAS.length })), puntos,
+      el('span', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })), puntos,
       el('span', { class: 'tv-reloj', id: 'tv-reloj' }, `⏱ ${mmss(Math.max(0, TIEMPO_S - segundos()))}`)),
     el('div', { class: 'tv-tablero' }, c,
-      el('div', { class: 'tv-letrero', 'aria-hidden': 'true' }, el('b', {}, fmt(T.etapa, { n: P.etapa + 1, total: ETAPAS.length })), el('span', {}, fmt(T.letrero, { n: e.presupuesto })))),
+      el('div', { class: 'tv-letrero', 'aria-hidden': 'true' }, el('b', {}, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })), el('span', {}, fmt(T.letrero, { n: e.presupuesto })))),
     el('div', { class: 'tv-barra' }, cuenta, aviso),
     botonProbar, fila);
   c._ajustar();
@@ -678,7 +709,7 @@ function jugar() {
         setTimeout(() => {
           if (P.fin) return;
           P.simulando = false;
-          if (P.hechas >= ETAPAS.length) { terminar('todas'); return; }
+          if (P.hechas >= P.etapas.length) { terminar('todas'); return; }
           P.etapa++; P.vigas = []; P.historial = []; jugar();
         }, 350);
         return;
@@ -717,10 +748,10 @@ const pct = x => `${Math.round(x * 100)} %`;
  */
 function resultado() {
   const { motivo, segundos: seg } = P.fin;
-  const p = puntajePartida(P.usadas, seg);
-  const todas = P.hechas === ETAPAS.length, C = T.cuenta;
+  const p = puntajePartida(P.usadas, seg, P.etapas);
+  const todas = P.hechas === P.etapas.length, C = T.cuenta;
   const td = (x, cls = '') => el('td', { class: cls }, x);
-  const filas = ETAPAS.map((e, k) => {
+  const filas = P.etapas.map((e, k) => {
     const a = p.ahorros[k];
     return el('tr', { class: a ? '' : 'no' },
       td(`${k + 1}`, 'num'), td(a ? '✅' : '⬛'),
@@ -736,7 +767,7 @@ function resultado() {
     el('div', { class: 'tv-tabla-caja' }, tabla),
     el('p', { class: 'muted tv-nota' }, fmt(C.notaAhorro, { u: PUNTOS_AHORRO })),
     el('div', { class: 'tv-linea' }, el('span', {}, fmt(C.rapidez, { t: mmss(seg) })), el('b', {}, `+${p.rapidez}`)),
-    el('p', { class: 'muted tv-nota' }, fmt(C.notaRapidez, { u: BONO_RAPIDEZ, rapido: mmss(RAPIDO_S), max: mmss(TIEMPO_S), f: pct(p.fraccionTiempo), n: p.pasadas, total: ETAPAS.length })),
+    el('p', { class: 'muted tv-nota' }, fmt(C.notaRapidez, { u: BONO_RAPIDEZ, rapido: mmss(RAPIDO_S), max: mmss(TIEMPO_S), f: pct(p.fraccionTiempo), n: p.pasadas, total: P.etapas.length })),
     el('div', { class: 'tv-linea total' }, el('span', {}, fmt(C.total, { a: p.etapas, b: p.ahorro, c: p.rapidez })), el('b', {}, `${p.total}`)));
   vista.replaceChildren(el('div', { class: 'resultado' },
     tituloJuego(true),
