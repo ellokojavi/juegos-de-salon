@@ -202,25 +202,36 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     if (!esc.ballena && ahora >= esc.proximaBallena && gx1 - gx0 > 60) {
       const dir = Math.random() < 0.5 ? 1 : -1, largo = Math.min(30, (gx1 - gx0) * 0.35);
       const x = dir > 0 ? gx0 + 14 + Math.random() * (gx1 - gx0 - largo - 28) : gx1 - 14 - Math.random() * (gx1 - gx0 - largo - 28);
-      const modo = ['salto', 'chorro'].includes(BALLENA_MODO) ? BALLENA_MODO : Math.random() < 0.5 ? 'salto' : 'chorro';
+      const modo = BALLENA_MODO === 'salto' ? 'salto' : 'chorro';   // the spout is the whale's act; the jump only with ?ballena=salto
       esc.ballena = { modo, x, dir, largo, alto: 12 + Math.random() * 6, t: 0, dura: modo === 'chorro' ? 3 : 1.15, salpicoSalida: false, salpicoEntrada: false };
     }
     if (esc.ballena) {
       const b = esc.ballena; b.t += dt;
       const u = Math.min(1, b.t / b.dura);
       if (b.modo === 'chorro') {
-        // It surfaces with half its body out, blows a spout from its head, and sinks back
-        const sale = Math.min(1, b.t / 0.6), entra = Math.max(0, (b.t - 2.3) / 0.7);
-        const asoma = 7 * sale * (1 - Math.min(1, entra));
-        const bx = b.x, by = yAgua + 9 - asoma;
-        if (!b.salpicoSalida && b.t > 0.15) { b.salpicoSalida = true; for (let n = 0; n < 8; n++) esc.parts.agregar({ x: bx + (Math.random() - 0.5) * 18, y: yAgua, vx: (Math.random() - 0.5) * 20, vy: -12 - Math.random() * 12, g: 90, vida: 0.6, colores: AGUA }); }
-        // The spout: drops that shoot up from the blowhole and fan out, while it is up
-        if (b.t > 0.75 && b.t < 2) {
-          const hx = bx + b.dir * 4, hy = by - 8;
+        // Three parts, always moving the same way: it surfaces on a diagonal (head up), floats level
+        // with half its body out and blows its spout, then dives on a diagonal (head down)
+        const T1 = 0.7, T2 = 2.3, T3 = 3.0;
+        let cuadroB, bx, by;
+        if (b.t < T1) {
+          const k = b.t / T1;
+          cuadroB = BALLENA.sube; bx = b.x + b.dir * 10 * k; by = yAgua + 14 - 10 * k;
+        } else if (b.t < T2) {
+          const k = (b.t - T1) / (T2 - T1);
+          cuadroB = BALLENA.arriba; bx = b.x + b.dir * (14 + 4 * k); by = yAgua + 3;
+        } else {
+          const k = Math.min(1, (b.t - T2) / (T3 - T2));
+          cuadroB = BALLENA.baja; bx = b.x + b.dir * (20 + 12 * k); by = yAgua + 1 + 15 * k;
+        }
+        if (!b.salpicoSalida && b.t > 0.2) { b.salpicoSalida = true; for (let n = 0; n < 8; n++) esc.parts.agregar({ x: bx + (Math.random() - 0.5) * 10, y: yAgua, vx: (Math.random() - 0.5) * 20, vy: -12 - Math.random() * 12, g: 90, vida: 0.6, colores: AGUA }); }
+        if (!b.salpicoEntrada && b.t > T2 + 0.3) { b.salpicoEntrada = true; for (let n = 0; n < 6; n++) esc.parts.agregar({ x: bx + (Math.random() - 0.5) * 10, y: yAgua, vx: (Math.random() - 0.5) * 16, vy: -10 - Math.random() * 10, g: 90, vida: 0.5, colores: AGUA }); }
+        // The spout: drops that shoot up from the blowhole and fan out, while it floats
+        if (b.t > T1 + 0.2 && b.t < T2 - 0.3) {
+          const hx = bx + b.dir * 5, hy = by - 8;
           for (let n = 0; n < 3; n++) esc.parts.agregar({ x: hx + (Math.random() - 0.5) * 2, y: hy, vx: (Math.random() - 0.5) * 18, vy: -48 - Math.random() * 18, g: 95, vida: 0.75, colores: AGUA });
         }
-        if (b.t < 3) r.sprite(BALLENA.arriba, PALETA_BALLENA, bx, by, { voltear: b.dir < 0, cortarY: yAgua });
-        if (b.t > 3.6) { esc.ballena = null; esc.proximaBallena = ahora + 18 + Math.random() * 20; }
+        if (b.t < T3) r.sprite(cuadroB, PALETA_BALLENA, bx, by, { voltear: b.dir < 0, cortarY: yAgua });
+        if (b.t > T3 + 0.7) { esc.ballena = null; esc.proximaBallena = ahora + 18 + Math.random() * 20; }
       } else {
       const bx = b.x + b.dir * b.largo * u, by = yAgua + 8 - b.alto * Math.sin(Math.PI * u);
       const salpica = xx => { for (let n = 0; n < 10; n++) esc.parts.agregar({ x: xx + (Math.random() - 0.5) * 8, y: yAgua, vx: (Math.random() - 0.5) * 36, vy: -22 - Math.random() * 28, g: 150, vida: 0.9, colores: AGUA }); };
