@@ -186,7 +186,7 @@ Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
   quedó mejor en la final"); y el desempate en "Cómo funciona".
 - **Tango marca el choque al tocar otra casilla** (#135, opción B): sin espera de 500 ms. Lo rojo
   es lo que se cobra; el último toque del tablero lleno se pinta sin sonar ni contar. Amended
-  in branch `tango-red-delay`: once the player moves on, the red, its sound and the counter wait
+  by D-337: once the player moves on, the red, its sound and the counter wait
   1.5 s (`ROJO_MS`); the trigger is still tapping another cell.
 - **Sol dado más intenso** (#61, opción A): ámbar al 84 % con borde propio.
 - **La etiqueta del chat no se toca** (#48, opción B): deja pasar los toques; solo la burbuja abre
