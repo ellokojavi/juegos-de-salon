@@ -39,7 +39,7 @@ const T = {
     larga: 'Muy larga: una viga mide hasta 2 cuadros.', fuera: 'Fuera del área de construcción.',
     repetida: 'Ya hay una viga ahí.', presupuesto: 'No te quedan vigas: quita alguna.', sinMadera: 'No te alcanza la madera: quita alguna viga.', suelta: 'Empieza en un punto marcado.',
     quitada: 'Viga quitada.', borrado: 'Borraste el puente: ↩ Deshacer lo trae de vuelta.',
-    cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.',
+    cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.', cortada: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
   },
   fin: { todas: '¡Todos los puentes en pie!', tiempo: 'Se acabó el tiempo', rendido: 'Te rendiste' },
   cuenta: {
@@ -722,7 +722,7 @@ function jugar() {
       // It fell: the scene keeps moving a moment (the fall, the splash, the smoke clearing)
       if (!cierre) cierre = performance.now();
       if (!avisado) {
-        avisado = true; aviso.textContent = T.aviso.cayo; botonProbar.disabled = false;
+        avisado = true; aviso.textContent = sim.cortada ? T.aviso.cortada : T.aviso.cayo; botonProbar.disabled = false;
         // The beams that snapped stay marked while you fix the bridge
         P.rotasAntes = new Set(sim.vigas.map((v, k) => (v.rota ? `${P.vigas[k].a}|${P.vigas[k].b}` : null)).filter(Boolean));
       }

@@ -52,7 +52,7 @@ function cruce(nivel) {
   if (tipo === 'pilar-lado') { pilar(true); if (!PRUEBA) anclas.push([0, -1], [W, -1]); }
   if (tipo === 'mixto') { torres(); pilar(rnd() < 0.5); }
   // The test version loads the train more at each level: ×1 to ×2
-  return { ancho: W, anclas, tipo, nivel: nivel + 1, ...(PRUEBA ? { carga: [1, 1.25, 1.5, 1.75, 2][nivel] } : {}), ...(MADERA ? { madera: true } : {}) };
+  return { ancho: W, anclas, tipo, nivel: nivel + 1, ...(PRUEBA ? { carga: [1, 1.25, 1.5, 1.75, 2][nivel] } : {}), ...(MADERA ? { madera: true, firme: true } : {}) };
 }
 
 /** Every valid beam up to 1.5 long between grid points from y = −3 to 2: the rich start of the search. */
@@ -143,11 +143,32 @@ function crecer(e, azar) {
   }
   return v;
 }
+/** The bridge mirrored left to right (x → width − x). */
+const espejo = (e, v) => v.map(b => V([e.ancho - b.a[0], b.a[1]], [e.ancho - b.b[0], b.b[1]]));
+/** Is the crossing the same mirrored? Then a symmetric bridge is the natural one. */
+const simetrico = e => e.anclas.every(([x, y]) => e.anclas.some(([x2, y2]) => x2 === e.ancho - x && y2 === y));
+/**
+ * The symmetric version of a bridge: it with its mirror, then dropping mirrored pairs while it still
+ * holds. On a symmetric crossing it is preferred if it costs at most 15 % more: the intuitive design fits.
+ */
+function simetrizar(e, v) {
+  const k = b => [b.a, b.b].map(String).sort().join('|');
+  const unidas = new Map(); for (const b of [...v, ...espejo(e, v)]) unidas.set(k(b), b);
+  let w = [...unidas.values()];
+  if (!llega(e, w)) return null;
+  for (const b of [...w].sort((p, q) => Math.hypot(q.b[0] - q.a[0], q.b[1] - q.a[1]) - Math.hypot(p.b[0] - p.a[0], p.b[1] - p.a[1]))) {
+    if (!w.includes(b)) continue;
+    const par = espejo(e, [b])[0], sin = conectadas(e, w.filter(x => k(x) !== k(b) && k(x) !== k(par)));
+    if (llega(e, sin)) w = sin;
+  }
+  return w;
+}
 function minimoMadera(e, intentos = 4) {
   const fino = DT;
   fijarDT(1 / 480);
   let mejor = null;
   for (let k = 0; k < intentos; k++) { const v = crecer(e, k === 0 ? 1 : 2); if (v && (!mejor || costo(e, v) < costo(e, mejor))) mejor = v; }
+  if (mejor && simetrico(e)) { const sim = simetrizar(e, mejor); if (sim && costo(e, sim) <= costo(e, mejor) * 1.15) mejor = sim; }
   fijarDT(fino);
   return mejor && probar(e, mejor).llego ? mejor : null;   // confirmed with the game's step
 }
