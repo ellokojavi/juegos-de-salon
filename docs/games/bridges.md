@@ -53,6 +53,8 @@ with a wakeboarder towed from its tower roof by a black rope, riding its wave (`
 crest, a fall and the boat turning back to pick the rider up, or the rider sinking, only the head popping up,
 and the boat coming back with a small orange flag raised).
 These only appear in the game, never on the cover.
+Their parameters are internal: they only work from a local server or the Tailscale link (`INTERNO`
+in `game.js`), and the published site ignores them, so players never call a visitor by hand.
 
 ## Exceptions to the canons (while in the lab)
 
