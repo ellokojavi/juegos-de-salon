@@ -387,6 +387,6 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
   la semilla; la protección contra trampas está en las reglas de Firebase (ventanas con la hora del
   servidor, una sola escritura, el asiento con el hash del PIN, D-96). La verificación cruzada de
   puntajes sigue pendiente (LIG-30).
-- **The top-left "‹ Menú" on a day's cover goes to the cup's board**, not to the app's menu: there
+- **The top-left button on a day's cover is "‹ Volver a la copa" and goes to the cup's board**, not to the app's menu: there
   the cup is the menu, and the button replaces the "Volver a la copa" that used to close that screen.
   Everywhere else in the cup it goes to the app's menu (or to the lab, with `?labs`).
