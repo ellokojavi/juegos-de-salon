@@ -6337,3 +6337,15 @@ had played: the week limit made the list look like it had lost them.
 **Consequences:** the cups played before D-220 only show up once they are noted to their player
 (`node tools/firebase/rankings-history.mjs --write`). A separate history (place, winner) is left
 for later, if the list grows too long.
+
+## D-337 · Tango's clash turns red 1.5 s after the player moves on
+**Date:** 2026-10-16 · **Status:** current · **Relation:** amends the resolution of dilemma #135 (option B, "no wait")
+**Decision:** Owner's request: in Tango, the red of a clash, its error sound and the counter wait
+1.5 s (`ROJO_MS` in `public/cup/games/tango/ui.js`) after the tap that brings them, also with the
+board full. Each cell tap, hint or Clear all restarts the wait; arming a two-tap button does not.
+The trigger is still tapping another cell, and the score is unchanged: it counts the clash on
+leaving, as before. A clash fixed within the 1.5 s still sounds when it is counted.
+**Why:** players complained that the evaluation was too quick: the red came the instant they
+tapped the next cell, before they had finished the thought.
+**Consequences:** shipped in PR #456. `tools/e2e/cup/tournament.mjs` checks the red is absent right
+after leaving and present 1.5 s later; the `tango clash` path in `tools/e2e/paths.mjs` waits for it.
