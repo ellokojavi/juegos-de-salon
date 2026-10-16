@@ -34,7 +34,8 @@ const llega = (e, v) => probar(e, v).llego;
 
 /** A crossing of one kind: its anchors, besides the deck's two edges. */
 function cruce(nivel) {
-  const W = entre(...ANCHOS[nivel]);
+  // The test version: with the heavy train, the last levels are narrower, so the load forces the shape, not the length
+  const W = entre(...(PRUEBA ? [[4, 5], [5, 6], [6, 7], [6, 7], [6, 7]] : ANCHOS)[nivel]);
   const tipos = PRUEBA ? (nivel >= 3 ? ['bajo', 'torres', 'pilar', 'pilar-lado', 'mixto'] : ['bajo', 'torres', 'pilar', 'pilar-lado'])
     : nivel === 0 ? ['bajo', 'torres'] : ['bajo', 'torres', 'pilar', 'pilar-lado', 'mixto'];
   const tipo = tipos[Math.floor(rnd() * tipos.length)];
@@ -48,7 +49,8 @@ function cruce(nivel) {
   if (tipo === 'pilar') { pilar(false); if (!PRUEBA) anclas.push([0, -1], [W, -1]); }
   if (tipo === 'pilar-lado') { pilar(true); if (!PRUEBA) anclas.push([0, -1], [W, -1]); }
   if (tipo === 'mixto') { torres(); pilar(rnd() < 0.5); }
-  return { ancho: W, anclas, tipo, nivel: nivel + 1 };
+  // The test version loads the train more at each level: ×1 to ×2
+  return { ancho: W, anclas, tipo, nivel: nivel + 1, ...(PRUEBA ? { carga: [1, 1.25, 1.5, 1.75, 2][nivel] } : {}) };
 }
 
 /** Every valid beam up to 1.5 long between grid points from y = −3 to 2: the rich start of the search. */

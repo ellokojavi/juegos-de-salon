@@ -31,7 +31,7 @@ const T = {
     ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con pocas vigas. Suman las etapas que pasa el tren, las vigas que te sobran y la rapidez.`],
   ],
   empezar: '🚂 Empezar', aJugar: '¡A construir!',
-  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', letrero: '{n} vigas para cruzar',
+  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', letrero: '{n} vigas para cruzar', carga: '🚂 Tren {x} más pesado',
   probar: '🚂 Probar', arreglar: '✏️ Arreglar', deshacer: '↩ Deshacer', borrar: '🧹 Borrar', borrarSeguro: '🧹 ¿Seguro?',
   rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   aviso: {
@@ -612,7 +612,7 @@ function jugar() {
       el('span', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })), puntos,
       el('span', { class: 'tv-reloj', id: 'tv-reloj' }, `⏱ ${mmss(Math.max(0, TIEMPO_S - segundos()))}`)),
     el('div', { class: 'tv-tablero' }, c,
-      el('div', { class: 'tv-letrero', 'aria-hidden': 'true' }, el('b', {}, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })), el('span', {}, fmt(T.letrero, { n: e.presupuesto })))),
+      el('div', { class: 'tv-letrero', 'aria-hidden': 'true' }, el('b', {}, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })), el('span', {}, fmt(T.letrero, { n: e.presupuesto })), e.carga > 1 ? el('span', { class: 'tv-carga' }, fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` })) : null)),
     el('div', { class: 'tv-barra' }, cuenta, aviso),
     botonProbar, fila);
   c._ajustar();

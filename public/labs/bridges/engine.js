@@ -138,7 +138,8 @@ export function paso(s) {
     const b = bajoTren(s, x);
     if (!b || b.y < -1.5) { tr.cayo = true; tr.cayoPieza = k; s.fin = true; break; }
     if (k === 0) tr.y = b.y;
-    const peso = FISICA[pz.peso];
+    // A crossing may carry a heavier train (`carga`, by level in the catalog): locomotive and wagons alike
+    const peso = FISICA[pz.peso] * (s.e.carga || 1);
     fy[nudos.indexOf(b.p)] -= peso * (1 - b.u);
     fy[nudos.indexOf(b.q)] -= peso * b.u;
   }
