@@ -8,7 +8,7 @@ import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
-import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ } from './pixel.js';
+import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // `?ovni`: the saucer comes right away (to look at it without waiting for chance)
@@ -17,6 +17,9 @@ const OVNI_YA = new URLSearchParams(location.search).has('ovni');
 const OVNI_MODO = new URLSearchParams(location.search).get('ovni') || '';
 // `?ballena`: the whale jumps right away
 const BALLENA_YA = new URLSearchParams(location.search).has('ballena');
+// `?topo`, `?topo=anteojos` or `?topo=minero`: the mole comes right away
+const TOPO_YA = new URLSearchParams(location.search).has('topo');
+const TOPO_MODO = new URLSearchParams(location.search).get('topo') || '';
 // `?ballena=salto` or `?ballena=chorro` picks the whale's act; without it, chance picks one
 const BALLENA_MODO = new URLSearchParams(location.search).get('ballena') || '';
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
@@ -290,6 +293,40 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     r.rect(xa, y0 - 1, xb - xa, 2, '#6fd42a'); r.rect(xa, y0 - 2, xb - xa, 1, '#9dff3a');
     for (let x = Math.floor(xa); x < xb; x += 3) if (ruido(x, 7) > 0.5) r.punto(x, y0 - 3, '#9dff3a');
   }
+  // The mole: a hole opens in the rock of one cliff and it comes out of it, then goes back in
+  if (visitas && !QUIETO) {
+    esc.inicio ??= ahora;
+    if (visitas.topo && !esc.topo && ahora - esc.inicio >= visitas.retrasoTopo) {
+      visitas.verTopo();
+      const izq = Math.random() < 0.5, xa = izq ? 0 : x1, xb = izq ? x0 : W;
+      esc.topo = { modo: visitas.modoTopo, x: (xa + xb) / 2, y: Math.round(y0 + 22 + Math.random() * Math.max(4, H - y0 - 40)), mira: izq ? 1 : -1, t: 0 };
+    }
+    if (esc.topo && !esc.topo.fuera) {
+      const tp = esc.topo; tp.t += dt;
+      const minero = tp.modo === 'minero', T = minero ? [0.35, 0.75, 2.8, 3.0, 3.3] : [0.35, 0.8, 2.6, 3.0, 3.35];
+      // The hole: it opens, stays, and closes
+      const hueco = tp.t < T[0] ? tp.t / T[0] : tp.t > T[3] ? Math.max(0, 1 - (tp.t - T[3]) / (T[4] - T[3])) : 1;
+      if (hueco > 0) for (let k = -2; k <= 1; k++) { const w = Math.round((6 - Math.abs(k + 0.5) * 1.5) * hueco); r.rect(tp.x - w, tp.y + k, 2 * w, 1, '#1a0b2e'); }
+      if (!tp.tierra && tp.t > 0.05) { tp.tierra = true; for (let n = 0; n < 7; n++) esc.parts.agregar({ x: tp.x + (Math.random() - 0.5) * 8, y: tp.y - 1, vx: (Math.random() - 0.5) * 24, vy: -10 - Math.random() * 14, g: 90, vida: 0.5, colores: ['#9a6440', '#7a4a2a', '#5a3a20'] }); }
+      // How much of it is out: it rises, stays, and sinks (the miner drops back fast)
+      const asoma = tp.t < T[0] ? 0 : tp.t < T[1] ? (tp.t - T[0]) / (T[1] - T[0]) : tp.t < T[2] ? 1 : tp.t < T[3] ? 1 - (tp.t - T[2]) / (T[3] - T[2]) : 0;
+      if (asoma > 0) {
+        // With glasses it looks one way and then the other; the miner keeps facing the gap
+        const mira = minero ? tp.mira : (Math.floor(Math.max(0, tp.t - T[1]) / 0.55) % 2 ? -tp.mira : tp.mira);
+        r.sprite(TOPO[tp.modo], PALETA_TOPO, tp.x, tp.y + 1 + 9 * (1 - asoma), { voltear: mira < 0, cortarY: tp.y });
+        // The miner's lamp: a cone of light that sweeps the scene, up and down
+        if (minero && tp.t > T[1] && tp.t < T[2]) {
+          const ang = -0.35 + 0.3 * Math.sin((tp.t - T[1]) * 2.4), lx = tp.x + tp.mira * 3, ly = tp.y - 7;
+          for (let k = 2; k < 60; k += 2) {
+            const cx = lx + tp.mira * k * Math.cos(ang), cy = ly + k * Math.sin(ang), h = 1 + k / 5;
+            r.rect(cx, cy - h / 2, 2, h, `rgba(255,248,208,${0.22 - k * 0.0035})`);
+          }
+        }
+      }
+      if (tp.t > T[4]) tp.fuera = true;
+    }
+  }
+
   for (const [ax, ay] of e.anclas) {
     const [px, py] = A(ax, ay);
     r.rect(px - u * 0.35, py, u * 0.7, u * 0.35, ROCA.base); r.rect(px - u * 0.35, py, u * 0.7, 1, ROCA.claro);
@@ -434,16 +471,18 @@ function portada() {
 /* The game                                                            */
 /* ------------------------------------------------------------------ */
 
-const P = { ovni: { etapa: -1, retraso: 0, visto: true, modo: 'mira' }, ballena: { etapa: -1, retraso: 0, visto: true, modo: 'chorro' }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
+const P = { topo: { etapa: -1, retraso: 0, visto: true, modo: 'anteojos' }, ovni: { etapa: -1, retraso: 0, visto: true, modo: 'mira' }, ballena: { etapa: -1, retraso: 0, visto: true, modo: 'chorro' }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
 const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
 
 /**
  * What may visit the current stage. One character per game, drawn at the start: the saucer (it looks
- * and asks, or it fishes) or the whale (it jumps, or it blows its spout), once, in one stage. Birds
+ * and asks, or it fishes), the whale (it jumps, or it blows its spout) or the mole (with glasses, or
+ * a miner with a lamp), once, in one stage. Birds
  * and clouds are the background: they come and go on their own.
  */
 const visitasDe = () => ({
   ovni: P.ovni.etapa === P.etapa && !P.ovni.visto, retraso: P.ovni.retraso, modoOvni: P.ovni.modo, verOvni: () => { P.ovni.visto = true; },
+  topo: P.topo.etapa === P.etapa && !P.topo.visto, retrasoTopo: P.topo.retraso, modoTopo: P.topo.modo, verTopo: () => { P.topo.visto = true; },
   ballena: P.ballena.etapa === P.etapa && !P.ballena.visto, retrasoBallena: P.ballena.retraso, modoBallena: P.ballena.modo, verBallena: () => { P.ballena.visto = true; },
 });
 
@@ -451,13 +490,16 @@ function empezar() {
   cuentaRegresiva({ titulo: `🚂 ${T.nombre}`, ya: T.aJugar }).then(() => {
     // One character per game, drawn at the start: the saucer or the whale (never both), with its act,
     // its stage and its moment. `?ovni[=mira|pesca]` or `?ballena[=salto|chorro]` picks it, in stage 1
-    const quien = OVNI_YA ? 'ovni' : BALLENA_YA ? 'ballena' : Math.random() < 0.5 ? 'ovni' : 'ballena';
-    const etapaSorteada = OVNI_YA || BALLENA_YA ? 0 : Math.floor(Math.random() * ETAPAS.length);
-    const retraso = OVNI_YA || BALLENA_YA ? 0.8 : 5 + Math.random() * 15;
+    const forzado = OVNI_YA || BALLENA_YA || TOPO_YA;
+    const quien = OVNI_YA ? 'ovni' : BALLENA_YA ? 'ballena' : TOPO_YA ? 'topo' : ['ovni', 'ballena', 'topo'][Math.floor(Math.random() * 3)];
+    const etapaSorteada = forzado ? 0 : Math.floor(Math.random() * ETAPAS.length);
+    const retraso = forzado ? 0.8 : 5 + Math.random() * 15;
     P.ovni = { etapa: quien === 'ovni' ? etapaSorteada : -1, retraso, visto: quien !== 'ovni',
       modo: ['mira', 'pesca'].includes(OVNI_MODO) ? OVNI_MODO : Math.random() < 0.5 ? 'mira' : 'pesca' };
     P.ballena = { etapa: quien === 'ballena' ? etapaSorteada : -1, retraso, visto: quien !== 'ballena',
       modo: ['salto', 'chorro'].includes(BALLENA_MODO) ? BALLENA_MODO : Math.random() < 0.5 ? 'salto' : 'chorro' };
+    P.topo = { etapa: quien === 'topo' ? etapaSorteada : -1, retraso, visto: quien !== 'topo',
+      modo: ['anteojos', 'minero'].includes(TOPO_MODO) ? TOPO_MODO : Math.random() < 0.5 ? 'anteojos' : 'minero' };
     Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
     jugar();
     clearInterval(P.reloj);
