@@ -68,3 +68,5 @@
 .tv-linea { display: flex; justify-content: space-between; gap: 10px; font-weight: 800; }
 .tv-linea.total { font-size: 1.1rem; color: var(--yellow); border-top: 2px solid var(--glass-border); padding-top: 8px; }
 @media (prefers-reduced-motion: reduce) { .tv-letrero { animation: none; display: none; } }
+
+.tv-letrero .tv-carga { color: #ff8a3d; }
