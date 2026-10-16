@@ -278,7 +278,7 @@ export const PEZ = [
 ];
 
 /* A mole that digs through the cliff's rock: side view, facing right, 11 × 6, two frames (its claws dig) */
-export const PALETA_TOPO = { k: '#1a0b14', b: '#7a4a2a', B: '#9a6440', p: '#ff8aa8', c: '#e8c8a0' };
+export const PALETA_TOPO = { k: '#1a0b14', b: '#7a4a2a', B: '#9a6440', p: '#ff8aa8', c: '#e8c8a0', w: '#ffffff', r: '#c2185b' };
 export const TOPO = [
   [
     '...kkkkk...',
@@ -309,4 +309,19 @@ export const EXCLAMACION = [
   '.kk.',
   'kyyk',
   '.kk.',
+];
+
+/* The mole falling, scared: seen from the front, eyes wide, mouth open screaming, arms flailing — 11 × 10, two frames */
+const MIEDO_CARA = [
+  '..kwwbwwk..',
+  '..kwkbkwk..',
+  '..kbbbbbk..',
+  '..kbkkkbk..',
+  '..kbkrrbk..',
+  '...kbbbk...',
+  '....kkk....',
+];
+export const TOPO_MIEDO = [
+  ['k.........k', 'bk..kkk..kb', '.bkkBBBkkb.', ...MIEDO_CARA],
+  ['...........', 'k...kkk...k', 'bkkkBBBkkkb', ...MIEDO_CARA],
 ];

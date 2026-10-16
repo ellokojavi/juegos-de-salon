@@ -8,7 +8,7 @@ import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
-import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, EXCLAMACION } from './pixel.js';
+import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // `?ovni`: the saucer comes right away (to look at it without waiting for chance)
@@ -319,24 +319,36 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
       for (const [cx, cy] of tp.camino) r.rect(cx - 1, cy - 6, 3, 7, 'rgba(26,11,46,0.92)');
       if (tp.fase === 'cava') {
         tp.x += dir * 11 * dt;
-        // Wobbly: the heading drifts up and down, kept within a few pixels of where it started
-        tp.rumbo += (Math.random() - 0.5) * 3 * dt;
-        tp.rumbo = Math.max(-0.5, Math.min(0.5, tp.rumbo - (tp.y - tp.y0) * 0.02));
-        tp.y = Math.max(tp.y0 - 4, Math.min(tp.y0 + 4, tp.y + tp.rumbo * 11 * dt));
+        // Erratic: every few pixels it picks a new height (up or down, within 4 of where it started)
+        // and heads for it, so the tunnel zigzags
+        if (tp.metaX === undefined || Math.abs(tp.x - tp.metaX) < 0.5 || (dir > 0) === (tp.x > tp.metaX)) {
+          tp.metaX = tp.x + dir * (3 + Math.random() * 3);
+          tp.metaY = tp.y0 + Math.round((Math.random() * 2 - 1) * 4);
+        }
+        tp.y += Math.sign(tp.metaY - tp.y) * Math.min(Math.abs(tp.metaY - tp.y), 16 * dt);
         const ultimo = tp.camino[tp.camino.length - 1];
         if (!ultimo || Math.abs(ultimo[0] - tp.x) >= 1) tp.camino.push([Math.round(tp.x), Math.round(tp.y)]);
         if (Math.random() < 0.35) esc.parts.agregar({ x: tp.x + dir * 5, y: tp.y - 3, vx: -dir * (8 + Math.random() * 14), vy: -6 - Math.random() * 10, g: 70, vida: 0.5, colores: ['#9a6440', '#7a4a2a', '#5a3a20'] });
         r.sprite(TOPO[Math.floor(tp.t * 6) % 2], PALETA_TOPO, tp.x, tp.y, { voltear: dir < 0 });
-        if ((dir > 0 && tp.x >= tp.borde) || (dir < 0 && tp.x <= tp.borde)) { tp.fase = 'sorpresa'; tp.t = 0; }
+        if ((dir > 0 && tp.x >= tp.borde) || (dir < 0 && tp.x <= tp.borde)) { tp.fase = 'aire'; tp.t = 0; }
+      } else if (tp.fase === 'aire') {
+        // Like in the cartoons: it keeps digging out past the edge, into thin air, without noticing...
+        tp.x += dir * 11 * dt;
+        r.sprite(TOPO[Math.floor(tp.t * 6) % 2], PALETA_TOPO, tp.x, tp.y, { voltear: dir < 0 });
+        if (tp.t > 0.55) { tp.fase = 'sorpresa'; tp.t = 0; }
       } else if (tp.fase === 'sorpresa') {
-        // At the edge, half out over the gap: a "!" pops up and it freezes a moment
+        // ...hangs there, a "!" pops up, and only then it drops
         r.sprite(TOPO[0], PALETA_TOPO, tp.x, tp.y, { voltear: dir < 0 });
-        if (tp.t > 0.15) r.sprite(EXCLAMACION, PALETA_PLATILLO, tp.x + dir * 2, tp.y - 8 - (tp.t < 0.3 ? 2 : 0));
-        if (tp.t > 0.9) { tp.fase = 'cae'; tp.t = 0; tp.vy = -18; }
+        if (tp.t > 0.1) r.sprite(EXCLAMACION, PALETA_PLATILLO, tp.x, tp.y - 8 - (tp.t < 0.25 ? 2 : 0));
+        if (tp.t > 0.85) { tp.fase = 'cae'; tp.t = 0; tp.vy = 0; }
       } else if (tp.fase === 'cae') {
         // It tumbles: forward a little, down with gravity, turning over, and splashes in the water
-        tp.vy += 160 * dt; tp.x += dir * 10 * dt; tp.y += tp.vy * dt;
-        if (tp.y < yAgua + 2) r.sprite(TOPO[0], PALETA_TOPO, tp.x, tp.y, { voltear: (Math.floor(tp.t * 8) % 2 === 0) === (dir < 0) });
+        tp.vy += 110 * dt; tp.y += tp.vy * dt;
+        // Falling scared: facing us, eyes wide, mouth open screaming, arms flailing, sweat flying off
+        if (tp.y < yAgua + 2) {
+          r.sprite(TOPO_MIEDO[Math.floor(tp.t * 10) % 2], PALETA_TOPO, tp.x, tp.y + 3);
+          if (Math.random() < 0.25) esc.parts.agregar({ x: tp.x + (Math.random() < 0.5 ? -6 : 6), y: tp.y - 6, vx: (Math.random() - 0.5) * 20, vy: -20 - Math.random() * 10, g: 60, vida: 0.4, colores: ['#ffffff', '#bff8ff', '#7af0ff'] });
+        }
         else if (!tp.salpico) { tp.salpico = true; for (let n = 0; n < 12; n++) esc.parts.agregar({ x: tp.x, y: yAgua, vx: (Math.random() - 0.5) * 36, vy: -24 - Math.random() * 26, g: 130, vida: 0.8, colores: AGUA }); }
       }
     }
