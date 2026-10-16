@@ -48,11 +48,13 @@ could have been crossed (the catalog's bridge, the train looping over it).
 Pixel art from `pixel.js` (sprites, particles): the train with smoke, steam and headlight, sparks
 when a beam snaps, a splash when something falls, birds now and then. One character per game, at a
 random stage and moment: a flying saucer (`?ovni`, `?ovni=mira|pesca`), a whale (`?ballena`,
-`?ballena=salto|chorro`) or a mole that tunnels through a cliff (`?topo`, `?topo=anteojos|minero`).
+`?ballena=salto|chorro`) a mole that tunnels through a cliff (`?topo`, `?topo=anteojos|minero`), or a petrol-green boat
+with a wake surfer riding its wave (`?wake`, `?wake=carve|jump|fall`: carving the wave, a jump off its
+crest, or a fall and the boat turning back to pick the rider up).
 These only appear in the game, never on the cover.
 
 ## Exceptions to the canons (while in the lab)
 
 - Spanish only, no i18n (C-3) and no usage signal: a local prototype.
-- Its URL parameters (`?catalogo`, `?ovni`, `?ballena`, `?topo`) are Spanish and read directly with
+- Its URL parameters (`?catalogo`, `?ovni`, `?ballena`, `?topo`) are Spanish (`?wake` is already English) and read directly with
   `URLSearchParams`, not through `parametros.js` (C-18, D-266). To be settled before it leaves the lab.

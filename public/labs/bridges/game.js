@@ -8,7 +8,7 @@ import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S, costo, costoViga } from './engine.js';
-import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION } from './pixel.js';
+import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, PALETA_LANCHA, SURFISTA, PALETA_SURFISTA } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // `?ovni`: the saucer comes right away (to look at it without waiting for chance)
@@ -21,6 +21,9 @@ const BALLENA_YA = new URLSearchParams(location.search).has('ballena');
 const TOPO_YA = new URLSearchParams(location.search).has('topo');
 // `?ballena=salto` or `?ballena=chorro` picks the whale's act; without it, chance picks one
 const BALLENA_MODO = new URLSearchParams(location.search).get('ballena') || '';
+// `?wake`: the green boat and its wake rider cross right away; `?wake=carve|jump|fall` picks the act
+const WAKE_YA = new URLSearchParams(location.search).has('wake');
+const WAKE_MODO = new URLSearchParams(location.search).get('wake') || '';
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
 const T = {
   nombre: 'Tren en Vilo',
@@ -283,6 +286,70 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     }
   }
 
+  // The green boat and its wake rider (in the game only): it crosses the water from behind one cliff to
+  // behind the other, its wave behind it and the rider on the wave. Three acts: carving up and down the
+  // wave, a jump off its crest, or a fall, and the boat turns back to pick the rider up
+  if (visitas && !QUIETO) {
+    esc.inicio ??= ahora;
+    if (visitas.wake && !esc.wake && ahora - esc.inicio >= visitas.retrasoWake) {
+      visitas.verWake();
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      esc.wake = { modo: visitas.modoWake, dir, x: dir > 0 ? -30 : W + 30, t: 0, fase: 'cruza', d: 9, salto: 0, vy: 0, giro: 0 };
+    }
+    if (esc.wake && !esc.wake.fuera) {
+      const w = esc.wake; w.t += dt;
+      const V = 26, mitad = W / 2;
+      // The wave's height `d` art pixels behind the stern: it rises off the hull, peaks, and fades
+      const ola = d => d < 2 ? 0 : d < 6 ? (d - 2) * 0.8 : Math.max(0, 3.2 - (d - 6) * 0.22);
+      const popa = () => w.x - w.dir * 8;
+      const dibujaOla = () => {
+        for (let d = 2; d < 24; d++) {
+          const h = Math.round(ola(d)), xx = popa() - w.dir * d;
+          if (h > 0) r.rect(xx, yAgua - h, 1, h, AGUA[1]);
+          r.punto(xx, yAgua - h, d < 9 || ruido(xx, Math.floor(ahora * 8)) > 0.4 ? '#ffffff' : AGUA[0]);
+        }
+      };
+      const lancha = (conJinete = false) => {
+        r.sprite(LANCHA, PALETA_LANCHA, w.x, yAgua + 2, { voltear: w.dir < 0, cortarY: yAgua + 1 });
+        if (conJinete) { r.punto(w.x - w.dir * 4, yAgua - 4, PALETA_SURFISTA.s); r.punto(w.x - w.dir * 4, yAgua - 5, PALETA_SURFISTA.k); }
+      };
+      w.x += w.dir * V * dt;
+      if (w.fase === 'cruza') {
+        // Carving: the rider slides up the wave and back down it, crouched while going down
+        if (w.modo === 'carve' || w.modo === 'jump' && w.salto === 0 && Math.abs(w.x - mitad) > 8 || w.modo === 'fall' && Math.abs(w.x - mitad) > 8) {
+          const prev = w.d; w.d = 9 + Math.sin(w.t * 2.2) * 3.5;
+          dibujaOla(); lancha();
+          r.sprite(w.d > prev ? SURFISTA.arriba : SURFISTA.agachado, PALETA_SURFISTA, popa() - w.dir * w.d, yAgua - ola(w.d) + 1, { voltear: w.dir < 0 });
+        } else if (w.modo === 'jump') {
+          // The jump: off the crest, up, a spin of the board in the air, and back down onto the wave
+          if (w.salto === 0) { w.salto = 1; w.alto = 0; w.vy = -46; }
+          w.vy += 120 * dt; w.alto = Math.min(0, w.alto + w.vy * dt);
+          dibujaOla(); lancha();
+          const enAire = w.alto < 0 || w.vy < 0;
+          r.sprite(enAire && w.vy < 10 ? SURFISTA.arriba : SURFISTA.agachado, PALETA_SURFISTA, popa() - w.dir * 7, yAgua - ola(7) + 1 + w.alto, { voltear: (w.dir < 0) !== (enAire && Math.floor(w.t * 8) % 2 === 1) });
+          if (!enAire) { w.salto = 2; w.modo = 'carve'; for (let n = 0; n < 8; n++) esc.parts.agregar({ x: popa() - w.dir * 7, y: yAgua - 2, vx: (Math.random() - 0.5) * 30, vy: -14 - Math.random() * 14, g: 100, vida: 0.5, colores: AGUA }); }
+        } else {
+          // The fall: the rider tumbles off the wave and splashes in; the boat goes on a little and turns back
+          w.fase = 'cae'; w.cx = popa() - w.dir * w.d; w.ct = 0;
+          for (let n = 0; n < 12; n++) esc.parts.agregar({ x: w.cx, y: yAgua, vx: (Math.random() - 0.5) * 34, vy: -20 - Math.random() * 22, g: 130, vida: 0.8, colores: AGUA });
+        }
+      } else if (w.fase === 'cae') {
+        w.ct += dt;
+        if (w.ct < 0.5) r.sprite(SURFISTA.cae, PALETA_SURFISTA, w.cx, yAgua + 1 + w.ct * 8, { cortarY: yAgua });
+        // The rider bobbing in the water, the board floating beside
+        else { const b = Math.round(Math.sin(ahora * 4)); r.punto(w.cx, yAgua - 1 + b, PALETA_SURFISTA.s); r.punto(w.cx, yAgua - 2 + b, PALETA_SURFISTA.k); r.rect(w.cx + 3, yAgua - 1, 4, 1, PALETA_SURFISTA.o); }
+        if (Math.abs(w.x - w.cx) > 40 && w.dir * (w.x - w.cx) > 0) { w.dir = -w.dir; }
+        else if (w.dir * (w.x - w.cx) > -3 && w.dir * (w.x - w.cx) < 0 && w.ct > 1.5) { w.fase = 'recoge'; }
+        if (w.ct < 1.2) dibujaOla();
+        lancha();
+      } else {
+        // Picked up: the rider is aboard, and the boat goes back the way it came, slow, no wave to ride
+        lancha(true);
+      }
+      if (w.x < -40 || w.x > W + 40) w.fuera = true;
+    }
+  }
+
   // The cliffs: rock with grain, an outline and grass on top
   const [x0, y0] = A(0, 0), [x1] = A(e.ancho, 0);
   const roca = (xa, xb) => {
@@ -523,7 +590,7 @@ function portada() {
 /* The game                                                            */
 /* ------------------------------------------------------------------ */
 
-const P = { etapas: ETAPAS, topo: { etapa: -1, retraso: 0, visto: true }, ovni: { etapa: -1, retraso: 0, visto: true, modo: 'mira' }, ballena: { etapa: -1, retraso: 0, visto: true, modo: 'chorro' }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
+const P = { etapas: ETAPAS, topo: { etapa: -1, retraso: 0, visto: true }, ovni: { etapa: -1, retraso: 0, visto: true, modo: 'mira' }, ballena: { etapa: -1, retraso: 0, visto: true, modo: 'chorro' }, wake: { etapa: -1, retraso: 0, visto: true, modo: 'carve' }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
 const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
 
 /**
@@ -547,21 +614,23 @@ function sortearEtapas() {
 /**
  * What may visit the current stage. One character per game, drawn at the start: the saucer (it looks
  * and asks, or it fishes), the whale (it jumps, or it blows its spout) or the mole (it digs a
- * tunnel through a cliff and falls into the water), once, in one stage. Birds
+ * tunnel through a cliff and falls into the water) or the green boat with its wake rider (carving, a
+ * jump, or a fall and a pick-up), once, in one stage. Birds
  * and clouds are the background: they come and go on their own.
  */
 const visitasDe = () => ({
   ovni: P.ovni.etapa === P.etapa && !P.ovni.visto, retraso: P.ovni.retraso, modoOvni: P.ovni.modo, verOvni: () => { P.ovni.visto = true; },
   topo: P.topo.etapa === P.etapa && !P.topo.visto, retrasoTopo: P.topo.retraso, verTopo: () => { P.topo.visto = true; },
   ballena: P.ballena.etapa === P.etapa && !P.ballena.visto, retrasoBallena: P.ballena.retraso, modoBallena: P.ballena.modo, verBallena: () => { P.ballena.visto = true; },
+  wake: P.wake.etapa === P.etapa && !P.wake.visto, retrasoWake: P.wake.retraso, modoWake: P.wake.modo, verWake: () => { P.wake.visto = true; },
 });
 
 function empezar() {
   cuentaRegresiva({ titulo: `🚂 ${T.nombre}`, ya: T.aJugar }).then(() => {
     // One character per game, drawn at the start: the saucer or the whale (never both), with its act,
     // its stage and its moment. `?ovni[=mira|pesca]` or `?ballena[=salto|chorro]` picks it, in stage 1
-    const forzado = OVNI_YA || BALLENA_YA || TOPO_YA;
-    const quien = OVNI_YA ? 'ovni' : BALLENA_YA ? 'ballena' : TOPO_YA ? 'topo' : ['ovni', 'ballena', 'topo'][Math.floor(Math.random() * 3)];
+    const forzado = OVNI_YA || BALLENA_YA || TOPO_YA || WAKE_YA;
+    const quien = OVNI_YA ? 'ovni' : BALLENA_YA ? 'ballena' : TOPO_YA ? 'topo' : WAKE_YA ? 'wake' : ['ovni', 'ballena', 'topo', 'wake'][Math.floor(Math.random() * 4)];
     const etapaSorteada = forzado ? 0 : Math.floor(Math.random() * P.etapas.length);
     const retraso = forzado ? 0.8 : 5 + Math.random() * 55;   // between 5 s and 1 minute into its stage
     P.ovni = { etapa: quien === 'ovni' ? etapaSorteada : -1, retraso, visto: quien !== 'ovni',
@@ -569,6 +638,8 @@ function empezar() {
     P.ballena = { etapa: quien === 'ballena' ? etapaSorteada : -1, retraso, visto: quien !== 'ballena',
       modo: ['salto', 'chorro'].includes(BALLENA_MODO) ? BALLENA_MODO : Math.random() < 0.5 ? 'salto' : 'chorro' };
     P.topo = { etapa: quien === 'topo' ? etapaSorteada : -1, retraso, visto: quien !== 'topo' };
+    P.wake = { etapa: quien === 'wake' ? etapaSorteada : -1, retraso, visto: quien !== 'wake',
+      modo: ['carve', 'jump', 'fall'].includes(WAKE_MODO) ? WAKE_MODO : ['carve', 'jump', 'fall'][Math.floor(Math.random() * 3)] };
     P.etapas = sortearEtapas();
     Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
     jugar();
