@@ -7,7 +7,7 @@
 import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { ETAPAS, TIEMPO_S, ALTO, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino } from './engine.js';
+import { ETAPAS, TIEMPO_S, ALTO, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S } from './engine.js';
 import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -18,7 +18,7 @@ const T = {
   como: [
     ['🌉', 'Arrastra de un punto a otro para tender una viga. Tócala para quitarla.'],
     ['🚂', 'Toca Probar: cruza el tren. Si una viga se estira de más, se corta.'],
-    ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos. Cuentan las etapas que pasa el tren y lo rápido que lo logras.`],
+    ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con pocas vigas. Suman las etapas que pasa el tren, las vigas que te sobran y la rapidez.`],
   ],
   empezar: '🚂 Empezar', aJugar: '¡A construir!',
   etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}',
@@ -32,7 +32,16 @@ const T = {
     cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.',
   },
   fin: { todas: '¡Todos los puentes en pie!', tiempo: 'Se acabó el tiempo', rendido: 'Te rendiste' },
-  desglose: { etapas: '🌉 Etapas ({n} de {total}): +{pts}.', rapidez: '⏱ Rapidez ({t}): +{pts}.', sinRapidez: '⏱ Rapidez: +0 (faltaron etapas).' },
+  cuenta: {
+    titulo: '🧮 Cómo se calculó',
+    etapas: '🌉 Etapas: {n} de {total} × {u} = {pts}',
+    ahorroTitulo: '🪵 Vigas que te sobraron (hasta {u} por etapa):',
+    ahorroEtapa: 'Etapa {k}: usaste {n} de {max} (lo mínimo conocido: {min}) → {u} × {f} = {pts}',
+    ahorroTotal: 'Ahorro: {pts}',
+    rapidez: '⏱ Rapidez: {u} × {f} del tiempo × {n}/{total} etapas = {pts}',
+    rapidezNota: 'Tardaste {t}: todo el bono en {rapido} o menos, nada a los {max}.',
+    total: '= {a} + {b} + {c} = {s} puntos',
+  },
   otraVez: '🔁 Jugar otra vez', laboratorio: '‹ Volver al laboratorio',
 };
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
@@ -151,14 +160,15 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   if (grilla) for (let x = 0; x <= e.ancho; x++) for (let y = ALTO[0]; y <= ALTO[1]; y++) { const [px, py] = A(x, y); r.punto(px, py, 'rgba(255,255,255,0.45)'); }
 
   // The beams as planks: a dark edge, the wood (warming to red with the strain), rails on the road
-  const grosor = Math.max(2, Math.round(u * 0.14));
+  // Thin planks: on a phone the grid is small, and a thick beam hides where it starts and ends
+  const grosor = Math.max(1, Math.round(u * 0.07));
   const pos = sim ? i => [sim.nudos[i].x, sim.nudos[i].y] : null;
   const lista = sim ? sim.vigas.map((v, k) => ({ k, a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino }))
     : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0 }));
   for (const v of lista) {
     if (v.rota) continue;
     const [ax, ay] = A(...v.a), [bx, by] = A(...v.b), g = v.camino ? grosor + 1 : grosor;
-    r.linea(ax, ay, bx, by, MADERA.borde, g + 2);
+    r.linea(ax, ay, bx, by, MADERA.borde, g + 1);
     r.linea(ax, ay, bx, by, sim ? colorTension(v.t) : '#c8874a', g);
     if (v.camino) r.linea(ax, ay - Math.ceil(g / 2), bx, by - Math.ceil(g / 2), MADERA.riel, 1);
   }
@@ -260,12 +270,12 @@ function portada() {
 /* The game                                                            */
 /* ------------------------------------------------------------------ */
 
-const P = { etapa: 0, hechas: 0, inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
+const P = { etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
 const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
 
 function empezar() {
   cuentaRegresiva({ titulo: `🚂 ${T.nombre}`, ya: T.aJugar }).then(() => {
-    Object.assign(P, { etapa: 0, hechas: 0, inicio: Date.now(), fin: null, vigas: [], historial: [] });
+    Object.assign(P, { etapa: 0, hechas: 0, usadas: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
     jugar();
     clearInterval(P.reloj);
     P.reloj = setInterval(() => {
@@ -408,7 +418,7 @@ function jugar() {
       avisado = true;
       if (sim.tren.llego) {
         aviso.textContent = T.aviso.paso; SFX.win(); vibrate([30, 50, 30]);
-        P.hechas++;
+        P.hechas++; P.usadas.push(P.vigas.length);
         setTimeout(() => {
           if (P.fin) return;
           P.simulando = false;
@@ -432,18 +442,30 @@ function terminar(motivo) {
   resultado();
 }
 
+/** A number with at most one decimal, with a comma: 3,3. */
+const num = x => (Math.round(x * 10) / 10).toString().replace('.', ',');
+const pct = x => `${Math.round(x * 100)} %`;
+
 function resultado() {
   const { motivo, segundos: seg } = P.fin;
-  const p = puntajePartida(P.hechas, seg);
-  const todas = P.hechas === ETAPAS.length;
+  const p = puntajePartida(P.usadas, seg);
+  const todas = P.hechas === ETAPAS.length, C = T.cuenta;
+  const cuenta = el('div', { class: 'panel tv-cuenta-final', id: 'cuenta' },
+    el('p', { class: 'lead' }, C.titulo),
+    el('p', {}, fmt(C.etapas, { n: p.pasadas, total: ETAPAS.length, u: PUNTOS_ETAPA, pts: p.etapas })),
+    p.ahorros.length ? el('div', {},
+      el('p', { style: 'margin-bottom:4px' }, fmt(C.ahorroTitulo, { u: PUNTOS_AHORRO })),
+      el('ul', { class: 'desglose muted' }, ...p.ahorros.map(a => el('li', {}, fmt(C.ahorroEtapa, { k: a.etapa, n: a.usadas, max: a.presupuesto, min: a.minimo, u: PUNTOS_AHORRO, f: pct(a.fraccion), pts: num(a.puntos) })))),
+      el('p', {}, fmt(C.ahorroTotal, { pts: p.ahorro }))) : null,
+    el('p', {}, fmt(C.rapidez, { u: BONO_RAPIDEZ, f: pct(p.fraccionTiempo), n: p.pasadas, total: ETAPAS.length, pts: p.rapidez })),
+    el('p', { class: 'muted', style: 'font-size:0.88rem' }, fmt(C.rapidezNota, { t: mmss(seg), rapido: mmss(RAPIDO_S), max: mmss(TIEMPO_S) })),
+    el('p', { class: 'tv-total' }, fmt(C.total, { a: p.etapas, b: p.ahorro, c: p.rapidez, s: p.total })));
   vista.replaceChildren(el('div', { class: 'resultado' },
     tituloJuego(true),
     el('p', { class: `tv-sello${todas ? '' : ' mal'}` }, T.fin[motivo]),
     el('div', { class: 'score-big', id: 'puntaje' }, `${p.total}/100`),
     el('div', { class: 'tv-puntos grande', 'aria-hidden': 'true' }, ...ETAPAS.map((_, k) => el('span', { class: k < P.hechas ? 'hecha' : '' }))),
-    el('ul', { class: 'desglose muted' },
-      el('li', {}, fmt(T.desglose.etapas, { n: P.hechas, total: ETAPAS.length, pts: p.etapas })),
-      el('li', {}, todas ? fmt(T.desglose.rapidez, { t: mmss(seg), pts: p.rapidez }) : T.desglose.sinRapidez)),
+    cuenta,
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otro', onClick: () => { SFX.tap(); empezar(); } }, T.otraVez),
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio)));
   scrollTo(0, 0);
