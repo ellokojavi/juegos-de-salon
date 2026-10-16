@@ -183,6 +183,9 @@ export const PATHS = {
         db[code]._keys.javi02 = await hashPin(code, 'javi02', '4321'); db[code]._seats.javi02 = {};
         localStorage.setItem(k, JSON.stringify(db)); location.href='/cup/?'+code+'&test&day=4'})()`,
       `1`, `1`, `window.confirm=()=>true; document.getElementById('btn-empezar').click()`, `1`],
+    // A day's cover (antesDeJugar): ‹ Menú top left goes back to the board
+    cover: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`],
+    'cover-back': [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`, `document.getElementById('btn-menu').click()`, `1`],
     // La Copa's 🐞 form, from the cup's screen (D-306: without the context dropdown)
     report: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.getElementById('btn-reporte').click()`, `1`],
     // The lab's feedback form (labs-idioma.js), in the layer the 🐞 or "Dejar un comentario" opens
