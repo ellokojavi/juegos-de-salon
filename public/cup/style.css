@@ -125,6 +125,9 @@ ol.como li { line-height: 1.45; }
 .tabla { display: grid; gap: 6px; }
 .fila { display: grid; grid-template-columns: 1.6em 1em 1fr auto; align-items: center; gap: 6px; background: rgba(0,0,0,0.22); border-radius: 12px; padding: 8px 10px; }
 .fila.yo { box-shadow: 0 0 0 2px var(--cyan) inset; }
+/* Out of the cup (D-347): kept in the table, in grey, below everyone still playing */
+.fila.fuera { opacity: 0.55; }
+.aviso-fuera { border: 2px solid rgba(255, 255, 255, 0.25); }
 .fila .lugar { font: 900 1.1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-align: center; }
 .fila .flecha { font-size: 0.75rem; text-align: center; }
 .fila .flecha.sube { color: var(--lime); }

@@ -63,6 +63,8 @@ await test('nothing is sent at night', () => {
 
 await test('the deadline: the grace day, 4 hours before closing or from 20:00, only if not played', () => {
   const cup = baseCup();
+  // She played day 1: missing day 2 is 0 points, not out of the cup (that case goes below, D-347)
+  cup.results[1] = { aaaaaa: { s: 1, ms: 1 } };
   const q = { aaaaaa: { [S1]: { dia: false, plazo: true, at: 0 } } };
   // Day 2 can be played until midnight of day 3 (its grace day)
   assert.equal(cupNotifications({ code: 'KQRST', cup, wants: q, subs, now: onDay(3, 18) }).length, 0, 'at 18:00 there are 6 hours left: not yet');
@@ -72,7 +74,7 @@ await test('the deadline: the grace day, 4 hours before closing or from 20:00, o
   assert.equal(night[0].notification.tag, 'copa-KQRST-d2', "replaces that day's morning notification");
   cup.results[2] = { aaaaaa: { s: 1, ms: 1 } };
   assert.equal(cupNotifications({ code: 'KQRST', cup, wants: q, subs, now: onDay(3, 21) }).length, 0, 'already played');
-  const one = cupNotifications({ code: 'KQRST', cup: baseCup(), wants: q, subs, now: onDay(3, 21.5) });
+  const one = cupNotifications({ code: 'KQRST', cup: { ...baseCup(), results: { 1: { aaaaaa: { s: 1, ms: 1 } } } }, wants: q, subs, now: onDay(3, 21.5) });
   assert.match(one[0].notification.body, /^⏳ Te quedan 3 horas/);
   const last = cupNotifications({ code: 'KQRST', cup: baseCup(), wants: q, subs, now: onDay(4, -0.6) });
   assert.equal(last.length, 0, 'at 23:24 it is night: not sent');
@@ -100,6 +102,8 @@ await test('The Grand Final tied on points with 1st (lost the tiebreak): no "0 p
   const r = (a, b, c) => ({ aaaaaa: { s: a, ms: 1000 }, bbbbbb: { s: b, ms: 1000 }, cccccc: { s: c, ms: 1000 } });
   cup.results[1] = r(90, 50, 10);
   cup.results[2] = r(10, 50, 90);
+  // Days 3 to 6 tied for everyone, so nobody is out of the cup (D-347) and the totals stay equal
+  for (let d = 3; d <= 6; d++) cup.results[d] = r(50, 50, 50);
   const out = cupNotifications({ code: 'KQRST', cup, wants: wants({ dia: false, plazo: false, at: 0 }), subs, now: onDay(7, 10) });
   assert.equal(of(out, S2)[0].notification.body, '🏁 Hoje é a Grande Final e vale o dobro. Você está em 3º, com os mesmos pontos que Ana.');
 });
@@ -160,6 +164,7 @@ await test("cap (D-229): at most 2 notifications of a cup per phone in a recipie
 
 await test('the final and the day before expire at once: a single notification with both (D-229)', () => {
   const cup = baseCup();
+  for (let d = 1; d <= 5; d++) cup.results[d] = { aaaaaa: { s: 1, ms: 1 } }; // she played until day 5: not out (D-347)
   const q = { aaaaaa: { [S1]: { dia: false, plazo: true, at: 0 } } };
   const out = cupNotifications({ code: 'KQRST', cup, wants: q, subs, now: onDay(7, 20.5) });
   assert.equal(out.length, 1);
@@ -209,6 +214,19 @@ await test('the test notification: to each phone of the cup, in its language, at
   assert.equal(of(out, S2)[0].notification.body, 'É assim que vão ficar os avisos desta copa.');
   assert.deepEqual(of(out, S1)[0].keys, []);
   assert.equal(of(out, S1)[0].notification.url, 'https://juegosdesalon.cl/cup/?KQRST&notif=test');
+});
+
+await test('out of the cup (D-347): the deadline warns before, and whoever is out gets nothing more', () => {
+  const cup = baseCup();
+  const q = { aaaaaa: { [S1]: { dia: true, plazo: true, at: 0 } } };
+  // Ana missed day 1: if she doesn't play day 2 before it closes, she is out
+  const due = cupNotifications({ code: 'KQRST', cup, wants: q, subs, now: onDay(3, 20.1) });
+  assert.equal(due.find(x => x.kind === 'plazo').notification.body, '⏳ Te quedan 4 horas para jugar el día 2. Ya te perdiste el anterior: si no lo juegas, quedas fuera de la copa.');
+  // Days 1 and 2 closed without her: day 4's notification no longer comes
+  assert.equal(cupNotifications({ code: 'KQRST', cup, wants: q, subs, now: onDay(4, 10) }).length, 0);
+  // The admin brought her back: it comes again
+  cup.players.aaaaaa.back = onDay(4, 9);
+  assert.equal(cupNotifications({ code: 'KQRST', cup, wants: q, subs, now: onDay(4, 10) })[0].kind, 'dia');
 });
 
 console.log(`schedule: ${n} cases green`);

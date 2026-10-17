@@ -70,6 +70,10 @@ export const ESCENAS = {
   podium: { inicio: 7, jugadores: 5, jugaron: 7, yo: 'javi02', pantalla: 'tablero' },
   // La máxima densidad del gráfico y de la imagen que se comparte (D-141): 7 días, 10 jugadores
   full: { inicio: 7, jugadores: 10, jugaron: 7, yo: 'javi02', pantalla: 'tablero', faltas: true },
+  // Out of the cup (D-347): whoever looks missed days 1 and 2; Tere missed day 3, one away from it
+  out: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', faltas: { javi02: [1, 2] } },
+  // The warning (D-347): whoever looks missed day 2, and day 3 is in its grace day
+  risk: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', faltas: { javi02: [2, 3] } },
 };
 
 /**
@@ -95,7 +99,7 @@ export function sembrar(nombre, { now, uid }) {
     for (const j of jug) {
       const hoyEsEste = d === e.jugaron + 1;
       if (hoyEsEste && (j.pid === e.yo || azar(j.pid, d) < 0.5)) continue;
-      if (e.faltas && FALTAS[j.pid]?.includes(d)) continue;
+      if (e.faltas && (e.faltas === true ? FALTAS : e.faltas)[j.pid]?.includes(d)) continue;
       const k = 0.35 + 0.6 * azar(j.pid, d);
       const r = PUNTAJE[cal[d - 1]](k);
       const at = Math.min(now - 3600000, meta.win[d].a + 3600000 * (8 + 10 * azar(j.pid, -d)));

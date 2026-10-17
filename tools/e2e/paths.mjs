@@ -197,6 +197,11 @@ export const PATHS = {
       `1`, `1`, `window.confirm=()=>true; document.getElementById('btn-empezar').click()`, `1`],
     // The board's open day card: "until 23:59 tomorrow (48 h)" under the game's name (every day but the final)
     board: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.querySelector('button[data-dia]')?.scrollIntoView({ block: 'center' })`],
+    // Out of the cup (D-347): the notice on top of the board, and the grey row in the table
+    out: [`location.href='/cup/?test&demo=out'`, `1`, `1`],
+    'out-table': [`location.href='/cup/?test&demo=out'`, `1`, `1`, `document.querySelector('.fila.fuera')?.scrollIntoView({ block: 'center' })`],
+    // One missed day away from it: the warning
+    risk: [`location.href='/cup/?test&demo=risk'`, `1`, `1`],
     // A day's cover (antesDeJugar): ‹ Menú top left goes back to the board
     cover: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`],
     'cover-back': [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`, `document.getElementById('btn-menu').click()`, `1`],
