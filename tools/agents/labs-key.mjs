@@ -66,25 +66,56 @@ export function remove(source, label) {
   return write(source, left);
 }
 
+/** A label is valid and not taken among `taken` (labels already in use, any case). Pure. */
+export function checkLabel(label, taken = []) {
+  if (!LABEL.test(label)) throw new Error(`invalid label: "${label}" (letters, digits, space, . _ -; up to 24)`);
+  const same = taken.find(t => t.toLowerCase() === label.toLowerCase());
+  if (same) throw new Error(`"${same}" already has a key: remove it before giving them another`);
+}
+
+// The keys live in Firebase (labsLlaves/<fingerprint> = label, D-345): giving or removing one is
+// instant, with no PR and no publish. Written as administrator (tools/firebase/firebase-admin.mjs).
+const NODE = 'labsLlaves';
+async function firebase() {
+  const { token, read, write } = await import('../firebase/firebase-admin.mjs');
+  const t = await token();
+  return { all: async () => (await read(NODE, t)) || {}, put: (h, label) => write(`${NODE}/${h}`, 'PUT', label, t), del: h => write(`${NODE}/${h}`, 'DELETE', undefined, t) };
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [cmd, ...rest] = process.argv.slice(2);
   const label = rest.join(' ').trim();
   const source = readFileSync(DOOR, 'utf8');
   try {
     if (cmd === 'list') {
-      for (const k of readKeys(source)) console.log(`${k.label.padEnd(24)} ${k.fingerprint.slice(0, 12)}…`);
+      const fb = await firebase(), keys = Object.entries(await fb.all());
+      for (const [h, l] of keys) console.log(`${l.padEnd(24)} ${h.slice(0, 12)}…`);
+      for (const k of readKeys(source)) console.log(`${k.label.padEnd(24)} ${k.fingerprint.slice(0, 12)}… (in labs-puerta.js, from before)`);
+      if (!keys.length && !readKeys(source).length) console.log('No keys.');
     } else if (cmd === 'new' && label) {
+      const fb = await firebase(), keys = await fb.all();
+      checkLabel(label, [...Object.values(keys), ...readKeys(source).map(k => k.label)]);
       const key = newKey(label);
-      writeFileSync(DOOR, add(source, label, key));
+      await fb.put(fingerprint(key), label);
       console.log(`Key for ${label}. It is shown only this time: copy it now.\n`);
       console.log(`  ${SITE}/labs/?key=${key}\n`);
-      console.log('The link opens only when the change to public/assets/js/labs-puerta.js goes in with a PR and the site is published.');
+      console.log('It opens right away: the key lives in Firebase (labsLlaves/), no PR needed.');
     } else if (cmd === 'remove' && label) {
-      const name = readKeys(source).find(k => k.label.toLowerCase() === label.toLowerCase())?.label ?? label;
-      writeFileSync(DOOR, remove(source, label));
-      console.log(`Key of ${name} removed. It stops entering when the change to public/assets/js/labs-puerta.js goes in with a PR and the site is published.`);
+      const fb = await firebase(), keys = await fb.all();
+      const h = Object.keys(keys).find(x => keys[x].toLowerCase() === label.toLowerCase());
+      if (h) { await fb.del(h); console.log(`Key of ${keys[h]} removed: it stops entering right away.`); }
+      else {
+        writeFileSync(DOOR, remove(source, label));
+        console.log(`Key of ${label} removed from labs-puerta.js (a key from before): it stops entering once a PR with that change is published.`);
+      }
+    } else if (cmd === 'migrate') {
+      // Once: the keys from before, from labs-puerta.js to Firebase; HUELLAS is left empty
+      const fb = await firebase(), old = readKeys(source);
+      for (const k of old) await fb.put(k.fingerprint, k.label);
+      writeFileSync(DOOR, source.replace(BLOCK, (_, indent) => `${indent}var HUELLAS = {\n${indent}};`));
+      console.log(`${old.length} key(s) moved to Firebase; HUELLAS in labs-puerta.js is empty (commit it in a PR).`);
     } else {
-      console.log('Usage: node tools/agents/labs-key.mjs new <label> | remove <label> | list');
+      console.log('Usage: node tools/agents/labs-key.mjs new <label> | remove <label> | list | migrate');
       process.exit(cmd ? 1 : 0);
     }
   } catch (e) {

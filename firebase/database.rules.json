@@ -828,6 +828,12 @@
         }
       }
     },
+    "labsLlaves": {
+      "$huella": {
+        ".read": "$huella.matches(/^[0-9a-f]{64}$/)",
+        ".validate": "newData.isString() && newData.val().length <= 24"
+      }
+    },
     "buzon": {
       ".read": "auth != null && auth.uid === '12ld0xRh0CM3BodWvKh8bCRmZ232'",
       "$id": {

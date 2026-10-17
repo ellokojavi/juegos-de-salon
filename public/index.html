@@ -399,7 +399,7 @@
     document.documentElement.lang = lang;
     const T = COMMON[lang];
     applyStatic(T);
-    // The inbox's fixed place (D-341): always here, opening the form in its overlay
+    // The inbox's fixed place (D-345): always here, opening the form in its overlay
     const btnBuzon = document.getElementById('btn-buzon-portada');
     btnBuzon.textContent = T.buzon.abrir;
     btnBuzon.addEventListener('click', () => import('./assets/js/buzon.js').then(m => m.abrirBuzon({ pantalla: 'portada' })));

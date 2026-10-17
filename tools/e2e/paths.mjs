@@ -128,7 +128,7 @@ const PM_VARIANT = v => `localStorage.setItem('juegos-de-salon:pintaminas:varian
 const PM_SOLVE = `(()=>{const {p}=window.__pintaminas;const k=c=>c===0?'btn-fondo':c===1?'btn-tinta':'btn-tinta2';
   p.sol.forEach((c,i)=>{if(p.dadas.includes(i))return;document.getElementById(k(c)).click();document.querySelector('#pm-tablero .pm-casilla[data-i="'+i+'"]').click();});})()`;
 
-/* --- The inbox (D-341): a device past its first 2 games, and Toque y Fama's solo result --- */
+/* --- The inbox (D-345): a device past its first 2 games, and Toque y Fama's solo result --- */
 const INBOX_SEED = `localStorage.setItem('juegos-de-salon:buzon', JSON.stringify({ partidas: 2 }))`;
 const TYF_RESULT = [
   `document.querySelectorAll('.mode')[2].click()`,
@@ -202,7 +202,7 @@ export const PATHS = {
     'cover-back': [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`, `document.getElementById('btn-menu').click()`, `1`],
     // La Copa's 🐞 form, from the cup's screen (D-306: without the context dropdown)
     report: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.getElementById('btn-reporte').click()`, `1`],
-    // The feedback form (buzon-form.js, D-341) with the inbox's texts, in the layer the 🐞 or "Sugerencias y comentarios" opens
+    // The feedback form (buzon-form.js, D-345) with the inbox's texts, in the layer the 🐞 or "Sugerencias y comentarios" opens
     feedback: [`(async()=>{const {COMMON}=await import('/assets/js/i18n.js');const {abrirComentario}=await import('/assets/js/labs-idioma.js');
       const C=COMMON[document.documentElement.lang]||COMMON.es;abrirComentario({T:C.buzon,enviar:async()=>{},contexto:{}});})()`, `1`],
   },
@@ -394,7 +394,7 @@ export const PATHS = {
       `document.getElementById('btn-fin').click()`,
       `1`, `1`, `1`, `1`,   // let the confetti pass
     ],
-    // The inbox (D-341): the same result on a device past its first 2 games, the link after the
+    // The inbox (D-345): the same result on a device past its first 2 games, the link after the
     // buttons, and the form unfolded in place with a kind picked
     'inbox-link': [INBOX_SEED, ...TYF_RESULT],
     'inbox-form': [INBOX_SEED, ...TYF_RESULT, `document.getElementById('btn-buzon').click()`, `1`, `document.querySelector('.buzon-tipo[data-tipo="idea"]').click()`],
@@ -525,7 +525,7 @@ for (const { id } of SUELTOS) {
 }
 
 /**
- * The inbox (D-341, U-38) on every kind of ending: the same result as its own path, on a device
+ * The inbox (D-345, U-38) on every kind of ending: the same result as its own path, on a device
  * past its first 2 games, scrolled to the link. `inbox-podium` is La Copa's podium (demo),
  * `inbox-end` Fourth King's last king and `inbox-home` the home page footer's form.
  */
