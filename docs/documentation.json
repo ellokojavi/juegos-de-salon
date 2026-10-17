@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "69e969a505c91f3b31377635ebc6175fbc29af18",
+  "checkedUpTo": "36f30a6559f6e166ba527898d1cff6c35717b3ec",
   "pending": [],
   "known": [],
   "rounds": [
@@ -86,6 +86,13 @@
       "from": "29db9b32b2b8b23c8483901ef49fb1df0e30e84d",
       "to": "69e969a505c91f3b31377635ebc6175fbc29af18",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/453",
+      "pending": []
+    },
+    {
+      "date": "2026-10-17",
+      "from": "69e969a505c91f3b31377635ebc6175fbc29af18",
+      "to": "36f30a6559f6e166ba527898d1cff6c35717b3ec",
+      "pr": null,
       "pending": []
     }
   ],
