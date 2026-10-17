@@ -54,7 +54,9 @@ did not work: the cheapest bridges peak at 90–100 %, and a local search within
 lowered that. Since the known bridge is the cheapest, solidity and saving wood pull against each other,
 so a perfect 100 is rare.
 
-When a stage passes, the notice gives its peak strain and the cheapest bridge's. The result explains
+While the train crosses, a gauge at the top of the board (`medidor()`) shows the strain live: a
+needle on the hardest-working beam, a red mark at the peak so far and a white one at the cheapest
+bridge's peak. When a stage passes, the notice gives its peak strain and the cheapest bridge's. After a pass the board holds 1.6 s before the next stage, to read them. The result explains
 the sum in a table (per stage: wood against the minimum, peak strain against the known bridge's, and
 its points as stage + savings + solidity), with a short legend, and shows how an unsolved stage could
 have been crossed (the catalog's bridge, the train looping over it, with its peak strain).

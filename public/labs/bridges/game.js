@@ -140,6 +140,40 @@ function pasoPorEncima(vigas, nudos, eps = 0.04) {
   }
   return res;
 }
+ * The strain gauge, at the top of the board while the train crosses: a dial from 0 to 100 % of the
+ * snapping point, its needle on the bridge's hardest-working beam right now, a mark that stays at the
+ * peak so far and a white mark at the cheapest known bridge's peak (what solidity is measured against).
+ */
+function medidor(referencia) {
+  const R = 34, cx = 44, cy = 40;
+  const punto = (f, r = R) => { const a = Math.PI * (1 - f); return [cx + r * Math.cos(a), cy - r * Math.sin(a)]; };
+  const arco = (f0, f1) => { const [x0, y0] = punto(f0), [x1, y1] = punto(f1); return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${R} ${R} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
+  const marca = (f, r0, r1) => { const [x0, y0] = punto(f, r0), [x1, y1] = punto(f, r1); return `M${x0.toFixed(1)} ${y0.toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)}`; };
+  const bandas = TENSION.map((col, k) => `<path d="${arco(k / TENSION.length, (k + 1) / TENSION.length)}" stroke="${col}" stroke-width="7" fill="none"/>`).join('');
+  const caja = el('div', { class: 'tv-medidor', 'aria-hidden': 'true', hidden: true });
+  caja.innerHTML = `<svg viewBox="0 0 88 56" width="88" height="56">${bandas}
+    <path d="${marca(referencia, R - 6, R + 6)}" stroke="#fff" stroke-width="2"/>
+    <path class="pico" d="" stroke="#ff2e4a" stroke-width="3"/>
+    <line class="aguja" x1="${cx}" y1="${cy}" x2="${cx - R + 6}" y2="${cy}" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="3.5" fill="#fff"/>
+    <text x="${cx}" y="54" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">0 %</text></svg>`;
+  const aguja = caja.querySelector('.aguja'), pico = caja.querySelector('.pico'), texto = caja.querySelector('text');
+  let suave = 0;
+  return {
+    caja,
+    /** `actual` and `maximo` from 0 to 1. */
+    poner(actual, maximo) {
+      suave += (Math.min(1, actual) - suave) * 0.35;
+      const [x, y] = punto(suave, R - 6);
+      aguja.setAttribute('x2', x.toFixed(1)); aguja.setAttribute('y2', y.toFixed(1));
+      pico.setAttribute('d', marca(Math.min(1, maximo), R - 5, R + 5));
+      texto.textContent = pct(maximo);
+    },
+    ver(si) { caja.hidden = !si; if (si) suave = 0; },
+  };
+}
+/** How hard the bridge works right now: its most strained unbroken beam, from 0 to 1 of the snapping point. */
+const esfuerzoAhora = sim => sim.vigas.reduce((m, v) => (v.rota ? m : Math.max(m, Math.abs(v.tension) / FISICA.quiebre)), 0);
 const colorTension = t => TENSION[Math.min(TENSION.length - 1, Math.floor((Math.abs(t) / FISICA.quiebre) * TENSION.length))];
 
 const CIELO = ['#1d0838', '#26093f', '#2f0c48', '#3a1152', '#46175c', '#521e66', '#5e2670'];
@@ -739,6 +773,7 @@ function empezar() {
 function jugar() {
   const e = P.etapas[P.etapa];
   const c = lienzo(e);
+  const aguja = medidor(picoReferencia(e));
   const aviso = el('p', { class: 'tv-aviso', 'aria-live': 'polite' }, T.aviso.inicio);
   const puntos = el('div', { class: 'tv-puntos', 'aria-hidden': 'true' },
     ...P.etapas.map((_, k) => el('span', { class: k < P.hechas ? 'hecha' : k === P.etapa ? 'actual' : '' })));
@@ -772,7 +807,7 @@ function jugar() {
     el('div', { class: 'tv-titulo-etapa' },
       el('h2', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })),
       el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, e.carga > 1 ? fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` }) : T.cargaNormal)),
-    el('div', { class: 'tv-tablero' }, c),
+    el('div', { class: 'tv-tablero' }, c, aguja.caja),
     el('div', { class: 'tv-barra' }, cuenta, aviso),
     botonProbar, fila);
   c._ajustar();
@@ -850,13 +885,14 @@ function jugar() {
   function probarPuente() {
     if (P.simulando) {
       // ✏️ Arreglar: back to building, with the same beams
-      P.simulando = false; botonProbar.textContent = T.probar; aviso.textContent = ''; repintar(); return;
+      P.simulando = false; botonProbar.textContent = T.probar; aviso.textContent = ''; aguja.ver(false); repintar(); return;
     }
     SFX.tap();
     P.simulando = true; botonProbar.textContent = T.arreglar; botonProbar.disabled = true;
     aviso.textContent = T.aviso.cruza;
     repintar();
     const sim = crearSim(e, P.vigas);
+    aguja.ver(true);
     let rotas = 0, cierre = 0, avisado = false;
     const cuadro = () => {
       if (!P.simulando || !c.isConnected || P.fin) return;
@@ -864,6 +900,7 @@ function jugar() {
       const ahora = sim.vigas.filter(v => v.rota).length;
       if (ahora > rotas) { rotas = ahora; SFX.error(); vibrate(40); }
       dibujar(c, e, { sim, visitas: visitasDe() });
+      if (!sim.fin || sim.tren.cayo) aguja.poner(sim.fin ? 0 : esfuerzoAhora(sim), picoDe(sim));
       if (!sim.fin) { requestAnimationFrame(cuadro); return; }
       // It made it: the notice now, and the scene runs on until the last wagon leaves the screen
       if (sim.tren.llego) {
@@ -874,7 +911,7 @@ function jugar() {
           P.simulando = false;
           if (P.hechas >= P.etapas.length) { terminar('todas'); return; }
           P.etapa++; P.vigas = []; P.historial = []; P.rotasAntes = new Set(); jugar();
-        }, 350);
+        }, 1600);   // a moment to read the gauge's peak and the notice before the next stage
         return;
       }
       // It fell: the scene keeps moving a moment (the fall, the splash, the smoke clearing)
