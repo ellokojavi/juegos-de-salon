@@ -141,6 +141,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 
 | Script | What it tests |
 |---|---|
+| `landing-fold.mjs` | Every game's landing (the `intro` path of each game in `paths.mjs`) at 320×568 and 375×667 in every language: the start button, or the first mode, is above the fold (U-39, D-344) |
 | `fourth-king/game.mjs` | Sound button, full deck up to the fourth king and the menu in English; that the table is exactly the script's names, even if the remembered table brings more rows |
 | `bulls-and-cows/local.mjs` | One phone and playing solo (twice, to see the record), up to the result |
 | `bulls-and-cows/online.mjs` | Two phones against real Firebase: joining by URL, reload midway, rematch |

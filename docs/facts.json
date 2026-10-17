@@ -1,5 +1,5 @@
 {
-  "version": "0.176.3",
+  "version": "0.176.5",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1136,6 +1136,7 @@
     "julep/languages.mjs",
     "julep/local.mjs",
     "julep/online.mjs",
+    "landing-fold.mjs",
     "lang-from-url.mjs",
     "languages-common.mjs",
     "liars-dice/languages.mjs",
