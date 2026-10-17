@@ -846,15 +846,14 @@ function renderResult(v) {
   if (!already) { if (festejo) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.timeUp(); }
 
   const box = $('#result-actions'); box.innerHTML = '';
-  // Uno al día: la tarjeta va arriba de los botones; el resultado del juego queda como siempre
-  if (S.hoy && soloYo) ponerTarjeta(terminarHoy(S.hoy, { s: puntajeAhorcado({ vidas: mia.solved ? mia.score : 0, total: M.config.lives }), ms: mia.ms, lang, alTocar: () => SFX.tap() }), box);
+  // One a Day: the card goes under the hero and carries the screen's actions and exits (C-19)
+  if (S.hoy && soloYo) { ponerTarjeta(terminarHoy(S.hoy, { s: puntajeAhorcado({ vidas: mia.solved ? mia.score : 0, total: M.config.lives }), ms: mia.ms, lang, alTocar: () => SFX.tap() })); return; }
   if (S.mode === 'online' && !S.switching) {
     const proposed = ROLES.filter(r => r !== S.role).map(r => M.rematch[r]).find(c => typeof c === 'string');
     if (proposed && proposed !== S.code) { S.switching = true; joinOnline(proposed, M.names[S.role]).catch(e => { console.error(e); S.switching = false; }); }
   }
   box.append(
-    // En Uno al día no hay revancha: la tarjeta ya ofrece jugar otro o repetir el de hoy (#226)
-    S.hoy && soloYo ? null : el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, busy: COMMON[lang].opening, reset: () => { S.switching = false; } }) }, T.rematch),
+    el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, busy: COMMON[lang].opening, reset: () => { S.switching = false; } }) }, T.rematch),
     S.mode === 'online' ? el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode) : el('button', { class: 'btn btn--ghost', onClick: () => { clearSession(); location.href = location.pathname; } }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
   );
