@@ -202,9 +202,9 @@ export const PATHS = {
     'cover-back': [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`, `document.getElementById('btn-menu').click()`, `1`],
     // La Copa's 🐞 form, from the cup's screen (D-306: without the context dropdown)
     report: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.getElementById('btn-reporte').click()`, `1`],
-    // The lab's feedback form (labs-idioma.js), in the layer the 🐞 or "Dejar un comentario" opens
-    feedback: [`(async()=>{const {LOCALES}=await import('/cup/rules.js');const {abrirComentario}=await import('/assets/js/labs-idioma.js');
-      const L=LOCALES[document.documentElement.lang]||LOCALES.es;abrirComentario({T:L.comentario,enviar:async()=>{},contexto:{}});})()`, `1`],
+    // The feedback form (buzon-form.js, D-341) with the inbox's texts, in the layer the 🐞 or "Sugerencias y comentarios" opens
+    feedback: [`(async()=>{const {COMMON}=await import('/assets/js/i18n.js');const {abrirComentario}=await import('/assets/js/labs-idioma.js');
+      const C=COMMON[document.documentElement.lang]||COMMON.es;abrirComentario({T:C.buzon,enviar:async()=>{},contexto:{}});})()`, `1`],
   },
   dudo: {
     intro: [],
