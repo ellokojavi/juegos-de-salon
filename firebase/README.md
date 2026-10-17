@@ -180,14 +180,17 @@ The owner (their UID) can write and delete in all these branches, to moderate.
 
 ## Reports (`feedback`)
 
-La Copa's 🐞 button (D-101, D-104), the one in a language's lab (D-191) and the "¿Qué te
-pareció?" at the end of the lab's El caso (D-265) write to `feedback/<id>` **over REST and without an account**:
+La Copa's 🐞 button (D-101, D-104), the one in a language's lab (D-191), the "¿Qué te
+pareció?" at the end of the lab's El caso (D-265) and the "💬 Sugerencias y comentarios" inbox at the
+end of every game and in the home footer (D-341, `buzon.js`) write to `feedback/<id>` **over REST and without an account**:
 `texto` (up to 1000 characters), optional `nombre`, `tester` (the label of the lab key
-used to enter, up to 24; never the key, D-306), `contexto` (JSON, up to 500), `v` and server `at`.
+used to enter, up to 24; never the key, D-306), `contexto` (JSON, up to 500), optional `tipo` (the kind picked in the inbox: `sugerencia`,
+`problema`, `idea` or `otro`, D-341), `v` and server `at`.
 It is written only once and **read without an account**: `node tools/firebase/reports.mjs` shows them
 (`--days 3` for recent ones). They carry no PIN or account data.
 Every 15 minutes, `.github/workflows/feedback.yml` (`tools/agents/feedback.mjs`) uploads the new ones as
-GitHub issues with the `feedback` label, with the name and the key (D-279, D-306) and without the
+GitHub issues with the `feedback` label (plus `feedback:suggestion`, `feedback:problem`,
+`feedback:game-idea` or `feedback:other` when it carries a `tipo`, D-341), with the name and the key (D-279, D-306) and without the
 browser, and the processes agent handles them (D-275).
 
 **The optional email (D-317):** `feedback/<id>` may carry `correoMascara` (`j********@********m`),

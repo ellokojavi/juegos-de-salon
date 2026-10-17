@@ -424,7 +424,8 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 .buzon-pie { margin-top: 18px; text-align: center; }
 .buzon-pie > .panel { text-align: start; }
 .buzon-link { background: none; border: 0; color: var(--muted); font: 700 0.85rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 8px; }
-.buzon-tipos { display: flex; flex-wrap: wrap; gap: 6px; }
+.buzon-tipos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+@media (min-width: 440px) { .buzon-tipos { grid-template-columns: repeat(4, auto); justify-content: start; } }
 .buzon-tipo {
   font: 800 0.8rem var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.3); cursor: pointer;
   border: 2px solid transparent; border-radius: 999px; padding: 6px 10px; min-height: 44px;
