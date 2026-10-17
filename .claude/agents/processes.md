@@ -186,6 +186,11 @@ change), saying why.
      something that contradicts a decision): it goes as a one-tap decision (below).
    - **Belongs to another session at work** (a PR with commits from today): you don't touch it
      (D-135).
+   **The owner's backlog** (D-339, owner's request): `check` lists the open issues with no label,
+   the to-dos the owner writes, oldest first. Each round: close the ones already done, with a comment
+   linking the PR that did them; move one or two forward, the smallest first, each in its own PR with
+   auto-merge (the usual agents' review applies); and ask with the Yes/No checkboxes (`decide`) only
+   when one needs a decision of the owner's. Say in your report which you closed, moved and asked.
 5. **Patterns.** Read the commits that fix something outdated and whatever diff is needed. For
    each one, what class of error is it? Record it: `node tools/agents/processes.mjs pattern <clave>
    "qué pasó" --commit <sha>`. Once is an accident; **twice is a pattern** and deserves a

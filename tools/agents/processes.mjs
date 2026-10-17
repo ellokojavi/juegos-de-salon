@@ -17,6 +17,7 @@
  *   - the "main is red" issues when main is already green (nobody closed them);
  *   - the last run of each workflow on main;
  *   - the usability dilemmas waiting for the owner for more than three days;
+ *   - the owner's backlog: open issues with no label (their to-dos), oldest first (D-339);
  *   - what the documentation agent's memory carries over from one round to the next;
  *   - the main commits since the last round that fix something that fell behind;
  *   - the unhandled 🐞 feedback (open `feedback` issues, D-275);
@@ -106,6 +107,17 @@ export function queued(issues) {
 }
 
 /** What an open PR is waiting for, or [] if nothing: each reason, one sentence. */
+/**
+ * The owner's backlog (D-339): the open issues with no label are the to-dos the owner writes; no other
+ * signal lists them. Oldest first, with their age in days; "main is red" issues are reported apart.
+ */
+export function backlog(issues, now = Date.now()) {
+  return issues
+    .filter(i => !i.labels.length && !/^main (en rojo|is red)/.test(i.title))
+    .map(i => ({ number: i.number, title: i.title, days: Math.floor((now - Date.parse(i.createdAt)) / DAY) }))
+    .sort((a, b) => b.days - a.days || a.number - b.number);
+}
+
 export function waits(pr, now = Date.now()) {
   const m = [];
   const days = Math.floor((now - Date.parse(pr.createdAt)) / DAY);
@@ -195,6 +207,11 @@ async function check() {
   const dilemmas = issues.filter(i => i.labels.some(l => ['usability', 'usabilidad'].includes(l.name)) && Date.now() - Date.parse(i.createdAt) > 3 * DAY);
   for (const i of dilemmas) console.log(`- dilemma #${i.number} waiting for the owner since ${i.createdAt.slice(0, 10)}: ${i.title}`);
   if (!dilemmas.length && !redIssues.length) console.log('Nothing overdue.');
+
+  heading("Owner's backlog: issues with no label (D-339)");
+  const pendientes = backlog(issues);
+  for (const i of pendientes) console.log(`- #${i.number} (${i.days} day${i.days === 1 ? '' : 's'}): ${i.title}`);
+  console.log(pendientes.length ? '→ Close what is already done (link the PR); move one or two forward (smallest first), each in its PR with auto-merge; ask with checkboxes only what needs the owner\'s decision.' : 'Empty.');
 
   heading('Unhandled 🐞 feedback');
   const feedback = issues.filter(i => i.labels.some(l => l.name === 'feedback'));
