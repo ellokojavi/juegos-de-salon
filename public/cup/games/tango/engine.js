@@ -128,6 +128,8 @@ export function tocar(p, g, i, fijas = new Set()) {
 }
 
 export const BORRAR = 'C';
+/** ↩️ Undo (D-342): a play that takes the board back to before the last tap or Clear all. */
+export const DESHACER = 'U';
 export const COSTO_PISTA = 15;
 
 /**
@@ -159,23 +161,35 @@ export function pista(p, g, fijas = new Set()) {
  *
  * `pendiente` es la casilla del último toque cuando rompió una regla: ese error ya está contado,
  * pero se perdona si el toque siguiente vuelve a ella. Si no hay, es -1 (#135).
+ *
+ * `'U'` (Undo, D-342) brings back the board from before the last tap or Clear all, one step per
+ * play, down to the start. It is a play so the score stays honest: an error already counted stays
+ * counted and a hint is never undone (its cell stays revealed). Undoing the tap that just broke a
+ * rule forgives it, like tapping the same cell again. `deshacibles` is how many steps can be undone.
  */
 export function estado(p, jugadas) {
   let g = inicial(p);
   let errores = 0, pistas = 0, pendiente = -1;
   const fijas = new Set();
+  const previos = [];   // the board before each tap or Clear all, for Undo
   jugadas.forEach((j, k) => {
-    if (j === BORRAR) { const h = inicial(p); fijas.forEach(i => { h[i] = p.sol[i]; }); g = h; return; }
+    if (j === DESHACER) {
+      if (!previos.length) return;
+      g = previos.pop().slice(); fijas.forEach(i => { g[i] = p.sol[i]; });
+      return;
+    }
+    if (j === BORRAR) { previos.push(g); const h = inicial(p); fijas.forEach(i => { h[i] = p.sol[i]; }); g = h; return; }
     if (j && typeof j === 'object') { g = g.slice(); g[j.h] = p.sol[j.h]; fijas.add(j.h); pistas++; return; }
     const antes = violaciones(p, g).size;
+    previos.push(g);
     g = tocar(p, g, j, fijas);
-    if (g[j] && violaciones(p, g).size > antes && jugadas[k + 1] !== j) {
+    if (g[j] && violaciones(p, g).size > antes && jugadas[k + 1] !== j && jugadas[k + 1] !== DESHACER) {
       errores++;
       if (k === jugadas.length - 1) pendiente = j;
     }
   });
   const mal = violaciones(p, g);
-  return { g, errores, pistas, fijas, mal, pendiente, fin: g.every(Boolean) && mal.size === 0 };
+  return { g, errores, pistas, fijas, mal, pendiente, deshacibles: previos.length, fin: g.every(Boolean) && mal.size === 0 };
 }
 
 /** 100 menos 10 por jugada que rompe una regla y 15 por pista, con piso de 10. */
