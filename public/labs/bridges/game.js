@@ -53,6 +53,7 @@ const T = {
     quitada: 'Viga quitada.', borrado: 'Borraste el puente: ↩ Deshacer lo trae de vuelta.',
     cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.', cortada: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
   },
+  maximo: 'máx. {p}',
   felicita: {
     titulo: '¡Etapa {n} superada!',
     madera: '🪵 Madera', maderaValor: '{n} de {max} m', vigasValor: '{n} de {max} vigas', minimo: 'mínimo conocido: {n}',
@@ -169,31 +170,34 @@ function pasoPorEncima(vigas, nudos, eps = 0.04) {
  * peak so far and a white mark at the cheapest known bridge's peak (what solidity is measured against).
  */
 function medidor(referencia) {
-  const R = 34, cx = 44, cy = 40;
+  const R = 50, cx = 70, cy = 66, ANCHO = 140, ALTO = 90;
   const punto = (f, r = R) => { const a = Math.PI * (1 - f); return [cx + r * Math.cos(a), cy - r * Math.sin(a)]; };
-  const arco = (f0, f1) => { const [x0, y0] = punto(f0), [x1, y1] = punto(f1); return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${R} ${R} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
-  const marca = (f, r0, r1) => { const [x0, y0] = punto(f, r0), [x1, y1] = punto(f, r1); return `M${x0.toFixed(1)} ${y0.toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)}`; };
-  const bandas = TENSION.map((col, k) => `<path d="${arco(k / TENSION.length, (k + 1) / TENSION.length)}" stroke="${col}" stroke-width="7" fill="none"/>`).join('');
+  const xy = ([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`;
+  const arco = (f0, f1) => `M${xy(punto(f0))} A${R} ${R} 0 0 1 ${xy(punto(f1))}`;
+  const marca = (f, r0, r1) => `M${xy(punto(f, r0))} L${xy(punto(f, r1))}`;
+  // The peak: a triangle outside the dial, pointing in at the highest load reached
+  const flecha = f => `M${xy(punto(f, R + 7))} L${xy(punto(f - 0.035, R + 17))} L${xy(punto(f + 0.035, R + 17))} Z`;
+  const bandas = TENSION.map((col, k) => `<path d="${arco(k / TENSION.length, (k + 1) / TENSION.length)}" stroke="${col}" stroke-width="10" fill="none"/>`).join('');
   const caja = el('div', { class: 'tv-medidor', 'aria-hidden': 'true', hidden: true });
-  caja.innerHTML = `<svg viewBox="0 0 88 56" width="88" height="56">${bandas}
-    <path d="${marca(referencia, R - 6, R + 6)}" stroke="#fff" stroke-width="2"/>
-    <path class="pico" d="" stroke="#ff2e4a" stroke-width="3"/>
-    <line class="aguja" x1="${cx}" y1="${cy}" x2="${cx - R + 6}" y2="${cy}" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
-    <circle cx="${cx}" cy="${cy}" r="3.5" fill="#fff"/>
-    <text x="${cx}" y="54" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">0 %</text></svg>`;
+  caja.innerHTML = `<svg viewBox="0 0 ${ANCHO} ${ALTO}" width="${ANCHO}" height="${ALTO}">${bandas}
+    <path d="${marca(referencia, R - 7, R + 7)}" stroke="#fff" stroke-width="2"/>
+    <path class="pico" d="${flecha(0)}" fill="#ff2e4a" stroke="#14081f" stroke-width="1" visibility="hidden"/>
+    <line class="aguja" x1="${cx}" y1="${cy}" x2="${cx - R + 8}" y2="${cy}" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="4.5" fill="#fff"/>
+    <text x="${cx}" y="${ALTO - 3}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff"></text></svg>`;
   const aguja = caja.querySelector('.aguja'), pico = caja.querySelector('.pico'), texto = caja.querySelector('text');
   let suave = 0;
   return {
     caja,
-    /** `actual` and `maximo` from 0 to 1. */
+    /** `actual` (the needle: the load right now) and `maximo` (the arrow: the peak so far), from 0 to 1. */
     poner(actual, maximo) {
       suave += (Math.min(1, actual) - suave) * 0.35;
-      const [x, y] = punto(suave, R - 6);
+      const [x, y] = punto(suave, R - 8);
       aguja.setAttribute('x2', x.toFixed(1)); aguja.setAttribute('y2', y.toFixed(1));
-      pico.setAttribute('d', marca(Math.min(1, maximo), R - 5, R + 5));
-      texto.textContent = pct(maximo);
+      if (maximo > 0.005) { pico.setAttribute('d', flecha(Math.min(1, maximo))); pico.setAttribute('visibility', 'visible'); }
+      texto.textContent = fmt(T.maximo, { p: pct(maximo) });
     },
-    ver(si) { caja.hidden = !si; if (si) suave = 0; },
+    ver(si) { caja.hidden = !si; if (si) { suave = 0; pico.setAttribute('visibility', 'hidden'); texto.textContent = ''; } },
   };
 }
 /** How hard the bridge works right now: its most strained unbroken beam, from 0 to 1 of the snapping point. */
@@ -969,8 +973,8 @@ function jugar() {
       const ahora = sim.vigas.filter(v => v.rota).length;
       if (ahora > rotas) { rotas = ahora; SFX.error(); vibrate(40); }
       dibujar(c, e, { sim, visitas: visitasDe() });
-      // Live while it crosses; once a beam snaps or the test ends, the needle stays on the peak (100 % if it broke)
-      aguja.poner(sim.fin || rotas ? picoDe(sim) : esfuerzoAhora(sim), picoDe(sim));
+      // The needle is the load right now, also after the test (zero if nothing weighs on it); the arrow keeps the peak
+      aguja.poner(esfuerzoAhora(sim), picoDe(sim));
       if (!sim.fin) { requestAnimationFrame(cuadro); return; }
       // It made it: the notice now, and the scene runs on until the last wagon leaves the screen
       if (sim.tren.llego) {
