@@ -43,7 +43,7 @@ const T = {
     ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con pocas vigas. Suman las etapas que pasa el tren, las vigas que te sobran y la rapidez.`],
   ],
   empezar: '🚂 Empezar', aJugar: '¡A construir!',
-  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', madera: 'Madera: {n} de {max} m', carga: '🚂 Tren {x} más pesado', cargaNormal: '🚂 Tren de peso normal',
+  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', madera: 'Madera: {n} de {max} m', carga: 'Tren {x} más pesado', cargaNormal: 'Tren de peso normal',
   probar: '🚂 Probar', arreglar: '✏️ Arreglar', deshacer: '↩ Deshacer', borrar: '🧹 Borrar', borrarSeguro: '🧹 ¿Seguro?',
   rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   aviso: {
@@ -89,6 +89,22 @@ const MARGEN = 1.3;          // the cliffs, on each side, in grid units
 const ARRIBA = ALTO[1] + 0.6, ABAJO = ALTO[0] - 1.1;
 
 /** A canvas sized to its box, in device pixels; returns the world ↔ screen mapping. */
+/**
+ * The stage's train in small, next to its weight in the title: the locomotive and a wagon as they will
+ * cross (passenger cars, crates, logs, coal or containers), so the weight has a picture.
+ */
+function trenMini(carga) {
+  const { vagon, paleta } = trenDe(carga), dpr = window.devicePixelRatio || 1, px = 2;
+  const ancho = 40, alto = Math.max(LOCO[0].length, vagon[0].length) + 1;
+  const c = el('canvas', { class: 'tv-tren-mini', 'aria-hidden': 'true', width: ancho * px * dpr, height: alto * px * dpr });
+  c.style.width = `${ancho * px}px`; c.style.height = `${alto * px}px`;
+  const r = pixelado(c, { px });
+  r.limpiar();
+  r.sprite(vagon[0], paleta, 8, alto); r.sprite(LOCO[0], paleta, 28, alto);
+  r.volcar();
+  return c;
+}
+
 function lienzo(e, { arriba = ARRIBA, abajo = ABAJO } = {}) {
   const c = el('canvas', { class: 'tv-lienzo' });
   c._v = { arriba, abajo };
@@ -807,7 +823,7 @@ function jugar() {
       el('span', { class: 'tv-reloj', id: 'tv-reloj' }, `⏱ ${mmss(Math.max(0, TIEMPO_S - segundos()))}`)),
     el('div', { class: 'tv-titulo-etapa' },
       el('h2', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })),
-      el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, e.carga > 1 ? fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` }) : T.cargaNormal)),
+      el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, trenMini(e.carga), e.carga > 1 ? fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` }) : T.cargaNormal)),
     el('div', { class: 'tv-tablero' }, c, aguja.caja),
     el('div', { class: 'tv-barra' }, cuenta, aviso),
     botonProbar, fila);
