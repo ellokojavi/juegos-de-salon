@@ -616,9 +616,14 @@ function portada() {
     if (!vivo || !c.isConnected) return;
     for (let k = 0; k < Math.round(1 / 60 / DT); k++) paso(sim);
     dibujar(c, e, { sim });
-    if (sim.fin && (sim.tren.cayo || fueraDeEscena(sim, e))) sim = crearSim(e, DEMO);
+    // Once the train is gone, the empty bridge rests a few seconds before the next one comes: not a hard loop
+    if (sim.fin && (sim.tren.cayo || fueraDeEscena(sim, e))) {
+      pausa ||= performance.now() + 3000 + Math.random() * 2000;
+      if (performance.now() >= pausa) { sim = crearSim(e, DEMO); pausa = 0; }
+    }
     requestAnimationFrame(cuadro);
   };
+  let pausa = 0;
   requestAnimationFrame(cuadro);
 }
 
