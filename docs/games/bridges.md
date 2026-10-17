@@ -20,8 +20,9 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
 - 🚂 Test sends the train (`PIEZAS`: the engine and two wagons that weigh); ✏️ Fix goes back to
   building, with the snapped beams blinking red for 8 seconds (`PARPADEO_MS`). A stage passes when the train crosses and the bridge is
   still standing.
-- Each stage has a budget of metres of wood (each beam costs its length; the old catalog counted beams) and a sign with it; heavy
-  levels say how much heavier the train is.
+- Each stage has a budget of metres of wood (each beam costs its length; the old catalog counted beams), shown under the
+  board as it is spent. The screen's title is the stage ("Etapa 2 de 5"), and under it, always in view, the
+  train's weight: normal, or how much heavier it is (it used to be a sign that slid over the board and went).
 
 ## Crossings and catalogs
 
@@ -56,7 +57,9 @@ have been crossed (the catalog's bridge, the train looping over it, with its pea
 
 ## The scene
 
-Pixel art from `pixel.js` (sprites, particles): the train with smoke, steam and headlight, sparks
+Pixel art from `pixel.js` (sprites, particles): the train with smoke, steam and headlight, which looks as
+heavy as it is (`trenDe`): old passenger cars at weight ×1, then flatcars with crates, logs, coal and
+containers, and a green freight locomotive from ×1,75; sparks
 when a beam snaps, a splash when something falls, birds now and then. One character per game, at a
 random stage and moment: a flying saucer (`?ovni`, `?ovni=mira|pesca`), a whale (`?ballena`,
 `?ballena=salto|chorro`) a mole that tunnels through a cliff (`?topo`, `?topo=anteojos|minero`), or a petrol-green boat

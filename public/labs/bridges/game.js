@@ -8,7 +8,7 @@ import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, PUNTOS_SOLIDEZ, MARGEN_SOLIDO, BONO_RAPIDEZ, RAPIDO_S, picoDe, picoReferencia, costo, costoViga } from './engine.js';
-import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, PALETA_LANCHA, SURFISTA, PALETA_SURFISTA } from './pixel.js';
+import { pixelado, particulas, LOCO, CHIMENEA, trenDe, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, PALETA_LANCHA, SURFISTA, PALETA_SURFISTA } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // The visitors' parameters are internal (the owner's request): they work in the workshop (a local server,
@@ -43,7 +43,7 @@ const T = {
     ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con pocas vigas. Suman las etapas que pasa el tren, las vigas que te sobran y la rapidez.`],
   ],
   empezar: '🚂 Empezar', aJugar: '¡A construir!',
-  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', madera: 'Madera: {n} de {max} m', letrero: '{n} vigas para cruzar', letreroMadera: '{n} m de madera para cruzar', carga: '🚂 Tren {x} más pesado',
+  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', madera: 'Madera: {n} de {max} m', carga: '🚂 Tren {x} más pesado', cargaNormal: '🚂 Tren de peso normal',
   probar: '🚂 Probar', arreglar: '✏️ Arreglar', deshacer: '↩ Deshacer', borrar: '🧹 Borrar', borrarSeguro: '🧹 ¿Seguro?',
   rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   aviso: {
@@ -546,6 +546,8 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   if (sim) {
     // The wheel frame, from the distance run (positive also while the train is still left of the gap)
     const tr = sim.tren, cuadro = ((Math.floor(tr.x * 7) % 6) + 6) % 6;
+    // Its look follows its weight: old passenger cars at first, bigger loads on the heavier stages
+    const { vagon: VAGON, paleta: PALETA_TREN } = trenDe(e.carga);
     const piezas = PIEZAS.map((pz, k) => ({ x: tr.x + pz.dx, k, loco: k === 0, spr: k === 0 ? LOCO[cuadro % 3] : VAGON[(cuadro + k) % 2] }));
     if (tr.cayo && !esc.caida) esc.caida = { dy: 0, vy: 0, salpico: false };
     if (esc.caida) { esc.caida.vy += 220 * dt; esc.caida.dy += esc.caida.vy * dt; }
@@ -727,11 +729,14 @@ function jugar() {
   const fila = el('div', { class: 'tv-acciones' }, botonDeshacer, botonBorrar, botonRendirse);
 
   vista.replaceChildren(
-    el('div', { class: 'tv-cabeza' },
-      el('span', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })), puntos,
+    // On top, the progress and the clock; then the stage as the screen's title, with the train's weight
+    // always in view (it was a sign that slid away); the board; what is spent and the notice; the buttons
+    el('div', { class: 'tv-cabeza' }, puntos,
       el('span', { class: 'tv-reloj', id: 'tv-reloj' }, `⏱ ${mmss(Math.max(0, TIEMPO_S - segundos()))}`)),
-    el('div', { class: 'tv-tablero' }, c,
-      el('div', { class: 'tv-letrero', 'aria-hidden': 'true' }, el('b', {}, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })), el('span', {}, e.madera ? fmt(T.letreroMadera, { n: num(e.presupuesto) }) : fmt(T.letrero, { n: e.presupuesto })), e.carga > 1 ? el('span', { class: 'tv-carga' }, fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` })) : null)),
+    el('div', { class: 'tv-titulo-etapa' },
+      el('h2', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })),
+      el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, e.carga > 1 ? fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` }) : T.cargaNormal)),
+    el('div', { class: 'tv-tablero' }, c),
     el('div', { class: 'tv-barra' }, cuenta, aviso),
     botonProbar, fila);
   c._ajustar();

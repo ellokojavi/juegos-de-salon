@@ -176,6 +176,61 @@ export const VAGON = [
   [...VAGON_CUERPO, '..kSSk....kSSk..', '.kSSsSk..kSSsSk.', '..kkkk....kkkk..'],
 ];
 
+/*
+ * Heavier trains look heavier: the first stage pulls the old passenger cars; from there on the wagons
+ * are flatcars with a bigger load each level (crates, logs, a heap of coal, containers), and the two
+ * heaviest have a green freight locomotive. `trenDe(carga)` gives the wagon frames and the palette.
+ */
+const PLANA = [
+  '.kkkkkkkkkkkkkk.',
+  '.kSSSSSSSSSSSSk.',
+  '.kddddddddddddk.',
+  'kkkkkkkkkkkkkkkk',
+];
+const CARGAS = {
+  cajas: [
+    '..kkkkkk.kkkkk..',
+    '..kcxxck.kcxck..',
+    '..kcxxck.kcxck..',
+    '..kkkkkk.kkkkk..',
+  ],
+  troncos: [
+    '..kkkkkkkkkkkk..',
+    '.kLlkLlkLlkLlkk.',
+    '.kLlkLlkLlkLlLk.',
+    '..kLlkLlkLlkLk..',
+    '.kLlkLlkLlkLlLk.',
+  ],
+  carbon: [
+    '.....kkkkkk.....',
+    '...kkhHhhHhkk...',
+    '..khHhhhhHhhhk..',
+    '.khhhhHhhhhhHhk.',
+    '.khhhHhhhhHhhhk.',
+  ],
+  contenedor: [
+    '.kkkkkkkkkkkkkk.',
+    '.kooOoOoOoOoOok.',
+    '.kooOoOoOoOoOok.',
+    '.kooOoOoOoOoOok.',
+    '.kooOoOoOoOoOok.',
+    '.kkkkkkkkkkkkkk.',
+  ],
+};
+const RUEDAS_VAGON = [
+  ['..kSSk....kSSk..', '.kSsSSk..kSsSSk.', '..kkkk....kkkk..'],
+  ['..kSSk....kSSk..', '.kSSsSk..kSSsSk.', '..kkkk....kkkk..'],
+];
+const vagonCon = carga => RUEDAS_VAGON.map(r => [...CARGAS[carga], ...PLANA, ...r]);
+const COLORES_CARGA = { c: '#c8874a', x: '#7a4a22', L: '#6b3e1e', l: '#e8c48a', h: '#26262e', H: '#5a5a6a', o: '#ff8a3d', O: '#c25a18' };
+/** The green freight livery of the heaviest locomotives: the red parts go green, the brass stays. */
+const PALETA_CARGUERO = { ...PALETA_TREN, ...COLORES_CARGA, r: '#2f8a4a', R: '#5ad07a', d: '#1a4a2a' };
+export function trenDe(carga = 1) {
+  if (carga < 1.2) return { vagon: VAGON, paleta: PALETA_TREN };
+  const nombre = carga < 1.4 ? 'cajas' : carga < 1.6 ? 'troncos' : carga < 1.9 ? 'carbon' : 'contenedor';
+  return { vagon: vagonCon(nombre), paleta: carga >= 1.6 ? PALETA_CARGUERO : { ...PALETA_TREN, ...COLORES_CARGA } };
+}
+
 /* ------------------------------------------------------------------ */
 /* A bird, flapping: two frames, wings up and wings down, facing right */
 /* ------------------------------------------------------------------ */
