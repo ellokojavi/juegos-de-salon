@@ -78,7 +78,7 @@ when a beam snaps, a splash when something falls, birds now and then. One charac
 random stage and moment: a flying saucer (`?ovni`, `?ovni=mira|pesca`), a whale (`?ballena`,
 `?ballena=salto|chorro`) a mole that tunnels through a cliff (`?topo`, `?topo=anteojos|minero`), or a petrol-green boat
 with a wakeboarder towed from its tower roof by a black rope, riding its wave (`?wake`, `?wake=carve|jump|fall|sink`: carving the wave, a jump off its
-crest, a fall and the boat turning back to pick the rider up, or the rider sinking, only the head popping up,
+crest, a fall and the boat turning back with an orange flag raised to pick the rider up, or the rider sinking, only the head popping up,
 and the boat coming back with a small orange flag raised). The boat comes out from just behind a cliff and
 crosses slowly, not from the screen's edge, so it stays in view over a phone's narrow water.
 It comes 5 to 25 s into its stage; if the stage is passed first, it moves to the next one and comes
