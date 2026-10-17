@@ -34,6 +34,22 @@ SITE=http://localhost:8791 node tools/e2e/hangman/online.mjs /tmp/e2e
 script's Chromes, for example): the script's first Chrome uses `CDP_PORT`, the second the next one, and
 so on. It is optional; without it there is nothing to coordinate.
 
+## Test levels (D-346)
+
+Each PR gets the least testing that still keeps the site safe, decided from what its changes reach
+(`levelOf()` in `affected.mjs`, on top of D-329's page graph). The processes agent owns the criterion.
+
+| Level | What the change reaches | What runs | Example |
+|---|---|---|---|
+| **N0 · no browser** | Nothing a page loads: docs, decisions, changelog, the agents, tools the scripts don't import, data in Firebase | Unit tests only (the `tests` check, ~2 min) | A decision, a lab key (D-345), the processes guide |
+| **N1 · lab** | Only pages under `public/labs/` | That game's scripts + `smoke.mjs` | Tren en Vilo's gauge |
+| **N2 · game** | Some public pages: not the home page, under a third of them | Their scripts + `smoke.mjs` | Hangman's rules |
+| **N3 · core** | The home page, a third of the pages or more, or what the page graph can't narrow (shared modules and styles, the e2e tools, the workflows, a file no page links) | Every script | `base.css`, `ui.js`, `cdp.mjs` |
+
+`smoke.mjs` is the floor of N1-N3: it opens every page and fails on an uncaught error or a blank screen,
+so even a game with no script of its own is covered (#482 left one blank and nothing failed).
+`ci.mjs --list|--groups --changes <file>` prints the level on stderr (`test level N2 · game: …`).
+
 ## On GitHub (D-193, D-307, D-308)
 
 `ci.mjs` runs the scripts that don't touch the production Firebase, and GitHub uses it on every PR
