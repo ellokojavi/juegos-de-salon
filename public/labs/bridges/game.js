@@ -53,7 +53,7 @@ const T = {
     quitada: 'Viga quitada.', borrado: 'Borraste el puente: ↩ Deshacer lo trae de vuelta.',
     cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.', cortada: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
   },
-  maximo: 'máx. {p}',
+  maximo: 'máx. {p}', carga_titulo: 'Carga',
   felicita: {
     titulo: '¡Etapa {n} superada!',
     madera: '🪵 Madera', maderaValor: '{n} de {max} m', vigasValor: '{n} de {max} vigas', minimo: 'mínimo conocido: {n}',
@@ -179,7 +179,8 @@ function medidor(referencia) {
   const flecha = f => `M${xy(punto(f, R + 7))} L${xy(punto(f - 0.035, R + 17))} L${xy(punto(f + 0.035, R + 17))} Z`;
   const bandas = TENSION.map((col, k) => `<path d="${arco(k / TENSION.length, (k + 1) / TENSION.length)}" stroke="${col}" stroke-width="10" fill="none"/>`).join('');
   const caja = el('div', { class: 'tv-medidor', 'aria-hidden': 'true', hidden: true });
-  caja.innerHTML = `<svg viewBox="0 0 ${ANCHO} ${ALTO}" width="${ANCHO}" height="${ALTO}">${bandas}
+  // Drawn 10 % smaller than its own coordinates (owner's request), under its title
+  caja.innerHTML = `<span class="tv-medidor-titulo">${T.carga_titulo}</span><svg viewBox="0 0 ${ANCHO} ${ALTO}" width="${Math.round(ANCHO * 0.9)}" height="${Math.round(ALTO * 0.9)}">${bandas}
     <path d="${marca(referencia, R - 7, R + 7)}" stroke="#fff" stroke-width="2"/>
     <path class="pico" d="${flecha(0)}" fill="#ff2e4a" stroke="#14081f" stroke-width="1" visibility="hidden"/>
     <line class="aguja" x1="${cx}" y1="${cy}" x2="${cx - R + 8}" y2="${cy}" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
