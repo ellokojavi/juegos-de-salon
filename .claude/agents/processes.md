@@ -164,6 +164,11 @@ change), saying why.
    answer with one or two warm, simple sentences; **actionable** ones (a bug, a suggestion) go
    through the paths above like any 🐞; **negative or destructive** ones get no email (`forget`).
    The reply lands in the sender's own thread, as an answer to their email (`feedback.mjs` does it).
+   **Resolve the trivial yourself, never escalate it** (owner's request, D-338): a kudos, a repeated
+   kudos, a thank-you, a test report or a test of a flow, an email with nothing to act on, a duplicate:
+   you decide (the warm reply, `forget`, or just close it with a line saying why) and note it in your
+   report. The owner can't be the one who resolves everything. A doubt is only for what truly needs
+   the owner: a decision about the product, money, a person's data, or a complaint you can't judge.
    **When you are not sure how to answer** (a complaint you can't judge, a sensitive or personal
    email, a request only the owner can decide, D-328): don't send anything. Write the doubt and
    your draft reply in a file and run `node tools/agents/feedback.mjs doubt <n> <notes.txt>`: the
