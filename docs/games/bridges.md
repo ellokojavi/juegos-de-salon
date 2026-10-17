@@ -33,6 +33,11 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
 - Each game draws one crossing per level (1 to 5) from `catalogo-madera.json`: low anchors on the cliff faces,
   stone towers, rock pillars in the water, or a mix. Its budget is the cheapest bridge a search found
   plus the level's spare beams.
+- The wood catalog's solutions are readable trusses (`--legible`, owner's request): the cheapest bridge
+  the search found could be a tangle of stays at 100 % strain that nobody would build. They start
+  from trusses a person would draw (under the deck, over it, or both, tied to the anchors, mirrored on
+  a symmetric crossing) and are trimmed only while the peak strain stays at or under 85 %. That bridge
+  is the known minimum, the budget's base and the solidity reference.
 - `tools/generators/bridges.mjs` builds the catalog (`--nivel n` per level in parallel, `--juntar` to
   join them; `--prueba` / `--madera` for the catalogs under evaluation).
 - The wood catalog is the default since the owner chose it over counting beams. `?catalogo=vigas`

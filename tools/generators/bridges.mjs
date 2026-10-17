@@ -1,6 +1,7 @@
 // Tren en Vilo (lab): builds the catalog of crossings, public/labs/bridges/catalogo.json.
 //   node tools/generators/bridges.mjs [--por-nivel 12] [--nivel 1..5]   (one level writes catalogo-<n>.json, to run them in parallel)
 //   node tools/generators/bridges.mjs --juntar                          (joins catalogo-1..5.json into catalogo.json)
+//   node tools/generators/bridges.mjs --legible [catalogo-madera.json] (replaces each solution with a readable, solid truss)
 // For each difficulty level (1 to 5) it makes crossings of different kinds — anchors low on the cliff
 // faces, stone towers above the deck, rock pillars out of the water, or a mix — searches each one's
 // cheapest bridge that holds (greedy removal from rich starts, like the first stages), and keeps those
@@ -174,6 +175,66 @@ function minimoMadera(e, intentos = 4) {
 }
 const HOLGURA_MADERA = [2.5, 2, 1.5, 1, 0.5];   // a little more room than the first test (+1 m per level): there was too little to try things
 const ANCHOS_MADERA = [[4, 5], [5, 6], [6, 7], [6, 7], [7, 8]];
+
+/**
+ * Readable solutions (`--legible`, owner's request): the cheapest bridge a search finds can be a tangle
+ * of stays at 100 % strain that no person would build. This starts from trusses a person would draw
+ * (triangles under the deck, over it, or both, tied to the crossing's anchors), mirrored when the
+ * crossing is symmetric, and trims beams only while the peak strain stays under `LEGIBLE`. The
+ * cheapest of those is the solution, the known minimum and the base of the budget.
+ */
+const LEGIBLE = 0.85;
+function legible(e, vueltas = 10) {
+  const W = e.ancho, k = b => [b.a, b.b].map(String).sort().join('|');
+  const nodos = v => new Set(v.flatMap(b => [b.a.join(','), b.b.join(',')]));
+  const atar = v => {
+    const n = [...nodos(v)].map(x => x.split(',').map(Number)), extra = [];
+    for (const a of e.anclas) for (const p of n) {
+      const l = Math.hypot(a[0] - p[0], a[1] - p[1]);
+      if (l > 0 && l <= 2.25 && !vigaValida(e, [...v, ...extra], a, p)) extra.push(V(a, p));
+    }
+    // A pillar too low to reach the truss: a post up to it
+    for (const a of e.anclas) if (a[1] <= -2 && !extra.some(b => b.a === a)) { const m = [a[0], a[1] + 2]; extra.push(V(a, m)); if (!vigaValida(e, [...v, ...extra], m, [a[0], 0])) extra.push(V(m, [a[0], 0])); }
+    return [...v, ...extra];
+  };
+  const unir = (...ls) => { const m = new Map(); for (const b of ls.flat()) m.set(k(b), b); return [...m.values()]; };
+  const inicios = [cercha(W, -1), cercha(W, 1), unir(cercha(W, -1), cercha(W, 1))].map(atar).map(v => conectadas(e, v));
+  const sim = simetrico(e), par = b => espejo(e, [b])[0];
+  const vale = (v, tope) => { const r = probar(e, v); return r.llego && r.pico <= tope; };
+  let mejor = null;
+  for (const tope of [LEGIBLE, 0.95]) {
+    for (const inicio of inicios) {
+      if (!vale(inicio, tope)) continue;
+      for (let t = 0; t < vueltas; t++) {
+        let v = [...inicio];
+        const orden = t === 0 ? [...v].sort((p, q) => Math.hypot(q.b[0] - q.a[0], q.b[1] - q.a[1]) - Math.hypot(p.b[0] - p.a[0], p.b[1] - p.a[1])) : barajar(v);
+        for (const b of orden) {
+          if (!v.some(x => k(x) === k(b))) continue;
+          const fuera = new Set([k(b), ...(sim ? [k(par(b))] : [])]);
+          const sin = conectadas(e, v.filter(x => !fuera.has(k(x))));
+          if (sin.length < v.length && vale(sin, tope)) v = sin;
+        }
+        if (!mejor || costo(e, v) < costo(e, mejor)) mejor = v;
+      }
+    }
+    if (mejor) break;
+  }
+  return mejor;
+}
+if (process.argv.includes('--legible')) {
+  const nombre = process.argv[process.argv.indexOf('--legible') + 1]?.endsWith('.json') ? process.argv[process.argv.indexOf('--legible') + 1] : 'catalogo-madera.json';
+  const f = new URL(nombre, CARPETA), cat = JSON.parse(readFileSync(f, 'utf8'));
+  for (const e of cat) {
+    const antes = probar(e, e.solucion.map(([a, b]) => V(a, b)));
+    const v = legible(e);
+    if (!v) { console.log(`level ${e.nivel}: ${e.tipo} — no readable truss, kept`); continue; }
+    const r = probar(e, v), min = Math.ceil(costo(e, v) * 10) / 10;
+    e.solucion = v.map(b => [b.a, b.b]); e.minimo = min; e.presupuesto = Math.round((min + HOLGURA_MADERA[e.nivel - 1]) * 10) / 10;
+    console.log(`level ${e.nivel}: ${e.tipo} — ${v.length} beams, ${min} m, peak ${Math.round(antes.pico * 100)} % → ${Math.round(r.pico * 100)} %, budget ${e.presupuesto}`);
+  }
+  writeFileSync(f, JSON.stringify(cat) + '\n');
+  process.exit(0);
+}
 
 const catalogo = [];
 for (let nivel = 0; nivel < 5; nivel++) {
