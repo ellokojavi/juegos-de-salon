@@ -59,6 +59,10 @@ own tree because they last a week and rooms die after half an hour (D-89).
 - `players/<pid>` is created by the player themselves before the final; afterwards only the admin changes it.
 - `started`, `results` and `wild` are written only once, by the seated player and within the
   window of their day. The wildcard, also, only before `started` and never on the final's day.
+- `started` is also refused to a player out of the cup (D-347): two days in a row closed without a
+  result, counting only days that closed after their `at` and after their `back` (the admin's
+  «Devolver a la copa», server time). The rule repeats the condition for each pair of days up to
+  day 6, because rules cannot loop.
 - `torneoKeys/<código>/<pid>` stores the PIN hash and `torneoSeats/<código>/<pid>/<uid>` the
   phones seated as that player. **Neither can be read**: sitting down requires sending
   the same hash. The admin can change the hash and delete the seats (new PIN).
