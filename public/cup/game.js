@@ -2147,13 +2147,14 @@ function resultado(d, { recien = false, det = null } = {}) {
     el('p', { class: 'lead center' }, cerrado(meta, d, now) || terminada(meta, now)
       ? fmt(T.finalPos, { pos: ord(yo.pos), n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: ord(yo.pos), n })),
-    // The end-screen order (C-19): the way back to the board first, then the next-day notice and share;
-    // the breakdown folded and the day table below, so the buttons show without scrolling (C-8)
+    // The end-screen order (C-19): the way back to the board first, then share and the next-day
+    // notice (share before the notice: the notice's card is tall and pushed share under the fold
+    // in German and Portuguese at 320 px); the breakdown folded and the day table below (C-8)
     el('button', { class: 'btn btn--yellow', id: 'btn-volver', onClick: () => { SFX.tap(); S.verDia = null; tablero(); } }, T.toBoard),
+    el('button', { class: 'btn btn--cyan', id: 'btn-tarjeta', onClick: ev => conBoton(ev, () => compartirResultado(d)) }, T.shareCard),
     // Ofrece avisar del próximo día que todavía no se abre: no siempre es d + 1 (un día viejo, o
     // jugado con el siguiente ya abierto)
     diaActual(meta, now) < meta.days && !terminada(meta, now) ? avisos().tarjeta({ dia: diaActual(meta, now) + 1 }) : null,
-    el('button', { class: 'btn btn--cyan', id: 'btn-tarjeta', onClick: ev => conBoton(ev, () => compartirResultado(d)) }, T.shareCard),
     explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d) }),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.dayTable),
       el('div', { class: 'tabla' }, ranking.map(j => el('div', { class: 'fila' + (j.pid === S.yo ? ' yo' : '') },

@@ -476,7 +476,7 @@ that moment, and only those, in the same order everywhere (D-343):
 
 | Context | Main action | Secondary | Exits |
 |---|---|---|---|
-| A Cup day | **Back to the board** | Next-day notice · share | none: the board is the Cup's home |
+| A Cup day | **Back to the board** | Share · next-day notice | none: the board is the Cup's home |
 | The Cup's podium | **Share the summary** | My days, the table | **🏠 Back to the menu**, under the podium; "Leave this Cup" stays a quiet link |
 | One a Day (any game) | **Share** | 🎲 Play another · Replay today's | **📅 Back to One a Day** · **🏠 Back to the menu** |
 | A game played on its own | **Play again** / Rematch | Share · Change mode | Back to the menu (or to the lab) |
