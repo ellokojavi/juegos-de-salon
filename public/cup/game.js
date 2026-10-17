@@ -36,7 +36,7 @@ import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
 import { formularioComentario, abrirComentario, campoCorreo } from '../assets/js/labs-idioma.js';
-import { enlaceBuzon, ponerBuzon } from '../assets/js/buzon.js';
+import { enlaceBuzon, ponerBuzon, sinDoble } from '../assets/js/buzon.js';
 import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
@@ -1152,7 +1152,7 @@ function tablero() {
     },
   }, T.leave));
 
-  if (terminada(meta, now) && buzonPodio) poner(body, buzonPodio);
+  if (terminada(meta, now) && buzonPodio) { poner(body, buzonPodio); sinDoble(body); }
 
   clearInterval(S.tic);
   S.tic = setInterval(() => { if (S.pantalla === 'tablero' && !document.hidden) tablero(); }, 60000);
