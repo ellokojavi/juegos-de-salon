@@ -121,6 +121,9 @@ change), saying why.
    round (in its PR, with auto-merge) and recorded with `record --queue <id>`.
 3. **The 🐞 feedback.** Each report people send from the app arrives as an issue with the
    `feedback` label (uploaded by `.github/workflows/feedback.yml` every 15 minutes, D-275, D-306).
+   Reports from the "💬 Sugerencias y comentarios" inbox (D-341) may also carry the kind the player
+   picked, as a second label (`feedback:suggestion`, `feedback:problem`, `feedback:game-idea`,
+   `feedback:other`) and a "Kind" row: a hint for triage, not the outcome; you still judge it.
    Each open issue gets one of these four outcomes, and you state it in a short comment (what you
    do and the link to the PR or issue that follows it up). One that already has your comment and
    hasn't changed, you skip:

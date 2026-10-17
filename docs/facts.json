@@ -1,5 +1,5 @@
 {
-  "version": "0.174.4",
+  "version": "0.175.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -18,7 +18,7 @@
     "pt": 100,
     "de": 100
   },
-  "commonKeys": 33,
+  "commonKeys": 34,
   "games": [
     {
       "id": "copa",
@@ -844,6 +844,8 @@
   "modules": [
     "public/assets/js/arrastre.js",
     "public/assets/js/azar.js",
+    "public/assets/js/buzon-form.js",
+    "public/assets/js/buzon.js",
     "public/assets/js/chat.js",
     "public/assets/js/compartir-portada.js",
     "public/assets/js/compartir.js",
@@ -1004,6 +1006,7 @@
   ],
   "tests": [
     "public/assets/js/arrastre.test.mjs",
+    "public/assets/js/buzon.test.mjs",
     "public/assets/js/compartir.test.mjs",
     "public/assets/js/favoritos.test.mjs",
     "public/assets/js/games.test.mjs",
@@ -1115,6 +1118,7 @@
     "daily.mjs",
     "exploding-numbers/lab.mjs",
     "favorites.mjs",
+    "feedback-prod.mjs",
     "fourth-king/game.mjs",
     "fourth-king/languages.mjs",
     "game-memory.mjs",
