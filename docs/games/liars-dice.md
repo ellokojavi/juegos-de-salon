@@ -103,7 +103,7 @@ calcular los dados del rival) no aplica. En la sala y en un celular se sigue tir
 
 Puntaje del día (`puntajeDudo` en `uno-al-dia.js`): ganar vale 60 y cada dado que te queda suma 8
 (100 sin perder ninguno); perdiendo, 10 por ronda aguantada (todas menos la que te dejó sin dados),
-hasta 50. La tarjeta de Uno al día va arriba de los botones del resultado; el primer intento cuenta
+hasta 50. La tarjeta de Uno al día va justo bajo el resultado y carries the exit (📅 Back to One a Day; the header goes to the menu); the game adds no buttons of its own (C-19, D-343); el primer intento cuenta
 y los siguientes son práctica. No hay revancha (#226): la tarjeta ya ofrece 🎲 Jugar otro y Repetir
 el de hoy. Se prueba con `tools/e2e/daily-group.mjs`.
 

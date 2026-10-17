@@ -6471,7 +6471,7 @@ result → context → actions → exits → detail → rankings → one feedbac
   Batalla Naval, Dudo (and Generala, ready for when it joins the deck, D-248) add no buttons of their
   own. "📅 See your One a Day" is now "📅 Back to One a Day". `/today/`, with the day done, offers
   Replay today's too.
-- **A Cup day:** Back to the board goes first, under the place; the next-day notice and share after
+- **A Cup day:** Back to the board goes first, under the place; share and the next-day notice after
   it; the breakdown starts folded (it stays open in practice) and the day table goes below.
 - **Above the fold, one primary button** (the usability review, at the owner's request): every main
   action and exit was measured at 390×812 and 320 px in the four languages. With two exits, a solo
