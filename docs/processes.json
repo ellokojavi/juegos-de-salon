@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "69e969a",
+  "checkedUpTo": "36f30a6",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -243,6 +243,46 @@
         }
       ],
       "mechanism": null
+    },
+    {
+      "key": "script-roto-en-merge",
+      "what": "Resolving a merge conflict in public/labs/bridges/game.js dropped a comment opener; Tren en Vilo went blank on the site with nothing red",
+      "seen": [
+        {
+          "date": "2026-10-17",
+          "what": "Resolving a merge conflict in public/labs/bridges/game.js dropped a comment opener; Tren en Vilo went blank on the site with nothing red",
+          "commit": "822ca6f8"
+        }
+      ],
+      "mechanism": {
+        "date": "2026-10-17",
+        "what": "tools/release/syntax.test.mjs runs node --check on every public/**/*.js in the tests check (D-340)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/484"
+      }
+    },
+    {
+      "key": "timer-rearmado",
+      "what": "Tango's new 1.5 s red wait (D-337) was restarted by arming Clear all or Hint, and a clash fixed before showing lost its sound; fixed the same day",
+      "seen": [
+        {
+          "date": "2026-10-17",
+          "what": "Tango's new 1.5 s red wait (D-337) was restarted by arming Clear all or Hint, and a clash fixed before showing lost its sound; fixed the same day",
+          "commit": "655fbdf1"
+        }
+      ],
+      "mechanism": null
+    },
+    {
+      "key": "boton-armado-se-corre",
+      "what": "Armed, Clear all's long phrase pushed it down a line and Undo took its place, so the confirming tap undid instead (Queens under D-283, Tango in #492, caught by usability)",
+      "seen": [
+        {
+          "date": "2026-10-17",
+          "what": "Armed, Clear all's long phrase pushed it down a line and Undo took its place, so the confirming tap undid instead (Queens under D-283, Tango in #492, caught by usability)",
+          "commit": "d00df5ee"
+        }
+      ],
+      "mechanism": null
     }
   ],
   "mechanisms": [
@@ -299,6 +339,12 @@
       "key": "captura-identica-atrasada",
       "what": "readme.py screenshots records byte-identical retakes in docs/screenshots/verified.json and check dates them from the retake (readme.test.py)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/425"
+    },
+    {
+      "date": "2026-10-17",
+      "key": "script-roto-en-merge",
+      "what": "tools/release/syntax.test.mjs runs node --check on every public/**/*.js in the tests check (D-340)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/484"
     }
   ],
   "queueDone": [
@@ -307,12 +353,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-16",
-      "to": "69e969a"
+      "date": "2026-10-17",
+      "to": "36f30a6"
     },
     "usability": {
-      "date": "2026-10-16",
-      "to": "69e969a"
+      "date": "2026-10-17",
+      "to": "36f30a6"
     }
   },
   "rounds": [
@@ -363,6 +409,14 @@
       "issue": null,
       "pr": null,
       "note": "Dispatched documentation and usability; collected 13 changelog entries (up to 0.173.3); measured e2e durations; closed #422 (fulfilled)."
+    },
+    {
+      "date": "2026-10-17",
+      "from": "69e969a",
+      "to": "36f30a6",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/494",
+      "pr": null,
+      "note": "Dispatched documentation (#493) and usability (#491, review of #492); collected 28 changelog entries; backlog #462 moved to #492; #466 asked in #494"
     }
   ],
   "ownerDecisions": [
