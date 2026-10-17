@@ -462,8 +462,8 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
         else if (w.dir * (w.x - w.cx) > -3 && w.dir * (w.x - w.cx) < 0 && w.ct > 1.5) { w.fase = 'recoge'; }
         if (w.ct < 1.2) dibujaOla();
         lancha();
-        // Going back for a sunk rider, a small orange flag raised on a pole over the tower roof: rider down
-        if (w.modo === 'sink' && w.vuelve) {
+        // Going back for a rider in the water (fallen or sunk), a small orange flag raised on a pole over the tower roof: rider down
+        if (w.vuelve) {
           const fx = w.x - w.dir * 4, ondea = Math.floor(ahora * 6) % 2;
           r.rect(fx, yAgua - 11, 1, 5, '#0a0a0a');
           r.rect(w.dir > 0 ? fx - 3 : fx + 1, yAgua - 11, 3, 2 - ondea, '#ff7a1a');
