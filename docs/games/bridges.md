@@ -38,10 +38,21 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
 
 ## Score
 
-Each stage passed is worth 12 (`PUNTOS_ETAPA`), plus up to 5 for saving beams or wood against the known
-minimum (`PUNTOS_AHORRO`), plus up to 15 for speed (all in 1:30 or less, none when time runs out,
-scaled by stages passed). The result explains the sum in a table and shows how an unsolved stage
-could have been crossed (the catalog's bridge, the train looping over it).
+Each stage passed is worth 10 (`PUNTOS_ETAPA`), plus up to 5 for saving beams or wood against the known
+minimum (`PUNTOS_AHORRO`), plus up to 3 for solidity (`PUNTOS_SOLIDEZ`), plus up to 10 for speed (all in
+1:30 or less, none when time runs out, scaled by stages passed).
+
+Solidity is relative: the engine records each bridge's peak strain while the train crosses (`pico`, 0 to
+1 of the snapping point) and compares it with the catalog's bridge for that crossing (`picoReferencia`).
+All of it if it is 15 points lower (`MARGEN_SOLIDO`), none if it is equal or higher. An absolute bar
+did not work: the cheapest bridges peak at 90–100 %, and a local search within the budgets barely
+lowered that. Since the known bridge is the cheapest, solidity and saving wood pull against each other,
+so a perfect 100 is rare.
+
+When a stage passes, the notice gives its peak strain and the cheapest bridge's. The result explains
+the sum in a table (per stage: wood against the minimum, peak strain against the known bridge's, and
+its points as stage + savings + solidity), with a short legend, and shows how an unsolved stage could
+have been crossed (the catalog's bridge, the train looping over it, with its peak strain).
 
 ## The scene
 
