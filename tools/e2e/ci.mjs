@@ -18,7 +18,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SUELTOS } from '../../public/assets/js/games.js';
 import { noBrowser } from './changes.mjs';
-import { affectedJobs } from './affected.mjs';
+import { affectedJobs, changeLevel } from './affected.mjs';
 import { group, readDurations, NOTICE } from './groups.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -149,6 +149,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   // The PR's files, one per line: if nothing reaches the browser, there is nothing to run
   const changesOf = () => args.includes('--changes') ? readFileSync(args[args.indexOf('--changes') + 1], 'utf8').split('\n') : null;
+  // The change's test level (D-346), on stderr so the workflow logs it and the JSON stays clean
+  const said = changesOf();
+  if (said) { const l = changeLevel(jobs(), said, f => noBrowser([f]), noBrowser(said)); console.error(`test level ${l.level} · ${l.name}: ${l.reason}`); }
   if (args.includes('--groups')) {
     const gs = groups(changesOf());
     if (!gs.length) console.error('the PR changes nothing an end-to-end script loads: none runs (D-205, D-299, D-329)');

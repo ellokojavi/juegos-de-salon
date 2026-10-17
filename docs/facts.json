@@ -1,5 +1,5 @@
 {
-  "version": "0.175.0",
+  "version": "0.176.3",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1153,6 +1153,7 @@
     "routes/game.mjs",
     "share-home.mjs",
     "share-room.mjs",
+    "smoke.mjs",
     "spacing-common.mjs",
     "timeline/chat.mjs",
     "timeline/choice.mjs",
