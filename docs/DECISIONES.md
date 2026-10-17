@@ -6364,3 +6364,15 @@ money, a person's data, or a complaint it can't judge.
 agent could give.
 **Consequences:** the processes guide (`.claude/agents/processes.md`) says it next to the doubt
 step; #437 was closed with no reply sent.
+
+## D-339 · The processes round works the owner's backlog
+**Date:** 2026-10-16 · **Status:** current · **Relation:** extends D-273 and D-276
+**Context:** the owner asked whether anyone reviews the backlog. The daily round looked at feedback,
+waiting PRs, red main, the queue and old dilemmas, but not at the issues the owner opens as to-dos
+(no label): they waited until a session picked them up, and one already done (#465) stayed open.
+**Decision:** owner's request: `processes.mjs check` lists the open issues with no label, oldest
+first, with their age (`backlog()`, tested in `processes.test.mjs`). Each round the processes agent
+closes the ones already done (linking the PR), moves one or two forward, the smallest first, each in
+its PR with auto-merge, and asks with checkboxes only what needs the owner's decision.
+**Why:** a to-do nobody lists is a to-do nobody does; the round already runs every day.
+**Alternatives discarded:** a label the owner has to put on each to-do (one more step for them).
