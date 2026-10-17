@@ -6511,4 +6511,3 @@ rule that changes between cups).
 **Consequences:** if every player stops playing, all of them are out and the cup goes on with
 nobody able to play it until it ends; the admin can bring them back. The demo has two new scenes
 (`?test&demo=out` and `&demo=risk`) and `paths.mjs` three screens (`out`, `out-table`, `risk`).
-
