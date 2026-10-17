@@ -18,7 +18,7 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
   two squares (or a 1×2 diagonal, `LARGO_MAX`); tap a beam to remove it. ↩ Undo, 🧹 Clear (two taps)
   and 🏳️ Give up (two taps).
 - 🚂 Test sends the train (`PIEZAS`: the engine and two wagons that weigh); ✏️ Fix goes back to
-  building, with the snapped beams marked. A stage passes when the train crosses and the bridge is
+  building, with the snapped beams blinking red for 8 seconds (`PARPADEO_MS`). A stage passes when the train crosses and the bridge is
   still standing.
 - Each stage has a budget of metres of wood (each beam costs its length; the old catalog counted beams) and a sign with it; heavy
   levels say how much heavier the train is.
