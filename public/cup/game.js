@@ -36,6 +36,7 @@ import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
 import { formularioComentario, abrirComentario, campoCorreo } from '../assets/js/labs-idioma.js';
+import { enlaceBuzon, ponerBuzon, sinDoble } from '../assets/js/buzon.js';
 import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
@@ -1070,6 +1071,7 @@ function desdeAviso() {
   else tablero();
 }
 
+let buzonPodio;   // the inbox link under the podium, decided once per page (D-341)
 function tablero() {
   const Lc = L();
   if (!Lc || !S.yo) return;
@@ -1141,12 +1143,16 @@ function tablero() {
       el('div', { class: 'nombres' }, jug.map(j => el('span', { class: 'chip' + (j.pid === S.yo ? ' chip--hot' : '') }, j.name)))));
   }
 
+  // The finished Cup's inbox link, at the very end (D-341); kept for the page: the board redraws every minute
+  if (terminada(meta, now) && buzonPodio === undefined) buzonPodio = enlaceBuzon({ juego: 'copa', contexto: { copa: S.code, pantalla: 'podio' } });
   poner(body, botonReporte(), el('button', {
     class: 'link-btn', onClick: () => {
       if (!confirm(T.leaveConfirm)) return;
       cuenta.olvidar(S.code); S.yo = null; entrar();
     },
   }, T.leave));
+
+  if (terminada(meta, now) && buzonPodio) { poner(body, buzonPodio); sinDoble(body); }
 
   clearInterval(S.tic);
   S.tic = setInterval(() => { if (S.pantalla === 'tablero' && !document.hidden) tablero(); }, 60000);
@@ -2356,12 +2362,14 @@ function pieComentario(extra) {
     class: 'link-btn reporte-btn', id: 'btn-comentario', type: 'button',
     onClick: () => {
       SFX.tap();
-      abrirComentario({ T: T.comentario, enviar: enviarComentario(), contexto: { ...extra, url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } });
+      abrirComentario({ T: TB(), enviar: enviarComentario(), contexto: { ...extra, url: location.pathname + location.search, pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160) } });
     },
-  }, T.comentario.abrir));
+  }, TB().abrir));
 }
 
 /** En el modo de prueba, el comentario queda en el almacén local, como los reportes; si no, va a Firebase. */
+/** The form's texts: the inbox's, one wording for everything (D-341). */
+const TB = () => (COMMON[LANG] || COMMON.es).buzon;
 const enviarComentario = () => (PRUEBA ? async r => (await abrirStore()).reportar(r) : undefined);
 
 /**
@@ -2527,10 +2535,12 @@ function resultadoPractica(id, semilla, r, variante = null) {
     volverDePractica(),
     ranking,
     // En la página de un juego del laboratorio, el comentario va abierto y al final de todo (D-265, D-268)
-    enLab ? formularioComentario({ T: T.comentario, enviar: enviarComentario(), contexto: {
+    enLab ? formularioComentario({ T: TB(), enviar: enviarComentario(), contexto: {
       juego: id, semilla, puntaje: r.s, resumen: r.resumen, tiempo: mmss(r.ms), url: location.pathname + location.search,
       pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
     } }) : null);
+  // Outside the lab, the quiet inbox link after everything (D-341): minigames and One a Day
+  if (!enLab) ponerBuzon(body, { juego: id, contexto: { semilla, resumen: r.resumen ?? r.s, ...(hoy ? { dia: hoy.dia } : {}) } });
 }
 
 /* ------------------------------------------------------------------ */

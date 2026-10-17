@@ -293,6 +293,8 @@ export const COMMON = {
       copy: "Copiar link",
       copied: "Link copiado.",
     },
+    // The inbox at the end of the experience and in the home footer (D-341)
+    buzon: { abrir: '💬 Sugerencias y comentarios', titulo: 'Sugerencias y comentarios', lead: 'Escríbenos lo que quieras: una sugerencia, un comentario, una idea, algo que falló o un juego que te gustaría.', ph: 'Por ejemplo: me gustaría jugar al dominó.', tipo: '¿De qué se trata? (opcional)', tipos: { sugerencia: '💡 Sugerencia', problema: '🐞 Problema', idea: '🎲 Idea de juego', otro: '💬 Otro' }, nombre: 'Tu nombre (opcional)', enviar: 'Enviar', enviando: 'Enviando…', cancelar: 'Cancelar', cerrar: 'Cerrar', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu mensaje llegó.', guardado: 'Ahora no hay internet: tu mensaje quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.' },
     rk: {
       title: 'Ranking', titleOf: 'Ranking de {game}',
       week: 'Semana', always: 'Siempre', friends: 'Amigos', cup: 'Copa', today: 'Hoy', streaks: 'Rachas',
@@ -522,6 +524,8 @@ export const COMMON = {
       copy: "Copy link",
       copied: "Link copied.",
     },
+    // The inbox at the end of the experience and in the home footer (D-341)
+    buzon: { abrir: '💬 Suggestions and comments', titulo: 'Suggestions and comments', lead: "Tell us anything: a suggestion, a comment, an idea, something that broke or a game you'd like.", ph: "For example: I'd like to play dominoes.", tipo: 'What is it about? (optional)', tipos: { sugerencia: '💡 Suggestion', problema: '🐞 Problem', idea: '🎲 Game idea', otro: '💬 Other' }, nombre: 'Your name (optional)', enviar: 'Send', enviando: 'Sending…', cancelar: 'Cancel', cerrar: 'Close', vacio: 'Write something first.', gracias: 'Thanks! 🙌 Your message arrived.', guardado: 'No internet right now: your message is saved on your phone and will be sent later.', error: "Couldn't send it. Try again in a bit." },
     rk: {
       title: 'Leaderboard', titleOf: '{game} leaderboard',
       week: 'Week', always: 'All time', friends: 'Friends', cup: 'Cup', today: 'Today', streaks: 'Streaks',
@@ -751,6 +755,8 @@ export const COMMON = {
       copy: "Copiar link",
       copied: "Link copiado.",
     },
+    // The inbox at the end of the experience and in the home footer (D-341)
+    buzon: { abrir: '💬 Sugestões e comentários', titulo: 'Sugestões e comentários', lead: 'Escreva o que quiser: uma sugestão, um comentário, uma ideia, algo que falhou ou um jogo que você gostaria.', ph: 'Por exemplo: eu gostaria de jogar dominó.', tipo: 'Sobre o que é? (opcional)', tipos: { sugerencia: '💡 Sugestão', problema: '🐞 Problema', idea: '🎲 Ideia de jogo', otro: '💬 Outro' }, nombre: 'Seu nome (opcional)', enviar: 'Enviar', enviando: 'Enviando…', cancelar: 'Cancelar', cerrar: 'Fechar', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Sua mensagem chegou.', guardado: 'Sem internet agora: sua mensagem ficou no celular e será enviada depois.', error: 'Não deu para enviar. Tente de novo daqui a pouco.' },
     rk: {
       title: 'Ranking', titleOf: 'Ranking de {game}',
       week: 'Semana', always: 'Sempre', friends: 'Amigos', cup: 'Copa', today: 'Hoje', streaks: 'Sequências',
@@ -980,6 +986,8 @@ export const COMMON = {
       copy: "Link kopieren",
       copied: "Link kopiert.",
     },
+    // The inbox at the end of the experience and in the home footer (D-341)
+    buzon: { abrir: '💬 Vorschläge und Kommentare', titulo: 'Vorschläge und Kommentare', lead: 'Schreib uns, was du willst: einen Vorschlag, einen Kommentar, eine Idee, etwas, das nicht geklappt hat, oder ein Spiel, das du dir wünschst.', ph: 'Zum Beispiel: Ich würde gern Domino spielen.', tipo: 'Worum geht es? (optional)', tipos: { sugerencia: '💡 Vorschlag', problema: '🐞 Problem', idea: '🎲 Spielidee', otro: '💬 Anderes' }, nombre: 'Dein Name (optional)', enviar: 'Senden', enviando: 'Wird gesendet …', cancelar: 'Abbrechen', cerrar: 'Schließen', vacio: 'Schreib erst etwas rein.', gracias: 'Danke! 🙌 Deine Nachricht ist angekommen.', guardado: 'Gerade kein Netz: Deine Nachricht ist auf dem Handy gespeichert und wird später automatisch gesendet.', error: 'Das hat nicht geklappt. Versuch es gleich nochmal.' },
     rk: {
       title: 'Rangliste', titleOf: 'Rangliste: {game}',
       week: 'Woche', always: 'Allzeit', friends: 'Freunde', cup: 'Pokal', today: 'Heute', streaks: 'Serien',

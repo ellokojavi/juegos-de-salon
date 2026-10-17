@@ -76,7 +76,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336 |
-| Agentes (usabilidad, documentación, procesos, atención) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318 |
+| Agentes (usabilidad, documentación, procesos, atención) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -4846,7 +4846,7 @@ El bloque aparte lo pidió el dueño, para que quien no lo ve siempre lo note.
 final ofrezca que la partida cuente.
 
 ## D-275 · El feedback 🐞 llega como issues y lo atiende el agente de procesos
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-279, D-306 · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-279, D-306, D-341 · **Relación:** amplía D-273 (el agente de procesos) y D-104 (los reportes de La Copa); corrige D-273 en que no tocaba el código de los juegos, y D-132 en que los reportes 🐞 eran de la ronda de usabilidad
 **Decisión:** `.github/workflows/feedback.yml` sube cada hora los reportes nuevos de `feedback/`
 (`tools/agents/feedback.mjs`) como issues con la etiqueta `feedback`, uno por reporte y nunca dos
 veces el mismo. El agente de procesos los atiende en su ronda: arregla lo que tiene un arreglo
@@ -5922,7 +5922,7 @@ labels, with environment variables read under both names for a while (`SITE` or 
   copies until the weekly review removes them (phase 4).
 
 ## D-317 · Feedback: an optional email, kept private, and a friendly reply when it's resolved
-**Date:** 2026-10-14 · **Status:** amended by D-327 · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
+**Date:** 2026-10-14 · **Status:** amended by D-327, D-341 · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
 **Decision:** Owner's request: every feedback form (the 🐞 in the lab and in La Copa, the "¿Qué te
 pareció?" at the end of each lab game and La Copa's report screen) gets an optional email field, so
 whoever wants to can be told when we answer.
@@ -6386,3 +6386,37 @@ Tren en Vilo, and the tests import only engines.
 module, and runs with the other tests on every PR (`tests` check).
 **Why:** a broken script is cheap to catch and costly to ship; a game outside the end-to-end suite
 had no other guard.
+
+## D-341 · "Suggestions and comments": the feedback inbox in production, at the end of the experience
+**Date:** 2026-10-16 · **Status:** current · **Relation:** amends D-275 (the form was the lab's 🐞 and "¿Qué te pareció?") and D-317 (one more form gets the email field: the inbox's); extends D-104 and D-268; rule U-38
+**Context:** the feedback form lived almost only in the lab (the 🐞, the end of each lab game, La
+Copa's results behind `enLab`). Players outside the lab barely saw it, and it asked only "¿Qué te
+pareció?", an opinion on the game just played (#463).
+**Decision:** owner's request, with these choices:
+- **Form:** a quiet link "💬 Sugerencias y comentarios" after the result and the main buttons;
+  tapping it unfolds the form in place. Never a popup, never during a game (U-38).
+- **Where:** the result of every group game (`finDePartida`), every solo result (`avisoPartida`),
+  La Copa's final podium, One a Day's result and the end of every minigame (La Copa's practice
+  result), and Cuarto Rey's end screen. Where it shows, La Copa's "🐞 Reportar un problema" link
+  steps aside (`sinDoble`), so a screen never offers two links for the same thing (U-1). `ponerBuzon` (public/assets/js/buzon.js) appends it at the
+  end of the screen.
+- **How often:** on each device, at most once per day; not during the first 2 games a new device
+  plays; 14 days of rest after the player sends something. Kept in `localStorage`
+  (`juegos-de-salon:buzon`), decided by `enlaceBuzon` / `tocaBuzon`.
+- **Fixed place:** a link in the home page footer, always there, opening the form in the overlay.
+- **Kind:** optional chips, 💡 Suggestion · 🐞 Problem · 🎲 Game idea · 💬 Other; sending without one
+  is allowed. It goes as `tipo` (`sugerencia|problema|idea|otro`, a closed list in the rules) and
+  `feedback.mjs` turns it into a second label on the issue (`feedback:suggestion`…).
+- **Wording:** one component (`buzon-form.js`, re-exported by `labs-idioma.js`) with the texts in
+  `COMMON.buzon`, in the four languages; La Copa's "¿Qué te pareció?" moves to them. The lab's 🐞
+  and the lab games' own prompts stay.
+- **Pipeline:** unchanged: `feedback/` (+ `feedbackContacto`, D-317) → `feedback.yml` → issues →
+  processes round.
+**Why:** the inbox is open to anything (a suggestion, a problem, a game they'd like), so it belongs
+where the player has finished and has a minute, not in the way of playing again. Once a day and the
+rest after sending keep it from becoming noise.
+**Alternatives discarded:** the form already unfolded (it pushes the buttons down and takes the
+eye); a popup at the end (it interrupts); showing it every game.
+**Consequences:** the form loads only on tap (`import('./buzon-form.js')`); `tools/e2e/feedback-prod.mjs`
+plays it end to end in four languages at 320 px; `buzon.test.mjs` checks the frequency rule and that
+the rules accept exactly the four kinds.

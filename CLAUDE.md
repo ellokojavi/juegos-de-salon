@@ -256,7 +256,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   time on the owner's Mac mini (a scheduled task in the app, not in the cloud): it launches the documentation
   and usability agents when there is something to review (`processes.mjs check` says which)
   and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
-  README", check how fresh the README is) are asked of it: it decides who, launches them, checks and replies. It handles the 🐞 feedback,
+  README", check how fresh the README is) are asked of it: it decides who, launches them, checks and replies. It handles the 🐞 feedback and the "💬 Sugerencias y comentarios" inbox at the end of every game (D-341),
   which `.github/workflows/feedback.yml` uploads every 15 minutes as `feedback` issues (`tools/agents/feedback.mjs`,
   with the name the player entered and without their browser, D-279); a player who left an email gets a
   templated reply in their language when the report is resolved (`feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <xx>`, one email per player for all their comments, grouped by `feedback.mjs pending`,

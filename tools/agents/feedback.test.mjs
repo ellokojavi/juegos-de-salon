@@ -71,3 +71,12 @@ console.log('feedback: ok');
   if (decodeURIComponent(gmailSearch(435).split('#search/')[1]) !== 'subject:"JdS duda 435"') throw new Error('gmail search');
   console.log('feedback doubt: ok');
 }
+
+// The inbox's kind (D-341): a known one adds its label, an unknown one or none adds nothing
+{
+  const { labelsOf, KIND_LABELS } = await import('./feedback.mjs');
+  assert.deepEqual(labelsOf({ texto: 'x' }), ['feedback'], 'without a kind, only feedback');
+  assert.deepEqual(labelsOf({ texto: 'x', tipo: 'idea' }), ['feedback', 'feedback:game-idea'], 'a game idea gets its label');
+  assert.deepEqual(labelsOf({ texto: 'x', tipo: 'hack' }), ['feedback'], 'an unknown kind adds nothing');
+  assert.deepEqual(Object.keys(KIND_LABELS).sort(), ['idea', 'otro', 'problema', 'sugerencia'], 'the same list the rules accept');
+}

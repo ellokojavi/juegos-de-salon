@@ -90,6 +90,12 @@ la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renu
   message. The create/join button is the retry; no reload link. The rematch button follows the
   same rule: the room text under it and the button back as the retry, without the one-phone button,
   since "Cambiar modo" is already next to it (D-322).
+- **U-38 · The inbox sits at the end of the experience and never interrupts** (D-341): "💬
+  Sugerencias y comentarios" is a quiet underlined link, the last thing on a result screen, after
+  the result and after the main buttons (play again, share) and the rankings. Tapping it unfolds the
+  form in place; it is never a popup, never shown during a game, and it never pushes the main
+  buttons down. It shows at most once a day per device, not in a device's first 2 games, and rests
+  14 days after the player sends something. The home footer has it always, opening the overlay.
 
 ## Compartir
 
