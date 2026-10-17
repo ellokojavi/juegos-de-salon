@@ -1,6 +1,6 @@
 // Tren en Vilo (lab): the physics is tuned so a bare deck falls and a truss holds, in every stage
 import assert from 'node:assert/strict';
-import { ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S } from './engine.js';
+import { ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './engine.js';
 import { readFileSync } from 'node:fs';
 
 const V = (a, b) => ({ a, b });
@@ -42,13 +42,18 @@ assert.equal(vigaValida(e0, [], [0, 0], [-1, 0]), 'fuera');
 assert.equal(vigaValida(e0, [V([0, 0], [1, 0])], [1, 0], [0, 0]), 'repetida');
 assert.equal(vigaValida(e0, [], [0, 0], [1, 2]), null, 'a 1 × 2 diagonal is allowed');
 
-// The score: stages, savings and time; 100 only with all five at the minimum and fast
+// The score: stages, savings, solidity and time; 100 only with all five at the minimum, clearly more
+// solid than the known bridge, and fast
 const minimos = ETAPAS.map(e => e.minimo), topes = ETAPAS.map(e => e.presupuesto);
-assert.equal(puntajePartida(minimos, 60).total, 100);
-assert.equal(puntajePartida(topes, TIEMPO_S).total, 65, 'all five at the budget and out of time: the stages, plus the savings of stage 5, whose budget is its minimum');
+const iguales = ETAPAS.map(e => picoReferencia(e)), solidos = iguales.map(x => x - MARGEN_SOLIDO);
+assert.equal(puntajePartida(minimos, 60).total, 85, 'no strain measured: no solidity');
+assert.equal(puntajePartida(minimos, 60, ETAPAS, iguales).total, 85, 'as strained as the known bridge: no solidity');
+assert.equal(puntajePartida(minimos, 60, ETAPAS, solidos).total, 100);
+assert.equal(puntajePartida(minimos, 60, ETAPAS, solidos.map(x => x + MARGEN_SOLIDO / 2)).solidez, 8, 'half the margin: half of 15, rounded');
+assert.equal(puntajePartida(topes, TIEMPO_S).total, 55, 'all five at the budget and out of time: the stages, plus the savings of stage 5, whose budget is its minimum');
 assert.equal(puntajePartida([], 30).total, 0);
 assert.ok(puntajePartida(topes.slice(0, 4), TIEMPO_S).total < puntajePartida(topes, TIEMPO_S).total, 'one more stage always wins');
-assert.equal(puntajePartida(minimos.slice(0, 2), 60).rapidez, 6, 'speed scales with the stages passed: 15 × 2/5');
+assert.equal(puntajePartida(minimos.slice(0, 2), 60).rapidez, 4, 'speed scales with the stages passed: 10 × 2/5');
 const p = puntajePartida([8, 14], 200);   // stage 1: 2 of 3 spare beams saved; stage 2: at its budget
 assert.equal(p.ahorros[0].fraccion, 2 / 3); assert.equal(p.ahorros[1].fraccion, 0);
 // The catalog of crossings (tools/generators/bridges.mjs): each one has a solution that passes, at its
