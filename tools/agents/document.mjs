@@ -250,7 +250,7 @@ export function runChecks() {
   for (const id of repeatedUsabilityRules(read('docs/USABILIDAD.md'))) problems.push(`${id} is twice in docs/USABILIDAD.md`);
 
   // Paths that do not exist, in today's guides (DECISIONES, CHANGELOG and REQUERIMIENTOS are history)
-  const guides = files.filter(f => /^(CLAUDE\.md|CONTRIBUTING\.md|docs\/(CANONES|AGREGAR-JUEGO|USABILIDAD|PANEL)\.md|docs\/games\/[^/]+\.md|\.claude\/agents\/[^/]+\.md)$/.test(f));
+  const guides = files.filter(f => /^(CLAUDE\.md|CONTRIBUTING\.md|docs\/(CANONES|AGREGAR-JUEGO|USABILIDAD|PANEL)\.md|docs\/games\/[^/]+\.md|\.claude\/agents\/[^/]+\.md|\.claude\/skills\/[^/]+\/SKILL\.md)$/.test(f));
   for (const f of guides) {
     for (const r of citedPaths(read(f))) if (!existsSync(join(ROOT, r))) problems.push(`${f} cites \`${r}\`, which does not exist`);
   }
