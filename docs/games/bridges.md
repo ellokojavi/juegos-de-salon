@@ -20,8 +20,9 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
 - 🚂 Test sends the train (`PIEZAS`: the engine and two wagons that weigh); ✏️ Fix goes back to
   building, with the snapped beams blinking red for 8 seconds (`PARPADEO_MS`). A stage passes when the train crosses and the bridge is
   still standing.
-- Each stage has a budget of metres of wood (each beam costs its length; the old catalog counted beams) and a sign with it; heavy
-  levels say how much heavier the train is.
+- Each stage has a budget of metres of wood (each beam costs its length; the old catalog counted beams), shown under the
+  board as it is spent. The screen's title is the stage ("Etapa 2 de 5"), and under it, always in view, the
+  train's weight: normal, or how much heavier it is (it used to be a sign that slid over the board and went).
 
 ## Crossings and catalogs
 
