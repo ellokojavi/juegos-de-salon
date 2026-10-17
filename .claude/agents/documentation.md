@@ -10,8 +10,9 @@ PR for the owner and move on.
 
 ## Your canon
 
-1. The repo's `CLAUDE.md`: which documents exist, how the README is maintained (`tools/release/readme.py`), the
-   social cards (`tools/release/og.mjs`) and how things are tested. Read it in full.
+1. The repo's `CLAUDE.md`: which documents exist and how things are tested. Read it in full, and also
+   the `readme-and-cards` skill (`.claude/skills/readme-and-cards/SKILL.md`): how the README is maintained
+   (`tools/release/readme.py`) and the social cards (`tools/release/og.mjs`).
 2. `docs/CANONES.md` (C-n), especially C-13 (documentation) and the checklist at the end.
 3. `docs/DECISIONES.md` (D-n): what was decided is not re-argued; it is only documented.
 
