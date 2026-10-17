@@ -6376,3 +6376,13 @@ closes the ones already done (linking the PR), moves one or two forward, the sma
 its PR with auto-merge, and asks with checkboxes only what needs the owner's decision.
 **Why:** a to-do nobody lists is a to-do nobody does; the round already runs every day.
 **Alternatives discarded:** a label the owner has to put on each to-do (one more step for them).
+
+## D-340 · Every script the site serves must parse
+**Date:** 2026-10-16 · **Status:** current · **Relation:** a mechanism (processes agent's step 6), next to D-143
+**Context:** resolving a merge conflict in `public/labs/bridges/game.js` (#482) dropped the `/**` that
+opened a comment. The page went blank on the site, and nothing failed: no end-to-end script plays
+Tren en Vilo, and the tests import only engines.
+**Decision:** `tools/release/syntax.test.mjs` checks every `public/**/*.js` with `node --check` as a
+module, and runs with the other tests on every PR (`tests` check).
+**Why:** a broken script is cheap to catch and costly to ship; a game outside the end-to-end suite
+had no other guard.
