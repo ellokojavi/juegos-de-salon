@@ -51,7 +51,14 @@ const T = {
     larga: 'Muy larga: una viga mide hasta 2 cuadros.', fuera: 'Fuera del área de construcción.',
     repetida: 'Ya hay una viga ahí.', presupuesto: 'No te quedan vigas: quita alguna.', sinMadera: 'No te alcanza la madera: quita alguna viga.', suelta: 'Empieza en un punto marcado.',
     quitada: 'Viga quitada.', borrado: 'Borraste el puente: ↩ Deshacer lo trae de vuelta.',
-    cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó! Esfuerzo máximo: {p} (el puente más barato: {r}).', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.', cortada: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
+    cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.', cortada: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
+  },
+  felicita: {
+    titulo: '¡Etapa {n} superada!',
+    madera: '🪵 Madera', maderaValor: '{n} de {max} m', vigasValor: '{n} de {max} vigas', minimo: 'mínimo conocido: {n}',
+    esfuerzo: '🧱 Esfuerzo máximo', esfuerzoValor: '{p}', referencia: 'el puente más barato: {r}',
+    tiempo: '⏱ Tiempo', puntos: '⭐ Puntos', puntosDetalle: 'etapa {e} + ahorro {a} + solidez {s}',
+    seguir: 'Siguiente etapa ▶', resultado: '🏁 Ver el resultado',
   },
   fin: { todas: '¡Todos los puentes en pie!', tiempo: 'Se acabó el tiempo', rendido: 'Te rendiste' },
   cuenta: {
@@ -787,7 +794,41 @@ function empezar() {
   });
 }
 
+/**
+ * The stage's summary, the only place it is shown (owner's request): over the screen when a stage
+ * passes, with the wood, the peak strain, the time and the points of that stage. It goes with its
+ * button, a tap anywhere, or on its own after `FELICITA_MS`, with a bar that empties until then. The
+ * game's clock stops while it is open.
+ */
+const FELICITA_MS = 6000;
+function felicitar(e, k, seguir) {
+  const F = T.felicita, a = puntajePartida(P.usadas, 0, P.etapas, P.picos).ahorros[k], abierta = Date.now();
+  const segs = Math.round((abierta - (P.inicioEtapa || abierta)) / 1000), ultima = P.hechas >= P.etapas.length;
+  const fila = (rotulo, valor, chico) => el('div', { class: 'tv-fel-fila' }, el('span', {}, rotulo), el('b', {}, valor), chico ? el('small', {}, chico) : null);
+  let listo = false, reloj = 0;
+  const cerrar = () => {
+    if (listo) return;
+    listo = true; clearTimeout(reloj); capa.remove();
+    P.inicio += Date.now() - abierta;   // the paused seconds don't count against the clock
+    seguir();
+  };
+  const capa = el('div', { class: 'tv-felicitacion', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'tv-fel-titulo', onClick: ev => { if (ev.target === capa) cerrar(); } },
+    el('div', { class: 'panel tv-fel-caja' },
+      el('h2', { id: 'tv-fel-titulo' }, `✅ ${fmt(F.titulo, { n: k + 1 })}`),
+      fila(F.madera, e.madera ? fmt(F.maderaValor, { n: num(a.usadas), max: num(e.presupuesto) }) : fmt(F.vigasValor, { n: a.usadas, max: e.presupuesto }), fmt(F.minimo, { n: num(e.minimo) })),
+      fila(F.esfuerzo, fmt(F.esfuerzoValor, { p: pct(a.pico) }), fmt(F.referencia, { r: pct(a.referencia) })),
+      fila(F.tiempo, mmss(segs)),
+      fila(F.puntos, num(PUNTOS_ETAPA + a.puntos + a.puntosSolidez), fmt(F.puntosDetalle, { e: PUNTOS_ETAPA, a: num(a.puntos), s: num(a.puntosSolidez) })),
+      el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-seguir', onClick: () => { SFX.tap(); cerrar(); } }, ultima ? F.resultado : F.seguir),
+      el('div', { class: 'tv-fel-barra', 'aria-hidden': 'true' }, el('span', { style: `animation-duration: ${FELICITA_MS}ms` }))));
+  document.body.append(capa);
+  capa.querySelector('#btn-seguir').focus({ preventScroll: true });
+  if (!QUIETO) confetti({ count: 60, duration: 1200 });
+  reloj = setTimeout(cerrar, FELICITA_MS);
+}
+
 function jugar() {
+  P.inicioEtapa = Date.now();
   const e = P.etapas[P.etapa];
   const c = lienzo(e);
   const aguja = medidor(picoReferencia(e));
@@ -922,14 +963,17 @@ function jugar() {
       if (!sim.fin) { requestAnimationFrame(cuadro); return; }
       // It made it: the notice now, and the scene runs on until the last wagon leaves the screen
       if (sim.tren.llego) {
-        if (!avisado) { avisado = true; aviso.textContent = fmt(T.aviso.paso, { p: pct(picoDe(sim)), r: pct(picoReferencia(e)) }); SFX.win(); vibrate([30, 50, 30]); P.hechas++; P.usadas.push(costo(e, P.vigas)); P.picos.push(picoDe(sim)); P.rotasAntes = new Set(); }
+        if (!avisado) { avisado = true; aviso.textContent = T.aviso.paso; SFX.win(); vibrate([30, 50, 30]); P.hechas++; P.usadas.push(costo(e, P.vigas)); P.picos.push(picoDe(sim)); P.rotasAntes = new Set(); }
         if (!fueraDeEscena(sim, e)) { requestAnimationFrame(cuadro); return; }
         setTimeout(() => {
+          if (P.fin) return;
+          felicitar(e, P.hechas - 1, () => {
           if (P.fin) return;
           P.simulando = false;
           if (P.hechas >= P.etapas.length) { terminar('todas'); return; }
           P.etapa++; P.vigas = []; P.historial = []; P.rotasAntes = new Set(); jugar();
-        }, 1600);   // a moment to read the gauge's peak and the notice before the next stage
+          });
+        }, 600);
         return;
       }
       // It fell: the scene keeps moving a moment (the fall, the splash, the smoke clearing)
@@ -952,6 +996,7 @@ function terminar(motivo) {
   if (P.fin) return;
   clearInterval(P.reloj);
   P.simulando = false;
+  document.querySelector('.tv-felicitacion')?.remove();   // time ran out with a stage's summary open
   P.fin = { motivo, segundos: Math.min(TIEMPO_S, (Date.now() - P.inicio) / 1000) };
   resultado();
 }
