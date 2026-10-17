@@ -1,5 +1,91 @@
 # Changelog
 
+## 0.175.0 — 2026-10-17
+- **💬 Suggestions and comments, everywhere:** at the end of every game (group, solo, minigames, One a Day and La Copa's podium) a quiet link, after the buttons, opens a short form for a suggestion, a comment, a game idea or a problem, with an optional kind. It shows at most once a day and rests for two weeks after you write; the home page footer always has it (D-341, U-38).
+
+## 0.174.8 — 2026-10-16
+- **The home page no longer jumps while it loads.** The language buttons, the random game die, the
+  filters and the game list have their place from the first moment, so on a slow network the
+  page stays still instead of everything moving down when the games arrive.
+
+## 0.174.7 — 2026-10-16
+- **Tren en Vilo (lab): a summary for each stage passed.** A congratulation opens with the wood used, the peak strain against the cheapest bridge, the time and the stage's points; it goes with a tap or on its own after 6 seconds, with a bar that shows it, and the clock waits meanwhile.
+
+## 0.174.6 — 2026-10-16
+- **Tren en Vilo (lab): the visitors show up.** They come sooner (5 to 25 s into their stage), move on to the next stage instead of being lost when you pass one quickly, and hand over to another when they don't fit the crossing.
+
+## 0.174.5 — 2026-10-16
+- **Tren en Vilo (lab): the title shows the train.** Next to its weight, each stage draws its train in small (the locomotive and a wagon with its load), so "heavier" has a picture.
+
+## 0.174.4 — 2026-10-16
+- **Tren en Vilo (lab): the game loads again, and the gauge holds its reading.** A merge had left a comment unopened in the game's script, and the page stayed blank; and when a test ends, the strain needle now stays on the peak (100 % if a beam snapped) instead of dropping to zero.
+
+## 0.174.3 — 2026-10-16
+- **Tren en Vilo (lab): bridges a person would build.** The solution shown at the end, and the minimum each stage is measured against, are now trusses with room to spare (at most 85 % strain), not the tangle of stays that barely held; the wood budgets move a little with them.
+
+## 0.174.2 — 2026-10-16
+- **Tren en Vilo (lab): a crossing is not a joint.** Where a beam crosses another, or runs over a bolt it doesn't end at, it now passes in front with a dark edge, so it no longer looks joined there.
+
+## 0.174.1 — 2026-10-16
+- **Tren en Vilo (lab): a strain gauge while the train crosses.** A dial at the top of the board moves with how hard the bridge is working, keeps a red mark at the peak and a white one at the cheapest bridge's; after a pass, a moment to read it before the next stage.
+
+## 0.174.0 — 2026-10-16
+- **Tren en Vilo (lab): solidity counts.** A bridge that works less hard than the cheapest known one earns up to 3 points per stage; the notice says each bridge's peak strain, and the final table shows wood, strain and points per stage with a short legend. The score is now 10 per stage, up to 5 for saving wood, up to 3 for solidity and up to 10 for speed.
+
+## 0.173.21 — 2026-10-16
+- **Tren en Vilo (lab): heavier trains look heavier.** The first stage pulls old passenger cars; the next ones carry crates, logs, coal and containers, and the two heaviest come with a green freight locomotive.
+
+## 0.173.20 — 2026-10-16
+- **Tren en Vilo (lab): a tidier game screen.** The stage is now the screen's title, with the train's weight under it and always in view (it was a sign that slid over the board and went away); the progress dots and the clock sit on one line above it.
+
+## 0.173.19 — 2026-10-16
+- **Tren en Vilo (lab): the cover breathes.** After the train leaves, the empty bridge rests 3 to 5 seconds before the next one comes, instead of looping right away.
+
+## 0.173.18 — 2026-10-16
+- **Tren en Vilo (lab): the snapped beams stop blinking.** After a failed test they blink red for 8 seconds and then go quiet, and a new stage never starts with them.
+
+## 0.173.17 — 2026-10-16
+- **Tren en Vilo (lab): the lab's guests can call the visitors.** The links that bring the UFO, the whale, the mole or the green boat right away work again on the site for whoever entered the lab with a key; players without one still only meet them by chance.
+
+## 0.173.16 — 2026-10-16
+- **Tren en Vilo (lab): the visitors only come by chance.** The links that called the UFO, the whale, the mole or the green boat right away no longer work on the site; they stay for testing in the workshop.
+
+## 0.173.15 — 2026-10-16
+- **Tren en Vilo (lab): the wake rider can sink.** A fourth act for the green boat (`?wake=sink`): the rider goes under, only the head pops up, and the boat comes back for them with a small orange flag raised.
+
+## 0.173.14 — 2026-10-16
+- **Tren en Vilo (lab): the wake rider holds a rope.** The green boat has a tower roof at its stern, and a black rope runs from it to the rider's hands while carving and jumping (let go when falling).
+
+## 0.173.13 — 2026-10-16
+- **Tren en Vilo (lab): the green boat can be seen on a phone.** It comes out from just behind a cliff, slower, instead of from the screen's edge, so on narrow water it no longer crosses in four seconds half hidden.
+
+## 0.173.12 — 2026-10-16
+- **Tren en Vilo (lab): a fourth visitor.** A petrol-green boat crosses the water with a wake surfer riding its wave: carving it, jumping off its crest, or falling in and getting picked up as the boat turns back (`?wake`, `?wake=carve|jump|fall`).
+
+## 0.173.11 — 2026-10-16
+- **Tren en Vilo (lab)** budgets metres of wood again, as in the tests: each beam costs its length.
+
+## 0.173.10 — 2026-10-16
+- **Tren en Vilo, in the lab** (`/labs/bridges/`): build a bridge with wooden beams so the train crosses, over five stages against the clock, drawn in pixel art. Only in the lab for now.
+
+## 0.173.9 — 2026-10-16
+- **Docs:** D-337 records the 1.5 s wait before Tango marks a clash.
+
+## 0.173.8 — 2026-10-16
+- **La Copa:** a day's card now says how long its game stays open: "Puedes jugarlo hasta mañana a las 23:59 (48 h)", in the four languages. Every day except the final has 48 hours (that day and the next one).
+
+## 0.173.7 — 2026-10-16
+- **La Copa: "Tus copas" keeps every finished cup.** "Mostrar copas terminadas" now lists all the cups you played, newest first, instead of only those that ended in the last week.
+
+## 0.173.6 — 2026-10-16
+- **Tango (La Copa): a clash turns red 1.5 s after you move on.** Breaking a rule and then tapping another cell (or filling the board) no longer paints the red, plays the error sound and bumps the counter in the same instant: they wait 1.5 s, so the player can finish the thought. What counts in the score does not change.
+
+## 0.173.5 — 2026-10-16
+- **A dragged card no longer stays floating on screen.** If the finger was lifted where the browser did not report it (it happened when creating a Cup: the 🖌️ Pintaminas card stayed stuck over La Copa's Administrar), the card now always comes down. This applies to every drag: La Copa's week, Línea de Tiempo, Dónde and Batalla Naval.
+
+## 0.173.4 — 2026-10-16
+- **La Copa: on a day's cover, the top-left button is "‹ Volver a la copa".** Before playing a day, it now says so and returns to the cup's board instead of the app's menu, and the "Volver a la copa" button at the bottom of that screen is gone.
+
 ## 0.173.3 — 2026-10-15
 - **The "New" sticker turns around:** it is now dark, with the home page title's rainbow running through its letters; it keeps its white edge, glow and wobble.
 
