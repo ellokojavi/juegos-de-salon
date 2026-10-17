@@ -35,6 +35,7 @@ import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
+import { salidasFin } from '../assets/js/fin.js';
 import { formularioComentario, abrirComentario, campoCorreo } from '../assets/js/labs-idioma.js';
 import { enlaceBuzon, ponerBuzon, sinDoble } from '../assets/js/buzon.js';
 import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js';
@@ -1189,7 +1190,9 @@ function podio() {
     medalla(T.medalWins, m.ganador?.filas, m.ganador ? ` (${m.ganador.n})` : ''),
     medalla(T.medalComeback, m.remontada?.filas, m.remontada ? ` (+${m.remontada.n})` : ''),
     medalla(T.medalLast, m.farolito),
-    el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%', id: 'btn-resumen', onClick: ev => conBoton(ev, compartirTabla) }, T.shareSummary));
+    el('button', { class: 'btn btn--cyan btn--sm', style: 'width:100%', id: 'btn-resumen', onClick: ev => conBoton(ev, compartirTabla) }, T.shareSummary),
+    // The Cup is over: its way out, right under the podium (C-19)
+    salidasFin('podio', { lang: LANG, raiz: RAIZ }));
 }
 
 /* ------------------------------------------------------------------ */
@@ -2144,11 +2147,14 @@ function resultado(d, { recien = false, det = null } = {}) {
     el('p', { class: 'lead center' }, cerrado(meta, d, now) || terminada(meta, now)
       ? fmt(T.finalPos, { pos: ord(yo.pos), n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: ord(yo.pos), n })),
-    explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d) }),
+    // The end-screen order (C-19): the way back to the board first, then the next-day notice and share;
+    // the breakdown folded and the day table below, so the buttons show without scrolling (C-8)
+    el('button', { class: 'btn btn--yellow', id: 'btn-volver', onClick: () => { SFX.tap(); S.verDia = null; tablero(); } }, T.toBoard),
     // Ofrece avisar del próximo día que todavía no se abre: no siempre es d + 1 (un día viejo, o
     // jugado con el siguiente ya abierto)
     diaActual(meta, now) < meta.days && !terminada(meta, now) ? avisos().tarjeta({ dia: diaActual(meta, now) + 1 }) : null,
     el('button', { class: 'btn btn--cyan', id: 'btn-tarjeta', onClick: ev => conBoton(ev, () => compartirResultado(d)) }, T.shareCard),
+    explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d) }),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.dayTable),
       el('div', { class: 'tabla' }, ranking.map(j => el('div', { class: 'fila' + (j.pid === S.yo ? ' yo' : '') },
         el('span', { class: 'lugar' }, `${pos[j.pid].pos}`),
@@ -2161,7 +2167,6 @@ function resultado(d, { recien = false, det = null } = {}) {
           // En la final, las cinco rondas de cada uno (⏳75 🔢85 …), para comparar ronda a ronda (#259)
           id === 'final' && Lc.results[d][j.pid].t ? el('small', { class: 'muted rondas' }, Lc.results[d][j.pid].t) : null),
         el('span', { class: 'total' }, `+${pos[j.pid].pts * multiplicador(Lc, d, j.pid)}`))))),
-    el('button', { class: 'btn btn--yellow', id: 'btn-volver', onClick: () => { SFX.tap(); S.verDia = null; tablero(); } }, T.toBoard),
     botonReporte({ juego: id, dia: d }),
   );
 }
@@ -2203,9 +2208,9 @@ function bajoElPuntaje(t, ms) {
  * mira después (el desglose no se guarda en la copa), la regla del juego. En la copa suma cómo el
  * lugar del día se vuelve puntos, y si ese día valía el doble.
  */
-function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
+function explicacion(J, { s, ms, det, x = 1, final = false, copa = true, abierto = !copa }) {
   const lineas = det?.length ? det : [puntajeTexto(J, copa)];
-  return el('details', { class: 'panel explicacion', id: 'explicacion', open: true },
+  return el('details', { class: 'panel explicacion', id: 'explicacion', open: abierto },
     el('summary', { class: 'lead' }, `🧮 ${T.bdTitle}`),
     el('ul', {}, lineas.map(t => el('li', {}, t))),
     det?.length ? el('p', { class: 'explicacion-total' }, fmt(s === 1 ? T.bdTotalOne : T.bdTotal, { s })) : null,
@@ -2230,7 +2235,7 @@ function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
  */
 const volverDePractica = () => (LABS
   ? el('a', { class: 'btn btn--ghost btn--sm', href: `${RAIZ}labs/` }, T.backToLabs)
-  : el('a', { class: 'btn btn--ghost btn--sm', href: RAIZ }, T.backToMenu));
+  : salidasFin('suelto', { lang: LANG, raiz: RAIZ }));
 
 /**
  * The variant of a standalone game (D-331): the link's (`?mode=hard`; Pintaminas' `?colors=2`
@@ -2533,8 +2538,9 @@ function resultadoPractica(id, semilla, r, variante = null) {
     hoy ? null : el('a', { class: 'btn btn--yellow', id: 'btn-otra', href: otra }, diario ? T.casoOtro : T.practiceAgain),
     deHoy ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: paginaSuelta(id) }, `📅 ${T.casoDeHoy}`) : null,
     LABS && !hoy && !diario ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}${otra.includes('?') ? '&' : '?'}seed=${semilla}` }, T.practiceSame) : null,
+    // One a Day's exits are in its card (C-19); the rest go back to the menu (or the lab), before 🐞
+    hoy ? null : volverDePractica(),
     enLab ? null : botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
-    volverDePractica(),
     ranking,
     // En la página de un juego del laboratorio, el comentario va abierto y al final de todo (D-265, D-268)
     enLab ? formularioComentario({ T: TB(), enviar: enviarComentario(), contexto: {

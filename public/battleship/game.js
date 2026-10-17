@@ -784,12 +784,13 @@ function renderResult(v) {
       el('ol', {}, ...repliesBy(r).map(s => el('li', {}, el('span', {}, s.cell), el('span', { class: 'r ' + s.result }, T[s.result] + (s.ship ? ` ${SHIP_EMOJI}` : '')))))));
   }
   if (!already) { if (!meRole || meRole === v.winner) { confetti({ count: 220, duration: 3500 }); SFX.win(); } else SFX.siren(); }
-  renderResultActions();
-  // Uno al día: la tarjeta va arriba de los botones; el resultado del juego queda como siempre
-  if (S.hoy) {
+  // One a Day: the card goes under the hero and carries the screen's actions and exits (C-19)
+  if (!S.hoy) renderResultActions();
+  else {
+    $('#result-actions').innerHTML = '';
     const mios = repliesBy('A');
     const s = puntajeNaval({ gano: v.winner === 'A', disparos: mios.length, aciertos: mios.filter(x => x.result !== 'agua').length });
-    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }), $('#result-actions'));
+    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }));
   }
 }
 
@@ -798,8 +799,7 @@ function renderResultActions() {
   const o = S.mode === 'online' ? other(S.role) : null;
   const waiting = S.mode === 'online' && M.rematch[S.role] && !M.rematch[o];
   box.append(
-    // En Uno al día no hay revancha: la tarjeta ya ofrece jugar otro o repetir el de hoy (#226)
-    S.hoy ? null : waiting ? el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.rematchWaiting, { name: M.names[o] }))) : el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, busy: COMMON[lang].opening, reset: () => { S.switching = false; } }) }, T.rematch),
+    waiting ? el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.rematchWaiting, { name: M.names[o] }))) : el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, busy: COMMON[lang].opening, reset: () => { S.switching = false; } }) }, T.rematch),
     el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode),
     el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
   );

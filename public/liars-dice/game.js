@@ -515,16 +515,14 @@ function renderResult(v) {
 
   const acciones = $('#result-actions');
   acciones.innerHTML = '';
-  // Uno al día: la tarjeta va arriba de los botones; el resultado del juego queda como siempre.
+  // One a Day: the card goes under the hero and carries the screen's actions and exits (C-19).
   // Perdiendo, cuentan las rondas que aguantó: todas menos la que lo dejó sin dados.
   if (S.hoy) {
     const gano = v.winner === 'A';
     const s = puntajeDudo({ gano, dados: v.st.A.dice, rondas: gano ? v.history.length : v.history.length - 1 });
-    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }), acciones);
-  }
-  acciones.append(
-    // En Uno al día no hay revancha: la tarjeta ya ofrece jugar otro o repetir el de hoy (#226)
-    S.hoy ? null : el('button', {
+    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }));
+  } else acciones.append(
+    el('button', {
       class: 'btn btn--yellow',
       onClick: e => {
         if (S.mode !== 'online') return startMatch(S.mode, M.names, M.config);
