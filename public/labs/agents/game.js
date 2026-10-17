@@ -98,9 +98,10 @@ function portada() {
     el('div', { class: 'portada' },
       el('div', { class: 'titulo-sello' }, tituloJuego(), el('span', { class: 'sello sello--rojo sello--titulo' }, T.clasificado)),
       el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), demo),
-    el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
     SEMILLA_URL ? null : el('p', { class: 'muted center', style: 'margin:0' }, `📅 ${T.hoy}`),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
+    // The steps go after Empezar, so it is seen without scrolling on a small phone (U-39)
+    el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
   ].filter(Boolean));
   pieComentario('portada');
   const vez = ++demoVez;

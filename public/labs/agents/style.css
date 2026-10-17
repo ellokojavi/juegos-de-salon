@@ -137,3 +137,8 @@
 .tablero-entero > summary { min-height: 44px; }
 /* Plegado, el volteo empieza al abrirlo: sin la espera de 0,9 s que dejaba pasar al sello, el panel no se ve vacío al tocarlo (U-3) */
 .tablero-entero .tablero--fin .carta { animation-delay: calc(var(--k) * 0.05s); }
+
+/* A short phone (320×568): the demo shrinks, so Empezar is seen without scrolling (U-39) */
+@media (max-height: 600px) {
+  .portada .demo { zoom: 0.72; }
+}

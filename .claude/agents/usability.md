@@ -45,6 +45,8 @@ English. Player-facing texts stay in the app's four languages (C-3), and you rev
      PR touches it shows the tagline, the steps and its card; if the rules, controls, scoring,
      modes or times changed, reread them so they say how the game is played today and fix them in the same PR (a ⚠️
      is a game that changed with the old landing page). Not optional: it is what slips through.
+     The start button above the fold (U-39) is checked by `landing-fold.mjs` in CI; if it goes
+     red, the fix is moving text after the button or shrinking the cover, never a smaller button.
   You do not run what GitHub already runs on the PR (all scripts in `tools/e2e/ci.mjs`, the
   `*.test.mjs` and `og.mjs check`): if the `End to end` check is red, look at what failed there.
   Marketing (point 6) belongs to the round, not the PR. You run at the same time as the

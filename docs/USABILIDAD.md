@@ -6,7 +6,7 @@ issue, para no volver a preguntarla.
 
 Cada regla tiene un ID (U-n) para citarla en los PR y en los issues. Los IDs van por bloques
 (1–18 textos, pantallas y botones; 20–23 interacciones; 30–35 compartir y marketing; la U-36,
-la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renumera.
+la portada al día, va con los textos, and U-39, the start button above the fold, with the screens): U-9 y U-19 nunca se usaron, y no se renumera.
 
 ## Textos
 
@@ -67,6 +67,12 @@ la portada al día, va con los textos): U-9 y U-19 nunca se usaron, y no se renu
 
 - **U-16 · Las reglas están a mano sin estorbar:** plegadas debajo del tablero en cada juego
   (D-133), con las mismas palabras de los botones.
+- **U-39 · The start button is seen without scrolling** (D-344, #464). On every game's landing
+  page the main action —Empezar, or the first mode of the picker— shows whole in the first screen
+  of a small phone (320×568) and a common one (375×667), in the four languages. The order is
+  cover, title, language, the button, and then «Cómo se juega» and the rest; a cover that does not
+  fit shrinks on a short screen. `node tools/e2e/landing-fold.mjs` checks it on every PR over the
+  `intro` path of each game in `tools/e2e/paths.mjs`: a new game is checked as soon as it has one.
 - **U-17 · El botón dice la acción, nada más:** verbo y objeto, en una sola línea a 320 px (unos
   18 caracteres). Lo que haya que explicar va en el texto de arriba. Si dos botones se parecen,
   se distinguen en la palabra principal y no con una cola ("Jugar de nuevo" / "Repetir esta
