@@ -45,7 +45,9 @@ could have been crossed (the catalog's bridge, the train looping over it).
 
 ## The scene
 
-Pixel art from `pixel.js` (sprites, particles): the train with smoke, steam and headlight, sparks
+Pixel art from `pixel.js` (sprites, particles): the train with smoke, steam and headlight, which looks as
+heavy as it is (`trenDe`): old passenger cars at weight ×1, then flatcars with crates, logs, coal and
+containers, and a green freight locomotive from ×1,75; sparks
 when a beam snaps, a splash when something falls, birds now and then. One character per game, at a
 random stage and moment: a flying saucer (`?ovni`, `?ovni=mira|pesca`), a whale (`?ballena`,
 `?ballena=salto|chorro`) a mole that tunnels through a cliff (`?topo`, `?topo=anteojos|minero`), or a petrol-green boat
