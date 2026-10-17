@@ -12,8 +12,11 @@
  * Además (D-103): **borrar todo**, que pide un segundo toque para confirmar; una **pista** que
  * revela una casilla y cuesta 15 puntos, también con segundo toque; y **consejos** para cuando
  * uno se queda atascado. Las jugadas son los índices tocados, 'C' (borrar todo) y { h } (pista).
+ * ↩️ Undo (D-342) takes back the last tap or Clear all, one per tap; it is a play too ('U'), so an
+ * error already counted stays counted and a hint stays revealed.
  */
 import * as motor from './engine.js';
+import { botonDeshacer } from '../deshacer.js';
 
 const ICONO = { [motor.SOL]: '☀️', [motor.LUNA]: '🌙' };
 const CLASE = { [motor.SOL]: 'sol', [motor.LUNA]: 'luna' };
@@ -150,6 +153,11 @@ export function montar(raiz, ctx) {
     if (errores || e.pistas) caja.append(el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.tangoCount, { e: errores, p: e.pistas })));
     if (!e.fin) {
       caja.append(el('div', { class: 'btn-row tango-acciones' },
+        // Undo is not a cell tap: it neither sounds a clash nor restarts the red wait's count
+        botonDeshacer({ el, T, SFX, vibrate, puede: e.deshacibles > 0, alDeshacer: () => {
+          armado = null; clearTimeout(armadoTimer);
+          jugadas.push(motor.DESHACER); ctx.guardar(jugadas); dibujar();
+        } }),
         conConfirmacion('borrar', `🧹 ${T.clearAll}`, T.clearAllSure, () => { SFX.splash(); jugar(motor.BORRAR); }, { id: 'btn-borrar' }),
         conConfirmacion('pista', `💡 ${fmt(T.hintCost, { n: motor.COSTO_PISTA })}`, fmt(T.hintSure, { n: motor.COSTO_PISTA }), () => {
           const i = motor.pista(p, e.g, e.fijas);
