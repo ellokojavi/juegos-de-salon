@@ -22,7 +22,7 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
   still standing.
 - Each stage has a budget of metres of wood (each beam costs its length; the old catalog counted beams), shown under the
   board as it is spent. The screen's title is the stage ("Etapa 2 de 5"), and under it, always in view, the
-  train's weight: normal, or how much heavier it is (it used to be a sign that slid over the board and went).
+  train's weight, drawn small beside it (`trenMini`: the locomotive and a wagon as they will cross): normal, or how much heavier it is (it used to be a sign that slid over the board and went).
 
 - Beams join only at their ends. Where one crosses another away from their ends, or runs over a bolt it
   doesn't end at, it is drawn in front with a dark edge (`pasoPorEncima()`), so it doesn't read as
