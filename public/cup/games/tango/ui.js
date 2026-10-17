@@ -80,11 +80,15 @@ export function montar(raiz, ctx) {
   };
 
   /** Un botón que pide confirmación con un segundo toque (el primero solo lo arma). */
+  // Armed, a button keeps the width it had: its long phrase does not push it down a line, so the
+  // confirming tap lands on it and not on ↩️ Undo, which would take its place (as in Reinas, D-283)
+  let anchoArmado = 0;
   const conConfirmacion = (clave, rotulo, rotuloArmado, accion, attrs = {}) => el('button', {
     type: 'button', class: 'btn btn--ghost btn--sm' + (armado === clave ? ' armado' : ''), ...attrs,
-    onClick: () => {
+    style: armado === clave && anchoArmado ? `flex: 0 0 ${anchoArmado}px` : null,
+    onClick: ev => {
       if (armado === clave) { armado = null; clearTimeout(armadoTimer); accion(); return; }
-      armado = clave; SFX.tap(); vibrate(15);
+      armado = clave; anchoArmado = ev.currentTarget.getBoundingClientRect().width; SFX.tap(); vibrate(15);
       clearTimeout(armadoTimer);
       armadoTimer = setTimeout(() => { armado = null; if (raiz.isConnected) dibujar(false, false); }, CONFIRMAR_MS);
       dibujar(false, false);
