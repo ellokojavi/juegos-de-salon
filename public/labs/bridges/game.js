@@ -8,7 +8,7 @@ import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
 import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S, costo, costoViga } from './engine.js';
-import { pixelado, particulas, LOCO, VAGON, CHIMENEA, PALETA_TREN, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, PALETA_LANCHA, SURFISTA, PALETA_SURFISTA } from './pixel.js';
+import { pixelado, particulas, LOCO, CHIMENEA, trenDe, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, PALETA_LANCHA, SURFISTA, PALETA_SURFISTA } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // The visitors' parameters are internal (the owner's request): they work in the workshop (a local server,
@@ -542,6 +542,8 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   if (sim) {
     // The wheel frame, from the distance run (positive also while the train is still left of the gap)
     const tr = sim.tren, cuadro = ((Math.floor(tr.x * 7) % 6) + 6) % 6;
+    // Its look follows its weight: old passenger cars at first, bigger loads on the heavier stages
+    const { vagon: VAGON, paleta: PALETA_TREN } = trenDe(e.carga);
     const piezas = PIEZAS.map((pz, k) => ({ x: tr.x + pz.dx, k, loco: k === 0, spr: k === 0 ? LOCO[cuadro % 3] : VAGON[(cuadro + k) % 2] }));
     if (tr.cayo && !esc.caida) esc.caida = { dy: 0, vy: 0, salpico: false };
     if (esc.caida) { esc.caida.vy += 220 * dt; esc.caida.dy += esc.caida.vy * dt; }
