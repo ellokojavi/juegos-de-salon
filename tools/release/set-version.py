@@ -8,7 +8,7 @@ the pages of `public/` in git carry no version, so two open PRs no longer collid
 - Writes a <script type="importmap"> in every page that loads modules, mapping ALL the site's JS
   modules (**/*.js, D-192) to the same path with ?v=KEY. Import maps also apply to nested imports
   (a module that imports another) and to dynamic import().
-- Adds ?v=KEY to the stylesheets, to the site's classic scripts (`vigia.js`, D-251) and to the
+- Adds ?v=KEY to the stylesheets, to the module preloads (`<link rel="modulepreload">`), to the site's classic scripts (`vigia.js`, D-251) and to the
   social card images (og:image, twitter:image), so a change of drawing does not get stuck in
   WhatsApp's cache (D-72).
 - Puts the version number in the menu footer.
@@ -70,6 +70,9 @@ def stamp(site, number, key):
                     sys.exit(f'{path}: it loads modules and has no stylesheet to put the import map before')
                 html = html.replace('  <link rel="stylesheet"', '  ' + block + '\n  <link rel="stylesheet"', 1)
             html = re.sub(r'(<link rel="stylesheet" href="[^"?]+)(\?v=[^"]*)?"', lambda m: f'{m.group(1)}?v={key}"', html)
+            # The preloads are URLs, not specifiers: the import map does not reach them, and without
+            # the version they would fetch a file the page then fetches again with it
+            html = re.sub(r'(<link rel="modulepreload" href="[^"?]+)(\?v=[^"]*)?"', lambda m: f'{m.group(1)}?v={key}"', html)
             # The site's classic scripts (the watchdog, D-251): the import map does not reach them
             html = re.sub(r'(<script src="(?![a-z]+:|//)[^"?]+\.js)(\?v=[^"]*)?"', lambda m: f'{m.group(1)}?v={key}"', html)
             html = re.sub(r'v\d+\.\d+\.\d+ ·', f'v{number} ·', html)

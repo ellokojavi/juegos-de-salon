@@ -67,6 +67,13 @@
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <script src="assets/js/vigia.js"></script>
   <link rel="stylesheet" href="assets/css/base.css">
+  <!-- One a Day's card and the modules only it brings, fetched with the page and not one after another
+       (they used to arrive 1.4 s late on a slow network) -->
+  <link rel="modulepreload" href="assets/js/uno-al-dia.js">
+  <link rel="modulepreload" href="assets/js/uno-al-dia-ui.js">
+  <link rel="modulepreload" href="assets/js/records.js">
+  <link rel="modulepreload" href="cup/games/semilla.js">
+  <link rel="modulepreload" href="timeline/engine.js">
   <style>
     .hero { text-align: center; padding: 28px 0 18px; }
     .hero .emoji { font-size: 3.2rem; display: block; margin-bottom: 6px; }
@@ -318,6 +325,7 @@
     .uad-card h2 > span:first-child { background-image: linear-gradient(180deg, #d9fffb, var(--cyan) 60%, #19b8ab); }
     .uad-card { border-color: rgba(255, 46, 136, 0.6); background: linear-gradient(160deg, rgba(255, 95, 165, 0.42), rgba(138, 77, 255, 0.38)); box-shadow: 0 0 22px rgba(255, 46, 136, 0.22); color: var(--ink); }
     .uad-card.hecho { border-color: rgba(46, 230, 214, 0.6); background: linear-gradient(160deg, rgba(46, 230, 214, 0.32), rgba(138, 77, 255, 0.3)); }
+    .uad-card.reserva .emoji span { opacity: 0.5; }
     .uad-card .tag { color: rgba(255, 255, 255, 0.88); }
     .uad-card .meta .uad-card-estado { background: rgba(0, 0, 0, 0.32); white-space: normal; }
     .uad-card .btn-uad-punto { top: 10px; right: 10px; }
@@ -369,6 +377,7 @@
     import { SFX, soundToggle, initSound } from './assets/js/sound.js';
     import { botonAzar, TEXTOS as AZAR } from './assets/js/azar.js';
     import { favoritos, alternarFavorito } from './assets/js/favoritos.js';
+    import { param } from './assets/js/parametros.js';
     import { trackVisit } from './assets/js/transport/stats.js';
     trackVisit(); // el tráfico del sitio (D-208)
     sparkles();
@@ -457,16 +466,22 @@
     }));
     // Uno al día (D-230): el juego de hoy, el mismo para todos. Va en una tarjeta de media fila junto
     // a La Copa (D-239, lo que eligió el dueño); ?daily=button lo pone al lado del dado, como antes
-    import('./assets/js/uno-al-dia.js').then(async ({ formaAcceso }) => {
+    // The row is drawn now, with an empty card in One a Day's place, so La Copa does not first show
+    // at full width and then jump when the modules arrive
+    const copa = tarjetas.find(t => t.g.torneo)?.card;
+    const reserva = !['button', 'off'].includes(param('daily')) && copa
+      && el('div', { class: 'game-card alta uad-card reserva', 'aria-hidden': 'true' }, el('div', { class: 'emoji' }, el('span', {}, '📅')));
+    if (reserva) {
+      const fila = el('div', { class: 'fila-alta' });
+      copa.replaceWith(fila);
+      copa.classList.add('alta');
+      fila.append(copa, reserva);
+    }
+    Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
       if (formaAcceso() === 'off') return;
       import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});
-      const { botonUnoAlDia, tarjetaUnoAlDia } = await import('./assets/js/uno-al-dia-ui.js');
-      const copa = tarjetas.find(t => t.g.torneo)?.card;
-      if (formaAcceso() === 'card' && copa) {
-        const fila = el('div', { class: 'fila-alta' });
-        copa.replaceWith(fila);
-        copa.classList.add('alta');
-        fila.append(copa, tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() }));
+      if (formaAcceso() === 'card' && reserva) {
+        reserva.replaceWith(tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() }));
       } else {
         const slot = document.getElementById('azar-slot');
         slot.classList.add('con-uad');
