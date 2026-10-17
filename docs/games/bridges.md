@@ -79,10 +79,13 @@ random stage and moment: a flying saucer (`?ovni`, `?ovni=mira|pesca`), a whale 
 `?ballena=salto|chorro`) a mole that tunnels through a cliff (`?topo`, `?topo=anteojos|minero`), or a petrol-green boat
 with a wakeboarder towed from its tower roof by a black rope, riding its wave (`?wake`, `?wake=carve|jump|fall|sink`: carving the wave, a jump off its
 crest, a fall and the boat turning back to pick the rider up, or the rider sinking, only the head popping up,
-and the boat coming back with a small orange flag raised).
+and the boat coming back with a small orange flag raised). The boat comes out from just behind a cliff and
+crosses slowly, not from the screen's edge, so it stays in view over a phone's narrow water.
 It comes 5 to 25 s into its stage; if the stage is passed first, it moves to the next one and comes
 3 s in (`mudarVisita`), and one that doesn't fit the crossing (the whale in narrow water, the mole with
 no rock to dig) hands over to the boat or the saucer (`noCabe`). These only appear in the game, never on the cover.
+The cover (`portada()`) loops a demo train over a bridge; once it is gone, the empty bridge rests 3 to 5 s
+before the next one comes.
 Their parameters are internal: they work from a local server or the Tailscale link, and on the site
 only for someone who came in with a lab key (`INTERNO` in `game.js`), so a player without one never
 calls a visitor by hand.
