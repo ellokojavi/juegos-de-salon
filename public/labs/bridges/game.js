@@ -811,7 +811,7 @@ function empezar() {
  * button, a tap anywhere, or on its own after `FELICITA_MS`, with a bar that empties until then. The
  * game's clock stops while it is open.
  */
-const FELICITA_MS = 6000;
+const FELICITA_MS = 10000;
 function felicitar(e, k, seguir) {
   const F = T.felicita, a = puntajePartida(P.usadas, 0, P.etapas, P.picos).ahorros[k], abierta = Date.now();
   const segs = Math.round((abierta - (P.inicioEtapa || abierta)) / 1000), ultima = P.hechas >= P.etapas.length;
