@@ -81,10 +81,13 @@
         <span class="icon">🍹</span>
         <h1 class="display display--xl rainbow" data-i18n="title">Julepe</h1>
         <p class="lead" data-i18n="lead"></p>
-        <p class="muted" data-i18n="leadExplain"></p>
         <div id="lang-slot" style="margin-top:6px"></div>
       </div>
       <div class="stack">
+        <div id="resume-slot"></div>
+        <div class="modes" id="modes"></div>
+        <!-- The rules go after the main action, so it is seen without scrolling (U-39) -->
+        <p class="muted center" style="margin:0" data-i18n="leadExplain"></p>
         <div class="panel">
           <p class="lead" style="margin:0 0 6px" data-i18n="beforeTitle">🍹 Antes de partir</p>
           <p class="muted" data-i18n-html="beforeText"></p>
@@ -93,8 +96,6 @@
           <summary data-i18n="rulesSummary">🍹 ¿Cómo se juega?</summary>
           <ol class="rules-list" id="rules-list"></ol>
         </details>
-        <div id="resume-slot"></div>
-        <div class="modes" id="modes"></div>
         <div class="stack" id="rk-slot"></div>
       </div>
     </section>

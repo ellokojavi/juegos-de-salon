@@ -706,8 +706,9 @@ function portada() {
   const c = lienzo(e, { arriba: 1.9, abajo: -2.2 });
   vista.replaceChildren(
     el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), el('div', { class: 'tv-demo', 'aria-hidden': 'true' }, c)),
-    el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
-    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); parar(); empezar(); } }, T.empezar));
+    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); parar(); empezar(); } }, T.empezar),
+    // The steps go after Empezar, so it is seen without scrolling on a small phone (U-39)
+    el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))));
   c._ajustar();
   let sim = crearSim(e, DEMO), vivo = true;
   window.__portada = () => sim;

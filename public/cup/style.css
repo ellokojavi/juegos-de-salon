@@ -719,3 +719,9 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .anio-juego .entry { align-items: center; gap: 8px; }
 .anio-era-marca { font: 900 1.05rem var(--font-body); color: var(--yellow); white-space: nowrap; margin-left: 8px; }
 .anio-era-marca[hidden] { display: none; }
+
+/* A short phone (320×568): the cover above the title shrinks, so Empezar is seen without
+   scrolling (U-39). zoom, not transform: it gives the space back to the page. */
+@media (max-height: 600px) {
+  .intro-hero > :first-child:not(h1):not(h2):not(p) { zoom: 0.6; }
+}

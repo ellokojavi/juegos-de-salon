@@ -47,6 +47,7 @@
  "installable.mjs": 21,
  "julep/languages.mjs": 73,
  "julep/local.mjs": 180,
+ "landing-fold.mjs": 243,
  "liars-dice/languages.mjs": 49,
  "liars-dice/local.mjs": 53,
  "paint-mines/game.mjs": 34,
