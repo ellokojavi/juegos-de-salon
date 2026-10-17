@@ -72,6 +72,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-62 | A new game shows a "New" label on its home card for two weeks (D-333). | ✅ v0.172.0 |
 | RP-63 | **Uno al día with every one-player game**: Rutas rotas, Loteo, Pintaminas, Zip, Tango and ¿Dónde queda? join the daily deck (16 games) from the deck shuffled on October 23, 2026, without changing the days already set; a game with variants plays its default one, with no picker (D-334). | ✅ v0.173.0 |
 | RP-64 | While a game carries its "New" label, its card goes right after La Copa on the home page; when the label goes, back to its place by popularity (D-335, dilemma #443). | ✅ v0.173.0 |
+| RP-65 | **"💬 Suggestions and comments" for every player**: a quiet link after the end of every game (group, solo, minigames, One a Day, La Copa's podium) opens a short form with an optional kind, at most once a day and resting two weeks after sending; the home page footer always has it (D-341, U-38, #463). | ✅ v0.175.0 |
 
 ## Cuarto Rey (CR)
 
