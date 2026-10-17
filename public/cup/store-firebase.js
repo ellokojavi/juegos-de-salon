@@ -160,6 +160,11 @@ export function createFirebaseStore() {
       await escribir({ [`torneos/${code}/players/${pid}/out`]: out ? true : null });
     },
 
+    /** Bring back a player out for missing two days in a row (D-347): the days closed before now are forgiven. */
+    async devolver(code, pid) {
+      await escribir({ [`torneos/${code}/players/${pid}/back`]: serverTimestamp() });
+    },
+
     /** Eliminar la copa entera (D-117): la copa, los hashes de los PIN y los asientos, de una vez. */
     async eliminar(code) {
       const alias = (await withTimeout(get(ref(db, `torneos/${code}/meta/alias`)), OP_MS)).val();

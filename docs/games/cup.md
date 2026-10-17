@@ -54,6 +54,7 @@ panel del dueño (D-137).
 | Nombre | El admin lo puede cambiar hasta que la copa termina; el link sigue igual (D-148). |
 | Terminar antes | El admin puede terminar la copa en cualquier momento desde que parte. Nadie más juega, la tabla de ese momento queda como la final y los días que no alcanzaron a abrirse no se juegan ni suman (D-161). |
 | Inscripción | Abierta hasta que empieza la final, salvo que el administrador la cierre o la copa llegue a 10 (quien llega lee por qué no puede entrar: terminó, cerrada, cerrada por el administrador o llena). Los días que ya cerraron quedan con 0; el aviso sale desde el día 3, porque el día 2 el día 1 sigue en su día de gracia (D-177). |
+| Out of the cup | Whoever lets **2 days in a row** close without playing them (each with its grace day) is out (D-347). Their points stay in the table, in grey with 🚪, below everyone still playing; they can't play any more days, the final included, and nobody waits for them (the "missing" lists, the provisional table, the notifications). The day before, the board and the "Before closing" notification warn them. Only days that closed after they signed up count, and the last two days never do: they close with the cup. The admin can **bring them back** («Devolver a la copa»): the days missed before that are forgiven. It is not the admin removing someone (`out`). |
 | Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final; si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen cuál de los dos criterios decidió (dilema #79). Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "al descenso" (el último). |
 
@@ -118,7 +119,7 @@ Recién creada, la copa abre en **Administrar** con una guía para invitar (D-11
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
 mientras nadie haya jugado. `?test&demo=<escena>` abre una copa de ejemplo en cualquier
 punto (`public/cup/demo.js`: `new`, `guest`, `waiting`, `not-started`, `player`, `admin`, `final`,
-`final-admin`, `podium`, `full`; los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262).
+`final-admin`, `podium`, `full`, and `out` and `risk` for D-347; los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105; la capa es
 `assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`, y la usa
@@ -303,7 +304,7 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   minutos, y `tools/push/schedule.mjs` decide con `engine.js` qué toca, en la hora y el idioma
   del celular y nunca entre las 22:00 y las 8:00: **se abrió el día** (desde las 9:00, si no lo ha
   jugado ni empezado), **se te acaba el plazo** (4 horas antes del cierre, o desde las 20:00 si
-  cierra de noche), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
+  cierra de noche; to whoever already missed the day before, it also says that missing this one leaves them out of the cup, D-347; whoever is out gets nothing more), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
   que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta, y dos
   por copa en un día (D-229). Los textos son los `avMsg*` de `rules.js`. Al tocarlo abre ese día
   (`&day=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
@@ -329,7 +330,7 @@ No tiene: no hay sala ni mensajes entre celulares. Cada celular escribe su resul
 
 ```
 torneos/<código>/meta               nombre, días, calendario (cal), ventanas, admin, joinUntil, final, idioma (lang), público (aud), zona (tz)
-torneos/<código>/players/<pid>      { name, at, out?, co?, j? }   co: país, al inscribirse o al volver a abrir (D-207, D-209); j: su jugador de los rankings (D-212)
+torneos/<código>/players/<pid>      { name, at, out?, back?, co?, j? }   back: when the admin brought them back after being out of the cup (D-347); co: país, al inscribirse o al volver a abrir (D-207, D-209); j: su jugador de los rankings (D-212)
 torneos/<código>/started/<d>/<pid>  hora del servidor al tocar Empezar
 torneos/<código>/results/<d>/<pid>  { s, ms, t, r, at }
 torneos/<código>/wild/<pid>         "3" (el día del comodín, como texto)
@@ -342,7 +343,7 @@ pushEnviados/<código>/<subId>/<clave>  hora en que se entregó ese aviso (dia:3
 
 Las reglas imponen: escribir una sola vez, las ventanas de cada día con la hora del servidor, el
 comodín antes de Empezar y fuera de la final, la inscripción antes de la final y que solo el admin
-renombre, saque o cambie PINes. El árbol no se llama `copas` porque las reglas no pueden nombrar
+renombre, saque o cambie PINes, and that a player out of the cup (D-347) can't press Empezar. El árbol no se llama `copas` porque las reglas no pueden nombrar
 juegos (C-16, `public/panel/adapta.test.mjs`).
 
 ## Archivos

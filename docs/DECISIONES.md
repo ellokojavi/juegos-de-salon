@@ -75,7 +75,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347 |
 | Agentes (usabilidad, documentación, procesos, atención) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -6509,3 +6509,40 @@ would let through. Checked: it fails on #482's `game.js` ("/labs/bridges throws:
 passes on main's 34 pages.
 **Alternatives discarded:** a level the author picks by hand (it drifts); everything on every PR (what
 D-329 left behind).
+
+## D-347 · Out of the cup after two days in a row without playing
+**Date:** 2026-10-17 · **Status:** current · **Relation:** new rule of La Copa; complements D-147 (provisional table), D-161 (closing early) and D-224 (notifications)
+**Context:** the owner's request: a player who stops playing should be left out automatically, and
+it should be seen both on their own board and in the table everyone sees. Until now a missed day
+was just 0 points: the absent player kept the table "provisional", appeared in every "missing"
+list and got the reminders.
+**Decision:** whoever lets **2 days in a row** close without playing them is **out of the cup**.
+Agreed with the owner: 2 days, in a row (not in total), always on (not an option when creating the
+cup), with a warning before and the admin able to bring them back.
+- **When:** a day counts as missed when it closes with its grace day and there is no result.
+  Only days that closed after the player signed up count (a late signup starts clean), never the
+  days the admin's early close left unopened (D-161), and never the last two days: they close with
+  the cup, when there is nothing left to leave.
+- **What stays:** their points. They stay in the table, grey, with 🚪 instead of a place and
+  "(fuera)", below everyone still playing. They can't press Empezar (the Firebase rules refuse it);
+  nobody waits for them: `faltan()` leaves them out, so the provisional table, the lists and the
+  closing confirmation don't count them, and they get no more notifications.
+- **What they see:** a notice on top of their board ("🚪 Quedaste fuera de la copa…"), with what to
+  do if it was a mistake: ask the admin.
+- **The warning:** with one day already missed, the board says which day to play before it
+  closes, and the "Before closing" notification says that missing it leaves them out.
+- **Bring back:** the admin's player list shows why someone is out and offers «Devolver a la
+  copa». It stores `players/<pid>/back` (server time): the days closed before it are forgiven.
+- **Computed, not stored:** being out comes from the results and the windows (`fuera()` and
+  `enRiesgo()` in `engine.js`); the rules repeat the same condition for each pair of days up to
+  day 6, because they cannot loop.
+**Why:** a missed day already cost its points; what hurt was the absent player holding the cup
+back. Two days, each with its grace, is about three days without showing up: long enough not to
+punish someone who forgot once, short enough for a 7-day cup.
+**Alternatives discarded:** taking them out of the table (their points were real, and the history
+would change); 3 days (in a 5-day cup it would almost never apply); counting days in total (it
+punishes forgetting, not leaving); making it optional (one more choice when creating the cup, and a
+rule that changes between cups).
+**Consequences:** if every player stops playing, all of them are out and the cup goes on with
+nobody able to play it until it ends; the admin can bring them back. The demo has two new scenes
+(`?test&demo=out` and `&demo=risk`) and `paths.mjs` three screens (`out`, `out-table`, `risk`).

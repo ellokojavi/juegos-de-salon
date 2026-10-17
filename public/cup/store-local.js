@@ -7,7 +7,7 @@
  * `?test` en la URL (`?prueba` antes de D-266). Imita las reglas del servidor que importan para jugar: escribir una
  * sola vez, la ventana de cada día, el PIN y el comodín antes de empezar.
  */
-import { aliasHasta, MAX_JUGADORES, faltaGente, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar, terminada, conCierre, puedeCerrar } from './engine.js';
+import { aliasHasta, MAX_JUGADORES, faltaGente, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar, terminada, conCierre, puedeCerrar, fuera } from './engine.js';
 
 const KEY = 'juegos-de-salon:copa:prueba';
 const RELOJ = 'juegos-de-salon:copa:prueba:reloj';
@@ -136,6 +136,8 @@ export function createLocalStore({ uid = null } = {}) {
         if (!sentado(L, pid)) throw falla('permiso');
         if (faltaGente(L)) throw falla('faltan');
         if (!abierto(vista(L), dia, now())) throw falla('ventana');
+        // Out of the cup (D-347), as the Firebase rules refuse it
+        if (fuera({ ...L, meta: vista(L) }, pid, now())) throw falla('permiso');
         L.started[dia] ||= {};
         if (!L.started[dia][pid]) L.started[dia][pid] = now();
       });
@@ -168,6 +170,16 @@ export function createLocalStore({ uid = null } = {}) {
         if (pid === L.meta.admin) throw falla('permiso');
         if (!L.players[pid]) throw falla('no-existe');
         if (out) L.players[pid].out = true; else delete L.players[pid].out;
+      });
+    },
+
+    /** Bring back a player out for missing two days in a row (D-347): only the admin. */
+    async devolver(code, pid) {
+      return cambiar(db => {
+        const L = copa(db, code);
+        if (!esAdmin(L)) throw falla('permiso');
+        if (!L.players[pid]) throw falla('no-existe');
+        L.players[pid].back = now();
       });
     },
 
