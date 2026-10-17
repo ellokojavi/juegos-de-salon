@@ -336,7 +336,8 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   if (visitas && !QUIETO) {
     const [gx0] = A(0, 0), [gx1] = A(e.ancho, 0);
     esc.inicio ??= ahora;
-    if (visitas.ballena && !esc.ballena && ahora - esc.inicio >= visitas.retrasoBallena && gx1 - gx0 > 60) {
+    if (visitas.ballena && !esc.ballena && ahora - esc.inicio >= visitas.retrasoBallena && gx1 - gx0 <= 60) visitas.noCabe('ballena');
+    else if (visitas.ballena && !esc.ballena && ahora - esc.inicio >= visitas.retrasoBallena) {
       visitas.verBallena();
       const dir = Math.random() < 0.5 ? 1 : -1, largo = Math.min(30, (gx1 - gx0) * 0.35);
       const x = dir > 0 ? gx0 + 14 + Math.random() * (gx1 - gx0 - largo - 28) : gx1 - 14 - Math.random() * (gx1 - gx0 - largo - 28);
@@ -502,7 +503,7 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
       const libre = yy => ocupados.every(py => yy - 12 > py + 8 || yy + 5 < py - 4);
       let y = null;
       for (let k = 0; k < 40 && y === null; k++) { const c = Math.round(y0 + 14 + Math.random() * Math.max(4, (yAgua - y0) - 24)); if (libre(c)) y = c; }
-      if (y === null) { esc.topo = { fuera: true }; } else
+      if (y === null) { esc.topo = { fuera: true }; visitas.noCabe('topo'); } else
       esc.topo = { izq, x: izq ? -6 : W + 6, borde: izq ? x0 - 2 : x1 + 2, y, y0: y, t: 0, fase: 'cava', vy: 0, rumbo: 0, camino: [] };
     }
     if (esc.topo && !esc.topo.fuera) {
@@ -759,7 +760,24 @@ function sortearEtapas() {
  * jump, or a fall and a pick-up), once, in one stage. Birds
  * and clouds are the background: they come and go on their own.
  */
+/** The game's visitor: who, in which stage, after how many seconds into it; the others don't come. */
+function asignarVisita(quien, etapa, retraso) {
+  P.ovni = { etapa: quien === 'ovni' ? etapa : -1, retraso, visto: quien !== 'ovni',
+    modo: ['mira', 'pesca'].includes(OVNI_MODO) ? OVNI_MODO : Math.random() < 0.5 ? 'mira' : 'pesca' };
+  P.ballena = { etapa: quien === 'ballena' ? etapa : -1, retraso, visto: quien !== 'ballena',
+    modo: ['salto', 'chorro'].includes(BALLENA_MODO) ? BALLENA_MODO : Math.random() < 0.5 ? 'salto' : 'chorro' };
+  P.topo = { etapa: quien === 'topo' ? etapa : -1, retraso, visto: quien !== 'topo' };
+  P.wake = { etapa: quien === 'wake' ? etapa : -1, retraso, visto: quien !== 'wake',
+    modo: ['carve', 'jump', 'fall', 'sink'].includes(WAKE_MODO) ? WAKE_MODO : ['carve', 'jump', 'fall', 'sink'][Math.floor(Math.random() * 4)] };
+}
+/** A visitor whose stage was passed before its moment moves to the next one and comes a few seconds in. */
+function mudarVisita() {
+  for (const q of ['ovni', 'ballena', 'topo', 'wake']) if (P[q].etapa === P.etapa && !P[q].visto) Object.assign(P[q], { etapa: P.etapa + 1, retraso: 3 });
+}
+
 const visitasDe = () => ({
+  // One that doesn't fit this crossing (the whale in narrow water, the mole with no rock to dig) hands over to one that does
+  noCabe: q => asignarVisita(q === 'ballena' ? 'wake' : 'ovni', P.etapa, 0),
   ovni: P.ovni.etapa === P.etapa && !P.ovni.visto, retraso: P.ovni.retraso, modoOvni: P.ovni.modo, verOvni: () => { P.ovni.visto = true; },
   topo: P.topo.etapa === P.etapa && !P.topo.visto, retrasoTopo: P.topo.retraso, verTopo: () => { P.topo.visto = true; },
   ballena: P.ballena.etapa === P.etapa && !P.ballena.visto, retrasoBallena: P.ballena.retraso, modoBallena: P.ballena.modo, verBallena: () => { P.ballena.visto = true; },
@@ -773,14 +791,7 @@ function empezar() {
     const forzado = OVNI_YA || BALLENA_YA || TOPO_YA || WAKE_YA;
     const quien = OVNI_YA ? 'ovni' : BALLENA_YA ? 'ballena' : TOPO_YA ? 'topo' : WAKE_YA ? 'wake' : ['ovni', 'ballena', 'topo', 'wake'][Math.floor(Math.random() * 4)];
     const etapaSorteada = forzado ? 0 : Math.floor(Math.random() * P.etapas.length);
-    const retraso = forzado ? 0.8 : 5 + Math.random() * 55;   // between 5 s and 1 minute into its stage
-    P.ovni = { etapa: quien === 'ovni' ? etapaSorteada : -1, retraso, visto: quien !== 'ovni',
-      modo: ['mira', 'pesca'].includes(OVNI_MODO) ? OVNI_MODO : Math.random() < 0.5 ? 'mira' : 'pesca' };
-    P.ballena = { etapa: quien === 'ballena' ? etapaSorteada : -1, retraso, visto: quien !== 'ballena',
-      modo: ['salto', 'chorro'].includes(BALLENA_MODO) ? BALLENA_MODO : Math.random() < 0.5 ? 'salto' : 'chorro' };
-    P.topo = { etapa: quien === 'topo' ? etapaSorteada : -1, retraso, visto: quien !== 'topo' };
-    P.wake = { etapa: quien === 'wake' ? etapaSorteada : -1, retraso, visto: quien !== 'wake',
-      modo: ['carve', 'jump', 'fall', 'sink'].includes(WAKE_MODO) ? WAKE_MODO : ['carve', 'jump', 'fall', 'sink'][Math.floor(Math.random() * 4)] };
+    asignarVisita(quien, etapaSorteada, forzado ? 0.8 : 5 + Math.random() * 20);   // between 5 and 25 s into its stage
     P.etapas = sortearEtapas();
     Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], picos: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
     jugar();
@@ -971,7 +982,7 @@ function jugar() {
           if (P.fin) return;
           P.simulando = false;
           if (P.hechas >= P.etapas.length) { terminar('todas'); return; }
-          P.etapa++; P.vigas = []; P.historial = []; P.rotasAntes = new Set(); jugar();
+          mudarVisita(); P.etapa++; P.vigas = []; P.historial = []; P.rotasAntes = new Set(); jugar();
           });
         }, 600);
         return;

@@ -80,7 +80,9 @@ random stage and moment: a flying saucer (`?ovni`, `?ovni=mira|pesca`), a whale 
 with a wakeboarder towed from its tower roof by a black rope, riding its wave (`?wake`, `?wake=carve|jump|fall|sink`: carving the wave, a jump off its
 crest, a fall and the boat turning back to pick the rider up, or the rider sinking, only the head popping up,
 and the boat coming back with a small orange flag raised).
-These only appear in the game, never on the cover.
+It comes 5 to 25 s into its stage; if the stage is passed first, it moves to the next one and comes
+3 s in (`mudarVisita`), and one that doesn't fit the crossing (the whale in narrow water, the mole with
+no rock to dig) hands over to the boat or the saucer (`noCabe`). These only appear in the game, never on the cover.
 Their parameters are internal: they work from a local server or the Tailscale link, and on the site
 only for someone who came in with a lab key (`INTERNO` in `game.js`), so a player without one never
 calls a visitor by hand.
