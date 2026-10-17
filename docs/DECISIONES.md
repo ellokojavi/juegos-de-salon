@@ -6210,7 +6210,7 @@ a flag on `reply` (any session could skip the rule for anyone).
 `send-mail.test.py` checks the exemption is case-insensitive and only for listed addresses.
 
 ## D-328 · Support: a doubt goes to the owner's email, with a public pointer
-**Date:** 2026-10-15 · **Status:** current · **Relation:** follows D-317, D-318 and D-327
+**Date:** 2026-10-15 · **Status:** current, narrowed by D-338 · **Relation:** follows D-317, D-318 and D-327
 **Decision:** Owner's request: when the processes agent isn't sure how to answer a report, it sends
 nothing to the player. `feedback.mjs doubt <n> <notes.txt>` emails the owner (their own account in
 `mail.json`, outside the 24-hour rule) with the doubt, a draft and the report, under the subject
@@ -6349,3 +6349,18 @@ leaving, as before. A clash fixed within the 1.5 s still sounds when it is count
 tapped the next cell, before they had finished the thought.
 **Consequences:** shipped in PR #456. `tools/e2e/cup/tournament.mjs` checks the red is absent right
 after leaving and present 1.5 s later; the `tango clash` path in `tools/e2e/paths.mjs` waits for it.
+
+## D-338 · Support: the agents resolve the trivial, a doubt is only for what needs the owner
+**Date:** 2026-10-16 · **Status:** current · **Relation:** narrows D-328
+**Context:** a `support-doubt` issue (#437) reached the owner about a test kudos ("do we answer this
+kudos again?"), with nothing to decide. The owner: "I can't be the one who resolves everything,
+above all trivial situations".
+**Decision:** the processes agent (and support, within its narrow powers) resolves on its own every
+case with an obvious answer: kudos and repeated kudos (the warm reply, within the 24-hour rule),
+thank-yous, tests of a flow, emails with nothing to act on, duplicates. It decides, acts and notes it
+in its report. `feedback.mjs doubt` is only for what truly needs the owner: a product decision,
+money, a person's data, or a complaint it can't judge.
+**Why:** a doubt costs the owner a read and an answer; the trivial ones had an obvious answer the
+agent could give.
+**Consequences:** the processes guide (`.claude/agents/processes.md`) says it next to the doubt
+step; #437 was closed with no reply sent.
