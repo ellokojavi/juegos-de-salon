@@ -1,5 +1,5 @@
 /**
- * The start button is above the fold (U-39, D-??): on every game's landing page —the `intro` path
+ * The start button is above the fold (U-39, D-344): on every game's landing page —the `intro` path
  * of each game in `paths.mjs`— the main action (the start button, or the first mode of the
  * picker in games that open with one) must be seen whole without scrolling, on a small phone
  * (320×568) and a common one (375×667), in every language (German is the longest).
