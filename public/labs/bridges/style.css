@@ -76,3 +76,8 @@
 .tv-tabla tbody td { vertical-align: top; }
 .tv-leyenda { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 3px; }
 @media (max-width: 380px) { .tv-tabla { font-size: 0.8rem; } }
+
+/* The strain gauge, at the top centre of the board (the sky, clear of the train and the towers) while the train crosses */
+.tv-medidor { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); padding: 4px 6px 2px; border-radius: 12px; background: rgba(20, 8, 31, 0.78);
+  border: 1px solid var(--glass-border); pointer-events: none; line-height: 0; }
+.tv-medidor[hidden] { display: none; }
