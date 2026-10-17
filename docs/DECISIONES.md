@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
-| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342 |
+| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320 |
@@ -6451,6 +6451,30 @@ answer).
 forgiven fresh clash; `tools/e2e/cup/tournament.mjs` taps Undo after Clear all and checks the board
 comes back.
 
+## D-344 · The start button of every landing page is above the fold
+**Date:** 2026-10-17 · **Status:** current · **Relation:** adds U-39; complements U-16 and U-18
+**Context:** owner's to-do (#464): on most landing pages the steps («Cómo se juega») came between
+the title and the start button, so the player had to scroll to find how to start. Measured at
+320×568 and 375×667 in the four languages, 20 of the 24 landings had the button (or the first mode)
+below the fold, up to 750 px down (Tango in German).
+**Decision:** on every landing the main action comes right after the cover, the title and the
+language toggle; the rules, the steps and the scoring go after it (still open, or folded where they
+already were). In the group games the panels move below the modes (and Fourth King's below «¡Armar
+la mesa!»); in La Copa's standalone games and the lab games, below Empezar and the player block;
+Julepe's second lead line goes there too. On a short screen (`max-height: 600px`) the standalone
+games' cover above the title shrinks (`zoom: 0.6`) and so does Agents' demo, which is what made
+Plots, Paint mines and The case miss by a few pixels at 320×568.
+**Why:** the player who opens a game wants to play; the rules are one glance below, and every
+game already repeats them folded under the board (U-16). A rule alone would come back: the check
+does not.
+**Alternatives discarded:** folding the steps above the button (still pushes it down in German and
+hides the drawing); a fixed bottom button (covers the rules and the ranking, and needs a safe-area
+case per phone).
+**Consequences:** `tools/e2e/landing-fold.mjs` measures every `intro` path of `tools/e2e/paths.mjs`
+at both sizes and in every language, and fails when the main button ends below the first viewport.
+It runs in CI (about 4 minutes). La Copa's day lobby (with the wildcard and the warning before
+starting) keeps its order: it is not a landing, and there the rules are read before a timed attempt.
+
 ## D-346 · Test levels: the least testing that keeps the site safe
 **Date:** 2026-10-17 · **Status:** current · **Relation:** builds on D-329 (the page graph); owned by the processes agent (D-273)
 **Context:** the owner: small changes shouldn't run every test, and important ones must not skip them;
@@ -6469,4 +6493,3 @@ would let through. Checked: it fails on #482's `game.js` ("/labs/bridges throws:
 passes on main's 34 pages.
 **Alternatives discarded:** a level the author picks by hand (it drifts); everything on every PR (what
 D-329 left behind).
-

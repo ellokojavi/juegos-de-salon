@@ -106,6 +106,8 @@ public/<carpeta>/
 
 ## C-5 · Modos de juego
 
+On every landing the modes (or the start button) come right after the cover, the title and the language toggle, and the rules and steps go below them (U-39, D-344).
+
 Un juego para dos personas ofrece los tres modos, en este orden en la intro:
 
 1. **📱 Un celular** (pasar y jugar). Es el modo base y el respaldo cuando la red falla.
@@ -476,6 +478,7 @@ Los nombres de antes se siguen leyendo como alias: un link que ya circula no se 
 - [ ] Todo el texto está en español, inglés, portugués y alemán (el de `IDIOMAS`, también el del laboratorio), con las mismas claves en todos, sin cadenas sueltas en el código (C-3, D-191).
 - [ ] Sus pantallas están en `tools/e2e/paths.mjs` y su `languages.mjs` pasa en todos los idiomas (C-12, D-199).
 - [ ] Hay sonido y vibración en las acciones clave, con botón de silencio (C-4).
+- [ ] On its landing the start button (or the first mode) is above the fold at 320×568 and 375×667 in every language, with the rules below it: `node tools/e2e/landing-fold.mjs` green (U-39, D-344).
 - [ ] Los botones tienen 44 px, los botones finales se ven sin desplazar y no hay scroll horizontal (C-8).
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).
 - [ ] Los secretos se comprometen y verifican (C-10).
