@@ -31,6 +31,8 @@ const BALLENA_MODO = URL_INTERNA.get('ballena') || '';
 const WAKE_YA = URL_INTERNA.has('wake');
 // `?wake=sink`: the rider sinks, only the head pops up, and the boat comes back with an orange flag raised
 const WAKE_MODO = URL_INTERNA.get('wake') || '';
+// How long the beams that snapped in the last test blink red, while fixing the bridge
+const PARPADEO_MS = 8000;
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
 const T = {
   nombre: 'Tren en Vilo',
@@ -498,7 +500,8 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   const pos = sim ? i => [sim.nudos[i].x, sim.nudos[i].y] : null;
   const lista = sim ? sim.vigas.map((v, k) => ({ k, a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino }))
     : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0 }));
-  const parpadeo = Math.sin(ahora * 8) > 0;
+  // It blinks for a few seconds after the test and then stops: a red that never ends gets in the way
+  const parpadeo = Math.sin(ahora * 8) > 0 && Date.now() - (rotasAntes.desde || 0) < PARPADEO_MS;
   for (const v of lista) {
     if (v.rota) continue;
     const [ax, ay] = A(...v.a), [bx, by] = A(...v.b), g = v.camino ? grosor + 1 : grosor;
@@ -820,7 +823,7 @@ function jugar() {
           if (P.fin) return;
           P.simulando = false;
           if (P.hechas >= P.etapas.length) { terminar('todas'); return; }
-          P.etapa++; P.vigas = []; P.historial = []; jugar();
+          P.etapa++; P.vigas = []; P.historial = []; P.rotasAntes = new Set(); jugar();
         }, 350);
         return;
       }
@@ -829,7 +832,7 @@ function jugar() {
       if (!avisado) {
         avisado = true; aviso.textContent = sim.cortada ? T.aviso.cortada : T.aviso.cayo; botonProbar.disabled = false;
         // The beams that snapped stay marked while you fix the bridge
-        P.rotasAntes = new Set(sim.vigas.map((v, k) => (v.rota ? `${P.vigas[k].a}|${P.vigas[k].b}` : null)).filter(Boolean));
+        P.rotasAntes = Object.assign(new Set(sim.vigas.map((v, k) => (v.rota ? `${P.vigas[k].a}|${P.vigas[k].b}` : null)).filter(Boolean)), { desde: Date.now() });
       }
       if (performance.now() - cierre < 1800) requestAnimationFrame(cuadro);
     };
