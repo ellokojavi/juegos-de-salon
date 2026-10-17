@@ -120,7 +120,7 @@ const ES = {
         'Nunca van tres iguales seguidos. Un = pide que dos casillas sean iguales y un ≠ que sean distintas.',
         'Toca una casilla para poner un sol, otra vez para una luna y otra vez para dejarla vacía.',
       ],
-      puntaje: 'Partes con 100 puntos. Cada error, que es dejar una casilla rompiendo una regla, resta 10, y cada pista resta 15. El mínimo es 10.',
+      puntaje: 'Partes con 100 puntos. Cada error, que es dejar una casilla rompiendo una regla, resta 10, y cada pista 15, aunque deshagas. El mínimo es 10.',
       desempate: 'Si empatas, gana quien tardó menos.',
     },
     caso: {
@@ -907,7 +907,7 @@ const EN = {
         'Never three of the same in a row. An = means two squares must be the same and an ≠ that they must be different.',
         'Tap a square to place a sun, again for a moon and again to clear it.',
       ],
-      puntaje: 'You start with 100 points. Each mistake, which is leaving a square that breaks a rule, takes off 10, and each hint takes off 15. The minimum is 10.',
+      puntaje: 'You start with 100 points. Each mistake, leaving a square that breaks a rule, takes off 10, and each hint 15, even if you undo. The minimum is 10.',
       desempate: 'On a tie, the faster player wins.',
     },
     caso: {
@@ -1683,7 +1683,7 @@ const PT = {
         'Nunca vão três iguais seguidos. Um = pede que duas casas sejam iguais e um ≠ que sejam diferentes.',
         'Toque numa casa para colocar um sol, de novo para uma lua e de novo para deixá-la vazia.',
       ],
-      puntaje: 'Você começa com 100 pontos. Cada erro, que é deixar uma casa quebrando uma regra, tira 10, e cada pista tira 15. O mínimo é 10.',
+      puntaje: 'Você começa com 100 pontos. Cada erro, que é deixar uma casa quebrando uma regra, tira 10, e cada pista 15, mesmo se desfizer. O mínimo é 10.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
     },
     caso: {
@@ -2459,7 +2459,7 @@ const DE = {
         'Nie drei Gleiche nebeneinander. Ein = verlangt zwei gleiche Felder, ein ≠ zwei verschiedene.',
         'Tippe ein Feld einmal für eine Sonne, nochmal für einen Mond und nochmal, um es zu leeren.',
       ],
-      puntaje: 'Du startest mit 100 Punkten. Jeder Fehler, also ein Feld, das eine Regel bricht, kostet 10, und jeder Tipp 15. Das Minimum ist 10.',
+      puntaje: 'Du startest mit 100 Punkten. Jeder Fehler, also ein Feld, das eine Regel bricht, kostet 10, und jeder Tipp 15, auch wenn du es rückgängig machst. Das Minimum ist 10.',
       desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
     },
     caso: {

@@ -218,8 +218,18 @@ const playTango = async level => {
       await sleep(1700);
       ok(await clashCount() > 0 && /1/.test(await counter()), 'Tango: a sun left in place is marked and counted 1.5 s after another cell is tapped');
     }
-    // Clear all (two taps) and a hint (two taps), the helpers of D-103
+    // Clear all (two taps) and a hint (two taps), the helpers of D-103; Undo brings back what Clear all erased (D-342)
     await t(free[0]);
+    const board = () => ev(`[...document.querySelectorAll('.tan')].map(c => c.dataset.v).join()`);
+    const full = await board();
+    const clearAt = `(()=>{const r=document.getElementById('btn-borrar').getBoundingClientRect();return [Math.round(r.x),Math.round(r.y),Math.round(r.width)].join()})()`;
+    const clearBefore = await ev(clearAt);
+    await click('#btn-borrar'); await sleep(60);
+    ok(await ev(clearAt) === clearBefore, 'Tango: armed, Clear all does not move: the second tap does not land on Undo (D-342)');
+    await click('#btn-borrar'); await sleep(100);
+    ok(await board() !== full, 'Tango: Clear all empties the board');
+    await click('#btn-deshacer'); await sleep(100);
+    ok(await board() === full, 'Tango: Undo brings back the board Clear all erased (D-342)');
     await click('#btn-borrar'); await sleep(60); await click('#btn-borrar'); await sleep(100);
     await click('#btn-pista'); await sleep(60); await click('#btn-pista'); await sleep(100);
   }

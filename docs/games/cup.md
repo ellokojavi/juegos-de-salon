@@ -212,7 +212,10 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 - **Reinas** tiene bajo el tablero **↩️ Deshacer**, **🧹 Borrar todo** (dos toques, D-169) y, en su
   propia línea, **🏳️ Rendirse** (D-110). Deshacer quita el último gesto (un toque, un toque largo,
   un arrastre entero o un Borrar todo) hasta el comienzo, sin pedir confirmación, y el reloj sigue
-  (D-283). El botón y sus pasos están en `games/deshacer.js`, listos para Tango y Zip.
+  (D-283). El botón y sus pasos están en `games/deshacer.js`, listos para Zip.
+- **Tango** has **↩️ Undo** too (D-342), to the left of Clear all: it takes back the last tap or
+  Clear all, but it is kept as a play (`'U'`), so a mistake already counted and a hint stay in the
+  score; undoing the tap that just broke a rule forgives it.
 - **Tango** no cuenta como error pasar por el sol para llegar a la luna: solo dejar la casilla
   rompiendo una regla (D-102). La pantalla dice lo mismo: el choque se pinta en rojo recién cuando
   el jugador toca otra casilla (never on a timer alone); con el tablero lleno se muestra sin contarse,

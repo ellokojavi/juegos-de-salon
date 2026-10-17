@@ -429,6 +429,9 @@ export const PATHS = {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, TANGO_FILL(false)],
     clash: [START, `1`, `1`, `1`, `1`, TANGO_FILL(true), `new Promise(r => setTimeout(r, 1700))`],
+    // The button row with a two-tap button armed: Undo, Clear all and the hint each keep their line (D-342)
+    'clear-armed': [START, `1`, `1`, `1`, `1`, TANGO_FILL(false), `document.getElementById('btn-borrar')?.click()`],
+    'hint-armed': [START, `1`, `1`, `1`, `1`, TANGO_FILL(false), `[...document.querySelectorAll('.tango-acciones .btn')].find(b => b.textContent.includes('💡'))?.click()`],
   },
   /**
    * 🔍 The case of the day. `clues` is the case half solved, with what can be deduced marked

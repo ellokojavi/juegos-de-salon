@@ -352,6 +352,30 @@ test('reinas: solución única, reglas y puntaje', () => {
   assert.equal(reinas.estado(p, [c0, vecina]).errores, 1);
 });
 
+test('tango: Undo takes back taps and Clear all, but not errors or hints (D-342)', () => {
+  const { SOL: S, LUNA: L } = tango;
+  // 4 × 4 with the first cell given as a sun and a ≠ between the first two cells
+  const p = { n: 4, dadas: { 0: S }, marcas: [{ a: 0, b: 1, t: 'x' }], sol: [S, L, S, L, L, S, L, S, S, L, S, L, L, S, L, S] };
+  const U = tango.DESHACER;
+  assert.equal(tango.estado(p, []).deshacibles, 0);
+  assert.equal(tango.estado(p, [U, U]).g.filter(Boolean).length, 1, 'nothing to undo: nothing happens');
+  // Each Undo takes back one tap, down to the start
+  const pasos = tango.estado(p, [2, 2, 3, U]);
+  assert.deepEqual(pasos.g.slice(0, 4), [S, 0, L, 0]);
+  assert.equal(pasos.deshacibles, 2);
+  assert.deepEqual(tango.estado(p, [2, 2, 3, U, U, U]).g, tango.inicial(p));
+  // A clash left behind stays counted after it is undone; undoing it at once forgives it
+  assert.equal(tango.estado(p, [1, 2, U, U]).errores, 1);
+  assert.equal(tango.estado(p, [1, U]).errores, 0);
+  assert.equal(tango.estado(p, [1, U, 2]).errores, 0);
+  // Clear all is undone; a hint is not, and its cell stays revealed and paid for
+  const borrado = tango.estado(p, [2, 3, tango.BORRAR, U]);
+  assert.deepEqual(borrado.g.slice(0, 4), [S, 0, S, S]);
+  const conPista = tango.estado(p, [2, { h: 5 }, U]);
+  assert.equal(conPista.g[2], 0); assert.equal(conPista.g[5], S); assert.equal(conPista.pistas, 1);
+  assert.equal(conPista.deshacibles, 0);
+});
+
 test('tango: solución única, reglas y puntaje', () => {
   for (const c of CODIGOS) {
     const p = tango.generar(c, 4);

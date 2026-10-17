@@ -1,8 +1,8 @@
 /**
  * ↩️ Deshacer (D-283): vuelve atrás la última jugada de un tablero que se guarda como una lista de
- * jugadas (Reinas hoy; Tango y Zip pueden sumarlo con lo mismo). Deshacer no es una jugada: quita
+ * jugadas (Reinas hoy; Zip puede sumarlo con lo mismo). Deshacer no es una jugada: quita
  * jugadas de la lista y la pantalla vuelve a dibujar desde lo que queda. El reloj y el puntaje no
- * se tocan.
+ * se tocan. Tango uses only the button: its Undo is a play, because its score counts mistakes (D-342).
  *
  * Un **paso** es lo que hizo un gesto: un toque es una jugada, pero un arrastre que pinta una fila
  * de X son varias, y se deshacen juntas. La pantalla avisa dónde empieza cada paso con `abrir()`.
