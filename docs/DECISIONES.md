@@ -6463,8 +6463,9 @@ own "Change mode" and "Back to the menu"). The podium had no way out of its own,
 did not offer "Replay today's" that the card did.
 **Decision:** each context has its exits (C-19's table), and every end screen keeps one order:
 result → context → actions → exits → detail → rankings → one feedback link.
-- **`public/assets/js/fin.js`** builds the exits (`salidasFin`): 📅 Back to One a Day and 🏠 Back
-  to the menu in One a Day; 🏠 Back to the menu under the podium and in a game played on its own.
+- **`public/assets/js/fin.js`** builds the exits (`salidasFin`): 📅 Back to One a Day in One a Day
+  (the header's ‹ Menu is its way to the menu: one way to it, not two); 🏠 Back to the menu under
+  the podium and in a game played on its own.
 - **One a Day:** the card (`tarjetaResultado`) carries all the actions and exits, and goes right
   under the hero in every game (`ponerTarjeta` no longer takes a place). In today mode Ahorcado,
   Batalla Naval, Dudo (and Generala, ready for when it joins the deck, D-248) add no buttons of their
@@ -6472,6 +6473,12 @@ result → context → actions → exits → detail → rankings → one feedbac
   Replay today's too.
 - **A Cup day:** Back to the board goes first, under the place; the next-day notice and share after
   it; the breakdown starts folded (it stays open in practice) and the day table goes below.
+- **Above the fold, one primary button** (the usability review, at the owner's request): every main
+  action and exit was measured at 390×812 and 320 px in the four languages. With two exits, a solo
+  game's One a Day card pushed them below the fold, so the menu one went (the header has it); the
+  Sign in offer inside the card is one line (`bloqueJugador({ compacto })`, the legend "Keep your
+  streak on any phone" as its title); the Cup's next-day notice button is cyan after a day's result,
+  so "Back to the board" is the only yellow one.
 - **The podium:** 🏠 Back to the menu, under Share the summary; "Leave this Cup" stays a quiet link
   at the end.
 - **Not offered, on purpose:** play again in a Cup day (U-21), a link to La Copa from One a Day (a

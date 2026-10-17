@@ -231,7 +231,7 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alToca
     let invitar = conRanking ? tarjetaInvitar({ lang, alTocar }) : null;
     const ranking = conRanking ? bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar }) : null;
     if (conRanking && !(await R.tengoJugador())) {
-      const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, bloqueJugador({ destacado: true, leyenda: T.guardaRacha, alTocar }));
+      const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, bloqueJugador({ destacado: true, compacto: true, leyenda: T.guardaRacha, alTocar }));
       arriba.append(entrar);
       // Si entra recién aquí, el de hoy igual sube; después, invitar ya no le pide entrar y el
       // ranking lo muestra
