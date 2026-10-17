@@ -199,6 +199,13 @@ change), saying why.
    linking the PR that did them; move one or two forward, the smallest first, each in its own PR with
    auto-merge (the usual agents' review applies); and ask with the Yes/No checkboxes (`decide`) only
    when one needs a decision of the owner's. Say in your report which you closed, moved and asked.
+   **The test levels** (D-346, owner's request: the least testing that keeps the site safe): you own
+   the criterion in `tools/e2e/README.md` (N0 no browser, N1 lab, N2 game, N3 core; `smoke.mjs` is the
+   floor). Each round, look for a misclassified change: something that broke `main`, the site or a
+   player's game (a red `publish.yml`, a 🐞 report, a revert) after a PR whose level ran too little. That
+   is a pattern: fix the criterion with a test in `affected.test.mjs`, not by running everything. And
+   the other way: an N3 that the graph could have narrowed (a shared file only two pages load) is cost
+   with no safety; narrow it the same way.
 5. **Patterns.** Read the commits that fix something outdated and whatever diff is needed. For
    each one, what class of error is it? Record it: `node tools/agents/processes.mjs pattern <clave>
    "qué pasó" --commit <sha>`. Once is an accident; **twice is a pattern** and deserves a
