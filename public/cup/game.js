@@ -1073,7 +1073,7 @@ function desdeAviso() {
   else tablero();
 }
 
-let buzonPodio;   // the inbox link under the podium, decided once per page (D-341)
+let buzonPodio;   // the inbox link under the podium, decided once per page (D-345)
 function tablero() {
   const Lc = L();
   if (!Lc || !S.yo) return;
@@ -1145,7 +1145,7 @@ function tablero() {
       el('div', { class: 'nombres' }, jug.map(j => el('span', { class: 'chip' + (j.pid === S.yo ? ' chip--hot' : '') }, j.name)))));
   }
 
-  // The finished Cup's inbox link, at the very end (D-341); kept for the page: the board redraws every minute
+  // The finished Cup's inbox link, at the very end (D-345); kept for the page: the board redraws every minute
   if (terminada(meta, now) && buzonPodio === undefined) buzonPodio = enlaceBuzon({ juego: 'copa', contexto: { copa: S.code, pantalla: 'podio' } });
   poner(body, botonReporte(), el('button', {
     class: 'link-btn', onClick: () => {
@@ -2371,7 +2371,7 @@ function pieComentario(extra) {
 }
 
 /** En el modo de prueba, el comentario queda en el almacén local, como los reportes; si no, va a Firebase. */
-/** The form's texts: the inbox's, one wording for everything (D-341). */
+/** The form's texts: the inbox's, one wording for everything (D-345). */
 const TB = () => (COMMON[LANG] || COMMON.es).buzon;
 const enviarComentario = () => (PRUEBA ? async r => (await abrirStore()).reportar(r) : undefined);
 
@@ -2542,7 +2542,7 @@ function resultadoPractica(id, semilla, r, variante = null) {
       juego: id, semilla, puntaje: r.s, resumen: r.resumen, tiempo: mmss(r.ms), url: location.pathname + location.search,
       pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
     } }) : null);
-  // Outside the lab, the quiet inbox link after everything (D-341): minigames and One a Day
+  // Outside the lab, the quiet inbox link after everything (D-345): minigames and One a Day
   if (!enLab) ponerBuzon(body, { juego: id, contexto: { semilla, resumen: r.resumen ?? r.s, ...(hoy ? { dia: hoy.dia } : {}) } });
 }
 

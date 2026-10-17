@@ -1,5 +1,5 @@
 /**
- * The feedback form (D-104, D-265, D-317, D-341): one component for the lab's 🐞, the end of a lab
+ * The feedback form (D-104, D-265, D-317, D-345): one component for the lab's 🐞, the end of a lab
  * game and the "💬 Suggestions and comments" inbox in production. Loaded only when someone taps to
  * write (buzon.js imports it on demand), so game endings don't get heavier.
  */
@@ -7,7 +7,7 @@ import { el } from './ui.js';
 import { versionOf } from './transport/stats.js';
 import { enviarReporte, correoValido } from '../../cup/reportes.js';
 
-/** The kinds a message can be tagged with (D-341). The rules accept exactly these (`feedback/$id/tipo`). */
+/** The kinds a message can be tagged with (D-345). The rules accept exactly these (`feedback/$id/tipo`). */
 export const TIPOS = ['sugerencia', 'problema', 'idea', 'otro'];
 
 const NOMBRE = 'juegos-de-salon:copa:reporte-nombre';
@@ -63,7 +63,7 @@ export function formularioComentario({ T, contexto: ctx, alCerrar = null, enviar
   const texto = el('textarea', { class: 'labs-texto', maxlength: '1000', rows: '5', placeholder: T.ph, 'aria-label': T.titulo });
   const nombre = el('input', { class: 'labs-nombre', maxlength: '40', autocomplete: 'name', placeholder: T.nombre, 'aria-label': T.nombre, value: nombreGuardado });
   const correo = campoCorreo(T);
-  // The optional kind (D-341): one row of chips, none picked by default; tapping the picked one unpicks it
+  // The optional kind (D-345): one row of chips, none picked by default; tapping the picked one unpicks it
   let tipo = '';
   const chips = T.tipos ? el('div', { class: 'buzon-tipos', role: 'group', 'aria-label': T.tipo },
     ...TIPOS.map(k => el('button', { type: 'button', class: 'buzon-tipo', 'data-tipo': k, 'aria-pressed': 'false', onClick: e => {

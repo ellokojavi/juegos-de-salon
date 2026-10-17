@@ -262,13 +262,11 @@ with that the screen also enters the language tests. To see it on a real phone,
   **Before working on the video, read `marketing/promo-video/README.md` in full** (the
   `promo-video` skill loads it) and when done, record the round there and in `marketing/registro.json`.
   `node tools/agents/marketing.mjs check` says which asset fell behind (U-34).
-- **Lab keys** (D-281, D-284): each person who enters `/labs/` has their own link.
-  `node tools/agents/labs-key.mjs new <label> | remove <label> | list` edits `HUELLAS` in
-  `labs-puerta.js`; the link is shown only once and the key is not stored. The label is public
-  (initials), and the change goes in through a PR. **Asking for a key is asking for it to work** (D-284, the
-  owner's request): the same session creates the key, opens the PR and turns on auto-merge
-  (`gh pr merge <n> --auto --merge`) without waiting for another order, without CHANGELOG or agents, and delivers the
-  link noting that it opens once the site is published.
+- **Lab keys** (D-281, D-284, D-345): each person who enters `/labs/` has their own link.
+  `node tools/agents/labs-key.mjs new <label> | remove <label> | list` writes the key's fingerprint to
+  Firebase (`labsLlaves/`) as administrator; the link is shown only once and the key is not stored.
+  The label: initials or a nickname. **It works at once**: no PR, no tests, no publish. **Asking for a
+  key is asking for it to work** (D-284, the owner's request): the session creates it and delivers the link.
 - **Panel, La Copa reports and rankings** (D-44, D-104, D-207, D-212): in the `owner-tools` skill (`.claude/skills/owner-tools/SKILL.md`); read it before touching them.
 
 ## Languages (C-3, D-197)

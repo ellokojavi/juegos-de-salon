@@ -1,4 +1,4 @@
-// The "💬 Suggestions and comments" inbox in production (D-341, U-38): at the end of a game, after
+// The "💬 Suggestions and comments" inbox in production (D-345, U-38): at the end of a game, after
 // its buttons, a quiet link that unfolds the form in place; sending saves the message (in `?test`'s
 // local store) with its kind; the link rests the rest of the day and 14 days after sending; and it
 // reads well in the four languages at 320 px. The home footer link opens the form in its overlay.

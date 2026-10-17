@@ -72,7 +72,7 @@ console.log('feedback: ok');
   console.log('feedback doubt: ok');
 }
 
-// The inbox's kind (D-341): a known one adds its label, an unknown one or none adds nothing
+// The inbox's kind (D-345): a known one adds its label, an unknown one or none adds nothing
 {
   const { labelsOf, KIND_LABELS } = await import('./feedback.mjs');
   assert.deepEqual(labelsOf({ texto: 'x' }), ['feedback'], 'without a kind, only feedback');

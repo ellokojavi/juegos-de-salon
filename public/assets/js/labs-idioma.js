@@ -39,7 +39,7 @@ const TEXTOS = {
   },
 };
 
-// The form, the overlay and the email field moved to buzon-form.js (D-341); re-exported for the lab games
+// The form, the overlay and the email field moved to buzon-form.js (D-345); re-exported for the lab games
 export { formularioComentario, abrirComentario, campoCorreo, textosCorreo, IDIOMAS_CORREO } from './buzon-form.js';
 import { abrirComentario } from './buzon-form.js';
 
