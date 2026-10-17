@@ -19,7 +19,8 @@
 /* The stage is the screen's title, and under it the train's weight, which stays */
 .tv-titulo-etapa { display: grid; gap: 2px; text-align: center; }
 .tv-etapa { margin: 0; font: 1.5rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
-.tv-carga { margin: 0; font-weight: 800; font-size: 0.95rem; color: var(--muted); }
+.tv-carga { margin: 0; font-weight: 800; font-size: 0.95rem; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 8px; }
+.tv-tren-mini { image-rendering: pixelated; }
 .tv-carga.pesado { color: #ff8a3d; }
 .tv-reloj { font-variant-numeric: tabular-nums; }
 .tv-reloj.apurado { color: #ff6b8b; }
