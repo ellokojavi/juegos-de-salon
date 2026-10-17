@@ -7,7 +7,7 @@
 import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, BONO_RAPIDEZ, RAPIDO_S, costo, costoViga } from './engine.js';
+import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, PUNTOS_SOLIDEZ, MARGEN_SOLIDO, BONO_RAPIDEZ, RAPIDO_S, picoDe, picoReferencia, costo, costoViga } from './engine.js';
 import { pixelado, particulas, LOCO, CHIMENEA, trenDe, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, PALETA_LANCHA, SURFISTA, PALETA_SURFISTA } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -51,20 +51,24 @@ const T = {
     larga: 'Muy larga: una viga mide hasta 2 cuadros.', fuera: 'Fuera del área de construcción.',
     repetida: 'Ya hay una viga ahí.', presupuesto: 'No te quedan vigas: quita alguna.', sinMadera: 'No te alcanza la madera: quita alguna viga.', suelta: 'Empieza en un punto marcado.',
     quitada: 'Viga quitada.', borrado: 'Borraste el puente: ↩ Deshacer lo trae de vuelta.',
-    cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.', cortada: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
+    cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó! Esfuerzo máximo: {p} (el puente más barato: {r}).', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.', cortada: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
   },
   fin: { todas: '¡Todos los puentes en pie!', tiempo: 'Se acabó el tiempo', rendido: 'Te rendiste' },
   cuenta: {
     titulo: '🧮 Cómo se calculó',
-    cabeza: ['Etapa', '', 'Vigas', 'Mín.', 'Etapa', 'Ahorro'], madera: 'Madera (m)',
-    notaAhorroMadera: 'Cada etapa pasada vale 12. El ahorro da hasta {u} por etapa: todo si usaste la madera mínima conocida, nada si usaste toda.',
+    cabeza: ['Etapa', 'Madera', 'Esfuerzo', 'Puntos'], cabezaVigas: 'Vigas',
+    minimo: 'mín. {n}', referencia: 'vs. {n}',
     subtotal: 'Suma',
-    notaAhorro: 'Cada etapa pasada vale 12. El ahorro da hasta {u} por etapa: todo si usaste lo mínimo conocido, nada si usaste todas las vigas.',
+    notas: [
+      '✅ Etapa: {e} por cada una que pasó el tren.',
+      '🪵 Ahorro: hasta {a} por etapa, todo con lo mínimo conocido, nada si usaste todo.',
+      '🧱 Solidez: hasta {s} por etapa, todo si el puente se esforzó {m} puntos menos que el más barato, nada si igual o más.',
+    ],
     rapidez: '⏱ Rapidez ({t})',
     notaRapidez: 'Hasta {u}: todo en {rapido} o menos, nada a los {max}. Te tocó el {f}, por {n} de {total} etapas.',
-    total: 'Total: {a} + {b} + {c}',
+    total: 'Total: {a} + {b} + {c} + {d}',
   },
-  solucion: '💡 Así se podía cruzar la etapa {n}', solucionMadera: 'Usa {n} m de madera de los {max} m que tenías.', solucionVigas: 'Usa {n} vigas de las {max} que tenías.',
+  solucion: '💡 Así se podía cruzar la etapa {n}', solucionMadera: 'Usa {n} m de madera de los {max} m que tenías, con un esfuerzo máximo de {p}.', solucionVigas: 'Usa {n} vigas de las {max} que tenías, con un esfuerzo máximo de {p}.',
   otraVez: '🔁 Jugar otra vez', laboratorio: '‹ Volver al laboratorio',
 };
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
@@ -633,7 +637,7 @@ function portada() {
 /* The game                                                            */
 /* ------------------------------------------------------------------ */
 
-const P = { etapas: ETAPAS, topo: { etapa: -1, retraso: 0, visto: true }, ovni: { etapa: -1, retraso: 0, visto: true, modo: 'mira' }, ballena: { etapa: -1, retraso: 0, visto: true, modo: 'chorro' }, wake: { etapa: -1, retraso: 0, visto: true, modo: 'carve' }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
+const P = { etapas: ETAPAS, topo: { etapa: -1, retraso: 0, visto: true }, ovni: { etapa: -1, retraso: 0, visto: true, modo: 'mira' }, ballena: { etapa: -1, retraso: 0, visto: true, modo: 'chorro' }, wake: { etapa: -1, retraso: 0, visto: true, modo: 'carve' }, rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], picos: [], inicio: 0, fin: null, vigas: [], historial: [], reloj: null, simulando: false };
 const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
 
 /**
@@ -684,7 +688,7 @@ function empezar() {
     P.wake = { etapa: quien === 'wake' ? etapaSorteada : -1, retraso, visto: quien !== 'wake',
       modo: ['carve', 'jump', 'fall', 'sink'].includes(WAKE_MODO) ? WAKE_MODO : ['carve', 'jump', 'fall', 'sink'][Math.floor(Math.random() * 4)] };
     P.etapas = sortearEtapas();
-    Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
+    Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], picos: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
     jugar();
     clearInterval(P.reloj);
     P.reloj = setInterval(() => {
@@ -827,7 +831,7 @@ function jugar() {
       if (!sim.fin) { requestAnimationFrame(cuadro); return; }
       // It made it: the notice now, and the scene runs on until the last wagon leaves the screen
       if (sim.tren.llego) {
-        if (!avisado) { avisado = true; aviso.textContent = T.aviso.paso; SFX.win(); vibrate([30, 50, 30]); P.hechas++; P.usadas.push(costo(e, P.vigas)); P.rotasAntes = new Set(); }
+        if (!avisado) { avisado = true; aviso.textContent = fmt(T.aviso.paso, { p: pct(picoDe(sim)), r: pct(picoReferencia(e)) }); SFX.win(); vibrate([30, 50, 30]); P.hechas++; P.usadas.push(costo(e, P.vigas)); P.picos.push(picoDe(sim)); P.rotasAntes = new Set(); }
         if (!fueraDeEscena(sim, e)) { requestAnimationFrame(cuadro); return; }
         setTimeout(() => {
           if (P.fin) return;
@@ -882,7 +886,7 @@ function solucionVista() {
   const caja = el('div', { class: 'panel tv-solucion', id: 'solucion' },
     el('p', { class: 'lead' }, fmt(T.solucion, { n: P.hechas + 1 })),
     el('div', { class: 'tv-tablero' }, c),
-    el('p', { class: 'muted tv-nota' }, e.madera ? fmt(T.solucionMadera, { n: num(costo(e, vigas)), max: num(e.presupuesto) }) : fmt(T.solucionVigas, { n: vigas.length, max: e.presupuesto })));
+    el('p', { class: 'muted tv-nota' }, e.madera ? fmt(T.solucionMadera, { n: num(costo(e, vigas)), max: num(e.presupuesto), p: pct(picoReferencia(e)) }) : fmt(T.solucionVigas, { n: vigas.length, max: e.presupuesto, p: pct(picoReferencia(e)) })));
   requestAnimationFrame(() => {
     c._ajustar();
     let sim = crearSim(e, vigas);
@@ -901,27 +905,32 @@ function solucionVista() {
 
 function resultado() {
   const { motivo, segundos: seg } = P.fin;
-  const p = puntajePartida(P.usadas, seg, P.etapas);
+  const p = puntajePartida(P.usadas, seg, P.etapas, P.picos);
   const todas = P.hechas === P.etapas.length, C = T.cuenta;
   const td = (x, cls = '') => el('td', { class: cls }, x);
+  // A number with a small line under it: what it is measured against, or how it adds up
+  const doble = (grande, chico, attrs = {}) => [el('b', attrs, grande), el('small', {}, chico)];
   const filas = P.etapas.map((e, k) => {
     const a = p.ahorros[k];
-    return el('tr', { class: a ? '' : 'no' },
-      td(`${k + 1}`, 'num'), td(a ? '✅' : '⬛'),
-      td(a ? `${num(a.usadas)}/${num(e.presupuesto)}` : '—', 'num'), td(`${num(e.minimo)}`, 'num muted'),
-      td(a ? `+${PUNTOS_ETAPA}` : '0', 'num'), td(a ? `+${num(a.puntos)}` : '0', 'num'));
+    if (!a) return el('tr', { class: 'no' }, td(`${k + 1} ⬛`), td('—', 'num'), td('—', 'num'), td('0', 'num'));
+    const suma = PUNTOS_ETAPA + a.puntos + a.puntosSolidez;
+    return el('tr', {},
+      td(`${k + 1} ✅`),
+      td(doble(`${num(a.usadas)}/${num(e.presupuesto)}`, fmt(C.minimo, { n: num(e.minimo) })), 'num'),
+      td(a.pico === null ? '—' : doble(pct(a.pico), fmt(C.referencia, { n: pct(a.referencia) }), { style: `color: ${colorTension(a.pico * FISICA.quiebre)}` }), 'num'),
+      td(doble(num(suma), `${PUNTOS_ETAPA} + ${num(a.puntos)} + ${num(a.puntosSolidez)}`), 'num'));
   });
   const tabla = el('table', { class: 'tv-tabla' },
-    el('thead', {}, el('tr', {}, ...C.cabeza.map((x, k) => el('th', { class: k > 1 ? 'num' : '' }, k === 2 && P.etapas.some(e => e.madera) ? C.madera : x)))),
+    el('thead', {}, el('tr', {}, ...C.cabeza.map((x, k) => el('th', { class: k ? 'num' : '' }, k === 1 && !P.etapas.some(e => e.madera) ? C.cabezaVigas : x)))),
     el('tbody', {}, ...filas),
-    el('tfoot', {}, el('tr', {}, el('td', { colspan: '4' }, C.subtotal), td(`${p.etapas}`, 'num'), td(`${p.ahorro}`, 'num'))));
+    el('tfoot', {}, el('tr', {}, el('td', { colspan: '3' }, C.subtotal), td(`${p.etapas + p.ahorro + p.solidez}`, 'num'))));
   const cuenta = el('div', { class: 'panel tv-cuenta-final', id: 'cuenta' },
     el('p', { class: 'lead' }, C.titulo),
     el('div', { class: 'tv-tabla-caja' }, tabla),
-    el('p', { class: 'muted tv-nota' }, fmt(P.etapas.some(e => e.madera) ? C.notaAhorroMadera : C.notaAhorro, { u: PUNTOS_AHORRO })),
+    el('ul', { class: 'muted tv-nota tv-leyenda' }, ...C.notas.map(x => el('li', {}, fmt(x, { e: PUNTOS_ETAPA, a: PUNTOS_AHORRO, s: PUNTOS_SOLIDEZ, m: Math.round(MARGEN_SOLIDO * 100) })))),
     el('div', { class: 'tv-linea' }, el('span', {}, fmt(C.rapidez, { t: mmss(seg) })), el('b', {}, `+${p.rapidez}`)),
     el('p', { class: 'muted tv-nota' }, fmt(C.notaRapidez, { u: BONO_RAPIDEZ, rapido: mmss(RAPIDO_S), max: mmss(TIEMPO_S), f: pct(p.fraccionTiempo), n: p.pasadas, total: P.etapas.length })),
-    el('div', { class: 'tv-linea total' }, el('span', {}, fmt(C.total, { a: p.etapas, b: p.ahorro, c: p.rapidez })), el('b', {}, `${p.total}`)));
+    el('div', { class: 'tv-linea total' }, el('span', {}, fmt(C.total, { a: p.etapas, b: p.ahorro, c: p.solidez, d: p.rapidez })), el('b', {}, `${p.total}`)));
   vista.replaceChildren(el('div', { class: 'resultado' },
     tituloJuego(true),
     el('p', { class: `tv-sello${todas ? '' : ' mal'}` }, T.fin[motivo]),
