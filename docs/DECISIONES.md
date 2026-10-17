@@ -68,7 +68,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
 | Memoria de partida | C-6 | D-25, D-150 |
-| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309 |
+| Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320 |
@@ -6420,3 +6420,33 @@ eye); a popup at the end (it interrupts); showing it every game.
 **Consequences:** the form loads only on tap (`import('./buzon-form.js')`); `tools/e2e/feedback-prod.mjs`
 plays it end to end in four languages at 320 px; `buzon.test.mjs` checks the frequency rule and that
 the rules accept exactly the four kinds.
+
+## D-342 · Tango: ↩️ Undo, without giving back mistakes or hints
+**Date:** 2026-10-17 · **Status:** current · **Relation:** extends D-283 and D-103 to Tango; an exception to D-283 in how Undo is kept
+**Context:** owner's to-do (#462): Tango had 🧹 Clear all (two taps) and 💡 a hint, but no way to take
+back the last move. Queens already had ↩️ Undo (D-283), with the button and its steps in
+`public/cup/games/deshacer.js`, ready for Tango.
+**Decision:** under Tango's board, to the left of Clear all, goes **↩️ Undo** (the shared
+`botonDeshacer`). Each tap takes back the last tap or Clear all, one after another down to the
+start; with nothing to undo it is off. It applies wherever Tango's screen is used: La Copa, the
+standalone game and One a Day.
+- **Undo is a play here (`'U'`), unlike Queens:** Tango's score is 100 minus mistakes and hints
+  (D-102, D-103), so taking a move out of the list would also take its mistake out of the score.
+  As a play, the engine (`estado`) replays it: the board goes back, but a mistake already counted
+  stays counted and a hint is never undone (its cell stays revealed and paid for). And because the
+  engine replays it, Undo keeps working after the game is reloaded.
+- **Undoing the tap that just broke a rule forgives it**, the same as tapping that cell again
+  (passing through the sun on the way to the moon, D-102): it had not counted yet.
+- **No confirmation** (U-15), like Queens: what it undoes is redone with the same tap.
+- **The row:** Undo, Clear all and the hint, each on one line of text; the one that doesn't fit
+  goes down (at 320 px in German, the three go one under the other). The rules' scoring line says,
+  in the four languages, that Undo doesn't give the points back.
+**Why:** a guess of several moves had to be taken apart by hand or erased whole; LinkedIn's Tango
+has Undo. Keeping the score as it was (mistakes and hints cost the same with or without Undo) is
+what lets Undo arrive without changing what a point means in a Cup.
+**Alternatives discarded:** Queens' way, cutting the list (it would erase mistakes from the score,
+so Undo would become a free retry); undoing hints too (it would give back 15 points for a revealed
+answer).
+**Consequences:** `juegos.test.mjs` checks the steps, the mistakes and hints that stay, and the
+forgiven fresh clash; `tools/e2e/cup/tournament.mjs` taps Undo after Clear all and checks the board
+comes back.
