@@ -6450,3 +6450,27 @@ answer).
 **Consequences:** `juegos.test.mjs` checks the steps, the mistakes and hints that stay, and the
 forgiven fresh clash; `tools/e2e/cup/tournament.mjs` taps Undo after Clear all and checks the board
 comes back.
+
+## D-344 · The start button of every landing page is above the fold
+**Date:** 2026-10-17 · **Status:** current · **Relation:** adds U-39; complements U-16 and U-18
+**Context:** owner's to-do (#464): on most landing pages the steps («Cómo se juega») came between
+the title and the start button, so the player had to scroll to find how to start. Measured at
+320×568 and 375×667 in the four languages, 20 of the 24 landings had the button (or the first mode)
+below the fold, up to 750 px down (Tango in German).
+**Decision:** on every landing the main action comes right after the cover, the title and the
+language toggle; the rules, the steps and the scoring go after it (still open, or folded where they
+already were). In the group games the panels move below the modes (and Fourth King's below «¡Armar
+la mesa!»); in La Copa's standalone games and the lab games, below Empezar and the player block;
+Julepe's second lead line goes there too. On a short screen (`max-height: 600px`) the standalone
+games' cover above the title shrinks (`zoom: 0.6`) and so does Agents' demo, which is what made
+Plots, Paint mines and The case miss by a few pixels at 320×568.
+**Why:** the player who opens a game wants to play; the rules are one glance below, and every
+game already repeats them folded under the board (U-16). A rule alone would come back: the check
+does not.
+**Alternatives discarded:** folding the steps above the button (still pushes it down in German and
+hides the drawing); a fixed bottom button (covers the rules and the ranking, and needs a safe-area
+case per phone).
+**Consequences:** `tools/e2e/landing-fold.mjs` measures every `intro` path of `tools/e2e/paths.mjs`
+at both sizes and in every language, and fails when the main button ends below the first viewport.
+It runs in CI (about 4 minutes). La Copa's day lobby (with the wildcard and the warning before
+starting) keeps its order: it is not a landing, and there the rules are read before a timed attempt.

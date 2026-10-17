@@ -164,9 +164,10 @@ function portada() {
   const rotulo = el('p', { class: 'demo-rotulo' }, '');
   vista.replaceChildren(...[
     el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), el('div', { class: 'demo', 'aria-hidden': 'true' }, caja, rotulo)),
-    el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ...conMas(ico)), el('span', {}, ...conMas(x)))))),
     SEMILLA_URL ? null : el('p', { class: 'muted center', style: 'margin:0' }, `📅 ${T.hoy}`),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
+    // The steps go after Empezar, so it is seen without scrolling on a small phone (U-39)
+    el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ...conMas(ico)), el('span', {}, ...conMas(x)))))),
   ].filter(Boolean));
   pieComentario('portada');
   partidaDemo(caja, rotulo);
