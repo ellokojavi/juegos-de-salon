@@ -5062,7 +5062,7 @@ guardar Deshacer como jugada en la lista (agrandaba lo guardado sin necesidad: n
 reproducir ni verificar fuera del celular); sumarlo a Tango en el mismo PR (queda para después).
 
 ## D-284 · Cada persona tiene su propia llave del laboratorio
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-281
+**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-281 · **Storage moved by D-345** (the fingerprints live in Firebase, not in `labs-puerta.js`)
 **Decisión:** La puerta del laboratorio acepta una lista de llaves, una por persona, en vez de una
 sola: `HUELLAS` en `labs-puerta.js`, con una línea `'etiqueta': 'huella'` por cada una. Se dan y se
 quitan con `node tools/agents/labs-key.mjs nueva <etiqueta> | quitar <etiqueta> | listar`: `nueva`
@@ -6450,3 +6450,20 @@ answer).
 **Consequences:** `juegos.test.mjs` checks the steps, the mistakes and hints that stay, and the
 forgiven fresh clash; `tools/e2e/cup/tournament.mjs` taps Undo after Clear all and checks the board
 comes back.
+
+## D-345 · The lab keys live in Firebase: giving or removing one is instant
+**Date:** 2026-10-17 · **Status:** current · **Relation:** moves where D-284 keeps the keys; keeps D-281's door
+**Context:** each key was a line in `HUELLAS` of `public/assets/js/labs-puerta.js`, so giving one meant a
+PR, the tests and end-to-end scripts of the nine lab pages and a publish: about ten minutes for data,
+and a new key didn't open until then.
+**Decision:** owner's request: the fingerprints live in Firebase, `labsLlaves/<SHA-256> = label`.
+`labs-key.mjs new | remove | list` writes them as administrator; the door hashes the key and reads
+that one node. The rules let anyone read a fingerprint they can already compute (from the key), never
+the list, and nobody write except the admin. With no network, a key already saved on that phone still
+enters; a new one doesn't. `HUELLAS` stays in the door, empty, for keys from before (`migrate` moved
+the nine there were).
+**Why:** a key is data, not code; and the list is now less exposed than before (it was in the public
+repo).
+**Consequences:** checked on the live database: a known fingerprint reads its label, the list and any
+write are denied. `labs-puerta.test.mjs` covers Firebase keys, removal and no network.
+

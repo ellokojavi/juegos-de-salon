@@ -1,5 +1,5 @@
 /**
- * The "💬 Suggestions and comments" inbox (D-341, U-38): a quiet link at the end of the experience,
+ * The "💬 Suggestions and comments" inbox (D-345, U-38): a quiet link at the end of the experience,
  * after the result and the main buttons, that unfolds the form in place. Never during a game, never
  * a popup. `enlaceBuzon` decides whether this ending gets it, from a rule kept on the device:
  *

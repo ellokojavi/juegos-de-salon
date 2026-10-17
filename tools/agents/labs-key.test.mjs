@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { readKeys, add, remove, fingerprint, newKey } from './labs-key.mjs';
+import { readKeys, add, remove, fingerprint, newKey, checkLabel } from './labs-key.mjs';
 
 const H1 = 'a'.repeat(64);
 const SOURCE = `(function () {
@@ -36,11 +36,16 @@ assert.notEqual(k, newKey());
 assert.match(newKey('ratoncito'), /^ratoncito-[a-z2-9]{20}$/, 'the key starts with the label');
 assert.match(newKey('Dueño Mayor'), /^dueno_mayor-[a-z2-9]{20}$/, 'no accents, capitals or spaces in the link');
 
-// The real door: its block reads, with distinct fingerprints and unique labels
+// The real door: its block reads (empty since the keys moved to Firebase, D-345), with distinct
+// fingerprints and unique labels if any are left
 const real = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../../public/assets/js/labs-puerta.js'), 'utf8');
 const keys = readKeys(real);
-assert.ok(keys.length >= 1, 'the door has at least one key');
 assert.equal(new Set(keys.map(l => l.fingerprint)).size, keys.length, 'each key is different');
 assert.equal(new Set(keys.map(l => l.label.toLowerCase())).size, keys.length, 'each label is unique');
+
+// The labels of the Firebase keys follow the same rules, and none is repeated
+assert.doesNotThrow(() => checkLabel('micaela', ['MI', 'dueño']));
+assert.throws(() => checkLabel('Micaela', ['micaela']), /already has a key/);
+assert.throws(() => checkLabel('a/b'), /invalid label/);
 
 console.log(`✓ lab keys · ${keys.length} in the door`);

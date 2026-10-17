@@ -12,23 +12,17 @@
  * Va como script clásico y primero en el <head>, para que la página no se alcance a ver. En
  * localhost (los guiones de punta a punta) y en Tailscale (D-67) se abre sola.
  *
- * Las llaves se dan y se quitan con `node tools/agents/labs-key.mjs new <label> | remove
- * <label> | list`, que edita HUELLAS: aquí solo está la huella SHA-256 de cada llave, nunca la
- * llave. La etiqueta es pública (el repo lo es): iniciales o un apodo, no un nombre completo.
+ * Las llaves viven en Firebase, en `labsLlaves/<huella SHA-256>` = etiqueta (D-345): darla o quitarla
+ * es al instante, sin PR ni publicar. `node tools/agents/labs-key.mjs new <label> | remove <label> |
+ * list` las escribe como administrador. Las reglas dejan leer una huella que ya se conoce, nunca la
+ * lista, y nadie escribe salvo el dueño. HUELLAS, aquí, queda para las llaves de antes (vacía).
+ * Si la red falla con una llave ya guardada, entra igual: es una puerta, no una cerradura.
  */
 (function () {
   // Una línea por persona: 'etiqueta': 'huella'. La edita labs-key.mjs
   var HUELLAS = {
-    'MI': 'f01eea37a3c990f60b252663ada208c1d8c83cb858d891b35bf3dee78a3e877d',
-    'Chanicua': '441119bfd83362159a827adaabe0d71a43ec146fca8cb02109521fa624f8b874',
-    'Pepembau': '5468c6279bf6e74a99b2edc3d4bce3fcb7bbfd3508dcc4442aaa21f33bbf9165',
-    'loco_Cris': '8ec321a014d83c5c51f3b2cd20feef15356712b908d05cd843cd66cc3b1a7700',
-    'ratoncito': '6a35ce1320faf96bdfdd1ecf882119353a7d7b72b67302786b546a9d48274a77',
-    'el_mas_lindo': 'dc1e85d247f1ace88abd7129c0fdba64e43bd78d27b60c4761f5c125900d3734',
-    'jiri': '5c6c52c8e92cc8699a9db6e0ff740df96c901c2f7387f7d7cb921fb070d77f77',
-    'dueño': 'bcbb9b6dfeb8c5dffd7bc49e9b936387966725f0ef035ba67912d28622a786d6',
-    'micaela': '9c17b737052d3a3d2c319c400ef85a6c1767c69edf88ff9cfe79f5e6ae7f5faf',
   };
+  var BASE = 'https://juegos-de-salon-default-rtdb.firebaseio.com';
   var GUARDADA = 'juegos-de-salon:labs-llave';
   // La etiqueta de esa llave, para que el feedback 🐞 diga quién lo manda (cup/reportes.js)
   var QUIEN = 'juegos-de-salon:labs-quien';
@@ -55,9 +49,21 @@
       var hex = Array.prototype.map.call(new Uint8Array(b), function (x) { return (x < 16 ? '0' : '') + x.toString(16); }).join('');
       var quien = null;
       for (var k in HUELLAS) if (Object.prototype.hasOwnProperty.call(HUELLAS, k) && HUELLAS[k] === hex) quien = k;
-      if (quien === null) return fuera();
-      try { localStorage.setItem(GUARDADA, llave); localStorage.setItem(QUIEN, quien); } catch (e) { /* entra igual, esta vez */ }
-      abrir();
+      var entrar = function (q) {
+        try { localStorage.setItem(GUARDADA, llave); localStorage.setItem(QUIEN, q); } catch (e) { /* entra igual, esta vez */ }
+        abrir();
+      };
+      if (quien !== null) return entrar(quien);
+      // La huella en Firebase: la etiqueta si la llave vale, null si no (o si se quitó)
+      fetch(BASE + '/labsLlaves/' + hex + '.json').then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).then(function (q) {
+        if (typeof q === 'string' && q) entrar(q); else fuera();
+      }, function () {
+        // Sin red: una llave que ya había entrado en este celular sigue entrando; una nueva, no
+        if (!dada) abrir(); else fuera();
+      });
     }, fuera);
   } catch (e) { fuera(); }
 })();

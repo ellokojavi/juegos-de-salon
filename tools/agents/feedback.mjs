@@ -32,7 +32,7 @@ import { correoValido as validEmail } from '../../public/cup/reportes.js';
 
 export const LABEL = 'feedback';
 
-/** The optional kind the player picked (D-341) → a second label on the issue; anything else, none. */
+/** The optional kind the player picked (D-345) → a second label on the issue; anything else, none. */
 export const KIND_LABELS = { sugerencia: 'feedback:suggestion', problema: 'feedback:problem', idea: 'feedback:game-idea', otro: 'feedback:other' };
 export const labelsOf = r => [LABEL, ...(KIND_LABELS[r?.tipo] ? [KIND_LABELS[r.tipo]] : [])];
 const REPO = process.env.GITHUB_REPOSITORY || 'ellokojavi/juegos-de-salon';
@@ -124,7 +124,7 @@ export function body(r) {
     '',
     c.canal === 'email'
       ? 'Arrived by email to hola@juegosdesalon.cl (D-318): the text above is the support agent\'s quote or summary of it. The processes agent handles it in its round.'
-      : 'Sent with the app\'s feedback form (D-275, D-341). The processes agent handles it in its round.',
+      : 'Sent with the app\'s feedback form (D-275, D-345). The processes agent handles it in its round.',
     marker(r.id),
   ].join('\n');
 }
@@ -144,7 +144,7 @@ async function sync(dryRun) {
   const exists = JSON.parse(gh('label', 'list', '--limit', '200', '--json', 'name')).some(l => l.name === LABEL);
   if (!exists) gh('label', 'create', LABEL, '--color', 'd93f0b', '--description', 'A player\'s 🐞 report (D-275)');
   const have = new Set(JSON.parse(gh('label', 'list', '--limit', '200', '--json', 'name')).map(l => l.name));
-  for (const name of Object.values(KIND_LABELS)) if (!have.has(name)) gh('label', 'create', name, '--color', 'c5def5', '--description', 'The kind the player picked in the inbox (D-341)');
+  for (const name of Object.values(KIND_LABELS)) if (!have.has(name)) gh('label', 'create', name, '--color', 'c5def5', '--description', 'The kind the player picked in the inbox (D-345)');
   for (const r of fresh) console.log(gh('issue', 'create', '--title', title(r), '--label', labelsOf(r).join(','), '--body', body(r)).trim());
 }
 

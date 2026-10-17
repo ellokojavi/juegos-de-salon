@@ -19,6 +19,14 @@ const conHuellas = (...llaves) => fuente.replace(/var HUELLAS = \{[\s\S]*?\};/, 
 let codigo = conHuellas(LLAVE, OTRA);
 assert.notEqual(codigo, fuente, 'la puerta declara sus HUELLAS');
 
+// Firebase (D-345): labsLlaves/<huella> = etiqueta. `red = false` simula estar sin conexión
+let FIREBASE = {}, red = true;
+const fetchFalso = async url => {
+  if (!red) throw new Error('sin red');
+  const h = String(url).match(/labsLlaves\/([0-9a-f]{64})\.json$/)?.[1];
+  return { ok: true, json: async () => (h && FIREBASE[h]) ?? null };
+};
+
 async function visitar(url, guardada = null) {
   const u = new URL(url);
   const almacen = new Map(guardada ? [['juegos-de-salon:labs-llave', guardada]] : []);
@@ -29,7 +37,7 @@ async function visitar(url, guardada = null) {
     location: { search: u.search, pathname: u.pathname, hash: u.hash, hostname: u.hostname, replace: a => { r.a = a; } },
     history: { state: null, replaceState: (_, __, l) => { r.link = l; } },
     localStorage: { getItem: k => almacen.get(k) ?? null, setItem: (k, v) => almacen.set(k, v), removeItem: k => almacen.delete(k) },
-    URLSearchParams, TextEncoder, crypto: globalThis.crypto,
+    URLSearchParams, TextEncoder, crypto: globalThis.crypto, fetch: fetchFalso,
   };
   ctx.window = ctx;
   vm.runInNewContext(codigo, ctx);
@@ -68,6 +76,21 @@ r = await visitar(`${SITIO}/labs/`, OTRA);
 assert.ok(r.a === '/' && r.guardada === null && r.quien === null, 'una llave quitada ya no abre, aunque estuviera guardada');
 r = await visitar(`${SITIO}/labs/`, LLAVE);
 assert.ok(r.a === null && r.visible, 'y las demás siguen entrando');
+
+// Las llaves de Firebase: entra con su etiqueta, se quita al instante, y sin red una ya guardada sigue entrando
+const NUBE = 'llave-en-firebase';
+FIREBASE = { [huella(NUBE)]: 'nube' };
+r = await visitar(`${SITIO}/labs/?key=${NUBE}`);
+assert.ok(r.a === null && r.visible && r.guardada === NUBE && r.quien === 'nube', 'una llave de Firebase abre y guarda su etiqueta');
+red = false;
+r = await visitar(`${SITIO}/labs/`, NUBE);
+assert.ok(r.a === null && r.visible, 'sin red, una llave ya guardada sigue entrando');
+r = await visitar(`${SITIO}/labs/?key=otra-nueva`);
+assert.equal(r.a, '/', 'sin red, una llave nueva no entra');
+red = true;
+FIREBASE = {};
+r = await visitar(`${SITIO}/labs/`, NUBE);
+assert.ok(r.a === '/' && r.guardada === null, 'quitada de Firebase, ya no abre');
 
 for (const local of ['http://localhost:8765/labs/', 'http://127.0.0.1:8765/labs/', 'https://mac-mini.tail1234.ts.net/labs/']) {
   r = await visitar(local);

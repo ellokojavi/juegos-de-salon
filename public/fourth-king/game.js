@@ -476,7 +476,7 @@ function finishGame(victimIndex) {
   $('#end-stats').textContent = fmt(T.endStats, { cards: state.drawn, mins });
   renderHistory();
   showScreen('screen-end');
-  // The quiet inbox link after the end screen's buttons (D-341, U-38)
+  // The quiet inbox link after the end screen's buttons (D-345, U-38)
   ponerBuzon($('#screen-end'), { juego: GAME_ID });
   SFX.win();
   confetti({ count: 260, duration: 4000 });
