@@ -6,7 +6,7 @@ import {
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
-  cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
+  fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
 } from './engine.js';
 
 let n = 0;
@@ -436,5 +436,48 @@ test('desempate del primer lugar: más días ganados y después la final (#79)',
   assert.equal(desempate([]), null);
 });
 
+test('out of the cup (D-347): two days in a row closed without playing, grace day included', () => {
+  assert.equal(AUSENCIAS, 2);
+  const r = { 1: { aaaaaa: { s: 9, ms: 1 } }, 2: { aaaaaa: { s: 9, ms: 1 }, bbbbbb: { s: 5, ms: 1 } }, 3: { aaaaaa: { s: 9, ms: 1 } } };
+  const L = { meta: meta7, players, results: r };
+  // Day 1 closes at the start of day 3 (its grace day), day 2 at the start of day 4
+  assert.equal(fuera(L, 'cccccc', dia(2)), null, 'day 2 is still in its grace day');
+  assert.equal(enRiesgo(L, 'cccccc', dia(2)), 2, 'the warning: play day 2 or you are out');
+  assert.deepEqual(fuera(L, 'cccccc', dia(3)), { desde: 1, hasta: 2 });
+  assert.equal(enRiesgo(L, 'cccccc', dia(3)), 0, 'already out: no warning');
+  assert.equal(fuera(L, 'bbbbbb', dia(4)), null, 'missing days 1 and 3, not in a row');
+  assert.equal(enRiesgo(L, 'aaaaaa', dia(3)), 0, 'who plays is never warned');
+  // The table keeps their points, below everyone still playing, and nobody waits for them
+  const t = tabla(L, 'aaaaaa', dia(3));
+  assert.deepEqual(t.slice(-2).map(f => f.pid).sort(), ['cccccc', 'dddddd']);
+  assert.ok(t.at(-1).fuera && !t[0].fuera);
+  assert.ok(t.find(f => f.pid === 'bbbbbb').lugar < t.find(f => f.pid === 'cccccc').lugar);
+  assert.deepEqual(faltan(L, 4, dia(3)).map(j => j.pid), ['aaaaaa', 'bbbbbb']);
+  // The history is not affected: it ranks by points
+  assert.ok(evolucion(L, 'aaaaaa', dia(3)).filas.every(f => f.lugares.length));
+});
+
+const r1 = () => ({ 1: { aaaaaa: { s: 1, ms: 1 } } });
+test('out of the cup (D-347): late signups, the admin bringing them back, and the last days', () => {
+  // Signed up on day 3: days 1 and 2 had closed or were closing; only what they could play counts
+  const tarde = { ...players, eeeeee: { name: 'Ema', at: dia(2, 1) } };
+  const L = { meta: meta7, players: tarde, results: {} };
+  assert.equal(fuera(L, 'eeeeee', dia(3)), null, 'day 1 closed before they signed up');
+  assert.deepEqual(fuera(L, 'eeeeee', dia(4)), { desde: 2, hasta: 3 }, 'day 2 was still in its grace day');
+  // The admin brings them back: the days closed before that are forgiven
+  const vuelta = { ...L, players: { ...tarde, cccccc: { ...players.cccccc, back: dia(3, 6) } } };
+  assert.equal(fuera(vuelta, 'cccccc', dia(3, 7)), null);
+  assert.equal(fuera(vuelta, 'cccccc', dia(4, 12)), null, 'only day 3 missed since then');
+  assert.deepEqual(fuera(vuelta, 'cccccc', dia(5, 12)), { desde: 3, hasta: 4 });
+  // The admin's own removal is something else
+  assert.equal(fuera({ ...L, players: { ...tarde, cccccc: { ...players.cccccc, out: true } } }, 'cccccc', dia(6)), null);
+  // Days 6 and the final close with the cup: nobody is left out at the end for them
+  const solo15 = { meta: meta7, players, results: Object.fromEntries([1, 2, 3, 4, 5].map(d => [d, { cccccc: { s: 1, ms: 1 } }])) };
+  assert.equal(fuera(solo15, 'cccccc', meta7.end + 1), null);
+  assert.equal(enRiesgo(solo15, 'cccccc', dia(6)), 0, 'no warning for the last days');
+  // A cup the admin closed early: the unopened days do not count
+  const cerrada = conCierre({ meta: meta7, players, results: r1(), fin: dia(1) });
+  assert.equal(fuera(cerrada, 'cccccc', dia(6)), null);
+});
 await new Promise(r => setTimeout(r, 50));
 console.log(`copa/engine: ${n} tests OK`);
