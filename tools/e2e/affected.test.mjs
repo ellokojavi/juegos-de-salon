@@ -2,6 +2,7 @@
 // Which end-to-end scripts a PR needs (D-329): those whose pages load what it changed.
 import assert from 'node:assert/strict';
 import { references, closures, scriptPages, select, chooseJobs, siteGraph, affectedJobs } from './affected.mjs';
+import { levelOf } from './affected.mjs';
 import { noBrowser } from './changes.mjs';
 
 // References: HTML, ES imports (static, re-exports, literal dynamic ones) and CSS, resolved from the file's folder
@@ -61,3 +62,15 @@ const jobs = ['labs/routes.mjs', 'exploding-numbers/lab.mjs', 'generala/local.mj
 assert.deepEqual(affectedJobs(jobs, ['public/labs/exploding-numbers/engine.js'], shared), ['exploding-numbers/lab.mjs']);
 assert.deepEqual(affectedJobs(jobs, ['public/cup/style.css'], shared), ['cup/seat.mjs']);
 console.log('affected: which end-to-end scripts a PR needs, green');
+
+// The test level (D-346)
+{
+  const c = (pages, scripts = ['x.mjs']) => ({ scripts, pages: new Set(pages), changedScripts: new Set() });
+  assert.equal(levelOf(c([], []), 30).level, 'N0', 'nothing a page loads: unit tests only');
+  assert.equal(levelOf(c(['labs/bridges']), 30).level, 'N1', 'a lab game');
+  assert.equal(levelOf(c(['hangman']), 30).level, 'N2', 'a production game');
+  assert.equal(levelOf(c(['labs/bridges', 'hangman']), 30).level, 'N2', 'lab and production: the production one rules');
+  assert.equal(levelOf(c(['']), 30).level, 'N3', 'the home page is core');
+  assert.equal(levelOf(c(Array.from({ length: 10 }, (_, i) => `g${i}`)), 30).level, 'N3', 'a third of the pages is core');
+  assert.equal(levelOf(null, 30).level, 'N3', 'what the graph cannot narrow is core');
+}

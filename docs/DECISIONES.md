@@ -6515,3 +6515,22 @@ case per phone).
 at both sizes and in every language, and fails when the main button ends below the first viewport.
 It runs in CI (about 4 minutes). La Copa's day lobby (with the wildcard and the warning before
 starting) keeps its order: it is not a landing, and there the rules are read before a timed attempt.
+
+## D-346 · Test levels: the least testing that keeps the site safe
+**Date:** 2026-10-17 · **Status:** current · **Relation:** builds on D-329 (the page graph); owned by the processes agent (D-273)
+**Context:** the owner: small changes shouldn't run every test, and important ones must not skip them;
+there should be a criterion and someone in charge. D-329 already chose scripts by the pages a change
+reaches, but no level was named, nobody reviewed the criterion, and a lab game with no script of its
+own had no browser test at all: a merge left Tren en Vilo blank (#482) and every check was green.
+**Decision:** four levels from what a change reaches (`levelOf()` in `tools/e2e/affected.mjs`, tested):
+N0 no browser (unit tests only), N1 lab (its scripts + smoke), N2 game (its scripts + smoke), N3 core
+(the home page, a third of the pages or more, or what the graph can't narrow: everything). The new
+`tools/e2e/smoke.mjs` opens every page and fails on an uncaught error or a blank screen: the floor of
+N1-N3. `ci.mjs` prints each PR's level. The processes agent owns it: each round it looks for a change
+that broke something after running too little, and for an N3 that could have been narrowed, and fixes
+the criterion with a test.
+**Why:** cost where it buys safety; the smoke test is a minute and catches what a missing script
+would let through. Checked: it fails on #482's `game.js` ("/labs/bridges throws: SyntaxError") and
+passes on main's 34 pages.
+**Alternatives discarded:** a level the author picks by hand (it drifts); everything on every PR (what
+D-329 left behind).

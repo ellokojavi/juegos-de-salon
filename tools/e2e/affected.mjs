@@ -156,6 +156,24 @@ export function chooseJobs(jobs, choice, pages) {
   });
 }
 
+/**
+ * The test level of a change (D-346), from what it reaches; the processes agent owns the criterion.
+ *   N0 · no browser: docs, tools, data, the agents (only the unit tests, the `tests` check).
+ *   N1 · lab: only pages under labs/ (their scripts and the smoke test of every page).
+ *   N2 · game: some public pages, not the home page and not most of them (their scripts and smoke).
+ *   N3 · core: the home page, a third of the pages or more, or anything the graph can't narrow
+ *        (shared modules, styles, the e2e tools, the workflows): every script.
+ * `choice` is select()'s result (null: everything); `total`, how many pages the site has.
+ */
+export function levelOf(choice, total) {
+  if (choice && !choice.scripts.length) return { level: 'N0', name: 'no browser', reason: 'nothing a page loads changed: unit tests only' };
+  if (!choice) return { level: 'N3', name: 'core', reason: 'a change the page graph cannot narrow: every script' };
+  const pages = [...choice.pages];
+  if (pages.includes('') || pages.length * 3 >= total) return { level: 'N3', name: 'core', reason: `${pages.includes('') ? 'the home page' : `${pages.length} of ${total} pages`}: every affected script` };
+  if (pages.length && pages.every(p => p.startsWith('labs/'))) return { level: 'N1', name: 'lab', reason: `lab only (${pages.join(', ')}): ${choice.scripts.length} script(s)` };
+  return { level: 'N2', name: 'game', reason: `${pages.join(', ') || 'a changed script'}: ${choice.scripts.length} script(s)` };
+}
+
 /* ------------------------------------------------------------------ */
 /* Reading the repo                                                    */
 /* ------------------------------------------------------------------ */
@@ -170,6 +188,15 @@ export function siteGraph() {
   const files = {};
   for (const f of walk(PUBLIC)) if (/\.(html|m?js|css)$/.test(f) && !/\.test\.m?js$/.test(f)) files[f] = readFileSync(join(PUBLIC, f), 'utf8');
   return closures(files);
+}
+
+/** The test level of these changes (D-346): { level, name, reason }. */
+export function changeLevel(jobs, changes, shared, noBrowser = false) {
+  if (noBrowser) return levelOf({ scripts: [], pages: new Set(), changedScripts: new Set() }, 1);
+  const names = [...new Set(jobs.map(j => j.split(':')[0]))];
+  const scripts = names.map(name => ({ name, source: existsSync(join(HERE, name)) ? readFileSync(join(HERE, name), 'utf8') : '' }));
+  const graph = siteGraph();
+  return levelOf(select({ changes, graph, scripts, shared }), Object.keys(graph).length);
 }
 
 /** Which of `jobs` (tools/e2e/ scripts, or `script:part`) to run for these changes; null means all. */
