@@ -223,7 +223,8 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
       el('p', { class: 'lead' }, pregunta),
       el('p', { class: 'muted' }, app ? T.avOfferAppSub : T.avOfferSub),
       el('div', { class: 'btn-row' },
-        el('button', { class: 'btn btn--yellow', id: 'btn-avisarme', onClick: pedir }, T.avYes),
+        // After a day's result the primary button is back to the board: this one stays secondary (C-19)
+        el('button', { class: `btn ${dia ? 'btn--cyan' : 'btn--yellow'}`, id: 'btn-avisarme', onClick: pedir }, T.avYes),
         el('button', { class: 'btn btn--ghost', id: 'btn-ahora-no', onClick: () => { tap(); cuenta.avisos.guardar(code, { no: true }); caja.remove(); redibujar(); } }, T.avNo)));
     return caja;
   }

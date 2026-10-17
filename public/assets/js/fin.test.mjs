@@ -7,7 +7,7 @@ const leer = p => readFileSync(new URL(p, raiz), 'utf8');
 
 // The contexts and their exits
 const fin = leer('assets/js/fin.js');
-assert.match(fin, /hoy: \['hoy', 'menu'\]/, 'One a Day: back to One a Day and to the menu');
+assert.match(fin, /hoy: \['hoy'\]/, 'One a Day: back to One a Day (the header goes to the menu)');
 assert.match(fin, /podio: \['menu'\]/, 'the podium: back to the menu');
 assert.match(fin, /suelto: \['menu'\]/, 'a game on its own: back to the menu');
 

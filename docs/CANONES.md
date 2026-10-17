@@ -478,13 +478,19 @@ that moment, and only those, in the same order everywhere (D-343):
 |---|---|---|---|
 | A Cup day | **Back to the board** | Share · next-day notice | none: the board is the Cup's home |
 | The Cup's podium | **Share the summary** | My days, the table | **🏠 Back to the menu**, under the podium; "Leave this Cup" stays a quiet link |
-| One a Day (any game) | **Share** | 🎲 Play another · Replay today's | **📅 Back to One a Day** · **🏠 Back to the menu** |
+| One a Day (any game) | **Share** | 🎲 Play another · Replay today's | **📅 Back to One a Day**; the menu is the header's ‹ (one way to it, not two) |
 | A game played on its own | **Play again** / Rematch | Share · Change mode | Back to the menu (or to the lab) |
 
 - **Blocks in this order:** the result (emoji, title, score, place) → the context (the One a Day
   card) → the actions → the exits → the long detail, folded or below (breakdown, words, fleets,
-  history) → rankings → one feedback link, 🐞 or 💬, last (U-38). The buttons show without
-  scrolling at 812 px (C-8).
+  history) → rankings → one feedback link, 🐞 or 💬, last (U-38).
+- **The main action and the exits show without scrolling** at 390×812 and at 320 px, in the four
+  languages (C-8): measured, not guessed (`getBoundingClientRect().bottom <= innerHeight`). What
+  goes above them (the Sign in offer inside the One a Day card) is one line (`compacto`).
+- **One primary (yellow) button per view**: the rest are cyan or ghost. A card that offers
+  something extra under a result (the Cup's next-day notice) does not compete with it.
+- **No exit twice:** where the header's ‹ already goes to the menu, the result does not add a
+  second "back to the menu" next to another exit (One a Day).
 - **The exits come from `public/assets/js/fin.js`** (`salidasFin(contexto)`): the same words and
   look in every game. A game does not build its own "back to the menu" for these contexts.
 - **One a Day is one card in every game**: `tarjetaResultado` (`uno-al-dia-ui.js`) carries its
