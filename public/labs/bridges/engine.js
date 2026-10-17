@@ -132,6 +132,8 @@ export function paso(s) {
     const dx = b.x - a.x, dy = b.y - a.y, l = Math.sqrt(dx * dx + dy * dy) || 1e-9;
     const deform = (l - v.largo) / v.largo;
     v.tension = deform;
+    // The peak strain while the train is on the bridge, as a fraction of the snapping point: how hard it worked
+    if (s.t > 0.6 && !s.fin) s.pico = Math.max(s.pico || 0, Math.abs(deform) / FISICA.quiebre);
     if (deform > FISICA.quiebre || deform < -FISICA.quiebre) {
       v.rota = true;
       // A crossing with `firme` asks for a bridge that stays standing: the first beam that snaps ends the test
@@ -174,39 +176,58 @@ export function paso(s) {
   return s;
 }
 
+/** The peak strain of a run, from 0 to 1. */
+export const picoDe = s => Math.min(1, s.pico || 0);
+
 /** Runs a bridge to the end, without drawing. `{ llego, cayo, rotas, t }`. */
 export function probar(e, vigas, maxPasos = Math.ceil(30 / DT)) {
   const s = crearSim(e, vigas);
   for (let k = 0; k < maxPasos && !s.fin; k++) paso(s);
   // `x`: how far the train got (for a search that builds bridges up)
-  return { llego: s.tren.llego, cayo: s.tren.cayo, rotas: s.vigas.filter(v => v.rota).length, t: s.t, x: s.tren.x };
+  // `pico`: the peak strain while it crossed, from 0 to 1 (1 is a beam at its snapping point)
+  return { llego: s.tren.llego, cayo: s.tren.cayo, rotas: s.vigas.filter(v => v.rota).length, t: s.t, x: s.tren.x, pico: picoDe(s) };
 }
 
 /* ------------------------------------------------------------------ */
-/* The score: stages passed, beams saved and time                      */
+/* The score: stages passed, wood saved, solidity and time             */
 /* ------------------------------------------------------------------ */
 
-export const PUNTOS_ETAPA = 12;       // 60 for the five
+export const PUNTOS_ETAPA = 10;       // 50 for the five
 export const PUNTOS_AHORRO = 5;       // per stage passed, all of it at the known minimum: 25 for the five
-export const BONO_RAPIDEZ = 15;       // all of it in 1:30 or less, none when time runs out; scaled by stages passed
+export const PUNTOS_SOLIDEZ = 3;      // per stage passed, all of it with a bridge clearly more solid than the known one: 15
+export const MARGEN_SOLIDO = 0.15;    // how much lower the peak strain must be than the known bridge's for all of it
+export const BONO_RAPIDEZ = 10;       // all of it in 1:30 or less, none when time runs out; scaled by stages passed
 export const RAPIDO_S = 90;
 
 const entre01 = x => Math.min(1, Math.max(0, x));
 
+/** The known bridge's peak strain on a crossing: what solidity is measured against. Memoized per crossing. */
+const referencias = new WeakMap();
+export function picoReferencia(e) {
+  if (!referencias.has(e)) referencias.set(e, e.solucion?.length ? probar(e, e.solucion.map(([a, b]) => ({ a, b }))).pico : 1);
+  return referencias.get(e);
+}
+
 /**
- * The score of a game, by layers, with each part separate for the breakdown. `usadas` is the beams
- * of the bridge that passed in each stage done (its length is the stages passed).
+ * The score of a game, by layers, with each part separate for the breakdown. `usadas` is the wood (or
+ * beams) of the bridge that passed in each stage done (its length is the stages passed), `picos` the
+ * peak strain of each of those bridges. Saving wood and building solid pull against each other:
+ * the known bridge is the cheapest, so being more solid than it costs wood.
  */
-export function puntajePartida(usadas, segundos, lista = ETAPAS) {
+export function puntajePartida(usadas, segundos, lista = ETAPAS, picos = []) {
   const pasadas = usadas.length;
   const etapas = PUNTOS_ETAPA * pasadas;
   const ahorros = usadas.map((n, k) => {
     const e = lista[k], margen = e.presupuesto - e.minimo;
     const fraccion = margen > 0 ? entre01((e.presupuesto - n) / margen) : 1;
-    return { etapa: k + 1, usadas: n, presupuesto: e.presupuesto, minimo: e.minimo, fraccion, puntos: PUNTOS_AHORRO * fraccion };
+    const pico = picos[k] ?? null, referencia = pico === null ? null : picoReferencia(e);
+    const solida = pico === null ? 0 : entre01((referencia - pico) / MARGEN_SOLIDO);
+    return { etapa: k + 1, usadas: n, presupuesto: e.presupuesto, minimo: e.minimo, fraccion, puntos: PUNTOS_AHORRO * fraccion,
+      pico, referencia, solida, puntosSolidez: PUNTOS_SOLIDEZ * solida };
   });
   const ahorro = Math.round(ahorros.reduce((s, a) => s + a.puntos, 0));
+  const solidez = Math.round(ahorros.reduce((s, a) => s + a.puntosSolidez, 0));
   const fraccionTiempo = entre01((TIEMPO_S - segundos) / (TIEMPO_S - RAPIDO_S));
   const rapidez = Math.round(BONO_RAPIDEZ * fraccionTiempo * (pasadas / lista.length));
-  return { pasadas, etapas, ahorros, ahorro, fraccionTiempo, rapidez, total: etapas + ahorro + rapidez };
+  return { pasadas, etapas, ahorros, ahorro, solidez, fraccionTiempo, rapidez, total: etapas + ahorro + solidez + rapidez };
 }

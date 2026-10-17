@@ -70,4 +70,9 @@
 .tv-solucion { display: grid; gap: 8px; text-align: left; }
 .tv-solucion p { margin: 0; }
 /* On a narrow phone the table drops the "Mín." column so it fits without scrolling; the note still names the minimum */
-@media (max-width: 380px) { .tv-tabla { font-size: 0.8rem; } .tv-tabla th:nth-child(4), .tv-tabla td:nth-child(4) { display: none; } }
+/* Each cell: the number, and under it, small, what it is measured against or how it adds up */
+.tv-tabla td b, .tv-tabla td small { display: block; }
+.tv-tabla td small { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+.tv-tabla tbody td { vertical-align: top; }
+.tv-leyenda { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 3px; }
+@media (max-width: 380px) { .tv-tabla { font-size: 0.8rem; } }
