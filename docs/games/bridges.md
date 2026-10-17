@@ -24,6 +24,10 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
   board as it is spent. The screen's title is the stage ("Etapa 2 de 5"), and under it, always in view, the
   train's weight: normal, or how much heavier it is (it used to be a sign that slid over the board and went).
 
+- Beams join only at their ends. Where one crosses another away from their ends, or runs over a bolt it
+  doesn't end at, it is drawn in front with a dark edge (`pasoPorEncima()`), so it doesn't read as
+  joined there.
+
 ## Crossings and catalogs
 
 - Each game draws one crossing per level (1 to 5) from `catalogo-madera.json`: low anchors on the cliff faces,

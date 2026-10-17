@@ -114,6 +114,32 @@ const ARTE = 16;
 
 /** The color of a beam by how stretched or squeezed it is: wood that warms to red, in steps. */
 const TENSION = ['#c8874a', '#d9a23a', '#e8b13a', '#f08a2c', '#ff5a3c', '#ff2e4a'];
+/**
+ * Where a beam passes over something it is not joined to: each crossing of two beams away from their
+ * ends (the later one goes in front), and each bolt a beam runs over without ending there.
+ * [[beam, [x, y]], …] in grid units.
+ */
+function pasoPorEncima(vigas, nudos, eps = 0.04) {
+  const res = [];
+  const cerca = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]) < eps;
+  for (let i = 0; i < vigas.length; i++) for (let j = i + 1; j < vigas.length; j++) {
+    const v = vigas[i], w = vigas[j], [ax, ay] = v.a, [bx, by] = v.b, [cx, cy] = w.a, [dx, dy] = w.b;
+    const den = (bx - ax) * (dy - cy) - (by - ay) * (dx - cx);
+    if (Math.abs(den) < 1e-9) continue;
+    const t = ((cx - ax) * (dy - cy) - (cy - ay) * (dx - cx)) / den, s = ((cx - ax) * (by - ay) - (cy - ay) * (bx - ax)) / den;
+    if (t <= eps || t >= 1 - eps || s <= eps || s >= 1 - eps) continue;
+    res.push([w, [ax + t * (bx - ax), ay + t * (by - ay)]]);
+  }
+  for (const v of vigas) for (const n of nudos) {
+    const p = [n.x, n.y];
+    if (cerca(p, v.a) || cerca(p, v.b)) continue;
+    const [ax, ay] = v.a, [bx, by] = v.b, l2 = (bx - ax) ** 2 + (by - ay) ** 2;
+    const t = ((p[0] - ax) * (bx - ax) + (p[1] - ay) * (by - ay)) / l2;
+    if (t <= 0 || t >= 1) continue;
+    if (Math.hypot(ax + t * (bx - ax) - p[0], ay + t * (by - ay) - p[1]) < eps) res.push([v, p]);
+  }
+  return res;
+}
 const colorTension = t => TENSION[Math.min(TENSION.length - 1, Math.floor((Math.abs(t) / FISICA.quiebre) * TENSION.length))];
 
 const CIELO = ['#1d0838', '#26093f', '#2f0c48', '#3a1152', '#46175c', '#521e66', '#5e2670'];
@@ -534,6 +560,16 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
     if (n.fijo) { r.rect(px - 2, py - 2, 5, 5, '#25103f'); r.rect(px - 1, py - 1, 3, 3, '#ff2e88'); r.punto(px - 1, py - 1, '#ff9cc8'); }
     else { r.circulo(px, py, 2, '#25103f'); r.circulo(px, py, 1, '#e6e6f0'); }
   }
+  // Not every touch is a joint: a beam that crosses another, or runs over a bolt it doesn't end at,
+  // passes in front, with a dark edge around it there, so it doesn't read as joined (owner's request)
+  const vivas = lista.filter(v => !v.rota);
+  const pieza = (v, [x, y]) => {
+    const [ax, ay] = A(...v.a), [bx, by] = A(...v.b), l = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / l, uy = (by - ay) / l;
+    const [px, py] = A(x, y), m = 3, g = v.camino ? grosor + 1 : grosor;
+    r.linea(px - ux * m, py - uy * m, px + ux * m, py + uy * m, MADERA.borde, g + 3);
+    r.linea(px - ux * m, py - uy * m, px + ux * m, py + uy * m, sim ? colorTension(v.t) : '#c8874a', g);
+  };
+  for (const [p, q] of pasoPorEncima(vivas, nudos)) pieza(p, q);
   // The beam being dragged: dashes, green if it can go, red if not
   if (arrastre) {
     const [ax, ay] = A(...arrastre.a), [bx, by] = A(...arrastre.b), col = arrastre.ok ? '#9dff3a' : '#ff2e88';
