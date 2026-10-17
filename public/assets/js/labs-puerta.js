@@ -27,6 +27,7 @@
     'el_mas_lindo': 'dc1e85d247f1ace88abd7129c0fdba64e43bd78d27b60c4761f5c125900d3734',
     'jiri': '5c6c52c8e92cc8699a9db6e0ff740df96c901c2f7387f7d7cb921fb070d77f77',
     'dueño': 'bcbb9b6dfeb8c5dffd7bc49e9b936387966725f0ef035ba67912d28622a786d6',
+    'micaela': '9c17b737052d3a3d2c319c400ef85a6c1767c69edf88ff9cfe79f5e6ae7f5faf',
   };
   var GUARDADA = 'juegos-de-salon:labs-llave';
   // La etiqueta de esa llave, para que el feedback 🐞 diga quién lo manda (cup/reportes.js)
