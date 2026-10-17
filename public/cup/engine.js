@@ -333,6 +333,59 @@ export const multiplicador = (L, d, pid) => (esFinal(L.meta, d) || comodinDe(L, 
 /* Puntos y tabla                                                      */
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/* Out of the cup: two days in a row without playing (D-347)           */
+/* ------------------------------------------------------------------ */
+
+/** How many days in a row, each closed with its grace day, leave a player out of the cup. */
+export const AUSENCIAS = 2;
+
+/**
+ * Does day `d` count against `pid` when missed? Only if it closed after the player signed up and
+ * after the admin brought them back (`back`, D-347): a late signup or a reinstated player starts
+ * clean. The days the admin's early close left unopened never count.
+ */
+const cuentaFalta = (L, d, p) => !anulado(L.meta, d) && L.meta.win[d].b > Math.max(Number(p.at) || 0, Number(p.back) || 0);
+
+/** Missed: the day counts against them, closed (grace included) and they have no result in it. */
+const falto = (L, d, pid, p, now) => cuentaFalta(L, d, p) && now >= L.meta.win[d].b && !L.results?.[d]?.[pid];
+
+/**
+ * Is `pid` out of the cup in `now`? Returns the days that left them out ({ desde, hasta }) or null.
+ * Only pairs that close before the cup ends: the last two days close with it, and by then there is
+ * nothing left to leave. The admin's own removal (`out`) is something else and is not this.
+ */
+export function fuera(L, pid, now) {
+  const p = L.players?.[pid];
+  if (!p || p.out) return null;
+  const { meta } = L;
+  for (let d = 1; d + AUSENCIAS - 1 < meta.days; d++) {
+    const ultimo = d + AUSENCIAS - 1;
+    if (meta.win[ultimo].b >= meta.end) break;
+    let todos = true;
+    for (let k = d; k <= ultimo; k++) if (!falto(L, k, pid, p, now)) { todos = false; break; }
+    if (todos) return { desde: d, hasta: ultimo };
+  }
+  return null;
+}
+
+/**
+ * The warning (D-347): `pid` already missed the day before and, if they don't play `d` before it
+ * closes, they are out. Returns that day `d`, or 0. Never for the final days, which close with the cup.
+ */
+export function enRiesgo(L, pid, now) {
+  const p = L.players?.[pid];
+  if (!p || p.out || fuera(L, pid, now)) return 0;
+  const { meta } = L;
+  for (let d = AUSENCIAS; d < meta.days; d++) {
+    if (meta.win[d].b >= meta.end || !abierto(meta, d, now) || L.results?.[d]?.[pid] || !cuentaFalta(L, d, p)) continue;
+    let antes = true;
+    for (let k = d - AUSENCIAS + 1; k < d; k++) if (!falto(L, k, pid, p, now)) { antes = false; break; }
+    if (antes) return d;
+  }
+  return 0;
+}
+
 /** Jugadores que cuentan: los inscritos que el admin no sacó. */
 /** Todavía no hay con quién competir: falta al menos un jugador más. */
 export const faltaGente = L => activos(L).length < MIN_JUGADORES;
@@ -371,7 +424,7 @@ export const visibleDia = (L, d, yo, now) => cerrado(L.meta, d, now) || !!L.resu
  * oculto), días ganados, posición en la final, lugar y flecha contra la tabla sin el último
  * día que cambió algo.
  */
-export function tabla(L, yo, now) {
+export function tabla(L, yo, now, { conFuera = true } = {}) {
   const jug = activos(L);
   const pids = jug.map(j => j.pid);
   const dias = [];
@@ -395,12 +448,13 @@ export function tabla(L, yo, now) {
       }
       const fin = L.meta.days;
       const finalPos = vis[fin] && fin <= hasta ? pos[fin]?.[j.pid]?.pos || 99 : 99;
-      return { pid: j.pid, name: j.name, total, ganados, finalPos, dias: porDia };
+      return { pid: j.pid, name: j.name, total, ganados, finalPos, dias: porDia, fuera: conFuera ? fuera(L, j.pid, now) : null };
     });
-    filas.sort((a, b) => b.total - a.total || b.ganados - a.ganados || a.finalPos - b.finalPos || a.name.localeCompare(b.name, 'es'));
+    // Who is out of the cup (D-347) keeps their points, below everyone still playing
+    filas.sort((a, b) => !!a.fuera - !!b.fuera || b.total - a.total || b.ganados - a.ganados || a.finalPos - b.finalPos || a.name.localeCompare(b.name, 'es'));
     filas.forEach((f, i) => {
       const p = filas[i - 1];
-      f.lugar = p && p.total === f.total && p.ganados === f.ganados && p.finalPos === f.finalPos ? p.lugar : i + 1;
+      f.lugar = p && !!p.fuera === !!f.fuera && p.total === f.total && p.ganados === f.ganados && p.finalPos === f.finalPos ? p.lugar : i + 1;
     });
     return filas;
   };
@@ -437,7 +491,8 @@ export function evolucion(L, yo, now) {
   const lugares = {};
   for (const d of dias) {
     const hasta = Object.fromEntries(Object.entries(L.results || {}).filter(([k]) => Number(k) <= d && dias.includes(Number(k))));
-    for (const f of tabla({ ...L, results: hasta }, yo, now)) (lugares[f.pid] ||= []).push(f.lugar);
+    // Without the later results everyone would look absent: the history ranks by points only
+    for (const f of tabla({ ...L, results: hasta }, yo, now, { conFuera: false })) (lugares[f.pid] ||= []).push(f.lugar);
   }
   return { dias, filas: activos(L).map(j => ({ pid: j.pid, name: j.name, lugares: lugares[j.pid] || [] })) };
 }
@@ -455,7 +510,8 @@ export function menosJuegos(filas) {
 /** Quiénes no han jugado un día que sigue abierto (para el mensaje del admin y el tablero). */
 export function faltan(L, d, now) {
   if (!abierto(L.meta, d, now)) return [];
-  return activos(L).filter(j => !L.results?.[d]?.[j.pid]);
+  // Who is out of the cup (D-347) is no longer waited for
+  return activos(L).filter(j => !L.results?.[d]?.[j.pid] && !fuera(L, j.pid, now));
 }
 
 /**

@@ -20,7 +20,7 @@ import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../asset
 import {
   POZO, VARIANTES, entradaCal, varianteDelDia, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
-  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, activos, ZONA, zonaDeIdioma,
+  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
 import { GAME_ID, LOCALES, juegosCopa, rondasFinal, conVariante, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
@@ -893,6 +893,8 @@ function tarjetaDia(d, rotulo) {
   const falta = faltan(Lc, d, now);
   let accion;
   if (est === 'jugado') accion = el('button', { class: 'btn btn--cyan btn--sm', onClick: () => { SFX.tap(); resultado(d); } }, T.seeResult);
+  // Out of the cup (D-347): nothing left to play; the notice on top says why
+  else if (fuera(Lc, S.yo, now)) accion = null;
   // Con el admin solo no se juega (D-118): falta con quién competir
   else if ((est === 'hoy' || est === 'gracia') && faltaGente(Lc)) accion = el('div', { class: 'aviso', id: 'falta-gente' }, T.needSecond);
   else if (est === 'hoy' || est === 'gracia') accion = el('button', { class: 'btn btn--yellow', 'data-dia': d, onClick: () => { SFX.tap(); antesDeJugar(d); } }, `${J.emoji} ${T.play}`);
@@ -902,7 +904,7 @@ function tarjetaDia(d, rotulo) {
       el('span', { class: 'chip' + (rotulo === T.today ? ' chip--hot' : '') }, rotulo),
       el('span', { class: 'muted' }, `${fmt(T.dayOf, { d, n: meta.days })} · ${fechaCorta(meta.win[d].a, meta.tz)}`),
       x2 ? el('span', { class: claseX2(esFinal(meta, d)) }, esFinal(meta, d) ? T.x2 : `${T.x2} ${T.wildUsed}`) : null),
-    el('div', { class: 'dia-juego' }, el('span', { class: con('dia-emoji', J.emoji) }, J.emoji), el('div', {}, el('b', {}, J.nombre, J.varianteNombre ? el('span', { class: 'dia-variante' }, ` · ${J.varianteNombre}`) : null), el('small', { class: 'muted' }, hastaCuando(d, est, now)))),
+    el('div', { class: 'dia-juego' }, el('span', { class: con('dia-emoji', J.emoji) }, J.emoji), el('div', {}, el('b', {}, J.nombre, J.varianteNombre ? el('span', { class: 'dia-variante' }, ` · ${J.varianteNombre}`) : null), el('small', { class: 'muted' }, est !== 'jugado' && fuera(Lc, S.yo, now) ? T.outTitle : hastaCuando(d, est, now)))),
     est === 'jugado' ? el('p', { class: 'ok' }, `✅ ${T.played}`) : null,
     accion,
     el('p', { class: 'muted quienes' }, jugaron.length ? fmt(T.whoPlayed, { names: jugaron.map(j => j.name).join(', ') }) : T.nobodyPlayed),
@@ -923,11 +925,12 @@ function vistaTabla(filas, { dias, meta, now }) {
     if (!x.jugo) return abierto(meta, d, now) ? el('span', { class: 'pd abierto', title: T.blockOpen }, '•') : el('span', { class: 'pd perdido', title: T.blockMissed }, '–');
     return el('span', { class: 'pd' + (x.x === 2 ? ' doble' : '') + (x.pos === 1 ? ' oro' : '') }, String(x.pts));
   };
-  return el('div', { class: 'tabla' }, filas.map(f => el('div', { class: 'fila' + (f.pid === S.yo ? ' yo' : '') },
-    el('span', { class: 'lugar' }, String(f.lugar)),
+  return el('div', { class: 'tabla' }, filas.map(f => el('div', { class: 'fila' + (f.pid === S.yo ? ' yo' : '') + (f.fuera ? ' fuera' : '') },
+    // Out of the cup (D-347): a door instead of a place, and grey
+    el('span', { class: 'lugar', title: f.fuera ? fmt(T.outAdmin, { a: f.fuera.desde, b: f.fuera.hasta }) : null }, f.fuera ? '🚪' : String(f.lugar)),
     el('span', { class: 'flecha ' + (f.flecha > 0 ? 'sube' : f.flecha < 0 ? 'baja' : '') }, f.flecha > 0 ? '▲' : f.flecha < 0 ? '▼' : ''),
     el('div', { class: 'quien' },
-      el('b', {}, f.name, f.pid === S.yo ? el('small', { class: 'muted' }, ` (${T.you})`) : null),
+      el('b', {}, f.name, f.pid === S.yo ? el('small', { class: 'muted' }, ` (${T.you})`) : null, f.fuera ? el('small', { class: 'muted' }, ` (${T.outRow})`) : null),
       el('div', { class: 'puntitos' }, dias.map(d => bloque(f, d)))),
     el('span', { class: 'total' }, String(f.total), el('small', {}, ` ${T.pts}`)))));
 }
@@ -941,6 +944,7 @@ function misDias(d, now) {
   const Lc = L(), { meta } = Lc;
   const pids = activos(Lc).map(j => j.pid);
   const w = comodinDe(Lc, S.yo);
+  const afuera = !!fuera(Lc, S.yo, now);
   const filas = [];
   for (let k = 1; k <= meta.days; k++) {
     if (k === d) { filas.push(tarjetaDia(k, T.today)); continue; }
@@ -954,7 +958,7 @@ function misDias(d, now) {
       detalle = visibleDia(Lc, k, S.yo, now) && pos ? `${r.r || r.s} · ${ord(pos.pos)} · +${pos.pts * multiplicador(Lc, k, S.yo)} ${T.pts}` : `${r.r || r.s}`;
     } else if (est === 'gracia') {
       detalle = T.lastDay;
-      accion = faltaGente(Lc) ? null : el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, `${J.emoji} ${T.play}`);
+      accion = faltaGente(Lc) || afuera ? null : el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, `${J.emoji} ${T.play}`);
     } else if (est === 'en-curso') {
       detalle = T.lastDay;
       accion = el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); jugar(k); } }, `${J.emoji} ${T.resume}`);
@@ -1113,6 +1117,13 @@ function tablero() {
 
   if (terminada(meta, now)) poner(body, podio());
   if (d === 0 && faltaGente(L())) poner(body, el('div', { class: 'panel center' }, el('p', { class: 'lead' }, T.needSecond)));
+
+  // Out of the cup, or one missed day away from it (D-347): said before the days
+  const yoFuera = terminada(meta, now) ? null : fuera(Lc, S.yo, now);
+  const riesgo = yoFuera || terminada(meta, now) ? 0 : enRiesgo(Lc, S.yo, now);
+  if (yoFuera) poner(body, el('div', { class: 'panel aviso-fuera', id: 'aviso-fuera' },
+    el('p', { class: 'lead', style: 'margin:0 0 6px' }, T.outTitle), el('p', { class: 'muted', style: 'margin:0' }, fmt(T.outText, { a: yoFuera.desde, b: yoFuera.hasta }))));
+  else if (riesgo) poner(body, el('p', { class: 'aviso', id: 'aviso-riesgo' }, fmt(T.outRisk, { p: riesgo - 1, d: riesgo })));
 
   // Tus días: el historial, el de hoy habilitado y los que vienen deshabilitados
   poner(body, misDias(d, now));
@@ -1757,6 +1768,7 @@ function admin({ forzar = false } = {}) {
 
   const lista = el('div', { class: 'admin-jugadores' });
   const fila = (pid, p) => {
+    const fueraPor = fuera(Lc, pid, now);
     const acciones = el('div', { class: 'acciones' });
     const editar = (rotulo, attrs, guardar) => {
       acciones.innerHTML = '';
@@ -1786,10 +1798,16 @@ function admin({ forzar = false } = {}) {
       esElAdmin || terminada(meta, now) ? null : el('button', { class: 'mini-btn', onClick: async () => {
         if (!p.out && !confirm(fmt(T.kickConfirm, { name: p.name }))) return;
         try { await store.sacar(S.code, pid, !p.out); } catch (e) { avisoError(err, errorDe(e)); }
-      } }, p.out ? T.unkick : T.kick));
+      } }, p.out ? T.unkick : T.kick),
+      // Out for missing two days in a row (D-347): the admin can bring them back
+      fueraPor && !terminada(meta, now) ? el('button', { class: 'mini-btn', onClick: async () => {
+        if (!confirm(fmt(T.bringBackConfirm, { name: p.name }))) return;
+        try { await store.devolver(S.code, pid); } catch (e) { avisoError(err, errorDe(e)); }
+      } }, T.bringBack) : null);
     const nombre = el('div', { class: 'admin-nombre' },
-      el('b', {}, p.name, esElAdmin ? el('small', { class: 'muted' }, ` (${T.youAdmin})`) : null, p.out ? el('small', { class: 'muted' }, ` (${T.kicked})`) : null), renombrar);
-    return el('div', { class: 'admin-fila' + (p.out ? ' fuera' : '') }, nombre, acciones);
+      el('b', {}, p.name, esElAdmin ? el('small', { class: 'muted' }, ` (${T.youAdmin})`) : null, p.out ? el('small', { class: 'muted' }, ` (${T.kicked})`) : null,
+        fueraPor ? el('small', { class: 'muted' }, ` (${fmt(T.outAdmin, { a: fueraPor.desde, b: fueraPor.hasta })})`) : null), renombrar);
+    return el('div', { class: 'admin-fila' + (p.out || fueraPor ? ' fuera' : '') }, nombre, acciones);
   };
   Object.entries(Lc.players || {}).sort((a, b) => (a[1].at || 0) - (b[1].at || 0)).forEach(([pid, p]) => poner(lista, fila(pid, p)));
   poner(body, el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.adminPlayers), lista, err),

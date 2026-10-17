@@ -23,7 +23,7 @@
  * Android they bring the Play and Mute this cup buttons (`acciones`, the key sw.js reads). The new
  * days of several cups at once are merged into one notification (`merge`, used by notify.mjs).
  */
-import { conCierre, diaActual, esFinal, anulado, tabla, juegoDelDia, terminada } from '../../public/cup/engine.js';
+import { conCierre, diaActual, esFinal, anulado, tabla, juegoDelDia, terminada, fuera, enRiesgo } from '../../public/cup/engine.js';
 import { LOCALES, juegosCopa } from '../../public/cup/rules.js';
 import { VALORES } from '../../public/assets/js/parametros.js';
 
@@ -84,6 +84,8 @@ export function cupNotifications({ code, cup, wants = {}, subs = {}, sent = {}, 
   for (const [pid, bySub] of Object.entries(wants || {})) {
     const player = L.players?.[pid];
     if (!player || player.out) continue;
+    // Out of the cup for missing two days in a row (D-347): nothing more to remind them of
+    if (!terminada(meta, now) && fuera(L, pid, now)) continue;
     for (const [subId, pref] of Object.entries(bySub || {})) {
       const sub = subs[subId];
       if (!sub) continue;
@@ -150,6 +152,8 @@ export function cupNotifications({ code, cup, wants = {}, subs = {}, sent = {}, 
             const hours = Math.min(...expiring.map(v => v.hours)), k = expiring[0].k;
             const body = expiring.length > 1
               ? fmt(hours <= 1 ? T.avMsgDueManyOne : T.avMsgDueMany, { h: hours, dias: listOf(expiring.map(v => String(v.k)), lang) })
+              // One missed day already: this one would leave them out (D-347)
+              : enRiesgo(L, pid, now) === k ? fmt(T.avMsgDueOut, { h: hours, d: k })
               : fmt(hours <= 1 ? T.avMsgDueOne : T.avMsgDue, { h: hours, d: k });
             candidates.push({ kind: 'plazo', keys: expiring.map(v => `plazo:${v.k}`), body, tag: `copa-${code}-d${expiring[expiring.length - 1].k}`, day: k });
           }
