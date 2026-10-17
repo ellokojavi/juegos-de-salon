@@ -6210,7 +6210,7 @@ a flag on `reply` (any session could skip the rule for anyone).
 `send-mail.test.py` checks the exemption is case-insensitive and only for listed addresses.
 
 ## D-328 · Support: a doubt goes to the owner's email, with a public pointer
-**Date:** 2026-10-15 · **Status:** current, narrowed by D-338 · **Relation:** follows D-317, D-318 and D-327
+**Date:** 2026-10-15 · **Status:** current · **Relation:** follows D-317, D-318 and D-327; narrowed by D-338
 **Decision:** Owner's request: when the processes agent isn't sure how to answer a report, it sends
 nothing to the player. `feedback.mjs doubt <n> <notes.txt>` emails the owner (their own account in
 `mail.json`, outside the 24-hour rule) with the doubt, a draft and the report, under the subject
