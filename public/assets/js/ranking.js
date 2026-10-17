@@ -11,6 +11,13 @@ import { COMMON, getLang } from './i18n.js';
 import { jugador, leerYo, rankingsVisibles } from './jugador.js';
 import { semana, SIEMPRE, tablaId, VARIANTE_COPA, VARIANTE_VICTORIAS, esVictorias, medallero, ultimasCopas, limpiarNombre, esPin, claveNombre, bandera, PARTIDAS, UAD_RACHA, periodoDia } from './records.js';
 import { fechaLocal, numDia, semanaDe } from './uno-al-dia.js';
+import { ponerBuzon } from './buzon.js';
+
+/** The inbox link at the end of the result screen, once it is drawn, after its buttons (D-341, U-38). */
+const buzonAlFinal = (juego, donde) => {
+  if (typeof document === 'undefined') return;
+  setTimeout(() => { try { ponerBuzon(donde(), { juego }); } catch (_) { /* never in the way */ } }, 0);
+};
 
 const R = () => (COMMON[getLang()] || COMMON.es).rk;
 const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
@@ -272,6 +279,7 @@ function ofrecerContar(caja, { nombre = '', alTocar = () => {}, alEntrar }) {
 export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {}, nombre = '', alTocar = () => {} }) {
   const T = R();
   const caja = el('div', { class: 'rk-resultado', 'aria-live': 'polite' });
+  buzonAlFinal(juego, () => caja.closest('.screen') || document.querySelector('.screen.active'));
   const anotar = async () => {
     try {
       const J = await jugador();
@@ -369,6 +377,7 @@ export function bloqueTabla({ tabla, titulo, hint = null, alTocar = () => {}, en
  * otro lado.
  */
 export function finDePartida({ juego, modo, rol = null, ganadores = [], nombres = {}, alTocar = () => {} }) {
+  buzonAlFinal(juego, () => document.querySelector('#screen-result'));
   try {
     if (modo === 'solo' || !rankingsVisibles()) return null;
     const mioDe = yo => rol || Object.keys(nombres).find(r => claveNombre(nombres[r]) === claveNombre(yo.n));

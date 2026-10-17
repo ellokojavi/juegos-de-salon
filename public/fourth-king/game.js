@@ -12,6 +12,7 @@ import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { GAME_ID, DEFAULT_CONFIG, RANKS, MIN_PLAYERS, MAX_PLAYERS, SORBOS, CARD_RULES, LOCALES } from './rules.js';
 import * as E from './engine.js';
+import { ponerBuzon } from '../assets/js/buzon.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -475,6 +476,8 @@ function finishGame(victimIndex) {
   $('#end-stats').textContent = fmt(T.endStats, { cards: state.drawn, mins });
   renderHistory();
   showScreen('screen-end');
+  // The quiet inbox link after the end screen's buttons (D-341, U-38)
+  ponerBuzon($('#screen-end'), { juego: GAME_ID });
   SFX.win();
   confetti({ count: 260, duration: 4000 });
 }
