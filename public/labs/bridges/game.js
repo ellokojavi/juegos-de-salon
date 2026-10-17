@@ -140,6 +140,7 @@ function pasoPorEncima(vigas, nudos, eps = 0.04) {
   }
   return res;
 }
+/**
  * The strain gauge, at the top of the board while the train crosses: a dial from 0 to 100 % of the
  * snapping point, its needle on the bridge's hardest-working beam right now, a mark that stays at the
  * peak so far and a white mark at the cheapest known bridge's peak (what solidity is measured against).
@@ -900,7 +901,8 @@ function jugar() {
       const ahora = sim.vigas.filter(v => v.rota).length;
       if (ahora > rotas) { rotas = ahora; SFX.error(); vibrate(40); }
       dibujar(c, e, { sim, visitas: visitasDe() });
-      if (!sim.fin || sim.tren.cayo) aguja.poner(sim.fin ? 0 : esfuerzoAhora(sim), picoDe(sim));
+      // Live while it crosses; once a beam snaps or the test ends, the needle stays on the peak (100 % if it broke)
+      aguja.poner(sim.fin || rotas ? picoDe(sim) : esfuerzoAhora(sim), picoDe(sim));
       if (!sim.fin) { requestAnimationFrame(cuadro); return; }
       // It made it: the notice now, and the scene runs on until the last wagon leaves the screen
       if (sim.tren.llego) {

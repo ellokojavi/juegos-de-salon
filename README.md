@@ -715,6 +715,7 @@ node tools/push/schedule.test.mjs
 node tools/push/webpush.test.mjs
 node tools/release/changelog.test.mjs
 node tools/release/merge-report.test.mjs
+node tools/release/syntax.test.mjs
 node tools/release/version.test.mjs
 ```
 <!-- /generated -->
