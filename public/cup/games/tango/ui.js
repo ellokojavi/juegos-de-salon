@@ -12,8 +12,11 @@
  * Además (D-103): **borrar todo**, que pide un segundo toque para confirmar; una **pista** que
  * revela una casilla y cuesta 15 puntos, también con segundo toque; y **consejos** para cuando
  * uno se queda atascado. Las jugadas son los índices tocados, 'C' (borrar todo) y { h } (pista).
+ * ↩️ Undo (D-342) takes back the last tap or Clear all, one per tap; it is a play too ('U'), so an
+ * error already counted stays counted and a hint stays revealed.
  */
 import * as motor from './engine.js';
+import { botonDeshacer } from '../deshacer.js';
 
 const ICONO = { [motor.SOL]: '☀️', [motor.LUNA]: '🌙' };
 const CLASE = { [motor.SOL]: 'sol', [motor.LUNA]: 'luna' };
@@ -77,11 +80,15 @@ export function montar(raiz, ctx) {
   };
 
   /** Un botón que pide confirmación con un segundo toque (el primero solo lo arma). */
+  // Armed, a button keeps the width it had: its long phrase does not push it down a line, so the
+  // confirming tap lands on it and not on ↩️ Undo, which would take its place (as in Reinas, D-283)
+  let anchoArmado = 0;
   const conConfirmacion = (clave, rotulo, rotuloArmado, accion, attrs = {}) => el('button', {
     type: 'button', class: 'btn btn--ghost btn--sm' + (armado === clave ? ' armado' : ''), ...attrs,
-    onClick: () => {
+    style: armado === clave && anchoArmado ? `flex: 0 0 ${anchoArmado}px` : null,
+    onClick: ev => {
       if (armado === clave) { armado = null; clearTimeout(armadoTimer); accion(); return; }
-      armado = clave; SFX.tap(); vibrate(15);
+      armado = clave; anchoArmado = ev.currentTarget.getBoundingClientRect().width; SFX.tap(); vibrate(15);
       clearTimeout(armadoTimer);
       armadoTimer = setTimeout(() => { armado = null; if (raiz.isConnected) dibujar(false, false); }, CONFIRMAR_MS);
       dibujar(false, false);
@@ -150,6 +157,11 @@ export function montar(raiz, ctx) {
     if (errores || e.pistas) caja.append(el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.tangoCount, { e: errores, p: e.pistas })));
     if (!e.fin) {
       caja.append(el('div', { class: 'btn-row tango-acciones' },
+        // Undo is not a cell tap: it neither sounds a clash nor restarts the red wait's count
+        botonDeshacer({ el, T, SFX, vibrate, puede: e.deshacibles > 0, alDeshacer: () => {
+          armado = null; clearTimeout(armadoTimer);
+          jugadas.push(motor.DESHACER); ctx.guardar(jugadas); dibujar();
+        } }),
         conConfirmacion('borrar', `🧹 ${T.clearAll}`, T.clearAllSure, () => { SFX.splash(); jugar(motor.BORRAR); }, { id: 'btn-borrar' }),
         conConfirmacion('pista', `💡 ${fmt(T.hintCost, { n: motor.COSTO_PISTA })}`, fmt(T.hintSure, { n: motor.COSTO_PISTA }), () => {
           const i = motor.pista(p, e.g, e.fijas);
