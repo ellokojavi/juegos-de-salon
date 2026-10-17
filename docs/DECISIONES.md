@@ -6397,7 +6397,8 @@ pareció?", an opinion on the game just played (#463).
   tapping it unfolds the form in place. Never a popup, never during a game (U-38).
 - **Where:** the result of every group game (`finDePartida`), every solo result (`avisoPartida`),
   La Copa's final podium, One a Day's result and the end of every minigame (La Copa's practice
-  result), and Cuarto Rey's end screen. `ponerBuzon` (public/assets/js/buzon.js) appends it at the
+  result), and Cuarto Rey's end screen. Where it shows, La Copa's "🐞 Reportar un problema" link
+  steps aside (`sinDoble`), so a screen never offers two links for the same thing (U-1). `ponerBuzon` (public/assets/js/buzon.js) appends it at the
   end of the screen.
 - **How often:** on each device, at most once per day; not during the first 2 games a new device
   plays; 14 days of rest after the player sends something. Kept in `localStorage`

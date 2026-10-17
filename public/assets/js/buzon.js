@@ -85,6 +85,9 @@ export function enlaceBuzon({ juego = null, contexto: extra = {}, almacen = glob
   } catch (_) { return null; /* the inbox never gets in the way of an ending */ }
 }
 
+/** One way to write per screen (U-1): where the inbox shows, La Copa's 🐞 report link steps aside. */
+export const sinDoble = en => en.querySelectorAll('#btn-reporte').forEach(b => { b.hidden = true; });
+
 let ultimo = -Infinity;
 /**
  * Puts the link at the very end of `en` (the result screen), after everything else, replacing the
@@ -97,7 +100,7 @@ export function ponerBuzon(en, opciones = {}) {
   ultimo = ahora;
   en.querySelector('#buzon-pie')?.remove();
   const caja = enlaceBuzon(opciones);
-  if (caja) en.append(caja);
+  if (caja) { en.append(caja); sinDoble(en); }
   return caja;
 }
 
