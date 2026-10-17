@@ -126,7 +126,10 @@ también Agentes del laboratorio): recién ahí aparece el tablero, y
 el reloj parte cuando el "¡A jugar!" ya se fue y terminó la entrada del juego, si la tiene (las
 cartas de El caso, con `entrada()` en su registro): la cuenta no es tiempo de juego (D-258). Al
 terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
-(`public/cup/desglose.js`, D-106), y abajo va la tabla del día. En la de 🏁 La Gran Final, cada
+(`public/cup/desglose.js`, D-106). Order (C-19, D-343): the place, then **Back to the board**, share and
+the next-day notice (its button cyan); the breakdown starts folded (open in practice) and the day table goes
+below. The podium has **🏠 Back to the menu** under Share the summary; "Leave this Cup" stays a
+quiet link at the end. The trial run (D-103) ends with only its way back to the waiting room. En la de 🏁 La Gran Final, cada
 jugador lleva además su tarjeta de cinco rondas (⏳75 🔢85 👑100 🔤60 📅90), para comparar ronda a
 ronda (#259); en la demo `podium` o `full` se ve con datos.
 
