@@ -1,7 +1,7 @@
 // The processes agent (D-273): which PRs count as "waiting", the queue of what was approved and the patterns.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { waits, queued, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS } from './processes.mjs';
+import { waits, backlog, queued, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS } from './processes.mjs';
 import { recordDone } from './approve.mjs';
 
 const now = Date.parse('2026-10-11T12:00:00Z');
@@ -61,3 +61,11 @@ for (const k of Object.keys(memory.dispatches)) assert.ok(EXECUTORS.includes(k),
 for (const p of memory.patterns) assert.ok(p.key && p.what && Array.isArray(p.seen), `pattern without key, what or seen: ${JSON.stringify(p).slice(0, 80)}`);
 
 console.log('processes: ok');
+
+// The owner's backlog (D-339): issues with no label, oldest first; labelled ones and "main is red" stay out
+{
+  const i = (number, createdAt, labels = [], title = 'x') => ({ number, title, createdAt, labels: labels.map(name => ({ name })) });
+  const b = backlog([i(5, '2026-10-10T00:00:00Z'), i(6, '2026-10-01T00:00:00Z'), i(7, '2026-10-01T00:00:00Z', ['feedback']), i(8, '2026-10-01T00:00:00Z', [], 'main is red: x')], now);
+  assert.deepEqual(b.map(x => x.number), [6, 5]);
+  assert.equal(b[0].days, 10);
+}

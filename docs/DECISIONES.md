@@ -6349,3 +6349,16 @@ leaving, as before. A clash fixed within the 1.5 s still sounds when it is count
 tapped the next cell, before they had finished the thought.
 **Consequences:** shipped in PR #456. `tools/e2e/cup/tournament.mjs` checks the red is absent right
 after leaving and present 1.5 s later; the `tango clash` path in `tools/e2e/paths.mjs` waits for it.
+
+## D-339 · The processes round works the owner's backlog
+**Date:** 2026-10-16 · **Status:** current · **Relation:** extends D-273 and D-276
+**Context:** the owner asked whether anyone reviews the backlog. The daily round looked at feedback,
+waiting PRs, red main, the queue and old dilemmas, but not at the issues the owner opens as to-dos
+(no label): they waited until a session picked them up, and one already done (#465) stayed open.
+**Decision:** owner's request: `processes.mjs check` lists the open issues with no label, oldest
+first, with their age (`backlog()`, tested in `processes.test.mjs`). Each round the processes agent
+closes the ones already done (linking the PR), moves one or two forward, the smallest first, each in
+its PR with auto-merge, and asks with checkboxes only what needs the owner's decision.
+**Why:** a to-do nobody lists is a to-do nobody does; the round already runs every day.
+**Alternatives discarded:** a label the owner has to put on each to-do (one more step for them).
+
