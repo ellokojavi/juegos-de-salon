@@ -490,7 +490,8 @@
         if (azar) azar.textContent = (AZAR[lang] || AZAR.es).corto;
         slot.append(botonUnoAlDia({ lang, alTocar: () => SFX.tap() }));
       }
-    }).catch(() => {});
+    // Without the modules (offline, an error) the empty card goes away and La Copa takes the row
+    }).catch(() => reserva?.remove());
 
     // Filtro por tipo (D-142, D-149): la lista ya es larga. Va en la URL (?type=logic, en inglés
     // como las rutas: D-214), así volver desde un juego lo deja como estaba y un link filtrado se
