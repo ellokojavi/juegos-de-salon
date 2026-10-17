@@ -520,3 +520,19 @@ export const PATHS = {
 for (const { id } of SUELTOS) {
   PATHS[id] ||= { intro: [], game: [START, `1`, `1`, `1`, `1`, `1`, `1`] };
 }
+
+/**
+ * The inbox (D-341, U-38) on every kind of ending: the same result as its own path, on a device
+ * past its first 2 games, scrolled to the link. `inbox-podium` is La Copa's podium (demo),
+ * `inbox-end` Fourth King's last king and `inbox-home` the home page footer's form.
+ */
+const TO_LINK = `document.getElementById('buzon-pie')?.scrollIntoView({ block: 'center' })`;
+for (const [game, screen] of [['ahorcado', 'result'], ['generala', 'final'], ['linea-de-tiempo', 'solo-result'], ['caso', 'result'], ['pintaminas', 'result'], ['labs/agents', 'result']]) {
+  if (PATHS[game]?.[screen]) PATHS[game][`inbox-${screen}`] = [INBOX_SEED, ...PATHS[game][screen], `1`, TO_LINK];
+}
+PATHS.copa['inbox-podium'] = [INBOX_SEED, `location.href='/cup/?test&demo=podium'`, `1`, `1`, `1`, TO_LINK];
+PATHS['cuarto-rey']['inbox-end'] = [INBOX_SEED,
+  `(()=>{const n=['Javi','Cata','Pancho'];const deck=[{rank:'5',suit:'♣',color:'black'},{rank:'K',suit:'♥',color:'red'}];localStorage.setItem('juegos-de-salon:cuarto-rey:session',JSON.stringify({v:1,game:'cuarto-rey',at:Date.now(),mode:'local',state:{players:n.map((name,i)=>({name,gender:'mfx'[i%3]})),deck,turn:0,kings:3,drawn:20,sorbos:n.map(()=>2),fondos:n.map(()=>0),history:[],current:null,finished:false,victim:null,startedAt:Date.now()}}));location.reload()})()`,
+  `document.querySelector('#resume-slot .btn--cyan').click()`, `document.getElementById('card').click()`, `1`, `1`,
+  `document.querySelector('#result .actions .btn')?.click()`, `1`, `1`, TO_LINK];
+PATHS.copa['inbox-home'] = [`location.href='/'`, `1`, `1`, `document.querySelector('.footer-buzon')?.click()`, `1`];
