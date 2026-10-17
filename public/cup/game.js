@@ -147,6 +147,8 @@ const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/c
 // On a day's cover the top-left button goes back to the cup, and says so ("‹ La Copa")
 function rotuloMenu() {
   $('#btn-menu').textContent = S.antesala ? `‹\u00a0${T.toBoard}` : LABS ? T.backToLabsShort : T.menu;
+  // That button already names the cup: the "🏆 La Copa" chip steps aside, or at 320 px it is cut to "🏆 …" (U-12)
+  document.body.classList.toggle('antesala', !!S.antesala);
 }
 
 function mostrar(id) {
