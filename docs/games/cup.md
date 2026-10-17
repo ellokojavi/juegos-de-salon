@@ -119,7 +119,7 @@ Recién creada, la copa abre en **Administrar** con una guía para invitar (D-11
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
 mientras nadie haya jugado. `?test&demo=<escena>` abre una copa de ejemplo en cualquier
 punto (`public/cup/demo.js`: `new`, `guest`, `waiting`, `not-started`, `player`, `admin`, `final`,
-`final-admin`, `podium`, `full`; los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262).
+`final-admin`, `podium`, `full`, and `out` and `risk` for D-347; los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105; la capa es
 `assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`, y la usa
@@ -304,7 +304,7 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   minutos, y `tools/push/schedule.mjs` decide con `engine.js` qué toca, en la hora y el idioma
   del celular y nunca entre las 22:00 y las 8:00: **se abrió el día** (desde las 9:00, si no lo ha
   jugado ni empezado), **se te acaba el plazo** (4 horas antes del cierre, o desde las 20:00 si
-  cierra de noche), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
+  cierra de noche; to whoever already missed the day before, it also says that missing this one leaves them out of the cup, D-347; whoever is out gets nothing more), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
   que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta, y dos
   por copa en un día (D-229). Los textos son los `avMsg*` de `rules.js`. Al tocarlo abre ese día
   (`&day=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
