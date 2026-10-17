@@ -128,6 +128,18 @@ const PM_VARIANT = v => `localStorage.setItem('juegos-de-salon:pintaminas:varian
 const PM_SOLVE = `(()=>{const {p}=window.__pintaminas;const k=c=>c===0?'btn-fondo':c===1?'btn-tinta':'btn-tinta2';
   p.sol.forEach((c,i)=>{if(p.dadas.includes(i))return;document.getElementById(k(c)).click();document.querySelector('#pm-tablero .pm-casilla[data-i="'+i+'"]').click();});})()`;
 
+/* --- The inbox (D-341): a device past its first 2 games, and Toque y Fama's solo result --- */
+const INBOX_SEED = `localStorage.setItem('juegos-de-salon:buzon', JSON.stringify({ partidas: 2 }))`;
+const TYF_RESULT = [
+  `document.querySelectorAll('.mode')[2].click()`,
+  `document.getElementById('btn-solo-empezar').click()`,
+  `(async()=>{const m=await import('../cup/games/number/engine.js');const s=m.generar(__tyf.guardada().codigo,1).secreto;
+    const guess=n=>{for(const d of n)[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent===d).click();document.querySelector('.screen.active .keypad .ok').click()};
+    guess(s==='0123'?'4567':'0123');guess(s);})()`,
+  `document.getElementById('btn-fin').click()`,
+  `1`, `1`, `1`, `1`,
+];
+
 export const PATHS = {
   /**
    * 🖌️ Pintaminas (D-331). The phone remembers the variant, so each path sets it first (the lever's
@@ -382,6 +394,10 @@ export const PATHS = {
       `document.getElementById('btn-fin').click()`,
       `1`, `1`, `1`, `1`,   // let the confetti pass
     ],
+    // The inbox (D-341): the same result on a device past its first 2 games, the link after the
+    // buttons, and the form unfolded in place with a kind picked
+    'inbox-link': [INBOX_SEED, ...TYF_RESULT],
+    'inbox-form': [INBOX_SEED, ...TYF_RESULT, `document.getElementById('btn-buzon').click()`, `1`, `document.querySelector('.buzon-tipo[data-tipo="idea"]').click()`],
   },
   /**
    * Línea de Tiempo playing solo: La Copa's ⏳ Línea Relámpago (D-142). For the result it is

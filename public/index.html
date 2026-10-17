@@ -373,6 +373,7 @@
 
     <footer>
       <p class="footer-msg" id="footer-msg" aria-live="polite">Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
+      <p><button type="button" class="buzon-link footer-buzon" id="btn-buzon-portada"></button></p>
       <p class="muted">v0.0.0 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
     </footer>
   </main>
@@ -398,6 +399,10 @@
     document.documentElement.lang = lang;
     const T = COMMON[lang];
     applyStatic(T);
+    // The inbox's fixed place (D-341): always here, opening the form in its overlay
+    const btnBuzon = document.getElementById('btn-buzon-portada');
+    btnBuzon.textContent = T.buzon.abrir;
+    btnBuzon.addEventListener('click', () => import('./assets/js/buzon.js').then(m => m.abrirBuzon({ pantalla: 'portada' })));
     document.title = `${T.appTitle} 🎲`;
     document.getElementById('lang-slot').append(langToggle());
     // Los rankings (D-212): un botón en la barra, que la portada no tiene espacio para más

@@ -31,6 +31,10 @@ import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 import { correoValido as validEmail } from '../../public/cup/reportes.js';
 
 export const LABEL = 'feedback';
+
+/** The optional kind the player picked (D-341) → a second label on the issue; anything else, none. */
+export const KIND_LABELS = { sugerencia: 'feedback:suggestion', problema: 'feedback:problem', idea: 'feedback:game-idea', otro: 'feedback:other' };
+export const labelsOf = r => [LABEL, ...(KIND_LABELS[r?.tipo] ? [KIND_LABELS[r.tipo]] : [])];
 const REPO = process.env.GITHUB_REPOSITORY || 'ellokojavi/juegos-de-salon';
 const SITE = 'https://juegosdesalon.cl';
 
@@ -108,7 +112,7 @@ export function body(r) {
   const c = context(r);
   const date = r.at ? new Date(r.at).toISOString().slice(0, 16).replace('T', ' ') + ' UTC' : 'no date';
   const data = [
-    ['Who', r.nombre && String(r.nombre).trim()], ['Lab key', r.tester && String(r.tester).trim()], ['Game', c.juego], ['Lab', c.labs], ['Cup', c.copa], ['Day', c.dia], ['Seed', c.semilla],
+    ['Who', r.nombre && String(r.nombre).trim()], ['Kind', r.tipo && KIND_LABELS[r.tipo]?.slice(9)], ['Lab key', r.tester && String(r.tester).trim()], ['Game', c.juego], ['Lab', c.labs], ['Cup', c.copa], ['Day', c.dia], ['Seed', c.semilla],
     ['Result', c.resumen ?? c.puntaje], ['Mistakes', c.errores], ['Hints', c.ayudas], ['Time', c.tiempo],
     ['Page', c.url && (String(c.url).startsWith('/') ? `${SITE}${c.url}` : c.url)], ['Screen', c.pantalla], ['Window size', c.pantallaTam], ['Version', r.v && `v${r.v}`], ['Date', date],
     ['Email', mask(r.correoMascara) && `\`${mask(r.correoMascara)}\` (wants a reply by email: the processes agent sends it when resolving, D-317)`],
@@ -120,7 +124,7 @@ export function body(r) {
     '',
     c.canal === 'email'
       ? 'Arrived by email to hola@juegosdesalon.cl (D-318): the text above is the support agent\'s quote or summary of it. The processes agent handles it in its round.'
-      : 'Sent with the app\'s 🐞 button (D-275). The processes agent handles it in its round.',
+      : 'Sent with the app\'s feedback form (D-275, D-341). The processes agent handles it in its round.',
     marker(r.id),
   ].join('\n');
 }
@@ -139,7 +143,9 @@ async function sync(dryRun) {
   if (dryRun) { for (const r of fresh) console.log(`${title(r)}\n${body(r)}\n`); return; }
   const exists = JSON.parse(gh('label', 'list', '--limit', '200', '--json', 'name')).some(l => l.name === LABEL);
   if (!exists) gh('label', 'create', LABEL, '--color', 'd93f0b', '--description', 'A player\'s 🐞 report (D-275)');
-  for (const r of fresh) console.log(gh('issue', 'create', '--title', title(r), '--label', LABEL, '--body', body(r)).trim());
+  const have = new Set(JSON.parse(gh('label', 'list', '--limit', '200', '--json', 'name')).map(l => l.name));
+  for (const name of Object.values(KIND_LABELS)) if (!have.has(name)) gh('label', 'create', name, '--color', 'c5def5', '--description', 'The kind the player picked in the inbox (D-341)');
+  for (const r of fresh) console.log(gh('issue', 'create', '--title', title(r), '--label', labelsOf(r).join(','), '--body', body(r)).trim());
 }
 
 /* ------------------------------------------------------------------ */
