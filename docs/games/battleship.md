@@ -69,7 +69,7 @@ otro y Repetir el de hoy. Se prueba con `tools/e2e/daily-group.mjs`.
 ## Flujo
 
 ```
-Intro (reglas, modos) → Setup (nombres, tiro extra) → [Lobby: código + QR + cancelar la sala]
+Intro (modos, then the rules below them, D-344) → Setup (nombres, tiro extra) → [Lobby: código + QR + cancelar la sala]
    → Colocar flota → Batalla (dos grillas) → Resultado (flotas reveladas y verificadas) → Revancha
 ```
 

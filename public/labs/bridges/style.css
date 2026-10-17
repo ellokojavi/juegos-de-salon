@@ -78,9 +78,13 @@
 .tv-leyenda { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 3px; }
 @media (max-width: 380px) { .tv-tabla { font-size: 0.8rem; } }
 
-/* The strain gauge, at the top centre of the board (the sky, clear of the train and the towers) while the train crosses */
-.tv-medidor { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); padding: 4px 6px 2px; border-radius: 12px; background: rgba(20, 8, 31, 0.78);
-  border: 1px solid var(--glass-border); pointer-events: none; line-height: 0; }
+/* The strain gauge, at the top centre of the board (the sky, clear of the train and the towers) while the
+   train crosses. Its plate is the scene's: night sky above, a strip of water and the cliff's rock below */
+.tv-medidor { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); padding: 4px 6px 3px; border-radius: 12px;
+  display: grid; justify-items: center; gap: 1px; pointer-events: none; line-height: 0;
+  background: linear-gradient(180deg, #1d0838 0%, #2f0c48 62%, #11415e 62%, #0b2c48 80%, #5a2f8a 80%, #3d1d63 100%);
+  border: 2px solid #25103f; box-shadow: inset 0 1px 0 rgba(157, 255, 58, 0.55); }
+.tv-medidor-titulo { line-height: 1; font: 0.78rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--yellow); }
 .tv-medidor[hidden] { display: none; }
 
 /* The stage's summary, over the screen when a stage passes; the bar empties until it goes on its own */

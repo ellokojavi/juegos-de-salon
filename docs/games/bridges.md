@@ -60,7 +60,7 @@ lowered that. Since the known bridge is the cheapest, solidity and saving wood p
 so a perfect 100 is rare.
 
 While the train crosses, a gauge at the top of the board (`medidor()`) shows the strain live: a
-needle on the hardest-working beam, a red mark at the peak so far and a white one at the cheapest
+needle on the hardest-working beam, a red arrow outside the dial at the peak so far (with "máx." and its number under it; the needle itself keeps showing the load right now, also after the test) and a white one at the cheapest
 bridge's peak. When a stage passes, a summary opens over the screen (`felicitar()`), the only place it is shown:
 the wood against the budget and the known minimum, the peak strain against the cheapest bridge's, the
 time on that stage and its points (stage + savings + solidity). It goes with its button, a tap outside,
@@ -78,7 +78,7 @@ when a beam snaps, a splash when something falls, birds now and then. One charac
 random stage and moment: a flying saucer (`?ovni`, `?ovni=mira|pesca`), a whale (`?ballena`,
 `?ballena=salto|chorro`) a mole that tunnels through a cliff (`?topo`, `?topo=anteojos|minero`), or a petrol-green boat
 with a wakeboarder towed from its tower roof by a black rope, riding its wave (`?wake`, `?wake=carve|jump|fall|sink`: carving the wave, a jump off its
-crest, a fall and the boat turning back to pick the rider up, or the rider sinking, only the head popping up,
+crest, a fall and the boat turning back with an orange flag raised to pick the rider up, or the rider sinking, only the head popping up,
 and the boat coming back with a small orange flag raised). The boat comes out from just behind a cliff and
 crosses slowly, not from the screen's edge, so it stays in view over a phone's narrow water.
 It comes 5 to 25 s into its stage; if the stage is passed first, it moves to the next one and comes
