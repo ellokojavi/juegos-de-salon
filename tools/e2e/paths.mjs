@@ -128,6 +128,18 @@ const PM_VARIANT = v => `localStorage.setItem('juegos-de-salon:pintaminas:varian
 const PM_SOLVE = `(()=>{const {p}=window.__pintaminas;const k=c=>c===0?'btn-fondo':c===1?'btn-tinta':'btn-tinta2';
   p.sol.forEach((c,i)=>{if(p.dadas.includes(i))return;document.getElementById(k(c)).click();document.querySelector('#pm-tablero .pm-casilla[data-i="'+i+'"]').click();});})()`;
 
+/* --- The inbox (D-341): a device past its first 2 games, and Toque y Fama's solo result --- */
+const INBOX_SEED = `localStorage.setItem('juegos-de-salon:buzon', JSON.stringify({ partidas: 2 }))`;
+const TYF_RESULT = [
+  `document.querySelectorAll('.mode')[2].click()`,
+  `document.getElementById('btn-solo-empezar').click()`,
+  `(async()=>{const m=await import('../cup/games/number/engine.js');const s=m.generar(__tyf.guardada().codigo,1).secreto;
+    const guess=n=>{for(const d of n)[...document.querySelectorAll('.screen.active .keypad button')].find(x=>x.textContent===d).click();document.querySelector('.screen.active .keypad .ok').click()};
+    guess(s==='0123'?'4567':'0123');guess(s);})()`,
+  `document.getElementById('btn-fin').click()`,
+  `1`, `1`, `1`, `1`,
+];
+
 export const PATHS = {
   /**
    * 🖌️ Pintaminas (D-331). The phone remembers the variant, so each path sets it first (the lever's
@@ -190,9 +202,9 @@ export const PATHS = {
     'cover-back': [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`, `document.getElementById('btn-menu').click()`, `1`],
     // La Copa's 🐞 form, from the cup's screen (D-306: without the context dropdown)
     report: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.getElementById('btn-reporte').click()`, `1`],
-    // The lab's feedback form (labs-idioma.js), in the layer the 🐞 or "Dejar un comentario" opens
-    feedback: [`(async()=>{const {LOCALES}=await import('/cup/rules.js');const {abrirComentario}=await import('/assets/js/labs-idioma.js');
-      const L=LOCALES[document.documentElement.lang]||LOCALES.es;abrirComentario({T:L.comentario,enviar:async()=>{},contexto:{}});})()`, `1`],
+    // The feedback form (buzon-form.js, D-341) with the inbox's texts, in the layer the 🐞 or "Sugerencias y comentarios" opens
+    feedback: [`(async()=>{const {COMMON}=await import('/assets/js/i18n.js');const {abrirComentario}=await import('/assets/js/labs-idioma.js');
+      const C=COMMON[document.documentElement.lang]||COMMON.es;abrirComentario({T:C.buzon,enviar:async()=>{},contexto:{}});})()`, `1`],
   },
   dudo: {
     intro: [],
@@ -382,6 +394,10 @@ export const PATHS = {
       `document.getElementById('btn-fin').click()`,
       `1`, `1`, `1`, `1`,   // let the confetti pass
     ],
+    // The inbox (D-341): the same result on a device past its first 2 games, the link after the
+    // buttons, and the form unfolded in place with a kind picked
+    'inbox-link': [INBOX_SEED, ...TYF_RESULT],
+    'inbox-form': [INBOX_SEED, ...TYF_RESULT, `document.getElementById('btn-buzon').click()`, `1`, `document.querySelector('.buzon-tipo[data-tipo="idea"]').click()`],
   },
   /**
    * Línea de Tiempo playing solo: La Copa's ⏳ Línea Relámpago (D-142). For the result it is
@@ -504,3 +520,19 @@ export const PATHS = {
 for (const { id } of SUELTOS) {
   PATHS[id] ||= { intro: [], game: [START, `1`, `1`, `1`, `1`, `1`, `1`] };
 }
+
+/**
+ * The inbox (D-341, U-38) on every kind of ending: the same result as its own path, on a device
+ * past its first 2 games, scrolled to the link. `inbox-podium` is La Copa's podium (demo),
+ * `inbox-end` Fourth King's last king and `inbox-home` the home page footer's form.
+ */
+const TO_LINK = `document.getElementById('buzon-pie')?.scrollIntoView({ block: 'center' })`;
+for (const [game, screen] of [['ahorcado', 'result'], ['generala', 'final'], ['linea-de-tiempo', 'solo-result'], ['caso', 'result'], ['pintaminas', 'result'], ['labs/agents', 'result']]) {
+  if (PATHS[game]?.[screen]) PATHS[game][`inbox-${screen}`] = [INBOX_SEED, ...PATHS[game][screen], `1`, TO_LINK];
+}
+PATHS.copa['inbox-podium'] = [INBOX_SEED, `location.href='/cup/?test&demo=podium'`, `1`, `1`, `1`, TO_LINK];
+PATHS['cuarto-rey']['inbox-end'] = [INBOX_SEED,
+  `(()=>{const n=['Javi','Cata','Pancho'];const deck=[{rank:'5',suit:'♣',color:'black'},{rank:'K',suit:'♥',color:'red'}];localStorage.setItem('juegos-de-salon:cuarto-rey:session',JSON.stringify({v:1,game:'cuarto-rey',at:Date.now(),mode:'local',state:{players:n.map((name,i)=>({name,gender:'mfx'[i%3]})),deck,turn:0,kings:3,drawn:20,sorbos:n.map(()=>2),fondos:n.map(()=>0),history:[],current:null,finished:false,victim:null,startedAt:Date.now()}}));location.reload()})()`,
+  `document.querySelector('#resume-slot .btn--cyan').click()`, `document.getElementById('card').click()`, `1`, `1`,
+  `document.querySelector('#result .actions .btn')?.click()`, `1`, `1`, TO_LINK];
+PATHS.copa['inbox-home'] = [`location.href='/'`, `1`, `1`, `document.querySelector('.footer-buzon')?.click()`, `1`];
