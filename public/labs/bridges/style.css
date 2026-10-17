@@ -14,8 +14,13 @@
 .tv-demo { width: 100%; max-width: 360px; margin: 0 auto; }
 
 /* The game: the stage, its dots and the countdown on top; the canvas; the beams left and the notice */
-.tv-cabeza { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font-weight: 900; }
-.tv-etapa { font-size: 0.95rem; }
+.tv-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 900; }
+.tv-puntos { justify-content: flex-start; }
+/* The stage is the screen's title, and under it the train's weight, which stays */
+.tv-titulo-etapa { display: grid; gap: 2px; text-align: center; }
+.tv-etapa { margin: 0; font: 1.5rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+.tv-carga { margin: 0; font-weight: 800; font-size: 0.95rem; color: var(--muted); }
+.tv-carga.pesado { color: #ff8a3d; }
 .tv-reloj { font-variant-numeric: tabular-nums; }
 .tv-reloj.apurado { color: #ff6b8b; }
 .tv-puntos { display: flex; gap: 6px; justify-content: center; }
@@ -48,13 +53,6 @@
 
 @media (prefers-reduced-motion: reduce) { .titulo-tv .tren, .tv-sello { animation: none; } }
 
-/* The stage's sign: it slides in over the board, holds and goes */
-.tv-letrero { position: absolute; left: 50%; top: 14%; transform: translateX(-50%); display: grid; gap: 2px; text-align: center; pointer-events: none;
-  padding: 8px 16px; border-radius: 12px; background: rgba(20, 8, 31, 0.86); border: 2px solid var(--yellow); white-space: nowrap;
-  animation: tv-letrero 2s ease-in-out forwards; }
-.tv-letrero b { font: 1.4rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
-.tv-letrero span { font-size: 0.85rem; font-weight: 800; }
-@keyframes tv-letrero { 0% { opacity: 0; transform: translate(-50%, -14px); } 15%, 75% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -8px); visibility: hidden; } }
 
 /* The score's table: one row per stage, numbers aligned on the right */
 .tv-tabla-caja { overflow-x: auto; }
@@ -67,9 +65,7 @@
 .tv-nota { font-size: 0.82rem; margin: 0; }
 .tv-linea { display: flex; justify-content: space-between; gap: 10px; font-weight: 800; }
 .tv-linea.total { font-size: 1.1rem; color: var(--yellow); border-top: 2px solid var(--glass-border); padding-top: 8px; }
-@media (prefers-reduced-motion: reduce) { .tv-letrero { animation: none; display: none; } }
 
-.tv-letrero .tv-carga { color: #ff8a3d; }
 /* The result's "how it could be crossed": the known bridge with the train looping over it */
 .tv-solucion { display: grid; gap: 8px; text-align: left; }
 .tv-solucion p { margin: 0; }
