@@ -44,6 +44,8 @@ language. Older Spanish content and Spanish file and identifier names are being 
 | What was requested (RP-n…) | [docs/REQUERIMIENTOS.md](docs/REQUERIMIENTOS.md) | When closing one |
 | German | [docs/ALEMAN.md](docs/ALEMAN.md), the glossary | When translating |
 | Owner panel | [docs/PANEL.md](docs/PANEL.md) | When touching signals or the panel |
+| README, screenshots, link cards | the `readme-and-cards` skill (`.claude/skills/readme-and-cards/`) | Before touching them, and on "Actualiza el README" |
+| Panel, Cup reports, rankings code | the `owner-tools` skill (`.claude/skills/owner-tools/`) | Before touching them |
 | End-to-end tests | [tools/e2e/README.md](tools/e2e/README.md) | When running or writing a script |
 | Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
 
@@ -190,27 +192,8 @@ owner's key) and does not merge. Everything else in this guide applies the same.
 
 ## README, screenshots and social cards (C-13, D-51, D-181)
 
-The `tests` check on each PR blocks an out-of-date README or card.
-
-```bash
-python3 tools/release/readme.py check        # is anything behind?
-python3 tools/release/readme.py update     # rewrites the <!-- generated: ... --> blocks
-python3 tools/release/readme.py screenshots <section> [--offline]   # redoes the screenshots with Chrome
-python3 tools/release/readme.py seal         # "I reread the README with these facts"
-node tools/e2e/contact-sheet.mjs <section> --out /tmp/contact-sheet   # look at them together (D-76)
-node tools/release/og.mjs cards | images | check           # WhatsApp cards (D-72)
-node tools/release/icons.mjs                                    # PNG icons for the installable app, from assets/icon.svg (D-221)
-node tools/push/vapid.mjs                                        # the notifications key: already run (D-225), not redone
-node tools/push/notify.mjs --dry-run | --test <code>           # which notifications it would send (Cups and Uno al día (One a Day)), or a test one to a Cup (D-224, D-230)
-```
-
-- **An out-of-date screenshot is a warning in an ordinary PR. "Actualiza el README" (update the README) is a full pass**,
-  at the owner's request: generated blocks, prose **and every screenshot** that `check` flags, looked at
-  on the contact sheet and only then sealed; it is not delivered with pending warnings (D-213).
-- Inside `<!-- generated: ... -->` nothing is edited by hand. Each screenshot declares in
-  [docs/capturas.json](docs/capturas.json) which `tools/e2e/` script and which shot it comes from.
-- The card images are redone **from a branch up to date with `main`**; they only change if
-  a name, an emoji, a tagline or the design changes ([tools/release/og/card.html](tools/release/og/card.html)).
+The `tests` check on each PR blocks an out-of-date README or card. **"Actualiza el README" (update the README) is a full pass**,
+at the owner's request (D-213). The commands and the rules are in the `readme-and-cards` skill (`.claude/skills/readme-and-cards/SKILL.md`): read it before touching the README, screenshots or cards.
 
 ## Tests (C-12)
 
@@ -286,22 +269,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   owner's request): the same session creates the key, opens the PR and turns on auto-merge
   (`gh pr merge <n> --auto --merge`) without waiting for another order, without CHANGELOG or agents, and delivers the
   link noting that it opens once the site is published.
-- **Panel** (`public/panel/`, D-44, D-207): `window.__panel.seed({ rooms, days, torneos, push, vista })`
-  draws it with seeded data without logging in. See [docs/PANEL.md](docs/PANEL.md).
-- **La Copa (the Cup) reports** (D-104): `node tools/firebase/reports.mjs [--days 3] [--json]`.
-- **Rankings** (D-212): `records.js` (logic), `jugador.js` (the player and their store:
-  `jugador-firebase.js`, or `jugador-local.js` in tests and with `?test`; `?records=firebase` forces
-  Firebase) and `ranking.js` + `ranking.css` (screen). Open to everyone since D-217 (the lab
-  gate, `RANKINGS_EN_LABS`, stays `false`). The
-  history of La Copa (podiums, the "Copa" tab and each player's Cups for "Tus copas" (Your Cups), D-220,
-  with inherited players that each one claims):
-  `node tools/firebase/rankings-history.mjs [--with-labs] [--write]`. Group games
-  record wins with `finDePartida` (`ranking.js`) when they end, and show their table with
-  `bloqueVictorias` in the intro (D-215); those played solo (Toque y Fama, Generala, Ahorcado (Hangman))
-  put their `<id>_solo` table on top with `bloqueTabla` (D-274). With no player signed in, `finDePartida` and
-  `avisoPartida` offer at the end, after the buttons, to sign in so that game counts (D-274). Uno al día (D-230) records with `anotarDia` from `jugador.js` in
-  `unoAlDia/<jid>/<n>` and in the `uno-al-dia` tables (the day period `d<n>` and the week) and
-  `uno-al-dia-racha`; its network (invitations, the data of who invites) is in `uno-al-dia-red.js`.
+- **Panel, La Copa reports and rankings** (D-44, D-104, D-207, D-212): in the `owner-tools` skill (`.claude/skills/owner-tools/SKILL.md`); read it before touching them.
 
 ## Languages (C-3, D-197)
 
