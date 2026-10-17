@@ -428,7 +428,7 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 @media (min-width: 440px) { .buzon-tipos { grid-template-columns: repeat(4, auto); justify-content: start; } }
 .buzon-tipo {
   font: 800 0.8rem var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.3); cursor: pointer;
-  border: 2px solid transparent; border-radius: 999px; padding: 6px 10px; min-height: 44px;
+  border: 2px solid transparent; border-radius: 999px; padding: 6px 8px; min-height: 44px; white-space: nowrap;
 }
 .buzon-tipo[aria-pressed="true"] { border-color: var(--cyan); background: rgba(0, 229, 255, 0.15); }
 .footer-buzon { display: inline-block; }
