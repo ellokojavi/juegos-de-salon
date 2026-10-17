@@ -1,4 +1,4 @@
-// The inbox's frequency rule (D-341) and the `tipo` the Firebase rules accept
+// The inbox's frequency rule (D-345) and the `tipo` the Firebase rules accept
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { tocaBuzon, buzonEnviado, PRIMERAS, DESCANSO_DIAS } from './buzon.js';

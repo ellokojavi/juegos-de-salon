@@ -420,7 +420,7 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
 .labs-aviso { margin: 0; font-weight: 800; line-height: 1.5; }
 .topbar .labs-bicho { flex: none; border-color: rgba(255, 122, 26, 0.6); font-size: 1.1rem; }
 
-/* The inbox at the end of the experience (D-341, U-38): a quiet link, below everything */
+/* The inbox at the end of the experience (D-345, U-38): a quiet link, below everything */
 .buzon-pie { margin-top: 18px; text-align: center; }
 .buzon-pie > .panel { text-align: start; }
 .buzon-link { background: none; border: 0; color: var(--muted); font: 700 0.85rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 8px; }
