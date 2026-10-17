@@ -1322,7 +1322,7 @@ const EN = {
   newPin: 'New PIN',
   kicked: 'out',
   outTitle: '🚪 You are out of the cup',
-  outText: 'You didn\'t play days {a} and {b}. Your points stay in the table, but you can\'t play anymore. If it was a mistake, ask the admin to bring you back.',
+  outText: 'You didn\'t play days {a} and {b}. Your points stay in the table, but you can\'t play anymore. If it was a mistake, ask the administrator to bring you back.',
   outRisk: '⚠️ You missed day {p}. Play day {d} before it closes or you are out of the cup.',
   outRow: 'out',
   outAdmin: 'out: didn\'t play days {a} and {b}',
