@@ -82,3 +82,14 @@
 .tv-medidor { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); padding: 4px 6px 2px; border-radius: 12px; background: rgba(20, 8, 31, 0.78);
   border: 1px solid var(--glass-border); pointer-events: none; line-height: 0; }
 .tv-medidor[hidden] { display: none; }
+
+/* The stage's summary, over the screen when a stage passes; the bar empties until it goes on its own */
+.tv-felicitacion { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: rgba(12, 4, 24, 0.72); }
+.tv-fel-caja { width: min(360px, 100%); display: grid; gap: 10px; text-align: left; }
+.tv-fel-caja h2 { margin: 0 0 4px; font: 1.35rem var(--font-display); color: var(--lime); text-align: center; letter-spacing: 0.03em; }
+.tv-fel-fila { display: grid; grid-template-columns: 1fr auto; column-gap: 10px; border-top: 1px solid var(--glass-border); padding-top: 8px; }
+.tv-fel-fila b { font-variant-numeric: tabular-nums; text-align: right; }
+.tv-fel-fila small { grid-column: 1 / -1; color: var(--muted); font-size: 0.78rem; }
+.tv-fel-barra { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.15); overflow: hidden; }
+.tv-fel-barra span { display: block; height: 100%; background: var(--yellow); transform-origin: left; animation: tv-fel-barra linear forwards; }
+@keyframes tv-fel-barra { from { transform: scaleX(1); } to { transform: scaleX(0); } }
