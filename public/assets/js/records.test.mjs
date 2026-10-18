@@ -234,4 +234,17 @@ assert.match(reglas.jugadorCopas.$jid.$code['.write'], /torneoSeats/);
 const textoReglas = JSON.stringify(reglas.records);
 assert.ok(textoReglas.includes(String(S_MAX)) && textoReglas.includes(String(MS_MAX)), 'las reglas de records usan otros topes');
 
+// D-358: a podium saved without the player gets their jid once they sit in that cup as themselves
+const celP = mkJugador('uid9');
+assert.equal(await celP.firmarPodio('PPPPP', 'pp0001'), false, 'sin jugador no firma');
+const pepe = await celP.crear('Pepenbauer', '4321');
+await celP.guardarPodio('PPPPP', { name: 'Copa P', end: 1, de: 2, dias: 3, por: 'pp0001', p: { pp0001: { n: 'Pepenbauer', l: 1 } } });
+assert.equal(await celP.firmarPodio('PPPPP', 'pp0001'), true);
+assert.equal(await celP.firmarPodio('PPPPP', 'pp0001'), false, 'una sola vez');
+assert.equal(await celP.firmarPodio('QQQQQ', 'pp0001'), false, 'sin podio no hay nada que firmar');
+assert.equal((await celP.podios()).PPPPP.p.pp0001.j, pepe.jid);
+const reglaJ = reglas.torneoPodios.$code.p.$pid.j;
+assert.match(reglaJ['.write'], /!data\.exists\(\)/, 'el jid del podio se firma una vez');
+assert.match(reglaJ['.write'], /torneoSeats\/' \+ \$code \+ '\/' \+ \$pid/, 'solo quien está sentado como ese jugador de la copa');
+
 console.log('records: ok');

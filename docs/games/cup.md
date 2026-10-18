@@ -80,6 +80,14 @@ medallero de **Campeones de La Copa** al final de la portada. A win by name alon
 player with that name when exactly one has it (D-357). El PIN de la copa sigue siendo aparte.
 Las copas del laboratorio no cuentan.
 
+**The usual name and PIN (D-358).** With no player on the phone, whoever creates, joins or sits in a
+cup with the name and PIN of their player enters as that player: the cup PIN is tried as the player
+PIN, and if it opens a player with that name, the phone signs in (a toast says so) and the cup links
+as above. A hint under the PIN says it. Nothing is created and a PIN that opens no player changes
+nothing. When a signed-in player sits in a finished cup whose podium was saved without them, their
+jid is written into `torneoPodios/<code>/p/<pid>/j`, once; the rules accept it only from a phone
+seated as that cup player.
+
 ### Admin
 
 Quien crea la copa también juega. Puede renombrar, sacar (y volver a meter) y ponerle PIN nuevo a
