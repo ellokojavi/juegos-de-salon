@@ -75,9 +75,9 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359 |
 | Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
@@ -1183,7 +1183,7 @@ ver), pero sin ver el tablero no se piensa mucho.
 **Consecuencias:** el intento guarda `{ ms, desde }` y lo retoma igual después de recargar.
 
 ## D-96 · Una cuenta es nombre y PIN dentro de una copa, con acceso anónimo de Firebase
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-359
 **Decisión:** No hay cuentas de la app. Dentro de cada copa, una persona es un `pid` con nombre y
 PIN de 4 dígitos, y entra desde cualquier celular o computador con el link. Cada navegador inicia
 sesión **anónima** en Firebase Auth; para escribir por un jugador, su `uid` tiene que estar sentado
@@ -3602,7 +3602,7 @@ jugador ya había jugado. Reglas nuevas: `jugadores/<jid>/co`, `co` en las filas
 y `partidas` entre las tablas que suben de a uno; las publica `publish.yml` (D-218).
 
 ## D-220 · "Tus copas" sigue al jugador, no solo al celular
-**Fecha:** 2026-10-05 · **Estado:** corregida por D-336 · **Relación:** amplía D-212 y la cuenta de La Copa (C-6)
+**Fecha:** 2026-10-05 · **Estado:** corregida por D-336, D-359 · **Relación:** amplía D-212 y la cuenta de La Copa (C-6)
 **Decisión:** La lista "Tus copas" de la portada de La Copa suma, a las que recuerda este celular,
 las del jugador que entró con nombre y PIN, de cualquier celular:
 - Cada vez que un celular con jugador abre una copa en que está sentado, además de enlazar al
@@ -6866,6 +6866,27 @@ screen (more steps for the same proof); dropping D-357 now (Pepenbauer's stored 
 again until they reopen that cup).
 **Consequences:** someone whose cup PIN differs from their player PIN still joins as before and
 gets no history from that cup unless they sign in to their player on that phone first.
+
+## D-359 · With a player signed in, La Copa asks for no cup PIN
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-96 (the cup PIN) and D-220 (the two PINs); builds on D-358
+**Context:** with a player on the phone, La Copa still asked for a second PIN, the cup's. The owner:
+the player's PIN plus being signed up in the cup is enough. The cup PIN stays for people with no
+player (the owner chose that over requiring a player for La Copa).
+**Decision:** with a player signed in on the phone (`leerYo()`), creating or joining a cup hides the
+PIN fields; the cup player gets a random key nobody needs, so the seat and the admin's "new PIN" work
+as before, and the cup player is linked to the player at once. Opening a cup where this phone's player
+is linked to a cup player seats the phone with no screen (`sentarseSolo`); on "Ya estoy inscrito",
+that player needs no PIN, and any other still does. The seat value is then the jid
+(`sentarseComoJugador`), and the rules accept it only if `players/<pid>/j` is that jid and
+`jugadorSeats/<jid>/<uid>` exists, which only a phone that typed the player's PIN has. A name already
+in the cup that is not linked to this player is turned away with `errRepetido` ("entra por Ya estoy
+inscrito", where the cup PIN still works).
+**Why:** one PIN for everything is what makes the player worth having, and the proof is the same: the
+player's PIN, checked by the rules.
+**Alternatives discarded:** requiring a player to play La Copa (one more step for first-timers); no
+key at all for those cup players (the admin's reset and the rules' seat check rely on it).
+**Consequences:** someone who joined with a player and later plays from a phone without it needs the
+cup PIN they never saw: they sign in to their player instead, or the admin gives them a new PIN.
 
 ## D-360 · A game-ideas agent: three ideas a week, each with evidence, as one-tap decisions
 **Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-273 and D-276 (the processes agent dispatches it and follows up its issues); reuses D-273's one-tap decisions, D-280 (Proyectos activos and La Bodega) and D-304 (a prototype is a lab-only PR); applies D-338 (the owner's time)

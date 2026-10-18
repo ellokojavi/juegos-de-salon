@@ -199,3 +199,12 @@ assert.equal(buscarCopa(torneos, '/oficina')?.code, 'OFICI');
 assert.equal(buscarCopa(torneos, 'nada'), null);
 
 console.log('copas.test.mjs: todo en verde');
+
+// A Cup closed early whose `win` comes back from Firebase as an array with a null slot 0 (the weekly report crashed on it)
+{
+  const win = [null, ...Object.keys(meta.win).sort().map(d => meta.win[d])];
+  const fin = meta.win[3].a + 1000;
+  const L = copaDe('abc123', { meta: { ...meta, win }, fin });
+  assert.equal(L.meta.end, fin);
+  assert.equal(L.meta.win[3].b, fin);
+}

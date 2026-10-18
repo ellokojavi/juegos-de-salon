@@ -235,6 +235,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | LIG-92 | Quien entra tarde lee que los días cerrados quedan en 0 desde el día 3 (el día 1 sigue en su gracia el día 2); con la copa llena lee que está llena; la sesión de prueba avisa que es más corta y no cuenta (D-177). | ✅ v0.84.0 |
 | LIG-93 | Zip tiene diez niveles, de 4 × 4 a 7 × 7: con los diez son 100 puntos y la partida termina ahí, sin esperar el reloj; entre quienes los resuelven todos gana quien terminó antes (D-250). | ✅ v0.130.0 |
 | LIG-94 | The owner's request: someone gets history and continuity just by using their usual name and PIN. With no player on the phone, the cup PIN tried as the player PIN for that name signs them in as that player; a podium saved without them gets their player once they sit in that cup as it (D-358). | ✅ on merge (D-358) |
+| LIG-95 | The owner's request: no cup PINs are needed when someone is signed in as a player; the player PIN plus being signed up in the cup suffices. The cup PIN stays for people without a player (D-359). | ✅ on merge (D-359) |
 
 ## Requerimientos no funcionales
 
