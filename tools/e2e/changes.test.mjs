@@ -20,7 +20,7 @@ assert.equal(docsOnly(['public/hangman/README.md']), false, 'a .md inside the si
 assert.equal(docsOnly(['tools/e2e/paths.mjs']), false);
 assert.equal(docsOnly(['tools/e2e/README.md']), false, "the tests' README goes with them");
 assert.equal(docsOnly(['.github/workflows/e2e.yml']), false);
-assert.equal(docsOnly(['tools/release/og/card.html']), false, 'when in doubt, they run');
+assert.equal(docsOnly(['tools/release/og.mjs']), false, 'when in doubt, they run');
 // No list (a push to main, or the API didn't answer): they run
 assert.equal(docsOnly([]), false);
 assert.equal(docsOnly(['', '  ']), false);
