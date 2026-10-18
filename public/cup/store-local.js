@@ -130,6 +130,15 @@ export function createLocalStore({ uid = null } = {}) {
       });
     },
 
+    /** Like the rules (D-359): with no cup PIN, if that cup player is linked to this player. */
+    async sentarseComoJugador(code, pid, jid) {
+      return cambiar(db => {
+        const L = copa(db, code);
+        if (!jid || L.players[pid]?.j !== jid) throw falla('pin');
+        (L._seats[pid] ||= {})[yo] = true;
+      });
+    },
+
     async empezar(code, dia, pid) {
       return cambiar(db => {
         const L = copa(db, code);

@@ -578,7 +578,7 @@
           ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && !newData.exists() && root.child('torneoSeats/' + $code + '/' + root.child('torneos/' + $code + '/meta').child('admin').val() + '/' + auth.uid).exists()",
           "$uid": {
             ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && $pid.matches(/^[a-z0-9]{6}$/) && $uid === auth.uid && newData.exists()",
-            ".validate": "newData.isString() && newData.val() === newData.parent().parent().parent().parent().child('torneoKeys/' + $code + '/' + $pid).val()"
+            ".validate": "newData.isString() && (newData.val() === newData.parent().parent().parent().parent().child('torneoKeys/' + $code + '/' + $pid).val() || (newData.val().matches(/^[a-z0-9]{8}$/) && newData.val() === root.child('torneos/' + $code + '/players/' + $pid + '/j').val() && root.child('jugadorSeats/' + newData.val() + '/' + auth.uid).exists()))"
           }
         }
       }
