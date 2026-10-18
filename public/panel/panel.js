@@ -2,10 +2,10 @@
  * Panel del dueño (D-44, D-207): entra con Google, lee las salas vivas, `stats/<env>/days` y las
  * copas de `torneos/`, y dibuja lo que arman `aggregate.js` y `copas.js`.
  *
- * Se navega como un sitio (D-207): cuatro secciones —Ahora, La Copa, Juegos y Audiencia— y una
+ * Se navega como un sitio (D-207): cuatro secciones —Ahora, The Cup, Juegos y Audiencia— y una
  * ficha por cada cosa que existe (una copa, un juego, una sala). Toda vista queda en el `#` de la
  * URL (`rutas.js`), así que Atrás, una recarga o un enlace guardado vuelven al mismo lugar. Las
- * horas son las del Pacífico, las mismas con que La Copa parte sus días. English only (D-350): it
+ * horas son las del Pacífico, las mismas con que The Cup parte sus días. English only (D-350): it
  * is not a player screen (exception to C-3, noted in docs/PANEL.md).
  *
  * Nada de acá escribe en la base. Las reglas solo dejan leer al UID del dueño; si la
@@ -20,7 +20,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { GAMES, SUELTOS, gameById, gameLabel as etiquetaRegistro, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon, isIndividualMode } from '../assets/js/games.js';
-import { JUEGOS_COPA } from '../cup/rules.js';
+import { juegosCopa } from '../cup/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS } from '../assets/js/transport/stats.js';
 import { $, el } from '../assets/js/ui.js';
@@ -41,12 +41,14 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-/** El torneo del registro (La Copa): su nombre y su emoji salen de `games.js`, no de acá (C-16). */
+/** El torneo del registro (The Cup): su nombre y su emoji salen de `games.js`, no de acá (C-16). */
 const TORNEO = GAMES.find(g => g.torneo) || null;
 const ENV_DEFECTO = ENVS[0];
 /** The panel is English only (D-350): game and country names in English, numbers in US format. */
 const PANEL_LANG = 'en';
 const LOCALE = 'en-US';
+/** The Cup's games with their English names (D-350). */
+const JUEGOS_COPA = juegosCopa(PANEL_LANG);
 
 const S = {
   user: null, env: ENV_DEFECTO, range: RANGO_POR_DEFECTO, ruta: leerRuta(location.hash),
@@ -224,7 +226,7 @@ const torneoNombre = TORNEO ? TORNEO.name[PANEL_LANG] || TORNEO.name.es : 'the t
 const torneoLabel = TORNEO ? gameLabel(TORNEO.id) : '🏆 Tournament';
 
 /**
- * El nombre de un juego con su emoji. Un juego de La Copa jugado suelto (Conexiones, Toque y Fama:
+ * El nombre de un juego con su emoji. Un juego de The Cup jugado suelto (Conexiones, Toque y Fama:
  * Palabra…) manda su id de la copa; está en el registro de sueltos o en el de la copa, no en el de
  * juegos, y antes salía con su clave cruda (`letras`). Uno que no está en ninguno, por su id (C-16).
  */
@@ -451,7 +453,7 @@ function filaCopa(c, now) {
 
 const estadoTexto = c => (c.estado === 'terminada' ? (c.fin ? 'ended early' : 'finished') : c.estado === 'por-empezar' ? 'not started' : `day ${c.dia} of ${c.days}`);
 
-/** Una copa del rango en la lista de La Copa: cuándo, cuánta gente, cuánto se jugó y quién gana. */
+/** Una copa del rango en la lista de The Cup: cuándo, cuánta gente, cuánto se jugó y quién gana. */
 function filaCopaLog(c) {
   const p = pct(c.participacion);
   const otros = c.primero?.empatados > 1 ? ` and ${c.primero.empatados - 1} more` : '';
@@ -569,7 +571,7 @@ function vistaAhora(now) {
 }
 
 /* ------------------------------------------------------------------ */
-/* La Copa                                                             */
+/* The Cup                                                             */
 /* ------------------------------------------------------------------ */
 /** Barras por idioma, en el orden de la app y con su nombre (D-211). */
 function porIdioma(titulo, nota, cuenta) {
@@ -840,7 +842,7 @@ const AVISOS_UAD = {
   ahorano: '🙅 "Not now"', silencio: '🔕 Muted them',
 };
 
-/** Las partidas sin red de todos los juegos (sin La Copa): ahí están quienes juegan solos (D-210). */
+/** Las partidas sin red de todos los juegos (sin The Cup): ahí están quienes juegan solos (D-210). */
 function sinRedRecientes(rango) {
   const todas = localLog(S.days, { from: rango.from, to: rango.to }).filter(p => esJuego(p.game));
   const visibles = S.sinRedTodas ? todas : todas.slice(0, SIN_RED_VISIBLES);
@@ -997,7 +999,7 @@ function vistaTrafico(now) {
   const nota = 'Visits to the site, whether they play or not. A visit is a tab: it counts once, on the page where it started, and each page it opens afterwards adds a view. No IP, no cookies and no identifying anyone: of where it came from only the domain is kept. UTC days.';
   if (t.desde === null) {
     return [...titulo(`📈 Traffic · ${tituloRango()}`, nota),
-      el('p', { class: 'empty' }, S.daysLoaded ? 'No visits recorded in this range yet: counting started with D-208. Games and La Copa are in their sections.' : 'Loading…')];
+      el('p', { class: 'empty' }, S.daysLoaded ? 'No visits recorded in this range yet: counting started with D-208. Games and The Cup are in their sections.' : 'Loading…')];
   }
   const periodos = groupDays(t.porDia, rango.grano);
   const maxD = Math.max(0, ...periodos.map(d => d.visitas));
@@ -1255,7 +1257,7 @@ function vistaResumen(now) {
     ...titulo(`📊 Summary · ${tituloRango()}`, 'The analyst\'s front page (D-348): the main metric, one card per domain against the previous period of the same length, and what is being played now. Each domain has three bands: pulse, diagnosis and trend. UTC days.'),
     franja('pulso'),
     el('div', { class: 'tiles' },
-      tile(norte, '⭐ games finished', { cambio: variacion(norte, norteA), info: 'main metric: rooms with an ending, offline games finished and La Copa games' }),
+      tile(norte, '⭐ games finished', { cambio: variacion(norte, norteA), info: 'main metric: rooms with an ending, offline games finished and The Cup games' }),
       tile(u.semana || '—', 'browsers active in 7 days', { href: ir('usuarios'), cambio: u.semana ? variacion(u.semana, usuarios(S.days, { from: a.to - 6, to: a.to }).semana) : undefined, info: 'since D-349' }),
       tile(vivas + sinRed + jugandoCopa, '🟢 playing now', { href: ir('ahora'), info: `${n(vivas)} rooms · ${n(sinRed)} offline · ${n(jugandoCopa)} in cups` }),
     ),
@@ -1269,7 +1271,7 @@ function vistaResumen(now) {
       tarjeta('salud', pctTxt(fallas), 'loads with failures', fallas === null || fallasA === null ? undefined : fallas - fallasA, h.total.arranque ? `⛔ ${n(h.total.arranque)} did not start` : 'all started', true),
     ),
     franja('tend'),
-    serie('Games per period', 'Cyan, group; yellow, individual; pink, La Copa games.', porDia, r,
+    serie('Games per period', 'Cyan, group; yellow, individual; pink, The Cup games.', porDia, r,
       [['grupo', C_TOTAL], ['individual', C_SIN_RED], ['torneo', C_TORNEO]], 'resumen'),
   ];
 }
@@ -1342,7 +1344,7 @@ function vistaIndividuales(now) {
   const q = xs => (xs[1] === null ? '—' : `${xs[0]}–${xs[1]}–${xs[2]}`);
   const qT = xs => (xs[1] === null ? '—' : xs.map(x => `${Math.floor(x / 60)}:${String(x % 60).padStart(2, '0')}`).join('–'));
   return [
-    ...titulo(`🧍 Individual · ${tituloRango()}`, 'Games for one person: La Copa\'s standalone games, the solo ones and One a Day. UTC days.'),
+    ...titulo(`🧍 Individual · ${tituloRango()}`, 'Games for one person: The Cup\'s standalone games, the solo ones and One a Day. UTC days.'),
     franja('pulso'),
     el('div', { class: 'tiles' },
       tile(pd.total, 'individual games', { cambio: variacion(pd.total, pda.total) }),
@@ -1433,7 +1435,7 @@ function vistaUsuarios(now) {
 /* ------------------------------------------------------------------ */
 /* Navegación                                                          */
 /* ------------------------------------------------------------------ */
-/** Ícono y nombre de cada sección. El de La Copa sale del registro de juegos (C-16). */
+/** Ícono y nombre de cada sección. El de The Cup sale del registro de juegos (C-16). */
 const SECCION = {
   resumen: ['📊', 'Summary'],
   grupo: ['👥', 'Group'],
