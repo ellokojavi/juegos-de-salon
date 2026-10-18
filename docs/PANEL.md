@@ -2,7 +2,9 @@
 
 Página privada en `/panel/` que muestra cuánto y desde dónde se juega. Son **señales de
 uso, no personas**: sirven para ver qué juegos gustan, cuántos jugadores se juntan y a
-qué horas, no para identificar a nadie (D-44).
+qué horas, no para identificar a nadie (D-44). Since D-349 each browser also keeps a random id,
+only to count active users and cohorts: it carries no name, IP, game or page and is never joined
+with rooms, Cups, rankings or feedback.
 
 - Publicado: `https://juegosdesalon.cl/panel/`
 - Local: `http://localhost:8765/panel/`
@@ -45,11 +47,11 @@ Los enlaces de antes (`#torneo`, `#resumen`, `#juegos`) siguen sirviendo.
 | `#/now` | Lo que está en juego, sin depender del rango: salas en juego, partidas sin red, copas en curso y celulares conectados. Cada cifra filtra la lista de abajo, que junta copas, salas y partidas sin red de lo más reciente a lo más quieto. Debajo, las copas por empezar. |
 | `#/cup` | Cifras de La Copa en el rango, la lista de copas con filtro por estado (en curso, por empezar, terminadas, laboratorio), por juego y por día. By game, a variant other than the default counts apart (`🖌️ Pintaminas · ⚡ Difícil`, D-331). |
 | `#/cup/<CÓDIGO>` | **Ficha de copa.** Cabecera (link propio, admin, idioma, audiencia, días, cuándo cierra cada día abierto, inscripción) y tres pestañas: **Tabla** completa, incluidos los días que los jugadores todavía no ven; **Día a día**, la grilla jugador × día con puntaje, tiempo, puntos, jugando ahora, sin terminar, no jugó, comodín y ×2; **Historia**, evento por evento (creada, inscripciones, empezó y terminó cada día, sin terminar, abrió y cerró cada día, fin), y aparte lo que la base guarda sin hora (comodín, retiros, inscripción cerrada). |
-| `#/games` | Los juegos de una partida: cifras, partidas por juego y modo (cada barra abre su ficha), jugadores por partida, por día y la bitácora de salas. |
+| `#/games` | Opens 👥 Group since D-348. Before: los juegos de una partida: cifras, partidas por juego y modo (cada barra abre su ficha), jugadores por partida, por día y la bitácora de salas. |
 | `#/game/<juego>` | **Ficha de juego.** Partidas, en dos celulares, sin red, salas sin rival y duración típica de sus salas; por modo, por día, sus salas y sus partidas sin red con hora, quién jugó y cómo terminó (D-140, D-210). |
 | `#/room/<CÓDIGO>[/<día>]` | **Ficha de sala.** Juego, creada, terminó, cuánto duró, quién ganó, versión y jugadores con su país; si sigue viva, jugadas, chat (solo cuántos) y quién está conectado. Los códigos se reciclan: con el día se pide una en particular. |
 | `#/traffic` | **Tráfico del sitio** (D-208): visitas, páginas vistas, cuántas llegan a jugar, visitas por día, de dónde llegan (por sitio, con sus dominios), por qué link (`from=link` de lo compartido, `utm_source`), páginas con sus entradas y cuántas juegan, aparato, primera vez o vuelve y país. |
-| `#/audience` | Cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
+| `#/audience` | Opens 🌎 Users since D-348, which keeps what it showed: cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
 | `#/health` | **Lo que le falla a quien juega** (D-251): cargas que no arrancaron, cargas con fallas por día y por tipo, los errores juntados por qué son (página, navegador, versión, días), páginas con fallas, navegador de los errores y cuánto tarda cada página en poder jugar. |
 
 Arriba, además del entorno y el rango, un **buscador**: un código de cinco letras o un link propio

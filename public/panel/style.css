@@ -160,6 +160,12 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
   .nav-panel .vivo { position: absolute; top: 6px; right: calc(50% - 18px); margin: 0; }
   #screen-panel { padding-bottom: calc(76px + var(--safe-bottom)); }
 }
+/* Ocho dominios (D-348) no caben en una fila de celular: dos filas de cuatro, todos a la vista */
+@media (max-width: 599px) {
+  .nav-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px 4px; }
+  .nav-panel a { max-width: none; min-width: 0; padding: 4px 2px; min-height: 44px; }
+  #screen-panel { padding-bottom: calc(130px + var(--safe-bottom)); }
+}
 
 /* Buscar por código o link */
 .buscar { flex: 1 1 200px; display: flex; }

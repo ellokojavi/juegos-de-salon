@@ -3293,7 +3293,7 @@ app, los reportes en el panel (LIG-44), una sección de salud de los datos y se�
 (cuándo entró el rival, cuándo cerró el admin la inscripción).
 
 ## D-208 · El tráfico del sitio, aunque nadie juegue
-**Fecha:** 2026-10-04 · **Estado:** corregida por D-266 · **Relación:** completa D-44
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-266, D-349 · **Relación:** completa D-44
 **Decisión:** Cada página que se abre manda una señal, aunque nadie llegue a jugar, y el panel
 la muestra en una sección nueva, **Tráfico** (`#/trafico`). Una **visita** es una pestaña: se
 cuenta una vez, en la página donde empezó, con de dónde llegó (solo el dominio: `google_com`,
