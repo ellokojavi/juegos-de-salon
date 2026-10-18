@@ -1,0 +1,1195 @@
+{
+  "about": "Spanish names left in the repo and what each becomes (D-316, D-354). Kept by tools/agents/english.mjs; english.test.mjs fails on a Spanish name not listed here.",
+  "paths": {
+    "docs/AGREGAR-JUEGO.md": {
+      "to": "docs/ADD-GAME.md",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/ALEMAN.md": {
+      "to": "docs/GERMAN.md",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/CANONES.md": {
+      "to": "docs/CANONS.md",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/DECISIONES.md": {
+      "to": "docs/DECISIONS.md",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/PWA-NOTIFICACIONES.md": {
+      "to": "docs/PWA-NOTIFICATIONS.md",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/REQUERIMIENTOS.md": {
+      "to": "docs/REQUIREMENTS.md",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/UNO-AL-DIA.md": {
+      "to": "docs/ONE-A-DAY.md",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/USABILIDAD.md": {
+      "to": "docs/USABILITY.md",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/capturas.json": {
+      "to": "docs/screenshots.json",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/games/bulls-and-cows-factibilidad.md": {
+      "to": "docs/games/bulls-and-cows-feasibility.md",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/battleship/02-flota.png": {
+      "to": "docs/screenshots/battleship/02-fleet.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/battleship/03-batalla.png": {
+      "to": "docs/screenshots/battleship/03-battle.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/battleship/04-pase.png": {
+      "to": "docs/screenshots/battleship/04-handoff.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/battleship/05-resultado.png": {
+      "to": "docs/screenshots/battleship/05-result.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/battleship/06-sala.png": {
+      "to": "docs/screenshots/battleship/06-room.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/battleship/07-dos-celulares.png": {
+      "to": "docs/screenshots/battleship/07-two-phones.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/bulls-and-cows/02-secreto.png": {
+      "to": "docs/screenshots/bulls-and-cows/02-secret.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/bulls-and-cows/03-tablero.png": {
+      "to": "docs/screenshots/bulls-and-cows/03-board.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/bulls-and-cows/04-pasale.png": {
+      "to": "docs/screenshots/bulls-and-cows/04-hand-over.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/bulls-and-cows/05-resultado.png": {
+      "to": "docs/screenshots/bulls-and-cows/05-result.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/bulls-and-cows/06-sala.png": {
+      "to": "docs/screenshots/bulls-and-cows/06-room.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/bulls-and-cows/07-dos-celulares.png": {
+      "to": "docs/screenshots/bulls-and-cows/07-two-phones.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/bulls-and-cows/08-verificado.png": {
+      "to": "docs/screenshots/bulls-and-cows/08-verified.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/compartir.png": {
+      "to": "docs/screenshots/share.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/cup/00-invitacion.png": {
+      "to": "docs/screenshots/cup/00-invite.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/cup/01-tablero.png": {
+      "to": "docs/screenshots/cup/01-board.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/cup/02-numero.png": {
+      "to": "docs/screenshots/cup/02-number.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/cup/03-conexiones.png": {
+      "to": "docs/screenshots/cup/03-connections.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/cup/04-reinas.png": {
+      "to": "docs/screenshots/cup/04-queens.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/cup/05-letras.png": {
+      "to": "docs/screenshots/cup/05-word.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/cup/06-anio.png": {
+      "to": "docs/screenshots/cup/06-year.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/cup/07-grafico.png": {
+      "to": "docs/screenshots/cup/07-chart.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/cup/08-podio.png": {
+      "to": "docs/screenshots/cup/08-podium.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/cup/10-semana.png": {
+      "to": "docs/screenshots/cup/10-week.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/fourth-king/03-jugadores.png": {
+      "to": "docs/screenshots/fourth-king/03-players.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/fourth-king/04-mesa.png": {
+      "to": "docs/screenshots/fourth-king/04-table.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/fourth-king/05-carta.png": {
+      "to": "docs/screenshots/fourth-king/05-card.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/fourth-king/06-minijuego.png": {
+      "to": "docs/screenshots/fourth-king/06-minigame.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/fourth-king/07-salud.png": {
+      "to": "docs/screenshots/fourth-king/07-health.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/fourth-king/08-pasale.png": {
+      "to": "docs/screenshots/fourth-king/08-hand-over.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/fourth-king/09-cuarto-rey.png": {
+      "to": "docs/screenshots/fourth-king/09-fourth-king.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/fourth-king/12-mesa-en.png": {
+      "to": "docs/screenshots/fourth-king/12-table-en.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/fourth-king/13-historial.png": {
+      "to": "docs/screenshots/fourth-king/13-history.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/generala/02-mesa.png": {
+      "to": "docs/screenshots/generala/02-table.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/generala/04-configuracion.png": {
+      "to": "docs/screenshots/generala/04-setup.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/generala/05-pase.png": {
+      "to": "docs/screenshots/generala/05-handoff.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/generala/07-servida.png": {
+      "to": "docs/screenshots/generala/07-served.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/hangman/02-configuracion.png": {
+      "to": "docs/screenshots/hangman/02-setup.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/hangman/03-escribir.png": {
+      "to": "docs/screenshots/hangman/03-write.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/hangman/04-juego.png": {
+      "to": "docs/screenshots/hangman/04-game.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/hangman/05-veredicto.png": {
+      "to": "docs/screenshots/hangman/05-verdict.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/hangman/06-sala.png": {
+      "to": "docs/screenshots/hangman/06-room.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/hangman/07-varios-celulares.png": {
+      "to": "docs/screenshots/hangman/07-several-phones.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/hangman/08-resultado.png": {
+      "to": "docs/screenshots/hangman/08-result.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/hangman/09-solitario.png": {
+      "to": "docs/screenshots/hangman/09-solo.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/julep/02-configuracion.png": {
+      "to": "docs/screenshots/julep/02-setup.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/julep/04-cambio.png": {
+      "to": "docs/screenshots/julep/04-swap.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/julep/05-baza.png": {
+      "to": "docs/screenshots/julep/05-trick.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/julep/06-julepe.png": {
+      "to": "docs/screenshots/julep/06-julep.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/julep/07-reparto.png": {
+      "to": "docs/screenshots/julep/07-deal.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/julep/08-resultado.png": {
+      "to": "docs/screenshots/julep/08-result.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/julep/09-pase.png": {
+      "to": "docs/screenshots/julep/09-handoff.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/julep/online-01-sala.png": {
+      "to": "docs/screenshots/julep/online-01-room.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/liars-dice/02-configuracion.png": {
+      "to": "docs/screenshots/liars-dice/02-setup.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/liars-dice/03-mesa.png": {
+      "to": "docs/screenshots/liars-dice/03-table.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/liars-dice/04-apuesta.png": {
+      "to": "docs/screenshots/liars-dice/04-bid.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/liars-dice/05-destape.png": {
+      "to": "docs/screenshots/liars-dice/05-reveal.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/liars-dice/06-resultado.png": {
+      "to": "docs/screenshots/liars-dice/06-result.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/liars-dice/07-pase.png": {
+      "to": "docs/screenshots/liars-dice/07-handoff.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/liars-dice/08-sala.png": {
+      "to": "docs/screenshots/liars-dice/08-room.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/liars-dice/09-destape-verificado.png": {
+      "to": "docs/screenshots/liars-dice/09-reveal-verified.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/timeline/02-tematica.png": {
+      "to": "docs/screenshots/timeline/02-theme.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/timeline/03-juego.png": {
+      "to": "docs/screenshots/timeline/03-game.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/timeline/04-veredicto.png": {
+      "to": "docs/screenshots/timeline/04-verdict.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/timeline/05-resultado.png": {
+      "to": "docs/screenshots/timeline/05-result.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/timeline/06-sala.png": {
+      "to": "docs/screenshots/timeline/06-room.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/timeline/07-varios-celulares.png": {
+      "to": "docs/screenshots/timeline/07-several-phones.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/timeline/10-pozo-comun.png": {
+      "to": "docs/screenshots/timeline/10-shared-pot.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "docs/screenshots/timeline/11-todas-a-la-vista.png": {
+      "to": "docs/screenshots/timeline/11-all-in-view.png",
+      "phase": 5,
+      "state": "pending"
+    },
+    "marketing/agentes-tarjeta/": {
+      "to": "marketing/agents-card/",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/agentes-tarjeta/animada.html": {
+      "to": "marketing/agentes-tarjeta/animated.html",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/agentes-tarjeta/construir-video.mjs": {
+      "to": "marketing/agentes-tarjeta/build-video.mjs",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/agentes-tarjeta/construir.mjs": {
+      "to": "marketing/agentes-tarjeta/build.mjs",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/agentes-tarjeta/output/agentes-1200x630.jpg": {
+      "to": "marketing/agentes-tarjeta/output/agents-1200x630.jpg",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/agentes-tarjeta/output/agentes-6s.gif": {
+      "to": "marketing/agentes-tarjeta/output/agents-6s.gif",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/agentes-tarjeta/output/agentes-6s.mp4": {
+      "to": "marketing/agentes-tarjeta/output/agents-6s.mp4",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/agentes-tarjeta/tarjeta.html": {
+      "to": "marketing/agentes-tarjeta/card.html",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/caso-teaser/": {
+      "to": "marketing/case-teaser/",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/caso-teaser/capturar.mjs": {
+      "to": "marketing/caso-teaser/capture.mjs",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/caso-teaser/construir.sh": {
+      "to": "marketing/caso-teaser/build.sh",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/caso-teaser/output/el-caso-6s.gif": {
+      "to": "marketing/caso-teaser/output/case-6s.gif",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/caso-teaser/output/el-caso-6s.mp4": {
+      "to": "marketing/caso-teaser/output/case-6s.mp4",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/promo-video/construir.sh": {
+      "to": "marketing/promo-video/build.sh",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/promo-video/copa.mjs": {
+      "to": "marketing/promo-video/cup.mjs",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/promo-video/hoja.py": {
+      "to": "marketing/promo-video/sheet.py",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/promo-video/jugar.mjs": {
+      "to": "marketing/promo-video/play.mjs",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/promo-video/music/cancion.mp3": {
+      "to": "marketing/promo-video/music/song.mp3",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/promo-video/navegador.mjs": {
+      "to": "marketing/promo-video/browser.mjs",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/promo-video/output/miniatura-short.jpg": {
+      "to": "marketing/promo-video/output/thumbnail-short.jpg",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/promo-video/output/miniatura-youtube.jpg": {
+      "to": "marketing/promo-video/output/thumbnail-youtube.jpg",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/promo-video/preparar.py": {
+      "to": "marketing/promo-video/prepare.py",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/proximamente-teaser/": {
+      "to": "marketing/coming-soon-teaser/",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/proximamente-teaser/animada.html": {
+      "to": "marketing/proximamente-teaser/animated.html",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/proximamente-teaser/construir-video.mjs": {
+      "to": "marketing/proximamente-teaser/build-video.mjs",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/proximamente-teaser/output/se-vienen-cositas-6s.mp4": {
+      "to": "marketing/proximamente-teaser/output/coming-soon-6s.mp4",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/registro.json": {
+      "to": "marketing/log.json",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/share-tutorial/capturar.mjs": {
+      "to": "marketing/share-tutorial/capture.mjs",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/share-tutorial/construir.sh": {
+      "to": "marketing/share-tutorial/build.sh",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/share-tutorial/output/compartir-16x9.mp4": {
+      "to": "marketing/share-tutorial/output/share-16x9.mp4",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/share-tutorial/output/compartir-vertical.mp4": {
+      "to": "marketing/share-tutorial/output/share-vertical.mp4",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/tres-nuevos/": {
+      "to": "marketing/three-new/",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/tres-nuevos/animada.html": {
+      "to": "marketing/tres-nuevos/animated.html",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/tres-nuevos/construir-video.mjs": {
+      "to": "marketing/tres-nuevos/build-video.mjs",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/tres-nuevos/construir.mjs": {
+      "to": "marketing/tres-nuevos/build.mjs",
+      "phase": 3,
+      "state": "pending"
+    },
+    "marketing/tres-nuevos/img/loteo.png": {
+      "to": "marketing/tres-nuevos/img/plots.png",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/tres-nuevos/img/pintaminas.png": {
+      "to": "marketing/tres-nuevos/img/paint-mines.png",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/tres-nuevos/img/rutas.png": {
+      "to": "marketing/tres-nuevos/img/routes.png",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/tres-nuevos/output/tres-nuevos-1080.jpg": {
+      "to": "marketing/tres-nuevos/output/three-new-1080.jpg",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/tres-nuevos/output/tres-nuevos-6s.mp4": {
+      "to": "marketing/tres-nuevos/output/three-new-6s.mp4",
+      "phase": 3,
+      "state": "pending",
+      "why": "published asset: check where it is linked before renaming"
+    },
+    "marketing/tres-nuevos/tarjeta.html": {
+      "to": "marketing/tres-nuevos/card.html",
+      "phase": 3,
+      "state": "pending"
+    },
+    "public/assets/css/linea.css": {
+      "to": "public/assets/css/line.css",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/css/teclado.css": {
+      "to": "public/assets/css/keyboard.css",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/arrastre.js": {
+      "to": "public/assets/js/drag.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/arrastre.test.mjs": {
+      "to": "public/assets/js/drag.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/azar.js": {
+      "to": "public/assets/js/random.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/buzon-form.js": {
+      "to": "public/assets/js/inbox-form.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/buzon.js": {
+      "to": "public/assets/js/inbox.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/buzon.test.mjs": {
+      "to": "public/assets/js/inbox.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/compartir-portada.js": {
+      "to": "public/assets/js/share-home.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/compartir.js": {
+      "to": "public/assets/js/share.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/compartir.test.mjs": {
+      "to": "public/assets/js/share.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/cuenta-regresiva.js": {
+      "to": "public/assets/js/countdown.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/dado3d.js": {
+      "to": "public/assets/js/die3d.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/dato.js": {
+      "to": "public/assets/js/fact.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/favoritos.js": {
+      "to": "public/assets/js/favorites.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/favoritos.test.mjs": {
+      "to": "public/assets/js/favorites.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/frases.js": {
+      "to": "public/assets/js/phrases.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/instalable.js": {
+      "to": "public/assets/js/installable.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/instalable.test.mjs": {
+      "to": "public/assets/js/installable.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/instalar.js": {
+      "to": "public/assets/js/install.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/instalar.test.mjs": {
+      "to": "public/assets/js/install.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/jugador-firebase.js": {
+      "to": "public/assets/js/player-firebase.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/jugador-local.js": {
+      "to": "public/assets/js/player-local.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/jugador.js": {
+      "to": "public/assets/js/player.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/labs-idioma.js": {
+      "to": "public/assets/js/labs-language.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/labs-puerta.js": {
+      "to": "public/assets/js/labs-door.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/labs-puerta.test.mjs": {
+      "to": "public/assets/js/labs-door.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/llegada.js": {
+      "to": "public/assets/js/arrival.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/parametros.js": {
+      "to": "public/assets/js/params.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/parametros.test.mjs": {
+      "to": "public/assets/js/params.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/teclado.js": {
+      "to": "public/assets/js/keyboard.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/uno-al-dia-avisos.js": {
+      "to": "public/assets/js/one-a-day-notices.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/uno-al-dia-avisos.test.mjs": {
+      "to": "public/assets/js/one-a-day-notices.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/uno-al-dia-jugador.test.mjs": {
+      "to": "public/assets/js/one-a-day-player.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/uno-al-dia-red.js": {
+      "to": "public/assets/js/one-a-day-network.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/uno-al-dia-ui.js": {
+      "to": "public/assets/js/one-a-day-ui.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/uno-al-dia.js": {
+      "to": "public/assets/js/one-a-day.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/uno-al-dia.test.mjs": {
+      "to": "public/assets/js/one-a-day.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/vigia.js": {
+      "to": "public/assets/js/watch.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/js/vigia.test.mjs": {
+      "to": "public/assets/js/watch.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/og/ahorcado.jpg": {
+      "to": "public/assets/og/hangman.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/anio.jpg": {
+      "to": "public/assets/og/year.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/batalla-naval.jpg": {
+      "to": "public/assets/og/battle-ship.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/caso.jpg": {
+      "to": "public/assets/og/case.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/conexiones.jpg": {
+      "to": "public/assets/og/connections.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/copa.jpg": {
+      "to": "public/assets/og/cup.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/cuarto-rey.jpg": {
+      "to": "public/assets/og/fourth-king.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/desenredo.jpg": {
+      "to": "public/assets/og/untangle.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/donde.jpg": {
+      "to": "public/assets/og/where.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/dudo.jpg": {
+      "to": "public/assets/og/liars-dice.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/huellas.json": {
+      "to": "public/assets/og/fingerprints.json",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/assets/og/julepe.jpg": {
+      "to": "public/assets/og/julep.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/letras.jpg": {
+      "to": "public/assets/og/word.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/linea-de-tiempo.jpg": {
+      "to": "public/assets/og/line-time.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/loteo.jpg": {
+      "to": "public/assets/og/plots.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/pintaminas.jpg": {
+      "to": "public/assets/og/paint-mines.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/reinas.jpg": {
+      "to": "public/assets/og/queens.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/rutas.jpg": {
+      "to": "public/assets/og/routes.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/assets/og/toque-y-fama.jpg": {
+      "to": "public/assets/og/bulls-and-cows.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
+    "public/batalla-naval/": {
+      "to": "public/battle-ship/",
+      "phase": 4,
+      "state": "keep",
+      "why": "bridge page of the old Spanish URL (D-192)"
+    },
+    "public/battleship/flota.js": {
+      "to": "public/battleship/fleet.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cuarto-rey/": {
+      "to": "public/fourth-king/",
+      "phase": 4,
+      "state": "keep",
+      "why": "bridge page of the old Spanish URL (D-192)"
+    },
+    "public/cup/avisos.js": {
+      "to": "public/cup/notices.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/cuenta.js": {
+      "to": "public/cup/account.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/desglose.js": {
+      "to": "public/cup/breakdown.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/audiencia.js": {
+      "to": "public/cup/games/audience.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/connections/grillas-de.js": {
+      "to": "public/cup/games/connections/grids-de.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/connections/grillas-en.js": {
+      "to": "public/cup/games/connections/grids-en.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/connections/grillas-pt.js": {
+      "to": "public/cup/games/connections/grids-pt.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/connections/grillas.js": {
+      "to": "public/cup/games/connections/grids.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/deshacer.js": {
+      "to": "public/cup/games/undo.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/deshacer.test.mjs": {
+      "to": "public/cup/games/undo.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/juegos.test.mjs": {
+      "to": "public/cup/games/games.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/mazos.js": {
+      "to": "public/cup/games/decks.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/paint-mines/dibujos.js": {
+      "to": "public/cup/games/paint-mines/drawings.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/semilla.js": {
+      "to": "public/cup/games/seed.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/where/ciudades.js": {
+      "to": "public/cup/games/where/cities.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/where/globo.js": {
+      "to": "public/cup/games/where/globe.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/where/mapa.js": {
+      "to": "public/cup/games/where/map.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/where/nombres.js": {
+      "to": "public/cup/games/where/names.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/games/word/palabras.js": {
+      "to": "public/cup/games/word/words.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/planilla.js": {
+      "to": "public/cup/scorecard.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/planilla.test.mjs": {
+      "to": "public/cup/scorecard.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/reportes.js": {
+      "to": "public/cup/reports.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/cup/reportes.test.mjs": {
+      "to": "public/cup/reports.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/dudo/": {
+      "to": "public/liars-dice/",
+      "phase": 4,
+      "state": "keep",
+      "why": "bridge page of the old Spanish URL (D-192)"
+    },
+    "public/hangman/decks/animales.js": {
+      "to": "public/hangman/decks/animals.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/hangman/decks/comida.js": {
+      "to": "public/hangman/decks/food.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/hangman/decks/deportes.js": {
+      "to": "public/hangman/decks/sports.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/julepe/": {
+      "to": "public/julep/",
+      "phase": 4,
+      "state": "keep",
+      "why": "bridge page of the old Spanish URL (D-192)"
+    },
+    "public/labs/agents/pistas.js": {
+      "to": "public/labs/agents/clues.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/labs/agents/tarjeta.jpg": {
+      "to": "public/labs/agents/card.jpg",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/labs/bridges/catalogo-madera.json": {
+      "to": "public/labs/bridges/catalog-wood.json",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/labs/bridges/catalogo-prueba.json": {
+      "to": "public/labs/bridges/catalog-test.json",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/labs/bridges/catalogo.json": {
+      "to": "public/labs/bridges/catalog.json",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/labs/bridges/soluciones.json": {
+      "to": "public/labs/bridges/solutions.json",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/labs/code/engine-palabra.js": {
+      "to": "public/labs/code/engine-word.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/labs/code/engine-palabra.test.mjs": {
+      "to": "public/labs/code/engine-word.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/linea-de-tiempo/": {
+      "to": "public/line-time/",
+      "phase": 4,
+      "state": "keep",
+      "why": "bridge page of the old Spanish URL (D-192)"
+    },
+    "public/panel/adapta.test.mjs": {
+      "to": "public/panel/adapt.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/panel/copas.js": {
+      "to": "public/panel/cups.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/panel/copas.test.mjs": {
+      "to": "public/panel/cups.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/panel/dominios.js": {
+      "to": "public/panel/domains.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/panel/dominios.test.mjs": {
+      "to": "public/panel/domains.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/panel/rutas.js": {
+      "to": "public/panel/routes.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/panel/rutas.test.mjs": {
+      "to": "public/panel/routes.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/timeline/decks/futbol.js": {
+      "to": "public/timeline/decks/football.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/timeline/decks/historia.js": {
+      "to": "public/timeline/decks/history.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/timeline/decks/musica.js": {
+      "to": "public/timeline/decks/music.js",
+      "phase": 4,
+      "state": "pending"
+    },
+    "public/toque-y-fama/": {
+      "to": "public/bulls-and-cows/",
+      "phase": 4,
+      "state": "keep",
+      "why": "bridge page of the old Spanish URL (D-192)"
+    }
+  }
+}
