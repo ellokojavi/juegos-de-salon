@@ -20,7 +20,8 @@ export const ALIAS = {
   notif: 'aviso',        // qué aviso abrió la página, para contarlo en el panel (D-233)
   from: 'de',            // la marca de un link compartido: `from=link` (D-208)
   timer: 'zipSeg',       // solo en prueba: el reloj de Zip y Desenredo, en segundos
-  daily: 'uad',          // dónde va el acceso a Uno al día en la portada (D-239)
+  daily: 'uad',
+  splash: 'anuncio',     // shows a promotional campaign on demand, without recording it (D-351)          // dónde va el acceso a Uno al día en la portada (D-239)
 };
 
 /** Los que van solos, sin valor (`?test`), y su nombre de antes. */

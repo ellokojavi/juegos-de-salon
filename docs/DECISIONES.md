@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
@@ -6644,3 +6644,36 @@ following a person); hashing the IP (there is no server, and it would identify m
 **Consequences:** someone who clears their data, uses private mode or changes phone counts as new.
 The panel says the counting starts with this decision. The search still does not look up people
 (D-207).
+
+## D-351 · A promotional splash over the home page, off by default and seen once
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends C-17 (the home page)
+**Context:** the owner wants to tell players about what is worth telling (three new games, a new
+mode, a novelty) with a promotional window over the home page: most of the screen, the page
+darkened behind, images and a link to each thing. It must not break the experience: it is not
+always on, and whoever already saw it does not see it again.
+**Decision:** `public/assets/js/splash.js` holds the campaigns (`CAMPAIGNS`, texts in the four
+languages; each item is a game of `games.js` by id or its own content) and
+the switch, `ACTIVE`, null by default. `node tools/agents/splash.mjs on <id> [--until YYYY-MM-DD] | off | list`
+rewrites that line, and the change goes out in a PR with auto-merge. The home page shows the active
+campaign 350 ms after drawing, once per phone: closing it (✕, the button, the backdrop, Esc) or
+following one of its links records the id in `localStorage` (`juegos-de-salon:splash-visto`), so a
+different campaign shows again to everyone. `?splash=<id>` shows any campaign on demand without
+recording it (the owner's preview); `?test` and a browser driven by automation never see it, so the
+end-to-end scripts are not blocked. Its sheet (`splash.css`) loads only when a window opens. On a
+phone the items become rows and the texts are cut to two lines, so three items fit in a 320×640
+screen without scrolling; with more, the window scrolls inside itself. **Each item shows a few
+seconds of real play** (the owner's request, on seeing the first version with the link cards: they
+repeated the texts): a muted looping MP4 of the board being solved, recorded from the game itself
+in headless Chrome by `marketing/splash-clips/capturar.mjs` (360 px, 25–50 KB each), with the solved
+board as its poster, still under reduced motion. **Each item is the way in** (also the owner's
+request: the first button only closed the window): the clip, the name and ▶ Play open the game; the
+way out is a quiet "Ahora no" under them, the ✕, the backdrop or Esc. The demo is
+`/labs/splash/`: the real home page behind and the window over it, by campaign and language.
+**Why:** a line in the repo is the simplest switch an agent or the owner can flip, and it reaches
+everyone with the version, with no new Firebase path, rules or read on every visit.
+**Alternatives discarded:** a Firebase flag (instant, but a read on every home page load and new
+rules for a switch used a few times a year); showing it on every visit or every day (it would break
+the experience the owner asked to protect); a separate page (players arrive at the home page).
+**Consequences:** turning it on or off takes a publish (minutes, with auto-merge). A phone that
+clears its data sees the campaign again. A new game in a campaign needs its clip recorded (one
+entry in `capturar.mjs`). Views and clicks are not counted yet.
