@@ -61,15 +61,17 @@ const slug = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 /* ------------------------------------------------------------------ */
 
 /**
- * The lab's projects from its index page (D-280): `{ active: [{ id, title }], shelved: [...] }`.
- * Active ones live before the `id="bodega"` group; each project is a `section.seccion` with an id
- * `seccion-<id>` and its `<h2>`.
+ * The lab's projects from its index page (D-280, D-361): `{ active, improvements, shelved }`, each
+ * `[{ id, title }]`. The groups are the `section.grupo` with ids `activos` (games being tried),
+ * `mejoras` (improvements to the rest of the app) and `bodega`; each project is a `section.seccion`
+ * with an id `seccion-<id>` and its `<h2>`.
  */
 export function laboratorio(html) {
-  const cut = String(html).indexOf('id="bodega"');
   const parse = s => [...s.matchAll(/<section class="panel seccion[^"]*" id="seccion-([a-z0-9-]+)">[\s\S]*?<h2>([^<]+)<\/h2>/g)]
     .map(m => ({ id: m[1], title: m[2].trim() }));
-  return cut < 0 ? { active: parse(html), shelved: [] } : { active: parse(html.slice(0, cut)), shelved: parse(html.slice(cut)) };
+  const grupos = [...String(html).matchAll(/<section class="grupo" id="([a-z]+)">/g)].map(m => ({ id: m[1], at: m.index }));
+  const de = id => { const i = grupos.findIndex(g => g.id === id); return i < 0 ? [] : parse(html.slice(grupos[i].at, grupos[i + 1]?.at ?? html.length)); };
+  return { active: de('activos'), improvements: de('mejoras'), shelved: de('bodega') };
 }
 
 /**
@@ -288,8 +290,9 @@ async function numbers(weeks) {
 
 function lab() {
   heading('The lab (D-280)');
-  const { active, shelved } = laboratorio(readFileSync(join(ROOT, 'public/labs/index.html'), 'utf8'));
-  console.log(`Active: ${active.map(p => p.title).join(', ') || 'nothing'}`);
+  const { active, improvements, shelved } = laboratorio(readFileSync(join(ROOT, 'public/labs/index.html'), 'utf8'));
+  console.log(`Games being tried: ${active.map(p => p.title).join(', ') || 'nothing'}`);
+  console.log(`Improvements being tried: ${improvements.map(p => p.title).join(', ') || 'nothing'}`);
   console.log(`La Bodega (did not prosper; not proposed again as they were): ${shelved.map(p => p.title).join(', ') || 'nothing'}`);
 }
 

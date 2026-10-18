@@ -11,22 +11,8 @@
   <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
   <script src="../../assets/js/vigia.js"></script>
   <link rel="stylesheet" href="../../assets/css/base.css">
-  <style>
-    /* The demo (D-351): the real home page behind, as a player would find it, and the splash over it */
-    html, body { height: 100%; margin: 0; overflow: hidden; }
-    .demo-portada { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
-    .demo-barra {
-      position: fixed; z-index: 90; left: 50%; bottom: calc(12px + var(--safe-bottom)); transform: translateX(-50%);
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; align-items: center;
-      width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box; padding: 8px 10px;
-      border-radius: 999px; background: rgba(10, 4, 20, 0.9); border: 1px solid var(--glass-border);
-    }
-    .demo-barra button, .demo-barra select, .demo-barra a {
-      font: inherit; font-weight: 800; font-size: 0.85rem; color: var(--ink); background: var(--glass);
-      border: 1px solid var(--glass-border); border-radius: 999px; padding: 6px 12px; text-decoration: none;
-    }
-    .demo-barra select option { color: #000; }
-  </style>
+  <!-- The experiments bar, shared with the other lab demos of a page (D-361) -->
+  <link rel="stylesheet" href="../experiments.css">
 </head>
 <body>
   <iframe class="demo-portada" src="../../?test" title="Portada" tabindex="-1" aria-hidden="true"></iframe>

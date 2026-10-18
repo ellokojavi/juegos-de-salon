@@ -159,7 +159,28 @@
       92% { transform: rotate(calc(var(--giro) + 5deg)) scale(1.1); }
       96% { transform: rotate(calc(var(--giro) - 2deg)) scale(1.04); }
     }
-    @media (prefers-reduced-motion: reduce) { .game-card h2 .nuevo, .game-card h2 .nuevo > span { animation: none; } }
+    /* "Popular" (D-361): the same sticker as "New", in fire instead of the rainbow, with its 🔥 outside
+       the gradient so the emoji keeps its own colors (the owner's request). */
+    .game-card h2 .popular {
+      --giro: -6deg; margin-block: 4px;
+      font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
+      padding: 3px 9px; border-radius: 999px; background: #2a0a06;
+      border: 2px solid rgba(255, 255, 255, 0.92);
+      transform: rotate(var(--giro));
+      filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.35));
+      animation: popularBrillo 2.4s ease-in-out infinite, nuevoBaile 5s ease-in-out infinite;
+    }
+    .game-card h2 .popular > span:last-child {
+      background: linear-gradient(90deg, var(--yellow), #ff8a3d, #ff3d2e, #ff8a3d, var(--yellow));
+      background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shimmer 4s linear infinite;
+    }
+    @keyframes popularBrillo {
+      0%, 100% { box-shadow: 0 0 6px rgba(255, 61, 46, 0.5); }
+      50% { box-shadow: 0 0 14px rgba(255, 138, 61, 0.9), 0 0 22px rgba(255, 210, 63, 0.35); }
+    }
+    @media (prefers-reduced-motion: reduce) { .game-card h2 .nuevo, .game-card h2 .nuevo > span, .game-card h2 .popular, .game-card h2 .popular > span { animation: none; } }
     /* Filtros (D-142, D-149): el tipo de juego, en fichas que se prenden y se apagan. */
     .filtros { display: grid; gap: 10px; margin-top: 4px; }
     .filtros > * { min-width: 0; }
@@ -379,7 +400,7 @@
   </main>
 
   <script type="module">
-    import { PORTADA, TIPOS, TIPOS_VIEJOS, rangoJugadores, esNuevo } from './assets/js/games.js';
+    import { PORTADA, TIPOS, TIPOS_VIEJOS, rangoJugadores, esNuevo, populares, POPULAR_EN_PORTADA } from './assets/js/games.js';
     import { sparkles, el, con, shareButton, ICONO_COMPARTIR } from './assets/js/ui.js';
     import { botonCompartirPortada, trailerDe } from './assets/js/compartir-portada.js';
     import { compartirApp, comparteArchivos } from './assets/js/compartir.js';
@@ -449,6 +470,8 @@
       pintar();
       return b;
     };
+    // The 🔥 "Popular" label on the top three (D-361): in the lab until it ships, previewed with ?popular
+    const top = POPULAR_EN_PORTADA || param('popular') !== null ? populares() : new Set();
     const tarjetas = PORTADA.map((g, i) => {
       const [, max] = rangoJugadores(g.players);
       // Un juego que no está disponible se ve, pero no se abre: sin href, ni con el teclado (C-5)
@@ -458,7 +481,8 @@
           // "Próximamente" va pegado al nombre: abajo, entre las píldoras, no se veía
           el('h2', {}, el('span', {}, pickLang(g.name, lang)), !g.available && el('span', { class: 'proximamente' }, T.soon),
             // A new game says so for two weeks (D-333)
-            g.available && esNuevo(g) && el('span', { class: 'nuevo' }, el('span', {}, T.newGame))),
+            g.available && esNuevo(g) && el('span', { class: 'nuevo' }, el('span', {}, T.newGame)),
+            top.has(g.id) && el('span', { class: 'popular' }, el('span', {}, '🔥 '), el('span', {}, T.popularGame))),
           el('div', { class: 'tag' }, pickLang(g.tagline, lang)),
         ),
         el('div', { class: 'meta' },

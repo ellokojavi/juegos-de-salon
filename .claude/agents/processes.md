@@ -273,6 +273,12 @@ that (after a new game, after a big text change), saying why.
    push. A persisted key (a game id, a Firebase path, a `localStorage` key) is never renamed here:
    it is `keep` in `docs/english-renames.json`. You mark each renamed one `done`. When nothing is
    left, you replace this step with the weekly sanity review D-316 asks for.
+   And **the home page's order** (D-361, the owner's request): when `check` says it is due (the
+   list is a week old), `node tools/agents/popularity.mjs update` in your worktree. It counts the
+   games finished in the last four weeks and rewrites `POPULARIDAD` and `POPULARIDAD_FECHA` in
+   `public/assets/js/games.js` only if the order changed; then the change goes in your PR with an
+   unnumbered `changelog/processes-<date>.md` entry (it changes `public/`), and `games.test.mjs`
+   must stay green. Same order: nothing to commit, and next week it is due again.
    And the end-to-end groups (D-307): once a week, `node tools/e2e/groups.mjs measure` in your
    worktree; if `durations.json` changed, it goes in your PR (the groups rebuild themselves from
    it).
