@@ -349,16 +349,17 @@
   ],
   "queueDone": [
     "#321:3",
-    "#387:1"
+    "#387:1",
+    "#494:2"
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-17",
-      "to": "36f30a6"
+      "date": "2026-10-18",
+      "to": "b7b2fc0"
     },
     "usability": {
-      "date": "2026-10-17",
-      "to": "36f30a6"
+      "date": "2026-10-18",
+      "to": "b7b2fc0"
     }
   },
   "rounds": [
