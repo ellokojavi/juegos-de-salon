@@ -380,19 +380,19 @@ export function gameLabel(id, lang = 'es') {
  *
  * Agregar un modo es agregar una línea acá: el registro de señales lo manda, las reglas de
  * la base lo aceptan por forma y el panel lo dibuja con su ícono y su color, sin tocar nada
- * más. El nombre va en español porque solo lo lee el dueño en el panel; lo que ve el jugador
- * sale de `LOCALES` de cada juego (C-3).
+ * más. The label is in English because only the owner reads it, in the panel, which is English
+ * only (D-350); what the player sees comes from each game's `LOCALES` (C-3).
  */
 export const MODES = {
-  online: { icon: '📡', label: 'dos celulares', room: true },
-  local: { icon: '📱', label: 'un celular' },
-  cpu: { icon: '🤖', label: 'contra el celular' },
+  online: { icon: '📡', label: 'two phones', room: true },
+  local: { icon: '📱', label: 'one phone' },
+  cpu: { icon: '🤖', label: 'vs. the phone' },
   // `individual`: played by one person; the panel splits its domains by this flag (D-348)
   solo: { icon: '🧍', label: 'solo', individual: true },
-  // Uno al día (D-230): el juego de hoy, el mismo para todos, en su modo para uno
-  'uno-al-dia': { icon: '📅', label: 'Uno al día', individual: true },
-  // El día jugado de un torneo: el panel lo mide en su propia vista, con los datos del torneo
-  copa: { icon: '🏆', label: 'día de La Copa', torneo: true },
+  // One a Day (D-230): today's game, the same for everyone, in its one-player mode
+  'uno-al-dia': { icon: '📅', label: 'One a Day', individual: true },
+  // A played tournament day: the panel measures it in its own view, with the tournament's data
+  copa: { icon: '🏆', label: 'a La Copa day', torneo: true },
 };
 /** El modo de las partidas de Uno al día (D-230): lo usan los juegos al contarlas y el panel al leerlas. */
 export const MODO_UNO_AL_DIA = 'uno-al-dia';
