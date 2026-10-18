@@ -594,10 +594,14 @@ How it is put together (canon C-3):
 
 ## Owner dashboard
 
-`/panel/` is a private page that shows how much the app is played and from where: live rooms and
-connected phones, games by title and mode, players per game, time zone, language and time of day.
+`/panel/` is a private page that shows how much the app is played and from where, by domain
+(summary, group, individual, The Cup, Uno al día, users, traffic and health), each against the
+period before: games finished, live rooms, players per game, returns and cohorts, time zone,
+language and time of day (D-348).
 You sign in with Google, and only the owner of the Firebase project can read it. These are
-usage signals, not tracking: an IP or a secret never leave the phone. Offline games send the
+usage signals, not tracking: an IP or a secret never leave the phone. To count active users and
+cohorts, each browser keeps a random id that carries nothing else and is never joined with names,
+rooms or rankings (D-349). Offline games send the
 game, mode and country, plus the name the player already typed somewhere in the app (if any) and how
 the game ended (D-210). A room also records the country of each phone and who won, which is what the room
 log at the bottom of the dashboard shows. Live rooms show **plays and chat messages separately**:
@@ -691,6 +695,7 @@ node public/labs/code/engine-palabra.test.mjs
 node public/panel/adapta.test.mjs
 node public/panel/aggregate.test.mjs
 node public/panel/copas.test.mjs
+node public/panel/dominios.test.mjs
 node public/panel/rutas.test.mjs
 node tools/agents/approve.test.mjs
 node tools/agents/clean-worktrees.test.mjs
@@ -816,7 +821,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
     code/                     The Code: a base and 4 see-through cards; put each one on, turn (↻) and flip (⇋) it until the strokes form a 5-digit code with no stroke on top of another (an overlap shows striped), typed on a keypad; in Spanish there is also Word, with 14-segment letters and two-sided cards (flipping shows the other side); all four languages, its texts in game.js (D-270)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
   today/                      One a Day: today's game, your streak, a calendar and how you do in each game (D-230)
-  panel/                      Private owner dashboard: now, The Cup, games, traffic, audience and health, with a page per cup, game and room (Google sign-in; see docs/PANEL.md)
+  panel/                      Private owner dashboard by domain: summary, group, individual, The Cup, Uno al día, users, traffic and health, with a page per cup, game and room; dominios.js holds the pure accounts (Google sign-in; see docs/PANEL.md)
   assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
   assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), labs-puerta.js (the lab's door: without a key from the owner, one per person, /labs/ sends you to the menu, D-281, D-284), ui.js, sound.js, compartir.js (everything shared, D-165), parametros.js (the URL parameters, in English, with the old Spanish names as aliases, D-266), compartir-portada.js (the home-page share sheet, with the promo video, in the languages that have one, D-253, D-254), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, cuenta-regresiva.js (the 3, 2, 1, Let's go! before playing, shared by the Cup and the lab, D-105), azar.js, dado3d.js and llegada.js (Random game: the die, which stays on screen until the game is drawn, D-237), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-232), favoritos.js (the home-page favorites, kept in the browser, D-238), push.js + vapid.js (phone notifications: subscribing, D-223), uno-al-dia.js + uno-al-dia-ui.js + uno-al-dia-red.js + uno-al-dia-avisos.js (One a Day: a daily game, the same for everyone, with a streak, freezes, leaderboards, invitations and reminders; D-230), fin.js (the exits of every result screen, the same words in every game, C-19, D-343), buzon.js + buzon-form.js (the "💬 Sugerencias y comentarios" inbox at the end of every game and in the home footer; the form loads only on tap, D-341), and vigia.js, a classic script (not a module) that every page loads first to report load failures, errors and start-up time to the dashboard (D-251)
   assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals), with the room's helpers: errors.js (waiting for the connection, timeouts and error texts), ratelimit.js (rooms per phone, D-41), cleanup.js (expired rooms, D-39), dispose.js (leaving on purpose, D-50) and best-effort.js (the writes nobody waits for, so a resend after a reconnect is not a failure, D-320)
