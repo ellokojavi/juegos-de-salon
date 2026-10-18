@@ -76,6 +76,11 @@ have been crossed (the catalog's bridge, the train looping over it, with its pea
 
 ## The scene
 
+The day goes by along a game (owner's request): stage 1 is in the morning (blue sky, sun, brown rock),
+the middle ones head into sunset, and the last is at night (`ambienteDe(t)` mixes three palettes, from
+0 = morning to 1 = night). The cover stays at night; the unsolved stage's bridge in the result shows that
+stage's time of day.
+
 Pixel art from `pixel.js` (sprites, particles): the train with smoke, steam and headlight, which looks as
 heavy as it is (`trenDe`): old passenger cars at weight ×1, then flatcars with crates, logs, coal and
 containers, and a green freight locomotive from ×1,75; sparks
