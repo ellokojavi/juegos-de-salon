@@ -71,7 +71,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
-| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320 |
+| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
@@ -347,7 +347,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** La mesa se puede vaciar antes de que nadie llegue a la meta, y ahí gana quien colocó más, que ya era el final por mazo agotado del pozo común. En solitario eso significa que se puede terminar sin lograrlo: la pantalla final lo dice con sus propias palabras ("Se acabaron las cartas · Alcanzaste a colocar 1 de las 3 cartas que necesitabas") y **no** se guarda récord, porque si no una partida abandonada a los dos intentos quedaría como la mejor marca. El récord del solitario se guarda con su propia clave (`tema:cartas:mesa`), aparte de la del pozo común y la de mano propia.
 
 ## D-44 · Señales de uso para un panel privado del dueño, sin identificar a nadie
-**Fecha:** 2026-09-11 · **Estado:** corregida por D-79, D-210
+**Fecha:** 2026-09-11 · **Estado:** corregida por D-79, D-210, D-349
 **Decisión:** Los juegos y el transporte dejan constancia de cada partida en `stats/<entorno>/days/<día>` de Firebase: las salas de dos celulares con juego, hora, versión y los nombres de quienes entraron; los modos sin red (un celular, contra el celular, solo) como un **contador** por juego, modo y cantidad de jugadores, sin nombre ni nada más; y de cualquier modo un contador de zona horaria, idioma del navegador y hora local. Una página nueva, `/panel/`, entra con Google y lo muestra; las reglas solo dejan leer `stats/` y listar `rooms/` al UID del dueño. Documentado en [PANEL.md](PANEL.md).
 **Por qué:** Hasta acá no había forma de saber si alguien jugaba, qué juego gustaba ni cuántos se juntaban. La base solo tenía salas vivas que se borran a las 6 horas, nadie podía listarlas (D-39) y los modos sin red no tocaban la red. Un panel con historia pide un registro aparte que la papelera no barra.
 **Por qué señales vagas y no personas:** el objetivo es ver uso, no identificar. Que alguien juegue desde Brasil o se llame "Fausto" no dice quién es. Por eso no se consulta ninguna geolocalización por IP (que además sería un tercero) y "de dónde" se contesta con la zona horaria del celular, que es gruesa y honesta. Los nombres de las salas ya viajan a Firebase para que el rival los vea; el registro no los expone más de lo que estaban, y ahora solo el dueño puede listarlos. De los modos sin red no sale ni un nombre, porque hasta hoy no salía nada, y la promesa de privacidad cambia de "no se envía ningún dato" a "no se envía nada que identifique a alguien" (requerimientos no funcionales).
@@ -3259,7 +3259,7 @@ lo que de verdad está abierto. La regla la escribió una sesión del 2026-10-04
 rama que nunca se subió (ese número quedó para el alemán); se rescató al limpiar las carpetas.
 
 ## D-207 · El panel se navega: secciones, fichas y la hora del Pacífico
-**Fecha:** 2026-10-04 · **Estado:** corregida por D-266 · **Relación:** reemplaza las tres vistas de D-137
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-266, D-348 · **Relación:** reemplaza las tres vistas de D-137
 **Decisión:** El panel deja de ser una página larga con tres pestañas y pasa a navegarse como un
 sitio: cuatro secciones (Ahora, La Copa, Juegos, Audiencia) y una ficha por cada cosa que existe.
 La de una copa tiene la tabla completa, la grilla jugador × día (puntaje, tiempo, puntos, jugando,
@@ -3293,7 +3293,7 @@ app, los reportes en el panel (LIG-44), una sección de salud de los datos y se�
 (cuándo entró el rival, cuándo cerró el admin la inscripción).
 
 ## D-208 · El tráfico del sitio, aunque nadie juegue
-**Fecha:** 2026-10-04 · **Estado:** corregida por D-266 · **Relación:** completa D-44
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-266, D-349 · **Relación:** completa D-44
 **Decisión:** Cada página que se abre manda una señal, aunque nadie llegue a jugar, y el panel
 la muestra en una sección nueva, **Tráfico** (`#/trafico`). Una **visita** es una pestaña: se
 cuenta una vez, en la página donde empezó, con de dónde llegó (solo el dominio: `google_com`,
@@ -6587,3 +6587,60 @@ rule that changes between cups).
 **Consequences:** if every player stops playing, all of them are out and the cup goes on with
 nobody able to play it until it ends; the admin can bring them back. The demo has two new scenes
 (`?test&demo=out` and `&demo=risk`) and `paths.mjs` three screens (`out`, `out-table`, `risk`).
+
+## D-348 · The panel by domain: three bands, the period before, versions and CSV
+**Date:** 2026-10-18 · **Status:** current · **Relation:** corrects D-207 (the sections); adds counters to D-44 and D-208
+**Context:** the owner, as an analyst: `/panel/` should be a critical statistical source to understand
+Juegos de Salón, split into reasonable domains, with reports from which operational, tactical and
+strategic conclusions come easily; data that is missing can be captured.
+**Decision:** the panel is navigated by **domain**: 📊 Summary (the front page, with Now inside), 👥
+Group, 🧍 Individual, 🏆 La Copa, 📅 Uno al día, 🌎 Users (which takes Audience in), 📈 Traffic and 🩺
+Health. The old addresses open the section that took their place (`#/games` → Group, `#/audience`
+→ Users, `#/now` still opens).
+- **Three bands in every domain:** 🩺 Pulse (operational: the numbers against the period before),
+  🔍 Diagnosis (tactical: funnels and breakdowns to adjust a game, a text or a notification) and 🧭
+  Trend (strategic: by week or month, cohorts).
+- **The period before:** every main number says how it changed against the period of the same
+  length right before it (green when it improves, pink when it worsens). The panel loads both.
+- **The main metric:** games **finished** (rooms with an ending, offline games finished and La
+  Copa games played), on top of Summary.
+- **Versions on the timelines:** each period's bar names the versions that first showed up in it
+  (from `v` in rooms and live games), to read "we changed X" next to "Y happened".
+- **CSV:** every table can be downloaded.
+- **Group and individual** are split by a registry flag (`individual` in `MODES`: solo and Uno
+  al día), not by a list in the panel (C-16).
+- **New counters** (under `stats/<env>/days/<day>/`, with no identifier): `fin/<game>/<mode>`
+  (an offline game finished), `otra/<game>` (a replay, detected in `stats.js`), `comparte/<what>`
+  (something shared, from `compartir()`), `vuelta/<band>` (days since the last visit, computed in
+  the browser: `nueva`, `d1`, `d2-7`, `d8-30`, `d31`) and `frec/<band>` (how many of the last 28
+  days the browser came, once a day).
+- **New reports:** rooms step by step and their median length; finished and replayed; the real
+  difficulty of each individual game (score and time quartiles from its endings, and how many were
+  left halfway); La Copa step by step, participation by day of the cup and who was left out
+  (D-347); what is shared and the visits each share brings (the viral factor); returns and
+  frequency; users, cohorts and stickiness (D-349).
+**Why:** the old sections showed data; an analyst needs questions answered at three horizons and
+a way to connect a change with its effect.
+**Alternatives discarded:** a separate analytics tool (it would send players' data to a third
+party); keeping the sections and adding tabs (the domains mixed in Games and Audience).
+**Consequences:** the new counters start the day they are published: there is no data back. The
+first weeks of Users look all new, as the panel says. `public/panel/dominios.js` holds the pure
+accounts (`dominios.test.mjs`); `look.mjs panel summary|group|individual|daily|users` shows them.
+
+## D-349 · A random id per browser, to count users and cohorts
+**Date:** 2026-10-18 · **Status:** current · **Relation:** corrects D-44 ("signals, not people") and D-208 ("no identifier")
+**Context:** with counters only, the panel could not say how many people play a day, a week or a
+month, nor whether those who came back. The owner chose to include it (D-348's phase 3).
+**Decision:** each browser keeps a random 10-character id (`juegos-de-salon:dispositivo` in
+`localStorage`) and marks itself active each day in `stats/<env>/days/<day>/activos/<id>`: 1 if it
+visited, 2 if it started something. Nothing else goes with it: no name, no IP, no game, no page,
+and it is never joined with rooms, Cups, rankings or the feedback. The panel only counts: active
+per day, in 7 and 30 days, new ones, stickiness and cohorts by week with their returns on days 1,
+7 and 30. Only the owner reads `stats/`, as always.
+**Why:** retention and real reach are the strategic questions the panel could not answer; an id
+that only says "the same browser as yesterday" answers them without knowing who it is.
+**Alternatives discarded:** an id joined with the player's name or the rankings (that would be
+following a person); hashing the IP (there is no server, and it would identify more).
+**Consequences:** someone who clears their data, uses private mode or changes phone counts as new.
+The panel says the counting starts with this decision. The search still does not look up people
+(D-207).

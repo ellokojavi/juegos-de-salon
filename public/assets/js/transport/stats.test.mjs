@@ -6,6 +6,8 @@ import {
   liveId, liveRecord, startLive, esEnVivo, LATIDO_MS, QUIETO_MS,
   paginaDe, origenDe, canalDe, dispositivoDe, avisoDe, pwaDe, sinMarcas, visitChanges, noteVisit, notePlayed, VISITA_KEY, VINO_KEY, REF_KEY,
   nombreDelCelular, nombresDe, finRecord,
+  esOtraVez, finChanges, vueltaBand, frecBand, diasConHoy, habitChanges, deviceId, noteActive, shareKey, shareKeyOfPage,
+  ULTIMA_KEY, DIAS_KEY, DISPOSITIVO_KEY,
 } from './stats.js';
 import { readFileSync } from 'node:fs';
 
@@ -291,7 +293,9 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   sesion.setItem(REF_KEY, 'https://www.instagram.com/');
   await noteVisit(api, { env: 'prod', co: 'AR' }, ctx('/liars-dice/', { ref: 'https://juegosdesalon.cl/dudo/' }));
   assert.equal(api.calls[0].path, 'stats/prod/days/20000');
-  assert.deepEqual(Object.keys(api.calls[0].changes).sort(), ['disp/celular', 'entradas/liars-dice', 'pais/AR', 'ref/instagram_com', 'retorno/nueva', 'vistas/liars-dice']);
+  const id = local.getItem(DISPOSITIVO_KEY);
+  assert.deepEqual(Object.keys(api.calls[0].changes).sort(), [`activos/${id}`, 'disp/celular', 'entradas/liars-dice', 'frec/f1', 'pais/AR', 'ref/instagram_com', 'retorno/nueva', 'vistas/liars-dice', 'vuelta/nueva']);
+  assert.equal(api.calls[0].changes[`activos/${id}`], 1);
   assert.equal(sesion.getItem(REF_KEY), null, 'el origen guardado se usa una vez');
   assert.equal(local.getItem(VINO_KEY), '1');
   // Otra página de la misma visita: solo la vista
@@ -410,5 +414,70 @@ assert.equal(avisoDe('?notif=dailyday'), 'uaddia');
 assert.equal(avisoDe('?notif=dailybye'), 'uadadios');
 assert.equal(avisoDe('?aviso=uaddia'), 'uaddia');
 assert.equal(avisoDe('?aviso=uad-dia'), '', 'con guion, no: las reglas piden solo letras');
+
+// Usage captures (D-349)
+const memStore = (init = {}) => { const m = new Map(Object.entries(init)); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k), m }; };
+assert.equal(esOtraVez(null, 'ahorcado'), false);
+assert.equal(esOtraVez({ game: 'ahorcado', finished: false }, 'ahorcado'), false);
+assert.equal(esOtraVez({ game: 'ahorcado', finished: true }, 'ahorcado'), true);
+assert.equal(esOtraVez({ game: 'ahorcado', finished: true }, 'generala'), false);
+assert.deepEqual(finChanges({ game: 'ahorcado', mode: 'solo' }), { 'fin/ahorcado/solo': INC });
+assert.equal(vueltaBand(null, 100), 'nueva');
+assert.equal(vueltaBand(100, 100), '');
+assert.equal(vueltaBand(99, 100), 'd1');
+assert.equal(vueltaBand(98, 100), 'd2-7');
+assert.equal(vueltaBand(93, 100), 'd2-7');
+assert.equal(vueltaBand(92, 100), 'd8-30');
+assert.equal(vueltaBand(70, 100), 'd8-30');
+assert.equal(vueltaBand(69, 100), 'd31');
+assert.deepEqual([1, 2, 3, 4, 7, 8, 14, 15, 28].map(frecBand), ['f1', 'f2-3', 'f2-3', 'f4-7', 'f4-7', 'f8-14', 'f8-14', 'f15', 'f15']);
+assert.deepEqual(diasConHoy('50,72,73,99,100', 100), [73, 99, 100]);
+assert.deepEqual(diasConHoy('basura', 100), [100]);
+{
+  const st = memStore();
+  assert.deepEqual(habitChanges(st, 100), { 'vuelta/nueva': INC, 'frec/f1': INC });
+  assert.deepEqual(habitChanges(st, 100), {});
+  assert.deepEqual(habitChanges(st, 103), { 'vuelta/d2-7': INC, 'frec/f2-3': INC });
+  assert.equal(st.getItem(ULTIMA_KEY), '103');
+  assert.equal(st.getItem(DIAS_KEY), '100,103');
+  const roto = { getItem() { throw new Error('x'); }, setItem() { throw new Error('x'); } };
+  assert.deepEqual(habitChanges(roto, 100), { 'vuelta/nueva': INC, 'frec/f1': INC });
+}
+{
+  const st = memStore();
+  const id = deviceId(st);
+  assert.match(id, /^[a-z0-9]{10}$/);
+  assert.equal(deviceId(st), id);
+  assert.equal(st.getItem(DISPOSITIVO_KEY), id);
+  assert.equal(deviceId({ getItem() { throw new Error('x'); }, setItem() { throw new Error('x'); } }), '');
+  const api = fakeApi();
+  const fp = { env: 'dev' };
+  const now = 100 * DAY + 5;
+  await noteActive(api, fp, { level: 1, local: st, now });
+  await noteActive(api, fp, { level: 1, local: st, now });
+  await noteActive(api, fp, { level: 2, local: st, now });
+  await noteActive(api, fp, { level: 1, local: st, now });
+  assert.deepEqual(api.calls, [
+    { path: 'stats/dev/days/100', changes: { [`activos/${id}`]: 1 } },
+    { path: 'stats/dev/days/100', changes: { [`activos/${id}`]: 2 } },
+  ]);
+  await noteActive(api, fp, { level: 1, local: st, now: now + DAY });
+  assert.equal(api.calls.length, 3);
+}
+assert.equal(shareKey('resultado-hangman'), 'resultado-hangman');
+assert.equal(shareKey('Uno al día!'), 'unoalda');
+assert.equal(shareKey(''), 'otro');
+assert.equal(shareKeyOfPage('/'), 'app');
+assert.equal(shareKeyOfPage('/cup/'), 'copa');
+assert.equal(shareKeyOfPage('/hangman/'), 'resultado-hangman');
+assert.equal(shareKeyOfPage('/panel/'), '');
+// The rules accept every key these produce
+{
+  const rules = JSON.parse(readFileSync(new URL('../../../../firebase/database.rules.json', import.meta.url))).rules.stats.$env.days.$day;
+  for (const k of ['fin', 'otra', 'comparte', 'vuelta', 'frec', 'activos']) assert.ok(rules[k], k);
+  const rx = (w, v) => new RegExp(w.match(new RegExp(`\\${v}\\.matches\\(/(.*?)/\\)`))[1]);
+  for (const b of ['nueva', 'd1', 'd2-7', 'd8-30', 'd31']) assert.match(b, rx(rules.vuelta.$band['.write'], '$band'));
+  for (const b of ['f1', 'f2-3', 'f4-7', 'f8-14', 'f15']) assert.match(b, rx(rules.frec.$band['.write'], '$band'));
+}
 
 console.log('stats.test.mjs: todo en verde');

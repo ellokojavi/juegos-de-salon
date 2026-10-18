@@ -204,7 +204,7 @@ export function tarjetaInvitar({ lang, alTocar }) {
       await nombres();
       const [datos, url] = await Promise.all([red.misDatos(), red.linkInvitar(withLang(URL_HOY, lang))]);
       const texto = [cabecera({ emoji: '📅', titulo: T.nombre, contexto: T.invCab }), `🔥 ${frase(datos, { lang })}. ${T.atreves}`].join('\n');
-      await compartir({ titulo: T.nombre, texto, url });
+      await compartir({ titulo: T.nombre, texto, url, que: 'uno-al-dia' });
     } catch (_) { /* sin compartir no hay nada que avisar */ } finally { b.disabled = false; }
   });
   import('./uno-al-dia-red.js').then(async red => {
