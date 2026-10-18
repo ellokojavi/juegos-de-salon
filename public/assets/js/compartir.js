@@ -64,7 +64,25 @@ export const conLink = (texto, url) => [texto, url && `🔗 ${url}`].filter(Bool
  * Comparte un texto (y una imagen, si la hay) con el menú del sistema. Sin menú, copia el texto
  * y descarga la imagen. Devuelve 'shared', 'copied', 'downloaded' o 'failed'.
  */
-export async function compartir({ titulo, texto, url, imagen = null }) {
+export async function compartir(opciones) {
+  const r = await compartirSinContar(opciones);
+  if (r !== 'failed') contarCompartido(opciones?.que);
+  return r;
+}
+
+/**
+ * Counts the share for the panel (D-349): `que` if the caller says what it is, otherwise the
+ * page (`app`, `copa`, `resultado-<page>`). Loaded on demand so this file keeps its light imports.
+ */
+function contarCompartido(que) {
+  try {
+    import('./transport/stats.js')
+      .then(m => { const k = que || m.shareKeyOfPage(globalThis.location?.pathname); if (k) m.trackShare(k); })
+      .catch(() => { /* best effort */ });
+  } catch (_) { /* best effort */ }
+}
+
+async function compartirSinContar({ titulo, texto, url, imagen = null }) {
   const completo = conLink(texto, marcarCompartido(url));
   const cancelado = e => e && e.name === 'AbortError';
   if (imagen && typeof navigator !== 'undefined' && navigator.canShare?.({ files: [imagen] })) {
@@ -153,7 +171,7 @@ export function botonInvitar({ T, titulo, texto, url, alTocar }) {
   btn.textContent = rotulo();
   btn.addEventListener('click', async () => {
     alTocar?.();
-    const r = await compartir({ titulo, texto: texto(), url });
+    const r = await compartir({ titulo, texto: texto(), url, que: 'invita' });
     if (r === 'copied') { btn.textContent = T.copied; setTimeout(() => { btn.textContent = rotulo(); }, 2000); }
   });
   return btn;

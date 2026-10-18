@@ -349,6 +349,44 @@
                 }
               }
             },
+            "fin": {
+              "$game": {
+                "$mode": {
+                  ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $game.matches(/^[a-z-]{1,40}$/) && $mode.matches(/^[a-z][a-z-]{0,15}$/)",
+                  ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+                }
+              }
+            },
+            "otra": {
+              "$game": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $game.matches(/^[a-z0-9-]{1,40}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "comparte": {
+              "$what": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $what.matches(/^[a-z0-9-]{1,40}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "vuelta": {
+              "$band": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $band.matches(/^[a-z0-9-]{1,8}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "frec": {
+              "$band": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $band.matches(/^f[0-9-]{1,5}$/)",
+                ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+              }
+            },
+            "activos": {
+              "$id": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $id.matches(/^[a-z0-9]{10}$/)",
+                ".validate": "newData.isNumber() && (newData.val() == 1 || newData.val() == 2) && (!data.exists() || newData.val() >= data.val())"
+              }
+            },
             "$other": {
               ".validate": false
             }
