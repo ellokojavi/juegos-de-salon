@@ -1,4 +1,4 @@
-// The home page's experiments in the lab (D-361) end to end, at /labs/home/: the lab offers it under
+// The home page's experiments in the lab (D-361, D-362) end to end, at /labs/home/: the lab offers it under
 // Mejoras en prueba (the splash beside it, the games apart), the demo shows the real home page with the
 // experiments bar, 🔥 Populares starts on and labels three cards that are not La Copa nor "New", the
 // switch turns it off and back, the language travels, and the home page alone shows no label. Prints ✗ if something fails.
@@ -27,9 +27,27 @@ ok(await ev(`(() => { const d = ${frame}; return (${labels}).every(id => { const
 ok(await ev(`${frame}.documentElement.scrollWidth <= 320`), 'no sideways scroll at 320 px');
 
 await ev(`document.querySelector('[data-exp=popular]').click(); 1`);
-ok(await waitFor(`/[?&]lang=es$/.test(document.getElementById('portada').src) && ${frame}?.querySelectorAll('.game-card').length > 3 && (${labels}).length === 0`), 'the switch turns it off: the home page as players see it');
+ok(await waitFor(`!/[?&]popular/.test(document.getElementById('portada').src) && ${frame}?.querySelectorAll('.game-card').length > 3 && (${labels}).length === 0`), 'the switch turns it off: the home page as players see it');
 await ev(`document.querySelector('[data-exp=popular]').click(); const s = document.getElementById('idioma'); s.value = 'de'; s.dispatchEvent(new Event('change')); 1`);
 ok(await waitFor(`(${labels}).length === 3 && ${frame}.querySelector('.popular').textContent.replace(/\s+/g, ' ').trim() === '🔥 Beliebt'`), 'back on, in German: 🔥 Beliebt');
+
+// ✨ Nuevo and 🔥 Populares (D-362): a row above the types, each one filters, in every language at 320 px
+for (const lang of ['es', 'en', 'pt', 'de']) {
+  await b.go(`${SITE}/?test&popular&picks&lang=${lang}`);
+  await waitFor(`document.querySelectorAll('.filtros .atajos button').length === 2`);
+  const fila = await ev(`(() => { const a = document.querySelector('.filtros .atajos'), t = document.querySelector('.filtros .tipos'); const vis = [...a.querySelectorAll('button')].filter(x => !x.hidden); return { arriba: a.getBoundingClientRect().bottom <= t.getBoundingClientRect().top + 1, una: vis.every(x => Math.abs(x.getBoundingClientRect().top - vis[0].getBoundingClientRect().top) < 2), alto: vis.every(x => x.getBoundingClientRect().height >= 44), n: vis.length, ancho: document.documentElement.scrollWidth <= 320 }; })()`);
+  ok(fila.arriba && fila.una && fila.alto && fila.ancho && fila.n >= 1, `${lang}: the row sits above the types, on one line, ≥44 px, no sideways scroll`);
+}
+await b.go(`${SITE}/?test&popular&picks`);
+await waitFor(`!!document.querySelector('.atajos [data-tipo=popular]')`);
+await ev(`document.querySelector('.atajos [data-tipo=popular]').click(); 1`);
+ok(await waitFor(`[...document.querySelectorAll('.game-card[data-id]')].filter(c => !c.hidden).length === 3 && [...document.querySelectorAll('.game-card[data-id]')].filter(c => !c.hidden).every(c => c.querySelector('.popular')) && /type=popular/.test(location.search)`), '🔥 Populares shows only the three popular games, and the link keeps it');
+if (await ev(`!document.querySelector('.atajos [data-tipo=new]').hidden`)) {
+  await ev(`document.querySelector('.atajos [data-tipo=new]').click(); 1`);
+  ok(await waitFor(`(() => { const v = [...document.querySelectorAll('.game-card[data-id]')].filter(c => !c.hidden); return v.length > 0 && v.every(c => c.querySelector('.nuevo')); })()`), '✨ Nuevo shows only the games that say "New"');
+}
+await b.go(`${SITE}/?test`);
+ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && await ev(`!document.querySelector('.filtros .atajos:not([hidden])')`), 'the home page alone has no Nuevo or Populares row');
 
 // Players: no label on the home page without the preview
 await b.go(`${SITE}/?test`);
