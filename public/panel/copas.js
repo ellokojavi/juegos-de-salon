@@ -232,11 +232,11 @@ export function duracion(ms) {
   return h ? `${h}:${dos(mm)}:${dos(ss)}` : `${mm}:${dos(ss)}`;
 }
 
-/** Fecha corta del primer día de la copa ("24 sept"), leída como texto para no correrla de zona. */
+/** Fecha corta del primer día de la copa ("Sep 24"), leída como texto para no correrla de zona. */
 export function inicioLabel(start) {
   const [y, mo, d] = String(start || '').split('-').map(Number);
   if (!y || !mo || !d) return '?';
-  return new Date(Date.UTC(y, mo - 1, d)).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  return new Date(Date.UTC(y, mo - 1, d)).toLocaleDateString('en-US', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 }
 
 
@@ -296,37 +296,37 @@ export function historiaCopa(L, now = Date.now()) {
   const sinHora = [];
   const nombre = pid => L.players[pid]?.name || '?';
   const admin = nombre(m.admin);
-  if (m.createdAt) ev.push({ at: m.createdAt, tipo: 'creada', pid: m.admin, texto: `${admin} creó la copa: ${m.days} días` });
+  if (m.createdAt) ev.push({ at: m.createdAt, tipo: 'creada', pid: m.admin, texto: `${admin} created the cup: ${m.days} days` });
   for (const [pid, p] of Object.entries(L.players)) {
-    if (typeof p?.at === 'number' && p.at > 1e12 && pid !== m.admin) ev.push({ at: p.at, tipo: 'inscripcion', pid, texto: `${p.name} se inscribió` });
-    if (p?.out) sinHora.push({ tipo: 'retiro', pid, texto: `${p.name} salió de la copa: lo retiró el admin` });
+    if (typeof p?.at === 'number' && p.at > 1e12 && pid !== m.admin) ev.push({ at: p.at, tipo: 'inscripcion', pid, texto: `${p.name} signed up` });
+    if (p?.out) sinHora.push({ tipo: 'retiro', pid, texto: `${p.name} left the cup: removed by the admin` });
   }
   const jug = activos(L);
   for (let d = 1; d <= m.days; d++) {
     const juego = juegoDelDia(m, d);
     for (const [pid, at] of Object.entries(L.started[d] || {})) {
       if (typeof at !== 'number') continue;
-      ev.push({ at, tipo: 'empezo', pid, dia: d, juego, texto: `${nombre(pid)} empezó el día ${d}` });
+      ev.push({ at, tipo: 'empezo', pid, dia: d, juego, texto: `${nombre(pid)} started day ${d}` });
       const r = L.results[d]?.[pid];
-      if (r?.at) ev.push({ at: r.at, tipo: 'termino', pid, dia: d, juego, s: Number(r.s) || 0, ms: Number(r.ms) || 0, texto: `${nombre(pid)} terminó el día ${d}` });
-      else if (!abierto(m, d, now) || now - at > JUGANDO_MS) ev.push({ at: Math.min(at + JUGANDO_MS, m.win[d].b), tipo: 'sin-terminar', pid, dia: d, juego, texto: `${nombre(pid)} dejó sin terminar el día ${d}` });
+      if (r?.at) ev.push({ at: r.at, tipo: 'termino', pid, dia: d, juego, s: Number(r.s) || 0, ms: Number(r.ms) || 0, texto: `${nombre(pid)} finished day ${d}` });
+      else if (!abierto(m, d, now) || now - at > JUGANDO_MS) ev.push({ at: Math.min(at + JUGANDO_MS, m.win[d].b), tipo: 'sin-terminar', pid, dia: d, juego, texto: `${nombre(pid)} left day ${d} unfinished` });
     }
     // Un resultado sin "empezó" (de antes de que se anotara) igual cuenta
     for (const [pid, r] of Object.entries(L.results[d] || {})) {
-      if (r?.at && typeof L.started[d]?.[pid] !== 'number') ev.push({ at: r.at, tipo: 'termino', pid, dia: d, juego, s: Number(r.s) || 0, ms: Number(r.ms) || 0, texto: `${nombre(pid)} terminó el día ${d}` });
+      if (r?.at && typeof L.started[d]?.[pid] !== 'number') ev.push({ at: r.at, tipo: 'termino', pid, dia: d, juego, s: Number(r.s) || 0, ms: Number(r.ms) || 0, texto: `${nombre(pid)} finished day ${d}` });
     }
-    if (m.win[d].a <= now && !(L.fin && m.win[d].a >= L.fin)) ev.push({ at: m.win[d].a, tipo: 'abrio', dia: d, juego, texto: `Abrió el día ${d}` });
+    if (m.win[d].a <= now && !(L.fin && m.win[d].a >= L.fin)) ev.push({ at: m.win[d].a, tipo: 'abrio', dia: d, juego, texto: `Day ${d} opened` });
     if (cerrado(m, d, now) && !(L.fin && m.win[d].a >= L.fin)) {
       const tocaba = jug.filter(j => debia(m, d, j));
       const jugaron = tocaba.filter(j => L.results[d]?.[j.pid]).length;
-      ev.push({ at: m.win[d].b, tipo: 'cerro', dia: d, juego, texto: `Cerró el día ${d}: jugaron ${jugaron} de ${tocaba.length}` });
+      ev.push({ at: m.win[d].b, tipo: 'cerro', dia: d, juego, texto: `Day ${d} closed: ${jugaron} of ${tocaba.length} played` });
     }
   }
-  for (const [pid, d] of Object.entries(L.wild || {})) sinHora.push({ tipo: 'comodin', pid, dia: Number(d), texto: `${nombre(pid)} usó el comodín en el día ${d}` });
+  for (const [pid, d] of Object.entries(L.wild || {})) sinHora.push({ tipo: 'comodin', pid, dia: Number(d), texto: `${nombre(pid)} used the wildcard on day ${d}` });
   // Con el pid del admin, para que su nombre lleve la bandera como los demás
-  if (L.closed) sinHora.push({ tipo: 'cerrada', pid: m.admin, texto: `${admin} cerró la inscripción` });
-  if (L.fin) ev.push({ at: L.fin, tipo: 'fin', pid: m.admin, texto: `${admin} terminó la copa antes de tiempo` });
-  else if (terminada(m, now)) ev.push({ at: m.end, tipo: 'fin', texto: 'La copa terminó' });
+  if (L.closed) sinHora.push({ tipo: 'cerrada', pid: m.admin, texto: `${admin} closed sign-up` });
+  if (L.fin) ev.push({ at: L.fin, tipo: 'fin', pid: m.admin, texto: `${admin} ended the cup early` });
+  else if (terminada(m, now)) ev.push({ at: m.end, tipo: 'fin', texto: 'The cup ended' });
   // A igual hora, primero lo que ocurrió después en la lógica: el cierre antes que la apertura del día siguiente
   const peso = { fin: 0, cerro: 1, termino: 2, 'sin-terminar': 3, empezo: 4, abrio: 5, inscripcion: 6, creada: 7 };
   ev.sort((a, b) => b.at - a.at || (peso[a.tipo] ?? 9) - (peso[b.tipo] ?? 9));

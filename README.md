@@ -577,7 +577,7 @@ How it is put together (canon C-3):
 - In The Cup, the screen follows each player's language, but the words of Connections and Word, the
   messages shared with the group and their link follow the language picked when the cup is created
   (D-170).
-- The owner dashboard is Spanish only (an exception recorded in `docs/PANEL.md`). The installed
+- The owner dashboard is English only (D-350, an exception recorded in `docs/PANEL.md`). The installed
   app, instead, is named in the player's language: there is one manifest per language, and
   `instalable.js` picks it, along with the iPhone's `apple-mobile-web-app-title` (D-222).
 
