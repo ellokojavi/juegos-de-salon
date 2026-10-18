@@ -1,4 +1,4 @@
-# 🕵️ Agentes (prototipo del laboratorio, en Proyectos activos)
+# 🕵️ Agentes (prototipo del laboratorio, en Juegos en prueba)
 
 Un *Codenames* mini para uno solo (D-286, D-287): el juego da una pista con su número y el jugador
 encuentra a sus agentes entre 15 palabras, sin tocar las neutrales ni al asesino. **Inspirado en

@@ -33,7 +33,8 @@ A game's name is quoted as the app shows it (Spanish, C-3).
    modes, the panel signal, the result screen, end-to-end scripts, its document, the README and
    the social card. Quote that cost honestly.
 4. Each game's document in `docs/games/` before saying anything about that game.
-5. The lab (`public/labs/index.html`, D-280): **🧪 Proyectos activos** is what is being tried;
+5. The lab (`public/labs/index.html`, D-280, D-361): **🎲 Juegos en prueba** is the games being tried
+   and **✨ Mejoras en prueba** the improvements to what is already published (the home page, the splash);
    **📦 La Bodega** is what did not prosper (El caso, La clave). A Bodega project is not proposed
    again as if new; it can be proposed again only with what changed and why it would work now.
 6. The panel (`docs/PANEL.md`, D-348) and the weekly report (D-352): the numbers you quote are
