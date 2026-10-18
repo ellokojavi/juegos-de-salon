@@ -256,9 +256,9 @@ function ofrecerContar(caja, { nombre = '', alTocar = () => {}, alEntrar }) {
   const T = R();
   nombre = nombre || nombreLocal();
   caja.classList.add('rk-contar');
-  caja.replaceChildren(el('p', { class: 'lead rk-contar-titulo' }, T.countThis), el('p', { class: 'muted rk-hint' }, T.countThisHint),
-    // Abierto: el nombre ya puesto se ve y basta el PIN (sin la fila plegada, que repetía la pregunta, U-8)
-    bloqueJugador({ abierto: true, nombre, alTocar }));
+  // One line with its Sign in button, the same card as everywhere (C-19): tapping it opens the form with the
+  // name already in, so the PIN is still all it takes (D-274)
+  caja.replaceChildren(bloqueJugador({ destacado: true, compacto: true, leyenda: T.countThis, nombre, alTocar }));
   let hecho = false;
   jugador().then(J => {
     const off = J.escuchar(() => {

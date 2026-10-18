@@ -1060,7 +1060,8 @@ function grafico(now) {
       el('span', { class: 'g-color', 'aria-hidden': 'true' }), nombreConJuegos(f.pid === S.yo ? fmt(T.progressYou, { name: f.name }) : f.name, menos[f.pid]))));
   const notaJuegos = Object.values(menos).some(x => x > 0) ? el('p', { class: 'muted grafico-nota', id: 'nota-juegos' }, T.fewerGamesNote) : null;
   return el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.progressTitle), svg, chips, notaJuegos, leyenda,
-    el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-imagen', onClick: async ev2 => {
+    // Once over, the podium's Share the summary does the same: one share button per screen (C-19)
+    terminada(L().meta, now) ? null : el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-imagen', onClick: async ev2 => {
       SFX.tap(); const b = ev2.currentTarget; b.disabled = true;
       try { await compartirTabla(); } catch (e) { toast(errorDe(e)); } finally { b.disabled = false; }
     } }, `📤 ${T.shareImage}`));
@@ -1197,7 +1198,8 @@ function podio() {
     el('div', { class: 'escalones' }, [1, 0, 2].map(i => top[i] ? el('div', { class: `escalon e${i + 1}` },
       el('span', { class: 'medal' }, ['🥇', '🥈', '🥉'][i]), el('b', {}, top[i].name), el('small', {}, `${top[i].total} ${T.pts}`)) : null)),
     desempate(filas) ? el('p', { class: 'center', id: 'podio-desempate', style: 'margin:0' }, lineaDesempate(T, filas)) : null,
-    medalla(T.medalChamp, m.campeon),
+    // A single champion is already the title and the 🥇: the line only names a shared one (C-19)
+    m.campeon?.length > 1 ? medalla(T.medalChamp, m.campeon) : null,
     medalla(T.medalWins, m.ganador?.filas, m.ganador ? ` (${m.ganador.n})` : ''),
     medalla(T.medalComeback, m.remontada?.filas, m.remontada ? ` (+${m.remontada.n})` : ''),
     medalla(T.medalLast, m.farolito),
@@ -2229,13 +2231,15 @@ function bajoElPuntaje(t, ms, id = null) {
  * mira después (el desglose no se guarda en la copa), la regla del juego. En la copa suma cómo el
  * lugar del día se vuelve puntos, y si ese día valía el doble.
  */
-function explicacion(J, { s, ms, det, x = 1, final = false, copa = true, abierto = !copa }) {
+function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
   const lineas = det?.length ? det : [puntajeTexto(J, copa)];
-  return el('details', { class: 'panel explicacion', id: 'explicacion', open: abierto },
+  // Folded and after the exits, everywhere (C-19); on its own the score and the time are already above it,
+  // so neither is said again here
+  return el('details', { class: 'panel explicacion', id: 'explicacion' },
     el('summary', { class: 'lead' }, `🧮 ${T.bdTitle}`),
     el('ul', {}, lineas.map(t => el('li', {}, t))),
-    det?.length ? el('p', { class: 'explicacion-total' }, fmt(s === 1 ? T.bdTotalOne : T.bdTotal, { s })) : null,
-    J === JUEGOS_COPA.zip || J === JUEGOS_COPA.desenredo ? null : el('p', { class: 'muted' }, fmt(copa ? T.bdTime : T.bdTimeSolo, { t: mmss(ms) })),
+    copa && det?.length ? el('p', { class: 'explicacion-total' }, fmt(s === 1 ? T.bdTotalOne : T.bdTotal, { s })) : null,
+    !copa || J === JUEGOS_COPA.zip || J === JUEGOS_COPA.desenredo ? null : el('p', { class: 'muted' }, fmt(T.bdTime, { t: mmss(ms) })),
     copa ? el('p', { class: 'muted' }, T.bdPlaces) : null,
     copa && x > 1 ? el('p', { class: 'ok' }, final ? T.bdFinal : T.bdWild) : null);
 }
@@ -2551,9 +2555,6 @@ function resultadoPractica(id, semilla, r, variante = null) {
     // Uno al día: la racha, compartir sin decir el juego, jugar otro o ver todo (D-230)
     hoy ? tarjetaResultado({ lang: LANG, fecha: S.hoy.fecha, primera: hoy.primera, dia: hoy.dia, raiz: RAIZ, alTocar: () => SFX.tap(), mmss }) : null,
     aviso,
-    explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
-    // El de un juego `diario` no: su semilla ya va en el link de compartir y en el comentario
-    LABS && !hoy && !diario ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
     // Suelto se comparte como cualquier juego jugado solo, con su página (D-162, D-165)
     // El de un juego `diario` lleva su semilla: quien lo recibe juega el mismo caso, también mañana
     (!LABS || diario) && !hoy && gameById(id)?.suelto ? botonResultadoSolo({ C: COMMON[LANG] || COMMON.es, emoji: J.emoji, juego: J.varianteNombre ? `${J.nombre} · ${J.varianteNombre}` : J.nombre, puntaje: r.resumen || String(r.s), tiempo: mmss(r.ms), tarjeta: r.t, url: withLang(`${SITIO}${gameById(id).path}${[diario && `seed=${semilla}`, rk && `mode=${rk}`].filter(Boolean).join('&').replace(/^./, c => `?${c}`)}`, LANG), alTocar: () => SFX.tap() }) : null,
@@ -2562,8 +2563,12 @@ function resultadoPractica(id, semilla, r, variante = null) {
     LABS && !hoy && !diario ? el('a', { class: 'btn btn--cyan btn--sm', id: 'btn-repetir', href: `${otra}${otra.includes('?') ? '&' : '?'}seed=${semilla}` }, T.practiceSame) : null,
     // One a Day's exits are in its card (C-19); the rest go back to the menu (or the lab), before 🐞
     hoy ? null : volverDePractica(),
-    enLab ? null : botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
+    // The long detail, folded, after the actions and the exits (C-19)
+    explicacion(J, { s: r.s, ms: r.ms, det: r.det, copa: false }),
+    // El de un juego `diario` no: su semilla ya va en el link de compartir y en el comentario
+    LABS && !hoy && !diario ? el('p', { class: 'muted center' }, fmt(T.practiceSeed, { semilla })) : null,
     ranking,
+    enLab ? null : botonReporte({ juego: id, semilla, puntaje: r.s, resumen: r.resumen }),
     // En la página de un juego del laboratorio, el comentario va abierto y al final de todo (D-265, D-268)
     enLab ? formularioComentario({ T: TB(), enviar: enviarComentario(), contexto: {
       juego: id, semilla, puntaje: r.s, resumen: r.resumen, tiempo: mmss(r.ms), url: location.pathname + location.search,

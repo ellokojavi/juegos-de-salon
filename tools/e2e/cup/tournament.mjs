@@ -636,7 +636,8 @@ if (runs('cup')) {
   await b.shot('chart-colors');
   // The partial table as an image (D-126): shared as a PNG file
   await ev(`navigator.canShare = () => true; 1`);
-  await click('#btn-imagen'); await sleep(1500);
+  ok(!await ev(`!!document.getElementById('btn-imagen')`), 'once over, the chart has no share button of its own: the podium has it (C-19)');
+  await click('#btn-resumen'); await sleep(1500);
   const img = await ev(`(async()=>{const d=window.__shared.at(-1);const f=d?.files?.[0];if(!f)return null;const r=new FileReader();const u=await new Promise(ok=>{r.onload=()=>ok(r.result);r.readAsDataURL(f)});return {name:f.name,type:f.type,size:f.size,u}})()`);
   ok(img && img.type === 'image/png' && img.size > 20000 && img.name === 'copa-oficina-tabla-final.png', `the table is shared as an image (${img?.name})`);
   ok(/^🏁 \*La Copa: .+\* · Tabla final\n\n/.test(await ev('window.__shared.at(-1)?.text || ""')), 'once over, the table image comes with the final summary');
@@ -950,7 +951,7 @@ if (runs('labs')) {
     await click('#btn-fin'); await sleep(500);
     const r = await ev(`JSON.stringify({p:__copa.estado.pantalla, s:document.querySelector('.score-big')?.textContent})`).then(JSON.parse);
     ok(r.p === 'resultado', `practice of ${id}: plays through to the end (${r.s})`);
-    ok((await ev(`document.querySelector('#explicacion')?.innerText || ''`)).length > 40, `practice of ${id}: explains how the score was computed`);
+    ok((await ev(`document.querySelector('#explicacion')?.textContent || ''`)).length > 40, `practice of ${id}: explains how the score was computed`);
     if (id === 'donde') ok(r.s === '100/100', `¿Dónde queda?: the pin right on each city is 100 points (${r.s})`);
     if (['reinas', 'zip', 'desenredo', 'tango', 'letras', 'donde'].includes(id)) await b.shot(`practice-${id}`);
     if (id === 'reinas') { await checkScreen('practice-result'); await b.shot('11-practice'); }
