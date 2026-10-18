@@ -74,6 +74,29 @@ export function unirViga(vigas, a, b, nudos = new Set()) {
 }
 
 /**
+ * A stroke longer than one beam (owner's request: the whole deck in one drag): a straight drag between
+ * two grid points becomes a beam for each step between the grid points on its line, so it joins at
+ * every one. `{ piezas, motivo }`: the new beams (those already there are left out), or why not.
+ * Within one beam's length it is a single beam, as before.
+ */
+const mcd = (x, y) => (y ? mcd(y, x % y) : x);
+export function trazo(e, vigas, a, b) {
+  if (Math.hypot(b[0] - a[0], b[1] - a[1]) <= LARGO_MAX + 1e-9) { const m = vigaValida(e, vigas, a, b); return { piezas: m ? [] : [{ a, b }], motivo: m }; }
+  const dx = b[0] - a[0], dy = b[1] - a[1], g = mcd(Math.abs(dx), Math.abs(dy));
+  const ux = dx / g, uy = dy / g;
+  if (Math.hypot(ux, uy) > LARGO_MAX + 1e-9) return { piezas: [], motivo: 'larga' };
+  const piezas = [];
+  for (let k = 0; k < g; k++) {
+    const p = [a[0] + ux * k, a[1] + uy * k], q = [a[0] + ux * (k + 1), a[1] + uy * (k + 1)];
+    const m = vigaValida(e, vigas, p, q);
+    if (m === 'repetida') continue;
+    if (m) return { piezas: [], motivo: m };
+    piezas.push({ a: p, b: q });
+  }
+  return piezas.length ? { piezas, motivo: null } : { piezas: [], motivo: 'repetida' };
+}
+
+/**
  * What a bridge costs. A crossing with `madera` measures its budget in wood: each beam costs its
  * length (a two-square beam costs double), so a few long beams are no longer a free trick. Without it,
  * one beam is one unit, as in the first stages.
