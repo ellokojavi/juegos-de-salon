@@ -207,6 +207,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `julep/languages.mjs` | Julepe in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `fourth-king/languages.mjs` | Cuarto Rey in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `cup-games/languages.mjs` | La Copa's standalone games in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
+| `home/lab.mjs` | The home page's experiments in the lab (D-361): the lab's three groups, `/labs/home/` with 🔥 Populares on and off, in German, and no label on the home page without `?popular` |
 | `splash/languages.mjs` | Every splash campaign in all languages: each one as `?splash=<id>` against the Spanish one (D-199, D-355) |
 
 ## All languages (D-199)
