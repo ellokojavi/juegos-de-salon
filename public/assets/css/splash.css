@@ -47,7 +47,7 @@
   transition: transform 0.15s, border-color 0.15s;
 }
 a.splash-item:hover, a.splash-item:focus-visible { transform: translateY(-3px); border-color: var(--yellow); }
-/* A few seconds of play, square (marketing/splash-clips/) */
+/* A few seconds of play, square (marketing/splash/) */
 .splash-media { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: #0b0716; pointer-events: none; }
 .splash-item-cuerpo { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px 12px; flex: 1; }
 .splash-item h3 { margin: 0; font-size: 1.08rem; font-weight: 900; }

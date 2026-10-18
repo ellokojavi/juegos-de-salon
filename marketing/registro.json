@@ -306,6 +306,53 @@
         "al_dia": true,
         "pendiente": []
       }
+    },
+    {
+      "id": "splash",
+      "tipo": "ventana en la portada",
+      "titulo": "Splash promocional de la portada",
+      "carpeta": "marketing/splash/",
+      "memoria": "marketing/splash/README.md",
+      "version": 1,
+      "fecha": "2026-10-18",
+      "idioma": "es, en, pt, de",
+      "app": "0.181.1",
+      "archivos": [
+        {
+          "ruta": "marketing/splash/campaigns/tres-juegos-demo/es-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña (es)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/tres-juegos-demo/en-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña (en)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/tres-juegos-demo/pt-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña (pt)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/tres-juegos-demo/de-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña (de)"
+        }
+      ],
+      "fuente": "public/assets/js/splash.js",
+      "construir": "marketing/splash/capture.mjs",
+      "juegos": [
+        "rutas",
+        "loteo",
+        "pintaminas"
+      ],
+      "seleccion": true,
+      "revision": {
+        "fecha": "2026-10-18",
+        "app": "0.181.1",
+        "al_dia": true,
+        "pendiente": []
+      }
     }
   ]
 }

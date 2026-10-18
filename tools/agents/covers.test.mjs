@@ -2,7 +2,7 @@
 // recognizes which games a PR touches. It is tested against the lab's real games.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { coverOf, touchedGames, resolvedSteps, labsExits, stage } from './covers.mjs';
+import { coverOf, touchedGames, resolvedSteps, labsExits, stage, splashChanges } from './covers.mjs';
 
 // Pintaminas, Rutas rotas and Loteo left the lab (D-332): their steps are in La Copa's texts now
 for (const slug of ['agents', 'exploding-numbers']) {
@@ -34,3 +34,21 @@ assert.equal(stage(['public/labs/routes/game.js', 'public/assets/js/i18n.js'], [
 assert.equal(stage(['public/assets/js/games.js'], ['untangle']), 'leaves');
 assert.equal(stage(['docs/x.md'], []), 'no-app');
 console.log('✓ covers (U-36, D-304)');
+
+// The splash campaigns a PR changes get a full usability pass (D-355)
+assert.deepEqual(splashChanges(`@@ -17,1 +17,1 @@\n-export const ACTIVE = null;\n+export const ACTIVE = { id: 'tres-juegos-demo', until: '2026-10-23' };`), ['tres-juegos-demo']);
+assert.deepEqual(splashChanges(`@@ -17,1 +17,1 @@\n-export const ACTIVE = { id: 'tres-juegos-demo' };\n+export const ACTIVE = null;`), [], 'turning it off shows nothing new');
+assert.deepEqual(splashChanges(`@@ -30,6 +30,6 @@ export const CAMPAIGNS = {
+   'tres-juegos-demo': {
+     emoji: '🎉',
+-    title: { es: 'Tres' },
++    title: { es: 'Tres juegos' },
+   },
+ };`), ['tres-juegos-demo']);
+assert.deepEqual(splashChanges(`@@ -40,3 +40,8 @@
+   },
++  'navidad': {
++    emoji: '🎄',
++  },
+ };`), ['navidad']);
+assert.deepEqual(splashChanges(''), []);
