@@ -6,7 +6,8 @@
  *   torneos/<código>/meta · players/<pid> · started/<día>/<pid> · results/<día>/<pid> · wild/<pid> · fin
  *   torneoKeys/<código>/<pid>          sha256 del PIN. Nadie lo puede leer.
  *   torneoSeats/<código>/<pid>/<uid>   el celular `uid` puede escribir por `pid`. Las reglas
- *                                    aceptan el asiento solo si trae el mismo hash que torneoKeys.
+ *                                    aceptan el asiento solo si trae el mismo hash que torneoKeys,
+ *                                    or the jid that `pid` is linked to, from a phone seated as that player (D-359).
  */
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import {
@@ -113,6 +114,16 @@ export function createFirebaseStore() {
     async sentarse(code, pid, pinHash) {
       const uid = await listo();
       await escribir({ [`torneoSeats/${code}/${pid}/${uid}`]: pinHash }, 'pin');
+    },
+
+    /**
+     * Sit as the cup player linked to this phone's player, with no cup PIN (D-359): the seat
+     * carries the jid, and the rules accept it if that cup player is linked to it and this phone
+     * is seated as that player.
+     */
+    async sentarseComoJugador(code, pid, jid) {
+      const uid = await listo();
+      await escribir({ [`torneoSeats/${code}/${pid}/${uid}`]: jid }, 'pin');
     },
 
     /**

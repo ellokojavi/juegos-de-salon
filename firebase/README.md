@@ -65,7 +65,8 @@ own tree because they last a week and rooms die after half an hour (D-89).
   day 6, because rules cannot loop.
 - `torneoKeys/<código>/<pid>` stores the PIN hash and `torneoSeats/<código>/<pid>/<uid>` the
   phones seated as that player. **Neither can be read**: sitting down requires sending
-  the same hash. The admin can change the hash and delete the seats (new PIN).
+  the same hash, or (D-359) the cup player's linked jid (`players/<pid>/j`) from a phone seated as
+  that player (`jugadorSeats/<jid>/<uid>`), so a signed-in player needs no cup PIN. The admin can change the hash and delete the seats (new PIN).
 - Cups aren't deleted yet (LIG-31).
 
 ## Publishing the rules (D-122, D-218)
