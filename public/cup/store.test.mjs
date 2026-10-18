@@ -122,6 +122,17 @@ await test('sentarse con el PIN', async () => {
   await intruso.sentarse(CODE, 'bbbbbb', await hashPin(CODE, 'bbbbbb', '2222'));
 });
 
+await test('sentarse como su jugador, sin PIN de copa (D-359)', async () => {
+  const cel = createLocalStore({ uid: 'u-jugador' });
+  await rechaza(cel.sentarseComoJugador(CODE, 'bbbbbb', 'jid00001'), 'pin');
+  await otro.enlazar(CODE, 'bbbbbb', 'jid00001');
+  await rechaza(cel.sentarseComoJugador(CODE, 'bbbbbb', 'jid00002'), 'pin');
+  await cel.sentarseComoJugador(CODE, 'bbbbbb', 'jid00001');
+  const { readFileSync } = await import('node:fs');
+  const r = JSON.parse(readFileSync(new URL('../../firebase/database.rules.json', import.meta.url))).rules.torneoSeats.$code.$pid.$uid['.validate'];
+  assert.match(r, /players\/' \+ \$pid \+ '\/j'\)\.val\(\) && root\.child\('jugadorSeats\/' \+ newData\.val\(\) \+ '\/' \+ auth\.uid\)\.exists\(\)/, 'the rules accept the jid only from a phone seated as that linked player');
+});
+
 await test('comodín antes de empezar; resultado una vez y en su ventana', async () => {
   await otro.comodin(CODE, 1, 'bbbbbb');
   await rechaza(otro.comodin(CODE, 2, 'bbbbbb'), 'comodin');
