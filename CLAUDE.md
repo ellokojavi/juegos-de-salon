@@ -15,7 +15,9 @@ into the repo. Exceptions: what the player reads (the app stays in its four lang
 default, C-3), text written by people outside the team (player feedback), and persisted data keys
 (game ids like `'ahorcado'`, Firebase paths and fields, `localStorage` keys), which are data, not
 language. Older Spanish content and Spanish file and identifier names are being migrated in phases
-(D-316); until then, new text is English even inside a Spanish file.
+(D-316); until then, new text is English even inside a Spanish file. What is left is listed in
+`docs/english-renames.json` (`node tools/agents/english.mjs status`), and a new Spanish file name fails
+`english.test.mjs` (D-354).
 
 ## Where everything is (D-192)
 
@@ -247,7 +249,8 @@ with that the screen also enters the language tests. To see it on a real phone,
   backlog, the open issues with no label that `processes.mjs check` lists (D-339). It closes what was left open and
   turns a recurring error into a mechanism (a test before an instruction). In its
   round it collects the `changelog/` entries into `CHANGELOG.md` (D-300) and deletes the decision
-  reservations that are already in `main` (`decision.mjs clean`, D-301). What
+  reservations that are already in `main` (`decision.mjs clean`, D-301). It also moves the rename to English forward, a part at a time, when no other PR is open
+  (`tools/agents/english.mjs`, D-354). What
   needs the owner goes in a `processes` issue with Yes/No checkboxes, opened by the bot (`decide.yml`) so
   the owner gets the email: ticking one carries it out instantly
   (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).

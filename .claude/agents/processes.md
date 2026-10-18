@@ -255,6 +255,13 @@ change), saying why.
    published version doesn't change. `check` already deleted the `reserve/D-n` reservations (and the older `reserva/D-n`) that
    are in `main`; one that has gone more than a week without a PR is recorded as
    `## D-n · (unused number)` in your PR and deleted (`git push origin --delete reserve/D-n`).
+   And **the move to English** (D-316, D-354), which `check` counts: when no other PR is open, you
+   rename the next part (`node tools/agents/english.mjs next`: one phase, up to ten names) in your
+   PR. Every name goes with `git mv`, every reference to it is updated in the same commit, the old
+   URL keeps its bridge page (D-192), and the tests and the whole end-to-end suite pass before the
+   push. A persisted key (a game id, a Firebase path, a `localStorage` key) is never renamed here:
+   it is `keep` in `docs/english-renames.json`. You mark each renamed one `done`. When nothing is
+   left, you replace this step with the weekly sanity review D-316 asks for.
    And the end-to-end groups (D-307): once a week, `node tools/e2e/groups.mjs measure` in your
    worktree; if `durations.json` changed, it goes in your PR (the groups rebuild themselves from
    it).

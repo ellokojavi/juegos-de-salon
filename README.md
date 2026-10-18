@@ -702,6 +702,7 @@ node tools/agents/clean-worktrees.test.mjs
 node tools/agents/covers.test.mjs
 node tools/agents/decision.test.mjs
 node tools/agents/document.test.mjs
+node tools/agents/english.test.mjs
 node tools/agents/feedback-templates.test.mjs
 node tools/agents/feedback.test.mjs
 node tools/agents/inbox.test.mjs

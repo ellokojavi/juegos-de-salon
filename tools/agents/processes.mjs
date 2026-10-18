@@ -197,6 +197,10 @@ async function check() {
   console.log(toCollect.length ? `- ${toCollect.length} ${toCollect.length === 1 ? 'entry' : 'entries'} in main's changelog/: collect them in your PR (node tools/release/changelog.mjs collect)` : "- main's changelog/ is empty.");
   try { console.log(sh('node', [join(ROOT, 'tools/agents/decision.mjs'), 'clean']).trim() || '- No open reservations.'); } catch (e) { console.log(`- reservations: ${String(e.message).split('\n')[0]}`); }
 
+  heading('The move to English (D-316, D-354)');
+  try { console.log(sh('node', [join(ROOT, 'tools/agents/english.mjs'), 'status']).trim()); } catch (e) { console.log(`- english: ${String(e.message).split('\n')[0]}`); }
+  try { if (gh('pr', 'list', '--state', 'open', '--json', 'number').length === 0) console.log('→ No PR is open: rename the next part in your PR (node tools/agents/english.mjs next).'); } catch (_) { /* without gh, the round says it elsewhere */ }
+
   heading('Issues');
   const issues = gh('issue', 'list', '--state', 'open', '--limit', '100', '--json', 'number,title,createdAt,labels,body');
   // On main, the end-to-end tests run inside publish.yml (D-302): its last finished run says whether main is green
