@@ -35,7 +35,7 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
 
 ## Crossings and catalogs
 
-- Each game draws one crossing per level (1 to 5) from `catalogo-madera.json` (33 crossings, 5 to 8 per level, about 11,000 combinations): low anchors on the cliff faces,
+- Each game draws one crossing per level (1 to 5) from `catalogo-madera.json` (33 crossings, 6 or 7 per level, ordered by the wood their solution needs so each level asks more than the one before: about 9 to 12 m at level 1 up to 29 to 36 m at level 5; about 15,000 combinations): low anchors on the cliff faces,
   stone towers, rock pillars in the water, or a mix. Its budget is the cheapest bridge a search found
   plus the level's spare beams.
 - The wood catalog's solutions are readable trusses (`--legible`, owner's request): the cheapest bridge
@@ -75,6 +75,11 @@ its points as stage + savings + solidity), with a short legend, and shows how an
 have been crossed (the catalog's bridge, the train looping over it, with its peak strain).
 
 ## The scene
+
+The day goes by along a game (owner's request): stage 1 is in the morning (blue sky, sun, brown rock),
+the middle ones head into sunset, and the last is at night (`timeOfDay(t)` mixes three palettes, `MORNING`, `SUNSET` and `NIGHT`, from
+0 = morning to 1 = night). The cover stays at night; the unsolved stage's bridge in the result shows that
+stage's time of day.
 
 Pixel art from `pixel.js` (sprites, particles): the train with smoke, steam and headlight, which looks as
 heavy as it is (`trenDe`): old passenger cars at weight ×1, then flatcars with crates, logs, coal and

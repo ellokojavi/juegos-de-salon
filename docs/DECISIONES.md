@@ -71,7 +71,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
-| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349 |
+| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
@@ -6645,6 +6645,18 @@ following a person); hashing the IP (there is no server, and it would identify m
 The panel says the counting starts with this decision. The search still does not look up people
 (D-207).
 
+## D-350 · The owner's panel in English
+**Date:** 2026-10-18 · **Status:** current · **Relation:** changes the panel's exception to C-3 (it was Spanish only, PANEL.md)
+**Context:** the owner asked for the whole panel ("el portal") in English, as its only language.
+**Decision:** `/panel/` shows everything in English: sections, bands, notes, labels, dates
+(`en-US`), the names of the games (`name.en` in `games.js`), the languages and countries (named in
+English) and the mode labels of `MODES`, which only the panel reads. There is no toggle: one
+language to keep. What the players see does not change: the app stays in its four languages, with
+Spanish by default (C-3).
+**Why:** the panel is read like an analyst's source, and the owner wants it in English; a second
+language there would only double the texts.
+**Consequences:** the panel's tests expect English; PANEL.md's exception to C-3 says English only.
+
 ## D-351 · A promotional splash over the home page, off by default and seen once
 **Date:** 2026-10-18 · **Status:** current · **Relation:** extends C-17 (the home page)
 **Context:** the owner wants to tell players about what is worth telling (three new games, a new
@@ -6677,3 +6689,30 @@ the experience the owner asked to protect); a separate page (players arrive at t
 **Consequences:** turning it on or off takes a publish (minutes, with auto-merge). A phone that
 clears its data sees the campaign again. A new game in a campaign needs its clip recorded (one
 entry in `capturar.mjs`). Views and clicks are not counted yet.
+
+## D-352 · A weekly report, as a PDF on disk and by email
+**Date:** 2026-10-18 · **Status:** current · **Relation:** builds on D-348 (the panel's accounts) and D-317 (send-mail.py)
+**Context:** the owner asked for a review every Sunday, once Saturday is over, of the most important
+numbers and events of Juegos de Salón, as a PDF saved on disk and emailed to the owner.
+**Decision:** `node tools/reports/weekly.mjs --send` builds it and a scheduled task of the app on the
+owner's Mac mini (`weekly-report`, Sundays at 08:00 local time) runs it.
+- **The week:** Sunday to Saturday (UTC days, like the panel), the last one already closed, against
+  the week before.
+- **What it says:** highlights, the headline (games finished, started, active browsers, visits,
+  shares), day by day, and one block per domain of the panel (group, individual with its real
+  difficulty, La Copa with its funnel and who was left out, One a Day, users, traffic, health), and
+  the week's events: the versions released (the ones with something new in detail, the patches
+  counted), the Cups created and how many player reports arrived.
+- **Same numbers as the panel:** `tools/reports/weekly-data.mjs` only calls the panel's accounts
+  (`dominios.js`, `aggregate.js`, `copas.js`); `weekly-html.mjs` is the page; headless Chrome
+  (`tools/e2e/cdp.mjs`) prints it. Both pure parts are tested (`weekly-data.test.mjs`).
+- **Where it goes:** the PDF in `~/Documents/Juegos de Salón/Weekly reports/` (`--out` changes it), and
+  the email to the owner's own account (`toOwner` of `send-mail.py`, which now takes `attachments`).
+  In English, like the panel (D-350).
+**Why:** the panel answers when someone looks; a weekly report makes someone look, and keeps the
+history of each week on disk.
+**Alternatives discarded:** a GitHub workflow (the PDF would not be on the owner's disk, and the mail
+account and the Firebase key would have to be secrets there); a report written by an agent from
+scratch each week (its numbers would drift from the panel's).
+**Consequences:** it needs the owner's Firebase key and mail account on the Mac mini, and the app
+open on Sunday morning (a task due while the app is closed runs when it opens).
