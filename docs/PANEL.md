@@ -177,20 +177,20 @@ motor de la copa, `public/cup/engine.js`; el panel no las repite.
 
 | Sección | Qué muestra | De dónde sale |
 |---|---|---|
-| **Ahora** | Salas en juego, celulares conectados, salas vivas (las que latieron hace menos de media hora, D-89), juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, **jugadas**, **mensajes de chat** y última jugada (D-138). Una sala cuenta como *en juego* solo si entró un rival. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
-| **Partidas sin red** | Las partidas contra el celular, en un celular o solitarias que se están jugando ahora (D-140): juego, modo, cuántos juegan, país, cuándo empezó y la última señal. Sale de la lista a los tres minutos sin señal. También suben al cuadro *partidas sin red ahora* y a *juegos en curso*. | `stats/<env>/days/<día>/live/<id>` (hoy y ayer) |
+| **Now** | Salas en juego, celulares conectados, salas vivas (las que latieron hace menos de media hora, D-89), juegos en curso. Lista de salas con código, juego, nombres, quién está conectado, **jugadas**, **mensajes de chat** y última jugada (D-138). Una sala cuenta como *en juego* solo si entró un rival. Solo las del entorno elegido (D-45). | `rooms/` en vivo (índice por `createdAt`), cruzado por código con `stats/<env>` |
+| **Offline games** | Las partidas contra el celular, en un celular o solitarias que se están jugando ahora (D-140): juego, modo, cuántos juegan, país, cuándo empezó y la última señal. Sale de la lista a los tres minutos sin señal. También suben al cuadro *partidas sin red ahora* y a *juegos en curso*. | `stats/<env>/days/<día>/live/<id>` (hoy y ayer) |
 | **Últimos 7 / 30 días** | Partidas empezadas, en dos celulares (solo las que tuvieron rival), sin red, entradas de un celular a una partida, partidas de hoy (día UTC) y salas donde nunca entró nadie más (D-138). | `stats/<env>/days/<día>` |
-| **Partidas por juego** | Barra por juego, partida por modo: 📡 dos celulares, 📱 un celular, 🤖 contra el celular, 🧍 solo. Los modos salen del registro, y uno nuevo entra solo (C-16). | `rooms` (📡) y `local/<juego>/<modo>/<n>` |
-| **Jugadores por partida** | Cuántas partidas de 1, 2, … hasta el juego más numeroso del menú (hoy 6, `MAX_PLAYERS`). | `n` de los contadores sin red y cantidad de nombres de cada sala |
-| **Por día** | Partidas por día, separando dos celulares del resto. | ídem |
-| **De dónde** | Zona horaria del celular (ciudad y región). Cuenta celulares que empezaron o entraron a una partida, no partidas. | `origin/<zona>` |
-| **Idioma del navegador** | `es-CL`, `pt-BR`, … De dónde es la persona. | `lang/<idioma>` |
-| **Idioma elegido para jugar** | El del toggle de la app, con su nombre en español. En cuál prefiere jugar, que no es lo mismo que de dónde es (D-46). | `applang/<idioma>` |
-| **A qué hora se juega** | Hora local de cada celular, 0 a 23. | `hour/<h>` |
-| **Cuota** | Enlace a la consola de uso de Firebase. Los "celulares conectados" son la mejor aproximación a las conexiones simultáneas del plan gratuito. | — |
+| **Games by game** | Barra por juego, partida por modo: 📡 dos celulares, 📱 un celular, 🤖 contra el celular, 🧍 solo. Los modos salen del registro, y uno nuevo entra solo (C-16). | `rooms` (📡) y `local/<juego>/<modo>/<n>` |
+| **Players per game** | Cuántas partidas de 1, 2, … hasta el juego más numeroso del menú (hoy 6, `MAX_PLAYERS`). | `n` de los contadores sin red y cantidad de nombres de cada sala |
+| **By day** | Partidas por día, separando dos celulares del resto. | ídem |
+| **From where** | Zona horaria del celular (ciudad y región). Cuenta celulares que empezaron o entraron a una partida, no partidas. | `origin/<zona>` |
+| **Browser language** | `es-CL`, `pt-BR`, … De dónde es la persona. | `lang/<idioma>` |
+| **Language chosen to play** | El del toggle de la app, con su nombre en inglés. En cuál prefiere jugar, que no es lo mismo que de dónde es (D-46). | `applang/<idioma>` |
+| **What time people play** | Hora local de cada celular, 0 a 23. | `hour/<h>` |
+| **Free plan quota** | Enlace a la consola de uso de Firebase. Los "celulares conectados" son la mejor aproximación a las conexiones simultáneas del plan gratuito. | — |
 
 **Salas cerradas**: una sala que sus jugadores cancelaron (todos con `left`, ver D-50) no
-aparece en "Ahora". Se borra sola en el acto, así que casi nunca alcanza a verse; si alguna
+aparece en "Now". Se borra sola en el acto, así que casi nunca alcanza a verse; si alguna
 sobrevive al borrado, mostrarla sería decir que hay gente jugando donde ya no hay nadie. Una
 sala donde nadie está conectado **sí** sigue apareciendo, apagada: esa partida se puede
 retomar hasta que la sala venza (C-6).
@@ -225,7 +225,7 @@ las cifras reales. `lab` quedó solo para leer lo que se guardó mientras existi
 - **Los días son días UTC**: en Chile el día del panel cambia a las 21:00 (verano) o 20:00
   (invierno). La hora de *A qué hora se juega* sí es la local del celular, tomada al empezar.
 
-Vale también para la lista de "Ahora", aunque ahí cueste un rodeo: `rooms/` es el nodo real
+Vale también para la lista de "Now", aunque ahí cueste un rodeo: `rooms/` es el nodo real
 del transporte y es uno solo para todos los entornos, así que una partida de prueba abre una
 sala tan real como la de un jugador. El panel cruza cada sala viva por código contra lo que
 `stats/<env>` registró hoy y ayer, y las que quedan fuera las nombra debajo de la lista en vez
