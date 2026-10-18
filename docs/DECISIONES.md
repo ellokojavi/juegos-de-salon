@@ -4672,7 +4672,7 @@ Con una tabla de alias no se rompe ningún link que ya circula.
 juegos, y además busca en `public/` y `tools/push/` una URL armada con un nombre de antes. Los
 nombres de las variables del código siguen en español: la regla es sobre lo que se ve en la URL.
 Las páginas puente no cambian (pasan la búsqueda tal cual y la página nueva la traduce), ni el
-`?juego=` de `tools/release/og/card.html`, que es una herramienta y no una página del sitio.
+`?juego=` de `tools/release/og/card.html` (hoy `marketing/share-cards/card.html`, D-356), que es una herramienta y no una página del sitio.
 
 ## D-267 · El caso se prueba en un solo lugar: /labs/case/, con el juego completo
 **Fecha:** 2026-10-10 · **Estado:** vigente · **Relación:** reemplaza el prototipo de D-256; corrige D-257 (dónde vive), D-265 (el comentario va en la pantalla de La Copa)
@@ -6803,3 +6803,27 @@ the check the agent already runs, and a test, make it hard to skip.
 for a few PRs a year); reviewing only the texts (the clips and links fail too).
 **Consequences:** turning on a campaign is no longer a one-minute PR: it waits for the usability
 agent. A new campaign needs its folder before its PR passes the tests.
+
+## D-356 · Promotional material lives in marketing/, and what the site serves names its asset
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-178 (marketing assets); keeps D-192 (public/ is the site as served); builds on D-181 (share cards)
+**Context:** the owner asked that everything promotional (share images, promo MP4s, splash pages)
+live in order in `marketing/`. Some of it already did (the video, the teasers, the Agents card), but
+the share cards' drawing was in `tools/release/og/`, and the files the site serves (the share images,
+the splash clips, the email header, the video's thumbnail) had no asset that said how they were made.
+**Decision:** the **sources** of every promotional piece live in `marketing/<asset>/`: its README (the
+memory), its drawing or template, its build script and its originals. The **files the site serves**
+stay in `public/` (the site is `public/` as served, so the local server and the publish need no
+copy step), and each asset lists them in `servido` in `marketing/registro.json`.
+`marketing/served.test.mjs` fails if a promotional file in `public/` (everything in
+`public/assets/og/`, `splash/` and `email/`, and every page's `og:image`) belongs to no asset, or if a
+`servido` entry matches no file. The share cards become an asset, `marketing/share-cards/`, with
+`card.html` moved there from `tools/release/og/`; `og.mjs` stays in `tools/release/` because it also
+writes the pages' card blocks and the bridge pages, which are the site.
+**Why:** one place to look for any promotional piece, without breaking the rule that what is served
+is what is in `public/`.
+**Alternatives discarded:** keeping the served files only in `marketing/` and copying them into the
+site when publishing (the local server would not show them without an extra step, and it breaks
+D-192); moving `og.mjs` too (half of what it writes is the site).
+**Consequences:** a new promotional file in the site needs its asset's `servido` entry. Changing
+`card.html` changes every card's fingerprint (D-181): the move recomputed them, the drawing did not
+change. The README's screenshots (`docs/screenshots/`) are documentation, not promotion: they stay.

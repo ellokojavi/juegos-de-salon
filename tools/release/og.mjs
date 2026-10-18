@@ -100,7 +100,7 @@ const pages = () => [...DOORS.map(door), ...withCard.map(g => ({
 }))];
 
 /**
- * An image's fingerprint (D-181): what draws it (tools/release/og/card.html) and what it says (the
+ * An image's fingerprint (D-181): what draws it (marketing/share-cards/card.html) and what it says (the
  * game in games.js, or the home page's texts). Each image saves its own in
  * public/assets/og/huellas.json when it is made, and `check` compares it with today's: that way an
  * image made with the old drawing, or before a tagline changed, does not pass as up to date. It
@@ -115,7 +115,7 @@ const readFingerprints = () => { try { return JSON.parse(readFileSync(FINGERPRIN
  */
 const inCards = o => (o && typeof o === 'object' ? Object.fromEntries(LANGS.filter(l => l in o).map(l => [l, o[l]])) : o);
 /**
- * From `COMMON`, only what the home page's card draws (`og/card.html`): a new app text (the one
+ * From `COMMON`, only what the home page's card draws (`marketing/share-cards/card.html`): a new app text (the one
  * for sharing it, D-226) does not leave it stale.
  */
 const cardTexts = lang => Object.fromEntries(['appTitle', 'appSub'].map(k => [k, COMMON[lang][k]]));
@@ -124,7 +124,7 @@ function fingerprint(p) {
   const data = game
     ? { emoji: game.emoji, name: inCards(game.name), tagline: inCards(game.tagline), players: game.players, duration: game.duration, durationUnit: inCards(game.durationUnit) }
     : { lang: p.lang, texts: cardTexts(p.lang), games: available.map(g => [g.id, g.emoji]) };
-  return createHash('sha256').update(readFileSync(join(ROOT, 'tools/release/og/card.html'), 'utf8')).update(JSON.stringify(data)).digest('hex').slice(0, 16);
+  return createHash('sha256').update(readFileSync(join(ROOT, 'marketing/share-cards/card.html'), 'utf8')).update(JSON.stringify(data)).digest('hex').slice(0, 16);
 }
 /** Is the image missing, or was it made with another drawing or other texts? */
 const stale = (p, prints = readFingerprints()) => !existsSync(join(ROOT, `public/assets/og/${p.image}.jpg`)) || prints[p.image] !== fingerprint(p);
@@ -362,7 +362,7 @@ async function cmdImages() {
       // The `t` is so Chrome does not reuse the card from the last round: without it, a change
       // in the drawing or in base.css is photographed old and there is no way to notice.
       const q = `?t=${Date.now()}${p.game ? `&game=${p.game}` : ''}&lang=${p.lang}`;
-      await b.go(`http://localhost:${PORT}/tools/release/og/card.html${q}`, 1200);
+      await b.go(`http://localhost:${PORT}/marketing/share-cards/card.html${q}`, 1200);
       // Without waiting for the fonts, the title comes out in the fallback typeface
       for (let i = 0; i < 20 && !(await b.evaluate(`document.body.dataset.ready === '1'`)); i++) await sleep(200);
       await sleep(300);
@@ -440,7 +440,7 @@ async function cmdHeader() {
   if (server.exitCode !== null) throw new Error(`port ${PORT} is taken: PORT=87xx node tools/release/og.mjs header`);
   try {
     const b = await launch({ port: CDP_PORT, dir: `${tmp}/profile`, out: tmp, width: 600, height: 170 });
-    await b.go(`http://localhost:${PORT}/tools/release/og/card.html?t=${Date.now()}&email&lang=es`, 1200);
+    await b.go(`http://localhost:${PORT}/marketing/share-cards/card.html?t=${Date.now()}&email&lang=es`, 1200);
     for (let i = 0; i < 20 && !(await b.evaluate(`document.body.dataset.ready === '1'`)); i++) await sleep(200);
     await sleep(300);
     await b.shot('header');

@@ -74,6 +74,9 @@
         "reinas",
         "tango",
         "desenredo"
+      ],
+      "servido": [
+        "public/assets/img/trailer.jpg"
       ]
     },
     {
@@ -218,7 +221,10 @@
           "Dice 'Una pista. 15 palabras.', pero desde D-287 cada tablero trae 4 pistas que llegan de a una (la portada del juego: 'Llegan 4 pistas, de a una'); se ve en el JPG, el video y la vista previa del link de /labs/agents/.",
           "No cuenta lo de los espías (D-288): la portada del juego y su ficha en el laboratorio abren con 'Cada palabra es el nombre en clave de un espía'. Menor: la tarjeta igual invita a buscar 'a tus agentes'."
         ]
-      }
+      },
+      "servido": [
+        "public/labs/agents/tarjeta.jpg"
+      ]
     },
     {
       "id": "se-vienen-cositas",
@@ -347,6 +353,47 @@
         "pintaminas"
       ],
       "seleccion": true,
+      "revision": {
+        "fecha": "2026-10-18",
+        "app": "0.181.1",
+        "al_dia": true,
+        "pendiente": []
+      },
+      "servido": [
+        "public/assets/splash/*.mp4",
+        "public/assets/splash/*.jpg"
+      ]
+    },
+    {
+      "id": "tarjetas-compartir",
+      "tipo": "imagen",
+      "titulo": "Tarjetas para compartir (vista previa de los links) y cabecera del correo",
+      "carpeta": "marketing/share-cards/",
+      "memoria": "marketing/share-cards/README.md",
+      "version": 1,
+      "fecha": "2026-10-18",
+      "idioma": "es, en, pt, de",
+      "app": "0.181.1",
+      "archivos": [
+        {
+          "ruta": "public/assets/og/*.jpg",
+          "formato": "1200×630",
+          "uso": "Vista previa de cada link en WhatsApp y redes"
+        },
+        {
+          "ruta": "public/assets/email/header.jpg",
+          "formato": "1200×340",
+          "uso": "Cabecera del correo de respuesta"
+        }
+      ],
+      "fuente": "marketing/share-cards/card.html",
+      "construir": "tools/release/og.mjs",
+      "juegos": [],
+      "seleccion": true,
+      "servido": [
+        "public/assets/og/*.jpg",
+        "public/assets/email/header.jpg"
+      ],
       "revision": {
         "fecha": "2026-10-18",
         "app": "0.181.1",

@@ -73,7 +73,7 @@ las pantallas de `tools/e2e/look.mjs` a 320 px, y después con los textos aleman
 
 Los pasos que este documento dejaba anotados, y cómo quedaron:
 
-- Hecho: sacarlo de `EN_LABS`, la puerta `/de/` con su tarjeta (`og.mjs` y `og/card.html`), el README, C-3 en CANONES, el CONTRIBUTING y el guion `lang-from-url.mjs` (prueba `/de/` y el puente de `/labs/de/`).
+- Hecho: sacarlo de `EN_LABS`, la puerta `/de/` con su tarjeta (`og.mjs` y `marketing/share-cards/card.html`), el README, C-3 en CANONES, el CONTRIBUTING y el guion `lang-from-url.mjs` (prueba `/de/` y el puente de `/labs/de/`).
 - Revisado el 4 de octubre: **las imágenes que se comparten** (punto 4) caben en alemán. La tabla de
   La Copa (a mitad de semana y la final de 10 jugadores con podio) y los resultados, con el
   minijuego de nombre más largo ("Bullen und Kühe: Zahl knacken"), se ven bien y las diéresis no se
@@ -95,8 +95,8 @@ Ordenado por lo que más se nota.
    brasileñas de Línea de Tiempo (que se entiendan sin contexto).
 2. **Sacarlo de `EN_LABS`** en `i18n.js`: con eso aparece para todos en el toggle.
 3. **La puerta `/de/`** con su tarjeta social: `de/index.html` (copia de `public/en/`), `og.mjs`
-   (`DOORS`, `FREE`, la conjunción "und", `LOCALE` `de_DE`), `tools/release/og/card.html`
-   (`FREE`) y `node tools/release/og.mjs images --all` en el Mac del dueño. En `og/card.html` el
+   (`DOORS`, `FREE`, la conjunción "und", `LOCALE` `de_DE`), `marketing/share-cards/card.html`
+   (`FREE`) y `node tools/release/og.mjs images --all` en el Mac del dueño. En `marketing/share-cards/card.html` el
    nombre va en Bangers 52 px sin ayuda para cortar: "SCHIFFE VERSENKEN" no cabe en una línea.
    `homeUrl('de')` pasa a ser `/de/`.
 4. **Imágenes que se comparten** (`compartir.js`, la imagen de la tabla en `public/cup/game.js`): el
