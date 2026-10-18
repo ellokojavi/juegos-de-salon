@@ -6658,7 +6658,7 @@ language there would only double the texts.
 **Consequences:** the panel's tests expect English; PANEL.md's exception to C-3 says English only.
 
 ## D-351 · A promotional splash over the home page, off by default and seen once
-**Date:** 2026-10-18 · **Status:** current, amended by D-355 · **Relation:** extends C-17 (the home page)
+**Date:** 2026-10-18 · **Status:** amended by D-355 · **Relation:** extends C-17 (the home page)
 **Context:** the owner wants to tell players about what is worth telling (three new games, a new
 mode, a novelty) with a promotional window over the home page: most of the screen, the page
 darkened behind, images and a link to each thing. It must not break the experience: it is not
