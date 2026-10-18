@@ -6988,4 +6988,3 @@ ships together with the popular label, in its own PR, with the usability agent's
 play, gets there in one tap. Tried in the lab first, as the owner asked for the label.
 **Consequences:** `tools/e2e/home/lab.mjs` checks the row above the types in the four languages at
 320 px and that each chip filters; C-17 says it.
-
