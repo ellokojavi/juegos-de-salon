@@ -286,7 +286,8 @@ Spanish one. The expected texts come from the dictionaries, they aren't written 
 `node tools/e2e/cup/player-cups.mjs <output>` tests that "Tus copas" follows the player (D-220):
 one phone signs in with its player and opens a cup where it is seated; another phone, which never saw it,
 signs in with the same player, finds it on the home page and on opening it has its name already chosen.
-It uses the cup's test store and the players' one.
+Last (D-358), a phone with no player sits in a cup with the usual name and PIN, enters as the player,
+and the podium saved without them gets their jid. It uses the cup's test store and the players' one.
 
 `node tools/e2e/cup/zip-ten.mjs <output>` plays the ten Zip levels in practice, with the
 fixed seed, and checks that the game ends there, before the clock (D-250): the notice "¡Resolviste

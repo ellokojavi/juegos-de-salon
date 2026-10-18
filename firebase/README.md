@@ -131,6 +131,8 @@ The same mechanism as La Copa, for the whole app:
 - `torneoPodios/<código>`: the podium of a finished cup, with `.indexOn: end`. Read without an account.
   Written once by someone seated in that cup (`por`), with the cup finished, without `lab`, and with
   the names and `j` the cup has.
+  `torneoPodios/<código>/p/<pid>/j` can be written later, once and only while empty, by a phone seated
+  as that cup player, with the jid that cup player is linked to: signing a podium saved without the player (D-358).
 - `torneos/<código>/players/<pid>/j`: the rankings player behind the cup's one. Written by
   whoever is seated as both.
 - `jugadorCopas/<jid>/<código>` = `{ p, at }`: the player's cups, for "Tus copas" on any
