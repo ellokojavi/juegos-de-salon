@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
@@ -71,7 +71,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Compartir | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
-| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350 |
+| Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
@@ -6656,6 +6656,66 @@ Spanish by default (C-3).
 **Why:** the panel is read like an analyst's source, and the owner wants it in English; a second
 language there would only double the texts.
 **Consequences:** the panel's tests expect English; PANEL.md's exception to C-3 says English only.
+
+## D-351 · A promotional splash over the home page, off by default and seen once
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends C-17 (the home page)
+**Context:** the owner wants to tell players about what is worth telling (three new games, a new
+mode, a novelty) with a promotional window over the home page: most of the screen, the page
+darkened behind, images and a link to each thing. It must not break the experience: it is not
+always on, and whoever already saw it does not see it again.
+**Decision:** `public/assets/js/splash.js` holds the campaigns (`CAMPAIGNS`, texts in the four
+languages; each item is a game of `games.js` by id or its own content) and
+the switch, `ACTIVE`, null by default. `node tools/agents/splash.mjs on <id> [--until YYYY-MM-DD] | off | list`
+rewrites that line, and the change goes out in a PR with auto-merge. The home page shows the active
+campaign 350 ms after drawing, once per phone: closing it (✕, the button, the backdrop, Esc) or
+following one of its links records the id in `localStorage` (`juegos-de-salon:splash-visto`), so a
+different campaign shows again to everyone. `?splash=<id>` shows any campaign on demand without
+recording it (the owner's preview); `?test` and a browser driven by automation never see it, so the
+end-to-end scripts are not blocked. Its sheet (`splash.css`) loads only when a window opens. On a
+phone the items become rows and the texts are cut to two lines, so three items fit in a 320×640
+screen without scrolling; with more, the window scrolls inside itself. **Each item shows a few
+seconds of real play** (the owner's request, on seeing the first version with the link cards: they
+repeated the texts): a muted looping MP4 of the board being solved, recorded from the game itself
+in headless Chrome by `marketing/splash-clips/capturar.mjs` (360 px, 25–50 KB each), with the solved
+board as its poster, still under reduced motion. **Each item is the way in** (also the owner's
+request: the first button only closed the window): the clip, the name and ▶ Play open the game; the
+way out is a quiet "Ahora no" under them, the ✕, the backdrop or Esc. The demo is
+`/labs/splash/`: the real home page behind and the window over it, by campaign and language.
+**Why:** a line in the repo is the simplest switch an agent or the owner can flip, and it reaches
+everyone with the version, with no new Firebase path, rules or read on every visit.
+**Alternatives discarded:** a Firebase flag (instant, but a read on every home page load and new
+rules for a switch used a few times a year); showing it on every visit or every day (it would break
+the experience the owner asked to protect); a separate page (players arrive at the home page).
+**Consequences:** turning it on or off takes a publish (minutes, with auto-merge). A phone that
+clears its data sees the campaign again. A new game in a campaign needs its clip recorded (one
+entry in `capturar.mjs`). Views and clicks are not counted yet.
+
+## D-352 · A weekly report, as a PDF on disk and by email
+**Date:** 2026-10-18 · **Status:** current · **Relation:** builds on D-348 (the panel's accounts) and D-317 (send-mail.py)
+**Context:** the owner asked for a review every Sunday, once Saturday is over, of the most important
+numbers and events of Juegos de Salón, as a PDF saved on disk and emailed to the owner.
+**Decision:** `node tools/reports/weekly.mjs --send` builds it and a scheduled task of the app on the
+owner's Mac mini (`weekly-report`, Sundays at 08:00 local time) runs it.
+- **The week:** Sunday to Saturday (UTC days, like the panel), the last one already closed, against
+  the week before.
+- **What it says:** highlights, the headline (games finished, started, active browsers, visits,
+  shares), day by day, and one block per domain of the panel (group, individual with its real
+  difficulty, La Copa with its funnel and who was left out, One a Day, users, traffic, health), and
+  the week's events: the versions released (the ones with something new in detail, the patches
+  counted), the Cups created and how many player reports arrived.
+- **Same numbers as the panel:** `tools/reports/weekly-data.mjs` only calls the panel's accounts
+  (`dominios.js`, `aggregate.js`, `copas.js`); `weekly-html.mjs` is the page; headless Chrome
+  (`tools/e2e/cdp.mjs`) prints it. Both pure parts are tested (`weekly-data.test.mjs`).
+- **Where it goes:** the PDF in `~/Documents/Juegos de Salón/Weekly reports/` (`--out` changes it), and
+  the email to the owner's own account (`toOwner` of `send-mail.py`, which now takes `attachments`).
+  In English, like the panel (D-350).
+**Why:** the panel answers when someone looks; a weekly report makes someone look, and keeps the
+history of each week on disk.
+**Alternatives discarded:** a GitHub workflow (the PDF would not be on the owner's disk, and the mail
+account and the Firebase key would have to be secrets there); a report written by an agent from
+scratch each week (its numbers would drift from the panel's).
+**Consequences:** it needs the owner's Firebase key and mail account on the Mac mini, and the app
+open on Sunday morning (a task due while the app is closed runs when it opens).
 
 ## D-353 · A result says each thing once
 **Date:** 2026-10-18 · **Status:** current · **Relation:** extends C-19 and D-343 (what a result screen shows); corrects D-274 (the count-this offer is the one-line card); corrects D-106 (the standalone breakdown, folded and without the total or the time)
