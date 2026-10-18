@@ -10,6 +10,7 @@ rehacerse (D-178).
 | Tutorial: cómo compartir (iOS) | 1 · 2026-10-09 · 6,0 s, sin audio | [vertical](share-tutorial/output/compartir-vertical.mp4) · [16:9](share-tutorial/output/compartir-16x9.mp4) | [share-tutorial/README.md](share-tutorial/README.md) |
 | Teaser de El caso | 1 · 2026-10-10 · 6,0 s | [vertical](caso-teaser/output/el-caso-6s.mp4) · [GIF](caso-teaser/output/el-caso-6s.gif) | [caso-teaser/README.md](caso-teaser/README.md) |
 | Tarjeta de Agentes (imagen y video) | 2 · 2026-10-11 · 6,0 s, sin audio | [imagen 1200×630](agentes-tarjeta/output/agentes-1200x630.jpg) · [video](agentes-tarjeta/output/agentes-6s.mp4) · [GIF](agentes-tarjeta/output/agentes-6s.gif) | [agentes-tarjeta/README.md](agentes-tarjeta/README.md) |
+| Tarjetas para compartir y cabecera del correo | 1 · 2026-10-18 | [`public/assets/og/`](../public/assets/og/) · [cabecera](../public/assets/email/header.jpg) | [share-cards/README.md](share-cards/README.md) |
 | Se vienen cositas (adelanto del laboratorio) | 1 · 2026-10-13 · 6,0 s, sin audio | [video 1:1](proximamente-teaser/output/se-vienen-cositas-6s.mp4) | [proximamente-teaser/README.md](proximamente-teaser/README.md) |
 
 [`registro.json`](registro.json) es la misma lista para leer con código: versión, fecha,
@@ -29,6 +30,10 @@ todavía en la portada (U-34).
   quedan en la historia de git. Lo que se rehace solo (capturas, cuadros sueltos, intermedios)
   no va al repo.
 - Todo lo de esta carpeta se publica con el sitio (GitHub Pages): nada privado acá.
+- **All promotional material has its asset here** (D-356): the sources (drawing, template, build
+  script, originals) live in the asset's folder. What the site serves stays in `public/`, and the asset
+  names it in `servido` in `registro.json`: `served.test.mjs` fails if a promotional file in the site
+  (share cards, splash clips, the email header, a page's `og:image`) has no asset.
 - **El agente de usabilidad revisa cada asset en su ronda** (U-34; la lanza el agente de procesos, D-276): `node tools/agents/marketing.mjs
   revisar` dice qué quedó atrás de la app (un juego nuevo que no sale, una versión vieja, commits
   que tocaron lo que muestra) y lo anota en el campo `revision` de `registro.json`. Rehacerlo lo

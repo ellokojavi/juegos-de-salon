@@ -25,4 +25,4 @@ node tools/push/notify.mjs --dry-run | --test <code>           # which notificat
 - Inside `<!-- generated: ... -->` nothing is edited by hand. Each screenshot declares in
   [docs/capturas.json](../../../docs/capturas.json) which `tools/e2e/` script and which shot it comes from.
 - The card images are redone **from a branch up to date with `main`**; they only change if
-  a name, an emoji, a tagline or the design changes ([tools/release/og/card.html](../../../tools/release/og/card.html)).
+  a name, an emoji, a tagline or the design changes ([marketing/share-cards/card.html](../../../marketing/share-cards/card.html)).

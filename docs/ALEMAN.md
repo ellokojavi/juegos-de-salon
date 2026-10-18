@@ -95,7 +95,7 @@ Ordenado por lo que más se nota.
    brasileñas de Línea de Tiempo (que se entiendan sin contexto).
 2. **Sacarlo de `EN_LABS`** en `i18n.js`: con eso aparece para todos en el toggle.
 3. **La puerta `/de/`** con su tarjeta social: `de/index.html` (copia de `public/en/`), `og.mjs`
-   (`DOORS`, `FREE`, la conjunción "und", `LOCALE` `de_DE`), `tools/release/og/card.html`
+   (`DOORS`, `FREE`, la conjunción "und", `LOCALE` `de_DE`), `marketing/share-cards/card.html`
    (`FREE`) y `node tools/release/og.mjs images --all` en el Mac del dueño. En `og/card.html` el
    nombre va en Bangers 52 px sin ayuda para cortar: "SCHIFFE VERSENKEN" no cabe en una línea.
    `homeUrl('de')` pasa a ser `/de/`.
