@@ -33,7 +33,7 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
 
 ## Crossings and catalogs
 
-- Each game draws one crossing per level (1 to 5) from `catalogo-madera.json`: low anchors on the cliff faces,
+- Each game draws one crossing per level (1 to 5) from `catalogo-madera.json` (33 crossings, 5 to 8 per level, about 11,000 combinations): low anchors on the cliff faces,
   stone towers, rock pillars in the water, or a mix. Its budget is the cheapest bridge a search found
   plus the level's spare beams.
 - The wood catalog's solutions are readable trusses (`--legible`, owner's request): the cheapest bridge
