@@ -1,6 +1,6 @@
 // Tren en Vilo (lab): the physics is tuned so a bare deck falls and a truss holds, in every stage
 import assert from 'node:assert/strict';
-import { unirViga, puntosMedios, enMedio, costo as costoDe, ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './engine.js';
+import { trazo, unirViga, puntosMedios, enMedio, costo as costoDe, ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './engine.js';
 import { readFileSync } from 'node:fs';
 
 const V = (a, b) => ({ a, b });
@@ -67,6 +67,15 @@ assert.equal(p.ahorros[0].fraccion, 2 / 3); assert.equal(p.ahorros[1].fraccion, 
   assert.equal(costoDe(e, unida), costoDe(e, [larga, { a: [1, 0], b: [1, 1] }]), 'splitting keeps the wood');
   const sobre = unirViga([{ a: [1, 0], b: [1, 1] }], [0, 0], [2, 0], new Set(['1,0']));
   assert.deepEqual(sobre.map(v => `${v.a}>${v.b}`).sort(), ['0,0>1,0', '1,0>1,1', '1,0>2,0'], 'a new beam over a joint joins it');
+}
+// A long stroke: one beam per grid step, the ones already there left out
+{
+  const e = { ancho: 5, anclas: [], madera: true };
+  assert.deepEqual(trazo(e, [], [0, 0], [5, 0]).piezas.map(v => `${v.a}>${v.b}`), ['0,0>1,0', '1,0>2,0', '2,0>3,0', '3,0>4,0', '4,0>5,0'], 'the whole deck in one drag');
+  assert.equal(trazo(e, [{ a: [1, 0], b: [2, 0] }], [0, 0], [3, 0]).piezas.length, 2, 'the piece already there is left out');
+  assert.equal(trazo(e, [], [0, 0], [2, 0]).piezas.length, 1, 'within one beam it is one beam, as before');
+  assert.equal(trazo(e, [], [0, 0], [3, 1]).motivo, 'larga', 'no grid points in between: too long');
+  assert.equal(trazo(e, [], [0, 0], [4, 2]).piezas.length, 2, 'a 1 x 2 diagonal step, twice');
 }
 // The catalog of crossings (tools/generators/bridges.mjs): each one has a solution that passes, at its
 // minimum and within its budget, a bare deck that falls, and the level's spare beams
