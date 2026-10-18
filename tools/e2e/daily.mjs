@@ -67,7 +67,7 @@ const play = async () => {
 };
 ok(await play(), 'at the end, the result carries the Uno al día card');
 const card = await text('#uad-tarjeta');
-ok(/Racha: 1 día/.test(card) && /día 2/.test(card) && /Hoy: \d+ puntos/.test(card), `the card: streak, come back tomorrow and the score (${card.replace(/\n/g, ' / ')})`);
+ok(/Racha: 1 día/.test(card) && /día 2/.test(card) && !/Hoy: \d+ puntos/.test(card), `the card: streak and come back tomorrow, without repeating the score (C-19) (${card.replace(/\n/g, ' / ')})`);
 ok(!await ev(`!!document.getElementById('btn-otra')`) && !await ev(`!!document.getElementById('btn-compartir-resultado')`), 'without "Jugar otra vez" or the usual share');
 await sleep(1500);   // the Sign in offer arrives with the network, above the buttons
 for (const id of ['btn-compartir-uad', 'btn-uad-otro', 'btn-fin-hoy']) {

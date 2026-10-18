@@ -649,7 +649,7 @@ function renderResult(v) {
       el('span', { class: 'p' }, i + 1),
       // Los julepes van dentro de la celda del nombre: como cuarta columna rompían la fila
       el('span', { class: 'n' }, nameOf(p),
-        v.st[p].julepes ? el('small', { class: 'j' }, ` · ${fmt(T.julepesOf, { n: v.st[p].julepes })}`) : null),
+        v.st[p].julepes ? el('small', { class: 'j' }, ` · ${(v.st[p].julepes === 1 ? T.julepesOne : fmt(T.julepesOf, { n: v.st[p].julepes }))}`) : null),
       el('span', { class: 's' }, v.st[p].tragos),
     ))));
 

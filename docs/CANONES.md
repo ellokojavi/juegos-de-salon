@@ -507,6 +507,21 @@ that moment, and only those, in the same order everywhere (D-343):
 - **Never offered at the wrong moment:** play again in a Cup day (it is played once, U-21), a
   link to La Copa from One a Day (a Cup is joined by invitation), the menu inside a running Cup
   (the header's ‹ already goes there).
+- **What a result says, once (D-353).** A result screen is read in a glance, so each fact appears
+  in one place only:
+  - **The score, the time, the winner and the game's name** each appear once. The hero says them; a
+    card or a sentence below does not repeat them ("Hoy: 80 puntos", "Tu tiempo fue 1:20",
+    "Total: 80 puntos", the champion named again as an award). A share card that only restates the
+    score (Desenredo's 🧶 🟩🟩) goes in the shared text, not on the screen.
+  - **The subtitle adds, it does not copy:** what the detail below already shows (each fleet's
+    shots and aim) is not said again under the title.
+  - **The long detail is folded or after the exits:** the score breakdown (🧮, always folded),
+    boards, words, history. It never pushes the main action down.
+  - **Sign in is one line:** the same `bloqueJugador({ destacado, compacto })` card everywhere, also
+    for "¿Quieres que esta partida cuente?" (D-274); tapping it opens the form with the name in.
+  - **Secondary offers fold:** under a result, "Invite a friend" and the like are a folded row,
+    open where they are the point (`/today/`).
+  - **One share button per screen**, and singular and plural said right ("1 julepe").
 - **A test stops it:** `node public/assets/js/fin.test.mjs`.
 
 ---
@@ -520,6 +535,7 @@ that moment, and only those, in the same order everywhere (D-343):
 - [ ] Hay sonido y vibración en las acciones clave, con botón de silencio (C-4).
 - [ ] On its landing the start button (or the first mode) is above the fold at 320×568 and 375×667 in every language, with the rules below it: `node tools/e2e/landing-fold.mjs` green (U-39, D-344).
 - [ ] Los botones tienen 44 px, los botones finales se ven sin desplazar y no hay scroll horizontal (C-8).
+- [ ] Its result screen follows C-19: the exits from `fin.js` for each context it is played in, and each fact said once (score, time, winner, name), the long detail folded or after the exits, Sign in in one line, one share button (D-343, D-353).
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).
 - [ ] Los secretos se comprometen y verifican (C-10).
 - [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia; creating or joining a room goes through `tryRoom` (C-14, U-37).
@@ -530,7 +546,6 @@ that moment, and only those, in the same order everywhere (D-343):
 - [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17). A new one brings `nuevoDesde` for its "New" label (D-333).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
 - [ ] Sus URL van en inglés: carpeta, parámetros y valores, leídos con `parametros.js`, con los nombres de antes como alias (C-18).
-- [ ] Its result screen offers the exits of C-19 for each context it can be played in (on its own, One a Day, La Copa), from `fin.js`, in the C-19 order.
 - [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).
 - [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/look.mjs panel data` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py check` en verde (C-13).
