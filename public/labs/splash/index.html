@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <!-- El laboratorio no se anuncia: no está en el menú ni en los buscadores (D-101), y sin la llave no se entra (D-281) -->
+  <script src="../../assets/js/labs-puerta.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Splash 🎉 · Laboratorio</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../assets/js/vigia.js"></script>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <style>
+    /* The demo (D-351): the real home page behind, as a player would find it, and the splash over it */
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    .demo-portada { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
+    .demo-barra {
+      position: fixed; z-index: 90; left: 50%; bottom: calc(12px + var(--safe-bottom)); transform: translateX(-50%);
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; align-items: center;
+      width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box; padding: 8px 10px;
+      border-radius: 999px; background: rgba(10, 4, 20, 0.9); border: 1px solid var(--glass-border);
+    }
+    .demo-barra button, .demo-barra select, .demo-barra a {
+      font: inherit; font-weight: 800; font-size: 0.85rem; color: var(--ink); background: var(--glass);
+      border: 1px solid var(--glass-border); border-radius: 999px; padding: 6px 12px; text-decoration: none;
+    }
+    .demo-barra select option { color: #000; }
+  </style>
+</head>
+<body>
+  <iframe class="demo-portada" src="../../?test" title="Portada" tabindex="-1" aria-hidden="true"></iframe>
+  <div class="demo-barra" id="barra">
+    <a href="../">‹ Lab</a>
+    <select id="campana" aria-label="Campaña"></select>
+    <select id="idioma" aria-label="Idioma">
+      <option value="es">ES</option><option value="en">EN</option><option value="pt">PT</option><option value="de">DE</option>
+    </select>
+    <button type="button" id="ver">▶ Ver de nuevo</button>
+  </div>
+  <script type="module">
+    import { CAMPAIGNS, showSplash } from '../../assets/js/splash.js';
+    const sel = document.getElementById('campana');
+    for (const [id, c] of Object.entries(CAMPAIGNS)) sel.append(new Option(`${c.emoji ?? ''} ${id}`, id));
+    const barra = document.getElementById('barra');
+    const ver = () => {
+      barra.hidden = true;
+      // record: false — the demo never marks a campaign as seen on this phone
+      showSplash(sel.value, { lang: document.getElementById('idioma').value, record: false }).then(() => { barra.hidden = false; });
+    };
+    document.getElementById('ver').addEventListener('click', ver);
+    // Like the home page: the window comes once the page behind has drawn
+    document.querySelector('iframe').addEventListener('load', () => setTimeout(ver, 350), { once: true });
+  </script>
+</body>
+</html>
