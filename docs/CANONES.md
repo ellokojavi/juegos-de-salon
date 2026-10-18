@@ -387,6 +387,12 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   While it says "New" it also goes **on top of the list, right after La Copa** (`ordenPortada`,
   D-335): with no plays yet, by popularity it would be last. When the label goes, it goes back to
   its place in `POPULARIDAD`.
+- **A promotional splash, off by default** (D-351): when the owner turns on a campaign
+  (`ACTIVE` in `splash.js`, with `node tools/agents/splash.mjs on <id> | off`), a window over the
+  home page tells what is new, with the page darkened behind; each phone sees it once, and a new
+  campaign shows again. Each game in it shows a clip of real play (`marketing/splash-clips/`) and
+  opens with ▶ Play; the way out is a quiet "Ahora no". It fits a 320×640 screen with three games. `?splash=<id>` previews one;
+  `?test` and the scripts never see it. Demo: `/labs/splash/`.
 - **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar, bajo la bajada, sale
   de las tarjetas que se ven y se pueden abrir, nunca de La Copa (D-188), y abre el juego con el
   dado encima (D-237). Uno al día es una tarjeta de media fila al lado de La Copa: los dos pesan
