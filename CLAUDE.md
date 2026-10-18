@@ -239,7 +239,8 @@ with that the screen also enters the language tests. To see it on a real phone,
   (`public/assets/js/compartir.js`).
 - **Processes** (D-273, D-275, D-276): **the head of the agents.** Daily round at 4:30 Pacific
   time on the owner's Mac mini (a scheduled task in the app, not in the cloud): it launches the documentation
-  and usability agents when there is something to review (`processes.mjs check` says which)
+  and usability agents when there is something to review, and the game-ideas agent once a week
+  (D-360; `processes.mjs check` says which)
   and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
   README", check how fresh the README is) are asked of it: it decides who, launches them, checks and replies. It handles the 🐞 feedback and the "💬 Sugerencias y comentarios" inbox at the end of every game (D-341),
   which `.github/workflows/feedback.yml` uploads every 15 minutes as `feedback` issues (`tools/agents/feedback.mjs`,
@@ -254,7 +255,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   needs the owner goes in a `processes` issue with Yes/No checkboxes, opened by the bot (`decide.yml`) so
   the owner gets the email: ticking one carries it out instantly
   (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).
-  Its memory is `docs/processes.json`: `node tools/agents/processes.mjs check | decide <file.json> | pattern <key> "…" | mechanism <key> "…" --pr <url> | dispatch <documentation|usability> <commit> | record --to <commit> | history`
+  Its memory is `docs/processes.json`: `node tools/agents/processes.mjs check | decide <file.json> | pattern <key> "…" | mechanism <key> "…" --pr <url> | dispatch <documentation|usability|ideas> <commit> | record --to <commit> | history`
   (`dispatch` records up to which `main` commit it launched each executor).
 - **Support** (D-318): triages the emails to hola@juegosdesalon.cl, which a Cloudflare Worker
   (`tools/cloudflare/inbox-worker.js`) keeps in Firebase `buzon/`. The processes agent launches it
@@ -278,6 +279,18 @@ with that the screen also enters the language tests. To see it on a real phone,
   `ACTIVE` line of `public/assets/js/splash.js`; it reaches players through a PR like any change.
   `?splash=<id>` previews a campaign, `/labs/splash/` is the demo, and the clips are recorded with
   `marketing/splash/capture.mjs`. Each campaign is kept in `marketing/splash/campaigns/<id>/` (its README), and a campaign that changes gets the usability agent's full pass before merging (D-355).
+- **Game ideas** (D-360): `.claude/agents/ideas.md` proposes what the app could try next, in three
+  lanes (meta-game dynamics, existing games with weak numbers, new games with their inspiration
+  credited), **with evidence**: `node tools/agents/ideas.mjs check` reads the panel's numbers as
+  administrator (games by plays against `POPULARIDAD`, the weakest finishes, the room funnel, La
+  Copa by game and by day, Uno al día's returns, shares), the lab's active projects and La Bodega,
+  and what players asked for. The processes agent dispatches it once a week and on the owner's
+  request ("brainstorm X", "investigate game Y"). It opens **one** issue per round with **at most
+  three** ideas, through the one-tap mechanism (`ideas.mjs propose <file.json>` →
+  `processes.mjs decide`): a Yes queues the prototype for the processes round, a No is recorded. It
+  builds nothing itself and touches only its ledger, `docs/ideas.json` (`ideas.mjs record <id>
+  <status> "why" | list | taste "…" | history`), which also keeps the owner's taste as their
+  answers teach it. What was discarded is not proposed again as new.
 - **Weekly report** (D-352): every Sunday the app's scheduled task `weekly-report` runs
   `node tools/reports/weekly.mjs --send`: the week that ended on Saturday, with the panel's numbers,
   as a PDF in `~/Documents/Juegos de Salón/Weekly reports/` and emailed to the owner.
