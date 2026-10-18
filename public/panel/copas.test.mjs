@@ -176,11 +176,11 @@ assert.equal(tipos('termino').length, 3);
 assert.equal(tipos('empezo').length, 7);
 assert.deepEqual(tipos('sin-terminar').map(e => [e.pid, e.dia]).sort(), [['bbbbbb', 3], ['cccccc', 1]]);
 assert.deepEqual(tipos('cerro').map(e => e.dia), [1], 'solo el día 1 cerró');
-assert.match(tipos('cerro')[0].texto, /jugaron 2 de 3/);
+assert.match(tipos('cerro')[0].texto, /2 of 3 played/);
 assert.equal(tipos('fin').length, 0, 'la copa no ha terminado');
 assert.deepEqual(h.sinHora.map(e => e.tipo).sort(), ['cerrada', 'comodin', 'retiro'], 'el comodín, el retiro y el cierre no tienen hora en la base');
 // Cada evento con una persona trae su pid y empieza con su nombre: el panel le pone la bandera (D-209)
-for (const e of [...h.eventos, ...h.sinHora].filter(e => e.pid)) assert.ok(e.texto.startsWith(players[e.pid].name), `${e.tipo}: "${e.texto}" no empieza con el nombre`);
+for (const e of [...h.eventos, ...h.sinHora].filter(e => e.pid)) assert.ok(e.texto.startsWith(players[e.pid].name), `${e.tipo}: "${e.texto}" does not start with the name`);
 assert.ok(h.sinHora.find(e => e.tipo === 'cerrada').pid, 'el cierre de la inscripción dice quién fue: el admin');
 
 // Terminada antes por el admin (D-161): ya no sale en curso, y los días que no abrieron quedan anulados
@@ -191,7 +191,7 @@ assert.equal(copasEnCurso({ OFICI: { ...torneos.OFICI, fin: finAt } }, now).leng
 const fc = fichaCopa(cortada, now);
 assert.equal(fc.dias[3].estado, 'anulado');
 assert.equal(fc.grilla[0].casillas[3].tipo, 'anulado');
-assert.ok(fc.historia.eventos.some(e => e.tipo === 'fin' && e.at === finAt && /antes de tiempo/.test(e.texto)));
+assert.ok(fc.historia.eventos.some(e => e.tipo === 'fin' && e.at === finAt && /ended the cup early/.test(e.texto)));
 
 // Buscar por código o por link propio
 assert.equal(buscarCopa(torneos, 'ofici')?.code, 'OFICI');

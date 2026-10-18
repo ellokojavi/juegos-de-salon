@@ -130,10 +130,10 @@ assert.deepEqual(tzLabel('America__Santiago'), { city: 'Santiago', region: 'Amer
 assert.deepEqual(tzLabel('America__Sao_Paulo'), { city: 'Sao Paulo', region: 'America' });
 assert.deepEqual(tzLabel('America__Argentina__Buenos_Aires'), { city: 'Buenos Aires', region: 'America/Argentina' });
 assert.deepEqual(tzLabel('Etc__GMT+3'), { city: 'GMT+3', region: '' });
-assert.deepEqual(tzLabel('desconocida'), { city: 'Sin zona horaria', region: '' });
-assert.equal(ago(now - 10 * 1000, now), 'recién');
-assert.equal(ago(now - 3 * 60 * 1000, now), 'hace 3 min');
-assert.equal(ago(now - 2 * 60 * 60 * 1000, now), 'hace 2 h');
+assert.deepEqual(tzLabel('desconocida'), { city: 'No time zone', region: '' });
+assert.equal(ago(now - 10 * 1000, now), 'just now');
+assert.equal(ago(now - 3 * 60 * 1000, now), '3 min ago');
+assert.equal(ago(now - 2 * 60 * 60 * 1000, now), '2 h ago');
 assert.ok(/\d/.test(dayLabel(20342)));
 
 // --- Separar las salas del entorno de las de prueba (D-45) ---
@@ -308,7 +308,7 @@ assert.equal(ZONA_PANEL, ZONA_COPA, 'el panel lee la hora en el mismo reloj con 
   // 15:00 UTC del 12 de septiembre de 2025 (verano del norte): 08:00 en Los Ángeles
   const t = Date.UTC(2025, 8, 12, 15, 0);
   assert.equal(horaLabel(t), '08:00');
-  assert.match(whenLabel(t), /12 sept?\.?, 08:00/);
+  assert.match(whenLabel(t), /Sep 12, 08:00/);
   assert.match(fechaLabel(t), /12/);
   // 05:00 UTC del 13: todavía es el 12 en el Pacífico
   assert.equal(diaPanel(Date.UTC(2025, 8, 13, 5, 0)), '2025-09-12');
@@ -377,7 +377,7 @@ assert.equal(mediana([1, 2, 3, 4]), 3);
   assert.equal(t.desde, d - 1, 'el primer día con visitas registradas');
   assert.deepEqual(t.paginas.inicio, { vistas: 5, entradas: 3, juegan: 1 });
   assert.deepEqual(t.porDia.map(x => x.visitas), [0, 0, 4, 2]);
-  assert.deepEqual(origenesAgrupados(t.ref), { 'Directo o sin dato': 4, Google: 2 }, 'dos dominios de Google son una barra');
+  assert.deepEqual(origenesAgrupados(t.ref), { 'Direct or unknown': 4, Google: 2 }, 'two Google domains are one bar');
   assert.equal(trafico({}, { from: d, to: d }).desde, null, 'sin registro, se dice que no hay datos');
 }
 assert.equal(origenLabel('instagram_com'), 'Instagram');
@@ -432,7 +432,7 @@ console.log('aggregate.test.mjs: todo en verde');
   assert.equal(r.jugadores, 2);
   assert.equal(r.d1, 33, 'de 3 días con día siguiente ya pasado (a:100, a:101, b:100), volvió 1');
   assert.equal(r.d7, null, 'todavía no pasan 7 días');
-  assert.deepEqual(r.tramos, [['1', 1], ['2 a 6', 1], ['7 a 29', 0], ['30 o más', 1]]);
+  assert.deepEqual(r.tramos, [['1', 1], ['2 to 6', 1], ['7 to 29', 0], ['30 or more', 1]]);
   assert.equal(r.aceptadas, 1, 'solo las del rango');
   const e = unoAlDiaDelRango({ days: { 100: { uad: { boton: 4, dado: 3 }, vistas: { today: 6, inicio: 50 }, entradas: { today: 2 } }, 101: { uad: { boton: 1 } }, 99: { uad: { boton: 9 } } } }, { from: 100, to: 101 });
   assert.deepEqual([e.vistas, e.entradas], [6, 2], 'el tráfico de /today/');
@@ -443,10 +443,10 @@ console.log('aggregate.test.mjs: todo en verde');
 {
   assert.ok(compararVersion('0.128.1', '0.99.2') > 0, 'por número, no por texto');
   assert.equal(compararVersion('1.2.3', '1.2.3'), 0);
-  assert.equal(navegadorLabel('ios16'), 'iPhone o iPad · iOS 16');
+  assert.equal(navegadorLabel('ios16'), 'iPhone or iPad · iOS 16');
   assert.equal(navegadorLabel('chrome129'), 'Chrome 129');
-  assert.equal(navegadorLabel('instagram'), 'Instagram (dentro de la app)');
-  assert.equal(navegadorLabel('raro9'), 'raro9', 'lo que no se conoce sale tal cual (C-16)');
+  assert.equal(navegadorLabel('instagram'), 'Instagram (in-app)');
+  assert.equal(navegadorLabel('raro9'), 'raro9', 'anything unknown is shown as is (C-16)');
   const err = (k, m, f, p, b, v, n) => ({ n, d: { k, m, f, p, b, v, at: 1 } });
   const days = {
     100: {
