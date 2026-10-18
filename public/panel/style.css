@@ -275,3 +275,15 @@ a.bar--link .label { text-decoration: underline; text-decoration-color: rgba(255
 .err-meta .q { font-weight: 800; font-size: 0.78rem; color: var(--muted); background: rgba(255, 255, 255, 0.06); border-radius: 999px; padding: 2px 9px; }
 .err-meta .q--ok { color: var(--lime); }
 .err-n { font-family: var(--font-display); font-size: 1.2rem; white-space: nowrap; }
+
+/* The domains (D-348): the three bands, the change against the period before, CSV and cohorts */
+.franja { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 18px 0 2px; padding-top: 10px; border-top: 1px solid var(--glass-border); }
+.franja h3 { margin: 0; font-size: 1rem; }
+.franja small { color: var(--muted); font-weight: 700; }
+.tile .cambio { font-size: 0.75rem; font-weight: 800; color: var(--muted); }
+.tile .cambio--bien { color: var(--lime); }
+.tile .cambio--mal { color: var(--pink); }
+.panel .csv { margin-top: 10px; min-height: 44px; }
+.cohortes { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.cohortes th, .cohortes td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--glass-border); }
+.cohortes th:first-child, .cohortes td:first-child { text-align: left; }

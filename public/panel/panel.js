@@ -19,7 +19,7 @@ import {
   getDatabase, ref, onValue, query, orderByChild, orderByKey, startAt,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
-import { GAMES, SUELTOS, gameById, gameLabel as etiquetaRegistro, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon } from '../assets/js/games.js';
+import { GAMES, SUELTOS, gameById, gameLabel as etiquetaRegistro, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon, isIndividualMode } from '../assets/js/games.js';
 import { JUEGOS_COPA } from '../cup/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS } from '../assets/js/transport/stats.js';
@@ -28,10 +28,14 @@ import { copaDe, copasEnCurso, resumenCopas, bitacoraCopas, fichaCopa, buscarCop
 import {
   ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog,
   paginate, flagOf, whenLabel, horaLabel, fechaLabel, diaPanel, ZONA_PANEL, ZONA_NOMBRE, RANGOS, RANGO_POR_DEFECTO, rangeOf,
-  groupDays, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, idiomasDeSalas, idiomasDelRango, trafico, origenesAgrupados, origenLabel, dayLabel,
+  groupDays, periodLabel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, idiomasDeSalas, idiomasDelRango, trafico, origenesAgrupados, origenLabel, dayLabel,
   avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango, salud, TRAMOS, navegadorLabel,
 } from './aggregate.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
+import {
+  rangoAnterior, variacion, partidasDominio, finales, embudoSalas, dificultad, versiones, versionesEn, usuarios, cohortes,
+  senales, ordenTramos, embudoCopas, aCsv,
+} from './dominios.js';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -138,7 +142,8 @@ function listen() {
   // Se baja solo hasta donde llega el rango elegido y nunca menos de lo que ya estaba bajado
   // (D-80): mirar un año son 365 días de registros, y no hay por qué pagarlos mientras se
   // mira la semana. Cambiar a un rango más corto no vuelve a pedir nada.
-  const desde = Math.min(rangeOf(S.range).from, S.desdeDia ?? Infinity);
+  // And the period before it, so every number can say how it changed (D-348)
+  const desde = Math.min(rangoAnterior(rangeOf(S.range)).from, S.desdeDia ?? Infinity);
   S.desdeDia = desde;
   S.unsubDays = onValue(query(ref(db, `stats/${S.env}/days`), orderByKey(), startAt(String(desde))), snap => { S.days = snap.val() || {}; S.daysLoaded = true; render(); }, denied);
   // Las copas se bajan enteras: son pocas y cada una es chica. Cada resultado llega como delta,
@@ -268,8 +273,8 @@ const idiomaTag = langs => {
 };
 
 /** Una cifra. Si lleva `href` u `onClick`, se abre en la lista que la suma: toda cifra se puede revisar. */
-function tile(value, label, { hot = false, href = null, onClick = null, pressed = null, info = '' } = {}) {
-  const hijos = [el('b', {}, typeof value === 'string' ? value : n(value)), el('small', {}, label), info ? el('span', { class: 'i' }, info) : null];
+function tile(value, label, { hot = false, href = null, onClick = null, pressed = null, info = '', cambio, menosEsMejor = false } = {}) {
+  const hijos = [el('b', {}, typeof value === 'string' ? value : n(value)), el('small', {}, label), cambio === undefined ? null : marcaCambio(cambio, menosEsMejor), info ? el('span', { class: 'i' }, info) : null];
   const cls = `tile${hot ? ' tile--hot' : ''}${href || onClick ? ' tile--link' : ''}`;
   if (href) return el('a', { class: cls, href }, ...hijos);
   if (onClick) return el('button', { type: 'button', class: cls, onClick, 'aria-pressed': pressed === null ? null : String(pressed) }, ...hijos);
@@ -318,6 +323,55 @@ const migas = (...pasos) => el('nav', { class: 'migas', 'aria-label': 'Estás en
 
 /** Pares dato–valor de la cabecera de una ficha. */
 const datos = pares => el('dl', { class: 'datos' }, ...pares.filter(Boolean).map(([k, v]) => el('div', {}, el('dt', {}, k), el('dd', {}, v ?? '—'))));
+
+/* ------------------------------------------------------------------ */
+/* Reading a number (D-348): change, bands, versions and CSV           */
+/* ------------------------------------------------------------------ */
+
+/** "▲ 12 % vs. the period before", green when it improves and pink when it worsens. */
+function marcaCambio(c, menosEsMejor = false) {
+  if (c === null) return el('span', { class: 'cambio' }, 'nuevo en el período');
+  if (c === 0) return el('span', { class: 'cambio' }, '= que el período anterior');
+  const mejor = menosEsMejor ? c < 0 : c > 0;
+  return el('span', { class: `cambio ${mejor ? 'cambio--bien' : 'cambio--mal'}` }, `${c > 0 ? '▲' : '▼'} ${Math.abs(c)} % vs. período anterior`);
+}
+
+/** The three bands of every domain: operational, tactical, strategic (D-348). */
+const FRANJAS = {
+  pulso: ['🩺 Pulso', 'operacional: cómo va hoy y en el rango, contra el período anterior'],
+  diag: ['🔍 Diagnóstico', 'táctico: dónde mirar para ajustar un juego, un texto o un aviso'],
+  tend: ['🧭 Tendencia', 'estratégico: hacia dónde va, por semana o mes; elige 90 días o más'],
+};
+const franja = k => el('div', { class: 'franja' }, el('h3', {}, FRANJAS[k][0]), el('small', {}, FRANJAS[k][1]));
+
+/** Downloads rows as a CSV named after the block and the range. */
+function descargarCsv(nombre, filas) {
+  const blob = new Blob([aCsv(filas)], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', { href: URL.createObjectURL(blob), download: `panel-${nombre}-${S.range}.csv` });
+  document.body.append(a); a.click(); a.remove();
+}
+/** A block with its "⬇︎ CSV" button: every table of the panel can leave it (D-348). */
+const conCsv = (nodo, nombre, filas) => {
+  if (filas?.length) nodo.append(el('button', { type: 'button', class: 'btn btn--ghost btn--sm csv', onClick: () => descargarCsv(nombre, typeof filas === 'function' ? filas() : filas) }, '⬇︎ CSV'));
+  return nodo;
+};
+
+/** The versions that first showed up in a period, for its bar (D-348): "we changed X" next to "Y happened". */
+let MARCAS = [];
+const subVersion = (d, grano) => {
+  const hasta = grano === 'mes' ? d.day + 30 : grano === 'semana' ? d.day + 6 : d.day;
+  const vs = versionesEn(MARCAS, d.day, hasta);
+  return vs.length ? `🚀 ${vs.length > 2 ? `${vs[0]} … ${vs.at(-1)}` : vs.join(', ')}` : '';
+};
+
+/** A timeline: one bar per period with its segments and the versions that came out in it. */
+function serie(titulo, nota, byDay, rango, campos, nombre) {
+  const periodos = groupDays(byDay, rango.grano);
+  const max = Math.max(0, ...periodos.map(d => campos.reduce((k, [c]) => k + (d[c] || 0), 0)));
+  const nodo = bloque(titulo, `${nota ? `${nota} ` : ''}🚀 marca las versiones que salieron en ese período.${rango.grano === 'semana' ? ' La fecha es el lunes de cada semana.' : ''}`,
+    lista(periodos.map(d => bar(d.label, campos.map(([c, color]) => seg(color, d[c] || 0)), max, { sub: subVersion(d, rango.grano) })), 'Nada todavía.', 'bars'));
+  return conCsv(nodo, nombre, periodos.map(({ label, day, ...x }) => ({ periodo: label, ...x })));
+}
 
 /** El título del rango, con "cargando" mientras falta algo: un año a medio bajar no es un año vacío (C-14). */
 function tituloRango() {
@@ -534,16 +588,31 @@ function vistaCopa(now) {
   const maxM = Math.max(0, ...rc.porJuego.map(m => m.jugadas + m.abandonos));
   const maxMD = Math.max(0, ...periodosM.map(d => d.total));
   const verTodas = () => { S.filtroCopas = 'todas'; render(); };
+  // The period before and the funnel (D-348); who was left out of a cup (D-347)
+  const rca = resumenCopas(S.torneos, rangoAnterior(rango), now);
+  const ec = embudoCopas(S.torneos, rango, now);
+  const pasos = [['Creadas', ec.creadas], ['Con 2 o más jugadores', ec.conGente], ['Partieron', ec.partieron], ['Terminaron con 2 o más', ec.terminadas]];
+  const maxDia = Math.max(0, ...ec.porDia.map(d => d.esperado));
 
   return [
     ...titulo(`${torneoLabel} · ${tituloRango()}`, 'Las copas que estuvieron abiertas en el rango, también las de prueba: no se separan por entorno.'),
+    franja('pulso'),
     el('div', { class: 'tiles' },
-      tile(rc.copas, 'copas activas', { onClick: verTodas }),
-      tile(rc.nuevas, 'copas nuevas'),
+      tile(rc.copas, 'copas activas', { onClick: verTodas, cambio: variacion(rc.copas, rca.copas) }),
+      tile(rc.nuevas, 'copas nuevas', { cambio: variacion(rc.nuevas, rca.nuevas) }),
       tile(rc.inscripciones, 'jugadores inscritos'),
-      tile(rc.jugadas, 'juegos jugados'),
+      tile(rc.jugadas, 'juegos jugados', { cambio: variacion(rc.jugadas, rca.jugadas) }),
       tile(part === null ? '—' : `${part}%`, 'participación', { info: 'jugados de los que se podían jugar, en días cerrados' }),
       tile(rc.abandonos, 'juegos sin terminar'),
+    ),
+    franja('diag'),
+    el('div', { class: 'grid2' },
+      conCsv(bloque('Copas, paso a paso', `De las copas creadas en el rango. Tamaño medio: ${ec.tamano ?? '—'} jugadores. Quedaron fuera por no jugar 2 días seguidos: ${n(ec.fuera)}; devueltos por el admin: ${n(ec.devueltos)} (D-347).`,
+        lista(pasos.map(([l, v]) => bar(l, [seg(C_TORNEO, v)], ec.creadas, { detail: ec.creadas ? `${pctTxt(pctDe(v, ec.creadas))} de las creadas` : '' })), 'Ninguna copa creada en este rango.', 'bars')),
+        'torneo-embudo', pasos.map(([paso, copas]) => ({ paso, copas }))),
+      conCsv(bloque('Participación por día de la copa', 'En los días cerrados: cuántos jugaron (rosado) de los que se podían jugar. Donde baja es donde la gente se cae.',
+        lista(ec.porDia.map(d => bar(`Día ${d.dia}`, [seg(C_TORNEO, d.jugado), seg('rgba(255,255,255,0.25)', d.esperado - d.jugado)], maxDia, { cifra: d.jugado, detail: pctTxt(pctDe(d.jugado, d.esperado)) })), 'Ningún día cerrado todavía.', 'bars')),
+        'torneo-participacion', ec.porDia),
     ),
     bloqueAvisos(rango, now),
     porIdioma('Copas por idioma', 'El idioma que eligió quien creó la copa: en ese idioma la juegan todos.', todas.reduce((m, c) => ({ ...m, [c.lang]: (m[c.lang] || 0) + 1 }), {})),
@@ -713,37 +782,6 @@ function vistaFichaCopa(code, now) {
 /* ------------------------------------------------------------------ */
 /* Juegos                                                              */
 /* ------------------------------------------------------------------ */
-function vistaJuegos() {
-  const rango = rangeOf(S.range);
-  const hoyDia = dayOf(Date.now());
-  const s = summarize(S.days, { from: rango.from, to: rango.to, incluye: esJuego });
-  const hoy = summarize(S.days, { from: hoyDia, to: hoyDia, incluye: esJuego });
-  MODOS = s.modes;
-  const games = Object.entries(s.byGame).sort((a, b) => b[1].total - a[1].total);
-  const maxGame = Math.max(0, ...games.map(([, g]) => g.total));
-  // La leyenda es de los juegos de una partida: el modo del torneo tiene su propia sección
-  const leyenda = `Toca un juego para ver su ficha. Por modo: ${MODE_IDS.filter(m => !MODES[m].torneo).map(m => `${modeIcon(m)} ${MODES[m].label}`).join(' · ')}`;
-  const verSolas = () => { S.logSolas = true; S.logPage = 1; render(); document.getElementById('salas-jugadas')?.scrollIntoView({ block: 'start' }); };
-
-  return [
-    ...titulo(`🎲 Juegos · ${tituloRango()}`, 'Los juegos de una partida, sin La Copa. Una partida se cuenta cuando empieza, aunque no se termine; las de dos celulares, solo si entró alguien más. Los días son UTC.'),
-    el('div', { class: 'tiles' },
-      tile(s.partidas, 'partidas empezadas'),
-      tile(s.online, 'en dos celulares'),
-      tile(s.local, 'sin red'),
-      tile(s.devices, 'entradas de un celular a una partida'),
-      tile(hoy.partidas, 'partidas hoy (día UTC)'),
-      tile(s.sinRival, 'salas donde nunca entró nadie más', { onClick: verSolas, info: 'ver cuáles' }),
-    ),
-    bloque('Partidas por juego', leyenda,
-      lista(games.map(([id, g]) => bar(gameLabel(id), MODOS.map(m => segModo(m, g[m] || 0)), maxGame,
-        { note: MODOS.filter(m => g[m]).map(m => `${modeIcon(m)}${n(g[m])}`).join(' '), href: ir('juego', [id]) })), 'Nada todavía.', 'bars')),
-    graficosJuego(s, rango),
-    bloqueUnoAlDia(rango),
-    sinRedRecientes(rango),
-    bitacora(rango),
-  ];
-}
 
 /**
  * Uno al día (D-230): las partidas del modo `uno-al-dia` (de todos), y de quienes entraron con
@@ -855,7 +893,7 @@ function vistaFichaJuego(id) {
   const modoDe = m => (MODES[m] ? `${modeIcon(m)} ${MODES[m].label}` : m);
 
   return [
-    migas(['🎲 Juegos', 'juegos'], [nombre]),
+    migas(['👥 Grupo', 'grupo'], [nombre]),
     ...titulo(`${nombre} · ${tituloRango()}`, `Los conteos van por día UTC; las horas, en ${ZONA_NOMBRE}.`),
     el('div', { class: 'tiles' },
       tile(fila.total, 'partidas empezadas'),
@@ -883,7 +921,7 @@ function vistaSala(code, dia, now) {
   const { propias, ajenas } = salasVivas(now);
   const viva = (!day || day >= dayOf(now) - 1) ? [...propias, ...ajenas].find(r => r.code === code) || null : null;
   const game = reg?.game || viva?.game || null;
-  const pasos = [['🎲 Juegos', 'juegos'], ...(game ? [[gameLabel(game), 'juego', [game]]] : []), [`Sala ${code}`]];
+  const pasos = [['👥 Grupo', 'grupo'], ...(game ? [[gameLabel(game), 'juego', [game]]] : []), [`Sala ${code}`]];
   if (!S.daysLoaded) return [migas(...pasos), el('p', { class: 'empty' }, 'Cargando…')];
   if (!reg && !viva) return [migas(...pasos), ...titulo(code), el('p', { class: 'empty' }, `No hay una sala ${code} en ${envLabel(S.env)} en ${rangeOf(S.range).titulo.toLowerCase()}. Prueba un rango más largo o el otro entorno.`)];
 
@@ -937,6 +975,17 @@ function paginaLabel(p) {
 /** Cómo se llama un canal: la marca que la app pone en lo que comparte, o la que vino en el enlace. */
 const canalLabel = k => (k === 'link' ? '🔗 Link compartido desde la app' : k);
 const porcentaje = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '—');
+
+/** What was shared and how many visits the shared links brought (D-348). */
+function bloqueCompartidos(rango) {
+  const sg = senales(S.days, rango);
+  const t = trafico(S.days, rango);
+  const que = Object.entries(sg.comparte).sort((a, b) => b[1] - a[1]);
+  const max = Math.max(0, ...que.map(([, v]) => v));
+  const llegan = t.via.link || 0;
+  return conCsv(bloque('Qué se comparte', `Cada vez que alguien tocó Compartir y no lo canceló (desde D-348). Por cada compartido llegaron ${sg.compartidos ? (llegan / sg.compartidos).toLocaleString('es-CL', { maximumFractionDigits: 2 }) : '—'} visitas con la marca del link: el factor viral.`,
+    lista(que.map(([k, v]) => bar(k, [seg(C_TORNEO, v)], max)), 'Nada compartido en este rango.', 'bars')), 'compartidos', que.map(([k, v]) => ({ que: k, veces: v })));
+}
 
 function vistaTrafico(now) {
   const rango = rangeOf(S.range);
@@ -994,6 +1043,7 @@ function vistaTrafico(now) {
       bloque('Primera vez o vuelve', 'Por visita. "Ya había venido" sale de una marca que deja el navegador; quien borra los datos o usa modo privado cuenta como primera vez.',
         lista(ret.map(([l, v]) => bar(l, [seg(C_IDIOMA, v)], maxR)), 'Nada todavía.', 'bars')),
     ),
+    bloqueCompartidos(rango),
     bloque('País de las visitas', 'Del huso horario del celular, como en las salas (D-79).',
       lista(paises.map(([k, v]) => bar(`${flagOf(k)} ${nombreDePais(k)}`.trim(), [seg(C_TORNEO, v)], maxPa)), 'Nada todavía.', 'bars')),
   ];
@@ -1011,7 +1061,7 @@ function vistaAudiencia(now) {
   const rc = resumenCopas(S.torneos, rango, now);
   const miniHoy = rc.porDia.find(d => d.day === today)?.total || 0;
 
-  const tipos = [[torneoLabel, C_TORNEO, rc.jugadas, 'juegos jugados', ir('torneo')], ['🎲 Otros juegos', C_TOTAL, s.partidas, 'partidas', ir('juegos')]];
+  const tipos = [[torneoLabel, C_TORNEO, rc.jugadas, 'juegos jugados', ir('torneo')], ['🎲 Otros juegos', C_TOTAL, s.partidas, 'partidas', ir('grupo')]];
   const maxT = Math.max(0, ...tipos.map(t => t[2]));
   const juntos = s.byDay.map((d, i) => ({ day: d.day, juegos: d.total, torneo: rc.porDia[i]?.total || 0 }));
   const periodosT = groupDays(juntos, rango.grano);
@@ -1030,7 +1080,7 @@ function vistaAudiencia(now) {
   return [
     ...titulo(`🌎 Audiencia · ${tituloRango()}`, 'Cuánto y desde dónde se juega. Días UTC: en el Pacífico el día cambia a las 17:00 (a las 16:00 en invierno).'),
     el('div', { class: 'tiles' },
-      tile(s.partidas, 'partidas de juegos empezadas', { href: ir('juegos') }),
+      tile(s.partidas, 'partidas de juegos empezadas', { href: ir('grupo') }),
       tile(rc.jugadas, `juegos de ${torneoNombre}`, { href: ir('torneo') }),
       tile(rc.copas, 'copas activas', { href: ir('torneo') }),
       tile(todo.devices, 'entradas de un celular a una partida'),
@@ -1160,15 +1210,235 @@ function vistaSalud(now) {
 }
 
 /* ------------------------------------------------------------------ */
+/* The domains (D-348): Summary, Group, Individual, Uno al día, Users  */
+/* ------------------------------------------------------------------ */
+
+/** The range and the one before it, with what each domain counts in both. */
+function periodos() {
+  const r = rangeOf(S.range), a = rangoAnterior(r);
+  return { r, a };
+}
+const terminadasSalas = e => Object.values(e).reduce((k, g) => k + g.terminadas, 0);
+const pctDe = (a, b) => (b ? Math.round((a / b) * 100) : null);
+const pctTxt = p => (p === null ? '—' : `${p}%`);
+
+/**
+ * The analyst's front page (D-348): the main metric (games finished), one card per domain with
+ * its headline and its change against the period before, and what is being played now.
+ */
+function vistaResumen(now) {
+  const { r, a } = periodos();
+  const pd = partidasDominio(S.days, r), pda = partidasDominio(S.days, a);
+  const f = finales(S.days, r), fa = finales(S.days, a);
+  const rc = resumenCopas(S.torneos, r, now), rca = resumenCopas(S.torneos, a, now);
+  const norte = f.terminadas + terminadasSalas(embudoSalas(S.days, r)) + rc.jugadas;
+  const norteA = fa.terminadas + terminadasSalas(embudoSalas(S.days, a)) + rca.jugadas;
+  const u = usuarios(S.days, r), ua = usuarios(S.days, a);
+  const t = trafico(S.days, r), ta = trafico(S.days, a);
+  const sg = senales(S.days, r), sga = senales(S.days, a);
+  const h = salud(S.days, r), ha = salud(S.days, a);
+  const uad = unoAlDiaDelRango({ days: S.days, ...S.uad }, { from: r.from, to: r.to, hoy: dayOf(now) });
+  const uada = unoAlDiaDelRango({ days: S.days, ...S.uad }, { from: a.from, to: a.to, hoy: a.to });
+  const fallas = pctDe(h.total.alguna, h.total.cargas), fallasA = pctDe(ha.total.alguna, ha.total.cargas);
+  const vivas = salasVivas(now).propias.filter(x => x.active).length;
+  const sinRed = liveLocal(S.days, now).length;
+  const jugandoCopa = copasEnCurso(S.torneos, now).reduce((k, c) => k + c.jugando.length, 0);
+  const tarjeta = (sec, cifra, label, cambio, extra = '', menosEsMejor = false) => {
+    const [ico, nombre] = SECCION[sec];
+    return tile(cifra, `${ico} ${nombre} · ${label}`, { href: ir(sec), cambio, info: extra, menosEsMejor });
+  };
+  const porDia = pd.grupo.byDay.map((d, i) => ({ day: d.day, grupo: d.total, individual: pd.individual.byDay[i].total, torneo: rc.porDia[i]?.total || 0 }));
+  return [
+    ...titulo(`📊 Resumen · ${tituloRango()}`, 'La portada del analista (D-348): la métrica principal, una tarjeta por dominio contra el período anterior del mismo largo, y lo que se está jugando ahora. Cada dominio tiene tres franjas: pulso, diagnóstico y tendencia. Días UTC.'),
+    franja('pulso'),
+    el('div', { class: 'tiles' },
+      tile(norte, '⭐ partidas terminadas', { cambio: variacion(norte, norteA), info: 'métrica principal: salas con final, partidas sin red terminadas y juegos de La Copa' }),
+      tile(u.semana || '—', 'navegadores activos en 7 días', { href: ir('usuarios'), cambio: u.semana ? variacion(u.semana, usuarios(S.days, { from: a.to - 6, to: a.to }).semana) : undefined, info: 'desde D-349' }),
+      tile(vivas + sinRed + jugandoCopa, '🟢 jugando ahora', { href: ir('ahora'), info: `${n(vivas)} salas · ${n(sinRed)} sin red · ${n(jugandoCopa)} en copas` }),
+    ),
+    el('div', { class: 'tiles' },
+      tarjeta('grupo', pd.grupo.total, 'partidas', variacion(pd.grupo.total, pda.grupo.total)),
+      tarjeta('individuales', pd.individual.total, 'partidas', variacion(pd.individual.total, pda.individual.total)),
+      tarjeta('torneo', rc.jugadas, 'juegos jugados', variacion(rc.jugadas, rca.jugadas), `participación ${pctTxt(pct(rc.participacion))}`),
+      tarjeta('unoaldia', uad.partidas, 'partidas', variacion(uad.partidas, uada.partidas), `vuelve al día siguiente ${pctTxt(uad.d1)}`),
+      tarjeta('usuarios', u.diario || '—', 'activos por día', u.diario ? variacion(u.diario, ua.diario) : undefined, u.pegajosidad === null ? '' : `pegajosidad ${u.pegajosidad}%`),
+      tarjeta('trafico', t.visitas, 'visitas', variacion(t.visitas, ta.visitas), `${pctTxt(pctDe(t.juegan, t.visitas))} llegan a jugar · ${n(sg.compartidos)} compartidos`),
+      tarjeta('salud', pctTxt(fallas), 'cargas con fallas', fallas === null || fallasA === null ? undefined : fallas - fallasA, h.total.arranque ? `⛔ ${n(h.total.arranque)} no arrancaron` : 'todas arrancaron', true),
+    ),
+    franja('tend'),
+    serie('Partidas por período', 'Celeste, de grupo; amarillo, individuales; rosado, juegos de La Copa.', porDia, r,
+      [['grupo', C_TOTAL], ['individual', C_SIN_RED], ['torneo', C_TORNEO]], 'resumen'),
+  ];
+}
+
+/** Group games (D-348): rooms, one phone and against the phone. */
+function vistaGrupo(now) {
+  const { r, a } = periodos();
+  const pd = partidasDominio(S.days, r).grupo, pda = partidasDominio(S.days, a).grupo;
+  const e = embudoSalas(S.days, r), ea = embudoSalas(S.days, a);
+  const f = finales(S.days, r);
+  const s = summarize(S.days, { from: r.from, to: r.to, incluye: esJuego });
+  MODOS = s.modes;
+  const sum = k => Object.values(e).reduce((x, g) => x + g[k], 0);
+  const conRival = sum('conRival'), creadas = sum('creadas'), term = sum('terminadas');
+  const conRivalA = Object.values(ea).reduce((x, g) => x + g.conRival, 0);
+  const juegos = Object.entries(pd.byGame).sort((x, y) => y[1] - x[1]);
+  const maxJ = Math.max(0, ...juegos.map(([, v]) => v));
+  const salas = Object.entries(e).sort((x, y) => y[1].creadas - x[1].creadas);
+  const maxS = Math.max(0, ...salas.map(([, g]) => g.creadas));
+  const terminan = Object.entries(f.porJuego).filter(([, g]) => g.grupo).sort((x, y) => y[1].grupo - x[1].grupo);
+  const maxT = Math.max(0, ...terminan.map(([, g]) => g.grupo));
+  const modos = Object.entries(pd.byMode).sort((x, y) => y[1] - x[1]);
+  const maxM = Math.max(0, ...modos.map(([, v]) => v));
+  const players = Object.entries(s.byPlayers).filter(([k]) => k !== '1').sort((x, y) => Number(x[0]) - Number(y[0]));
+  const maxP = Math.max(0, ...players.map(([, v]) => v));
+  return [
+    ...titulo(`👥 Grupo · ${tituloRango()}`, 'Los juegos para varias personas: en dos celulares (salas), en un celular y contra el celular. Una partida se cuenta al empezar; una sala, solo si entró un rival. Días UTC.'),
+    franja('pulso'),
+    el('div', { class: 'tiles' },
+      tile(pd.total, 'partidas de grupo', { cambio: variacion(pd.total, pda.total) }),
+      tile(conRival, 'salas con rival', { cambio: variacion(conRival, conRivalA) }),
+      tile(pctTxt(pctDe(conRival, creadas)), 'salas donde entró un rival', { info: `${n(creadas - conRival)} quedaron solas` }),
+      tile(pctTxt(pctDe(term, conRival)), 'salas que llegaron al final', { info: 'con ganador o empate' }),
+      tile(f.otras, 'revanchas y "otra vez"', { info: 'desde D-348' }),
+    ),
+    franja('diag'),
+    conCsv(bloque('Partidas por juego', `Toca un juego para ver su ficha. Sus modos: ${MODE_IDS.filter(m => !MODES[m].torneo && !MODES[m].individual).map(m => `${modeIcon(m)} ${MODES[m].label}`).join(' · ')}.`,
+      lista(juegos.map(([id, v]) => bar(gameLabel(id), [seg(C_TOTAL, v)], maxJ, { href: ir('juego', [id]) })), 'Nada todavía.', 'bars')), 'grupo-juegos', juegos.map(([id, v]) => ({ juego: id, partidas: v }))),
+    el('div', { class: 'grid2' },
+      conCsv(bloque('Salas, paso a paso', 'Creada → entró un rival (celeste) → llegó al final (verde). La duración es la mediana de las que terminaron.',
+        lista(salas.map(([id, g]) => bar(gameLabel(id), [seg('var(--lime)', g.terminadas), seg(C_TOTAL, g.conRival - g.terminadas), seg('rgba(255,255,255,0.25)', g.creadas - g.conRival)], maxS, {
+          cifra: g.creadas, detail: `${pctTxt(pctDe(g.conRival, g.creadas))} con rival · ${pctTxt(pctDe(g.terminadas, g.conRival))} al final${g.medianaMs ? ` · dura ${minutos(g.medianaMs)}` : ''}`,
+        })), 'Ninguna sala en este rango.', 'bars')), 'grupo-salas', salas.map(([id, g]) => ({ juego: id, ...g }))),
+      conCsv(bloque('Terminadas en un celular', 'Partidas sin red de grupo que llegaron al final, contra las empezadas (D-348: se cuenta desde esta versión).',
+        lista(terminan.map(([id, g]) => bar(gameLabel(id), [seg(C_SIN_RED, g.grupo)], maxT, { detail: `${pctTxt(pctDe(g.terminadas, g.empezadas))} terminadas · ${n(g.otras)} otra vez` })), 'Nada todavía.', 'bars')),
+        'grupo-terminadas', terminan.map(([id, g]) => ({ juego: id, ...g }))),
+    ),
+    el('div', { class: 'grid2' },
+      bloque('Por modo', null, lista(modos.map(([m, v]) => bar(`${modeIcon(m)} ${MODES[m]?.label || m}`, [segModo(m, v)], maxM)), 'Nada todavía.', 'bars')),
+      bloque('Jugadores por partida', null, lista(players.map(([k, v]) => bar(`${k} jugadores`, [seg(C_SIN_RED, v)], maxP)), 'Nada todavía.', 'bars')),
+    ),
+    franja('tend'),
+    serie('Partidas de grupo por período', null, pd.byDay, r, [['total', C_TOTAL]], 'grupo-serie'),
+    sinRedRecientes(r),
+    bitacora(r),
+  ];
+}
+
+/** Individual games (D-348): solo and Uno al día, with their real difficulty. */
+function vistaIndividuales(now) {
+  const { r, a } = periodos();
+  const pd = partidasDominio(S.days, r).individual, pda = partidasDominio(S.days, a).individual;
+  const f = finales(S.days, r);
+  const dif = dificultad(S.days, r, now);
+  const term = Object.values(f.porJuego).reduce((k, g) => k + Math.min(g.terminadas, g.individual), 0);
+  const ab = dif.reduce((k, g) => k + g.abandonos, 0), emp = dif.reduce((k, g) => k + g.empezadas, 0);
+  const juegos = Object.entries(pd.byGame).sort((x, y) => y[1] - x[1]);
+  const maxJ = Math.max(0, ...juegos.map(([, v]) => v));
+  const maxD = Math.max(0, ...dif.map(g => g.empezadas));
+  const q = xs => (xs[1] === null ? '—' : `${xs[0]}–${xs[1]}–${xs[2]}`);
+  const qT = xs => (xs[1] === null ? '—' : xs.map(x => `${Math.floor(x / 60)}:${String(x % 60).padStart(2, '0')}`).join('–'));
+  return [
+    ...titulo(`🧍 Individuales · ${tituloRango()}`, 'Los juegos para una persona: los sueltos de La Copa, los de jugar solo y Uno al día. Días UTC.'),
+    franja('pulso'),
+    el('div', { class: 'tiles' },
+      tile(pd.total, 'partidas individuales', { cambio: variacion(pd.total, pda.total) }),
+      tile(pctTxt(pctDe(term, pd.total)), 'terminadas', { info: 'desde D-348' }),
+      tile(pctTxt(pctDe(ab, emp)), 'dejadas a la mitad', { info: 'sin final y una hora sin señal', hot: emp > 0 && ab / emp > 0.3 }),
+      tile(Object.values(f.porJuego).reduce((k, g) => k + g.otras, 0), '"otra vez"'),
+    ),
+    franja('diag'),
+    conCsv(bloque('Dificultad real', 'De las partidas terminadas: el puntaje (0 a 100) y el tiempo en cuartiles, el de abajo, el del medio y el de arriba. Un juego con el del medio muy alto es fácil; uno con muchas dejadas a la mitad, frustrante. Una variante cuenta aparte.',
+      lista(dif.map(g => bar(g.variante ? `${gameLabel(g.game)} · ${g.variante}` : gameLabel(g.game), [seg(C_SIN_RED, g.terminadas), seg('rgba(255,255,255,0.25)', g.empezadas - g.terminadas)], maxD, {
+        cifra: g.empezadas, detail: `puntaje ${q(g.puntaje)} · tiempo ${qT(g.tiempo)} · ${pctTxt(pctDe(g.abandonos, g.empezadas))} a la mitad`,
+      })), 'Nada todavía.', 'bars')),
+      'individuales-dificultad', dif.map(g => ({ juego: g.k, empezadas: g.empezadas, terminadas: g.terminadas, abandonos: g.abandonos, puntaje_p25: g.puntaje[0], puntaje_p50: g.puntaje[1], puntaje_p75: g.puntaje[2], seg_p25: g.tiempo[0], seg_p50: g.tiempo[1], seg_p75: g.tiempo[2] }))),
+    conCsv(bloque('Partidas por juego', null, lista(juegos.map(([id, v]) => bar(gameLabel(id), [seg(C_SIN_RED, v)], maxJ, { href: ir('juego', [id]) })), 'Nada todavía.', 'bars')),
+      'individuales-juegos', juegos.map(([id, v]) => ({ juego: id, partidas: v }))),
+    franja('tend'),
+    serie('Partidas individuales por período', null, pd.byDay, r, [['total', C_SIN_RED]], 'individuales-serie'),
+  ];
+}
+
+/** Uno al día as its own domain (D-348): the block it had in Games, with the bands. */
+function vistaUnoAlDia(now) {
+  const { r, a } = periodos();
+  const u = unoAlDiaDelRango({ days: S.days, ...S.uad }, { from: r.from, to: r.to, hoy: dayOf(now) });
+  const ua = unoAlDiaDelRango({ days: S.days, ...S.uad }, { from: a.from, to: a.to, hoy: a.to });
+  return [
+    ...titulo(`📅 Uno al día · ${tituloRango()}`, 'El juego del día, el mismo para todos (D-230). Días UTC.'),
+    franja('pulso'),
+    el('div', { class: 'tiles' },
+      tile(u.partidas, 'partidas', { cambio: variacion(u.partidas, ua.partidas) }),
+      tile(u.jugadores, 'jugadores con nombre', { cambio: variacion(u.jugadores, ua.jugadores) }),
+      tile(pctTxt(u.d1), 'vuelve al día siguiente'),
+      tile(pctTxt(u.d7), 'vuelve a los 7 días'),
+    ),
+    franja('diag'),
+    bloqueUnoAlDia(r),
+    franja('tend'),
+    serie('Partidas de Uno al día por período', null, u.porDia, r, [['total', C_SIN_RED]], 'uno-al-dia-serie'),
+  ];
+}
+
+const VUELTA_LABEL = { nueva: 'Primera vez', d1: 'Al día siguiente', 'd2-7': 'Entre 2 y 7 días', 'd8-30': 'Entre 8 y 30 días', d31: 'Más de 30 días' };
+const FREC_LABEL = { f1: '1 día de 28', 'f2-3': '2 a 3 días', 'f4-7': '4 a 7 días', 'f8-14': '8 a 14 días', f15: '15 días o más' };
+
+/**
+ * Users (D-348, D-349): active browsers, new and returning, cohorts, frequency, and where they
+ * are from and in which language they play (what Audience showed).
+ */
+function vistaUsuarios(now) {
+  const { r, a } = periodos();
+  const u = usuarios(S.days, r), ua = usuarios(S.days, a);
+  const sg = senales(S.days, r);
+  const co = cohortes(S.days, { hoy: Math.min(r.to, dayOf(now)) });
+  const vuelta = ordenTramos(sg.vuelta), frec = ordenTramos(sg.frec);
+  const maxV = Math.max(0, ...vuelta.map(([, v]) => v)), maxF = Math.max(0, ...frec.map(([, v]) => v));
+  const audiencia = vistaAudiencia(now).slice(3);
+  const desde = u.desde === null ? 'Todavía no hay navegadores contados: se cuentan desde D-349.' : u.desde > r.from ? `Se cuentan desde el ${dayLabel(u.desde)} (D-349).` : '';
+  return [
+    ...titulo(`🌎 Usuarios · ${tituloRango()}`, 'Un usuario es un navegador: un número al azar que vive en él y no dice nada de la persona, sin nombre, sin IP y sin cruzarse con nada (D-349). Quien borra los datos o usa modo privado cuenta como nuevo. Días UTC.'),
+    desde ? el('p', { class: 'muted small' }, desde) : null,
+    franja('pulso'),
+    el('div', { class: 'tiles' },
+      tile(u.diario, 'activos por día', { cambio: u.diario ? variacion(u.diario, ua.diario) : undefined }),
+      tile(u.semana, 'activos en 7 días'),
+      tile(u.mes, 'activos en 30 días'),
+      tile(u.pegajosidad === null ? '—' : `${u.pegajosidad}%`, 'pegajosidad', { info: 'activos por día sobre activos en 30 días' }),
+      tile(pctTxt(pctDe(u.porDia.reduce((k, d) => k + d.jugaron, 0), u.porDia.reduce((k, d) => k + d.activos, 0))), 'de los activos jugaron'),
+    ),
+    franja('diag'),
+    el('div', { class: 'grid2' },
+      conCsv(bloque('Cuándo había venido antes', 'Por visita: cuántos días pasaron desde la anterior. Lo calcula el navegador y manda solo el tramo.',
+        lista(vuelta.map(([k, v]) => bar(VUELTA_LABEL[k] || k, [seg(C_IDIOMA, v)], maxV)), 'Nada todavía.', 'bars')), 'usuarios-vuelta', vuelta.map(([k, v]) => ({ tramo: k, visitas: v }))),
+      conCsv(bloque('Frecuencia', 'Una vez por navegador y día: cuántos de los últimos 28 días vino. Mucho arriba es un hábito.',
+        lista(frec.map(([k, v]) => bar(FREC_LABEL[k] || k, [seg(C_TORNEO, v)], maxF)), 'Nada todavía.', 'bars')), 'usuarios-frecuencia', frec.map(([k, v]) => ({ tramo: k, navegadores_dia: v }))),
+    ),
+    serie('Activos por día', 'Celeste, activos que ya habían venido; verde, nuevos (vistos por primera vez en lo bajado).',
+      u.porDia.map(d => ({ day: d.day, vuelven: d.activos - d.nuevos, nuevos: d.nuevos })), r, [['vuelven', C_TOTAL], ['nuevos', C_IDIOMA]], 'usuarios-activos'),
+    franja('tend'),
+    conCsv(bloque('Cohortes por semana', 'Los que llegaron cada semana (vistos por primera vez en lo bajado) y qué parte volvió justo 1, 7 y 30 días después. "—" es que todavía no se puede saber. Para cohortes largas, elige 90 días o más.',
+      co.length ? el('table', { class: 'cohortes' },
+        el('thead', {}, el('tr', {}, ...['Semana', 'Llegaron', 'Día 1', 'Día 7', 'Día 30'].map(x => el('th', {}, x)))),
+        el('tbody', {}, ...co.map(c => el('tr', {}, el('td', {}, periodLabel(c.semana, 'semana')), el('td', {}, n(c.tamano)), ...[c.d1, c.d7, c.d30].map(p => el('td', { style: p === null ? null : `background:rgba(46,230,214,${Math.min(0.6, p / 100)})` }, pctTxt(p))))))) : el('p', { class: 'empty' }, 'Nada todavía.')),
+      'usuarios-cohortes', co.map(c => ({ semana: periodLabel(c.semana, 'semana'), ...c }))),
+    ...audiencia,
+  ];
+}
+
+/* ------------------------------------------------------------------ */
 /* Navegación                                                          */
 /* ------------------------------------------------------------------ */
 /** Ícono y nombre de cada sección. El de La Copa sale del registro de juegos (C-16). */
 const SECCION = {
-  ahora: ['🟢', 'Ahora'],
+  resumen: ['📊', 'Resumen'],
+  grupo: ['👥', 'Grupo'],
+  individuales: ['🧍', 'Individuales'],
   torneo: TORNEO ? [TORNEO.emoji, TORNEO.name.es] : ['🏆', 'Torneo'],
-  juegos: ['🎲', 'Juegos'],
+  unoaldia: ['📅', 'Uno al día'],
+  usuarios: ['🌎', 'Usuarios'],
   trafico: ['📈', 'Tráfico'],
-  audiencia: ['🌎', 'Audiencia'],
   salud: ['🩺', 'Salud'],
 };
 
@@ -1182,24 +1452,28 @@ function renderNav(now) {
     const [ico, nombre] = SECCION[sec] || ['·', sec];
     return enlace(sec, [], { 'aria-current': sec === actual ? 'page' : null },
       el('span', { class: 'ico', 'aria-hidden': 'true' }, ico), el('span', { class: 'nombre' }, nombre),
-      sec === 'ahora' && algo ? el('span', { class: 'vivo', title: 'Hay algo en juego' }) : null,
+      sec === 'resumen' && algo ? el('span', { class: 'vivo', title: 'Hay algo en juego' }) : null,
       sec === 'salud' && noArranca ? el('span', { class: 'vivo vivo--alerta', title: 'Hoy o ayer una página no arrancó' }) : null);
   }));
 }
 
 function render() {
   const now = Date.now();
+  MARCAS = versiones(S.days);
   const { sec, args } = S.ruta;
   let nodos;
   if (sec === 'torneo' && args[0]) nodos = vistaFichaCopa(args[0].toUpperCase(), now);
   else if (sec === 'torneo') nodos = vistaCopa(now);
   else if (sec === 'juego') nodos = vistaFichaJuego(args[0]);
   else if (sec === 'sala') nodos = vistaSala(args[0].toUpperCase(), args[1], now);
-  else if (sec === 'juegos') nodos = vistaJuegos();
-  else if (sec === 'audiencia') nodos = vistaAudiencia(now);
+  else if (sec === 'grupo') nodos = vistaGrupo(now);
+  else if (sec === 'individuales') nodos = vistaIndividuales(now);
+  else if (sec === 'unoaldia') nodos = vistaUnoAlDia(now);
+  else if (sec === 'usuarios') nodos = vistaUsuarios(now);
+  else if (sec === 'ahora') nodos = vistaAhora(now);
   else if (sec === 'trafico') nodos = vistaTrafico(now);
   else if (sec === 'salud') nodos = vistaSalud(now);
-  else nodos = vistaAhora(now);
+  else nodos = vistaResumen(now);
   $('#vista').replaceChildren(...nodos.flat().filter(Boolean));
   renderNav(now);
   $('#updated').textContent = `Actualizado ${horaLabel(now)} · ${ZONA_NOMBRE}`;
@@ -1241,7 +1515,7 @@ function cambiarRango(id, anotar = true) {
   S.range = id;
   S.logPage = 1;
   $('#range').value = id;
-  if (S.user && S.desdeDia !== null && rangeOf(id).from < S.desdeDia) { S.daysLoaded = false; listen(); }
+  if (S.user && S.desdeDia !== null && rangoAnterior(rangeOf(id)).from < S.desdeDia) { S.daysLoaded = false; listen(); }
   if (anotar) { anotarEnUrl(); render(); }
 }
 
@@ -1294,7 +1568,7 @@ window.__panel = {
     stopListening();
     S.rooms = rooms; S.days = days; S.daysLoaded = daysLoaded; S.torneos = torneos; S.torneosLoaded = true; S.push = push;
     if (uad) S.uad = { historia: {}, invitados: {}, rachas: {}, ...uad };
-    S.desdeDia = rangeOf(S.range).from;
+    S.desdeDia = rangoAnterior(rangeOf(S.range)).from;
     showScreen('screen-panel');
     if (vista) {
       const hash = `#${vista}`;
