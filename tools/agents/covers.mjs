@@ -12,6 +12,9 @@
  * And it says the PR's stage, which decides how much usability review it gets (D-304): 🧪 lab only
  * (short: this and the screens that changed, at 320 px), 🎓 a game that leaves the lab (full pass
  * over the whole game), or the site (as always).
+ *
+ * And a promotional splash campaign the PR turns on or changes (D-355) gets a full usability pass
+ * of its own, whatever the stage: it is the first thing every player sees on the home page.
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync, existsSync } from 'node:fs';
@@ -78,6 +81,30 @@ export function labsExits(diff, names) {
   return [...leaving];
 }
 
+/**
+ * The splash campaigns a PR changes (D-355), from the diff of public/assets/js/splash.js: the one
+ * the `ACTIVE` line turns on, and each one whose entry in `CAMPAIGNS` changed. Turning it off
+ * (`ACTIVE = null`) shows nothing new, so it is not one.
+ */
+export function splashChanges(diff) {
+  const ids = new Set();
+  const on = diff.match(/^\+export const ACTIVE = \{ id: '([^']+)'/m);
+  if (on) ids.add(on[1]);
+  let current = null;
+  for (const l of diff.split('\n')) {
+    if (l.startsWith('@@')) { current = null; continue; }
+    const m = l.match(/^[ +-]  '([\w-]+)': \{/);
+    if (m) { current = m[1]; continue; }
+    if (/^[ +-]  \},?$/.test(l) || /^[ +-]\};?$/.test(l)) { current = null; continue; }
+    if (current && /^[+-]/.test(l) && !/^(\+\+\+|---)/.test(l)) ids.add(current);
+    const added = l.match(/^\+  '([\w-]+)': \{/);
+    if (added) ids.add(added[1]);
+  }
+  return [...ids];
+}
+
+export const SPLASH = id => `📣 Splash campaign ${id}: full usability pass before merging (D-355) —its texts in the four languages (U-1, U-18), each item's clip and link, at 390 and 320 px: node tools/e2e/look.mjs splash ${id} --width 320 [--lang de]`;
+
 /** A PR's stage (D-304): 'leaves', 'labs', 'site' or 'no-app'. */
 export function stage(files, exits) {
   if (exits.length) return 'leaves';
@@ -99,6 +126,17 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const files = git('diff', '--name-only', `${base}...HEAD`).split('\n').filter(Boolean);
   const exits = labsExits(git('diff', `${base}...HEAD`, '--', 'public/assets/js/games.js', 'public/cup/rules.js'), git('diff', '--name-status', '-M', `${base}...HEAD`));
   console.log(`Stage: ${STAGES[stage(files, exits)](exits)}`);
+  const campaigns = splashChanges(git('diff', `${base}...HEAD`, '--', 'public/assets/js/splash.js'));
+  if (campaigns.length) {
+    const { CAMPAIGNS } = await import(join(ROOT, 'public/assets/js/splash.js'));
+    for (const id of campaigns) {
+      console.log(SPLASH(id));
+      const c = CAMPAIGNS[id];
+      if (!c) continue;
+      for (const lang of ['es', 'en', 'pt', 'de']) console.log(`   ${lang}: ${[c.kicker, c.title, c.lead].map(t => t?.[lang] ?? '(missing)').join(' · ')}`);
+      console.log(`   items: ${c.items.map(i => i.game ?? i.title?.es ?? '?').join(', ')}`);
+    }
+  }
   const { labs, others } = touchedGames(files);
   if (!labs.length && !others.length) { console.log('✓ the PR touches no game: no cover pages to reread'); process.exit(0); }
   const index = existsSync(join(ROOT, 'public/labs/index.html')) ? readFileSync(join(ROOT, 'public/labs/index.html'), 'utf8') : '';

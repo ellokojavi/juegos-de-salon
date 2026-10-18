@@ -207,12 +207,13 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `julep/languages.mjs` | Julepe in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `fourth-king/languages.mjs` | Cuarto Rey in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `cup-games/languages.mjs` | La Copa's standalone games in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
+| `splash/languages.mjs` | Every splash campaign in all languages: each one as `?splash=<id>` against the Spanish one (D-199, D-355) |
 
 ## All languages (D-199)
 
 Each game has its `<folder>/languages.mjs` (`hangman/`, `battleship/`, `bulls-and-cows/`,
 `timeline/`, `liars-dice/`, `generala/`, `julep/`, `fourth-king/`, and `cup-games/` for the La Copa games
-played standalone). They go through each screen in [`paths.mjs`](paths.mjs) in each language of
+played standalone; `splash/` does the same for each campaign of the home page's splash, D-355). They go through each screen in [`paths.mjs`](paths.mjs) in each language of
 `LANGS` —a new language gets in on its own— and compare it with the same screen in Spanish:
 
 - the page is in that language (`<html lang>`) and reaches the same screen;

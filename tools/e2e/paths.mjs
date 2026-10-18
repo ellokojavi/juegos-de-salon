@@ -6,6 +6,7 @@
  * wait. It is keyed by the game's id ('ahorcado'), not by its folder.
  */
 import { SUELTOS } from '../../public/assets/js/games.js';
+import { CAMPAIGNS } from '../../public/assets/js/splash.js';
 
 /* --- Path pieces for Batalla Naval (see the comment on its entry) --- */
 const BS_CPU = [
@@ -549,3 +550,9 @@ PATHS['cuarto-rey']['inbox-end'] = [INBOX_SEED,
   `document.querySelector('#resume-slot .btn--cyan').click()`, `document.getElementById('card').click()`, `1`, `1`,
   `document.querySelector('#result .actions .btn')?.click()`, `1`, `1`, TO_LINK];
 PATHS.copa['inbox-home'] = [`location.href='/'`, `1`, `1`, `document.querySelector('.footer-buzon')?.click()`, `1`];
+
+/**
+ * Each promotional splash campaign over the home page (D-351), as `?splash=<id>` shows it: with
+ * this the language tests go through every campaign, and `look.mjs splash <id>` opens one (D-355).
+ */
+PATHS.splash = Object.fromEntries(Object.keys(CAMPAIGNS).map(id => [id, [`location.href='/?splash=${id}'`, `1`, `1`, `1`]]));

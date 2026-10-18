@@ -1191,10 +1191,16 @@
       "state": "keep",
       "why": "bridge page of the old Spanish URL (D-192)"
     },
+    "marketing/splash/campaigns/tres-juegos-demo/": {
+      "to": "marketing/splash/campaigns/tres-juegos-demo/",
+      "phase": 4,
+      "state": "keep",
+      "why": "named by the campaign's id, which phones keep in localStorage (data, D-351, D-355)"
+    },
     "marketing/splash-clips/capturar.mjs": {
-      "to": "marketing/splash-clips/capture.mjs",
+      "to": "marketing/splash/capture.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     }
   }
 }
