@@ -207,6 +207,31 @@ const colorTension = t => TENSION[Math.min(TENSION.length - 1, Math.floor((Math.
 
 const CIELO = ['#1d0838', '#26093f', '#2f0c48', '#3a1152', '#46175c', '#521e66', '#5e2670'];
 const ROCA = { base: '#5a2f8a', claro: '#7444a8', oscuro: '#3d1d63', borde: '#25103f' };
+/**
+ * The time of day along a game (owner's request): stage 1 in the morning, the middle ones toward
+ * sunset, the last at night. Three palettes, and the stages in between mix them (`timeOfDay(t)`, t from
+ * 0 = morning to 1 = night). The cover and anything without a stage stay at night.
+ */
+const MORNING = { sky: ['#3f86c9', '#4f93d0', '#5fa0d6', '#71aedc', '#86bde2', '#9dcbe6', '#b4d8ea'], rock: { base: '#8a5f42', claro: '#a77a55', oscuro: '#6a4530', borde: '#3a2416' },
+  water: ['#1f7fa8', '#14608a'], stars: 0, clouds: ['rgba(255,255,255,0.55)', 'rgba(255,255,255,0.35)'], sun: { x: 0.8, y: 0.14, r: 5, color: '#fff3a0', halo: 'rgba(255,240,160,0.35)' } };
+const SUNSET = { sky: ['#3b2a6e', '#6b3a7e', '#a2477a', '#d45f6a', '#ee8458', '#f6a85a', '#f8c66c'], rock: { base: '#6e3f5c', claro: '#8c5672', oscuro: '#4e2a42', borde: '#2a1424' },
+  water: ['#2c4f7e', '#1c3560'], stars: 0.15, clouds: ['rgba(255,190,150,0.35)', 'rgba(255,220,180,0.25)'], sun: { x: 0.25, y: 0.42, r: 7, color: '#ffb347', halo: 'rgba(255,160,80,0.35)' } };
+const NIGHT = { sky: CIELO, rock: ROCA, water: ['#11415e', '#0b2c48'], stars: 1, clouds: ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.05)'], sun: null };
+const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mixColor = (a, b, f) => {
+  if (a.startsWith('rgba') || b.startsWith('rgba')) return f < 0.5 ? a : b;
+  const [x, y] = [hex(a), hex(b)];
+  return '#' + x.map((v, i) => Math.round(v + (y[i] - v) * f).toString(16).padStart(2, '0')).join('');
+};
+const mix = (a, b, f) => ({
+  sky: a.sky.map((c, i) => mixColor(c, b.sky[i], f)),
+  rock: Object.fromEntries(Object.keys(a.rock).map(k => [k, mixColor(a.rock[k], b.rock[k], f)])),
+  water: a.water.map((c, i) => mixColor(c, b.water[i], f)),
+  stars: a.stars + (b.stars - a.stars) * f,
+  clouds: f < 0.5 ? a.clouds : b.clouds,
+  sun: f < 0.5 ? a.sun : b.sun,
+});
+const timeOfDay = t => (t <= 0.5 ? mix(MORNING, SUNSET, t / 0.5) : mix(SUNSET, NIGHT, (t - 0.5) / 0.5));
 const MADERA = { borde: '#3a1d10', riel: '#e6e6f0' };
 const HUMO = ['rgba(255,255,255,0.95)', 'rgba(235,232,245,0.85)', 'rgba(200,196,220,0.7)', 'rgba(160,156,188,0.5)', 'rgba(130,126,160,0.3)'];
 const CHISPAS = ['#fff3a0', '#ffd23f', '#ff8a3d', '#ff2e4a'];
@@ -231,12 +256,16 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   const A = (x, y) => { const [px, py] = aPantalla(c, x, y); return [px / r.px, py / r.px]; };
   const u = ARTE;                        // art pixels per grid unit
   const { W, H } = r;
+  // The time of day (owner's request): the stage's light, from morning to night (timeOfDay)
+  const time = c._time || NIGHT, SKY = time.sky, RK = time.rock;
 
   // The sky, in bands, with stars that twinkle and two clouds drifting by
-  for (let y = 0; y < H; y++) r.rect(0, y, W, 1, CIELO[Math.min(CIELO.length - 1, Math.floor((y / H) * CIELO.length * 1.3))]);
+  for (let y = 0; y < H; y++) r.rect(0, y, W, 1, SKY[Math.min(SKY.length - 1, Math.floor((y / H) * SKY.length * 1.3))]);
+  // The sun (or the moon at night): high in the morning, low and orange at sunset
+  if (time.sun) { const [ax, ay] = [W * time.sun.x, H * time.sun.y]; r.circulo(ax, ay, time.sun.r + 2, time.sun.halo); r.circulo(ax, ay, time.sun.r, time.sun.color); }
   for (let k = 0; k < 26; k++) {
     const x = Math.floor(ruido(k, 1) * W), y = Math.floor(ruido(k, 2) * H * 0.45);
-    if (Math.sin(ahora * (1 + ruido(k, 3) * 2) + k) > -0.3) r.punto(x, y, ruido(k, 4) > 0.5 ? '#fff3a0' : '#ffffff');
+    if (ruido(k, 5) < time.stars && Math.sin(ahora * (1 + ruido(k, 3) * 2) + k) > -0.3) r.punto(x, y, ruido(k, 4) > 0.5 ? '#fff3a0' : '#ffffff');
   }
   // Clouds, each with its own shape (puffs of different sizes drawn once per scene), height and speed;
   // the top of each puff a little lighter
@@ -248,8 +277,8 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   });
   for (const nb of esc.nubes) {
     const x = ((ahora * nb.v + nb.desfase) % (W + nb.ancho + 20)) - nb.ancho - 10;
-    for (const [dx, dy, rr] of nb.puffs) r.circulo(x + dx, nb.y + dy, rr, 'rgba(255,255,255,0.08)');
-    for (const [dx, dy, rr] of nb.puffs) r.circulo(x + dx, nb.y + dy - 1, Math.max(1, rr - 1), 'rgba(255,255,255,0.05)');
+    for (const [dx, dy, rr] of nb.puffs) r.circulo(x + dx, nb.y + dy, rr, time.clouds[0]);
+    for (const [dx, dy, rr] of nb.puffs) r.circulo(x + dx, nb.y + dy - 1, Math.max(1, rr - 1), time.clouds[1]);
   }
 
   // Visitors, only in the game (never on the cover: they are a surprise). `visitas` comes from the game:
@@ -328,8 +357,8 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
 
   // The water, with waves that run and glint
   const [, yAgua] = A(0, c._v.abajo + 0.7);
-  r.rect(0, yAgua, W, H - yAgua, '#11415e');
-  r.rect(0, yAgua + 3, W, H - yAgua, '#0b2c48');
+  r.rect(0, yAgua, W, H - yAgua, time.water[0]);
+  r.rect(0, yAgua + 3, W, H - yAgua, time.water[1]);
   for (let x = 0; x < W; x++) {
     const ola = Math.round(Math.sin(x * 0.35 + ahora * 2.2) * 1.2);
     r.punto(x, yAgua + ola, AGUA[1]);
@@ -482,14 +511,14 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
   // The cliffs: rock with grain, an outline and grass on top
   const [x0, y0] = A(0, 0), [x1] = A(e.ancho, 0);
   const roca = (xa, xb) => {
-    r.rect(xa, y0, xb - xa, H - y0, ROCA.base);
+    r.rect(xa, y0, xb - xa, H - y0, RK.base);
     for (let y = Math.ceil(y0) + 2; y < H; y++) for (let x = Math.floor(xa); x < xb; x++) {
       const n = ruido(x, y);
-      if (n > 0.9) r.punto(x, y, ROCA.claro); else if (n < 0.08) r.punto(x, y, ROCA.oscuro);
+      if (n > 0.9) r.punto(x, y, RK.claro); else if (n < 0.08) r.punto(x, y, RK.oscuro);
     }
   };
   roca(0, x0); roca(x1, W);
-  r.rect(x0 - 1, y0, 1, H - y0, ROCA.borde); r.rect(x1, y0, 1, H - y0, ROCA.borde);
+  r.rect(x0 - 1, y0, 1, H - y0, RK.borde); r.rect(x1, y0, 1, H - y0, RK.borde);
   for (const [xa, xb] of [[0, x0], [x1, W]]) {
     r.rect(xa, y0 - 1, xb - xa, 2, '#6fd42a'); r.rect(xa, y0 - 2, xb - xa, 1, '#9dff3a');
     for (let x = Math.floor(xa); x < xb; x += 3) if (ruido(x, 7) > 0.5) r.punto(x, y0 - 3, '#9dff3a');
@@ -572,11 +601,11 @@ function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null
       r.rect(xa - 1, py - 1, ancho + 2, 2, '#b9aed6');
     } else if (!enOrilla) {
       const ancho = Math.round(u * 0.7), xa = Math.round(px - ancho / 2);
-      r.rect(xa, py, ancho, yAgua - py + 6, ROCA.base);
-      for (let yy = Math.round(py) + 2; yy < yAgua; yy++) for (let xx = xa; xx < xa + ancho; xx++) { const n = ruido(xx, yy); if (n > 0.88) r.punto(xx, yy, ROCA.claro); else if (n < 0.1) r.punto(xx, yy, ROCA.oscuro); }
-      r.rect(xa, py, ancho, 1, ROCA.claro); r.rect(xa - 1, py, 1, yAgua - py, ROCA.borde); r.rect(xa + ancho, py, 1, yAgua - py, ROCA.borde);
+      r.rect(xa, py, ancho, yAgua - py + 6, RK.base);
+      for (let yy = Math.round(py) + 2; yy < yAgua; yy++) for (let xx = xa; xx < xa + ancho; xx++) { const n = ruido(xx, yy); if (n > 0.88) r.punto(xx, yy, RK.claro); else if (n < 0.1) r.punto(xx, yy, RK.oscuro); }
+      r.rect(xa, py, ancho, 1, RK.claro); r.rect(xa - 1, py, 1, yAgua - py, RK.borde); r.rect(xa + ancho, py, 1, yAgua - py, RK.borde);
     } else {
-      r.rect(px - u * 0.35, py, u * 0.7, u * 0.35, ROCA.base); r.rect(px - u * 0.35, py, u * 0.7, 1, ROCA.claro);
+      r.rect(px - u * 0.35, py, u * 0.7, u * 0.35, RK.base); r.rect(px - u * 0.35, py, u * 0.7, 1, RK.claro);
     }
   }
 
@@ -848,6 +877,7 @@ function jugar() {
   P.inicioEtapa = Date.now();
   const e = P.etapas[P.etapa];
   const c = lienzo(e);
+  c._time = timeOfDay(P.etapa / Math.max(1, P.etapas.length - 1));
   const aguja = medidor(picoReferencia(e));
   const aviso = el('p', { class: 'tv-aviso', 'aria-live': 'polite' }, T.aviso.inicio);
   const puntos = el('div', { class: 'tv-puntos', 'aria-hidden': 'true' },
@@ -1046,6 +1076,7 @@ function solucionVista() {
   if (!e?.solucion?.length) return null;
   const vigas = e.solucion.map(([a, b]) => ({ a, b }));
   const c = lienzo(e);
+  c._time = timeOfDay(P.hechas / Math.max(1, P.etapas.length - 1));
   const caja = el('div', { class: 'panel tv-solucion', id: 'solucion' },
     el('p', { class: 'lead' }, fmt(T.solucion, { n: P.hechas + 1 })),
     el('div', { class: 'tv-tablero' }, c),
@@ -1113,4 +1144,4 @@ initSound?.();
 addEventListener('resize', () => { const c = document.querySelector('.tv-lienzo'); if (c?._ajustar && !P.simulando) { c._ajustar(); } });
 portada();
 // For the end-to-end scripts and the owner's console
-window.__trenEnVilo = { P, ETAPAS };
+window.__trenEnVilo = { P, ETAPAS, timeOfDay };
