@@ -1192,9 +1192,9 @@
       "why": "bridge page of the old Spanish URL (D-192)"
     },
     "marketing/splash-clips/capturar.mjs": {
-      "to": "marketing/splash-clips/capture.mjs",
+      "to": "marketing/splash/capture.mjs",
       "phase": 3,
-      "state": "pending"
+      "state": "done"
     }
   }
 }

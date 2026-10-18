@@ -390,7 +390,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **A promotional splash, off by default** (D-351): when the owner turns on a campaign
   (`ACTIVE` in `splash.js`, with `node tools/agents/splash.mjs on <id> | off`), a window over the
   home page tells what is new, with the page darkened behind; each phone sees it once, and a new
-  campaign shows again. Each game in it shows a clip of real play (`marketing/splash-clips/`) and
+  campaign shows again. Each game in it shows a clip of real play (`marketing/splash/`) and
   opens with ▶ Play; the way out is a quiet "Ahora no". It fits a 320×640 screen with three games. `?splash=<id>` previews one;
   `?test` and the scripts never see it. Demo: `/labs/splash/`.
 - **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar, bajo la bajada, sale

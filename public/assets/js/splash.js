@@ -26,7 +26,7 @@ export const SEEN_KEY = 'juegos-de-salon:splash-visto';
  * in the four languages, and its items, each one a game of games.js by id (name, emoji, tagline and
  * link come from there) or its own content (`title`, `text`, `href`). Each item shows a few seconds
  * of play: `video` (a looping MP4, muted) with its `img` as the poster, or just `img` (a still or a
- * GIF). Paths are from the site root; the clips are made with marketing/splash-clips/capturar.mjs.
+ * GIF). Paths are from the site root; the clips are made with marketing/splash/capture.mjs, and each campaign is kept in marketing/splash/campaigns/<id>/ (D-355).
  */
 export const CAMPAIGNS = {
   'tres-juegos-demo': {
