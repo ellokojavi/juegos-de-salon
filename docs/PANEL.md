@@ -334,7 +334,7 @@ de eso, un `401` en ese `fetch` es una señal de que las reglas y el código se 
 
 ```
 public/panel/
-  index.html          Pantalla de entrada y el panel. Solo en español (ver abajo)
+  index.html          Pantalla de entrada y el panel. English only (D-350, see below)
   style.css           Lo específico del panel; el resto sale de base.css
   panel.js            Entrada con Google, lecturas en vivo y dibujo
   aggregate.js        Agregación pura (sin DOM ni Firebase)
@@ -386,8 +386,9 @@ panel, y porque lo de un juego que ya se fue del menú queda guardado igual.
 
 ## Excepciones a los cánones
 
-- **C-3 (idiomas):** el panel es solo en español. No es una pantalla de jugador: lo lee
-  una persona, y mantener tres idiomas ahí es costo sin beneficio.
+- **C-3 (languages):** the panel is **English only** (D-350; Spanish only before it). It is not a
+  player's screen: one person reads it, and keeping several languages there is cost without benefit.
+  Game names come from `name.en` in `games.js`, and dates and numbers are formatted in `en-US`.
 - **C-4 (sonido) y C-6 (memoria de partida):** no aplican; no es un juego.
 
 ## Qué queda fuera de esta versión
