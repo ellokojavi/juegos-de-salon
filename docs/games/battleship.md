@@ -102,7 +102,7 @@ Intro (modos, then the rules below them, D-344) → Setup (nombres, tiro extra) 
   perder la flota, campanita al llegar el turno (espera 650 ms si acaba de sonar un resultado).
 
 ### Resultado
-Ganador, disparos totales y precisión de cada uno, ambas flotas reveladas (con los disparos encima), verificación ✅ del compromiso, desplegable con la secuencia de disparos, Revancha / Cambiar modo / Menú (in One a Day only the card, under the hero, D-343).
+Ganador, disparos totales y precisión de cada uno (when the winner is the player on this phone, against the phone, in a room or in One a Day, the title says "¡Ganaste!" instead of their name, #503), ambas flotas reveladas (con los disparos encima), verificación ✅ del compromiso, desplegable con la secuencia de disparos, Revancha / Cambiar modo / Menú (in One a Day only the card, under the hero, D-343).
 
 ### Interfaz y estilo
 

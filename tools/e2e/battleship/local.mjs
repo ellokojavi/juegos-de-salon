@@ -70,5 +70,17 @@ while (guard++ < 400) {
 // `quieto()` doesn't see it and the shot came out with the screen covered in paper bits (D-76).
 await sleep(6000); await b.shot('14-cpu-result');
 console.log('cpu result:', await b.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent`), '| total shots:', await b.evaluate(`__bn.match().shots.length`));
+// ---- CPU, won: the human only hits, so the title speaks to them, not "¡Ganó Javi!" (#503) ----
+await b.go(`${SITE}/battleship/`); await b.evaluate(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(300);
+await click('#setup-actions .btn'); await sleep(400); await clickText('#place-actions .btn', 'azar'); await click('#place-sail .btn'); await sleep(2500);
+const botCells2 = await shipCells('B'); let hitIdx2 = 0; guard = 0;
+while (guard++ < 400 && hitIdx2 < botCells2.length) {
+  const vv = await bv(); if (vv.phase !== 'play') break;
+  if (vv.shooter !== 'A' || vv.pending) { await sleep(700); continue; }
+  await fireAt(botCells2[hitIdx2++]); await sleep(300);
+}
+await sleep(6000);
+const won = await b.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent`);
+console.log(/^¡Ganaste!/.test(won) && !/Ganó/.test(won) ? '✓' : '✗', 'cpu won:', won);
 console.log('errors:', JSON.stringify(b.errors), JSON.stringify(b.logs));
 b.close();

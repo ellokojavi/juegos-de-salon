@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.178.0 — 2026-10-18
+- **The owner's panel, by domain.** `/panel/` is now read as Summary, Group, Individual, La Copa, Uno al día, Users, Traffic and Health, each with an operational pulse against the period before, a diagnosis and a trend, with the versions marked on every timeline and a CSV of every table. To feed it, the site now counts finished games, replays, shares, how long since the last visit and how often a browser comes back, and keeps a random id per browser to count users and cohorts, with no name or anything else tied to it.
+
+## 0.177.4 — 2026-10-17
+- **Tren en Vilo (lab): long strokes.** A straight drag longer than one beam lays a beam at every grid step, so the whole deck goes in with a single drag.
+
+## 0.177.3 — 2026-10-17
+- **Tren en Vilo (lab): many more crossings.** Each level now draws from 5 to 8 different crossings instead of 2, so a game is one of about 11,000 combinations instead of 32; each one has a readable, solid bridge as its solution.
+
+## 0.177.2 — 2026-10-17
+- **Tren en Vilo (lab): join a beam in the middle of another.** A beam can now start or end in the middle of a two-square beam, and it joins there with a bolt like any other, with no need to lay two short ones.
+
+## 0.177.1 — 2026-10-17
+- **Desenredo's result screen drops the 🧶 card under the score**: it only repeated the score. It
+  still goes in the shared result.
+
+## 0.177.0 — 2026-10-17
+- **La Copa: out after two days in a row without playing.** Whoever lets two days in a row close without playing them (each with its grace day) is out of the cup: their points stay in the table, in grey with 🚪, but they can't play any more days and nobody waits for them. The day before, the board and the reminder warn them, and the admin can bring them back with «Devolver a la copa».
+
+## 0.176.6 — 2026-10-17
+- **Lab keys open at once.** A new key for the lab works the moment it is given, and a removed one stops right away: the keys now live in the database, not in the site's code.
+
+## 0.176.5 — 2026-10-17
+- **Every page is checked to open.** A new end-to-end smoke test opens every page of the site and fails if one throws an error or stays blank; each change runs the least testing that keeps the site safe, by level.
+
+## 0.176.4 — 2026-10-17
+- **Start without scrolling.** On every game's first screen the start button (or the choice of how to play) now comes right after the title, and «How to play» goes below it, so on a small phone you see how to start without scrolling. A test checks it for every game, at two phone sizes and in the four languages.
+
+## 0.176.3 — 2026-10-17
+- **Tren en Vilo (lab): the boat raises the orange flag whenever the rider is in the water.** Also when the wake rider falls, not only when they sink, as on a real wakeboard boat.
+
+## 0.176.2 — 2026-10-17
+- **Tren en Vilo (lab): the gauge fits the scene.** It is 10% smaller, says "Carga" on top, and its plate is the night sky over a strip of water and rock.
+
+## 0.176.1 — 2026-10-17
+- **Tren en Vilo (lab): a clearer strain gauge.** It is bigger, its needle always shows the load right now (back to zero when nothing weighs on the bridge), and the peak is a red arrow outside the dial, with "máx." and its number.
+
+## 0.176.0 — 2026-10-17
+- **Tango: ↩️ Undo.** Under the board, to the left of Clear all, a button takes back the last tap or Clear all, one per tap, down to the start, in La Copa, the standalone game and One a Day. A mistake already counted and a hint stay in the score (the rules say so in the four languages); undoing the tap that just broke a rule forgives it, like tapping that cell again (D-342).
+
+## 0.175.2 — 2026-10-17
+- **Tren en Vilo (lab): more time to read each stage's summary.** It now stays 10 seconds before moving on by itself.
+
+## 0.175.1 — 2026-10-17
+- **La Copa: a day's cover no longer cuts the top bar.** Before playing a day, the top-left button already says "‹ Volver a la copa", so the "🏆 La Copa" chip beside it steps aside; on a 320 px phone (and in German even at 390 px) it was cut to "🏆 …".
+
 ## 0.175.0 — 2026-10-17
 - **💬 Suggestions and comments, everywhere:** at the end of every game (group, solo, minigames, One a Day and La Copa's podium) a quiet link, after the buttons, opens a short form for a suggestion, a comment, a game idea or a problem, with an optional kind. It shows at most once a day and rests for two weeks after you write; the home page footer always has it (D-341, U-38).
 
