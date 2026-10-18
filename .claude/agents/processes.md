@@ -70,8 +70,8 @@ The documentation and usability agents no longer have their own schedule: **you 
 your round, when there is something to review, and when the owner requests it.
 `processes.mjs check` says whom and why: documentation if something entered `main` since its
 `checkedUpTo`; usability if something in `public/` changed since its last dispatch, and once a
-week even if not. You can also launch them outside of that (after a new game, after a big text
-change), saying why.
+week even if not; the game-ideas agent once a week (D-360). You can also launch them outside of
+that (after a new game, after a big text change), saying why.
 
 - **`support`, when `check` shows emails at hola@ (D-318):** "Triage the hola@ inbox
   according to your guide (`.claude/agents/support.md`)." Nothing else in the prompt: never paste
@@ -105,6 +105,17 @@ change), saying why.
   screens it looked at named in its report, its PR with base `main` and tests green (if it fixed
   something), each new dilemma without an equal one in `list --all`, `marketing.mjs check`
   and `og.mjs check` run and its note in the PR if something changed.
+- **`ideas`, weekly round (D-360):** "Do your weekly round according to your guide
+  (`.claude/agents/ideas.md`), from `origin/main` and in your own worktree; PR base `main`." Also
+  when the owner asks you to brainstorm or to investigate a game: the request, in the owner's words,
+  goes in the prompt after the guide. Criteria: `ideas.mjs check` run and its range named in the
+  report; the outcomes of the previous ideas issue recorded (`ideas.mjs list --status proposed`
+  empty unless the owner has not answered, and then no new issue); at most one new issue, with at
+  most three ideas, each with evidence, cost, prototype and proof, opened through `decide` (it
+  carries the `processes` label, so it is one of the decision issues you follow up in step 7: a Yes
+  there is a `queue` task for your next round, and you launch a session to build the prototype as a
+  lab-only PR, D-304); its PR with only `docs/ideas.json`, auto-merge on. It touches no game, no
+  text and no rule: if it did, send it back.
 - When you launch them, record the dispatch (`dispatch <agent> <main commit>`). It goes in
   `docs/processes.json`: a round that dispatched leaves a PR even if it has nothing else (step 9),
   or tomorrow `check` asks for it again. While they run, you go on with your round; at the end

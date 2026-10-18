@@ -7,7 +7,7 @@
  *   node tools/agents/processes.mjs decide <file.json> [--direct]   # opens the one-tap decisions issue
  *   node tools/agents/processes.mjs pattern <key> "what happened" [--commit <sha>]   # records one sighting
  *   node tools/agents/processes.mjs mechanism <key> "what stops it now" --pr <url>
- *   node tools/agents/processes.mjs dispatch <documentation|usability> <commit>   # launched it up to that main commit
+ *   node tools/agents/processes.mjs dispatch <documentation|usability|ideas> <commit>   # launched it up to that main commit
  *   node tools/agents/processes.mjs record --to <commit> [--issue <url>] [--pr <url>] [--note "…"]
  *   node tools/agents/processes.mjs record --queue <#n:d>      # an approved queued task is done
  *   node tools/agents/processes.mjs history
@@ -24,7 +24,8 @@
  *   - the decisions the owner approved as "queued" that are still not done;
  *   - the patterns seen twice or more that still have no mechanism;
  *   - whom to dispatch today (D-276): the documentation agent if something entered main since its
- *     last round, and the usability agent if something in public/ changed since it was last launched.
+ *     last round, the usability agent if something in public/ changed since it was last launched,
+ *     and the game-ideas agent once a week (D-360).
  *
  * `decide` takes `{ title, summary, decisions: [{ question, context?, yes: [actions], no?: [actions] }] }`
  * and opens an issue with a Yes and a No checkbox per decision; checking one carries it out at once
@@ -130,16 +131,17 @@ export function waits(pr, now = Date.now()) {
   return m;
 }
 
-/** The executors (D-276). */
-export const EXECUTORS = ['documentation', 'usability'];
+/** The executors (D-276; `ideas` since D-360). */
+export const EXECUTORS = ['documentation', 'usability', 'ideas'];
 
 /**
  * Whom to dispatch today and why: `[{ agent, reason }]`. `documentation` gets the main commits
  * since its `checkedUpTo`; `usability`, those that touched public/ since its last dispatch (or
  * `null` if it was never launched) and the days since then: once a week it goes anyway.
- * `support`, the emails waiting in the hola@ inbox (D-318).
+ * `support`, the emails waiting in the hola@ inbox (D-318). `ideas`, the days since its last
+ * round (`null` if never): once a week, no more (D-360).
  */
-export function toDispatch({ docCommits, publicCommits, usabilityDays, emails = 0 }) {
+export function toDispatch({ docCommits, publicCommits, usabilityDays, emails = 0, ideasDays = 0 }) {
   const res = [];
   // D-318: the support agent only when hola@ left emails in the inbox
   if (emails > 0) res.push({ agent: 'support', reason: `${emails} email(s) in the hola@ inbox` });
@@ -147,6 +149,9 @@ export function toDispatch({ docCommits, publicCommits, usabilityDays, emails = 
   if (publicCommits === null) res.push({ agent: 'usability', reason: 'it was never dispatched' });
   else if (publicCommits > 0) res.push({ agent: 'usability', reason: `${publicCommits} commit(s) that change public/ since its last dispatch` });
   else if (usabilityDays >= 7) res.push({ agent: 'usability', reason: `a week without a round (${usabilityDays} days)` });
+  // D-360: the game-ideas agent once a week, whatever changed; its round is the owner's time
+  if (ideasDays === null) res.push({ agent: 'ideas', reason: 'it was never dispatched' });
+  else if (ideasDays >= 7) res.push({ agent: 'ideas', reason: `a week since its last round (${ideasDays} days)` });
   return res;
 }
 
@@ -250,6 +255,7 @@ async function check() {
     docCommits: doc.checkedUpTo ? count(`${doc.checkedUpTo}..origin/main`) : 1,
     publicCommits: lastUsability ? count(`${lastUsability.to}..origin/main`, '--', 'public/') : null,
     usabilityDays: lastUsability ? Math.floor((Date.now() - Date.parse(lastUsability.date)) / DAY) : null,
+    ideasDays: m.dispatches.ideas ? Math.floor((Date.now() - Date.parse(m.dispatches.ideas.date)) / DAY) : null,
     emails: await import('./inbox.mjs').then(i => i.count()).catch(e => { console.log(`- (the hola@ inbox could not be read: ${e.message})`); return 0; }),
   });
   for (const d of plan) console.log(`- ${d.agent}: ${d.reason}${d.agent === 'support' ? '' : ` (when launching it: dispatch ${d.agent} ${tip.slice(0, 7)})`}`);

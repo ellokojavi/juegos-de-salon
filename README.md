@@ -708,6 +708,7 @@ node tools/agents/document.test.mjs
 node tools/agents/english.test.mjs
 node tools/agents/feedback-templates.test.mjs
 node tools/agents/feedback.test.mjs
+node tools/agents/ideas.test.mjs
 node tools/agents/inbox.test.mjs
 node tools/agents/labs-key.test.mjs
 node tools/agents/marketing.test.mjs
