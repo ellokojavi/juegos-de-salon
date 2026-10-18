@@ -76,7 +76,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359 |
-| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361 |
+| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-362 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -6975,3 +6975,17 @@ four languages, before players see it, is what the lab is for, and the owner lik
 counting starts (it rewards games people abandon); labelling La Copa or a "New" game as popular.
 **Consequences:** `popularity.test.mjs`, `games.test.mjs` and `tools/e2e/home/lab.mjs` cover it; C-17
 says the new order and the label.
+
+## D-362 · "✨ Nuevo" and "🔥 Populares" as filters, in the lab
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-361 (the home page's experiments, the popular label), D-333 (New), D-142 and D-238 (the filters and ⭐ Favoritos)
+**Decision:** the owner's request: two more chips above the four types, in a row of their own: **✨ Nuevo**
+shows the games that say "New" (`esNuevo`), **🔥 Populares** the three with the label (`populares`).
+Same pill as ⭐ Favoritos; each one shows only when it has games; tapping it again clears it; the link
+keeps it (`?type=new`, `?type=popular`). Texts: Nuevo / Populares, New / Popular, Novo / Populares,
+Neu / Beliebt. **In the lab** (D-361): only with `?picks`, a switch of `/labs/home/` (✨ Filtros). It
+ships together with the popular label, in its own PR, with the usability agent's full pass.
+**Why:** the owner's request; a returning player looking for what is new, or a new one for what others
+play, gets there in one tap. Tried in the lab first, as the owner asked for the label.
+**Consequences:** `tools/e2e/home/lab.mjs` checks the row above the types in the four languages at
+320 px and that each chip filters; C-17 says it.
+
