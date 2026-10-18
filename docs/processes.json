@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "36f30a6",
+  "checkedUpTo": "b7b2fc0",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -283,6 +283,18 @@
         }
       ],
       "mechanism": null
+    },
+    {
+      "key": "changelog-entrada-pisada",
+      "what": "Three PRs from one branch (claude/bold-gates-zf889v: #506, #508, #509) each wrote changelog/<branch>.md; each merge overwrote the previous uncollected entry, so #506 (a minor) and #508 were lost and 0.178.0 went live without the minor bump. Documentation restored them in #515",
+      "seen": [
+        {
+          "date": "2026-10-18",
+          "what": "Three PRs from one branch (claude/bold-gates-zf889v: #506, #508, #509) each wrote changelog/<branch>.md; each merge overwrote the previous uncollected entry, so #506 (a minor) and #508 were lost and 0.178.0 went live without the minor bump. Documentation restored them in #515",
+          "commit": null
+        }
+      ],
+      "mechanism": null
     }
   ],
   "mechanisms": [
@@ -418,6 +430,14 @@
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/494",
       "pr": null,
       "note": "Dispatched documentation (#493) and usability (#491, review of #492); collected 28 changelog entries; backlog #462 moved to #492; #466 asked in #494"
+    },
+    {
+      "date": "2026-10-18",
+      "from": "36f30a6",
+      "to": "b7b2fc0",
+      "issue": null,
+      "pr": null,
+      "note": "Dispatched documentation (#515) and usability (#514), both reviewed. Closed #503 (fix here), #466 (done in #513) and #494. Collected 15 changelog entries."
     }
   ],
   "ownerDecisions": [
