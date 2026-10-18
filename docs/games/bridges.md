@@ -77,7 +77,7 @@ have been crossed (the catalog's bridge, the train looping over it, with its pea
 ## The scene
 
 The day goes by along a game (owner's request): stage 1 is in the morning (blue sky, sun, brown rock),
-the middle ones head into sunset, and the last is at night (`ambienteDe(t)` mixes three palettes, from
+the middle ones head into sunset, and the last is at night (`timeOfDay(t)` mixes three palettes, `MORNING`, `SUNSET` and `NIGHT`, from
 0 = morning to 1 = night). The cover stays at night; the unsolved stage's bridge in the result shows that
 stage's time of day.
 
