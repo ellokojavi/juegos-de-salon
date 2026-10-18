@@ -32,7 +32,7 @@ export const CAMPAIGNS = {
   'tres-juegos-demo': {
     emoji: '🎉',
     kicker: { es: 'Novedades', en: "What's new", pt: 'Novidades', de: 'Neuigkeiten' },
-    title: { es: '¡Tres juegos nuevos!', en: 'Three new games!', pt: 'Três jogos novos!', de: 'Drei neue Spiele!' },
+    title: { es: '¡Upa, papá! Tres juegos nuevos', en: 'Three new games!', pt: 'Três jogos novos!', de: 'Drei neue Spiele!' },
     lead: {
       es: 'Tres desafíos de lógica para jugar solo. Elige uno y empieza.',
       en: 'Three logic puzzles to play on your own. Pick one and start.',
@@ -173,7 +173,9 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   const prevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
   const before = document.activeElement;
-  done.focus({ preventScroll: true });
+  // Focus goes to the window, not to "Ahora no": a focused button shows a ring the owner did not want
+  card.tabIndex = -1;
+  card.focus({ preventScroll: true });
 
   return new Promise(res => {
     const close = () => {
