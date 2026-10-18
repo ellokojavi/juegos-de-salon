@@ -43,9 +43,10 @@ const errorDe = e => (e?.code === 'pin' ? R().loggedOut : R().errNet);
  *
  * `destacado`: la invitación va arriba, antes de jugar, como una tarjeta con borde y un botón
  * "Entrar" a la vista (D-249): plegada sigue siendo una sola fila, para no bajar Empezar (C-8).
- * `leyenda`: una línea bajo el título de la tarjeta (en Uno al día, que guarda la racha).
+ * `leyenda`: una línea bajo el título de la tarjeta (en Uno al día, que guarda la racha). `compacto`:
+ * one line, the legend alone as the title (inside the One a Day card, C-19).
  */
-export function bloqueJugador({ abierto = false, destacado = false, leyenda = '', alTocar = () => {}, nombre: sugerido = '' } = {}) {
+export function bloqueJugador({ abierto = false, destacado = false, compacto = false, leyenda = '', alTocar = () => {}, nombre: sugerido = '' } = {}) {
   const caja = el('div', { class: 'rk-jugador' });
   let mensaje = '';
   const dibujar = () => {
@@ -128,9 +129,9 @@ export function bloqueJugador({ abierto = false, destacado = false, leyenda = ''
             el('button', { type: 'button', class: 'btn btn--ghost btn--sm', onClick: () => { alTocar(); extra.replaceChildren(); pin.value = ''; pin.focus(); } }, T.retry)));
     };
     pin.addEventListener('keydown', e => { if (e.key === 'Enter') b.click(); });
-    const det = el('details', { class: destacado ? 'panel rk-invita rk-invita--destacada' : 'panel rk-invita', ...(abierto || mensaje ? { open: true } : {}) },
+    const det = el('details', { class: destacado ? `panel rk-invita rk-invita--destacada${compacto ? ' rk-invita--compacta' : ''}` : 'panel rk-invita', ...(abierto || mensaje ? { open: true } : {}) },
       destacado
-        ? el('summary', {}, el('span', { class: 'rk-invita-txt' }, el('b', {}, T.joinCard), leyenda ? el('small', {}, leyenda) : null),
+        ? el('summary', {}, el('span', { class: 'rk-invita-txt' }, compacto && leyenda ? el('b', {}, leyenda) : [el('b', {}, T.joinCard), leyenda ? el('small', {}, leyenda) : null]),
           el('span', { class: 'btn btn--cyan btn--sm rk-invita-btn', 'aria-hidden': 'true' }, T.join))
         : el('summary', {}, T.joinTitle),
       el('p', { class: 'muted rk-hint' }, T.joinHint),

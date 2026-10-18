@@ -734,7 +734,6 @@ const ES = {
   // Con espacio que no parte, para que el ‹ no quede solo en la primera línea (U-12)
   backToLabsShort: '‹\u00a0Laboratorio',
   // El juego suelto, abierto desde la portada (D-142)
-  backToMenu: 'Volver al menú',
   practiceHint: 'Es una práctica: no cuenta para ninguna copa y puedes jugarla las veces que quieras.',
   practiceSeed: 'Esta partida es la semilla {semilla}. Si vas a reportar un problema, con ella se repite la misma partida.',
   practiceAgain: 'Jugar de nuevo',
@@ -1519,7 +1518,6 @@ const EN = {
   // Laboratorio y práctica
   backToLabs: '🧪 Back to the lab',
   backToLabsShort: '‹\u00a0Lab',
-  backToMenu: 'Back to the menu',
   practiceHint: 'It\'s practice: it doesn\'t count for any cup and you can play it as many times as you like.',
   practiceSeed: 'This game is seed {semilla}. If you\'re reporting a problem, it replays the exact same game.',
   practiceAgain: 'Play again',
@@ -2303,7 +2301,6 @@ const PT = {
   // Laboratorio y práctica
   backToLabs: '🧪 Voltar ao laboratório',
   backToLabsShort: '‹\u00a0Laboratório',
-  backToMenu: 'Voltar ao menu',
   practiceHint: 'É um treino: não conta para nenhuma copa e dá para jogar quantas vezes quiser.',
   practiceSeed: 'Esta partida é a semente {semilla}. Se for relatar um problema, com ela se repete a mesma partida.',
   practiceAgain: 'Jogar de novo',
@@ -3087,7 +3084,6 @@ const DE = {
   // Laboratorio y práctica (D-101)
   backToLabs: '🧪 Zurück zum Labor',
   backToLabsShort: '‹ Labor',
-  backToMenu: 'Zurück zum Menü',
   practiceHint: 'Das ist eine Übungsrunde: Sie zählt für keinen Pokal, und du kannst sie so oft spielen, wie du willst.',
   practiceSeed: 'Diese Partie hat den Seed {semilla}. Wenn du ein Problem meldest, lässt sich damit genau diese Partie wiederholen.',
   practiceAgain: 'Nochmal spielen',

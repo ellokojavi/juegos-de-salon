@@ -107,7 +107,7 @@
     import { gameById } from '../assets/js/games.js';
     import { mmss } from '../cup/engine.js';
     import { estado, porJuego, juegoDia, faltaParaManana, LANZAMIENTO, COMODINES_MAX } from '../assets/js/uno-al-dia.js';
-    import { fmt, tirarHoy, compartirHoy, jugarOtro, tarjetaInvitar, tarjetaDesafio } from '../assets/js/uno-al-dia-ui.js';
+    import { fmt, tirarHoy, compartirHoy, jugarOtro, tarjetaInvitar, tarjetaDesafio, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
     import { UNO_AL_DIA } from '../assets/js/records.js';
 
     trackVisit(); // el tráfico del sitio (D-208)
@@ -164,7 +164,9 @@
         hoy.append(el('p', {}, fmt(T.hoyListo, { juego: `${juegoDia(e.dia.j)?.emoji || JC[e.dia.j]?.emoji || '🎲'} ${nombreDe(e.dia.j)}`, s: e.dia.s })), proximo,
           el('div', { class: 'uad-acciones' },
             compartirHoy({ lang, fecha: e.hoy, dia: e.dia, alTocar: tap, mmss }),
-            el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)));
+            el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)),
+          // The same replay the game's card offers (C-19)
+          el('a', { class: 'link-btn', id: 'btn-uad-repetir', href: `../${rutaHoy(e.dia.j)}` }, T.repetir));
         pagina.append(hoy);
       }
 

@@ -471,6 +471,40 @@ Los nombres de antes se siguen leyendo como alias: un link que ya circula no se 
 
 ---
 
+## C-19 · The way out of a result screen
+
+Every end screen (a game's result, a Cup day, the Cup's podium) offers the exits that are right at
+that moment, and only those, in the same order everywhere (D-343):
+
+| Context | Main action | Secondary | Exits |
+|---|---|---|---|
+| A Cup day | **Back to the board** | Share · next-day notice | none: the board is the Cup's home |
+| The Cup's podium | **Share the summary** | My days, the table | **🏠 Back to the menu**, under the podium; "Leave this Cup" stays a quiet link |
+| One a Day (any game) | **Share** | 🎲 Play another · Replay today's | **📅 Back to One a Day**; the menu is the header's ‹ (one way to it, not two) |
+| A game played on its own | **Play again** / Rematch | Share · Change mode | Back to the menu (or to the lab) |
+
+- **Blocks in this order:** the result (emoji, title, score, place) → the context (the One a Day
+  card) → the actions → the exits → the long detail, folded or below (breakdown, words, fleets,
+  history) → rankings → one feedback link, 🐞 or 💬, last (U-38).
+- **The main action and the exits show without scrolling** at 390×812 and at 320 px, in the four
+  languages (C-8): measured, not guessed (`getBoundingClientRect().bottom <= innerHeight`). What
+  goes above them (the Sign in offer inside the One a Day card) is one line (`compacto`).
+- **One primary (yellow) button per view**: the rest are cyan or ghost. A card that offers
+  something extra under a result (the Cup's next-day notice) does not compete with it.
+- **No exit twice:** where the header's ‹ already goes to the menu, the result does not add a
+  second "back to the menu" next to another exit (One a Day).
+- **The exits come from `public/assets/js/fin.js`** (`salidasFin(contexto)`): the same words and
+  look in every game. A game does not build its own "back to the menu" for these contexts.
+- **One a Day is one card in every game**: `tarjetaResultado` (`uno-al-dia-ui.js`) carries its
+  actions and exits, and `ponerTarjeta` puts it right under the hero. In today mode the game adds
+  no buttons of its own: no rematch (#226), no change mode, no second menu button.
+- **Never offered at the wrong moment:** play again in a Cup day (it is played once, U-21), a
+  link to La Copa from One a Day (a Cup is joined by invitation), the menu inside a running Cup
+  (the header's ‹ already goes there).
+- **A test stops it:** `node public/assets/js/fin.test.mjs`.
+
+---
+
 ## Lista de chequeo antes de dar por listo un juego
 
 - [ ] Los modos que ofrece (los tres, si es para dos) funcionan y la partida se puede retomar en **todos** (C-5, C-6).
@@ -490,6 +524,7 @@ Los nombres de antes se siguen leyendo como alias: un link que ya circula no se 
 - [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17). A new one brings `nuevoDesde` for its "New" label (D-333).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
 - [ ] Sus URL van en inglés: carpeta, parámetros y valores, leídos con `parametros.js`, con los nombres de antes como alias (C-18).
+- [ ] Its result screen offers the exits of C-19 for each context it can be played in (on its own, One a Day, La Copa), from `fin.js`, in the C-19 order.
 - [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).
 - [ ] El panel lo muestra sin haberlo tocado: `node public/panel/adapta.test.mjs` en verde y una mirada a `node tools/e2e/look.mjs panel data` (C-16).
 - [ ] Capturas del README rehechas y miradas, y `python3 tools/release/readme.py check` en verde (C-13).
