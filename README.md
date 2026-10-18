@@ -663,6 +663,7 @@ node public/labs/code/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
+node marketing/splash/campaigns.test.mjs
 node public/assets/js/arrastre.test.mjs
 node public/assets/js/buzon.test.mjs
 node public/assets/js/compartir.test.mjs
@@ -843,7 +844,7 @@ tools/
   agents/                     dilemmas.mjs (usability dilemmas as issues, D-132), decision.mjs (reserves decision numbers, so two sessions never take the same D-n, D-301), document.mjs (the documentation agent, D-172), clean-worktrees.mjs (removes merged, empty and abandoned worktrees, leftover test output and stale local branches, at session start and in the daily process round, D-218, D-252, D-315), processes.mjs (the process agent, D-273), approve.mjs (one-tap Yes/No decisions in issues, D-273), feedback.mjs (players' 🐞 reports as issues, D-275, and the email reply to whoever left an address, with feedback-templates.mjs and send-mail.py, D-317), inbox.mjs (the hola@ inbox, for the support agent: list, ingest as a feedback report, or skip, signed in as the inbox user, D-318), labs-key.mjs (gives or takes away a person's own key to the lab, D-284), covers.mjs (shows the cover of every game a PR touches and warns when a game changed but its cover did not, U-36), splash.mjs (the switch of the home page's promotional splash: list, on <id> [--until], off, D-351)
   cloudflare/                 inbox-worker.js (the Cloudflare Email Worker behind hola@juegosdesalon.cl: forwards a copy to the owner and keeps the text in Firebase buzon/; pasted in the Cloudflare dashboard, D-318)
   e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here. groups.mjs splits them into even groups for CI (D-307), affected.mjs keeps only the scripts whose pages load what a PR changed (D-329), already-tested.mjs lets publishing skip what already passed in the PR (D-308), and output.mjs picks each script's output folder, so a missing argument never leaves screenshots in the working copy (D-315)
-marketing/                  The promo video and its memory, and splash-clips/ (capturar.mjs records the splash's few seconds of real play per game, D-351)
+marketing/                  The promo video and its memory, and splash/ (every splash campaign with its screenshots, and capture.mjs for its clips, D-351, D-355)
 .claude/                    The project's agents (usability, documentation, processes, support) and skills
 ```
 

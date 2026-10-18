@@ -277,7 +277,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   default. `node tools/agents/splash.mjs list | on <id> [--until YYYY-MM-DD] | off` rewrites the
   `ACTIVE` line of `public/assets/js/splash.js`; it reaches players through a PR like any change.
   `?splash=<id>` previews a campaign, `/labs/splash/` is the demo, and the clips are recorded with
-  `marketing/splash-clips/capturar.mjs` (its README).
+  `marketing/splash/capture.mjs`. Each campaign is kept in `marketing/splash/campaigns/<id>/` (its README), and a campaign that changes gets the usability agent's full pass before merging (D-355).
 - **Weekly report** (D-352): every Sunday the app's scheduled task `weekly-report` runs
   `node tools/reports/weekly.mjs --send`: the week that ended on Saturday, with the panel's numbers,
   as a PDF in `~/Documents/Juegos de Salón/Weekly reports/` and emailed to the owner.
