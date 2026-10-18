@@ -275,7 +275,7 @@ export const pasarDia = meta => moverInicio(meta, sumarDias(meta.start, -1));
 export function cerrarEn(meta, fin) {
   if (!fin || fin >= meta.end) return meta;
   const win = {};
-  for (const [d, w] of Object.entries(meta.win)) win[d] = { a: w.a, b: Math.min(w.b, fin), h: Math.min(w.h, fin) };
+  for (const [d, w] of Object.entries(meta.win)) if (w) win[d] = { a: w.a, b: Math.min(w.b, fin), h: Math.min(w.h, fin) };
   return { ...meta, win, end: fin, joinUntil: Math.min(meta.joinUntil ?? fin, fin), fin };
 }
 
