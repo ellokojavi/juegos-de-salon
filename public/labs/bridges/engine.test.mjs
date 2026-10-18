@@ -1,6 +1,6 @@
 // Tren en Vilo (lab): the physics is tuned so a bare deck falls and a truss holds, in every stage
 import assert from 'node:assert/strict';
-import { ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './engine.js';
+import { unirViga, puntosMedios, enMedio, costo as costoDe, ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './engine.js';
 import { readFileSync } from 'node:fs';
 
 const V = (a, b) => ({ a, b });
@@ -56,6 +56,18 @@ assert.ok(puntajePartida(topes.slice(0, 4), TIEMPO_S).total < puntajePartida(top
 assert.equal(puntajePartida(minimos.slice(0, 2), 60).rapidez, 4, 'speed scales with the stages passed: 10 × 2/5');
 const p = puntajePartida([8, 14], 200);   // stage 1: 2 of 3 spare beams saved; stage 2: at its budget
 assert.equal(p.ahorros[0].fraccion, 2 / 3); assert.equal(p.ahorros[1].fraccion, 0);
+// Joints in the middle of a beam: ending inside one splits it there; a new beam over a joint is split at it
+{
+  const larga = { a: [0, 0], b: [2, 0] };
+  assert.ok(enMedio(larga, [1, 0]) && !enMedio(larga, [0, 0]) && !enMedio(larga, [1, 1]));
+  assert.deepEqual([...puntosMedios([larga, { a: [0, 0], b: [1, 2] }])], ['1,0'], 'only grid points inside a beam');
+  const unida = unirViga([larga], [1, 0], [1, 1]);
+  assert.deepEqual(unida.map(v => `${v.a}>${v.b}`).sort(), ['0,0>1,0', '1,0>1,1', '1,0>2,0'], 'the long beam splits where the new one starts');
+  const e = { madera: true };
+  assert.equal(costoDe(e, unida), costoDe(e, [larga, { a: [1, 0], b: [1, 1] }]), 'splitting keeps the wood');
+  const sobre = unirViga([{ a: [1, 0], b: [1, 1] }], [0, 0], [2, 0], new Set(['1,0']));
+  assert.deepEqual(sobre.map(v => `${v.a}>${v.b}`).sort(), ['0,0>1,0', '1,0>1,1', '1,0>2,0'], 'a new beam over a joint joins it');
+}
 // The catalog of crossings (tools/generators/bridges.mjs): each one has a solution that passes, at its
 // minimum and within its budget, a bare deck that falls, and the level's spare beams
 {
