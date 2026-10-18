@@ -130,7 +130,9 @@ export function tarjetaResultado({ lang, fecha, primera, dia, raiz = '', alTocar
   const T = textos(lang).uad;
   const e = estado();
   const n = e.racha;
-  const hoyLinea = el('p', { style: 'margin:0', id: 'uad-hoy-puntos' }, primera ? fmt(T.hoyPuntos, { s: dia.s }) : fmt(T.practica, { s: dia.s }));
+  // The score is the result's hero: the card only says it when it is not today's (practice), or how it
+  // compares, once the network says (C-19)
+  const hoyLinea = el('p', { style: 'margin:0', id: 'uad-hoy-puntos', hidden: primera }, primera ? '' : fmt(T.practica, { s: dia.s }));
   // Lo que depende de la red (el porcentaje, el duelo, entrar, invitar, el ranking) llega después
   const comodin = lineaComodin(e, fecha, lang);
   const red = el('div', { class: 'uad-red', id: 'uad-red' });
@@ -191,7 +193,7 @@ async function nombres() {
  * La tarjeta "👋 Invita a un amigo": qué se gana (un comodín, si tiene jugador y menos de 2; si no
  * tiene, que entrando lo gana) y el botón, que manda un texto en primera persona con su dato.
  */
-export function tarjetaInvitar({ lang, alTocar }) {
+export function tarjetaInvitar({ lang, alTocar, plegada = false }) {
   const T = textos(lang).uad;
   const linea = el('p', { class: 'muted', style: 'margin:0', id: 'uad-inv-linea' });
   const b = el('button', { type: 'button', class: 'btn btn--cyan', id: 'btn-uad-invitar' }, T.invitar);
@@ -213,7 +215,10 @@ export function tarjetaInvitar({ lang, alTocar }) {
     linea.textContent = !con ? T.invEntrar : e.comodines < COMODINES_MAX ? T.invComodin : '';
     linea.hidden = !linea.textContent;
   }).catch(() => { linea.hidden = true; });
-  return el('div', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('p', { class: 'lead', style: 'margin:0' }, T.invTitulo), linea, b);
+  // Under a result it goes folded (C-19): the streak and Sign in already speak above; /today/ shows it open
+  return plegada
+    ? el('details', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('summary', { class: 'lead' }, T.invTitulo), linea, b)
+    : el('div', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('p', { class: 'lead', style: 'margin:0' }, T.invTitulo), linea, b);
 }
 
 /**
@@ -228,7 +233,7 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alToca
     // Entrar, lo primero: lo de abajo espera a la red, y la invitación no tiene por qué esperar
     const conRanking = rankingsVisibles();
     const { bloqueJugador, bloqueRanking } = conRanking ? await import('./ranking.js') : {};
-    let invitar = conRanking ? tarjetaInvitar({ lang, alTocar }) : null;
+    let invitar = conRanking ? tarjetaInvitar({ lang, alTocar, plegada: true }) : null;
     const ranking = conRanking ? bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar }) : null;
     if (conRanking && !(await R.tengoJugador())) {
       const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, bloqueJugador({ destacado: true, compacto: true, leyenda: T.guardaRacha, alTocar }));
@@ -240,7 +245,7 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alToca
           if (!yo) return;
           off(); entrar.remove();
           R.sincronizar().catch(() => {}).then(() => {
-            const nueva = tarjetaInvitar({ lang, alTocar });
+            const nueva = tarjetaInvitar({ lang, alTocar, plegada: true });
             invitar.replaceWith(nueva); invitar = nueva;
             ranking.recargar?.();
           });
@@ -265,7 +270,7 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alToca
     }
     if (primera) {
       const p = await R.porcentajeHoy(fecha, dia.s);
-      if (p != null) hoyLinea.textContent = fmt(T.pct, { s: dia.s, p });
+      if (p != null) { hoyLinea.textContent = fmt(T.pct, { p }); hoyLinea.hidden = false; }
     }
     if (conRanking) red.append(invitar, ranking);
   } catch (_) { /* sin red, la tarjeta queda con lo del celular */ }
