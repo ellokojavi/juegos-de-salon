@@ -13,6 +13,7 @@
  *                                   si trae el mismo hash que jugadorKeys (como en La Copa, D-96).
  *   records/<tabla>/<periodo>/<jid> { s, ms, k, at, n }: el mejor, y solo si mejora.
  *   torneoPodios/<código>           el podio de una copa terminada, para el medallero.
+ *                                   `p/<pid>/j` is signed later by that cup player (D-358).
  *   jugadorCopas/<jid>/<código>     { p, at }: las copas en que está, como el jugador `p` de cada
  *                                   una (D-220). Solo la leen sus celulares.
  *   unoAlDia/<jid>/<n>              { j, s, ms, at, w? }: el primer intento de Uno al día del día `n`
