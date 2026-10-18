@@ -77,7 +77,7 @@ en `players/<pid>/j`. Con eso: los de la copa que también lo están pasan a ser
 los rankings; cada día jugado cuenta para la pestaña **Copa** del ranking de ese juego; y cuando la
 copa termina, el primero que la abre guarda su podio en `torneoPodios/<código>`, del que sale el
 medallero de **Campeones de La Copa** al final de la portada. A win by name alone (without a player) joins the
-player with that name when exactly one has it (D-357). El PIN de la copa sigue siendo aparte.
+player with that name when exactly one has it (D-357). With a player on the phone there is no cup PIN (D-359, below).
 Las copas del laboratorio no cuentan.
 
 **The usual name and PIN (D-358).** With no player on the phone, whoever creates, joins or sits in a
@@ -87,6 +87,14 @@ as above. A hint under the PIN says it. Nothing is created and a PIN that opens 
 nothing. When a signed-in player sits in a finished cup whose podium was saved without them, their
 jid is written into `torneoPodios/<code>/p/<pid>/j`, once; the rules accept it only from a phone
 seated as that cup player.
+
+**No cup PIN with a player (D-359).** With a player signed in on the phone, La Copa asks for no cup
+PIN: creating or joining hides the PIN fields (a line says the player stands in for them) and the cup
+keeps a random key for that cup player that nobody needs. Opening a cup where this phone's player is
+linked to one of its players seats the phone at once; on "Ya estoy inscrito", picking that player
+needs no PIN. The seat carries the jid, and the rules accept it only if that cup player is linked to
+it and this phone is seated as that player. Without a player, everything is as before: name and cup
+PIN.
 
 ### Admin
 
