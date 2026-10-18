@@ -221,7 +221,7 @@ await test('out of the cup (D-347): the deadline warns before, and whoever is ou
   const q = { aaaaaa: { [S1]: { dia: true, plazo: true, at: 0 } } };
   // Ana missed day 1: if she doesn't play day 2 before it closes, she is out
   const due = cupNotifications({ code: 'KQRST', cup, wants: q, subs, now: onDay(3, 20.1) });
-  assert.equal(due.find(x => x.kind === 'plazo').notification.body, '⏳ Te quedan 4 horas para jugar el día 2. Ya te perdiste el anterior: si no lo juegas, quedas fuera de la copa.');
+  assert.equal(due.find(x => x.kind === 'plazo').notification.body, '⏳ Te quedan 4 horas para jugar el día 2. Si no lo juegas, quedas fuera de la copa: ya te perdiste el anterior.');
   // Days 1 and 2 closed without her: day 4's notification no longer comes
   assert.equal(cupNotifications({ code: 'KQRST', cup, wants: q, subs, now: onDay(4, 10) }).length, 0);
   // The admin brought her back: it comes again
