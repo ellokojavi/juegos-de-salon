@@ -17,7 +17,7 @@
 import { param, tiene } from './parametros.js';
 
 /** The campaign that is on, or null. `until` (optional, inclusive) turns it off by itself. */
-export const ACTIVE = null;
+export const ACTIVE = { id: 'tres-juegos-demo', until: '2026-10-23' };
 
 export const SEEN_KEY = 'juegos-de-salon:splash-visto';
 
