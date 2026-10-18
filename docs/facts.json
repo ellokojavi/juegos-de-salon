@@ -1,5 +1,5 @@
 {
-  "version": "0.180.0",
+  "version": "0.181.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1008,6 +1008,7 @@
     "public/timeline/rules.js"
   ],
   "tests": [
+    "marketing/splash/campaigns.test.mjs",
     "public/assets/js/arrastre.test.mjs",
     "public/assets/js/buzon.test.mjs",
     "public/assets/js/compartir.test.mjs",
@@ -1164,6 +1165,7 @@
     "share-room.mjs",
     "smoke.mjs",
     "spacing-common.mjs",
+    "splash/languages.mjs",
     "timeline/chat.mjs",
     "timeline/choice.mjs",
     "timeline/decks.mjs",

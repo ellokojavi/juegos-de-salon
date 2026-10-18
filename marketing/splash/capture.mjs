@@ -3,7 +3,7 @@
 // opens its page with a fixed seed, starts, and plays the solution slowly while it shoots the board
 // about 12 times a second; ffmpeg turns the frames into a small looping MP4 and its poster.
 //
-//   SITE=http://localhost:8771 node marketing/splash-clips/capturar.mjs [routes|plots|paint-mines]
+//   SITE=http://localhost:8771 node marketing/splash/capture.mjs [routes|plots|paint-mines]
 //
 // Output: public/assets/splash/<game>.mp4 and <game>.jpg (the last frame: the board solved).
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';

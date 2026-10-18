@@ -42,7 +42,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   } else if (cmd === 'on') {
     if (!CAMPAIGNS[id]) { console.error(`✗ No campaign "${id}". Ids: ${Object.keys(CAMPAIGNS).join(', ')}`); process.exit(1); }
     writeFileSync(FILE, rewrite(readFileSync(FILE, 'utf8'), activeLine(id, until)));
-    console.log(`On: ${id}${until ? ` until ${until}` : ''}. It reaches players when this change is merged and published.`);
+    console.log(`On: ${id}${until ? ` until ${until}` : ''}. It reaches players when this change is merged and published, after the usability agent's full pass of the campaign (D-355).`);
   } else if (cmd === 'off') {
     writeFileSync(FILE, rewrite(readFileSync(FILE, 'utf8'), activeLine(null)));
     console.log('Off. It disappears when this change is merged and published.');

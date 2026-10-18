@@ -47,6 +47,13 @@ English. Player-facing texts stay in the app's four languages (C-3), and you rev
      is a game that changed with the old landing page). Not optional: it is what slips through.
      The start button above the fold (U-39) is checked by `landing-fold.mjs` in CI; if it goes
      red, the fix is moving text after the button or shrinking the cover, never a smaller button.
+  6. **A splash campaign (D-355):** if `covers.mjs check` prints 📣, the PR turns on or changes a
+     campaign of the home page's splash, and it gets a **full pass whatever the stage**: it is the
+     first thing every player sees. `node tools/e2e/look.mjs splash <id>` in the four languages at
+     390 and 320 px: the kicker, title and lead say what is new and why to try it (U-1, U-18), every
+     item's clip plays and its name and ▶ open the right game, "Ahora no" and ✕ close it, and nothing
+     is cut or scrolls at 320×640. Its screenshots in `marketing/splash/campaigns/<id>/` are retaken
+     if the texts changed.
   You do not run what GitHub already runs on the PR (all scripts in `tools/e2e/ci.mjs`, the
   `*.test.mjs` and `og.mjs check`): if the `End to end` check is red, look at what failed there.
   Marketing (point 6) belongs to the round, not the PR. You run at the same time as the

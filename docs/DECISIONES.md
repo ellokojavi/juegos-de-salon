@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
@@ -6658,7 +6658,7 @@ language there would only double the texts.
 **Consequences:** the panel's tests expect English; PANEL.md's exception to C-3 says English only.
 
 ## D-351 · A promotional splash over the home page, off by default and seen once
-**Date:** 2026-10-18 · **Status:** current · **Relation:** extends C-17 (the home page)
+**Date:** 2026-10-18 · **Status:** amended by D-355 · **Relation:** extends C-17 (the home page)
 **Context:** the owner wants to tell players about what is worth telling (three new games, a new
 mode, a novelty) with a promotional window over the home page: most of the screen, the page
 darkened behind, images and a link to each thing. It must not break the experience: it is not
@@ -6676,7 +6676,7 @@ phone the items become rows and the texts are cut to two lines, so three items f
 screen without scrolling; with more, the window scrolls inside itself. **Each item shows a few
 seconds of real play** (the owner's request, on seeing the first version with the link cards: they
 repeated the texts): a muted looping MP4 of the board being solved, recorded from the game itself
-in headless Chrome by `marketing/splash-clips/capturar.mjs` (360 px, 25–50 KB each), with the solved
+in headless Chrome by `marketing/splash-clips/capturar.mjs` (now `marketing/splash/capture.mjs`, D-355) (360 px, 25–50 KB each), with the solved
 board as its poster, still under reduced motion. **Each item is the way in** (also the owner's
 request: the first button only closed the window): the clip, the name and ▶ Play open the game; the
 way out is a quiet "Ahora no" under them, the ✕, the backdrop or Esc. The demo is
@@ -6688,7 +6688,8 @@ rules for a switch used a few times a year); showing it on every visit or every 
 the experience the owner asked to protect); a separate page (players arrive at the home page).
 **Consequences:** turning it on or off takes a publish (minutes, with auto-merge). A phone that
 clears its data sees the campaign again. A new game in a campaign needs its clip recorded (one
-entry in `capturar.mjs`). Views and clicks are not counted yet.
+entry in `capturar.mjs`). Views and clicks are not counted yet. **Amended by D-355**: every
+campaign gets a full usability pass before it goes live and is kept in `marketing/splash/`.
 
 ## D-352 · A weekly report, as a PDF on disk and by email
 **Date:** 2026-10-18 · **Status:** current · **Relation:** builds on D-348 (the panel's accounts) and D-317 (send-mail.py)
@@ -6779,3 +6780,26 @@ every open PR and could break links and published assets); leaving it to whoever
 (that is what stalled it).
 **Consequences:** the proposals in `docs/english-renames.json` are a starting point: whoever renames
 a part reads its proposal and fixes it if it is wrong before `git mv` (`ADD-GAME.md`, `ONE-A-DAY.md`).
+
+## D-355 · A splash campaign passes usability before it goes live, and is kept in marketing
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-351; builds on D-132 (the usability agent), D-178 (marketing assets) and D-304 (how much usability a PR gets)
+**Context:** the first campaign (`tres-juegos-demo`) went live in a one-line PR, without the usability
+agent: its texts and clips are the first thing every player sees, and nobody had read them in the four
+languages. The owner asked that every future splash pass the usability review, and that the
+campaigns made be kept in a folder of their own inside `marketing/`.
+**Decision:** a PR that turns a campaign on or changes one gets a **full usability pass of that
+campaign, whatever its stage**. It is mechanical, not a memory: `covers.mjs check` reads the diff of
+`splash.js` and prints 📣 with the campaign and its texts in the four languages; the usability agent's
+step 6 says what to look at; `tools/e2e/paths.mjs` gives each campaign a screen (`look.mjs splash <id>`),
+so the language tests go through every campaign too; and `splash.mjs on` reminds it. Turning a
+campaign off is not reviewed: it shows nothing new. **`marketing/splash/`** is the asset's memory:
+its README (how a campaign is made), `capture.mjs` and `clips.md` (moved from `marketing/splash-clips/`),
+and `campaigns/<id>/` for each campaign, with a README (what, dates, PR, how it went) and its
+screenshots at 390 px in the four languages; `marketing/splash/campaigns.test.mjs` fails if a
+campaign in `CAMPAIGNS` has no folder.
+**Why:** a rule that only lives in a document is what let the first campaign through; a 📣 line in
+the check the agent already runs, and a test, make it hard to skip.
+**Alternatives discarded:** a CI check that blocks the merge until someone ticks a box (one more gate
+for a few PRs a year); reviewing only the texts (the clips and links fail too).
+**Consequences:** turning on a campaign is no longer a one-minute PR: it waits for the usability
+agent. A new campaign needs its folder before its PR passes the tests.
