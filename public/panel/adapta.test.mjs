@@ -76,7 +76,7 @@ const fuentes = ['public/panel/panel.js', 'public/panel/aggregate.js', 'public/p
 for (const [ruta, src] of fuentes) {
   for (const id of GAME_IDS) assert.ok(!src.includes(`'${id}'`), `${ruta} nombra el juego ${id}: los juegos salen de games.js (C-16)`);
   for (const m of MODE_IDS) assert.ok(!src.includes(`'${m}'`), `${ruta} nombra el modo ${m}: los modos salen de games.js (C-16)`);
-  for (const l of LANGS.filter(x => x !== 'es')) assert.ok(!src.includes(`'${l}'`), `${ruta} nombra el idioma ${l}: el panel es solo en español y los idiomas salen de i18n.js`);
+  for (const l of LANGS.filter(x => x !== 'es' && x !== 'en')) assert.ok(!src.includes(`'${l}'`), `${ruta} names the language ${l}: the panel is English only (D-350) and languages come from i18n.js`);
 }
 const html = leer('public/panel/index.html');
 assert.match(html, /<select id="env"><\/select>/, 'los entornos los pone panel.js, no el HTML');
