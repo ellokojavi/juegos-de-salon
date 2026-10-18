@@ -767,9 +767,11 @@ function renderResult(v) {
   if (!already && S.mode !== 'online') trackFinish({ ganador: M.names[v.winner] });
   const meRole = S.mode === 'cpu' ? 'A' : (S.mode === 'online' ? S.role : null);
   const title = $('#result-title'), sub = $('#result-sub'), trophy = $('#result-trophy');
-  title.textContent = fmt(T.winTitle, { name: M.names[v.winner] });
+  // The player on this phone won: say it to them, not "Jugador 1 wins!" (#503)
+  const iWon = meRole && meRole === v.winner;
+  title.textContent = iWon ? T.youWin : fmt(T.winTitle, { name: M.names[v.winner] });
   const stats = r => { const mine = repliesBy(r); const hits = mine.filter(s => s.result !== 'agua').length; return fmt(T.stats, { shots: mine.length, acc: mine.length ? Math.round(100 * hits / mine.length) : 0 }); };
-  sub.textContent = (meRole ? (meRole === v.winner ? T.youWin : T.youLose) + ' · ' : '') + stats(v.winner);
+  sub.textContent = (meRole && !iWon ? T.youLose + ' · ' : '') + stats(v.winner);
   trophy.textContent = meRole && meRole !== v.winner ? '😵' : '🏆';
   const fleets = $('#result-fleets'); fleets.innerHTML = '';
   for (const r of ['A', 'B']) {
