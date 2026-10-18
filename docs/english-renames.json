@@ -1190,6 +1190,11 @@
       "phase": 4,
       "state": "keep",
       "why": "bridge page of the old Spanish URL (D-192)"
+    },
+    "marketing/splash-clips/capturar.mjs": {
+      "to": "marketing/splash-clips/capture.mjs",
+      "phase": 3,
+      "state": "pending"
     }
   }
 }
