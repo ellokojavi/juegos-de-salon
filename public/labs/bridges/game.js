@@ -38,9 +38,9 @@ const T = {
   nombre: 'Tren en Vilo',
   lema: 'Arma un puente que aguante el tren.',
   como: [
-    ['🌉', 'Arrastra de un punto a otro para tender una viga. Tócala para quitarla.'],
+    ['🌉', 'Arrastra de un punto a otro para tender vigas. Toca una para quitarla.'],
     ['🚂', 'Toca Probar: cruza el tren. Si una viga se estira de más, se corta.'],
-    ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con pocas vigas. Suman las etapas que pasa el tren, las vigas que te sobran y la rapidez.`],
+    ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con poca madera. Suman las etapas que pasa el tren, la madera que te sobra, la solidez y la rapidez.`],
   ],
   empezar: '🚂 Empezar', aJugar: '¡A construir!',
   etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', madera: 'Madera: {n} de {max} m', carga: 'Tren {x} más pesado', cargaNormal: 'Tren de peso normal',
@@ -48,7 +48,7 @@ const T = {
   rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   aviso: {
     inicio: 'Arrastra desde un punto marcado: las orillas o una viga que ya pusiste.',
-    larga: 'Muy larga: una viga mide hasta 2 cuadros.', fuera: 'Fuera del área de construcción.',
+    larga: 'Ese trazo no se parte en vigas: prueba uno más corto o más recto.', fuera: 'Fuera del área de construcción.',
     repetida: 'Ya hay una viga ahí.', presupuesto: 'No te quedan vigas: quita alguna.', sinMadera: 'No te alcanza la madera: quita alguna viga.', suelta: 'Empieza en un punto marcado.',
     quitada: 'Viga quitada.', borrado: 'Borraste el puente: ↩ Deshacer lo trae de vuelta.',
     cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.', cortada: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
