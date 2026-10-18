@@ -1,14 +1,14 @@
 {
-  "docs/screenshots/battleship/04-pase.png": {
-    "sha256": "90ba9a3472591ca6ad188efde0774e0cfd0d2e884a9ea1903f9760601f257eec",
-    "date": 1792238796
-  },
   "docs/screenshots/generala/07-servida.png": {
     "sha256": "9cb69b2df1ad237fea02641558f32c22e80d3844433cb131390df4cacb695bd4",
-    "date": 1792238366
+    "date": 1792324938
   },
-  "docs/screenshots/julep/09-pase.png": {
-    "sha256": "443d4a20acecec00b76652bdaa0868909ab591109a43178d6a6f534ef4f5defb",
-    "date": 1792238664
+  "docs/screenshots/hangman/05-veredicto.png": {
+    "sha256": "a36bb9f5582952b8065920ca8c6799b39402ea92b8a81830b24ceaa8c64f150a",
+    "date": 1792325007
+  },
+  "docs/screenshots/julep/06-julepe.png": {
+    "sha256": "61e834e45ecc9e1d050ea5920ab7d97790161758f6fde32753d798d9f015409f",
+    "date": 1792325227
   }
 }
