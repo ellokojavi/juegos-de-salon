@@ -1,6 +1,6 @@
 // "Tus copas" follows the player, not the phone (D-220): with the test store (`?test`),
 // one phone signs in with its player and opens a cup it is seated in; another phone, which never
-// saw it, signs in with the same player and finds it on the home page, with its name already picked.
+// saw it, signs in with the same player, finds it on the home page and enters it with no cup PIN (D-359).
 // At the end, finished cups: with their label and hidden until the switch is turned on (D-234).
 // Last, D-358: a phone with no player sits in a cup with the usual name and PIN and enters as the
 // player, and the podium saved without them gets their jid.
@@ -56,16 +56,11 @@ try {
   ok(/Piratotes 1983/.test(list) && list.includes(CODE), `"Tus copas" brings the player's cup: ${JSON.stringify(list)}`);
   await b.shot('home-your-cups');
 
-  // When tapped, their name is already picked: only the cup's PIN is missing
+  // When tapped, the player's PIN stands in for the cup's: it sits as Jiri with no PIN (D-359)
   await ev(`document.querySelector('#tus-copas a.mia').click(); 1`);
   await sleep(1500);
-  ok(await ev(`__copa.estado.pantalla`) === 'entrar', 'the cup asks to sign in on this phone');
-  ok(await ev(`!!document.querySelector('#tab-inscrito.on') && document.querySelector('.chip-btn.on')?.dataset.pid === 'jiri01'`), 'with "Ya estoy inscrito" and Jiri picked');
-  ok(await ev(`!document.getElementById('btn-sentarse').disabled`), 'the sign-in button is already ready');
-  await b.shot('sign-in-picked');
-  await ev(`(()=>{ const i = document.querySelector('#entrar-body input.pin'); i.value = '4321'; document.getElementById('btn-sentarse').click(); return 1 })()`);
-  await sleep(1200);
-  ok(await ev(`__copa.estado.pantalla`) === 'tablero', 'with the cup\'s PIN they are seated');
+  ok(await ev(`__copa.estado.pantalla`) === 'tablero' && await ev(`__copa.estado.yo`) === 'jiri01', 'phone 2 enters the cup as Jiri with no cup PIN');
+  await b.shot('entered-as-player');
 
   // Finished ones carry their label and hide behind a switch that starts off (D-234)
   await ev(`(()=>{ const D = 864e5, now = Date.now(); sessionStorage.setItem('juegos-de-salon:copa:prueba:mias', JSON.stringify([
@@ -109,6 +104,24 @@ try {
   ok(after.j === jiri, 'the cup player is linked to the player');
   ok(after.podio === jiri, 'the podium saved without them now carries their jid');
   await b.shot('joined-as-player');
+
+  // D-359: signed in as Jiri, joining a new cup shows no cup PIN and links the player
+  const C3 = 'RSTUV';
+  await ev(`(async()=>{
+    const E = await import('/cup/engine.js');
+    const { createLocalStore } = await import('/cup/store-local.js');
+    const st = createLocalStore({ uid: 'otro-admin' });
+    const meta = E.nuevaMeta({ nombre: 'Viernes', dias: 3, inicio: E.fechaEn(Date.now()), admin: 'ana001', creada: Date.now() });
+    await st.crear('${C3}', meta, { pid: 'ana001', name: 'Ana', at: Date.now(), pinHash: await E.hashPin('${C3}', 'ana001', '5555') });
+    return 1;
+  })()`);
+  await b.go(`${BASE}?${C3}&test`, 1500);
+  ok(await ev(`!!document.getElementById('sin-pin-copa') && !document.querySelector('#entrar-body input.pin')`), 'D-359: signed in, "Soy nuevo" asks no cup PIN');
+  await b.shot('join-no-pin');
+  await ev(`document.getElementById('btn-inscribir').click(); 1`);
+  await sleep(1500);
+  const joined = await ev(`JSON.stringify({ p: __copa.estado.pantalla, j: __copa.estado.copa.players[__copa.estado.yo]?.j })`).then(JSON.parse);
+  ok(joined.p === 'tablero' && joined.j === jiri, `joins and the cup player is linked to Jiri: ${JSON.stringify(joined)}`);
 } finally {
   b.close();
 }
