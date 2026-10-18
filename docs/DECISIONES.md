@@ -77,7 +77,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347 |
 | Agentes (usabilidad, documentación, procesos, atención) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-358 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
@@ -6827,3 +6827,24 @@ D-192); moving `og.mjs` too (half of what it writes is the site).
 **Consequences:** a new promotional file in the site needs its asset's `servido` entry. Changing
 `card.html` changes every card's fingerprint (D-181): the move recomputed them, the drawing did not
 change. The README's screenshots (`docs/screenshots/`) are documentation, not promotion: they stay.
+
+## D-358 · The usual name and PIN carry a player's history into La Copa
+**Date:** 2026-10-18 · **Status:** current · **Relation:** builds on D-212 and D-220; D-357 stays as the fallback for wins nobody signs
+**Context:** a champion who joins a cup without signing in to their player on that phone loses the
+win from their history: the podium is saved by name alone. The owner wants someone to get history
+and continuity just by using their usual name and PIN.
+**Decision:** (1) when a phone with no player creates, joins or sits in a cup, the cup PIN it typed
+is tried as the player PIN for that name (`J.entrar`); if it opens a player, the phone enters as
+them, a toast says so, and the cup links as before. A hint under the cup PIN tells players this.
+(2) When a player sits in a finished cup whose podium was saved without them, `firmarPodio()` writes
+their jid into `torneoPodios/<code>/p/<pid>/j`. The rules allow that one field only if it was empty,
+only from a phone seated as that cup player, and only with the jid the cup player is linked to. So a
+win is claimed by proving both PINs: the cup's and the player's.
+**Why:** most people use one PIN everywhere, so this needs no new screen and no new step. Tying the
+claim to the cup seat means nobody can sign someone else's win.
+**Alternatives discarded:** an id made from the name and the PIN hash (a 4-digit PIN is guessed in a
+second from it, and changing the PIN or name would split the person); a separate "claim this win"
+screen (more steps for the same proof); dropping D-357 now (Pepenbauer's stored win would split
+again until they reopen that cup).
+**Consequences:** someone whose cup PIN differs from their player PIN still joins as before and
+gets no history from that cup unless they sign in to their player on that phone first.

@@ -2,6 +2,8 @@
 // one phone signs in with its player and opens a cup it is seated in; another phone, which never
 // saw it, signs in with the same player and finds it on the home page, with its name already picked.
 // At the end, finished cups: with their label and hidden until the switch is turned on (D-234).
+// Last, D-358: a phone with no player sits in a cup with the usual name and PIN and enters as the
+// player, and the podium saved without them gets their jid.
 //
 // Usage: python3 -m http.server 8765 -d public (in another terminal) and node tools/e2e/cup/player-cups.mjs <output-folder>
 import { output } from '../output.mjs';
@@ -78,6 +80,35 @@ try {
   ok(JSON.stringify(await names()) === JSON.stringify([['Piratotes 1983', false], ['Copa vieja', true]]), 'on, the finished one appears');
   ok(await ev(`document.querySelector('#tus-copas a.mia.terminada .etiqueta-fin')?.textContent`) === 'Terminó', 'with the label "Terminó"');
   await b.shot('home-finished');
+
+  // D-358: no player on this phone, a cup PIN that is the usual player PIN → it enters as the player
+  const C2 = 'KLMNP';
+  const jiri = await ev(`(async()=>{
+    const { jugador } = await import('/assets/js/jugador.js');
+    const J = await jugador();
+    const E = await import('/cup/engine.js');
+    const { createLocalStore } = await import('/cup/store-local.js');
+    const st = createLocalStore();
+    const meta = E.nuevaMeta({ nombre: 'Jueves', dias: 3, inicio: E.fechaEn(Date.now()), admin: 'jiri02', creada: Date.now() });
+    await st.crear('${C2}', meta, { pid: 'jiri02', name: 'Jiri', at: Date.now(), pinHash: await E.hashPin('${C2}', 'jiri02', '1234') });
+    await J.guardarPodio('${C2}', { name: 'Jueves', end: 1, de: 2, dias: 3, por: 'jiri02', p: { jiri02: { n: 'Jiri', l: 1 } } });
+    const jid = J.yo().jid;
+    J.salir();
+    sessionStorage.clear();
+    return jid;
+  })()`);
+  await b.go(`${BASE}?${C2}&test`, 1500);
+  ok(await ev(`__copa.estado.pantalla`) === 'entrar' && await ev(`!localStorage.getItem('juegos-de-salon:jugador')`), 'D-358: a phone with no player opens the cup');
+  ok(await ev(`!!document.getElementById('consejo-jugador')`), 'the hint says the usual name and PIN carry the history');
+  await ev(`document.getElementById('tab-inscrito').click(); document.querySelector('.chip-btn[data-pid="jiri02"]').click(); 1`);
+  await ev(`(()=>{ const i = document.querySelector('#entrar-body input.pin'); i.value = '1234'; document.getElementById('btn-sentarse').click(); return 1 })()`);
+  await sleep(2000);
+  const after = await ev(`(async()=>{ const { jugador, leerYo } = await import('/assets/js/jugador.js'); const J = await jugador();
+    return JSON.stringify({ yo: leerYo()?.jid, j: __copa.estado.copa.players.jiri02.j, podio: (await J.podios()).${C2}?.p?.jiri02?.j }); })()`).then(JSON.parse);
+  ok(after.yo === jiri, `with the cup PIN equal to the player's, this phone enters as Jiri: ${JSON.stringify(after)}`);
+  ok(after.j === jiri, 'the cup player is linked to the player');
+  ok(after.podio === jiri, 'the podium saved without them now carries their jid');
+  await b.shot('joined-as-player');
 } finally {
   b.close();
 }

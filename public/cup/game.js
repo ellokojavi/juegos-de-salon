@@ -583,6 +583,7 @@ function crearCopa() {
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pin1.input.value), co: miPais() });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
+      entrarComoJugador(quien, pin1.input.value);
       history.replaceState(null, '', `${location.pathname}?${alias || code}${PRUEBA ? '&test' : ''}`);
       await abrirCopa(code, { recienCreada: true });
     } catch (e) {
@@ -599,7 +600,7 @@ function crearCopa() {
     el('div', { class: 'panel' }, el('div', { class: 'field' }, el('label', {}, T.fLang), idioma.nodo, el('small', { class: 'muted' }, T.fLangHint)),
       el('div', { class: 'field', id: 'crear-alcance' }, el('label', {}, T.fScope), alcance.nodo, el('small', { class: 'muted' }, T.fScopeHint))),
     el('div', { class: 'panel' }, link.nodo),
-    el('div', { class: 'panel' }, yo.nodo, pin1.nodo, pin2.nodo, el('small', { class: 'muted' }, T.pinHint)),
+    el('div', { class: 'panel' }, yo.nodo, pin1.nodo, pin2.nodo, el('small', { class: 'muted' }, T.pinHint), consejoJugador()),
     err, boton,
     el('button', { class: 'btn btn--ghost btn--sm', onClick: () => portada() }, '‹ ' + T.menu.replace('‹ ', '')),
   );
@@ -673,6 +674,27 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
  * termina, su podio se guarda una vez para el medallero. Todo es de adorno: nunca frena la copa.
  */
 let podioGuardado = false;
+
+/**
+ * Someone who joins a cup with no player on this phone, but with their usual name and PIN, is that
+ * player (D-358): the cup PIN they typed is tried as the player's PIN, and if it opens a player with
+ * that name, this phone enters as them and the cup adds to their history. Nothing is created, and a
+ * PIN that opens no player changes nothing.
+ */
+/** Under the cup PIN, with no player on this phone: the usual name and PIN carry the history (D-358). */
+const consejoJugador = () => (leerYo() || !rankingsVisibles() ? null : el('small', { class: 'muted', id: 'consejo-jugador' }, T.pinPlayerTip));
+
+async function entrarComoJugador(nombre, pin) {
+  try {
+    if (leerYo() || !rankingsVisibles()) return;
+    const J = await jugador();
+    const r = await J.entrar(nombre, pin);
+    if (r.estado !== 'dentro') return;
+    toast(fmt(T.playerJoined, { name: J.yo().n }));
+    if (S.L) vincularJugador(S.L);
+  } catch (_) { /* sin red: la copa sigue igual */ }
+}
+
 async function vincularJugador(Lc) {
   try {
     if (!Lc?.meta || !S.yo || !Lc.players?.[S.yo]) return;
@@ -684,6 +706,8 @@ async function vincularJugador(Lc) {
       if (Lc.players[S.yo].j !== yo.jid) await store.enlazar(S.code, S.yo, yo.jid);
       // Y la copa queda en la lista del jugador, para verla desde cualquier celular (D-220)
       await J.anotarCopa(S.code, S.yo);
+      // A podium saved while this cup player had no player of their own now carries theirs (D-358)
+      await J.firmarPodio(S.code, S.yo).catch(() => {});
     }
     if (!podioGuardado && !Lc.meta.lab && terminada(Lc.meta, ahora()) && activos(Lc).length >= 2) {
       podioGuardado = true;
@@ -752,6 +776,7 @@ function entrar({ mantener = false } = {}) {
           await store.sentarse(S.code, pid, await hashPin(S.code, pid, p1.input.value));
           cuenta.recordar(S.code, pid, { nombre: x.name, copa: meta.name, fin: meta.end });
           S.yo = pid;
+          entrarComoJugador(x.name, p1.input.value);
           SFX.reveal(); toast(fmt(T.welcomeBack, { name: x.name }));
           tablero();
         } catch (e) {
@@ -768,11 +793,12 @@ function entrar({ mantener = false } = {}) {
         cuenta.nombre.set(n);
         cuenta.recordar(S.code, pid, { nombre: n, copa: meta.name, fin: meta.end });
         S.yo = pid;
+        entrarComoJugador(n, p1.input.value);
         SFX.reveal();
         tablero();
       } catch (e) { avisoError(err, errorDe(e)); b.disabled = false; b.textContent = T.joinGo; }
     });
-    poner(caja, el('div', { class: 'panel' }, yo.nodo, p1.nodo, p2.nodo, el('small', { class: 'muted' }, T.pinHint)),
+    poner(caja, el('div', { class: 'panel' }, yo.nodo, p1.nodo, p2.nodo, el('small', { class: 'muted' }, T.pinHint), consejoJugador()),
       d > 2 ? el('p', { class: 'muted center' }, T.lateJoin) : null, err, b);
   };
   const inscrito = () => {
@@ -808,6 +834,7 @@ function entrar({ mantener = false } = {}) {
         cuenta.recordar(S.code, elegido, { nombre: players[elegido].name, copa: meta.name, fin: meta.end });
         S.yo = elegido;
         S.reentrar = null;
+        entrarComoJugador(players[elegido].name, p.input.value);
         SFX.reveal();
         tablero();
       } catch (e) {
@@ -822,7 +849,7 @@ function entrar({ mantener = false } = {}) {
     const lead = deVuelta && elegido === deVuelta ? el('p', { class: 'lead', id: 'sentarse-de-nuevo' }, fmt(T.seatLost, { name: players[deVuelta].name }))
       : el('p', { class: 'lead', id: desdeApp ? 'bienvenida-app' : null }, desdeApp ? fmt(T.avAppWelcome, { name: players[appPid].name }) : T.pickName);
     poner(caja, el('div', { class: 'panel' }, lead, nombres, p.nodo,
-      yoJ ? el('small', { class: 'muted' }, T.pinCopaHint) : null), err, b);
+      yoJ ? el('small', { class: 'muted' }, T.pinCopaHint) : consejoJugador()), err, b);
   };
 
   const tabs = el('div', { class: 'seg' },
