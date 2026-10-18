@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -13,55 +13,55 @@
 <body>
   <main class="app app--panel" id="app">
     <div class="topbar">
-      <a class="back" href="../">‹ Menú</a>
+      <a class="back" href="../">‹ Menu</a>
       <div class="tools"><span class="chip">📊 Panel</span><span id="user-slot"></span></div>
     </div>
 
-    <!-- ENTRAR -->
+    <!-- SIGN IN -->
     <section class="screen active" id="screen-login">
       <div class="intro-hero">
         <span class="icon">📊</span>
         <h1 class="display display--xl rainbow">Panel</h1>
-        <p class="lead">Cuánto y desde dónde se juega. Solo para el dueño.</p>
+        <p class="lead">How much and from where people play. For the owner only.</p>
       </div>
       <div class="stack">
         <div class="panel center">
-          <p class="muted" id="login-msg">Entra con la cuenta de Google del proyecto de Firebase.</p>
-          <button class="btn btn--cyan" id="btn-login">Entrar con Google</button>
+          <p class="muted" id="login-msg">Sign in with the Google account of the Firebase project.</p>
+          <button class="btn btn--cyan" id="btn-login">Sign in with Google</button>
         </div>
         <div class="panel" id="uid-help" hidden>
-          <p class="lead">Falta autorizar esta cuenta</p>
-          <p class="muted">Las reglas de la base no dejan leer con este usuario. Puede ser que entraste con otra cuenta, o que este UID todavía no esté en las reglas. Si es la cuenta correcta, ponlo en las dos líneas <code>.read</code> de <code>firebase/database.rules.json</code> y publica las reglas en la consola, en Realtime Database y luego Rules.</p>
+          <p class="lead">This account is not authorized yet</p>
+          <p class="muted">The database rules do not let this user read. You may have signed in with another account, or this UID is not in the rules yet. If it is the right account, put it in the two <code>.read</code> lines of <code>firebase/database.rules.json</code> and publish the rules in the console: Realtime Database, then Rules.</p>
           <p class="uid" id="uid"></p>
         </div>
       </div>
     </section>
 
-    <!-- PANEL: una barra fija, la navegación y la vista que pide la URL (D-207) -->
+    <!-- PANEL: a fixed bar, the navigation and the view the URL asks for (D-207) -->
     <section class="screen" id="screen-panel">
       <div class="filters">
-        <!-- Las opciones las pone panel.js con los entornos que emite la app (C-16) -->
-        <label>Entorno
+        <!-- panel.js fills the options with the environments the app sends (C-16) -->
+        <label>Environment
           <select id="env"></select>
         </label>
-        <!-- Los rangos los pone panel.js desde la lista de aggregate.js (C-16) -->
-        <label>Rango
+        <!-- panel.js fills the ranges from the list in aggregate.js (C-16) -->
+        <label>Range
           <select id="range"></select>
         </label>
         <form class="buscar" id="buscar" role="search">
-          <input id="buscar-q" type="search" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Código o link de sala o copa" aria-label="Buscar una sala o una copa por su código o su link">
+          <input id="buscar-q" type="search" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Room or cup code or link" aria-label="Find a room or a cup by its code or link">
         </form>
         <span class="muted" id="updated"></span>
       </div>
       <p class="buscar-msg" id="buscar-msg" role="status" hidden></p>
 
       <div class="cuerpo-panel">
-        <!-- Las secciones las pone panel.js: el nombre del torneo sale del registro de juegos (C-16) -->
-        <nav class="nav-panel" id="nav" aria-label="Secciones del panel"></nav>
+        <!-- panel.js fills the sections: the tournament name comes from the game registry (C-16) -->
+        <nav class="nav-panel" id="nav" aria-label="Panel sections"></nav>
         <div class="vista" id="vista" aria-live="polite"></div>
       </div>
 
-      <p class="muted center small pie">Señales de uso, no personas: sin IP, sin secretos, y del chat solo cuántos mensajes hubo, nunca qué dicen. De una sala quedan el juego, los nombres que se pusieron, el país del celular y quién ganó (D-44, D-79). Los modos sin red mandan solo contadores. De una copa, lo que ya guarda para su tabla: nombres, país, puntajes y tiempos. Las horas son del Pacífico (Los Ángeles).</p>
+      <p class="muted center small pie">Usage signals, not people: no IP, no secrets, and of the chat only how many messages there were, never what they say. Of a room what remains is the game, the names people entered, the phone's country and who won (D-44, D-79). Offline modes send only counters. Of a cup, what it already keeps for its standings: names, country, scores and times. Times are Pacific time (Los Angeles).</p>
     </section>
   </main>
 

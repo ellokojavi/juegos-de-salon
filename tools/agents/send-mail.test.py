@@ -30,6 +30,15 @@ assert mod.recent('otra@correo.cl', t0 + timedelta(minutes=1), path) is None, 'a
 assert oct(os.stat(path).st_mode & 0o777) == '0o600'
 assert mod.unlimited({'noLimit': ['Owner@Gmail.com']}, ' owner@gmail.com'), 'noLimit skips the 24-hour rule (D-327)'
 assert not mod.unlimited({'noLimit': ['owner@gmail.com']}, 'ana@correo.cl') and not mod.unlimited({}, 'ana@correo.cl')
+# An attachment (the weekly report's PDF, D-352): read from disk and named after the file
+import tempfile
+with tempfile.TemporaryDirectory() as d:
+    pdf = os.path.join(d, 'weekly.pdf')
+    open(pdf, 'wb').write(b'%PDF-1.4 test')
+    att = mod.message(cfg, {'to': 'a@b.cl', 'subject': 's', 'text': 't', 'attachments': [pdf]})
+    parts = [p for p in att.iter_attachments()]
+    assert len(parts) == 1 and parts[0].get_filename() == 'weekly.pdf' and parts[0].get_content_type() == 'application/pdf'
+    assert parts[0].get_content() == b'%PDF-1.4 test'
 threaded = mod.message(cfg, {'to': 'a@b.cl', 'subject': 'Re: Hola', 'text': 't', 'inReplyTo': '<abc@mail.gmail.com>'})
 assert threaded['In-Reply-To'] == '<abc@mail.gmail.com>' and threaded['References'] == '<abc@mail.gmail.com>'
 assert msg['In-Reply-To'] is None
