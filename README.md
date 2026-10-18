@@ -724,6 +724,7 @@ node tools/release/changelog.test.mjs
 node tools/release/merge-report.test.mjs
 node tools/release/syntax.test.mjs
 node tools/release/version.test.mjs
+node tools/reports/weekly-data.test.mjs
 ```
 <!-- /generated -->
 

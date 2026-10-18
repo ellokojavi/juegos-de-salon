@@ -2,7 +2,8 @@
 """Sends one plain-text email through Gmail's SMTP (D-317). Used by `feedback.mjs reply`.
 
 The message comes as JSON on stdin ({"to", "subject", "text", and optionally "html", sent as
-the alternative that mail apps show; the text stays for the ones that don't}), so the address never shows in a
+the alternative that mail apps show; the text stays for the ones that don't; and "attachments", a list
+of file paths, e.g. the weekly report's PDF, D-352}), so the address never shows in a
 command line. The account comes from ~/.config/juegos-de-salon/mail.json (or $JUEGOS_MAIL), never
 from the repo:
 
@@ -21,6 +22,7 @@ refused before connecting, except to the addresses in `noLimit` (D-327). `python
 """
 import hashlib
 import json
+import mimetypes
 import os
 import smtplib
 import sys
@@ -91,6 +93,11 @@ def message(cfg, m):
     msg.set_content(m['text'])
     if m.get('html'):
         msg.add_alternative(m['html'], subtype='html')
+    for path in m.get('attachments') or []:
+        # A file the owner's tools wrote (the weekly report, D-352): read from disk, never from the message
+        kind = (mimetypes.guess_type(path)[0] or 'application/octet-stream').split('/', 1)
+        with open(path, 'rb') as f:
+            msg.add_attachment(f.read(), maintype=kind[0], subtype=kind[1], filename=os.path.basename(path))
     return msg
 
 

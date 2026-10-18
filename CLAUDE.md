@@ -267,6 +267,9 @@ with that the screen also enters the language tests. To see it on a real phone,
   Firebase (`labsLlaves/`) as administrator; the link is shown only once and the key is not stored.
   The label: initials or a nickname. **It works at once**: no PR, no tests, no publish. **Asking for a
   key is asking for it to work** (D-284, the owner's request): the session creates it and delivers the link.
+- **Weekly report** (D-352): every Sunday the app's scheduled task `weekly-report` runs
+  `node tools/reports/weekly.mjs --send`: the week that ended on Saturday, with the panel's numbers,
+  as a PDF in `~/Documents/Juegos de Salón/Weekly reports/` and emailed to the owner.
 - **Panel, La Copa reports and rankings** (D-44, D-104, D-207, D-212): in the `owner-tools` skill (`.claude/skills/owner-tools/SKILL.md`); read it before touching them.
 
 ## Languages (C-3, D-197)
