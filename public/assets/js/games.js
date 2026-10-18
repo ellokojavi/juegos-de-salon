@@ -288,12 +288,15 @@ export const TIPOS = {
 export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'trivia', mesa: 'tabletop' };
 
 /**
- * El orden de la portada (D-255): de lo más jugado a lo menos, contando las partidas de todos los
- * modos, las de las copas y las de Uno al día (del 11 de septiembre al 9 de octubre de 2026).
- * Se rehace a mano cuando el dueño lo pide. Un juego que no está en la lista va después de los
- * que sí, en el orden de GAMES y SUELTOS.
+ * The home page's order (D-255, D-361): most finished games first, counting the last four weeks of
+ * offline games, rooms that ended, La Copa days played and Uno al día. It is still a fixed list,
+ * so the page needs no database to draw itself, but it is no longer refreshed by hand: once a week
+ * the processes round runs `node tools/agents/popularity.mjs update` and opens a PR with auto-merge
+ * when the order changed. The two lines below are written by that tool; a game not in the list
+ * goes after the ones that are, in the order of GAMES and SUELTOS.
  */
-export const POPULARIDAD = ['copa', 'toque-y-fama', 'linea-de-tiempo', 'reinas', 'tango', 'ahorcado', 'batalla-naval', 'donde', 'letras', 'zip', 'conexiones', 'anio', 'dudo', 'desenredo', 'julepe', 'cuarto-rey', 'generala'];
+export const POPULARIDAD_FECHA = '2026-10-18';
+export const POPULARIDAD = ['copa', 'reinas', 'linea-de-tiempo', 'tango', 'conexiones', 'anio', 'letras', 'donde', 'toque-y-fama', 'zip', 'desenredo', 'batalla-naval', 'rutas', 'loteo', 'ahorcado', 'dudo', 'pintaminas', 'generala', 'julepe', 'cuarto-rey'];
 const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
 
 /**
@@ -321,6 +324,18 @@ export function ordenPortada(hoy = new Date()) {
   return [...disponibles, ...ofrecidos.filter(g => !g.available)];
 }
 export const PORTADA = ordenPortada();
+
+/**
+ * The 🔥 "Popular" label (D-361, the owner's request): the first POPULARES games of the home page's
+ * order, leaving out La Copa (it has its own card on top) and the games still carrying "New"
+ * (that label says more, and they have no plays to rank yet). Only available games count.
+ */
+export const POPULARES = 3;
+/** Off for players while it is tried in the lab (D-361): only `/?popular` shows it, from /labs/. */
+export const POPULAR_EN_PORTADA = false;
+export function populares(hoy = new Date(), orden = ordenPortada(hoy)) {
+  return new Set(orden.filter(g => g.available && !g.torneo && !esNuevo(g, hoy) && POPULARIDAD.includes(g.id)).slice(0, POPULARES).map(g => g.id));
+}
 
 /** Cuántos juegan como mínimo y como máximo ("1–6" → [1, 6]; "1" → [1, 1]). */
 export function rangoJugadores(players) {

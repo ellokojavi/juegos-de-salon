@@ -76,7 +76,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359 |
-| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360 |
+| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -4437,7 +4437,7 @@ basta el compartir de siempre hasta que haya versiones del video en otros idioma
 D-253; no le sirve a quien no habla español).
 
 ## D-255 · La portada, de lo más jugado a lo menos
-**Fecha:** 2026-10-09 · **Estado:** corregida por D-335 · **Relación:** cambia el orden de D-142 y D-149 (primero `GAMES`, después `SUELTOS`); corregida por D-335 (un juego nuevo va arriba mientras dice "Nuevo")
+**Fecha:** 2026-10-09 · **Estado:** corregida por D-335, D-361 · **Relación:** cambia el orden de D-142 y D-149 (primero `GAMES`, después `SUELTOS`); corregida por D-335 (un juego nuevo va arriba mientras dice "Nuevo")
 **Decisión:** Los juegos disponibles de la portada van ordenados por cuántas partidas se jugaron,
 de más a menos, con los de `GAMES` y los de La Copa sueltos mezclados. El orden es una lista fija,
 `POPULARIDAD` en `games.js`; los que vienen "Próximamente" siguen al final. La primera vuelta
@@ -4971,7 +4971,7 @@ a buscarlo; el correo del issue es donde lee el reporte).
 **Después:** D-306 suma la etiqueta de la llave del laboratorio, que llega aunque no se escriba nombre.
 
 ## D-280 · El laboratorio tiene dos grupos: Proyectos activos y La Bodega
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-262
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-361 · **Relación:** amplía D-262
 **Decisión:** `/labs/` se ordena en dos grupos: **🧪 Proyectos activos**, lo que se está probando
 ahora, y **📦 La Bodega**, los proyectos que no prosperaron. Los de La Bodega se siguen jugando en su
 página, pero ya no se trabajan. Hoy van a La Bodega El caso (`/labs/case/`) y La clave
@@ -6936,3 +6936,42 @@ owns the queue and the agents' review; one path for every build); a free-form ba
 **Consequences:** `processes.mjs check` lists `ideas` among the dispatches once a week;
 `processes.test.mjs` and `ideas.test.mjs` cover the pure parts; `CLAUDE.md` names the agent. The
 first round proposes the first three ideas; this PR opens none.
+
+## D-361 · The home page's order every week, a 🔥 "Popular" label in the lab, and the lab in three groups
+**Date:** 2026-10-18 · **Status:** current · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar)
+**Context:** the game-ideas agent's first check (D-360) showed 18 games three or more places away from
+the order D-255 counted on October 9. The owner asked for the order to update every week, to put the
+best of the app in front of a new player, and for a 🔥 "Popular" label on the top three; then, to try
+the label in the lab before shipping it, to separate the lab's games from its other improvements, to
+keep and grow the splash demo's experiments bar ("experimentos en el Landing page"), and to give the
+label the same look as "New", in other colors and with the flame.
+**Decision:**
+- **The order counts games finished, every week.** `tools/agents/popularity.mjs` counts the last four
+  weeks with the panel's accounts: offline games that ended (the per-game log or the D-348 counter,
+  whichever says more for that game), rooms that ended and La Copa days played (under their game, and
+  all together as La Copa). Finished, not started: a game people often leave halfway should not be the
+  first thing a new player meets. `POPULARIDAD` stays a fixed list in `games.js`, so the home page
+  still needs no database to draw (D-255's reason holds); `update` rewrites it and its date,
+  `POPULARIDAD_FECHA`. The processes round runs it once the list is a week old (`processes.mjs check`
+  says so) and the change goes in its PR. This PR applies the first count. New games keep going on
+  top while they say "New" (D-335), and the filters keep the same order.
+- **🔥 "Popular" on the top three** (`populares` in `games.js`): the first three of the order that are
+  not La Copa (it has its own card) and do not say "New" (that label says more). The same sticker as
+  "New" (dark, tilted, white edge, gradient through the letters, breathing glow, wobble, still with
+  reduced motion) in fire colors, with the 🔥 outside the gradient. Text: Popular, Popular, Popular,
+  Beliebt. **It is in the lab, not on the home page** (`POPULAR_EN_PORTADA = false`): only `/?popular`
+  shows it. Shipping it is turning that flag on, in its own PR, with the usability agent's full pass.
+- **The lab's experiments bar is kept and grown.** `public/labs/experiments.css` is the bar the
+  splash demo had, shared. `/labs/home/` shows the real home page with one switch per experiment of
+  `public/labs/home/experiments.js` (each one a URL parameter the home page reads), the language, and
+  the way back to the lab. A new home page experiment is an entry there plus its parameter; when it
+  ships, the entry goes.
+- **The lab in three groups:** 🎲 Juegos en prueba (`#activos`), ✨ Mejoras en prueba (`#mejoras`: the
+  splash and the home page's experiments) and 📦 La Bodega. `ideas.mjs` reads the three.
+**Why:** the owner's requests. A list counted once by hand drifted in nine days; a weekly count keeps
+the home page honest without making it read the database. Trying a label on the real page, in the
+four languages, before players see it, is what the lab is for, and the owner liked the splash bar.
+**Alternatives discarded:** ordering live from Firebase (D-255: the page would wait for the database);
+counting starts (it rewards games people abandon); labelling La Copa or a "New" game as popular.
+**Consequences:** `popularity.test.mjs`, `games.test.mjs` and `tools/e2e/home/lab.mjs` cover it; C-17
+says the new order and the label.

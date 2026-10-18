@@ -1,0 +1,19 @@
+/* The lab's experiments bar (D-351, D-361): the real page behind, untouched, and a dark pill floating
+   at the bottom with the controls of what is being tried. Shared by every lab demo of a page of the
+   app (the splash, the home page), so a new experiment only adds its controls. */
+html, body { height: 100%; margin: 0; overflow: hidden; }
+.demo-portada { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
+.demo-barra {
+  position: fixed; z-index: 90; left: 50%; bottom: calc(12px + var(--safe-bottom)); transform: translateX(-50%);
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; align-items: center;
+  width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box; padding: 8px 10px;
+  border-radius: 999px; background: rgba(10, 4, 20, 0.9); border: 1px solid var(--glass-border);
+}
+.demo-barra button, .demo-barra select, .demo-barra a {
+  font: inherit; font-weight: 800; font-size: 0.85rem; color: var(--ink); background: var(--glass);
+  border: 1px solid var(--glass-border); border-radius: 999px; padding: 6px 12px; text-decoration: none;
+  min-height: 44px; box-sizing: border-box;
+}
+.demo-barra select option { color: #000; }
+/* A switch: off is the page as players see it today, on is the experiment */
+.demo-barra button[aria-pressed="true"] { background: var(--yellow); color: #3a1200; border-color: var(--yellow); }

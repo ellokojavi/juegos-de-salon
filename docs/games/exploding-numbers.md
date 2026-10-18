@@ -1,4 +1,4 @@
-# 💥 Números explosivos (prototipo del laboratorio, en Proyectos activos)
+# 💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)
 
 Un solitario de números para uno solo (D-297): en una grilla de 9 columnas con números del 1 al 9 se
 hacen estallar de a pares dos números **iguales o que suman 10**, si están juntos en línea, hasta
