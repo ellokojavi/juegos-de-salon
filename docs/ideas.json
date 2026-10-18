@@ -1,0 +1,32 @@
+{
+  "_": "The game-ideas agent's memory (D-360): the ledger of what was proposed and what the owner answered, and the taste those answers taught. Managed by tools/agents/ideas.mjs.",
+  "taste": [
+    {
+      "date": "2026-10-18",
+      "what": "A new game credits its inspiration honestly on its cover page, with a link (Codenames, ColorSweeper, Junction Nine, Number Match, Shikaku), and the credit stays off the result screen.",
+      "from": "D-286, D-289, D-288"
+    },
+    {
+      "date": "2026-10-18",
+      "what": "A puzzle is deducible without guessing, and a hint costs points instead of being free.",
+      "from": "D-289, D-292, D-310"
+    },
+    {
+      "date": "2026-10-18",
+      "what": "A new game is tried first as a solo, Spanish-only lab prototype in Proyectos activos; it leaves the lab in the four languages and joins La Copa's pool with a 0-to-100 score, never ×1.5.",
+      "from": "D-280, D-304, D-331, D-332"
+    },
+    {
+      "date": "2026-10-18",
+      "what": "No configurable rule variants for the sake of options, and no phone opponent where playing alone does the job.",
+      "from": "D-68, D-65"
+    },
+    {
+      "date": "2026-10-18",
+      "what": "What brings people back is asked for quietly: a streak with wildcards, reminders the player chooses, a quiet link for comments, never a popup during a game.",
+      "from": "D-230, D-224, D-341"
+    }
+  ],
+  "ideas": [],
+  "rounds": []
+}
