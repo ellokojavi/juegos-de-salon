@@ -663,6 +663,7 @@ node public/labs/code/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
+node marketing/splash/campaigns.test.mjs
 node public/assets/js/arrastre.test.mjs
 node public/assets/js/buzon.test.mjs
 node public/assets/js/compartir.test.mjs
