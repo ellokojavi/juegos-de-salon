@@ -59,7 +59,7 @@ async function final(id, date, expected) {
   ok(d?.j === id && d.n === 1, `${id}: it stays recorded on the phone (${JSON.stringify(d)})`);
   ok(d?.s === expected && d.s >= 0 && d.s <= 100, `${id}: the score is its formula's, from 0 to 100 (${d?.s}, expected ${expected})`);
   const t = await text('#uad-tarjeta');
-  ok(/Racha: 1 día/.test(t) && new RegExp(`Hoy: ${expected} puntos`).test(t), `${id}: the card says the streak and the score (${t.replace(/\n/g, ' / ')})`);
+  ok(/Racha: 1 día/.test(t) && !/Hoy: \d+ puntos/.test(t), `${id}: the card says the streak, without repeating the score (C-19) (${t.replace(/\n/g, ' / ')})`);
   await b.shot(`${id}-result`);
 }
 

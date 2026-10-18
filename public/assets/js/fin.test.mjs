@@ -32,4 +32,18 @@ assert.ok(dia.indexOf("id: 'btn-volver'") < dia.indexOf('T.dayTable'), 'a Cup da
 assert.ok(dia.indexOf("id: 'btn-volver'") < dia.indexOf('explicacion('), 'a Cup day: back to the board before the breakdown');
 assert.match(copa, /salidasFin\('podio'/, 'the podium offers the way back to the menu');
 assert.match(copa, /hoy \? null : volverDePractica\(\)/, 'One a Day in La Copa\'s games: the exits are the card\'s');
+
+// What a result says, once (C-19, D-353)
+const exp = copa.slice(copa.indexOf('function explicacion('), copa.indexOf('function explicacion(') + 1400);
+assert.doesNotMatch(exp, /open:/, 'the score breakdown is always folded');
+assert.doesNotMatch(copa, /bdTimeSolo/, 'on its own the breakdown does not repeat the time');
+const prac = copa.slice(copa.indexOf('function resultadoPractica('), copa.indexOf('function resultadoPractica(') + 9000);
+assert.ok(prac.indexOf('volverDePractica()') < prac.indexOf('explicacion(J'), 'on its own the breakdown goes after the exits');
+assert.match(copa, /m\.campeon\?\.length > 1 \? medalla\(T\.medalChamp/, 'the podium names a single champion once');
+assert.match(copa, /terminada\(L\(\)\.meta, now\) \? null : el\('button', \{ class: 'btn btn--cyan btn--sm', id: 'btn-imagen'/, 'once over, one share button on the podium');
+assert.doesNotMatch(ui, /T\.hoyPuntos/, 'the One a Day card does not repeat the score');
+assert.match(ui, /plegada: true/, 'under a result, inviting is folded');
+const rk = leer('assets/js/ranking.js');
+assert.match(rk, /bloqueJugador\(\{ destacado: true, compacto: true, leyenda: T\.countThis/, '"count this game" is the one-line Sign in card');
+assert.match(leer('julep/game.js'), /julepes === 1 \? T\.julepesOne/, 'Julepe says "1 julepe"');
 console.log('✓ fin.test.mjs');

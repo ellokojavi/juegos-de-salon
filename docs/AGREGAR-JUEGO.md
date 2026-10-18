@@ -37,6 +37,10 @@
    `suelto` en `games.js`), y lo hace `public/cup/game.js` sin que el juego haga nada: su página
    sale de `public/cup/suelto/index.html`, que ya carga `ranking.css`. Un juego de salón no anota
    récords; si uno nuevo debería, es una decisión para el dueño, no algo que se agrega de pasada.
+7c. **The result screen** (C-19): its exits come from `fin.js` for each context it can be played
+   in (on its own, One a Day, La Copa), in C-19's order, and each fact is said once (the score, the
+   time, the winner, the name); the long detail goes folded or after the exits, and Sign in is the
+   one-line card. Before calling it done, look at it at 390×812 and 320 px with the screen's path.
 8. **Las pruebas de punta a punta** (C-12): las pantallas del juego como entradas en
    `tools/e2e/paths.mjs`, su `tools/e2e/<carpeta>/languages.mjs` y los guiones de partida en
    `tools/e2e/<carpeta>/`. `node tools/e2e/look.mjs <juego> <pantalla> --width 320` para mirar.
