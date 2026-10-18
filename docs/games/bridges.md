@@ -64,8 +64,8 @@ did not work: the cheapest bridges peak at 90–100 %, and a local search within
 lowered that. Since the known bridge is the cheapest, solidity and saving wood pull against each other,
 so a perfect 100 is rare.
 
-While the train crosses, a gauge at the top of the board (`medidor()`) shows the strain live: a
-needle on the hardest-working beam, a red arrow outside the dial at the peak so far (with "máx." and its number under it; the needle itself keeps showing the load right now, also after the test) and a white one at the cheapest
+While the train crosses, a gauge at the top of the board (`medidor()`), titled "Carga" on a plate drawn
+like the scene (night sky over a strip of water and rock), shows the strain live: a needle on the hardest-working beam, a red arrow outside the dial at the peak so far (with "máx." and its number under it; the needle itself keeps showing the load right now, also after the test) and a white one at the cheapest
 bridge's peak. When a stage passes, a summary opens over the screen (`felicitar()`), the only place it is shown:
 the wood against the budget and the known minimum, the peak strain against the cheapest bridge's, the
 time on that stage and its points (stage + savings + solidity). It goes with its button, a tap outside,
