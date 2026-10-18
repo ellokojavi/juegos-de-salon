@@ -15,7 +15,9 @@ into the repo. Exceptions: what the player reads (the app stays in its four lang
 default, C-3), text written by people outside the team (player feedback), and persisted data keys
 (game ids like `'ahorcado'`, Firebase paths and fields, `localStorage` keys), which are data, not
 language. Older Spanish content and Spanish file and identifier names are being migrated in phases
-(D-316); until then, new text is English even inside a Spanish file.
+(D-316); until then, new text is English even inside a Spanish file. What is left is listed in
+`docs/english-renames.json` (`node tools/agents/english.mjs status`), and a new Spanish file name fails
+`english.test.mjs` (D-354).
 
 ## Where everything is (D-192)
 
@@ -247,7 +249,8 @@ with that the screen also enters the language tests. To see it on a real phone,
   backlog, the open issues with no label that `processes.mjs check` lists (D-339). It closes what was left open and
   turns a recurring error into a mechanism (a test before an instruction). In its
   round it collects the `changelog/` entries into `CHANGELOG.md` (D-300) and deletes the decision
-  reservations that are already in `main` (`decision.mjs clean`, D-301). What
+  reservations that are already in `main` (`decision.mjs clean`, D-301). It also moves the rename to English forward, a part at a time, when no other PR is open
+  (`tools/agents/english.mjs`, D-354). What
   needs the owner goes in a `processes` issue with Yes/No checkboxes, opened by the bot (`decide.yml`) so
   the owner gets the email: ticking one carries it out instantly
   (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).
@@ -267,17 +270,14 @@ with that the screen also enters the language tests. To see it on a real phone,
   Firebase (`labsLlaves/`) as administrator; the link is shown only once and the key is not stored.
   The label: initials or a nickname. **It works at once**: no PR, no tests, no publish. **Asking for a
   key is asking for it to work** (D-284, the owner's request): the session creates it and delivers the link.
-<<<<<<< HEAD
 - **Promotional splash** (D-351): a window over the home page announcing something new, off by
   default. `node tools/agents/splash.mjs list | on <id> [--until YYYY-MM-DD] | off` rewrites the
   `ACTIVE` line of `public/assets/js/splash.js`; it reaches players through a PR like any change.
   `?splash=<id>` previews a campaign, `/labs/splash/` is the demo, and the clips are recorded with
   `marketing/splash-clips/capturar.mjs` (its README).
-=======
 - **Weekly report** (D-352): every Sunday the app's scheduled task `weekly-report` runs
   `node tools/reports/weekly.mjs --send`: the week that ended on Saturday, with the panel's numbers,
   as a PDF in `~/Documents/Juegos de Salón/Weekly reports/` and emailed to the owner.
->>>>>>> origin/main
 - **Panel, La Copa reports and rankings** (D-44, D-104, D-207, D-212): in the `owner-tools` skill (`.claude/skills/owner-tools/SKILL.md`); read it before touching them.
 
 ## Languages (C-3, D-197)
