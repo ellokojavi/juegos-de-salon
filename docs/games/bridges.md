@@ -24,7 +24,10 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
   board as it is spent. The screen's title is the stage ("Etapa 2 de 5"), and under it, always in view, the
   train's weight, drawn small beside it (`trenMini`: the locomotive and a wagon as they will cross): normal, or how much heavier it is (it used to be a sign that slid over the board and went).
 
-- Beams join only at their ends. Where one crosses another away from their ends, or runs over a bolt it
+- On wood budgets, a beam may also start or end at a grid point inside another (the middle of a
+  two-square beam): that beam is split there (`unirViga()` in `engine.js`), and a new beam that runs over
+  a joint is split at it, so every touch on a grid point is a bolt like any other; the wood stays the
+  same. Beams join only at those points. Where one crosses another away from their ends, or runs over a bolt it
   doesn't end at, it is drawn in front with a dark edge (`pasoPorEncima()`), so it doesn't read as
   joined there.
 
