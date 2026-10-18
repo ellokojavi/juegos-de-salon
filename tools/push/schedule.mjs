@@ -153,7 +153,7 @@ export function cupNotifications({ code, cup, wants = {}, subs = {}, sent = {}, 
             const body = expiring.length > 1
               ? fmt(hours <= 1 ? T.avMsgDueManyOne : T.avMsgDueMany, { h: hours, dias: listOf(expiring.map(v => String(v.k)), lang) })
               // One missed day already: this one would leave them out (D-347)
-              : enRiesgo(L, pid, now) === k ? fmt(T.avMsgDueOut, { h: hours, d: k })
+              : enRiesgo(L, pid, now) === k ? fmt(hours <= 1 ? T.avMsgDueOutOne : T.avMsgDueOut, { h: hours, d: k })
               : fmt(hours <= 1 ? T.avMsgDueOne : T.avMsgDue, { h: hours, d: k });
             candidates.push({ kind: 'plazo', keys: expiring.map(v => `plazo:${v.k}`), body, tag: `copa-${code}-d${expiring[expiring.length - 1].k}`, day: k });
           }
