@@ -167,6 +167,7 @@ const ES = {
   howTitle: 'Cómo funciona',
   howItems: [
     'Cada juego se puede jugar ese día o al día siguiente, salvo la final.',
+    'Si dejas pasar 2 días seguidos sin jugar, quedas fuera de la copa. Tus puntos siguen en la tabla.',
     'El primero del día suma 10 puntos, el segundo 8, el tercero 6 y así hasta 1.',
     'Tienes un comodín que duplica tus puntos de un día. La final vale doble para todos.',
     'Si dos terminan con los mismos puntos, desempata quien ganó más días y, si siguen iguales, quien quedó mejor en la final.',
@@ -961,6 +962,7 @@ const EN = {
   howTitle: 'How it works',
   howItems: [
     'Each game can be played that day or the next, except the final.',
+    'If you let 2 days in a row go by without playing, you are out of the cup. Your points stay in the table.',
     'First place of the day scores 10 points, second 8, third 6 and so on down to 1.',
     'You have a wildcard that doubles your points for one day. The final is worth double for everyone.',
     'If two finish level on points, the one who won more days goes ahead and, if they are still level, the one who did better in the final.',
@@ -1745,6 +1747,7 @@ const PT = {
   howTitle: 'Como funciona',
   howItems: [
     'Cada jogo pode ser jogado nesse dia ou no dia seguinte, menos a final.',
+    'Se você deixar passar 2 dias seguidos sem jogar, fica fora da copa. Seus pontos continuam na tabela.',
     'O primeiro do dia soma 10 pontos, o segundo 8, o terceiro 6 e assim até 1.',
     'Você tem um coringa que dobra seus pontos de um dia. A final vale o dobro para todos.',
     'Se dois terminarem com os mesmos pontos, desempata quem ganhou mais dias e, se continuarem iguais, quem foi melhor na final.',
@@ -2529,6 +2532,7 @@ const DE = {
   howTitle: 'So läuft’s',
   howItems: [
     'Jedes Spiel kannst du am selben oder am nächsten Tag spielen, außer das Finale.',
+    'Wenn du 2 Tage hintereinander nicht spielst, bist du aus dem Pokal raus. Deine Punkte bleiben in der Tabelle.',
     'Der Tagesbeste bekommt 10 Punkte, der Zweite 8, der Dritte 6 und so weiter bis 1.',
     'Du hast einen Joker, der deine Punkte eines Tages verdoppelt. Das Finale zählt für alle doppelt.',
     'Bei Punktgleichheit gewinnt, wer mehr Tage gewonnen hat, und wenn es dann noch gleich steht, wer im Finale besser war.',
