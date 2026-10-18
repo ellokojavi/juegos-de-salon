@@ -1,4 +1,4 @@
 level: patch
 
-- **The "Sign in" button on the One a Day card fits inside its frame again**: in the one-line version
-  under a result, the button stuck out of the box.
+- **Desenredo's result screen drops the 🧶 card under the score**: it only repeated the score. It
+  still goes in the shared result.

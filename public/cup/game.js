@@ -2161,7 +2161,7 @@ function resultado(d, { recien = false, det = null } = {}) {
       el('h2', { class: 'display display--md' }, fmt(T.resultTitle, { d, juego: J.nombre })),
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, mio.r || String(mio.s)),
-      ...bajoElPuntaje(mio.t, mio.ms)),
+      ...bajoElPuntaje(mio.t, mio.ms, id)),
     el('p', { class: 'lead center' }, cerrado(meta, d, now) || terminada(meta, now)
       ? fmt(T.finalPos, { pos: ord(yo.pos), n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: ord(yo.pos), n })),
@@ -2215,9 +2215,11 @@ async function compartirResultado(d) {
  * Lo que va bajo el puntaje (D-114): la tarjeta para compartir y el tiempo, pero el tiempo solo
  * si la tarjeta no lo trae ya (la de Reinas es "👑 ⏱ 1:23 ✅"): se veía dos veces.
  */
-function bajoElPuntaje(t, ms) {
+/** Games whose share card only repeats the score (Desenredo's 🧶 🟩🟩): it goes in the shared text, not on the result screen. */
+const SIN_TARJETA_EN_RESULTADO = new Set(['desenredo']);
+function bajoElPuntaje(t, ms, id = null) {
   return [
-    t ? el('pre', { class: 'tarjeta' }, t) : null,
+    t && !SIN_TARJETA_EN_RESULTADO.has(id) ? el('pre', { class: 'tarjeta' }, t) : null,
     String(t || '').includes('⏱') ? null : el('p', { class: 'muted' }, `⏱ ${mmss(ms)}`),
   ];
 }
@@ -2545,7 +2547,7 @@ function resultadoPractica(id, semilla, r, variante = null) {
       el('h2', { class: 'display display--md' }, J.nombre),
       el('p', { class: 'muted', style: 'margin:0' }, T.yourScore),
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),
-      ...bajoElPuntaje(r.t, r.ms)),
+      ...bajoElPuntaje(r.t, r.ms, id)),
     // Uno al día: la racha, compartir sin decir el juego, jugar otro o ver todo (D-230)
     hoy ? tarjetaResultado({ lang: LANG, fecha: S.hoy.fecha, primera: hoy.primera, dia: hoy.dia, raiz: RAIZ, alTocar: () => SFX.tap(), mmss }) : null,
     aviso,
