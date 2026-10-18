@@ -26,16 +26,16 @@ export const dayOf = ts => Math.floor(ts / DAY);
  * `stats/`) sigue en días UTC, y el panel lo rotula así.
  */
 export const ZONA_PANEL = 'America/Los_Angeles';
-export const ZONA_NOMBRE = 'hora del Pacífico';
+export const ZONA_NOMBRE = 'Pacific time';
 
-/** "14:05", en la hora del panel. 24 horas: "02:05 p. m." ocupa el doble en una lista. */
+/** "14:05", in the panel's time. 24-hour: "02:05 PM" takes twice the room in a list. */
 export function horaLabel(ts) {
-  return new Date(ts).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: ZONA_PANEL });
+  return new Date(ts).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: ZONA_PANEL });
 }
 
-/** "sáb 4 oct", en la hora del panel. */
+/** "Sat, Oct 4", in the panel's time. */
 export function fechaLabel(ts) {
-  return new Date(ts).toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short', timeZone: ZONA_PANEL });
+  return new Date(ts).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', timeZone: ZONA_PANEL });
 }
 
 /** El día del calendario en la hora del panel, como texto ordenable ("2026-10-04"): para agrupar eventos. */
@@ -51,12 +51,12 @@ export const diaPanel = ts => new Date(ts).toLocaleDateString('en-CA', { timeZon
  * adelante.
  */
 export const RANGOS = [
-  { id: '7d', etiqueta: '7 días', titulo: 'Últimos 7 días', dias: 7, grano: 'dia' },
-  { id: '30d', etiqueta: '30 días', titulo: 'Últimos 30 días', dias: 30, grano: 'dia' },
-  { id: '60d', etiqueta: '60 días', titulo: 'Últimos 60 días', dias: 60, grano: 'semana' },
-  { id: '90d', etiqueta: '90 días', titulo: 'Últimos 90 días', dias: 90, grano: 'semana' },
-  { id: '1y', etiqueta: '1 año', titulo: 'Último año', dias: 365, grano: 'mes' },
-  { id: 'ytd', etiqueta: 'Este año', titulo: 'Lo que va del año', dias: null, grano: 'mes' },
+  { id: '7d', etiqueta: '7 days', titulo: 'Last 7 days', dias: 7, grano: 'dia' },
+  { id: '30d', etiqueta: '30 days', titulo: 'Last 30 days', dias: 30, grano: 'dia' },
+  { id: '60d', etiqueta: '60 days', titulo: 'Last 60 days', dias: 60, grano: 'semana' },
+  { id: '90d', etiqueta: '90 days', titulo: 'Last 90 days', dias: 90, grano: 'semana' },
+  { id: '1y', etiqueta: '1 year', titulo: 'Last year', dias: 365, grano: 'mes' },
+  { id: 'ytd', etiqueta: 'This year', titulo: 'Year to date', dias: null, grano: 'mes' },
 ];
 
 export const RANGO_POR_DEFECTO = '7d';
@@ -100,11 +100,11 @@ export function groupDays(byDay, grano = 'dia') {
   return [...cajones.values()].sort((a, b) => a.day - b.day).map(c => ({ ...c, label: periodLabel(c.day, grano) }));
 }
 
-/** Cómo se llama un cajón: "8 sep" la semana, "sep 2026" el mes. */
+/** A bucket's label: "Sep 8" for a week, "Sep 2026" for a month. */
 export function periodLabel(day, grano) {
   const d = new Date(day * DAY);
-  if (grano === 'mes') return d.toLocaleDateString('es-CL', { month: 'short', year: 'numeric', timeZone: 'UTC' });
-  if (grano === 'semana') return d.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  if (grano === 'mes') return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+  if (grano === 'semana') return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', timeZone: 'UTC' });
   return dayLabel(day);
 }
 
@@ -471,7 +471,7 @@ export function flagOf(co) {
 
 /** Día y hora de una sala, en la hora del panel (D-207). */
 export function whenLabel(ts) {
-  const dia = new Date(ts).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', timeZone: ZONA_PANEL });
+  const dia = new Date(ts).toLocaleDateString('en-US', { day: 'numeric', month: 'short', timeZone: ZONA_PANEL });
   return `${dia}, ${horaLabel(ts)}`;
 }
 
@@ -485,27 +485,27 @@ export function top(obj, limit = 12) {
  * region: 'America' }. La ciudad va primero porque es lo que se lee de un vistazo.
  */
 export function tzLabel(key) {
-  if (!key || key === 'desconocida') return { city: 'Sin zona horaria', region: '' };
+  if (!key || key === 'desconocida') return { city: 'No time zone', region: '' };
   const parts = key.split('__');
   const city = parts[parts.length - 1].replace(/_/g, ' ');
   const region = parts.slice(0, -1).filter(p => p !== 'Etc').join('/');
   return { city, region };
 }
 
-/** "hace 3 min", "hace 2 h", para la lista de salas. */
+/** "3 min ago", "2 h ago", for the room list. */
 export function ago(ts, now = Date.now()) {
   const s = Math.max(0, Math.round((now - ts) / 1000));
-  if (s < 60) return 'recién';
+  if (s < 60) return 'just now';
   const m = Math.round(s / 60);
-  if (m < 60) return `hace ${m} min`;
+  if (m < 60) return `${m} min ago`;
   const h = Math.round(m / 60);
-  return `hace ${h} h`;
+  return `${h} h ago`;
 }
 
 /** Fecha corta de un número de día, en la zona horaria del panel. */
 export function dayLabel(day) {
   const d = new Date(day * DAY);
-  return d.toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+  return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
 }
 
 /* ------------------------------------------------------------------ */
@@ -556,9 +556,9 @@ const SITIOS = [
   [/(^|_)reddit_com$/, 'Reddit'], [/(^|_)github_com$|_github_io$/, 'GitHub'],
 ];
 
-/** El nombre de un origen: `google_cl` → Google, `directo` → Directo o sin dato, `algo_cl` → algo.cl. */
+/** El nombre de un origen: `google_cl` → Google, `directo` → Direct or unknown, `algo_cl` → algo.cl. */
 export function origenLabel(k) {
-  if (!k || k === 'directo') return 'Directo o sin dato';
+  if (!k || k === 'directo') return 'Direct or unknown';
   for (const [re, nombre] of SITIOS) if (re.test(k)) return nombre;
   return k.replace(/_/g, '.');
 }
@@ -604,7 +604,7 @@ export const vueltaAtrasada = (vuelta, now = Date.now()) => !vuelta || now - vue
  * vuelta al día siguiente y a los 7 días (de quienes jugaron un día del rango cuyo día siguiente, o
  * séptimo, ya pasó), las rachas por tramo y las invitaciones aceptadas.
  */
-export const TRAMOS_RACHA = [['1', 1, 1], ['2 a 6', 2, 6], ['7 a 29', 7, 29], ['30 o más', 30, Infinity]];
+export const TRAMOS_RACHA = [['1', 1, 1], ['2 to 6', 2, 6], ['7 to 29', 7, 29], ['30 or more', 30, Infinity]];
 export function unoAlDiaDelRango({ days = {}, historia = {}, invitados = {}, rachas = {} } = {}, { from, to, hoy = to }) {
   const porDia = [], porJuego = {};
   let partidas = 0;
@@ -662,7 +662,7 @@ export function unoAlDiaDelRango({ days = {}, historia = {}, invitados = {}, rac
  * página son las dos cosas juntas.
  */
 export const TIPOS_FALLA = ['arranque', 'recurso', 'js', 'promesa'];
-export const TRAMOS = [['s1', 'menos de 1 s'], ['s3', '1 a 3 s'], ['s6', '3 a 6 s'], ['s10', '6 a 10 s'], ['mas', '10 s o más']];
+export const TRAMOS = [['s1', 'under 1 s'], ['s3', '1 to 3 s'], ['s6', '3 to 6 s'], ['s10', '6 to 10 s'], ['mas', '10 s or more']];
 /** Desde qué tramo una carga es lenta: 6 s o más hasta poder jugar. */
 export const TRAMOS_LENTOS = ['s10', 'mas'];
 
@@ -730,8 +730,8 @@ export function salud(days, { from, to }) {
   return { total, paginas, porDia, errores: lista, desde, versionActual };
 }
 
-/** `ios16` → iPhone o iPad (iOS 16); `chrome129` → Chrome 129. Lo que no se conoce sale tal cual. */
-const NAVEGADORES = { ios: 'iPhone o iPad · iOS', chrome: 'Chrome', safari: 'Safari', firefox: 'Firefox', edge: 'Edge', samsung: 'Samsung Internet', instagram: 'Instagram (dentro de la app)', facebook: 'Facebook (dentro de la app)', otro: 'Otro navegador' };
+/** `ios16` → iPhone or iPad (iOS 16); `chrome129` → Chrome 129. Anything unknown is shown as is. */
+const NAVEGADORES = { ios: 'iPhone or iPad · iOS', chrome: 'Chrome', safari: 'Safari', firefox: 'Firefox', edge: 'Edge', samsung: 'Samsung Internet', instagram: 'Instagram (in-app)', facebook: 'Facebook (in-app)', otro: 'Other browser' };
 export function navegadorLabel(k) {
   const m = /^([a-z]+)(\d*)$/.exec(String(k || ''));
   if (!m || !NAVEGADORES[m[1]]) return String(k || '?');
