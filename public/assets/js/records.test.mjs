@@ -100,6 +100,15 @@ const med = medallero({
 assert.deepEqual(med.map(f => [f.n, f.oro, f.plata, f.bronce, f.puesto]), [
   ['Javier', 2, 0, 0, 1], ['cata', 1, 1, 0, 2], ['Pancho', 0, 1, 1, 3],
 ]);
+// D-357: a win by name alone joins the only player with that name; with two such players it stays apart
+const med2 = medallero({
+  A: { end: 1, p: { a: { n: 'Pepenbauer', l: 1, j: 'pepe0001' } } },
+  B: { end: 2, p: { b: { n: 'pepenbauer ', l: 1, co: 'US' } } },
+  C: { end: 3, p: { c: { n: 'Javi', l: 1, j: 'javi0001' }, d: { n: 'Javi', l: 2, j: 'javi0002' }, e: { n: 'Javi', l: 3 } } },
+});
+assert.deepEqual(med2.map(f => [f.n, f.jid, f.co, f.oro, f.plata, f.bronce]), [
+  ['Pepenbauer', 'pepe0001', 'US', 2, 0, 0], ['Javi', 'javi0001', null, 1, 0, 0], ['Javi', 'javi0002', null, 0, 1, 0], ['Javi', null, null, 0, 0, 1],
+]);
 assert.deepEqual(ultimasCopas({ A: { name: 'a', end: 1, p: { x: { n: 'X', l: 1 } } }, B: { name: 'b', end: 2, p: {} } }).map(c => c.code), ['B', 'A']);
 
 // El almacén de prueba hace cumplir lo mismo que las reglas: con otro PIN no se entra

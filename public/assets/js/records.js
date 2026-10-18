@@ -206,7 +206,8 @@ export function podioDe(filas, jugadores = {}) {
 /**
  * El medallero: cuántos oros, platas y bronces tiene cada uno, de todas las copas guardadas.
  * Quien entró con su jugador suma por su jid; quien no, por su nombre (y dos con el mismo nombre
- * suman juntos: es lo que se puede saber). Orden olímpico: oros, después platas, después bronces.
+ * suman juntos: es lo que se puede saber). A name-only row joins the one player with that name,
+ * if there is exactly one (D-357). Orden olímpico: oros, después platas, después bronces.
  */
 export function medallero(podios) {
   const por = new Map();
@@ -220,6 +221,23 @@ export function medallero(podios) {
       if ((c.end || 0) >= (f.ultima || 0)) { f.n = x.n; f.ultima = c.end || 0; }
       por.set(id, f);
     }
+  }
+  // Someone who won once with their player and once by name alone is one person when exactly one
+  // player carries that name: the name-only row folds into it. With two players of that name it
+  // cannot be told whose it is, and it stays apart (D-357).
+  const conJid = new Map();
+  for (const f of por.values()) if (f.jid) {
+    const k = claveNombre(f.n);
+    conJid.set(k, conJid.has(k) ? null : f);
+  }
+  for (const [id, f] of por) {
+    if (f.jid) continue;
+    const dueno = conJid.get(claveNombre(f.n));
+    if (!dueno) continue;
+    dueno.oro += f.oro; dueno.plata += f.plata; dueno.bronce += f.bronce;
+    dueno.copas.push(...f.copas);
+    if (!dueno.co && f.co) dueno.co = f.co;
+    por.delete(id);
   }
   const filas = [...por.values()].sort((a, b) => b.oro - a.oro || b.plata - a.plata || b.bronce - a.bronce || a.n.localeCompare(b.n, 'es'));
   filas.forEach((f, i) => {

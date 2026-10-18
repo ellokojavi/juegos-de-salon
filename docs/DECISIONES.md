@@ -77,7 +77,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347 |
 | Agentes (usabilidad, documentación, procesos, atención) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341 |
-| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-358 |
+| Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
@@ -3368,7 +3368,7 @@ del idioma elegido (`applang`, D-46) decía cuánto, pero no de qué partida.
 **Consecuencias:** Lo de antes no tiene idioma y no lleva etiqueta. Reglas nuevas, solo agregan.
 
 ## D-212 · Un jugador es un nombre y un PIN para todos los juegos, y sus récords van a rankings
-**Fecha:** 2026-10-04 · **Estado:** corregida por D-217, D-249 · **Relación:** amplía D-96 fuera de La Copa; completa C-7 (lo que sale de quien entra con su jugador)
+**Fecha:** 2026-10-04 · **Estado:** corregida por D-217, D-249, D-357 · **Relación:** amplía D-96 fuera de La Copa; completa C-7 (lo que sale de quien entra con su jugador)
 **Decisión:** Quien quiere aparecer en los rankings entra con **su nombre y un PIN de 4 dígitos**,
 como en La Copa, pero una vez para toda la app y en cualquier celular. Es opcional y se ofrece
 plegado en la antesala de cada juego suelto (junto al ranking, debajo de "Empezar": antes lo
@@ -6827,6 +6827,24 @@ D-192); moving `og.mjs` too (half of what it writes is the site).
 **Consequences:** a new promotional file in the site needs its asset's `servido` entry. Changing
 `card.html` changes every card's fingerprint (D-181): the move recomputed them, the drawing did not
 change. The README's screenshots (`docs/screenshots/`) are documentation, not promotion: they stay.
+
+## D-357 · A La Copa win by name alone joins the only player with that name
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-212 (the champions' medal table)
+**Context:** Pepenbauer won two cups, one with their player and one with only their name, and the
+medal table showed two Pepenbauer rows with one gold each: wins with a player add up by its jid, and
+wins without one by name, and the two never met. The owner asked to merge these cases, also for the
+cups already played.
+**Decision:** `medallero()` (`public/assets/js/records.js`) folds a name-only row into the row of a
+player with the same name (`claveNombre`) **when exactly one player has that name**. With two or more
+players of that name the row stays apart, because it cannot be told whose it is. It is done when the
+table is read, not in Firebase, so it applies to every cup already stored and to future ones.
+**Why:** a returning champion who forgot to sign in once is far more common than two different people
+with the same name, and with a single player of that name the merge is very likely right.
+**Alternatives discarded:** writing the jid into the stored podiums (a data fix only for the past
+cups, which would have to be repeated); merging by name always (it would add up two different people
+who share a name).
+**Consequences:** a name-only win can join someone else's player if two different people use the
+same name and only one of them has a player; it is the trade accepted.
 
 ## D-358 · The usual name and PIN carry a player's history into La Copa
 **Date:** 2026-10-18 · **Status:** current · **Relation:** builds on D-212 and D-220; D-357 stays as the fallback for wins nobody signs

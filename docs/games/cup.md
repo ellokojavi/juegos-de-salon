@@ -76,7 +76,8 @@ toda la app), al inscribirse el nombre viene puesto, y al abrir la copa su jugad
 en `players/<pid>/j`. Con eso: los de la copa que también lo están pasan a ser sus **amigos** en
 los rankings; cada día jugado cuenta para la pestaña **Copa** del ranking de ese juego; y cuando la
 copa termina, el primero que la abre guarda su podio en `torneoPodios/<código>`, del que sale el
-medallero de **Campeones de La Copa** al final de la portada. El PIN de la copa sigue siendo aparte.
+medallero de **Campeones de La Copa** al final de la portada. A win by name alone (without a player) joins the
+player with that name when exactly one has it (D-357). El PIN de la copa sigue siendo aparte.
 Las copas del laboratorio no cuentan.
 
 **The usual name and PIN (D-358).** With no player on the phone, whoever creates, joins or sits in a
