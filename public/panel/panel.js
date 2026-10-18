@@ -1132,6 +1132,14 @@ const listaDe = (obj, label, max = 4) => {
 };
 
 /** Un error, juntado por qué es: dónde, en qué páginas, en qué navegadores y versiones, y cuándo. */
+/**
+ * The vigía writes what failed to load in Spanish (`vigia.js`, stored as data): read in English here,
+ * old records included (D-350). "módulo que no cargó (el de la página)" → "module that did not load (the page's own)".
+ */
+const RECURSO_EN = { 'módulo': 'module', script: 'script', 'hoja de estilos': 'stylesheet' };
+const mensajeEn = m => String(m || '').replace(/^(módulo|script|hoja de estilos) que no cargó( \(el de la página\))?$/,
+  (_, tipo, propio) => `${RECURSO_EN[tipo]} that did not load${propio ? " (the page's own)" : ''}`).replace(/^\(sin detalle\)$/, '(no detail)');
+
 function filaError(g) {
   const [ico, nombre] = TIPO_FALLA[g.k] || ['·', g.k];
   const dias = g.primero === g.ultimo ? dayLabel(g.ultimo) : `${dayLabel(g.primero)} to ${dayLabel(g.ultimo)}`;
@@ -1139,7 +1147,7 @@ function filaError(g) {
   return el('div', { class: `err-row${g.viejo ? ' err-row--viejo' : ''}` },
     el('div', { class: 'err-ico', title: nombre, role: 'img', 'aria-label': nombre }, ico),
     el('div', { class: 'err-cuerpo' },
-      el('p', { class: 'err-msg' }, g.m),
+      el('p', { class: 'err-msg' }, mensajeEn(g.m)),
       g.f ? el('p', { class: 'err-lugar' }, el('code', {}, g.f)) : null,
       el('div', { class: 'err-meta' },
         el('span', { class: 'q' }, listaDe(g.paginas, paginaLabel)),
