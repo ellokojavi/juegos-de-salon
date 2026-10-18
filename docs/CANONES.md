@@ -392,6 +392,8 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **🔥 "Popular", in the lab** (D-361): the first three of the order that are neither La Copa nor
   "New" (`populares`) wear the "New" sticker in fire colors, with the 🔥 outside the gradient. It is
   off for players (`POPULAR_EN_PORTADA = false`); `/?popular` and the lab's `/labs/home/` show it.
+- **✨ Nuevo and 🔥 Populares filters, in the lab** (D-362): a row of two chips above the types,
+  each shown only when it has games, kept in the link as `?type=new` / `?type=popular`; only with `?picks`.
 - **Home page experiments** (D-361): what is tried on the home page before players see it is a URL
   parameter the page reads, off by default, listed in `public/labs/home/experiments.js`; `/labs/home/`
   shows the real page with one switch for each (the bar of `public/labs/experiments.css`).

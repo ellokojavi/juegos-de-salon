@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
@@ -6975,3 +6975,16 @@ four languages, before players see it, is what the lab is for, and the owner lik
 counting starts (it rewards games people abandon); labelling La Copa or a "New" game as popular.
 **Consequences:** `popularity.test.mjs`, `games.test.mjs` and `tools/e2e/home/lab.mjs` cover it; C-17
 says the new order and the label.
+
+## D-362 · "✨ Nuevo" and "🔥 Populares" as filters, in the lab
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-361 (the home page's experiments, the popular label), D-333 (New), D-142 and D-238 (the filters and ⭐ Favoritos)
+**Decision:** the owner's request: two more chips above the four types, in a row of their own: **✨ Nuevo**
+shows the games that say "New" (`esNuevo`), **🔥 Populares** the three with the label (`populares`).
+Same pill as ⭐ Favoritos; each one shows only when it has games; tapping it again clears it; the link
+keeps it (`?type=new`, `?type=popular`). Texts: Nuevo / Populares, New / Popular, Novo / Populares,
+Neu / Beliebt. **In the lab** (D-361): only with `?picks`, a switch of `/labs/home/` (✨ Filtros). It
+ships together with the popular label, in its own PR, with the usability agent's full pass.
+**Why:** the owner's request; a returning player looking for what is new, or a new one for what others
+play, gets there in one tap. Tried in the lab first, as the owner asked for the label.
+**Consequences:** `tools/e2e/home/lab.mjs` checks the row above the types in the four languages at
+320 px and that each chip filters; C-17 says it.

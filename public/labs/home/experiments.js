@@ -6,6 +6,7 @@
  */
 export const EXPERIMENTS = {
   popular: { emoji: '🔥', name: 'Populares', what: 'Los tres juegos con más partidas terminadas llevan la etiqueta 🔥 Popular.' },
+  picks: { emoji: '✨', name: 'Filtros', what: 'Arriba de los tipos, dos fichas más: ✨ Nuevo y 🔥 Populares.' },
 };
 
 /** The home page's address with the experiments that are on, in a language, never counted (`test`). */

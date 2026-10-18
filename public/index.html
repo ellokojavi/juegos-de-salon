@@ -225,7 +225,16 @@
       font: 900 0.9rem var(--font-body); border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
       transition: background 0.15s, color 0.15s, transform 0.1s;
     }
-    .filtros .tipos button.on, .filtros .ficha-fav.on { background: var(--cyan); border-color: transparent; color: #03302c; }
+    /* "✨ Nuevo" and "🔥 Populares" (D-362, in the lab): a row of their own above the types, the same
+       pill as ⭐ Favoritos; each one shows only when it has games. */
+    .filtros .atajos { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .filtros .atajos[hidden], .filtros .atajos button[hidden] { display: none; }
+    .filtros .atajos button {
+      display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
+      font: 900 0.9rem var(--font-body); border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
+      transition: background 0.15s, color 0.15s, transform 0.1s;
+    }
+    .filtros .atajos button.on, .filtros .tipos button.on, .filtros .ficha-fav.on { background: var(--cyan); border-color: transparent; color: #03302c; }
     .filtros button:active { transform: scale(0.96); }
     .filtros-cuenta { display: flex; flex-wrap: wrap; gap: 4px 10px; justify-content: center; align-items: center; color: var(--muted); font-weight: 700; font-size: 0.9rem; margin: 0; min-height: 44px; }
     .filtros-cuenta[hidden] { display: none; }
@@ -545,9 +554,15 @@
       const pedido = q.get('type') || TIPOS_VIEJOS[q.get('tipo')];
       const FAV = 'favorites';
       const hayFavoritos = () => tarjetas.some(t => t.caja !== t.card && marcados.has(t.g.id));
-      const filtro = { tipo: TIPOS[pedido] || (pedido === FAV && hayFavoritos()) ? pedido : null };
+      // "✨ Nuevo" and "🔥 Populares" (D-362): in the lab until they ship, with ?picks
+      const NEW = 'new', POP = 'popular';
+      const conAtajos = param('picks') !== null;
+      const top3 = populares();
+      const atajo = { [NEW]: g => g.available && esNuevo(g), [POP]: g => top3.has(g.id) };
+      const tieneAtajo = k => conAtajos && PORTADA.some(atajo[k]);
+      const filtro = { tipo: TIPOS[pedido] || (pedido === FAV && hayFavoritos()) || (atajo[pedido] && tieneAtajo(pedido)) ? pedido : null };
       const caben = ({ g, card, caja }) => !filtro.tipo
-        || (filtro.tipo === FAV ? caja !== card && marcados.has(g.id) : (g.tipos || []).includes(filtro.tipo));
+        || (filtro.tipo === FAV ? caja !== card && marcados.has(g.id) : atajo[filtro.tipo] ? atajo[filtro.tipo](g) : (g.tipos || []).includes(filtro.tipo));
       const caja = document.getElementById('filtros');
       caja.setAttribute('aria-label', T.filters);
       const tipos = el('div', { class: 'tipos', role: 'group', 'aria-label': T.filters });
@@ -562,7 +577,13 @@
         const b = el('button', { type: 'button', 'data-tipo': id, onClick: () => { filtro.tipo = filtro.tipo === id ? null : id; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, t.emoji), el('span', {}, pickLang(t.name, lang)));
         tipos.append(b); botones.push(b);
       }
-      caja.append(favs, tipos);
+      const atajos = el('div', { class: 'atajos', role: 'group', 'aria-label': T.filters });
+      for (const [k, emoji, texto] of [[NEW, '✨', T.filterNew], [POP, '🔥', T.filterPopular]]) {
+        const b = el('button', { type: 'button', 'data-tipo': k, hidden: !tieneAtajo(k), onClick: () => { filtro.tipo = filtro.tipo === k ? null : k; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, emoji), el('span', {}, texto));
+        atajos.append(b); botones.push(b);
+      }
+      atajos.hidden = ![NEW, POP].some(tieneAtajo);
+      caja.append(favs, atajos, tipos);
       const limpiar = () => { filtro.tipo = null; aplicar(); };
       // Dónde va ⭐ Favoritos (D-241): se prueba de la forma más completa a la más corta y queda la
       // primera que cabe sin que la fila se desborde. Se mide en vez de fijar un ancho: el largo de
