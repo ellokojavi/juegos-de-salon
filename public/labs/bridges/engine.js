@@ -38,6 +38,42 @@ export function vigaValida(e, vigas, a, b) {
 }
 
 /**
+ * Joints in the middle of a beam (owner's request): a beam may start or end on a grid point inside
+ * another beam, and that beam is split there in two, so it looks and works like any joint between
+ * ends; and a new beam that runs over a joint is split at it too. Splitting keeps the wood (the
+ * pieces add up to the same length), so it only applies to wood budgets.
+ */
+const EPS = 1e-9;
+/** Is grid point `p` strictly inside beam `v` (on its line, between its ends)? */
+export function enMedio(v, p) {
+  const [ax, ay] = v.a, [bx, by] = v.b, [px, py] = p;
+  if (Math.abs((bx - ax) * (py - ay) - (by - ay) * (px - ax)) > EPS) return false;
+  const t = ((px - ax) * (bx - ax) + (py - ay) * (by - ay)) / ((bx - ax) ** 2 + (by - ay) ** 2);
+  return t > EPS && t < 1 - EPS;
+}
+/** The beams with each one that has `p` inside split in two there. */
+export const partir = (vigas, p) => vigas.flatMap(v => (enMedio(v, p) ? [{ a: v.a, b: p }, { a: p, b: v.b }] : [v]));
+/** The grid points inside beams (where a beam can now start or end): 'x,y'. */
+export function puntosMedios(vigas) {
+  const out = new Set();
+  for (const v of vigas) {
+    const [ax, ay] = v.a, [bx, by] = v.b, n = Math.max(Math.abs(bx - ax), Math.abs(by - ay));
+    for (let k = 1; k < n; k++) { const x = ax + ((bx - ax) * k) / n, y = ay + ((by - ay) * k) / n; if (Number.isInteger(x) && Number.isInteger(y)) out.add(`${x},${y}`); }
+  }
+  return out;
+}
+/**
+ * The bridge with beam a→b added and joined everywhere it touches: the beams it starts or ends inside
+ * are split there, and it is split at every joint (`nudos`, 'x,y') it runs over.
+ */
+export function unirViga(vigas, a, b, nudos = new Set()) {
+  const partidas = partir(partir(vigas, a), b);
+  let nueva = [{ a, b }];
+  for (const k of nudos) { const p = k.split(',').map(Number); nueva = partir(nueva, p); }
+  return [...partidas, ...nueva];
+}
+
+/**
  * What a bridge costs. A crossing with `madera` measures its budget in wood: each beam costs its
  * length (a two-square beam costs double), so a few long beams are no longer a free trick. Without it,
  * one beam is one unit, as in the first stages.
