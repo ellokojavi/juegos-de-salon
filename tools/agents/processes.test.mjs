@@ -53,6 +53,12 @@ assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2,
 assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 2, usabilityDays: 1 }).map(d => d.agent), ['usability']);
 assert.match(toDispatch({ docCommits: 0, publicCommits: null, usabilityDays: null })[0].reason, /never/);
 assert.match(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 7 })[0].reason, /week/);
+// The game-ideas agent, once a week (D-360)
+assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2, ideasDays: 6 }), [], 'six days: not yet');
+assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2, ideasDays: 7 }).map(d => [d.agent, d.reason]), [['ideas', 'a week since its last round (7 days)']]);
+assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2, ideasDays: null }).map(d => d.agent), ['ideas'], 'never dispatched: it goes');
+assert.deepEqual(toDispatch({ docCommits: 2, publicCommits: 1, usabilityDays: 1, ideasDays: 9 }).map(d => d.agent), ['documentation', 'usability', 'ideas']);
+assert.ok(EXECUTORS.includes('ideas'), 'ideas can be recorded with dispatch');
 
 // The repo's memory has the shape the tool reads (keys in English since D-316)
 const memory = JSON.parse(readFileSync(MEMORY, 'utf8'));

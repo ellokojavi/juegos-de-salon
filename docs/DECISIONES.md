@@ -76,7 +76,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347 |
-| Agentes (usabilidad, documentación, procesos, atención) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341 |
+| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -6866,3 +6866,52 @@ screen (more steps for the same proof); dropping D-357 now (Pepenbauer's stored 
 again until they reopen that cup).
 **Consequences:** someone whose cup PIN differs from their player PIN still joins as before and
 gets no history from that cup unless they sign in to their player on that phone first.
+
+## D-360 · A game-ideas agent: three ideas a week, each with evidence, as one-tap decisions
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-273 and D-276 (the processes agent dispatches it and follows up its issues); reuses D-273's one-tap decisions, D-280 (Proyectos activos and La Bodega) and D-304 (a prototype is a lab-only PR); applies D-338 (the owner's time)
+**Context:** the owner asked for a brainstorming agent that knows the games, knows what is popular
+elsewhere and proposes improvements: meta-game dynamics, existing features, new games. Until now
+every new game came from the owner asking to investigate one (Codenames, ColorSweeper, Junction
+Nine, Number Match, Shikaku); there was no ledger of what was tried and why it stopped (El caso and
+La clave went to La Bodega, D-280), the home page's order is a frozen count (D-255) and the panel's
+new numbers (D-348: finish rate, abandons, cup days skipped, returns, shares) had no reader asking
+"what should we try?". The feedback inbox's 🎲 game-idea kind (D-341) had no owner either.
+**Decision:** a fifth agent, `.claude/agents/ideas.md`, with its tool `tools/agents/ideas.mjs` and
+its memory `docs/ideas.json`:
+- **Evidence first.** `ideas.mjs check` reads as administrator what the panel reads and prints the
+  games by plays against `POPULARIDAD` (a game that moved three places or more, or is missing, is
+  an idea: refresh the order), the one-player games with the weakest finish (ten starts or more),
+  the room funnel, La Copa by game and by day, Uno al día's returns, users and shares, the lab's
+  two groups, the `feedback:game-idea` and open `feedback:suggestion` issues, and the ledger. An
+  idea quotes those numbers or those requests, never a metric of its own.
+- **Three lanes:** meta-game (what brings a player back and brings a friend), existing games (the
+  weak numbers), new games (what is popular elsewhere and fits the house: phone first, 3 to 10
+  minutes, four languages or none, 0 to 100 with a seed, deducible without guessing, the
+  inspiration credited on the cover page).
+- **At most three ideas per round, one issue, once a week**, opened through `processes.mjs decide`
+  (D-273) so it reaches the owner by email with a Yes and a No per idea. Each idea carries its
+  evidence, its cost in PRs (a new game is all of `docs/AGREGAR-JUEGO.md`), how it is tried first
+  (a lab project, a flag, a variant) and the panel number that would prove it. A Yes queues the
+  prototype for the processes round, which launches a session to build it as a lab-only PR
+  (D-304); a No is recorded with the owner's reason. No new issue while the last one is unanswered.
+- **The ledger remembers.** `docs/ideas.json` keeps every idea with its status (`proposed` →
+  `approved` or `discarded`; `approved` → `prototyped` → `graduated` or `shelved`) and why, and
+  `taste`: one line per thing the owner's answers taught, the way the marketing memory keeps "Lo que
+  el dueño quiere" (D-178). A discarded or shelved idea is not proposed again as new; it comes back
+  only with what changed.
+- **It builds nothing.** It touches `docs/ideas.json` and nothing else; its PR carries only that
+  file, with auto-merge (D-313). The processes agent dispatches it once a week (`toDispatch`,
+  `dispatches.ideas`) and on the owner's request, and reviews its issue against the criteria in its
+  guide. What is decided in `docs/DECISIONES.md` is not re-proposed (D-65, D-68, D-198, D-255,
+  D-288, D-331, D-332 are the ones it most often brushes against).
+**Why:** the owner's request. An idea generator without evidence produces noise, and the owner is
+already the bottleneck of every decision (D-338): the agent's value is to turn the numbers the
+panel now has, the players' requests and what is popular outside into few, grounded proposals, and
+to remember the answers so the same idea is not pitched twice.
+**Alternatives discarded:** a daily round (the owner cannot answer ideas every day, and the numbers
+move by the week); letting it open the prototype PR itself on a Yes (the processes round already
+owns the queue and the agents' review; one path for every build); a free-form backlog document
+(nobody reads a list; a ledger with statuses and reasons is what the next round needs).
+**Consequences:** `processes.mjs check` lists `ideas` among the dispatches once a week;
+`processes.test.mjs` and `ideas.test.mjs` cover the pure parts; `CLAUDE.md` names the agent. The
+first round proposes the first three ideas; this PR opens none.
