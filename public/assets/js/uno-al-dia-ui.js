@@ -12,6 +12,7 @@ import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir } f
 import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel } from './uno-al-dia.js';
 import { UNO_AL_DIA } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
+import { salidasFin } from './fin.js';
 
 export const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const textos = lang => (COMMON[lang] || COMMON.es);
@@ -121,7 +122,7 @@ export function compartirHoy({ lang, fecha, dia, alTocar, mmss }) {
 
 /**
  * La tarjeta bajo el resultado de un juego jugado como Uno al día: la racha, lo que cuenta de hoy
- * y qué hacer ahora (compartir, jugar otro, repetirlo o ver todo). `primera` dice si esta partida
+ * y qué hacer ahora (compartir, jugar otro, repetirlo, volver a Uno al día o al menú). `primera` dice si esta partida
  * fue el resultado del día o una práctica; `dia` es lo anotado para hoy.
  */
 export function tarjetaResultado({ lang, fecha, primera, dia, raiz = '', alTocar, mmss }) {
@@ -144,8 +145,9 @@ export function tarjetaResultado({ lang, fecha, primera, dia, raiz = '', alTocar
     el('div', { class: 'uad-acciones' },
       compartirHoy({ lang, fecha, dia, alTocar, mmss }),
       el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { alTocar?.(); jugarOtro({ lang, raiz }); } }, T.jugarOtro)),
-    el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-uad-todo', href: `${raiz}today/` }, T.verTodo),
     el('a', { class: 'link-btn', id: 'btn-uad-repetir', href: `${raiz}${rutaHoy(dia.j)}` }, T.repetir),
+    // The exits of a One a Day end screen live here, in every game (C-19): the game adds none
+    salidasFin('hoy', { lang, raiz: raiz || './' }),
     red);
   conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alTocar });
   return tarjeta;
@@ -229,7 +231,7 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alToca
     let invitar = conRanking ? tarjetaInvitar({ lang, alTocar }) : null;
     const ranking = conRanking ? bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar }) : null;
     if (conRanking && !(await R.tengoJugador())) {
-      const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, bloqueJugador({ destacado: true, leyenda: T.guardaRacha, alTocar }));
+      const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, bloqueJugador({ destacado: true, compacto: true, leyenda: T.guardaRacha, alTocar }));
       arriba.append(entrar);
       // Si entra recién aquí, el de hoy igual sube; después, invitar ya no le pide entrar y el
       // ranking lo muestra
@@ -324,8 +326,11 @@ export function terminarHoy(hoy, { s, ms, lang, alTocar }) {
   return tarjetaResultado({ lang, fecha: hoy.fecha, primera, dia, raiz: '../', alTocar, mmss });
 }
 
-/** Pone la tarjeta justo antes de `antes` (los botones del resultado), sin duplicarla. */
-export function ponerTarjeta(tarjeta, antes) {
+/**
+ * Puts the card right under the result's hero, above the game's long content (words, fleets), so
+ * its actions and exits show without scrolling (C-8, C-19); never twice.
+ */
+export function ponerTarjeta(tarjeta, despues = document.querySelector('#screen-result .result-hero')) {
   document.getElementById('uad-tarjeta')?.remove();
-  antes.before(tarjeta);
+  despues.after(tarjeta);
 }

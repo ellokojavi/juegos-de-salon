@@ -396,8 +396,9 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   no cambian: generan con ella como en cualquier copa. Las palabras van en el idioma de quien juega,
   como en el juego suelto: el desafío es el mismo para los que juegan en el mismo idioma.
 - **La tarjeta del resultado** va justo bajo el puntaje: la racha, "Vuelve mañana para el día N", lo
-  que cuenta de hoy (o que fue práctica), **Compartir mi resultado**, **🎲 Jugar otro**, **📅 Ver tu
-  Uno al día** y **Repetir el de hoy**. Reemplaza al "Jugar otra vez" y al compartir del juego suelto.
+  que cuenta de hoy (o que fue práctica), **Compartir mi resultado**, **🎲 Jugar otro**, **Repetir el de hoy**
+  and **📅 Back to One a Day**; the header's ‹ goes to the menu (the exit comes from `fin.js`, C-19, D-343).
+  Reemplaza al "Jugar otra vez" y al compartir del juego suelto.
 - **Sin comodines, sin ranking del día y sin invitar todavía:** necesitan el jugador en Firebase
   (PR 3). El primer intento del día sí va al ranking normal del juego, si hay jugador; los demás no.
 - **`/today/`**: hoy (el dado si falta, o el resultado con el reloj al próximo, compartir y jugar
@@ -443,12 +444,12 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   acertada **hasta 39** (el diseño decía los barcos hundidos): con 6 por casilla, 7 aciertos ya pasaban de 40, el mínimo al ganar, así que
   se topó para que perder valga siempre menos. Dudo, ganando, 60 más 8 por dado que queda;
   perdiendo, 10 por ronda aguantada (todas menos la última) hasta 50.
-- **La tarjeta del resultado** va arriba de los botones del juego, que siguen ahí (a diferencia de
-  los solitarios, donde la tarjeta reemplaza "Jugar otra vez"): el resultado de cada juego tiene su
-  propia forma. La revancha del juego es una partida cualquiera, sin tarjeta; para repetir el
-  desafío está **Repetir el de hoy**. El primer intento cuenta; los siguientes son práctica.
+- **La tarjeta del resultado** goes right under the hero, as in the solo games, and the game adds
+  no buttons of its own in today mode: no rematch (#226), no "Change mode", no second menu button
+  (C-19, D-343). The game's own detail (words, fleets, dice) goes below the card. To repeat the
+  challenge there is **Repetir el de hoy**. El primer intento cuenta; los siguientes son práctica.
 - La lógica común de los tres está en `uno-al-dia-ui.js`: `modoHoy` (la fecha, la semilla, si ya
-  jugó y el salto al juego de hoy), `introHoy`, `terminarHoy` y `ponerTarjeta`.
+  jugó y el salto al juego de hoy), `introHoy`, `terminarHoy` y `ponerTarjeta` (no longer takes a place: always under the hero, D-343).
 - **Sin rankings del día** todavía (PR 3), y estos tres no anotan en el ranking normal jugando solo
   o contra el celular más que lo de siempre (las victorias contra el celular, D-215).
 - Se prueba con `uno-al-dia.test.mjs` (el mazo con 10 juegos, los días anteriores sin cambios, las

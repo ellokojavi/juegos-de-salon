@@ -465,11 +465,11 @@ function renderResultSolo(v, already) {
 
   const acciones = $('#result-actions');
   acciones.innerHTML = '';
-  // Uno al día: la tarjeta va arriba de los botones; el primer intento cuenta y los demás son práctica
-  if (S.hoy) ponerTarjeta(terminarHoy(S.hoy, { s: puntajeDia(total), ms: S.ms, lang, alTocar: () => SFX.tap() }), acciones);
-  acciones.append(
-    // En Uno al día no hay otra partida: la tarjeta ya ofrece jugar otro o repetir el de hoy (#226)
-    S.hoy ? null : el('button', { class: 'btn btn--yellow', id: 'btn-otra', onClick: () => startMatch('solo', M.names, M.config) }, T.endAgain),
+  // One a Day: the card goes under the hero and carries the screen's actions and exits (C-19);
+  // the first try counts and the rest are practice
+  if (S.hoy) ponerTarjeta(terminarHoy(S.hoy, { s: puntajeDia(total), ms: S.ms, lang, alTocar: () => SFX.tap() }));
+  else acciones.append(
+    el('button', { class: 'btn btn--yellow', id: 'btn-otra', onClick: () => startMatch('solo', M.names, M.config) }, T.endAgain),
     el('div', { class: 'btn-row' },
       el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); location.href = location.pathname; } }, T.changeMode),
       el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backMenu)),

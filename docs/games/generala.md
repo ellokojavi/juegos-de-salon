@@ -93,7 +93,7 @@ solitarios de La Copa (D-97).
 
 Puntaje del día (`puntajeDia` de `engine.js`): un tercio del total, hasta 100 (300 puntos ya es una
 partida excelente; el máximo es 360). El primer intento cuenta; los siguientes son práctica. No hay
-"Otra partida": la tarjeta de Uno al día ofrece jugar otro o repetir el de hoy. **Todavía no está en el mazo:**
+"Otra partida" nor buttons of its own: the card, right under the hero, offers play another, replay today's and the exits (C-19, D-343). **Todavía no está en el mazo:**
 entra cuando Generala salga de próximamente, el primer día de un mazo que no haya empezado (D-247,
 D-248).
 

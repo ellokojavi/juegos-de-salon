@@ -62,7 +62,7 @@ siempre, con su azar: lo común es el punto de partida, no la partida entera.
 
 Puntaje del día (`puntajeNaval` en `uno-al-dia.js`): ganando, 100 con 17 disparos y bajando parejo
 hasta 40 con los 100 del tablero; perdiendo, 6 por casilla de barco acertada, hasta 39 (siempre
-menos que ganar). La tarjeta de Uno al día va arriba de los botones del resultado; el primer
+menos que ganar). La tarjeta de Uno al día va justo bajo el resultado y carries the exit (📅 Back to One a Day; the header goes to the menu); the game adds no buttons of its own (C-19, D-343); el primer
 intento cuenta y los siguientes son práctica. No hay revancha (#226): la tarjeta ya ofrece 🎲 Jugar
 otro y Repetir el de hoy. Se prueba con `tools/e2e/daily-group.mjs`.
 
@@ -102,7 +102,7 @@ Intro (modos, then the rules below them, D-344) → Setup (nombres, tiro extra) 
   perder la flota, campanita al llegar el turno (espera 650 ms si acaba de sonar un resultado).
 
 ### Resultado
-Ganador, disparos totales y precisión de cada uno, ambas flotas reveladas (con los disparos encima), verificación ✅ del compromiso, desplegable con la secuencia de disparos, Revancha / Cambiar modo / Menú.
+Ganador, disparos totales y precisión de cada uno, ambas flotas reveladas (con los disparos encima), verificación ✅ del compromiso, desplegable con la secuencia de disparos, Revancha / Cambiar modo / Menú (in One a Day only the card, under the hero, D-343).
 
 ### Interfaz y estilo
 

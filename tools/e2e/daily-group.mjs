@@ -51,9 +51,9 @@ async function intro(id, folder, extra) {
 /** What the endings share: the card above the game's buttons, and what was recorded. */
 async function final(id, date, expected) {
   ok(await waitFor(`!!document.getElementById('uad-tarjeta')`, 60), `${id}: at the end, the Uno al día card`);
-  ok(await ev(`document.getElementById('uad-tarjeta').nextElementSibling?.id === 'result-actions'`), `${id}: it goes right above the game's buttons`);
-  ok(!await ev(`[...document.querySelectorAll('#result-actions .btn--yellow')].length`), `${id}: no rematch button (#226): the card already offers playing another or repeating today's`);
-  ok(await ev(`document.querySelectorAll('#result-actions .btn').length > 0`), `${id}: and the game's buttons are still there`);
+  ok(await ev(`document.getElementById('uad-tarjeta').previousElementSibling?.classList.contains('result-hero')`), `${id}: it goes right under the result's hero (C-19)`);
+  ok(!await ev(`document.querySelectorAll('#result-actions .btn').length`), `${id}: no buttons of the game's own (#226, C-19): the card carries them`);
+  ok(await ev(`!!document.querySelector('#uad-tarjeta #btn-fin-hoy') && !document.querySelector('#btn-fin-menu')`), `${id}: the card offers back to One a Day, and the menu is the header's (C-19)`);
   const m = await memory();
   const d = m.dias[date];
   ok(d?.j === id && d.n === 1, `${id}: it stays recorded on the phone (${JSON.stringify(d)})`);
