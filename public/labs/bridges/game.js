@@ -7,7 +7,7 @@
 import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, PUNTOS_SOLIDEZ, MARGEN_SOLIDO, BONO_RAPIDEZ, RAPIDO_S, picoDe, picoReferencia, costo, costoViga, unirViga, puntosMedios, partir } from './engine.js';
+import { ETAPAS, TIEMPO_S, ALTO, LARGO_MAX, PIEZAS, fijos, vigaValida, crearSim, paso, DT, FISICA, puntajePartida, alturaCamino, PUNTOS_ETAPA, PUNTOS_AHORRO, PUNTOS_SOLIDEZ, MARGEN_SOLIDO, BONO_RAPIDEZ, RAPIDO_S, picoDe, picoReferencia, costo, costoViga, unirViga, puntosMedios, partir, trazo } from './engine.js';
 import { pixelado, particulas, LOCO, CHIMENEA, trenDe, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, PALETA_LANCHA, SURFISTA, PALETA_SURFISTA } from './pixel.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -924,8 +924,8 @@ function jugar() {
     if (!desde) return;
     const m = punto(ev), g = cercano(m);
     const hasta = cerca(m, g) ? g : m;
-    const motivo = Array.isArray(hasta) && Number.isInteger(hasta[0]) && Number.isInteger(hasta[1]) ? vigaValida(e, P.vigas, desde, hasta) : 'suelta';
-    ultimoArrastre = { a: desde, b: hasta, ok: !motivo && costo(e, P.vigas) + costoViga(e, { a: desde, b: hasta }) <= e.presupuesto + 1e-9 };
+    const t = Array.isArray(hasta) && Number.isInteger(hasta[0]) && Number.isInteger(hasta[1]) ? trazo(e, P.vigas, desde, hasta) : { piezas: [], motivo: 'suelta' };
+    ultimoArrastre = { a: desde, b: hasta, ok: !t.motivo && costo(e, P.vigas) + costo(e, t.piezas) <= e.presupuesto + 1e-9 };
     repintar(ultimoArrastre);
   });
   c.addEventListener('pointerup', ev => {
@@ -940,11 +940,18 @@ function jugar() {
     }
     if (desde) {
       const hasta = cerca(m, g) ? g : null;
-      // On wood, a beam that ends inside another, or runs over a joint, joins there (unirViga)
+      // On wood, a beam that ends inside another, or runs over a joint, joins there (unirViga); a stroke
+      // longer than one beam is laid as a beam per grid step (trazo), the whole deck in one drag
       const base = e.madera && hasta ? partir(partir(P.vigas, desde), hasta) : P.vigas;
-      const motivo = !hasta ? 'fuera' : costo(e, P.vigas) + costoViga(e, { a: desde, b: hasta }) > e.presupuesto + 1e-9 ? (e.madera ? 'sinMadera' : 'presupuesto') : vigaValida(e, base, desde, hasta);
+      const t = hasta ? trazo(e, base, desde, hasta) : { piezas: [], motivo: 'fuera' };
+      const motivo = t.motivo || (costo(e, P.vigas) + costo(e, t.piezas) > e.presupuesto + 1e-9 ? (e.madera ? 'sinMadera' : 'presupuesto') : null);
       if (motivo) { if (motivo !== 'cero') { aviso.textContent = T.aviso[motivo] || T.aviso.fuera; SFX.error(); vibrate([30, 30, 30]); } }
-      else { P.historial.push(P.vigas); P.vigas = e.madera ? unirViga(P.vigas, desde, hasta, usados()) : [...P.vigas, { a: desde, b: hasta }]; SFX.tap(); vibrate(10); aviso.textContent = ''; }
+      else {
+        P.historial.push(P.vigas);
+        let vs = P.vigas;
+        for (const pz of t.piezas) vs = e.madera ? unirViga(vs, pz.a, pz.b, usados()) : [...vs, pz];
+        P.vigas = vs; SFX.tap(); vibrate(10); aviso.textContent = '';
+      }
     }
     desde = null; ultimoArrastre = null; repintar();
   });

@@ -24,6 +24,8 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
   board as it is spent. The screen's title is the stage ("Etapa 2 de 5"), and under it, always in view, the
   train's weight, drawn small beside it (`trenMini`: the locomotive and a wagon as they will cross): normal, or how much heavier it is (it used to be a sign that slid over the board and went).
 
+- A straight drag longer than one beam is a stroke (`trazo()` in `engine.js`): it lays a beam for each
+  step between the grid points on its line (the whole deck in one drag), skipping those already there.
 - On wood budgets, a beam may also start or end at a grid point inside another (the middle of a
   two-square beam): that beam is split there (`unirViga()` in `engine.js`), and a new beam that runs over
   a joint is split at it, so every touch on a grid point is a bolt like any other; the wood stays the
