@@ -1,7 +1,4 @@
-level: minor
+level: patch
 
-- **Every result screen shows where to go next, in the same place** (C-19, D-343). In One a Day,
-  every game ends with the same card, right under the score: share, 🎲 play another, replay today's,
-  and 📅 back to One a Day, all visible without scrolling (no more "Change mode" or duplicated menu buttons in
-  El Ahorcado, Batalla Naval and Dudo). A Cup day puts "Back to the board" first, with the breakdown
-  folded; the Cup's podium now has 🏠 back to the menu; and `/today/` offers "Replay today's" too.
+- **The "Sign in" button on the One a Day card fits inside its frame again**: in the one-line version
+  under a result, the button stuck out of the box.
