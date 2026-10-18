@@ -13,6 +13,7 @@
  *                                   si trae el mismo hash que jugadorKeys (como en La Copa, D-96).
  *   records/<tabla>/<periodo>/<jid> { s, ms, k, at, n }: el mejor, y solo si mejora.
  *   torneoPodios/<código>           el podio de una copa terminada, para el medallero.
+ *                                   `p/<pid>/j` is signed later by that cup player (D-358).
  *   jugadorCopas/<jid>/<código>     { p, at }: las copas en que está, como el jugador `p` de cada
  *                                   una (D-220). Solo la leen sus celulares.
  *   unoAlDia/<jid>/<n>              { j, s, ms, at, w? }: el primer intento de Uno al día del día `n`
@@ -427,6 +428,20 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     async guardarPodio(code, podio) {
       if (await almacen.get(`torneoPodios/${code}/end`)) return false;
       await almacen.update({ [`torneoPodios/${code}`]: { ...podio, at: HORA } });
+      return true;
+    },
+
+    /**
+     * Sign this player's place on a podium saved without them (D-358): someone who won by name
+     * alone and later sits in that cup with their player. The rules accept it only from a phone
+     * seated as that cup player, and only once. Best effort: false if there is nothing to sign.
+     */
+    async firmarPodio(code, pid) {
+      const yo = api.yo();
+      if (!yo) return false;
+      const x = await almacen.get(`torneoPodios/${code}/p/${pid}`);
+      if (!x || x.j) return false;
+      await almacen.update({ [`torneoPodios/${code}/p/${pid}/j`]: yo.jid });
       return true;
     },
 
