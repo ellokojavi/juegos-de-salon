@@ -431,6 +431,20 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     },
 
     /**
+     * Sign this player's place on a podium saved without them (D-358): someone who won by name
+     * alone and later sits in that cup with their player. The rules accept it only from a phone
+     * seated as that cup player, and only once. Best effort: false if there is nothing to sign.
+     */
+    async firmarPodio(code, pid) {
+      const yo = api.yo();
+      if (!yo) return false;
+      const x = await almacen.get(`torneoPodios/${code}/p/${pid}`);
+      if (!x || x.j) return false;
+      await almacen.update({ [`torneoPodios/${code}/p/${pid}/j`]: yo.jid });
+      return true;
+    },
+
+    /**
      * Las copas de este jugador, de cualquier celular (D-220): `[{ code, p, at }]`, la más reciente
      * primero. Sin jugador, ninguna.
      */

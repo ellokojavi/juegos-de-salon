@@ -636,6 +636,7 @@
               ".validate": "newData.isNumber() && (newData.val() == 1 || newData.val() == 2 || newData.val() == 3)"
             },
             "j": {
+              ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && !data.exists() && newData.exists() && data.parent().exists() && root.child('torneoSeats/' + $code + '/' + $pid + '/' + auth.uid).exists()",
               ".validate": "newData.isString() && newData.val() === root.child('torneos/' + $code + '/players/' + $pid + '/j').val()"
             },
             "co": {
