@@ -239,7 +239,8 @@ with that the screen also enters the language tests. To see it on a real phone,
   (`public/assets/js/compartir.js`).
 - **Processes** (D-273, D-275, D-276): **the head of the agents.** Daily round at 4:30 Pacific
   time on the owner's Mac mini (a scheduled task in the app, not in the cloud): it launches the documentation
-  and usability agents when there is something to review (`processes.mjs check` says which)
+  and usability agents when there is something to review, and the game-ideas agent once a week
+  (D-360; `processes.mjs check` says which)
   and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
   README", check how fresh the README is) are asked of it: it decides who, launches them, checks and replies. It handles the 🐞 feedback and the "💬 Sugerencias y comentarios" inbox at the end of every game (D-341),
   which `.github/workflows/feedback.yml` uploads every 15 minutes as `feedback` issues (`tools/agents/feedback.mjs`,
@@ -254,7 +255,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   needs the owner goes in a `processes` issue with Yes/No checkboxes, opened by the bot (`decide.yml`) so
   the owner gets the email: ticking one carries it out instantly
   (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).
-  Its memory is `docs/processes.json`: `node tools/agents/processes.mjs check | decide <file.json> | pattern <key> "…" | mechanism <key> "…" --pr <url> | dispatch <documentation|usability> <commit> | record --to <commit> | history`
+  Its memory is `docs/processes.json`: `node tools/agents/processes.mjs check | decide <file.json> | pattern <key> "…" | mechanism <key> "…" --pr <url> | dispatch <documentation|usability|ideas> <commit> | record --to <commit> | history`
   (`dispatch` records up to which `main` commit it launched each executor).
 - **Support** (D-318): triages the emails to hola@juegosdesalon.cl, which a Cloudflare Worker
   (`tools/cloudflare/inbox-worker.js`) keeps in Firebase `buzon/`. The processes agent launches it
