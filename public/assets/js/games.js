@@ -387,9 +387,10 @@ export const MODES = {
   online: { icon: '📡', label: 'dos celulares', room: true },
   local: { icon: '📱', label: 'un celular' },
   cpu: { icon: '🤖', label: 'contra el celular' },
-  solo: { icon: '🧍', label: 'solo' },
+  // `individual`: played by one person; the panel splits its domains by this flag (D-348)
+  solo: { icon: '🧍', label: 'solo', individual: true },
   // Uno al día (D-230): el juego de hoy, el mismo para todos, en su modo para uno
-  'uno-al-dia': { icon: '📅', label: 'Uno al día' },
+  'uno-al-dia': { icon: '📅', label: 'Uno al día', individual: true },
   // El día jugado de un torneo: el panel lo mide en su propia vista, con los datos del torneo
   copa: { icon: '🏆', label: 'día de La Copa', torneo: true },
 };
@@ -412,6 +413,9 @@ export const LOCAL_MODES = MODE_IDS.filter(m => !MODES[m].room);
 export const MODE_KEY = /^[a-z][a-z-]{0,15}$/;
 
 /** ¿Esta clave es un modo sin red, que sube contador? Vale para uno que todavía no existe. */
+/** A mode played by one person (D-348): solo and Uno al día. */
+export const isIndividualMode = mode => !!MODES[mode]?.individual;
+
 export const isLocalMode = mode => MODE_KEY.test(String(mode || '')) && !MODES[mode]?.room;
 
 /**

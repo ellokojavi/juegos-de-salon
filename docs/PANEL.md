@@ -2,7 +2,9 @@
 
 Página privada en `/panel/` que muestra cuánto y desde dónde se juega. Son **señales de
 uso, no personas**: sirven para ver qué juegos gustan, cuántos jugadores se juntan y a
-qué horas, no para identificar a nadie (D-44).
+qué horas, no para identificar a nadie (D-44). Since D-349 each browser also keeps a random id,
+only to count active users and cohorts: it carries no name, IP, game or page and is never joined
+with rooms, Cups, rankings or feedback.
 
 - Publicado: `https://juegosdesalon.cl/panel/`
 - Local: `http://localhost:8765/panel/`
@@ -10,9 +12,31 @@ qué horas, no para identificar a nadie (D-44).
 No aparece en el menú ni se indexa. El código es público como todo el repo: lo que protege
 los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 
+## Domains (D-348)
+
+The panel is read by **domain**, each with three bands: 🩺 **Pulse** (operational: the numbers of the
+range against the period of the same length right before it, green when they improve and pink when
+they worsen), 🔍 **Diagnosis** (tactical: funnels and breakdowns) and 🧭 **Trend** (strategic: by week
+or month, with 🚀 marking the versions that first showed up in each period). Every table has a
+⬇︎ CSV button. The pure accounts are in `public/panel/dominios.js`.
+
+| Section | Address | What it answers |
+|---|---|---|
+| 📊 Summary | `#/summary` | The main metric (**games finished**: rooms with an ending, offline games finished and La Copa games), one card per domain with its change, and what is being played now (`#/now` keeps the full list). |
+| 👥 Group | `#/group` | Rooms step by step (created → a rival came in → ended) with their median length, offline group games finished and replayed, by mode and players per game, the timeline, the offline log and the room log. |
+| 🧍 Individual | `#/individual` | Solo and Uno al día games: finished, left halfway, "otra vez", and the **real difficulty** of each game (score and time quartiles from its endings; a variant counts apart). |
+| 🏆 La Copa | `#/cup` | As before, plus the period before, the Cups step by step (created → 2 or more → started → finished), participation by day of the Cup, and who was left out (D-347) or brought back. |
+| 📅 Uno al día | `#/daily` | The block that was in Games, with its pulse and its timeline. |
+| 🌎 Users | `#/users` | Active browsers per day, in 7 and 30 days, stickiness, new and returning, days since the last visit, frequency in 28 days, cohorts by week (returns on days 1, 7 and 30), and what Audience showed (where from, languages, hour, quota). |
+| 📈 Traffic | `#/traffic` | As before, plus what is shared and the visits each share brings (the viral factor). |
+| 🩺 Health | `#/health` | As before. |
+
+`#/games` opens Group and `#/audience` opens Users. Group and individual are split by the
+`individual` flag of `MODES` in `games.js` (C-16).
+
 ## Secciones y fichas (D-207)
 
-El panel se navega como un sitio: seis secciones fijas y una ficha por cada cosa que existe.
+El panel se navega como un sitio: secciones fijas y una ficha por cada cosa que existe (the sections are D-348's, above).
 A la izquierda en el computador; abajo, como barra, en el celular. Todo queda en el `#` de la
 URL (`public/panel/rutas.js`), así que Atrás, una recarga o un enlace guardado vuelven al mismo
 lugar; el rango y el entorno van detrás solo si no son los de siempre (`#/cup?r=30d&e=dev`).
@@ -23,11 +47,11 @@ Los enlaces de antes (`#torneo`, `#resumen`, `#juegos`) siguen sirviendo.
 | `#/now` | Lo que está en juego, sin depender del rango: salas en juego, partidas sin red, copas en curso y celulares conectados. Cada cifra filtra la lista de abajo, que junta copas, salas y partidas sin red de lo más reciente a lo más quieto. Debajo, las copas por empezar. |
 | `#/cup` | Cifras de La Copa en el rango, la lista de copas con filtro por estado (en curso, por empezar, terminadas, laboratorio), por juego y por día. By game, a variant other than the default counts apart (`🖌️ Pintaminas · ⚡ Difícil`, D-331). |
 | `#/cup/<CÓDIGO>` | **Ficha de copa.** Cabecera (link propio, admin, idioma, audiencia, días, cuándo cierra cada día abierto, inscripción) y tres pestañas: **Tabla** completa, incluidos los días que los jugadores todavía no ven; **Día a día**, la grilla jugador × día con puntaje, tiempo, puntos, jugando ahora, sin terminar, no jugó, comodín y ×2; **Historia**, evento por evento (creada, inscripciones, empezó y terminó cada día, sin terminar, abrió y cerró cada día, fin), y aparte lo que la base guarda sin hora (comodín, retiros, inscripción cerrada). |
-| `#/games` | Los juegos de una partida: cifras, partidas por juego y modo (cada barra abre su ficha), jugadores por partida, por día y la bitácora de salas. |
+| `#/games` | Opens 👥 Group since D-348. Before: los juegos de una partida: cifras, partidas por juego y modo (cada barra abre su ficha), jugadores por partida, por día y la bitácora de salas. |
 | `#/game/<juego>` | **Ficha de juego.** Partidas, en dos celulares, sin red, salas sin rival y duración típica de sus salas; por modo, por día, sus salas y sus partidas sin red con hora, quién jugó y cómo terminó (D-140, D-210). |
 | `#/room/<CÓDIGO>[/<día>]` | **Ficha de sala.** Juego, creada, terminó, cuánto duró, quién ganó, versión y jugadores con su país; si sigue viva, jugadas, chat (solo cuántos) y quién está conectado. Los códigos se reciclan: con el día se pide una en particular. |
 | `#/traffic` | **Tráfico del sitio** (D-208): visitas, páginas vistas, cuántas llegan a jugar, visitas por día, de dónde llegan (por sitio, con sus dominios), por qué link (`from=link` de lo compartido, `utm_source`), páginas con sus entradas y cuántas juegan, aparato, primera vez o vuelve y país. |
-| `#/audience` | Cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
+| `#/audience` | Opens 🌎 Users since D-348, which keeps what it showed: cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
 | `#/health` | **Lo que le falla a quien juega** (D-251): cargas que no arrancaron, cargas con fallas por día y por tipo, los errores juntados por qué son (página, navegador, versión, días), páginas con fallas, navegador de los errores y cuánto tarda cada página en poder jugar. |
 
 Arriba, además del entorno y el rango, un **buscador**: un código de cinco letras o un link propio
@@ -231,6 +255,15 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   `juegan/<página de entrada>`. El panel no se cuenta.
 - **Lo que falla al cargar o al jugar** (D-251, ver *Salud*): `falla/`, `err/` y `listo/`, que manda
   `vigia.js` y no `stats.js`.
+- **Since D-348:** `fin/<game>/<mode>` (an offline game finished), `otra/<game>` (a replay: the
+  same game started again after finishing, detected in `stats.js`), `comparte/<what>` (a share that
+  was not cancelled, from `compartir()`), and once per visit `vuelta/<band>` (days since the last
+  visit: `nueva`, `d1`, `d2-7`, `d8-30`, `d31`) and once per browser and day `frec/<band>` (how many
+  of the last 28 days it came: `f1`, `f2-3`, `f4-7`, `f8-14`, `f15`). The browser computes the bands
+  from `juegos-de-salon:ultima` and `juegos-de-salon:dias` and sends only the band.
+- **Since D-349:** `activos/<id>` = 1 (visited) or 2 (started something), once a day: `<id>` is a
+  random 10-character id that lives in the browser (`juegos-de-salon:dispositivo`). Nothing goes
+  with it, and it is never joined with names, rooms, Cups or rankings.
 
 No sale nunca: dirección IP (no hay servidor que la vea y no se consulta a nadie), los
 secretos de las partidas ni el chat. En los modos sin red sale el nombre que la persona ya

@@ -80,7 +80,7 @@ for (const [ruta, src] of fuentes) {
 }
 const html = leer('public/panel/index.html');
 assert.match(html, /<select id="env"><\/select>/, 'los entornos los pone panel.js, no el HTML');
-assert.match(fuentes[0][1], /MODE_IDS\.filter\(m => !MODES\[m\]\.torneo\)\.map/, 'la leyenda de modos la escribe panel.js desde el registro');
+assert.match(fuentes[0][1], /MODE_IDS\.filter\(m => !MODES\[m\]\.torneo[^)]*\)\.map/, 'la leyenda de modos la escribe panel.js desde el registro');
 for (const m of MODE_IDS) assert.ok(!html.includes(MODES[m].icon), `el HTML del panel dibuja el ícono de ${m} a mano`);
 
 // --- Las reglas de la base validan por forma, no por lista --------------

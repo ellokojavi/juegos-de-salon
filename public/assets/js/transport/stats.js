@@ -32,6 +32,16 @@
  *   disp/<celular|tableta|computador>, pais/<CL>: de la visita
  *   juegan/<página>: visitas que llegaron a empezar algo, por su página de entrada
  *
+ * Usage captures (D-348, D-349):
+ *
+ *   fin/<game>/<mode>: a local (no-network) game that reached its end
+ *   otra/<game>: a replay ("Otra vez", "Revancha"): the same game started again after finishing
+ *   comparte/<what>: something shared (`app`, `copa`, `resultado-<page>`, `otro`)
+ *   vuelta/<nueva|d1|d2-7|d8-30|d31>: days since this browser's last visit, once per visit
+ *   frec/<f1|f2-3|f4-7|f8-14|f15>: distinct days visited in the last 28, once per device per day
+ *   activos/<device id>: 1 visited, 2 started something. The id is a random pseudonym kept in
+ *                        this browser, never tied to a name, an IP or anything else (D-349, amends D-44)
+ *
  * Va por la REST API con un `fetch` y `keepalive`: los modos sin red no cargan el SDK de
  * Firebase ni abren una conexión persistente, así que no pesan en la carga ni gastan la
  * cuota de conexiones simultáneas (D-41). Todo es mejor esfuerzo: si falla, nadie se entera
@@ -386,14 +396,21 @@ export function trackEnd(info) {
  * el de la anterior, así el mismo celular nunca se ve jugando dos a la vez.
  */
 let pararVivo = null;
+/** The previous start in this page: its game, and whether its live game was finished (replay detection). */
+let anterior = null;
+/** Is this start a replay? Same game as the previous start in this page, and that one had finished. */
+export const esOtraVez = (prev, game) => !!(prev && game && prev.game === game && prev.finished);
 export function trackStart(info) {
   try {
     const s = stats();
     if (pararVivo) { pararVivo(); pararVivo = null; }
+    if (esOtraVez(anterior, info?.game)) trackReplay(info.game);
+    anterior = { game: info?.game, mode: info?.mode, finished: false };
     // Quién juega: los nombres de la partida o, si no los hay, el que este celular ya conoce (D-210)
     const name = nombresDe(info?.nombres) || nombreDelCelular(info?.game);
     if (esEnVivo(info?.mode)) pararVivo = startLive(s.api, s.fp, { ...info, name });
     notePlayed(s.api, s.fp);
+    noteActive(s.api, s.fp, { level: 2 });
     return noteStart(s.api, s.fp, info);
   } catch (_) { return Promise.resolve(); }
 }
@@ -404,7 +421,7 @@ export function trackStart(info) {
 /**
  * Cuánta gente entra al sitio y de dónde llega, aunque no juegue. Mismas reglas que lo demás
  * (D-44): contadores por día, sin IP, sin la dirección completa de donde vino (solo el dominio)
- * y sin ningún identificador. "Vuelve" es una marca en el navegador que dice "ya vine", y no viaja.
+ * y sin ningún identificador (since D-349, one random id per browser, counted apart in `activos/`). "Vuelve" es una marca en el navegador que dice "ya vine", y no viaja.
  *
  * Una visita es una pestaña: se cuenta una vez, en la página donde empezó, con su origen. Cada
  * página que se abre después suma una vista. Si en esa visita se empieza algo, suma `juegan`
@@ -546,7 +563,10 @@ export function noteVisit(api, fp, {
     poner(sesion, VISITA_KEY, pagina);
     poner(local, VINO_KEY, '1');
   }
-  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), visitChanges(fp, datos)));
+  const cambios = visitChanges(fp, datos);
+  if (primera) Object.assign(cambios, habitChanges(local, dayOf(now)));
+  Object.assign(cambios, activeChange({ level: 1, local, now }));
+  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), cambios));
 }
 
 /** Esta visita empezó algo: suma una sola vez, en su página de entrada. */
@@ -592,6 +612,130 @@ export function trackFinish(info) {
     const p = pararVivo;
     if (!p?.terminar) return Promise.resolve();
     pararVivo = null;
+    const prev = anterior;
+    if (prev) prev.finished = true;
+    if (prev?.game && isLocalMode(prev.mode)) {
+      const st = stats();
+      quiet(() => st.api.patch(dayPath(st.fp.env, dayOf(Date.now())), finChanges(prev)));
+    }
     return p.terminar(info);
   } catch (_) { return Promise.resolve(); }
+}
+
+/* ------------------------------------------------------------------ */
+/* Usage captures (D-348, D-349)                                              */
+/* ------------------------------------------------------------------ */
+export const ULTIMA_KEY = 'juegos-de-salon:ultima';            // localStorage: last visit day (dayOf)
+export const DIAS_KEY = 'juegos-de-salon:dias';                // localStorage: distinct visit days, last 28, comma-separated
+export const DISPOSITIVO_KEY = 'juegos-de-salon:dispositivo';  // localStorage: pseudonymous device id
+export const ACTIVO_KEY = 'juegos-de-salon:activo';            // localStorage: `<day>:<level>` already written
+export const VENTANA_DIAS = 28;
+
+/** A finished local game: `fin/<game>/<mode>`. */
+export const finChanges = ({ game, mode }) => ({ [`fin/${game}/${mode}`]: INC });
+
+/** Band of days since the last visit; '' on the same day. */
+export function vueltaBand(last, today) {
+  if (last == null || !Number.isFinite(Number(last))) return 'nueva';
+  const d = today - Number(last);
+  if (d <= 0) return '';
+  if (d === 1) return 'd1';
+  if (d <= 7) return 'd2-7';
+  if (d <= 30) return 'd8-30';
+  return 'd31';
+}
+
+/** Band of distinct days visited in the last 28, today included. */
+export function frecBand(n) {
+  if (n <= 1) return 'f1';
+  if (n <= 3) return 'f2-3';
+  if (n <= 7) return 'f4-7';
+  if (n <= 14) return 'f8-14';
+  return 'f15';
+}
+
+/** The stored day list with today added and anything older than the window pruned. */
+export function diasConHoy(texto, today) {
+  const dias = new Set(String(texto || '').split(',').map(Number).filter(d => Number.isInteger(d) && d > today - VENTANA_DIAS && d <= today));
+  dias.add(today);
+  return [...dias].sort((a, b) => a - b);
+}
+
+/**
+ * `vuelta/` and `frec/` for the first page of a visit, updating the local marks. `vuelta` only
+ * when the day changed (or first time); `frec` only on the first visit of the day.
+ */
+export function habitChanges(local, today) {
+  const c = {};
+  const ultima = leer(local, ULTIMA_KEY);
+  const band = vueltaBand(ultima == null ? null : Number(ultima), today);
+  if (band) {
+    c[`vuelta/${band}`] = INC;
+    const dias = diasConHoy(leer(local, DIAS_KEY), today);
+    c[`frec/${frecBand(dias.length)}`] = INC;
+    poner(local, DIAS_KEY, dias.join(','));
+  }
+  poner(local, ULTIMA_KEY, String(today));
+  return c;
+}
+
+/** The pseudonymous device id, created once. Empty if storage is blocked (then nothing is sent). */
+export function deviceId(local = globalThis.localStorage, rand = Math.random) {
+  const id = leer(local, DISPOSITIVO_KEY);
+  if (/^[a-z0-9]{10}$/.test(id || '')) return id;
+  const nuevo = liveId(rand);
+  poner(local, DISPOSITIVO_KEY, nuevo);
+  return leer(local, DISPOSITIVO_KEY) === nuevo ? nuevo : '';
+}
+
+/**
+ * `activos/<id>` = 1 (visited) or 2 (started something), once per day and level, never lowered.
+ * An idempotent set, not an increment. Empty when already written today or without storage.
+ */
+export function activeChange({ level, local = globalThis.localStorage, now = Date.now() } = {}) {
+  try {
+    const day = dayOf(now);
+    const [d, l] = String(leer(local, ACTIVO_KEY) || '').split(':').map(Number);
+    if (d === day && l >= level) return {};
+    const id = deviceId(local);
+    if (!id) return {};
+    poner(local, ACTIVO_KEY, `${day}:${level}`);
+    return { [`activos/${id}`]: level };
+  } catch (_) { return {}; }
+}
+
+export function noteActive(api, fp, { level, local = globalThis.localStorage, now = Date.now() } = {}) {
+  const c = activeChange({ level, local, now });
+  if (!Object.keys(c).length) return Promise.resolve();
+  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), c));
+}
+
+/** A replay ("Otra vez", "Revancha"). trackStart detects them on its own. Never throws. */
+export function trackReplay(game) {
+  try {
+    const g = clave(game);
+    if (!g) return Promise.resolve();
+    const s = stats();
+    return quiet(() => s.api.patch(dayPath(s.fp.env, dayOf(Date.now())), { [`otra/${g}`]: INC }));
+  } catch (_) { return Promise.resolve(); }
+}
+
+/** What a share is about, as a key: lowercase, digits and dashes, `otro` if nothing is left. */
+export const shareKey = what => (/^[a-z0-9-]{1,40}$/.test(clave(what)) ? clave(what) : 'otro');
+
+/** Something was shared. Never throws. */
+export function trackShare(what) {
+  try {
+    const s = stats();
+    return quiet(() => s.api.patch(dayPath(s.fp.env, dayOf(Date.now())), { [`comparte/${shareKey(what)}`]: INC }));
+  } catch (_) { return Promise.resolve(); }
+}
+
+/** The default share key from the page: home → `app`, the Cup → `copa`, a game → `resultado-<page>`. */
+export function shareKeyOfPage(pathname = '/') {
+  const p = paginaDe(pathname);
+  if (p === 'inicio') return 'app';
+  if (p === 'cup' || p === 'copa') return 'copa';
+  if (p === 'panel') return '';
+  return shareKey(`resultado-${p}`);
 }

@@ -279,6 +279,12 @@ stats/prod/days/20342/
   falla/js/cup: 3                      loads with failures, by type and page: recorded by vigia.js (D-251)
   err/a1b2c3/n: 2                      how many loads saw that error; err/<firma>/d, its detail
   listo/cup/s3: 6                      how long the page took to start, by bucket
+  fin/toque-y-fama/cpu: 5              offline games finished, by game and mode (D-348)
+  otra/toque-y-fama: 2                 replays ("otra vez"), by game
+  comparte/app: 3                      things shared, by what
+  vuelta/d2-7: 4                       days since the browser's last visit, by band
+  frec/f3-7: 6                         how many of the last 28 days the browser came, by band
+  activos/k3j9x0q2ab: 2                a browser's random id: 1 visited, 2 started something (D-349)
 stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many subscriptions are still alive
 ```
 
@@ -303,6 +309,10 @@ stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many
 - Uno al día (D-230): `uad/<evento>` is uploaded by phones (`trackUnoAlDia` in `stats.js`): the
   event is validated by shape (`^[a-z]{1,16}$`) and the value can only start at 1 or go up by exactly
   one. The list of events lives in `stats.js` (`EVENTOS_UAD`); it doesn't say who.
+- Domains (D-348, D-349): `fin`, `otra`, `comparte`, `vuelta` and `frec` are counters like the
+  others (start at 1, go up by one; keys by shape). `activos/<id>` is the only key that names a
+  browser: a random 10-character id (`^[a-z0-9]{10}$`) kept in `localStorage`, whose value can only
+  be 1 or 2 and never go down. Nothing else goes with it.
 
 - Health (D-251): `falla/<tipo>/<página>`, `listo/<página>/<tramo>` and `err/<firma>/n` are uploaded by
   `public/assets/js/vigia.js`, by one; type, page, bucket and signature are validated by shape. The detail,

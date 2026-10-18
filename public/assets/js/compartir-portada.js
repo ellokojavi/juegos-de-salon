@@ -87,7 +87,7 @@ export function botonCompartirPortada({ C, app, url, icono, tap = () => {}, doc 
         const archivo = comparteArchivos() ? await app.imagen() : null;
         return compartir({ titulo: app.titulo, texto: app.texto, url, imagen: archivo });
       }),
-      opcion('btn-compartir-video', t.video, t.videoNote, () => compartir({ titulo: C.appTitle, texto: textoVideo({ C, trailer }) })),
+      opcion('btn-compartir-video', t.video, t.videoNote, () => compartir({ titulo: C.appTitle, texto: textoVideo({ C, trailer }), que: 'video' })),
       el('div', { class: 'btn-row' }, el('button', { type: 'button', class: 'btn btn--ghost', onClick: () => { tap(); cerrar(); } }, t.close)));
     capa = el('div', { class: 'hoja-capa' }, el('div', { class: 'hoja-fondo', onClick: cerrar }), panel);
     doc.body.append(capa);
