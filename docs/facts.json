@@ -1,5 +1,5 @@
 {
-  "version": "0.178.0",
+  "version": "0.179.3",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1083,7 +1083,8 @@
     "tools/release/changelog.test.mjs",
     "tools/release/merge-report.test.mjs",
     "tools/release/syntax.test.mjs",
-    "tools/release/version.test.mjs"
+    "tools/release/version.test.mjs",
+    "tools/reports/weekly-data.test.mjs"
   ],
   "e2e": [
     "affected.mjs",
