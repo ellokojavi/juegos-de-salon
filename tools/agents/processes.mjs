@@ -25,7 +25,8 @@
  *   - the patterns seen twice or more that still have no mechanism;
  *   - whom to dispatch today (D-276): the documentation agent if something entered main since its
  *     last round, the usability agent if something in public/ changed since it was last launched,
- *     and the game-ideas agent once a week (D-360).
+ *     and the game-ideas agent once a week (D-360);
+ *   - whether the home page's order is a week old and due for `popularity.mjs update` (D-361).
  *
  * `decide` takes `{ title, summary, decisions: [{ question, context?, yes: [actions], no?: [actions] }] }`
  * and opens an issue with a Yes and a No checkbox per decision; checking one carries it out at once
@@ -260,6 +261,12 @@ async function check() {
   });
   for (const d of plan) console.log(`- ${d.agent}: ${d.reason}${d.agent === 'support' ? '' : ` (when launching it: dispatch ${d.agent} ${tip.slice(0, 7)})`}`);
   if (!plan.length) console.log('Nobody: nothing changed that needs a review.');
+
+  heading("The home page's order (D-361)");
+  const { POPULARIDAD_FECHA } = await import('../../public/assets/js/games.js');
+  const { vence } = await import('./popularity.mjs');
+  const o = vence(POPULARIDAD_FECHA);
+  console.log(o.toca ? `- Due: the list is from ${POPULARIDAD_FECHA} (${o.dias} days). In your worktree: node tools/agents/popularity.mjs update, and if it rewrote games.js, it goes in your PR.` : `- Up to date: the list is from ${POPULARIDAD_FECHA} (${o.dias} day(s)).`);
 
   heading('Approved and queued');
   const decisionIssues = gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '30', '--json', 'number,body');

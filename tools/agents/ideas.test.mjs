@@ -11,12 +11,16 @@ const html = `
   <section class="panel seccion" id="seccion-agentes"><h2>🕵️ Agentes</h2></section>
   <section class="panel seccion" id="seccion-puentes"><h2>🚂 Tren en Vilo</h2></section>
 </section>
+<section class="grupo" id="mejoras"><h2>✨ Mejoras en prueba</h2>
+  <section class="panel seccion" id="seccion-splash"><h2>🎉 Splash</h2></section>
+</section>
 <section class="grupo" id="bodega"><h2>📦 La Bodega</h2>
   <section class="panel seccion plegada" id="seccion-caso"><details><summary><h2>🔍 El caso</h2></summary></details></section>
 </section>`;
-assert.deepEqual(laboratorio(html), { active: [{ id: 'agentes', title: '🕵️ Agentes' }, { id: 'puentes', title: '🚂 Tren en Vilo' }], shelved: [{ id: 'caso', title: '🔍 El caso' }] });
+assert.deepEqual(laboratorio(html), { active: [{ id: 'agentes', title: '🕵️ Agentes' }, { id: 'puentes', title: '🚂 Tren en Vilo' }], improvements: [{ id: 'splash', title: '🎉 Splash' }], shelved: [{ id: 'caso', title: '🔍 El caso' }] });
 const real = laboratorio(readFileSync(join(ROOT, 'public/labs/index.html'), 'utf8'));
-assert.ok(real.active.length >= 1 && real.shelved.length >= 1, 'the real lab page has active projects and a Bodega');
+assert.ok(real.active.length >= 1 && real.improvements.some(p => p.id === 'portada') && real.shelved.length >= 1, 'the real lab page has games, improvements (the home page experiments among them) and a Bodega');
+assert.ok(!real.active.some(p => p.id === 'splash'), 'the splash is an improvement, not a game');
 
 // Today's order counts offline games, rooms and cup days under the game's id, La Copa as its days
 const hoy = popularidadHoy({

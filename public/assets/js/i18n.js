@@ -113,7 +113,7 @@ export const COMMON = {
     shown: 'Se ven {n} de {total} juegos.', clearFilters: 'Ver todos',
     favorites: 'Favoritos', favorite: 'Marcar {juego} como favorito',
     onlySpanish: 'En español',
-    code: 'código en GitHub', volverMenu: '🏠 Volver al menú', menu: 'Menú', soon: 'Próximamente', newGame: 'Nuevo', or: 'o',
+    code: 'código en GitHub', volverMenu: '🏠 Volver al menú', menu: 'Menú', soon: 'Próximamente', newGame: 'Nuevo', popularGame: 'Popular', or: 'o',
     // Creating or joining a room (U-37): the button while it waits, and the way out when it can't
     opening: 'Abriendo sala…', joining: 'Entrando…', playOnePhone: '📱 Jugar en un celular',
     share: 'Compartir Juegos de Salón',
@@ -354,7 +354,7 @@ export const COMMON = {
     shown: 'Showing {n} of {total} games.', clearFilters: 'Show all',
     favorites: 'Favorites', favorite: 'Mark {juego} as a favorite',
     onlySpanish: 'In Spanish',
-    code: 'code on GitHub', volverMenu: '🏠 Back to the menu', menu: 'Menu', soon: 'Coming soon', newGame: 'New', or: 'or',
+    code: 'code on GitHub', volverMenu: '🏠 Back to the menu', menu: 'Menu', soon: 'Coming soon', newGame: 'New', popularGame: 'Popular', or: 'or',
     opening: 'Opening room…', joining: 'Joining…', playOnePhone: '📱 Play on one phone',
     share: 'Share Party Games',
     shareApp: {
@@ -584,7 +584,7 @@ export const COMMON = {
     shown: 'Mostrando {n} de {total} jogos.', clearFilters: 'Ver todos',
     favorites: 'Favoritos', favorite: 'Marcar {juego} como favorito',
     onlySpanish: 'Em espanhol',
-    code: 'código no GitHub', volverMenu: '🏠 Voltar ao menu', menu: 'Menu', soon: 'Em breve', newGame: 'Novo', or: 'ou',
+    code: 'código no GitHub', volverMenu: '🏠 Voltar ao menu', menu: 'Menu', soon: 'Em breve', newGame: 'Novo', popularGame: 'Popular', or: 'ou',
     opening: 'Abrindo sala…', joining: 'Entrando…', playOnePhone: '📱 Jogar em um celular',
     share: 'Compartilhar Jogos de Salão',
     shareApp: {
@@ -814,7 +814,7 @@ export const COMMON = {
     shown: 'Du siehst {n} von {total} Spielen.', clearFilters: 'Alle zeigen',
     favorites: 'Favoriten', favorite: '{juego} als Favorit markieren',
     onlySpanish: 'Auf Spanisch',
-    code: 'Code auf GitHub', volverMenu: '🏠 Zurück zum Menü', menu: 'Menü', soon: 'Demnächst', newGame: 'Neu', or: 'oder',
+    code: 'Code auf GitHub', volverMenu: '🏠 Zurück zum Menü', menu: 'Menü', soon: 'Demnächst', newGame: 'Neu', popularGame: 'Beliebt', or: 'oder',
     opening: 'Raum wird geöffnet…', joining: 'Beitritt läuft…', playOnePhone: '📱 Mit einem Handy spielen',
     share: 'Salonspiele teilen',
     shareApp: {

@@ -368,7 +368,9 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 
 - **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: los juegos
   de `GAMES` y los juegos de La Copa sueltos (`SUELTOS`, aparte solo por cómo están hechos, D-198)
-  van mezclados, de lo más jugado a lo menos, según la lista `POPULARIDAD` (D-255), sin lista
+  van mezclados, de lo más jugado a lo menos, según la lista `POPULARIDAD` (D-255): most games
+  finished in the last four weeks first, recounted every week by the processes round with
+  `tools/agents/popularity.mjs update` (D-361), sin lista
   propia en la página (D-142, D-149). La Copa va primera, en media fila junto a Uno al día. Un
   juego que no está disponible se ve, con "Próximamente" al lado del nombre, pero no se abre, ni
   con el teclado (`available` en `games.js`, C-2; D-142), y va al final de la lista, con y sin
@@ -387,6 +389,12 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   While it says "New" it also goes **on top of the list, right after La Copa** (`ordenPortada`,
   D-335): with no plays yet, by popularity it would be last. When the label goes, it goes back to
   its place in `POPULARIDAD`.
+- **🔥 "Popular", in the lab** (D-361): the first three of the order that are neither La Copa nor
+  "New" (`populares`) wear the "New" sticker in fire colors, with the 🔥 outside the gradient. It is
+  off for players (`POPULAR_EN_PORTADA = false`); `/?popular` and the lab's `/labs/home/` show it.
+- **Home page experiments** (D-361): what is tried on the home page before players see it is a URL
+  parameter the page reads, off by default, listed in `public/labs/home/experiments.js`; `/labs/home/`
+  shows the real page with one switch for each (the bar of `public/labs/experiments.css`).
 - **A promotional splash, off by default** (D-351): when the owner turns on a campaign
   (`ACTIVE` in `splash.js`, with `node tools/agents/splash.mjs on <id> | off`), a window over the
   home page tells what is new, with the page darkened behind; each phone sees it once, and a new

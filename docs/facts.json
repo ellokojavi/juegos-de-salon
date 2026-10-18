@@ -1,5 +1,5 @@
 {
-  "version": "0.182.2",
+  "version": "0.184.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -18,7 +18,7 @@
     "pt": 100,
     "de": 100
   },
-  "commonKeys": 35,
+  "commonKeys": 36,
   "games": [
     {
       "id": "copa",
@@ -987,6 +987,7 @@
     "public/labs/code/game.js",
     "public/labs/exploding-numbers/engine.js",
     "public/labs/exploding-numbers/game.js",
+    "public/labs/home/experiments.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -1073,6 +1074,7 @@
     "tools/agents/inbox.test.mjs",
     "tools/agents/labs-key.test.mjs",
     "tools/agents/marketing.test.mjs",
+    "tools/agents/popularity.test.mjs",
     "tools/agents/processes.test.mjs",
     "tools/cloudflare/inbox-worker.test.mjs",
     "tools/e2e/affected.test.mjs",
@@ -1141,6 +1143,7 @@
     "hangman/languages.mjs",
     "hangman/local.mjs",
     "hangman/online.mjs",
+    "home/lab.mjs",
     "install-prompt.mjs",
     "installable.mjs",
     "invite-link.mjs",
@@ -1223,7 +1226,7 @@
     },
     {
       "path": "docs/games/agents.md",
-      "title": "🕵️ Agentes (prototipo del laboratorio, en Proyectos activos)"
+      "title": "🕵️ Agentes (prototipo del laboratorio, en Juegos en prueba)"
     },
     {
       "path": "docs/games/battleship.md",
@@ -1255,7 +1258,7 @@
     },
     {
       "path": "docs/games/exploding-numbers.md",
-      "title": "💥 Números explosivos (prototipo del laboratorio, en Proyectos activos)"
+      "title": "💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)"
     },
     {
       "path": "docs/games/fourth-king.md",
