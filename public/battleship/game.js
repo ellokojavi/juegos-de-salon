@@ -771,7 +771,8 @@ function renderResult(v) {
   const iWon = meRole && meRole === v.winner;
   title.textContent = iWon ? T.youWin : fmt(T.winTitle, { name: M.names[v.winner] });
   const stats = r => { const mine = repliesBy(r); const hits = mine.filter(s => s.result !== 'agua').length; return fmt(T.stats, { shots: mine.length, acc: mine.length ? Math.round(100 * hits / mine.length) : 0 }); };
-  sub.textContent = (meRole && !iWon ? T.youLose + ' · ' : '') + stats(v.winner);
+  // Each fleet already carries its shots and aim below: the subtitle only says when you lost (C-19)
+  sub.textContent = meRole && !iWon ? T.youLose : '';
   trophy.textContent = meRole && meRole !== v.winner ? '😵' : '🏆';
   const fleets = $('#result-fleets'); fleets.innerHTML = '';
   for (const r of ['A', 'B']) {

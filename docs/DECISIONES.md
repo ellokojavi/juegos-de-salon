@@ -1348,7 +1348,7 @@ todos el tiempo desempata. Si se retoma una partida empezada, el tablero vuelve 
 cuenta da el mismo punto de partida a todos.
 
 ## D-106 · Al terminar, cómo se calculó el puntaje
-**Fecha:** 2026-09-23 · **Estado:** vigente
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-353
 **Decisión:** El resultado del día, el de la práctica y el de la sesión de prueba traen un
 recuadro **Cómo se calculó tu puntaje**, con la cuenta línea por línea y en frases completas
 (`copa/desglose.js`, con las mismas funciones del motor): los grupos y los errores, las reinas en
@@ -4824,7 +4824,7 @@ confirmación en un Cloudflare Worker (son dos toques igual que la casilla, con 
 documentación (3:54). El correo llega solo los días con algo que decidir.
 
 ## D-274 · Rankings: que cuente la partida recién jugada, el solitario en la portada y Ahorcado solo
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** amplía D-212 y D-215
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-353 · **Relación:** amplía D-212 y D-215
 **Decisión:** Tres cambios para que los rankings se llenen:
 - **"¿Quieres que esta partida cuente?"**: al terminar una partida sin jugador abierto (jugando solo
   en Toque y Fama, Generala, Ahorcado y Línea Relámpago, y en todos los juegos de grupo contra el
@@ -6656,3 +6656,37 @@ Spanish by default (C-3).
 **Why:** the panel is read like an analyst's source, and the owner wants it in English; a second
 language there would only double the texts.
 **Consequences:** the panel's tests expect English; PANEL.md's exception to C-3 says English only.
+
+## D-353 · A result says each thing once
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends C-19 and D-343 (what a result screen shows); corrects D-274 (the count-this offer is the one-line card); corrects D-106 (the standalone breakdown, folded and without the total or the time)
+**Context:** the owner asked for a full pass over every result screen looking for redundant or
+unnecessary information, "simply for the sake of simplicity", and then approved every proposal and
+asked for a standard so future games follow it, inside the canons rather than in a new document.
+The pass found the same facts said two or three times and long blocks above the buttons.
+**Decision:** C-19 gains "What a result says, once", and these changes apply it:
+- **Standalone La Copa games** (and One a Day on them): the 🧮 breakdown is folded and goes after the
+  exits. Outside a Cup it no longer repeats the total ("Total: 80 puntos") or the time ("Tu tiempo
+  fue…"), both already in the hero. In ¿En qué año? the open breakdown pushed Play again and Back
+  to the menu below the fold, and in Reinas the menu button was cut.
+- **One a Day card:** "Hoy: 80 puntos." is gone (the hero says it). The line comes back only to say
+  how you compare ("Mejor que el 72 % de los que jugaron hoy.") or that this try was practice. "👋
+  Invita a un amigo" is a folded row under a result; `/today/` keeps it open.
+- **"¿Quieres que esta partida cuente en el ranking?"** (El Ahorcado, Dudo, Julepe, Generala, Toque
+  y Fama, Línea de Tiempo, Batalla Naval…): the same one-line Sign in card as the rest, instead of
+  the open form of about 370 px. Tapping it opens the form with the name already in, so the PIN is
+  still all it takes, which is what D-274 wanted.
+- **The Cup's podium:** the "🏆 Campeón" award line only appears for a shared title (a single
+  champion is already the title and the 🥇). The chart's own "📤 Compartir" is gone once the Cup is
+  over: it did the same as Share the summary.
+- **Batalla Naval:** the subtitle no longer repeats the winner's shots and aim (each fleet carries
+  its own); it says only "Perdiste" when you lost. Its buttons go right under the result, before the
+  fleets.
+- **Julepe:** "1 julepe", not "1 julepes".
+- 🐞 and 💬 never show together: already true (`sinDoble`, D-341).
+**Why:** a result is read in a glance on a phone; every repeated line pushes the next action down.
+**Alternatives discarded:** a separate playbook document (it would repeat the canons, D-213);
+removing the breakdown (D-106: the score is still explained, one tap away).
+**Consequences:** `fin.test.mjs` checks the folded breakdown, the one-line count-this card, the
+missing "Hoy: X puntos", the podium's single share and the singular julepe. The smaller findings of
+the pass (the "Tu puntaje" label, the name in the header chip and the title, `/today/`'s equal
+streak tiles) are left as they are for now.
