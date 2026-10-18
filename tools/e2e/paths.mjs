@@ -119,6 +119,11 @@ const SEED_PANEL = view => `(async()=>{const DAY=86400000,now=Date.now(),today=M
       days[today].err={a1:errOf('js',"TypeError: Cannot read properties of undefined (reading 'dia')",'/cup/game.js:1840','cup','chrome129','0.130.0',4),a2:errOf('js',"TypeError: undefined is not an object (evaluating 'c.dia')",'/cup/game.js:1840','cup','ios16','0.130.0',2),b1:errOf('promesa','PERMISSION_DENIED: Permission denied','/cup/store.js:212','cup','safari17','0.130.0',1),c1:errOf('js','ReferenceError: palabras is not defined','/hangman/game.js:88','hangman','samsung25','0.130.0',1)};
       days[today-1].err={d1:errOf('recurso','módulo que no cargó (el de la página)','/where/','where','instagram','0.129.0',3),e1:errOf('js',"SyntaxError: Unexpected token '.'",'/cup/games/where/ui.js:12','where','ios13','0.129.0',2)};
       days[today-3].err={f1:errOf('js','RangeError: Maximum call stack size exceeded','/zip/x.js:5','zip','chrome128','0.128.0',6)};
+      // The domains (D-348, D-349): two weeks of active browsers (a cohort that comes back), returns, frequency, shares, endings and replays
+      const ids=Array.from({length:40},(_,i)=>('u'+String(i).padStart(9,'0')));
+      for(let k=0;k<14;k++){const b=(days[today-k] ||= {});b.activos={};ids.forEach((id,i)=>{if((i+k)%3!==0&&i<20+k)b.activos[id]=(i+k)%2?2:1;});
+        b.vuelta={nueva:4+k%3,d1:6,'d2-7':5,'d8-30':2,d31:1};b.frec={f1:5,'f2-3':4,'f4-7':3,'f8-14':2,f15:1};b.comparte={'resultado-tango':3,copa:2,app:1,invita:k%2};
+        b.fin={dudo:{local:3,cpu:2},'toque-y-fama':{solo:2}};b.otra={dudo:2,'toque-y-fama':1};}
       window.__panel.seed({rooms,days,torneos:cups,push,uad,vista:'${view}'});})()`;
 
 /* --- Pintaminas: the variant the phone remembers, and painting the whole board with the engine's solution --- */
@@ -465,7 +470,7 @@ export const PATHS = {
    * section or a card by its route (D-207); `data` is the audience one.
    */
   panel: {
-    ...Object.fromEntries([['data', '/audience'], ['now', '/now'], ['summary', '/now'], ['tournament', '/cup'], ['games', '/games'], ['audience', '/audience'],
+    ...Object.fromEntries([['data', '/users'], ['now', '/now'], ['summary', '/summary'], ['tournament', '/cup'], ['games', '/group'], ['group', '/group'], ['individual', '/individual'], ['daily', '/daily'], ['users', '/users'], ['audience', '/users'],
       ['cup-card', '/cup/OFICI'], ['game-card', '/game/liars-dice'], ['room-card', '/room/CPSV'], ['traffic', '/traffic'], ['health', '/health']].map(([shot, view]) => [shot, [SEED_PANEL(view)]])),
     // The other two tabs of a cup's card (D-207)
     'cup-days': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],

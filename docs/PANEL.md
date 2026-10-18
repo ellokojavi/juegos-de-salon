@@ -10,9 +10,31 @@ qué horas, no para identificar a nadie (D-44).
 No aparece en el menú ni se indexa. El código es público como todo el repo: lo que protege
 los datos son las reglas de Firebase, que solo dejan leer al UID del dueño.
 
+## Domains (D-348)
+
+The panel is read by **domain**, each with three bands: 🩺 **Pulse** (operational: the numbers of the
+range against the period of the same length right before it, green when they improve and pink when
+they worsen), 🔍 **Diagnosis** (tactical: funnels and breakdowns) and 🧭 **Trend** (strategic: by week
+or month, with 🚀 marking the versions that first showed up in each period). Every table has a
+⬇︎ CSV button. The pure accounts are in `public/panel/dominios.js`.
+
+| Section | Address | What it answers |
+|---|---|---|
+| 📊 Summary | `#/summary` | The main metric (**games finished**: rooms with an ending, offline games finished and La Copa games), one card per domain with its change, and what is being played now (`#/now` keeps the full list). |
+| 👥 Group | `#/group` | Rooms step by step (created → a rival came in → ended) with their median length, offline group games finished and replayed, by mode and players per game, the timeline, the offline log and the room log. |
+| 🧍 Individual | `#/individual` | Solo and Uno al día games: finished, left halfway, "otra vez", and the **real difficulty** of each game (score and time quartiles from its endings; a variant counts apart). |
+| 🏆 La Copa | `#/cup` | As before, plus the period before, the Cups step by step (created → 2 or more → started → finished), participation by day of the Cup, and who was left out (D-347) or brought back. |
+| 📅 Uno al día | `#/daily` | The block that was in Games, with its pulse and its timeline. |
+| 🌎 Users | `#/users` | Active browsers per day, in 7 and 30 days, stickiness, new and returning, days since the last visit, frequency in 28 days, cohorts by week (returns on days 1, 7 and 30), and what Audience showed (where from, languages, hour, quota). |
+| 📈 Traffic | `#/traffic` | As before, plus what is shared and the visits each share brings (the viral factor). |
+| 🩺 Health | `#/health` | As before. |
+
+`#/games` opens Group and `#/audience` opens Users. Group and individual are split by the
+`individual` flag of `MODES` in `games.js` (C-16).
+
 ## Secciones y fichas (D-207)
 
-El panel se navega como un sitio: seis secciones fijas y una ficha por cada cosa que existe.
+El panel se navega como un sitio: secciones fijas y una ficha por cada cosa que existe (the sections are D-348's, above).
 A la izquierda en el computador; abajo, como barra, en el celular. Todo queda en el `#` de la
 URL (`public/panel/rutas.js`), así que Atrás, una recarga o un enlace guardado vuelven al mismo
 lugar; el rango y el entorno van detrás solo si no son los de siempre (`#/cup?r=30d&e=dev`).
@@ -231,6 +253,15 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   `juegan/<página de entrada>`. El panel no se cuenta.
 - **Lo que falla al cargar o al jugar** (D-251, ver *Salud*): `falla/`, `err/` y `listo/`, que manda
   `vigia.js` y no `stats.js`.
+- **Since D-348:** `fin/<game>/<mode>` (an offline game finished), `otra/<game>` (a replay: the
+  same game started again after finishing, detected in `stats.js`), `comparte/<what>` (a share that
+  was not cancelled, from `compartir()`), and once per visit `vuelta/<band>` (days since the last
+  visit: `nueva`, `d1`, `d2-7`, `d8-30`, `d31`) and once per browser and day `frec/<band>` (how many
+  of the last 28 days it came: `f1`, `f2-3`, `f4-7`, `f8-14`, `f15`). The browser computes the bands
+  from `juegos-de-salon:ultima` and `juegos-de-salon:dias` and sends only the band.
+- **Since D-349:** `activos/<id>` = 1 (visited) or 2 (started something), once a day: `<id>` is a
+  random 10-character id that lives in the browser (`juegos-de-salon:dispositivo`). Nothing goes
+  with it, and it is never joined with names, rooms, Cups or rankings.
 
 No sale nunca: dirección IP (no hay servidor que la vea y no se consulta a nadie), los
 secretos de las partidas ni el chat. En los modos sin red sale el nombre que la persona ya

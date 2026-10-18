@@ -32,7 +32,7 @@
  *   disp/<celular|tableta|computador>, pais/<CL>: de la visita
  *   juegan/<página>: visitas que llegaron a empezar algo, por su página de entrada
  *
- * Usage captures (D-349):
+ * Usage captures (D-348, D-349):
  *
  *   fin/<game>/<mode>: a local (no-network) game that reached its end
  *   otra/<game>: a replay ("Otra vez", "Revancha"): the same game started again after finishing
@@ -421,7 +421,7 @@ export function trackStart(info) {
 /**
  * Cuánta gente entra al sitio y de dónde llega, aunque no juegue. Mismas reglas que lo demás
  * (D-44): contadores por día, sin IP, sin la dirección completa de donde vino (solo el dominio)
- * y sin ningún identificador. "Vuelve" es una marca en el navegador que dice "ya vine", y no viaja.
+ * y sin ningún identificador (since D-349, one random id per browser, counted apart in `activos/`). "Vuelve" es una marca en el navegador que dice "ya vine", y no viaja.
  *
  * Una visita es una pestaña: se cuenta una vez, en la página donde empezó, con su origen. Cada
  * página que se abre después suma una vista. Si en esa visita se empieza algo, suma `juegan`
@@ -623,7 +623,7 @@ export function trackFinish(info) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Usage captures (D-349)                                              */
+/* Usage captures (D-348, D-349)                                              */
 /* ------------------------------------------------------------------ */
 export const ULTIMA_KEY = 'juegos-de-salon:ultima';            // localStorage: last visit day (dayOf)
 export const DIAS_KEY = 'juegos-de-salon:dias';                // localStorage: distinct visit days, last 28, comma-separated
