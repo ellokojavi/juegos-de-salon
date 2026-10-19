@@ -29,12 +29,12 @@ const T = {
   como: [
     ['🎲', 'Pon todas las fichas: cada una cubre dos casillas.'],
     ['🎯', 'Cada zona de color cumple su regla: un número es lo que suman sus puntos; = todos iguales; ≠ todos distintos; <5 y >9, menos o más.'],
-    ['👆', 'Toca una ficha para elegirla, otra vez para girarla, y luego su casilla. Un toque la saca.'],
+    ['👆', 'Arrastra cada ficha a su casilla; tócala dos veces para girarla. Toca un rombo y se ilumina su zona.'],
   ],
   empezar: '🎲 Empezar', aJugar: '¡A jugar!',
   tablero: 'Tablero {n} de {total} · {nivel}',
   nivel: { facil: 'fácil', medio: 'medio', dificil: 'difícil' },
-  elegir: 'Elige una ficha de abajo.',
+  elegir: 'Arrastra una ficha al tablero, o tócala para elegirla.',
   elegida: 'Tócala otra vez para girarla, o toca la casilla donde va.',
   no: { fuera: 'Así no cabe: gírala o prueba otra casilla.', ocupada: 'Ahí ya hay una ficha: sácala primero.' },
   rota: '❌ Una zona no cumple su regla: mueve alguna ficha.',
@@ -239,8 +239,97 @@ function tablero() {
     if (p.puestas.every(Boolean)) decir(T.rota, 'mal');
   };
 
+  // The zone in focus lights up (its cells and its diamond) and the rest dims: on a tap on its
+  // diamond, for a moment, and under a domino being dragged.
+  let focoTimer = null;
+  const enfocar = (k, ms = 0) => {
+    clearTimeout(focoTimer);
+    g.classList.toggle('foco', k !== null);
+    g.querySelectorAll('.celda, .regla').forEach(x => x.classList.toggle('encendida', k !== null && +x.dataset.zona === k));
+    if (ms) focoTimer = setTimeout(() => enfocar(null), ms);
+  };
+
+  // Drag and drop (D-385): a domino from the tray, or one already placed, follows the finger
+  // (lifted a little, so the finger does not hide it) and the half that was grabbed lands on the
+  // cell under it. A move of less than a few pixels is still a tap.
+  let arr = null, tragar = false;
+  const LEVANTE = 36, UMBRAL = 8;
+  const giroDe = (f, s) => { const a = t.celdas[s.a], b = t.celdas[s.b], v = a.c === b.c; return ((v ? a.r < b.r : a.c < b.c) ? 0 : 2) + (v ? 1 : 0); };
+  const celdaEn = (x, y) => [...g.querySelectorAll('.celda')].find(c => { const r = c.getBoundingClientRect(); return x >= r.left && x < r.right && y >= r.top && y < r.bottom; });
+  const en = (r, c) => t.celdas.findIndex(x => x.r === r && x.c === c);
+  const destino = (i, f, mitad) => {
+    if (mitad === 0) return lugar(t, i, giro[f]);
+    const c = t.celdas[i], j = giro[f] % 2 ? en(c.r - 1, c.c) : en(c.r, c.c - 1);
+    return j < 0 ? null : lugar(t, j, giro[f]);
+  };
+  const marcar = sitio => {
+    g.querySelectorAll('.destino').forEach(x => x.classList.remove('destino', 'no'));
+    if (!sitio) return;
+    const o = ocupacion(p), mal = [sitio.a, sitio.b].some(i => o[i] >= 0 && o[i] !== arr.f);
+    [sitio.a, sitio.b].forEach(i => g.querySelector(`.celda[data-i="${i}"]`).classList.add('destino', ...(mal ? ['no'] : [])));
+  };
+  const agarrar = (ev, boton, f, puesta) => {
+    if (P.fin || ev.button > 0) return;
+    const m = ev.target.closest('.mitad');
+    arr = { f, boton, puesta, x0: ev.clientX, y0: ev.clientY, id: ev.pointerId, mitad: m ? [...m.parentNode.children].indexOf(m) : 0, fantasma: null, sitio: null, celda: null, levante: ev.pointerType === 'mouse' ? 0 : LEVANTE };
+    boton.setPointerCapture?.(ev.pointerId);
+  };
+  const mover = ev => {
+    if (!arr || ev.pointerId !== arr.id) return;
+    if (!arr.fantasma) {
+      if (Math.hypot(ev.clientX - arr.x0, ev.clientY - arr.y0) < UMBRAL) return;
+      if (arr.puesta) giro[arr.f] = giroDe(arr.f, p.puestas[arr.f]);
+      const fx = t.fichas[arr.f];
+      arr.fantasma = ficha(giro[arr.f] >= 2 ? [fx[1], fx[0]] : fx, { vertical: giro[arr.f] % 2 === 1, class: 'fantasma', 'aria-hidden': 'true' });
+      arr.fantasma.style.setProperty('--t', `${g.querySelector('.celda').getBoundingClientRect().width - 4}px`);
+      document.body.append(arr.fantasma);
+      arr.boton.classList.add('arrastrada');
+      SFX.tap(); vibrate(8);
+    }
+    const x = ev.clientX, y = ev.clientY - arr.levante;
+    const fr = arr.fantasma.getBoundingClientRect(), h = arr.fantasma.querySelectorAll('.mitad')[arr.mitad].getBoundingClientRect();
+    arr.fantasma.style.left = `${x - (h.left - fr.left) - h.width / 2}px`;
+    arr.fantasma.style.top = `${y - (h.top - fr.top) - h.height / 2}px`;
+    arr.celda = celdaEn(x, y);
+    arr.sitio = arr.celda ? destino(+arr.celda.dataset.i, arr.f, arr.mitad) : null;
+    marcar(arr.sitio);
+    enfocar(arr.celda ? +arr.celda.dataset.zona : null);
+  };
+  const soltar = ev => {
+    if (!arr || ev.pointerId !== arr.id) return;
+    const a = arr; arr = null;
+    if (!a.fantasma) return;
+    tragar = true; setTimeout(() => { tragar = false; }, 0);
+    a.fantasma.remove(); a.boton.classList.remove('arrastrada');
+    marcar(null); enfocar(null);
+    if (ev.type === 'pointercancel') return;
+    if (!a.celda) {
+      // Off the board: a placed domino goes back to the tray, one from the tray stays there
+      if (a.puesta) { sacar(p, a.f); SFX.tap(); vibrate(6); sel = null; dibujar(); decir(T.elegir); }
+      return;
+    }
+    const antes = p.puestas[a.f];
+    const r = poner(p, a.f, a.sitio);
+    if (!r.ok) {
+      if (antes) p.puestas[a.f] = antes;
+      SFX.error(); vibrate([40, 30, 40]);
+      a.celda.classList.remove('no'); void a.celda.offsetWidth; a.celda.classList.add('no');
+      decir(T.no[r.motivo], 'mal');
+      return;
+    }
+    if (sel === a.f) sel = null;
+    SFX.hit(); vibrate(15);
+    dibujar();
+    g.querySelector(`.puesta[data-f="${a.f}"]`)?.classList.add('cae');
+    decir(sel === null ? T.elegir : T.elegida);
+    revisar();
+  };
+  bandeja.addEventListener('pointerdown', ev => { const b = ev.target.closest('.ficha'); if (b) agarrar(ev, b, +b.dataset.f, false); });
+  g.addEventListener('pointerdown', ev => { const b = ev.target.closest('.puesta'); if (b) agarrar(ev, b, +b.dataset.f, true); });
+  for (const x of [bandeja, g]) { x.addEventListener('pointermove', mover); x.addEventListener('pointerup', soltar); x.addEventListener('pointercancel', soltar); }
+
   bandeja.addEventListener('click', ev => {
-    const b = ev.target.closest('.ficha'); if (!b || P.fin) return;
+    const b = ev.target.closest('.ficha'); if (!b || P.fin || tragar) return;
     const f = +b.dataset.f;
     if (sel === f) { giro[f] = (giro[f] + 1) % 4; SFX.flip(); vibrate(6); }
     else { sel = f; SFX.tap(); vibrate(8); }
@@ -248,7 +337,9 @@ function tablero() {
     dibujar();
   });
   g.addEventListener('click', ev => {
-    if (P.fin) return;
+    if (P.fin || tragar) return;
+    const regla = ev.target.closest('.regla');
+    if (regla) { const k = +regla.dataset.zona; SFX.tap(); enfocar(g.querySelector('.regla.encendida') === regla ? null : k, 1800); return; }
     const puesta = ev.target.closest('.puesta');
     if (puesta) { sacar(p, +puesta.dataset.f); SFX.tap(); vibrate(6); dibujar(); decir(sel === null ? T.elegir : T.elegida); return; }
     const celda = ev.target.closest('.celda'); if (!celda) return;
