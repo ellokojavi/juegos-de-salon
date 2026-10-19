@@ -36,8 +36,8 @@ export const alAzar = g => !g.torneo && g.available && minimo(g) < 3;
 const barajar = xs => { const a = xs.slice(); for (let i = a.length - 1; i > 0; i--) { const j = azar(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
 /**
- * El botón. `candidatos()` devuelve los juegos que pueden salir en este momento (los que se ven
- * con el filtro puesto); `base` es lo que se antepone a `g.path` para abrirlo.
+ * El botón. `candidatos()` devuelve los juegos de la portada (all of them, whatever filter is on,
+ * D-374); `alAzar` leaves out what cannot come out. `base` es lo que se antepone a `g.path` para abrirlo.
  */
 export function botonAzar({ candidatos, lang, base = '' }) {
   const T = TEXTOS[lang] || TEXTOS.es;
