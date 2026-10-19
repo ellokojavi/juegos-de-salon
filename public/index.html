@@ -133,14 +133,15 @@
        the title's rainbow runs through its letters (`shimmer`, base.css), one gradient across the
        word, like the home page title. A glow breathes and now and then it wobbles around its tilt.
        The 4 px above and below keep its tilted corners off the name and the description, also
-       mid-wobble (U-11). */
+       mid-wobble (U-11). Soft, so it sits on the card rather than over it (D-373): a see-through fill,
+       a thin faint edge and a low glow. */
     .game-card h2 .nuevo {
       --giro: -6deg; margin-block: 4px;
       font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
-      padding: 3px 9px; border-radius: 999px; background: #1a0b2e;
-      border: 2px solid rgba(255, 255, 255, 0.92);
+      padding: 3px 9px; border-radius: 999px; background: rgba(26, 11, 46, 0.45);
+      border: 1px solid rgba(46, 230, 214, 0.35);
       transform: rotate(var(--giro));
-      filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.35));
+      filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.2));
       animation: nuevoBrillo 2.4s ease-in-out infinite, nuevoBaile 5s ease-in-out infinite;
     }
     .game-card h2 .nuevo > span {
@@ -150,8 +151,8 @@
       animation: shimmer 4s linear infinite;
     }
     @keyframes nuevoBrillo {
-      0%, 100% { box-shadow: 0 0 6px rgba(255, 46, 136, 0.5); }
-      50% { box-shadow: 0 0 14px rgba(46, 230, 214, 0.85), 0 0 22px rgba(255, 210, 63, 0.35); }
+      0%, 100% { box-shadow: 0 0 3px rgba(255, 46, 136, 0.2); }
+      50% { box-shadow: 0 0 8px rgba(46, 230, 214, 0.3); }
     }
     @keyframes nuevoBaile {
       0%, 84%, 100% { transform: rotate(var(--giro)) scale(1); }
@@ -164,10 +165,10 @@
     .game-card h2 .popular {
       --giro: -6deg; margin-block: 4px;
       font: 900 0.78rem var(--font-body); letter-spacing: 0; text-transform: none; white-space: nowrap;
-      padding: 3px 9px; border-radius: 999px; background: #2a0a06;
-      border: 2px solid rgba(255, 255, 255, 0.92);
+      padding: 3px 9px; border-radius: 999px; background: rgba(42, 10, 6, 0.45);
+      border: 1px solid rgba(255, 138, 61, 0.4);
       transform: rotate(var(--giro));
-      filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.35));
+      filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.2));
       animation: popularBrillo 2.4s ease-in-out infinite, nuevoBaile 5s ease-in-out infinite;
     }
     .game-card h2 .popular > span:last-child {
@@ -177,8 +178,8 @@
       animation: shimmer 4s linear infinite;
     }
     @keyframes popularBrillo {
-      0%, 100% { box-shadow: 0 0 6px rgba(255, 61, 46, 0.5); }
-      50% { box-shadow: 0 0 14px rgba(255, 138, 61, 0.9), 0 0 22px rgba(255, 210, 63, 0.35); }
+      0%, 100% { box-shadow: 0 0 3px rgba(255, 61, 46, 0.2); }
+      50% { box-shadow: 0 0 8px rgba(255, 138, 61, 0.35); }
     }
     @media (prefers-reduced-motion: reduce) { .game-card h2 .nuevo, .game-card h2 .nuevo > span, .game-card h2 .popular, .game-card h2 .popular > span { animation: none; } }
     /* Filtros (D-142, D-149): el tipo de juego, en fichas que se prenden y se apagan. */
