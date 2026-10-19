@@ -24,7 +24,7 @@ import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stat
 import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../assets/js/ranking.js';
 import { rankingsVisibles, leerYo } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
-import { codigoAlAzar } from '../cup/engine.js';
+import { codigoAlAzar } from '../cup/code.js';
 import * as numero from '../cup/games/number/engine.js';
 import * as uiNumero from '../cup/games/number/ui.js';
 import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
