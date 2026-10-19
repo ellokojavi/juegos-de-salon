@@ -142,7 +142,7 @@ Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105; la capa es
 `assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`, y la usa
 también Agentes del laboratorio): recién ahí aparece el tablero, y
 el reloj parte cuando el "¡A jugar!" ya se fue y terminó la entrada del juego, si la tiene (las
-cartas de El caso, con `entrada()` en su registro): la cuenta no es tiempo de juego (D-258). Al
+cartas de El caso, con `entrada()` en su registro): la cuenta no es tiempo de juego (D-258). **No clock shows while playing** (D-379): the time counts as always (paused for a fact and with the tab hidden, stopped when the board ends) and appears only at the end, on the result, the standings and the share text; a game's own ⏳ countdown stays. Al
 terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
 (`public/cup/desglose.js`, D-106). Order (C-19, D-343): the place, then **Back to the board**, share and
 the next-day notice (its button cyan); the breakdown starts folded (open in practice) and the day table goes

@@ -52,7 +52,7 @@ a cup), with what Loteo brings in `public/cup/games/plots/ui.js`:
   y 0 en 15. Cada ayuda resta 10.»; in a cup, the tie-break «Si empatas, gana quien tardó menos.».
 
 Start goes through the shared 3, 2, 1 countdown («¡A jugar!»; the lab's «¡A lotear!» is gone) and the
-clock in the header runs from there, paused with the screen hidden (U-20).
+time counts from there, paused with the screen hidden (U-20); no clock shows while playing, only the ⏳ countdown (D-379).
 
 ## How it plays
 

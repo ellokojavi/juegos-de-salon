@@ -311,7 +311,7 @@ async function waitCountdown({ check = false } = {}) {
   await b.until(`!document.getElementById('cuenta') || document.getElementById('cuenta').classList.contains('ya')`, 8000, 50);
   if (check) {
     ok(await ev(`document.getElementById('cuenta')?.textContent.includes('¡A jugar!') && !!document.querySelector('#jugar-body').children.length`), 'after the countdown it says ¡A jugar! and the board appears');
-    ok(/0:0[01]/.test(await ev(`document.querySelector('#jugar-head .cron')?.textContent || ''`)), 'the clock starts at zero after the countdown');
+    ok(/0:0[01]/.test(await ev(`document.querySelector('#jugar-head').reloj?.() || ''`)), 'the clock starts at zero after the countdown');
   }
   await sleep(950);
 }
@@ -930,9 +930,9 @@ if (runs('labs')) {
     await PLAY[id](id === 'tango' ? 1 : 2);
     if (id === 'zip') {
       ok(await ev(`document.querySelector('.zip-grid').classList.contains('solucion') && !!document.getElementById('zip-solucion')`), 'Zip: when time runs out the solution of the half-done level shows');
-      const clock0 = await ev(`document.querySelector('#jugar-head .cron').textContent`);
+      const clock0 = await ev(`document.querySelector('#jugar-head').reloj()`);
       await sleep(2200);
-      ok(await ev(`document.querySelector('#jugar-head .cron').textContent`) === clock0 && !await ev(`document.querySelector('.zip-reloj')`), `Zip: when time runs out the clock stays still at ${clock0} and the countdown disappears`);
+      ok(await ev(`document.querySelector('#jugar-head').reloj()`) === clock0 && !await ev(`document.querySelector('.zip-reloj')`), `Zip: when time runs out the clock stays still at ${clock0} and the countdown disappears`);
       await b.shot('zip-solution');
     }
     if (id === 'desenredo') {
@@ -944,9 +944,9 @@ if (runs('labs')) {
     if (id === 'conexiones') ok(await ev(`document.querySelectorAll('.grupo').length === 4 && !document.querySelector('.grupo').classList.contains('pop')`), 'Conexiones: groups already solved do not animate again');
     if (['conexiones', 'reinas', 'linea', 'letras'].includes(id)) {
       // The clock stops when the board ends, not when "Ver resultado" is tapped (D-130)
-      const t0 = await ev(`document.querySelector('#jugar-head .cron').textContent`);
+      const t0 = await ev(`document.querySelector('#jugar-head').reloj()`);
       await sleep(2300);
-      ok(await ev(`document.querySelector('#jugar-head .cron').textContent`) === t0, `${id}: when the board ends the clock stays still at ${t0}`);
+      ok(await ev(`document.querySelector('#jugar-head').reloj()`) === t0, `${id}: when the board ends the clock stays still at ${t0}`);
     }
     await click('#btn-fin'); await sleep(500);
     const r = await ev(`JSON.stringify({p:__copa.estado.pantalla, s:document.querySelector('.score-big')?.textContent})`).then(JSON.parse);
