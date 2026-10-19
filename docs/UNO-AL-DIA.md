@@ -1,7 +1,7 @@
 # Uno al día
 
 **Estado:** **para todos desde v0.121.0** (el n.° 1 es el 6 de octubre de 2026); construido en 7 PR y abierto en el octavo (ver "Lo que el PR N hizo") · **Fecha:** 2026-10-05 ·
-**Toca:** RP-44, RP-63, D-334, D-188, D-237 y D-374 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
+**Toca:** RP-44, RP-63, D-334, D-188, D-237, D-374 y D-375 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
 juego, el mismo desafío para todos, y lleva la cuenta de cuántos días seguidos juega cada uno, cómo
@@ -415,7 +415,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   hasta D-262).
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
   El paso del dado al juego es el de Juego al azar (D-237): el juego abre con el mismo dado encima
-  y el dado se desvanece cuando el juego está dibujado (`llegada.js`).
+  y el dado se desvanece cuando el juego está dibujado (`llegada.js`), only on the page it opened (D-375).
 - Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
   `tools/e2e/daily.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
 

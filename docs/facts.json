@@ -1022,6 +1022,7 @@
     "public/assets/js/instalable.test.mjs",
     "public/assets/js/instalar.test.mjs",
     "public/assets/js/labs-puerta.test.mjs",
+    "public/assets/js/llegada.test.mjs",
     "public/assets/js/parametros.test.mjs",
     "public/assets/js/push.test.mjs",
     "public/assets/js/records.test.mjs",
