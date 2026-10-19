@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<!-- The Reddit r/chile image: 540×675 CSS, photographed at double (1080×1350, Reddit's 4:5) by build.mjs.
+     Fonts and colors are the app's (U-40, D-380): base.css imports these same Google Fonts. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap">
+<style>
+  :root { --pink: #ff2e88; --yellow: #ffd23f; --cyan: #2ee6d6; --lime: #9dff3a; --purple: #8a4dff;
+    --bg1: #150726; --bg2: #2a0a4a; --bg3: #0b1e3f; --muted: rgba(255, 255, 255, 0.72); }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--bg1); }
+  #t { width: 540px; height: 675px; transform-origin: 0 0; font-family: 'Nunito', sans-serif; color: #fff; position: relative; padding: 26px 22px 0;
+    background:
+      radial-gradient(700px 360px at 10% -10%, rgba(255, 46, 136, 0.35), transparent 60%),
+      radial-gradient(500px 300px at 110% 10%, rgba(46, 230, 214, 0.22), transparent 60%),
+      radial-gradient(500px 400px at 50% 120%, rgba(138, 77, 255, 0.35), transparent 60%),
+      linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3)); }
+  h1 { text-align: center; font: 58px/0.95 'Bangers'; letter-spacing: 0.03em; color: var(--yellow); transform: rotate(-2deg);
+    text-shadow: 0 4px 0 rgba(0,0,0,0.4), 0 0 26px rgba(255, 210, 63, 0.45); }
+  .sub { text-align: center; font: 900 17px/1.25 'Nunito'; margin-top: 8px; }
+  .sub b { color: var(--cyan); }
+  .fila { margin-top: 12px; }
+  .rotulo { font: 26px/1 'Bangers'; letter-spacing: 0.05em; margin: 0 0 8px 4px; }
+  .grupo .rotulo { color: var(--pink); }
+  .solo .rotulo { color: var(--cyan); }
+  .tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .g { text-align: center; }
+  .g img { width: 100%; aspect-ratio: 390 / 430; object-fit: cover; object-position: top; border-radius: 14px; display: block;
+    border: 2px solid rgba(255, 255, 255, 0.16); box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+  .n { margin-top: 6px; font: 19px/1 'Bangers'; letter-spacing: 0.04em; white-space: nowrap; }
+  .pie { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; }
+  .pie small { display: block; font: 700 13px 'Nunito'; color: var(--muted); margin-bottom: 2px; }
+  .pie b { font: 34px/1 'Bangers'; letter-spacing: 0.05em; color: var(--yellow); }
+</style>
+</head>
+<body>
+<div id="t">
+  <h1>Solo o con amigos</h1>
+  <p class="sub">17 juegos en el celular, <b>gratis</b> y sin descargar nada</p>
+  <div class="fila grupo">
+    <p class="rotulo">👥 Con amigos</p>
+    <div class="tres">
+      <div class="g"><img src="img/fourth-king.png" alt=""><p class="n">👑 Cuarto Rey</p></div>
+      <div class="g"><img src="img/liars-dice.png" alt="" style="object-position: 0 48%"><p class="n">🎲 Dudo</p></div>
+      <div class="g"><img src="img/cup.png" alt=""><p class="n">🏆 La Copa</p></div>
+    </div>
+  </div>
+  <div class="fila solo">
+    <p class="rotulo">🧩 Solo</p>
+    <div class="tres">
+      <div class="g"><img src="img/home.png" alt="" style="object-position: 0 83%"><p class="n">📅 Uno al día</p></div>
+      <div class="g"><img src="img/queens.png" alt=""><p class="n">👑 Reinas</p></div>
+      <div class="g"><img src="img/routes.png" alt=""><p class="n">🚇 Rutas rotas</p></div>
+    </div>
+  </div>
+  <p class="pie"><small>Sin cuenta: tocas el link y juegas</small><b>juegosdesalon.cl</b></p>
+</div>
+<script>document.getElementById('t').style.transform = `scale(${innerWidth / 540})`;</script>
+</body>
+</html>

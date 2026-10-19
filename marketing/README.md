@@ -12,6 +12,7 @@ rehacerse (D-178).
 | Tarjeta de Agentes (imagen y video) | 2 · 2026-10-11 · 6,0 s, sin audio | [imagen 1200×630](agentes-tarjeta/output/agentes-1200x630.jpg) · [video](agentes-tarjeta/output/agentes-6s.mp4) · [GIF](agentes-tarjeta/output/agentes-6s.gif) | [agentes-tarjeta/README.md](agentes-tarjeta/README.md) |
 | Tarjetas para compartir y cabecera del correo | 1 · 2026-10-18 | [`public/assets/og/`](../public/assets/og/) · [cabecera](../public/assets/email/header.jpg) | [share-cards/README.md](share-cards/README.md) |
 | Se vienen cositas (adelanto del laboratorio) | 1 · 2026-10-13 · 6,0 s, sin audio | [video 1:1](proximamente-teaser/output/se-vienen-cositas-6s.mp4) | [proximamente-teaser/README.md](proximamente-teaser/README.md) |
+| Reddit r/chile: solo o con amigos | 1 · 2026-10-19 | [imagen 1080×1350](reddit-chile/output/reddit-chile-1080x1350.jpg) · [post](reddit-chile/reddit.md) | [reddit-chile/README.md](reddit-chile/README.md) |
 
 [`registro.json`](registro.json) es la misma lista para leer con código: versión, fecha,
 archivos, formatos, duración y estado de cada asset, y qué juegos muestra: `juegos`, con
