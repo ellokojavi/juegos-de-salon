@@ -296,7 +296,7 @@ no se muestra en el formulario, y quien entró al laboratorio con su llave manda
 `node tools/firebase/reports.mjs`; en `?test` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
 Every one of these forms also has an optional **email** field (`campoCorreo` in `labs-idioma.js`, D-317)
 that says it is only to tell the player we replied: `feedback/<id>` gets only its mask
-(`correoMascara`), the address goes to `feedbackContacto/<id>`, readable only with the owner's key,
+(`correoMascara`, `j********n@g********m`, D-366), the address goes to `feedbackContacto/<id>`, readable only with the owner's key,
 and the processes agent emails the reply and deletes it (`tools/agents/feedback.mjs reply`).
 
 ### Avisos al celular (D-223, D-224, D-225, D-227, D-228)

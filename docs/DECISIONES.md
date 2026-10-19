@@ -4958,7 +4958,7 @@ ser algo que el jugador sepa (un nombre, un hecho único), no un superlativo o u
 carta dice. Si no la hay, la carta no entra.
 
 ## D-279 · Los issues de feedback llevan el nombre de quien lo manda
-**Fecha:** 2026-10-11 · **Estado:** vigente · **Relación:** corrige D-275 (el issue iba sin el nombre)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-366 (the name shows masked) · **Relación:** corrige D-275 (el issue iba sin el nombre)
 **Decisión:** El issue de cada reporte 🐞 suma una línea **Quién** con el nombre que el jugador
 escribió en el formulario, si escribió uno. El navegador sigue fuera. Los nueve issues que ya
 estaban se completaron con su nombre.
@@ -5922,7 +5922,7 @@ labels, with environment variables read under both names for a while (`SITE` or 
   copies until the weekly review removes them (phase 4).
 
 ## D-317 · Feedback: an optional email, kept private, and a friendly reply when it's resolved
-**Date:** 2026-10-14 · **Status:** amended by D-327, D-341 · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
+**Date:** 2026-10-14 · **Status:** amended by D-327, D-341, D-366 (the mask keeps first and last letters) · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
 **Decision:** Owner's request: every feedback form (the 🐞 in the lab and in La Copa, the "¿Qué te
 pareció?" at the end of each lab game and La Copa's report screen) gets an optional email field, so
 whoever wants to can be told when we answer.
@@ -7049,6 +7049,24 @@ inbox every 15 minutes would open 96 sessions a day, almost all to find nothing.
 **Why:** one place to see and change what runs; checking costs nothing, only the work found costs tokens.
 **Consequences:** a new job is an entry in `jobs.json` (and, if it's `mac`, `jobs.mjs install` on the Mac
 mini). The processes round still triages what the watcher misses. `tools/jobs/README.md` explains it.
+
+## D-366 · Feedback issues mask the player's name, and the email mask keeps both ends of each side
+**Date:** 2026-10-18 · **Status:** in force · **Relation:** amends D-279 (the full name on the issue) and D-317 (the email mask)
+**Decision:** Owner's request, after issue #538 showed a player's full name on the public repo:
+- **Who** shows each word of the name by its first letter, the rest asterisks, one per letter
+  (`Cristina Alvarado` → `C******* A*******`; `enmascararNombre` in `public/cup/reportes.js`,
+  used by `tools/agents/feedback.mjs`). Enough for the owner to recognize who it is.
+- **The email mask** keeps the first and last letter of each side of the @, with a fixed eight
+  asterisks between them so the length says nothing: `j********n@g********m` (`enmascarar`, same
+  file). The address stays only in the private `feedbackContacto/<id>`, as before.
+- The reply's greeting takes the name from the report in `feedback/<id>`, not from the issue.
+- The Firebase rule and `feedback.mjs` accept the older mask too, so a cached app's report still gets
+  in. The open `feedback` issues were re-masked by hand; GitHub keeps their edit history.
+**Why:** the repo is public and its issues are indexed; masking when the issue is created is the only
+thing that keeps the name off GitHub. D-279 argued `feedback/` is already readable without a key,
+which is true but a much smaller exposure than an indexed issue.
+**Consequences:** `feedback.test.mjs` checks that the full name never reaches the body;
+`reportes.test.mjs` checks both masks and that the rule lets the new and old ones in.
 
 ## D-367 · Bulls and Cows on two phones: both guess at once
 **Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-19 (on two phones nobody starts: both guess at once)
