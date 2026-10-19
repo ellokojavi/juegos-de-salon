@@ -71,8 +71,8 @@
 .lt-punto.actual { border-color: #fff; background: rgba(255,255,255,0.25); box-shadow: 0 0 8px rgba(255,255,255,0.5); }
 .lt-punto.hecha { background: var(--lime); border-color: var(--lime); }
 
-/* Two lines tall always: a long notice does not push the board while playing (U-12) */
-.lt-aviso { margin: 0; min-height: 2.6em; line-height: 1.3; display: grid; place-items: center; text-align: center; font-weight: 800; color: var(--muted); }
+/* Two lines tall always, in rem so the bigger size and win texts do not grow it: the board never moves while playing (U-12) */
+.lt-aviso { margin: 0; height: 3rem; overflow: visible; line-height: 1.3; display: grid; place-items: center; text-align: center; font-weight: 800; color: var(--muted); }
 .lt-aviso.mal { color: #ff8a8a; } .lt-aviso.ayuda, .lt-aviso.ojo { color: var(--yellow); }
 .lt-aviso.medida { color: #fff; font: 900 1.15rem var(--font-num); }
 .lt-aviso.bien { color: var(--lime); font-size: 1.15rem; animation: pop 0.45s ease-out; }
