@@ -69,12 +69,12 @@ await close(A); await close(B);
 let guard = 0;
 while (guard++ < 14) {
   const vA = await A.view(); if (!vA || vA.phase === 'done') break;
-  const dev = vA.expected === 'A' ? A : B;
-  const role = vA.expected;
-  if (!(await dev.hasPad())) { await sleep(800); continue; }
-  const mine = await dev.evaluate(`__tyf.match().guesses.filter(g=>g.from==='${role}').length`);
-  const guess = role === 'A' ? (mine === 0 ? '5687' : '5678') : (mine === 0 ? '1243' : '1234');
-  await dev.typeNum(guess);
+  // Both at once (D-367)
+  for (const [role, dev] of [['A', A], ['B', B]]) {
+    if (!(await dev.hasPad())) continue;
+    const mine = await dev.evaluate(`__tyf.match().guesses.filter(g=>g.from==='${role}').length`);
+    await dev.typeNum(role === 'A' ? (mine === 0 ? '5687' : '5678') : (mine === 0 ? '1243' : '1234'));
+  }
   await sleep(3200);
 }
 await sleep(3000);
