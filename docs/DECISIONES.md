@@ -178,7 +178,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** Proyecto de Firebase `juegos-de-salon` creado el 2026-09-08 (plan Spark, sin Analytics ni Gemini). Reglas publicadas y versionadas en `firebase/database.rules.json`; configuración pública en `assets/js/firebase-config.js`. Ver [firebase/README.md](../firebase/README.md).
 
 ## D-19 · Quién parte en Toque y Fama: determinista, sin sorteo
-**Fecha:** 2026-09-08 · **Estado:** vigente
+**Fecha:** 2026-09-08 · **Estado:** vigente; corregida por D-367 (en dos celulares nadie parte)
 **Decisión:** En la primera partida parte el invitado (rol B); en la revancha parte quien perdió (en empate, quien no partió). No hay sorteo.
 **Por qué:** El sorteo con nonces públicos propuesto en el estudio era manipulable: quien confirma segundo ve el nonce del otro y puede elegir el suyo. Además, un sorteo asíncrono (SHA-256) impedía reconstruir la partida de forma síncrona al reconectar. Con el derecho a réplica activado, la ventaja de partir es mínima, así que una regla fija es justa, simple y reproducible en ambos celulares.
 
@@ -7049,3 +7049,18 @@ inbox every 15 minutes would open 96 sessions a day, almost all to find nothing.
 **Why:** one place to see and change what runs; checking costs nothing, only the work found costs tokens.
 **Consequences:** a new job is an entry in `jobs.json` (and, if it's `mac`, `jobs.mjs install` on the Mac
 mini). The processes round still triages what the watcher misses. `tools/jobs/README.md` explains it.
+
+## D-367 · Bulls and Cows on two phones: both guess at once
+**Date:** 2026-10-18 · **Status:** in force · corrects D-19 for two phones
+**Decision:** In 📡 two-phone rooms both players guess at the same time, each at their own pace, without
+waiting for the other. A player who cracks the number waits, watching the rival's board, until the rival
+cracks it too; then the final screen shows for both. Fewer guesses wins; the same number of guesses is a
+tie. The right of reply is gone there (both always get the same chances) and its switch only shows in 📱
+one phone, which stays turn-based. Rooms carry `config.parallel: true`; a room without it (opened before)
+plays by turns. Each guess carries `n`, its number in its player's own list, and a reply names it with
+`of` and `n`, because with both guessing at once each phone may see the two guesses in a different order.
+**Why:** A player's suggestion by email (#538): the two halves of the game are independent, so waiting for
+the rival's turn on two phones was dead time. It stays one player against another: both boards are on
+screen and the result waits for both.
+**Consequences:** `view()` in `public/bulls-and-cows/game.js` has a parallel branch (`canGuess`,
+`solvedIn`); who starts (D-19) only matters on one phone.

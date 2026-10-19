@@ -13,7 +13,7 @@ const ES = {
   howText: 'Por cada intento recibes pistas: una <b>fama</b> es una cifra correcta en su lugar y un <b>toque</b> es una cifra correcta en otro lugar. Gana quien adivina primero.',
   example: 'Ejemplo: número secreto 1234, intento 1356 → 1 fama (el 1) y 1 toque (el 3).',
   modeLocal: '📱 Un celular, dos jugadores', modeLocalHint: 'Se pasan el celular. La pantalla se tapa entre turnos.',
-  modeOnline: '📡 Dos celulares', modeOnlineHint: 'Cada uno juega en su celular.',
+  modeOnline: '📡 Dos celulares', modeOnlineHint: 'Cada uno en su celular, los dos a la vez.',
   modeSolo: '🧍 Jugar solo', modeSoloHint: 'El celular elige el número secreto y tú lo adivinas.',
   // setup
   setupTitle: '¿Cómo jugamos?', digits: 'Cifras', replica: 'Derecho a réplica', replicaHint: 'Si quien empieza adivina, el otro tiene un último intento para empatar.',
@@ -34,6 +34,7 @@ const ES = {
   confirm: '¡Vamos!', hide: 'Tapar pantalla', tapToReveal: 'Toca para ver', secretSaved: 'Número secreto guardado 🔒',
   waitingSecret: 'Esperando a que {name} elija su número secreto', bothReady: '¡Los dos listos!',
   // play
+  solvedIn: '¡Lo sacaste en {n} {word}!', waitingFinish: 'Esperando a que {name} lo saque…',
   turnYou: '¡Te toca! Adivina el de {name}', turnOther: 'Le toca a {name}…', waitingReply: 'Esperando la respuesta…', round: 'Ronda {n}',
   blockHint: '💡 Mantén apretada una cifra para tacharla. Repite para destacharla.',
   mySecret: 'Tu número secreto', tapToShow: 'toca para ver', tapToHide: 'toca para ocultar',
@@ -71,7 +72,7 @@ const EN = {
   howText: 'Every guess gets clues: a <b>bull</b> is a right digit in the right spot and a <b>cow</b> is a right digit in the wrong spot. Whoever cracks it first wins.',
   example: 'Example: secret number 1234, guess 1356 → 1 bull (the 1) and 1 cow (the 3).',
   modeLocal: '📱 One phone, two players', modeLocalHint: 'Pass the phone around. The screen hides between turns.',
-  modeOnline: '📡 Two phones', modeOnlineHint: 'Each player plays on their own phone.',
+  modeOnline: '📡 Two phones', modeOnlineHint: 'Each on their own phone, both at once.',
   modeSolo: '🧍 Play alone', modeSoloHint: 'The phone picks the secret number and you crack it.',
   setupTitle: 'How do we play?', digits: 'Digits', replica: 'Right of reply', replicaHint: 'If the starter cracks it, the other player gets one last guess to tie.',
   zeroFirst: 'Allow leading zero', yourName: 'Your name', p1: 'Player 1', p2: 'Player 2',
@@ -88,6 +89,7 @@ const EN = {
   secretTitle: 'Your secret number', secretFor: '{name}\'s secret number', secretHint: '{n} different digits. No peeking.', secretHintNoZero: '{n} different digits, no leading zero. No peeking.',
   confirm: 'Let\'s go!', hide: 'Hide screen', tapToReveal: 'Tap to reveal', secretSaved: 'Secret number saved 🔒',
   waitingSecret: 'Waiting for {name} to pick a secret number', bothReady: 'Both ready!',
+  solvedIn: 'You cracked it in {n} {word}!', waitingFinish: 'Waiting for {name} to crack it…',
   turnYou: 'Your turn! Guess {name}\'s number', turnOther: '{name}\'s turn…', waitingReply: 'Waiting for the reply…', round: 'Round {n}',
   blockHint: '💡 Long-press a digit to cross it out. Do it again to bring it back.',
   mySecret: 'Your secret number', tapToShow: 'tap to show', tapToHide: 'tap to hide',
@@ -123,7 +125,7 @@ const PT = {
   howText: 'A cada tentativa você recebe pistas: uma <b>fama</b> é um algarismo certo no lugar certo e um <b>toque</b> é um algarismo certo em outro lugar. Ganha quem descobre primeiro.',
   example: 'Exemplo: número secreto 1234, tentativa 1356 → 1 fama (o 1) e 1 toque (o 3).',
   modeLocal: '📱 Um celular, dois jogadores', modeLocalHint: 'Vocês passam o celular. A tela fica coberta entre os turnos.',
-  modeOnline: '📡 Dois celulares', modeOnlineHint: 'Cada um joga no seu celular.',
+  modeOnline: '📡 Dois celulares', modeOnlineHint: 'Cada um no seu celular, os dois ao mesmo tempo.',
   modeSolo: '🧍 Jogar sozinho', modeSoloHint: 'O celular escolhe o número secreto e você descobre.',
   // configuração
   setupTitle: 'Como vamos jogar?', digits: 'Algarismos', replica: 'Direito de resposta', replicaHint: 'Se quem começa acertar, o outro tem uma última tentativa para empatar.',
@@ -144,6 +146,7 @@ const PT = {
   confirm: 'Vamos!', hide: 'Cobrir a tela', tapToReveal: 'Toque para ver', secretSaved: 'Número secreto guardado 🔒',
   waitingSecret: 'Esperando {name} escolher o número secreto', bothReady: 'Os dois prontos!',
   // jogo
+  solvedIn: 'Você descobriu em {n} {word}!', waitingFinish: 'Esperando {name} descobrir…',
   turnYou: 'Sua vez! Descubra o número de {name}', turnOther: 'Vez de {name}…', waitingReply: 'Esperando a resposta…', round: 'Rodada {n}',
   blockHint: '💡 Segure um algarismo para riscá-lo. Repita para desfazer.',
   mySecret: 'Seu número secreto', tapToShow: 'toque para ver', tapToHide: 'toque para esconder',
@@ -181,7 +184,7 @@ const DE = {
   howText: 'Für jeden Versuch bekommst du Hinweise: Ein <b>Bulle</b> ist eine richtige Ziffer an der richtigen Stelle, eine <b>Kuh</b> eine richtige Ziffer an der falschen Stelle. Wer die Zahl zuerst knackt, gewinnt.',
   example: 'Beispiel: geheime Zahl 1234, Versuch 1356 → 1 Bulle (die 1) und 1 Kuh (die 3).',
   modeLocal: '📱 Ein Handy, zwei Spieler', modeLocalHint: 'Ihr reicht das Handy weiter. Zwischen den Zügen wird der Bildschirm verdeckt.',
-  modeOnline: '📡 Zwei Handys', modeOnlineHint: 'Jeder spielt auf seinem eigenen Handy.',
+  modeOnline: '📡 Zwei Handys', modeOnlineHint: 'Jeder auf seinem Handy, beide gleichzeitig.',
   modeSolo: '🧍 Allein spielen', modeSoloHint: 'Das Handy wählt die geheime Zahl und du knackst sie.',
   // Einstellungen
   setupTitle: 'Wie spielen wir?', digits: 'Ziffern', replica: 'Recht auf Antwort', replicaHint: 'Knackt der Startspieler die Zahl, hat der andere noch einen letzten Versuch zum Ausgleich.',
@@ -202,6 +205,7 @@ const DE = {
   confirm: 'Los!', hide: 'Verdecken', tapToReveal: 'Tippen zum Ansehen', secretSaved: 'Geheime Zahl gespeichert 🔒',
   waitingSecret: 'Warte, bis {name} eine geheime Zahl wählt', bothReady: 'Beide bereit!',
   // Spiel
+  solvedIn: 'Geknackt: {n} {word}!', waitingFinish: 'Warte, bis {name} sie knackt…',
   turnYou: 'Du bist dran! Rate die Zahl von {name}', turnOther: '{name} ist dran…', waitingReply: 'Warte auf die Antwort…', round: 'Runde {n}',
   blockHint: '💡 Halte eine Ziffer gedrückt, um sie durchzustreichen. Nochmal, um das zurückzunehmen.',
   mySecret: 'Deine geheime Zahl', tapToShow: 'tippen zum Zeigen', tapToHide: 'tippen zum Verbergen',
