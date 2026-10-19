@@ -7,7 +7,8 @@
  */
 export const EXPERIMENTS = {
   popular: { emoji: '🔥', name: 'Populares', what: 'Los tres juegos con más partidas terminadas llevan la etiqueta 🔥 Popular.' },
-  picks: { emoji: '✨', name: 'Filtros', what: 'Arriba de los tipos, dos fichas más: ✨ Nuevo y 🔥 Populares.' },
+  picks: { emoji: '✨', name: 'Filtros', what: 'Arriba de los tipos, dos fichas más: ✨ Nuevos y 🔥 Populares, con ⭐ Favoritos a su lado.' },
+  brand: { emoji: '🎲', name: 'Título', what: 'Al bajar, el menú flotante lleva arriba el nombre Juegos de Salón; un toque vuelve arriba.' },
 };
 
 /** The home page's address in the lab: never counted (`test`), with the bar (`lab`), a language and the experiments on. */

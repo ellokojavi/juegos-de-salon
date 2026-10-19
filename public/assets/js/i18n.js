@@ -111,7 +111,7 @@ export const COMMON = {
     // Los filtros de la portada (D-142)
     filters: 'Filtrar juegos',
     shown: 'Se ven {n} de {total} juegos.', clearFilters: 'Ver todos',
-    favorites: 'Favoritos', favorite: 'Marcar {juego} como favorito', filterNew: 'Nuevo', filterPopular: 'Populares',
+    favorites: 'Favoritos', favorite: 'Marcar {juego} como favorito', filterNew: 'Nuevos', filterPopular: 'Populares',
     onlySpanish: 'En español',
     code: 'código en GitHub', volverMenu: '🏠 Volver al menú', menu: 'Menú', soon: 'Próximamente', newGame: 'Nuevo', popularGame: 'Popular', or: 'o',
     // Creating or joining a room (U-37): the button while it waits, and the way out when it can't
@@ -582,7 +582,7 @@ export const COMMON = {
     player: 'jogador',
     filters: 'Filtrar jogos',
     shown: 'Mostrando {n} de {total} jogos.', clearFilters: 'Ver todos',
-    favorites: 'Favoritos', favorite: 'Marcar {juego} como favorito', filterNew: 'Novo', filterPopular: 'Populares',
+    favorites: 'Favoritos', favorite: 'Marcar {juego} como favorito', filterNew: 'Novos', filterPopular: 'Populares',
     onlySpanish: 'Em espanhol',
     code: 'código no GitHub', volverMenu: '🏠 Voltar ao menu', menu: 'Menu', soon: 'Em breve', newGame: 'Novo', popularGame: 'Popular', or: 'ou',
     opening: 'Abrindo sala…', joining: 'Entrando…', playOnePhone: '📱 Jogar em um celular',

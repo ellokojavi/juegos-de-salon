@@ -278,7 +278,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   recounts the home page's order (`POPULARIDAD` in `games.js`) by games finished in the last four
   weeks; the processes round runs `update` once the list is a week old. What is tried on the home
   page before players see it is a URL parameter listed in `public/labs/home/experiments.js`, shown with
-  switches by the bar `?lab` draws on the real home page, opened from `/labs/home/` (D-363; today 🔥 Populares, `?popular`, and the ✨ Nuevo / 🔥 Populares filters, `?picks`). The lab has three groups: games, improvements, La Bodega.
+  switches by the bar `?lab` draws on the real home page, opened from `/labs/home/` (D-363; today 🔥 Populares, `?popular`, the ✨ Nuevos / 🔥 Populares filters, `?picks`, and the app's name on the floating menu, `?brand`). The lab has three groups: games, improvements, La Bodega.
 - **Promotional splash** (D-351): a window over the home page announcing something new, off by
   default. `node tools/agents/splash.mjs list | on <id> [--until YYYY-MM-DD] | off` rewrites the
   `ACTIVE` line of `public/assets/js/splash.js`; it reaches players through a PR like any change.
