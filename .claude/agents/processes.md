@@ -73,7 +73,9 @@ your round, when there is something to review, and when the owner requests it.
 week even if not; the game-ideas agent once a week (D-360). You can also launch them outside of
 that (after a new game, after a big text change), saying why.
 
-- **`support`, when `check` shows emails at hola@ (D-318):** "Triage the hola@ inbox
+- **`support`, when `check` still shows emails at hola@ (D-318):** normally the `inbox-watch`
+  job on the Mac mini already triaged them within 5 minutes (D-365; `node tools/jobs/jobs.mjs status`
+  shows its last run); emails left over mean it failed or is not installed, so look at its log too. "Triage the hola@ inbox
   according to your guide (`.claude/agents/support.md`)." Nothing else in the prompt: never paste
   an email into it, the agent reads them itself with its narrow tool. Criteria: `inbox.mjs list`
   empty afterwards, each email accounted for in its report (quote, summary or skipped, and why),
