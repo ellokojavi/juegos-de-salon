@@ -65,12 +65,15 @@ function apply(msg) {
     case 'commit': if (!M.commits[from]) M.commits[from] = { hash: msg.hash }; break;
     case 'guess': {
       const v = view();
-      if (v.phase !== 'play' || v.pending || v.expected !== from) return;
-      M.guesses.push({ from, value: msg.value, round: M.guesses.length, famas: null, toques: null });
+      if (v.phase !== 'play') return;
+      if (v.parallel ? !v.canGuess[from] : (v.pending || v.expected !== from)) return;
+      // `n` numbers the guess within its player's own list: with both guessing at once, each phone
+      // may see the two guesses in a different order, so a reply names (of, n), not the position.
+      M.guesses.push({ from, value: msg.value, round: M.guesses.length, n: M.guesses.filter(g => g.from === from).length, famas: null, toques: null });
       break;
     }
     case 'reply': {
-      const g = M.guesses[msg.round];
+      const g = msg.of ? M.guesses.find(x => x.from === msg.of && x.n === msg.n) : M.guesses[msg.round];
       if (!g || g.famas !== null || g.from === from) return;
       g.famas = msg.famas; g.toques = msg.toques;
       break;
@@ -90,6 +93,29 @@ function view() {
   const committed = M.commits.A && M.commits.B;
   const starter = M.starter;
   const pending = M.guesses.find(g => g.famas === null) || null;
+  const pendings = M.guesses.filter(g => g.famas === null);
+  // Dos celulares a la vez (D-367): cada uno adivina a su ritmo, sin esperar al otro. Termina
+  // cuando los dos lo sacaron: gana quien usó menos intentos, y con los mismos es empate.
+  const parallel = !!M.config.parallel;
+  if (parallel) {
+    const solvedIn = {}, canGuess = {};
+    for (const r of ['A', 'B']) {
+      const mine = M.guesses.filter(g => g.from === r);
+      const hit = mine.findIndex(g => g.famas === d);
+      solvedIn[r] = hit >= 0 ? hit + 1 : null;
+      canGuess[r] = !solvedIn[r] && !mine.some(g => g.famas === null);
+    }
+    const done = !!(solvedIn.A && solvedIn.B);
+    const tie = done && solvedIn.A === solvedIn.B;
+    const winner = done && !tie ? (solvedIn.A < solvedIn.B ? 'A' : 'B') : null;
+    let phase;
+    if (!both) phase = 'lobby';
+    else if (!committed) phase = 'secret';
+    else if (!done) phase = 'play';
+    else if (!(M.reveals.A && M.reveals.B)) phase = 'reveal';
+    else phase = 'done';
+    return { phase, pending, pendings, expected: null, done, winner, tie, replicaFor: null, starter, parallel, solvedIn, canGuess };
+  }
   const expected = starter ? (M.guesses.length % 2 === 0 ? starter : other(starter)) : null;
   // Resultado
   let done = false, winner = null, tie = false, replicaFor = null;
@@ -110,7 +136,7 @@ function view() {
   else if (!done) phase = 'play';
   else if (!(M.reveals.A && M.reveals.B)) phase = 'reveal';
   else phase = 'done';
-  return { phase, pending, expected, done, winner, tie, replicaFor, starter };
+  return { phase, pending, pendings, expected, done, winner, tie, replicaFor, starter, parallel: false };
 }
 
 /* ------------------------------------------------------------------ */
@@ -144,10 +170,12 @@ async function act() {
     const sec = S.secrets[r];
     if (!sec) continue;
     if (v.phase === 'secret' && !M.commits[r]) { S.transport.send({ t: 'commit', from: r, hash: sec.hash }); }
-    if (v.phase === 'play' && v.pending && v.pending.from !== r && !S.repliedRounds.has(v.pending.round)) {
-      S.repliedRounds.add(v.pending.round);
-      const { famas, toques } = score(v.pending.value, sec.secret);
-      S.transport.send({ t: 'reply', from: r, round: v.pending.round, famas, toques });
+    if (v.phase === 'play') for (const g of v.pendings) {
+      const key = v.parallel ? `${g.from}${g.n}` : g.round;
+      if (g.from === r || S.repliedRounds.has(key)) continue;
+      S.repliedRounds.add(key);
+      const { famas, toques } = score(g.value, sec.secret);
+      S.transport.send(v.parallel ? { t: 'reply', from: r, of: g.from, n: g.n, famas, toques } : { t: 'reply', from: r, round: g.round, famas, toques });
     }
     if (v.phase === 'reveal' && !M.reveals[r]) { S.transport.send({ t: 'reveal', from: r, secret: sec.secret, salt: sec.salt }); }
   }
@@ -301,7 +329,7 @@ function render() {
   const v = view();
   // El chat acompaña la sala, la partida y el resultado; muere con la sala (canon C-15, D-35)
   if (chat) chat.show();
-  if (chat && v.phase === 'play' && v.expected === S.role && !v.pending) chat.closeIfIdle();
+  if (chat && v.phase === 'play' && (v.parallel ? v.canGuess[S.role] : v.expected === S.role && !v.pending)) chat.closeIfIdle();
   switch (v.phase) {
     case 'lobby': renderLobby(); break;
     case 'secret': renderSecret(v); break;
@@ -436,7 +464,7 @@ function statusSub(v) {
 function renderPlay(v) {
   showScreen('screen-play');
   $('#secret-entry').innerHTML = '';
-  const myTurnRole = S.roles.includes(v.expected) ? v.expected : null;
+  const myTurnRole = v.parallel ? (v.canGuess[S.role] ? S.role : null) : S.roles.includes(v.expected) ? v.expected : null;
   // Modo un celular: al completarse una respuesta, mostrar el resultado y pasar el celular
   if (S.mode === 'local') {
     const last = M.guesses[M.guesses.length - 1];
@@ -461,6 +489,12 @@ function renderPlay(v) {
   // Estado
   const who = $('#status-who'), sub = $('#status-sub');
   if (v.phase === 'reveal') { who.textContent = '…'; sub.textContent = T.waitingReply; }
+  else if (v.parallel) {
+    const mine = M.guesses.filter(g => g.from === S.role);
+    const solved = v.solvedIn[S.role];
+    who.textContent = solved ? fmt(T.solvedIn, { n: solved, word: triesWord(solved) }) : fmt(T.turnYou, { name: M.names[other(S.role)] });
+    sub.textContent = solved ? fmt(T.waitingFinish, { name: M.names[other(S.role)] }) : mine.some(g => g.famas === null) ? T.waitingReply : fmt(T.round, { n: mine.length + 1 });
+  }
   else if (myTurnRole) { who.textContent = fmt(T.turnYou, { name: M.names[other(myTurnRole)] }); sub.textContent = statusSub(v); }
   else { who.textContent = fmt(T.turnOther, { name: M.names[v.expected] }); sub.textContent = statusSub(v); }
   // Entrada (con recordatorio del número propio)
@@ -468,7 +502,7 @@ function renderPlay(v) {
   entry.innerHTML = '';
   const reminderRole = S.mode === 'online' ? S.role : myTurnRole;
   if (reminderRole && S.secrets[reminderRole] && v.phase === 'play') entry.append(mySecretChip(reminderRole));
-  if (myTurnRole && !v.pending && v.phase === 'play') {
+  if (myTurnRole && (v.parallel || !v.pending) && v.phase === 'play') {
     S.notes[myTurnRole] = S.notes[myTurnRole] || new Set();
     entry.append(
       keypad({ digits: M.config.digits, zeroFirst: M.config.zeroFirst, notes: S.notes[myTurnRole], onNotesChange: saveSession, onSubmit: val => { S.transport.send({ t: 'guess', from: myTurnRole, value: val }); } }),
@@ -478,7 +512,7 @@ function renderPlay(v) {
   // Tableros
   const boards = $('#boards');
   boards.innerHTML = '';
-  for (const r of boardOrder()) boards.append(boardEl(r, v.expected === r && v.phase === 'play'));
+  for (const r of boardOrder()) boards.append(boardEl(r, v.phase === 'play' && (v.parallel ? v.canGuess[r] : v.expected === r)));
   // Auto-scroll a la última fila
   const lastLi = boards.querySelector('li:last-child'); if (lastLi && M.guesses.length > 3) lastLi.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
@@ -566,7 +600,7 @@ async function rematch() {
     // Yo propongo: creo la sala nueva (seré A) y aviso. El rival entra como B.
     const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
     const t = createFirebaseTransport({ game: GAME_ID });
-    const config = { ...M.config, starter: nextStarterFor(loser => (loser === S.role ? 'A' : 'B')) };
+    const config = { ...M.config, parallel: true, replica: false, starter: nextStarterFor(loser => (loser === S.role ? 'A' : 'B')) };
     S.switching = true;
     const code = await t.create({ config, name: M.names[S.role] });
     S.transport.send({ t: 'rematch', from: S.role, code });
@@ -602,6 +636,7 @@ async function startOnline(transport, code, role, name, config) {
 async function createOnline(name, config) {
   const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
   const t = createFirebaseTransport({ game: GAME_ID });
+  config = { ...config, parallel: true, replica: false }; // dos celulares: a la vez, sin réplica (D-367)
   const code = await t.create({ config, name });
   await startOnline(t, code, 'A', name, config);
 }
@@ -768,7 +803,7 @@ function renderSetup(mode, prefillCode = '') {
   const seg = el('div', { class: 'seg' }, ...DIGIT_OPTIONS.map(d => el('button', { type: 'button', class: d === config.digits ? 'on' : '', onClick: e => { config.digits = d; $$('button', seg).forEach(b => b.classList.toggle('on', b === e.currentTarget)); SFX.tap(); } }, d)));
   const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); SFX.tap(); } }); return el('div', { class: 'toggle-row' }, el('div', {}, el('b', {}, label), hint ? el('small', {}, hint) : null), b); };
   // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
-  if (!prefillCode) form.append(el('div', { class: 'field' }, el('label', {}, T.digits), seg), sw('replica', T.replica, T.replicaHint), sw('zeroFirst', T.zeroFirst));
+  if (!prefillCode) form.append(el('div', { class: 'field' }, el('label', {}, T.digits), seg), mode === 'local' ? sw('replica', T.replica, T.replicaHint) : null, sw('zeroFirst', T.zeroFirst));
   const actions = $('#setup-actions'); actions.innerHTML = '';
   const fail = (msg) => { clearRoomError(err); err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const getName = k => inputs[k].value.trim();
