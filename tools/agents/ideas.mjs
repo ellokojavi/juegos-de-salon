@@ -13,8 +13,9 @@
  * `check` reads Firebase as administrator (the owner's key, tools/firebase/firebase-admin.mjs) and
  * computes with the panel's own accounts (public/panel/), so the agent and the panel never
  * disagree. Without the key it prints what needs none and says so. It gathers, without judging:
- *   - the games by plays in the range (rooms, offline games, cup days) against the home page's fixed
- *     order (`POPULARIDAD`, D-255), and which ones drifted three places or more;
+ *   - the games finished in the last four weeks (what `popularity.mjs` counts, D-361) against the home
+ *     page's order (`POPULARIDAD`), and which ones drifted three places or more; plays started in the
+ *     range ride along as a column but never raise the flag;
  *   - the one-player games with the weakest finish (started, finished, abandoned, median score);
  *   - the group games' room funnel (created → with a rival → ended);
  *   - La Copa by game (played, abandons, average) and the participation by day of the cup;
@@ -96,16 +97,17 @@ export function popularidadHoy({ grupo, individual, copa }) {
 }
 
 /**
- * How far today's order is from the fixed one: `[{ id, plays, was, now }]` for the games listed
- * in `fixed` that moved `DRIFT` places or more (`was`/`now` are 1-based positions). A game that
- * is not in `fixed` is reported with `was: null`: it is missing from the list.
+ * How far the order by games finished is from the fixed one: `hoy` is the new order
+ * (`[{ id, finished }]`, as `popularity.mjs` `nuevoOrden` sorts it), and the result is
+ * `[{ id, finished, was, now }]` for the games in `fixed` that moved `drift` places or more
+ * (`was`/`now` are 1-based positions). A game not in `fixed` is reported with `was: null`.
  */
 export function deriva(hoy, fixed, drift = DRIFT) {
   const out = [];
   hoy.forEach((g, i) => {
     const was = fixed.indexOf(g.id);
-    if (was < 0) { out.push({ id: g.id, plays: g.plays, was: null, now: i + 1 }); return; }
-    if (Math.abs(was - i) >= drift) out.push({ id: g.id, plays: g.plays, was: was + 1, now: i + 1 });
+    if (was < 0) { out.push({ id: g.id, finished: g.finished, was: null, now: i + 1 }); return; }
+    if (Math.abs(was - i) >= drift) out.push({ id: g.id, finished: g.finished, was: was + 1, now: i + 1 });
   });
   return out;
 }
@@ -220,10 +222,12 @@ async function leer(ruta, t, query = {}) {
 
 async function numbers(weeks) {
   const { semanaCerrada, nombreJuego } = await import('../reports/weekly-data.mjs');
-  const { partidasDominio, dificultad, embudoSalas, embudoCopas, usuarios, senales } = await import('../../public/panel/dominios.js');
+  const { partidasDominio, finales, dificultad, embudoSalas, embudoCopas, usuarios, senales } = await import('../../public/panel/dominios.js');
   const { unoAlDiaDelRango } = await import('../../public/panel/aggregate.js');
   const { resumenCopas, pct: pctCopa } = await import('../../public/panel/copas.js');
-  const { POPULARIDAD } = await import('../../public/assets/js/games.js');
+  const { POPULARIDAD, POPULARIDAD_FECHA, GAMES, SUELTOS } = await import('../../public/assets/js/games.js');
+  const { ventana, terminadas, terminadasLog, nuevoOrden } = await import('./popularity.mjs');
+  const ofrecidos = [...GAMES, ...SUELTOS.filter(m => !m.labs)].map(g => g.id);
   const { token, KEY } = await import('../firebase/firebase-admin.mjs');
   if (!existsSync(KEY)) { console.log(`(no owner's key at ${KEY}: the numbers are skipped; the lab, the requests and the ledger follow)`); return; }
 
@@ -245,14 +249,20 @@ async function numbers(weeks) {
   let rc = null;
   try { rc = resumenCopas(torneos, range, fin); } catch (e) { console.log(`(La Copa's accounts failed: ${e.message}; the cup days are missing from the plays below)`); }
 
-  section("Games by plays, against the home page's order (D-255)", () => {
-    const hoy = popularidadHoy({ grupo: pd.grupo, individual: pd.individual, copa: rc });
+  section("Games finished in the last four weeks, against the home page's order (D-361)", () => {
+    // The same count and the same sort as `popularity.mjs check`, so the two never disagree
+    const win = ventana(now);
+    const conteo = terminadas({ finales: finales(days, win).porJuego, log: terminadasLog(days, win), salas: embudoSalas(days, win), copa: resumenCopas(torneos, win, (win.to + 1) * DAY).porJuego });
+    const orden = nuevoOrden(conteo, ofrecidos, POPULARIDAD);
+    const hoy = orden.map(id => ({ id, finished: conteo[id] || 0 }));
+    const starts = Object.fromEntries(popularidadHoy({ grupo: pd.grupo, individual: pd.individual, copa: rc }).map(g => [g.id, g.plays]));
+    console.log(`(${fecha(win.from)} to ${fecha(win.to)}; the list is from ${POPULARIDAD_FECHA}; starts are from the range above)`);
     hoy.forEach((g, i) => {
       const was = POPULARIDAD.indexOf(g.id);
-      console.log(`${String(i + 1).padStart(2)}. ${nombreJuego(g.id)} — ${g.plays} plays${was < 0 ? ' · not in POPULARIDAD' : was !== i ? ` · listed ${was + 1}${Math.abs(was - i) >= DRIFT ? ' ⚠️ drifted' : ''}` : ''}`);
+      console.log(`${String(i + 1).padStart(2)}. ${nombreJuego(g.id)} — ${g.finished} finished, ${starts[g.id] || 0} started${was < 0 ? ' · not in POPULARIDAD' : was !== i ? ` · listed ${was + 1}${Math.abs(was - i) >= DRIFT ? ' ⚠️ drifted' : ''}` : ''}`);
     });
     const d = deriva(hoy, POPULARIDAD);
-    console.log(d.length ? `→ ${d.length} game(s) drifted ${DRIFT}+ places or are missing: refreshing POPULARIDAD is an idea for the owner (the order is a fixed list, D-255).` : '→ The order holds.');
+    console.log(d.length ? `→ ${d.length} game(s) drifted ${DRIFT}+ places or are missing: the processes round refreshes POPULARIDAD weekly with \`node tools/agents/popularity.mjs update\`; it is not an idea to propose.` : '→ The order holds.');
   });
 
   section(`One-player games: the weakest finish (${MIN_STARTS}+ starts; started → finished, abandoned, median score, median time)`, () => {
