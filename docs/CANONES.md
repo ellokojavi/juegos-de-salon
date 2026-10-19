@@ -382,9 +382,10 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **A new game says "New" for two weeks** (D-333): next to its name, like "Próximamente", from its
   `nuevoDesde` date in `games.js` for `DIAS_NUEVO` days (`esNuevo`). Every game that reaches the
   home page brings that date; `games.test.mjs` stops one that doesn't.
-  Unlike the plain yellow "Próximamente" pill, it is a dark sticker that shines: tilted −6° with a
-  white edge and its shadow, the title's rainbow flowing through its letters (`shimmer`, one
-  gradient across the word, like the home page title), a breathing glow and a little wobble around
+  Unlike the plain yellow "Próximamente" pill, it is a sticker that shines softly, so it sits on the
+  card rather than over it (D-373): tilted −6°, a see-through dark fill with a thin faint edge in its
+  own color and a light shadow, the title's rainbow flowing through its letters (`shimmer`, one
+  gradient across the word, like the home page title), a low breathing glow and a little wobble around
   its tilt now and then; with reduced motion it stays tilted and still (owner's requests; the
   owner picked this look among ten on a comparison page).
   While it says "New" it also goes **on top of the list, right after La Copa** (`ordenPortada`,

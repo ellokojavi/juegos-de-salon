@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -6293,7 +6293,7 @@ picking their variant in a cup (scores would not compare).
 versions of each game to keep alike).
 
 ## D-333 · A new game says "New" on its home card for two weeks
-**Date:** 2026-10-15 · **Status:** current · **Relation:** extends C-17 (the home page)
+**Date:** 2026-10-15 · **Status:** amended by D-373 · **Relation:** extends C-17 (the home page)
 **Decision:** Owner's request: every new game carries a "New" label (Nuevo, New, Novo, Neu) next to
 its name on the home card for a set time, today **two weeks** (`DIAS_NUEVO = 14` in
 `public/assets/js/games.js`). The game says when it arrived with `nuevoDesde: 'YYYY-MM-DD'`, and
@@ -6938,7 +6938,7 @@ owns the queue and the agents' review; one path for every build); a free-form ba
 first round proposes the first three ideas; this PR opens none.
 
 ## D-361 · The home page's order every week, a 🔥 "Popular" label in the lab, and the lab in three groups
-**Date:** 2026-10-18 · **Status:** amended by D-363, D-369 · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar); extended by D-372 (the home page experiments card in La Bodega)
+**Date:** 2026-10-18 · **Status:** amended by D-363, D-369, D-373 · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar); extended by D-372 (the home page experiments card in La Bodega)
 **Context:** the game-ideas agent's first check (D-360) showed 18 games three or more places away from
 the order D-255 counted on October 9. The owner asked for the order to update every week, to put the
 best of the app in front of a new player, and for a 🔥 "Popular" label on the top three; then, to try
@@ -7144,6 +7144,16 @@ to the improvements. La Bodega's intro now says it keeps the projects no longer 
 did not prosper or because they already reached everyone.
 **Why:** the owner's request.
 **Consequences:** `tools/e2e/home/lab.mjs` checks the card is in La Bodega and folded.
+
+## D-373 · The "New" and "Popular" stickers, softer
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-333 (the "New" sticker) and D-361 (🔥 "Popular", the same sticker in fire)
+**Decision:** both stickers keep their tilt, the shimmer through their letters and the wobble, but blend
+with the card: a see-through fill (45 % of their dark color) instead of a solid one, a 1 px edge in a
+faint tint of their own color (cyan for "New", orange for "Popular") instead of the 2 px white one, a
+lighter shadow, and a breathing glow about a third as strong.
+**Why:** the owner's request: on the cards they looked too strong. The owner approved this version on
+their phone.
+**Consequences:** only the CSS in `public/index.html` changes; the canon's "New" item describes the new look.
 
 ## D-374 · The random dice skips games that need a group
 **Date:** 2026-10-18 · **Status:** current · **Relation:** corrects D-188 (🎲 Juego al azar: what can come out) and D-238 (with ⭐ Favoritos on, the dice no longer picks among favorites)
