@@ -70,7 +70,8 @@ b.close();
 
 // Where ⭐ Favoritos goes (D-241), in each language: at 390 px and on a computer (the home page
 // doesn't go wider than a phone), first in the type row; at 320 px, where it fits (English fits
-// in the row; the other three, on their own line). The types always go in one row and nothing overflows.
+// in the row; the other three, on their own line). Since D-369 the row is the ✨ Nuevos / 🔥 Populares one when it
+// shows. The types always go in one row and nothing overflows.
 const WIDTHS = [[320, 'where it fits'], [390, 'row'], [900, 'row']];
 const at320 = [];
 for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt', 'de']) {
@@ -82,8 +83,11 @@ for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt', 'de'
     const bs = [...types.querySelectorAll('button')].filter(x => !x.hidden);
     const fav = document.querySelector('.ficha-fav'), rf = fav.getBoundingClientRect(), row = types.getBoundingClientRect();
     const tops = new Set(bs.map(x => Math.round(x.getBoundingClientRect().top)));
-    const inRow = fav.parentNode === types, named = getComputedStyle(fav.lastChild).display !== 'none';
-    return { shape: inRow ? (named ? 'row with name' : 'row') : 'line', first: !inRow || bs[0] === fav,
+    // Since D-369 ⭐ goes first in the ✨ Nuevos / 🔥 Populares row when it shows; otherwise in the types
+    const picks = document.querySelector('.filtros .atajos'), inPicks = fav.parentNode === picks;
+    const inRow = inPicks || fav.parentNode === types, named = getComputedStyle(fav.lastChild).display !== 'none';
+    const own = inPicks ? [...picks.querySelectorAll('button')].filter(x => !x.hidden) : bs;
+    return { shape: inRow ? (inPicks ? 'picks' : 'row') + (named ? ' with name' : '') : 'line', first: !inRow || own[0] === fav,
       above: inRow || rf.bottom <= row.top, tap: rf.height >= 44 && rf.width >= 44,
       rows: tops.size, overflows: bs.some(x => x.getBoundingClientRect().right > row.right + 1), width: document.documentElement.scrollWidth,
       // If something overflows the screen, which (against the requested width and not innerWidth:
@@ -92,7 +96,7 @@ for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt', 'de'
         .map(x => (x.id ? '#' + x.id : x.className ? '.' + String(x.className).split(' ')[0] : x.tagName) + ' «' + x.textContent.trim().slice(0, 24) + '» in ' + (x.parentElement.className || x.parentElement.tagName) + ':' + Math.round(x.getBoundingClientRect().right)
           + ' font ' + getComputedStyle(x).fontFamily.slice(0, 30)).slice(0, 6) };
   })())`).then(JSON.parse);
-  const shape = expect === 'row' ? f.shape.startsWith('row') : true;
+  const shape = expect === 'row' ? f.shape.startsWith('picks') : true;
   if (width === 320) at320.push(f.shape);
   check(shape && f.first && f.above && f.tap && f.rows === 1 && !f.overflows && f.width <= width,
     `${lang} at ${width} px: ⭐ Favoritos ${expect === 'row' ? 'in the row' : 'where it fits'}, the types in one row and nothing overflows (${JSON.stringify(f)})`);
@@ -101,5 +105,6 @@ for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt', 'de'
   check(!c.errors.length, `${lang} at ${width} px: no console errors ${JSON.stringify(c.errors)}`);
   c.close();
 }
-check(at320.includes('line'), `at 320 px, where it doesn't fit in the row, it goes on its own line (${at320.join(', ')})`);
+// With the picks row (D-369), ⭐ fits in it at 320 px too: named where it fits, bare ⭐ otherwise, never on a line of its own
+check(at320.every(s => s.startsWith('picks')), `at 320 px, ⭐ stays first in the ✨ / 🔥 row (${at320.join(', ')})`);
 if (bad) process.exit(1);
