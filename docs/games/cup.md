@@ -142,7 +142,7 @@ Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105; la capa es
 `assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`, y la usa
 también Agentes del laboratorio): recién ahí aparece el tablero, y
 el reloj parte cuando el "¡A jugar!" ya se fue y terminó la entrada del juego, si la tiene (las
-cartas de El caso, con `entrada()` en su registro): la cuenta no es tiempo de juego (D-258). **No clock shows while playing** (D-379): the time counts as always (paused for a fact and with the tab hidden, stopped when the board ends) and appears only at the end, on the result, the standings and the share text; a game's own ⏳ countdown stays. Al
+cartas de El caso, con `entrada()` en su registro): la cuenta no es tiempo de juego (D-258). **No clock shows while playing** (D-379): the time counts as always (paused for a fact and with the tab hidden, stopped when the board ends) and appears only at the end, on the result, the standings and the share text; a game's own ⏳ countdown stays. **Except where speed scores and there is no countdown** (D-384): Loteo and Reinas show the ⏱ elapsed time in the play head (`clock` in their `ui.js`), dimmed while a fact is read and stopped when the board ends. Al
 terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
 (`public/cup/desglose.js`, D-106). Order (C-19, D-343): the place, then **Back to the board**, share and
 the next-day notice (its button cyan); the breakdown starts folded (open in practice) and the day table goes
@@ -375,7 +375,7 @@ Todo bajo `public/cup/`:
 | `engine.js` | Calendario, ventanas con zona horaria, puntos, tabla, evolución, medallas; re-exports `code.js` and `clock.js` |
 | `code.js` · `clock.js` | The cup code (`codigoAlAzar`) and the active-time clock (`reloj`, `mmss`, `pausaDeLectura`), apart so Toque y Fama, Línea de tiempo and Generala alone use them without loading La Copa (D-377) |
 | `games/<carpeta>/engine.js` | Motor puro de cada juego (`case`, `connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
-| `games/<carpeta>/ui.js` | La pantalla de cada juego |
+| `games/<carpeta>/ui.js` | La pantalla de cada juego; its optional flags (`caro`, `pruebaCompleta`, `pantallaCompleta`, `clock`) are read by `games/index.js`: a new game whose speed scores and that has no ⏳ countdown sets `clock = true` (D-384) |
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?test`) |
 | `cuenta.js` | Con quién está sentado este celular, el intento a medio jugar, los avisos de cada copa (D-223) y "Tus copas" (las del celular más las del jugador, `juntarCopas`, D-220) |
