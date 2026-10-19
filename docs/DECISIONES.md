@@ -4958,7 +4958,7 @@ ser algo que el jugador sepa (un nombre, un hecho único), no un superlativo o u
 carta dice. Si no la hay, la carta no entra.
 
 ## D-279 · Los issues de feedback llevan el nombre de quien lo manda
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-366 (the name shows masked) · **Relación:** corrige D-275 (el issue iba sin el nombre)
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-366 · **Relación:** corrige D-275 (el issue iba sin el nombre)
 **Decisión:** El issue de cada reporte 🐞 suma una línea **Quién** con el nombre que el jugador
 escribió en el formulario, si escribió uno. El navegador sigue fuera. Los nueve issues que ya
 estaban se completaron con su nombre.
@@ -5922,7 +5922,7 @@ labels, with environment variables read under both names for a while (`SITE` or 
   copies until the weekly review removes them (phase 4).
 
 ## D-317 · Feedback: an optional email, kept private, and a friendly reply when it's resolved
-**Date:** 2026-10-14 · **Status:** amended by D-327, D-341, D-366 (the mask keeps first and last letters) · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
+**Date:** 2026-10-14 · **Status:** amended by D-327, D-341, D-366 · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
 **Decision:** Owner's request: every feedback form (the 🐞 in the lab and in La Copa, the "¿Qué te
 pareció?" at the end of each lab game and La Copa's report screen) gets an optional email field, so
 whoever wants to can be told when we answer.
@@ -7051,7 +7051,7 @@ inbox every 15 minutes would open 96 sessions a day, almost all to find nothing.
 mini). The processes round still triages what the watcher misses. `tools/jobs/README.md` explains it.
 
 ## D-366 · Feedback issues mask the player's name, and the email mask keeps both ends of each side
-**Date:** 2026-10-18 · **Status:** in force · **Relation:** amends D-279 (the full name on the issue) and D-317 (the email mask)
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-279 (the full name on the issue) and D-317 (the email mask)
 **Decision:** Owner's request, after issue #538 showed a player's full name on the public repo:
 - **Who** shows each word of the name by its first letter, the rest asterisks, one per letter
   (`Cristina Alvarado` → `C******* A*******`; `enmascararNombre` in `public/cup/reportes.js`,

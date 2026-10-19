@@ -81,6 +81,9 @@ export const textOf = body => (body || '').split('\n').filter(l => l.startsWith(
 /** The name the player gave, from the issue (`Who`, or `Quién` in the issues from before D-316; without the zero-width spaces of `inert`). */
 export const nameOf = body => (/^- \*\*(?:Who|Quién):\*\* (.+)$/m.exec(body || '')?.[1] || '').replace(/\u200b/g, '').trim();
 
+/** The name the reply greets: the report's own (the issue shows it masked, D-366), never a mask. */
+export const greetingName = (report, body) => String(report?.nombre || '').trim() || (nameOf(body).includes('*') ? '' : nameOf(body));
+
 /** The report ids that already have an issue, read from the bodies. */
 export const uploaded = issues => new Set(issues.flatMap(i => [...(i.body || '').matchAll(/<!-- feedback:([^\s>]+) -->/g)].map(m => m[1])));
 
@@ -163,7 +166,7 @@ async function contactOf(number, t, test = false) {
   const c = t ? await (await import('../firebase/firebase-admin.mjs')).read(`feedbackContacto/${id}`, t) : null;
   // The issue shows the name masked (D-366): the greeting takes it from the report itself
   const report = t ? await (await import('../firebase/firebase-admin.mjs')).read(`feedback/${id}`, t) : null;
-  return { number: String(number), id, email: c?.correo || null, name: String(report?.nombre || '').trim() || (nameOf(issue.body).includes('*') ? '' : nameOf(issue.body)), text: textOf(issue.body), thread: c?.idMensaje ? { id: c.idMensaje, subject: c.asunto || '' } : null, state: issue.state, mask: /\*\*Email:\*\* `([^`]+)`/.exec(issue.body)?.[1] || '' };
+  return { number: String(number), id, email: c?.correo || null, name: greetingName(report, issue.body), text: textOf(issue.body), thread: c?.idMensaje ? { id: c.idMensaje, subject: c.asunto || '' } : null, state: issue.state, mask: /\*\*Email:\*\* `([^`]+)`/.exec(issue.body)?.[1] || '' };
 }
 
 const adminToken = async () => (await import('../firebase/firebase-admin.mjs')).token();

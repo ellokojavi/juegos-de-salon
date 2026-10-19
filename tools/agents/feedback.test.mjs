@@ -1,6 +1,6 @@
 // The 🐞 feedback as issues (D-275, D-279): with the name and without the browser, without mentions, and never the same report twice.
 import assert from 'node:assert/strict';
-import { title, body, pending, uploaded, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN } from './feedback.mjs';
+import { greetingName, title, body, pending, uploaded, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN } from './feedback.mjs';
 
 const r = {
   id: '-P3bm', at: Date.parse('2026-10-10T18:28:23Z'), v: '0.144.0', nombre: 'Tu admirador secreto',
@@ -83,3 +83,8 @@ console.log('feedback: ok');
   assert.deepEqual(labelsOf({ texto: 'x', tipo: 'hack' }), ['feedback'], 'an unknown kind adds nothing');
   assert.deepEqual(Object.keys(KIND_LABELS).sort(), ['idea', 'otro', 'problema', 'sugerencia'], 'the same list the rules accept');
 }
+
+// The reply greets with the real name from the report, never the issue's mask (D-366)
+assert.equal(greetingName({ nombre: ' Tu admirador secreto ' }, c), 'Tu admirador secreto');
+assert.equal(greetingName(null, c), '', 'no report: no name, never the mask');
+assert.equal(greetingName(null, '- **Quién:** Cris'), 'Cris', 'an old issue with the name unmasked');
