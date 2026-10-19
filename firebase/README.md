@@ -197,10 +197,10 @@ It is written only once and **read without an account**: `node tools/firebase/re
 (`--days 3` for recent ones). They carry no PIN or account data.
 Every 15 minutes, `.github/workflows/feedback.yml` (`tools/agents/feedback.mjs`) uploads the new ones as
 GitHub issues with the `feedback` label (plus `feedback:suggestion`, `feedback:problem`,
-`feedback:game-idea` or `feedback:other` when it carries a `tipo`, D-341), with the name and the key (D-279, D-306) and without the
+`feedback:game-idea` or `feedback:other` when it carries a `tipo`, D-341), with the name masked (`C******* A*******`, D-279, D-366) and the key (D-306) and without the
 browser, and the processes agent handles them (D-275).
 
-**The optional email (D-317):** `feedback/<id>` may carry `correoMascara` (`j********@********m`),
+**The optional email (D-317):** `feedback/<id>` may carry `correoMascara` (`j********n@g********m`, D-366; the older `j********@********m` still validates),
 never the address. The address goes to `feedbackContacto/<id>` (`correo`, up to 120, and server
 `at`): written once, only when `feedback/<id>` exists, and **never readable without the owner's
 key**. `tools/agents/feedback.mjs reply` reads it with the key, emails the reply and deletes it;

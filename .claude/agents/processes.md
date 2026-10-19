@@ -150,7 +150,7 @@ that (after a new game, after a big text change), saying why.
      or the issue that covers it.
    - **Can't be understood or isn't about the app:** you close it saying why.
    **The email reply (D-317, owner's request).** A report whose issue shows `**Email:**` (a mask
-   like `j********@********m`) wants to hear back. When you resolve it (fixed in your PR, queued
+   like `j********n@g********m`, D-366) wants to hear back. When you resolve it (fixed in your PR, queued
    by the owner's Yes, already done, or answered), you email the player. **One email per player
    per round, never one per comment** (owner's request: a long session leaves several):
    `node tools/agents/feedback.mjs pending` groups the waiting reports by address (it reads them
