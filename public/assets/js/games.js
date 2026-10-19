@@ -331,8 +331,6 @@ export const PORTADA = ordenPortada();
  * (that label says more, and they have no plays to rank yet). Only available games count.
  */
 export const POPULARES = 3;
-/** Off for players while it is tried in the lab (D-361): only `/?popular` shows it, from /labs/. */
-export const POPULAR_EN_PORTADA = false;
 export function populares(hoy = new Date(), orden = ordenPortada(hoy)) {
   return new Set(orden.filter(g => g.available && !g.torneo && !esNuevo(g, hoy) && POPULARIDAD.includes(g.id)).slice(0, POPULARES).map(g => g.id));
 }

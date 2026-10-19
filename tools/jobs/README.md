@@ -1,6 +1,6 @@
 # tools/jobs/
 
-Every job of Juegos de Salón, in one registry (D-365): [`jobs.json`](jobs.json). A job that is not
+Every job of Juegos de Salón, in one registry (D-369): [`jobs.json`](jobs.json). A job that is not
 there does not exist. `jobs.test.mjs` fails if a scheduled workflow is missing from it.
 
 ```bash
