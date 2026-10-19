@@ -125,7 +125,7 @@ ol.como li { line-height: 1.45; }
 .tabla { display: grid; gap: 6px; }
 .fila { display: grid; grid-template-columns: 1.6em 1em 1fr auto; align-items: center; gap: 6px; background: rgba(0,0,0,0.22); border-radius: 12px; padding: 8px 10px; }
 .fila.yo { box-shadow: 0 0 0 2px var(--cyan) inset; }
-/* Out of the cup (D-347): kept in the table, in grey, below everyone still playing */
+/* Out of the cup (D-347): kept in the table, faded, below everyone still playing (D-376) */
 .fila.fuera { opacity: 0.45; }
 .fila.fuera .quien b { font-weight: 700; color: var(--muted); }
 /* The days an eliminated player will not play, in one pill (D-376) */

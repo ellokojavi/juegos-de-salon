@@ -1017,7 +1017,7 @@ function vistaTabla(filas, { dias, meta, now }) {
       resto ? el('span', { class: 'pd eliminado', style: `min-width:calc(${resto} * 1.368rem + ${resto - 1} * 4px)` }, T.outBadge) : null];
   };
   return el('div', { class: 'tabla' }, filas.map(f => el('div', { class: 'fila' + (f.pid === S.yo ? ' yo' : '') + (f.fuera ? ' fuera' : '') },
-    // Out of the cup (D-347): a door instead of a place, and grey
+    // Out of the cup (D-347): a door instead of a place, and faded (D-376)
     el('span', { class: 'lugar', title: f.fuera ? fmt(T.outAdmin, { a: f.fuera.desde, b: f.fuera.hasta }) : null }, f.fuera ? '🚪' : String(f.lugar)),
     el('span', { class: 'flecha ' + (f.flecha > 0 ? 'sube' : f.flecha < 0 ? 'baja' : '') }, f.flecha > 0 ? '▲' : f.flecha < 0 ? '▼' : ''),
     el('div', { class: 'quien' },
