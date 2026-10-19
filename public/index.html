@@ -680,10 +680,23 @@
       // The menu sticks below the space for the title (D-369): it floats once its mark passes that line
       const tope = parseFloat(getComputedStyle(barra).top) || 0;
       new IntersectionObserver(([e]) => barra.classList.toggle('pegada', !e.isIntersecting && e.boundingClientRect.top < tope), { rootMargin: `${-tope}px 0px 0px 0px` }).observe(marca);
+      // A short result would not let the page scroll that far, and the menu would drop back to its
+      // place on its own (D-371): an empty space under the list keeps it floating, and it shrinks as
+      // the player scrolls up, so the menu leaves only then. It never grows on a scroll.
+      const relleno = el('div', { class: 'filtros-relleno', 'aria-hidden': 'true' });
+      document.getElementById('games').after(relleno);
+      const sobra = () => Math.max(0, Math.ceil(window.scrollY + innerHeight - (document.documentElement.scrollHeight - relleno.offsetHeight)));
+      window.addEventListener('scroll', () => {
+        if (relleno.offsetHeight && sobra() < relleno.offsetHeight) relleno.style.height = `${sobra()}px`;
+      }, { passive: true });
       barra.addEventListener('click', e => {
         if (!e.target.closest('button') || e.target.closest('.barra-titulo') || !barra.classList.contains('pegada')) return;
         const tope = parseFloat(getComputedStyle(barra).top) || 0;
-        window.scrollTo({ top: marca.getBoundingClientRect().top + window.scrollY - tope });
+        // Rounded up: the page scrolls by whole pixels, and half a pixel short the menu dropped too
+        const y = Math.ceil(marca.getBoundingClientRect().top + window.scrollY - tope);
+        relleno.style.height = '0px';
+        relleno.style.height = `${Math.max(0, Math.ceil(y + innerHeight - document.documentElement.scrollHeight))}px`;
+        window.scrollTo({ top: y });
       });
       window.__portada = { get filtro() { return { ...filtro }; }, get visibles() { return tarjetas.filter(t => !t.card.hidden).map(t => t.g.id); }, get favoritos() { return [...marcados]; } };
     } catch (e) { console.warn('filtros del menú:', e); }

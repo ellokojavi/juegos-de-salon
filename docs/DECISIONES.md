@@ -52,7 +52,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184, D-324 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-373 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -3038,7 +3038,7 @@ guardaba bien el español, pero "‹ Menú" lo llevaba a la portada del laborato
 en alemán.
 
 ## D-196 · Los filtros de la portada quedan pegados arriba
-**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** complementa D-142 y D-149
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** complementa D-142 y D-149; ampliada por D-371 (the menu keeps floating after the tap)
 **Decisión:** Al bajar por la lista de juegos, la barra de tipos (y la línea "Se ven N de M ·
 Ver todos") se queda pegada arriba, con fondo oscuro desenfocado que tapa también la franja de la
 muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjeta, justo debajo.
@@ -4971,7 +4971,7 @@ a buscarlo; el correo del issue es donde lee el reporte).
 **Después:** D-306 suma la etiqueta de la llave del laboratorio, que llega aunque no se escriba nombre.
 
 ## D-280 · El laboratorio tiene dos grupos: Proyectos activos y La Bodega
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-361 · **Relación:** amplía D-262
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-361 · **Relación:** amplía D-262; extended by D-372 (La Bodega also keeps what reached everyone)
 **Decisión:** `/labs/` se ordena en dos grupos: **🧪 Proyectos activos**, lo que se está probando
 ahora, y **📦 La Bodega**, los proyectos que no prosperaron. Los de La Bodega se siguen jugando en su
 página, pero ya no se trabajan. Hoy van a La Bodega El caso (`/labs/case/`) y La clave
@@ -6938,7 +6938,7 @@ owns the queue and the agents' review; one path for every build); a free-form ba
 first round proposes the first three ideas; this PR opens none.
 
 ## D-361 · The home page's order every week, a 🔥 "Popular" label in the lab, and the lab in three groups
-**Date:** 2026-10-18 · **Status:** amended by D-363, D-369, D-373 · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar)
+**Date:** 2026-10-18 · **Status:** amended by D-363, D-369, D-373 · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar); extended by D-372 (the home page experiments card in La Bodega)
 **Context:** the game-ideas agent's first check (D-360) showed 18 games three or more places away from
 the order D-255 counted on October 9. The owner asked for the order to update every week, to put the
 best of the app in front of a new player, and for a 🔥 "Popular" label on the top three; then, to try
@@ -7095,7 +7095,7 @@ what they were told without anyone doing it by hand.
 `tools/agents/feedback.test.mjs`.
 
 ## D-369 · 🔥 Popular, the ✨ Nuevos / 🔥 Populares filters and the name on the floating menu reach everyone
-**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-361, D-362 and D-364 (they were in the lab); keeps D-363 (the lab bar) for the next experiments
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-361, D-362 and D-364 (they were in the lab); keeps D-363 (the lab bar) for the next experiments; extended by D-371 (the menu keeps floating after a tap) and D-372 (the lab card goes to La Bodega)
 **Decision:** the owner, after trying them in the lab: "hagamos merge en producción". The 🔥 Popular label
 on the top three, the row of ✨ Nuevos and 🔥 Populares chips (with ⭐ Favoritos first in it) and
 "🎲 Juegos de Salón" on top of the floating filters are on for every player; `POPULAR_EN_PORTADA` and the
@@ -7120,6 +7120,30 @@ email from another thread answered in the same reply) is still quoted above its 
 (`--test-to`) has no thread, so it quotes everything.
 **Why:** The owner's rule after the reply to #538: quoting what is already on screen in the thread is noise.
 **Consequences:** `inThread` in `tools/agents/feedback.mjs` decides it; the test is in `tools/agents/feedback.test.mjs`.
+
+## D-371 · A tap on the floating filters keeps them floating, even on a short result
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-196 (the tap takes the list to its first card) and D-369 (the title on the floating menu)
+**Decision:** the owner: when tapping a filter while the menu floats leaves a list too short to scroll
+that far, the menu floats anyway, and it goes back to its place when the player scrolls up. An empty
+space under the list (`.filtros-relleno`, before the footer) makes the page just tall enough for the
+jump; on each scroll it shrinks to what the page still needs and never grows, so scrolling up gives
+the space back pixel by pixel and the menu leaves at the first one. The jump is rounded up to a whole
+pixel: half a pixel short, the menu also dropped, on any list (at 390 px wide it happened with every
+type).
+**Why:** the owner's request: the menu vanishing on its own right after a tap read as a glitch.
+**Consequences:** `tools/e2e/home/popular.mjs` taps 🔥 Populares on a tall screen and checks that the
+menu floats and the cards start under it, that scrolling up lets it go and the space shrinks, and that
+a long type at 390 px keeps it floating.
+
+## D-372 · The home page experiments go to La Bodega
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-280 (La Bodega) and D-361 (the lab's three groups)
+**Decision:** the 🏠 Experimentos de la portada card leaves ✨ Mejoras en prueba for 📦 La Bodega, folded to
+its title like the others: everything it tried reached everyone in D-369 and nothing is being tried on
+the home page now. `/labs/home/` and `experiments.js` stay, so a new experiment can bring the card back
+to the improvements. La Bodega's intro now says it keeps the projects no longer worked on, because they
+did not prosper or because they already reached everyone.
+**Why:** the owner's request.
+**Consequences:** `tools/e2e/home/lab.mjs` checks the card is in La Bodega and folded.
 
 ## D-373 · The "New" and "Popular" stickers, softer
 **Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-333 (the "New" sticker) and D-361 (🔥 "Popular", the same sticker in fire)

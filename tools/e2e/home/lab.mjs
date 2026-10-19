@@ -1,5 +1,5 @@
-// The home page's experiments in the lab (D-361, D-363, D-369) end to end: the lab's three groups (the
-// home page experiments and the splash among the improvements), /labs/home/ landing on the real home page
+// The home page's experiments in the lab (D-361, D-363, D-369, D-372) end to end: the lab's three groups (the
+// splash among the improvements, the home page experiments in La Bodega), /labs/home/ landing on the real home page
 // with its bar, the filters sticking on scroll, the language, and no bar for players. Prints ✗ if something fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -12,9 +12,10 @@ const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!
 const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
 const labels = `[...document.querySelectorAll('.game-card')].filter(c => c.querySelector('.popular')).map(c => c.dataset.id)`;
 
-// The lab: games, improvements and La Bodega apart; the splash and the home page among the improvements
+// The lab: games, improvements and La Bodega apart; the splash among the improvements, the home page in La Bodega (D-372)
 await b.go(`${SITE}/labs/?test`);
-ok(await ev(`!!document.querySelector('#mejoras #seccion-portada #btn-portada') && !!document.querySelector('#mejoras #seccion-splash')`), 'the lab offers the home page experiments and the splash under Mejoras en prueba');
+ok(await ev(`!!document.querySelector('#mejoras #seccion-splash') && !document.querySelector('#mejoras #seccion-portada')`), 'the lab offers the splash under Mejoras en prueba');
+ok(await ev(`!!document.querySelector('#bodega #seccion-portada.plegada details #btn-portada')`), 'the home page experiments are kept in La Bodega, folded to their title');
 ok(await ev(`!document.querySelector('#activos #seccion-splash') && !!document.querySelector('#activos #seccion-agentes')`), 'the games being tried are apart from the improvements');
 
 // /labs/home/ opens the real home page, without a frame (D-363), with the bar: ‹ Lab and the language (no
