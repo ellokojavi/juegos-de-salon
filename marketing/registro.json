@@ -165,7 +165,7 @@
         "al_dia": false,
         "pendiente": [
           "Step 1 (0-1.3 s, the home page in the iPhone): the Uno al día card's pill says 'Jugar el de hoy'; since D-305 it says 'Jugar hoy'.",
-          "Step 1 (0-1.3 s): under the La Copa and Uno al día row the home page shows Línea de Tiempo; today Rutas rotas goes there with its dark rainbow 'Nuevo' sticker (D-333, D-335, until 2026-10-29), and Toque y Fama after that (D-255). Minor: a retake with capturar.mjs fixes both."
+          "Step 1 (0-1.3 s): under the La Copa and Uno al día row the home page shows Línea de Tiempo; today Rutas rotas goes there with its dark rainbow 'Nuevo' sticker (D-333, D-335, until 2026-10-29), and Toque y Fama after that (D-255). Minor: a retake with capture.mjs fixes both."
         ]
       }
     },
@@ -204,8 +204,8 @@
           "uso": "GIF para WhatsApp"
         }
       ],
-      "fuente": "marketing/agentes-tarjeta/tarjeta.html y animada.html",
-      "construir": "marketing/agentes-tarjeta/construir.mjs y construir-video.mjs",
+      "fuente": "marketing/agentes-tarjeta/card.html y animada.html",
+      "construir": "marketing/agentes-tarjeta/build.mjs y construir-video.mjs",
       "juegos": [
         "agentes"
       ],
@@ -298,8 +298,8 @@
           "uso": "Mensaje de WhatsApp con los links"
         }
       ],
-      "fuente": "marketing/tres-nuevos/tarjeta.html",
-      "construir": "marketing/tres-nuevos/construir.mjs",
+      "fuente": "marketing/tres-nuevos/card.html",
+      "construir": "marketing/tres-nuevos/build.mjs",
       "juegos": [
         "rutas",
         "loteo",
@@ -397,6 +397,47 @@
       "revision": {
         "fecha": "2026-10-18",
         "app": "0.181.1",
+        "al_dia": true,
+        "pendiente": []
+      }
+    },
+    {
+      "id": "reddit-chile",
+      "tipo": "imagen y mensaje",
+      "titulo": "Reddit r/chile: solo o con amigos",
+      "carpeta": "marketing/reddit-chile/",
+      "memoria": "marketing/reddit-chile/README.md",
+      "version": 1,
+      "fecha": "2026-10-19",
+      "idioma": "es",
+      "app": "0.186.12",
+      "archivos": [
+        {
+          "ruta": "marketing/reddit-chile/output/reddit-chile-1080x1350.jpg",
+          "formato": "4:5",
+          "ancho": 1080,
+          "alto": 1350,
+          "uso": "Reddit r/chile"
+        },
+        {
+          "ruta": "marketing/reddit-chile/reddit.md",
+          "formato": "texto",
+          "uso": "Título y texto del post de Reddit"
+        }
+      ],
+      "fuente": "marketing/reddit-chile/card.html",
+      "construir": "marketing/reddit-chile/build.mjs",
+      "juegos": [
+        "cuarto-rey",
+        "dudo",
+        "copa",
+        "reinas",
+        "rutas"
+      ],
+      "seleccion": true,
+      "revision": {
+        "fecha": "2026-10-19",
+        "app": "0.186.12",
         "al_dia": true,
         "pendiente": []
       }
