@@ -50,12 +50,12 @@ export const EMAILED = '<!-- feedback-emailed -->', FORGOTTEN = '<!-- feedback-a
 export const idOf = body => /<!-- feedback:([^\s>]+) -->/.exec(body || '')?.[1] || null;
 /** Does the issue's player want an email reply? (the issue shows the mask) */
 export const wantsEmail = body => /^- \*\*Email:\*\* /m.test(body || '');
-/** Already emailed or forgotten? */
 export const REPLIED = 'replied';
 /** The comment left on an issue once its reply is emailed: what the player was told, quoted (D-368). */
 export const emailedComment = ({ mask, together = '', answer = '' }) =>
   `📧 Reply emailed to \`${mask}\`${together}; the address was then deleted (D-317). Marked replied and closed as resolved (D-368).` +
   (answer.trim() ? `\n\nWhat we answered:\n\n${answer.trim().split('\n').map(l => `> ${l}`).join('\n')}` : '') + `\n${EMAILED}`;
+/** Already emailed or forgotten? */
 export const handled = comments => (comments || []).some(c => (c.body || '').includes(EMAILED) || (c.body || '').includes(FORGOTTEN));
 
 /**
