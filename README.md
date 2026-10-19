@@ -722,6 +722,7 @@ node tools/e2e/groups.test.mjs
 node tools/e2e/output.test.mjs
 node tools/firebase/rankings-history.test.mjs
 node tools/firebase/unnoted-rooms.test.mjs
+node tools/jobs/jobs.test.mjs
 node tools/push/daily.test.mjs
 node tools/push/notify.test.mjs
 node tools/push/schedule.test.mjs
