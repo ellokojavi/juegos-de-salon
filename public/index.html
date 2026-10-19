@@ -458,6 +458,8 @@
 
     // The splash (D-351): a campaign the owner turned on, once per phone, or the one in ?splash=
     import('./assets/js/splash.js').then(({ startSplash }) => startSplash({ lang })).catch(() => {});
+    // The lab's experiments bar (D-363): opened from /labs/home/ with ?lab, on the real home page
+    if (param('lab') !== null) import('./labs/home/experiments.js').then(({ drawBar }) => drawBar()).catch(() => {});
 
     // El globo que invita a agregar la app a inicio (D-232): sale un rato después, en un celular
     // que todavía no la abre instalada, hasta que lo cierran. Por ahora, en el laboratorio

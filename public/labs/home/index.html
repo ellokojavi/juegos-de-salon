@@ -11,38 +11,13 @@
   <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
   <script src="../../assets/js/vigia.js"></script>
   <link rel="stylesheet" href="../../assets/css/base.css">
-  <!-- The experiments bar, shared with the splash demo (D-351, D-361) -->
-  <link rel="stylesheet" href="../experiments.css">
 </head>
 <body>
-  <!-- The real home page behind, with the experiments the switches turn on (D-361) -->
-  <iframe class="demo-portada" id="portada" title="Portada"></iframe>
-  <div class="demo-barra" id="barra">
-    <a href="../">‹ Lab</a>
-    <span id="experimentos" style="display:contents"></span>
-    <select id="idioma" aria-label="Idioma">
-      <option value="es">ES</option><option value="en">EN</option><option value="pt">PT</option><option value="de">DE</option>
-    </select>
-  </div>
+  <!-- The home page's experiments (D-361, D-363): the real home page, opened with the bar and every
+       experiment on. No frame: on an iPhone a frame grows to its page's height and nothing in it sticks. -->
   <script type="module">
     import { EXPERIMENTS, homeUrl } from './experiments.js';
-    import { param } from '../../assets/js/parametros.js';
-    // Every experiment starts on (that is what is being looked at); ?off=popular,… starts one off
-    const off = new Set((param('off') || '').split(',').filter(Boolean));
-    const on = new Set(Object.keys(EXPERIMENTS).filter(k => !off.has(k)));
-    const idioma = document.getElementById('idioma');
-    const frame = document.getElementById('portada');
-    const cargar = () => { frame.src = homeUrl(on, idioma.value); };
-    for (const [k, x] of Object.entries(EXPERIMENTS)) {
-      const b = document.createElement('button');
-      b.type = 'button'; b.dataset.exp = k; b.title = x.what;
-      const pintar = () => { b.textContent = `${x.emoji} ${x.name}`; b.setAttribute('aria-pressed', on.has(k) ? 'true' : 'false'); };
-      b.addEventListener('click', () => { if (on.has(k)) on.delete(k); else on.add(k); pintar(); cargar(); });
-      pintar();
-      document.getElementById('experimentos').append(b);
-    }
-    idioma.addEventListener('change', cargar);
-    cargar();
+    location.replace(homeUrl(new Set(Object.keys(EXPERIMENTS)), 'es', new URL('../../', location.href).pathname));
   </script>
 </body>
 </html>
