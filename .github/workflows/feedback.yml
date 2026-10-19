@@ -1,4 +1,6 @@
-# The 🐞 feedback as issues (D-275): every 15 minutes it uploads to GitHub the new reports of
+# The 🐞 feedback as issues (D-275): by hand only, a fallback. The Mac mini's `feedback-watch` job
+# uploads them every 5 minutes (D-382), since GitHub ran the 15-minute schedule about 4 times a day.
+# It uploads to GitHub the new reports of
 # `feedback/` in Firebase, with the `feedback` label, so the processes agent handles them in its
 # round. As an issue, each report reaches the owner by email and stays linked to its reply and its
 # fix, even though the round (on the Mac mini, D-276) could read Firebase directly. The node is
@@ -7,10 +9,6 @@
 name: Feedback
 
 on:
-  schedule:
-    # GitHub delays and sometimes skips schedules (with '41 * * * *' it ran about 4 times a day):
-    # asking every 15 minutes leaves it at a while, not hours (D-306)
-    - cron: '7,22,37,52 * * * *'
   workflow_dispatch:
 
 permissions:

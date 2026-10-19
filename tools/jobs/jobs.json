@@ -10,12 +10,12 @@
       "decisions": ["D-318", "D-365"]
     },
     {
-      "id": "feedback",
-      "where": "github",
-      "workflow": "feedback.yml",
-      "cron": "7,22,37,52 * * * *",
-      "what": "Uploads the new 🐞 and email feedback reports from Firebase as `feedback` issues.",
-      "decisions": ["D-275", "D-306"]
+      "id": "feedback-watch",
+      "where": "mac",
+      "every": 300,
+      "command": ["node", "tools/agents/feedback.mjs", "sync"],
+      "what": "Uploads the new 🐞 and email feedback reports from Firebase as `feedback` issues (reads without a key; `gh` makes the issues). `feedback.yml` stays as a manual fallback.",
+      "decisions": ["D-275", "D-382"]
     },
     {
       "id": "notifications",
