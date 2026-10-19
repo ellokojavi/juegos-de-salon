@@ -79,7 +79,7 @@ button.ficha:active { transform: scale(0.94); }
 /* Dragging: the cells it would land on (red when taken), the domino that follows the finger */
 .celda.destino { outline: 3px solid #fff; outline-offset: -3px; }
 .celda.destino.no { outline-color: #ff3b3b; }
-.bandeja .ficha, .tablero-pips .puesta { touch-action: none; }
+.bandeja .ficha, .tablero-pips .puesta { touch-action: none; -webkit-touch-callout: none; }
 .ficha.arrastrada { opacity: 0.3; }
 .ficha.fantasma { position: fixed; z-index: 50; pointer-events: none; transform: scale(1.06); box-shadow: 0 10px 24px rgba(0,0,0,0.55); }
 .tablero-pips.chico .regla > span { font-size: 0.62rem; }
@@ -97,8 +97,10 @@ button.ficha:active { transform: scale(0.94); }
 .aviso-pips { margin: 0; min-height: 2.6em; text-align: center; font-weight: 700; color: var(--muted); }
 .aviso-pips.mal { color: #ff8a8a; } .aviso-pips.bien { color: #9dff3a; } .aviso-pips.ayuda { color: var(--yellow); } .aviso-pips.ojo { color: var(--yellow); }
 /* The tray: the dominoes not yet placed; the chosen one lifts and shines */
-.bandeja { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; min-height: 60px; padding: 6px 0; }
-.bandeja .ficha { --t: 34px; }
+.bandeja { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; padding: 6px 0; }
+/* Each domino has a square slot as big as it is long (D-385): turning it, or laying it, moves nothing */
+.bandeja > .hueco { flex: none; width: 66px; height: 66px; display: grid; place-items: center; }
+.bandeja .ficha { --t: 31px; }
 .bandeja .ficha.sel { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--cyan), 0 0 18px var(--cyan), 0 4px 10px rgba(0,0,0,0.35); }
 .acciones-pips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .acciones-pips .armado { background: var(--yellow); color: #3a1200; }

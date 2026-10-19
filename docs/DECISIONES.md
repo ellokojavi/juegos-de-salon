@@ -7337,8 +7337,13 @@ its zone (its cells glow, the rest dims) for 1.8 s; the zone under a dragged dom
 Dominoes drag, from the tray and from the board: the grabbed half lands on the cell under the finger,
 the domino is drawn a little above the finger, the target cells are outlined (red when taken), an
 invalid drop leaves it where it was, and a placed domino dropped off the board goes back to the tray.
-Taps keep working: a move under 8 px is a tap.
+A tap on a domino in the tray turns it and chooses it, so one tap is enough to turn it; moving it, or
+holding it 250 ms, lifts it to drag. A move under 8 px is still a tap. Each domino in the tray has a
+square slot as big as it is long, so turning or laying one moves nothing else on the screen.
+Two buttons above Ayuda and Rendirse: ↩️ Deshacer takes back the last change to the board, one at a
+time (a help undone keeps its cost), and 🧹 Limpiar takes every domino off after a second tap, which
+Deshacer can take back.
 **Why:** the owner chose this from three mockups (inside, inside + lighting, centered): only lighting
-says that a rule is about the whole zone. Dragging is what the original does and what a hand expects.
+says that a rule is about the whole zone. Dragging is what the original does and what a hand expects. Undo and clear, the owner's request: with dragging, a slip is easy, and starting a board over meant taking dominoes off one by one.
 **Consequences:** `game.js` (`enfocar`, the pointer handlers) and `style.css`; the third step of the
 cover says to drag. The tap path stays, so the end-to-end scripts that tap cells still play.
