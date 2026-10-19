@@ -258,6 +258,8 @@ falta mensajes de respuesta.
 
 - El mazo se baraja con un generador sembrado (`mulberry32`), así que la semilla basta para que
   todos tengan el mismo mazo y el mismo reparto.
+  The generator (`rng`) lives in `public/assets/js/rng.js` since D-378, shared with La Copa's seeds
+  and Uno al día; `engine.js` re-exports it, so a page that needs only `rng` does not load this engine.
 - `view()` deriva: manos, línea de tiempo, pozo, turno, aciertos y errores, tiempo por jugador y ganador.
 - Jugadas fuera de turno, repetidas o con cartas que no están en la mano se descartan en el reductor.
 - `chat` es la excepción: el reductor lo dibuja y lo olvida, y avisa que **no** hay que volver a dibujar la partida. Si el chat se redibujara con el juego, cada mensaje recibido borraría lo que el jugador está escribiendo.

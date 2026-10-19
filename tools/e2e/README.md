@@ -82,10 +82,17 @@ and this folder, `tools/agents/`, `tools/firebase/`, `firebase/` and the workflo
 Any other PR runs **only the scripts whose pages load what it changed** (D-329,
 [`affected.mjs`](affected.mjs), tested by `node tools/e2e/affected.test.mjs`). There is no build, so
 the graph is read straight from the files: each `index.html`, what it links, and what that imports.
-So a page is only as narrow as its imports: what other pages need from La Copa (the cup code, the
-clock, the notification sheets' texts) lives in small modules of its own, and
-`public/assets/js/uno-al-dia.test.mjs` fails if any page but La Copa's own (its screens, Uno al día,
-the records and the panel) loads La Copa's rules or engine (D-377).
+So a page is only as narrow as its imports: what other pages need from a game (La Copa's code, clock
+and notification sheets' texts, D-377; the seeded `rng`, D-378) lives in small modules of its own, and
+[`scope.test.mjs`](scope.test.mjs) fails if a page loads another game's files, unless `affected.mjs`
+lists it in `SHARED` (a small module every page may load) or `REUSES` (a game that plays another's
+engine on purpose), each with its reason (D-378). A game's file that La Copa plays (`cup/games/<game>/…`,
+and the engines it takes from `bulls-and-cows/` and `timeline/`) is imported by every screen of La Copa
+but counts only for the pages that play it: that game's page, the cup and `cup/suelto` and its declared
+reuses (`playedOn()`); a load error on the other screens is what `smoke.mjs` catches on any change.
+**Each PR's run summary shows its scope** (`ci.mjs --scope`, in `e2e.yml`'s `list` job): how many jobs
+run, and for each changed file of the site the pages and jobs it reaches and, if it reaches other games'
+pages, the import that takes it there.
 A script's pages come from its `${SITE}/…` addresses, its folder (`hangman/` → `/hangman/`,
 `case/` → `/labs/case/`) and the page names it lists when it builds its routes; a part named after a
 game (`cup-games/languages.mjs:year`) runs only with that game. **When in doubt, everything runs:**

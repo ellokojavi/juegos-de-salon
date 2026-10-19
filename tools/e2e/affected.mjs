@@ -97,6 +97,24 @@ export function dynamicPages(source, pages) {
  * `scripts`: [{ name: 'hangman/local.mjs', source }]. Returns { scripts, pages, changedScripts }, or
  * null for all.
  */
+/**
+ * Of the pages that load `f`, those that run it (D-378). A game's files that La Copa plays (cup/games/<game>/…,
+ * and the engines it takes from bulls-and-cows/ and timeline/) are imported by every screen of La Copa,
+ * through cup/games/index.js, but only played on that game's page, on La Copa's pages that play them all
+ * (the cup and cup/suelto) and on a page that reuses it on purpose (REUSES). On the screens of La Copa's
+ * other games they are only loaded, and a load error there is what smoke.mjs, which opens every page,
+ * catches on any change.
+ */
+export function playedOn(f, hit, graph) {
+  // A Cup game's folder, or a game whose engine La Copa plays too (bulls-and-cows/, timeline/)
+  const game = f.match(/^cup\/games\/([^/]+)\//)?.[1] || (f.startsWith('cup/') || f.startsWith('assets/') ? null : f.split('/')[0]);
+  if (!game) return hit;
+  // Only the screens of La Copa's other games import it without playing it
+  const onlyImports = p => graph[p]?.has('cup/game.js') && p !== 'cup' && p !== 'cup/suelto' && p !== game && p !== `labs/${game}`
+    && !p.startsWith(`${game}/`) && !(REUSES[p] || []).some(x => f.startsWith(x));
+  return hit.filter(p => !onlyImports(p));
+}
+
 export function select({ changes, graph, scripts, shared }) {
   const pages = Object.keys(graph);
   const changedScripts = new Set();
@@ -120,7 +138,7 @@ export function select({ changes, graph, scripts, shared }) {
   for (const f of changedPublic) {
     const hit = pages.filter(p => graph[p].has(f));
     if (!hit.length) return null; // no page loads it directly: it may be fetched at run time
-    hit.forEach(p => affected.add(p));
+    playedOn(f, hit, graph).forEach(p => affected.add(p));
   }
   const runs = scripts.filter(s => {
     if (changedScripts.has(s.name)) return true;
@@ -184,10 +202,13 @@ const walk = (dir, base = dir) => readdirSync(dir).flatMap(f => {
 });
 
 /** The site's text files, path → contents, and the page graph. */
-export function siteGraph() {
+function siteFiles() {
   const files = {};
   for (const f of walk(PUBLIC)) if (/\.(html|m?js|css)$/.test(f) && !/\.test\.m?js$/.test(f)) files[f] = readFileSync(join(PUBLIC, f), 'utf8');
-  return closures(files);
+  return files;
+}
+export function siteGraph() {
+  return closures(siteFiles());
 }
 
 /** The test level of these changes (D-346): { level, name, reason }. */
@@ -205,4 +226,89 @@ export function affectedJobs(jobs, changes, shared) {
   const scripts = names.map(name => ({ name, source: existsSync(join(HERE, name)) ? readFileSync(join(HERE, name), 'utf8') : '' }));
   const graph = siteGraph();
   return chooseJobs(jobs, select({ changes, graph, scripts, shared }), Object.keys(graph));
+}
+
+/* ------------------------------------------------------------------ */
+/* Whose files a page may load (D-377, D-378)                         */
+/* ------------------------------------------------------------------ */
+
+// La Copa's own pages besides its screens (which load cup/game.js, that plays the games La Copa is made
+// of): the three that show its data
+const SHOWS_CUP = new Set(['today', 'records', 'panel']);
+// Small modules every page may load, though they live in a game's folder
+export const SHARED = {
+  'cup/reportes.js': 'the 🐞 reports and the inbox, from every page (D-341)',
+  'cup/games/semilla.js': "the seeds of La Copa's games, that Uno al día uses on every page",
+  'cup/games/solo.js': 'a Cup game played alone: the solo mode of Generala, Toque y Fama and Línea de tiempo',
+  'cup/clock.js': 'the active-time clock (D-95, D-377)',
+  'cup/code.js': 'the cup code and a random one (D-377)',
+  'cup/games/audiencia.js': 'who a deck or word list is for, shared by the Cup and the games that reuse its words',
+};
+// A game that plays another one's engine on purpose: its solo mode is that game
+export const REUSES = {
+  'bulls-and-cows': ['cup/games/number/'],
+  timeline: ['cup/games/timeline/', 'cup/games/year/engine.js', 'cup/games/mazos.js'],
+  'labs/code': ['cup/games/word/'],
+};
+
+/** The game a file belongs to (the first folder of its path, when that folder is a page), or null. */
+const ownerIn = (pages, f) => {
+  const root = f.split('/')[0];
+  return !f.startsWith('assets/') && pages.some(p => p === root || p.startsWith(`${root}/`)) ? root : null;
+};
+
+/** May `page` load `f`? Its own game's files, the shared ones, La Copa's pages anything La Copa plays, and the reuses. */
+export function mayLoad(graph, page, f) {
+  const pages = Object.keys(graph), owner = ownerIn(pages, f);
+  if (!owner || f.endsWith('index.html')) return true;
+  if (page === owner || page.startsWith(`${owner}/`)) return true;
+  if (owner === 'cup' && SHARED[f]) return true;
+  if (graph[page].has('cup/game.js') || SHOWS_CUP.has(page)) return true;
+  return (REUSES[page] || []).some(x => f.startsWith(x));
+}
+
+/** Every page that loads another game's file it should not: [{ page, file }]. */
+export function crossLoads(graph = siteGraph()) {
+  const out = [];
+  for (const [page, files] of Object.entries(graph)) for (const f of files) if (!mayLoad(graph, page, f)) out.push({ page, file: f });
+  return out;
+}
+
+/**
+ * The PR's test scope, for the run's summary (D-378): how many scripts run, and for each changed file of
+ * the site the pages and scripts it reaches. A file loaded by other games' pages names the import that
+ * takes it there, so a leak shows on the PR that makes it, not months later. Markdown lines.
+ */
+export function scopeReport(jobs, changes, shared) {
+  const all = affectedJobs(jobs, changes, shared);
+  const n = all === null ? jobs.length : all.length;
+  const lines = [`### Test scope: ${n} of ${jobs.length} end-to-end jobs`];
+  const site = changes.map(c => c.trim()).filter(c => c.startsWith('public/') && !/\.test\.m?js$|\.md$/.test(c));
+  if (!site.length) return lines;
+  const files = siteFiles(), graph = closures(files), pages = Object.keys(graph);
+  // The first file on the way from a page to `to` that is not the page's own: the import that brings it
+  const via = (page, to) => {
+    const start = page ? `${page}/index.html` : 'index.html';
+    const prev = { [start]: null }, queue = [start];
+    while (queue.length) {
+      const c = queue.shift();
+      if (c === to) { const path = []; for (let x = c; x; x = prev[x]) path.unshift(x); return path.slice(1).find(f => !f.startsWith(`${page}/`)) || to; }
+      if (c !== start && c.endsWith('index.html')) continue;
+      for (const r of references(c, files[c] || '')) if (!(r in prev) && files[r] != null) { prev[r] = c; queue.push(r); }
+    }
+    return null;
+  };
+  lines.push('', '| Changed file | Pages | Jobs | Reaches other games\' pages through |', '|---|---|---|---|');
+  for (const c of site.slice(0, 40)) {
+    const f = c.slice('public/'.length);
+    const on = pages.filter(p => graph[p].has(f));
+    const jobsOf = affectedJobs(jobs, [c], shared);
+    const owner = ownerIn(pages, f);
+    const foreign = owner ? on.filter(p => !mayLoad(graph, p, f)) : [];
+    const hops = {};
+    for (const p of foreign) { const h = via(p, f); if (h && h !== f) (hops[h] ||= []).push(p || 'home'); }
+    const how = Object.entries(hops).sort((a, b) => b[1].length - a[1].length).slice(0, 3).map(([h, ps]) => `\`${h}\` (${ps.length})`).join(', ');
+    lines.push(`| \`${f}\` | ${on.length} | ${jobsOf === null ? 'all' : jobsOf.length} | ${owner ? how || '—' : 'shared module'} |`);
+  }
+  return lines;
 }

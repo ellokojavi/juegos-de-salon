@@ -240,18 +240,6 @@ for (let r = 0; r < 20; r++) assert.ok(puntajeDudo({ gano: false, dados: 0, rond
   }
 }
 
-// No page but La Copa's own loads its rules or engine (D-377): a change to them would run every
-// end-to-end script that goes through that page. La Copa's are its screens (they load cup/game.js) and
-// the three that show its data: Uno al día, the records and the panel
-{
-  const { siteGraph } = await import('../../../tools/e2e/affected.mjs');
-  const g = siteGraph();
-  const SUYAS = new Set(['today', 'records', 'panel']);
-  for (const [page, files] of Object.entries(g)) {
-    if (files.has('cup/game.js') || SUYAS.has(page)) continue;
-    for (const f of ['cup/rules.js', 'cup/engine.js'])
-      assert.ok(!files.has(f), `${page || 'the home page'} loads ${f}: take what it needs into a module of its own (D-377)`);
-  }
-  assert.ok(!g[''].has('cup/rules.js') && !g.hangman.has('cup/engine.js'), 'the home page and a group game are checked');
-}
+// That no page but La Copa's own loads its rules or engine (D-377) is checked for every game in
+// tools/e2e/scope.test.mjs (D-378)
 console.log('uno-al-dia: ok');

@@ -14,7 +14,7 @@
  *   De ahí salen la racha, la mejor racha, el calendario y cómo le va en cada juego.
  */
 import { hash32 } from '../../cup/games/semilla.js';
-import { rng as mulberry } from '../../timeline/engine.js';
+import { rng as mulberry } from './rng.js';
 import { semana } from './records.js';
 import { param } from './parametros.js';
 

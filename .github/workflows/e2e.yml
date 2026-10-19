@@ -46,6 +46,8 @@ jobs:
           if [ -n "$PR" ]; then
             gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' > "$RUNNER_TEMP/changes"
             echo "groups=$(node tools/e2e/ci.mjs --groups --changes "$RUNNER_TEMP/changes")" >> "$GITHUB_OUTPUT"
+            # The PR's test scope in the run's summary: what runs, and through what each file reaches (D-378)
+            node tools/e2e/ci.mjs --scope --changes "$RUNNER_TEMP/changes" > /dev/null || true
           else
             echo "groups=$(node tools/e2e/ci.mjs --groups)" >> "$GITHUB_OUTPUT"
           fi

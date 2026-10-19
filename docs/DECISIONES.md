@@ -74,7 +74,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
-| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377 |
+| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376 |
 | Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
@@ -6228,7 +6228,7 @@ is only what makes it visible and gives the round something to wait on.
 (no record for the round to follow up).
 
 ## D-329 · A PR runs only the end-to-end scripts its changes reach
-**Date:** 2026-10-15 · **Status:** current · **Relation:** narrows D-205 and D-299 (all or nothing); keeps D-302 and D-308; extended by D-377 (La Copa's files stay out of other pages)
+**Date:** 2026-10-15 · **Status:** current · **Relation:** narrows D-205 and D-299 (all or nothing); keeps D-302 and D-308; extended by D-377 (La Copa's files stay out of other pages) and D-378 (each game's files, what is played, the scope in the summary)
 **Context:** a PR that changed one file in `public/` ran all 61 jobs, even if it only touched a lab
 game: La Copa's style sheet ran Batalla Naval, Generala and every language check.
 **Decision:** owner's request: `tools/e2e/affected.mjs` reads the site's graph (each `index.html`, what
@@ -7203,7 +7203,7 @@ rest, with days still "to play".
 what the image writes; `public/cup/engine.test.mjs` checks `menosJuegos` with players out of the cup.
 
 ## D-377 · La Copa's rules and engine stay out of the pages that are not La Copa's
-**Date:** 2026-10-19 · **Status:** current · **Relation:** extends D-329 (a PR runs the scripts its changes reach)
+**Date:** 2026-10-19 · **Status:** current · **Relation:** extends D-329 (a PR runs the scripts its changes reach); extended by D-378 (every game's files, and its guard moved to `tools/e2e/scope.test.mjs`)
 **Context:** a PR that only changed La Copa's table (#552) ran 67 of the 74 end-to-end scripts.
 `cup/rules.js` reached 22 pages and `cup/engine.js` 20, though only the Cup and its own games show
 them: the home page, Ahorcado, Batalla Naval, Dudo and Generala loaded `cup/rules.js` through Uno al
@@ -7222,4 +7222,29 @@ from 49 to 35; what is left are La Copa's own pages (the Cup, its games, Uno al 
 **Consequences:** `public/assets/js/uno-al-dia.test.mjs` checks that no page loads `cup/rules.js` or
 `cup/engine.js` except La Copa's own (its screens, which load `cup/game.js`, and Uno al día, the records
 and the panel, which show its data), and that the two names in `JUEGOS_DIA` say what La Copa says. A
-new import of La Copa from any other page, a new game's included, fails that test.
+new import of La Copa from any other page, a new game's included, fails that test. Since D-378 that
+page check lives in `tools/e2e/scope.test.mjs`, for every game's files, not only La Copa's.
+
+## D-378 · Each PR tests what it really touches: each game's files on its own pages, and the scope in sight
+**Date:** 2026-10-19 · **Status:** current · **Relation:** extends D-329 (scripts by the pages a change reaches) and D-377
+**Context:** the owner wants each PR to run the tests its real scope needs, to save PR time. After
+D-377, 29 of the site's 191 files still ran all or nearly all of the 74 end-to-end jobs. Most are truly
+shared (`base.css`, `i18n.js`, `ui.js`), but two kinds were not: La Copa's seeds and Uno al día loaded
+the whole Timeline engine for `rng` (and the home page preloaded it), so a change to Timeline's engine
+ran 71 jobs; and every screen of La Copa imports every Cup game's engine through `cup/games/index.js`,
+so a change to Queens' engine ran 34 and one to Toque y Fama's 38, though only that game's page and La
+Copa play it.
+**Decision:** three layers. **The leaks go:** `rng` lives in `assets/js/rng.js`, which the Timeline
+engine re-exports, and the home page preloads it instead of the engine. **What is only imported does not
+count:** a game's file that La Copa plays (`cup/games/<game>/…`, and the engines it takes from
+`bulls-and-cows/` and `timeline/`) counts for that game's page, the cup, `cup/suelto` and its declared
+reuses, not for the screens of La Copa's other games (`playedOn()` in `affected.mjs`); a load error
+there is what `smoke.mjs`, which opens every page on any change, catches. **The scope is in sight and
+kept:** each PR's run summary shows how many jobs run and, for each changed file, the pages and jobs it
+reaches and the import that takes it into other games' pages (`ci.mjs --scope`); and
+`tools/e2e/scope.test.mjs` fails if a page loads another game's files, unless `affected.mjs` lists the
+file in `SHARED` or the page in `REUSES`, each with its reason. It replaces D-377's La Copa-only guard.
+**Why:** the owner's request: a smart way to scope tests per PR and save deployment time.
+**Consequences:** a change to Timeline's engine runs 11 jobs instead of 71; to Queens' engine, 17
+instead of 34; to Zip's screen, 15 instead of 34; to Toque y Fama's engine, 18 instead of 38; to a
+Timeline deck, 22 instead of 42. `affected.test.mjs` tests `playedOn`, and `scope.test.mjs` tests the rule.
