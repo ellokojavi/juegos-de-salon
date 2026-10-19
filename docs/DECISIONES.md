@@ -5922,7 +5922,7 @@ labels, with environment variables read under both names for a while (`SITE` or 
   copies until the weekly review removes them (phase 4).
 
 ## D-317 · Feedback: an optional email, kept private, and a friendly reply when it's resolved
-**Date:** 2026-10-14 · **Status:** amended by D-327, D-341, D-366, D-368 · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
+**Date:** 2026-10-14 · **Status:** amended by D-327, D-341, D-366, D-368, D-370 · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
 **Decision:** Owner's request: every feedback form (the 🐞 in the lab and in La Copa, the "¿Qué te
 pareció?" at the end of each lab game and La Copa's report screen) gets an optional email field, so
 whoever wants to can be told when we answer.
@@ -7093,3 +7093,13 @@ what we answered (quoted, without the address), adds the `replied` label and clo
 what they were told without anyone doing it by hand.
 **Consequences:** `.claude/agents/processes.md` (step 3, the email reply) describes it; the test is in
 `tools/agents/feedback.test.mjs`.
+
+## D-370 · A reply in the sender's own thread does not quote their email
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-317
+**Decision:** When `feedback.mjs reply` answers in the thread of the player's email (D-327), it leaves out the
+quote of that email: the player sees it right above. A report that is not that email (a 🐞 report, or an
+email from another thread answered in the same reply) is still quoted above its answer. A test email
+(`--test-to`) has no thread, so it quotes everything.
+**Why:** The owner's rule after the reply to #538: quoting what is already on screen in the thread is noise.
+**Consequences:** `inThread` in `tools/agents/feedback.mjs` decides it; the test is in `tools/agents/feedback.test.mjs`.
+

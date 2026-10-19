@@ -51,6 +51,8 @@ export const idOf = body => /<!-- feedback:([^\s>]+) -->/.exec(body || '')?.[1] 
 /** Does the issue's player want an email reply? (the issue shows the mask) */
 export const wantsEmail = body => /^- \*\*Email:\*\* /m.test(body || '');
 export const REPLIED = 'replied';
+/** Is this report the email the reply answers in its thread? Then the player already sees it (D-370). */
+export const inThread = (x, thread) => !!(thread?.id && x.thread?.id === thread.id);
 /** The comment left on an issue once its reply is emailed: what the player was told, quoted (D-368). */
 export const emailedComment = ({ mask, together = '', answer = '' }) =>
   `📧 Reply emailed to \`${mask}\`${together}; the address was then deleted (D-317). Marked replied and closed as resolved (D-368).` +
@@ -203,10 +205,13 @@ async function reply(list, file, lang, { dryRun, testTo }) {
     if (new Set(all.map(x => x.email.toLowerCase())).size > 1) throw new Error(`Not the same player: ${all.map(x => `#${x.number} ${x.mask}`).join(', ')}. One email per address.`);
   }
   const name = all.map(x => x.name).find(Boolean) || '';
-  const { subject, text, html } = buildEmail({ lang, name, n: Number(numbers[0]), items: all.map(x => ({ quote: x.text, answer: answers[x.number] })) });
-  const to = testTo || all[0].email;
   // An emailed report: answer in the sender's own thread (D-327)
   const thread = testTo ? null : all.map(x => x.thread).find(Boolean);
+  // The player sees their own email right above in that thread, so it is not quoted again; a 🐞
+  // report, or an email from another thread, still is (D-370)
+  const items = all.map(x => ({ quote: inThread(x, thread) ? '' : x.text, answer: answers[x.number] }));
+  const { subject, text, html } = buildEmail({ lang, name, n: Number(numbers[0]), items });
+  const to = testTo || all[0].email;
   const finalSubject = thread?.subject ? (/^re:/i.test(thread.subject) ? thread.subject : `Re: ${thread.subject}`) : subject;
   if (dryRun) { console.log(`To: ${testTo || all[0].mask}\nSubject: ${testTo ? subject : finalSubject}${thread ? `\nIn-Reply-To: ${thread.id}` : ''}\n\n${text}`); return; }
   // Through stdin: the address never shows in a command line or a log
