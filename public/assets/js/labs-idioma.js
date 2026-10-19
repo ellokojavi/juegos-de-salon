@@ -27,7 +27,7 @@ const TEXTOS = {
     titulo: 'Feedback zum Deutsch-Labor',
     lead: 'Was klingt komisch, ist abgeschnitten oder falsch übersetzt? Schreib einfach, was dir auffällt – gern auch auf Englisch oder Spanisch.',
     ph: 'Zum Beispiel: Auf dem Startbildschirm ist „Galgenmännchen“ abgeschnitten.',
-    nombre: 'Dein Name (optional)',
+    nombre: 'Name oder Spitzname (opt.)',
     enviar: 'Senden',
     enviando: 'Wird gesendet …',
     cancelar: 'Abbrechen',
