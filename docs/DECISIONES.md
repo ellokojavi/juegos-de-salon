@@ -1618,6 +1618,8 @@ los días que el jugador ya puede ver (no delata lo de hoy).
   juegos que el que más jugó va marcado junto a su nombre: **"Tomario (-1J)"** (`menosJuegos`).
   La misma marca va en el mensaje de texto "Tabla parcial" del admin y en el recuadro "Posiciones
   día a día" (al final de cada línea y en los botones de jugador), con la misma leyenda.
+  Since D-376, whoever is out of the cup (D-347) gets no "(-1J)" and does not count for "the one
+  who played the most": they carry 🚪 instead.
 **Por qué:** una imagen se lee de un vistazo en el grupo; y en una tabla a mitad de día, el que
 va último puede ser solo el que todavía no juega.
 
@@ -6565,7 +6567,8 @@ cup), with a warning before and the admin able to bring them back.
   days the admin's early close left unopened (D-161), and never the last two days: they close with
   the cup, when there is nothing left to leave.
 - **What stays:** their points. They stay in the table, grey, with 🚪 instead of a place and
-  "(fuera)", below everyone still playing. They can't press Empezar (the Firebase rules refuse it);
+  "(fuera)", below everyone still playing (since D-376: faded, with one "Eliminado" pill over the
+  days they will not play instead of "(fuera)"). They can't press Empezar (the Firebase rules refuse it);
   nobody waits for them: `faltan()` leaves them out, so the provisional table, the lists and the
   closing confirmation don't count them, and they get no more notifications.
 - **What they see:** a notice on top of their board ("🚪 Quedaste fuera de la copa…"), with what to
