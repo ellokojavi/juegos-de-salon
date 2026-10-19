@@ -52,7 +52,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 
 | Tema | Regla de hoy (canon) | Decisiones vigentes que la explican |
 |---|---|---|
-| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316 |
+| Estructura y rutas | C-2, C-18 | D-01, D-02, D-03, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372 |
 | Identidad y textos | C-1 | D-11, D-30, D-49, D-177, D-184, D-324 |
 | Mazos de cartas con fecha | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes, el juego del laboratorio (tablero, pistas, trampas) | `docs/games/agents.md` | D-286, D-287, D-288 |
@@ -7134,3 +7134,13 @@ type).
 **Consequences:** `tools/e2e/home/popular.mjs` taps 🔥 Populares on a tall screen and checks that the
 menu floats and the cards start under it, that scrolling up lets it go and the space shrinks, and that
 a long type at 390 px keeps it floating.
+
+## D-372 · The home page experiments go to La Bodega
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-280 (La Bodega) and D-361 (the lab's three groups)
+**Decision:** the 🏠 Experimentos de la portada card leaves ✨ Mejoras en prueba for 📦 La Bodega, folded to
+its title like the others: everything it tried reached everyone in D-369 and nothing is being tried on
+the home page now. `/labs/home/` and `experiments.js` stay, so a new experiment can bring the card back
+to the improvements. La Bodega's intro now says it keeps the projects no longer worked on, because they
+did not prosper or because they already reached everyone.
+**Why:** the owner's request.
+**Consequences:** `tools/e2e/home/lab.mjs` checks the card is in La Bodega and folded.
