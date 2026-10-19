@@ -389,14 +389,16 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   While it says "New" it also goes **on top of the list, right after La Copa** (`ordenPortada`,
   D-335): with no plays yet, by popularity it would be last. When the label goes, it goes back to
   its place in `POPULARIDAD`.
-- **🔥 "Popular", in the lab** (D-361): the first three of the order that are neither La Copa nor
-  "New" (`populares`) wear the "New" sticker in fire colors, with the 🔥 outside the gradient. It is
-  off for players (`POPULAR_EN_PORTADA = false`); `/?popular` and the lab's `/labs/home/` show it.
-- **✨ Nuevos and 🔥 Populares filters, in the lab** (D-362): a row of two chips above the types,
-  each shown only when it has games, kept in the link as `?type=new` / `?type=popular`; only with `?picks`.
-  With a favorite marked, ⭐ Favoritos goes first in that row, with its name if it fits (D-364).
-- **The app's name on the floating menu, in the lab** (D-364): with `?brand`, while the filters float,
-  "🎲 Juegos de Salón" tops them in the title's font; a tap goes back to the top.
+- **🔥 "Popular"** (D-361, for everyone since D-369): the first three of the order that are neither
+  La Copa nor "New" (`populares`) wear the "New" sticker in fire colors, with the 🔥 outside the
+  gradient, beside the name when it fits (on its own line only when the name fills it).
+- **✨ Nuevos and 🔥 Populares filters** (D-362, D-369): a row of two chips above the types, each shown
+  only when it has games, kept in the link as `?type=new` / `?type=popular`. With a favorite marked,
+  ⭐ Favoritos goes first in that row: with its name, tighter, or the ⭐ alone, centered (D-364).
+- **The app's name on the floating menu** (D-364, D-369): while the filters float, "🎲 Juegos de
+  Salón" tops them in the title's font, in the 36 px the floating filters leave above them, so nothing
+  moves when it appears; a tap goes back to the top. The frosted background reaches
+  4 px below the last row, so the space under the filters matches the space above the title.
 - **Home page experiments** (D-361): what is tried on the home page before players see it is a URL
   parameter the page reads, off by default, listed in `public/labs/home/experiments.js`. `/labs/home/`
   opens the real home page with `?lab`, which draws the bar (`public/labs/experiments.css`) with one

@@ -1,5 +1,5 @@
 {
-  "version": "0.184.5",
+  "version": "0.186.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1145,6 +1145,7 @@
     "hangman/local.mjs",
     "hangman/online.mjs",
     "home/lab.mjs",
+    "home/popular.mjs",
     "install-prompt.mjs",
     "installable.mjs",
     "invite-link.mjs",

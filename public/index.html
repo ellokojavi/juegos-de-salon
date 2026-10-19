@@ -225,7 +225,7 @@
       font: 900 0.9rem var(--font-body); border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
       transition: background 0.15s, color 0.15s, transform 0.1s;
     }
-    /* "✨ Nuevo" and "🔥 Populares" (D-362, in the lab): a row of their own above the types, the same
+    /* "✨ Nuevos" and "🔥 Populares" (D-362, for everyone since D-369): a row of their own above the types, the same
        pill as ⭐ Favoritos; each one shows only when it has games. */
     .filtros .atajos { display: flex; gap: 8px; justify-content: center; }
     .filtros .atajos .ficha-fav { flex: 0 0 auto; }
@@ -248,26 +248,31 @@
     .filtros-fin { border: 0; height: 1px; margin: 12px 6% 4px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent); }
     /* Al bajar por la lista, los filtros se quedan pegados arriba: cambiar de tipo no obliga a
        volver a subir. Sin fondo mientras están en su lugar; pegados, toman el del sitio. */
+    /* While they float, the filters stop 36 px below the top and the app's name (D-364) fills that
+       space above them, out of the flow: nothing in the page moves when it appears (D-369). */
     .filtros-barra {
-      position: sticky; top: var(--safe-top); z-index: 5;
+      --titulo: 36px;
+      position: sticky; top: calc(var(--safe-top) + var(--titulo)); z-index: 5;
       margin: 0 -18px; padding: 8px 18px;
     }
     /* El fondo es una sola capa que sube hasta tapar también la franja de la muesca, para que las
        tarjetas no se vean pasar por detrás de la hora: con una capa aparte para la franja, el
        desenfoque no le llegaba y se leían las tarjetas, o quedaba una costura de dos colores (U-12). */
     .filtros-barra::before {
-      content: ''; position: absolute; z-index: -1; inset: calc(-1 * var(--safe-top)) 0 0 0;
+      /* 4 px below the last row, so the space under the filters matches the space above the title (D-369) */
+      content: ''; position: absolute; z-index: -1; inset: calc(-1 * (var(--safe-top) + var(--titulo))) 0 -4px 0;
       border-radius: 0 0 20px 20px; pointer-events: none; opacity: 0; transition: opacity 0.2s;
       background: rgba(21, 7, 38, 0.82); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
       box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12), 0 10px 24px rgba(0, 0, 0, 0.35);
     }
     .filtros-barra.pegada::before { opacity: 1; }
-    /* The app's name on top of the filters, only while they float (D-364, in the lab with ?brand):
+    /* The app's name on top of the filters, only while they float (D-364, for everyone since D-369):
        scrolling down a long list, the floating menu still says where you are; a tap goes back up. */
     .barra-titulo { display: none; }
     .filtros-barra.pegada .barra-titulo {
-      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px;
-      margin: -8px 0 0; padding: 0; border: 0; background: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px; height: 44px;
+      position: absolute; left: 0; right: 0; top: calc(-1 * var(--titulo));
+      margin: 0; padding: 0; border: 0; background: none; cursor: pointer;
       font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.04em; color: var(--ink);
     }
     .filtros-barra.pegada .barra-titulo span:last-child {
@@ -429,7 +434,7 @@
   </main>
 
   <script type="module">
-    import { PORTADA, TIPOS, TIPOS_VIEJOS, rangoJugadores, esNuevo, populares, POPULAR_EN_PORTADA } from './assets/js/games.js';
+    import { PORTADA, TIPOS, TIPOS_VIEJOS, rangoJugadores, esNuevo, populares } from './assets/js/games.js';
     import { sparkles, el, con, shareButton, ICONO_COMPARTIR } from './assets/js/ui.js';
     import { botonCompartirPortada, trailerDe } from './assets/js/compartir-portada.js';
     import { compartirApp, comparteArchivos } from './assets/js/compartir.js';
@@ -501,8 +506,8 @@
       pintar();
       return b;
     };
-    // The 🔥 "Popular" label on the top three (D-361): in the lab until it ships, previewed with ?popular
-    const top = POPULAR_EN_PORTADA || param('popular') !== null ? populares() : new Set();
+    // The 🔥 "Popular" label on the top three (D-361; for everyone since D-369)
+    const top = populares();
     const tarjetas = PORTADA.map((g, i) => {
       const [, max] = rangoJugadores(g.players);
       // Un juego que no está disponible se ve, pero no se abre: sin href, ni con el teclado (C-5)
@@ -576,12 +581,11 @@
       const pedido = q.get('type') || TIPOS_VIEJOS[q.get('tipo')];
       const FAV = 'favorites';
       const hayFavoritos = () => tarjetas.some(t => t.caja !== t.card && marcados.has(t.g.id));
-      // "✨ Nuevo" and "🔥 Populares" (D-362): in the lab until they ship, with ?picks
+      // "✨ Nuevos" and "🔥 Populares" (D-362; for everyone since D-369)
       const NEW = 'new', POP = 'popular';
-      const conAtajos = param('picks') !== null;
       const top3 = populares();
       const atajo = { [NEW]: g => g.available && esNuevo(g), [POP]: g => top3.has(g.id) };
-      const tieneAtajo = k => conAtajos && PORTADA.some(atajo[k]);
+      const tieneAtajo = k => PORTADA.some(atajo[k]);
       const filtro = { tipo: TIPOS[pedido] || (pedido === FAV && hayFavoritos()) || (atajo[pedido] && tieneAtajo(pedido)) ? pedido : null };
       const caben = ({ g, card, caja }) => !filtro.tipo
         || (filtro.tipo === FAV ? caja !== card && marcados.has(g.id) : atajo[filtro.tipo] ? atajo[filtro.tipo](g) : (g.tipos || []).includes(filtro.tipo));
@@ -670,9 +674,11 @@
       // pasó de largo. Al cambiar de tipo estando pegados, la lista vuelve a empezar justo debajo.
       const barra = document.getElementById('filtros-barra');
       const marca = document.getElementById('filtros-marca');
-      if (param('brand') !== null) barra.prepend(el('button', { type: 'button', class: 'barra-titulo', 'aria-label': T.appTitle, onClick: () => scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }) },
+      barra.prepend(el('button', { type: 'button', class: 'barra-titulo', 'aria-label': T.appTitle, onClick: () => scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }) },
         el('span', { 'aria-hidden': 'true' }, '🎲'), el('span', {}, T.appTitle)));
-      new IntersectionObserver(([e]) => barra.classList.toggle('pegada', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(marca);
+      // The menu sticks below the space for the title (D-369): it floats once its mark passes that line
+      const tope = parseFloat(getComputedStyle(barra).top) || 0;
+      new IntersectionObserver(([e]) => barra.classList.toggle('pegada', !e.isIntersecting && e.boundingClientRect.top < tope), { rootMargin: `${-tope}px 0px 0px 0px` }).observe(marca);
       barra.addEventListener('click', e => {
         if (!e.target.closest('button') || e.target.closest('.barra-titulo') || !barra.classList.contains('pegada')) return;
         const tope = parseFloat(getComputedStyle(barra).top) || 0;

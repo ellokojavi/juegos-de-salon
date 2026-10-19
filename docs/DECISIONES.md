@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -6938,7 +6938,7 @@ owns the queue and the agents' review; one path for every build); a free-form ba
 first round proposes the first three ideas; this PR opens none.
 
 ## D-361 · The home page's order every week, a 🔥 "Popular" label in the lab, and the lab in three groups
-**Date:** 2026-10-18 · **Status:** amended by D-363 · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar)
+**Date:** 2026-10-18 · **Status:** amended by D-363, D-369 · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar)
 **Context:** the game-ideas agent's first check (D-360) showed 18 games three or more places away from
 the order D-255 counted on October 9. The owner asked for the order to update every week, to put the
 best of the app in front of a new player, and for a 🔥 "Popular" label on the top three; then, to try
@@ -6977,7 +6977,7 @@ counting starts (it rewards games people abandon); labelling La Copa or a "New" 
 says the new order and the label.
 
 ## D-362 · "✨ Nuevo" and "🔥 Populares" as filters, in the lab
-**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-361 (the home page's experiments, the popular label), D-333 (New), D-142 and D-238 (the filters and ⭐ Favoritos)
+**Date:** 2026-10-18 · **Status:** amended by D-369 · **Relation:** extends D-361 (the home page's experiments, the popular label), D-333 (New), D-142 and D-238 (the filters and ⭐ Favoritos)
 **Decision:** the owner's request: two more chips above the four types, in a row of their own: **✨ Nuevo**
 shows the games that say "New" (`esNuevo`), **🔥 Populares** the three with the label (`populares`).
 Same pill as ⭐ Favoritos; each one shows only when it has games; tapping it again clears it; the link
@@ -7004,7 +7004,7 @@ install banner included); the splash demo keeps its own frame, where nothing nee
 that the filters stick when the page scrolls, and that the bar never shows without `?lab`.
 
 ## D-364 · The floating menu carries the app's name, and ⭐ Favoritos joins Nuevo and Populares, in the lab
-**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-362 (the ✨ Nuevos / 🔥 Populares row) and D-241 (where ⭐ Favoritos goes)
+**Date:** 2026-10-18 · **Status:** amended by D-369 · **Relation:** extends D-362 (the ✨ Nuevos / 🔥 Populares row) and D-241 (where ⭐ Favoritos goes)
 **Context:** the owner asked whether the floating menu could carry the logo or the title, and noticed the
 ⭐ Favoritos star was missing: with the new row it was squeezed, as a bare ⭐, in front of the four types.
 **Decision:**
@@ -7093,6 +7093,24 @@ what we answered (quoted, without the address), adds the `replied` label and clo
 what they were told without anyone doing it by hand.
 **Consequences:** `.claude/agents/processes.md` (step 3, the email reply) describes it; the test is in
 `tools/agents/feedback.test.mjs`.
+
+## D-369 · 🔥 Popular, the ✨ Nuevos / 🔥 Populares filters and the name on the floating menu reach everyone
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-361, D-362 and D-364 (they were in the lab); keeps D-363 (the lab bar) for the next experiments
+**Decision:** the owner, after trying them in the lab: "hagamos merge en producción". The 🔥 Popular label
+on the top three, the row of ✨ Nuevos and 🔥 Populares chips (with ⭐ Favoritos first in it) and
+"🎲 Juegos de Salón" on top of the floating filters are on for every player; `POPULAR_EN_PORTADA` and the
+`?popular`, `?picks` and `?brand` parameters go away, and so do their switches: `/labs/home/` keeps the
+bar (‹ Lab and the language) and its list of experiments, empty today. One last adjustment the owner
+asked for: the floating menu's frosted background reaches 4 px below its last row, so the space under
+the filters (12 px) matches the space above the title's letters (11 px), without moving the list.
+The title does not take room in the page: the floating filters stop 36 px below the top and the title
+fills that space, out of the flow, so the list never jumps when the menu starts floating (a first
+version pushed it 44 px down, and the end-to-end tap on a ⭐ missed in CI).
+**Why:** the owner's decision; the usability agent's full pass over the home page in the four languages
+went with it, as D-361 asked.
+**Consequences:** `tools/e2e/home/popular.mjs` checks what players see (the label, the chips and their
+filtering, ⭐ in the row and centered, the title and its tap, the two spaces); `tools/e2e/home/lab.mjs`
+keeps the lab's groups and the bar. The lab card says nothing is being tried on the home page today.
 
 ## D-370 · A reply in the sender's own thread does not quote their email
 **Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-317
