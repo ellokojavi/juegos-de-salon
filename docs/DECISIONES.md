@@ -7253,7 +7253,7 @@ instead of 34; to Zip's screen, 15 instead of 34; to Toque y Fama's engine, 18 i
 Timeline deck, 22 instead of 42. `affected.test.mjs` tests `playedOn`, and `scope.test.mjs` tests the rule.
 
 ## D-379 · No cup clock while playing: the time shows only at the end
-**Date:** 2026-10-19 · **Status:** current; corrected by D-384 (games whose speed scores and that have no countdown show the elapsed time) · **Relation:** changes how D-105, D-130 and D-277 show the time (they still measure it the same); resolves dilemma #442
+**Date:** 2026-10-19 · **Status:** amended by D-384 · **Relation:** changes how D-105, D-130 and D-277 show the time (they still measure it the same); resolves dilemma #442
 **Context:** La Copa's play screen showed its ⏱ clock in the header, counting up, in every game, Cup and solo. In games with their own ⏳ countdown (Rutas rotas, Zip, Desenredo, Línea Relámpago) the player saw two clocks going opposite ways, and could read 0:04 as time left (#442).
 **Decision:** the header clock goes, in every game and every mode. The time is measured exactly as before (from «¡A jugar!», paused while reading a fact and with the tab hidden, stopped when the board ends) and shows at the end: the result, the standings and the share text. Each game's own countdown stays. The end-to-end scripts read the time from `#jugar-head`'s `reloj()`, not from the screen.
 **Why:** the owner: the game's own clock means something, because it decides points within that game, but a global clock makes no sense until the very end.
