@@ -4971,7 +4971,7 @@ a buscarlo; el correo del issue es donde lee el reporte).
 **Después:** D-306 suma la etiqueta de la llave del laboratorio, que llega aunque no se escriba nombre.
 
 ## D-280 · El laboratorio tiene dos grupos: Proyectos activos y La Bodega
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-361 · **Relación:** amplía D-262
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-361 · **Relación:** amplía D-262; extended by D-372 (La Bodega also keeps what reached everyone)
 **Decisión:** `/labs/` se ordena en dos grupos: **🧪 Proyectos activos**, lo que se está probando
 ahora, y **📦 La Bodega**, los proyectos que no prosperaron. Los de La Bodega se siguen jugando en su
 página, pero ya no se trabajan. Hoy van a La Bodega El caso (`/labs/case/`) y La clave
@@ -6938,7 +6938,7 @@ owns the queue and the agents' review; one path for every build); a free-form ba
 first round proposes the first three ideas; this PR opens none.
 
 ## D-361 · The home page's order every week, a 🔥 "Popular" label in the lab, and the lab in three groups
-**Date:** 2026-10-18 · **Status:** amended by D-363, D-369 · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar)
+**Date:** 2026-10-18 · **Status:** amended by D-363, D-369 · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar); extended by D-372 (the home page experiments card in La Bodega)
 **Context:** the game-ideas agent's first check (D-360) showed 18 games three or more places away from
 the order D-255 counted on October 9. The owner asked for the order to update every week, to put the
 best of the app in front of a new player, and for a 🔥 "Popular" label on the top three; then, to try
@@ -7095,7 +7095,7 @@ what they were told without anyone doing it by hand.
 `tools/agents/feedback.test.mjs`.
 
 ## D-369 · 🔥 Popular, the ✨ Nuevos / 🔥 Populares filters and the name on the floating menu reach everyone
-**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-361, D-362 and D-364 (they were in the lab); keeps D-363 (the lab bar) for the next experiments
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-361, D-362 and D-364 (they were in the lab); keeps D-363 (the lab bar) for the next experiments; extended by D-371 (the menu keeps floating after a tap) and D-372 (the lab card goes to La Bodega)
 **Decision:** the owner, after trying them in the lab: "hagamos merge en producción". The 🔥 Popular label
 on the top three, the row of ✨ Nuevos and 🔥 Populares chips (with ⭐ Favoritos first in it) and
 "🎲 Juegos de Salón" on top of the floating filters are on for every player; `POPULAR_EN_PORTADA` and the
