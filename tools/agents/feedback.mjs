@@ -12,7 +12,7 @@
  *   node tools/agents/feedback.mjs forget <issue> "<reason>"                 # deletes the address, no email
  *
  * Optional email (D-317): a player who wants to hear back leaves an address. The issue only shows
- * its mask (`j********@********m`); the address lives in `feedbackContacto/<id>`, readable only
+ * its mask (`j********n@g********m`, D-366); the address lives in `feedbackContacto/<id>`, readable only
  * with the owner's key, so `reply` and `forget` run on the owner's Mac mini (the processes round),
  * never in a workflow (its logs are public). `reply` sends the message through Gmail's SMTP
  * (`send-mail.py`), wrapped in one of the friendly templates of `feedback-templates.mjs`, in the
@@ -28,7 +28,7 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
-import { correoValido as validEmail } from '../../public/cup/reportes.js';
+import { correoValido as validEmail, enmascararNombre as maskName } from '../../public/cup/reportes.js';
 
 export const LABEL = 'feedback';
 
@@ -104,15 +104,15 @@ export function title(r) {
   return `🐞 ${where(r)}: ${t.length > 70 ? `${t.slice(0, 69)}…` : t}`;
 }
 
-/** The mask as the rules let it in (D-317), inside a code span: it can't mention or link anything. */
-const mask = m => (/^.\*{8}@\*{8}.$/u.test(String(m || '')) ? String(m).replace(/`/g, "'") : null);
+/** The mask as the rules let it in (D-317; D-366's, or the older one from a cached app), inside a code span: it can't mention or link anything. */
+const mask = m => (/^(?:.\*{8}@\*{8}.|.\*{8}.@.\*{8}.)$/u.test(String(m || '')) ? String(m).replace(/`/g, "'") : null);
 
 /** The body: the text as is, who sent it and the context, without the browser. */
 export function body(r) {
   const c = context(r);
   const date = r.at ? new Date(r.at).toISOString().slice(0, 16).replace('T', ' ') + ' UTC' : 'no date';
   const data = [
-    ['Who', r.nombre && String(r.nombre).trim()], ['Kind', r.tipo && KIND_LABELS[r.tipo]?.slice(9)], ['Lab key', r.tester && String(r.tester).trim()], ['Game', c.juego], ['Lab', c.labs], ['Cup', c.copa], ['Day', c.dia], ['Seed', c.semilla],
+    ['Who', r.nombre && maskName(r.nombre)], ['Kind', r.tipo && KIND_LABELS[r.tipo]?.slice(9)], ['Lab key', r.tester && String(r.tester).trim()], ['Game', c.juego], ['Lab', c.labs], ['Cup', c.copa], ['Day', c.dia], ['Seed', c.semilla],
     ['Result', c.resumen ?? c.puntaje], ['Mistakes', c.errores], ['Hints', c.ayudas], ['Time', c.tiempo],
     ['Page', c.url && (String(c.url).startsWith('/') ? `${SITE}${c.url}` : c.url)], ['Screen', c.pantalla], ['Window size', c.pantallaTam], ['Version', r.v && `v${r.v}`], ['Date', date],
     ['Email', mask(r.correoMascara) && `\`${mask(r.correoMascara)}\` (wants a reply by email: the processes agent sends it when resolving, D-317)`],
@@ -161,7 +161,9 @@ async function contactOf(number, t, test = false) {
   if (!test && !wantsEmail(issue.body)) throw new Error(`#${number}: the player left no email.`);
   if (!test && handled(issue.comments)) throw new Error(`#${number}: already emailed or the address was already deleted.`);
   const c = t ? await (await import('../firebase/firebase-admin.mjs')).read(`feedbackContacto/${id}`, t) : null;
-  return { number: String(number), id, email: c?.correo || null, name: nameOf(issue.body), text: textOf(issue.body), thread: c?.idMensaje ? { id: c.idMensaje, subject: c.asunto || '' } : null, state: issue.state, mask: /\*\*Email:\*\* `([^`]+)`/.exec(issue.body)?.[1] || '' };
+  // The issue shows the name masked (D-366): the greeting takes it from the report itself
+  const report = t ? await (await import('../firebase/firebase-admin.mjs')).read(`feedback/${id}`, t) : null;
+  return { number: String(number), id, email: c?.correo || null, name: String(report?.nombre || '').trim() || (nameOf(issue.body).includes('*') ? '' : nameOf(issue.body)), text: textOf(issue.body), thread: c?.idMensaje ? { id: c.idMensaje, subject: c.asunto || '' } : null, state: issue.state, mask: /\*\*Email:\*\* `([^`]+)`/.exec(issue.body)?.[1] || '' };
 }
 
 const adminToken = async () => (await import('../firebase/firebase-admin.mjs')).token();

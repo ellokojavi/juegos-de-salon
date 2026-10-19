@@ -31,8 +31,15 @@ export function correoValido(c) {
   return t.length <= 120 && /^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/.test(t) ? t : '';
 }
 
-/** The mask the GitHub issue shows (D-317): enough for the owner to recognize it, nothing for anyone else. */
-export const enmascarar = c => { const [u, d] = String(c).split('@'); return `${u[0]}********@********${d.at(-1)}`; };
+/**
+ * The mask the GitHub issue shows (D-317, D-366): the first and last letter on each side of the @,
+ * with a fixed eight asterisks between them so the length says nothing (`j********n@g********m`).
+ */
+export const enmascarar = c => { const [u, d] = String(c).split('@'); return `${u[0]}********${u.at(-1)}@${d[0]}********${d.at(-1)}`; };
+
+/** A player's name as the GitHub issue shows it (D-366): each word's first letter, the rest asterisks. */
+export const enmascararNombre = n => String(n || '').trim().split(/\s+/u).filter(Boolean)
+  .map(w => { const [first, ...rest] = [...w]; return first + '*'.repeat(rest.length); }).join(' ');
 
 const leer = almacen => { try { return JSON.parse(almacen.getItem(PENDIENTES) || '[]'); } catch (_) { return []; } };
 const escribir = (almacen, lista) => {

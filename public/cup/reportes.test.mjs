@@ -1,7 +1,7 @@
 // Tests de los reportes sin cuenta (D-104, D-109): node public/cup/reportes.test.mjs
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { enviarReporte, reenviarPendientes, correoValido, enmascarar } from './reportes.js';
+import { enviarReporte, reenviarPendientes, correoValido, enmascarar, enmascararNombre } from './reportes.js';
 
 const almacen = () => { const m = new Map(); return { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: k => m.delete(k) }; };
 const falla = async () => ({ ok: false, status: 401 });
@@ -37,7 +37,11 @@ await enviarReporte({ texto: 'hola' }, anda(sinTester), almacen());
 assert.ok(!('tester' in sinTester[0]), 'sin llave, no va el campo');
 
 // The optional email (D-317): the public node only gets the mask; the address goes to the private node
-assert.equal(enmascarar('jirigoyen@gmail.com'), 'j********@********m');
+assert.equal(enmascarar('jirigoyen@gmail.com'), 'j********n@g********m');
+assert.equal(enmascarar('a@b.cl'), 'a********a@b********l');
+assert.equal(enmascararNombre('  Cristina   Alvarado '), 'C******* A*******');
+assert.equal(enmascararNombre('Ñandú'), 'Ñ****');
+assert.equal(enmascararNombre(''), '');
 assert.equal(correoValido(' ana@correo.cl '), 'ana@correo.cl');
 for (const malo of ['', 'ana', 'ana@correo', '@correo.cl', 'a b@correo.cl', `${'a'.repeat(110)}@correo.cl`]) assert.equal(correoValido(malo), '', malo);
 {
@@ -47,7 +51,7 @@ for (const malo of ['', 'ana', 'ana@correo', '@correo.cl', 'a b@correo.cl', `${'
   assert.equal(pedidos.length, 2);
   assert.match(pedidos[0].url, /\/feedback\.json$/);
   assert.ok(!JSON.stringify(pedidos[0].body).includes('ana@'), 'the address never reaches the public node');
-  assert.equal(pedidos[0].body.correoMascara, 'a********@********l');
+  assert.equal(pedidos[0].body.correoMascara, 'a********a@c********l');
   assert.match(pedidos[1].url, /\/feedbackContacto\/-Nabc\.json$/);
   assert.equal(pedidos[1].o.method, 'PUT');
   assert.equal(pedidos[1].body.correo, 'ana@correo.cl');
@@ -81,6 +85,7 @@ for (const malo of ['', 'ana', 'ana@correo', '@correo.cl', 'a b@correo.cl', `${'
   assert.ok(!JSON.stringify(reglas.feedbackContacto).includes('".read":true'));
   const mascara = new RegExp(reglas.feedback.$id.correoMascara['.validate'].match(/matches\(\/(.*)\/\)/)[1]);
   assert.ok(mascara.test(enmascarar('jirigoyen@gmail.com')) && !mascara.test('jirigoyen@gmail.com'));
+  assert.ok(mascara.test('j********@********m'), 'the older mask, from a cached app, still gets in (D-366)');
   assert.ok(!('correo' in reglas.feedback.$id), 'the public node has no field for the address');
 }
 
