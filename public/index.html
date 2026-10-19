@@ -221,16 +221,22 @@
     .filtros .favs { display: flex; justify-content: center; }
     .filtros .favs[hidden] { display: none; }
     .filtros .ficha-fav {
-      display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
       font: 900 0.9rem var(--font-body); border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
       transition: background 0.15s, color 0.15s, transform 0.1s;
     }
     /* "✨ Nuevo" and "🔥 Populares" (D-362, in the lab): a row of their own above the types, the same
        pill as ⭐ Favoritos; each one shows only when it has games. */
-    .filtros .atajos { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .filtros .atajos { display: flex; gap: 8px; justify-content: center; }
+    .filtros .atajos .ficha-fav { flex: 0 0 auto; }
+    .filtros .atajos .ficha-fav.sola { min-width: 44px; padding-inline: 4px; }
+    .filtros .atajos .ficha-fav.sola .ficha-emoji { font-size: 1.3rem; }
+    .filtros .atajos .ficha-fav.sola span:last-child { display: none; }
+    .filtros .atajos.apretada { gap: 4px; }
+    .filtros .atajos.apretada button { padding-inline: 10px; gap: 4px; }
     .filtros .atajos[hidden], .filtros .atajos button[hidden] { display: none; }
     .filtros .atajos button {
-      display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
       font: 900 0.9rem var(--font-body); border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
       transition: background 0.15s, color 0.15s, transform 0.1s;
     }
@@ -256,6 +262,20 @@
       box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12), 0 10px 24px rgba(0, 0, 0, 0.35);
     }
     .filtros-barra.pegada::before { opacity: 1; }
+    /* The app's name on top of the filters, only while they float (D-364, in the lab with ?brand):
+       scrolling down a long list, the floating menu still says where you are; a tap goes back up. */
+    .barra-titulo { display: none; }
+    .filtros-barra.pegada .barra-titulo {
+      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px;
+      margin: -8px 0 0; padding: 0; border: 0; background: none; cursor: pointer;
+      font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.04em; color: var(--ink);
+    }
+    .filtros-barra.pegada .barra-titulo span:last-child {
+      background: linear-gradient(90deg, var(--yellow), var(--pink), var(--cyan), var(--lime), var(--yellow));
+      background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shimmer 6s linear infinite;
+    }
+    @media (prefers-reduced-motion: reduce) { .filtros-barra.pegada .barra-titulo span:last-child { animation: none; } }
     .link-btn { background: none; border: 0; color: var(--yellow); font: 900 0.9rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; }
     .game-card[hidden], .game-slot[hidden] { display: none !important; }
     /* La ⭐ de favorito (D-238): en la esquina de arriba de la tarjeta, encima y no adentro (un
@@ -593,15 +613,22 @@
       const acomodarFav = () => {
         const hay = hayFavoritos();
         fav.hidden = !hay;
-        const formas = hay ? [['fila', false], ['fila', true], ['linea', false]] : [['linea', false]];
-        for (const [donde, sola] of formas) {
-          if (donde === 'fila') { if (fav.parentNode !== tipos) tipos.prepend(fav); }
+        // With ✨ Nuevo and 🔥 Populares (D-362), ⭐ goes first in their row, with its name if it fits (D-364)
+        const conFila = hay && [NEW, POP].some(tieneAtajo);
+        // In that row: with its name; with its name and less air; the ⭐ alone
+        const formas = hay ? [...(conFila ? [['atajos', false, false], ['atajos', false, true], ['atajos', true, true]] : []), ['fila', false], ['fila', true], ['linea', false]] : [['linea', false]];
+        for (const [donde, sola, justa = sola] of formas) {
+          if (donde === 'atajos') { if (fav.parentNode !== atajos) atajos.prepend(fav); }
+          else if (donde === 'fila') { if (fav.parentNode !== tipos) tipos.prepend(fav); }
           else if (fav.parentNode !== favs) favs.append(fav);
           fav.classList.toggle('sola', sola);
-          tipos.classList.toggle('apretada', sola);
-          if (donde === 'linea' || tipos.scrollWidth <= tipos.clientWidth + 0.5) break;
+          tipos.classList.toggle('apretada', donde === 'fila' && sola);
+          atajos.classList.toggle('apretada', donde === 'atajos' && justa);
+          const fila = donde === 'atajos' ? atajos : tipos;
+          if (donde === 'linea' || fila.scrollWidth <= fila.clientWidth + 0.5) break;
         }
         favs.hidden = !hay || fav.parentNode !== favs;
+        atajos.hidden = ![NEW, POP].some(tieneAtajo) && fav.parentNode !== atajos;
       };
       const aplicar = (primera = false) => {
         for (const b of botones) {
@@ -643,9 +670,11 @@
       // pasó de largo. Al cambiar de tipo estando pegados, la lista vuelve a empezar justo debajo.
       const barra = document.getElementById('filtros-barra');
       const marca = document.getElementById('filtros-marca');
+      if (param('brand') !== null) barra.prepend(el('button', { type: 'button', class: 'barra-titulo', 'aria-label': T.appTitle, onClick: () => scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }) },
+        el('span', { 'aria-hidden': 'true' }, '🎲'), el('span', {}, T.appTitle)));
       new IntersectionObserver(([e]) => barra.classList.toggle('pegada', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(marca);
       barra.addEventListener('click', e => {
-        if (!e.target.closest('button') || !barra.classList.contains('pegada')) return;
+        if (!e.target.closest('button') || e.target.closest('.barra-titulo') || !barra.classList.contains('pegada')) return;
         const tope = parseFloat(getComputedStyle(barra).top) || 0;
         window.scrollTo({ top: marca.getBoundingClientRect().top + window.scrollY - tope });
       });
