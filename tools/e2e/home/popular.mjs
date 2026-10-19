@@ -2,7 +2,8 @@
 // players see them since D-369 (tried in the lab as D-361, D-362 and D-364): three labelled cards that are
 // neither La Copa nor "New", in German too; the chips above the types in every language at 320 px, each one
 // filtering; ⭐ Favoritos beside them, centered when bare; the title only while the filters float, a tap back
-// to the top; and the space under the floating filters like the space above the title. Prints ✗ if something fails.
+// to the top; the space under the floating filters like the space above the title; and a tap on a floating filter
+// keeps the menu floating, even on a short result, until the player scrolls up (D-371). Prints ✗ if something fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output('/tmp/home-popular');
@@ -66,6 +67,32 @@ await waitFor(`document.getElementById('filtros-barra').classList.contains('pega
 await sleep(300);
 const gaps = await ev(`(() => { const bar = document.getElementById('filtros-barra'), t = bar.querySelector('.barra-titulo span:last-child'), r = document.createRange(); r.selectNodeContents(t); const top = r.getBoundingClientRect().top; const fondo = bar.getBoundingClientRect().bottom + parseFloat(getComputedStyle(bar, '::before').bottom) * -1; const ultima = Math.max(...[...bar.querySelectorAll('.atajos, .tipos, .favs:not([hidden])')].map(x => x.getBoundingClientRect().bottom)); return [Math.round(top), Math.round(fondo - ultima)]; })()`);
 ok(Math.abs(gaps[0] - gaps[1]) <= 2, `the space under the floating filters (${gaps[1]} px) matches the one above the title (${gaps[0]} px)`);
+
+// A tap on a floating filter keeps the menu floating (D-371): on a tall screen 🔥 Populares leaves a list too short to
+// scroll that far, and an empty space under it holds the menu until the player scrolls up
+const alto = await launch({ dir: `${OUT}/alto`, out: OUT, width: 390, height: 1400 });
+const ev2 = e => alto.evaluate(e);
+const estado = `(() => { const bar = document.getElementById('filtros-barra'), c = [...document.querySelectorAll('.game-card[data-id]')].find(x => !x.hidden); return { pegada: bar.classList.contains('pegada'), arriba: Math.abs(bar.getBoundingClientRect().top - parseFloat(getComputedStyle(bar).top)) < 2, tarjeta: c.getBoundingClientRect().top >= bar.getBoundingClientRect().bottom - 1, relleno: document.querySelector('.filtros-relleno').offsetHeight, y: scrollY }; })()`;
+await alto.go(`${SITE}/?test&lang=es`);
+for (let t = 0; t < 80 && !(await ev2(`document.querySelectorAll('.game-card').length > 3`)); t++) await sleep(100);
+await ev2(`scrollTo(0, 3000); 1`); await sleep(400);
+await ev2(`document.querySelector('.atajos [data-tipo=popular]').click(); 1`); await sleep(500);
+const corto = await ev2(estado);
+ok(corto.pegada && corto.arriba && corto.tarjeta && corto.relleno > 0, `on a short result the menu keeps floating over the first card (${corto.relleno} px of space under the list)`);
+await ev2(`scrollBy(0, -40); 1`); await sleep(400);
+const subio = await ev2(estado);
+ok(!subio.pegada && corto.relleno - subio.relleno === 40, `scrolling up lets the menu go and gives the space back (${subio.relleno} px left)`);
+await ev2(`scrollTo(0, 0); 1`); await sleep(300);
+ok(await ev2(`document.querySelector('.filtros-relleno').offsetHeight === 0`), 'back on top, no space is left under the list');
+alto.close();
+// Half a pixel short of the line the menu dropped on any list: at 390 px, 🧩 with its many games
+const ancho = await launch({ dir: `${OUT}/ancho`, out: OUT, width: 390, height: 844 });
+await ancho.go(`${SITE}/?test&lang=es`);
+for (let t = 0; t < 80 && !(await ancho.evaluate(`document.querySelectorAll('.game-card').length > 3`)); t++) await sleep(100);
+await ancho.evaluate(`scrollTo(0, 3000); 1`); await sleep(400);
+await ancho.evaluate(`document.querySelector('.tipos [data-tipo=logic]').click(); 1`); await sleep(500);
+ok(await ancho.evaluate(`document.getElementById('filtros-barra').classList.contains('pegada')`), 'at 390 px, a tap on 🧩 Lógica keeps the menu floating');
+ancho.close();
 
 b.close();
 console.log(failures ? `✗ ${failures} failure(s)` : '✓ home/popular.mjs');

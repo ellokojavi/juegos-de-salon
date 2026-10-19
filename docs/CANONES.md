@@ -46,7 +46,8 @@ public/<carpeta>/
   Toda página de `/labs/` carga primero la puerta (`labs-puerta.js`) y lleva
   `<meta name="robots" content="noindex, nofollow">`, y sus puentes también el `noindex`
   (`og.mjs` los pone en las que genera; D-281). En `/labs/`, un proyecto va en **Proyectos
-  activos** mientras se prueba y en **La Bodega** si no prosperó, plegado a su título (D-280).
+  activos** mientras se prueba y en **La Bodega** si no prosperó, plegado a su título (D-280), or once
+  what it tried reached everyone (D-372).
 - El juego se registra en `public/assets/js/games.js` con `id`, `emoji`, `name` y `tagline` por idioma, `players`, `duration`, `path` y `available`. Con sala, también `jugadas`: los tipos de mensaje que hace una persona, que es lo que el panel cuenta como jugadas (D-138).
 - El `<head>` de cada página de la app lleva el manifest, el ícono y el nombre del iPhone
   (`apple-touch-icon` y `apple-mobile-web-app-title`), el script que elige el manifest del idioma
@@ -402,7 +403,8 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **Home page experiments** (D-361): what is tried on the home page before players see it is a URL
   parameter the page reads, off by default, listed in `public/labs/home/experiments.js`. `/labs/home/`
   opens the real home page with `?lab`, which draws the bar (`public/labs/experiments.css`) with one
-  switch for each; never in a frame, where an iPhone would not let anything stick (D-363).
+  switch for each; never in a frame, where an iPhone would not let anything stick (D-363). With none
+  being tried, its 🏠 Experimentos de la portada card waits in La Bodega, folded (D-372).
 - **A promotional splash, off by default** (D-351): when the owner turns on a campaign
   (`ACTIVE` in `splash.js`, with `node tools/agents/splash.mjs on <id> | off`), a window over the
   home page tells what is new, with the page darkened behind; each phone sees it once, and a new
@@ -436,7 +438,10 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   (D-149, D-214, D-238).
 - **Los filtros se quedan pegados arriba** al bajar por la lista, y tocar uno estando pegados
   lleva a la primera tarjeta filtrada (D-196). Pegados, su fondo sube hasta tapar la franja de la
-  muesca: las tarjetas no se ven pasar detrás de la hora (U-12).
+  muesca: las tarjetas no se ven pasar detrás de la hora (U-12). They keep floating after that tap even when the
+  result is too short to scroll that far: an empty space under the list (`.filtros-relleno`) holds
+  them, and shrinks as the player scrolls up, so they leave at the first pixel up; the jump is
+  rounded up to a whole pixel (D-371).
 - **Los tipos van en una sola fila**, a cualquier ancho desde 320 px y en los cuatro idiomas:
   bajo 520 px el emoji sube arriba del nombre, y bajo 300 px de caja las fichas se aprietan para
   no quedar pegadas al borde (D-144, D-149, U-11). Lo que se suma a la fila entra solo si cabe,
