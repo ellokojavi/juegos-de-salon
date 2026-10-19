@@ -258,7 +258,7 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | TF-05 | Modo dos celulares conectados por sala con código de 4 letras y QR (Firebase Realtime Database). | ✅ v0.4 |
 | TF-06 | El secreto no sale del celular durante la partida; compromiso por hash (con sal privada) al inicio y revelación verificada al final. | ✅ v0.4 |
 | TF-07 | Reconexión: si un celular se cierra, retoma la partida desde la sala (secreto guardado en el dispositivo). | ✅ v0.4 |
-| TF-08 | Derecho a réplica configurable. Quién parte es determinista: el invitado en la primera partida, el perdedor en la revancha (ver D-19). | ✅ v0.4 |
+| TF-08 | Derecho a réplica configurable. Quién parte es determinista: el invitado en la primera partida, el perdedor en la revancha (ver D-19). Since D-367 this applies only to 📱 one phone: on 📡 two phones both guess at once, without right of reply. | ✅ v0.4 |
 | TF-09 | Textos en español e inglés (“Bulls and Cows”). | ✅ v0.4 |
 | TF-10 | Revancha en los tres modos; en dos celulares se crea una sala nueva y ambos se mueven solos. | ✅ v0.4 |
 | TF-11 | Indicador de rival desconectado en modo dos celulares. | ✅ v0.4 |

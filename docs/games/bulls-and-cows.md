@@ -15,6 +15,7 @@ está en [bulls-and-cows-factibilidad.md](bulls-and-cows-factibilidad.md).
 - Por turnos, cada uno intenta adivinar el del rival. El celular responde solo: **fama** = cifra correcta en su posición, **toque** = cifra correcta en otra posición.
 - Gana quien llega a todas las famas. Con **derecho a réplica** (por defecto), si acierta quien partió, el otro tiene un último intento; si también acierta, empate.
 - **Quién parte:** el invitado (B) en la primera partida; en la revancha, el perdedor (D-19).
+- **📡 Two phones: both at once (D-367).** There are no turns: each guesses at their own pace. Whoever cracks it waits for the rival, watching their board, and the final screen comes when both have it. Fewer guesses wins; the same number is a tie. No right of reply (its switch only shows on one phone). The rules above about turns, right of reply and who starts apply to 📱 one phone.
 
 ### Vocabulario en pantalla
 
@@ -115,6 +116,7 @@ Vale para un celular y dos celulares; jugando solo no hay mensajes.
 { "t": "commit",  "from": "A", "hash": "sha256(secreto+sal)" }
 { "t": "guess",   "from": "A", "round": 0, "value": "4071" }
 { "t": "reply",   "from": "B", "round": 0, "famas": 1, "toques": 2 }
+{ "t": "reply",   "from": "B", "of": "A", "n": 0, "famas": 1, "toques": 2 }   // two phones (D-367): names the guess by player and number
 { "t": "reveal",  "from": "A", "secret": "1234", "salt": "…" }
 { "t": "rematch", "from": "B", "code": "KXTR" }      // solo dos celulares
 { "t": "chat",    "from": "B", "text": "no le achuntas ni una" }   // solo dos celulares; no es estado
