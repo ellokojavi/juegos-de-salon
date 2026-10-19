@@ -19,6 +19,7 @@ import {
 } from './push.js';
 import { estado, leer, recorrer, numDia, semanaDe } from './uno-al-dia.js';
 import { trackUnoAlDia } from './transport/stats.js';
+import { SHEETS } from './notification-sheets.js';
 
 const KEY = 'juegos-de-salon:uno-al-dia:avisos';
 export const HORAS = [9, 13, 19];
@@ -114,10 +115,9 @@ function hoja(id, ...hijos) {
 }
 export function cerrar() { abierta?.remove(); abierta = null; }
 
-/** Los textos de las hojas de La Copa que valen igual aquí (agregar a inicio, abrir en Safari, bloqueados). */
+/** The sheets' texts, the same as La Copa's (add to home screen, open in Safari, blocked; D-377). */
 async function textosCopa(lang) {
-  const { LOCALES } = await import('../../cup/rules.js');
-  return LOCALES[lang] || LOCALES.es;
+  return SHEETS[lang] || SHEETS.es;
 }
 
 async function hojaInstalar({ lang, alTocar }) {

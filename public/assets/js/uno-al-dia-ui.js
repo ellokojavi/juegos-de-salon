@@ -27,14 +27,11 @@ export const URL_HOY = `${SITIO}today/`;
 export const textoRacha = (n, lang) => (n === 1 ? textos(lang).uad.racha1 : fmt(textos(lang).uad.racha, { n }));
 
 /**
- * Los juegos del dado, con su nombre en cada idioma. El de un juego de grupo está en `games.js`;
- * el de un solitario, en las reglas de La Copa, que pesan: se cargan recién al tirar, no al
- * dibujar la portada.
+ * Los juegos del dado, con su nombre en cada idioma: el de `games.js`, o el que trae su entrada en
+ * JUEGOS_DIA si solo La Copa lo tiene (D-377), sin cargar las reglas de La Copa.
  */
 async function caras() {
-  const { juegosCopa, LOCALES } = await import('../../cup/rules.js');
-  const por = Object.fromEntries(Object.keys(LOCALES).map(l => [l, juegosCopa(l)]));
-  return JUEGOS_DIA.map(j => ({ id: j.id, emoji: j.emoji, name: gameById(j.id)?.name || Object.fromEntries(Object.keys(por).map(l => [l, por[l][j.id].nombre])) }));
+  return JUEGOS_DIA.map(j => ({ id: j.id, emoji: j.emoji, name: gameById(j.id)?.name || j.name }));
 }
 
 /**
