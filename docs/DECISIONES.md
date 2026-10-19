@@ -7051,7 +7051,7 @@ inbox every 15 minutes would open 96 sessions a day, almost all to find nothing.
 mini). The processes round still triages what the watcher misses. `tools/jobs/README.md` explains it.
 
 ## D-366 · Feedback issues mask the player's name, and the email mask keeps both ends of each side
-**Date:** 2026-10-18 · **Status:** in force · **Relation:** amends D-279 (the full name on the issue) and D-317 (the email mask)
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-279 (the full name on the issue) and D-317 (the email mask)
 **Decision:** Owner's request, after issue #538 showed a player's full name on the public repo:
 - **Who** shows each word of the name by its first letter, the rest asterisks, one per letter
   (`Cristina Alvarado` → `C******* A*******`; `enmascararNombre` in `public/cup/reportes.js`,
