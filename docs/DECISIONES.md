@@ -5574,7 +5574,7 @@ píldora de Uno al día quedaba pegada a su bajada, a media tarjeta, y se leía 
 tarjeta chica); igualar el largo de las bajadas (cambia con el idioma).
 
 ## D-306 · El feedback dice con qué llave se entró, no muestra su JSON y se sube cada 15 minutos
-**Fecha:** 2026-10-12 · **Estado:** vigente; corregida por D-382 (the upload runs on the Mac mini every 5 minutes) · **Relación:** amplía D-104 (un campo más en el reporte), D-279 (quién manda el feedback) y D-284 (una llave por persona); corrige D-275 en que se subía cada hora
+**Fecha:** 2026-10-12 · **Estado:** corregida por D-382 · **Relación:** amplía D-104 (un campo más en el reporte), D-279 (quién manda el feedback) y D-284 (una llave por persona); corrige D-275 en que se subía cada hora
 **Decisión:** tres cambios al feedback 🐞, los tres pedidos por el dueño:
 - **Quien entró al laboratorio con su llave manda también su etiqueta.** Cuando una llave abre la
   puerta, `labs-puerta.js` guarda su etiqueta (`juegos-de-salon:labs-quien`, nunca la llave) y
@@ -7032,7 +7032,7 @@ from the other, also in the types row since D-241); the title is 44 px tall (C-8
 D-362's filters.
 
 ## D-365 · Every job in one registry, and the frequent ones run on the Mac without Claude
-**Date:** 2026-10-18 · **Status:** current; extended by D-382 (the feedback upload is a `mac` job too) · **Relation:** extends D-318 (the hola@ inbox) and D-276 (the round on the Mac mini)
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-318 (the hola@ inbox) and D-276 (the round on the Mac mini)
 **Context:** an email to hola@ waited for the daily round to become an issue. The owner asked to be
 more responsive at very low cost, and that every job of the project be orchestrated centrally, none out
 of sight, in a way that scales. The jobs were spread out: two scheduled workflows, two scheduled tasks
