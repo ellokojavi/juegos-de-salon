@@ -77,7 +77,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379 |
-| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365 |
+| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178, D-380 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -5574,7 +5574,7 @@ píldora de Uno al día quedaba pegada a su bajada, a media tarjeta, y se leía 
 tarjeta chica); igualar el largo de las bajadas (cambia con el idioma).
 
 ## D-306 · El feedback dice con qué llave se entró, no muestra su JSON y se sube cada 15 minutos
-**Fecha:** 2026-10-12 · **Estado:** vigente · **Relación:** amplía D-104 (un campo más en el reporte), D-279 (quién manda el feedback) y D-284 (una llave por persona); corrige D-275 en que se subía cada hora
+**Fecha:** 2026-10-12 · **Estado:** vigente; corregida por D-382 (the upload runs on the Mac mini every 5 minutes) · **Relación:** amplía D-104 (un campo más en el reporte), D-279 (quién manda el feedback) y D-284 (una llave por persona); corrige D-275 en que se subía cada hora
 **Decisión:** tres cambios al feedback 🐞, los tres pedidos por el dueño:
 - **Quien entró al laboratorio con su llave manda también su etiqueta.** Cuando una llave abre la
   puerta, `labs-puerta.js` guarda su etiqueta (`juegos-de-salon:labs-quien`, nunca la llave) y
@@ -7032,7 +7032,7 @@ from the other, also in the types row since D-241); the title is 44 px tall (C-8
 D-362's filters.
 
 ## D-365 · Every job in one registry, and the frequent ones run on the Mac without Claude
-**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-318 (the hola@ inbox) and D-276 (the round on the Mac mini)
+**Date:** 2026-10-18 · **Status:** current; extended by D-382 (the feedback upload is a `mac` job too) · **Relation:** extends D-318 (the hola@ inbox) and D-276 (the round on the Mac mini)
 **Context:** an email to hola@ waited for the daily round to become an issue. The owner asked to be
 more responsive at very low cost, and that every job of the project be orchestrated centrally, none out
 of sight, in a way that scales. The jobs were spread out: two scheduled workflows, two scheduled tasks
@@ -7285,3 +7285,18 @@ ones that already work here, tried in the lab before deciding anything else.
 on an iPhone; 🎲 instead).
 **Consequences:** the ideas ledger records `pips-dominoes` as approved; `engine.test.mjs` and
 `tools/e2e/pips/lab.mjs` cover it.
+
+## D-382 · The feedback upload runs on the Mac mini every 5 minutes
+**Date:** 2026-10-19 · **Status:** current · **Relation:** corrects D-306 (the 15-minute GitHub schedule); extends D-365 (a second `mac` job)
+**Context:** on 2026-10-19 GitHub ran `feedback.yml`'s `7,22,37,52 * * * *` schedule only at 01:50,
+06:58, 14:35 and 20:09 UTC: a report from the app's form waited up to eight hours to become an issue.
+And `inbox-watch` handed its emails to that same workflow by `gh workflow run`. The owner asked to move it all to the Mac mini.
+**Decision:**
+- **`feedback-watch` is a `mac` job every 5 minutes** that runs `node tools/agents/feedback.mjs sync`:
+  one read of `feedback/` (no key) and one `gh issue list`; it creates issues only when there is a new report.
+- **`inbox-watch` uploads its reports itself** with `feedback.mjs sync`, without going through GitHub.
+- **`feedback.yml` stays, by hand only** (`workflow_dispatch`): the fallback if the Mac mini is off.
+**Why:** launchd keeps its interval; GitHub's schedules are best effort and skip most runs on a busy day.
+**Consequences:** a report becomes an issue within about 5 minutes while the Mac mini is on; if it is
+off, the reports wait in Firebase (nothing is lost) until it is back or someone launches `feedback.yml`.
+After merging, the Mac mini needs `git pull` in the main folder and `node tools/jobs/jobs.mjs install`.
