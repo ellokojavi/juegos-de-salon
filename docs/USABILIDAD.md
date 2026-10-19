@@ -141,6 +141,8 @@ la portada al día, va con los textos, and U-39, the start button above the fold
 
 Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
 
+- **No clock at the top while playing** (#442, D-379; the owner replaced the recommended option A): none of La Copa's
+  games shows the ⏱ that counted up, in the cup or in practice; the time shows at the end, and each game's own ⏳ stays.
 - **New games on top of the home page** (#443, D-335): while a game carries its "New" label it goes
   right after La Copa; when the label goes, back to its place by popularity.
 - **Rutas en un celular chico** (#360, opción B): sin el título mientras se juega (la barra de arriba ya
