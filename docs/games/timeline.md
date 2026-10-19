@@ -108,7 +108,7 @@ dice); el dato deja algo aprendido en cada jugada, también en ¿En qué año? y
   línea como quedó: los errores con su dato a la vista y el resto a un toque. En ¿En qué año? va bajo
   el año de cada hito.
 - **El reloj se pausa mientras se lee el dato** en Línea Relámpago (solo, práctica, Uno al día y
-  copa) y en cada hito de ¿En qué año?: el reloj de arriba marca ⏸ y una barra bajo el dato se vacía. La pausa tiene
+  copa) y en cada hito de ¿En qué año?: the clock at the top shows ⏸ (in the standalone game; La Copa's screens show no clock while playing, D-379) y una barra bajo el dato se vacía. La pausa tiene
   **tope de 6 s** (`PAUSA_DATO_MS`) para que no sirva de tiempo para pensar; el veredicto tapa el
   tablero, así que tampoco hay nada que estudiar. En el juego en grupo (un celular o varios) no hace
   falta: el tiempo de cada turno parte cuando se cierra el veredicto (D-31), así que leer el dato ya
