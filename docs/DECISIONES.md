@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
@@ -7002,3 +7002,21 @@ install banner included); the splash demo keeps its own frame, where nothing nee
 **Why:** what is tried has to behave as it will for a player, on the phone the owner uses.
 **Consequences:** `tools/e2e/home/lab.mjs` checks that `/labs/home/` lands on the home page with the bar,
 that the filters stick when the page scrolls, and that the bar never shows without `?lab`.
+
+## D-364 · The floating menu carries the app's name, and ⭐ Favoritos joins Nuevo and Populares, in the lab
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-362 (the ✨ Nuevo / 🔥 Populares row) and D-241 (where ⭐ Favoritos goes)
+**Context:** the owner asked whether the floating menu could carry the logo or the title, and noticed the
+⭐ Favoritos star was missing: with the new row it was squeezed, as a bare ⭐, in front of the four types.
+**Decision:**
+- **⭐ Favoritos in the Nuevo / Populares row** when that row is on (`?picks`): first in it, with its
+  name; with its name and less air; or the ⭐ alone, whichever fits first (`acomodarFav` measures). From
+  360 px it keeps its name in the four languages; at 320 px, only in German. It still appears only once a
+  game is marked (D-238), and without the row it goes where D-241 put it.
+- **🎲 Juegos de Salón on top of the floating menu** (`?brand`, a third switch "🎲 Título" at
+  `/labs/home/`): the app's name in the title's font and rainbow, only while the filters float, never in
+  their place under the real title; a tap goes back to the top.
+**Why:** the owner's requests. Scrolling a long list, the floating menu still says where you are; and
+the star in the row of quick picks is one line less than in its own (124 px floating at 320 px with a
+favorite, the title included, against 178 without the title).
+**Consequences:** `tools/e2e/home/lab.mjs` checks both; C-17 says them. They ship with D-361's label and
+D-362's filters.
