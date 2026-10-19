@@ -5922,7 +5922,7 @@ labels, with environment variables read under both names for a while (`SITE` or 
   copies until the weekly review removes them (phase 4).
 
 ## D-317 · Feedback: an optional email, kept private, and a friendly reply when it's resolved
-**Date:** 2026-10-14 · **Status:** amended by D-327, D-341, D-366 · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
+**Date:** 2026-10-14 · **Status:** amended by D-327, D-341, D-366, D-368 · **Relation:** extends D-275 (feedback as issues) and D-279 (what the issue shows); amended by D-327 (an exempt list for the 24-hour rule)
 **Decision:** Owner's request: every feedback form (the 🐞 in the lab and in La Copa, the "¿Qué te
 pareció?" at the end of each lab game and La Copa's report screen) gets an optional email field, so
 whoever wants to can be told when we answer.
@@ -7067,3 +7067,15 @@ thing that keeps the name off GitHub. D-279 argued `feedback/` is already readab
 which is true but a much smaller exposure than an indexed issue.
 **Consequences:** `feedback.test.mjs` checks that the full name never reaches the body;
 `reportes.test.mjs` checks both masks and that the rule lets the new and old ones in.
+
+## D-368 · When we build a player's idea, the reply follows one standard and closes the issue
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-317
+**Decision:** When a change comes from a player's feedback, the email reply goes out only once the change
+is live (merged and published), and its answer has three parts: thanks for their time and the idea, what
+changed and how it plays now, and what stayed as it was. `feedback.mjs reply` then comments on the issue
+what we answered (quoted, without the address), adds the `replied` label and closes it as completed.
+**Why:** The owner's request with #538: the player hears back when they can try it, and the issue shows
+what they were told without anyone doing it by hand.
+**Consequences:** `.claude/agents/processes.md` (step 3, the email reply) describes it; the test is in
+`tools/agents/feedback.test.mjs`.
+
