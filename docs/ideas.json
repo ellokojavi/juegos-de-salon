@@ -82,7 +82,7 @@
       "proof": "In the lab, a finish rate of 50% or more with 20+ starts within 3 weeks; after graduating, 40+ plays in its first 4 weeks (Zip's level).",
       "recommendation": "Yes, after the two above: it fits the house exactly, but it is the most expensive.",
       "inspiration": "Pips, NYT Games (launched 2025): https://www.nytimes.com/games/pips",
-      "status": "proposed",
+      "status": "approved",
       "date": "2026-10-19",
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/556",
       "history": [
@@ -91,8 +91,15 @@
           "status": "proposed",
           "why": null,
           "link": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
+        },
+        {
+          "date": "2026-10-19",
+          "status": "approved",
+          "why": "The owner, in chat on 2026-10-19: Hagamos una demo de Pips en Labs; built in the lab as D-381",
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
         }
-      ]
+      ],
+      "why": "The owner, in chat on 2026-10-19: Hagamos una demo de Pips en Labs; built in the lab as D-381"
     }
   ],
   "rounds": [

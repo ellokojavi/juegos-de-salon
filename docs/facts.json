@@ -1,5 +1,5 @@
 {
-  "version": "0.186.9",
+  "version": "0.186.11",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -994,6 +994,8 @@
     "public/labs/exploding-numbers/engine.js",
     "public/labs/exploding-numbers/game.js",
     "public/labs/home/experiments.js",
+    "public/labs/pips/engine.js",
+    "public/labs/pips/game.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -1063,6 +1065,7 @@
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
+    "public/labs/pips/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
@@ -1174,6 +1177,7 @@
     "output.test.mjs",
     "paint-mines/game.mjs",
     "paths.mjs",
+    "pips/lab.mjs",
     "plots/numbers.mjs",
     "plots/utilities.mjs",
     "room-cap.mjs",
@@ -1297,6 +1301,10 @@
     {
       "path": "docs/games/paint-mines.md",
       "title": "🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)"
+    },
+    {
+      "path": "docs/games/pips.md",
+      "title": "🎲 Pips (lab prototype, in Juegos en prueba)"
     },
     {
       "path": "docs/games/plots.md",
