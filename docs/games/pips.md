@@ -19,9 +19,12 @@ que cada zona cumpla su regla."), the credit, and an easy board that solves itse
 then another (still with reduced motion). Then "📅 Los tableros de hoy son los mismos para todos." (without
 `?seed=`), "🎲 Empezar" and the three steps (after the button, U-39):
 
-1. 🎲 Pon todas las fichas en el tablero: cada una ocupa dos casillas.
-2. 🎯 Cada zona de color cumple su regla: 6 suman 6, = todas iguales, ≠ todas distintas, <5 suman menos de 5, >9 suman más de 9.
-3. 👆 Toca una ficha para elegirla, otra vez para girarla, y toca la casilla donde va. Una ficha puesta se saca con un toque. Son 3 tableros contra el reloj.
+1. 🎲 Pon todas las fichas: cada una cubre dos casillas.
+2. 🎯 Cada zona de color cumple su regla: un número es lo que suman sus puntos; = todos iguales; ≠ todos distintos; <5 y >9, menos o más.
+3. 👆 Toca una ficha para elegirla, otra vez para girarla, y luego su casilla. Un toque la saca.
+
+The usability agent shortened them to fit U-18 (273 characters); that there are three boards against the
+clock is said by the lab card and the heading of each board.
 
 The 🎲 stands in for a domino: the domino characters (🁢) are not color emoji on an iPhone and could show
 as an empty box.
