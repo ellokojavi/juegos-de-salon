@@ -7203,7 +7203,7 @@ rest, with days still "to play".
 what the image writes; `public/cup/engine.test.mjs` checks `menosJuegos` with players out of the cup.
 
 ## D-377 · La Copa's rules and engine stay out of the pages that are not La Copa's
-**Date:** 2026-10-19 · **Status:** current · **Relation:** extends D-329 (a PR runs the scripts its changes reach)
+**Date:** 2026-10-19 · **Status:** current · **Relation:** extends D-329 (a PR runs the scripts its changes reach); extended by D-378 (every game's files, and its guard moved to `tools/e2e/scope.test.mjs`)
 **Context:** a PR that only changed La Copa's table (#552) ran 67 of the 74 end-to-end scripts.
 `cup/rules.js` reached 22 pages and `cup/engine.js` 20, though only the Cup and its own games show
 them: the home page, Ahorcado, Batalla Naval, Dudo and Generala loaded `cup/rules.js` through Uno al
@@ -7222,7 +7222,8 @@ from 49 to 35; what is left are La Copa's own pages (the Cup, its games, Uno al 
 **Consequences:** `public/assets/js/uno-al-dia.test.mjs` checks that no page loads `cup/rules.js` or
 `cup/engine.js` except La Copa's own (its screens, which load `cup/game.js`, and Uno al día, the records
 and the panel, which show its data), and that the two names in `JUEGOS_DIA` say what La Copa says. A
-new import of La Copa from any other page, a new game's included, fails that test.
+new import of La Copa from any other page, a new game's included, fails that test. Since D-378 that
+page check lives in `tools/e2e/scope.test.mjs`, for every game's files, not only La Copa's.
 
 ## D-378 · Each PR tests what it really touches: each game's files on its own pages, and the scope in sight
 **Date:** 2026-10-19 · **Status:** current · **Relation:** extends D-329 (scripts by the pages a change reaches) and D-377
