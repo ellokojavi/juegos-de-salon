@@ -642,6 +642,11 @@
       "phase": 4,
       "state": "pending"
     },
+    "public/assets/js/azar.test.mjs": {
+      "to": "public/assets/js/random.test.mjs",
+      "phase": 4,
+      "state": "pending"
+    },
     "public/assets/js/buzon-form.js": {
       "to": "public/assets/js/inbox-form.js",
       "phase": 4,

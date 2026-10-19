@@ -64,7 +64,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -2850,7 +2850,7 @@ brasileño puede jugar en español).
 
 
 ## D-188 · Juego al azar: un dado que rueda sobre el menú
-**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** el paso al juego, en D-237
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** el paso al juego, en D-237; extended by D-374 (the dice skips games that need a group)
 **Decisión:** El menú tiene un botón **🎲 Juego al azar** bajo la bajada. Al tocarlo, un dado
 blanco de cantos redondos, con un juego en cada cara, entra rodando sobre la misma portada,
 rebota tres veces y cae con el elegido adelante; abajo dice "¡Te tocó! <juego>" y a los 1,3 s se
@@ -7144,3 +7144,14 @@ to the improvements. La Bodega's intro now says it keeps the projects no longer 
 did not prosper or because they already reached everyone.
 **Why:** the owner's request.
 **Consequences:** `tools/e2e/home/lab.mjs` checks the card is in La Bodega and folded.
+
+## D-374 · The random dice skips games that need a group
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-188 (🎲 Juego al azar)
+**Decision:** 🎲 Juego al azar never picks a game whose `players` starts at three or more: today only
+Cuarto Rey (4–6). Neither does 🎲 Jugar otro after Uno al día, which rolls the same dice. Its card stays
+on the home page and in its filter; only the dice leaves it out. The
+rule reads the registry (`alAzar` and `minimo` in `public/assets/js/azar.js`), so a future group game
+stays out of the dice on its own.
+**Why:** the owner's request: whoever rolls the dice may be alone, and landing on a game that needs a
+group gathered is a dead end.
+**Consequences:** `public/assets/js/azar.test.mjs` checks the dice's pool against the registry.
