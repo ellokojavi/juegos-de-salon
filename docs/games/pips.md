@@ -76,5 +76,9 @@ real Pips has more `=`, `≠`, `<` and `>`. Worth looking at once friends have p
 
 `public/labs/pips/engine.test.mjs` (rules, one solution per board, laying, help, score) and
 `tools/e2e/pips/lab.mjs` (the lab card, the cover, choosing, turning and laying with taps, the three
-boards solved by taps, the help, the result, giving up). Exceptions to the canons: those of every lab
-prototype (Spanish only, D-304).
+boards solved by taps, the help, the result, giving up).
+
+## Exceptions to the canons
+
+Those of every lab prototype (D-304): Spanish only, outside La Copa and Uno al día, reached only with a
+lab key.
