@@ -9,7 +9,8 @@ const r = {
 };
 
 const c = body(r);
-assert.match(c, /\*\*Who:\*\* Tu admirador secreto/, 'with the name, for the follow-up (D-279)');
+assert.match(c, /\*\*Who:\*\* T\* a\*{8} s\*{6}$/m, 'the name masked, each word by its first letter (D-279, D-366)');
+assert.doesNotMatch(c, /admirador/, 'never the full name on the public issue (D-366)');
 assert.doesNotMatch(body({ ...r, nombre: undefined }), /Who/, 'without a name, without the line');
 assert.match(body({ ...r, tester: 'ratoncito' }), /\*\*Lab key:\*\* ratoncito/, 'with the label of the lab key (D-306)');
 assert.doesNotMatch(c, /Mozilla|Android/, 'without the browser');
@@ -33,8 +34,10 @@ const list = [{ id: 'a', texto: 'x', at: 1 }, { id: 'c', texto: 'z', at: 3 }, { 
 assert.deepEqual(pending(list, already).map(x => x.id), ['b', 'c']);
 
 // The optional email (D-317): the issue shows the mask, never an address, and says it wants a reply
-const withEmail = body({ ...r, correoMascara: 'j********@********m' });
-assert.match(withEmail, /^- \*\*Email:\*\* `j\*{8}@\*{8}m`/m);
+const withEmail = body({ ...r, correoMascara: 'j********n@g********m' });
+assert.match(withEmail, /^- \*\*Email:\*\* `j\*{8}n@g\*{8}m`/m);
+assert.match(body({ ...r, correoMascara: 'j********@********m' }), /`j\*{8}@\*{8}m`/, 'the older mask, from a cached app, still shows');
+assert.doesNotMatch(body({ ...r, correoMascara: 'jirigoyen@gmail.com' }), /Email/, 'never an address');
 assert.ok(wantsEmail(withEmail) && !wantsEmail(c));
 assert.equal(idOf(withEmail), '-P3bm');
 assert.ok(!handled([]) && !handled([{ body: 'thanks' }]));
@@ -50,9 +53,9 @@ assert.throws(() => readAnswers('#1\nUno.\n#3\nTres.', ['1']), /extra #3/);
 assert.throws(() => readAnswers('Hola\n#1\nUno.', ['1']), /before/);
 assert.equal(textOf('> uno\n> dos\n\n- x'), 'uno\ndos');
 assert.equal(textOf(c), 'Se podrian auto tachar las pistas ya usadas. @alguien mira el #12');
-assert.equal(nameOf(withEmail), 'Tu admirador secreto');
+assert.equal(nameOf(withEmail), 'T* a******** s******');
 assert.equal(nameOf('> hola\n\n- **Quién:** Cris\n- **Juego:** loteo'), 'Cris', 'issues from before D-316 say Quién');
-assert.equal(nameOf(body({ ...r, nombre: '@cris' })), '@cris');
+assert.equal(nameOf(body({ ...r, nombre: '@cris' })), '@****');
 assert.equal(nameOf(body({ ...r, nombre: '' })), '');
 
 // A report that arrived by email to hola@ (D-318) says so

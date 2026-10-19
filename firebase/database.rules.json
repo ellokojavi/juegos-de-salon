@@ -851,7 +851,7 @@
           ".validate": "newData.isString() && newData.val().length <= 16"
         },
         "correoMascara": {
-          ".validate": "newData.isString() && newData.val().matches(/^.[*][*][*][*][*][*][*][*]@[*][*][*][*][*][*][*][*].$/)"
+          ".validate": "newData.isString() && newData.val().matches(/^(.[*][*][*][*][*][*][*][*]@[*][*][*][*][*][*][*][*].|.[*][*][*][*][*][*][*][*].@.[*][*][*][*][*][*][*][*].)$/)"
         },
         "tipo": {
           ".validate": "newData.isString() && newData.val().matches(/^(sugerencia|problema|idea|otro)$/)"
