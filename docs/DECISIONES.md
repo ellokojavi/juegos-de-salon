@@ -4060,7 +4060,8 @@ desde cualquier página que muestre "Juegas como", no solo desde Records.
   pinta.
 - **Al llegar**, `assets/js/llegada.js` (lo trae `instalable.js`, en el `<head>` de cada página)
   pone encima la misma escena, quieta (`.azar-capa.velo` en `base.css`, donde ahora vive toda la
-  capa del dado). El cambio de página no se ve.
+  capa del dado). El cambio de página no se ve. Only the page the dice opened shows it (the scene
+  carries its path, `para`); any other page that loads first drops it (D-375).
 - La escena **espera a que el juego dibuje su pantalla** (una `.screen.active` que no sea
   `#screen-espera`, la de "cargando"), con un tope de 4 s, y recién ahí se desvanece en 0,45 s
   mientras el dado se achica. Debajo ya está el juego, entero.
