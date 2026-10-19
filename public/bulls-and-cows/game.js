@@ -550,6 +550,8 @@ function renderResult(v) {
     title.textContent = fmt(T.winTitle, { name: M.names[v.winner] });
     const tries = M.guesses.filter(g => g.from === v.winner).length;
     sub.textContent = (meRole ? (meRole === v.winner ? T.youWin + ' ' : T.youLose + ' ') : '') + fmt(T.inTries, { n: tries, word: triesWord(tries) });
+    // A la vez gana quien usó menos intentos: se ven los de los dos (D-367)
+    if (v.parallel) sub.textContent = (meRole === v.winner ? T.youWin : T.youLose) + ' ' + ['A', 'B'].map(r => `${M.names[r]}: ${fmt(T.tries, { n: v.solvedIn[r], word: triesWord(v.solvedIn[r]) })}`).join(' · ');
     trophy.textContent = meRole && meRole !== v.winner ? '😵' : '🏆';
   }
   const secrets = $('#result-secrets'); secrets.innerHTML = '';
