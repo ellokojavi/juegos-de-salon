@@ -4,7 +4,8 @@
  * El dado es un cubo con un juego en cada cara. Se lanza sobre la misma portada, rueda, rebota y
  * cae con la cara del elegido hacia adelante; abajo aparece su nombre y se abre el juego. Tocar
  * en cualquier parte mientras rueda lo abre de inmediato. La Copa no entra: es una semana con
- * amigos, no una partida para sacar al azar.
+ * amigos, no una partida para sacar al azar. Tampoco un juego que pide un grupo (tres o más
+ * jugadores como mínimo, como Cuarto Rey): quien tira el dado puede estar solo (D-374).
  *
  * Al irse no hay pantalla vacía: el juego abre mostrando el mismo dado, y el dado se desvanece
  * recién cuando el juego está dibujado (llegada.js, D-237).
@@ -27,6 +28,11 @@ export const TEXTOS = {
 };
 
 const azar = n => Math.floor(Math.random() * n);
+/** The fewest players a game needs, from its `players` ('4–6', '1', '2–10'). */
+export const minimo = g => parseInt(String(g.players ?? '1'), 10) || 1;
+/** Can the dice pick it? Not La Copa, not one unavailable, not one that needs a group (D-374). */
+export const alAzar = g => !g.torneo && g.available && minimo(g) < 3;
+
 const barajar = xs => { const a = xs.slice(); for (let i = a.length - 1; i > 0; i--) { const j = azar(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
 /**
@@ -37,7 +43,7 @@ export function botonAzar({ candidatos, lang, base = '' }) {
   const T = TEXTOS[lang] || TEXTOS.es;
   return el('button', {
     type: 'button', class: 'btn-azar', 'aria-label': T.aria,
-    onClick: () => { const pool = candidatos().filter(g => !g.torneo && g.available); if (pool.length) tirar(pool, { lang, base, T }); },
+    onClick: () => { const pool = candidatos().filter(alAzar); if (pool.length) tirar(pool, { lang, base, T }); },
   }, el('span', { class: 'btn-azar-dado', 'aria-hidden': 'true' }, '🎲'), el('span', {}, T.boton));
 }
 
