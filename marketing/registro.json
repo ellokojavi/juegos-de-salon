@@ -400,6 +400,47 @@
         "al_dia": true,
         "pendiente": []
       }
+    },
+    {
+      "id": "reddit-chile",
+      "tipo": "imagen y mensaje",
+      "titulo": "Reddit r/chile: solo o con amigos",
+      "carpeta": "marketing/reddit-chile/",
+      "memoria": "marketing/reddit-chile/README.md",
+      "version": 1,
+      "fecha": "2026-10-19",
+      "idioma": "es",
+      "app": "0.186.12",
+      "archivos": [
+        {
+          "ruta": "marketing/reddit-chile/output/reddit-chile-1080x1350.jpg",
+          "formato": "4:5",
+          "ancho": 1080,
+          "alto": 1350,
+          "uso": "Reddit r/chile"
+        },
+        {
+          "ruta": "marketing/reddit-chile/reddit.md",
+          "formato": "texto",
+          "uso": "Título y texto del post de Reddit"
+        }
+      ],
+      "fuente": "marketing/reddit-chile/tarjeta.html",
+      "construir": "marketing/reddit-chile/construir.mjs",
+      "juegos": [
+        "cuarto-rey",
+        "dudo",
+        "copa",
+        "reinas",
+        "rutas"
+      ],
+      "seleccion": true,
+      "revision": {
+        "fecha": "2026-10-19",
+        "app": "0.186.12",
+        "al_dia": true,
+        "pendiente": []
+      }
     }
   ]
 }
