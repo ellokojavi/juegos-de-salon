@@ -7002,4 +7002,3 @@ install banner included); the splash demo keeps its own frame, where nothing nee
 **Why:** what is tried has to behave as it will for a player, on the phone the owner uses.
 **Consequences:** `tools/e2e/home/lab.mjs` checks that `/labs/home/` lands on the home page with the bar,
 that the filters stick when the page scrolls, and that the bar never shows without `?lab`.
-
