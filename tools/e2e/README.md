@@ -84,8 +84,8 @@ Any other PR runs **only the scripts whose pages load what it changed** (D-329,
 the graph is read straight from the files: each `index.html`, what it links, and what that imports.
 So a page is only as narrow as its imports: what other pages need from La Copa (the cup code, the
 clock, the notification sheets' texts) lives in small modules of its own, and
-`public/assets/js/uno-al-dia.test.mjs` fails if the home page or six non-Cup game pages load La
-Copa's rules or engine again (D-377).
+`public/assets/js/uno-al-dia.test.mjs` fails if any page but La Copa's own (its screens, Uno al día,
+the records and the panel) loads La Copa's rules or engine (D-377).
 A script's pages come from its `${SITE}/…` addresses, its folder (`hangman/` → `/hangman/`,
 `case/` → `/labs/case/`) and the page names it lists when it builds its routes; a part named after a
 game (`cup-games/languages.mjs:year`) runs only with that game. **When in doubt, everything runs:**
