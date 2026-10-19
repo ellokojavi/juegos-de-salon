@@ -1338,7 +1338,7 @@ servidor; si eso cambia, se cierra la lectura al UID del dueño y se leen desde 
 **Después:** D-306 suma `tester`, la etiqueta de la llave del laboratorio (nunca la llave).
 
 ## D-105 · Cuenta regresiva antes de cada juego con reloj
-**Fecha:** 2026-09-23 · **Estado:** corregida por D-258 · **Relación:** desde la 0.46 la cuenta va de 3 a 1: con 5 se hacía larga. Desde la 0.158.1 la capa es compartida (`assets/js/cuenta-regresiva.js`, D-102) y la usa también Agentes (D-286)
+**Fecha:** 2026-09-23 · **Estado:** corregida por D-258, D-379 · **Relación:** desde la 0.46 la cuenta va de 3 a 1: con 5 se hacía larga. Desde la 0.158.1 la capa es compartida (`assets/js/cuenta-regresiva.js`, D-102) y la usa también Agentes (D-286)
 **Decisión:** Al tocar Empezar (el día, la sesión de prueba o la práctica) aparece una capa con
 el nombre del juego y una cuenta de 3 a 1, un número por segundo, con un tic y una vibración
 corta. Después dice **¡A jugar!** y se desvanece sola sobre el tablero. El tablero no se dibuja
@@ -1675,7 +1675,7 @@ guardada del modo anterior no se ofrece para retomar. El panel verá el modo `so
 desde esta versión.
 
 ## D-130 · El tiempo se corta al terminar el tablero
-**Fecha:** 2026-09-25 · **Estado:** vigente
+**Fecha:** 2026-09-25 · **Estado:** corregida por D-379
 **Decisión:** En todos los minijuegos el reloj se detiene cuando el tablero termina (resuelto,
 perdido, rendido o sin tiempo), no cuando se toca "Ver resultado": cada pantalla llama
 `ctx.pararReloj()` al ver su estado final. Lo que se tarda en tocar el botón ya no cuenta para el
@@ -4906,7 +4906,7 @@ Los días sin cambios, los ejecutores no corren. Revisar un PR antes de fusionar
 sesión dueña lanza a los dos agentes (CLAUDE.md).
 
 ## D-277 · El veredicto de una carta con fecha cuenta su dato, y leerlo no cuesta tiempo
-**Fecha:** 2026-10-11 · **Estado:** corregida por D-314 · **Relación:** excepción a C-8b (la explicación del error); completa D-95 (el tiempo activo) y D-278
+**Fecha:** 2026-10-11 · **Estado:** corregida por D-314, D-379 · **Relación:** excepción a C-8b (la explicación del error); completa D-95 (el tiempo activo) y D-278
 **Decisión:** Cada carta de los mazos de Línea de Tiempo puede llevar un **dato** en los cuatro
 idiomas (un porqué o una anécdota de hasta 110 caracteres, sin años), y el veredicto lo cuenta en
 vez de decir entre qué hitos iba la carta:
