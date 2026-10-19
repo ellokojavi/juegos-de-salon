@@ -5,16 +5,10 @@
  * cada dispositivo llega al mismo resultado sin necesidad de mensajes de respuesta.
  */
 
-/** Generador pseudoaleatorio con semilla (mulberry32): mismo mazo en todos los dispositivos. */
-export function rng(seed) {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6D2B79F5) >>> 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+// The seeded generator lives in assets/js/rng.js, so a page that needs only it does not load this
+// engine (D-378); it stays exported here for the code that already takes it from here
+import { rng } from '../assets/js/rng.js';
+export { rng };
 
 /** Baraja una copia de `arr` de forma determinista a partir de la semilla. */
 export function shuffleSeeded(arr, seed) {
