@@ -1,7 +1,7 @@
 # Uno al día
 
 **Estado:** **para todos desde v0.121.0** (el n.° 1 es el 6 de octubre de 2026); construido en 7 PR y abierto en el octavo (ver "Lo que el PR N hizo") · **Fecha:** 2026-10-05 ·
-**Toca:** RP-44, RP-63, D-334, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
+**Toca:** RP-44, RP-63, D-334, D-188, D-237 y D-374 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
 juego, el mismo desafío para todos, y lleva la cuenta de cuántos días seguidos juega cada uno, cómo
@@ -56,7 +56,7 @@ el contenido del día:
 - En Dudo y Batalla Naval el rival responde a lo que haces, así que lo común es el punto de partida
   (los dados, la flota) y no la partida entera. Igual se pueden comparar, y lo dicen la intro (desde el PR 2)
   y el ranking del día: "Todos parten con los mismos dados."
-- **🎲 Jugar otro** (abajo) ofrece cualquier juego de la portada, también Cuarto Rey.
+- **🎲 Jugar otro** (abajo) ofrece cualquier juego de la portada, menos los que piden un grupo, como Cuarto Rey (D-374).
 
 **La rotación:** son 16 juegos since D-334 (10 before), así que no cabe uno por día de la semana. Funciona como un mazo: se
 barajan todos con la semilla `uno-al-dia:ciclo:<n>` y salen de a uno por día, sin repetir, hasta
@@ -115,7 +115,8 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 ### Quiere jugar más
 
 - Después de Uno al día, **🎲 Jugar otro** tira el dado de Juego al azar (cualquier juego de la
-  portada, también los de grupo). No cuenta para la racha, pero sí para "Juegos esta semana" y
+  portada; like the home page's 🎲, never one that needs a group, such as Cuarto Rey: `jugarOtro` in
+  `uno-al-dia-ui.js` uses `alAzar`, D-374). No cuenta para la racha, pero sí para "Juegos esta semana" y
   para los rankings normales de ese juego.
 - **Repetir el desafío de hoy** se puede, como práctica: el ranking del día toma solo el
   primer intento completo, igual que en La Copa.

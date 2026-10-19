@@ -414,7 +414,8 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   `?test` and the scripts never see it. Demo: `/labs/splash/`.
 - **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar, bajo la bajada, sale
   de las tarjetas que se ven y se pueden abrir, nunca de La Copa (D-188), y abre el juego con el
-  dado encima (D-237). Uno al día es una tarjeta de media fila al lado de La Copa: los dos pesan
+  dado encima (D-237). It never picks a game that needs a group, three or more players at least,
+  like Cuarto Rey (`alAzar` in `azar.js`, D-374). Uno al día es una tarjeta de media fila al lado de La Copa: los dos pesan
   más que un juego (D-230, D-239; el detalle, en [UNO-AL-DIA.md](UNO-AL-DIA.md)).
 - **Las dos tarjetas de media fila** (`.fila-alta`, `.game-card.alta`) llevan el emoji de 40 px
   a la izquierda del título, la bajada y las píldoras de ancho entero, y el título en color: La

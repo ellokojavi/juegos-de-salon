@@ -8,6 +8,9 @@ Juego de naipes para tomar, popular en Chile. Reglas base según instrucciones e
 "Reglas originales"). El celular reemplaza al mazo (D-12): se pasa de mano en mano, cada jugador saca una carta y
 la app dice qué hacer y quién toma. Termina cuando sale el cuarto rey.
 
+It needs a group gathered, so 🎲 Juego al azar never picks it: its card stays on the home page and in its
+filter, but the dice leaves it out (`alAzar` in `public/assets/js/azar.js`, D-374).
+
 ## Reglas
 
 | Carta | Regla | Comportamiento en la app |
