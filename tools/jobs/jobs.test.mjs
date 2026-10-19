@@ -1,4 +1,4 @@
-// The jobs registry (D-369): every scheduled workflow is in it with the same cron, every job is
+// The jobs registry (D-365): every scheduled workflow is in it with the same cron, every job is
 // well formed, and the launchd plist is what launchd expects.
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
