@@ -18,7 +18,7 @@ assert.throws(() => report(email, 'x', 'fr'), /--lang/);
 
 // What the agent reads: the address masked, the text indented, automatic senders flagged
 const m = show('-Nabc', { ...email, automatico: true });
-assert.ok(m.includes('A********@********l') && !m.includes('Correo.cl'));
+assert.ok(m.includes('A********a@C********l') && !m.includes('Correo.cl'));
 assert.ok(m.includes('⚠️ automatic sender') && m.includes('  el botón no responde') && m.includes('2026-10-14 20:00 UTC'));
 
 // Never the admin key: the inbox user only
