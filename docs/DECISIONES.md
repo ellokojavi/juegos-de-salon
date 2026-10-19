@@ -2856,7 +2856,7 @@ blanco de cantos redondos, con un juego en cada cara, entra rodando sobre la mis
 rebota tres veces y cae con el elegido adelante; abajo dice "¡Te tocó! <juego>" y a los 1,3 s se
 abre su pantalla principal. Tocar mientras rueda lo abre de inmediato.
 - **Qué puede salir:** las tarjetas que se ven y se pueden abrir, menos La Copa (es una semana con
-  amigos, no una partida para sacar al azar). Con un filtro de tipo puesto, sale uno de esos.
+  amigos, no una partida para sacar al azar). Con un filtro de tipo puesto, sale uno de esos (until D-374: now it is always among every game).
   Entran los minijuegos sueltos de la portada.
 - **El dado es WebGL** (`assets/js/dado3d.js`, sin librerías): una malla de cubo de cantos
   redondos, luz difusa, brillo y un emoji por cara en una textura. Los botes y la sombra del
@@ -7147,11 +7147,14 @@ did not prosper or because they already reached everyone.
 
 ## D-374 · The random dice skips games that need a group
 **Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-188 (🎲 Juego al azar)
-**Decision:** 🎲 Juego al azar never picks a game whose `players` starts at three or more: today only
+**Decision:** 🎲 Juego al azar always picks among every game on the home page, whatever filter is on (until
+now it picked among the visible cards, so it followed the type filter), and never a game whose
+`players` starts at three or more: today only
 Cuarto Rey (4–6). Neither does 🎲 Jugar otro after Uno al día, which rolls the same dice. Its card stays
 on the home page and in its filter; only the dice leaves it out. The
 rule reads the registry (`alAzar` and `minimo` in `public/assets/js/azar.js`), so a future group game
 stays out of the dice on its own.
 **Why:** the owner's request: whoever rolls the dice may be alone, and landing on a game that needs a
-group gathered is a dead end.
+group gathered is a dead end; and the dice is general, over all games, with only the players
+exceptions (with Cartas/Dados on, it could only ever land on Dudo).
 **Consequences:** `public/assets/js/azar.test.mjs` checks the dice's pool against the registry.
