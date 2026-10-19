@@ -137,7 +137,7 @@ async function abrirStore() {
 }
 
 /** Estado de la pantalla: la copa abierta, quién soy en ella y qué se está mirando. */
-const S = { code: null, L: null, yo: null, reentrar: null, pantalla: null, off: null, juego: null, reloj: null, tic: null };
+const S = { code: null, L: null, yo: null, reentrar: null, pantalla: null, off: null, juego: null, tic: null };
 
 // El link de una copa: su nombre propio si lo tiene (?pirata), si no su código. Sin &labs: la
 // copa ya sabe por dentro si es del laboratorio (D-121)
@@ -168,15 +168,15 @@ function mostrar(id) {
  */
 function pantallaCompleta(si) {
   document.body.classList.toggle('pantalla-completa', !!si);
-  // El reloj va dentro de la barra, entre volver y el sonido: centrado en la ventana se montaba
-  // sobre "‹ Laboratorio" (C-8). Fuera de la pantalla completa vuelve a la cabeza de jugar.
+  // The play head goes inside the bar, between back and sound: centered in the window it sat
+  // over "‹ Laboratorio" (C-8). Outside full screen it goes back on top of the play screen.
   const head = $('#jugar-head'), barra = $('.topbar');
   if (si) barra.insertBefore(head, $('.tools', barra));
   else if (head.parentNode === barra) $('#screen-jugar').prepend(head);
   ajustarCabeza();
 }
 
-/** Si el reloj no cabe en la barra, la píldora de prueba queda en 🧪 y, si ni así, se va. */
+/** If the head does not fit in the bar, the test pill shrinks to 🧪 and, if still not, goes. */
 function ajustarCabeza() {
   const head = $('#jugar-head');
   head.classList.remove('justo', 'sin-chip');
@@ -2160,10 +2160,10 @@ async function jugar(d) {
 
   const head = $('#jugar-head');
   head.innerHTML = '';
-  const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: mmss(reloj.leer(rel, now)) }));
-  head.append(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), cron);
-  clearInterval(S.reloj);
-  S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) }); }, 1000);
+  head.append(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
+  // No clock in the header while playing (D-379): the time counts and shows on the result.
+  // The end-to-end scripts read it here to check that it stops with the board (D-130)
+  head.reloj = () => mmss(reloj.leer(rel, ahora()));
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
   // Mientras se lee el dato de un error el reloj está en pausa, y volver a la pestaña no lo anda (D-277)
   let leyendo = null;
@@ -2189,7 +2189,7 @@ async function jugar(d) {
       leyendo = pausaDeLectura({ ms,
         pausar: () => { rel = reloj.pausar(rel, ahora()); persistir(); },
         seguir: () => { leyendo = null; if (!detenido && !document.hidden) rel = reloj.seguir(rel, ahora()); },
-        alCambiar: p => cron.classList.toggle('en-pausa', p) });
+      });
       return leyendo;
     },
     // Cada juego lo llama cuando su tablero termina (resuelto, perdido o sin tiempo): el tiempo
@@ -2197,11 +2197,9 @@ async function jugar(d) {
     // final, además, el resultado sale en ese momento (D-150)
     pararReloj(estado) {
       if (!detenido) { rel = reloj.pausar(rel, ahora()); detenido = true; persistir(); }
-      clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, ahora())) });
       if (estado && !fin) cerrar(estado);
     },
     terminar(estado) {
-      clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
       if (!fin) cerrar(estado);
       enviar(d, fin, envio);
@@ -2552,10 +2550,8 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   let rel = { ...reloj.nuevo(Date.now() + espera + (sigue ? 0 : mod.entrada?.() || 0)), ms: guardado?.ms || 0 };
   const head = $('#jugar-head');
   head.innerHTML = '';
-  const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: '0:00' }));
-  poner(head, el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? chipPrueba() : null, cron);
-  clearInterval(S.reloj);
-  S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) }); }, 1000);
+  poner(head, el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? chipPrueba() : null);
+  head.reloj = () => mmss(reloj.leer(rel, Date.now()));   // as in the cup (D-379)
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
   let detenido = false;
   let leyendo = null;
@@ -2577,15 +2573,13 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
       leyendo = pausaDeLectura({ ms,
         pausar: () => { rel = reloj.pausar(rel, Date.now()); },
         seguir: () => { leyendo = null; if (!detenido && !document.hidden) rel = reloj.seguir(rel, Date.now()); },
-        alCambiar: p => cron.classList.toggle('en-pausa', p) });
+      });
       return leyendo;
     },
     pararReloj() {
       if (!detenido) { rel = reloj.pausar(rel, Date.now()); detenido = true; }
-      clearInterval(S.reloj); cron.textContent = fmt(T.timer, { t: mmss(reloj.leer(rel, Date.now())) });
     },
     terminar(estado) {
-      clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
       const r = mod.resultado(estado);
       alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: detalle(id, estado, { T, fmt, mmss, copa: false, lang: LANG }) });

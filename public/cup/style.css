@@ -185,7 +185,6 @@ ol.como li { line-height: 1.45; }
 /* Jugar */
 .jugar-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; min-height: 1.5em; }
 .jugar-titulo { font-weight: 900; }
-.cron { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
 
 /* Resultado */
 .result-hero { text-align: center; }
@@ -385,16 +384,18 @@ body.pantalla-completa .donde-arriba { order: 1; pointer-events: auto; }
 body.pantalla-completa #jugar-reglas { order: 2; pointer-events: none; }
 body.pantalla-completa #jugar-reglas .reglas { pointer-events: auto; }
 body.pantalla-completa .donde-abajo { order: 3; margin-top: auto; }
-/* El reloj, una píldora en medio de la barra (game.js la mete ahí, entre volver y el sonido: así
-   nunca los pisa); el nombre del juego ya lo dice la ciudad. Si no cabe, .justo deja la píldora
-   de prueba en 🧪 y .sin-chip la saca (ajustarCabeza) */
+/* The play head, a pill in the middle of the bar (game.js puts it there, between back and sound,
+   so it never covers them); the city already names the game, and there is no clock (D-379), so it
+   holds only the test pill, and is hidden when empty. If it does not fit, .justo leaves the test
+   pill as 🧪 and .sin-chip removes it (ajustarCabeza) */
 body.pantalla-completa #jugar-head { flex: 0 1 auto; min-width: 0; overflow: hidden; white-space: nowrap;
   width: auto; min-height: 44px; margin: 0 auto; padding: 0 12px; gap: 8px; border-radius: 999px; pointer-events: auto;
   background: rgba(21,7,38,0.75); border: 1px solid var(--glass-border); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
-body.pantalla-completa #jugar-head:empty { display: none; }
+body.pantalla-completa #jugar-head:empty,
+body.pantalla-completa #jugar-head:not(:has(.chip)),
+body.pantalla-completa #jugar-head.sin-chip { display: none; }
 body.pantalla-completa #jugar-head .jugar-titulo { display: none; }
 body.pantalla-completa #jugar-head .chip { margin: 0; }
-body.pantalla-completa #jugar-head .cron { flex: none; color: var(--ink); }
 #jugar-head.justo .chip { padding-inline: 8px; }
 #jugar-head.justo .chip-txt, #jugar-head.sin-chip .chip { display: none; }
 /* Las reglas, un widget plegado bajo la ciudad: cerrado es una píldora a la izquierda; abierto,
