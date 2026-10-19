@@ -2850,13 +2850,13 @@ brasileño puede jugar en español).
 
 
 ## D-188 · Juego al azar: un dado que rueda sobre el menú
-**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** el paso al juego, en D-237; extended by D-374 (the dice skips games that need a group)
+**Fecha:** 2026-10-03 · **Estado:** corregida por D-374 · **Relación:** el paso al juego, en D-237; D-374 corrects what can come out (every game, whatever filter is on, and never one that needs a group)
 **Decisión:** El menú tiene un botón **🎲 Juego al azar** bajo la bajada. Al tocarlo, un dado
 blanco de cantos redondos, con un juego en cada cara, entra rodando sobre la misma portada,
 rebota tres veces y cae con el elegido adelante; abajo dice "¡Te tocó! <juego>" y a los 1,3 s se
 abre su pantalla principal. Tocar mientras rueda lo abre de inmediato.
 - **Qué puede salir:** las tarjetas que se ven y se pueden abrir, menos La Copa (es una semana con
-  amigos, no una partida para sacar al azar). Con un filtro de tipo puesto, sale uno de esos.
+  amigos, no una partida para sacar al azar). Con un filtro de tipo puesto, sale uno de esos (until D-374: now it is always among every game).
   Entran los minijuegos sueltos de la portada.
 - **El dado es WebGL** (`assets/js/dado3d.js`, sin librerías): una malla de cubo de cantos
   redondos, luz difusa, brillo y un emoji por cara en una textura. Los botes y la sombra del
@@ -4079,7 +4079,7 @@ disponible, el juego abre como antes de D-235. Una página de juego nueva que no
 deja el dado encima hasta 4 s.
 
 ## D-238 · Juegos favoritos en la portada, con su propio filtro
-**Fecha:** 2026-10-06 · **Estado:** corregida por D-241 · **Relación:** completa D-142 y D-149; respeta D-144; D-241 cambia dónde va la ficha ⭐ Favoritos
+**Fecha:** 2026-10-06 · **Estado:** corregida por D-241, D-374 · **Relación:** completa D-142 y D-149; respeta D-144; D-241 cambia dónde va la ficha ⭐ Favoritos; D-374, that the dice no longer follows the filter
 **Decisión:** cada tarjeta de la portada lleva una ☆ en la esquina de arriba. Al tocarla, el juego
 queda marcado como favorito (⭐ amarilla) y no se abre; al tocarla otra vez, se desmarca.
 - **El filtro** es una ficha "⭐ Favoritos" en su propia línea, arriba de los tipos (corregida
@@ -4088,7 +4088,7 @@ queda marcado como favorito (⭐ amarilla) y no se abre; al tocarla otra vez, se
 - **Funciona como un tipo más:** se elige uno o el otro, la cuenta dice "Se ven n de m" con "Ver
   todos" y va en la URL (`?type=favorites`). Un link así, en un celular sin favoritos, muestra
   todos sin avisar nada. El dado de Juego al azar (D-188) sale de las tarjetas que se ven, así
-  que con Favoritos elegido sortea entre los favoritos.
+  que con Favoritos elegido sortea entre los favoritos (until D-374: now it is always among every game).
 - **Desmarcar estando en Favoritos** no saca la tarjeta de la vista: se puede volver a marcar.
   Si ya no queda ningún favorito, se ven todos y la ficha se va.
 - **Dónde se guardan:** en el `localStorage` del navegador (`juegos-de-salon:favoritos`), por id
@@ -7146,12 +7146,15 @@ did not prosper or because they already reached everyone.
 **Consequences:** `tools/e2e/home/lab.mjs` checks the card is in La Bodega and folded.
 
 ## D-374 · The random dice skips games that need a group
-**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-188 (🎲 Juego al azar)
-**Decision:** 🎲 Juego al azar never picks a game whose `players` starts at three or more: today only
+**Date:** 2026-10-18 · **Status:** current · **Relation:** corrects D-188 (🎲 Juego al azar: what can come out) and D-238 (with ⭐ Favoritos on, the dice no longer picks among favorites)
+**Decision:** 🎲 Juego al azar always picks among every game on the home page, whatever filter is on (until
+now it picked among the visible cards, so it followed the type filter), and never a game whose
+`players` starts at three or more: today only
 Cuarto Rey (4–6). Neither does 🎲 Jugar otro after Uno al día, which rolls the same dice. Its card stays
 on the home page and in its filter; only the dice leaves it out. The
 rule reads the registry (`alAzar` and `minimo` in `public/assets/js/azar.js`), so a future group game
 stays out of the dice on its own.
 **Why:** the owner's request: whoever rolls the dice may be alone, and landing on a game that needs a
-group gathered is a dead end.
+group gathered is a dead end; and the dice is general, over all games, with only the players
+exceptions (with Cartas/Dados on, it could only ever land on Dudo).
 **Consequences:** `public/assets/js/azar.test.mjs` checks the dice's pool against the registry.
