@@ -521,6 +521,10 @@ export const PATHS = {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
   },
+  'labs/pips': {
+    intro: [],
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
+  },
   'labs/bridges': {
     intro: [],
     game: [START, `1`, `1`, `1`],

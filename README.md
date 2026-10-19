@@ -661,6 +661,7 @@ node public/labs/agents/engine.test.mjs
 node public/labs/bridges/engine.test.mjs
 node public/labs/code/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
+node public/labs/pips/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node marketing/served.test.mjs
@@ -894,6 +895,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Diseño: Julepe](docs/games/julep.md)
 - [Diseño: Dudo](docs/games/liars-dice.md)
 - [🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)](docs/games/paint-mines.md)
+- [🎲 Pips (lab prototype, in Juegos en prueba)](docs/games/pips.md)
 - [📐 Loteo (Plots · Loteamento · Parzellen)](docs/games/plots.md)
 - [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
