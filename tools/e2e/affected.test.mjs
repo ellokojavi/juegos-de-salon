@@ -74,3 +74,20 @@ console.log('affected: which end-to-end scripts a PR needs, green');
   assert.equal(levelOf(c(Array.from({ length: 10 }, (_, i) => `g${i}`)), 30).level, 'N3', 'a third of the pages is core');
   assert.equal(levelOf(null, 30).level, 'N3', 'what the graph cannot narrow is core');
 }
+
+// Played, not just imported (D-378): a Cup game's file, or an engine La Copa takes from a group game, reaches
+// that game's page, La Copa and cup/suelto and the declared reuses, not the screens of La Copa's other games
+{
+  const { playedOn } = await import('./affected.mjs');
+  const screen = files => new Set(['cup/game.js', ...files]);
+  const graph = { cup: screen([]), 'cup/suelto': screen([]), queens: screen([]), zip: screen([]), 'bulls-and-cows': new Set(), hangman: new Set(), timeline: new Set() };
+  const all = Object.keys(graph);
+  assert.deepEqual(playedOn('cup/games/queens/engine.js', all, graph).sort(), ['bulls-and-cows', 'cup', 'cup/suelto', 'hangman', 'queens', 'timeline'],
+    "Queens' engine: its page and La Copa's, not Zip's screen (the others are not screens: they keep it)");
+  assert.deepEqual(playedOn('bulls-and-cows/engine.js', ['cup', 'cup/suelto', 'queens', 'zip', 'bulls-and-cows'], graph).sort(), ['bulls-and-cows', 'cup', 'cup/suelto'],
+    'a group engine La Copa plays: its own page and La Copa, not the other games\' screens');
+  assert.deepEqual(playedOn('cup/games/number/engine.js', ['cup', 'queens', 'bulls-and-cows'], graph).sort(), ['bulls-and-cows', 'cup'], 'a declared reuse keeps its page');
+  assert.deepEqual(playedOn('cup/game.js', ['cup', 'queens', 'zip'], graph), ['cup', 'queens', 'zip'], "La Copa's own screen code reaches every screen");
+  assert.deepEqual(playedOn('assets/js/ui.js', ['cup', 'queens'], graph), ['cup', 'queens'], 'a shared module reaches every page');
+}
+console.log('affected: played, not just imported, green');

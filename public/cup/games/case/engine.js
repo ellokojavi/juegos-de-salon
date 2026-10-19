@@ -11,7 +11,7 @@
  * juega, con las plantillas de `rules.js` (C-3): el caso es el mismo en todos los idiomas.
  */
 import { hash32 } from '../semilla.js';
-import { rng as mulberry } from '../../../timeline/engine.js';
+import { rng as mulberry } from '../../../assets/js/rng.js';
 
 export const COLS = 4;
 export const FILAS = 5;

@@ -1,5 +1,5 @@
 {
-  "version": "0.186.8",
+  "version": "0.186.9",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -874,6 +874,7 @@
     "public/assets/js/push.js",
     "public/assets/js/ranking.js",
     "public/assets/js/records.js",
+    "public/assets/js/rng.js",
     "public/assets/js/session.js",
     "public/assets/js/sobre.js",
     "public/assets/js/sound.js",
@@ -1089,6 +1090,7 @@
     "tools/e2e/changes.test.mjs",
     "tools/e2e/groups.test.mjs",
     "tools/e2e/output.test.mjs",
+    "tools/e2e/scope.test.mjs",
     "tools/firebase/rankings-history.test.mjs",
     "tools/firebase/unnoted-rooms.test.mjs",
     "tools/jobs/jobs.test.mjs",
@@ -1177,6 +1179,7 @@
     "room-cap.mjs",
     "room-error.mjs",
     "routes/game.mjs",
+    "scope.test.mjs",
     "share-home.mjs",
     "share-room.mjs",
     "smoke.mjs",
