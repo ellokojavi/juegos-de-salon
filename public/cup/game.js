@@ -137,7 +137,7 @@ async function abrirStore() {
 }
 
 /** Estado de la pantalla: la copa abierta, quién soy en ella y qué se está mirando. */
-const S = { code: null, L: null, yo: null, reentrar: null, pantalla: null, off: null, juego: null, tic: null };
+const S = { code: null, L: null, yo: null, reentrar: null, pantalla: null, off: null, juego: null, tic: null, reloj: null };
 
 // El link de una copa: su nombre propio si lo tiene (?pirata), si no su código. Sin &labs: la
 // copa ya sabe por dentro si es del laboratorio (D-121)
@@ -174,6 +174,25 @@ function pantallaCompleta(si) {
   if (si) barra.insertBefore(head, $('.tools', barra));
   else if (head.parentNode === barra) $('#screen-jugar').prepend(head);
   ajustarCabeza();
+}
+
+/**
+ * The elapsed-time clock in the play head, only for a game whose speed scores and that has no
+ * countdown of its own (`export const clock = true` in its ui.js, D-384); null for the rest (D-379).
+ */
+function mostrarReloj(head, mod, leer) {
+  clearInterval(S.reloj);
+  if (!mod.clock) return null;
+  const cron = el('span', { class: 'cron' }, fmt(T.timer, { t: mmss(leer()) }));
+  head.append(cron);
+  S.reloj = setInterval(() => { if (S.pantalla === 'jugar') cron.textContent = fmt(T.timer, { t: mmss(leer()) }); }, 1000);
+  return cron;
+}
+
+/** The board ended: the clock stops on the time it keeps. */
+function pararMuestra(cron, leer) {
+  clearInterval(S.reloj);
+  if (cron) cron.textContent = fmt(T.timer, { t: mmss(leer()) });
 }
 
 /** If the head does not fit in the bar, the test pill shrinks to 🧪 and, if still not, goes. */
@@ -2161,9 +2180,11 @@ async function jugar(d) {
   const head = $('#jugar-head');
   head.innerHTML = '';
   head.append(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
-  // No clock in the header while playing (D-379): the time counts and shows on the result.
-  // The end-to-end scripts read it here to check that it stops with the board (D-130)
+  // No clock in the header while playing (D-379), except in a game whose speed scores and that has
+  // no countdown of its own (`clock` in its ui.js, D-384). The end-to-end scripts read the time
+  // here to check that it stops with the board (D-130)
   head.reloj = () => mmss(reloj.leer(rel, ahora()));
+  const cron = mostrarReloj(head, mod, () => reloj.leer(rel, ahora()));
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
   // Mientras se lee el dato de un error el reloj está en pausa, y volver a la pestaña no lo anda (D-277)
   let leyendo = null;
@@ -2189,7 +2210,7 @@ async function jugar(d) {
       leyendo = pausaDeLectura({ ms,
         pausar: () => { rel = reloj.pausar(rel, ahora()); persistir(); },
         seguir: () => { leyendo = null; if (!detenido && !document.hidden) rel = reloj.seguir(rel, ahora()); },
-      });
+        alCambiar: p => cron?.classList.toggle('en-pausa', p) });
       return leyendo;
     },
     // Cada juego lo llama cuando su tablero termina (resuelto, perdido o sin tiempo): el tiempo
@@ -2197,9 +2218,11 @@ async function jugar(d) {
     // final, además, el resultado sale en ese momento (D-150)
     pararReloj(estado) {
       if (!detenido) { rel = reloj.pausar(rel, ahora()); detenido = true; persistir(); }
+      pararMuestra(cron, () => reloj.leer(rel, ahora()));
       if (estado && !fin) cerrar(estado);
     },
     terminar(estado) {
+      clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
       if (!fin) cerrar(estado);
       enviar(d, fin, envio);
@@ -2551,7 +2574,8 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   const head = $('#jugar-head');
   head.innerHTML = '';
   poner(head, el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)), ensayo ? chipPrueba() : null);
-  head.reloj = () => mmss(reloj.leer(rel, Date.now()));   // as in the cup (D-379)
+  head.reloj = () => mmss(reloj.leer(rel, Date.now()));   // as in the cup (D-379, D-384)
+  const cron = mostrarReloj(head, mod, () => reloj.leer(rel, Date.now()));
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
   let detenido = false;
   let leyendo = null;
@@ -2573,13 +2597,15 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
       leyendo = pausaDeLectura({ ms,
         pausar: () => { rel = reloj.pausar(rel, Date.now()); },
         seguir: () => { leyendo = null; if (!detenido && !document.hidden) rel = reloj.seguir(rel, Date.now()); },
-      });
+        alCambiar: p => cron?.classList.toggle('en-pausa', p) });
       return leyendo;
     },
     pararReloj() {
       if (!detenido) { rel = reloj.pausar(rel, Date.now()); detenido = true; }
+      pararMuestra(cron, () => reloj.leer(rel, Date.now()));
     },
     terminar(estado) {
+      clearInterval(S.reloj);
       document.removeEventListener('visibilitychange', S.visibilidad);
       const r = mod.resultado(estado);
       alTerminar({ ...r, ms: r.ms ?? Math.round(reloj.leer(rel, Date.now())), det: detalle(id, estado, { T, fmt, mmss, copa: false, lang: LANG }) });

@@ -185,6 +185,8 @@ ol.como li { line-height: 1.45; }
 /* Jugar */
 .jugar-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; min-height: 1.5em; }
 .jugar-titulo { font-weight: 900; }
+.cron { font: 900 1rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+.cron.en-pausa { opacity: .55; }
 
 /* Resultado */
 .result-hero { text-align: center; }
@@ -392,10 +394,11 @@ body.pantalla-completa #jugar-head { flex: 0 1 auto; min-width: 0; overflow: hid
   width: auto; min-height: 44px; margin: 0 auto; padding: 0 12px; gap: 8px; border-radius: 999px; pointer-events: auto;
   background: rgba(21,7,38,0.75); border: 1px solid var(--glass-border); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
 body.pantalla-completa #jugar-head:empty,
-body.pantalla-completa #jugar-head:not(:has(.chip)),
-body.pantalla-completa #jugar-head.sin-chip { display: none; }
+body.pantalla-completa #jugar-head:not(:has(.chip, .cron)),
+body.pantalla-completa #jugar-head.sin-chip:not(:has(.cron)) { display: none; }
 body.pantalla-completa #jugar-head .jugar-titulo { display: none; }
 body.pantalla-completa #jugar-head .chip { margin: 0; }
+body.pantalla-completa #jugar-head .cron { flex: none; color: var(--ink); }
 #jugar-head.justo .chip { padding-inline: 8px; }
 #jugar-head.justo .chip-txt, #jugar-head.sin-chip .chip { display: none; }
 /* Las reglas, un widget plegado bajo la ciudad: cerrado es una píldora a la izquierda; abierto,
