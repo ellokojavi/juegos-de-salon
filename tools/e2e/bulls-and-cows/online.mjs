@@ -27,26 +27,30 @@ console.log('A secret:', await A.typeNum('1234')); await sleep(1000); await A.sh
 console.log('B secret:', await B.typeNum('5678')); await sleep(3500);
 console.log('A:', JSON.stringify(await A.view()), '\nB:', JSON.stringify(await B.view()));
 await A.shot('25-play-A'); await B.shot('25-play-B');
-// Alternating turns until the end
-let guard = 0;
-while (guard++ < 16) {
-  const vA = await A.view(); if (!vA || vA.phase === 'done') break;
-  const dev = vA.expected === 'A' ? A : B;
-  const role = vA.expected;
-  if (!(await dev.hasPad())) { await sleep(800); continue; }
-  const mine = await dev.evaluate(`__tyf.match().guesses.filter(g=>g.from==='${role}').length`);
-  const guess = role === 'A' ? (mine === 0 ? '5687' : '5678') : (mine === 0 ? '1243' : '1234');
-  console.log('turn', role, '→', guess, await dev.typeNum(guess));
+// Both at once (D-367): A cracks it on the first guess, B on the second, so A waits for B and wins
+const plan = { A: ['5678'], B: ['1243', '1234'] };
+let guard = 0, waitedOk = false;
+while (guard++ < 20) {
+  const vA = await A.view(); if (!vA || vA.phase !== 'play') break;
+  for (const [role, dev] of [['A', A], ['B', B]]) {
+    if (!(await dev.hasPad())) continue;
+    const mine = await dev.evaluate(`__tyf.match().guesses.filter(g=>g.from==='${role}').length`);
+    const guess = plan[role][mine]; if (!guess) continue;
+    console.log('guess', role, '→', guess, await dev.typeNum(guess));
+  }
   await sleep(3500);
-  if (guard === 2) {
-    await A.shot('26-mid-A'); await B.shot('26-mid-B');
-    // Reconnection mid-game: A reloads and must resume with its secret
-    await A.go(`${SITE}/bulls-and-cows/?room=${code}`, 6000);
-    console.log('A after reloading mid-game:', await A.active(), JSON.stringify(await A.view()), 'secret saved:', await A.evaluate(`!!__tyf.session()?.secrets?.A`));
-    await A.shot('26-reloaded-A');
+  const who = await A.evaluate(`document.getElementById('status-who')?.textContent`);
+  if (/sacaste|cracked/.test(who || '') && !waitedOk) { waitedOk = true; console.log('A waits for B:', who); await A.shot('26-waiting-A'); await B.shot('26-mid-B'); }
+  if (guard === 1) {
+    // Reconnection mid-game: B reloads and must resume with its secret
+    await B.go(`${SITE_B}/bulls-and-cows/?room=${code}`, 6000);
+    console.log('B after reloading mid-game:', await B.active(), JSON.stringify(await B.view()), 'secret saved:', await B.evaluate(`!!__tyf.session()?.secrets?.B`));
   }
 }
+if (!waitedOk) console.log('✗ A never showed the waiting screen after cracking it');
 await sleep(4000);
+const fin = await A.view();
+if (fin.phase !== 'done' || fin.winner !== 'A') console.log('✗ expected A to win with fewer guesses:', JSON.stringify(fin));
 console.log('final A:', await A.active(), await A.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent + ' | ' + document.getElementById('result-secrets').innerText.replace(/\\n/g,' ')`));
 console.log('final B:', await B.active(), await B.evaluate(`document.getElementById('result-title').textContent + ' | ' + document.getElementById('result-sub').textContent + ' | ' + document.getElementById('result-secrets').innerText.replace(/\\n/g,' ')`));
 await A.shot('27-result-A'); await B.shot('27-result-B');
@@ -59,8 +63,8 @@ await A.shot('28-rematch-A'); await B.shot('28-rematch-B');
 console.log('new-room roles → A:', await A.evaluate(`__tyf.session().role`), 'B:', await B.evaluate(`__tyf.session().role`));
 console.log('secret A2:', await A.typeNum('2468'), 'secret B2:', await B.typeNum('1357')); await sleep(3500);
 const v2 = await A.view(); console.log('new game view:', JSON.stringify(v2));
-const dev2 = (v2.expected === (await A.evaluate(`__tyf.session().role`))) ? A : B;
-console.log('first turn in new room:', await dev2.typeNum('9876')); await sleep(3500);
+if (!v2.parallel) console.log('✗ the rematch room is not simultaneous');
+console.log('both guess at once in new room:', await A.typeNum('9876'), await B.typeNum('9875')); await sleep(3500);
 console.log('guesses A:', await A.evaluate(`JSON.stringify(__tyf.match().guesses)`), '\nguesses B:', await B.evaluate(`JSON.stringify(__tyf.match().guesses)`));
 await A.shot('29-newgame-A'); await B.shot('29-newgame-B');
 console.log('errors A:', JSON.stringify(A.errors), JSON.stringify(A.logs), '\nerrors B:', JSON.stringify(B.errors), JSON.stringify(B.logs));
