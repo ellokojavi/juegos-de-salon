@@ -59,6 +59,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298, D-332 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295, D-332 |
 | 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
+| 🎲 Pips, the dominoes puzzle of the lab (zones with a rule, one solution per board, three boards) | `docs/games/pips.md` | D-381 |
 | 📐 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, cinco tableros contra el reloj: dos para calentar y tres difíciles; el modo ⚡💧 Servicios, con lotes del mismo tamaño y un ⚡ y un 💧 en cada uno) | `docs/games/plots.md` | D-310, D-311, D-312, D-332 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
@@ -7255,3 +7256,23 @@ Timeline deck, 22 instead of 42. `affected.test.mjs` tests `playedOn`, and `scop
 **Decision:** the header clock goes, in every game and every mode. The time is measured exactly as before (from «¡A jugar!», paused while reading a fact and with the tab hidden, stopped when the board ends) and shows at the end: the result, the standings and the share text. Each game's own countdown stays. The end-to-end scripts read the time from `#jugar-head`'s `reloj()`, not from the screen.
 **Why:** the owner: the game's own clock means something, because it decides points within that game, but a global clock makes no sense until the very end.
 **Consequences:** the ⏸ cue on the header clock while reading a fact goes with it (the bar under the fact still shows the pause); the `timer` text and the `.cron` styles of La Copa are removed.
+
+## D-381 · Pips: a dominoes puzzle in Juegos en prueba
+**Date:** 2026-10-19 · **Status:** current · **Relation:** the first idea of the game-ideas agent (D-360) to reach the lab; follows D-280 and D-361 (the lab's groups), D-304 (a lab-only PR)
+**Context:** the game-ideas agent's first round (issue #556) proposed `pips-dominoes`: a puzzle inspired by
+Pips, The New York Times Games' newest daily (2025), because the daily-wave number puzzles carry the solo
+plays here (Reinas, Tango) and it needs no words. The owner: "Hagamos una demo de Pips en Labs".
+**Decision:** a solo, Spanish-only prototype at `/labs/pips/`, in 🎲 Juegos en prueba, credited on the cover
+and the lab card. Three boards, easy to hard (4, 6 and 8 dominoes), against the clock; zones with a rule
+(an exact sum, all equal, all different, less or more than a number, or none); a domino is chosen, turned
+and laid with taps; any arrangement that keeps every rule solves the board. Every board is built from a
+solution and tightened until it has exactly one answer, so it never needs a guess. Out of 100: 20 a board,
+up to 40 for speed with the three, −10 a help. Today's boards are the same for everyone. Details in
+`docs/games/pips.md`.
+**Why:** the owner's request on the agent's proposal; a number puzzle with a clear daily shape, like the
+ones that already work here, tried in the lab before deciding anything else.
+**Alternatives discarded:** dragging the dominoes (taps first, as in the other lab puzzles: dragging needs
+`arrastre.js` and can come if friends ask for it); the domino characters (🁢) as the emoji (not color emoji
+on an iPhone; 🎲 instead).
+**Consequences:** the ideas ledger records `pips-dominoes` as approved; `engine.test.mjs` and
+`tools/e2e/pips/lab.mjs` cover it.
