@@ -29,7 +29,7 @@ const T = {
   como: [
     ['🎲', 'Pon todas las fichas: cada una cubre dos casillas.'],
     ['🎯', 'Cada zona de color cumple su regla: un número es lo que suman sus puntos; = todos iguales; ≠ todos distintos; <5 y >9, menos o más.'],
-    ['👆', 'Arrastra cada ficha a su casilla; tócala dos veces para girarla. Toca un rombo: se ilumina su zona.'],
+    ['👆', 'Arrastra cada ficha a su casilla; dos toques la giran. Toca un rombo: se ilumina su zona.'],
   ],
   empezar: '🎲 Empezar', aJugar: '¡A jugar!',
   tablero: 'Tablero {n} de {total} · {nivel}',
