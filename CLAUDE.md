@@ -288,7 +288,7 @@ with that the screen also enters the language tests. To see it on a real phone,
 - **Game ideas** (D-360): `.claude/agents/ideas.md` proposes what the app could try next, in three
   lanes (meta-game dynamics, existing games with weak numbers, new games with their inspiration
   credited), **with evidence**: `node tools/agents/ideas.mjs check` reads the panel's numbers as
-  administrator (games by plays against `POPULARIDAD`, the weakest finishes, the room funnel, La
+  administrator (games finished in the last four weeks against `POPULARIDAD`, the weakest finishes, the room funnel, La
   Copa by game and by day, Uno al día's returns, shares), the lab's active projects and La Bodega,
   and what players asked for. The processes agent dispatches it once a week and on the owner's
   request ("brainstorm X", "investigate game Y"). It opens **one** issue per round with **at most

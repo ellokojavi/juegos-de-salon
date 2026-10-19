@@ -6905,7 +6905,7 @@ new numbers (D-348: finish rate, abandons, cup days skipped, returns, shares) ha
 its memory `docs/ideas.json`:
 - **Evidence first.** `ideas.mjs check` reads as administrator what the panel reads and prints the
   games by plays against `POPULARIDAD` (a game that moved three places or more, or is missing, is
-  an idea: refresh the order), the one-player games with the weakest finish (ten starts or more),
+  an idea: refresh the order; since D-361 the count is games finished, and a drift is not an idea), the one-player games with the weakest finish (ten starts or more),
   the room funnel, La Copa by game and by day, Uno al día's returns, users and shares, the lab's
   two groups, the `feedback:game-idea` and open `feedback:suggestion` issues, and the ledger. An
   idea quotes those numbers or those requests, never a metric of its own.
@@ -6978,7 +6978,9 @@ four languages, before players see it, is what the lab is for, and the owner lik
 **Alternatives discarded:** ordering live from Firebase (D-255: the page would wait for the database);
 counting starts (it rewards games people abandon); labelling La Copa or a "New" game as popular.
 **Consequences:** `popularity.test.mjs`, `games.test.mjs` and `tools/e2e/home/lab.mjs` cover it; C-17
-says the new order and the label.
+says the new order and the label. `ideas.mjs check` ranks the games with the same count
+(`popularity.mjs` exports `ventana` and `contarDe`), plays started stay as a side column, and the
+drift warning comes only from finishes and points to `popularity.mjs update`.
 
 ## D-362 · "✨ Nuevo" and "🔥 Populares" as filters, in the lab
 **Date:** 2026-10-18 · **Status:** amended by D-369 · **Relation:** extends D-361 (the home page's experiments, the popular label), D-333 (New), D-142 and D-238 (the filters and ⭐ Favoritos)
