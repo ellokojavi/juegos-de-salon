@@ -83,7 +83,7 @@ la portada al día, va con los textos, and U-39, the start button above the fold
 
 - **U-20 · El reloj corre solo mientras se juega:** parte con la pantalla de juego a la vista (después
   de la cuenta regresiva y de la entrada del juego, si la tiene), se pausa con la pantalla oculta y se
-  detiene al terminar el tablero (D-105, D-130, D-258). In La Copa's games it does not show while playing, only at the end; a game's own ⏳ countdown does (D-379).
+  detiene al terminar el tablero (D-105, D-130, D-258). In La Copa's games it does not show while playing, only at the end; a game's own ⏳ countdown does (D-379), and so does the ⏱ elapsed time of a game whose speed scores and that has no countdown (Loteo, Reinas; D-384).
 - **U-21 · Nada cambia a mitad de un día:** contenido, grilla o reglas nuevas entran para los días
   que todavía no empiezan (D-128).
 - **U-22 · Un reintento nunca traba:** si algo llegó aunque el celular mostró error, el segundo
@@ -147,6 +147,8 @@ Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
 
 - **No clock at the top while playing** (#442, D-379; the owner replaced the recommended option A): none of La Copa's
   games shows the ⏱ that counted up, in the cup or in practice; the time shows at the end, and each game's own ⏳ stays.
+  Corrected by D-384 (a player's request, #563): a game whose speed scores and that has no ⏳ of its own (Loteo,
+  Reinas) shows the ⏱ elapsed time, because the player cannot pace a score they cannot see.
 - **New games on top of the home page** (#443, D-335): while a game carries its "New" label it goes
   right after La Copa; when the label goes, back to its place by popularity.
 - **Rutas en un celular chico** (#360, opción B): sin el título mientras se juega (la barra de arriba ya

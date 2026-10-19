@@ -76,7 +76,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384 |
 | Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178, D-380 |
@@ -5574,7 +5574,7 @@ píldora de Uno al día quedaba pegada a su bajada, a media tarjeta, y se leía 
 tarjeta chica); igualar el largo de las bajadas (cambia con el idioma).
 
 ## D-306 · El feedback dice con qué llave se entró, no muestra su JSON y se sube cada 15 minutos
-**Fecha:** 2026-10-12 · **Estado:** vigente; corregida por D-382 (the upload runs on the Mac mini every 5 minutes) · **Relación:** amplía D-104 (un campo más en el reporte), D-279 (quién manda el feedback) y D-284 (una llave por persona); corrige D-275 en que se subía cada hora
+**Fecha:** 2026-10-12 · **Estado:** corregida por D-382 · **Relación:** amplía D-104 (un campo más en el reporte), D-279 (quién manda el feedback) y D-284 (una llave por persona); corrige D-275 en que se subía cada hora
 **Decisión:** tres cambios al feedback 🐞, los tres pedidos por el dueño:
 - **Quien entró al laboratorio con su llave manda también su etiqueta.** Cuando una llave abre la
   puerta, `labs-puerta.js` guarda su etiqueta (`juegos-de-salon:labs-quien`, nunca la llave) y
@@ -7032,7 +7032,7 @@ from the other, also in the types row since D-241); the title is 44 px tall (C-8
 D-362's filters.
 
 ## D-365 · Every job in one registry, and the frequent ones run on the Mac without Claude
-**Date:** 2026-10-18 · **Status:** current; extended by D-382 (the feedback upload is a `mac` job too) · **Relation:** extends D-318 (the hola@ inbox) and D-276 (the round on the Mac mini)
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-318 (the hola@ inbox) and D-276 (the round on the Mac mini)
 **Context:** an email to hola@ waited for the daily round to become an issue. The owner asked to be
 more responsive at very low cost, and that every job of the project be orchestrated centrally, none out
 of sight, in a way that scales. The jobs were spread out: two scheduled workflows, two scheduled tasks
@@ -7253,7 +7253,7 @@ instead of 34; to Zip's screen, 15 instead of 34; to Toque y Fama's engine, 18 i
 Timeline deck, 22 instead of 42. `affected.test.mjs` tests `playedOn`, and `scope.test.mjs` tests the rule.
 
 ## D-379 · No cup clock while playing: the time shows only at the end
-**Date:** 2026-10-19 · **Status:** current · **Relation:** changes how D-105, D-130 and D-277 show the time (they still measure it the same); resolves dilemma #442
+**Date:** 2026-10-19 · **Status:** amended by D-384 · **Relation:** changes how D-105, D-130 and D-277 show the time (they still measure it the same); resolves dilemma #442
 **Context:** La Copa's play screen showed its ⏱ clock in the header, counting up, in every game, Cup and solo. In games with their own ⏳ countdown (Rutas rotas, Zip, Desenredo, Línea Relámpago) the player saw two clocks going opposite ways, and could read 0:04 as time left (#442).
 **Decision:** the header clock goes, in every game and every mode. The time is measured exactly as before (from «¡A jugar!», paused while reading a fact and with the tab hidden, stopped when the board ends) and shows at the end: the result, the standings and the share text. Each game's own countdown stays. The end-to-end scripts read the time from `#jugar-head`'s `reloj()`, not from the screen.
 **Why:** the owner: the game's own clock means something, because it decides points within that game, but a global clock makes no sense until the very end.
@@ -7311,3 +7311,17 @@ the owner asked that the repo know what runs on that machine, in case it has to 
 **Why:** a machine's setup that lives only in the machine is lost with it.
 **Consequences:** a new job or a new key file is added to MAC-MINI.md in the same PR. The prompts of
 the app's scheduled tasks are still only in the app.
+
+## D-384 · A game whose speed scores, and that has no countdown, shows the elapsed time
+**Date:** 2026-10-19 · **Status:** current · **Relation:** corrects D-379 (no clock while playing) for these games
+**Context:** a player wrote (#563) that Loteo shows no timer while playing, though the time decides up
+to 40 of its points. D-379 had removed La Copa's ⏱ from every game that same day, to avoid two clocks
+in games with their own ⏳ countdown. Of La Copa's games, two score by speed with no countdown: Loteo
+(up to 40 for speed, full in 5 minutes, none in 15) and Reinas (100 up to 30 s, 10 at 5 minutes).
+Rutas rotas, Zip and Desenredo have their ⏳; the lab's Pips already shows its own ⏱.
+**Decision:** a game's `ui.js` that exports `clock = true` gets the ⏱ elapsed time back in the play
+head, as before D-379: it counts the same active time, dims while a fact is read, and stops when the
+board ends. Loteo and Reinas set it; every other game keeps no clock while playing.
+**Why:** the owner: the clock that decides points within a game means something; a player cannot pace a score they cannot see.
+**Consequences:** `tools/e2e/plots/numbers.mjs` checks the ⏱ shows and stops with the last board. A new
+game whose speed scores and that has no countdown sets `clock`.
