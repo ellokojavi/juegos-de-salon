@@ -21,7 +21,7 @@ then another (still with reduced motion). Then "📅 Los tableros de hoy son los
 
 1. 🎲 Pon todas las fichas: cada una cubre dos casillas.
 2. 🎯 Cada zona de color cumple su regla: un número es lo que suman sus puntos; = todos iguales; ≠ todos distintos; <5 y >9, menos o más.
-3. 👆 Toca una ficha para elegirla, otra vez para girarla, y luego su casilla. Un toque la saca.
+3. 👆 Arrastra cada ficha a su casilla; tócala dos veces para girarla. Toca un rombo y se ilumina su zona.
 
 The usability agent shortened them to fit U-18 (273 characters); that there are three boards against the
 clock is said by the lab card and the heading of each board.
@@ -35,12 +35,20 @@ as an empty box.
   after the other, against a clock that runs from the shared 3, 2, 1 ("¡A jugar!"). The heading says
   "Tablero n de 3 · fácil|medio|difícil" and the clock shows the time so far.
 - **The board:** square cells, each colored by its zone, with a dashed edge where the zone ends. A zone
-  with no rule is plain. The rule hangs on the zone's last cell as a diamond: `6`, `=`, `≠`, `<5`, `>9`.
+  with no rule is plain. The rule sits inside the zone's last cell, in its bottom-right corner, as a
+  diamond: `6`, `=`, `≠`, `<5`, `>9` (D-385: it used to hang over the corner, where it looked like any
+  of four cells'). A tap on a diamond lights its zone for a moment and dims the rest.
 - **The tray:** the dominoes not yet placed, ivory with dark dots. A tap chooses one (it lifts and
   shines); another tap turns it a quarter (x|y, x over y, y|x, y over x); a tap on a cell lays its first
   half there and the other to the right or below. Where it does not fit: "Así no cabe: gírala o prueba
   otra casilla." On a taken cell: "Ahí ya hay una ficha: sácala primero." A placed domino comes off with
   a tap.
+- **Drag and drop (D-385):** a domino from the tray, or one already placed, can be dragged. It follows
+  the finger a little above it (so the finger does not hide it), with the orientation it has, and the
+  half that was grabbed lands on the cell under it. While dragging, the two cells it would take are
+  outlined (red if taken) and the zone under it lights up. Dropped where it does not fit, it stays where
+  it was and the cell shakes; a placed domino dropped off the board goes back to the tray. A move under
+  8 px is still a tap, so the tap way keeps working.
 - **The zones:** once full, a kept rule's diamond gets a green ring, a broken one turns red and shakes.
   With every domino down and a zone broken: "❌ Una zona no cumple su regla: mueve alguna ficha."
 - **Solved:** every cell covered and every zone kept, in any arrangement (not only the engine's): the

@@ -7325,3 +7325,20 @@ board ends. Loteo and Reinas set it; every other game keeps no clock while playi
 **Why:** the owner: the clock that decides points within a game means something; a player cannot pace a score they cannot see.
 **Consequences:** `tools/e2e/plots/numbers.mjs` checks the ⏱ shows and stops with the last board. A new
 game whose speed scores and that has no countdown sets `clock`.
+
+## D-385 · Pips: the rule's diamond inside its cell, the zone lights up, and dominoes drag
+**Date:** 2026-10-19 · **Status:** current · **Relation:** amends D-381 (how a domino is laid)
+**Context:** the owner, playing the lab's Pips: the diamond with the rule did not say which cell it
+belonged to. It hung over the bottom-right corner of the zone's last cell, where up to four cells of
+different zones meet. And laying a domino took three taps (choose, turn, cell), where the original is
+played by dragging.
+**Decision:** the diamond goes inside the cell, smaller, in its bottom-right corner. A tap on it lights
+its zone (its cells glow, the rest dims) for 1.8 s; the zone under a dragged domino lights the same way.
+Dominoes drag, from the tray and from the board: the grabbed half lands on the cell under the finger,
+the domino is drawn a little above the finger, the target cells are outlined (red when taken), an
+invalid drop leaves it where it was, and a placed domino dropped off the board goes back to the tray.
+Taps keep working: a move under 8 px is a tap.
+**Why:** the owner chose this from three mockups (inside, inside + lighting, centered): only lighting
+says that a rule is about the whole zone. Dragging is what the original does and what a hand expects.
+**Consequences:** `game.js` (`enfocar`, the pointer handlers) and `style.css`; the third step of the
+cover says to drag. The tap path stays, so the end-to-end scripts that tap cells still play.
