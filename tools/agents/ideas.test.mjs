@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { laboratorio, popularidadHoy, deriva, debiles, embudoGrupo, validateIdea, ideasDecisions, addIdeas, setStatus, questionOf, MEMORY, ROOT, STATUSES, LANES } from './ideas.mjs';
+import { nuevoOrden } from './popularity.mjs';
 import { POPULARIDAD } from '../../public/assets/js/games.js';
 
 // The lab page: active projects before La Bodega, shelved ones inside it
@@ -33,11 +34,18 @@ assert.deepEqual(hoy, [
 ]);
 assert.deepEqual(popularidadHoy({}), [], 'nothing played, nothing listed');
 
+// Right after `popularity.mjs update` the order is nuevoOrden(conteo, ofrecidos, POPULARIDAD) = POPULARIDAD: no drift
+const ofrecidosT = ['a', 'b', 'c', 'd', 'e'];
+const conteoT = { e: 9, d: 7, a: 1 };
+const ordenT = nuevoOrden(conteoT, ofrecidosT, ['a', 'b', 'c', 'd', 'e']);
+assert.equal(deriva(ordenT.map(id => ({ id, finished: conteoT[id] || 0 })), ['a', 'b', 'c', 'd', 'e']).length, 1, 'finishes that reorder the list drift it');
+assert.deepEqual(deriva(nuevoOrden(conteoT, ofrecidosT, ordenT).map(id => ({ id, finished: conteoT[id] || 0 })), ordenT), [], 'refreshed by popularity.mjs, nothing drifts');
+
 // Drift: three places or more, or a game missing from the fixed list
 const fixed = ['copa', 'a', 'b', 'c', 'd', 'e'];
-assert.deepEqual(deriva([{ id: 'copa', plays: 9 }, { id: 'b', plays: 5 }, { id: 'a', plays: 4 }], fixed), [], 'one place is no drift');
-assert.deepEqual(deriva([{ id: 'e', plays: 9 }, { id: 'copa', plays: 8 }, { id: 'x', plays: 1 }], fixed), [
-  { id: 'e', plays: 9, was: 6, now: 1 }, { id: 'x', plays: 1, was: null, now: 3 },
+assert.deepEqual(deriva([{ id: 'copa', finished: 9 }, { id: 'b', finished: 5 }, { id: 'a', finished: 4 }], fixed), [], 'one place is no drift');
+assert.deepEqual(deriva([{ id: 'e', finished: 9 }, { id: 'copa', finished: 8 }, { id: 'x', finished: 1 }], fixed), [
+  { id: 'e', finished: 9, was: 6, now: 1 }, { id: 'x', finished: 1, was: null, now: 3 },
 ]);
 assert.ok(POPULARIDAD.includes('copa'), 'the fixed order the check compares against still exists');
 
