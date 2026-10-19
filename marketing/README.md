@@ -38,4 +38,7 @@ todavía en la portada (U-34).
   revisar` dice qué quedó atrás de la app (un juego nuevo que no sale, una versión vieja, commits
   que tocaron lo que muestra) y lo anota en el campo `revision` de `registro.json`. Rehacerlo lo
   decide el dueño.
+- **Every promotional item follows the app's design** (U-40, D-380): its colors, its fonts
+  (Bangers and Nunito, from `public/assets/css/base.css`) and its look, read from the app's CSS,
+  never a system font that looks similar.
 - Un asset nuevo es una carpeta nueva con su README, que sigue el de `promo-video/` como modelo.
