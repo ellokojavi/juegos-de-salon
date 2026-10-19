@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * The hola@ inbox watcher (D-365), a `mac` job in tools/jobs/jobs.json, every 5 minutes. It counts
+ * The hola@ inbox watcher (D-369), a `mac` job in tools/jobs/jobs.json, every 5 minutes. It counts
  * the emails waiting in `buzon/` with the inbox user (D-318), which costs nothing; only when there
  * is one it runs the support agent headless (`claude -p --agent support`, Haiku), limited to
  * `inbox.mjs` and its scratch files, and then asks GitHub to upload the reports as issues at once
