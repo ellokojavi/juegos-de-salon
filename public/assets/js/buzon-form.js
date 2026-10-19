@@ -61,7 +61,7 @@ export function formularioComentario({ T, contexto: ctx, alCerrar = null, enviar
   try { nombreGuardado = localStorage.getItem(NOMBRE) || ''; } catch (_) { /* nada */ }
   const err = el('div', { class: 'labs-error', role: 'alert' });
   const texto = el('textarea', { class: 'labs-texto', maxlength: '1000', rows: '5', placeholder: T.ph, 'aria-label': T.titulo });
-  const nombre = el('input', { class: 'labs-nombre', maxlength: '40', autocomplete: 'name', placeholder: T.nombre, 'aria-label': T.nombre, value: nombreGuardado });
+  const nombre = el('input', { class: 'labs-nombre', maxlength: '40', autocomplete: 'given-name', placeholder: T.nombre, 'aria-label': T.nombre, value: nombreGuardado });
   const correo = campoCorreo(T);
   // The optional kind (D-345): one row of chips, none picked by default; tapping the picked one unpicks it
   let tipo = '';
