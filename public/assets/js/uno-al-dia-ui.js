@@ -7,7 +7,7 @@ import { el } from './ui.js';
 import { COMMON, SITIO, withLang } from './i18n.js';
 import { GAMES, SUELTOS, PORTADA, gameById, SLUGS_SIN_PAGINA } from './games.js';
 import { tiene } from './parametros.js';
-import { tirar, TEXTOS as AZAR } from './azar.js';
+import { tirar, alAzar, TEXTOS as AZAR } from './azar.js';
 import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir } from './compartir.js';
 import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel } from './uno-al-dia.js';
 import { UNO_AL_DIA } from './records.js';
@@ -96,7 +96,7 @@ export function tarjetaUnoAlDia({ lang, raiz = '', alTocar }) {
 /** Tira el dado de Juego al azar con los juegos de la portada: "🎲 Jugar otro". */
 export function jugarOtro({ lang, raiz }) {
   trackUnoAlDia('otro');
-  const pool = PORTADA.filter(g => g.available && !g.torneo);
+  const pool = PORTADA.filter(alAzar);
   tirar(pool, { lang, base: raiz, T: AZAR[lang] || AZAR.es });
 }
 

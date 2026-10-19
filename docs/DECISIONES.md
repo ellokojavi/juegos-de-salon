@@ -7124,7 +7124,8 @@ email from another thread answered in the same reply) is still quoted above its 
 ## D-374 · The random dice skips games that need a group
 **Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-188 (🎲 Juego al azar)
 **Decision:** 🎲 Juego al azar never picks a game whose `players` starts at three or more: today only
-Cuarto Rey (4–6). Its card stays on the home page and in its filter; only the dice leaves it out. The
+Cuarto Rey (4–6). Neither does 🎲 Jugar otro after Uno al día, which rolls the same dice. Its card stays
+on the home page and in its filter; only the dice leaves it out. The
 rule reads the registry (`alAzar` and `minimo` in `public/assets/js/azar.js`), so a future group game
 stays out of the dice on its own.
 **Why:** the owner's request: whoever rolls the dice may be alone, and landing on a game that needs a
