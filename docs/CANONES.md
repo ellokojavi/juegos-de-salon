@@ -55,7 +55,8 @@ public/<carpeta>/
   (C-7, D-251), y, después de las hojas de estilo, el
   registro del service worker (`import '<…>assets/js/instalable.js'`, que además pone el manifest y
   el nombre del idioma elegido, y trae `llegada.js`, que repite encima el dado de Juego al azar hasta
-  que el juego está dibujado: una `.screen.active` que no sea `#screen-espera`, D-237): así la app se
+  que el juego está dibujado: una `.screen.active` que no sea `#screen-espera`, D-237; only on the
+  game the dice opened, D-375): así la app se
   puede instalar desde cualquier juego, con su nombre.
   Se copian de otro juego; `public/assets/js/instalable.test.mjs` los exige (D-221, D-222).
 - Las páginas en git no llevan import map: lo escribe `set-version.py` solo en la copia que se publica,

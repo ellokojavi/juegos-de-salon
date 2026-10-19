@@ -14,12 +14,26 @@ export const LLEGA = 'azar-llega';
 /** Lo más que la escena espera al juego: si algo se traba, igual se va. */
 const ESPERA_MAX = 4000;
 
+/**
+ * Is the scene for this page? Only the game the dice opened shows it (D-375): a player who goes back
+ * before that game loads lands on the home page, which would hold the dice over itself for
+ * ESPERA_MAX and, meanwhile, the 🎲 button would not roll. A scene without `para` (left by an older
+ * version of the home page) is still shown, as before.
+ */
+export function esPara(escena, pathname) {
+  if (!escena || typeof escena !== 'object') return false;
+  if (!escena.para) return true;
+  const limpio = p => String(p).replace(/index\.html$/, '');
+  return limpio(escena.para) === limpio(pathname);
+}
+
 function leer() {
   try {
     const crudo = sessionStorage.getItem(LLEGA);
     if (!crudo) return null;
     sessionStorage.removeItem(LLEGA);
-    return JSON.parse(crudo);
+    const escena = JSON.parse(crudo);
+    return esPara(escena, location.pathname) ? escena : null;
   } catch { return null; }
 }
 
