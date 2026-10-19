@@ -1122,6 +1122,7 @@
     "cup-games/languages.mjs",
     "cup/languages.mjs",
     "cup/notifications.mjs",
+    "cup/out.mjs",
     "cup/player-cups.mjs",
     "cup/seat.mjs",
     "cup/tournament.mjs",

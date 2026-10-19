@@ -75,7 +75,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
-| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359 |
+| La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376 |
 | Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178 |
@@ -1618,6 +1618,8 @@ los días que el jugador ya puede ver (no delata lo de hoy).
   juegos que el que más jugó va marcado junto a su nombre: **"Tomario (-1J)"** (`menosJuegos`).
   La misma marca va en el mensaje de texto "Tabla parcial" del admin y en el recuadro "Posiciones
   día a día" (al final de cada línea y en los botones de jugador), con la misma leyenda.
+  Since D-376, whoever is out of the cup (D-347) gets no "(-1J)" and does not count for "the one
+  who played the most": they carry 🚪 instead.
 **Por qué:** una imagen se lee de un vistazo en el grupo; y en una tabla a mitad de día, el que
 va último puede ser solo el que todavía no juega.
 
@@ -6553,7 +6555,7 @@ passes on main's 34 pages.
 D-329 left behind).
 
 ## D-347 · Out of the cup after two days in a row without playing
-**Date:** 2026-10-17 · **Status:** current · **Relation:** new rule of La Copa; complements D-147 (provisional table), D-161 (closing early) and D-224 (notifications)
+**Date:** 2026-10-17 · **Status:** current · **Relation:** new rule of La Copa; complements D-147 (provisional table), D-161 (closing early) and D-224 (notifications); extended by D-376 (how the table and the image show them)
 **Context:** the owner's request: a player who stops playing should be left out automatically, and
 it should be seen both on their own board and in the table everyone sees. Until now a missed day
 was just 0 points: the absent player kept the table "provisional", appeared in every "missing"
@@ -6566,7 +6568,8 @@ cup), with a warning before and the admin able to bring them back.
   days the admin's early close left unopened (D-161), and never the last two days: they close with
   the cup, when there is nothing left to leave.
 - **What stays:** their points. They stay in the table, grey, with 🚪 instead of a place and
-  "(fuera)", below everyone still playing. They can't press Empezar (the Firebase rules refuse it);
+  "(fuera)", below everyone still playing (since D-376: faded, with one "Eliminado" pill over the
+  days they will not play instead of "(fuera)"). They can't press Empezar (the Firebase rules refuse it);
   nobody waits for them: `faltan()` leaves them out, so the provisional table, the lists and the
   closing confirmation don't count them, and they get no more notifications.
 - **What they see:** a notice on top of their board ("🚪 Quedaste fuera de la copa…"), with what to
@@ -7181,3 +7184,20 @@ waits for) and, meanwhile, ignored 🎲, which does not roll while a dice is on 
 fixing `tools/e2e/home/dice.mjs` on GitHub's slower runner; the owner asked for the fix.
 **Consequences:** `public/assets/js/llegada.test.mjs` tests `esPara`; `tools/e2e/home/dice.mjs` leaves a
 scene for a game, opens the home page and checks there is no dice over it and 🎲 rolls at once.
+
+## D-376 · Out of the cup, shown as "Eliminado" in the table, the chart and the image
+**Date:** 2026-10-19 · **Status:** current · **Relation:** extends D-347 (out of the cup)
+**Decision:** whoever is out of the cup is told apart at a glance, in the app and in the image shared
+with the group. **In the table** the row is fainter (opacity 0.45, the name in grey) and keeps the 🚪;
+the days after the last one they played, which they will not play, become a single **"Eliminado"** pill
+(Eliminated, Eliminado, Ausgeschieden) at least as wide as those columns, so the other rows stay aligned,
+and wider when the word needs it; the "(fuera)" after the name goes, since the pill says it. Days missed
+before that keep their "–". **In "Posiciones día a día"** their line and their name chip fade and carry
+🚪 instead of "(-2J)". **In the image**, their line, dots and row are drawn faded, with 🚪 for a place and
+an outlined "ELIMINADO" after the name, in the cup's language like the rest of it (D-170). Nobody out of
+the cup counts as having games left: no "-2J" for them, and they do not set how many the others lack
+(`menosJuegos`).
+**Why:** the owner's request: in the table and the shared image, eliminated players looked like the
+rest, with days still "to play".
+**Consequences:** `tools/e2e/cup/out.mjs` checks the table in four languages at 320 px, the chart and
+what the image writes; `public/cup/engine.test.mjs` checks `menosJuegos` with players out of the cup.

@@ -996,7 +996,8 @@ function tarjetaDia(d, rotulo) {
 /**
  * La tabla con un bloque por día de la copa, los siete (D-131): con puntos si ya se ven, ✓ si
  * jugó pero todavía no los puedes ver, "por jugar" si el día está abierto y no ha jugado, "–" si
- * se cerró sin jugarlo, y vacío si el día todavía no abre.
+ * se cerró sin jugarlo, y vacío si el día todavía no abre. Out of the cup (D-347, D-376): the days
+ * after the last one they played become a single "Eliminado" pill, in the same columns.
  */
 function vistaTabla(filas, { dias, meta, now }) {
   const bloque = (f, d) => {
@@ -1006,13 +1007,22 @@ function vistaTabla(filas, { dias, meta, now }) {
     if (!x.jugo) return abierto(meta, d, now) ? el('span', { class: 'pd abierto', title: T.blockOpen }, '•') : el('span', { class: 'pd perdido', title: T.blockMissed }, '–');
     return el('span', { class: 'pd' + (x.x === 2 ? ' doble' : '') + (x.pos === 1 ? ' oro' : '') }, String(x.pts));
   };
+  const bloques = f => {
+    if (!f.fuera) return dias.map(d => bloque(f, d));
+    const ultimo = dias.reduce((u, d, i) => (f.dias[d]?.jugo ? i : u), -1);
+    const resto = dias.length - ultimo - 1;
+    // At least as wide as the blocks it replaces (each one 1.9em of its 0.72rem letter, with the 4px
+    // gap between them), and wider if the word needs it: a single day left, or German
+    return [...dias.slice(0, ultimo + 1).map(d => bloque(f, d)),
+      resto ? el('span', { class: 'pd eliminado', style: `min-width:calc(${resto} * 1.368rem + ${resto - 1} * 4px)` }, T.outBadge) : null];
+  };
   return el('div', { class: 'tabla' }, filas.map(f => el('div', { class: 'fila' + (f.pid === S.yo ? ' yo' : '') + (f.fuera ? ' fuera' : '') },
-    // Out of the cup (D-347): a door instead of a place, and grey
+    // Out of the cup (D-347): a door instead of a place, and faded (D-376)
     el('span', { class: 'lugar', title: f.fuera ? fmt(T.outAdmin, { a: f.fuera.desde, b: f.fuera.hasta }) : null }, f.fuera ? '🚪' : String(f.lugar)),
     el('span', { class: 'flecha ' + (f.flecha > 0 ? 'sube' : f.flecha < 0 ? 'baja' : '') }, f.flecha > 0 ? '▲' : f.flecha < 0 ? '▼' : ''),
     el('div', { class: 'quien' },
-      el('b', {}, f.name, f.pid === S.yo ? el('small', { class: 'muted' }, ` (${T.you})`) : null, f.fuera ? el('small', { class: 'muted' }, ` (${T.outRow})`) : null),
-      el('div', { class: 'puntitos' }, dias.map(d => bloque(f, d)))),
+      el('b', {}, f.name, f.pid === S.yo ? el('small', { class: 'muted' }, ` (${T.you})`) : null),
+      el('div', { class: 'puntitos' }, bloques(f))),
     el('span', { class: 'total' }, String(f.total), el('small', {}, ` ${T.pts}`)))));
 }
 
@@ -1076,7 +1086,10 @@ function grafico(now) {
   const ev = evolucion(Lc, S.yo, now);
   if (!ev.dias.length) return null;
   // "(-1J)" junto a quien lleva menos juegos, como en la imagen que se comparte (D-126)
-  const menos = menosJuegos(tabla(Lc, S.yo, now));
+  const filasTabla = tabla(Lc, S.yo, now);
+  const menos = menosJuegos(filasTabla);
+  // Out of the cup (D-347): their line, faded, and 🚪 after their name (D-376)
+  const afuera = new Set(filasTabla.filter(f => f.fuera).map(f => f.pid));
   const n = ev.filas.length;
   const W = 320, fila = 24, arriba = 14, abajo = 26, izq = 26, der = 92; // espacio a la derecha para "Nombre 3º (-1J)"
   const H = arriba + (n - 1) * fila + abajo;
@@ -1106,7 +1119,7 @@ function grafico(now) {
   const enLugar = {};
   for (const f of orden) {
     const mia = f.pid === S.yo;
-    const g = svgEl('g', { class: 'g-jugador' + (mia ? ' mia' : ''), 'data-pid': f.pid, style: `--c:${color(f.pid)}` });
+    const g = svgEl('g', { class: 'g-jugador' + (mia ? ' mia' : '') + (afuera.has(f.pid) ? ' fuera' : ''), 'data-pid': f.pid, style: `--c:${color(f.pid)}` });
     grupos[f.pid] = g;
     const pts = f.lugares.map((l, i) => [x(ev.dias[i]), y(l)]);
     if (pts.length > 1) g.append(svgEl('polyline', { points: pts.map(p => p.join(',')).join(' '), class: 'g-linea' }));
@@ -1120,7 +1133,7 @@ function grafico(now) {
     if (pts.length) {
       const [px, py] = pts[pts.length - 1];
       const corto = f.name.length > 10 ? `${f.name.slice(0, 9)}…` : f.name;
-      const marca = menos[f.pid] > 0 ? ` (-${menos[f.pid]}J)` : '';
+      const marca = afuera.has(f.pid) ? ' 🚪' : menos[f.pid] > 0 ? ` (-${menos[f.pid]}J)` : '';
       const ultimo = f.lugares[f.lugares.length - 1];
       const k = (enLugar[ultimo] = (enLugar[ultimo] ?? -1) + 1);
       g.append(svgEl('text', { x: px + 9, y: py + 4 + k * 11, class: 'g-rotulo' }, `${corto} ${ord(ultimo)}${marca}`));
@@ -1136,8 +1149,8 @@ function grafico(now) {
     chips.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.pid === destacado));
   };
   const chips = el('div', { class: 'grafico-chips' }, ev.filas.slice().sort((a, b) => porLlegada.indexOf(a.pid) - porLlegada.indexOf(b.pid)).map(f =>
-    el('button', { type: 'button', class: 'g-chip' + (f.pid === S.yo ? ' mia' : ''), 'data-pid': f.pid, style: `--c:${color(f.pid)}`, onClick: () => { SFX.tap(); destacar(f.pid); } },
-      el('span', { class: 'g-color', 'aria-hidden': 'true' }), nombreConJuegos(f.pid === S.yo ? fmt(T.progressYou, { name: f.name }) : f.name, menos[f.pid]))));
+    el('button', { type: 'button', class: 'g-chip' + (f.pid === S.yo ? ' mia' : '') + (afuera.has(f.pid) ? ' fuera' : ''), 'data-pid': f.pid, style: `--c:${color(f.pid)}`, onClick: () => { SFX.tap(); destacar(f.pid); } },
+      el('span', { class: 'g-color', 'aria-hidden': 'true' }), nombreConJuegos(f.pid === S.yo ? fmt(T.progressYou, { name: f.name }) : f.name, menos[f.pid]), afuera.has(f.pid) ? ' 🚪' : null)));
   const notaJuegos = Object.values(menos).some(x => x > 0) ? el('p', { class: 'muted grafico-nota', id: 'nota-juegos' }, T.fewerGamesNote) : null;
   return el('div', { class: 'panel' }, el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.progressTitle), svg, chips, notaJuegos, leyenda,
     // Once over, the podium's Share the summary does the same: one share button per screen (C-19)
@@ -1500,6 +1513,9 @@ async function imagenTabla() {
   });
   // Las filas de la tabla, detrás de las líneas que llegan a ellas. Terminada, el podio en galvanos.
   const filaDe = Object.fromEntries(filas.map((f, i) => [f.pid, i]));
+  // Out of the cup (D-347): their line, dots and row faded, 🚪 for a place and "Eliminado" (D-376)
+  const afuera = new Set(filas.filter(f => f.fuera).map(f => f.pid));
+  const TENUE = 0.35;
   const metal = f => (fin ? METALES[f.lugar] : null);
   filas.forEach((f, i) => {
     const y0 = yFila(i) - fila * 0.43, h = fila * 0.86, w = derTabla - tabla0, mia = f.pid === S.yo, mt = metal(f);
@@ -1544,6 +1560,7 @@ async function imagenTabla() {
   const PUNTEADO = [2, 14];
   for (const f of orden) {
     const pts = puntos(f), mia = f.pid === S.yo, mk = marcas[f.pid];
+    c.globalAlpha = afuera.has(f.pid) ? TENUE : 1;
     c.strokeStyle = color(f.pid); c.lineWidth = mia ? 10 : 6; c.lineJoin = 'round'; c.lineCap = 'round';
     for (let i = 1; i < pts.length; i++) {
       c.setLineDash(mk[i]?.tipo === 'falta' ? PUNTEADO : []);
@@ -1553,6 +1570,7 @@ async function imagenTabla() {
     c.setLineDash(mk[pts.length - 1]?.tipo === 'falta' ? PUNTEADO : []);
     c.beginPath(); c.moveTo(ux, uy); c.lineTo(tabla0 + 6, uy); c.stroke();
     c.setLineDash([]);
+    c.globalAlpha = 1;
   }
   // Los puntos, encima de todas las líneas
   const pildora = (cx, cy, txt) => {
@@ -1569,9 +1587,10 @@ async function imagenTabla() {
       c.fillStyle = col; c.font = fuente(900, r * 0.95); c.fillText('?', cx, cy + r * 0.34);
     } else if (mk.tipo === 'no') {
       c.fillStyle = TINTA; circulo(cx, cy, r * 0.72); c.fill();
-      c.globalAlpha = 0.55; c.lineWidth = 3; c.strokeStyle = col; c.stroke();
+      const a0 = c.globalAlpha; // multiplied, so a faded player's dot stays faded (D-376)
+      c.globalAlpha = a0 * 0.55; c.lineWidth = 3; c.strokeStyle = col; c.stroke();
       c.fillStyle = col; c.font = fuente(900, r * 0.8); c.fillText('–', cx, cy + r * 0.28);
-      c.globalAlpha = 1;
+      c.globalAlpha = a0;
     } else {
       c.fillStyle = col; circulo(cx, cy, r); c.fill();
       if (mk.tipo === 'comodin' || mk.final) { c.lineWidth = 4; c.strokeStyle = mk.tipo === 'comodin' ? '#ffd23f' : '#2ee6d6'; circulo(cx, cy, r + 4); c.stroke(); }
@@ -1584,8 +1603,10 @@ async function imagenTabla() {
     puntos(f).forEach(([px, py], i) => {
       const base = i === m - 1 ? R : junto[i][f.pid].r; // el último cae en su fila, sin apretura
       const mk = marcas[f.pid][i], r = mia ? base + 2 : base;
+      c.globalAlpha = afuera.has(f.pid) ? TENUE : 1;
       punto(px, py, r, mk, color(f.pid));
       if (mk.tipo === 'comodin') pildora(px + r * 0.95, py - r * 0.95, G().T.x2);
+      c.globalAlpha = 1;
     });
   }
   // La pill de juegos por jugar: borde punteado, como el punto "?"; devuelve su ancho
@@ -1598,19 +1619,28 @@ async function imagenTabla() {
     return w;
   };
   const anchoPill = (k, px) => { c.font = fuente(900, px); return c.measureText(fmt(G().T.fewerGamesPill, { n: k })).width + px * 1.1; };
+  // "Eliminado" after the name of whoever is out of the cup (D-376): a plain outline, not the dashed "-1J"
+  const ELIMINADO = G().T.outBadge.toUpperCase();
+  const anchoFuera = px => { c.font = fuente(900, px); return c.measureText(ELIMINADO).width + px * 1.3; };
+  const pillFuera = (x0, cy, px) => {
+    const w = anchoFuera(px), h = px * 1.6;
+    c.lineWidth = 2.5; c.strokeStyle = 'rgba(255,255,255,0.8)'; caja(x0, cy - h / 2, w, h, h / 2); c.stroke();
+    c.fillStyle = '#ffffff'; c.textAlign = 'left'; c.font = fuente(900, px); c.fillText(ELIMINADO, x0 + px * 0.65, cy + px * 0.36);
+  };
   // El texto de cada fila: lugar, flecha, nombre (con su pill o la copa del campeón) y puntos
   const tamFila = Math.round(Math.min(42, fila * 0.4));
   // Lugar, flecha y nombre se corren con la letra
   const xLugar = tabla0 + tamFila * 1.1, xFlecha = tabla0 + tamFila * 2.15, xNombre = tabla0 + tamFila * 2.75;
   filas.forEach((f, i) => {
-    const y = yFila(i) + tamFila * 0.36, mt = metal(f);
+    const y = yFila(i) + tamFila * 0.36, mt = metal(f), out = afuera.has(f.pid);
+    c.globalAlpha = out ? 0.5 : 1;
     // En el galvano, letra grabada: tinta oscura con un reflejo claro abajo
     const escribir = (t, px, color) => {
       if (mt) { c.fillStyle = 'rgba(255,255,255,0.55)'; c.fillText(t, px, y + 2); c.fillStyle = mt.tinta; } else c.fillStyle = color;
       c.fillText(t, px, y);
     };
     c.textAlign = 'center'; c.font = fuente(900, tamFila);
-    escribir(String(f.lugar), xLugar, '#ffd23f');
+    escribir(out ? '🚪' : String(f.lugar), xLugar, '#ffd23f');
     if (f.flecha) { c.font = fuente(900, tamFila * 0.6); c.fillStyle = f.flecha > 0 ? '#9dff3a' : '#ff2e88'; c.fillText(f.flecha > 0 ? '▲' : '▼', xFlecha, y - 2); }
     c.textAlign = 'right'; c.font = fuente(900, tamFila);
     const total = `${f.total} ${G().T.pts}`;
@@ -1618,7 +1648,7 @@ async function imagenTabla() {
     // Lo que va después del nombre: la copa del campeón o la pill; el nombre achica la letra
     // para que todo quepa antes de los puntos y, si aún no cabe, se corta con "…"
     const copa = fin && f.lugar === 1, k = menos[f.pid] || 0;
-    const extra = t => (copa ? 14 + t * 1.15 : k ? 16 + anchoPill(k, Math.round(t * 0.62)) : 0);
+    const extra = t => (copa ? 14 + t * 1.15 : out ? 16 + anchoFuera(Math.round(t * 0.5)) : k ? 16 + anchoPill(k, Math.round(t * 0.62)) : 0);
     const libre = derTabla - 22 - c.measureText(total).width - 20 - xNombre;
     const peso = mt ? 900 : 800;
     let nombre = f.name, t = tamFila;
@@ -1629,7 +1659,9 @@ async function imagenTabla() {
     escribir(nombre, xNombre, '#ffffff');
     const tras = xNombre + c.measureText(nombre).width + 14;
     if (copa) { c.font = fuente(900, t); c.fillText('🏆', tras, y); }
-    if (k) pill(tras + 2, yFila(i), k, Math.round(t * 0.62));
+    if (out) pillFuera(tras + 2, yFila(i), Math.round(t * 0.5));
+    else if (k) pill(tras + 2, yFila(i), k, Math.round(t * 0.62));
+    c.globalAlpha = 1;
   });
   // La leyenda: los mismos puntos del gráfico, solo los que aparecen en él
   const hay = new Set(Object.values(marcas).flat().map(mk => mk.tipo));
