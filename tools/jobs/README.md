@@ -14,7 +14,7 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
 
 | `where` | What it is | Use it for |
 |---|---|---|
-| `github` | a scheduled workflow in `.github/workflows/` | what needs no key on the Mac (the feedback upload, push notifications) |
+| `github` | a scheduled workflow in `.github/workflows/` | what needs no key on the Mac (push notifications) |
 | `mac` | a launchd job on the owner's Mac mini, a plain script | frequent checks: free to check, Claude only when there is work |
 | `app` | a scheduled task in the Claude app | rounds that are Claude's work every time (processes, weekly report) |
 | `hook` | a Claude Code hook (`.claude/settings.json`) | what runs with each session |
@@ -32,6 +32,9 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
 
 - **`inbox-watch`** ([`inbox-watch.mjs`](inbox-watch.mjs)), every 5 minutes: counts the emails in
   `buzon/` (D-318). With one, runs the support agent headless with Haiku, allowed only
-  `inbox.mjs`, Read and Write, and launches `feedback.yml` so the issue appears at once.
+  `inbox.mjs`, Read and Write, and uploads the reports right away so the issue appears at once.
+- **`feedback-watch`** (`tools/agents/feedback.mjs sync`), every 5 minutes: uploads the new reports of
+  `feedback/` as `feedback` issues (D-382). It was the GitHub workflow `feedback.yml`, which GitHub ran
+  about 4 times a day instead of every 15 minutes; the workflow stays, by hand only.
 
 Logs: `~/Library/Logs/juegos-de-salon/<id>.log`. Last run: `~/.config/juegos-de-salon/jobs/<id>.json`.
