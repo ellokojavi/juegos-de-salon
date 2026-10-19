@@ -227,4 +227,6 @@ export function montar(raiz, ctx) {
   dibujar();
 }
 
+/** Speed scores and there is no countdown: the play head shows the elapsed time (D-384). */
+export const clock = true;
 export const resultado = e => ({ s: motor.puntaje(e), t: motor.tarjeta(e), resumen: `${motor.puntaje(e)}/100` });

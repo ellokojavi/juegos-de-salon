@@ -237,6 +237,8 @@ export function ejemplo({ el, T, variante = null }) {
 
 /** Building the hard Utilities boards takes about half a second: the waiting room builds them ahead. */
 export const caro = true;
+/** Speed scores and there is no countdown: the play head shows the elapsed time (D-384). */
+export const clock = true;
 
 /* ------------------------------------------------------------------ */
 /* The game                                                            */
