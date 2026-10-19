@@ -435,7 +435,9 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   (D-149, D-214, D-238).
 - **Los filtros se quedan pegados arriba** al bajar por la lista, y tocar uno estando pegados
   lleva a la primera tarjeta filtrada (D-196). Pegados, su fondo sube hasta tapar la franja de la
-  muesca: las tarjetas no se ven pasar detrás de la hora (U-12).
+  muesca: las tarjetas no se ven pasar detrás de la hora (U-12) They keep floating after that tap even when the
+  result is too short to scroll that far: an empty space under the list holds them until the player
+  scrolls up (D-371).
 - **Los tipos van en una sola fila**, a cualquier ancho desde 320 px y en los cuatro idiomas:
   bajo 520 px el emoji sube arriba del nombre, y bajo 300 px de caja las fichas se aprietan para
   no quedar pegadas al borde (D-144, D-149, U-11). Lo que se suma a la fila entra solo si cabe,

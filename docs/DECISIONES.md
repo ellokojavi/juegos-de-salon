@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -3038,7 +3038,7 @@ guardaba bien el español, pero "‹ Menú" lo llevaba a la portada del laborato
 en alemán.
 
 ## D-196 · Los filtros de la portada quedan pegados arriba
-**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** complementa D-142 y D-149
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** complementa D-142 y D-149; ampliada por D-371 (the menu keeps floating after the tap)
 **Decisión:** Al bajar por la lista de juegos, la barra de tipos (y la línea "Se ven N de M ·
 Ver todos") se queda pegada arriba, con fondo oscuro desenfocado que tapa también la franja de la
 muesca. Tocar un tipo estando pegada lleva la lista filtrada a su primera tarjeta, justo debajo.
@@ -7120,3 +7120,17 @@ email from another thread answered in the same reply) is still quoted above its 
 (`--test-to`) has no thread, so it quotes everything.
 **Why:** The owner's rule after the reply to #538: quoting what is already on screen in the thread is noise.
 **Consequences:** `inThread` in `tools/agents/feedback.mjs` decides it; the test is in `tools/agents/feedback.test.mjs`.
+
+## D-371 · A tap on the floating filters keeps them floating, even on a short result
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-196 (the tap takes the list to its first card) and D-369 (the title on the floating menu)
+**Decision:** the owner: when tapping a filter while the menu floats leaves a list too short to scroll
+that far, the menu floats anyway, and it goes back to its place when the player scrolls up. An empty
+space under the list (`.filtros-relleno`, before the footer) makes the page just tall enough for the
+jump; on each scroll it shrinks to what the page still needs and never grows, so scrolling up gives
+the space back pixel by pixel and the menu leaves at the first one. The jump is rounded up to a whole
+pixel: half a pixel short, the menu also dropped, on any list (at 390 px wide it happened with every
+type).
+**Why:** the owner's request: the menu vanishing on its own right after a tap read as a glitch.
+**Consequences:** `tools/e2e/home/popular.mjs` taps 🔥 Populares on a tall screen and checks that the
+menu floats and the cards start under it, that scrolling up lets it go and the space shrinks, and that
+a long type at 390 px keeps it floating.
