@@ -1,5 +1,5 @@
 // Zip with all ten levels solved (D-250): the game ends before the clock, with 100 points,
-// with no countdown or solution in view, and the clock at the top stays still.
+// with no countdown or solution in view, and the measured time stays still.
 //
 // Usage: python3 -m http.server 8765 -d public (in another terminal) and node tools/e2e/cup/zip-ten.mjs <output-folder>
 import { output } from '../output.mjs';
@@ -32,12 +32,12 @@ try {
     await sleep(k < 9 ? 650 : 300);
   }
   const end = await ev(`JSON.stringify({notice:document.querySelector('.zip-aviso')?.textContent||'',button:!!document.getElementById('btn-fin'),
-    timer:!!document.querySelector('.zip-reloj'),solution:document.querySelector('.zip-grid').classList.contains('solucion'),clock:document.querySelector('#jugar-head .cron')?.textContent})`).then(JSON.parse);
+    timer:!!document.querySelector('.zip-reloj'),solution:document.querySelector('.zip-grid').classList.contains('solucion'),clock:document.querySelector('#jugar-head').reloj?.()})`).then(JSON.parse);
   ok(/10 niveles/.test(end.notice) && end.button, `Zip: with all ten solved it ends before the clock and says so (${end.notice})`);
   ok(!/null|undefined/.test(end.notice), 'Zip: the final notice carries no extra text');
   ok(!end.timer && !end.solution, 'Zip: at the end there is no countdown and no "así se resolvía"');
   await sleep(1500);
-  ok(await ev(`document.querySelector('#jugar-head .cron')?.textContent`) === end.clock, `Zip: the clock at the top stays still at ${end.clock}`);
+  ok(await ev(`document.querySelector('#jugar-head').reloj?.()`) === end.clock, `Zip: the measured time stays still at ${end.clock}`);
   await b.shot('zip-ten');
 
   await ev(`document.getElementById('btn-fin').click(); 1`); await sleep(800);

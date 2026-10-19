@@ -148,9 +148,9 @@ for (let n = 0; n < ETAPAS.length; n++) {
 }
 ok(await waitFor(`!!document.getElementById('btn-fin')`, 3000), 'after the fifth: See result');
 ok(/Todo loteado/.test(await ev(`document.getElementById('lt-sello').textContent`)) && await ev(`document.querySelector('#lt-tablero').classList.contains('resuelto')`), '«¡Todo loteado!» over the last board, shining');
-const clock = await ev(`document.querySelector('#jugar-head .cron').textContent`);
+const clock = await ev(`document.querySelector('#jugar-head').reloj()`);
 await sleep(1300);
-ok(await ev(`document.querySelector('#jugar-head .cron').textContent`) === clock, `the clock stopped when the last board was solved (${clock})`);
+ok(await ev(`document.querySelector('#jugar-head').reloj()`) === clock, `the clock stopped when the last board was solved (${clock})`);
 ok(await ev(`document.getElementById('btn-fin').getBoundingClientRect().bottom <= innerHeight`), 'See result is in sight without scrolling');
 await b.shot('06-all-done');
 await ev(`document.getElementById('btn-fin').click(); 1`);

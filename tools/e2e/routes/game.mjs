@@ -102,9 +102,9 @@ try {
   const perfect = J.hechas.filter(x => x.giros <= x.minimo).length;
   ok(new RegExp(perfect === 5 ? '¡Todas en el mínimo!' : '¡Rutas unidas!').test(await text('#rr-sello')), `the stamp says how it went (${J.hechas.map(x => `${x.giros}/${x.minimo}`).join(' ')})`);
   ok(await ev(`document.querySelectorAll('.rr-punto.perfecta').length`) === perfect && await ev(`document.querySelectorAll('.rr-punto.hecha').length`) === 5 - perfect, 'and the dots: green at the minimum, yellow with extra turns');
-  const clock = await text('#jugar-head .cron');
+  const clock = await ev(`document.querySelector('#jugar-head').reloj()`);
   await sleep(1300);
-  ok(await text('#jugar-head .cron') === clock, `La Copa's clock stopped when the board ended (${clock})`);
+  ok(await ev(`document.querySelector('#jugar-head').reloj()`) === clock, `La Copa's clock stopped when the board ended (${clock})`);
   await b.shot('04-end');
   const exp = puntajePartida(J.hechas, J.seg);
   await ev(`document.getElementById('btn-fin').click(); 1`);
