@@ -136,6 +136,10 @@ la portada al día, va con los textos, and U-39, the start button above the fold
   uno que ya no está o una pantalla que cambió. Un juego que sale a propósito sin estar en la
   portada, porque todavía está en el laboratorio (`"laboratorio": ["caso"]`; el teaser de El caso),
   tampoco cuenta como "uno que ya no está".
+- **U-40 · Promotional material looks like the app (D-380):** every promotional item uses the
+  app's colors, fonts (Bangers for titles and game names, Nunito for text; see `--font-display`
+  and `--font-body` in `public/assets/css/base.css`), emojis and look. A missing font is
+  downloaded, never swapped for a look-alike.
 
 ## Resuelto con el dueño
 
