@@ -1,7 +1,7 @@
 // The six screens of the Reddit image, real and in Spanish: each one opens the served site in
 // Chrome, walks the same steps as tools/e2e/paths.mjs (or its own, below) and leaves a 390×844
 // PNG in img/. With ?test the home page opens without the promotional splash.
-//   SITE=http://localhost:8765 node marketing/reddit-chile/capturar.mjs
+//   SITE=http://localhost:8765 node marketing/reddit-chile/capture.mjs
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { launch, sleep } from '../../tools/e2e/cdp.mjs';
@@ -12,12 +12,12 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const SITE = process.env.SITE || 'http://localhost:8765';
 const route = id => gameById(id)?.path || `${id}/`;
 const SHOTS = [
-  { name: 'portada', url: '?test', steps: [] },
-  { name: 'dudo', url: route('dudo'), steps: PATHS.dudo.reveal },
-  { name: 'cuarto-rey', url: route('cuarto-rey'), steps: [...PATHS['cuarto-rey'].table, `document.getElementById('card').click()`, `1`, `1`] },
-  { name: 'copa', url: 'cup/?test&demo=podium', steps: [`1`, `1`] },
-  { name: 'reinas', url: route('reinas'), steps: PATHS.reinas.game },
-  { name: 'rutas', url: route('rutas'), steps: PATHS.rutas.stage },
+  { name: 'home', url: '?test', steps: [] },
+  { name: 'liars-dice', url: route('dudo'), steps: PATHS.dudo.reveal },
+  { name: 'fourth-king', url: route('cuarto-rey'), steps: [...PATHS['cuarto-rey'].table, `document.getElementById('card').click()`, `1`, `1`] },
+  { name: 'cup', url: 'cup/?test&demo=podium', steps: [`1`, `1`] },
+  { name: 'queens', url: route('reinas'), steps: PATHS.reinas.game },
+  { name: 'routes', url: route('rutas'), steps: PATHS.rutas.stage },
 ];
 const only = process.argv.slice(2);
 const b = await launch({ dir: '/tmp/reddit-chile/profile', out: join(HERE, 'img'), width: 390, height: 844 });

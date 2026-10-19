@@ -38,11 +38,11 @@ Copa: if one is added or removed, the number changes here, in the image and in t
 
 ```bash
 python3 -m http.server 8765 -d public                     # in another terminal
-node marketing/reddit-chile/capturar.mjs                   # the six screens into img/ (SITE= for another port)
-node marketing/reddit-chile/construir.mjs                  # tarjeta.html → output/reddit-chile-1080x1350.jpg
+node marketing/reddit-chile/capture.mjs                   # the six screens into img/ (SITE= for another port)
+node marketing/reddit-chile/build.mjs                  # card.html → output/reddit-chile-1080x1350.jpg
 ```
 
-Each crop is set with `object-position` in `tarjeta.html`. Look at the result before delivering it:
+Each crop is set with `object-position` in `card.html`. Look at the result before delivering it:
 text cut at the edges, the footer free of the second row, the contrast.
 
 ## History
