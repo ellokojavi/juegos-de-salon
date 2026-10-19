@@ -503,8 +503,9 @@ export function evolucion(L, yo, now) {
  */
 export function menosJuegos(filas) {
   const jugados = f => Object.values(f.dias || {}).filter(x => !x.oculto && x.jugo).length;
-  const max = Math.max(0, ...filas.map(jugados));
-  return Object.fromEntries(filas.map(f => [f.pid, max - jugados(f)]));
+  // Who is out of the cup (D-347) has nothing left to play: no "-2J", and they do not set the max (D-376)
+  const max = Math.max(0, ...filas.filter(f => !f.fuera).map(jugados));
+  return Object.fromEntries(filas.map(f => [f.pid, f.fuera ? 0 : Math.max(0, max - jugados(f))]));
 }
 
 /** Quiénes no han jugado un día que sigue abierto (para el mensaje del admin y el tablero). */
