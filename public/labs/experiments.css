@@ -1,10 +1,8 @@
-/* The lab's experiments bar (D-351, D-361): the real page behind, untouched, and a dark pill floating
-   at the bottom with the controls of what is being tried. Shared by every lab demo of a page of the
-   app (the splash, the home page), so a new experiment only adds its controls. */
-html, body { height: 100%; margin: 0; overflow: hidden; }
-.demo-portada { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
+/* The lab's experiments bar (D-351, D-361, D-363): a dark pill floating at the bottom with the controls
+   of what is being tried. Shared by the splash demo and the home page's experiments, which draws it on
+   the real home page (no frame: on an iPhone a frame grows to its page's height and nothing in it sticks). */
 .demo-barra {
-  position: fixed; z-index: 90; left: 50%; bottom: calc(12px + var(--safe-bottom)); transform: translateX(-50%);
+  position: fixed; z-index: 1000; left: 50%; bottom: calc(12px + var(--safe-bottom)); transform: translateX(-50%);
   display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; align-items: center;
   width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box; padding: 8px 10px;
   border-radius: 999px; background: rgba(10, 4, 20, 0.9); border: 1px solid var(--glass-border);

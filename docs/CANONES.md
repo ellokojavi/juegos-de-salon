@@ -395,8 +395,9 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **✨ Nuevo and 🔥 Populares filters, in the lab** (D-362): a row of two chips above the types,
   each shown only when it has games, kept in the link as `?type=new` / `?type=popular`; only with `?picks`.
 - **Home page experiments** (D-361): what is tried on the home page before players see it is a URL
-  parameter the page reads, off by default, listed in `public/labs/home/experiments.js`; `/labs/home/`
-  shows the real page with one switch for each (the bar of `public/labs/experiments.css`).
+  parameter the page reads, off by default, listed in `public/labs/home/experiments.js`. `/labs/home/`
+  opens the real home page with `?lab`, which draws the bar (`public/labs/experiments.css`) with one
+  switch for each; never in a frame, where an iPhone would not let anything stick (D-363).
 - **A promotional splash, off by default** (D-351): when the owner turns on a campaign
   (`ACTIVE` in `splash.js`, with `node tools/agents/splash.mjs on <id> | off`), a window over the
   home page tells what is new, with the page darkened behind; each phone sees it once, and a new
