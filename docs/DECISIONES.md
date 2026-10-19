@@ -7102,4 +7102,3 @@ email from another thread answered in the same reply) is still quoted above its 
 (`--test-to`) has no thread, so it quotes everything.
 **Why:** The owner's rule after the reply to #538: quoting what is already on screen in the thread is noise.
 **Consequences:** `inThread` in `tools/agents/feedback.mjs` decides it; the test is in `tools/agents/feedback.test.mjs`.
-
