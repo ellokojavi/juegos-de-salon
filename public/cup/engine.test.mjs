@@ -338,6 +338,16 @@ test('juegos de menos en la tabla parcial (D-126)', () => {
   assert.deepEqual(menosJuegos(filas), { a: 0, b: 1, c: 2 });
 });
 
+test('whoever is out of the cup has no games left, and does not set the max (D-347, D-376)', () => {
+  const filas = [
+    { pid: 'a', dias: { 1: { jugo: true }, 2: { jugo: false } } },
+    { pid: 'b', dias: { 1: { jugo: false }, 2: { jugo: false } } },
+    { pid: 'x', dias: { 1: { jugo: true }, 2: { jugo: true } }, fuera: { desde: 3, hasta: 4 } },
+    { pid: 'y', dias: { 1: { jugo: false }, 2: { jugo: false } }, fuera: { desde: 1, hasta: 2 } },
+  ];
+  assert.deepEqual(menosJuegos(filas), { a: 0, b: 1, x: 0, y: 0 });
+});
+
 test('la marca de cada día en la imagen: puntos, comodín, no jugó o falta jugar (D-153)', () => {
   const L = {
     meta: meta7, players, wild: { bbbbbb: 1 },
