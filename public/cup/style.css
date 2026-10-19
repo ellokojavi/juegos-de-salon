@@ -391,7 +391,9 @@ body.pantalla-completa .donde-abajo { order: 3; margin-top: auto; }
 body.pantalla-completa #jugar-head { flex: 0 1 auto; min-width: 0; overflow: hidden; white-space: nowrap;
   width: auto; min-height: 44px; margin: 0 auto; padding: 0 12px; gap: 8px; border-radius: 999px; pointer-events: auto;
   background: rgba(21,7,38,0.75); border: 1px solid var(--glass-border); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
-body.pantalla-completa #jugar-head:empty { display: none; }
+body.pantalla-completa #jugar-head:empty,
+body.pantalla-completa #jugar-head:not(:has(.chip)),
+body.pantalla-completa #jugar-head.sin-chip { display: none; }
 body.pantalla-completa #jugar-head .jugar-titulo { display: none; }
 body.pantalla-completa #jugar-head .chip { margin: 0; }
 #jugar-head.justo .chip { padding-inline: 8px; }
