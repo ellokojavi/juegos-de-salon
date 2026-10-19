@@ -228,4 +228,30 @@ for (let r = 0; r < 20; r++) assert.ok(puntajeDudo({ gano: false, dados: 0, rond
   }
 }
 
+// The dice's faces carry a name in four languages without loading La Copa's rules (D-377): from
+// games.js, or from the entry itself for the games only La Copa has, which must say what La Copa says
+{
+  const { juegosCopa } = await import('../../cup/rules.js');
+  const { gameById } = await import('./games.js');
+  for (const j of JUEGOS_DIA) {
+    const name = gameById(j.id)?.name || j.name;
+    for (const l of ['es', 'en', 'pt', 'de']) assert.ok(name?.[l], `${j.id} has its name in ${l} for the dice`);
+    if (j.name) for (const l of ['es', 'en', 'pt', 'de']) assert.equal(j.name[l], juegosCopa(l)[j.id].nombre, `${j.id} is named as in La Copa (${l})`);
+  }
+}
+
+// No page but La Copa's own loads its rules or engine (D-377): a change to them would run every
+// end-to-end script that goes through that page. La Copa's are its screens (they load cup/game.js) and
+// the three that show its data: Uno al día, the records and the panel
+{
+  const { siteGraph } = await import('../../../tools/e2e/affected.mjs');
+  const g = siteGraph();
+  const SUYAS = new Set(['today', 'records', 'panel']);
+  for (const [page, files] of Object.entries(g)) {
+    if (files.has('cup/game.js') || SUYAS.has(page)) continue;
+    for (const f of ['cup/rules.js', 'cup/engine.js'])
+      assert.ok(!files.has(f), `${page || 'the home page'} loads ${f}: take what it needs into a module of its own (D-377)`);
+  }
+  assert.ok(!g[''].has('cup/rules.js') && !g.hangman.has('cup/engine.js'), 'the home page and a group game are checked');
+}
 console.log('uno-al-dia: ok');

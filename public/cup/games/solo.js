@@ -8,7 +8,7 @@
  * corre con la pantalla visible, D-95) y guardar cada jugada. La intro, el resultado y los
  * textos son de cada juego.
  */
-import { reloj, mmss, pausaDeLectura } from '../engine.js';
+import { reloj, mmss, pausaDeLectura } from '../clock.js';
 
 export { mmss };
 

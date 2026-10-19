@@ -34,8 +34,10 @@ export const DESDE_MAS = '2026-10-16';
  * el juego de días que alguien ya jugó.
  */
 export const JUEGOS_DIA = [
-  { id: 'linea', emoji: '⏳', desde: LANZAMIENTO },
-  { id: 'numero', emoji: '🔢', desde: LANZAMIENTO },
+  // The two that only La Copa has carry their name here, so the dice does not load La Copa's rules
+  // to say it (D-377); uno-al-dia.test.mjs checks they match juegosCopa()
+  { id: 'linea', emoji: '⏳', desde: LANZAMIENTO, name: { es: 'Línea Relámpago', en: 'Timeline Flash', pt: 'Linha Relâmpago', de: 'Blitz-Zeitstrahl' } },
+  { id: 'numero', emoji: '🔢', desde: LANZAMIENTO, name: { es: 'Toque y Fama: adivina el número', en: 'Bulls and Cows: Crack the Number', pt: 'Toque e Fama: descubra o número', de: 'Bullen und Kühe: Zahl knacken' } },
   { id: 'conexiones', emoji: '🔗', desde: LANZAMIENTO },
   { id: 'letras', emoji: '🔤', desde: LANZAMIENTO },
   { id: 'anio', emoji: '📅', desde: LANZAMIENTO },

@@ -27,7 +27,7 @@ import { buildState, correctSlot, randomSeed, yearLabel, timeLabel } from './eng
 import { generar as generarLinea, CARTAS as CARTAS_SOLO } from '../cup/games/timeline/engine.js';
 import * as uiLinea from '../cup/games/timeline/ui.js';
 import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
-import { codigoAlAzar } from '../cup/engine.js';
+import { codigoAlAzar } from '../cup/code.js';
 import { DECKS, getDeck } from './decks/index.js';
 import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, VISIBLE, SPREAD_FACTOR, LOCALES } from './rules.js';
 
