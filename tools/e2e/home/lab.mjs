@@ -23,7 +23,7 @@ await b.go(`${SITE}/labs/home/?test`);
 ok(await waitFor(`location.pathname === '/' && new URLSearchParams(location.search).has('lab') && !!document.getElementById('barra')`), '/labs/home/ opens the home page itself with the experiments bar');
 ok(await ev(`getComputedStyle(document.getElementById('barra')).position === 'fixed' && !!document.querySelector('#barra a[href$="/labs/"]')`), 'the bar floats and leads back to the lab');
 await ev(`scrollTo(0, 1500); 1`);
-ok(await waitFor(`document.getElementById('filtros-barra').classList.contains('pegada') && Math.abs(document.getElementById('filtros-barra').getBoundingClientRect().top) < 2`), 'scrolling down, the filters stay stuck on top');
+ok(await waitFor(`document.getElementById('filtros-barra').classList.contains('pegada') && Math.abs(document.getElementById('filtros-barra').getBoundingClientRect().top - parseFloat(getComputedStyle(document.getElementById('filtros-barra')).top)) < 2`), 'scrolling down, the filters stay stuck on top');
 await ev(`const s = document.getElementById('idioma'); s.value = 'de'; s.dispatchEvent(new Event('change')); 1`);
 ok(await waitFor(`document.documentElement.lang.startsWith('de') && !!document.getElementById('barra')`), 'changing the language keeps the bar');
 

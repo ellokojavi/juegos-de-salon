@@ -248,8 +248,11 @@
     .filtros-fin { border: 0; height: 1px; margin: 12px 6% 4px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent); }
     /* Al bajar por la lista, los filtros se quedan pegados arriba: cambiar de tipo no obliga a
        volver a subir. Sin fondo mientras están en su lugar; pegados, toman el del sitio. */
+    /* While they float, the filters stop 36 px below the top and the app's name (D-364) fills that
+       space above them, out of the flow: nothing in the page moves when it appears (D-369). */
     .filtros-barra {
-      position: sticky; top: var(--safe-top); z-index: 5;
+      --titulo: 36px;
+      position: sticky; top: calc(var(--safe-top) + var(--titulo)); z-index: 5;
       margin: 0 -18px; padding: 8px 18px;
     }
     /* El fondo es una sola capa que sube hasta tapar también la franja de la muesca, para que las
@@ -257,7 +260,7 @@
        desenfoque no le llegaba y se leían las tarjetas, o quedaba una costura de dos colores (U-12). */
     .filtros-barra::before {
       /* 4 px below the last row, so the space under the filters matches the space above the title (D-369) */
-      content: ''; position: absolute; z-index: -1; inset: calc(-1 * var(--safe-top)) 0 -4px 0;
+      content: ''; position: absolute; z-index: -1; inset: calc(-1 * (var(--safe-top) + var(--titulo))) 0 -4px 0;
       border-radius: 0 0 20px 20px; pointer-events: none; opacity: 0; transition: opacity 0.2s;
       background: rgba(21, 7, 38, 0.82); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
       box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12), 0 10px 24px rgba(0, 0, 0, 0.35);
@@ -267,8 +270,9 @@
        scrolling down a long list, the floating menu still says where you are; a tap goes back up. */
     .barra-titulo { display: none; }
     .filtros-barra.pegada .barra-titulo {
-      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px;
-      margin: -8px 0 0; padding: 0; border: 0; background: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px; height: 44px;
+      position: absolute; left: 0; right: 0; top: calc(-1 * var(--titulo));
+      margin: 0; padding: 0; border: 0; background: none; cursor: pointer;
       font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.04em; color: var(--ink);
     }
     .filtros-barra.pegada .barra-titulo span:last-child {
@@ -672,7 +676,9 @@
       const marca = document.getElementById('filtros-marca');
       barra.prepend(el('button', { type: 'button', class: 'barra-titulo', 'aria-label': T.appTitle, onClick: () => scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }) },
         el('span', { 'aria-hidden': 'true' }, '🎲'), el('span', {}, T.appTitle)));
-      new IntersectionObserver(([e]) => barra.classList.toggle('pegada', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(marca);
+      // The menu sticks below the space for the title (D-369): it floats once its mark passes that line
+      const tope = parseFloat(getComputedStyle(barra).top) || 0;
+      new IntersectionObserver(([e]) => barra.classList.toggle('pegada', !e.isIntersecting && e.boundingClientRect.top < tope), { rootMargin: `${-tope}px 0px 0px 0px` }).observe(marca);
       barra.addEventListener('click', e => {
         if (!e.target.closest('button') || e.target.closest('.barra-titulo') || !barra.classList.contains('pegada')) return;
         const tope = parseFloat(getComputedStyle(barra).top) || 0;
