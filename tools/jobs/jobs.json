@@ -1,0 +1,52 @@
+{
+  "_": "Every job of Juegos de Salón, wherever it runs (D-365). A job that is not here does not exist: jobs.test.mjs fails if a scheduled workflow is missing, and `jobs.mjs install` only installs what is here. `node tools/jobs/jobs.mjs status` shows them all with their last run.",
+  "jobs": [
+    {
+      "id": "inbox-watch",
+      "where": "mac",
+      "every": 300,
+      "command": ["node", "tools/jobs/inbox-watch.mjs"],
+      "what": "Checks the hola@ inbox without Claude; only when an email is waiting it runs the support agent headless (Haiku) and uploads the reports as issues at once.",
+      "decisions": ["D-318", "D-365"]
+    },
+    {
+      "id": "feedback",
+      "where": "github",
+      "workflow": "feedback.yml",
+      "cron": "7,22,37,52 * * * *",
+      "what": "Uploads the new 🐞 and email feedback reports from Firebase as `feedback` issues.",
+      "decisions": ["D-275", "D-306"]
+    },
+    {
+      "id": "notifications",
+      "where": "github",
+      "workflow": "notifications.yml",
+      "cron": "7,22,37,52 * * * *",
+      "what": "Sends La Copa's Web Push notifications that are due.",
+      "decisions": ["D-224"]
+    },
+    {
+      "id": "processes-round",
+      "where": "app",
+      "task": "ronda-procesos-juegos-de-salon",
+      "cron": "30 4 * * *",
+      "what": "The processes agent's daily round (Pacific time): launches documentation, usability, support and ideas, handles feedback, collects the changelog.",
+      "decisions": ["D-273", "D-276"]
+    },
+    {
+      "id": "weekly-report",
+      "where": "app",
+      "task": "weekly-report",
+      "cron": "0 8 * * 0",
+      "what": "Sunday: `node tools/reports/weekly.mjs --send`, the week's PDF emailed to the owner.",
+      "decisions": ["D-352"]
+    },
+    {
+      "id": "clean-worktrees",
+      "where": "hook",
+      "trigger": "SessionStart (.claude/settings.json)",
+      "what": "Deletes merged, empty and abandoned worktrees at the start of every Claude session in this repo.",
+      "decisions": ["D-218", "D-252"]
+    }
+  ]
+}
