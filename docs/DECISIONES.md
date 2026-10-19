@@ -76,7 +76,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359 |
-| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361 |
+| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -5966,7 +5966,7 @@ waiting for a reply (📧). Until the owner sets up `hola@juegosdesalon.cl` and 
 fails without sending anything and the round says so.
 
 ## D-318 · hola@juegosdesalon.cl: a Cloudflare Worker, a narrow inbox user and a support agent
-**Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-317 (the email reply) and D-275 (feedback as issues); adds an agent to D-276
+**Date:** 2026-10-14 · **Status:** current · **Relation:** extends D-317 (the email reply) and D-275 (feedback as issues); adds an agent to D-276; extended by D-365 (the inbox is watched every 5 minutes, not only in the daily round)
 **Decision:** Owner's request: what people write to hola@juegosdesalon.cl enters the same pipeline
 as the app's 🐞, triaged by a **support agent** (`.claude/agents/support.md`) that the processes
 agent launches when there are emails.
@@ -7023,6 +7023,32 @@ correction of D-362's "Nuevo"); the bare ⭐ is centered in its chip (it sat 5 p
 from the other, also in the types row since D-241); the title is 44 px tall (C-8).
 **Consequences:** `tools/e2e/home/lab.mjs` checks both; C-17 says them. They ship with D-361's label and
 D-362's filters.
+
+## D-365 · Every job in one registry, and the frequent ones run on the Mac without Claude
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-318 (the hola@ inbox) and D-276 (the round on the Mac mini)
+**Context:** an email to hola@ waited for the daily round to become an issue. The owner asked to be
+more responsive at very low cost, and that every job of the project be orchestrated centrally, none out
+of sight, in a way that scales. The jobs were spread out: two scheduled workflows, two scheduled tasks
+in the Claude app, a session hook, and nothing listing them together. A Claude app task checking the
+inbox every 15 minutes would open 96 sessions a day, almost all to find nothing.
+**Decision:**
+- **`tools/jobs/jobs.json` lists every job**, wherever it runs: `github` (a scheduled workflow), `mac`
+  (a launchd job on the Mac mini), `app` (a scheduled task in the Claude app) or `hook`. Each says
+  what it does and which decisions it follows. `node tools/jobs/jobs.mjs status` shows them all with
+  their last run.
+- **`jobs.test.mjs` keeps it whole:** a scheduled workflow missing from the registry, or with another
+  cron, fails the `tests` check.
+- **A frequent job that usually finds nothing is a `mac` job:** a plain script that checks for free and
+  calls Claude only when there is work. `jobs.mjs install` writes the launchd plists from the registry
+  (`cl.juegosdesalon.<id>`); they run `jobs.mjs run <id>` from the main folder (one at a time, logged
+  in `~/Library/Logs/juegos-de-salon/`, last run in `~/.config/juegos-de-salon/jobs/`).
+- **The first one is `inbox-watch`**, every 5 minutes: it counts the emails in `buzon/`; with one, it runs
+  the support agent headless (`claude -p --agent support`, Haiku, allowed only `inbox.mjs`, Read and
+  Write) and launches `feedback.yml` so the issue appears at once. The hourly app task tried the same day
+  is deleted.
+**Why:** one place to see and change what runs; checking costs nothing, only the work found costs tokens.
+**Consequences:** a new job is an entry in `jobs.json` (and, if it's `mac`, `jobs.mjs install` on the Mac
+mini). The processes round still triages what the watcher misses. `tools/jobs/README.md` explains it.
 
 ## D-366 · Feedback issues mask the player's name, and the email mask keeps both ends of each side
 **Date:** 2026-10-18 · **Status:** in force · **Relation:** amends D-279 (the full name on the issue) and D-317 (the email mask)
