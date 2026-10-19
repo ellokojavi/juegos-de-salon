@@ -372,7 +372,8 @@ Todo bajo `public/cup/`:
 
 | Archivo | Qué hace |
 |---|---|
-| `engine.js` | Calendario, ventanas con zona horaria, puntos, tabla, evolución, medallas, reloj activo |
+| `engine.js` | Calendario, ventanas con zona horaria, puntos, tabla, evolución, medallas; re-exports `code.js` and `clock.js` |
+| `code.js` · `clock.js` | The cup code (`codigoAlAzar`) and the active-time clock (`reloj`, `mmss`, `pausaDeLectura`), apart so Toque y Fama, Línea de tiempo and Generala alone use them without loading La Copa (D-377) |
 | `games/<carpeta>/engine.js` | Motor puro de cada juego (`case`, `connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
 | `games/<carpeta>/ui.js` | La pantalla de cada juego |
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
@@ -383,7 +384,7 @@ Todo bajo `public/cup/`:
 | `demo.js` | Las escenas de ejemplo de `?test&demo=`, para las pruebas y las capturas |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
 | `planilla.js` | La tabla final como CSV (D-161) |
-| `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`) y la explicación de cada juego |
+| `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`; the help sheets' texts come from `assets/js/notification-sheets.js`, shared with Uno al día, D-377) y la explicación de cada juego |
 | `game.js` | Pantallas |
 | `suelto/index.html` | La página de un juego suelto (`/<slug>/`), de la que `og.mjs cards` genera las demás |
 

@@ -48,7 +48,7 @@ juego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el idio
 
 - **Reglas:** 4 cifras distintas, puede empezar con cero, 10 intentos. Puntaje de 0 a 100: 100 al
   primer intento y 10 menos por cada uno más; 0 si no lo saca (`public/cup/games/number/engine.js`).
-- **Número:** sale de un código de 5 letras al azar (`codigoAlAzar` de `public/cup/engine.js`) con
+- **Número:** sale de un código de 5 letras al azar (`codigoAlAzar` de `public/cup/code.js`, D-377) con
   `numero.generar(codigo, 1)`. No hay secreto que guardar ni que verificar.
 - **Pantallas:** una previa con “Cómo se juega” (3 puntos), cómo se calcula el puntaje, el récord y
   Empezar; la del juego (`#screen-solo`) con el título y el reloj arriba y `ui-numero` montado por

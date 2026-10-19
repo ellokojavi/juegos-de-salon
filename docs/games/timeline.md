@@ -196,7 +196,7 @@ intentos, con nombre, forma de repartir y tamaño de mano (D-27, D-32, D-43); es
   celular; sin jugador, después de los botones (`#sr-actions`) va "¿Quieres que esta partida cuente?"
   con nombre y PIN, y al entrar se anota esa partida en la tabla de la temática (D-274). No suma al
   Todoterreno.
-- **Semilla:** un código de 5 letras al azar (`codigoAlAzar` de `public/cup/engine.js`) y
+- **Semilla:** un código de 5 letras al azar (`codigoAlAzar` de `public/cup/code.js`, D-377) y
   `generar(codigo, 1, { tema, lang, excluir })` de `public/cup/games/timeline/engine.js`. `excluir` deja fuera las
   cartas vistas hace poco (D-34); si con eso no alcanzan diez hitos de años separados, se reparte
   sin excluir.
@@ -289,7 +289,7 @@ public/timeline/
 Del lado compartido usa `public/assets/js/chat.js` (chat de sala) montado en `<div id="chat">`, hermano de `#handoff`,
 y `public/assets/css/linea.css` (la mano, la línea y el veredicto). Jugar solo usa además `public/cup/games/timeline/engine.js`
 (motor), `public/cup/games/timeline/ui.js` (pantalla), `public/cup/games/solo.js` (reloj, guardado y récord) y
-`codigoAlAzar` de `public/cup/engine.js` (D-142).
+`codigoAlAzar` de `public/cup/code.js` (D-142, D-377).
 
 Tests del motor: `node public/timeline/engine.test.mjs`. Gancho de pruebas (C-14): `window.__ldt` (`view`, `match`, `session`, `solo`).
 

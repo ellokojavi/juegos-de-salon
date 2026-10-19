@@ -416,6 +416,12 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - El CSS del dado pasó de la portada a `base.css`, para tirarlo desde cualquier página.
   El paso del dado al juego es el de Juego al azar (D-237): el juego abre con el mismo dado encima
   y el dado se desvanece cuando el juego está dibujado (`llegada.js`), only on the page it opened (D-375).
+- **The dice names its games without loading La Copa** (D-377): a game's name comes from
+  `games.js`, and the two only La Copa has (⏳ Línea Relámpago, 🔢 Toque y Fama: adivina el número)
+  carry theirs in their `JUEGOS_DIA` entry (`name`), which `uno-al-dia.test.mjs` checks against
+  `juegosCopa()`. The test also checks that the home page, Ahorcado, Batalla Naval, Dudo, Generala,
+  Toque y Fama and Línea de tiempo do not load
+  `cup/rules.js`, `cup/engine.js` or `cup/game.js`.
 - Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
   `tools/e2e/daily.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
 
@@ -507,7 +513,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - **En la pantalla** (`uno-al-dia-avisos.js`): la oferta sale en la tarjeta del resultado la
   segunda vez que termina, con las tres horas y **Ahora no**; la campana de `/today/` muestra la
   hora y abre la hoja (los tres interruptores, la hora, **Probar los avisos** y **Silenciar**). Los
-  caminos de cada celular son los de La Copa (`push.js`), con sus hojas y un paso 3 propio.
+  caminos de cada celular son los de La Copa (`push.js`), con sus hojas y un paso 3 propio. The
+  sheets' texts live in `assets/js/notification-sheets.js`, shared with La Copa (D-377).
 - **El globo del ícono**: la página pone un 1 mientras falta jugar hoy y lo quita al terminar; el
   aviso del día también lo pone (`sw.js`).
 - **(Sacado en v0.120.2, decisión 15)** Agregar recordatorio (antes "Agregar al calendario"): un `.ics` armado en el celular, con un evento diario a la hora elegida
