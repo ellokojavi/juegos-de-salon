@@ -419,9 +419,8 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 - **The dice names its games without loading La Copa** (D-377): a game's name comes from
   `games.js`, and the two only La Copa has (⏳ Línea Relámpago, 🔢 Toque y Fama: adivina el número)
   carry theirs in their `JUEGOS_DIA` entry (`name`), which `uno-al-dia.test.mjs` checks against
-  `juegosCopa()`. The test also checks that the home page, Ahorcado, Batalla Naval, Dudo, Generala,
-  Toque y Fama and Línea de tiempo do not load
-  `cup/rules.js`, `cup/engine.js` or `cup/game.js`.
+  `juegosCopa()`. The test also checks that no page but La Copa's own (its screens, Uno al día, the
+  records and the panel) loads `cup/rules.js` or `cup/engine.js`.
 - Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
   `tools/e2e/daily.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
 

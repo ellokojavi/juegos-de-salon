@@ -7219,6 +7219,7 @@ número) carry theirs in `JUEGOS_DIA`.
 **Why:** the owner's request, after asking whether #552's tests were excessive: a change to La Copa
 should test La Copa. A change to `cup/rules.js` went from 58 scripts to 35, and one to `cup/engine.js`
 from 49 to 35; what is left are La Copa's own pages (the Cup, its games, Uno al día, records, the panel).
-**Consequences:** `public/assets/js/uno-al-dia.test.mjs` checks that the home page and those six games
-load none of `cup/rules.js`, `cup/engine.js` or `cup/game.js`, and that the two names in `JUEGOS_DIA`
-say what La Copa says. A new import of La Copa from outside it fails that test.
+**Consequences:** `public/assets/js/uno-al-dia.test.mjs` checks that no page loads `cup/rules.js` or
+`cup/engine.js` except La Copa's own (its screens, which load `cup/game.js`, and Uno al día, the records
+and the panel, which show its data), and that the two names in `JUEGOS_DIA` say what La Copa says. A
+new import of La Copa from any other page, a new game's included, fails that test.
