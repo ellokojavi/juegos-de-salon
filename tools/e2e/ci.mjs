@@ -5,6 +5,7 @@
 //   node tools/e2e/ci.mjs --list          # the scripts that run, in JSON
 //   node tools/e2e/ci.mjs --list --changes <file>      # [] if the PR touches nothing in the browser (D-205, D-299)
 //   node tools/e2e/ci.mjs --groups [--changes <file>]  # the same, in even groups for GitHub's matrix (D-307)
+//   node tools/e2e/ci.mjs --scope --changes <file>     # the PR's test scope, as Markdown for the run's summary (D-378)
 //   node tools/e2e/ci.mjs cup/tournament.mjs        # only those (the path from tools/e2e/)
 //   node tools/e2e/ci.mjs cup/tournament.mjs:cup    # only one part of a long script (see PARTS)
 //
@@ -18,7 +19,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SUELTOS } from '../../public/assets/js/games.js';
 import { noBrowser } from './changes.mjs';
-import { affectedJobs, changeLevel } from './affected.mjs';
+import { affectedJobs, changeLevel, scopeReport } from './affected.mjs';
 import { group, readDurations, NOTICE } from './groups.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -152,7 +153,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   // The change's test level (D-346), on stderr so the workflow logs it and the JSON stays clean
   const said = changesOf();
   if (said) { const l = changeLevel(jobs(), said, f => noBrowser([f]), noBrowser(said)); console.error(`test level ${l.level} · ${l.name}: ${l.reason}`); }
-  if (args.includes('--groups')) {
+  if (args.includes('--scope')) {
+    // The PR's test scope for the run's summary (D-378): what runs, and what reaches where through what
+    const report = scopeReport(jobs(), changesOf() || [], f => noBrowser([f])).join('\n');
+    console.log(report);
+    if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, report + '\n');
+  } else if (args.includes('--groups')) {
     const gs = groups(changesOf());
     if (!gs.length) console.error('the PR changes nothing an end-to-end script loads: none runs (D-205, D-299, D-329)');
     console.log(JSON.stringify(gs.map(g => ({ name: g.name, scripts: g.scripts.join(' ') }))));
