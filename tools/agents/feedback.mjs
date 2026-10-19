@@ -2,7 +2,7 @@
 /**
  * The 🐞 feedback as GitHub issues (D-275): each report people send from La Copa or the lab
  * (`feedback/` in Firebase, D-104, D-191, D-265) becomes an issue with the `feedback` label, and
- * the processes agent handles it in its round. `.github/workflows/feedback.yml` runs it every 15
+ * the processes agent handles it in its round. The Mac mini's `feedback-watch` job (D-382) runs it every 5
  * minutes: that way each report reaches the owner by email and stays linked to its reply and its fix.
  *
  *   node tools/agents/feedback.mjs sync [--dry-run]   # creates the missing issues

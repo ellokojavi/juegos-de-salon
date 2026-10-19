@@ -244,7 +244,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   (D-360; `processes.mjs check` says which)
   and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
   README", check how fresh the README is) are asked of it: it decides who, launches them, checks and replies. It handles the 🐞 feedback and the "💬 Sugerencias y comentarios" inbox at the end of every game (D-341),
-  which `.github/workflows/feedback.yml` uploads every 15 minutes as `feedback` issues (`tools/agents/feedback.mjs`,
+  which the Mac mini's `feedback-watch` job uploads every 5 minutes (D-382) as `feedback` issues (`tools/agents/feedback.mjs`,
   with the name the player entered and without their browser, D-279); a player who left an email gets a
   templated reply in their language when the report is resolved (`feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <xx>`, one email per player for all their comments, grouped by `feedback.mjs pending`,
   through `send-mail.py`, then comments the quoted answer on each issue, labels it `replied` and closes it; a reply for a built suggestion goes out only once the change is live, in three parts: thanks, what changed, what stayed; `forget` only deletes the address of destructive feedback; D-317, D-368). It works the owner's

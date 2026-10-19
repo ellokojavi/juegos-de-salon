@@ -133,7 +133,7 @@ that (after a new game, after a big text change), saying why.
 2. **What's approved in the queue first:** each task the owner approved with a Yes is done in this
    round (in its PR, with auto-merge) and recorded with `record --queue <id>`.
 3. **The 🐞 feedback.** Each report people send from the app arrives as an issue with the
-   `feedback` label (uploaded by `.github/workflows/feedback.yml` every 15 minutes, D-275, D-306).
+   `feedback` label (uploaded by the Mac mini's `feedback-watch` job every 5 minutes, D-275, D-382).
    Reports from the "💬 Sugerencias y comentarios" inbox (D-341) may also carry the kind the player
    picked, as a second label (`feedback:suggestion`, `feedback:problem`, `feedback:game-idea`,
    `feedback:other`) and a "Kind" row: a hint for triage, not the outcome; you still judge it.

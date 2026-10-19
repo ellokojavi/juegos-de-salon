@@ -117,7 +117,7 @@ async function ingest(id, file, lang) {
   await ask(`/${id}`, 'DELETE');
   const mask = r.correo ? maskEmail(r.correo) : null;
   log({ email: id, action: 'ingest', from: mask });
-  console.log(`${id} → a feedback report${mask ? ` (reply possible to ${mask})` : ' (no valid address: no reply possible)'}; deleted from the inbox. Its issue appears within 15 minutes.`);
+  console.log(`${id} → a feedback report${mask ? ` (reply possible to ${mask})` : ' (no valid address: no reply possible)'}; deleted from the inbox. Its issue appears within 5 minutes.`);
 }
 
 async function skip(id, reason) {
