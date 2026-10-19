@@ -84,7 +84,8 @@ export function tirar(pool, { lang, base = '', T, elegido = pool[azar(pool.lengt
     // Si todavía rueda, se queda quieto donde va: la página del juego lo pone en ese mismo lugar
     for (const a of [...salto.getAnimations(), ...sombra.getAnimations()]) a.pause();
     const { transform: alto } = getComputedStyle(salto), som = getComputedStyle(sombra);
-    const escena = { emoji: elegido.emoji, img: foto(), alto, sombra: [som.transform, som.opacity] };
+    // `para`: the page it is for; any other page that loads first (a quick "back") drops it (D-375)
+    const escena = { emoji: elegido.emoji, img: foto(), alto, sombra: [som.transform, som.opacity], para: new URL(destino, location.href).pathname };
     if (revelado) Object.assign(escena, { chico: T.tocó, nombre: pickLang(elegido.name, lang) });
     try { sessionStorage.setItem(LLEGA, JSON.stringify(escena)); } catch { /* sin espacio, el juego abre como siempre */ }
     location.href = destino;

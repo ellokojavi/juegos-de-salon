@@ -208,7 +208,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `julep/languages.mjs` | Julepe in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `fourth-king/languages.mjs` | Cuarto Rey in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `cup-games/languages.mjs` | La Copa's standalone games in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
-| `home/dice.mjs` | 🎲 Juego al azar with the 🎲 Cartas/Dados filter on: it still lands on games of every kind, and never on Cuarto Rey nor La Copa (D-188, D-374) |
+| `home/dice.mjs` | 🎲 Juego al azar with the 🎲 Cartas/Dados filter on: it still lands on games of every kind, and never on Cuarto Rey nor La Copa (D-188, D-374); back on the home page before the game loaded, no dice is left over it and 🎲 rolls at once (D-375) |
 | `home/lab.mjs` | The lab's three groups, with the home page experiments card folded in La Bodega, and the home page's experiments bar (D-361, D-363, D-369, D-372): `/labs/home/` landing on the real home page with the bar, the filters sticking on scroll, the language, no bar for players |
 | `home/popular.mjs` | What players see since D-369: the 🔥 Popular label on three cards (not La Copa nor "New", in German too), the ✨ Nuevos / 🔥 Populares chips above the types in four languages at 320 px and their filtering, ⭐ Favoritos in that row and centered, the app's name on the floating menu and its tap, the space under the floating filters, and the menu still floating after a tap on a short result until the player scrolls up (D-371) |
 | `splash/languages.mjs` | Every splash campaign in all languages: each one as `?splash=<id>` against the Spanish one (D-199, D-355) |

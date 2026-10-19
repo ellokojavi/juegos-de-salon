@@ -676,6 +676,7 @@ node public/assets/js/i18n.test.mjs
 node public/assets/js/instalable.test.mjs
 node public/assets/js/instalar.test.mjs
 node public/assets/js/labs-puerta.test.mjs
+node public/assets/js/llegada.test.mjs
 node public/assets/js/parametros.test.mjs
 node public/assets/js/push.test.mjs
 node public/assets/js/records.test.mjs

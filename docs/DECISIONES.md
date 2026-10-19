@@ -64,7 +64,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373 |
-| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374 |
+| Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
 | Memoria de partida | C-6 | D-25, D-150 |
@@ -4054,7 +4054,7 @@ de cuenta.
 desde cualquier página que muestre "Juegas como", no solo desde Records.
 
 ## D-237 · Del dado al juego sin pantalla vacía: el juego abre con el mismo dado encima
-**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** reemplaza a D-235; completa D-188 y D-230
+**Fecha:** 2026-10-06 · **Estado:** vigente · **Relación:** reemplaza a D-235; completa D-188 y D-230; extended by D-375 (the scene shows only on its game)
 **Decisión:** El dado de Juego al azar (y el de Uno al día) no se borra antes de abrir el juego:
 - **Al irse**, el menú guarda la escena del dado en `sessionStorage` (`azar-llega`: una foto del
   lienzo leída en el mismo momento en que se dibuja, el emoji y, si ya cayó, "¡Te tocó!" con el
@@ -4062,7 +4062,8 @@ desde cualquier página que muestre "Juegas como", no solo desde Records.
   pinta.
 - **Al llegar**, `assets/js/llegada.js` (lo trae `instalable.js`, en el `<head>` de cada página)
   pone encima la misma escena, quieta (`.azar-capa.velo` en `base.css`, donde ahora vive toda la
-  capa del dado). El cambio de página no se ve.
+  capa del dado). El cambio de página no se ve. Only the page the dice opened shows it (the scene
+  carries its path, `para`); any other page that loads first drops it (D-375).
 - La escena **espera a que el juego dibuje su pantalla** (una `.screen.active` que no sea
   `#screen-espera`, la de "cargando"), con un tope de 4 s, y recién ahí se desvanece en 0,45 s
   mientras el dado se achica. Debajo ya está el juego, entero.
@@ -7171,6 +7172,18 @@ stays out of the dice on its own.
 group gathered is a dead end; and the dice is general, over all games, with only the players
 exceptions (with Cartas/Dados on, it could only ever land on Dudo).
 **Consequences:** `public/assets/js/azar.test.mjs` checks the dice's pool against the registry.
+
+## D-375 · The dice's scene shows only on the game it opened
+**Date:** 2026-10-19 · **Status:** current · **Relation:** extends D-237 (the dice stays on top until the game is drawn)
+**Decision:** the scene the dice leaves in `sessionStorage` (`azar-llega`) carries the page it is for
+(`para`, the game's path), and `llegada.js` shows it only there (`esPara`). Any other page that loads
+first drops it. A scene without `para`, left by an older home page, is still shown as before.
+**Why:** a player who rolled and went back before the game loaded landed on a home page that read the
+scene, held the dice over itself for four seconds (the home page never has the `.screen.active` it
+waits for) and, meanwhile, ignored 🎲, which does not roll while a dice is on screen. Found while
+fixing `tools/e2e/home/dice.mjs` on GitHub's slower runner; the owner asked for the fix.
+**Consequences:** `public/assets/js/llegada.test.mjs` tests `esPara`; `tools/e2e/home/dice.mjs` leaves a
+scene for a game, opens the home page and checks there is no dice over it and 🎲 rolls at once.
 
 ## D-376 · Out of the cup, shown as "Eliminado" in the table, the chart and the image
 **Date:** 2026-10-19 · **Status:** current · **Relation:** extends D-347 (out of the cup)
