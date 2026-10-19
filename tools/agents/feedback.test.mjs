@@ -88,3 +88,13 @@ console.log('feedback: ok');
 assert.equal(greetingName({ nombre: ' Tu admirador secreto ' }, c), 'Tu admirador secreto');
 assert.equal(greetingName(null, c), '', 'no report: no name, never the mask');
 assert.equal(greetingName(null, '- **Quién:** Cris'), 'Cris', 'an old issue with the name unmasked');
+
+// The emailed comment quotes what the player was told and still marks the issue handled (D-368)
+{
+  const { emailedComment, handled } = await import('./feedback.mjs');
+  const body = emailedComment({ mask: 'c****o@g****m', answer: 'Line one.\nLine two.' });
+  assert.ok(body.includes('> Line one.\n> Line two.'), 'quotes the answer');
+  assert.ok(body.includes('closed as resolved'), 'says it was resolved');
+  assert.ok(!body.includes('@g****m`') || body.includes('c****o@g****m'), 'only the mask');
+  assert.ok(handled([{ body }]), 'counts as handled');
+}
