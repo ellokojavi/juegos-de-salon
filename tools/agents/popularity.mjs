@@ -93,9 +93,20 @@ export function reescribir(src, orden, fecha) {
 /* The count (network)                                                 */
 /* ------------------------------------------------------------------ */
 
-async function contar() {
+/** The counted days: the last four whole days up to yesterday, today left out (UTC day numbers). */
+export function ventana(ahora = Date.now()) {
+  const hoy = Math.floor(ahora / DAY);
+  return { from: hoy - WINDOW, to: hoy - 1 };
+}
+
+/** Games finished by id in `range`, from the stats days and the cups already read from Firebase. */
+export async function contarDe(days, torneos, range) {
   const { finales, embudoSalas } = await import('../../public/panel/dominios.js');
   const { resumenCopas } = await import('../../public/panel/copas.js');
+  return terminadas({ finales: finales(days, range).porJuego, log: terminadasLog(days, range), salas: embudoSalas(days, range), copa: resumenCopas(torneos, range, (range.to + 1) * DAY).porJuego });
+}
+
+async function contar() {
   const { firebaseConfig } = await import('../../public/assets/js/firebase-config.js');
   const { token } = await import('../firebase/firebase-admin.mjs');
   const t = await token();
@@ -105,13 +116,9 @@ async function contar() {
     if (!r.ok) throw new Error(`could not read ${ruta}/ (HTTP ${r.status})`);
     return (await r.json()) || {};
   };
-  const hoy = Math.floor(Date.now() / DAY);
-  const range = { from: hoy - WINDOW, to: hoy - 1 }; // the last four whole days, today left out
+  const range = ventana();
   const [days, torneos] = await Promise.all([leer('stats/prod/days', { orderBy: '$key', startAt: String(range.from) }), leer('torneos')]);
-  return {
-    range,
-    conteo: terminadas({ finales: finales(days, range).porJuego, log: terminadasLog(days, range), salas: embudoSalas(days, range), copa: resumenCopas(torneos, range, (range.to + 1) * DAY).porJuego }),
-  };
+  return { range, conteo: await contarDe(days, torneos, range) };
 }
 
 async function main([command]) {
