@@ -7,6 +7,8 @@ const OUT = output();
 const b = await launch({ port: Number(process.env.CDP_PORT || process.env.PUERTO_CDP) || 9354, dir: `${OUT}/p`, out: OUT });
 const urls = async () => b.evaluate(`performance.getEntriesByType('resource').map(r=>r.name.replace(location.origin,'')).filter(u=>/\\.(js|css)/.test(u))`);
 await b.go(`${SITE}/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITE}/`);
+// The promo splash (D-351), if a campaign is on, is closed as a player would: the screenshots show the home page
+await b.evaluate(`document.querySelector('.splash-luego, .splash-cerrar')?.click(); 1`); await sleep(600);
 console.log('menu → cards:', await b.evaluate(`document.querySelectorAll('.game-card').length`), '| resources:', JSON.stringify(await urls()));
 await b.shot('menu');
 // The share sheet (D-253), for the README (docs/capturas.json)
