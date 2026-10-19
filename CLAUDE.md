@@ -301,7 +301,8 @@ with that the screen also enters the language tests. To see it on a real phone,
   tasks, hooks), is listed in `tools/jobs/jobs.json`; `node tools/jobs/jobs.mjs status` shows them all
   with their last run, and `jobs.test.mjs` fails if a scheduled workflow is missing. Frequent checks
   are `mac` jobs, plain scripts that call Claude only when there is work (`inbox-watch`: the hola@
-  inbox every 5 minutes). Adding one: [tools/jobs/README.md](tools/jobs/README.md).
+  inbox every 5 minutes). Adding one: [tools/jobs/README.md](tools/jobs/README.md). What the Mac mini
+  holds and how to move it to another machine: [tools/jobs/MAC-MINI.md](tools/jobs/MAC-MINI.md) (D-383).
 - **Weekly report** (D-352): every Sunday the app's scheduled task `weekly-report` runs
   `node tools/reports/weekly.mjs --send`: the week that ended on Saturday, with the panel's numbers,
   as a PDF in `~/Documents/Juegos de Salón/Weekly reports/` and emailed to the owner.

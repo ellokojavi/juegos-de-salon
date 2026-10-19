@@ -77,7 +77,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379 |
-| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382 |
+| Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178, D-380 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -7300,3 +7300,14 @@ And `inbox-watch` handed its emails to that same workflow by `gh workflow run`. 
 **Consequences:** a report becomes an issue within about 5 minutes while the Mac mini is on; if it is
 off, the reports wait in Firebase (nothing is lost) until it is back or someone launches `feedback.yml`.
 After merging, the Mac mini needs `git pull` in the main folder and `node tools/jobs/jobs.mjs install`.
+
+## D-383 · The repo describes the Mac mini, so it can move to another machine
+**Date:** 2026-10-19 · **Status:** current · **Relation:** extends D-365 (the jobs registry) and D-382
+**Context:** on 2026-10-19 `inbox-watch` turned out never to have been installed on the Mac mini, and
+the owner asked that the repo know what runs on that machine, in case it has to move.
+**Decision:** `tools/jobs/MAC-MINI.md` lists the `mac` and `app` jobs, the files in
+`~/.config/juegos-de-salon/` (what each is, never its content), the sign-ins and the steps to move.
+`tools/jobs/machine.test.mjs` fails if a `mac` or `app` job, or a config file the code reads, is not named there.
+**Why:** a machine's setup that lives only in the machine is lost with it.
+**Consequences:** a new job or a new key file is added to MAC-MINI.md in the same PR. The prompts of
+the app's scheduled tasks are still only in the app.
