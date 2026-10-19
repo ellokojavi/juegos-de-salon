@@ -50,6 +50,13 @@ export const EMAILED = '<!-- feedback-emailed -->', FORGOTTEN = '<!-- feedback-a
 export const idOf = body => /<!-- feedback:([^\s>]+) -->/.exec(body || '')?.[1] || null;
 /** Does the issue's player want an email reply? (the issue shows the mask) */
 export const wantsEmail = body => /^- \*\*Email:\*\* /m.test(body || '');
+export const REPLIED = 'replied';
+/** Is this report the email the reply answers in its thread? Then the player already sees it (D-370). */
+export const inThread = (x, thread) => !!(thread?.id && x.thread?.id === thread.id);
+/** The comment left on an issue once its reply is emailed: what the player was told, quoted (D-368). */
+export const emailedComment = ({ mask, together = '', answer = '' }) =>
+  `📧 Reply emailed to \`${mask}\`${together}; the address was then deleted (D-317). Marked replied and closed as resolved (D-368).` +
+  (answer.trim() ? `\n\nWhat we answered:\n\n${answer.trim().split('\n').map(l => `> ${l}`).join('\n')}` : '') + `\n${EMAILED}`;
 /** Already emailed or forgotten? */
 export const handled = comments => (comments || []).some(c => (c.body || '').includes(EMAILED) || (c.body || '').includes(FORGOTTEN));
 
@@ -198,19 +205,26 @@ async function reply(list, file, lang, { dryRun, testTo }) {
     if (new Set(all.map(x => x.email.toLowerCase())).size > 1) throw new Error(`Not the same player: ${all.map(x => `#${x.number} ${x.mask}`).join(', ')}. One email per address.`);
   }
   const name = all.map(x => x.name).find(Boolean) || '';
-  const { subject, text, html } = buildEmail({ lang, name, n: Number(numbers[0]), items: all.map(x => ({ quote: x.text, answer: answers[x.number] })) });
-  const to = testTo || all[0].email;
   // An emailed report: answer in the sender's own thread (D-327)
   const thread = testTo ? null : all.map(x => x.thread).find(Boolean);
+  // The player sees their own email right above in that thread, so it is not quoted again; a 🐞
+  // report, or an email from another thread, still is (D-370)
+  const items = all.map(x => ({ quote: inThread(x, thread) ? '' : x.text, answer: answers[x.number] }));
+  const { subject, text, html } = buildEmail({ lang, name, n: Number(numbers[0]), items });
+  const to = testTo || all[0].email;
   const finalSubject = thread?.subject ? (/^re:/i.test(thread.subject) ? thread.subject : `Re: ${thread.subject}`) : subject;
   if (dryRun) { console.log(`To: ${testTo || all[0].mask}\nSubject: ${testTo ? subject : finalSubject}${thread ? `\nIn-Reply-To: ${thread.id}` : ''}\n\n${text}`); return; }
   // Through stdin: the address never shows in a command line or a log
   execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to, subject: testTo ? `[Test] ${subject}` : finalSubject, inReplyTo: thread?.id || null, text, html, issues: numbers.map(Number), test: !!testTo }), stdio: ['pipe', 'inherit', 'inherit'] });
   if (testTo) { console.log(`Test email with ${numbers.map(n => `#${n}`).join(', ')} sent to the test address; nothing else touched.`); return; }
+  try { gh('label', 'create', REPLIED, '--color', '0e8a16', '--description', 'Feedback answered by email and resolved (D-368)'); } catch { /* already there */ }
   for (const x of all) {
     await remove(x.id, t);
     const together = all.length > 1 ? ` in one email together with ${all.filter(y => y !== x).map(y => `#${y.number}`).join(', ')}` : '';
-    gh('issue', 'comment', x.number, '--body', `📧 Reply emailed to \`${x.mask}\`${together}; the address was then deleted (D-317).\n${EMAILED}`);
+    // The record of what was answered, then replied and resolved (D-368): the issue says what the player was told
+    gh('issue', 'comment', x.number, '--body', emailedComment({ mask: x.mask, together, answer: answers[x.number] }));
+    gh('issue', 'edit', x.number, '--add-label', REPLIED);
+    gh('issue', 'close', x.number, '--reason', 'completed');
   }
   console.log(`${numbers.map(n => `#${n}`).join(', ')}: one email to ${all[0].mask}, addresses deleted.`);
 }

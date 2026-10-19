@@ -166,10 +166,17 @@ that (after a new game, after a big text change), saying why.
       email quotes the start of each comment above its answer. The greeting, one of ten friendly
       openings (plural ones for several comments), the closing and the subject come from
       `tools/agents/feedback-templates.mjs`.
+      **When we built what a player suggested** (D-368, owner's rule), the answer has three parts,
+      in this order: it opens by thanking them for their time and the idea, then explains in plain
+      words what changed and how it plays now, and ends with what stayed as it was (the caveat:
+      the mode, screen or option the change did not touch). It is sent **only once the change is
+      live**: its PR merged and `publish.yml` reported the version on the merged PR, never when it is
+      only queued or open.
    2. `node tools/agents/feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> --dry-run`,
       read it, then the same without `--dry-run`. It sends through Gmail (`send-mail.py`, account
-      in `~/.config/juegos-de-salon/mail.json`), deletes the address from Firebase and notes it
-      on each issue. It refuses issues that don't share the same address. `--test-to <address>`
+      in `~/.config/juegos-de-salon/mail.json`), deletes the address from Firebase, and on each
+      issue comments what we answered (quoted), adds the `replied` label and closes it as
+      resolved (D-368): nothing is left to do by hand. It refuses issues that don't share the same address. `--test-to <address>`
       sends the same email to that address instead and touches nothing else (to show the owner
       how it looks). **At most one email per address every 24 hours** (owner's rule; the addresses in `mail.json`'s `noLimit` are exempt, D-327):
       `send-mail.py` refuses a second one, so answer everything a player has in that one email,
@@ -180,6 +187,8 @@ that (after a new game, after a big text change), saying why.
    answer with one or two warm, simple sentences; **actionable** ones (a bug, a suggestion) go
    through the paths above like any 🐞; **negative or destructive** ones get no email (`forget`).
    The reply lands in the sender's own thread, as an answer to their email (`feedback.mjs` does it).
+   There the player sees their email right above, so the reply does not quote it again; a 🐞 report,
+   or an email from another thread answered in the same reply, is still quoted (D-370, owner's rule).
    **Resolve the trivial yourself, never escalate it** (owner's request, D-338): a kudos, a repeated
    kudos, a thank-you, a test report or a test of a flow, an email with nothing to act on, a duplicate:
    you decide (the warm reply, `forget`, or just close it with a line saying why) and note it in your
