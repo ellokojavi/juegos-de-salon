@@ -1,5 +1,5 @@
 {
-  "version": "0.186.6",
+  "version": "0.186.8",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -56,6 +56,8 @@
       "chat": false,
       "files": [
         "public/cup/avisos.js",
+        "public/cup/clock.js",
+        "public/cup/code.js",
         "public/cup/cuenta.js",
         "public/cup/demo.js",
         "public/cup/desglose.js",
@@ -867,6 +869,7 @@
     "public/assets/js/labs-idioma.js",
     "public/assets/js/labs-puerta.js",
     "public/assets/js/llegada.js",
+    "public/assets/js/notification-sheets.js",
     "public/assets/js/parametros.js",
     "public/assets/js/push.js",
     "public/assets/js/ranking.js",
@@ -899,6 +902,8 @@
     "public/bulls-and-cows/game.js",
     "public/bulls-and-cows/rules.js",
     "public/cup/avisos.js",
+    "public/cup/clock.js",
+    "public/cup/code.js",
     "public/cup/cuenta.js",
     "public/cup/demo.js",
     "public/cup/desglose.js",

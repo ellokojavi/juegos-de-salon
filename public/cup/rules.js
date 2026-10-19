@@ -11,6 +11,7 @@ export const GAME_ID = 'copa';
 import RUTAS from './games/routes/texts.js';
 import LOTEO from './games/plots/texts.js';
 import PINTAMINAS from './games/paint-mines/texts.js';
+import { SHEETS } from '../assets/js/notification-sheets.js';
 
 /**
  * Lo que un juego es en cualquier idioma: su emoji y si está en el laboratorio. El nombre,
@@ -785,25 +786,11 @@ const ES = {
   avChange: "Cambiar",
   avReady: "Listo. Te avisaremos de esta copa en la mañana cuando se abra un día, y antes del cierre si no has jugado.",
   avError: "No se pudieron activar los avisos. Prueba de nuevo.",
-  avInstallTitle: "Agrega la app a tu inicio",
-  avInstallLead: "En iPhone, los avisos llegan solo a la app de la pantalla de inicio. Se agrega en tres pasos:",
-  avStep1: "Toca **Compartir** en la barra de Safari.",
-  avStep1b: "En iOS 26 está dentro del botón ⋯ de la barra.",
-  avStep2: "Elige **Agregar a inicio**. Si no lo ves, baja en la lista.",
   avStep3: "Abre **Juegos de Salón** desde el ícono nuevo, entra a La Copa con el código **{code}**, tu nombre y tu PIN, y toca **Activar avisos** otra vez.",
   avInstalled: "Ya la agregué",
   avInstalledNext: "Ahora ábrela desde el ícono de tu pantalla de inicio y sigue el paso 3. El PIN es el que elegiste para esta copa.",
-  avClose: "Cerrar",
-  avOtherTitle: "Abre el link en Safari",
   avOtherLead: "Estás dentro de otra app, y ahí no se puede agregar Juegos de Salón a la pantalla de inicio. Copia el link, ábrelo en Safari y toca **Activar avisos** otra vez.",
-  avCopy: "Copiar link",
   avCopied: "Link copiado.",
-  avBlockedTitle: "Los avisos están bloqueados",
-  avBlockedLead: "Este celular no deja que Juegos de Salón mande avisos. Para permitirlos:",
-  avBlockedAndroid: "Toca el candado junto a la dirección, después **Permisos**, y activa **Notificaciones**.",
-  avBlockedIos: "Abre **Ajustes**, después **Notificaciones**, busca **Juegos de Salón** y activa **Permitir notificaciones**.",
-  avBlockedOther: "Abre los ajustes del navegador, busca los permisos de juegosdesalon.cl y permite las **Notificaciones**.",
-  avOk: "Entendido",
   avSetTitle: "Avisos de esta copa",
   avSetDay: "Cuando se abre un día",
   avSetDaySub: "En la mañana, con el juego del día.",
@@ -1572,25 +1559,11 @@ const EN = {
   avChange: "Change",
   avReady: "All set. You'll get a notification for this cup in the morning when a day opens, and before it closes if you haven't played.",
   avError: "Notifications couldn't be turned on. Try again.",
-  avInstallTitle: "Add the app to your home screen",
-  avInstallLead: "On iPhone, notifications only reach the app on your home screen. Adding it takes three steps:",
-  avStep1: "Tap **Share** in the Safari bar.",
-  avStep1b: "On iOS 26 it's inside the ⋯ button in the bar.",
-  avStep2: "Choose **Add to Home Screen**. If you don't see it, scroll down the list.",
   avStep3: "Open **Party Games** from the new icon, enter The Cup with the code **{code}**, your name and your PIN, and tap **Turn on notifications** again.",
   avInstalled: "I added it",
   avInstalledNext: "Now open it from the icon on your home screen and follow step 3. The PIN is the one you chose for this cup.",
-  avClose: "Close",
-  avOtherTitle: "Open the link in Safari",
   avOtherLead: "You're inside another app, and from there Party Games can't be added to the home screen. Copy the link, open it in Safari and tap **Turn on notifications** again.",
-  avCopy: "Copy link",
   avCopied: "Link copied.",
-  avBlockedTitle: "Notifications are blocked",
-  avBlockedLead: "This phone doesn't let Party Games send notifications. To allow them:",
-  avBlockedAndroid: "Tap the lock next to the address, then **Permissions**, and turn on **Notifications**.",
-  avBlockedIos: "Open **Settings**, then **Notifications**, find **Party Games** and turn on **Allow Notifications**.",
-  avBlockedOther: "Open your browser settings, find the permissions for juegosdesalon.cl and allow **Notifications**.",
-  avOk: "Got it",
   avSetTitle: "Notifications for this cup",
   avSetDay: "When a day opens",
   avSetDaySub: "In the morning, with the day's game.",
@@ -2359,25 +2332,11 @@ const PT = {
   avChange: "Mudar",
   avReady: "Pronto. Vamos te avisar desta copa de manhã quando abrir um dia, e antes do fechamento se você não tiver jogado.",
   avError: "Não deu para ativar os avisos. Tente de novo.",
-  avInstallTitle: "Adicione o app à sua tela de início",
-  avInstallLead: "No iPhone, os avisos só chegam ao app da tela de início. Dá para adicionar em três passos:",
-  avStep1: "Toque em **Compartilhar** na barra do Safari.",
-  avStep1b: "No iOS 26 fica dentro do botão ⋯ da barra.",
-  avStep2: "Escolha **Adicionar à Tela de Início**. Se não aparecer, desça na lista.",
   avStep3: "Abra **Jogos de Salão** pelo ícone novo, entre na Copa com o código **{code}**, seu nome e seu PIN, e toque em **Ativar avisos** de novo.",
   avInstalled: "Já adicionei",
   avInstalledNext: "Agora abra pelo ícone da sua tela de início e siga o passo 3. O PIN é o que você escolheu para esta copa.",
-  avClose: "Fechar",
-  avOtherTitle: "Abra o link no Safari",
   avOtherLead: "Você está dentro de outro app, e ali não dá para adicionar Jogos de Salão à tela de início. Copie o link, abra no Safari e toque em **Ativar avisos** de novo.",
-  avCopy: "Copiar link",
   avCopied: "Link copiado.",
-  avBlockedTitle: "Os avisos estão bloqueados",
-  avBlockedLead: "Este celular não deixa Jogos de Salão mandar avisos. Para permitir:",
-  avBlockedAndroid: "Toque no cadeado ao lado do endereço, depois em **Permissões**, e ative **Notificações**.",
-  avBlockedIos: "Abra **Ajustes**, depois **Notificações**, procure **Jogos de Salão** e ative **Permitir Notificações**.",
-  avBlockedOther: "Abra os ajustes do navegador, procure as permissões de juegosdesalon.cl e permita as **Notificações**.",
-  avOk: "Entendi",
   avSetTitle: "Avisos desta copa",
   avSetDay: "Quando abre um dia",
   avSetDaySub: "De manhã, com o jogo do dia.",
@@ -3147,25 +3106,11 @@ const DE = {
   avChange: "Ändern",
   avReady: "Fertig. Wir geben dir für diesen Pokal morgens Bescheid, wenn ein Tag öffnet, und vor Tagesschluss, wenn du noch nicht gespielt hast.",
   avError: "Die Mitteilungen ließen sich nicht einschalten. Versuch es noch mal.",
-  avInstallTitle: "Füge die App zu deinem Home-Bildschirm hinzu",
-  avInstallLead: "Auf dem iPhone kommen Mitteilungen nur bei der App auf dem Home-Bildschirm an. Das geht in drei Schritten:",
-  avStep1: "Tippe in der Safari-Leiste auf **Teilen**.",
-  avStep1b: "Unter iOS 26 steckt es im ⋯-Knopf der Leiste.",
-  avStep2: "Wähle **Zum Home-Bildschirm**. Wenn du es nicht siehst, scrolle in der Liste nach unten.",
   avStep3: "Starte **Salonspiele** über das neue Symbol, tritt dem Pokal mit dem Code **{code}** bei, melde dich mit deinem Namen und deiner PIN an und tippe noch mal auf **Mitteilungen einschalten**.",
   avInstalled: "Hab ich gemacht",
   avInstalledNext: "Öffne sie jetzt über das Symbol auf deinem Home-Bildschirm und folge Schritt 3. Die PIN ist die, die du für diesen Pokal gewählt hast.",
-  avClose: "Schließen",
-  avOtherTitle: "Öffne den Link in Safari",
   avOtherLead: "Du bist in einer anderen App, und dort lässt sich Salonspiele nicht zum Home-Bildschirm hinzufügen. Kopier den Link, öffne ihn in Safari und tippe noch mal auf **Mitteilungen einschalten**.",
-  avCopy: "Link kopieren",
   avCopied: "Link kopiert.",
-  avBlockedTitle: "Die Mitteilungen sind blockiert",
-  avBlockedLead: "Dieses Handy lässt Salonspiele keine Mitteilungen schicken. So erlaubst du sie:",
-  avBlockedAndroid: "Tippe auf das Schloss neben der Adresse, dann auf **Berechtigungen**, und schalte **Benachrichtigungen** ein.",
-  avBlockedIos: "Öffne **Einstellungen**, dann **Mitteilungen**, such **Salonspiele** und schalte **Mitteilungen erlauben** ein.",
-  avBlockedOther: "Öffne die Einstellungen des Browsers, such die Berechtigungen von juegosdesalon.cl und erlaube **Benachrichtigungen**.",
-  avOk: "Verstanden",
   avSetTitle: "Mitteilungen für diesen Pokal",
   avSetDay: "Wenn ein Tag öffnet",
   avSetDaySub: "Morgens, mit dem Spiel des Tages.",
@@ -3197,6 +3142,13 @@ const DE = {
 };
 
 export const LOCALES = { es: ES, en: EN, pt: PT, de: DE };
+// The notification sheets' texts, shared with Uno al día (D-377)
+for (const [lang, L] of Object.entries(LOCALES)) {
+  for (const [k, v] of Object.entries(SHEETS[lang])) {
+    if (k in L) throw new Error(`rules.js: the sheets repeat the key ${k}`);
+    L[k] = v;
+  }
+}
 // Each game's own texts (D-331): its entry in `juegos` and the keys its screen reads
 for (const [id, textos] of Object.entries({ rutas: RUTAS, loteo: LOTEO, pintaminas: PINTAMINAS })) {
   for (const [lang, L] of Object.entries(LOCALES)) {

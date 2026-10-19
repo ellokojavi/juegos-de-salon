@@ -9,6 +9,12 @@
  * sabe de reglas; la pantalla no sabe sumar.
  */
 
+// Small pieces other games use too, in modules of their own so a page that needs only them does not
+// load La Copa (D-377): the cup code and a random one, and the active-time clock
+import { cryptoRand } from './code.js';
+export { LETRAS, CODIGO, esCodigo, codigoAlAzar } from './code.js';
+export { reloj, pausaDeLectura, mmss } from './clock.js';
+
 /**
  * El calendario de siempre de cada modalidad. El último siempre es la final, que vale doble.
  * Desde D-163 el admin arma el suyo al crear la copa (ver POZO); este queda para las demos.
@@ -80,31 +86,14 @@ export const ZONA = 'America/Los_Angeles';
 export const ZONAS_POR_IDIOMA = { de: 'Europe/Berlin' };
 export const zonaDeIdioma = lang => ZONAS_POR_IDIOMA[lang] || ZONA;
 
-/** Código de copa: 5 letras sin las ambiguas (I, O). 24⁵ ≈ 7,9 millones. */
-export const LETRAS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-export const CODIGO = /^[A-HJ-NP-Z]{5}$/;
-export const esCodigo = c => typeof c === 'string' && CODIGO.test(c);
-
 /** Identificador de jugador dentro de la copa: 6 letras minúsculas o cifras. */
 export const PID = /^[a-z0-9]{6}$/;
-
-export function codigoAlAzar(rand = cryptoRand) {
-  let out = '';
-  for (let i = 0; i < 5; i++) out += LETRAS[Math.floor(rand() * LETRAS.length)];
-  return out;
-}
 
 export function pidAlAzar(rand = cryptoRand) {
   const abc = 'abcdefghjkmnpqrstuvwxyz23456789';
   let out = '';
   for (let i = 0; i < 6; i++) out += abc[Math.floor(rand() * abc.length)];
   return out;
-}
-
-function cryptoRand() {
-  const b = new Uint32Array(1);
-  crypto.getRandomValues(b);
-  return b[0] / 4294967296;
 }
 
 /* ------------------------------------------------------------------ */
@@ -577,33 +566,3 @@ export function medallas(L) {
 /* Tiempo activo                                                       */
 /* ------------------------------------------------------------------ */
 
-/**
- * Cronómetro que solo corre con la pantalla visible (D-95). Se guarda como { ms, desde }:
- * `ms` acumulado y `desde` el instante en que volvió a correr (o null si está en pausa).
- */
-export const reloj = {
-  nuevo: now => ({ ms: 0, desde: now }),
-  pausar: (r, now) => (r.desde == null ? r : { ms: r.ms + Math.max(0, now - r.desde), desde: null }),
-  seguir: (r, now) => (r.desde == null ? { ms: r.ms, desde: now } : r),
-  leer: (r, now) => r.ms + (r.desde == null ? 0 : Math.max(0, now - r.desde)),
-};
-
-/**
- * La pausa para leer el dato de un error (D-277): detiene el reloj y lo vuelve a andar al cerrar
- * el veredicto o cuando se cumple el tope, lo que pase primero. Devuelve la función que la
- * termina; llamarla dos veces no hace nada. `pausar` y `seguir` son los del reloj de cada pantalla.
- */
-export function pausaDeLectura({ ms, pausar, seguir, alCambiar }) {
-  pausar(); alCambiar?.(true);
-  let hecha = false;
-  const fin = () => { if (hecha) return; hecha = true; clearTimeout(t); seguir(); alCambiar?.(false); };
-  const t = setTimeout(fin, ms);
-  return fin;
-}
-
-/** "3:07" o "1:02:10". */
-export function mmss(ms) {
-  const s = Math.max(0, Math.round(ms / 1000));
-  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
-  return h ? `${h}:${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}` : `${m}:${String(r).padStart(2, '0')}`;
-}

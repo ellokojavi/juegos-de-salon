@@ -228,4 +228,25 @@ for (let r = 0; r < 20; r++) assert.ok(puntajeDudo({ gano: false, dados: 0, rond
   }
 }
 
+// The dice's faces carry a name in four languages without loading La Copa's rules (D-377): from
+// games.js, or from the entry itself for the games only La Copa has, which must say what La Copa says
+{
+  const { juegosCopa } = await import('../../cup/rules.js');
+  const { gameById } = await import('./games.js');
+  for (const j of JUEGOS_DIA) {
+    const name = gameById(j.id)?.name || j.name;
+    for (const l of ['es', 'en', 'pt', 'de']) assert.ok(name?.[l], `${j.id} has its name in ${l} for the dice`);
+    if (j.name) for (const l of ['es', 'en', 'pt', 'de']) assert.equal(j.name[l], juegosCopa(l)[j.id].nombre, `${j.id} is named as in La Copa (${l})`);
+  }
+}
+
+// What the home page loads never reaches La Copa's rules or engine (D-377): a change to them would run
+// every end-to-end script that goes through the home page
+{
+  const { siteGraph } = await import('../../../tools/e2e/affected.mjs');
+  const g = siteGraph();
+  for (const page of ['', 'hangman', 'battleship', 'liars-dice', 'generala', 'bulls-and-cows', 'timeline'])
+    for (const f of ['cup/rules.js', 'cup/engine.js', 'cup/game.js'])
+      assert.ok(!g[page].has(f), `${page || 'the home page'} does not load ${f}`);
+}
 console.log('uno-al-dia: ok');
