@@ -21,7 +21,7 @@ then another (still with reduced motion). Then "📅 Los tableros de hoy son los
 
 1. 🎲 Pon todas las fichas: cada una cubre dos casillas.
 2. 🎯 Cada zona de color cumple su regla: un número es lo que suman sus puntos; = todos iguales; ≠ todos distintos; <5 y >9, menos o más.
-3. 👆 Arrastra cada ficha a su casilla; tócala dos veces para girarla. Toca un rombo y se ilumina su zona.
+3. 👆 Arrastra cada ficha a su casilla; dos toques la giran. Toca un rombo: se ilumina su zona.
 
 The usability agent shortened them to fit U-18 (273 characters); that there are three boards against the
 clock is said by the lab card and the heading of each board.
