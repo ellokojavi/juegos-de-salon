@@ -7078,4 +7078,3 @@ what we answered (quoted, without the address), adds the `replied` label and clo
 what they were told without anyone doing it by hand.
 **Consequences:** `.claude/agents/processes.md` (step 3, the email reply) describes it; the test is in
 `tools/agents/feedback.test.mjs`.
-
