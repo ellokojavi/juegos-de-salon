@@ -1,5 +1,5 @@
 {
-  "_": "Every job of Juegos de Salón, wherever it runs (D-369). A job that is not here does not exist: jobs.test.mjs fails if a scheduled workflow is missing, and `jobs.mjs install` only installs what is here. `node tools/jobs/jobs.mjs status` shows them all with their last run.",
+  "_": "Every job of Juegos de Salón, wherever it runs (D-365). A job that is not here does not exist: jobs.test.mjs fails if a scheduled workflow is missing, and `jobs.mjs install` only installs what is here. `node tools/jobs/jobs.mjs status` shows them all with their last run.",
   "jobs": [
     {
       "id": "inbox-watch",
@@ -7,7 +7,7 @@
       "every": 300,
       "command": ["node", "tools/jobs/inbox-watch.mjs"],
       "what": "Checks the hola@ inbox without Claude; only when an email is waiting it runs the support agent headless (Haiku) and uploads the reports as issues at once.",
-      "decisions": ["D-318", "D-369"]
+      "decisions": ["D-318", "D-365"]
     },
     {
       "id": "feedback",
