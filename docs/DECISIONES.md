@@ -66,7 +66,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
-| Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
+| Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
 | Memoria de partida | C-6 | D-25, D-150 |
 | Interfaz táctil | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344 |
 | Errores y pase del celular | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
@@ -178,7 +178,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 **Consecuencias:** Proyecto de Firebase `juegos-de-salon` creado el 2026-09-08 (plan Spark, sin Analytics ni Gemini). Reglas publicadas y versionadas en `firebase/database.rules.json`; configuración pública en `assets/js/firebase-config.js`. Ver [firebase/README.md](../firebase/README.md).
 
 ## D-19 · Quién parte en Toque y Fama: determinista, sin sorteo
-**Fecha:** 2026-09-08 · **Estado:** vigente
+**Fecha:** 2026-09-08 · **Estado:** corregida por D-367
 **Decisión:** En la primera partida parte el invitado (rol B); en la revancha parte quien perdió (en empate, quien no partió). No hay sorteo.
 **Por qué:** El sorteo con nonces públicos propuesto en el estudio era manipulable: quien confirma segundo ve el nonce del otro y puede elegir el suyo. Además, un sorteo asíncrono (SHA-256) impedía reconstruir la partida de forma síncrona al reconectar. Con el derecho a réplica activado, la ventaja de partir es mínima, así que una regla fija es justa, simple y reproducible en ambos celulares.
 
@@ -7067,3 +7067,18 @@ thing that keeps the name off GitHub. D-279 argued `feedback/` is already readab
 which is true but a much smaller exposure than an indexed issue.
 **Consequences:** `feedback.test.mjs` checks that the full name never reaches the body;
 `reportes.test.mjs` checks both masks and that the rule lets the new and old ones in.
+
+## D-367 · Bulls and Cows on two phones: both guess at once
+**Date:** 2026-10-18 · **Status:** current · **Relation:** amends D-19 (on two phones nobody starts: both guess at once)
+**Decision:** In 📡 two-phone rooms both players guess at the same time, each at their own pace, without
+waiting for the other. A player who cracks the number waits, watching the rival's board, until the rival
+cracks it too; then the final screen shows for both. Fewer guesses wins; the same number of guesses is a
+tie. The right of reply is gone there (both always get the same chances) and its switch only shows in 📱
+one phone, which stays turn-based. Rooms carry `config.parallel: true`; a room without it (opened before)
+plays by turns. Each guess carries `n`, its number in its player's own list, and a reply names it with
+`of` and `n`, because with both guessing at once each phone may see the two guesses in a different order.
+**Why:** A player's suggestion by email (#538): the two halves of the game are independent, so waiting for
+the rival's turn on two phones was dead time. It stays one player against another: both boards are on
+screen and the result waits for both.
+**Consequences:** `view()` in `public/bulls-and-cows/game.js` has a parallel branch (`canGuess`,
+`solvedIn`); who starts (D-19) only matters on one phone.

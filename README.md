@@ -80,7 +80,7 @@ Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 Each player picks a secret number with no repeated digits and tries to crack the other one, or you play alone against a number the phone picks. For every guess the phone answers on its own: **fama** is a right digit in the right place, **toque** is a right digit somewhere else. Nobody counts by hand, nobody cheats.
 
 - **📱 One phone:** players pass the phone around, and the screen is covered between turns.
-- **📡 Two phones:** a room with a 4-letter code and a QR. Each phone keeps its own secret and answers the rival's guesses. At the end both reveal and everything is verified.
+- **📡 Two phones:** a room with a 4-letter code and a QR. Each phone keeps its own secret and answers the rival's guesses, and both guess at once, each at their own pace: fewer guesses wins. At the end both reveal and everything is verified.
 - **🧍 Play alone:** The Cup's number game. The phone picks a 4-digit number and you get 10 guesses: 100 points on the first one and 10 less for each extra guess, with a clock and a record for your best score. Clues are spelled out in full ("2 famas, 1 toque").
 - **💬 Room chat:** on two phones there is a chat to trash-talk while guessing, and it stays alive on the final screen to celebrate or ask for a rematch. New messages peek out next to the bubble.
 
