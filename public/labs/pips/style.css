@@ -1,0 +1,108 @@
+/* Pips (lab, D-381). What is shared lives in assets/css/base.css. */
+
+/* The page's background: a deep night with a little color, like a game table */
+body {
+  --bg1: #100a26; --bg2: #1a0c33; --bg3: #08142a;
+  --fondo:
+    radial-gradient(1000px 560px at 0% -10%, rgba(46, 230, 214, 0.20), transparent 60%),
+    radial-gradient(900px 520px at 110% 20%, rgba(255, 46, 136, 0.18), transparent 60%),
+    radial-gradient(800px 600px at 50% 120%, rgba(255, 210, 63, 0.12), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+}
+
+.portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
+.titulo-pips { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
+.titulo-pips .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-pips .logo { --t: 26px; transform: rotate(-12deg); animation: pips-mece 3s ease-in-out infinite; }
+.titulo-pips.chico .display { font-size: 1.6rem; }
+.titulo-pips.chico .logo { --t: 18px; }
+@keyframes pips-mece { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(6deg) translateY(-2px); } }
+.credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.credito a { color: var(--cyan); }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+.demo { display: grid; place-items: center; min-height: 150px; }
+
+/* A domino: two square halves of --t, ivory, with dark dots on a 3×3 grid */
+.ficha {
+  --t: 40px;
+  display: inline-grid; grid-auto-flow: column; padding: 0; border: 0; border-radius: calc(var(--t) * 0.18);
+  background: #fbf6e9; box-shadow: 0 2px 0 #c9bfa5, 0 4px 10px rgba(0,0,0,0.35); color: #1a1030;
+  -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
+}
+.ficha.vertical { grid-auto-flow: row; }
+.ficha .mitad { width: var(--t); height: var(--t); display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); padding: calc(var(--t) * 0.14); box-sizing: border-box; gap: calc(var(--t) * 0.04); }
+.ficha .mitad + .mitad { border-left: 2px solid #d8cfb6; }
+.ficha.vertical .mitad + .mitad { border-left: 0; border-top: 2px solid #d8cfb6; }
+.ficha .mitad i { display: block; border-radius: 50%; }
+.ficha .mitad i.pt { background: #1a1030; }
+button.ficha { cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+button.ficha:active { transform: scale(0.94); }
+
+/* The board: one square cell of --s per place, colored by its zone (--z), its edges where the zone ends */
+.tablero-pips {
+  --s: min(54px, calc((100vw - 52px) / var(--w)));
+  position: relative; display: grid; grid-template-columns: repeat(var(--w), var(--s)); grid-template-rows: repeat(var(--h), var(--s));
+  justify-content: center; margin: 4px auto; transition: filter 0.3s;
+}
+.tablero-pips.chico { --s: min(34px, calc((100vw - 80px) / var(--w))); }
+.celda {
+  --z: rgba(255,255,255,0.35);
+  margin: 1px; padding: 0; border: 0; border-radius: 6px; cursor: pointer;
+  background: color-mix(in srgb, var(--z) 26%, rgba(255,255,255,0.04));
+  -webkit-tap-highlight-color: transparent;
+}
+.celda.libre { background: rgba(255,255,255,0.07); }
+/* The zone's edge: a dashed line on each side where it meets another zone or the outside */
+.celda.bt { border-top: 2px dashed var(--z); } .celda.br { border-right: 2px dashed var(--z); }
+.celda.bb { border-bottom: 2px dashed var(--z); } .celda.bl { border-left: 2px dashed var(--z); }
+.celda.libre.bt, .celda.libre.br, .celda.libre.bb, .celda.libre.bl { border-color: rgba(255,255,255,0.18); }
+.celda.no { animation: pips-no 0.35s; }
+@keyframes pips-no { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+/* The rule: a small diamond hung on the zone's last cell, bottom right */
+.regla {
+  z-index: 2; pointer-events: none; align-self: end; justify-self: end; margin: 0 -8px -8px 0;
+  width: 28px; height: 28px; display: grid; place-items: center; transform: rotate(45deg);
+  background: var(--z); border: 2px solid #fff; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+}
+.regla > span { transform: rotate(-45deg); font: 900 0.8rem var(--font-num); color: #140a28; white-space: nowrap; }
+.regla.ok { box-shadow: 0 0 0 3px #9dff3a, 0 2px 6px rgba(0,0,0,0.45); }
+.regla.mal { background: #ff3b3b; animation: pips-no 0.35s; }
+.regla.mal > span { color: #fff; }
+.tablero-pips.chico .regla { width: 20px; height: 20px; margin: 0 -6px -6px 0; }
+.tablero-pips.chico .regla > span { font-size: 0.62rem; }
+/* A placed domino covers its two cells */
+.puesta { --t: calc(var(--s) - 4px); z-index: 1; align-self: center; justify-self: center; }
+.tablero-pips .puesta.cae { animation: pips-cae 0.28s ease-out; }
+.tablero-pips .puesta.pista { box-shadow: 0 0 0 3px var(--yellow), 0 0 18px var(--yellow); }
+@keyframes pips-cae { from { transform: scale(1.25); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
+.tablero-pips.resuelto { filter: drop-shadow(0 0 14px rgba(157, 255, 58, 0.6)); }
+
+/* While playing */
+.cabeza-pips { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.marcador { margin: 0; font-weight: 800; }
+.reloj { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--muted); }
+.aviso-pips { margin: 0; min-height: 2.6em; text-align: center; font-weight: 700; color: var(--muted); }
+.aviso-pips.mal { color: #ff8a8a; } .aviso-pips.bien { color: #9dff3a; } .aviso-pips.ayuda { color: var(--yellow); } .aviso-pips.ojo { color: var(--yellow); }
+/* The tray: the dominoes not yet placed; the chosen one lifts and shines */
+.bandeja { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; min-height: 60px; padding: 6px 0; }
+.bandeja .ficha { --t: 34px; }
+.bandeja .ficha.sel { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--cyan), 0 0 18px var(--cyan), 0 4px 10px rgba(0,0,0,0.35); }
+.acciones-pips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.acciones-pips .armado { background: var(--yellow); color: #3a1200; }
+
+/* The result, like the other lab games */
+.resultado { text-align: center; display: grid; gap: 10px; --gap-contenedor: 10px; }
+.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.sello-pips { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+.sello-pips.mal { color: #ff8a8a; }
+.resultado .comentario { text-align: left; }
+.divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
+.desglose { list-style: none; text-align: left; margin: 0 auto; padding: 0; display: grid; gap: 4px; }
+.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .titulo-pips .logo, .tablero-pips .puesta.cae, .celda.no, .regla.mal, .sello-pips { animation: none; }
+}
