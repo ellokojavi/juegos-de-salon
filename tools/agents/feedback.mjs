@@ -51,6 +51,11 @@ export const idOf = body => /<!-- feedback:([^\s>]+) -->/.exec(body || '')?.[1] 
 /** Does the issue's player want an email reply? (the issue shows the mask) */
 export const wantsEmail = body => /^- \*\*Email:\*\* /m.test(body || '');
 /** Already emailed or forgotten? */
+export const REPLIED = 'replied';
+/** The comment left on an issue once its reply is emailed: what the player was told, quoted (D-368). */
+export const emailedComment = ({ mask, together = '', answer = '' }) =>
+  `📧 Reply emailed to \`${mask}\`${together}; the address was then deleted (D-317). Marked replied and closed as resolved (D-368).` +
+  (answer.trim() ? `\n\nWhat we answered:\n\n${answer.trim().split('\n').map(l => `> ${l}`).join('\n')}` : '') + `\n${EMAILED}`;
 export const handled = comments => (comments || []).some(c => (c.body || '').includes(EMAILED) || (c.body || '').includes(FORGOTTEN));
 
 /**
@@ -207,10 +212,14 @@ async function reply(list, file, lang, { dryRun, testTo }) {
   // Through stdin: the address never shows in a command line or a log
   execFileSync('python3', [fileURLToPath(new URL('./send-mail.py', import.meta.url))], { input: JSON.stringify({ to, subject: testTo ? `[Test] ${subject}` : finalSubject, inReplyTo: thread?.id || null, text, html, issues: numbers.map(Number), test: !!testTo }), stdio: ['pipe', 'inherit', 'inherit'] });
   if (testTo) { console.log(`Test email with ${numbers.map(n => `#${n}`).join(', ')} sent to the test address; nothing else touched.`); return; }
+  try { gh('label', 'create', REPLIED, '--color', '0e8a16', '--description', 'Feedback answered by email and resolved (D-368)'); } catch { /* already there */ }
   for (const x of all) {
     await remove(x.id, t);
     const together = all.length > 1 ? ` in one email together with ${all.filter(y => y !== x).map(y => `#${y.number}`).join(', ')}` : '';
-    gh('issue', 'comment', x.number, '--body', `📧 Reply emailed to \`${x.mask}\`${together}; the address was then deleted (D-317).\n${EMAILED}`);
+    // The record of what was answered, then replied and resolved (D-368): the issue says what the player was told
+    gh('issue', 'comment', x.number, '--body', emailedComment({ mask: x.mask, together, answer: answers[x.number] }));
+    gh('issue', 'edit', x.number, '--add-label', REPLIED);
+    gh('issue', 'close', x.number, '--reason', 'completed');
   }
   console.log(`${numbers.map(n => `#${n}`).join(', ')}: one email to ${all[0].mask}, addresses deleted.`);
 }
