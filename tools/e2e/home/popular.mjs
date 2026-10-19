@@ -52,13 +52,19 @@ ok(await waitFor(`scrollY < 5`, 4000), 'a tap on the title goes back to the top'
 await ev(`document.querySelector('.ficha-fav')?.click(); 1`);
 await ev(`document.querySelectorAll('.fav.on').forEach(x => x.click()); 1`);
 
+// Nothing moves when the menu starts floating and the title appears (D-369): a card keeps its place
+await b.go(`${SITE}/?test&lang=es`);
+await waitFor(`document.querySelectorAll('.game-card').length > 3`);
+const salto = await ev(`(async () => { const bar = document.getElementById('filtros-barra'), c = document.querySelectorAll('.game-card[data-id]')[6]; const tope = parseFloat(getComputedStyle(bar).top); const marca = document.getElementById('filtros-marca'); const y0 = marca.getBoundingClientRect().top + scrollY - tope; scrollTo(0, y0 - 3); await new Promise(r => setTimeout(r, 300)); const antes = c.getBoundingClientRect().top; const p0 = bar.classList.contains('pegada'); scrollTo(0, y0 + 3); await new Promise(r => setTimeout(r, 300)); const despues = c.getBoundingClientRect().top; return [p0, bar.classList.contains('pegada'), Math.round(antes - despues)]; })()`);
+ok(!salto[0] && salto[1] && Math.abs(salto[2] - 6) <= 1, `the list does not jump when the menu starts floating (moved ${salto[2]} px for 6 px of scroll)`);
+
 // The space under the floating filters matches the space above the title's letters (D-369)
 await b.go(`${SITE}/?test&lang=es`);
 await waitFor(`document.querySelectorAll('.game-card').length > 3`);
 await ev(`scrollTo(0, 1500); 1`);
 await waitFor(`document.getElementById('filtros-barra').classList.contains('pegada')`);
 await sleep(300);
-const gaps = await ev(`(() => { const bar = document.getElementById('filtros-barra'), t = bar.querySelector('.barra-titulo span:last-child'), r = document.createRange(); r.selectNodeContents(t); const top = r.getBoundingClientRect().top - bar.getBoundingClientRect().top; const fondo = bar.getBoundingClientRect().bottom + parseFloat(getComputedStyle(bar, '::before').bottom) * -1; const ultima = Math.max(...[...bar.querySelectorAll('.atajos, .tipos, .favs:not([hidden])')].map(x => x.getBoundingClientRect().bottom)); return [Math.round(top), Math.round(fondo - ultima)]; })()`);
+const gaps = await ev(`(() => { const bar = document.getElementById('filtros-barra'), t = bar.querySelector('.barra-titulo span:last-child'), r = document.createRange(); r.selectNodeContents(t); const top = r.getBoundingClientRect().top; const fondo = bar.getBoundingClientRect().bottom + parseFloat(getComputedStyle(bar, '::before').bottom) * -1; const ultima = Math.max(...[...bar.querySelectorAll('.atajos, .tipos, .favs:not([hidden])')].map(x => x.getBoundingClientRect().bottom)); return [Math.round(top), Math.round(fondo - ultima)]; })()`);
 ok(Math.abs(gaps[0] - gaps[1]) <= 2, `the space under the floating filters (${gaps[1]} px) matches the one above the title (${gaps[0]} px)`);
 
 b.close();

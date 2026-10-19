@@ -7103,6 +7103,9 @@ on the top three, the row of ✨ Nuevos and 🔥 Populares chips (with ⭐ Favor
 bar (‹ Lab and the language) and its list of experiments, empty today. One last adjustment the owner
 asked for: the floating menu's frosted background reaches 4 px below its last row, so the space under
 the filters (12 px) matches the space above the title's letters (11 px), without moving the list.
+The title does not take room in the page: the floating filters stop 36 px below the top and the title
+fills that space, out of the flow, so the list never jumps when the menu starts floating (a first
+version pushed it 44 px down, and the end-to-end tap on a ⭐ missed in CI).
 **Why:** the owner's decision; the usability agent's full pass over the home page in the four languages
 went with it, as D-361 asked.
 **Consequences:** `tools/e2e/home/popular.mjs` checks what players see (the label, the chips and their

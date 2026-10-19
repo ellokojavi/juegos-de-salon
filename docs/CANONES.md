@@ -396,7 +396,8 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   only when it has games, kept in the link as `?type=new` / `?type=popular`. With a favorite marked,
   ⭐ Favoritos goes first in that row: with its name, tighter, or the ⭐ alone, centered (D-364).
 - **The app's name on the floating menu** (D-364, D-369): while the filters float, "🎲 Juegos de
-  Salón" tops them in the title's font; a tap goes back to the top. The frosted background reaches
+  Salón" tops them in the title's font, in the 36 px the floating filters leave above them, so nothing
+  moves when it appears; a tap goes back to the top. The frosted background reaches
   4 px below the last row, so the space under the filters matches the space above the title.
 - **Home page experiments** (D-361): what is tried on the home page before players see it is a URL
   parameter the page reads, off by default, listed in `public/labs/home/experiments.js`. `/labs/home/`
