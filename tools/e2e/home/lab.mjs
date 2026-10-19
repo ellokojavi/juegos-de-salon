@@ -1,4 +1,4 @@
-// The home page's experiments in the lab (D-361, D-362) end to end, at /labs/home/: the lab offers it under
+// The home page's experiments in the lab (D-361, D-362, D-363) end to end, at /labs/home/: the lab offers it under
 // Mejoras en prueba (the splash beside it, the games apart), the demo shows the real home page with the
 // experiments bar, 🔥 Populares starts on and labels three cards that are not La Copa nor "New", the
 // switch turns it off and back, the language travels, and the home page alone shows no label. Prints ✗ if something fails.
@@ -11,25 +11,30 @@ const SITE = process.env.SITE || 'http://localhost:8765';
 let failures = 0;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) failures++; };
 const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
-const frame = `document.getElementById('portada').contentDocument`;
-const labels = `[...(${frame}?.querySelectorAll('.game-card') || [])].filter(c => c.querySelector('.popular')).map(c => c.dataset.id)`;
+const labels = `[...document.querySelectorAll('.game-card')].filter(c => c.querySelector('.popular')).map(c => c.dataset.id)`;
 
 // The lab: games, improvements and La Bodega apart; the splash and the home page among the improvements
 await b.go(`${SITE}/labs/?test`);
 ok(await ev(`!!document.querySelector('#mejoras #seccion-portada #btn-portada') && !!document.querySelector('#mejoras #seccion-splash')`), 'the lab offers the home page experiments and the splash under Mejoras en prueba');
 ok(await ev(`!document.querySelector('#activos #seccion-splash') && !!document.querySelector('#activos #seccion-agentes')`), 'the games being tried are apart from the improvements');
 
-// The demo: the real home page behind and the bar, 🔥 Populares on from the start
+// The demo: /labs/home/ opens the real home page, without a frame (D-363), with the bar and every experiment on
 await b.go(`${SITE}/labs/home/?test`);
+ok(await waitFor(`location.pathname === '/' && new URLSearchParams(location.search).has('lab') && !!document.getElementById('barra')`), '/labs/home/ opens the home page itself with the experiments bar');
 ok(await waitFor(`(${labels}).length === 3`), 'with 🔥 Populares on, three cards carry the label');
-ok(await ev(`document.querySelector('[data-exp=popular]').getAttribute('aria-pressed') === 'true'`), 'its switch shows as on');
-ok(await ev(`(() => { const d = ${frame}; return (${labels}).every(id => { const c = d.querySelector('.game-card[data-id="' + id + '"]'); return !c.classList.contains('torneo') && !c.querySelector('.nuevo'); }); })()`), 'neither La Copa nor a "New" game carries it');
-ok(await ev(`${frame}.documentElement.scrollWidth <= 320`), 'no sideways scroll at 320 px');
+ok(await ev(`document.querySelector('#barra [data-exp=popular]').getAttribute('aria-pressed') === 'true' && getComputedStyle(document.getElementById('barra')).position === 'fixed'`), 'its switch shows as on, in a bar that floats');
+ok(await ev(`(${labels}).every(id => { const c = document.querySelector('.game-card[data-id="' + id + '"]'); return !c.classList.contains('torneo') && !c.querySelector('.nuevo'); })`), 'neither La Copa nor a "New" game carries it');
+ok(await ev(`document.documentElement.scrollWidth <= 320`), 'no sideways scroll at 320 px');
+// The filters stick when the page scrolls (what a frame broke on the iPhone)
+await ev(`scrollTo(0, 1500); 1`);
+ok(await waitFor(`document.getElementById('filtros-barra').classList.contains('pegada') && Math.abs(document.getElementById('filtros-barra').getBoundingClientRect().top) < 2`), 'scrolling down, the filters stay stuck on top');
 
-await ev(`document.querySelector('[data-exp=popular]').click(); 1`);
-ok(await waitFor(`!/[?&]popular/.test(document.getElementById('portada').src) && ${frame}?.querySelectorAll('.game-card').length > 3 && (${labels}).length === 0`), 'the switch turns it off: the home page as players see it');
-await ev(`document.querySelector('[data-exp=popular]').click(); const s = document.getElementById('idioma'); s.value = 'de'; s.dispatchEvent(new Event('change')); 1`);
-ok(await waitFor(`(${labels}).length === 3 && ${frame}.querySelector('.popular').textContent.replace(/\s+/g, ' ').trim() === '🔥 Beliebt'`), 'back on, in German: 🔥 Beliebt');
+await ev(`document.querySelector('#barra [data-exp=popular]').click(); 1`);
+ok(await waitFor(`!new URLSearchParams(location.search).has('popular') && document.querySelectorAll('.game-card').length > 3 && (${labels}).length === 0 && !!document.getElementById('barra')`), 'the switch turns it off: the home page as players see it, the bar still there');
+await ev(`document.querySelector('#barra [data-exp=popular]').click(); 1`);
+await waitFor(`new URLSearchParams(location.search).has('popular') && !!document.getElementById('barra')`);
+await ev(`const s = document.getElementById('idioma'); s.value = 'de'; s.dispatchEvent(new Event('change')); 1`);
+ok(await waitFor(`document.documentElement.lang.startsWith('de') && (${labels}).length === 3 && document.querySelector('.popular').textContent.replace(/\\s+/g, ' ').trim() === '🔥 Beliebt'`), 'back on, in German: 🔥 Beliebt');
 
 // ✨ Nuevo and 🔥 Populares (D-362): a row above the types, each one filters, in every language at 320 px
 for (const lang of ['es', 'en', 'pt', 'de']) {
@@ -47,7 +52,7 @@ if (await ev(`!document.querySelector('.atajos [data-tipo=new]').hidden`)) {
   ok(await waitFor(`(() => { const v = [...document.querySelectorAll('.game-card[data-id]')].filter(c => !c.hidden); return v.length > 0 && v.every(c => c.querySelector('.nuevo')); })()`), '✨ Nuevo shows only the games that say "New"');
 }
 await b.go(`${SITE}/?test`);
-ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && await ev(`!document.querySelector('.filtros .atajos:not([hidden])')`), 'the home page alone has no Nuevo or Populares row');
+ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && await ev(`!document.querySelector('.filtros .atajos:not([hidden])') && !document.getElementById('barra')`), 'the home page alone has no Nuevo or Populares row and no lab bar');
 
 // Players: no label on the home page without the preview
 await b.go(`${SITE}/?test`);

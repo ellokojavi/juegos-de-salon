@@ -63,7 +63,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246 |
@@ -6938,7 +6938,7 @@ owns the queue and the agents' review; one path for every build); a free-form ba
 first round proposes the first three ideas; this PR opens none.
 
 ## D-361 · The home page's order every week, a 🔥 "Popular" label in the lab, and the lab in three groups
-**Date:** 2026-10-18 · **Status:** current · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar)
+**Date:** 2026-10-18 · **Status:** amended by D-363 · **Relation:** corrects D-255 (the order, refreshed by hand from plays) and D-280 (the lab's two groups); extends D-333 (the "New" sticker) and D-351 (the splash demo's bar)
 **Context:** the game-ideas agent's first check (D-360) showed 18 games three or more places away from
 the order D-255 counted on October 9. The owner asked for the order to update every week, to put the
 best of the app in front of a new player, and for a 🔥 "Popular" label on the top three; then, to try
@@ -6988,3 +6988,18 @@ ships together with the popular label, in its own PR, with the usability agent's
 play, gets there in one tap. Tried in the lab first, as the owner asked for the label.
 **Consequences:** `tools/e2e/home/lab.mjs` checks the row above the types in the four languages at
 320 px and that each chip filters; C-17 says it.
+
+## D-363 · The home page's experiments run on the real home page, without a frame
+**Date:** 2026-10-18 · **Status:** current · **Relation:** corrects D-361 (`/labs/home/` showed the home page in a frame)
+**Context:** the owner, on an iPhone: "the menu is not floating in Labs". Safari on an iPhone grows a
+frame to the full height of its page, so the home page inside `/labs/home/` never scrolled itself and its
+sticky filter bar never stuck; in Chrome it did.
+**Decision:** `/labs/home/` opens the home page itself (`/?test&lab&lang=es&popular&picks`, every
+experiment on). With `?lab` the home page draws the experiments bar (`drawBar` in
+`public/labs/home/experiments.js`): ‹ Lab, one switch per experiment and the language; each one reloads
+the page with the new address. `public/labs/experiments.css` keeps only the bar (above everything, the
+install banner included); the splash demo keeps its own frame, where nothing needs to scroll.
+**Why:** what is tried has to behave as it will for a player, on the phone the owner uses.
+**Consequences:** `tools/e2e/home/lab.mjs` checks that `/labs/home/` lands on the home page with the bar,
+that the filters stick when the page scrolls, and that the bar never shows without `?lab`.
+
