@@ -538,10 +538,9 @@
       return { g, card, caja };
     });
 
-    // Juego al azar (D-188): sale de las tarjetas que se ven, así respeta el filtro de tipo
-    document.getElementById('azar-slot').append(botonAzar({
-      lang, candidatos: () => tarjetas.filter(t => !t.card.hidden).map(t => t.g),
-    }));
+    // Juego al azar (D-188): always from every game on the home page, whatever filter is on; only
+    // `alAzar` leaves some out (La Copa, and the games that need a group, D-374)
+    document.getElementById('azar-slot').append(botonAzar({ lang, candidatos: () => PORTADA }));
     // Uno al día (D-230): el juego de hoy, el mismo para todos. Va en una tarjeta de media fila junto
     // a La Copa (D-239, lo que eligió el dueño); ?daily=button lo pone al lado del dado, como antes
     // The row is drawn now, with an empty card in One a Day's place, so La Copa does not first show
