@@ -1,7 +1,7 @@
 # Uno al día
 
 **Estado:** **para todos desde v0.121.0** (el n.° 1 es el 6 de octubre de 2026); construido en 7 PR y abierto en el octavo (ver "Lo que el PR N hizo") · **Fecha:** 2026-10-05 ·
-**Toca:** RP-44, RP-63, D-334, D-188 y D-237 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
+**Toca:** RP-44, RP-63, D-334, D-188, D-237 y D-374 (Juego al azar), D-212 y D-217 (rankings), D-221 a D-229 (avisos), D-97 (semillas)
 
 Una modalidad nueva en la portada, al lado de **Juego al azar**: cada día la app sorprende con un
 juego, el mismo desafío para todos, y lleva la cuenta de cuántos días seguidos juega cada uno, cómo
@@ -115,7 +115,8 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 ### Quiere jugar más
 
 - Después de Uno al día, **🎲 Jugar otro** tira el dado de Juego al azar (cualquier juego de la
-  portada, también los de grupo). No cuenta para la racha, pero sí para "Juegos esta semana" y
+  portada, también los de grupo: unlike the home page's 🎲, `jugarOtro` in `uno-al-dia-ui.js` does not
+  use `alAzar`, so it can still land on Cuarto Rey, D-374). No cuenta para la racha, pero sí para "Juegos esta semana" y
   para los rankings normales de ese juego.
 - **Repetir el desafío de hoy** se puede, como práctica: el ranking del día toma solo el
   primer intento completo, igual que en La Copa.

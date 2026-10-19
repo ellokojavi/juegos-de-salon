@@ -2850,7 +2850,7 @@ brasileño puede jugar en español).
 
 
 ## D-188 · Juego al azar: un dado que rueda sobre el menú
-**Fecha:** 2026-10-03 · **Estado:** vigente, ampliada por D-374 · **Relación:** el paso al juego, en D-237
+**Fecha:** 2026-10-03 · **Estado:** vigente · **Relación:** el paso al juego, en D-237; extended by D-374 (the dice skips games that need a group)
 **Decisión:** El menú tiene un botón **🎲 Juego al azar** bajo la bajada. Al tocarlo, un dado
 blanco de cantos redondos, con un juego en cada cara, entra rodando sobre la misma portada,
 rebota tres veces y cae con el elegido adelante; abajo dice "¡Te tocó! <juego>" y a los 1,3 s se

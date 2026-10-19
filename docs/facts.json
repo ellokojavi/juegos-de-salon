@@ -1,5 +1,5 @@
 {
-  "version": "0.186.1",
+  "version": "0.186.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1012,6 +1012,7 @@
     "marketing/served.test.mjs",
     "marketing/splash/campaigns.test.mjs",
     "public/assets/js/arrastre.test.mjs",
+    "public/assets/js/azar.test.mjs",
     "public/assets/js/buzon.test.mjs",
     "public/assets/js/compartir.test.mjs",
     "public/assets/js/favoritos.test.mjs",
