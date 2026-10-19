@@ -52,14 +52,15 @@ if (await ev(`!document.querySelector('.atajos [data-tipo=new]').hidden`)) {
   ok(await waitFor(`(() => { const v = [...document.querySelectorAll('.game-card[data-id]')].filter(c => !c.hidden); return v.length > 0 && v.every(c => c.querySelector('.nuevo')); })()`), '✨ Nuevo shows only the games that say "New"');
 }
 // ⭐ Favoritos joins the Nuevo / Populares row (D-364), with its name from 360 px; the title tops the floating menu
-await b.go(`${SITE}/?test&popular&picks&brand`);
+await b.go(`${SITE}/?test&popular&picks&brand&lang=es`);
 await waitFor(`document.querySelectorAll('.game-card .fav').length > 3`);
 await ev(`document.querySelector('.game-card + .fav, .fav').click(); 1`);
-ok(await waitFor(`(() => { const f = document.querySelector('.ficha-fav'); return !f.hidden && f.parentNode.classList.contains('atajos'); })()`), 'with a favorite, ⭐ goes first in the Nuevo / Populares row');
+ok(await waitFor(`(() => { const f = document.querySelector('.ficha-fav'); return !f.hidden && f.parentNode.classList.contains('atajos') && f.classList.contains('sola'); })()`), 'with a favorite, ⭐ goes first in the Nuevos / Populares row (bare at 320 px in Spanish)');
 ok(await ev(`document.documentElement.scrollWidth <= 320`), 'and the row still fits at 320 px');
+ok(await ev(`(() => { const f = document.querySelector('.ficha-fav'), e = f.querySelector('.ficha-emoji').getBoundingClientRect(), a = f.getBoundingClientRect(); return !f.classList.contains('sola') || Math.abs((e.left - a.left) - (a.right - e.right)) <= 2 && Math.abs((e.top - a.top) - (a.bottom - e.bottom)) <= 2; })()`), 'the bare ⭐ sits centered in its chip');
 ok(await ev(`getComputedStyle(document.querySelector('.barra-titulo')).display === 'none'`), 'the title is hidden while the filters sit in their place');
 await ev(`scrollTo(0, 1500); 1`);
-ok(await waitFor(`document.getElementById('filtros-barra').classList.contains('pegada') && getComputedStyle(document.querySelector('.barra-titulo')).display !== 'none'`), 'floating, the menu carries the 🎲 Juegos de Salón title');
+ok(await waitFor(`document.getElementById('filtros-barra').classList.contains('pegada') && getComputedStyle(document.querySelector('.barra-titulo')).display !== 'none' && document.querySelector('.barra-titulo').getBoundingClientRect().height >= 44`), 'floating, the menu carries the 🎲 Juegos de Salón title, 44 px tall');
 await ev(`document.querySelector('.barra-titulo').click(); 1`);
 ok(await waitFor(`scrollY < 5`, 4000), 'a tap on the title goes back to the top');
 await ev(`document.querySelector('.ficha-fav')?.click(); 1`);

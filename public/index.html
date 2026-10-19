@@ -221,7 +221,7 @@
     .filtros .favs { display: flex; justify-content: center; }
     .filtros .favs[hidden] { display: none; }
     .filtros .ficha-fav {
-      display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
       font: 900 0.9rem var(--font-body); border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
       transition: background 0.15s, color 0.15s, transform 0.1s;
     }
@@ -236,7 +236,7 @@
     .filtros .atajos.apretada button { padding-inline: 10px; gap: 4px; }
     .filtros .atajos[hidden], .filtros .atajos button[hidden] { display: none; }
     .filtros .atajos button {
-      display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
       font: 900 0.9rem var(--font-body); border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
       transition: background 0.15s, color 0.15s, transform 0.1s;
     }
@@ -266,8 +266,8 @@
        scrolling down a long list, the floating menu still says where you are; a tap goes back up. */
     .barra-titulo { display: none; }
     .filtros-barra.pegada .barra-titulo {
-      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 36px;
-      margin: -4px 0 4px; padding: 0; border: 0; background: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px;
+      margin: -8px 0 0; padding: 0; border: 0; background: none; cursor: pointer;
       font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.04em; color: var(--ink);
     }
     .filtros-barra.pegada .barra-titulo span:last-child {

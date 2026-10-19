@@ -7004,7 +7004,7 @@ install banner included); the splash demo keeps its own frame, where nothing nee
 that the filters stick when the page scrolls, and that the bar never shows without `?lab`.
 
 ## D-364 · The floating menu carries the app's name, and ⭐ Favoritos joins Nuevo and Populares, in the lab
-**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-362 (the ✨ Nuevo / 🔥 Populares row) and D-241 (where ⭐ Favoritos goes)
+**Date:** 2026-10-18 · **Status:** current · **Relation:** extends D-362 (the ✨ Nuevos / 🔥 Populares row) and D-241 (where ⭐ Favoritos goes)
 **Context:** the owner asked whether the floating menu could carry the logo or the title, and noticed the
 ⭐ Favoritos star was missing: with the new row it was squeezed, as a bare ⭐, in front of the four types.
 **Decision:**
@@ -7016,7 +7016,10 @@ that the filters stick when the page scrolls, and that the bar never shows witho
   `/labs/home/`): the app's name in the title's font and rainbow, only while the filters float, never in
   their place under the real title; a tap goes back to the top.
 **Why:** the owner's requests. Scrolling a long list, the floating menu still says where you are; and
-the star in the row of quick picks is one line less than in its own (124 px floating at 320 px with a
+the star in the row of quick picks is one line less than in its own (156 px floating at 320 px with a
 favorite, the title included, against 178 without the title).
+**Also:** the chip says **Nuevos** (Novos in Portuguese), in the plural like Populares (the owner's
+correction of D-362's "Nuevo"); the bare ⭐ is centered in its chip (it sat 5 px from one side and 17
+from the other, also in the types row since D-241); the title is 44 px tall (C-8).
 **Consequences:** `tools/e2e/home/lab.mjs` checks both; C-17 says them. They ship with D-361's label and
 D-362's filters.

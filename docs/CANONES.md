@@ -392,7 +392,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **🔥 "Popular", in the lab** (D-361): the first three of the order that are neither La Copa nor
   "New" (`populares`) wear the "New" sticker in fire colors, with the 🔥 outside the gradient. It is
   off for players (`POPULAR_EN_PORTADA = false`); `/?popular` and the lab's `/labs/home/` show it.
-- **✨ Nuevo and 🔥 Populares filters, in the lab** (D-362): a row of two chips above the types,
+- **✨ Nuevos and 🔥 Populares filters, in the lab** (D-362): a row of two chips above the types,
   each shown only when it has games, kept in the link as `?type=new` / `?type=popular`; only with `?picks`.
   With a favorite marked, ⭐ Favoritos goes first in that row, with its name if it fits (D-364).
 - **The app's name on the floating menu, in the lab** (D-364): with `?brand`, while the filters float,
