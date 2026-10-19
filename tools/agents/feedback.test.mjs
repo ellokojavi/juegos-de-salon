@@ -98,3 +98,13 @@ assert.equal(greetingName(null, '- **Quién:** Cris'), 'Cris', 'an old issue wit
   assert.ok(!body.includes('@g****m`') || body.includes('c****o@g****m'), 'only the mask');
   assert.ok(handled([{ body }]), 'counts as handled');
 }
+
+// In the sender's own thread the email is not quoted again; outside it, it is (D-370)
+{
+  const { inThread } = await import('./feedback.mjs');
+  const thread = { id: '<a@mail>', subject: 'Hola' };
+  assert.equal(inThread({ thread }, thread), true, 'the email of the thread');
+  assert.equal(inThread({ thread: null }, thread), false, 'a 🐞 report');
+  assert.equal(inThread({ thread: { id: '<b@mail>' } }, thread), false, 'another thread');
+  assert.equal(inThread({ thread }, null), false, 'no thread (test email)');
+}

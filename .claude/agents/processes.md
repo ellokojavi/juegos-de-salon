@@ -187,6 +187,8 @@ that (after a new game, after a big text change), saying why.
    answer with one or two warm, simple sentences; **actionable** ones (a bug, a suggestion) go
    through the paths above like any 🐞; **negative or destructive** ones get no email (`forget`).
    The reply lands in the sender's own thread, as an answer to their email (`feedback.mjs` does it).
+   There the player sees their email right above, so the reply does not quote it again; a 🐞 report,
+   or an email from another thread answered in the same reply, is still quoted (D-370, owner's rule).
    **Resolve the trivial yourself, never escalate it** (owner's request, D-338): a kudos, a repeated
    kudos, a thank-you, a test report or a test of a flow, an email with nothing to act on, a duplicate:
    you decide (the warm reply, `forget`, or just close it with a line saying why) and note it in your
