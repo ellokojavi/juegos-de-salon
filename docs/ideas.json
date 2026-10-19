@@ -27,6 +27,83 @@
       "from": "D-230, D-224, D-341"
     }
   ],
-  "ideas": [],
-  "rounds": []
+  "ideas": [
+    {
+      "id": "cup-come-back-wildcard",
+      "title": "La Copa: come back on your own once",
+      "lane": "meta",
+      "evidence": "La Copa participation falls from 90% on day 1 to 51% on day 7; 11 players went out after two days without playing (D-347) and 0 were brought back. The only way back today is the admin's «Devolver a la copa».",
+      "cost": "One PR in La Copa: a one-time «Volver a la copa» button on the out player's own board (spends their single comeback, reusing players/<pid>/back), a Firebase rules change so the player may write it once, four languages, a demo scene and its paths.mjs screen. Amends D-347 (only the admin brings back).",
+      "prototype": "Lab demo first (?test&demo=out with the button), Spanish only, then a flag on real cups for two weeks.",
+      "proof": "Players brought back goes from 0 to at least a third of those out, and day-7 participation rises from 51% to 60% or more over the next 4 weeks.",
+      "recommendation": "Yes: the drop is the biggest leak in the most played thing in the app, and the cost is one rule, not a new mode.",
+      "question": "La Copa: let a player who went out come back on their own, once per cup?",
+      "status": "proposed",
+      "date": "2026-10-19",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/556",
+      "history": [
+        {
+          "date": "2026-10-19",
+          "status": "proposed",
+          "why": null,
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
+        }
+      ]
+    },
+    {
+      "id": "tango-first-board-guide",
+      "title": "Tango: a guided first board",
+      "lane": "existing",
+      "evidence": "Tango solo: 65 starts, 15 finishes (23%, the lowest of all), 50 abandoned; yet finishers score a median of 100/100 in 0:59, and in La Copa it has the most abandons (4 of 29). Those who get it, get it fast: the wall is understanding the rules, not the puzzle.",
+      "cost": "One PR in Tango: a first-time 4x4 board that teaches the two signs (= and x) and the three-in-a-row rule step by step, shown once per browser (localStorage), four languages. No engine change.",
+      "prototype": "Lab copy of Tango with the guided board, Spanish only, compared against the published one.",
+      "proof": "Tango's solo finish rate from 23% to 40% or more, and abandons per start down, in the 4 weeks after it ships.",
+      "recommendation": "Yes: cheapest of the three, and the numbers say the puzzle is fine once it is understood.",
+      "question": "Tango: try a short guided first board for new players?",
+      "status": "proposed",
+      "date": "2026-10-19",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/556",
+      "history": [
+        {
+          "date": "2026-10-19",
+          "status": "proposed",
+          "why": null,
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
+        }
+      ]
+    },
+    {
+      "id": "pips-dominoes",
+      "title": "Pips: dominoes on a board",
+      "lane": "new-game",
+      "evidence": "No game-idea requests from players yet; the case is the house's own pattern: the number puzzles from the daily waves carry the solo plays (Queens 103, Tango 94, Bulls and Cows 95), and Pips is the NYT's newest daily puzzle. It needs no words (travels to the four languages), is deducible without guessing, takes 1 to 5 minutes and has easy/medium/hard sizes for a seed.",
+      "cost": "The whole of docs/AGREGAR-JUEGO.md: engine and generator with a unique-solution check and tests, solo mode with a daily seed, 0-to-100 scoring, panel signal, result screen, end-to-end scripts, its document, four languages, README and social card; then La Copa's pool (not the Gran Final, D-332). Three to four PRs.",
+      "prototype": "A Spanish-only solo lab project in Proyectos activos (D-304), one daily board, with the cover page crediting NYT Pips.",
+      "proof": "In the lab, a finish rate of 50% or more with 20+ starts within 3 weeks; after graduating, 40+ plays in its first 4 weeks (Zip's level).",
+      "recommendation": "Yes, after the two above: it fits the house exactly, but it is the most expensive.",
+      "inspiration": "Pips, NYT Games (launched 2025): https://www.nytimes.com/games/pips",
+      "status": "proposed",
+      "date": "2026-10-19",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/556",
+      "history": [
+        {
+          "date": "2026-10-19",
+          "status": "proposed",
+          "why": null,
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
+        }
+      ]
+    }
+  ],
+  "rounds": [
+    {
+      "date": "2026-10-19",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/556",
+      "ideas": [
+        "cup-come-back-wildcard",
+        "tango-first-board-guide",
+        "pips-dominoes"
+      ]
+    }
+  ]
 }
