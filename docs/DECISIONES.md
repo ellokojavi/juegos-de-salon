@@ -79,7 +79,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379 |
 | Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
-| Marketing | `marketing/README.md` | D-178 |
+| Marketing | `marketing/README.md` | D-178, D-380 |
 | App instalable y avisos al celular | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
 ---
@@ -6906,7 +6906,7 @@ new numbers (D-348: finish rate, abandons, cup days skipped, returns, shares) ha
 its memory `docs/ideas.json`:
 - **Evidence first.** `ideas.mjs check` reads as administrator what the panel reads and prints the
   games by plays against `POPULARIDAD` (a game that moved three places or more, or is missing, is
-  an idea: refresh the order), the one-player games with the weakest finish (ten starts or more),
+  an idea: refresh the order; since D-361 the count is games finished, and a drift is not an idea), the one-player games with the weakest finish (ten starts or more),
   the room funnel, La Copa by game and by day, Uno al día's returns, users and shares, the lab's
   two groups, the `feedback:game-idea` and open `feedback:suggestion` issues, and the ledger. An
   idea quotes those numbers or those requests, never a metric of its own.
@@ -6979,7 +6979,9 @@ four languages, before players see it, is what the lab is for, and the owner lik
 **Alternatives discarded:** ordering live from Firebase (D-255: the page would wait for the database);
 counting starts (it rewards games people abandon); labelling La Copa or a "New" game as popular.
 **Consequences:** `popularity.test.mjs`, `games.test.mjs` and `tools/e2e/home/lab.mjs` cover it; C-17
-says the new order and the label.
+says the new order and the label. `ideas.mjs check` ranks the games with the same count
+(`popularity.mjs` exports `ventana` and `contarDe`), plays started stay as a side column, and the
+drift warning comes only from finishes and points to `popularity.mjs update`.
 
 ## D-362 · "✨ Nuevo" and "🔥 Populares" as filters, in the lab
 **Date:** 2026-10-18 · **Status:** amended by D-369 · **Relation:** extends D-361 (the home page's experiments, the popular label), D-333 (New), D-142 and D-238 (the filters and ⭐ Favoritos)
@@ -7256,6 +7258,13 @@ Timeline deck, 22 instead of 42. `affected.test.mjs` tests `playedOn`, and `scop
 **Decision:** the header clock goes, in every game and every mode. The time is measured exactly as before (from «¡A jugar!», paused while reading a fact and with the tab hidden, stopped when the board ends) and shows at the end: the result, the standings and the share text. Each game's own countdown stays. The end-to-end scripts read the time from `#jugar-head`'s `reloj()`, not from the screen.
 **Why:** the owner: the game's own clock means something, because it decides points within that game, but a global clock makes no sense until the very end.
 **Consequences:** the ⏸ cue on the header clock while reading a fact goes with it (the bar under the fact still shows the pause); the `timer` text and the `.cron` styles of La Copa are removed.
+
+## D-380 · Promotional material follows the app's design
+**Date:** 2026-10-19 · **Status:** current · **Relation:** completes D-178, D-356 and U-34 (those say what promotional material shows; this says how it looks); written as U-40
+**Context:** an image for a Reddit post was first drawn with a system font (Arial Rounded) over the app's screenshots, so the text did not look like the app around it.
+**Decision:** every promotional item (videos, images, cards, posts, splashes, teasers) uses the app's design: its colors, its fonts (Bangers for titles and game names, Nunito for text, `--font-display` and `--font-body` in `public/assets/css/base.css`), its emojis and its look. The values are read from the app's CSS, not copied by eye; a font not installed on the machine is downloaded from Google Fonts, never replaced by a look-alike.
+**Why:** the owner: promotional material is the app's first impression, so it has to look like the app the player will open.
+**Consequences:** the usability agent checks it when it reviews a marketing asset (U-34, U-40).
 
 ## D-381 · Pips: a dominoes puzzle in Juegos en prueba
 **Date:** 2026-10-19 · **Status:** current · **Relation:** the first idea of the game-ideas agent (D-360) to reach the lab; follows D-280 and D-361 (the lab's groups), D-304 (a lab-only PR)
