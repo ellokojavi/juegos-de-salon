@@ -660,7 +660,8 @@
         const url = new URL(location.href);
         for (const k of ['jugadores', 'tipo', 'type']) url.searchParams.delete(k);
         if (filtro.tipo) url.searchParams.set('type', filtro.tipo);
-        history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+        // Without the empty `=` URLSearchParams adds to flags: `?test&lab`, not `?test=&lab=`
+        history.replaceState(history.state, '', url.pathname + url.search.replace(/=(?=&|$)/g, '') + url.hash);
       };
       aplicar(true);
       // In development: only for lab key holders (D-395)
