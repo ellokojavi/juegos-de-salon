@@ -70,6 +70,9 @@ await type('xyzzy');
 ok(await ev(`!!document.querySelector('#buscar-lista .buscar-nada') && ${sugs}.length === 0`), 'nothing found says so in the dropdown');
 await ev(`document.querySelector('.buscar-cerrar').click(); 1`);
 ok(await ev(`document.querySelector('.atajos').classList.contains('cerrando') && ${shown('#buscar')}`), '✕ first folds the field back into the pill (D-398)');
+// The fold really plays (D-402): a restarted animation, not the opening's one frozen at its end
+ok(await ev(`(a => !!a && a.playState === 'running')(document.querySelector('.atajos .buscar').getAnimations().find(a => a.animationName === 'buscar-pliega'))`), 'the fold is its own running animation, so the field does not freeze folded');
+ok(await ev(`getComputedStyle(document.querySelector('.buscar-pill')).opacity === '0' || getComputedStyle(document.querySelector('.buscar-pill')).transitionProperty.split(', ').every(p => p !== 'opacity')`), 'the pill\'s 🔎 does not fade in, so it does not blink when the field hands over (D-402)');
 ok(await waitFor(`!${shown('#buscar')} && ${shown('.atajos .buscar-pill')} && ${shown('.atajos [data-tipo="popular"]')} && ${visible}.length === ${all}`), '✕ brings the pills back and every game');
 await ev(`document.querySelector('.buscar-pill').click(); 1`);
 await type('toque');
