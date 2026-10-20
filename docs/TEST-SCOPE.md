@@ -153,7 +153,7 @@ catch in the PR) and moving the declared facts to their own module (tidier, but 
 | What | File |
 |---|---|
 | This design | `docs/TEST-SCOPE.md` |
-| Why each step was taken | `docs/DECISIONES.md`: D-308, D-329, D-346, D-378, D-388, D-391, D-392 |
+| Why each step was taken | `docs/decisions/`: D-308, D-329, D-346, D-378, D-388, D-391, D-392 |
 | How to run and write scripts | `tools/e2e/README.md` |
 | The code | `tools/e2e/affected.mjs`, `changes.mjs`, `ci.mjs`, `since-passed.mjs` (D-392) |
 | The guards | `tools/e2e/*.test.mjs` |
