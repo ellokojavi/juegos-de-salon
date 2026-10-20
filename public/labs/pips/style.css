@@ -121,3 +121,9 @@ button.ficha:active { transform: scale(0.94); }
   .titulo-pips .logo, .tablero-pips .puesta.cae, .celda.no, .regla.mal, .sello-pips { animation: none; }
 }
 .como-pips { text-align: left; }
+
+/* A short phone (320×568): the cover's demo board shrinks so 🎲 Empezar stays above the fold (U-39) */
+@media (max-height: 620px) {
+  .demo { min-height: 0; }
+  .tablero-pips.chico { --s: min(40px, calc((100vw - 64px) / var(--w))); }
+}
