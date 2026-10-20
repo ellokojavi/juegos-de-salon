@@ -6537,7 +6537,7 @@ repo).
 write are denied. `labs-puerta.test.mjs` covers Firebase keys, removal and no network.
 
 ## D-346 · Test levels: the least testing that keeps the site safe
-**Date:** 2026-10-17 · **Status:** current · **Relation:** builds on D-329 (the page graph); owned by the processes agent (D-273)
+**Date:** 2026-10-17 · **Status:** amended by D-388 · **Relation:** builds on D-329 (the page graph); owned by the processes agent (D-273)
 **Context:** the owner: small changes shouldn't run every test, and important ones must not skip them;
 there should be a criterion and someone in charge. D-329 already chose scripts by the pages a change
 reaches, but no level was named, nobody reviewed the criterion, and a lab game with no script of its
@@ -7385,3 +7385,17 @@ type is called Cartas/Dados.
 lab and not on the home page. Keywords come in Spanish and English (`es`, `en` in `KEYWORDS`), and both are
 searched whatever the language. The lab's home page card is back among the improvements while the
 experiment runs (C-17, D-372). `tools/e2e/home/search.mjs` checks it end to end.
+
+## D-388 · A change to the home page alone runs the home page's scripts, not the games'
+**Date:** 2026-10-20 · **Status:** current · **Relation:** amends D-346 (the home page was always N3 · core)
+**Context:** the home page's search experiment (D-387) touched `public/index.html` and launched all 75
+end-to-end jobs, full games of Dudo and Battleship included. The owner asked why a search box played games.
+Many game scripts open `/` and click their card, so the page graph named the home page as theirs.
+**Decision:** when the pages a PR reaches are the home page and, at most, lab pages, a new level
+**N2 · home** runs `home/*`, `smoke.mjs`, the scripts that never leave the home page (`favorites.mjs`,
+`share-home.mjs`, `installable.mjs`…), those of the lab pages reached and any script that imports a
+changed file. The home page with anything else, or a shared module, stays N3.
+**Why:** a game's script that starts on the home page only checks that its card opens it, and
+`smoke.mjs` already opens every page; playing the whole game tests nothing the home page change can break.
+**Consequences:** a home-page-only PR runs about 7 jobs instead of 75. `affected.test.mjs` checks the
+level and the selection; `tools/e2e/README.md` lists the level.
