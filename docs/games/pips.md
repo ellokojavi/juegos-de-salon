@@ -59,6 +59,8 @@ as an empty box.
 - **💡 Ayuda (−10):** a second tap ("Toca de nuevo (−10)", 3 seconds), then it lays one domino of the
   solution in its place, taking off whatever was on those cells, and marks it.
 - **🏳️ Rendirse:** a second tap ("🏳️ ¿Seguro?").
+- **¿Cómo se juega?:** under the buttons, a folded panel with the cover's three steps, to read them
+  again without leaving the board.
 - **↩️ Deshacer and 🧹 Limpiar (D-385):** a row above Ayuda and Rendirse. Deshacer takes back the last
   change to the board (a domino laid, moved or taken off, a help, a clear), one at a time, as far back as
   the board began; a help undone keeps its −10. Limpiar takes every domino off with a second tap ("🧹

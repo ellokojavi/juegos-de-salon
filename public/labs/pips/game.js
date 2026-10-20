@@ -31,6 +31,7 @@ const T = {
     ['🎯', 'Cada zona de color cumple su regla: un número es lo que suman sus puntos; = todos iguales; ≠ todos distintos; <5 y >9, menos o más.'],
     ['👆', 'Mantén y arrastra cada ficha a su casilla; un toque la gira. Toca un rombo: se ilumina su zona.'],
   ],
+  comoTitulo: '¿Cómo se juega?',
   empezar: '🎲 Empezar', aJugar: '¡A jugar!',
   tablero: 'Tablero {n} de {total} · {nivel}',
   nivel: { facil: 'fácil', medio: 'medio', dificil: 'difícil' },
@@ -142,6 +143,9 @@ const tituloJuego = (chico = false) => el('h1', { class: `titulo-pips${chico ? '
 const credito = () => el('p', { class: 'credito' }, 'Inspirado en ',
   el('a', { href: NYT_PIPS, target: '_blank', rel: 'noopener', id: 'link-pips' }, 'Pips'), ', de The New York Times Games.');
 
+/** The three steps, on the cover and, folded, under the board. */
+const pasos = () => el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))));
+
 let demoVez = 0;
 function portada() {
   const caja = el('div', { class: 'demo', 'aria-hidden': 'true' });
@@ -150,7 +154,7 @@ function portada() {
     SEMILLA_URL ? null : el('p', { class: 'muted center', style: 'margin:0' }, `📅 ${T.hoy}`),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-empezar', onClick: () => { SFX.tap(); empezar(); } }, T.empezar),
     // The steps go after Empezar, so it is seen without scrolling on a small phone (U-39)
-    el('div', { class: 'panel' }, el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))))),
+    el('div', { class: 'panel' }, pasos()),
   ].filter(Boolean));
   pieComentario('portada');
   partidaDemo(caja);
@@ -402,7 +406,8 @@ function tablero() {
     P.k++; tablero();
   }
 
-  vista.replaceChildren(tituloJuego(true), el('div', { class: 'cabeza-pips' }, encabezado, reloj), g, aviso, bandeja, el('div', { class: 'acciones-pips' }, botonDeshacer, botonLimpiar), el('div', { class: 'acciones-pips' }, botonAyuda, botonRendirse));
+  vista.replaceChildren(tituloJuego(true), el('div', { class: 'cabeza-pips' }, encabezado, reloj), g, aviso, bandeja, el('div', { class: 'acciones-pips' }, botonDeshacer, botonLimpiar), el('div', { class: 'acciones-pips' }, botonAyuda, botonRendirse),
+    el('details', { class: 'panel como-pips', id: 'como-pips' }, el('summary', {}, T.comoTitulo), pasos()));
   dibujar();
   pieComentario('juego');
   const tic = setInterval(() => { if (!reloj.isConnected || P.fin) return clearInterval(tic); reloj.textContent = `⏱️ ${mmss(Date.now() - P.desde)}`; }, 500);

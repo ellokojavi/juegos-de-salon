@@ -119,3 +119,4 @@ button.ficha:active { transform: scale(0.94); }
 @media (prefers-reduced-motion: reduce) {
   .titulo-pips .logo, .tablero-pips .puesta.cae, .celda.no, .regla.mal, .sello-pips { animation: none; }
 }
+.como-pips { text-align: left; }
