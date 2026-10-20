@@ -1,6 +1,6 @@
 /**
- * The home page's search, a lab experiment (`?search`, the owner's request): a 🔎 pill that opens into
- * a field with a dropdown of the games it finds (drawSearch, D-390), by the game's name in any language, its tagline, its
+ * The home page's search, a lab experiment (`?search`, the owner's request): a 🔎 pill, first in the filter row
+ * (left of ⭐ Favoritos, D-396), that opens into a field with a dropdown of the games it finds (drawSearch, D-390), by the game's name in any language, its tagline, its
  * types and the keywords below, in Spanish and English ("lógica", "dados", "dice"). Accents and case do not count, and each
  * word typed must start some word of the game ("dad" finds Dudo). Until it ships, the keywords live
  * here and not in games.js.
@@ -172,7 +172,7 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
   style.textContent = `
     .filtros .atajos:has(.buscar-pill) { gap: 6px; }
     .filtros .atajos:has(.buscar-pill) button { padding-inline: 12px; }
-    .filtros .atajos .buscar-pill { flex: 0 0 auto; min-width: 44px; padding-inline: 10px; }
+    .filtros .atajos .buscar-pill { order: -1; flex: 0 0 auto; min-width: 44px; padding-inline: 10px; }
     .filtros .atajos .buscar-pill .ficha-emoji { font-size: 1.15rem; }
     .filtros .atajos .buscar { display: none; }
     .filtros .atajos.buscando > :not(.buscar) { display: none !important; }

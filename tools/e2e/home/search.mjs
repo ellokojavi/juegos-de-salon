@@ -39,6 +39,16 @@ await b.go(`${SITE}/?test&search`);
 ok(await waitFor(shown('.atajos .buscar-pill')), 'with ?search a 🔎 pill sits in the row of Nuevos and Populares');
 ok(await ev(`!${shown('#buscar')} && document.querySelector('.atajos').scrollWidth <= document.querySelector('.atajos').clientWidth + 1`), 'folded, the field is hidden and the row fits at 320 px');
 await b.shot('pill');
+// With favorites, the 🔎 still goes first, left of ⭐ (D-396)
+await ev(`localStorage.setItem('juegos-de-salon:favoritos', JSON.stringify(['dudo'])); 1`);
+await b.go(`${SITE}/?test&search`);
+await waitFor(shown('.atajos .buscar-pill'));
+ok(await ev(`(r => { const kids = [...r.children].filter(k => k.getBoundingClientRect().width > 0); const left = Math.min(...kids.map(k => k.getBoundingClientRect().left)); const pill = r.querySelector('.buscar-pill').getBoundingClientRect(), fav = r.querySelector('.ficha-fav')?.getBoundingClientRect(); return pill.left === left && (r.querySelector('.ficha-fav') ? pill.right <= fav.left : true); })(document.querySelector('.atajos'))`), 'the 🔎 pill goes first, left of ⭐ Favoritos when it shares the row (at 320 px ⭐ takes its own line)');
+ok(await ev(`document.querySelector('.atajos').scrollWidth <= document.querySelector('.atajos').clientWidth + 1`), 'with ⭐ in it, the row still fits at 320 px');
+await b.shot('pill-favorites');
+await ev(`localStorage.removeItem('juegos-de-salon:favoritos'); 1`);
+await b.go(`${SITE}/?test&search`);
+await waitFor(shown('.atajos .buscar-pill'));
 await ev(`document.querySelector('.buscar-pill').click(); 1`);
 ok(await waitFor(`${shown('#buscar')} && !${shown('.atajos [data-tipo="popular"]')} && document.activeElement.id === 'buscar'`), 'tapped, the field takes the row in place of the pills, with the cursor in it');
 ok(await ev(shown('.tipos')), 'the types stay below');
