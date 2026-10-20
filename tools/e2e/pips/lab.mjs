@@ -4,7 +4,7 @@
 // a cell; one that does not fit shakes and says why; a placed one comes off with a tap; laying the
 // engine's solution with real taps solves the three boards and pays up to 100; the 💡 help asks for a
 // second tap and lays a domino; the result brings share, other boards, the lab and the comment form;
-// giving up asks for a second tap. At 375 px. Prints ✗ if anything fails.
+// giving up asks for a second tap; a drag let go anywhere, or cut short by a redraw, leaves no ghost. At 375 px. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output('/tmp/pips-lab');
@@ -77,6 +77,20 @@ await tocarCelda(i);
 ok(await ev(`!!document.querySelector('#tablero .puesta[data-f="${s0.f}"]') && !document.querySelector('#bandeja [data-f="${s0.f}"]')`), 'a tap on a cell lays it on the board');
 await ev(`document.querySelector('#tablero .puesta[data-f="${s0.f}"]').click(); 1`);
 ok(await ev(`!document.querySelector('#tablero .puesta') && !!document.querySelector('#bandeja [data-f="${s0.f}"]')`), 'a tap on a placed domino takes it off');
+
+
+// A drag that ends anywhere leaves no ghost: lifted from the tray and let go over the buttons, or
+// cut short by the board being redrawn (Deshacer) under the finger
+const pe = (type, el, x, y) => `${el}.dispatchEvent(new PointerEvent('${type}', { bubbles: true, pointerId: 7, pointerType: 'touch', isPrimary: true, clientX: ${x}, clientY: ${y} }))`;
+const fichaEl = `document.querySelector('#bandeja [data-f="${s0.f}"]')`;
+await ev(`(() => { const r = ${fichaEl}.getBoundingClientRect(); ${pe('pointerdown', fichaEl, 'r.left + 10', 'r.top + 10')}; ${pe('pointermove', fichaEl, 'r.left + 10', 'r.top - 60')}; return 1; })()`);
+ok(await ev(`!!document.querySelector('body > .fantasma')`), 'dragging a domino lifts a ghost');
+await ev(`(() => { const b = document.getElementById('btn-ayuda'), r = b.getBoundingClientRect(); ${pe('pointerup', 'b', 'r.left + 5', 'r.top + 5')}; return 1; })()`);
+ok(await ev(`!document.querySelector('body > .fantasma') && !document.querySelector('.arrastrada')`), 'let go outside the board and the tray, the ghost goes away');
+await tocarFicha(s0.f); await girarA(s0.f, g); await tocarCelda(i);
+await ev(`(() => { const q = document.querySelector('#bandeja .ficha'), k = q.getBoundingClientRect(); ${pe('pointerdown', 'q', 'k.left + 10', 'k.top + 10')}; ${pe('pointermove', 'q', 'k.left + 10', 'k.top - 60')}; document.getElementById('btn-deshacer').click(); return 1; })()`);
+ok(await ev(`!document.querySelector('body > .fantasma')`), 'the board redrawn mid-drag (Deshacer) leaves no ghost');
+await ev(`document.querySelectorAll('#tablero .puesta').forEach(x => x.click()); 1`);
 
 // The three boards with the engine's solution, by taps
 await resolverTablero(t0);
