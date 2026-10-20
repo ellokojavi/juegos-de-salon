@@ -64,7 +64,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -7399,3 +7399,18 @@ changed file. The home page with anything else, or a shared module, stays N3.
 `smoke.mjs` already opens every page; playing the whole game tests nothing the home page change can break.
 **Consequences:** a home-page-only PR runs about 7 jobs instead of 75. `affected.test.mjs` checks the
 level and the selection; `tools/e2e/README.md` lists the level.
+
+## D-389 · The home page's experiments, the splash among them, in one lab card with checkboxes
+**Date:** 2026-10-20 · **Status:** current · **Relation:** amends D-363 (the bar's switches) and D-351 (the splash's own lab card)
+**Context:** the lab showed two cards for what is tried on the home page: 🎉 Splash de novedades and 🏠
+Experimentos de la portada. The owner asked for one, keeping the bar the home page draws, with boxes to
+pick none, one or several experiments at once.
+**Decision:** the lab has a single 🏠 Experimentos de la portada card, under ✨ Mejoras en prueba, that
+lists what it holds (🔎 Buscar, 🎉 Splash). `/labs/home/` opens the home page with the bar and nothing on.
+The bar has a checkbox per experiment; ticking or unticking one reloads the address with the others kept.
+Each splash campaign is an entry of `EXPERIMENTS` (`param: 'splash', value: <id>`), turned on as
+`?splash=<id>`, so ticking one unticks any other campaign. `/labs/splash/` still works but is no longer linked.
+**Why:** both change the same page, and trying the splash over the search box is what a player would see
+if both shipped.
+**Consequences:** a new campaign in `splash.js` appears in the bar on its own. `home/lab.mjs` checks the
+card, the empty start and two experiments on at once.

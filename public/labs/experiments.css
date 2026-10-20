@@ -7,7 +7,7 @@
   width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box; padding: 8px 10px;
   border-radius: 999px; background: rgba(10, 4, 20, 0.9); border: 1px solid var(--glass-border);
 }
-.demo-barra button, .demo-barra select, .demo-barra a {
+.demo-barra button, .demo-barra select, .demo-barra a, .demo-barra .demo-exp {
   font: inherit; font-weight: 800; font-size: 0.85rem; color: var(--ink); background: var(--glass);
   border: 1px solid var(--glass-border); border-radius: 999px; padding: 6px 12px; text-decoration: none;
   min-height: 44px; box-sizing: border-box;
@@ -15,3 +15,7 @@
 .demo-barra select option { color: #000; }
 /* A switch: off is the page as players see it today, on is the experiment */
 .demo-barra button[aria-pressed="true"] { background: var(--yellow); color: #3a1200; border-color: var(--yellow); }
+/* An experiment's checkbox (D-389): the label is the whole pill, ticked it turns yellow */
+.demo-barra .demo-exp { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.demo-barra .demo-exp input { width: 18px; height: 18px; margin: 0; accent-color: var(--yellow); }
+.demo-barra .demo-exp:has(input:checked) { background: var(--yellow); color: #3a1200; border-color: var(--yellow); }
