@@ -49,6 +49,7 @@ language. Older Spanish content and Spanish file and identifier names are being 
 | README, screenshots, link cards | the `readme-and-cards` skill (`.claude/skills/readme-and-cards/`) | Before touching them, and on "Actualiza el README" |
 | Panel, Cup reports, rankings code | the `owner-tools` skill (`.claude/skills/owner-tools/`) | Before touching them |
 | End-to-end tests | [tools/e2e/README.md](tools/e2e/README.md) | When running or writing a script |
+| Which tests a change runs | [docs/TEST-SCOPE.md](docs/TEST-SCOPE.md), the design (D-391) | Before touching `tools/e2e/affected.mjs` or when a PR runs more than it should |
 | Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
 
 **A rule that changes is changed in its place, in the same PR:** if a new decision changes a
@@ -132,7 +133,8 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    D-193, D-213, D-216), even if they already passed here. `main` requires both: `end-to-end` is the
    job that summarizes the `End to end` workflow (the scripts in even groups, D-307) and goes red if any fails.
    A PR runs only the scripts whose pages load what it changed (`tools/e2e/affected.mjs`, D-329); its run
-   summary shows that scope, and `tools/e2e/scope.test.mjs` stops a page that loads another game's files (D-378).
+   summary shows that scope, and `tools/e2e/scope.test.mjs` stops a page that loads another game's files (D-378);
+   `tools/e2e/scope-guard.test.mjs` fails if a site file is loaded by no page or a CI script names no page (D-391).
    In a PR that touches nothing in the browser (documentation, `tools/agents/`, workflows, rules)
    no script runs and it goes green anyway; a failing script is retried once and, if it passes,
    leaves an "Intermitente" (flaky) notice (D-299).
