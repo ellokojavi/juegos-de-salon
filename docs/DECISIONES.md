@@ -64,7 +64,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -7416,7 +7416,7 @@ if both shipped.
 card, the empty start and two experiments on at once.
 
 ## D-390 · The home page's search: a 🔎 pill and a dropdown of games
-**Date:** 2026-10-20 · **Status:** current · **Relation:** amends D-387 (the box on its own line, filtering while typing)
+**Date:** 2026-10-20 · **Status:** corrected by D-393 (the keyboard: Enter and Escape) · **Relation:** amends D-387 (the box on its own line, filtering while typing)
 **Context:** the owner asked that the search not take a whole line of the filters, but be a 🔎 pill that
 opens in place of the pills above, and that it find games the way a shop's autocomplete does, without
 moving the list on the page.
@@ -7431,3 +7431,21 @@ pill costs the filters nothing while nobody searches.
 **Consequences:** the word shown is the one the player sees: a game the Portuguese name finds ("dados"
 in Dado Mentiroso) shows the Spanish tagline's word. `tools/e2e/home/search.mjs` checks the pill, the
 row at 320 px, the dropdown, "see them all", ✕ and opening a game.
+
+## D-393 · The home page's search on a computer: ↓ ↑ Enter and Escape in the dropdown
+**Date:** 2026-10-20 · **Status:** current · **Relation:** corrects D-390 (Enter always filtered, and one Escape closed everything)
+**Context:** the owner asked that whoever searches from a computer can choose a game in the dropdown
+without the mouse, the way a shop's autocomplete does.
+**Decision:** in the `?search` lab experiment, ↓ and ↑ move a selection through the dropdown's options
+(the suggested games, La Copa among them, and last "Ver los n juegos"), wrapping past either end; from
+nothing selected ↓ takes the first and ↑ the last. The selected option looks like the hovered one, and
+the field names it with `aria-activedescendant` (each option has an id, `role="option"` and
+`aria-selected`). Enter opens the selected game or the Cup; on "Ver los n juegos", or with nothing
+selected, it filters the list as before; on a game coming soon it does nothing. Escape folds the
+dropdown first, and a second Escape closes the search. The mouse over an option selects it, so mouse
+and keyboard never show two selections; typing again selects nothing.
+**Why:** on a computer the hands are on the keyboard while typing; reaching for the mouse to pick the
+game just found is the step a search should save. One Escape closing everything threw away what was typed.
+**Consequences:** still only in the lab: without `?search` nothing changes. `tools/e2e/home/search.mjs`
+also checks ↓ ↓ Enter opening the second suggestion, ↑ jumping to "see them all" and Enter filtering,
+the mouse selection, and the two Escapes.
