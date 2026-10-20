@@ -7,6 +7,7 @@
  */
 export const EXPERIMENTS = {
   // Shipped to everyone (D-369): 🔥 Populares (`popular`), ✨ Filtros (`picks`) and 🎲 Título (`brand`).
+  search: { emoji: '🔎', name: 'Buscar', what: 'Arriba de los filtros, una caja para buscar juegos por nombre o por lo que tienen: lógica, dados, palabras…' },
 };
 
 /** The home page's address in the lab: never counted (`test`), with the bar (`lab`), a language and the experiments on. */
