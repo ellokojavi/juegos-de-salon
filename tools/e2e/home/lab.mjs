@@ -23,7 +23,11 @@ ok(await ev(`!!document.querySelector('#activos #seccion-agentes') && !document.
 await b.go(`${SITE}/labs/home/?test`);
 ok(await waitFor(`location.pathname === '/' && new URLSearchParams(location.search).has('lab') && !!document.getElementById('barra')`), '/labs/home/ opens the home page itself with the experiments bar');
 ok(await ev(`getComputedStyle(document.getElementById('barra')).position === 'fixed' && !!document.querySelector('#barra a[href$="/labs/"]')`), 'the bar floats and leads back to the lab');
-ok(await ev(`[...document.querySelectorAll('#barra input[type=checkbox]')].every(x => !x.checked) && !!document.querySelector('#barra [data-exp="search"]') && !!document.querySelector('#barra [data-exp^="splash:"]')`), 'it opens with no experiment on, a checkbox for 🔎 Buscar and one for the splash');
+ok(await ev(`!!document.querySelector('#barra [data-exp="search"]') && !!document.querySelector('#barra [data-exp^="splash:"]')`), 'a checkbox for 🔎 Buscar and one for the splash');
+// It opens with the newest experiment on, first in the bar (D-399); untick it to start from none
+ok(await ev(`(b => b[0].dataset.exp === 'search' && b[0].checked && b.slice(1).every(x => !x.checked))([...document.querySelectorAll('#barra input[type=checkbox]')]) && new URLSearchParams(location.search).has('search')`), 'it opens with the newest experiment, 🔎 Buscar, on and first');
+await ev(`document.querySelector('#barra [data-exp="search"]').click(); 1`);
+ok(await waitFor(`!new URLSearchParams(location.search).has('search') && !!document.getElementById('barra') && [...document.querySelectorAll('#barra input[type=checkbox]')].every(x => !x.checked)`), 'unticking it leaves none on');
 // Several at once: Buscar, then the splash, both stay on
 await ev(`document.querySelector('#barra [data-exp="search"]').click(); 1`);
 ok(await waitFor(`new URLSearchParams(location.search).has('search') && !!document.getElementById('buscar')`), 'ticking Buscar reloads with the search box');
