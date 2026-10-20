@@ -211,23 +211,37 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     .filtros .atajos .buscar-pill { order: -1; flex: 0 0 auto; min-width: 44px; padding-inline: 10px; }
     .filtros .atajos .buscar-pill .ficha-emoji { font-size: 1.15rem; }
     .filtros .atajos .buscar { display: none; }
-    .filtros .atajos.buscando > :not(.buscar) { display: none !important; }
-    .filtros .atajos.buscando .buscar { display: block; position: relative; z-index: 30; flex: 1 1 auto; }
-    /* Opening and closing (D-398): the field grows out of the 🔎 pill, which sits first in the row, and
-       folds back into it; the pills it covered come back with a short fade */
-    @keyframes buscar-abre { from { clip-path: inset(0 calc(100% - 44px) 0 0 round 22px); } to { clip-path: inset(0 0 0 0 round 22px); } }
-    @keyframes buscar-vuelven { from { opacity: 0; transform: scale(0.92); } }
-    .filtros .atajos.buscando .buscar { animation: buscar-abre 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
-    .filtros .atajos.buscando.cerrando .buscar { animation: buscar-abre 0.22s cubic-bezier(0.4, 0, 1, 1) reverse both; }
+    /* Opening and closing (D-398, smoothed in D-402): the field lies over the row instead of taking
+       its place, so nothing in the row moves. It grows out of the 🔎 pill's own box (measured, --l and
+       --r) and folds back into it; its 🔎 starts and ends exactly over the pill's (--dx), the pills it
+       covers fade out and back in while it moves, and its cyan border and ✕ arrive at the end */
+    .filtros .atajos:has(.buscar-pill) { position: relative; }
+    .filtros .atajos:has(.buscar-pill) > :not(.buscar) { transition: opacity 0.08s ease, background 0.15s, color 0.15s, transform 0.1s; }
+    .filtros .atajos.buscando > :not(.buscar) { opacity: 0; pointer-events: none; }
+    .filtros .atajos.buscando > .buscar-pill { transition: none; }
+    .filtros .atajos.buscando.cerrando > :not(.buscar):not(.buscar-pill) { opacity: 1; transition-duration: 0.1s; transition-delay: 0.14s; }
+    .filtros .atajos.buscando .buscar { display: block; position: absolute; inset: 0; z-index: 30; }
+    @keyframes buscar-abre { from { clip-path: inset(0 var(--r, 0px) 0 var(--l, 0px) round 22px); } to { clip-path: inset(0 0 0 0 round 22px); } }
+    @keyframes buscar-lupa { from { transform: translate(var(--dx, 0px), -50%) scale(1.15); } }
+    @keyframes buscar-borde { from { border-color: var(--glass-border); } }
+    @keyframes buscar-aparece { from { opacity: 0; } }
+    .filtros .atajos.buscando .buscar { animation: buscar-abre 0.28s cubic-bezier(0.3, 0, 0.2, 1); }
+    .filtros .atajos.buscando .buscar-lupa { animation: buscar-lupa 0.28s cubic-bezier(0.3, 0, 0.2, 1); }
+    .filtros .atajos.buscando .buscar-cerrar { animation: buscar-aparece 0.14s ease-out 0.14s both; }
+    /* The placeholder, too, only once the field is open: mid-motion it would cross the fading pills and the moving 🔎 */
+    @property --buscar-ph { syntax: '<color>'; inherits: true; initial-value: transparent; }
+    @keyframes buscar-texto { from, 60% { --buscar-ph: transparent; } }
+    .filtros .atajos .buscar input { --buscar-ph: var(--muted); }
+    .filtros .atajos.buscando .buscar input { animation: buscar-borde 0.28s ease-in, buscar-texto 0.28s linear; }
+    .filtros .atajos.buscando.cerrando :is(.buscar, .buscar-lupa, .buscar input, .buscar-cerrar) { animation-duration: 0.24s; animation-delay: 0s; animation-direction: reverse; animation-fill-mode: both; }
     .filtros .atajos.buscando.cerrando .buscar-lista { display: none; }
-    .filtros .atajos.recien > :not(.buscar) { animation: buscar-vuelven 0.22s ease-out both; }
-    @media (prefers-reduced-motion: reduce) { .filtros .atajos .buscar, .filtros .atajos > * { animation: none !important; } }
+    @media (prefers-reduced-motion: reduce) { .filtros .atajos .buscar, .filtros .atajos .buscar *, .filtros .atajos > * { animation: none !important; transition: none !important; } }
     .buscar input { width: 100%; box-sizing: border-box; min-height: 44px; padding: 10px 44px 10px 40px; border-radius: 999px;
       font: inherit; font-weight: 700; font-size: 1rem; color: var(--ink); background: var(--glass); border: 1px solid var(--cyan); }
-    .buscar input::placeholder { color: var(--muted); font-weight: 600; }
+    .buscar input::placeholder { color: var(--buscar-ph, var(--muted)); font-weight: 600; }
     .buscar input:focus { outline: none; }
     .buscar input::-webkit-search-cancel-button { display: none; }
-    .buscar-lupa { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+    .buscar-lupa { position: absolute; left: 14px; font-size: 1.15rem; line-height: 1; top: 50%; transform: translateY(-50%); pointer-events: none; }
     .buscar-cerrar { position: absolute; right: 0; top: 0; width: 44px; height: 44px; border: 0; background: none; color: var(--muted); font: inherit; font-weight: 800; cursor: pointer; }
     .buscar-lista { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 20; display: grid; padding: 6px; border-radius: 18px;
       background: #1a0a2e; border: 1px solid var(--glass-border); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); text-align: left; }
@@ -252,7 +266,7 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     const y = Math.ceil(marca.getBoundingClientRect().top + scrollY - (parseFloat(getComputedStyle(barra).top) || 0));
     if (y > scrollY) scrollTo({ top: y, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
-  const abrir = () => { clearTimeout(reserva); row.classList.remove('cerrando', 'recien'); row.classList.add('buscando'); pill.setAttribute('aria-expanded', 'true'); input.focus({ preventScroll: true }); subir(); sugerir(); };
+  const abrir = () => { clearTimeout(reserva); row.classList.remove('cerrando'); row.classList.add('buscando'); medir(); pill.setAttribute('aria-expanded', 'true'); input.focus({ preventScroll: true }); subir(); sugerir(); };
   const plegar = () => { lista.hidden = true; input.setAttribute('aria-expanded', 'false'); elegir(-1); };
   const verTodos = ids => { plegar(); input.blur(); onChange(ids); };
   // The option the keyboard (or the mouse over it) has selected: -1 is none
@@ -282,6 +296,14 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     lista.hidden = false;
     input.setAttribute('aria-expanded', 'true');
   };
+  // Where the 🔎 pill is inside the row, so the field opens out of it and its 🔎 starts on the pill's
+  const lupa = campo.querySelector('.buscar-lupa');
+  const medir = () => {
+    const r = row.getBoundingClientRect(), p = pill.getBoundingClientRect(), e = pill.firstChild.getBoundingClientRect();
+    campo.style.setProperty('--l', `${p.left - r.left}px`);
+    campo.style.setProperty('--r', `${r.right - p.right}px`);
+    campo.style.setProperty('--dx', `${e.left + e.width / 2 - (r.left + 14 + lupa.offsetWidth / 2)}px`);
+  };
   // Closing waits for the field to fold back into the pill (D-398); without motion, at once
   let reserva = null;
   const quieto = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -292,14 +314,14 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
       // Opened again while it was closing: it stays open
       if (!row.classList.contains('cerrando') && !quieto()) return;
       row.classList.remove('buscando', 'cerrando');
-      row.classList.add('recien');
-      setTimeout(() => row.classList.remove('recien'), 260);
     };
-    if (quieto()) { row.classList.remove('buscando'); row.classList.add('recien'); setTimeout(() => row.classList.remove('recien'), 260); return; }
+    if (quieto()) { fin(); return; }
+    medir();
     row.classList.add('cerrando');
     let hecho = false;
     const una = () => { if (!hecho) { hecho = true; clearTimeout(reserva); fin(); } };
-    campo.addEventListener('animationend', una, { once: true });
+    const h = e => { if (e.target === campo) { campo.removeEventListener('animationend', h); una(); } };
+    campo.addEventListener('animationend', h);
     // In case the animation never ends (a hidden tab): the row still comes back. Reopening clears it,
     // so a quick close, open, close does not cut the second fold short
     reserva = setTimeout(una, 400);
