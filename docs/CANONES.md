@@ -412,7 +412,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   home page tells what is new, with the page darkened behind; each phone sees it once, and a new
   campaign shows again. Each game in it shows a clip of real play (`marketing/splash/`) and
   opens with ▶ Play; the way out is a quiet "Ahora no". It fits a 320×640 screen with three games. `?splash=<id>` previews one;
-  `?test` and the scripts never see it. Demo: `/labs/splash/`.
+  `?test` and the scripts never see it. Tried in the lab from the home page's experiments bar (D-389).
 - **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar, bajo la bajada, sale
   de los juegos que se pueden abrir, nunca de La Copa (D-188), y abre el juego con el
   dado encima (D-237). It always picks among every game, whatever filter is on, and never one that
