@@ -39,7 +39,7 @@ as an empty box.
   diamond: `6`, `=`, `≠`, `<5`, `>9` (D-385: it used to hang over the corner, where it looked like any
   of four cells'). A tap on a diamond lights its zone for a moment and dims the rest.
 - **The tray:** the dominoes not yet placed, ivory with dark dots, each in a square slot as big as the
-  domino is long (halves of 38 px, big enough to grab; board cells up to 64 px, smaller on a short
+  domino is long (halves of up to 38 px, four to a row even at 320 px; board cells up to 64 px, smaller on a short
   screen so the tray stays in view), so turning one or laying it moves nothing on the screen (D-385; a laid domino leaves its
   slot empty). A tap turns it a quarter (x|y, x over y, y|x, y over x) and chooses it (it lifts and
   shines); a tap on a cell then lays its first half there and the other to the right or below. Where it
