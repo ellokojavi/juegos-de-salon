@@ -7,7 +7,7 @@ a campaign once. This folder is its memory: every campaign that was made, and ho
 |---|---|
 | The code | `public/assets/js/splash.js` (`CAMPAIGNS` and the `ACTIVE` line) and `public/assets/css/splash.css` |
 | Turned on and off | `node tools/agents/splash.mjs list \| on <id> [--until YYYY-MM-DD] \| off`, in a PR |
-| Seen on demand | `/?splash=<id>`, and `node tools/e2e/look.mjs splash <id> [--width 320] [--lang de]` |
+| Seen on demand | `/?splash=<id>` (a campaign that is not on: only with a lab key, D-395), and `node tools/e2e/look.mjs splash <id> [--width 320] [--lang de]` |
 | Clips | [`capture.mjs`](capture.mjs), see [clips.md](clips.md) |
 | Campaigns | [`campaigns/<id>/`](campaigns/): a README (what, when, which PR) and its screenshots in the four languages |
 
