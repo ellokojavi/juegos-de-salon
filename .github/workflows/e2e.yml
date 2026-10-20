@@ -33,6 +33,7 @@ jobs:
     outputs:
       groups: ${{ steps.list.outputs.groups }}
       tree: ${{ steps.list.outputs.tree }}
+      since: ${{ steps.list.outputs.since }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -133,8 +134,10 @@ jobs:
           case "${{ needs.e2e.result }}" in success|skipped) ;; *) exit 1 ;; esac
           echo "tested" > "$RUNNER_TEMP/mark"
       # The mark of the tree that passed, with real scripts: publish.yml looks for it so as not to
-      # repeat the end-to-end run on the same thing (tools/e2e/already-tested.mjs, D-308)
-      - if: needs.e2e.result == 'success'
+      # repeat the end-to-end run on the same thing (tools/e2e/already-tested.mjs, D-308). Not after
+      # an incremental run (D-392): it tested only the last push, so it cannot vouch for the whole
+      # tree, and publish.yml then runs the whole suite before publishing
+      - if: needs.e2e.result == 'success' && needs.list.outputs.since == ''
         uses: actions/upload-artifact@v4
         with:
           name: e2e-tree-${{ needs.list.outputs.tree }}
