@@ -75,7 +75,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
-| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391 |
+| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384 |
 | Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
@@ -7416,7 +7416,7 @@ if both shipped.
 card, the empty start and two experiments on at once.
 
 ## D-391 · The end-to-end scope never falls back to "everything" without a test saying so
-**Date:** 2026-10-20 · **Status:** current · **Relation:** amends D-329 (the page graph) and D-388 (the home page level)
+**Date:** 2026-10-20 · **Status:** amended by D-392 · **Relation:** amends D-329 (the page graph) and D-388 (the home page level)
 **Context:** after D-388, a lab search PR (#576) still ran all 76 end-to-end jobs. The page graph in
 `tools/e2e/affected.mjs` runs everything when a changed file is one no page loads, and it did not read
 `import('…')` inside a page's HTML nor `new URL('…', ROOT)`, so `labs/home/search.js`, `instalar.js`,
@@ -7433,3 +7433,22 @@ the file or script is written, on the `tests` check, in two minutes.
 a lab game's style 2; `sw.js` (every page registers it) 55 and `ui.js` 75, as they should. What still runs
 everything is what the graph truly cannot narrow: the e2e tools, the workflows, a file outside `public/`
 that a script imports. The design, with the feedback loop still to build, is `docs/TEST-SCOPE.md`.
+
+## D-392 · A push to a PR tests only what changed since the PR last passed
+**Date:** 2026-10-20 · **Status:** current · **Relation:** extends D-329 (the scope) and D-308 (the marks of what passed); amends D-391 (its proposed phases)
+**Context:** a PR is pushed several times, and each push ran the end-to-end scope of the whole PR: #572 ran
+all 76 jobs three times for commits that touched no page (a test, the README seal, a changelog entry).
+Asked whether to build D-391's proposed ledger and audit, the owner chose this instead.
+**Decision:** each PR run that passes `end-to-end` leaves an artifact `e2e-head-<sha>` for the PR's head
+commit. `tools/e2e/since-passed.mjs` finds the PR's last earlier commit with that mark and gives the
+scope only the files changed since it (GitHub's compare, merges of `main` included). The whole PR is tested
+on the first push, after a red run, after a force push, when the compare reaches GitHub's 300-file limit
+or when asking fails. Of D-391's phases, the ledger with a daily audit and the module of declared facts
+are dropped; the feedback left is a ⚠️ line in the run summary when a run goes over its level's budget,
+and a line in the merged PR's comment when a script it skipped fails on `main` (to build).
+**Why:** the push is what is new; what passed before still passes unless a changed file reaches it. A
+daily audit would cost every day what the guards already catch in the PR.
+**Consequences:** a fix pushed after a green run runs only its own scope (none for a doc or a test).
+Changes on `main` the PR did not merge are not retested on the PR; `main` passed them, and `publish.yml`
+runs the whole suite on what it publishes unless that tree passed (D-302, D-308). The design is in
+`docs/TEST-SCOPE.md`; `since-passed.test.mjs` tests the choice.
