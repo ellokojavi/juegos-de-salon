@@ -99,8 +99,9 @@ button.ficha:active { transform: scale(0.94); }
 /* The tray: the dominoes not yet placed; the chosen one lifts and shines */
 .bandeja { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px; padding: 6px 0; }
 /* Each domino has a square slot as big as it is long (D-385): turning it, or laying it, moves nothing */
-.bandeja > .hueco { flex: none; width: 80px; height: 80px; display: grid; place-items: center; }
-.bandeja .ficha { --t: 38px; }
+.bandeja { --hueco: min(80px, calc((100vw - 52px) / 4)); }
+.bandeja > .hueco { flex: none; width: var(--hueco); height: var(--hueco); display: grid; place-items: center; }
+.bandeja .ficha { --t: calc(var(--hueco) * 0.475); }
 .bandeja .ficha.sel { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--cyan), 0 0 18px var(--cyan), 0 4px 10px rgba(0,0,0,0.35); }
 .acciones-pips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .acciones-pips .armado { background: var(--yellow); color: #3a1200; }
