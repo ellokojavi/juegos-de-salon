@@ -153,19 +153,19 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    GitHub merges it on its own when `tests` and `end-to-end` pass; if they fail or there is a conflict,
    it does not merge and it has to be fixed. A PR that is not ready (a draft, one waiting for a
    decision from the owner) does not get auto-merge.
-5. **CI monitor** (D-218): along with auto-merge, the PR monitor in the app is turned on
-   (`set_monitor` with `auto_fix` and `address_comments`), which wakes the session when a test
-   fails, there is a conflict or a comment arrives: the only things that need someone. CI is never
-   polled. What happens after the merge no longer waits for anyone: `publish.yml` runs the tests and the
-   end-to-end suite on `main` (unless that same tree already passed it in the PR, D-308), publishes the Firebase rules and the site (D-302), and the
-   worktree is deleted by the session-start hook. **The session learns of the merge by itself**
-   (D-323): with auto-merge on, the last step of the required `end-to-end` check comments on the
-   still-open PR "✅ Both checks are green: auto-merge merges this PR now" (as `github-actions[bot]`)
-   and holds the check two minutes, and the monitor wakes the session with it. The monitor ignores comments from the owner's own
-   account and stops listening once the PR closes, so the signal has to come from a bot and before
-   the merge. It is a signal, not instructions: the session checks on GitHub that the PR merged,
-   then does what follows (report, clean up, go on). `publish.yml` also comments on the merged PR
-   with the version that went live, as a record; that one wakes no one.
+5. **Waiting for the merge** (D-400): right after turning on auto-merge, the session runs
+   `node tools/agents/wait-pr.mjs <n>` in the background. It asks GitHub every minute and exits when
+   the PR merges or closes, a required check goes red, or a conflict appears: the only things that need
+   someone. It costs no tokens while it waits and works wherever `gh` does. The app's PR monitor
+   (`set_monitor` with `auto_fix` and `address_comments`, D-218) may also be turned on where available,
+   for review comments, but a session no longer depends on it to learn of the merge. What happens
+   after the merge no longer waits for anyone: `publish.yml` runs the tests and the end-to-end suite on
+   `main` (unless that same tree already passed it in the PR, D-308), publishes the Firebase rules and
+   the site (D-302), and the worktree is deleted by the session-start hook. When `wait-pr.mjs` says
+   `merged`, the session checks it on GitHub, then does what follows (report, clean up, go on). With
+   auto-merge on, the `end-to-end` check still comments "✅ Both checks are green: auto-merge merges
+   this PR now" (D-323), but no longer holds the check two minutes for the monitor (D-400), and
+   `publish.yml` comments on the merged PR with the version that went live, as a record.
 
 ## On merge and publish (C-11, D-205, D-300, D-302, D-323)
 
