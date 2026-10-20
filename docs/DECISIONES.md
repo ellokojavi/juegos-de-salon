@@ -64,7 +64,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -7368,3 +7368,20 @@ kept only if the board still has one answer.
 of rule shows up on most days. Building the three boards takes longer (25 ms median and about 150 ms at
 the 95th percentile on the Mac mini, against 2 and 14), still once per game. `engine.test.mjs` checks
 the mix (at most 70% of cells under a sum, every rule present, no domino inside one zone).
+
+## D-387 · Home page search box, a lab experiment
+**Date:** 2026-10-20 · **Status:** current · **Relation:** extends D-363 (a new switch on the home page's lab bar)
+**Context:** the owner asked to try, in the lab, a search bar on the home page that loads results while
+typing, by the game's name or by what it has: "lógica", "dados", "toque", "puente".
+**Decision:** `?search` draws a box at the top of the filters (`public/labs/home/search.js`). Each typed
+word must start a word of the game (its name in the four languages, its tagline, its types' names, or
+its keywords in `KEYWORDS`), or match it but for a short ending ("reinas" finds "reina"); accents and
+capitals are ignored. It narrows the list together with the type filter, the count line says how many
+are shown, its "Ver todos" also clears the box, and a search with no result says so. The query is not
+kept in the URL. The keywords live in the experiment's module until it ships, then move to `games.js`.
+**Why:** the list is already 20 games long and a player who wants "something with dice" has to know the
+type is called Cartas/Dados.
+**Consequences:** "puente" finds nothing today: the only game about bridges, Tren en Vilo, is still in the
+lab and not on the home page. Keywords come in Spanish and English (`es`, `en` in `KEYWORDS`), and both are
+searched whatever the language. The lab's home page card is back among the improvements while the
+experiment runs (C-17, D-372). `tools/e2e/home/search.mjs` checks it end to end.

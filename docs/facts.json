@@ -1,5 +1,5 @@
 {
-  "version": "0.186.15",
+  "version": "0.188.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -994,6 +994,7 @@
     "public/labs/exploding-numbers/engine.js",
     "public/labs/exploding-numbers/game.js",
     "public/labs/home/experiments.js",
+    "public/labs/home/search.js",
     "public/labs/pips/engine.js",
     "public/labs/pips/game.js",
     "public/liars-dice/engine.js",
@@ -1161,6 +1162,7 @@
     "home/dice.mjs",
     "home/lab.mjs",
     "home/popular.mjs",
+    "home/search.mjs",
     "install-prompt.mjs",
     "installable.mjs",
     "invite-link.mjs",
