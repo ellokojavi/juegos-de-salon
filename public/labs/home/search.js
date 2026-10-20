@@ -152,6 +152,10 @@ export const SUGGESTIONS = 5;
  * one) and ends with "see the n games", which filters the list below through `onChange(ids)`. The list
  * does not move while typing. ✕ closes the field and brings the pills back. Returns `clear()`, for the
  * home page's "show all".
+ *
+ * On a computer, ↓ and ↑ move through the dropdown's options and wrap around, Enter opens the one
+ * selected (or filters, as "see them all"), and Escape folds the dropdown and then closes the field;
+ * the mouse selects what it is over, so there is never a second highlight (D-393).
  */
 export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n?.[l] ?? n?.es }) {
   const T = TEXTS[lang] || TEXTS.es;
@@ -184,7 +188,7 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
       background: #1a0a2e; border: 1px solid var(--glass-border); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); text-align: left; }
     .buscar-lista[hidden] { display: none; }
     .buscar-lista a, .buscar-lista .sug { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 10px; border-radius: 12px; color: var(--ink); text-decoration: none; font-weight: 700; }
-    .buscar-lista a:hover, .buscar-lista a:focus-visible, .buscar-lista button:hover { background: var(--glass); outline: none; }
+    .buscar-lista a:hover, .buscar-lista a:focus-visible, .buscar-lista button:hover, .buscar-lista .sel { background: var(--glass); outline: none; }
     .buscar-lista .sug-emoji { font-size: 1.3rem; width: 1.6rem; text-align: center; }
     .buscar-lista .sug-nombre { flex: 0 0 auto; }
     .buscar-lista .sug-por { color: var(--muted); font-weight: 600; font-style: italic; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -204,35 +208,62 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     if (y > scrollY) scrollTo({ top: y, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
   const abrir = () => { row.classList.add('buscando'); pill.setAttribute('aria-expanded', 'true'); input.focus({ preventScroll: true }); subir(); sugerir(); };
-  const verTodos = ids => { lista.hidden = true; input.setAttribute('aria-expanded', 'false'); input.blur(); onChange(ids); };
+  const plegar = () => { lista.hidden = true; input.setAttribute('aria-expanded', 'false'); elegir(-1); };
+  const verTodos = ids => { plegar(); input.blur(); onChange(ids); };
+  // The option the keyboard (or the mouse over it) has selected: -1 is none
+  let sel = -1;
+  const opciones = () => [...lista.querySelectorAll('[role="option"]')];
+  const elegir = i => {
+    sel = i;
+    opciones().forEach((o, j) => { o.classList.toggle('sel', j === i); o.setAttribute('aria-selected', String(j === i)); });
+    if (i >= 0) input.setAttribute('aria-activedescendant', `buscar-op-${i}`); else input.removeAttribute('aria-activedescendant');
+  };
   const sugerir = () => {
     const q = input.value.trim();
     const ids = search(q, games);
-    if (!ids) { lista.hidden = true; input.setAttribute('aria-expanded', 'false'); return; }
+    if (!ids) { plegar(); return; }
     const found = games.filter(g => ids.has(g.id));
     const kids = found.slice(0, SUGGESTIONS).map(g => {
       const por = matchedWord(q, g, lang);
       const kidsOf = [el('span', { class: 'sug-emoji', 'aria-hidden': 'true' }, g.emoji), el('span', { class: 'sug-nombre' }, pickName(g.name, lang)), (por || !g.available) ? el('span', { class: 'sug-por' }, `· ${g.available ? por : T.soon}`) : ''];
       return g.available ? el('a', { class: 'sug', href: g.path, role: 'option', 'data-id': g.id }, ...kidsOf) : el('div', { class: 'sug soon', role: 'option', 'aria-disabled': 'true', 'data-id': g.id }, ...kidsOf);
     });
-    if (found.length) kids.push(el('button', { type: 'button', class: 'buscar-todos', onclick: () => verTodos(ids) }, (found.length === 1 ? T.one : T.all).replace('{n}', found.length).replace('{q}', q)));
+    if (found.length) kids.push(el('button', { type: 'button', class: 'buscar-todos', role: 'option', tabIndex: -1, onclick: () => verTodos(ids) }, (found.length === 1 ? T.one : T.all).replace('{n}', found.length).replace('{q}', q)));
     else kids.push(el('p', { class: 'buscar-nada', 'aria-live': 'polite' }, T.none.replace('{q}', q)));
     lista.replaceChildren(...kids);
+    opciones().forEach((o, i) => { o.id = `buscar-op-${i}`; o.addEventListener('pointerenter', () => elegir(i)); });
+    elegir(-1);
     lista.hidden = false;
     input.setAttribute('aria-expanded', 'true');
   };
-  const cerrarTodo = () => { input.value = ''; lista.hidden = true; row.classList.remove('buscando'); pill.setAttribute('aria-expanded', 'false'); onChange(null); };
+  const cerrarTodo = () => { input.value = ''; plegar(); row.classList.remove('buscando'); pill.setAttribute('aria-expanded', 'false'); onChange(null); };
   pill.addEventListener('click', abrir);
   // The list below stays as it is while typing (the owner's choice): only the dropdown follows
   input.addEventListener('input', sugerir);
   input.addEventListener('focus', () => { if (input.value.trim()) sugerir(); });
-  // Enter: the same as "see them all", and the keyboard goes away so the list is seen
   input.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { const ids = search(input.value, games); if (ids?.size) verTodos(ids); else input.blur(); }
-    if (e.key === 'Escape') cerrarTodo();
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (lista.hidden) sugerir();
+      const n = opciones().length;
+      if (!n || lista.hidden) return;
+      // From none, ↓ takes the first and ↑ the last ("see them all"); past either end it wraps
+      elegir(sel < 0 ? (e.key === 'ArrowDown' ? 0 : n - 1) : (sel + (e.key === 'ArrowDown' ? 1 : n - 1)) % n);
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const o = !lista.hidden && sel >= 0 ? opciones()[sel] : null;
+      // A game or the Cup opens; one coming soon does nothing
+      if (o?.href) { location.href = o.href; return; }
+      if (o && o.getAttribute('aria-disabled') === 'true') return;
+      // "See them all", or nothing selected: filters, and the keyboard goes away so the list is seen
+      const ids = search(input.value, games); if (ids?.size) verTodos(ids); else input.blur();
+    }
+    // Escape folds the dropdown first, then closes the field
+    if (e.key === 'Escape') { e.preventDefault(); if (!lista.hidden) plegar(); else cerrarTodo(); }
   });
   cerrar.addEventListener('click', cerrarTodo);
   // A tap outside folds the dropdown away, leaving the field and what it filtered
-  document.addEventListener('pointerdown', e => { if (!campo.contains(e.target)) { lista.hidden = true; input.setAttribute('aria-expanded', 'false'); } });
+  document.addEventListener('pointerdown', e => { if (!campo.contains(e.target)) plegar(); });
   return { clear: () => { if (input.value || row.classList.contains('buscando')) cerrarTodo(); } };
 }
