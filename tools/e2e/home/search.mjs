@@ -1,7 +1,7 @@
 // The home page's search, a lab experiment (?search, D-387, D-390) end to end: a 🔎 pill in the row of
 // ✨ Nuevos and 🔥 Populares that opens into a field over that row; while typing, a dropdown names up to
 // five games (the list below does not move) and "see them all" filters the list; ✕ brings the pills
-// back. Prints ✗ if something fails.
+// back. On a computer, ↓ ↑ Enter and Escape drive the dropdown (D-393). Prints ✗ if something fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output('/tmp/home-search');
@@ -15,6 +15,8 @@ const type = async q => { await ev(`{ const i = document.getElementById('buscar'
 const visible = `window.__portada.visibles`;
 const all = `document.querySelectorAll('#games .game-card[data-id]').length`;
 const sugs = `[...document.querySelectorAll('#buscar-lista .sug')].map(x => x.dataset.id)`;
+const key = k => ev(`document.getElementById('buscar').dispatchEvent(new KeyboardEvent('keydown', { key: '${k}', bubbles: true, cancelable: true })); 1`);
+const selected = `(document.querySelector('#buscar-lista .sel') || {}).id || ''`;
 const shown = sel => `(e => !!e && e.getBoundingClientRect().width > 0)(document.querySelector('${sel}'))`;
 
 await b.go(`${SITE}/?test`);
@@ -46,6 +48,39 @@ await type('toque');
 ok(await ev(`!!document.querySelector('#buscar-lista a.sug[data-id="toque-y-fama"][href]')`), 'a suggestion is a link to its game');
 await ev(`document.querySelector('#buscar-lista a.sug[data-id="toque-y-fama"]').click(); 1`);
 ok(await waitFor(`location.pathname.includes('bulls-and-cows')`), 'tapping it opens the game');
+
+// The keyboard (D-393)
+await b.go(`${SITE}/?test&search`);
+await waitFor(shown('.atajos .buscar-pill'));
+await ev(`document.querySelector('.buscar-pill').click(); 1`);
+await type('logica');
+ok(await ev(`!document.querySelector('#buscar-lista .sel') && !document.getElementById('buscar').hasAttribute('aria-activedescendant')`), 'typing leaves nothing selected');
+await key('ArrowDown'); await key('ArrowDown');
+const second = await ev(`${sugs}[1]`);
+ok(await ev(`${selected} === 'buscar-op-1' && document.getElementById('buscar').getAttribute('aria-activedescendant') === 'buscar-op-1' && document.getElementById('buscar-op-1').getAttribute('aria-selected') === 'true'`), '↓ ↓ selects the second option, named by aria-activedescendant');
+await ev(`document.getElementById('buscar-op-3').dispatchEvent(new PointerEvent('pointerenter')); 1`);
+ok(await ev(`${selected} === 'buscar-op-3' && document.querySelectorAll('#buscar-lista .sel').length === 1`), 'the mouse over an option selects it, and only it');
+await type('logica');
+ok(await ev(`!document.querySelector('#buscar-lista .sel')`), 'typing again clears the selection');
+await key('ArrowUp');
+ok(await ev(`document.querySelector('#buscar-lista .sel')?.classList.contains('buscar-todos')`), '↑ from nothing jumps to "see them all"');
+await key('ArrowDown');
+ok(await ev(`${selected} === 'buscar-op-0'`), 'past the end it wraps to the first');
+await key('ArrowUp');
+await key('Enter');
+ok(await waitFor(`${visible}.includes('reinas') && !${visible}.includes('dudo') && document.getElementById('buscar-lista').hidden`), 'Enter on "see them all" filters the list');
+await key('ArrowDown');
+await waitFor(`!document.getElementById('buscar-lista').hidden`);
+await key('Escape');
+ok(await ev(`document.getElementById('buscar-lista').hidden && ${shown('#buscar')}`), 'a first Escape folds the dropdown');
+await key('Escape');
+ok(await waitFor(`!${shown('#buscar')} && ${shown('.atajos .buscar-pill')} && ${visible}.length === ${all}`), 'a second Escape closes the search');
+await ev(`document.querySelector('.buscar-pill').click(); 1`);
+await type('logica');
+await key('ArrowDown'); await key('ArrowDown');
+const href = await ev(`document.getElementById('buscar-op-1').href`);
+await key('Enter');
+ok(!!href && await waitFor(`location.href.split('?')[0] === ${JSON.stringify(href)}.split('?')[0]`), `↓ ↓ Enter opens the second game (${second})`);
 
 b.close();
 console.log(failures ? `✗ ${failures} failure(s)` : '✓ home/search.mjs');
