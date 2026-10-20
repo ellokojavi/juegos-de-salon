@@ -151,8 +151,13 @@ function forma(rnd, n, ancho, alto = ancho) {
   return lugares;
 }
 
-/** Splits the cells into connected zones of 1 to 4 cells, in a random order. */
-function zonas(rnd, celdas) {
+/**
+ * Splits the cells into connected zones of 1 to 4 cells, in a random order. A zone grows first into
+ * a neighbor with the same pips when there is one (most of the time), so `=` zones come up, as in
+ * the real Pips. A zone never holds both halves of a domino with two different numbers: turned
+ * round, it would leave the same pips in the zone, a second answer no rule can tell apart.
+ */
+function zonas(rnd, celdas, valores, pareja) {
   const idx = new Map(celdas.map((c, i) => [clave(c.r, c.c), i]));
   const de = Array(celdas.length).fill(-1);
   const out = [];
@@ -162,25 +167,94 @@ function zonas(rnd, celdas) {
     const z = [i]; de[i] = out.length;
     while (z.length < tam) {
       const cand = [];
-      for (const j of z) for (const [dr, dc] of VECINOS) { const k = idx.get(clave(celdas[j].r + dr, celdas[j].c + dc)); if (k !== undefined && de[k] < 0) cand.push(k); }
+      for (const j of z) for (const [dr, dc] of VECINOS) { const k = idx.get(clave(celdas[j].r + dr, celdas[j].c + dc)); if (k !== undefined && de[k] < 0 && !z.some(m => pareja[m] === k && valores[m] !== valores[k])) cand.push(k); }
       if (!cand.length) break;
-      const k = cand[entero(rnd, cand.length)]; de[k] = out.length; z.push(k);
+      const iguales = cand.filter(k => valores[k] === valores[i]);
+      const k = iguales.length && rnd() < 0.8 ? iguales[entero(rnd, iguales.length)] : cand[entero(rnd, cand.length)];
+      de[k] = out.length; z.push(k);
     }
-    out.push(z.sort((a, b) => a - b));
+    out.push(z);
   }
-  return out;
+  // Cells left alone (their neighbors were taken first) mostly join a small neighboring zone: the
+  // real Pips has few one-cell zones
+  for (const z of out) {
+    if (z.length !== 1 || rnd() < 0.25) continue;
+    const i = z[0];
+    const vecinas = VECINOS.map(([dr, dc]) => idx.get(clave(celdas[i].r + dr, celdas[i].c + dc))).filter(k => k !== undefined && out[de[k]].length > 1 && out[de[k]].length < 4 && !out[de[k]].some(m => pareja[i] === m && valores[m] !== valores[i]));
+    if (!vecinas.length) continue;
+    const k = (vecinas.find(k => valores[k] === valores[i]) ?? vecinas[entero(rnd, vecinas.length)]);
+    out[de[k]].push(i); de[i] = de[k]; z.length = 0;
+  }
+  return out.filter(z => z.length).map(z => z.sort((a, b) => a - b));
 }
 
 /** A rule this zone's pips keep, chosen at random among the ones that make sense for them. */
 function regla(rnd, vals) {
   const suma = vals.reduce((a, b) => a + b, 0);
-  const opciones = [{ tipo: 'suma', n: suma }, { tipo: 'suma', n: suma }];
+  const opciones = [{ tipo: 'suma', n: suma }];
   if (vals.length > 1 && vals.every(v => v === vals[0])) opciones.push({ tipo: 'igual' }, { tipo: 'igual' }, { tipo: 'igual' });
-  if (vals.length > 1 && new Set(vals).size === vals.length) opciones.push({ tipo: 'distinto' });
+  if (vals.length > 2 && new Set(vals).size === vals.length) opciones.push({ tipo: 'distinto' }, { tipo: 'distinto' });
   if (suma < 6 * vals.length) opciones.push({ tipo: 'menor', n: suma + 1 + entero(rnd, 2) });
   if (suma > 0) opciones.push({ tipo: 'mayor', n: suma - 1 - entero(rnd, Math.min(2, suma)) });
   opciones.push({ tipo: 'libre' });
   return opciones[entero(rnd, opciones.length)];
+}
+
+/**
+ * The stricter rule that tells our pips from the `otras` solutions': among the zones that differ, a
+ * rule ours keep and theirs break, preferring `=`, `≠`, `<` and `>` (the tightest bound) to an exact
+ * sum, so the boards are not all adding up, and among those the one that rules out the most of them.
+ * `{ z, regla }`, or null when no zone can tell them apart.
+ */
+function ajuste(rnd, zs, valores, otras) {
+  const nuestras = [], sumas = [];
+  for (const z of zs) {
+    const v = z.celdas.map(i => valores[i]);
+    const ws = otras.map(o => z.celdas.map(i => o[i])).filter(w => w.some((x, k) => x !== v[k]));
+    if (!ws.length) continue;
+    const suma = v.reduce((a, b) => a + b, 0);
+    const mata = r => ws.filter(w => cumple(r, w) === false).length;
+    const reglas = [{ tipo: 'igual' }, { tipo: 'distinto' }, { tipo: 'menor', n: suma + 1 }, { tipo: 'mayor', n: suma - 1 }]
+      .filter(r => (r.tipo !== 'igual' && r.tipo !== 'distinto') || v.length > 1)
+      .filter(r => r.tipo !== z.tipo || r.n !== z.n)
+      .filter(r => cumple(r, v) === true);
+    for (const r of reglas) { const k = mata(r); if (k) nuestras.push({ z, regla: r, k }); }
+    const exacta = { tipo: 'suma', n: suma };
+    if (z.tipo !== 'suma') { const k = mata(exacta); if (k) sumas.push({ z, regla: exacta, k }); }
+  }
+  const pool = nuestras.length && rnd() < 0.75 ? nuestras : sumas.length ? sumas : nuestras;
+  if (!pool.length) return null;
+  const mejor = Math.max(...pool.map(o => o.k));
+  const top = pool.filter(o => o.k === mejor);
+  return top[entero(rnd, top.length)];
+}
+
+/**
+ * Once a board has one answer: a one-cell zone joins a small neighboring zone whenever the board keeps
+ * a single answer with the joined zone's new rule (`=`, `≠`, `<` or `>` before an exact sum), so the
+ * tightening leaves fewer loose numbers behind.
+ */
+function pulir(rnd, t, valores, pareja, limite) {
+  const junto = (i, j) => Math.abs(t.celdas[i].r - t.celdas[j].r) + Math.abs(t.celdas[i].c - t.celdas[j].c) === 1;
+  for (const z of barajar(rnd, t.zonas.filter(z => z.celdas.length === 1))) {
+    if (z.celdas.length !== 1) continue;   // another one joined it already
+    const i = z.celdas[0];
+    const cerca = barajar(rnd, t.zonas.filter(u => u !== z && u.celdas.length < 4 && u.celdas.some(j => junto(i, j))
+      && !u.celdas.some(j => pareja[i] === j && valores[j] !== valores[i])));
+    for (const u of cerca) {
+      const cs = [...u.celdas, i].sort((a, b) => a - b), vs = cs.map(j => valores[j]);
+      const suma = vs.reduce((a, b) => a + b, 0);
+      const reglas = [...barajar(rnd, [{ tipo: 'igual' }, { tipo: 'distinto' }, { tipo: 'menor', n: suma + 1 }, { tipo: 'mayor', n: suma - 1 }]), { tipo: 'suma', n: suma }]
+        .filter(r => cumple(r, vs) === true);
+      const antes = { celdas: u.celdas, tipo: u.tipo, n: u.n };
+      const k = t.zonas.indexOf(z);
+      t.zonas.splice(k, 1);
+      const ok = reglas.some(r => { Object.assign(u, { celdas: cs, n: undefined }, r); const s = resolver(t, 2, limite); return s && s.length === 1; });
+      if (ok) break;
+      Object.assign(u, antes); t.zonas.splice(k, 0, z);
+    }
+  }
+  for (const z of t.zonas) if (z.n === undefined) delete z.n;
 }
 
 /**
@@ -207,7 +281,9 @@ export function generar(semilla, nivel = 'facil') {
       valores[a] = x; valores[b] = y;
       return { f, a, b, x, y };
     });
-    const zs = zonas(rnd, celdas).map(cs => ({ celdas: cs, ...regla(rnd, cs.map(i => valores[i])) }));
+    const pareja = Array(celdas.length);
+    for (const { a, b } of solucion) { pareja[a] = b; pareja[b] = a; }
+    const zs = zonas(rnd, celdas, valores, pareja).map(cs => ({ celdas: cs, ...regla(rnd, cs.map(i => valores[i])) }));
     const t = { nivel, ancho: Math.max(...celdas.map(c => c.c)) + 1, alto: Math.max(...celdas.map(c => c.r)) + 1, celdas, fichas: solucion.map(s => [s.x, s.y]), zonas: zs, solucion: solucion.map(({ f, a, b }) => ({ f, a, b })) };
     // Tighten until only one solution is left: a zone that differs from ours gets its exact sum. A
     // board too loose to prove quickly gets one more exact sum, on a zone that has none (a phone
@@ -223,24 +299,35 @@ export function generar(semilla, nivel = 'facil') {
     }
     if (sols === null) continue;
     while (sols.length > 1 && vueltas++ < 60) {
-      const otra = sols.find(s => s.some((v, i) => v !== valores[i]));
-      const z = t.zonas.find(z => z.tipo !== 'suma' && z.celdas.some(i => otra[i] !== valores[i]))
-        || t.zonas.find(z => z.celdas.some(i => otra[i] !== valores[i]) && z.celdas.reduce((a, i) => a + otra[i], 0) !== z.celdas.reduce((a, i) => a + valores[i], 0));
-      if (z) { z.tipo = 'suma'; z.n = z.celdas.reduce((a, i) => a + valores[i], 0); }
+      const otras = sols.filter(s => s.some((v, i) => v !== valores[i]));
+      const otra = otras[0];
+      const cambio = ajuste(rnd, t.zonas, valores, otras);
+      if (cambio) Object.assign(cambio.z, cambio.regla);
       else {
         // The two differ only inside zones whose sums agree (2 and 4 against 4 and 2): one of those
-        // cells becomes a zone of its own, with its exact pips, and the rest keeps its sum
+        // cells moves to a small neighboring zone, so the next round can tell them apart there, or,
+        // with none, becomes a zone of its own with its exact pips. The zone it leaves keeps a rule
+        // its pips still keep
         const w = t.zonas.find(w => w.celdas.length > 1 && w.celdas.some(i => otra[i] !== valores[i]));
         if (!w) break;
         const i = w.celdas.find(i => otra[i] !== valores[i]);
         w.celdas = w.celdas.filter(j => j !== i);
-        w.tipo = 'suma'; w.n = w.celdas.reduce((a, j) => a + valores[j], 0);
-        t.zonas.push({ celdas: [i], tipo: 'suma', n: valores[i] });
+        const resto = w.celdas.map(j => valores[j]);
+        if (cumple(w, resto) !== true || w.tipo === 'suma') Object.assign(w, { tipo: 'suma', n: resto.reduce((a, b) => a + b, 0) });
+        const cerca = t.zonas.filter(u => u !== w && u.celdas.length < 4 && u.celdas.some(j => Math.abs(celdas[j].r - celdas[i].r) + Math.abs(celdas[j].c - celdas[i].c) === 1)
+          && !u.celdas.some(j => pareja[i] === j && valores[j] !== valores[i]));
+        if (cerca.length) {
+          const u = cerca[entero(rnd, cerca.length)];
+          u.celdas = [...u.celdas, i].sort((a, b) => a - b);
+          const vs = u.celdas.map(j => valores[j]);
+          if (u.tipo === 'suma' || cumple(u, vs) !== true) Object.assign(u, { tipo: 'suma', n: vs.reduce((a, b) => a + b, 0) });
+        } else t.zonas.push({ celdas: [i], tipo: 'suma', n: valores[i] });
       }
       sols = resolver(t, 2, LIMITE);
       if (sols === null) break;
     }
     if (!sols || sols.length !== 1) continue;
+    pulir(rnd, t, valores, pareja, LIMITE);
     // The tray shows the dominoes in a shuffled order, each one turned at random
     const orden = barajar(rnd, t.fichas.map((_, f) => f));
     const giro = orden.map(() => rnd() < 0.5);
