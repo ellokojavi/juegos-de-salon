@@ -13,11 +13,11 @@
   <link rel="stylesheet" href="../../assets/css/base.css">
 </head>
 <body>
-  <!-- The home page's experiments (D-361, D-363): the real home page, opened with the bar and every
-       experiment on. No frame: on an iPhone a frame grows to its page's height and nothing in it sticks. -->
+  <!-- The home page's experiments (D-361, D-363): the real home page, opened with the bar and no
+       experiment on: the bar's checkboxes pick none, one or several (D-389). No frame: on an iPhone a frame grows to its page's height and nothing in it sticks. -->
   <script type="module">
-    import { EXPERIMENTS, homeUrl } from './experiments.js';
-    location.replace(homeUrl(new Set(Object.keys(EXPERIMENTS)), 'es', new URL('../../', location.href).pathname));
+    import { homeUrl } from './experiments.js';
+    location.replace(homeUrl(new Set(), 'es', new URL('../../', location.href).pathname));
   </script>
 </body>
 </html>

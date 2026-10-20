@@ -12,17 +12,29 @@ const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!
 const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
 const labels = `[...document.querySelectorAll('.game-card')].filter(c => c.querySelector('.popular')).map(c => c.dataset.id)`;
 
-// The lab: games, improvements and La Bodega apart; the splash among the improvements, the home page in La Bodega (D-372)
+// The lab: games, improvements and La Bodega apart; the home page's experiments, the splash among them, one card (D-389)
 await b.go(`${SITE}/labs/?test`);
-ok(await ev(`!!document.querySelector('#mejoras #seccion-splash')`), 'the lab offers the splash under Mejoras en prueba');
-ok(await ev(`!!document.querySelector('#mejoras #seccion-portada #btn-portada') && !document.querySelector('#bodega #seccion-portada')`), 'with 🔎 Buscar being tried, the home page experiments are among the improvements (D-387)');
-ok(await ev(`!document.querySelector('#activos #seccion-splash') && !!document.querySelector('#activos #seccion-agentes')`), 'the games being tried are apart from the improvements');
+ok(await ev(`!!document.querySelector('#mejoras #seccion-portada #btn-portada') && !document.querySelector('#bodega #seccion-portada')`), 'the home page experiments are among the improvements');
+ok(await ev(`!document.getElementById('seccion-splash') && /Splash/.test(document.getElementById('seccion-portada').textContent)`), 'the splash is one of them, not a card of its own');
+ok(await ev(`!!document.querySelector('#activos #seccion-agentes') && !document.querySelector('#activos #seccion-portada')`), 'the games being tried are apart from the improvements');
 
-// /labs/home/ opens the real home page, without a frame (D-363), with the bar: ‹ Lab and the language (no
-// experiment is being tried since D-369); the filters still stick when the page scrolls
+// /labs/home/ opens the real home page, without a frame (D-363), with the bar: ‹ Lab, a checkbox per
+// experiment (D-389) and the language; the filters still stick when the page scrolls
 await b.go(`${SITE}/labs/home/?test`);
 ok(await waitFor(`location.pathname === '/' && new URLSearchParams(location.search).has('lab') && !!document.getElementById('barra')`), '/labs/home/ opens the home page itself with the experiments bar');
 ok(await ev(`getComputedStyle(document.getElementById('barra')).position === 'fixed' && !!document.querySelector('#barra a[href$="/labs/"]')`), 'the bar floats and leads back to the lab');
+ok(await ev(`[...document.querySelectorAll('#barra input[type=checkbox]')].every(x => !x.checked) && !!document.querySelector('#barra [data-exp="search"]') && !!document.querySelector('#barra [data-exp^="splash:"]')`), 'it opens with no experiment on, a checkbox for 🔎 Buscar and one for the splash');
+// Several at once: Buscar, then the splash, both stay on
+await ev(`document.querySelector('#barra [data-exp="search"]').click(); 1`);
+ok(await waitFor(`new URLSearchParams(location.search).has('search') && !!document.getElementById('buscar')`), 'ticking Buscar reloads with the search box');
+await ev(`document.querySelector('#barra [data-exp^="splash:"]').click(); 1`);
+ok(await waitFor(`new URLSearchParams(location.search).has('splash') && new URLSearchParams(location.search).has('search') && !!document.getElementById('buscar') && !!document.querySelector('.splash, [class*=splash]')`), 'ticking the splash too keeps Buscar on and opens the splash');
+ok(await ev(`[...document.querySelectorAll('#barra input[type=checkbox]')].every(x => x.checked)`), 'both boxes show ticked');
+await ev(`document.querySelector('#barra [data-exp="search"]').click(); 1`);
+ok(await waitFor(`!new URLSearchParams(location.search).has('search') && new URLSearchParams(location.search).has('splash') && !!document.querySelector('#barra [data-exp^="splash:"]')`), 'unticking Buscar leaves the splash on');
+await b.shot('bar-splash');
+await ev(`document.querySelector('#barra [data-exp^="splash:"]').click(); 1`);
+ok(await waitFor(`!new URLSearchParams(location.search).has('splash') && !!document.getElementById('barra')`), 'and none is the home page as players see it');
 await ev(`scrollTo(0, 1500); 1`);
 ok(await waitFor(`document.getElementById('filtros-barra').classList.contains('pegada') && Math.abs(document.getElementById('filtros-barra').getBoundingClientRect().top - parseFloat(getComputedStyle(document.getElementById('filtros-barra')).top)) < 2`), 'scrolling down, the filters stay stuck on top');
 await ev(`const s = document.getElementById('idioma'); s.value = 'de'; s.dispatchEvent(new Event('change')); 1`);
