@@ -4,14 +4,20 @@
  *   node tools/agents/english.mjs scan        every tracked path with a Spanish word, with its proposal
  *   node tools/agents/english.mjs status      how many are left, by phase (the processes agent's round)
  *   node tools/agents/english.mjs next        the next part to rename: one phase, a few files
+ *   node tools/agents/english.mjs decisions [n]   the next n decisions whose text is still Spanish (D-394)
  *
  * The list lives in `docs/english-renames.json`: each Spanish path, the English one it becomes, its
  * D-316 phase (3 workshop, 4 app code, 5 documents) and its state (`pending`, `done`, or `keep` with
  * the reason: a persisted id, a bridge page, a proper name). `english.test.mjs` fails when a new
  * Spanish path appears that the list does not name, so the list only shrinks.
+ *
+ * The decisions' text is not a name: since D-394 each one is a file in docs/decisions/, and one still
+ * written in Spanish (its **Decisión:** / **Por qué:** labels) is counted here and translated in
+ * batches, those in force first, keeping its meaning and quoted player text exactly.
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { readAll, kind } from './decision.mjs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -91,6 +97,11 @@ export function scan(paths, registry = {}) {
 
 export const readRegistry = () => JSON.parse(readFileSync(REGISTRY, 'utf8')).paths;
 
+/** The decisions whose text is still Spanish (D-394): in force first, then by number. */
+export const spanishDecisions = (root = ROOT) => readAll(root)
+  .filter(d => /\*\*(Decisión|Por qué|Consecuencias|Contexto):\*\*/.test(d.body || ''))
+  .sort((a, b) => (['current', 'amended'].includes(kind(b)) - ['current', 'amended'].includes(kind(a))) || a.n - b.n);
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const cmd = process.argv[2] || 'status';
   const rows = scan(trackedPaths(), readRegistry());
@@ -102,9 +113,13 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.log(`English (D-316): ${left.length} Spanish names left — phase 3 (workshop) ${by(3)}, phase 4 (app code) ${by(4)}, phase 5 (documents) ${by(5)}; ${rows.filter(r => r.state === 'keep').length} kept on purpose`);
     const unlisted = rows.filter(r => r.state === 'unlisted');
     if (unlisted.length) console.log(`✗ ${unlisted.length} not in docs/english-renames.json: ${unlisted.map(r => r.path).join(', ')}`);
+    console.log(`Decisions still written in Spanish (D-394): ${spanishDecisions().length} — node tools/agents/english.mjs decisions 20`);
   } else if (cmd === 'next') {
     const phase = Math.min(...left.map(r => r.phase));
     const part = left.filter(r => r.phase === phase).slice(0, 10);
     console.log(part.length ? `Next part, phase ${phase} (rename with git mv, update every reference, run the tests and the end-to-end suite):\n${part.map(r => `  ${r.path}  →  ${r.to}`).join('\n')}` : 'Nothing left: replace this with the weekly sanity review (D-316).');
-  } else { console.error('usage: english.mjs scan | status | next'); process.exit(2); }
+  } else if (cmd === 'decisions') {
+    const batch = spanishDecisions().slice(0, Number(process.argv[3]) || 20);
+    console.log(batch.length ? `Next decisions to translate (the text, the Relation and the labels; meaning, IDs, code and quoted player text exactly as they are; then decision.mjs index):\n${batch.map(d => `  docs/decisions/${d.file}  ${d.title}`).join('\n')}` : 'Every decision is in English.');
+  } else { console.error('usage: english.mjs scan | status | next | decisions [n]'); process.exit(2); }
 }

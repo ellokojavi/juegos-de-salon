@@ -1,12 +1,13 @@
 // The checks and the memory of the documentation agent (D-172).
 // Usage: node tools/agents/document.test.mjs
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
+import { readAll, readTopics, allText, parse } from './decision.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   writtenDecisions, citedDecisions, notMentioned, changelogHas, versionOf, newMemory, recordRound, split, range,
-  repeatedRequirements, repeatedUsabilityRules, entries, readStatus, amendedBy, statusProblems, citedPaths, MEMORY,
+  repeatedRequirements, repeatedUsabilityRules, entries, readStatus, amendedBy, statusProblems, fileProblems, citedPaths, MEMORY,
 } from './document.mjs';
 
 let n = 0;
@@ -97,7 +98,7 @@ test('a Status outside the four, one citing what does not exist and an unmarked 
   assert.deepEqual(statusProblems(bad), [
     'D-1 is amended by D-8, which does not exist',
     'D-2 has a Status that is not one of the four: "superada"',
-    'D-4 has no **Status:** in docs/DECISIONES.md',
+    'D-4 has no **Status:** in docs/decisions/D-4.md',
     'D-4 changes, amends or replaces D-2, and the Status of D-2 does not name it ("superada")',
     'D-4 changes, amends or replaces D-1, and the Status of D-1 does not name it ("corregida por D-03, D-08")',
   ]);
@@ -187,13 +188,21 @@ test("the repo's memory has the keys the tool reads (English since D-316)", () =
   for (const r of m.rounds) assert.ok('date' in r && 'to' in r, `round without date or to: ${JSON.stringify(r).slice(0, 80)}`);
 });
 
-// In the real repo, not in examples: two PRs merged at once left a repeated decision (D-277) and
-// another out of order (D-282 before D-280), and nothing stopped it on GitHub.
-test("the repo's docs/DECISIONES.md: no repeated or out-of-order decisions", () => {
-  const text = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../../docs/DECISIONES.md'), 'utf8');
-  const { repeated, outOfOrder } = writtenDecisions(text);
-  assert.deepEqual(repeated, [], `repeated decisions: ${repeated.map(n => `D-${n}`).join(', ')} (renumber yours)`);
-  assert.deepEqual(outOfOrder, [], `out of order: ${outOfOrder.map(([n, a]) => `D-${n} after D-${a}`).join(', ')}`);
+// In the real repo, not in examples (D-394): each decision in its own file, named after its
+// heading, with English labels and known topics, its Statuses consistent, and the index up to date.
+test("the repo's docs/decisions/: files, statuses and the index", () => {
+  const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
+  assert.ok(!existsSync(join(root, 'docs/DECISIONES.md')), 'docs/DECISIONES.md is back (a branch from before D-394): node tools/agents/decision.mjs split');
+  const index = existsSync(join(root, 'docs/DECISIONS.md')) ? readFileSync(join(root, 'docs/DECISIONS.md'), 'utf8') : '';
+  assert.deepEqual(fileProblems(readAll(root), readTopics(root), index), []);
+  assert.deepEqual(statusProblems(allText(root)), []);
+  assert.deepEqual(writtenDecisions(allText(root)).repeated, []);
+});
+
+test('a decision file named after another number, with an old label or an unknown topic', () => {
+  const d = parse('## D-5 · x\n**Fecha:** 2026-01-01 · **Status:** current · **Topics:** nope\nText');
+  const p = fileProblems([{ file: 'D-6.md', ...d }], [{ key: 'tests', name: 'Tests', rule: 'C-12' }], 'stale');
+  assert.equal(p.length, 4, p.join('\n'));
 });
 
 console.log(`document: ${n} cases green`);
