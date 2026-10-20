@@ -7267,7 +7267,7 @@ Timeline deck, 22 instead of 42. `affected.test.mjs` tests `playedOn`, and `scop
 **Consequences:** the usability agent checks it when it reviews a marketing asset (U-34, U-40).
 
 ## D-381 · Pips: a dominoes puzzle in Juegos en prueba
-**Date:** 2026-10-19 · **Status:** current · **Relation:** the first idea of the game-ideas agent (D-360) to reach the lab; follows D-280 and D-361 (the lab's groups), D-304 (a lab-only PR)
+**Date:** 2026-10-19 · **Status:** amended by D-385 · **Relation:** the first idea of the game-ideas agent (D-360) to reach the lab; follows D-280 and D-361 (the lab's groups), D-304 (a lab-only PR)
 **Context:** the game-ideas agent's first round (issue #556) proposed `pips-dominoes`: a puzzle inspired by
 Pips, The New York Times Games' newest daily (2025), because the daily-wave number puzzles carry the solo
 plays here (Reinas, Tango) and it needs no words. The owner: "Hagamos una demo de Pips en Labs".
@@ -7325,3 +7325,25 @@ board ends. Loteo and Reinas set it; every other game keeps no clock while playi
 **Why:** the owner: the clock that decides points within a game means something; a player cannot pace a score they cannot see.
 **Consequences:** `tools/e2e/plots/numbers.mjs` checks the ⏱ shows and stops with the last board. A new
 game whose speed scores and that has no countdown sets `clock`.
+
+## D-385 · Pips: the rule's diamond inside its cell, the zone lights up, and dominoes drag
+**Date:** 2026-10-19 · **Status:** current · **Relation:** amends D-381 (how a domino is laid)
+**Context:** the owner, playing the lab's Pips: the diamond with the rule did not say which cell it
+belonged to. It hung over the bottom-right corner of the zone's last cell, where up to four cells of
+different zones meet. And laying a domino took three taps (choose, turn, cell), where the original is
+played by dragging.
+**Decision:** the diamond goes inside the cell, smaller, in its bottom-right corner. A tap on it lights
+its zone (its cells glow, the rest dims) for 1.8 s; the zone under a dragged domino lights the same way.
+Dominoes drag, from the tray and from the board: the grabbed half lands on the cell under the finger,
+the domino is drawn a little above the finger, the target cells are outlined (red when taken), an
+invalid drop leaves it where it was, and a placed domino dropped off the board goes back to the tray.
+A tap on a domino in the tray turns it and chooses it, so one tap is enough to turn it; moving it, or
+holding it 250 ms, lifts it to drag. A move under 8 px is still a tap. Each domino in the tray has a
+square slot as big as it is long, so turning or laying one moves nothing else on the screen.
+Two buttons above Ayuda and Rendirse: ↩️ Deshacer takes back the last change to the board, one at a
+time (a help undone keeps its cost), and 🧹 Limpiar takes every domino off after a second tap, which
+Deshacer can take back.
+**Why:** the owner chose this from three mockups (inside, inside + lighting, centered): only lighting
+says that a rule is about the whole zone. Dragging is what the original does and what a hand expects. Undo and clear, the owner's request: with dragging, a slip is easy, and starting a board over meant taking dominoes off one by one.
+**Consequences:** `game.js` (`enfocar`, the pointer handlers) and `style.css`; the third step of the
+cover says to drag. The tap path stays, so the end-to-end scripts that tap cells still play.

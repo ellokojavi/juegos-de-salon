@@ -29,18 +29,19 @@ const T = {
   como: [
     ['🎲', 'Pon todas las fichas: cada una cubre dos casillas.'],
     ['🎯', 'Cada zona de color cumple su regla: un número es lo que suman sus puntos; = todos iguales; ≠ todos distintos; <5 y >9, menos o más.'],
-    ['👆', 'Toca una ficha para elegirla, otra vez para girarla, y luego su casilla. Un toque la saca.'],
+    ['👆', 'Mantén y arrastra cada ficha a su casilla; un toque la gira. Toca un rombo: se ilumina su zona.'],
   ],
   empezar: '🎲 Empezar', aJugar: '¡A jugar!',
   tablero: 'Tablero {n} de {total} · {nivel}',
   nivel: { facil: 'fácil', medio: 'medio', dificil: 'difícil' },
-  elegir: 'Elige una ficha de abajo.',
-  elegida: 'Tócala otra vez para girarla, o toca la casilla donde va.',
+  elegir: 'Arrastra una ficha al tablero; un toque la gira.',
+  elegida: 'Tócala para girarla otra vez, o toca la casilla donde va.',
   no: { fuera: 'Así no cabe: gírala o prueba otra casilla.', ocupada: 'Ahí ya hay una ficha: sácala primero.' },
   rota: '❌ Una zona no cumple su regla: mueve alguna ficha.',
   listo: '✅ ¡Listo!',
   ayuda: '💡 Ayuda (−{pts})', ayudaSeguro: 'Toca de nuevo (−{pts})', ayudaDice: '💡 Esa ficha va ahí.',
   rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
+  deshacer: '↩️ Deshacer', limpiar: '🧹 Limpiar', limpiarSeguro: '🧹 ¿Sacar todas?',
   fin: { todos: '¡Los tres!', rendido: 'Te rendiste' },
   desglose: {
     tableros: ['🎲 Ningún tablero.', `🎲 1 tablero: ${PUNTOS_TABLERO}.`, `🎲 {n} tableros: {pts}.`],
@@ -198,6 +199,9 @@ function tablero() {
   const p = P.p = nuevaPartida(t);
   let sel = null;
   const giro = t.fichas.map(() => 0);
+  // Undo (D-385): each change to the board keeps what was there before; help keeps its cost
+  const historial = [];
+  const guardar = () => { historial.push(p.puestas.map(x => (x ? { ...x } : null))); };
   const encabezado = el('p', { class: 'marcador' }, fmt(T.tablero, { n: P.k + 1, total: NIVELES.length, nivel: T.nivel[nivel.id] }));
   const reloj = el('span', { class: 'reloj', id: 'reloj' }, '0:00');
   const g = tableroVacio(t);
@@ -219,8 +223,20 @@ function tablero() {
   };
   const botonAyuda = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-ayuda' });
   const botonRendirse = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-rendirse' });
+  const botonDeshacer = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-deshacer' }, T.deshacer);
+  const botonLimpiar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-limpiar' });
+  botonDeshacer.addEventListener('click', () => {
+    if (P.fin || !historial.length) return;
+    p.puestas = historial.pop(); sel = null;
+    SFX.flip(); vibrate(6); dibujar(); decir(T.elegir);
+  });
+  dosToques(botonLimpiar, { listo: () => T.limpiar, seguro: () => T.limpiarSeguro, accion: () => {
+    if (!p.puestas.some(Boolean)) return;
+    guardar(); p.puestas = p.puestas.map(() => null); sel = null;
+    SFX.flip(); vibrate(10); dibujar(); decir(T.elegir);
+  } });
   dosToques(botonAyuda, { listo: () => fmt(T.ayuda, { pts: RESTA_AYUDA }), seguro: () => fmt(T.ayudaSeguro, { pts: RESTA_AYUDA }), accion: () => {
-    const f = ayudar(p); if (f < 0) return;
+    guardar(); const f = ayudar(p); if (f < 0) { historial.pop(); return; }
     P.ayudas++; sel = null; SFX.flip(); vibrate(10);
     dibujar(); g.querySelector(`.puesta[data-f="${f}"]`)?.classList.add('pista');
     decir(T.ayudaDice, 'ayuda'); revisar();
@@ -228,33 +244,140 @@ function tablero() {
   dosToques(botonRendirse, { listo: () => T.rendirse, seguro: () => T.rendirseSeguro, accion: () => terminar('rendido') });
 
   const dibujar = () => {
+    botonDeshacer.disabled = !historial.length;
+    botonLimpiar.disabled = !p.puestas.some(Boolean);
     fichasPuestas(g, p, { conBotones: true });
-    bandeja.replaceChildren(...t.fichas.map((fx, f) => (p.puestas[f] ? null : ficha(giro[f] >= 2 ? [fx[1], fx[0]] : fx, {
-      type: 'button', vertical: giro[f] % 2 === 1, class: sel === f ? 'sel' : '', 'data-f': f,
-      'aria-label': `Ficha ${fx[0]} y ${fx[1]}${sel === f ? ', elegida: tócala para girarla' : ''}`, 'aria-pressed': sel === f ? 'true' : 'false',
-    }))).filter(Boolean));
+    bandeja.replaceChildren(...t.fichas.map((fx, f) => el('span', { class: 'hueco' }, p.puestas[f] ? null : ficha(giro[f] >= 2 ? [fx[1], fx[0]] : fx, {
+      type: 'button', vertical: giro[f] % 2 === 1, class: sel === f ? 'sel' : '', 'data-f': f, 'data-giro': giro[f],
+      'aria-label': `Ficha ${fx[0]} y ${fx[1]}${sel === f ? ', elegida' : ''}: tócala para girarla, mantén para arrastrarla`, 'aria-pressed': sel === f ? 'true' : 'false',
+    }))));
   };
   const revisar = () => {
     if (resuelto(p)) return listo();
     if (p.puestas.every(Boolean)) decir(T.rota, 'mal');
   };
 
+  // The zone in focus lights up (its cells and its diamond) and the rest dims: on a tap on its
+  // diamond, for a moment, and under a domino being dragged.
+  let focoTimer = null;
+  const enfocar = (k, ms = 0) => {
+    clearTimeout(focoTimer);
+    g.classList.toggle('foco', k !== null);
+    g.querySelectorAll('.celda, .regla').forEach(x => x.classList.toggle('encendida', k !== null && +x.dataset.zona === k));
+    if (ms) focoTimer = setTimeout(() => enfocar(null), ms);
+  };
+
+  // Drag and drop (D-385): a domino from the tray, or one already placed, follows the finger
+  // (lifted a little, so the finger does not hide it) and the half that was grabbed lands on the
+  // cell under it. A move of less than a few pixels is still a tap.
+  let arr = null, tragar = false;
+  const LEVANTE = 36, UMBRAL = 8, MANTENER = 250;
+  const giroDe = (f, s) => { const a = t.celdas[s.a], b = t.celdas[s.b], v = a.c === b.c; return ((v ? a.r < b.r : a.c < b.c) ? 0 : 2) + (v ? 1 : 0); };
+  const celdaEn = (x, y) => [...g.querySelectorAll('.celda')].find(c => { const r = c.getBoundingClientRect(); return x >= r.left && x < r.right && y >= r.top && y < r.bottom; });
+  const en = (r, c) => t.celdas.findIndex(x => x.r === r && x.c === c);
+  const destino = (i, f, mitad) => {
+    if (mitad === 0) return lugar(t, i, giro[f]);
+    const c = t.celdas[i], j = giro[f] % 2 ? en(c.r - 1, c.c) : en(c.r, c.c - 1);
+    return j < 0 ? null : lugar(t, j, giro[f]);
+  };
+  const marcar = sitio => {
+    g.querySelectorAll('.destino').forEach(x => x.classList.remove('destino', 'no'));
+    if (!sitio) return;
+    const o = ocupacion(p), mal = [sitio.a, sitio.b].some(i => o[i] >= 0 && o[i] !== arr.f);
+    [sitio.a, sitio.b].forEach(i => g.querySelector(`.celda[data-i="${i}"]`).classList.add('destino', ...(mal ? ['no'] : [])));
+  };
+  const agarrar = (ev, boton, f, puesta) => {
+    if (P.fin || ev.button > 0) return;
+    const m = ev.target.closest('.mitad');
+    arr = { f, boton, puesta, x0: ev.clientX, y0: ev.clientY, id: ev.pointerId, mitad: m ? [...m.parentNode.children].indexOf(m) : 0, fantasma: null, sitio: null, celda: null, levante: ev.pointerType === 'mouse' ? 0 : LEVANTE };
+    try { boton.setPointerCapture(ev.pointerId); } catch { /* a pointer the browser no longer tracks */ }
+    // Held still for a moment, it lifts: the drag starts without moving
+    arr.timer = setTimeout(() => { if (arr && !arr.fantasma) { levantar(); seguir(arr.x0, arr.y0); } }, MANTENER);
+  };
+  const levantar = () => {
+    clearTimeout(arr.timer);
+    if (arr.puesta) giro[arr.f] = giroDe(arr.f, p.puestas[arr.f]);
+    const fx = t.fichas[arr.f];
+    arr.fantasma = ficha(giro[arr.f] >= 2 ? [fx[1], fx[0]] : fx, { vertical: giro[arr.f] % 2 === 1, class: 'fantasma', 'aria-hidden': 'true' });
+    arr.fantasma.style.setProperty('--t', `${g.querySelector('.celda').getBoundingClientRect().width - 4}px`);
+    document.body.append(arr.fantasma);
+    arr.boton.classList.add('arrastrada');
+    SFX.tap(); vibrate(8);
+  };
+  const mover = ev => {
+    if (!arr || ev.pointerId !== arr.id) return;
+    if (!arr.fantasma) {
+      if (Math.hypot(ev.clientX - arr.x0, ev.clientY - arr.y0) < UMBRAL) return;
+      levantar();
+    }
+    seguir(ev.clientX, ev.clientY);
+  };
+  const seguir = (px, py) => {
+    const x = px, y = py - arr.levante;
+    const fr = arr.fantasma.getBoundingClientRect(), h = arr.fantasma.querySelectorAll('.mitad')[arr.mitad].getBoundingClientRect();
+    arr.fantasma.style.left = `${x - (h.left - fr.left) - h.width / 2}px`;
+    arr.fantasma.style.top = `${y - (h.top - fr.top) - h.height / 2}px`;
+    arr.celda = celdaEn(x, y);
+    arr.sitio = arr.celda ? destino(+arr.celda.dataset.i, arr.f, arr.mitad) : null;
+    marcar(arr.sitio);
+    enfocar(arr.celda ? +arr.celda.dataset.zona : null);
+  };
+  const soltar = ev => {
+    if (!arr || ev.pointerId !== arr.id) return;
+    const a = arr; arr = null;
+    clearTimeout(a.timer);
+    if (!a.fantasma) return;
+    tragar = true; setTimeout(() => { tragar = false; }, 0);
+    a.fantasma.remove(); a.boton.classList.remove('arrastrada');
+    marcar(null); enfocar(null);
+    if (ev.type === 'pointercancel') return;
+    if (!a.celda) {
+      // Off the board: a placed domino goes back to the tray, one from the tray stays there
+      if (a.puesta) { guardar(); sacar(p, a.f); SFX.tap(); vibrate(6); sel = null; dibujar(); decir(T.elegir); }
+      return;
+    }
+    const antes = p.puestas[a.f];
+    guardar();
+    const r = poner(p, a.f, a.sitio);
+    if (!r.ok) {
+      historial.pop();
+      if (antes) p.puestas[a.f] = antes;
+      SFX.error(); vibrate([40, 30, 40]);
+      a.celda.classList.remove('no'); void a.celda.offsetWidth; a.celda.classList.add('no');
+      decir(T.no[r.motivo], 'mal');
+      return;
+    }
+    if (sel === a.f) sel = null;
+    SFX.hit(); vibrate(15);
+    dibujar();
+    g.querySelector(`.puesta[data-f="${a.f}"]`)?.classList.add('cae');
+    decir(sel === null ? T.elegir : T.elegida);
+    revisar();
+  };
+  bandeja.addEventListener('pointerdown', ev => { const b = ev.target.closest('.ficha'); if (b) agarrar(ev, b, +b.dataset.f, false); });
+  g.addEventListener('pointerdown', ev => { const b = ev.target.closest('.puesta'); if (b) agarrar(ev, b, +b.dataset.f, true); });
+  for (const x of [bandeja, g]) { x.addEventListener('pointermove', mover); x.addEventListener('pointerup', soltar); x.addEventListener('pointercancel', soltar); }
+
   bandeja.addEventListener('click', ev => {
-    const b = ev.target.closest('.ficha'); if (!b || P.fin) return;
+    const b = ev.target.closest('.ficha'); if (!b || P.fin || tragar) return;
     const f = +b.dataset.f;
-    if (sel === f) { giro[f] = (giro[f] + 1) % 4; SFX.flip(); vibrate(6); }
-    else { sel = f; SFX.tap(); vibrate(8); }
+    // A tap turns it a quarter, and leaves it chosen for a tap on a cell (D-385)
+    giro[f] = (giro[f] + 1) % 4; sel = f; SFX.flip(); vibrate(6);
     decir(T.elegida);
     dibujar();
   });
   g.addEventListener('click', ev => {
-    if (P.fin) return;
+    if (P.fin || tragar) return;
+    const regla = ev.target.closest('.regla');
+    if (regla) { const k = +regla.dataset.zona; SFX.tap(); enfocar(g.querySelector('.regla.encendida') === regla ? null : k, 1800); return; }
     const puesta = ev.target.closest('.puesta');
-    if (puesta) { sacar(p, +puesta.dataset.f); SFX.tap(); vibrate(6); dibujar(); decir(sel === null ? T.elegir : T.elegida); return; }
+    if (puesta) { guardar(); sacar(p, +puesta.dataset.f); SFX.tap(); vibrate(6); dibujar(); decir(sel === null ? T.elegir : T.elegida); return; }
     const celda = ev.target.closest('.celda'); if (!celda) return;
     if (sel === null) { decir(T.elegir, 'ojo'); return; }
+    guardar();
     const r = poner(p, sel, lugar(t, +celda.dataset.i, giro[sel]));
     if (!r.ok) {
+      historial.pop();
       SFX.error(); vibrate([40, 30, 40]);
       celda.classList.remove('no'); void celda.offsetWidth; celda.classList.add('no');
       decir(T.no[r.motivo], 'mal');
@@ -279,7 +402,7 @@ function tablero() {
     P.k++; tablero();
   }
 
-  vista.replaceChildren(tituloJuego(true), el('div', { class: 'cabeza-pips' }, encabezado, reloj), g, aviso, bandeja, el('div', { class: 'acciones-pips' }, botonAyuda, botonRendirse));
+  vista.replaceChildren(tituloJuego(true), el('div', { class: 'cabeza-pips' }, encabezado, reloj), g, aviso, bandeja, el('div', { class: 'acciones-pips' }, botonDeshacer, botonLimpiar), el('div', { class: 'acciones-pips' }, botonAyuda, botonRendirse));
   dibujar();
   pieComentario('juego');
   const tic = setInterval(() => { if (!reloj.isConnected || P.fin) return clearInterval(tic); reloj.textContent = `⏱️ ${mmss(Date.now() - P.desde)}`; }, 500);
