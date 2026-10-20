@@ -7432,4 +7432,4 @@ the file or script is written, on the `tests` check, in two minutes.
 **Consequences:** a change to the home page or its lab search runs 8 jobs, the splash 9, a game's file 5,
 a lab game's style 2; `sw.js` (every page registers it) 55 and `ui.js` 75, as they should. What still runs
 everything is what the graph truly cannot narrow: the e2e tools, the workflows, a file outside `public/`
-that a script imports.
+that a script imports. The design, with the feedback loop still to build, is `docs/TEST-SCOPE.md`.
