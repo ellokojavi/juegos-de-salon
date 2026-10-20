@@ -60,9 +60,13 @@ PR's last commit that passed** (GitHub's compare, which includes what a merge of
 only those go into the scope below. The whole PR is tested when no earlier commit passed (the first push,
 a push after a red run, a force push) or when asking GitHub fails.
 
-What is not retested on purpose: changes on `main` that the PR did not merge. `main` passed them, and
-`publish.yml` runs the whole suite on what it publishes unless that exact tree already passed (D-302,
-D-308), so a bad interaction is still caught before the site changes.
+What is not retested on the PR: changes on `main` that the PR did not merge. GitHub tests a PR merged
+with the `main` of that moment, so a later push tests its own files against a newer `main` without
+rerunning what the newer `main` brought. The safety net is `publish.yml`, which runs the whole suite on
+what it publishes unless that exact tree already passed (D-302, D-308). For that net to hold, **an
+incremental run never leaves the tree's mark** (`e2e-tree-<tree>`): only a run that tested the whole PR
+can vouch for a tree. After a PR whose last push was incremental, publishing takes the whole suite
+(~8 minutes of publishing, never of the PR).
 
 ### 1. Knowledge
 
@@ -139,6 +143,9 @@ catch in the PR) and moving the declared facts to their own module (tidier, but 
 - **The lab's own index is a lab page** (`labs`, not only `labs/…`).
 - **"When in doubt, run everything" hides the doubt.** Keep the safe fallback, but a guard must fail the
   PR that creates it.
+- **A narrowed run must not vouch for more than it tested.** A first version of D-392 left the tree's
+  mark after an incremental run, which would have let `publish.yml` skip the whole suite on a tree only
+  partly tested.
 - **Check the scope before pushing**, with the command below; a surprise in CI costs a whole run.
 
 ## Where this knowledge lives

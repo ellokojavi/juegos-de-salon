@@ -7449,6 +7449,7 @@ and a line in the merged PR's comment when a script it skipped fails on `main` (
 **Why:** the push is what is new; what passed before still passes unless a changed file reaches it. A
 daily audit would cost every day what the guards already catch in the PR.
 **Consequences:** a fix pushed after a green run runs only its own scope (none for a doc or a test).
-Changes on `main` the PR did not merge are not retested on the PR; `main` passed them, and `publish.yml`
-runs the whole suite on what it publishes unless that tree passed (D-302, D-308). The design is in
+Changes on `main` the PR did not merge are not retested on the PR; `publish.yml` runs the whole suite
+on what it publishes unless that tree passed (D-302, D-308), and an incremental run never leaves the
+tree's mark, so after a PR whose last push was incremental, publishing runs the whole suite. The design is in
 `docs/TEST-SCOPE.md`; `since-passed.test.mjs` tests the choice.
