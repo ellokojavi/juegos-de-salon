@@ -1,7 +1,8 @@
 /**
  * The home page's experiments (D-361, D-363, the owner's request): what is being tried on the home page
  * before it reaches players. Each one is a URL parameter the home page reads, off by default. With
- * `?lab` the home page itself draws the experiments bar (`drawBar`): one checkbox per entry (none, one or several on at once), the language
+ * `?lab` the home page itself draws the experiments bar (`drawBar`): one checkbox per entry (none, one or several on at once,
+ * the newest first and on when the lab opens it, D-399), the language
  * and the way back to the lab. To add one: an entry here and the parameter read in public/index.html (an entry with
  * `param` and `value` is turned on as `?param=value`, like the splash campaigns);
  * when it ships, the entry goes away and the home page does it for everyone.
@@ -10,12 +11,21 @@ import { CAMPAIGNS } from '../../assets/js/splash.js';
 
 export const EXPERIMENTS = {
   // Shipped to everyone (D-369): 🔥 Populares (`popular`), ✨ Filtros (`picks`) and 🎲 Título (`brand`).
-  search: { emoji: '🔎', name: 'Buscar', what: 'Una píldora 🔎 junto a Nuevos y Populares que se abre en un buscador con un desplegable de juegos: lógica, dados, palabras…' },
+  // `built`: the day it was last built or changed; the bar opens with the newest on (D-399)
+  search: { built: '2026-10-20', emoji: '🔎', name: 'Buscar', what: 'Una píldora 🔎 junto a Nuevos y Populares que se abre en un buscador con un desplegable de juegos: lógica, dados, palabras…' },
   // The promotional splash (D-351): one box per campaign, shown with `?splash=<id>` (one at a time,
   // so ticking one unticks the others). With it, the window opens over the home page on every load.
   ...Object.fromEntries(Object.entries(CAMPAIGNS).map(([id, c]) => [`splash:${id}`,
-    { emoji: c.emoji || '🎉', name: Object.keys(CAMPAIGNS).length > 1 ? `Splash ${id}` : 'Splash', what: 'La ventana de novedades sobre la portada.', param: 'splash', value: id }])),
+    { built: c.built || '2026-10-18', emoji: c.emoji || '🎉', name: Object.keys(CAMPAIGNS).length > 1 ? `Splash ${id}` : 'Splash', what: 'La ventana de novedades sobre la portada.', param: 'splash', value: id }])),
 };
+
+/**
+ * The experiment built last (D-399, the owner's request): `/labs/home/` opens the home page with it
+ * on, and the others are ticked on top of it from the bar. Between two of the same day, the first listed.
+ */
+export function latest(experiments = EXPERIMENTS) {
+  return Object.entries(experiments).reduce((best, [k, x]) => (!best || (x.built || '') > (experiments[best].built || '') ? k : best), null);
+}
 
 const paramOf = k => EXPERIMENTS[k].param || k;
 /** The experiments an address has on. */
@@ -48,7 +58,8 @@ export function drawBar(doc = document, loc = location) {
   const volver = doc.createElement('a');
   volver.href = new URL('../', import.meta.url).href; volver.textContent = '‹ Lab';
   barra.append(volver);
-  for (const [k, x] of Object.entries(EXPERIMENTS)) {
+  // The newest first, so the one the lab opened with leads the bar
+  for (const [k, x] of Object.entries(EXPERIMENTS).sort(([, a], [, b]) => (b.built || '').localeCompare(a.built || ''))) {
     const caja = doc.createElement('label');
     caja.className = 'demo-exp'; caja.title = x.what;
     const box = doc.createElement('input');
