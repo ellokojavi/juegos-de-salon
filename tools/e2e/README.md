@@ -81,7 +81,7 @@ and this folder, `tools/agents/`, `tools/firebase/`, `firebase/` and the workflo
 `node tools/e2e/changes.test.mjs`).
 
 Each push to a PR tests only what changed since the PR's last commit that passed (D-392,
-[`since-passed.mjs`](since-passed.mjs)): the first push, or one after a red run, tests the whole PR.
+[`since-passed.mjs`](since-passed.mjs), tested by `node tools/e2e/since-passed.test.mjs`): the first push, or one after a red run, tests the whole PR.
 Any other PR runs **only the scripts whose pages load what it changed** (D-329,
 [`affected.mjs`](affected.mjs), tested by `node tools/e2e/affected.test.mjs`). There is no build, so
 the graph is read straight from the files: each `index.html`, what it links, and what that imports.
