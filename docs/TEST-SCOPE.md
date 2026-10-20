@@ -168,3 +168,6 @@ node tools/e2e/ci.mjs --scope --changes /tmp/changes.txt   # level, jobs and why
 
 If it says "a change the graph cannot narrow" or runs more than the level's budget, fix the knowledge
 before pushing; don't accept it.
+
+In a run, the `list` job's log says which way it went: `since-passed: N file(s) changed since <sha>, the
+last commit of this PR that passed`, or `no earlier commit of this PR passed: the whole PR`.
