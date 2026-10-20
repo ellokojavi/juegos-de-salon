@@ -172,7 +172,7 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
   style.textContent = `
     .filtros .atajos:has(.buscar-pill) { gap: 6px; }
     .filtros .atajos:has(.buscar-pill) button { padding-inline: 12px; }
-    .filtros .atajos .buscar-pill { flex: 0 0 auto; min-width: 44px; padding-inline: 10px; }
+    .filtros .atajos .buscar-pill { order: -1; flex: 0 0 auto; min-width: 44px; padding-inline: 10px; }
     .filtros .atajos .buscar-pill .ficha-emoji { font-size: 1.15rem; }
     .filtros .atajos .buscar { display: none; }
     .filtros .atajos.buscando > :not(.buscar) { display: none !important; }
