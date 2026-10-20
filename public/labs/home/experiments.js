@@ -10,7 +10,7 @@ import { CAMPAIGNS } from '../../assets/js/splash.js';
 
 export const EXPERIMENTS = {
   // Shipped to everyone (D-369): 🔥 Populares (`popular`), ✨ Filtros (`picks`) and 🎲 Título (`brand`).
-  search: { emoji: '🔎', name: 'Buscar', what: 'Arriba de los filtros, una caja para buscar juegos por nombre o por lo que tienen: lógica, dados, palabras…' },
+  search: { emoji: '🔎', name: 'Buscar', what: 'Una píldora 🔎 junto a Nuevos y Populares que se abre en un buscador con un desplegable de juegos: lógica, dados, palabras…' },
   // The promotional splash (D-351): one box per campaign, shown with `?splash=<id>` (one at a time,
   // so ticking one unticks the others). With it, the window opens over the home page on every load.
   ...Object.fromEntries(Object.entries(CAMPAIGNS).map(([id, c]) => [`splash:${id}`,
