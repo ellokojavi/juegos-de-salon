@@ -122,6 +122,7 @@ export function search(query, games) {
 /**
  * The word that found the game, as it is written (with its accents), to show next to it: the first
  * one a typed word matched that is not already in the game's name, or null when the name says it.
+ * Words of three letters or fewer never show: typing "la" would name "las" from a tagline.
  */
 export function matchedWord(query, g, lang = 'es') {
   // Only the name the player sees: "dados" finds Dudo through its Portuguese name, Dado Mentiroso,
@@ -130,7 +131,7 @@ export function matchedWord(query, g, lang = 'es') {
   const sources = [g.tagline?.[lang], ...(g.tipos || []).map(t => TIPOS[t]?.name?.[lang]), ...Object.values(KEYWORDS[g.id] || {}).flat(), ...Object.values(g.tagline || {})];
   for (const t of words(query)) {
     if ([...named].some(w => matches(t, w))) continue;
-    for (const src of sources) for (const raw of String(src ?? '').split(/[^\p{L}\p{N}]+/u)) if (raw && matches(t, plain(raw))) return raw.toLowerCase();
+    for (const src of sources) for (const raw of String(src ?? '').split(/[^\p{L}\p{N}]+/u)) if (raw.length >= 4 && matches(t, plain(raw))) return raw.toLowerCase();
   }
   return null;
 }
