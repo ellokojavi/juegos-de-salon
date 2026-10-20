@@ -239,7 +239,7 @@ Cuando cada dispositivo guarda un secreto (un número, una flota):
 - El menú dibuja la lista de juegos **antes** que cualquier adorno, y los adornos van en `try/catch`: un adorno roto no puede dejar la app vacía.
 - Cada cambio publicado entra en `changelog/` sin número, y el agente de procesos lo junta en `CHANGELOG.md` con su versión (D-300).
 - Se verifica que el sitio publicado sirva la versión nueva antes de darla por lista: lo hace el último paso de `publish.yml` (D-205).
-- The PR's session learns of the merge without the owner (D-323): with auto-merge on, the last step of the required `end-to-end` check comments on the still-open PR that it merges now (`tools/release/merge-report.mjs --ready`), and that bot comment wakes the session (its CI monitor relays comments, D-218, but not the owner's own nor on a closed PR). After publishing, the `report` job of `publish.yml` comments on the merged PR "✅ Merged and published" with the version, or "❌ Merged, but not published" with the step that stopped it: a record, not a wake-up.
+- The PR's session learns of the merge without the owner (D-323): with auto-merge on, the last step of the required `end-to-end` check comments on the still-open PR that it merges now (`tools/release/merge-report.mjs --ready`), without holding the check; the session learns of the merge with `tools/agents/wait-pr.mjs`, which it runs in the background after turning on auto-merge (D-400). After publishing, the `report` job of `publish.yml` comments on the merged PR "✅ Merged and published" with the version, or "❌ Merged, but not published" with the step that stopped it: a record, not a wake-up.
 
 ## C-12 · Pruebas
 
