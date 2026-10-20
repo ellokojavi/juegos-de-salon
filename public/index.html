@@ -587,7 +587,7 @@
       const atajo = { [NEW]: g => g.available && esNuevo(g), [POP]: g => top3.has(g.id) };
       const tieneAtajo = k => PORTADA.some(atajo[k]);
       const filtro = { tipo: TIPOS[pedido] || (pedido === FAV && hayFavoritos()) || (atajo[pedido] && tieneAtajo(pedido)) ? pedido : null };
-      // The search box (lab, ?search): the games it found, or null with nothing typed
+      // The search (lab, ?search, D-390): the games "see them all" filtered, or null with nothing typed
       const busca = { ids: null, clear: () => {} };
       const caben = ({ g, card, caja }) => (!busca.ids || busca.ids.has(g.id)) && (!filtro.tipo
         || (filtro.tipo === FAV ? caja !== card && marcados.has(g.id) : atajo[filtro.tipo] ? atajo[filtro.tipo](g) : (g.tipos || []).includes(filtro.tipo)));
