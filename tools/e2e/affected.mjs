@@ -4,8 +4,8 @@
 // files. A change reaches a page if the page's closure (its HTML, what it links, what that imports)
 // contains the changed file.
 //
-// When in doubt, everything runs:
-//   - a file in public/ that no page's closure contains (sw.js, an image fetched at run time, a JSON);
+// When in doubt, everything runs (and scope-guard.test.mjs fails the PR that creates the doubt, D-391):
+//   - a file in public/ that no page's closure contains (an image fetched at run time, a JSON);
 //   - anything outside public/ that changes.mjs doesn't already skip and a script may depend on
 //     (tools/e2e/'s shared code, the e2e workflow, a tool a script imports, a file at the root);
 //   - a script whose pages can't be read from its source (it builds its routes in a loop), or that
@@ -18,6 +18,8 @@ import { fileURLToPath } from 'node:url';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '../..');
 const PUBLIC = join(ROOT, 'public');
+// The lab's pages, its own index (`labs`) among them (D-391)
+const isLab = p => p === 'labs' || p.startsWith('labs/');
 
 /* ------------------------------------------------------------------ */
 /* Pure: the references in a file, and the closures                  */
@@ -36,6 +38,8 @@ export function references(path, text) {
     for (const m of text.matchAll(/\b(?:src|href)\s*=\s*["']([^"']+)["']/g)) add(m[1]);
     // Inline modules import too
     for (const m of text.matchAll(/\bimport\s*(?:[^'"()]*?\bfrom\s*)?["']([^"']+)["']/g)) add(m[1]);
+    // And load modules on demand (`import('./labs/home/search.js')`, D-391)
+    for (const m of text.matchAll(/\bimport\(\s*["']([^"']+)["']\s*\)/g)) add(m[1]);
   } else if (path.endsWith('.js') || path.endsWith('.mjs')) {
     for (const m of text.matchAll(/\b(?:import|export)\s*(?:[^'"();]*?\bfrom\s*)?["']([^"']+)["']/g)) add(m[1]);
     for (const m of text.matchAll(/\bimport\(\s*["']([^"']+)["']\s*\)/g)) add(m[1]);
@@ -45,6 +49,23 @@ export function references(path, text) {
   }
   // A folder link is its index.html
   return found.map(f => (f.endsWith('/') || f === '.' ? posix.join(f, 'index.html') : f));
+}
+
+/**
+ * The site's files a script builds a URL to at run time (`new URL('assets/css/splash.css', ROOT)`,
+ * `register(new URL('sw.js', root))`, D-391): the first argument of `new URL`, when it is a real file, read from the script's own folder or from the
+ * site's root. Only scripts: a page's HTML says what it loads in its tags.
+ */
+export function assetsNamed(path, text, files) {
+  if (!/\.m?js$/.test(path)) return [];
+  const dir = posix.dirname(path);
+  const out = [];
+  // Only `new URL('<file>', …)`: a bare name in a comment or a message is not a load
+  for (const m of text.matchAll(/\bnew URL\(\s*["'`]((?:\.{0,2}\/)?[\w./-]+\.(?:m?js|css|html))["'`]/g)) {
+    const ref = m[1].replace(/^\//, '');
+    for (const f of [posix.normalize(posix.join(dir, ref)), posix.normalize(ref)]) if (files[f] != null && f !== path) { out.push(f); break; }
+  }
+  return out;
 }
 
 /** Each page's closure: { 'hangman': Set(['hangman/index.html', 'assets/js/ui.js', …]) }. */
@@ -60,7 +81,7 @@ export function closures(files) {
       seen.add(f);
       // Other pages it links to are not part of it: they are pages of their own
       if (f !== page && f.endsWith('index.html')) continue;
-      if (files[f] != null) queue.push(...references(f, files[f]));
+      if (files[f] != null) queue.push(...references(f, files[f]), ...assetsNamed(f, files[f], files));
     }
     out[page === 'index.html' ? '' : page.slice(0, -'/index.html'.length)] = new Set([...seen].filter(f => f === page || !f.endsWith('index.html')));
   }
@@ -71,7 +92,7 @@ export function closures(files) {
 export function scriptPages(source, pages) {
   const known = new Set(pages);
   const found = new Set();
-  for (const m of source.matchAll(/\$\{SITE\}\/([a-z0-9/_-]*)/gi)) {
+  for (const m of source.matchAll(/\$\{(?:SITE|SITIO|BASE)\}\/([a-z0-9/_-]*)/gi)) {
     let p = m[1].replace(/\/+$/, '');
     // The longest prefix that is a page (`timeline/decks/index` → 'timeline')
     while (p && !known.has(p)) p = p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '';
@@ -85,7 +106,7 @@ export function scriptPages(source, pages) {
  * ('hangman', 'battleship/'): those count. If it names none, it can't be narrowed.
  */
 export function dynamicPages(source, pages) {
-  if (!/\$\{SITE\}\/\$\{/.test(source)) return { dynamic: false, found: new Set() };
+  if (!/\$\{(?:SITE|SITIO|BASE)\}\/\$\{/.test(source)) return { dynamic: false, found: new Set() };
   const known = new Set(pages.filter(Boolean));
   const found = new Set();
   for (const m of source.matchAll(/['"`]([a-z0-9/_-]+?)\/?['"`]/gi)) if (known.has(m[1])) found.add(m[1]);
@@ -143,7 +164,7 @@ export function select({ changes, graph, scripts, shared }) {
   // Only the home page changed, maybe with lab pages (D-388): its own scripts run (home/*, smoke.mjs,
   // and those that never leave it, like favorites.mjs) and the lab pages' ones, not the games that
   // start on the home page and click their card
-  const labs = [...affected].filter(p => p.startsWith('labs/'));
+  const labs = [...affected].filter(p => isLab(p));
   const homeOnly = affected.has('') && affected.size === labs.length + 1;
   const runs = scripts.filter(s => {
     if (changedScripts.has(s.name)) return true;
@@ -199,9 +220,9 @@ export function levelOf(choice, total) {
   if (choice && !choice.scripts.length) return { level: 'N0', name: 'no browser', reason: 'nothing a page loads changed: unit tests only' };
   if (!choice) return { level: 'N3', name: 'core', reason: 'a change the page graph cannot narrow: every script' };
   const pages = [...choice.pages];
-  if (pages.includes('') && pages.every(p => p === '' || p.startsWith('labs/'))) return { level: 'N2', name: 'home', reason: `the home page${pages.length > 1 ? ' and the lab' : ''} only: its ${choice.scripts.length} script(s), not the games (D-388)` };
+  if (pages.includes('') && pages.every(p => p === '' || isLab(p))) return { level: 'N2', name: 'home', reason: `the home page${pages.length > 1 ? ' and the lab' : ''} only: its ${choice.scripts.length} script(s), not the games (D-388)` };
   if (pages.includes('') || pages.length * 3 >= total) return { level: 'N3', name: 'core', reason: `${pages.includes('') ? 'the home page' : `${pages.length} of ${total} pages`}: every affected script` };
-  if (pages.length && pages.every(p => p.startsWith('labs/'))) return { level: 'N1', name: 'lab', reason: `lab only (${pages.join(', ')}): ${choice.scripts.length} script(s)` };
+  if (pages.length && pages.every(p => isLab(p))) return { level: 'N1', name: 'lab', reason: `lab only (${pages.join(', ')}): ${choice.scripts.length} script(s)` };
   return { level: 'N2', name: 'game', reason: `${pages.join(', ') || 'a changed script'}: ${choice.scripts.length} script(s)` };
 }
 
@@ -214,8 +235,14 @@ const walk = (dir, base = dir) => readdirSync(dir).flatMap(f => {
   return statSync(full).isDirectory() ? walk(full, base) : [relative(base, full).split('\\').join('/')];
 });
 
+/**
+ * The scripts that run on every change a page reaches, on purpose: they say no page because they open
+ * them all. Any other script must name its pages, so the graph can leave it out (D-391).
+ */
+export const EVERY_PAGE = new Set(['smoke.mjs']);
+
 /** The site's text files, path → contents, and the page graph. */
-function siteFiles() {
+export function siteFiles() {
   const files = {};
   for (const f of walk(PUBLIC)) if (/\.(html|m?js|css)$/.test(f) && !/\.test\.m?js$/.test(f)) files[f] = readFileSync(join(PUBLIC, f), 'utf8');
   return files;
@@ -262,6 +289,8 @@ export const REUSES = {
   'bulls-and-cows': ['cup/games/number/'],
   timeline: ['cup/games/timeline/', 'cup/games/year/engine.js', 'cup/games/mazos.js'],
   'labs/code': ['cup/games/word/'],
+  // The home page's lab experiments (D-363, D-387): loaded only with ?lab or their parameter
+  '': ['labs/home/', 'labs/experiments.css'],
 };
 
 /** The game a file belongs to (the first folder of its path, when that folder is a page), or null. */

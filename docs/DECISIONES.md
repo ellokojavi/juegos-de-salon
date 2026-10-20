@@ -75,7 +75,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Panel y señales de uso (privacidad) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352 |
 | Publicar y versión | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README y capturas | C-13 | D-51, D-76, D-78, D-213, D-316 |
-| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378 |
+| Pruebas | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391 |
 | La Copa (torneo, días, puntaje) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384 |
 | Agentes (usabilidad, documentación, procesos, atención, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383 |
 | Rankings y jugador (nombre y PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
@@ -6229,7 +6229,7 @@ is only what makes it visible and gives the round something to wait on.
 (no record for the round to follow up).
 
 ## D-329 · A PR runs only the end-to-end scripts its changes reach
-**Date:** 2026-10-15 · **Status:** current · **Relation:** narrows D-205 and D-299 (all or nothing); keeps D-302 and D-308; extended by D-377 (La Copa's files stay out of other pages) and D-378 (each game's files, what is played, the scope in the summary)
+**Date:** 2026-10-15 · **Status:** amended by D-391 · **Relation:** narrows D-205 and D-299 (all or nothing); keeps D-302 and D-308; extended by D-377 (La Copa's files stay out of other pages) and D-378 (each game's files, what is played, the scope in the summary)
 **Context:** a PR that changed one file in `public/` ran all 61 jobs, even if it only touched a lab
 game: La Copa's style sheet ran Batalla Naval, Generala and every language check.
 **Decision:** owner's request: `tools/e2e/affected.mjs` reads the site's graph (each `index.html`, what
@@ -7387,7 +7387,7 @@ searched whatever the language. The lab's home page card is back among the impro
 experiment runs (C-17, D-372). `tools/e2e/home/search.mjs` checks it end to end.
 
 ## D-388 · A change to the home page alone runs the home page's scripts, not the games'
-**Date:** 2026-10-20 · **Status:** current · **Relation:** amends D-346 (the home page was always N3 · core)
+**Date:** 2026-10-20 · **Status:** amended by D-391 · **Relation:** amends D-346 (the home page was always N3 · core)
 **Context:** the home page's search experiment (D-387) touched `public/index.html` and launched all 75
 end-to-end jobs, full games of Dudo and Battleship included. The owner asked why a search box played games.
 Many game scripts open `/` and click their card, so the page graph named the home page as theirs.
@@ -7414,3 +7414,22 @@ Each splash campaign is an entry of `EXPERIMENTS` (`param: 'splash', value: <id>
 if both shipped.
 **Consequences:** a new campaign in `splash.js` appears in the bar on its own. `home/lab.mjs` checks the
 card, the empty start and two experiments on at once.
+
+## D-391 · The end-to-end scope never falls back to "everything" without a test saying so
+**Date:** 2026-10-20 · **Status:** current · **Relation:** amends D-329 (the page graph) and D-388 (the home page level)
+**Context:** after D-388, a lab search PR (#576) still ran all 76 end-to-end jobs. The page graph in
+`tools/e2e/affected.mjs` runs everything when a changed file is one no page loads, and it did not read
+`import('…')` inside a page's HTML nor `new URL('…', ROOT)`, so `labs/home/search.js`, `instalar.js`,
+`splash.css` and `sw.js` looked unloaded. The owner asked for a fix at the root, not one case at a time.
+**Decision:** the graph reads `import('…')` in HTML too, and the first argument of `new URL('<file>', …)` in
+scripts (not bare names in comments). Scripts may say `${BASE}` or `${SITIO}` as well as `${SITE}`. The
+lab's own index (`labs`) counts as a lab page for D-388. A new test, `tools/e2e/scope-guard.test.mjs`,
+fails a PR when any file of the site is loaded by no page, or a script GitHub runs names no page (unless
+it is in `EVERY_PAGE`, today only `smoke.mjs`, or is split in parts named after pages). The message says
+how to fix it. The home page may load `labs/home/` and `labs/experiments.css` (its lab bar), listed in `REUSES`.
+**Why:** each "run everything" fallback was found only when a PR was already slow; a test catches it when
+the file or script is written, on the `tests` check, in two minutes.
+**Consequences:** a change to the home page or its lab search runs 8 jobs, the splash 9, a game's file 5,
+a lab game's style 2; `sw.js` (every page registers it) 55 and `ui.js` 75, as they should. What still runs
+everything is what the graph truly cannot narrow: the e2e tools, the workflows, a file outside `public/`
+that a script imports.
