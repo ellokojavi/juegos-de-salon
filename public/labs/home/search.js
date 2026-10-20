@@ -252,7 +252,7 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     const y = Math.ceil(marca.getBoundingClientRect().top + scrollY - (parseFloat(getComputedStyle(barra).top) || 0));
     if (y > scrollY) scrollTo({ top: y, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
-  const abrir = () => { row.classList.remove('cerrando', 'recien'); row.classList.add('buscando'); pill.setAttribute('aria-expanded', 'true'); input.focus({ preventScroll: true }); subir(); sugerir(); };
+  const abrir = () => { clearTimeout(reserva); row.classList.remove('cerrando', 'recien'); row.classList.add('buscando'); pill.setAttribute('aria-expanded', 'true'); input.focus({ preventScroll: true }); subir(); sugerir(); };
   const plegar = () => { lista.hidden = true; input.setAttribute('aria-expanded', 'false'); elegir(-1); };
   const verTodos = ids => { plegar(); input.blur(); onChange(ids); };
   // The option the keyboard (or the mouse over it) has selected: -1 is none
@@ -283,6 +283,7 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     input.setAttribute('aria-expanded', 'true');
   };
   // Closing waits for the field to fold back into the pill (D-398); without motion, at once
+  let reserva = null;
   const quieto = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   const cerrarTodo = () => {
     input.value = ''; plegar(); pill.setAttribute('aria-expanded', 'false'); onChange(null);
@@ -297,10 +298,11 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     if (quieto()) { row.classList.remove('buscando'); row.classList.add('recien'); setTimeout(() => row.classList.remove('recien'), 260); return; }
     row.classList.add('cerrando');
     let hecho = false;
-    const una = () => { if (!hecho) { hecho = true; fin(); } };
+    const una = () => { if (!hecho) { hecho = true; clearTimeout(reserva); fin(); } };
     campo.addEventListener('animationend', una, { once: true });
-    // In case the animation never ends (a hidden tab): the row still comes back
-    setTimeout(una, 400);
+    // In case the animation never ends (a hidden tab): the row still comes back. Reopening clears it,
+    // so a quick close, open, close does not cut the second fold short
+    reserva = setTimeout(una, 400);
   };
   pill.addEventListener('click', abrir);
   // The list below stays as it is while typing (the owner's choice): only the dropdown follows
