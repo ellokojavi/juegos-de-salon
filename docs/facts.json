@@ -1240,6 +1240,10 @@
       "title": "Requerimientos"
     },
     {
+      "path": "docs/TEST-SCOPE.md",
+      "title": "Test scope: which tests a change runs, and how the system learns it (D-391)"
+    },
+    {
       "path": "docs/UNO-AL-DIA.md",
       "title": "Uno al día"
     },
