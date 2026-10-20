@@ -136,6 +136,42 @@ export function matchedWord(query, g, lang = 'es') {
   return null;
 }
 
+/**
+ * How well a game answers the query (the owner's request, D-397): its name in the player's language
+ * first, its name in another language next, then its keywords, its types, its tagline last; between
+ * equals, the shorter name ("toque": Toque y Fama before Toque y Fama: Palabra). Each typed
+ * word scores by the best place it is found; a game a typed word does not find scores 0.
+ */
+export function relevance(query, g, lang = 'es') {
+  const typed = words(query);
+  if (!typed.length) return 0;
+  const own = words(g.name?.[lang] ?? g.name?.es);
+  const tiers = [
+    [4, own],
+    [3, Object.values(g.name || {}).flatMap(words)],
+    [2, Object.values(KEYWORDS[g.id] || {}).flat().flatMap(words)],
+    // A type is coarse ("Cartas/Dados" holds both): below the game's own keywords
+    [1.5, (g.tipos || []).flatMap(t => [t, ...Object.values(TIPOS[t]?.name || {})]).flatMap(words)],
+    [1, Object.values(g.tagline || {}).flatMap(words)],
+  ];
+  let total = 0;
+  for (const t of typed) {
+    const best = tiers.find(([, ws]) => ws.some(w => matches(t, w)));
+    if (!best) return 0;
+    // A word that starts the name ("toq" → Toque y Fama) beats one later in it ("fama" → Toque y Fama: Palabra)
+    total += best[0] + (best[0] === 4 && own[0]?.startsWith(t) ? 0.5 : 0);
+  }
+  return total;
+}
+
+/** The games found, the best answers first; equal ones by the shorter name, then the home page's order. */
+export function ranked(query, games, lang = 'es') {
+  const ids = search(query, games);
+  if (!ids) return [];
+  return games.map((g, i) => ({ g, i, r: relevance(query, g, lang) })).filter(x => ids.has(x.g.id))
+    .sort((a, b) => b.r - a.r || words(a.g.name?.[lang] ?? a.g.name?.es).length - words(b.g.name?.[lang] ?? b.g.name?.es).length || a.i - b.i).map(x => x.g);
+}
+
 export const TEXTS = {
   es: { placeholder: 'Buscar: lógica, dados…', label: 'Buscar un juego', none: 'Ningún juego con «{q}».', clear: 'Cerrar la búsqueda', all: 'Ver los {n} juegos con «{q}»', one: 'Ver el juego con «{q}» en la lista', soon: 'Próximamente' },
   en: { placeholder: 'Search: logic, dice…', label: 'Find a game', none: 'No game matches “{q}”.', clear: 'Close the search', all: 'See the {n} games with “{q}”', one: 'See the game with “{q}” in the list', soon: 'Coming soon' },
@@ -222,7 +258,8 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     const q = input.value.trim();
     const ids = search(q, games);
     if (!ids) { plegar(); return; }
-    const found = games.filter(g => ids.has(g.id));
+    // The name first (D-397): Toque y Fama before a game whose tagline says «toquen»
+    const found = ranked(q, games, lang);
     const kids = found.slice(0, SUGGESTIONS).map(g => {
       const por = matchedWord(q, g, lang);
       const kidsOf = [el('span', { class: 'sug-emoji', 'aria-hidden': 'true' }, g.emoji), el('span', { class: 'sug-nombre' }, pickName(g.name, lang)), (por || !g.available) ? el('span', { class: 'sug-por' }, `· ${g.available ? por : T.soon}`) : ''];
