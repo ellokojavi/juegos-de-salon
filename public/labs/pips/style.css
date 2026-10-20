@@ -42,7 +42,7 @@ button.ficha:active { transform: scale(0.94); }
 
 /* The board: one square cell of --s per place, colored by its zone (--z), its edges where the zone ends */
 .tablero-pips {
-  --s: min(54px, calc((100vw - 52px) / var(--w)));
+  --s: min(64px, calc((100vw - 40px) / var(--w)), calc((100svh - 400px) / var(--h)));
   position: relative; display: grid; grid-template-columns: repeat(var(--w), var(--s)); grid-template-rows: repeat(var(--h), var(--s));
   justify-content: center; margin: 4px auto; transition: filter 0.3s;
 }
@@ -97,10 +97,10 @@ button.ficha:active { transform: scale(0.94); }
 .aviso-pips { margin: 0; min-height: 2.6em; text-align: center; font-weight: 700; color: var(--muted); }
 .aviso-pips.mal { color: #ff8a8a; } .aviso-pips.bien { color: #9dff3a; } .aviso-pips.ayuda { color: var(--yellow); } .aviso-pips.ojo { color: var(--yellow); }
 /* The tray: the dominoes not yet placed; the chosen one lifts and shines */
-.bandeja { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; padding: 6px 0; }
+.bandeja { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px; padding: 6px 0; }
 /* Each domino has a square slot as big as it is long (D-385): turning it, or laying it, moves nothing */
-.bandeja > .hueco { flex: none; width: 66px; height: 66px; display: grid; place-items: center; }
-.bandeja .ficha { --t: 31px; }
+.bandeja > .hueco { flex: none; width: 80px; height: 80px; display: grid; place-items: center; }
+.bandeja .ficha { --t: 38px; }
 .bandeja .ficha.sel { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--cyan), 0 0 18px var(--cyan), 0 4px 10px rgba(0,0,0,0.35); }
 .acciones-pips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .acciones-pips .armado { background: var(--yellow); color: #3a1200; }
