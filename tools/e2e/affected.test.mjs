@@ -72,6 +72,17 @@ assert.deepEqual(affectedJobs(jobs, ['public/cup/style.css'], shared), ['cup/sea
   ];
   assert.deepEqual(select({ changes: ['public/index.html'], graph: g, scripts, shared }).scripts, ['home/dice.mjs', 'smoke.mjs', 'favorites.mjs']);
 }
+// What a page loads on demand counts (D-391): import('…') in its HTML, and new URL('…') in a script
+{
+  const files = {
+    'index.html': `<script type="module">if (x) import('./labs/home/search.js');</script><script type="module" src="assets/js/a.js"></script>`,
+    'labs/home/search.js': '', 'assets/js/a.js': "const l = new URL('assets/css/b.css', ROOT); // see hangman/game.js", 'assets/css/b.css': '', 'hangman/game.js': '',
+  };
+  const g = closures(files);
+  assert.ok(g[''].has('labs/home/search.js'), "an inline import('…') is part of the page");
+  assert.ok(g[''].has('assets/css/b.css'), "new URL('…', ROOT) is part of the page");
+  assert.ok(!g[''].has('hangman/game.js'), 'a file named in a comment is not');
+}
 console.log('affected: which end-to-end scripts a PR needs, green');
 
 // The test level (D-346)
