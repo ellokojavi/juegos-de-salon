@@ -81,7 +81,7 @@ as an empty box.
   each zone gets a rule its pips keep. `resolver(t, max, limite)` counts the solutions (layouts that
   leave the same pips on every cell count once); while there are two, a zone that differs gets a stricter
   rule, `=`, `≠` or the tightest `<`/`>` before an exact sum, or, when only the order inside a zone
-  differs, a cell moves to a neighboring zone; a board too loose to prove within `limite` steps gets one
+  differs, a cell moves to a neighboring zone (only if the zone it leaves stays in one piece); a board too loose to prove within `limite` steps gets one
   more exact sum. Then each one-cell zone tries to join a neighbor while the board keeps one answer.
   Every board has exactly one answer (engine.test.mjs checks it for several seeds and the three levels,
   and the rule mix). Building the three boards takes about 25 ms on a computer (rarely a few hundred).
