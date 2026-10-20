@@ -7416,7 +7416,7 @@ if both shipped.
 card, the empty start and two experiments on at once.
 
 ## D-390 · The home page's search: a 🔎 pill and a dropdown of games
-**Date:** 2026-10-20 · **Status:** corrected by D-393 (the keyboard: Enter and Escape) · **Relation:** amends D-387 (the box on its own line, filtering while typing)
+**Date:** 2026-10-20 · **Status:** amended by D-393 · **Relation:** amends D-387 (the box on its own line, filtering while typing)
 **Context:** the owner asked that the search not take a whole line of the filters, but be a 🔎 pill that
 opens in place of the pills above, and that it find games the way a shop's autocomplete does, without
 moving the list on the page.
@@ -7433,7 +7433,7 @@ in Dado Mentiroso) shows the Spanish tagline's word. `tools/e2e/home/search.mjs`
 row at 320 px, the dropdown, "see them all", ✕ and opening a game.
 
 ## D-393 · The home page's search on a computer: ↓ ↑ Enter and Escape in the dropdown
-**Date:** 2026-10-20 · **Status:** current · **Relation:** corrects D-390 (Enter always filtered, and one Escape closed everything)
+**Date:** 2026-10-20 · **Status:** current · **Relation:** amends D-390 (Enter always filtered, and one Escape closed everything)
 **Context:** the owner asked that whoever searches from a computer can choose a game in the dropdown
 without the mouse, the way a shop's autocomplete does.
 **Decision:** in the `?search` lab experiment, ↓ and ↑ move a selection through the dropdown's options
