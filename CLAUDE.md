@@ -74,7 +74,9 @@ Several Claude sessions may be working in this repo at the same time:
   (`.gitattributes`; `decision.mjs install` in a worktree that did not reserve).
 - **A single push at the end** (D-303): commits are made locally and pushed together when the
   work, including the agents' work, is ready. Each push to a PR launches the 58 scripts and cancels
-  the previous run's: a third of the end-to-end compute was going to canceled runs.
+  the previous run's: a third of the end-to-end compute was going to canceled runs. Since D-392 a
+  push after a green `end-to-end` run tests only the files changed since that commit, so it is cheap;
+  a push after a red or canceled run retests the whole PR again.
 - Before touching another PR's branch, ask that session (ListAgents / SendMessage).
 - **On merge, the worktree is deleted**, in the same move, from the main folder (D-206):
   ```bash
@@ -137,7 +139,9 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    `tools/e2e/scope-guard.test.mjs` fails if a site file is loaded by no page or a CI script names no page (D-391).
    In a PR that touches nothing in the browser (documentation, `tools/agents/`, workflows, rules)
    no script runs and it goes green anyway; a failing script is retried once and, if it passes,
-   leaves an "Intermitente" (flaky) notice (D-299).
+   leaves an "Intermitente" (flaky) notice (D-299). Each later push tests only what changed since the PR's
+   last commit that passed end-to-end (`tools/e2e/since-passed.mjs`, D-392): fix a red run in one push,
+   because until something passes every push retests the whole PR.
 4. **Auto-merge by default** (D-216, the owner's request): when the PR is ready to merge
    —the agents are done and their fixes are pushed, and the `changelog/<branch>.md` entry is already
    on the branch (D-300)—, GitHub's auto-merge is turned on instead of waiting for the ✅ by hand:
