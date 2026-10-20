@@ -6663,7 +6663,7 @@ language there would only double the texts.
 **Consequences:** the panel's tests expect English; PANEL.md's exception to C-3 says English only.
 
 ## D-351 · A promotional splash over the home page, off by default and seen once
-**Date:** 2026-10-18 · **Status:** amended by D-355 · **Relation:** extends C-17 (the home page)
+**Date:** 2026-10-18 · **Status:** amended by D-355, D-389 · **Relation:** extends C-17 (the home page)
 **Context:** the owner wants to tell players about what is worth telling (three new games, a new
 mode, a novelty) with a promotional window over the home page: most of the screen, the page
 darkened behind, images and a link to each thing. It must not break the experience: it is not
@@ -6997,7 +6997,7 @@ play, gets there in one tap. Tried in the lab first, as the owner asked for the 
 320 px and that each chip filters; C-17 says it.
 
 ## D-363 · The home page's experiments run on the real home page, without a frame
-**Date:** 2026-10-18 · **Status:** current · **Relation:** corrects D-361 (`/labs/home/` showed the home page in a frame)
+**Date:** 2026-10-18 · **Status:** amended by D-389 · **Relation:** corrects D-361 (`/labs/home/` showed the home page in a frame)
 **Context:** the owner, on an iPhone: "the menu is not floating in Labs". Safari on an iPhone grows a
 frame to the full height of its page, so the home page inside `/labs/home/` never scrolled itself and its
 sticky filter bar never stuck; in Chrome it did.
