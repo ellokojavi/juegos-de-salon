@@ -40,7 +40,7 @@ language. Older Spanish content and Spanish file and identifier names are being 
 |---|---|---|
 | How a game is built (C-n) | [docs/CANONES.md](docs/CANONES.md), with its checklist at the end | Before building or changing a game or the home page (C-17), and when done |
 | Texts, buttons, sharing (U-n) | [docs/USABILIDAD.md](docs/USABILIDAD.md): U-1, U-8 and **U-18** before writing instructions | Before writing anything the player reads |
-| Why it is this way (D-n) | [docs/DECISIONES.md](docs/DECISIONES.md), with a topic index at the top | Before changing something that looks odd |
+| Why it is this way (D-n) | [docs/DECISIONS.md](docs/DECISIONS.md), the index (by topic, then one row each), and `docs/decisions/D-<n>.md` for each one (D-394): read the index, open only the ones you need | Before changing something that looks odd |
 | A new game, step by step | [docs/AGREGAR-JUEGO.md](docs/AGREGAR-JUEGO.md) | When starting one |
 | Each game | `docs/games/<folder>.md`, with its exceptions to the canons | Before touching it |
 | What was requested (RP-n…) | [docs/REQUERIMIENTOS.md](docs/REQUERIMIENTOS.md) | When closing one |
@@ -68,9 +68,11 @@ Several Claude sessions may be working in this repo at the same time:
   A PR opened before this moves its entry over with `node tools/release/changelog.mjs migrate`.
 - **Decisions (D-n) are reserved** before they are written (D-301):
   `node tools/agents/decision.mjs reserve [--count n]` pushes a `reserve/D-n` branch that GitHub
-  rejects if it already exists, so two sessions never take the same number. It also configures the
-  driver that merges `docs/DECISIONES.md` decision by decision when pulling `main`
-  (`.gitattributes`; `decision.mjs install` in a worktree that did not reserve).
+  rejects if it already exists, so two sessions never take the same number, and writes the skeleton
+  of its file in `docs/decisions/`. Each decision is its own file (D-394), so two PRs do not collide; the
+  index `docs/DECISIONS.md` is generated (`decision.mjs index`, also when it collides on pulling
+  `main`), never edited by hand. A branch from before D-394 that still has the old single
+  DECISIONES.md runs `decision.mjs split`.
 - **A single push at the end** (D-303): commits are made locally and pushed together when the
   work, including the agents' work, is ready. Each push to a PR launches the 58 scripts and cancels
   the previous run's: a third of the end-to-end compute was going to canceled runs.

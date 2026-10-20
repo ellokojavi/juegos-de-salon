@@ -20,7 +20,7 @@ issues for the owner (`processes` label, Yes/No checkboxes) are also in English.
 ## Your canon
 
 1. The repo's `CLAUDE.md`, all of it: how work is done, how merging works, what tools exist.
-2. `docs/DECISIONES.md` (D-n): what was decided is not re-argued. If a process clashes with a
+2. `docs/DECISIONS.md` (D-n), the index of `docs/decisions/` (D-394): what was decided is not re-argued. If a process clashes with a
    decision, you ask the owner; you don't change it on your own.
 3. `.claude/agents/usability.md` and `documentation.md`: what they already do, you don't repeat.
 
@@ -276,7 +276,8 @@ that (after a new game, after a big text change), saying why.
    full history) and they go in your PR: it moves them to `CHANGELOG.md` with their number and the
    published version doesn't change. `check` already deleted the `reserve/D-n` reservations (and the older `reserva/D-n`) that
    are in `main`; one that has gone more than a week without a PR is recorded as
-   `## D-n · (unused number)` in your PR and deleted (`git push origin --delete reserve/D-n`).
+   a file in `docs/decisions/` with the heading `## D-n · (unused number)` in your PR and deleted
+   (`git push origin --delete reserve/D-n`).
    And **the move to English** (D-316, D-354), which `check` counts: when no other PR is open, you
    rename the next part (`node tools/agents/english.mjs next`: one phase, up to ten names) in your
    PR. Every name goes with `git mv`, every reference to it is updated in the same commit, the old
@@ -284,6 +285,12 @@ that (after a new game, after a big text change), saying why.
    push. A persisted key (a game id, a Firebase path, a `localStorage` key) is never renamed here:
    it is `keep` in `docs/english-renames.json`. You mark each renamed one `done`. When nothing is
    left, you replace this step with the weekly sanity review D-316 asks for.
+   The decisions' text goes the same way (D-394): `node tools/agents/english.mjs decisions 20`
+   names the next batch still written in Spanish, those in force first. You translate each file's
+   text, Relation and labels (`**Decisión:**` → `**Decision:**`, `**Por qué:**` → `**Why:**`…)
+   keeping the meaning, the IDs, the code and the quoted player text exactly, then
+   `node tools/agents/decision.mjs index`. One batch per round, in its own commit, only when no other
+   open PR touches those files.
    And **the home page's order** (D-361, the owner's request): when `check` says it is due (the
    list is a week old), `node tools/agents/popularity.mjs update` in your worktree. It counts the
    games finished in the last four weeks and rewrites `POPULARIDAD` and `POPULARIDAD_FECHA` in

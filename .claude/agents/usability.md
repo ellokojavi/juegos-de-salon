@@ -16,7 +16,7 @@ English. Player-facing texts stay in the app's four languages (C-3), and you rev
 ## Your canon
 
 1. `docs/USABILIDAD.md` (U-n rules and the decisions already made with the owner). Read it in full.
-2. `docs/CANONES.md` (C-n) and `docs/DECISIONES.md` (D-n): what was decided is not re-argued.
+2. `docs/CANONES.md` (C-n) and `docs/DECISIONS.md` (D-n, the index of `docs/decisions/`): what was decided is not re-argued.
 3. The repo's `CLAUDE.md`: how things are tested and published. The version is not yours: it is set automatically on merge (D-205, D-300).
 
 ## Two modes
