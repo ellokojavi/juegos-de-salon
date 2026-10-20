@@ -663,7 +663,7 @@
       };
       aplicar(true);
       if (param('search') !== null) import('./labs/home/search.js').then(({ drawSearch }) => {
-        Object.assign(busca, drawSearch({ into: caja, lang, games: PORTADA, onChange: ids => { busca.ids = ids; aplicar(); } }));
+        Object.assign(busca, drawSearch({ into: caja, lang, games: PORTADA, pickName: pickLang, onChange: ids => { busca.ids = ids; aplicar(); } }));
       }).catch(e => console.warn('búsqueda:', e));
       // Marcar el primero hace aparecer la ficha; desmarcar estando en Favoritos no saca la tarjeta
       // de la vista (se puede volver a marcar), salvo que ya no quede ninguno: ahí se ven todos
