@@ -60,17 +60,28 @@ button.ficha:active { transform: scale(0.94); }
 .celda.libre.bt, .celda.libre.br, .celda.libre.bb, .celda.libre.bl { border-color: rgba(255,255,255,0.18); }
 .celda.no { animation: pips-no 0.35s; }
 @keyframes pips-no { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-/* The rule: a small diamond hung on the zone's last cell, bottom right */
+/* The rule: a small diamond inside the zone's last cell, bottom right (D-385); a tap lights its zone */
 .regla {
-  z-index: 2; pointer-events: none; align-self: end; justify-self: end; margin: 0 -8px -8px 0;
-  width: 28px; height: 28px; display: grid; place-items: center; transform: rotate(45deg);
+  z-index: 2; cursor: pointer; align-self: end; justify-self: end; margin: 0 4px 4px 0;
+  width: 22px; height: 22px; display: grid; place-items: center; transform: rotate(45deg);
   background: var(--z); border: 2px solid #fff; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.45);
 }
-.regla > span { transform: rotate(-45deg); font: 900 0.8rem var(--font-num); color: #140a28; white-space: nowrap; }
+.regla > span { transform: rotate(-45deg); font: 900 0.72rem var(--font-num); color: #140a28; white-space: nowrap; }
 .regla.ok { box-shadow: 0 0 0 3px #9dff3a, 0 2px 6px rgba(0,0,0,0.45); }
 .regla.mal { background: #ff3b3b; animation: pips-no 0.35s; }
 .regla.mal > span { color: #fff; }
-.tablero-pips.chico .regla { width: 20px; height: 20px; margin: 0 -6px -6px 0; }
+.tablero-pips.chico .regla { width: 16px; height: 16px; margin: 0 2px 2px 0; pointer-events: none; }
+/* The zone in focus: its cells light up and the rest dim */
+.tablero-pips .celda, .tablero-pips .regla { transition: opacity 0.15s, box-shadow 0.15s, background 0.15s; }
+.tablero-pips.foco .celda:not(.encendida), .tablero-pips.foco .regla:not(.encendida) { opacity: 0.45; }
+.tablero-pips .celda.encendida:not(.libre) { background: color-mix(in srgb, var(--z) 55%, transparent); box-shadow: 0 0 14px var(--z); }
+.tablero-pips .regla.encendida { transform: rotate(45deg) scale(1.25); }
+/* Dragging: the cells it would land on (red when taken), the domino that follows the finger */
+.celda.destino { outline: 3px solid #fff; outline-offset: -3px; }
+.celda.destino.no { outline-color: #ff3b3b; }
+.bandeja .ficha, .tablero-pips .puesta { touch-action: none; -webkit-touch-callout: none; }
+.ficha.arrastrada { opacity: 0.3; }
+.ficha.fantasma { position: fixed; z-index: 50; pointer-events: none; transform: scale(1.06); box-shadow: 0 10px 24px rgba(0,0,0,0.55); }
 .tablero-pips.chico .regla > span { font-size: 0.62rem; }
 /* A placed domino covers its two cells */
 .puesta { --t: calc(var(--s) - 4px); z-index: 1; align-self: center; justify-self: center; }
@@ -86,8 +97,10 @@ button.ficha:active { transform: scale(0.94); }
 .aviso-pips { margin: 0; min-height: 2.6em; text-align: center; font-weight: 700; color: var(--muted); }
 .aviso-pips.mal { color: #ff8a8a; } .aviso-pips.bien { color: #9dff3a; } .aviso-pips.ayuda { color: var(--yellow); } .aviso-pips.ojo { color: var(--yellow); }
 /* The tray: the dominoes not yet placed; the chosen one lifts and shines */
-.bandeja { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; min-height: 60px; padding: 6px 0; }
-.bandeja .ficha { --t: 34px; }
+.bandeja { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; padding: 6px 0; }
+/* Each domino has a square slot as big as it is long (D-385): turning it, or laying it, moves nothing */
+.bandeja > .hueco { flex: none; width: 66px; height: 66px; display: grid; place-items: center; }
+.bandeja .ficha { --t: 31px; }
 .bandeja .ficha.sel { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--cyan), 0 0 18px var(--cyan), 0 4px 10px rgba(0,0,0,0.35); }
 .acciones-pips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .acciones-pips .armado { background: var(--yellow); color: #3a1200; }

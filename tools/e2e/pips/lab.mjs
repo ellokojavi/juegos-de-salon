@@ -24,14 +24,20 @@ function jugada(t, s) {
 }
 const tocarFicha = f => ev(`document.querySelector('#bandeja [data-f="${f}"]').click(); 1`);
 const tocarCelda = i => ev(`document.querySelector('#tablero .celda[data-i="${i}"]').click(); 1`);
+/** Taps on domino `f` until it has turn `g` and is chosen: each tap turns it a quarter and chooses it. */
+async function girarA(f, g) {
+  const q = `document.querySelector('#bandeja [data-f="${f}"]')`;
+  const cur = await ev(`+${q}.dataset.giro`), sel = await ev(`${q}.classList.contains('sel')`);
+  const n = (g - cur + 4) % 4 || (sel ? 0 : 4);
+  for (let k = 0; k < n; k++) await tocarFicha(f);
+}
 const aviso = () => ev(`document.querySelector('.aviso-pips').textContent`);
 async function resolverTablero(t) {
   for (const s of t.solucion) {
     // One the help already laid is not in the tray any more
     if (!await ev(`!!document.querySelector('#bandeja [data-f="${s.f}"]')`)) continue;
     const { i, g } = jugada(t, s);
-    await tocarFicha(s.f);
-    for (let k = 0; k < g; k++) await tocarFicha(s.f);
+    await girarA(s.f, g);
     await tocarCelda(i);
   }
 }
@@ -52,21 +58,20 @@ ok(/Tablero 1 de 3 · fácil/.test(await ev(`document.querySelector('.marcador')
 const t0 = generar(SEED, 'facil');
 ok(await ev(`document.querySelectorAll('#tablero .celda').length`) === t0.celdas.length && await ev(`document.querySelectorAll('#bandeja .ficha').length`) === t0.fichas.length, 'the board and the tray are the engine\'s');
 
-// Choose, turn, lay; one that does not fit; take it off
+// A tap turns and chooses; lay; one that does not fit; take it off
 const s0 = t0.solucion[0];
+const alto = () => ev(`document.getElementById('bandeja').offsetHeight`);
+const altoAntes = await alto();
 await tocarFicha(s0.f);
-ok(await ev(`document.querySelector('#bandeja [data-f="${s0.f}"]').classList.contains('sel')`), 'a tap chooses a domino');
-const antes = await ev(`document.querySelector('#bandeja [data-f="${s0.f}"]').classList.contains('vertical')`);
-await tocarFicha(s0.f);
-ok(await ev(`document.querySelector('#bandeja [data-f="${s0.f}"]').classList.contains('vertical')`) !== antes, 'a second tap turns it');
+ok(await ev(`document.querySelector('#bandeja [data-f="${s0.f}"]').classList.contains('sel') && document.querySelector('#bandeja [data-f="${s0.f}"]').classList.contains('vertical')`), 'a single tap turns a domino and chooses it');
+ok(await alto() === altoAntes, 'turning it does not change the tray\'s height');
 const sinSitio = t0.celdas.findIndex((_, i) => !lugar(t0, i, 1));
 if (sinSitio >= 0) {
   await tocarCelda(sinSitio);
   ok(/Así no cabe/.test(await aviso()), 'where it does not fit, it says so');
 }
-await tocarFicha(s0.f); await tocarFicha(s0.f); await tocarFicha(s0.f);   // back to x|y
 const { i, g } = jugada(t0, s0);
-for (let k = 0; k < g; k++) await tocarFicha(s0.f);
+await girarA(s0.f, g);
 await tocarCelda(i);
 ok(await ev(`!!document.querySelector('#tablero .puesta[data-f="${s0.f}"]') && !document.querySelector('#bandeja [data-f="${s0.f}"]')`), 'a tap on a cell lays it on the board');
 await ev(`document.querySelector('#tablero .puesta[data-f="${s0.f}"]').click(); 1`);
