@@ -57,6 +57,7 @@ ok(await waitFor(`!!document.getElementById('tablero')`, 9000), 'Empezar goes th
 ok(/Tablero 1 de 3 · fácil/.test(await ev(`document.querySelector('.marcador').textContent`)), 'it says board 1 of 3, easy');
 const t0 = generar(SEED, 'facil');
 ok(await ev(`document.querySelectorAll('#tablero .celda').length`) === t0.celdas.length && await ev(`document.querySelectorAll('#bandeja .ficha').length`) === t0.fichas.length, 'the board and the tray are the engine\'s');
+ok(await ev(`(d => d && !d.open && d.querySelector('summary').textContent === '¿Cómo se juega?' && d.querySelectorAll('.pasos li').length === 3)(document.getElementById('como-pips'))`), 'under the board, a folded ¿Cómo se juega? with the cover\'s three steps');
 
 // A tap turns and chooses; lay; one that does not fit; take it off
 const s0 = t0.solucion[0];

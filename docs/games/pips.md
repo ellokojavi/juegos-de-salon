@@ -39,7 +39,8 @@ as an empty box.
   diamond: `6`, `=`, `≠`, `<5`, `>9` (D-385: it used to hang over the corner, where it looked like any
   of four cells'). A tap on a diamond lights its zone for a moment and dims the rest.
 - **The tray:** the dominoes not yet placed, ivory with dark dots, each in a square slot as big as the
-  domino is long, so turning one or laying it moves nothing on the screen (D-385; a laid domino leaves its
+  domino is long (halves of up to 38 px, four to a row even at 320 px; board cells up to 64 px, smaller on a short
+  screen so the tray stays in view), so turning one or laying it moves nothing on the screen (D-385; a laid domino leaves its
   slot empty). A tap turns it a quarter (x|y, x over y, y|x, y over x) and chooses it (it lifts and
   shines); a tap on a cell then lays its first half there and the other to the right or below. Where it
   does not fit: "Así no cabe: gírala o prueba otra casilla." On a taken cell: "Ahí ya hay una ficha:
@@ -58,6 +59,8 @@ as an empty box.
 - **💡 Ayuda (−10):** a second tap ("Toca de nuevo (−10)", 3 seconds), then it lays one domino of the
   solution in its place, taking off whatever was on those cells, and marks it.
 - **🏳️ Rendirse:** a second tap ("🏳️ ¿Seguro?").
+- **¿Cómo se juega?:** under the buttons, a folded panel with the cover's three steps, to read them
+  again without leaving the board.
 - **↩️ Deshacer and 🧹 Limpiar (D-385):** a row above Ayuda and Rendirse. Deshacer takes back the last
   change to the board (a domino laid, moved or taken off, a help, a clear), one at a time, as far back as
   the board began; a help undone keeps its −10. Limpiar takes every domino off with a second tap ("🧹
