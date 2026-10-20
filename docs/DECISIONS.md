@@ -46,14 +46,14 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352 |
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
-| Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392 |
+| Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384 |
-| Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400 |
+| Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401 |
 | Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178, D-380 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (389)
+## In force (390)
 
 | D | Title | Status |
 |---|---|---|
@@ -439,13 +439,14 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-391](decisions/D-391.md) | The end-to-end scope never falls back to "everything" without a test saying so | amended by D-392 |
 | [D-392](decisions/D-392.md) | A push to a PR tests only what changed since the PR last passed | current |
 | [D-393](decisions/D-393.md) | The home page's search on a computer: ↓ ↑ Enter and Escape in the dropdown | current |
-| [D-394](decisions/D-394.md) | One file per decision, and a generated index | current |
+| [D-394](decisions/D-394.md) | One file per decision, and a generated index | amended by D-401 |
 | [D-395](decisions/D-395.md) | Everything in development sits behind the lab door | current |
 | [D-396](decisions/D-396.md) | The home page's 🔎 pill goes first, left of ⭐ Favoritos | current |
 | [D-397](decisions/D-397.md) | The home page search lists the games whose name matches first | current |
 | [D-398](decisions/D-398.md) | The home page's 🔎 search opens and closes with a motion | current |
 | [D-399](decisions/D-399.md) | The home page's lab bar opens with the newest experiment on | current |
 | [D-400](decisions/D-400.md) | The merge no longer waits two minutes for the app's monitor; sessions wait with wait-pr.mjs | current |
+| [D-401](decisions/D-401.md) | A decisions index left behind by other PRs no longer fails the next PR | current |
 
 ## No longer in force (9)
 
