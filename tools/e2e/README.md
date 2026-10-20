@@ -80,12 +80,16 @@ and this folder, `tools/agents/`, `tools/firebase/`, `firebase/` and the workflo
 [`changes.mjs`](changes.mjs) decides what counts (D-205, D-299; tested by
 `node tools/e2e/changes.test.mjs`).
 
+Each push to a PR tests only what changed since the PR's last commit that passed (D-392,
+[`since-passed.mjs`](since-passed.mjs), tested by `node tools/e2e/since-passed.test.mjs`): the first push, or one after a red run, tests the whole PR.
 Any other PR runs **only the scripts whose pages load what it changed** (D-329,
 [`affected.mjs`](affected.mjs), tested by `node tools/e2e/affected.test.mjs`). There is no build, so
 the graph is read straight from the files: each `index.html`, what it links, and what that imports.
 So a page is only as narrow as its imports: what other pages need from a game (La Copa's code, clock
 and notification sheets' texts, D-377; the seeded `rng`, D-378) lives in small modules of its own, and
-[`scope.test.mjs`](scope.test.mjs) fails if a page loads another game's files, unless `affected.mjs`
+The design behind all this is [docs/TEST-SCOPE.md](../../docs/TEST-SCOPE.md). [`scope-guard.test.mjs`](scope-guard.test.mjs) fails if a file of the site is loaded by no page, or a script
+names no page, since either makes the graph run every script (D-391): a page loads what its tags, imports,
+`import('…')` and `new URL('<file>', …)` name. [`scope.test.mjs`](scope.test.mjs) fails if a page loads another game's files, unless `affected.mjs`
 lists it in `SHARED` (a small module every page may load) or `REUSES` (a game that plays another's
 engine on purpose), each with its reason (D-378). A game's file that La Copa plays (`cup/games/<game>/…`,
 and the engines it takes from `bulls-and-cows/` and `timeline/`) is imported by every screen of La Copa
