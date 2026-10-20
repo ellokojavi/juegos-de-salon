@@ -272,8 +272,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     mkdirSync(join(ROOT, DIR), { recursive: true });
     let written = 0;
     const differ = [];
-    for (const [name, text] of files) {
+    for (let [name, text] of files) {
       const f = join(ROOT, DIR, name);
+      // A title already translated here is kept: only what the branch changed counts as different
+      if (existsSync(f)) text = text.replace(/^.*\n/, readFileSync(f, 'utf8').match(/^.*\n/)[0]);
       if (existsSync(f) && readFileSync(f, 'utf8') !== text && !args.includes('--force')) { differ.push(name); continue; } // already here, maybe edited since
       if (!existsSync(f) || readFileSync(f, 'utf8') !== text) { writeFileSync(f, text); written++; }
     }

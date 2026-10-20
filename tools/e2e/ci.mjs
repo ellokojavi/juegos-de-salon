@@ -28,7 +28,7 @@ const OUT = process.env.E2E_OUT || process.env.SALIDA_E2E || '/tmp/e2e';
 const CAP_MS = 15 * 60 * 1000;
 
 // Not tests: they look at screens or build screenshot sheets
-const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs', 'affected.mjs']);
+const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs', 'affected.mjs', 'since-passed.mjs']);
 // They open rooms or join them in the production Firebase: still run by hand
 const WITH_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
 const ALSO_FIREBASE = new Set([
@@ -48,7 +48,7 @@ const OBSOLETE = new Set([
 // The long scripts are split into parts, each in its own GitHub job: the slowest sets how long
 // the whole check takes. Each part reaches the script as `--part <name>`. Here, without a part,
 // they run whole.
-const PARTS = {
+export const PARTS = {
   'cup/tournament.mjs': ['cup', 'labs', 'demos'],
   'cup-games/languages.mjs': SUELTOS.map(m => m.slug),
 };
