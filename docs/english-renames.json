@@ -19,7 +19,7 @@
     "docs/DECISIONES.md": {
       "to": "docs/DECISIONS.md",
       "phase": 5,
-      "state": "pending"
+      "state": "done"
     },
     "docs/PWA-NOTIFICACIONES.md": {
       "to": "docs/PWA-NOTIFICATIONS.md",

@@ -118,7 +118,8 @@ const e2e = files('tools/e2e', r => r.endsWith('.mjs') && !r.endsWith('cdp.mjs')
 const title = path => (read(path).match(/^#\s+(.+)$/m) || [, path])[1]
   .replace(/[\p{Extended_Pictographic}\uFE0F\s]+$/u, '').trim();
 const documents = [
-  ...files('docs', r => r.endsWith('.md')),
+  // Each decision is its own file (D-394): the index, docs/DECISIONS.md, stands for them all
+  ...files('docs', r => r.endsWith('.md') && !r.startsWith('docs/decisions/')),
   'firebase/README.md', 'tools/e2e/README.md', 'CHANGELOG.md',
 ].filter(exists).map(path => ({ path, title: title(path) }));
 

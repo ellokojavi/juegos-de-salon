@@ -14,7 +14,7 @@ PR for the owner and move on.
    the `readme-and-cards` skill (`.claude/skills/readme-and-cards/SKILL.md`): how the README is maintained
    (`tools/release/readme.py`) and the social cards (`tools/release/og.mjs`).
 2. `docs/CANONES.md` (C-n), especially C-13 (documentation) and the checklist at the end.
-3. `docs/DECISIONES.md` (D-n): what was decided is not re-argued; it is only documented.
+3. `docs/DECISIONS.md` (D-n), the index, and `docs/decisions/D-<n>.md`, one file each (D-394): what was decided is not re-argued; it is only documented.
 
 The README is **in English** (C-13, D-78), and since D-316 so is everything else you write (see
 "Language" below).
@@ -65,8 +65,9 @@ changelog entries are written in English, even inside files that are still in Sp
      already merged into `CHANGELOG.md`), with what changed for players, in the tone of the
      previous ones. In a PR, its `changelog/<rama>.md` must describe what it brings. You do not write
      the numbers: they are assigned automatically, and the processes agent merges the entries in.
-   - **`docs/DECISIONES.md`:** every D-n cited in the code or in a commit exists, has a
-     date and status, and the ones it replaces say "reemplazada por D-n". Numbers are not repeated.
+   - **`docs/decisions/`:** every D-n cited in the code or in a commit exists as `D-<n>.md`, has a
+     date, a status and its topics, and the ones it amends or replaces say "amended by D-n" /
+     "replaced by D-n". The index `docs/DECISIONS.md` is rebuilt with `node tools/agents/decision.mjs index`, never edited by hand (D-394).
    - **`docs/REQUERIMIENTOS.md`:** a fulfilled requirement is marked ✅ with its version.
    - **`docs/games/<carpeta>.md`** of the game that changed, `docs/CANONES.md` if a general rule
      changed, `docs/USABILIDAD.md` only if the owner resolved a dilemma and it still needs recording.
