@@ -85,7 +85,9 @@ Any other PR runs **only the scripts whose pages load what it changed** (D-329,
 the graph is read straight from the files: each `index.html`, what it links, and what that imports.
 So a page is only as narrow as its imports: what other pages need from a game (La Copa's code, clock
 and notification sheets' texts, D-377; the seeded `rng`, D-378) lives in small modules of its own, and
-[`scope.test.mjs`](scope.test.mjs) fails if a page loads another game's files, unless `affected.mjs`
+[`scope-guard.test.mjs`](scope-guard.test.mjs) fails if a file of the site is loaded by no page, or a script
+names no page, since either makes the graph run every script (D-391): a page loads what its tags, imports,
+`import('…')` and `new URL('<file>', …)` name. [`scope.test.mjs`](scope.test.mjs) fails if a page loads another game's files, unless `affected.mjs`
 lists it in `SHARED` (a small module every page may load) or `REUSES` (a game that plays another's
 engine on purpose), each with its reason (D-378). A game's file that La Copa plays (`cup/games/<game>/…`,
 and the engines it takes from `bulls-and-cows/` and `timeline/`) is imported by every screen of La Copa

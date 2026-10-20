@@ -48,7 +48,7 @@ const OBSOLETE = new Set([
 // The long scripts are split into parts, each in its own GitHub job: the slowest sets how long
 // the whole check takes. Each part reaches the script as `--part <name>`. Here, without a part,
 // they run whole.
-const PARTS = {
+export const PARTS = {
   'cup/tournament.mjs': ['cup', 'labs', 'demos'],
   'cup-games/languages.mjs': SUELTOS.map(m => m.slug),
 };
