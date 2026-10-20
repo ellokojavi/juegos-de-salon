@@ -1,6 +1,6 @@
 /**
- * The home page's search, a lab experiment (`?search`, the owner's request): a 🔎 pill that opens into
- * a field with a dropdown of the games it finds (drawSearch, D-390), by the game's name in any language, its tagline, its
+ * The home page's search, a lab experiment (`?search`, the owner's request): a 🔎 pill, first in the filter row
+ * (left of ⭐ Favoritos, D-396), that opens into a field with a dropdown of the games it finds (drawSearch, D-390), by the game's name in any language, its tagline, its
  * types and the keywords below, in Spanish and English ("lógica", "dados", "dice"). Accents and case do not count, and each
  * word typed must start some word of the game ("dad" finds Dudo). Until it ships, the keywords live
  * here and not in games.js.
