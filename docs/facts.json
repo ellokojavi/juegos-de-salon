@@ -1,5 +1,5 @@
 {
-  "version": "0.187.8",
+  "version": "0.187.10",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1068,6 +1068,7 @@
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
+    "public/labs/home/search.test.mjs",
     "public/labs/pips/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
