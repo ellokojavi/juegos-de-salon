@@ -15,7 +15,7 @@ issue #556, idea `pips-dominoes`), approved by the owner: "Hagamos una demo de P
 ## Cover
 
 The title with an ivory domino (6 and 3) that sways, the tagline ("Pon todas las fichas de dominó para
-que cada zona cumpla su regla."), the credit, and an easy board that solves itself, a domino at a time,
+que cada zona cumpla su regla."), the credit, and an easy board (cells up to 52 px) that solves itself, a domino at a time,
 then another (still with reduced motion). Then "📅 Los tableros de hoy son los mismos para todos." (without
 `?seed=`), "🎲 Empezar" and the three steps (after the button, U-39):
 
