@@ -1,4 +1,4 @@
-# Test scope: which tests a change runs, and how the system learns it (D-391)
+# Test scope: which tests a change runs, and how the system learns it (D-391, D-392)
 
 Every push to a PR runs the `tests` check (unit tests, ~2 min) and the `end-to-end` check (scripts in
 `tools/e2e/` playing the site in headless Chrome, up to 76 jobs and ~25 min). The end-to-end check is
@@ -7,8 +7,8 @@ the expensive one, so it should run **only the scripts that can break with this 
 
 That has gone wrong several times. Each time it was fixed for one case (D-329, D-346, D-378, D-388) and
 the next case was only found when a PR was already slow. This document is the design that ends the
-case-by-case cycle: one place for the knowledge, guards that fail when it is missing, and a loop that
-measures and fixes it on its own.
+case-by-case cycle: test only the push, one place for the knowledge, guards that fail when it is
+missing, and a light report when something still slips.
 
 ## Principles
 
@@ -20,17 +20,19 @@ measures and fixes it on its own.
 3. **No silent "run everything".** "I cannot tell" is a bug in the knowledge, not a safe default. The
    graph still runs everything when in doubt (safety first), but a test fails the PR that creates the
    doubt, in the fast `tests` check, with a message saying how to fix it.
-4. **Measure both errors.** Over-testing (jobs that could not break) costs time; under-testing (a
-   script skipped that would have failed) costs a broken `main`. Both are measured, and each is fixed
-   by improving the knowledge, never by running more "just in case".
-5. **The system improves itself.** The processes agent reads the measures in its daily round and turns
-   each recurring miss into a fix in the graph, the declared list or a guard (D-273: a mechanism, not
-   an instruction).
+4. **Test what is new.** A push tests what changed since its PR last passed, not the whole PR again.
+5. **Watch both errors where they happen.** Over-testing (jobs that could not break) costs time;
+   under-testing (a script skipped that would have failed) costs a red `main`, which the whole suite on
+   `main` still catches before publishing. Each is fixed by improving the knowledge, never by running
+   more "just in case", and a recurring one becomes a mechanism (D-273).
 
-## The four layers
+## The layers
 
 ```
- change (files in the PR)
+ push to a PR
+        │
+        ▼
+ 0. INCREMENT   only the files changed since the PR last passed   since-passed.mjs (D-392)
         │
         ▼
  1. KNOWLEDGE   page graph (derived) + declared facts         affected.mjs
@@ -42,8 +44,29 @@ measures and fixes it on its own.
  3. GUARDS      fail the PR when the knowledge has a hole     scope-guard.test.mjs, scope.test.mjs,
         │                                                     affected.test.mjs
         ▼
- 4. FEEDBACK    measure over- and under-testing, fix          ledger + processes round (phase 2–3)
+ 4. FEEDBACK    say when a run goes over budget, and when a   ci.mjs --scope, merge-report.mjs
+                skipped script fails on main                  (phase 3, proposed)
 ```
+
+### 0. Increment: test the push, not the whole PR again (D-392)
+
+A PR is pushed several times: a fix, the agents' commits, a changelog entry, a merge of `main`. Each
+push used to run the scope of the **whole PR**, so a one-line fix to a test ran the same 76 jobs as the
+first push (#572 ran them three times for commits that touched no page).
+
+Now each PR run that passes the `end-to-end` check leaves a mark, an artifact `e2e-head-<sha>` of the
+PR's head commit. The next push asks `tools/e2e/since-passed.mjs` for the files changed **since the
+PR's last commit that passed** (GitHub's compare, which includes what a merge of `main` brought in), and
+only those go into the scope below. The whole PR is tested when no earlier commit passed (the first push,
+a push after a red run, a force push) or when asking GitHub fails.
+
+What is not retested on the PR: changes on `main` that the PR did not merge. GitHub tests a PR merged
+with the `main` of that moment, so a later push tests its own files against a newer `main` without
+rerunning what the newer `main` brought. The safety net is `publish.yml`, which runs the whole suite on
+what it publishes unless that exact tree already passed (D-302, D-308). For that net to hold, **an
+incremental run never leaves the tree's mark** (`e2e-tree-<tree>`): only a run that tested the whole PR
+can vouch for a tree. After a PR whose last push was incremental, publishing takes the whole suite
+(~8 minutes of publishing, never of the PR).
 
 ### 1. Knowledge
 
@@ -84,49 +107,57 @@ A new capability (a new page, a new way to load a module, a new kind of script) 
 graph already reads, or a guard fails on its first PR and names the fix. That is what keeps the design
 sustainable as the site grows: nobody has to remember the rule.
 
-### 4. Feedback
+### 4. Feedback (phase 3, proposed)
 
-Two signals, measured from GitHub runs, not from memory:
+Kept small on purpose: no ledger, no daily round reading runs. A daily agent reading GitHub runs costs
+time and tokens every day, and with the guards of layer 3 the "cannot narrow" cases already fail in the
+PR that creates them. What is left to catch is cheap to report where it happens:
 
-- **Over-testing.** For each PR run: its level, its jobs, its minutes, and the reason the scope gave
-  (`ci.mjs --scope` already writes it to the run summary, D-378). A run at N3 for "a change the graph
-  cannot narrow", or one over its level's budget, is a candidate. The file that caused it is in the
-  summary's table.
-- **Under-testing (an escape).** `publish.yml` runs the whole suite on `main` unless the tree already
-  passed (D-302, D-308). If a script fails there that the PR skipped, the scope missed a dependency:
-  the PR's files and the failing script name the missing edge.
+- **Over budget.** `ci.mjs --scope` already writes the scope to the run summary (D-378). When a run goes
+  over its level's budget it adds a ⚠️ line naming the file that widened it, in the same summary.
+- **An escape.** If the whole suite on `main` (`publish.yml`) fails on a script the merged PR did not
+  run, `merge-report.mjs` says so in the comment it already leaves on the PR (D-323): the PR's files and
+  the failing script name the missing link in the graph, to fix with a test.
 
-Both go into a ledger, `docs/test-scope.json` (one entry per merged PR: number, level, jobs, minutes,
-reason, escapes), written by `node tools/e2e/scope-audit.mjs record`. The processes agent runs
-`scope-audit.mjs check` in its daily round (D-276):
-
-1. It lists the misses since the last round: over-budget runs with their file, and escapes with their
-   PR and script.
-2. A miss seen once is recorded (`processes.mjs pattern`); seen twice, it gets a mechanism: a fix in the
-   graph (a new load pattern it reads), a declared fact with its reason, or a new guard, in a PR with
-   a test (`processes.mjs mechanism`, D-273).
-3. Its weekly report says how many end-to-end minutes PRs used, against the week before.
+The processes agent handles both as any other recurring error (D-273): seen twice, it becomes a fix in
+the graph, a declared fact or a guard.
 
 ## Phases
 
 | Phase | What | State |
 |---|---|---|
-| 1 | The graph reads on-demand loads (`import('…')`, `new URL`); `scope-guard.test.mjs`; the lab index counts as lab for N2 · home | **Built** in this PR (D-391) |
-| 2 | `tools/e2e/scope-audit.mjs` (`record`, `check`) and the ledger `docs/test-scope.json`, fed from the runs' summaries through `gh`; in the processes round | Proposed |
-| 3 | Escapes: `publish.yml`'s report names a failing script the PR skipped, and the audit records it | Proposed |
-| 4 | The declared facts (`REUSES`, `SHARED`, `EVERY_PAGE`, `PARTS`) move to one module, `tools/e2e/scope-facts.mjs`, each with its reason and decision | Proposed |
+| 1 | The graph reads on-demand loads (`import('…')`, `new URL`); `scope-guard.test.mjs`; the lab index counts as lab for N2 · home | **Built** (D-391) |
+| 2 | Increment: a push tests only what changed since the PR's last commit that passed (`since-passed.mjs`, the `e2e-head-<sha>` marks) | **Built** (D-392) |
+| 3 | Feedback: the over-budget line in the run summary, and the escape line in the merged PR's comment | Proposed |
+
+Left out after review (D-392): a ledger with a daily audit (it costs every day what the guards already
+catch in the PR) and moving the declared facts to their own module (tidier, but no job less).
+
+## Lessons (what went wrong before, so it is not repeated)
+
+- **A page loads more than its tags say.** `import('…')` inside an inline `<script>`, `new URL('<file>', …)`
+  and a service worker's registration are loads too. Each one the graph did not read made every PR that
+  touched the file run all 76 jobs (D-391).
+- **Reading every string that looks like a file name is too much.** A first try read any `'x.js'` in a
+  script and pulled La Copa into the home page through a comment; only `new URL('…')` counts.
+- **The lab's own index is a lab page** (`labs`, not only `labs/…`).
+- **"When in doubt, run everything" hides the doubt.** Keep the safe fallback, but a guard must fail the
+  PR that creates it.
+- **A narrowed run must not vouch for more than it tested.** A first version of D-392 left the tree's
+  mark after an incremental run, which would have let `publish.yml` skip the whole suite on a tree only
+  partly tested.
+- **Check the scope before pushing**, with the command below; a surprise in CI costs a whole run.
 
 ## Where this knowledge lives
 
 | What | File |
 |---|---|
 | This design | `docs/TEST-SCOPE.md` |
-| Why each step was taken | `docs/DECISIONES.md`: D-329, D-346, D-378, D-388, D-391 |
+| Why each step was taken | `docs/DECISIONES.md`: D-308, D-329, D-346, D-378, D-388, D-391, D-392 |
 | How to run and write scripts | `tools/e2e/README.md` |
-| The code | `tools/e2e/affected.mjs`, `changes.mjs`, `ci.mjs` |
+| The code | `tools/e2e/affected.mjs`, `changes.mjs`, `ci.mjs`, `since-passed.mjs` (D-392) |
 | The guards | `tools/e2e/*.test.mjs` |
 | Who watches it | `.claude/agents/processes.md` (owns the test-level criterion, D-346) |
-| The measures (phase 2) | `docs/test-scope.json` |
 
 ## Checking a PR's scope by hand
 
@@ -137,3 +168,6 @@ node tools/e2e/ci.mjs --scope --changes /tmp/changes.txt   # level, jobs and why
 
 If it says "a change the graph cannot narrow" or runs more than the level's budget, fix the knowledge
 before pushing; don't accept it.
+
+In a run, the `list` job's log says which way it went: `since-passed: N file(s) changed since <sha>, the
+last commit of this PR that passed`, or `no earlier commit of this PR passed: the whole PR`.
