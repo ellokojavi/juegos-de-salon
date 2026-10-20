@@ -1,5 +1,5 @@
 {
-  "version": "0.188.1",
+  "version": "0.187.4",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1094,7 +1094,9 @@
     "tools/e2e/changes.test.mjs",
     "tools/e2e/groups.test.mjs",
     "tools/e2e/output.test.mjs",
+    "tools/e2e/scope-guard.test.mjs",
     "tools/e2e/scope.test.mjs",
+    "tools/e2e/since-passed.test.mjs",
     "tools/firebase/rankings-history.test.mjs",
     "tools/firebase/unnoted-rooms.test.mjs",
     "tools/jobs/jobs.test.mjs",
@@ -1186,9 +1188,12 @@
     "room-cap.mjs",
     "room-error.mjs",
     "routes/game.mjs",
+    "scope-guard.test.mjs",
     "scope.test.mjs",
     "share-home.mjs",
     "share-room.mjs",
+    "since-passed.mjs",
+    "since-passed.test.mjs",
     "smoke.mjs",
     "spacing-common.mjs",
     "splash/languages.mjs",
@@ -1236,6 +1241,10 @@
     {
       "path": "docs/REQUERIMIENTOS.md",
       "title": "Requerimientos"
+    },
+    {
+      "path": "docs/TEST-SCOPE.md",
+      "title": "Test scope: which tests a change runs, and how the system learns it (D-391, D-392)"
     },
     {
       "path": "docs/UNO-AL-DIA.md",
