@@ -120,10 +120,10 @@ export function search(query, games) {
 }
 
 export const TEXTS = {
-  es: { placeholder: 'Busca un juego: lógica, dados, palabras…', label: 'Buscar un juego', none: 'Ningún juego con «{q}».', clear: 'Borrar la búsqueda' },
-  en: { placeholder: 'Find a game: logic, dice, words…', label: 'Find a game', none: 'No game matches “{q}”.', clear: 'Clear the search' },
-  pt: { placeholder: 'Busque um jogo: lógica, dados, palavras…', label: 'Buscar um jogo', none: 'Nenhum jogo com “{q}”.', clear: 'Apagar a busca' },
-  de: { placeholder: 'Spiel suchen: Logik, Würfel, Wörter…', label: 'Spiel suchen', none: 'Kein Spiel passt zu „{q}“.', clear: 'Suche löschen' },
+  es: { placeholder: 'Buscar: lógica, dados…', label: 'Buscar un juego', none: 'Ningún juego con «{q}».', clear: 'Borrar la búsqueda' },
+  en: { placeholder: 'Search: logic, dice…', label: 'Find a game', none: 'No game matches “{q}”.', clear: 'Clear the search' },
+  pt: { placeholder: 'Buscar: lógica, dados…', label: 'Buscar um jogo', none: 'Nenhum jogo com “{q}”.', clear: 'Apagar a busca' },
+  de: { placeholder: 'Suchen: Logik, Würfel…', label: 'Spiel suchen', none: 'Kein Spiel passt zu „{q}“.', clear: 'Suche löschen' },
 };
 
 /**
