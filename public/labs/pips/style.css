@@ -22,7 +22,7 @@ body {
 .pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
 .pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
 .paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
-.demo { display: grid; place-items: center; min-height: 150px; }
+.demo { display: grid; place-items: center; min-height: 220px; }
 
 /* A domino: two square halves of --t, ivory, with dark dots on a 3×3 grid */
 .ficha {
@@ -46,7 +46,7 @@ button.ficha:active { transform: scale(0.94); }
   position: relative; display: grid; grid-template-columns: repeat(var(--w), var(--s)); grid-template-rows: repeat(var(--h), var(--s));
   justify-content: center; margin: 4px auto; transition: filter 0.3s;
 }
-.tablero-pips.chico { --s: min(34px, calc((100vw - 80px) / var(--w))); }
+.tablero-pips.chico { --s: min(52px, calc((100vw - 64px) / var(--w))); }
 .celda {
   --z: rgba(255,255,255,0.35);
   margin: 1px; padding: 0; border: 0; border-radius: 6px; cursor: pointer;
@@ -70,7 +70,7 @@ button.ficha:active { transform: scale(0.94); }
 .regla.ok { box-shadow: 0 0 0 3px #9dff3a, 0 2px 6px rgba(0,0,0,0.45); }
 .regla.mal { background: #ff3b3b; animation: pips-no 0.35s; }
 .regla.mal > span { color: #fff; }
-.tablero-pips.chico .regla { width: 16px; height: 16px; margin: 0 2px 2px 0; pointer-events: none; }
+.tablero-pips.chico .regla { width: 22px; height: 22px; margin: 0 2px 2px 0; pointer-events: none; }
 /* The zone in focus: its cells light up and the rest dim */
 .tablero-pips .celda, .tablero-pips .regla { transition: opacity 0.15s, box-shadow 0.15s, background 0.15s; }
 .tablero-pips.foco .celda:not(.encendida), .tablero-pips.foco .regla:not(.encendida) { opacity: 0.45; }
@@ -82,7 +82,7 @@ button.ficha:active { transform: scale(0.94); }
 .bandeja .ficha, .tablero-pips .puesta { touch-action: none; -webkit-touch-callout: none; }
 .ficha.arrastrada { opacity: 0.3; }
 .ficha.fantasma { position: fixed; z-index: 50; pointer-events: none; transform: scale(1.06); box-shadow: 0 10px 24px rgba(0,0,0,0.55); }
-.tablero-pips.chico .regla > span { font-size: 0.62rem; }
+.tablero-pips.chico .regla > span { font-size: 0.8rem; }
 /* A placed domino covers its two cells */
 .puesta { --t: calc(var(--s) - 4px); z-index: 1; align-self: center; justify-self: center; }
 .tablero-pips .puesta.cae { animation: pips-cae 0.28s ease-out; }
