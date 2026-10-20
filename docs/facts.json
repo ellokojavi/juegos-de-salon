@@ -1,5 +1,5 @@
 {
-  "version": "0.187.4",
+  "version": "0.187.6",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1227,8 +1227,8 @@
       "title": "Cánones y estándares de Juegos de Salón"
     },
     {
-      "path": "docs/DECISIONES.md",
-      "title": "Decisiones de diseño y arquitectura"
+      "path": "docs/DECISIONS.md",
+      "title": "Decisions"
     },
     {
       "path": "docs/PANEL.md",

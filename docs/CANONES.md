@@ -264,7 +264,7 @@ Con cada juego o cambio relevante se actualiza:
   Reglas, Modos, Flujo, Protocolo de mensajes, Archivos y Excepciones a los cánones (D-213). Lo que
   un juego necesite además va en una sección propia. Los juegos de La Copa viven en `cup.md`.
 - `docs/REQUERIMIENTOS.md`: requerimientos con prefijo propio y estado.
-- `docs/DECISIONES.md`: una decisión numerada (D-n) por cada elección no obvia, con su porqué y sus consecuencias.
+- `docs/decisions/D-<n>.md`: one numbered decision (D-n) per non-obvious choice, with its why and its consequences; `docs/DECISIONS.md` is its generated index (D-394).
 - `README.md`: sección del juego con capturas, **en inglés** (ver abajo).
 - `CHANGELOG.md`: qué cambió, en qué versión.
 

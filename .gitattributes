@@ -1,3 +1,3 @@
-# DECISIONES.md is merged decision by decision (D-301): `node tools/agents/decision.mjs install`
-# sets up the driver in the worktree (reserve does it by itself). Without it, git uses the usual merge.
-docs/DECISIONES.md merge=decisions
+# docs/DECISIONS.md is generated from docs/decisions/ (D-394): if it collides when bringing in main,
+# keep both sides and build it again with `node tools/agents/decision.mjs index` (a test fails while it is stale).
+docs/DECISIONS.md merge=union

@@ -9,7 +9,8 @@
  *
  * `check` starts from the commit saved in docs/documentation.json (or from `--from`), lists what
  * came into main and checks what can be checked without reading prose:
- *   - each D-n cited in the repo exists in docs/DECISIONES.md, and none is there twice;
+ *   - each D-n cited in the repo exists in docs/decisions/ (one file each, D-394), and none is there twice;
+ *   - each file is named after its heading, its Topics exist, and docs/DECISIONS.md is up to date;
  *   - the decisions are in order and without gaps (an empty number is written "(número sin usar)"
  *     or "(unused number)");
  *   - each decision has one of the four Statuses (D-213), and what its Status cites exists;
@@ -32,6 +33,7 @@ import { dirname, join } from 'node:path';
 import { compartirApp, LO_PRINCIPAL } from '../../public/assets/js/compartir.js';
 import { COMMON } from '../../public/assets/js/i18n.js';
 import { PORTADA } from '../../public/assets/js/games.js';
+import { allText, readAll, readTopics, topicsOf, buildIndex, numberOf, DIR, INDEX } from './decision.mjs';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const MEMORY = join(ROOT, 'docs/documentation.json');
@@ -113,14 +115,30 @@ export function amendedBy(relation) {
   return [...n];
 }
 
-/** What is wrong in the Statuses and Relations of DECISIONES.md (D-213). */
+/**
+ * What is wrong in the decision files themselves (D-394): a file not named after its heading, a
+ * Topic that topics.json does not have, a meta line without English labels, a stale index.
+ */
+export function fileProblems(decisions, topics, index) {
+  const problems = [], keys = new Set(topics.map(t => t.key));
+  for (const d of decisions) {
+    if (d.n === undefined) { problems.push(`${DIR}/${d.file} does not start with "## D-n · title"`); continue; }
+    if (numberOf(d.file) !== d.n) problems.push(`${DIR}/${d.file} holds D-${d.n}: the file is named D-${d.n}.md`);
+    for (const k of ['Fecha', 'Estado', 'Relación']) if (d.meta.has(k)) problems.push(`D-${d.n} uses the label **${k}:**; since D-394 the meta line is English (Date, Status, Relation, Topics)`);
+    for (const t of topicsOf(d)) if (!keys.has(t)) problems.push(`D-${d.n} has the topic "${t}", which is not in ${DIR}/topics.json`);
+  }
+  if (index !== buildIndex(decisions, topics)) problems.push(`${INDEX} is stale: node tools/agents/decision.mjs index`);
+  return problems;
+}
+
+/** What is wrong in the Statuses and Relations of the decisions (D-213). */
 export function statusProblems(decisions) {
   const all = entries(decisions), problems = [];
   const byNumber = new Map(all.map(e => [e.n, e]));
   for (const e of all) {
     if (e.unused) continue;
     const status = readStatus(e.status);
-    if (e.status === null) problems.push(`D-${e.n} has no **Status:** in docs/DECISIONES.md`);
+    if (e.status === null) problems.push(`D-${e.n} has no **Status:** in ${DIR}/D-${e.n}.md`);
     else if (!status) problems.push(`D-${e.n} has a Status that is not one of the four: "${e.status}"`);
     else for (const x of status.by) if (!byNumber.has(x) || byNumber.get(x).unused) problems.push(`D-${e.n} is ${status.type} by D-${x}, which does not exist`);
     for (const x of amendedBy(e.relation)) {
@@ -226,24 +244,25 @@ export function runChecks() {
   const texts = files.filter(f => /\.(js|mjs|py|md|json|html|css)$/.test(f) && !f.startsWith('docs/screenshots/'));
 
   // Cited decisions that do not exist, and repeated ones
-  const { written, repeated } = writtenDecisions(read('docs/DECISIONES.md'));
-  for (const n of repeated) problems.push(`D-${n} is twice in docs/DECISIONES.md`);
+  const decisionsText = allText(ROOT);
+  const { written, repeated } = writtenDecisions(decisionsText);
+  for (const n of repeated) problems.push(`D-${n} is twice in ${DIR}/`);
+  problems.push(...fileProblems(readAll(ROOT), readTopics(ROOT), existsSync(join(ROOT, INDEX)) ? read(INDEX) : ''));
   const missing = new Map();
   for (const f of texts) {
     for (const n of citedDecisions(read(f))) if (!written.has(n)) missing.set(n, [...(missing.get(n) || []), f]);
   }
-  for (const [n, fs] of [...missing].sort((a, b) => a[0] - b[0])) problems.push(`D-${n} is cited (${fs.slice(0, 3).join(', ')}${fs.length > 3 ? '…' : ''}) and is not in docs/DECISIONES.md`);
+  for (const [n, fs] of [...missing].sort((a, b) => a[0] - b[0])) problems.push(`D-${n} is cited (${fs.slice(0, 3).join(', ')}${fs.length > 3 ? '…' : ''}) and is not in ${DIR}/`);
 
   // Numbering, Statuses and unmarked amendments (D-213)
-  const { gaps, outOfOrder } = writtenDecisions(read('docs/DECISIONES.md'));
+  const { gaps } = writtenDecisions(decisionsText);
   // A number missing here may be that of an open PR (CLAUDE.md, D-135): that is not a gap
   const branches = git('for-each-ref', '--format=%(refname)', 'refs/remotes').split('\n').filter(r => r && !r.endsWith('/HEAD'));
   // …or one reserved with `decision.mjs reserve` (D-301): its `reserve/D-n` branch (`reserva/D-n`
   // before D-316) says someone is writing it
-  const inOtherBranch = n => branches.some(r => r.endsWith(`/reserve/D-${n}`) || r.endsWith(`/reserva/D-${n}`)) || (() => { try { return !!git('grep', '-l', '-E', `^## D-[0]*${n} `, ...branches, '--', 'docs/DECISIONES.md'); } catch (_) { return false; } })();
-  for (const n of gaps.filter(n => !inOtherBranch(n))) problems.push(`D-${n} is missing from docs/DECISIONES.md: a number that was not used is written "## D-${n} · (unused number)"`);
-  for (const [n, before] of outOfOrder) problems.push(`D-${n} is out of order in docs/DECISIONES.md (it comes after D-${before})`);
-  problems.push(...statusProblems(read('docs/DECISIONES.md')));
+  const inOtherBranch = n => branches.some(r => r.endsWith(`/reserve/D-${n}`) || r.endsWith(`/reserva/D-${n}`)) || (() => { try { return branches.some(b => { try { git('cat-file', '-e', `${b}:${DIR}/D-${n}.md`); return true; } catch (_) { return false; } }); } catch (_) { return false; } })();
+  for (const n of gaps.filter(n => !inOtherBranch(n))) problems.push(`D-${n} is missing from ${DIR}/: a number that was not used is written "## D-${n} · (unused number)"`);
+  problems.push(...statusProblems(decisionsText));
 
   // Repeated IDs
   for (const id of repeatedRequirements(read('docs/REQUERIMIENTOS.md'))) problems.push(`${id} is in more than one row of docs/REQUERIMIENTOS.md`);
