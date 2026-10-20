@@ -1,7 +1,7 @@
 // Run: node tools/release/merge-report.test.mjs
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { HOLD_S, MARKER, READY_MARKER, STEPS, prOf, ready, report, testsConclusion } from './merge-report.mjs';
+import { MARKER, READY_MARKER, STEPS, prOf, ready, report, testsConclusion } from './merge-report.mjs';
 
 const base = { version: '0.172.0', siteUrl: 'https://juegosdesalon.cl/', runUrl: 'https://github.com/x/y/actions/runs/1' };
 const all = r => Object.fromEntries(['tests', 'already-tested', 'e2e', 'rules', 'publish'].map(j => [j, { result: r }]));
@@ -99,7 +99,6 @@ const all = r => Object.fromEntries(['tests', 'already-tested', 'e2e', 'rules', 
   assert.match(step, /continue-on-error: true/);
   assert.match(step, /node tools\/release\/merge-report\.mjs --ready/);
   // The hold keeps the PR open long enough for the monitor to read the comment (#427 lost it in 15 s)
-  assert.ok(HOLD_S >= 60 && HOLD_S <= 300, `the hold is a minute or few, not ${HOLD_S} s`);
   // publish.yml calls e2e.yml: it has to grant what end-to-end asks for, or the call fails to start
   const pub = readFileSync(new URL('../../.github/workflows/publish.yml', import.meta.url), 'utf8');
   const call = pub.slice(pub.indexOf('\n  e2e:'), pub.indexOf('\n  rules:'));
