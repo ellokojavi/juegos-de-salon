@@ -85,4 +85,23 @@ assert.equal(puntaje({ resueltos: 0, ms: 0, ayudas: 3 }), 0);
 assert.equal(RESTA_AYUDA, 10);
 assert.equal(tarjeta({ resueltos: 2, ayudas: 1 }), '✅✅⬜ 2 de 3 · 💡 1');
 
+// Not every board adds up (D-386): over many seeds, at most 70% of the cells sit in an exact-sum
+// zone, every kind of rule shows up, and a zone never holds both halves of a domino with two
+// different numbers (turned round, it would be a second answer)
+{
+  let celdas = 0, enSuma = 0;
+  const tipos = new Set();
+  for (const nivel of NIVELES.map(x => x.id)) for (let s = 0; s < 25; s++) {
+    const t = generar(`mezcla${s}`, nivel);
+    const zonaDe = []; t.zonas.forEach((z, k) => z.celdas.forEach(i => { zonaDe[i] = k; }));
+    for (const z of t.zonas) { celdas += z.celdas.length; if (z.tipo === 'suma') enSuma += z.celdas.length; tipos.add(z.tipo); }
+    for (const { f, a, b } of t.solucion) {
+      const [x, y] = t.fichas[f];
+      assert.ok(x === y || zonaDe[a] !== zonaDe[b], `${nivel} ${s}: a domino inside one zone`);
+    }
+  }
+  assert.ok(enSuma / celdas <= 0.7, `cells under an exact sum: ${Math.round(100 * enSuma / celdas)}%`);
+  for (const tipo of ['suma', 'igual', 'distinto', 'menor', 'mayor']) assert.ok(tipos.has(tipo), `some zone asks ${tipo}`);
+}
+
 console.log('✓ pips engine');

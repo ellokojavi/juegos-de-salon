@@ -15,7 +15,7 @@ issue #556, idea `pips-dominoes`), approved by the owner: "Hagamos una demo de P
 ## Cover
 
 The title with an ivory domino (6 and 3) that sways, the tagline ("Pon todas las fichas de dominó para
-que cada zona cumpla su regla."), the credit, and an easy board that solves itself, a domino at a time,
+que cada zona cumpla su regla."), the credit, and an easy board (cells up to 52 px) that solves itself, a domino at a time,
 then another (still with reduced motion). Then "📅 Los tableros de hoy son los mismos para todos." (without
 `?seed=`), "🎲 Empezar" and the three steps (after the button, U-39):
 
@@ -72,12 +72,15 @@ as an empty box.
 
 - `engine.js`: `generar(semilla, nivel)` builds a board from a solution: dominoes laid next to each
   other make a compact shape (a new one goes where it touches more of the shape), each gets a different
-  domino of a double-six set, the cells are split into zones of 1 to 4, and each zone gets a rule its
-  pips keep. `resolver(t, max, limite)` counts the solutions (layouts that leave the same pips on every
-  cell count once); while there are two, a zone that differs gets its exact sum, or a cell where only the
-  order differs (2 and 4 against 4 and 2) becomes a zone of its own; a board too loose to prove within
-  `limite` steps gets one more exact sum. Every board has exactly one answer (engine.test.mjs checks it
-  for several seeds and the three levels). A phone builds a hard board in a few tens of milliseconds.
+  domino of a double-six set, the cells are split into zones of 1 to 4 (growing first into a neighbor
+  with the same pips, and never holding both halves of a domino with two different numbers, D-386), and
+  each zone gets a rule its pips keep. `resolver(t, max, limite)` counts the solutions (layouts that
+  leave the same pips on every cell count once); while there are two, a zone that differs gets a stricter
+  rule, `=`, `≠` or the tightest `<`/`>` before an exact sum, or, when only the order inside a zone
+  differs, a cell moves to a neighboring zone; a board too loose to prove within `limite` steps gets one
+  more exact sum. Then each one-cell zone tries to join a neighbor while the board keeps one answer.
+  Every board has exactly one answer (engine.test.mjs checks it for several seeds and the three levels,
+  and the rule mix). Building the three boards takes about 25 ms on a computer (rarely a few hundred).
 - `cumple(zona, valores)` decides a rule (and prunes the solver while a zone is partial); `lugar`,
   `poner`, `sacar`, `estadoZonas`, `resuelto`, `ayudar`, `puntaje` and `tarjeta` are the game.
 - `game.js` draws the board with a CSS grid (cells, edges, diamonds) and the dominoes over it; the
@@ -86,8 +89,9 @@ as an empty box.
 
 ## To tune
 
-Most zones end up with an exact sum (the tightening favors them), so the boards lean on adding up; the
-real Pips has more `=`, `≠`, `<` and `>`. Worth looking at once friends have played it.
+D-386 cut the exact sums from 86% of the cells to about 60%, and the one-cell zones from three in four
+to under half. The real Pips still has more `=` zones and bigger zones; worth looking at again once
+friends have played it.
 
 ## Tests
 

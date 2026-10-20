@@ -59,7 +59,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | 🖌️ Pintaminas, el Buscaminas de colores del laboratorio (dibujos y sus colores, pinceles, tablero sin adivinar, modo difícil, ayuda, rendirse) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298, D-332 |
 | 🚇 Rutas rotas (antes Rutas), el plano de metro del laboratorio (giros de rectángulos, mínimo exacto, cinco etapas, reloj de 7 minutos y puntaje por capas) | `docs/games/routes.md` | D-293, D-294, D-295, D-332 |
 | 💥 Números explosivos, el solitario de números del laboratorio (pares iguales o que suman 10, filas que se van, ➕, tablero con salida, explosiones) | `docs/games/exploding-numbers.md` | D-297 |
-| 🎲 Pips, the dominoes puzzle of the lab (zones with a rule, one solution per board, three boards) | `docs/games/pips.md` | D-381 |
+| 🎲 Pips, the dominoes puzzle of the lab (zones with a rule, one solution per board, three boards) | `docs/games/pips.md` | D-381, D-385, D-386 |
 | 📐 Loteo, el Shikaku del laboratorio (rectángulos con un número que es su área, solución única, cinco tableros contra el reloj: dos para calentar y tres difíciles; el modo ⚡💧 Servicios, con lotes del mismo tamaño y un ⚡ y un 💧 en cada uno) | `docs/games/plots.md` | D-310, D-311, D-312, D-332 |
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
@@ -7267,7 +7267,7 @@ Timeline deck, 22 instead of 42. `affected.test.mjs` tests `playedOn`, and `scop
 **Consequences:** the usability agent checks it when it reviews a marketing asset (U-34, U-40).
 
 ## D-381 · Pips: a dominoes puzzle in Juegos en prueba
-**Date:** 2026-10-19 · **Status:** amended by D-385 · **Relation:** the first idea of the game-ideas agent (D-360) to reach the lab; follows D-280 and D-361 (the lab's groups), D-304 (a lab-only PR)
+**Date:** 2026-10-19 · **Status:** amended by D-385, D-386 · **Relation:** the first idea of the game-ideas agent (D-360) to reach the lab; follows D-280 and D-361 (the lab's groups), D-304 (a lab-only PR)
 **Context:** the game-ideas agent's first round (issue #556) proposed `pips-dominoes`: a puzzle inspired by
 Pips, The New York Times Games' newest daily (2025), because the daily-wave number puzzles carry the solo
 plays here (Reinas, Tango) and it needs no words. The owner: "Hagamos una demo de Pips en Labs".
@@ -7347,3 +7347,23 @@ Deshacer can take back.
 says that a rule is about the whole zone. Dragging is what the original does and what a hand expects. Undo and clear, the owner's request: with dragging, a slip is easy, and starting a board over meant taking dominoes off one by one.
 **Consequences:** `game.js` (`enfocar`, the pointer handlers) and `style.css`; the third step of the
 cover says to drag. The tap path stays, so the end-to-end scripts that tap cells still play.
+
+## D-386 · Pips: boards that do not all add up
+**Date:** 2026-10-19 · **Status:** current · **Relation:** amends D-381 (how a board is built)
+**Context:** the owner asked to keep improving Pips, and chose the item left open in its document: the
+boards leaned on adding up. Measured over 80 seeds per level, 86% of the cells sat in an exact-sum zone
+and three zones in four were a single cell with its number. Each time the solver found a second answer,
+the generator gave a zone its exact sum, and when the two answers differed only by order inside a zone
+(a domino turned round), it cut a cell off as a zone of its own.
+**Decision:** a zone never holds both halves of a domino with two different numbers (turned round, it
+would be a second answer no rule can see). Zones grow first into a neighbor with the same pips, so `=`
+zones come up. To rule out a second answer, the generator prefers `=`, `≠` and the tightest `<` or `>`
+to an exact sum (three times in four, when one works), and picks the rule that rules out the most known
+answers. When two answers differ only by order inside a zone, a cell moves to a small neighboring zone
+instead of standing alone. Once a board has one answer, each one-cell zone tries to join a neighbor,
+kept only if the board still has one answer.
+**Why:** the real Pips mixes its rules, and a board of loose numbers is arithmetic, not deduction.
+**Consequences:** cells under an exact sum fall to about 60%, one-cell zones to under half, and every kind
+of rule shows up on most days. Building the three boards takes longer (25 ms median and about 150 ms at
+the 95th percentile on the Mac mini, against 2 and 14), still once per game. `engine.test.mjs` checks
+the mix (at most 70% of cells under a sum, every rule present, no domino inside one zone).
