@@ -140,8 +140,20 @@ export function select({ changes, graph, scripts, shared }) {
     if (!hit.length) return null; // no page loads it directly: it may be fetched at run time
     playedOn(f, hit, graph).forEach(p => affected.add(p));
   }
+  // Only the home page changed, maybe with lab pages (D-388): its own scripts run (home/*, smoke.mjs,
+  // and those that never leave it, like favorites.mjs) and the lab pages' ones, not the games that
+  // start on the home page and click their card
+  const labs = [...affected].filter(p => p.startsWith('labs/'));
+  const homeOnly = affected.has('') && affected.size === labs.length + 1;
   const runs = scripts.filter(s => {
     if (changedScripts.has(s.name)) return true;
+    if (homeOnly) {
+      if (s.name.startsWith('home/') || s.name === 'smoke.mjs') return true;
+      if (changedPublic.some(f => s.source.includes(`public/${f}`))) return true;
+      const named = scriptPages(s.source, pages);
+      if (labs.some(p => named.has(p))) return true;
+      return named.has('') && [...named].every(p => p === '') && !dynamicPages(s.source, pages).dynamic;
+    }
     // It imports a changed module itself (`../../public/hangman/rules.js`)
     if (changedPublic.some(f => s.source.includes(`public/${f}`))) return true;
     if (!affected.size) return false;
@@ -187,6 +199,7 @@ export function levelOf(choice, total) {
   if (choice && !choice.scripts.length) return { level: 'N0', name: 'no browser', reason: 'nothing a page loads changed: unit tests only' };
   if (!choice) return { level: 'N3', name: 'core', reason: 'a change the page graph cannot narrow: every script' };
   const pages = [...choice.pages];
+  if (pages.includes('') && pages.every(p => p === '' || p.startsWith('labs/'))) return { level: 'N2', name: 'home', reason: `the home page${pages.length > 1 ? ' and the lab' : ''} only: its ${choice.scripts.length} script(s), not the games (D-388)` };
   if (pages.includes('') || pages.length * 3 >= total) return { level: 'N3', name: 'core', reason: `${pages.includes('') ? 'the home page' : `${pages.length} of ${total} pages`}: every affected script` };
   if (pages.length && pages.every(p => p.startsWith('labs/'))) return { level: 'N1', name: 'lab', reason: `lab only (${pages.join(', ')}): ${choice.scripts.length} script(s)` };
   return { level: 'N2', name: 'game', reason: `${pages.join(', ') || 'a changed script'}: ${choice.scripts.length} script(s)` };

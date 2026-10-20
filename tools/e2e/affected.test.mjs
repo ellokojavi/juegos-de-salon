@@ -61,6 +61,17 @@ assert.ok(Object.keys(real).length > 20 && real.cup.size > 20, 'the graph reads 
 const jobs = ['labs/routes.mjs', 'exploding-numbers/lab.mjs', 'generala/local.mjs', 'cup/seat.mjs'];
 assert.deepEqual(affectedJobs(jobs, ['public/labs/exploding-numbers/engine.js'], shared), ['exploding-numbers/lab.mjs']);
 assert.deepEqual(affectedJobs(jobs, ['public/cup/style.css'], shared), ['cup/seat.mjs']);
+// Only the home page (D-388): its own scripts, not a game's that starts there and clicks its card
+{
+  const g = { '': new Set(['index.html']), hangman: new Set(['hangman/index.html']) };
+  const scripts = [
+    { name: 'home/dice.mjs', source: '`${SITE}/?test`' },
+    { name: 'smoke.mjs', source: 'every page' },
+    { name: 'favorites.mjs', source: "b.go(`${SITE}/?test`)" },
+    { name: 'hangman/local.mjs', source: "b.go(`${SITE}/?test`); b.go(`${SITE}/hangman/`)" },
+  ];
+  assert.deepEqual(select({ changes: ['public/index.html'], graph: g, scripts, shared }).scripts, ['home/dice.mjs', 'smoke.mjs', 'favorites.mjs']);
+}
 console.log('affected: which end-to-end scripts a PR needs, green');
 
 // The test level (D-346)
@@ -70,7 +81,8 @@ console.log('affected: which end-to-end scripts a PR needs, green');
   assert.equal(levelOf(c(['labs/bridges']), 30).level, 'N1', 'a lab game');
   assert.equal(levelOf(c(['hangman']), 30).level, 'N2', 'a production game');
   assert.equal(levelOf(c(['labs/bridges', 'hangman']), 30).level, 'N2', 'lab and production: the production one rules');
-  assert.equal(levelOf(c(['']), 30).level, 'N3', 'the home page is core');
+  assert.equal(levelOf(c(['']), 30).name, 'home', 'the home page alone: its own scripts (D-388)');
+  assert.equal(levelOf(c(['', 'hangman']), 30).level, 'N3', 'the home page and a game: core');
   assert.equal(levelOf(c(Array.from({ length: 10 }, (_, i) => `g${i}`)), 30).level, 'N3', 'a third of the pages is core');
   assert.equal(levelOf(null, 30).level, 'N3', 'what the graph cannot narrow is core');
 }
