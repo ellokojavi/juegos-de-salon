@@ -1,6 +1,6 @@
 // Pips (D-381): rules, one solution per board, laying dominoes, the help and the score.
 import assert from 'node:assert/strict';
-import { cumple, etiqueta, resolver, generar, nuevaPartida, lugar, poner, sacar, valores, estadoZonas, resuelto, lleno, ayudar, puntaje, tarjeta, NIVELES, MAXIMO, PUNTOS_TABLERO, RESTA_AYUDA } from './engine.js';
+import { cumple, etiqueta, resolver, generar, nuevaPartida, lugar, poner, sacar, valores, estadoZonas, resuelto, lleno, ayudar, puntaje, tarjeta, NIVELES, MAXIMO, PUNTOS_TABLERO, RESTA_AYUDA, unida } from './engine.js';
 
 // The rules, full and partial
 assert.equal(cumple({ tipo: 'suma', n: 6 }, [2, 4]), true);
@@ -87,7 +87,7 @@ assert.equal(tarjeta({ resueltos: 2, ayudas: 1 }), '✅✅⬜ 2 de 3 · 💡 1')
 
 // Not every board adds up (D-386): over many seeds, at most 70% of the cells sit in an exact-sum
 // zone, every kind of rule shows up, and a zone never holds both halves of a domino with two
-// different numbers (turned round, it would be a second answer)
+// different numbers (turned round, it would be a second answer), and every zone is one piece
 {
   let celdas = 0, enSuma = 0;
   const tipos = new Set();
@@ -95,6 +95,7 @@ assert.equal(tarjeta({ resueltos: 2, ayudas: 1 }), '✅✅⬜ 2 de 3 · 💡 1')
     const t = generar(`mezcla${s}`, nivel);
     const zonaDe = []; t.zonas.forEach((z, k) => z.celdas.forEach(i => { zonaDe[i] = k; }));
     for (const z of t.zonas) { celdas += z.celdas.length; if (z.tipo === 'suma') enSuma += z.celdas.length; tipos.add(z.tipo); }
+    for (const z of t.zonas) assert.ok(unida(t.celdas, z.celdas), `${nivel} ${s}: a zone in two pieces`);
     for (const { f, a, b } of t.solucion) {
       const [x, y] = t.fichas[f];
       assert.ok(x === y || zonaDe[a] !== zonaDe[b], `${nivel} ${s}: a domino inside one zone`);
