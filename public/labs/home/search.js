@@ -216,10 +216,10 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
        --r) and folds back into it; its 🔎 starts and ends exactly over the pill's (--dx), the pills it
        covers fade out and back in while it moves, and its cyan border and ✕ arrive at the end */
     .filtros .atajos:has(.buscar-pill) { position: relative; }
-    .filtros .atajos:has(.buscar-pill) > :not(.buscar) { transition: opacity 0.14s ease, background 0.15s, color 0.15s, transform 0.1s; }
+    .filtros .atajos:has(.buscar-pill) > :not(.buscar) { transition: opacity 0.08s ease, background 0.15s, color 0.15s, transform 0.1s; }
     .filtros .atajos.buscando > :not(.buscar) { opacity: 0; pointer-events: none; }
     .filtros .atajos.buscando > .buscar-pill { transition: none; }
-    .filtros .atajos.buscando.cerrando > :not(.buscar):not(.buscar-pill) { opacity: 1; transition-delay: 0.08s; }
+    .filtros .atajos.buscando.cerrando > :not(.buscar):not(.buscar-pill) { opacity: 1; transition-duration: 0.1s; transition-delay: 0.14s; }
     .filtros .atajos.buscando .buscar { display: block; position: absolute; inset: 0; z-index: 30; }
     @keyframes buscar-abre { from { clip-path: inset(0 var(--r, 0px) 0 var(--l, 0px) round 22px); } to { clip-path: inset(0 0 0 0 round 22px); } }
     @keyframes buscar-lupa { from { transform: translate(var(--dx, 0px), -50%) scale(1.15); } }
@@ -227,14 +227,18 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     @keyframes buscar-aparece { from { opacity: 0; } }
     .filtros .atajos.buscando .buscar { animation: buscar-abre 0.28s cubic-bezier(0.3, 0, 0.2, 1); }
     .filtros .atajos.buscando .buscar-lupa { animation: buscar-lupa 0.28s cubic-bezier(0.3, 0, 0.2, 1); }
-    .filtros .atajos.buscando .buscar input { animation: buscar-borde 0.28s ease-in; }
     .filtros .atajos.buscando .buscar-cerrar { animation: buscar-aparece 0.14s ease-out 0.14s both; }
+    /* The placeholder, too, only once the field is open: mid-motion it would cross the fading pills and the moving 🔎 */
+    @property --buscar-ph { syntax: '<color>'; inherits: true; initial-value: transparent; }
+    @keyframes buscar-texto { from, 60% { --buscar-ph: transparent; } }
+    .filtros .atajos .buscar input { --buscar-ph: var(--muted); }
+    .filtros .atajos.buscando .buscar input { animation: buscar-borde 0.28s ease-in, buscar-texto 0.28s linear; }
     .filtros .atajos.buscando.cerrando :is(.buscar, .buscar-lupa, .buscar input, .buscar-cerrar) { animation-duration: 0.24s; animation-delay: 0s; animation-direction: reverse; animation-fill-mode: both; }
     .filtros .atajos.buscando.cerrando .buscar-lista { display: none; }
     @media (prefers-reduced-motion: reduce) { .filtros .atajos .buscar, .filtros .atajos .buscar *, .filtros .atajos > * { animation: none !important; transition: none !important; } }
     .buscar input { width: 100%; box-sizing: border-box; min-height: 44px; padding: 10px 44px 10px 40px; border-radius: 999px;
       font: inherit; font-weight: 700; font-size: 1rem; color: var(--ink); background: var(--glass); border: 1px solid var(--cyan); }
-    .buscar input::placeholder { color: var(--muted); font-weight: 600; }
+    .buscar input::placeholder { color: var(--buscar-ph, var(--muted)); font-weight: 600; }
     .buscar input:focus { outline: none; }
     .buscar input::-webkit-search-cancel-button { display: none; }
     .buscar-lupa { position: absolute; left: 14px; font-size: 1.15rem; line-height: 1; top: 50%; transform: translateY(-50%); pointer-events: none; }
