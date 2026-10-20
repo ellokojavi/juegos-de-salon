@@ -53,7 +53,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (390)
+## In force (391)
 
 | D | Title | Status |
 |---|---|---|
@@ -443,6 +443,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-395](decisions/D-395.md) | Everything in development sits behind the lab door | current |
 | [D-396](decisions/D-396.md) | The home page's 🔎 pill goes first, left of ⭐ Favoritos | current |
 | [D-397](decisions/D-397.md) | The home page search lists the games whose name matches first | current |
+| [D-398](decisions/D-398.md) | The home page's 🔎 search opens and closes with a motion | amended by D-402 |
 | [D-399](decisions/D-399.md) | The home page's lab bar opens with the newest experiment on | current |
 | [D-400](decisions/D-400.md) | The merge no longer waits two minutes for the app's monitor; sessions wait with wait-pr.mjs | current |
 | [D-401](decisions/D-401.md) | A decisions index left behind by other PRs no longer fails the next PR | current |
