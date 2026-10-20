@@ -7267,7 +7267,7 @@ Timeline deck, 22 instead of 42. `affected.test.mjs` tests `playedOn`, and `scop
 **Consequences:** the usability agent checks it when it reviews a marketing asset (U-34, U-40).
 
 ## D-381 · Pips: a dominoes puzzle in Juegos en prueba
-**Date:** 2026-10-19 · **Status:** amended by D-385 · **Relation:** the first idea of the game-ideas agent (D-360) to reach the lab; follows D-280 and D-361 (the lab's groups), D-304 (a lab-only PR)
+**Date:** 2026-10-19 · **Status:** amended by D-385, D-386 · **Relation:** the first idea of the game-ideas agent (D-360) to reach the lab; follows D-280 and D-361 (the lab's groups), D-304 (a lab-only PR)
 **Context:** the game-ideas agent's first round (issue #556) proposed `pips-dominoes`: a puzzle inspired by
 Pips, The New York Times Games' newest daily (2025), because the daily-wave number puzzles carry the solo
 plays here (Reinas, Tango) and it needs no words. The owner: "Hagamos una demo de Pips en Labs".
