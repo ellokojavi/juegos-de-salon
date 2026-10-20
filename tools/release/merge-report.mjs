@@ -9,9 +9,9 @@
 //
 //   --ready   the last step of the required `end-to-end` check, on a PR with auto-merge on: the
 //             PR is still open (auto-merge waits for this very check), and the comment says it
-//             merges now. This is what wakes the session. Then it holds the check for HOLD_S
-//             seconds: the monitor reads the PR every so often, not at once, and on #427 the
-//             merge 15 s after the comment closed the PR before it looked, so the comment was lost.
+//             merges now. It no longer holds the check (D-400): holding it two minutes so the app's
+//             monitor could read it delayed every merge, and sessions now learn of the merge with
+//             `tools/agents/wait-pr.mjs`, which asks GitHub itself.
 //   (none)    the last job of publish.yml: comments on the merged PR whether its version is live.
 //             It no longer wakes anyone, but it records which version went live and when, and the
 //             owner gets it by email.
@@ -28,9 +28,6 @@ export const STEPS = [
 
 export const MARKER = '<!-- merge-report -->';
 export const READY_MARKER = '<!-- merge-ready -->';
-
-/** How long the check stays open after the comment, so the monitor sees it on an open PR. */
-export const HOLD_S = 120;
 
 /**
  * The comment of the `end-to-end` check when it passes on a PR, or null when there is nothing to
@@ -89,8 +86,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     if (!body) { console.log(`#${pr}: nothing to tell (auto-merge ${pull.auto_merge ? 'on' : 'off'})`); process.exit(0); }
     sh('gh', 'pr', 'comment', pr, '--repo', repo, '--body', body);
     console.log(`commented on #${pr}: ${body.split('\n')[1]}`);
-    console.log(`holding the check ${HOLD_S} s so the PR is still open when the monitor reads it`);
-    await new Promise(r => setTimeout(r, HOLD_S * 1000));
     process.exit(0);
   }
 
