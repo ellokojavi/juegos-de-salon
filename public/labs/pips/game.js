@@ -197,7 +197,11 @@ function empezar() {
   cuentaRegresiva({ titulo: '🎲 Pips', ya: T.aJugar }).then(() => { P.desde = Date.now(); tablero(); });
 }
 
+/** Ends the board's drag: its ghost and its window listeners (set by each board). */
+let finArrastre = () => {};
+
 function tablero() {
+  finArrastre();
   const nivel = NIVELES[P.k];
   const t = generar(P.semilla, nivel.id);
   const p = P.p = nuevaPartida(t);
@@ -206,6 +210,7 @@ function tablero() {
   // Undo (D-385): each change to the board keeps what was there before; help keeps its cost
   const historial = [];
   const guardar = () => { historial.push(p.puestas.map(x => (x ? { ...x } : null))); };
+  let cortar = () => {};   // calls a drag off (set below); redrawing the board under a finger does it
   const encabezado = el('p', { class: 'marcador' }, fmt(T.tablero, { n: P.k + 1, total: NIVELES.length, nivel: T.nivel[nivel.id] }));
   const reloj = el('span', { class: 'reloj', id: 'reloj' }, '0:00');
   const g = tableroVacio(t);
@@ -248,6 +253,7 @@ function tablero() {
   dosToques(botonRendirse, { listo: () => T.rendirse, seguro: () => T.rendirseSeguro, accion: () => terminar('rendido') });
 
   const dibujar = () => {
+    cortar();
     botonDeshacer.disabled = !historial.length;
     botonLimpiar.disabled = !p.puestas.some(Boolean);
     fichasPuestas(g, p, { conBotones: true });
@@ -290,8 +296,19 @@ function tablero() {
     const o = ocupacion(p), mal = [sitio.a, sitio.b].some(i => o[i] >= 0 && o[i] !== arr.f);
     [sitio.a, sitio.b].forEach(i => g.querySelector(`.celda[data-i="${i}"]`).classList.add('destino', ...(mal ? ['no'] : [])));
   };
+  // A drag that never got its pointerup (the domino redrawn under the finger, a second finger, the
+  // browser dropping the pointer) is called off, so its ghost never stays on the screen
+  const cancelar = () => {
+    if (!arr) return;
+    const a = arr; arr = null;
+    clearTimeout(a.timer);
+    a.fantasma?.remove(); a.boton.classList.remove('arrastrada');
+    marcar(null); enfocar(null);
+  };
+  cortar = cancelar;
   const agarrar = (ev, boton, f, puesta) => {
     if (P.fin || ev.button > 0) return;
+    if (arr) { if (ev.pointerId !== arr.id) return; cancelar(); }
     const m = ev.target.closest('.mitad');
     arr = { f, boton, puesta, x0: ev.clientX, y0: ev.clientY, id: ev.pointerId, mitad: m ? [...m.parentNode.children].indexOf(m) : 0, fantasma: null, sitio: null, celda: null, levante: ev.pointerType === 'mouse' ? 0 : LEVANTE };
     try { boton.setPointerCapture(ev.pointerId); } catch { /* a pointer the browser no longer tracks */ }
@@ -360,7 +377,14 @@ function tablero() {
   };
   bandeja.addEventListener('pointerdown', ev => { const b = ev.target.closest('.ficha'); if (b) agarrar(ev, b, +b.dataset.f, false); });
   g.addEventListener('pointerdown', ev => { const b = ev.target.closest('.puesta'); if (b) agarrar(ev, b, +b.dataset.f, true); });
-  for (const x of [bandeja, g]) { x.addEventListener('pointermove', mover); x.addEventListener('pointerup', soltar); x.addEventListener('pointercancel', soltar); }
+  // On the window, not the board: the pointer may end anywhere, and the domino it grabbed may be gone
+  const fuera = new AbortController();
+  addEventListener('pointermove', mover, { signal: fuera.signal });
+  addEventListener('pointerup', soltar, { signal: fuera.signal });
+  addEventListener('pointercancel', soltar, { signal: fuera.signal });
+  addEventListener('blur', cancelar, { signal: fuera.signal });
+  document.addEventListener('visibilitychange', cancelar, { signal: fuera.signal });
+  finArrastre = () => { cancelar(); fuera.abort(); document.querySelectorAll('body > .fantasma').forEach(x => x.remove()); };
 
   bandeja.addEventListener('click', ev => {
     const b = ev.target.closest('.ficha'); if (!b || P.fin || tragar) return;
@@ -414,6 +438,7 @@ function tablero() {
 }
 
 function terminar(motivo) {
+  finArrastre();
   if (P.fin) return;
   P.fin = motivo;
   resultado();
