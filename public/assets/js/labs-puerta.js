@@ -38,7 +38,8 @@
     var q = new URLSearchParams(location.search), dada = q.get('key');
     if (dada !== null) {
       q.delete('key');
-      var resto = q.toString();
+      // Without the empty `=` toString() adds to flags (`?test`, not `?test=`)
+      var resto = q.toString().replace(/=(?=&|$)/g, '');
       history.replaceState(history.state, '', location.pathname + (resto ? '?' + resto : '') + location.hash);
     }
     if (/^(localhost|127\.0\.0\.1|\[::1\])$|\.ts\.net$/.test(location.hostname)) return abrir();

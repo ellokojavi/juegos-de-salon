@@ -44,6 +44,12 @@ ok(await waitFor(`document.getElementById('filtros-barra').classList.contains('p
 await ev(`const s = document.getElementById('idioma'); s.value = 'de'; s.dispatchEvent(new Event('change')); 1`);
 ok(await waitFor(`document.documentElement.lang.startsWith('de') && !!document.getElementById('barra')`), 'changing the language keeps the bar');
 
+// A filter rewrites the address without the empty `=` of the flags: `?test&lab`, not `?test=&lab=`
+await b.go(`${SITE}/?test&lab&search`);
+await waitFor(`!!document.querySelector('.tipos button[data-tipo="logic"]')`);
+await ev(`document.querySelector('.tipos button[data-tipo="logic"]').click(); 1`);
+ok(await waitFor(`location.search.includes('type=logic')`) && await ev(`!/=(&|$)/.test(location.search)`), 'a filter keeps the flags bare in the address');
+
 // Players never see the bar
 await b.go(`${SITE}/?test`);
 ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && await ev(`!document.getElementById('barra')`), 'the home page alone has no lab bar');
