@@ -7360,7 +7360,8 @@ would be a second answer no rule can see). Zones grow first into a neighbor with
 zones come up. To rule out a second answer, the generator prefers `=`, `≠` and the tightest `<` or `>`
 to an exact sum (three times in four, when one works), and picks the rule that rules out the most known
 answers. When two answers differ only by order inside a zone, a cell moves to a small neighboring zone
-instead of standing alone. Once a board has one answer, each one-cell zone tries to join a neighbor,
+instead of standing alone, only when the zone it leaves stays in one piece (a first version could
+split a zone in two, fixed the next day). Once a board has one answer, each one-cell zone tries to join a neighbor,
 kept only if the board still has one answer.
 **Why:** the real Pips mixes its rules, and a board of loose numbers is arithmetic, not deduction.
 **Consequences:** cells under an exact sum fall to about 60%, one-cell zones to under half, and every kind

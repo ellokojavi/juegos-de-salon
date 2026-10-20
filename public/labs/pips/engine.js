@@ -200,6 +200,17 @@ function regla(rnd, vals) {
   return opciones[entero(rnd, opciones.length)];
 }
 
+/** Are these cells (indices into `celdas`) one connected piece? */
+export function unida(celdas, cs) {
+  if (cs.length < 2) return true;
+  const visto = new Set([cs[0]]), cola = [cs[0]];
+  while (cola.length) {
+    const i = cola.pop();
+    for (const j of cs) if (!visto.has(j) && Math.abs(celdas[i].r - celdas[j].r) + Math.abs(celdas[i].c - celdas[j].c) === 1) { visto.add(j); cola.push(j); }
+  }
+  return visto.size === cs.length;
+}
+
 /**
  * The stricter rule that tells our pips from the `otras` solutions': among the zones that differ, a
  * rule ours keep and theirs break, preferring `=`, `≠`, `<` and `>` (the tightest bound) to an exact
@@ -308,9 +319,10 @@ export function generar(semilla, nivel = 'facil') {
         // cells moves to a small neighboring zone, so the next round can tell them apart there, or,
         // with none, becomes a zone of its own with its exact pips. The zone it leaves keeps a rule
         // its pips still keep
-        const w = t.zonas.find(w => w.celdas.length > 1 && w.celdas.some(i => otra[i] !== valores[i]));
+        // Only a cell whose leaving keeps its zone in one piece: a zone is always connected
+        const w = t.zonas.find(w => w.celdas.length > 1 && w.celdas.some(i => otra[i] !== valores[i] && unida(t.celdas, w.celdas.filter(j => j !== i))));
         if (!w) break;
-        const i = w.celdas.find(i => otra[i] !== valores[i]);
+        const i = w.celdas.find(i => otra[i] !== valores[i] && unida(t.celdas, w.celdas.filter(j => j !== i)));
         w.celdas = w.celdas.filter(j => j !== i);
         const resto = w.celdas.map(j => valores[j]);
         if (cumple(w, resto) !== true || w.tipo === 'suma') Object.assign(w, { tipo: 'suma', n: resto.reduce((a, b) => a + b, 0) });
