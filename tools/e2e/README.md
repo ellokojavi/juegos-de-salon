@@ -44,7 +44,8 @@ Each PR gets the least testing that still keeps the site safe, decided from what
 | **N0 · no browser** | Nothing a page loads: docs, decisions, changelog, the agents, tools the scripts don't import, data in Firebase | Unit tests only (the `tests` check, ~2 min) | A decision, a lab key (D-345), the processes guide |
 | **N1 · lab** | Only pages under `public/labs/` | That game's scripts + `smoke.mjs` | Tren en Vilo's gauge |
 | **N2 · game** | Some public pages: not the home page, under a third of them | Their scripts + `smoke.mjs` | Hangman's rules |
-| **N3 · core** | The home page, a third of the pages or more, or what the page graph can't narrow (shared modules and styles, the e2e tools, the workflows, a file no page links) | Every script | `base.css`, `ui.js`, `cdp.mjs` |
+| **N2 · home** | Only the home page (`public/index.html`, or a file only it loads) | Its own scripts: `home/*`, `smoke.mjs` and those that never leave it (`favorites.mjs`, `landing-fold.mjs`…), not the games that start there (D-388) | the home page's filters |
+| **N3 · core** | The home page with something else, a third of the pages or more, or what the page graph can't narrow (shared modules and styles, the e2e tools, the workflows, a file no page links) | Every script | `base.css`, `ui.js`, `cdp.mjs` |
 
 `smoke.mjs` is the floor of N1-N3: it opens every page and fails on an uncaught error or a blank screen,
 so even a game with no script of its own is covered (#482 left one blank and nothing failed).
