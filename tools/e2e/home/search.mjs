@@ -50,6 +50,7 @@ await ev(`localStorage.removeItem('juegos-de-salon:favoritos'); 1`);
 await b.go(`${SITE}/?test&search`);
 await waitFor(shown('.atajos .buscar-pill'));
 await ev(`document.querySelector('.buscar-pill').click(); 1`);
+ok(await ev(`document.querySelector('.atajos .buscar').getAnimations().some(a => a.animationName === 'buscar-abre')`), 'the field grows out of the pill (D-398)');
 ok(await waitFor(`${shown('#buscar')} && !${shown('.atajos [data-tipo="popular"]')} && document.activeElement.id === 'buscar'`), 'tapped, the field takes the row in place of the pills, with the cursor in it');
 ok(await ev(shown('.tipos')), 'the types stay below');
 await type('dados');
@@ -65,6 +66,7 @@ ok(await ev(`!document.getElementById('filtros-cuenta').hidden`), 'the count lin
 await type('xyzzy');
 ok(await ev(`!!document.querySelector('#buscar-lista .buscar-nada') && ${sugs}.length === 0`), 'nothing found says so in the dropdown');
 await ev(`document.querySelector('.buscar-cerrar').click(); 1`);
+ok(await ev(`document.querySelector('.atajos').classList.contains('cerrando') && ${shown('#buscar')}`), '✕ first folds the field back into the pill (D-398)');
 ok(await waitFor(`!${shown('#buscar')} && ${shown('.atajos .buscar-pill')} && ${shown('.atajos [data-tipo="popular"]')} && ${visible}.length === ${all}`), '✕ brings the pills back and every game');
 await ev(`document.querySelector('.buscar-pill').click(); 1`);
 await type('toque');

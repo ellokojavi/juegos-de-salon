@@ -213,6 +213,15 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     .filtros .atajos .buscar { display: none; }
     .filtros .atajos.buscando > :not(.buscar) { display: none !important; }
     .filtros .atajos.buscando .buscar { display: block; position: relative; z-index: 30; flex: 1 1 auto; }
+    /* Opening and closing (D-398): the field grows out of the 🔎 pill, which sits first in the row, and
+       folds back into it; the pills it covered come back with a short fade */
+    @keyframes buscar-abre { from { clip-path: inset(0 calc(100% - 44px) 0 0 round 22px); } to { clip-path: inset(0 0 0 0 round 22px); } }
+    @keyframes buscar-vuelven { from { opacity: 0; transform: scale(0.92); } }
+    .filtros .atajos.buscando .buscar { animation: buscar-abre 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .filtros .atajos.buscando.cerrando .buscar { animation: buscar-abre 0.22s cubic-bezier(0.4, 0, 1, 1) reverse both; }
+    .filtros .atajos.buscando.cerrando .buscar-lista { display: none; }
+    .filtros .atajos.recien > :not(.buscar) { animation: buscar-vuelven 0.22s ease-out both; }
+    @media (prefers-reduced-motion: reduce) { .filtros .atajos .buscar, .filtros .atajos > * { animation: none !important; } }
     .buscar input { width: 100%; box-sizing: border-box; min-height: 44px; padding: 10px 44px 10px 40px; border-radius: 999px;
       font: inherit; font-weight: 700; font-size: 1rem; color: var(--ink); background: var(--glass); border: 1px solid var(--cyan); }
     .buscar input::placeholder { color: var(--muted); font-weight: 600; }
@@ -243,7 +252,7 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     const y = Math.ceil(marca.getBoundingClientRect().top + scrollY - (parseFloat(getComputedStyle(barra).top) || 0));
     if (y > scrollY) scrollTo({ top: y, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
-  const abrir = () => { row.classList.add('buscando'); pill.setAttribute('aria-expanded', 'true'); input.focus({ preventScroll: true }); subir(); sugerir(); };
+  const abrir = () => { clearTimeout(reserva); row.classList.remove('cerrando', 'recien'); row.classList.add('buscando'); pill.setAttribute('aria-expanded', 'true'); input.focus({ preventScroll: true }); subir(); sugerir(); };
   const plegar = () => { lista.hidden = true; input.setAttribute('aria-expanded', 'false'); elegir(-1); };
   const verTodos = ids => { plegar(); input.blur(); onChange(ids); };
   // The option the keyboard (or the mouse over it) has selected: -1 is none
@@ -273,7 +282,28 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     lista.hidden = false;
     input.setAttribute('aria-expanded', 'true');
   };
-  const cerrarTodo = () => { input.value = ''; plegar(); row.classList.remove('buscando'); pill.setAttribute('aria-expanded', 'false'); onChange(null); };
+  // Closing waits for the field to fold back into the pill (D-398); without motion, at once
+  let reserva = null;
+  const quieto = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cerrarTodo = () => {
+    input.value = ''; plegar(); pill.setAttribute('aria-expanded', 'false'); onChange(null);
+    if (!row.classList.contains('buscando') || row.classList.contains('cerrando')) return;
+    const fin = () => {
+      // Opened again while it was closing: it stays open
+      if (!row.classList.contains('cerrando') && !quieto()) return;
+      row.classList.remove('buscando', 'cerrando');
+      row.classList.add('recien');
+      setTimeout(() => row.classList.remove('recien'), 260);
+    };
+    if (quieto()) { row.classList.remove('buscando'); row.classList.add('recien'); setTimeout(() => row.classList.remove('recien'), 260); return; }
+    row.classList.add('cerrando');
+    let hecho = false;
+    const una = () => { if (!hecho) { hecho = true; clearTimeout(reserva); fin(); } };
+    campo.addEventListener('animationend', una, { once: true });
+    // In case the animation never ends (a hidden tab): the row still comes back. Reopening clears it,
+    // so a quick close, open, close does not cut the second fold short
+    reserva = setTimeout(una, 400);
+  };
   pill.addEventListener('click', abrir);
   // The list below stays as it is while typing (the owner's choice): only the dropdown follows
   input.addEventListener('input', sugerir);
