@@ -46,14 +46,14 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352 |
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
-| Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378 |
+| Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384 |
 | Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394 |
 | Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178, D-380 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (380)
+## In force (382)
 
 | D | Title | Status |
 |---|---|---|
@@ -375,7 +375,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-326](decisions/D-326.md) | The a. C. switch shows only in themes that need it | current |
 | [D-327](decisions/D-327.md) | Emails to hola@: replies in the sender's thread, by kind, and an exempt list | current |
 | [D-328](decisions/D-328.md) | Support: a doubt goes to the owner's email, with a public pointer | current |
-| [D-329](decisions/D-329.md) | A PR runs only the end-to-end scripts its changes reach | current |
+| [D-329](decisions/D-329.md) | A PR runs only the end-to-end scripts its changes reach | amended by D-391 |
 | [D-331](decisions/D-331.md) | Game variants: the player picks one standalone, the admin picks one per cup day | current |
 | [D-332](decisions/D-332.md) | Rutas rotas, Loteo and Pintaminas leave the lab: home page and La Copa | current |
 | [D-333](decisions/D-333.md) | A new game says "New" on its home card for two weeks | amended by D-373 |
@@ -433,9 +433,11 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-385](decisions/D-385.md) | Pips: the rule's diamond inside its cell, the zone lights up, and dominoes drag | current |
 | [D-386](decisions/D-386.md) | Pips: boards that do not all add up | current |
 | [D-387](decisions/D-387.md) | Home page search box, a lab experiment | amended by D-390 |
-| [D-388](decisions/D-388.md) | A change to the home page alone runs the home page's scripts, not the games' | current |
+| [D-388](decisions/D-388.md) | A change to the home page alone runs the home page's scripts, not the games' | amended by D-391 |
 | [D-389](decisions/D-389.md) | The home page's experiments, the splash among them, in one lab card with checkboxes | current |
 | [D-390](decisions/D-390.md) | The home page's search: a 🔎 pill and a dropdown of games | current |
+| [D-391](decisions/D-391.md) | The end-to-end scope never falls back to "everything" without a test saying so | amended by D-392 |
+| [D-392](decisions/D-392.md) | A push to a PR tests only what changed since the PR last passed | current |
 | [D-394](decisions/D-394.md) | One file per decision, and a generated index | current |
 
 ## No longer in force (9)

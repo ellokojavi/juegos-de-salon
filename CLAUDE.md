@@ -49,6 +49,7 @@ language. Older Spanish content and Spanish file and identifier names are being 
 | README, screenshots, link cards | the `readme-and-cards` skill (`.claude/skills/readme-and-cards/`) | Before touching them, and on "Actualiza el README" |
 | Panel, Cup reports, rankings code | the `owner-tools` skill (`.claude/skills/owner-tools/`) | Before touching them |
 | End-to-end tests | [tools/e2e/README.md](tools/e2e/README.md) | When running or writing a script |
+| Which tests a change runs | [docs/TEST-SCOPE.md](docs/TEST-SCOPE.md), the design (D-391, D-392): a push tests only what changed since the PR last passed | Before touching `tools/e2e/affected.mjs` or when a PR runs more than it should |
 | Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
 
 **A rule that changes is changed in its place, in the same PR:** if a new decision changes a
@@ -75,7 +76,9 @@ Several Claude sessions may be working in this repo at the same time:
   DECISIONES.md runs `decision.mjs split`.
 - **A single push at the end** (D-303): commits are made locally and pushed together when the
   work, including the agents' work, is ready. Each push to a PR launches the 58 scripts and cancels
-  the previous run's: a third of the end-to-end compute was going to canceled runs.
+  the previous run's: a third of the end-to-end compute was going to canceled runs. Since D-392 a
+  push after a green `end-to-end` run tests only the files changed since that commit, so it is cheap;
+  a push after a red or canceled run retests the whole PR again.
 - Before touching another PR's branch, ask that session (ListAgents / SendMessage).
 - **On merge, the worktree is deleted**, in the same move, from the main folder (D-206):
   ```bash
@@ -134,10 +137,13 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    D-193, D-213, D-216), even if they already passed here. `main` requires both: `end-to-end` is the
    job that summarizes the `End to end` workflow (the scripts in even groups, D-307) and goes red if any fails.
    A PR runs only the scripts whose pages load what it changed (`tools/e2e/affected.mjs`, D-329); its run
-   summary shows that scope, and `tools/e2e/scope.test.mjs` stops a page that loads another game's files (D-378).
+   summary shows that scope, and `tools/e2e/scope.test.mjs` stops a page that loads another game's files (D-378);
+   `tools/e2e/scope-guard.test.mjs` fails if a site file is loaded by no page or a CI script names no page (D-391).
    In a PR that touches nothing in the browser (documentation, `tools/agents/`, workflows, rules)
    no script runs and it goes green anyway; a failing script is retried once and, if it passes,
-   leaves an "Intermitente" (flaky) notice (D-299).
+   leaves an "Intermitente" (flaky) notice (D-299). Each later push tests only what changed since the PR's
+   last commit that passed end-to-end (`tools/e2e/since-passed.mjs`, D-392): fix a red run in one push,
+   because until something passes every push retests the whole PR.
 4. **Auto-merge by default** (D-216, the owner's request): when the PR is ready to merge
    —the agents are done and their fixes are pushed, and the `changelog/<branch>.md` entry is already
    on the branch (D-300)—, GitHub's auto-merge is turned on instead of waiting for the ✅ by hand:
