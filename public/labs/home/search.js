@@ -218,7 +218,6 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     .filtros .atajos:has(.buscar-pill) { position: relative; }
     .filtros .atajos:has(.buscar-pill) > :not(.buscar) { transition: opacity 0.08s ease, background 0.15s, color 0.15s, transform 0.1s; }
     .filtros .atajos.buscando > :not(.buscar) { opacity: 0; pointer-events: none; }
-    .filtros .atajos.buscando > .buscar-pill { transition: none; }
     .filtros .atajos.buscando.cerrando > :not(.buscar):not(.buscar-pill) { opacity: 1; transition-duration: 0.1s; transition-delay: 0.14s; }
     .filtros .atajos.buscando .buscar { display: block; position: absolute; inset: 0; z-index: 30; }
     @keyframes buscar-abre { from { clip-path: inset(0 var(--r, 0px) 0 var(--l, 0px) round 22px); } to { clip-path: inset(0 0 0 0 round 22px); } }
@@ -233,7 +232,19 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     @keyframes buscar-texto { from, 60% { --buscar-ph: transparent; } }
     .filtros .atajos .buscar input { --buscar-ph: var(--muted); }
     .filtros .atajos.buscando .buscar input { animation: buscar-borde 0.28s ease-in, buscar-texto 0.28s linear; }
-    .filtros .atajos.buscando.cerrando :is(.buscar, .buscar-lupa, .buscar input, .buscar-cerrar) { animation-duration: 0.24s; animation-delay: 0s; animation-direction: reverse; animation-fill-mode: both; }
+    /* Closing plays the same motions backwards under their own names: an animation that already ran
+       does not start over when only its direction changes, so the field froze folded and then vanished */
+    @keyframes buscar-pliega { from { clip-path: inset(0 0 0 0 round 22px); } to { clip-path: inset(0 var(--r, 0px) 0 var(--l, 0px) round 22px); } }
+    @keyframes buscar-lupa-vuelve { to { transform: translate(var(--dx, 0px), -50%) scale(1.15); } }
+    @keyframes buscar-borde-sale { 40%, to { border-color: var(--glass-border); } }
+    @keyframes buscar-texto-sale { 40%, to { --buscar-ph: transparent; } }
+    @keyframes buscar-se-va { 50%, to { opacity: 0; } }
+    .filtros .atajos.buscando.cerrando .buscar { animation: buscar-pliega 0.24s cubic-bezier(0.3, 0, 0.2, 1) both; }
+    .filtros .atajos.buscando.cerrando .buscar-lupa { animation: buscar-lupa-vuelve 0.24s cubic-bezier(0.3, 0, 0.2, 1) both; }
+    .filtros .atajos.buscando.cerrando .buscar input { animation: buscar-borde-sale 0.24s linear both, buscar-texto-sale 0.24s linear both; }
+    .filtros .atajos.buscando.cerrando .buscar-cerrar { animation: buscar-se-va 0.24s linear both; }
+    /* The pill's 🔎 never fades: the field's 🔎 lies exactly on it at both ends, so it simply takes over */
+    .filtros .atajos:has(.buscar-pill) > .buscar-pill { transition: background 0.15s, color 0.15s, transform 0.1s; }
     .filtros .atajos.buscando.cerrando .buscar-lista { display: none; }
     @media (prefers-reduced-motion: reduce) { .filtros .atajos .buscar, .filtros .atajos .buscar *, .filtros .atajos > * { animation: none !important; transition: none !important; } }
     .buscar input { width: 100%; box-sizing: border-box; min-height: 44px; padding: 10px 44px 10px 40px; border-radius: 999px;
