@@ -7381,4 +7381,6 @@ kept in the URL. The keywords live in the experiment's module until it ships, th
 **Why:** the list is already 20 games long and a player who wants "something with dice" has to know the
 type is called Cartas/Dados.
 **Consequences:** "puente" finds nothing today: the only game about bridges, Tren en Vilo, is still in the
-lab and not on the home page. `tools/e2e/home/search.mjs` checks it end to end.
+lab and not on the home page. Keywords come in Spanish and English (`es`, `en` in `KEYWORDS`), and both are
+searched whatever the language. The lab's home page card is back among the improvements while the
+experiment runs (C-17, D-372). `tools/e2e/home/search.mjs` checks it end to end.
