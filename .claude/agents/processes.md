@@ -228,7 +228,9 @@ that (after a new game, after a big text change), saying why.
    is a pattern: fix the criterion with a test in `affected.test.mjs`, not by running everything. And
    the other way: an N3 that the graph could have narrowed (a shared file only two pages load) is cost
    with no safety; narrow it the same way. A file no page loads, or a script that names no page, is not a
-   case for "everything": `scope-guard.test.mjs` stops it (D-391).
+   case for "everything": `scope-guard.test.mjs` stops it (D-391). A later push to a PR runs only what
+   changed since its last green end-to-end commit (`since-passed.mjs`, D-392): a break that slips through
+   that narrowing is also a pattern for `affected.test.mjs` or `since-passed.test.mjs`.
 5. **Patterns.** Read the commits that fix something outdated and whatever diff is needed. For
    each one, what class of error is it? Record it: `node tools/agents/processes.mjs pattern <clave>
    "qué pasó" --commit <sha>`. Once is an accident; **twice is a pattern** and deserves a
