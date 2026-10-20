@@ -36,7 +36,7 @@ many as you need.
   checklist.
 - **[docs/USABILIDAD.md](docs/USABILIDAD.md)**: how texts are written and where buttons go.
 - **[docs/AGREGAR-JUEGO.md](docs/AGREGAR-JUEGO.md)**, if it is a new game.
-- **[docs/DECISIONES.md](docs/DECISIONES.md)**: why things are the way they are. Before changing something
+- **[docs/DECISIONS.md](docs/DECISIONS.md)**: why things are the way they are. Before changing something
   that looks odd, look it up there.
 
 What gets forgotten most:

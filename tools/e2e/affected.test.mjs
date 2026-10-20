@@ -42,7 +42,7 @@ assert.deepEqual(run(['public/hangman/game.js']), ['hangman/local.mjs', 'room-er
 // Something shared: every page that loads it
 assert.deepEqual(run(['public/assets/js/ui.js']), ['hangman/local.mjs', 'case/lab.mjs', 'room-error.mjs', 'loop.mjs']);
 // Unit tests and notes inside public/, docs, the workshop no script imports: nothing
-assert.deepEqual(run(['public/hangman/rules.test.mjs', 'docs/DECISIONES.md', 'tools/release/changelog.mjs']), []);
+assert.deepEqual(run(['public/hangman/rules.test.mjs', 'docs/decisions/D-1.md', 'tools/release/changelog.mjs']), []);
 // A changed script runs itself
 assert.deepEqual(run(['tools/e2e/favorites.mjs']), ['favorites.mjs']);
 // When in doubt, all: a file no page loads, tools/e2e's shared code, the e2e workflow, a tool a script imports

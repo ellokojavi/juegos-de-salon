@@ -13,7 +13,7 @@ assert.equal(validMark([{ ...run(5), expired: true }]), null, "an expired mark d
 assert.equal(validMark([run(5, false), run(7)]).workflow_run.id, 7);
 
 assert.equal(decide({ mark: run(7), parentMark: null, changes: null }).tested, true);
-const docs = decide({ mark: null, parentMark: run(3), changes: ['docs/DECISIONES.md', 'changelog/x.md'] });
+const docs = decide({ mark: null, parentMark: run(3), changes: ['docs/decisions/D-1.md', 'changelog/x.md'] });
 assert.deepEqual([docs.tested, docs.inherited], [true, true]);
 assert.equal(decide({ mark: null, parentMark: run(3), changes: ['public/index.html'] }).tested, false, 'a site change without its tree tested runs whole');
 assert.equal(decide({ mark: null, parentMark: null, changes: ['docs/x.md'] }).tested, false, 'without a tested parent, there is nothing to inherit from');

@@ -876,7 +876,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 <!-- generated: docs · written by python3 tools/release/readme.py update -->
 - [Cánones y estándares de Juegos de Salón](docs/CANONES.md)
 - [Requerimientos](docs/REQUERIMIENTOS.md)
-- [Decisiones de diseño y arquitectura](docs/DECISIONES.md)
+- [Decisions](docs/DECISIONS.md)
 - [Cómo agregar un juego nuevo](docs/AGREGAR-JUEGO.md)
 - [Panel del dueño](docs/PANEL.md)
 - [End-to-end tests (headless Chrome over CDP)](tools/e2e/README.md)
