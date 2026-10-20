@@ -587,8 +587,10 @@
       const atajo = { [NEW]: g => g.available && esNuevo(g), [POP]: g => top3.has(g.id) };
       const tieneAtajo = k => PORTADA.some(atajo[k]);
       const filtro = { tipo: TIPOS[pedido] || (pedido === FAV && hayFavoritos()) || (atajo[pedido] && tieneAtajo(pedido)) ? pedido : null };
-      const caben = ({ g, card, caja }) => !filtro.tipo
-        || (filtro.tipo === FAV ? caja !== card && marcados.has(g.id) : atajo[filtro.tipo] ? atajo[filtro.tipo](g) : (g.tipos || []).includes(filtro.tipo));
+      // The search box (lab, ?search): the games it found, or null with nothing typed
+      const busca = { ids: null, clear: () => {} };
+      const caben = ({ g, card, caja }) => (!busca.ids || busca.ids.has(g.id)) && (!filtro.tipo
+        || (filtro.tipo === FAV ? caja !== card && marcados.has(g.id) : atajo[filtro.tipo] ? atajo[filtro.tipo](g) : (g.tipos || []).includes(filtro.tipo)));
       const caja = document.getElementById('filtros');
       caja.setAttribute('aria-label', T.filters);
       const tipos = el('div', { class: 'tipos', role: 'group', 'aria-label': T.filters });
@@ -610,7 +612,7 @@
       }
       atajos.hidden = ![NEW, POP].some(tieneAtajo);
       caja.append(favs, atajos, tipos);
-      const limpiar = () => { filtro.tipo = null; aplicar(); };
+      const limpiar = () => { filtro.tipo = null; busca.clear(); aplicar(); };
       // Dónde va ⭐ Favoritos (D-241): se prueba de la forma más completa a la más corta y queda la
       // primera que cabe sin que la fila se desborde. Se mide en vez de fijar un ancho: el largo de
       // los tipos cambia con el idioma y con las fuentes de cada celular.
@@ -648,7 +650,7 @@
           if (ve) n++;
         }
         acomodarFav();
-        const filtrado = !!filtro.tipo;
+        const filtrado = !!filtro.tipo || !!busca.ids;
         cuenta.hidden = !filtrado || n === 0;
         cuenta.replaceChildren(el('span', {}, T.shown.replace('{n}', n).replace('{total}', tarjetas.length)),
           el('button', { class: 'link-btn', type: 'button', onClick: limpiar }, T.clearFilters));
@@ -660,6 +662,9 @@
         history.replaceState(history.state, '', url.pathname + url.search + url.hash);
       };
       aplicar(true);
+      if (param('search') !== null) import('./labs/home/search.js').then(({ drawSearch }) => {
+        Object.assign(busca, drawSearch({ into: caja, lang, games: PORTADA, onChange: ids => { busca.ids = ids; aplicar(); } }));
+      }).catch(e => console.warn('búsqueda:', e));
       // Marcar el primero hace aparecer la ficha; desmarcar estando en Favoritos no saca la tarjeta
       // de la vista (se puede volver a marcar), salvo que ya no quede ninguno: ahí se ven todos
       document.addEventListener('favoritos', () => {
