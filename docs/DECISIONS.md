@@ -36,6 +36,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
 | Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-399 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -434,7 +435,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-386](decisions/D-386.md) | Pips: boards that do not all add up | current |
 | [D-387](decisions/D-387.md) | Home page search box, a lab experiment | amended by D-390 |
 | [D-388](decisions/D-388.md) | A change to the home page alone runs the home page's scripts, not the games' | amended by D-391 |
-| [D-389](decisions/D-389.md) | The home page's experiments, the splash among them, in one lab card with checkboxes | current |
+| [D-389](decisions/D-389.md) | The home page's experiments, the splash among them, in one lab card with checkboxes | amended by D-399 |
 | [D-390](decisions/D-390.md) | The home page's search: a 🔎 pill and a dropdown of games | amended by D-393, D-396 |
 | [D-391](decisions/D-391.md) | The end-to-end scope never falls back to "everything" without a test saying so | amended by D-392 |
 | [D-392](decisions/D-392.md) | A push to a PR tests only what changed since the PR last passed | current |
@@ -444,6 +445,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-396](decisions/D-396.md) | The home page's 🔎 pill goes first, left of ⭐ Favoritos | current |
 | [D-397](decisions/D-397.md) | The home page search lists the games whose name matches first | current |
 | [D-398](decisions/D-398.md) | The home page's 🔎 search opens and closes with a motion | current |
+| [D-399](decisions/D-399.md) | The home page's lab bar opens with the newest experiment on | current |
 
 ## No longer in force (9)
 
