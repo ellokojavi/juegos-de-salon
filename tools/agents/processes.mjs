@@ -198,9 +198,12 @@ async function check() {
     console.log(`- ${w}: ${r ? `${r.conclusion || r.status} (${r.createdAt.slice(0, 16)})${r.conclusion === 'failure' ? ` ${r.url}` : ''}` : 'no runs'}`);
   }
 
-  heading('CHANGELOG to collect and decision reservations (D-300, D-301)');
+  heading('CHANGELOG to collect, the decisions index and decision reservations (D-300, D-301, D-401)');
   const toCollect = sh('git', ['ls-tree', '--name-only', 'origin/main', 'changelog/']).split('\n').filter(f => f.endsWith('.md') && !f.endsWith('README.md'));
   console.log(toCollect.length ? `- ${toCollect.length} ${toCollect.length === 1 ? 'entry' : 'entries'} in main's changelog/: collect them in your PR (node tools/release/changelog.mjs collect)` : "- main's changelog/ is empty.");
+  // The generated decisions index falls a row behind when two PRs that touch decisions merge one after the other (D-401)
+  try { sh('node', [join(ROOT, 'tools/agents/decision.mjs'), 'index', '--check']); console.log('- docs/DECISIONS.md is up to date.'); }
+  catch (_) { console.log('- docs/DECISIONS.md is stale: rebuild it in your PR (node tools/agents/decision.mjs index)'); }
   try { console.log(sh('node', [join(ROOT, 'tools/agents/decision.mjs'), 'clean']).trim() || '- No open reservations.'); } catch (e) { console.log(`- reservations: ${String(e.message).split('\n')[0]}`); }
 
   heading('The move to English (D-316, D-354)');

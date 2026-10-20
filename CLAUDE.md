@@ -72,7 +72,9 @@ Several Claude sessions may be working in this repo at the same time:
   rejects if it already exists, so two sessions never take the same number, and writes the skeleton
   of its file in `docs/decisions/`. Each decision is its own file (D-394), so two PRs do not collide; the
   index `docs/DECISIONS.md` is generated (`decision.mjs index`, also when it collides on pulling
-  `main`), never edited by hand. A branch from before D-394 that still has the old single
+  `main`), never edited by hand. When two PRs that touch decisions merge one after the other, `main`'s
+  index falls a row behind: the `tests` check then rebuilds it in its copy and only warns, and the
+  processes round rebuilds it on `main` (D-401). A branch from before D-394 that still has the old single
   DECISIONES.md runs `decision.mjs split`.
 - **A single push at the end** (D-303): commits are made locally and pushed together when the
   work, including the agents' work, is ready. Each push to a PR launches the 58 scripts and cancels

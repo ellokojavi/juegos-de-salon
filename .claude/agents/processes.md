@@ -274,7 +274,7 @@ that (after a new game, after a big text change), saying why.
    Yes `merge`. `queue` is for what shouldn't be done before knowing the answer.
    An owner who answers from their phone: few decisions (up to five) that can be understood
    without opening anything else.
-8. **The CHANGELOG and the reservations** (D-300, D-301), which `check` shows: if `changelog/`
+8. **The CHANGELOG, the decisions index and the reservations** (D-300, D-301, D-401), which `check` shows. If `node tools/agents/decision.mjs index --check` says `docs/DECISIONS.md` is stale on `main` (two PRs that touch decisions merged one after the other), `node tools/agents/decision.mjs index` in your worktree and it goes in your PR; the `tests` check only warns about it meanwhile. if `changelog/`
    on `main` has entries, `node tools/release/changelog.mjs collect` in your worktree (with the
    full history) and they go in your PR: it moves them to `CHANGELOG.md` with their number and the
    published version doesn't change. `check` already deleted the `reserve/D-n` reservations (and the older `reserva/D-n`) that

@@ -29,6 +29,17 @@ jobs:
         with:
           python-version: '3.12'
 
+      # The decisions index is generated (D-394) and every PR that adds or amends a decision rebuilds
+      # it, so two such PRs merged one after the other leave it a row behind on main, and every PR
+      # after them failed for a file none of them touched (D-401). Here a stale index is rebuilt in
+      # this copy and noted, not failed; the processes round rebuilds it on main.
+      - name: Decisions index
+        run: |
+          if ! node tools/agents/decision.mjs index --check > /dev/null; then
+            echo "::warning file=docs/DECISIONS.md::docs/DECISIONS.md is behind the decision files (two PRs that touch decisions merged one after the other). Tested with a rebuilt copy; the processes round rebuilds it on main (D-401)."
+            node tools/agents/decision.mjs index
+          fi
+
       # Every *.test.mjs in the repo, with no list to maintain: a new one gets in by itself.
       - name: Node tests
         run: |
