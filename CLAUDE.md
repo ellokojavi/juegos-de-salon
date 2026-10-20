@@ -281,6 +281,9 @@ with that the screen also enters the language tests. To see it on a real phone,
   Firebase (`labsLlaves/`) as administrator; the link is shown only once and the key is not stored.
   The label: initials or a nickname. **It works at once**: no PR, no tests, no publish. **Asking for a
   key is asking for it to work** (D-284, the owner's request): the session creates it and delivers the link.
+- **Everything in development sits behind the lab** (D-395, the owner's rule): lab games under `/labs/`, and
+  anything tried on a page players visit turns on only for a lab key holder (`labAccess()`,
+  `public/assets/js/lab-access.js`). It goes to production for everyone only once validated in the lab.
 - **Home page order and lab experiments** (D-361): `node tools/agents/popularity.mjs check | update`
   recounts the home page's order (`POPULARIDAD` in `games.js`) by games finished in the last four
   weeks; the processes round runs `update` once the list is a week old. What is tried on the home

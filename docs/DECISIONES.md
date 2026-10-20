@@ -64,7 +64,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -6663,7 +6663,7 @@ language there would only double the texts.
 **Consequences:** the panel's tests expect English; PANEL.md's exception to C-3 says English only.
 
 ## D-351 · A promotional splash over the home page, off by default and seen once
-**Date:** 2026-10-18 · **Status:** amended by D-355, D-389 · **Relation:** extends C-17 (the home page)
+**Date:** 2026-10-18 · **Status:** amended by D-355, D-389, D-395 · **Relation:** extends C-17 (the home page)
 **Context:** the owner wants to tell players about what is worth telling (three new games, a new
 mode, a novelty) with a promotional window over the home page: most of the screen, the page
 darkened behind, images and a link to each thing. It must not break the experience: it is not
@@ -6997,7 +6997,7 @@ play, gets there in one tap. Tried in the lab first, as the owner asked for the 
 320 px and that each chip filters; C-17 says it.
 
 ## D-363 · The home page's experiments run on the real home page, without a frame
-**Date:** 2026-10-18 · **Status:** amended by D-389 · **Relation:** corrects D-361 (`/labs/home/` showed the home page in a frame)
+**Date:** 2026-10-18 · **Status:** amended by D-389, D-395 · **Relation:** corrects D-361 (`/labs/home/` showed the home page in a frame)
 **Context:** the owner, on an iPhone: "the menu is not floating in Labs". Safari on an iPhone grows a
 frame to the full height of its page, so the home page inside `/labs/home/` never scrolled itself and its
 sticky filter bar never stuck; in Chrome it did.
@@ -7488,3 +7488,21 @@ game just found is the step a search should save. One Escape closing everything 
 **Consequences:** still only in the lab: without `?search` nothing changes. `tools/e2e/home/search.mjs`
 also checks ↓ ↓ Enter opening the second suggestion, ↑ jumping to "see them all" and Enter filtering,
 the mouse selection, and the two Escapes.
+
+## D-395 · Everything in development sits behind the lab door
+**Date:** 2026-10-20 · **Status:** current · **Relation:** amends D-363 (an experiment's parameter alone turned it on) and D-351 (`?splash=<id>` previewed any campaign)
+**Context:** the owner found the home page's search open to anyone who typed `?search`, and asked that
+it not be: nothing in development reaches players until it has been validated in the lab.
+**Decision:** owner's rule: every feature in development sits behind the lab, and only once it is
+validated there does it go to production for everyone. Lab games already live under `/labs/` behind its
+door (D-281). What is tried on pages players visit (the home page's experiments, `?lab`'s bar, the
+preview of a splash campaign that is not on) now turns on only for whoever holds a lab key:
+`public/assets/js/lab-access.js` asks the same as the door (the key saved on that phone when its link
+was opened, still in Firebase; on localhost and Tailscale it opens by itself). Without a key, those
+addresses show the site as it is. Previewing the campaign that is on stays open: everyone sees it anyway.
+**Why:** an address with a parameter circulates like any link; a feature not validated yet must not
+reach a player through it.
+**Consequences:** a new experiment, or any feature in development outside `/labs/`, asks `labAccess()`
+before it turns on. `lab-access.test.mjs` checks the answer, and `tools/e2e/home/search.mjs` opens the
+home page through the machine's network address, where the lab does not open by itself, to check that
+`?search`, `?lab` and a splash preview show nothing without a key.
