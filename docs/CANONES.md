@@ -405,13 +405,16 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **Home page experiments** (D-361): what is tried on the home page before players see it is a URL
   parameter the page reads, off by default, listed in `public/labs/home/experiments.js`. `/labs/home/`
   opens the real home page with `?lab`, which draws the bar (`public/labs/experiments.css`) with one
-  switch for each; never in a frame, where an iPhone would not let anything stick (D-363). With none
+  switch for each; never in a frame, where an iPhone would not let anything stick (D-363).
+  **Everything in development sits behind the lab** (D-395): an experiment, or anything else not yet
+  validated, turns on only for a lab key holder (`labAccess()` in `public/assets/js/lab-access.js`);
+  without one its parameter shows the site as it is. It reaches everyone only once validated in the lab. With none
   being tried, its 🏠 Experimentos de la portada card waits in La Bodega, folded (D-372).
 - **A promotional splash, off by default** (D-351): when the owner turns on a campaign
   (`ACTIVE` in `splash.js`, with `node tools/agents/splash.mjs on <id> | off`), a window over the
   home page tells what is new, with the page darkened behind; each phone sees it once, and a new
   campaign shows again. Each game in it shows a clip of real play (`marketing/splash/`) and
-  opens with ▶ Play; the way out is a quiet "Ahora no". It fits a 320×640 screen with three games. `?splash=<id>` previews one;
+  opens with ▶ Play; the way out is a quiet "Ahora no". It fits a 320×640 screen with three games. `?splash=<id>` previews one (one that is not on, only with a lab key, D-395);
   `?test` and the scripts never see it. Tried in the lab from the home page's experiments bar (D-389).
 - **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar, bajo la bajada, sale
   de los juegos que se pueden abrir, nunca de La Copa (D-188), y abre el juego con el

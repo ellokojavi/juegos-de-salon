@@ -4,6 +4,8 @@
 // back. On a computer, ↓ ↑ Enter and Escape drive the dropdown (D-393). Prints ✗ if something fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
+import { networkInterfaces } from 'node:os';
+import { ACTIVE, CAMPAIGNS } from '../../../public/assets/js/splash.js';
 const OUT = output('/tmp/home-search');
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 320, height: 640 });
 const ev = e => b.evaluate(e);
@@ -21,6 +23,17 @@ const shown = sel => `(e => !!e && e.getBoundingClientRect().width > 0)(document
 
 await b.go(`${SITE}/?test`);
 ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && await ev(`!document.querySelector('.buscar-pill')`), 'players see no search');
+// Without a lab key nothing in development turns on, even with its parameter (D-395): the page is
+// opened through this machine's network address, which the lab treats as any other site
+const lan = Object.values(networkInterfaces()).flat().find(a => a && a.family === 'IPv4' && !a.internal)?.address;
+if (lan) {
+  const port = new URL(SITE).port || '80';
+  await b.go(`http://${lan}:${port}/?test&search&lab&splash=${Object.keys(CAMPAIGNS).find(id => id !== ACTIVE?.id) || 'x'}`);
+  ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && (await sleep(1200), await ev(`!document.querySelector('.buscar-pill') && !document.getElementById('barra') && !document.getElementById('splash-titulo')`)), 'without a lab key, ?search, ?lab and a splash preview show nothing');
+  // The same address on localhost, where the lab opens by itself, does show them: the check above is not empty
+  await b.go(`${SITE}/?test&search&lab`);
+  ok(await waitFor(`!!document.querySelector('.buscar-pill') && !!document.getElementById('barra')`), 'with the lab open, the same address shows them');
+} else console.log('· no network address: the lab-key check is skipped');
 
 await b.go(`${SITE}/?test&search`);
 ok(await waitFor(shown('.atajos .buscar-pill')), 'with ?search a 🔎 pill sits in the row of Nuevos and Populares');

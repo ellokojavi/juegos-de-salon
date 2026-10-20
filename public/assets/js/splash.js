@@ -201,9 +201,13 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
 export function startSplash({ lang = 'es', search = globalThis.location?.search ?? '' } = {}) {
   const forced = param('splash', search);
   const automated = tiene('test', search) || globalThis.navigator?.webdriver === true;
-  const id = shouldShow({ seen: seenId(), forced, automated });
-  if (!id) return null;
-  // After the home page has drawn its list, so the window lands on a page that is already there
-  setTimeout(() => showSplash(id, { lang, record: !forced }), 350);
-  return id;
+  const show = id => {
+    if (!id) return null;
+    // After the home page has drawn its list, so the window lands on a page that is already there
+    setTimeout(() => showSplash(id, { lang, record: !forced }), 350);
+    return id;
+  };
+  // Previewing a campaign that is not on yet is development: only for lab key holders (D-395)
+  if (forced && forced !== ACTIVE?.id) return import('./lab-access.js').then(({ labAccess }) => labAccess()).then(yes => show(yes ? shouldShow({ forced }) : null));
+  return show(shouldShow({ seen: seenId(), forced, automated }));
 }

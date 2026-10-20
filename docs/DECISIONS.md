@@ -35,7 +35,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -53,7 +53,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (383)
+## In force (384)
 
 | D | Title | Status |
 |---|---|---|
@@ -396,7 +396,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-348](decisions/D-348.md) | The panel by domain: three bands, the period before, versions and CSV | current |
 | [D-349](decisions/D-349.md) | A random id per browser, to count users and cohorts | current |
 | [D-350](decisions/D-350.md) | The owner's panel in English | current |
-| [D-351](decisions/D-351.md) | A promotional splash over the home page, off by default and seen once | amended by D-355, D-389 |
+| [D-351](decisions/D-351.md) | A promotional splash over the home page, off by default and seen once | amended by D-355, D-389, D-395 |
 | [D-352](decisions/D-352.md) | A weekly report, as a PDF on disk and by email | current |
 | [D-353](decisions/D-353.md) | A result says each thing once | current |
 | [D-354](decisions/D-354.md) | The move to English gets an owner and a ratchet | current |
@@ -408,7 +408,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-360](decisions/D-360.md) | A game-ideas agent: three ideas a week, each with evidence, as one-tap decisions | current |
 | [D-361](decisions/D-361.md) | The home page's order every week, a 🔥 "Popular" label in the lab, and the lab in three groups | amended by D-363, D-369, D-373 |
 | [D-362](decisions/D-362.md) | "✨ Nuevo" and "🔥 Populares" as filters, in the lab | amended by D-369 |
-| [D-363](decisions/D-363.md) | The home page's experiments run on the real home page, without a frame | amended by D-389 |
+| [D-363](decisions/D-363.md) | The home page's experiments run on the real home page, without a frame | amended by D-389, D-395 |
 | [D-364](decisions/D-364.md) | The floating menu carries the app's name, and ⭐ Favoritos joins Nuevo and Populares, in the lab | amended by D-369 |
 | [D-365](decisions/D-365.md) | Every job in one registry, and the frequent ones run on the Mac without Claude | current |
 | [D-366](decisions/D-366.md) | Feedback issues mask the player's name, and the email mask keeps both ends of each side | current |
@@ -440,6 +440,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-392](decisions/D-392.md) | A push to a PR tests only what changed since the PR last passed | current |
 | [D-393](decisions/D-393.md) | The home page's search on a computer: ↓ ↑ Enter and Escape in the dropdown | current |
 | [D-394](decisions/D-394.md) | One file per decision, and a generated index | current |
+| [D-395](decisions/D-395.md) | Everything in development sits behind the lab door | current |
 
 ## No longer in force (9)
 
