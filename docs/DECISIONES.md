@@ -64,7 +64,7 @@ que siguen explicando algo; las reemplazadas y derogadas quedan fuera.
 | Idiomas | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310 |
 | Sonido y vibración | C-4 | D-17, D-92 |
 | Modos de juego | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389 |
+| Portada: orden, filtros y favoritos | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390 |
 | Juego al azar y Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375 |
 | Salas y transporte | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-trampa y secretos | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -7370,7 +7370,7 @@ the 95th percentile on the Mac mini, against 2 and 14), still once per game. `en
 the mix (at most 70% of cells under a sum, every rule present, no domino inside one zone).
 
 ## D-387 · Home page search box, a lab experiment
-**Date:** 2026-10-20 · **Status:** current · **Relation:** extends D-363 (a new switch on the home page's lab bar)
+**Date:** 2026-10-20 · **Status:** amended by D-390 · **Relation:** extends D-363 (a new switch on the home page's lab bar)
 **Context:** the owner asked to try, in the lab, a search bar on the home page that loads results while
 typing, by the game's name or by what it has: "lógica", "dados", "toque", "puente".
 **Decision:** `?search` draws a box at the top of the filters (`public/labs/home/search.js`). Each typed
@@ -7414,3 +7414,20 @@ Each splash campaign is an entry of `EXPERIMENTS` (`param: 'splash', value: <id>
 if both shipped.
 **Consequences:** a new campaign in `splash.js` appears in the bar on its own. `home/lab.mjs` checks the
 card, the empty start and two experiments on at once.
+
+## D-390 · The home page's search: a 🔎 pill and a dropdown of games
+**Date:** 2026-10-20 · **Status:** current · **Relation:** amends D-387 (the box on its own line, filtering while typing)
+**Context:** the owner asked that the search not take a whole line of the filters, but be a 🔎 pill that
+opens in place of the pills above, and that it find games the way a shop's autocomplete does, without
+moving the list on the page.
+**Decision:** the 🔎 pill goes at the end of the row of ✨ Nuevos and 🔥 Populares. Tapped, a field takes
+that row (the types stay below) and the filters come to the top of the screen. While typing, a dropdown
+under the field names up to five games with their emoji and the word that found them (Dudo · dados), or
+"Próximamente" for one that does not open yet; a tap opens the game. It ends with "Ver los n juegos con
+«q»", which, like Enter, filters the list below with the count line; the list does not move before that.
+No game found says so in the dropdown. ✕ or Escape close the field, bring the pills back and every game.
+**Why:** with the keyboard up a phone shows little of the list, so the results go where the eyes are; a
+pill costs the filters nothing while nobody searches.
+**Consequences:** the word shown is the one the player sees: a game the Portuguese name finds ("dados"
+in Dado Mentiroso) shows the Spanish tagline's word. `tools/e2e/home/search.mjs` checks the pill, the
+row at 320 px, the dropdown, "see them all", ✕ and opening a game.
