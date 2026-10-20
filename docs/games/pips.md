@@ -51,7 +51,8 @@ as an empty box.
   half that was grabbed lands on the cell under it. While dragging, the two cells it would take are
   outlined (red if taken) and the zone under it lights up. Dropped where it does not fit, it stays where
   it was and the cell shakes; a placed domino dropped off the board goes back to the tray. A move under
-  8 px is still a tap, so the tap way keeps working.
+  8 px is still a tap, so the tap way keeps working. A drag that ends anywhere on the screen, or is cut short (the board
+  redrawn by Deshacer or Limpiar, a second finger, the page hidden), takes its ghost with it.
 - **The zones:** once full, a kept rule's diamond gets a green ring, a broken one turns red and shakes.
   With every domino down and a zone broken: "❌ Una zona no cumple su regla: mueve alguna ficha."
 - **Solved:** every cell covered and every zone kept, in any arrangement (not only the engine's): the
