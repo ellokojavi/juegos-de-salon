@@ -1,6 +1,7 @@
-// The home page's search box, a lab experiment (?search) end to end: it appears only with the
-// parameter, narrows the list while typing, ignores accents, says when nothing matches and clears
-// with "show all". Prints ✗ if something fails.
+// The home page's search, a lab experiment (?search, D-387, D-390) end to end: a 🔎 pill in the row of
+// ✨ Nuevos and 🔥 Populares that opens into a field over that row; while typing, a dropdown names up to
+// five games (the list below does not move) and "see them all" filters the list; ✕ brings the pills
+// back. Prints ✗ if something fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output('/tmp/home-search');
@@ -12,26 +13,39 @@ const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!
 const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
 const type = async q => { await ev(`{ const i = document.getElementById('buscar'); i.value = ${JSON.stringify(q)}; i.dispatchEvent(new Event('input')); } 1`); await sleep(200); };
 const visible = `window.__portada.visibles`;
+const all = `document.querySelectorAll('#games .game-card[data-id]').length`;
+const sugs = `[...document.querySelectorAll('#buscar-lista .sug')].map(x => x.dataset.id)`;
+const shown = sel => `(e => !!e && e.getBoundingClientRect().width > 0)(document.querySelector('${sel}'))`;
 
 await b.go(`${SITE}/?test`);
-ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && await ev(`!document.getElementById('buscar')`), 'players see no search box');
+ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && await ev(`!document.querySelector('.buscar-pill')`), 'players see no search');
 
 await b.go(`${SITE}/?test&search`);
-ok(await waitFor(`!!document.getElementById('buscar')`), 'with ?search the box is on top of the filters');
+ok(await waitFor(shown('.atajos .buscar-pill')), 'with ?search a 🔎 pill sits in the row of Nuevos and Populares');
+ok(await ev(`!${shown('#buscar')} && document.querySelector('.atajos').scrollWidth <= document.querySelector('.atajos').clientWidth + 1`), 'folded, the field is hidden and the row fits at 320 px');
+await b.shot('pill');
+await ev(`document.querySelector('.buscar-pill').click(); 1`);
+ok(await waitFor(`${shown('#buscar')} && !${shown('.atajos [data-tipo="popular"]')} && document.activeElement.id === 'buscar'`), 'tapped, the field takes the row in place of the pills, with the cursor in it');
+ok(await ev(shown('.tipos')), 'the types stay below');
+await type('dados');
+ok(await ev(`${sugs}.includes('dudo') && ${sugs}.length <= 5`), '"dados" names Dudo in the dropdown');
+ok(await ev(`${visible}.length === ${all}`), 'the list below does not move while typing');
+ok(await ev(`/dados/.test(document.querySelector('#buscar-lista .sug[data-id="dudo"]').textContent)`) || await ev(`/dado/.test(document.querySelector('#buscar-lista .sug[data-id="dudo"]').textContent)`), 'it says which word found it');
+await b.shot('dropdown');
 await type('logica');
-ok(await ev(`${visible}.includes('reinas') && !${visible}.includes('dudo')`), '"logica" (no accent) finds the logic games');
-await type('dados');
-ok(await ev(`${visible}.includes('dudo') && !${visible}.includes('reinas')`), '"dados" finds Dudo');
-await type('toque');
-ok(await ev(`${visible}.includes('toque-y-fama') && ${visible}.includes('letras')`), '"toque" finds both Toque y Fama');
-await b.shot("toque");
+ok(await ev(`${sugs}.length === 5 && /\\d+/.test(document.querySelector('.buscar-todos').textContent)`), '"logica" names five and offers to see them all');
+await ev(`document.querySelector('.buscar-todos').click(); 1`);
+ok(await waitFor(`${visible}.includes('reinas') && !${visible}.includes('dudo') && document.getElementById('buscar-lista').hidden`), '"see them all" filters the list and folds the dropdown');
+ok(await ev(`!document.getElementById('filtros-cuenta').hidden`), 'the count line shows how many');
 await type('xyzzy');
-ok(await ev(`${visible}.length === 0 && !document.querySelector('.buscar-nada').hidden`), 'nothing found says so');
-await type('');
-ok(await ev(`${visible}.length === document.querySelectorAll('#games .game-card[data-id]').length && document.querySelector('.buscar-nada').hidden`), 'an empty box shows every game');
-await type('dados');
-await ev(`document.querySelector('#filtros-cuenta .link-btn').click(); 1`);
-ok(await waitFor(`document.getElementById('buscar').value === '' && ${visible}.length === document.querySelectorAll('#games .game-card[data-id]').length`), '"show all" clears the search');
+ok(await ev(`!!document.querySelector('#buscar-lista .buscar-nada') && ${sugs}.length === 0`), 'nothing found says so in the dropdown');
+await ev(`document.querySelector('.buscar-cerrar').click(); 1`);
+ok(await waitFor(`!${shown('#buscar')} && ${shown('.atajos .buscar-pill')} && ${shown('.atajos [data-tipo="popular"]')} && ${visible}.length === ${all}`), '✕ brings the pills back and every game');
+await ev(`document.querySelector('.buscar-pill').click(); 1`);
+await type('toque');
+ok(await ev(`!!document.querySelector('#buscar-lista a.sug[data-id="toque-y-fama"][href]')`), 'a suggestion is a link to its game');
+await ev(`document.querySelector('#buscar-lista a.sug[data-id="toque-y-fama"]').click(); 1`);
+ok(await waitFor(`location.pathname.includes('bulls-and-cows')`), 'tapping it opens the game');
 
 b.close();
 console.log(failures ? `✗ ${failures} failure(s)` : '✓ home/search.mjs');
