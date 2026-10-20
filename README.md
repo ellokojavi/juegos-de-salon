@@ -725,6 +725,7 @@ node tools/e2e/groups.test.mjs
 node tools/e2e/output.test.mjs
 node tools/e2e/scope-guard.test.mjs
 node tools/e2e/scope.test.mjs
+node tools/e2e/since-passed.test.mjs
 node tools/firebase/rankings-history.test.mjs
 node tools/firebase/unnoted-rooms.test.mjs
 node tools/jobs/jobs.test.mjs
@@ -904,7 +905,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Changelog](CHANGELOG.md)
 - [El alemán](docs/ALEMAN.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
-- [Test scope: which tests a change runs, and how the system learns it (D-391)](docs/TEST-SCOPE.md)
+- [Test scope: which tests a change runs, and how the system learns it (D-391, D-392)](docs/TEST-SCOPE.md)
 - [Uno al día](docs/UNO-AL-DIA.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
 <!-- /generated -->

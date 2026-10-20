@@ -25,6 +25,11 @@ concurrency:
 jobs:
   list:
     runs-on: ubuntu-latest
+    # Reading the PR's commits and the marks of those that passed (D-392)
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
     outputs:
       groups: ${{ steps.list.outputs.groups }}
       tree: ${{ steps.list.outputs.tree }}
@@ -41,10 +46,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
         run: |
           echo "tree=$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
           if [ -n "$PR" ]; then
-            gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' > "$RUNNER_TEMP/changes"
+            # Only what changed since the PR's last commit that passed (D-392); the whole PR on its
+            # first push, after a force push, or when asking fails
+            node tools/e2e/since-passed.mjs --pr "$PR" --head "$HEAD" > "$RUNNER_TEMP/changes"
             echo "groups=$(node tools/e2e/ci.mjs --groups --changes "$RUNNER_TEMP/changes")" >> "$GITHUB_OUTPUT"
             # The PR's test scope in the run's summary: what runs, and through what each file reaches (D-378)
             node tools/e2e/ci.mjs --scope --changes "$RUNNER_TEMP/changes" > /dev/null || true
@@ -132,6 +140,14 @@ jobs:
           name: e2e-tree-${{ needs.list.outputs.tree }}
           path: ${{ runner.temp }}/mark
           retention-days: 7
+      # The mark of the PR's commit that passed, with or without scripts: the next push to the PR
+      # tests only what changed since it (tools/e2e/since-passed.mjs, D-392)
+      - if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-head-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/mark
+          retention-days: 14
       # Wakes the PR's session (D-323): with auto-merge on, this check passing is the merge, so it
       # comments that it merges now, then holds the check two minutes so the PR is still open when
       # the app's monitor reads it (it reads every so often, not at once). It has to be here, inside the check: the PR is still open
