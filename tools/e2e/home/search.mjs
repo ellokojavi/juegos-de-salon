@@ -53,6 +53,7 @@ const sitio = `JSON.stringify([...document.querySelectorAll('.atajos > button')]
 const antes = await ev(sitio);
 await ev(`document.querySelector('.buscar-pill').click(); 1`);
 ok(await ev(`document.querySelector('.atajos .buscar').getAnimations().some(a => a.animationName === 'buscar-abre')`), 'the field grows out of the pill (D-398)');
+ok(await ev(`Math.abs(document.querySelector('.buscar-lupa').getBoundingClientRect().width - document.querySelector('.buscar-pill .ficha-emoji').getBoundingClientRect().width) < 0.5`), 'the field\'s 🔎 is the pill\'s size all along: it slides, it does not shrink (D-402)');
 ok(await waitFor(`${shown('#buscar')} && getComputedStyle(document.querySelector('.atajos [data-tipo="popular"]')).opacity === '0' && document.activeElement.id === 'buscar'`), 'tapped, the field covers the row and the pills under it fade out, with the cursor in it');
 ok(await ev(sitio) === antes, 'opening moves nothing in the row: the field lies over it (D-402)');
 ok(await ev(shown('.tipos')), 'the types stay below');

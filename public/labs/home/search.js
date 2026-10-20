@@ -221,7 +221,7 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     .filtros .atajos.buscando.cerrando > :not(.buscar):not(.buscar-pill) { opacity: 1; transition-duration: 0.1s; transition-delay: 0.14s; }
     .filtros .atajos.buscando .buscar { display: block; position: absolute; inset: 0; z-index: 30; }
     @keyframes buscar-abre { from { clip-path: inset(0 var(--r, 0px) 0 var(--l, 0px) round 22px); } to { clip-path: inset(0 0 0 0 round 22px); } }
-    @keyframes buscar-lupa { from { transform: translate(var(--dx, 0px), -50%) scale(1.15); } }
+    @keyframes buscar-lupa { from { transform: translate(var(--dx, 0px), -50%); } }
     @keyframes buscar-borde { from { border-color: var(--glass-border); } }
     @keyframes buscar-aparece { from { opacity: 0; } }
     .filtros .atajos.buscando .buscar { animation: buscar-abre 0.28s cubic-bezier(0.3, 0, 0.2, 1); }
@@ -235,7 +235,7 @@ export function drawSearch({ into, lang, games, onChange, pickName = (n, l) => n
     /* Closing plays the same motions backwards under their own names: an animation that already ran
        does not start over when only its direction changes, so the field froze folded and then vanished */
     @keyframes buscar-pliega { from { clip-path: inset(0 0 0 0 round 22px); } to { clip-path: inset(0 var(--r, 0px) 0 var(--l, 0px) round 22px); } }
-    @keyframes buscar-lupa-vuelve { to { transform: translate(var(--dx, 0px), -50%) scale(1.15); } }
+    @keyframes buscar-lupa-vuelve { to { transform: translate(var(--dx, 0px), -50%); } }
     @keyframes buscar-borde-sale { 40%, to { border-color: var(--glass-border); } }
     @keyframes buscar-texto-sale { 40%, to { --buscar-ph: transparent; } }
     @keyframes buscar-se-va { 50%, to { opacity: 0; } }
