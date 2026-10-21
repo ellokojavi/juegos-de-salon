@@ -180,7 +180,7 @@ Austria y Suiza, **con ß** (los suizos no la escriben, pero la leen sin problem
 | juego | Spiel |
 | a. C. | v. Chr. |
 | Dudo: dudar · calzar · as | Zweifeln! · Genau! (Punktlandung) · Ass |
-| Generala: escalera · full · póker · servida · planilla · guardar · anotar · tachar | Straße · Full House · Viererpasch · im ersten Wurf · Block · behalten · eintragen · streichen |
+| Generala: escalera · full · póker · servida · planilla · casilla · guardar · anotar · tachar · Unos a Seises · doble generala | Straße · Full House · Viererpasch · im ersten Wurf · Block · Feld · behalten · eintragen · streichen · Einer bis Sechser · Doppel-Generala |
 | Toque y Fama: toque · fama | Kuh · Bulle |
 | Batalla Naval: agua · tocado · hundido | Wasser · Treffer · versenkt |
 | Cuarto Rey: penitencia · ¡tomar! · Yo nunca nunca | Aufgabe · Trink! · Ich hab noch nie |
