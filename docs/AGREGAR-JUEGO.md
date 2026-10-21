@@ -19,6 +19,10 @@
    It also brings `nuevoDesde: 'YYYY-MM-DD'`, the day it reaches the home page: its card says
    "New" for two weeks (D-333).
    Si estrena un modo, se agrega a `MODES` y basta.
+   **Its search keywords** (D-404): an entry in `KEYWORDS` in `public/assets/js/search.js`, in es,
+   en, pt and de, at least three each: what the game is, what it is played with, what it is like
+   (`dados`, `dice`, `dados`, `Würfel`). Without them `search.test.mjs` fails. Something new inside an
+   existing card (a new kind of La Copa, a new mode) adds its words to that card's keywords.
 4. **Los modos** que le tocan según C-5, con el transporte de C-7 (`create`, `join`, `send`,
    `onMessage`, `onPresence`, `leave`, `dispose`) y, si tiene sala, sus reglas en
    `firebase/database.rules.json`.

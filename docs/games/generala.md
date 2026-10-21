@@ -1,6 +1,6 @@
 # Diseño: Generala 📝
 
-**Ruta:** `/generala/` (id `generala`) · **Jugadores:** 1 a 6 · **Desde:** v0.189 (2026-10-20) · **Estado:** publicado (v0.189, los tres modos; announced as "Próximamente" from v0.128, D-248, opened by D-405) ·
+**Ruta:** `/generala/` (id `generala`) · **Jugadores:** 1 a 6 · **Desde:** v0.190 (2026-10-20) · **Estado:** publicado (v0.190, los tres modos; announced as "Próximamente" from v0.128, D-248, opened by D-405) ·
 **Idiomas:** es, en ("Generala"), pt ("General", como se le dice en Brasil) y de ("Generala") ·
 **Decisiones:** D-246 (el juego), D-247 (Uno al día), D-248 (próximamente), D-405 (opened, and in Uno al día from 2026-10-23)
 
