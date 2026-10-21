@@ -296,6 +296,7 @@ export const COMMON = {
     rk: {
       title: 'Ranking', titleOf: 'Ranking de {game}',
       week: 'Semana', always: 'Siempre', friends: 'Amigos', cup: 'Copa', today: 'Hoy', streaks: 'Rachas',
+      month: 'Mes', champion: 'Campeón del mes pasado', dailyPoints: 'Puntos de Uno al día', dailyPointsHint: 'La temporada es el mes: cada día suma el puntaje del juego más el bono de la racha. 🔥 es la racha.',
       loading: 'Cargando el ranking…',
       error: 'No se pudo cargar el ranking. Revisa tu conexión.',
       empty: 'Todavía nadie. ¡Sé el primero!',
@@ -525,6 +526,7 @@ export const COMMON = {
     rk: {
       title: 'Leaderboard', titleOf: '{game} leaderboard',
       week: 'Week', always: 'All time', friends: 'Friends', cup: 'Cup', today: 'Today', streaks: 'Streaks',
+      month: 'Month', champion: 'Last month’s champion', dailyPoints: 'One a Day points', dailyPointsHint: 'The season is the month: each day adds the game’s score plus the streak bonus. 🔥 is the streak.',
       loading: 'Loading the leaderboard…',
       error: 'Couldn\'t load the leaderboard. Check your connection.',
       empty: 'Nobody yet. Be the first!',
@@ -754,6 +756,7 @@ export const COMMON = {
     rk: {
       title: 'Ranking', titleOf: 'Ranking de {game}',
       week: 'Semana', always: 'Sempre', friends: 'Amigos', cup: 'Copa', today: 'Hoje', streaks: 'Sequências',
+      month: 'Mês', champion: 'Campeão do mês passado', dailyPoints: 'Pontos do Um por dia', dailyPointsHint: 'A temporada é o mês: cada dia soma a pontuação do jogo mais o bônus da sequência. 🔥 é a sequência.',
       loading: 'Carregando o ranking…',
       error: 'Não deu para carregar o ranking. Confira sua conexão.',
       empty: 'Ninguém ainda. Seja o primeiro!',
@@ -983,6 +986,7 @@ export const COMMON = {
     rk: {
       title: 'Rangliste', titleOf: 'Rangliste: {game}',
       week: 'Woche', always: 'Allzeit', friends: 'Freunde', cup: 'Pokal', today: 'Heute', streaks: 'Serien',
+      month: 'Monat', champion: 'Sieger des Vormonats', dailyPoints: 'Punkte im Spiel des Tages', dailyPointsHint: 'Die Saison ist der Monat: Jeder Tag zählt die Punkte des Spiels plus den Serienbonus. 🔥 ist die Serie.',
       loading: 'Rangliste wird geladen…',
       error: 'Die Rangliste konnte nicht geladen werden. Prüf deine Verbindung.',
       empty: 'Noch niemand. Sei der Erste!',

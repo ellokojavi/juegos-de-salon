@@ -57,6 +57,9 @@ let d = await db();
 ok(d.records?.['uno-al-dia']?.[`d${N}`]?.[sara]?.s === d.unoAlDia[sara][N].s, "and to the day's ranking, with the history's score");
 ok(d.records?.['uno-al-dia-racha']?.siempre?.[sara]?.s === 1, 'and to the streaks table');
 ok(await waitFor(`/^🧊 Si tu amigo termina/.test(document.getElementById('uad-inv-linea')?.textContent||'') && /Sara/.test(document.querySelector('#uad-tarjeta .rk-lista')?.innerText||'')`), 'and under the result, inviting no longer asks to sign in and the ranking shows her');
+// With a lab key (localhost opens it), the month's points come first, the same table /records/ shows (D-412)
+ok(await ev(`document.querySelector('#uad-tarjeta .rk-seg button')?.dataset.p`) === 'mes', "with a lab key, Uno al día's ranking opens on the month's points");
+ok(await waitFor(`!!JSON.parse(localStorage.getItem('${DB}')||'{}').records?.['uno-al-dia-pts']`), 'and signing in adds today to the month points table');
 await b.shot('sara-result');
 
 /* ---------- /today/ with a player: ranking and invite ---------- */
@@ -110,6 +113,13 @@ ok(/🧊 1/.test(await text('#uad-comodines')), 'and has a wildcard');
 await b.go(`${SITE}/today/`, 2200);
 ok(!await ev(`!!document.querySelector('[data-aviso="aceptado"]')`), 'the notice shows only once');
 await b.shot('sara-wildcard');
+
+/* ---------- Uno al día points (lab, D-412): the same ranking in /records/ and in "tu Uno al día" ---------- */
+await b.go(`${SITE}/records/?test`, 1500);
+ok(await waitFor(`/Sara/.test(document.querySelector('[data-tabla="uno-al-dia-pts"] .rk-lista')?.innerText||'')`), "with a lab key, /records/ shows Uno al día's month points, with Sara");
+await b.go(`${SITE}/labs/daily-score/live/?test`, 1500);
+ok(await waitFor(`/Sara/.test(document.querySelector('#ranking [data-tabla="uno-al-dia-pts"] .rk-lista')?.innerText||'') && /#1 del mes/.test(document.getElementById('hero')?.innerText||'')`), `"tu Uno al día" shows the same ranking and her place (${(await text('#hero')).replace(/\n/g, ' · ')})`);
+await b.shot('daily-points-live');
 
 await b.close?.();
 console.log(`Screenshots in ${OUT}`);
