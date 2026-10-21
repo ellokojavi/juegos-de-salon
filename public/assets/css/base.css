@@ -470,7 +470,7 @@ html.i18n-pendiente body { visibility: hidden; }
 /* The vertical Short (D-410): as tall as the screen allows, centered, under its two tabs */
 .hoja-video--vertical { aspect-ratio: 9 / 16; width: auto; height: min(46dvh, 520px); max-width: 100%; margin: 0 auto; flex-shrink: 0; }
 .hoja-pestanas { display: flex; gap: 6px; padding: 4px; border-radius: 999px; background: var(--glass); border: 2px solid var(--glass-border); }
-.hoja-pestana { flex: 1; min-height: 40px; border: 0; border-radius: 999px; background: none; color: var(--muted);
+.hoja-pestana { flex: 1; min-height: 44px; border: 0; border-radius: 999px; background: none; color: var(--muted);
   font-family: var(--font-body); font-weight: 900; font-size: 0.95rem; cursor: pointer; }
 .hoja-pestana.on { background: linear-gradient(180deg, var(--yellow), #ff9a1a); color: #3a1200; }
 .hoja-pestana:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
