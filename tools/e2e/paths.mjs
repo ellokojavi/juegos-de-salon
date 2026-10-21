@@ -539,6 +539,10 @@ export const PATHS = {
     rules: [`document.querySelector('[data-ir="hub"]').click(); 1`, `document.querySelector('[data-ir="reglas"]').click(); document.getElementById('telefono').scrollIntoView(); 1`],
     champion: [`document.querySelector('[data-ir="hub"]').click(); 1`, `[...document.querySelectorAll('button')].find(b => /Campe/.test(b.textContent))?.click(); document.getElementById('telefono').scrollIntoView(); 1`],
   },
+  'labs/daily-score/live': {
+    hub: [],
+    rules: [`document.querySelector('.como')?.click(); 1`],
+  },
   'labs/bridges': {
     intro: [],
     game: [START, `1`, `1`, `1`],

@@ -87,7 +87,8 @@
     import { trackVisit } from '../assets/js/transport/stats.js';
     import { bloqueJugador, bloqueRanking, bloqueCampeones } from '../assets/js/ranking.js';
     import { jugador, leerYo } from '../assets/js/jugador.js';
-    import { TODOTERRENO, PARTIDAS } from '../assets/js/records.js';
+    import { TODOTERRENO, PARTIDAS, UAD_PUNTOS } from '../assets/js/records.js';
+    import { labAccess } from '../assets/js/lab-access.js';
     import { VARIANTES } from '../cup/engine.js';
     import { juegosCopa } from '../cup/rules.js';
 
@@ -220,11 +221,15 @@
       history.replaceState(null, '', seccion === 'copas' ? '#copas' : `#juegos/${juegoElegido || ''}`);
     }
 
+    // Uno al día points (lab, D-412): the same table and tabs as in Uno al día. lab: #seccion-puntos-dia
+    const puntosDia = el('div', { id: 'rk-puntos-dia', hidden: true });
+    labAccess().then(ok => { if (ok) puntosDia.replaceWith(bloqueRanking({ juego: UAD_PUNTOS, titulo: `📅 ${T.dailyPoints}`, hint: T.dailyPointsHint, pestanas: ['mes', 'amigosMes'], alTocar: tap })); });
     pagina.append(
       bloqueJugador({ alTocar: tap }),
       perfil,
       bloqueRanking({ juego: TODOTERRENO, titulo: `🏅 ${T.general}`, hint: T.allRounderHint, alTocar: tap }),
       bloqueRanking({ juego: PARTIDAS, titulo: `🎲 ${T.playsTitle}`, hint: T.playsHint, alTocar: tap }),
+      puntosDia,
       macro,
       seccionJuegos,
       seccionCopas,

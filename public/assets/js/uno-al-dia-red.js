@@ -80,6 +80,8 @@ export async function sincronizar() {
   // Lo de hoy jugado en este celular antes de entrar con el jugador
   const hoy = fechaLocal(), locales = leer().dias, mio = locales[hoy];
   if (mio && !dias[hoy]) await j.anotarDia({ n: numDia(hoy), j: mio.j, s: mio.s, ms: mio.ms, semanaP: semanaDe(hoy), mejor: estado().mejor }).catch(() => null);
+  // And its Uno al día points, for lab key holders (D-412). lab: #seccion-puntos-dia
+  if (mio && await labAccess()) await j.anotarPuntosDia({ n: numDia(hoy), mesP: periodoMes(hoy), racha: estado().racha }).catch(() => false);
   // Los días viejos de este celular que Firebase no tiene van a la historia (no a los rankings de su
   // día ni de su semana, que ya pasaron): así la racha sigue en otro celular
   for (const [f, x] of Object.entries(locales)) {

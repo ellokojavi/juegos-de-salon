@@ -9,7 +9,8 @@
 import { el } from './ui.js';
 import { COMMON, getLang } from './i18n.js';
 import { jugador, leerYo, rankingsVisibles } from './jugador.js';
-import { semana, SIEMPRE, tablaId, VARIANTE_COPA, VARIANTE_VICTORIAS, esVictorias, medallero, ultimasCopas, limpiarNombre, esPin, claveNombre, bandera, PARTIDAS, UAD_RACHA, periodoDia } from './records.js';
+import { semana, SIEMPRE, tablaId, VARIANTE_COPA, VARIANTE_VICTORIAS, esVictorias, medallero, ultimasCopas, limpiarNombre, esPin, claveNombre, bandera, PARTIDAS, UAD_RACHA, UAD_PUNTOS, periodoDia, periodoMes } from './records.js';
+import { sumarDias } from './uno-al-dia.js';
 import { fechaLocal, numDia, semanaDe } from './uno-al-dia.js';
 import { ponerBuzon } from './buzon.js';
 
@@ -173,18 +174,31 @@ const PESTANAS = {
   semanaDia: { rotulo: T => T.week, leer: (J, juego) => J.tabla(juego, semanaDe(fechaLocal())) },
   rachas: { rotulo: T => T.streaks, tabla: UAD_RACHA, leer: J => J.tabla(UAD_RACHA, SIEMPRE) },
   amigosSemana: { rotulo: T => T.friends, vacio: T => T.emptyFriendsToday, leer: async (J, juego) => ({ top: await J.tablaAmigos(juego, semanaDe(fechaLocal())), amigos: true }) },
+  // Uno al día points (lab, D-412): the month's season, everyone and friends; last month's winner
+  // carries the 🏆 badge next to their name
+  mes: { rotulo: T => T.month, tabla: UAD_PUNTOS, leer: J => J.tabla(UAD_PUNTOS, periodoMes(fechaLocal())) },
+  amigosMes: { rotulo: T => T.friends, tabla: UAD_PUNTOS, vacio: T => T.emptyFriendsToday, leer: async J => ({ top: await J.tablaAmigos(UAD_PUNTOS, periodoMes(fechaLocal())), amigos: true }) },
 };
 
-function fila(f, yo, victorias = false) {
+/** The month before today's, as a period (`s2026-09`). */
+export const mesAnterior = (fecha = fechaLocal()) => periodoMes(sumarDias(`${fecha.slice(0, 7)}-01`, -1));
+
+/** Last month's Uno al día points champion (D-412): their jid, or null. */
+export async function campeonDelMes(J) {
+  try { return (await J.tabla(UAD_PUNTOS, mesAnterior(), { top: 1 })).top[0]?.jid ?? null; } catch (_) { return null; }
+}
+
+function fila(f, yo, victorias = false, campeon = null) {
   const T = R();
   const mia = yo && f.jid === yo;
   return el('div', { class: 'rk-fila' + (mia ? ' yo' : ''), 'data-jid': f.jid },
     el('span', { class: 'rk-puesto' }, f.puesto == null ? '·' : MEDALLA[f.puesto - 1] || `${f.puesto}`),
     // El "(tú)" va fuera del recorte: un nombre largo se corta, pero se sigue viendo cuál es el propio
-    el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, conBandera(f.co, f.n || '?')), mia ? el('small', {}, `(${T.you})`) : null),
+    el('span', { class: 'rk-nombre' }, el('span', { class: 'rk-n' }, conBandera(f.co, f.n || '?')),
+      campeon && f.jid === campeon ? el('span', { class: 'rk-campeon', title: T.champion, 'aria-label': T.champion }, '🏆') : null, mia ? el('small', {}, `(${T.you})`) : null),
     el('span', { class: 'rk-puntos' }, `${f.s}`),
     // En una tabla de victorias no hay tiempo: el trofeo dice qué se cuenta
-    el('small', { class: 'rk-tiempo' }, victorias === 'partidas' ? '🎲' : victorias === 'racha' ? '🔥' : victorias ? '🏆' : mmss(f.ms)));
+    el('small', { class: 'rk-tiempo' }, victorias === 'partidas' ? '🎲' : victorias === 'racha' ? '🔥' : victorias === 'puntos' ? `🔥${f.r || 0}` : victorias ? '🏆' : mmss(f.ms)));
 }
 
 /**
@@ -208,15 +222,16 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
     try {
       const J = await jugador();
       const v = await PESTANAS[actual].leer(J, juego);
+      const campeon = (PESTANAS[actual].tabla || juego) === UAD_PUNTOS ? await campeonDelMes(J) : null;
       if (mio !== turno) return;
       const yo = leerYo()?.jid;
       lista.replaceChildren();
       const sinAmigos = PESTANAS[actual].vacio?.(T) || T.emptyFriends;
       if (!v.top.length) { lista.append(el('p', { class: 'muted rk-centro' }, v.amigos ? sinAmigos : T.empty)); return; }
       const t = PESTANAS[actual].tabla || juego;
-      const tipo = t === PARTIDAS ? 'partidas' : t === UAD_RACHA ? 'racha' : esVictorias(t);
-      lista.append(...v.top.map(f => fila(f, yo, tipo)));
-      if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, tipo)));
+      const tipo = t === PARTIDAS ? 'partidas' : t === UAD_RACHA ? 'racha' : t === UAD_PUNTOS ? 'puntos' : esVictorias(t);
+      lista.append(...v.top.map(f => fila(f, yo, tipo, campeon)));
+      if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, tipo, campeon)));
       if (v.amigos && v.top.length < 2) lista.append(el('p', { class: 'muted rk-centro' }, sinAmigos));
     } catch (e) {
       if (mio === turno) lista.replaceChildren(el('p', { class: 'rk-error' }, T.error));
