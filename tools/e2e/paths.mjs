@@ -532,6 +532,13 @@ export const PATHS = {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
   },
+  // The Uno al día points lab: a click-through prototype; each step opens one screen
+  'labs/daily-score': {
+    intro: [],
+    hub: [`document.querySelector('[data-ir="hub"]').click(); document.getElementById('telefono').scrollIntoView(); 1`],
+    rules: [`document.querySelector('[data-ir="hub"]').click(); 1`, `document.querySelector('[data-ir="reglas"]').click(); document.getElementById('telefono').scrollIntoView(); 1`],
+    champion: [`document.querySelector('[data-ir="hub"]').click(); 1`, `[...document.querySelectorAll('button')].find(b => /Campe/.test(b.textContent))?.click(); document.getElementById('telefono').scrollIntoView(); 1`],
+  },
   'labs/bridges': {
     intro: [],
     game: [START, `1`, `1`, `1`],
