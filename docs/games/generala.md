@@ -175,3 +175,8 @@ Gancho de pruebas (C-14): `window.__generala` (`view`, `match`, `session`).
   día, porque la semilla adelantaría los próximos tiros a quien la lea (D-246).
 - **C-10, anti-trampa:** no hay secretos que comprometer; los dados van en claro, como en la mesa
   (D-246).
+- **U-18, a lo más 3 puntos:** "¿Cómo se juega?" keeps its three points, and under them goes a
+  second list, "Qué pide cada casilla", with one line per box (six in all, Unos a Seises counted
+  as one) and what it is worth. It goes beyond the three points on the owner's request
+  (2026-10-20): the boxes are the game's vocabulary, and the table usually learns them from someone
+  who already knows.
