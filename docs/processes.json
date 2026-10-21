@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "b7b2fc0",
+  "checkedUpTo": "b75fac6",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -228,6 +228,11 @@
           "date": "2026-10-15",
           "what": "The documentation guide asks for the PR link in a commit after opening the PR, which forces a second push (D-303 asks for one)",
           "commit": null
+        },
+        {
+          "date": "2026-10-21",
+          "what": "Documentation round 2026-10-21 (#608) pushed twice again: the PR link commit went after opening the PR",
+          "commit": null
         }
       ],
       "mechanism": null
@@ -366,12 +371,16 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-18",
-      "to": "b7b2fc0"
+      "date": "2026-10-21",
+      "to": "b75fac6"
     },
     "usability": {
-      "date": "2026-10-18",
-      "to": "b7b2fc0"
+      "date": "2026-10-21",
+      "to": "b75fac6"
+    },
+    "ideas": {
+      "date": "2026-10-21",
+      "to": "b75fac6"
     }
   },
   "rounds": [
@@ -438,6 +447,14 @@
       "issue": null,
       "pr": null,
       "note": "Dispatched documentation (#515) and usability (#514), both reviewed. Closed #503 (fix here), #466 (done in #513) and #494. Collected 15 changelog entries."
+    },
+    {
+      "date": "2026-10-21",
+      "from": "b7b2fc0",
+      "to": "b75fac6",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/607",
+      "pr": null,
+      "note": "Ad-hoc round for feedback: #604 to owner decision; 80 changelog entries collected; D-330 unused"
     }
   ],
   "ownerDecisions": [
