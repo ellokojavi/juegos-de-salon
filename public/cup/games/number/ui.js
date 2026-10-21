@@ -8,7 +8,6 @@
  */
 import * as motor from './engine.js';
 import { teclado, CIFRAS } from '../../../assets/js/teclado.js';
-import { labAccess } from '../../../assets/js/lab-access.js';
 import { LOCALES as TYF_LOCALES } from '../../../bulls-and-cows/rules.js';
 
 export const TYF = TYF_LOCALES.es;
@@ -56,10 +55,8 @@ export function montar(raiz, ctx) {
   const notas = new Set(J.n);
   const guardar = () => ctx.guardar({ i: J.i, n: [...notas] });
 
-  // Elegir la casilla (#604): Toque y Fama, jugando solo, la trae prendida; en La Copa, por ahora solo
-  // con llave del lab (D-409). lab: #seccion-copa-casilla
-  const elegir = ctx.elegir ?? labAccess();
-  const elegible = pad => { Promise.resolve(elegir).then(ok => { if (ok) pad.activarElegir(); }); return pad; };
+  // Choosing the box (#604): on for everyone, in Toque y Fama and in La Copa (tried in the lab, D-409)
+  const elegible = pad => { pad.activarElegir(); return pad; };
   const dibujar = () => {
     const e = motor.estado(p, J.i, max);
     // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
