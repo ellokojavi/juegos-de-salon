@@ -567,3 +567,6 @@ PATHS.copa['inbox-home'] = [`location.href='/'`, `1`, `1`, `document.querySelect
  * this the language tests go through every campaign, and `look.mjs splash <id>` opens one (D-355).
  */
 PATHS.splash = Object.fromEntries(Object.keys(CAMPAIGNS).map(id => [id, [`location.href='/?splash=${id}'`, `1`, `1`, `1`]]));
+
+/** The home page share sheet (D-410): the Short in its tab, and the two ways to share under it. */
+PATHS.copa['share-sheet'] = [`location.href='/?test'`, `1`, `1`, `document.getElementById('btn-compartir-portada')?.click()`, `1`];

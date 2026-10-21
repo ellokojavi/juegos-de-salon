@@ -7,10 +7,10 @@
       "titulo": "Video promocional de Juegos de Salón",
       "carpeta": "marketing/promo-video/",
       "memoria": "marketing/promo-video/README.md",
-      "version": 6,
-      "fecha": "2026-10-08",
+      "version": 7,
+      "fecha": "2026-10-21",
       "idioma": "es",
-      "app": "0.129.1",
+      "app": "0.190.2",
       "archivos": [
         {
           "ruta": "marketing/promo-video/output/promo-youtube-16x9.mp4",
@@ -27,6 +27,15 @@
           "alto": 1920,
           "segundos": 39.2,
           "uso": "Shorts, Reels, estados de WhatsApp"
+        },
+        {
+          "ruta": "marketing/promo-video/output/promo-vertical-en.mp4",
+          "formato": "9:16",
+          "ancho": 1080,
+          "alto": 1920,
+          "segundos": 39.2,
+          "uso": "English Short; the home page share sheet (D-410)",
+          "idioma": "en"
         }
       ],
       "fuente": "marketing/promo-video/promo.html",
@@ -39,7 +48,7 @@
         "zip",
         "reinas"
       ],
-      "estado": "en YouTube (@eljotairi), no listado: 16:9 https://youtu.be/fQ4uFaPX_4g y Short https://youtube.com/shorts/RYAvj2MTRPQ",
+      "estado": "Shorts on the channel of hola@juegosdesalon.cl, public: ES https://youtube.com/shorts/zM9v2UwEsM8 and EN https://youtube.com/shorts/UubTGcUoQD8, both in the home page share sheet (D-410). The v7 16:9 is not uploaded yet",
       "revision": {
         "fecha": "2026-10-21",
         "app": "0.190.2",
@@ -66,7 +75,12 @@
         "anio",
         "reinas",
         "tango",
-        "desenredo"
+        "desenredo",
+        "generala",
+        "julepe",
+        "rutas",
+        "loteo",
+        "pintaminas"
       ],
       "servido": [
         "public/assets/img/trailer.jpg"

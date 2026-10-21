@@ -8,13 +8,15 @@ import json, os, sys
 from PIL import Image, ImageDraw
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
-d = json.load(open(os.path.join(AQUI, 'plays/plays.json')))
+LANG = os.environ.get('LANG_PROMO', 'es')
+DIR = 'plays' if LANG == 'es' else f'plays-{LANG}'
+d = json.load(open(os.path.join(AQUI, DIR, 'plays.json')))
 ids = sys.argv[1:] or list(d)
 W, H = 234, 506
 hoja = Image.new('RGB', (W * max(len(d[i]) for i in ids), H * len(ids)), 'black')
 for r, i in enumerate(ids):
     for c, f in enumerate(d[i]):
-        im = Image.open(os.path.join(AQUI, 'plays', f['img'])).convert('RGB').resize((W, H))
+        im = Image.open(os.path.join(AQUI, DIR, f['img'])).convert('RGB').resize((W, H))
         if f['tap']:
             x, y = f['tap']['x'] * W / 390, f['tap']['y'] * H / 844
             ImageDraw.Draw(im).ellipse((x - 9, y - 9, x + 9, y + 9), outline='red', width=3)
