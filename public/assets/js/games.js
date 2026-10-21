@@ -87,9 +87,10 @@ export const GAMES = [
     duration: '15–30',
     jugadas: ['roll', 'score'],
     path: 'generala/',
-    // En la portada como "Próximamente" (D-248): el juego está entero en /generala/, pero se
-    // anuncia antes de abrirse. Al abrirlo, entra también a Uno al día (D-247).
-    available: false,
+    // Announced as "Próximamente" first (D-248), opened on the owner's request (D-405): it joins
+    // Uno al día with the deck shuffled on 2026-10-23 (DESDE_GENERALA in uno-al-dia.js)
+    nuevoDesde: '2026-10-20',
+    available: true,
   },
   {
     id: 'batalla-naval',

@@ -1,19 +1,20 @@
 // Uno al día with a game that has variants (D-334): the daily challenge is the same for everyone, so
 // `?today` plays the default variant without offering the picker, even on a phone that remembers the
-// other one. The page clock is fixed at noon on the day each game is due (Loteo on October 23, 2026,
-// Pintaminas on October 30). Prints ✗ if anything fails.
+// other one. The page clock is fixed at noon on the first day each game is due, looked up in the deck
+// (D-405: hand-written dates broke whenever a game joined). Prints ✗ if anything fails.
 import { output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
-import { juegoDel as gameOf } from '../../public/assets/js/uno-al-dia.js';
+import { juegoDel as gameOf, DESDE_MAS, sumarDias } from '../../public/assets/js/uno-al-dia.js';
 
 const SITE = process.env.SITE || 'http://localhost:8765';
 const OUT = output();
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) process.exitCode = 1; };
+const dayOf = id => { for (let i = 0; i < 200; i++) { const f = sumarDias(DESDE_MAS, i); if (gameOf(f) === id) return f; } return null; };
 const CASES = [
-  { day: '2026-10-23', id: 'loteo', path: 'plots', other: 'utilities', variant: () => 'window.__loteo?.P?.p?.variante' },
-  { day: '2026-10-30', id: 'pintaminas', path: 'paint-mines', other: 'hard', variant: () => 'window.__pintaminas?.p?.variante' },
+  { day: dayOf('loteo'), id: 'loteo', path: 'plots', other: 'utilities', variant: () => 'window.__loteo?.P?.p?.variante' },
+  { day: dayOf('pintaminas'), id: 'pintaminas', path: 'paint-mines', other: 'hard', variant: () => 'window.__pintaminas?.p?.variante' },
 ];
-for (const c of CASES) if (gameOf(c.day) !== c.id) { console.log(`✗ ${c.day} no longer gets ${c.id} (it gets ${gameOf(c.day)}): change the script's dates`); process.exit(1); }
+for (const c of CASES) if (!c.day) { console.log(`✗ ${c.id} never comes out in Uno al día`); process.exit(1); }
 
 for (const c of CASES) {
   const b = await launch({ dir: `${OUT}/p-${c.id}`, out: OUT });
