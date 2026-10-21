@@ -25,8 +25,7 @@ The video and its memory live in `marketing/promo-video/` (D-178).
    cannot be listened to from here).
 4. **To upload it to YouTube** (the owner's channel, @eljotairi) follow "Para YouTube" in the README:
    files under 10 MB, Claude in Chrome, everything filled in and set to *Unlisted*, and **the owner presses
-   "Save"**. What was uploaded is recorded in "Lo subido", and the new 16:9 goes to the home page: its id in `TRAILERS`, in the
-   entry for its language (`public/assets/js/compartir-portada.js`, D-254) and its thumbnail in `public/assets/img/trailer.jpg` (D-253).
+   "Save"**. What was uploaded is recorded in "Lo subido", and the new Shorts go to the home page share sheet: each id in `SHORTS` (`public/assets/js/compartir-portada.js`, D-410).
 5. **When closing the iteration, record it** before opening the PR:
    - a new entry in the README's "Historia", with what the owner asked for (in their own words when
      it matters) and what was done;

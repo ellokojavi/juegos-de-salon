@@ -23,7 +23,7 @@ export { mmss };
  *
  * Devuelve `soltar()`, que detiene el reloj y los oyentes (al salir de la pantalla).
  */
-export function jugarSolo(raiz, { mod, p, lang, T, fmt, el, SFX, vibrate, jugadas, ms = 0, guardar, alTerminar, cron, pausado }) {
+export function jugarSolo(raiz, { mod, p, lang, T, fmt, el, SFX, vibrate, jugadas, ms = 0, guardar, alTerminar, cron, pausado, elegir = false }) {
   let rel = reloj.nuevo(Date.now());
   rel.ms = ms;
   let detenido = false;
@@ -41,7 +41,7 @@ export function jugarSolo(raiz, { mod, p, lang, T, fmt, el, SFX, vibrate, jugada
   document.addEventListener('visibilitychange', visibilidad);
   const soltar = () => { clearInterval(tic); document.removeEventListener('visibilitychange', visibilidad); };
   mod.montar(raiz, {
-    p, jugadas, lang, T, fmt, el, SFX, vibrate,
+    p, jugadas, lang, T, fmt, el, SFX, vibrate, elegir,
     guardar(j) { actuales = j; escribir(); },
     tiempo: leer,
     pausa(ms) {

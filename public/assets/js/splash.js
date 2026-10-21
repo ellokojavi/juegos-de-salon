@@ -208,6 +208,7 @@ export function startSplash({ lang = 'es', search = globalThis.location?.search 
     return id;
   };
   // Previewing a campaign that is not on yet is development: only for lab key holders (D-395)
+  // A campaign that is not on previews only with a lab key (D-395). lab: #seccion-portada
   if (forced && forced !== ACTIVE?.id) return import('./lab-access.js').then(({ labAccess }) => labAccess()).then(yes => show(yes ? shouldShow({ forced }) : null));
   return show(shouldShow({ seen: seenId(), forced, automated }));
 }

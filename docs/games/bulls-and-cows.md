@@ -96,6 +96,20 @@ En la pantalla de juego aparece una ficha “🔒 Tu número secreto”. En dos 
 
 En el teclado de adivinar, una pulsación larga (450 ms) sobre una cifra la tacha: se ve con 🚫, se quita de la entrada actual y el toque corto no la ingresa. Otra pulsación larga la destacha. En pantalla se dice **tachar**, no bloquear (U-5, D-177). El teclado con notas es el compartido, `public/assets/js/teclado.js` (D-102). Las marcas son por jugador (en un celular cada uno tiene las suyas), duran toda la partida, se guardan con la sesión en modo dos celulares y se limpian en la revancha. Bajo el teclado hay una instrucción de una línea para usuarios nuevos.
 
+### Choosing the box
+
+A player asked for it by email (#604, approved in #607): tapping a box chooses where the next digit
+goes, instead of always filling left to right, so a digit whose place is already deduced can be put
+there and the others thought around it. The next digit goes to the chosen box, then the first empty
+one after it; ⌫ clears the chosen box (or the one before it, if it is empty); a gap in the middle
+cannot be confirmed; the 0 still cannot go first when the game forbids it. It is the shared keyboard's
+`elegir` option (`teclado.js`), on in Toque y Fama's games, the secret number and playing solo; in La
+Copa's 🔢 it is in the lab (only with a lab key, D-409, its card in ✨ Mejoras en prueba), and the
+other users of the keyboard do not turn it on. It was tried in the lab first (D-409) and
+the owner published it for everyone; its card stays in La Bodega, marked 🚀 Lanzado. The hint under
+the keypad says it («Toca una casilla para elegir dónde va la cifra…»). Checked by
+`tools/e2e/bulls-and-cows/choose-box.mjs`.
+
 ### Repaso al final
 
 Bajo “Los números secretos eran” hay un desplegable “🔎 Ver todos los intentos”, colapsado por defecto (una línea de alto, para que Revancha, Cambiar modo y Volver al menú queden a la vista en un celular de 812 px), con los tableros completos de ambos jugadores.

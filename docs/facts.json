@@ -1,5 +1,5 @@
 {
-  "version": "0.190.3",
+  "version": "0.192.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1070,6 +1070,7 @@
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
+    "public/labs/listed.test.mjs",
     "public/labs/pips/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
@@ -1130,6 +1131,7 @@
     "battleship/online.mjs",
     "battleship/placement.mjs",
     "bulls-and-cows/chat.mjs",
+    "bulls-and-cows/choose-box.mjs",
     "bulls-and-cows/languages.mjs",
     "bulls-and-cows/local.mjs",
     "bulls-and-cows/online.mjs",

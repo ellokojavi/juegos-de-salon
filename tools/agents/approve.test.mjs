@@ -1,6 +1,6 @@
 // One-tap decisions (D-273): which checkbox counts, who may check it and which actions are accepted.
 import assert from 'node:assert/strict';
-import { plan, checkedWithoutResult, question, checkboxes, newlyChecked, readActions, invalidAction, recordDone, doneSet, normalizeAction, OWNER } from './approve.mjs';
+import { plan, checkedWithoutResult, question, checkboxes, newlyChecked, readActions, invalidAction, recordDone, doneSet, normalizeAction, OWNER, settle, undecided, decisionQueuing } from './approve.mjs';
 import { decisionsBody } from './processes.mjs';
 
 const decisions = {
@@ -24,7 +24,7 @@ assert.deepEqual(checkboxes(body), { '1:si': false, '1:no': false, '2:si': false
 assert.deepEqual(readActions(body)['1:si'], [{ type: 'merge', pr: 300 }]);
 assert.deepEqual(readActions(body)['2:no'], [{ type: 'nothing' }], 'a No without actions is only noted');
 assert.match(body, /Merge the docs of the 11th/);
-assert.match(body, /Check \*\*Yes\*\* or \*\*No\*\* on each one/);
+assert.match(body, /Check one box on each/);
 
 // Each checkbox says what it does, and the comment names the question
 assert.match(body, /^- \[ \] Yes: merges #300 <!-- op:1:si -->$/m);
@@ -102,3 +102,31 @@ assert.deepEqual(plan(event(old, check(old, '1:si'))).plans, [{ decision: '1', o
 assert.ok(doneSet(recordDone(check(old, '1:si'), '1', 'si', '✅ #300 fusionado')).has('1'));
 
 console.log('approve: ok');
+
+// D-409: "Yes, and publish" is a third box; checking it and "Yes, in Labs" together carries out one
+const labOrPub = decisionsBody({ decisions: [{ question: 'Choose the box', yes: [{ type: 'queue', task: 'build it' }] }] });
+const pubChecked = check(labOrPub, '1:pub');
+assert.deepEqual(plan(event(labOrPub, pubChecked)).plans, [{ decision: '1', option: 'pub', actions: [{ type: 'queue', task: '[publish] build it' }] }]);
+const labAndPub = check(pubChecked, '1:si');
+const twoBoxes = plan(event(labOrPub, labAndPub));
+assert.equal(twoBoxes.plans.length, 1);
+assert.match(twoBoxes.warnings[0], /already answered/);
+
+// D-411: a decision settled without a box (its work was done another way) counts as made, and the
+// idea's decision is found by its queued task, [labs] or [publish] mark aside
+const ideasBody = decisionsBody({ decisions: [
+  { question: 'Come back to the cup?', yes: [{ type: 'queue', task: 'ideas cup-come-back: lab demo' }] },
+  { question: 'Try Pips?', yes: [{ type: 'queue', task: 'ideas pips-dominoes: a lab project' }] },
+] });
+assert.deepEqual(undecided(ideasBody), ['1', '2']);
+assert.equal(decisionQueuing(ideasBody, 'ideas pips-dominoes:'), '2');
+assert.equal(decisionQueuing(ideasBody, 'ideas nope:'), null);
+const settled = settle(ideasBody, '2', 'prototyped: built in the lab');
+assert.match(settled, /<!-- op:2:no -->\n- ✔️ No answer needed, nothing was carried out: prototyped: built in the lab <!-- hecho:2 -->/);
+assert.doesNotMatch(settled, /\[x\]/, 'no box is checked');
+assert.deepEqual(undecided(settled), ['1']);
+assert.equal(settle(settled, '2', 'again'), settled, 'settling twice changes nothing');
+assert.throws(() => settle(ideasBody, '7', 'x'), /no decision 7/);
+// Checking a box of a settled decision carries nothing out
+const lateYes = check(settled, '2:si');
+assert.match(plan(event(settled, lateYes)).warnings[0], /already answered/);

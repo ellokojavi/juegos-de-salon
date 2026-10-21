@@ -57,7 +57,7 @@ A game's name is quoted as the app shows it (Spanish, C-3).
 ```bash
 node tools/agents/ideas.mjs check [--weeks 4]        # the numbers, the lab, what players asked, the ledger
 node tools/agents/ideas.mjs propose <file.json> [--dry-run]   # records the ideas and opens the owner's issue
-node tools/agents/ideas.mjs record <id> <status> "why" [--link <url>]
+node tools/agents/ideas.mjs record <id> <status> "why" [--link <url>]   # built, shelved or discarded while its question is open: settles it on the issue (D-411)
 node tools/agents/ideas.mjs list [--status proposed,approved]
 node tools/agents/ideas.mjs taste "<what the answer taught>" --from <issue url>
 node tools/agents/ideas.mjs history
@@ -126,7 +126,10 @@ mini like the processes round (D-276). Without the key it prints what needs no k
 6. `node tools/agents/ideas.mjs propose <file.json>`: it records the ideas as `proposed` and opens
    **one** issue through the processes agent's one-tap mechanism (`processes.mjs decide`, D-273):
    "Ideas: <date>", one Yes and one No per idea, the Yes queued for the processes round
-   (`queue`), which launches a session to build the prototype as a lab-only PR (D-304). First
+   (`queue`), which launches a session to build the prototype as a lab-only PR (D-304). Since the
+   Yes queues work, each idea gets three boxes on its own (D-409): **Yes, in Labs** (the task marked
+   `[labs]`), **Yes, and publish** (`[publish]`) and **No**; an idea is a lab prototype, so the
+   recommendation is normally the first. First
    `--dry-run` and read the questions as the owner will, from a phone.
 7. **Next round, the outcomes first:** each Yes → `record <id> approved "…"`; each No →
    `record <id> discarded "<what the owner said, in their words when it matters>"`, and what
