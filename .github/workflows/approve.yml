@@ -1,6 +1,8 @@
 # One-tap decisions (D-273): the processes agent opens an issue with checkboxes
 # (`processes` label): Yes / No, or Yes, in Labs / Yes, and publish / No when the Yes changes something (D-409); when the owner checks one, this does what the checkbox says, with no model
 # in between. The rules of who and what are in tools/agents/approve.mjs and its test.
+# A decision settled with `processes.mjs settle` (D-411) counts as made: a box checked on it
+# afterwards carries nothing out.
 #
 # A merge made with the workflow token does not wake publish.yml: that is why `merge` runs it
 # by hand afterwards (workflow_dispatch does work with this token), and publish.yml runs the
