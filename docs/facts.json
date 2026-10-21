@@ -1,5 +1,5 @@
 {
-  "version": "0.187.11",
+  "version": "0.188.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -876,6 +876,7 @@
     "public/assets/js/ranking.js",
     "public/assets/js/records.js",
     "public/assets/js/rng.js",
+    "public/assets/js/search.js",
     "public/assets/js/session.js",
     "public/assets/js/sobre.js",
     "public/assets/js/sound.js",
@@ -995,7 +996,6 @@
     "public/labs/exploding-numbers/engine.js",
     "public/labs/exploding-numbers/game.js",
     "public/labs/home/experiments.js",
-    "public/labs/home/search.js",
     "public/labs/pips/engine.js",
     "public/labs/pips/game.js",
     "public/liars-dice/engine.js",
@@ -1037,6 +1037,7 @@
     "public/assets/js/parametros.test.mjs",
     "public/assets/js/push.test.mjs",
     "public/assets/js/records.test.mjs",
+    "public/assets/js/search.test.mjs",
     "public/assets/js/splash.test.mjs",
     "public/assets/js/transport/best-effort.test.mjs",
     "public/assets/js/transport/cleanup.test.mjs",
@@ -1068,7 +1069,6 @@
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
-    "public/labs/home/search.test.mjs",
     "public/labs/pips/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",

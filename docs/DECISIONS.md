@@ -432,10 +432,10 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-384](decisions/D-384.md) | A game whose speed scores, and that has no countdown, shows the elapsed time | current |
 | [D-385](decisions/D-385.md) | Pips: the rule's diamond inside its cell, the zone lights up, and dominoes drag | current |
 | [D-386](decisions/D-386.md) | Pips: boards that do not all add up | current |
-| [D-387](decisions/D-387.md) | Home page search box, a lab experiment | amended by D-390 |
+| [D-387](decisions/D-387.md) | Home page search box, a lab experiment | amended by D-390, D-403 |
 | [D-388](decisions/D-388.md) | A change to the home page alone runs the home page's scripts, not the games' | amended by D-391 |
 | [D-389](decisions/D-389.md) | The home page's experiments, the splash among them, in one lab card with checkboxes | amended by D-399 |
-| [D-390](decisions/D-390.md) | The home page's search: a 🔎 pill and a dropdown of games | amended by D-393, D-396 |
+| [D-390](decisions/D-390.md) | The home page's search: a 🔎 pill and a dropdown of games | amended by D-393, D-396, D-403 |
 | [D-391](decisions/D-391.md) | The end-to-end scope never falls back to "everything" without a test saying so | amended by D-392 |
 | [D-392](decisions/D-392.md) | A push to a PR tests only what changed since the PR last passed | current |
 | [D-393](decisions/D-393.md) | The home page's search on a computer: ↓ ↑ Enter and Escape in the dropdown | current |
