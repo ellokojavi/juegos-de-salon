@@ -1,5 +1,270 @@
 # Changelog
 
+## 0.190.2 — 2026-10-21
+- **The home page announces the three new logic games** (Rutas, Loteo and Pintaminas) in the promotional splash, through Friday, October 23 (D-351). Each phone sees it once: closing it or opening a game hides it for good.
+
+## 0.190.1 — 2026-10-21
+- **📐 Loteo's waiting room no longer jumps when you switch between Números and Servicios**: the demo board keeps its space while the next one loads, and both variants put the title at the same height (owner's report).
+
+## 0.190.0 — 2026-10-20
+- **Owner's panel: 🕑 Timeline** (D-408). A new section lists the key events one by one, with who and when (Pacific time): games that reached an ending (rooms, offline, One a Day, La Copa days), cups created, joined or finished, and feedback sent. Filter by kind, count by day, week or month and by hour of day, and tap a period to list only its events; ⬇︎ CSV included. Nothing changes for players.
+
+## 0.189.4 — 2026-10-20
+- **📝 Generala explains every box**: under "¿Cómo se juega?" a new list says what each box asks for and what it is worth, normal and on the first roll: Unos a Seises, Escalera, Full, Póker, Generala and Doble generala, in the four languages (owner's request).
+
+## 0.189.3 — 2026-10-20
+- **Generala:** the estimated time now reads 5–30 min instead of 15–30: a solo game takes about 3 to 5 minutes. It changes on the home page, the game's page and its link card.
+
+## 0.189.2 — 2026-10-20
+- **📝 Generala says it is like Kniffel or Yatzy**, on its home card and its link card in the four languages, and searching "kniffel" or "yatzy" finds it in every language (owner's request).
+
+## 0.189.1 — 2026-10-20
+- **Generala:** at the end of a solo game, the ranking (and "make it count?") no longer sits flush against the "Cambiar de modo / Volver al menú" row; everything under the buttons is spaced 12 px apart.
+
+## 0.189.0 — 2026-10-20
+- **📝 Generala opens from the home page** (D-405): it leaves "Próximamente", carries the ✨ Nuevo label for two weeks and joins 🎲 Juego al azar, the favorites and the search like any other game. Roll five dice up to three times and fill your card, on one phone, several phones or solo.
+- **Generala joins Uno al día from October 23**, the first day of the next deck, so no day already played changes: on its day `/generala/?today` plays solo with the same dice for everyone, and scores a third of the total, up to 100 (D-247).
+
+## 0.188.3 — 2026-10-20
+- **Home page filters**: the shortcuts (🔎, ⭐ Favoritos, ✨ Nuevos, 🔥 Populares) are now outlined and the types filled, so the two rows read as two kinds of filter; the chosen one is the same cyan in both (D-407).
+
+## 0.188.2 — 2026-10-20
+- **Lab: 💊 Píldoras de filtros** (D-406): a page to compare six ways the home page filter rows could look, with the pros and cons of each.
+
+## 0.188.1 — 2026-10-20
+- **🔎 Search in Portuguese and German** (D-404): every game, and La Copa, can now be found by what it is in all four languages ("dados", "Würfel", "quebra-cabeça", "Rätsel"…), and searching a kind of tournament (3 or 7 days, Chile, Brazil) finds La Copa. A new game cannot ship without its search keywords in the four languages: a test asks for them.
+
+## 0.188.0 — 2026-10-20
+- **🔎 Search on the home page, for everyone** (D-403): a 🔎 pill next to ✨ Nuevos and 🔥 Populares opens a search box with a dropdown of games while typing, by name or by what they are (logic, dice, words…).
+- **Lab**: the home page experiments, 🔎 Buscar and 🎉 Splash, move to La Bodega marked 🚀 Lanzado.
+
+## 0.187.18 — 2026-10-20
+- **Lab search (?search): the 🔎 no longer shrinks when the search opens** (D-402): it keeps the pill's size and only slides into place.
+
+## 0.187.17 — 2026-10-20
+- **Lab search (?search): closing no longer flickers** (D-402): the field folds back into the 🔎 in one smooth motion instead of freezing and the magnifier blinking.
+
+## 0.187.16 — 2026-10-20
+- **Lab search (?search): the 🔎 opens and closes smoothly** (D-402): the field grows out of the 🔎 pill exactly where it sits and folds back into it, its magnifier never jumps, and the pills under it fade out and back in while it moves, instead of vanishing and popping back.
+
+## 0.187.15 — 2026-10-20
+- **A decisions index left behind by other PRs no longer fails the next PR** (D-401). The `tests` check rebuilds it and warns; the processes round brings it up to date on main.
+
+## 0.187.14 — 2026-10-20
+- **Addresses without empty `=`.** Choosing a filter on the home page, or opening a lab link with its key, no longer turns `?test&lab` into `?test=&lab=`.
+
+## 0.187.13 — 2026-10-20
+- **Lab search: the 🔎 pill opens and closes with a motion** (D-398). The field grows out of the pill and folds back into it.
+
+## 0.187.12 — 2026-10-20
+- **Auto-merged PRs merge about two minutes sooner** (D-400). The `end-to-end` check no longer holds itself open for the app's PR monitor; sessions learn of the merge with `tools/agents/wait-pr.mjs`.
+
+## 0.187.11 — 2026-10-20
+- **Lab: «‹ Lab» centered in the experiments bar.** Its text sat at the top of its pill, higher than the checkboxes next to it.
+
+## 0.187.10 — 2026-10-20
+- **Lab: the home page experiments bar opens with the newest experiment on** (D-399). The others can be ticked on top of it, and it lists the newest first.
+
+## 0.187.9 — 2026-10-20
+- **Lab search: games whose name matches come first** (D-397). In the home page search's dropdown, a match in the game's name ranks above its keywords, its type and its description: "toque" now starts with Toque y Fama.
+
+## 0.187.8 — 2026-10-20
+- **Home page search (lab):** the 🔎 pill goes first in its row, left of ⭐ Favoritos (D-396).
+
+## 0.187.7 — 2026-10-20
+- **Lab only behind its key:** the home page's search (`?search`), the experiments bar (`?lab`) and the preview of a splash campaign that is not on now open only for whoever holds a lab key; everyone else sees the home page as it is (D-395).
+
+## 0.187.6 — 2026-10-20
+- **Nothing changes for players.** Behind the scenes, the design decisions moved from one 700 KB file to one file each (`docs/decisions/`), with a generated index in `docs/DECISIONS.md` (D-394): cheaper to read, no merge collisions, and checked by the tests.
+
+## 0.187.5 — 2026-10-20
+- **Home page search (lab, `?search`):** on a computer, ↓ and ↑ move through the dropdown, Enter opens the selected game (or filters on «Ver los n juegos»), and Escape folds the dropdown before closing the search (D-393).
+
+## 0.187.4 — 2026-10-20
+- **A push to a PR tests only what changed since it last passed** (D-392). A fix, a changelog entry or the agents' commits after a green run no longer rerun the whole PR's end-to-end scope; the first push, or one after a red run, still tests it all.
+
+## 0.187.3 — 2026-10-20
+- **Fewer end-to-end tests on each PR** (D-391). The scope reads what a page loads on demand (`import('…')`, `new URL('…')`), so a home page or lab search change runs 8 jobs instead of 76, and a new test stops any file or script the scope cannot place.
+
+## 0.187.2 — 2026-10-20
+- **Lab: the home page search is a 🔎 pill with a dropdown** (D-390). The pill sits next to ✨ Nuevos and 🔥 Populares and opens into a field in their place; while typing, a dropdown names up to five games (a tap opens one) and "Ver los n juegos" filters the list. The list does not move while typing.
+
+## 0.187.1 — 2026-10-20
+- **Lab: the home page's experiments in one card, picked with checkboxes** (D-389). 🎉 Splash and 🔎 Buscar are now one 🏠 Experimentos de la portada card. The bar on the home page has a box per experiment, to try none, one or several at once.
+
+## 0.187.0 — 2026-10-20
+- **Home page search, in the lab** (D-387). With `?search` (a switch on the lab's home page bar), a box above the filters narrows the list while typing: by a game's name in any language, its tagline, its type or its keywords in Spanish and English ("lógica", "dados", "dice", "cards", "map"). Accents and capitals do not count, it combines with the type filters, and "Ver todos" clears it. Players do not see it yet.
+
+## 0.186.22 — 2026-10-20
+- **Pips (lab): 🎲 Empezar fits on a short phone.** At 320×568 the cover's demo board shrinks, so the start button shows without scrolling (U-39).
+
+## 0.186.21 — 2026-10-20
+- **Pips (lab): every zone in one piece.** Some boards had a zone split into two cells that did not touch. Now every zone is a single block. Today's boards may change for anyone who reloads.
+
+## 0.186.20 — 2026-10-19
+- **Pips (lab): no more stuck dominoes.** A domino dragged and let go outside the board, or interrupted (by Limpiar, Deshacer or a second finger), could leave a copy floating over the board. Now it always goes away.
+
+## 0.186.19 — 2026-10-19
+- **Pips (lab): bigger dominoes in the tray.** The dominoes to choose from are about 10% larger, still four to a row.
+
+## 0.186.18 — 2026-10-19
+- **Pips (lab): bigger dominoes.** The dominoes in the tray and the cells of the board are larger, so they are easier to grab and drag. On a short screen the board shrinks a little so the tray stays in view.
+- **Pips (lab): the rules under the board.** A folded "¿Cómo se juega?" under the buttons brings back the cover's three steps without leaving the game.
+
+## 0.186.17 — 2026-10-19
+- **Pips (lab): boards that do not all add up.** The zones now mix `=`, `≠`, `<` and `>` with the numbers, so you deduce more and add up less. There are fewer one-cell zones, and a domino never lies inside a single zone. Each board still has exactly one answer (D-386).
+- **Pips (lab): a bigger board on the cover.** The board that solves itself on the cover is larger, so its dominoes stand out.
+
+## 0.186.16 — 2026-10-19
+- **Pips (lab):** the diamond with each zone's rule now sits inside its cell, and a tap on it lights up its whole zone. Dominoes can be dragged onto the board (or held to lift them), and moved once placed; one tap turns a domino, and turning it no longer moves the rest of the screen. New ↩️ Deshacer and 🧹 Limpiar buttons (D-385).
+
+## 0.186.15 — 2026-10-19
+- ⏱ **Loteo and Reinas show the time again while you play**, since how fast you finish gives you points (D-384, a player's request).
+
+## 0.186.14 — 2026-10-19
+- 🐞 **Your comments and emails reach us within about 5 minutes**: the upload of feedback reports moved from a GitHub schedule (which ran about 4 times a day) to the Mac mini (D-382).
+
+## 0.186.13 — 2026-10-19
+- **Marketing: a post and an image for Reddit r/chile.** "Solo o con amigos": a 1080×1350 image with six real screens and the post's text, in `marketing/reddit-chile/` (D-356, U-40).
+
+## 0.186.12 — 2026-10-19
+- **Pips, a dominoes puzzle, in the lab.** Lay every domino on the board so each colored zone keeps its rule: its pips add up to a number, are all equal or all different, or add up to less or more than a number. Three boards from easy to hard against the clock, the same for everyone each day. Inspired by Pips, from The New York Times Games. Only for lab testers for now.
+
+## 0.186.11 — 2026-10-19
+- **Marketing: promotional material looks like the app.** Every promotional item uses the app's colors and fonts (Bangers and Nunito), never a look-alike (U-40, D-380).
+
+## 0.186.10 — 2026-10-19
+- **Behind the scenes:** the game-ideas agent now ranks games by games finished in the last four weeks, the same count that orders the home page, so it no longer raises a false "order drifted" alarm.
+
+## 0.186.9 — 2026-10-19
+- **No clock at the top while playing La Copa's games**: the ⏱ that counted up next to each game (and next to the ⏳ countdowns of Rutas rotas, Zip, Desenredo and Línea Relámpago) is gone. Your time is still measured the same way and shows at the end: on the result, the standings and the share text (D-379, #442).
+
+## 0.186.8 — 2026-10-19
+- **Faster checks on each PR.** A change to one game now runs that game's end-to-end scripts and La Copa's, not half the suite, and each PR shows its test scope in the run's summary (D-378). Nothing changes for players.
+
+## 0.186.7 — 2026-10-19
+- **Faster checks for La Copa's changes.** The home page and the games that are not La Copa's no longer load La Copa's rules and engine, so a change to La Copa runs about half as many end-to-end scripts (D-377). Nothing changes for players.
+
+## 0.186.6 — 2026-10-19
+- **La Copa: eliminated players stand apart.** Whoever is out of the cup now shows faded in the table, with the days they will not play replaced by one "Eliminado" pill, a faded line in the day-by-day chart, and the same in the image shared with the group (🚪 and ELIMINADO). They no longer show "-2J" games left (D-376).
+
+## 0.186.5 — 2026-10-19
+- **Back from the dice, the home page is ready at once.** If you rolled 🎲 and went back before the game loaded, the dice used to stay over the home page for a few seconds and 🎲 would not roll again; now it shows only on the game it opened (D-375).
+
+## 0.186.4 — 2026-10-18
+- **Softer "Nuevo" and "Popular" labels.** The stickers on the game cards keep their shine and their little wobble, but now blend with the card: a see-through fill, a thin edge in their own color and a gentler glow (D-373).
+
+## 0.186.3 — 2026-10-18
+- **🎲 Juego al azar picks among every game.** With a type filter on, the dice used to pick only among those games (with 🎲 Cartas/Dados, always Dudo); now it is always general, over every game, leaving out only La Copa and the games that need a group (D-374).
+
+## 0.186.2 — 2026-10-18
+- **🎲 Juego al azar skips Cuarto Rey.** The dice no longer lands on a game that needs a group gathered (three or more players): whoever rolls it may be alone. The same goes for 🎲 Jugar otro after Uno al día. Cuarto Rey stays on the home page and in its filter (D-374).
+
+## 0.186.1 — 2026-10-18
+- **The floating filters stay put after a tap.** Scrolled down the home page, tapping a game type or ✨ Nuevos / 🔥 Populares used to drop the floating menu back to its place when the result was short; now it keeps floating over the first card until you scroll up.
+- **Lab: the home page experiments go to La Bodega.** Everything they tried already reached everyone, so the card is kept folded in 📦 La Bodega (D-372).
+
+## 0.186.0 — 2026-10-18
+- **The home page shows what is popular and what is new.** The three games people finished most in the last four weeks wear a 🔥 Popular label, and two new chips above the game types, ✨ Nuevos and 🔥 Populares, show only the new games or only the popular ones, with ⭐ Favoritos beside them. Scrolling down, the floating filters now carry the name Juegos de Salón; a tap on it goes back to the top.
+
+## 0.185.3 — 2026-10-18
+- 💬 **The feedback forms ask for a name or nickname**, not a full name: "¿Cómo te llamamos?" on La Copa's 🐞 and "Nombre o apodo (opcional)" in Sugerencias y comentarios and the lab forms, in the four languages, and the browser suggests the first name instead of the full one.
+
+## 0.185.2 — 2026-10-18
+- 📧 **A reply in the player's own email thread no longer quotes their email**, which they see right above; 🐞 reports are still quoted (D-370).
+
+## 0.185.1 — 2026-10-18
+- 📧 **Replies to players who suggested a change** follow one standard (thanks, what changed, what stayed the same), go out once the change is live, and close the issue with the `replied` label and a quote of what we answered (D-368).
+
+## 0.185.0 — 2026-10-18
+- 🔢 **Toque y Fama on two phones: both guess at once.** No more waiting for the rival's turn: each one
+  guesses at their own pace, whoever cracks it waits for the other, and fewer guesses wins (the same
+  number is a tie). The right of reply stays only on one phone, which keeps its turns. A player's idea
+  (#538, D-367).
+
+## 0.184.5 — 2026-10-18
+- **Feedback issues no longer show a player's full name**: each word is reduced to its first letter and asterisks (`C******* A*******`), and the email mask now keeps the first and last letter of each side of the @ (`j********n@g********m`). The address stays private, as before (D-366).
+
+## 0.184.4 — 2026-10-18
+- **Lab: the app's name on the floating menu, and ⭐ Favoritos beside Nuevos and Populares.** Among the home page's experiments in the lab, the filters that float while scrolling now carry "🎲 Juegos de Salón" on top (a tap goes back up), and the favorites chip joins the new row with its name. Nothing changes for players yet.
+
+## 0.184.3 — 2026-10-18
+- **Loteo: the board no longer shifts while you play.** The line above it (the plot size, a mistake, a hint) now keeps one fixed height, so the grid stays in the same place whatever it says.
+
+## 0.184.2 — 2026-10-18
+- **Lab: the home page's experiments now open on the real home page.** On an iPhone the filters did not stay on top while scrolling the lab's home page; now `/labs/home/` opens the home page itself with the experiments bar, so it behaves as it will for players. Nothing changes for players.
+
+## 0.184.1 — 2026-10-18
+- **Lab: "Nuevo" and "Populares" filters on the home page.** Two more chips above the game types, to see only the new games or the three most popular, can be tried from the lab's home page experiments. Nothing changes for players yet.
+
+## 0.184.0 — 2026-10-18
+- **The home page puts the most played games first, every week.** The order of the games now follows the games people finished in the last four weeks, and it updates itself once a week; new games still go on top while they say "New".
+
+## 0.183.1 — 2026-10-18
+- **A game-ideas agent for the owner.** A new agent reads the panel's numbers, the lab and what players asked for, and proposes up to three ideas a week (meta-game, existing games, new games with their inspiration credited) as one-tap decisions, each with evidence, cost, a prototype path and the number that would prove it; its ledger remembers what the owner answered. Nothing changes for players yet.
+
+## 0.183.0 — 2026-10-18
+- **No cup PIN when you have a player**: signed in with your player, you create, join and come back to a cup with no PIN of its own; your player's name and PIN are enough. Without a player, the cup PIN works as before (D-359).
+
+## 0.182.1 — 2026-10-18
+- **A La Copa the admin ended early no longer breaks the owner's panel or the weekly report**: Firebase hands the day windows back as an array with an empty first slot, and ending a cup early tripped over it.
+
+## 0.182.0 — 2026-10-18
+- **Your usual name and PIN carry your La Copa history**: with no player signed in on the phone, creating, joining or entering a cup with the name and PIN of your player signs you in as that player, so the cup and its podium count for you. A podium saved before you signed in gets your name once you enter that cup as your player (D-358).
+
+## 0.181.3 — 2026-10-18
+- **La Copa champions add up every win of the same person**: a win by name alone now joins the player with that name, when there is only one, so someone who won with their player and then without it no longer shows twice with one gold each (D-357).
+
+## 0.181.2 — 2026-10-18
+- **All promotional material has its home in `marketing/`** (D-356): the share cards' drawing moves to `marketing/share-cards/` (the same drawing: the cards do not change), and every promotional file the site serves (share cards, splash clips, the email header, the video's thumbnail) names its asset in `marketing/registro.json`, checked by `marketing/served.test.mjs`. Nothing changes for players.
+
+## 0.181.1 — 2026-10-18
+- **Every splash campaign gets a usability review before it goes live, and is kept in `marketing/splash/`** (D-355). `covers.mjs check` flags a PR that turns on or changes a campaign, each campaign has a screen for `look.mjs` and the language tests, and its folder keeps a README and screenshots in the four languages.
+- **The splash says "¡Upa, papá! Tres juegos nuevos" in Spanish**, and opening it no longer draws a frame around "Ahora no": the focus goes to the window (the keyboard still sees the ring).
+
+## 0.181.0 — 2026-10-18
+- **Simpler result screens: each thing said once** (C-19, D-353).
+  - In La Copa's standalone games, "How your score was calculated" is folded under the buttons and
+    no longer repeats the total or the time.
+  - The One a Day card drops "Today: X points" and folds "Invite a friend".
+  - "Want this game to count on the leaderboard?" is now one line with its Sign in button, instead
+    of the whole form.
+  - The Cup's podium names the champion once and has a single share button.
+  - Batalla Naval puts its buttons right under the result and no longer repeats the shots in the
+    subtitle.
+  - Julepe says "1 julepe".
+
+## 0.180.0 — 2026-10-18
+- **A promotional splash for the home page** (D-351): a window over the home page, with the page darkened behind, to tell players about something new (three new games, a new mode): each game shows a few seconds of real play and opens with ▶ Play. It is off by default; the owner turns on one campaign at a time with `node tools/agents/splash.mjs on <id>`, and each phone sees it once. `?splash=<id>` previews any campaign. Try it in the lab, at `/labs/splash/`.
+
+## 0.179.4 — 2026-10-18
+- **Tren en Vilo (lab): the day goes by.** The first stage is in the morning, with a blue sky and the sun up; the middle ones head into sunset; the last one is at night.
+
+## 0.179.3 — 2026-10-18
+- **The owner's panel is in English.** Everything in `/panel/` (sections, notes, dates, game names) now reads in English; the games are unchanged.
+
+## 0.179.2 — 2026-10-18
+- **Tren en Vilo (lab): each level is harder than the one before.** The crossings are sorted into levels by how much wood their bridge needs, from about 9 to 12 m at level 1 up to 29 to 36 m at level 5, with the heavier train on the bigger ones.
+
+## 0.179.1 — 2026-10-18
+- **Batalla Naval: "¡Ganaste!" when you win.** Beating the phone, in One a Day or in a room, the result title now tells the player on this phone that they won, instead of "¡Ganó Jugador 1!" with their name or the placeholder (#503).
+
+## 0.179.0 — 2026-10-18
+- **Every result screen shows where to go next, in the same place** (C-19, D-343). In One a Day,
+  every game ends with the same card, right under the score: share, 🎲 play another, replay today's,
+  and 📅 back to One a Day, all visible without scrolling (no more "Change mode" or duplicated menu buttons in
+  El Ahorcado, Batalla Naval and Dudo). A Cup day puts "Back to the board" first, with the breakdown
+  folded; the Cup's podium now has 🏠 back to the menu; and `/today/` offers "Replay today's" too.
+
+## 0.178.2 — 2026-10-18
+- **The "Sign in" button on the One a Day card fits inside its frame again**: in the one-line version
+  under a result, the button stuck out of the box.
+
+## 0.178.1 — 2026-10-18
+- **La Copa: the "last chance" notice reads at once.** The deadline notification for someone who already missed the day before now says first what happens ("Si no lo juegas, quedas fuera de la copa") and then why ("ya te perdiste el anterior"), so "lo" points to today's day and not the one missed; in its last hour it says "1 hora", not "1 horas", in the four languages.
+- **Tren en Vilo (lab): its steps match how it is played today.** One drag now lays several beams and the budget is wood, so the steps say "tender vigas" and "con poca madera", and the score names the solidity too; a stroke that cannot be split into beams no longer says "Muy larga: una viga mide hasta 2 cuadros", which contradicted the long strokes.
+- **La Copa: "Cómo funciona" tells the out rule.** It now says that letting 2 days in a row go by without playing leaves you out of the cup, with your points still in the table, so nobody meets the rule for the first time in the warning.
+
 ## 0.178.0 — 2026-10-18
 - **The owner's panel, by domain.** `/panel/` is now read as Summary, Group, Individual, La Copa, Uno al día, Users, Traffic and Health, each with an operational pulse against the period before, a diagnosis and a trend, with the versions marked on every timeline and a CSV of every table. To feed it, the site now counts finished games, replays, shares, how long since the last visit and how often a browser comes back, and keeps a random id per browser to count users and cohorts, with no name or anything else tied to it.
 
