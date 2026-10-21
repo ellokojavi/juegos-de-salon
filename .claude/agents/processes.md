@@ -59,8 +59,8 @@ When the owner asks you for something another agent executes ("check how fresh t
    evidence shows it came out right. Never "the agent says that…" without having checked it.
 
 **A PR, by the game's stage** (D-304): `node tools/agents/covers.mjs check <base>` says it in
-its first line. Lab only → documentation and short usability (cover pages and the screens that
-changed, at 320 px). Takes a game out of the lab → full usability pass over the whole game (all its
+its first line. Lab only → the fast lane, no agents: the session looks at the changed screens at 320 px itself
+(D-413); with shared code or Firebase rules, both agents. Takes a game out of the lab → full usability pass over the whole game (all its
 screens, the four languages, 320 px, its cover page and its place on the main cover page) and
 documentation with the README and the social card. Everything else, both as always.
 
