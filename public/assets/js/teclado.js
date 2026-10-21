@@ -31,10 +31,12 @@ export const LONG_PRESS_MS = 450;
  * @param {() => void} [o.onNotesChange]
  * @param {boolean} [o.elegir]              tocar una casilla la elige: la próxima tecla va ahí, no
  *   siempre a la derecha de lo escrito (#604; en el lab, D-395). `puede` recibe entonces lo escrito
- *   en las otras casillas y la casilla elegida
+ *   en las otras casillas y la casilla elegida. También se prende después, con
+ *   `activarElegir()` del elemento que devuelve: la llave del lab se pregunta por la red
  */
-export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, columnas = 3, acciones = 'fin', hidden = false, notes = null, onNotesChange = null, elegir = false }) {
+export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, columnas = 3, acciones = 'fin', hidden = false, notes = null, onNotesChange = null, elegir: elegirAlInicio = false }) {
   // Una casilla por posición: con `elegir` puede quedar un hueco al medio
+  let elegir = elegirAlInicio;
   const slots = Array(largo).fill('');
   let cursor = 0;
   const value = () => slots.join('');
@@ -45,7 +47,7 @@ export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, c
   const full = () => slots.every(Boolean);
   // Con `elegir` un hueco al medio no se confirma; sin él, lo escrito es siempre contiguo
   const listo = () => (!elegir || full()) && valido(value());
-  const boxes = Array.from({ length: largo }, (_, i) => el('div', { class: 'box', ...(elegir ? { onClick: () => { cursor = i; SFX.tap(); refresh(); } } : {}) }));
+  const boxes = Array.from({ length: largo }, (_, i) => el('div', { class: 'box', onClick: () => { if (!elegir) return; cursor = i; SFX.tap(); refresh(); } }));
   const entry = el('div', { class: 'entry' + (elegir ? ' entry--elegir' : '') }, ...boxes);
   const keys = [];
   const clear = () => { slots.fill(''); cursor = 0; };
@@ -91,7 +93,9 @@ export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, c
     ? el('div', { class: 'keypad' }, ...celdas.slice(0, -1), del, celdas[celdas.length - 1], ok)
     : el('div', { class: 'keypad keypad--letras', style: `grid-template-columns: repeat(${columnas}, 1fr)` }, ...celdas, del, ok);
   refresh();
-  return el('div', {}, entry, pad);
+  const root = el('div', {}, entry, pad);
+  root.activarElegir = () => { if (elegir) return; elegir = true; entry.classList.add('entry--elegir'); cursor = firstEmpty(); refresh(); };
+  return root;
 }
 
 /** Las diez cifras en el orden del teclado de Toque y Fama: 1 a 9 y el 0 al final. */
