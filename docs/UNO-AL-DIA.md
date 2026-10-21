@@ -692,7 +692,9 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 
 ### Lab prototype: monthly points and ranking (`/labs/daily-score/`)
 
-A design prototype, lab only (D-395): nothing in the real Uno al día changes and it saves nothing.
+A design prototype, lab only (D-395): nothing players see changes. Since D-412 a lab key holder's
+points are saved in `records/uno-al-dia-pts/s<yyyy>-<mm>/` (each day of the history once, checked by
+the rules); the screens still use made-up rivals.
 It explores one number that ranks players in a **monthly season** (everyone starts at 0 on the 1st):
 
 - **A day's points** = the game's own 0–100 score + a **streak bonus** of +5 per day of streak, up
@@ -700,7 +702,11 @@ It explores one number that ranks players in a **monthly season** (everyone star
 - **A wildcard 🧊 day** gives 0 points but keeps the streak, so the next day still earns the full
   bonus; without one, the streak and its bonus start over. A 🧊 earned while holding 2 is lost.
 - **Navigation:** the home card would open the player's Uno al día hub (points and rank first, then
-  play, streak, wildcards, ranking and calendar) instead of rolling the dice.
+  play, streak, wildcards, ranking and calendar) instead of rolling the dice; Uno al día's notices
+  and links open it too (D-412). "¿Cómo se ganan los puntos?" is a link under the chase line.
+- **The owner's answers (D-412):** monthly season, its end shown in a form chosen in the lab (days
+  left, closing date or span); a 🏆 champion badge next to the name of last month's winner;
+  inviting gives a 🧊 and +10 points (`INVITE_POINTS`, tunable).
 
 The rules are pure functions in `public/labs/daily-score/score.js` (over the same history and
 streak rules as `uno-al-dia.js`), tested by `score.test.mjs`. The page lists its open questions for

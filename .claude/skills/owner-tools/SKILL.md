@@ -20,4 +20,4 @@ description: The owner's panel (public/panel/), La Copa reports and the rankings
   put their `<id>_solo` table on top with `bloqueTabla` (D-274). With no player signed in, `finDePartida` and
   `avisoPartida` offer at the end, after the buttons, to sign in so that game counts (D-274). Uno al día (D-230) records with `anotarDia` from `jugador.js` in
   `unoAlDia/<jid>/<n>` and in the `uno-al-dia` tables (the day period `d<n>` and the week) and
-  `uno-al-dia-racha`; its network (invitations, the data of who invites) is in `uno-al-dia-red.js`.
+  `uno-al-dia-racha` (and, for lab key holders, the monthly points table `uno-al-dia-pts`, D-412); its network (invitations, the data of who invites) is in `uno-al-dia-red.js`.

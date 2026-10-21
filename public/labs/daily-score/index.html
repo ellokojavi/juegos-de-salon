@@ -50,6 +50,10 @@
     .hero .puesto { font-weight: 900; font-size: 1.05rem; }
     .hero .sube { color: var(--lime); }
     .hero .caza { font-size: 0.85rem; color: var(--muted); font-weight: 700; }
+    .hero .como { justify-self: center; min-height: 44px; display: inline-flex; align-items: center; padding: 0 8px; background: none; border: 0; color: var(--cyan); font: 800 0.85rem var(--font-body); text-decoration: underline; cursor: pointer; }
+    .campeon { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 999px; background: var(--yellow); color: #2a1600; font-size: 0.7rem; font-weight: 900; vertical-align: 1px; }
+    .corona { text-align: center; display: grid; gap: 6px; padding: 18px 10px; border-radius: 20px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.35), rgba(255, 46, 136, 0.25)); border: 1px solid var(--yellow); }
+    .corona .grande { font-size: 3.4rem; line-height: 1; }
     .hero .hoy-chip { justify-self: center; padding: 3px 10px; border-radius: 999px; background: var(--lime); color: #142400; font-weight: 900; font-size: 0.85rem; }
     .jugar { display: grid; gap: 2px; text-align: center; padding: 14px; border-radius: 18px; border: 0; background: var(--yellow); color: #2a1600; font: 900 1.1rem var(--font-body); cursor: pointer; }
     .jugar small { font-weight: 800; font-size: 0.8rem; opacity: 0.8; }
@@ -126,12 +130,14 @@
     <section class="panel seccion">
       <h2>❓ Lo que falta decidir</h2>
       <ul class="reglas" id="preguntas"></ul>
+      <p style="margin-top:6px"><b>¿Cómo se muestra el cierre de la temporada?</b> Elige y mira la pantalla 2:</p>
+      <div class="fila" id="fin" role="group" aria-label="Cierre de la temporada"></div>
     </section>
   </div>
 
   <script type="module">
     import { fechaLocal, sumarDias, leer, numeroDel, juegoDel, juegoDia, COMODINES_MAX, faltaParaManana } from '../../assets/js/uno-al-dia.js';
-    import { walk, seasonPoints, maxToday, bonusFor, rankAmong, BONUS_MAX, BONUS_PER_DAY } from './score.js';
+    import { walk, seasonPoints, maxToday, bonusFor, rankAmong, BONUS_MAX, BONUS_PER_DAY, INVITE_POINTS } from './score.js';
 
     const NOMBRES = { linea: 'Línea Relámpago', numero: 'Toque y Fama', conexiones: 'Conexiones', letras: 'Letras', anio: '¿En qué año?', reinas: 'Reinas', desenredo: 'Desenredo', ahorcado: 'Ahorcado', 'batalla-naval': 'Batalla Naval', dudo: 'Dudo', rutas: 'Rutas', loteo: 'Loteo', pintaminas: 'Pintaminas', zip: 'Zip', tango: 'Tango', donde: '¿Dónde queda?', generala: 'Generala' };
     const emoji = id => juegoDia(id)?.emoji || '🎮';
@@ -158,6 +164,11 @@
     let fuente = Object.keys(leer().dias).length ? 'mios' : 'ejemplo';
     let pantalla = 'hub';
     let ancho = 320;
+    // How the season's end is shown: the owner chooses here (D-412)
+    let finTemp = 'quedan';
+    const FIN = { quedan: '⏳ Quedan X días', fecha: '📅 Fecha de cierre', duracion: '📆 Duración' };
+    // Last month's champion among the made-up players, to show the badge next to the name
+    const CAMPEON = 'Coni';
 
     // The made-up rivals: names spread around the player's own total, so the chase line has someone
     const RIVALES = ['Ana', 'Beto', 'Coni', 'Diego', 'Eli', 'Fran', 'Gabo', 'Isi', 'Javi R.', 'Kari', 'Lucho', 'Majo', 'Nico', 'Olga', 'Pato', 'Quique', 'Rosi', 'Sebas', 'Tati', 'Uli', 'Vale', 'Wally', 'Xime', 'Yayo'];
@@ -193,12 +204,22 @@
         ? `Te faltan <b>${miles(d.r.ahead.pts - d.pts + 1)}</b> pts para pasar a ${d.r.ahead.name}`
         : '¡Vas primero! Defiende el puesto mañana.';
       return `<div class="hero">
-        <span class="temp">🏆 Temporada de ${mes}</span>
+        <span class="temp">🏆 Temporada de ${mes} · ${finDeTemporada()}</span>
         <span class="pts">${miles(d.pts)} <small>pts</small></span>
         ${hoy && d.hoyDia ? `<span class="hoy-chip">+${d.hoyDia.points} hoy</span>` : ''}
         <span class="puesto">Puesto ${d.r.rank} de ${d.total}${hoy && d.sube > 0 ? ` <span class="sube">▲${d.sube}</span>` : ''}</span>
         <span class="caza">${caza}</span>
+        <button class="como" type="button" data-ir="reglas">¿Cómo se ganan los puntos?</button>
       </div>`;
+    }
+
+    // The season's end, in the form chosen above the questions
+    function finDeTemporada() {
+      const [y, m, dd] = HOY.split('-').map(Number);
+      const ultimo = new Date(Date.UTC(y, m, 0)).getUTCDate(), quedan = ultimo - dd + 1;
+      if (finTemp === 'fecha') return `cierra el ${ultimo} de ${MESES[m - 1]}`;
+      if (finTemp === 'duracion') return `del 1 al ${ultimo} de ${MESES[m - 1]}`;
+      return quedan === 1 ? 'último día' : `quedan ${quedan} días`;
     }
 
     function trio(d) {
@@ -212,16 +233,18 @@
 
     function cajaComodin(d) {
       const bono = bonusFor(d.w.streak);
+      const invitar = `<p>👋 <b>Invita a un amigo:</b> cuando termine su primer Uno al día, ganas un 🧊 y <b>+${INVITE_POINTS} pts</b>.</p>
+        <button class="mini" type="button">👋 Invitar a un amigo</button>`;
       if (d.w.wildcards > 0) return `<div class="caja hielo"><h4>🧊 Tu bono está protegido</h4>
-        <p>Si un día no puedes jugar, un comodín salva tu racha y tu bono de <b>+${bono}</b> por día sigue entero.</p></div>`;
+        <p>Si un día no puedes jugar, un comodín salva tu racha y tu bono de <b>+${bono}</b> por día sigue entero.</p>${invitar}</div>`;
       return `<div class="caja alerta"><h4>🧊 Sin comodines: tu bono de +${bono} está en riesgo</h4>
-        <p>Si un día no juegas, la racha vuelve a 0 y el bono también. Ganas un comodín cada 7 días seguidos, o cuando un amigo que invitaste termina su primer Uno al día.</p>
-        <button class="mini" type="button">👋 Invitar a un amigo</button></div>`;
+        <p>Si un día no juegas, la racha vuelve a 0 y el bono también. Ganas un comodín cada 7 días seguidos, o invitando.</p>
+        ${invitar}</div>`;
     }
 
     function ranking(d, { completo = false } = {}) {
       const L = d.r.list, yo = d.r.rank - 1;
-      const fila = (x, i) => `<div class="r${x.me ? ' yo' : ''}"><span class="n">${i + 1}</span><span class="nom">${x.me ? '⭐ Tú' : x.name}</span><b>${miles(x.pts)}</b></div>`;
+      const fila = (x, i) => `<div class="r${x.me ? ' yo' : ''}"><span class="n">${i + 1}</span><span class="nom">${x.me ? '⭐ Tú' : x.name}${x.name === CAMPEON ? '<span class="campeon" title="Campeón del mes pasado">🏆</span>' : ''}</span><b>${miles(x.pts)}</b></div>`;
       let filas;
       if (completo) filas = L.map(fila).join('');
       else {
@@ -252,7 +275,6 @@
         <div class="cal">${celdas}</div><p class="muted" style="font-size:0.78rem">En cada día, los puntos que sumó: juego + bono. 🧊 = día salvado por un comodín.</p></div>`;
     }
 
-    const comoSeGana = `<button class="mini" type="button" data-ir="reglas">❓ ¿Cómo se ganan los puntos?</button>`;
 
     // ——— The screens ———
     const PANTALLAS = {
@@ -269,7 +291,7 @@
         nota: `<h3>La tarjeta de la portada</h3><ul>
           <li>Suma una línea: <b>tus puntos del mes y tu puesto</b> (🏆 1.240 pts · #14), arriba de la racha.</li>
           <li><b>Tocarla abre tu Uno al día</b> (la pantalla 2), no el dado. Hoy el dado rueda al tiro y el puntaje queda escondido en /today/.</li>
-          <li>Los avisos y los links de "juega el de hoy" siguen tirando el dado directo: quien viene a jugar no da un paso más.</li></ul>`,
+          <li><b>Los avisos y los links de Uno al día también abren tu Uno al día</b> (decidido): ahí se ve qué está en juego antes de jugar. Los avisos ya abren /today/; los links de otros juegos no cambian.</li></ul>`,
       },
       hub: {
         paso: '2 · Tu Uno al día', nuevo: true,
@@ -277,10 +299,11 @@
           const d = datos();
           return `${barra('📅 Uno al día n.° ' + numeroDel(HOY))}${hero(d)}
             <button class="jugar" type="button" data-ir="resultado">🎲 Jugar el de hoy<small>hasta +${maxToday(d.w.streak)} pts</small></button>
-            ${trio(d)}${cajaComodin(d)}${ranking(d)}${calendario(d)}${comoSeGana}`;
+            ${trio(d)}${cajaComodin(d)}${ranking(d)}${calendario(d)}`;
         },
         nota: `<h3>Tu Uno al día, antes de jugar</h3><ul>
-          <li><b>Lo primero son los puntos</b>: el total del mes, el puesto y a quién tienes que pasar ("Te faltan 38 pts para pasar a Ana"). Esa línea es el gancho para volver mañana.</li>
+          <li><b>Lo primero son los puntos</b>: el total del mes, el puesto y a quién tienes que pasar ("Te faltan 38 pts para pasar a Ana"). Esa línea es el gancho para volver mañana. Justo debajo, el link "¿Cómo se ganan los puntos?".</li>
+          <li>Arriba, cuándo termina la temporada, en la forma que se elija abajo en ❓.</li>
           <li>El botón amarillo dice cuánto se puede ganar hoy (100 del juego + el bono de la racha que harías). Lleva al dado y al juego, como hoy.</li>
           <li>Racha, bono y comodines en tres números. La caja 🧊 dice <b>cuánto vale tu comodín en puntos</b>: es lo que hace que importe tener uno.</li>
           <li>El ranking muestra el podio y a tus vecinos; el calendario, los puntos de cada día en vez del puntaje del juego.</li>
@@ -318,7 +341,7 @@
           const { h, m } = (() => { const ms = faltaParaManana(); return { h: Math.floor(ms / 3600000), m: Math.floor(ms / 60000) % 60 }; })();
           return `${barra('📅 Uno al día n.° ' + numeroDel(HOY))}${hero(d, { hoy: true })}
             <div class="listo">✅ Listo por hoy<span class="reloj">Próximo juego en ${h} h ${m} min</span></div>
-            ${trio(d)}${ranking(d)}${calendario(d)}${comoSeGana}`;
+            ${trio(d)}${ranking(d)}${calendario(d)}`;
         },
         nota: `<h3>Tu Uno al día, después de jugar</h3><ul>
           <li>Es la misma pantalla, y lo que cambia es lo de arriba: <b>+117 hoy</b>, el puesto con ▲ si subió y el reloj al próximo.</li>
@@ -335,6 +358,7 @@
         nota: `<h3>El día después de un comodín</h3><ul>
           <li>El aviso de hoy ("Usaste un comodín ayer y tu racha sigue") pasa a decir <b>cuántos puntos salvó</b>: el bono que sigue contra el +5 de empezar de nuevo.</li>
           <li>Si quedó en 0 🧊, la caja naranja invita a ganar otro (7 días seguidos o un amigo).</li>
+          <li>Invitar da además <b>+${INVITE_POINTS} pts</b> cuando el amigo termina su primer Uno al día (el número se puede ajustar).</li>
           <li>En la práctica, ver lo que vale un comodín es lo que hace que la gente quiera ganarlo e invitar.</li></ul>`,
       },
       ranking: {
@@ -346,7 +370,8 @@
         nota: `<h3>El ranking completo</h3><ul>
           <li><b>Mes</b> (puntos de la temporada) es la pestaña principal; Semana, Hoy y Amigos son las de /today/ hoy.</li>
           <li>La temporada vuelve a 0 el día 1: quien llega tarde puede pelear el mes, y el puesto de cada mes queda en la historia.</li>
-          <li>Solo aparece quien entró con su jugador, como los demás rankings (D-212).</li></ul>`,
+          <li>Solo aparece quien entró con su jugador, como los demás rankings (D-212).</li>
+          <li>🏆 junto al nombre: el campeón del mes pasado. La insignia lo acompaña en todos los rankings durante el mes siguiente.</li></ul>`,
       },
       reglas: {
         paso: '❓ Cómo se gana', nuevo: true,
@@ -354,21 +379,35 @@
           <li>🎮 <b>Juego:</b> el puntaje del juego de hoy, de 0 a 100. Cuenta solo el primer intento.</li>
           <li>🔥 <b>Bono de racha:</b> +${BONUS_PER_DAY} por cada día de tu racha, hasta +${BONUS_MAX} (desde 10 días seguidos).</li>
           <li>🧊 <b>Comodín:</b> si un día no juegas, salva tu racha y tu bono sigue. Ese día no suma puntos.</li>
-          <li>🏆 <b>Temporada:</b> se suman los puntos del mes. El día 1 todos empiezan de 0.</li></ul></div>`,
+          <li>👋 <b>Invitar:</b> cuando un amigo termina su primer Uno al día, ganas un 🧊 y +${INVITE_POINTS} pts.</li>
+          <li>🏆 <b>Temporada:</b> se suman los puntos del mes (${finDeTemporada()}). El día 1 todos empiezan de 0, y quien termina primero lleva la insignia 🏆 de campeón junto a su nombre el mes siguiente.</li></ul></div>`,
         nota: `<h3>Las reglas, en una pantalla</h3><ul>
-          <li>Cuatro líneas, una por concepto (U-18). Se abren desde "¿Cómo se ganan los puntos?".</li>
+          <li>Cinco líneas, una por concepto (U-18). Se abren desde "¿Cómo se ganan los puntos?", debajo de la línea de a quién pasar.</li>
           <li>Con estos números, la racha llega a valer la mitad del máximo: jugar bien importa, pero no faltar importa casi lo mismo.</li></ul>`,
       },
+      campeon: {
+        paso: '👑 Campeón', nuevo: true,
+        html() {
+          const m = +HOY.slice(5, 7), pasado = MESES[(m + 10) % 12];
+          return `${barra('📅 Uno al día', 'hub')}<div class="corona"><span class="grande">🏆</span><b style="font-size:1.2rem">¡Campeón de ${pasado}!</b>
+            <p>Terminaste primero la temporada de ${pasado}. Tu insignia 🏆 va junto a tu nombre en todos los rankings durante ${MESES[m - 1]}.</p></div>
+            <div class="caja"><h4>Así te ven</h4><div class="rank"><div class="r yo"><span class="n">1</span><span class="nom">⭐ Tú<span class="campeon">🏆</span></span><b>${miles(2480)}</b></div></div></div>
+            <button class="jugar" type="button" data-ir="hub">Empezar la temporada de ${MESES[m - 1]}</button>`;
+        },
+        nota: `<h3>El premio del mes</h3><ul>
+          <li>El día 1, quien terminó primero el mes anterior ve esta pantalla una vez, al abrir su Uno al día.</li>
+          <li>La insignia 🏆 va junto a su nombre en los rankings durante el mes siguiente, para que todos la vean.</li></ul>`,
+      },
     };
-    const ORDEN = ['portada', 'hub', 'dado', 'resultado', 'hubJugado', 'comodin', 'ranking', 'reglas'];
+    const ORDEN = ['portada', 'hub', 'dado', 'resultado', 'hubJugado', 'comodin', 'ranking', 'reglas', 'campeon'];
 
     const PREGUNTAS = [
-      '¿El bono de racha tiene el peso justo? Hoy: +5 por día, tope +50 (la mitad del juego). Más alto premia volver; más bajo premia jugar bien.',
-      '¿Temporada mensual (todos parten de 0 cada mes) o un total de siempre? El mensual deja competir a los nuevos.',
-      '¿Un premio al final del mes (una insignia para el top 10, un comodín para quien juega todos los días)?',
-      'Incentivar el comodín: ¿basta con mostrar cuántos puntos salva, o le damos algo más (p. ej. +10 por cada comodín ganado invitando)?',
-      '¿Los avisos y los links siguen tirando el dado directo, o también pasan por tu Uno al día?',
-      'Para llevarlo a producción hace falta guardar los puntos en Firebase (records/uno-al-dia-pts/<mes>) y que las reglas los revisen contra el historial.',
+      '✅ Bono de racha: +5 por día, tope +50. Decidido.',
+      '✅ Temporada mensual: todos parten de 0 cada mes. Decidido. <b>Falta elegir cómo se muestra el cierre</b> (abajo).',
+      '✅ Premio del mes: una insignia 🏆 de campeón junto al nombre. Decidido (pantalla 👑 Campeón).',
+      `✅ Invitar da puntos: +${INVITE_POINTS} pts además del comodín. Decidido; el número se puede ajustar.`,
+      '✅ Los avisos y los links de Uno al día pasan por tu Uno al día. Decidido.',
+      '✅ Los puntos se guardan en Firebase (records/uno-al-dia-pts/), y las reglas los revisan contra la historia. Hecho, por ahora solo con llave del laboratorio.',
     ];
 
     const tel = document.getElementById('telefono'), nota = document.getElementById('nota');
@@ -380,12 +419,15 @@
       document.getElementById('flujo').innerHTML = ORDEN.map((k, i) =>
         `${i && i < 5 ? '<span class="flecha">›</span>' : i === 5 ? '<span class="flecha" style="flex-basis:100%;height:0"></span>' : ''}<button type="button" data-ir="${k}" class="${PANTALLAS[k].nuevo ? 'nuevo' : ''}${k === pantalla ? ' on' : ''}">${PANTALLAS[k].paso}</button>`).join('');
       document.querySelectorAll('#datos .chip').forEach(b => b.classList.toggle('on', b.dataset.d === fuente));
+      document.getElementById('fin').innerHTML = Object.entries(FIN).map(([k, t]) => `<button type="button" class="chip${k === finTemp ? ' on' : ''}" data-fin="${k}">${t}</button>`).join('');
     }
     document.addEventListener('click', e => {
       const ir = e.target.closest('[data-ir]');
       if (ir) { pantalla = ir.dataset.ir; pintar(); if (ir.closest('#telefono')) tel.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
       const d = e.target.closest('#datos [data-d]');
       if (d) { fuente = d.dataset.d; pintar(); return; }
+      const f = e.target.closest('#fin [data-fin]');
+      if (f) { finTemp = f.dataset.fin; pintar(); return; }
       const w = e.target.closest('#anchos [data-w]');
       if (w) { ancho = +w.dataset.w; document.querySelectorAll('#anchos .chip').forEach(b => b.classList.toggle('on', b === w)); pintar(); }
     });
