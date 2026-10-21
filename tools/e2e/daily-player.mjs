@@ -120,6 +120,11 @@ ok(await waitFor(`/Sara/.test(document.querySelector('[data-tabla="uno-al-dia-pt
 await b.go(`${SITE}/labs/daily-score/live/?test`, 1500);
 ok(await waitFor(`/Sara/.test(document.querySelector('#ranking [data-tabla="uno-al-dia-pts"] .rk-lista')?.innerText||'') && /#1 del mes/.test(document.getElementById('hero')?.innerText||'')`), `"tu Uno al día" shows the same ranking and her place (${(await text('#hero')).replace(/\n/g, ' · ')})`);
 await b.shot('daily-points-live');
+await ev(`(document.querySelector('#calendario .cal button.l1, #calendario .cal button.l2, #calendario .cal button.l3') || document.querySelector('#calendario .cal button[data-dia]'))?.click(); 1`);
+ok(await waitFor(`!!document.getElementById('dia') && /Sumó/.test(document.getElementById('dia').innerText)`), `a tap on a calendar day shows its details (${(await text('#dia')).replace(/\n/g, ' · ')})`);
+await b.shot('daily-points-live-day');
+await ev(`document.getElementById('hero').click(); 1`);
+ok(await waitFor(`!document.getElementById('dia')`), 'a tap outside the calendar closes the day');
 
 await b.close?.();
 console.log(`Screenshots in ${OUT}`);
