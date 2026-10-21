@@ -3,7 +3,8 @@
 // playing on its own, and two options (D-253, D-410). In each
 // language, the invitation sends, with a phone that shares files, that language's social card along
 // with the text, and "Compartir el video" sends the video's text with its YouTube link; on a
-// computer, only the copied text and nothing downloaded.
+// computer, only the copied text and nothing downloaded. While the sheet is open the home page behind
+// it does not scroll.
 // Usage: node tools/e2e/share-home.mjs /tmp/share-home
 import { output as output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
@@ -56,6 +57,19 @@ for (const [lang, e] of Object.entries(EXPECTED)) {
   check(link === `🔗 https://juegosdesalon.cl/${lang === 'es' ? '' : `${lang}/`}?from=link`, `${lang}: the link to the language's home page, only on the last line (${link})`);
   console.log(m.text.replace(/^/gm, '    '));
 }
+// The page behind the open sheet does not scroll, and closing it leaves the page where it was
+await b.go(`${SITE}/?lang=es&test`, 1500);
+const lock = await b.evaluate(`(async () => {
+  const w = ms => new Promise(r => setTimeout(r, ms));
+  scrollTo(0, 400); await w(200); const antes = scrollY;
+  document.querySelector('#share-slot button').click(); await w(400);
+  scrollBy(0, 300); document.scrollingElement.scrollTop += 300; await w(200);
+  const fijo = getComputedStyle(document.body).position === 'fixed' && document.body.getBoundingClientRect().top === -antes;
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); await w(300);
+  return JSON.stringify({ antes, fijo, despues: scrollY, estilo: document.body.getAttribute('style') });
+})()`).then(JSON.parse);
+check(lock.antes > 0 && lock.fijo, `with the sheet open the page behind stays put (${JSON.stringify(lock)})`);
+check(lock.despues === lock.antes && !/fixed/.test(lock.estilo || ''), 'closing the sheet puts the page back where it was');
 // A computer: no menu, the text gets copied, the button says ✅ and no image is fetched.
 // Headless Chrome does have navigator.canShare: it is removed before the page loads, or the
 // home page fetches the card ahead of time and the image count comes out wrong
