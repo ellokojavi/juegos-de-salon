@@ -105,7 +105,7 @@ one after it; ⌫ clears the chosen box (or the one before it, if it is empty); 
 cannot be confirmed; the 0 still cannot go first when the game forbids it. It is the shared keyboard's
 `elegir` option (`teclado.js`), on in Toque y Fama's games and in playing solo, and only for a lab
 key holder (D-395) until it is validated: La Copa and the other users of the keyboard do not turn it
-on. Checked by `tools/e2e/bulls-and-cows/choose-box.mjs`. When it goes to everyone, the instructions
+on. It is listed in `/labs/` under ✨ Mejoras en prueba, so a key holder knows where to try it. Checked by `tools/e2e/bulls-and-cows/choose-box.mjs`. When it goes to everyone, the instructions
 gain a line about it, in the four languages.
 
 ### Repaso al final
