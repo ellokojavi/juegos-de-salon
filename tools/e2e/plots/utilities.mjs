@@ -36,7 +36,13 @@ ok(await ev(`[...document.querySelectorAll('#selector-variante .opcion')].every(
 const numbersSteps = await steps();
 
 // Utilities: the steps, the drawing, the demo and the ranking change
-await ev(`document.querySelectorAll('#selector-variante .opcion')[1].click(); 1`); await sleep(300);
+// Switching redraws the waiting room: the title must not move while the new demo board loads
+// (it jumped 180 px with the demo box empty, and 32 px between variants; owner's report)
+const titleTops = i => ev(`new Promise(r => { const h = () => Math.round(document.querySelector('.lt-titulo h2').getBoundingClientRect().top);
+  const tops = [h()], t0 = performance.now(); document.querySelectorAll('#selector-variante .opcion')[${i}].click();
+  const tick = () => { tops.push(h()); performance.now() - t0 < 1200 ? requestAnimationFrame(tick) : r([...new Set(tops)]); }; tick(); })`);
+const toUtilities = await titleTops(1);
+ok(toUtilities.length === 1, `the title stays put while switching to Utilities (${toUtilities} px)`);
 ok(/Servicios/.test(await on()) && /Un ⚡ y un 💧 por lote/.test(await on()), 'tapping Utilities picks it, with its second line');
 const utilitiesSteps = await steps();
 ok(utilitiesSteps !== numbersSteps && /un ⚡ y un 💧, ni más ni menos/.test(utilitiesSteps) && /del tamaño que dice arriba/.test(utilitiesSteps) && /deja una casilla sin lote posible/.test(utilitiesSteps), `the steps change (${utilitiesSteps})`);
@@ -52,7 +58,8 @@ await b.shot('01-lobby-utilities');
 // It is remembered: coming back without the parameter, still Utilities; ?mode=utilities goes straight in
 await b.go(PAGE, 1500);
 ok(await waitFor(`/Servicios/.test(document.querySelector('#selector-variante .opcion.on')?.textContent || '')`), 'on return, the phone remembers Utilities');
-await ev(`document.querySelectorAll('#selector-variante .opcion')[0].click(); 1`); await sleep(300);
+const toNumbers = await titleTops(0);
+ok(toNumbers.length === 1 && toNumbers[0] === toUtilities[0], `and back to Numbers, at the same height (${toNumbers} px)`);
 ok(await steps() === numbersSteps && await waitFor(`document.querySelectorAll('.lt-demo .lt-num:not(.lt-icono)').length === 25`, 3000), 'back to Numbers: its steps and its 5×5 demo');
 await b.go(`${PAGE}&mode=utilities`, 1500);
 ok(await waitFor(`/Servicios/.test(document.querySelector('#selector-variante .opcion.on')?.textContent || '')`), '?mode=utilities enters Utilities');

@@ -6,7 +6,9 @@
 .lt-credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
 .lt-credito a { color: var(--cyan); }
 .lt-portada { display: grid; justify-items: center; gap: 8px; margin: 0 auto 4px; }
-.lt-demo-caja { position: relative; width: 180px; max-width: 100%; margin: 0 auto; }
+/* The box keeps its square while it is empty (the first instant of a waiting room, and every
+   variant switch, which redraws it): without it the title below jumped up and back (owner's report) */
+.lt-demo-caja { position: relative; width: 180px; max-width: 100%; aspect-ratio: 1; margin: 0 auto; }
 .lt-demo-caja .lt-tablero { transition: opacity 0.4s; }
 .lt-demo-caja:has(.lt-demo-rotulo.ve) .lt-tablero { opacity: 0.35; }
 .lt-demo-rotulo { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; pointer-events: none; z-index: 4;
@@ -15,6 +17,10 @@
 .lt-demo-rotulo.ve { opacity: 1; animation: lt-listo 0.55s cubic-bezier(.3,1.6,.6,1); }
 @keyframes lt-listo { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
 .lt-demo-tam { font-size: 0.85rem; }
+/* Numbers has no plot size to show, but keeps its row where the player can switch variants, so both put
+   the title at the same height; where there is no picker (a Cup day, Uno al día) the row would be dead space */
+.lt-demo-tam.vacio { display: none; }
+body:has(#selector-variante) .lt-demo-tam.vacio { display: block; visibility: hidden; }
 
 /* The board: the squared background, the plots on top and the numbers above everything.
    Its own width sizes the numbers (container units), so the same rules serve the small boards */
