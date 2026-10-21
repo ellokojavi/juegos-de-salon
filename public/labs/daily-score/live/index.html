@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <!-- The lab is not announced: not in the menu or search engines (D-101), and no entry without the key (D-281) -->
+  <script src="../../../assets/js/labs-puerta.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Tu Uno al día 📅 · Laboratorio</title>
+  <link rel="icon" href="../../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../../assets/js/vigia.js"></script>
+  <link rel="stylesheet" href="../../../assets/css/base.css">
+  <link rel="stylesheet" href="../../../assets/css/ranking.css">
+  <style>
+    /* The real screen of "tu Uno al día" (D-412), with real data: this phone's days, the player's
+       history in Firebase and the month's points table. The ranking is the site's own (ranking.js),
+       the same block /records/ shows. */
+    body { padding: 12px 10px 48px; }
+    .wrap { max-width: 520px; margin: 0 auto; display: grid; gap: 12px; }
+    .barra { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .barra a { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink); font-weight: 800; text-decoration: none; }
+    .barra h1 { margin: 0; font: 400 1.4rem var(--font-display); }
+    .hero { text-align: center; display: grid; gap: 4px; padding: 16px 10px; border-radius: 20px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.22), rgba(138, 77, 255, 0.28)); border: 1px solid rgba(255, 210, 63, 0.45); }
+    .hero .temp { font-size: 0.78rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yellow); }
+    .hero .pts { font: 400 3.1rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+    .hero .pts small { font-size: 1.1rem; color: var(--muted); }
+    .hero .puesto { font-weight: 900; font-size: 1.05rem; }
+    .hero .caza { font-size: 0.88rem; color: var(--muted); font-weight: 700; }
+    .hero .como { justify-self: center; min-height: 44px; padding: 0 8px; background: none; border: 0; color: var(--cyan); font: 800 0.88rem var(--font-body); text-decoration: underline; cursor: pointer; }
+    .corona { text-align: center; display: grid; gap: 4px; padding: 14px 10px; border-radius: 20px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.35), rgba(255, 46, 136, 0.25)); border: 1px solid var(--yellow); font-weight: 800; }
+    .corona .grande { font-size: 2.6rem; line-height: 1; }
+    .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .trio div { display: grid; text-align: center; padding: 8px 2px; border-radius: 14px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); }
+    .trio b { font: 400 1.5rem/1.1 var(--font-display); }
+    .trio small { color: var(--muted); font-weight: 800; font-size: 0.72rem; }
+    .jugar { display: grid; gap: 2px; text-align: center; padding: 14px; border-radius: 18px; background: var(--yellow); color: #2a1600; font: 900 1.1rem var(--font-body); text-decoration: none; }
+    .jugar small { font-weight: 800; font-size: 0.8rem; opacity: 0.8; }
+    .listo { text-align: center; padding: 12px; border-radius: 18px; background: rgba(46, 230, 214, 0.18); border: 1px solid rgba(46, 230, 214, 0.5); font-weight: 800; }
+    .caja { padding: 12px; display: grid; gap: 8px; }
+    .caja h2 { margin: 0; font-size: 1rem; }
+    .caja p { margin: 0; }
+    .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .cal > span { min-height: 42px; border-radius: 8px; display: grid; place-items: center; align-content: center; gap: 1px; font-size: 0.72rem; font-weight: 800; color: var(--muted); background: rgba(255,255,255,0.05); }
+    .cal .sem { background: none; min-height: 0; font-size: 0.66rem; }
+    .cal .vacio { background: none; }
+    .cal .p { font: 900 0.66rem/1 var(--font-body); padding: 2px 4px; border-radius: 999px; background: rgba(0,0,0,0.35); color: var(--ink); }
+    .cal .l1 { background: rgba(255, 46, 136, 0.28); } .cal .l2 { background: rgba(255, 46, 136, 0.5); } .cal .l3 { background: rgba(255, 46, 136, 0.8); }
+    .cal .salvado { background: rgba(80, 160, 255, 0.35); }
+    .cal .hoy { outline: 2px solid var(--yellow); outline-offset: -2px; }
+    .reglas { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 0.92rem; }
+    dialog { max-width: min(92vw, 440px); border-radius: 20px; border: 1px solid var(--glass-border); background: var(--bg2, #1d0b35); color: var(--ink); padding: 18px; }
+    dialog::backdrop { background: rgba(0,0,0,0.6); }
+    .lab { padding: 12px; display: grid; gap: 8px; border-style: dashed; }
+    .lab p { margin: 0; font-size: 0.85rem; }
+    .fila { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip { min-height: 44px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); font: 800 0.85rem var(--font-body); cursor: pointer; }
+    .chip.on { background: var(--yellow); color: #2a1600; border-color: transparent; }
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app">
+    <div class="barra"><a href="../../">‹ Laboratorio</a><h1>📅 Tu Uno al día</h1><span style="width:44px"></span></div>
+    <div id="corona"></div>
+    <section class="hero" id="hero"><p class="muted" style="margin:0">Cargando…</p></section>
+    <div class="trio" id="trio"></div>
+    <div id="jugar"></div>
+    <div id="entrar"></div>
+    <div id="ranking"></div>
+    <section class="panel caja" id="invitar-pts">
+      <h2>👋 Invita y suma</h2>
+      <p>Cuando un amigo que invitaste termina su primer Uno al día, ganas un 🧊 comodín y <b>+10 pts</b> para la temporada.</p>
+    </section>
+    <div id="invitar"></div>
+    <section class="panel caja" id="calendario"></section>
+    <section class="panel lab">
+      <p><b>🧪 Laboratorio.</b> Estas pantallas usan tus datos reales; solo las ves con tu llave. Los +10 por invitar todavía no se guardan. <a href="../">Ver el prototipo con las notas</a>.</p>
+      <p><b>¿Cómo se muestra el cierre de la temporada?</b> Elige y mira la línea de arriba:</p>
+      <div class="fila" id="fin" role="group" aria-label="Cierre de la temporada"></div>
+    </section>
+  </div>
+
+  <dialog id="reglas" aria-labelledby="reglas-t">
+    <h2 id="reglas-t" style="margin:0 0 10px">¿Cómo se ganan los puntos?</h2>
+    <ul class="reglas">
+      <li>🎮 <b>El juego:</b> cada Uno al día suma su puntaje, de 0 a 100.</li>
+      <li>🔥 <b>La racha:</b> +5 por cada día seguido, hasta +50.</li>
+      <li>🧊 <b>Comodín:</b> salva un día que no jugaste; la racha y su bono siguen.</li>
+      <li>👋 <b>Invitar:</b> cuando tu amigo termina su primer Uno al día, un 🧊 y +10 pts.</li>
+      <li>🏆 <b>Temporada:</b> el mes. El 1.° todos parten de 0, y el primero del mes lleva el 🏆 junto a su nombre el mes siguiente.</li>
+    </ul>
+    <form method="dialog" style="margin-top:14px"><button class="btn btn--yellow" style="width:100%">Entendido</button></form>
+  </dialog>
+
+  <script type="module">
+    import { el } from '../../../assets/js/ui.js';
+    import { estado, leer, sumarDias, numDia, numeroDel, juegoDel, juegoDia } from '../../../assets/js/uno-al-dia.js';
+    import { periodoMes, UAD_PUNTOS } from '../../../assets/js/records.js';
+    import { jugador } from '../../../assets/js/jugador.js';
+    import { bloqueRanking, bloqueJugador, campeonDelMes, mesAnterior } from '../../../assets/js/ranking.js';
+    import { tarjetaInvitar, rutaHoy } from '../../../assets/js/uno-al-dia-ui.js';
+    import { walk, seasonPoints } from '../score.js';
+
+    const $ = id => document.getElementById(id);
+    const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const miles = n => Number(n || 0).toLocaleString('es-CL');
+    const mesDe = p => MESES[Number(p.slice(6, 8)) - 1];
+
+    // How the season's end is shown: the owner chooses here (D-412); the choice stays on this phone
+    const FIN_KEY = 'juegos-de-salon:lab:fin-temporada';
+    const FIN = { quedan: '⏳ Quedan X días', fecha: '📅 Fecha de cierre', duracion: '📆 Duración' };
+    let fin = localStorage.getItem(FIN_KEY) in FIN ? localStorage.getItem(FIN_KEY) : 'quedan';
+    function lineaTemporada(hoy) {
+      const [y, m] = hoy.split('-').map(Number);
+      const ultimo = new Date(Date.UTC(y, m, 0)).getUTCDate();
+      const mes = MESES[m - 1], quedan = ultimo - Number(hoy.slice(8)) + 1;
+      return `Temporada de ${mes} · ` + (fin === 'fecha' ? `cierra el ${ultimo} de ${mes}` : fin === 'duracion' ? `del 1 al ${ultimo} de ${mes}` : quedan === 1 ? 'último día' : `quedan ${quedan} días`);
+    }
+
+    function calendario(w, hoy) {
+      const [y, m] = hoy.split('-').map(Number);
+      const primero = `${hoy.slice(0, 8)}01`;
+      const offset = (new Date(Date.UTC(y, m - 1, 1)).getUTCDay() + 6) % 7;
+      const enMes = new Date(Date.UTC(y, m, 0)).getUTCDate();
+      const por = Object.fromEntries(w.days.map(x => [x.date, x]));
+      const celdas = ['L', 'M', 'M', 'J', 'V', 'S', 'D'].map(s => el('span', { class: 'sem' }, s));
+      for (let i = 0; i < offset; i++) celdas.push(el('span', { class: 'vacio' }));
+      for (let i = 0; i < enMes; i++) {
+        const f = sumarDias(primero, i), x = por[f], h = f === hoy ? ' hoy' : '';
+        if (x?.played) celdas.push(el('span', { class: `l${x.points >= 120 ? 3 : x.points >= 80 ? 2 : 1}${h}` }, el('span', {}, juegoDia(x.game)?.emoji || '🎲'), el('span', { class: 'p' }, `${x.points}`)));
+        else if (x?.saved) celdas.push(el('span', { class: `salvado${h}` }, '🧊'));
+        else celdas.push(el('span', { class: h.trim() }, `${i + 1}`));
+      }
+      $('calendario').replaceChildren(el('h2', {}, `🗓️ ${MESES[m - 1]} ${y}`), el('div', { class: 'cal' }, celdas),
+        el('p', { class: 'muted', style: 'font-size:0.8rem' }, 'En cada día, los puntos que sumó: juego + bono de la racha. 🧊 = día salvado por un comodín.'));
+    }
+
+    // One drawing at a time: the backfill below must not add a day twice
+    let cola = Promise.resolve();
+    const dibujar = () => (cola = cola.then(dibujarYa, dibujarYa));
+    async function dibujarYa() {
+      const e = estado(), hoy = e.hoy, mes = periodoMes(hoy);
+      const w = walk(leer().dias, hoy);
+      let J = null, yo = null;
+      try { J = await jugador(); yo = J.yo(); } catch (_) { /* sin red: lo del celular */ }
+
+      // Los días de este mes que aún no suman puntos se suman en orden (la racha de cada uno)
+      if (yo) for (const d of w.days.filter(x => x.played && x.date.startsWith(hoy.slice(0, 7)))) {
+        await J.anotarPuntosDia({ n: numDia(d.date), mesP: mes, racha: d.streak }).catch(() => false);
+      }
+      let pts = seasonPoints(w, hoy), puesto = null, delante = null, campeon = null, soyCampeon = false;
+      if (yo) {
+        const v = await J.tabla(UAD_PUNTOS, mes, { top: 100 }).catch(() => null);
+        const filas = v ? [...v.top, ...(v.vecinos || [])] : [];
+        const i = filas.findIndex(f => f.jid === yo.jid);
+        if (i >= 0) { pts = filas[i].s; puesto = filas[i].puesto; delante = i > 0 ? filas[i - 1] : null; }
+        campeon = await campeonDelMes(J);
+        soyCampeon = campeon === yo.jid;
+      }
+
+      $('corona').replaceChildren(...(soyCampeon ? [el('div', { class: 'corona' }, el('span', { class: 'grande' }, '👑'), `¡Campeón de ${mesDe(mesAnterior(hoy))}! Tu 🏆 va junto a tu nombre en el ranking este mes.`)] : []));
+      const como = el('button', { type: 'button', class: 'como', onClick: () => $('reglas').showModal() }, '¿Cómo se ganan los puntos?');
+      $('hero').replaceChildren(
+        el('span', { class: 'temp' }, lineaTemporada(hoy)),
+        el('span', { class: 'pts' }, miles(pts), el('small', {}, ' pts')),
+        puesto ? el('span', { class: 'puesto' }, `#${puesto} del mes${soyCampeon ? ' 🏆' : ''}`) : el('span', { class: 'caza' }, yo ? 'Juega hoy para entrar al ranking del mes.' : 'Entra con tu nombre para guardar tus puntos y salir en el ranking.'),
+        ...(delante ? [el('span', { class: 'caza' }, 'Te faltan ', el('b', {}, miles(delante.s - pts + 1)), ` pts para pasar a ${delante.n}`)] : []),
+        como);
+      $('trio').replaceChildren(
+        el('div', {}, el('b', {}, `🔥${e.racha}`), el('small', {}, 'racha')),
+        el('div', {}, el('b', {}, `🧊${e.comodines}`), el('small', {}, 'comodines')),
+        el('div', {}, el('b', {}, `+${Math.min(50, (e.racha + (e.dia ? 0 : 1)) * 5)}`), el('small', {}, e.dia ? 'bono de hoy' : 'bono si juegas hoy')));
+      const juego = juegoDia(juegoDel(hoy));
+      $('jugar').replaceChildren(e.dia
+        ? el('div', { class: 'listo' }, `✅ Listo por hoy: ${e.dia.s} + bono. Mañana, otro.`)
+        : el('a', { class: 'jugar', href: `../../../${rutaHoy(juego?.id)}` }, `▶ Jugar el n.° ${numeroDel(hoy)}`, el('small', {}, `${juego?.emoji || '🎲'} hasta ${100 + Math.min(50, (e.racha + 1) * 5)} pts`)));
+      calendario(w, hoy);
+    }
+
+    // The ranking: the site's own block, the same as in /records/ (D-412)
+    $('ranking').replaceChildren(bloqueRanking({ juego: UAD_PUNTOS, titulo: '🏅 Ranking del mes', pestanas: ['mes', 'amigosMes'] }));
+    $('invitar').replaceChildren(tarjetaInvitar({ lang: 'es', plegada: true }));
+    jugador().then(J => {
+      if (!J.yo()) $('entrar').replaceChildren(bloqueJugador({ destacado: true, compacto: true, leyenda: 'Entra para guardar tus puntos del mes.' }));
+      J.escuchar(yo => { if (yo) { $('entrar').replaceChildren(); dibujar(); } });
+    }).catch(() => {});
+
+    $('fin').replaceChildren(...Object.entries(FIN).map(([k, t]) => el('button', {
+      type: 'button', class: 'chip' + (k === fin ? ' on' : ''), 'data-fin': k,
+      onClick: ev => { fin = k; localStorage.setItem(FIN_KEY, k); $('fin').querySelectorAll('.chip').forEach(b => b.classList.toggle('on', b === ev.currentTarget)); dibujar(); },
+    }, t)));
+    dibujar();
+  </script>
+</body>
+</html>

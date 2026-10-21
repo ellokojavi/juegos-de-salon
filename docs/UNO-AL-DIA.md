@@ -694,7 +694,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 
 A design prototype, lab only (D-395): nothing players see changes. Since D-412 a lab key holder's
 points are saved in `records/uno-al-dia-pts/s<yyyy>-<mm>/` (each day of the history once, checked by
-the rules); the screens still use made-up rivals.
+the rules); the prototype's screens use made-up rivals, the real ones (below) use real players.
 It explores one number that ranks players in a **monthly season** (everyone starts at 0 on the 1st):
 
 - **A day's points** = the game's own 0–100 score + a **streak bonus** of +5 per day of streak, up
@@ -711,3 +711,14 @@ It explores one number that ranks players in a **monthly season** (everyone star
 The rules are pure functions in `public/labs/daily-score/score.js` (over the same history and
 streak rules as `uno-al-dia.js`), tested by `score.test.mjs`. The page lists its open questions for
 the owner; nothing goes to players until validated in the lab.
+
+**The real screens (`/labs/daily-score/live/`).** "Tu Uno al día" with real data, lab key only: the
+season line (in the form chosen there), the month's points and place read from
+`records/uno-al-dia-pts/`, "Te faltan X pts para pasar a Y" with the "¿Cómo se ganan los puntos?"
+link, the 👑 banner and 🏆 for last month's champion, streak, wildcards, today's bonus, play, sign
+in, invite (+10 pts, shown but not saved yet), the ranking and the month's calendar. On opening it
+adds this month's days that do not count yet, in order; signing in on the result adds today's too
+(`sincronizar`). **One ranking everywhere:** the month's points are `bloqueRanking` from
+`ranking.js` with the tabs `mes` and `amigosMes` (🏆 next to last month's champion, 🔥 the streak),
+the same block in the hub, in /records/ (under 🎲, lab key only) and first in the ranking under Uno
+al día's result (lab key only). `tools/e2e/daily-player.mjs` checks all three.

@@ -231,7 +231,9 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alToca
     const conRanking = rankingsVisibles();
     const { bloqueJugador, bloqueRanking } = conRanking ? await import('./ranking.js') : {};
     let invitar = conRanking ? tarjetaInvitar({ lang, alTocar, plegada: true }) : null;
-    const ranking = conRanking ? bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar }) : null;
+    // With a lab key, the month's points come first (D-412), the same tabs as in /records/. lab: #seccion-puntos-dia
+    const conPuntos = conRanking && await (await import('./lab-access.js')).labAccess();
+    const ranking = conRanking ? bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: [...(conPuntos ? ['mes'] : []), 'hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar }) : null;
     if (conRanking && !(await R.tengoJugador())) {
       const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, bloqueJugador({ destacado: true, compacto: true, leyenda: T.guardaRacha, alTocar }));
       arriba.append(entrar);

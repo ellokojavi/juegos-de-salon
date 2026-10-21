@@ -81,6 +81,8 @@ details.panel.rk-invita--destacada:not([open]) summary::after { content: none; }
 .rk-nombre { font-weight: 800; display: flex; align-items: baseline; gap: 4px; min-width: 0; }
 .rk-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .rk-nombre small { color: var(--cyan); font-weight: 900; flex-shrink: 0; }
+/* Last month's Uno al día points champion (D-412) */
+.rk-campeon { flex-shrink: 0; }
 .rk-puntos { font: 900 1.05rem var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
 .rk-tiempo { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); min-width: 3.2em; text-align: right; }
 .rk-medallas { grid-column: 3 / 5; font-family: var(--font-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
