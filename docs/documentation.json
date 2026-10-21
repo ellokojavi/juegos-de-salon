@@ -1,6 +1,8 @@
 {
-  "checkedUpTo": "b7b2fc08d602d169a63ba9352c1eaa1b8e5d2aaa",
-  "pending": [],
+  "checkedUpTo": "b75fac6c0cbbd2651a7c8a70293d224160d3e93e",
+  "pending": [
+    "Stale README screenshots in 11 game sections (cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review offline"
+  ],
   "known": [],
   "rounds": [
     {
@@ -101,6 +103,15 @@
       "to": "b7b2fc08d602d169a63ba9352c1eaa1b8e5d2aaa",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/515",
       "pending": []
+    },
+    {
+      "date": "2026-10-21",
+      "from": "b7b2fc08d602d169a63ba9352c1eaa1b8e5d2aaa",
+      "to": "b75fac6c0cbbd2651a7c8a70293d224160d3e93e",
+      "pr": null,
+      "pending": [
+        "Stale README screenshots in 11 game sections (cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review offline"
+      ]
     }
   ],
   "note": "Memoria del agente de documentación (D-172). La lee y la escribe tools/document.mjs: hasta qué commit de main se revisó, lo que quedó pendiente, los problemas ya conocidos que esperan al dueño y las rondas anteriores."
