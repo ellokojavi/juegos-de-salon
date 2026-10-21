@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <!-- The lab is not announced: not in the menu or search engines (D-101), and no entry without the key (D-281) -->
+  <script src="../../assets/js/labs-puerta.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Puntos de Uno al día 🏆 · Laboratorio</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../assets/js/vigia.js"></script>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <style>
+    /* A design prototype: the screens of a Uno al día with points and a monthly ranking, drawn in a
+       phone frame, with the navigation between them and a note under each. Nothing here is saved or
+       sent: the player's own history is read from the phone, the other players are made up. */
+    body { padding: 16px 8px 48px; }
+    .wrap { max-width: 680px; margin: 0 auto; display: grid; gap: 18px; }
+    header h1 { font-family: var(--font-display); margin: 0 0 6px; text-align: center; }
+    header p { margin: 0 0 8px; text-align: center; }
+    .fila { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+    .chip { min-height: 44px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); font: 800 0.88rem var(--font-body); cursor: pointer; }
+    .chip.on { background: var(--yellow); color: #2a1600; border-color: transparent; }
+    .seccion { padding: 16px; display: grid; gap: 10px; }
+    .seccion h2 { margin: 0; font-size: 1.15rem; }
+    .seccion p { margin: 0; }
+
+    /* The navigation map: each step jumps to its screen */
+    .flujo { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; }
+    .flujo button { min-height: 44px; padding: 6px 10px; border-radius: 14px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.25); color: var(--ink); font: 800 0.8rem var(--font-body); cursor: pointer; }
+    .flujo button.on { outline: 2px solid var(--yellow); }
+    .flujo button.nuevo { border-color: var(--lime); }
+    .flujo .flecha { color: var(--muted); font-weight: 900; }
+    .leyenda { font-size: 0.82rem; text-align: center; }
+
+    /* The phone */
+    .telefono { width: min(100%, var(--ancho, 320px)); margin: 0 auto; padding: 14px 10px 18px; border-radius: 26px; background: var(--bg2, #1d0b35); outline: 1px dashed rgba(255,255,255,0.18); outline-offset: 4px; display: grid; gap: 12px; }
+    .nota { padding: 14px 16px; display: grid; gap: 8px; font-size: 0.92rem; }
+    .nota h3 { margin: 0; font-size: 1rem; }
+    .nota ul { margin: 0; padding-left: 1.2em; }
+
+    /* ——— The screens (what would ship) ——— */
+    .t-barra { display: flex; align-items: center; justify-content: space-between; font-weight: 800; color: var(--muted); font-size: 0.85rem; }
+    .t-barra button { background: none; border: 0; color: var(--ink); font: 900 1rem var(--font-body); min-height: 44px; cursor: pointer; }
+    .hero { text-align: center; display: grid; gap: 4px; padding: 16px 10px; border-radius: 20px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.22), rgba(138, 77, 255, 0.28)); border: 1px solid rgba(255, 210, 63, 0.45); }
+    .hero .temp { font-size: 0.78rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yellow); }
+    .hero .pts { font: 400 3.1rem/1 var(--font-display); letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+    .hero .pts small { font-size: 1.1rem; color: var(--muted); }
+    .hero .puesto { font-weight: 900; font-size: 1.05rem; }
+    .hero .sube { color: var(--lime); }
+    .hero .caza { font-size: 0.85rem; color: var(--muted); font-weight: 700; }
+    .hero .hoy-chip { justify-self: center; padding: 3px 10px; border-radius: 999px; background: var(--lime); color: #142400; font-weight: 900; font-size: 0.85rem; }
+    .jugar { display: grid; gap: 2px; text-align: center; padding: 14px; border-radius: 18px; border: 0; background: var(--yellow); color: #2a1600; font: 900 1.1rem var(--font-body); cursor: pointer; }
+    .jugar small { font-weight: 800; font-size: 0.8rem; opacity: 0.8; }
+    .listo { text-align: center; padding: 12px; border-radius: 18px; background: rgba(46, 230, 214, 0.18); border: 1px solid rgba(46, 230, 214, 0.5); font-weight: 800; display: grid; gap: 4px; }
+    .listo .reloj { color: var(--muted); font-size: 0.85rem; }
+    .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .trio div { display: grid; text-align: center; padding: 8px 2px; border-radius: 14px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); }
+    .trio b { font: 400 1.5rem/1.1 var(--font-display); }
+    .trio small { color: var(--muted); font-weight: 800; font-size: 0.7rem; }
+    .caja { padding: 12px; border-radius: 16px; background: rgba(0, 0, 0, 0.22); border: 1px solid var(--glass-border); display: grid; gap: 8px; font-size: 0.9rem; }
+    .caja h4 { margin: 0; font-size: 0.95rem; }
+    .caja p { margin: 0; }
+    .caja.hielo { border-color: rgba(120, 200, 255, 0.55); background: rgba(80, 160, 255, 0.12); }
+    .caja.alerta { border-color: rgba(255, 140, 60, 0.6); background: rgba(255, 120, 60, 0.12); }
+    .mini { justify-self: start; min-height: 44px; padding: 4px 14px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); font: 800 0.85rem var(--font-body); cursor: pointer; }
+    .rank { display: grid; gap: 3px; }
+    .rank .r { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 6px; align-items: center; padding: 6px 8px; border-radius: 10px; font-size: 0.88rem; background: rgba(255,255,255,0.04); }
+    .rank .r.yo { background: rgba(255, 210, 63, 0.22); outline: 1px solid var(--yellow); font-weight: 900; }
+    .rank .r .n { color: var(--muted); font-weight: 900; text-align: right; }
+    .rank .r .nom { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rank .r b { font-variant-numeric: tabular-nums; }
+    .rank .sep { text-align: center; color: var(--muted); font-size: 0.8rem; line-height: 1; }
+    .pestanas { display: flex; gap: 4px; }
+    .pestanas span { flex: 1; text-align: center; padding: 6px 2px; border-radius: 10px; font-size: 0.78rem; font-weight: 900; background: rgba(255,255,255,0.06); color: var(--muted); }
+    .pestanas span.on { background: var(--cyan); color: #03302c; }
+    .cal-cab { display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
+    .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .cal > span { min-height: 42px; border-radius: 8px; display: grid; place-items: center; align-content: center; gap: 1px; font-size: 0.72rem; font-weight: 800; color: var(--muted); background: rgba(255,255,255,0.05); }
+    .cal .sem { background: none; min-height: 0; font-size: 0.66rem; }
+    .cal .vacio { background: none; }
+    .cal .e { font-size: 0.95rem; line-height: 1; }
+    .cal .p { font: 900 0.62rem/1 var(--font-body); padding: 2px 4px; border-radius: 999px; background: rgba(0,0,0,0.35); color: var(--ink); }
+    .cal .l1 { background: rgba(255, 46, 136, 0.28); } .cal .l2 { background: rgba(255, 46, 136, 0.5); } .cal .l3 { background: rgba(255, 46, 136, 0.8); }
+    .cal .salvado { background: rgba(80, 160, 255, 0.35); }
+    .cal .hoy { outline: 2px solid var(--yellow); outline-offset: -2px; }
+    .suma { display: grid; gap: 4px; font-size: 0.95rem; }
+    .suma div { display: flex; justify-content: space-between; }
+    .suma .tot { border-top: 1px solid var(--glass-border); padding-top: 6px; font-weight: 900; font-size: 1.15rem; color: var(--yellow); }
+    .tarjeta-portada { display: grid; gap: 4px; padding: 14px; border-radius: 20px; text-align: center; background: linear-gradient(160deg, rgba(255, 95, 165, 0.3), rgba(138, 77, 255, 0.3)); border: 1px solid rgba(255, 46, 136, 0.55); cursor: pointer; }
+    .tarjeta-portada .ico { font-size: 2rem; }
+    .tarjeta-portada b { font-size: 1.05rem; }
+    .tarjeta-portada .linea { font-size: 0.82rem; font-weight: 800; }
+    .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tarjeta-copa { padding: 14px; border-radius: 20px; text-align: center; background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border); color: var(--muted); font-weight: 800; display: grid; place-items: center; }
+    .ejemplo { font-size: 0.72rem; text-align: center; color: var(--muted); }
+    .reglas { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🏆 Puntos de Uno al día</h1>
+      <p class="muted">Un puntaje global de Uno al día y un ranking del mes, para que valga la pena volver cada día, jugar bien y cuidar la racha con los comodines 🧊. Tocar 📅 Uno al día en la portada ya no tira el dado al tiro: abre <b>tu Uno al día</b>, con tus puntos y tu puesto arriba de todo.</p>
+      <p class="muted" style="font-size:0.85rem">Es un prototipo: no guarda ni manda nada. Tus días salen de este celular; los demás jugadores del ranking son inventados.</p>
+      <div class="fila" id="datos" role="group" aria-label="Datos">
+        <button type="button" class="chip" data-d="mios">📱 Mis días</button>
+        <button type="button" class="chip" data-d="ejemplo">🧪 Ejemplo</button>
+      </div>
+      <div class="fila" id="anchos" role="group" aria-label="Ancho de pantalla" style="margin-top:6px">
+        <button type="button" class="chip on" data-w="320">📱 320 px</button>
+        <button type="button" class="chip" data-w="390">📱 390 px</button>
+      </div>
+    </header>
+
+    <section class="panel seccion">
+      <h2>🧭 La navegación</h2>
+      <div class="flujo" id="flujo"></div>
+      <p class="muted leyenda">Toca un paso para ver su pantalla. Con borde verde, lo nuevo; 🎲 y el juego quedan como hoy.</p>
+    </section>
+
+    <div class="telefono" id="telefono"></div>
+    <section class="panel nota" id="nota"></section>
+
+    <section class="panel seccion">
+      <h2>❓ Lo que falta decidir</h2>
+      <ul class="reglas" id="preguntas"></ul>
+    </section>
+  </div>
+
+  <script type="module">
+    import { fechaLocal, sumarDias, leer, numeroDel, juegoDel, juegoDia, COMODINES_MAX, faltaParaManana } from '../../assets/js/uno-al-dia.js';
+    import { walk, seasonPoints, maxToday, bonusFor, rankAmong, BONUS_MAX, BONUS_PER_DAY } from './score.js';
+
+    const NOMBRES = { linea: 'Línea Relámpago', numero: 'Toque y Fama', conexiones: 'Conexiones', letras: 'Letras', anio: '¿En qué año?', reinas: 'Reinas', desenredo: 'Desenredo', ahorcado: 'Ahorcado', 'batalla-naval': 'Batalla Naval', dudo: 'Dudo', rutas: 'Rutas', loteo: 'Loteo', pintaminas: 'Pintaminas', zip: 'Zip', tango: 'Tango', donde: '¿Dónde queda?', generala: 'Generala' };
+    const emoji = id => juegoDia(id)?.emoji || '🎮';
+    const nombre = id => NOMBRES[id] || id;
+    const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const miles = n => n.toLocaleString('es-CL');
+    const HOY = fechaLocal();
+    const AYER = sumarDias(HOY, -1);
+    const PUNTAJE_HOY = 87; // the made-up result of today's game, in the screens after playing
+
+    // The example: this month up to yesterday, a day missed without a wildcard on the 4th (the streak
+    // starts over) and one saved by a wildcard on the 15th, earned on the 11th after 7 days in a row
+    function ejemplo() {
+      const dias = {}, mes = HOY.slice(0, 8);
+      for (let d = 1; ; d++) {
+        const f = `${mes}${String(d).padStart(2, '0')}`;
+        if (f >= HOY) break;
+        if (d === 4 || d === 15) continue;
+        dias[f] = { j: juegoDel(f)?.id || 'reinas', s: 55 + ((d * 37) % 45) };
+      }
+      return dias;
+    }
+
+    let fuente = Object.keys(leer().dias).length ? 'mios' : 'ejemplo';
+    let pantalla = 'hub';
+    let ancho = 320;
+
+    // The made-up rivals: names spread around the player's own total, so the chase line has someone
+    const RIVALES = ['Ana', 'Beto', 'Coni', 'Diego', 'Eli', 'Fran', 'Gabo', 'Isi', 'Javi R.', 'Kari', 'Lucho', 'Majo', 'Nico', 'Olga', 'Pato', 'Quique', 'Rosi', 'Sebas', 'Tati', 'Uli', 'Vale', 'Wally', 'Xime', 'Yayo'];
+    const rivales = base => RIVALES.map((name, i) => ({ name, pts: Math.max(40, Math.round(base * (1.75 - i * 0.065) + ((i * 53) % 29))) }));
+
+    function datos({ jugado = false, comodinAyer = false } = {}) {
+      let dias = fuente === 'mios' ? { ...leer().dias } : ejemplo();
+      // The screens before playing leave today out; the ones after add today's made-up result
+      const jugoHoy = !!dias[HOY];
+      if (!jugado) delete dias[HOY];
+      else if (!dias[HOY]) dias[HOY] = { j: juegoDel(HOY)?.id || 'reinas', s: PUNTAJE_HOY };
+      // The wildcard screen: yesterday missed, after 7 days in a row that earned the wildcard it spends
+      if (comodinAyer) {
+        delete dias[AYER];
+        for (let i = 1; i <= 7; i++) { const f = sumarDias(AYER, -i); dias[f] ||= { j: juegoDel(f)?.id || 'zip', s: 70 }; }
+      }
+      const w = walk(dias, HOY);
+      const hoyDia = w.days.find(d => d.date === HOY) || null;
+      const pts = seasonPoints(w, HOY);
+      const antes = hoyDia ? pts - hoyDia.points : pts;
+      const otros = rivales(Math.max(300, antes || 300));
+      const r = rankAmong(otros, { name: 'Tú', pts });
+      const rAntes = rankAmong(otros, { name: 'Tú', pts: antes });
+      return { dias, w, pts, hoyDia, r, sube: rAntes.rank - r.rank, total: otros.length + 1, jugoHoy };
+    }
+
+    // ——— Pieces of the screens ———
+    const barra = (titulo, atras = 'portada') => `<div class="t-barra"><button data-ir="${atras}" aria-label="Volver">‹ Volver</button><span>${titulo}</span><span style="width:44px"></span></div>`;
+
+    function hero(d, { hoy = false } = {}) {
+      const mes = MESES[+HOY.slice(5, 7) - 1];
+      const caza = d.r.ahead
+        ? `Te faltan <b>${miles(d.r.ahead.pts - d.pts + 1)}</b> pts para pasar a ${d.r.ahead.name}`
+        : '¡Vas primero! Defiende el puesto mañana.';
+      return `<div class="hero">
+        <span class="temp">🏆 Temporada de ${mes}</span>
+        <span class="pts">${miles(d.pts)} <small>pts</small></span>
+        ${hoy && d.hoyDia ? `<span class="hoy-chip">+${d.hoyDia.points} hoy</span>` : ''}
+        <span class="puesto">Puesto ${d.r.rank} de ${d.total}${hoy && d.sube > 0 ? ` <span class="sube">▲${d.sube}</span>` : ''}</span>
+        <span class="caza">${caza}</span>
+      </div>`;
+    }
+
+    function trio(d) {
+      const bono = bonusFor(d.w.streak + (d.hoyDia ? 0 : 1));
+      return `<div class="trio">
+        <div><b>🔥 ${d.w.streak}</b><small>racha</small></div>
+        <div><b>+${bono}</b><small>${d.hoyDia ? 'bono de hoy' : 'bono si juegas'}</small></div>
+        <div><b>🧊 ${d.w.wildcards}/${COMODINES_MAX}</b><small>comodines</small></div>
+      </div>`;
+    }
+
+    function cajaComodin(d) {
+      const bono = bonusFor(d.w.streak);
+      if (d.w.wildcards > 0) return `<div class="caja hielo"><h4>🧊 Tu bono está protegido</h4>
+        <p>Si un día no puedes jugar, un comodín salva tu racha y tu bono de <b>+${bono}</b> por día sigue entero.</p></div>`;
+      return `<div class="caja alerta"><h4>🧊 Sin comodines: tu bono de +${bono} está en riesgo</h4>
+        <p>Si un día no juegas, la racha vuelve a 0 y el bono también. Ganas un comodín cada 7 días seguidos, o cuando un amigo que invitaste termina su primer Uno al día.</p>
+        <button class="mini" type="button">👋 Invitar a un amigo</button></div>`;
+    }
+
+    function ranking(d, { completo = false } = {}) {
+      const L = d.r.list, yo = d.r.rank - 1;
+      const fila = (x, i) => `<div class="r${x.me ? ' yo' : ''}"><span class="n">${i + 1}</span><span class="nom">${x.me ? '⭐ Tú' : x.name}</span><b>${miles(x.pts)}</b></div>`;
+      let filas;
+      if (completo) filas = L.map(fila).join('');
+      else {
+        const ver = new Set([0, 1, 2, yo - 1, yo, yo + 1].filter(i => i >= 0 && i < L.length));
+        let prev = -1; filas = '';
+        for (const i of [...ver].sort((a, b) => a - b)) { if (i > prev + 1) filas += '<div class="sep">⋯</div>'; filas += fila(L[i], i); prev = i; }
+      }
+      return `<div class="caja"><h4>🏅 Ranking del mes</h4>
+        ${completo ? '' : ''}<div class="rank">${filas}</div>
+        ${completo ? '' : '<button class="mini" type="button" data-ir="ranking">Ver ranking completo ›</button>'}</div>`;
+    }
+
+    function calendario(d) {
+      const [y, m] = HOY.split('-').map(Number);
+      const primero = `${HOY.slice(0, 8)}01`;
+      const offset = (new Date(Date.UTC(y, m - 1, 1)).getUTCDay() + 6) % 7;
+      const enMes = new Date(Date.UTC(y, m, 0)).getUTCDate();
+      const por = Object.fromEntries(d.w.days.map(x => [x.date, x]));
+      let celdas = ['L', 'M', 'M', 'J', 'V', 'S', 'D'].map(s => `<span class="sem">${s}</span>`).join('');
+      celdas += '<span class="vacio"></span>'.repeat(offset);
+      for (let i = 0; i < enMes; i++) {
+        const f = sumarDias(primero, i), x = por[f], hoy = f === HOY ? ' hoy' : '';
+        if (x?.played) celdas += `<span class="l${x.points >= 120 ? 3 : x.points >= 80 ? 2 : 1}${hoy}"><span class="e">${emoji(x.game)}</span><span class="p">${x.points}</span></span>`;
+        else if (x?.saved) celdas += `<span class="salvado${hoy}"><span class="e">🧊</span></span>`;
+        else celdas += `<span class="${hoy.trim()}">${i + 1}</span>`;
+      }
+      return `<div class="caja"><div class="cal-cab"><span>‹</span><span>${MESES[m - 1]} ${y}</span><span>›</span></div>
+        <div class="cal">${celdas}</div><p class="muted" style="font-size:0.78rem">En cada día, los puntos que sumó: juego + bono. 🧊 = día salvado por un comodín.</p></div>`;
+    }
+
+    const comoSeGana = `<button class="mini" type="button" data-ir="reglas">❓ ¿Cómo se ganan los puntos?</button>`;
+
+    // ——— The screens ———
+    const PANTALLAS = {
+      portada: {
+        paso: '1 · Portada', nuevo: true,
+        html() {
+          const d = datos();
+          return `<div class="dos">
+            <div class="tarjeta-copa">🏆<br>La Copa</div>
+            <div class="tarjeta-portada" data-ir="hub"><span class="ico">📅</span><b>Uno al día</b>
+              <span class="linea">🏆 ${miles(d.pts)} pts · #${d.r.rank}</span><span class="linea">🔥 ${d.w.streak} · Jugar hoy</span></div>
+          </div><p class="ejemplo">La media fila de la portada (D-239). Toca la tarjeta.</p>`;
+        },
+        nota: `<h3>La tarjeta de la portada</h3><ul>
+          <li>Suma una línea: <b>tus puntos del mes y tu puesto</b> (🏆 1.240 pts · #14), arriba de la racha.</li>
+          <li><b>Tocarla abre tu Uno al día</b> (la pantalla 2), no el dado. Hoy el dado rueda al tiro y el puntaje queda escondido en /today/.</li>
+          <li>Los avisos y los links de "juega el de hoy" siguen tirando el dado directo: quien viene a jugar no da un paso más.</li></ul>`,
+      },
+      hub: {
+        paso: '2 · Tu Uno al día', nuevo: true,
+        html() {
+          const d = datos();
+          return `${barra('📅 Uno al día n.° ' + numeroDel(HOY))}${hero(d)}
+            <button class="jugar" type="button" data-ir="resultado">🎲 Jugar el de hoy<small>hasta +${maxToday(d.w.streak)} pts</small></button>
+            ${trio(d)}${cajaComodin(d)}${ranking(d)}${calendario(d)}${comoSeGana}`;
+        },
+        nota: `<h3>Tu Uno al día, antes de jugar</h3><ul>
+          <li><b>Lo primero son los puntos</b>: el total del mes, el puesto y a quién tienes que pasar ("Te faltan 38 pts para pasar a Ana"). Esa línea es el gancho para volver mañana.</li>
+          <li>El botón amarillo dice cuánto se puede ganar hoy (100 del juego + el bono de la racha que harías). Lleva al dado y al juego, como hoy.</li>
+          <li>Racha, bono y comodines en tres números. La caja 🧊 dice <b>cuánto vale tu comodín en puntos</b>: es lo que hace que importe tener uno.</li>
+          <li>El ranking muestra el podio y a tus vecinos; el calendario, los puntos de cada día en vez del puntaje del juego.</li>
+          <li>Lo que /today/ tiene hoy y no está aquí (por juego, invitar, avisos) iría más abajo, sin cambios.</li></ul>`,
+      },
+      dado: {
+        paso: '🎲 Dado', nuevo: false,
+        html: () => `<div class="caja" style="text-align:center;min-height:220px;place-content:center"><span style="font-size:3rem">🎲</span><p>El dado rueda y cae en ${emoji(juegoDel(HOY)?.id)} <b>${nombre(juegoDel(HOY)?.id)}</b>, como hoy.</p><button class="jugar" type="button" data-ir="resultado">Jugar ›</button></div>`,
+        nota: `<h3>El dado y el juego, sin cambios</h3><ul><li>La intro del juego suma una línea: "📅 Uno al día: suma hasta +${BONUS_MAX + 100} pts al ranking del mes."</li></ul>`,
+      },
+      resultado: {
+        paso: '3 · Resultado', nuevo: true,
+        html() {
+          const d = datos({ jugado: true }), h = d.hoyDia;
+          return `<div class="caja" style="text-align:center"><span style="font-size:2.4rem">${emoji(h.game)}</span><b>${nombre(h.game)}</b><span class="muted">El resultado de siempre del juego: ${h.score} puntos</span></div>
+            <div class="caja"><h4>📅 Uno al día · sumaste</h4>
+              <div class="suma"><div><span>${emoji(h.game)} Juego</span><b>+${h.score}</b></div>
+              <div><span>🔥 Bono de racha (${h.streak} ${h.streak === 1 ? 'día' : 'días'})</span><b>+${h.bonus}</b></div>
+              <div class="tot"><span>Hoy</span><span>+${h.points} pts</span></div></div>
+              <p>🏆 Mes: <b>${miles(d.pts)} pts</b> · puesto ${d.r.rank}${d.sube > 0 ? ` <b style="color:var(--lime)">▲${d.sube}</b>` : ''}</p>
+              <p class="muted" style="font-size:0.85rem">${h.bonus >= BONUS_MAX ? `Tu bono está en el máximo: +${BONUS_MAX} cada día mientras no cortes la racha.` : `Mañana tu bono sube a +${bonusFor(h.streak + 1)}.`}</p>
+              <button class="jugar" type="button" data-ir="hubJugado">Ver mi Uno al día</button>
+              <div class="dos"><button class="mini" type="button">Compartir</button><button class="mini" type="button">🎲 Jugar otro</button></div></div>`;
+        },
+        nota: `<h3>La tarjeta del resultado</h3><ul>
+          <li>Reemplaza "🔥 Racha: N días · Hoy: 87 puntos" por <b>la suma</b>: juego + bono = puntos de hoy, y cómo se movió el puesto.</li>
+          <li>"Mañana tu bono sube a +X" da la razón para volver.</li>
+          <li>El botón principal lleva a tu Uno al día (pantalla 4), donde se ve el puesto nuevo. Compartir y 🎲 Jugar otro quedan.</li>
+          <li>Repetir el desafío no suma (es práctica, como hoy).</li></ul>`,
+      },
+      hubJugado: {
+        paso: '4 · Ya jugaste', nuevo: true,
+        html() {
+          const d = datos({ jugado: true });
+          const { h, m } = (() => { const ms = faltaParaManana(); return { h: Math.floor(ms / 3600000), m: Math.floor(ms / 60000) % 60 }; })();
+          return `${barra('📅 Uno al día n.° ' + numeroDel(HOY))}${hero(d, { hoy: true })}
+            <div class="listo">✅ Listo por hoy<span class="reloj">Próximo juego en ${h} h ${m} min</span></div>
+            ${trio(d)}${ranking(d)}${calendario(d)}${comoSeGana}`;
+        },
+        nota: `<h3>Tu Uno al día, después de jugar</h3><ul>
+          <li>Es la misma pantalla, y lo que cambia es lo de arriba: <b>+117 hoy</b>, el puesto con ▲ si subió y el reloj al próximo.</li>
+          <li>Es también lo que se abre al tocar la tarjeta de la portada cuando ya jugaste (hoy ya pasa: abre /today/).</li></ul>`,
+      },
+      comodin: {
+        paso: '🧊 Comodín usado', nuevo: true,
+        html() {
+          const d = datos({ comodinAyer: true });
+          return `${barra('📅 Uno al día n.° ' + numeroDel(HOY))}
+            <div class="caja hielo"><h4>🧊 Ayer usaste un comodín</h4><p>Tu racha de ${d.w.streak} sigue, y hoy juegas con <b>+${bonusFor(d.w.streak + 1)}</b> de bono. Sin el comodín empezarías de 0 y ganarías +5.</p></div>
+            ${hero(d)}<button class="jugar" type="button" data-ir="resultado">🎲 Jugar el de hoy<small>hasta +${maxToday(d.w.streak)} pts</small></button>${trio(d)}${cajaComodin(d)}`;
+        },
+        nota: `<h3>El día después de un comodín</h3><ul>
+          <li>El aviso de hoy ("Usaste un comodín ayer y tu racha sigue") pasa a decir <b>cuántos puntos salvó</b>: el bono que sigue contra el +5 de empezar de nuevo.</li>
+          <li>Si quedó en 0 🧊, la caja naranja invita a ganar otro (7 días seguidos o un amigo).</li>
+          <li>En la práctica, ver lo que vale un comodín es lo que hace que la gente quiera ganarlo e invitar.</li></ul>`,
+      },
+      ranking: {
+        paso: '🏅 Ranking', nuevo: true,
+        html() {
+          const d = datos();
+          return `${barra('🏅 Ranking', 'hub')}<div class="pestanas"><span class="on">Mes</span><span>Semana</span><span>Hoy</span><span>Amigos</span></div>${ranking(d, { completo: true })}<p class="ejemplo">Los demás nombres son de ejemplo.</p>`;
+        },
+        nota: `<h3>El ranking completo</h3><ul>
+          <li><b>Mes</b> (puntos de la temporada) es la pestaña principal; Semana, Hoy y Amigos son las de /today/ hoy.</li>
+          <li>La temporada vuelve a 0 el día 1: quien llega tarde puede pelear el mes, y el puesto de cada mes queda en la historia.</li>
+          <li>Solo aparece quien entró con su jugador, como los demás rankings (D-212).</li></ul>`,
+      },
+      reglas: {
+        paso: '❓ Cómo se gana', nuevo: true,
+        html: () => `${barra('❓ Los puntos', 'hub')}<div class="caja"><ul class="reglas">
+          <li>🎮 <b>Juego:</b> el puntaje del juego de hoy, de 0 a 100. Cuenta solo el primer intento.</li>
+          <li>🔥 <b>Bono de racha:</b> +${BONUS_PER_DAY} por cada día de tu racha, hasta +${BONUS_MAX} (desde 10 días seguidos).</li>
+          <li>🧊 <b>Comodín:</b> si un día no juegas, salva tu racha y tu bono sigue. Ese día no suma puntos.</li>
+          <li>🏆 <b>Temporada:</b> se suman los puntos del mes. El día 1 todos empiezan de 0.</li></ul></div>`,
+        nota: `<h3>Las reglas, en una pantalla</h3><ul>
+          <li>Cuatro líneas, una por concepto (U-18). Se abren desde "¿Cómo se ganan los puntos?".</li>
+          <li>Con estos números, la racha llega a valer la mitad del máximo: jugar bien importa, pero no faltar importa casi lo mismo.</li></ul>`,
+      },
+    };
+    const ORDEN = ['portada', 'hub', 'dado', 'resultado', 'hubJugado', 'comodin', 'ranking', 'reglas'];
+
+    const PREGUNTAS = [
+      '¿El bono de racha tiene el peso justo? Hoy: +5 por día, tope +50 (la mitad del juego). Más alto premia volver; más bajo premia jugar bien.',
+      '¿Temporada mensual (todos parten de 0 cada mes) o un total de siempre? El mensual deja competir a los nuevos.',
+      '¿Un premio al final del mes (una insignia para el top 10, un comodín para quien juega todos los días)?',
+      'Incentivar el comodín: ¿basta con mostrar cuántos puntos salva, o le damos algo más (p. ej. +10 por cada comodín ganado invitando)?',
+      '¿Los avisos y los links siguen tirando el dado directo, o también pasan por tu Uno al día?',
+      'Para llevarlo a producción hace falta guardar los puntos en Firebase (records/uno-al-dia-pts/<mes>) y que las reglas los revisen contra el historial.',
+    ];
+
+    const tel = document.getElementById('telefono'), nota = document.getElementById('nota');
+    function pintar() {
+      const p = PANTALLAS[pantalla];
+      tel.style.setProperty('--ancho', `${ancho}px`);
+      tel.innerHTML = p.html();
+      nota.innerHTML = p.nota;
+      document.getElementById('flujo').innerHTML = ORDEN.map((k, i) =>
+        `${i && i < 5 ? '<span class="flecha">›</span>' : i === 5 ? '<span class="flecha" style="flex-basis:100%;height:0"></span>' : ''}<button type="button" data-ir="${k}" class="${PANTALLAS[k].nuevo ? 'nuevo' : ''}${k === pantalla ? ' on' : ''}">${PANTALLAS[k].paso}</button>`).join('');
+      document.querySelectorAll('#datos .chip').forEach(b => b.classList.toggle('on', b.dataset.d === fuente));
+    }
+    document.addEventListener('click', e => {
+      const ir = e.target.closest('[data-ir]');
+      if (ir) { pantalla = ir.dataset.ir; pintar(); if (ir.closest('#telefono')) tel.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+      const d = e.target.closest('#datos [data-d]');
+      if (d) { fuente = d.dataset.d; pintar(); return; }
+      const w = e.target.closest('#anchos [data-w]');
+      if (w) { ancho = +w.dataset.w; document.querySelectorAll('#anchos .chip').forEach(b => b.classList.toggle('on', b === w)); pintar(); }
+    });
+    document.getElementById('preguntas').innerHTML = PREGUNTAS.map(q => `<li>${q}</li>`).join('');
+    const pedida = new URLSearchParams(location.search).get('screen');
+    if (pedida && PANTALLAS[pedida]) pantalla = pedida;
+    pintar();
+  </script>
+</body>
+</html>
