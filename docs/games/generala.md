@@ -108,6 +108,10 @@ Intro (modos) → Setup (nombres y la servida) → [Lobby: código + QR] → Mes
 ```
 
 1. **Intro:** de qué se trata, los tres modos, la partida a medias si la hay y la tabla de victorias.
+   The folded "¿Cómo se juega?" has the three points (U-18) and, under them, **what each box asks
+   for** (owner's request, 2026-10-20): Unos a Seises, Escalera, Full, Póker, Generala and Doble
+   generala, each with what it needs in one line and what it is worth, normal and served. The worth
+   is read from `VALOR` in `engine.js`, so the list and the score cannot disagree.
 2. **Setup:** nombres (2 a 6, o el tuyo jugando solo) y el interruptor "La generala servida gana".
 3. **Mesa:** arriba, el total de cada uno con el del turno encendido (jugando solo no va); el título
    dice de quién es el turno y la línea de abajo, la vuelta y el tiro. Al centro los cinco dados, que
@@ -171,3 +175,8 @@ Gancho de pruebas (C-14): `window.__generala` (`view`, `match`, `session`).
   día, porque la semilla adelantaría los próximos tiros a quien la lea (D-246).
 - **C-10, anti-trampa:** no hay secretos que comprometer; los dados van en claro, como en la mesa
   (D-246).
+- **U-18, a lo más 3 puntos:** "¿Cómo se juega?" keeps its three points, and under them goes a
+  second list, "Qué pide cada casilla", with one line per box (six in all, Unos a Seises counted
+  as one) and what it is worth. It goes beyond the three points on the owner's request
+  (2026-10-20): the boxes are the game's vocabulary, and the table usually learns them from someone
+  who already knows.
