@@ -1,95 +1,135 @@
 /**
  * The home page's search (the owner's request; for everyone since D-403): a 🔎 pill, first in the filter row
  * (left of ⭐ Favoritos, D-396), that opens into a field with a dropdown of the games it finds (drawSearch, D-390), by the game's name in any language, its tagline, its
- * types and the keywords below, in Spanish and English ("lógica", "dados", "dice"). Accents and case do not count, and each
+ * types and the keywords below, in the four languages ("lógica", "dice", "Würfel"). Accents and case do not count, and each
  * word typed must start some word of the game ("dad" finds Dudo).
  */
 import { TIPOS } from './games.js';
 
 /**
- * What a player might type for each game, in Spanish (`es`) and English (`en`): what it is, what it
- * is played with and what it is like, beyond its name and tagline. Both are searched in any language.
+ * What a player might type for each game, in every language of the app (es, en, pt, de; D-404): what it is, what it
+ * is played with and what it is like, beyond its name and tagline. All are searched whatever the language; every game on the home page must have all four (search.test.mjs).
  */
 export const KEYWORDS = {
   copa: {
-    es: ['torneo', 'semana', 'amigos', 'competencia', 'campeonato', 'grupo', 'diario', 'ranking'],
-    en: ['tournament', 'cup', 'week', 'friends', 'competition', 'championship', 'group', 'daily', 'ranking'],
+    es: ['torneo', 'copa', 'semana', 'amigos', 'competencia', 'campeonato', 'grupo', 'diario', 'ranking', 'final', '3 dias', '7 dias', 'global', 'chile', 'brasil'],
+    en: ['tournament', 'cup', 'week', 'friends', 'competition', 'championship', 'group', 'daily', 'ranking', 'final', '3 days', '7 days', 'global', 'chile', 'brazil'],
+    pt: ['torneio', 'copa', 'semana', 'amigos', 'competição', 'campeonato', 'grupo', 'diário', 'ranking', 'final', '3 dias', '7 dias', 'global', 'chile', 'brasil'],
+    de: ['turnier', 'pokal', 'woche', 'freunde', 'wettbewerb', 'meisterschaft', 'gruppe', 'täglich', 'rangliste', 'finale', '3 tage', '7 tage', 'global', 'chile', 'brasilien'],
   },
   rutas: {
     es: ['metro', 'lineas', 'tren', 'girar', 'rotar', 'conectar', 'caminos', 'puzzle', 'rompecabezas', 'logica'],
     en: ['subway', 'metro', 'lines', 'train', 'rotate', 'turn', 'connect', 'pipes', 'routes', 'puzzle', 'logic'],
+    pt: ['metrô', 'linhas', 'trem', 'girar', 'rodar', 'conectar', 'caminhos', 'canos', 'quebra-cabeça', 'lógica'],
+    de: ['u-bahn', 'linien', 'zug', 'drehen', 'verbinden', 'wege', 'rohre', 'rätsel', 'puzzle', 'logik'],
   },
   loteo: {
     es: ['lotes', 'dividir', 'numeros', 'casillas', 'rectangulos', 'grilla', 'shikaku', 'puzzle', 'rompecabezas', 'logica'],
     en: ['plots', 'divide', 'split', 'numbers', 'cells', 'rectangles', 'grid', 'shikaku', 'puzzle', 'logic'],
+    pt: ['lotes', 'dividir', 'números', 'casas', 'retângulos', 'grade', 'shikaku', 'quebra-cabeça', 'lógica'],
+    de: ['grundstücke', 'teilen', 'zahlen', 'felder', 'rechtecke', 'gitter', 'shikaku', 'rätsel', 'puzzle', 'logik'],
   },
   pintaminas: {
     es: ['pintar', 'dibujo', 'imagen', 'grilla', 'nonograma', 'picross', 'casillas', 'puzzle', 'rompecabezas', 'logica'],
     en: ['paint', 'picture', 'drawing', 'image', 'grid', 'nonogram', 'picross', 'cells', 'puzzle', 'logic'],
+    pt: ['pintar', 'desenho', 'imagem', 'grade', 'nonograma', 'picross', 'casas', 'quebra-cabeça', 'lógica'],
+    de: ['malen', 'bild', 'zeichnung', 'gitter', 'nonogramm', 'picross', 'felder', 'rätsel', 'puzzle', 'logik'],
   },
   reinas: {
     es: ['reina', 'ajedrez', 'colores', 'zonas', 'grilla', 'puzzle', 'rompecabezas', 'logica'],
     en: ['queens', 'queen', 'chess', 'colors', 'regions', 'grid', 'puzzle', 'logic'],
+    pt: ['rainha', 'xadrez', 'cores', 'zonas', 'grade', 'quebra-cabeça', 'lógica'],
+    de: ['dame', 'königin', 'schach', 'farben', 'zonen', 'gitter', 'rätsel', 'puzzle', 'logik'],
   },
   'linea-de-tiempo': {
     es: ['historia', 'orden', 'ordenar', 'fechas', 'hitos', 'futbol', 'cultura', 'preguntas'],
     en: ['timeline', 'history', 'order', 'sort', 'dates', 'events', 'soccer', 'football', 'trivia', 'quiz'],
+    pt: ['história', 'ordem', 'ordenar', 'datas', 'marcos', 'futebol', 'cultura', 'perguntas'],
+    de: ['geschichte', 'reihenfolge', 'ordnen', 'daten', 'ereignisse', 'fußball', 'wissen', 'fragen'],
   },
   tango: {
     es: ['soles', 'lunas', 'sol', 'luna', 'binario', 'grilla', 'puzzle', 'rompecabezas', 'logica'],
     en: ['suns', 'moons', 'sun', 'moon', 'binary', 'grid', 'puzzle', 'logic'],
+    pt: ['sóis', 'luas', 'sol', 'lua', 'binário', 'grade', 'quebra-cabeça', 'lógica'],
+    de: ['sonnen', 'monde', 'sonne', 'mond', 'binär', 'gitter', 'rätsel', 'puzzle', 'logik'],
   },
   conexiones: {
     es: ['grupos', 'palabras', 'categorias', 'relacionar', 'asociar', 'cultura'],
     en: ['connections', 'groups', 'words', 'categories', 'link', 'associate', 'trivia'],
+    pt: ['grupos', 'palavras', 'categorias', 'relacionar', 'associar', 'cultura'],
+    de: ['gruppen', 'wörter', 'kategorien', 'verbinden', 'zuordnen', 'wissen'],
   },
   anio: {
     es: ['año', 'fechas', 'historia', 'adivinar', 'cultura', 'preguntas'],
     en: ['year', 'dates', 'history', 'guess', 'trivia', 'quiz'],
+    pt: ['ano', 'datas', 'história', 'adivinhar', 'cultura', 'perguntas'],
+    de: ['jahr', 'daten', 'geschichte', 'raten', 'wissen', 'fragen'],
   },
   letras: {
     es: ['palabra', 'letras', 'adivinar', 'wordle', 'toque', 'fama', 'vocabulario'],
     en: ['word', 'letters', 'guess', 'wordle', 'bulls', 'cows', 'vocabulary'],
+    pt: ['palavra', 'letras', 'adivinhar', 'wordle', 'vocabulário'],
+    de: ['wort', 'buchstaben', 'raten', 'wordle', 'wortschatz'],
   },
   donde: {
     es: ['mapa', 'geografia', 'ciudades', 'paises', 'globo', 'mundo', 'viajes', 'cultura'],
     en: ['map', 'geography', 'cities', 'countries', 'globe', 'world', 'travel', 'trivia', 'where'],
+    pt: ['mapa', 'geografia', 'cidades', 'países', 'globo', 'mundo', 'viagens', 'cultura'],
+    de: ['landkarte', 'geografie', 'städte', 'länder', 'globus', 'welt', 'reisen', 'wissen'],
   },
   'toque-y-fama': {
     es: ['numeros', 'adivinar', 'codigo', 'secreto', 'mastermind', 'duelo', 'logica'],
     en: ['numbers', 'guess', 'code', 'secret', 'mastermind', 'bulls', 'cows', 'duel', 'logic'],
+    pt: ['números', 'adivinhar', 'código', 'secreto', 'mastermind', 'duelo', 'lógica'],
+    de: ['zahlen', 'raten', 'code', 'geheim', 'mastermind', 'duell', 'logik'],
   },
   zip: {
     es: ['trazo', 'camino', 'linea', 'numeros', 'unir', 'recorrido', 'puzzle', 'rompecabezas', 'logica'],
     en: ['path', 'line', 'trail', 'numbers', 'connect', 'route', 'puzzle', 'logic'],
+    pt: ['traço', 'caminho', 'linha', 'números', 'unir', 'percurso', 'quebra-cabeça', 'lógica'],
+    de: ['strich', 'weg', 'linie', 'zahlen', 'verbinden', 'route', 'rätsel', 'puzzle', 'logik'],
   },
   desenredo: {
     es: ['nudos', 'hilos', 'cruces', 'enredo', 'desenredar', 'arrastrar', 'puzzle', 'rompecabezas', 'logica'],
     en: ['untangle', 'tangle', 'knots', 'threads', 'crossings', 'drag', 'puzzle', 'logic'],
+    pt: ['nós', 'fios', 'cruzamentos', 'emaranhado', 'desembaraçar', 'arrastar', 'quebra-cabeça', 'lógica'],
+    de: ['knoten', 'fäden', 'kreuzungen', 'gewirr', 'entwirren', 'ziehen', 'rätsel', 'puzzle', 'logik'],
   },
   'batalla-naval': {
     es: ['barcos', 'flota', 'hundir', 'mar', 'guerra', 'duelo', 'estrategia'],
     en: ['battleship', 'ships', 'fleet', 'sink', 'sea', 'war', 'duel', 'strategy'],
+    pt: ['navios', 'barcos', 'frota', 'afundar', 'mar', 'guerra', 'duelo', 'estratégia'],
+    de: ['schiffe', 'flotte', 'versenken', 'meer', 'krieg', 'duell', 'strategie'],
   },
   ahorcado: {
     es: ['palabras', 'letras', 'adivinar', 'vocabulario', 'vidas'],
     en: ['hangman', 'words', 'letters', 'guess', 'vocabulary', 'lives'],
+    pt: ['forca', 'palavras', 'letras', 'adivinhar', 'vocabulário', 'vidas'],
+    de: ['galgen', 'galgenmännchen', 'wörter', 'buchstaben', 'raten', 'wortschatz', 'leben'],
   },
   dudo: {
     es: ['dados', 'cacho', 'mentiroso', 'mentir', 'apuesta', 'farol', 'previa', 'carrete', 'cubilete'],
     en: ['dice', 'liar', 'lie', 'bluff', 'bet', 'party', 'cup'],
+    pt: ['dados', 'mentiroso', 'mentir', 'aposta', 'blefe', 'copo', 'festa'],
+    de: ['würfel', 'lügner', 'lügen', 'wette', 'bluff', 'becher', 'party'],
   },
   'cuarto-rey': {
     es: ['cartas', 'naipes', 'baraja', 'tomar', 'beber', 'tragos', 'previa', 'carrete', 'rey'],
     en: ['cards', 'deck', 'drinking', 'drinks', 'party', 'king', 'kings'],
+    pt: ['cartas', 'baralho', 'beber', 'drinques', 'festa', 'rei'],
+    de: ['karten', 'kartenspiel', 'trinken', 'trinkspiel', 'party', 'könig'],
   },
   generala: {
     es: ['dados', 'escalera', 'full', 'poker', 'planilla', 'cubilete'],
     en: ['dice', 'yahtzee', 'straight', 'full', 'house', 'poker', 'scorecard'],
+    pt: ['dados', 'sequência', 'full', 'poker', 'general', 'yahtzee', 'copo'],
+    de: ['würfel', 'straße', 'full house', 'poker', 'kniffel', 'yahtzee', 'becher'],
   },
   julepe: {
     es: ['cartas', 'naipes', 'baraja', 'bazas', 'apuesta'],
     en: ['cards', 'deck', 'tricks', 'bet'],
+    pt: ['cartas', 'baralho', 'vazas', 'aposta'],
+    de: ['karten', 'kartenspiel', 'stiche', 'wette'],
   },
 };
 
