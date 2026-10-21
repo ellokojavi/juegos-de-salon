@@ -39,13 +39,13 @@ export const KEYWORDS = {
     es: ['reina', 'ajedrez', 'colores', 'zonas', 'grilla', 'puzzle', 'rompecabezas', 'logica'],
     en: ['queens', 'queen', 'chess', 'colors', 'regions', 'grid', 'puzzle', 'logic'],
     pt: ['rainha', 'xadrez', 'cores', 'zonas', 'grade', 'quebra-cabeça', 'lógica'],
-    de: ['dame', 'königin', 'schach', 'farben', 'zonen', 'gitter', 'rätsel', 'puzzle', 'logik'],
+    de: ['dame', 'königin', 'schach', 'farben', 'zonen', 'regionen', 'gitter', 'rätsel', 'puzzle', 'logik'],
   },
   'linea-de-tiempo': {
     es: ['historia', 'orden', 'ordenar', 'fechas', 'hitos', 'futbol', 'cultura', 'preguntas'],
     en: ['timeline', 'history', 'order', 'sort', 'dates', 'events', 'soccer', 'football', 'trivia', 'quiz'],
-    pt: ['história', 'ordem', 'ordenar', 'datas', 'marcos', 'futebol', 'cultura', 'perguntas'],
-    de: ['geschichte', 'reihenfolge', 'ordnen', 'daten', 'ereignisse', 'fußball', 'wissen', 'fragen'],
+    pt: ['história', 'ordem', 'ordenar', 'datas', 'marcos', 'futebol', 'cultura', 'perguntas', 'quiz'],
+    de: ['geschichte', 'reihenfolge', 'ordnen', 'jahreszahlen', 'datum', 'ereignisse', 'fußball', 'wissen', 'quiz', 'fragen'],
   },
   tango: {
     es: ['soles', 'lunas', 'sol', 'luna', 'binario', 'grilla', 'puzzle', 'rompecabezas', 'logica'],
@@ -62,8 +62,8 @@ export const KEYWORDS = {
   anio: {
     es: ['año', 'fechas', 'historia', 'adivinar', 'cultura', 'preguntas'],
     en: ['year', 'dates', 'history', 'guess', 'trivia', 'quiz'],
-    pt: ['ano', 'datas', 'história', 'adivinhar', 'cultura', 'perguntas'],
-    de: ['jahr', 'daten', 'geschichte', 'raten', 'wissen', 'fragen'],
+    pt: ['ano', 'datas', 'história', 'adivinhar', 'cultura', 'perguntas', 'quiz'],
+    de: ['jahr', 'jahreszahlen', 'datum', 'geschichte', 'raten', 'wissen', 'quiz', 'fragen'],
   },
   letras: {
     es: ['palabra', 'letras', 'adivinar', 'wordle', 'toque', 'fama', 'vocabulario'],
