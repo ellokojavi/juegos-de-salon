@@ -79,6 +79,11 @@ export function decisionsBody({ summary = '', decisions }) {
   decisions.forEach((d, i) => {
     const n = i + 1;
     // The markers keep their Spanish option names (`si`, `no`): approve.mjs reads old issues too
+    // A Yes says what it does, `nothing` included on purpose: one left empty became a silent
+    // `nothing`, and an approved change was never queued (#604, #607). A No may stay empty
+    if (!d.yes?.length) throw new Error(`Decision ${n}: no Yes actions. Write them, or [{ "type": "nothing" }] if a Yes only takes note`);
+    const yesNothing = d.yes.every(a => normalizeAction(a).type === 'nothing');
+    if (yesNothing && /\bqueue|\bnext round|\bbuil[dt]\b/i.test(`${d.question} ${d.context || ''}`)) throw new Error(`Decision ${n}: its text says the Yes queues or builds work, but its Yes does nothing. Use [{ "type": "queue", "task": "…" }]`);
     for (const [op, key] of [['si', 'yes'], ['no', 'no']]) {
       const list = (d[key]?.length ? d[key] : [{ type: 'nothing' }]).map(normalizeAction);
       const bad = list.map(invalidAction).find(Boolean);

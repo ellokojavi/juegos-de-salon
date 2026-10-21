@@ -70,7 +70,7 @@ export function montar(raiz, ctx) {
       const quedan = max - e.usados;
       caja.append(el('p', { class: 'muted center', style: 'margin:0' }, quedan === 1 ? T.tryLeft1 : fmt(T.triesLeft, { n: quedan })),
         teclado({
-          largo: p.cifras, teclas: CIFRAS, submitLabel: TYF.guess, notes: notas, onNotesChange: guardar,
+          largo: p.cifras, teclas: CIFRAS, submitLabel: TYF.guess, notes: notas, onNotesChange: guardar, elegir: !!ctx.elegir,
           valido: v => motor.valido(v, p.cifras),
           puede: (v, d) => !v.includes(d) && v.length < p.cifras,
           onSubmit: v => {
