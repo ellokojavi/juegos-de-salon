@@ -148,15 +148,17 @@ The owner (their UID) can write and delete in all these branches, to moderate.
 
 ## Uno al día (`unoAlDia`, `invitados`, D-230)
 
-- `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w? }`: the first Uno al día attempt of day `n` (days
+- `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w?, p? }`: the first Uno al día attempt of day `n` (days
   since 1970). Written once by whoever is seated as that player; `w` (the mark that it was already
-  added to the week) is added once. Anyone can read it.
+  added to the week) and `p` (already added to the month's points, D-412) are each added once. Anyone can read it.
 - `invitados/<jid>/<uid>` = `{ d, at, j? }`: the `uid` phone finished its first Uno al día with an
   invitation from `jid`. Written by that phone, once, and not if it is seated as `jid`. Only the
   player `jid` reads it.
 - In `records`, the period can also be a day (`d20731`). For the `uno-al-dia` table, the
   day's score has to be the one in its history, and the week adds a day from the history (`u`) that
-  didn't have `w` yet. Details and limits in [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
+  didn't have `w` yet. The `uno-al-dia-pts` table (D-412, lab key holders only for now) takes only a
+  month (`s<yyyy>-<mm>`): each write adds a day `u` that didn't have `p` yet, its score plus the
+  streak bonus (5 × `r`, up to 50), and the streak `r` (1–10) grows at most one per write. Details and limits in [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
 - The owner reads all of `unoAlDia/` and `invitados/`, for the panel's Uno al día block, and
   can write and delete in both, to moderate.
 
