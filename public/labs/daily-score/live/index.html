@@ -166,7 +166,7 @@
         : x?.saved
           ? [juego, fila('No jugaste', '🧊 lo salvó un comodín'), fila('Racha', `🔥 ${x.streak} días, no se cortó`), fila('Sumó', '0 pts', 'suma')]
           : n < 1 ? [fila('Uno al día', 'todavía no existía')]
-          : [juego, fila(f === hoy ? 'Hoy' : 'No jugaste', f === hoy ? 'todavía no juegas' : 'la racha se cortó'), fila('Sumó', '0 pts', 'suma')];
+          : [...(f === hoy ? [] : [juego]), fila(f === hoy ? 'Hoy' : 'No jugaste', f === hoy ? 'todavía no juegas' : 'la racha se cortó'), fila('Sumó', '0 pts', 'suma')];
       const celda = document.querySelector(`.uad-cal [data-dia="${f}"]`);
       celda?.classList.add('elegido'); celda?.setAttribute('aria-expanded', 'true');
       $('calendario').append(el('div', { class: 'dia', id: 'dia', role: 'region', 'aria-labelledby': 'dia-t' },
