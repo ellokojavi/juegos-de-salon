@@ -1,5 +1,5 @@
 {
-  "version": "0.189.3",
+  "version": "0.189.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -363,7 +363,7 @@
         "de": "Generala"
       },
       "players": "1 to 6",
-      "duration": "15–30",
+      "duration": "5–30",
       "available": true,
       "labs": false,
       "status": "v0.189",
