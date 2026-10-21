@@ -111,7 +111,7 @@ export function checkedWithoutResult(body = '') {
   return res;
 }
 
-const yesNo = option => (option === 'si' ? 'Yes' : 'No');
+const yesNo = option => ({ si: 'Yes', pub: 'Yes, and publish', no: 'No' })[option] || option;
 
 /**
  * What to do with an `issues.edited` event: `{ ignore: reason }` or `{ plans: [{ decision, option,

@@ -489,6 +489,7 @@
     import('./assets/js/splash.js').then(({ startSplash }) => startSplash({ lang })).catch(() => {});
     // The lab's experiments bar (D-363): opened from /labs/home/ with ?lab, on the real home page
     // Only for lab key holders, like everything still in development (D-395)
+    // The experiments' bar, only with a lab key (D-395). lab: #seccion-portada
     if (param('lab') !== null) import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => yes && import('./labs/home/experiments.js').then(({ drawBar }) => drawBar())).catch(() => {});
 
     // El globo que invita a agregar la app a inicio (D-232): sale un rato después, en un celular
