@@ -126,8 +126,10 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    at the documents. Both fix things on the same PR's branch (D-213), in local commits that the
    session pushes with its own in a single push (D-303). How much usability depends on the game's stage
    (D-304); `node tools/agents/covers.mjs check` says it on its first line:
-   - **Lab-only PR** (everything in `public/` is under `public/labs/`): documentation, and
-     short usability: `covers.mjs check` and the screens that changed, at 320 px.
+   - **Lab-only PR** (everything in `public/` is under `public/labs/`): the **fast lane** (D-413):
+     no agents; the session makes the change itself, looks at the changed screens at 320 px, runs
+     only the tests for what changed and writes the `changelog/` entry. A lab PR that also touches
+     shared code or Firebase rules gets both agents.
    - **PR that takes a game out of the lab** (it loses `labs: true`, or its folder leaves
      `public/labs/`): a **full usability pass** over the whole game —all its screens, the
      four languages, 320 px, its home page and its place on the main home page— and documentation with the
