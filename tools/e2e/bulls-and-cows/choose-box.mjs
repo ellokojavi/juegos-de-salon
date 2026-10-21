@@ -1,5 +1,5 @@
-// Toque y Fama, playing solo: tapping a box chooses where the next digit goes (#604), only with a lab
-// key (D-395; on localhost the lab opens by itself). The other boxes fill from the chosen one onward,
+// Toque y Fama, playing solo: tapping a box chooses where the next digit goes (#604; validated in
+// the lab and published for everyone, D-409). The other boxes fill from the chosen one onward,
 // a gap in the middle cannot be confirmed, and ⌫ clears the chosen box.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
