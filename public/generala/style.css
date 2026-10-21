@@ -135,6 +135,9 @@
 .podio .fila.gana { box-shadow: 0 0 0 2px var(--yellow); }
 .podio .fila.gana .pts { color: var(--yellow); }
 .replay { margin-top: 10px; padding: 12px 16px; }
+/* What goes under the end screen's buttons ("make it count?", the ranking, the cards) is spaced
+   from them and from each other like a .stack, 12 px: the ranking sat flush against the button row */
+#screen-result > #result-actions ~ * { margin-top: 12px; }
 .replay summary { font-size: 1rem; }
 /* La tabla de todas las planillas: una columna por jugador, sin desbordar (C-8) */
 .tabla-wrap { margin-top: 8px; }
