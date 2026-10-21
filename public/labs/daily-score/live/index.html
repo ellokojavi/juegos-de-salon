@@ -192,23 +192,26 @@
     async function dibujarYa() {
       const e = estado(), hoy = e.hoy, mes = periodoMes(hoy);
       const w = walk(leer().dias, hoy);
+      // First what this phone knows, at once; then the network fills in the place and the ranking
+      pintar({ e, hoy, w, pts: seasonPoints(w, hoy) });
       let J = null, yo = null;
       try { J = await jugador(); yo = J.yo(); } catch (_) { /* sin red: lo del celular */ }
+      if (!yo) return;
 
-      // Los días de este mes que aún no suman puntos se suman en orden (la racha de cada uno)
-      if (yo) for (const d of w.days.filter(x => x.played && x.date.startsWith(hoy.slice(0, 7)))) {
+      // Only the days of this month that don't count yet (one read of the history, not one per day),
+      // added in order for the streak of each
+      const hist = await J.historialDia(yo.jid).catch(() => ({}));
+      for (const d of w.days.filter(x => x.played && x.date.startsWith(hoy.slice(0, 7)) && !hist[numDia(x.date)]?.p)) {
         await J.anotarPuntosDia({ n: numDia(d.date), mesP: mes, racha: d.streak }).catch(() => false);
       }
-      let pts = seasonPoints(w, hoy), puesto = null, delante = null, campeon = null, soyCampeon = false;
-      if (yo) {
-        const v = await J.tabla(UAD_PUNTOS, mes, { top: 100 }).catch(() => null);
-        const filas = v ? [...v.top, ...(v.vecinos || [])] : [];
-        const i = filas.findIndex(f => f.jid === yo.jid);
-        if (i >= 0) { pts = filas[i].s; puesto = filas[i].puesto; delante = i > 0 ? filas[i - 1] : null; }
-        campeon = await campeonDelMes(J);
-        soyCampeon = campeon === yo.jid;
-      }
+      const [v, campeon] = await Promise.all([J.tabla(UAD_PUNTOS, mes, { top: 100 }).catch(() => null), campeonDelMes(J).catch(() => null)]);
+      const filas = v ? [...v.top, ...(v.vecinos || [])] : [];
+      const i = filas.findIndex(f => f.jid === yo.jid);
+      pintar({ e, hoy, w, yo, pts: i >= 0 ? filas[i].s : seasonPoints(w, hoy), puesto: i >= 0 ? filas[i].puesto : null,
+        delante: i > 0 ? filas[i - 1] : null, soyCampeon: campeon === yo.jid });
+    }
 
+    function pintar({ e, hoy, w, yo = null, pts, puesto = null, delante = null, soyCampeon = false }) {
       $('corona').replaceChildren(...(soyCampeon ? [el('div', { class: 'corona' }, el('span', { class: 'grande' }, '👑'), `¡Campeón de ${mesDe(mesAnterior(hoy))}! Tu 🏆 va junto a tu nombre en el ranking este mes.`)] : []));
       const como = el('button', { type: 'button', class: 'como', onClick: () => $('reglas').showModal() }, '¿Cómo se ganan los puntos?');
       $('hero').replaceChildren(
