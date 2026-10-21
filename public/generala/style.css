@@ -9,6 +9,11 @@
 .rules-list { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 7px; }
 .rules-list li { color: var(--muted); font-weight: 700; line-height: 1.35; }
 .rules-list li b { color: var(--ink); }
+.boxes-title { margin: 16px 0 6px; font-size: 1rem; color: var(--ink); }
+.boxes-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.boxes-list li { color: var(--muted); font-weight: 700; line-height: 1.35; }
+.boxes-list li b { color: var(--ink); }
+.boxes-list li small { display: block; color: var(--lime, var(--ink)); font-weight: 800; }
 
 .modes { display: grid; gap: 10px; }
 .mode { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; text-align: left; background: var(--glass); border: 2px solid var(--glass-border); border-radius: var(--radius); padding: 14px 16px; color: var(--ink); cursor: pointer; font-family: var(--font-body); transition: transform 0.1s; }

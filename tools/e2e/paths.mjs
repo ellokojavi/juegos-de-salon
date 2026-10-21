@@ -248,6 +248,8 @@ export const PATHS = {
   },
   generala: {
     intro: [],
+    // The folded rules, open: the three points and what each box asks for and is worth
+    rules: [`(()=>{const d=document.querySelector('#screen-intro details');d.open=true;document.getElementById('boxes-list').scrollIntoView({block:'center'});return 1})()`],
     setup: [`document.querySelector('[data-mode=local]').click()`],
     // Playing solo the table is reached without a handoff: a roll, two dice kept and a box chosen
     game: [
