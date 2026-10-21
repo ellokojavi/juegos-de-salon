@@ -51,16 +51,16 @@ el contenido del día:
 - **Cuarto Rey no entra:** es un juego de mesa para 4 a 6 personas y no tiene modo para uno (su
   documento lo explica). **Julepe** tampoco, porque hoy no se ofrece en la portada; si vuelve,
   entra con su modo contra el celular.
-- Zip, Tango and ¿Dónde queda? came in with D-334, together with the three that left the lab (D-332): 16 games from the deck shuffled on October 23, 2026 (`DESDE_MAS`).
+- Zip, Tango and ¿Dónde queda? came in with D-334, together with the three that left the lab (D-332), and 📝 Generala with D-405: 17 games from the deck shuffled on October 23, 2026 (`DESDE_MAS`, `DESDE_GENERALA`).
 - **A game with variants** (D-331) plays its default one in Uno al día, with no picker: the challenge is the same for everyone. The phone keeps the variant picked standalone for the next standalone game.
 - En Dudo y Batalla Naval el rival responde a lo que haces, así que lo común es el punto de partida
   (los dados, la flota) y no la partida entera. Igual se pueden comparar, y lo dicen la intro (desde el PR 2)
   y el ranking del día: "Todos parten con los mismos dados."
 - **🎲 Jugar otro** (abajo) ofrece cualquier juego de la portada, menos los que piden un grupo, como Cuarto Rey (D-374).
 
-**La rotación:** son 16 juegos since D-334 (10 before), así que no cabe uno por día de la semana. Funciona como un mazo: se
+**La rotación:** son 17 juegos from the deck shuffled on 2026-10-23 (D-334, D-405; 10 before), así que no cabe uno por día de la semana. Funciona como un mazo: se
 barajan todos con la semilla `uno-al-dia:ciclo:<n>` y salen de a uno por día, sin repetir, hasta
-que se acaba el mazo (16 days since D-334; 10 before). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
+que se acaba el mazo (17 days from 2026-10-23; 10 before). Al barajar el mazo siguiente, ningún juego puede salir antes de 7
 días desde la última vez. Cada juego lleva la fecha desde la que entra a Uno al día. Así un juego
 nuevo se suma en el mazo siguiente y los días ya pasados no cambian. El contenido del día sale de
 `uno-al-dia:2026-10-05`, convertida en un código de copa de 5 letras (ver "Lo que el PR 1 hizo"). Es una semilla distinta de las
@@ -682,7 +682,8 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 - **Six more games** enter the deck with `desde: '2026-10-16'` (`DESDE_MAS`), at the owner's request once
   Rutas rotas, Loteo and Pintaminas reached the home page: those three plus Zip, Tango and ¿Dónde queda?.
   The deck being played (October 13 to 22) does not change, so they come out from the one shuffled on
-  October 23 (Loteo is its first day). With 16 games the wait stays at 7 days.
+  October 23. With 16 games the wait stays at 7 days. (Loteo was to be its first day; Generala joining the same
+  deck, D-405, reshuffled it before it started: it now opens with Desenredo, and with 17 games.)
 - `?today` on a game with variants plays the default one and hides the picker (`practica()` in
   `public/cup/game.js`).
 - Tested by `uno-al-dia.test.mjs` (16 games, no day before `DESDE_MAS` changes, each new one comes
