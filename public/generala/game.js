@@ -25,7 +25,7 @@ import { modoHoy, introHoy, terminarHoy, ponerTarjeta } from '../assets/js/uno-a
 import { azarDel } from '../assets/js/uno-al-dia.js';
 import {
   CATEGORIAS, NUMEROS, JUEGOS, TIROS, MIN_PLAYERS, MAX_PLAYERS,
-  buildState, tirar, writeDice, writeKeep, puntajeDia,
+  buildState, tirar, writeDice, writeKeep, puntajeDia, VALOR,
 } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 
@@ -631,6 +631,16 @@ function renderRules() {
   const list = $('#rules-list');
   list.innerHTML = '';
   T.rules.forEach(r => list.append(el('li', { html: r })));
+  // What each box asks for and what it is worth: the worth comes from the engine, so it cannot drift
+  $('#boxes-title').textContent = T.boxesTitle;
+  const boxes = $('#boxes-list');
+  boxes.innerHTML = '';
+  const fill = (tpl, v) => fmt(tpl, { n: v.normal, s: v.servida });
+  const row = (name, need, worth) => boxes.append(el('li', {},
+    el('b', {}, name), el('span', {}, ` ${need}`), worth ? el('small', {}, worth) : ''));
+  row(T.numbersName, T.boxes.numbers);
+  JUEGOS.forEach(c => row(catName(c), T.boxes[c],
+    fill(c === 'generala' ? T.generalaWorth : c === 'doble' ? T.dobleWorth : T.boxWorth, VALOR[c])));
 }
 
 function renderResumeSlot() {
