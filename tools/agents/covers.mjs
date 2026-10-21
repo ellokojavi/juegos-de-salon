@@ -115,7 +115,7 @@ export function stage(files, exits) {
 
 export const STAGES = {
   leaves: s => `🎓 ${s.join(', ')} leaves the lab: full usability pass over the whole game —all its screens, the four languages, 320 px, its cover page and its place on the main cover page— and documentation with the README and the social card (D-304)`,
-  labs: () => '🧪 Lab-only PR: short usability —this cover-page check and the screens that changed, at 320 px— and documentation (D-304)',
+  labs: () => '🧪 Lab-only PR: the fast lane —no agents; the session looks at the changed screens at 320 px and runs the tests for what changed (D-413)',
   site: () => 'Site PR: usability and documentation, as always (D-132, D-204)',
   'no-app': () => 'The PR does not touch public/: usability has no screens to look at',
 };
