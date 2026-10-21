@@ -31,7 +31,7 @@ a cup), with what Loteo brings in `public/cup/games/plots/ui.js`:
   utilities in plots of 4 with «Lotes de 4 casillas» above it): the frame grows from one corner to
   the other, as when dragging, and the plot takes its color. At the end the board dims and «¡Listo!»
   appears big in the middle; then another board. With reduced motion it stays solved and still.
-  Its square is reserved even while empty, and the «Lotes de 4 casillas» row is kept (hidden) in
+  Its square is reserved even while empty, and where the variant picker is shown the «Lotes de 4 casillas» row is kept (hidden) in
   Numbers, so switching variants never moves the title or what is below it (owner's report,
   2026-10-21; `tools/e2e/plots/utilities.mjs` checks the title stays put both ways).
 - **`titulo`**: the name, and under it «Inspirado en Shikaku, de Nikoli (1989).» with the link.
