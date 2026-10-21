@@ -88,8 +88,8 @@
     box-shadow: 0 0 0 3px rgba(255,255,255,0.16), 0 20px 44px rgba(0,0,0,0.5); }
   .mscreen { position: relative; width: 100%; height: 100%; border-radius: 22px; overflow: hidden; background: var(--bg1); }
   .mscreen img { position: absolute; left: 0; top: 0; width: 100%; }
-  .mlabel { margin: 14px -30px 0; font-weight: 900; font-size: 30px; line-height: 1.15; }
-  .wide .mlabel { margin: 12px -85px 0; font-size: 28px; white-space: nowrap; }
+  .mlabel { margin: 12px -18px 0; font-weight: 900; font-size: 26px; line-height: 1.15; }
+  .wide .mlabel { margin: 10px -40px 0; font-size: 24px; }
   /* Uno al día y La Copa tienen su propio fondo, para que se lean como algo aparte de los juegos */
   #tinte-uad { background: radial-gradient(circle at 18% 12%, rgba(46,230,214,0.5), transparent 55%), radial-gradient(circle at 85% 82%, rgba(157,255,58,0.32), transparent 55%), linear-gradient(160deg, #031f26, #05343c 55%, #0a2a3f); }
   #tinte-copa { background: radial-gradient(circle at 50% 8%, rgba(255,210,63,0.5), transparent 55%), radial-gradient(circle at 12% 88%, rgba(255,122,26,0.42), transparent 55%), linear-gradient(160deg, #2a1300, #4d2400 55%, #3d0b14); }
@@ -142,7 +142,7 @@
     <div class="abs center" id="c0" style="top:120px;font-size:64px;font-weight:900;line-height:1.2;padding:0 70px">¿Te atreves a desafiar<br>a tus amigos <span style="color:var(--yellow)">por una semana?</span></div>
     <div class="abs center disp" id="c1" style="top:330px;font-size:230px"><span class="emoji" style="font-size:0.78em;vertical-align:0.06em">🏆</span> <span class="disp grad-gold">LA COPA</span></div>
     <div class="abs center" id="c2" style="top:575px;font-size:46px;font-weight:900;line-height:1.3;padding:0 100px">Un juego distinto cada día.<br><span style="color:var(--yellow)">Quien suma más puntos, gana.</span></div>
-    <div class="phone" id="cphone"><div class="screen" id="cscreen"><img id="clarga" src="plays/copa-larga.png"><div class="touch" id="ctouch"></div></div></div>
+    <div class="phone" id="cphone"><div class="screen" id="cscreen"><img id="clarga"><div class="touch" id="ctouch"></div></div></div>
     <div class="layer" id="confetti"></div>
   </div>
 
@@ -159,7 +159,12 @@
   <div class="layer" id="fade" style="background:#000;pointer-events:none"></div>
 </div>
 
-<script src="plays/plays.js"></script>
+<script>
+/* ---------- Idioma: ?lang=en usa las capturas de plays-en/ (LANG_PROMO=en en jugar.mjs) y los textos de EN ---------- */
+const LANG = new URLSearchParams(location.search).get('lang') || 'es';
+const PDIR = LANG === 'es' ? 'plays' : `plays-${LANG}`;
+document.write(`<script src="${PDIR}/plays.js"><\/script>`);
+</script>
 <script>
 /* ---------- Formato: vertical 1080×1920 (Shorts, Reels, WhatsApp) o ?wide 1920×1080 (YouTube) ---------- */
 const WIDE = location.search.includes('wide');
@@ -205,7 +210,30 @@ const UAD = { emoji: '📅', name: 'UNO AL DÍA', line: 'Un juego sorpresa cada 
 /** «¡Y muchos más juegos!»: todos los demás de la portada, cada uno jugando en bucle. */
 const MORE = [['🔢', 'Toque y Fama', 'toque'], ['🔤', 'Toque y Fama: Palabra', 'letras'], ['🪢', 'El Ahorcado', 'ahorcado'], ['⚓', 'Batalla Naval', 'naval'],
   ['👑', 'Cuarto Rey', 'rey'], ['🔗', 'Conexiones', 'conexiones'], ['📅', '¿En qué año?', 'anio'],
-  ['👑', 'Reinas', 'reinas'], ['☀️', 'Tango', 'tango'], ['🧶', 'Desenredo', 'desenredo']];
+  ['👑', 'Reinas', 'reinas'], ['☀️', 'Tango', 'tango'], ['🧶', 'Desenredo', 'desenredo'],
+  ['📝', 'Generala', 'generala'], ['🍹', 'Julepe', 'julepe'], ['🚇', 'Rutas rotas', 'rutas'], ['📐', 'Loteo', 'loteo'], ['🖌️', 'Pintaminas', 'pintaminas']];
+const EN = LANG === 'en';
+$('clarga').src = `${PDIR}/copa-larga.png`;
+if (EN) {
+  const T = {
+    h1: 'GRAB YOUR<br>FRIENDS', h2: 'TAKE OUT<br>YOUR PHONE', h3: "LET'S PLAY!",
+    l3: 'The classic party games,<br>on your phone',
+    x0: WIDE ? 'AND MANY MORE GAMES!' : 'AND MANY<br>MORE GAMES!',
+    c0: 'Challenge your friends<br><span style="color:var(--yellow)">for a whole week?</span>',
+    c1: '<span class="emoji" style="font-size:0.78em;vertical-align:0.06em">🏆</span> <span class="disp grad-gold">THE CUP</span>',
+    c2: 'A different game every day.<br><span style="color:var(--yellow)">Most points wins.</span>',
+    e1: 'BETTER<br>TOGETHER!', e2: 'Free · Nothing to download · No sign-up',
+    e4: '📲 Add it to your home screen', e5: 'In 4 languages: 🇪🇸 🇬🇧 🇧🇷 🇩🇪',
+  };
+  for (const id in T) $(id).innerHTML = T[id];
+  const G = { linea: ['TIMELINE', 'What happened first?', '1–6 players'], dudo: ["LIAR'S DICE", 'Bid and keep a straight face', '1–6 players'],
+    donde: ['WHERE IS IT?', 'Find the city on the globe', '2–5 min'], zip: ['ZIP', 'One line through the whole board', '3 min'] };
+  for (const g of GAMES) if (G[g.img]) [g.name, g.line, g.chip] = G[g.img];
+  Object.assign(UAD, { name: 'ONE A DAY', line: 'A surprise game every day,<br>the same for everyone', chip: '🔥 Build your streak' });
+  const M = { toque: 'Bulls and Cows', letras: 'Bulls and Cows: Word', ahorcado: 'Hangman', naval: 'Battleship', rey: 'Fourth King', conexiones: 'Connections',
+    anio: 'What Year?', reinas: 'Queens', tango: 'Tango', desenredo: 'Untangle', generala: 'Generala', julepe: 'Julep', rutas: 'Broken Routes', loteo: 'Plots', pintaminas: 'Paint Mines' };
+  for (const m of MORE) m[1] = M[m[2]] || m[1];
+}
 // Escenas en golpes: gancho 6 · logo 6 · juegos 23 · más 10 · Uno al día 16 · La Copa 14 · cierre 10 = 85 (39,2 s; la canción alcanza sola, ver README)
 const S = {}; { let b = 0; for (const [k, n] of [['hook', 6], ['logo', 6], ['games', GAMES.reduce((s, g) => s + g.beats, 0)], ['more', 10], ['uad', 16], ['copa', 14], ['cta', 10]]) { S[k] = [b * BEAT, (b + n) * BEAT]; b += n; } }
 const DURATION = S.cta[1];
@@ -280,7 +308,7 @@ function animarTitulo(w, lt, t, o = 1) {
 /* Los juegos se juegan de verdad: una captura real por jugada (jugar.mjs), con un círculo donde fue el
    dedo. Las capturas son de 390×844 px css; `sc` y `ox` las llevan a una pantalla. */
 function makePlayer(box, play, sc, ox, touchSize = 74) {
-  const P = { frames: play.map(f => { const img = document.createElement('img'); img.src = `plays/${f.img}`; box.appendChild(img); return img; }) };
+  const P = { frames: play.map(f => { const img = document.createElement('img'); img.src = `${PDIR}/${f.img}`; box.appendChild(img); return img; }) };
   P.touch = document.createElement('div'); P.touch.className = 'touch'; box.appendChild(P.touch);
   P.ripple = document.createElement('div'); P.ripple.className = 'ripple'; box.appendChild(P.ripple);
   if (touchSize !== 74) for (const e of [P.touch, P.ripple]) css(e, { width: touchSize + 'px', height: touchSize + 'px', margin: `${-touchSize / 2}px 0 0 ${-touchSize / 2}px` });
@@ -357,8 +385,9 @@ const uplay = document.createElement('div'); uplay.className = 'play'; $('uscree
 UAD.P = makePlayer(uplay, PLAYS[UAD.img], SC, OX); guionar(UAD.P, UAD.guion);
 
 /* «¡Y muchos más juegos!»: una grilla de celulares chicos, cada uno jugando el suyo en bucle */
-const MT = WIDE ? { sw: 160, cols: MORE.map((_, i) => [W / 2 + (i % 5 - 2) * 330, i < 5 ? 170 : 600]) }
-  : { sw: 196, cols: MORE.map((_, i) => { const r = i < 4 ? 0 : i < 7 ? 1 : 2, c = r ? (i - (r === 1 ? 4 : 7)) : i, n = r ? 3 : 4; return [W / 2 + (c - (n - 1) / 2) * (n === 4 ? 250 : 300), 330 + r * 520]; }) };
+// 15 games (v7): in 16:9, two rows of 8 and 7; vertical, three rows of 5
+const MT = WIDE ? { sw: 130, cols: MORE.map((_, i) => { const r = i < 8 ? 0 : 1, c = r ? i - 8 : i, n = r ? 7 : 8; return [W / 2 + (c - (n - 1) / 2) * 225, 190 + r * 440]; }) }
+  : { sw: 160, cols: MORE.map((_, i) => { const r = Math.floor(i / 5), c = i % 5; return [W / 2 + (c - 2) * 205, 330 + r * 450]; }) };
 const tiles = MORE.map(([emoji, name, id], i) => {
   const sh = Math.round(MT.sw * 844 / 390), [cx, top] = MT.cols[i];
   const t = document.createElement('div'); t.className = 'abs';
@@ -368,7 +397,7 @@ const tiles = MORE.map(([emoji, name, id], i) => {
   $('x1').appendChild(t);
   const P = makePlayer(t.querySelector('.mscreen'), PLAYS[id], MT.sw / 390, 0, 30);
   schedule(P, 0.4, 2.3);
-  return { el: t, P, delay: 0.3 + i * 0.12 };
+  return { el: t, P, delay: 0.3 + i * 0.09 };
 });
 const LOOP = 3.2;
 const confetti = [];
