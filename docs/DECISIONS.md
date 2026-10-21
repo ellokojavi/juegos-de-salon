@@ -43,7 +43,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Touch interface | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344 |
 | Errors and passing the phone | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272 |
-| Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352 |
+| Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408 |
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401 |
@@ -53,7 +53,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (396)
+## In force (397)
 
 | D | Title | Status |
 |---|---|---|
@@ -453,6 +453,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-405](decisions/D-405.md) | Generala opens from the home page and joins Uno al día on October 23 | current |
 | [D-406](decisions/D-406.md) | A lab page to choose how the two filter rows look | amended by D-407 |
 | [D-407](decisions/D-407.md) | The shortcut pills are outlined, the type pills filled | current |
+| [D-408](decisions/D-408.md) | The panel's timeline of key events | current |
 
 ## No longer in force (9)
 
