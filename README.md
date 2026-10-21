@@ -312,7 +312,7 @@ The phone does what the table does badly: it adds up, it shows what every free b
 - **📡 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each player rolls on their own phone and everyone watches the dice and the card of whoever is playing. There is nothing hidden in this game, so the dice travel in the clear; they are not derived from the shared seed either, because with the public code that would let anyone compute their next rolls (D-246).
 - **🧍 Play solo:** eleven turns for your best score, with a record on the phone and, signed in, the `generala_solo` leaderboard.
 
-It was announced as coming soon first (D-248) and opened in v0.189 (D-405). It is the first group game that also works **without playing at the same time**: everyone fills their own card. It is in **One a Day** from October 23, 2026, where every roll comes from the day's seed, so whoever keeps the same dice gets the same dice (D-247). In Portuguese it is called General, as in Brazil; Kniffel and Yahtzee are trademarks and a slightly different game.
+It was announced as coming soon first (D-248) and opened in v0.189 (D-405). It is the first group game that also works **without playing at the same time**: everyone fills their own card. It is in **One a Day** from October 23, 2026, where every roll comes from the day's seed, so whoever keeps the same dice gets the same dice (D-247). In Portuguese it is called General, as in Brazil; Kniffel and Yahtzee are trademarks and a slightly different game, so the name stays Generala, but its card says it is like Kniffel or Yatzy and searching either name finds it, in every language.
 
 Spec and design: [docs/games/generala.md](docs/games/generala.md)
 
