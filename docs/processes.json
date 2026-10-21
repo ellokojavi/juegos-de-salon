@@ -300,6 +300,22 @@
         }
       ],
       "mechanism": null
+    },
+    {
+      "key": "empty-yes-noted",
+      "what": "A one-tap decision whose Yes was left empty became a silent nothing: the owner approved work that never reached the queue (#607)",
+      "seen": [
+        {
+          "date": "2026-10-21",
+          "what": "A one-tap decision whose Yes was left empty became a silent nothing: the owner approved work that never reached the queue (#607)",
+          "commit": null
+        }
+      ],
+      "mechanism": {
+        "date": "2026-10-21",
+        "what": "decide refuses a Yes with no actions, or a nothing Yes whose text says it queues or builds",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/611"
+      }
     }
   ],
   "mechanisms": [
@@ -362,6 +378,12 @@
       "key": "script-roto-en-merge",
       "what": "tools/release/syntax.test.mjs runs node --check on every public/**/*.js in the tests check (D-340)",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/484"
+    },
+    {
+      "date": "2026-10-21",
+      "key": "empty-yes-noted",
+      "what": "decide refuses a Yes with no actions, or a nothing Yes whose text says it queues or builds",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/611"
     }
   ],
   "queueDone": [
