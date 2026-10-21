@@ -542,6 +542,9 @@ export const PATHS = {
   'labs/daily-score/live': {
     hub: [],
     rules: [`document.querySelector('.como')?.click(); 1`],
+    // The calendar with today's details open under the grid, then the invite card and the footer
+    day: [`(document.querySelector('.uad-cal button.hoy') || document.querySelector('.uad-cal button[data-dia]'))?.click(); document.getElementById('calendario').scrollIntoView(); 1`],
+    footer: [`document.getElementById('pie').scrollIntoView({ block: 'end' }); 1`],
   },
   'labs/bridges': {
     intro: [],
