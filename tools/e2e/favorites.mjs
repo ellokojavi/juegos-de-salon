@@ -105,6 +105,7 @@ for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt', 'de'
   check(!c.errors.length, `${lang} at ${width} px: no console errors ${JSON.stringify(c.errors)}`);
   c.close();
 }
-// With the picks row (D-369), ⭐ fits in it at 320 px too: named where it fits, bare ⭐ otherwise, never on a line of its own
-check(at320.every(s => s.startsWith('picks')), `at 320 px, ⭐ stays first in the ✨ / 🔥 row (${at320.join(', ')})`);
+// At 320 px the 🔎 pill shares the ✨ / 🔥 row (D-396, for everyone since D-403): ⭐ goes where it fits in each
+// language (D-364), checked above; here, that it always found a place
+check(at320.length === 4 && at320.every(s => /^(picks|row|line)/.test(s)), `at 320 px, ⭐ finds a place beside the 🔎 pill in every language (${at320.join(', ')})`);
 if (bad) process.exit(1);

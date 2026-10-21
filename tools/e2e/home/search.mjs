@@ -1,4 +1,4 @@
-// The home page's search, a lab experiment (?search, D-387, D-390) end to end: a 🔎 pill in the row of
+// The home page's search, for everyone since D-403 (D-387, D-390) end to end: a 🔎 pill in the row of
 // ✨ Nuevos and 🔥 Populares that opens into a field over that row; while typing, a dropdown names up to
 // five games (the list below does not move) and "see them all" filters the list; ✕ brings the pills
 // back. On a computer, ↓ ↑ Enter and Escape drive the dropdown (D-393). Prints ✗ if something fails.
@@ -22,32 +22,32 @@ const selected = `(document.querySelector('#buscar-lista .sel') || {}).id || ''`
 const shown = sel => `(e => !!e && e.getBoundingClientRect().width > 0)(document.querySelector('${sel}'))`;
 
 await b.go(`${SITE}/?test`);
-ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && await ev(`!document.querySelector('.buscar-pill')`), 'players see no search');
+ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && await waitFor(`!!document.querySelector('.buscar-pill')`), 'every player sees the 🔎 search, with no parameter and no lab key (D-403)');
 // Without a lab key nothing in development turns on, even with its parameter (D-395): the page is
 // opened through this machine's network address, which the lab treats as any other site
 const lan = Object.values(networkInterfaces()).flat().find(a => a && a.family === 'IPv4' && !a.internal)?.address;
 if (lan) {
   const port = new URL(SITE).port || '80';
-  await b.go(`http://${lan}:${port}/?test&search&lab&splash=${Object.keys(CAMPAIGNS).find(id => id !== ACTIVE?.id) || 'x'}`);
-  ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && (await sleep(1200), await ev(`!document.querySelector('.buscar-pill') && !document.getElementById('barra') && !document.getElementById('splash-titulo')`)), 'without a lab key, ?search, ?lab and a splash preview show nothing');
+  await b.go(`http://${lan}:${port}/?test&lab&splash=${Object.keys(CAMPAIGNS).find(id => id !== ACTIVE?.id) || 'x'}`);
+  ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && (await sleep(1200), await ev(`!!document.querySelector('.buscar-pill') && !document.getElementById('barra') && !document.getElementById('splash-titulo')`)), 'without a lab key, ?lab and a splash preview show nothing, and the search is there anyway');
   // The same address on localhost, where the lab opens by itself, does show them: the check above is not empty
-  await b.go(`${SITE}/?test&search&lab`);
-  ok(await waitFor(`!!document.querySelector('.buscar-pill') && !!document.getElementById('barra')`), 'with the lab open, the same address shows them');
+  await b.go(`${SITE}/?test&lab`);
+  ok(await waitFor(`!!document.getElementById('barra')`), 'with the lab open, the same address shows the bar');
 } else console.log('· no network address: the lab-key check is skipped');
 
-await b.go(`${SITE}/?test&search`);
-ok(await waitFor(shown('.atajos .buscar-pill')), 'with ?search a 🔎 pill sits in the row of Nuevos and Populares');
+await b.go(`${SITE}/?test`);
+ok(await waitFor(shown('.atajos .buscar-pill')), 'a 🔎 pill sits in the row of Nuevos and Populares');
 ok(await ev(`!${shown('#buscar')} && document.querySelector('.atajos').scrollWidth <= document.querySelector('.atajos').clientWidth + 1`), 'folded, the field is hidden and the row fits at 320 px');
 await b.shot('pill');
 // With favorites, the 🔎 still goes first, left of ⭐ (D-396)
 await ev(`localStorage.setItem('juegos-de-salon:favoritos', JSON.stringify(['dudo'])); 1`);
-await b.go(`${SITE}/?test&search`);
+await b.go(`${SITE}/?test`);
 await waitFor(shown('.atajos .buscar-pill'));
 ok(await ev(`(r => { const kids = [...r.children].filter(k => k.getBoundingClientRect().width > 0); const left = Math.min(...kids.map(k => k.getBoundingClientRect().left)); const pill = r.querySelector('.buscar-pill').getBoundingClientRect(), fav = r.querySelector('.ficha-fav')?.getBoundingClientRect(); return pill.left === left && (r.querySelector('.ficha-fav') ? pill.right <= fav.left : true); })(document.querySelector('.atajos'))`), 'the 🔎 pill goes first, left of ⭐ Favoritos when it shares the row (at 320 px ⭐ takes its own line)');
 ok(await ev(`document.querySelector('.atajos').scrollWidth <= document.querySelector('.atajos').clientWidth + 1`), 'with ⭐ in it, the row still fits at 320 px');
 await b.shot('pill-favorites');
 await ev(`localStorage.removeItem('juegos-de-salon:favoritos'); 1`);
-await b.go(`${SITE}/?test&search`);
+await b.go(`${SITE}/?test`);
 await waitFor(shown('.atajos .buscar-pill'));
 const sitio = `JSON.stringify([...document.querySelectorAll('.atajos > button')].map(b => Math.round(b.getBoundingClientRect().left)))`;
 const antes = await ev(sitio);
@@ -82,7 +82,7 @@ await ev(`document.querySelector('#buscar-lista a.sug[data-id="toque-y-fama"]').
 ok(await waitFor(`location.pathname.includes('bulls-and-cows')`), 'tapping it opens the game');
 
 // The keyboard (D-393)
-await b.go(`${SITE}/?test&search`);
+await b.go(`${SITE}/?test`);
 await waitFor(shown('.atajos .buscar-pill'));
 await ev(`document.querySelector('.buscar-pill').click(); 1`);
 await type('logica');

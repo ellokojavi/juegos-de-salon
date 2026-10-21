@@ -588,7 +588,7 @@
       const atajo = { [NEW]: g => g.available && esNuevo(g), [POP]: g => top3.has(g.id) };
       const tieneAtajo = k => PORTADA.some(atajo[k]);
       const filtro = { tipo: TIPOS[pedido] || (pedido === FAV && hayFavoritos()) || (atajo[pedido] && tieneAtajo(pedido)) ? pedido : null };
-      // The search (lab, ?search, D-390): the games "see them all" filtered, or null with nothing typed
+      // The search (D-390, for everyone since D-403): the games "see them all" filtered, or null with nothing typed
       const busca = { ids: null, clear: () => {} };
       const caben = ({ g, card, caja }) => (!busca.ids || busca.ids.has(g.id)) && (!filtro.tipo
         || (filtro.tipo === FAV ? caja !== card && marcados.has(g.id) : atajo[filtro.tipo] ? atajo[filtro.tipo](g) : (g.tipos || []).includes(filtro.tipo)));
@@ -664,10 +664,10 @@
         history.replaceState(history.state, '', url.pathname + url.search.replace(/=(?=&|$)/g, '') + url.hash);
       };
       aplicar(true);
-      // In development: only for lab key holders (D-395)
-      if (param('search') !== null) import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => yes && import('./labs/home/search.js').then(({ drawSearch }) => {
+      // The 🔎 search, for everyone (D-403): loaded after the list is drawn, so it never delays it
+      import('./assets/js/search.js').then(({ drawSearch }) => {
         Object.assign(busca, drawSearch({ into: caja, lang, games: PORTADA, pickName: pickLang, onChange: ids => { busca.ids = ids; aplicar(); } }));
-      })).catch(e => console.warn('búsqueda:', e));
+      }).catch(e => console.warn('búsqueda:', e));
       // Marcar el primero hace aparecer la ficha; desmarcar estando en Favoritos no saca la tarjeta
       // de la vista (se puede volver a marcar), salvo que ya no quede ninguno: ahí se ven todos
       document.addEventListener('favoritos', () => {

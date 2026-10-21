@@ -292,7 +292,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   recounts the home page's order (`POPULARIDAD` in `games.js`) by games finished in the last four
   weeks; the processes round runs `update` once the list is a week old. What is tried on the home
   page before players see it is a URL parameter listed in `public/labs/home/experiments.js`, shown with
-  checkboxes (none, one or several, D-389) by the bar `?lab` draws on the real home page, opened from `/labs/home/` (D-363; today the 🔎 search pill, `?search`, D-387, D-390, which like `?lab` turns on only with a lab key, D-395; before it: the 🔥 Popular label, the ✨ Nuevos / 🔥 Populares filters and the name on the floating menu reached everyone in D-369, and the project is kept in La Bodega, D-372). The lab has three groups: games, improvements, La Bodega.
+  checkboxes (none, one or several, D-389) by the bar `?lab` draws on the real home page, opened from `/labs/home/` (D-363; today only the splash campaign previews, which like `?lab` turn on only with a lab key, D-395; everything tried there reached everyone: the 🔥 Popular label, the ✨ Nuevos / 🔥 Populares filters and the name on the floating menu in D-369, the 🔎 search and the splash in D-403, and the project is kept in La Bodega, marked 🚀 Lanzado, D-372, D-403). The lab has three groups: games, improvements, La Bodega.
 - **Promotional splash** (D-351): a window over the home page announcing something new, off by
   default. `node tools/agents/splash.mjs list | on <id> [--until YYYY-MM-DD] | off` rewrites the
   `ACTIVE` line of `public/assets/js/splash.js`; it reaches players through a PR like any change.
