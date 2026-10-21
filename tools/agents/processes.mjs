@@ -328,7 +328,7 @@ export function settleIssue(issue, decision, note) {
   if (after === body) return { changed: false, closed: false };
   sh('gh', ['issue', 'edit', n, '-R', REPO, '--body', after]);
   const left = undecided(after);
-  sh('gh', ['issue', 'comment', n, '-R', REPO, '--body', `**${question(after, decision)}** No answer needed: ${note}${left.length ? '' : '\n\nNothing is left to decide here: closing.'}`]);
+  sh('gh', ['issue', 'comment', n, '-R', REPO, '--body', `**${question(after, decision)}** No answer needed, nothing was carried out: ${note}${left.length ? '' : '\n\nNothing is left to decide here: closing.'}`]);
   if (!left.length) sh('gh', ['issue', 'close', n, '-R', REPO, '--reason', 'completed']);
   return { changed: true, closed: !left.length };
 }

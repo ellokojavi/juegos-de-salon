@@ -89,7 +89,7 @@ export function settle(body, decision, note) {
   const lines = body.split('\n');
   const last = lines.map((l, i) => (new RegExp(`<!-- op:${decision}:[a-z]+ -->`).test(l) ? i : -1)).filter(i => i >= 0).pop();
   if (last === undefined) throw new Error(`the issue has no decision ${decision}`);
-  lines.splice(last + 1, 0, `- ✔️ No answer needed: ${String(note).trim()} <!-- hecho:${decision} -->`);
+  lines.splice(last + 1, 0, `- ✔️ No answer needed, nothing was carried out: ${String(note).trim()} <!-- hecho:${decision} -->`);
   return lines.join('\n');
 }
 

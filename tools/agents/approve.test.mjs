@@ -122,7 +122,7 @@ assert.deepEqual(undecided(ideasBody), ['1', '2']);
 assert.equal(decisionQueuing(ideasBody, 'ideas pips-dominoes:'), '2');
 assert.equal(decisionQueuing(ideasBody, 'ideas nope:'), null);
 const settled = settle(ideasBody, '2', 'prototyped: built in the lab');
-assert.match(settled, /<!-- op:2:no -->\n- ✔️ No answer needed: prototyped: built in the lab <!-- hecho:2 -->/);
+assert.match(settled, /<!-- op:2:no -->\n- ✔️ No answer needed, nothing was carried out: prototyped: built in the lab <!-- hecho:2 -->/);
 assert.doesNotMatch(settled, /\[x\]/, 'no box is checked');
 assert.deepEqual(undecided(settled), ['1']);
 assert.equal(settle(settled, '2', 'again'), settled, 'settling twice changes nothing');
