@@ -9,7 +9,7 @@
  *
  * The issue carries each option on a line `- [ ] Yes <!-- op:1:si -->` and, at the end, the
  * actions of each option in a `<!-- acciones {...} -->` block (written by `processes.mjs decide`).
- * The markers (`op:n:si`, `op:n:no`, `hecho:n`, `acciones`) stay in Spanish: parsing depends only
+ * The markers (`op:n:si`, `op:n:pub` for "Yes, and publish" (D-409), `op:n:no`, `hecho:n`, `acciones`) stay in Spanish: parsing depends only
  * on them, so issues opened before D-316 (in Spanish) still work. Actions are written in English
  * (`{ type: 'merge', pr }`); the Spanish ones of older issues (`{ tipo: 'fusionar', pr }`) are
  * read through `normalizeAction`.
@@ -111,7 +111,7 @@ export function checkedWithoutResult(body = '') {
   return res;
 }
 
-const yesNo = option => (option === 'si' ? 'Yes' : 'No');
+const yesNo = option => ({ si: 'Yes', pub: 'Yes, and publish', no: 'No' })[option] || option;
 
 /**
  * What to do with an `issues.edited` event: `{ ignore: reason }` or `{ plans: [{ decision, option,
