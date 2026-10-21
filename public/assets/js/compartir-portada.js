@@ -45,8 +45,24 @@ export function botonCompartirPortada({ C, app, url, icono, lang = 'es', tap = (
   const cerrar = () => {
     if (!capa) return;
     capa.remove(); capa = null;
+    soltarFondo();
     doc.removeEventListener('keydown', alTeclear);
     antes?.focus?.();
+  };
+  // While the sheet is open the page behind it does not scroll: the body is pinned where it was
+  // (position: fixed, which iOS Safari also respects) and put back at the same place on close
+  let fondo = null;
+  const fijarFondo = () => {
+    const b = doc.body, y = doc.defaultView?.scrollY || 0;
+    fondo = { y, style: b.getAttribute('style') };
+    Object.assign(b.style, { position: 'fixed', top: `-${y}px`, left: '0', right: '0', overflow: 'hidden' });
+  };
+  const soltarFondo = () => {
+    if (!fondo) return;
+    const b = doc.body;
+    if (fondo.style === null) b.removeAttribute('style'); else b.setAttribute('style', fondo.style);
+    doc.defaultView?.scrollTo(0, fondo.y);
+    fondo = null;
   };
   const alTeclear = e => { if (e.key === 'Escape') cerrar(); };
 
@@ -105,6 +121,7 @@ export function botonCompartirPortada({ C, app, url, icono, lang = 'es', tap = (
       el('div', { class: 'btn-row' }, el('button', { type: 'button', class: 'btn btn--ghost', onClick: () => { tap(); cerrar(); } }, t.close)));
     capa = el('div', { class: 'hoja-capa' }, el('div', { class: 'hoja-fondo', onClick: cerrar }), panel);
     doc.body.append(capa);
+    fijarFondo();
     doc.addEventListener('keydown', alTeclear);
     panel.querySelector('.hoja-pestana.on')?.focus();
   }
