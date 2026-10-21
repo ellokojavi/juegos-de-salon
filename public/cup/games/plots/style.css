@@ -17,8 +17,10 @@
 .lt-demo-rotulo.ve { opacity: 1; animation: lt-listo 0.55s cubic-bezier(.3,1.6,.6,1); }
 @keyframes lt-listo { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
 .lt-demo-tam { font-size: 0.85rem; }
-/* Numbers has no plot size to show, but keeps its row, so both variants put the title at the same height */
-.lt-demo-tam.vacio { visibility: hidden; }
+/* Numbers has no plot size to show, but keeps its row where the player can switch variants, so both put
+   the title at the same height; where there is no picker (a Cup day, Uno al día) the row would be dead space */
+.lt-demo-tam.vacio { display: none; }
+body:has(#selector-variante) .lt-demo-tam.vacio { display: block; visibility: hidden; }
 
 /* The board: the squared background, the plots on top and the numbers above everything.
    Its own width sizes the numbers (container units), so the same rules serve the small boards */
