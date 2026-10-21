@@ -29,10 +29,10 @@ export const LONG_PRESS_MS = 450;
  * @param {boolean} [o.hidden]              tapar lo escrito (el número secreto en un celular)
  * @param {Set<string>|null} [o.notes]      las teclas tachadas, si el juego tiene notas
  * @param {() => void} [o.onNotesChange]
- * @param {boolean} [o.elegir]              tocar una casilla la elige: la próxima tecla va ahí, no
- *   siempre a la derecha de lo escrito (#604; en el lab, D-395). `puede` recibe entonces lo escrito
- *   en las otras casillas y la casilla elegida. También se prende después, con
- *   `activarElegir()` del elemento que devuelve: la llave del lab se pregunta por la red
+ * @param {boolean} [o.elegir]              tapping a box chooses it: the next key goes there, not
+ *   always to the right of what is written (#604; for everyone in Toque y Fama since D-409).
+ *   `puede` then receives what is in the other boxes and the chosen box. It can also be turned
+ *   on later with `activarElegir()` on the returned element.
  */
 export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, columnas = 3, acciones = 'fin', hidden = false, notes = null, onNotesChange = null, elegir: elegirAlInicio = false }) {
   // Una casilla por posición: con `elegir` puede quedar un hueco al medio
