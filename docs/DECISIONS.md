@@ -301,7 +301,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-250](decisions/D-250.md) | Zip has ten levels: with all ten it is 100 points and ends sooner | current |
 | [D-251](decisions/D-251.md) | The lookout: what fails for whoever plays, in the panel's Health section | current |
 | [D-252](decisions/D-252.md) | No working copy is left unused | current |
-| [D-253](decisions/D-253.md) | Sharing, from the home page, opens a sheet with the video | amended by D-254 and D-410 |
+| [D-253](decisions/D-253.md) | Sharing, from the home page, opens a sheet with the video | amended by D-254, D-410 |
 | [D-255](decisions/D-255.md) | The home page, from most played to least | amended by D-335, D-361 |
 | [D-257](decisions/D-257.md) | The case as a La Copa game, in the lab and in the four languages | amended by D-267 |
 | [D-258](decisions/D-258.md) | The clock starts with the game screen in view, not with the countdown | current |
