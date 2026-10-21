@@ -1,5 +1,5 @@
 {
-  "version": "0.188.4",
+  "version": "0.189.3",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -364,9 +364,9 @@
       },
       "players": "1 to 6",
       "duration": "15–30",
-      "available": false,
+      "available": true,
       "labs": false,
-      "status": null,
+      "status": "v0.190",
       "modes": [
         {
           "key": "modeLocal",

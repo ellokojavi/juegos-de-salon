@@ -35,8 +35,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-406, D-407 |
-| Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407 |
+| Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
 | Game memory | C-6 | D-25, D-150 |
@@ -53,7 +53,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (395)
+## In force (396)
 
 | D | Title | Status |
 |---|---|---|
@@ -296,7 +296,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-245](decisions/D-245.md) | The ¿Dónde queda? globe waits for the satellite image | current |
 | [D-246](decisions/D-246.md) | Generala: the dice game, with dice in the open and the served hand that wins | current |
 | [D-247](decisions/D-247.md) | Generala in Uno al día, from the third deck and with the seed's dice | amended by D-248 |
-| [D-248](decisions/D-248.md) | Generala is announced as "Próximamente" before opening | current |
+| [D-248](decisions/D-248.md) | Generala is announced as "Próximamente" before opening | amended by D-405 |
 | [D-249](decisions/D-249.md) | The invitation to join goes on top, as a card with its button | current |
 | [D-250](decisions/D-250.md) | Zip has ten levels: with all ten it is 100 points and ends sooner | current |
 | [D-251](decisions/D-251.md) | The lookout: what fails for whoever plays, in the panel's Health section | current |
@@ -450,6 +450,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-402](decisions/D-402.md) | The 🔎 search opens and closes as one smooth motion | current |
 | [D-403](decisions/D-403.md) | The 🔎 search reaches everyone; the home page experiments are all launched | amended by D-404 |
 | [D-404](decisions/D-404.md) | Everything new is indexed in the search, in every language | current |
+| [D-405](decisions/D-405.md) | Generala opens from the home page and joins Uno al día on October 23 | current |
 | [D-406](decisions/D-406.md) | A lab page to choose how the two filter rows look | amended by D-407 |
 | [D-407](decisions/D-407.md) | The shortcut pills are outlined, the type pills filled | current |
 
