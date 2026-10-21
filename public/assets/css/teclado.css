@@ -51,3 +51,5 @@
 .reply-clue .f { background: var(--lime); color: #1d3a00; }
 .reply-clue .t { background: var(--yellow); color: #3a1200; }
 .reply-clue .z { background: rgba(255,255,255,0.15); }
+/* Con `elegir` (#604) las casillas se tocan para elegir dónde va la próxima cifra */
+.entry--elegir .box { cursor: pointer; -webkit-tap-highlight-color: transparent; }

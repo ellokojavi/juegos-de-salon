@@ -83,14 +83,13 @@ body:has(#selector-variante) .lt-demo-tam.vacio { display: block; visibility: hi
 .lt-aviso.medida { color: #fff; font: 900 1.15rem var(--font-num); }
 .lt-aviso.bien { color: var(--lime); font-size: 1.15rem; animation: pop 0.45s ease-out; }
 
-/* Undo, Clear and Give up: three equal buttons in one row; the hint apart, smaller, below them */
-.lt-acciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+/* Two rows of two, all the same size (#441): Undo and Clear on top, Hint and Give up below, so no
+   label wraps at 320 px in any language (U-17) and Give up sits farthest from Undo */
+.lt-acciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .lt-acciones .btn { width: 100%; min-width: 0; min-height: 44px; margin: 0; padding: 4px; font-size: 0.9rem; line-height: 1.15; }
-.lt-acciones .btn:disabled, .lt-ayuda:disabled { opacity: 0.4; }
-.lt-acciones .btn.armado, .lt-ayuda.armado { border-color: var(--yellow); color: var(--yellow); }
+.lt-acciones .btn:disabled { opacity: 0.4; }
+.lt-acciones .btn.armado { border-color: var(--yellow); color: var(--yellow); }
 .lt-acciones .lt-rendirse.armado { color: #ff8a8a; border-color: #ff8a8a; }
-.lt-ayuda { justify-self: center; width: fit-content; margin: 0 auto; min-height: 44px; padding: 4px 16px; font-size: 0.85rem; opacity: 0.85; }
-.lt-ayuda.armado { opacity: 1; }
 
 /* The end: the stamp and "See result", above the board */
 .lt-cierre { justify-items: center; gap: 8px; }

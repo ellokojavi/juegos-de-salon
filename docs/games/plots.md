@@ -79,16 +79,17 @@ time counts from there, paused with the screen hidden (U-20); the ⏱ elapsed ti
 - **Board done:** when the plots cover it, it shines («📐 ¡Tablero n listo!») and the next one comes.
 - **The hard ones of Utilities:** on reaching board 3, the first hard one, the notice says «Difíciles:
   si un lote deja una casilla sin lote posible, no va.» (only there).
-- **Below, three equal controls in one row** (the owner's request), the cup's words:
+- **Below, four equal controls in two rows of two** (#441: the owner's earlier row of three wrapped
+  «Borrar todo» at 320 px and in German, U-17): ↩️ Deshacer · 🧹 Borrar todo on top, 💡 Ayuda ·
+  🏳️ Rendirse below, the cup's words:
   - **↩️ Deshacer** (the shared `deshacer.js` button): back to before the last move (draw, erase a
     plot, clear the board or a hint); free. It does not go back to an earlier board, and undoing a
     hint does not give its points back.
   - **🧹 Borrar todo:** asks for a second tap («🧹 ¿Seguro?», 3 seconds) and empties the board («Borraste
     el tablero: ↩️ Deshacer lo trae de vuelta.»). Off with the board empty.
   - **🏳️ Rendirse:** asks for a second tap («🏳️ ¿Seguro?»). One armed button at a time.
-- **💡 Ayuda (−10), apart**, smaller, below the row: it is not a board control. A second tap («Toca de
-  nuevo (−10)») places a plot of the solution that was not right, with a dashed border («💡 Ese lote
-  va así.»).
+  - **💡 Ayuda (−10):** a second tap («Toca de nuevo (−10)») places a plot of the solution that was not right, with a dashed border («💡 Ese lote
+    va así.»).
 - **The end:** solving the fifth board or giving up stops the clock right there (D-130). The stamp
   goes above the board («¡Todo loteado!» over the last board, shining; or «Te rendiste.» and «Así se
   resolvía el tablero n.» with the solution drawn), with «Ver resultado» under it, in sight without
