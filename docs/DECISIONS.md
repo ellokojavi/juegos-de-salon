@@ -448,7 +448,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-400](decisions/D-400.md) | The merge no longer waits two minutes for the app's monitor; sessions wait with wait-pr.mjs | current |
 | [D-401](decisions/D-401.md) | A decisions index left behind by other PRs no longer fails the next PR | current |
 | [D-402](decisions/D-402.md) | The 🔎 search opens and closes as one smooth motion | current |
-| [D-403](decisions/D-403.md) | The 🔎 search reaches everyone; the home page experiments are all launched | current |
+| [D-403](decisions/D-403.md) | The 🔎 search reaches everyone; the home page experiments are all launched | amended by D-404 |
 | [D-404](decisions/D-404.md) | Everything new is indexed in the search, in every language | current |
 
 ## No longer in force (9)
