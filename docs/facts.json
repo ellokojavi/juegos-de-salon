@@ -1,5 +1,5 @@
 {
-  "version": "0.189.4",
+  "version": "0.190.3",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1006,6 +1006,7 @@
     "public/panel/dominios.js",
     "public/panel/panel.js",
     "public/panel/rutas.js",
+    "public/panel/timeline.js",
     "public/sw.js",
     "public/timeline/decks/brasil.js",
     "public/timeline/decks/chile.js",
@@ -1076,6 +1077,7 @@
     "public/panel/copas.test.mjs",
     "public/panel/dominios.test.mjs",
     "public/panel/rutas.test.mjs",
+    "public/panel/timeline.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/approve.test.mjs",
     "tools/agents/clean-worktrees.test.mjs",
