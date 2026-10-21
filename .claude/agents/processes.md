@@ -147,7 +147,17 @@ that (after a new game, after a big text change), saying why.
      (U-3): a new text goes with your best proposal, noted.
    - **An idea or a request** (change a rule, add something, redesign): one-tap decision
      (step 7), with your recommendation. If it's small and you recommend it, leave the PR done and
-     let the Yes merge it; if it's big, the Yes queues it.
+     let the Yes merge it; if it's big, the Yes queues it (`{ "type": "queue", "task": "…" }`).
+     Every change goes to Labs first unless the owner says otherwise (D-409): `decide` gives a
+     queued Yes three boxes, **Yes, in Labs** (`[labs]`), **Yes, and publish** (`[publish]`) and **No**.
+     A question whose work was done another way, or that no longer applies, is settled, never
+     answered Yes or No: `processes.mjs settle <issue> <n> "why"` notes it and closes the issue if
+     nothing is left (D-411).
+     A `[labs]` task is built behind `labAccess()` with its card in `/labs/` (a `lab: #<id>` comment,
+     `public/labs/listed.test.mjs`); a `[publish]` one, for everyone. A prepared PR is built behind the
+     lab, and names `publish` actions only if there is a version for everyone.
+     `decide` refuses a Yes with no actions, or one that does `nothing` while its text says it queues
+     or builds (#607, where an approved change was only noted and never reached the queue).
    - **Resolved, duplicate or already an open dilemma:** you close it naming where it was resolved
      or the issue that covers it.
    - **Can't be understood or isn't about the app:** you close it saying why.
@@ -160,7 +170,7 @@ that (after a new game, after a big text change), saying why.
    can resolve them this round, do it first and answer them all together.
    1. Write only the specific answers in a text file, **in the language the feedback was written
       in** (Spanish, English, Portuguese or German; if it mixes, the one most of it is in): what
-      you did or what will happen, in two to four plain sentences, warm and grateful, neutral
+      you did or what will happen, **short** (the owner's rule: people read less and less; about 50 words, one short sentence per idea, no thanks the opening already gives), warm and grateful, neutral
       language (no local slang), no jargon, no PR or issue numbers, and **no em or en dashes**
       (the tool refuses them). With several reports, each answer goes under a line `#<n>`; the
       email quotes the start of each comment above its answer. The greeting, one of ten friendly

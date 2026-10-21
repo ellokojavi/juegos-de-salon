@@ -5,7 +5,7 @@
 // the engine's numbers (the cup's code and day 1). A drag shows the live size and a real drag draws a
 // plot; a rectangle with no number, with two numbers or with the wrong area shakes in red and says why;
 // a valid one is painted and tapping it erases it; the 💡 hint asks for a second tap and places a plot
-// from the solution, which ↩️ Undo removes; Undo, Clear and Give up sit in one row with the hint apart;
+// from the solution, which ↩️ Undo removes; Undo and Clear, then Hint and Give up, in two rows of two;
 // Clear asks for a second tap, empties the board and Undo brings it back; one armed button at a time.
 // With the engine's solution the 5 boards are solved, the clock stops, «¡Todo loteado!» and See result
 // give the engine's score with the card and the breakdown. Giving up asks for a second tap, shows how
@@ -107,8 +107,8 @@ await tap(free.f1, free.c1); await sleep(60);
 ok(await notice() === 'Arrastra de una esquina a otra para dibujar un lote.', 'tapping an empty square reminds the gesture');
 
 // The hint: two taps, places a plot from the solution; Undo removes it and the hint stays counted
-ok(await ev(`[...document.querySelectorAll('.lt-acciones .btn')].map(b => b.id).join()`) === 'btn-deshacer,btn-borrar,btn-rendirse' && await ev(`!document.querySelector('.lt-acciones #btn-ayuda') && !!document.getElementById('btn-ayuda')`), 'below: Undo, Clear and Give up in one row; the hint apart');
-ok(await ev(`(()=>{const r=[...document.querySelectorAll('.lt-acciones .btn')].map(b=>b.getBoundingClientRect().top);return Math.max(...r)-Math.min(...r)<2})()`), 'the three on the same line');
+ok(await ev(`[...document.querySelectorAll('.lt-acciones .btn')].map(b => b.id).join()`) === 'btn-deshacer,btn-borrar,btn-ayuda,btn-rendirse' && await ev(`getComputedStyle(document.querySelector('.lt-acciones')).gridTemplateColumns.split(' ').length`) === 2, 'below: Undo and Clear, then Hint and Give up, in two rows of two');
+ok(await ev(`(()=>{const r=[...document.querySelectorAll('.lt-acciones .btn')].map(b=>Math.round(b.getBoundingClientRect().top));return new Set(r).size===2&&r[0]===r[1]&&r[2]===r[3]})()`), 'two to a row');
 await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(80);
 ok(/Toca de nuevo \(−10\)/.test(await ev(`document.getElementById('btn-ayuda').textContent`)) && await plots() === 0, 'the first hint tap asks to confirm, without charging');
 await ev(`document.getElementById('btn-ayuda').click(); 1`); await sleep(120);

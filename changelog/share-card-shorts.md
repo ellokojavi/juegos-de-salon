@@ -1,0 +1,3 @@
+level: minor
+
+- **🎬 The home page's share button now plays the new 40-second video right in the card** (D-410), as a tall vertical video with two tabs, 🇪🇸 Español and 🇬🇧 English. Spanish opens on the Spanish video and every other language on the English one; it starts on its own, muted, and the two ways to share stay underneath: "Invitar a jugar" and "Compartir el video", which sends the link of the video on show. The card now opens in all four languages. The video itself is new too (v7): it shows the five games added since the last one (Generala, Julepe, Rutas rotas, Loteo and Pintaminas) and has an English version.

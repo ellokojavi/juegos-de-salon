@@ -5,6 +5,7 @@
  *
  *   node tools/agents/processes.mjs check                       # today's signals
  *   node tools/agents/processes.mjs decide <file.json> [--direct]   # opens the one-tap decisions issue
+ *   node tools/agents/processes.mjs settle <issue> <n> "why"       # a decision needing no answer (D-411): noted, closed if last
  *   node tools/agents/processes.mjs pattern <key> "what happened" [--commit <sha>]   # records one sighting
  *   node tools/agents/processes.mjs mechanism <key> "what stops it now" --pr <url>
  *   node tools/agents/processes.mjs dispatch <documentation|usability|ideas> <commit>   # launched it up to that main commit
@@ -39,7 +40,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { invalidAction, checkboxes, doneSet, readActions, normalizeAction, LABEL } from './approve.mjs';
+import { invalidAction, checkboxes, doneSet, readActions, normalizeAction, LABEL, settle, undecided, question, decisionQueuing } from './approve.mjs';
 import { wantsEmail, handled } from './feedback.mjs';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -63,24 +64,46 @@ export function describeActions(list = []) {
       case 'close-issue': return `closes #${a.issue}`;
       case 'comment': return `comments on #${a.on}`;
       case 'run': return a.workflow === 'publish.yml' ? 'publishes the site' : 'runs the end-to-end tests';
-      case 'queue': return 'queues it for the next round';
+      case 'queue': return a.task.startsWith('[publish]') ? 'queues it for the next round, for everyone' : a.task.startsWith('[labs]') ? 'queues it for the next round, in Labs' : 'queues it for the next round';
       default: return '';
     }
   }).filter(Boolean);
   return phrases.length > 1 ? `${phrases.slice(0, -1).join(', ')} and ${phrases.at(-1)}` : phrases[0] || '';
 }
 
-/** The decisions issue body: `<!-- op:n:si -->` checkboxes and the actions block at the end. */
+/** Queue tasks marked with where the work lands (D-409): `[labs]` behind the lab key, `[publish]` for everyone. */
+export const LABS = '[labs]', PUBLISH = '[publish]';
+const markTasks = (list, mark) => list.map(a => (a.type === 'queue' && !/^\[(labs|publish)\]/.test(a.task) ? { ...a, task: `${mark} ${a.task}` } : a));
+
+/**
+ * The decisions issue body: `<!-- op:n:si -->` checkboxes and the actions block at the end. A
+ * decision that changes something answers in three (D-409, the owner's rule: every change goes to
+ * the lab first unless they say otherwise): **Yes, in Labs** (`yes`, the default), **Yes, and
+ * publish** (`publish`, op `pub`) and **No**. A `yes` that queues work gets its `publish` on its own,
+ * the same tasks marked `[publish]` instead of `[labs]`; a prepared PR (`merge`) offers publishing
+ * only if `publish` names its own actions. A Yes that only takes note stays Yes / No.
+ */
 export function decisionsBody({ summary = '', decisions }) {
   if (!decisions?.length) throw new Error('No decisions.');
   const actions = {}, parts = [];
   if (summary) parts.push(summary.trim(), '');
-  parts.push('Check **Yes** or **No** on each one. What you check happens right away and cannot be undone; the result is noted next to it.', '');
+  parts.push('Check one box on each. What you check happens right away and cannot be undone; the result is noted next to it. A change goes to Labs first, for you to try, unless you check **Yes, and publish**.', '');
   decisions.forEach((d, i) => {
     const n = i + 1;
     // The markers keep their Spanish option names (`si`, `no`): approve.mjs reads old issues too
-    for (const [op, key] of [['si', 'yes'], ['no', 'no']]) {
-      const list = (d[key]?.length ? d[key] : [{ type: 'nothing' }]).map(normalizeAction);
+    // A Yes says what it does, `nothing` included on purpose: one left empty became a silent
+    // `nothing`, and an approved change was never queued (#604, #607). A No may stay empty
+    if (!d.yes?.length) throw new Error(`Decision ${n}: no Yes actions. Write them, or [{ "type": "nothing" }] if a Yes only takes note`);
+    const yesNothing = d.yes.every(a => normalizeAction(a).type === 'nothing');
+    if (yesNothing && /\bqueue|\bnext round|\bbuil[dt]\b/i.test(`${d.question} ${d.context || ''}`)) throw new Error(`Decision ${n}: its text says the Yes queues or builds work, but its Yes does nothing. Use [{ "type": "queue", "task": "…" }]`);
+    const yes = d.yes.map(normalizeAction);
+    const queues = yes.some(a => a.type === 'queue');
+    const lists = { yes: queues ? markTasks(yes, LABS) : yes, no: d.no };
+    if (d.publish?.length) lists.publish = markTasks(d.publish.map(normalizeAction), PUBLISH);
+    else if (queues) lists.publish = markTasks(yes, PUBLISH);
+    for (const [op, key] of [['si', 'yes'], ['pub', 'publish'], ['no', 'no']]) {
+      if (key === 'publish' && !lists.publish) continue;
+      const list = (lists[key]?.length ? lists[key] : [{ type: 'nothing' }]).map(normalizeAction);
       const bad = list.map(invalidAction).find(Boolean);
       if (bad) throw new Error(`Decision ${n}, ${key}: ${bad}`);
       actions[`${n}:${op}`] = list;
@@ -88,7 +111,7 @@ export function decisionsBody({ summary = '', decisions }) {
     parts.push(`### ${n}. ${d.question}`);
     if (d.context) parts.push(d.context.trim());
     const box = (op, name) => { const q = describeActions(actions[`${n}:${op}`]); return `- [ ] ${name}${q ? `: ${q}` : ''} <!-- op:${n}:${op} -->`; };
-    parts.push(box('si', 'Yes'), box('no', 'No'), '');
+    parts.push(...(lists.publish ? [box('si', 'Yes, in Labs'), box('pub', 'Yes, and publish')] : [box('si', 'Yes')]), box('no', 'No'), '');
   });
   parts.push(`<!-- acciones ${JSON.stringify(actions)} -->`);
   return parts.join('\n');
@@ -284,6 +307,32 @@ async function check() {
   console.log(`\nWhen closing: node tools/agents/processes.mjs record --to ${tip.slice(0, 7)} [--issue <url>] [--pr <url>] [--note "…"]`);
 }
 
+/**
+ * Settles decision n of a decisions issue without checking a box (D-411): it notes why next to its
+ * options, comments it, and closes the issue when nothing is left to decide. For a question whose
+ * work was already done another way, or that no longer applies.
+ */
+/** Settles the open decision of `issue` that queues a task starting with `task`, if there is one: null otherwise. */
+export function settleFor(issue, task, note) {
+  const n = String(issue).replace(/.*\/issues\//, '');
+  const body = gh('issue', 'view', n, '--json', 'body').body;
+  const d = decisionQueuing(body, task);
+  if (!d || doneSet(body).has(d)) return null;
+  return settleIssue(n, d, note);
+}
+
+export function settleIssue(issue, decision, note) {
+  const n = String(issue).replace(/.*\/issues\//, '');
+  const body = gh('issue', 'view', n, '--json', 'body,state').body;
+  const after = settle(body, decision, note);
+  if (after === body) return { changed: false, closed: false };
+  sh('gh', ['issue', 'edit', n, '-R', REPO, '--body', after]);
+  const left = undecided(after);
+  sh('gh', ['issue', 'comment', n, '-R', REPO, '--body', `**${question(after, decision)}** No answer needed, nothing was carried out: ${note}${left.length ? '' : '\n\nNothing is left to decide here: closing.'}`]);
+  if (!left.length) sh('gh', ['issue', 'close', n, '-R', REPO, '--reason', 'completed']);
+  return { changed: true, closed: !left.length };
+}
+
 function decide(file) {
   if (!file) throw new Error('Usage: node tools/agents/processes.mjs decide <file.json>');
   const d = JSON.parse(readFileSync(file, 'utf8'));
@@ -317,13 +366,19 @@ function record(args) {
   console.log('Recorded in docs/processes.json.');
 }
 
-const USAGE = 'Usage: node tools/agents/processes.mjs check | decide <file.json> [--direct] | pattern <key> "…" [--commit <sha>] | mechanism <key> "…" --pr <url> | dispatch <agent> <commit> | record --to <commit> | record --queue <#n:d> | history';
+const USAGE = 'Usage: node tools/agents/processes.mjs check | decide <file.json> [--direct] | settle <issue> <n> "why" | pattern <key> "…" [--commit <sha>] | mechanism <key> "…" --pr <url> | dispatch <agent> <commit> | record --to <commit> | record --queue <#n:d> | history';
 
 function main([command, ...args]) {
   const m = readMemory();
   switch (command) {
     case 'check': return check();
     case 'decide': return decide(args[0]);
+    case 'settle': {
+      const [issue, decision, note] = args;
+      if (!issue || !decision || !note) throw new Error('Usage: node tools/agents/processes.mjs settle <issue> <n> "why no answer is needed"');
+      const r = settleIssue(issue, decision, note);
+      return console.log(r.changed ? `#${issue}, decision ${decision}: settled${r.closed ? '; nothing left, closed' : ''}.` : `#${issue}, decision ${decision}: already decided.`);
+    }
     case 'pattern': {
       const [key, what] = args;
       if (!key || !what) throw new Error('Usage: pattern <key> "what happened" [--commit <sha>]');

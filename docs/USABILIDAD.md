@@ -112,7 +112,7 @@ la portada al día, va con los textos, and U-39, the start button above the fold
   abajo el mismo link. Un resultado o una tabla se comparten siempre con imagen y texto juntos,
   desde cualquier botón; una invitación, solo con texto (la imagen la pone la tarjeta del link).
   La app, desde la portada ("Invitar a jugar"), va con esa tarjeta como imagen, la de su idioma
-  (D-226); el video de la portada (solo en español, D-254), solo con texto: la vista previa la arma
+  (D-226); el video de la portada (the Short of the tab on show, D-410), solo con texto: la vista previa la arma
   el chat con la miniatura de YouTube (D-253).
 - **U-31 · Completo:** el resultado dice copa, día, juego, jugador y puntaje; la tabla dice quién
   falta y marca "(-1J)" a quien lleva menos juegos. Excepción: el resultado de Uno al día no
@@ -145,6 +145,9 @@ la portada al día, va con los textos, and U-39, the start button above the fold
 
 Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
 
+- **Loteo: four buttons in two rows of two** (#441, option A; the owner's Yes in #607): ↩️ Deshacer ·
+  🧹 Borrar todo on top, 💡 Ayuda · 🏳️ Rendirse below, all the same size, instead of the row of three with
+  the hint apart: no label wraps at 320 px in any language (U-17), and Rendirse sits farthest from Deshacer.
 - **No clock at the top while playing** (#442, D-379; the owner replaced the recommended option A): none of La Copa's
   games shows the ⏱ that counted up, in the cup or in practice; the time shows at the end, and each game's own ⏳ stays.
   Corrected by D-384 (a player's request, #563): a game whose speed scores and that has no ⏳ of its own (Loteo,

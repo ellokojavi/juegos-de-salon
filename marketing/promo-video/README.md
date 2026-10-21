@@ -5,15 +5,15 @@ hecho, cómo se rehace y todo lo que pasó en cada versión. **Se lee entero ant
 video** (D-178), y al terminar cada vuelta se anota en [Historia](#historia) y en
 [`../registro.json`](../registro.json).
 
-## Hoy: versión 6 (2026-10-08)
+## Hoy: versión 7 (2026-10-21)
 
 | | |
 |---|---|
-| Archivos | [`output/promo-youtube-16x9.mp4`](output/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`output/promo-vertical.mp4`](output/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) |
+| Archivos | [`output/promo-youtube-16x9.mp4`](output/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`output/promo-vertical.mp4`](output/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) · [`output/promo-vertical-en.mp4`](output/promo-vertical-en.mp4) (the vertical in English, v7) |
 | Duración | 39,2 s (85 golpes), H.264 + AAC 256 kb/s, 30 cuadros por segundo |
-| Idioma | Español (el cierre dice "En 4 idiomas" con las cuatro banderas) |
+| Idioma | Español (el cierre dice "En 4 idiomas" con las cuatro banderas); since v7 also a vertical in English (`?lang=en`, see [In English](#in-english)) |
 | Música | [`music/cancion.mp3`](music/cancion.mp3), la que puso el dueño (ver [La canción](#la-canción)) |
-| App que muestra | 0.129.1 |
+| App que muestra | 0.190.2 |
 
 En `output/` vive **solo la última versión**: al publicar una nueva, se reemplazan los dos mp4.
 Las anteriores quedan en la historia de git. Ojo: GitHub Pages publica el repo entero, así que
@@ -23,15 +23,15 @@ los mp4 también quedan en `juegosdesalon.cl/marketing/promo-video/output/…`.
 nuevo en la portada no deja atrás al video; `node tools/agents/marketing.mjs check` solo avisa si
 uno de los que salen ya no está, o si la app cambió de versión.
 
-## Pendiente: versión 7
+## Pendiente: versión 8
 
-Sin empezar hasta que el dueño la pida.
+Not started until the owner asks for it.
 
 - **Los avisos de La Copa** (#210, el dueño eligió C y A el 2026-10-11): un plano corto de la
   notificación que llega al celular el día que se abre un juego de la copa (la campana 🔔 y la
   tarjeta "¿Te avisamos…?"). En iPhone el aviso pide tener la app en inicio: se graba en Android o
   se muestra la notificación sin el paso de instalar.
-- **Zip** dice "Nivel 1 de 10" desde la 0.130.0 (D-250); en la v6 sale "Nivel 1 · 4 × 4".
+- **Loteo**'s buttons are in two rows on `main` since #441 (v7 shows the earlier single row).
 
 ## Lo que el dueño quiere
 
@@ -59,7 +59,7 @@ Lo que fue pidiendo en cada vuelta, para no tener que volver a preguntarlo:
   (v4).
 - Le gustó el estilo desde la v1: neón, Bangers + Nunito, emojis, un celular flotando.
 
-## El guion de la v6
+## El guion de la v6 (v7: the same, with a bigger grid)
 
 La canción va a 130 BPM: un golpe dura 0,4615 s y cada corte cae en un golpe.
 
@@ -68,7 +68,7 @@ La canción va a 130 BPM: un golpe dura 0,4615 s y cada corte cae en un golpe.
 | Gancho | 6 | 0 – 2,8 | "JUNTA A TUS AMIGOS · SACA EL CELULAR · ¡Y A JUGAR!", con emojis girando |
 | Logo | 6 | 2,8 – 5,5 | 🎲 cae, "JUEGOS DE SALÓN", "Los juegos de toda la vida, en tu celular" |
 | Juegos | 23 | 5,5 – 16,2 | Cuatro juegos jugados en un celular (tabla de abajo) |
-| ¡Y muchos más juegos! | 10 | 16,2 – 20,8 | Diez celulares chicos, cada uno jugando el suyo en bucle: 🔢 Toque y Fama, 🔤 Toque y Fama: Palabra, 🪢 El Ahorcado, ⚓ Batalla Naval, 👑 Cuarto Rey, 🔗 Conexiones, 📅 ¿En qué año?, 👑 Reinas, ☀️ Tango y 🧶 Desenredo. En vertical van en filas de 4, 3 y 3; en horizontal, en dos de 5 |
+| ¡Y muchos más juegos! | 10 | 16,2 – 20,8 | Fifteen small phones (v7), each playing its own game in a loop: 🔢 Toque y Fama, 🔤 Toque y Fama: Palabra, 🪢 El Ahorcado, ⚓ Batalla Naval, 👑 Cuarto Rey, 🔗 Conexiones, 📅 ¿En qué año?, 👑 Reinas, ☀️ Tango, 🧶 Desenredo, 📝 Generala, 🍹 Julepe, 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas. Vertical: three rows of 5; 16:9: rows of 8 and 7 |
 | 📅 Uno al día | 16 | 20,8 – 28,2 | Fondo verde azulado. "Un juego sorpresa cada día, el mismo para todos" · "🔥 Arma tu racha". El dedo toca la tarjeta de la portada, el dado rueda (a todo el cuadro) y cae en 👑 Reinas, pone las dos últimas reinas y sale 100/100 con "Racha: 11 días" |
 | La Copa | 14 | 28,2 – 34,6 | Fondo dorado. "¿Te atreves a desafiar a tus amigos por una semana?", "🏆 LA COPA", el celular baja por podio, calendario, tabla y gráfico |
 | Cierre | 10 | 34,6 – 39,2 | "¡JUNTOS SE JUEGA MEJOR!", "Gratis · Sin descargar nada · Sin cuentas", **juegosdesalon.cl**, "📲 Agrégala a tu inicio" (D-232), "En 4 idiomas: 🇪🇸 🇬🇧 🇧🇷 🇩🇪" |
@@ -149,6 +149,24 @@ con su `construir.sh`.
 **Antes de entregar se miran cuadros sueltos de las dos versiones** (`--tiempos` en los cortes y
 en medio de cada jugada) y la hoja de las capturas. Rehacerlas no es revisarlas (D-76).
 
+## In English
+
+Since v7 the video has an English version (only the vertical so far). The same `promo.html` with
+`?lang=en`: its texts are in the `EN` block (the logo stays "JUEGOS DE SALÓN", the brand), and it reads
+the captures from `plays-en/`. They are made with the app in English:
+
+```bash
+LANG_PROMO=en node jugar.mjs            # every game, in English, into plays-en/
+LANG_PROMO=en node copa.mjs
+LANG_PROMO=en python3 preparar.py       # and LANG_PROMO=en python3 hoja.py to review them
+node render.mjs trabajo-en.mp4 --lang en    # then the music as in construir.sh
+```
+
+`jugar.mjs` finds buttons by text in both languages (`/Dudo|Liar/`) and plays the puzzles whose
+content changes with the language with their English answers (Connections: the fonts group; ¿En
+qué año?: 1913; Toque y Fama: Palabra: the secret word from the engine, `generar(…, { lang })`).
+Another language is a new `LANG_PROMO`, its texts in `promo.html` and its answers in `jugar.mjs`.
+
 ## La canción
 
 `music/cancion.mp3` (47,1 s) la subió el dueño. Lo que se sabe de ella:
@@ -189,6 +207,12 @@ la música (89 golpes sola) y la cuenta de `construir.sh` (hoy 85).
   `render.mjs` avisa cuáles no cargaron. El dado son unas 100.
 - **El servidor local se cae** en sesiones largas: `construir.sh` avisa si `SITIO` no responde.
 - La Copa del video es la demo del laboratorio (`?test&labs&demo=podium`): no toca Firebase.
+- **Check that `SITIO` serves this worktree** (`lsof -iTCP:<port>` and its `cwd`): with several
+  sessions, a port that seems free may be another session's server, and the captures come from its
+  worktree. v7 was captured that way, from a worktree a few commits behind `main`.
+- **Línea de Tiempo's deal changes with the app** (D-378 took the shuffle out of the game): in v7
+  the card placed after 2001 came out wrong, so it goes in the first slot now. Check that the last
+  capture says "¡Correcto!".
 
 ## Para YouTube
 
@@ -281,17 +305,21 @@ para fiestas, juegos gratis, uno al día, la copa, dudo, batalla naval, reinas, 
 
 ### Lo subido
 
+Since v7 the videos go to the game's own channel (signed in as hola@juegosdesalon.cl), uploaded by
+the owner from the phone; the v6 ones stay on @eljotairi.
+
 | Versión | Formato | Enlace | Estado |
 |---|---|---|---|
 | v6 | 16:9 | <https://youtu.be/fQ4uFaPX_4g> | 2026-10-08: no listado (H.264, miniatura del logo) |
 | v6 | Short | <https://youtube.com/shorts/RYAvj2MTRPQ> | 2026-10-08: no listado (H.264, miniatura vertical del logo) |
+| v7 | Short ES | <https://youtube.com/shorts/zM9v2UwEsM8> | 2026-10-21: public, in the home page share sheet (D-410) |
+| v7 | Short EN | <https://youtube.com/shorts/UubTGcUoQD8> | 2026-10-21: public, in the home page share sheet (D-410) |
 | v6, 1.ª subida | 16:9 y Short | `_HwYxd0buog`, `e4dMm0npWOM` | Privados: en H.265 empezaban en Dudo. Borrarlos lo hace el dueño (Claude no borra videos: es permanente) |
 
-- **La portada muestra el último video** (D-253): al subir una versión nueva, se cambia `TRAILERS`
-  en `public/assets/js/compartir-portada.js` (el id del 16:9, en la entrada de su idioma) y su miniatura,
-  `public/assets/img/trailer.jpg` (la de `output/miniatura-youtube.jpg`). La hoja de compartir sale
-  solo en los idiomas que tienen video (hoy, español, D-254): un video en inglés, portugués o
-  alemán se suma como una entrada más de `TRAILERS`, con su miniatura.
+- **The home page shows the latest Shorts** (D-410): when a new version is uploaded, change the ids
+  in `SHORTS` in `public/assets/js/compartir-portada.js` (Spanish and English tabs; every language
+  other than Spanish opens on English). The sheet no longer uses the 16:9 or its thumbnail
+  (`public/assets/img/trailer.jpg` stays, for the share tutorial).
 - **Miniaturas:** `output/miniatura-youtube.jpg` (1280×720) y `output/miniatura-short.jpg`
   (720×1280), sacadas de la escena del logo (`render.mjs --fotos … --tiempos 4.6`). Sin miniatura
   propia, YouTube elige un cuadro del medio (en la v6, Uno al día). Se suben en *Details →
@@ -350,7 +378,7 @@ y los dos fundidos. Al registrarlo en el repo se fijó también el azar de `cryp
 `jugar.mjs`: las capturas que se rehagan desde ahora pueden mostrar otras palabras que las de la
 v5 (en la v5 El Ahorcado adivina "PISCO").
 
-### v6 · 2026-10-08 · 39,2 s, vertical y 16:9 (la de hoy)
+### v6 · 2026-10-08 · 39,2 s, vertical y 16:9
 > "Rehace el vídeo promocional con todo lo nuevo, pero reduce el contenido a 35 segundos. No lo
 > hagas muy denso en contenido. Elige un subconjunto de juegos a mostrar, luego Uno al Día y luego
 > La Copa."
@@ -374,8 +402,20 @@ se graba en cámara lenta (`lento`, `tras`) y sale a ~30 cuadros por segundo; ¿
 globo con el dedo, lo acerca y el mapa vuela a Chile al confirmar. Volvió "¡Y muchos más juegos!"
 con los diez juegos restantes (suma 🧶 Desenredo, que no estaba en la v5). Quedó en 39,2 s.
 
+### v7 · 2026-10-21 · 39,2 s, vertical and 16:9, and a vertical in English
+> "Help me upload the promo video we have in marketing… I don't know if it's stale with all the
+> changes made since its creation. If so, create a new one." Then: "Make the Short in English too."
+
+It was stale: five games had reached the home page since v6 (Generala, Julepe, Rutas rotas, Loteo
+and Pintaminas) and the grid promises every other game. They were added to `jugar.mjs` (Rutas rotas
+solved in its minimum by searching the engine's rectangles; Loteo's whole first board; Pintaminas
+painting from the engine's solution) and the grid went to 15 phones. Everything was recaptured with
+app 0.190.2; Línea de Tiempo's card moved to the first slot (see Trampas). Then the English vertical
+(see [In English](#in-english)). The owner uploaded both Shorts from the phone to the game's new
+channel, and the home page share sheet now plays them, in Spanish and English tabs (D-410).
+
 ## Ideas que quedaron en el aire
 
 - Una miniatura de 1280×720 para YouTube (un cuadro de "¡JUNTOS SE JUEGA MEJOR!" o del podio).
-- Versiones en inglés, portugués y alemán del video: los textos están todos en `promo.html` y la app ya
-  se captura en cualquier idioma (`juegos-de-salon:lang` en `jugar.mjs`).
+- Portuguese and German versions, and the 16:9 in English: the mechanism is there since v7 (see
+  [In English](#in-english)).

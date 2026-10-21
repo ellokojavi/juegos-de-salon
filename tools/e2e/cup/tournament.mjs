@@ -125,6 +125,14 @@ const playNumber = async level => {
   const wrong = ['0123456789'.split('').filter(d => !secret.includes(d)).slice(0, digits).join(''), secret.split('').reverse().join('')];
   for (const guess of [...wrong.slice(0, level === 2 ? 0 : level === 1 ? 1 : 2), secret]) {
     if (!await ev(`!!document.querySelector('.keypad .ok')`)) break;
+    // With a lab key (localhost opens it, D-409), the right guess starts by tapping the last box
+    const choose = await ev(`!!document.querySelector('.entry--elegir')`);
+    if (guess === secret) ok(choose, "La Copa's 🔢: with a lab key, tapping a box chooses where the digit goes");
+    if (guess === secret && choose) {
+      await ev(`document.querySelectorAll('.entry .box')[${digits - 1}].click(); 1`);
+      await typeKeypad(secret.at(-1) + secret.slice(0, -1));
+      continue;
+    }
     await typeKeypad(guess);
   }
 };
@@ -665,8 +673,9 @@ if (runs('labs')) {
   await b.go(`${SITE}/labs/`, 1500);
   // Only what hasn't shipped stays in the lab (D-262): each section leads to its prototype's
   // page, at /labs/<folder>/ (El caso, D-267…), and La Copa is no longer there
+  // An improvement (being tried, or launched and kept in La Bodega) opens the real page it changes (D-409)
   const sections = await ev(`JSON.stringify([...document.querySelectorAll('section.seccion')].map(x => [x.id, x.querySelector('a.btn')?.getAttribute('href')]))`).then(JSON.parse);
-  ok(sections.length >= 1 && sections.some(([id, h]) => id === 'seccion-caso' && h === 'case/') && sections.every(([, h]) => /^[a-z-]+\/$/.test(h || '')) && !await ev(`!!document.getElementById('minis')`),
+  ok(sections.length >= 1 && sections.some(([id, h]) => id === 'seccion-caso' && h === 'case/') && sections.every(([, h]) => /^(\.\.\/)?[a-z-]+\/$/.test(h || '')) && !await ev(`!!document.getElementById('minis')`),
     `the lab offers only prototypes, each in its folder (${sections.map(([, h]) => h).join(' ')})`);
   await b.shot('10-labs');
   // A link from before D-266, with the parameters in Spanish: still arrives, and in English

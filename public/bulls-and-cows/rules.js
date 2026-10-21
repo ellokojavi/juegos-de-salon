@@ -36,7 +36,7 @@ const ES = {
   // play
   solvedIn: '¡Lo sacaste en {n} {word}!', waitingFinish: 'Esperando a que {name} lo saque…',
   turnYou: '¡Te toca! Adivina el de {name}', turnOther: 'Le toca a {name}…', waitingReply: 'Esperando la respuesta…', round: 'Ronda {n}',
-  blockHint: '💡 Mantén apretada una cifra para tacharla. Repite para destacharla.',
+  blockHint: '💡 Toca una casilla para elegir dónde va la cifra. Mantén apretada una cifra para tacharla; repite para destacharla.',
   mySecret: 'Tu número secreto', tapToShow: 'toca para ver', tapToHide: 'toca para ocultar',
   guess: 'Probar', famas: 'famas', toques: 'toques', fama: 'fama', toque: 'toque', none: 'nada', famaShort: 'F', toqueShort: 'T',
   boardOf: 'Intentos de {name}', noGuesses: 'Aún sin intentos', tries: '{n} {word}', tryOne: 'intento', tryMany: 'intentos',
@@ -91,7 +91,7 @@ const EN = {
   waitingSecret: 'Waiting for {name} to pick a secret number', bothReady: 'Both ready!',
   solvedIn: 'You cracked it in {n} {word}!', waitingFinish: 'Waiting for {name} to crack it…',
   turnYou: 'Your turn! Guess {name}\'s number', turnOther: '{name}\'s turn…', waitingReply: 'Waiting for the reply…', round: 'Round {n}',
-  blockHint: '💡 Long-press a digit to cross it out. Do it again to bring it back.',
+  blockHint: '💡 Tap a box to choose where the digit goes. Long-press a digit to cross it out; do it again to bring it back.',
   mySecret: 'Your secret number', tapToShow: 'tap to show', tapToHide: 'tap to hide',
   guess: 'Guess', famas: 'bulls', toques: 'cows', fama: 'bull', toque: 'cow', none: 'nothing', famaShort: 'B', toqueShort: 'C',
   boardOf: '{name}\'s guesses', noGuesses: 'No guesses yet', tries: '{n} {word}', tryOne: 'guess', tryMany: 'guesses',
@@ -148,7 +148,7 @@ const PT = {
   // jogo
   solvedIn: 'Você descobriu em {n} {word}!', waitingFinish: 'Esperando {name} descobrir…',
   turnYou: 'Sua vez! Descubra o número de {name}', turnOther: 'Vez de {name}…', waitingReply: 'Esperando a resposta…', round: 'Rodada {n}',
-  blockHint: '💡 Segure um algarismo para riscá-lo. Repita para desfazer.',
+  blockHint: '💡 Toque numa casa para escolher onde vai o algarismo. Segure um algarismo para riscá-lo; repita para desfazer.',
   mySecret: 'Seu número secreto', tapToShow: 'toque para ver', tapToHide: 'toque para esconder',
   guess: 'Tentar', famas: 'famas', toques: 'toques', fama: 'fama', toque: 'toque', none: 'nada', famaShort: 'F', toqueShort: 'T',
   boardOf: 'Tentativas de {name}', noGuesses: 'Ainda sem tentativas', tries: '{n} {word}', tryOne: 'tentativa', tryMany: 'tentativas',
@@ -207,7 +207,7 @@ const DE = {
   // Spiel
   solvedIn: 'Geknackt: {n} {word}!', waitingFinish: 'Warte, bis {name} sie knackt…',
   turnYou: 'Du bist dran! Rate die Zahl von {name}', turnOther: '{name} ist dran…', waitingReply: 'Warte auf die Antwort…', round: 'Runde {n}',
-  blockHint: '💡 Halte eine Ziffer gedrückt, um sie durchzustreichen. Nochmal, um das zurückzunehmen.',
+  blockHint: '💡 Tippe auf ein Feld, um zu wählen, wohin die Ziffer kommt. Halte eine Ziffer gedrückt, um sie durchzustreichen; nochmal, um das zurückzunehmen.',
   mySecret: 'Deine geheime Zahl', tapToShow: 'tippen zum Zeigen', tapToHide: 'tippen zum Verbergen',
   guess: 'Raten', famas: 'Bullen', toques: 'Kühe', fama: 'Bulle', toque: 'Kuh', none: 'nichts', famaShort: 'B', toqueShort: 'K',
   boardOf: 'Versuche von {name}', noGuesses: 'Noch keine Versuche', tries: '{n} {word}', tryOne: 'Versuch', tryMany: 'Versuche',

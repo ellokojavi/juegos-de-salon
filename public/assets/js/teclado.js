@@ -29,18 +29,39 @@ export const LONG_PRESS_MS = 450;
  * @param {boolean} [o.hidden]              tapar lo escrito (el número secreto en un celular)
  * @param {Set<string>|null} [o.notes]      las teclas tachadas, si el juego tiene notas
  * @param {() => void} [o.onNotesChange]
+ * @param {boolean} [o.elegir]              tapping a box chooses it: the next key goes there, not
+ *   always to the right of what is written (#604; for everyone in Toque y Fama since D-409).
+ *   `puede` then receives what is in the other boxes and the chosen box. It can also be turned
+ *   on later with `activarElegir()` on the returned element.
  */
-export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, columnas = 3, acciones = 'fin', hidden = false, notes = null, onNotesChange = null }) {
-  let value = '';
-  const boxes = Array.from({ length: largo }, () => el('div', { class: 'box' }));
-  const entry = el('div', { class: 'entry' }, ...boxes);
+export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, columnas = 3, acciones = 'fin', hidden = false, notes = null, onNotesChange = null, elegir: elegirAlInicio = false }) {
+  // Una casilla por posición: con `elegir` puede quedar un hueco al medio
+  let elegir = elegirAlInicio;
+  const slots = Array(largo).fill('');
+  let cursor = 0;
+  const value = () => slots.join('');
+  const firstEmpty = (from = 0) => { for (let k = 0; k < largo; k++) { const i = (from + k) % largo; if (!slots[i]) return i; } return from; };
+  // Dónde va la próxima tecla: sin `elegir` y con todo lleno, ninguna (como antes, a la derecha)
+  const at = () => (!elegir && slots.every(Boolean) ? largo : cursor);
+  const others = () => slots.filter((x, i) => x && i !== at()).join('');
+  const full = () => slots.every(Boolean);
+  // Con `elegir` un hueco al medio no se confirma; sin él, lo escrito es siempre contiguo
+  const listo = () => (!elegir || full()) && valido(value());
+  const boxes = Array.from({ length: largo }, (_, i) => el('div', { class: 'box', onClick: () => { if (!elegir) return; cursor = i; SFX.tap(); refresh(); } }));
+  const entry = el('div', { class: 'entry' + (elegir ? ' entry--elegir' : '') }, ...boxes);
   const keys = [];
-  const ok = el('button', { class: 'ok', disabled: true, onClick: () => { if (valido(value)) { SFX.tap(); const v = value; value = ''; refresh(); onSubmit(v); } } }, submitLabel);
-  const del = el('button', { class: 'del', 'aria-label': '⌫', onClick: () => { value = value.slice(0, -1); SFX.tap(); refresh(); } }, '⌫');
+  const clear = () => { slots.fill(''); cursor = 0; };
+  const ok = el('button', { class: 'ok', disabled: true, onClick: () => { if (listo()) { SFX.tap(); const v = value(); clear(); refresh(); onSubmit(v); } } }, submitLabel);
+  const del = el('button', { class: 'del', 'aria-label': '⌫', onClick: () => {
+    if (elegir && slots[cursor]) slots[cursor] = '';
+    else { let i = elegir ? cursor - 1 : largo - 1; while (i >= 0 && !slots[i]) i--; if (i >= 0) { slots[i] = ''; cursor = i; } }
+    if (!elegir) cursor = firstEmpty();
+    SFX.tap(); refresh();
+  } }, '⌫');
   const refresh = () => {
-    boxes.forEach((b, i) => { b.textContent = value[i] || ''; b.className = 'box' + (value[i] ? ' filled' : '') + (hidden && value[i] ? ' hidden-digit' : '') + (i === value.length ? ' active' : ''); });
-    keys.forEach(k => { const d = k.dataset.d; const blocked = notes ? notes.has(d) : false; k.classList.toggle('blocked', blocked); k.disabled = !blocked && !puede(value, d); });
-    ok.disabled = !valido(value);
+    boxes.forEach((b, i) => { b.textContent = slots[i]; b.className = 'box' + (slots[i] ? ' filled' : '') + (hidden && slots[i] ? ' hidden-digit' : '') + (i === cursor && !full() || elegir && i === cursor ? ' active' : ''); });
+    keys.forEach(k => { const d = k.dataset.d; const blocked = notes ? notes.has(d) : false; k.classList.toggle('blocked', blocked); k.disabled = !blocked && !puede(others(), d, at()); });
+    ok.disabled = !listo();
   };
   const key = d => {
     let timer = null, longPressed = false;
@@ -48,13 +69,13 @@ export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, c
       onClick: () => {
         if (longPressed) { longPressed = false; return; }
         if (notes && notes.has(d)) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); vibrate([20, 30, 20]); return; }
-        if (puede(value, d)) { value += d; vibrate(8); SFX.tap(); refresh(); }
+        if (puede(others(), d, at())) { slots[at()] = d; cursor = firstEmpty(cursor); vibrate(8); SFX.tap(); refresh(); }
       },
       onPointerdown: () => {
         if (!notes) return;
         timer = setTimeout(() => {
           timer = null; longPressed = true;
-          if (notes.has(d)) notes.delete(d); else { notes.add(d); value = value.split(d).join(''); }
+          if (notes.has(d)) notes.delete(d); else { notes.add(d); slots.forEach((x, i) => { if (x === d) slots[i] = ''; }); if (!elegir) { const v = value(); slots.fill(''); [...v].forEach((x, i) => { slots[i] = x; }); } cursor = firstEmpty(elegir ? cursor : 0); }
           vibrate([30, 40, 30]); SFX.dice(); refresh(); onNotesChange && onNotesChange();
         }, LONG_PRESS_MS);
       },
@@ -72,7 +93,9 @@ export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, c
     ? el('div', { class: 'keypad' }, ...celdas.slice(0, -1), del, celdas[celdas.length - 1], ok)
     : el('div', { class: 'keypad keypad--letras', style: `grid-template-columns: repeat(${columnas}, 1fr)` }, ...celdas, del, ok);
   refresh();
-  return el('div', {}, entry, pad);
+  const root = el('div', {}, entry, pad);
+  root.activarElegir = () => { if (elegir) return; elegir = true; entry.classList.add('entry--elegir'); cursor = firstEmpty(); refresh(); };
+  return root;
 }
 
 /** Las diez cifras en el orden del teclado de Toque y Fama: 1 a 9 y el 0 al final. */

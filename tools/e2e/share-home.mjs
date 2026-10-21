@@ -1,8 +1,10 @@
-// The home page share button (D-226, D-242): in Spanish it opens a sheet with the video and two
-// options (D-253); in the languages without a video it shares directly, as before (D-254). In each
+// The home page share button (D-226, D-242): in every language it opens a sheet with the vertical
+// video, in a Spanish and an English tab (Spanish opens on Spanish, every other language on English),
+// playing on its own, and two options (D-253, D-410). In each
 // language, the invitation sends, with a phone that shares files, that language's social card along
 // with the text, and "Compartir el video" sends the video's text with its YouTube link; on a
-// computer, only the copied text and nothing downloaded. The video isn't loaded until it is tapped.
+// computer, only the copied text and nothing downloaded. While the sheet is open the home page behind
+// it does not scroll.
 // Usage: node tools/e2e/share-home.mjs /tmp/share-home
 import { output as output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
@@ -28,20 +30,24 @@ for (const [lang, e] of Object.entries(EXPECTED)) {
   await b.go(`${SITE}/?lang=${lang}`, 1500);
   await b.evaluate(PHONE);
   // The photo is fetched on tap, if it wasn't fetched before; the tap waits for it
-  await b.evaluate(`document.querySelector('#share-slot button').click(); 1`); await sleep(lang === 'es' ? 500 : 1200);
-  if (lang === 'es') {
-    // In Spanish, the sheet with the video (D-253)
-    check(await b.evaluate(`!!document.querySelector('#hoja-compartir .hoja-video-play img') && !document.querySelector('#hoja-compartir iframe')`), `${lang}: the button opens the sheet, with the video thumbnail and without loading it`);
-    await b.evaluate(`document.getElementById('btn-compartir-video').click(); 1`); await sleep(600);
-    const v = await b.evaluate(`JSON.stringify(window.__menu || null)`).then(JSON.parse);
-    check(v && v.text.startsWith('🎬 ') && /^🔗 https:\/\/youtu\.be\/[\w-]+$/.test(v.text.trim().split('\n').pop()) && !v.files.length, `${lang}: "Compartir el video" sends its text with the YouTube link at the end (${v?.text?.split('\n').pop()})`);
-    await b.evaluate(`window.__menu = null; document.getElementById('btn-invitar-portada').click(); 1`); await sleep(1200);
-  } else {
-    // In a language without a video, the button shares directly, as before (D-254)
-    check(await b.evaluate(`!document.getElementById('hoja-compartir')`), `${lang}: without a video in its language, there is no sheet`);
-  }
+  await b.evaluate(`document.querySelector('#share-slot button').click(); 1`); await sleep(500);
+  // The sheet, on its language's tab, with that tab's Short playing muted (D-410)
+  const tab = lang === 'es' ? 'es' : 'en', other = tab === 'es' ? 'en' : 'es';
+  const ID = { es: 'zM9v2UwEsM8', en: 'UubTGcUoQD8' };
+  const v0 = await b.evaluate(`JSON.stringify({ on: document.querySelector('#hoja-compartir .hoja-pestana.on')?.dataset.k, src: document.querySelector('#hoja-compartir iframe')?.src })`).then(JSON.parse);
+  check(v0.on === tab && v0.src?.includes(`/embed/${ID[tab]}?`) && /autoplay=1/.test(v0.src) && /mute=1/.test(v0.src), `${lang}: the sheet opens on the ${tab} tab, its Short autoplaying muted`);
+  await b.evaluate(`window.__menu = null; document.getElementById('btn-compartir-video').click(); 1`); await sleep(600);
+  const v = await b.evaluate(`JSON.stringify(window.__menu || null)`).then(JSON.parse);
+  check(v && v.text.startsWith('🎬 ') && v.text.trim().split('\n').pop() === `🔗 https://youtube.com/shorts/${ID[tab]}` && !v.files.length, `${lang}: "share the video" sends its text with the tab's Short at the end (${v?.text?.split('\n').pop()})`);
+  // The other tab: its Short plays and is the one shared
+  await b.evaluate(`document.getElementById('pestana-video-${other}').click(); 1`); await sleep(400);
+  const v1 = await b.evaluate(`JSON.stringify({ on: document.querySelector('#hoja-compartir .hoja-pestana.on')?.dataset.k, src: document.querySelector('#hoja-compartir iframe')?.src, sel: document.getElementById('pestana-video-${other}').getAttribute('aria-selected') })`).then(JSON.parse);
+  await b.evaluate(`window.__menu = null; document.getElementById('btn-compartir-video').click(); 1`); await sleep(600);
+  const v2 = await b.evaluate(`JSON.stringify(window.__menu || null)`).then(JSON.parse);
+  check(v1.on === other && v1.sel === 'true' && v1.src?.includes(`/embed/${ID[other]}?`) && v2?.text.trim().endsWith(`https://youtube.com/shorts/${ID[other]}`), `${lang}: the ${other} tab plays and shares its own Short`);
+  await b.evaluate(`window.__menu = null; document.getElementById('btn-invitar-portada').click(); 1`); await sleep(1200);
   const m = await b.evaluate(`JSON.stringify(window.__menu || null)`).then(JSON.parse);
-  check(m, `${lang}: ${lang === 'es' ? '"Invitar a jugar"' : 'the button'} opens the system menu`);
+  check(m, `${lang}: the invite option opens the system menu`);
   if (!m) continue;
   check(m.files.length === 1 && m.files[0].name === e.file && m.files[0].type === 'image/jpeg' && m.files[0].size > 50000, `${lang}: the card goes as an image (${JSON.stringify(m.files[0])})`);
   const photos = await b.evaluate(`JSON.stringify(performance.getEntriesByType('resource').filter(e => /assets\\/og\\//.test(e.name)).map(e => e.name.split('/').pop()))`).then(JSON.parse);
@@ -51,6 +57,19 @@ for (const [lang, e] of Object.entries(EXPECTED)) {
   check(link === `🔗 https://juegosdesalon.cl/${lang === 'es' ? '' : `${lang}/`}?from=link`, `${lang}: the link to the language's home page, only on the last line (${link})`);
   console.log(m.text.replace(/^/gm, '    '));
 }
+// The page behind the open sheet does not scroll, and closing it leaves the page where it was
+await b.go(`${SITE}/?lang=es&test`, 1500);
+const lock = await b.evaluate(`(async () => {
+  const w = ms => new Promise(r => setTimeout(r, ms));
+  scrollTo(0, 400); await w(200); const antes = scrollY;
+  document.querySelector('#share-slot button').click(); await w(400);
+  scrollBy(0, 300); document.scrollingElement.scrollTop += 300; await w(200);
+  const fijo = getComputedStyle(document.body).position === 'fixed' && document.body.getBoundingClientRect().top === -antes;
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); await w(300);
+  return JSON.stringify({ antes, fijo, despues: scrollY, estilo: document.body.getAttribute('style') });
+})()`).then(JSON.parse);
+check(lock.antes > 0 && lock.fijo, `with the sheet open the page behind stays put (${JSON.stringify(lock)})`);
+check(lock.despues === lock.antes && !/fixed/.test(lock.estilo || ''), 'closing the sheet puts the page back where it was');
 // A computer: no menu, the text gets copied, the button says ✅ and no image is fetched.
 // Headless Chrome does have navigator.canShare: it is removed before the page loads, or the
 // home page fetches the card ahead of time and the image count comes out wrong

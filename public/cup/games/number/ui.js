@@ -8,6 +8,7 @@
  */
 import * as motor from './engine.js';
 import { teclado, CIFRAS } from '../../../assets/js/teclado.js';
+import { labAccess } from '../../../assets/js/lab-access.js';
 import { LOCALES as TYF_LOCALES } from '../../../bulls-and-cows/rules.js';
 
 export const TYF = TYF_LOCALES.es;
@@ -55,6 +56,10 @@ export function montar(raiz, ctx) {
   const notas = new Set(J.n);
   const guardar = () => ctx.guardar({ i: J.i, n: [...notas] });
 
+  // Elegir la casilla (#604): Toque y Fama, jugando solo, la trae prendida; en La Copa, por ahora solo
+  // con llave del lab (D-409). lab: #seccion-copa-casilla
+  const elegir = ctx.elegir ?? labAccess();
+  const elegible = pad => { Promise.resolve(elegir).then(ok => { if (ok) pad.activarElegir(); }); return pad; };
   const dibujar = () => {
     const e = motor.estado(p, J.i, max);
     // Terminado el tablero, el tiempo se detiene aquí y no al tocar el botón (D-130)
@@ -69,7 +74,7 @@ export function montar(raiz, ctx) {
     } else {
       const quedan = max - e.usados;
       caja.append(el('p', { class: 'muted center', style: 'margin:0' }, quedan === 1 ? T.tryLeft1 : fmt(T.triesLeft, { n: quedan })),
-        teclado({
+        elegible(teclado({
           largo: p.cifras, teclas: CIFRAS, submitLabel: TYF.guess, notes: notas, onNotesChange: guardar,
           valido: v => motor.valido(v, p.cifras),
           puede: (v, d) => !v.includes(d) && v.length < p.cifras,
@@ -79,7 +84,7 @@ export function montar(raiz, ctx) {
             if (u.famas === p.cifras) { SFX.win(); vibrate([30, 50, 30]); } else SFX.reveal();
             dibujar();
           },
-        }),
+        })),
         el('p', { class: 'block-hint' }, T.blockHintDigits)); // "tachar", como en Palabra y en las reglas (U-5)
     }
     caja.append(tablero(el, { filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) }));
