@@ -167,7 +167,7 @@ that (after a new game, after a big text change), saying why.
    can resolve them this round, do it first and answer them all together.
    1. Write only the specific answers in a text file, **in the language the feedback was written
       in** (Spanish, English, Portuguese or German; if it mixes, the one most of it is in): what
-      you did or what will happen, in two to four plain sentences, warm and grateful, neutral
+      you did or what will happen, **short** (the owner's rule: people read less and less; about 50 words, one short sentence per idea, no thanks the opening already gives), warm and grateful, neutral
       language (no local slang), no jargon, no PR or issue numbers, and **no em or en dashes**
       (the tool refuses them). With several reports, each answer goes under a line `#<n>`; the
       email quotes the start of each comment above its answer. The greeting, one of ten friendly
