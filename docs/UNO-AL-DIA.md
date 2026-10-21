@@ -704,19 +704,23 @@ It explores one number that ranks players in a **monthly season** (everyone star
 - **Navigation:** the home card would open the player's Uno al día hub (points and rank first, then
   play, streak, wildcards, ranking and calendar) instead of rolling the dice; Uno al día's notices
   and links open it too (D-412). "¿Cómo se ganan los puntos?" is a link under the chase line.
-- **The owner's answers (D-412):** monthly season, its end shown in a form chosen in the lab (days
-  left, closing date or span); a 🏆 champion badge next to the name of last month's winner;
+- **The owner's answers (D-412):** monthly season, its end shown as "quedan X días" (the owner chose it
+  in the lab, 2026-10-21); a 🏆 champion badge next to the name of last month's winner;
   inviting gives a 🧊 and +10 points (`INVITE_POINTS`, tunable).
 
 The rules are pure functions in `public/labs/daily-score/score.js` (over the same history and
 streak rules as `uno-al-dia.js`), tested by `score.test.mjs`. The page lists its open questions for
 the owner; nothing goes to players until validated in the lab.
 
-**The real screens (`/labs/daily-score/live/`).** "Tu Uno al día" with real data, lab key only: the
-season line (in the form chosen there), the month's points and place read from
+**The real screens (`/labs/daily-score/live/`).** "Uno al día" (title on the right) with real data,
+lab key only: the season line ("quedan X días", in white), the month's points in large rainbow
+digits (the titles' `.rainbow`), the month's points and place read from
 `records/uno-al-dia-pts/`, "Te faltan X pts para pasar a Y" with the "¿Cómo se ganan los puntos?"
 link, the 👑 banner and 🏆 for last month's champion, streak, wildcards, today's bonus, play, sign
-in, invite (+10 pts, shown but not saved yet), the ranking and the month's calendar. On opening it
+in, one invite card (the site's `tarjetaInvitar` with the +10 pts line; shown but not saved yet), the
+ranking, the month's calendar (each day up to today is a button that opens its details: game, its
+score, streak, bonus, points, or the 🧊 that saved it) and a footer (home, rankings, today's game,
+💬 Sugerencias y comentarios, the lab note). On opening it
 adds this month's days that do not count yet, in order; signing in on the result adds today's too
 (`sincronizar`). **One ranking everywhere:** the month's points are `bloqueRanking` from
 `ranking.js` with the tabs `mes` and `amigosMes` (🏆 next to last month's champion, 🔥 the streak),
