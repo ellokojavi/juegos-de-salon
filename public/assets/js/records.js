@@ -87,6 +87,15 @@ export const PERIODO = /^(siempre|s[0-9]{4}-[0-9]{2}|d[0-9]{5})$/;
 /** Las tablas de Uno al día (D-230): el puntaje del día y la suma de la semana, y la mejor racha. */
 export const UNO_AL_DIA = 'uno-al-dia';
 export const UAD_RACHA = 'uno-al-dia-racha';
+/**
+ * Uno al día points (lab, D-412): one table per month, `s<yyyy>-<mm>` (a month, not a week: the table
+ * has no weeks). Each day adds its game score plus the streak bonus, +5 a day up to +50; `r` is the
+ * streak counted up to 10, and the rules let it grow at most one per day added.
+ */
+export const UAD_PUNTOS = 'uno-al-dia-pts';
+export const periodoMes = fecha => `s${fecha.slice(0, 7)}`;
+export const RACHA_TOPE = 10;
+export const bonoRacha = r => Math.min(RACHA_TOPE, Math.max(0, r)) * 5;
 /** El período de un día de Uno al día, por su número. */
 export const periodoDia = n => `d${n}`;
 /** Las semanas parten el lunes a medianoche en Chile, donde vive la app. */

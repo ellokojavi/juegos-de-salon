@@ -4,7 +4,7 @@
  * las pruebas con node, los guiones de punta a punta y el sitio servido en localhost, para que
  * nada de eso escriba en los rankings de verdad.
  */
-import { claveOrden, S_MAX, MS_MAX, esCuenta } from './records.js';
+import { claveOrden, S_MAX, MS_MAX, esCuenta, UAD_PUNTOS, bonoRacha } from './records.js';
 
 const DB = 'juegos-de-salon:prueba:records-db';
 const UID = 'juegos-de-salon:prueba:records-uid';
@@ -93,15 +93,24 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
           if (r.s !== (antes?.s || 0) + leerEn(nuevo, `${h}/s`)) return false;
         }
       }
+      // Uno al día points (lab, D-412): a month adds one day of the history once (`p` is set in the
+      // same write), its game score plus the streak bonus; the streak `r` grows at most one a day
+      if (p[1] === UAD_PUNTOS) {
+        const h = `unoAlDia/${jid}/${r.u}`;
+        if (!/^s[0-9]{4}-[0-9]{2}$/.test(p[2]) || r.ms !== 0 || !/^[0-9]{5}$/.test(r.u || '')) return false;
+        if (!(Number.isInteger(r.r) && r.r >= 1 && r.r <= 10 && r.r <= (antes ? antes.r + 1 : 10))) return false;
+        if (leerEn(nuevo, `${h}/p`) !== true || leerEn(viejo, `${h}/p`) != null) return false;
+        if (r.s !== (antes?.s || 0) + leerEn(nuevo, `${h}/s`) + bonoRacha(r.r)) return false;
+      }
       return !antes || r.k < antes.k;
     }
     // La historia de Uno al día: un día se escribe una vez; después solo se le pone `w`
     if (rama === 'unoAlDia') {
       if (!sentado(viejo, a) || !/^[0-9]{5}$/.test(b || '')) return false;
-      if (p.length === 4 && c === 'w') return leerEn(viejo, ruta) == null && leerEn(nuevo, ruta) === true;
+      if (p.length === 4 && (c === 'w' || c === 'p')) return leerEn(viejo, ruta) == null && leerEn(nuevo, ruta) === true;
       const x = leerEn(nuevo, ruta);
       return p.length === 3 && leerEn(viejo, ruta) == null && !!x && typeof x.j === 'string' && x.s >= 0 && x.s <= 100 && x.ms >= 0 && typeof x.at === 'number'
-        && Object.keys(x).every(k => ['j', 's', 'ms', 'at', 'w'].includes(k));
+        && Object.keys(x).every(k => ['j', 's', 'ms', 'at', 'w', 'p'].includes(k));
     }
     // Quién aceptó una invitación (D-230): cada celular una vez, y nadie se invita a sí mismo
     if (rama === 'invitados') {

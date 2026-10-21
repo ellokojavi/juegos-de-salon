@@ -27,7 +27,7 @@ import { tiene } from './parametros.js';
 import {
   claveNombre, limpiarNombre, esPin, esJid, nuevoJid, hashPinJugador, tablaId, normalizar, esMejor, semana,
   SIEMPRE, TODOTERRENO, todoterreno, vistaTabla, ordenar, VARIANTE_VICTORIAS, claveOrden, PARTIDAS, esPais,
-  UNO_AL_DIA, UAD_RACHA, periodoDia, MS_MAX,
+  UNO_AL_DIA, UAD_RACHA, periodoDia, MS_MAX, UAD_PUNTOS, RACHA_TOPE, bonoRacha,
 } from './records.js';
 
 /** Lo que entiende Firebase (y el almacén de prueba) como "la hora del servidor" y "sumar uno". */
@@ -378,6 +378,25 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         }
       } catch (_) { /* la tabla de rachas es aparte */ }
       return out;
+    },
+
+    /**
+     * Uno al día points (lab, D-412): adds day `n` of the history to the month `mesP` once, its game
+     * score plus the streak bonus of `racha` (counted up to 10). Only for lab key holders for now:
+     * the caller asks `labAccess()` (lab: #seccion-puntos-dia). Returns true if it added the day.
+     */
+    async anotarPuntosDia({ n, mesP, racha }) {
+      const yo = api.yo();
+      if (!yo || !Number.isInteger(n) || !/^s[0-9]{4}-[0-9]{2}$/.test(mesP || '')) return false;
+      const h = `unoAlDia/${yo.jid}/${n}`;
+      const hist = await almacen.get(h).catch(() => null);
+      if (!hist || hist.p) return false;
+      const ruta = `records/${UAD_PUNTOS}/${mesP}/${yo.jid}`;
+      const antes = await almacen.get(ruta).catch(() => null);
+      const r = Math.max(1, Math.min(RACHA_TOPE, racha, antes ? antes.r + 1 : RACHA_TOPE));
+      const s = (antes?.s || 0) + hist.s + bonoRacha(r);
+      await almacen.update({ [`${h}/p`]: true, [ruta]: { s, ms: 0, k: claveOrden(s, 0), at: HORA, ...quien(yo), u: String(n), r } });
+      return true;
     },
 
     /** La historia de Uno al día de un jugador (el propio, si no se dice): `{ n: { j, s, ms } }`. */
