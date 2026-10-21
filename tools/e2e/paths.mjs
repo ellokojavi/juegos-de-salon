@@ -172,6 +172,9 @@ export const PATHS = {
       `(async()=>{for(let k=0;k<5;k++){for(const r of __loteo.P.t.solucion)__loteo.dibujar(r);await new Promise(r=>setTimeout(r,2000));}})()`,
       ...Array(12).fill(`1`)],
     gaveup: [LT_NUMBERS, `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, `document.getElementById('btn-rendirse').click()`, `document.getElementById('btn-rendirse').click()`, `1`],
+
+    // Hint armed (#441): «Toca de nuevo (−10)», the longest label, fits in its half without wrapping
+    armed: [LT_NUMBERS, `1`, START, `1`, `1`, `1`, `1`, `1`, `1`, `__loteo.dibujar(__loteo.P.t.solucion[0])`, `1`, `document.getElementById('btn-ayuda').click()`],
   },
   pintaminas: {
     intro: [PM_VARIANT('easy'), `1`, `1`],
