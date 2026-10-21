@@ -469,4 +469,4 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-256](decisions/D-256.md) | The case: a mystery prototype in the lab, Spanish only | replaced by D-261, D-264, D-267 |
 | [D-269](decisions/D-269.md) | Trick riddles, a prototype in the lab | revoked |
 
-Numbers never used: D-180.
+Numbers never used: D-180, D-330.
