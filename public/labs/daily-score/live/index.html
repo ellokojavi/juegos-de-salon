@@ -18,13 +18,14 @@
        the same block /records/ shows. */
     body { padding: 12px 10px 48px; }
     .wrap { max-width: 520px; margin: 0 auto; display: grid; gap: 12px; }
-    .barra { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .barra { display: grid; gap: 2px; }
     .barra a { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink); font-weight: 800; text-decoration: none; }
-    .barra h1 { margin: 0; font: 400 1.4rem var(--font-display); text-align: right; }
+    .barra a { justify-self: start; }
+    .barra h1 { margin: 0; font: 400 2.4rem/1.1 var(--font-display); text-align: center; }
     .hero { text-align: center; display: grid; gap: 4px; padding: 16px 10px; border-radius: 20px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.22), rgba(138, 77, 255, 0.28)); border: 1px solid rgba(255, 210, 63, 0.45); }
     .hero .temp { font-size: 0.78rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
     .hero .total { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
-    .hero .pts { font: 400 4.4rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+    .hero .pts { font: 400 4.4rem/1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--yellow); padding-right: 0.08em; }
     .hero .total small { font-size: 1.1rem; color: var(--muted); font-weight: 800; }
     .hero .puesto { font-weight: 900; font-size: 1.05rem; }
     .hero .caza { font-size: 0.88rem; color: var(--muted); font-weight: 700; }
@@ -35,8 +36,7 @@
     .trio div { display: grid; text-align: center; padding: 8px 2px; border-radius: 14px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); }
     .trio b { font: 400 1.5rem/1.1 var(--font-display); }
     .trio small { color: var(--muted); font-weight: 800; font-size: 0.72rem; }
-    .jugar { display: grid; gap: 2px; text-align: center; padding: 14px; border-radius: 18px; background: var(--yellow); color: #2a1600; font: 900 1.1rem var(--font-body); text-decoration: none; }
-    .jugar small { font-weight: 800; font-size: 0.8rem; opacity: 0.8; }
+    .jugar { width: 100%; }
     .listo { text-align: center; padding: 12px; border-radius: 18px; background: rgba(46, 230, 214, 0.18); border: 1px solid rgba(46, 230, 214, 0.5); font-weight: 800; }
     .caja { padding: 12px; display: grid; gap: 8px; }
     .caja h2 { margin: 0; font-size: 1rem; }
@@ -56,6 +56,11 @@
     .detalle-dia dd { margin: 0; font-weight: 800; text-align: right; }
     .detalle-dia .suma { border-top: 1px solid var(--glass-border); padding-top: 6px; }
     .reglas { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 0.92rem; }
+    #calendario { position: relative; }
+    .flota { position: absolute; left: 8px; right: 8px; z-index: 5; padding: 12px 14px; border-radius: 16px; background: var(--bg2, #1d0b35); border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .flota h3 { margin: 0 40px 8px 0; font-size: 1rem; }
+    .flota .x { position: absolute; top: 2px; right: 2px; width: 44px; height: 44px; border: 0; background: none; color: var(--ink); font-size: 1.2rem; cursor: pointer; }
+    .cal > button.elegido { outline: 2px solid var(--cyan); outline-offset: -2px; }
     dialog { max-width: min(92vw, 440px); border-radius: 20px; border: 1px solid var(--glass-border); background: var(--bg2, #1d0b35); color: var(--ink); padding: 18px; }
     dialog::backdrop { background: rgba(0,0,0,0.6); }
     .lab { padding: 12px; display: grid; gap: 8px; border-style: dashed; }
@@ -69,15 +74,15 @@
 </head>
 <body>
   <div class="wrap" id="app">
-    <div class="barra"><a href="../../">‹ Laboratorio</a><h1>📅 Uno al día</h1></div>
+    <div class="barra"><a href="../../">‹ Laboratorio</a><h1><span class="rainbow">Uno al día</span></h1></div>
     <div id="corona"></div>
     <section class="hero" id="hero"><p class="muted" style="margin:0">Cargando…</p></section>
     <div class="trio" id="trio"></div>
     <div id="jugar"></div>
     <div id="entrar"></div>
     <div id="ranking"></div>
-    <div id="invitar"></div>
     <section class="panel caja" id="calendario"></section>
+    <div id="invitar"></div>
     <footer class="pie" id="pie">
       <nav aria-label="Más">
         <a href="../../../">🏠 Portada</a>
@@ -89,11 +94,6 @@
     </footer>
   </div>
 
-  <dialog id="dia" aria-labelledby="dia-t">
-    <h2 id="dia-t" style="margin:0 0 10px"></h2>
-    <div id="dia-cuerpo"></div>
-    <form method="dialog" style="margin-top:14px"><button class="btn btn--yellow" style="width:100%">Cerrar</button></form>
-  </dialog>
 
   <dialog id="reglas" aria-labelledby="reglas-t">
     <h2 id="reglas-t" style="margin:0 0 10px">¿Cómo se ganan los puntos?</h2>
@@ -135,7 +135,7 @@
     function verDia(f, x, hoy) {
       const [y, m, d] = f.split('-').map(Number);
       const n = numeroDel(f);
-      $('dia-t').textContent = `${DIAS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]} ${d} de ${MESES[m - 1]}${n >= 1 ? ` · n.° ${n}` : ''}`;
+      const titulo = `${DIAS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]} ${d} de ${MESES[m - 1]}${n >= 1 ? ` · n.° ${n}` : ''}`;
       const g = juegoDia(x?.game ?? (n >= 1 ? juegoDel(f) : null));
       const fila = (k, v, cls) => [el('dt', cls ? { class: cls } : {}, k), el('dd', cls ? { class: cls } : {}, v)];
       const filas = x?.played
@@ -146,9 +146,24 @@
           ? [...fila('Juego', `${g?.emoji || '🎲'} ${nombre(g)}`), ...fila('No jugaste', '🧊 lo salvó un comodín'), ...fila('Racha', `🔥 ${x.streak} sigue`), ...fila('Sumó', '0 pts', 'suma')]
           : n < 1 ? [...fila('Uno al día', 'todavía no existía')]
           : [...fila('Juego', `${g?.emoji || '🎲'} ${nombre(g)}`), ...fila(f === hoy ? 'Hoy' : 'No jugaste', f === hoy ? 'todavía no juegas' : 'la racha se cortó'), ...fila('Sumó', '0 pts', 'suma')];
-      $('dia-cuerpo').replaceChildren(el('dl', { class: 'detalle-dia' }, ...filas));
-      $('dia').showModal();
+      cerrarDia();
+      const celda = document.querySelector(`.cal [data-dia="${f}"]`);
+      celda?.classList.add('elegido'); celda?.setAttribute('aria-expanded', 'true');
+      const caja = $('calendario');
+      const flota = el('div', { class: 'flota', id: 'dia', role: 'dialog', 'aria-labelledby': 'dia-t' },
+        el('button', { type: 'button', class: 'x', 'aria-label': 'Cerrar', onClick: cerrarDia }, '✕'),
+        el('h3', { id: 'dia-t' }, titulo), el('dl', { class: 'detalle-dia' }, ...filas));
+      caja.append(flota);
+      // Floats just below the tapped row, inside the calendar
+      flota.style.top = `${Math.min(celda.offsetTop + celda.offsetHeight + 4, caja.clientHeight - flota.offsetHeight)}px`;
     }
+    function cerrarDia() {
+      $('dia')?.remove();
+      document.querySelectorAll('.cal .elegido').forEach(b => { b.classList.remove('elegido'); b.removeAttribute('aria-expanded'); });
+    }
+    // Closes with ✕, Escape, another day or a tap outside the calendar
+    document.addEventListener('keydown', ev => { if (ev.key === 'Escape') cerrarDia(); });
+    document.addEventListener('click', ev => { if ($('dia') && !ev.target.closest('#dia, .cal [data-dia]')) cerrarDia(); });
 
     function calendario(w, hoy) {
       const [y, m] = hoy.split('-').map(Number);
@@ -198,7 +213,7 @@
       const como = el('button', { type: 'button', class: 'como', onClick: () => $('reglas').showModal() }, '¿Cómo se ganan los puntos?');
       $('hero').replaceChildren(
         el('span', { class: 'temp' }, lineaTemporada(hoy)),
-        el('span', { class: 'total' }, el('span', { class: 'pts rainbow' }, miles(pts)), el('small', {}, 'pts')),
+        el('span', { class: 'total' }, el('span', { class: 'pts' }, miles(pts)), el('small', {}, 'pts')),
         puesto ? el('span', { class: 'puesto' }, `#${puesto} del mes${soyCampeon ? ' 🏆' : ''}`) : el('span', { class: 'caza' }, yo ? 'Juega hoy para entrar al ranking del mes.' : 'Entra con tu nombre para guardar tus puntos y salir en el ranking.'),
         ...(delante ? [el('span', { class: 'caza' }, 'Te faltan ', el('b', {}, miles(delante.s - pts + 1)), ` pts para pasar a ${delante.n}`)] : []),
         como);
@@ -209,7 +224,7 @@
       const juego = juegoDia(juegoDel(hoy));
       $('jugar').replaceChildren(e.dia
         ? el('div', { class: 'listo' }, `✅ Listo por hoy: ${e.dia.s} + bono. Mañana, otro.`)
-        : el('a', { class: 'jugar', href: `../../../${rutaHoy(juego?.id)}` }, `▶ Jugar el n.° ${numeroDel(hoy)}`, el('small', {}, `${juego?.emoji || '🎲'} hasta ${100 + Math.min(50, (e.racha + 1) * 5)} pts`)));
+        : el('a', { class: 'btn btn--yellow jugar', href: `../../../${rutaHoy(juego?.id)}` }, 'Jugar'));
       calendario(w, hoy);
     }
 
