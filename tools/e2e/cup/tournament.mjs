@@ -675,7 +675,7 @@ if (runs('labs')) {
   // page, at /labs/<folder>/ (El caso, D-267…), and La Copa is no longer there
   // An improvement (being tried, or launched and kept in La Bodega) opens the real page it changes (D-409)
   const sections = await ev(`JSON.stringify([...document.querySelectorAll('section.seccion')].map(x => [x.id, x.querySelector('a.btn')?.getAttribute('href')]))`).then(JSON.parse);
-  ok(sections.length >= 1 && sections.some(([id, h]) => id === 'seccion-caso' && h === 'case/') && sections.every(([, h]) => /^(\.\.\/)?[a-z-]+\/$/.test(h || '')) && !await ev(`!!document.getElementById('minis')`),
+  ok(sections.length >= 1 && sections.some(([id, h]) => id === 'seccion-caso' && h === 'case/') && sections.every(([, h]) => /^(\.\.\/)?[a-z-]+\/([a-z-]+\/)?$/.test(h || '')) && !await ev(`!!document.getElementById('minis')`),
     `the lab offers only prototypes, each in its folder (${sections.map(([, h]) => h).join(' ')})`);
   await b.shot('10-labs');
   // A link from before D-266, with the parameters in Spanish: still arrives, and in English
