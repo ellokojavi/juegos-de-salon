@@ -707,7 +707,7 @@ function soloJugar(partida) {
   const p = numero.generar(codigo, 1);
   const cron = $('#solo-cron');
   soltarSolo = jugarSolo($('#solo-body'), {
-    mod: uiNumero, p, lang, T: TN, fmt, el, SFX, vibrate, elegir: true,
+    mod: uiNumero, p, lang, T: TN, fmt, el, SFX, vibrate,
     jugadas: partida.jugadas ?? undefined, ms: partida.ms || 0,
     guardar: ({ jugadas, ms }) => store.save({ mode: 'solo', codigo, jugadas, ms, done: false }),
     cron: t => { cron.textContent = fmt(T.soloTimer, { t }); },
