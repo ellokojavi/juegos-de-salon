@@ -593,7 +593,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   día que no juegas. Tienes 1 de 2: …", y lo mismo en la tarjeta de invitar y al ganar uno (el dueño:
   que se entienda y den ganas de ganarlos).
 
-### Generala, lista para entrar al mazo (v0.128.0; in the deck since v0.189.0)
+### Generala, lista para entrar al mazo (v0.128.0; in the deck since v0.190.0)
 
 - **📝 Generala** (D-246) was announced as "Próximamente" (D-248) and opened with D-405: it is in
   `JUEGOS_DIA` and `GRUPO` with `desde: '2026-10-23'` (`DESDE_GENERALA`), the first day of the deck
