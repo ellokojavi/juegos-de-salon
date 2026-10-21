@@ -137,7 +137,6 @@ export const COMMON = {
     // en un idioma con video (hoy, español; D-254): los demás textos esperan su versión del video
     shareSheet: {
       title: 'Compartir Juegos de Salón',
-      play: 'Ver el video',
       videoTitle: 'Video de Juegos de Salón',
       invite: '💬 Invitar a jugar',
       inviteNote: 'Un mensaje con el link para entrar a jugar.',
@@ -373,7 +372,6 @@ export const COMMON = {
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
     shareSheet: {
       title: 'Share Party Games',
-      play: 'Watch the video',
       videoTitle: 'Party Games video',
       invite: '💬 Invite to play',
       inviteNote: 'A message with the link to start playing.',
@@ -603,7 +601,6 @@ export const COMMON = {
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
     shareSheet: {
       title: 'Compartilhar Jogos de Salão',
-      play: 'Ver o vídeo',
       videoTitle: 'Vídeo de Jogos de Salão',
       invite: '💬 Convidar a jogar',
       inviteNote: 'Uma mensagem com o link para entrar e jogar.',
@@ -833,7 +830,6 @@ export const COMMON = {
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
     shareSheet: {
       title: 'Salonspiele teilen',
-      play: 'Video ansehen',
       videoTitle: 'Video von Salonspiele',
       invite: '💬 Zum Spielen einladen',
       inviteNote: 'Eine Nachricht mit dem Link zum Mitspielen.',

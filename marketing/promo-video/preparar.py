@@ -12,7 +12,9 @@ import glob, json, os
 from PIL import Image
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
-PLAYS = os.path.join(AQUI, 'plays')
+LANG = os.environ.get('LANG_PROMO', 'es')
+DIR = 'plays' if LANG == 'es' else f'plays-{LANG}'
+PLAYS = os.path.join(AQUI, DIR)
 ANCHO = 546
 
 for f in glob.glob(os.path.join(PLAYS, '*.png')):
