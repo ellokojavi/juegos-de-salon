@@ -439,11 +439,11 @@ html.i18n-pendiente body { visibility: hidden; }
 /* --- La hoja de abajo (D-223, D-232): pasos y avisos sobre el morado oscuro de la hoja del chat
    (.chat-panel). Sobre el fondo de la app, un blanco encandila (lo pidió el dueño al ver el
    diseño). La usan los avisos de La Copa y el globo de agregar a inicio de la portada. */
-.hoja-capa { position: fixed; inset: 0; z-index: 60; display: grid; align-items: end; }
+.hoja-capa { position: fixed; inset: 0; z-index: 60; display: grid; align-items: end; overscroll-behavior: contain; }
 .hoja-fondo { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); animation: fadeIn 0.2s both; }
 .hoja {
   position: relative; width: 100%; max-width: 560px; margin: 0 auto; box-sizing: border-box;
-  max-height: 88dvh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+  max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 12px;
   padding: 10px 20px calc(22px + var(--safe-bottom));
   border-radius: 22px 22px 0 0; border: 2px solid var(--glass-border); border-bottom: 0;
   background: linear-gradient(180deg, rgba(42, 10, 74, 0.985), rgba(21, 7, 38, 0.99));
