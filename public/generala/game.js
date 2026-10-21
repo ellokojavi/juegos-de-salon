@@ -435,15 +435,18 @@ function renderResultSolo(v, already) {
   if (!already) {
     S.ms = ms;
     trackFinish({ detalle: `${total} puntos · ${mmss(ms)}` });   // cómo salió, para el panel (D-210)
-    S.recordAntes = record.get();
-    S.recordNuevo = total > 0 ? record.anotar('', { s: total, ms }).nuevo : false;
+    // One a Day is scored on its own card and ranking (D-230): its dice come from the day's seed,
+    // so it touches neither the phone's record nor Generala's solo ranking
+    S.recordAntes = S.hoy ? null : record.get();
+    S.recordNuevo = !S.hoy && total > 0 ? record.anotar('', { s: total, ms }).nuevo : false;
   }
   $('#result-trophy').textContent = S.recordNuevo ? '🏅' : '🎲';
   $('#result-title').textContent = fmt(T.soloEnd, { n: total });
   $('#result-sub').textContent = fmt(T.soloTime, { t: mmss(S.ms) });
   // Con jugador, el aviso de los rankings reemplaza al récord del celular (D-212); va una vez
   const podio = $('#result-podio');
-  if (!already) {
+  if (S.hoy) podio.replaceChildren();
+  else if (!already) {
     const tablaFin = bloqueTabla({ tabla: TABLA_SOLO, titulo: fmt(COMMON[lang].rk.titleOf, { game: T.title }), alTocar: () => SFX.tap(), entrar: false });
     S.tablaFin = tablaFin;
     podio.replaceChildren(
