@@ -12,7 +12,7 @@ if [[ "${1:-}" != "--sin-capturas" ]]; then
   curl -sf -o /dev/null "$SITIO/" || { echo "El sitio no responde en $SITIO: python3 -m http.server 8765 -d public"; exit 1; }
   rm -rf plays
   # los que salen en el video: GAMES, UAD y MORE en promo.html
-  node jugar.mjs linea dudo donde zip hoy toque letras ahorcado naval rey conexiones anio reinas tango desenredo
+  node jugar.mjs linea dudo donde zip hoy toque letras ahorcado naval rey conexiones anio reinas tango desenredo generala julepe rutas loteo pintaminas
   node copa.mjs
 fi
 python3 preparar.py

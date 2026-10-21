@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
 const dir = path.dirname(fileURLToPath(import.meta.url));
-const OUT = path.join(dir, 'plays'); fs.mkdirSync(OUT, { recursive: true });
+const LANG = process.env.LANG_PROMO || 'es', PLAYS_DIR = LANG === 'es' ? 'plays' : `plays-${LANG}`;
+const OUT = path.join(dir, PLAYS_DIR); fs.mkdirSync(OUT, { recursive: true });
 const B = SITIO;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -22,6 +23,8 @@ const HOY_FECHA = [2026, 9, 29, 12];
 const HOY_RACHA = (() => { const d = {}, js = ['letras', 'ahorcado', 'linea', 'conexiones', 'batalla-naval', 'anio', 'numero', 'reinas', 'desenredo', 'linea'];
   for (let n = 1; n <= 10; n++) { const f = new Date(Date.UTC(2026, 9, 29 - n)).toISOString().slice(0, 10); d[f] = { j: js[n - 1], s: 60 + n * 3, ms: 90000, at: 1, n: 1 }; }
   return JSON.stringify({ dias: d }); })();
+const NOMBRE = `(()=>{const i=[...document.querySelectorAll('input')].find(x=>x.offsetParent);i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`;
+const CELDA = i => `document.querySelectorAll('.lt-celda')[${i}]`;
 const REINA = k => `(()=>{const r=window.__sol;return document.querySelector('.rej[data-i="'+(${k}*8+r[${k}])+'"]')})()`;
 const PLAYS = {
   hoy: { url: '/', reloj: HOY_FECHA, memoria: { 'juegos-de-salon:uno-al-dia': HOY_RACHA }, steps: [
@@ -39,10 +42,10 @@ const PLAYS = {
     { tap: `document.getElementById('btn-fin')`, after: 1500 },
   ] },
   linea: { url: '/timeline/', steps: [
-    `[...document.querySelectorAll('.mode')].find(m=>/solo/i.test(m.textContent)).click()`,
+    `[...document.querySelectorAll('.mode')].find(m=>/solo|alone/i.test(m.textContent)).click()`,
     `document.getElementById('btn-solo-empezar').click()`, { wait: 1500 }, { snap: true },
     { tap: `document.querySelectorAll('#solo-juego .hand .card')[1]` },
-    { tap: `[...document.querySelectorAll('#solo-juego .line .slot')].at(-1)` },
+    { tap: `document.querySelectorAll('#solo-juego .line .slot')[0]` },
     { tap: `document.getElementById('btn-colocar')`, after: 900 },
   ] },
   toque: { url: '/bulls-and-cows/', steps: [
@@ -57,11 +60,11 @@ const PLAYS = {
     `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
     `document.querySelector('#setup-actions .btn').click()`, { wait: 1200 },
     // una letra antes de empezar a filmar, y después dos que están
-    `((()=>{const w=__ahorcado.view().words.A.toUpperCase();const l=[...new Set(w.replace(/[^A-ZÑ]/g,''))][0];return [...document.querySelectorAll('button')].find(b=>b.textContent.trim()===l)})()).click()`, { wait: 300 }, `[...document.querySelectorAll('.btn')].find(b=>/Probar la/i.test(b.textContent)).click()`, { wait: 900 }, { snap: true },
+    `((()=>{const w=__ahorcado.view().words.A.toUpperCase();const l=[...new Set(w.replace(/[^A-ZÑ]/g,''))][0];return [...document.querySelectorAll('button')].find(b=>b.textContent.trim()===l)})()).click()`, { wait: 300 }, `[...document.querySelectorAll('.btn')].find(b=>/Probar la|Try the/i.test(b.textContent)).click()`, { wait: 900 }, { snap: true },
     { tap: `(()=>{const w=__ahorcado.view().words.A.toUpperCase();const l=[...new Set(w.replace(/[^A-ZÑ]/g,''))][1];return [...document.querySelectorAll('button')].find(b=>b.textContent.trim()===l)})()`, after: 250 },
-    { tap: `[...document.querySelectorAll('.btn')].find(b=>/Probar la/i.test(b.textContent))`, after: 700 },
+    { tap: `[...document.querySelectorAll('.btn')].find(b=>/Probar la|Try the/i.test(b.textContent))`, after: 700 },
     { tap: `(()=>{const w=__ahorcado.view().words.A.toUpperCase();const l=[...new Set(w.replace(/[^A-ZÑ]/g,''))][2];return [...document.querySelectorAll('button')].find(b=>b.textContent.trim()===l)})()`, after: 250 },
-    { tap: `[...document.querySelectorAll('.btn')].find(b=>/Probar la/i.test(b.textContent))`, after: 700 },
+    { tap: `[...document.querySelectorAll('.btn')].find(b=>/Probar la|Try the/i.test(b.textContent))`, after: 700 },
   ] },
   dudo: { url: '/liars-dice/', steps: [
     `document.querySelectorAll('.mode')[2].click()`,
@@ -70,13 +73,13 @@ const PLAYS = {
     { tap: `document.querySelectorAll('.pinta')[4]`, after: 400 },
     { tap: `[...document.querySelectorAll('#actions button')].find(b=>b.textContent.trim()==='+')`, after: 300 },
     { tap: `document.querySelector('#actions .btn--yellow')`, after: 2600 },
-    { tap: `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo/i.test(b.textContent))`, after: 1500 },
+    { tap: `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar/i.test(b.textContent))`, after: 1500 },
   ] },
   naval: { url: '/battleship/', steps: [
     `document.querySelectorAll('.mode')[2].click()`,
     `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
     `document.querySelector('#setup-actions .btn--yellow').click()`, { wait: 500 },
-    `[...document.querySelectorAll('#place-actions .btn')].find(b=>/azar/.test(b.textContent)).click()`,
+    `[...document.querySelectorAll('#place-actions .btn')].find(b=>/azar|Random/.test(b.textContent)).click()`,
     `document.querySelector('#place-sail .btn').click()`, { wait: 600 },
     `(()=>{const S=window.__bn.session();clearTimeout(S.cpuTimer);S.cpuTimer='frenado';})()`,
     'FALLA_B', { wait: 900 }, { snap: true },
@@ -90,7 +93,7 @@ const PLAYS = {
     `[...document.querySelectorAll('#players-form input')].forEach((i,k)=>{i.value=['Javi','Cata','Pancho','Fran'][k];i.dispatchEvent(new Event('input',{bubbles:true}))})`,
     `document.getElementById('btn-start').click()`, { wait: 900 }, { snap: true },
     { tap: `document.getElementById('card')`, after: 1400 },
-    { tap: `[...document.querySelectorAll('#result .btn')].at(-1)`, after: 500, luego: `(()=>{const h=document.getElementById('handoff');if(!h.hidden&&/Sigan/i.test(h.innerText))h.click()})()` },
+    { tap: `[...document.querySelectorAll('#result .btn')].at(-1)`, after: 500, luego: `(()=>{const h=document.getElementById('handoff');if(!h.hidden&&/Sigan|Keep/i.test(h.innerText))h.click()})()` },
   ] },
   reinas: { url: '/queens/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 },
@@ -118,27 +121,62 @@ const PLAYS = {
   ] },
   conexiones: { url: '/connections/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
-    ...['PICASSO', 'DALÍ', 'MIRÓ', 'VELÁZQUEZ'].map(w => ({ tap: BOTON(w), after: 200 })),
+    ...(LANG === 'en' ? ['CALIBRI', 'VERDANA', 'TIMES', 'ARIAL'] : ['PICASSO', 'DALÍ', 'MIRÓ', 'VELÁZQUEZ']).map(w => ({ tap: BOTON(w), after: 200 })),
     { tap: `document.getElementById('btn-confirmar')`, after: 1200 },
   ] },
   anio: { url: '/year/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
-    ...'1985'.split('').map(d => ({ tap: BOTON(d), after: 180 })),
+    ...(LANG === 'en' ? '1913' : '1985').split('').map(d => ({ tap: BOTON(d), after: 180 })),
     { tap: `[...document.querySelectorAll('button')].find(b=>/^OK$/i.test(b.textContent.trim()))`, after: 1200 },
   ] },
   letras: { url: '/word/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 },
     // El "null" suelto bajo los intentos es un error de la app (ui-letras.js); no va en el video
     `(()=>{const f=()=>document.querySelectorAll('.letras-juego, .stack').forEach(n=>[...n.childNodes].forEach(c=>{if(c.nodeType===3&&c.textContent==='null')c.remove()}));f();new MutationObserver(f).observe(document.body,{childList:true,subtree:true})})()`,
-    `(()=>{for(const c of 'MONTE')[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===c).click();[...document.querySelectorAll('button')].find(b=>/Probar/i.test(b.textContent)).click()})()`,
+    `(()=>{for(const c of '${LANG === 'en' ? 'PLANT' : 'MONTE'}')[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===c).click();[...document.querySelectorAll('button')].find(b=>/Probar|Guess/i.test(b.textContent)).click()})()`,
+    `import('/cup/games/word/engine.js').then(m=>{window.__secreto=m.generar('WNDRN',1,{lang:'${LANG}'}).secreto.toUpperCase()})`,
     { wait: 900 }, { snap: true },
-    ...'CLAVO'.split('').map(c => ({ tap: BOTON(c), after: 160 })),
-    { tap: `[...document.querySelectorAll('button')].find(b=>/Probar/i.test(b.textContent))`, after: 1000 },
+    ...[0, 1, 2, 3, 4].map(k => ({ tap: LANG === 'es' ? BOTON('CLAVO'[k]) : `[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===window.__secreto[${k}])`, after: 160 })),
+    { tap: `[...document.querySelectorAll('button')].find(b=>/Probar|Guess/i.test(b.textContent))`, after: 1000 },
   ] },
   desenredo: { url: '/untangle/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
     { drag: [`document.querySelector('.des-nudos circle[data-v="0"]')`, 90, 70], mids: 6, after: 300 },
     { drag: [`document.querySelector('.des-nudos circle[data-v="3"]')`, -80, 60], mids: 6, after: 600 },
+  ] },
+  // v7: the five games that reached the home page after v6 (D-331 and later), for the grid
+  generala: { url: '/generala/', steps: [
+    `document.querySelectorAll('.mode')[2].click()`, NOMBRE, `document.getElementById('btn-empezar').click()`, { wait: 1200 }, { snap: true },
+    { tap: `document.getElementById('btn-tirar')`, after: 1400 },
+    { tap: `document.querySelectorAll('.dado-btn')[0]`, after: 250 },
+    { tap: `document.querySelectorAll('.dado-btn')[1]`, after: 250 },
+    { tap: `document.getElementById('btn-tirar')`, after: 1400 },
+    { tap: `document.querySelector('.casilla.libre')`, after: 900 },
+  ] },
+  julepe: { url: '/julep/', steps: [
+    `document.querySelectorAll('.mode')[2].click()`, NOMBRE, `[...document.querySelectorAll('.btn')].find(b=>/A JUGAR|Deal me/i.test(b.textContent)).click()`, { wait: 1500 }, { snap: true },
+    { tap: `[...document.querySelectorAll('.btn')].find(b=>/VOY|I am in/i.test(b.textContent))`, after: 1500 },
+    { tap: `[...document.querySelectorAll('.pcard:not(.pcard--sm)')].find(c=>c.offsetParent)`, after: 1200 },
+    { tap: `[...document.querySelectorAll('.btn--yellow')].find(c=>c.offsetParent)`, after: 1500 },
+  ] },
+  rutas: { url: '/routes/?seed=WNDRN', steps: [
+    `document.getElementById('btn-empezar').click()`, { wait: 4500 },
+    // the first stage solved in its minimum, found by search over the engine's rectangles
+    `import('/cup/games/routes/engine.js').then(m=>{const t=m.generarEtapa('WNDRN',0),R=m.RECTANGULOS;const ir=(e,n,c)=>{if(m.resuelto(t.piezas,e))return c;if(!n)return null;for(const r of R){const x=ir(m.girar(e,r),n-1,[...c,r]);if(x)return x}return null};for(let n=1;n<=t.minimo;n++){const s=ir(t.inicio,n,[]);if(s){window.__giros=s;break}}})`,
+    { wait: 300 }, { snap: true },
+    { rect: 0, after: 900 }, { rect: 1, after: 900 }, { rect: 2, after: 1200 },
+  ] },
+  loteo: { url: '/plots/?seed=WNDRN', steps: [
+    `document.getElementById('btn-empezar').click()`, { wait: 4500 }, { snap: true },
+    // the whole first board (5×5): 3, 8, 2, 8, 2, 2
+    ...[[0, 2], [3, 19], [7, 12], [5, 21], [17, 22], [23, 24]].map(([a, b]) => ({ drag: [CELDA(a), CELDA(b)], mids: 3, after: 300 })),
+    { wait: 900 }, { snap: true },
+  ] },
+  pintaminas: { url: '/paint-mines/?seed=WNDRN', steps: [
+    `(document.getElementById('btn-empezar')||{click(){}}).click()`, { wait: 4500 },
+    `import('/cup/games/paint-mines/engine.js').then(m=>{const t=m.generarDia('WNDRN',1,{variante:'easy'});const d=new Set(t.dadas);window.__pm=[...t.sol.keys()].filter(i=>!d.has(i)&&t.sol[i]===1).slice(0,6)})`,
+    { wait: 300 }, { snap: true },
+    ...[0, 1, 2, 3, 4, 5].map(k => ({ tap: `document.querySelector('.pm-casilla[data-i="'+window.__pm[${k}]+'"]')`, after: 300 })),
   ] },
   donde: { url: '/where/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 5000 }, { snap: true },
@@ -146,7 +184,7 @@ const PLAYS = {
     { globo: [-30, -66], pasos: 16, after: 300 },
     { tap: `[...document.querySelectorAll('button')].find(b=>b.textContent.trim()==='+')`, lento: 0.3, tras: 700, after: 200 },
     { tap: `document.querySelector('canvas.mapa-globo')`, aqui: process.env.DONDE ? null : `document.querySelector('canvas.mapa-globo').globo.aPantalla(-33.45,-70.67)`, at: process.env.DONDE ? DONDE : null, after: 600 },
-    { tap: `[...document.querySelectorAll('.btn')].find(b=>/Confirmar/i.test(b.textContent))`, lento: 0.3, tras: 1500, after: 300 },
+    { tap: `[...document.querySelectorAll('.btn')].find(b=>/Confirmar|Confirm/i.test(b.textContent))`, lento: 0.3, tras: 1500, after: 300 },
   ] },
 };
 
@@ -156,7 +194,7 @@ const FALLA_B = `(()=>{const S=window.__bn.session(),L=S.layouts['A'].layout,
   for(let r=0;r<10;r++) for(let c=0;c<10;c++) if(!o.has(r+','+c)) return S.transport.send({t:'shot',from:'B',cell:'ABCDEFGHIJ'[c]+(r+1)});})()`;
 const barco = k => `(()=>{const S=window.__bn.session(),p=S.layouts['B'].layout.battleship;
   return [...document.querySelectorAll('#enemy-grid .cell')].find(x=>+x.dataset.r===p.r+(p.dir==='h'?0:${k})&&+x.dataset.c===p.c+(p.dir==='h'?${k}:0))})()`;
-const ESPECIALES = { BARCO_B: barco(1), BARCO_B2: barco(2), FUEGO: `[...document.querySelectorAll('.btn')].find(b=>/Fuego/i.test(b.textContent))` };
+const ESPECIALES = { BARCO_B: barco(1), BARCO_B2: barco(2), FUEGO: `[...document.querySelectorAll('.btn')].find(b=>/Fuego|Fire/i.test(b.textContent))` };
 
 const browser = await abrir();
 const json = fs.existsSync(path.join(OUT, 'plays.json')) ? JSON.parse(fs.readFileSync(path.join(OUT, 'plays.json'))) : {};
@@ -183,8 +221,8 @@ for (const id of pedidos) {
   if (PLAYS[id].reloj) await page.addInitScript(f => { const D = Date, dif = new D(...f).getTime() - D.now();
     class F extends D { constructor(...a) { a.length ? super(...a) : super(D.now() + dif); } static now() { return D.now() + dif; } } window.Date = F; }, PLAYS[id].reloj);
   await page.goto(B + '/');
-  await page.evaluate(m => { localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', 'es'); localStorage.setItem('juegos-de-salon:instalar:no', '1');
-    for (const k in m) localStorage.setItem(k, m[k]); }, PLAYS[id].memoria || {});
+  await page.evaluate(([m, LANG]) => { localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', LANG); localStorage.setItem('juegos-de-salon:instalar:no', '1');
+    for (const k in m) localStorage.setItem(k, m[k]); }, [PLAYS[id].memoria || {}, LANG]);
   await page.goto(B + PLAYS[id].url); await sleep(1500);
   const frames = [];
   const snap = async tap => { const f = `${id}-${frames.length}.png`; await page.screenshot({ path: path.join(OUT, f) }); frames.push({ img: f, tap }); };
@@ -224,6 +262,18 @@ for (const id of pedidos) {
       await page.mouse.up();
       await sleep(s.after ?? 500);
       await snap({ x: x0, y: y0, path: pts.map(([x, y]) => [x - x0, y - y0]), mids: pts.length - 2 });
+      continue;
+    }
+    if (s.rect !== undefined) {
+      // Rutas rotas: a drag from corner to corner of the rectangle that turns (window.__giros)
+      const r = await page.evaluate(k => window.__giros?.[k], s.rect);
+      if (!r) { console.log(id, 'no rect', s.rect); continue; }
+      const bb = await (await page.$('#rr-tablero')).boundingBox(), w = bb.width / 3, hh = bb.height / 3;
+      const x = bb.x + (r.c1 + 0.5) * w, y = bb.y + (r.f1 + 0.5) * hh, dx = (r.c2 - r.c1) * w, dy = (r.f2 - r.f1) * hh, n = 3;
+      await page.mouse.move(x, y); await page.mouse.down();
+      for (let k = 1; k <= n; k++) { await page.mouse.move(x + dx * k / n, y + dy * k / n, { steps: 3 }); await sleep(80); if (k < n) await snap(null); }
+      await page.mouse.up();
+      await sleep(s.after ?? 500); await snap({ x, y, dx, dy, mids: n - 1 });
       continue;
     }
     const expr = ESPECIALES[s.tap] || s.tap || s.drag[0];
