@@ -689,3 +689,19 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 - Tested by `uno-al-dia.test.mjs` (16 games, no day before `DESDE_MAS` changes, each new one comes
   out in the next two decks) and `tools/e2e/daily-variants.mjs` (Loteo and Pintaminas, on the first
   day each is due, looked up in the deck since D-405, play their default variant with no picker, even when the phone remembers the other).
+
+### Lab prototype: monthly points and ranking (`/labs/daily-score/`)
+
+A design prototype, lab only (D-395): nothing in the real Uno al día changes and it saves nothing.
+It explores one number that ranks players in a **monthly season** (everyone starts at 0 on the 1st):
+
+- **A day's points** = the game's own 0–100 score + a **streak bonus** of +5 per day of streak, up
+  to +50 (a 10-day streak).
+- **A wildcard 🧊 day** gives 0 points but keeps the streak, so the next day still earns the full
+  bonus; without one, the streak and its bonus start over. A 🧊 earned while holding 2 is lost.
+- **Navigation:** the home card would open the player's Uno al día hub (points and rank first, then
+  play, streak, wildcards, ranking and calendar) instead of rolling the dice.
+
+The rules are pure functions in `public/labs/daily-score/score.js` (over the same history and
+streak rules as `uno-al-dia.js`), tested by `score.test.mjs`. The page lists its open questions for
+the owner; nothing goes to players until validated in the lab.
