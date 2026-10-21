@@ -75,3 +75,12 @@ console.log('processes: ok');
   assert.deepEqual(b.map(x => x.number), [6, 5]);
   assert.equal(b[0].days, 10);
 }
+
+// A Yes must say what it does (#607): empty is refused, and `nothing` when the text promises work
+const q = (yes, context = '') => () => decisionsBody({ decisions: [{ question: 'Let the player tap the box?', context, yes }] });
+assert.throws(q(undefined), /no Yes actions/);
+assert.throws(q([]), /no Yes actions/);
+assert.throws(q([{ type: 'nothing' }], 'It changes the shared keyboard, so it is queued rather than done blind.'), /does nothing/);
+assert.throws(q([{ type: 'nothing' }], 'Built first behind the lab key.'), /does nothing/);
+assert.doesNotThrow(q([{ type: 'nothing' }], 'A Yes only records your taste.'));
+assert.match(decisionsBody({ decisions: [{ question: 'x', context: 'queued for the next round', yes: [{ type: 'queue', task: 'build it' }] }] }), /queues it for the next round/);

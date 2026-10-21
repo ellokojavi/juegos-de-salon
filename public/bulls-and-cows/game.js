@@ -19,6 +19,7 @@ import { score, isValid, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
 import { createChat } from '../assets/js/chat.js';
 import { teclado, CIFRAS } from '../assets/js/teclado.js';
+import { labAccess } from '../assets/js/lab-access.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../assets/js/ranking.js';
@@ -238,12 +239,16 @@ function showScreen(id) { $$('.screen').forEach(s => s.classList.toggle('active'
 
 /** Teclado numérico con casillas. onSubmit(value). */
 /** El teclado, con notas (toque largo para tachar), sale de assets/js/teclado.js (D-102). */
+// Tocar la casilla donde va la próxima cifra (#604): en desarrollo, solo con llave del lab (D-395)
 function keypad({ digits, zeroFirst, onSubmit, hidden = false, submitLabel = T.guess, notes = null, onNotesChange = null }) {
-  return teclado({
+  const pad = teclado({
     largo: digits, teclas: CIFRAS, submitLabel, hidden, notes, onNotesChange, onSubmit,
     valido: v => isValid(v, digits, { zeroFirst }),
-    puede: (v, d) => !v.includes(d) && v.length < digits && !(v.length === 0 && d === '0' && !zeroFirst),
+    // `pos` es la casilla donde iría: el 0 no va primero (sin `elegir`, es lo ya escrito)
+    puede: (v, d, pos = v.length) => !v.includes(d) && v.length < digits && !(pos === 0 && d === '0' && !zeroFirst),
   });
+  labAccess().then(ok => { if (ok) pad.activarElegir(); });
+  return pad;
 }
 
 /**
@@ -704,7 +709,7 @@ function soloJugar(partida) {
   const p = numero.generar(codigo, 1);
   const cron = $('#solo-cron');
   soltarSolo = jugarSolo($('#solo-body'), {
-    mod: uiNumero, p, lang, T: TN, fmt, el, SFX, vibrate,
+    mod: uiNumero, p, lang, T: TN, fmt, el, SFX, vibrate, elegir: labAccess(),
     jugadas: partida.jugadas ?? undefined, ms: partida.ms || 0,
     guardar: ({ jugadas, ms }) => store.save({ mode: 'solo', codigo, jugadas, ms, done: false }),
     cron: t => { cron.textContent = fmt(T.soloTimer, { t }); },

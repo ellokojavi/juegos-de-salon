@@ -7,7 +7,7 @@
  * Drag from one corner to the other to draw a plot (with its live size, "2×3 = 6"); tapping a plot
  * erases it, tapping a 1 draws it. Five boards per variant against the clock (`ETAPAS`,
  * `ETAPAS_SERVICIOS`; the trial session, the two warm-up ones). Below the board, ↩️ Undo, 🧹 Clear
- * (with a second tap) and 🏳️ Give up (with a second tap) in one row, and 💡 Hint (−10) apart.
+ * (with a second tap), 💡 Hint (−10) and 🏳️ Give up (with a second tap) in two rows of two (#441).
  *
  * The moves are saved as a list (`motor.jugada`) and the game is rebuilt from `p` and that list
  * (`motor.partida`), so a reloaded cup day goes on where it was. The clock is the cup's (`ctx.tiempo()`).
@@ -359,7 +359,7 @@ export function montar(raiz, ctx) {
     } });
     const botonBorrar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-borrar' });
     const botonRendirse = el('button', { type: 'button', class: 'btn btn--ghost btn--sm lt-rendirse', id: 'btn-rendirse' });
-    const botonAyuda = el('button', { type: 'button', class: 'btn btn--ghost btn--sm lt-ayuda', id: 'btn-ayuda' });
+    const botonAyuda = el('button', { type: 'button', class: 'btn btn--ghost lt-ayuda', id: 'btn-ayuda' });
     dosToques(botonAyuda, {
       listo: () => fmt(T.ltHelp, { pts: motor.RESTA_AYUDA }), seguro: () => fmt(T.ltHelpSure, { pts: motor.RESTA_AYUDA }),
       accion: () => {
@@ -382,13 +382,13 @@ export function montar(raiz, ctx) {
       anotar(motor.jugada.RENDIRSE);
       terminar();
     } });
-    const acciones = el('div', { class: 'lt-acciones' }, deshacer(), botonBorrar, botonRendirse);
+    const acciones = el('div', { class: 'lt-acciones' }, deshacer(), botonBorrar, botonAyuda, botonRendirse);
     const pintar = (nuevo = null) => {
       tab.pintar(e.parcelas, { nuevo });
       acciones.firstChild.replaceWith(deshacer());
       botonBorrar.disabled = !e.parcelas.length;
     };
-    caja.replaceChildren(cabeza, aviso, tab.caja, acciones, botonAyuda);
+    caja.replaceChildren(cabeza, aviso, tab.caja, acciones);
     vista = { t, tab, decir, pintar, cabeza, aviso, acciones, botonAyuda, bloqueado: false };
     // The first hard board of Utilities says how to think them (the owner's request)
     if (ut && t.dificil && !tableros[k - 1]?.dificil) decir(T.ltHardNotice, 'ojo');

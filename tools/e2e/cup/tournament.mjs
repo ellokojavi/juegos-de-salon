@@ -665,8 +665,9 @@ if (runs('labs')) {
   await b.go(`${SITE}/labs/`, 1500);
   // Only what hasn't shipped stays in the lab (D-262): each section leads to its prototype's
   // page, at /labs/<folder>/ (El caso, D-267…), and La Copa is no longer there
-  const sections = await ev(`JSON.stringify([...document.querySelectorAll('section.seccion')].map(x => [x.id, x.querySelector('a.btn')?.getAttribute('href')]))`).then(JSON.parse);
-  ok(sections.length >= 1 && sections.some(([id, h]) => id === 'seccion-caso' && h === 'case/') && sections.every(([, h]) => /^[a-z-]+\/$/.test(h || '')) && !await ev(`!!document.getElementById('minis')`),
+  // An improvement being tried (✨ Mejoras en prueba) opens the real page it changes, behind the key (D-409)
+  const sections = await ev(`JSON.stringify([...document.querySelectorAll('section.seccion')].map(x => [x.id, x.querySelector('a.btn')?.getAttribute('href'), !!x.closest('#mejoras')]))`).then(JSON.parse);
+  ok(sections.length >= 1 && sections.some(([id, h]) => id === 'seccion-caso' && h === 'case/') && sections.every(([, h, mejora]) => (mejora ? /^(\.\.\/)?[a-z-]+\/$/ : /^[a-z-]+\/$/).test(h || '')) && !await ev(`!!document.getElementById('minis')`),
     `the lab offers only prototypes, each in its folder (${sections.map(([, h]) => h).join(' ')})`);
   await b.shot('10-labs');
   // A link from before D-266, with the parameters in Spanish: still arrives, and in English

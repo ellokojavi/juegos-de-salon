@@ -147,7 +147,9 @@ that (after a new game, after a big text change), saying why.
      (U-3): a new text goes with your best proposal, noted.
    - **An idea or a request** (change a rule, add something, redesign): one-tap decision
      (step 7), with your recommendation. If it's small and you recommend it, leave the PR done and
-     let the Yes merge it; if it's big, the Yes queues it.
+     let the Yes merge it; if it's big, the Yes queues it (`{ "type": "queue", "task": "…" }`):
+     `decide` refuses a Yes with no actions, or one that does `nothing` while its text says it queues
+     or builds (#607, where an approved change was only noted and never reached the queue).
    - **Resolved, duplicate or already an open dilemma:** you close it naming where it was resolved
      or the issue that covers it.
    - **Can't be understood or isn't about the app:** you close it saying why.
