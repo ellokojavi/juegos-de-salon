@@ -27,6 +27,9 @@ export const DESDE_GRUPO = '2026-10-07';
 /** The day Rutas rotas, Loteo, Pintaminas, Zip, Tango and ¿Dónde queda? enter (D-334): they join the next deck shuffled from then. */
 export const DESDE_MAS = '2026-10-16';
 
+/** The day Generala enters (D-247, D-405): the first day of the deck shuffled after it left "Próximamente". */
+export const DESDE_GENERALA = '2026-10-23';
+
 /**
  * Los juegos que pueden salir y la fecha desde la que entran. Los solitarios van con su id de La
  * Copa (`cup/games/`); los de grupo, con el de la portada (`games.js`), que es el de su página.
@@ -53,9 +56,11 @@ export const JUEGOS_DIA = [
   { id: 'zip', emoji: '〰️', desde: DESDE_MAS },
   { id: 'tango', emoji: '☀️', desde: DESDE_MAS },
   { id: 'donde', emoji: '📍', desde: DESDE_MAS },
+  // D-405: Generala, opened from the home page, plays solo with the day's dice (D-247)
+  { id: 'generala', emoji: '📝', desde: DESDE_GENERALA },
 ];
 /** Los de grupo: tienen su propio motor y su modo para uno (contra el celular o con su mazo). */
-export const GRUPO = ['ahorcado', 'batalla-naval', 'dudo'];
+export const GRUPO = ['ahorcado', 'batalla-naval', 'dudo', 'generala'];
 export const juegoDia = id => JUEGOS_DIA.find(j => j.id === id) || null;
 
 /**
