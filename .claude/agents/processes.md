@@ -150,6 +150,9 @@ that (after a new game, after a big text change), saying why.
      let the Yes merge it; if it's big, the Yes queues it (`{ "type": "queue", "task": "…" }`).
      Every change goes to Labs first unless the owner says otherwise (D-409): `decide` gives a
      queued Yes three boxes, **Yes, in Labs** (`[labs]`), **Yes, and publish** (`[publish]`) and **No**.
+     A question whose work was done another way, or that no longer applies, is settled, never
+     answered Yes or No: `processes.mjs settle <issue> <n> "why"` notes it and closes the issue if
+     nothing is left (D-411).
      A `[labs]` task is built behind `labAccess()` with its card in `/labs/` (a `lab: #<id>` comment,
      `public/labs/listed.test.mjs`); a `[publish]` one, for everyone. A prepared PR is built behind the
      lab, and names `publish` actions only if there is a version for everyone.

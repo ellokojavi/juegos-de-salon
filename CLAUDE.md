@@ -266,7 +266,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   needs the owner goes in a `processes` issue with Yes/No checkboxes, opened by the bot (`decide.yml`) so
   the owner gets the email: ticking one carries it out instantly
   (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).
-  Its memory is `docs/processes.json`: `node tools/agents/processes.mjs check | decide <file.json> | pattern <key> "…" | mechanism <key> "…" --pr <url> | dispatch <documentation|usability|ideas> <commit> | record --to <commit> | history`
+  Its memory is `docs/processes.json`: `node tools/agents/processes.mjs check | decide <file.json> | settle <issue> <n> "why" | pattern <key> "…" | mechanism <key> "…" --pr <url> | dispatch <documentation|usability|ideas> <commit> | record --to <commit> | history`
   (`dispatch` records up to which `main` commit it launched each executor).
 - **Support** (D-318): triages the emails to hola@juegosdesalon.cl, which a Cloudflare Worker
   (`tools/cloudflare/inbox-worker.js`) keeps in Firebase `buzon/`. The `inbox-watch` job on the Mac mini

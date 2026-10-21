@@ -5,7 +5,7 @@
  *
  *   node tools/agents/ideas.mjs check [--weeks n]              # the numbers, the lab, what players asked, the ledger
  *   node tools/agents/ideas.mjs propose <file.json> [--dry-run]   # records the ideas and opens the owner's issue
- *   node tools/agents/ideas.mjs record <id> <status> "why" [--link <url>]
+ *   node tools/agents/ideas.mjs record <id> <status> "why" [--link <url>]   # settles its open question (D-411)
  *   node tools/agents/ideas.mjs list [--status proposed,approved]
  *   node tools/agents/ideas.mjs taste "<what the answer taught>" [--from <issue url>]
  *   node tools/agents/ideas.mjs history
@@ -40,6 +40,8 @@ const DAY = 24 * 3600 * 1000;
 
 export const LANES = ['meta', 'existing', 'new-game'];
 export const STATUSES = ['proposed', 'approved', 'prototyped', 'graduated', 'shelved', 'discarded'];
+/** Statuses that, reached while the idea's question is unanswered, settle it on its issue (D-411). */
+export const SETTLES = ['prototyped', 'graduated', 'shelved', 'discarded'];
 /** From `proposed` the owner answers; from `approved` the prototype moves it on. */
 export const NEXT = {
   proposed: ['approved', 'discarded'],
@@ -366,7 +368,15 @@ async function main([command, ...args]) {
       const m = readMemory();
       const i = setStatus(m, id, status, why, { link: flag(args, '--link') });
       save(m);
-      return console.log(`${i.id}: ${i.status} (${i.why}).`);
+      console.log(`${i.id}: ${i.status} (${i.why}).`);
+      // Built, shelved or discarded another way while its question was still open: the question
+      // is settled on its issue, so the owner is not left a Yes or No that no longer means anything (D-411)
+      if (SETTLES.includes(i.status) && i.issue) {
+        const { settleFor } = await import('./processes.mjs');
+        const r = settleFor(i.issue, `ideas ${i.id}:`, `${i.status}: ${i.why}`);
+        if (r) console.log(`${i.issue}: its question settled${r.closed ? '; nothing left to decide, closed' : ''}.`);
+      }
+      return;
     }
     case 'list': {
       const m = readMemory();
