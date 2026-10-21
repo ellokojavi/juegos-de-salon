@@ -125,9 +125,9 @@ const playNumber = async level => {
   const wrong = ['0123456789'.split('').filter(d => !secret.includes(d)).slice(0, digits).join(''), secret.split('').reverse().join('')];
   for (const guess of [...wrong.slice(0, level === 2 ? 0 : level === 1 ? 1 : 2), secret]) {
     if (!await ev(`!!document.querySelector('.keypad .ok')`)) break;
-    // With a lab key (localhost opens it, D-409), the right guess starts by tapping the last box
+    // The right guess starts by tapping the last box (choosing the box, for everyone)
     const choose = await ev(`!!document.querySelector('.entry--elegir')`);
-    if (guess === secret) ok(choose, "La Copa's 🔢: with a lab key, tapping a box chooses where the digit goes");
+    if (guess === secret) ok(choose, "La Copa's 🔢: tapping a box chooses where the digit goes");
     if (guess === secret && choose) {
       await ev(`document.querySelectorAll('.entry .box')[${digits - 1}].click(); 1`);
       await typeKeypad(secret.at(-1) + secret.slice(0, -1));
