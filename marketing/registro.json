@@ -41,17 +41,10 @@
       ],
       "estado": "en YouTube (@eljotairi), no listado: 16:9 https://youtu.be/fQ4uFaPX_4g y Short https://youtube.com/shorts/RYAvj2MTRPQ",
       "revision": {
-        "fecha": "2026-10-18",
-        "app": "0.178.1",
-        "al_dia": false,
-        "pendiente": [
-          "Zip (escena de los cuatro juegos, ~14-16 s): el encabezado del video dice 'Nivel 1 · 4 × 4'; desde 0.130.0 (D-250) dice 'Nivel 1 de 10' (diez niveles fijos). Se corrige en la próxima vuelta, no amerita rehacer la v6.",
-          "Uno al día (~21 s, the finger taps the home card): under the La Copa and Uno al día row the video shows Línea de Tiempo; today, while the New label lasts (D-333, D-335, until 2026-10-29), Rutas rotas with its dark rainbow 'Nuevo' sticker goes there, and after that Toque y Fama by popularity (D-255). Minor: fixed on the next pass.",
-          "Uno al día (~21 s): la píldora de su tarjeta en la portada dice '🔥 10 · Jugar el de hoy'; desde D-305 dice 'Jugar hoy' (EN 'Play today', PT 'Jogar hoje').",
-          "Reinas (grilla '¡Y muchos más juegos!', ~20 s): bajo el tablero se ven 🧹 Borrar todo y 🏳️ Rendirse en una fila; desde D-283 la fila es ↩️ Deshacer y 🧹 Borrar todo, y Rendirse baja a su propia línea.",
-          "Línea de Tiempo (~6-8 s, the '¡Correcto!' verdict): the card shows only its emoji, text and year (622); since D-314 a correct guess also tells the card's fact under it, with a bar that empties before it closes.",
-          "Tango (grilla '¡Y muchos más juegos!', ~16-21 s): bajo el tablero se ven 🧹 Borrar todo y 💡 Pista (-15 puntos) en una fila; desde D-342 la fila es ↩️ Deshacer y 🧹 Borrar todo, y la Pista baja a su propia línea."
-        ]
+        "fecha": "2026-10-21",
+        "app": "0.190.2",
+        "al_dia": true,
+        "pendiente": []
       },
       "seleccion": true,
       "escenas": [
@@ -117,12 +110,10 @@
         "caso"
       ],
       "revision": {
-        "fecha": "2026-10-18",
-        "app": "0.178.1",
-        "al_dia": false,
-        "pendiente": [
-          "Muestra el prototipo, que se borró (D-267): hoy /labs/case/ abre primero una antesala ('El caso de hoy es el mismo para todos') y una cuenta 3, 2, 1, y la pantalla del caso es la de La Copa: arriba '‹ Laboratorio' y el reloj, sin el marcador '✅ 1/20 · 0 errores' del video, y el botón dice '💡 Ayuda (-15 puntos)' (D-263), no '💡 Ayuda'."
-        ]
+        "fecha": "2026-10-21",
+        "app": "0.190.2",
+        "al_dia": true,
+        "pendiente": []
       }
     },
     {
@@ -160,13 +151,10 @@
       "seleccion": true,
       "estado": "entregado al dueño",
       "revision": {
-        "fecha": "2026-10-18",
-        "app": "0.178.1",
-        "al_dia": false,
-        "pendiente": [
-          "Step 1 (0-1.3 s, the home page in the iPhone): the Uno al día card's pill says 'Jugar el de hoy'; since D-305 it says 'Jugar hoy'.",
-          "Step 1 (0-1.3 s): under the La Copa and Uno al día row the home page shows Línea de Tiempo; today Rutas rotas goes there with its dark rainbow 'Nuevo' sticker (D-333, D-335, until 2026-10-29), and Toque y Fama after that (D-255). Minor: a retake with capture.mjs fixes both."
-        ]
+        "fecha": "2026-10-21",
+        "app": "0.190.2",
+        "al_dia": true,
+        "pendiente": []
       }
     },
     {
@@ -214,13 +202,10 @@
         "agentes"
       ],
       "revision": {
-        "fecha": "2026-10-18",
-        "app": "0.178.1",
-        "al_dia": false,
-        "pendiente": [
-          "Dice 'Una pista. 15 palabras.', pero desde D-287 cada tablero trae 4 pistas que llegan de a una (la portada del juego: 'Llegan 4 pistas, de a una'); se ve en el JPG, el video y la vista previa del link de /labs/agents/.",
-          "No cuenta lo de los espías (D-288): la portada del juego y su ficha en el laboratorio abren con 'Cada palabra es el nombre en clave de un espía'. Menor: la tarjeta igual invita a buscar 'a tus agentes'."
-        ]
+        "fecha": "2026-10-21",
+        "app": "0.190.2",
+        "al_dia": true,
+        "pendiente": []
       },
       "servido": [
         "public/labs/agents/tarjeta.jpg"
@@ -260,8 +245,8 @@
         "numeros-explosivos"
       ],
       "revision": {
-        "fecha": "2026-10-18",
-        "app": "0.178.1",
+        "fecha": "2026-10-21",
+        "app": "0.190.2",
         "al_dia": true,
         "pendiente": []
       }
@@ -307,8 +292,8 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-18",
-        "app": "0.178.1",
+        "fecha": "2026-10-21",
+        "app": "0.190.2",
         "al_dia": true,
         "pendiente": []
       }
@@ -354,8 +339,8 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-18",
-        "app": "0.181.1",
+        "fecha": "2026-10-21",
+        "app": "0.190.2",
         "al_dia": true,
         "pendiente": []
       },
@@ -395,8 +380,8 @@
         "public/assets/email/header.jpg"
       ],
       "revision": {
-        "fecha": "2026-10-18",
-        "app": "0.181.1",
+        "fecha": "2026-10-21",
+        "app": "0.190.2",
         "al_dia": true,
         "pendiente": []
       }
@@ -436,10 +421,12 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-19",
-        "app": "0.186.12",
-        "al_dia": true,
-        "pendiente": []
+        "fecha": "2026-10-21",
+        "app": "0.190.2",
+        "al_dia": false,
+        "pendiente": [
+          "The 👑 Reinas screenshot predates the ⏱ elapsed-time clock Reinas shows while playing since D-384."
+        ]
       }
     }
   ]
