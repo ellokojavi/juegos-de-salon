@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#150726">
+  <!-- El laboratorio no se anuncia: no está en el menú ni en los buscadores (D-101), y sin la llave no se entra (D-281) -->
+  <script src="../../assets/js/labs-puerta.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Píldoras de filtros 💊 · Laboratorio</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <script src="../../assets/js/vigia.js"></script>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <style>
+    /* A side-by-side of visual treatments for the home page's two filter rows (D-406): the shortcuts
+       (🔎 ⭐ ✨ 🔥) and the types. Only the look: a tap selects one pill across both rows, as on the
+       home page (one choice), and filters nothing. Each option's CSS is scoped to its own .op-x box. */
+    body { padding: 16px 8px 48px; }
+    .wrap { max-width: 640px; margin: 0 auto; display: grid; gap: 18px; }
+    header h1 { font-family: var(--font-display); margin: 0 0 6px; text-align: center; }
+    header p { margin: 0; text-align: center; }
+    .anchos { display: flex; gap: 6px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+    .anchos button, .elegir { min-height: 44px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); font: 800 0.9rem var(--font-body); cursor: pointer; }
+    .anchos button.on { background: var(--yellow); color: #2a1600; border-color: transparent; }
+    .opcion { padding: 16px 8px; display: grid; gap: 10px; }
+    @media (min-width: 400px) { .opcion { padding: 16px; } }
+    .opcion h2 { margin: 0; font-size: 1.15rem; }
+    .opcion .nota { margin: 0; font-size: 0.92rem; }
+    .opcion .nota b { color: var(--ink); }
+    .pros { margin: 0; padding-left: 1.2em; font-size: 0.88rem; }
+    /* The frame: the width of the home page's content at the chosen screen width (screen − 36 px) */
+    .marco { width: min(100%, var(--ancho, 284px)); margin: 0 auto; padding: 10px 0; border-radius: 16px; background: rgba(0, 0, 0, 0.18); outline: 1px dashed rgba(255, 255, 255, 0.15); outline-offset: 4px; }
+    .elegir.on { background: var(--lime, #a6e22e); color: #142400; border-color: transparent; }
+    .elegida { outline: 2px solid var(--lime, #a6e22e); }
+
+    /* ——— The home page as it is (copied from public/index.html), the base of every option ——— */
+    .filtros { display: grid; gap: 10px; container-type: inline-size; }
+    .filtros > * { min-width: 0; }
+    .filtros .atajos, .filtros .tipos { display: flex; gap: 8px; justify-content: center; }
+    .filtros button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; cursor: pointer; white-space: nowrap;
+      font: 900 0.9rem var(--font-body); border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .filtros .atajos button { flex: 0 0 auto; padding: 6px 12px; }
+    .filtros .atajos .lupa { min-width: 44px; padding-inline: 10px; }
+    .filtros .atajos .lupa .ficha-emoji { font-size: 1.15rem; }
+    .filtros .tipos button { padding: 6px 14px; }
+    @container (max-width: 520px) {
+      .filtros .tipos { gap: 6px; }
+      .filtros .tipos button { flex: 1 1 auto; flex-direction: column; gap: 0; padding: 6px 6px; border-radius: 18px; font-size: 0.8rem; line-height: 1.15; }
+      .filtros .tipos button .ficha-emoji { font-size: 1.15rem; }
+    }
+    @container (max-width: 300px) {
+      .filtros .atajos { gap: 4px; }
+      .filtros .atajos button { padding-inline: 8px; gap: 4px; }
+      /* At 320 px the home page moves ⭐ off this row (acomodarFav): here it simply hides */
+      .filtros .atajos [data-k="fav"] { display: none; }
+      .filtros .tipos { gap: 4px; }
+      .filtros .tipos button { padding: 6px 3px; }
+    }
+    /* The chosen one: the same cyan in both rows, in every option (one choice, D-406) */
+    .filtros button.on { background: var(--cyan); border-color: transparent; color: #03302c; }
+    .filtros button:active { transform: scale(0.96); }
+
+    /* ——— B · Atajos con contorno ——— */
+    .op-b .atajos button:not(.on) { background: transparent; border-color: rgba(255, 255, 255, 0.28); }
+
+    /* ——— C · Atajos tenues y livianos ——— */
+    .op-c .atajos button:not(.on) { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.10); font-weight: 700; color: rgba(255, 255, 255, 0.86); }
+    .op-c .tipos button:not(.on) { background: rgba(255, 255, 255, 0.11); border-color: rgba(255, 255, 255, 0.22); }
+
+    /* ——— D · Tipos como pestañas ——— */
+    .op-d .tipos { gap: 0 !important; border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+    .op-d .tipos button { background: none; border: 0; border-radius: 12px 12px 0 0; border-bottom: 3px solid transparent; margin-bottom: -1px; color: var(--muted); }
+    .op-d .tipos button.on { background: none; color: var(--cyan); border-bottom-color: var(--cyan); }
+
+    /* ——— E · Atajos con su color ——— */
+    .op-e .atajos [data-k="fav"]:not(.on) { background: rgba(255, 210, 63, 0.12); border-color: rgba(255, 210, 63, 0.35); }
+    .op-e .atajos [data-k="new"]:not(.on) { background: rgba(178, 132, 255, 0.14); border-color: rgba(178, 132, 255, 0.40); }
+    .op-e .atajos [data-k="pop"]:not(.on) { background: rgba(255, 120, 60, 0.13); border-color: rgba(255, 120, 60, 0.40); }
+
+    /* ——— F · Lupa aparte + atajos con contorno ——— */
+    .op-f .atajos .lupa { border-radius: 50%; width: 44px; padding: 0; background: transparent; border: 1.5px solid var(--cyan); }
+    .op-f .atajos .lupa.on { background: var(--cyan); }
+    .op-f .atajos .sep { flex: 0 0 1px; align-self: center; height: 24px; background: rgba(255, 255, 255, 0.2); margin-inline: 2px; }
+    .op-f .atajos button:not(.lupa):not(.on) { background: transparent; border-color: rgba(255, 255, 255, 0.28); }
+    .filtros .sep { display: none; }
+    .op-f .filtros .sep { display: block; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>💊 Píldoras de filtros</h1>
+      <p class="muted">Seis maneras de distinguir la fila de atajos (🔎 ⭐ ✨ 🔥) de la de tipos. Toca una píldora para verla elegida: en todas, la elegida es el mismo cian, porque en la portada las dos filas son una sola elección. Los filtros no filtran nada aquí. A 320 px ⭐ Favoritos no cabe en la fila y se oculta, como en la portada, donde baja a su propia línea.</p>
+      <div class="anchos" id="anchos" role="group" aria-label="Ancho de pantalla">
+        <button type="button" data-w="284" class="on">📱 320 px</button>
+        <button type="button" data-w="354">📱 390 px</button>
+        <button type="button" data-w="564">💻 600 px</button>
+      </div>
+    </header>
+    <div id="opciones"></div>
+  </div>
+  <script type="module">
+    const OPCIONES = [
+      { id: 'a', titulo: 'A · Como está hoy', nota: 'Las dos filas iguales: vidrio con borde suave. Es la referencia para comparar.',
+        pros: ['✅ Ordenado y parejo.', '⚠️ Nada dice que arriba hay atajos y abajo categorías.'] },
+      { id: 'b', titulo: 'B · Atajos con contorno', nota: 'Arriba, píldoras sin relleno, solo con borde; abajo, las fichas con relleno de siempre. <b>Mi recomendada.</b>',
+        pros: ['✅ La diferencia se nota sin gritar, y la elegida sigue igual en las dos filas.', '✅ El cambio más chico: solo cambia el fondo de una fila.', '⚠️ El contorno sobre el fondo oscuro pesa un poco menos al tacto.'] },
+      { id: 'c', titulo: 'C · Atajos tenues, tipos más marcados', nota: 'Arriba, casi transparentes y con letra más liviana; abajo, un relleno algo más claro que hoy.',
+        pros: ['✅ Jerarquía clara: los tipos mandan y los atajos acompañan.', '⚠️ Los atajos pueden pasar por desactivados, sobre todo al sol.'] },
+      { id: 'd', titulo: 'D · Tipos como pestañas', nota: 'Los atajos siguen siendo píldoras; los tipos pasan a ser pestañas con una línea abajo, y la elegida se subraya en cian.',
+        pros: ['✅ La diferencia más fuerte: dos controles de otra familia.', '⚠️ Las pestañas prometen "secciones" y que siempre haya una elegida, y aquí se puede no elegir ninguna.', '⚠️ La elegida ya no es igual en las dos filas, y eso sugiere que se combinan (no se combinan).'] },
+      { id: 'e', titulo: 'E · Atajos con su color', nota: 'Cada atajo con un tinte suave de su emoji: ⭐ amarillo, ✨ lila, 🔥 naranja. Los tipos, en vidrio.',
+        pros: ['✅ Alegre y fácil de recordar: "lo naranjo son los populares".', '⚠️ Más color en una pantalla que ya tiene mucho; compite con las etiquetas 🔥 Popular y Nuevo de las tarjetas.'] },
+      { id: 'f', titulo: 'F · Lupa aparte + atajos con contorno', nota: 'Como B, pero la 🔎 es un botón redondo con borde cian, separado por una rayita, porque es una acción y no un filtro.',
+        pros: ['✅ Deja claro que la lupa abre algo y lo demás filtra.', '✅ Combina con B si te gusta B.', '⚠️ Un elemento más (la rayita) en una fila que a 320 px va justa.'] },
+    ];
+    const ATAJOS = [['lupa', '🔎', ''], ['fav', '⭐', 'Favoritos'], ['new', '✨', 'Nuevos'], ['pop', '🔥', 'Populares']];
+    const TIPOS = [['words', '🔤', 'Palabras'], ['logic', '🧩', 'Lógica'], ['trivia', '🧠', 'Cultura'], ['tabletop', '🎲', 'Cartas/Dados']];
+    const ficha = ([k, e, t], extra = '') => `<button type="button" data-k="${k}" class="${k === 'lupa' ? 'lupa' : ''}"${k === 'lupa' ? ' aria-label="Buscar"' : ''}>${extra}<span class="ficha-emoji" aria-hidden="true">${e}</span>${t ? `<span>${t}</span>` : ''}</button>`;
+    const caja = document.getElementById('opciones');
+    caja.style.display = 'grid'; caja.style.gap = '18px';
+    const guardada = localStorage.getItem('labs:pildoras');
+    for (const o of OPCIONES) {
+      const s = document.createElement('section');
+      s.className = `panel opcion op-${o.id}`; s.id = `op-${o.id}`;
+      s.innerHTML = `<h2>${o.titulo}</h2><p class="muted nota">${o.nota}</p>
+        <div class="marco"><section class="filtros">
+          <div class="atajos">${ficha(ATAJOS[0])}<span class="sep" aria-hidden="true"></span>${ATAJOS.slice(1).map(a => ficha(a)).join('')}</div>
+          <div class="tipos">${TIPOS.map(t => ficha(t)).join('')}</div>
+        </section></div>
+        <ul class="muted pros">${o.pros.map(p => `<li>${p}</li>`).join('')}</ul>
+        <button type="button" class="elegir" data-op="${o.id}">👍 Me gusta esta</button>`;
+      caja.append(s);
+      // One choice across both rows, as on the home page; a second tap unselects
+      s.querySelector('.filtros').addEventListener('click', e => {
+        const b = e.target.closest('button'); if (!b) return;
+        const ya = b.classList.contains('on');
+        s.querySelectorAll('.filtros button').forEach(x => x.classList.remove('on'));
+        if (!ya) b.classList.add('on');
+      });
+    }
+    // The vote stays on this phone only, to remember which one you liked while comparing
+    const marcar = id => document.querySelectorAll('.opcion').forEach(s => {
+      const on = s.id === `op-${id}`;
+      s.classList.toggle('elegida', on);
+      const b = s.querySelector('.elegir'); b.classList.toggle('on', on); b.textContent = on ? '✅ Elegida' : '👍 Me gusta esta';
+    });
+    caja.addEventListener('click', e => { const b = e.target.closest('.elegir'); if (b) { localStorage.setItem('labs:pildoras', b.dataset.op); marcar(b.dataset.op); } });
+    if (guardada) marcar(guardada);
+    document.getElementById('anchos').addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      document.querySelectorAll('#anchos button').forEach(x => x.classList.toggle('on', x === b));
+      document.documentElement.style.setProperty('--ancho', `${b.dataset.w}px`);
+    });
+  </script>
+</body>
+</html>
