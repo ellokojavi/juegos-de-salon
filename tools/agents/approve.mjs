@@ -73,6 +73,34 @@ export function checkboxes(body = '') {
 /** The decisions already carried out (`<!-- hecho:1 -->`). */
 export const doneSet = (body = '') => new Set([...body.matchAll(/<!-- hecho:(\d+) -->/g)].map(m => m[1]));
 
+/** The decisions of the issue not made yet: those in the actions block without `<!-- hecho:n -->`. */
+export function undecided(body = '') {
+  const done = doneSet(body);
+  return [...new Set(Object.keys(readActions(body) || {}).map(op => op.split(':')[0]))].filter(n => !done.has(n));
+}
+
+/**
+ * The body with decision n settled without a box (D-411): what it asked was already done or no
+ * longer applies, so no Yes or No is checked, which would carry something out or record the wrong
+ * answer. A line goes under its options with the note, and the decision counts as made.
+ */
+export function settle(body, decision, note) {
+  if (doneSet(body).has(String(decision))) return body;
+  const lines = body.split('\n');
+  const last = lines.map((l, i) => (new RegExp(`<!-- op:${decision}:[a-z]+ -->`).test(l) ? i : -1)).filter(i => i >= 0).pop();
+  if (last === undefined) throw new Error(`the issue has no decision ${decision}`);
+  lines.splice(last + 1, 0, `- ✔️ No answer needed: ${String(note).trim()} <!-- hecho:${decision} -->`);
+  return lines.join('\n');
+}
+
+/** The decision whose actions queue `task` (an idea's, `ideas <id>:`), ignoring the [labs]/[publish] mark, or null. */
+export function decisionQueuing(body, startsWith) {
+  for (const [op, list] of Object.entries(readActions(body) || {})) {
+    if (list.some(a => a.type === 'queue' && String(a.task).replace(/^\[(labs|publish)\] /, '').startsWith(startsWith))) return op.split(':')[0];
+  }
+  return null;
+}
+
 /** The text of question n (`### n. …`), so the comment makes sense without opening the issue. */
 export function question(body = '', n) {
   return body.match(new RegExp(`^###\\s+${n}\\.\\s+(.+)$`, 'm'))?.[1].trim() || `Decision ${n}`;
