@@ -687,5 +687,5 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
 - `?today` on a game with variants plays the default one and hides the picker (`practica()` in
   `public/cup/game.js`).
 - Tested by `uno-al-dia.test.mjs` (16 games, no day before `DESDE_MAS` changes, each new one comes
-  out in the next two decks) and `tools/e2e/daily-variants.mjs` (Loteo on October 23 and Pintaminas
-  on October 30 play their default variant with no picker, even when the phone remembers the other).
+  out in the next two decks) and `tools/e2e/daily-variants.mjs` (Loteo and Pintaminas, on the first
+  day each is due, looked up in the deck since D-405, play their default variant with no picker, even when the phone remembers the other).
