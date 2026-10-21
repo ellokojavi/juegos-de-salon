@@ -241,6 +241,9 @@
       font: 900 0.9rem var(--font-body); border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink);
       transition: background 0.15s, color 0.15s, transform 0.1s;
     }
+    /* The shortcuts (🔎 ⭐ ✨ 🔥) are outlined and the types filled (D-407, option B of /labs/pills/): two
+       kinds of filter, one choice, so the chosen one is the same cyan in both rows */
+    .filtros .atajos button:not(.on), .filtros .ficha-fav:not(.on) { background: transparent; border-color: rgba(255, 255, 255, 0.28); }
     .filtros .atajos button.on, .filtros .tipos button.on, .filtros .ficha-fav.on { background: var(--cyan); border-color: transparent; color: #03302c; }
     .filtros button:active { transform: scale(0.96); }
     .filtros-cuenta { display: flex; flex-wrap: wrap; gap: 4px 10px; justify-content: center; align-items: center; color: var(--muted); font-weight: 700; font-size: 0.9rem; margin: 0; min-height: 44px; }
