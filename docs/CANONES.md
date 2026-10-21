@@ -405,6 +405,8 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **✨ Nuevos and 🔥 Populares filters** (D-362, D-369): a row of two chips above the types, each shown
   only when it has games, kept in the link as `?type=new` / `?type=popular`. With a favorite marked,
   ⭐ Favoritos goes first in that row: with its name, tighter, or the ⭐ alone, centered (D-364).
+  These shortcuts (and the 🔎 pill, D-390) are outlined, with no fill; the types are filled. The chosen
+  pill is the same cyan in both rows, because both are one single choice (D-407).
 - **The app's name on the floating menu** (D-364, D-369): while the filters float, "🎲 Juegos de
   Salón" tops them in the title's font, in the 36 px the floating filters leave above them, so nothing
   moves when it appears; a tap goes back to the top. The frosted background reaches

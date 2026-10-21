@@ -39,6 +39,17 @@ if (await ev(`!document.querySelector('.atajos [data-tipo=new]').hidden`)) {
   await ev(`document.querySelector('.atajos [data-tipo=new]').click(); 1`);
   ok(await waitFor(`(() => { const v = [...document.querySelectorAll('.game-card[data-id]')].filter(c => !c.hidden); return v.length > 0 && v.every(c => c.querySelector('.nuevo')); })()`), '✨ Nuevos shows only the games that say "New"');
 }
+// The shortcuts outlined, the types filled; the chosen one the same cyan in both (D-407)
+await b.go(`${SITE}/?test&lang=es`);
+await waitFor(`!!document.querySelector('.filtros .atajos .buscar-pill')`);
+const bg = sel => `getComputedStyle(document.querySelector('${sel}')).backgroundColor`;
+ok(await ev(`${bg('.filtros .atajos [data-tipo=popular]')} === 'rgba(0, 0, 0, 0)' && ${bg('.filtros .atajos .buscar-pill')} === 'rgba(0, 0, 0, 0)' && ${bg('.filtros .tipos button')} !== 'rgba(0, 0, 0, 0)'`), 'the shortcuts are outlined and the types filled (D-407)');
+await ev(`document.querySelector('.filtros .atajos [data-tipo=popular]').click(); 1`);
+await sleep(400); // past the 0.15 s color transition
+const onBg = await ev(bg('.filtros .atajos [data-tipo=popular]'));
+await ev(`document.querySelector('.filtros .tipos button').click(); 1`);
+await sleep(400);
+ok(onBg === await ev(bg('.filtros .tipos button')) && onBg !== 'rgba(0, 0, 0, 0)', 'the chosen one is the same color in both rows: one choice');
 // ⭐ Favoritos joins the Nuevo / Populares row (D-364), with its name from 360 px; the title tops the floating menu
 await b.go(`${SITE}/?test&lang=es`);
 await waitFor(`document.querySelectorAll('.game-card .fav').length > 3`);
