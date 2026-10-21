@@ -16,6 +16,8 @@ import { COMODINES_MAX, COMODIN_CADA, FECHA, sumarDias } from '../../assets/js/u
 
 export const BONUS_PER_DAY = 5;
 export const BONUS_MAX = 50;
+/** Inviting: when the friend finishes their first Uno al día, a 🧊 and these points (tunable, D-412). */
+export const INVITE_POINTS = 10;
 export const bonusFor = streak => Math.min(BONUS_MAX, Math.max(0, streak) * BONUS_PER_DAY);
 
 /**

@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { crearAlmacenLocal } from './jugador-local.js';
 import { crearJugador } from './jugador.js';
-import { UNO_AL_DIA, UAD_RACHA, periodoDia, PERIODO, SIEMPRE } from './records.js';
+import { UNO_AL_DIA, UAD_RACHA, UAD_PUNTOS, periodoDia, periodoMes, PERIODO, SIEMPRE } from './records.js';
 import { numDia, semanaDe } from './uno-al-dia.js';
 
 const ls = new Map();
@@ -55,6 +55,19 @@ assert.equal(await intento({ [`records/${UNO_AL_DIA}/${sem}/${sara.jid}`]: fila(
 assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n}`]: { j: 'reinas', s: 100, ms: 1, at: ahora.t } }), false, 'la historia de un día no se reescribe');
 assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n + 3}`]: { j: 'reinas', s: 101, ms: 1, at: ahora.t } }), false, 'el puntaje va de 0 a 100');
 
+// Uno al día points (lab, D-412): game score plus streak bonus, each day once, the streak growing
+// at most one a day
+const mes = periodoMes('2026-10-07'), pts = `records/${UAD_PUNTOS}/${mes}/${sara.jid}`;
+assert.equal(await cel1.anotarPuntosDia({ n, mesP: mes, racha: 3 }), true);
+assert.deepEqual([(await db.get(pts)).s, (await db.get(pts)).r], [87 + 15, 3]);
+assert.equal(await cel1.anotarPuntosDia({ n, mesP: mes, racha: 3 }), false, 'a day adds its points once');
+assert.equal(await cel1.anotarPuntosDia({ n: n + 1, mesP: mes, racha: 9 }), true);
+assert.deepEqual([(await db.get(pts)).s, (await db.get(pts)).r], [102 + 40 + 20, 4], 'the streak grows one a day, whatever the phone says');
+assert.equal(await cel1.anotarPuntosDia({ n: n + 5, mesP: mes, racha: 5 }), false, 'a day without history adds nothing');
+assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/p`]: true, [pts]: fila(162 + 70 + 50, { u: String(n - 3), r: 10 }) }), false, 'the streak cannot jump');
+assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/p`]: true, [pts]: fila(162 + 99, { u: String(n - 3), r: 5 }) }), false, 'the points are the history plus the bonus');
+assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/p`]: true, [pts]: fila(162 + 70 + 25, { u: String(n - 3), r: 5 }) }), true, 'an honest day goes in');
+
 // Invitar: el celular invitado deja su marca una vez, y nadie se invita a sí mismo
 assert.equal(await cel1.aceptarInvitacion(sara.jid, n), false, 'invitarse a sí mismo no vale');
 assert.equal(await cel2.aceptarInvitacion(sara.jid, n), true, 'un celular sin jugador acepta la invitación');
@@ -70,6 +83,8 @@ assert.deepEqual(await cel1.publico(sara.jid), { n: 'Sara', co: null });
 const reglas = JSON.parse(await readFile(new URL('../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules;
 assert.ok(reglas.unoAlDia?.$jid?.$d && reglas.invitados?.$jid?.$uid, 'faltan unoAlDia o invitados en las reglas');
 assert.match(reglas.records.$t.$p.$jid['.write'], /uno-al-dia/);
+assert.match(reglas.records.$t.$p.$jid['.write'], /'uno-al-dia-pts'.*\/p'\)\.exists\(\).*>= 10 \? 50 : newData\.child\('r'\)\.val\(\) \* 5/, 'the rules check the points like the test store');
+assert.ok(reglas.unoAlDia.$jid.$d.p && reglas.records.$t.$p.$jid.r, 'the rules know p and r');
 assert.match(reglas.records.$t.$p['.read'], /d\[0-9\]\{5\}/, 'las reglas no aceptan el período de un día');
 assert.match(reglas.invitados.$jid.$uid['.write'], /!root\.child\('jugadorSeats/, 'invitarse a sí mismo');
 

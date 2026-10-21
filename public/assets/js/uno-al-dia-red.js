@@ -11,7 +11,8 @@
 import {
   estado, leer, juntar, numDia, fechaDeNum, semanaDe, recorrer, porJuego, fechaLocal, KEY,
 } from './uno-al-dia.js';
-import { UNO_AL_DIA, UAD_RACHA, periodoDia, SIEMPRE, esJid } from './records.js';
+import { UNO_AL_DIA, UAD_RACHA, periodoDia, periodoMes, SIEMPRE, esJid } from './records.js';
+import { labAccess } from './lab-access.js';
 import { trackUnoAlDia } from './transport/stats.js';
 
 /** Quién invitó a este celular (el `jid` del link), si alguien. */
@@ -51,6 +52,8 @@ export async function subirHoy({ fecha, dia }) {
   const e = estado();
   const n = numDia(fecha);
   if (j.yo()) out.subido = await j.anotarDia({ n, j: dia.j, s: dia.s, ms: dia.ms, semanaP: semanaDe(fecha), mejor: e.mejor }).catch(() => null);
+  // Uno al día points (D-412): saved only for lab key holders while they are tried. lab: #seccion-puntos-dia
+  if (j.yo() && await labAccess()) out.puntos = await j.anotarPuntosDia({ n, mesP: periodoMes(fecha), racha: e.racha }).catch(() => false);
   const inv = invitador();
   // El primero de este celular: solo hay un día jugado, el de hoy
   if (inv && e.jugados === 1 && e.dias[fecha]) {
