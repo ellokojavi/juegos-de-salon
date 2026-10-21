@@ -239,7 +239,7 @@ function showScreen(id) { $$('.screen').forEach(s => s.classList.toggle('active'
 
 /** Teclado numérico con casillas. onSubmit(value). */
 /** El teclado, con notas (toque largo para tachar), sale de assets/js/teclado.js (D-102). */
-// Tocar la casilla donde va la próxima cifra (#604): en desarrollo, solo con llave del lab (D-395)
+// Tocar la casilla donde va la próxima cifra (#604): en desarrollo, solo con llave del lab (D-395). lab: #seccion-elegir-casilla
 function keypad({ digits, zeroFirst, onSubmit, hidden = false, submitLabel = T.guess, notes = null, onNotesChange = null }) {
   const pad = teclado({
     largo: digits, teclas: CIFRAS, submitLabel, hidden, notes, onNotesChange, onSubmit,

@@ -147,7 +147,12 @@ that (after a new game, after a big text change), saying why.
      (U-3): a new text goes with your best proposal, noted.
    - **An idea or a request** (change a rule, add something, redesign): one-tap decision
      (step 7), with your recommendation. If it's small and you recommend it, leave the PR done and
-     let the Yes merge it; if it's big, the Yes queues it (`{ "type": "queue", "task": "…" }`):
+     let the Yes merge it; if it's big, the Yes queues it (`{ "type": "queue", "task": "…" }`).
+     Every change goes to Labs first unless the owner says otherwise (D-409): `decide` gives a
+     queued Yes three boxes, **Yes, in Labs** (`[labs]`), **Yes, and publish** (`[publish]`) and **No**.
+     A `[labs]` task is built behind `labAccess()` with its card in `/labs/` (a `lab: #<id>` comment,
+     `public/labs/listed.test.mjs`); a `[publish]` one, for everyone. A prepared PR is built behind the
+     lab, and names `publish` actions only if there is a version for everyone.
      `decide` refuses a Yes with no actions, or one that does `nothing` while its text says it queues
      or builds (#607, where an approved change was only noted and never reached the queue).
    - **Resolved, duplicate or already an open dilemma:** you close it naming where it was resolved

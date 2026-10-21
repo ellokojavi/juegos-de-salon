@@ -63,19 +63,30 @@ export function describeActions(list = []) {
       case 'close-issue': return `closes #${a.issue}`;
       case 'comment': return `comments on #${a.on}`;
       case 'run': return a.workflow === 'publish.yml' ? 'publishes the site' : 'runs the end-to-end tests';
-      case 'queue': return 'queues it for the next round';
+      case 'queue': return a.task.startsWith('[publish]') ? 'queues it for the next round, for everyone' : a.task.startsWith('[labs]') ? 'queues it for the next round, in Labs' : 'queues it for the next round';
       default: return '';
     }
   }).filter(Boolean);
   return phrases.length > 1 ? `${phrases.slice(0, -1).join(', ')} and ${phrases.at(-1)}` : phrases[0] || '';
 }
 
-/** The decisions issue body: `<!-- op:n:si -->` checkboxes and the actions block at the end. */
+/** Queue tasks marked with where the work lands (D-409): `[labs]` behind the lab key, `[publish]` for everyone. */
+export const LABS = '[labs]', PUBLISH = '[publish]';
+const markTasks = (list, mark) => list.map(a => (a.type === 'queue' && !/^\[(labs|publish)\]/.test(a.task) ? { ...a, task: `${mark} ${a.task}` } : a));
+
+/**
+ * The decisions issue body: `<!-- op:n:si -->` checkboxes and the actions block at the end. A
+ * decision that changes something answers in three (D-409, the owner's rule: every change goes to
+ * the lab first unless they say otherwise): **Yes, in Labs** (`yes`, the default), **Yes, and
+ * publish** (`publish`, op `pub`) and **No**. A `yes` that queues work gets its `publish` on its own,
+ * the same tasks marked `[publish]` instead of `[labs]`; a prepared PR (`merge`) offers publishing
+ * only if `publish` names its own actions. A Yes that only takes note stays Yes / No.
+ */
 export function decisionsBody({ summary = '', decisions }) {
   if (!decisions?.length) throw new Error('No decisions.');
   const actions = {}, parts = [];
   if (summary) parts.push(summary.trim(), '');
-  parts.push('Check **Yes** or **No** on each one. What you check happens right away and cannot be undone; the result is noted next to it.', '');
+  parts.push('Check one box on each. What you check happens right away and cannot be undone; the result is noted next to it. A change goes to Labs first, for you to try, unless you check **Yes, and publish**.', '');
   decisions.forEach((d, i) => {
     const n = i + 1;
     // The markers keep their Spanish option names (`si`, `no`): approve.mjs reads old issues too
@@ -84,8 +95,14 @@ export function decisionsBody({ summary = '', decisions }) {
     if (!d.yes?.length) throw new Error(`Decision ${n}: no Yes actions. Write them, or [{ "type": "nothing" }] if a Yes only takes note`);
     const yesNothing = d.yes.every(a => normalizeAction(a).type === 'nothing');
     if (yesNothing && /\bqueue|\bnext round|\bbuil[dt]\b/i.test(`${d.question} ${d.context || ''}`)) throw new Error(`Decision ${n}: its text says the Yes queues or builds work, but its Yes does nothing. Use [{ "type": "queue", "task": "…" }]`);
-    for (const [op, key] of [['si', 'yes'], ['no', 'no']]) {
-      const list = (d[key]?.length ? d[key] : [{ type: 'nothing' }]).map(normalizeAction);
+    const yes = d.yes.map(normalizeAction);
+    const queues = yes.some(a => a.type === 'queue');
+    const lists = { yes: queues ? markTasks(yes, LABS) : yes, no: d.no };
+    if (d.publish?.length) lists.publish = markTasks(d.publish.map(normalizeAction), PUBLISH);
+    else if (queues) lists.publish = markTasks(yes, PUBLISH);
+    for (const [op, key] of [['si', 'yes'], ['pub', 'publish'], ['no', 'no']]) {
+      if (key === 'publish' && !lists.publish) continue;
+      const list = (lists[key]?.length ? lists[key] : [{ type: 'nothing' }]).map(normalizeAction);
       const bad = list.map(invalidAction).find(Boolean);
       if (bad) throw new Error(`Decision ${n}, ${key}: ${bad}`);
       actions[`${n}:${op}`] = list;
@@ -93,7 +110,7 @@ export function decisionsBody({ summary = '', decisions }) {
     parts.push(`### ${n}. ${d.question}`);
     if (d.context) parts.push(d.context.trim());
     const box = (op, name) => { const q = describeActions(actions[`${n}:${op}`]); return `- [ ] ${name}${q ? `: ${q}` : ''} <!-- op:${n}:${op} -->`; };
-    parts.push(box('si', 'Yes'), box('no', 'No'), '');
+    parts.push(...(lists.publish ? [box('si', 'Yes, in Labs'), box('pub', 'Yes, and publish')] : [box('si', 'Yes')]), box('no', 'No'), '');
   });
   parts.push(`<!-- acciones ${JSON.stringify(actions)} -->`);
   return parts.join('\n');
