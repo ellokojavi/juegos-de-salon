@@ -151,7 +151,7 @@ Austria y Suiza, **con ß** (los suizos no la escriben, pero la leen sin problem
 | Toque y Fama | Bulls and Cows | Bullen und Kühe |
 | El Ahorcado | Hangman | Galgenmännchen |
 | Dudo | Liar's Dice | Lügenwürfel |
-| Generala | Generala | Generala (no Kniffel ni Yahtzee, que son marcas: D-246) |
+| Generala | Generala | Generala (no Kniffel ni Yahtzee, que son marcas: D-246; the tagline may compare it: "Wie Kniffel oder Yatzy") |
 | Batalla Naval | Battleship | Schiffe versenken |
 | Julepe | Julep | Julepe |
 | Cuarto Rey | Fourth King | Der vierte König |

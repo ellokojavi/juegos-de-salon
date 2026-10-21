@@ -82,7 +82,7 @@ export const GAMES = [
     tipos: ['tabletop'],
     emoji: '📝',
     name: { es: 'Generala', en: 'Generala', pt: 'General', de: 'Generala' },
-    tagline: { es: 'Tira cinco dados hasta tres veces y llena tu planilla. Escalera, full, póker… ¡y generala!', en: 'Roll five dice up to three times and fill your score card. Straight, full house… and generala!', pt: 'Jogue cinco dados até três vezes e preencha sua cartela. Sequência, full, quadra… e general!', de: 'Wirf fünf Würfel bis zu dreimal und füll deinen Block. Straße, Full House … und Generala!' },
+    tagline: { es: 'Tira cinco dados hasta tres veces y llena tu planilla. Escalera, full, póker… ¡y generala! Como el Kniffel o el Yatzy.', en: 'Roll five dice up to three times and fill your score card. Straight, full house… and generala! Like Kniffel or Yatzy.', pt: 'Jogue cinco dados até três vezes e preencha sua cartela. Sequência, full, quadra… e general! Como o Kniffel ou o Yatzy.', de: 'Wirf fünf Würfel bis zu dreimal und füll deinen Block. Straße, Full House … und Generala! Wie Kniffel oder Yatzy.' },
     players: '1–6',
     duration: '5–30',
     jugadas: ['roll', 'score'],
