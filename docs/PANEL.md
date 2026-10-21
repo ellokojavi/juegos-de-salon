@@ -23,6 +23,7 @@ or month, with 🚀 marking the versions that first showed up in each period). E
 | Section | Address | What it answers |
 |---|---|---|
 | 📊 Summary | `#/summary` | The main metric (**games finished**: rooms with an ending, offline games finished and La Copa games), one card per domain with its change, and what is being played now (`#/now` keeps the full list). |
+| 🕑 Timeline | `#/timeline` | The key events one by one (D-408): games that reached an ending (rooms, offline, One a Day, La Copa days), cups created, joined or finished, and feedback, with who and when; filter by kind, count by day, week or month and by hour, tap a period to list only it. |
 | 👥 Group | `#/group` | Rooms step by step (created → a rival came in → ended) with their median length, offline group games finished and replayed, by mode and players per game, the timeline, the offline log and the room log. |
 | 🧍 Individual | `#/individual` | Solo and Uno al día games: finished, left halfway, "otra vez", and the **real difficulty** of each game (score and time quartiles from its endings; a variant counts apart). |
 | 🏆 La Copa | `#/cup` | As before, plus the period before, the Cups step by step (created → 2 or more → started → finished), participation by day of the Cup, and who was left out (D-347) or brought back. |

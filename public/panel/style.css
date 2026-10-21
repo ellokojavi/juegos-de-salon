@@ -293,3 +293,11 @@ a.bar--link .label { text-decoration: underline; text-decoration-color: rgba(255
 .cohortes { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .cohortes th, .cohortes td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--glass-border); }
 .cohortes th:first-child, .cohortes td:first-child { text-align: left; }
+
+/* The timeline (D-408): each period is a button that filters the list; each event opens its card */
+.bar-btn { display: block; width: 100%; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 10px; padding: 4px 6px; margin: -4px -6px; min-height: 44px; }
+.bar-btn:hover, .bar-btn:focus-visible { background: var(--glass); outline: none; }
+.bar-btn--on { background: var(--glass); box-shadow: inset 3px 0 0 var(--pink); }
+.bars .bar-btn { width: calc(100% + 12px); }
+a.evento--link { color: inherit; text-decoration: none; border-radius: 8px; }
+a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); outline: none; }
