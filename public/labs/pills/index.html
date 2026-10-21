@@ -28,8 +28,8 @@
     .opcion .nota { margin: 0; font-size: 0.92rem; }
     .opcion .nota b { color: var(--ink); }
     .pros { margin: 0; padding-left: 1.2em; font-size: 0.88rem; }
-    /* The frame: the width of the home page's content at the chosen screen width (screen − 36 px) */
-    .marco { width: min(100%, var(--ancho, 284px)); margin: 0 auto; padding: 10px 0; border-radius: 16px; background: rgba(0, 0, 0, 0.18); outline: 1px dashed rgba(255, 255, 255, 0.15); outline-offset: 4px; }
+    /* The frame: the width of the home page's content at the chosen screen width (screen − 36 px), on the home page's own purple and not the panel's glass, which hid the difference between glass and outline */
+    .marco { width: min(100%, var(--ancho, 284px)); margin: 0 auto; padding: 10px 0; border-radius: 16px; background: var(--bg2); outline: 1px dashed rgba(255, 255, 255, 0.15); outline-offset: 4px; }
     .elegir.on { background: var(--lime, #a6e22e); color: #142400; border-color: transparent; }
     .elegida { outline: 2px solid var(--lime, #a6e22e); }
 
@@ -107,7 +107,7 @@
       { id: 'a', titulo: 'A · Como está hoy', nota: 'Las dos filas iguales: vidrio con borde suave. Es la referencia para comparar.',
         pros: ['✅ Ordenado y parejo.', '⚠️ Nada dice que arriba hay atajos y abajo categorías.'] },
       { id: 'b', titulo: 'B · Atajos con contorno', nota: 'Arriba, píldoras sin relleno, solo con borde; abajo, las fichas con relleno de siempre. <b>Mi recomendada.</b>',
-        pros: ['✅ La diferencia se nota sin gritar, y la elegida sigue igual en las dos filas.', '✅ El cambio más chico: solo cambia el fondo de una fila.', '⚠️ El contorno sobre el fondo oscuro pesa un poco menos al tacto.'] },
+        pros: ['✅ La diferencia se nota sin gritar, y la elegida sigue igual en las dos filas.', '✅ El cambio más chico: solo cambia el fondo de una fila.', '⚠️ Sin relleno, los atajos parecen un poco menos botones.'] },
       { id: 'c', titulo: 'C · Atajos tenues, tipos más marcados', nota: 'Arriba, casi transparentes y con letra más liviana; abajo, un relleno algo más claro que hoy.',
         pros: ['✅ Jerarquía clara: los tipos mandan y los atajos acompañan.', '⚠️ Los atajos pueden pasar por desactivados, sobre todo al sol.'] },
       { id: 'd', titulo: 'D · Tipos como pestañas', nota: 'Los atajos siguen siendo píldoras; los tipos pasan a ser pestañas con una línea abajo, y la elegida se subraya en cian.',
