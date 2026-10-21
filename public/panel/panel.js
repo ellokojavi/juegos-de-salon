@@ -26,11 +26,12 @@ import { ENVS } from '../assets/js/transport/stats.js';
 import { $, el } from '../assets/js/ui.js';
 import { copaDe, copasEnCurso, resumenCopas, bitacoraCopas, fichaCopa, buscarCopa, paisDe, pct, duracion, inicioLabel } from './copas.js';
 import {
-  ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog,
+  DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog,
   paginate, flagOf, whenLabel, horaLabel, fechaLabel, diaPanel, ZONA_PANEL, ZONA_NOMBRE, RANGOS, RANGO_POR_DEFECTO, rangeOf,
   groupDays, periodLabel, localLog, paisesDeSalas, paisesDelRango, salaDe, mediana, idiomasDeSalas, idiomasDelRango, trafico, origenesAgrupados, origenLabel, dayLabel,
   avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango, salud, TRAMOS, navegadorLabel,
 } from './aggregate.js';
+import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KINDS, pacificRange } from './timeline.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import {
   rangoAnterior, variacion, partidasDominio, finales, embudoSalas, dificultad, versiones, versionesEn, usuarios, cohortes,
@@ -55,6 +56,8 @@ const S = {
   rooms: {}, days: {}, daysLoaded: false, torneos: {}, torneosLoaded: false, push: null,
   // Uno al día (D-230): la historia de quienes entraron con jugador, las invitaciones y las rachas
   uad: { historia: {}, invitados: {}, rachas: {} },
+  // The timeline (D-408): feedback messages, and what is picked in that view
+  feedback: {}, unsubFeedback: null, tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
   unsubRooms: null, unsubDays: null, unsubTorneos: null, unsubPush: null, unsubUad: [], tick: null,
   // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
   desdeDia: null,
@@ -132,6 +135,7 @@ function stopListening() {
   if (S.unsubDays) { S.unsubDays(); S.unsubDays = null; }
   if (S.unsubTorneos) { S.unsubTorneos(); S.unsubTorneos = null; }
   if (S.unsubPush) { S.unsubPush(); S.unsubPush = null; }
+  if (S.unsubFeedback) { S.unsubFeedback(); S.unsubFeedback = null; }
   for (const f of S.unsubUad) f();
   S.unsubUad = [];
   if (S.tick) { clearInterval(S.tick); S.tick = null; }
@@ -161,6 +165,8 @@ function listen() {
   for (const [clave, ruta] of [['historia', 'unoAlDia'], ['invitados', 'invitados'], ['rachas', 'records/uno-al-dia-racha/siempre']]) {
     S.unsubUad.push(onValue(ref(db, ruta), snap => { S.uad = { ...S.uad, [clave]: snap.val() || {} }; render(); }, () => {}));
   }
+  // Feedback for the timeline (D-408): the 🐞 reports and the inbox at the end of every game
+  S.unsubFeedback = onValue(ref(db, 'feedback'), snap => { S.feedback = snap.val() || {}; render(); }, () => {});
   S.tick = setInterval(render, 30000); // "hace 3 min" se actualiza solo
 }
 
@@ -1441,11 +1447,127 @@ function vistaUsuarios(now) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Timeline: the key events (D-408)                                    */
+/* ------------------------------------------------------------------ */
+/** Each kind of key event: icon, name and color. The kinds and their order come from `timeline.js`. */
+const KIND = {
+  'cup-game': ['🏆', 'La Copa games', C_TORNEO],
+  room: ['📡', 'Room games', C_TOTAL],
+  offline: ['🎮', 'Offline games', C_SIN_RED],
+  daily: ['📅', 'One a Day', C_IDIOMA],
+  'cup-new': ['✨', 'Cups created', 'var(--purple)'],
+  'cup-join': ['✍️', 'Cup sign-ups', 'var(--purple)'],
+  'cup-end': ['🏁', 'Cups finished', C_TORNEO],
+  feedback: ['💬', 'Feedback', 'var(--yellow)'],
+};
+const TL_GRAINS = [['day', 'By day'], ['week', 'By week'], ['month', 'By month']];
+const GRANO_TL = { dia: 'day', semana: 'week', mes: 'month' };
+const TL_VISIBLES = 100;
+const FEEDBACK_TIPO = { sugerencia: 'a suggestion', problema: 'a problem report', idea: 'an idea', otro: 'a message' };
+
+/** "Javi", "Javi and Cata", "Ana, Leo and Bia", each with their flag; no name is "Someone". */
+const quienes = who => {
+  const xs = who.map(w => (w.name ? quien(w.name, w.co) : el('span', { class: 'quien' }, 'Someone', bandera(w.co))));
+  return xs.flatMap((x, i) => [i === 0 ? '' : i === xs.length - 1 ? ' and ' : ', ', x]);
+};
+const copaTxt = c => [`La Copa (${c.name})`, c.lab ? el('span', { class: 'tag' }, 'lab') : null];
+
+/** One key event as a sentence: who did what, and a second line with how it went. */
+function frase(e) {
+  const modo = e.mode && MODES[e.mode] ? ` ${MODES[e.mode].label}` : '';
+  const empezo = e.startedAt ? `started ${horaLabel(e.startedAt)}` : '';
+  const gano = e.tie ? '🤝 tie' : e.winner ? `🏆 ${e.winner} won` : '';
+  switch (e.kind) {
+    case 'cup-game': return [[...quienes(e.who), ' played ', ...copaTxt(e.cup), `, day ${e.cup.day}: `, miniLabel(e.game)],
+      [`${e.s} of 100 in ${duracion(e.ms)}`, empezo].filter(Boolean).join(' · ')];
+    case 'room': return [[...quienes(e.who), ' played ', gameLabel(e.game), ' on two phones'], [gano, empezo].filter(Boolean).join(' · ')];
+    case 'offline': return [[...quienes(e.who), ' finished ', gameLabel(e.game), modo ? `,${modo}` : ''], [gano, e.detail, empezo].filter(Boolean).join(' · ')];
+    case 'daily': return [[...quienes(e.who), ' finished their One a Day: ', gameLabel(e.game)], [e.detail, empezo].filter(Boolean).join(' · ')];
+    case 'cup-new': return [[...quienes(e.who), ' created ', ...copaTxt(e.cup)], `${e.cup.days} days`];
+    case 'cup-join': return [[...quienes(e.who), ' joined ', ...copaTxt(e.cup)], ''];
+    case 'cup-end': return [[...copaTxt(e.cup), ' finished: ', e.tie ? 'tied at the top, ' : '🏆 ', quien(e.who[0].name, e.who[0].co), e.tie ? ' among them' : ' won'], e.detail];
+    case 'feedback': return [[...quienes(e.who), ` sent ${FEEDBACK_TIPO[e.tipo] || 'feedback'}`, e.tester ? el('span', { class: 'tag' }, 'lab') : null],
+      `“${e.text.length > 160 ? `${e.text.slice(0, 157)}…` : e.text}”`];
+    default: return [[e.kind], ''];
+  }
+}
+
+function filaClave(e) {
+  const [ico] = KIND[e.kind] || ['·'];
+  const [texto, detalle] = frase(e);
+  const cuerpo = [el('span', { class: 'hora' }, horaLabel(e.at)), el('span', { class: 'ico', 'aria-hidden': 'true' }, ico),
+    el('span', { class: 'que' }, ...texto, detalle ? el('small', {}, detalle) : null)];
+  return e.to ? enlace(e.to[0], e.to[1], { class: 'evento evento--link' }, ...cuerpo) : el('div', { class: 'evento' }, ...cuerpo);
+}
+
+/**
+ * The moments of truth, one by one (D-408): every game that reached its end, every cup created,
+ * joined or finished, and every feedback message, with who and when. Filtered by kind, counted by
+ * day, week or month and by hour; tapping a period shows only its events.
+ */
+function vistaTimeline(now) {
+  const { r, a } = periodos();
+  const todos = keyEvents({ days: S.days, torneos: S.torneos, feedback: S.feedback }, r, now);
+  const antes = keyEvents({ days: S.days, torneos: S.torneos, feedback: S.feedback }, a, now);
+  const kinds = S.tlKinds || new Set(KINDS);
+  const grano = S.tlGrain || GRANO_TL[r.grano] || 'day';
+  const evs = todos.filter(e => kinds.has(e.kind));
+  const cuenta = countKinds(todos), cuentaA = countKinds(antes);
+  const per = periodosClave(evs, r, grano, now);
+  const maxP = Math.max(0, ...per.map(p => p.total));
+  const horas = byHour(evs);
+  const maxH = Math.max(0, ...horas.map(h => h.total));
+  const elegido = per.find(p => p.key === S.tlPeriod) || null;
+  const enLista = elegido ? evs.filter(e => periodOf(e.day, grano) === elegido.key) : evs;
+  const visibles = S.tlAll ? enLista : enLista.slice(0, TL_VISIBLES);
+  const alternar = k => {
+    const s = new Set(kinds);
+    if (s.has(k) && s.size === 1) KINDS.forEach(x => s.add(x)); // the last one off turns them all back on
+    else if (s.size === KINDS.length) { s.clear(); s.add(k); }  // from all, a tap shows only that kind
+    else if (s.has(k)) s.delete(k); else s.add(k);
+    S.tlKinds = s.size === KINDS.length ? null : s; S.tlAll = false; render();
+  };
+  const segs = byKind => KINDS.filter(k => kinds.has(k)).map(k => ({ ...seg(KIND[k][2], byKind[k] || 0), title: KIND[k][0] }));
+  const pr = pacificRange(r, now);
+  const grupos = [];
+  for (const e of visibles) { if (grupos.at(-1)?.day !== e.day) grupos.push({ day: e.day, evs: [] }); grupos.at(-1).evs.push(e); }
+  const total = todos.filter(e => kinds.has(e.kind)).length;
+  const totalA = antes.filter(e => kinds.has(e.kind)).length;
+  const csv = () => enLista.map(e => ({ date: e.day, time: horaLabel(e.at), kind: e.kind, who: e.who.map(w => w.name || 'Someone').join(' + '),
+    game: e.game || '', cup: e.cup?.name || '', detail: frase(e)[1] || '' }));
+
+  return [
+    ...titulo(`🕑 Timeline · ${tituloRango()}`, `The moments of truth, one by one: every game that reached its end, every cup created, joined or finished, and every feedback message. Opening a page, starting a game or leaving it halfway is not here. Rooms and offline games follow the environment above; cups and feedback have none. ${ZONA_NOMBRE}, Pacific dates.`),
+    el('div', { class: 'tiles' },
+      tile(total, `⭐ key events${kinds.size < KINDS.length ? ' (filtered)' : ''}`, { cambio: variacion(total, totalA), info: `${n(evs.filter(e => ['cup-game', 'room', 'offline', 'daily'].includes(e.kind)).length)} games finished` }),
+      ...KINDS.map(k => tile(cuenta[k], `${KIND[k][0]} ${KIND[k][1]}`, { onClick: () => alternar(k), pressed: kinds.has(k), cambio: variacion(cuenta[k], cuentaA[k]) }))),
+    el('p', { class: 'muted small' }, 'Tap a kind to see only it; tap more to add them; tap the last one again to see them all.'),
+    el('div', { class: 'grid2' },
+      bloque('When', elegido ? `Showing ${elegido.label} below. Tap it again to see the whole range.` : 'Tap a period to see only its events below.',
+        filtros(TL_GRAINS, grano, v => { S.tlGrain = v; S.tlPeriod = null; render(); }, 'Group by'),
+        lista(per.map(p => {
+          const b = bar(p.label, segs(p.byKind), maxP);
+          return el('button', { type: 'button', class: `bar-btn${p.key === S.tlPeriod ? ' bar-btn--on' : ''}`, 'aria-pressed': String(p.key === S.tlPeriod),
+            onClick: () => { S.tlPeriod = p.key === S.tlPeriod ? null : p.key; S.tlAll = false; render(); } }, b);
+        }), 'Nothing yet.', 'bars')),
+      bloque('Time of day', `When the key events happen, by hour, ${ZONA_NOMBRE}.`,
+        lista(horas.filter(h => h.total || (h.hour >= 7 && h.hour <= 23)).map(h => bar(`${String(h.hour).padStart(2, '0')}:00`, [seg(C_TOTAL, h.total)], maxH)), 'Nothing yet.', 'bars'))),
+    conCsv(bloque(elegido ? `Key events · ${elegido.label}` : 'Key events', `Newest first. Tap one to open its room, game or cup. From ${periodLabelDia(pr.from)} to ${periodLabelDia(pr.to)}.`,
+      grupos.length ? el('div', { class: 'historia' }, ...grupos.flatMap(g => [el('p', { class: 'dia-grupo' }, fechaLabel(Date.parse(`${g.day}T12:00:00Z`))), ...g.evs.map(filaClave)]))
+        : el('p', { class: 'empty' }, 'No key events in this range.'),
+      enLista.length > TL_VISIBLES ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm mas', onClick: () => { S.tlAll = !S.tlAll; render(); } }, S.tlAll ? 'Show fewer' : `Show all ${n(enLista.length)}`) : null),
+    'timeline', csv),
+  ];
+}
+const periodLabelDia = d => new Date(d * DAY).toLocaleDateString('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' });
+
+/* ------------------------------------------------------------------ */
 /* Navegación                                                          */
 /* ------------------------------------------------------------------ */
 /** Ícono y nombre de cada sección. El de The Cup sale del registro de juegos (C-16). */
 const SECCION = {
   resumen: ['📊', 'Summary'],
+  timeline: ['🕑', 'Timeline'],
   grupo: ['👥', 'Group'],
   individuales: ['🧍', 'Individual'],
   torneo: TORNEO ? [TORNEO.emoji, TORNEO.name[PANEL_LANG] || TORNEO.name.es] : ['🏆', 'Tournament'],
@@ -1486,6 +1608,7 @@ function render() {
   else if (sec === 'ahora') nodos = vistaAhora(now);
   else if (sec === 'trafico') nodos = vistaTrafico(now);
   else if (sec === 'salud') nodos = vistaSalud(now);
+  else if (sec === 'timeline') nodos = vistaTimeline(now);
   else nodos = vistaResumen(now);
   $('#vista').replaceChildren(...nodos.flat().filter(Boolean));
   renderNav(now);
@@ -1502,7 +1625,7 @@ function alCambiarRuta() {
   if ((S.ruta.e || ENV_DEFECTO) !== S.env) cambiarEntorno(S.ruta.e || ENV_DEFECTO, false);
   const otra = antes.sec !== S.ruta.sec || antes.args.join('/') !== S.ruta.args.join('/');
   if (otra) {
-    S.logPage = 1; S.sinRedTodas = false; S.erroresTodos = false;
+    S.logPage = 1; S.sinRedTodas = false; S.erroresTodos = false; S.tlPeriod = null; S.tlAll = false;
     if (S.ruta.args[0] !== antes.args[0]) S.fichaTab = 'tabla';
   }
   $('#buscar-msg').hidden = true;
@@ -1577,8 +1700,9 @@ $('#buscar').addEventListener('submit', e => { e.preventDefault(); buscar($('#bu
 // `vista` es una ruta (`/torneo/OFICI`) o, como antes, el nombre de una vista (`torneo`).
 window.__panel = {
   get state() { return S; },
-  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, daysLoaded = true, vista }) {
+  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, feedback = {}, daysLoaded = true, vista }) {
     stopListening();
+    S.feedback = feedback;
     S.rooms = rooms; S.days = days; S.daysLoaded = daysLoaded; S.torneos = torneos; S.torneosLoaded = true; S.push = push;
     if (uad) S.uad = { historia: {}, invitados: {}, rachas: {}, ...uad };
     S.desdeDia = rangoAnterior(rangeOf(S.range)).from;
