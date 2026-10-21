@@ -26,7 +26,7 @@ The games with their own section below come first; after them, the one-player ga
 | 🔢 [Bulls and Cows / Toque y Fama / Toque e Fama](#-bulls-and-cows-toque-y-fama) | 1 to 2 | One phone · Two phones · Play alone | v0.4 |
 | 🪢 [Hangman / El Ahorcado / Forca](#-hangman-el-ahorcado) | 1 to 6 | One phone · Several phones · Play alone | v0.26 |
 | 🎲 [Liar's Dice / Dudo / Dado Mentiroso](#-liars-dice-dudo) | 1 to 6 | One phone · Several phones · Versus the phone | v0.32 |
-| 📝 [Generala / General](#-generala) | 1 to 6 | One phone · Several phones · Play solo | 🔜 coming soon |
+| 📝 [Generala / General](#-generala) | 1 to 6 | One phone · Several phones · Play solo | v0.189 |
 | ⚓ [Battleship / Batalla Naval / Batalha Naval](#-battleship-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
 | 🍹 [Julep / Julepe / Paga o Bolo](#-julep-julepe) | 1 to 6 | One phone · Several phones · Versus the phone | ⏸ paused |
 | 👑 [Fourth King / Cuarto Rey / Quarto Rei](#-fourth-king-cuarto-rey) | 4 to 6 | One phone | v0.27 |
@@ -312,7 +312,7 @@ The phone does what the table does badly: it adds up, it shows what every free b
 - **📡 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each player rolls on their own phone and everyone watches the dice and the card of whoever is playing. There is nothing hidden in this game, so the dice travel in the clear; they are not derived from the shared seed either, because with the public code that would let anyone compute their next rolls (D-246).
 - **🧍 Play solo:** eleven turns for your best score, with a record on the phone and, signed in, the `generala_solo` leaderboard.
 
-**Coming soon:** the home page announces it at the end of the list, without opening it yet (D-248); the page works in full for anyone with the link. It is the first group game that also works **without playing at the same time**: everyone fills their own card. When it opens it joins **One a Day**, where every roll comes from the day's seed, so whoever keeps the same dice gets the same dice (D-247). In Portuguese it is called General, as in Brazil; Kniffel and Yahtzee are trademarks and a slightly different game.
+It was announced as coming soon first (D-248) and opened in v0.189 (D-405). It is the first group game that also works **without playing at the same time**: everyone fills their own card. It is in **One a Day** from October 23, 2026, where every roll comes from the day's seed, so whoever keeps the same dice gets the same dice (D-247). In Portuguese it is called General, as in Brazil; Kniffel and Yahtzee are trademarks and a slightly different game.
 
 Spec and design: [docs/games/generala.md](docs/games/generala.md)
 

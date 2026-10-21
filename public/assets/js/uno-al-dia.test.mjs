@@ -3,7 +3,7 @@
 // y los puntajes de los juegos de grupo (El Ahorcado, Batalla Naval, Dudo).
 import assert from 'node:assert/strict';
 import {
-  JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, DESDE_MAS, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
+  JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, DESDE_MAS, DESDE_GENERALA, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
   fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, formaAcceso, KEY,
 } from './uno-al-dia.js';
 import { JUEGOS } from '../../cup/games/index.js';
@@ -12,6 +12,7 @@ import { GAMES, SUELTOS, SLUGS_SIN_PAGINA } from './games.js';
 import { randomLayout, isValidLayout } from '../../battleship/engine.js';
 
 const almacen = () => { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k) }; };
+const juegoDiaDesde = id => JUEGOS_DIA.find(j => j.id === id)?.desde;
 const fechas = (desde, n) => Array.from({ length: n }, (_, i) => sumarDias(desde, i));
 
 // Las fechas
@@ -30,7 +31,14 @@ for (const j of JUEGOS_DIA) {
   if (GRUPO.includes(j.id)) assert.ok(GAMES.find(g => g.id === j.id)?.available, `${j.id}: no está en games.js`);
   else assert.ok(JUEGOS[j.id]?.generar, `${j.id}: no está en cup/games`);
 }
-assert.equal(JUEGOS_DIA.length, 16, '16 games: 13 solo and 3 group ones (D-334)');
+assert.equal(JUEGOS_DIA.length, 17, '17 games: 13 solo and 4 with their own page (D-334, D-405)');
+// D-405: Generala joins on DESDE_GENERALA, the first day of the third deck: no day before it changes
+{
+  assert.equal(DESDE_GENERALA, '2026-10-23', 'Generala enters with the deck shuffled on 2026-10-23 (D-405)');
+  const sin = crearCalendario(JUEGOS_DIA.filter(j => j.id !== 'generala'));
+  for (const f of fechas(LANZAMIENTO, diasEntre(LANZAMIENTO, DESDE_GENERALA))) assert.equal(juegoDel(f), sin.juegoDel(f), `${f} changed its game when Generala joined`);
+  assert.ok(fechas(DESDE_GENERALA, JUEGOS_DIA.length).map(juegoDel).includes('generala'), 'Generala comes out in the deck shuffled on 2026-10-23');
+}
 // D-334: the six that join on DESDE_MAS do not change any day before it, and each one comes out in the next two decks
 {
   const antes = crearCalendario(JUEGOS_DIA.filter(j => j.desde < DESDE_MAS));
@@ -51,7 +59,7 @@ assert.notEqual(semillaDel('2026-10-05'), semillaDel('2026-10-06'));
 
 // El mazo: cada juego una vez antes de repetir, y ninguno vuelve antes de tiempo. Cada mazo tiene
 // los juegos que ya habían entrado al barajarlo: el primero, los 7 solitarios; desde el segundo, los
-// 10, y con 10 la espera es de 7 días. From the third (2026-10-23), the 16 of D-334.
+// 10, y con 10 la espera es de 7 días. From the third (2026-10-23), the 16 of D-334 and Generala (D-405).
 const salidos = dias.map(juegoDel);
 const mazos = [];
 for (let k = 0; k < salidos.length;) {
@@ -61,7 +69,7 @@ for (let k = 0; k < salidos.length;) {
   if (mazo.length === n) assert.equal(new Set(mazo).size, n, `el mazo que empieza el ${dias[k]} repite un juego`);
   k += n;
 }
-assert.deepEqual(mazos.slice(0, 4).map(m => m.n), [7, 10, 16, 16], 'the first deck has 7 games, the second 10 and, from the one shuffled on 2026-10-23, 16 (D-334)');
+assert.deepEqual(mazos.slice(0, 4).map(m => m.n), [7, 10, 17, 17], 'the first deck has 7 games, the second 10 and, from the one shuffled on 2026-10-23, 17 (D-334, D-405)');
 assert.equal(dias[mazos[2].k], '2026-10-23', 'the six games of D-334 enter with the deck shuffled on 2026-10-23');
 assert.equal(mazos[1].espera, 7, 'con 10 juegos, ninguno vuelve antes de 7 días');
 for (const { k, n, espera } of mazos) {
@@ -70,7 +78,7 @@ for (const { k, n, espera } of mazos) {
     assert.ok(!antes.includes(salidos[i]), `${dias[i]}: ${salidos[i]} volvió antes de ${espera} días`);
   }
 }
-for (const id of GRUPO) assert.ok(salidos.slice(0, 7 + 10).includes(id), `${id} no salió en el segundo mazo`);
+for (const id of GRUPO.filter(g => juegoDiaDesde(g) === DESDE_GRUPO)) assert.ok(salidos.slice(0, 7 + 10).includes(id), `${id} no salió en el segundo mazo`);
 // Los días antes de que entraran los de grupo no cambian: son los del mazo de 7
 const solo7 = crearCalendario(JUEGOS_DIA.filter(j => !GRUPO.includes(j.id)));
 const viejos = fechas(LANZAMIENTO, diasEntre(LANZAMIENTO, DESDE_GRUPO));
@@ -176,6 +184,7 @@ assert.equal(rutaDel('numero', slugs, SLUGS_SIN_PAGINA), 'cup/suelto/?number&tod
 assert.equal(rutaDel('ahorcado', slugs), 'hangman/?today');
 assert.equal(rutaDel('batalla-naval', slugs), 'battleship/?today');
 assert.equal(rutaDel('dudo', slugs), 'liars-dice/?today');
+assert.equal(rutaDel('generala', slugs), 'generala/?today');
 for (const j of JUEGOS_DIA) assert.ok(slugs[j.id] || ['linea', 'numero'].includes(j.id), `${j.id}: sin página para jugarlo`);
 
 // Dónde va en la portada: junto a La Copa (D-239), salvo que el link pida otra cosa con ?daily=

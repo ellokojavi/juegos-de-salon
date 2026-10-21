@@ -1,8 +1,8 @@
 # Diseño: Generala 📝
 
-**Ruta:** `/generala/` (id `generala`) · **Jugadores:** 1 a 6 · **Estado:** en la portada como "Próximamente" (D-248) ·
+**Ruta:** `/generala/` (id `generala`) · **Jugadores:** 1 a 6 · **Desde:** v0.189 (2026-10-20) · **Estado:** publicado (v0.189, los tres modos; announced as "Próximamente" from v0.128, D-248, opened by D-405) ·
 **Idiomas:** es, en ("Generala"), pt ("General", como se le dice en Brasil) y de ("Generala") ·
-**Decisiones:** D-246 (el juego), D-247 (Uno al día), D-248 (próximamente)
+**Decisiones:** D-246 (el juego), D-247 (Uno al día), D-248 (próximamente), D-405 (opened, and in Uno al día from 2026-10-23)
 
 ## Resumen
 
@@ -19,8 +19,9 @@ Es el primer juego de grupo de la app que se puede jugar **sin coincidir**: cada
 planilla y nadie depende de la jugada del otro. Por eso está listo para Uno al día, donde todos
 tiran los mismos dados (D-247).
 
-**Por ahora se anuncia:** la portada lo muestra como "Próximamente", al final de la lista y sin
-abrirlo, igual que Julepe (C-17); la página `/generala/` funciona entera para quien tenga el link (D-248).
+**Open since D-405:** it was announced first as "Próximamente" (D-248) and the owner opened it on
+2026-10-20. It carries the "New" label for two weeks (`nuevoDesde`, D-333) and joins the dice, the
+favorites and Uno al día like any other game.
 
 ## Reglas
 
@@ -93,9 +94,9 @@ solitarios de La Copa (D-97).
 
 Puntaje del día (`puntajeDia` de `engine.js`): un tercio del total, hasta 100 (300 puntos ya es una
 partida excelente; el máximo es 360). El primer intento cuenta; los siguientes son práctica. No hay
-"Otra partida" nor buttons of its own: the card, right under the hero, offers play another, replay today's and the exits (C-19, D-343). **Todavía no está en el mazo:**
-entra cuando Generala salga de próximamente, el primer día de un mazo que no haya empezado (D-247,
-D-248).
+"Otra partida" nor buttons of its own: the card, right under the hero, offers play another, replay today's and the exits (C-19, D-343). **In the deck from
+2026-10-23** (`DESDE_GENERALA`, D-405), the first day of the deck shuffled after it opened, so no day
+already played changed (D-247).
 
 ## Flujo
 
