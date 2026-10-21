@@ -368,6 +368,13 @@ La portada (`public/index.html`) es la lista de juegos y las maneras de elegir u
 salieron de varias decisiones que se fueron corrigiendo; aquí está lo vigente, y cada punto dice
 de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 
+- **Everything on the home page can be searched, in every language (D-403, D-404).** The 🔎 search
+  (`public/assets/js/search.js`) finds each card by its name, tagline and type in any language, and by
+  its `KEYWORDS`: what it is, what it is played with and what it is like, in es, en, pt and de, at
+  least three per language. A new game, or anything new with a card, brings its keywords in the same
+  PR; something new inside an existing card (a new kind of La Copa, a new mode) adds its words to that
+  card's keywords. `search.test.mjs` fails without them. A new language of the app adds its keywords
+  for every card when it comes in.
 - **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: los juegos
   de `GAMES` y los juegos de La Copa sueltos (`SUELTOS`, aparte solo por cómo están hechos, D-198)
   van mezclados, de lo más jugado a lo menos, según la lista `POPULARIDAD` (D-255): most games
@@ -570,7 +577,7 @@ that moment, and only those, in the same order everywhere (D-343):
 - [ ] Lo que cambió, en `changelog/<rama>.md` sin número (`node tools/release/changelog.mjs new`); publicada y comprobada en la URL pública por `publish.yml` (C-11, D-205, D-300).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
-- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17). A new one brings `nuevoDesde` for its "New" label (D-333).
+- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17). A new one brings `nuevoDesde` for its "New" label (D-333) and its search keywords in the four languages (D-404).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
 - [ ] Sus URL van en inglés: carpeta, parámetros y valores, leídos con `parametros.js`, con los nombres de antes como alias (C-18).
 - [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).
