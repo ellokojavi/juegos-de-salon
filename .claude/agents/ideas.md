@@ -57,7 +57,7 @@ A game's name is quoted as the app shows it (Spanish, C-3).
 ```bash
 node tools/agents/ideas.mjs check [--weeks 4]        # the numbers, the lab, what players asked, the ledger
 node tools/agents/ideas.mjs propose <file.json> [--dry-run]   # records the ideas and opens the owner's issue
-node tools/agents/ideas.mjs record <id> <status> "why" [--link <url>]
+node tools/agents/ideas.mjs record <id> <status> "why" [--link <url>]   # built, shelved or discarded while its question is open: settles it on the issue (D-411)
 node tools/agents/ideas.mjs list [--status proposed,approved]
 node tools/agents/ideas.mjs taste "<what the answer taught>" --from <issue url>
 node tools/agents/ideas.mjs history

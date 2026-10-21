@@ -5,6 +5,7 @@
  *
  *   node tools/agents/processes.mjs check                       # today's signals
  *   node tools/agents/processes.mjs decide <file.json> [--direct]   # opens the one-tap decisions issue
+ *   node tools/agents/processes.mjs settle <issue> <n> "why"       # a decision needing no answer (D-411): noted, closed if last
  *   node tools/agents/processes.mjs pattern <key> "what happened" [--commit <sha>]   # records one sighting
  *   node tools/agents/processes.mjs mechanism <key> "what stops it now" --pr <url>
  *   node tools/agents/processes.mjs dispatch <documentation|usability|ideas> <commit>   # launched it up to that main commit
@@ -39,7 +40,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { invalidAction, checkboxes, doneSet, readActions, normalizeAction, LABEL } from './approve.mjs';
+import { invalidAction, checkboxes, doneSet, readActions, normalizeAction, LABEL, settle, undecided, question, decisionQueuing } from './approve.mjs';
 import { wantsEmail, handled } from './feedback.mjs';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -306,6 +307,32 @@ async function check() {
   console.log(`\nWhen closing: node tools/agents/processes.mjs record --to ${tip.slice(0, 7)} [--issue <url>] [--pr <url>] [--note "…"]`);
 }
 
+/**
+ * Settles decision n of a decisions issue without checking a box (D-411): it notes why next to its
+ * options, comments it, and closes the issue when nothing is left to decide. For a question whose
+ * work was already done another way, or that no longer applies.
+ */
+/** Settles the open decision of `issue` that queues a task starting with `task`, if there is one: null otherwise. */
+export function settleFor(issue, task, note) {
+  const n = String(issue).replace(/.*\/issues\//, '');
+  const body = gh('issue', 'view', n, '--json', 'body').body;
+  const d = decisionQueuing(body, task);
+  if (!d || doneSet(body).has(d)) return null;
+  return settleIssue(n, d, note);
+}
+
+export function settleIssue(issue, decision, note) {
+  const n = String(issue).replace(/.*\/issues\//, '');
+  const body = gh('issue', 'view', n, '--json', 'body,state').body;
+  const after = settle(body, decision, note);
+  if (after === body) return { changed: false, closed: false };
+  sh('gh', ['issue', 'edit', n, '-R', REPO, '--body', after]);
+  const left = undecided(after);
+  sh('gh', ['issue', 'comment', n, '-R', REPO, '--body', `**${question(after, decision)}** No answer needed: ${note}${left.length ? '' : '\n\nNothing is left to decide here: closing.'}`]);
+  if (!left.length) sh('gh', ['issue', 'close', n, '-R', REPO, '--reason', 'completed']);
+  return { changed: true, closed: !left.length };
+}
+
 function decide(file) {
   if (!file) throw new Error('Usage: node tools/agents/processes.mjs decide <file.json>');
   const d = JSON.parse(readFileSync(file, 'utf8'));
@@ -339,13 +366,19 @@ function record(args) {
   console.log('Recorded in docs/processes.json.');
 }
 
-const USAGE = 'Usage: node tools/agents/processes.mjs check | decide <file.json> [--direct] | pattern <key> "…" [--commit <sha>] | mechanism <key> "…" --pr <url> | dispatch <agent> <commit> | record --to <commit> | record --queue <#n:d> | history';
+const USAGE = 'Usage: node tools/agents/processes.mjs check | decide <file.json> [--direct] | settle <issue> <n> "why" | pattern <key> "…" [--commit <sha>] | mechanism <key> "…" --pr <url> | dispatch <agent> <commit> | record --to <commit> | record --queue <#n:d> | history';
 
 function main([command, ...args]) {
   const m = readMemory();
   switch (command) {
     case 'check': return check();
     case 'decide': return decide(args[0]);
+    case 'settle': {
+      const [issue, decision, note] = args;
+      if (!issue || !decision || !note) throw new Error('Usage: node tools/agents/processes.mjs settle <issue> <n> "why no answer is needed"');
+      const r = settleIssue(issue, decision, note);
+      return console.log(r.changed ? `#${issue}, decision ${decision}: settled${r.closed ? '; nothing left, closed' : ''}.` : `#${issue}, decision ${decision}: already decided.`);
+    }
     case 'pattern': {
       const [key, what] = args;
       if (!key || !what) throw new Error('Usage: pattern <key> "what happened" [--commit <sha>]');
