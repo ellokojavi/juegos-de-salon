@@ -120,10 +120,10 @@ export const KEYWORDS = {
     de: ['karten', 'kartenspiel', 'trinken', 'trinkspiel', 'party', 'könig'],
   },
   generala: {
-    es: ['dados', 'escalera', 'full', 'poker', 'planilla', 'cubilete'],
-    en: ['dice', 'yahtzee', 'straight', 'full', 'house', 'poker', 'scorecard'],
-    pt: ['dados', 'sequência', 'full', 'poker', 'general', 'yahtzee', 'copo'],
-    de: ['würfel', 'straße', 'full house', 'poker', 'kniffel', 'yahtzee', 'becher'],
+    es: ['dados', 'escalera', 'full', 'poker', 'planilla', 'cubilete', 'kniffel', 'yatzy'],
+    en: ['dice', 'yahtzee', 'kniffel', 'yatzy', 'straight', 'full', 'house', 'poker', 'scorecard'],
+    pt: ['dados', 'sequência', 'full', 'poker', 'general', 'yahtzee', 'kniffel', 'yatzy', 'copo'],
+    de: ['würfel', 'straße', 'full house', 'poker', 'kniffel', 'yatzy', 'yahtzee', 'becher'],
   },
   julepe: {
     es: ['cartas', 'naipes', 'baraja', 'bazas', 'apuesta'],

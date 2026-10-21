@@ -53,7 +53,10 @@ favorites and Uno al día like any other game.
 - **Rival de máquina:** no hay información oculta ni decisiones contra otro, así que un rival que
   tira sus dados no agrega nada. Es un juego de "🧍 Jugar solo" con récord, como Toque y Fama (C-5).
 - **Kniffel y Yahtzee** son marcas (de Schmidt y de Hasbro) y además otro juego (otras casillas, el
-  bono, el "chance"). En alemán se llama Generala, con las casillas con nombre alemán.
+  bono, el "chance"). En alemán se llama Generala, con las casillas con nombre alemán. On the owner's
+  request (2026-10-20) the home card tagline says it is like Kniffel or Yatzy, in the four languages,
+  and "kniffel" and "yatzy" are search keywords in every language, so a player who knows the game by
+  those names finds it; the game is still called Generala.
 
 ## Modos
 
