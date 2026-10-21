@@ -3,7 +3,8 @@
 // playing on its own, and two options (D-253, D-410). In each
 // language, the invitation sends, with a phone that shares files, that language's social card along
 // with the text, and "Compartir el video" sends the video's text with its YouTube link; on a
-// computer, only the copied text and nothing downloaded.
+// computer, only the copied text and nothing downloaded. While the sheet is open the home page behind
+// it does not scroll.
 // Usage: node tools/e2e/share-home.mjs /tmp/share-home
 import { output as output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
