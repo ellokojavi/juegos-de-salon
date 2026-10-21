@@ -450,7 +450,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-402](decisions/D-402.md) | The 🔎 search opens and closes as one smooth motion | current |
 | [D-403](decisions/D-403.md) | The 🔎 search reaches everyone; the home page experiments are all launched | amended by D-404 |
 | [D-404](decisions/D-404.md) | Everything new is indexed in the search, in every language | current |
-| [D-406](decisions/D-406.md) | A lab page to choose how the two filter rows look | current |
+| [D-406](decisions/D-406.md) | A lab page to choose how the two filter rows look | amended by D-407 |
 | [D-407](decisions/D-407.md) | The shortcut pills are outlined, the type pills filled | current |
 
 ## No longer in force (9)
