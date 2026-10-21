@@ -20,7 +20,7 @@ const html = `
 </section>`;
 assert.deepEqual(laboratorio(html), { active: [{ id: 'agentes', title: '🕵️ Agentes' }, { id: 'puentes', title: '🚂 Tren en Vilo' }], improvements: [{ id: 'splash', title: '🎉 Splash' }], shelved: [{ id: 'caso', title: '🔍 El caso' }] });
 const real = laboratorio(readFileSync(join(ROOT, 'public/labs/index.html'), 'utf8'));
-assert.ok(real.active.length >= 1 && real.improvements.some(p => p.id === 'portada'), 'the real lab page has games, improvements (the home page experiments, the splash among them, D-389) and a Bodega');
+assert.ok(real.active.length >= 1 && real.shelved.some(p => p.id === 'portada'), 'the real lab page has games and a Bodega, where the home page experiments went once all launched (D-403)');
 assert.ok(!real.active.some(p => p.id === 'portada'), 'the home page experiments are an improvement, not a game');
 
 // Today's order counts offline games, rooms and cup days under the game's id, La Copa as its days

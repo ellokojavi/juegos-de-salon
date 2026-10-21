@@ -1,7 +1,7 @@
 // The home page search's order (D-397): the game's name first, then its keywords, its type, its tagline.
 import assert from 'node:assert/strict';
 import { ranked, relevance } from './search.js';
-import { PORTADA } from '../../assets/js/games.js';
+import { PORTADA } from './games.js';
 
 const first = (q, lang = 'es') => ranked(q, PORTADA, lang).map(g => g.id);
 assert.equal(first('toque')[0], 'toque-y-fama', 'the name wins over a tagline that says «toquen», and the shorter name over the longer');

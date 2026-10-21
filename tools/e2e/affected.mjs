@@ -38,7 +38,7 @@ export function references(path, text) {
     for (const m of text.matchAll(/\b(?:src|href)\s*=\s*["']([^"']+)["']/g)) add(m[1]);
     // Inline modules import too
     for (const m of text.matchAll(/\bimport\s*(?:[^'"()]*?\bfrom\s*)?["']([^"']+)["']/g)) add(m[1]);
-    // And load modules on demand (`import('./labs/home/search.js')`, D-391)
+    // And load modules on demand (`import('./assets/js/search.js')`, D-391)
     for (const m of text.matchAll(/\bimport\(\s*["']([^"']+)["']\s*\)/g)) add(m[1]);
   } else if (path.endsWith('.js') || path.endsWith('.mjs')) {
     for (const m of text.matchAll(/\b(?:import|export)\s*(?:[^'"();]*?\bfrom\s*)?["']([^"']+)["']/g)) add(m[1]);
