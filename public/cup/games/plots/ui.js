@@ -164,7 +164,8 @@ export function portada({ variante = null } = {}) {
   const caja = el('div', { class: 'lt-demo' });
   const rotulo = el('p', { class: 'lt-demo-rotulo' }, T.ltReady);
   const raiz = el('div', { class: 'lt-portada', 'aria-hidden': 'true' },
-    variante === 'utilities' ? el('p', { class: 'lt-tam lt-demo-tam' }, fmt(T.ltLotSize, { n: DEMO_SERVICIOS.tam })) : null,
+    // Both variants keep this row (hidden in Numbers), so switching does not move the title
+    el('p', { class: variante === 'utilities' ? 'lt-tam lt-demo-tam' : 'lt-tam lt-demo-tam vacio' }, fmt(T.ltLotSize, { n: DEMO_SERVICIOS.tam })),
     el('div', { class: 'lt-demo-caja' }, caja, rotulo));
   if (QUIETO()) {
     const t = tableroDemo(variante, 0);
