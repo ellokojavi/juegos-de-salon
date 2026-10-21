@@ -145,6 +145,9 @@ la portada al día, va con los textos, and U-39, the start button above the fold
 
 Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
 
+- **Loteo: four buttons in two rows of two** (#441, option A; the owner's Yes in #607): ↩️ Deshacer ·
+  🧹 Borrar todo on top, 💡 Ayuda · 🏳️ Rendirse below, all the same size, instead of the row of three with
+  the hint apart: no label wraps at 320 px in any language (U-17), and Rendirse sits farthest from Deshacer.
 - **No clock at the top while playing** (#442, D-379; the owner replaced the recommended option A): none of La Copa's
   games shows the ⏱ that counted up, in the cup or in practice; the time shows at the end, and each game's own ⏳ stays.
   Corrected by D-384 (a player's request, #563): a game whose speed scores and that has no ⏳ of its own (Loteo,
