@@ -38,3 +38,9 @@ assert.throws(() => buildEmail({ lang: 'fr', items: one }));
 assert.throws(() => buildEmail({ lang: 'es', items: [{ quote: 'x', answer: ' ' }] }));
 assert.throws(() => buildEmail({ lang: 'es', items: [] }));
 console.log('feedback-templates: ok');
+
+// Short, the owner's rule (people read less and less): an opening is one short line, and so is the closing
+for (const [lang, T] of Object.entries(TEMPLATES)) {
+  for (const o of [...T.openings, ...T.openingsMany]) assert.ok(o.length <= 45, `${lang}: opening too long (${o.length}): ${o}`);
+  assert.ok(T.closing.length <= 55, `${lang}: closing too long (${T.closing.length})`);
+}
