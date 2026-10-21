@@ -26,8 +26,9 @@ English. Player-facing texts stay in the app's four languages (C-3), and you rev
   1. `git diff --stat origin/main...HEAD`. If it touches nothing the player sees or reads (only
      `docs/`, `tools/`, `marketing/`, tests, workflows), stop there: "no visible changes".
      If not, **the stage** (D-304), which `node tools/agents/covers.mjs check` gives on its first line:
-     - 🧪 **Lab only:** short review: step 5 (landing pages) and the screens that
-       changed at 320 px (step 2 without 390 or other languages). Nothing else.
+     - 🧪 **Lab only:** normally not launched: the session takes the fast lane (D-413). If launched
+       anyway (the PR also touches shared code), short review: step 5 (landing pages) and the screens
+       that changed at 320 px (step 2 without 390 or other languages). Nothing else.
      - 🎓 **A game leaves the lab:** **full pass over the whole game**, not the diff (which
        may be one line): all its screens in the four languages at 390 and 320 px, its
        texts and share messages (points 3 to 5 below), its landing page (step 5) and its place and
