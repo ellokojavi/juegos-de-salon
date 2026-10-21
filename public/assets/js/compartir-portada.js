@@ -67,16 +67,17 @@ export function botonCompartirPortada({ C, app, url, icono, lang = 'es', tap = (
   // The tab on show: its Short plays in the card and is the one "Compartir el video" sends
   let pestana = pestanaDe(lang);
   function video() {
-    const caja = el('div', { class: 'hoja-video hoja-video--vertical' });
+    const caja = el('div', { class: 'hoja-video hoja-video--vertical', role: 'tabpanel', id: 'panel-video' });
     const pestanas = el('div', { class: 'hoja-pestanas', role: 'tablist', 'aria-label': t.videoTitle });
     const poner = k => {
       pestana = k;
       pestanas.querySelectorAll('button').forEach(b => { const on = b.dataset.k === k; b.setAttribute('aria-selected', String(on)); b.classList.toggle('on', on); b.tabIndex = on ? 0 : -1; });
+      caja.setAttribute('aria-labelledby', `pestana-video-${k}`);
       caja.replaceChildren(el('iframe', { src: embebido(SHORTS[k].youtube), title: `${t.videoTitle} · ${SHORTS[k].label}`,
         allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen', allowfullscreen: '', referrerpolicy: 'strict-origin-when-cross-origin' }));
     };
     for (const k of Object.keys(SHORTS)) {
-      const b = el('button', { type: 'button', role: 'tab', class: 'hoja-pestana', 'data-k': k, id: `pestana-video-${k}` }, SHORTS[k].label);
+      const b = el('button', { type: 'button', role: 'tab', class: 'hoja-pestana', 'data-k': k, id: `pestana-video-${k}`, 'aria-controls': 'panel-video' }, SHORTS[k].label);
       b.addEventListener('click', () => { if (k !== pestana) { tap(); poner(k); } });
       pestanas.append(b);
     }

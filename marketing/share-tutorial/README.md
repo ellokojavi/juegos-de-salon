@@ -11,7 +11,7 @@ compartir (D-253) en un iPhone. Sigue el modelo de [`../promo-video/`](../promo-
 |---|---|
 | Archivos | [`output/compartir-vertical.mp4`](output/compartir-vertical.mp4) (1080×1920: estados de WhatsApp, Reels, Shorts) · [`output/compartir-16x9.mp4`](output/compartir-16x9.mp4) (1920×1080) |
 | Duración | 6,0 s, H.264, 30 cuadros por segundo, **sin audio** |
-| Idioma | Español (la hoja con el video sale solo en español, D-254) |
+| Idioma | Español (it shows the sheet as it was in v1: 16:9 thumbnail, Spanish only, D-254; since D-410 the sheet plays the Shorts in Spanish and English tabs, so a new version should redraw it) |
 | Dispositivo | iPhone: la pantalla de 390×844 puntos, la isla dinámica y el menú de compartir de iOS |
 | App que muestra | 0.134.1 |
 
@@ -62,7 +62,7 @@ node marketing/promo-video/render.mjs --pagina marketing/share-tutorial/tutorial
   línea, `shareSheet` en `i18n.js`): si cambia ese texto, se cambia en `tutorial.html`.
 - **Las coordenadas de los toques salen de la app** (`puntos.js`); la de WhatsApp está fija en el
   dibujo del menú de iOS.
-- La miniatura del video es `public/assets/img/trailer.jpg`, la misma de la portada.
+- La miniatura del video es `public/assets/img/trailer.jpg`, which the home page no longer shows (D-410); it stays only for this tutorial.
 
 ## Historia
 

@@ -133,8 +133,8 @@ export const COMMON = {
         '🌎 En español, inglés, portugués y alemán.',
       ],
     },
-    // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir. Sale solo
-    // en un idioma con video (hoy, español; D-254): los demás textos esperan su versión del video
+    // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir. Sale en
+    // los cuatro idiomas, con el Short en español o en inglés (D-410)
     shareSheet: {
       title: 'Compartir Juegos de Salón',
       videoTitle: 'Video de Juegos de Salón',
