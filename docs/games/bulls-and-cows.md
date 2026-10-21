@@ -104,9 +104,8 @@ there and the others thought around it. The next digit goes to the chosen box, t
 one after it; ⌫ clears the chosen box (or the one before it, if it is empty); a gap in the middle
 cannot be confirmed; the 0 still cannot go first when the game forbids it. It is the shared keyboard's
 `elegir` option (`teclado.js`), on in Toque y Fama's games, the secret number, playing solo and La
-Copa's 🔢 (tried in the lab, D-409, then published; its card is in La Bodega, 🚀 Lanzado); the
-other users of the keyboard do not turn it on. It was tried in the lab first (D-409) and
-the owner published it for everyone; its card stays in La Bodega, marked 🚀 Lanzado. The hint under
+Copa's 🔢, for everyone; the other users of the keyboard do not turn it on. Both were tried in the
+lab first (D-409) and the owner published them; their cards are in La Bodega, marked 🚀 Lanzado. The hint under
 the keypad says it («Toca una casilla para elegir dónde va la cifra…»). Checked by
 `tools/e2e/bulls-and-cows/choose-box.mjs`.
 
