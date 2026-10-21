@@ -35,7 +35,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -48,12 +48,12 @@ Where today's rule is and which decisions explain it: those in force that still 
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384 |
-| Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401 |
+| Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409 |
 | Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359 |
 | Marketing | `marketing/README.md` | D-178, D-380 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (397)
+## In force (398)
 
 | D | Title | Status |
 |---|---|---|
@@ -319,7 +319,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-270](decisions/D-270.md) | La clave: transparent cards that together say a code | current |
 | [D-271](decisions/D-271.md) | The app's messages name everything principal, and the documentation agent maintains them | amended by D-272 |
 | [D-272](decisions/D-272.md) | The principal things are also the installable app with its notifications and the four languages | current |
-| [D-273](decisions/D-273.md) | A processes agent, and one-tap decisions | amended by D-275, D-276, D-302 |
+| [D-273](decisions/D-273.md) | A processes agent, and one-tap decisions | amended by D-275, D-276, D-302, D-409 |
 | [D-274](decisions/D-274.md) | Rankings: the game just played counts, the solo game on the home page and Ahorcado solo | amended by D-353 |
 | [D-275](decisions/D-275.md) | 🐞 feedback arrives as issues and the processes agent handles it | amended by D-279, D-306, D-341 |
 | [D-276](decisions/D-276.md) | The processes agent is the boss of the other agents, and everything runs on the Mac mini | current |
@@ -440,7 +440,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-392](decisions/D-392.md) | A push to a PR tests only what changed since the PR last passed | current |
 | [D-393](decisions/D-393.md) | The home page's search on a computer: ↓ ↑ Enter and Escape in the dropdown | current |
 | [D-394](decisions/D-394.md) | One file per decision, and a generated index | amended by D-401 |
-| [D-395](decisions/D-395.md) | Everything in development sits behind the lab door | current |
+| [D-395](decisions/D-395.md) | Everything in development sits behind the lab door | amended by D-409 |
 | [D-396](decisions/D-396.md) | The home page's 🔎 pill goes first, left of ⭐ Favoritos | current |
 | [D-397](decisions/D-397.md) | The home page search lists the games whose name matches first | current |
 | [D-398](decisions/D-398.md) | The home page's 🔎 search opens and closes with a motion | amended by D-402 |
@@ -454,6 +454,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-406](decisions/D-406.md) | A lab page to choose how the two filter rows look | amended by D-407 |
 | [D-407](decisions/D-407.md) | The shortcut pills are outlined, the type pills filled | current |
 | [D-408](decisions/D-408.md) | The panel's timeline of key events | current |
+| [D-409](decisions/D-409.md) | Every change goes to Labs first; decisions answer in three | current |
 
 ## No longer in force (9)
 

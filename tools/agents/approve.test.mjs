@@ -24,7 +24,7 @@ assert.deepEqual(checkboxes(body), { '1:si': false, '1:no': false, '2:si': false
 assert.deepEqual(readActions(body)['1:si'], [{ type: 'merge', pr: 300 }]);
 assert.deepEqual(readActions(body)['2:no'], [{ type: 'nothing' }], 'a No without actions is only noted');
 assert.match(body, /Merge the docs of the 11th/);
-assert.match(body, /Check \*\*Yes\*\* or \*\*No\*\* on each one/);
+assert.match(body, /Check one box on each/);
 
 // Each checkbox says what it does, and the comment names the question
 assert.match(body, /^- \[ \] Yes: merges #300 <!-- op:1:si -->$/m);
@@ -102,3 +102,12 @@ assert.deepEqual(plan(event(old, check(old, '1:si'))).plans, [{ decision: '1', o
 assert.ok(doneSet(recordDone(check(old, '1:si'), '1', 'si', '✅ #300 fusionado')).has('1'));
 
 console.log('approve: ok');
+
+// D-409: "Yes, and publish" is a third box; checking it and "Yes, in Labs" together carries out one
+const labOrPub = decisionsBody({ decisions: [{ question: 'Choose the box', yes: [{ type: 'queue', task: 'build it' }] }] });
+const pubChecked = check(labOrPub, '1:pub');
+assert.deepEqual(plan(event(labOrPub, pubChecked)).plans, [{ decision: '1', option: 'pub', actions: [{ type: 'queue', task: '[publish] build it' }] }]);
+const labAndPub = check(pubChecked, '1:si');
+const twoBoxes = plan(event(labOrPub, labAndPub));
+assert.equal(twoBoxes.plans.length, 1);
+assert.match(twoBoxes.warnings[0], /already answered/);

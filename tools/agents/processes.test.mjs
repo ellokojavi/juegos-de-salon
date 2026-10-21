@@ -22,13 +22,22 @@ const body = decisionsBody({ decisions: [
 ] });
 assert.deepEqual(queued([{ number: 5, body }]), []);
 const approved = recordDone(body.replace(/- \[ \](.*?<!-- op:1:si -->)/, '- [x]$1'), '1', 'si', '✅');
-assert.deepEqual(queued([{ number: 5, body: approved }]), [{ id: '#5:1', task: 'write messages.test.mjs' }]);
+assert.deepEqual(queued([{ number: 5, body: approved }]), [{ id: '#5:1', task: '[labs] write messages.test.mjs' }]);
 // An issue from before D-316, with a Spanish "encolar", is still read
 const old = `- [x] Sí <!-- op:1:si --> — ✅ <!-- hecho:1 -->\n<!-- acciones ${JSON.stringify({ '1:si': [{ tipo: 'encolar', tarea: 'vieja' }] })} -->`;
 assert.deepEqual(queued([{ number: 3, body: old }]), [{ id: '#3:1', task: 'vieja' }]);
 
 // Each checkbox says what it does; one that does nothing, just Yes or No
-assert.match(body, /^- \[ \] Yes: queues it for the next round <!-- op:1:si -->$/m);
+assert.match(body, /^- \[ \] Yes, in Labs: queues it for the next round, in Labs <!-- op:1:si -->$/m);
+// D-409: a change answers in three; "Yes, and publish" queues the same task for everyone
+assert.match(body, /^- \[ \] Yes, and publish: queues it for the next round, for everyone <!-- op:1:pub -->$/m);
+const published = recordDone(body.replace(/- \[ \](.*?<!-- op:1:pub -->)/, '- [x]$1'), '1', 'pub', '✅');
+assert.deepEqual(queued([{ number: 5, body: published }]), [{ id: '#5:1', task: '[publish] write messages.test.mjs' }]);
+// A prepared PR offers publishing only with its own actions; a Yes that closes something, just Yes / No
+const merge = decisionsBody({ decisions: [{ question: 'Merge the lab PR', yes: [{ type: 'merge', pr: 9 }] }, { question: 'Merge both', yes: [{ type: 'merge', pr: 9 }], publish: [{ type: 'merge', pr: 10 }] }] });
+assert.doesNotMatch(merge, /op:1:pub/);
+assert.match(merge, /^- \[ \] Yes: merges #9 <!-- op:1:si -->$/m);
+assert.match(merge, /^- \[ \] Yes, and publish: merges #10 <!-- op:2:pub -->$/m);
 assert.match(body, /^- \[ \] No <!-- op:1:no -->$/m);
 
 // A pattern counts once per commit
