@@ -26,8 +26,9 @@ ok(await waitFor(`(${labels}).length === 3 && document.querySelector('.popular')
 // ✨ Nuevos and 🔥 Populares (D-362): a row above the types, each one filters, in every language at 320 px
 for (const lang of ['es', 'en', 'pt', 'de']) {
   await b.go(`${SITE}/?test&lang=${lang}`);
-  await waitFor(`document.querySelectorAll('.filtros .atajos button').length === 2`);
-  const fila = await ev(`(() => { const a = document.querySelector('.filtros .atajos'), t = document.querySelector('.filtros .tipos'); const vis = [...a.querySelectorAll('button')].filter(x => !x.hidden); return { arriba: a.getBoundingClientRect().bottom <= t.getBoundingClientRect().top + 1, una: vis.every(x => Math.abs(x.getBoundingClientRect().top - vis[0].getBoundingClientRect().top) < 2), alto: vis.every(x => x.getBoundingClientRect().height >= 44), n: vis.length, ancho: document.documentElement.scrollWidth <= 320 }; })()`);
+  // The row's own pills, the 🔎 among them (D-403); not the ✕ inside the folded search field
+  await waitFor(`!!document.querySelector('.filtros .atajos .buscar-pill')`);
+  const fila = await ev(`(() => { const a = document.querySelector('.filtros .atajos'), t = document.querySelector('.filtros .tipos'); const vis = [...a.querySelectorAll(':scope > button')].filter(x => !x.hidden); return { arriba: a.getBoundingClientRect().bottom <= t.getBoundingClientRect().top + 1, una: vis.every(x => Math.abs(x.getBoundingClientRect().top - vis[0].getBoundingClientRect().top) < 2), alto: vis.every(x => x.getBoundingClientRect().height >= 44), n: vis.length, ancho: document.documentElement.scrollWidth <= 320 }; })()`);
   ok(fila.arriba && fila.una && fila.alto && fila.ancho && fila.n >= 1, `${lang}: the row sits above the types, on one line, ≥44 px, no sideways scroll`);
 }
 await b.go(`${SITE}/?test`);
@@ -42,7 +43,7 @@ if (await ev(`!document.querySelector('.atajos [data-tipo=new]').hidden`)) {
 await b.go(`${SITE}/?test&lang=es`);
 await waitFor(`document.querySelectorAll('.game-card .fav').length > 3`);
 await ev(`document.querySelector('.game-card + .fav, .fav').click(); 1`);
-ok(await waitFor(`(() => { const f = document.querySelector('.ficha-fav'); return !f.hidden && f.parentNode.classList.contains('atajos') && f.classList.contains('sola'); })()`), 'with a favorite, ⭐ goes first in the Nuevos / Populares row (bare at 320 px in Spanish)');
+ok(await waitFor(`(() => { const f = [...document.querySelectorAll('.ficha-fav')].find(x => x.getBoundingClientRect().width > 0); if (!f) return false; const r = f.getBoundingClientRect(); return r.width >= 44 && r.right <= 320 && document.documentElement.scrollWidth <= 320; })()`), 'with a favorite at 320 px, ⭐ shows where it fits beside the 🔎 pill, and nothing overflows (D-364, D-396)');
 ok(await ev(`document.documentElement.scrollWidth <= 320`), 'and the row still fits at 320 px');
 ok(await ev(`(() => { const f = document.querySelector('.ficha-fav'), e = f.querySelector('.ficha-emoji').getBoundingClientRect(), a = f.getBoundingClientRect(); return !f.classList.contains('sola') || Math.abs((e.left - a.left) - (a.right - e.right)) <= 2 && Math.abs((e.top - a.top) - (a.bottom - e.bottom)) <= 2; })()`), 'the bare ⭐ sits centered in its chip');
 ok(await ev(`getComputedStyle(document.querySelector('.barra-titulo')).display === 'none'`), 'the title is hidden while the filters sit in their place');
