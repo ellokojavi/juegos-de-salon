@@ -27,7 +27,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
   el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Público:** 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil, que se elige al crear la copa (D-187, `meta.aud`; las copas `intl` de D-186 se leen como global). Decide qué contenido local entra (`public/cup/games/audiencia.js`).
   **Idioma:** español, inglés, portugués (D-170) y alemán (D-191, para todos desde D-197). La
-  pantalla va en el idioma de quien mira; las palabras de Conexiones y Palabra, los mensajes al
+  pantalla va en el idioma de quien mira; las palabras de Agentes, Conexiones (copas de antes de D-421) y Palabra, los mensajes al
   grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
 - **Calendario:** lo arma el admin al crear la copa (D-163): qué juegos entran y en qué orden,
@@ -137,7 +137,7 @@ Todos los juegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es
 |---|---|---|---|
 | 1 | ⏳ Línea Relámpago: 10 hitos, 9 en la mano en cualquier orden | 100 × aciertos / 9 | la mano, las ranuras, el arrastre y el veredicto de Línea de Tiempo |
 | 2 | 🔢 Toque y Fama: adivina el número. 4 cifras, 10 intentos | 100 − 10 × (intentos − 1), 0 si no | el teclado con notas, el tablero y las pistas de Toque y Fama; tocar una casilla elige dónde va la cifra (#604; probado en el lab, D-409) |
-| 3 | 🔗 Conexiones: 16 palabras, 4 grupos, 4 errores | 25 × grupo − 5 × error | 12 grillas por significado, con distractores (`public/cup/games/connections/grillas.js` y sus versiones por idioma, D-128) |
+| 3 | 🕵️ Agentes: 15 palabras, 4 pistas una a una, 11 agentes, 3 neutrales y el asesino (D-421) | 100 × agentes / 11 − 15 por neutral − 40 por el asesino, nunca bajo 0 | el mazo de pistas por idioma (`public/cup/games/agents/clues.js`, `clues-en.js`, `clues-pt.js`, `clues-de.js`); see [agents.md](agents.md). Until D-421, 🔗 Conexiones (16 palabras, 4 grupos, 4 errores; 25 × grupo − 5 × error), which the cups created before still play |
 | 4 | 👑 Reinas: una por fila, columna y zona, sin tocarse | por tiempo: 100 hasta 30 s, 10 a los 5 min (D-107) | nuevo (Queens de LinkedIn) |
 | 5 | 🔤 Toque y Fama: Palabra. 5 letras, 8 intentos | 10 × letra encontrada en su lugar (una vez por lugar) + si la saca 50 − 5 × (intentos − 1) (D-108) | lo mismo que el día 2, con letras |
 | 6 | 📅 ¿En qué año?: 6 hitos | promedio de los hitos (100 cada uno, baja con la distancia) | mazos de Línea de Tiempo y teclado de Toque y Fama |
@@ -154,8 +154,7 @@ punto (`public/cup/demo.js`: `new`, `guest`, `waiting`, `not-started`, `player`,
 `final-admin`, `podium`, `full`, and `out` and `risk` for D-347; los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105; la capa es
-`assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`, y la usa
-también Agentes del laboratorio): recién ahí aparece el tablero, y
+`assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`): recién ahí aparece el tablero, y
 el reloj parte cuando el "¡A jugar!" ya se fue y terminó la entrada del juego, si la tiene (las
 cartas de El caso, con `entrada()` en su registro): la cuenta no es tiempo de juego (D-258). **No clock shows while playing** (D-379): the time counts as always (paused for a fact and with the tab hidden, stopped when the board ends) and appears only at the end, on the result, the standings and the share text; a game's own ⏳ countdown stays. **Except where speed scores and there is no countdown** (D-384): Loteo and Reinas show the ⏱ elapsed time in the play head (`clock` in their `ui.js`), dimmed while a fact is read and stopped when the board ends. Al
 terminar, el resultado explica **cómo se calculó el puntaje** línea por línea
@@ -174,13 +173,13 @@ cuenta para la copa" (`trialNote`, D-177).
 
 Al crear la copa, apenas se elige la duración aparece **¿Qué se juega cada día?** con una propuesta
 al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`: los seis de siempre
-más Zip, Tango, ¿Dónde queda?, Desenredo and, since D-332, 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas), sin dos días seguidos de la misma habilidad. Es la mano y la línea
+más Zip, Tango, ¿Dónde queda?, Desenredo and, since D-332, 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas; since D-421 🕵️ Agentes in 🔗 Conexiones' place), sin dos días seguidos de la misma habilidad. Es la mano y la línea
 de Línea de Tiempo con su arrastre: un día se arrastra a otro lugar de la semana (en un celular,
 por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando se llega a lo mismo
 (el juego y después la ranura o el día). 🎲 propone otro orden. La final queda fija al último y juega una ronda de cada juego elegido (D-418; the finals that opened before 2026-10-22 noon Pacific keep the five fixed rounds). El calendario se guarda en
 `meta.cal` y `nuevaMeta` rechaza uno que no se puede jugar (`calendarioValido`). Sin elección
-(las demos) se usa el de siempre, `CALENDARIOS`: Línea, Toque y Fama, Conexiones, Reinas, Palabra,
-Año y la final; o Línea, Conexiones y la final en la de 3 días (D-163).
+(las demos) se usa el de siempre, `CALENDARIOS`: Línea, Toque y Fama, Agentes, Reinas, Palabra,
+Año y la final; o Línea, Agentes y la final en la de 3 días (D-163; Agentes took Conexiones' place in D-421).
 
 Los otros juegos del pozo, antes de los tres de D-332, son **〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles: diez, de 4 × 4 a 7 × 7, en tres minutos; con los diez son 100 y la partida termina ahí, y entre quienes los resuelven todos gana quien terminó antes, D-250) y **☀️ Tango**
 (soles y lunas, mitad y mitad por línea, nunca tres seguidos, con marcas = y ×), y **📍 ¿Dónde
@@ -289,6 +288,12 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   [routes.md](routes.md), [plots.md](plots.md) and [paint-mines.md](paint-mines.md). They bring their
   texts (`games/<slug>/texts.js`, merged into `rules.js`), their styles (`games/<slug>/style.css`)
   and their score breakdown (`desglose()` in their `ui.js`). Like any game of the week without a short version, the Gran Final plays them whole, with new content (D-418).
+- **🕵️ Agentes** (D-421) came from the lab in 🔗 Conexiones' place, in the pool (`POZO`) and the demo
+  calendars (`CALENDARIOS`); its page is [agents.md](agents.md). Like the three of D-332 it brings its
+  texts, styles and breakdown (`games/agents/`), its words follow the cup's language (`CON_PALABRAS`),
+  its trial is two clues, and the Gran Final plays it whole. **🔗 Conexiones** stays registered in
+  `JUEGOS`, so the cups created before keep playing it, their final included; new cups cannot pick it,
+  and outside La Copa it sits in the lab's 📦 La Bodega at `/connections/`.
 
 ## Modos
 
@@ -389,7 +394,7 @@ Todo bajo `public/cup/`:
 |---|---|
 | `engine.js` | Calendario, ventanas con zona horaria, puntos, tabla, evolución, medallas; re-exports `code.js` and `clock.js` |
 | `code.js` · `clock.js` | The cup code (`codigoAlAzar`) and the active-time clock (`reloj`, `mmss`, `pausaDeLectura`), apart so Toque y Fama, Línea de tiempo and Generala alone use them without loading La Copa (D-377) |
-| `games/<carpeta>/engine.js` | Motor puro de cada juego (`case`, `connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
+| `games/<carpeta>/engine.js` | Motor puro de cada juego (`agents`, `case`, `connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
 | `games/<carpeta>/ui.js` | La pantalla de cada juego; its optional flags (`caro`, `pruebaCompleta`, `pantallaCompleta`, `clock`) are read by `games/index.js`: a new game whose speed scores and that has no ⏳ countdown sets `clock = true` (D-384) |
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
 | `store-firebase.js` · `store-local.js` | El mismo almacén contra Firebase o contra localStorage (`?test`) |
