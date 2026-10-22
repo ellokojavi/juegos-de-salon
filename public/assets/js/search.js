@@ -113,12 +113,6 @@ export const KEYWORDS = {
     pt: ['dados', 'mentiroso', 'mentir', 'aposta', 'blefe', 'copo', 'festa'],
     de: ['würfel', 'lügner', 'lügen', 'wette', 'bluff', 'becher', 'party'],
   },
-  'cuarto-rey': {
-    es: ['cartas', 'naipes', 'baraja', 'tomar', 'beber', 'tragos', 'previa', 'carrete', 'rey'],
-    en: ['cards', 'deck', 'drinking', 'drinks', 'party', 'king', 'kings'],
-    pt: ['cartas', 'baralho', 'beber', 'drinques', 'festa', 'rei'],
-    de: ['karten', 'kartenspiel', 'trinken', 'trinkspiel', 'party', 'könig'],
-  },
   generala: {
     es: ['dados', 'escalera', 'full', 'poker', 'planilla', 'cubilete', 'kniffel', 'yatzy'],
     en: ['dice', 'yahtzee', 'kniffel', 'yatzy', 'straight', 'full', 'house', 'poker', 'scorecard'],

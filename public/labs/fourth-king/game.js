@@ -4,15 +4,15 @@
  * El estado completo se guarda en localStorage para poder retomar la partida (C-6).
  * Todos los textos salen de LOCALES[lang] (rules.js); el idioma se elige en el menú o en la intro.
  */
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
-import { getLang, langToggle, applyStatic } from '../assets/js/i18n.js';
-import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { createSessionStore, createNameStore } from '../assets/js/session.js';
-import { showHandoff, passBlock } from '../assets/js/handoff.js';
-import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../../assets/js/ui.js';
+import { getLang, langToggle, applyStatic } from '../../assets/js/i18n.js';
+import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
+import { createSessionStore, createNameStore } from '../../assets/js/session.js';
+import { showHandoff, passBlock } from '../../assets/js/handoff.js';
+import { trackStart, trackVisit, trackFinish } from '../../assets/js/transport/stats.js';
 import { GAME_ID, DEFAULT_CONFIG, RANKS, MIN_PLAYERS, MAX_PLAYERS, SORBOS, CARD_RULES, LOCALES } from './rules.js';
 import * as E from './engine.js';
-import { ponerBuzon } from '../assets/js/buzon.js';
+import { ponerBuzon } from '../../assets/js/buzon.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();

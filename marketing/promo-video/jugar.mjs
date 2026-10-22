@@ -88,7 +88,7 @@ const PLAYS = {
     { tap: 'BARCO_B2', after: 300 },
     { tap: 'FUEGO', after: 1100 },
   ] },
-  rey: { url: '/fourth-king/', seed: 17, steps: [
+  rey: { url: '/labs/fourth-king/', seed: 17, steps: [
     `document.getElementById('btn-go-setup').click()`,
     `[...document.querySelectorAll('#players-form input')].forEach((i,k)=>{i.value=['Javi','Cata','Pancho','Fran'][k];i.dispatchEvent(new Event('input',{bubbles:true}))})`,
     `document.getElementById('btn-start').click()`, { wait: 900 }, { snap: true },
