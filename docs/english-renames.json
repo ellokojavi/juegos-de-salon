@@ -136,11 +136,6 @@
       "phase": 5,
       "state": "pending"
     },
-    "docs/screenshots/cup/03-conexiones.png": {
-      "to": "docs/screenshots/cup/03-connections.png",
-      "phase": 5,
-      "state": "pending"
-    },
     "docs/screenshots/cup/04-reinas.png": {
       "to": "docs/screenshots/cup/04-queens.png",
       "phase": 5,

@@ -374,7 +374,7 @@ Spec and design: [docs/games/julep.md](docs/games/julep.md)
     <td align="center"><img src="docs/screenshots/cup/00-invitacion.png" width="180" alt="The invite: your name and a 4-digit PIN"><br><sub>The invite: your name and a 4-digit PIN</sub></td>
     <td align="center"><img src="docs/screenshots/cup/01-tablero.png" width="180" alt="Your days: past ones done, today open"><br><sub>Your days: past ones done, today open</sub></td>
     <td align="center"><img src="docs/screenshots/cup/02-numero.png" width="180" alt="Day 2: Bulls and Cows, guess the number"><br><sub>Day 2: Bulls and Cows, guess the number</sub></td>
-    <td align="center"><img src="docs/screenshots/cup/03-conexiones.png" width="180" alt="Day 3: Connections, with red herrings"><br><sub>Day 3: Connections, with red herrings</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/03-agents.png" width="180" alt="Day 3: Agents, find your spies from the clues"><br><sub>Day 3: Agents, find your spies from the clues</sub></td>
   </tr>
   <tr>
     <td align="center"><img src="docs/screenshots/cup/04-reinas.png" width="180" alt="Day 4: Queens"><br><sub>Day 4: Queens</sub></td>

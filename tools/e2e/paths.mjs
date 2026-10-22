@@ -163,8 +163,8 @@ export const PATHS = {
   agentes: {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
-    end: [START, `1`, `1`, `1`, `1`, `1`, `1`, AG_FINISH, ...Array(11).fill(`1`)],
-    result: [START, `1`, `1`, `1`, `1`, `1`, `1`, AG_FINISH, ...Array(11).fill(`1`), `document.getElementById('btn-fin')?.click()`, `1`, `1`],
+    end: [START, `1`, `1`, `1`, `1`, `1`, `1`, AG_FINISH, ...Array(4).fill(`1`)],
+    result: [START, `1`, `1`, `1`, `1`, `1`, `1`, AG_FINISH, ...Array(4).fill(`1`), `document.getElementById('btn-fin')?.click()`, `1`, `1`],
   },
   /**
    * 🖌️ Pintaminas (D-331). The phone remembers the variant, so each path sets it first (the lever's
@@ -579,7 +579,7 @@ for (const { id } of SUELTOS) {
  * `inbox-end` Fourth King's last king and `inbox-home` the home page footer's form.
  */
 const TO_LINK = `document.getElementById('buzon-pie')?.scrollIntoView({ block: 'center' })`;
-for (const [game, screen] of [['ahorcado', 'result'], ['generala', 'final'], ['linea-de-tiempo', 'solo-result'], ['caso', 'result'], ['pintaminas', 'result'], ['agentes', 'result']]) {
+for (const [game, screen] of [['ahorcado', 'result'], ['generala', 'final'], ['linea-de-tiempo', 'solo-result'], ['caso', 'result'], ['pintaminas', 'result']]) {
   if (PATHS[game]?.[screen]) PATHS[game][`inbox-${screen}`] = [INBOX_SEED, ...PATHS[game][screen], `1`, TO_LINK];
 }
 PATHS.copa['inbox-podium'] = [INBOX_SEED, `location.href='/cup/?test&demo=podium'`, `1`, `1`, `1`, TO_LINK];
