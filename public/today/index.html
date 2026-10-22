@@ -267,8 +267,7 @@
       } else {
         nuevo.push(calendario(e, w));
         nuevo.push(...porJuegoBloque(e));
-        nuevo.push(el('p', { class: 'center uad-dice', id: 'uad-comodines-texto' }, fmt(T.comodinesTexto, { n: e.comodines })));
-        nuevo.push(tarjetaInvitar({ lang, alTocar: tap }));
+        nuevo.push(tarjetaInvitar({ lang, alTocar: tap, comodines: e.comodines }));
       }
 
       /* Los avisos: el recordatorio de cada día, a la hora que elige (D-230) */
