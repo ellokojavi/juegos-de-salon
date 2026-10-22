@@ -359,9 +359,12 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
 - **The recap on the home page** (D-423, in the lab: only with a lab key, listed in /labs/ as
   `#seccion-resumen-copa`): when a cup this phone played ("Tus copas", `copa:mias`) ended by its
   planned end less than a week ago and its recap was not seen here, the home page opens a window
-  over itself: "La Copa terminó", the cup's name, the `fin` notification's sentence, and the final
-  table with 🥇🥈🥉 or the place, a small line of each player's place day by day, the places climbed
-  or lost since day 1 (▲2, ▼1, =) and the points, the player's row marked; **🏆 Ver la copa** opens
+  over itself: "La Copa terminó", the `fin` notification's sentence, and the final table as the
+  image the cup shares from its podium (D-427): the trajectory day by day and the table, the first
+  three on gold, silver and bronze plates, in the cup's language and with its link (the cup's name,
+  which the image carries, stays only for screen readers). If the image cannot be drawn, the window
+  shows its own table: 🥇🥈🥉 or the place, a small line of each player's place day by day, the places
+  climbed or lost since day 1 (▲2, ▼1, =) and the points, the player's row marked. **🏆 Ver la copa** opens
   the cup, **Cerrar** and ✕ close it. Closing it or following the link marks it seen
   (`copa:resumen-visto`); with several due, one in `OPEN_CUPS` first (D-426), then the most recent. That visit the splash (D-351) waits.
   `/?recap=demo` shows it with the podium demo, recording nothing.
@@ -420,10 +423,11 @@ Todo bajo `public/cup/`:
 | `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`). El estilo de la hoja de abajo (`.hoja`) es de todo el sitio y vive en `assets/css/base.css` (D-232); `style.css` guarda solo lo propio de los avisos |
 | `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
 | `demo.js` | Las escenas de ejemplo de `?test&demo=`, para las pruebas y las capturas; `escena()` builds one without storing it, for the home page's recap demo (D-423) |
-| `recap.js` · `recap/index.html` | The recap of an ended cup for the home page (D-423): `/cup/recap/` is a page with no screen that the home page opens in a hidden frame; it reads the due cup over REST and posts back its table (`cupRecap`), so the home page never loads the engine. The window itself is `assets/js/recap.js` and `assets/css/recap.css` |
+| `recap.js` · `recap/index.html` | The recap of an ended cup for the home page (D-423): `/cup/recap/` is a page with no screen that the home page opens in a hidden frame; it reads the due cup over REST and posts back its table (`cupRecap`) and the final table's image (`cupImage`, D-427), so the home page never loads the engine; it loads the app's fonts (Bangers, Nunito) for the image, since it has no base.css. The window itself is `assets/js/recap.js` and `assets/css/recap.css` |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
 | `planilla.js` | La tabla final como CSV (D-161) |
 | `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`; the help sheets' texts come from `assets/js/notification-sheets.js`, shared with Uno al día, D-377) y la explicación de cada juego |
+| `table-image.js` | The cup's table as a 1080 × 1350 image (D-126, D-141, D-153): the trajectory chart and the table, with the podium on plates once the cup ended (`imagenDeTabla`, `cabeceraTabla`, `COLORES_GRAFICO`). No screen state: `game.js` shares it from the board, the podium and Administrar, and `recap.js` draws it for the home page's recap (D-427) |
 | `game.js` | Pantallas |
 | `suelto/index.html` | La página de un juego suelto (`/<slug>/`), de la que `og.mjs cards` genera las demás |
 
