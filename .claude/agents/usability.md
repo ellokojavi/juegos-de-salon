@@ -113,7 +113,7 @@ the rule below does not make it a dilemma. Except for whatever a cup is playing 
   agents finish (D-303); each push relaunches the whole end-to-end. Before and after screenshots
   go in your report, for the PR comment.
 - **Round fixes:** in a separate worktree of the repo (`git worktree add`) from `main` (never
-  from another PR's branch), and **a PR with auto-merge** (`gh pr merge <n> --auto --merge`, D-313),
+  from another PR's branch), and **a PR with auto-merge** (`gh pr merge <n> --auto --merge`, D-313; not if the owner explicitly said not to auto-merge, D-419),
   with before and after screenshots and the U-n rule for each fix. It goes in only when `tests` and
   `end-to-end` pass; a new text you propose (U-3) still carries it: the owner corrects it
   after it is published. Local commits and a single push at the end (D-303).
