@@ -397,7 +397,9 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
   el plazo y la final llevan `&day=<d>` y los botones de Android (`acciones`).
 - `tools/push/daily.mjs` decide los de Uno al día (D-230) con `pushDia` (lo que pidió cada
   celular y su último día y racha); notify.mjs los manda en la misma vuelta y los anota en
-  `pushEnviadosDia`.
+  `pushEnviadosDia`. Since D-424 it also reads `uadTemporada/s<m>/t` for this UTC month and the one
+  before: the notification that a season ended (`temporada:<yyyy-mm>`, the 1st to the 3rd) waits until
+  the nightly points rebuild has closed that month, or its link (`/?recap=season`) would open nothing.
 - `tools/push/notify.mjs` lee `pushCopa`, `push` y `pushEnviados`, manda, y anota cada aviso
   entregado en `pushEnviados/<código>/<subId>/<clave>` (`dia:3`, `plazo:3`, `final`, `fin`,
   `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente. Antes de mandar, junta

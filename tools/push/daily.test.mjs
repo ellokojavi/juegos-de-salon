@@ -9,7 +9,7 @@ const sub = (tz = 'America/Santiago', lang = 'es') => ({ endpoint: 'https://x', 
 const at = (date, santiagoHour) => Date.parse(`${date}T00:10:00Z`) + (santiagoHour + 3) * 3600e3;
 const N = numDia('2026-10-07');
 const base = { h: 9, d: true, r: true, w: true, u: N - 1, c: 5, k: 0, m: 5 };
-const run = (q, now, sent = {}, s = sub()) => dailyNotifications({ wants: { a: q }, subs: { a: s }, sent: { a: sent }, now });
+const run = (q, now, sent = {}, s = sub(), seasonsDone = ['2026-10']) => dailyNotifications({ wants: { a: q }, subs: { a: s }, sent: { a: sent }, now, seasonsDone });
 
 // Today's: from their hour, with the streak and the number, without naming the game
 assert.deepEqual(run(base, at('2026-10-07', 8)), [], 'before their hour it does not go out');
@@ -63,5 +63,27 @@ assert.match(run(base, Date.parse('2026-10-07T07:10:00Z'), {}, sub('Europe/Berli
 // No subscription, nothing; the old is cleaned
 assert.deepEqual(dailyNotifications({ wants: { a: base }, subs: {}, sent: {}, now: at('2026-10-07', 10) }), []);
 assert.deepEqual(stale({ a: { 'dia:1': 0, 'dia:2': Date.parse('2026-10-07') } }, Date.parse('2026-10-08')), ['pushEnviadosDia/a/dia:1']);
+
+
+// The season (D-424): on the 1st to the 3rd from their hour, once, if they played since last month began
+{
+  const NOV = numDia('2026-11-01');
+  const q = { ...base, u: numDia('2026-10-28'), c: 0, d: false };
+  let s = run(q, at('2026-11-01', 9));
+  assert.equal(s.length, 1);
+  assert.equal(s[0].key, 'temporada:2026-10');
+  assert.equal(s[0].notification.body, '🏆 Terminó la temporada de octubre. Toca para ver el ranking final.');
+  assert.match(s[0].notification.url, /\?recap=season&notif=dailyseason$/, 'it opens the season on the home page');
+  assert.deepEqual(run(q, at('2026-11-01', 8)), [], 'not before their hour');
+  assert.deepEqual(run(q, at('2026-11-01', 9), {}, sub(), []), [], 'not before the rebuild computed the month to its end: its link would open nothing');
+  assert.deepEqual(run(q, at('2026-11-02', 10), { 'temporada:2026-10': at('2026-11-01', 9) }), [], 'once');
+  assert.equal(run(q, at('2026-11-03', 9))[0]?.key, 'temporada:2026-10', 'still on the 3rd, if it could not go out before');
+  assert.deepEqual(run(q, at('2026-11-04', 9)), [], 'not after the 3rd');
+  assert.ok(run({ ...q, u: numDia('2026-09-29') }, at('2026-11-01', 9)).every(x => x.kind !== 'temporada'), 'not to whoever did not play that month');
+  assert.equal(run({ ...q, u: NOV }, at('2026-11-01', 9))[0]?.key, 'temporada:2026-10', 'playing on the 1st does not take it away');
+  s = run(q, at('2026-11-01', 9), {}, sub('America/Santiago', 'de'));
+  assert.equal(s[0].notification.body, '🏆 Die Saison im Oktober ist vorbei. Tippe, um die Endrangliste zu sehen.');
+  assert.match(s[0].notification.url, /&lang=de$/);
+}
 
 console.log('One a Day notifications: ok');
