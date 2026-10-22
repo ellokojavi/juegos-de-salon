@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Uno al día 📅 · Juegos de Salón</title>
-  <meta name="description" content="Cada día un juego sorpresa, el mismo desafío para todos: tu racha, tu calendario y cómo te va en cada juego.">
+  <meta name="description" content="Cada día un juego sorpresa, el mismo desafío para todos: tus puntos del mes, tu racha, tu calendario y cómo te va en cada juego.">
   <link rel="canonical" href="https://juegosdesalon.cl/today/">
   <!-- Sin destello de idioma (D-194): si el idioma elegido no es el español, no se pinta hasta tener sus textos -->
   <script>
@@ -39,32 +39,80 @@
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/ranking.css">
   <style>
+    /* Uno al día (D-230) with its points (D-412, D-414): the season, today, the month's ranking, the
+       calendar with each day's points and its details, by game, inviting and the notices. */
+    .intro-hero { margin-bottom: 10px; }
     .uad-pagina { display: grid; gap: 14px; }
     .uad-hero-icon { display: block; font-size: 3.4rem; line-height: 1.1; }
-    .uad-hoy { display: grid; gap: 10px; text-align: center; }
-    .uad-hoy h2, .uad-bloque h2 { margin: 0; font: 400 1.5rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
-    .uad-hoy p { margin: 0; }
+    .uad-hoy, .uad-bloque { display: grid; gap: 10px; }
+    .uad-hoy { text-align: center; }
+    .uad-hoy h2, .uad-bloque h2, #reglas h2 { margin: 0; font: 400 1.5rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+    .uad-hoy p, .uad-bloque p { margin: 0; }
+    .uad-jugar { width: 100%; }
     .uad-proximo { color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums; }
-    .uad-trio { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    @media (max-width: 400px) { .uad-trio { grid-template-columns: repeat(2, 1fr); } }
-    .uad-trio div { display: grid; text-align: center; padding: 10px 4px; border-radius: 16px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); }
-    .uad-trio b { font: 400 1.9rem/1 var(--font-display); letter-spacing: 0.03em; }
-    .uad-trio small { color: var(--muted); font-weight: 800; font-size: 0.78rem; }
-    .uad-bloque { display: grid; gap: 10px; }
+    .uad-acciones { display: grid; gap: 8px; }
+    /* The season: the points, today's status and the numbers, in one box */
+    .hero { text-align: center; display: grid; gap: 8px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.22), rgba(138, 77, 255, 0.28)); border-color: rgba(255, 210, 63, 0.45); }
+    .hero .chips { justify-content: center; align-items: center; }
+    .hero .quedan { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
+    .hero .total { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
+    .hero .pts { font: 900 3.6rem/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
+    .hero .total small { font-size: 1.1rem; color: var(--muted); font-weight: 800; }
+    .hero .estado { margin: 0; font-weight: 800; }
+    .hero .estado + .estado { color: var(--muted); font-size: 0.92rem; }
+    .uad-trio { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding-top: 10px; border-top: 1px solid var(--glass-border); }
+    .uad-trio div { display: grid; }
+    .uad-trio b { font: 900 1.4rem/1.15 var(--font-num); font-variant-numeric: tabular-nums; }
+    .uad-trio small { color: var(--muted); font-weight: 800; font-size: 0.74rem; }
+    .como { justify-self: center; min-height: 44px; padding: 0 8px; background: none; border: 0; color: var(--cyan); font: 800 0.92rem var(--font-body); text-decoration: underline; cursor: pointer; }
+    /* A short phone (320×568, 375×667): the cover and the season's box shrink so Jugar is seen
+       without scrolling (U-39) */
+    @media (max-height: 700px) {
+      .uad-hero-icon { font-size: 2.2rem; }
+      .intro-hero { margin-bottom: 4px; }
+      .hero { gap: 4px; padding: 10px 14px; }
+      .hero .chips { gap: 6px; }
+      .hero .chip { padding: 3px 8px; font-size: 0.8rem; }
+      .hero .quedan { font-size: 0.76rem; }
+      .hero .estado { font-size: 0.9rem; line-height: 1.25; }
+      .hero .pts { font-size: 2.8rem; }
+      .uad-trio { padding-top: 6px; }
+      .uad-trio b { font-size: 1.2rem; }
+      .uad-trio small { line-height: 1.15; }
+    }
+    .uad-dice { margin: 0; color: var(--muted); }
+    /* The calendar: each day up to today a button with its points; its details right under the grid */
     .uad-cal-cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .uad-cal-cab b { font-weight: 900; }
     .uad-cal-cab button { min-width: 44px; min-height: 44px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.25); color: var(--ink); font: 900 1.1rem var(--font-body); cursor: pointer; }
     .uad-cal-cab button:disabled { opacity: 0.3; cursor: default; }
     .uad-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-    .uad-cal > span { min-height: 46px; min-width: 0; border-radius: 8px; display: grid; place-items: center; align-content: center; gap: 2px; padding: 3px 0; font-size: 0.8rem; font-weight: 800; color: var(--muted); background: rgba(255, 255, 255, 0.05); }
+    .uad-cal > span, .uad-cal > button { min-height: 46px; min-width: 0; border-radius: 8px; display: grid; place-items: center; align-content: center; gap: 2px; padding: 3px 0; font: 800 0.8rem var(--font-body); color: var(--muted); background: rgba(255, 255, 255, 0.05); border: 0; }
+    .uad-cal > button { cursor: pointer; }
+    .uad-cal > button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
     .uad-cal .cal-emoji { font-size: 1.05rem; line-height: 1; }
-    .uad-cal .cal-pts { font: 900 0.68rem/1 var(--font-body); padding: 2px 5px; border-radius: 999px; background: rgba(0, 0, 0, 0.35); color: var(--ink); font-variant-numeric: tabular-nums; }
+    .uad-cal .cal-pts { font: 900 0.68rem/1 var(--font-num); padding: 2px 5px; border-radius: 999px; background: rgba(0, 0, 0, 0.35); color: var(--ink); font-variant-numeric: tabular-nums; }
     .uad-cal .sem { background: none; min-height: 0; font-size: 0.72rem; text-transform: uppercase; }
     .uad-cal .vacio { background: none; }
-    .uad-cal .l1 { background: rgba(255, 46, 136, 0.28); color: var(--ink); font-size: 1.05rem; }
-    .uad-cal .l2 { background: rgba(255, 46, 136, 0.5); color: var(--ink); font-size: 1.05rem; }
-    .uad-cal .l3 { background: rgba(255, 46, 136, 0.8); color: var(--ink); font-size: 1.05rem; }
+    .uad-cal .l1 { background: rgba(255, 46, 136, 0.28); color: var(--ink); }
+    .uad-cal .l2 { background: rgba(255, 46, 136, 0.5); color: var(--ink); }
+    .uad-cal .l3 { background: rgba(255, 46, 136, 0.8); color: var(--ink); }
+    .uad-cal .salvado { background: rgba(46, 230, 214, 0.3); color: var(--ink); font-size: 1.05rem; }
     .uad-cal .hoy { outline: 2px solid var(--yellow); outline-offset: -2px; }
+    .uad-cal > button.elegido { outline: 2px solid var(--cyan); outline-offset: -2px; }
+    .leyenda { color: var(--muted); font-size: 0.85rem; }
+    .dia { position: relative; display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--glass-border); }
+    .dia h3 { margin: 0 44px 0 0; font-size: 1.05rem; }
+    .dia h3 .muted { font-weight: 800; white-space: nowrap; }
+    .dia .x { position: absolute; top: 2px; right: -8px; width: 44px; height: 44px; border: 0; background: none; color: var(--ink); font-size: 1.2rem; cursor: pointer; }
+    .detalle-dia { margin: 0; display: grid; gap: 6px; }
+    .detalle-dia div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .detalle-dia dt { color: var(--muted); font-weight: 800; }
+    .detalle-dia dd { margin: 0; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+    .detalle-dia .ancha { display: grid; gap: 2px; }
+    .detalle-dia .ancha dd { text-align: left; }
+    .detalle-dia .suma { border-top: 1px solid var(--glass-border); padding-top: 6px; }
+    /* By game */
     .uad-juegos { display: grid; gap: 6px; }
     .uad-fila { display: grid; grid-template-columns: minmax(0, 1fr) 64px 44px; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; background: rgba(0, 0, 0, 0.2); }
     .uad-fila .nom { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -73,12 +121,19 @@
     .uad-fila .flecha { text-align: right; font-weight: 900; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
     .uad-fila .sube { color: var(--lime); }
     .uad-fila .baja { color: var(--orange); }
-    .uad-dice { margin: 0; color: var(--muted); }
-    .uad-cal .salvado { background: rgba(46, 230, 214, 0.3); color: var(--ink); font-size: 1.05rem; }
     .uad-desafio { display: grid; gap: 10px; text-align: center; border-color: rgba(255, 46, 136, 0.6); background: linear-gradient(160deg, rgba(255, 95, 165, 0.3), rgba(138, 77, 255, 0.28)); }
     .uad-desafio h2 { margin: 0; font: 400 1.6rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
     .uad-desafio p { margin: 0; }
     .uad-aviso { margin: 0; text-align: center; font-weight: 800; }
+    /* Rules: the emoji is the marker */
+    .reglas { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+    #reglas { max-width: min(92vw, 440px); border-radius: var(--radius); border: 1px solid var(--glass-border); background: var(--bg2, #1d0b35); color: var(--ink); padding: 18px; }
+    #reglas::backdrop { background: rgba(0, 0, 0, 0.6); }
+    #reglas h2 { margin-bottom: 12px; font-size: 1.3rem; }
+    .pie { display: grid; gap: 10px; justify-items: center; text-align: center; }
+    .pie nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; }
+    .pie nav a { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink); font-weight: 800; text-decoration: none; }
+    .pie p { margin: 0; }
   </style>
   <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
@@ -98,6 +153,12 @@
     <div class="uad-pagina" id="uad-pagina"></div>
   </main>
 
+  <dialog id="reglas" aria-labelledby="reglas-t">
+    <h2 id="reglas-t"></h2>
+    <ul class="reglas" id="reglas-lista"></ul>
+    <form method="dialog" style="margin-top:16px"><button class="btn btn--yellow" style="width:100%" id="reglas-ok"></button></form>
+  </dialog>
+
   <script type="module">
     import { el, conEmoji } from '../assets/js/ui.js';
     import { getLang, langToggle, applyStatic, COMMON } from '../assets/js/i18n.js';
@@ -106,15 +167,16 @@
     import { juegosCopa } from '../cup/rules.js';
     import { gameById } from '../assets/js/games.js';
     import { mmss } from '../cup/engine.js';
-    import { estado, porJuego, juegoDia, faltaParaManana, LANZAMIENTO, COMODINES_MAX } from '../assets/js/uno-al-dia.js';
-    import { fmt, tirarHoy, compartirHoy, jugarOtro, tarjetaInvitar, tarjetaDesafio, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
-    import { UNO_AL_DIA } from '../assets/js/records.js';
+    import { estado, leer, porJuego, juegoDia, juegoDel, numeroDel, faltaParaManana, LANZAMIENTO, COMODINES_MAX } from '../assets/js/uno-al-dia.js';
+    import { fmt, tirarHoy, compartirHoy, jugarOtro, tarjetaInvitar, tarjetaDesafio, rutaHoy, PESTANAS_UAD } from '../assets/js/uno-al-dia-ui.js';
+    import { walk, seasonPoints, bonusFor } from '../assets/js/daily-points.js';
+    import { UNO_AL_DIA, UAD_PUNTOS, periodoMes } from '../assets/js/records.js';
 
     trackVisit(); // el tráfico del sitio (D-208)
     initSound();
     const lang = getLang();
     document.documentElement.lang = lang;
-    const C = COMMON[lang] || COMMON.es, T = C.uad;
+    const C = COMMON[lang] || COMMON.es, T = C.uad, P = T.pts;
     const JC = juegosCopa(lang);
     applyStatic(C);
     document.title = `${T.nombre} 📅 · ${C.appTitle}`;
@@ -128,11 +190,25 @@
     // El nombre de un solitario está en las reglas de La Copa; el de un juego de grupo, en games.js
     const nombreDe = id => JC[id]?.nombre || gameById(id)?.name?.[lang] || id;
     const nombre = id => conEmoji(juegoDia(id)?.emoji || JC[id]?.emoji || '🎲', nombreDe(id));
+    const miles = n => Number(n || 0).toLocaleString(lang);
+    const mesLargo = (y, m) => new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(y, m - 1, 1));
+    const mayus = t => t.charAt(0).toLocaleUpperCase(lang) + t.slice(1);
+
+    // The rules of the points (D-412): four lines, the emoji as the marker
+    document.getElementById('reglas-t').textContent = P.como;
+    document.getElementById('reglas-ok').textContent = P.entendido;
+    document.getElementById('reglas-lista').replaceChildren(...P.reglas.map(([e, b, t]) => el('li', {}, `${e} `, el('b', {}, b), ` ${t}`)));
 
     /** "7 h 12 min" o "12 min", con espacios que no se cortan entre el número y la unidad. */
     const falta = ms => {
       const m = Math.max(1, Math.ceil(ms / 60000)), h = Math.floor(m / 60);
-      return (h ? fmt(T.horas, { h, m: m % 60 }) : fmt(T.minutos, { m })).replace(/(\d) /g, '$1\u00a0');
+      return (h ? fmt(T.horas, { h, m: m % 60 }) : fmt(T.minutos, { m })).replace(/(\d) /g, '$1 ');
+    };
+    /** The season's end: "quedan X días" ("último día" on the last), the owner's choice (D-412). */
+    const quedan = hoy => {
+      const [y, m] = hoy.split('-').map(Number);
+      const n = new Date(Date.UTC(y, m, 0)).getUTCDate() - Number(hoy.slice(8)) + 1;
+      return n === 1 ? P.ultimo : fmt(P.quedan, { n });
     };
 
     // Un link de invitación (`?inv=<jid>`): se recuerda quién invitó, para el duelo y su comodín
@@ -140,141 +216,227 @@
     const red = import('../assets/js/uno-al-dia-red.js');
     const desafio = inv ? red.then(R => R.recordarInvitacion(inv)) : Promise.resolve(null);
     let reloj = null;
+    // What Firebase says about the month (with a player): the place, who is ahead, last month's champion
+    let enRed = null;
+    // The calendar's open day and month survive a redraw (the network fills in an instant later)
+    let abierto = null, mes = null;
 
     /** Todo lo de la página, con lo que haya en el celular; se vuelve a dibujar al llegar lo de Firebase. */
     const dibujar = async ({ avisos = [] } = {}) => {
       clearInterval(reloj);
-      pagina.replaceChildren();
       const e = estado();
-      for (const a of avisos) pagina.append(el('p', { class: 'uad-aviso', 'data-aviso': 'aceptado' }, a));
+      const w = walk(leer().dias, e.hoy);
+      const nuevo = [];
+      for (const a of avisos) nuevo.push(el('p', { class: 'uad-aviso', 'data-aviso': 'aceptado' }, a));
 
-      /* Hoy: el juego de hoy y su resultado; si falta, el dado (o el desafío de quien invitó) */
-      const hoy = el('section', { class: 'panel uad-hoy', id: 'uad-hoy' }, el('h2', {}, T.hoyTitulo));
+      /* The season: the month's points, the place, today and the numbers. Before playing, how the
+         points are won goes under Jugar, so Jugar is seen without scrolling (U-39) */
       const quien = await desafio;
+      const conJugar = !e.dia && !quien;
+      nuevo.push(temporada(e, w, !conJugar));
+
+      /* Hoy: si falta, el dado (o el desafío de quien invitó); jugado, el resultado y compartir */
       if (!e.dia && quien) {
-        pagina.append(await tarjetaDesafio({ lang, raiz: '../', inv: quien, alTocar: tap }));
+        nuevo.push(await tarjetaDesafio({ lang, raiz: '../', inv: quien, alTocar: tap }));
       } else if (!e.dia) {
-        hoy.append(el('p', {}, T.hoyFalta),
-          el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, `📅 ${T.jugar}`));
-        pagina.append(hoy);
+        nuevo.push(el('div', { class: 'uad-hoy', id: 'uad-hoy' },
+          el('button', { type: 'button', class: 'btn btn--yellow uad-jugar', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, P.jugar), como()));
       } else {
         const proximo = el('p', { class: 'uad-proximo', id: 'uad-proximo' });
         const tic = () => { proximo.textContent = fmt(T.proximo, { t: falta(faltaParaManana()) }); };
         tic(); reloj = setInterval(tic, 30000);
-        hoy.append(el('p', {}, fmt(T.hoyListo, { juego: `${juegoDia(e.dia.j)?.emoji || JC[e.dia.j]?.emoji || '🎲'} ${nombreDe(e.dia.j)}`, s: e.dia.s })), proximo,
+        nuevo.push(el('section', { class: 'panel uad-hoy', id: 'uad-hoy' }, el('h2', {}, T.hoyTitulo),
+          el('p', {}, fmt(T.hoyListo, { juego: `${juegoDia(e.dia.j)?.emoji || JC[e.dia.j]?.emoji || '🎲'} ${nombreDe(e.dia.j)}`, s: e.dia.s })), proximo,
           el('div', { class: 'uad-acciones' },
             compartirHoy({ lang, fecha: e.hoy, dia: e.dia, alTocar: tap, mmss }),
             el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)),
           // The same replay the game's card offers (C-19)
-          el('a', { class: 'link-btn', id: 'btn-uad-repetir', href: `../${rutaHoy(e.dia.j)}` }, T.repetir));
-        pagina.append(hoy);
+          el('a', { class: 'link-btn', id: 'btn-uad-repetir', href: `../${rutaHoy(e.dia.j)}` }, T.repetir)));
       }
 
-      /* Entrar, antes de la racha que guarda (D-249): sin jugador, vive solo en este celular */
+      /* Entrar, antes de lo que guarda (D-249): sin jugador, vive solo en este celular */
       const { rankingsVisibles, leerYo } = await import('../assets/js/jugador.js');
       const { bloqueRanking, bloqueJugador } = rankingsVisibles() ? await import('../assets/js/ranking.js') : {};
-      if (bloqueJugador && !leerYo()) pagina.append(bloqueJugador({ destacado: true, leyenda: T.guardaRacha, alTocar: tap }));
+      if (bloqueJugador && !leerYo()) nuevo.push(bloqueJugador({ destacado: true, leyenda: T.guardaRacha, alTocar: tap }));
 
-      /* La racha y los comodines */
-      pagina.append(el('div', { class: 'uad-trio', id: 'uad-trio' },
-        el('div', {}, el('b', {}, `🔥 ${e.racha}`), el('small', {}, T.rachaLabel)),
-        el('div', {}, el('b', {}, String(e.mejor)), el('small', {}, T.mejorLabel)),
-        el('div', { id: 'uad-comodines' }, el('b', {}, `🧊 ${e.comodines}`), el('small', {}, T.comodinesLabel)),
-        el('div', {}, el('b', {}, String(e.jugados)), el('small', {}, T.jugadosLabel))));
-      if (!e.racha && e.mejor) pagina.append(el('p', { class: 'center uad-dice' }, fmt(T.rachaCortada, { n: e.mejor })));
-      if (e.jugados) pagina.append(el('p', { class: 'center uad-dice', id: 'uad-comodines-texto' }, fmt(T.comodinesTexto, { n: e.comodines })));
+      /* The month's ranking first, and the day's and the streaks', the same tabs as under the result (D-414) */
+      if (bloqueRanking) nuevo.push(bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: PESTANAS_UAD, alTocar: tap }));
 
       if (!e.jugados) {
-        pagina.append(el('p', { class: 'center uad-dice', id: 'uad-vacio' }, T.vacio));
+        nuevo.push(el('p', { class: 'center uad-dice', id: 'uad-vacio' }, T.vacio));
       } else {
-        /* El calendario del mes, con el emoji del juego en los días jugados y 🧊 en los salvados */
-        const cal = el('div', { class: 'uad-cal', id: 'uad-cal' });
-        const titulo = el('b', {});
-        const antes = el('button', { type: 'button', 'aria-label': T.mesAnterior }, '‹');
-        const despues = el('button', { type: 'button', 'aria-label': T.mesSiguiente }, '›');
-        const primero = [LANZAMIENTO, ...Object.keys(e.dias)].sort()[0].slice(0, 7);
-        let mes = e.hoy.slice(0, 7);
-        const pintarMes = () => {
-          const [y, m] = mes.split('-').map(Number);
-          const t = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1));
-          titulo.textContent = t.charAt(0).toLocaleUpperCase(lang) + t.slice(1);
-          antes.disabled = mes <= primero; despues.disabled = mes >= e.hoy.slice(0, 7);
-          cal.replaceChildren();
-          // Los días de la semana, desde el lunes (el 5 de enero de 2026 fue lunes)
-          const sem = new Intl.DateTimeFormat(lang, { weekday: 'narrow' });
-          for (let i = 0; i < 7; i++) cal.append(el('span', { class: 'sem', 'aria-hidden': 'true' }, sem.format(new Date(2026, 0, 5 + i))));
-          const d1 = new Date(y, m - 1, 1), hueco = (d1.getDay() + 6) % 7;
-          for (let i = 0; i < hueco; i++) cal.append(el('span', { class: 'vacio' }));
-          const largo = new Date(y, m, 0).getDate();
-          for (let d = 1; d <= largo; d++) {
-            const f = `${mes}-${String(d).padStart(2, '0')}`, x = e.dias[f], salvado = e.salvados.includes(f);
-            const nivel = salvado ? 'salvado' : !x ? '' : x.s >= 80 ? 'l3' : x.s >= 50 ? 'l2' : 'l1';
-            cal.append(el('span', {
-              class: [nivel, f === e.hoy ? 'hoy' : ''].filter(Boolean).join(' ') || null,
-              title: x ? `${nombreDe(x.j)}: ${fmt(T.puntos, { s: x.s })}` : null,
-            }, salvado ? '🧊' : x
-              // El juego y, en una píldora como la de La Copa, el puntaje de 0 a 100
-              ? [el('span', { class: 'cal-emoji', 'aria-hidden': 'true' }, juegoDia(x.j)?.emoji || '•'), el('small', { class: 'cal-pts' }, String(x.s))]
-              : String(d)));
-          }
-        };
-        const mover = n => { const [y, m] = mes.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); mes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; pintarMes(); };
-        antes.addEventListener('click', () => { tap(); mover(-1); });
-        despues.addEventListener('click', () => { tap(); mover(1); });
-        pintarMes();
-        pagina.append(el('section', { class: 'panel uad-bloque' }, el('h2', {}, T.calendario), el('div', { class: 'uad-cal-cab' }, antes, titulo, despues), cal));
-
-        /* Por juego: cuántas veces, promedio, mejor, los últimos 8 y si va mejorando */
-        const juegos = porJuego(e.dias);
-        const linea = xs => {
-          const W = 64, H = 22, paso = xs.length > 1 ? (W - 4) / (xs.length - 1) : 0;
-          const pts = xs.map((s, i) => `${(2 + i * paso).toFixed(1)},${(H - 2 - (s / 100) * (H - 4)).toFixed(1)}`);
-          const ult = pts.at(-1).split(',');
-          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-          svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('aria-hidden', 'true');
-          svg.innerHTML = `<polyline fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linejoin="round" points="${pts.join(' ')}"/><circle cx="${ult[0]}" cy="${ult[1]}" r="2.4" fill="var(--yellow)"/>`;
-          return svg;
-        };
-        const filas = juegos.map(g => el('div', { class: 'uad-fila', 'data-id': g.id },
-          el('div', {}, el('span', { class: 'nom' }, nombre(g.id)),
-            el('span', { class: 'nums' }, `${g.n} ${g.n === 1 ? T.vez : T.veces} · ${T.promedio} ${g.promedio} · ${T.mejor} ${g.mejor}`)),
-          linea(g.ultimos),
-          el('span', { class: `flecha ${g.tendencia > 0 ? 'sube' : g.tendencia < 0 ? 'baja' : ''}` },
-            g.tendencia === null ? '' : g.tendencia > 0 ? `▲ ${g.tendencia}` : g.tendencia < 0 ? `▼ ${-g.tendencia}` : '=')));
-        // Lo que dicen las flechas, en palabras: el que más mejoró o, si ninguno, el que más bajó
-        const conT = juegos.filter(g => g.tendencia);
-        const sube = conT.filter(g => g.tendencia > 0).sort((a, b) => b.tendencia - a.tendencia)[0];
-        const baja = conT.filter(g => g.tendencia < 0).sort((a, b) => a.tendencia - b.tendencia)[0];
-        const dice = sube || baja;
-        pagina.append(el('section', { class: 'panel uad-bloque', id: 'uad-por-juego' }, el('h2', {}, T.porJuego),
-          el('div', { class: 'uad-juegos' }, filas),
-          dice ? el('p', { class: 'uad-dice', id: 'uad-tendencia' }, fmt(sube ? T.mejorando : T.bajando, { juego: nombreDe(dice.id), a: dice.ultimos3, b: dice.antes })) : null));
-
-        pagina.append(tarjetaInvitar({ lang, alTocar: tap }));
+        nuevo.push(calendario(e, w));
+        nuevo.push(...porJuegoBloque(e));
+        nuevo.push(el('p', { class: 'center uad-dice', id: 'uad-comodines-texto' }, fmt(T.comodinesTexto, { n: e.comodines })));
+        nuevo.push(tarjetaInvitar({ lang, alTocar: tap }));
       }
 
       /* Los avisos: el recordatorio de cada día, a la hora que elige (D-230) */
       const Av = await import('../assets/js/uno-al-dia-avisos.js');
       const campana = Av.bloque({ lang, alTocar: tap, redibujar: aviso => dibujar({ avisos: aviso ? [aviso] : [] }) });
-      if (campana) pagina.append(campana);
-
-      /* El ranking de Uno al día y entrar con nombre y PIN (mientras los rankings se vean) */
-      if (bloqueRanking) pagina.append(bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: ['hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar: tap }));
+      if (campana) nuevo.push(campana);
+      nuevo.push(pie());
+      pagina.replaceChildren(...nuevo);
     };
 
-    /** Lo de Firebase (con jugador): la historia de otros celulares, los comodines por invitar y los desafíos aceptados. */
+    /** The season's box: the points (Firebase's, or this phone's until they arrive), the place and the numbers. */
+    function temporada(e, w, conComo = true) {
+      const hoy = e.hoy, [y, m] = hoy.split('-').map(Number);
+      const yo = enRed?.yo || null;
+      const pts = enRed?.fila ? enRed.fila.s : seasonPoints(w, hoy);
+      const hecho = e.dia ? w.days.find(d => d.date === hoy && d.played) : null;
+      const estados = [];
+      if (hecho) estados.push(fmt(P.hoySumaste, { p: miles(hecho.points), s: hecho.score, b: hecho.bonus }));
+      if (enRed?.fila) estados.push(enRed.delante ? fmt(P.faltan, { p: enRed.fila.puesto, f: miles(enRed.delante.s - pts + 1), n: enRed.delante.n }) : `${fmt(P.puesto, { p: enRed.fila.puesto })}${enRed.campeon ? ' 🏆' : ''}`);
+      else if (yo && !e.dia) estados.push(P.juegaHoy);
+      else if (yo && e.dia) estados.push(P.enUnMomento);
+      return el('section', { class: 'panel hero', id: 'uad-puntos' },
+        el('div', { class: 'chips' }, el('span', { class: 'chip' }, fmt(P.temporada, { mes: mesLargo(y, m) })),
+          ...(enRed?.campeon ? [el('span', { class: 'chip chip--gold' }, fmt(P.campeon, { mes: mesLargo(m === 1 ? y - 1 : y, m === 1 ? 12 : m - 1) }))] : []),
+          el('span', { class: 'quedan' }, quedan(hoy))),
+        el('span', { class: 'total' }, el('span', { class: 'pts', id: 'uad-pts' }, miles(pts)), el('small', {}, P.pts)),
+        ...estados.map(t => el('p', { class: 'estado' }, t)),
+        el('div', { class: 'uad-trio', id: 'uad-trio' },
+          el('div', {}, el('b', {}, `🔥 ${e.racha}`), el('small', {}, T.rachaLabel)),
+          el('div', {}, el('b', {}, String(e.mejor)), el('small', {}, T.mejorLabel)),
+          el('div', { id: 'uad-comodines' }, el('b', {}, `🧊 ${e.comodines}`), el('small', {}, T.comodinesLabel)),
+          el('div', {}, el('b', {}, `+${bonusFor(e.racha + (e.dia ? 0 : 1))}`), el('small', {}, P.bonoHoy))),
+        ...(conComo ? [como()] : []));
+    }
+    /** «¿Cómo se ganan los puntos?»: opens the rules. */
+    function como() {
+      return el('button', { type: 'button', class: 'como', id: 'btn-uad-reglas', onClick: () => { tap(); document.getElementById('reglas').showModal(); } }, P.como);
+    }
+
+    /** The month's calendar: each day up to today a button with the points it added; its details under the grid. */
+    function calendario(e, w) {
+      const por = Object.fromEntries(w.days.map(x => [x.date, x]));
+      const cal = el('div', { class: 'uad-cal', id: 'uad-cal' });
+      const titulo = el('b', {});
+      const antes = el('button', { type: 'button', 'aria-label': T.mesAnterior }, '‹');
+      const despues = el('button', { type: 'button', 'aria-label': T.mesSiguiente }, '›');
+      const primero = [LANZAMIENTO, ...Object.keys(e.dias)].sort()[0].slice(0, 7);
+      mes ||= e.hoy.slice(0, 7);
+      const caja = el('section', { class: 'panel uad-bloque', id: 'uad-calendario' }, el('h2', {}, T.calendario), el('div', { class: 'uad-cal-cab' }, antes, titulo, despues), cal,
+        el('p', { class: 'leyenda' }, P.leyenda));
+      const detalle = () => {
+        caja.querySelector('#uad-dia')?.remove();
+        cal.querySelectorAll('.elegido').forEach(b => { b.classList.remove('elegido'); b.setAttribute('aria-expanded', 'false'); });
+        if (!abierto || !abierto.startsWith(mes)) return;
+        const f = abierto, x = por[f], n = numeroDel(f);
+        const [y, m, d] = f.split('-').map(Number);
+        const g = juegoDia(x?.game ?? (n >= 1 ? juegoDel(f) : null));
+        const fila = (k, v, cls) => el('div', cls ? { class: cls } : {}, el('dt', {}, k), el('dd', {}, v));
+        const juego = fila(P.juego, `${g?.emoji || '🎲'} ${g ? nombreDe(g.id) : x?.game || ''}`, 'ancha');
+        const dias = k => fmt(k === 1 ? P.dia1 : P.dias, { n: k });
+        const filas = x?.played
+          ? [juego, fila(P.puntaje, `${x.score} / 100`), fila(P.racha, `🔥 ${dias(x.streak)}`), fila(P.bono, `+${x.bonus}`), fila(P.sumo, fmt(P.ptsN, { n: miles(x.points) }), 'suma')]
+          : x?.saved
+            ? [juego, fila(P.noJugaste, P.salvo), fila(P.racha, fmt(P.siguio, { n: x.streak })), fila(P.sumo, fmt(P.ptsN, { n: 0 }), 'suma')]
+            : n < 1 ? [fila(T.nombre, P.noExistia)]
+            // Today, not played yet: the game is not named before the die says it (#215)
+            : [...(f === e.hoy ? [] : [juego]), fila(f === e.hoy ? P.hoy : P.noJugaste, f === e.hoy ? P.todaviaNo : P.cortada), fila(P.sumo, fmt(P.ptsN, { n: 0 }), 'suma')];
+        const celda = cal.querySelector(`[data-dia="${f}"]`);
+        celda?.classList.add('elegido'); celda?.setAttribute('aria-expanded', 'true');
+        const cuando = new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(y, m - 1, d));
+        caja.append(el('div', { class: 'dia', id: 'uad-dia', role: 'region', 'aria-labelledby': 'uad-dia-t' },
+          el('button', { type: 'button', class: 'x', 'aria-label': P.cerrar, onClick: () => { tap(); abierto = null; detalle(); } }, '✕'),
+          el('h3', { id: 'uad-dia-t' }, mayus(cuando), ...(n >= 1 ? [' ', el('span', { class: 'muted' }, `· ${fmt(P.numero, { n })}`)] : [])),
+          el('dl', { class: 'detalle-dia' }, ...filas)));
+      };
+      const pintarMes = () => {
+        const [y, m] = mes.split('-').map(Number);
+        titulo.textContent = mayus(new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1)));
+        antes.disabled = mes <= primero; despues.disabled = mes >= e.hoy.slice(0, 7);
+        cal.replaceChildren();
+        // Los días de la semana, desde el lunes (el 5 de enero de 2026 fue lunes)
+        const sem = new Intl.DateTimeFormat(lang, { weekday: 'narrow' });
+        for (let i = 0; i < 7; i++) cal.append(el('span', { class: 'sem', 'aria-hidden': 'true' }, sem.format(new Date(2026, 0, 5 + i))));
+        const hueco = (new Date(y, m - 1, 1).getDay() + 6) % 7;
+        for (let i = 0; i < hueco; i++) cal.append(el('span', { class: 'vacio' }));
+        const largo = new Date(y, m, 0).getDate();
+        for (let d = 1; d <= largo; d++) {
+          const f = `${mes}-${String(d).padStart(2, '0')}`, x = por[f], h = f === e.hoy ? ' hoy' : '';
+          // Up to today each day is a button that opens its details; the days to come are only a number
+          const ver = { type: 'button', 'data-dia': f, 'aria-expanded': 'false', 'aria-controls': 'uad-dia', onClick: () => { tap(); abierto = abierto === f ? null : f; detalle(); } };
+          if (x?.played) cal.append(el('button', { ...ver, class: `l${x.points >= 120 ? 3 : x.points >= 80 ? 2 : 1}${h}`, 'aria-label': fmt(P.diaAria, { d, p: x.points }) },
+            el('span', { class: 'cal-emoji', 'aria-hidden': 'true' }, juegoDia(x.game)?.emoji || '•'), el('small', { class: 'cal-pts' }, String(x.points))));
+          else if (x?.saved) cal.append(el('button', { ...ver, class: `salvado${h}`, 'aria-label': fmt(P.comodinAria, { d }) }, '🧊'));
+          else if (f <= e.hoy) cal.append(el('button', { ...ver, class: h.trim() || null }, String(d)));
+          else cal.append(el('span', {}, String(d)));
+        }
+        detalle();
+      };
+      const mover = n => { const [y, m] = mes.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); mes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; pintarMes(); };
+      antes.addEventListener('click', () => { tap(); mover(-1); });
+      despues.addEventListener('click', () => { tap(); mover(1); });
+      pintarMes();
+      return caja;
+    }
+    document.addEventListener('keydown', ev => { if (ev.key === 'Escape') document.querySelector('#uad-dia .x')?.click(); });
+
+    /** Por juego: cuántas veces, promedio, mejor, los últimos 8 y si va mejorando. */
+    function porJuegoBloque(e) {
+      const juegos = porJuego(e.dias);
+      const linea = xs => {
+        const W = 64, H = 22, paso = xs.length > 1 ? (W - 4) / (xs.length - 1) : 0;
+        const pts = xs.map((s, i) => `${(2 + i * paso).toFixed(1)},${(H - 2 - (s / 100) * (H - 4)).toFixed(1)}`);
+        const ult = pts.at(-1).split(',');
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('aria-hidden', 'true');
+        svg.innerHTML = `<polyline fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linejoin="round" points="${pts.join(' ')}"/><circle cx="${ult[0]}" cy="${ult[1]}" r="2.4" fill="var(--yellow)"/>`;
+        return svg;
+      };
+      const filas = juegos.map(g => el('div', { class: 'uad-fila', 'data-id': g.id },
+        el('div', {}, el('span', { class: 'nom' }, nombre(g.id)),
+          el('span', { class: 'nums' }, `${g.n} ${g.n === 1 ? T.vez : T.veces} · ${T.promedio} ${g.promedio} · ${T.mejor} ${g.mejor}`)),
+        linea(g.ultimos),
+        el('span', { class: `flecha ${g.tendencia > 0 ? 'sube' : g.tendencia < 0 ? 'baja' : ''}` },
+          g.tendencia === null ? '' : g.tendencia > 0 ? `▲ ${g.tendencia}` : g.tendencia < 0 ? `▼ ${-g.tendencia}` : '=')));
+      // Lo que dicen las flechas, en palabras: el que más mejoró o, si ninguno, el que más bajó
+      const conT = juegos.filter(g => g.tendencia);
+      const sube = conT.filter(g => g.tendencia > 0).sort((a, b) => b.tendencia - a.tendencia)[0];
+      const baja = conT.filter(g => g.tendencia < 0).sort((a, b) => a.tendencia - b.tendencia)[0];
+      const dice = sube || baja;
+      return [el('section', { class: 'panel uad-bloque', id: 'uad-por-juego' }, el('h2', {}, T.porJuego),
+        el('div', { class: 'uad-juegos' }, filas),
+        dice ? el('p', { class: 'uad-dice', id: 'uad-tendencia' }, fmt(sube ? T.mejorando : T.bajando, { juego: nombreDe(dice.id), a: dice.ultimos3, b: dice.antes })) : null)];
+    }
+
+    /** The footer: home, the rankings and the inbox, last (U-38). */
+    function pie() {
+      const buzon = el('button', { type: 'button', class: 'buzon-link footer-buzon', id: 'btn-buzon-uad', onClick: () => import('../assets/js/buzon.js').then(m => m.abrirBuzon({ pantalla: 'uno-al-dia' })) }, C.buzon.abrir);
+      return el('footer', { class: 'pie', id: 'uad-pie' },
+        el('nav', { 'aria-label': T.nombre }, el('a', { href: '../' }, `🏠 ${C.menu}`), el('a', { href: '../records/' }, `🏅 ${C.rk.rankings}`)),
+        el('p', {}, buzon));
+    }
+
+    /** Lo de Firebase (con jugador): la historia de otros celulares, los puntos del mes, los comodines por invitar y los desafíos aceptados. */
     const sincronizar = async () => {
       const R = await red;
       // Los comodines que había antes: cada aceptado da uno mientras quede lugar bajo el tope
       let libres = COMODINES_MAX - estado().comodines;
       const { nuevos } = await R.sincronizar();
+      await leerMes().catch(() => {});
       return nuevos.map(x => fmt(libres-- > 0 ? T.aceptado : T.aceptadoSin, { n: x.n || T.unAmigo }));
     };
+    /** The month's table: where this player is, who is just ahead, and whether they won last month. */
+    async function leerMes() {
+      const { jugador, rankingsVisibles } = await import('../assets/js/jugador.js');
+      if (!rankingsVisibles()) return;
+      const J = await jugador(), yo = J.yo();
+      if (!yo) { enRed = null; return; }
+      const { campeonDelMes } = await import('../assets/js/ranking.js');
+      const [v, campeon] = await Promise.all([J.tabla(UAD_PUNTOS, periodoMes(estado().hoy), { top: 100 }).catch(() => null), campeonDelMes(J).catch(() => null)]);
+      const filas = v ? [...v.top, ...(v.vecinos || [])] : [];
+      const i = filas.findIndex(f => f.jid === yo.jid);
+      enRed = { yo, fila: i >= 0 ? filas[i] : null, delante: i > 0 ? filas[i - 1] : null, campeon: campeon === yo.jid };
+    }
     await dibujar();
     import('../assets/js/uno-al-dia-avisos.js').then(Av => { Av.globo(); Av.refrescar({ lang }).catch(() => {}); }).catch(() => {});
     sincronizar().then(avisos => dibujar({ avisos })).catch(() => {});
     // Entrar con el jugador desde esta página trae lo suyo
-    import('../assets/js/jugador.js').then(async ({ jugador }) => (await jugador()).escuchar(yo => { if (yo) sincronizar().then(avisos => dibujar({ avisos })).catch(() => {}); })).catch(() => {});
+    import('../assets/js/jugador.js').then(async ({ jugador }) => (await jugador()).escuchar(yo => { if (yo) sincronizar().then(avisos => dibujar({ avisos })).catch(() => {}); else { enRed = null; dibujar(); } })).catch(() => {});
   </script>
 </body>
 </html>

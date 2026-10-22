@@ -156,9 +156,9 @@ The owner (their UID) can write and delete in all these branches, to moderate.
   player `jid` reads it.
 - In `records`, the period can also be a day (`d20731`). For the `uno-al-dia` table, the
   day's score has to be the one in its history, and the week adds a day from the history (`u`) that
-  didn't have `w` yet. The `uno-al-dia-pts` table (D-412, lab key holders only for now) takes only a
+  didn't have `w` yet. The `uno-al-dia-pts` table (D-412, D-414) takes only a
   month (`s<yyyy>-<mm>`): each write adds a day `u` that didn't have `p` yet, its score plus the
-  streak bonus (5 × `r`, up to 50), and the streak `r` (1–10) grows at most one per write. Details and limits in [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
+  streak bonus (5 × `r`, up to 50), and the streak `r` (1–10) grows at most one per write. October 2026 was filled in from the history by `tools/firebase/uad-points-backfill.mjs` as administrator (D-414). Details and limits in [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
 - The owner reads all of `unoAlDia/` and `invitados/`, for the panel's Uno al día block, and
   can write and delete in both, to moderate.
 

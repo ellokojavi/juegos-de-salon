@@ -1,5 +1,5 @@
 /**
- * Uno al día points (lab prototype). One number that sums how well and how steadily a player plays
+ * Uno al día points (D-412, D-414). One number that sums how well and how steadily a player plays
  * Uno al día, so it can rank everyone in a monthly season. Pure functions over the same history
  * `uno-al-dia.js` keeps (`{ fecha: { j, s } }`), with the same streak and wildcard (comodín) rules.
  *
@@ -12,7 +12,7 @@
  *
  * The season is the calendar month: everyone starts at 0 on the 1st, so a newcomer can compete.
  */
-import { COMODINES_MAX, COMODIN_CADA, FECHA, sumarDias } from '../../assets/js/uno-al-dia.js';
+import { COMODINES_MAX, COMODIN_CADA, FECHA, sumarDias } from './uno-al-dia.js';
 
 export const BONUS_PER_DAY = 5;
 export const BONUS_MAX = 50;
