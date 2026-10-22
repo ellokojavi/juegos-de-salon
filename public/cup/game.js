@@ -557,8 +557,18 @@ function armarSemana() {
     estilo = ultimo;
     cal = semanaAlAzar(dias, { familia, estilo, nuevos });
     pintar();
-    if (animar) barajar();
+    if (animar) { aLaVista(); barajar(); }
   };
+  /**
+   * On a small phone the week starts below the 🎲 (the owner's request, D-425): if any day is out of
+   * view, the page scrolls so the 🎲 sits at the top and the roll is seen.
+   */
+  function aLaVista() {
+    const r = lista.getBoundingClientRect();
+    if (r.top >= 0 && r.bottom <= innerHeight) return;
+    const suave = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    scrollTo({ top: dado.getBoundingClientRect().top + scrollY - 12, behavior: suave ? 'smooth' : 'auto' });
+  }
   /**
    * The roll, as a slot machine (the owner's request, D-425): each card runs through random games of
    * the pool and stops on its own, top to bottom, in under a second. The week is already drawn and
