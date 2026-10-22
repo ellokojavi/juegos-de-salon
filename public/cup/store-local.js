@@ -17,6 +17,15 @@ const guardarAlias = a => { try { localStorage.setItem(ALIASES, JSON.stringify(a
 
 const falla = code => Object.assign(new Error(code), { code });
 
+/** Whether this phone is seated as player `jid` in the test player store (jugador-local.js, D-416). */
+function sentadoComoJugador(jid) {
+  try {
+    const u = localStorage.getItem('juegos-de-salon:prueba:records-uid');
+    const db = JSON.parse(localStorage.getItem('juegos-de-salon:prueba:records-db') || '{}');
+    return !!(u && db.jugadorSeats?.[jid]?.[u]);
+  } catch (_) { return false; }
+}
+
 function leerTodo() {
   try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (_) { return {}; }
 }
@@ -130,11 +139,15 @@ export function createLocalStore({ uid = null } = {}) {
       });
     },
 
-    /** Like the rules (D-359): with no cup PIN, if that cup player is linked to this player. */
+    /**
+     * Like the rules (D-359): with no cup PIN, if that cup player is linked to this player and
+     * this phone is seated as that player in the test player store (D-416). On the site both
+     * seats hang from the same anonymous uid; here the player store keeps its own.
+     */
     async sentarseComoJugador(code, pid, jid) {
       return cambiar(db => {
         const L = copa(db, code);
-        if (!jid || L.players[pid]?.j !== jid) throw falla('pin');
+        if (!jid || L.players[pid]?.j !== jid || !sentadoComoJugador(jid)) throw falla('pin');
         (L._seats[pid] ||= {})[yo] = true;
       });
     },

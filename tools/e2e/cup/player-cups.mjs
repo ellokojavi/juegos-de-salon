@@ -122,6 +122,31 @@ try {
   await sleep(1500);
   const joined = await ev(`JSON.stringify({ p: __copa.estado.pantalla, j: __copa.estado.copa.players[__copa.estado.yo]?.j })`).then(JSON.parse);
   ok(joined.p === 'tablero' && joined.j === jiri, `joins and the cup player is linked to Jiri: ${JSON.stringify(joined)}`);
+
+  // D-416: the phone loses its anonymous session. The player stays in localStorage, but neither seat
+  // (the player's nor the cup's) belongs to the new session. Empezar must lead to the player's PIN.
+  const pidJiri = await ev('__copa.estado.yo');
+  await ev(`(()=>{ localStorage.setItem('juegos-de-salon:prueba:records-uid', 'u-sesion-nueva');
+    const k = 'juegos-de-salon:copa:prueba', db = JSON.parse(localStorage.getItem(k));
+    db['${C3}']._seats['${pidJiri}'] = {}; localStorage.setItem(k, JSON.stringify(db)); return 1 })()`);
+  await b.go(`${BASE}?${C3}&test&day=1`, 1500);
+  ok(await ev(`__copa.estado.pantalla`) === 'jugar', 'D-416: the day opens, as from the notification');
+  ok(await ev(`(()=>{ const x = document.getElementById('btn-empezar'); if (!x || x.disabled) return false; x.click(); return true })()`), 'Empezar can be tapped');
+  await sleep(800);
+  ok(await ev(`__copa.estado.pantalla`) === 'entrar', 'without its seats, Empezar leads to signing in again');
+  ok(/tu jugador Jiri/.test(await ev(`document.getElementById('sesion-jugador-perdida')?.innerText || ''`)), 'it says the player\'s session was lost too');
+  const pinVisible = () => ev(`(()=>{ const i = document.querySelector('#entrar-body input.pin'); return !!i && !i.closest('[hidden]') })()`);
+  ok(await ev(`document.querySelector('.chip-btn.on')?.dataset.pid`) === pidJiri && await pinVisible(), 'Jiri is picked and the PIN field shows');
+  await b.shot('player-seat-lost');
+  await ev(`document.querySelector('#entrar-body input.pin').value = '0000'; document.getElementById('btn-sentarse').click(); 1`);
+  await sleep(800);
+  ok(/no es el de tu jugador Jiri/.test(await ev(`document.querySelector('#entrar-body .form-error, #entrar-body [role=alert]')?.innerText || document.body.innerText`)), 'a wrong PIN says it is not the player\'s');
+  await ev(`document.querySelector('.chip-btn[data-pid="ana001"]').click(); document.querySelector('.chip-btn[data-pid="${pidJiri}"]').click(); 1`);
+  ok(await pinVisible(), 'picking another name and back to Jiri keeps the PIN field');
+  await ev(`document.querySelector('#entrar-body input.pin').value = '1234'; document.getElementById('btn-sentarse').click(); 1`);
+  await sleep(1500);
+  ok(await ev(`__copa.estado.pantalla`) === 'tablero' && await ev(`__copa.estado.yo`) === pidJiri, 'with the player\'s PIN it is back on the board as Jiri');
+  ok(await ev(`!!JSON.parse(localStorage.getItem('juegos-de-salon:prueba:records-db')).jugadorSeats['${jiri}']['u-sesion-nueva']`), 'and the phone is seated as the player again');
 } finally {
   b.close();
 }
