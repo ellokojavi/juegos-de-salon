@@ -79,6 +79,19 @@ assert.equal(inv.length, 2);
 assert.ok(inv.some(x => x.j === cel3.yo().jid), 'el invitado con jugador queda nombrado (para Amigos)');
 assert.deepEqual(await cel1.publico(sara.jid), { n: 'Sara', co: null });
 
+// +10 per invited friend (D-414): once per acceptance, marked `p` in the same write, exactly +10
+const antesInv = (await db.get(pts)).s;
+const uno = inv.find(x => x.uid === 'uid2');
+assert.ok(uno, 'invitados() says who accepted (the phone)');
+assert.equal(await cel1.anotarInvitado({ uid: 'uid2', mesP: mes }), true);
+assert.equal((await db.get(pts)).s, antesInv + 10, 'a friend who accepted adds +10');
+assert.equal(await cel1.anotarInvitado({ uid: 'uid2', mesP: mes }), false, 'once per friend');
+assert.equal(await cel1.anotarInvitado({ uid: 'uidX', mesP: mes }), false, 'no acceptance, no points');
+assert.equal(await intento({ [`invitados/${sara.jid}/uid3/p`]: true, [pts]: fila(antesInv + 30, { u: (await db.get(pts)).u, r: (await db.get(pts)).r, i: 'uid3' }) }), false, 'exactly +10');
+assert.equal(await intento({ [pts]: fila(antesInv + 20, { u: (await db.get(pts)).u, r: (await db.get(pts)).r, i: 'uid3' }) }), false, 'the acceptance must be marked in the same write');
+assert.equal(await cel1.anotarInvitado({ uid: 'uid3', mesP: periodoMes('2026-11-02') }), true, 'a month with no days yet starts with the friend\'s +10');
+assert.equal(await cel1.anotarPuntosDia({ n: n + 2, mesP: periodoMes('2026-11-02'), racha: 1 }), false, 'a day without history still adds nothing');
+
 // Las reglas de Firebase tienen las mismas ramas y lo mismo que revisa el almacén de prueba
 const reglas = JSON.parse(await readFile(new URL('../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules;
 assert.ok(reglas.unoAlDia?.$jid?.$d && reglas.invitados?.$jid?.$uid, 'faltan unoAlDia o invitados en las reglas');
@@ -87,5 +100,7 @@ assert.match(reglas.records.$t.$p.$jid['.write'], /'uno-al-dia-pts'.*\/p'\)\.exi
 assert.ok(reglas.unoAlDia.$jid.$d.p && reglas.records.$t.$p.$jid.r, 'the rules know p and r');
 assert.match(reglas.records.$t.$p['.read'], /d\[0-9\]\{5\}/, 'las reglas no aceptan el período de un día');
 assert.match(reglas.invitados.$jid.$uid['.write'], /!root\.child\('jugadorSeats/, 'invitarse a sí mismo');
+assert.match(reglas.records.$t.$p.$jid['.write'], /invitados\/.*\/p'\)\.val\(\) === true.*\+ 10\)/, 'the rules check the invite +10 like the test store');
+assert.ok(reglas.invitados.$jid.$uid.p && reglas.records.$t.$p.$jid.i, 'the rules know the acceptance p and i');
 
 console.log('uno-al-dia-jugador: ok');

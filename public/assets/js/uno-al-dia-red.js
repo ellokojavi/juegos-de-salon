@@ -13,6 +13,7 @@ import {
 } from './uno-al-dia.js';
 import { UNO_AL_DIA, UAD_RACHA, periodoDia, periodoMes, SIEMPRE, esJid } from './records.js';
 import { walk } from './daily-points.js';
+import { labAccess } from './lab-access.js';
 import { trackUnoAlDia } from './transport/stats.js';
 
 /** Quién invitó a este celular (el `jid` del link), si alguien. */
@@ -91,6 +92,11 @@ export async function sincronizar() {
   const mes = hoy.slice(0, 7);
   for (const d of walk(leer().dias, hoy).days.filter(x => x.played && x.date.startsWith(mes) && !hist[numDia(x.date)]?.p)) {
     await j.anotarPuntosDia({ n: numDia(d.date), mesP: periodoMes(hoy), racha: d.streak }).catch(() => false);
+  }
+  // Each friend who accepted adds +10 to the month they accepted in, once (D-414); in the lab for
+  // now (D-409). lab: #seccion-uad-invitar-jugar
+  if (invitados.some(x => !x.p && periodoMes(fechaDeNum(x.d)) >= 's2026-10') && await labAccess()) {
+    for (const x of invitados.filter(x => !x.p && periodoMes(fechaDeNum(x.d)) >= 's2026-10')) await j.anotarInvitado({ uid: x.uid, mesP: periodoMes(fechaDeNum(x.d)) }).catch(() => false);
   }
   // Los que aceptaron y tienen jugador quedan en Amigos
   const conNombre = await Promise.all(invitados.map(async x => ({ ...x, n: x.j ? (await j.publico(x.j).catch(() => null))?.n || null : null })));

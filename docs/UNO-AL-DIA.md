@@ -233,6 +233,22 @@ link.
   dejan reescribirlo, ni que alguien se invite a sí mismo). El comodín se suma al leer esa lista,
   así que no hace falta que los dos estén conectados a la vez.
 
+### +10 pts por invitar (in the lab, D-414)
+
+With a lab key, each friend who accepts also adds **+10 pts** to the inviter's month, once per
+friend: on opening /today/ (`sincronizar` in `uno-al-dia-red.js`), each acceptance without `p` from
+October 2026 on adds +10 to the table of the month it was accepted in, and marks `p` on the
+acceptance in the same write (`anotarInvitado` in `jugador.js`; the rules and `jugador-local.js`
+check exactly +10, once). No limit of 2 here: every friend counts. Said in the wildcards box
+("👋 Y cada amigo que invitas suma +10 pts a tu mes.") and in the rules dialog, only with a lab key.
+On 2026-10-22 there were no acceptances in Firebase yet, so October needed no backfill.
+
+### The home card: two destinations (in the lab, D-414)
+
+With a lab key, the 📅 card on the home page has two controls side by side, never one inside the
+other: the card itself is a link to /today/, and its chip **▶ Jugar hoy** rolls today's die and opens
+the game straight away; once today is played the chip says **✅ Tus puntos** and opens /today/.
+
 ## Su página: 📅 Uno al día
 
 En `/today/` (carpeta en inglés, D-192; el id es `'uno-al-dia'`). Arriba lo de hoy y abajo lo

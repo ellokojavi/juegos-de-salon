@@ -388,6 +388,13 @@
     .uad-card .tag { color: rgba(255, 255, 255, 0.88); }
     .uad-card .meta .uad-card-estado { background: rgba(0, 0, 0, 0.32); white-space: normal; }
     .uad-card .btn-uad-punto { top: 10px; right: 10px; }
+    /* Two destinations (lab, D-414): the link covers the card; the chip sits above it */
+    .uad-card.dos { position: relative; }
+    .uad-card-link { position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
+    .uad-card-link:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+    .uad-card.dos .meta { position: relative; z-index: 2; }
+    .uad-card-chip { min-height: 44px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; border: 0; background: var(--yellow); color: #2a1600; font: 900 0.9rem var(--font-body); text-decoration: none; cursor: pointer; white-space: nowrap; }
+    .uad-card.hecho .uad-card-chip { background: rgba(0, 0, 0, 0.32); color: var(--ink); }
     /* El punto no se monta sobre el título: "Spiel des Tages" llega hasta el borde (U-12) */
     .uad-card:not(.hecho) h2 { padding-right: 14px; }
     @media (prefers-reduced-motion: reduce) { .btn-uad-punto { animation: none; } }
