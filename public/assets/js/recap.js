@@ -168,10 +168,13 @@ export function showRecap(view, { lang = 'es', onLeave } = {}) {
   const wrap = node('div', 'recap-tabla-caja');
   if (view.image) {
     // The final table as the cup shares it (D-427): the trajectory and the podium in gold, silver and bronze
+    // The rows stay for screen readers; the picture is for the eyes
     const img = node('img', 'recap-imagen');
     img.src = URL.createObjectURL(view.image);
-    img.alt = `${view.title}. ${view.lead}`;
-    wrap.append(img);
+    img.alt = '';
+    img.setAttribute('aria-hidden', 'true');
+    table.classList.add('recap-oculto');
+    wrap.append(img, table);
   } else wrap.append(table);
 
   const go = node('a', 'btn btn--yellow recap-ir', view.link.label);
@@ -195,7 +198,10 @@ export function showRecap(view, { lang = 'es', onLeave } = {}) {
       onLeave?.();
       document.removeEventListener('keydown', onKey);
       layer.classList.add('sale');
-      setTimeout(() => { layer.remove(); document.body.style.overflow = prevOverflow; before?.focus?.({ preventScroll: true }); }, 180);
+      setTimeout(() => {
+        for (const i of layer.querySelectorAll('img.recap-imagen')) URL.revokeObjectURL(i.src);
+        layer.remove(); document.body.style.overflow = prevOverflow; before?.focus?.({ preventScroll: true });
+      }, 180);
       res();
     };
     const onKey = e => { if (e.key === 'Escape') close(); };
