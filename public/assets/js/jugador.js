@@ -381,9 +381,8 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     },
 
     /**
-     * Uno al día points (lab, D-412): adds day `n` of the history to the month `mesP` once, its game
-     * score plus the streak bonus of `racha` (counted up to 10). Only for lab key holders for now:
-     * the caller asks `labAccess()` (lab: #seccion-puntos-dia). Returns true if it added the day.
+     * Uno al día points (D-412, D-414): adds day `n` of the history to the month `mesP` once, its game
+     * score plus the streak bonus of `racha` (counted up to 10). Returns true if it added the day.
      */
     async anotarPuntosDia({ n, mesP, racha }) {
       const yo = api.yo();

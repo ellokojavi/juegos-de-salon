@@ -105,12 +105,13 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 - **Por su cuenta:** abre la app y la tarjeta de Uno al día dice **🔥 1 · Jugar hoy**, con el
   punto que brilla (D-239, ver "Lo que el PR 1 hizo").
 - **Con un aviso** a la hora que eligió: "📅 Uno al día n.° 13 ya está. 🔥 Racha: 1 día." (el de la tabla de
-  avisos) Al tocarlo
-  rueda el dado.
-- **Mientras no lo haya jugado, el dado rueda cada vez** que toca la tarjeta, el aviso o un link, y
-  siempre cae en el mismo juego (decisión del dueño: la misma experiencia de Juego al azar).
-- Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y al tocarla abre su página de Uno al día (sus
-  números, el ranking del día y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.").
+  avisos) Al tocarlo abre /today/ (D-412).
+- **The card, the notice and the links open /today/** (D-414), played or not: its season box comes
+  first (points, place, who is just ahead), and its **Jugar** rolls the die, which always lands on the
+  same game (the owner's call: the same experience as Juego al azar). Before D-414 the card rolled the
+  die until today was played.
+- Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y /today/ muestra su resultado, Compartir y
+  Jugar otro, y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.".
 
 ### Quiere jugar más
 
@@ -239,13 +240,16 @@ acumulado:
 
 | Bloque | Qué muestra |
 |---|---|
-| **Hoy** | El juego de hoy con su emoji y su resultado ("Hoy jugaste 👑 Reinas: 87 puntos."), o **Jugar** si falta; el reloj al próximo ("Próximo juego en 7 h 12 min.") |
-| **Racha** | 🔥 actual, mejor racha y comodines 🧊 |
-| **Calendario** | El mes, con un cuadro por día: en los jugados, el emoji del juego y el puntaje en una píldora; se va a meses anteriores |
+| **Temporada** (D-414) | The month's points ("Temporada de octubre · quedan 11 días", the total in yellow), the place and who is just ahead ("#3 del mes · te faltan 40 pts para pasar a Yayo"), what today added, then 🔥 streak, best streak, 🧊 wildcards and today's bonus, and "¿Cómo se ganan los puntos?" (a four-line dialog) |
+| **Hoy** | **Jugar** (the die) si falta; jugado, el juego con su emoji y su resultado ("Hoy jugaste 👑 Reinas: 87 puntos."), el reloj al próximo ("Próximo juego en 7 h 12 min."), Compartir y Jugar otro |
+| **Calendario** | El mes, con un cuadro por día: en los jugados, el emoji del juego y los puntos que sumó (juego + bono de la racha) en una píldora; tocar un día abre su detalle bajo la grilla; se va a meses anteriores |
 | **Por juego** | Una fila por juego: veces jugado, promedio, mejor y una línea con los últimos 8. La flecha dice si va mejorando: el promedio de los últimos 3 contra los 5 de antes (▲ +12) |
-| **Rankings** | Pestañas: **Hoy** (el desafío de hoy) · **Semana** (suma de puntos) · **Rachas** (mejor racha) · **Amigos** (los de sus copas, que `jugador.js` ya conoce, y los que invitó o lo invitaron) |
+| **Rankings** | Pestañas (D-414, the same under the result): **Mes** (the season's points) · **Hoy** (el desafío de hoy) · **Rachas** (mejor racha) · **Amigos** (the month's points among friends: los de sus copas, que `jugador.js` ya conoce, y los que invitó o lo invitaron) |
 | **Invitar** | Cuántos aceptaron sus desafíos, y **Invitar** |
 | **Avisos** | La campana con su estado y la hora elegida: el recordatorio de cada día es el aviso diario (decisión 15) |
+| **Pie** | 🏠 Menú · 🏅 Rankings, and 💬 Sugerencias y comentarios last (U-38) |
+
+**The home page's 📅 card opens /today/** (D-414), played or not; the die rolls from its Jugar.
 
 **"Mejoró o no"** se dice en palabras además de la flecha: "En Reinas vas mejorando: tus últimas 3
 promedian 82, antes 70." Así se entiende sin leer gráficos.
@@ -328,6 +332,7 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 | El historial del jugador | `unoAlDia/<jid>/<fecha>` = `{ j, s, ms, at }` | Una vez por fecha: las reglas no dejan reescribirla, y la fecha tiene que estar a 14 horas o menos de la hora del servidor. |
 | **Ranking del día** | `records/uno-al-dia/d2026-10-05/<jid>` | Un período nuevo, `dAAAA-MM-DD`, en `PERIODO` de `records.js` y en las reglas. |
 | **Ranking de la semana** | `records/uno-al-dia/s2026-41/<jid>` | La suma de la semana. Solo sube, como cualquier récord, y las reglas exigen que suba lo que dice el historial del día. |
+| **Puntos del mes** (D-412, D-414) | `records/uno-al-dia-pts/s2026-10/<jid>` | The month's season: each day of the history adds once (`p` marks it), its score plus the streak bonus; the streak `r` grows at most one per day. Shown in the Mes and Amigos tabs; the week's table is still saved, but no tab shows it since D-414. |
 | **Mejor racha** | `records/uno-al-dia-racha/siempre/<jid>` | Solo sube. Las reglas exigen que no pase los días del historial. |
 | La racha de hoy y los comodines | El celular, y `jugadores/<jid>/unoAlDia` = `{ racha, comodines, ultimo }` | Se recalcula del historial, que es la fuente. |
 | Sin jugador | `localStorage` (`juegos-de-salon:uno-al-dia`) | Al entrar con jugador, lo del celular se sube al historial una vez. |
@@ -690,44 +695,39 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
   out in the next two decks) and `tools/e2e/daily-variants.mjs` (Loteo and Pintaminas, on the first
   day each is due, looked up in the deck since D-405, play their default variant with no picker, even when the phone remembers the other).
 
-### Lab prototype: monthly points and ranking (`/labs/daily-score/`)
+### Uno al día points (D-412, D-414)
 
-A design prototype, lab only (D-395): nothing players see changes. Since D-412 a lab key holder's
-points are saved in `records/uno-al-dia-pts/s<yyyy>-<mm>/` (each day of the history once, checked by
-the rules); the prototype's screens use made-up rivals, the real ones (below) use real players.
-It explores one number that ranks players in a **monthly season** (everyone starts at 0 on the 1st):
+One number ranks players in a **monthly season** (everyone starts at 0 on the 1st; the table is
+`records/uno-al-dia-pts/s<yyyy>-<mm>/`, so a new month is a new table):
 
 - **A day's points** = the game's own 0–100 score + a **streak bonus** of +5 per day of streak, up
   to +50 (a 10-day streak).
 - **A wildcard 🧊 day** gives 0 points but keeps the streak, so the next day still earns the full
-  bonus; without one, the streak and its bonus start over. A 🧊 earned while holding 2 is lost.
-- **Navigation:** the home card would open the player's Uno al día hub (points and rank first, then
-  play, streak, wildcards, ranking and calendar) instead of rolling the dice; Uno al día's notices
-  and links open it too (D-412). "¿Cómo se ganan los puntos?" is a link under the chase line.
-- **The owner's answers (D-412):** monthly season, its end shown as "quedan X días" (the owner chose it
-  in the lab, 2026-10-21); a 🏆 champion badge next to the name of last month's winner;
-  inviting gives a 🧊 and +10 points (`INVITE_POINTS`, tunable).
+  bonus; without one, the streak and its bonus start over.
+- **Last month's winner** wears a 🏆 next to their name in the month's ranking, and sees a 👑 chip on
+  /today/. The season's end shows as "quedan X días" ("último día" on the last).
+- **Saving:** each day of the player's history in Firebase adds once (`p` marks it), checked by the
+  rules against the history; the streak `r` a phone claims grows at most one a day, up to 10. Today's
+  goes up when it is played; on opening /today/ the month's days not yet counted go up in order.
+- **Not yet:** the +10 for inviting a friend (`INVITE_POINTS`) is in the prototype only, until it is saved.
 
-The rules are pure functions in `public/labs/daily-score/score.js` (over the same history and
-streak rules as `uno-al-dia.js`), tested by `score.test.mjs`. The page lists its open questions for
-the owner; nothing goes to players until validated in the lab.
+The rules are pure functions in `public/assets/js/daily-points.js` (over the same history and streak
+rules as `uno-al-dia.js`), tested by `daily-points.test.mjs`, and shared by /today/, the lab prototype
+and the backfill.
 
-**The real screens (`/labs/daily-score/live/`).** Built on the site's shell like /today/ (`.app`,
-`.topbar`, `.intro-hero` with the rainbow "Uno al día", `.panel`), with real data, lab key only.
-Top to bottom: one hero box (the "Temporada de octubre" chip, "quedan X días", 👑 chip for last
-month's champion, the month's points in yellow `--font-num` digits, one or two status lines —"✅ Hoy
-sumaste 138 pts: 88 del juego + 50 de racha.", "#3 del mes · te faltan X pts para pasar a Y"—, a
-borderless stat row for streak, wildcards and today's bonus, and "¿Cómo se ganan los puntos?");
-Jugar (the standard yellow button) or, once played, 📤 Compartir mi resultado (/today/'s
-`compartirHoy`); Entrar when signed out (the only sign-in nudge); the ranking; the calendar (/today/'s
-cells and title; each day up to today is a button whose details —game, score, streak, bonus,
-points, or the 🧊 that saved it— open right under the grid, one at a time, closed by ✕, the same
-day or Escape); the invite card (the site's `tarjetaInvitar` with one line; the +10 pts is not
-promised until it is saved); and a footer (a dashed lab note that says the +10 is not saved yet,
-🏠 Portada · 🏅 Rankings, and 💬 Sugerencias y comentarios last). The rules dialog has four points.
-Redesigned from a usability critique the owner approved in full (2026-10-21). On opening it
-adds this month's days that do not count yet, in order; signing in on the result adds today's too
-(`sincronizar`). **One ranking everywhere:** the month's points are `bloqueRanking` from
-`ranking.js` with the tabs `mes` and `amigosMes` (🏆 next to last month's champion, 🔥 the streak),
-the same block in the hub, in /records/ (under 🎲, lab key only) and first in the ranking under Uno
-al día's result (lab key only). `tools/e2e/daily-player.mjs` checks all three.
+**The lab, then everyone.** It was tried as a click-through prototype with notes
+(`/labs/daily-score/`, still there) and as real screens behind the lab key (D-395, D-412), redesigned
+from a usability critique the owner approved in full, and published on /today/ (D-414, 2026-10-22)
+in the four languages. **One ranking everywhere:** `bloqueRanking` with the tabs Mes · Hoy · Rachas ·
+Amigos on /today/ and under the result, and the points table (Mes · Amigos) in /records/;
+`tools/e2e/daily-player.mjs` checks they agree, and `tools/e2e/daily-languages.mjs` checks /today/'s
+screens in every language.
+
+**October's backfill (D-414).** The season started with October already played, so
+`node tools/firebase/uad-points-backfill.mjs` (a dry run; `--apply` writes) gives every player the
+October they would have had: it walks their history in Firebase as the phone does and adds each
+October day not yet counted, in order, with the streak `r` the rules accept, marking its `p`. It is
+safe to run twice. What Firebase does not have does not count: days played on a phone without a name
+were never uploaded, and the 🧊 won by inviting is not part of the walk (on the phone or here), so a
+missed day with no 🧊 earned by the streak breaks it.
+

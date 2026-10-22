@@ -20,6 +20,8 @@ const textos = lang => (COMMON[lang] || COMMON.es);
 const SLUGS = Object.fromEntries([...GAMES.filter(g => !g.torneo).map(g => [g.id, g.path.replace(/\/$/, '')]), ...SUELTOS.map(g => [g.id, g.slug])]);
 /** Dónde se juega hoy, desde la raíz del sitio. */
 export const rutaHoy = id => rutaDel(id, SLUGS, SLUGS_SIN_PAGINA);
+/** The tabs of Uno al día's ranking, the same on /today/ and under the result (D-414). */
+export const PESTANAS_UAD = ['mes', 'hoy', 'rachas', 'amigosMes'];
 /** El link de Uno al día que se comparte. */
 export const URL_HOY = `${SITIO}today/`;
 
@@ -58,8 +60,9 @@ function estadoAcceso(lang, raiz, alTocar) {
   const linea2 = hecho
     ? `✅ ${T.listo}${e.racha ? ` · 🔥 ${e.racha}` : ''}`
     : `${e.racha ? `🔥 ${e.racha} · ` : ''}${T.jugar}`;
-  const abrir = () => { alTocar?.(); trackUnoAlDia('boton'); if (hecho) location.href = `${raiz}today/`; else tirarHoy({ lang, raiz }); };
-  // El estado completo para un lector de pantalla: "Uno al día: abrir el juego de hoy. 🔥 Racha: 6 días"
+  // It opens the player's Uno al día, with their points and place; the die rolls from there (D-414)
+  const abrir = () => { alTocar?.(); trackUnoAlDia('boton'); location.href = `${raiz}today/`; };
+  // El estado completo para un lector de pantalla: "Uno al día: tus puntos y el juego de hoy. 🔥 Racha: 6 días"
   const aria = [hecho ? T.ariaListo : T.aria, e.racha ? textoRacha(e.racha, lang).replace('🔥 ', '') : ''].filter(Boolean).join('. ');
   return { T, hecho, linea2, abrir, aria, racha: e.racha };
 }
@@ -231,9 +234,8 @@ async function conRed({ lang, fecha, dia, primera, hoyLinea, red, arriba, alToca
     const conRanking = rankingsVisibles();
     const { bloqueJugador, bloqueRanking } = conRanking ? await import('./ranking.js') : {};
     let invitar = conRanking ? tarjetaInvitar({ lang, alTocar, plegada: true }) : null;
-    // With a lab key, the month's points come first (D-412), the same tabs as in /records/. lab: #seccion-puntos-dia
-    const conPuntos = conRanking && await (await import('./lab-access.js')).labAccess();
-    const ranking = conRanking ? bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: [...(conPuntos ? ['mes'] : []), 'hoy', 'semanaDia', 'rachas', 'amigosSemana'], alTocar }) : null;
+    // The month's points first (D-412, D-414): the same block and tabs as on /today/
+    const ranking = conRanking ? bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: PESTANAS_UAD, alTocar }) : null;
     if (conRanking && !(await R.tengoJugador())) {
       const entrar = el('div', { class: 'uad-entrar', id: 'uad-entrar' }, bloqueJugador({ destacado: true, compacto: true, leyenda: T.guardaRacha, alTocar }));
       arriba.append(entrar);

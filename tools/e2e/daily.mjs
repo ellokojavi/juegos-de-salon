@@ -36,14 +36,18 @@ ok(await ev(`document.getElementById('btn-uno-al-dia').parentElement.querySelect
 ok(/Jugar hoy/.test(await text('#btn-uno-al-dia .uad-card-estado')), `it says "Jugar hoy", no streak yet (${await text('#btn-uno-al-dia .uad-card-estado')})`);
 ok((await text('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Juego al azar', `and the die still says "🎲 Juego al azar" (${await text('.azar-slot .btn-azar')})`);
 ok(await ev(`(()=>{const s=[...document.querySelectorAll('.game-card.torneo .meta > span')];return s.length===2&&s[0].getBoundingClientRect().top===s[1].getBoundingClientRect().top})()`), "La Copa's players and duration, on one line");
-ok(/abrir el juego de hoy/.test(await ev(`document.getElementById('btn-uno-al-dia').getAttribute('aria-label')`)), 'what it does goes in aria-label');
+ok(/tus puntos y el juego de hoy/.test(await ev(`document.getElementById('btn-uno-al-dia').getAttribute('aria-label')`)), 'what it does goes in aria-label');
 ok(await ev(`!!document.querySelector('#btn-uno-al-dia .btn-uad-punto')`), "and a dot shines: today hasn't been played");
 ok(await noOverflow(), "the home page doesn't overflow sideways");
 await b.shot('home');
 
-/* ---------- The die ---------- */
+/* ---------- The card opens Uno al día; its Jugar rolls the die (D-414) ---------- */
 await click('#btn-uno-al-dia');
-ok(await waitFor(`!!document.querySelector('.azar-capa')`, 12), 'tapping it rolls the die');
+ok(await waitFor(`location.pathname === '/today/' && !!document.getElementById('btn-uad-jugar')`, 12), 'tapping it opens /today/, with the season and a Jugar button');
+ok(/Temporada de octubre/.test(await text('#uad-puntos')) && /quedan 26 días/.test(await text('#uad-puntos')), `the season box says the month and the days left (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
+await b.shot('today-before');
+await click('#btn-uad-jugar');
+ok(await waitFor(`!!document.querySelector('.azar-capa')`, 12), 'Jugar rolls the die');
 ok(await waitFor(`/Hoy te toca/.test(document.querySelector('.azar-nombre')?.innerText||'')`, 16), `the die says the number and the game (${(await text('.azar-nombre')).replace(/\n/g, ' ')})`);
 ok(/n\.° 1/.test(await text('.azar-nombre')) && /Desenredo/.test(await text('.azar-nombre')), 'Uno al día no. 1, Desenredo');
 await b.shot('die');
@@ -112,8 +116,9 @@ ok(/🧶 Desenredo: \d+ puntos/.test(await text('#uad-hoy')) && /Próximo juego 
 // The streak is drawn after "Hoy" (in CI sometimes an instant later): wait for it
 ok(await waitFor(`/🔥 1/.test(document.getElementById('uad-trio')?.textContent || '')`, 20), `the streak (${await text('#uad-trio')})`);
 ok(await ev(`[...document.querySelectorAll('.uad-bloque h2')].some(h => h.textContent === 'Calendario')`), 'the month calendar is titled "Calendario"');
-ok(await ev(`document.querySelectorAll('#uad-cal span.hoy').length`) === 1 && /🧶/.test(await text('#uad-cal span.hoy')), "the calendar marks today with the game's emoji");
-ok(/^\d+$/.test(await text('#uad-cal span.hoy .cal-pts')), `and the 0 to 100 score in a pill (${await text('#uad-cal span.hoy .cal-pts')})`);
+ok(await ev(`document.querySelectorAll('#uad-cal .hoy').length`) === 1 && /🧶/.test(await text('#uad-cal .hoy')), "the calendar marks today with the game's emoji");
+ok(/^\d+$/.test(await text('#uad-cal .hoy .cal-pts')), `and the points it added in a pill: the game plus the streak bonus (${await text('#uad-cal .hoy .cal-pts')})`);
+ok(/Hoy sumaste \d+ pts/.test(await text('#uad-puntos')), `the season box says what today added (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
 ok(await ev(`!!document.querySelector('#uad-por-juego [data-id="desenredo"]')`), 'and Desenredo in "Por juego"');
 
 // With history: a long streak, days from other months and a trend
@@ -152,9 +157,9 @@ for (const lang of IDIOMAS) {
   ok(await noOverflow(), `${lang}: /today/ doesn't overflow sideways`);
   ok(!/undefined|NaN|\{\w+\}/.test(await ev('document.body.innerText')), `${lang}: /today/ without half-built texts`);
   await b.shot(`today-320-${lang}`);
-  // The calendar, with a 100 (yesterday): each pill reads whole inside its day
-  const cal = await ev(`JSON.stringify((()=>{document.getElementById('uad-cal').scrollIntoView({block:'center'});const p=[...document.querySelectorAll('#uad-cal .cal-pts')];return {n:p.length,hundred:p.some(x=>x.textContent==='100'),inside:p.every(x=>{const a=x.getBoundingClientRect(),c=x.parentElement.getBoundingClientRect();return a.left>=c.left&&a.right<=c.right&&x.scrollWidth<=x.clientWidth+1})}})())`).then(JSON.parse);
-  ok(cal.n >= 2 && cal.hundred && cal.inside, `${lang}: at 320 px, the calendar's score (a 100 too) fits in its day (${JSON.stringify(cal)})`);
+  // The calendar, with three digits (yesterday, 100 + its bonus): each pill reads whole inside its day
+  const cal = await ev(`JSON.stringify((()=>{document.getElementById('uad-cal').scrollIntoView({block:'center'});const p=[...document.querySelectorAll('#uad-cal .cal-pts')];return {n:p.length,hundred:p.some(x=>x.textContent.length>=3),inside:p.every(x=>{const a=x.getBoundingClientRect(),c=x.parentElement.getBoundingClientRect();return a.left>=c.left&&a.right<=c.right&&x.scrollWidth<=x.clientWidth+1})}})())`).then(JSON.parse);
+  ok(cal.n >= 2 && cal.hundred && cal.inside, `${lang}: at 320 px, the calendar's score (three digits too) fits in its day (${JSON.stringify(cal)})`);
   await b.shot(`today-320-${lang}-calendar`);
 }
 

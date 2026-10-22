@@ -1,6 +1,6 @@
-// The Uno al día points of the lab prototype (public/labs/daily-score/score.js)
+// The Uno al día points (public/assets/js/daily-points.js), shared by /today/, the lab prototype and the October backfill
 import assert from 'node:assert/strict';
-import { walk, bonusFor, seasonPoints, maxToday, rankAmong } from './score.js';
+import { walk, bonusFor, seasonPoints, maxToday, rankAmong } from './daily-points.js';
 
 assert.equal(bonusFor(0), 0);
 assert.equal(bonusFor(1), 5);
