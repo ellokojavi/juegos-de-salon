@@ -26,6 +26,7 @@ tr.mia .recap-linea circle { fill: var(--cyan); }
 .recap-delta.igual { color: var(--muted); }
 .recap-pts { text-align: right; font-weight: 900; color: var(--yellow); font-variant-numeric: tabular-nums; }
 th.recap-pts { text-align: right; }
+.recap-nota { margin: -6px 0 0; font-size: 0.85rem; color: var(--muted); }
 .recap-ir { align-self: center; min-width: 220px; text-align: center; text-decoration: none; }
 @media (max-width: 600px) {
   .recap-ir { width: 100%; box-sizing: border-box; }
