@@ -112,8 +112,8 @@ await test('the cup ended: who won, for one day', () => {
   const cup = baseCup();
   for (let d = 1; d <= 7; d++) cup.results[d] = { aaaaaa: { s: 90, ms: 1000 }, bbbbbb: { s: 50, ms: 1000 } };
   const out = cupNotifications({ code: 'KQRST', cup, wants: wants(), subs, now: meta.end + 10 * HOUR });
-  assert.equal(of(out, S1)[0].notification.body, '🥇 ¡Ganaste la copa!');
-  assert.equal(of(out, S2)[0].notification.body, '🥇 Ana ganhou. Você ficou em 2º.');
+  assert.equal(of(out, S1)[0].notification.body, '🥇 ¡Ganaste la copa! Toca para ver la tabla final.');
+  assert.equal(of(out, S2)[0].notification.body, '🥇 Ana ganhou. Você ficou em 2º. Toque para ver a tabela final.');
   assert.equal(cupNotifications({ code: 'KQRST', cup, wants: wants(), subs, now: meta.end + 34 * HOUR }).length, 0, 'after a day, no more');
 });
 
@@ -181,9 +181,9 @@ await test('a tie for first place (D-229): both won, in plural', () => {
   const s3 = { ...subs, [S3]: { lang: 'en', tz: TZ } };
   const q = { ...wants(), cccccc: { [S3]: { dia: true, plazo: true, at: 0 } } };
   const out = cupNotifications({ code: 'KQRST', cup, wants: q, subs: s3, now: meta.end + 10 * HOUR });
-  assert.equal(of(out, S1)[0].notification.body, '🥇 ¡Ganaste la copa junto con Beto!');
-  assert.equal(of(out, S2)[0].notification.body, '🥇 Você ganhou a copa junto com Ana!');
-  assert.equal(of(out, S3)[0].notification.body, '🥇 Ana and Beto won. You finished #3.');
+  assert.equal(of(out, S1)[0].notification.body, '🥇 ¡Ganaste la copa junto con Beto! Toca para ver la tabla final.');
+  assert.equal(of(out, S2)[0].notification.body, '🥇 Você ganhou a copa junto com Ana! Toque para ver a tabela final.');
+  assert.equal(of(out, S3)[0].notification.body, '🥇 Ana and Beto won. You finished #3. Tap to see the final table.');
   assert.equal(of(out, S1)[0].notification.acciones, undefined, 'the closing one has no buttons: it opens the podium');
   assert.equal(of(out, S1)[0].notification.url, 'https://juegosdesalon.cl/cup/?KQRST&notif=end', 'with its kind, to count the taps (D-233)');
 });
