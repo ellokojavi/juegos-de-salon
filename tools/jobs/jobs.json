@@ -26,6 +26,14 @@
       "decisions": ["D-224"]
     },
     {
+      "id": "uad-rebuild",
+      "where": "github",
+      "workflow": "uad-rebuild.yml",
+      "cron": "23 8 * * *",
+      "what": "Rebuilds Uno al día's month of points from the history, with the days a phone's 🧊 saved, and corrects any total that differs.",
+      "decisions": ["D-415"]
+    },
+    {
       "id": "processes-round",
       "where": "app",
       "task": "ronda-procesos-juegos-de-salon",

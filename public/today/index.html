@@ -228,7 +228,7 @@
     const dibujar = async ({ avisos = [] } = {}) => {
       clearInterval(reloj);
       const e = estado();
-      const w = walk(leer().dias, e.hoy);
+      const w = walk(leer().dias, e.hoy, { gifts: leer().regalos || [] });
       const nuevo = [];
       for (const a of avisos) nuevo.push(el('p', { class: 'uad-aviso', 'data-aviso': 'aceptado' }, a));
 
@@ -281,11 +281,22 @@
       pagina.replaceChildren(...nuevo);
     };
 
-    /** The season's box: the points (Firebase's, or this phone's until they arrive), the place and the numbers. */
+    /**
+     * The month's total Firebase last gave this phone (D-415): signed in, the first drawing shows it
+     * instead of this phone's own count, so the number doesn't jump when the ranking arrives.
+     * Signing out forgets it.
+     */
+    const CACHE = 'uad-pts-cache';
+    // Only for someone signed in on this phone (they may have signed out on another page)
+    const sentado = () => { try { return !!JSON.parse(localStorage.getItem('juegos-de-salon:jugador') || 'null')?.jid; } catch (_) { return false; } };
+    const leerCache = periodo => { if (!sentado()) return null; try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c?.p === periodo && Number.isFinite(c.s) ? c.s : null; } catch (_) { return null; } };
+    const ponerCache = v => { try { if (v) localStorage.setItem(CACHE, JSON.stringify(v)); else localStorage.removeItem(CACHE); } catch (_) { /* sin memoria */ } };
+
+    /** The season's box: the points (Firebase's, the last ones it gave, or this phone's), the place and the numbers. */
     function temporada(e, w, conComo = true) {
       const hoy = e.hoy, [y, m] = hoy.split('-').map(Number);
       const yo = enRed?.yo || null;
-      const pts = enRed?.fila ? enRed.fila.s : seasonPoints(w, hoy);
+      const pts = enRed?.fila ? enRed.fila.s : leerCache(periodoMes(hoy)) ?? seasonPoints(w, hoy);
       const hecho = e.dia ? w.days.find(d => d.date === hoy && d.played) : null;
       const estados = [];
       if (hecho) estados.push(fmt(P.hoySumaste, { p: miles(hecho.points), s: hecho.score, b: hecho.bonus }));
@@ -427,18 +438,21 @@
       const { jugador, rankingsVisibles } = await import('../assets/js/jugador.js');
       if (!rankingsVisibles()) return;
       const J = await jugador(), yo = J.yo();
-      if (!yo) { enRed = null; return; }
+      if (!yo) { enRed = null; ponerCache(null); return; }
       const { campeonDelMes } = await import('../assets/js/ranking.js');
       const [v, campeon] = await Promise.all([J.tabla(UAD_PUNTOS, periodoMes(estado().hoy), { top: 100 }).catch(() => null), campeonDelMes(J).catch(() => null)]);
       const filas = v ? [...v.top, ...(v.vecinos || [])] : [];
       const i = filas.findIndex(f => f.jid === yo.jid);
       enRed = { yo, fila: i >= 0 ? filas[i] : null, delante: i > 0 ? filas[i - 1] : null, campeon: campeon === yo.jid };
+      // The server answered: its row is the cache, or no row this month clears it (a failed read keeps it)
+      if (enRed.fila) ponerCache({ p: periodoMes(estado().hoy), s: enRed.fila.s });
+      else if (v) ponerCache(null);
     }
     await dibujar();
     import('../assets/js/uno-al-dia-avisos.js').then(Av => { Av.globo(); Av.refrescar({ lang }).catch(() => {}); }).catch(() => {});
     sincronizar().then(avisos => dibujar({ avisos })).catch(() => {});
     // Entrar con el jugador desde esta página trae lo suyo
-    import('../assets/js/jugador.js').then(async ({ jugador }) => (await jugador()).escuchar(yo => { if (yo) sincronizar().then(avisos => dibujar({ avisos })).catch(() => {}); else { enRed = null; dibujar(); } })).catch(() => {});
+    import('../assets/js/jugador.js').then(async ({ jugador }) => (await jugador()).escuchar(yo => { if (yo) sincronizar().then(avisos => dibujar({ avisos })).catch(() => {}); else { enRed = null; ponerCache(null); dibujar(); } })).catch(() => {});
   </script>
 </body>
 </html>

@@ -123,7 +123,7 @@ En `#/games`, el bloque **📅 Uno al día**:
   al dueño, y la tabla `records/uno-al-dia-racha/siempre`): **jugadores**, **volvió al día siguiente**
   y **volvió a los 7 días** (de los días jugados cuyo siguiente, o séptimo, ya pasó, en cuántos
   volvió), los **jugadores por su mejor racha, desde siempre** (1 día, 2 a 6, 7 a 29, 30 o más) y las **invitaciones
-  aceptadas**. Las cuentas son `unoAlDiaDelRango` en aggregate.js.
+  aceptadas**. Las cuentas son `unoAlDiaDelRango` en aggregate.js. The days a 🧊 saved (markers `{ c: true }`, D-415) were not played, so they count neither as players nor as returns.
 - **Qué se hace** y **Avisos**: las señales `uad/<evento>` de todos (`EVENTOS_UAD`
   en stats.js), y el tráfico de `/today/` (páginas vistas y visitas que entraron por ahí).
 - Los avisos de Uno al día salen en el bloque de avisos al celular (en `#/cup`, abajo) como `uaddia`,

@@ -1,6 +1,6 @@
 // The October backfill of Uno al día points (uad-points-backfill.mjs, D-414): the same days and rows a phone writes
 import assert from 'node:assert/strict';
-import { mesDe, lastDay } from './uad-points-backfill.mjs';
+import { mesDe, lastDay, rehacerMes } from './uad-points-backfill.mjs';
 import { numDia } from '../../public/assets/js/uno-al-dia.js';
 
 const n = f => numDia(f);
@@ -33,6 +33,18 @@ const m3 = mesDe(largo, '2026-10');
 assert.ok(m3.nuevos.every(d => d.date.startsWith('2026-10')));
 assert.equal(m3.nuevos[0].r, 10);
 assert.equal(m3.nuevos[0].s, 10 + 50);
+
+// A day the phone's 🧊 saved (its marker, D-415) keeps the streak; without it the streak breaks
+const marca = { ...corte, [n('2026-10-07')]: { c: true, at: 1 } };
+assert.deepEqual(mesDe(marca, '2026-10').nuevos.map(d => d.r), [1, 2]);
+
+// --rebuild: the whole month from scratch, whatever was counted before (p), plus +10 per friend counted
+const contado = { [n('2026-10-06')]: { j: 'q', s: 50, p: true }, [n('2026-10-07')]: { c: true, at: 1 }, [n('2026-10-08')]: { j: 'q', s: 50, p: true }, [n('2026-10-09')]: { j: 'q', s: 20 } };
+assert.deepEqual(rehacerMes(contado, '2026-10'), { s: 55 + 60 + 35, r: 3, u: String(n('2026-10-09')), faltaP: [n('2026-10-09')] });
+assert.equal(rehacerMes(contado, '2026-10', { invites: 2 }).s, 150 + 20);
+const sinMarca = { ...contado }; delete sinMarca[n('2026-10-07')];
+assert.equal(rehacerMes(sinMarca, '2026-10').s, 55 + 55 + 30, 'without the marker the streak starts over');
+assert.equal(rehacerMes(contado, '2026-11'), null);
 
 // November is another table: October's days don't count there
 assert.equal(mesDe(hist, '2026-11'), null);
