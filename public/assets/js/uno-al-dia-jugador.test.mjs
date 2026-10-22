@@ -68,6 +68,15 @@ assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/p`]: true, [pts]: f
 assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/p`]: true, [pts]: fila(162 + 99, { u: String(n - 3), r: 5 }) }), false, 'the points are the history plus the bonus');
 assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/p`]: true, [pts]: fila(162 + 70 + 25, { u: String(n - 3), r: 5 }) }), true, 'an honest day goes in');
 
+// A day a 🧊 saved (D-415): only the marker, once, never over a day played, and it adds no points
+assert.equal(await cel1.anotarSalvado({ n: n - 2 }), true);
+assert.deepEqual(Object.keys(await db.get(`unoAlDia/${sara.jid}/${n - 2}`)).sort(), ['at', 'c']);
+assert.equal(await cel1.anotarSalvado({ n: n - 2 }).catch(() => false), false, 'a saved day is marked once');
+assert.equal(await cel1.anotarSalvado({ n }).catch(() => false), false, 'a day played is never marked saved');
+assert.equal(await cel1.anotarPuntosDia({ n: n - 2, mesP: mes, racha: 6 }), false, 'a saved day adds no points');
+assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 4}`]: { c: true, s: 50, at: ahora.t } }), false, 'a marker carries no score');
+assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 2}/p`]: true }), false, 'a marker never gets p');
+
 // Invitar: el celular invitado deja su marca una vez, y nadie se invita a sí mismo
 assert.equal(await cel1.aceptarInvitacion(sara.jid, n), false, 'invitarse a sí mismo no vale');
 assert.equal(await cel2.aceptarInvitacion(sara.jid, n), true, 'un celular sin jugador acepta la invitación');
@@ -98,6 +107,7 @@ assert.ok(reglas.unoAlDia?.$jid?.$d && reglas.invitados?.$jid?.$uid, 'faltan uno
 assert.match(reglas.records.$t.$p.$jid['.write'], /uno-al-dia/);
 assert.match(reglas.records.$t.$p.$jid['.write'], /'uno-al-dia-pts'.*\/p'\)\.exists\(\).*>= 10 \? 50 : newData\.child\('r'\)\.val\(\) \* 5/, 'the rules check the points like the test store');
 assert.ok(reglas.unoAlDia.$jid.$d.p && reglas.records.$t.$p.$jid.r, 'the rules know p and r');
+assert.ok(reglas.unoAlDia.$jid.$d.c && /hasChildren\(\['c', 'at'\]\)/.test(reglas.unoAlDia.$jid.$d['.validate']), 'the rules know the saved marker (D-415)');
 assert.match(reglas.records.$t.$p['.read'], /d\[0-9\]\{5\}/, 'las reglas no aceptan el período de un día');
 assert.match(reglas.invitados.$jid.$uid['.write'], /!root\.child\('jugadorSeats/, 'invitarse a sí mismo');
 assert.match(reglas.records.$t.$p.$jid['.write'], /invitados\/.*\/p'\)\.val\(\) === true.*\+ 10\)/, 'the rules check the invite +10 like the test store');

@@ -7,6 +7,13 @@
  *   node tools/firebase/uad-points-backfill.mjs                      dry run: what it would write
  *   node tools/firebase/uad-points-backfill.mjs --apply              writes it
  *   node tools/firebase/uad-points-backfill.mjs --month 2026-10      another month (default 2026-10)
+ *   node tools/firebase/uad-points-backfill.mjs --rebuild [--apply]  recomputes the whole month (D-415)
+ *
+ * `--rebuild` recomputes each player's month from scratch, from the history and the days their 🧊
+ * saved (the markers a phone uploads, `{ c: true }`, D-415), plus +10 for each invited friend already
+ * counted (`invitados/<jid>/<uid>/p`) that accepted in that month, and rewrites the row when it
+ * differs (and gives `p` to any played day of the month that lacks it). It fixes a total a phone or
+ * this backfill added with a streak the server didn't know. Running it twice writes nothing new.
  *
  * For each player, the days of their history are walked as `walk()` does on the phone
  * (`daily-points.js`: the streak, and the 🧊 earned every 7 days in a row that saves a missed
@@ -15,14 +22,15 @@
  * most one a day and up to 10, exactly what the rules accept. Each counted day gets its `p`, so no
  * phone adds it again; a day a phone already counted is left alone, so running it twice writes
  * nothing new. Only what Firebase has counts: days played on a phone without signing in were never
- * uploaded, and the 🧊 won by inviting (`invitados/`) is not used by the walk, on the phone or here.
+ * uploaded. The 🧊 won by inviting (`invitados/`) and the days a phone's 🧊 saved (its markers, D-415)
+ * count here as on the phone.
  * The next month starts at 0 on its own: its table is another period (`s2026-11`).
  *
  * Needs the service account key (see tools/firebase/firebase-admin.mjs).
  */
 import { fileURLToPath } from 'node:url';
 import { fechaDeNum, numDia } from '../../public/assets/js/uno-al-dia.js';
-import { walk } from '../../public/assets/js/daily-points.js';
+import { walk, bonusFor } from '../../public/assets/js/daily-points.js';
 import { UAD_PUNTOS, RACHA_TOPE, bonoRacha, claveOrden, esPais } from '../../public/assets/js/records.js';
 
 /**
@@ -30,11 +38,8 @@ import { UAD_PUNTOS, RACHA_TOPE, bonoRacha, claveOrden, esPais } from '../../pub
  * row the table ends with. `antes` is the row already in the table (a phone may have added days).
  * Returns null when there is nothing to add.
  */
-export function mesDe(hist, month, antes = null) {
-  const dias = {};
-  for (const [k, x] of Object.entries(hist || {})) if (/^[0-9]{5}$/.test(k) && x?.j) dias[fechaDeNum(Number(k))] = { j: x.j, s: x.s || 0 };
-  const fin = lastDay(month);
-  const w = walk(dias, fin);
+export function mesDe(hist, month, antes = null, { gifts = [] } = {}) {
+  const w = walkServer(hist, month, gifts);
   let fila = antes ? { s: antes.s, r: antes.r, u: antes.u } : null;
   const nuevos = [];
   for (const d of w.days) {
@@ -48,6 +53,33 @@ export function mesDe(hist, month, antes = null) {
   return nuevos.length ? { nuevos, fila } : null;
 }
 
+/**
+ * The server's walk of a player's history up to the month's last day: the days played, and the
+ * missed days their phone said a 🧊 saved (D-415). `gifts` are the dates a friend accepted.
+ */
+export function walkServer(hist, month, gifts = []) {
+  const dias = {}, saved = [];
+  for (const [k, x] of Object.entries(hist || {})) {
+    if (!/^[0-9]{5}$/.test(k)) continue;
+    if (x?.j) dias[fechaDeNum(Number(k))] = { j: x.j, s: x.s || 0 };
+    else if (x?.c === true) saved.push(fechaDeNum(Number(k)));
+  }
+  return walk(dias, lastDay(month), { saved, gifts });
+}
+
+/**
+ * A player's month recomputed from scratch (`--rebuild`, D-415): `{ s, r, u, faltaP }`, with
+ * `faltaP` the played days of the month without their `p`. `invites` is how many friends already
+ * counted (`p`) accepted in that month. null when the month has no day played.
+ */
+export function rehacerMes(hist, month, { gifts = [], invites = 0 } = {}) {
+  const dias = walkServer(hist, month, gifts).days.filter(d => d.played && d.date.startsWith(month));
+  if (!dias.length) return null;
+  const last = dias.at(-1);
+  const s = dias.reduce((a, d) => a + d.score + bonusFor(Math.min(RACHA_TOPE, d.streak)), 0) + invites * 10;
+  return { s, r: Math.max(1, Math.min(RACHA_TOPE, last.streak)), u: String(numDia(last.date)), faltaP: dias.map(d => numDia(d.date)).filter(n => !hist[n]?.p) };
+}
+
 /** The last day of `yyyy-mm`. */
 export const lastDay = month => {
   const [y, m] = month.split('-').map(Number);
@@ -56,17 +88,40 @@ export const lastDay = month => {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const { token, read, write, fail } = await import('./firebase-admin.mjs');
-  const apply = process.argv.includes('--apply');
+  const apply = process.argv.includes('--apply'), rebuild = process.argv.includes('--rebuild');
   const i = process.argv.indexOf('--month');
   const month = i > 0 ? process.argv[i + 1] : '2026-10';
   if (!/^[0-9]{4}-[0-9]{2}$/.test(month || '')) fail('--month takes yyyy-mm');
   const period = `s${month}`;
   const t = await token();
-  const [todos, tabla, jugadores] = await Promise.all([read('unoAlDia', t), read(`records/${UAD_PUNTOS}/${period}`, t), read('jugadores', t)]);
+  const [todos, tabla, jugadores, invitados] = await Promise.all([read('unoAlDia', t), read(`records/${UAD_PUNTOS}/${period}`, t), read('jugadores', t), read('invitados', t)]);
+  // The dates a friend accepted (the 🧊 they gave), and how many of them already gave +10 this month
+  const giftsOf = jid => Object.values(invitados?.[jid] || {}).filter(x => Number.isInteger(x?.d)).map(x => fechaDeNum(x.d));
+  const invitesOf = jid => Object.values(invitados?.[jid] || {}).filter(x => x?.p === true && Number.isInteger(x.d) && fechaDeNum(x.d).startsWith(month)).length;
+  if (rebuild) {
+    const cambios = [];
+    for (const [jid, hist] of Object.entries(todos || {})) {
+      if (!/^[a-z0-9]{8}$/.test(jid) || !jugadores?.[jid]?.n) continue;
+      const m = rehacerMes(hist, month, { gifts: giftsOf(jid), invites: invitesOf(jid) });
+      const antes = tabla?.[jid] || null;
+      if (!m || (antes && antes.s === m.s && antes.r === m.r && antes.u === m.u && !m.faltaP.length)) continue;
+      cambios.push({ jid, n: jugadores[jid].n, co: esPais(jugadores[jid].co) ? jugadores[jid].co : null, antes: antes?.s ?? null, i: antes?.i, ...m });
+    }
+    console.log(`${period} rebuild: ${Object.keys(todos || {}).length} players with a history · ${cambios.length} to rewrite`);
+    for (const c of cambios) console.log(`  ${c.n} (${c.jid})  ${c.antes ?? '—'} → ${c.s} pts · streak ${c.r}${c.faltaP.length ? ` · ${c.faltaP.length} days get p` : ''}`);
+    if (!apply) { console.log('Dry run: nothing written. Run it with --rebuild --apply to write.'); process.exit(0); }
+    for (const c of cambios) {
+      const w = { [`records/${UAD_PUNTOS}/${period}/${c.jid}`]: { s: c.s, ms: 0, k: claveOrden(c.s, 0), at: Date.now(), n: c.n, ...(c.co ? { co: c.co } : {}), u: c.u, r: c.r, ...(c.i ? { i: c.i } : {}) } };
+      for (const n of c.faltaP) w[`unoAlDia/${c.jid}/${n}/p`] = true;
+      await write('', 'PATCH', w, t);
+    }
+    console.log(`Rewritten: ${cambios.length} players.`);
+    process.exit(0);
+  }
   const filas = [];
   for (const [jid, hist] of Object.entries(todos || {})) {
     if (!/^[a-z0-9]{8}$/.test(jid)) continue;
-    const m = mesDe(hist, month, tabla?.[jid] || null);
+    const m = mesDe(hist, month, tabla?.[jid] || null, { gifts: giftsOf(jid) });
     const yo = jugadores?.[jid];
     if (!m || !yo?.n) continue;
     filas.push({ jid, n: yo.n, co: esPais(yo.co) ? yo.co : null, ...m });

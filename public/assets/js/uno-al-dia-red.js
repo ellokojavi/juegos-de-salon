@@ -87,10 +87,14 @@ export async function sincronizar() {
     if (f === hoy || dias[f] || !x?.j) continue;
     await j.anotarDia({ n: numDia(f), j: x.j, s: x.s, ms: x.ms, soloHistoria: true }).catch(() => null);
   }
+  // The days this phone's 🧊 saved go up as markers (D-415), so the server's walk keeps the streak
+  // through them as this phone does (the backfill's rebuild corrects the month's total with them)
+  const w = walk(leer().dias, hoy, { gifts: leer().regalos || [] });
+  for (const d of w.days.filter(x => x.saved && !hist[numDia(x.date)])) await j.anotarSalvado({ n: numDia(d.date) }).catch(() => false);
   // Uno al día points (D-414): this month's days that don't count yet, in order (the streak of
   // each, as walk() gives it); the history read above says which already do (`p`)
   const mes = hoy.slice(0, 7);
-  for (const d of walk(leer().dias, hoy).days.filter(x => x.played && x.date.startsWith(mes) && !hist[numDia(x.date)]?.p)) {
+  for (const d of w.days.filter(x => x.played && x.date.startsWith(mes) && !hist[numDia(x.date)]?.p)) {
     await j.anotarPuntosDia({ n: numDia(d.date), mesP: periodoMes(hoy), racha: d.streak }).catch(() => false);
   }
   // Each friend who accepted adds +10 to the month they accepted in, once (D-414); in the lab for

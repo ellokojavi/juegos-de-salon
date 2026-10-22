@@ -151,6 +151,10 @@ The owner (their UID) can write and delete in all these branches, to moderate.
 - `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w?, p? }`: the first Uno al día attempt of day `n` (days
   since 1970). Written once by whoever is seated as that player; `w` (the mark that it was already
   added to the week) and `p` (already added to the month's points, D-412) are each added once. Anyone can read it.
+  A day a 🧊 saved is only a marker, `{ c: true, at }` (D-415): written once by the phone that saved
+  it, never over a day played, and it never gets `w` or `p`. The rules check its shape, not whether
+  the phone held a 🧊 (they can't count wildcards); the nightly rebuild bounds what an unbacked marker
+  buys (see D-415).
 - `invitados/<jid>/<uid>` = `{ d, at, j?, p? }`: the `uid` phone finished its first Uno al día with an
   invitation from `jid`. Written by that phone, once, and not if it is seated as `jid`. Only the
   player `jid` reads it. `p` (D-414) is added once, by whoever is seated as `jid`, in the same write
@@ -160,7 +164,7 @@ The owner (their UID) can write and delete in all these branches, to moderate.
   day's score has to be the one in its history, and the week adds a day from the history (`u`) that
   didn't have `w` yet. The `uno-al-dia-pts` table (D-412, D-414) takes only a
   month (`s<yyyy>-<mm>`): each write adds a day `u` that didn't have `p` yet, its score plus the
-  streak bonus (5 × `r`, up to 50), and the streak `r` (1–10) grows at most one per write. October 2026 was filled in from the history by `tools/firebase/uad-points-backfill.mjs` as administrator (D-414). Details and limits in [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
+  streak bonus (5 × `r`, up to 50), and the streak `r` (1–10) grows at most one per write. October 2026 was filled in from the history by `tools/firebase/uad-points-backfill.mjs` as administrator (D-414), and its `--rebuild` rewrites every month's totals each night from the history and the markers (the `uad-rebuild` workflow, D-415). Details and limits in [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
 - The owner reads all of `unoAlDia/` and `invitados/`, for the panel's Uno al día block, and
   can write and delete in both, to moderate.
 

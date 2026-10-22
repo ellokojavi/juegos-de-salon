@@ -35,6 +35,19 @@ assert.equal(w.days[8].streak, 8);
 assert.equal(w.days[8].bonus, 40);
 assert.equal(w.wildcards, 0);
 
+// The server's way (D-415): a missed day is saved only by a 🧊 it can see, or by a phone's marker
+// while the 2 it lends last; with neither, the streak breaks
+const g = { '2026-10-01': { j: 'q', s: 10 }, '2026-10-02': { j: 'q', s: 10 }, '2026-10-04': { j: 'q', s: 10 }, '2026-10-06': { j: 'q', s: 10 }, '2026-10-08': { j: 'q', s: 10 }, '2026-10-10': { j: 'q', s: 10 } };
+w = walk(g, '2026-10-10', { saved: [] });
+assert.deepEqual(w.days.filter(d => d.played).map(d => d.streak), [1, 2, 1, 1, 1, 1], 'no marker: every gap breaks');
+w = walk(g, '2026-10-10', { saved: ['2026-10-03', '2026-10-05', '2026-10-07'] });
+assert.deepEqual(w.days.filter(d => d.played).map(d => d.streak), [1, 2, 3, 4, 1, 1], 'two markers honoured, the third breaks, and an unmarked gap breaks');
+w = walk(g, '2026-10-10', { gifts: ['2026-10-02'], saved: ['2026-10-03', '2026-10-05', '2026-10-07'] });
+assert.deepEqual(w.days.filter(d => d.played).map(d => d.streak), [1, 2, 3, 4, 5, 1], 'a gift (an invited friend) covers one more; the unmarked gap still breaks');
+// The phone's way spends gifts too, as recorrer does
+w = walk({ '2026-10-01': { j: 'q', s: 10 }, '2026-10-03': { j: 'q', s: 10 } }, '2026-10-03', { gifts: ['2026-10-01'] });
+assert.deepEqual(w.days.map(d => d.saved), [false, true, false]);
+
 // The season is the month
 w = walk({ '2026-09-30': { j: 'reinas', s: 100 }, '2026-10-01': { j: 'zip', s: 100 } }, '2026-10-01');
 assert.equal(seasonPoints(w, '2026-10-01'), 110);
