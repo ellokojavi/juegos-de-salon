@@ -3,13 +3,31 @@
  * The home page (assets/js/recap.js) says which cup is due and draws the window; this module runs
  * in /cup/recap/, a page with no screen the home page opens in a hidden frame, so the cup's engine
  * stays out of the home page (D-377). It reads the cup over REST (`torneos/<code>` is public to
- * read), with no Firebase SDK, and builds the rows the window draws.
+ * read), with no Firebase SDK, and builds the rows the window draws and the cup's final table as
+ * the image the cup shares (table-image.js, D-427): the trajectory and the podium in gold, silver
+ * and bronze, in the cup's language (D-170).
  */
 import { conCierre, terminada, tabla, evolucion } from './engine.js';
 import { createCuenta } from './cuenta.js';
 import { dueCup, markCupSeen } from '../assets/js/recap.js';
 
 const DB = 'https://juegos-de-salon-default-rtdb.firebaseio.com';
+
+/** The fonts the image is drawn with (base.css loads them on every page; this one has no CSS). */
+const FONTS = ['400 76px Bangers', '800 40px Nunito', '900 40px Nunito'];
+
+/**
+ * The cup's final table as the image it shares (D-427), the same one the podium's 📤 sends, as a
+ * PNG file; null if it could not be drawn (the window then shows its own table).
+ */
+export async function cupImage(Lraw, pid, now, url) {
+  try {
+    const [{ imagenDeTabla }, { LOCALES }] = await Promise.all([import('./table-image.js'), import('./rules.js')]);
+    try { await Promise.all(FONTS.map(f => document.fonts.load(f))); } catch (_) { /* the fallbacks */ }
+    const Lc = conCierre(Lraw);
+    return await imagenDeTabla({ Lc, yo: pid, now: Math.max(now, Lc.meta.end), T: LOCALES[Lc.meta.lang] || LOCALES.es, code: null, url });
+  } catch (_) { return null; }
+}
 
 /**
  * What the window draws for `pid` in cup `L`, or null when there is nothing to tell (the cup has
@@ -34,11 +52,11 @@ export function cupRecap(Lraw, pid, now) {
 }
 
 /**
- * The due cup and its recap, or null: `{ code, alias, recap }`. A cup that turns out to have
+ * The due cup and its recap, or null: `{ code, alias, recap, image }` (`image` with `withImage`). A cup that turns out to have
  * nothing to tell is marked seen, so it is not fetched again; one that could not be read is tried
  * on the next visit.
  */
-export async function loadCupRecap({ now = Date.now(), fetchFn = globalThis.fetch } = {}) {
+export async function loadCupRecap({ now = Date.now(), fetchFn = globalThis.fetch, withImage = false } = {}) {
   const due = dueCup({ now });
   if (!due) return null;
   const pid = createCuenta().quien(due.code);
@@ -51,7 +69,8 @@ export async function loadCupRecap({ now = Date.now(), fetchFn = globalThis.fetc
   } catch (_) { return null; }
   const recap = L ? cupRecap(L, pid, now) : null;
   if (!recap) { markCupSeen(due.code); return null; }
-  return { code: due.code, alias: L.meta.alias || null, recap };
+  const image = withImage ? await cupImage(L, pid, now, `https://juegosdesalon.cl/cup/?${L.meta.alias || due.code}`) : null;
+  return { code: due.code, alias: L.meta.alias || null, recap, image };
 }
 
 /** `?recap=demo`: La Copa's podium demo (demo.js), as if it had just ended; its link opens that demo. */
@@ -59,5 +78,5 @@ export async function demoRecap() {
   const { escena } = await import('./demo.js');
   const now = Date.now();
   const { L, e, meta } = escena('podium', { now });
-  return { code: null, path: 'cup/?test&demo=podium', recap: cupRecap(L, e.yo, Math.max(now, meta.end)) };
+  return { code: null, path: 'cup/?test&demo=podium', recap: cupRecap(L, e.yo, Math.max(now, meta.end)), image: await cupImage(L, e.yo, now, 'https://juegosdesalon.cl/cup/') };
 }
