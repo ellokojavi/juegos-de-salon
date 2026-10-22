@@ -107,7 +107,7 @@
     <header>
       <h1>🏆 Puntos de Uno al día</h1>
       <p class="muted">Un puntaje global de Uno al día y un ranking del mes, para que valga la pena volver cada día, jugar bien y cuidar la racha con los comodines 🧊. Tocar 📅 Uno al día en la portada ya no tira el dado al tiro: abre <b>tu Uno al día</b>, con tus puntos y tu puesto arriba de todo.</p>
-      <p class="muted" style="font-size:0.85rem">Es un prototipo: no guarda ni manda nada. Tus días salen de este celular; los demás jugadores del ranking son inventados. <a href="live/">📅 Abrir tu Uno al día de verdad ›</a></p>
+      <p class="muted" style="font-size:0.85rem">Es un prototipo: no guarda ni manda nada. Tus días salen de este celular; los demás jugadores del ranking son inventados. <a href="../../today/">📅 Abrir tu Uno al día de verdad ›</a></p>
       <div class="fila" id="datos" role="group" aria-label="Datos">
         <button type="button" class="chip" data-d="mios">📱 Mis días</button>
         <button type="button" class="chip" data-d="ejemplo">🧪 Ejemplo</button>
@@ -137,7 +137,7 @@
 
   <script type="module">
     import { fechaLocal, sumarDias, leer, numeroDel, juegoDel, juegoDia, COMODINES_MAX, faltaParaManana } from '../../assets/js/uno-al-dia.js';
-    import { walk, seasonPoints, maxToday, bonusFor, rankAmong, BONUS_MAX, BONUS_PER_DAY, INVITE_POINTS } from './score.js';
+    import { walk, seasonPoints, maxToday, bonusFor, rankAmong, BONUS_MAX, BONUS_PER_DAY, INVITE_POINTS } from '../../assets/js/daily-points.js';
 
     const NOMBRES = { linea: 'Línea Relámpago', numero: 'Toque y Fama', conexiones: 'Conexiones', letras: 'Letras', anio: '¿En qué año?', reinas: 'Reinas', desenredo: 'Desenredo', ahorcado: 'Ahorcado', 'batalla-naval': 'Batalla Naval', dudo: 'Dudo', rutas: 'Rutas', loteo: 'Loteo', pintaminas: 'Pintaminas', zip: 'Zip', tango: 'Tango', donde: '¿Dónde queda?', generala: 'Generala' };
     const emoji = id => juegoDia(id)?.emoji || '🎮';

@@ -187,6 +187,9 @@ ok(await waitFor(`location.pathname === '/liars-dice/'`), "and a solo game also 
   await b.go(`${SITE}/`, 1500);
   await waitFor(`!!document.getElementById('btn-uno-al-dia')`);
   await click('#btn-uno-al-dia');
+  // The card opens Uno al día (D-414); its Jugar rolls the die
+  await waitFor(`!!document.getElementById('btn-uad-jugar')`, 12);
+  await click('#btn-uad-jugar');
   ok(await waitFor(`/Hoy te toca/.test(document.querySelector('.azar-nombre')?.innerText||'')`, 16) && /El Ahorcado/.test(await text('.azar-nombre')), `the die lands on El Ahorcado (${(await text('.azar-nombre')).replace(/\n/g, ' ')})`);
   ok(await waitFor(`location.pathname === '/hangman/' && location.search === '?today'`, 20), 'and opens /hangman/?today');
 }

@@ -8,6 +8,9 @@
 import { SUELTOS } from '../../public/assets/js/games.js';
 import { CAMPAIGNS } from '../../public/assets/js/splash.js';
 
+/** Uno al día (D-414): six days played up to yesterday on this phone, then the page again. */
+const UAD_SEED = `(()=>{const d={},f=k=>{const t=new Date(Date.now()-k*86400000);return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')};for(let k=1;k<=6;k++)d[f(k)]={j:'reinas',s:50+k*7,ms:60000,at:Date.now(),n:1};localStorage.setItem('juegos-de-salon:uno-al-dia',JSON.stringify({dias:d}));location.reload();return 1})()`;
+
 /* --- Path pieces for Batalla Naval (see the comment on its entry) --- */
 const BS_CPU = [
   `document.querySelectorAll('.mode')[2].click()`,
@@ -539,12 +542,13 @@ export const PATHS = {
     rules: [`document.querySelector('[data-ir="hub"]').click(); 1`, `document.querySelector('[data-ir="reglas"]').click(); document.getElementById('telefono').scrollIntoView(); 1`],
     champion: [`document.querySelector('[data-ir="hub"]').click(); 1`, `[...document.querySelectorAll('button')].find(b => /Campe/.test(b.textContent))?.click(); document.getElementById('telefono').scrollIntoView(); 1`],
   },
-  'labs/daily-score/live': {
-    hub: [],
-    rules: [`document.querySelector('.como')?.click(); 1`],
-    // The calendar with today's details open under the grid, then the invite card and the footer
-    day: [`(document.querySelector('.uad-cal button.hoy') || document.querySelector('.uad-cal button[data-dia]'))?.click(); document.getElementById('calendario').scrollIntoView(); 1`],
-    footer: [`document.getElementById('pie').scrollIntoView({ block: 'end' }); 1`],
+  // Uno al día with its points (D-414): the page with a week played (seeded, then reloaded), the
+  // rules, a day's details open under the calendar, and the footer
+  today: {
+    hub: [UAD_SEED, `1`],
+    rules: [UAD_SEED, `1`, `document.getElementById('btn-uad-reglas')?.click(); 1`],
+    day: [UAD_SEED, `1`, `document.querySelector('#uad-cal button.l1, #uad-cal button.l2, #uad-cal button.l3')?.click(); document.getElementById('uad-calendario')?.scrollIntoView(); 1`],
+    footer: [UAD_SEED, `1`, `document.getElementById('uad-pie')?.scrollIntoView({ block: 'end' }); 1`],
   },
   'labs/bridges': {
     intro: [],

@@ -12,7 +12,7 @@ import {
   estado, leer, juntar, numDia, fechaDeNum, semanaDe, recorrer, porJuego, fechaLocal, KEY,
 } from './uno-al-dia.js';
 import { UNO_AL_DIA, UAD_RACHA, periodoDia, periodoMes, SIEMPRE, esJid } from './records.js';
-import { labAccess } from './lab-access.js';
+import { walk } from './daily-points.js';
 import { trackUnoAlDia } from './transport/stats.js';
 
 /** Quién invitó a este celular (el `jid` del link), si alguien. */
@@ -52,8 +52,8 @@ export async function subirHoy({ fecha, dia }) {
   const e = estado();
   const n = numDia(fecha);
   if (j.yo()) out.subido = await j.anotarDia({ n, j: dia.j, s: dia.s, ms: dia.ms, semanaP: semanaDe(fecha), mejor: e.mejor }).catch(() => null);
-  // Uno al día points (D-412): saved only for lab key holders while they are tried. lab: #seccion-puntos-dia
-  if (j.yo() && await labAccess()) out.puntos = await j.anotarPuntosDia({ n, mesP: periodoMes(fecha), racha: e.racha }).catch(() => false);
+  // Uno al día points (D-412, D-414): today's, into the month's season
+  if (j.yo()) out.puntos = await j.anotarPuntosDia({ n, mesP: periodoMes(fecha), racha: e.racha }).catch(() => false);
   const inv = invitador();
   // El primero de este celular: solo hay un día jugado, el de hoy
   if (inv && e.jugados === 1 && e.dias[fecha]) {
@@ -80,13 +80,17 @@ export async function sincronizar() {
   // Lo de hoy jugado en este celular antes de entrar con el jugador
   const hoy = fechaLocal(), locales = leer().dias, mio = locales[hoy];
   if (mio && !dias[hoy]) await j.anotarDia({ n: numDia(hoy), j: mio.j, s: mio.s, ms: mio.ms, semanaP: semanaDe(hoy), mejor: estado().mejor }).catch(() => null);
-  // And its Uno al día points, for lab key holders (D-412). lab: #seccion-puntos-dia
-  if (mio && await labAccess()) await j.anotarPuntosDia({ n: numDia(hoy), mesP: periodoMes(hoy), racha: estado().racha }).catch(() => false);
   // Los días viejos de este celular que Firebase no tiene van a la historia (no a los rankings de su
   // día ni de su semana, que ya pasaron): así la racha sigue en otro celular
   for (const [f, x] of Object.entries(locales)) {
     if (f === hoy || dias[f] || !x?.j) continue;
     await j.anotarDia({ n: numDia(f), j: x.j, s: x.s, ms: x.ms, soloHistoria: true }).catch(() => null);
+  }
+  // Uno al día points (D-414): this month's days that don't count yet, in order (the streak of
+  // each, as walk() gives it); the history read above says which already do (`p`)
+  const mes = hoy.slice(0, 7);
+  for (const d of walk(leer().dias, hoy).days.filter(x => x.played && x.date.startsWith(mes) && !hist[numDia(x.date)]?.p)) {
+    await j.anotarPuntosDia({ n: numDia(d.date), mesP: periodoMes(hoy), racha: d.streak }).catch(() => false);
   }
   // Los que aceptaron y tienen jugador quedan en Amigos
   const conNombre = await Promise.all(invitados.map(async x => ({ ...x, n: x.j ? (await j.publico(x.j).catch(() => null))?.n || null : null })));
