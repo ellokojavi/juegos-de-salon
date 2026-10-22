@@ -1,5 +1,5 @@
 {
-  "version": "0.200.0",
+  "version": "0.200.7",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -133,7 +133,8 @@
         "public/cup/store-firebase.js",
         "public/cup/store-local.js",
         "public/cup/style.css",
-        "public/cup/suelto/index.html"
+        "public/cup/suelto/index.html",
+        "public/cup/table-image.js"
       ]
     },
     {
@@ -1014,6 +1015,7 @@
     "public/cup/rules.js",
     "public/cup/store-firebase.js",
     "public/cup/store-local.js",
+    "public/cup/table-image.js",
     "public/generala/engine.js",
     "public/generala/game.js",
     "public/generala/rules.js",
@@ -1272,7 +1274,8 @@
     "timeline/table.mjs",
     "timeline/tie.mjs",
     "timeline/verdict.mjs",
-    "versioning.mjs"
+    "versioning.mjs",
+    "zz-recap-look.mjs"
   ],
   "documents": [
     {
