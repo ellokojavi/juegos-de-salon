@@ -110,8 +110,9 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
   first (points, place, who is just ahead), and its **Jugar** rolls the die, which always lands on the
   same game (the owner's call: the same experience as Juego al azar). Before D-414 the card rolled the
   die until today was played.
-- Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y /today/ muestra su resultado, Compartir y
-  Jugar otro, y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.".
+- Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y /today/ muestra su resultado, Jugar otro
+  y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.". (Sharing the result stays on the
+  game's result card; on /today/ what is shared is the ranking, 2026-10-22.)
 
 ### Quiere jugar más
 
@@ -257,11 +258,12 @@ acumulado:
 | Bloque | Qué muestra |
 |---|---|
 | **Temporada** (D-414) | The month's points ("Temporada de octubre · quedan 11 días", the total in yellow), the place and who is just ahead ("#3 del mes · te faltan 40 pts para pasar a Yayo"), what today added, then 🔥 streak, best streak, 🧊 wildcards and today's bonus, and "¿Cómo se ganan los puntos?" (a four-line dialog) |
-| **Hoy** | **Jugar** (the die) si falta; jugado, el juego con su emoji y su resultado ("Hoy jugaste 👑 Reinas: 87 puntos."), el reloj al próximo ("Próximo juego en 7 h 12 min."), Compartir y Jugar otro |
+| **Jugar** | Before playing, **Jugar** (the die) right under the season box, above the fold (U-39) |
+| **Rankings** | Pestañas (D-414, the same under the result): **Mes** (the season's points) · **Hoy** (el desafío de hoy) · **Rachas** (mejor racha) · **Amigos** (the month's points among friends: los de sus copas, que `jugador.js` ya conoce, y los que invitó o lo invitaron). Under them, **📤 Compartir el ranking** (2026-10-22, the owner's request): a 1080 px picture of the tab on screen (top 10, the player's neighbours, their row highlighted, `laminaRanking` in `uno-al-dia-ui.js`), a short line ("Voy #3 en el ranking de Uno al día. ¿Me alcanzas? Juega el de hoy:") and the link to /today/, with the player's invite link when signed in. Without file sharing, the picture downloads and the text is copied (`compartir.js`). Only on /today/, not /records/ |
+| **Hoy** | Once played, after the ranking (the owner's request): el juego con su emoji y su resultado ("Hoy jugaste 👑 Reinas: 87 puntos."), el reloj al próximo ("Próximo juego en 7 h 12 min."), Jugar otro y Repetir. **Compartir mi resultado** was removed from /today/ (2026-10-22); the game's result card keeps it |
 | **Calendario** | El mes, con un cuadro por día: en los jugados, el emoji del juego y los puntos que sumó (juego + bono de la racha) en una píldora; tocar un día abre su detalle bajo la grilla; se va a meses anteriores |
-| **Por juego** | Una fila por juego: veces jugado, promedio, mejor y una línea con los últimos 8. La flecha dice si va mejorando: el promedio de los últimos 3 contra los 5 de antes (▲ +12) |
-| **Rankings** | Pestañas (D-414, the same under the result): **Mes** (the season's points) · **Hoy** (el desafío de hoy) · **Rachas** (mejor racha) · **Amigos** (the month's points among friends: los de sus copas, que `jugador.js` ya conoce, y los que invitó o lo invitaron) |
 | **Invitar** | Cuántos aceptaron sus desafíos, y **Invitar** |
+| ~~Por juego~~ | Removed 2026-10-22 (the owner's request): the per-game rows, their last-8 line and the trend sentence. `porJuego()` stays in `uno-al-dia.js`, tested, unused by the page |
 | **Avisos** | La campana con su estado y la hora elegida: el recordatorio de cada día es el aviso diario (decisión 15) |
 | **Pie** | 🏠 Menú · 🏅 Rankings, and 💬 Sugerencias y comentarios last (U-38) |
 

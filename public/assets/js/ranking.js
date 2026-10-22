@@ -219,6 +219,7 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
   async function cargar() {
     const mio = ++turno;
     lista.replaceChildren(el('p', { class: 'muted rk-centro' }, T.loading));
+    caja.datos = null;
     try {
       const J = await jugador();
       const v = await PESTANAS[actual].leer(J, juego);
@@ -231,6 +232,8 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
       const t = PESTANAS[actual].tabla || juego;
       const tipo = t === PARTIDAS ? 'partidas' : t === UAD_RACHA ? 'racha' : t === UAD_PUNTOS ? 'puntos' : esVictorias(t);
       lista.append(...v.top.map(f => fila(f, yo, tipo, campeon)));
+      // What is shown, for whoever draws it elsewhere (sharing the ranking as a picture)
+      caja.datos = { pestana: actual, rotulo: PESTANAS[actual].rotulo(T), top: v.top, vecinos: v.vecinos || [], yo, tipo, campeon };
       if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, tipo, campeon)));
       if (v.amigos && v.top.length < 2) lista.append(el('p', { class: 'muted rk-centro' }, sinAmigos));
     } catch (e) {

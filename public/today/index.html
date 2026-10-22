@@ -51,6 +51,7 @@
     .uad-jugar { width: 100%; }
     .uad-proximo { color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums; }
     .uad-acciones { display: grid; gap: 8px; }
+    .rk-ranking .rk-compartir { width: 100%; margin-top: 12px; }
     /* The season: the points, today's status and the numbers, in one box */
     .hero { text-align: center; display: grid; gap: 8px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.22), rgba(138, 77, 255, 0.28)); border-color: rgba(255, 210, 63, 0.45); }
     .hero .chips { justify-content: center; align-items: center; }
@@ -113,14 +114,6 @@
     .detalle-dia .ancha dd { text-align: left; }
     .detalle-dia .suma { border-top: 1px solid var(--glass-border); padding-top: 6px; }
     /* By game */
-    .uad-juegos { display: grid; gap: 6px; }
-    .uad-fila { display: grid; grid-template-columns: minmax(0, 1fr) 64px 44px; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; background: rgba(0, 0, 0, 0.2); }
-    .uad-fila .nom { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .uad-fila .nums { display: block; color: var(--muted); font-size: 0.78rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-    .uad-fila svg { width: 64px; height: 22px; display: block; }
-    .uad-fila .flecha { text-align: right; font-weight: 900; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
-    .uad-fila .sube { color: var(--lime); }
-    .uad-fila .baja { color: var(--orange); }
     .uad-desafio { display: grid; gap: 10px; text-align: center; border-color: rgba(255, 46, 136, 0.6); background: linear-gradient(160deg, rgba(255, 95, 165, 0.3), rgba(138, 77, 255, 0.28)); }
     .uad-desafio h2 { margin: 0; font: 400 1.6rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
     .uad-desafio p { margin: 0; }
@@ -166,9 +159,8 @@
     import { trackVisit } from '../assets/js/transport/stats.js';
     import { juegosCopa } from '../cup/rules.js';
     import { gameById } from '../assets/js/games.js';
-    import { mmss } from '../cup/engine.js';
-    import { estado, leer, porJuego, juegoDia, juegoDel, numeroDel, faltaParaManana, LANZAMIENTO, COMODINES_MAX } from '../assets/js/uno-al-dia.js';
-    import { fmt, tirarHoy, compartirHoy, jugarOtro, tarjetaInvitar, tarjetaDesafio, rutaHoy, PESTANAS_UAD } from '../assets/js/uno-al-dia-ui.js';
+    import { estado, leer, juegoDia, juegoDel, numeroDel, faltaParaManana, LANZAMIENTO, COMODINES_MAX } from '../assets/js/uno-al-dia.js';
+    import { fmt, tirarHoy, jugarOtro, tarjetaInvitar, botonCompartirRanking, tarjetaDesafio, rutaHoy, PESTANAS_UAD } from '../assets/js/uno-al-dia-ui.js';
     import { walk, seasonPoints, bonusFor } from '../assets/js/daily-points.js';
     import { UNO_AL_DIA, UAD_PUNTOS, periodoMes } from '../assets/js/records.js';
 
@@ -244,17 +236,20 @@
       } else if (!e.dia) {
         nuevo.push(el('div', { class: 'uad-hoy', id: 'uad-hoy' },
           el('button', { type: 'button', class: 'btn btn--yellow uad-jugar', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, P.jugar), como()));
-      } else {
+      }
+      // Played: the "Hoy" block goes after the ranking (owner's request); before playing, Jugar stays
+      // right under the season, above the fold (U-39)
+      let hoyBloque = null;
+      if (e.dia) {
         const proximo = el('p', { class: 'uad-proximo', id: 'uad-proximo' });
         const tic = () => { proximo.textContent = fmt(T.proximo, { t: falta(faltaParaManana()) }); };
         tic(); reloj = setInterval(tic, 30000);
-        nuevo.push(el('section', { class: 'panel uad-hoy', id: 'uad-hoy' }, el('h2', {}, T.hoyTitulo),
+        hoyBloque = el('section', { class: 'panel uad-hoy', id: 'uad-hoy' }, el('h2', {}, T.hoyTitulo),
           el('p', {}, fmt(T.hoyListo, { juego: `${juegoDia(e.dia.j)?.emoji || JC[e.dia.j]?.emoji || '🎲'} ${nombreDe(e.dia.j)}`, s: e.dia.s })), proximo,
           el('div', { class: 'uad-acciones' },
-            compartirHoy({ lang, fecha: e.hoy, dia: e.dia, alTocar: tap, mmss }),
             el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { tap(); jugarOtro({ lang, raiz: '../' }); } }, T.jugarOtro)),
           // The same replay the game's card offers (C-19)
-          el('a', { class: 'link-btn', id: 'btn-uad-repetir', href: `../${rutaHoy(e.dia.j)}` }, T.repetir)));
+          el('a', { class: 'link-btn', id: 'btn-uad-repetir', href: `../${rutaHoy(e.dia.j)}` }, T.repetir));
       }
 
       /* Entrar, antes de lo que guarda (D-249): sin jugador, vive solo en este celular */
@@ -263,13 +258,18 @@
       if (bloqueJugador && !leerYo()) nuevo.push(bloqueJugador({ destacado: true, leyenda: T.guardaRacha, alTocar: tap }));
 
       /* The month's ranking first, and the day's and the streaks', the same tabs as under the result (D-414) */
-      if (bloqueRanking) nuevo.push(bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: PESTANAS_UAD, alTocar: tap }));
+      if (bloqueRanking) {
+        const rk = bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: PESTANAS_UAD, alTocar: tap });
+        // Sharing the ranking: its picture, a short line and the link to play (owner's request)
+        rk.append(botonCompartirRanking({ lang, caja: rk, alTocar: tap }));
+        nuevo.push(rk);
+      }
+      if (hoyBloque) nuevo.push(hoyBloque);
 
       if (!e.jugados) {
         nuevo.push(el('p', { class: 'center uad-dice', id: 'uad-vacio' }, T.vacio));
       } else {
         nuevo.push(calendario(e, w));
-        nuevo.push(...porJuegoBloque(e));
         nuevo.push(tarjetaInvitar({ lang, alTocar: tap, comodines: e.comodines }));
       }
 
@@ -387,34 +387,6 @@
       return caja;
     }
     document.addEventListener('keydown', ev => { if (ev.key === 'Escape') document.querySelector('#uad-dia .x')?.click(); });
-
-    /** Por juego: cuántas veces, promedio, mejor, los últimos 8 y si va mejorando. */
-    function porJuegoBloque(e) {
-      const juegos = porJuego(e.dias);
-      const linea = xs => {
-        const W = 64, H = 22, paso = xs.length > 1 ? (W - 4) / (xs.length - 1) : 0;
-        const pts = xs.map((s, i) => `${(2 + i * paso).toFixed(1)},${(H - 2 - (s / 100) * (H - 4)).toFixed(1)}`);
-        const ult = pts.at(-1).split(',');
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('aria-hidden', 'true');
-        svg.innerHTML = `<polyline fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linejoin="round" points="${pts.join(' ')}"/><circle cx="${ult[0]}" cy="${ult[1]}" r="2.4" fill="var(--yellow)"/>`;
-        return svg;
-      };
-      const filas = juegos.map(g => el('div', { class: 'uad-fila', 'data-id': g.id },
-        el('div', {}, el('span', { class: 'nom' }, nombre(g.id)),
-          el('span', { class: 'nums' }, `${g.n} ${g.n === 1 ? T.vez : T.veces} · ${T.promedio} ${g.promedio} · ${T.mejor} ${g.mejor}`)),
-        linea(g.ultimos),
-        el('span', { class: `flecha ${g.tendencia > 0 ? 'sube' : g.tendencia < 0 ? 'baja' : ''}` },
-          g.tendencia === null ? '' : g.tendencia > 0 ? `▲ ${g.tendencia}` : g.tendencia < 0 ? `▼ ${-g.tendencia}` : '=')));
-      // Lo que dicen las flechas, en palabras: el que más mejoró o, si ninguno, el que más bajó
-      const conT = juegos.filter(g => g.tendencia);
-      const sube = conT.filter(g => g.tendencia > 0).sort((a, b) => b.tendencia - a.tendencia)[0];
-      const baja = conT.filter(g => g.tendencia < 0).sort((a, b) => a.tendencia - b.tendencia)[0];
-      const dice = sube || baja;
-      return [el('section', { class: 'panel uad-bloque', id: 'uad-por-juego' }, el('h2', {}, T.porJuego),
-        el('div', { class: 'uad-juegos' }, filas),
-        dice ? el('p', { class: 'uad-dice', id: 'uad-tendencia' }, fmt(sube ? T.mejorando : T.bajando, { juego: nombreDe(dice.id), a: dice.ultimos3, b: dice.antes })) : null)];
-    }
 
     /** The footer: home, the rankings and the inbox, last (U-38). */
     function pie() {
