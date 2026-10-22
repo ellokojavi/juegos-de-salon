@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { cupRecap, demoRecap, loadCupRecap } from './recap.js';
 import { escena } from './demo.js';
 import { createCuenta } from './cuenta.js';
-import { sparkPoints, cupLead, TEXTS, dueCup, seenCups, markCupSeen, minePlayed, RECAP_MS } from '../assets/js/recap.js';
+import { sparkPoints, cupLead, TEXTS, dueCup, seenCups, markCupSeen, minePlayed, RECAP_MS, OPEN_CUPS } from '../assets/js/recap.js';
+import { esCodigo } from './code.js';
 
 const DAY = 24 * 60 * 60 * 1000;
 const now = Date.parse('2026-10-22T18:00:00Z');
@@ -71,5 +72,8 @@ assert.equal(await loadCupRecap({ now: end, fetchFn: fetchOk }), null);
 assert.equal(asked, 0, 'a seen cup is not fetched');
 markCupSeen('AAAAA');
 assert.deepEqual(seenCups(), ['AAAAA', 'PQRST']);
+
+// The cups opened to all their players (D-426) are cup codes
+assert.ok(OPEN_CUPS.every(esCodigo), `OPEN_CUPS holds cup codes: ${OPEN_CUPS}`);
 
 console.log('✓ recap: which cup is due, its table and its line');
