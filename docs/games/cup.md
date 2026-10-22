@@ -148,7 +148,7 @@ terminar, el resultado explica **cómo se calculó el puntaje** línea por líne
 the next-day notice (its button cyan); the breakdown starts folded (open in practice) and the day table goes
 below. The podium has **🏠 Back to the menu** under Share the summary; "Leave this Cup" stays a
 quiet link at the end. The trial run (D-103) ends with only its way back to the waiting room. En la de 🏁 La Gran Final, cada
-jugador lleva además su tarjeta de rondas (⏳75 🔢85 👑100 🔤60 📅90), para comparar ronda a
+jugador lleva además su tarjeta de rondas, one per game of the week (⏳75 🔢85 👑100 🔤60 📅90 in the classic week), para comparar ronda a
 ronda (#259); en la demo `podium` o `full` se ve con datos.
 
 Antes de Empezar cada día se puede jugar una **sesión de prueba** (D-103): la misma mecánica con
@@ -273,7 +273,7 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 - **🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas** (D-332) came from the lab; each one's page is
   [routes.md](routes.md), [plots.md](plots.md) and [paint-mines.md](paint-mines.md). They bring their
   texts (`games/<slug>/texts.js`, merged into `rules.js`), their styles (`games/<slug>/style.css`)
-  and their score breakdown (`desglose()` in their `ui.js`). They are not rounds of the Gran Final.
+  and their score breakdown (`desglose()` in their `ui.js`). Like any game of the week without a short version, the Gran Final plays them whole, with new content (D-418).
 
 ## Modos
 
