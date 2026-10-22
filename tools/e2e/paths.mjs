@@ -542,9 +542,11 @@ export const PATHS = {
     rules: [`document.querySelector('[data-ir="hub"]').click(); 1`, `document.querySelector('[data-ir="reglas"]').click(); document.getElementById('telefono').scrollIntoView(); 1`],
     champion: [`document.querySelector('[data-ir="hub"]').click(); 1`, `[...document.querySelectorAll('button')].find(b => /Campe/.test(b.textContent))?.click(); document.getElementById('telefono').scrollIntoView(); 1`],
   },
-  // Uno al día with its points (D-414): the page with a week played (seeded, then reloaded), the
-  // rules, a day's details open under the calendar, and the footer
+  // Uno al día with its points (D-414): the page as a first visit sees it (its landing: Jugar is
+  // checked above the fold, U-39), with a week played (seeded, then reloaded), the rules, a day's
+  // details open under the calendar, and the footer
   today: {
+    intro: [],
     hub: [UAD_SEED, `1`],
     rules: [UAD_SEED, `1`, `document.getElementById('btn-uad-reglas')?.click(); 1`],
     day: [UAD_SEED, `1`, `document.querySelector('#uad-cal button.l1, #uad-cal button.l2, #uad-cal button.l3')?.click(); document.getElementById('uad-calendario')?.scrollIntoView(); 1`],

@@ -64,7 +64,22 @@
     .uad-trio div { display: grid; }
     .uad-trio b { font: 900 1.4rem/1.15 var(--font-num); font-variant-numeric: tabular-nums; }
     .uad-trio small { color: var(--muted); font-weight: 800; font-size: 0.74rem; }
-    .hero .como { justify-self: center; min-height: 44px; padding: 0 8px; background: none; border: 0; color: var(--cyan); font: 800 0.92rem var(--font-body); text-decoration: underline; cursor: pointer; }
+    .como { justify-self: center; min-height: 44px; padding: 0 8px; background: none; border: 0; color: var(--cyan); font: 800 0.92rem var(--font-body); text-decoration: underline; cursor: pointer; }
+    /* A short phone (320×568, 375×667): the cover and the season's box shrink so Jugar is seen
+       without scrolling (U-39) */
+    @media (max-height: 700px) {
+      .uad-hero-icon { font-size: 2.2rem; }
+      .intro-hero { margin-bottom: 4px; }
+      .hero { gap: 4px; padding: 10px 14px; }
+      .hero .chips { gap: 6px; }
+      .hero .chip { padding: 3px 8px; font-size: 0.8rem; }
+      .hero .quedan { font-size: 0.76rem; }
+      .hero .estado { font-size: 0.9rem; line-height: 1.25; }
+      .hero .pts { font-size: 2.8rem; }
+      .uad-trio { padding-top: 6px; }
+      .uad-trio b { font-size: 1.2rem; }
+      .uad-trio small { line-height: 1.15; }
+    }
     .uad-dice { margin: 0; color: var(--muted); }
     /* The calendar: each day up to today a button with its points; its details right under the grid */
     .uad-cal-cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -214,16 +229,18 @@
       const nuevo = [];
       for (const a of avisos) nuevo.push(el('p', { class: 'uad-aviso', 'data-aviso': 'aceptado' }, a));
 
-      /* The season: the month's points, the place, today and the numbers */
-      nuevo.push(temporada(e, w));
+      /* The season: the month's points, the place, today and the numbers. Before playing, how the
+         points are won goes under Jugar, so Jugar is seen without scrolling (U-39) */
+      const quien = await desafio;
+      const conJugar = !e.dia && !quien;
+      nuevo.push(temporada(e, w, !conJugar));
 
       /* Hoy: si falta, el dado (o el desafío de quien invitó); jugado, el resultado y compartir */
-      const quien = await desafio;
       if (!e.dia && quien) {
         nuevo.push(await tarjetaDesafio({ lang, raiz: '../', inv: quien, alTocar: tap }));
       } else if (!e.dia) {
         nuevo.push(el('div', { class: 'uad-hoy', id: 'uad-hoy' },
-          el('button', { type: 'button', class: 'btn btn--yellow uad-jugar', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, P.jugar)));
+          el('button', { type: 'button', class: 'btn btn--yellow uad-jugar', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, P.jugar), como()));
       } else {
         const proximo = el('p', { class: 'uad-proximo', id: 'uad-proximo' });
         const tic = () => { proximo.textContent = fmt(T.proximo, { t: falta(faltaParaManana()) }); };
@@ -263,7 +280,7 @@
     };
 
     /** The season's box: the points (Firebase's, or this phone's until they arrive), the place and the numbers. */
-    function temporada(e, w) {
+    function temporada(e, w, conComo = true) {
       const hoy = e.hoy, [y, m] = hoy.split('-').map(Number);
       const yo = enRed?.yo || null;
       const pts = enRed?.fila ? enRed.fila.s : seasonPoints(w, hoy);
@@ -284,7 +301,11 @@
           el('div', {}, el('b', {}, String(e.mejor)), el('small', {}, T.mejorLabel)),
           el('div', { id: 'uad-comodines' }, el('b', {}, `🧊 ${e.comodines}`), el('small', {}, T.comodinesLabel)),
           el('div', {}, el('b', {}, `+${bonusFor(e.racha + (e.dia ? 0 : 1))}`), el('small', {}, P.bonoHoy))),
-        el('button', { type: 'button', class: 'como', id: 'btn-uad-reglas', onClick: () => { tap(); document.getElementById('reglas').showModal(); } }, P.como));
+        ...(conComo ? [como()] : []));
+    }
+    /** «¿Cómo se ganan los puntos?»: opens the rules. */
+    function como() {
+      return el('button', { type: 'button', class: 'como', id: 'btn-uad-reglas', onClick: () => { tap(); document.getElementById('reglas').showModal(); } }, P.como);
     }
 
     /** The month's calendar: each day up to today a button with the points it added; its details under the grid. */
