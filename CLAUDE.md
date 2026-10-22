@@ -156,7 +156,9 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    ```
    GitHub merges it on its own when `tests` and `end-to-end` pass; if they fail or there is a conflict,
    it does not merge and it has to be fixed. A PR that is not ready (a draft, one waiting for a
-   decision from the owner) does not get auto-merge.
+   decision from the owner) does not get auto-merge. **Every ready PR gets it, unless the owner
+   explicitly says not to auto-merge** (D-419, the owner's rule): then the PR stays open, says so in its
+   description, and waits for the owner to merge it.
 5. **Waiting for the merge** (D-400): right after turning on auto-merge, the session runs
    `node tools/agents/wait-pr.mjs <n>` in the background. It asks GitHub every minute and exits when
    the PR merges or closes, a required check goes red, or a conflict appears: the only things that need
