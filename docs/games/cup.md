@@ -367,6 +367,8 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   `/?recap=demo` shows it with the podium demo, recording nothing.
   Since D-424 the same window also tells a season of Uno al día that ended (`assets/js/daily-recap.js`,
   docs/UNO-AL-DIA.md); La Copa's goes first when both are due, one per visit.
+  The owner can open one cup's recap to all its players before the window leaves the lab: its code
+  goes in `OPEN_CUPS` (`assets/js/recap.js`, D-426); the first is Thursday Guys #4 (`QNPFM`).
 
 ## Flujo
 
