@@ -6,6 +6,7 @@
 // folds the language, the audience, the link and (in the test store) the 3-day cup, and says in
 // one line what is chosen; under the button, when the cup starts and ends. The cup created saves
 // the week as shown. Without `&lab` the test store keeps the screen of before (cup/tournament.mjs).
+// Last, the week and the sheet in English, Portuguese and German at 320 px: no sideways scroll.
 // Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -169,6 +170,21 @@ try {
   const expected = [...final.map((id, i) => (i === pinta ? 'pintaminas:hard' : id)), 'final'].join(',');
   ok(pinta >= 0 && cal === expected, `the cup saves the week as shown, with its version (${cal})`);
   ok(/\?primos&test$/.test(await ev('location.search')), 'with its own link');
+  // The other three languages at 320 px: the week and a day's sheet fit, with no sideways scroll
+  await b.send('Emulation.setDeviceMetricsOverride', { width: 320, height: 760, deviceScaleFactor: 2, mobile: true });
+  for (const lang of ['en', 'pt', 'de']) {
+    await b.open(`${SITE}/cup/?test&lab&lang=${lang}`, 1200);
+    await b.until(`!!document.getElementById('btn-crear')`, 5000);
+    await click('#btn-crear');
+    await b.until(`!!document.getElementById('crear-semana')`, 3000);
+    const wide = () => ev(`document.documentElement.scrollWidth > innerWidth || [...document.querySelectorAll('#crear-semana *, #semana-hoja *')].some(x => x.scrollWidth > x.clientWidth + 1 && getComputedStyle(x).overflowX === 'visible' && x.children.length === 0)`);
+    ok(!await wide(), `${lang}: the week fits at 320 px`);
+    await ev(`(document.getElementById('crear-semana').scrollIntoView({block:'start'}), 1)`); await sleep(150);
+    await b.shot(`lang-${lang}-week`);
+    await openSheet(5);
+    ok(!await wide(), `${lang}: a day's sheet fits at 320 px`);
+    await b.shot(`lang-${lang}-sheet`);
+  }
 } catch (e) {
   ok(false, `the script broke: ${e.message}`);
 } finally {
