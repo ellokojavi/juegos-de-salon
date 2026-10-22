@@ -40,6 +40,8 @@ const PUNTAJE = {
   rutas: k => { const s = 17 * Math.round(5 * k) + (k > 0.9 ? 12 : 0); return { s, r: `${s}/100` }; },
   loteo: k => { const s = 12 * Math.round(5 * k) + (k > 0.9 ? 30 : 0); return { s, r: `${s}/100` }; },
   pintaminas: k => { const s = Math.max(0, 100 - 15 * Math.round(4 * (1 - k))); return { s, r: `${s}/100` }; },
+  // Agentes (D-421): the agents found, minus a neutral now and then
+  agentes: k => { const s = Math.max(0, Math.round(100 * Math.round(11 * k) / 11) - (k < 0.5 ? 15 : 0)); return { s, r: `${s}/100` }; },
   // La final trae su tarjeta de rondas (⏳75 🔢85 …), que la tabla del día muestra (#259)
   final: k => {
     const rondas = [0.1, -0.2, 0.3, -0.1, -0.1].map(o => Math.max(0, Math.min(100, 5 * Math.round(20 * (k + o)))));

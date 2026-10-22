@@ -2104,7 +2104,7 @@ function antesDeJugar(d) {
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
 /** Los juegos que se juegan con palabras del idioma de la copa (D-170). */
-const CON_PALABRAS = ['conexiones', 'letras', 'final'];
+const CON_PALABRAS = ['conexiones', 'agentes', 'letras', 'final'];
 /** "Las palabras de esta copa van en inglés", solo si no es el idioma en que se está mirando. */
 /** El público de la copa se dice en la invitación y en el tablero (D-186, D-187). */
 const avisoAudiencia = meta => {

@@ -42,7 +42,7 @@ async function saveImage(name) {
 }
 
 /** The README shots, with a fixed name so docs/capturas.json finds them. */
-const SHOTS = { numero: '02-number', conexiones: '03-connections', reinas: '04-queens', letras: '05-letters', anio: '06-year' };
+const SHOTS = { numero: '02-number', agentes: '03-agents', reinas: '04-queens', letras: '05-letters', anio: '06-year' };
 
 /** C-8: no horizontal scroll and no buttons under 44 px on the active screen. */
 async function checkScreen(name) {
@@ -291,6 +291,28 @@ const playConnections = async level => {
   for (const g of groups) if (await ev(`!!document.getElementById('btn-confirmar')`)) await tryWords(g);
 };
 
+// Agentes (D-421): each clue's agents, tapped from the board on screen. Level 2 finds them all; level 1
+// first touches a bystander (it cuts clue 1, whose agents still count when found later); level 0
+// touches the assassin first and skips the last clue's agents (Terminar, then Sí, terminar)
+const playAgents = async level => {
+  await b.until(`!!document.querySelector('#ag-tablero .ag-carta') && !!window.__agentes`, 6000);
+  const t = await ev('JSON.stringify(window.__agentes.t)').then(JSON.parse);
+  const idx = pred => t.cartas.map((c, i) => [c, i]).filter(([c]) => pred(c)).map(([, i]) => i);
+  const tap = async i => {
+    await b.until(`!document.querySelector('#ag-tablero .ag-carta[data-i="${i}"]')?.disabled || !!document.getElementById('btn-fin')`, 4000, 50);
+    await ev(`document.querySelector('#ag-tablero .ag-carta[data-i="${i}"]')?.click(); 1`); await sleep(60);
+  };
+  if (level === 1) await tap(idx(c => c.tipo === 'neutral')[0]);
+  if (level === 0) await tap(idx(c => c.tipo === 'asesino')[0]);
+  const last = t.pistas.length - 1;
+  for (let p = 0; p < t.pistas.length; p++) if (level || p < last) for (const i of idx(c => c.tipo === 'agente' && c.p === p)) await tap(i);
+  if (!level) for (let k = 0; k < 2; k++) {
+    await b.until(`!!document.getElementById('btn-pasar') && !document.getElementById('btn-pasar').disabled`, 4000, 50);
+    await click('#btn-pasar'); await sleep(80);
+  }
+  await b.until(`!!document.getElementById('btn-fin')`, 8000);
+};
+
 // The final has one round per game of the week (D-418), each played with that game's own player
 const playFinal = async level => {
   const rounds = await ev('JSON.stringify(window.__playing.p.rondas)').then(JSON.parse);
@@ -314,7 +336,7 @@ const playFinal = async level => {
   }
 };
 
-const PLAY = { donde: playWhere, linea: playLine, numero: playNumber, anio: playYear, reinas: playQueens, letras: playLetters, zip: playZip, desenredo: playUntangle, tango: playTango, conexiones: playConnections, final: playFinal };
+const PLAY = { donde: playWhere, linea: playLine, numero: playNumber, anio: playYear, reinas: playQueens, letras: playLetters, zip: playZip, desenredo: playUntangle, tango: playTango, conexiones: playConnections, agentes: playAgents, final: playFinal };
 
 /** The 3-to-1 countdown before each game (D-105): waits for "¡A jugar!" to show up. */
 async function waitCountdown({ check = false } = {}) {
@@ -478,8 +500,8 @@ if (runs('cup')) {
     }
     // The usual calendar is arranged, so the rest of the script knows what each day plays. First one
     // reversed, to be sure to go through both tapping paths
-    const goal = SEVEN ? ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio'] : ['linea', 'conexiones'];
-    await arrange(SEVEN ? ['zip', 'anio', 'letras', 'reinas', 'conexiones', 'numero'] : ['tango', 'conexiones'], true);
+    const goal = SEVEN ? ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio'] : ['linea', 'agentes'];
+    await arrange(SEVEN ? ['zip', 'anio', 'letras', 'reinas', 'agentes', 'numero'] : ['tango', 'agentes'], true);
     await arrange(goal, true);
     await click('#btn-azar'); await sleep(100);
     const shuffled = await cal();
@@ -507,7 +529,7 @@ if (runs('cup')) {
   const CODE = await ev('__copa.estado.code');
   ok(/^[A-HJ-NP-Z]{5}$/.test(CODE), `cup created with code ${CODE}`);
   ok(await ev('__copa.estado.copa.meta.aud') === 'cl', 'the cup saves its audience (Chile)');
-  ok(await ev('__copa.estado.copa.meta.cal') === (SEVEN ? 'linea,numero,conexiones,reinas,letras,anio,final' : 'linea,conexiones,final'), 'the cup saves the games in the chosen order');
+  ok(await ev('__copa.estado.copa.meta.cal') === (SEVEN ? 'linea,numero,agentes,reinas,letras,anio,final' : 'linea,agentes,final'), 'the cup saves the games in the chosen order');
   // Freshly created, the admin starts in Administrar, with the first-time guide (D-110)
   ok(await screen() === 'admin' && !!await ev(`document.getElementById('admin-bienvenida')`), 'on creating it, the admin sees Administrar with the guide to invite');
   ok(/Mensajes para los jugadores/.test(await ev(`document.getElementById('admin-body').innerText`)), 'the messages are for the players');
@@ -518,7 +540,7 @@ if (runs('cup')) {
   console.log('  invitation:', await ev('window.__shared[0]?.text'));
   {
     const inv = await ev('window.__shared[0]?.text || ""');
-    ok(/¡Estás invitado!/.test(inv) && /👥 Ya se inscribió Cata\./.test(inv) && !/Línea Relámpago|Conexiones|Reinas/.test(inv), 'the invitation is promotional, says who is already in and does not reveal the games (D-127)');
+    ok(/¡Estás invitado!/.test(inv) && /👥 Ya se inscribió Cata\./.test(inv) && !/Línea Relámpago|Agentes|Reinas/.test(inv), 'the invitation is promotional, says who is already in and does not reveal the games (D-127)');
   }
   ok(/\n\n🔗 https?:\/\/\S+\?oficina/.test(await ev('window.__shared[0]?.text || ""')), 'the invitation ends with the ?oficina link on its own line');
   // Closing sign-up keeps new players out; reopening it doesn't
@@ -798,7 +820,7 @@ if (runs('labs')) {
   ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-reporte' && !!await ev(`document.getElementById('btn-enviar-reporte')`), 'standalone game: the result\'s 🐞 opens the form');
   await ev(`[...document.querySelectorAll('#reporte-body .btn--ghost')].at(-1).click()`); await sleep(300);
   ok(await ev(`document.querySelector('.screen.active')?.id`) === 'screen-resultado', 'standalone game: cancelling the report goes back to the result');
-  for (const id of ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'zip', 'desenredo', 'tango', 'anio', 'donde', 'final']) {
+  for (const id of ['linea', 'numero', 'agentes', 'reinas', 'letras', 'zip', 'desenredo', 'tango', 'anio', 'donde', 'final']) {
     // Zip with a fixed seed: the warning check looks for a path that reaches the end without covering everything.
     // Desenredo with a short clock too: two levels solved and time runs out on the third
   await b.go(`${BASE}?practice=${slugDe(id)}&test&labs${id === 'zip' ? '&timer=12&seed=KQRST' : id === 'desenredo' ? '&timer=25&seed=KQRST' : ''}`, 1200); await prepare();
@@ -838,7 +860,7 @@ if (runs('labs')) {
     {
       const r = await ev(`(()=>{const d=document.getElementById('reglas');if(!d)return null;const b=document.getElementById('jugar-body').getBoundingClientRect();return JSON.stringify({open:d.open,below:d.getBoundingClientRect().top>=b.bottom-1,title:d.querySelector('summary').textContent})})()`).then(x => x && JSON.parse(x));
       ok(r && !r.open && r.below && r.title.includes(await ev(`__copa.estado.juego ? document.querySelector('.jugar-titulo')?.textContent.split(' ').slice(1).join(' ') : ''`)), `${id}: the rules are folded below the board (${r?.title})`);
-      if (id === 'conexiones') {
+      if (id === 'agentes') {
         await ev(`document.querySelector('#reglas summary').click(); document.getElementById('reglas').scrollIntoView(); 1`); await sleep(300);
         await b.shot('rules-open');
         await ev(`document.querySelector('#reglas summary').click(); window.scrollTo(0,0); 1`);
@@ -959,8 +981,7 @@ if (runs('labs')) {
       ok(!/null|false|undefined/.test(await ev(`document.querySelector('.zip-aviso').textContent`)), 'Desenredo: the final notice carries no stray text');
       await sleep(900); await b.shot('untangle-solution');
     }
-    if (id === 'conexiones') ok(await ev(`document.querySelectorAll('.grupo').length === 4 && !document.querySelector('.grupo').classList.contains('pop')`), 'Conexiones: groups already solved do not animate again');
-    if (['conexiones', 'reinas', 'linea', 'letras'].includes(id)) {
+    if (['agentes', 'reinas', 'linea', 'letras'].includes(id)) {
       // The clock stops when the board ends, not when "Ver resultado" is tapped (D-130)
       const t0 = await ev(`document.querySelector('#jugar-head').reloj()`);
       await sleep(2300);

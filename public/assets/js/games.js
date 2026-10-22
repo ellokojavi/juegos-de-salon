@@ -154,6 +154,9 @@ export const GAMES = [
  */
 export const SUELTOS = [
   {
+    // In La Bodega since D-421, the owner's request: Agentes took its place on the home page, in La Copa
+    // and in Uno al día. Its page /connections/ still opens (old links, the lab's Bodega card) and the
+    // cups created before keep playing it; `bodega` leaves it off the home page and the search
     id: 'conexiones',
     slug: 'connections',
     emoji: '🔗',
@@ -161,6 +164,7 @@ export const SUELTOS = [
     tagline: { es: 'Arma cuatro grupos de cuatro palabras que tienen algo en común.', en: 'Sort sixteen words into four groups of four that share something.', pt: 'Monte quatro grupos de quatro palavras que têm algo em comum.', de: 'Sortier sechzehn Wörter in vier Gruppen, die etwas gemeinsam haben.' },
     tipos: ['words', 'trivia'],
     duration: '3–8',
+    bodega: true,
   },
   {
     id: 'letras',
@@ -275,6 +279,18 @@ export const SUELTOS = [
     deLabs: true,
     nuevoDesde: '2026-10-15',
   },
+  {
+    // Out of the lab in D-421, in Conexiones' place (the owner's request): its page was /labs/agents/, now a bridge (`deLabs`)
+    id: 'agentes',
+    slug: 'agents',
+    emoji: '🕵️',
+    name: { es: 'Agentes', en: 'Agents', pt: 'Agentes', de: 'Agenten' },
+    tagline: { es: 'Encuentra a tus espías con las pistas, sin tocar al asesino.', en: 'Find your spies from the clues, without touching the assassin.', pt: 'Encontre seus espiões com as pistas, sem tocar no assassino.', de: 'Finde deine Spione anhand der Hinweise, ohne den Attentäter zu berühren.' },
+    tipos: ['words'],
+    duration: '3–6',
+    deLabs: true,
+    nuevoDesde: '2026-10-22',
+  },
   // Los del laboratorio viven en /labs/<slug>/ (D-267): al salir pasan a /<slug>/
 ].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true }));
 
@@ -302,7 +318,7 @@ export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'triv
  * goes after the ones that are, in the order of GAMES and SUELTOS.
  */
 export const POPULARIDAD_FECHA = '2026-10-18';
-export const POPULARIDAD = ['copa', 'reinas', 'linea-de-tiempo', 'tango', 'conexiones', 'anio', 'letras', 'donde', 'toque-y-fama', 'zip', 'desenredo', 'batalla-naval', 'rutas', 'loteo', 'ahorcado', 'dudo', 'pintaminas', 'generala', 'julepe'];
+export const POPULARIDAD = ['copa', 'reinas', 'linea-de-tiempo', 'tango', 'anio', 'letras', 'donde', 'toque-y-fama', 'zip', 'desenredo', 'batalla-naval', 'rutas', 'loteo', 'ahorcado', 'dudo', 'pintaminas', 'generala', 'julepe'];
 const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
 
 /**
@@ -324,7 +340,7 @@ export const esNuevo = (g, hoy = new Date()) => {
  * request: it has no plays yet, so by popularity it would be last); when the label goes, so does that.
  */
 export function ordenPortada(hoy = new Date()) {
-  const ofrecidos = [...GAMES, ...SUELTOS].filter(g => !g.labs).sort((a, b) => puesto(a.id) - puesto(b.id));
+  const ofrecidos = [...GAMES, ...SUELTOS].filter(g => !g.labs && !g.bodega).sort((a, b) => puesto(a.id) - puesto(b.id));
   const arriba = g => (g.torneo ? 0 : esNuevo(g, hoy) ? 1 : 2);
   const disponibles = ofrecidos.filter(g => g.available).sort((a, b) => arriba(a) - arriba(b));
   return [...disponibles, ...ofrecidos.filter(g => !g.available)];

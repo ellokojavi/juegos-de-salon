@@ -35,6 +35,8 @@ const MINE_SEED = `const D=864e5, now=Date.now(); sessionStorage.setItem('juegos
 
 /* --- Tango: start and fill the board with the real engine (see its entry) --- */
 const START = `document.getElementById('btn-empezar').click()`;
+// Agentes: passes every clue (the last one asks first, so it takes two taps), each as soon as its button is back
+const AG_FINISH = `(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));for(let k=0;k<40&&!document.querySelector('#ag-tablero .sin-tocar');k++){const b=document.getElementById('btn-pasar');if(b&&!b.disabled)b.click();await w(b&&!b.disabled?150:100);}})()`;
 const TANGO_FILL = clash => `(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
   const L=p.sol.map((v,i)=>i).filter(i=>p.dadas[i]===undefined), u=${clash}?L.filter(i=>p.sol[i]===2).at(-1):L.at(-1);
   const c=i=>document.querySelector('.tan[data-i="'+i+'"]');
@@ -152,6 +154,18 @@ const TYF_RESULT = [
 ];
 
 export const PATHS = {
+  /**
+   * 🕵️ Agentes (D-421): the board, the end (every clue passed, Terminar confirmed) and its result.
+   * AG_FINISH passes each clue as soon as its button comes back (a clue takes about a second to
+   * turn away), in one step: tapping it on a fixed beat took 14 steps, and the language check runs it
+   * eight times.
+   */
+  agentes: {
+    intro: [],
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
+    end: [START, `1`, `1`, `1`, `1`, `1`, `1`, AG_FINISH, ...Array(4).fill(`1`)],
+    result: [START, `1`, `1`, `1`, `1`, `1`, `1`, AG_FINISH, ...Array(4).fill(`1`), `document.getElementById('btn-fin')?.click()`, `1`, `1`],
+  },
   /**
    * 🖌️ Pintaminas (D-331). The phone remembers the variant, so each path sets it first (the lever's
    * shot leaves it in hard). `hint` is the 💡 hint paid (the cell that pulses and its numbers);
@@ -522,13 +536,6 @@ export const PATHS = {
     // Cuarto Rey's card, in La Bodega since D-420
     'cellar-king': [`document.querySelector('#seccion-cuarto-rey summary').click(); document.getElementById('seccion-cuarto-rey').scrollIntoView(); 1`],
   },
-  'labs/agents': {
-    intro: [],
-    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
-    // The result (the case the owner reported, D-309): passes the four clues and confirms Terminar
-    result: [START, `1`, `1`, `1`, `1`, `1`, `1`,
-      ...Array(14).fill(`document.getElementById('btn-pasar')?.click()`), `1`, `1`, `1`, `1`],
-  },
   'labs/exploding-numbers': {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
@@ -574,7 +581,7 @@ for (const { id } of SUELTOS) {
  * `inbox-end` Fourth King's last king and `inbox-home` the home page footer's form.
  */
 const TO_LINK = `document.getElementById('buzon-pie')?.scrollIntoView({ block: 'center' })`;
-for (const [game, screen] of [['ahorcado', 'result'], ['generala', 'final'], ['linea-de-tiempo', 'solo-result'], ['caso', 'result'], ['pintaminas', 'result'], ['labs/agents', 'result']]) {
+for (const [game, screen] of [['ahorcado', 'result'], ['generala', 'final'], ['linea-de-tiempo', 'solo-result'], ['caso', 'result'], ['pintaminas', 'result']]) {
   if (PATHS[game]?.[screen]) PATHS[game][`inbox-${screen}`] = [INBOX_SEED, ...PATHS[game][screen], `1`, TO_LINK];
 }
 PATHS.copa['inbox-podium'] = [INBOX_SEED, `location.href='/cup/?test&demo=podium'`, `1`, `1`, `1`, TO_LINK];

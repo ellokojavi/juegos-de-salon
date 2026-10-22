@@ -100,7 +100,7 @@ for (const g of GAMES) {
 // The Cup's games played standalone from the home page (D-142): they go in the README's games
 // table, apart, because they have no rules.js nor modes.
 const standalone = SUELTOS.map(m => ({
-  id: m.id, emoji: m.emoji, name: m.name, kinds: m.tipos, duration: m.duration, labs: !!m.labs, path: m.path,
+  id: m.id, emoji: m.emoji, name: m.name, kinds: m.tipos, duration: m.duration, labs: !!m.labs, bodega: !!m.bodega, path: m.path,
 }));
 
 // ------------------------------------------------------------- the shared parts

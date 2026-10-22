@@ -1,5 +1,5 @@
 {
- "agents/lab.mjs": 29,
+ "agents/game.mjs": 70,
  "battleship/alignment.mjs": 44,
  "battleship/languages.mjs": 52,
  "battleship/local.mjs": 105,
@@ -8,6 +8,7 @@
  "bulls-and-cows/local.mjs": 53,
  "case/lab.mjs": 21,
  "code/lab.mjs": 31,
+ "cup-games/languages.mjs:agents": 145,
  "cup-games/languages.mjs:case": 98,
  "cup-games/languages.mjs:connections": 33,
  "cup-games/languages.mjs:paint-mines": 236,

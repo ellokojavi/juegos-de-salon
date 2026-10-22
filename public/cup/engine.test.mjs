@@ -41,8 +41,10 @@ test('variants (D-331): a day is `id` or `id:variant`, and the default one is wr
 });
 
 test('calendarios: la final siempre al final', () => {
-  assert.deepEqual(CALENDARIOS[3], ['linea', 'conexiones', 'final']);
-  assert.deepEqual(CALENDARIOS[7], ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'final']);
+  // Agentes took Conexiones' place (D-421)
+  assert.deepEqual(CALENDARIOS[3], ['linea', 'agentes', 'final']);
+  assert.deepEqual(CALENDARIOS[7], ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio', 'final']);
+  assert.ok(POZO.includes('agentes') && !POZO.includes('conexiones'), 'a new cup offers Agentes, not Conexiones (D-421)');
   assert.equal(CALENDARIOS[7].length, 7);
   assert.equal(CALENDARIOS[7][6], 'final');
   assert.equal(new Set(CALENDARIOS[7]).size, 7);
@@ -74,7 +76,7 @@ test('calendario a elección (D-163): juegos del pozo sin repetir y la final al 
   // nuevaMeta guarda el calendario elegido y rechaza uno que no se puede jugar
   const base = { nombre: 'X', dias: 3, inicio: '2026-10-01', admin: 'abc123', creada: 0 };
   assert.equal(nuevaMeta({ ...base, cal: ['donde', 'zip', 'final'] }).cal, 'donde,zip,final');
-  assert.equal(nuevaMeta(base).cal, 'linea,conexiones,final');
+  assert.equal(nuevaMeta(base).cal, 'linea,agentes,final');
   assert.throws(() => nuevaMeta({ ...base, cal: ['zip', 'zip', 'final'] }), /calendario/);
   // El público (D-187): se escribe si es uno de los tres; sin él, como las copas de antes
   assert.equal(nuevaMeta({ ...base, aud: 'br' }).aud, 'br');

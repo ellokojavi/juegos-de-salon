@@ -11,7 +11,7 @@ const bad = msg => { console.log(`✗ ${msg}`); process.exitCode = 1; };
 const b = await launch({ port: 9496, dir: `${OUT}/p`, out: OUT });
 
 import { COMMON, IDIOMAS } from '../../public/assets/js/i18n.js';
-const PAGES = ['/', '/hangman/', '/cup/', '/cup/suelto/?practice=connections', '/records/'];
+const PAGES = ['/', '/hangman/', '/cup/', '/cup/suelto/?practice=agents', '/records/'];
 
 /** The name the app would be installed with: the one in the manifest Chrome read and the iPhone's. */
 const names = async () => {
