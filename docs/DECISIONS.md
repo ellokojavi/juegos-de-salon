@@ -40,20 +40,20 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
 | Game memory | C-6 | D-25, D-150 |
-| Touch interface | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344 |
+| Touch interface | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344, D-425 |
 | Errors and passing the phone | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272, D-410 |
 | Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408 |
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401 |
-| La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423 |
+| La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425 |
 | Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413 |
 | Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424 |
 | Marketing | `marketing/README.md` | D-178, D-380, D-410 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (412)
+## In force (413)
 
 | D | Title | Status |
 |---|---|---|
@@ -469,6 +469,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-422](decisions/D-422.md) | La Bodega in two subgroups: games kept and improvements launched | current |
 | [D-423](decisions/D-423.md) | An ended cup is told on the home page, and its notification says to tap for the table | current |
 | [D-424](decisions/D-424.md) | A season of Uno al día that ends is told on the home page and in a notification | current |
+| [D-425](decisions/D-425.md) | Creating a cup: the week in view, the 🎲 with locks and week styles, in the lab | current |
 
 ## No longer in force (10)
 
