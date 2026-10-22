@@ -66,7 +66,9 @@ export function montar(raiz, ctx) {
       el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.roundOf, { i: J.ronda + 1, n })),
       el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, M.emoji), el('h2', { class: 'display display--md' }, M.nombre)),
       el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay),
-        RONDAS_FINAL[r] ? el('p', {}, RONDAS_FINAL[r]) : el('ol', { class: 'como' }, M.como.map(x => el('li', {}, x)))),
+        RONDAS_FINAL[r] ? el('p', {}, RONDAS_FINAL[r]) : el('ol', { class: 'como' }, M.como.map(x => el('li', {}, x))),
+        // A game played whole says how it scores, as each short round's text does (U-18)
+        RONDAS_FINAL[r] ? null : [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, M.puntaje)]),
       J.ronda > 0 ? el('p', { class: 'muted center' }, fmt(T.finalSoFar, { pts: lleva, max: J.ronda * 100 })) : null,
       el('button', { class: 'btn btn--yellow', id: 'btn-ronda', onClick: () => {
         SFX.tap(); J.jugando = true; if (!ESTADO[r] && J.t0[r] === undefined) J.t0[r] = ahora(); guardar(); ronda();
@@ -79,7 +81,7 @@ export function montar(raiz, ctx) {
     const M = ficha(r);
     const corta = !!ESTADO[r];
     const mod = corta ? UI[r] : ctx.juegos?.[r];
-    const caja = el('div');
+    const caja = el('div', { class: 'final-ronda' });
     poner(raiz, el('p', { class: 'muted center', style: 'margin:0 0 8px' }, `${fmt(T.roundOf, { i: J.ronda + 1, n })} · ${M.emoji} ${M.nombre}`), caja);
     const ultima = J.ronda === n - 1;
     // A game played whole scores with its own result (0 to 100) the moment its board ends (D-150)
