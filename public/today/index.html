@@ -60,6 +60,7 @@
     .hero .total small { font-size: 1.1rem; color: var(--muted); font-weight: 800; }
     .hero .estado { margin: 0; font-weight: 800; }
     .hero .estado + .estado { color: var(--muted); font-size: 0.92rem; }
+    .hero .lugar { min-height: 1.3em; }
     .uad-trio { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding-top: 10px; border-top: 1px solid var(--glass-border); }
     .uad-trio div { display: grid; }
     .uad-trio b { font: 900 1.4rem/1.15 var(--font-num); font-variant-numeric: tabular-nums; }
@@ -290,6 +291,7 @@
     // Only for someone signed in on this phone (they may have signed out on another page)
     const sentado = () => { try { return !!JSON.parse(localStorage.getItem('juegos-de-salon:jugador') || 'null')?.jid; } catch (_) { return false; } };
     const leerCache = periodo => { if (!sentado()) return null; try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c?.p === periodo && Number.isFinite(c.s) ? c.s : null; } catch (_) { return null; } };
+    const leerCacheLugar = periodo => { try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c?.p === periodo && typeof c.l === 'string' ? c.l : null; } catch (_) { return null; } };
     const ponerCache = v => { try { if (v) localStorage.setItem(CACHE, JSON.stringify(v)); else localStorage.removeItem(CACHE); } catch (_) { /* sin memoria */ } };
 
     /** The season's box: the points (Firebase's, the last ones it gave, or this phone's), the place and the numbers. */
@@ -300,15 +302,20 @@
       const hecho = e.dia ? w.days.find(d => d.date === hoy && d.played) : null;
       const estados = [];
       if (hecho) estados.push(fmt(P.hoySumaste, { p: miles(hecho.points), s: hecho.score, b: hecho.bonus }));
-      if (enRed?.fila) estados.push(enRed.delante ? fmt(P.faltan, { p: enRed.fila.puesto, f: miles(enRed.delante.s - pts + 1), n: enRed.delante.n }) : `${fmt(P.puesto, { p: enRed.fila.puesto })}${enRed.campeon ? ' 🏆' : ''}`);
-      else if (yo && !e.dia) estados.push(P.juegaHoy);
-      else if (yo && e.dia) estados.push(P.enUnMomento);
+      // The place line has its own slot for anyone signed in, so it fills in without pushing the page
+      // down: the last one the server gave (cached) until the ranking answers (owner's request)
+      let lugar = null;
+      if (enRed?.fila) lugar = enRed.delante ? fmt(P.faltan, { p: enRed.fila.puesto, f: miles(enRed.delante.s - pts + 1), n: enRed.delante.n }) : `${fmt(P.puesto, { p: enRed.fila.puesto })}${enRed.campeon ? ' 🏆' : ''}`;
+      else if (yo && !e.dia) lugar = P.juegaHoy;
+      else if (yo && e.dia) lugar = P.enUnMomento;
+      else if (sentado()) lugar = leerCacheLugar(periodoMes(hoy)) ?? '';
       return el('section', { class: 'panel hero', id: 'uad-puntos' },
         el('div', { class: 'chips' }, el('span', { class: 'chip' }, fmt(P.temporada, { mes: mesLargo(y, m) })),
           ...(enRed?.campeon ? [el('span', { class: 'chip chip--gold' }, fmt(P.campeon, { mes: mesLargo(m === 1 ? y - 1 : y, m === 1 ? 12 : m - 1) }))] : []),
           el('span', { class: 'quedan' }, quedan(hoy))),
         el('span', { class: 'total' }, el('span', { class: 'pts', id: 'uad-pts' }, miles(pts)), el('small', {}, P.pts)),
         ...estados.map(t => el('p', { class: 'estado' }, t)),
+        ...(lugar != null ? [el('p', { class: 'estado lugar', id: 'uad-lugar' }, lugar || '\u00a0')] : []),
         el('div', { class: 'uad-trio', id: 'uad-trio' },
           el('div', {}, el('b', {}, `🔥 ${e.racha}`), el('small', {}, T.rachaLabel)),
           el('div', {}, el('b', {}, String(e.mejor)), el('small', {}, T.mejorLabel)),
@@ -445,7 +452,7 @@
       const i = filas.findIndex(f => f.jid === yo.jid);
       enRed = { yo, fila: i >= 0 ? filas[i] : null, delante: i > 0 ? filas[i - 1] : null, campeon: campeon === yo.jid };
       // The server answered: its row is the cache, or no row this month clears it (a failed read keeps it)
-      if (enRed.fila) ponerCache({ p: periodoMes(estado().hoy), s: enRed.fila.s });
+      if (enRed.fila) ponerCache({ p: periodoMes(estado().hoy), s: enRed.fila.s, l: enRed.delante ? fmt(P.faltan, { p: enRed.fila.puesto, f: miles(enRed.delante.s - enRed.fila.s + 1), n: enRed.delante.n }) : fmt(P.puesto, { p: enRed.fila.puesto }) });
       else if (v) ponerCache(null);
     }
     await dibujar();
