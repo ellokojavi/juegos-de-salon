@@ -130,6 +130,7 @@ The same mechanism as La Copa, for the whole app:
   by exactly one. Each row can carry `co`, the player's country (two letters, D-219).
 - `jugadores/<jid>/co`: the player's country, once, by whoever is seated (D-219).
 - `torneoPodios/<código>`: the podium of a finished cup, with `.indexOn: end`. Read without an account.
+- `uadTemporada/s<yyyy-mm>`: Uno al día's season places by week (D-424), `{ c, t, j: { <jid>: { n, co?, s, l } } }`. Read without an account; written only by the administrator, by the nightly points rebuild (`uad-points-backfill.mjs --rebuild`). The home page's season recap reads it.
   Written once by someone seated in that cup (`por`), with the cup finished, without `lab`, and with
   the names and `j` the cup has.
   `torneoPodios/<código>/p/<pid>/j` can be written later, once and only while empty, by a phone seated

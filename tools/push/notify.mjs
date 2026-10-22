@@ -29,6 +29,7 @@ import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 import { VAPID_PUBLICA } from '../../public/assets/js/vapid.js';
 import { cupNotifications, testNotifications, merge } from './schedule.mjs';
 import { dailyNotifications, stale } from './daily.mjs';
+import { sumarDias } from '../../public/assets/js/uno-al-dia.js';
 import { send } from './webpush.mjs';
 
 const WEEK = 7 * 24 * 3600e3;
@@ -80,8 +81,12 @@ export async function round({ db, deliver, now = Date.now(), dryRun = false, tes
   }
   // One a Day (D-230): they do not go with a cup's test
   if (!testCode) {
-    const [dailyWants, dailySent] = await Promise.all([db.read('pushDia'), db.read('pushEnviadosDia')]);
-    for (const p of dailyNotifications({ wants: dailyWants || {}, subs: subs || {}, sent: dailySent || {}, now })) {
+    // The seasons already computed to their end (D-424): this UTC month's and the one before, whichever a phone's date is in
+    const utcMonth = new Date(now).toISOString().slice(0, 7);
+    const months = [utcMonth, sumarDias(`${utcMonth}-01`, -1).slice(0, 7)];
+    const [dailyWants, dailySent, ...ends] = await Promise.all([db.read('pushDia'), db.read('pushEnviadosDia'), ...months.map(m => db.read(`uadTemporada/s${m}/t`))]);
+    const seasonsDone = months.filter((m, i) => typeof ends[i] === 'string' && ends[i] > `${m}-31`);
+    for (const p of dailyNotifications({ wants: dailyWants || {}, subs: subs || {}, sent: dailySent || {}, now, seasonsDone })) {
       summary.notifications++;
       log(`${dryRun ? '· would send' : '→'} one-a-day ${p.subId.slice(0, 8)} [${p.key}] ${p.notification.body}`);
       if (dryRun) continue;

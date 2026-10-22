@@ -14,6 +14,7 @@
  *   dia:<n>      today's is ready          from their hour (h), if they have not played today
  *   racha:<n>    the streak is ending      from 21:00, if they have not played and the streak is 2 or more
  *   semana:<s>   their week                on Mondays from their hour, if they played any day the week before
+ *   temporada:<m> the month's season ended   on the 1st to the 3rd from their hour, if they played since that month began (D-424)
  *   adios        they calm down on their own   after 30 days without playing, one last; then deleted
  * Never at night (before 8:00 or from 22:00) and at most 2 a day per phone. The notification does
  * not say which game is due (the owner's decision): the surprise belongs to the die. After 14 days
@@ -25,6 +26,19 @@ import { localDate, localHour, FROM_HOUR, TO_HOUR, SITE } from './schedule.mjs';
 import { VALORES } from '../../public/assets/js/parametros.js';
 
 export const STREAK_HOUR = 21;
+/** The season's notification goes out on the first days of the next month, from their hour (D-424). */
+export const SEASON_DAYS = 3;
+/**
+ * The season's notification (D-424), in the four languages: here and not in i18n.js, which every
+ * page loads, because only this sender says it. Its link opens the season's recap on the home page.
+ */
+export const SEASON_TEXT = {
+  es: '🏆 Terminó la temporada de {mes}. Toca para ver el ranking final.',
+  en: "🏆 {mes}'s season is over. Tap to see the final leaderboard.",
+  pt: '🏆 A temporada de {mes} terminou. Toque para ver o ranking final.',
+  de: '🏆 Die Saison im {mes} ist vorbei. Tippe, um die Endrangliste zu sehen.',
+};
+const monthName = (m, lang) => new Intl.DateTimeFormat(lang, { month: 'long', timeZone: 'UTC' }).format(new Date(`${m}-15T12:00:00Z`));
 export const DAILY_CAP = 2;
 export const CALM_DAYS = 14;
 export const GOODBYE_DAYS = 30;
@@ -41,9 +55,11 @@ export function liveStreak(q, todayN) {
  * @param {object} wants  pushDia: { <subId>: { h, d, r, w, u, c, k, m, sp, sn, at } }
  * @param {object} subs   push: { <subId>: { endpoint, keys, lang, tz, uid, at } }
  * @param {object} sent   pushEnviadosDia: { <subId>: { <key>: at } }
+ * @param {string[]} seasonsDone  the months whose places the rebuild already computed to their end
+ *   (`uadTemporada/s<m>/t`, D-424): the season's notification waits for them, or its link would open nothing
  * @returns {{ subId, kind, key, remove?, notification: { title, body, url, tag } }[]}
  */
-export function dailyNotifications({ wants = {}, subs = {}, sent = {}, now }) {
+export function dailyNotifications({ wants = {}, subs = {}, sent = {}, now, seasonsDone = [] }) {
   const out = [];
   for (const [subId, q] of Object.entries(wants || {})) {
     const sub = subs[subId];
@@ -75,6 +91,13 @@ export function dailyNotifications({ wants = {}, subs = {}, sent = {}, now }) {
       // The freezes left: if they did not play yesterday, one was already spent to reach today
       const freezesLeft = (q.k || 0) - Math.max(0, todayN - q.u - 1);
       if (one('racha', `racha:${todayN}`, fmt(freezesLeft > 0 ? T.avRachaCom : T.avRacha, { c, h: left }))) continue;
+    }
+    // The month's season ended (D-424): in its first days, from their hour, if they played since it began
+    const day = Number(today.slice(8, 10));
+    const month = sumarDias(`${today.slice(0, 7)}-01`, -1).slice(0, 7);
+    if (day <= SEASON_DAYS && seasonsDone.includes(month) && hour >= (q.h ?? 9) && Number.isInteger(q.u) && q.u >= numDia(`${month}-01`)) {
+      const n = { title: T.avTitulo, body: fmt(SEASON_TEXT[lang], { mes: monthName(month, lang) }), url: `${SITE}?recap=season&notif=dailyseason${lang === 'es' ? '' : `&lang=${lang}`}`, tag: 'uad-temporada' };
+      if (!already[`temporada:${month}`]) { out.push({ subId, kind: 'temporada', key: `temporada:${month}`, notification: n }); continue; }
     }
     // The week, on Mondays: only if they played any day the week before
     const monday = new Date(`${today}T12:00:00Z`).getUTCDay() === 1;

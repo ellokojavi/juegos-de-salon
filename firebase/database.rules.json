@@ -887,6 +887,11 @@
         }
       }
     },
+    "uadTemporada": {
+      "$p": {
+        ".read": "$p.matches(/^s[0-9]{4}-[0-9]{2}$/)"
+      }
+    },
     "labsLlaves": {
       "$huella": {
         ".read": "$huella.matches(/^[0-9a-f]{64}$/)",

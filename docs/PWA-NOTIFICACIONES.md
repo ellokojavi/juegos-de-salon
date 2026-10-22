@@ -51,7 +51,7 @@ perfecto para un aviso: hay una fecha, hay algo pendiente y le importa a la pers
 |---|---|---|---|
 | **Se abrió el día** | Entre 9:00 y 10:00 del jugador (no a las 00:00) | Inscritos que activaron avisos | "🕵️ Día 3: Agentes. Ya puedes jugar." |
 | **Se te acaba el plazo** | Unas 4 horas antes de que cierre el día (el de gracia, o la final) | Solo a quien **no** ha jugado ese día | "⏳ Te quedan 4 horas para jugar el día 3. Si no lo juegas, son 0 puntos." |
-| **Terminó la copa** | Al cerrar (o al terminarla el admin, D-161) | Todos los inscritos con avisos | "🥇 Ganó Ana. Quedaste 2.°." |
+| **Terminó la copa** | Al cerrar (o al terminarla el admin, D-161) | Todos los inscritos con avisos | "🥇 Ganó Ana. Quedaste 2.°. Toca para ver la tabla final." (D-423) |
 | **La Gran Final** | En la mañana del último día, en vez de "se abrió el día" | Inscritos con avisos | "🏁 Hoy es La Gran Final y vale doble. Vas 2.°, a 3 puntos de Ana." |
 | Alguien se inscribió | Al inscribirse alguien | Solo el admin | "Pedro se inscribió en tu copa. Ya son 5 jugadores inscritos." |
 
@@ -201,7 +201,7 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
 | Se abrió el día | 🏆 La Copa: Los Primos | "🕵️ Día 3: Agentes. Ya puedes jugar." (el emoji del juego, como el recordatorio) | El día 3, en "Empezar" |
 | Se te acaba el plazo | 🏆 La Copa: Los Primos | "⏳ Te quedan 4 horas para jugar el día 3. Si no lo juegas, son 0 puntos." | El día 3 |
 | La Gran Final | 🏆 La Copa: Los Primos | "🏁 Hoy es La Gran Final y vale doble. Vas 2.°, a 3 puntos de Ana." | La Gran Final |
-| Terminó | 🏆 La Copa: Los Primos | "🥇 Ganó Ana. Quedaste 2.°." (a quien ganó: "🥇 ¡Ganaste la copa!"; con empate arriba, "🥇 Ganaron Ana y Beto…", D-229) | El podio |
+| Terminó | 🏆 La Copa: Los Primos | "🥇 Ganó Ana. Quedaste 2.°. Toca para ver la tabla final." (a quien ganó: "🥇 ¡Ganaste la copa! Toca para ver la tabla final."; con empate arriba, "🥇 Ganaron Ana y Beto…", D-229; every variant ends with "Toca para ver la tabla final.", `avEndSee`, D-423) | El podio |
 | Alguien se inscribió (solo admin) | 🏆 La Copa: Los Primos | "Pedro se inscribió en tu copa. Ya son 5 jugadores inscritos." | El tablero |
 
 - **Hora del jugador, no de la copa**: la zona horaria se guarda con la suscripción. El aviso de
@@ -241,7 +241,8 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
   arriba, "🥇 ¡Ganaste la copa junto con Beto!".
 - El de la inscripción le llega al admin solo si él activó avisos en esa copa, y nombra a quienes
   se inscribieron después de activarlos, durante un día. El de "terminó la copa" vale durante el
-  día siguiente al cierre; después ya no sale.
+  día siguiente al cierre; después ya no sale. Whoever had notifications off learns it on the home
+  page instead: the recap window of D-423 (in the lab for now; see [games/cup.md](games/cup.md)).
 - Un aviso que el servicio no entrega en 12 horas se descarta (`TTL`).
 - **Al terminar la copa** se borran sus suscripciones solas. El permiso del celular queda, así que
   la próxima copa ya viene con avisos (principio 7).
@@ -396,7 +397,9 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
   el plazo y la final llevan `&day=<d>` y los botones de Android (`acciones`).
 - `tools/push/daily.mjs` decide los de Uno al día (D-230) con `pushDia` (lo que pidió cada
   celular y su último día y racha); notify.mjs los manda en la misma vuelta y los anota en
-  `pushEnviadosDia`.
+  `pushEnviadosDia`. Since D-424 it also reads `uadTemporada/s<m>/t` for this UTC month and the one
+  before: the notification that a season ended (`temporada:<yyyy-mm>`, the 1st to the 3rd) waits until
+  the nightly points rebuild has closed that month, or its link (`/?recap=season`) would open nothing.
 - `tools/push/notify.mjs` lee `pushCopa`, `push` y `pushEnviados`, manda, y anota cada aviso
   entregado en `pushEnviados/<código>/<subId>/<clave>` (`dia:3`, `plazo:3`, `final`, `fin`,
   `insc:<pid>`). Una falla pasajera se reintenta en la vuelta siguiente. Antes de mandar, junta
