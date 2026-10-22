@@ -49,12 +49,13 @@ export function markCupSeen(code) {
 }
 
 /**
- * The cup whose recap is due: ended (by its planned end), less than a week ago, not seen yet; the
- * most recent one. `mine` is what MINE_KEY holds.
+ * The cup whose recap is due: ended (by its planned end), less than a week ago, not seen yet; one
+ * the owner opened to all its players first (D-426), then the most recent. `mine` is what MINE_KEY holds.
  */
 export function dueCup({ mine = minePlayed(), seen = seenCups(), now = Date.now() } = {}) {
   const due = mine.filter(c => c?.code && Number.isFinite(c.fin) && c.fin <= now && now - c.fin <= RECAP_MS && !seen.includes(c.code));
-  due.sort((a, b) => b.fin - a.fin);
+  // A cup the owner opened to all its players (OPEN_CUPS, D-426) goes first: its turn is not taken by another
+  due.sort((a, b) => OPEN_CUPS.includes(b.code) - OPEN_CUPS.includes(a.code) || b.fin - a.fin);
   return due[0] || null;
 }
 const fmt = (s, v = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (v[k] !== undefined ? v[k] : `{${k}}`));
