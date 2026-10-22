@@ -42,6 +42,9 @@
 .opciones.dos { grid-template-columns: 1fr 1fr; }
 .opciones.tres { grid-template-columns: 1fr 1fr 1fr; }
 .opciones.tres .opcion { text-align: center; padding-left: 6px; padding-right: 6px; }
+/* German hyphenates on its own (base.css): in three narrow columns that split "Mor-gen" and "Ande-res". Whole words, a bit smaller on a narrow phone (texts not cut, C-8) */
+.opciones.tres .opcion b { -webkit-hyphens: manual; hyphens: manual; }
+@media (max-width: 374px) { .opciones.tres .opcion { padding-left: 4px; padding-right: 4px; } .opciones.tres .opcion b { font-size: 0.95rem; } }
 .opcion {
   text-align: left; background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 16px; padding: 12px 14px;
   color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 48px;
