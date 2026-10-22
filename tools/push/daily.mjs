@@ -33,10 +33,10 @@ export const SEASON_DAYS = 3;
  * page loads, because only this sender says it. Its link opens the season's recap on the home page.
  */
 export const SEASON_TEXT = {
-  es: '🏆 Terminó la temporada de {mes}. Toca para ver cómo quedaste.',
-  en: "🏆 {mes}'s season is over. Tap to see where you finished.",
-  pt: '🏆 A temporada de {mes} terminou. Toque para ver como você ficou.',
-  de: '🏆 Die Saison im {mes} ist vorbei. Tippe, um deine Platzierung zu sehen.',
+  es: '🏆 Terminó la temporada de {mes}. Toca para ver el ranking final.',
+  en: "🏆 {mes}'s season is over. Tap to see the final leaderboard.",
+  pt: '🏆 A temporada de {mes} terminou. Toque para ver o ranking final.',
+  de: '🏆 Die Saison im {mes} ist vorbei. Tippe, um die Endrangliste zu sehen.',
 };
 const monthName = (m, lang) => new Intl.DateTimeFormat(lang, { month: 'long', timeZone: 'UTC' }).format(new Date(`${m}-15T12:00:00Z`));
 export const DAILY_CAP = 2;
