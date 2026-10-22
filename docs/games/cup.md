@@ -32,9 +32,9 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
 - **Calendario:** lo arma el admin al crear la copa (D-163): qué juegos entran y en qué orden,
   a partir de una propuesta al azar. La final va siempre el último día y repite los juegos de la semana, en su orden (D-418).
-  In the lab (D-425), a key holder sees a new create screen: the week in view from the start, 🎲 Another
-  week that keeps the 🔒 days, week styles (Balanced, Puzzles, Trivia and words, What's new), a sheet with the
-  13 games to change, move or pick the version of a day, the PIN once with 👁, and the language, audience and
+  In the lab (D-425), a key holder sees a new create screen: the week in view from the start, 🎲 Crear al
+  azar, week styles (Balanced, Puzzles, Trivia and words, What's new), a sheet with the
+  13 games to change, move or pick the version of a day, Ahora/Mañana with their weekday, the PIN once with 👁, and the language, audience and
   link folded in "More options". The test store shows it only with `&lab` (`tools/e2e/cup/create-week.mjs`).
 
 ### Pendiente (después de la v1)

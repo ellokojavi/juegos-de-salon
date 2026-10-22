@@ -42,6 +42,9 @@
 .opciones.dos { grid-template-columns: 1fr 1fr; }
 .opciones.tres { grid-template-columns: 1fr 1fr 1fr; }
 .opciones.tres .opcion { text-align: center; padding-left: 6px; padding-right: 6px; }
+/* German hyphenates on its own (base.css): in three narrow columns that split "Mor-gen" and "Ande-res". Whole words, a bit smaller on a narrow phone (texts not cut, C-8) */
+.opciones.tres .opcion b { -webkit-hyphens: manual; hyphens: manual; }
+@media (max-width: 374px) { .opciones.tres .opcion { padding-left: 4px; padding-right: 4px; } .opciones.tres .opcion b { font-size: 0.95rem; } }
 .opcion {
   text-align: left; background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 16px; padding: 12px 14px;
   color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 48px;
@@ -116,7 +119,7 @@ ol.como li { line-height: 1.45; }
   box-shadow: 0 3px 0 #b86e00;
 }
 .btn-dado:active { transform: translateY(2px); box-shadow: 0 1px 0 #b86e00; }
-/* At 320 px "Otra semana" / "Outra semana" ran past the panel's padding to its border (U-11): a touch smaller there,
+/* At 320 px "Crear al azar" / "Criar ao acaso" can run past the panel's padding to its border (U-11): a touch smaller there,
    and if a language still does not fit, the button drops under the title instead of overflowing */
 .semana-cabeza { flex-wrap: wrap; }
 @media (max-width: 360px) { .btn-dado { font-size: 1.05rem; padding: 0 12px; } }
@@ -128,7 +131,7 @@ ol.como li { line-height: 1.45; }
 .semana-estilos .estilo.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
 .semana-dias { display: grid; gap: 6px; }
 .semana-dia {
-  display: grid; grid-template-columns: 3.4em minmax(0, 1fr) 44px 26px; align-items: center; gap: 4px; min-height: 56px; padding-left: 8px;
+  display: grid; grid-template-columns: 3.4em minmax(0, 1fr) 36px; align-items: center; gap: 4px; min-height: 56px; padding-left: 8px;
   background: rgba(0, 0, 0, 0.22); border: 1px solid var(--glass-border); border-radius: 14px;
 }
 .semana-dias + .semana-final { margin-top: 6px; }
@@ -140,12 +143,9 @@ ol.como li { line-height: 1.45; }
 .semana-juego {
   all: unset; box-sizing: border-box; cursor: pointer; display: grid; align-content: center; min-height: 44px; padding: 6px 2px; min-width: 0;
 }
-.semana-juego:focus-visible, .candado:focus-visible, .hoja-juego:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; border-radius: 8px; }
+.semana-juego:focus-visible, .hoja-juego:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; border-radius: 8px; }
 .semana-juego b { font-size: 0.95rem; font-weight: 900; line-height: 1.2; overflow-wrap: anywhere; }
 .semana-juego small { color: var(--muted); font-weight: 700; font-size: 0.75rem; }
-.candado { all: unset; cursor: pointer; width: 44px; height: 44px; display: grid; place-items: center; font-size: 1.05rem; opacity: 0.5; }
-.semana-dia.fija { border-color: rgba(46, 230, 214, 0.6); background: rgba(46, 230, 214, 0.08); }
-.semana-dia.fija .candado { opacity: 1; }
 .semana-dia.hueco { opacity: 0.3; border-style: dashed; }
 .semana-dia.on { border: 2px solid var(--yellow); background: rgba(255, 210, 63, 0.18); }
 /* As in the week of before: on a phone the day is dragged by its grip, and the rest of the row lets the page scroll */

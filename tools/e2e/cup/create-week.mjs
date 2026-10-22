@@ -1,7 +1,7 @@
 // La Copa's new create screen (D-425), end to end, as a lab key holder sees it (`?test&lab`; on
-// localhost the lab opens by itself): the week is in view from the start; 🎲 Another week draws
-// again and keeps the 🔒 days; each week style draws by its rule; tapping a game opens the sheet
-// with the whole pool, which swaps, replaces (and locks what it picked), moves the day and picks
+// localhost the lab opens by itself): the week is in view from the start; 🎲 Crear al azar draws
+// it again; each week style draws by its rule; tapping a game opens the sheet
+// with the whole pool, which swaps, replaces, moves the day and picks
 // its version; a day is still dragged by its grip; the PIN goes once, with 👁; "More options"
 // folds the language, the audience, the link and (in the test store) the 3-day cup, and says in
 // one line what is chosen; under the button, when the cup starts and ends. The cup created saves
@@ -20,7 +20,6 @@ const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!
 const ev = expr => b.evaluate(expr);
 const click = sel => ev(`(()=>{const x=document.querySelector(${JSON.stringify(sel)});if(!x)return 'missing';if(x.disabled)return 'disabled';x.click();return 'ok'})()`);
 const week = async () => JSON.parse(await ev(`JSON.stringify([...document.querySelectorAll('#semana-dias .semana-dia')].map(x=>x.dataset.juego))`));
-const locked = async () => JSON.parse(await ev(`JSON.stringify([...document.querySelectorAll('#semana-dias .semana-dia.fija')].map(x=>x.dataset.juego))`));
 const openSheet = async i => { await ev(`(document.querySelectorAll('#semana-dias .semana-juego')[${i}].click(), 1)`); await b.until(`!!document.getElementById('semana-hoja')`, 1500); };
 const center = sel => ev(`(()=>{const r=document.querySelector('${sel}').getBoundingClientRect();return [Math.round(r.x+r.width/2),Math.round(r.y+r.height/2)]})()`);
 
@@ -49,21 +48,17 @@ try {
   ok(!await ev(`document.documentElement.scrollWidth > innerWidth`), 'no sideways scroll at 360 px');
   await b.shot('01-week');
 
-  // 🎲 with a lock: the locked day keeps its game and its place, the rest changes
-  await ev(`(document.querySelectorAll('#semana-dias .candado')[1].click(), 1)`);
-  const keep = w0[1];
-  ok(JSON.stringify(await locked()) === JSON.stringify([keep]) && await ev(`document.querySelectorAll('#semana-dias .candado')[1].getAttribute('aria-pressed')`) === 'true', `🔒 locks day 2 (${keep})`);
-  let changed = false, kept = true;
+  // 🎲 Make it random draws the whole week again; there are no locks (the owner's review)
+  ok(/Crear al azar/.test(await ev(`document.getElementById('btn-dado').textContent`)), 'the yellow button says "🎲 Crear al azar"');
+  ok(!await ev(`document.querySelector('#semana-dias .candado')`), 'no 🔒 on the days');
+  let changed = false, valid = true;
   for (let k = 0; k < 6; k++) {
     await click('#btn-dado'); await sleep(60);
     const w = await week();
-    kept &&= w[1] === keep && w.length === 6 && new Set(w).size === 6;
+    valid &&= w.length === 6 && new Set(w).size === 6;
     changed ||= JSON.stringify(w) !== JSON.stringify(w0);
   }
-  ok(kept, '🎲 Another week keeps the locked day in its place');
-  ok(changed, '🎲 Another week changes the other days');
-  await ev(`(document.querySelectorAll('#semana-dias .candado')[1].click(), 1)`);
-  ok((await locked()).length === 0, 'and 🔓 lets it go');
+  ok(valid && changed, '🎲 draws another week of six different games');
 
   // The styles: each one draws by its rule
   const PUZZLES = ['reinas', 'zip', 'tango', 'loteo', 'desenredo', 'rutas', 'pintaminas'];
@@ -95,13 +90,12 @@ try {
   ok(await ev(`document.querySelectorAll('#semana-hoja .hoja-juego').length`) === 13, 'tapping a game opens the sheet with the 13 games of the pool');
   ok(await ev(`[...document.querySelectorAll('#semana-hoja .hoja-juego small')].every(x=>x.textContent.length>10)`), 'each one says what it is');
   await b.shot('02-sheet');
-  // Replacing day 3 with a game outside the week: it goes in, locked
+  // Replacing day 3 with a game outside the week
   const before = await week();
   const outside = await ev(`[...document.querySelectorAll('#semana-hoja .hoja-juego')].map(x=>x.dataset.juego).find(id=>!${JSON.stringify(before)}.includes(id))`);
   await click(`#semana-hoja .hoja-juego[data-juego="${outside}"]`); await sleep(200);
   let w = await week();
   ok(!await ev(`document.getElementById('semana-hoja')`) && w[2] === outside && !w.includes(before[2]), `picking a game outside the week replaces the day (${before[2]} → ${outside})`);
-  ok((await locked()).includes(outside), 'and the game picked by hand comes locked');
   ok(await ev(`document.querySelector('#semana-estilos .estilo.on')`) === null, 'a week changed by hand has no style marked');
   // Picking one already in the week swaps the two days
   await openSheet(0);
@@ -131,6 +125,7 @@ try {
     const at = (await week()).indexOf('pintaminas');
     await openSheet(at);
     await ev(`([...document.querySelectorAll('#semana-hoja .opciones.variantes .opcion')][1].click(), 1)`); await sleep(100);
+    ok(await ev(`document.getElementById('hoja-listo').classList.contains('btn--yellow')`), 'the sheet\'s Listo is yellow');
     await click('#hoja-listo'); await sleep(100);
     ok(/Difícil/.test(await ev(`document.querySelectorAll('#semana-dias .semana-juego small')[${at}].textContent`)), 'the version is picked in the sheet and shows on the day');
   }
@@ -158,6 +153,10 @@ try {
   await click('#ver-pin');
   ok(await ev(`document.querySelector('#crear-body input.pin').type`) === 'password', 'and hides it again');
   ok(await ev(`document.getElementById('crear-fechas').textContent`) === '', 'no dates before choosing when it starts');
+  {
+    const starts = await ev(`[...document.querySelectorAll('#crear-body .opciones.tres')][0].textContent`);
+    ok(/^Ahora \(\p{L}{2,4}\)Mañana \(\p{L}{2,4}\)Otra fecha$/u.test(starts.trim()), `the start says Now and Tomorrow with their weekday (${starts.trim()})`);
+  }
   await ev(`([...document.querySelectorAll('#crear-body .opcion')].find(x=>/Mañana/.test(x.textContent)).click(), 1)`); await sleep(100);
   ok(/^Parte el .+ y termina el .+\.$/.test(await ev(`document.getElementById('crear-fechas').textContent`)), `under the button, when it starts and ends (${await ev(`document.getElementById('crear-fechas').textContent`)})`);
 

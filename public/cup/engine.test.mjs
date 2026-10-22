@@ -493,7 +493,7 @@ test('out of the cup (D-347): late signups, the admin bringing them back, and th
   const cerrada = conCierre({ meta: meta7, players, results: r1(), fin: dia(1) });
   assert.equal(fuera(cerrada, 'cccccc', dia(6)), null);
 });
-test('the 🎲 of the new create screen (D-425): styles, locks and balance', () => {
+test('the 🎲 of the new create screen (D-425): styles and balance', () => {
   // The real skills, in Spanish, as the screen compares them
   const familia = id => JUEGOS_COPA[id].habilidad;
   let semilla = 11;
@@ -515,24 +515,6 @@ test('the 🎲 of the new create screen (D-425): styles, locks and balance', () 
       }
     }
   }
-  // A locked day keeps its game and its place; the rest changes
-  const fijos = [null, 'reinas', null, null, 'agentes', null];
-  const vistos = new Set();
-  for (let i = 0; i < 100; i++) {
-    const cal = semanaAlAzar(7, { rand, familia, fijos });
-    assert.equal(cal[1], 'reinas'); assert.equal(cal[4], 'agentes');
-    assert.ok(calendarioValido(cal, 7), cal.join());
-    vistos.add(cal[0]);
-  }
-  assert.ok(vistos.size > 3, 'the unlocked days do change');
-  // Locks that break the rules still give a playable week that keeps them
-  const imposible = ['reinas', 'zip', 'tango', 'loteo', null, null];
-  const cal = semanaAlAzar(7, { rand, familia, fijos: imposible });
-  assert.deepEqual(cal.slice(0, 4), imposible.slice(0, 4));
-  assert.ok(calendarioValido(cal, 7), cal.join());
-  // Everything locked: the same week
-  const todo = ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio'];
-  assert.deepEqual(semanaAlAzar(7, { rand, familia, fijos: todo }), [...todo, 'final']);
 });
 await new Promise(r => setTimeout(r, 50));
 console.log(`copa/engine: ${n} tests OK`);
