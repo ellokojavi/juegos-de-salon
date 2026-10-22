@@ -100,7 +100,7 @@ PIN.
 **A linked player who lost their session (D-416).** The player's seat (`jugadorSeats/<jid>/<uid>`)
 hangs from the same anonymous session as the cup seat, so a phone that lost it still shows the player
 but the rules refuse `sentarseComoJugador`. Then "Ya estoy inscrito" does not say the PIN is wrong:
-it shows "Este celular también perdió la sesión de tu jugador {name}" and asks for the **player's**
+it shows "Este celular dejó de entrar como tu jugador {name}" and asks for the **player's**
 PIN (right away when coming back from a lost seat, D-285). The PIN seats the phone as the player again
 (`jugador.reseat(pin)`), which also brings back rankings and Uno al día on that phone, and then sits
 as the cup player with no cup PIN. A PIN that is not the player's is tried as a cup PIN, so a new
