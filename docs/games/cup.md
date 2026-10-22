@@ -145,6 +145,8 @@ Todos los juegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es
 
 Between rounds of 🏁 La Gran Final, the intro of the next round shows the running score: the average of the rounds played so far, out of 100, the same scale as the result, which it equals after the last round (D-417).
 
+The final's folded rules list its rounds: a short round carries how it is played, a game played whole only its name, under one line above the list saying those are played whole with new content (`finalWholeNote`). The final outside a cup (the lab's practice and its trial) has no week, so it plays the five fixed short rounds and its texts say so (`comoSuelta`, `puntajeSuelto` in `rules.js`; D-418 review, option A).
+
 Recién creada, la copa abre en **Administrar** con una guía para invitar (D-110). Ahí el admin
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
 mientras nadie haya jugado. `?test&demo=<escena>` abre una copa de ejemplo en cualquier

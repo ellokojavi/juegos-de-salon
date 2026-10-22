@@ -2160,11 +2160,15 @@ const rondasDeLaFinal = () => finalRounds(S.juego?.practica || !S.code ? null : 
 /** The final's rounds as a list: each game's name, and with `detalle` how its round is played. */
 const listaRondas = ({ detalle = false } = {}) => el('ul', { class: 'como', id: 'rondas-final' }, rondasDeLaFinal().map(x => {
   const { id: r, variante: v } = diaDeCal(x), R = conVariante(JUEGOS_COPA[r], v);
-  return el('li', {}, detalle ? `${R.emoji} ${R.nombre}: ${RONDAS_FINAL[r] || T.finalWholeRound}` : `${R.emoji} ${R.nombre}`);
+  return el('li', {}, detalle && RONDAS_FINAL[r] ? `${R.emoji} ${R.nombre}: ${RONDAS_FINAL[r]}` : `${R.emoji} ${R.nombre}`);
 }));
+/** One line, above the detailed list, for the rounds played whole (instead of repeating it per round). */
+const notaRondasEnteras = () => (rondasDeLaFinal().some(x => !RONDAS_FINAL[diaDeCal(x).id]) ? el('p', { class: 'muted', id: 'nota-enteras' }, T.finalWholeNote) : null);
+/** The final outside a cup (the lab's practice and its trial) has no week: its five fixed rounds' texts (D-418). */
+const reglasDe = (id, J) => (id === 'final' && S.juego?.practica && J?.comoSuelta ? { ...J, como: J.comoSuelta, puntaje: J.puntajeSuelto } : J);
 
 function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) {
-  const J = conVariante(JUEGOS_COPA[id], variante);
+  const J = reglasDe(id, conVariante(JUEGOS_COPA[id], variante));
   const caja = $('#jugar-reglas');
   caja.innerHTML = '';
   if (!J) return;
@@ -2175,7 +2179,7 @@ function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) 
     rotuloVariante(J),
     dibujo(id, variante),
     el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
-    id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds),
+    id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds), notaRondasEnteras(),
       listaRondas({ detalle: true })] : null,
     el('p', { class: 'lead' }, T.scoring),
     el('p', { class: 'muted' }, puntajeTexto(J, copa))));
@@ -2506,6 +2510,7 @@ function practica(id, varianteElegida = null) {
   if (SUELTO && LABS && !HOY && !delDia) history.replaceState(null, '', paginaSuelta(id, { semilla, zipSeg, modo: varianteRk(id, variante) }));
   else if (!SUELTO) history.replaceState(null, '', `${location.pathname}?practice=${slugDe(id)}&seed=${semilla}${PRUEBA ? '&test' : ''}${LABS ? '&labs' : ''}${zipSeg ? `&timer=${zipSeg}` : ''}`);
   S.juego = { d: 1, id, practica: true, semilla, variante };
+  const Jr = reglasDe(id, J);
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
   $('#jugar-reglas').innerHTML = ''; // en la antesala las reglas ya están a la vista
@@ -2532,8 +2537,8 @@ function practica(id, varianteElegida = null) {
     // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
     rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     // How to play goes after Empezar, so the button is seen without scrolling on a small phone (U-39)
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
-      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J, false))),
+    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, Jr.como.map(x => el('li', {}, x))),
+      el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(Jr, false))),
     rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });
 }
