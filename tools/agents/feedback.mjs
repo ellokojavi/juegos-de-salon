@@ -97,6 +97,13 @@ export const uploaded = issues => new Set(issues.flatMap(i => [...(i.body || '')
 /** The reports without an issue, oldest to newest (so the issue numbers follow the order). */
 export const pending = (reports, already) => reports.filter(r => r.id && !already.has(r.id) && String(r.texto || '').trim()).sort((a, b) => (a.at || 0) - (b.at || 0));
 
+/**
+ * Whether the issue list GitHub returned looks short: many reports at once, most of what Firebase
+ * holds, is what an empty or partial answer looks like, not a burst of players. On 2026-10-22 two
+ * such answers re-uploaded 20 handled reports twice. Real reports arrive a few at a time.
+ */
+export const looksShort = (reports, fresh) => fresh.length >= 5 && fresh.length * 2 >= reports.length;
+
 const context = r => { try { return JSON.parse(r.contexto || '{}') || {}; } catch { return {}; } };
 
 /** Where it was written, in a few words: the game or the page. */
@@ -148,7 +155,14 @@ async function sync(dryRun) {
   if (!res.ok) throw new Error(`Could not read feedback/ (HTTP ${res.status}).`);
   const reports = Object.entries((await res.json()) || {}).map(([id, r]) => ({ id, ...r }));
   const issues = JSON.parse(gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '1000', '--json', 'body'));
-  const fresh = pending(reports, uploaded(issues));
+  let fresh = pending(reports, uploaded(issues));
+  if (looksShort(reports, fresh)) {
+    // Ask again: a second short answer is not trusted either, and the next run tries once more.
+    const again = JSON.parse(gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '1000', '--json', 'body'));
+    fresh = pending(reports, uploaded([...issues, ...again]));
+    if (looksShort(reports, fresh) && !process.argv.includes('--force'))
+      throw new Error(`${fresh.length} of ${reports.length} report(s) without an issue: GitHub's issue list looks incomplete, nothing uploaded (--force if they really are new).`);
+  }
   if (!fresh.length) return console.log(`Nothing new (${reports.length} report(s), all with an issue).`);
   if (dryRun) { for (const r of fresh) console.log(`${title(r)}\n${body(r)}\n`); return; }
   const exists = JSON.parse(gh('label', 'list', '--limit', '200', '--json', 'name')).some(l => l.name === LABEL);
