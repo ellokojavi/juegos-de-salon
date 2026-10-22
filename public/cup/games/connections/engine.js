@@ -30,6 +30,18 @@ export const grillaDe = (codigo, { desde = null, lang = 'es', aud = null } = {})
   return lista[hash32(`${codigo}:grilla`) % lista.length];
 };
 
+/**
+ * The grid of the cup's final (D-418): another one from the same list, never the one its week
+ * played, which is fixed per cup.
+ */
+export const grillaFinal = (codigo, { lang = 'es', aud = null } = {}) => {
+  const todas = IDIOMAS[lang]?.GRILLAS || GRILLAS;
+  const lista = aud ? todas.filter(g => !fuera(g.local, aud)) : todas;
+  const semana = grillaDe(codigo, { lang, aud });
+  const otras = lista.filter(g => g.id !== semana.id);
+  return otras.length ? otras[hash32(`${codigo}:grilla-final`) % otras.length] : semana;
+};
+
 /** `palabras`: el idioma de las palabras, el de la copa (D-170); sin él, `lang`. */
 export function generar(codigo, dia, { sal = 'conexiones', grilla, desde = null, lang = 'es', palabras = lang, aud = null } = {}) {
   const g = grilla || grillaDe(codigo, { desde, lang: palabras, aud });
