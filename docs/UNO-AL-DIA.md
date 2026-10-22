@@ -254,9 +254,10 @@ For everyone since 2026-10-22 (it was tried in the lab first, D-409), the 📅 c
 two controls side by side, never one inside the other: the card itself is a link to /today/, and its
 chip **▶ Jugar hoy** rolls today's die and opens the game straight away. Once today is played the
 chip opens /today/ and shows the month's **place big** (the site's yellow-to-pink gradient: "#3", in
-German "Platz 3") with "del mes · 120 pts" under it; with no place known yet, the points are the big
-number, with "pts del mes" under them (`chipPuntos` in `uno-al-dia-ui.js`). On a phone 340 px wide
-or less, "del mes" is dropped.
+German too, "#3") with the points and the streak under it ("871 pts · 🔥 6"; the 🔥 pill leaves
+its own row once played, the owner's choice); with no place known yet, the points are the big
+number (`chipPuntos` in `uno-al-dia-ui.js`). With no streak the line says "del mes · 871 pts", and
+on a phone 340 px wide or less "del mes" is dropped.
 
 The place comes from `uad-pts-cache` in `localStorage`, which /today/ writes each time the server
 answers (`p` the month, `s` the points, `r` the place, `d` the day and `h` whether that day was
