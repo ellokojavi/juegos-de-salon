@@ -151,9 +151,11 @@ The owner (their UID) can write and delete in all these branches, to moderate.
 - `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w?, p? }`: the first Uno al día attempt of day `n` (days
   since 1970). Written once by whoever is seated as that player; `w` (the mark that it was already
   added to the week) and `p` (already added to the month's points, D-412) are each added once. Anyone can read it.
-- `invitados/<jid>/<uid>` = `{ d, at, j? }`: the `uid` phone finished its first Uno al día with an
+- `invitados/<jid>/<uid>` = `{ d, at, j?, p? }`: the `uid` phone finished its first Uno al día with an
   invitation from `jid`. Written by that phone, once, and not if it is seated as `jid`. Only the
-  player `jid` reads it.
+  player `jid` reads it. `p` (D-414) is added once, by whoever is seated as `jid`, in the same write
+  that adds the friend's +10 to `uno-al-dia-pts`: that write carries `i` = the friend's `uid`, keeps
+  `u` and `r`, and adds exactly 10.
 - In `records`, the period can also be a day (`d20731`). For the `uno-al-dia` table, the
   day's score has to be the one in its history, and the week adds a day from the history (`u`) that
   didn't have `w` yet. The `uno-al-dia-pts` table (D-412, D-414) takes only a

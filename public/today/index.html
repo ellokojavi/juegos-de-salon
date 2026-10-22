@@ -197,7 +197,10 @@
     // The rules of the points (D-412): four lines, the emoji as the marker
     document.getElementById('reglas-t').textContent = P.como;
     document.getElementById('reglas-ok').textContent = P.entendido;
-    document.getElementById('reglas-lista').replaceChildren(...P.reglas.map(([e, b, t]) => el('li', {}, `${e} `, el('b', {}, b), ` ${t}`)));
+    const regla = ([e, b, t]) => el('li', {}, `${e} `, el('b', {}, b), ` ${t}`);
+    document.getElementById('reglas-lista').replaceChildren(...P.reglas.map(regla));
+    // The +10 per invited friend, in the lab for now (D-409). lab: #seccion-uad-invitar-jugar
+    import('../assets/js/lab-access.js').then(m => m.labAccess()).then(ok => { if (ok) document.getElementById('reglas-lista').append(regla(P.reglaInvitar)); }).catch(() => {});
 
     /** "7 h 12 min" o "12 min", con espacios que no se cortan entre el número y la unidad. */
     const falta = ms => {

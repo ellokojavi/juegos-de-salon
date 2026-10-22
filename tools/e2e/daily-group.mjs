@@ -185,8 +185,8 @@ ok(await waitFor(`location.pathname === '/liars-dice/'`), "and a solo game also 
   await clock(DAYS.ahorcado);
   await ev(`localStorage.removeItem('${KEY}'); 1`);
   await b.go(`${SITE}/`, 1500);
-  await waitFor(`!!document.getElementById('btn-uno-al-dia')`);
-  await click('#btn-uno-al-dia');
+  await waitFor(`!!document.getElementById('btn-uad-abrir')`);
+  await click('#btn-uad-abrir, button#btn-uno-al-dia');
   // The card opens Uno al día (D-414); its Jugar rolls the die
   await waitFor(`!!document.getElementById('btn-uad-jugar')`, 12);
   await click('#btn-uad-jugar');

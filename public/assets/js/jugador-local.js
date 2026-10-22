@@ -96,9 +96,17 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
       // Uno al día points (lab, D-412): a month adds one day of the history once (`p` is set in the
       // same write), its game score plus the streak bonus; the streak `r` grows at most one a day
       if (p[1] === UAD_PUNTOS) {
+        if (!/^s[0-9]{4}-[0-9]{2}$/.test(p[2]) || r.ms !== 0) return false;
+        // An invited friend's +10 (D-414): their acceptance gets `p` in the same write, once
+        if (r.i !== undefined) {
+          const a = `invitados/${jid}/${r.i}`;
+          if (typeof r.i !== 'string' || leerEn(viejo, `${a}/d`) == null || leerEn(nuevo, `${a}/p`) !== true || leerEn(viejo, `${a}/p`) != null) return false;
+          if (r.u !== antes?.u || r.r !== antes?.r || r.s !== (antes?.s || 0) + 10) return false;
+          return !antes || r.k < antes.k;
+        }
         const h = `unoAlDia/${jid}/${r.u}`;
-        if (!/^s[0-9]{4}-[0-9]{2}$/.test(p[2]) || r.ms !== 0 || !/^[0-9]{5}$/.test(r.u || '')) return false;
-        if (!(Number.isInteger(r.r) && r.r >= 1 && r.r <= 10 && r.r <= (antes ? antes.r + 1 : 10))) return false;
+        if (!/^[0-9]{5}$/.test(r.u || '')) return false;
+        if (!(Number.isInteger(r.r) && r.r >= 1 && r.r <= 10 && r.r <= (antes?.r ? antes.r + 1 : 10))) return false;
         if (leerEn(nuevo, `${h}/p`) !== true || leerEn(viejo, `${h}/p`) != null) return false;
         if (r.s !== (antes?.s || 0) + leerEn(nuevo, `${h}/s`) + bonoRacha(r.r)) return false;
       }
@@ -114,6 +122,8 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
     }
     // Quién aceptó una invitación (D-230): cada celular una vez, y nadie se invita a sí mismo
     if (rama === 'invitados') {
+      // The inviter marks an acceptance counted for the month's +10 (D-414), once
+      if (p.length === 4 && c === 'p') return sentado(viejo, a) && leerEn(viejo, `invitados/${a}/${b}/d`) != null && leerEn(viejo, ruta) == null && leerEn(nuevo, ruta) === true;
       const x = leerEn(nuevo, ruta);
       return p.length === 3 && b === u && leerEn(viejo, ruta) == null && !!x && !sentado(viejo, a) && typeof x.d === 'number'
         && (x.j === undefined || (/^[a-z0-9]{8}$/.test(x.j) && x.j !== a)) && Object.keys(x).every(k => ['d', 'at', 'j'].includes(k));

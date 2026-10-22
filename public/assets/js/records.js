@@ -96,6 +96,8 @@ export const UAD_PUNTOS = 'uno-al-dia-pts';
 export const periodoMes = fecha => `s${fecha.slice(0, 7)}`;
 export const RACHA_TOPE = 10;
 export const bonoRacha = r => Math.min(RACHA_TOPE, Math.max(0, r)) * 5;
+/** What a friend who finishes their first Uno al día with your invitation adds to your month (D-414). */
+export const PUNTOS_INVITAR = 10;
 /** El período de un día de Uno al día, por su número. */
 export const periodoDia = n => `d${n}`;
 /** Las semanas parten el lunes a medianoche en Chile, donde vive la app. */

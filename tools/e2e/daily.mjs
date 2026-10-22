@@ -32,17 +32,27 @@ await b.go(`${SITE}/`, 600);
 await ev(`(()=>{localStorage.clear();localStorage.setItem('juegos-de-salon:instalar:no','1');return 1})()`);
 await b.go(`${SITE}/`, 1500);
 ok(await waitFor(`!!document.getElementById('btn-uno-al-dia')`), 'the home page has the Uno al día card');
+await waitFor(`!!document.getElementById('btn-uad-chip')`, 4); // with the lab key (localhost), the two-destination card replaces it
 ok(await ev(`document.getElementById('btn-uno-al-dia').parentElement.querySelector('.game-card.torneo') !== null`), 'it goes in the same row as La Copa, half and half (D-239)');
-ok(/Jugar hoy/.test(await text('#btn-uno-al-dia .uad-card-estado')), `it says "Jugar hoy", no streak yet (${await text('#btn-uno-al-dia .uad-card-estado')})`);
+ok(/Jugar hoy/.test(await text('#btn-uno-al-dia .meta')), `it says "Jugar hoy", no streak yet (${await text('#btn-uno-al-dia .meta')})`);
+// Two destinations (lab, D-414; localhost has the lab key): the card opens /today/, its chip plays
+ok(await ev(`!!document.querySelector('#btn-uno-al-dia > a.uad-card-link[href$="today/"]') && document.querySelector('#btn-uad-chip')?.tagName === 'BUTTON' && !document.querySelector('a #btn-uad-chip, button #btn-uad-chip')`), 'the card is a link to /today/ and «▶ Jugar hoy» a separate button beside it');
+ok(await ev(`document.getElementById('btn-uad-chip').getBoundingClientRect().height >= 44`), 'the chip is a 44 px target');
 ok((await text('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Juego al azar', `and the die still says "🎲 Juego al azar" (${await text('.azar-slot .btn-azar')})`);
 ok(await ev(`(()=>{const s=[...document.querySelectorAll('.game-card.torneo .meta > span')];return s.length===2&&s[0].getBoundingClientRect().top===s[1].getBoundingClientRect().top})()`), "La Copa's players and duration, on one line");
-ok(/tus puntos y el juego de hoy/.test(await ev(`document.getElementById('btn-uno-al-dia').getAttribute('aria-label')`)), 'what it does goes in aria-label');
+ok(/tus puntos y el juego de hoy/.test(await ev(`(document.querySelector('#btn-uno-al-dia .uad-card-link') || document.getElementById('btn-uno-al-dia')).getAttribute('aria-label')`)), 'what it does goes in aria-label');
 ok(await ev(`!!document.querySelector('#btn-uno-al-dia .btn-uad-punto')`), "and a dot shines: today hasn't been played");
 ok(await noOverflow(), "the home page doesn't overflow sideways");
 await b.shot('home');
 
+/* ---------- The chip plays today's game straight away (lab, D-414) ---------- */
+await click('#btn-uad-chip');
+ok(await waitFor(`!!document.querySelector('.azar-capa')`, 12) && await waitFor(`location.pathname === '/untangle/' && location.search === '?today'`, 20), `«▶ Jugar hoy» rolls today's die and opens the game (${await ev('location.pathname + location.search')})`);
+await b.go(`${SITE}/`, 1500);
+await waitFor(`!!document.getElementById('btn-uad-chip')`);
+
 /* ---------- The card opens Uno al día; its Jugar rolls the die (D-414) ---------- */
-await click('#btn-uno-al-dia');
+await ev(`document.getElementById('btn-uad-abrir').click(); 1`);
 ok(await waitFor(`location.pathname === '/today/' && !!document.getElementById('btn-uad-jugar')`, 12), 'tapping it opens /today/, with the season and a Jugar button');
 ok(/Temporada de octubre/.test(await text('#uad-puntos')) && /quedan 26 días/.test(await text('#uad-puntos')), `the season box says the month and the days left (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
 await b.shot('today-before');
@@ -105,9 +115,10 @@ ok(/práctica/.test(await text('#uad-intro')), "a second attempt's intro warns i
 await b.go(`${SITE}/`, 1500);
 await waitFor(`!!document.getElementById('btn-uno-al-dia')`);
 ok(await ev(`document.getElementById('btn-uno-al-dia').classList.contains('hecho')`) && /✅/.test(await text('#btn-uno-al-dia')) && /🔥 1/.test(await text('#btn-uno-al-dia')), `the button turns cyan, with ✅ and the streak (${(await text('#btn-uno-al-dia')).replace(/\n/g, ' ')})`);
-ok(/Racha: 1 día/.test(await ev(`document.getElementById('btn-uno-al-dia').getAttribute('aria-label')`)), 'and the streak in aria-label too');
+ok(/Racha: 1 día/.test(await ev(`(document.querySelector('#btn-uno-al-dia .uad-card-link') || document.getElementById('btn-uno-al-dia')).getAttribute('aria-label')`)), 'and the streak in aria-label too');
 ok(!await ev(`!!document.querySelector('#btn-uno-al-dia .btn-uad-punto')`), 'and the dot no longer shines');
-await click('#btn-uno-al-dia');
+ok(/Tus puntos/.test(await text('#btn-uad-chip')) && /today\/$/.test(await ev(`document.getElementById('btn-uad-chip').getAttribute('href') || ''`)), 'played, the chip says «✅ Tus puntos» and opens /today/');
+await click('#btn-uad-abrir, button#btn-uno-al-dia');
 ok(await waitFor(`location.pathname === '/today/'`, 12), 'tapping it opens /today/ (no die)');
 
 /* ---------- /today/ ---------- */

@@ -86,10 +86,37 @@ export function botonUnoAlDia({ lang, raiz = '', alTocar }) {
  */
 export function tarjetaUnoAlDia({ lang, raiz = '', alTocar }) {
   const { T, hecho, linea2, abrir, aria } = estadoAcceso(lang, raiz, alTocar);
+  // Two destinations, in the lab for now (D-409): the card opens /today/, its chip plays today's game
+  // (or, once played, shows your points). lab: #seccion-uad-invitar-jugar
+  const vieja = tarjetaVieja({ T, hecho, linea2, abrir, aria });
+  import('./lab-access.js').then(m => m.labAccess()).then(ok => { if (ok) vieja.replaceWith(tarjetaDosDestinos({ lang, raiz, alTocar })); }).catch(() => {});
+  return vieja;
+}
+
+function tarjetaVieja({ T, hecho, linea2, abrir, aria }) {
   return el('button', { type: 'button', class: 'game-card alta uad-card' + (hecho ? ' hecho' : ''), id: 'btn-uno-al-dia', 'aria-label': aria, onClick: abrir },
     el('div', { class: 'emoji' }, el('span', { 'aria-hidden': 'true' }, '📅')),
     el('div', { class: 'texto' }, el('h2', {}, el('span', {}, T.nombre)), el('div', { class: 'tag' }, T.sub)),
     el('div', { class: 'meta' }, el('span', { class: 'uad-card-estado' }, linea2)),
+    hecho ? null : el('span', { class: 'btn-uad-punto', 'aria-hidden': 'true' }));
+}
+
+/**
+ * The card with two destinations (D-414, lab): a link over the whole card opens /today/, and the chip,
+ * a separate button above it, plays today's game ("▶ Jugar hoy") or, once played, opens /today/
+ * ("✅ Tus puntos"). Two sibling controls, never one inside the other.
+ */
+function tarjetaDosDestinos({ lang, raiz, alTocar }) {
+  const { T, hecho, aria, racha } = estadoAcceso(lang, raiz, alTocar);
+  const ir = () => { alTocar?.(); trackUnoAlDia('boton'); };
+  const chip = hecho
+    ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, 'aria-label': T.ariaTusPuntos, onClick: ir }, T.tusPuntos)
+    : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', 'aria-label': T.ariaJugarHoy, onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, `▶ ${T.jugar}`);
+  return el('div', { class: 'game-card alta uad-card dos' + (hecho ? ' hecho' : ''), id: 'btn-uno-al-dia' },
+    el('a', { class: 'uad-card-link', id: 'btn-uad-abrir', href: `${raiz}today/`, 'aria-label': aria, onClick: ir }),
+    el('div', { class: 'emoji' }, el('span', { 'aria-hidden': 'true' }, '📅')),
+    el('div', { class: 'texto' }, el('h2', {}, el('span', {}, T.nombre)), el('div', { class: 'tag' }, T.sub)),
+    el('div', { class: 'meta' }, racha ? el('span', { class: 'uad-card-estado', 'aria-hidden': 'true' }, `🔥 ${racha}`) : null, chip),
     hecho ? null : el('span', { class: 'btn-uad-punto', 'aria-hidden': 'true' }));
 }
 
@@ -195,6 +222,9 @@ async function nombres() {
  */
 export function tarjetaInvitar({ lang, alTocar, plegada = false, comodines = null }) {
   const T = textos(lang).uad;
+  // The +10 per invited friend, said only with a lab key for now (D-409). lab: #seccion-uad-invitar-jugar
+  const ptsInv = el('p', { style: 'margin:0', id: 'uad-inv-pts', hidden: true }, T.pts.invitarPts);
+  if (comodines != null) import('./lab-access.js').then(m => m.labAccess()).then(ok => { ptsInv.hidden = !ok; }).catch(() => {});
   const linea = el('p', { class: 'muted', style: 'margin:0', id: 'uad-inv-linea' });
   const b = el('button', { type: 'button', class: 'btn btn--cyan', id: 'btn-uad-invitar' }, T.invitar);
   b.addEventListener('click', async () => {
@@ -222,7 +252,7 @@ export function tarjetaInvitar({ lang, alTocar, plegada = false, comodines = nul
     : comodines != null
       // /today/: one box for the wildcards, their logic and the invite that earns one
       ? el('div', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('p', { class: 'lead', style: 'margin:0' }, fmt(T.comodinesTitulo, { n: comodines })),
-        el('p', { style: 'margin:0', id: 'uad-comodines-texto' }, T.comodinesLogica), linea, b)
+        el('p', { style: 'margin:0', id: 'uad-comodines-texto' }, T.comodinesLogica), linea, ptsInv, b)
       : el('div', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('p', { class: 'lead', style: 'margin:0' }, T.invTitulo), linea, b);
 }
 
