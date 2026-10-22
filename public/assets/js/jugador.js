@@ -212,6 +212,20 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       if (yo) almacen.listo().then(uid => almacen.update({ [`jugadorSeats/${yo.jid}/${uid}`]: null })).catch(() => {});
     },
 
+    /**
+     * Seat this phone as its player again with the player's PIN (D-416). The seat hangs from the
+     * anonymous session, which the browser can drop while the player stays in localStorage: the
+     * phone still shows the player, but the rules no longer accept its writes. 'pin' if wrong.
+     */
+    async reseat(pin) {
+      const yo = api.yo();
+      if (!yo) throw falla('sin-jugador');
+      if (!esPin(pin)) throw falla('pin-forma');
+      const uid = await almacen.listo();
+      try { await almacen.update({ [`jugadorSeats/${yo.jid}/${uid}`]: await hashPinJugador(yo.jid, pin) }); }
+      catch (e) { throw e?.code === 'permiso' ? falla('pin') : e; }
+    },
+
     /** Cambiar el PIN: los demás celulares donde estaba quedan afuera. */
     async cambiarPin(pin) {
       const yo = api.yo();

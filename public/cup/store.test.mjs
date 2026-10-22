@@ -127,7 +127,13 @@ await test('sentarse como su jugador, sin PIN de copa (D-359)', async () => {
   await rechaza(cel.sentarseComoJugador(CODE, 'bbbbbb', 'jid00001'), 'pin');
   await otro.enlazar(CODE, 'bbbbbb', 'jid00001');
   await rechaza(cel.sentarseComoJugador(CODE, 'bbbbbb', 'jid00002'), 'pin');
+  // D-416: linked, but this phone is not seated as the player (it lost its anonymous session)
+  await rechaza(cel.sentarseComoJugador(CODE, 'bbbbbb', 'jid00001'), 'pin');
+  localStorage.setItem('juegos-de-salon:prueba:records-uid', 'u-jugador');
+  localStorage.setItem('juegos-de-salon:prueba:records-db', JSON.stringify({ jugadorSeats: { jid00001: { 'u-jugador': 'h' } } }));
   await cel.sentarseComoJugador(CODE, 'bbbbbb', 'jid00001');
+  localStorage.removeItem('juegos-de-salon:prueba:records-uid');
+  localStorage.removeItem('juegos-de-salon:prueba:records-db');
   const { readFileSync } = await import('node:fs');
   const r = JSON.parse(readFileSync(new URL('../../firebase/database.rules.json', import.meta.url))).rules.torneoSeats.$code.$pid.$uid['.validate'];
   assert.match(r, /players\/' \+ \$pid \+ '\/j'\)\.val\(\) && root\.child\('jugadorSeats\/' \+ newData\.val\(\) \+ '\/' \+ auth\.uid\)\.exists\(\)/, 'the rules accept the jid only from a phone seated as that linked player');
