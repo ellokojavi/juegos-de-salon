@@ -1,6 +1,6 @@
 // The 🐞 feedback as issues (D-275, D-279): with the name and without the browser, without mentions, and never the same report twice.
 import assert from 'node:assert/strict';
-import { greetingName, title, body, pending, uploaded, looksShort, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN } from './feedback.mjs';
+import { greetingName, title, body, pending, uploaded, unrecorded, looksShort, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN } from './feedback.mjs';
 
 const r = {
   id: '-P3bm', at: Date.parse('2026-10-10T18:28:23Z'), v: '0.144.0', nombre: 'Tu admirador secreto',
@@ -114,3 +114,9 @@ const twenty = Array.from({ length: 20 }, (_, i) => ({ id: `r${i}`, texto: 'x', 
 assert.ok(looksShort(twenty, pending(twenty, uploaded([]))), 'an empty list uploads nothing');
 assert.ok(!looksShort(twenty, twenty.slice(0, 2)), 'two new reports go up');
 assert.ok(!looksShort(twenty.slice(0, 3), twenty.slice(0, 3)), 'the first few reports ever go up');
+
+// The Firebase record keeps each report's first issue, and what GitHub shows only adds to it
+const dup = [{ number: 683, body: marker('a') }, { number: 312, body: marker('a') }, { number: 9, body: marker('b') }, { number: 5, body: 'no marker' }];
+assert.deepEqual(unrecorded(dup, {}), { a: 312, b: 9 }, 'the oldest issue of a duplicated report');
+assert.deepEqual(unrecorded(dup, { a: 312 }), { b: 9 }, 'what is recorded is not written again');
+assert.deepEqual(unrecorded([], { a: 312 }), {}, 'an empty list from GitHub takes nothing from the record');

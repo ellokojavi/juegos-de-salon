@@ -16,7 +16,7 @@ machine needs. `machine.test.mjs` fails if a `mac` or `app` job, or a file under
 
 The launchd plists are generated from `jobs.json` (`~/Library/LaunchAgents/cl.juegosdesalon.<id>.plist`)
 and run the code of the **main folder** (today `~/Documents/Claude/Projects/juegos-de-salon`), which
-stays on `main` and is pulled after each merge that changes a job. The app's scheduled tasks live
+stays on `main`; `jobs.mjs run` fast-forwards it to origin/main before each run (only when clean and on `main`; the log says when it could not). The app's scheduled tasks live
 only in the Claude app: their prompts are not in the repo.
 
 ## What the machine holds (never in the repo)
