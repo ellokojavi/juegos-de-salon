@@ -21,7 +21,10 @@
  *
  * The repo is public: the issue carries the text as is, the game, the version and the screen, and
  * the name the player gave, so the owner can follow up (D-279), but not their browser. Each issue
- * carries `<!-- feedback:<id> -->`, so a report is never uploaded twice, even if its issue is closed.
+ * carries `<!-- feedback:<id> -->`, and `feedbackIssues/<id>` in Firebase (admin only) records the issue
+ * each report got: that record, not GitHub's issue list, says what is already up. GitHub's list
+ * comes back empty or partial at random (2026-10-22: 0, 62 or 80 issues for the same query, and 60
+ * reports re-uploaded), so the markers it shows only add to the record, never take from it.
  * The report's fields (`texto`, `nombre`, `contexto`, and inside it `juego`, `copa`…) are Firebase
  * data and keep their names.
  */
@@ -94,6 +97,14 @@ export const greetingName = (report, body) => String(report?.nombre || '').trim(
 /** The report ids that already have an issue, read from the bodies. */
 export const uploaded = issues => new Set(issues.flatMap(i => [...(i.body || '').matchAll(/<!-- feedback:([^\s>]+) -->/g)].map(m => m[1])));
 
+/** The issues GitHub showed that `feedbackIssues/` does not have yet: id → its first issue. */
+export function unrecorded(issues, ledger) {
+  const out = {};
+  for (const i of issues) for (const m of (i.body || '').matchAll(/<!-- feedback:([^\s>]+) -->/g))
+    if (!ledger?.[m[1]] && i.number && (!out[m[1]] || i.number < out[m[1]])) out[m[1]] = i.number;
+  return out;
+}
+
 /** The reports without an issue, oldest to newest (so the issue numbers follow the order). */
 export const pending = (reports, already) => reports.filter(r => r.id && !already.has(r.id) && String(r.texto || '').trim()).sort((a, b) => (a.at || 0) - (b.at || 0));
 
@@ -154,12 +165,21 @@ async function sync(dryRun) {
   const res = await fetch(`${firebaseConfig.databaseURL}/feedback.json`);
   if (!res.ok) throw new Error(`Could not read feedback/ (HTTP ${res.status}).`);
   const reports = Object.entries((await res.json()) || {}).map(([id, r]) => ({ id, ...r }));
-  const issues = JSON.parse(gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '1000', '--json', 'body'));
-  let fresh = pending(reports, uploaded(issues));
+  const { read, write } = await import('../firebase/firebase-admin.mjs');
+  const t = await adminToken();
+  const ledger = (await read('feedbackIssues', t)) || {};
+  const list = () => JSON.parse(gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '1000', '--json', 'number,body'));
+  const issues = list();
+  // What GitHub shows and the record lacks goes into the record (the issues from before it existed)
+  const missing = unrecorded(issues, ledger);
+  if (Object.keys(missing).length && !dryRun) await write('feedbackIssues', 'PATCH', missing, t);
+  Object.assign(ledger, missing);
+  const known = new Set([...Object.keys(ledger), ...uploaded(issues)]);
+  let fresh = pending(reports, known);
   if (looksShort(reports, fresh)) {
     // Ask again: a second short answer is not trusted either, and the next run tries once more.
-    const again = JSON.parse(gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '1000', '--json', 'body'));
-    fresh = pending(reports, uploaded([...issues, ...again]));
+    for (const id of uploaded(list())) known.add(id);
+    fresh = pending(reports, known);
     if (looksShort(reports, fresh) && !process.argv.includes('--force'))
       throw new Error(`${fresh.length} of ${reports.length} report(s) without an issue: GitHub's issue list looks incomplete, nothing uploaded (--force if they really are new).`);
   }
@@ -169,7 +189,11 @@ async function sync(dryRun) {
   if (!exists) gh('label', 'create', LABEL, '--color', 'd93f0b', '--description', 'A player\'s 🐞 report (D-275)');
   const have = new Set(JSON.parse(gh('label', 'list', '--limit', '200', '--json', 'name')).map(l => l.name));
   for (const name of Object.values(KIND_LABELS)) if (!have.has(name)) gh('label', 'create', name, '--color', 'c5def5', '--description', 'The kind the player picked in the inbox (D-345)');
-  for (const r of fresh) console.log(gh('issue', 'create', '--title', title(r), '--label', labelsOf(r).join(','), '--body', body(r)).trim());
+  for (const r of fresh) {
+    const url = gh('issue', 'create', '--title', title(r), '--label', labelsOf(r).join(','), '--body', body(r)).trim();
+    await write('feedbackIssues', 'PATCH', { [r.id]: Number(url.split('/').pop()) }, t);
+    console.log(url);
+  }
 }
 
 /* ------------------------------------------------------------------ */
