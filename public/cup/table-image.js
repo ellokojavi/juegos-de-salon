@@ -1,8 +1,8 @@
 /**
- * La tabla de una copa como imagen (D-126, D-141, D-153): la que se comparte desde el tablero, el
- * podio y Administrar (game.js), y la que muestra el resumen de una copa terminada en la portada
- * (D-427, recap.js). Sin estado de la pantalla: recibe la copa, quién mira, la hora, los textos en
- * el idioma de la copa (D-170) y el link, y devuelve el archivo PNG.
+ * A cup's table as an image (D-126, D-141, D-153): the one shared from the board, the podium and
+ * Administrar (game.js), and the one the home page's recap of an ended cup shows (D-427,
+ * recap.js). No screen state: it takes the cup, who looks, the time, the texts in the cup's
+ * language (D-170) and the link, and returns the PNG file.
  */
 import { tabla, evolucion, terminada, menosJuegos, ultimoDiaVisto, diaActual, esFinal, marcaDelDia, provisoria } from './engine.js';
 import { lamina, aArchivo, nombreArchivo, MARCO } from '../assets/js/compartir.js';
@@ -16,7 +16,7 @@ export const COLORES_GRAFICO = ['#2ee6d6', '#ffd23f', '#ff2e88', '#9dff3a', '#ff
 export const llegada = Lc => Object.entries(Lc.players || {}).sort((a, b) => (a[1].at || 0) - (b[1].at || 0)).map(([pid]) => pid);
 export const colorDe = (Lc, pid) => COLORES_GRAFICO[Math.max(0, llegada(Lc).indexOf(pid)) % COLORES_GRAFICO.length];
 
-/** La cabecera de la tabla, la misma en el texto y en la imagen (D-165): terminada, la final; si no, el día. */
+/** The table's header, the same in the text and in the image (D-165): the final one once it ended; otherwise the day. */
 export function cabeceraTabla(Lc, filas, now, T) {
   const { meta } = Lc;
   const cab = (emoji, contexto) => ({ emoji, titulo: fmt(T.shareHead, { copa: meta.name }), contexto });
