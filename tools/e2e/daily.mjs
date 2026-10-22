@@ -114,10 +114,10 @@ ok(/práctica/.test(await text('#uad-intro')), "a second attempt's intro warns i
 /* ---------- The home page after playing ---------- */
 await b.go(`${SITE}/`, 1500);
 await waitFor(`!!document.getElementById('btn-uno-al-dia')`);
-ok(await ev(`document.getElementById('btn-uno-al-dia').classList.contains('hecho')`) && /✅/.test(await text('#btn-uno-al-dia')) && /🔥 1/.test(await text('#btn-uno-al-dia')), `the button turns cyan, with ✅ and the streak (${(await text('#btn-uno-al-dia')).replace(/\n/g, ' ')})`);
+ok(await ev(`document.getElementById('btn-uno-al-dia').classList.contains('hecho')`) && /\d+\s*pts/.test(await text('#btn-uno-al-dia')) && /🔥 1/.test(await text('#btn-uno-al-dia')), `the button turns cyan, with the points and the streak (${(await text('#btn-uno-al-dia')).replace(/\n/g, ' ')})`);
 ok(/Racha: 1 día/.test(await ev(`(document.querySelector('#btn-uno-al-dia .uad-card-link') || document.getElementById('btn-uno-al-dia')).getAttribute('aria-label')`)), 'and the streak in aria-label too');
 ok(!await ev(`!!document.querySelector('#btn-uno-al-dia .btn-uad-punto')`), 'and the dot no longer shines');
-ok(/Tus puntos/.test(await text('#btn-uad-chip')) && /today\/$/.test(await ev(`document.getElementById('btn-uad-chip').getAttribute('href') || ''`)), 'played, the chip says «✅ Tus puntos» and opens /today/');
+ok(/\d+\s*pts/.test(await text('#btn-uad-chip')) && /today\/$/.test(await ev(`document.getElementById('btn-uad-chip').getAttribute('href') || ''`)), 'played, the chip shows the points of the month and opens /today/');
 await click('#btn-uad-abrir, button#btn-uno-al-dia');
 ok(await waitFor(`location.pathname === '/today/'`, 12), 'tapping it opens /today/ (no die)');
 
