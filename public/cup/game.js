@@ -738,6 +738,22 @@ const camposPin = (a, b) => (sinPinDeCopa()
 
 const consejoJugador = () => (leerYo() || !rankingsVisibles() ? null : el('small', { class: 'muted', id: 'consejo-jugador' }, T.pinPlayerTip));
 
+/**
+ * The linked player's seat was lost with the anonymous session (D-416): their player's PIN seats
+ * the phone as the player again, and then as the cup player with no cup PIN, as D-359. A PIN that
+ * is not the player's may be a new cup PIN from the admin, so it is tried as that. 'pin' if neither.
+ */
+async function sentarseConPinJugador(pid, pin) {
+  try {
+    await (await jugador()).reseat(pin);
+  } catch (e) {
+    if (e?.code !== 'pin') throw e;
+    await store.sentarse(S.code, pid, await hashPin(S.code, pid, pin));
+    return;
+  }
+  await store.sentarseComoJugador(S.code, pid, leerYo().jid);
+}
+
 async function entrarComoJugador(nombre, pin) {
   try {
     if (leerYo() || !rankingsVisibles()) return;
@@ -873,7 +889,17 @@ function entrar({ mantener = false } = {}) {
     // The cup player linked to this phone's player sits with no PIN (D-359)
     const esMio = pid => !!(yoJ && rankingsVisibles() && players[pid]?.j === yoJ.jid);
     const pistaCopa = el('small', { class: 'muted', id: 'pista-pin-copa' }, T.pinCopaHint);
-    const verPin = () => { p.nodo.hidden = pistaCopa.hidden = esMio(elegido); };
+    // The linked player's seat can be lost too (same anonymous session): then their PIN is asked
+    // for here, the player's, or a new cup PIN from the admin (D-416)
+    let conPinJugador = false;
+    const pistaJugador = el('small', { class: 'muted', id: 'pista-pin-jugador' });
+    const verPin = () => {
+      const mia = esMio(elegido);
+      p.nodo.hidden = mia && !conPinJugador;
+      pistaCopa.hidden = mia;
+      pistaJugador.hidden = !(mia && conPinJugador);
+      if (yoJ) pistaJugador.textContent = fmt(T.playerPinHint, { name: yoJ.n });
+    };
     const nombres = el('div', { class: 'nombres' }, Object.entries(players).filter(([, x]) => !x.out)
       .sort((a, b2) => a[1].name.localeCompare(b2[1].name, 'es'))
       .map(([pid, x]) => el('button', {
@@ -883,9 +909,17 @@ function entrar({ mantener = false } = {}) {
           $$('.chip-btn', nombres).forEach(c => c.classList.toggle('on', c === ev.currentTarget));
           b.disabled = false; b.textContent = fmt(T.loginGo, { name: x.name });
           verPin();
-          if (!esMio(pid)) p.input.focus();
+          if (!p.nodo.hidden) p.input.focus();
         },
       }, x.name)));
+    const pedirPinJugador = () => {
+      conPinJugador = true;
+      err.textContent = '';
+      lead.id = 'sesion-jugador-perdida';
+      lead.textContent = fmt(T.playerSeatLost, { name: yoJ.n });
+      verPin();
+      p.input.focus();
+    };
     // Quien llega desde las copas de su jugador (D-220) ya tiene su nombre elegido: falta el PIN
     if (mio) {
       elegido = mio;
@@ -897,10 +931,12 @@ function entrar({ mantener = false } = {}) {
       SFX.tap();
       if (!elegido) return;
       const mia = esMio(elegido);
-      if (!mia && !esPin(p.input.value)) return avisoError(err, T.errPin);
+      const conPin = !mia || conPinJugador;
+      if (conPin && !esPin(p.input.value)) return avisoError(err, T.errPin);
       b.disabled = true;
       try {
-        if (mia) await store.sentarseComoJugador(S.code, elegido, yoJ.jid);
+        if (mia && conPinJugador) await sentarseConPinJugador(elegido, p.input.value);
+        else if (mia) await store.sentarseComoJugador(S.code, elegido, yoJ.jid);
         else await store.sentarse(S.code, elegido, await hashPin(S.code, elegido, p.input.value));
         cuenta.recordar(S.code, elegido, { nombre: players[elegido].name, copa: meta.name, fin: meta.end });
         S.yo = elegido;
@@ -910,8 +946,11 @@ function entrar({ mantener = false } = {}) {
         SFX.reveal();
         tablero();
       } catch (e) {
-        avisoError(err, e?.code === 'pin' ? fmt(T.errPinWrong, { name: players[elegido].name }) : errorDe(e));
         b.disabled = false;
+        // Linked, but the rules no longer see this phone as the player: not a wrong PIN (D-416)
+        if (mia && !conPinJugador && e?.code === 'pin') return pedirPinJugador();
+        avisoError(err, e?.code !== 'pin' ? errorDe(e)
+          : mia ? fmt(T.errPlayerPin, { name: yoJ.n }) : fmt(T.errPinWrong, { name: players[elegido].name }));
       }
     });
     // Con un jugador en este celular hay dos PIN: aquí va el de la copa (D-96, D-220)
@@ -921,7 +960,10 @@ function entrar({ mantener = false } = {}) {
     const lead = deVuelta && elegido === deVuelta ? el('p', { class: 'lead', id: 'sentarse-de-nuevo' }, fmt(T.seatLost, { name: players[deVuelta].name }))
       : el('p', { class: 'lead', id: desdeApp ? 'bienvenida-app' : null }, desdeApp ? fmt(T.avAppWelcome, { name: players[appPid].name }) : T.pickName);
     poner(caja, el('div', { class: 'panel' }, lead, nombres, p.nodo,
-      yoJ ? pistaCopa : consejoJugador()), err, b);
+      yoJ ? pistaCopa : consejoJugador(), pistaJugador), err, b);
+    verPin();
+    // Back from a lost seat as the linked player: both seats hung from the same session (D-416)
+    if (deVuelta && elegido === deVuelta && esMio(deVuelta)) pedirPinJugador();
   };
 
   const tabs = el('div', { class: 'seg' },
