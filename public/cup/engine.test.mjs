@@ -7,7 +7,9 @@ import {
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
+  semanaAlAzar, ESTILOS_SEMANA,
 } from './engine.js';
+import { JUEGOS_COPA } from './rules.js';
 
 let n = 0;
 const test = (name, fn) => { fn(); n++; };
@@ -490,6 +492,47 @@ test('out of the cup (D-347): late signups, the admin bringing them back, and th
   // A cup the admin closed early: the unopened days do not count
   const cerrada = conCierre({ meta: meta7, players, results: r1(), fin: dia(1) });
   assert.equal(fuera(cerrada, 'cccccc', dia(6)), null);
+});
+test('the 🎲 of the new create screen (D-425): styles, locks and balance', () => {
+  // The real skills, in Spanish, as the screen compares them
+  const familia = id => JUEGOS_COPA[id].habilidad;
+  let semilla = 11;
+  const rand = () => ((semilla = (semilla * 16807) % 2147483647) / 2147483647);
+  const cuenta = w => w.reduce((c, id) => ({ ...c, [familia(id)]: (c[familia(id)] || 0) + 1 }), {});
+  for (const id of POZO) assert.ok(JUEGOS_COPA[id]?.habilidad, `${id} has a skill`);
+  for (const lista of Object.values(ESTILOS_SEMANA)) for (const id of lista || []) assert.ok(POZO.includes(id), `${id} is in the pool`);
+  const nuevos = ['agentes', 'rutas', 'loteo', 'pintaminas'];
+  for (let i = 0; i < 300; i++) {
+    for (const estilo of Object.keys(ESTILOS_SEMANA)) {
+      for (const dias of [3, 7]) {
+        const cal = semanaAlAzar(dias, { rand, familia, estilo, nuevos });
+        assert.ok(calendarioValido(cal, dias), `${estilo}: ${cal.join()}`);
+        const w = cal.slice(0, -1);
+        w.slice(1).forEach((id, k) => assert.notEqual(familia(id), familia(w[k]), `${estilo}: no two days in a row of one skill (${cal.join()})`));
+        if (estilo === 'equilibrada' || estilo === 'nuevo') assert.ok(Object.values(cuenta(w)).every(c => c <= 2), `${estilo}: at most two of one skill (${cal.join()})`);
+        if (ESTILOS_SEMANA[estilo] && dias === 7) assert.ok(w.every(id => ESTILOS_SEMANA[estilo].includes(id)), `${estilo}: only its games (${cal.join()})`);
+        if (estilo === 'nuevo' && dias === 7) assert.ok(nuevos.every(id => w.includes(id)), `nuevo: every new game is in (${cal.join()})`);
+      }
+    }
+  }
+  // A locked day keeps its game and its place; the rest changes
+  const fijos = [null, 'reinas', null, null, 'agentes', null];
+  const vistos = new Set();
+  for (let i = 0; i < 100; i++) {
+    const cal = semanaAlAzar(7, { rand, familia, fijos });
+    assert.equal(cal[1], 'reinas'); assert.equal(cal[4], 'agentes');
+    assert.ok(calendarioValido(cal, 7), cal.join());
+    vistos.add(cal[0]);
+  }
+  assert.ok(vistos.size > 3, 'the unlocked days do change');
+  // Locks that break the rules still give a playable week that keeps them
+  const imposible = ['reinas', 'zip', 'tango', 'loteo', null, null];
+  const cal = semanaAlAzar(7, { rand, familia, fijos: imposible });
+  assert.deepEqual(cal.slice(0, 4), imposible.slice(0, 4));
+  assert.ok(calendarioValido(cal, 7), cal.join());
+  // Everything locked: the same week
+  const todo = ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio'];
+  assert.deepEqual(semanaAlAzar(7, { rand, familia, fijos: todo }), [...todo, 'final']);
 });
 await new Promise(r => setTimeout(r, 50));
 console.log(`copa/engine: ${n} tests OK`);
