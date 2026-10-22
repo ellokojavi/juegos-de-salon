@@ -43,7 +43,7 @@ el contenido del día:
 
 | Juego | Modo | El desafío común del día | Puntaje del día (0 a 100) |
 |---|---|---|---|
-| ⏳ Línea Relámpago, 🔢 Toque y Fama: adivina el número, 🔗 Conexiones, 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo; since D-334 also 🚇 Rutas rotas, 📐 Loteo, 🖌️ Pintaminas, 〰️ Zip, ☀️ Tango and 📍 ¿Dónde queda? (in their default variant: 🔢 Numbers, easy) | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
+| ⏳ Línea Relámpago, 🔢 Toque y Fama: adivina el número, 🔗 Conexiones (until 2026-10-23; from 2026-10-24 🕵️ Agentes in its place, D-421), 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo; since D-334 also 🚇 Rutas rotas, 📐 Loteo, 🖌️ Pintaminas, 〰️ Zip, ☀️ Tango and 📍 ¿Dónde queda? (in their default variant: 🔢 Numbers, easy) | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
 | 🪢 El Ahorcado | 🎴 Mazo del celular, con 1 jugador | La palabra (ya sale de la semilla del mazo) | Las vidas que quedan, llevadas a 100, y el tiempo desempata |
 | ⚓ Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan las casillas de barco que acertaste |
 | 🎲 Dudo | 🤖 Contra el celular | Los dados de cada ronda | Ganar vale 60, y cada dado que te queda suma; perder suma por las rondas que aguantaste |
@@ -53,6 +53,7 @@ el contenido del día:
   documento lo explica). **Julepe** tampoco, porque hoy no se ofrece en la portada; si vuelve,
   entra con su modo contra el celular.
 - Zip, Tango and ¿Dónde queda? came in with D-334, together with the three that left the lab (D-332), and 📝 Generala with D-405: 17 games from the deck shuffled on October 23, 2026 (`DESDE_MAS`, `DESDE_GENERALA`).
+- **A game that leaves** says from which date it no longer comes out (`hasta` in `JUEGOS_DIA`, checked by `vigente()`): from that day it is dropped also from the deck in play, and the days before keep their game. 🔗 Conexiones left on 2026-10-24 (`DESDE_AGENTES`, D-421), when 🕵️ Agentes left the lab in its place and joined the next deck shuffled; `uno-al-dia.test.mjs` checks that no day before changes.
 - **A game with variants** (D-331) plays its default one in Uno al día, with no picker: the challenge is the same for everyone. The phone keeps the variant picked standalone for the next standalone game.
 - En Dudo y Batalla Naval el rival responde a lo que haces, así que lo común es el punto de partida
   (los dados, la flota) y no la partida entera. Igual se pueden comparar, y lo dicen la intro (desde el PR 2)

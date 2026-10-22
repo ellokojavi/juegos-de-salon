@@ -827,6 +827,12 @@
       "phase": 4,
       "state": "pending"
     },
+    "public/assets/og/agentes.jpg": {
+      "to": "public/assets/og/agents.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
     "public/assets/og/ahorcado.jpg": {
       "to": "public/assets/og/hangman.jpg",
       "phase": 4,

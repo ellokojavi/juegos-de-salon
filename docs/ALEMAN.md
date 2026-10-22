@@ -34,7 +34,8 @@ que los amigos del dueño van a corregir.
 | Cuarto Rey: penitencias, categorías, "Ich hab noch nie", minijuegos | ~4.000 caracteres | adaptados a un grupo alemán (Bundesliga, Späti, Schlagerstars) |
 | Cartas de Línea de Tiempo | 675 cartas, 26.000 caracteres, y su dato (57.000, D-277) | traducidas, con títulos alemanes de películas y canciones |
 | Palabras del Ahorcado | 100 palabras con pista | elegidas en alemán, sin Ä, Ö, Ü ni ß |
-| Conexiones (`public/cup/games/connections/grillas-de.js`) | 15 grillas y la de ensayo | escritas en alemán, con distractores propios (KIEFER, SCHLOSS, BANK) |
+| Conexiones (`public/cup/games/connections/grillas-de.js`) | 15 grillas y la de ensayo | escritas en alemán, con distractores propios (KIEFER, SCHLOSS, BANK); in La Bodega since D-421, still played by the cups created before |
+| Agentes (`public/cup/games/agents/clues-de.js`, D-421) | about 118 clues, each with 9 or 10 words and 3 temptations | written in German, adapted rather than translated (a Chilean item becomes a German one: DRACHEN); one word per card, at most 15 letters |
 | Palabra (`PALABRAS_DE`) | 162 palabras de cinco letras distintas | escritas en alemán, sin Ä, Ö, Ü ni ß |
 | ¿Dónde queda? (`nombres.js`) | 195 países y 239 ciudades | exónimos alemanes (München, Wien, Elfenbeinküste) |
 
@@ -159,6 +160,7 @@ Austria y Suiza, **con ß** (los suizos no la escriben, pero la leen sin problem
 | Toque y Fama: adivina el número | Bulls and Cows: Crack the Number | Bullen und Kühe: Zahl knacken |
 | Toque y Fama: Palabra | Bulls and Cows: Word | Bullen und Kühe: Wort |
 | Conexiones | Connections | Verbindungen |
+| Agentes | Agents | Agenten |
 | Reinas | Queens | Damen |
 | ¿En qué año? | What Year? | Welches Jahr? |
 | ¿Dónde queda? | Where Is It? | Wo liegt das? |
@@ -185,3 +187,4 @@ Austria y Suiza, **con ß** (los suizos no la escriben, pero la leen sin problem
 | Batalla Naval: agua · tocado · hundido | Wasser · Treffer · versenkt |
 | Cuarto Rey: penitencia · ¡tomar! · Yo nunca nunca | Aufgabe · Trink! · Ich hab noch nie |
 | Julepe: palos · baza · triunfo | Pik, Herz, Karo, Kreuz · Stich · Trumpf |
+| Agentes: agente · pista · neutral · asesino · sospechoso · descartado (D-421) | Agent · Hinweis · Unbeteiligter · Attentäter · verdächtig · ausgeschlossen |
