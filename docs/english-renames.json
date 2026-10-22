@@ -1099,16 +1099,6 @@
       "state": "keep",
       "why": "bridge page of the old Spanish URL (D-192)"
     },
-    "public/labs/agents/pistas.js": {
-      "to": "public/labs/agents/clues.js",
-      "phase": 4,
-      "state": "pending"
-    },
-    "public/labs/agents/tarjeta.jpg": {
-      "to": "public/labs/agents/card.jpg",
-      "phase": 4,
-      "state": "pending"
-    },
     "public/labs/bridges/catalogo-madera.json": {
       "to": "public/labs/bridges/catalog-wood.json",
       "phase": 4,

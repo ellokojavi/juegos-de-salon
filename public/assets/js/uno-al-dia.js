@@ -31,7 +31,14 @@ export const DESDE_MAS = '2026-10-16';
 export const DESDE_GENERALA = '2026-10-23';
 
 /**
- * Los juegos que pueden salir y la fecha desde la que entran. Los solitarios van con su id de La
+ * The day Agentes takes Conexiones' place (D-421): from then on Conexiones does not come out (`hasta`),
+ * also if the deck in play still has it, and Agentes joins the next deck shuffled.
+ */
+export const DESDE_AGENTES = '2026-10-24';
+
+/**
+ * Los juegos que pueden salir y la fecha desde la que entran. One that leaves says from which date
+ * it no longer comes out (`hasta`): the days before it keep their game. Los solitarios van con su id de La
  * Copa (`cup/games/`); los de grupo, con el de la portada (`games.js`), que es el de su página.
  * Un juego nuevo se agrega con una fecha de hoy en adelante, nunca del pasado: si no, cambiaría
  * el juego de días que alguien ya jugó.
@@ -41,7 +48,7 @@ export const JUEGOS_DIA = [
   // to say it (D-377); uno-al-dia.test.mjs checks they match juegosCopa()
   { id: 'linea', emoji: '⏳', desde: LANZAMIENTO, name: { es: 'Línea Relámpago', en: 'Timeline Flash', pt: 'Linha Relâmpago', de: 'Blitz-Zeitstrahl' } },
   { id: 'numero', emoji: '🔢', desde: LANZAMIENTO, name: { es: 'Toque y Fama: adivina el número', en: 'Bulls and Cows: Crack the Number', pt: 'Toque e Fama: descubra o número', de: 'Bullen und Kühe: Zahl knacken' } },
-  { id: 'conexiones', emoji: '🔗', desde: LANZAMIENTO },
+  { id: 'conexiones', emoji: '🔗', desde: LANZAMIENTO, hasta: DESDE_AGENTES },
   { id: 'letras', emoji: '🔤', desde: LANZAMIENTO },
   { id: 'anio', emoji: '📅', desde: LANZAMIENTO },
   { id: 'reinas', emoji: '👑', desde: LANZAMIENTO },
@@ -58,7 +65,11 @@ export const JUEGOS_DIA = [
   { id: 'donde', emoji: '📍', desde: DESDE_MAS },
   // D-405: Generala, opened from the home page, plays solo with the day's dice (D-247)
   { id: 'generala', emoji: '📝', desde: DESDE_GENERALA },
+  // D-421: Agentes, out of the lab in Conexiones' place
+  { id: 'agentes', emoji: '🕵️', desde: DESDE_AGENTES },
 ];
+/** Whether a game can come out on a date: it already joined and has not left. */
+export const vigente = (j, fecha) => j.desde <= fecha && !(j.hasta && j.hasta <= fecha);
 /** Los de grupo: tienen su propio motor y su modo para uno (contra el celular o con su mazo). */
 export const GRUPO = ['ahorcado', 'batalla-naval', 'dudo', 'generala'];
 export const juegoDia = id => JUEGOS_DIA.find(j => j.id === id) || null;
@@ -128,8 +139,10 @@ export function crearCalendario(juegos = JUEGOS_DIA, lanzamiento = LANZAMIENTO) 
   let mazo = [], ciclo = 0, espera = SIN_REPETIR;
   const siguiente = () => {
     const n = dias.length, fecha = sumarDias(lanzamiento, n);
+    // A game that left goes out of the deck in play from its day on
+    mazo = mazo.filter(id => vigente(juegos.find(j => j.id === id), fecha));
     if (!mazo.length) {
-      const pozo = juegos.filter(j => j.desde <= fecha).map(j => j.id);
+      const pozo = juegos.filter(j => vigente(j, fecha)).map(j => j.id);
       mazo = barajar(pozo, mulberry(hash32(`uno-al-dia:ciclo:${ciclo++}`)));
       // Con pocos juegos, 7 días obligaría a repetir el mismo orden cada semana: se deja holgura
       espera = Math.max(1, Math.min(SIN_REPETIR, pozo.length - 2));

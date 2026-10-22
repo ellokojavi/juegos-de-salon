@@ -221,9 +221,8 @@
         "al_dia": true,
         "pendiente": []
       },
-      "servido": [
-        "public/labs/agents/tarjeta.jpg"
-      ]
+      "servido": [],
+      "estado": "Retired from the site in D-421: Agentes left the lab, and its link card is now the game card that og.mjs draws (public/assets/og/agentes.jpg, owned by share-cards). The image and video stay here as the lab invitation."
     },
     {
       "id": "se-vienen-cositas",

@@ -629,8 +629,11 @@ test('final: the rounds are the week\'s games (D-418)', () => {
     assert.equal(p.numero.secreto.length, final.NUMERO_CIFRAS);
     assert.equal(p.reinas.n, 6);
     assert.deepEqual(p.tango, JUEGOS.tango.generar(c, 7));
-    // Conexiones' grid is fixed per cup: the final plays another one
-    assert.notEqual(p.conexiones.id, JUEGOS.conexiones.generar(c, 3, { aud: 'cl' }).id, `${c}: the final's grid is not the week's`);
+    // Conexiones' grid is fixed per cup: the final of a cup from before D-421 plays another one
+    assert.notEqual(JUEGOS.final.generar(c, 7, { rondas: ['conexiones'], aud: 'cl' }).conexiones.id, JUEGOS.conexiones.generar(c, 3, { aud: 'cl' }).id, `${c}: the final's grid is not the week's`);
+    // Agentes plays its own board on the final's day, in the cup's words (D-421)
+    assert.notDeepEqual(p.agentes, JUEGOS.agentes.generar(c, 3, {}), `${c}: the final's Agentes board is not the week's`);
+    assert.deepEqual(JUEGOS.final.generar(c, 7, { rondas: ['agentes'], lang: 'de', palabras: 'en' }).agentes, JUEGOS.agentes.generar(c, 7, { palabras: 'en' }), `${c}: in the cup's words`);
     const t = JUEGOS.final.ensayo(c, 7, { rondas: POZO, aud: 'cl' });
     assert.deepEqual(t.rondas, POZO, `${c}: the trial has the same rounds`);
   }

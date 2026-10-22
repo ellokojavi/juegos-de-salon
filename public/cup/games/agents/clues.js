@@ -1,11 +1,12 @@
 /**
- * Las pistas de Agentes (laboratorio, D-286, D-288), en español de Chile: 100 de cosas concretas y
- * 18 de ideas (ABSTRACTAS, #383), que salen en el calendario desde ABSTRACTAS_DESDE. Cada una trae:
- *  - `si`: palabras que van claramente con la pista (de aquí salen las del tablero).
- *  - `casi`: palabras que se le parecen pero no van: de aquí sale el asesino, que tienta.
+ * Agentes' clues in Spanish from Chile (D-286, D-288, D-421): 100 of concrete things and 18 of ideas
+ * (ABSTRACTAS, #383). Each one brings:
+ *  - `si`: words that clearly go with the clue (the board's agents come from here).
+ *  - `casi`: words that look like it but do not go: the assassin and the neutrals, which tempt.
  *
- * Una palabra puede estar en varias pistas: el generador nunca pone en un tablero una palabra
- * que vaya con dos de sus pistas, ni un asesino que vaya de verdad con alguna.
+ * A word can be in several clues: the generator never puts on a board a word that goes with two of
+ * its clues, nor an assassin that really goes with one. English, Portuguese and German have their
+ * own decks (clues-en.js, clues-pt.js, clues-de.js), adapted, not translated.
  */
 export const CLASICAS = [
   { pista: 'MAR', si: ['OLA', 'BARCO', 'SAL', 'PLAYA', 'ANCLA', 'ISLA', 'MAREA', 'PUERTO', 'TIBURÓN'], casi: ['RÍO', 'LAGO', 'PISCINA'] },
