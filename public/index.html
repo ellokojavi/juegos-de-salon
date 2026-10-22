@@ -501,8 +501,10 @@
     // sistema tiene que abrirse enseguida (Safari lo niega si el toque quedó atrás)
     if (comparteArchivos()) (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => app.imagen());
 
-    // The splash (D-351): a campaign the owner turned on, once per phone, or the one in ?splash=
-    import('./assets/js/splash.js').then(({ startSplash }) => startSplash({ lang })).catch(() => {});
+    // The recap (D-423) goes first: something this phone played ended since the last visit. The
+    // splash (D-351), a campaign the owner turned on or the one in ?splash=, waits for a visit without one
+    import('./assets/js/recap.js').then(({ startRecap }) => startRecap({ lang })).catch(() => false)
+      .then(shown => shown || import('./assets/js/splash.js').then(({ startSplash }) => startSplash({ lang }))).catch(() => {});
     // The lab's experiments bar (D-363): opened from /labs/home/ with ?lab, on the real home page
     // Only for lab key holders, like everything still in development (D-395)
     // The experiments' bar, only with a lab key (D-395). lab: #seccion-portada

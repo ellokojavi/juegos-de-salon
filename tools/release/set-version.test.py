@@ -16,6 +16,12 @@ with tempfile.TemporaryDirectory() as d:
     html = (site / 'index.html').read_text()
     assert '<link rel="modulepreload" href="a.js?v=K">' in html, html
     assert '"./a.js": "./a.js?v=K"' in html, html
+    # A page with no screen has no stylesheet (/cup/recap/, D-423): the import map goes at the end of its head
+    (site / 'x').mkdir()
+    (site / 'x' / 'index.html').write_text('<head>\n  <title>x</title>\n</head><body><script type="module">import "../a.js";</script></body>')
+    sv.stamp(site, '1.2.3', 'K')
+    html = (site / 'x' / 'index.html').read_text()
+    assert html.index('id="importmap"') < html.index('</head>') < html.index('type="module">'), html
 
 # Every preload on the home page names a module that exists
 home = (ROOT / 'public/index.html').read_text()
