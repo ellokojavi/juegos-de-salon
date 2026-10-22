@@ -712,15 +712,20 @@ The rules are pure functions in `public/labs/daily-score/score.js` (over the sam
 streak rules as `uno-al-dia.js`), tested by `score.test.mjs`. The page lists its open questions for
 the owner; nothing goes to players until validated in the lab.
 
-**The real screens (`/labs/daily-score/live/`).** "Uno al día" (title on the right) with real data,
-lab key only: the season line ("quedan X días", in white), the month's points in large rainbow
-digits (the titles' `.rainbow`), the month's points and place read from
-`records/uno-al-dia-pts/`, "Te faltan X pts para pasar a Y" with the "¿Cómo se ganan los puntos?"
-link, the 👑 banner and 🏆 for last month's champion, streak, wildcards, today's bonus, play, sign
-in, one invite card (the site's `tarjetaInvitar` with the +10 pts line; shown but not saved yet), the
-ranking, the month's calendar (each day up to today is a button that opens its details: game, its
-score, streak, bonus, points, or the 🧊 that saved it) and a footer (home, rankings, today's game,
-💬 Sugerencias y comentarios, the lab note). On opening it
+**The real screens (`/labs/daily-score/live/`).** Built on the site's shell like /today/ (`.app`,
+`.topbar`, `.intro-hero` with the rainbow "Uno al día", `.panel`), with real data, lab key only.
+Top to bottom: one hero box (the "Temporada de octubre" chip, "quedan X días", 👑 chip for last
+month's champion, the month's points in yellow `--font-num` digits, one or two status lines —"✅ Hoy
+sumaste 138 pts: 88 del juego + 50 de racha.", "#3 del mes · te faltan X pts para pasar a Y"—, a
+borderless stat row for streak, wildcards and today's bonus, and "¿Cómo se ganan los puntos?");
+Jugar (the standard yellow button) or, once played, 📤 Compartir mi resultado (/today/'s
+`compartirHoy`); Entrar when signed out (the only sign-in nudge); the ranking; the calendar (/today/'s
+cells and title; each day up to today is a button whose details —game, score, streak, bonus,
+points, or the 🧊 that saved it— open right under the grid, one at a time, closed by ✕, the same
+day or Escape); the invite card (the site's `tarjetaInvitar` with one line; the +10 pts is not
+promised until it is saved); and a footer (a dashed lab note that says the +10 is not saved yet,
+🏠 Portada · 🏅 Rankings, and 💬 Sugerencias y comentarios last). The rules dialog has four points.
+Redesigned from a usability critique the owner approved in full (2026-10-21). On opening it
 adds this month's days that do not count yet, in order; signing in on the result adds today's too
 (`sincronizar`). **One ranking everywhere:** the month's points are `bloqueRanking` from
 `ranking.js` with the tabs `mes` and `amigosMes` (🏆 next to last month's champion, 🔥 the streak),

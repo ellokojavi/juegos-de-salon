@@ -14,106 +14,114 @@
   <link rel="stylesheet" href="../../../assets/css/ranking.css">
   <style>
     /* The real screen of "tu Uno al día" (D-412), with real data: this phone's days, the player's
-       history in Firebase and the month's points table. The ranking is the site's own (ranking.js),
-       the same block /records/ shows. */
-    body { padding: 12px 10px 48px; }
-    .wrap { max-width: 520px; margin: 0 auto; display: grid; gap: 12px; }
-    .barra { display: grid; gap: 2px; }
-    .barra a { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink); font-weight: 800; text-decoration: none; }
-    .barra a { justify-self: start; }
-    .barra h1 { margin: 0; font: 400 2.4rem/1.1 var(--font-display); text-align: center; }
-    .hero { text-align: center; display: grid; gap: 4px; padding: 16px 10px; border-radius: 20px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.22), rgba(138, 77, 255, 0.28)); border: 1px solid rgba(255, 210, 63, 0.45); }
-    .hero .temp { font-size: 0.78rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
+       history in Firebase and the month's points table. Built on the site's shell (.app, .topbar,
+       .intro-hero, .panel), with /today/'s section titles and calendar; the ranking is the site's own
+       (ranking.js), the same block /records/ shows. */
+    .uad-pagina { display: grid; gap: 14px; }
+    .uad-hero-icon { display: block; font-size: 3.4rem; line-height: 1.1; }
+    .uad-bloque { display: grid; gap: 10px; }
+    .uad-bloque h2, #reglas h2 { margin: 0; font: 400 1.5rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+    .uad-bloque p { margin: 0; }
+    /* The hero: the season, the points and today, in one box */
+    .hero { text-align: center; display: grid; gap: 8px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.22), rgba(138, 77, 255, 0.28)); border-color: rgba(255, 210, 63, 0.45); }
+    .hero .chips { justify-content: center; align-items: center; }
+    .hero .quedan { color: var(--muted); font-weight: 800; font-size: 0.9rem; }
     .hero .total { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
-    .hero .pts { font: 400 4.4rem/1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--yellow); padding-right: 0.08em; }
+    .hero .pts { font: 900 3.6rem/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); }
     .hero .total small { font-size: 1.1rem; color: var(--muted); font-weight: 800; }
-    .hero .puesto { font-weight: 900; font-size: 1.05rem; }
-    .hero .caza { font-size: 0.88rem; color: var(--muted); font-weight: 700; }
-    .hero .como { justify-self: center; min-height: 44px; padding: 0 8px; background: none; border: 0; color: var(--cyan); font: 800 0.88rem var(--font-body); text-decoration: underline; cursor: pointer; }
-    .corona { text-align: center; display: grid; gap: 4px; padding: 14px 10px; border-radius: 20px; background: linear-gradient(160deg, rgba(255, 210, 63, 0.35), rgba(255, 46, 136, 0.25)); border: 1px solid var(--yellow); font-weight: 800; }
-    .corona .grande { font-size: 2.6rem; line-height: 1; }
-    .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .trio div { display: grid; text-align: center; padding: 8px 2px; border-radius: 14px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); }
-    .trio b { font: 400 1.5rem/1.1 var(--font-display); }
-    .trio small { color: var(--muted); font-weight: 800; font-size: 0.72rem; }
+    .hero .estado { margin: 0; font-weight: 800; }
+    .hero .estado + .estado { color: var(--muted); font-size: 0.92rem; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding-top: 10px; border-top: 1px solid var(--glass-border); }
+    .stats div { display: grid; }
+    .stats b { font: 900 1.4rem/1.15 var(--font-num); font-variant-numeric: tabular-nums; }
+    .stats small { color: var(--muted); font-weight: 800; font-size: 0.78rem; }
+    .hero .como { justify-self: center; min-height: 44px; padding: 0 8px; background: none; border: 0; color: var(--cyan); font: 800 0.92rem var(--font-body); text-decoration: underline; cursor: pointer; }
     .jugar { width: 100%; }
-    .listo { text-align: center; padding: 12px; border-radius: 18px; background: rgba(46, 230, 214, 0.18); border: 1px solid rgba(46, 230, 214, 0.5); font-weight: 800; }
-    .caja { padding: 12px; display: grid; gap: 8px; }
-    .caja h2 { margin: 0; font-size: 1rem; }
-    .caja p { margin: 0; }
-    .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-    .cal > span, .cal > button { min-height: 44px; border-radius: 8px; display: grid; place-items: center; align-content: center; gap: 1px; font-size: 0.72rem; font-weight: 800; color: var(--muted); background: rgba(255,255,255,0.05); }
-    .cal > button { border: 0; font-family: var(--font-body); cursor: pointer; padding: 0; }
-    .cal > button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
-    .cal .sem { background: none; min-height: 0; font-size: 0.66rem; }
-    .cal .vacio { background: none; }
-    .cal .p { font: 900 0.66rem/1 var(--font-body); padding: 2px 4px; border-radius: 999px; background: rgba(0,0,0,0.35); color: var(--ink); }
-    .cal .l1 { background: rgba(255, 46, 136, 0.28); } .cal .l2 { background: rgba(255, 46, 136, 0.5); } .cal .l3 { background: rgba(255, 46, 136, 0.8); }
-    .cal .salvado { background: rgba(80, 160, 255, 0.35); }
-    .cal .hoy { outline: 2px solid var(--yellow); outline-offset: -2px; }
-    .detalle-dia { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; }
+    #invitar .lead { font: 400 1.5rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+    /* The calendar: /today/'s cells, each day up to today a button */
+    .uad-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .uad-cal > span, .uad-cal > button { min-height: 46px; min-width: 0; border-radius: 8px; display: grid; place-items: center; align-content: center; gap: 2px; padding: 3px 0; font: 800 0.8rem var(--font-body); color: var(--muted); background: rgba(255, 255, 255, 0.05); border: 0; }
+    .uad-cal > button { cursor: pointer; }
+    .uad-cal > button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
+    .uad-cal .cal-emoji { font-size: 1.05rem; line-height: 1; }
+    .uad-cal .cal-pts { font: 900 0.68rem/1 var(--font-num); padding: 2px 5px; border-radius: 999px; background: rgba(0, 0, 0, 0.35); color: var(--ink); font-variant-numeric: tabular-nums; }
+    .uad-cal .sem { background: none; min-height: 0; font-size: 0.72rem; text-transform: uppercase; }
+    .uad-cal .vacio { background: none; }
+    .uad-cal .l1 { background: rgba(255, 46, 136, 0.28); color: var(--ink); }
+    .uad-cal .l2 { background: rgba(255, 46, 136, 0.5); color: var(--ink); }
+    .uad-cal .l3 { background: rgba(255, 46, 136, 0.8); color: var(--ink); }
+    .uad-cal .salvado { background: rgba(46, 230, 214, 0.3); color: var(--ink); font-size: 1.05rem; }
+    .uad-cal .hoy { outline: 2px solid var(--yellow); outline-offset: -2px; }
+    .uad-cal > button.elegido { outline: 2px solid var(--cyan); outline-offset: -2px; }
+    .uad-mes { font-weight: 900; }
+    .leyenda { color: var(--muted); font-size: 0.85rem; }
+    /* A day's details, right under the grid */
+    .dia { position: relative; display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--glass-border); }
+    .dia h3 { margin: 0 44px 0 0; font-size: 1.05rem; }
+    .dia h3 .muted { font-weight: 800; white-space: nowrap; }
+    .dia .x { position: absolute; top: 2px; right: -8px; width: 44px; height: 44px; border: 0; background: none; color: var(--ink); font-size: 1.2rem; cursor: pointer; }
+    .detalle-dia { margin: 0; display: grid; gap: 6px; }
+    .detalle-dia div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
     .detalle-dia dt { color: var(--muted); font-weight: 800; }
-    .detalle-dia dd { margin: 0; font-weight: 800; text-align: right; }
+    .detalle-dia dd { margin: 0; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+    .detalle-dia .ancha { display: grid; gap: 2px; }
+    .detalle-dia .ancha dd { text-align: left; }
     .detalle-dia .suma { border-top: 1px solid var(--glass-border); padding-top: 6px; }
-    .reglas { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 0.92rem; }
-    #calendario { position: relative; }
-    .flota { position: absolute; left: 8px; right: 8px; z-index: 5; padding: 12px 14px; border-radius: 16px; background: var(--bg2, #1d0b35); border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .flota h3 { margin: 0 40px 8px 0; font-size: 1rem; }
-    .flota .x { position: absolute; top: 2px; right: 2px; width: 44px; height: 44px; border: 0; background: none; color: var(--ink); font-size: 1.2rem; cursor: pointer; }
-    .cal > button.elegido { outline: 2px solid var(--cyan); outline-offset: -2px; }
-    dialog { max-width: min(92vw, 440px); border-radius: 20px; border: 1px solid var(--glass-border); background: var(--bg2, #1d0b35); color: var(--ink); padding: 18px; }
-    dialog::backdrop { background: rgba(0,0,0,0.6); }
-    .lab { padding: 12px; display: grid; gap: 8px; border-style: dashed; }
-    .lab p { margin: 0; font-size: 0.85rem; }
-    .pie { display: grid; gap: 10px; justify-items: center; text-align: center; padding: 8px 0 0; }
-    .pie nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; }
+    /* Rules: the emoji is the marker */
+    .reglas { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+    #reglas { max-width: min(92vw, 440px); border-radius: var(--radius); border: 1px solid var(--glass-border); background: var(--bg2, #1d0b35); color: var(--ink); padding: 18px; }
+    #reglas::backdrop { background: rgba(0, 0, 0, 0.6); }
+    #reglas h2 { margin-bottom: 12px; font-size: 1.3rem; }
+    .pie { display: grid; gap: 10px; justify-items: center; text-align: center; }
+    .pie .lab { justify-self: stretch; border-style: dashed; padding: 12px 16px; text-align: left; font-size: 0.88rem; margin: 0; }
+    .pie nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; }
     .pie nav a { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink); font-weight: 800; text-decoration: none; }
-    .pie p { margin: 0; font-size: 0.85rem; }
-    .uad-invitar .suma-inv { margin: 0; }
+    .pie p { margin: 0; }
   </style>
 </head>
 <body>
-  <div class="wrap" id="app">
-    <div class="barra"><a href="../../">‹ Laboratorio</a><h1><span class="rainbow">Uno al día</span></h1></div>
-    <div id="corona"></div>
-    <section class="hero" id="hero"><p class="muted" style="margin:0">Cargando…</p></section>
-    <div class="trio" id="trio"></div>
-    <div id="jugar"></div>
-    <div id="entrar"></div>
-    <div id="ranking"></div>
-    <section class="panel caja" id="calendario"></section>
-    <div id="invitar"></div>
-    <footer class="pie" id="pie">
-      <nav aria-label="Más">
-        <a href="../../../">🏠 Portada</a>
-        <a href="../../../records/">🏅 Rankings</a>
-        <a href="../../../today/">📅 Uno al día de hoy</a>
-      </nav>
-      <p><button type="button" class="buzon-link footer-buzon" id="btn-buzon-uad">💬 Sugerencias y comentarios</button></p>
-      <p class="muted"><b>🧪 Laboratorio.</b> Estas pantallas usan tus datos reales; solo las ves con tu llave. Los +10 por invitar todavía no se guardan. <a href="../" style="color:inherit">Ver el prototipo con las notas</a>.</p>
-    </footer>
-  </div>
-
+  <main class="app">
+    <div class="topbar"><a class="back" href="../../">‹ Laboratorio</a></div>
+    <header class="intro-hero center">
+      <span class="uad-hero-icon" aria-hidden="true">📅</span>
+      <h1 class="display display--lg rainbow">Uno al día</h1>
+    </header>
+    <div class="uad-pagina" id="app">
+      <section class="panel hero" id="hero"><p class="muted" style="margin:0">Cargando…</p></section>
+      <div id="jugar"></div>
+      <div id="entrar"></div>
+      <div id="ranking"></div>
+      <section class="panel uad-bloque" id="calendario"></section>
+      <div id="invitar"></div>
+      <footer class="pie" id="pie">
+        <p class="panel lab">🧪 <b>Laboratorio:</b> tus datos reales, solo con tu llave. Los +10 pts por invitar llegan cuando se guarden. <a href="../" style="color:inherit">Ver el prototipo con las notas</a>.</p>
+        <nav aria-label="Más">
+          <a href="../../../">🏠 Portada</a>
+          <a href="../../../records/">🏅 Rankings</a>
+        </nav>
+        <p><button type="button" class="buzon-link footer-buzon" id="btn-buzon-uad">💬 Sugerencias y comentarios</button></p>
+      </footer>
+    </div>
+  </main>
 
   <dialog id="reglas" aria-labelledby="reglas-t">
-    <h2 id="reglas-t" style="margin:0 0 10px">¿Cómo se ganan los puntos?</h2>
+    <h2 id="reglas-t">¿Cómo se ganan los puntos?</h2>
     <ul class="reglas">
       <li>🎮 <b>El juego:</b> cada Uno al día suma su puntaje, de 0 a 100.</li>
       <li>🔥 <b>La racha:</b> +5 por cada día seguido, hasta +50.</li>
       <li>🧊 <b>Comodín:</b> salva un día que no jugaste; la racha y su bono siguen.</li>
-      <li>👋 <b>Invitar:</b> cuando tu amigo termina su primer Uno al día, un 🧊 y +10 pts.</li>
       <li>🏆 <b>Temporada:</b> el mes. El 1.° todos parten de 0, y el primero del mes lleva el 🏆 junto a su nombre el mes siguiente.</li>
     </ul>
-    <form method="dialog" style="margin-top:14px"><button class="btn btn--yellow" style="width:100%">Entendido</button></form>
+    <form method="dialog" style="margin-top:16px"><button class="btn btn--yellow" style="width:100%">Entendido</button></form>
   </dialog>
 
   <script type="module">
     import { el } from '../../../assets/js/ui.js';
-    import { estado, leer, sumarDias, numDia, numeroDel, juegoDel, juegoDia } from '../../../assets/js/uno-al-dia.js';
+    import { estado, leer, sumarDias, numDia, numeroDel, juegoDel, juegoDia, COMODINES_MAX } from '../../../assets/js/uno-al-dia.js';
     import { periodoMes, UAD_PUNTOS } from '../../../assets/js/records.js';
     import { jugador } from '../../../assets/js/jugador.js';
     import { bloqueRanking, bloqueJugador, campeonDelMes, mesAnterior } from '../../../assets/js/ranking.js';
-    import { tarjetaInvitar, rutaHoy } from '../../../assets/js/uno-al-dia-ui.js';
+    import { tarjetaInvitar, compartirHoy, rutaHoy } from '../../../assets/js/uno-al-dia-ui.js';
     import { gameById } from '../../../assets/js/games.js';
     import { walk, seasonPoints } from '../score.js';
 
@@ -121,49 +129,53 @@
     const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     const miles = n => Number(n || 0).toLocaleString('es-CL');
     const mesDe = p => MESES[Number(p.slice(6, 8)) - 1];
+    // m:ss for the share card's time, as La Copa writes it (not imported: a page loads only its own game, D-378)
+    const mmss = ms => { const t = Math.round(ms / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+    const bono = r => Math.min(50, Math.max(0, r) * 5);
 
     // The season's end: "quedan X días", the owner's choice in the lab (D-412)
-    function lineaTemporada(hoy) {
+    function quedan(hoy) {
       const [y, m] = hoy.split('-').map(Number);
-      const quedan = new Date(Date.UTC(y, m, 0)).getUTCDate() - Number(hoy.slice(8)) + 1;
-      return `Temporada de ${MESES[m - 1]} · ${quedan === 1 ? 'último día' : `quedan ${quedan} días`}`;
+      const n = new Date(Date.UTC(y, m, 0)).getUTCDate() - Number(hoy.slice(8)) + 1;
+      return n === 1 ? 'último día' : `quedan ${n} días`;
     }
 
-    // A tapped day of the calendar: what it was and what it added
+    // A tapped day of the calendar: what it was and what it added, right under the grid.
+    // One at a time: the same day closes it, another day switches it, ✕ or Escape close it.
     const nombre = g => (g && (gameById(g.id)?.name || g.name)?.es) || '';
     const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-    function verDia(f, x, hoy) {
+    let abierto = null, ultimo = null;
+    function verDia(f) {
+      if (abierto === f) return cerrarDia();
+      abierto = f;
+      mostrarDia();
+    }
+    function mostrarDia() {
+      $('dia')?.remove();
+      document.querySelectorAll('.uad-cal .elegido').forEach(b => { b.classList.remove('elegido'); b.setAttribute('aria-expanded', 'false'); });
+      if (!abierto || !ultimo) return;
+      const { w, hoy } = ultimo, f = abierto;
+      const x = w.days.find(d => d.date === f);
       const [y, m, d] = f.split('-').map(Number);
       const n = numeroDel(f);
-      const titulo = `${DIAS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]} ${d} de ${MESES[m - 1]}${n >= 1 ? ` · n.° ${n}` : ''}`;
       const g = juegoDia(x?.game ?? (n >= 1 ? juegoDel(f) : null));
-      const fila = (k, v, cls) => [el('dt', cls ? { class: cls } : {}, k), el('dd', cls ? { class: cls } : {}, v)];
+      const fila = (k, v, cls) => el('div', cls ? { class: cls } : {}, el('dt', {}, k), el('dd', {}, v));
+      const juego = fila('Juego', `${g?.emoji || '🎲'} ${nombre(g) || x?.game || ''}`, 'ancha');
       const filas = x?.played
-        ? [...fila('Juego', `${g?.emoji || '🎲'} ${nombre(g) || x.game}`), ...fila('Puntaje del juego', `${x.score} / 100`),
-          ...fila('Racha', `🔥 ${x.streak} ${x.streak === 1 ? 'día' : 'días'}`), ...fila('Bono de la racha', `+${x.bonus}`),
-          ...fila('Sumó', `${miles(x.points)} pts`, 'suma')]
+        ? [juego, fila('Puntaje del juego', `${x.score} / 100`), fila('Racha', `🔥 ${x.streak} ${x.streak === 1 ? 'día' : 'días'}`), fila('Bono de la racha', `+${x.bonus}`), fila('Sumó', `${miles(x.points)} pts`, 'suma')]
         : x?.saved
-          ? [...fila('Juego', `${g?.emoji || '🎲'} ${nombre(g)}`), ...fila('No jugaste', '🧊 lo salvó un comodín'), ...fila('Racha', `🔥 ${x.streak} sigue`), ...fila('Sumó', '0 pts', 'suma')]
-          : n < 1 ? [...fila('Uno al día', 'todavía no existía')]
-          : [...fila('Juego', `${g?.emoji || '🎲'} ${nombre(g)}`), ...fila(f === hoy ? 'Hoy' : 'No jugaste', f === hoy ? 'todavía no juegas' : 'la racha se cortó'), ...fila('Sumó', '0 pts', 'suma')];
-      cerrarDia();
-      const celda = document.querySelector(`.cal [data-dia="${f}"]`);
+          ? [juego, fila('No jugaste', '🧊 lo salvó un comodín'), fila('Racha', `🔥 ${x.streak} días, no se cortó`), fila('Sumó', '0 pts', 'suma')]
+          : n < 1 ? [fila('Uno al día', 'todavía no existía')]
+          : [...(f === hoy ? [] : [juego]), fila(f === hoy ? 'Hoy' : 'No jugaste', f === hoy ? 'todavía no juegas' : 'la racha se cortó'), fila('Sumó', '0 pts', 'suma')];
+      const celda = document.querySelector(`.uad-cal [data-dia="${f}"]`);
       celda?.classList.add('elegido'); celda?.setAttribute('aria-expanded', 'true');
-      const caja = $('calendario');
-      const flota = el('div', { class: 'flota', id: 'dia', role: 'dialog', 'aria-labelledby': 'dia-t' },
+      $('calendario').append(el('div', { class: 'dia', id: 'dia', role: 'region', 'aria-labelledby': 'dia-t' },
         el('button', { type: 'button', class: 'x', 'aria-label': 'Cerrar', onClick: cerrarDia }, '✕'),
-        el('h3', { id: 'dia-t' }, titulo), el('dl', { class: 'detalle-dia' }, ...filas));
-      caja.append(flota);
-      // Floats just below the tapped row, inside the calendar
-      flota.style.top = `${Math.min(celda.offsetTop + celda.offsetHeight + 4, caja.clientHeight - flota.offsetHeight)}px`;
+        el('h3', { id: 'dia-t' }, `${DIAS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]} ${d} de ${MESES[m - 1]}`, ...(n >= 1 ? [' ', el('span', { class: 'muted' }, `· n.° ${n}`)] : [])),
+        el('dl', { class: 'detalle-dia' }, ...filas)));
     }
-    function cerrarDia() {
-      $('dia')?.remove();
-      document.querySelectorAll('.cal .elegido').forEach(b => { b.classList.remove('elegido'); b.removeAttribute('aria-expanded'); });
-    }
-    // Closes with ✕, Escape, another day or a tap outside the calendar
-    document.addEventListener('keydown', ev => { if (ev.key === 'Escape') cerrarDia(); });
-    document.addEventListener('click', ev => { if ($('dia') && !ev.target.closest('#dia, .cal [data-dia]')) cerrarDia(); });
+    function cerrarDia() { abierto = null; mostrarDia(); }
+    document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && abierto) cerrarDia(); });
 
     function calendario(w, hoy) {
       const [y, m] = hoy.split('-').map(Number);
@@ -176,14 +188,16 @@
       for (let i = 0; i < enMes; i++) {
         const f = sumarDias(primero, i), x = por[f], h = f === hoy ? ' hoy' : '';
         // Up to today each day is a button that opens its details; the days to come are only a number
-        const ver = { type: 'button', 'data-dia': f, onClick: () => verDia(f, x, hoy) };
-        if (x?.played) celdas.push(el('button', { ...ver, class: `l${x.points >= 120 ? 3 : x.points >= 80 ? 2 : 1}${h}`, 'aria-label': `${i + 1}: ${x.points} pts` }, el('span', {}, juegoDia(x.game)?.emoji || '🎲'), el('span', { class: 'p' }, `${x.points}`)));
+        const ver = { type: 'button', 'data-dia': f, 'aria-expanded': 'false', 'aria-controls': 'dia', onClick: () => verDia(f) };
+        if (x?.played) celdas.push(el('button', { ...ver, class: `l${x.points >= 120 ? 3 : x.points >= 80 ? 2 : 1}${h}`, 'aria-label': `${i + 1}: ${x.points} pts` }, el('span', { class: 'cal-emoji' }, juegoDia(x.game)?.emoji || '🎲'), el('span', { class: 'cal-pts' }, `${x.points}`)));
         else if (x?.saved) celdas.push(el('button', { ...ver, class: `salvado${h}`, 'aria-label': `${i + 1}: comodín` }, '🧊'));
         else if (f <= hoy) celdas.push(el('button', { ...ver, class: h.trim() }, `${i + 1}`));
         else celdas.push(el('span', {}, `${i + 1}`));
       }
-      $('calendario').replaceChildren(el('h2', {}, `🗓️ ${MESES[m - 1]} ${y}`), el('div', { class: 'cal' }, celdas),
-        el('p', { class: 'muted', style: 'font-size:0.8rem' }, 'En cada día, los puntos que sumó: juego + bono de la racha. 🧊 = día salvado por un comodín. Toca un día para ver el detalle.'));
+      $('calendario').replaceChildren(el('h2', {}, 'Calendario'), el('p', { class: 'uad-mes' }, `${MESES[m - 1][0].toUpperCase()}${MESES[m - 1].slice(1)} ${y}`),
+        el('div', { class: 'uad-cal' }, celdas),
+        el('p', { class: 'leyenda' }, 'Puntos de cada día: juego + racha. Toca un día para ver el detalle.'));
+      mostrarDia();
     }
 
     // One drawing at a time: the backfill below must not add a day twice
@@ -212,30 +226,40 @@
     }
 
     function pintar({ e, hoy, w, yo = null, pts, puesto = null, delante = null, soyCampeon = false }) {
-      $('corona').replaceChildren(...(soyCampeon ? [el('div', { class: 'corona' }, el('span', { class: 'grande' }, '👑'), `¡Campeón de ${mesDe(mesAnterior(hoy))}! Tu 🏆 va junto a tu nombre en el ranking este mes.`)] : []));
-      const como = el('button', { type: 'button', class: 'como', onClick: () => $('reglas').showModal() }, '¿Cómo se ganan los puntos?');
+      ultimo = { w, hoy };
+      const [, m] = hoy.split('-').map(Number);
+      const hecho = e.dia ? w.days.find(d => d.date === hoy && d.played) : null;
+      // One status line (two at most): today, then the place; signed out, the Entrar card below says it
+      const estados = [];
+      if (hecho) estados.push(`✅ Hoy sumaste ${miles(hecho.points)} pts: ${hecho.score} del juego + ${hecho.bonus} de racha.`);
+      if (puesto) estados.push(delante ? `#${puesto} del mes · te faltan ${miles(delante.s - pts + 1)} pts para pasar a ${delante.n}` : `#${puesto} del mes${soyCampeon ? ' 🏆' : ''}`);
+      else if (yo && !e.dia) estados.push('Juega hoy para entrar al ranking del mes.');
+      else if (yo && e.dia) estados.push('Tus puntos entran al ranking en un momento.');
       $('hero').replaceChildren(
-        el('span', { class: 'temp' }, lineaTemporada(hoy)),
+        el('div', { class: 'chips' }, el('span', { class: 'chip' }, `Temporada de ${MESES[m - 1]}`),
+          ...(soyCampeon ? [el('span', { class: 'chip chip--gold' }, `👑 Campeón de ${mesDe(mesAnterior(hoy))}`)] : []),
+          el('span', { class: 'quedan' }, quedan(hoy))),
         el('span', { class: 'total' }, el('span', { class: 'pts' }, miles(pts)), el('small', {}, 'pts')),
-        puesto ? el('span', { class: 'puesto' }, `#${puesto} del mes${soyCampeon ? ' 🏆' : ''}`) : el('span', { class: 'caza' }, yo ? 'Juega hoy para entrar al ranking del mes.' : 'Entra con tu nombre para guardar tus puntos y salir en el ranking.'),
-        ...(delante ? [el('span', { class: 'caza' }, 'Te faltan ', el('b', {}, miles(delante.s - pts + 1)), ` pts para pasar a ${delante.n}`)] : []),
-        como);
-      $('trio').replaceChildren(
-        el('div', {}, el('b', {}, `🔥${e.racha}`), el('small', {}, 'racha')),
-        el('div', {}, el('b', {}, `🧊${e.comodines}`), el('small', {}, 'comodines')),
-        el('div', {}, el('b', {}, `+${Math.min(50, (e.racha + (e.dia ? 0 : 1)) * 5)}`), el('small', {}, e.dia ? 'bono de hoy' : 'bono si juegas hoy')));
+        ...estados.map(t => el('p', { class: 'estado' }, t)),
+        el('div', { class: 'stats' },
+          el('div', {}, el('b', {}, `🔥${e.racha}`), el('small', {}, 'racha')),
+          el('div', {}, el('b', {}, `🧊${e.comodines}`), el('small', {}, 'comodines')),
+          el('div', {}, el('b', {}, `+${bono(e.racha + (e.dia ? 0 : 1))}`), el('small', {}, 'bono de hoy'))),
+        el('button', { type: 'button', class: 'como', onClick: () => $('reglas').showModal() }, '¿Cómo se ganan los puntos?'));
       const juego = juegoDia(juegoDel(hoy));
+      // Played today: share it, as /today/ does; not yet: Jugar
       $('jugar').replaceChildren(e.dia
-        ? el('div', { class: 'listo' }, `✅ Listo por hoy: ${e.dia.s} + bono. Mañana, otro.`)
+        ? compartirHoy({ lang: 'es', fecha: hoy, dia: e.dia, mmss })
         : el('a', { class: 'btn btn--yellow jugar', href: `../../../${rutaHoy(juego?.id)}` }, 'Jugar'));
       calendario(w, hoy);
     }
 
     // The ranking: the site's own block, the same as in /records/ (D-412)
     $('ranking').replaceChildren(bloqueRanking({ juego: UAD_PUNTOS, titulo: '🏅 Ranking del mes', pestanas: ['mes', 'amigosMes'] }));
-    // Inviting, in one card: the site's invite card, with what it adds to the season
+    // Inviting: the site's card with one line of its own (the +10 is not saved yet, so it is not promised)
     const inv = tarjetaInvitar({ lang: 'es' });
-    inv.querySelector('.lead')?.after(el('p', { class: 'suma-inv' }, 'Cuando tu amigo termina su primer Uno al día, ganas un 🧊 comodín y ', el('b', {}, '+10 pts'), ' para la temporada.'));
+    inv.querySelector('#uad-inv-linea')?.replaceWith(...(estado().comodines < COMODINES_MAX
+      ? [el('p', { class: 'muted', style: 'margin:0' }, '🧊 Cuando tu amigo termina su primer Uno al día, ganas un comodín.')] : []));
     $('invitar').replaceChildren(inv);
     $('btn-buzon-uad').addEventListener('click', () => import('../../../assets/js/buzon.js').then(m => m.abrirBuzon({ pantalla: 'uno-al-dia-lab' })));
     jugador().then(J => {
