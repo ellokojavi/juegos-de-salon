@@ -115,9 +115,10 @@ function spark(lugares, n) {
 const MEDALS = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
 /**
- * Opens the window. `view`: `{ emoji, kicker, title, lead, rows, link: { label, href }, cols?, scale?, note? }`,
+ * Opens the window. `view`: `{ emoji, kicker, title, lead, rows, link: { label, href }, cols?, scale?, note?, image? }`,
  * each row `{ lugar, name, total, lugares, delta, mine, fuera }`; `cols` names the line's column
- * (day by day, or week by week), `scale` is the last place a line can reach, `note` a line under the table. Resolves when it closes; `onLeave`
+ * (day by day, or week by week), `scale` is the last place a line can reach, `note` a line under the table;
+ * `image`, a cup's final table as it shares it (D-427), takes the place of the rows. Resolves when it closes; `onLeave`
  * runs when the player closes it or follows its link (that is when it counts as seen).
  */
 export function showRecap(view, { lang = 'es', onLeave } = {}) {
@@ -140,6 +141,8 @@ export function showRecap(view, { lang = 'es', onLeave } = {}) {
   head.append(node('p', 'splash-kicker', view.kicker));
   const h = node('h2', 'splash-titulo recap-titulo', view.title);
   h.id = 'recap-titulo';
+  // The cup's image already carries its name on top (D-427): the title stays for screen readers
+  if (view.image) h.classList.add('recap-oculto');
   head.append(h, node('p', 'splash-lead recap-lead', view.lead));
 
   const n = view.scale || view.rows.length;
@@ -163,7 +166,13 @@ export function showRecap(view, { lang = 'es', onLeave } = {}) {
   }
   table.append(thead, tbody);
   const wrap = node('div', 'recap-tabla-caja');
-  wrap.append(table);
+  if (view.image) {
+    // The final table as the cup shares it (D-427): the trajectory and the podium in gold, silver and bronze
+    const img = node('img', 'recap-imagen');
+    img.src = URL.createObjectURL(view.image);
+    img.alt = `${view.title}. ${view.lead}`;
+    wrap.append(img);
+  } else wrap.append(table);
 
   const go = node('a', 'btn btn--yellow recap-ir', view.link.label);
   go.href = view.link.href;
@@ -197,10 +206,10 @@ export function showRecap(view, { lang = 'es', onLeave } = {}) {
 }
 
 /** La Copa's recap as the window draws it. */
-export function cupView({ code, alias, path, recap }, lang) {
+export function cupView({ code, alias, path, recap, image = null }, lang) {
   const R = textsOf(lang);
   return {
-    emoji: '🏆', kicker: R.cupKicker, title: recap.name, lead: cupLead(recap, lang), rows: recap.rows,
+    emoji: '🏆', kicker: R.cupKicker, title: recap.name, lead: cupLead(recap, lang), rows: recap.rows, image,
     link: { label: R.seeCup, href: new URL(path || `cup/?${alias || code}`, ROOT).href },
   };
 }
