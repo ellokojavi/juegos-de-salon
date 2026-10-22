@@ -312,7 +312,10 @@ one phone signs in with its player and opens a cup where it is seated; another p
 signs in with the same player, finds it on the home page and enters it with no cup PIN (D-359).
 Last (D-358), a phone with no player sits in a cup with the usual name and PIN, enters as the player,
 and the podium saved without them gets their jid. Then, signed in, joining a new cup asks no cup PIN
-and links the player (D-359). It uses the cup's test store and the players' one.
+and links the player (D-359). Last (D-416), that phone loses its anonymous session: Empezar leads to
+"Ya estoy inscrito", which says the player's session was lost too and asks for the player's PIN; a
+wrong one is refused, switching names keeps the field, and the right one seats the phone as the
+player again and returns to the board. It uses the cup's test store and the players' one.
 
 `node tools/e2e/cup/zip-ten.mjs <output>` plays the ten Zip levels in practice, with the
 fixed seed, and checks that the game ends there, before the clock (D-250): the notice "¡Resolviste
