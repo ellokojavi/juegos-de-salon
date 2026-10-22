@@ -236,16 +236,16 @@ link.
   dejan reescribirlo, ni que alguien se invite a sí mismo). El comodín se suma al leer esa lista,
   así que no hace falta que los dos estén conectados a la vez.
 
-### +10 pts por invitar (in the lab, D-414)
+### +10 pts por invitar (D-414)
 
-Still behind the lab key (card `#seccion-uad-invitar-jugar` in /labs/), now that the home card has left it.
+For everyone since 2026-10-22, validated in the lab by the owner (its card is in La Bodega, 🚀 Lanzado).
 
-With a lab key, each friend who accepts also adds **+10 pts** to the inviter's month, once per
+Each friend who accepts also adds **+10 pts** to the inviter's month, once per
 friend: on opening /today/ (`sincronizar` in `uno-al-dia-red.js`), each acceptance without `p` from
 October 2026 on adds +10 to the table of the month it was accepted in, and marks `p` on the
 acceptance in the same write (`anotarInvitado` in `jugador.js`; the rules and `jugador-local.js`
 check exactly +10, once). No limit of 2 here: every friend counts. Said in the wildcards box
-("👋 Y cada amigo que invitas suma +10 pts a tu mes.") and in the rules dialog, only with a lab key.
+("👋 Y cada amigo que invitas suma +10 pts a tu mes.") and in the rules dialog.
 On 2026-10-22 there were no acceptances in Firebase yet, so October needed no backfill.
 
 ### The home card: two destinations (D-414)
@@ -752,8 +752,7 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
   rules against the history; the streak `r` a phone claims grows at most one a day, up to 10. Today's
   goes up when it is played; on opening /today/ the month's days not yet counted go up in order.
 - **Inviting:** each friend who finishes their first Uno al día with your invitation adds +10 to your
-  month (`PUNTOS_INVITAR` in `records.js`), once per friend; saved for lab key holders only for now
-  (D-414, see "+10 pts por invitar" above).
+  month (`PUNTOS_INVITAR` in `records.js`), once per friend (D-414, see "+10 pts por invitar" above).
 
 The rules are pure functions in `public/assets/js/daily-points.js` (over the same history and streak
 rules as `uno-al-dia.js`), tested by `daily-points.test.mjs`, and shared by /today/, the lab prototype
