@@ -95,17 +95,19 @@ export function tarjetaUnoAlDia({ lang, raiz = '', alTocar }) {
  * The chip once today is played: the month's points and place (owner's request). The last ones the
  * server gave, cached by /today/, if they already count today; otherwise this phone's own count.
  */
-function chipPuntos(T, lang) {
+function chipPuntos(T, lang, racha = 0) {
   const P = T.pts, hoy = fechaLocal(), mes = `s${hoy.slice(0, 7)}`;
   let c = null;
   try { c = JSON.parse(localStorage.getItem('uad-pts-cache') || 'null'); } catch (_) { /* sin memoria */ }
   if (c?.p !== mes) c = null;
   const pts = c && c.d === hoy && c.h ? c.s : seasonPoints(walk(leer().dias, hoy), hoy);
   const n = fmt(P.ptsN, { n: Number(pts || 0).toLocaleString(lang) });
+  // Once played the streak goes in the line under the place, not in a row of its own (owner's choice)
+  const fuego = racha ? [el('span', { class: 'uad-card-fuego' }, ` · 🔥 ${racha}`)] : [];
   // The place big (gradient), the points under it; with no place known yet, the points are the big one
   return c?.r
-    ? [el('span', { class: 'uad-card-pos' }, fmt(P.chipPuesto, { p: c.r })), el('span', { class: 'uad-card-sub' }, el('i', {}, `${P.delMes} · `), el('b', {}, n))]
-    : [el('span', { class: 'uad-card-pos' }, Number(pts || 0).toLocaleString(lang)), el('span', { class: 'uad-card-sub' }, el('b', {}, `${P.pts} `), el('i', {}, P.delMes))];
+    ? [el('span', { class: 'uad-card-pos' }, fmt(P.chipPuesto, { p: c.r })), el('span', { class: 'uad-card-sub' }, ...(racha ? [] : [el('i', {}, `${P.delMes} · `)]), el('b', {}, n), ...fuego)]
+    : [el('span', { class: 'uad-card-pos' }, Number(pts || 0).toLocaleString(lang)), el('span', { class: 'uad-card-sub' }, el('b', {}, `${P.pts} `), el('i', {}, P.delMes), ...fuego)];
 }
 
 /**
@@ -117,7 +119,7 @@ function tarjetaDosDestinos({ lang, raiz, alTocar }) {
   const { T, hecho, aria, racha } = estadoAcceso(lang, raiz, alTocar);
   const ir = () => { alTocar?.(); trackUnoAlDia('boton'); };
   const chip = hecho
-    ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, onClick: ir }, ...chipPuntos(T, lang))
+    ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, onClick: ir }, ...chipPuntos(T, lang, racha))
     : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', 'aria-label': T.ariaJugarHoy, onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, `▶ ${T.jugar}`);
   // The screen reader hears the place and the points too, not only «your points»
   if (hecho) chip.setAttribute('aria-label', `${T.ariaTusPuntos}: ${chip.textContent}`);
@@ -125,7 +127,7 @@ function tarjetaDosDestinos({ lang, raiz, alTocar }) {
     el('a', { class: 'uad-card-link', id: 'btn-uad-abrir', href: `${raiz}today/`, 'aria-label': aria, onClick: ir }),
     el('div', { class: 'emoji' }, el('span', { 'aria-hidden': 'true' }, '📅')),
     el('div', { class: 'texto' }, el('h2', {}, el('span', {}, T.nombre)), el('div', { class: 'tag' }, T.sub)),
-    el('div', { class: 'meta' }, racha ? el('span', { class: 'uad-card-estado', 'aria-hidden': 'true' }, `🔥 ${racha}`) : null, chip),
+    el('div', { class: 'meta' }, racha && !hecho ? el('span', { class: 'uad-card-estado', 'aria-hidden': 'true' }, `🔥 ${racha}`) : null, chip),
     hecho ? null : el('span', { class: 'btn-uad-punto', 'aria-hidden': 'true' }));
 }
 
