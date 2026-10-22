@@ -9,6 +9,9 @@
  *   node tools/firebase/uad-points-backfill.mjs --month 2026-10      another month (default 2026-10)
  *   node tools/firebase/uad-points-backfill.mjs --rebuild [--apply]  recomputes the whole month (D-415)
  *
+ * `--rebuild` also writes the season's places by week (`uadTemporada/s<yyyy-mm>`, D-424) for the
+ * recap the home page shows when the month ends.
+ *
  * `--rebuild` recomputes each player's month from scratch, from the history and the days their 🧊
  * saved (the markers a phone uploads, `{ c: true }`, D-415), plus +10 for each invited friend already
  * counted (`invitados/<jid>/<uid>/p`) that accepted in that month, and rewrites the row when it
@@ -80,6 +83,47 @@ export function rehacerMes(hist, month, { gifts = [], invites = 0 } = {}) {
   return { s, r: Math.max(1, Math.min(RACHA_TOPE, last.streak)), u: String(numDia(last.date)), faltaP: dias.map(d => numDia(d.date)).filter(n => !hist[n]?.p) };
 }
 
+/** Where the season's places by week are kept (D-424): `uadTemporada/s<yyyy-mm>`, public to read. */
+export const TEMPORADA = 'uadTemporada';
+
+/**
+ * The days a season's places are taken (D-424): each Sunday of the month (Uno al día's weeks start
+ * on Monday) and its last day, the end of the season.
+ */
+export function cortesDe(month) {
+  const last = lastDay(month);
+  const out = [];
+  for (let d = `${month}-01`; d <= last; d = fechaDeNum(numDia(d) + 1)) if (new Date(`${d}T12:00:00Z`).getUTCDay() === 0 && d !== last) out.push(d);
+  return [...out, last];
+}
+
+/**
+ * The season's places by week (D-424), for the recap window the home page opens when a month ends:
+ * `{ c: [cut dates], t: the day it was computed, j: { <jid>: { n, co?, s, l: [place at each cut, or 0] } } }`.
+ * Each player's points walk their history as `rehacerMes` does, plus +10 on the day each counted
+ * friend accepted; at each cut, everyone with points is ranked by points, ties sharing the place
+ * (as the table does, `ordenar`). 0 means no points yet by that cut. `players`: `[{ jid, n, co, hist, gifts, invites: [dates] }]`.
+ */
+export function temporadaDe(players, month, today) {
+  const cortes = cortesDe(month);
+  const filas = [];
+  for (const p of players) {
+    const dias = walkServer(p.hist, month, p.gifts).days.filter(d => d.played && d.date.startsWith(month));
+    const sumas = [...dias.map(d => [d.date, d.score + bonusFor(Math.min(RACHA_TOPE, d.streak))]), ...(p.invites || []).map(f => [f, 10])];
+    if (!sumas.length) continue;
+    const at = cortes.map(c => sumas.reduce((a, [f, x]) => a + (f <= c ? x : 0), 0));
+    filas.push({ p, at });
+  }
+  const j = {};
+  for (const { p, at } of filas) j[p.jid] = { n: p.n, ...(p.co ? { co: p.co } : {}), s: at.at(-1), l: [] };
+  cortes.forEach((_, i) => {
+    const conPuntos = filas.filter(f => f.at[i] > 0).sort((a, b) => b.at[i] - a.at[i]);
+    conPuntos.forEach((f, k) => { const prev = conPuntos[k - 1]; f.lugar = prev && prev.at[i] === f.at[i] ? prev.lugar : k + 1; });
+    for (const f of filas) j[f.p.jid].l.push(f.at[i] > 0 ? f.lugar : 0);
+  });
+  return { c: cortes, t: today, j };
+}
+
 /** The last day of `yyyy-mm`. */
 export const lastDay = month => {
   const [y, m] = month.split('-').map(Number);
@@ -109,7 +153,15 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     }
     console.log(`${period} rebuild: ${Object.keys(todos || {}).length} players with a history · ${cambios.length} to rewrite`);
     for (const c of cambios) console.log(`  ${c.n} (${c.jid})  ${c.antes ?? '—'} → ${c.s} pts · streak ${c.r}${c.faltaP.length ? ` · ${c.faltaP.length} days get p` : ''}`);
+    // The season's places by week (D-424), every night: the home page's recap reads them once the month is over
+    const hoy = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Santiago' }).format(new Date());
+    const datesOf = jid => Object.values(invitados?.[jid] || {}).filter(x => x?.p === true && Number.isInteger(x.d) && fechaDeNum(x.d).startsWith(month)).map(x => fechaDeNum(x.d));
+    const temporada = temporadaDe(Object.entries(todos || {}).filter(([jid]) => /^[a-z0-9]{8}$/.test(jid) && jugadores?.[jid]?.n)
+      .map(([jid, hist]) => ({ jid, n: jugadores[jid].n, co: esPais(jugadores[jid].co) ? jugadores[jid].co : null, hist, gifts: giftsOf(jid), invites: datesOf(jid) })), month, hoy);
+    const podio = Object.entries(temporada.j).filter(([, x]) => x.l.at(-1) && x.l.at(-1) <= 3).sort((a, b) => a[1].l.at(-1) - b[1].l.at(-1));
+    console.log(`${TEMPORADA}/${period}: ${Object.keys(temporada.j).length} players, places on ${temporada.c.join(', ')} · ${podio.map(([, x]) => `#${x.l.at(-1)} ${x.n} ${x.s}`).join(' · ') || 'nobody yet'}`);
     if (!apply) { console.log('Dry run: nothing written. Run it with --rebuild --apply to write.'); process.exit(0); }
+    await write(`${TEMPORADA}/${period}`, 'PUT', temporada, t);
     for (const c of cambios) {
       const w = { [`records/${UAD_PUNTOS}/${period}/${c.jid}`]: { s: c.s, ms: 0, k: claveOrden(c.s, 0), at: Date.now(), n: c.n, ...(c.co ? { co: c.co } : {}), u: c.u, r: c.r, ...(c.i ? { i: c.i } : {}) } };
       for (const n of c.faltaP) w[`unoAlDia/${c.jid}/${n}/p`] = true;

@@ -83,6 +83,24 @@ export const ESCENAS = {
  * "celular" de esta pestaña: la sesión de quien mira queda sentada en él.
  */
 export function sembrar(nombre, { now, uid }) {
+  const x = escena(nombre, { now, uid });
+  if (!x) return null;
+  const { L, e, meta } = x;
+  try {
+    const db = JSON.parse(localStorage.getItem(KEY) || '{}');
+    let code = codigoAlAzar();
+    while (db[code]) code = codigoAlAzar();
+    db[code] = L;
+    localStorage.setItem(KEY, JSON.stringify(db));
+    return { code, pid: e.yo, pantalla: e.pantalla, recien: !!e.recien, nombre: e.yo ? L.players[e.yo].name : null, meta };
+  } catch (_) { return null; }
+}
+
+/**
+ * The scene's cup, built and not stored: `{ L, e, meta }`. sembrar stores it; the home page's
+ * recap window (`?recap=demo`) draws the podium scene from it without touching the test store.
+ */
+export function escena(nombre, { now, uid = 'demo' }) {
   const e = ESCENAS[nombre];
   if (!e) return null;
   const hoy = fechaEn(now, ZONA);
@@ -110,12 +128,5 @@ export function sembrar(nombre, { now, uid }) {
     }
   }
   if (e.jugaron >= 3) L.wild.panc03 = '2';
-  try {
-    const db = JSON.parse(localStorage.getItem(KEY) || '{}');
-    let code = codigoAlAzar();
-    while (db[code]) code = codigoAlAzar();
-    db[code] = L;
-    localStorage.setItem(KEY, JSON.stringify(db));
-    return { code, pid: e.yo, pantalla: e.pantalla, recien: !!e.recien, nombre: e.yo ? L.players[e.yo].name : null, meta };
-  } catch (_) { return null; }
+  return { L, e, meta };
 }

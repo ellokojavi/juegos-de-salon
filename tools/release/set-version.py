@@ -65,10 +65,14 @@ def stamp(site, number, key):
             if 'id="importmap"' in html:
                 html = re.sub(r'<script type="importmap" id="importmap">.*?</script>', lambda _: block, html, flags=re.S)
             else:
-                # before the first stylesheet (and therefore before any module)
-                if '  <link rel="stylesheet"' not in html:
-                    sys.exit(f'{path}: it loads modules and has no stylesheet to put the import map before')
-                html = html.replace('  <link rel="stylesheet"', '  ' + block + '\n  <link rel="stylesheet"', 1)
+                # before the first stylesheet (and therefore before any module); a page with no
+                # screen has none (/cup/recap/, D-423): then at the end of the head, before its modules
+                if '  <link rel="stylesheet"' in html:
+                    html = html.replace('  <link rel="stylesheet"', '  ' + block + '\n  <link rel="stylesheet"', 1)
+                elif '</head>' in html and html.index('</head>') < html.index('type="module"'):
+                    html = html.replace('</head>', '  ' + block + '\n</head>', 1)
+                else:
+                    sys.exit(f'{path}: it loads modules and has no stylesheet or head to put the import map before')
             html = re.sub(r'(<link rel="stylesheet" href="[^"?]+)(\?v=[^"]*)?"', lambda m: f'{m.group(1)}?v={key}"', html)
             # The preloads are URLs, not specifiers: the import map does not reach them, and without
             # the version they would fetch a file the page then fetches again with it

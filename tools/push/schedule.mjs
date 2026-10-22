@@ -9,7 +9,7 @@
  *   dia:<d>     day d opened (not the final)                if they asked for "When a day opens"
  *   plazo:<d>   day d is about to close and they have not played it   if they asked for "Before closing"
  *   final       today is The Grand Final                    always, with their place in the table
- *   fin         the cup ended                               always, with who won
+ *   fin         the cup ended                               always, with who won and a tap to see the table
  *   insc:<pid>  someone signed up (only to the admin)       always
  *
  * When: in the recipient's time (their zone comes with the subscription), never at night
@@ -112,7 +112,8 @@ export function cupNotifications({ code, cup, wants = {}, subs = {}, sent = {}, 
               ? (others.length ? fmt(T.avMsgWinTie, { names: listOf(others, lang) }) : T.avMsgWin)
               : winners.length > 1 ? fmt(T.avMsgEndMany, { names: listOf(winners.map(f => f.name), lang), pos: ord(mine.lugar) })
               : fmt(T.avMsgEnd, { name: rows[0].name, pos: ord(mine.lugar) });
-            candidates.push({ kind: 'fin', keys: ['fin'], body, tag: `copa-${code}-fin` });
+            // It says what the tap opens: the cup's final table (D-423)
+            candidates.push({ kind: 'fin', keys: ['fin'], body: `${body} ${T.avEndSee}`, tag: `copa-${code}-fin` });
           }
         }
       } else {
