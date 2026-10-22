@@ -106,6 +106,81 @@ ol.como li { line-height: 1.45; }
 .cal-variantes .field { margin: 0; }
 .cal-variante-t { margin: 0 0 6px; font-weight: 900; }
 .cal-variante-t .y { color: var(--muted); font-size: 0.85rem; font-weight: 700; }
+
+/* The new create screen (D-425): the week in view, the 🎲 with locks, the styles and the sheet */
+.semana-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+.semana-titulo { white-space: nowrap; font-weight: 900; font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.btn-dado {
+  font: 400 1.2rem var(--font-display); letter-spacing: 0.04em; color: #2a1200; white-space: nowrap; cursor: pointer;
+  background: linear-gradient(180deg, #ffe066, var(--yellow)); border: 0; border-radius: 999px; min-height: 44px; padding: 0 16px;
+  box-shadow: 0 3px 0 #b86e00;
+}
+.btn-dado:active { transform: translateY(2px); box-shadow: 0 1px 0 #b86e00; }
+.semana-estilos { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.semana-estilos .estilo {
+  flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font: 800 0.85rem var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border);
+}
+.semana-estilos .estilo.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+.semana-dias { display: grid; gap: 6px; }
+.semana-dia {
+  display: grid; grid-template-columns: 3.4em minmax(0, 1fr) 44px 26px; align-items: center; gap: 4px; min-height: 56px; padding-left: 8px;
+  background: rgba(0, 0, 0, 0.22); border: 1px solid var(--glass-border); border-radius: 14px;
+}
+.semana-dias + .semana-final { margin-top: 6px; }
+.semana-dia .cab { display: grid; justify-items: center; line-height: 1.1; }
+.semana-dia .y { font-weight: 900; font-size: 0.75rem; color: var(--yellow); white-space: nowrap; }
+.semana-dia .em { font-size: 1.35rem; }
+.semana-dia .em.gira { animation: semanaGira 0.42s ease-out both; }
+@keyframes semanaGira { from { transform: rotate(-200deg) scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
+.semana-juego {
+  all: unset; box-sizing: border-box; cursor: pointer; display: grid; align-content: center; min-height: 44px; padding: 6px 2px; min-width: 0;
+}
+.semana-juego:focus-visible, .candado:focus-visible, .hoja-juego:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; border-radius: 8px; }
+.semana-juego b { font-size: 0.95rem; font-weight: 900; line-height: 1.2; overflow-wrap: anywhere; }
+.semana-juego small { color: var(--muted); font-weight: 700; font-size: 0.75rem; }
+.candado { all: unset; cursor: pointer; width: 44px; height: 44px; display: grid; place-items: center; font-size: 1.05rem; opacity: 0.5; }
+.semana-dia.fija { border-color: rgba(46, 230, 214, 0.6); background: rgba(46, 230, 214, 0.08); }
+.semana-dia.fija .candado { opacity: 1; }
+.semana-dia.hueco { opacity: 0.3; border-style: dashed; }
+.semana-dia.on { border: 2px solid var(--yellow); background: rgba(255, 210, 63, 0.18); }
+/* As in the week of before: on a phone the day is dragged by its grip, and the rest of the row lets the page scroll */
+.semana-dia .agarre { color: var(--muted); font-size: 1.2rem; text-align: center; padding: 12px 0; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.semana-final { grid-template-columns: 3.4em minmax(0, 1fr); border-style: dashed; border-color: rgba(46, 230, 214, 0.45); }
+.semana-final .semana-juego { cursor: default; }
+.semana-mezcla { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 6px; }
+.semana-mezcla span { font-size: 0.75rem; font-weight: 800; border-radius: 999px; padding: 3px 10px; background: rgba(255, 255, 255, 0.1); }
+.semana-mezcla span.muchas { background: rgba(255, 46, 136, 0.28); }
+.semana-ayuda { display: block; }
+/* The sheet is the app's own (base.css, D-223): here, a day's choices */
+.hoja .field { margin: 0; }
+/* The version keeps the look of the cup's options: the sheet's own (.hoja .opcion, base.css) is a row with a check */
+#semana-hoja .opciones .opcion { display: block; text-align: center; padding: 12px 6px; }
+.hoja-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.hoja-cabeza h3 { margin: 0; font-size: 1.1rem; font-weight: 900; }
+.hoja-mover { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.hoja-mover .btn { width: 100%; font-size: 0.95rem; }
+.hoja-mover .btn:disabled { opacity: 0.35; }
+.hoja-juegos { display: grid; gap: 6px; }
+.hoja-juego {
+  all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 10px; align-items: center;
+  padding: 10px 12px; min-height: 52px; border-radius: 14px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.22);
+}
+.hoja-juego.actual { border-color: var(--yellow); background: rgba(255, 210, 63, 0.1); }
+.hoja-juego .em { font-size: 1.35rem; text-align: center; }
+.hoja-juego .t b { display: block; font-size: 0.95rem; font-weight: 900; line-height: 1.2; }
+.hoja-juego .t small { display: block; color: var(--muted); font-weight: 600; font-size: 0.8rem; line-height: 1.3; }
+.hoja-juego .etiqueta { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cyan); white-space: nowrap; }
+.hoja-juego .etiqueta.nueva { color: var(--pink); }
+/* "More options" folds like every panel (base.css, ▾ on the right), with what is chosen inside under its name */
+.mas-opciones > summary { min-height: 44px; gap: 10px; }
+.mas-opciones .mas-t { display: grid; gap: 2px; min-width: 0; }
+.mas-opciones .mas-t small { font-weight: 700; font-size: 0.8rem; }
+.pin-fila { display: grid; grid-template-columns: minmax(0, 1fr) 48px; gap: 6px; }
+.ver-pin { min-height: 44px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.25); color: var(--ink); font-size: 1.1rem; cursor: pointer; }
+.ver-pin[aria-pressed="true"] { border-color: var(--cyan); }
+.crear-fechas { display: block; text-align: center; margin-top: -4px; }
+@media (prefers-reduced-motion: reduce) { .semana-dia .em.gira { animation: none; } }
 .variante-dia { margin: 2px 0 0; color: var(--yellow); font-weight: 900; }
 .dia-variante { font-weight: 700; color: var(--muted); }
 #selector-variante { margin-top: 2px; }
