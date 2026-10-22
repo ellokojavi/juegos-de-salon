@@ -229,7 +229,7 @@ link.
   con tu nombre y un PIN, y ganas un comodín cuando un amigo que invitaste termina su primer Uno al
   día." y ofrece **Entrar**. (No dice "por cada amigo": con el tope de 2, no sería verdad.)
 - **Uno por celular invitado:** al terminar su primer día, el celular del amigo escribe
-  `invitados/<jid de quien invita>/<uid del amigo>` = `{ fecha, j? }`, una sola vez (las reglas no
+  `invitados/<jid de quien invita>/<uid del amigo>` = `{ d, at, j? }`, una sola vez (`p`, D-414, lo agrega después quien invita; las reglas no
   dejan reescribirlo, ni que alguien se invite a sí mismo). El comodín se suma al leer esa lista,
   así que no hace falta que los dos estén conectados a la vez.
 
@@ -348,7 +348,7 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 | El historial del jugador | `unoAlDia/<jid>/<fecha>` = `{ j, s, ms, at }` | Una vez por fecha: las reglas no dejan reescribirla, y la fecha tiene que estar a 14 horas o menos de la hora del servidor. |
 | **Ranking del día** | `records/uno-al-dia/d2026-10-05/<jid>` | Un período nuevo, `dAAAA-MM-DD`, en `PERIODO` de `records.js` y en las reglas. |
 | **Ranking de la semana** | `records/uno-al-dia/s2026-41/<jid>` | La suma de la semana. Solo sube, como cualquier récord, y las reglas exigen que suba lo que dice el historial del día. |
-| **Puntos del mes** (D-412, D-414) | `records/uno-al-dia-pts/s2026-10/<jid>` | The month's season: each day of the history adds once (`p` marks it), its score plus the streak bonus; the streak `r` grows at most one per day. Shown in the Mes and Amigos tabs; the week's table is still saved, but no tab shows it since D-414. |
+| **Puntos del mes** (D-412, D-414) | `records/uno-al-dia-pts/s2026-10/<jid>` | The month's season: each day of the history adds once (`p` marks it), its score plus the streak bonus; the streak `r` grows at most one per day. In the lab, an invited friend adds +10 once (the write carries `i` = their `uid` and marks `p` on their acceptance, D-414). Shown in the Mes and Amigos tabs; the week's table is still saved, but no tab shows it since D-414. |
 | **Mejor racha** | `records/uno-al-dia-racha/siempre/<jid>` | Solo sube. Las reglas exigen que no pase los días del historial. |
 | La racha de hoy y los comodines | El celular, y `jugadores/<jid>/unoAlDia` = `{ racha, comodines, ultimo }` | Se recalcula del historial, que es la fuente. |
 | Sin jugador | `localStorage` (`juegos-de-salon:uno-al-dia`) | Al entrar con jugador, lo del celular se sube al historial una vez. |
@@ -725,7 +725,9 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
 - **Saving:** each day of the player's history in Firebase adds once (`p` marks it), checked by the
   rules against the history; the streak `r` a phone claims grows at most one a day, up to 10. Today's
   goes up when it is played; on opening /today/ the month's days not yet counted go up in order.
-- **Not yet:** the +10 for inviting a friend (`INVITE_POINTS`) is in the prototype only, until it is saved.
+- **Inviting:** each friend who finishes their first Uno al día with your invitation adds +10 to your
+  month (`PUNTOS_INVITAR` in `records.js`), once per friend; saved for lab key holders only for now
+  (D-414, see "+10 pts por invitar" above).
 
 The rules are pure functions in `public/assets/js/daily-points.js` (over the same history and streak
 rules as `uno-al-dia.js`), tested by `daily-points.test.mjs`, and shared by /today/, the lab prototype
