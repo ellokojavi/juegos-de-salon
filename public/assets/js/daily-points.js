@@ -24,13 +24,25 @@ export const bonusFor = streak => Math.min(BONUS_MAX, Math.max(0, streak) * BONU
  * Walks the history from the first day played to `today`, as `recorrer` does, and returns every day:
  * `{ date, played, game, score, streak, bonus, points, saved }`, plus the totals.
  * Today, not played yet, is left out (it does not break the streak until midnight).
+ *
+ * - `gifts`: the dates a 🧊 was won by inviting (`recorrer`'s `regalos`), also capped at 2.
+ * - `saved`: the server's way (the backfill, D-415). The phone decides which missed days its 🧊 save
+ *   and uploads them as markers (`unoAlDia/<jid>/<n>: { c: true }`). The server spends the 🧊 it can
+ *   see (every 7 days in a row, the gifts) on any missed day, as the phone does; a marked day it
+ *   can't cover that way takes one of 2 more it lends once (the most a phone can hold, earned on days
+ *   the server never saw). A missed day with neither breaks the streak.
  */
-export function walk(days, today) {
+export function walk(days, today, { gifts = [], saved = null } = {}) {
   const dates = Object.keys(days).filter(f => FECHA.test(f) && f <= today).sort();
   const out = { days: [], streak: 0, wildcards: 0, best: 0 };
   if (!dates.length) return out;
+  const byGift = {};
+  for (const f of gifts) if (FECHA.test(f) && f <= today) byGift[f] = (byGift[f] || 0) + 1;
+  const marked = saved ? new Set(saved) : null;
+  let lent = marked ? COMODINES_MAX : 0;
   let row = 0;
   for (let f = dates[0]; f <= today; f = sumarDias(f, 1)) {
+    if (byGift[f]) out.wildcards = Math.min(COMODINES_MAX, out.wildcards + byGift[f]);
     const d = days[f];
     if (d) {
       out.streak++; row++;
@@ -38,8 +50,10 @@ export function walk(days, today) {
       const bonus = bonusFor(out.streak);
       out.days.push({ date: f, played: true, game: d.j, score: d.s, streak: out.streak, bonus, points: d.s + bonus, saved: false });
     } else if (f !== today) {
-      if (out.streak > 0 && out.wildcards > 0) {
-        out.wildcards--;
+      const own = out.streak > 0 && out.wildcards > 0;
+      const borrowed = !own && out.streak > 0 && lent > 0 && marked?.has(f);
+      if (own || borrowed) {
+        if (own) out.wildcards--; else lent--;
         out.days.push({ date: f, played: false, saved: true, streak: out.streak, bonus: 0, points: 0 });
       } else {
         out.streak = 0; row = 0;

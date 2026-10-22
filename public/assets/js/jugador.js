@@ -384,12 +384,23 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
      * Uno al día points (D-412, D-414): adds day `n` of the history to the month `mesP` once, its game
      * score plus the streak bonus of `racha` (counted up to 10). Returns true if it added the day.
      */
+    /**
+     * A day a 🧊 saved (D-415): a marker in the history, `{ c: true }`, so the server's walk (the
+     * backfill's rebuild) keeps the streak through it as the phone does. Once per day, and never over
+     * a day played.
+     */
+    async anotarSalvado({ n }) {
+      const yo = api.yo();
+      if (!yo || !Number.isInteger(n) || n < 10000 || n > 99999) return false;
+      await almacen.update({ [`unoAlDia/${yo.jid}/${n}`]: { c: true, at: HORA } });
+      return true;
+    },
     async anotarPuntosDia({ n, mesP, racha }) {
       const yo = api.yo();
       if (!yo || !Number.isInteger(n) || !/^s[0-9]{4}-[0-9]{2}$/.test(mesP || '')) return false;
       const h = `unoAlDia/${yo.jid}/${n}`;
       const hist = await almacen.get(h).catch(() => null);
-      if (!hist || hist.p) return false;
+      if (!hist || hist.p || hist.c) return false;
       const ruta = `records/${UAD_PUNTOS}/${mesP}/${yo.jid}`;
       const antes = await almacen.get(ruta).catch(() => null);
       const r = Math.max(1, Math.min(RACHA_TOPE, racha, antes?.r ? antes.r + 1 : RACHA_TOPE));

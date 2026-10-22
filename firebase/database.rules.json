@@ -745,7 +745,7 @@
         ".read": "$jid.matches(/^[a-z0-9]{8}$/)",
         "$d": {
           ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && $d.matches(/^[0-9]{5}$/) && !data.exists() && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
-          ".validate": "newData.hasChildren(['j', 's', 'ms', 'at'])",
+          ".validate": "(newData.hasChildren(['j', 's', 'ms', 'at']) && !newData.hasChild('c')) || (newData.hasChildren(['c', 'at']) && !newData.hasChild('j') && !newData.hasChild('s') && !newData.hasChild('ms') && !newData.hasChild('w') && !newData.hasChild('p'))",
           "j": {
             ".validate": "newData.isString() && newData.val().matches(/^[a-z][a-z0-9-]{0,24}$/)"
           },
@@ -764,6 +764,9 @@
           },
           "p": {
             ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && !data.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+            ".validate": "newData.isBoolean() && newData.val() == true"
+          },
+          "c": {
             ".validate": "newData.isBoolean() && newData.val() == true"
           },
           "$other": {

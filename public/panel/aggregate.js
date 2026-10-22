@@ -620,7 +620,8 @@ export function unoAlDiaDelRango({ days = {}, historia = {}, invitados = {}, rac
   const jugadores = new Set();
   const vuelta = { d1: [0, 0], d7: [0, 0] };
   for (const [jid, h] of Object.entries(historia || {})) {
-    const nums = new Set(Object.keys(h || {}).map(Number).filter(Number.isInteger));
+    // A day a 🧊 saved is only a marker (`c`, D-415): it was not played
+    const nums = new Set(Object.keys(h || {}).filter(k => !h[k]?.c).map(Number).filter(Number.isInteger));
     for (const n of nums) {
       if (n < from || n > to) continue;
       jugadores.add(jid);

@@ -345,7 +345,7 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 
 | Qué | Dónde | Nota |
 |---|---|---|
-| El historial del jugador | `unoAlDia/<jid>/<fecha>` = `{ j, s, ms, at }` | Una vez por fecha: las reglas no dejan reescribirla, y la fecha tiene que estar a 14 horas o menos de la hora del servidor. |
+| El historial del jugador | `unoAlDia/<jid>/<fecha>` = `{ j, s, ms, at }` | Una vez por fecha: las reglas no dejan reescribirla, y la fecha tiene que estar a 14 horas o menos de la hora del servidor. A day a 🧊 saved is only a marker, `{ c: true, at }` (D-415). |
 | **Ranking del día** | `records/uno-al-dia/d2026-10-05/<jid>` | Un período nuevo, `dAAAA-MM-DD`, en `PERIODO` de `records.js` y en las reglas. |
 | **Ranking de la semana** | `records/uno-al-dia/s2026-41/<jid>` | La suma de la semana. Solo sube, como cualquier récord, y las reglas exigen que suba lo que dice el historial del día. |
 | **Puntos del mes** (D-412, D-414) | `records/uno-al-dia-pts/s2026-10/<jid>` | The month's season: each day of the history adds once (`p` marks it), its score plus the streak bonus; the streak `r` grows at most one per day. In the lab, an invited friend adds +10 once (the write carries `i` = their `uid` and marks `p` on their acceptance, D-414). Shown in the Mes and Amigos tabs; the week's table is still saved, but no tab shows it since D-414. |
@@ -711,7 +711,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
   out in the next two decks) and `tools/e2e/daily-variants.mjs` (Loteo and Pintaminas, on the first
   day each is due, looked up in the deck since D-405, play their default variant with no picker, even when the phone remembers the other).
 
-### Uno al día points (D-412, D-414)
+### Uno al día points (D-412, D-414, D-415)
 
 One number ranks players in a **monthly season** (everyone starts at 0 on the 1st; the table is
 `records/uno-al-dia-pts/s<yyyy>-<mm>/`, so a new month is a new table):
@@ -719,7 +719,14 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
 - **A day's points** = the game's own 0–100 score + a **streak bonus** of +5 per day of streak, up
   to +50 (a 10-day streak).
 - **A wildcard 🧊 day** gives 0 points but keeps the streak, so the next day still earns the full
-  bonus; without one, the streak and its bonus start over.
+  bonus; without one, the streak and its bonus start over. The phone uploads each day its 🧊 saved as a marker
+  (`unoAlDia/<jid>/<n>: { c: true }`, D-415), so the server keeps the streak through it too.
+- **The nightly rebuild** (D-415): `tools/firebase/uad-points-backfill.mjs --rebuild`, run by the
+  `uad-rebuild` workflow at 08:23 UTC, recomputes each player's month from the history and the
+  markers and corrects a total that differs. The server spends the 🧊 it can see (7 days in a row,
+  invited friends) and lends 2 more, once, for marked days it can't back.
+- **No jump on /today/:** signed in, the first drawing shows the last total the ranking gave this phone
+  (`uad-pts-cache`), then the fresh one.
 - **Last month's winner** wears a 🏆 next to their name in the month's ranking, and sees a 👑 chip on
   /today/. The season's end shows as "quedan X días" ("último día" on the last).
 - **Saving:** each day of the player's history in Firebase adds once (`p` marks it), checked by the
@@ -746,6 +753,7 @@ screens in every language.
 October they would have had: it walks their history in Firebase as the phone does and adds each
 October day not yet counted, in order, with the streak `r` the rules accept, marking its `p`. It is
 safe to run twice. What Firebase does not have does not count: days played on a phone without a name
-were never uploaded, and the 🧊 won by inviting is not part of the walk (on the phone or here), so a
-missed day with no 🧊 earned by the streak breaks it.
+were never uploaded. Since D-415 the walk also spends the 🧊 won by inviting and keeps the streak
+through the days a phone marked as saved, and `--rebuild` recomputes the whole month every night
+(above, "The nightly rebuild").
 

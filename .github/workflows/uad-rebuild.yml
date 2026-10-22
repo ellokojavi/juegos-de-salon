@@ -1,0 +1,57 @@
+# Rebuilds Uno al día's month of points every night (D-415): tools/firebase/uad-points-backfill.mjs
+# --rebuild recomputes each player's month from their history in Firebase, including the days their
+# phone said a 🧊 saved (the markers it uploads on opening /today/), and rewrites a total that
+# differs. So a total a phone added with a streak the server didn't know is corrected by the next
+# morning. In the first three days of a month it also rebuilds the month before, for the markers
+# that arrive late. Running it twice writes nothing new.
+#
+# It needs the FIREBASE_ADMIN_JSON secret (the same as publish.yml's, D-218); without it, it warns
+# and ends green.
+
+name: Uno al día points rebuild
+
+on:
+  schedule:
+    - cron: '23 8 * * *'
+  # To rebuild now (Actions → Uno al día points rebuild → Run workflow), or only see what it would do
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only say what it would rewrite'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uad-rebuild
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Rebuild the month's points
+        env:
+          KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+          APPLY: ${{ inputs.dry_run && ' ' || '--apply' }}
+        run: |
+          if [ -z "$KEY_JSON" ]; then
+            echo "::warning::The FIREBASE_ADMIN_JSON secret is missing: the points are not rebuilt"
+            exit 0
+          fi
+          umask 077
+          printf '%s' "$KEY_JSON" > "$RUNNER_TEMP/key.json"
+          export FIREBASE_KEY="$RUNNER_TEMP/key.json"
+          # Chile's date: the app's days and months are Chile's
+          month=$(TZ=America/Santiago date +%Y-%m)
+          node tools/firebase/uad-points-backfill.mjs --rebuild $APPLY --month "$month"
+          if [ "$(TZ=America/Santiago date +%d)" -le 3 ]; then
+            node tools/firebase/uad-points-backfill.mjs --rebuild $APPLY --month "$(TZ=America/Santiago date -d "$month-01 -1 day" +%Y-%m)"
+          fi
