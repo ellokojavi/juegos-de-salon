@@ -245,6 +245,14 @@ Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
   Final, bajo el puntaje y el tiempo de cada jugador, su tarjeta de rondas (una por juego de la semana, D-418), para comparar
   ronda a ronda. Solo en la final: en los otros días las tarjetas de varias líneas alargarían
   mucho la tabla (opción B, por si se echa de menos). A 320 px la línea se corta entre ronda y ronda.
+- **The final's texts outside a cup say five rounds** (D-418 review, option A, the owner on 2026-10-22):
+  the lab's practice of 🏁 La Gran Final and its trial have no week, so they play the five fixed
+  rounds and say so ("Son 5 rondas cortas seguidas…", `comoSuelta` and `puntajeSuelto` in the final's
+  texts); inside a cup the final says one round of each game of the week.
+- **One line for the rounds played whole** (D-418 review, option A, the owner on 2026-10-22): the
+  final's folded rules say once, above the list, that games without a short version are played whole
+  with new content (`finalWholeNote`); in the list only the short rounds carry their explanation and
+  the others just their name. It used to repeat the same sentence once per whole game.
 - **Portada bajo 375 px: las acciones bajan a una segunda línea** (#250, opción A): entre 320 y 374
   px el idioma queda arriba a la izquierda y sonido, rankings y compartir bajan a la derecha. Se
   acepta la escalera antes que achicar los botones de idioma bajo 44 px (C-8) o volver atrás D-231.
