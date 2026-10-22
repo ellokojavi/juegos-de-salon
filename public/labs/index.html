@@ -39,6 +39,9 @@
     .plegada .flecha { font: 900 1.9rem/1 var(--font-body); color: #fff; transition: transform 0.2s; }
     .plegada details[open] .flecha { transform: rotate(90deg); }
     .plegada .detalle { display: grid; gap: 10px; padding: 0 18px 18px; }
+    /* La Bodega's two subgroups (D-422): a smaller title than the group's */
+    .subgrupo { display: grid; gap: 12px; }
+    .subgrupo > h3 { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; margin: 8px 0 0; }
     .divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
   </style>
 </head>
@@ -107,101 +110,107 @@
       <section class="grupo" id="bodega">
         <h2>📦 La Bodega</h2>
         <p class="muted">Los proyectos que ya no se están trabajando, porque no prosperaron, porque salieron de la portada o porque ya pasaron a todos. Quedan guardados acá y se pueden seguir abriendo.</p>
-        <section class="panel seccion plegada" id="seccion-uad-invitar-jugar">
-          <details>
-            <summary><h2>📅 Uno al día: +10 por invitar</h2><span class="flecha" aria-hidden="true">›</span></summary>
-            <div class="detalle">
-              <p class="muted" style="margin:0">🚀 Lanzado. Cada amigo que invitas y termina su primer Uno al día suma +10 pts a tu mes, una vez por amigo.</p>
-              <a class="btn btn--yellow" id="btn-uad-invitar-jugar" href="../today/">📅 Ir a Uno al día</a>
-            </div>
-          </details>
+        <!-- Two subgroups (D-422): the games kept, each tagged with why it is here, and the improvements that reached everyone -->
+        <section class="subgrupo" id="bodega-juegos">
+          <h3>🎲 Juegos guardados</h3>
+          <section class="panel seccion plegada" id="seccion-caso">
+            <details>
+              <summary><h2>🔍 El caso</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">💤 No prosperó. Un misterio al estilo de <i>Clues by Sam</i>: veinte sospechosos y pistas que siempre dicen la verdad. Descubre quién es criminal sin adivinar.</p>
+                <p class="muted" style="margin:0;font-size:0.85rem">Es el caso del día, el mismo para todos; al terminar se puede jugar otro.</p>
+                <a class="btn btn--yellow" id="btn-caso" href="case/">🔍 Jugar El caso</a>
+              </div>
+            </details>
+          </section>
+
+          <section class="panel seccion plegada" id="seccion-clave">
+            <details>
+              <summary><h2>🔐 La clave</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">💤 No prosperó. Unas cartas transparentes esconden una clave: una palabra de 5 letras (en español) o un código de 5 cifras. Hay que ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen la clave sin pisarse; en Palabra, cada carta tiene dos caras distintas.</p>
+                <a class="btn btn--yellow" id="btn-clave" href="code/">🔐 Jugar La clave</a>
+              </div>
+            </details>
+          </section>
+
+          <section class="panel seccion plegada" id="seccion-cuarto-rey">
+            <details>
+              <summary><h2>👑 Cuarto Rey</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">👋 Salió de la portada. El juego de naipes para tomar, de 4 a 6 jugadores con un solo celular: cada uno saca una carta, la app dice quién toma y termina cuando sale el cuarto rey.</p>
+                <a class="btn btn--yellow" id="btn-cuarto-rey" href="fourth-king/">👑 Jugar Cuarto Rey</a>
+              </div>
+            </details>
+          </section>
         </section>
 
-        <section class="panel seccion plegada" id="seccion-puntos-dia">
-          <details>
-            <summary><h2>🏆 Puntos de Uno al día</h2><span class="flecha" aria-hidden="true">›</span></summary>
-            <div class="detalle">
-              <p class="muted" style="margin:0">🚀 Lanzado. Un puntaje y un ranking del mes para Uno al día: cada día suma el puntaje del juego más un bono por la racha. La tarjeta de la portada abre tu Uno al día, con tus puntos y tu puesto primero. <a href="daily-score/" style="color:inherit">El prototipo con las notas</a> queda guardado.</p>
-              <a class="btn btn--yellow" id="btn-puntos-dia" href="../today/">📅 Ir a Uno al día</a>
-            </div>
-          </details>
-        </section>
+        <section class="subgrupo" id="bodega-mejoras">
+          <h3>✨ Mejoras lanzadas</h3>
+          <section class="panel seccion plegada" id="seccion-uad-invitar-jugar">
+            <details>
+              <summary><h2>📅 Uno al día: +10 por invitar</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Cada amigo que invitas y termina su primer Uno al día suma +10 pts a tu mes, una vez por amigo.</p>
+                <a class="btn btn--yellow" id="btn-uad-invitar-jugar" href="../today/">📅 Ir a Uno al día</a>
+              </div>
+            </details>
+          </section>
 
-        <section class="panel seccion plegada" id="seccion-copa-casilla">
-          <details>
-            <summary><h2>🏆 La Copa: elige la casilla en Toque y Fama</h2><span class="flecha" aria-hidden="true">›</span></summary>
-            <div class="detalle">
-              <p class="muted" style="margin:0">🚀 Lanzado. Lo mismo que ya tiene Toque y Fama, ahora en el 🔢 de La Copa: toca una casilla y la próxima cifra va ahí.</p>
-              <a class="btn btn--yellow" id="btn-copa-casilla" href="../cup/">🏆 Ir a La Copa</a>
-            </div>
-          </details>
-        </section>
+          <section class="panel seccion plegada" id="seccion-puntos-dia">
+            <details>
+              <summary><h2>🏆 Puntos de Uno al día</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Un puntaje y un ranking del mes para Uno al día: cada día suma el puntaje del juego más un bono por la racha. La tarjeta de la portada abre tu Uno al día, con tus puntos y tu puesto primero. <a href="daily-score/" style="color:inherit">El prototipo con las notas</a> queda guardado.</p>
+                <a class="btn btn--yellow" id="btn-puntos-dia" href="../today/">📅 Ir a Uno al día</a>
+              </div>
+            </details>
+          </section>
 
-        <section class="panel seccion plegada" id="seccion-elegir-casilla">
-          <details>
-            <summary><h2>🔢 Toque y Fama: elige la casilla</h2><span class="flecha" aria-hidden="true">›</span></summary>
-            <div class="detalle">
-              <p class="muted" style="margin:0">🚀 Lanzado. Lo pidió un jugador: al adivinar, toca una casilla y la próxima cifra va ahí, en vez de llenarse siempre de izquierda a derecha.</p>
-              <a class="btn btn--yellow" id="btn-elegir-casilla" href="../bulls-and-cows/">🔢 Jugar Toque y Fama</a>
-            </div>
-          </details>
-        </section>
+          <section class="panel seccion plegada" id="seccion-copa-casilla">
+            <details>
+              <summary><h2>🏆 La Copa: elige la casilla en Toque y Fama</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Lo mismo que ya tiene Toque y Fama, ahora en el 🔢 de La Copa: toca una casilla y la próxima cifra va ahí.</p>
+                <a class="btn btn--yellow" id="btn-copa-casilla" href="../cup/">🏆 Ir a La Copa</a>
+              </div>
+            </details>
+          </section>
 
-        <section class="panel seccion plegada" id="seccion-caso">
-          <details>
-            <summary><h2>🔍 El caso</h2><span class="flecha" aria-hidden="true">›</span></summary>
-            <div class="detalle">
-              <p class="muted" style="margin:0">Un misterio al estilo de <i>Clues by Sam</i>: veinte sospechosos y pistas que siempre dicen la verdad. Descubre quién es criminal sin adivinar.</p>
-              <p class="muted" style="margin:0;font-size:0.85rem">Es el caso del día, el mismo para todos; al terminar se puede jugar otro.</p>
-              <a class="btn btn--yellow" id="btn-caso" href="case/">🔍 Jugar El caso</a>
-            </div>
-          </details>
-        </section>
+          <section class="panel seccion plegada" id="seccion-elegir-casilla">
+            <details>
+              <summary><h2>🔢 Toque y Fama: elige la casilla</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Lo pidió un jugador: al adivinar, toca una casilla y la próxima cifra va ahí, en vez de llenarse siempre de izquierda a derecha.</p>
+                <a class="btn btn--yellow" id="btn-elegir-casilla" href="../bulls-and-cows/">🔢 Jugar Toque y Fama</a>
+              </div>
+            </details>
+          </section>
 
-        <section class="panel seccion plegada" id="seccion-cuarto-rey">
-          <details>
-            <summary><h2>👑 Cuarto Rey</h2><span class="flecha" aria-hidden="true">›</span></summary>
-            <div class="detalle">
-              <p class="muted" style="margin:0">El juego de naipes para tomar, de 4 a 6 jugadores con un solo celular: cada uno saca una carta, la app dice quién toma y termina cuando sale el cuarto rey. Salió de la portada y quedó guardado acá.</p>
-              <a class="btn btn--yellow" id="btn-cuarto-rey" href="fourth-king/">👑 Jugar Cuarto Rey</a>
-            </div>
-          </details>
-        </section>
+          <section class="panel seccion plegada" id="seccion-portada">
+            <details>
+              <summary><h2>🏠 Experimentos de la portada</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">La portada de verdad, con una barra abajo para prender y apagar lo que se probaba en ella, en cada idioma. Todo lo que se probó ya pasó a todos:</p>
+                <ul class="muted" style="margin:0;padding-left:1.2em;text-align:left">
+                  <li>🚀 Lanzado · 🔎 Buscar: la píldora junto a Nuevos y Populares que se abre en un buscador de juegos.</li>
+                  <li>🚀 Lanzado · 🎉 Splash: la ventana de novedades sobre la portada, que el dueño enciende para una campaña. En la barra se sigue pudiendo mirar cada campaña antes de encenderla.</li>
+                  <li>🚀 Lanzado · la etiqueta 🔥 Popular, las fichas ✨ Nuevos y 🔥 Populares y el nombre de la app en el menú flotante.</li>
+                </ul>
+                <a class="btn btn--yellow" id="btn-portada" href="home/">🏠 Ver la portada con la barra</a>
+              </div>
+            </details>
+          </section>
 
-        <section class="panel seccion plegada" id="seccion-clave">
-          <details>
-            <summary><h2>🔐 La clave</h2><span class="flecha" aria-hidden="true">›</span></summary>
-            <div class="detalle">
-              <p class="muted" style="margin:0">Unas cartas transparentes esconden una clave: una palabra de 5 letras (en español) o un código de 5 cifras. Hay que ponerlas sobre la base y girar y voltear cada una hasta que los trazos formen la clave sin pisarse; en Palabra, cada carta tiene dos caras distintas.</p>
-              <a class="btn btn--yellow" id="btn-clave" href="code/">🔐 Jugar La clave</a>
-            </div>
-          </details>
-        </section>
-
-
-        <section class="panel seccion plegada" id="seccion-portada">
-          <details>
-            <summary><h2>🏠 Experimentos de la portada</h2><span class="flecha" aria-hidden="true">›</span></summary>
-            <div class="detalle">
-              <p class="muted" style="margin:0">La portada de verdad, con una barra abajo para prender y apagar lo que se probaba en ella, en cada idioma. Todo lo que se probó ya pasó a todos:</p>
-              <ul class="muted" style="margin:0;padding-left:1.2em;text-align:left">
-                <li>🚀 Lanzado · 🔎 Buscar: la píldora junto a Nuevos y Populares que se abre en un buscador de juegos.</li>
-                <li>🚀 Lanzado · 🎉 Splash: la ventana de novedades sobre la portada, que el dueño enciende para una campaña. En la barra se sigue pudiendo mirar cada campaña antes de encenderla.</li>
-                <li>🚀 Lanzado · la etiqueta 🔥 Popular, las fichas ✨ Nuevos y 🔥 Populares y el nombre de la app en el menú flotante.</li>
-              </ul>
-              <a class="btn btn--yellow" id="btn-portada" href="home/">🏠 Ver la portada con la barra</a>
-            </div>
-          </details>
-        </section>
-
-        <section class="panel seccion plegada" id="seccion-pildoras">
-          <details>
-            <summary><h2>💊 Píldoras de filtros</h2><span class="flecha" aria-hidden="true">›</span></summary>
-            <div class="detalle">
-              <p class="muted" style="margin:0">Seis maneras de distinguir la fila de atajos (🔎 ⭐ ✨ 🔥) de la de tipos. 🚀 Lanzada la B: los atajos con contorno y los tipos con relleno.</p>
-              <a class="btn btn--yellow" id="btn-pildoras" href="pills/">💊 Ver las opciones</a>
-            </div>
-          </details>
+          <section class="panel seccion plegada" id="seccion-pildoras">
+            <details>
+              <summary><h2>💊 Píldoras de filtros</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">Seis maneras de distinguir la fila de atajos (🔎 ⭐ ✨ 🔥) de la de tipos. 🚀 Lanzada la B: los atajos con contorno y los tipos con relleno.</p>
+                <a class="btn btn--yellow" id="btn-pildoras" href="pills/">💊 Ver las opciones</a>
+              </div>
+            </details>
+          </section>
         </section>
       </section>
     </div>
