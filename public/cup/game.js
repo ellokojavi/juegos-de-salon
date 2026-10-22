@@ -530,17 +530,19 @@ const juegoPortada = id => gameById(DE_PORTADA[id] || id);
 const lemaDe = id => juegoPortada(id)?.tagline?.[LANG] || juegoPortada(id)?.tagline?.es || '';
 /** A cup's day ('2026-10-23') in words, "jueves 23 de octubre". */
 const fechaDia = f => fechaLarga(Date.parse(`${f}T12:00:00Z`), 'UTC');
+/** Its day of the week, short and without the dot: "jue", "Thu", "qui", "Do". */
+const diaCorto = f => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { weekday: 'short', timeZone: 'UTC' }).format(new Date(`${f}T12:00:00Z`)).replace('.', '');
 
 /**
  * The week of the new create screen (D-425): in view from the start, drawn by the 🎲 in one of the
- * week styles. A 🔒 day keeps its game when the die rolls; a game picked by hand comes locked, since
- * it was chosen. Tapping a game opens a sheet with the whole pool, each with its tagline: picking
+ * week styles; the die draws the whole week again (the owner's review took the 🔒 locks out: a game
+ * can still be changed or moved by hand). Tapping a game opens a sheet with the whole pool, each with its tagline: picking
  * one that is already in the week swaps the two days, and the sheet also moves the day and picks
  * its version. A day is still dragged by its ⠿ grip, as a shortcut (D-85: dragging is choosing).
  */
 function armarSemana() {
   let dias = 7, cal = [], estilo = 'equilibrada', ultimo = 'equilibrada', sel = null, destino = null, arrastrando = false, capa = null;
-  const fijos = new Set(), variantes = {};
+  const variantes = {};
   // The skill is compared in Spanish: the same rules whatever the screen's language
   const familia = id => JUEGOS_COPA_ES[id].habilidad;
   const nuevos = POZO.filter(id => esNuevo(juegoPortada(id)));
@@ -552,14 +554,12 @@ function armarSemana() {
 
   const tirar = ({ animar = true } = {}) => {
     estilo = ultimo;
-    const antes = semana();
-    cal = semanaAlAzar(dias, { familia, estilo, nuevos, fijos: antes.map(id => (fijos.has(id) ? id : null)) });
-    for (const id of [...fijos]) if (!cal.includes(id)) fijos.delete(id);
+    cal = semanaAlAzar(dias, { familia, estilo, nuevos });
     pintar();
-    if (animar) lista.querySelectorAll('.semana-dia:not(.fija) .em').forEach((x, i) => { x.style.animationDelay = `${i * 40}ms`; x.classList.add('gira'); });
+    if (animar) lista.querySelectorAll('.semana-dia .em').forEach((x, i) => { x.style.animationDelay = `${i * 40}ms`; x.classList.add('gira'); });
   };
   /** A change by hand: the week no longer matches a style, and the die goes back to the last one. */
-  const aMano = w => { cal = [...w, 'final']; estilo = null; for (const id of [...fijos]) if (!cal.includes(id)) fijos.delete(id); };
+  const aMano = w => { cal = [...w, 'final']; estilo = null; };
 
   const dado = el('button', { type: 'button', class: 'btn-dado', id: 'btn-dado', onClick: () => { SFX.tap(); vibrate(15); tirar(); } }, T.weekDice);
   const chips = el('div', { class: 'semana-estilos', id: 'semana-estilos', role: 'group', 'aria-label': T.weekStylesLabel });
@@ -568,15 +568,11 @@ function armarSemana() {
   const mezcla = el('div', { class: 'semana-mezcla', id: 'semana-mezcla', 'aria-label': T.weekMix });
 
   function fila(id, i) {
-    const J = JUEGOS_COPA[id], fijo = fijos.has(id);
+    const J = JUEGOS_COPA[id];
     const sub = [J.habilidad, nombreVariante(id)].filter(Boolean).join(' · ');
-    return el('div', { class: `semana-dia${fijo ? ' fija' : ''}${arrastrando && sel === id ? ' hueco' : ''}${destino === `m${i}` ? ' on' : ''}`, 'data-dia': i, 'data-juego': id, 'data-clave': `m${i}` },
+    return el('div', { class: `semana-dia${arrastrando && sel === id ? ' hueco' : ''}${destino === `m${i}` ? ' on' : ''}`, 'data-dia': i, 'data-juego': id, 'data-clave': `m${i}` },
       el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), el('span', { class: con('em', J.emoji) }, J.emoji)),
       el('button', { type: 'button', class: 'semana-juego', onClick: () => { SFX.tap(); hoja(i); } }, el('b', {}, J.nombre), el('small', {}, sub)),
-      el('button', {
-        type: 'button', class: 'candado', 'aria-pressed': String(fijo), 'aria-label': fmt(fijo ? T.weekUnlock : T.weekLock, { juego: J.nombre }),
-        onClick: () => { SFX.tap(); if (fijo) fijos.delete(id); else fijos.add(id); pintar(); },
-      }, fijo ? '🔒' : '🔓'),
       el('span', { class: 'agarre', 'aria-hidden': 'true' }, '⠿'));
   }
   function pintar() {
@@ -617,13 +613,13 @@ function armarSemana() {
         type: 'button', class: 'hoja-juego' + (id === actual ? ' actual' : ''), 'data-juego': id, 'aria-pressed': String(id === actual),
         onClick: () => {
           SFX.tap();
-          if (id !== actual) { const x = semana(); if (k >= 0) x[k] = actual; x[i] = id; aMano(x); fijos.add(id); }
+          if (id !== actual) { const x = semana(); if (k >= 0) x[k] = actual; x[i] = id; aMano(x); }
           listo();
         },
       }, el('span', { class: con('em', G.emoji) }, G.emoji), el('span', { class: 't' }, el('b', {}, G.nombre), el('small', {}, lemaDe(id))),
       etiqueta ? el('span', { class: 'etiqueta' + (k < 0 && id !== actual ? ' nueva' : '') }, etiqueta) : null);
     });
-    const cerrar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm hoja-listo', id: 'hoja-listo', onClick: () => { SFX.tap(); cerrarHoja(); } }, T.weekClose);
+    const cerrar = el('button', { type: 'button', class: 'btn btn--yellow btn--sm hoja-listo', id: 'hoja-listo', onClick: () => { SFX.tap(); cerrarHoja(); } }, T.weekClose);
     capa = el('div', { class: 'hoja-capa', id: 'semana-hoja' },
       el('div', { class: 'hoja-fondo', onClick: () => cerrarHoja() }),
       el('div', { class: 'hoja', role: 'dialog', 'aria-modal': 'true', 'aria-label': fmt(T.gamesDay, { d: i + 1 }) },
@@ -700,7 +696,9 @@ async function crearCopa() {
   // Hoy, mañana u otra fecha de un calendario, hasta 30 días desde hoy (D-115)
   const hoyCrear = fechaEn(Date.now(), zonaDeIdioma(idioma.valor));
   const otraFecha = campoFecha(hoyCrear);
-  const inicio = opciones([{ valor: 0, titulo: T.startToday }, { valor: 1, titulo: T.startTomorrow }, { valor: 'otra', titulo: T.startOther }],
+  // On the new screen (D-425, the owner's review) Today is Now, and each says its day of the week: "Ahora (jue)"
+  const conDia = (titulo, n) => (nuevo ? `${titulo} (${diaCorto(sumarDias(hoyCrear, n))})` : titulo);
+  const inicio = opciones([{ valor: 0, titulo: conDia(nuevo ? T.startNow : T.startToday, 0) }, { valor: 1, titulo: conDia(T.startTomorrow, 1) }, { valor: 'otra', titulo: T.startOther }],
     v => { otraFecha.nodo.hidden = v !== 'otra'; if (v === 'otra') otraFecha.input.focus(); fechas(); });
   inicio.nodo.classList.add('tres');
   otraFecha.input.addEventListener('change', () => fechas());
