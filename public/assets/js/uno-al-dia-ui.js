@@ -193,7 +193,7 @@ async function nombres() {
  * La tarjeta "👋 Invita a un amigo": qué se gana (un comodín, si tiene jugador y menos de 2; si no
  * tiene, que entrando lo gana) y el botón, que manda un texto en primera persona con su dato.
  */
-export function tarjetaInvitar({ lang, alTocar, plegada = false }) {
+export function tarjetaInvitar({ lang, alTocar, plegada = false, comodines = null }) {
   const T = textos(lang).uad;
   const linea = el('p', { class: 'muted', style: 'margin:0', id: 'uad-inv-linea' });
   const b = el('button', { type: 'button', class: 'btn btn--cyan', id: 'btn-uad-invitar' }, T.invitar);
@@ -212,13 +212,18 @@ export function tarjetaInvitar({ lang, alTocar, plegada = false }) {
   import('./uno-al-dia-red.js').then(async red => {
     const con = await red.tengoJugador();
     const e = estado();
-    linea.textContent = !con ? T.invEntrar : e.comodines < COMODINES_MAX ? T.invComodin : '';
+    // On /today/ the card is the wildcards' box: what they do and how to earn them, always said
+    linea.textContent = comodines != null ? (con ? '' : T.comodinesEntrar) : !con ? T.invEntrar : e.comodines < COMODINES_MAX ? T.invComodin : '';
     linea.hidden = !linea.textContent;
   }).catch(() => { linea.hidden = true; });
   // Under a result it goes folded (C-19): the streak and Sign in already speak above; /today/ shows it open
   return plegada
     ? el('details', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('summary', { class: 'lead' }, T.invTitulo), linea, b)
-    : el('div', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('p', { class: 'lead', style: 'margin:0' }, T.invTitulo), linea, b);
+    : comodines != null
+      // /today/: one box for the wildcards, their logic and the invite that earns one
+      ? el('div', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('p', { class: 'lead', style: 'margin:0' }, fmt(T.comodinesTitulo, { n: comodines })),
+        el('p', { style: 'margin:0', id: 'uad-comodines-texto' }, T.comodinesLogica), linea, b)
+      : el('div', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('p', { class: 'lead', style: 'margin:0' }, T.invTitulo), linea, b);
 }
 
 /**
