@@ -18,7 +18,7 @@ for (const lang of ['es', 'en', 'pt', 'de']) {
   ok(await waitFor(`(i => !!i && i.complete && i.naturalWidth === 1080)(document.querySelector('.recap .recap-imagen'))`), `${lang}: the window opens with the demo cup's final table, as the cup shares it (D-427)`);
   await sleep(500);
   ok(await ev(`document.querySelector('.recap .splash-kicker').textContent`) === TEXTS[lang].cupKicker, `${lang}: it says the cup ended`);
-  ok(await ev(`!document.querySelector('.recap .recap-tabla') && (r => r.width > 250)(document.querySelector('.recap-imagen').getBoundingClientRect())`), `${lang}: the image in place of the rows, across the window`);
+  ok(await ev(`document.querySelector('.recap .recap-tabla').classList.contains('recap-oculto') && document.querySelectorAll('.recap-tabla tbody tr').length === 5 && (r => r.width > 250)(document.querySelector('.recap-imagen').getBoundingClientRect())`), `${lang}: the image in place of the rows, which stay for screen readers`);
   ok(await ev(`document.documentElement.scrollWidth <= innerWidth && document.querySelector('.recap').scrollWidth <= document.querySelector('.recap').clientWidth`), `${lang}: nothing wider than 320 px`);
   ok(await ev(`(r => r.top >= 0 && r.bottom <= innerHeight)(document.querySelector('.recap-ir').getBoundingClientRect())`), `${lang}: the button to the cup fits in the screen`);
   ok(await ev(`document.querySelectorAll('iframe').length === 0`), `${lang}: the hidden frame that built the table is gone`);
