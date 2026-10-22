@@ -1,8 +1,6 @@
 # 🎲 Juegos de Salón
 
-Mobile-first web app with party games to play with friends: card and dice games, word and logic puzzles, guessing games. Open it on a phone or tablet, pick a game from the menu, type in the players, and the phone runs the game. In Spanish, English, Portuguese and German.
-
-The menu can be filtered by kind of game (words, logic, trivia, cards and dice); how many are playing is chosen inside each game. The filter lives in the link, so going back from a game keeps it and a filtered menu can be shared. Each game card has a ☆ in its corner to mark it as a favorite; once there is one, a ⭐ **Favorites** chip at the start of the kinds (or just above them, on a narrow phone) shows only those. Favorites stay in that browser, with no account (D-238). Above the kinds, two more chips, ✨ **New** and 🔥 **Popular**, show only the new games or only the popular ones, with the ⭐ **Favorites** chip first in that row (D-362, D-364). A new game wears a **New** sticker next to its name for two weeks and, meanwhile, sits right after The Cup (D-333, D-335). The rest are ordered by the games finished in the last four weeks, recounted every week, and the top three wear a 🔥 **Popular** sticker (D-361, D-369). Scrolling down, the filters float at the top under the app's name, which takes you back up (D-364). A 🎲 **Random game** button rolls a 3D die over the menu, one game per face, and opens whichever lands on top: never The Cup nor a game that needs a group of three or more, like Fourth King, and always among every game, whatever filter is on (D-188, D-374). At the top, 📅 **One a Day** shares a row with The Cup, each in a half-width card: the card opens One a Day's page and its ▶ Play today chip opens today's game, a surprise game every day, the same challenge for everyone; once played, the chip shows your place in the month and your points (D-230, D-239, D-414; see below). The games The Cup is made of (Agents, Bulls and Cows: Word, What Year?, Where Is It?, Queens, Tango, Zip, Untangle, Broken Routes, Plots and Paint Mines) are on the menu too, as games like any other: one player, in all four languages (D-198, D-332). Connections, which Agents replaced in D-421, is off the menu and sits in the lab's Storeroom; its page `/connections/` still opens.
+Mobile-first web app with party games to play with friends: card and dice games, word and logic puzzles, guessing games. Open it on a phone, pick a game, type in the players, and the phone runs the game. In Spanish, English, Portuguese and German, with no account needed.
 
 **Play:** https://juegosdesalon.cl/
 
@@ -10,9 +8,14 @@ The menu can be filtered by kind of game (words, logic, trivia, cards and dice);
 <p align="center"><img src="docs/screenshots/menu.png" width="220" alt="Main menu">&nbsp;&nbsp;<img src="docs/screenshots/compartir.png" width="220" alt="Share sheet with the promo video"></p>
 <!-- /generated -->
 
-> The app was first made for Chilean players and is now for everyone, in four languages. Spanish is the default and the language the games are written in first; English, Portuguese and German are adaptations, not literal translations, and content only Chileans or Brazilians would know is tagged so a global Cup can leave it out (D-186, D-324).
->
-> Everything internal to the repository is in English (D-316): the rest of the documentation, linked at the end, is being moved from Spanish to English, so some documents are still in Spanish for now. The screenshots show the app in Spanish, which is its default language.
+**The two things to know first:**
+
+- 🏆 **[The Cup](#-the-cup-la-copa)**: a week-long tournament for a group of friends, one daily game each day, the same for everyone.
+- 📅 **[One a Day](#one-a-day)**: a surprise game every day, the same challenge for everyone, with streaks and a monthly points season.
+
+Everything else is a game you play in a group (one phone passed around, or a room with each player on their own phone) or alone.
+
+> Spanish is the default and the language the games are written in first; the other three are adaptations, not literal translations, and content only Chileans or Brazilians would know is tagged so a global Cup can leave it out (D-186, D-324). Everything internal to the repository is in English (D-316); some linked documents are still in Spanish while they are migrated. The screenshots show the app in Spanish.
 
 ## Games
 
@@ -47,114 +50,107 @@ The games with their own section below come first; after them, the one-player ga
 
 ---
 
-## 👑 Fourth King (Cuarto Rey)
+## 🏆 The Cup (La Copa)
 
-**In the lab's Storeroom since D-420**, at the owner's request: it is no longer on the home page, in Random game or in the search. It still plays, unchanged, at `/labs/fourth-king/`, behind the lab's door (`/fourth-king/` and `/cuarto-rey/` redirect there), so a key holder can open it from La Bodega.
-
-The classic drinking card game. The phone is the deck: each player draws a card and the phone says what to do. It names who drinks, runs the minigames (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it drinks everything left in their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it. After each card, who drinks and "pass the phone to X" share one screen, and only the next player's button moves on.
-
-<!-- generated: screenshots:cuarto-rey · written by python3 tools/release/readme.py update -->
+<!-- generated: screenshots:copa · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/fourth-king/02-intro.png" width="180" alt="Intro and rules"><br><sub>Intro and rules</sub></td>
-    <td align="center"><img src="docs/screenshots/fourth-king/03-jugadores.png" width="180" alt="Players and gender"><br><sub>Players and gender</sub></td>
-    <td align="center"><img src="docs/screenshots/fourth-king/04-mesa.png" width="180" alt="Tap to draw a card"><br><sub>Tap to draw a card</sub></td>
-    <td align="center"><img src="docs/screenshots/fourth-king/05-carta.png" width="180" alt="Card and instruction"><br><sub>Card and instruction</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/00-invitacion.png" width="180" alt="The invite: your name and a 4-digit PIN"><br><sub>The invite: your name and a 4-digit PIN</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/01-tablero.png" width="180" alt="Your days: past ones done, today open"><br><sub>Your days: past ones done, today open</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/02-numero.png" width="180" alt="Day 2: Bulls and Cows, guess the number"><br><sub>Day 2: Bulls and Cows, guess the number</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/03-agents.png" width="180" alt="Day 3: Agents, find your spies from the clues"><br><sub>Day 3: Agents, find your spies from the clues</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/fourth-king/06-minijuego.png" width="180" alt="Minigame with prompts"><br><sub>Minigame with prompts</sub></td>
-    <td align="center"><img src="docs/screenshots/fourth-king/07-salud.png" width="180" alt="Who drinks"><br><sub>Who drinks</sub></td>
-    <td align="center"><img src="docs/screenshots/fourth-king/08-pasale.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
-    <td align="center"><img src="docs/screenshots/fourth-king/09-cuarto-rey.png" width="180" alt="Fourth King!"><br><sub>Fourth King!</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/04-reinas.png" width="180" alt="Day 4: Queens"><br><sub>Day 4: Queens</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/05-letras.png" width="180" alt="Day 5: Bulls and Cows: Word"><br><sub>Day 5: Bulls and Cows: Word</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/06-anio.png" width="180" alt="Day 6: What year was it?"><br><sub>Day 6: What year was it?</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/07-grafico.png" width="180" alt="Everyone's place, day by day"><br><sub>Everyone's place, day by day</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/fourth-king/10-final.png" width="180" alt="Sip ranking"><br><sub>Sip ranking</sub></td>
-    <td align="center"><img src="docs/screenshots/fourth-king/13-historial.png" width="180" alt="Every card that came up"><br><sub>Every card that came up</sub></td>
-    <td></td>
+    <td align="center"><img src="docs/screenshots/cup/08-podio.png" width="180" alt="Podium and medals"><br><sub>Podium and medals</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/09-admin.png" width="180" alt="The admin shares messages with the group"><br><sub>The admin shares messages with the group</sub></td>
+    <td align="center"><img src="docs/screenshots/cup/10-semana.png" width="180" alt="Creating a cup: drag the games into the week"><br><sub>Creating a cup: drag the games into the week</sub></td>
     <td></td>
   </tr>
 </table>
 <!-- /generated -->
 
-Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
+Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different game opens, **the same for everybody**, playable **once**. Each day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so every day weighs the same and one crushing day does not decide the cup (D-94, D-113). The final is worth double, everyone gets one ×2 wildcard, and the most points on day 7 lifts the cup. It borrows what makes daily puzzles work (Wordle, Connections): same challenge, once a day, comparable scores, little luck, and a **share card** that does not give the answer away.
 
-## 🔢 Bulls and Cows (Toque y Fama)
+**The admin picks the week** (D-163) from thirteen games, dragging them into place, or takes a random proposal with no two days of the same skill in a row. The Grand Final always closes the cup. The classic week:
 
-Each player picks a secret number with no repeated digits and tries to crack the other one, or you play alone against a number the phone picks. For every guess the phone answers on its own: **fama** is a right digit in the right place, **toque** is a right digit somewhere else. Nobody counts by hand, nobody cheats.
+| Day | Game | Skill |
+|---|---|---|
+| 1 | ⏳ Timeline Flash: 10 milestones, placed with Timeline's drag and drop | knowledge |
+| 2 | 🔢 Bulls and Cows: guess the number | deduction |
+| 3 | 🕵️ Agents: find your 11 agents among 15 words from four clues (D-421) | association |
+| 4 | 👑 Queens: one per row, column and color region, never touching; scored by solve time (D-166 to D-169, D-283) | logic |
+| 5 | 🔤 Bulls and Cows: Word: a 5-letter word colored like Wordle; every letter pinned down scores | deduction |
+| 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
+| 7 | 🏁 The Grand Final: one round of each game of the week, worth double | everything |
 
-- **📱 One phone:** players pass the phone around, and the screen is covered between turns.
-- **📡 Two phones:** a room with a 4-letter code and a QR. Each phone keeps its own secret and answers the rival's guesses, and both guess at once, each at their own pace: fewer guesses wins. At the end both reveal and everything is verified.
-- **🧍 Play alone:** The Cup's number game. The phone picks a 4-digit number and you get 10 guesses: 100 points on the first one and 10 less for each extra guess, with a clock and a record for your best score. Clues are spelled out in full ("2 famas, 1 toque").
-- **💬 Room chat:** on two phones there is a chat to trash-talk while guessing, and it stays alive on the final screen to celebrate or ask for a rematch. New messages peek out next to the bubble.
+The other seven: **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** (drop a pin for five cities on an unlabeled satellite globe; up to 100 points each, minus 4 per 100 km off, D-155, D-159), **🧶 Untangle** (Simon Tatham's puzzle: ten levels of knots against a four-minute clock, D-179), and the three below. Every cup game also plays on its own from the menu at `/<slug>/` (D-142, D-149, D-198), with its own social card (D-162). The Cup reuses the app's existing UX rather than inventing its own (D-102).
 
-<!-- generated: screenshots:toque-y-fama · written by python3 tools/release/readme.py update -->
+How it works:
+
+- **Everything comes from a seed** (`code:day`), so everyone plays the same content with no server (D-97).
+- **A day stays open until the next midnight** (grace day), except the final. **Late sign-ups** stay open until the final unless closed or full (ten players); missed days score 0 (D-177). Time only breaks ties, and it is *active* time (D-95). **Two days in a row without playing leave a player out**, with a warning the day before; the admin can bring them back (D-347, D-376).
+- **Results stay hidden until you play**, so the table cannot spoil today.
+- **Accounts are a name and a PIN inside one cup**, on Firebase anonymous auth; the PIN hash is unreadable and the rules check it (D-96). Signed in to the leaderboards, **Your cups** follows you to any phone (D-220); finished cups hide behind **Show finished cups** (D-234, D-336).
+- **The admin plays too**: renames, removes or re-PINs players, shares the invite, **today's reminder** with who is missing, the table and the final summary (D-99, D-171, D-176, D-165); can **end the cup early** (D-161) and **export the final table** as an image or CSV. A new cup opens with a short guide (D-110).
+- **Every day has a practice round** that does not count (D-103), then a **3-to-1 countdown** before the clock starts (D-105, D-258); the result **explains its score** line by line (D-106).
+- **A cup can have its own link** (D-121): `juegosdesalon.cl/cup/?pirata` instead of a 5-letter code.
+- **Language** (D-170): the screen follows each player's language; the cup's language, chosen at creation, sets the words of the word games and every shared message. **Audience** (D-186, D-187): 🌎 Global, 🇨🇱 Chile or 🇧🇷 Brazil decides which local content is in.
+- **Phone notifications** (D-223, D-224, D-228): a 🔔 bell per cup; reminders when a day opens or is running out, the final and the winner ([docs/PWA-NOTIFICACIONES.md](docs/PWA-NOTIFICACIONES.md)). In the lab, a **recap window** on the home page shows how a cup you played ended (D-423, D-426; `/?recap=demo`).
+- **Bug reports and comments need no account** (D-104, D-341): the 🐞 form and the "💬 Suggestions and comments" link at the end of every game post to `feedback/`; an optional email gets a reply when resolved (D-317). Emails to **hola@juegosdesalon.cl** land there too (D-318).
+- **Testing:** `?three` makes a 3-day cup (D-100); `?test` plays with no Firebase, as the demos, the screenshots and the end-to-end scripts do.
+
+Spec and design: [docs/games/cup.md](docs/games/cup.md)
+
+### 🚇 Broken Routes, 📐 Plots and 🖌️ Paint Mines
+
+<!-- generated: screenshots:cup-new-games · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/bulls-and-cows/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/bulls-and-cows/02-secreto.png" width="180" alt="Secret number"><br><sub>Secret number</sub></td>
-    <td align="center"><img src="docs/screenshots/bulls-and-cows/03-tablero.png" width="180" alt="Board and keypad"><br><sub>Board and keypad</sub></td>
-    <td align="center"><img src="docs/screenshots/bulls-and-cows/04-pasale.png" width="180" alt="Answer and handoff on one screen"><br><sub>Answer and handoff on one screen</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/01-routes-waiting.png" width="180" alt="Broken Routes: the waiting room"><br><sub>Broken Routes: the waiting room</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/02-routes-game.png" width="180" alt="Broken Routes: turn rectangles until every line joins"><br><sub>Broken Routes: turn rectangles until every line joins</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/03-routes-result.png" width="180" alt="Broken Routes: five stages, turns against the minimum"><br><sub>Broken Routes: five stages, turns against the minimum</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/04-plots-numbers.png" width="180" alt="Plots in Numbers: each number, a plot that size"><br><sub>Plots in Numbers: each number, a plot that size</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/bulls-and-cows/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
-    <td align="center"><img src="docs/screenshots/bulls-and-cows/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
-    <td align="center"><img src="docs/screenshots/bulls-and-cows/08-verificado.png" width="180" alt="Verified secrets"><br><sub>Verified secrets</sub></td>
-    <td align="center"><img src="docs/screenshots/bulls-and-cows/05-resultado.png" width="180" alt="Playing alone: a new record"><br><sub>Playing alone: a new record</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/screenshots/bulls-and-cows/09-chat.png" width="180" alt="Room chat"><br><sub>Room chat</sub></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/05-plots-utilities.png" width="180" alt="Plots in Utilities: one ⚡ and one 💧 per plot"><br><sub>Plots in Utilities: one ⚡ and one 💧 per plot</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/06-paint-mines-hard.png" width="180" alt="Paint Mines: the lever picks hard, two colors"><br><sub>Paint Mines: the lever picks hard, two colors</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/07-paint-mines-hint.png" width="180" alt="Paint Mines: a 💡 hint marks a cell to deduce"><br><sub>Paint Mines: a 💡 hint marks a cell to deduce</sub></td>
+    <td align="center"><img src="docs/screenshots/cup-new-games/08-paint-mines-drawing.png" width="180" alt="Painted whole, the drawing shows"><br><sub>Painted whole, the drawing shows</sub></td>
   </tr>
 </table>
 <!-- /generated -->
 
-Spec: [docs/games/bulls-and-cows.md](docs/games/bulls-and-cows.md) · Feasibility study: [docs/games/bulls-and-cows-factibilidad.md](docs/games/bulls-and-cows-factibilidad.md)
+Three one-player games that left the lab together (D-332): on the home page, in The Cup's pool and replayed in the Grand Final (D-418). Standalone, every board is new; in a cup, the code and the day decide it.
 
-## ⚓ Battleship (Batalla Naval)
+- **🚇 Broken Routes** (`/routes/`; inspired by *Junction Nine*, by Bricks and Chips): turn rectangles of a 3×3 metro map until every color is one unbroken line; five stages against a 7-minute clock (D-293 to D-295).
+- **📐 Plots** (`/plots/`; inspired by Nikoli's *Shikaku*): split the grid into rectangles, each holding one number equal to its area; five boards against the clock (D-310, D-312).
+- **🖌️ Paint Mines** (`/paint-mines/`; inspired by *ColorSweeper*, by ARRKKA): a color Minesweeper whose solved grid is a drawing (D-289 to D-298).
 
-Sink the fleet. Each player hides 5 ships on a 10×10 board and fires in turns: miss, hit or sunk. A hit lets you fire again. Ships are placed by tapping or by dragging them from the list onto the board, with rotate and "random". The phone answers on its own and keeps score.
+**Variants** (D-331): Plots has 🔢 **Numbers** and ⚡💧 **Utilities**, Paint Mines **easy** and ⚡ **hard**. Standalone the player picks one (or the link says `?mode=…`), each with its own leaderboard; in a cup the admin picks it per day. Every variant scores 0 to 100.
 
-The fleet is drawn in **pixel art, seen from above** (D-91): every square paints one 16×16 piece — stern, middle sections, bow — and together they make the ship, so a carrier is a flight deck with a jet parked on it and a submarine is a thin hull with its periscope up. Every ship begins and ends in a point, and turning one is the same drawing rotated 90°. The sea is a single tile repeated in every square. The art lives in `public/battleship/flota.js`, **generated** by `python3 tools/generators/fleet.py`: to change a ship you edit the script and run it again.
+Spec and design: [docs/games/routes.md](docs/games/routes.md), [docs/games/plots.md](docs/games/plots.md), [docs/games/paint-mines.md](docs/games/paint-mines.md)
 
-Sinking a ship **takes a second and a half** (D-93): a flash on the cell you fired at, fire running
-along the hull one square at a time out from the hit, the whole hull slipping under once the fire
-has run, and four bubbles rising just as the sound plays its own. It is the one moment the rival's
-board draws the hull — you already knew the squares, since sinking means hitting all of them, but
-not the ship — and it used to happen in a single repaint.
+### 🕵️ Agents
 
-Whose turn it is is said **four times over, and never only in words** (D-92): the status bar fills
-lime with a 🎯 when it is yours and stays grey with an ⏳ when it is not, the rival's board glows
-while you can fire and dims when you cannot, tapping it out of turn shakes it and tells you why, and
-a chime, a buzz and the tab title announce your turn when the phone is face down.
+A one-player mini *Codenames* (inspired by [Codenames](https://czechgames.com/en/codenames/), by Vlaada Chvátil), at `/agents/`, in The Cup and in One a Day from 2026-10-24, in Connections' place (D-286, D-287, D-421). Four clues come one at a time, «SEA · 3», and you tap the 11 agents among 15 words while avoiding 3 neutrals (−15) and the assassin (−40). Hold a card to mark it suspect or ruled out. Each language has its own deck of about 118 clues, adapted, not translated.
 
-- **📱 One phone:** your fleet is covered between turns. On a miss, the result and "pass the phone to X" share one screen.
-- **📡 Two phones:** a room with a code, a QR and chat. Each phone answers the shots against its own fleet, and at the end both fleets are revealed and verified. The chat steps aside while you place your own fleet, which fills the whole screen, and comes back with its unread badge once you are waiting for the rival (D-138).
-- **🤖 Versus the phone:** an AI that hunts by parity and chases after a hit. It sinks a fleet in about 50 shots.
+Spec and design: [docs/games/agents.md](docs/games/agents.md)
 
-<!-- generated: screenshots:batalla-naval · written by python3 tools/release/readme.py update -->
-<table>
-  <tr>
-    <td align="center"><img src="docs/screenshots/battleship/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/battleship/02-flota.png" width="180" alt="Placing the fleet"><br><sub>Placing the fleet</sub></td>
-    <td align="center"><img src="docs/screenshots/battleship/03-batalla.png" width="180" alt="Battle"><br><sub>Battle</sub></td>
-    <td align="center"><img src="docs/screenshots/battleship/04-pase.png" width="180" alt="Result and handoff"><br><sub>Result and handoff</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/screenshots/battleship/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
-    <td align="center"><img src="docs/screenshots/battleship/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
-    <td align="center"><img src="docs/screenshots/battleship/05-resultado.png" width="180" alt="Result with both fleets"><br><sub>Result with both fleets</sub></td>
-    <td></td>
-  </tr>
-</table>
-<!-- /generated -->
+### Retired cup games
 
-Spec and design: [docs/games/battleship.md](docs/games/battleship.md)
+**🔗 Connections** (16 words, 4 groups) was day 3 until Agents replaced it (D-421); old cups keep it and it still opens at `/connections/`, in the lab's Storeroom. **🔍 The Case**, a *Clues by Sam*-style deduction mystery, also sits in the Storeroom at `/labs/case/`, playable but no longer worked on (D-257, D-263, D-267, D-280).
+
+---
 
 ## ⏳ Timeline (Línea de Tiempo)
 
-You get events with no date on them and place them in the right spot on a shared timeline. Get it right and the card stays. Get it wrong and it is discarded (with your own hand, you draw another one). The first player to correctly place the cards needed to win takes the game; with your own hand, the first to run out of cards. The round is always played to the end, and on a tie the fastest player wins. The rules on the game's front page are folded, one tap away (D-177). The theme is picked at the start, and adding a new one is just a data file. Cards do not repeat across back-to-back games: each phone remembers the ones it has already shown.
+Place undated events in the right spot on a shared timeline: right and the card stays, wrong and it is discarded. The first to place the cards needed wins; the round is always played to the end, and ties go to the fastest. Cards do not repeat across back-to-back games, and a new theme is just a data file.
 
 <!-- generated: themes · written by python3 tools/release/readme.py update -->
 | Theme | Cards | Years | What it covers |
@@ -168,14 +164,10 @@ You get events with no date on them and place them in the right spot on a shared
 | **Total** | **675** | | |
 <!-- /generated -->
 
-- **📱 One phone:** two to six players, passing the phone around.
-- **📡 Several phones:** a room with a code and a QR, up to six players. The host starts the game once everyone is in, and each player sees their own hand.
-- **🧍 Play alone:** The Cup's Timeline Flash. Pick a theme and get ten events: the first one is already on the timeline and you place the other nine in any order. A wrong card lands in its right spot marked in red, and you keep going. You score 0 to 100 for the share you got right, with a clock and a record for your best score in each theme.
-- **💡 Every card tells you something** (D-277, D-314): the verdict tells you a fact, a reason or an anecdote about the card, whether you got it right or wrong. A wrong card's verdict no longer says which events it went between (its big year already says that) and stays until you tap; a right one closes on its own when its bar runs out, after 6 seconds, or sooner with a tap. On the final timeline, tapping an event shows its fact. Against the clock (Timeline Flash, and every event in the Cup's 📅 What year was it?) the clock pauses while you read, for up to 6 seconds. All six themes have them; a wrong card with no fact still says where it went.
-- **🗂 All cards on the table (default):** twice the cards you need to win are dealt face up from the first turn (6, 10 or 14), and no new card enters for the rest of the game. Since the table only shrinks, the cards that are hard to place pile up for the end, on a timeline that by then is already crowded. The game gets harder on its own.
-- **🃏 Shared pool:** the same 6 cards face up for everyone, refilled from the deck, and whoever places the agreed number of cards first wins. It can also be played with **🙋 your own hand**, each player with private cards.
-- **💬 Room chat:** on several phones there is a chat to comment on the plays while waiting for your turn, and it stays alive on the final screen. New messages peek out for a few seconds next to the bubble.
-- **Drag a card into place.** Pull a card down out of your hand and drop it where you think it goes. While it travels it is drawn large and above your finger: in the hand a card is 130px wide and its title sits at 11px, which is unreadable on a narrow phone exactly when you have to decide. A card you already placed can be picked up again and moved, or dropped outside the timeline to send it back to your hand. Dropping only **chooses** — the yellow button is still the one that places it, so nothing irreversible happens by accident, and tapping works exactly as before.
+- **📱 One phone** (two to six players) · **📡 Several phones** (a room with a code and QR, up to six, each with their own hand, and a chat) · **🧍 Play alone**: Timeline Flash, ten events scored 0 to 100 with a clock and a record per theme.
+- **🗂 All cards on the table** (default): twice the cards needed are dealt face up and none is added, so the hard ones pile up for the end. **🃏 Shared pool**: six cards refilled from the deck, or **🙋 your own hand**.
+- **💡 Every card tells you something** (D-277, D-314): the verdict gives a fact or anecdote, right or wrong; against the clock it pauses while you read.
+- **Drag a card into place**, drawn large above your finger; dropping only chooses, and the yellow button places it.
 
 <!-- generated: screenshots:linea-de-tiempo · written by python3 tools/release/readme.py update -->
 <table>
@@ -202,7 +194,38 @@ You get events with no date on them and place them in the right spot on a shared
 
 Spec and design: [docs/games/timeline.md](docs/games/timeline.md)
 
----
+## 🔢 Bulls and Cows (Toque y Fama)
+
+Crack a secret number with no repeated digits. For every guess the phone answers on its own: **fama** is a right digit in the right place, **toque** a right digit elsewhere. Nobody counts by hand, nobody cheats.
+
+- **📱 One phone:** pass it around, the screen covered between turns.
+- **📡 Two phones:** a room with a code, a QR and a chat. Each phone keeps its own secret, both guess at once, fewer guesses wins, and everything is verified at the end.
+- **🧍 Play alone:** The Cup's number game: 4 digits, 10 guesses, 100 points minus 10 per extra guess, with a clock and a record.
+
+<!-- generated: screenshots:toque-y-fama · written by python3 tools/release/readme.py update -->
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/02-secreto.png" width="180" alt="Secret number"><br><sub>Secret number</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/03-tablero.png" width="180" alt="Board and keypad"><br><sub>Board and keypad</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/04-pasale.png" width="180" alt="Answer and handoff on one screen"><br><sub>Answer and handoff on one screen</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/08-verificado.png" width="180" alt="Verified secrets"><br><sub>Verified secrets</sub></td>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/05-resultado.png" width="180" alt="Playing alone: a new record"><br><sub>Playing alone: a new record</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/bulls-and-cows/09-chat.png" width="180" alt="Room chat"><br><sub>Room chat</sub></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+<!-- /generated -->
+
+Spec: [docs/games/bulls-and-cows.md](docs/games/bulls-and-cows.md) · Feasibility study: [docs/games/bulls-and-cows-factibilidad.md](docs/games/bulls-and-cows-factibilidad.md)
 
 ## 🪢 Hangman (El Ahorcado)
 
@@ -229,25 +252,17 @@ Spec and design: [docs/games/timeline.md](docs/games/timeline.md)
 </table>
 <!-- /generated -->
 
-The classic word game, with the fix it has always needed: **nobody sits and watches**. Instead of one bored executioner and one guesser, every player writes the word for the next one, the last one writes for the first, and everyone guesses their own. Two players make a duel, six make a race. Your score is **the lives you had left**, so cracking the word is not enough: you have to crack it cheap. Setting an impossible word earns nothing, and the player next to you writes yours anyway.
+The classic, fixed so that **nobody sits and watches**: every player writes the word for the next one and everyone guesses their own, one letter per turn, all boards advancing together. Your score is **the lives you had left**. Five themes and a mix, each with its own words per language (not translations, since a translated word changes length and difficulty); 5, 6 or 8 lives; **buy a letter** 💡 for a life.
 
 | | 🤝 Chain | 🎴 Phone's deck |
 |---|---|---|
 | Who sets the word | Each player, for the next one, with a mandatory clue | The phone, from the chosen theme |
-| What the theme is for | It suggests six words to whoever writes, who can take them, edit them or ignore them | It is where the word comes from |
-| The secret | It never travels: it is committed with a hash and verified at the end | There is none: it comes from the deck seed |
+| What the theme is for | It suggests six words to whoever writes | It is where the word comes from |
+| The secret | Committed with a hash and verified at the end | There is none: it comes from the deck seed |
 
-Five themes and a mix (Chile, Animals, Food, Film and TV, Sports), each with its own words and clues per language. They are not translations, because a translated word changes length and difficulty. Lives are configurable (5, 6 or 8), each miss costs one, and the last stroke of the drawing is always the X eyes. You can **buy a letter** 💡: the rarest missing one shows up and it costs you a life.
-
-Turns alternate: you try a letter and the turn moves to the next player. All boards advance together, so seeing that your neighbour has one life left while you still have four lands exactly when it matters.
-
-- **📱 One phone:** two to six players, with a covered screen for writing the word. After each letter, the result and "pass the phone to X" share one screen.
-- **📡 Several phones:** a room with a code and a QR, up to six, taking turns one letter at a time so the sequence is visible (D-66). The rival strip shows lives and progress, never letters.
-- **🧍 Play alone:** the phone deals a word from the chosen theme with its clue, and you crack it. There is no rival: the phone does not guess. Since the word comes from the deck there is no secret to commit, so this is the only mode that works without https (D-65).
+- **📱 One phone** (two to six) · **📡 Several phones** (up to six, one letter at a time; rivals show lives and progress, never letters, D-66) · **🧍 Play alone** (the phone deals the word; the only mode that works without https, D-65).
 
 Spec and design: [docs/games/hangman.md](docs/games/hangman.md)
-
----
 
 ## 🎲 Liar's Dice (Dudo)
 
@@ -274,19 +289,11 @@ Spec and design: [docs/games/hangman.md](docs/games/hangman.md)
 </table>
 <!-- /generated -->
 
-The classic dice game from bars and long dinners. Everyone rolls five dice and **only looks at their own**. You bet how many dice of one face are on **the whole table** ("four fives"), and the next player either raises or calls **dudo**. On a call everything is revealed and counted: if there were as many as claimed or more, the caller loses a die; if there were fewer, the bidder does. **Aces are wild**. A player with no dice left is out, and the last one with dice wins.
+Everyone rolls five dice and **only looks at their own**. You bet how many dice of one face are on **the whole table** ("four fives"); the next player raises or calls **dudo**, and whoever was wrong loses a die. **Aces are wild**; the last one with dice wins. The phone rolls, **refuses illegal bids** and counts instantly, which is what people argue about. **Calzar** (claiming the exact count) is offered only with three players or more (D-71). In Spanish the faces keep their Chilean names (**ases, tontos, trenes, cuadras, quintas, sextas**), switchable to numbers.
 
-Here the phone does what a real table does badly: it rolls the dice, it **refuses illegal bids** (a raise is more dice, or the same number with a higher face, and aces count double in both directions), and it counts instantly, which is exactly what people argue about. **Calzar** means claiming the count is exact: get it right and you win a die back, get it wrong and you lose one. It is available from half the dice on the table and **only with three players or more**. In a duel there is a single hidden hand, so the exact count is arithmetic, not a risk (D-71).
-
-In Spanish the faces are called the way they are called at a Chilean table (**ases, tontos, trenes, cuadras, quintas, sextas**), which is how the game is actually played in Chile: "cuatro quintas", not "cuatro cincos". It ships on, and it can be turned off in settings to go back to numbers. In English, Portuguese and German the faces go by their number and the switch is not offered.
-
-- **📱 One phone:** two to six players. The phone is passed around and each player sees their dice behind a handoff screen (C-9).
-- **🤖 Versus the phone:** a duel. The phone bets on probability and **only looks at its own dice**: the decision comes from how many unknown dice are left and how likely they are to cover the bid, not from peeking at yours.
-- **📡 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each phone rolls **its own** dice and publishes only the hash. On a call it reveals them and everyone verifies that nobody swapped them (C-10). This is why the dice are not derived from the shared seed like everything else this app deals: the code is public, and with a shared seed anyone could compute the rival's dice from the console (D-70).
+- **📱 One phone** (two to six, a handoff screen between players, C-9) · **🤖 Versus the phone** (it bets on probability and only looks at its own dice) · **📡 Several phones** (each phone rolls its own dice and publishes only a hash, verified on a call, C-10, D-70).
 
 Spec and design: [docs/games/liars-dice.md](docs/games/liars-dice.md)
-
----
 
 ## 📝 Generala
 
@@ -307,21 +314,42 @@ Spec and design: [docs/games/liars-dice.md](docs/games/liars-dice.md)
 </table>
 <!-- /generated -->
 
-The dice game of every Latin American after-dinner table. On your turn you roll five dice **up to three times**, tapping the ones you want to keep between rolls, and then you score the result in a free box of your card, or cross one out with a 0. There are eleven boxes, so there are eleven turns, and the highest total wins: ones to sixes add up their face, a straight is worth 20, a full house 30, four of a kind 40 (five more if they come on the first roll), a generala 50 and a double generala 100. A **generala on the first roll wins the game on the spot**; that rule ships on and can be turned off before starting.
+The Latin American after-dinner dice game: roll five dice **up to three times**, keep the ones you want, and score in one of eleven boxes; highest total wins. A **generala on the first roll wins on the spot** (can be turned off). The phone adds up, shows what every free box is worth now, and blocks illegal moves.
 
-The phone does what the table does badly: it adds up, it shows what every free box would be worth with the dice you have now, and it will not let you score twice in the same box or roll a fourth time. Nothing comes preselected: you tap a box and the button says what it does ("Score 30 in Full house").
+- **📱 One phone** (two to six) · **📡 Several phones** (everyone watches who is rolling, D-246) · **🧍 Play solo** (eleven turns for a record and the `generala_solo` leaderboard).
 
-- **📱 One phone:** two to six players. Before each handoff you see what the last player scored, with their dice (C-9).
-- **📡 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. Each player rolls on their own phone and everyone watches the dice and the card of whoever is playing. There is nothing hidden in this game, so the dice travel in the clear; they are not derived from the shared seed either, because with the public code that would let anyone compute their next rolls (D-246).
-- **🧍 Play solo:** eleven turns for your best score, with a record on the phone and, signed in, the `generala_solo` leaderboard.
-
-It was announced as coming soon first (D-248) and opened in v0.189 (D-405). It is the first group game that also works **without playing at the same time**: everyone fills their own card. It is in **One a Day** from October 23, 2026, where every roll comes from the day's seed, so whoever keeps the same dice gets the same dice (D-247). In Portuguese it is called General, as in Brazil; Kniffel and Yahtzee are trademarks and a slightly different game, so the name stays Generala, but its card says it is like Kniffel or Yatzy and searching either name finds it, in every language.
+Opened in v0.189 (D-248, D-405); in **One a Day** from October 23, 2026, with the day's dice (D-247). Its card says it is like Kniffel or Yatzy, and searching either name finds it.
 
 Spec and design: [docs/games/generala.md](docs/games/generala.md)
 
----
+## ⚓ Battleship (Batalla Naval)
+
+Hide 5 ships on a 10×10 board and fire in turns; a hit lets you fire again. Place ships by tapping or dragging, with rotate and "random". The fleet is **pixel art seen from above**, generated by `python3 tools/generators/fleet.py` into `public/battleship/flota.js` (D-91); sinking a ship is a second-and-a-half animation (D-93), and whose turn it is is shown four ways, never only in words (D-92).
+
+- **📱 One phone** (your fleet covered between turns) · **📡 Two phones** (a room with code, QR and chat; fleets verified at the end, D-138) · **🤖 Versus the phone** (an AI that hunts by parity; about 50 shots to sink a fleet).
+
+<!-- generated: screenshots:batalla-naval · written by python3 tools/release/readme.py update -->
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/battleship/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/02-flota.png" width="180" alt="Placing the fleet"><br><sub>Placing the fleet</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/03-batalla.png" width="180" alt="Battle"><br><sub>Battle</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/04-pase.png" width="180" alt="Result and handoff"><br><sub>Result and handoff</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/battleship/06-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/07-dos-celulares.png" width="180" alt="Game on two phones"><br><sub>Game on two phones</sub></td>
+    <td align="center"><img src="docs/screenshots/battleship/05-resultado.png" width="180" alt="Result with both fleets"><br><sub>Result with both fleets</sub></td>
+    <td></td>
+  </tr>
+</table>
+<!-- /generated -->
+
+Spec and design: [docs/games/battleship.md](docs/games/battleship.md)
 
 ## 🍹 Julep (Julepe)
+
+> **Paused.** The rules text still does not land for new players, so the home page shows it as "Coming soon" while it is reworked (D-88, D-142). The game works at [`/julep/`](https://juegosdesalon.cl/julep/).
 
 <!-- generated: screenshots:julepe · written by python3 tools/release/readme.py update -->
 <table>
@@ -346,306 +374,60 @@ Spec and design: [docs/games/generala.md](docs/games/generala.md)
 </table>
 <!-- /generated -->
 
-> **Paused for now.** Several rounds of rewriting the rules text still did not make the game land
-> — not even for the person writing them. The home page shows it as "Coming soon", at the end of the
-> list, without opening it, while the rules get reworked into something a new player can actually
-> follow (D-88, D-142). The game itself is untouched and still
-> works at [`/julep/`](https://juegosdesalon.cl/julep/).
-
-A trick-taking game from the Tute family, played for sips. There is a **pot** of sips on the table. You look at your five cards and, taking turns from the dealer's right, say whether you are **in** or **out**. Going in means committing to win **two of the five tricks**: make it and you are safe, and you get to hand out two sips per trick among the others; fall short and you **drink the whole pot**. That is a **julep**. The pot carries over to the next hand once for every player who got juleped, so two juleps in the same hand double it before anyone notices.
-
-The phone does what a real table does badly. It deals, it keeps the pot, it remembers who owes whom, and above all it **refuses illegal cards**: you must follow the suit led, you must play higher than the highest card of that suit on the table if you can, and you must trump when you are out of the suit. Those three rules are what people argue about all night; here the cards that cannot be played are simply dimmed, with a line saying which rule is doing it. Nobody has to learn a rule by breaking it.
-
-If only one player goes in, the hand would be no hand at all, so **the dealer is dragged in** and has to play it (D-83). Dealing is a risk too, which is exactly the story the table tells afterwards.
-
-- **📱 One phone:** two to six players. The phone goes around the table for every declaration, every swap and every card, with the result of what just happened shown before each handoff (C-9).
-- **📡 Several phones:** a room with a 4-letter code, a QR and chat, two to six players. The deal travels **sealed for each player**: every phone publishes a public key when it joins, and the dealer seals each hand with the key of the person it belongs to (D-81). Nobody else can open it, not even reading the room from the console. When the hand ends everyone reveals what they were dealt and the app checks that no one played a card they did not have: "Cards verified ✅" (C-10). It is also what the table wants to see anyway — what the player who got juleped was holding.
-- **🤖 Versus the phone:** one to five phone rivals, however many you want at the table. They weigh their hand the way you would (how many trumps, how high, how many aces and kings), and they get more careful as the pot grows: risking twenty sips for the right to hand out four is not the same bet as risking six.
-
-The name changes in each language, because a name only works if it is recognised (D-84): the English cousin of this game is *Loo*, which today reads as the toilet, so in English it is **Julep** — a real word, a drink, and one letter from the original. In Portuguese there is no relative to borrow from, but *o bolo* is what the pot is called in Brazil, so it is **Paga o Bolo**.
+A Tute-family trick-taking game played for sips. Going **in** commits you to win two of five tricks; fall short and you **drink the whole pot**, a **julep**. The phone deals, keeps the pot and **dims illegal cards** with the rule that blocks them. If only one player goes in, the dealer is dragged in (D-83). On several phones each hand is **sealed with its owner's public key** and verified at the end (D-81, C-10); versus the phone, one to five AI rivals. Named Julep in English (*Loo* reads as the toilet) and Paga o Bolo in Portuguese (D-84).
 
 Spec and design: [docs/games/julep.md](docs/games/julep.md)
 
----
+## 👑 Fourth King (Cuarto Rey)
 
-## 🏆 The Cup (La Copa)
+> **In the lab's Storeroom since D-420**: off the home page, Random game and the search. It still plays at `/labs/fourth-king/` for lab key holders.
 
-<!-- generated: screenshots:copa · written by python3 tools/release/readme.py update -->
+The classic drinking card game. The phone is the deck: each player draws a card and the phone says who drinks, runs the minigames, suggests dares and counts the kings. Whoever draws the fourth king drinks what is left, and the last screen shows the sip ranking and every card that came up.
+
+<!-- generated: screenshots:cuarto-rey · written by python3 tools/release/readme.py update -->
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/cup/00-invitacion.png" width="180" alt="The invite: your name and a 4-digit PIN"><br><sub>The invite: your name and a 4-digit PIN</sub></td>
-    <td align="center"><img src="docs/screenshots/cup/01-tablero.png" width="180" alt="Your days: past ones done, today open"><br><sub>Your days: past ones done, today open</sub></td>
-    <td align="center"><img src="docs/screenshots/cup/02-numero.png" width="180" alt="Day 2: Bulls and Cows, guess the number"><br><sub>Day 2: Bulls and Cows, guess the number</sub></td>
-    <td align="center"><img src="docs/screenshots/cup/03-agents.png" width="180" alt="Day 3: Agents, find your spies from the clues"><br><sub>Day 3: Agents, find your spies from the clues</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/02-intro.png" width="180" alt="Intro and rules"><br><sub>Intro and rules</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/03-jugadores.png" width="180" alt="Players and gender"><br><sub>Players and gender</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/04-mesa.png" width="180" alt="Tap to draw a card"><br><sub>Tap to draw a card</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/05-carta.png" width="180" alt="Card and instruction"><br><sub>Card and instruction</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/cup/04-reinas.png" width="180" alt="Day 4: Queens"><br><sub>Day 4: Queens</sub></td>
-    <td align="center"><img src="docs/screenshots/cup/05-letras.png" width="180" alt="Day 5: Bulls and Cows: Word"><br><sub>Day 5: Bulls and Cows: Word</sub></td>
-    <td align="center"><img src="docs/screenshots/cup/06-anio.png" width="180" alt="Day 6: What year was it?"><br><sub>Day 6: What year was it?</sub></td>
-    <td align="center"><img src="docs/screenshots/cup/07-grafico.png" width="180" alt="Everyone's place, day by day"><br><sub>Everyone's place, day by day</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/06-minijuego.png" width="180" alt="Minigame with prompts"><br><sub>Minigame with prompts</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/07-salud.png" width="180" alt="Who drinks"><br><sub>Who drinks</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/08-pasale.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/09-cuarto-rey.png" width="180" alt="Fourth King!"><br><sub>Fourth King!</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/cup/08-podio.png" width="180" alt="Podium and medals"><br><sub>Podium and medals</sub></td>
-    <td align="center"><img src="docs/screenshots/cup/09-admin.png" width="180" alt="The admin shares messages with the group"><br><sub>The admin shares messages with the group</sub></td>
-    <td align="center"><img src="docs/screenshots/cup/10-semana.png" width="180" alt="Creating a cup: drag the games into the week"><br><sub>Creating a cup: drag the games into the week</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/10-final.png" width="180" alt="Sip ranking"><br><sub>Sip ranking</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/13-historial.png" width="180" alt="Every card that came up"><br><sub>Every card that came up</sub></td>
+    <td></td>
     <td></td>
   </tr>
 </table>
 <!-- /generated -->
 
-**On the menu since D-175**, after a stint in the lab (D-101). The 3-day cup, for testing with close friends, is offered with `?three` in the link. A 🐞 button sends bug reports and comments with their context, no login needed.
-
-Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link with the group; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different game opens, **the same one for everybody**, and it can be played **once**. Your score only matters against the others: the day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so every day weighs the same (and every game scores 0 to 100 anyway, D-113) and one crushing day does not decide the cup (D-94). The final day is worth double, everyone gets one ×2 wildcard, and whoever has the most points on day 7 lifts the cup.
-
-It borrows what makes daily puzzles work (Wordle, Connections): same challenge for everyone, once a day, comparable scores, little luck, and a **share card** that shows how you did without giving the answer away. The games reuse the engines, decks and screens this app already had where it can.
-
-**The admin picks the week** (D-163): when creating the cup, which games go in and in what order, starting from a random proposal (no two days of the same skill in a row) for anyone who would rather not think about it. It is Timeline's hand and line: drag a day to another spot in the week, or drag a game from the hand onto the day it replaces. There are thirteen to choose from: the six below plus Zip, Tango, Where is it?, Untangle, Broken Routes, Plots and Paint Mines. The Grand Final always closes the cup and does not change. Without a choice, this is the classic week:
-
-| Day | Game | Skill |
-|---|---|---|
-| 1 | ⏳ Timeline Flash: 10 milestones, played from a hand with the Timeline drag and drop | knowledge |
-| 2 | 🔢 Bulls and Cows: guess the number, with the Bulls and Cows keypad and notes | deduction |
-| 3 | 🕵️ Agents: four clues, one at a time; find your 11 agents among 15 words without touching the neutrals or the assassin (D-421) | association |
-| 4 | 👑 Queens: one per row, column and color region, never touching; a tap cycles queen → X → empty, dragging fills X (or erases them, starting on an X), ↩️ Undo takes back the last gesture (a whole drag is one) without touching the clock, and 🧹 Clear all starts over; scored by solve time, mistakes are free, and you can give up (D-166 to D-169, D-283) | logic |
-| 5 | 🔤 Bulls and Cows: Word: a 5-letter word, each letter colored by its clue (green for a bull, yellow for a cow, like Wordle); every letter you pin down scores, so getting close counts | deduction |
-| 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
-| 7 | 🏁 The Grand Final: one round of each game of the week, worth double | everything |
-
-The other seven are **〰️ Zip**, **☀️ Tango**, **📍 Where is it?**, **🧶 Untangle** and the three that left the lab in D-332, below. Untangle is Simon Tatham's puzzle, where you drag knots until no thread crosses another, in ten levels of 6 to 15 knots against a four-minute clock, like Zip. The tangle is built from an untangled drawing, so it always has a solution, and a thread running over a knot counts as a crossing, so piling the knots up doesn't help (D-179). 🔄 Restart level puts the knots back where the level began: like Clear all in Queens and Zip, the first tap arms it, the second does it, and the clock keeps running. Where is it? gives you five cities, each with its country, and you drop a pin on a satellite-image globe with no names on it (NASA's Blue Marble, so deserts, jungles and ice look like themselves), which spins endlessly as you drag it: every city is worth up to 100 points, minus 4 per 100 km off. The cities are the capitals of every UN country and its two observers, plus famous and second-tier ones (529 in all), and the borders used to check them come from Natural Earth via `tools/generators/map.mjs` (D-155, D-159). **The games also play on their own from the main menu** (D-142), one player and no cup: Timeline Flash and the number game are the *play alone* modes of Timeline and Bulls and Cows, in all four languages, and the other eleven (all but the final) have their own card, Where is it? included since D-174, Untangle since D-190, the three below since D-332 and Agents since D-421, open at `/<slug>/` like any other game (`/queens/`, `/tango/`…; no "cup" in a link that has nothing to do with one, D-149, D-198) and play in the player's language. Each of those pages is generated by `tools/release/og.mjs` with its own social card, so a link pasted in WhatsApp shows the game, not the cup (D-162). **🔗 Connections** (16 words, 4 groups, with red herrings) was day 3 of the classic week until D-421, when Agents took its place in the pool, the demo calendars and One a Day: cups created before keep playing it, and it still opens at `/connections/`, listed in the lab's Storeroom. **🔍 The Case** is a finished cup game that stayed in the lab and, since it didn't take off, now sits in the lab's Storeroom, still playable but no longer worked on (D-257, D-280): a deduction mystery in the style of *Clues by Sam*, with 20 suspects and clues that always tell the truth, generated so you never have to guess; if you get stuck, 💡 Hint tells you whom to look at and which clues to put together, for 15 points (D-263). It plays at `/labs/case/` (`/case/` redirects there), behind the lab's door, where each invited person has their own key (D-281, D-284), in all four languages, with an animated cover of cards flipping under a magnifying glass: with no seed in the link it's the case of the day, the same for everyone, it picks up where you left off after a reload, and the end offers sharing that same case, another one, today's, and a comment form (D-267). A cup can't pick it. The cup does not invent its own UX (D-102): the timeline, the drag and drop and the keypad are the ones Timeline and Bulls and Cows already use, shared from `public/assets/`.
-
-- **Everything comes from a seed** (`code:day`), so everyone plays exactly the same content with no server (D-97).
-- **A day stays open until the next midnight** (a grace day), except the final. **Late sign-ups** are open until the final unless the admin closes them or the cup is full (ten players); a late player gets 0 for the days already closed, and the warning shows from day 3 on, because on day 2 day 1 is still in its grace day (D-177). Time only breaks ties, and it is *active* time: it pauses while the screen is hidden (D-95). **Two days in a row without playing** (each closed with its grace day) **leave a player out of the cup**: their points stay in the table, faded with 🚪 and an **Eliminated** pill over the days they won't play (also in the shared image, D-376), but they can't play another day and nobody waits for them. The day before, their board and the reminder warn them, and the admin can bring them back with «Devolver a la copa» (D-347).
-- **Results stay hidden until you play**: the table and the progress chart only add up the days you can already see, so they cannot spoil today.
-- **Accounts are a name and a PIN inside one cup**, backed by Firebase anonymous auth. The PIN hash lives where nobody can read it, and the rules only let a device write for a player if it sends the same hash (D-96). With a leaderboard player signed in, **Your cups** on The Cup's front page follows you to any phone: a cup you play on another one shows up too, and opening it has your name already picked, so only that cup's PIN is missing (D-220). Finished cups are tagged **Finished** and stay out of the list until you switch on **Show finished cups**, which starts off every time (D-234); behind it, every finished cup stays, newest first, instead of leaving after a week (D-336).
-- **The admin plays too**, and can rename, remove or re-PIN players and share ready-made messages with the group: the invite, **today's reminder** (with who is still missing), the partial table and the final summary (D-99). The invite stays in the admin screen for as long as someone new can still join (sign-ups open and fewer than ten players), and once the cup is under way it says which day it is on instead of when it starts (D-176). The table goes out the same from everywhere — the chart, the admin, the podium — as the image, with a short text that only adds what the image does not show (who is still missing, or the medals) (D-171); each day's result also goes out with its own image, headed with the cup and the day (D-165).
-- **The admin can end the cup early** (D-161), say when last place is not going to play the final: nobody plays after that, the table as it stands becomes final and the podium shows up; days that had not opened yet are dropped. Once a cup is over, the admin can **export the final table**: the shareable image with everyone's place day by day, or a CSV spreadsheet (final table, place after each day and every day's detail) for Excel or Google Sheets.
-- **Every day has a practice round first** (D-103): same mechanics, different content, shorter, and it does not count, which the screen says right under its button and again in its folded rules (D-177). Starting the real one shows a **3-to-1 countdown**: the board appears on "¡A jugar!" (D-105), and the clock starts only once that message is gone and the board is in plain view, so the countdown is never playing time (D-258). When you finish, the result **explains how the score was calculated**, line by line (D-106).
-- **A new cup opens on the admin screen** with a short guide: share the invite, wait for people to join (they can before it starts), close sign-ups if you like, and move the start to today or tomorrow while nobody has played yet (D-110). The lab has **ten live demos** of the cup, as a player and as the admin.
-- **A cup can have its own link** (D-121): `juegosdesalon.cl/cup/?pirata` instead of a 5-letter code. It is an alias, unique while the cup lasts and free again a week after it ends.
-- **Bug reports need no account** (D-104): the 🐞 form posts straight to `feedback/` and remembers your name on that device; `node tools/firebase/reports.mjs` reads them back. Since D-341 every game's end (group, solo, minigames, One a Day and the Cup's podium) also has a quiet "💬 Suggestions and comments" link after its buttons, at most once a day and resting two weeks after you write, and the home footer always has it: same form, same `feedback/`, with an optional kind (suggestion, problem, game idea, other). An optional email lets the player hear back when the report is resolved: only its mask is public, the address sits in `feedbackContacto/`, readable only with the owner's key, and is deleted once the reply goes out (D-317). Emails to **hola@juegosdesalon.cl** end up in the same place: a Cloudflare Email Worker keeps them in `buzon/`, readable only by one narrow inbox user, and the support agent turns each one into a report or skips it (D-318).
-- **Many languages, one rule** (D-170): what is personal follows your language, what belongs to the group follows the cup's. The screen (rules, board, scoring breakdown) follows each player's toggle; the cup's language, chosen when it is created, sets the words of Agents, Connections and Bulls and Cows: Word, so everyone plays the same ones, and every message shared with the group, with its link. Word content is written per language, not translated: Agents clue decks, Connections grids and secret words in English, Portuguese and German, plus country and city names for Where is it?.
-- **Who it's for** (D-186, D-187): when creating a cup, the admin picks its audience: 🌎 Global, 🇨🇱 Chile or 🇧🇷 Brazil. Content that people only know in one of those countries is tagged with it: Timeline's Chile and Brazil themes and a few local cards, the Connections grids with Chilean or Brazilian words, a few Chilean secret words, and Chilean and Brazilian cities that aren't capitals (Rio and São Paulo count as global). A global cup leaves out both countries' topics; a Chilean or Brazilian cup adds its own and leaves out the other's. Cups created before keep their content.
-- **Phone notifications** (D-223, D-224, open to everyone since D-228): a 🔔 bell in each cup turns them on. The offer shows up after you play a day, before the cup starts, or when you open the cup from the installed app; the system permission is only asked after a tap, and a confirmation notification arrives at once. On iPhone, the bell first walks you through adding the app to the home screen. A scheduled GitHub workflow checks every 15 minutes and tells you when a day opens, when your time to play it is running out, about The Grand Final and who won, with a tap to see the final table ([docs/PWA-NOTIFICACIONES.md](docs/PWA-NOTIFICACIONES.md)). In the lab, whoever comes back to the home page after a cup they played ended finds a **recap window** with the final table, a small line of each player's place day by day and the places climbed or lost, once per cup within a week of its end; that visit the news splash waits (D-423, `/?recap=demo` shows it with the demo cup). The owner can open it to every player of a given cup before it leaves the lab (D-426; the first, Thursday Guys #4).
-- A 3-day cup exists for testing with `?three` (D-100), and `?test` plays a cup with no Firebase, which is what the demos (`?test&demo=<scene>`, no longer linked from the lab since D-262), the README screenshots and the end-to-end scripts use.
-
-Spec and design: [docs/games/cup.md](docs/games/cup.md)
-
-### 🚇 Broken Routes, 📐 Plots and 🖌️ Paint Mines
-
-<!-- generated: screenshots:cup-new-games · written by python3 tools/release/readme.py update -->
-<table>
-  <tr>
-    <td align="center"><img src="docs/screenshots/cup-new-games/01-routes-waiting.png" width="180" alt="Broken Routes: the waiting room"><br><sub>Broken Routes: the waiting room</sub></td>
-    <td align="center"><img src="docs/screenshots/cup-new-games/02-routes-game.png" width="180" alt="Broken Routes: turn rectangles until every line joins"><br><sub>Broken Routes: turn rectangles until every line joins</sub></td>
-    <td align="center"><img src="docs/screenshots/cup-new-games/03-routes-result.png" width="180" alt="Broken Routes: five stages, turns against the minimum"><br><sub>Broken Routes: five stages, turns against the minimum</sub></td>
-    <td align="center"><img src="docs/screenshots/cup-new-games/04-plots-numbers.png" width="180" alt="Plots in Numbers: each number, a plot that size"><br><sub>Plots in Numbers: each number, a plot that size</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/screenshots/cup-new-games/05-plots-utilities.png" width="180" alt="Plots in Utilities: one ⚡ and one 💧 per plot"><br><sub>Plots in Utilities: one ⚡ and one 💧 per plot</sub></td>
-    <td align="center"><img src="docs/screenshots/cup-new-games/06-paint-mines-hard.png" width="180" alt="Paint Mines: the lever picks hard, two colors"><br><sub>Paint Mines: the lever picks hard, two colors</sub></td>
-    <td align="center"><img src="docs/screenshots/cup-new-games/07-paint-mines-hint.png" width="180" alt="Paint Mines: a 💡 hint marks a cell to deduce"><br><sub>Paint Mines: a 💡 hint marks a cell to deduce</sub></td>
-    <td align="center"><img src="docs/screenshots/cup-new-games/08-paint-mines-drawing.png" width="180" alt="Painted whole, the drawing shows"><br><sub>Painted whole, the drawing shows</sub></td>
-  </tr>
-</table>
-<!-- /generated -->
-
-Three one-player games that were tried out with friends in the lab and left it together (D-332): each one is on the home page in the four languages, at its own page, and in The Cup's pool, so the admin can put it in the week, and then The Grand Final plays it again, whole and with new content (D-418). Like the other cup games, the same screen serves the standalone page and the cup day (D-198): the waiting room, the 3-2-1 countdown, the clock, the result with its breakdown, sharing, the 🐞 report and the leaderboards are the cup's. Standalone, every game is a new random board; in a cup, the code and the day decide it, so everyone plays the same one.
-
-- **🚇 Broken Routes** (Rutas rotas, `/routes/`; inspired by *Junction Nine*, by Bricks and Chips): nine pieces of a metro map on a 3×3 board. Drag from one piece to another and the rectangle between them turns half a turn as one block, its pieces ending up flipped; a tap turns a single piece. Join every color into one unbroken line, in five stages that get harder, against a 7-minute clock. Each stage is worth 17 points; with all five, up to 10 more for speed and up to 5 for using the fewest turns. Undo and restart are free; 🏳️ Give up asks for a second tap and keeps the stages already done (D-293 to D-295).
-- **📐 Plots** (Loteo, `/plots/`; inspired by Nikoli's *Shikaku*): split the grid into rectangles by dragging from corner to corner, each holding exactly one number, which is its area; every board has a single solution you reach without guessing. Five boards against the clock, two to warm up and three hard ones; each is worth 12 points, and with all five, speed adds up to 40; each 💡 hint takes 10 (D-310, D-312).
-- **🖌️ Paint Mines** (Pintaminas, `/paint-mines/`; inspired by *ColorSweeper*, by ARRKKA): a color Minesweeper on a 7×7 grid where each cell is painted or not, and its number counts how many of its 8 neighbors are like it. Paint it all without guessing and a drawing shows up, in its real colors. A miss costs 15 and a 💡 hint 10, from 100; giving up is worth the painted share (D-289, D-290, D-292, D-296, D-298).
-
-**Variants** (D-331): Plots comes in 🔢 **Numbers** and ⚡💧 **Utilities** (all plots the same size, each with exactly one ⚡ and one 💧), and Paint Mines in **easy** (one color) and ⚡ **hard** (two colors). Standalone, the player picks one in the waiting room, right under the game's name (Paint Mines' own lever, two buttons for Plots); the phone remembers it, a link can say it (`?mode=hard`, `?mode=utilities`) and each variant has its own leaderboard. In a cup everyone has to play the same thing, so the admin picks the variant of each of those days below the week when creating the cup, and the day's card, its waiting room and its rules say it under the game's name. Every variant scores 0 to 100, so the hard mode's old ×1.5 from the lab is gone (D-332).
-
-Spec and design: [docs/games/routes.md](docs/games/routes.md), [docs/games/plots.md](docs/games/plots.md), [docs/games/paint-mines.md](docs/games/paint-mines.md)
-
-### 🕵️ Agents
-
-A mini *Codenames* for one player (inspired by [Codenames](https://czechgames.com/en/codenames/), by Vlaada Chvátil), tried in the lab in Spanish and taken out of it in Connections' place (D-286, D-287, D-421): on the menu with the ✨ New sticker, at `/agents/`, in The Cup's pool and in One a Day from 2026-10-24. Every word on the 3×5 board is a spy's codename. Four clues come one at a time, «SEA · 3», and you tap the words that go with each: 11 agents in all (three clues of 3 and one of 2), plus 3 neutrals and an assassin that look like some clue. A neutral costs 15 and the assassin 40, and either cuts the clue short; an agent of another clue still counts. Press and hold a card to mark it 📌 suspect or 🚫 ruled out, or skip a clue. The score is 100 × agents found / 11 minus what you touched, never under 0. Each language has its own deck of about 118 clues, adapted, not translated. Standalone it is a new random board every time; in a cup the code and the day decide it, in the cup's language, and the practice round is two clues.
-
-Spec and design: [docs/games/agents.md](docs/games/agents.md)
+Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 
 ---
 
 ## What every game shares
 
-- **Languages:** Spanish (default), English, Brazilian Portuguese and German. The menu toggle saves the choice on the device, and the browser language is never used to guess (D-47, D-48). See [Languages](#languages).
-- **Sound:** effects synthesized with Web Audio, no audio files. A 🔊/🔇 button on every screen.
-- **Sharing the app:** a share button at the top right of the menu, next to sound and 🏅 rankings
-  (the language toggle sits on the left, in a block of its own), drawn with
-  the system share icon (a box with an arrow pointing up, D-242) in the page's colors: a cyan
-  box and a pink arrow, each with the drop shadow of the page's buttons (D-243). It opens a sheet
-  with the promo video and two options (D-253), in every language: the vertical Short in a tall card
-  under two tabs, 🇪🇸 Español and 🇬🇧 English (Spanish opens on the Spanish one; English, Portuguese
-  and German on the English one), which starts playing on its own, muted and looping, from
-  `youtube-nocookie.com` as soon as the sheet opens (D-410); nothing loads from YouTube until the
-  sheet is opened. **Invite to play** is the app's own message: on a phone it opens the share
-  sheet with the menu's social card **as an image** and a short text — a header with how many games
-  there are, one line each for The Cup, One a Day, playing in a group, playing alone, leaderboards,
-  needing no account, installing it as an app with its notifications, and the four languages (every
-  main feature, `LO_PRINCIPAL` in `compartir.js`, D-271, D-272) —
-  ending with the link to the front door of the language you are reading in: `/`, `/en/`, `/pt/` or
-  `/de/`, card included (D-74, D-226). **Share the video** sends a short text ending with the
-  YouTube link of the Short on show, and the chat builds the preview from its thumbnail. On a computer either
-  option just copies the text and the link; nothing is downloaded. Which Shorts are shown is
-  `SHORTS` in `public/assets/js/compartir-portada.js`, changed whenever a new version goes up on
-  YouTube; a video in another language is one more tab there.
-- **One standard for everything that gets shared** (D-165), built for WhatsApp, in
-  `public/assets/js/compartir.js`. Every message opens with a header — `{emoji} *{title}* · {context}`,
-  like "🏆 *La Copa: Valdenenas* · Día 3 de 7" or "🃏 *Julepe* · Sala WFBN" —, says one thing
-  per line, and ends with the link on its own line. A result or a table always goes out as an
-  **image plus its text**, from whichever button: the image carries the same header on top and
-  the same link at the bottom, so forwarded on its own it still says which cup, which day or
-  which game it is. **The text never repeats the image** (D-171): it carries the header, only what the image cannot say (who is still missing, the medals, the dare) and the link. Invitations to a room or a cup go as text only: the link brings its own
-  social card. Results of playing a game alone (on its own page, or in Bulls and Cows and
-  Timeline) share the same result image, with a "can you beat me?" and the game's link. With no
-  share sheet (a computer), the image is downloaded and the text copied.
-- **Leaderboards** (D-212, open to everyone since D-217): signing in is optional and needs no account — a name and a 4-digit
-  PIN, the same idea as The Cup, that works on any phone. Until you do, a card with a **Sign in** button sits right under each game's Start and Back to menu buttons, under your score when you finish and, in One a Day, above the result's buttons (D-249). Signed in, every game played alone on its
-  own page keeps your best score and counts your games. Each game's page shows its leaderboard
-  (this week, all time, friends and The Cup), with your neighbours when you are below the top ten.
-  `/records/` (🏅 on the menu) adds the All-Rounder, the sum of your best score in every game, and
-  The Cup's medal table; it opens with the overall ranking and the most games played, then a Games | Cups switch, and every name carries its country's flag (D-219). Group games keep a table of wins each (D-215) — in a room by your seat, against
-  the phone as the human, on one phone if you play under your own name — and Bulls and Cows, Generala
-  and Hangman alone and Timeline Flash (one per theme) keep their 0–100 records; the first three show
-  their solo table first on their page, since that is how they are played most (D-274). Finish a game
-  without being signed in and, below the end buttons, a box asks whether you want that game to count:
-  sign in there and that game (or your win) is saved. Two people may share a name; with
-  different PINs they are different players. Tapping **Playing as** on any page that shows it opens **Change PIN**, with a line on what the PIN
-  is for, and **Sign out**; `/records/` lists **Your games**, how many times you played each one (D-236).
-- **One a Day** (D-230, open to everyone since v0.121.0; One a Day #1 was 6 October 2026): every day, at the player's own midnight, a new game and its content come out of the date, the same for everyone, and the Random game die rolls onto it. The deck holds every game that can be played alone — the thirteen solo games (Broken Routes, Plots, Paint Mines, Zip, Tango and Where Is It? since 23 October 2026, D-334; Agents in Connections' place from 24 October 2026, D-421; a game with variants in its default one), Hangman with the phone's deck, Battleship and Liar's Dice against the phone, and Generala played solo with the day's dice (since 23 October 2026, D-405) — and none repeats within a week; each scores 0–100. [`/today/`](https://juegosdesalon.cl/today/), which the home page's 📅 card opens (its ▶ Play today chip rolls the die straight away and, once played, shows your place and points), keeps your streak (a 🧊 freeze for every 7 days in a row, up to 2) and a calendar. **Points** (D-412, D-414): every day adds the game's score plus a streak bonus (+5 a day, up to +50) to a monthly season, so everyone starts at 0 on the 1st; /today/ opens with your points, your place and who you have to pass, the calendar shows what each day added, and last month's winner wears a 🏆. Signed in, you get the month's, the day's, the streaks and the friends' leaderboards (the month's also in 🏅 Rankings), which /today/ shares as a picture with the link to play, and you can invite a friend to the same challenge: when they finish their first day, you earn a freeze. The shared result never names the game, so it does not spoil it. If you ask for them, notifications remind you every day at the hour you pick, warn you when your streak is about to break, sum up your week and tell you when the month's season ends ([docs/UNO-AL-DIA.md](docs/UNO-AL-DIA.md)). In the lab, the first visit to the home page in a month's first week shows La Copa's recap window for last month's season: who won, your place and points, and the top 10 with each place week by week (D-424, `/?recap=season-demo` shows a made-up October); the notification opens it for everyone.
-- **Saved games:** every game stores its state on the device and offers to continue.
-- **Installable:** a PWA manifest, PNG icons for Android and iPhone and a service worker, so the browser offers to install it on the home screen from any game (D-221). On a phone, a bubble on the menu invites you to add it to the home screen and shows the steps for that phone's browser (Safari or Chrome on iPhone, Chrome or Samsung Internet on Android); its ✕ hides it for good (D-232). The service worker caches nothing yet: there is no offline mode. The screen stays awake while playing.
+- **The menu:** filters by kind of game (kept in the link), ⭐ **Favorites** (in the browser, D-238), ✨ **New** and 🔥 **Popular** (D-362, D-364), a 🔎 search (D-387, D-403) and a 🎲 **Random game** die (D-188, D-374). New games sit after The Cup for two weeks (D-333, D-335); the rest are ordered by games finished in the last four weeks (D-361, D-369).
+- <a id="one-a-day"></a>**📅 One a Day** (D-230; #1 was 6 October 2026): every day at your midnight, a game and its content come from the date, the same for everyone, picked from every solo-playable game with no repeat within a week (D-334, D-405, D-421). [`/today/`](https://juegosdesalon.cl/today/) keeps your streak (a 🧊 freeze per 7 days, up to 2), a calendar and a **monthly points season**: the day's score plus a streak bonus (D-412, D-414). Signed in: leaderboards, invites that earn a freeze, and optional reminders ([docs/UNO-AL-DIA.md](docs/UNO-AL-DIA.md)). In the lab, a recap window shows last month's season (D-424).
+- **Leaderboards** (D-212, D-217): optional sign-in with a name and a 4-digit PIN, no account. Each game keeps your best score and its weekly, all-time, friends and Cup tables; `/records/` adds the All-Rounder and The Cup's medals (D-219); group games keep wins (D-215).
+- **Sharing** (D-165, D-171): every message has a `{emoji} *{title}* · {context}` header, one thing per line and the link last; results go out as an **image plus text**, and the text never repeats the image. The menu's share sheet shows the promo video and an **Invite to play** message listing the main features (D-253, D-271, D-410).
+- **Languages:** Spanish (default), English, Brazilian Portuguese and German, chosen by hand and saved on the device; the browser language is never guessed (D-47, D-48). See [Languages](#languages).
+- **Sound** synthesized with Web Audio, with a 🔊/🔇 button; **saved games** offer to continue; the screen stays awake while playing.
+- **Installable** as a PWA, with a bubble showing the steps for each phone's browser (D-221, D-232); no offline mode yet.
 
-### Languages
+---
 
-The whole experience is translated: the menu and its footer lines, every game with all its modes, the rooms, the chat, the transport errors, the "pass the phone" screens and the cards of every Timeline theme. Portuguese is the Brazilian one, informal; German is standard German for Germany, Austria and Switzerland (D-194). The names are translated the same way in every language:
-
-<!-- generated: languages · written by python3 tools/release/readme.py update -->
-| Español | English | Português | Deutsch |
-|---|---|---|---|
-| Juegos de Salón | Party Games | Jogos de Salão | Salonspiele |
-| La Copa | The Cup | A Copa | Der Pokal |
-| Línea de Tiempo | Timeline | Linha do Tempo | Zeitstrahl |
-| Toque y Fama | Bulls and Cows | Toque e Fama | Bullen und Kühe |
-| El Ahorcado | Hangman | Forca | Galgenmännchen |
-| Dudo | Liar's Dice | Dado Mentiroso | Lügenwürfel |
-| Generala | Generala | General | Generala |
-| Batalla Naval | Battleship | Batalha Naval | Schiffe versenken |
-| Julepe | Julep | Paga o Bolo | Julepe |
-| Cuarto Rey | Fourth King | Quarto Rei | Der vierte König |
-| Conexiones | Connections | Conexões | Verbindungen |
-| Toque y Fama: Palabra | Bulls and Cows: Word | Toque e Fama: Palavra | Bullen und Kühe: Wort |
-| ¿En qué año? | What Year? | Em que ano? | Welches Jahr? |
-| Reinas | Queens | Rainhas | Damen |
-| Tango | Tango | Tango | Tango |
-| Zip | Zip | Zip | Zip |
-| Desenredo | Untangle | Desenrola | Entwirren |
-| ¿Dónde queda? | Where Is It? | Onde fica? | Wo liegt das? |
-| El caso | The Case | O Caso | Der Fall |
-| Rutas rotas | Broken Routes | Rotas Quebradas | Kaputte Linien |
-| Loteo | Plots | Loteamento | Parzellen |
-| Pintaminas | Paint Mines | Pinta-Minas | Malminen |
-| Agentes | Agents | Agentes | Agenten |
-<!-- /generated -->
-
-How it is put together (canon C-3):
-
-- `public/assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the
-  🇪🇸 ES · 🇬🇧 EN · 🇧🇷 PT · 🇩🇪 DE toggle and holds the shared text (`COMMON`): the menu and what goes out
-  when somebody shares the app, plus the strings every game repeats word for word — the room
-  invitation (D-173, D-165), the "or" between creating a room and joining one, what the button
-  says while a room opens or is joined and the "📱 Play on one phone" way out when it can't be
-  reached (D-319), and the shared result of playing a game alone.
-- Each game keeps its text in `LOCALES = { es, en, pt, de }` inside its `rules.js`. There is not a
-  single literal string in `game.js`. Fixed HTML text is marked with `data-i18n`.
-- The menu registry (`games.js`), the 100 footer lines (`frases.js`) and every Timeline card
-  (`decks/*.js`) carry all four languages.
-- **The four dictionaries have exactly the same keys.** `node public/assets/js/i18n.test.mjs` checks
-  keys, list lengths, the `{braces}` in templates and that no text is empty. A missing string
-  would show up as `undefined` on screen.
-- **Every screen is tested in every language** (D-199). Each game has a
-  `tools/e2e/<folder>/languages.mjs` that walks its screens in each language of `LANGS` and compares
-  them with the Spanish ones: nothing left in Spanish, nothing half-built (`undefined`, a
-  `{placeholder}`) and no button that the longer German text pushes off the screen. A new
-  language is tested the day it arrives.
-- Translations are adapted, not copied: in Portuguese the Santiago districts become bairros, the
-  dare becomes a prenda and "fondo" becomes "vira, vira, vira".
-- **The language can travel in the link** (D-74): `juegosdesalon.cl/?lang=pt` on any page, or the
-  `juegosdesalon.cl/pt/`, `/en/` and `/de/` doors, which set the language and send you to the menu. It is
-  applied, it is saved, and the parameter is removed from the address bar. **A room invitation
-  carries it**, so whoever gets the link opens the app in the language it was sent in. This is not
-  detection: somebody chose, for themselves or for the person getting the link.
-- To add a language: add it to `IDIOMAS` and to the toggle in `i18n.js`, then add the dictionary in
-  `COMMON`, `games.js`, `frases.js`, the eight `rules.js`, `decks/index.js` and every card. The
-  parity test says what is missing.
-- **A new language starts in the lab** (D-191): listed in `EN_LABS`, it is only offered on a device
-  that came in through `/labs/<lang>/` (behind the lab's door: one key per person, D-281, D-284), where every "‹ Menu" leads back to the lab and a 🐞 button
-  sends comments, so native speakers can review the draft before everyone sees it. **German** went
-  through it and is now offered to everyone (D-197).
-  Its glossary is in [docs/ALEMAN.md](docs/ALEMAN.md).
-- In The Cup, the screen follows each player's language, but the words of Agents, Connections and Word, the
-  messages shared with the group and their link follow the language picked when the cup is created
-  (D-170).
-- The owner dashboard is English only (D-350, an exception recorded in `docs/PANEL.md`). The installed
-  app, instead, is named in the player's language: there is one manifest per language, and
-  `instalable.js` picks it, along with the iPhone's `apple-mobile-web-app-title` (D-222).
-
-<!-- generated: screenshots:idiomas · written by python3 tools/release/readme.py update -->
-<table>
-  <tr>
-    <td align="center"><img src="docs/screenshots/fourth-king/11-menu-en.png" width="180" alt="Menu in English"><br><sub>Menu in English</sub></td>
-    <td align="center"><img src="docs/screenshots/fourth-king/12-mesa-en.png" width="180" alt="Table in English"><br><sub>Table in English</sub></td>
-    <td></td>
-    <td></td>
-  </tr>
-</table>
-<!-- /generated -->
-
-## Owner dashboard
-
-`/panel/` is a private page that shows how much the app is played and from where, by domain
-(summary, a timeline of key events, group, individual, The Cup, Uno al día, users, traffic and health), each against the
-period before: games finished, live rooms, players per game, returns and cohorts, time zone,
-language and time of day (D-348).
-You sign in with Google, and only the owner of the Firebase project can read it. These are
-usage signals, not tracking: an IP or a secret never leave the phone. To count active users and
-cohorts, each browser keeps a random id that carries nothing else and is never joined with names,
-rooms or rankings (D-349). Offline games send the
-game, mode and country, plus the name the player already typed somewhere in the app (if any) and how
-the game ended (D-210). A room also records the country of each phone and who won, which is what the room
-log at the bottom of the dashboard shows. Live rooms show **plays and chat messages separately**:
-only what a person did counts as a play (a shot, a guess, a bid), never the automatic answers, and
-of the chat only the number of messages is shown, never what they say (D-138).
-
-It is navigated like a small site (D-207): six sections, **Now**, **La Copa**, **Games**,
-**Traffic**, **Audience** and **Health**, and a page for each thing that exists. Traffic counts visits even when
-nobody plays: pages viewed, where visitors come from (the domain only), which shared link brought
-them, first-time or returning, device, country, and how many visits end up playing (D-208). A cup's page has its full standings, a grid of
-every player and day (score, time, points, left unfinished, wildcard) and its history, event by
-event. A game's page has its modes, how long its rooms last, its rooms and its offline games; a
-room's page has its players, winner and duration. Every number opens the list that adds up to it,
-every player's name carries the flag of their country, and each view lives in the URL, so Back and
-a saved link return to it. Times are Pacific time, the same clock La Copa uses for its days.
-La Copa's section also measures the phone notifications (D-233): phones subscribed, notifications
-sent and tapped by type, opens from the installed app, and when the scheduled workflow last ran,
-in red if it stopped.
-Health (D-251) shows what goes wrong for players: page loads that never started, uncaught errors
-grouped by what they are (page, browser family, version, days seen), and how long each page takes
-until it can be played. A tiny classic script, `public/assets/js/vigia.js`, loads before everything
-else on every page, so it still reports when the app's own modules fail to load.
-
-One range selector drives the whole page: 7, 30, 60 or 90 days, one year, or the year so far. Test
-rooms run in the development environment, so they are out by default; test cups show up with the
-rest, since they are not split by environment.
-
-It keeps no lists of its own. Games and modes are read from the registry in `public/assets/js/games.js`,
-so a new game shows up there by itself, and anything it does not recognize yet is drawn anyway,
-keyed by name instead of thrown away. See [docs/PANEL.md](docs/PANEL.md).
+# For developers and the owner
 
 ## Stack
 
-Plain HTML, CSS and JavaScript (ES modules). No build step, no npm dependencies. The site is the `public/` folder, published as a static site on GitHub Pages by a workflow on every merge to `main`, once the tests pass (D-192). Everything else in the repo (docs, tools, marketing) is the workshop, and is not published. The two-phone mode uses **Firebase Realtime Database** (free plan) as a live room. See [firebase/README.md](firebase/README.md).
+Plain HTML, CSS and JavaScript (ES modules). No build step, no npm dependencies. The site is the `public/` folder, published on GitHub Pages by a workflow on every merge to `main` once the tests pass (D-192); the rest of the repo is the workshop. Rooms use **Firebase Realtime Database** (free plan). See [firebase/README.md](firebase/README.md).
 
 ## Running it locally
 
@@ -653,7 +435,7 @@ Plain HTML, CSS and JavaScript (ES modules). No build step, no npm dependencies.
 python3 -m http.server 8765 -d public
 ```
 
-Then open http://localhost:8765 (ES modules have to be served over HTTP). Tests for the engines, the languages and the shared modules:
+Then open http://localhost:8765 (ES modules have to be served over HTTP). The tests:
 
 <!-- generated: tests · written by python3 tools/release/readme.py update -->
 ```bash
@@ -761,9 +543,7 @@ node tools/reports/weekly-data.test.mjs
 ```
 <!-- /generated -->
 
-## Looking at one screen
-
-To check how a single screen turned out, without playing a whole game:
+### Looking at one screen
 
 ```bash
 node tools/e2e/look.mjs ahorcado game --width 320
@@ -771,36 +551,31 @@ node tools/e2e/look.mjs ahorcado result --lang pt
 node tools/e2e/look.mjs panel data --width 900
 ```
 
-It takes the screenshot and reports horizontal scroll, buttons under 44 px and anything that falls below the bottom edge, which is what the canon asks you to look at on every screen. The path to each screen lives in `tools/e2e/paths.mjs`: adding one is adding an entry, not writing a new script, and the screen is then tested in every language too.
-
-To look at **all** the screenshots in this README at once, before publishing them, the contact sheet puts them side by side at the size they will be seen:
+It takes the screenshot and reports horizontal scroll, buttons under 44 px and anything below the bottom edge. Each screen's path lives in `tools/e2e/paths.mjs`; adding one also tests it in every language. To see all of a section's screenshots side by side before publishing (D-76):
 
 ```bash
 node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 ```
 
-Retaking them is not reviewing them. Together they show what a single image hides. That is how we found the Cuarto Rey player list photographed halfway through its entrance animation, with rows at different widths, as if the grid were broken (D-76).
-
-To try it on a real phone, and to hand the link to someone else, serve the working tree over Tailscale without publishing anything (D-67):
+To try it on a real phone over HTTPS without publishing (D-67):
 
 ```bash
-tailscale serve --bg 8765          # with the server above running; served at https://<machine>.<tailnet>.ts.net/
-tailscale serve --https=443 off    # and this takes it down
+tailscale serve --bg 8765
 ```
 
-It is the whole app over HTTPS, so the modes that need a secure context work too. This used to be a `lab/` folder with a mirror of each game. The mirrors went stale, and this covers the same ground better.
+```bash
+tailscale serve --https=443 off
+```
 
 ## Publishing a version
 
-Each pull request leaves its changelog entry, without a number, in `changelog/<branch>.md`; the version is the top entry of `CHANGELOG.md` bumped once per pending entry, in the order the pull requests reached `main`, so it is assigned on merge. Pages in git carry no version: the publish workflow stamps it into the copy it uploads (import maps, stylesheets and social card images get `?v=<version>-<commit>`), so the browser never mixes old and new files and two open pull requests never clash over it. Just before an auto-merge, the end-to-end check comments on the pull request that it merges now, which wakes the Claude session that opened it; when publishing ends, the workflow comments again with the version that went live, or the step that stopped it (D-323). To try the stamp locally, on a copy:
+Each pull request leaves its changelog entry, without a number, in `changelog/<branch>.md`; the version is assigned on merge, in the order PRs reach `main` (D-300). Pages in git carry no version: the publish workflow stamps `?v=<version>-<commit>` into the copy it uploads, and comments on the merged PR with the version that went live (D-323). To try the stamp locally:
 
 ```bash
 python3 tools/release/set-version.py --site /tmp/site
 ```
 
 ## Keeping this README current
-
-This file states things the code already knows (how many games there are, what modes each one has, how many cards each theme carries, which tests run) and shows screenshots of screens that change. None of that announces when it goes stale, so there is a tool:
 
 ```bash
 python3 tools/release/readme.py check            # did anything fall behind the code?
@@ -809,81 +584,109 @@ python3 tools/release/readme.py screenshots <section> [--offline]   # retakes th
 python3 tools/release/readme.py seal             # "I have read it again against these facts"
 ```
 
-- **Anything derivable is generated.** Everything between `<!-- generated: ... -->` and
-  `<!-- /generated -->` is written by `update` from [`tools/release/facts.mjs`](tools/release/facts.mjs),
-  which imports the real modules (`games.js`, the `rules.js` files, `decks/index.js`). Nothing in
-  there is edited by hand: the games table, the themes, the names per language, the tests, the
-  document index and the screenshot galleries.
-- **Prose is written by a person**, and the tool does not touch it. It reports on it instead.
-  `check` compares today's facts against the last seal (`docs/facts.json`) and names what
-  changed and which section to read again. Once it has been read, `seal` records that.
-- **Screenshots are retaken automatically.** [`docs/capturas.json`](docs/capturas.json) says which
-  script in [`tools/e2e/`](tools/e2e/README.md) each image comes from and which shot it is.
-  `screenshots` runs the scripts in headless Chrome, copies the PNGs and saves them at twice the width
-  they are shown at. The ones that need a Firebase room are marked and skipped with `--offline`.
-  Look at them before publishing: design problems are seen, not asserted (C-12).
-- **The hook that makes it happen** is the `tests` check on every pull request and before every
-  publish (C-11): it runs `check` and stays red if the README fell behind.
+- Everything between `<!-- generated: ... -->` and `<!-- /generated -->` is written by `update` from [`tools/release/facts.mjs`](tools/release/facts.mjs); never edit it by hand.
+- Prose is written by a person: `check` compares today's facts with the last seal (`docs/facts.json`) and names what to reread.
+- Screenshots come from the `tools/e2e/` scripts named in [`docs/capturas.json`](docs/capturas.json). To add one: take the shot in the script, add the entry, then run `screenshots` and `update`.
+- The `tests` check on every PR runs `check` and stays red if the README fell behind (C-11).
 
-To add a screen to this README: take the shot in the e2e script, add the entry to
-`docs/capturas.json`, then run `screenshots` and `update`.
+## Languages
+
+The whole app is translated, Portuguese as spoken in Brazil and German for Germany, Austria and Switzerland (D-194). The names:
+
+<!-- generated: languages · written by python3 tools/release/readme.py update -->
+| Español | English | Português | Deutsch |
+|---|---|---|---|
+| Juegos de Salón | Party Games | Jogos de Salão | Salonspiele |
+| La Copa | The Cup | A Copa | Der Pokal |
+| Línea de Tiempo | Timeline | Linha do Tempo | Zeitstrahl |
+| Toque y Fama | Bulls and Cows | Toque e Fama | Bullen und Kühe |
+| El Ahorcado | Hangman | Forca | Galgenmännchen |
+| Dudo | Liar's Dice | Dado Mentiroso | Lügenwürfel |
+| Generala | Generala | General | Generala |
+| Batalla Naval | Battleship | Batalha Naval | Schiffe versenken |
+| Julepe | Julep | Paga o Bolo | Julepe |
+| Cuarto Rey | Fourth King | Quarto Rei | Der vierte König |
+| Conexiones | Connections | Conexões | Verbindungen |
+| Toque y Fama: Palabra | Bulls and Cows: Word | Toque e Fama: Palavra | Bullen und Kühe: Wort |
+| ¿En qué año? | What Year? | Em que ano? | Welches Jahr? |
+| Reinas | Queens | Rainhas | Damen |
+| Tango | Tango | Tango | Tango |
+| Zip | Zip | Zip | Zip |
+| Desenredo | Untangle | Desenrola | Entwirren |
+| ¿Dónde queda? | Where Is It? | Onde fica? | Wo liegt das? |
+| El caso | The Case | O Caso | Der Fall |
+| Rutas rotas | Broken Routes | Rotas Quebradas | Kaputte Linien |
+| Loteo | Plots | Loteamento | Parzellen |
+| Pintaminas | Paint Mines | Pinta-Minas | Malminen |
+| Agentes | Agents | Agentes | Agenten |
+<!-- /generated -->
+
+<!-- generated: screenshots:idiomas · written by python3 tools/release/readme.py update -->
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/fourth-king/11-menu-en.png" width="180" alt="Menu in English"><br><sub>Menu in English</sub></td>
+    <td align="center"><img src="docs/screenshots/fourth-king/12-mesa-en.png" width="180" alt="Table in English"><br><sub>Table in English</sub></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+<!-- /generated -->
+
+How it is put together (canon C-3):
+
+- `public/assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the toggle and holds the shared text (`COMMON`). Each game keeps its text in `LOCALES = { es, en, pt, de }` in its `rules.js`, with no literal string in `game.js`; fixed HTML is marked `data-i18n`.
+- **The four dictionaries have the same keys**: `node public/assets/js/i18n.test.mjs` checks keys, list lengths, `{braces}` and empty texts. **Every screen is tested in every language** by `tools/e2e/<folder>/languages.mjs` (D-199).
+- Translations are adapted, not copied (Santiago's districts become bairros in Portuguese).
+- **The language can travel in the link** (D-74): `?lang=pt` on any page, or the `/en/`, `/pt/` and `/de/` doors; room invitations carry it.
+- **A new language starts in the lab** (D-191, `EN_LABS`), offered only through `/labs/<lang>/`; German went through it (D-197; glossary in [docs/ALEMAN.md](docs/ALEMAN.md)).
+- The owner dashboard is English only (D-350); the installed app is named in the player's language, one manifest per language (D-222).
+
+## Owner dashboard
+
+`/panel/` is a private page, readable only by the owner's Google account, showing how much the app is played: six sections (**Now**, **La Copa**, **Games**, **Traffic**, **Audience**, **Health**), each against the period before, with a page per cup, game and room and every view in the URL (D-207, D-208, D-233, D-251, D-348). These are usage signals, not tracking: no IP or secret leaves the phone, a random browser id is never joined with names (D-349), and chat is counted, never read (D-138). It keeps no lists of its own: games are read from `public/assets/js/games.js`. See [docs/PANEL.md](docs/PANEL.md).
 
 ## Layout
 
-The repo root is not the web root (D-192). `public/` is the site, exactly as it is served: folder =
-URL, in English. Query parameters and their values are in English too (`?room=`, `?seed=`, `?test`,
-`&demo=podium`; C-18, D-266): `parametros.js` reads them, and still understands the old Spanish
-names (`?sala=`, `?semilla=`) of the links already shared on WhatsApp. Everything next to it is the workshop.
+The repo root is not the web root (D-192). `public/` is the site, exactly as served: folder = URL, in English, as are query parameters (`?room=`, `?seed=`, `?test`; `parametros.js` still reads the old Spanish ones, C-18, D-266). Everything next to it is the workshop.
 
 ```
 public/                     The site (juegosdesalon.cl/): the only folder that gets published
   index.html                  Main menu (generated from assets/js/games.js)
-  en/ · pt/ · de/             Language doors: they set the language and send you to the menu
-  cup/                        The Cup: tournament engine (with code.js, the cup code, and clock.js, the active-time clock, apart so other games use them without loading the Cup, D-377), avisos.js (the notifications bell and sheets, D-223), stores (Firebase and local test), desglose.js (score breakdown), planilla.js (final table as CSV), reportes.js (auth-free bug reports), demo.js (lab demos), recap.js + recap/ (the table of an ended cup for the home page's recap window, built in a hidden frame so the home page never loads the engine, D-423)
-    games/                    The games: one folder each (engine.js + ui.js + its own word content in each language; texts.js and style.css when a game brings its own texts and styles, D-331); solo.js mounts one as the play-alone mode of another game; deshacer.js is the shared ↩️ Undo button
-  timeline/                   Timeline (engine.js + tests, game.js, rules.js, decks/)
-  bulls-and-cows/             Bulls and Cows (engine.js + tests, game.js, rules.js)
-  hangman/                    Hangman (engine.js + tests, game.js, rules.js, decks/)
-  liars-dice/                 Liar's Dice (engine.js + tests, game.js, rules.js)
-  generala/                   Generala (engine.js + tests, game.js, rules.js)
-  battleship/                 Battleship (engine.js + tests, game.js, rules.js, flota.js: the pixel art)
-  julep/                      Julep (engine.js + tests, game.js, rules.js)
-  agents/ · queens/ …         The Cup's games played on their own, one page each (generated from cup/suelto/)
-  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed, and behind a key: each invited person gets their own link, and without one every lab page sends you to the menu, D-281, D-284), in two groups, Active projects, today 💥 Números explosivos (labs/exploding-numbers/: a Number Match-style solitaire on a 9-column grid; pop pairs of equal numbers or numbers that add up to 10 when they line up, a fully popped row explodes and goes away, and ➕ copies the numbers left to the bottom, three times a game, D-297), and 🚂 Tren en Vilo (labs/bridges/: a Poly Bridge-style bridge builder in pixel art, Spanish only; lay beams over a gap and the train tests them, five stages against a 7-minute clock, the crossings drawn from a catalog that tools/generators/bridges.mjs builds), and the Storeroom, for what is no longer worked on, in two subgroups, games kept and improvements launched (D-422), each folded to its title until you tap it (D-280): 🔗 Conexiones (its card opens /connections/, D-421), El caso (labs/case/, D-267), 👑 Fourth King (labs/fourth-king/: the drinking card game, off the home page since D-420; engine.js + tests, game.js, rules.js) and The Code (labs/code/: 4 see-through cards that, laid on a base and each turned the right way, show a 5-digit code, or in Spanish a 5-letter word, D-270); each ends with a "What did you think?" form for the friends testing them (D-265, D-268); labs/paint-mines/, labs/routes/, labs/plots/ and labs/agents/ are now bridges to the games that left the lab (D-332, D-421); labs/splash/ still holds the demo of the home page's promotional splash (D-351), no longer linked from the lab: its campaigns are switched on from the home page experiments card (D-389)
-    case/                     The Case: a mystery in the style of Clues by Sam, the full game in all four languages; today's case is the same for everyone (D-256, D-267)
-    code/                     The Code: a base and 4 see-through cards; put each one on, turn (↻) and flip (⇋) it until the strokes form a 5-digit code with no stroke on top of another (an overlap shows striped), typed on a keypad; in Spanish there is also Word, with 14-segment letters and two-sided cards (flipping shows the other side); all four languages, its texts in game.js (D-270)
-  records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)
-  today/                      One a Day: the month's points and place, today's game, your streak, a calendar with each day's points and how you do in each game (D-230, D-414)
-  panel/                      Private owner dashboard by domain: summary, timeline, group, individual, The Cup, Uno al día, users, traffic and health, with a page per cup, game and room; dominios.js and timeline.js hold the pure accounts (Google sign-in; see docs/PANEL.md)
-  assets/css/                 Shared styles: base.css (party theme), linea.css (timeline), teclado.css (keypad), ranking.css (leaderboards)
-  assets/js/                  Shared modules: games.js (game registry), i18n.js (ES/EN/PT/DE), labs-idioma.js (a new language in the lab, D-191), labs-puerta.js (the lab's door: without a key from the owner, one per person, /labs/ sends you to the menu, D-281, D-284), lab-access.js (whether this visitor holds a lab key: what is in development turns on only for them, D-395), ui.js, sound.js, compartir.js (everything shared, D-165), parametros.js (the URL parameters, in English, with the old Spanish names as aliases, D-266), compartir-portada.js (the home-page share sheet, with the promo video's Shorts in Spanish and English tabs, D-253, D-410), handoff.js, chat.js, session.js, arrastre.js (drag and drop), teclado.js, cuenta-regresiva.js (the 3, 2, 1, Let's go! before playing, shared by the Cup and the lab, D-105), azar.js, dado3d.js and llegada.js (Random game: the die, which stays on screen until the game is drawn, D-237), frases.js, records.js + jugador.js + ranking.js (players and leaderboards, D-212; jugador-firebase.js and jugador-local.js are their stores), instalable.js (registers the service worker, D-221), instalar.js (the home-page bubble that invites to add the app to the home screen, D-232), favoritos.js (the home-page favorites, kept in the browser, D-238), push.js + vapid.js (phone notifications: subscribing, D-223), uno-al-dia.js + uno-al-dia-ui.js + uno-al-dia-red.js + uno-al-dia-avisos.js (One a Day: a daily game, the same for everyone, with a streak, freezes, leaderboards, invitations and reminders; D-230), daily-points.js (One a Day's points: a day's score plus the streak bonus, the monthly season; D-412, D-414), fin.js (the exits of every result screen, the same words in every game, C-19, D-343), notification-sheets.js (the texts of the sheets that help turn notifications on, shared by the Cup and One a Day, D-377), rng.js (the seeded random generator every deck, board and day comes from, D-378), buzon.js + buzon-form.js (the "💬 Sugerencias y comentarios" inbox at the end of every game and in the home footer; the form loads only on tap, D-341), splash.js (the promotional window over the home page, one campaign at a time and off by default, turned on with tools/agents/splash.mjs, D-351), recap.js (the window over the home page that tells how a cup this phone played ended; it goes before the splash, in the lab, D-423, except the cups listed in OPEN_CUPS, D-426), daily-recap.js (the same window for a season of One a Day that ended: the places week by week, read over REST, D-424), search.js (the home page's 🔎 search: a pill in the filter row that opens a field and a dropdown of games, found by name, tagline or keyword, D-387, D-390, out of the lab for everyone in D-403, with keywords in all four languages, D-404), and vigia.js, a classic script (not a module) that every page loads first to report load failures, errors and start-up time to the dashboard (D-251)
-  assets/js/transport/        Transports: local (same phone), firebase (room) and stats (usage signals), with the room's helpers: errors.js (waiting for the connection, timeouts and error texts), ratelimit.js (rooms per phone, D-41), cleanup.js (expired rooms, D-39), dispose.js (leaving on purpose, D-50) and best-effort.js (the writes nobody waits for, so a resend after a reconnect is not a failure, D-320)
-  assets/og/                  The 1200×630 images shown when a link is shared
-  manifest.webmanifest        PWA manifest (installable on the home screen), one per language (manifest.en.webmanifest …) so the app is named in the player's language (D-222); its PNG icons are in assets/icons/
-  sw.js                       Service worker (D-221): it makes the app installable, caches nothing, and shows The Cup's and One a Day's notifications (D-223, D-230), with Play and Mute buttons on Android (D-229)
-  ahorcado/ copa/ …           Bridge pages: the old Spanish URLs, forwarding to the new ones (generated, D-192)
+  en/ · pt/ · de/             Language doors
+  cup/                        The Cup: engine, stores, score breakdown, CSV export, reports, demos, recap (D-423)
+    games/                    The Cup's games, one folder each (engine.js + ui.js + word content per language)
+  timeline/ · bulls-and-cows/ · hangman/ · liars-dice/ · generala/ · battleship/ · julep/
+                              The group games (engine.js + tests, game.js, rules.js, decks/ where needed)
+  agents/ · queens/ …         The Cup's games played on their own (generated from cup/suelto/)
+  labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422)
+  records/                    Leaderboards (D-212)
+  today/                      One a Day (D-230, D-414)
+  panel/                      Private owner dashboard (docs/PANEL.md)
+  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, search.js, vigia.js (error reporting, D-251) …
+  assets/js/transport/        Local, Firebase room and usage-signal transports, with their helpers
+  assets/og/                  Social card images
+  manifest.webmanifest · sw.js   PWA manifest (one per language) and service worker (D-221, D-222)
+  ahorcado/ copa/ …           Bridge pages for the old Spanish URLs (generated, D-192)
 docs/                       Requirements, decisions, canons, one spec per game (docs/games/) and the README screenshots
 firebase/                   Realtime Database security rules and notes
-changelog/                  Each open PR's changelog entry, without a number, until it is merged into CHANGELOG.md (D-300)
+changelog/                  Each open PR's changelog entry, without a number (D-300)
 tools/
-  push/                       vapid.mjs (the notifications key pair, already run once: the public key is in assets/js/vapid.js, the private one a GitHub secret; D-223, D-225); notify.mjs sends the La Copa notifications every 15 minutes from notifications.yml and leaves what it sent for the dashboard (D-233), with schedule.mjs (what is due: at most 2 a day per cup, overlapping deadlines in one, the new days of several cups together; D-229) and webpush.mjs (encryption and VAPID, no dependencies; D-224); daily.mjs decides One a Day's, in the same run (D-230)
-  release/                    Publishing: set-version.py (version stamp, at publish time), readme.py + facts.mjs (this README), og.mjs (social cards and bridge pages), icons.mjs (the app icons, from assets/icon.svg), changelog.mjs (each PR's changelog entry, without a number, in changelog/; the version comes from the order PRs reach main, D-300), merge-report.mjs (the PR comments that say it merges now and whether its change went live, D-323)
-  firebase/                   rules.mjs (publish the rules), reports.mjs (The Cup bug reports), in-progress.mjs (anyone playing?), rankings-history.mjs (The Cup's history into the leaderboards, and each player's cups), unnoted-rooms.mjs (rooms the trash bin would never sweep, D-321), uad-points-backfill.mjs (October 2026's One a Day points from everyone's history, run once by hand, D-414; with --rebuild, every night, the month's points and the season's places by week, D-415, D-424)
-  generators/                 map.mjs (the world of Where is it?), fleet.py (the Battleship fleet), bridges.mjs (the crossings of Tren en Vilo, in the lab)
-  agents/                     dilemmas.mjs (usability dilemmas as issues, D-132), decision.mjs (reserves decision numbers, so two sessions never take the same D-n, D-301), document.mjs (the documentation agent, D-172), clean-worktrees.mjs (removes merged, empty and abandoned worktrees, leftover test output and stale local branches, at session start and in the daily process round, D-218, D-252, D-315), processes.mjs (the process agent, D-273), approve.mjs (one-tap Yes/No decisions in issues, D-273), feedback.mjs (players' 🐞 reports as issues, D-275, and the email reply to whoever left an address, with feedback-templates.mjs and send-mail.py, D-317), inbox.mjs (the hola@ inbox, for the support agent: list, ingest as a feedback report, or skip, signed in as the inbox user, D-318), labs-key.mjs (gives or takes away a person's own key to the lab, D-284), covers.mjs (shows the cover of every game a PR touches and warns when a game changed but its cover did not, U-36), splash.mjs (the switch of the home page's promotional splash: list, on <id> [--until], off, D-351), ideas.mjs (the game-ideas agent: check reads the panel's numbers, the lab and what players asked for; propose opens the owner's one-tap issue; record, list, taste and history keep its ledger docs/ideas.json, D-360)
-  cloudflare/                 inbox-worker.js (the Cloudflare Email Worker behind hola@juegosdesalon.cl: forwards a copy to the owner and keeps the text in Firebase buzon/; pasted in the Cloudflare dashboard, D-318)
-  e2e/                        Full games in headless Chrome, one folder per game; the screenshots come from here. groups.mjs splits them into even groups for CI (D-307), affected.mjs keeps only the scripts whose pages load what a PR changed (D-329), already-tested.mjs lets publishing skip what already passed in the PR (D-308), and output.mjs picks each script's output folder, so a missing argument never leaves screenshots in the working copy (D-315)
-marketing/                  The promo video and its memory, and splash/ (every splash campaign with its screenshots, and capture.mjs for its clips, D-351, D-355)
-.claude/                    The project's agents (usability, documentation, processes, support, game ideas) and skills
+  push/                       Phone notifications for The Cup and One a Day (D-223 to D-230)
+  release/                    Publishing: version stamp, this README, social cards, icons, changelog, merge reports
+  firebase/                   Rules, Cup reports, live-game check, rankings history, room cleanup, One a Day points
+  generators/                 Generated content: the map, the Battleship fleet, the lab's bridges
+  agents/                     The owner's agents' tools: decisions, worktrees, processes, feedback, inbox, lab keys, splash, ideas
+  cloudflare/                 The Email Worker behind hola@juegosdesalon.cl (D-318)
+  e2e/                        Full games in headless Chrome, test scope for CI (D-307, D-329, D-308)
+  jobs/                       Every scheduled job, listed and checked (D-365)
+  reports/                    The weekly report (D-352)
+marketing/                  The promo video, splash campaigns and other promotional assets
+.claude/                    The project's agents and skills
 ```
 
 ## Contributing
 
-Fork the repo, work on a topic branch and open a pull request to `main`; the tests run on every
-PR. `main` is protected and whatever lands there goes live at once, so nothing gets in without a
-PR. Your PR brings its changelog entry without a number in `changelog/<your-branch>.md`: the version
-number is assigned on merge (D-300), and the owner handles the Firebase rules. The
-guide is [CONTRIBUTING.md](CONTRIBUTING.md) (D-189).
+Fork the repo, work on a topic branch and open a pull request to `main`; the tests run on every PR. Your PR brings its changelog entry without a number in `changelog/<your-branch>.md` (D-300), and the owner handles the Firebase rules. The guide is [CONTRIBUTING.md](CONTRIBUTING.md) (D-189).
 
 ## License
 
