@@ -383,7 +383,14 @@ export function ponerTarjeta(tarjeta, despues = document.querySelector('#screen-
 const MEDALLAS = ['🥇', '🥈', '🥉'];
 const mmssCorto = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 /** What a row shows on the right, as on screen: the month's points (and streak), the streak, or the score and time. */
-const valorFila = (f, tipo) => (tipo === 'puntos' ? `${f.s} pts · 🔥${f.r || 0}` : tipo === 'racha' ? `🔥 ${f.s}` : `${f.s}${f.ms ? ` · ⏱ ${mmssCorto(f.ms)}` : ''}`);
+const valorFila = (f, tipo, P) => (tipo === 'puntos' ? `${fmt(P.ptsN, { n: f.s })} · 🔥${f.r || 0}` : tipo === 'racha' ? `🔥 ${f.s}` : `${f.s}${f.ms ? ` · ⏱ ${mmssCorto(f.ms)}` : ''}`);
+
+/** The tab shared, in words: "Ranking de octubre" for the month's (and the friends' month), else "Ranking · <tab>". */
+function contextoRanking(T, lang, d) {
+  const mes = new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date());
+  if (!d || d.pestana === 'mes' || d.pestana === 'amigosMes') return `${fmt(T.rkCompCab, { mes })}${d?.pestana === 'amigosMes' ? ` · ${d.rotulo}` : ''}`;
+  return `${T.rkPalabra} · ${d.rotulo}`;
+}
 
 /**
  * The ranking as a picture (owner's request): the share frame with "📅 Uno al día" and the tab on
@@ -392,10 +399,7 @@ const valorFila = (f, tipo) => (tipo === 'puntos' ? `${f.s} pts · 🔥${f.r || 
  */
 export async function laminaRanking({ lang, d, url }) {
   const T = textos(lang).uad;
-  const mes = new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date());
-  const contexto = d.pestana === 'mes' || d.pestana === 'amigosMes'
-    ? `🏅 ${fmt(T.rkCompCab, { mes })}${d.pestana === 'amigosMes' ? ` · ${d.rotulo}` : ''}`
-    : `🏅 ${T.rkPalabra} · ${d.rotulo}`;
+  const contexto = `🏅 ${contextoRanking(T, lang, d)}`;
   const filas = [...d.top.slice(0, 10).map(f => ({ f })), ...(d.vecinos.length ? [{ sep: true }, ...d.vecinos.slice(0, 3).map(f => ({ f }))] : [])];
   const ALTO = 86, SEP = 50, PIE = 70;
   const contenido = filas.reduce((a, x) => a + (x.sep ? SEP : ALTO), 0) + PIE;
@@ -412,7 +416,7 @@ export async function laminaRanking({ lang, d, url }) {
     const base = y + ALTO / 2 + 15;
     c.textAlign = 'left'; c.fillStyle = '#ffffff';
     c.font = fuente(900, 44); c.fillText(f.puesto == null ? '·' : MEDALLAS[f.puesto - 1] || String(f.puesto), X0, base);
-    const valor = valorFila(f, d.tipo);
+    const valor = valorFila(f, d.tipo, T.pts);
     c.font = fuente(900, 40); const wv = c.measureText(valor).width;
     c.textAlign = 'right'; c.fillStyle = mia ? COLORES.amarillo : '#ffffff'; c.fillText(valor, X1, base);
     // The name, cut with an ellipsis if it would reach the value
@@ -444,7 +448,7 @@ export function botonCompartirRanking({ lang, caja, alTocar }) {
       const red = await import('./uno-al-dia-red.js');
       const url = await red.linkInvitar(withLang(URL_HOY, lang)).catch(() => withLang(URL_HOY, lang));
       const mia = d && [...d.top, ...d.vecinos].find(f => d.yo && f.jid === d.yo);
-      const texto = [cabecera({ emoji: '📅', titulo: T.nombre, contexto: fmt(T.rkCompCab, { mes: new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date()) }) }),
+      const texto = [cabecera({ emoji: '📅', titulo: T.nombre, contexto: contextoRanking(T, lang, d) }),
         mia?.puesto ? fmt(T.rkCompVoy, { p: mia.puesto }) : T.rkCompSin].join('\n');
       return { titulo: T.nombre, texto, url, que: 'uno-al-dia-ranking', imagen: d && d.top.length ? await laminaRanking({ lang, d, url }) : null };
     },
