@@ -1,6 +1,6 @@
 // La Copa's new create screen (D-425), end to end, as a lab key holder sees it (`?test&lab`; on
 // localhost the lab opens by itself): the week is in view from the start; 🎲 Crear al azar draws
-// it again; each week style draws by its rule; tapping a game opens the sheet
+// it again, the cards spinning like a slot machine; each week style draws by its rule; tapping a game opens the sheet
 // with the whole pool, which swaps, replaces, moves the day and picks
 // its version; a day is still dragged by its grip; the PIN goes once, with 👁; "More options"
 // folds the language, the audience, the link and (in the test store) the 3-day cup, and says in
@@ -59,6 +59,20 @@ try {
     changed ||= JSON.stringify(w) !== JSON.stringify(w0);
   }
   ok(valid && changed, '🎲 draws another week of six different games');
+  // The roll: the cards run through random games and land one after the other, on the real week
+  {
+    await click('#btn-dado'); await sleep(40);
+    const spinning = await ev(`document.querySelectorAll('#semana-dias .semana-dia.baraja').length`);
+    ok(spinning === 6, `pressing 🎲, the six cards spin (${spinning})`);
+    await sleep(500);
+    const midway = await ev(`document.querySelectorAll('#semana-dias .semana-dia.baraja').length`);
+    ok(midway > 0 && midway < 6, `and they land one after the other (${6 - midway} landed at ~0.5 s)`);
+    await sleep(600);
+    const landed = await ev(`(async()=>{const {juegosCopa}=await import('/cup/rules.js');const J=juegosCopa('es');
+      const f=[...document.querySelectorAll('#semana-dias .semana-dia')];
+      return !document.querySelector('#semana-dias .baraja') && f.every(x=>x.querySelector('.semana-juego b').textContent===J[x.dataset.juego].nombre)})()`);
+    ok(landed, 'in under a second every card is still and shows the week drawn');
+  }
 
   // The styles: each one draws by its rule
   const PUZZLES = ['reinas', 'zip', 'tango', 'loteo', 'desenredo', 'rutas', 'pintaminas'];

@@ -138,8 +138,14 @@ ol.como li { line-height: 1.45; }
 .semana-dia .cab { display: grid; justify-items: center; line-height: 1.1; }
 .semana-dia .y { font-weight: 900; font-size: 0.75rem; color: var(--yellow); white-space: nowrap; }
 .semana-dia .em { font-size: 1.35rem; }
-.semana-dia .em.gira { animation: semanaGira 0.42s ease-out both; }
-@keyframes semanaGira { from { transform: rotate(-200deg) scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
+/* The roll (D-425): while a card runs through random games its text spins like a slot machine's reel,
+   and it lands with a small bump, one card after the other */
+.semana-dia.baraja { border-color: rgba(255, 210, 63, 0.55); }
+.semana-dia.baraja .em, .semana-dia.baraja .semana-juego b, .semana-dia.baraja .semana-juego small { animation: semanaRueda 70ms linear infinite; }
+.semana-dia.baraja .semana-juego b, .semana-dia.baraja .semana-juego small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@keyframes semanaRueda { from { transform: translateY(-5px); opacity: 0.45; } to { transform: translateY(5px); opacity: 0.85; } }
+.semana-dia.cae { animation: semanaCae 0.3s ease-out; }
+@keyframes semanaCae { 0% { transform: scale(0.96); } 55% { transform: scale(1.03); border-color: var(--yellow); background: rgba(255, 210, 63, 0.16); } 100% { transform: none; } }
 .semana-juego {
   all: unset; box-sizing: border-box; cursor: pointer; display: grid; align-content: center; min-height: 44px; padding: 6px 2px; min-width: 0;
 }
@@ -184,7 +190,7 @@ ol.como li { line-height: 1.45; }
 .ver-pin { min-height: 44px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.25); color: var(--ink); font-size: 1.1rem; cursor: pointer; }
 .ver-pin[aria-pressed="true"] { border-color: var(--cyan); }
 .crear-fechas { display: block; text-align: center; margin-top: -4px; }
-@media (prefers-reduced-motion: reduce) { .semana-dia .em.gira { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .semana-dia.baraja *, .semana-dia.cae { animation: none; } }
 .variante-dia { margin: 2px 0 0; color: var(--yellow); font-weight: 900; }
 .dia-variante { font-weight: 700; color: var(--muted); }
 #selector-variante { margin-top: 2px; }
