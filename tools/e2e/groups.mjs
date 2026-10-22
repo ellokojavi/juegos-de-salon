@@ -16,7 +16,7 @@ import { execFileSync } from 'node:child_process';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const DURATIONS = join(HERE, 'durations.json');
-export const TARGET_S = 300;       // ~5 min per group: with ~1 min of setup, the check in ~6 (270 until Agentes joined La Copa's games, D-421, and the 18 runners no longer fit the suite at 270)
+export const TARGET_S = 300;       // ~5 min per group: with ~1 min of setup, the check in ~6 (270 until D-421: with Agentes' two jobs the 18 runners no longer fit)
 export const MAXIMUM = 18;         // and 2 runners free out of the 20, for list and end-to-end
 export const UNMEASURED_S = 90;    // a new script, until it is measured
 const REPO = process.env.REPO || 'ellokojavi/juegos-de-salon';
