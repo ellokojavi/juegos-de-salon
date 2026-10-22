@@ -719,7 +719,14 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
 - **A day's points** = the game's own 0–100 score + a **streak bonus** of +5 per day of streak, up
   to +50 (a 10-day streak).
 - **A wildcard 🧊 day** gives 0 points but keeps the streak, so the next day still earns the full
-  bonus; without one, the streak and its bonus start over.
+  bonus; without one, the streak and its bonus start over. The phone uploads each day its 🧊 saved as a marker
+  (`unoAlDia/<jid>/<n>: { c: true }`, D-415), so the server keeps the streak through it too.
+- **The nightly rebuild** (D-415): `tools/firebase/uad-points-backfill.mjs --rebuild`, run by the
+  `uad-rebuild` workflow at 08:23 UTC, recomputes each player's month from the history and the
+  markers and corrects a total that differs. The server spends the 🧊 it can see (7 days in a row,
+  invited friends) and lends 2 more, once, for marked days it can't back.
+- **No jump on /today/:** signed in, the first drawing shows the last total the ranking gave this phone
+  (`uad-pts-cache`), then the fresh one.
 - **Last month's winner** wears a 🏆 next to their name in the month's ranking, and sees a 👑 chip on
   /today/. The season's end shows as "quedan X días" ("último día" on the last).
 - **Saving:** each day of the player's history in Firebase adds once (`p` marks it), checked by the
