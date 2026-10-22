@@ -1,6 +1,6 @@
 // The 🐞 feedback as issues (D-275, D-279): with the name and without the browser, without mentions, and never the same report twice.
 import assert from 'node:assert/strict';
-import { greetingName, title, body, pending, uploaded, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN } from './feedback.mjs';
+import { greetingName, title, body, pending, uploaded, looksShort, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN } from './feedback.mjs';
 
 const r = {
   id: '-P3bm', at: Date.parse('2026-10-10T18:28:23Z'), v: '0.144.0', nombre: 'Tu admirador secreto',
@@ -108,3 +108,9 @@ assert.equal(greetingName(null, '- **Quién:** Cris'), 'Cris', 'an old issue wit
   assert.equal(inThread({ thread: { id: '<b@mail>' } }, thread), false, 'another thread');
   assert.equal(inThread({ thread }, null), false, 'no thread (test email)');
 }
+
+// An empty or partial issue list is not taken as 20 new reports (2026-10-22: 40 duplicates)
+const twenty = Array.from({ length: 20 }, (_, i) => ({ id: `r${i}`, texto: 'x', at: i }));
+assert.ok(looksShort(twenty, pending(twenty, uploaded([]))), 'an empty list uploads nothing');
+assert.ok(!looksShort(twenty, twenty.slice(0, 2)), 'two new reports go up');
+assert.ok(!looksShort(twenty.slice(0, 3), twenty.slice(0, 3)), 'the first few reports ever go up');
