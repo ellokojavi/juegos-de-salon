@@ -296,6 +296,12 @@ const playFinal = async level => {
   const rounds = await ev('JSON.stringify(window.__playing.p.rondas)').then(JSON.parse);
   ok(Array.isArray(rounds) && rounds.length > 0, `the final brings its rounds (${rounds})`);
   for (const r of rounds) {
+    // Between rounds, the running score is out of 100, the result's scale (D-417; #637 read "60 de 300")
+    if (r !== rounds[0]) {
+      const soFar = await ev(`[...document.querySelectorAll('.screen.active p.muted.center')].map(x=>x.textContent).find(t=>/\\d+ (?:\\S+ ){1,2}100\\b/.test(t)) || ''`);
+      const m = soFar.match(/(\d+) (?:\S+ ){1,2}100\b/);
+      ok(!!m && +m[1] <= 100, `the final, before ${r}: the running score is out of 100 (${JSON.stringify(soFar)})`);
+    }
     await click('#btn-ronda'); await sleep(200);
     await ev(`window.__playingFinal = window.__playing; window.__playing = { p: window.__playingFinal.p.${r} }; 1`);
     await PLAY[r](level);

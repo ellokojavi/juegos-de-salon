@@ -601,6 +601,13 @@ test('final: cinco rondas, promedio de 0 a 100', () => {
   assert.deepEqual(p.rondas, final.RONDAS);
   assert.equal(final.puntaje({ rondas: p.rondas, pts }), 100);
   assert.equal(final.puntaje({ rondas: p.rondas, pts: {} }), 0);
+  // Between rounds, the running score is the average of the rounds played, on the same 0-100 scale
+  // as the result, and after the last round it equals it (D-417; #637: it read "60 of 300")
+  const tres = { rondas: p.rondas, pts: { linea: pts.linea, numero: pts.numero, reinas: pts.reinas } };
+  assert.equal(final.puntajeParcial(tres), 100);
+  assert.equal(final.puntajeParcial({ rondas: p.rondas, pts: {} }), 0);
+  assert.equal(final.puntajeParcial({ rondas: p.rondas, pts: { ...tres.pts, reinas: 0 } }), 67);
+  assert.equal(final.puntajeParcial({ rondas: p.rondas, pts }), final.puntaje({ rondas: p.rondas, pts }));
   assert.equal(final.tarjeta({ rondas: p.rondas, pts }), '⏳100 🔢100 👑100 🔤100 📅100');
 });
 
