@@ -72,7 +72,7 @@ assert.deepEqual(stale({ a: { 'dia:1': 0, 'dia:2': Date.parse('2026-10-07') } },
   let s = run(q, at('2026-11-01', 9));
   assert.equal(s.length, 1);
   assert.equal(s[0].key, 'temporada:2026-10');
-  assert.equal(s[0].notification.body, '🏆 Terminó la temporada de octubre. Toca para ver cómo quedaste.');
+  assert.equal(s[0].notification.body, '🏆 Terminó la temporada de octubre. Toca para ver el ranking final.');
   assert.match(s[0].notification.url, /\?recap=season&notif=dailyseason$/, 'it opens the season on the home page');
   assert.deepEqual(run(q, at('2026-11-01', 8)), [], 'not before their hour');
   assert.deepEqual(run(q, at('2026-11-01', 9), {}, sub(), []), [], 'not before the rebuild computed the month to its end: its link would open nothing');
@@ -82,7 +82,7 @@ assert.deepEqual(stale({ a: { 'dia:1': 0, 'dia:2': Date.parse('2026-10-07') } },
   assert.ok(run({ ...q, u: numDia('2026-09-29') }, at('2026-11-01', 9)).every(x => x.kind !== 'temporada'), 'not to whoever did not play that month');
   assert.equal(run({ ...q, u: NOV }, at('2026-11-01', 9))[0]?.key, 'temporada:2026-10', 'playing on the 1st does not take it away');
   s = run(q, at('2026-11-01', 9), {}, sub('America/Santiago', 'de'));
-  assert.equal(s[0].notification.body, '🏆 Die Saison im Oktober ist vorbei. Tippe, um deine Platzierung zu sehen.');
+  assert.equal(s[0].notification.body, '🏆 Die Saison im Oktober ist vorbei. Tippe, um die Endrangliste zu sehen.');
   assert.match(s[0].notification.url, /&lang=de$/);
 }
 
