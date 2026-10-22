@@ -247,7 +247,8 @@ for (const p of paginas) {
   const prefijo = '../'.repeat(rel.split('/').length - 1);
   const tag = `<script src="${prefijo}assets/js/vigia.js"></script>`;
   assert.ok(html.includes(tag), `${rel}: falta ${tag} (D-251)`);
-  assert.ok(html.indexOf(tag) < html.indexOf('<link rel="stylesheet"'), `${rel}: el vigía va antes de las hojas de estilo`);
+  // A page with no screen (/cup/recap/, D-423) has no stylesheet to go before
+  assert.ok(!html.includes('<link rel="stylesheet"') || html.indexOf(tag) < html.indexOf('<link rel="stylesheet"'), `${rel}: el vigía va antes de las hojas de estilo`);
   assert.ok(html.indexOf(tag) < html.indexOf('type="module"'), `${rel}: el vigía va antes de los módulos`);
   conVigia++;
 }
