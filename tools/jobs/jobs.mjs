@@ -117,6 +117,21 @@ function uninstall(id) {
   console.log(`✓ ${LABEL(id)} removed`);
 }
 
+/**
+ * The main folder catches up with origin/main before each run: nobody pulled it by hand, and on
+ * 2026-10-22 the jobs were running code 215 commits old. Only a fast-forward, only on a clean `main`;
+ * otherwise it runs what is there and says why.
+ */
+function catchUp(folder) {
+  const git = (...a) => execFileSync('git', a, { cwd: folder, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+  try {
+    if (git('rev-parse', '--abbrev-ref', 'HEAD') !== 'main') return 'not on main, not updated';
+    if (git('status', '--porcelain', '--untracked-files=no')) return 'uncommitted changes, not updated';
+    git('pull', '--ff-only', '-q', 'origin', 'main');
+    return '';
+  } catch (e) { return `not updated: ${String(e.stderr || e.message).trim().split('\n')[0]}`; }
+}
+
 /** What launchd runs: one at a time, every line logged, the last run recorded for `status`. */
 function run(id) {
   const j = jobs().find(x => x.id === id && x.where === 'mac');
@@ -126,8 +141,10 @@ function run(id) {
   try { mkdirSync(lock); } catch { return; } // the previous run is still going
   const start = Date.now();
   try {
-    const r = spawnSync(j.command[0], j.command.slice(1), { cwd: mainFolder(), encoding: 'utf8', timeout: (j.timeout || 900) * 1000 });
-    const out = `${r.stdout || ''}${r.stderr || ''}`.trim();
+    const folder = mainFolder();
+    const note = catchUp(folder);
+    const r = spawnSync(j.command[0], j.command.slice(1), { cwd: folder, encoding: 'utf8', timeout: (j.timeout || 900) * 1000 });
+    const out = `${note ? `(main folder ${note})\n` : ''}${r.stdout || ''}${r.stderr || ''}`.trim();
     const exit = r.status ?? 1;
     appendFileSync(join(LOGS, `${id}.log`), `── ${new Date(start).toISOString()} exit ${exit} ${Date.now() - start} ms\n${out}\n`);
     writeFileSync(join(STATE, `${id}.json`), JSON.stringify({ at: new Date(start).toISOString(), exit, ms: Date.now() - start, summary: out.split('\n').pop().slice(0, 120) }));
