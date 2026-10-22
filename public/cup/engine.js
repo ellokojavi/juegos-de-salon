@@ -72,8 +72,7 @@ export function calendarioAlAzar(dias, { rand = cryptoRand, familia = null } = {
 
 /**
  * The week styles of the 🎲 (D-425): each one is a rule for the die, not a fixed list. Puzzles and
- * Knowledge name the games they draw from (topped up from the rest of the pool if the locked days
- * leave too few); Balanced and New draw from the whole pool, at most two games of one skill.
+ * Knowledge name the games they draw from; Balanced and New draw from the whole pool, at most two games of one skill.
  */
 export const ESTILOS_SEMANA = {
   equilibrada: null,
@@ -83,31 +82,24 @@ export const ESTILOS_SEMANA = {
 };
 
 /**
- * A random week for the new create screen (D-425): `fijos` holds the locked game of each day (or
- * null), and the die only draws the others. `familia` is each game's skill: never two days in a
- * row of the same one, and in Balanced and New at most two of one skill. `nuevos` are the games
- * with the home page's New label, all of which New puts in. Without a week that meets every rule
- * (the locks can make one impossible), the last one drawn that keeps the locks.
+ * A random week for the new create screen (D-425). `familia` is each game's skill: never two days
+ * in a row of the same one, and in Balanced and New at most two of one skill. `nuevos` are the
+ * games with the home page's New label, all of which New puts in. Without a week that meets every
+ * rule, the last one drawn.
  */
-export function semanaAlAzar(dias, { rand = cryptoRand, familia = null, fijos = [], estilo = 'equilibrada', nuevos = [] } = {}) {
-  const n = dias - 1;
-  const fijo = Array.from({ length: n }, (_, i) => (POZO.includes(fijos[i]) ? fijos[i] : null));
+export function semanaAlAzar(dias, { rand = cryptoRand, familia = null, estilo = 'equilibrada', nuevos = [] } = {}) {
   const barajar = xs => { const a = [...xs]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const libre = id => !fijo.includes(id);
   const tope = estilo === 'equilibrada' || estilo === 'nuevo';
   const fam = id => (familia ? familia(id) : id);
   const seguidas = w => w.every((id, i) => i === 0 || fam(id) !== fam(w[i - 1]));
   const hastaDos = w => { const c = {}; return w.every(id => (c[fam(id)] = (c[fam(id)] || 0) + 1) <= 2); };
   let semana = null;
   for (let k = 0; k < 400; k++) {
-    const propios = (ESTILOS_SEMANA[estilo] || POZO).filter(libre);
-    const resto = POZO.filter(id => libre(id) && !propios.includes(id));
-    let orden = [...barajar(propios), ...barajar(resto)];
-    if (estilo === 'nuevo') { const ns = barajar(nuevos.filter(id => POZO.includes(id) && libre(id))); orden = [...ns, ...orden.filter(id => !ns.includes(id))]; }
-    // Which games go in is decided first, then their order: the locked days keep their place
-    const entran = orden.slice(0, fijo.filter(x => !x).length);
-    const sueltos = barajar(entran);
-    semana = fijo.map(x => x || sueltos.shift());
+    const propios = ESTILOS_SEMANA[estilo] || POZO;
+    let orden = [...barajar(propios), ...barajar(POZO.filter(id => !propios.includes(id)))];
+    if (estilo === 'nuevo') { const ns = barajar(nuevos.filter(id => POZO.includes(id))); orden = [...ns, ...orden.filter(id => !ns.includes(id))]; }
+    // Which games go in is decided first, then their order
+    semana = barajar(orden.slice(0, dias - 1));
     if (seguidas(semana) && (!tope || hastaDos(semana))) break;
   }
   return [...semana, 'final'];
