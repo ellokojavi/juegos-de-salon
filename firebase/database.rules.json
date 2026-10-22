@@ -789,6 +789,10 @@
           "j": {
             ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9]{8}$/) && newData.val() !== $jid"
           },
+          "p": {
+            ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && !data.exists() && data.parent().child('d').exists()",
+            ".validate": "newData.val() === true"
+          },
           "$other": {
             ".validate": false
           }
@@ -804,7 +808,7 @@
             "k"
           ],
           "$jid": {
-            ".write": "auth != null && $t.matches(/^[a-z][a-z0-9-]{0,24}(_[a-z0-9-]{1,16})?$/) && $p.matches(/^(siempre|s[0-9]{4}-[0-9]{2}|d[0-9]{5})$/) && $jid.matches(/^[a-z0-9]{8}$/) && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && (!data.exists() || newData.child('k').val() < data.child('k').val()) && (!($t.endsWith('_victorias') || $t === 'partidas') || (newData.child('ms').val() == 0 && newData.child('s').val() == (data.exists() ? data.child('s').val() : 0) + 1)) && ($t !== 'uno-al-dia' || ($p.beginsWith('d') && newData.child('s').val() === newData.parent().parent().parent().parent().child('unoAlDia/' + $jid + '/' + $p.replace('d', '') + '/s').val()) || (!$p.beginsWith('d') && newData.child('u').isString() && newData.parent().parent().parent().parent().child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/w').exists() && !root.child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/w').exists() && newData.child('s').val() === (data.exists() ? data.child('s').val() : 0) + newData.parent().parent().parent().parent().child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/s').val())) && ($t !== 'uno-al-dia-pts' || ($p.matches(/^s[0-9]{4}-[0-9]{2}$/) && newData.child('ms').val() == 0 && newData.child('u').isString() && newData.child('r').val() <= (data.exists() ? data.child('r').val() + 1 : 10) && newData.parent().parent().parent().parent().child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/p').exists() && !root.child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/p').exists() && newData.child('s').val() === (data.exists() ? data.child('s').val() : 0) + newData.parent().parent().parent().parent().child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/s').val() + (newData.child('r').val() >= 10 ? 50 : newData.child('r').val() * 5)))",
+            ".write": "auth != null && $t.matches(/^[a-z][a-z0-9-]{0,24}(_[a-z0-9-]{1,16})?$/) && $p.matches(/^(siempre|s[0-9]{4}-[0-9]{2}|d[0-9]{5})$/) && $jid.matches(/^[a-z0-9]{8}$/) && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && (!data.exists() || newData.child('k').val() < data.child('k').val()) && (!($t.endsWith('_victorias') || $t === 'partidas') || (newData.child('ms').val() == 0 && newData.child('s').val() == (data.exists() ? data.child('s').val() : 0) + 1)) && ($t !== 'uno-al-dia' || ($p.beginsWith('d') && newData.child('s').val() === newData.parent().parent().parent().parent().child('unoAlDia/' + $jid + '/' + $p.replace('d', '') + '/s').val()) || (!$p.beginsWith('d') && newData.child('u').isString() && newData.parent().parent().parent().parent().child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/w').exists() && !root.child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/w').exists() && newData.child('s').val() === (data.exists() ? data.child('s').val() : 0) + newData.parent().parent().parent().parent().child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/s').val())) && ($t !== 'uno-al-dia-pts' || ($p.matches(/^s[0-9]{4}-[0-9]{2}$/) && newData.child('ms').val() == 0 && newData.child('u').isString() && newData.child('r').val() <= (data.child('r').exists() ? data.child('r').val() + 1 : 10) && newData.parent().parent().parent().parent().child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/p').exists() && !root.child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/p').exists() && newData.child('s').val() === (data.exists() ? data.child('s').val() : 0) + newData.parent().parent().parent().parent().child('unoAlDia/' + $jid + '/' + newData.child('u').val() + '/s').val() + (newData.child('r').val() >= 10 ? 50 : newData.child('r').val() * 5)) || ($p.matches(/^s[0-9]{4}-[0-9]{2}$/) && newData.child('ms').val() == 0 && newData.child('i').isString() && root.child('invitados/' + $jid + '/' + newData.child('i').val() + '/d').exists() && newData.parent().parent().parent().parent().child('invitados/' + $jid + '/' + newData.child('i').val() + '/p').val() === true && !root.child('invitados/' + $jid + '/' + newData.child('i').val() + '/p').exists() && newData.child('u').val() == data.child('u').val() && newData.child('r').val() == data.child('r').val() && newData.child('s').val() === (data.exists() ? data.child('s').val() : 0) + 10))",
             ".validate": "newData.hasChildren(['s', 'ms', 'k', 'at', 'n'])",
             "s": {
               ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000"
@@ -829,6 +833,9 @@
             },
             "r": {
               ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 10 && newData.val() % 1 === 0"
+            },
+            "i": {
+              ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9]{20,40}$/)"
             },
             "$other": {
               ".validate": false
