@@ -291,20 +291,22 @@ const playConnections = async level => {
   for (const g of groups) if (await ev(`!!document.getElementById('btn-confirmar')`)) await tryWords(g);
 };
 
+// The final has one round per game of the week (D-418), each played with that game's own player
 const playFinal = async level => {
-  const rounds = { linea: playLine, numero: playNumber, reinas: playQueens, letras: playLetters, anio: playYear };
-  for (const r of ['linea', 'numero', 'reinas', 'letras', 'anio']) {
+  const rounds = await ev('JSON.stringify(window.__playing.p.rondas)').then(JSON.parse);
+  ok(Array.isArray(rounds) && rounds.length > 0, `the final brings its rounds (${rounds})`);
+  for (const r of rounds) {
     // Between rounds, the running score is out of 100, the result's scale (D-417; #637 read "60 de 300")
-    if (r !== 'linea') {
+    if (r !== rounds[0]) {
       const soFar = await ev(`[...document.querySelectorAll('.screen.active p.muted.center')].map(x=>x.textContent).find(t=>/\\d+ (?:\\S+ ){1,2}100\\b/.test(t)) || ''`);
       const m = soFar.match(/(\d+) (?:\S+ ){1,2}100\b/);
       ok(!!m && +m[1] <= 100, `the final, before ${r}: the running score is out of 100 (${JSON.stringify(soFar)})`);
     }
     await click('#btn-ronda'); await sleep(200);
     await ev(`window.__playingFinal = window.__playing; window.__playing = { p: window.__playingFinal.p.${r} }; 1`);
-    await rounds[r](level);
+    await PLAY[r](level);
     await ev('window.__playing = window.__playingFinal; 1');
-    if (r === 'anio' && await ev('!!__copa.estado.copa && !__copa.estado.juego?.practica')) {
+    if (r === rounds.at(-1) && await ev('!!__copa.estado.copa && !__copa.estado.juego?.practica')) {
       await sleep(300);
       ok(await ev(`(()=>{const d=__copa.estado.juego.d, x=__copa.estado.copa.results?.[d]?.[__copa.estado.yo];return !!x && __copa.estado.pantalla === 'jugar'})()`), 'the final: when the last round ends the result is already in the cup (D-150)');
     }
@@ -355,7 +357,8 @@ async function playDay(d, level, { capture = false, joker = false } = {}) {
     await b.shot(`failure-day${d}`);
   }
   const id = await ev('__copa.estado.juego.id');
-  await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');window.__playing={p:JUEGOS[${JSON.stringify(id)}].generar(__copa.estado.code, ${d})};return 1})()`);
+  // The final is built with this cup's rounds (D-418), as the screen builds it
+  await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const {finalRounds}=await import('/cup/engine.js');window.__playing={p:JUEGOS[${JSON.stringify(id)}].generar(__copa.estado.code, ${d}, {rondas: finalRounds(__copa.estado.copa.meta)})};return 1})()`);
   await PLAY[id](level, { drag: capture && id === 'linea' });
   if (capture) { await checkScreen(`game-${id}`); if (SHOTS[id]) await b.shot(SHOTS[id]); }
   // The result is saved as soon as the board ends, before tapping "Ver resultado" (D-150)

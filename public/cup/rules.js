@@ -146,13 +146,13 @@ const ES = {
     final: {
       nombre: 'La Gran Final', habilidad: 'todo',
       como: [
-        'Son 5 rondas cortas seguidas, y antes de cada una verás cómo se juega.',
+        'Juegas una ronda de cada juego de la semana, una tras otra. Antes de cada una verás cómo se juega.',
       ],
-      puntaje: 'Tu puntaje es el promedio de las 5 rondas.',
+      puntaje: 'Tu puntaje es el promedio de las rondas.',
       desempate: 'Si empatas, gana quien tardó menos.',
     },
   },
-  // Las rondas de la Gran Final (versiones cortas, con su propia explicación)
+  // The short rounds of the Grand Final, with their own explanation; a game without one is played whole (D-418)
   rondas: {
     linea: 'Pon 3 cartas en la línea. Las 3 bien puestas son 100 puntos.',
     numero: 'Un número de 3 cifras distintas en 7 intentos: 100 puntos al primero y 15 menos por cada intento después del primero.',
@@ -408,7 +408,8 @@ const ES = {
   // Antes de jugar
   howToPlay: 'Cómo se juega',
   rulesOf: 'Reglas de {juego}',
-  finalRounds: 'Las cinco rondas',
+  finalRounds: 'Las rondas',
+  finalWholeRound: 'El juego completo, como en la semana, con contenido nuevo.',
   scoring: 'Puntaje',
   wildTitle: 'Comodín ×2',
   wildOff: 'Duplica tus puntos de este día. Tienes uno solo por copa.',
@@ -734,7 +735,7 @@ const ES = {
   bc: 'a. C.',
   yearWas: 'Fue en {v}. Ganaste {pts} puntos.',
   yearWasOne: 'Fue en {v}. Ganaste 1 punto.',
-  roundOf: 'Ronda {i} de 5',
+  roundOf: 'Ronda {i} de {n}',
 
   // Laboratorio y práctica (D-101)
   backToLabs: '🧪 Volver al laboratorio',
@@ -933,9 +934,9 @@ const EN = {
     final: {
       nombre: 'The Grand Final', habilidad: 'everything',
       como: [
-        'Five short rounds in a row, and before each one you\'ll see how it\'s played.',
+        'You play one round of each game of the week, one after another. Before each one you\'ll see how it\'s played.',
       ],
-      puntaje: 'Your score is the average of the 5 rounds.',
+      puntaje: 'Your score is the average of the rounds.',
       desempate: 'On a tie, the faster player wins.',
     },
   },
@@ -1193,7 +1194,8 @@ const EN = {
   // Antes de jugar
   howToPlay: 'How to play',
   rulesOf: '{juego} rules',
-  finalRounds: 'The five rounds',
+  finalRounds: 'The rounds',
+  finalWholeRound: 'The whole game, as during the week, with new content.',
   scoring: 'Scoring',
   wildTitle: 'Wildcard ×2',
   wildOff: 'It doubles your points for this day. You only get one per cup.',
@@ -1513,7 +1515,7 @@ const EN = {
   bc: 'BC',
   yearWas: 'It was in {v}. You got {pts} points.',
   yearWasOne: 'It was in {v}. You got 1 point.',
-  roundOf: 'Round {i} of 5',
+  roundOf: 'Round {i} of {n}',
 
   // Laboratorio y práctica
   backToLabs: '🧪 Back to the lab',
@@ -1709,9 +1711,9 @@ const PT = {
     final: {
       nombre: 'A Grande Final', habilidad: 'tudo',
       como: [
-        'São 5 rodadas curtas seguidas, e antes de cada uma você vai ver como se joga.',
+        'Você joga uma rodada de cada jogo da semana, uma atrás da outra. Antes de cada uma você vai ver como se joga.',
       ],
-      puntaje: 'Sua pontuação é a média das 5 rodadas.',
+      puntaje: 'Sua pontuação é a média das rodadas.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
     },
   },
@@ -1969,7 +1971,8 @@ const PT = {
   // Antes de jugar
   howToPlay: 'Como se joga',
   rulesOf: 'Regras de {juego}',
-  finalRounds: 'As cinco rodadas',
+  finalRounds: 'As rodadas',
+  finalWholeRound: 'O jogo completo, como na semana, com conteúdo novo.',
   scoring: 'Pontuação',
   wildTitle: 'Coringa ×2',
   wildOff: 'Dobra seus pontos deste dia. Você tem um só por copa.',
@@ -2289,7 +2292,7 @@ const PT = {
   bc: 'a.C.',
   yearWas: 'Foi em {v}. Você ganhou {pts} pontos.',
   yearWasOne: 'Foi em {v}. Você ganhou 1 ponto.',
-  roundOf: 'Rodada {i} de 5',
+  roundOf: 'Rodada {i} de {n}',
 
   // Laboratorio y práctica
   backToLabs: '🧪 Voltar ao laboratório',
@@ -2485,9 +2488,9 @@ const DE = {
     final: {
       nombre: 'Das große Finale', habilidad: 'Alles',
       como: [
-        'Spiel 5 kurze Runden am Stück. Vor jeder Runde siehst du, wie sie geht.',
+        'Du spielst eine Runde von jedem Spiel der Woche, eine nach der anderen. Vor jeder Runde siehst du, wie sie geht.',
       ],
-      puntaje: 'Dein Ergebnis ist der Durchschnitt der 5 Runden.',
+      puntaje: 'Dein Ergebnis ist der Durchschnitt der Runden.',
       desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
     },
   },
@@ -2745,7 +2748,8 @@ const DE = {
   // Antes de jugar
   howToPlay: 'So wird gespielt',
   rulesOf: 'Regeln: {juego}',
-  finalRounds: 'Die fünf Runden',
+  finalRounds: 'Die Runden',
+  finalWholeRound: 'Das ganze Spiel, wie unter der Woche, mit neuem Inhalt.',
   scoring: 'Wertung',
   wildTitle: 'Joker ×2',
   wildOff: 'Verdoppelt deine Punkte an diesem Tag. Du hast nur einen pro Pokal.',
@@ -3065,7 +3069,7 @@ const DE = {
   bc: 'v. Chr.',
   yearWas: 'Es war {v}. {pts} Punkte für dich.',
   yearWasOne: 'Es war {v}. 1 Punkt für dich.',
-  roundOf: 'Runde {i} von 5',
+  roundOf: 'Runde {i} von {n}',
 
   // Laboratorio y práctica (D-101)
   backToLabs: '🧪 Zurück zum Labor',

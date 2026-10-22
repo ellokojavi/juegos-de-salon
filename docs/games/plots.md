@@ -13,7 +13,7 @@ chose Loteo before publishing it.
   the four languages (C-3). Id `loteo` (rooms, rankings, signals, `localStorage`), folder and slug
   `plots`. It left the lab in D-332: `/labs/plots/` and `/minigames/plots/`, `/minijuegos/loteo/`
   are bridges to `/plots/`.
-- **In La Copa:** it is in `POZO`, so a week can pick it; it is not part of the Gran Final. The admin
+- **In La Copa:** it is in `POZO`, so a week can pick it, and then the Gran Final plays it again whole (D-418). The admin
   picks the variant for that day below the week (`loteo` or `loteo:utilities` in the calendar, D-331).
 - **Two variants** (D-331): 🔢 **Numbers** (`numbers`, the default) and ⚡💧 **Utilities**
   (`utilities`, D-311). Standalone, the player picks one in the waiting room; the phone remembers it

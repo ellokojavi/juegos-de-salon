@@ -9,7 +9,7 @@ by ARRKKA**, and the waiting room says so, with the link.
 
 - **Where:** its own page, `https://juegosdesalon.cl/paint-mines/` (generated from
   `public/cup/suelto/index.html`), on the home page in the four languages, and a day of La Copa:
-  it is in the cup's pool (`POZO`), not in the Gran Final (D-332). Id `pintaminas` (rooms, rankings,
+  it is in the cup's pool (`POZO`, D-332), and a week that picks it plays it again whole in the Gran Final (D-418). Id `pintaminas` (rooms, rankings,
   `localStorage`, the panel); the folder and the URL are `paint-mines`.
 - **For whom:** one player.
 - **Variants** (D-331): `easy` (one color, the default) and `hard` (⚡ two colors). Standalone, the
