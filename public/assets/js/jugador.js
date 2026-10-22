@@ -27,7 +27,7 @@ import { tiene } from './parametros.js';
 import {
   claveNombre, limpiarNombre, esPin, esJid, nuevoJid, hashPinJugador, tablaId, normalizar, esMejor, semana,
   SIEMPRE, TODOTERRENO, todoterreno, vistaTabla, ordenar, VARIANTE_VICTORIAS, claveOrden, PARTIDAS, esPais,
-  UNO_AL_DIA, UAD_RACHA, periodoDia, MS_MAX, UAD_PUNTOS, RACHA_TOPE, bonoRacha,
+  UNO_AL_DIA, UAD_RACHA, periodoDia, MS_MAX, UAD_PUNTOS, RACHA_TOPE, bonoRacha, PUNTOS_INVITAR,
 } from './records.js';
 
 /** Lo que entiende Firebase (y el almacén de prueba) como "la hora del servidor" y "sumar uno". */
@@ -392,7 +392,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       if (!hist || hist.p) return false;
       const ruta = `records/${UAD_PUNTOS}/${mesP}/${yo.jid}`;
       const antes = await almacen.get(ruta).catch(() => null);
-      const r = Math.max(1, Math.min(RACHA_TOPE, racha, antes ? antes.r + 1 : RACHA_TOPE));
+      const r = Math.max(1, Math.min(RACHA_TOPE, racha, antes?.r ? antes.r + 1 : RACHA_TOPE));
       const s = (antes?.s || 0) + hist.s + bonoRacha(r);
       await almacen.update({ [`${h}/p`]: true, [ruta]: { s, ms: 0, k: claveOrden(s, 0), at: HORA, ...quien(yo), u: String(n), r } });
       return true;
@@ -410,11 +410,28 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       return n ? { n, co: await almacen.get(`jugadores/${jid}/co`).catch(() => null) } : null;
     },
 
-    /** Quienes aceptaron mis desafíos: `[{ d, j? }]`. Solo los lee el propio jugador. */
+    /** Quienes aceptaron mis desafíos: `[{ uid, d, j?, p? }]`. Solo los lee el propio jugador. */
     async invitados() {
       const yo = api.yo();
       if (!yo) return [];
-      return Object.values((await almacen.get(`invitados/${yo.jid}`).catch(() => null)) || {}).filter(x => Number.isInteger(x?.d));
+      return Object.entries((await almacen.get(`invitados/${yo.jid}`).catch(() => null)) || {}).map(([uid, x]) => ({ uid, ...x })).filter(x => Number.isInteger(x?.d));
+    },
+
+    /**
+     * Uno al día points (D-414): a friend who finished their first Uno al día with my invitation adds
+     * +10 to the month `mesP`, once per friend (`p` on their acceptance, in the same write).
+     */
+    async anotarInvitado({ uid, mesP }) {
+      const yo = api.yo();
+      if (!yo || typeof uid !== 'string' || !/^s[0-9]{4}-[0-9]{2}$/.test(mesP || '')) return false;
+      const a = `invitados/${yo.jid}/${uid}`;
+      const acepto = await almacen.get(a).catch(() => null);
+      if (!acepto?.d || acepto.p) return false;
+      const ruta = `records/${UAD_PUNTOS}/${mesP}/${yo.jid}`;
+      const antes = await almacen.get(ruta).catch(() => null);
+      const s = (antes?.s || 0) + PUNTOS_INVITAR;
+      await almacen.update({ [`${a}/p`]: true, [ruta]: { s, ms: 0, k: claveOrden(s, 0), at: HORA, ...quien(yo), ...(antes?.u ? { u: antes.u } : {}), ...(antes?.r ? { r: antes.r } : {}), i: uid } });
+      return true;
     },
 
     /**
