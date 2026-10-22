@@ -233,9 +233,8 @@ async function nombres() {
  */
 export function tarjetaInvitar({ lang, alTocar, plegada = false, comodines = null }) {
   const T = textos(lang).uad;
-  // The +10 per invited friend, said only with a lab key for now (D-409). lab: #seccion-uad-invitar-jugar
-  const ptsInv = el('p', { style: 'margin:0', id: 'uad-inv-pts', hidden: true }, T.pts.invitarPts);
-  if (comodines != null) import('./lab-access.js').then(m => m.labAccess()).then(ok => { ptsInv.hidden = !ok; }).catch(() => {});
+  // The +10 per invited friend (D-414), said in the wildcards' box
+  const ptsInv = el('p', { style: 'margin:0', id: 'uad-inv-pts', hidden: comodines == null }, T.pts.invitarPts);
   const linea = el('p', { class: 'muted', style: 'margin:0', id: 'uad-inv-linea' });
   const b = el('button', { type: 'button', class: 'btn btn--cyan', id: 'btn-uad-invitar' }, T.invitar);
   b.addEventListener('click', async () => {
