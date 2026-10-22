@@ -350,7 +350,17 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   (`&day=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
   (`&mute`). Los días nuevos de varias copas van juntos en un aviso, y un empate arriba nombra
   a todos los que ganaron (D-229). Cada dirección lleva `&notif=<tipo>` (en inglés, D-266: `day`, `deadline`, `end`…), que la página cuenta al
-  abrirse y saca de la dirección; el panel muestra mandados y tocados por tipo (D-233).
+  abrirse y saca de la dirección; el panel muestra mandados y tocados por tipo (D-233). The
+  cup-ended one ends with "Toca para ver la tabla final." (`avEndSee`, D-423).
+- **The recap on the home page** (D-423, in the lab: only with a lab key, listed in /labs/ as
+  `#seccion-resumen-copa`): when a cup this phone played ("Tus copas", `copa:mias`) ended by its
+  planned end less than a week ago and its recap was not seen here, the home page opens a window
+  over itself: "La Copa terminó", the cup's name, the `fin` notification's sentence, and the final
+  table with 🥇🥈🥉 or the place, a small line of each player's place day by day, the places climbed
+  or lost since day 1 (▲2, ▼1, =) and the points, the player's row marked; **🏆 Ver la copa** opens
+  the cup, **Cerrar** and ✕ close it. Closing it or following the link marks it seen
+  (`copa:resumen-visto`); with several due, the most recent. That visit the splash (D-351) waits.
+  `/?recap=demo` shows it with the podium demo, recording nothing.
 
 ## Flujo
 
@@ -401,7 +411,8 @@ Todo bajo `public/cup/`:
 | `cuenta.js` | Con quién está sentado este celular, el intento a medio jugar, los avisos de cada copa (D-223) y "Tus copas" (las del celular más las del jugador, `juntarCopas`, D-220) |
 | `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`). El estilo de la hoja de abajo (`.hoja`) es de todo el sitio y vive en `assets/css/base.css` (D-232); `style.css` guarda solo lo propio de los avisos |
 | `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
-| `demo.js` | Las escenas de ejemplo de `?test&demo=`, para las pruebas y las capturas |
+| `demo.js` | Las escenas de ejemplo de `?test&demo=`, para las pruebas y las capturas; `escena()` builds one without storing it, for the home page's recap demo (D-423) |
+| `recap.js` · `recap/index.html` | The recap of an ended cup for the home page (D-423): `/cup/recap/` is a page with no screen that the home page opens in a hidden frame; it reads the due cup over REST and posts back its table (`cupRecap`), so the home page never loads the engine. The window itself is `assets/js/recap.js` and `assets/css/recap.css` |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
 | `planilla.js` | La tabla final como CSV (D-161) |
 | `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`; the help sheets' texts come from `assets/js/notification-sheets.js`, shared with Uno al día, D-377) y la explicación de cada juego |
@@ -422,6 +433,8 @@ node tools/e2e/cup/tournament.mjs /tmp/copa            # Copa de 3 días, tres j
 node tools/e2e/cup/tournament.mjs /tmp/copa --siete    # los siete juegos
 node tools/e2e/cup/notifications.mjs /tmp/avisos          # los avisos al celular, con un servicio falso (D-223)
 node tools/push/schedule.test.mjs                # qué aviso toca y cuándo, con relojes inventados (D-224)
+node public/cup/recap.test.mjs                   # the recap of an ended cup: which cup is due, its rows and its sentence (D-423)
+node tools/e2e/home/recap.mjs                    # the recap window on the home page, with ?recap=demo (D-423)
 node tools/push/notify.test.mjs                    # una vuelta del envío, con una base falsa
 node tools/push/webpush.test.mjs                   # el cifrado y la firma, contra el ejemplo del RFC 8291
 ```

@@ -18,6 +18,8 @@ const pages = [];
 const walk = d => { for (const f of readdirSync(d)) { const p = join(d, f); if (statSync(p).isDirectory()) walk(p); else if (f === 'index.html' && !/Bridge page|Página puente/.test(readFileSync(p, 'utf8'))) pages.push(relative(PUBLIC, dirname(p)).split('\\').join('/')); } };
 walk(PUBLIC);
 pages.sort();
+/** Pages with no screen of their own (`<meta name="screen" content="none">`, like /cup/recap/, D-423): they must open without errors, not show text. */
+const noScreen = new Set(pages.filter(p => /<meta name="screen" content="none">/.test(readFileSync(join(PUBLIC, p, 'index.html'), 'utf8'))));
 
 const b = await launch({ dir: `${OUT}/p`, out: OUT });
 let ok = 0;
@@ -27,7 +29,7 @@ for (const page of pages) {
   const errors = b.errors.slice(before);
   const seen = await b.evaluate(`JSON.stringify({ text: (document.body?.innerText || '').trim().length, hidden: getComputedStyle(document.documentElement).visibility === 'hidden', at: location.pathname })`).then(JSON.parse).catch(() => ({ text: 0 }));
   if (errors.length) bad(`/${page} throws: ${errors[0].slice(0, 160)}`);
-  else if (seen.hidden || seen.text < 20) bad(`/${page} is blank (${seen.text} characters of text${seen.hidden ? ', hidden' : ''})`);
+  else if (!noScreen.has(page) && (seen.hidden || seen.text < 20)) bad(`/${page} is blank (${seen.text} characters of text${seen.hidden ? ', hidden' : ''})`);
   else ok++;
 }
 await sleep(100);

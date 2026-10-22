@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="screen" content="none">
+  <title>La Copa</title>
+  <script src="../../assets/js/vigia.js"></script>
+  <!--
+    The recap of an ended cup (D-423), with no screen: the home page opens this page in a hidden
+    frame when a cup this phone played is due, and it posts back the cup's table, built with the
+    cup's engine, so the home page does not load the engine itself (D-377). `?demo`: the podium demo.
+  -->
+</head>
+<body>
+  <script type="module">
+    import { loadCupRecap, demoRecap } from '../recap.js';
+    const post = found => parent.postMessage({ type: 'recap', found }, location.origin);
+    (new URLSearchParams(location.search).has('demo') ? demoRecap() : loadCupRecap()).then(post, () => post(null));
+  </script>
+</body>
+</html>
