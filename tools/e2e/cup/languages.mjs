@@ -78,7 +78,7 @@ for (const [i, lang] of OTHERS.entries()) {
 // ('letras'); the folder, in English ('word'): D-192. All their screens in every language are
 // walked by cup-games/languages.mjs; here, what depends on each language's content.
 const STANDALONE = Object.fromEntries(SUELTOS.map(m => [m.id, m]));
-for (const id of ['letras', 'conexiones', 'anio', 'reinas', 'donde']) for (const lang of OTHERS) {
+for (const id of ['letras', 'agentes', 'conexiones', 'anio', 'reinas', 'donde']) for (const lang of OTHERS) {
   await b.open(`${SITE}/${STANDALONE[id].slug}/?test&lang=${lang}`, 2000);
   const t = await screenText();
   ok(has(t, STANDALONE[id].name[lang]), `${id} (${lang}): the lobby is translated (${STANDALONE[id].name[lang]})`);
@@ -88,6 +88,7 @@ for (const id of ['letras', 'conexiones', 'anio', 'reinas', 'donde']) for (const
   await ev(`document.getElementById('btn-empezar').click(); 1`);
   await b.until(`document.getElementById('cuenta')`, 1500); await b.until(`!document.getElementById('cuenta')`, 4800); await b.settle(400);
   if (id === 'letras') ok(!(await ev(`[...document.querySelectorAll('.keypad button')].some(x=>x.textContent==='Ñ')`)), `letras (${lang}): the keyboard has no Ñ`);
+  if (id === 'agentes') ok(await ev(`(async()=>{const m=await import('/cup/games/agents/engine.js');const words=new Set(m.mazoDe('${lang}').flatMap(x=>[...x.si,...x.casi]));const w=[...document.querySelectorAll('#ag-tablero .ag-carta')].map(x=>x.textContent.replace('💀 ',''));return w.length===15&&w.every(x=>words.has(x))})()`), `agentes (${lang}): the board is its language's deck`);
   if (id === 'conexiones') ok(await ev(`(async()=>{const m=await import('/cup/games/connections/grillas-${lang}.js');const w=[...document.querySelectorAll('#jugar-body button')].map(x=>x.textContent);return m.GRILLAS.some(g=>g.grupos.flatMap(x=>x.palabras).includes(w[0]))})()`), `conexiones (${lang}): the grid is one of its language's`);
   await check(`${lang}-standalone-${id}-game`, { buttons: false });
 }

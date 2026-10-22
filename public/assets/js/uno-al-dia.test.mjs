@@ -3,7 +3,7 @@
 // y los puntajes de los juegos de grupo (El Ahorcado, Batalla Naval, Dudo).
 import assert from 'node:assert/strict';
 import {
-  JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, DESDE_MAS, DESDE_GENERALA, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
+  JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, DESDE_MAS, DESDE_GENERALA, DESDE_AGENTES, vigente, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
   fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, formaAcceso, KEY,
 } from './uno-al-dia.js';
 import { JUEGOS } from '../../cup/games/index.js';
@@ -31,7 +31,16 @@ for (const j of JUEGOS_DIA) {
   if (GRUPO.includes(j.id)) assert.ok(GAMES.find(g => g.id === j.id)?.available, `${j.id}: no está en games.js`);
   else assert.ok(JUEGOS[j.id]?.generar, `${j.id}: no está en cup/games`);
 }
-assert.equal(JUEGOS_DIA.length, 17, '17 games: 13 solo and 4 with their own page (D-334, D-405)');
+assert.equal(JUEGOS_DIA.length, 18, '18 games: 14 solo (Conexiones until DESDE_AGENTES) and 4 with their own page (D-334, D-405, D-421)');
+// D-421: from DESDE_AGENTES Conexiones no longer comes out and Agentes joins the next deck; no day before changes
+{
+  assert.equal(DESDE_AGENTES, '2026-10-24', 'Agentes takes Conexiones\' place on 2026-10-24 (D-421)');
+  const antes = crearCalendario(JUEGOS_DIA.filter(j => j.id !== 'agentes').map(({ hasta, ...j }) => j));
+  for (const f of fechas(LANZAMIENTO, diasEntre(LANZAMIENTO, DESDE_AGENTES))) assert.equal(juegoDel(f), antes.juegoDel(f), `${f} changed its game when Agentes came in`);
+  const despues = fechas(DESDE_AGENTES, 3 * JUEGOS_DIA.length).map(juegoDel);
+  assert.ok(!despues.includes('conexiones'), 'Conexiones does not come out from DESDE_AGENTES on');
+  assert.ok(despues.includes('agentes'), 'Agentes comes out after DESDE_AGENTES');
+}
 // D-405: Generala joins on DESDE_GENERALA, the first day of the third deck: no day before it changes
 {
   assert.equal(DESDE_GENERALA, '2026-10-23', 'Generala enters with the deck shuffled on 2026-10-23 (D-405)');
@@ -63,13 +72,18 @@ assert.notEqual(semillaDel('2026-10-05'), semillaDel('2026-10-06'));
 const salidos = dias.map(juegoDel);
 const mazos = [];
 for (let k = 0; k < salidos.length;) {
-  const n = JUEGOS_DIA.filter(j => j.desde <= dias[k]).length;
+  let n = JUEGOS_DIA.filter(j => vigente(j, dias[k])).length;
+  // A game that leaves while the deck is in play (D-421) drops out of it if it had not come out yet
+  for (const j of JUEGOS_DIA.filter(j => j.hasta && vigente(j, dias[k]))) {
+    const h = diasEntre(dias[k], j.hasta);
+    if (h < n && !salidos.slice(k, k + h).includes(j.id)) n--;
+  }
   mazos.push({ k, n, espera: Math.min(SIN_REPETIR, n - 2) });
   const mazo = salidos.slice(k, k + n);
   if (mazo.length === n) assert.equal(new Set(mazo).size, n, `el mazo que empieza el ${dias[k]} repite un juego`);
   k += n;
 }
-assert.deepEqual(mazos.slice(0, 4).map(m => m.n), [7, 10, 17, 17], 'the first deck has 7 games, the second 10 and, from the one shuffled on 2026-10-23, 17 (D-334, D-405)');
+assert.deepEqual(mazos.slice(0, 4).map(m => m.n), [7, 10, 16, 17], 'the first deck has 7 games, the second 10, the one shuffled on 2026-10-23 16 (Conexiones leaves it, D-421) and the next 17 with Agentes (D-334, D-405)');
 assert.equal(dias[mazos[2].k], '2026-10-23', 'the six games of D-334 enter with the deck shuffled on 2026-10-23');
 assert.equal(mazos[1].espera, 7, 'con 10 juegos, ninguno vuelve antes de 7 días');
 for (const { k, n, espera } of mazos) {

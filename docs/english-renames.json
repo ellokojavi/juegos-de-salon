@@ -136,11 +136,6 @@
       "phase": 5,
       "state": "pending"
     },
-    "docs/screenshots/cup/03-conexiones.png": {
-      "to": "docs/screenshots/cup/03-connections.png",
-      "phase": 5,
-      "state": "pending"
-    },
     "docs/screenshots/cup/04-reinas.png": {
       "to": "docs/screenshots/cup/04-queens.png",
       "phase": 5,
@@ -827,6 +822,12 @@
       "phase": 4,
       "state": "pending"
     },
+    "public/assets/og/agentes.jpg": {
+      "to": "public/assets/og/agents.jpg",
+      "phase": 4,
+      "state": "keep",
+      "why": "link-card image named by the game id, already cached by WhatsApp and the like (data, D-316)"
+    },
     "public/assets/og/ahorcado.jpg": {
       "to": "public/assets/og/hangman.jpg",
       "phase": 4,
@@ -1098,16 +1099,6 @@
       "phase": 4,
       "state": "keep",
       "why": "bridge page of the old Spanish URL (D-192)"
-    },
-    "public/labs/agents/pistas.js": {
-      "to": "public/labs/agents/clues.js",
-      "phase": 4,
-      "state": "pending"
-    },
-    "public/labs/agents/tarjeta.jpg": {
-      "to": "public/labs/agents/card.jpg",
-      "phase": 4,
-      "state": "pending"
     },
     "public/labs/bridges/catalogo-madera.json": {
       "to": "public/labs/bridges/catalog-wood.json",

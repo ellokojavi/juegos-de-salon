@@ -18,7 +18,7 @@ export const RONDAS = FIXED_FINAL;
 export const SHORT = ['linea', 'numero', 'reinas', 'letras', 'anio'];
 export const EMOJI = {
   linea: '⏳', numero: '🔢', conexiones: '🔗', reinas: '👑', letras: '🔤', anio: '📅', zip: '〰️', tango: '☀️',
-  donde: '📍', caso: '🔍', desenredo: '🧶', rutas: '🚇', loteo: '📐', pintaminas: '🖌️',
+  donde: '📍', caso: '🔍', desenredo: '🧶', rutas: '🚇', loteo: '📐', pintaminas: '🖌️', agentes: '🕵️',
 };
 
 export const NUMERO_CIFRAS = 3;

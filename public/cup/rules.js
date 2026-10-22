@@ -2,7 +2,7 @@
  * La Copa — datos y textos. Sin lógica ni DOM (C-2).
  *
  * En español, inglés y portugués (D-170). La interfaz va en el idioma de quien mira; las palabras
- * de Conexiones y de Toque y Fama: Palabra van en el idioma de la copa, que se elige al crearla,
+ * de Conexiones, de Agentes y de Toque y Fama: Palabra van en el idioma de la copa, que se elige al crearla,
  * para que todos jueguen lo mismo. Ese contenido no se traduce: cada idioma tiene el suyo.
  */
 export const GAME_ID = 'copa';
@@ -11,6 +11,7 @@ export const GAME_ID = 'copa';
 import RUTAS from './games/routes/texts.js';
 import LOTEO from './games/plots/texts.js';
 import PINTAMINAS from './games/paint-mines/texts.js';
+import AGENTES from './games/agents/texts.js';
 import { SHEETS } from '../assets/js/notification-sheets.js';
 
 /**
@@ -32,6 +33,7 @@ const BASE = {
   rutas: { emoji: '🚇' },
   loteo: { emoji: '📐' },
   pintaminas: { emoji: '🖌️' },
+  agentes: { emoji: '🕵️' },
   final: { emoji: '🏁' },
 };
 
@@ -3178,7 +3180,7 @@ for (const [lang, L] of Object.entries(LOCALES)) {
   }
 }
 // Each game's own texts (D-331): its entry in `juegos` and the keys its screen reads
-for (const [id, textos] of Object.entries({ rutas: RUTAS, loteo: LOTEO, pintaminas: PINTAMINAS })) {
+for (const [id, textos] of Object.entries({ rutas: RUTAS, loteo: LOTEO, pintaminas: PINTAMINAS, agentes: AGENTES })) {
   for (const [lang, L] of Object.entries(LOCALES)) {
     const t = textos[lang] || textos.es;
     L.juegos[id] = t.juego;

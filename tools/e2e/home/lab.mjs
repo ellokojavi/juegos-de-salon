@@ -1,5 +1,5 @@
 // The home page's experiments in the lab (D-361, D-363, D-369, D-372, D-403) end to end: the lab's three groups (the
-// home page experiments, all launched, in La Bodega), /labs/home/ landing on the real home page
+// home page experiments, all launched, in La Bodega, and Conexiones there too since D-421), /labs/home/ landing on the real home page
 // with its bar, the filters sticking on scroll, the language, and no bar for players. Prints ✗ if something fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -16,7 +16,10 @@ const labels = `[...document.querySelectorAll('.game-card')].filter(c => c.query
 await b.go(`${SITE}/labs/?test`);
 ok(await ev(`!!document.querySelector('#bodega #seccion-portada details #btn-portada') && !document.querySelector('#mejoras #seccion-portada')`), 'the home page experiments are in La Bodega, folded');
 ok(await ev(`(t => /🚀 Lanzado · 🔎 Buscar/.test(t) && /🚀 Lanzado · 🎉 Splash/.test(t))(document.getElementById('seccion-portada').textContent)`), '🔎 Buscar and 🎉 Splash are marked launched');
-ok(await ev(`!!document.querySelector('#activos #seccion-agentes') && !document.querySelector('#activos #seccion-portada')`), 'the games being tried are apart from the improvements');
+ok(await ev(`!!document.querySelector('#activos #seccion-puentes') && !document.querySelector('#activos #seccion-portada')`), 'the games being tried are apart from the improvements');
+// Conexiones left the home page for La Bodega when 🕵️ Agentes took its place (D-421): folded, and still playable
+ok(await ev(`(d => !!d && !d.open && d.querySelector('#btn-conexiones')?.getAttribute('href') === '../connections/')(document.querySelector('#bodega #seccion-conexiones details'))`), 'Conexiones is in La Bodega, folded, with its link to /connections/');
+ok(await ev(`!document.querySelector('#seccion-agentes')`), 'and Agentes, out of the lab, is no longer a lab project');
 
 // /labs/home/ opens the real home page, without a frame (D-363), with the bar: ‹ Lab, a checkbox per
 // experiment (D-389) and the language; the filters still stick when the page scrolls

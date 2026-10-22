@@ -49,7 +49,7 @@ perfecto para un aviso: hay una fecha, hay algo pendiente y le importa a la pers
 
 | Aviso | Cuándo | A quién | Ejemplo |
 |---|---|---|---|
-| **Se abrió el día** | Entre 9:00 y 10:00 del jugador (no a las 00:00) | Inscritos que activaron avisos | "🔗 Día 3: Conexiones. Ya puedes jugar." |
+| **Se abrió el día** | Entre 9:00 y 10:00 del jugador (no a las 00:00) | Inscritos que activaron avisos | "🕵️ Día 3: Agentes. Ya puedes jugar." |
 | **Se te acaba el plazo** | Unas 4 horas antes de que cierre el día (el de gracia, o la final) | Solo a quien **no** ha jugado ese día | "⏳ Te quedan 4 horas para jugar el día 3. Si no lo juegas, son 0 puntos." |
 | **Terminó la copa** | Al cerrar (o al terminarla el admin, D-161) | Todos los inscritos con avisos | "🥇 Ganó Ana. Quedaste 2.°." |
 | **La Gran Final** | En la mañana del último día, en vez de "se abrió el día" | Inscritos con avisos | "🏁 Hoy es La Gran Final y vale doble. Vas 2.°, a 3 puntos de Ana." |
@@ -198,7 +198,7 @@ modo No molestar, por ejemplo), el botón **Probar los avisos** de la hoja sirve
 
 | Aviso | Título | Texto | Al tocarlo |
 |---|---|---|---|
-| Se abrió el día | 🏆 La Copa: Los Primos | "🔗 Día 3: Conexiones. Ya puedes jugar." (el emoji del juego, como el recordatorio) | El día 3, en "Empezar" |
+| Se abrió el día | 🏆 La Copa: Los Primos | "🕵️ Día 3: Agentes. Ya puedes jugar." (el emoji del juego, como el recordatorio) | El día 3, en "Empezar" |
 | Se te acaba el plazo | 🏆 La Copa: Los Primos | "⏳ Te quedan 4 horas para jugar el día 3. Si no lo juegas, son 0 puntos." | El día 3 |
 | La Gran Final | 🏆 La Copa: Los Primos | "🏁 Hoy es La Gran Final y vale doble. Vas 2.°, a 3 puntos de Ana." | La Gran Final |
 | Terminó | 🏆 La Copa: Los Primos | "🥇 Ganó Ana. Quedaste 2.°." (a quien ganó: "🥇 ¡Ganaste la copa!"; con empate arriba, "🥇 Ganaron Ana y Beto…", D-229) | El podio |

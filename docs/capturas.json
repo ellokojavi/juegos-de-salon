@@ -705,10 +705,10 @@
     },
     {
       "seccion": "copa",
-      "imagen": "docs/screenshots/cup/03-conexiones.png",
-      "pie": "Day 3: Connections, with red herrings",
+      "imagen": "docs/screenshots/cup/03-agents.png",
+      "pie": "Day 3: Agents, find your spies from the clues",
       "guion": "copa",
-      "toma": "03-connections"
+      "toma": "03-agents"
     },
     {
       "seccion": "copa",

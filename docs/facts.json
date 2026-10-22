@@ -1,5 +1,5 @@
 {
-  "version": "0.196.1",
+  "version": "0.197.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -63,6 +63,15 @@
         "public/cup/desglose.js",
         "public/cup/engine.js",
         "public/cup/game.js",
+        "public/cup/games/agents/clues-de.js",
+        "public/cup/games/agents/clues-en.js",
+        "public/cup/games/agents/clues-pt.js",
+        "public/cup/games/agents/clues.js",
+        "public/cup/games/agents/engine.js",
+        "public/cup/games/agents/numbers.js",
+        "public/cup/games/agents/style.css",
+        "public/cup/games/agents/texts.js",
+        "public/cup/games/agents/ui.js",
         "public/cup/games/audiencia.js",
         "public/cup/games/case/engine.js",
         "public/cup/games/case/ui.js",
@@ -543,6 +552,7 @@
       ],
       "duration": "3–8",
       "labs": false,
+      "bodega": true,
       "path": "connections/"
     },
     {
@@ -560,6 +570,7 @@
       ],
       "duration": "3–8",
       "labs": false,
+      "bodega": false,
       "path": "word/"
     },
     {
@@ -576,6 +587,7 @@
       ],
       "duration": "2–5",
       "labs": false,
+      "bodega": false,
       "path": "year/"
     },
     {
@@ -592,6 +604,7 @@
       ],
       "duration": "2–5",
       "labs": false,
+      "bodega": false,
       "path": "queens/"
     },
     {
@@ -608,6 +621,7 @@
       ],
       "duration": "3–8",
       "labs": false,
+      "bodega": false,
       "path": "tango/"
     },
     {
@@ -624,6 +638,7 @@
       ],
       "duration": "3",
       "labs": false,
+      "bodega": false,
       "path": "zip/"
     },
     {
@@ -640,6 +655,7 @@
       ],
       "duration": "4",
       "labs": false,
+      "bodega": false,
       "path": "untangle/"
     },
     {
@@ -656,6 +672,7 @@
       ],
       "duration": "2–5",
       "labs": false,
+      "bodega": false,
       "path": "where/"
     },
     {
@@ -672,6 +689,7 @@
       ],
       "duration": "5–10",
       "labs": true,
+      "bodega": false,
       "path": "labs/case/"
     },
     {
@@ -688,6 +706,7 @@
       ],
       "duration": "7",
       "labs": false,
+      "bodega": false,
       "path": "routes/"
     },
     {
@@ -704,6 +723,7 @@
       ],
       "duration": "5–15",
       "labs": false,
+      "bodega": false,
       "path": "plots/"
     },
     {
@@ -720,7 +740,25 @@
       ],
       "duration": "3–6",
       "labs": false,
+      "bodega": false,
       "path": "paint-mines/"
+    },
+    {
+      "id": "agentes",
+      "emoji": "🕵️",
+      "name": {
+        "es": "Agentes",
+        "en": "Agents",
+        "pt": "Agentes",
+        "de": "Agenten"
+      },
+      "kinds": [
+        "words"
+      ],
+      "duration": "3–6",
+      "labs": false,
+      "bodega": false,
+      "path": "agents/"
     }
   ],
   "themes": [
@@ -909,6 +947,14 @@
     "public/cup/desglose.js",
     "public/cup/engine.js",
     "public/cup/game.js",
+    "public/cup/games/agents/clues-de.js",
+    "public/cup/games/agents/clues-en.js",
+    "public/cup/games/agents/clues-pt.js",
+    "public/cup/games/agents/clues.js",
+    "public/cup/games/agents/engine.js",
+    "public/cup/games/agents/numbers.js",
+    "public/cup/games/agents/texts.js",
+    "public/cup/games/agents/ui.js",
     "public/cup/games/audiencia.js",
     "public/cup/games/case/engine.js",
     "public/cup/games/case/ui.js",
@@ -978,9 +1024,6 @@
     "public/julep/engine.js",
     "public/julep/game.js",
     "public/julep/rules.js",
-    "public/labs/agents/engine.js",
-    "public/labs/agents/game.js",
-    "public/labs/agents/pistas.js",
     "public/labs/bridges/engine.js",
     "public/labs/bridges/game.js",
     "public/labs/bridges/pixel.js",
@@ -1051,6 +1094,7 @@
     "public/battleship/engine.test.mjs",
     "public/bulls-and-cows/engine.test.mjs",
     "public/cup/engine.test.mjs",
+    "public/cup/games/agents/engine.test.mjs",
     "public/cup/games/deshacer.test.mjs",
     "public/cup/games/juegos.test.mjs",
     "public/cup/games/paint-mines/engine.test.mjs",
@@ -1062,7 +1106,6 @@
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/julep/engine.test.mjs",
-    "public/labs/agents/engine.test.mjs",
     "public/labs/bridges/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
@@ -1120,7 +1163,7 @@
   "e2e": [
     "affected.mjs",
     "affected.test.mjs",
-    "agents/lab.mjs",
+    "agents/game.mjs",
     "already-tested.mjs",
     "already-tested.test.mjs",
     "battleship/alignment.mjs",
@@ -1265,7 +1308,7 @@
     },
     {
       "path": "docs/games/agents.md",
-      "title": "🕵️ Agentes (prototipo del laboratorio, en Juegos en prueba)"
+      "title": "🕵️ Agentes"
     },
     {
       "path": "docs/games/battleship.md",

@@ -53,11 +53,11 @@ export const KEYWORDS = {
     pt: ['sóis', 'luas', 'sol', 'lua', 'binário', 'grade', 'quebra-cabeça', 'lógica'],
     de: ['sonnen', 'monde', 'sonne', 'mond', 'binär', 'gitter', 'rätsel', 'puzzle', 'logik'],
   },
-  conexiones: {
-    es: ['grupos', 'palabras', 'categorias', 'relacionar', 'asociar', 'cultura'],
-    en: ['connections', 'groups', 'words', 'categories', 'link', 'associate', 'trivia'],
-    pt: ['grupos', 'palavras', 'categorias', 'relacionar', 'associar', 'cultura'],
-    de: ['gruppen', 'wörter', 'kategorien', 'verbinden', 'zuordnen', 'wissen'],
+  agentes: {
+    es: ['codenames', 'espias', 'pistas', 'palabras', 'asociar', 'asesino', 'agente', 'secreto'],
+    en: ['agents', 'codenames', 'spies', 'clues', 'words', 'associate', 'assassin', 'spy', 'secret'],
+    pt: ['codenames', 'espiões', 'pistas', 'palavras', 'associar', 'assassino', 'agente', 'segredo'],
+    de: ['codenames', 'spione', 'hinweise', 'wörter', 'assoziieren', 'attentäter', 'agent', 'geheim'],
   },
   anio: {
     es: ['año', 'fechas', 'historia', 'adivinar', 'cultura', 'preguntas'],

@@ -50,10 +50,12 @@
       ],
       "estado": "Shorts on the channel of hola@juegosdesalon.cl, public: ES https://youtube.com/shorts/zM9v2UwEsM8 and EN https://youtube.com/shorts/UubTGcUoQD8, both in the home page share sheet (D-410). The v7 16:9 is not uploaded yet",
       "revision": {
-        "fecha": "2026-10-21",
-        "app": "0.190.2",
-        "al_dia": true,
-        "pendiente": []
+        "fecha": "2026-10-22",
+        "app": "0.197.0",
+        "al_dia": false,
+        "pendiente": [
+          "The v7 '¡Y muchos más juegos!' grid (grilla_mas) and the v6 YouTube description show 🔗 Conexiones, which went to La Bodega in D-421: the next version swaps it for 🕵️ Agentes, now on the home page"
+        ]
       },
       "seleccion": true,
       "escenas": [
@@ -187,7 +189,7 @@
           "formato": "1.91:1",
           "ancho": 1200,
           "alto": 630,
-          "uso": "WhatsApp y vista previa del link de /labs/agents/"
+          "uso": "WhatsApp y vista previa del link de /labs/agents/ (until D-421)"
         },
         {
           "ruta": "marketing/agentes-tarjeta/output/agentes-6s.mp4",
@@ -206,8 +208,8 @@
           "uso": "GIF para WhatsApp"
         }
       ],
-      "fuente": "marketing/agentes-tarjeta/card.html y animada.html",
-      "construir": "marketing/agentes-tarjeta/build.mjs y construir-video.mjs",
+      "fuente": "marketing/agentes-tarjeta/tarjeta.html y animada.html",
+      "construir": "marketing/agentes-tarjeta/construir.mjs y construir-video.mjs",
       "juegos": [
         "agentes"
       ],
@@ -221,9 +223,8 @@
         "al_dia": true,
         "pendiente": []
       },
-      "servido": [
-        "public/labs/agents/tarjeta.jpg"
-      ]
+      "servido": [],
+      "estado": "Retired from the site in D-421: Agentes left the lab, and its link card is now the game card that og.mjs draws (public/assets/og/agentes.jpg, owned by share-cards). The image and video stay here as the lab invitation."
     },
     {
       "id": "se-vienen-cositas",

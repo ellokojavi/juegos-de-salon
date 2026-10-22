@@ -20,13 +20,16 @@ export { reloj, pausaDeLectura, mmss } from './clock.js';
  * Desde D-163 el admin arma el suyo al crear la copa (ver POZO); este queda para las demos.
  */
 export const CALENDARIOS = {
-  3: ['linea', 'conexiones', 'final'],
-  7: ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'final'],
+  3: ['linea', 'agentes', 'final'],
+  7: ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio', 'final'],
 };
 export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
 
-/** Los juegos que el admin puede poner en los días antes de la final (D-163). */
-export const POZO = ['linea', 'numero', 'conexiones', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo', 'rutas', 'loteo', 'pintaminas'];
+/**
+ * Los juegos que el admin puede poner en los días antes de la final (D-163). Agentes took Conexiones'
+ * place in D-421: the cups created before still play Conexiones, which stays registered in JUEGOS.
+ */
+export const POZO = ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo', 'rutas', 'loteo', 'pintaminas'];
 
 /**
  * The variants a game can be played in (D-331), the first one being the default. In a cup the admin

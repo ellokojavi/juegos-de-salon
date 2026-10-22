@@ -108,7 +108,8 @@ def block_games(F, C):
     # goes to the playable page, because they have no section of their own in the README.
     for m in F.get('standalone', []):
         names = ' / '.join(dict.fromkeys([m['name']['en'], m['name']['es'], m['name']['pt']]))
-        status = '🧪 lab' if m['labs'] else 'Also in The Cup'
+        # One in La Bodega (D-280, D-421) is off the menu and out of new cups, but its page still opens
+        status = '🧪 lab' if m['labs'] else '📦 La Bodega' if m.get('bodega') else 'Also in The Cup'
         # One from the lab goes without a link: the lab is not announced (D-281)
         name = names if m['labs'] else f"[{names}](https://juegosdesalon.cl/{m['path']})"
         rows.append(f"| {m['emoji']} {name} | 1 "
