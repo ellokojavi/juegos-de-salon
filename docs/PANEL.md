@@ -127,7 +127,9 @@ En `#/games`, el bloque **📅 Uno al día**:
 - **Qué se hace** y **Avisos**: las señales `uad/<evento>` de todos (`EVENTOS_UAD`
   en stats.js), y el tráfico de `/today/` (páginas vistas y visitas que entraron por ahí).
 - Los avisos de Uno al día salen en el bloque de avisos al celular (en `#/cup`, abajo) como `uaddia`,
-  `uadracha`, `uadsemana` y `uadadios`.
+  `uadracha`, `uadsemana` y `uadadios`. Since D-424 also `uadtemporada` (the season ended), with its raw key
+  (`AVISO_LABEL` in panel.js has no label for it) and only its sent ones: its taps
+  (`notif=dailyseason`) are not counted yet, since `dailyseason` is not in `VALORES.notif`.
 
 Con `window.__panel.seed({ …, uad: { historia, invitados, rachas } })` se dibuja con datos sembrados
 (`node tools/e2e/look.mjs panel games` ya los trae).
@@ -142,7 +144,7 @@ En `#/cup`, debajo de las cifras de las copas, el bloque **🔔 Avisos al celula
   celular aceptó); `aviso/<tipo>`, la página que abrió el aviso (`&notif=<tipo>` en su dirección, en inglés: `notif=deadline` se cuenta como `aviso/plazo`, D-266).
   El porcentaje es tocados sobre mandados en el rango. Los mandados son siempre del sitio publicado.
   Los tipos que no son de La Copa salen después, con su nombre: los de Uno al día son `uaddia`,
-  `uadracha`, `uadsemana` y `uadadios` (D-230).
+  `uadracha`, `uadsemana` y `uadadios` (D-230), and `uadtemporada` (D-424, sent only, see above).
 - **Aperturas de la app instalada:** `pwa/<sistema>`, del `start_url` `./?pwa` de los manifests.
 - **Última vuelta:** la hora de `stats/prod/push/vuelta`. Si pasó más de una hora sale en rojo:
   GitHub pudo apagar el workflow programado (lo hace tras 60 días sin commits) o le faltan los
