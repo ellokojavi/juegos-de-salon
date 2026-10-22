@@ -32,7 +32,7 @@ await b.go(`${SITE}/`, 600);
 await ev(`(()=>{localStorage.clear();localStorage.setItem('juegos-de-salon:instalar:no','1');return 1})()`);
 await b.go(`${SITE}/`, 1500);
 ok(await waitFor(`!!document.getElementById('btn-uno-al-dia')`), 'the home page has the Uno al día card');
-await waitFor(`!!document.getElementById('btn-uad-chip')`, 4); // with the lab key (localhost), the two-destination card replaces it
+await waitFor(`!!document.getElementById('btn-uad-chip')`, 4); // the two-destination card (D-414)
 ok(await ev(`document.getElementById('btn-uno-al-dia').parentElement.querySelector('.game-card.torneo') !== null`), 'it goes in the same row as La Copa, half and half (D-239)');
 ok(/Jugar hoy/.test(await text('#btn-uno-al-dia .meta')), `it says "Jugar hoy", no streak yet (${await text('#btn-uno-al-dia .meta')})`);
 // Two destinations (D-414, for everyone): the card opens /today/, its chip plays
