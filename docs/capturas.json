@@ -833,7 +833,7 @@
       "public/assets/img/trailer.jpg"
     ],
     "cuarto-rey": [
-      "public/fourth-king/"
+      "public/labs/fourth-king/"
     ],
     "toque-y-fama": [
       "public/bulls-and-cows/"
@@ -846,7 +846,7 @@
     ],
     "idiomas": [
       "public/assets/js/i18n.js",
-      "public/fourth-king/"
+      "public/labs/fourth-king/"
     ],
     "ahorcado": [
       "public/hangman/"

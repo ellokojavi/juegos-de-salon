@@ -1,6 +1,6 @@
 /**
  * Cuarto Rey — reglas puras (C-2): el mazo, sacar una carta, a quién le toca tomar, el cuarto rey
- * y el ranking del final. Sin DOM ni estado global; lo prueba node public/fourth-king/engine.test.mjs.
+ * y el ranking del final. Sin DOM ni estado global; lo prueba node public/labs/fourth-king/engine.test.mjs.
  *
  * Las funciones que cambian la partida modifican el estado que reciben (game.js lo guarda tal cual
  * después de cada acción, C-6). El azar entra por parámetro (`random`, una función que da [0, 1)):

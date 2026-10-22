@@ -126,8 +126,13 @@ export const GAMES = [
     tagline: { es: 'Naipes, sorbos y el temido cuarto rey.', en: 'Cards, sips and the dreaded fourth king.', pt: 'Cartas, goles e o temido quarto rei.', de: 'Karten, Schlucke und der gefürchtete vierte König.' },
     players: '4–6',
     duration: '20–40',
-    path: 'fourth-king/',
-    available: true,
+    // In La Bodega since D-420 (the owner's request): off the home page, behind the lab's door at
+    // /labs/fourth-king/; /fourth-king/ and /cuarto-rey/ are bridges there
+    path: 'labs/fourth-king/',
+    // Its name in URLs and its docs/games/ and docs/screenshots/ folders, without the lab (C-18)
+    slug: 'fourth-king',
+    labs: true,
+    available: false,
   },
 ];
 
@@ -313,7 +318,7 @@ export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'triv
  * goes after the ones that are, in the order of GAMES and SUELTOS.
  */
 export const POPULARIDAD_FECHA = '2026-10-18';
-export const POPULARIDAD = ['copa', 'reinas', 'linea-de-tiempo', 'tango', 'anio', 'letras', 'donde', 'toque-y-fama', 'zip', 'desenredo', 'batalla-naval', 'rutas', 'loteo', 'ahorcado', 'dudo', 'pintaminas', 'generala', 'julepe', 'cuarto-rey'];
+export const POPULARIDAD = ['copa', 'reinas', 'linea-de-tiempo', 'tango', 'anio', 'letras', 'donde', 'toque-y-fama', 'zip', 'desenredo', 'batalla-naval', 'rutas', 'loteo', 'ahorcado', 'dudo', 'pintaminas', 'generala', 'julepe'];
 const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
 
 /**
@@ -335,7 +340,7 @@ export const esNuevo = (g, hoy = new Date()) => {
  * request: it has no plays yet, so by popularity it would be last); when the label goes, so does that.
  */
 export function ordenPortada(hoy = new Date()) {
-  const ofrecidos = [...GAMES, ...SUELTOS.filter(m => !m.labs && !m.bodega)].sort((a, b) => puesto(a.id) - puesto(b.id));
+  const ofrecidos = [...GAMES, ...SUELTOS].filter(g => !g.labs && !g.bodega).sort((a, b) => puesto(a.id) - puesto(b.id));
   const arriba = g => (g.torneo ? 0 : esNuevo(g, hoy) ? 1 : 2);
   const disponibles = ofrecidos.filter(g => g.available).sort((a, b) => arriba(a) - arriba(b));
   return [...disponibles, ...ofrecidos.filter(g => !g.available)];
