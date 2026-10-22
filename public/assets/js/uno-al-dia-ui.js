@@ -86,20 +86,9 @@ export function botonUnoAlDia({ lang, raiz = '', alTocar }) {
  * jerarquía que los juegos. Misma lógica que el botón.
  */
 export function tarjetaUnoAlDia({ lang, raiz = '', alTocar }) {
-  const { T, hecho, linea2, abrir, aria } = estadoAcceso(lang, raiz, alTocar);
-  // Two destinations, in the lab for now (D-409): the card opens /today/, its chip plays today's game
-  // (or, once played, shows your points). lab: #seccion-uad-invitar-jugar
-  const vieja = tarjetaVieja({ T, hecho, linea2, abrir, aria });
-  import('./lab-access.js').then(m => m.labAccess()).then(ok => { if (ok) vieja.replaceWith(tarjetaDosDestinos({ lang, raiz, alTocar })); }).catch(() => {});
-  return vieja;
-}
-
-function tarjetaVieja({ T, hecho, linea2, abrir, aria }) {
-  return el('button', { type: 'button', class: 'game-card alta uad-card' + (hecho ? ' hecho' : ''), id: 'btn-uno-al-dia', 'aria-label': aria, onClick: abrir },
-    el('div', { class: 'emoji' }, el('span', { 'aria-hidden': 'true' }, '📅')),
-    el('div', { class: 'texto' }, el('h2', {}, el('span', {}, T.nombre)), el('div', { class: 'tag' }, T.sub)),
-    el('div', { class: 'meta' }, el('span', { class: 'uad-card-estado' }, linea2)),
-    hecho ? null : el('span', { class: 'btn-uad-punto', 'aria-hidden': 'true' }));
+  // Two destinations (D-414): the card opens /today/, its chip plays today's game or, once played,
+  // shows the month's place and points (owner-approved render)
+  return tarjetaDosDestinos({ lang, raiz, alTocar });
 }
 
 /**
@@ -111,22 +100,24 @@ function tarjetaVieja({ T, hecho, linea2, abrir, aria }) {
  * The chip once today is played: the month's points and place (owner's request). The last ones the
  * server gave, cached by /today/, if they already count today; otherwise this phone's own count.
  */
-function chipPuntos(T) {
+function chipPuntos(T, lang) {
   const P = T.pts, hoy = fechaLocal(), mes = `s${hoy.slice(0, 7)}`;
   let c = null;
   try { c = JSON.parse(localStorage.getItem('uad-pts-cache') || 'null'); } catch (_) { /* sin memoria */ }
   if (c?.p !== mes) c = null;
   const pts = c && c.d === hoy && c.h ? c.s : seasonPoints(walk(leer().dias, hoy), hoy);
-  // Like the season box of /today/: the points big, in the number font, and the place beside them
-  return [el('span', { class: 'uad-card-num' }, Number(pts || 0).toLocaleString()), el('small', {}, P.pts),
-    ...(c?.r ? [el('span', { class: 'uad-card-pos' }, fmt(P.chipPuesto, { p: c.r }))] : [])];
+  const n = fmt(P.ptsN, { n: Number(pts || 0).toLocaleString(lang) });
+  // The place big (gradient), the points under it; with no place known yet, the points are the big one
+  return c?.r
+    ? [el('span', { class: 'uad-card-pos' }, fmt(P.chipPuesto, { p: c.r })), el('span', { class: 'uad-card-sub' }, el('i', {}, `${P.delMes} · `), el('b', {}, n))]
+    : [el('span', { class: 'uad-card-pos' }, Number(pts || 0).toLocaleString(lang)), el('span', { class: 'uad-card-sub' }, el('b', {}, `${P.pts} `), el('i', {}, P.delMes))];
 }
 
 function tarjetaDosDestinos({ lang, raiz, alTocar }) {
   const { T, hecho, aria, racha } = estadoAcceso(lang, raiz, alTocar);
   const ir = () => { alTocar?.(); trackUnoAlDia('boton'); };
   const chip = hecho
-    ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, 'aria-label': T.ariaTusPuntos, onClick: ir }, ...chipPuntos(T))
+    ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, 'aria-label': T.ariaTusPuntos, onClick: ir }, ...chipPuntos(T, lang))
     : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', 'aria-label': T.ariaJugarHoy, onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, `▶ ${T.jugar}`);
   return el('div', { class: 'game-card alta uad-card dos' + (hecho ? ' hecho' : ''), id: 'btn-uno-al-dia' },
     el('a', { class: 'uad-card-link', id: 'btn-uad-abrir', href: `${raiz}today/`, 'aria-label': aria, onClick: ir }),
