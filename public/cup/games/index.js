@@ -101,5 +101,13 @@ export const JUEGOS = {
   rutas: delLab('rutas', rutas, uiRutas),
   loteo: delLab('loteo', loteo, uiLoteo),
   pintaminas: delLab('pintaminas', pintaminas, uiPintaminas),
-  final: juego(final, uiFinal, (c, d, o) => final.generar(codigoEnsayo(c), d, o)),
+  final: {
+    ...juego(final, uiFinal),
+    // A round with no short version is the game whole, built with its own generator for the final
+    // day (D-418); Conexiones, whose grid is fixed per cup, plays another grid
+    generar: (c, d, o = {}) => final.generar(c, d, { ...o, otro: (id, x) => JUEGOS[id].generar(c, d, { ...x, ...(id === 'conexiones' ? { grilla: conexiones.grillaFinal(c, { lang: x.palabras, aud: x.aud }) } : {}) }) }),
+    // The trial: the same rounds, the short ones with the trial code and the others in their trial size
+    ensayo: (c, d, o = {}) => final.generar(codigoEnsayo(c), d, { ...o, otro: (id, x) => JUEGOS[id].ensayo(c, d, x) }),
+    montar: (raiz, ctx) => uiFinal.montar(raiz, { ...ctx, juegos: JUEGOS }),
+  },
 };

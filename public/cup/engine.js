@@ -218,6 +218,26 @@ export const juegoDelDia = (meta, d) => calendario(meta)[d - 1] || null;
 export const varianteDelDia = (meta, d) => { const x = String(meta.cal || '').split(',')[d - 1]; return x ? diaDeCal(x).variante : null; };
 export const esFinal = (meta, d) => d === meta.days;
 
+/**
+ * Finals that open from this moment on repeat the week's games (D-418); one that opened before keeps
+ * the five fixed rounds it was started with, so nobody's final changes halfway (D-163).
+ */
+export const FINAL_FROM_WEEK = Date.parse('2026-10-22T19:00:00Z');
+/** The five fixed rounds of the finals from before D-418, and of the final played outside a cup. */
+export const FIXED_FINAL = ['linea', 'numero', 'reinas', 'letras', 'anio'];
+/**
+ * The rounds of a cup's final (D-418): the week's games in the order they were played, each with its
+ * variant (`'loteo:utilities'`), as written in `meta.cal`. Without a cup, or for a final that opened
+ * before `FINAL_FROM_WEEK`, the five fixed ones.
+ */
+export function finalRounds(meta) {
+  const cal = String(meta?.cal || '').split(',').filter(Boolean);
+  const week = cal.slice(0, -1).map(x => { const { id, variante } = diaDeCal(x); return entradaCal(REEMPLAZOS[id] || id, variante); });
+  const opens = meta?.win?.[meta?.days]?.a;
+  if (!week.length || (typeof opens === 'number' && opens < FINAL_FROM_WEEK)) return [...FIXED_FINAL];
+  return week;
+}
+
 /** El número de día que se vive en `now`: 0 antes de empezar, `days + 1` después de terminar. */
 export function diaActual(meta, now) {
   if (now < meta.win[1].a) return 0;
