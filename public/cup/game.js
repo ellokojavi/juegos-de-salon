@@ -20,7 +20,7 @@ import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../asset
 import {
   POZO, VARIANTES, entradaCal, varianteDelDia, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
-  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, activos, ZONA, zonaDeIdioma,
+  medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar,
 } from './engine.js';
 import { GAME_ID, LOCALES, juegosCopa, rondasFinal, conVariante, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
@@ -2021,8 +2021,8 @@ function antesDeJugar(d) {
   const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar', disabled: sinGente }, `${J.emoji} ${T.start}`);
   if (sinGente) avisoError(err, T.needSecond);
   precalentar(id,
-    () => JUEGOS[id].generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante }),
-    () => JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante }));
+    () => JUEGOS[id].generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: finalRounds(meta) }),
+    () => JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: finalRounds(meta) }));
   empezar.addEventListener('click', async () => {
     SFX.tap();
     empezar.disabled = true;
@@ -2043,6 +2043,8 @@ function antesDeJugar(d) {
       tituloAntesala(id, J), rotuloVariante(J)),
     CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
+      // The final names its rounds, the games of this week (D-418)
+      id === 'final' ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.finalRounds), listaRondas()] : null,
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
@@ -2106,10 +2108,18 @@ const dibujo = (id, variante = null) => JUEGOS[id]?.ejemplo?.({ el, T, variante 
 /**
  * Las reglas del juego, plegadas debajo del tablero (D-133): no molestan mientras se juega y
  * están a mano ante la duda. Son las mismas de la pantalla de antes de jugar, con las palabras
- * de los botones que se ven al jugar. En la final, además, las cinco rondas.
+ * de los botones que se ven al jugar. En la final, además, sus rondas (D-418).
  */
 /** Cómo se puntúa; el desempate solo dentro de una copa, donde hay con quién empatar (dilema #72). */
 const puntajeTexto = (J, copa = true) => (copa && J.desempate ? `${J.puntaje} ${J.desempate}` : J.puntaje);
+
+/** The rounds of the final being played (D-418): this cup's, or the five fixed ones in the lab's practice. */
+const rondasDeLaFinal = () => finalRounds(S.juego?.practica || !S.code ? null : L()?.meta);
+/** The final's rounds as a list: each game's name, and with `detalle` how its round is played. */
+const listaRondas = ({ detalle = false } = {}) => el('ul', { class: 'como', id: 'rondas-final' }, rondasDeLaFinal().map(x => {
+  const { id: r, variante: v } = diaDeCal(x), R = conVariante(JUEGOS_COPA[r], v);
+  return el('li', {}, detalle ? `${R.emoji} ${R.nombre}: ${RONDAS_FINAL[r] || T.finalWholeRound}` : `${R.emoji} ${R.nombre}`);
+}));
 
 function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) {
   const J = conVariante(JUEGOS_COPA[id], variante);
@@ -2124,7 +2134,7 @@ function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) 
     dibujo(id, variante),
     el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
     id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds),
-      el('ul', { class: 'como' }, Object.entries(RONDAS_FINAL).map(([r, x]) => el('li', {}, `${JUEGOS_COPA[r].emoji} ${JUEGOS_COPA[r].nombre}: ${x}`)))] : null,
+      listaRondas({ detalle: true })] : null,
     el('p', { class: 'lead' }, T.scoring),
     el('p', { class: 'muted' }, puntajeTexto(J, copa))));
 }
@@ -2154,7 +2164,7 @@ async function jugar(d) {
   // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
   // Los textos en el idioma de quien juega y las palabras en el de la copa (D-170)
   // El público de la copa decide qué contenido local entra (D-187)
-  const p = mod.generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, ...(id === 'conexiones' ? { desde: meta.win[d].a } : {}) });
+  const p = mod.generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: finalRounds(meta), ...(id === 'conexiones' ? { desde: meta.win[d].a } : {}) });
   const now = ahora();
   // El reloj se detiene cuando el tablero termina, no cuando se toca "Ver resultado" (D-130).
   // Detenido, queda así aunque se recargue la página.
@@ -2201,7 +2211,7 @@ async function jugar(d) {
   S.juego = { d, id };
   pantallaCompleta(mod.pantallaCompleta);
   mod.montar(body, {
-    p, jugadas, T, fmt, el, SFX, vibrate, lang: LANG,
+    p, jugadas, T, fmt, el, SFX, vibrate, lang: LANG, pantallaCompleta,
     guardar(j) { jugadas = j; persistir(); },
     tiempo: () => Math.round(reloj.leer(rel, ahora())),
     pausa(ms) {
@@ -2318,7 +2328,7 @@ function resultado(d, { recien = false, det = null } = {}) {
         el('div', { class: 'quien' }, multiplicador(Lc, d, j.pid) === 2
           ? el('div', { class: 'con-x2' }, el('b', {}, j.name), el('span', { class: `${claseX2(esFinal(meta, d))} md-x2` }, T.x2))
           : el('b', {}, j.name), el('small', { class: 'muted' }, `${Lc.results[d][j.pid].r || Lc.results[d][j.pid].s} · ⏱ ${mmss(Lc.results[d][j.pid].ms)}`),
-          // En la final, las cinco rondas de cada uno (⏳75 🔢85 …), para comparar ronda a ronda (#259)
+          // En la final, las rondas de cada uno (⏳75 🔢85 …), para comparar ronda a ronda (#259)
           id === 'final' && Lc.results[d][j.pid].t ? el('small', { class: 'muted rondas' }, Lc.results[d][j.pid].t) : null),
         el('span', { class: 'total' }, `+${pos[j.pid].pts * multiplicador(Lc, d, j.pid)}`))))),
     botonReporte({ juego: id, dia: d }),
@@ -2586,7 +2596,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   panelReglas(id, { copa: false, prueba: ensayo && !S.juego?.practica, variante });
   pantallaCompleta(mod.pantallaCompleta);
   mod.montar(body, {
-    p, jugadas: guardado?.jugadas, T, fmt, el, SFX, vibrate, lang: LANG,
+    p, jugadas: guardado?.jugadas, T, fmt, el, SFX, vibrate, lang: LANG, pantallaCompleta,
     textoFin: ensayo ? T.trialEnd : undefined,
     // No cuenta para nada; solo un juego `diario` lo guarda en el celular, para seguir al recargar
     guardar(jugadas) { guardado?.guardar(jugadas, Math.round(reloj.leer(rel, Date.now()))); },
@@ -2619,7 +2629,7 @@ function ensayo(d) {
   const id = juegoDelDia(L().meta, d), variante = varianteDelDia(L().meta, d);
   mostrar('jugar');
   S.juego = { d, id, ensayo: true };
-  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(L().meta), aud: audienciaDe(L().meta), variante }), r => resultadoEnsayo(id, r, () => antesDeJugar(d), variante), { ensayo: true, variante });
+  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(L().meta), aud: audienciaDe(L().meta), variante, rondas: finalRounds(L().meta) }), r => resultadoEnsayo(id, r, () => antesDeJugar(d), variante), { ensayo: true, variante });
 }
 
 /** La sesión de prueba desde la práctica del laboratorio: la misma que antes de un día (D-109). */

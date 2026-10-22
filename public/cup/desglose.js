@@ -53,8 +53,8 @@ export function desglose(id, e, { T, fmt, mmss, copa = true, lang = 'es' }) {
     ].filter(Boolean);
     case 'anio': return [...e.filas.map(f => fmt(T.bdYear, { hito: f.hito.texto, r: anio.anioLabel(f.r, lang), y: anio.anioLabel(f.hito.year, lang), pts: f.pts })), T.bdAverage];
     case 'donde': return [...e.filas.map(f => fmt(T.bdCity, { c: donde.nombre(f.ciudad, lang), km: donde.km(f.km, lang), pts: f.pts })), T.bdAverage];
-    case 'final': return [...final.RONDAS.map(r => fmt(T.bdRound, {
-      emoji: final.EMOJI[r], juego: juegosCopa(lang)[r].nombre, pts: e[r] ? final.puntosRonda[r](e[r]) : 0,
+    case 'final': return [...(e.rondas || final.RONDAS).map(r => fmt(T.bdRound, {
+      emoji: final.EMOJI[r] || juegosCopa(lang)[r].emoji, juego: juegosCopa(lang)[r].nombre, pts: e.pts?.[r] || 0,
     })), T.bdAverage];
     default: return null;
   }

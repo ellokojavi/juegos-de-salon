@@ -597,9 +597,42 @@ test('final: cinco rondas, promedio de 0 a 100', () => {
     letras: letras.estado(p.letras, [p.letras.secreto]),
     anio: anio.estado(p.anio, p.anio.hitos.map(h => h.year)),
   };
-  assert.equal(final.puntaje(perfecto), 100);
-  assert.equal(final.puntaje({}), 0);
-  assert.equal(final.tarjeta(perfecto), '⏳100 🔢100 👑100 🔤100 📅100');
+  const pts = Object.fromEntries(Object.entries(perfecto).map(([r, e]) => [r, final.puntosRonda[r](e)]));
+  assert.deepEqual(p.rondas, final.RONDAS);
+  assert.equal(final.puntaje({ rondas: p.rondas, pts }), 100);
+  assert.equal(final.puntaje({ rondas: p.rondas, pts: {} }), 0);
+  assert.equal(final.tarjeta({ rondas: p.rondas, pts }), '⏳100 🔢100 👑100 🔤100 📅100');
+});
+
+// D-418: the final repeats the week's games, in their order; before the switch, the five fixed ones
+const { finalRounds, FINAL_FROM_WEEK, POZO } = await import('../engine.js');
+test('final: the rounds are the week\'s games (D-418)', () => {
+  const meta = (cal, opens) => ({ cal, days: cal.split(',').length, win: { [cal.split(',').length]: { a: opens } } });
+  const after = FINAL_FROM_WEEK + 1, before = FINAL_FROM_WEEK - 1;
+  assert.deepEqual(finalRounds(meta('zip,linea,loteo:utilities,conexiones,tango,dudo,final', after)), ['zip', 'linea', 'loteo:utilities', 'conexiones', 'tango', 'letras']);
+  assert.deepEqual(finalRounds(meta('linea,conexiones,final', after)), ['linea', 'conexiones']);
+  assert.deepEqual(finalRounds(meta('zip,tango,donde,rutas,loteo,pintaminas,final', before)), final.RONDAS, 'a final that opened before keeps its five rounds');
+  assert.deepEqual(finalRounds(null), final.RONDAS, 'outside a cup, the five fixed ones');
+  // Every game of the pool can be a round, and each scores from 0 to 100
+  for (const c of ['KQRST', 'ABCDE']) {
+    const p = JUEGOS.final.generar(c, 7, { rondas: POZO, aud: 'cl' });
+    assert.deepEqual(p.rondas, POZO, `${c}: one round per game, in order`);
+    for (const id of POZO) assert.ok(p[id], `${c}: ${id} has content`);
+    // A short round plays its short version; another game plays whole, with content for the final day
+    assert.equal(p.numero.secreto.length, final.NUMERO_CIFRAS);
+    assert.equal(p.reinas.n, 6);
+    assert.deepEqual(p.tango, JUEGOS.tango.generar(c, 7));
+    // Conexiones' grid is fixed per cup: the final plays another one
+    assert.notEqual(p.conexiones.id, JUEGOS.conexiones.generar(c, 3, { aud: 'cl' }).id, `${c}: the final's grid is not the week's`);
+    const t = JUEGOS.final.ensayo(c, 7, { rondas: POZO, aud: 'cl' });
+    assert.deepEqual(t.rondas, POZO, `${c}: the trial has the same rounds`);
+  }
+  // A variant travels with its round
+  assert.equal(JUEGOS.final.generar('KQRST', 7, { rondas: ['loteo:utilities'] }).loteo.variante, 'utilities');
+  // The score is the average of all the rounds, the unplayed ones at 0, and the card names each
+  const res = { rondas: ['zip', 'linea', 'conexiones'], pts: { zip: 30, linea: 100 } };
+  assert.equal(final.puntaje(res), 43);
+  assert.equal(final.tarjeta(res), '〰️30 ⏳100 🔗0');
 });
 
 // El desglose del puntaje explica la cuenta con frases completas (D-106)
@@ -618,7 +651,7 @@ test('final: cinco rondas, promedio de 0 a 100', () => {
     zip: { hechos: 3, ultimo: 125000 },
     desenredo: { hechos: 4, ultimo: 151000 },
     anio: anio.estado(pa, pa.hitos.map(h => h.year + 3)),
-    final: { reinas: { fin: true, errores: 0 } },
+    final: { rondas: ['linea', 'zip'], pts: { zip: 40 } },
     caso: { fin: true, errores: 1, ayudas: 2 },
   };
   for (const [id, e] of Object.entries(casos)) {

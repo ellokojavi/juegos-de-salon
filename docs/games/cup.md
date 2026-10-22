@@ -31,7 +31,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).
 - **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
 - **Calendario:** lo arma el admin al crear la copa (D-163): qué juegos entran y en qué orden,
-  a partir de una propuesta al azar. La final va siempre el último día y no cambia.
+  a partir de una propuesta al azar. La final va siempre el último día y repite los juegos de la semana, en su orden (D-418).
 
 ### Pendiente (después de la v1)
 
@@ -130,7 +130,7 @@ Todos los juegos puntúan **de 0 a 100** (D-113). Igual lo que decide la copa es
 | 4 | 👑 Reinas: una por fila, columna y zona, sin tocarse | por tiempo: 100 hasta 30 s, 10 a los 5 min (D-107) | nuevo (Queens de LinkedIn) |
 | 5 | 🔤 Toque y Fama: Palabra. 5 letras, 8 intentos | 10 × letra encontrada en su lugar (una vez por lugar) + si la saca 50 − 5 × (intentos − 1) (D-108) | lo mismo que el día 2, con letras |
 | 6 | 📅 ¿En qué año?: 6 hitos | promedio de los hitos (100 cada uno, baja con la distancia) | mazos de Línea de Tiempo y teclado de Toque y Fama |
-| 7 | 🏁 La Gran Final: 5 rondas cortas | promedio de las rondas (0 a 100 cada una) | los cinco motores |
+| 7 | 🏁 La Gran Final: one round per game of the week, in order (D-418): the short version of the five that have one, any other game whole with new content | average of the rounds (0 to 100 each) | each game's engine and screen |
 
 Recién creada, la copa abre en **Administrar** con una guía para invitar (D-110). Ahí el admin
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
@@ -148,7 +148,7 @@ terminar, el resultado explica **cómo se calculó el puntaje** línea por líne
 the next-day notice (its button cyan); the breakdown starts folded (open in practice) and the day table goes
 below. The podium has **🏠 Back to the menu** under Share the summary; "Leave this Cup" stays a
 quiet link at the end. The trial run (D-103) ends with only its way back to the waiting room. En la de 🏁 La Gran Final, cada
-jugador lleva además su tarjeta de cinco rondas (⏳75 🔢85 👑100 🔤60 📅90), para comparar ronda a
+jugador lleva además su tarjeta de rondas (⏳75 🔢85 👑100 🔤60 📅90), para comparar ronda a
 ronda (#259); en la demo `podium` o `full` se ve con datos.
 
 Antes de Empezar cada día se puede jugar una **sesión de prueba** (D-103): la misma mecánica con
@@ -162,7 +162,7 @@ al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`: 
 más Zip, Tango, ¿Dónde queda?, Desenredo and, since D-332, 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas), sin dos días seguidos de la misma habilidad. Es la mano y la línea
 de Línea de Tiempo con su arrastre: un día se arrastra a otro lugar de la semana (en un celular,
 por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando se llega a lo mismo
-(el juego y después la ranura o el día). 🎲 propone otro orden. La final queda fija al último. El calendario se guarda en
+(el juego y después la ranura o el día). 🎲 propone otro orden. La final queda fija al último y juega una ronda de cada juego elegido (D-418; the finals that opened before 2026-10-22 noon Pacific keep the five fixed rounds). El calendario se guarda en
 `meta.cal` y `nuevaMeta` rechaza uno que no se puede jugar (`calendarioValido`). Sin elección
 (las demos) se usa el de siempre, `CALENDARIOS`: Línea, Toque y Fama, Conexiones, Reinas, Palabra,
 Año y la final; o Línea, Conexiones y la final en la de 3 días (D-163).
