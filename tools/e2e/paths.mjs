@@ -157,6 +157,15 @@ export const PATHS = {
    * shot leaves it in hard). `hint` is the 💡 hint paid (the cell that pulses and its numbers);
    * `revealed`, a hard board painted whole (the drawing and «Ver resultado»); `result`, its result.
    */
+  /** 🕵️ Agentes (D-421): the board, a clue's end (all passed, with Terminar confirmed) and its result. */
+  agentes: {
+    intro: [],
+    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
+    end: [START, `1`, `1`, `1`, `1`, `1`, `1`,
+      ...Array(14).fill(`document.getElementById('btn-pasar')?.click()`), `1`, `1`, `1`, `1`],
+    result: [START, `1`, `1`, `1`, `1`, `1`, `1`,
+      ...Array(14).fill(`document.getElementById('btn-pasar')?.click()`), `1`, `1`, `1`, `1`, `document.getElementById('btn-fin')?.click()`, `1`, `1`],
+  },
   rutas: {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
@@ -520,13 +529,6 @@ export const PATHS = {
     cellar: [`document.getElementById('bodega').scrollIntoView(); 1`],
     'cellar-open': [`document.querySelector('#seccion-caso summary').click(); document.getElementById('bodega').scrollIntoView(); 1`],
   },
-  'labs/agents': {
-    intro: [],
-    game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
-    // The result (the case the owner reported, D-309): passes the four clues and confirms Terminar
-    result: [START, `1`, `1`, `1`, `1`, `1`, `1`,
-      ...Array(14).fill(`document.getElementById('btn-pasar')?.click()`), `1`, `1`, `1`, `1`],
-  },
   'labs/exploding-numbers': {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, `1`, `1`],
@@ -572,7 +574,7 @@ for (const { id } of SUELTOS) {
  * `inbox-end` Fourth King's last king and `inbox-home` the home page footer's form.
  */
 const TO_LINK = `document.getElementById('buzon-pie')?.scrollIntoView({ block: 'center' })`;
-for (const [game, screen] of [['ahorcado', 'result'], ['generala', 'final'], ['linea-de-tiempo', 'solo-result'], ['caso', 'result'], ['pintaminas', 'result'], ['labs/agents', 'result']]) {
+for (const [game, screen] of [['ahorcado', 'result'], ['generala', 'final'], ['linea-de-tiempo', 'solo-result'], ['caso', 'result'], ['pintaminas', 'result'], ['agentes', 'result']]) {
   if (PATHS[game]?.[screen]) PATHS[game][`inbox-${screen}`] = [INBOX_SEED, ...PATHS[game][screen], `1`, TO_LINK];
 }
 PATHS.copa['inbox-podium'] = [INBOX_SEED, `location.href='/cup/?test&demo=podium'`, `1`, `1`, `1`, TO_LINK];

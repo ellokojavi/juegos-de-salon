@@ -23,7 +23,7 @@ test('terminada antes: tabla, lugares día a día y detalle, sin la final que no
   const f = filasPlanilla(L, opciones);
   const texto = f.map(x => x.join('|'));
   assert.equal(f[1][0], fmt(T.csvEndedEarly, { fecha: '2026-09-29' }));
-  const cab = texto.indexOf([T.csvPlace, T.csvPlayer, T.csvTotal, T.csvWins, fmt(T.csvDay, { d: 1, juego: JUEGOS_COPA.linea.nombre }), fmt(T.csvDay, { d: 2, juego: JUEGOS_COPA.conexiones.nombre })].join('|'));
+  const cab = texto.indexOf([T.csvPlace, T.csvPlayer, T.csvTotal, T.csvWins, fmt(T.csvDay, { d: 1, juego: JUEGOS_COPA.linea.nombre }), fmt(T.csvDay, { d: 2, juego: JUEGOS_COPA.agentes.nombre })].join('|'));
   assert.ok(cab > 0);
   // Javi: 8 el día 1 y 10 × 2 (comodín) el día 2
   assert.deepEqual(f[cab + 1], [1, 'Javi', 28, 1, 8, 20]);
@@ -33,8 +33,8 @@ test('terminada antes: tabla, lugares día a día y detalle, sin la final que no
   assert.deepEqual(f[prog + 2], ['Javi', 2, 1]);
   const det = texto.indexOf(T.csvDetail);
   assert.deepEqual(f[det + 2], [1, JUEGOS_COPA.linea.nombre, 'Cata', '8/9', 90, '1:01', 1, 10, '']);
-  assert.ok(texto.some(x => x === ['2', JUEGOS_COPA.conexiones.nombre, 'Javi', '70', '70', '0:01', '1', '20', T.csvWild].join('|')));
-  assert.ok(texto.some(x => x.startsWith(`2|${JUEGOS_COPA.conexiones.nombre}|Pancho|${T.csvNotPlayed}`)));
+  assert.ok(texto.some(x => x === ['2', JUEGOS_COPA.agentes.nombre, 'Javi', '70', '70', '0:01', '1', '20', T.csvWild].join('|')));
+  assert.ok(texto.some(x => x.startsWith(`2|${JUEGOS_COPA.agentes.nombre}|Pancho|${T.csvNotPlayed}`)));
   assert.ok(!texto.some(x => x.includes(JUEGOS_COPA.final.nombre)));
 });
 

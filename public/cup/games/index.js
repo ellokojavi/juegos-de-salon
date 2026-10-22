@@ -26,6 +26,7 @@ import * as caso from './case/engine.js';
 import * as rutas from './routes/engine.js';
 import * as loteo from './plots/engine.js';
 import * as pintaminas from './paint-mines/engine.js';
+import * as agentes from './agents/engine.js';
 import * as uiLinea from './timeline/ui.js';
 import * as uiNumero from './number/ui.js';
 import * as uiConexiones from './connections/ui.js';
@@ -41,6 +42,7 @@ import * as uiCaso from './case/ui.js';
 import * as uiRutas from './routes/ui.js';
 import * as uiLoteo from './plots/ui.js';
 import * as uiPintaminas from './paint-mines/ui.js';
+import * as uiAgentes from './agents/ui.js';
 
 import { temasDeLaCopa, decksDe } from './mazos.js';
 import { LETRAS, VARIANTES } from '../engine.js';
@@ -77,7 +79,7 @@ const juego = (motor, ui, ensayo) => ({ generar: motor.generar, montar: ui.monta
 /**
  * `generar(código, día, opciones)` y `ensayo(código, día, opciones)` reciben el idioma (D-170):
  * `lang`, el de quien juega, para los textos (hitos, ciudades), y `palabras`, el de la copa, para
- * las palabras que todos tienen que jugar iguales (Conexiones y Palabra). Sin `palabras`, `lang`.
+ * las palabras que todos tienen que jugar iguales (Conexiones, Agentes y Palabra). Sin `palabras`, `lang`.
  */
 export const JUEGOS = {
   linea: juego(linea, uiLinea, (c, d, o = {}) => linea.generar(codigoEnsayo(c), d, { n: 5, tema: temaLibre(c, o.aud), sal: 'ensayo', lang: o.lang, aud: o.aud })),
@@ -101,6 +103,8 @@ export const JUEGOS = {
   rutas: delLab('rutas', rutas, uiRutas),
   loteo: delLab('loteo', loteo, uiLoteo),
   pintaminas: delLab('pintaminas', pintaminas, uiPintaminas),
+  // Out of the lab in D-421, in Conexiones' place: its words are the cup's language, like Conexiones'
+  agentes: delLab('agentes', agentes, uiAgentes),
   final: {
     ...juego(final, uiFinal),
     // A round with no short version is the game whole, built with its own generator for the final

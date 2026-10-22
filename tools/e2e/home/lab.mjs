@@ -16,7 +16,7 @@ const labels = `[...document.querySelectorAll('.game-card')].filter(c => c.query
 await b.go(`${SITE}/labs/?test`);
 ok(await ev(`!!document.querySelector('#bodega #seccion-portada details #btn-portada') && !document.querySelector('#mejoras #seccion-portada')`), 'the home page experiments are in La Bodega, folded');
 ok(await ev(`(t => /🚀 Lanzado · 🔎 Buscar/.test(t) && /🚀 Lanzado · 🎉 Splash/.test(t))(document.getElementById('seccion-portada').textContent)`), '🔎 Buscar and 🎉 Splash are marked launched');
-ok(await ev(`!!document.querySelector('#activos #seccion-agentes') && !document.querySelector('#activos #seccion-portada')`), 'the games being tried are apart from the improvements');
+ok(await ev(`!!document.querySelector('#activos #seccion-puentes') && !document.querySelector('#activos #seccion-portada')`), 'the games being tried are apart from the improvements');
 
 // /labs/home/ opens the real home page, without a frame (D-363), with the bar: ‹ Lab, a checkbox per
 // experiment (D-389) and the language; the filters still stick when the page scrolls
