@@ -533,6 +533,8 @@ export const PATHS = {
     // La Bodega folded to its title, and with El caso open
     cellar: [`document.getElementById('bodega').scrollIntoView(); 1`],
     'cellar-open': [`document.querySelector('#seccion-caso summary').click(); document.getElementById('bodega').scrollIntoView(); 1`],
+    // Cuarto Rey's card, in La Bodega since D-420
+    'cellar-king': [`document.querySelector('#seccion-cuarto-rey summary').click(); document.getElementById('seccion-cuarto-rey').scrollIntoView(); 1`],
   },
   'labs/exploding-numbers': {
     intro: [],

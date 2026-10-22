@@ -15,7 +15,7 @@ await b.shot('menu');
 await b.evaluate(`document.querySelector('#share-slot button').click(); 1`); await sleep(700);
 await b.shot('share');
 await b.evaluate(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); 1`);
-await b.go(`${SITE}/fourth-king/`);
+await b.go(`${SITE}/labs/fourth-king/`);
 console.log('cuarto-rey → rules listed:', await b.evaluate(`document.querySelectorAll('#rules-list li').length`), '| resources:', JSON.stringify(await urls()));
 await b.go(`${SITE}/bulls-and-cows/`);
 console.log('toque-y-fama → modes:', await b.evaluate(`document.querySelectorAll('.mode').length`), '| resources:', JSON.stringify(await urls()));

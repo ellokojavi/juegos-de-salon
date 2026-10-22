@@ -7,7 +7,7 @@ const first = (q, lang = 'es') => ranked(q, PORTADA, lang).map(g => g.id);
 assert.equal(first('toque')[0], 'toque-y-fama', 'the name wins over a tagline that says «toquen», and the shorter name over the longer');
 assert.ok(first('toque').indexOf('reinas') > first('toque').indexOf('letras'), 'a tagline match goes last');
 assert.equal(first('fama')[0], 'toque-y-fama');
-assert.deepEqual(first('cartas').slice(0, 2).sort(), ['cuarto-rey', 'julepe'], 'a keyword beats the coarse type Cartas/Dados');
+assert.equal(first('cartas')[0], 'julepe', 'a keyword beats the coarse type Cartas/Dados');
 assert.equal(first('dados')[0], 'dudo');
 assert.equal(first('queens', 'en')[0], 'reinas', 'the name in the player\'s language');
 const g = PORTADA.find(x => x.id === 'reinas');
@@ -26,7 +26,7 @@ assert.deepEqual(Object.keys(KEYWORDS).filter(id => !PORTADA.some(x => x.id === 
 // Each language finds by what a game is, not only by its name
 const finds = (q, id) => search(q, PORTADA)?.has(id);
 assert.ok(finds('würfel', 'dudo') && finds('wurfel', 'generala') && finds('dados', 'dudo') && finds('dice', 'dudo'), 'dice, in all four');
-assert.ok(finds('kartenspiel', 'julepe') && finds('baralho', 'cuarto-rey'), 'cards, in German and Portuguese');
+assert.ok(finds('kartenspiel', 'julepe') && finds('baralho', 'julepe'), 'cards, in German and Portuguese');
 assert.ok(finds('rätsel', 'reinas') && finds('quebra-cabeça', 'tango'), 'puzzles, in German and Portuguese');
 // The tournament types lead to La Copa (D-404): its length and its audience
 assert.ok(['torneo', 'turnier', 'torneio', 'tournament', '7 dias', '3 tage', 'chile', 'brasilien'].every(q => finds(q, 'copa')), 'every kind of tournament finds La Copa');

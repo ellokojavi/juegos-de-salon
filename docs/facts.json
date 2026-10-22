@@ -1,5 +1,5 @@
 {
-  "version": "0.197.0",
+  "version": "0.197.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -519,9 +519,9 @@
       },
       "players": "4 to 6",
       "duration": "20–40",
-      "available": true,
-      "labs": false,
-      "status": "v0.27",
+      "available": false,
+      "labs": true,
+      "status": null,
       "modes": [],
       "variants": [],
       "screens": [
@@ -532,11 +532,7 @@
       ],
       "chat": false,
       "files": [
-        "public/fourth-king/engine.js",
-        "public/fourth-king/game.js",
-        "public/fourth-king/index.html",
-        "public/fourth-king/rules.js",
-        "public/fourth-king/style.css"
+        "public/fourth-king/index.html"
       ]
     }
   ],
@@ -1013,9 +1009,6 @@
     "public/cup/rules.js",
     "public/cup/store-firebase.js",
     "public/cup/store-local.js",
-    "public/fourth-king/engine.js",
-    "public/fourth-king/game.js",
-    "public/fourth-king/rules.js",
     "public/generala/engine.js",
     "public/generala/game.js",
     "public/generala/rules.js",
@@ -1039,6 +1032,9 @@
     "public/labs/code/game.js",
     "public/labs/exploding-numbers/engine.js",
     "public/labs/exploding-numbers/game.js",
+    "public/labs/fourth-king/engine.js",
+    "public/labs/fourth-king/game.js",
+    "public/labs/fourth-king/rules.js",
     "public/labs/home/experiments.js",
     "public/labs/pips/engine.js",
     "public/labs/pips/game.js",
@@ -1107,7 +1103,6 @@
     "public/cup/planilla.test.mjs",
     "public/cup/reportes.test.mjs",
     "public/cup/store.test.mjs",
-    "public/fourth-king/engine.test.mjs",
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/julep/engine.test.mjs",
@@ -1115,6 +1110,7 @@
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
+    "public/labs/fourth-king/engine.test.mjs",
     "public/labs/listed.test.mjs",
     "public/labs/pips/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
@@ -1206,6 +1202,7 @@
     "favorites.mjs",
     "feedback-prod.mjs",
     "fourth-king/game.mjs",
+    "fourth-king/lab.mjs",
     "fourth-king/languages.mjs",
     "game-memory.mjs",
     "generala/languages.mjs",

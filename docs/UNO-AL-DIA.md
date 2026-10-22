@@ -50,7 +50,7 @@ el contenido del día:
 | 📝 Generala (from 2026-10-23, D-247, D-405) | 🧍 Jugar solo | Los dados de cada tiro: quien guarda lo mismo recibe lo mismo | Un tercio del total, hasta 100 |
 
 - **Cuarto Rey no entra:** es un juego de mesa para 4 a 6 personas y no tiene modo para uno (su
-  documento lo explica). **Julepe** tampoco, porque hoy no se ofrece en la portada; si vuelve,
+  documento lo explica), and since D-420 it is in the lab's La Bodega, off the home page. **Julepe** tampoco, porque hoy no se ofrece en la portada; si vuelve,
   entra con su modo contra el celular.
 - Zip, Tango and ¿Dónde queda? came in with D-334, together with the three that left the lab (D-332), and 📝 Generala with D-405: 17 games from the deck shuffled on October 23, 2026 (`DESDE_MAS`, `DESDE_GENERALA`).
 - **A game that leaves** says from which date it no longer comes out (`hasta` in `JUEGOS_DIA`, checked by `vigente()`): from that day it is dropped also from the deck in play, and the days before keep their game. 🔗 Conexiones left on 2026-10-24 (`DESDE_AGENTES`, D-421), when 🕵️ Agentes left the lab in its place and joined the next deck shuffled; `uno-al-dia.test.mjs` checks that no day before changes.
@@ -58,7 +58,7 @@ el contenido del día:
 - En Dudo y Batalla Naval el rival responde a lo que haces, así que lo común es el punto de partida
   (los dados, la flota) y no la partida entera. Igual se pueden comparar, y lo dicen la intro (desde el PR 2)
   y el ranking del día: "Todos parten con los mismos dados."
-- **🎲 Jugar otro** (abajo) ofrece cualquier juego de la portada, menos los que piden un grupo, como Cuarto Rey (D-374).
+- **🎲 Jugar otro** (abajo) ofrece cualquier juego de la portada, menos los que piden un grupo (D-374; Cuarto Rey was the one, in La Bodega since D-420).
 
 **La rotación:** son 17 juegos from the deck shuffled on 2026-10-23 (D-334, D-405; 10 before), así que no cabe uno por día de la semana. Funciona como un mazo: se
 barajan todos con la semilla `uno-al-dia:ciclo:<n>` y salen de a uno por día, sin repetir, hasta
@@ -120,7 +120,7 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 ### Quiere jugar más
 
 - Después de Uno al día, **🎲 Jugar otro** tira el dado de Juego al azar (cualquier juego de la
-  portada; like the home page's 🎲, never one that needs a group, such as Cuarto Rey: `jugarOtro` in
+  portada; like the home page's 🎲, never one that needs a group, as Cuarto Rey was before D-420: `jugarOtro` in
   `uno-al-dia-ui.js` uses `alAzar`, D-374). No cuenta para la racha, pero sí para "Juegos esta semana" y
   para los rankings normales de ese juego.
 - **Repetir el desafío de hoy** se puede, como práctica: el ranking del día toma solo el
