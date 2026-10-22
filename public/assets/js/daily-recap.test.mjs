@@ -38,9 +38,10 @@ assert.deepEqual(sparkPoints([null, 2, 1], 2, { w: 56, h: 20, pad: 3 }), [null, 
 const d = demoSeason();
 assert.equal(seasonLead(d.recap, 'es'), 'Quedaste #3 de 8, con 901 pts. Ganó Chan.');
 assert.equal(seasonLead(d.recap, 'en'), 'You finished #3 of 8, with 901 pts. Chan won.');
-assert.equal(seasonLead({ ...d.recap, me: null }, 'es'), '🥇 Ganó Chan, con 1098 pts.');
+assert.equal(seasonLead({ ...d.recap, me: null }, 'es'), '🥇 Ganó Chan con 1098 pts.');
 const won = seasonRecap({ c: ['2026-10-31'], t: '2026-11-01', j: { aaaaaaaa: { n: 'Ana', s: 900, l: [1] }, bbbbbbbb: { n: 'Beto', s: 900, l: [1] } } }, 'aaaaaaaa');
-assert.equal(seasonLead(won, 'pt'), '🥇 Você ganhou a temporada junto com Beto, com 900 pts!');
+assert.equal(seasonLead(won, 'pt'), '🥇 Você ganhou a temporada com 900 pts, junto com Beto!');
+assert.equal(seasonLead({ ...won, me: null }, 'es'), '🥇 Ganaron Ana y Beto con 900 pts.', 'a tie for first, not signed in: plural (U-6)');
 const v = seasonView(d, 'de');
 assert.equal(v.title, 'Spiel des Tages: Oktober');
 assert.equal(v.note, 'Die Saison im November hat begonnen: Alle starten bei 0.');
