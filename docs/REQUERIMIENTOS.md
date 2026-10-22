@@ -75,8 +75,11 @@ Los IDs no se reusan: un requerimiento que cambia conserva su ID y su texto se a
 | RP-65 | **"💬 Suggestions and comments" for every player**: a quiet link after the end of every game (group, solo, minigames, One a Day, La Copa's podium) opens a short form with an optional kind, at most once a day and resting two weeks after sending; the home page footer always has it (D-341, U-38, #463). | ✅ v0.175.0 |
 | RP-66 | **The home page's order updates every week**, by games finished in the last four weeks (offline, rooms and La Copa days), recounted by the processes round; a **🔥 "Popular" label** on the top three, tried first in the lab with the home page's experiments bar (`/labs/home/`); the lab in three groups: games, improvements and La Bodega (D-361); **✨ Nuevos and 🔥 Populares filter chips** above the types, in the lab with `?picks` (D-362), joined there by ⭐ Favoritos, and the app's name on the floating menu with `?brand` (D-364). | ✅ order; ✅ label, filters and the name on the floating menu for everyone since D-369 |
 | RP-67 | **Pips**, a solo prototype in the lab's Juegos en prueba (`/labs/pips/`), inspired by Pips (The New York Times Games), Spanish only: lay every domino so each colored zone keeps its rule (sum, equal, different, less, more); three boards from easy to hard against the clock, each with exactly one answer, today's the same for everyone; out of 100 (20 a board, up to 40 for speed, −10 a help); the credit with its link (D-381, [docs/games/pips.md](games/pips.md)). | ✅ in the lab |
+| RP-68 | **Cuarto Rey goes to the lab's 📦 La Bodega**: off the home page, 🎲 Juego al azar, the 🔎 search, the home page order and the home page's link cards; still playable at `/labs/fourth-king/` with a lab key, folded in La Bodega, and the old links `/fourth-king/` and `/cuarto-rey/` lead there (D-420, [docs/games/fourth-king.md](games/fourth-king.md)). | ✅ |
 
 ## Cuarto Rey (CR)
+
+In the lab's 📦 La Bodega since D-420, at the owner's request: off the home page, 🎲 Juego al azar and the 🔎 search, still playable at `/labs/fourth-king/` with a lab key. The requirements below still hold for the game.
 
 | ID | Requerimiento | Estado |
 |---|---|---|
