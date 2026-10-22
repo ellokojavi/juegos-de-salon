@@ -221,7 +221,7 @@ that (after a new game, after a big text change), saying why.
 4. **Close what's open.** For each thing that waits, one of three:
    - **Can be closed without asking**, because a decision already says so (a "main is red"
      issue (or an older "main en rojo" one) with main green, a PR of yours that's ready): you close it or enable its
-     auto-merge, and report it.
+     auto-merge (not if the owner said not to auto-merge it, D-419), and report it.
    - **Waits for the owner** (a PR from another round without auto-merge, an old dilemma,
      something that contradicts a decision): it goes as a one-tap decision (below).
    - **Belongs to another session at work** (a PR with commits from today): you don't touch it
@@ -351,8 +351,8 @@ that.
 - Browserless tests green. If you touched a workflow, make sure the YAML parses.
 - Local commits and **a single push** at the end (D-303): each push to a PR relaunches the whole
   end-to-end.
-- Your PR with auto-merge (`gh pr merge <n> --auto --merge`, D-216): your work doesn't wait for
-  the owner. What needs their opinion goes in the decisions issue, not in the PR.
+- Your PR with auto-merge (`gh pr merge <n> --auto --merge`, D-216), unless the owner explicitly
+  said not to auto-merge it (D-419): your work doesn't wait for the owner. What needs their opinion goes in the decisions issue, not in the PR.
 - If there's nothing to close, no new pattern, no decisions and no dispatches: you finish with no
   PR and no issue, and say so in one line.
 
