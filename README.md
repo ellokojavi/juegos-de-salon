@@ -101,7 +101,7 @@ How it works:
 - **Every day has a practice round** that does not count (D-103), then a **3-to-1 countdown** before the clock starts (D-105, D-258); the result **explains its score** line by line (D-106).
 - **A cup can have its own link** (D-121): `juegosdesalon.cl/cup/?pirata` instead of a 5-letter code.
 - **Language** (D-170): the screen follows each player's language; the cup's language, chosen at creation, sets the words of the word games and every shared message. **Audience** (D-186, D-187): 🌎 Global, 🇨🇱 Chile or 🇧🇷 Brazil decides which local content is in.
-- **Phone notifications** (D-223, D-224, D-228): a 🔔 bell per cup; reminders when a day opens or is running out, the final and the winner ([docs/PWA-NOTIFICACIONES.md](docs/PWA-NOTIFICACIONES.md)). In the lab, a **recap window** on the home page shows how a cup you played ended (D-423, D-426; `/?recap=demo`).
+- **Phone notifications** (D-223, D-224, D-228): a 🔔 bell per cup; reminders when a day opens or is running out, the final and the winner ([docs/PWA-NOTIFICACIONES.md](docs/PWA-NOTIFICACIONES.md)). In the lab, a **recap window** on the home page shows how a cup you played ended, with the final table image the cup shares (D-423, D-426, D-427; `/?recap=demo`).
 - **Bug reports and comments need no account** (D-104, D-341): the 🐞 form and the "💬 Suggestions and comments" link at the end of every game post to `feedback/`; an optional email gets a reply when resolved (D-317). Emails to **hola@juegosdesalon.cl** land there too (D-318).
 - **Testing:** `?three` makes a 3-day cup (D-100); `?test` plays with no Firebase, as the demos, the screenshots and the end-to-end scripts do.
 
@@ -653,7 +653,7 @@ The repo root is not the web root (D-192). `public/` is the site, exactly as ser
 public/                     The site (juegosdesalon.cl/): the only folder that gets published
   index.html                  Main menu (generated from assets/js/games.js)
   en/ · pt/ · de/             Language doors
-  cup/                        The Cup: engine, stores, score breakdown, CSV export, reports, demos, recap (D-423)
+  cup/                        The Cup: engine, stores, score breakdown, CSV export, reports, demos, table image, recap (D-423, D-427)
     games/                    The Cup's games, one folder each (engine.js + ui.js + word content per language)
   timeline/ · bulls-and-cows/ · hangman/ · liars-dice/ · generala/ · battleship/ · julep/
                               The group games (engine.js + tests, game.js, rules.js, decks/ where needed)
