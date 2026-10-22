@@ -380,6 +380,8 @@ body.antesala .topbar .tools .chip { display: none; }
 body.pantalla-completa #screen-jugar.active { animation: none; position: fixed; inset: 0; z-index: 2; pointer-events: none; gap: 8px;
   padding: calc(var(--safe-top) + 12px + 44px + 10px) calc(16px + env(safe-area-inset-right, 0px)) calc(var(--safe-bottom) + 16px) calc(16px + env(safe-area-inset-left, 0px)); }
 body.pantalla-completa #jugar-body, body.pantalla-completa .donde-juego { display: contents; }
+/* A full-screen game played whole inside the final (D-418): its round's box does not get in the way (U-12) */
+body.pantalla-completa .final-ronda { display: contents; }
 body.pantalla-completa #screen-jugar > *, body.pantalla-completa .donde-juego > * { width: 100%; max-width: 440px; align-self: center; }
 body.pantalla-completa .donde-juego > .mapa-caja { width: auto; max-width: none; align-self: stretch; }
 body.pantalla-completa .donde-arriba { order: 1; pointer-events: auto; }
