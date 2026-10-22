@@ -827,6 +827,7 @@ const ES = {
   avMsgDueManyOne: "⏳ Te queda 1 hora para jugar los días {dias}. Si no los juegas, son 0 puntos.",
   avMsgWinTie: "🥇 ¡Ganaste la copa junto con {names}!",
   avMsgEndMany: "🥇 Ganaron {names}. Quedaste {pos}.",
+  avEndSee: "Toca para ver la tabla final.",
   avMsgDayMany: "🎲 Tienes un día nuevo en {n} copas: {copas}.",
 };
 
@@ -1607,6 +1608,7 @@ const EN = {
   avMsgDueManyOne: "⏳ You have 1 hour left to play days {dias}. If you don't play them, you get 0 points.",
   avMsgWinTie: "🥇 You won the cup, tied with {names}!",
   avMsgEndMany: "🥇 {names} won. You finished {pos}.",
+  avEndSee: "Tap to see the final table.",
   avMsgDayMany: "🎲 You have a new day in {n} cups: {copas}.",
 };
 
@@ -2387,6 +2389,7 @@ const PT = {
   avMsgDueManyOne: "⏳ Falta 1 hora para jogar os dias {dias}. Se não jogar, são 0 pontos.",
   avMsgWinTie: "🥇 Você ganhou a copa junto com {names}!",
   avMsgEndMany: "🥇 {names} ganharam. Você ficou em {pos}.",
+  avEndSee: "Toque para ver a tabela final.",
   avMsgDayMany: "🎲 Você tem um dia novo em {n} copas: {copas}.",
 };
 
@@ -3168,6 +3171,7 @@ const DE = {
   avMsgDueManyOne: "⏳ Du hast noch 1 Stunde, um die Tage {dias} zu spielen. Sonst gibt es 0 Punkte.",
   avMsgWinTie: "🥇 Du hast den Pokal gewonnen, punktgleich mit {names}!",
   avMsgEndMany: "🥇 {names} haben gewonnen. Du bist auf Platz {pos} gelandet.",
+  avEndSee: "Tippe, um die Abschlusstabelle zu sehen.",
   avMsgDayMany: "🎲 Du hast einen neuen Tag in {n} Pokalen: {copas}.",
 };
 
