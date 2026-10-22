@@ -535,7 +535,8 @@ const diaCorto = f => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { weekd
 
 /**
  * The week of the new create screen (D-425): in view from the start, drawn by the 🎲 in one of the
- * week styles; the die draws the whole week again (the owner's review took the 🔒 locks out: a game
+ * week styles; the die draws the whole week again, with a short slot-machine roll on the cards (the
+ * owner's review took the 🔒 locks out: a game
  * can still be changed or moved by hand). Tapping a game opens a sheet with the whole pool, each with its tagline: picking
  * one that is already in the week swaps the two days, and the sheet also moves the day and picks
  * its version. A day is still dragged by its ⠿ grip, as a shortcut (D-85: dragging is choosing).
@@ -556,8 +557,45 @@ function armarSemana() {
     estilo = ultimo;
     cal = semanaAlAzar(dias, { familia, estilo, nuevos });
     pintar();
-    if (animar) lista.querySelectorAll('.semana-dia .em').forEach((x, i) => { x.style.animationDelay = `${i * 40}ms`; x.classList.add('gira'); });
+    if (animar) barajar();
   };
+  /**
+   * The roll, as a slot machine (the owner's request, D-425): each card runs through random games of
+   * the pool and stops on its own, top to bottom, in under a second. The week is already drawn and
+   * painted underneath (each card's `data-juego` is the real one), so a tap meanwhile acts on it.
+   */
+  let rueda = null;
+  function barajar() {
+    clearInterval(rueda);
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cartas = [...lista.querySelectorAll('.semana-dia')].map(f => {
+      const em = f.querySelector('.em'), b = f.querySelector('.semana-juego b'), small = f.querySelector('.semana-juego small');
+      return { f, em, b, small, real: [em.textContent, em.className, b.textContent, small.textContent], quieta: false };
+    });
+    // Each card keeps the height of the game it lands on: a longer name passing by does not wrap
+    // and push the rows below (it is cut on one line while it spins, C-8)
+    cartas.forEach(c => { c.f.style.height = `${c.f.offsetHeight}px`; });
+    const t0 = performance.now();
+    const paso = () => {
+      const t = performance.now() - t0;
+      let giran = 0;
+      cartas.forEach((c, i) => {
+        if (c.quieta) return;
+        if (t >= 300 + i * 90) {
+          [c.em.textContent, c.em.className, c.b.textContent, c.small.textContent] = c.real;
+          c.f.classList.remove('baraja'); c.f.style.height = ''; c.f.classList.add('cae'); c.quieta = true;
+          return;
+        }
+        giran++;
+        const G = JUEGOS_COPA[POZO[Math.floor(Math.random() * POZO.length)]];
+        c.em.textContent = G.emoji; c.em.className = con('em', G.emoji); c.b.textContent = G.nombre; c.small.textContent = G.habilidad;
+        c.f.classList.add('baraja');
+      });
+      if (!giran) clearInterval(rueda);
+    };
+    paso();
+    rueda = setInterval(paso, 70);
+  }
   /** A change by hand: the week no longer matches a style, and the die goes back to the last one. */
   const aMano = w => { cal = [...w, 'final']; estilo = null; };
 
