@@ -467,7 +467,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-420](decisions/D-420.md) | Cuarto Rey leaves the home page for La Bodega | current |
 | [D-421](decisions/D-421.md) | Agentes leaves the lab in Conexiones' place; Conexiones goes to La Bodega | current |
 | [D-422](decisions/D-422.md) | La Bodega in two subgroups: games kept and improvements launched | current |
-| [D-423](decisions/D-423.md) | An ended cup is told on the home page, and its notification says to tap for the table | current |
+| [D-423](decisions/D-423.md) | An ended cup is told on the home page, and its notification says to tap for the table | amended by D-426 |
 | [D-424](decisions/D-424.md) | A season of Uno al día that ends is told on the home page and in a notification | current |
 | [D-425](decisions/D-425.md) | Creating a cup: the week in view, the 🎲 and week styles, in the lab | current |
 | [D-426](decisions/D-426.md) | The owner opens a cup's recap to all its players while the window is in the lab | current |

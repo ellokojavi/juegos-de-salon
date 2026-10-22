@@ -74,6 +74,9 @@ markCupSeen('AAAAA');
 assert.deepEqual(seenCups(), ['AAAAA', 'PQRST']);
 
 // The cups opened to all their players (D-426) are cup codes
+// and one of them goes first, even if another cup ended after it (D-426)
+assert.equal(dueCup({ mine: [{ code: 'BBBBB', fin: now - DAY }, { code: OPEN_CUPS[0], fin: now - 3 * DAY }], now }).code, OPEN_CUPS[0]);
+assert.equal(dueCup({ mine: [{ code: 'BBBBB', fin: now - DAY }, { code: OPEN_CUPS[0], fin: now - 3 * DAY }], seen: [OPEN_CUPS[0]], now }).code, 'BBBBB', 'once seen, the next one');
 assert.ok(OPEN_CUPS.every(esCodigo), `OPEN_CUPS holds cup codes: ${OPEN_CUPS}`);
 
 console.log('✓ recap: which cup is due, its table and its line');
