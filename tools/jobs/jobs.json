@@ -30,8 +30,8 @@
       "where": "github",
       "workflow": "uad-rebuild.yml",
       "cron": "23 8 * * *",
-      "what": "Rebuilds Uno al día's month of points from the history, with the days a phone's 🧊 saved, and corrects any total that differs.",
-      "decisions": ["D-415"]
+      "what": "Rebuilds Uno al día's month of points from the history, with the days a phone's 🧊 saved, and corrects any total that differs; also writes the season's places by week (uadTemporada/).",
+      "decisions": ["D-415", "D-424"]
     },
     {
       "id": "processes-round",

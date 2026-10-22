@@ -9,7 +9,7 @@ a campaign once. This folder is its memory: every campaign that was made, and ho
 | Turned on and off | `node tools/agents/splash.mjs list \| on <id> [--until YYYY-MM-DD] \| off`, in a PR |
 | Seen on demand | `/?splash=<id>` (a campaign that is not on: only with a lab key, D-395), and `node tools/e2e/look.mjs splash <id> [--width 320] [--lang de]` |
 | Clips | [`capture.mjs`](capture.mjs), see [clips.md](clips.md) |
-| Gives way to | La Copa's recap of an ended cup (D-423, `assets/js/recap.js`): on a visit that opens it, the splash waits for the next one; it reuses `splash.css` |
+| Gives way to | The recap window (`assets/js/recap.js`): La Copa's of an ended cup (D-423) or Uno al día's of an ended season (D-424); on a visit that opens it, the splash waits for the next one; it reuses `splash.css` |
 | Campaigns | [`campaigns/<id>/`](campaigns/): a README (what, when, which PR) and its screenshots in the four languages |
 
 ## Making a campaign

@@ -361,6 +361,8 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   the cup, **Cerrar** and ✕ close it. Closing it or following the link marks it seen
   (`copa:resumen-visto`); with several due, the most recent. That visit the splash (D-351) waits.
   `/?recap=demo` shows it with the podium demo, recording nothing.
+  Since D-424 the same window also tells a season of Uno al día that ended (`assets/js/daily-recap.js`,
+  docs/UNO-AL-DIA.md); La Copa's goes first when both are due, one per visit.
 
 ## Flujo
 
@@ -434,7 +436,7 @@ node tools/e2e/cup/tournament.mjs /tmp/copa --siete    # los siete juegos
 node tools/e2e/cup/notifications.mjs /tmp/avisos          # los avisos al celular, con un servicio falso (D-223)
 node tools/push/schedule.test.mjs                # qué aviso toca y cuándo, con relojes inventados (D-224)
 node public/cup/recap.test.mjs                   # the recap of an ended cup: which cup is due, its rows and its sentence (D-423)
-node tools/e2e/home/recap.mjs                    # the recap window on the home page, with ?recap=demo (D-423)
+node tools/e2e/home/recap.mjs                    # the recap window on the home page, with ?recap=demo (D-423) and ?recap=season-demo (D-424)
 node tools/push/notify.test.mjs                    # una vuelta del envío, con una base falsa
 node tools/push/webpush.test.mjs                   # el cifrado y la firma, contra el ejemplo del RFC 8291
 ```
