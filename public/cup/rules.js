@@ -3171,7 +3171,7 @@ const DE = {
   avMsgDueManyOne: "⏳ Du hast noch 1 Stunde, um die Tage {dias} zu spielen. Sonst gibt es 0 Punkte.",
   avMsgWinTie: "🥇 Du hast den Pokal gewonnen, punktgleich mit {names}!",
   avMsgEndMany: "🥇 {names} haben gewonnen. Du bist auf Platz {pos} gelandet.",
-  avEndSee: "Tippe, um die Abschlusstabelle zu sehen.",
+  avEndSee: "Tippe, um die Endtabelle zu sehen.",
   avMsgDayMany: "🎲 Du hast einen neuen Tag in {n} Pokalen: {copas}.",
 };
 
