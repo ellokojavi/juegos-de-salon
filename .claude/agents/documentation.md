@@ -129,7 +129,7 @@ write it in the PR as a question for the owner.
   with the same commit it completes that round, without duplicating it or deleting what is pending.
 - Browserless tests green (`*.test.mjs`, `tools/release/readme.test.py`), `readme.py check`
   without ERROR, `og.mjs check` green and `node tools/agents/document.mjs check` without new ✗.
-- **A PR with auto-merge** (`gh pr merge <n> --auto --merge`, D-313), titled `Documentation up to date: <date>`,
+- **A PR with auto-merge** (`gh pr merge <n> --auto --merge`, D-313; not if the owner explicitly said not to auto-merge, D-419), titled `Documentation up to date: <date>`,
   with a list of what came into `main` and, for each item, where it was documented;
   the redone screenshots; and the questions for the owner, if any. You never merge it by hand: it goes in
   on its own when `tests` and `end-to-end` pass, so the next round starts from your work. If
