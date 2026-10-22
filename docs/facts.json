@@ -1,5 +1,5 @@
 {
-  "version": "0.198.0",
+  "version": "0.199.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -890,6 +890,7 @@
     "public/assets/js/cuenta-regresiva.js",
     "public/assets/js/dado3d.js",
     "public/assets/js/daily-points.js",
+    "public/assets/js/daily-recap.js",
     "public/assets/js/dato.js",
     "public/assets/js/favoritos.js",
     "public/assets/js/fin.js",
@@ -1071,6 +1072,7 @@
     "public/assets/js/buzon.test.mjs",
     "public/assets/js/compartir.test.mjs",
     "public/assets/js/daily-points.test.mjs",
+    "public/assets/js/daily-recap.test.mjs",
     "public/assets/js/favoritos.test.mjs",
     "public/assets/js/fin.test.mjs",
     "public/assets/js/games.test.mjs",

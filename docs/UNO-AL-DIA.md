@@ -317,6 +317,7 @@ propia casilla, apagados hasta que el jugador diga que sí.
 | **Tu juego de hoy** | A la hora elegida, si no ha jugado | "📅 Uno al día n.° 13 ya está. 🔥 Racha: 6 días." (sin racha, solo la primera frase) |
 | **Se corta la racha** | 21:00 del jugador, si no ha jugado y tiene racha de 2 o más | Sin comodines: "🔥 Tu racha de 6 días se corta a medianoche. Te quedan 3 horas." Con comodines no se corta, así que no se dice que se corta: "🧊 Si no juegas hoy, gastas un comodín para salvar tu racha de 6 días. Te quedan 3 horas." |
 | **Tu semana** | Lunes, a la hora elegida (casilla aparte, encendida por defecto) | "📊 Tu semana: jugaste 6 de 7 días y quedaste 14.° de 230. Donde más mejoraste: Reinas." (sin "Semana 40": el número de la semana no lo lleva nadie en la cabeza. El puesto, solo con jugador.) El PR 4 dice solo cuántos días jugó: "📊 Tu semana: jugaste 6 de 7 días." |
+| **The season ended** (D-424) | The 1st to the 3rd of the month, from their hour, once, if they played since the month before began, and only once the nightly rebuild closed that month (`uadTemporada/s<m>/t` after its last day) | "🏆 Terminó la temporada de octubre. Toca para ver cómo quedaste." It opens `/?recap=season`, last month's season recap on the home page, with or without a lab key. Its texts are `SEASON_TEXT` in `tools/push/daily.mjs`, not in `i18n.js` |
 
 - **El aviso no dice qué juego toca**: la sorpresa queda para el dado, y la curiosidad es un motivo
   más para tocarlo.
@@ -368,6 +369,7 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 | **Ranking del día** | `records/uno-al-dia/d2026-10-05/<jid>` | Un período nuevo, `dAAAA-MM-DD`, en `PERIODO` de `records.js` y en las reglas. |
 | **Ranking de la semana** | `records/uno-al-dia/s2026-41/<jid>` | La suma de la semana. Solo sube, como cualquier récord, y las reglas exigen que suba lo que dice el historial del día. |
 | **Puntos del mes** (D-412, D-414) | `records/uno-al-dia-pts/s2026-10/<jid>` | The month's season: each day of the history adds once (`p` marks it), its score plus the streak bonus; the streak `r` grows at most one per day. In the lab, an invited friend adds +10 once (the write carries `i` = their `uid` and marks `p` on their acceptance, D-414). Shown in the Mes and Amigos tabs; the week's table is still saved, but no tab shows it since D-414. |
+| **Season places by week** (D-424) | `uadTemporada/s2026-10` = `{ c, t, j: { <jid>: { n, co?, s, l } } }` | Written every night by the points rebuild (`uad-points-backfill.mjs --rebuild`), only by the administrator; public to read. `c` the cuts (each Sunday and the last day), `t` the day it ran, `l` each player's place at each cut (0 before their first points). The home page's season recap and its notification read it. |
 | **Mejor racha** | `records/uno-al-dia-racha/siempre/<jid>` | Solo sube. Las reglas exigen que no pase los días del historial. |
 | La racha de hoy y los comodines | El celular, y `jugadores/<jid>/unoAlDia` = `{ racha, comodines, ultimo }` | Se recalcula del historial, que es la fuente. |
 | Sin jugador | `localStorage` (`juegos-de-salon:uno-al-dia`) | Al entrar con jugador, lo del celular se sube al historial una vez. |
@@ -572,6 +574,11 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   `mandados/uad<tipo>`: salen como filas propias en el bloque "🔔 Avisos al celular" (D-233), con sus
   tocados (`TIPOS_AVISO` en `stats.js` los conoce). Sin guion, porque las reglas de `aviso/<tipo>`
   y `mandados/<tipo>` piden solo letras.
+- **Since D-424** a fifth one, `temporada:<yyyy-mm>`, the season that ended: on the 1st to the 3rd,
+  from their hour, if they played since that month began, once the rebuild closed the month
+  (`notify.mjs` reads `uadTemporada/s<m>/t` for this UTC month and the one before). It opens
+  `/?recap=season&notif=dailyseason`; `mandados/uadtemporada` counts the sent ones, but the panel does not
+  count its taps yet (`dailyseason` is not in `VALORES.notif` of `parametros.js`).
 - Se prueba con `tools/push/daily.test.mjs`, el caso nuevo de `notify.test.mjs`,
   `uno-al-dia-avisos.test.mjs` y `tools/e2e/daily-notifications.mjs` (con un servicio de avisos falso).
 
@@ -755,6 +762,21 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
   goes up when it is played; on opening /today/ the month's days not yet counted go up in order.
 - **Inviting:** each friend who finishes their first Uno al día with your invitation adds +10 to your
   month (`PUNTOS_INVITAR` in `records.js`), once per friend (D-414, see "+10 pts por invitar" above).
+- **The season's end, told** (D-424, in the lab: only with a lab key, listed in /labs/ as
+  `#seccion-resumen-temporada`): the nightly rebuild also writes `uadTemporada/s<yyyy-mm>`, each
+  player's place at each Sunday of the month and on its last day (ties share the place; an invited
+  friend's +10 counts on the day they accepted). In the first 7 days of a month, a phone whose history
+  has a day of the month before and has not seen that season gets La Copa's recap window (D-423) on the
+  home page: "Terminó la temporada", "Uno al día: octubre", who won and, signed in, "Quedaste #3 de 8,
+  con 901 pts. Ganó Chan.", the top 10 plus the player's own row with a line of their place week by
+  week (▲▼ since their first week), "La temporada de noviembre ya empezó: todos parten de 0." and
+  **📅 Ir a Uno al día**. La Copa's recap goes first if both are due; one window per visit, and the
+  splash waits. It is read over REST (`assets/js/daily-recap.js`) only once `t` is after the month's
+  last day, and it is seen once per season (`juegos-de-salon:uno-al-dia:temporada-vista`).
+  `/?recap=season-demo` shows a made-up October, recording nothing. The notification "🏆 Terminó la
+  temporada de octubre…" (see "Los avisos") opens `/?recap=season`, which shows last month's season to
+  whoever taps it, lab key or not. Tested by `daily-recap.test.mjs`, the season cases of
+  `uad-points-backfill.test.mjs` and `daily.test.mjs`, and `tools/e2e/home/recap.mjs`.
 
 The rules are pure functions in `public/assets/js/daily-points.js` (over the same history and streak
 rules as `uno-al-dia.js`), tested by `daily-points.test.mjs`, and shared by /today/, the lab prototype
