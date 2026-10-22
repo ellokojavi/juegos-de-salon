@@ -572,6 +572,9 @@ function armarSemana() {
       const em = f.querySelector('.em'), b = f.querySelector('.semana-juego b'), small = f.querySelector('.semana-juego small');
       return { f, em, b, small, real: [em.textContent, em.className, b.textContent, small.textContent], quieta: false };
     });
+    // Each card keeps the height of the game it lands on: a longer name passing by does not wrap
+    // and push the rows below (it is cut on one line while it spins, C-8)
+    cartas.forEach(c => { c.f.style.height = `${c.f.offsetHeight}px`; });
     const t0 = performance.now();
     const paso = () => {
       const t = performance.now() - t0;
@@ -580,7 +583,7 @@ function armarSemana() {
         if (c.quieta) return;
         if (t >= 300 + i * 90) {
           [c.em.textContent, c.em.className, c.b.textContent, c.small.textContent] = c.real;
-          c.f.classList.remove('baraja'); c.f.classList.add('cae'); c.quieta = true;
+          c.f.classList.remove('baraja'); c.f.style.height = ''; c.f.classList.add('cae'); c.quieta = true;
           return;
         }
         giran++;
