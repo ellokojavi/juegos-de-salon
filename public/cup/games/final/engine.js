@@ -68,4 +68,13 @@ export const puntosRonda = {
  */
 export const puntaje = ({ rondas = RONDAS, pts = {} } = {}) => (rondas.length ? Math.round(rondas.reduce((s, r) => s + (pts[r] || 0), 0) / rondas.length) : 0);
 
+/**
+ * The running score between rounds (D-417): the average of the rounds played so far, from 0 to 100,
+ * on the same scale as the result. After the last round it equals `puntaje`.
+ */
+export const puntajeParcial = ({ pts = {} } = {}) => {
+  const hechas = Object.values(pts);
+  return hechas.length ? Math.round(hechas.reduce((s, x) => s + x, 0) / hechas.length) : 0;
+};
+
 export const tarjeta = ({ rondas = RONDAS, pts = {} } = {}) => rondas.map(r => `${EMOJI[r] || '🏁'}${pts[r] || 0}`).join(' ');

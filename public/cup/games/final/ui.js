@@ -61,7 +61,7 @@ export function montar(raiz, ctx) {
     raiz.innerHTML = '';
     const r = rondas[J.ronda];
     const M = ficha(r);
-    const lleva = Object.values(estados(p, J).pts).reduce((a, b) => a + b, 0);
+    const lleva = final.puntajeParcial(estados(p, J));
     poner(raiz, el('div', { class: 'stack' },
       el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.roundOf, { i: J.ronda + 1, n })),
       el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, M.emoji), el('h2', { class: 'display display--md' }, M.nombre)),
@@ -69,7 +69,7 @@ export function montar(raiz, ctx) {
         RONDAS_FINAL[r] ? el('p', {}, RONDAS_FINAL[r]) : el('ol', { class: 'como' }, M.como.map(x => el('li', {}, x))),
         // A game played whole says how it scores, as each short round's text does (U-18)
         RONDAS_FINAL[r] ? null : [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, M.puntaje)]),
-      J.ronda > 0 ? el('p', { class: 'muted center' }, fmt(T.finalSoFar, { pts: lleva, max: J.ronda * 100 })) : null,
+      J.ronda > 0 ? el('p', { class: 'muted center' }, fmt(T.finalSoFar, { pts: lleva })) : null,
       el('button', { class: 'btn btn--yellow', id: 'btn-ronda', onClick: () => {
         SFX.tap(); J.jugando = true; if (!ESTADO[r] && J.t0[r] === undefined) J.t0[r] = ahora(); guardar(); ronda();
       } }, `${M.emoji} ${T.roundStart}`)));
