@@ -158,7 +158,8 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | Script | What it tests |
 |---|---|
 | `landing-fold.mjs` | Every game's landing (the `intro` path of each game in `paths.mjs`) at 320×568 and 375×667 in every language: the start button, or the first mode, is above the fold (U-39, D-344) |
-| `fourth-king/game.mjs` | Sound button, full deck up to the fourth king and the menu in English; that the table is exactly the script's names, even if the remembered table brings more rows |
+| `fourth-king/lab.mjs` | Cuarto Rey in La Bodega (D-420): not on the home page, in the lab's La Bodega folded to its title, a tap shows Play; `/fourth-king/` and `/cuarto-rey/` lead to `/labs/fourth-king/`, which loads behind the lab's door and is not indexed |
+| `fourth-king/game.mjs` | At `/labs/fourth-king/` (D-420): sound button, full deck up to the fourth king and the menu in English; that the table is exactly the script's names, even if the remembered table brings more rows |
 | `bulls-and-cows/local.mjs` | One phone and playing solo (twice, to see the record), up to the result |
 | `bulls-and-cows/choose-box.mjs` | Playing solo with a lab key: tapping a box chooses where the next digit goes (#604) |
 | `bulls-and-cows/online.mjs` | Two phones against real Firebase: joining by URL, reload midway, rematch |
@@ -227,7 +228,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `julep/languages.mjs` | Julepe in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `fourth-king/languages.mjs` | Cuarto Rey in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
 | `cup-games/languages.mjs` | La Copa's standalone games in all languages: each screen in `paths.mjs` against the Spanish one (D-199) |
-| `home/dice.mjs` | 🎲 Juego al azar with the 🎲 Cartas/Dados filter on: it still lands on games of every kind, and never on Cuarto Rey nor La Copa (D-188, D-374); back on the home page before the game loaded, no dice is left over it and 🎲 rolls at once (D-375) |
+| `home/dice.mjs` | 🎲 Juego al azar with the 🎲 Cartas/Dados filter on: it still lands on games of every kind, and never on Cuarto Rey (in La Bodega since D-420) nor La Copa (D-188, D-374); back on the home page before the game loaded, no dice is left over it and 🎲 rolls at once (D-375) |
 | `home/lab.mjs` | The lab's three groups, with the home page experiments card folded in La Bodega, and the home page's experiments bar (D-361, D-363, D-369, D-372): `/labs/home/` landing on the real home page with the bar, the filters sticking on scroll, the language, no bar for players |
 | `home/search.mjs` | The home page's search (D-387, D-390, D-393, D-396), for every player since D-403: shown without `?search` and without a lab key; the 🔎 pill first in the filter row, left of ⭐ Favoritos (D-396), which fits at 320 px; tapped, the field takes that row; the dropdown names up to five games with the word that found them while the list stays put; "Ver los n juegos" filters the list; nothing found; ✕ brings the pills back; a suggestion opens its game; ↓ ↓ Enter opens the second suggestion, ↑ wraps to "see them all" and Enter filters, the mouse over an option selects it, and the first Escape folds the dropdown while the second closes the search |
 | `home/popular.mjs` | What players see since D-369: the 🔥 Popular label on three cards (not La Copa nor "New", in German too), the ✨ Nuevos / 🔥 Populares chips above the types in four languages at 320 px and their filtering, ⭐ Favoritos in that row and centered, the app's name on the floating menu and its tap, the space under the floating filters, and the menu still floating after a tap on a short result until the player scrolls up (D-371) |

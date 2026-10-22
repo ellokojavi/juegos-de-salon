@@ -29,7 +29,7 @@ The games with their own section below come first; after them, the one-player ga
 | 📝 [Generala / General](#-generala) | 1 to 6 | One phone · Several phones · Play solo | v0.189 |
 | ⚓ [Battleship / Batalla Naval / Batalha Naval](#-battleship-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
 | 🍹 [Julep / Julepe / Paga o Bolo](#-julep-julepe) | 1 to 6 | One phone · Several phones · Versus the phone | ⏸ paused |
-| 👑 [Fourth King / Cuarto Rey / Quarto Rei](#-fourth-king-cuarto-rey) | 4 to 6 | One phone | v0.27 |
+| 👑 [Fourth King / Cuarto Rey / Quarto Rei](#-fourth-king-cuarto-rey) | 4 to 6 | One phone | 🧪 lab |
 | 🔗 [Connections / Conexiones / Conexões](https://juegosdesalon.cl/connections/) | 1 | Play alone | Also in The Cup |
 | 🔤 [Bulls and Cows: Word / Toque y Fama: Palabra / Toque e Fama: Palavra](https://juegosdesalon.cl/word/) | 1 | Play alone | Also in The Cup |
 | 📅 [What Year? / ¿En qué año? / Em que ano?](https://juegosdesalon.cl/year/) | 1 | Play alone | Also in The Cup |
@@ -47,6 +47,8 @@ The games with their own section below come first; after them, the one-player ga
 ---
 
 ## 👑 Fourth King (Cuarto Rey)
+
+**In the lab's Storeroom since D-420**, at the owner's request: it is no longer on the home page, in Random game or in the search. It still plays, unchanged, at `/labs/fourth-king/`, behind the lab's door (`/fourth-king/` and `/cuarto-rey/` redirect there), so a key holder can open it from La Bodega.
 
 The classic drinking card game. The phone is the deck: each player draws a card and the phone says what to do. It names who drinks, runs the minigames (Cuenta Cuentos, Chancho Inflado, Cultura Chupística, Nunca Nunca), suggests dares and counts the kings. The fourth king ends the game: whoever draws it drinks everything left in their glass, and the last screen shows who it was, the sip ranking and, folded at the bottom, every card that came up and who drew it. After each card, who drinks and "pass the phone to X" share one screen, and only the next player's button moves on.
 
@@ -653,7 +655,6 @@ node public/cup/engine.test.mjs
 node public/cup/games/paint-mines/engine.test.mjs
 node public/cup/games/plots/engine.test.mjs
 node public/cup/games/routes/engine.test.mjs
-node public/fourth-king/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/julep/engine.test.mjs
@@ -661,6 +662,7 @@ node public/labs/agents/engine.test.mjs
 node public/labs/bridges/engine.test.mjs
 node public/labs/code/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
+node public/labs/fourth-king/engine.test.mjs
 node public/labs/pips/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
@@ -836,9 +838,8 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   generala/                   Generala (engine.js + tests, game.js, rules.js)
   battleship/                 Battleship (engine.js + tests, game.js, rules.js, flota.js: the pixel art)
   julep/                      Julep (engine.js + tests, game.js, rules.js)
-  fourth-king/                Fourth King (engine.js + tests, game.js, rules.js)
   connections/ · queens/ …    The Cup's games played on their own, one page each (generated from cup/suelto/)
-  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed, and behind a key: each invited person gets their own link, and without one every lab page sends you to the menu, D-281, D-284), in two groups, Active projects, today 🕵️ Agentes (labs/agents/: a mini Codenames for one player, where the game gives the clues and you find your agents among 15 words, D-286, D-287), 💥 Números explosivos (labs/exploding-numbers/: a Number Match-style solitaire on a 9-column grid; pop pairs of equal numbers or numbers that add up to 10 when they line up, a fully popped row explodes and goes away, and ➕ copies the numbers left to the bottom, three times a game, D-297), and 🚂 Tren en Vilo (labs/bridges/: a Poly Bridge-style bridge builder in pixel art, Spanish only; lay beams over a gap and the train tests them, five stages against a 7-minute clock, the crossings drawn from a catalog that tools/generators/bridges.mjs builds), and the Storeroom, for the ones that didn't take off, each folded to its title until you tap it (D-280): El caso (labs/case/, D-267) and The Code (labs/code/: 4 see-through cards that, laid on a base and each turned the right way, show a 5-digit code, or in Spanish a 5-letter word, D-270); each ends with a "What did you think?" form for the friends testing them (D-265, D-268); labs/paint-mines/, labs/routes/ and labs/plots/ are now bridges to the games that left the lab (D-332); labs/splash/ still holds the demo of the home page's promotional splash (D-351), no longer linked from the lab: its campaigns are switched on from the home page experiments card (D-389)
+  labs/                       The lab: games being tested before they reach the menu (not linked, not indexed, and behind a key: each invited person gets their own link, and without one every lab page sends you to the menu, D-281, D-284), in two groups, Active projects, today 🕵️ Agentes (labs/agents/: a mini Codenames for one player, where the game gives the clues and you find your agents among 15 words, D-286, D-287), 💥 Números explosivos (labs/exploding-numbers/: a Number Match-style solitaire on a 9-column grid; pop pairs of equal numbers or numbers that add up to 10 when they line up, a fully popped row explodes and goes away, and ➕ copies the numbers left to the bottom, three times a game, D-297), and 🚂 Tren en Vilo (labs/bridges/: a Poly Bridge-style bridge builder in pixel art, Spanish only; lay beams over a gap and the train tests them, five stages against a 7-minute clock, the crossings drawn from a catalog that tools/generators/bridges.mjs builds), and the Storeroom, for the ones that didn't take off, each folded to its title until you tap it (D-280): El caso (labs/case/, D-267), 👑 Fourth King (labs/fourth-king/: the drinking card game, off the home page since D-420; engine.js + tests, game.js, rules.js) and The Code (labs/code/: 4 see-through cards that, laid on a base and each turned the right way, show a 5-digit code, or in Spanish a 5-letter word, D-270); each ends with a "What did you think?" form for the friends testing them (D-265, D-268); labs/paint-mines/, labs/routes/ and labs/plots/ are now bridges to the games that left the lab (D-332); labs/splash/ still holds the demo of the home page's promotional splash (D-351), no longer linked from the lab: its campaigns are switched on from the home page experiments card (D-389)
     case/                     The Case: a mystery in the style of Clues by Sam, the full game in all four languages; today's case is the same for everyone (D-256, D-267)
     code/                     The Code: a base and 4 see-through cards; put each one on, turn (↻) and flip (⇋) it until the strokes form a 5-digit code with no stroke on top of another (an overlap shows striped), typed on a keypad; in Spanish there is also Word, with 14-segment letters and two-sided cards (flipping shows the other side); all four languages, its texts in game.js (D-270)
   records/                    Leaderboards: the All-Rounder, every game's table and The Cup's medal table (D-212)

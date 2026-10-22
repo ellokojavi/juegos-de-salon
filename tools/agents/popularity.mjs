@@ -124,7 +124,7 @@ async function contar() {
 async function main([command]) {
   if (!['check', 'update'].includes(command)) { console.error('Usage: node tools/agents/popularity.mjs check | update'); process.exit(2); }
   const { GAMES, SUELTOS, POPULARIDAD, POPULARIDAD_FECHA } = await import('../../public/assets/js/games.js');
-  const ofrecidos = [...GAMES, ...SUELTOS.filter(m => !m.labs)].map(g => g.id);
+  const ofrecidos = [...GAMES, ...SUELTOS].filter(g => !g.labs).map(g => g.id);
   const { dias, toca } = vence(POPULARIDAD_FECHA);
   const { range, conteo } = await contar();
   const orden = nuevoOrden(conteo, ofrecidos, POPULARIDAD);

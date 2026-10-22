@@ -36,7 +36,7 @@ assert.throws(() => reescribir('export const X = 1;', [], '2026-10-25'), /lost t
 
 // What the repo holds is what the tool writes: a date, and only games the home page offers
 assert.match(POPULARIDAD_FECHA, /^\d{4}-\d{2}-\d{2}$/);
-const ofrecidos = new Set([...GAMES, ...SUELTOS.filter(m => !m.labs)].map(g => g.id));
+const ofrecidos = new Set([...GAMES, ...SUELTOS].filter(g => !g.labs).map(g => g.id));
 for (const id of POPULARIDAD) assert.ok(ofrecidos.has(id), `POPULARIDAD names ${id}, which the home page does not offer`);
 assert.equal(new Set(POPULARIDAD).size, POPULARIDAD.length, 'no game twice in POPULARIDAD');
 
