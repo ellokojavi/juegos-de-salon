@@ -105,12 +105,13 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 - **Por su cuenta:** abre la app y la tarjeta de Uno al día dice **🔥 1 · Jugar hoy**, con el
   punto que brilla (D-239, ver "Lo que el PR 1 hizo").
 - **Con un aviso** a la hora que eligió: "📅 Uno al día n.° 13 ya está. 🔥 Racha: 1 día." (el de la tabla de
-  avisos) Al tocarlo
-  rueda el dado.
-- **Mientras no lo haya jugado, el dado rueda cada vez** que toca la tarjeta, el aviso o un link, y
-  siempre cae en el mismo juego (decisión del dueño: la misma experiencia de Juego al azar).
-- Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y al tocarla abre su página de Uno al día (sus
-  números, el ranking del día y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.").
+  avisos) Al tocarlo abre /today/ (D-412).
+- **The card, the notice and the links open /today/** (D-414), played or not: its season box comes
+  first (points, place, who is just ahead), and its **Jugar** rolls the die, which always lands on the
+  same game (the owner's call: the same experience as Juego al azar). Before D-414 the card rolled the
+  die until today was played.
+- Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y /today/ muestra su resultado, Compartir y
+  Jugar otro, y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.".
 
 ### Quiere jugar más
 
@@ -331,6 +332,7 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 | El historial del jugador | `unoAlDia/<jid>/<fecha>` = `{ j, s, ms, at }` | Una vez por fecha: las reglas no dejan reescribirla, y la fecha tiene que estar a 14 horas o menos de la hora del servidor. |
 | **Ranking del día** | `records/uno-al-dia/d2026-10-05/<jid>` | Un período nuevo, `dAAAA-MM-DD`, en `PERIODO` de `records.js` y en las reglas. |
 | **Ranking de la semana** | `records/uno-al-dia/s2026-41/<jid>` | La suma de la semana. Solo sube, como cualquier récord, y las reglas exigen que suba lo que dice el historial del día. |
+| **Puntos del mes** (D-412, D-414) | `records/uno-al-dia-pts/s2026-10/<jid>` | The month's season: each day of the history adds once (`p` marks it), its score plus the streak bonus; the streak `r` grows at most one per day. Shown in the Mes and Amigos tabs; the week's table is still saved, but no tab shows it since D-414. |
 | **Mejor racha** | `records/uno-al-dia-racha/siempre/<jid>` | Solo sube. Las reglas exigen que no pase los días del historial. |
 | La racha de hoy y los comodines | El celular, y `jugadores/<jid>/unoAlDia` = `{ racha, comodines, ultimo }` | Se recalcula del historial, que es la fuente. |
 | Sin jugador | `localStorage` (`juegos-de-salon:uno-al-dia`) | Al entrar con jugador, lo del celular se sube al historial una vez. |

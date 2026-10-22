@@ -124,7 +124,7 @@ export const COMMON = {
       context: '{n} juegos para el celular',
       lines: [
         '🏆 La Copa: un torneo de una semana entre amigos, con un juego distinto cada día.',
-        '📅 Uno al día: un desafío nuevo cada día, el mismo para todos. ¿Hasta dónde llega tu racha?',
+        '📅 Uno al día: un desafío nuevo cada día, el mismo para todos, con su ranking del mes.',
         '👥 Para jugar en grupo: en un celular o cada uno en el suyo.',
         '🧩 Para jugar solo: minijuegos de palabras, lógica y cultura.',
         '🏅 Rankings: tus mejores puntajes contra los de tus amigos y los de todos.',
@@ -363,7 +363,7 @@ export const COMMON = {
       context: '{n} games for your phone',
       lines: [
         '🏆 The Cup: a week-long tournament among friends, with a different game every day.',
-        '📅 One a Day: a new challenge every day, the same for everyone. How long can your streak go?',
+        '📅 One a Day: a new challenge every day, the same for everyone, with its own monthly leaderboard.',
         '👥 To play in a group: on one phone or each on their own phone.',
         '🧩 To play solo: word, logic and trivia minigames.',
         '🏅 Leaderboards: your best scores against your friends\' and everyone else\'s.',
@@ -595,7 +595,7 @@ export const COMMON = {
       context: '{n} jogos para o celular',
       lines: [
         '🏆 A Copa: um torneio de uma semana entre amigos, com um jogo diferente por dia.',
-        '📅 Um por dia: um desafio novo todo dia, o mesmo para todos. Até onde vai a sua sequência?',
+        '📅 Um por dia: um desafio novo todo dia, o mesmo para todos, com seu ranking do mês.',
         '👥 Para jogar em grupo: num celular só ou cada um no seu.',
         '🧩 Para jogar sozinho: minijogos de palavras, lógica e cultura.',
         '🏅 Rankings: as suas melhores pontuações contra as dos amigos e as de todo mundo.',
@@ -827,7 +827,7 @@ export const COMMON = {
       context: '{n} Spiele fürs Handy',
       lines: [
         '🏆 Der Pokal: ein Turnier unter Freunden, eine Woche lang, mit einem anderen Spiel pro Tag.',
-        '📅 Spiel des Tages: jeden Tag eine neue Aufgabe, für alle dieselbe. Wie lang wird deine Serie?',
+        '📅 Spiel des Tages: jeden Tag eine neue Aufgabe, für alle dieselbe, mit eigener Monatsrangliste.',
         '👥 In der Gruppe: auf einem Handy oder jeder auf seinem.',
         '🧩 Allein: Minispiele mit Wörtern, Logik und Wissen.',
         '🏅 Ranglisten: deine besten Punkte gegen die deiner Freunde und aller anderen.',
