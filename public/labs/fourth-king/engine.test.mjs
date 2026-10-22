@@ -1,4 +1,4 @@
-// Ejecutar: node public/fourth-king/engine.test.mjs — las reglas del Cuarto Rey: mazo, quién toma con cada carta, el cuarto rey y el ranking
+// Ejecutar: node public/labs/fourth-king/engine.test.mjs — las reglas del Cuarto Rey: mazo, quién toma con cada carta, el cuarto rey y el ranking
 import assert from 'node:assert/strict';
 import {
   rng, pickWith, pickOther, buildDeck, newGame, fromSaved, currentPlayer, resolveTargets, genderFallback,

@@ -51,12 +51,12 @@ console.log('BN resumed in battle → screen:', await b.active(), '| shots:', aw
 await b.shot('bn-resumed');
 
 // ---------- CUARTO REY (new format) ----------
-await b.go(`${SITE}/fourth-king/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITE}/fourth-king/`);
+await b.go(`${SITE}/labs/fourth-king/`); await b.evaluate(`localStorage.clear(); 1`); await b.go(`${SITE}/labs/fourth-king/`);
 await click('#btn-go-setup'); await sleep(300);
 await b.evaluate(`(()=>{const names=['Javi','Cata','Pancho','Fran'];[...document.querySelectorAll('#players-form input')].forEach((inp,i)=>{inp.value=names[i];inp.dispatchEvent(new Event('input',{bubbles:true}));});return 1})()`);
 await click('#btn-start'); await sleep(500); await click('#card'); await sleep(1400);
 console.log('CR saved:', await key('cuarto-rey'));
-await b.go(`${SITE}/fourth-king/`, 1500);
+await b.go(`${SITE}/labs/fourth-king/`, 1500);
 console.log('CR after reload → continue:', await resumeVisible());
 await click('#resume-slot .btn'); await sleep(700);
 console.log('CR resumed → screen:', await b.active(), '| cards left:', await b.evaluate(`document.getElementById('deck-count').textContent`),

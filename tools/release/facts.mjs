@@ -68,7 +68,8 @@ function variants(L, EN) {
 }
 
 /** The game's folder, which is its URL and not its id (D-192): 'ahorcado' lives in public/hangman/. */
-const folder = g => g.path.replace(/\/$/, '');
+// A game in La Bodega lives in /labs/<slug>/, but its docs and screenshots keep their folder (D-420)
+const folder = g => g.slug || g.path.replace(/\/$/, '');
 
 const games = [];
 for (const g of GAMES) {
