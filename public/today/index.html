@@ -287,7 +287,9 @@
      * Signing out forgets it.
      */
     const CACHE = 'uad-pts-cache';
-    const leerCache = periodo => { try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c?.p === periodo && Number.isFinite(c.s) ? c.s : null; } catch (_) { return null; } };
+    // Only for someone signed in on this phone (they may have signed out on another page)
+    const sentado = () => { try { return !!JSON.parse(localStorage.getItem('juegos-de-salon:jugador') || 'null')?.jid; } catch (_) { return false; } };
+    const leerCache = periodo => { if (!sentado()) return null; try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c?.p === periodo && Number.isFinite(c.s) ? c.s : null; } catch (_) { return null; } };
     const ponerCache = v => { try { if (v) localStorage.setItem(CACHE, JSON.stringify(v)); else localStorage.removeItem(CACHE); } catch (_) { /* sin memoria */ } };
 
     /** The season's box: the points (Firebase's, the last ones it gave, or this phone's), the place and the numbers. */
@@ -442,7 +444,9 @@
       const filas = v ? [...v.top, ...(v.vecinos || [])] : [];
       const i = filas.findIndex(f => f.jid === yo.jid);
       enRed = { yo, fila: i >= 0 ? filas[i] : null, delante: i > 0 ? filas[i - 1] : null, campeon: campeon === yo.jid };
+      // The server answered: its row is the cache, or no row this month clears it (a failed read keeps it)
       if (enRed.fila) ponerCache({ p: periodoMes(estado().hoy), s: enRed.fila.s });
+      else if (v) ponerCache(null);
     }
     await dibujar();
     import('../assets/js/uno-al-dia-avisos.js').then(Av => { Av.globo(); Av.refrescar({ lang }).catch(() => {}); }).catch(() => {});
