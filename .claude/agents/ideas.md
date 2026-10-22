@@ -152,7 +152,7 @@ mini like the processes round (D-276). Without the key it prints what needs no k
 
 - Your worktree from `origin/main` (`git worktree add ../juegos-de-salon-ideas-<date> -b
   ideas-<date> origin/main`), never the repo's main folder (D-135). Your PR carries only
-  `docs/ideas.json`, with auto-merge (`gh pr merge <n> --auto --merge`, D-313); it touches
+  `docs/ideas.json`, with auto-merge (`gh pr merge <n> --auto --merge`, D-313; not if the owner explicitly said not to auto-merge, D-419); it touches
   nothing in `public/`, so it needs no changelog entry and runs no end-to-end script. Local
   commits and a single push (D-303). If the round changed nothing in the ledger, no PR: you say
   so in one line and remove the worktree (D-252).

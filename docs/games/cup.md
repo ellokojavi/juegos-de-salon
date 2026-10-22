@@ -69,7 +69,8 @@ nadie puede leer.
 El celular recuerda con quién está sentado en `localStorage`, pero el asiento es del `uid`: si el
 navegador pierde la sesión de Firebase, o el admin le da un PIN nuevo al jugador, las reglas niegan
 empezar o enviar aunque el día esté abierto. Entonces la copa pide el PIN de nuevo, con el nombre
-ya elegido, en vez de decir que el día se cerró (D-285).
+ya elegido, en vez de decir que el día se cerró (D-285). If that cup player is linked to the phone's
+player (D-359), the player's seat was lost with the same session, so it asks for the player's PIN instead (D-416, below).
 
 **Con los rankings (D-212).** Si en el celular hay un jugador de los rankings (nombre y PIN para
 toda la app), al inscribirse el nombre viene puesto, y al abrir la copa su jugador queda enlazado
@@ -95,6 +96,16 @@ linked to one of its players seats the phone at once; on "Ya estoy inscrito", pi
 needs no PIN. The seat carries the jid, and the rules accept it only if that cup player is linked to
 it and this phone is seated as that player. Without a player, everything is as before: name and cup
 PIN.
+
+**A linked player who lost their session (D-416).** The player's seat (`jugadorSeats/<jid>/<uid>`)
+hangs from the same anonymous session as the cup seat, so a phone that lost it still shows the player
+but the rules refuse `sentarseComoJugador`. Then "Ya estoy inscrito" does not say the PIN is wrong:
+it shows "Este celular dejó de entrar como tu jugador {name}" and asks for the **player's**
+PIN (right away when coming back from a lost seat, D-285). The PIN seats the phone as the player again
+(`jugador.reseat(pin)`), which also brings back rankings and Uno al día on that phone, and then sits
+as the cup player with no cup PIN. A PIN that is not the player's is tried as a cup PIN, so a new
+cup PIN from the admin also works. The test store (`store-local.js`) refuses `sentarseComoJugador`
+without the player seat, like the rules; `tools/e2e/cup/player-cups.mjs` plays it.
 
 ### Admin
 
