@@ -397,6 +397,14 @@
     .uad-card-chip { min-height: 44px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; border: 0; background: var(--yellow); color: #2a1600; font: 900 0.9rem var(--font-body); text-decoration: none; cursor: pointer; flex: 1 1 auto; max-width: 100%; box-sizing: border-box; justify-content: center; text-align: center; line-height: 1.1; }
     @media (max-width: 340px) { .uad-card-chip { padding: 0 10px; font-size: 0.82rem; } }
     .uad-card.hecho .uad-card-chip { background: rgba(0, 0, 0, 0.32); color: var(--ink); }
+    /* Played today: the month's place big, with the site's gradient, and the points under it (owner-approved) */
+    .uad-card.hecho .meta .uad-card-chip { flex: 1 1 100%; flex-direction: column; gap: 2px; padding: 6px 10px; border-radius: 18px; }
+    .uad-card .meta .uad-card-chip span { background: none; padding: 0; border: 0; border-radius: 0; white-space: nowrap; }
+    .uad-card .meta .uad-card-chip .uad-card-pos { font: 800 2.1rem/0.95 var(--font-num); letter-spacing: -0.02em; padding-right: 0.06em; background: linear-gradient(90deg, var(--yellow), var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .uad-card .meta .uad-card-chip .uad-card-sub { font: 800 0.78rem/1.1 var(--font-body); color: var(--muted); }
+    .uad-card-sub i { font-style: normal; }
+    .uad-card-sub b { color: var(--yellow); font-family: var(--font-num); }
+    @media (max-width: 340px) { .uad-card-sub i { display: none; } }
     /* El punto no se monta sobre el título: "Spiel des Tages" llega hasta el borde (U-12) */
     .uad-card:not(.hecho) h2 { padding-right: 14px; }
     @media (prefers-reduced-motion: reduce) { .btn-uad-punto { animation: none; } }

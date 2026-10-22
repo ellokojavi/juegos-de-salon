@@ -14,7 +14,8 @@ Las pantallas están dibujadas en un lienzo aparte (privado del dueño).
 
 1. **Un acceso nuevo en la portada**: 📅 **Uno al día**, en una tarjeta de media fila junto a La
    Copa (D-239; en el diseño era un botón junto a 🎲 **Juego al azar**). Muestra la racha (🔥 6) y
-   si ya se jugó hoy.
+   si ya se jugó hoy. Since D-414 it has two destinations: the card opens /today/ and its chip plays
+   today's game or, once played, shows the month's place and points.
 2. **El juego de hoy es el mismo para todos**, con el mismo contenido: sale de la fecha, como el
    contenido de un día de La Copa sale del código y del día (D-97). Así hay ranking del día y algo
    que compartir ("hoy me fue mejor que a ti").
@@ -102,14 +103,15 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
 
 ### Día 2 en adelante: vuelve
 
-- **Por su cuenta:** abre la app y la tarjeta de Uno al día dice **🔥 1 · Jugar hoy**, con el
-  punto que brilla (D-239, ver "Lo que el PR 1 hizo").
+- **Por su cuenta:** abre la app y la tarjeta de Uno al día dice **🔥 1** and its chip **▶ Jugar hoy**,
+  con el punto que brilla (D-239, ver "Lo que el PR 1 hizo"; the chip since D-414).
 - **Con un aviso** a la hora que eligió: "📅 Uno al día n.° 13 ya está. 🔥 Racha: 1 día." (el de la tabla de
   avisos) Al tocarlo abre /today/ (D-412).
 - **The card, the notice and the links open /today/** (D-414), played or not: its season box comes
   first (points, place, who is just ahead), and its **Jugar** rolls the die, which always lands on the
   same game (the owner's call: the same experience as Juego al azar). Before D-414 the card rolled the
-  die until today was played.
+  die until today was played. The home card's chip **▶ Jugar hoy** rolls it straight from the home
+  page (see "The home card: two destinations").
 - Si ya jugó, la tarjeta queda cian, **✅ Listo · 🔥 2**, y /today/ muestra su resultado, Jugar otro
   y cuánto falta para el próximo: "Próximo juego en 7 h 12 min.". (Sharing the result stays on the
   game's result card; on /today/ what is shared is the ranking, 2026-10-22.)
@@ -236,6 +238,8 @@ link.
 
 ### +10 pts por invitar (in the lab, D-414)
 
+Still behind the lab key (card `#seccion-uad-invitar-jugar` in /labs/), now that the home card has left it.
+
 With a lab key, each friend who accepts also adds **+10 pts** to the inviter's month, once per
 friend: on opening /today/ (`sincronizar` in `uno-al-dia-red.js`), each acceptance without `p` from
 October 2026 on adds +10 to the table of the month it was accepted in, and marks `p` on the
@@ -244,11 +248,22 @@ check exactly +10, once). No limit of 2 here: every friend counts. Said in the w
 ("👋 Y cada amigo que invitas suma +10 pts a tu mes.") and in the rules dialog, only with a lab key.
 On 2026-10-22 there were no acceptances in Firebase yet, so October needed no backfill.
 
-### The home card: two destinations (in the lab, D-414)
+### The home card: two destinations (D-414)
 
-With a lab key, the 📅 card on the home page has two controls side by side, never one inside the
-other: the card itself is a link to /today/, and its chip **▶ Jugar hoy** rolls today's die and opens
-the game straight away; once today is played the chip says **✅ Tus puntos** and opens /today/.
+For everyone since 2026-10-22 (it was tried in the lab first, D-409), the 📅 card on the home page has
+two controls side by side, never one inside the other: the card itself is a link to /today/, and its
+chip **▶ Jugar hoy** rolls today's die and opens the game straight away. Once today is played the
+chip opens /today/ and shows the month's **place big** (the site's yellow-to-pink gradient: "#3", in
+German "Platz 3") with "del mes · 120 pts" under it; with no place known yet, the points are the big
+number, with "pts del mes" under them (`chipPuntos` in `uno-al-dia-ui.js`). On a phone 340 px wide
+or less, "del mes" is dropped.
+
+The place comes from `uad-pts-cache` in `localStorage`, which /today/ writes each time the server
+answers (`p` the month, `s` the points, `r` the place, `d` the day and `h` whether that day was
+already played when it was read). A cache from another month is ignored. Its points count only if
+they were read today after playing (`d` is today and `h` is set); otherwise the chip shows this
+phone's own count (`seasonPoints` over the days in `localStorage`, `daily-points.js`). So until
+/today/ is opened after playing, the place is the last one the server gave.
 
 ## Su página: 📅 Uno al día
 
@@ -729,6 +744,8 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
   invited friends) and lends 2 more, once, for marked days it can't back.
 - **No jump on /today/:** signed in, the first drawing shows the last total the ranking gave this phone
   (`uad-pts-cache`), then the fresh one.
+- **On the home page:** once today is played, the 📅 card's chip shows the month's place big and the
+  points under it, from that same cache (see "The home card: two destinations").
 - **Last month's winner** wears a 🏆 next to their name in the month's ranking, and sees a 👑 chip on
   /today/. The season's end shows as "quedan X días" ("último día" on the last).
 - **Saving:** each day of the player's history in Firebase adds once (`p` marks it), checked by the
