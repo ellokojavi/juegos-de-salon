@@ -252,7 +252,7 @@ export function tarjetaInvitar({ lang, alTocar, plegada = false, comodines = nul
     : comodines != null
       // /today/: one box for the wildcards, their logic and the invite that earns one
       ? el('div', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('p', { class: 'lead', style: 'margin:0' }, fmt(T.comodinesTitulo, { n: comodines })),
-        el('p', { style: 'margin:0', id: 'uad-comodines-texto' }, T.comodinesLogica), ptsInv, linea, b)
+        el('p', { style: 'margin:0', id: 'uad-comodines-texto' }, T.comodinesLogica), linea, ptsInv, b)
       : el('div', { class: 'panel uad-invitar', id: 'uad-invitar' }, el('p', { class: 'lead', style: 'margin:0' }, T.invTitulo), linea, b);
 }
 
