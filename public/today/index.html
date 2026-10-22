@@ -424,7 +424,7 @@
       const i = filas.findIndex(f => f.jid === yo.jid);
       enRed = { yo, fila: i >= 0 ? filas[i] : null, delante: i > 0 ? filas[i - 1] : null, campeon: campeon === yo.jid };
       // The server answered: its row is the cache, or no row this month clears it (a failed read keeps it)
-      if (enRed.fila) ponerCache({ p: periodoMes(estado().hoy), s: enRed.fila.s, l: enRed.delante ? fmt(P.faltan, { p: enRed.fila.puesto, f: miles(enRed.delante.s - enRed.fila.s + 1), n: enRed.delante.n }) : fmt(P.puesto, { p: enRed.fila.puesto }) });
+      if (enRed.fila) ponerCache({ p: periodoMes(estado().hoy), s: enRed.fila.s, r: enRed.fila.puesto, d: estado().hoy, h: !!estado().dia, l: enRed.delante ? fmt(P.faltan, { p: enRed.fila.puesto, f: miles(enRed.delante.s - enRed.fila.s + 1), n: enRed.delante.n }) : fmt(P.puesto, { p: enRed.fila.puesto }) });
       else if (v) ponerCache(null);
     }
     await dibujar();

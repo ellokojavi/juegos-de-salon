@@ -12,6 +12,7 @@ import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir, la
 import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel } from './uno-al-dia.js';
 import { UNO_AL_DIA, bandera } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
+import { walk, seasonPoints } from './daily-points.js';
 import { salidasFin } from './fin.js';
 
 export const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
@@ -106,11 +107,26 @@ function tarjetaVieja({ T, hecho, linea2, abrir, aria }) {
  * a separate button above it, plays today's game ("▶ Jugar hoy") or, once played, opens /today/
  * ("✅ Tus puntos"). Two sibling controls, never one inside the other.
  */
+/**
+ * The chip once today is played: the month's points and place (owner's request). The last ones the
+ * server gave, cached by /today/, if they already count today; otherwise this phone's own count.
+ */
+function chipPuntos(T) {
+  const P = T.pts, hoy = fechaLocal(), mes = `s${hoy.slice(0, 7)}`;
+  let c = null;
+  try { c = JSON.parse(localStorage.getItem('uad-pts-cache') || 'null'); } catch (_) { /* sin memoria */ }
+  if (c?.p !== mes) c = null;
+  const pts = c && c.d === hoy && c.h ? c.s : seasonPoints(walk(leer().dias, hoy), hoy);
+  // Like the season box of /today/: the points big, in the number font, and the place beside them
+  return [el('span', { class: 'uad-card-num' }, Number(pts || 0).toLocaleString()), el('small', {}, P.pts),
+    ...(c?.r ? [el('span', { class: 'uad-card-pos' }, fmt(P.chipPuesto, { p: c.r }))] : [])];
+}
+
 function tarjetaDosDestinos({ lang, raiz, alTocar }) {
   const { T, hecho, aria, racha } = estadoAcceso(lang, raiz, alTocar);
   const ir = () => { alTocar?.(); trackUnoAlDia('boton'); };
   const chip = hecho
-    ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, 'aria-label': T.ariaTusPuntos, onClick: ir }, T.tusPuntos)
+    ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, 'aria-label': T.ariaTusPuntos, onClick: ir }, ...chipPuntos(T))
     : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', 'aria-label': T.ariaJugarHoy, onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, `▶ ${T.jugar}`);
   return el('div', { class: 'game-card alta uad-card dos' + (hecho ? ' hecho' : ''), id: 'btn-uno-al-dia' },
     el('a', { class: 'uad-card-link', id: 'btn-uad-abrir', href: `${raiz}today/`, 'aria-label': aria, onClick: ir }),
