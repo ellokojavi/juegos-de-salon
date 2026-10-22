@@ -1,6 +1,6 @@
 # Especificación: Cuarto Rey 👑
 
-**Ruta:** `/fourth-king/` (id `cuarto-rey`) · **Jugadores:** 4 a 6 · **Desde:** v0.1 · **Estado:** publicado (v0.27, con el historial de cartas) · **Idiomas:** es, en (“Fourth King”), pt (“Quarto Rei”) y de (“Der vierte König”, D-191, D-197)
+**Ruta:** `/labs/fourth-king/` (id `cuarto-rey`; `/fourth-king/` and `/cuarto-rey/` are bridges there) · **Jugadores:** 4 a 6 · **Desde:** v0.1 · **Estado:** in 📦 La Bodega since D-420 (published until then; v0.27, con el historial de cartas) · **Idiomas:** es, en (“Fourth King”), pt (“Quarto Rei”) y de (“Der vierte König”, D-191, D-197)
 
 ## Resumen
 
@@ -8,8 +8,12 @@ Juego de naipes para tomar, popular en Chile. Reglas base según instrucciones e
 "Reglas originales"). El celular reemplaza al mazo (D-12): se pasa de mano en mano, cada jugador saca una carta y
 la app dice qué hacer y quién toma. Termina cuando sale el cuarto rey.
 
-It needs a group gathered, so 🎲 Juego al azar never picks it: its card stays on the home page and in its
-filter, but the dice leaves it out (`alAzar` in `public/assets/js/azar.js`, D-374).
+**In La Bodega (D-420, the owner's request):** it is no longer on the home page, in 🎲 Juego al azar, in the
+🔎 search or in the home page's social cards. The page lives at `/labs/fourth-king/`, behind the lab's door
+(D-281) and not indexed, and the lab lists it folded in 📦 La Bodega (`#seccion-cuarto-rey`). The game itself
+did not change: what follows describes it as it plays there. Its entry in `games.js` stays, with `labs: true`,
+`available: false` and `slug: 'fourth-king'`, so the panel still names its history. Before, it needed a group
+gathered, so the dice never picked it (D-374).
 
 ## Reglas
 
@@ -112,16 +116,16 @@ No tiene: solo un celular.
 
 ## Archivos
 
-- `public/fourth-king/index.html`: pantallas.
-- `public/fourth-king/rules.js`: `GAME_ID`, `DEFAULT_CONFIG`, palos, rangos, `CARD_RULES`, límites de jugadores y
+- `public/labs/fourth-king/index.html`: pantallas.
+- `public/labs/fourth-king/rules.js`: `GAME_ID`, `DEFAULT_CONFIG`, palos, rangos, `CARD_RULES`, límites de jugadores y
   `LOCALES` (es, en, pt, de).
-- `public/fourth-king/engine.js`: las reglas puras (C-2): el mazo barajado con azar inyectable (`rng(semilla)` en los
+- `public/labs/fourth-king/engine.js`: las reglas puras (C-2): el mazo barajado con azar inyectable (`rng(semilla)` en los
   tests), `drawCard` (saca y aplica lo automático: sorbos, reyes, la penitencia o la categoría sorteada),
   `resolveTargets` y `genderFallback` (quién toma, D-04, D-05), el regalo del 8, el turno, el cuarto rey y el ranking.
-- `public/fourth-king/engine.test.mjs`: tests del motor (`node public/fourth-king/engine.test.mjs`).
-- `public/fourth-king/game.js`: máquina de estados y dibujo; el pase con `handoff.js`, la mesa con `createNameStore`,
+- `public/labs/fourth-king/engine.test.mjs`: tests del motor (`node public/labs/fourth-king/engine.test.mjs`).
+- `public/labs/fourth-king/game.js`: máquina de estados y dibujo; el pase con `handoff.js`, la mesa con `createNameStore`,
   `trackStart` y `trackFinish` (D-44, D-210).
-- `public/fourth-king/style.css`: estilos propios (carta, mesa, coronas, final).
+- `public/labs/fourth-king/style.css`: estilos propios (carta, mesa, coronas, final).
 - `public/cuarto-rey/index.html`: página puente generada desde la ruta vieja (D-192); no se edita.
 
 Gancho de solo lectura para las pruebas (C-14): `window.__cuartoRey`, con `state()` (una copia de la partida),

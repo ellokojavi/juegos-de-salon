@@ -5,7 +5,7 @@
  * cae con la cara del elegido hacia adelante; abajo aparece su nombre y se abre el juego. Tocar
  * en cualquier parte mientras rueda lo abre de inmediato. La Copa no entra: es una semana con
  * amigos, no una partida para sacar al azar. Tampoco un juego que pide un grupo (tres o más
- * jugadores como mínimo, como Cuarto Rey): quien tira el dado puede estar solo (D-374).
+ * jugadores como mínimo): quien tira el dado puede estar solo (D-374).
  *
  * Al irse no hay pantalla vacía: el juego abre mostrando el mismo dado, y el dado se desvanece
  * recién cuando el juego está dibujado (llegada.js, D-237).

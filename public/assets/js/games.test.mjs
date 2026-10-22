@@ -34,8 +34,9 @@ const COMPROBACIONES = {
   motor: c => existe(`public/${c}/engine.js`) ? null : `falta public/${c}/engine.js (C-2)`,
   'pruebas-del-motor': c => existe(`public/${c}/engine.test.mjs`) ? null : `falta public/${c}/engine.test.mjs (C-2, C-12)`,
   gancho: c => gancho(c) ? null : `public/${c}/game.js no expone un gancho window.__… para las pruebas (C-14)`,
-  especificacion: c => {
-    const doc = `docs/games/${c}.md`;
+  // A game in La Bodega lives in public/labs/<slug>/, but its spec is docs/games/<slug>.md (D-420)
+  especificacion: (c, juego) => {
+    const doc = `docs/games/${juego.slug || c}.md`;
     if (!existe(doc)) return `falta la especificación ${doc} (C-13)`;
     const texto = leer(doc);
     let desde = -1;
@@ -68,7 +69,7 @@ for (const g of GAMES) {
   const exc = EXCEPCIONES[g.id] || {};
   const suyas = [], pendientes = [];
   for (const [nombre, comprobar] of Object.entries(COMPROBACIONES)) {
-    const falla = comprobar(carpeta);
+    const falla = comprobar(carpeta, g);
     if (exc[nombre]) {
       if (falla) pendientes.push(nombre);
       else suyas.push(`la excepción '${nombre}' ya no hace falta (la comprobación pasa): bórrala de EXCEPCIONES en games.test.mjs`);

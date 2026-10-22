@@ -36,7 +36,7 @@ await ev(`document.querySelector('.sound-toggle').click(); 1`);
 console.log('after toggle:', await ev(`document.querySelector('.sound-toggle').textContent + ' muted=' + localStorage.getItem('juegos-de-salon:muted')`));
 await ev(`document.querySelector('.sound-toggle').click(); 1`);
 
-await b.go(`${SITE}/fourth-king/`);
+await b.go(`${SITE}/labs/fourth-king/`);
 console.log('game sound btn:', await ev(`document.querySelector('.sound-toggle')?.textContent`), 'audio ctx ok:', await ev(`typeof AudioContext`));
 await shot('02-intro');
 await play(['Javi', 'Cata', 'Pancho', 'Fran'], '04-table');
@@ -95,9 +95,9 @@ if (final === 'screen-end') {
 console.log('final screen:', final, '| screenshots:', [...taken].sort().join(' '));
 
 // ---- the remembered table migrates from juegos-de-salon:players to createNameStore (C-6) ----
-await b.go(`${SITE}/fourth-king/`);
+await b.go(`${SITE}/labs/fourth-king/`);
 await ev(`localStorage.clear(); localStorage.setItem('juegos-de-salon:players', JSON.stringify([{name:'Ana',gender:'f'},{name:'Beto',gender:'m'},{name:'Cami',gender:'x'},{name:'Dani',gender:'f'},{name:'Eli',gender:'m'}])); 1`);
-await b.go(`${SITE}/fourth-king/`);
+await b.go(`${SITE}/labs/fourth-king/`);
 await ev(`document.getElementById('btn-go-setup').click(); 1`); await sleep(300);
 const migrated = await ev(`JSON.stringify({ rows: [...document.querySelectorAll('#players-form input')].map(i=>i.value), genders: [...document.querySelectorAll('#players-form .gender .on')].map(x=>x.dataset.g).join(''), newStore: JSON.parse(localStorage.getItem('juegos-de-salon:cuarto-rey:names')||'[]').length, oldStore: localStorage.getItem('juegos-de-salon:players') })`);
 console.log('migrated table:', migrated);
@@ -109,7 +109,7 @@ await b.go(`${SITE}/`); await ev(`localStorage.removeItem('juegos-de-salon:cuart
 await ev(`[...document.querySelectorAll('.lang-toggle button')].find(x=>/EN/.test(x.textContent)).click(); 1`); await sleep(1200);
 console.log('menu in English:', await ev(`document.querySelector('.game-card')?.innerText.replace(/\\n/g,' | ')`));
 await shot('11-menu-en');
-await b.go(`${SITE}/fourth-king/`);
+await b.go(`${SITE}/labs/fourth-king/`);
 await play(['Javi', 'Cata', 'Pancho', 'Fran'], '12-table-en');
 console.log('table in English:', await ev(`[...document.querySelectorAll('#screen-play .deck-count, #screen-play .tap')].map(x=>x.textContent.trim()).join(' | ')`));
 
