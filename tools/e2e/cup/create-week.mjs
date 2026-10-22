@@ -1,6 +1,6 @@
 // La Copa's new create screen (D-425), end to end, as a lab key holder sees it (`?test&lab`; on
 // localhost the lab opens by itself): the week is in view from the start; 🎲 Crear al azar draws
-// it again, the cards spinning like a slot machine; each week style draws by its rule; tapping a game opens the sheet
+// it again, the cards spinning like a slot machine, and on a small phone it scrolls the week into view; each week style draws by its rule; tapping a game opens the sheet
 // with the whole pool, which swaps, replaces, moves the day and picks
 // its version; a day is still dragged by its grip; the PIN goes once, with 👁; "More options"
 // folds the language, the audience, the link and (in the test store) the 3-day cup, and says in
@@ -72,6 +72,20 @@ try {
       const f=[...document.querySelectorAll('#semana-dias .semana-dia')];
       return !document.querySelector('#semana-dias .baraja') && f.every(x=>x.querySelector('.semana-juego b').textContent===J[x.dataset.juego].nombre)})()`);
     ok(landed, 'in under a second every card is still and shows the week drawn');
+  }
+  // On a small phone (320×640) the week starts below the 🎲: rolling scrolls it into view
+  {
+    await b.send('Emulation.setDeviceMetricsOverride', { width: 320, height: 640, deviceScaleFactor: 2, mobile: true });
+    await ev(`(scrollTo(0, 0), 1)`); await sleep(200);
+    const before = JSON.parse(await ev(`JSON.stringify(document.getElementById('semana-dias').getBoundingClientRect())`));
+    await click('#btn-dado'); await sleep(900);
+    const after = JSON.parse(await ev(`JSON.stringify({ dado: document.getElementById('btn-dado').getBoundingClientRect().top, lista: document.getElementById('semana-dias').getBoundingClientRect() })`));
+    ok(before.bottom > 640 && after.dado >= 0 && after.dado < 40 && after.lista.bottom <= 640,
+      `at 320×640 the roll scrolls the week into view (the 🎲 at ${Math.round(after.dado)} px, the week ends at ${Math.round(after.lista.bottom)} px)`);
+    await b.shot('04-roll-small');
+    await click('#btn-dado'); await sleep(900);
+    ok(Math.abs(await ev(`document.getElementById('btn-dado').getBoundingClientRect().top`) - after.dado) < 2, 'with the week already in view, rolling again does not move the page');
+    await b.send('Emulation.setDeviceMetricsOverride', { width: 360, height: 760, deviceScaleFactor: 2, mobile: true });
   }
 
   // The styles: each one draws by its rule
