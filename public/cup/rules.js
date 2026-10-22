@@ -1545,7 +1545,7 @@ const EN = {
   roundStart: 'Start the round',
   roundNext: 'Next round',
   roundDone: 'Round over: {pts} points.',
-  finalSoFar: 'You\'re at {pts} of 100: the average of your rounds so far.',
+  finalSoFar: 'You\'re at {pts} out of 100: the average of your rounds so far.',
   seeResults: 'See result',
 
   // Phone notifications (D-223)
