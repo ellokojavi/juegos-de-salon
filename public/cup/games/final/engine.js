@@ -41,4 +41,13 @@ export const puntosRonda = {
 /** De 0 a 100 (D-113): el promedio de las cinco rondas, que valen de 0 a 100 cada una. */
 export const puntaje = rondas => Math.round(RONDAS.reduce((s, r) => s + (rondas[r] ? puntosRonda[r](rondas[r]) : 0), 0) / RONDAS.length);
 
+/**
+ * The running score between rounds (D-417): the average of the rounds played so far, from 0 to 100,
+ * on the same scale as the result. After the last round it equals `puntaje`.
+ */
+export const puntajeParcial = rondas => {
+  const hechas = RONDAS.filter(r => rondas[r]);
+  return hechas.length ? Math.round(hechas.reduce((s, r) => s + puntosRonda[r](rondas[r]), 0) / hechas.length) : 0;
+};
+
 export const tarjeta = rondas => RONDAS.map(r => `${EMOJI[r]}${rondas[r] ? puntosRonda[r](rondas[r]) : 0}`).join(' ');
