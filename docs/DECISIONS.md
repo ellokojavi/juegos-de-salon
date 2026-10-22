@@ -53,7 +53,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (405)
+## In force (406)
 
 | D | Title | Status |
 |---|---|---|
@@ -461,8 +461,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-414](decisions/D-414.md) | Uno al día points reach everyone, on /today/, and October is backfilled | amended by D-415 |
 | [D-415](decisions/D-415.md) | A day a 🧊 saved goes up to Firebase, and the month's points are rebuilt from it every night | current |
 | [D-416](decisions/D-416.md) | La Copa: a linked player who lost their session re-enters with the player's PIN | current |
-| [D-419](decisions/D-419.md) | Auto-merge on every ready PR, unless the owner says not to | current |
 | [D-417](decisions/D-417.md) | La Gran Final's running score is the average so far, out of 100 | current |
+| [D-419](decisions/D-419.md) | Auto-merge on every ready PR, unless the owner says not to | current |
 
 ## No longer in force (10)
 
