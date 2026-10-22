@@ -11,7 +11,7 @@ const ES = {
   juego: {
     nombre: 'Agentes', habilidad: 'asociar',
     como: [
-      `Cada palabra es un espía en clave. Toca las que van con la pista: «MAR · 3» son 3. Llegan ${CUANTAS} pistas.`,
+      `Cada palabra es el nombre en clave de un espía. Toca las que van con la pista: «MAR · 3» son 3. Llegan ${CUANTAS} pistas.`,
       `Evita las ${NEUTRALES} neutrales (−${RESTA_NEUTRAL}) y al asesino (−${RESTA_ASESINO}): se parecen a una pista y la cortan.`,
       'Si dudas, mantén apretada una carta para marcarla, o pasa de pista.',
     ],
@@ -102,7 +102,7 @@ const PT = {
     ],
     agClue: 'Pista {n} de {t}', agMissing: 'Faltam {n}', agMissingOne: 'Falta 1',
     agPass: '⏭️ Próxima pista', agFinish: '🏁 Terminar', agFinishSure: '🏁 Sim, terminar',
-    agLeftOne: 'Falta encontrar 1 agente. Terminar mesmo assim?', agLeft: 'Faltam encontrar {n} agentes. Terminar mesmo assim?',
+    agLeftOne: 'Ainda falta 1 agente. Terminar mesmo assim?', agLeft: 'Ainda faltam {n} agentes. Terminar mesmo assim?',
     agMarksHelp: '💡 Segure uma carta para marcá-la como suspeita 📌. De novo para descartá-la 🚫 e mais uma vez para tirar a marca.',
     agDiscarded: '🚫 Descartada: segure-a para tirar a marca.',
     agMarkSuspect: '📌 Marcada, sem revelar. Toque nela para revelar.', agMarkDiscard: '🚫 Descartada: assim você não a revela sem querer.', agMarkNone: 'Sem marca.',
@@ -122,7 +122,7 @@ const DE = {
   juego: {
     nombre: 'Agenten', habilidad: 'Assoziieren',
     como: [
-      `Jedes Wort ist ein Spion. Tipp die an, die zum Hinweis passen: „MEER · 3“ heißt 3. Es kommen ${CUANTAS} Hinweise.`,
+      `Jedes Wort ist ein Deckname. Tipp die an, die zum Hinweis passen: „MEER · 3“ heißt 3. Es kommen ${CUANTAS} Hinweise.`,
       `Meide die ${NEUTRALES} Unbeteiligten (−${RESTA_NEUTRAL}) und den Attentäter (−${RESTA_ASESINO}): Sie beenden den Hinweis.`,
       'Unsicher? Halt eine Karte gedrückt, um sie zu markieren, oder überspring den Hinweis.',
     ],
@@ -148,7 +148,7 @@ const DE = {
     agNeutral: `Unbeteiligt: −${RESTA_NEUTRAL}. Der Hinweis bricht ab.`, agAssassin: `Der Attentäter! −${RESTA_ASESINO}. Der Hinweis bricht ab.`,
     agSealDone: 'Komplett', agSealCut: 'Abgebrochen', agSealPassed: 'Übersprungen',
     agEndWin: 'Mission erfüllt!', agEndHalf: 'Mission halb erfüllt', agEndFail: 'Mission gescheitert', agEndAssassin: 'Der Attentäter hat dich erwischt',
-    agTrapHit: '💀 Du bist auf {w} hereingefallen: Es sah nach {p} aus, war aber keiner von deinen.', agTrapDodged: '💀 Du bist dem Attentäter ausgewichen: {w}, das nach {p} aussah.',
+    agTrapHit: '💀 Du bist auf {w} hereingefallen: Es sah nach {p} aus, war aber keiner von deinen.', agTrapDodged: '💀 Du bist dem Attentäter ausgewichen: {w} sah nach {p} aus.',
     agTempts: '≈ {p}', agWholeBoard: '🗺️ Das ganze Brett',
     agBdFound: '🕵️ Du hast {n} von {t} Agenten gefunden: +{pts}.', agBdNeutralOne: '⬜ Du hast 1 Unbeteiligten erwischt: −{pts}.', agBdNeutrals: '⬜ Du hast {n} Unbeteiligte erwischt: −{pts}.',
     agBdAssassin: '💀 Du hast den Attentäter erwischt: −{pts}.',
