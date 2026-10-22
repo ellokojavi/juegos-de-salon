@@ -1274,8 +1274,7 @@
     "timeline/table.mjs",
     "timeline/tie.mjs",
     "timeline/verdict.mjs",
-    "versioning.mjs",
-    "zz-recap-look.mjs"
+    "versioning.mjs"
   ],
   "documents": [
     {
