@@ -92,11 +92,6 @@ export function tarjetaUnoAlDia({ lang, raiz = '', alTocar }) {
 }
 
 /**
- * The card with two destinations (D-414, lab): a link over the whole card opens /today/, and the chip,
- * a separate button above it, plays today's game ("▶ Jugar hoy") or, once played, opens /today/
- * ("✅ Tus puntos"). Two sibling controls, never one inside the other.
- */
-/**
  * The chip once today is played: the month's points and place (owner's request). The last ones the
  * server gave, cached by /today/, if they already count today; otherwise this phone's own count.
  */
@@ -113,12 +108,19 @@ function chipPuntos(T, lang) {
     : [el('span', { class: 'uad-card-pos' }, Number(pts || 0).toLocaleString(lang)), el('span', { class: 'uad-card-sub' }, el('b', {}, `${P.pts} `), el('i', {}, P.delMes))];
 }
 
+/**
+ * The card with two destinations (D-414): a link over the whole card opens /today/, and the chip,
+ * a separate control above it, plays today's game ("▶ Jugar hoy") or, once played, shows the month's
+ * place and points and opens /today/. Two sibling controls, never one inside the other.
+ */
 function tarjetaDosDestinos({ lang, raiz, alTocar }) {
   const { T, hecho, aria, racha } = estadoAcceso(lang, raiz, alTocar);
   const ir = () => { alTocar?.(); trackUnoAlDia('boton'); };
   const chip = hecho
-    ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, 'aria-label': T.ariaTusPuntos, onClick: ir }, ...chipPuntos(T, lang))
+    ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, onClick: ir }, ...chipPuntos(T, lang))
     : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', 'aria-label': T.ariaJugarHoy, onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, `▶ ${T.jugar}`);
+  // The screen reader hears the place and the points too, not only «your points»
+  if (hecho) chip.setAttribute('aria-label', `${T.ariaTusPuntos}: ${chip.textContent}`);
   return el('div', { class: 'game-card alta uad-card dos' + (hecho ? ' hecho' : ''), id: 'btn-uno-al-dia' },
     el('a', { class: 'uad-card-link', id: 'btn-uad-abrir', href: `${raiz}today/`, 'aria-label': aria, onClick: ir }),
     el('div', { class: 'emoji' }, el('span', { 'aria-hidden': 'true' }, '📅')),
