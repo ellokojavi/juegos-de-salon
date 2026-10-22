@@ -52,12 +52,12 @@ export function montar(raiz, ctx) {
     const r = final.RONDAS[J.ronda];
     const M = JUEGOS_COPA[r];
     const hechos = estados(p, J);
-    const lleva = final.puntaje(hechos);
+    const lleva = final.puntajeParcial(hechos);
     poner(raiz, el('div', { class: 'stack' },
       el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.roundOf, { i: J.ronda + 1 })),
       el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, M.emoji), el('h2', { class: 'display display--md' }, M.nombre)),
       el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), el('p', {}, RONDAS_FINAL[r])),
-      J.ronda > 0 ? el('p', { class: 'muted center' }, fmt(T.finalSoFar, { pts: lleva, max: J.ronda * 100 })) : null,
+      J.ronda > 0 ? el('p', { class: 'muted center' }, fmt(T.finalSoFar, { pts: lleva })) : null,
       el('button', { class: 'btn btn--yellow', id: 'btn-ronda', onClick: () => { SFX.tap(); J.jugando = true; guardar(); ronda(); } }, `${M.emoji} ${T.roundStart}`)));
   };
 

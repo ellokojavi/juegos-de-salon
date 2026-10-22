@@ -769,7 +769,7 @@ const ES = {
   roundStart: 'Empezar la ronda',
   roundNext: 'Siguiente ronda',
   roundDone: 'Ronda terminada: {pts} puntos.',
-  finalSoFar: 'Llevas {pts} de {max} puntos.',
+  finalSoFar: 'Vas con {pts} de 100: el promedio de tus rondas hasta ahora.',
   seeResults: 'Ver resultado',
 
   // Avisos al celular (D-223)
@@ -1545,7 +1545,7 @@ const EN = {
   roundStart: 'Start the round',
   roundNext: 'Next round',
   roundDone: 'Round over: {pts} points.',
-  finalSoFar: 'You have {pts} of {max} points so far.',
+  finalSoFar: 'You\'re at {pts} out of 100: the average of your rounds so far.',
   seeResults: 'See result',
 
   // Phone notifications (D-223)
@@ -2321,7 +2321,7 @@ const PT = {
   roundStart: 'Começar a rodada',
   roundNext: 'Próxima rodada',
   roundDone: 'Rodada terminada: {pts} pontos.',
-  finalSoFar: 'Você tem {pts} de {max} pontos.',
+  finalSoFar: 'Você está com {pts} de 100: a média das suas rodadas até agora.',
   seeResults: 'Ver resultado',
 
   // Avisos no celular (D-223)
@@ -3098,7 +3098,7 @@ const DE = {
   roundStart: 'Runde starten',
   roundNext: 'Nächste Runde',
   roundDone: 'Runde vorbei: {pts} Punkte.',
-  finalSoFar: 'Du hast {pts} von {max} Punkten.',
+  finalSoFar: 'Du stehst bei {pts} von 100: der Durchschnitt deiner bisherigen Runden.',
   seeResults: 'Ergebnis ansehen',
 
   // Mitteilungen aufs Handy (D-223)

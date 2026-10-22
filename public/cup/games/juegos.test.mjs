@@ -600,6 +600,13 @@ test('final: cinco rondas, promedio de 0 a 100', () => {
   assert.equal(final.puntaje(perfecto), 100);
   assert.equal(final.puntaje({}), 0);
   assert.equal(final.tarjeta(perfecto), '⏳100 🔢100 👑100 🔤100 📅100');
+  // Between rounds, the running score is the average of the rounds played, on the same 0-100 scale
+  // as the result, and after the last round it equals it (D-417; #637: it read "60 of 300")
+  const tres = { linea: perfecto.linea, numero: perfecto.numero, reinas: perfecto.reinas };
+  assert.equal(final.puntajeParcial(tres), 100);
+  assert.equal(final.puntajeParcial({}), 0);
+  assert.equal(final.puntajeParcial({ ...tres, reinas: { fin: true, rendido: true } }), 67);
+  assert.equal(final.puntajeParcial(perfecto), final.puntaje(perfecto));
 });
 
 // El desglose del puntaje explica la cuenta con frases completas (D-106)
