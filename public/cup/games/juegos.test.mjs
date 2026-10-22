@@ -633,6 +633,9 @@ test('final: the rounds are the week\'s games (D-418)', () => {
   const res = { rondas: ['zip', 'linea', 'conexiones'], pts: { zip: 30, linea: 100 } };
   assert.equal(final.puntaje(res), 43);
   assert.equal(final.tarjeta(res), '〰️30 ⏳100 🔗0');
+  // Between rounds, the average of the rounds played so far, out of 100 (D-417)
+  assert.equal(final.puntajeParcial(res), 65);
+  assert.equal(final.puntajeParcial({ rondas: res.rondas, pts: {} }), 0);
 });
 
 // El desglose del puntaje explica la cuenta con frases completas (D-106)
