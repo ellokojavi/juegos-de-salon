@@ -72,7 +72,7 @@ ok(await waitFor(`/#1 del mes/.test(document.getElementById('uad-puntos')?.inner
 await ev(`document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] [data-p="rachas"]').click(); 1`);
 ok(await waitFor(`/🔥/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'')`), 'Rachas shows the streak with 🔥');
 ok(/comodín/.test(await text('#uad-invitar')), `inviting says what you win (${(await text('#uad-invitar')).replace(/\n/g, ' / ')})`);
-ok(/salva tu racha el día que no juegas/.test(await text('#uad-comodines-texto')) && /Tienes 0 de 2/.test(await text('#uad-comodines-texto')), 'and the wildcards say what they are for and how many she has');
+ok(/salva tu racha el día que no juegas/.test(await text('#uad-comodines-texto')) && /Comodines: 0 de 2/.test(await text('#uad-invitar')), 'and the wildcards say what they are for and how many she has');
 await click('#btn-uad-invitar');
 await waitFor(`window.__compartido.length > 0`, 20);
 const inv = await ev(`window.__compartido[0]?.text || ''`);
