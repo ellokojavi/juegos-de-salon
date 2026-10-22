@@ -121,6 +121,17 @@ ok(await waitFor(`/Sara/.test(document.querySelector('[data-tabla="uno-al-dia-pt
 await b.go(`${SITE}/today/?test`, 1800);
 ok(await waitFor(`/Sara/.test(document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] .rk-lista')?.innerText||'') && /#1 del mes/.test(document.getElementById('uad-puntos')?.innerText||'')`), `/today/ shows the same ranking and her place (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
 await b.shot('daily-points');
+// Sharing the ranking (owner's request): its picture, a short line and her invite link
+ok(await ev(`!!document.querySelector('.rk-ranking[data-tabla="uno-al-dia"] #btn-uad-compartir-ranking')`), 'the ranking carries its share button');
+ok(await ev(`Math.round(document.getElementById('btn-uad-compartir-ranking').getBoundingClientRect().height) >= 44`), 'and it is at least 44 px tall');
+await ev(`window.__compartido.length = 0; document.getElementById('btn-uad-compartir-ranking').click(); 1`);
+ok(await waitFor(`window.__compartido.length > 0`, 20), 'tapping it opens the share menu');
+const rk = await ev(`(async()=>{const d=window.__compartido[0];const f=(d.files||[])[0];let dim=null;if(f){const im=await createImageBitmap(f);dim=im.width+'x'+im.height;const r=new FileReader();window.__rkPng=await new Promise(ok=>{r.onload=()=>ok(r.result);r.readAsDataURL(f)})}return JSON.stringify({text:d.text,files:(d.files||[]).length,type:f?.type,dim})})()`).then(JSON.parse);
+ok(rk.files === 1 && rk.type === 'image/png' && /^1080x\d+$/.test(rk.dim), `with the ranking's picture as a PNG (${rk.dim})`);
+ok(/Uno al día/.test(rk.text) && /#1/.test(rk.text) && /today\/\?inv=/.test(rk.text), `a short line with her place and her link to play (${rk.text.replace(/\n/g, ' / ')})`);
+if (process.env.RANKING_PNG) { const { writeFileSync } = await import('node:fs'); writeFileSync(process.env.RANKING_PNG, Buffer.from((await ev('window.__rkPng')).split(',')[1], 'base64')); }
+ok(await ev(`(()=>{const r=document.querySelector('.rk-ranking[data-tabla="uno-al-dia"]'),h=document.getElementById('uad-hoy');return !h || !!(r.compareDocumentPosition(h)&Node.DOCUMENT_POSITION_FOLLOWING)})()`), 'the ranking comes before "Hoy"');
+ok(!await ev(`!!document.getElementById('btn-compartir-uad')`), 'and /today/ no longer has «Compartir mi resultado»');
 const dayCell = `document.querySelector('#uad-cal button.l1, #uad-cal button.l2, #uad-cal button.l3')`;
 await ev(`${dayCell}?.click(); 1`);
 ok(await waitFor(`document.getElementById('uad-dia')?.previousElementSibling?.previousElementSibling?.classList.contains('uad-cal') && /Sumó/.test(document.getElementById('uad-dia').innerText)`), `a tap on a calendar day shows its details right under the grid (${(await text('#uad-dia')).replace(/\n/g, ' · ')})`);

@@ -130,7 +130,8 @@ ok(await ev(`[...document.querySelectorAll('.uad-bloque h2')].some(h => h.textCo
 ok(await ev(`document.querySelectorAll('#uad-cal .hoy').length`) === 1 && /🧶/.test(await text('#uad-cal .hoy')), "the calendar marks today with the game's emoji");
 ok(/^\d+$/.test(await text('#uad-cal .hoy .cal-pts')), `and the points it added in a pill: the game plus the streak bonus (${await text('#uad-cal .hoy .cal-pts')})`);
 ok(/Hoy sumaste \d+ pts/.test(await text('#uad-puntos')), `the season box says what today added (${(await text('#uad-puntos')).replace(/\n/g, ' · ')})`);
-ok(await ev(`!!document.querySelector('#uad-por-juego [data-id="desenredo"]')`), 'and Desenredo in "Por juego"');
+ok(!await ev(`!!document.getElementById('uad-por-juego')`), 'no "Por juego" block (owner\'s request)');
+ok(!await ev(`!!document.getElementById('btn-compartir-uad')`), 'nor «Compartir mi resultado» on /today/ (owner\'s request)');
 
 // With history: a long streak, days from other months and a trend
 await ev(`(()=>{const d=JSON.parse(localStorage.getItem('${KEY}'));
@@ -141,7 +142,6 @@ await ev(`(()=>{const d=JSON.parse(localStorage.getItem('${KEY}'));
   localStorage.setItem('${KEY}',JSON.stringify(d));return 1})()`);
 await b.go(`${SITE}/today/`, 1500);
 ok(/🔥 9/.test(await text('#uad-trio')) && /\b9\b/.test(await text('#uad-trio')), `streak of 9 and best streak of 9 (${(await text('#uad-trio')).replace(/\n/g, ' ')})`);
-ok(/En Reinas vas mejorando/.test(await text('#uad-tendencia')), `the trend in words (${await text('#uad-tendencia')})`);
 await ev(`document.querySelector('#uad-cal').previousElementSibling.firstElementChild.click(); 1`); await sleep(300);
 ok(/septiembre/i.test(await text('.uad-cal-cab')) && /👑/.test(await text('#uad-cal')), "the previous month shows September's days");
 await b.shot('today');
