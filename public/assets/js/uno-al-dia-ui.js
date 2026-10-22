@@ -8,9 +8,9 @@ import { COMMON, SITIO, withLang } from './i18n.js';
 import { GAMES, SUELTOS, PORTADA, gameById, SLUGS_SIN_PAGINA } from './games.js';
 import { tiene } from './parametros.js';
 import { tirar, alAzar, TEXTOS as AZAR } from './azar.js';
-import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir } from './compartir.js';
+import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir, lamina, aArchivo, fuente, COLORES, MARCO } from './compartir.js';
 import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel } from './uno-al-dia.js';
-import { UNO_AL_DIA } from './records.js';
+import { UNO_AL_DIA, bandera } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
 import { salidasFin } from './fin.js';
 
@@ -375,3 +375,79 @@ export function ponerTarjeta(tarjeta, despues = document.querySelector('#screen-
   document.getElementById('uad-tarjeta')?.remove();
   despues.after(tarjeta);
 }
+
+/* ------------------------------------------------------------------ */
+/* Sharing the ranking                                                 */
+/* ------------------------------------------------------------------ */
+
+const MEDALLAS = ['🥇', '🥈', '🥉'];
+const mmssCorto = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+/** What a row shows on the right, as on screen: the month's points (and streak), the streak, or the score and time. */
+const valorFila = (f, tipo) => (tipo === 'puntos' ? `${f.s} pts · 🔥${f.r || 0}` : tipo === 'racha' ? `🔥 ${f.s}` : `${f.s}${f.ms ? ` · ⏱ ${mmssCorto(f.ms)}` : ''}`);
+
+/**
+ * The ranking as a picture (owner's request): the share frame with "📅 Uno al día" and the tab on
+ * top, the rows shown (top 10, then the player's neighbours), the player's row highlighted, and the
+ * site under it. `d` is what `bloqueRanking` keeps of the tab on screen (`caja.datos`).
+ */
+export async function laminaRanking({ lang, d, url }) {
+  const T = textos(lang).uad;
+  const mes = new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date());
+  const contexto = d.pestana === 'mes' || d.pestana === 'amigosMes'
+    ? `🏅 ${fmt(T.rkCompCab, { mes })}${d.pestana === 'amigosMes' ? ` · ${d.rotulo}` : ''}`
+    : `🏅 ${T.rkPalabra} · ${d.rotulo}`;
+  const filas = [...d.top.slice(0, 10).map(f => ({ f })), ...(d.vecinos.length ? [{ sep: true }, ...d.vecinos.slice(0, 3).map(f => ({ f }))] : [])];
+  const ALTO = 86, SEP = 50, PIE = 70;
+  const contenido = filas.reduce((a, x) => a + (x.sep ? SEP : ALTO), 0) + PIE;
+  const alto = Math.min(1920, Math.max(MARCO.ancho, MARCO.arriba + contenido + MARCO.abajo + 60));
+  const { cv, c, W, H } = await lamina({ alto, cab: { emoji: '📅', titulo: T.nombre, contexto }, url });
+  let y = MARCO.arriba + Math.max(20, (H - MARCO.arriba - MARCO.abajo - contenido) / 2);
+  const X0 = 90, X1 = W - 90;
+  for (const x of filas) {
+    if (x.sep) { c.textAlign = 'center'; c.fillStyle = 'rgba(255,255,255,0.5)'; c.font = fuente(900, 40); c.fillText('⋯', W / 2, y + 36); y += SEP; continue; }
+    const f = x.f, mia = d.yo && f.jid === d.yo;
+    c.fillStyle = mia ? 'rgba(255, 210, 63, 0.22)' : 'rgba(0, 0, 0, 0.22)';
+    c.beginPath(); if (c.roundRect) c.roundRect(X0 - 20, y + 6, X1 - X0 + 40, ALTO - 12, 22); else c.rect(X0 - 20, y + 6, X1 - X0 + 40, ALTO - 12); c.fill();
+    if (mia) { c.strokeStyle = COLORES.amarillo; c.lineWidth = 3; c.stroke(); }
+    const base = y + ALTO / 2 + 15;
+    c.textAlign = 'left'; c.fillStyle = '#ffffff';
+    c.font = fuente(900, 44); c.fillText(f.puesto == null ? '·' : MEDALLAS[f.puesto - 1] || String(f.puesto), X0, base);
+    const valor = valorFila(f, d.tipo);
+    c.font = fuente(900, 40); const wv = c.measureText(valor).width;
+    c.textAlign = 'right'; c.fillStyle = mia ? COLORES.amarillo : '#ffffff'; c.fillText(valor, X1, base);
+    // The name, cut with an ellipsis if it would reach the value
+    let nombre = [bandera(f.co), f.n || '?'].filter(Boolean).join(' ') + (d.campeon && f.jid === d.campeon ? ' 🏆' : '');
+    c.textAlign = 'left'; c.font = fuente(800, 42); c.fillStyle = '#ffffff';
+    const max = X1 - wv - 40 - (X0 + 90);
+    if (c.measureText(nombre).width > max) { while (nombre.length > 1 && c.measureText(`${nombre}…`).width > max) nombre = nombre.slice(0, -1); nombre += '…'; }
+    c.fillText(nombre, X0 + 90, base);
+    y += ALTO;
+  }
+  c.textAlign = 'center'; c.font = fuente(800, 36); c.fillStyle = COLORES.cian;
+  c.fillText(T.rkCompImagen, W / 2, y + 50);
+  return aArchivo(cv, nombreArchivo('uno-al-dia', 'ranking', d.pestana));
+}
+
+/**
+ * The button under the Uno al día ranking on /today/: the picture of the tab on screen, a short line
+ * (the player's place if they are in it) and the link to play — their invite link when signed in, as
+ * the invite card. Where pictures can't be shared, `compartir` downloads it and copies the text.
+ */
+export function botonCompartirRanking({ lang, caja, alTocar }) {
+  const C = textos(lang), T = C.uad;
+  return botonCompartir({
+    rotulo: T.rkCompartir, id: 'btn-uad-compartir-ranking', clase: 'btn btn--cyan rk-compartir',
+    alTocar: () => { alTocar?.(); trackUnoAlDia('compartir'); },
+    avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
+    armar: async () => {
+      const d = caja.datos;
+      const red = await import('./uno-al-dia-red.js');
+      const url = await red.linkInvitar(withLang(URL_HOY, lang)).catch(() => withLang(URL_HOY, lang));
+      const mia = d && [...d.top, ...d.vecinos].find(f => d.yo && f.jid === d.yo);
+      const texto = [cabecera({ emoji: '📅', titulo: T.nombre, contexto: fmt(T.rkCompCab, { mes: new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date()) }) }),
+        mia?.puesto ? fmt(T.rkCompVoy, { p: mia.puesto }) : T.rkCompSin].join('\n');
+      return { titulo: T.nombre, texto, url, que: 'uno-al-dia-ranking', imagen: d && d.top.length ? await laminaRanking({ lang, d, url }) : null };
+    },
+  });
+}
+
