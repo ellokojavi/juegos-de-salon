@@ -1,6 +1,7 @@
 // The recap of an ended cup over the home page (D-423) end to end, with La Copa's podium demo (`?recap=demo`): the window in the
 // four languages at 320 px, its table and its line per player, the link to the cup, the ✕, the hidden frame that builds the
-// table gone once it answered, nothing recorded by the demo, and its card in the lab. Prints ✗ if something fails.
+// table gone once it answered, nothing recorded by the demo, and its card in the lab. Then Uno al día's season (D-424,
+// `?recap=season-demo`): the same window, week by week, with the player's place and the new season's line. Prints ✗ if something fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { TEXTS, SEEN_KEY } from '../../../public/assets/js/recap.js';
@@ -31,6 +32,21 @@ await ev(`document.querySelector('.recap .splash-x').click(); 1`);
 ok(await waitFor(`!document.querySelector('.splash-capa') && document.body.style.overflow === ''`, 2000), 'the ✕ closes it and the page scrolls again');
 ok(await ev(`localStorage.getItem('${SEEN_KEY}') === null`), 'the demo is not recorded as seen');
 
+// Uno al día's season (D-424): the made-up October, this phone 3rd of 8
+for (const lang of ['es', 'en', 'pt', 'de']) {
+  await b.go(`${SITE}/?recap=season-demo&lang=${lang}`, 300);
+  ok(await waitFor(`!!document.querySelector('.recap .recap-tabla tbody tr')`), `${lang}: the season's window opens`);
+  await sleep(500);
+  ok(await ev(`document.querySelector('.recap .splash-kicker').textContent`) === TEXTS[lang].seasonKicker, `${lang}: it says the season ended`);
+  ok(await ev(`document.querySelectorAll('.recap-tabla tbody tr').length === 8 && document.querySelector('.recap-tabla tr.mia .recap-lugar').textContent === '🥉'`), `${lang}: eight players, the player 3rd and marked`);
+  ok(await ev(`document.querySelector('.recap-tabla th.recap-dias').textContent`) === TEXTS[lang].colWeeks, `${lang}: the line is week by week`);
+  ok(await ev(`!!document.querySelector('.recap-nota') && document.querySelector('.recap-ir').href.endsWith('/today/')`), `${lang}: the new season's line, and the way to Uno al día`);
+  ok(await ev(`document.documentElement.scrollWidth <= innerWidth && document.querySelector('.recap').scrollWidth <= document.querySelector('.recap').clientWidth`), `${lang}: nothing wider than 320 px`);
+  await b.shot(`season-${lang}`);
+}
+await ev(`document.querySelector('.recap .splash-luego').click(); 1`);
+ok(await waitFor(`!document.querySelector('.splash-capa')`, 2000) && await ev(`localStorage.getItem('juegos-de-salon:uno-al-dia:temporada-vista') === null`), 'Cerrar closes it, and the demo records nothing');
+
 // With no cup due, the home page opens no frame (and the scripts never see a recap of their own)
 await b.go(`${SITE}/?test`, 2500);
 ok(await ev(`!document.querySelector('.recap') && document.querySelectorAll('iframe').length === 0`), 'no cup due: no window and no frame');
@@ -38,6 +54,7 @@ ok(await ev(`!document.querySelector('.recap') && document.querySelectorAll('ifr
 // Its card in the lab's improvements, with the demo's link (D-409)
 await b.go(`${SITE}/labs/?test`);
 ok(await ev(`document.querySelector('#mejoras #seccion-resumen-copa #btn-resumen-copa')?.getAttribute('href') === '../?recap=demo'`), 'the lab lists it among the improvements, with the demo');
+ok(await ev(`document.querySelector('#mejoras #seccion-resumen-temporada #btn-resumen-temporada')?.getAttribute('href') === '../?recap=season-demo'`), "and Uno al día's season, with its demo");
 
 console.log(failures ? `\n✗ ${failures} failure(s)` : '\n✓ recap: all green');
 process.exit(failures ? 1 : 0);
