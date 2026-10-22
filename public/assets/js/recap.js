@@ -231,6 +231,12 @@ export function seasonView({ month, recap }, lang) {
   };
 }
 
+/**
+ * The cups whose recap every player of theirs sees, lab key or not (D-426): the owner opens a cup's
+ * recap while the window is still in the lab. By code; a cup told and gone may stay listed.
+ */
+export const OPEN_CUPS = ['QNPFM']; // Thursday Guys #4, ends 2026-10-23
+
 /** How long the hidden frame may take to read the cup and answer, before the home page gives up. */
 const FRAME_MS = 10000;
 
@@ -268,13 +274,17 @@ export async function startRecap({ lang = 'es', search = globalThis.location?.se
       showRecap(seasonView(found, lang), { lang, onLeave: () => season.markSeasonSeen(month) });
       return true;
     }
-    const cupDue = mode === 'demo' || (!mode && !!dueCup());
+    const due = mode ? null : dueCup();
+    const cupDue = mode === 'demo' || !!due;
     const seasonDue = mode === 'season-demo' || (!mode && !!season.dueSeason());
     // Nothing due on this phone: no lab check, no network
     if (!cupDue && !seasonDue) return false;
-    // Still in the lab (D-395). lab: #seccion-resumen-copa, lab: #seccion-resumen-temporada
+    // Still in the lab (D-395), except a cup the owner opened to all its players (OPEN_CUPS, D-426).
+    // lab: #seccion-resumen-copa, lab: #seccion-resumen-temporada
+    const open = !!due && OPEN_CUPS.includes(due.code);
     const { labAccess } = await import('./lab-access.js');
-    if (!(await labAccess())) return false;
+    const lab = open || await labAccess();
+    if (!lab) return false;
     if (cupDue) {
       const found = await askFrame(mode === 'demo');
       if (found?.recap) {
@@ -282,7 +292,8 @@ export async function startRecap({ lang = 'es', search = globalThis.location?.se
         return true;
       }
     }
-    if (!seasonDue) return false;
+    // An open cup skipped the lab check: the season still needs it
+    if (!seasonDue || (open && !(await labAccess()))) return false;
     const found = mode === 'season-demo' ? season.demoSeason() : await season.loadSeasonRecap();
     if (!found) return false;
     showRecap(seasonView(found, lang), { lang, onLeave: mode ? null : () => season.markSeasonSeen(found.month) });
