@@ -116,6 +116,10 @@ ol.como li { line-height: 1.45; }
   box-shadow: 0 3px 0 #b86e00;
 }
 .btn-dado:active { transform: translateY(2px); box-shadow: 0 1px 0 #b86e00; }
+/* At 320 px "Otra semana" / "Outra semana" ran past the panel's padding to its border (U-11): a touch smaller there,
+   and if a language still does not fit, the button drops under the title instead of overflowing */
+.semana-cabeza { flex-wrap: wrap; }
+@media (max-width: 360px) { .btn-dado { font-size: 1.05rem; padding: 0 12px; } }
 .semana-estilos { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .semana-estilos .estilo {
   flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; cursor: pointer; white-space: nowrap;
