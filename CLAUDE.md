@@ -51,6 +51,7 @@ language. Older Spanish content and Spanish file and identifier names are being 
 | End-to-end tests | [tools/e2e/README.md](tools/e2e/README.md) | When running or writing a script |
 | Which tests a change runs | [docs/TEST-SCOPE.md](docs/TEST-SCOPE.md), the design (D-391, D-392): a push tests only what changed since the PR last passed | Before touching `tools/e2e/affected.mjs` or when a PR runs more than it should |
 | Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
+| PR previews | [docs/PREVIEWS.md](docs/PREVIEWS.md): each PR on GitHub Pages (D-429) | When the owner reviews a change, or a preview fails |
 
 **A rule that changes is changed in its place, in the same PR:** if a new decision changes a
 canon, the PR edits the canon and marks the old decision (`corregida por` / `reemplazada por`). A
@@ -156,7 +157,10 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    ```
    GitHub merges it on its own when `tests` and `end-to-end` pass; if they fail or there is a conflict,
    it does not merge and it has to be fixed. A PR that is not ready (a draft, one waiting for a
-   decision from the owner) does not get auto-merge. **Every ready PR gets it, unless the owner
+   decision from the owner) does not get auto-merge. **While the owner reviews a change round by
+   round** (D-429), the PR stays open without auto-merge: each round is a push to the same PR, and the
+   owner looks at its preview (the 🔍 comment, `ellokojavi.github.io/juegos-de-salon-previews/<branch>/`)
+   instead of a new PR merging per round; auto-merge goes on when the owner approves. **Every ready PR gets it, unless the owner
    explicitly says not to auto-merge** (D-419, the owner's rule): then the PR stays open, says so in its
    description, and waits for the owner to merge it.
 5. **Waiting for the merge** (D-400): right after turning on auto-merge, the session runs

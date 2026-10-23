@@ -65,6 +65,9 @@ export const ENVS = ['prod', 'dev'];
 const STAMP = { '.sv': 'timestamp' };
 const INC = { '.sv': { increment: 1 } };
 
+/** Where PR previews are served, under the owner's github.io (D-429). */
+export const PREVIEWS = '/juegos-de-salon-previews/';
+
 /**
  * Entorno según la URL: pruebas o app publicada.
  *
@@ -73,8 +76,10 @@ const INC = { '.sv': { increment: 1 } };
  * celular de verdad, D-67). Antes solo el computador contaba como prueba, y las partidas hechas
  * por Tailscale llegaban al panel como gente jugando (D-138).
  */
-export function envOf({ hostname = '' } = {}) {
+export function envOf({ hostname = '', pathname = '' } = {}) {
   const h = String(hostname).toLowerCase();
+  // A PR's preview (D-429): the owner trying a change before it merges, not people playing
+  if (h.endsWith('.github.io') && String(pathname).startsWith(PREVIEWS)) return 'dev';
   if (/^(localhost|127\.\d+\.\d+\.\d+|\[::1\]|0\.0\.0\.0)$/.test(h)) return 'dev';
   if (/^(10\.\d+|192\.168|172\.(1[6-9]|2\d|3[01]))\.\d+\.\d+$/.test(h)) return 'dev';
   if (/(^|\.)(ts\.net|local)$/.test(h)) return 'dev';

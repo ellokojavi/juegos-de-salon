@@ -44,8 +44,9 @@
   var INC = { '.sv': { increment: 1 } };
 
   /** Lo mismo que `envOf` de stats.js: pruebas es todo lo que no se sirve desde internet. */
-  function entorno(host) {
+  function entorno(host, path) {
     var h = String(host || '').toLowerCase();
+    if (/\.github\.io$/.test(h) && String(path || '').indexOf('/juegos-de-salon-previews/') === 0) return 'dev';
     if (/^(localhost|127\.\d+\.\d+\.\d+|\[::1\]|0\.0\.0\.0)$/.test(h)) return 'dev';
     if (/^(10\.\d+|192\.168|172\.(1[6-9]|2\d|3[01]))\.\d+\.\d+$/.test(h)) return 'dev';
     if (/(^|\.)(ts\.net|local)$/.test(h)) return 'dev';
@@ -117,7 +118,7 @@
 
   var V = {
     pagina: pagina(location.pathname),
-    env: entorno(location.hostname),
+    env: entorno(location.hostname, location.pathname),
     nav: navegador(navigator.userAgent),
     fallas: [],          // lo que se mandó en esta carga, para las pruebas (C-14)
     vistos: {},
