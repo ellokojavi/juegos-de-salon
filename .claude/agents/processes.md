@@ -310,9 +310,10 @@ that (after a new game, after a big text change), saying why.
    `public/assets/js/games.js` only if the order changed; then the change goes in your PR with an
    unnumbered `changelog/processes-<date>.md` entry (it changes `public/`), and `games.test.mjs`
    must stay green. Same order: nothing to commit, and next week it is due again.
-   And the end-to-end groups (D-307): once a week, `node tools/e2e/groups.mjs measure` in your
-   worktree; if `durations.json` changed, it goes in your PR (the groups rebuild themselves from
-   it).
+   And the end-to-end groups (D-307, D-428): every round, `node tools/e2e/groups.mjs measure` in
+   your worktree; if `durations.json` changed, it goes in your PR (the groups rebuild themselves
+   from it, and that file alone runs no script). Weekly was too slow: on October 22 a script
+   measured at 201 s took 370 s, and its group set the whole check at 9 minutes.
    And **the projects folder** (D-315, the owner's request), in every round and at the end, with
    your PR already pushed (or your worktree removed if it gave no PR):
    `node tools/agents/clean-worktrees.mjs`, run **from the repo's main folder**. It deletes the

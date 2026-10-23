@@ -68,10 +68,10 @@ job that runs its scripts one after another (that they stay even and each script
 time and its result, and the `screenshots-g<n>` artifact has, in one folder per script, the screenshots of
 what failed or passed on the second attempt. A new script gets in on its own, with an assumed 90 s until it is
 measured: each job leaves a "Durations" notice with how long each script took, and
-`node tools/e2e/groups.mjs measure` moves it into `durations.json` (the processes round, when the
-groups get uneven). A script that goes over about 4 minutes is split into parts (`PARTS` in
-`ci.mjs`, D-204): `cup/tournament.mjs` into `cup`, `labs` and `demos`, and `cup-games/languages.mjs` into
-one per game. Each part reaches the script as `--part <name>`; without a part, the script runs whole
+`node tools/e2e/groups.mjs measure` moves it into `durations.json` (the processes round, every round;
+that file alone runs no script, D-428). A script that goes over about 4 minutes is split into parts (`PARTS` in
+`ci.mjs`, D-204): `cup/tournament.mjs` into `cup`, `labs` and `demos`, `cup/languages.mjs` into `cup`,
+`standalone`, `screens-a` and `screens-b` (D-428), and `cup-games/languages.mjs` into one per game. Each part reaches the script as `--part <name>`; without a part, the script runs whole
 (that is how `readme.py screenshots` runs it, and anyone testing it by hand).
 
 A PR that touches nothing in the browser (`docs/`, `marketing/`, `.claude/`, the `.md` files outside `public/`
@@ -129,7 +129,7 @@ uses these instead of `sleep` and `go(url, ms)`; `sleep` remains for what really
 clock (letting a timer run, a double tap).
 
 ```bash
-node tools/e2e/ci.mjs              # all the CI ones, one after another, with a summary
+node tools/e2e/ci.mjs              # all the CI ones, one after another (not before pushing: the check runs them, D-428)
 node tools/e2e/ci.mjs --groups     # the groups GitHub would run (JSON)
 node tools/e2e/groups.mjs show     # the same, with their estimated time
 node tools/e2e/ci.mjs cup/tournament.mjs   # just that one
