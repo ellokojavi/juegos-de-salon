@@ -52,15 +52,16 @@ export const CAMPAIGNS = {
     ],
   },
   // A teaser of 🚂 Tren en Vilo, still in the lab: a train stops at the edge of a gap where the bridge
-  // should be. It says something is coming, not what: no name, no link
+  // should be. It says something is coming, not what: no name, no link, and the texts say nothing of
+  // crossing (the owner's request: a mystery)
   'tren-en-vilo-pronto': {
     emoji: '🚂',
     langs: ['es', 'en'],
     kicker: { es: 'Muy pronto', en: 'Coming soon' },
     title: { es: 'Algo se viene…', en: 'Something is coming…' },
     lead: {
-      es: 'Un juego nuevo está por llegar. ¿Podrá cruzar el tren?',
-      en: 'A new game is on its way. Will the train make it across?',
+      es: 'Un juego nuevo está por llegar. ¿Qué será?',
+      en: 'A new game is on its way. What could it be?',
     },
     items: [{ img: 'assets/splash/bridges-teaser.gif', still: 'assets/splash/bridges-teaser.png', ratio: '8 / 5' }],
   },
