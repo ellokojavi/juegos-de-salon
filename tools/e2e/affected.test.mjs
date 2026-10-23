@@ -114,3 +114,13 @@ console.log('affected: which end-to-end scripts a PR needs, green');
   assert.deepEqual(playedOn('assets/js/ui.js', ['cup', 'queens'], graph), ['cup', 'queens'], 'a shared module reaches every page');
 }
 console.log('affected: played, not just imported, green');
+
+// A picture a script names by its path from the root (a splash teaser) reaches the pages that load the
+// script, not every page (D-430)
+{
+  const { assetsNamed } = await import('./affected.mjs');
+  assert.deepEqual(assetsNamed('assets/js/splash.js', `{ img: 'assets/splash/bridges-teaser.gif', still: "assets/splash/bridges-teaser.png" }`, {}),
+    ['assets/splash/bridges-teaser.gif', 'assets/splash/bridges-teaser.png']);
+  const g = closures({ 'index.html': '<script type="module" src="assets/js/splash.js"></script>', 'assets/js/splash.js': `const x = 'assets/splash/a.gif';`, 'hangman/index.html': '<p></p>' });
+  assert.ok(g[''].has('assets/splash/a.gif') && !g.hangman.has('assets/splash/a.gif'));
+}

@@ -54,7 +54,7 @@ export function references(path, text) {
 /**
  * The site's files a script builds a URL to at run time (`new URL('assets/css/splash.css', ROOT)`,
  * `register(new URL('sw.js', root))`, D-391): the first argument of `new URL`, when it is a real file, read from the script's own folder or from the
- * site's root. Only scripts: a page's HTML says what it loads in its tags.
+ * site's root, and the media it names by its path from the root. Only scripts: a page's HTML says what it loads in its tags.
  */
 export function assetsNamed(path, text, files) {
   if (!/\.m?js$/.test(path)) return [];
@@ -65,6 +65,9 @@ export function assetsNamed(path, text, files) {
     const ref = m[1].replace(/^\//, '');
     for (const f of [posix.normalize(posix.join(dir, ref)), posix.normalize(ref)]) if (files[f] != null && f !== path) { out.push(f); break; }
   }
+  // And the media it names by path from the site's root (`img: 'assets/splash/bridges-teaser.gif'` in
+  // splash.js): a changed clip or picture reaches the pages that load the script, not every page
+  for (const m of text.matchAll(/["'`](assets\/[\w./-]+\.(?:gif|png|jpe?g|webp|svg|mp4|webm))["'`]/g)) out.push(posix.normalize(m[1]));
   return out;
 }
 
