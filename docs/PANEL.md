@@ -210,6 +210,7 @@ días de La Copa no se muestran acá: quién está jugando un juego ya se ve en 
 
 **Entorno**: el selector separa lo publicado (`prod`) de las pruebas (`dev`): el computador, la
 red de la casa (10/8, 172.16/12, 192.168/16, `.local`) y Tailscale (`*.ts.net`, D-67, D-138).
+PR previews count as `dev` too: a `*.github.io` host under `/juegos-de-salon-previews/` (D-429).
 Las pruebas de punta a punta pegan contra Firebase de verdad y caen en `dev`, así que no ensucian
 las cifras reales. `lab` quedó solo para leer lo que se guardó mientras existió el laboratorio.
 

@@ -265,7 +265,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-213](decisions/D-213.md) | One source per rule: the canons state today's rule | amended by D-394 |
 | [D-214](decisions/D-214.md) | The home page filter is in English in the URL: `?type=logic` | current |
 | [D-215](decisions/D-215.md) | Wins per group game, and records for solo Toque y Fama and Línea Relámpago | amended by D-217 |
-| [D-216](decisions/D-216.md) | Auto-merge by default, with end-to-end required on `main` | amended by D-419 |
+| [D-216](decisions/D-216.md) | Auto-merge by default, with end-to-end required on `main` | amended by D-419, D-429 |
 | [D-217](decisions/D-217.md) | Rankings leave the lab | current |
 | [D-218](decisions/D-218.md) | What happens after merging waits for no one | amended by D-252, D-400 |
 | [D-219](decisions/D-219.md) | /records/ gets ordered: general at the top, Juegos or Copas below, and the flag next to each name | amended by D-236 |
