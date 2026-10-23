@@ -426,7 +426,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   opens with ▶ Play; the way out is a quiet "Ahora no". It fits a 320×640 screen with three games. `?splash=<id>` previews one (one that is not on, only with a lab key, D-395);
   `?test` and the scripts never see it. Tried in the lab from the home page's experiments bar (D-389).
   **One window per visit** (D-423, D-424): when the recap of an ended cup of La Copa, or of an ended
-  season of Uno al día, opens (in the lab for now, except the cups the owner opens to all their players, D-426), the splash waits for the next visit (`startRecap` in `assets/js/recap.js` runs first in `index.html`).
+  season of Uno al día, opens (in the lab for now, except the cups the owner opens to all their players, D-426), the splash waits for the next visit (`startRecap` in `assets/js/recap.js` runs first). In the lab, one gate (`assets/js/home-windows.js`, D-431) extends it to every window the home page opens on its own: recap, then splash (one campaign per visit), then the install bubble.
 - **Arriba de la lista, los accesos que eligen por ti.** 🎲 Juego al azar, bajo la bajada, sale
   de los juegos que se pueden abrir, nunca de La Copa (D-188), y abre el juego con el
   dado encima (D-237). It always picks among every game, whatever filter is on, and never one that
