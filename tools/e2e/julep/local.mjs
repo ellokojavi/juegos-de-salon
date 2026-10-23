@@ -55,7 +55,7 @@ const legalOk = () => ev(`(()=>{
 
 await b.go(`${SITE}/`);
 await ev(`localStorage.clear(); 1`);
-await b.go(`${SITE}/julep/`);
+await b.go(`${SITE}/labs/julep/`);
 await shot('01-intro');
 console.log('modes:', await ev(`[...document.querySelectorAll('.mode')].map(m=>m.innerText.split('\\n')[0]).join(' | ')`));
 
@@ -102,7 +102,7 @@ await sleep(4200);   // the confetti lasts 4 s and would cover the screenshot's 
 await shot('08-result');
 
 /* ---------------- Three on one phone ---------------- */
-await b.go(`${SITE}/julep/`); await ev(`localStorage.clear(); 1`); await b.go(`${SITE}/julep/`);
+await b.go(`${SITE}/labs/julep/`); await ev(`localStorage.clear(); 1`); await b.go(`${SITE}/labs/julep/`);
 await ev(`document.querySelectorAll('.mode')[0].click(); 1`); await sleep(300);
 await ev(`(()=>{const n=['Javi','Cata','Nico'];[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))});return 1})()`);
 await ev(`document.querySelectorAll('.largos button')[0].click(); 1`);   // short game
@@ -124,7 +124,7 @@ while ((await screen()) !== 'screen-result' && rounds++ < 500) {
   if (!resumed && v.manoN === 1 && v.phase === 'baza') {
     resumed = true;
     const before = JSON.stringify(v.historia.length) + '/' + v.manoN;
-    await b.go(`${SITE}/julep/`); await sleep(400);
+    await b.go(`${SITE}/labs/julep/`); await sleep(400);
     await ev(`(()=>{const b=[...document.querySelectorAll('#resume-slot .btn')][0]; if(b) b.click(); return 1})()`);
     await sleep(700);
     const now = await view();

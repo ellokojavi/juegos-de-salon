@@ -12,7 +12,7 @@ import { LOCALES as BS } from '../../public/battleship/rules.js';
 import { LOCALES as HM } from '../../public/hangman/rules.js';
 import { LOCALES as LD } from '../../public/liars-dice/rules.js';
 import { LOCALES as GE } from '../../public/generala/rules.js';
-import { LOCALES as JU } from '../../public/julep/rules.js';
+import { LOCALES as JU } from '../../public/labs/julep/rules.js';
 // With several sessions at once, each serves its worktree on its own port (D-135)
 const SITE = process.env.SITE || process.env.SITIO || 'http://localhost:8765';
 

@@ -31,7 +31,7 @@ The games with their own section below come first; after them, the one-player ga
 | 🎲 [Liar's Dice / Dudo / Dado Mentiroso](#-liars-dice-dudo) | 1 to 6 | One phone · Several phones · Versus the phone | v0.32 |
 | 📝 [Generala / General](#-generala) | 1 to 6 | One phone · Several phones · Play solo | v0.189 |
 | ⚓ [Battleship / Batalla Naval / Batalha Naval](#-battleship-batalla-naval) | 1 to 2 | One phone · Two phones · Versus the phone | v0.6 |
-| 🍹 [Julep / Julepe / Paga o Bolo](#-julep-julepe) | 1 to 6 | One phone · Several phones · Versus the phone | ⏸ paused |
+| 🍹 [Julep / Julepe / Paga o Bolo](#-julep-julepe) | 1 to 6 | One phone · Several phones · Versus the phone | 🧪 lab |
 | 👑 [Fourth King / Cuarto Rey / Quarto Rei](#-fourth-king-cuarto-rey) | 4 to 6 | One phone | 🧪 lab |
 | 🔗 [Connections / Conexiones / Conexões](https://juegosdesalon.cl/connections/) | 1 | Play alone | 📦 La Bodega |
 | 🔤 [Bulls and Cows: Word / Toque y Fama: Palabra / Toque e Fama: Palavra](https://juegosdesalon.cl/word/) | 1 | Play alone | Also in The Cup |
@@ -349,7 +349,7 @@ Spec and design: [docs/games/battleship.md](docs/games/battleship.md)
 
 ## 🍹 Julep (Julepe)
 
-> **Paused.** The rules text still does not land for new players, so the home page shows it as "Coming soon" while it is reworked (D-88, D-142). The game works at [`/julep/`](https://juegosdesalon.cl/julep/).
+> **In the lab's Storeroom since D-434**: off the home page and the search (it had been paused there as "Coming soon" since D-88). It still plays at `/labs/julep/` for lab key holders, rooms included.
 
 <!-- generated: screenshots:julepe · written by python3 tools/release/readme.py update -->
 <table>
@@ -448,11 +448,11 @@ node public/cup/games/plots/engine.test.mjs
 node public/cup/games/routes/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
-node public/julep/engine.test.mjs
 node public/labs/bridges/engine.test.mjs
 node public/labs/code/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
 node public/labs/fourth-king/engine.test.mjs
+node public/labs/julep/engine.test.mjs
 node public/labs/pips/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
@@ -658,7 +658,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   en/ · pt/ · de/             Language doors
   cup/                        The Cup: engine, stores, score breakdown, CSV export, reports, demos, table image, recap (D-423, D-427)
     games/                    The Cup's games, one folder each (engine.js + ui.js + word content per language)
-  timeline/ · bulls-and-cows/ · hangman/ · liars-dice/ · generala/ · battleship/ · julep/
+  timeline/ · bulls-and-cows/ · hangman/ · liars-dice/ · generala/ · battleship/
                               The group games (engine.js + tests, game.js, rules.js, decks/ where needed)
   agents/ · queens/ …         The Cup's games played on their own (generated from cup/suelto/)
   labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422)

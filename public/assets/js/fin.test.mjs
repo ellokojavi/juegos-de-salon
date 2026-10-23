@@ -45,5 +45,5 @@ assert.doesNotMatch(ui, /T\.hoyPuntos/, 'the One a Day card does not repeat the 
 assert.match(ui, /plegada: true/, 'under a result, inviting is folded');
 const rk = leer('assets/js/ranking.js');
 assert.match(rk, /bloqueJugador\(\{ destacado: true, compacto: true, leyenda: T\.countThis/, '"count this game" is the one-line Sign in card');
-assert.match(leer('julep/game.js'), /julepes === 1 \? T\.julepesOne/, 'Julepe says "1 julepe"');
+assert.match(leer('labs/julep/game.js'), /julepes === 1 \? T\.julepesOne/, 'Julepe says "1 julepe"');
 console.log('✓ fin.test.mjs');
