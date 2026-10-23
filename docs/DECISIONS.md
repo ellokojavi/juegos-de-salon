@@ -479,7 +479,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-433](decisions/D-433.md) | Uno al día's first attempt counts from its start; La Copa's clock survives another phone | current |
 | [D-434](decisions/D-434.md) | Julepe leaves the home page for La Bodega | current |
 | [D-435](decisions/D-435.md) | The home page draws its last look at once; Uno al día's place refreshes on the card | current |
-| [D-436](decisions/D-436.md) | Uno al día's ranking loads once and shows at once (lab) | current |
+| [D-436](decisions/D-436.md) | Uno al día's ranking loads once and shows at once | current |
 
 ## No longer in force (11)
 
