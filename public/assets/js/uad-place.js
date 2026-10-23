@@ -1,6 +1,6 @@
 /**
- * Uno al día's place on the home page card, fresh from the server (the owner's request; in the lab,
- * D-395, lab: #seccion-portada-al-tiro). The card draws at once with the last place /today/ cached;
+ * Uno al día's place on the home page card, fresh from the server (the owner's request,
+ * D-435). The card draws at once with the last place /today/ cached;
  * this reads the month's table afterwards, writes the same cache /today/ writes (so either page
  * reads the other's) and swaps the chip only if the place or the points changed. Only once today
  * is played (before that the chip says ▶ Jugar hoy) and for someone signed in. Loaded by the home

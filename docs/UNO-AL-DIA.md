@@ -267,7 +267,7 @@ already played when it was read). A cache from another month is ignored. Its poi
 they were read today after playing (`d` is today and `h` is set); otherwise the chip shows this
 phone's own count (`seasonPoints` over the days in `localStorage`, `daily-points.js`). So until
 /today/ is opened after playing, the place is the last one the server gave.
-In the lab (D-435, card `#seccion-portada-al-tiro`), the home page itself refreshes it: once today
+Since D-435 the home page itself refreshes it: once today
 is played and someone is signed in, `uad-place.js` reads the month's table after the page is drawn,
 writes the same `uad-pts-cache` and swaps the chip if the place or the points changed.
 
