@@ -220,16 +220,18 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
   const lista = el('div', { class: 'rk-lista', 'aria-live': 'polite' });
   const seg = pestanas.length > 1 ? el('div', { class: 'rk-seg', role: 'tablist' }, pestanas.map(p => el('button', {
     type: 'button', role: 'tab', 'data-p': p, class: p === actual ? 'on' : '', 'aria-selected': String(p === actual),
-    onClick: () => { alTocar(); actual = p; caja.datos = null; marcar(); cargar(); },
+    onClick: () => { alTocar(); actual = p; caja.datos = null; pintado = false; marcar(); cargar(); },
   }, PESTANAS[p].rotulo(T)))) : null;
   const marcar = () => seg?.querySelectorAll('button').forEach(b => { const on = b.dataset.p === actual; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); });
   let turno = 0;
+  // A list (or its empty line) is on screen for this tab, so a fast reload keeps it until the new one
+  let pintado = false;
   const guardada = () => `juegos-de-salon:rk-visto:${juego}:${actual}`;
   async function cargar() {
     const mio = ++turno;
-    const visto = rapido && !caja.datos && leerVisto(guardada());
+    const visto = rapido && !pintado && leerVisto(guardada());
     if (visto) pintar(visto);
-    else if (!rapido || !caja.datos) { lista.replaceChildren(el('p', { class: 'muted rk-centro' }, T.loading)); caja.datos = null; }
+    else if (!rapido || !pintado) { lista.replaceChildren(el('p', { class: 'muted rk-centro' }, T.loading)); caja.datos = null; }
     try {
       const J = await jugador();
       const conPuntos = (PESTANAS[actual].tabla || juego) === UAD_PUNTOS;
@@ -244,13 +246,14 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
       if (rapido && !v.amigos) guardarVisto(guardada(), { top: v.top, vecinos: v.vecinos || [], campeon });
       pintar({ ...v, campeon });
     } catch (e) {
-      if (mio === turno && !(rapido && caja.datos)) lista.replaceChildren(el('p', { class: 'rk-error' }, T.error));
+      if (mio === turno && !(rapido && pintado)) lista.replaceChildren(el('p', { class: 'rk-error' }, T.error));
     }
   }
   function pintar(v) {
     const campeon = v.campeon ?? null;
     const yo = leerYo()?.jid;
     caja.datos = null;
+    pintado = true;
     lista.replaceChildren();
     const sinAmigos = PESTANAS[actual].vacio?.(T) || T.emptyFriends;
     if (!v.top.length) { lista.append(el('p', { class: 'muted rk-centro' }, v.amigos ? sinAmigos : T.empty)); return; }
