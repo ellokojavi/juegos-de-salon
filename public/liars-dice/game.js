@@ -19,7 +19,7 @@ import { createLocalTransport } from '../assets/js/transport/local.js';
 import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
-import { modoHoy, introHoy, terminarHoy, ponerTarjeta } from '../assets/js/uno-al-dia-ui.js';
+import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
 import { azarDel, puntajeDudo } from '../assets/js/uno-al-dia.js';
 import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
@@ -655,6 +655,7 @@ function startMatch(mode, names, config, hoy = null) {
   S.shownRound = 0;
   S.shownWin = false;
   keepAwake();
+  if (hoy) empezarHoy(hoy);   // the first attempt counts from here (D-433, lab)
   trackStart({ game: GAME_ID, mode: hoy ? MODO_UNO_AL_DIA : mode, players: mode === 'cpu' ? 1 : players.length, nombres: mode === 'cpu' ? [names?.A] : players.map(r => names?.[r]) }); // señal de uso (D-44, D-210)
   onChange();
 }

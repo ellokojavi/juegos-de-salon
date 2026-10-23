@@ -775,6 +775,17 @@
         }
       }
     },
+    "unoAlDiaInicio": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$jid": {
+        ".read": "$jid.matches(/^[a-z0-9]{8}$/)",
+        "$d": {
+          ".write": "auth != null && $jid.matches(/^[a-z0-9]{8}$/) && $d.matches(/^[0-9]{5}$/) && !data.exists() && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists()",
+          ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+        }
+      }
+    },
     "invitados": {
       ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
