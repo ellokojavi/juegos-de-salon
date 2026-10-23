@@ -68,12 +68,19 @@
   <script src="assets/js/vigia.js"></script>
   <link rel="stylesheet" href="assets/css/base.css">
   <!-- One a Day's card and the modules only it brings, fetched with the page and not one after another
-       (they used to arrive 1.4 s late on a slow network) -->
+       (they used to arrive 1.4 s late on a slow network); stats.js too, which the page itself now
+       loads on its own. home-preload.test.mjs fails if one is missing -->
   <link rel="modulepreload" href="assets/js/uno-al-dia.js">
   <link rel="modulepreload" href="assets/js/uno-al-dia-ui.js">
   <link rel="modulepreload" href="assets/js/records.js">
   <link rel="modulepreload" href="cup/games/semilla.js">
   <link rel="modulepreload" href="assets/js/rng.js">
+  <link rel="modulepreload" href="assets/js/daily-points.js">
+  <link rel="modulepreload" href="assets/js/fin.js">
+  <link rel="modulepreload" href="assets/js/transport/stats.js">
+  <link rel="modulepreload" href="assets/js/firebase-config.js">
+  <link rel="modulepreload" href="assets/js/transport/cleanup.js">
+  <link rel="modulepreload" href="assets/js/back-guard.js">
   <style>
     .hero { text-align: center; padding: 28px 0 18px; }
     .hero .emoji { font-size: 3.2rem; display: block; margin-bottom: 6px; }
@@ -467,8 +474,8 @@
     import { botonAzar, TEXTOS as AZAR } from './assets/js/azar.js';
     import { favoritos, alternarFavorito } from './assets/js/favoritos.js';
     import { param } from './assets/js/parametros.js';
-    import { trackVisit } from './assets/js/transport/stats.js';
-    trackVisit(); // el tráfico del sitio (D-208)
+    // The site's traffic (D-208), loaded on its own: counting the visit never holds up the list
+    import('./assets/js/transport/stats.js').then(({ trackVisit }) => trackVisit()).catch(() => {});
     sparkles();
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
