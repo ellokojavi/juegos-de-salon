@@ -252,6 +252,95 @@ export function anotar(fecha, { j, s, ms }, { storage = globalThis.localStorage,
   return { primera: !antes, dia };
 }
 
+/* ------------------------------------------------------------------ */
+/* The attempt counts from its start (D-433)                           */
+/* ------------------------------------------------------------------ */
+/**
+ * Without this, a bad first attempt could be dropped (Back, reload) and the same board played
+ * again from zero, with the board already known, until one was finished. With a lab key (lab: #seccion-uad-intento; the screens
+ * ask `labAccess()`), starting today's first attempt leaves a marker on this phone (and in Firebase
+ * with a player, `uno-al-dia-red.js`): a solo game left halfway goes on where it was, a group game
+ * left halfway counts 0, and a day that ends with its attempt unfinished counts 0. Only the screens
+ * write the marker, so without it everything here does nothing.
+ */
+export const STARTED_KEY = 'juegos-de-salon:uno-al-dia:empezado';
+/** Today's attempt in progress, per game (moves and active time), to go on where it was. */
+export const SAVE_PREFIX = 'juegos-de-salon:uno-al-dia:partida:';
+/** The most an unfinished attempt is charged: a day. */
+const FORFEIT_MS_MAX = 86400000;
+
+/** The marker, `{ fecha, j, at }`, or null. */
+export function startedAttempt(storage = globalThis.localStorage) {
+  try {
+    const x = JSON.parse(storage.getItem(STARTED_KEY));
+    return x && FECHA.test(x.fecha || '') && typeof x.j === 'string' ? x : null;
+  } catch (_) { return null; }
+}
+
+/** Marks the start of the day's first attempt. Not if the day already has its result. */
+export function markStarted(fecha, j, { storage = globalThis.localStorage, ahora = Date.now() } = {}) {
+  if (leer(storage).dias[fecha]) return false;
+  const antes = startedAttempt(storage);
+  if (antes?.fecha === fecha) return true;
+  try { storage.setItem(STARTED_KEY, JSON.stringify({ fecha, j, at: ahora })); } catch (_) { return false; }
+  return true;
+}
+
+/** Today's attempt started on this phone and not finished yet, or null. */
+export function unfinished(fecha, { storage = globalThis.localStorage } = {}) {
+  const s = startedAttempt(storage);
+  return s && s.fecha === fecha && !leer(storage).dias[fecha] ? s : null;
+}
+
+const saveKey = (fecha, j) => `${SAVE_PREFIX}${fecha}:${j}`;
+const forget = (storage, s) => {
+  try { storage.removeItem(STARTED_KEY); if (s) storage.removeItem(saveKey(s.fecha, s.j)); } catch (_) { /* sin memoria */ }
+};
+
+/**
+ * Records 0 for the day's attempt left unfinished, as the day's result (`anotar`): `{ primera, dia }`,
+ * or null if the day already had one. `j` and `at` say which game and when, when the marker is not on
+ * this phone (it was started on another one, D-433).
+ */
+export function forfeit(fecha, { j, at, storage = globalThis.localStorage, ahora = Date.now() } = {}) {
+  const s = startedAttempt(storage);
+  const mio = s?.fecha === fecha ? s : null;
+  if (leer(storage).dias[fecha]) { if (mio) forget(storage, mio); return null; }
+  const juego = j || mio?.j || juegoDel(fecha);
+  // Charged its time so far: never better than an honest 0 that was played to the end
+  const ms = Math.min(FORFEIT_MS_MAX, Math.max(dailySave(fecha, juego, { storage }).ms, ahora - (at ?? mio?.at ?? ahora)));
+  const r = anotar(fecha, { j: juego, s: 0, ms }, { storage, ahora });
+  if (mio) forget(storage, mio);
+  return r;
+}
+
+/**
+ * On any Uno al día screen: a marker whose day already has its result goes, and one from a day
+ * that ended unfinished counts 0 for that day. Returns the forfeit, or null.
+ */
+export function settleStarted({ storage = globalThis.localStorage, ahora = Date.now() } = {}) {
+  const s = startedAttempt(storage);
+  if (!s) return null;
+  if (leer(storage).dias[s.fecha]) { forget(storage, s); return null; }
+  return s.fecha < fechaLocal(ahora) ? { fecha: s.fecha, ...forfeit(s.fecha, { storage, ahora }) } : null;
+}
+
+/**
+ * Today's attempt in progress of a solo game: `{ jugadas, ms, guardar(jugadas, ms), borrar() }`,
+ * as El caso's (D-267), so going back to it goes on where it was.
+ */
+export function dailySave(fecha, j, { storage = globalThis.localStorage } = {}) {
+  const k = saveKey(fecha, j);
+  let previa = null;
+  try { previa = JSON.parse(storage.getItem(k) || 'null'); } catch (_) { /* de cero */ }
+  return {
+    jugadas: Array.isArray(previa?.jugadas) && previa.jugadas.length ? previa.jugadas : undefined,
+    ms: Number(previa?.ms) || 0,
+    guardar(jugadas, ms) { try { storage.setItem(k, JSON.stringify({ jugadas: jugadas || [], ms })); } catch (_) { /* sin memoria */ } },
+    borrar() { try { storage.removeItem(k); } catch (_) { /* sin memoria */ } },
+  };
+}
+
 /** Los comodines que se pueden tener a la vez. */
 export const COMODINES_MAX = 2;
 /** Cada cuántos días jugados seguidos se gana un comodín. */
@@ -323,6 +412,8 @@ export function porJuego(dias) {
 /** Todo lo que muestra la pantalla, de una vez. */
 export function estado({ storage = globalThis.localStorage, ahora = Date.now() } = {}) {
   const hoy = fechaLocal(ahora);
+  // A day that ended with its attempt unfinished counts 0 before the streak is counted (D-433)
+  settleStarted({ storage, ahora });
   const d = leer(storage);
   const r = recorrer(d.dias, hoy, { regalos: d.regalos || [] });
   return {

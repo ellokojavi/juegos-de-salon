@@ -1,0 +1,101 @@
+/**
+ * The back-swipe guard (D-432), for now only with a lab key. lab: #seccion-volver-atras
+ *
+ * `overscroll-behavior: none` (D-86) already keeps Chrome's own swipe from taking the page, but
+ * iOS's edge swipe and Android's system Back belong to the phone, and no page can stop them. Both
+ * only go back one entry, though: while a game is on, the page adds one entry for its own address,
+ * so a back swipe lands on it instead of leaving, and asks "Leave the game?". `trackStart` arms it
+ * and `trackFinish` / `trackEnd` disarm it (`transport/stats.js`), so every game gets it at once.
+ *
+ * Chrome skips, on Back, an entry a page added without a tap: `arm()` runs inside the tap that
+ * starts the game, and the lab key is asked at load so the answer is ready by then.
+ */
+import { el } from './ui.js';
+import { COMMON, getLang } from './i18n.js';
+import { labAccess } from './lab-access.js';
+
+const MARK = 'backGuard';
+
+/**
+ * The guard, with what it touches passed in so node can test it: `win` (history, location and
+ * popstate) and `ask`, which resolves true when the player chose to leave.
+ */
+export function createBackGuard({ win = globalThis.window, ask = askLeave, allowed = labAccess } = {}) {
+  let armed = false, asking = false;
+  const ours = () => !!win.history.state?.[MARK];
+  const push = () => win.history.pushState({ [MARK]: true }, '', win.location.href);
+  function onPop() {
+    if (!armed) return;
+    // The swipe already left our entry: put it back, so a second swipe asks again instead of leaving
+    push();
+    if (asking) return;
+    asking = true;
+    Promise.resolve(ask()).then(leave => {
+      asking = false;
+      if (!leave || !armed) return;
+      armed = false;
+      win.removeEventListener('popstate', onPop);
+      // Our entry and the game's: back to the page before the game
+      win.history.go(-2);
+    }, () => { asking = false; });
+  }
+  return {
+    get armed() { return armed; },
+    async arm() {
+      if (armed || !win?.history?.pushState) return;
+      let ok = false;
+      try { ok = await allowed(); } catch (_) { ok = false; }
+      if (!ok || armed) return;
+      armed = true;
+      if (!ours()) push();
+      win.addEventListener('popstate', onPop);
+    },
+    disarm() {
+      if (!armed) return;
+      armed = false;
+      win.removeEventListener('popstate', onPop);
+      // The game is over: our entry goes, so Back works as on any page
+      if (ours()) win.history.back();
+    },
+  };
+}
+
+/** "Leave the game?", the bottom sheet of the rest of the app. Resolves true on Leave. */
+export function askLeave({ doc = globalThis.document, lang = getLang() } = {}) {
+  const t = (COMMON[lang] || COMMON.es).backGuard;
+  return new Promise(resolve => {
+    doc.getElementById('back-guard')?.remove();
+    let done = false;
+    const close = leave => {
+      if (done) return;
+      done = true;
+      capa.remove();
+      doc.removeEventListener('keydown', onKey);
+      resolve(leave);
+    };
+    const onKey = e => { if (e.key === 'Escape') close(false); };
+    const stay = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-back-guard-stay', onClick: () => close(false) }, t.stay);
+    const panel = el('div', { class: 'hoja', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'back-guard-title' },
+      el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),
+      el('h2', { id: 'back-guard-title' }, t.title),
+      el('p', {}, t.body),
+      el('div', { class: 'btn-row' },
+        stay,
+        el('button', { type: 'button', class: 'btn btn--ghost', id: 'btn-back-guard-leave', onClick: () => close(true) }, t.leave)));
+    const capa = el('div', { class: 'hoja-capa', id: 'back-guard' }, el('div', { class: 'hoja-fondo', onClick: () => close(false) }), panel);
+    doc.body.append(capa);
+    doc.addEventListener('keydown', onKey);
+    stay.focus();
+  });
+}
+
+let shared = null;
+/** The page's guard. Without a window (node), one that does nothing. */
+export function backGuard() {
+  if (!shared) {
+    shared = globalThis.window?.history ? createBackGuard() : { armed: false, arm: async () => {}, disarm() {} };
+    // Asked now, so the answer is there inside the tap that starts the game
+    if (globalThis.window?.history) labAccess().catch(() => {});
+  }
+  return shared;
+}

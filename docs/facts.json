@@ -1,5 +1,5 @@
 {
-  "version": "0.200.13",
+  "version": "0.200.15",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -18,7 +18,7 @@
     "pt": 100,
     "de": 100
   },
-  "commonKeys": 38,
+  "commonKeys": 39,
   "games": [
     {
       "id": "copa",
@@ -883,6 +883,7 @@
   "modules": [
     "public/assets/js/arrastre.js",
     "public/assets/js/azar.js",
+    "public/assets/js/back-guard.js",
     "public/assets/js/buzon-form.js",
     "public/assets/js/buzon.js",
     "public/assets/js/chat.js",
@@ -1072,8 +1073,10 @@
     "marketing/splash/campaigns.test.mjs",
     "public/assets/js/arrastre.test.mjs",
     "public/assets/js/azar.test.mjs",
+    "public/assets/js/back-guard.test.mjs",
     "public/assets/js/buzon.test.mjs",
     "public/assets/js/compartir.test.mjs",
+    "public/assets/js/daily-attempt.test.mjs",
     "public/assets/js/daily-points.test.mjs",
     "public/assets/js/daily-recap.test.mjs",
     "public/assets/js/favoritos.test.mjs",
@@ -1204,6 +1207,7 @@
     "cup/tournament.mjs",
     "cup/variants.mjs",
     "cup/zip-ten.mjs",
+    "daily-attempt.mjs",
     "daily-group.mjs",
     "daily-languages.mjs",
     "daily-notifications.mjs",

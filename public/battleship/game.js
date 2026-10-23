@@ -18,7 +18,7 @@ import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
 import { createChat } from '../assets/js/chat.js';
-import { modoHoy, introHoy, terminarHoy, ponerTarjeta } from '../assets/js/uno-al-dia-ui.js';
+import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
 import { azarDel, puntajeNaval } from '../assets/js/uno-al-dia.js';
 import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
@@ -890,6 +890,7 @@ function startLocalMode(mode, names, config, hoy = null) {
   document.getElementById('uad-tarjeta')?.remove();   // la de la partida anterior, si la hubo
   if (hoy && !hoy.anotado) hoy.inicio = Date.now();
   keepAwake();
+  if (hoy) empezarHoy(hoy);   // the first attempt counts from here (D-433, lab)
   trackStart({ game: GAME_ID, mode: hoy ? MODO_UNO_AL_DIA : mode, players: mode === 'cpu' ? 1 : 2, nombres: mode === 'cpu' ? [names.A] : Object.values(names || {}) }); // señal de uso (D-44, D-210)
 }
 
