@@ -1192,7 +1192,7 @@ const EN = {
   untilTomorrowNight: 'You can play it until 23:59 tomorrow (48 h).',
   play: 'Play',
   resume: 'Keep playing',
-  resumedElsewhere: "⏱ This game had already started and wasn't saved here: the clock goes on from when you started.",
+  resumedElsewhere: "⏱ This game had already started and wasn't saved here: the clock keeps running from when you started.",
   played: 'You played it',
   seeResult: 'See result',
   lost: 'You didn\'t play it',
