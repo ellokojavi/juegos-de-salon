@@ -58,11 +58,7 @@ export const CAMPAIGNS = {
     emoji: '🚂',
     langs: ['es', 'en'],
     kicker: { es: 'Muy pronto', en: 'Coming soon' },
-    title: { es: 'Algo se viene…', en: 'Something is coming…' },
-    lead: {
-      es: 'Un juego nuevo está por llegar.',
-      en: 'A new game is on its way.',
-    },
+    title: { es: 'Algo nuevo se viene…', en: 'Something new is coming…' },
     items: [{ img: 'assets/splash/bridges-teaser.gif', still: 'assets/splash/bridges-teaser.png', ratio: '8 / 5' }],
   },
 };
