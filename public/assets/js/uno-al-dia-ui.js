@@ -9,7 +9,7 @@ import { GAMES, SUELTOS, PORTADA, gameById, SLUGS_SIN_PAGINA } from './games.js'
 import { tiene } from './parametros.js';
 import { tirar, alAzar, TEXTOS as AZAR } from './azar.js';
 import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir, lamina, aArchivo, fuente, COLORES, MARCO } from './compartir.js';
-import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel, settleStarted, unfinished, forfeit, markStarted } from './uno-al-dia.js';
+import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel, settleStarted, unfinished, forfeit, markStarted, GRUPO } from './uno-al-dia.js';
 import { labAccess } from './lab-access.js';
 import { UNO_AL_DIA, bandera } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
@@ -45,6 +45,8 @@ async function caras() {
 export async function tirarHoy({ lang, raiz = '' }) {
   const e = estado();
   if (!e.juego) return;
+  // An attempt left halfway (D-433): no die, the game is already known; straight to it
+  if (e.inProgress) { location.href = raiz + rutaHoy(e.juego); return; }
   trackUnoAlDia('dado');
   const pool = await caras();
   const T = textos(lang).uad;
@@ -52,6 +54,15 @@ export async function tirarHoy({ lang, raiz = '' }) {
     lang, T: { boton: T.nombre, tocó: fmt(T.tocó, { n: e.numero }) },
     elegido: pool.find(g => g.id === e.juego), destino: raiz + rutaHoy(e.juego),
   });
+}
+
+/**
+ * The play button's label: «▶ Seguir jugando» when today's solo game was left halfway and goes on
+ * (D-433); a group game left halfway already counts 0, so it keeps its usual label.
+ */
+export function rotuloJugar(lang, usual) {
+  const e = estado();
+  return e.inProgress && !GRUPO.includes(e.juego) ? textos(lang).backGuard.stay : usual;
 }
 
 /** Lo que dice el acceso según el día: si ya jugó, su racha y, para la tarjeta, la segunda línea ("🔥 1 · Jugar hoy" o "✅ Listo · 🔥 1"). */
@@ -121,7 +132,7 @@ function tarjetaDosDestinos({ lang, raiz, alTocar }) {
   const ir = () => { alTocar?.(); trackUnoAlDia('boton'); };
   const chip = hecho
     ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, onClick: ir }, ...chipPuntos(T, lang, racha))
-    : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', 'aria-label': T.ariaJugarHoy, onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, `▶ ${T.jugar}`);
+    : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', 'aria-label': T.ariaJugarHoy, onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, rotuloJugar(lang, `▶ ${T.jugar}`));
   // The screen reader hears the place and the points too, not only «your points»
   if (hecho) chip.setAttribute('aria-label', `${T.ariaTusPuntos}: ${chip.textContent}`);
   return el('div', { class: 'game-card alta uad-card dos' + (hecho ? ' hecho' : ''), id: 'btn-uno-al-dia' },

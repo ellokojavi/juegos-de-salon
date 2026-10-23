@@ -6,6 +6,7 @@
  * only go back one entry, though: while a game is on, the page adds one entry for its own address,
  * so a back swipe lands on it instead of leaving, and asks "Leave the game?". `trackStart` arms it
  * and `trackFinish` / `trackEnd` disarm it (`transport/stats.js`), so every game gets it at once.
+ * The header's «‹ Menú» is the same wish to leave, so while a game is on it asks the same.
  *
  * Chrome skips, on Back, an entry a page added without a tap: `arm()` runs inside the tap that
  * starts the game, and the lab key is asked at load so the answer is ready by then.
@@ -16,9 +17,12 @@ import { labAccess } from './lab-access.js';
 
 const MARK = 'backGuard';
 
+/** The header's way out of a game: «‹ Menú» (or «‹ Laboratorio» in a lab game). */
+export const MENU = 'a.back';
+
 /**
- * The guard, with what it touches passed in so node can test it: `win` (history, location and
- * popstate) and `ask`, which resolves true when the player chose to leave.
+ * The guard, with what it touches passed in so node can test it: `win` (history, location,
+ * popstate and the document's clicks) and `ask`, which resolves true when the player chose to leave.
  */
 export function createBackGuard({ win = globalThis.window, ask = askLeave, allowed = labAccess } = {}) {
   let armed = false, asking = false;
@@ -33,11 +37,29 @@ export function createBackGuard({ win = globalThis.window, ask = askLeave, allow
     Promise.resolve(ask()).then(leave => {
       asking = false;
       if (!leave || !armed) return;
-      armed = false;
-      win.removeEventListener('popstate', onPop);
+      off();
       // Our entry and the game's: back to the page before the game
       win.history.go(-2);
     }, () => { asking = false; });
+  }
+  // «‹ Menú» mid-game: the same question; Leave follows the link
+  function onClick(ev) {
+    const a = ev.target?.closest?.(MENU);
+    if (!armed || !a || ev.defaultPrevented || ev.button > 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
+    ev.preventDefault();
+    if (asking) return;
+    asking = true;
+    Promise.resolve(ask()).then(leave => {
+      asking = false;
+      if (!leave || !armed) return;
+      off();
+      win.location.assign(a.href);
+    }, () => { asking = false; });
+  }
+  function off() {
+    armed = false;
+    win.removeEventListener('popstate', onPop);
+    win.document?.removeEventListener('click', onClick);
   }
   return {
     get armed() { return armed; },
@@ -49,11 +71,11 @@ export function createBackGuard({ win = globalThis.window, ask = askLeave, allow
       armed = true;
       if (!ours()) push();
       win.addEventListener('popstate', onPop);
+      win.document?.addEventListener('click', onClick);
     },
     disarm() {
       if (!armed) return;
-      armed = false;
-      win.removeEventListener('popstate', onPop);
+      off();
       // The game is over: our entry goes, so Back works as on any page
       if (ours()) win.history.back();
     },
