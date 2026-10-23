@@ -100,6 +100,11 @@ Their parameters are internal: they work from a local server or the Tailscale li
 only for someone who came in with a lab key (`INTERNO` in `game.js`), so a player without one never
 calls a visitor by hand.
 
+Its sprites also draw the home page's first teaser (D-430): `tren-en-vilo-pronto`, on through
+2026-10-28, a GIF of a train stopping at the edge of a gap, no name and no link, made by
+`marketing/splash/teaser.mjs` from `marketing/splash/teaser/bridges.html`, which imports `pixel.js`.
+A sprite changed there changes the teaser only once the GIF is remade.
+
 ## Exceptions to the canons (while in the lab)
 
 - Spanish only, no i18n (C-3) and no usage signal: a local prototype.
