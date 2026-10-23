@@ -65,6 +65,9 @@ assert.equal(_.BASE, firebaseConfig.databaseURL, 'la base del vigía es la de fi
 for (const h of ['localhost', '127.0.0.1', '[::1]', '0.0.0.0', '192.168.1.40', '10.0.0.7', '172.20.1.1', 'mac.tail1.ts.net', 'mac.local', 'juegosdesalon.cl', 'ellokojavi.github.io', '172.32.0.1']) {
   assert.equal(_.entorno(h), envOf({ hostname: h }), `entorno de ${h}`);
 }
+for (const [h, p] of [['ellokojavi.github.io', '/juegos-de-salon-previews/a/'], ['ellokojavi.github.io', '/juegos-de-salon/'], ['juegosdesalon.cl', '/juegos-de-salon-previews/a/']]) {
+  assert.equal(_.entorno(h, p), envOf({ hostname: h, pathname: p }), `entorno de ${h}${p}`);
+}
 for (const p of ['/', '/hangman/', '/cup/suelto/', '/index.html', '/labs/', '/Today/', '']) assert.equal(_.pagina(p), paginaDe(p), `página de ${p}`);
 {
   const b = navegador({ ahora: 500 });

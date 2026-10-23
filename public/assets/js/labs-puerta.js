@@ -27,10 +27,14 @@
   // La etiqueta de esa llave, para que el feedback 🐞 diga quién lo manda (cup/reportes.js)
   var QUIEN = 'juegos-de-salon:labs-quien';
   var h = document.documentElement;
+  // The site's home, from this script's own address (assets/js/ → ../../): '/' on juegosdesalon.cl,
+  // the preview's folder on a PR preview (D-429), not the github.io root
+  var MENU = '/';
+  try { if (document.currentScript && document.currentScript.src) MENU = new URL('../../', document.currentScript.src).pathname; } catch (e) { /* '/' */ }
   var abrir = function () { h.style.visibility = ''; };
   var fuera = function () {
     try { localStorage.removeItem(GUARDADA); localStorage.removeItem(QUIEN); } catch (e) { /* sin almacenamiento */ }
-    location.replace('/');
+    location.replace(MENU);
   };
   h.style.visibility = 'hidden';
   try {

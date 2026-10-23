@@ -63,6 +63,8 @@ its first line. Lab only → the fast lane, no agents: the session looks at the 
 (D-413); with shared code or Firebase rules, both agents. Takes a game out of the lab → full usability pass over the whole game (all its
 screens, the four languages, 320 px, its cover page and its place on the main cover page) and
 documentation with the README and the social card. Everything else, both as always.
+While the owner reviews a change round by round, the PR stays open without auto-merge and each
+round is a push; the owner looks at its preview (the 🔍 comment, D-429) and auto-merge goes on when they approve.
 
 ## Dispatch (D-276)
 
