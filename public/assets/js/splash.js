@@ -60,8 +60,8 @@ export const CAMPAIGNS = {
     kicker: { es: 'Muy pronto', en: 'Coming soon' },
     title: { es: 'Algo se viene…', en: 'Something is coming…' },
     lead: {
-      es: 'Un juego nuevo está por llegar. ¿Qué será?',
-      en: 'A new game is on its way. What could it be?',
+      es: 'Un juego nuevo está por llegar.',
+      en: 'A new game is on its way.',
     },
     items: [{ img: 'assets/splash/bridges-teaser.gif', still: 'assets/splash/bridges-teaser.png', ratio: '8 / 5' }],
   },
