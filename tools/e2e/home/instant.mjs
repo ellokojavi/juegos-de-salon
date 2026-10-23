@@ -1,4 +1,4 @@
-// The home page drawn at once (in the lab, D-395; on localhost the lab is open): the first visit saves a
+// The home page drawn at once (D-435): the first visit saves a
 // copy of the list, the next one draws it before any module arrives and the real cards take its place
 // unchanged; a link with a filter never uses it; and once today's Uno al día is played, the card's place
 // comes fresh from the month's table (the test store), over the stale one cached. Prints ✗ if something fails.

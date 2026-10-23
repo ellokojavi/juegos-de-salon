@@ -380,6 +380,13 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   PR; something new inside an existing card (a new kind of La Copa, a new mode) adds its words to that
   card's keywords. `search.test.mjs` fails without them. A new language of the app adds its keywords
   for every card when it comes in.
+- **The list is drawn at once from the last visit's copy (D-435).** The page saves the list's HTML
+  (`juegos-de-salon:portada-foto`, keyed by version, language and day) and a script under `#games`
+  puts it back before the modules arrive; the module clears `#games` and draws the real cards in the
+  same task. So anything drawn into the list must look the same in the copy as drawn (no state that
+  only the module knows, nothing random), and the space above the list (`#lang-slot`, `.tools`,
+  `#azar-slot`, `.filtros`) is reserved at the size the module draws it, or the list jumps.
+  `tools/e2e/home/instant.mjs` checks that the copy equals the real list.
 - **Qué se ofrece y en qué orden.** Las tarjetas salen de `PORTADA` en `games.js`: los juegos
   de `GAMES` y los juegos de La Copa sueltos (`SUELTOS`, aparte solo por cómo están hechos, D-198)
   van mezclados, de lo más jugado a lo menos, según la lista `POPULARIDAD` (D-255): most games

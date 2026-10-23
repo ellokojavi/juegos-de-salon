@@ -464,7 +464,7 @@
     <section class="games" id="games" aria-label="Lista de juegos"></section>
     <script>
       /* The cards as they looked on the last visit, drawn before any module arrives (the owner's
-         request; in the lab, D-395, lab: #seccion-portada-al-tiro): the page's module saves a copy
+         request, D-435; for everyone since 2026-10-23): the page's module saves a copy
          of the list once drawn, and here it comes back at once. It is a link like any other card,
          so a game opens even before the modules arrive. The copy counts only for the same version,
          language and day (a ✨ Nuevo or Uno al día's state changes with the date) and with no
@@ -551,22 +551,21 @@
     // The experiments' bar, only with a lab key (D-395). lab: #seccion-portada
     if (param('lab') !== null) import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => yes && import('./labs/home/experiments.js').then(({ drawBar }) => drawBar())).catch(() => {});
 
-    // What is still in development, only with a lab key (D-395); asked once, and only when needed
-    const conLab = f => import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => yes && f()).catch(() => {});
-    // The copy of the list the next visit draws at once (in the lab): only of the whole list, never a
-    // filtered or searched one, and without a lab key any copy left is forgotten. lab: #seccion-portada-al-tiro
+    // The copy of the list the next visit draws at once (D-435): only of the whole list, never a
+    // filtered or searched one
     const FOTO = 'juegos-de-salon:portada-foto';
-    const guardarFoto = () => import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => {
-      if (!yes) { localStorage.removeItem(FOTO); return; }
-      const k = window.__fotoPortada?.k;
-      if (k && !list.querySelector('[hidden], .reserva')) localStorage.setItem(FOTO, JSON.stringify({ k, html: list.innerHTML }));
-    }).catch(() => {});
+    const guardarFoto = () => {
+      try {
+        const k = window.__fotoPortada?.k;
+        if (k && !list.querySelector('[hidden], .reserva')) localStorage.setItem(FOTO, JSON.stringify({ k, html: list.innerHTML }));
+      } catch (_) { /* without storage, every visit waits for the modules, as before */ }
+    };
 
     // 1) Lo importante primero: la lista de juegos, con los de La Copa al final (D-142).
     const list = document.getElementById('games');
-    // The last visit's copy (the script under #games, in the lab): the real cards take its place in
+    // The last visit's copy (the script under #games, D-435): the real cards take its place in
     // this same task, so nothing blinks. Its Uno al día card stays until the real one arrives, as
-    // the empty card does without a copy. lab: #seccion-portada-al-tiro
+    // the empty card does without a copy.
     const uadFoto = list.classList.contains('foto') ? list.querySelector('#btn-uno-al-dia') : null;
     list.replaceChildren();
     const marcados = new Set(favoritos());
@@ -637,12 +636,12 @@
       if (formaAcceso() === 'card' && reserva) {
         const card = tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() });
         reserva.replaceWith(card);
-        // A tap on the copy's ▶ chip before the modules arrived: carried out now. lab: #seccion-portada-al-tiro
+        // A tap on the copy's ▶ chip before the modules arrived: carried out now
         if (window.__fotoPortada?.chip) { window.__fotoPortada.chip = false; card.querySelector('button#btn-uad-chip')?.click(); }
-        // The month's place fresh from the server, once the page is drawn (the owner's request, in
-        // the lab): until it answers, the chip shows the last one cached. lab: #seccion-portada-al-tiro
-        conLab(() => (window.requestIdleCallback || (f => setTimeout(f, 300)))(() => import('./assets/js/uad-place.js')
-          .then(({ refreshPlace }) => refreshPlace(card, { lang, alTocar: () => SFX.tap() })).then(cambio => cambio && guardarFoto()).catch(() => {})));
+        // The month's place fresh from the server, once the page is drawn (D-435): until it
+        // answers, the chip shows the last one cached
+        (window.requestIdleCallback || (f => setTimeout(f, 300)))(() => import('./assets/js/uad-place.js')
+          .then(({ refreshPlace }) => refreshPlace(card, { lang, alTocar: () => SFX.tap() })).then(cambio => cambio && guardarFoto()).catch(() => {}));
       } else {
         reserva?.remove();
         const slot = document.getElementById('azar-slot');
