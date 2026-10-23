@@ -475,7 +475,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-428](decisions/D-428.md) | Faster releases without testing less: CI is the gate, and the groups fit the real times | current |
 | [D-429](decisions/D-429.md) | A preview of each PR on GitHub Pages, and review rounds on it instead of a PR per round | current |
 | [D-430](decisions/D-430.md) | Splash campaigns queue up, and a teaser can be a picture alone in Spanish and English | amended by D-431 |
-| [D-431](decisions/D-431.md) | One window per visit on the home page, through one gate | current (in the lab) |
+| [D-431](decisions/D-431.md) | One window per visit on the home page, through one gate | current |
 
 ## No longer in force (10)
 
