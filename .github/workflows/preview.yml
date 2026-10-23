@@ -89,7 +89,7 @@ jobs:
           FOLDER: ${{ steps.build.outputs.folder }}
         run: |
           url="https://${GITHUB_REPOSITORY_OWNER,,}.github.io/juegos-de-salon-previews/$FOLDER/"
-          body=$(printf '<!-- preview -->\n🔍 **Preview of this PR:** %s\n\nUpdated to %s; it is live about two minutes after this comment changes. It uses the real Firebase (rooms are real), but its plays do not reach the panel or the rankings. Lab features need your lab link opened once on this site (D-429).' "$url" "${SHA:0:7}")
+          body=$(printf '<!-- preview -->\n🔍 **Preview of this PR:** %s\n\nUpdated to %s; the link shows it about two minutes after this comment changes. Rooms are real (the real Firebase), but plays do not reach the panel or the rankings. For the lab, open your lab link once with this address in place of juegosdesalon.cl (D-429).' "$url" "${SHA:0:7}")
           id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate --jq '.[] | select(.body | startswith("<!-- preview -->")) | .id' | head -1)
           if [ -n "$id" ]; then
             gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -f body="$body" > /dev/null
