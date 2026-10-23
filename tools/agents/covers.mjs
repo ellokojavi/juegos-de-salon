@@ -134,8 +134,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       console.log(SPLASH(id));
       const c = CAMPAIGNS[id];
       if (!c) continue;
-      for (const lang of ['es', 'en', 'pt', 'de']) console.log(`   ${lang}: ${[c.kicker, c.title, c.lead].map(t => t?.[lang] ?? '(missing)').join(' · ')}`);
-      console.log(`   items: ${c.items.map(i => i.game ?? i.title?.es ?? '?').join(', ')}`);
+      for (const lang of ['es', 'en', 'pt', 'de']) {
+        // A campaign limited to some languages (`langs`, D-430) shows the rest in English
+        if (c.langs && !c.langs.includes(lang)) { console.log(`   ${lang}: in English`); continue; }
+        console.log(`   ${lang}: ${[c.kicker, c.title, c.lead].filter(Boolean).map(t => t[lang] ?? '(missing)').join(' · ')}`);
+      }
+      console.log(`   items: ${c.items.map(i => i.game ?? i.title?.es ?? (i.img ? `teaser ${i.img}` : '?')).join(', ')}`);
     }
   }
   const { labs, others } = touchedGames(files);
