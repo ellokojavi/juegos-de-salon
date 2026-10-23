@@ -794,6 +794,18 @@ Amigos on /today/ and under the result, and the points table (Mes · Amigos) in 
 `tools/e2e/daily-player.mjs` checks they agree, and `tools/e2e/daily-languages.mjs` checks /today/'s
 screens in every language.
 
+**The faster ranking (D-436, in the lab: only with a lab key, listed in /labs/ as
+`#seccion-uad-ranking-rapido`).** /today/ builds its ranking once and keeps it across the page's
+redraws (at once, after `sincronizar()`, on signing in or out): a redraw calls `recargar()`, which
+keeps the list on screen until the new one arrives, and the page, not the block, reloads it when the
+player signs in or out. With `bloqueRanking({ rapido: true })` the table and last month's champion
+are read together, and `J.tabla(t, p, { reciente: 5000 })` reuses the read of the same table that
+`leerMes()` started less than 5 s before (or that is still on its way) instead of asking again;
+`leerMes()` itself always reads fresh, so a reused read is never older than the day's upload. The list
+each tab drew last today (not Amigos) is saved on the phone
+(`juegos-de-salon:rk-visto:<table>:<tab>`) and shown while the first read loads, instead of
+"Cargando…". Without a key, and under a game's result (`uno-al-dia-ui.js`), nothing changes.
+
 **October's backfill (D-414).** The season started with October already played, so
 `node tools/firebase/uad-points-backfill.mjs` (a dry run; `--apply` writes) gives every player the
 October they would have had: it walks their history in Firebase as the phone does and adds each
