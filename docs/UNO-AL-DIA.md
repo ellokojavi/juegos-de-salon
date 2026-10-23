@@ -822,7 +822,10 @@ tab) and the same board, already known, played from zero until one was finished.
   (`empezadoEnOtro` in `uno-al-dia-red.js`; if Firebase does not answer in 2.5 s, the attempt is not
   lost on a doubt). Without a player the marker lives only on the phone, so clearing the browser's
   memory still resets it; those attempts reach no ranking.
-- Leaving mid-game by a back swipe asks first (D-432, also in the lab).
+- With an attempt left halfway, the way in skips the die: the home page's ▶ and /today/'s Jugar go
+  straight to today's game (`tirarHoy`), saying «▶ Seguir jugando» for a solo game (`rotuloJugar`,
+  `estado().inProgress`); a group game's keeps its label, since going back counts 0.
+- Leaving mid-game by a back swipe or «‹ Menú» asks first (D-432, also in the lab).
 - Tests: `daily-attempt.test.mjs` (the marker, the resume, the 0, the streak),
   `uno-al-dia-jugador.test.mjs` (the Firebase start against the test store and the rules) and
   `tools/e2e/daily-attempt.mjs`.

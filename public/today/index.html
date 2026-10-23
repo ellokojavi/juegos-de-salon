@@ -162,7 +162,7 @@
     import { juegosCopa } from '../cup/rules.js';
     import { gameById } from '../assets/js/games.js';
     import { estado, leer, juegoDia, juegoDel, numeroDel, faltaParaManana, LANZAMIENTO, COMODINES_MAX } from '../assets/js/uno-al-dia.js';
-    import { fmt, tirarHoy, jugarOtro, tarjetaInvitar, botonCompartirRanking, tarjetaDesafio, rutaHoy, PESTANAS_UAD } from '../assets/js/uno-al-dia-ui.js';
+    import { fmt, tirarHoy, rotuloJugar, jugarOtro, tarjetaInvitar, botonCompartirRanking, tarjetaDesafio, rutaHoy, PESTANAS_UAD } from '../assets/js/uno-al-dia-ui.js';
     import { walk, seasonPoints, bonusFor } from '../assets/js/daily-points.js';
     import { UNO_AL_DIA, UAD_PUNTOS, periodoMes } from '../assets/js/records.js';
 
@@ -237,7 +237,7 @@
         nuevo.push(await tarjetaDesafio({ lang, raiz: '../', inv: quien, alTocar: tap }));
       } else if (!e.dia) {
         nuevo.push(el('div', { class: 'uad-hoy', id: 'uad-hoy' },
-          el('button', { type: 'button', class: 'btn btn--yellow uad-jugar', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, P.jugar), como()));
+          el('button', { type: 'button', class: 'btn btn--yellow uad-jugar', id: 'btn-uad-jugar', onClick: () => { tap(); tirarHoy({ lang, raiz: '../' }); } }, rotuloJugar(lang, P.jugar)), como()));
       }
       // Played: the "Hoy" block goes after the ranking (owner's request); before playing, Jugar stays
       // right under the season, above the fold (U-39)
