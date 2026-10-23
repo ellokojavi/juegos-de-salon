@@ -217,8 +217,7 @@
     let enRed = null;
     // The calendar's open day and month survive a redraw (the network fills in an instant later)
     let abierto = null, mes = null;
-    // The faster ranking (D-436), only with a lab key: built once and kept across redraws. lab: #seccion-uad-ranking-rapido
-    const rapido = import('../assets/js/lab-access.js').then(m => m.labAccess()).catch(() => false);
+    // The faster ranking (D-436): built once and kept across redraws
     let rkGuardado = null;
 
     /** Todo lo de la página, con lo que haya en el celular; se vuelve a dibujar al llegar lo de Firebase. */
@@ -264,14 +263,13 @@
 
       /* The month's ranking first, and the day's and the streaks', the same tabs as under the result (D-414) */
       if (bloqueRanking) {
-        const lab = await rapido;
-        let rk = lab ? rkGuardado : null;
+        let rk = rkGuardado;
         if (rk) rk.recargar();
         else {
-          rk = bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: PESTANAS_UAD, alTocar: tap, rapido: lab });
+          rk = bloqueRanking({ juego: UNO_AL_DIA, titulo: T.rankingTitulo, pestanas: PESTANAS_UAD, alTocar: tap, rapido: true });
           // Sharing the ranking: its picture, a short line and the link to play (owner's request)
           rk.append(botonCompartirRanking({ lang, caja: rk, alTocar: tap }));
-          if (lab) rkGuardado = rk;
+          rkGuardado = rk;
         }
         nuevo.push(rk);
       }
