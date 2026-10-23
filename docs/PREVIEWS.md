@@ -50,8 +50,10 @@ Settings → Pages → Source: **GitHub Actions**.
 
 3. **Try it:** on any open PR, push a commit (or Actions → Preview → the PR's last run → Re-run).
    The PR gets the 🔍 comment, and the link works about two minutes later.
-4. **The lab, once per browser:** take your lab link (`https://juegosdesalon.cl/labs/?key=…`) and open
-   it with the preview's address instead: `https://ellokojavi.github.io/juegos-de-salon-previews/<branch>/labs/?key=…`.
+4. **The lab, once per browser:** open `https://ellokojavi.github.io/juegos-de-salon-previews/?key=<your key>`
+   (your lab link with `juegosdesalon.cl/labs/` replaced by that address). The previews' front page
+   saves the key for every preview, also when no PR is open, and says ✅ when it did. The key is checked
+   when a preview's lab opens; a removed key stops working there too.
 
 ## If something goes wrong
 
