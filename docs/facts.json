@@ -1,5 +1,5 @@
 {
-  "version": "0.200.8",
+  "version": "0.200.13",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -899,6 +899,7 @@
     "public/assets/js/frases.js",
     "public/assets/js/games.js",
     "public/assets/js/handoff.js",
+    "public/assets/js/home-windows.js",
     "public/assets/js/i18n.js",
     "public/assets/js/instalable.js",
     "public/assets/js/instalar.js",
@@ -1078,6 +1079,7 @@
     "public/assets/js/favoritos.test.mjs",
     "public/assets/js/fin.test.mjs",
     "public/assets/js/games.test.mjs",
+    "public/assets/js/home-windows.test.mjs",
     "public/assets/js/i18n.test.mjs",
     "public/assets/js/instalable.test.mjs",
     "public/assets/js/instalar.test.mjs",

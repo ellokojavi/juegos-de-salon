@@ -9,8 +9,9 @@
  *
  * That rewrites ACTIVE below, and the change goes out like any other (a PR with auto-merge).
  * More than one can be on at once: ACTIVE is a queue, in the order they were turned on, and a player
- * with several still to see gets them one after the other, closing one opens the next (the owner's
- * request). Each player sees a campaign once: closing it records its id in localStorage, and it does
+ * with several still to see gets them one after the other, closing one opens the next (D-430, the
+ * owner's request). With a lab key the home page's gate (home-windows.js, D-431) shows only the first
+ * one per visit, through showSplash; the chaining is the path without one. Each player sees a campaign once: closing it records its id in localStorage, and it does
  * not come back. `?splash=<id>` shows any campaign on demand, on the home page or anywhere that
  * calls showSplash (the lab demo, /labs/splash/), without recording it.
  *
@@ -227,8 +228,8 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
 }
 
 /**
- * What the home page calls: shows each active campaign once per phone, one after the other (closing
- * one opens the next), or the one in `?splash=`. Never under the end-to-end scripts (`?test`, or a
+ * What the home page calls without a lab key (home-windows.js, D-431): shows each active campaign
+ * once per phone, one after the other (closing one opens the next), or the one in `?splash=`. Never under the end-to-end scripts (`?test`, or a
  * browser driven by automation). Returns the ids it will show.
  */
 export function startSplash({ lang = 'es', search = globalThis.location?.search ?? '' } = {}) {
