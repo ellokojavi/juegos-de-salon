@@ -12,9 +12,7 @@
  * window: the dice's arrival veil (llegada.js), Uno al día's app badge, or the lab's experiments bar
  * (`?lab`). `?recap=` and `?splash=` previews keep working as before.
  *
- * Still in the lab (D-409, the owner's choice): with a lab key the gate decides; without one, the home
- * page behaves as before (the recap, else the splash queue, and the install bubble on its own).
- * lab: #seccion-una-ventana
+ * For everyone since the owner validated it in the lab (D-409, D-431).
  *
  * The choice is pure (`readPending`, `choose`), so node tests it without a DOM.
  */
@@ -73,12 +71,9 @@ export function candidates(pending) {
 export async function startHomeWindows({ lang = 'es', T, url, tap, search = globalThis.location?.search ?? '' } = {}) {
   const recap = () => startRecap({ lang, search }).catch(() => false);
   const install = () => { try { return !!globoInstalar({ T, url, tap }); } catch (_) { return false; } };
-  const { labAccess } = await import('./lab-access.js');
-  const previewing = param('recap', search) !== null || param('splash', search) !== null;
-  if (previewing || !(await labAccess().catch(() => false))) {
-    // As before the gate: the recap, else the splash queue; the install bubble on its own
+  // A preview (`?recap=`, `?splash=`) is the owner looking at one window: it opens that one, as before
+  if (param('recap', search) !== null || param('splash', search) !== null) {
     recap().then(shown => shown || startSplash({ lang, search }));
-    install();
     return;
   }
   // Under the end-to-end scripts the splash never opens and the recap checks it itself (startRecap);
