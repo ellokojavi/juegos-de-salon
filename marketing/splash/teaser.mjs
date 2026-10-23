@@ -1,0 +1,57 @@
+// A splash teaser as a GIF (D-430): a drawn scene of a game that is coming, not its play. The
+// scene is a page in marketing/splash/teaser/ that draws one frame at a time with the game's own
+// sprites (window.frame(i) returns it as a PNG); this serves the repo, opens it in headless Chrome,
+// takes every frame and lets ffmpeg make the looping GIF (its own palette, scaled up with no
+// smoothing, so the pixel art stays crisp) and a still for reduced motion.
+//
+//   node marketing/splash/teaser.mjs [bridges]
+//
+// Output: public/assets/splash/<name>-teaser.gif and <name>-teaser.png
+import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, statSync } from 'node:fs';
+import { createServer } from 'node:http';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { dirname, join, extname, normalize } from 'node:path';
+import { output } from '../../tools/e2e/output.mjs';
+import { launch } from '../../tools/e2e/cdp.mjs';
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const DEST = join(ROOT, 'public', 'assets', 'splash');
+const OUT = output('/tmp/splash-teaser');
+const SCALE = 4; // the art is 128×80: the GIF is 512×320
+// The frame the still is taken from (for reduced motion): the train stopped at the edge, the "?" up
+const STILL = { bridges: 90 };
+
+// The repo served as files, only for the scene page and the sprites it imports
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json' };
+const server = createServer((req, res) => {
+  const path = normalize(join(ROOT, decodeURIComponent(new URL(req.url, 'http://x').pathname)));
+  if (!path.startsWith(ROOT) || !existsSync(path) || !statSync(path).isFile()) { res.writeHead(404); return res.end(); }
+  res.writeHead(200, { 'content-type': TYPES[extname(path)] || 'application/octet-stream' });
+  res.end(readFileSync(path));
+});
+await new Promise(ok => server.listen(0, '127.0.0.1', ok));
+const SITE = `http://127.0.0.1:${server.address().port}`;
+
+const only = process.argv[2];
+mkdirSync(DEST, { recursive: true });
+const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 600, height: 400 });
+try {
+  for (const name of Object.keys(STILL)) {
+    if (only && only !== name) continue;
+    const frames = `${OUT}/${name}`;
+    rmSync(frames, { recursive: true, force: true }); mkdirSync(frames, { recursive: true });
+    await b.go(`${SITE}/marketing/splash/teaser/${name}.html?capture`, 800);
+    if (!(await b.until('window.ready', 8000))) throw new Error(`${name}: the scene did not load`);
+    const [n, fps] = await b.evaluate('[window.FRAMES, window.FPS]');
+    for (let i = 0; i < n; i++) {
+      const png = await b.evaluate(`window.frame(${i})`);
+      writeFileSync(`${frames}/${String(i).padStart(4, '0')}.png`, Buffer.from(png.split(',')[1], 'base64'));
+    }
+    const gif = join(DEST, `${name}-teaser.gif`), up = `scale=iw*${SCALE}:ih*${SCALE}:flags=neighbor`;
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', `${frames}/%04d.png`,
+      '-vf', `${up},split[a][b];[a]palettegen=max_colors=128:stats_mode=full[p];[b][p]paletteuse=dither=none`, '-loop', '0', gif]);
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', `${frames}/${String(STILL[name]).padStart(4, '0')}.png`, '-vf', up, join(DEST, `${name}-teaser.png`)]);
+    console.log(`✓ ${name}: ${n} frames → ${gif} (${Math.round(statSync(gif).size / 1024)} KB)`);
+  }
+} finally { server.close(); process.exit(0); }

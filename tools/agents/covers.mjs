@@ -82,14 +82,15 @@ export function labsExits(diff, names) {
 }
 
 /**
- * The splash campaigns a PR changes (D-355), from the diff of public/assets/js/splash.js: the one
- * the `ACTIVE` line turns on, and each one whose entry in `CAMPAIGNS` changed. Turning it off
- * (`ACTIVE = null`) shows nothing new, so it is not one.
+ * The splash campaigns a PR changes (D-355), from the diff of public/assets/js/splash.js: each one
+ * the `ACTIVE` line turns on (it is a queue: those it did not have before), and each one whose entry
+ * in `CAMPAIGNS` changed. Turning one off shows nothing new, so it is not one.
  */
 export function splashChanges(diff) {
   const ids = new Set();
-  const on = diff.match(/^\+export const ACTIVE = \{ id: '([^']+)'/m);
-  if (on) ids.add(on[1]);
+  const activeIds = sign => [...(diff.match(new RegExp(`^\\${sign}export const ACTIVE = .*$`, 'm'))?.[0] ?? '').matchAll(/id: '([^']+)'/g)].map(m => m[1]);
+  const before = activeIds('-');
+  for (const id of activeIds('+')) if (!before.includes(id)) ids.add(id);
   let current = null;
   for (const l of diff.split('\n')) {
     if (l.startsWith('@@')) { current = null; continue; }
@@ -133,8 +134,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       console.log(SPLASH(id));
       const c = CAMPAIGNS[id];
       if (!c) continue;
-      for (const lang of ['es', 'en', 'pt', 'de']) console.log(`   ${lang}: ${[c.kicker, c.title, c.lead].map(t => t?.[lang] ?? '(missing)').join(' · ')}`);
-      console.log(`   items: ${c.items.map(i => i.game ?? i.title?.es ?? '?').join(', ')}`);
+      for (const lang of ['es', 'en', 'pt', 'de']) {
+        // A campaign limited to some languages (`langs`, D-430) shows the rest in English
+        if (c.langs && !c.langs.includes(lang)) { console.log(`   ${lang}: in English`); continue; }
+        console.log(`   ${lang}: ${[c.kicker, c.title, c.lead].filter(Boolean).map(t => t[lang] ?? '(missing)').join(' · ')}`);
+      }
+      console.log(`   items: ${c.items.map(i => i.game ?? i.title?.es ?? (i.img ? `teaser ${i.img}` : '?')).join(', ')}`);
     }
   }
   const { labs, others } = touchedGames(files);
