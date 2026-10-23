@@ -54,7 +54,7 @@ GitHub runs every `*.test.mjs` and `*.test.py` on each PR and checks that the RE
 The same, on your computer:
 
 ```bash
-for f in $(git ls-files '*.test.mjs'); do node "$f" || echo "FALLA $f"; done
+git ls-files '*.test.mjs' | xargs -P8 -I{} sh -c 'node "{}" > /dev/null 2>&1 || echo "FALLA {}"'
 for f in $(git ls-files '*.test.py'); do python3 "$f" || echo "FALLA $f"; done
 python3 tools/release/readme.py check
 node tools/release/og.mjs check
