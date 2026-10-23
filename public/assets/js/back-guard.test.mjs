@@ -34,20 +34,11 @@ function fakeWindow() {
 }
 const tick = () => new Promise(r => setTimeout(r, 0));
 
-// Without the lab key it does nothing
-{
-  const f = fakeWindow();
-  const g = createBackGuard({ win: f.win, ask: () => true, allowed: async () => false });
-  await g.arm();
-  assert.equal(g.armed, false);
-  assert.equal(f.entries.length, 2, 'no entry without the lab key');
-}
-
 // A back swipe mid-game asks; Stay keeps the game, and a second swipe asks again
 {
   const f = fakeWindow();
   let asked = 0;
-  const g = createBackGuard({ win: f.win, ask: async () => { asked++; return false; }, allowed: async () => true });
+  const g = createBackGuard({ win: f.win, ask: async () => { asked++; return false; } });
   await g.arm();
   assert.equal(f.entries.length, 3, 'arming adds one entry');
   await g.arm();
@@ -66,7 +57,7 @@ const tick = () => new Promise(r => setTimeout(r, 0));
 // Leave goes to the page before the game
 {
   const f = fakeWindow();
-  const g = createBackGuard({ win: f.win, ask: async () => true, allowed: async () => true });
+  const g = createBackGuard({ win: f.win, ask: async () => true });
   await g.arm();
   f.swipeBack();
   await tick();
@@ -78,7 +69,7 @@ const tick = () => new Promise(r => setTimeout(r, 0));
 {
   const f = fakeWindow();
   let asked = 0;
-  const g = createBackGuard({ win: f.win, ask: async () => { asked++; return false; }, allowed: async () => true });
+  const g = createBackGuard({ win: f.win, ask: async () => { asked++; return false; } });
   await g.arm();
   g.disarm();
   assert.equal(f.index(), 1, 'disarming removes the entry');
@@ -95,7 +86,7 @@ const tick = () => new Promise(r => setTimeout(r, 0));
 {
   const f = fakeWindow();
   let answer = false, asked = 0;
-  const g = createBackGuard({ win: f.win, ask: async () => { asked++; return answer; }, allowed: async () => true });
+  const g = createBackGuard({ win: f.win, ask: async () => { asked++; return answer; } });
   assert.equal(f.tapMenu(), false, 'before the game, «‹ Menú» is a plain link');
   await g.arm();
   assert.equal(f.tapMenu(), true, 'mid-game, the link waits');
@@ -114,7 +105,7 @@ const tick = () => new Promise(r => setTimeout(r, 0));
 }
 {
   const f = fakeWindow();
-  const g = createBackGuard({ win: f.win, ask: async () => true, allowed: async () => true });
+  const g = createBackGuard({ win: f.win, ask: async () => true });
   await g.arm();
   g.disarm();
   assert.equal(f.tapMenu(), false, 'after the game, «‹ Menú» does not ask');

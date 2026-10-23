@@ -1,4 +1,4 @@
-// Leaving a game midway (D-432, D-433), with the lab open as on localhost: a back swipe or «‹ Menú»
+// Leaving a game midway (D-432, D-433): a back swipe or «‹ Menú»
 // asks «¿Salir de la partida?» and Seguir jugando stays; Uno al día's first attempt counts from its start,
 // so a group game left halfway counts 0, a solo game left halfway goes on where it was (the home
 // page's Uno al día goes straight to it, without the die), and a day
