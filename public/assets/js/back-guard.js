@@ -1,5 +1,5 @@
 /**
- * The back-swipe guard (D-432), for now only with a lab key. lab: #seccion-volver-atras
+ * The back-swipe guard (D-432), for everyone since the owner validated it in the lab.
  *
  * `overscroll-behavior: none` (D-86) already keeps Chrome's own swipe from taking the page, but
  * iOS's edge swipe and Android's system Back belong to the phone, and no page can stop them. Both
@@ -9,11 +9,10 @@
  * The header's «‹ Menú» is the same wish to leave, so while a game is on it asks the same.
  *
  * Chrome skips, on Back, an entry a page added without a tap: `arm()` runs inside the tap that
- * starts the game, and the lab key is asked at load so the answer is ready by then.
+ * starts the game.
  */
 import { el } from './ui.js';
 import { COMMON, getLang } from './i18n.js';
-import { labAccess } from './lab-access.js';
 
 const MARK = 'backGuard';
 
@@ -24,7 +23,7 @@ export const MENU = 'a.back';
  * The guard, with what it touches passed in so node can test it: `win` (history, location,
  * popstate and the document's clicks) and `ask`, which resolves true when the player chose to leave.
  */
-export function createBackGuard({ win = globalThis.window, ask = askLeave, allowed = labAccess } = {}) {
+export function createBackGuard({ win = globalThis.window, ask = askLeave } = {}) {
   let armed = false, asking = false;
   const ours = () => !!win.history.state?.[MARK];
   const push = () => win.history.pushState({ [MARK]: true }, '', win.location.href);
@@ -63,11 +62,8 @@ export function createBackGuard({ win = globalThis.window, ask = askLeave, allow
   }
   return {
     get armed() { return armed; },
-    async arm() {
+    arm() {
       if (armed || !win?.history?.pushState) return;
-      let ok = false;
-      try { ok = await allowed(); } catch (_) { ok = false; }
-      if (!ok || armed) return;
       armed = true;
       if (!ours()) push();
       win.addEventListener('popstate', onPop);
@@ -115,9 +111,7 @@ let shared = null;
 /** The page's guard. Without a window (node), one that does nothing. */
 export function backGuard() {
   if (!shared) {
-    shared = globalThis.window?.history ? createBackGuard() : { armed: false, arm: async () => {}, disarm() {} };
-    // Asked now, so the answer is there inside the tap that starts the game
-    if (globalThis.window?.history) labAccess().catch(() => {});
+    shared = globalThis.window?.history ? createBackGuard() : { armed: false, arm() {}, disarm() {} };
   }
   return shared;
 }

@@ -10,7 +10,6 @@ import { tiene } from './parametros.js';
 import { tirar, alAzar, TEXTOS as AZAR } from './azar.js';
 import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir, lamina, aArchivo, fuente, COLORES, MARCO } from './compartir.js';
 import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel, settleStarted, unfinished, forfeit, markStarted, GRUPO } from './uno-al-dia.js';
-import { labAccess } from './lab-access.js';
 import { UNO_AL_DIA, bandera } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
 import { walk, seasonPoints } from './daily-points.js';
@@ -377,9 +376,8 @@ export function modoHoy(id, { raiz = '../', loc = globalThis.location } = {}) {
 /* ------------------------------------------------------------------ */
 
 /**
- * For now only with a lab key. lab: #seccion-uad-intento
- * What today's game does about its first attempt, once the key answers: `'off'` (no key, or the day
- * already has its result), `'new'` (the first attempt is about to start), `'resume'` (a solo game
+ * What today's game does about its first attempt (for everyone since the owner validated it in the
+ * lab): `'off'` (the day already has its result), `'new'` (the first attempt is about to start), `'resume'` (a solo game
  * left halfway on this phone goes on where it was) or `'lost'` (a group game left halfway, or an
  * attempt started on another phone and never finished: it counts 0, and this one is practice).
  * `hoy` is `modoHoy`'s, or La Copa's for its solo games; `'lost'` marks it `ya`.
@@ -387,7 +385,7 @@ export function modoHoy(id, { raiz = '../', loc = globalThis.location } = {}) {
 export async function lockState(hoy, { canResume = false } = {}) {
   // Played already (also in this same page, before "play again"): nothing to lock
   const jugado = () => { if (leer().dias[hoy.fecha]) hoy.ya = true; return hoy.ya; };
-  if (jugado() || !(await labAccess().catch(() => false))) return 'off';
+  if (jugado()) return 'off';
   const mine = unfinished(hoy.fecha);
   if (mine && canResume) return 'resume';
   const R = await import('./uno-al-dia-red.js');
@@ -411,7 +409,7 @@ export function lockLine(state, { lang, extra = '' }) {
 
 /**
  * The first attempt starts (D-433): marks it on this phone and, with a player, in Firebase. A tap
- * that comes before the lab key answers is marked when it does.
+ * that comes before the check for another phone answers is marked when it does.
  */
 export function empezarHoy(hoy) {
   if (!hoy || hoy.ya) return;
@@ -424,7 +422,7 @@ export function empezarHoy(hoy) {
 /**
  * La línea de la intro: "📅 Uno al día: hoy todos juegan el mismo desafío." (o que es práctica),
  * y si el rival responde a lo que haces, qué es lo común (`extra`: "Todos parten con los mismos dados.").
- * With a lab key, the line says the first attempt counts, or that it was lost (D-433).
+ * The line says the first attempt counts, or that it was lost (D-433).
  */
 export function introHoy(hoy, { lang, extra = '' }) {
   const T = textos(lang).uad;
