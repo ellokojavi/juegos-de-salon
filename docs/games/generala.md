@@ -46,6 +46,12 @@ favorites and Uno al día like any other game.
   generala servida vale 50 como cualquier otra.
 - **Gana el que suma más** después de las 11 vueltas; si empatan, empatan.
 
+**The ace-high straight, said at the table** (feedback #736, in the lab): 3‑4‑5‑6‑1 surprised a
+player who plays without it, so when the dice show it and Escalera is free, a line under the dice
+says it is a straight (`aceStraight`, `esEscaleraAlAs`). The rule stays; only the table explains it.
+For now it shows only with a lab key (D-395, card `#seccion-generala-escalera-as`); the screen is
+`look.mjs generala ace-straight`.
+
 ### Lo que no está y por qué (D-246)
 
 - **El bono de los números** (el "63" del Yahtzee) no es de la Generala.

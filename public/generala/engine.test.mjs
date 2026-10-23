@@ -1,6 +1,7 @@
 // Tests del motor de Generala: node public/generala/engine.test.mjs
 import assert from 'node:assert/strict';
 import {
+  esEscaleraAlAs,
   CATEGORIAS, DADOS, buildState, cuentas, esEscalera, esFull, esGenerala, esPoker, puntajeDia,
   puntos, readDice, readKeep, tirar, total, writeDice, writeKeep,
 } from './engine.js';
@@ -132,5 +133,9 @@ const score = (from, c) => ({ t: 'score', from, c });
 assert.equal(puntajeDia(0), 0);
 assert.equal(puntajeDia(150), 50);
 assert.equal(puntajeDia(360), 100);
+
+// Only 3-4-5-6-1 gets the note under the dice (feedback #736)
+assert.ok(esEscaleraAlAs([1, 3, 6, 5, 4]));
+assert.ok(!esEscaleraAlAs([1, 2, 3, 4, 5]) && !esEscaleraAlAs([2, 3, 4, 5, 6]) && !esEscaleraAlAs([1, 3, 4, 5, 5]));
 
 console.log('✓ engine de Generala');

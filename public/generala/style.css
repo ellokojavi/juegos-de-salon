@@ -154,3 +154,4 @@
 
 /* La barra de acciones ya separa 10 px (padding-top): el resto del aire lo pone la mesa (D-309) */
 #mesa { --aire-ya: 10px; }
+.mesa .hint.as { color: var(--cyan); margin-top: 6px; }
