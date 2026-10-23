@@ -53,7 +53,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (416)
+## In force (417)
 
 | D | Title | Status |
 |---|---|---|
@@ -472,8 +472,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-425](decisions/D-425.md) | Creating a cup: the week in view, the 🎲 and week styles, in the lab | current |
 | [D-426](decisions/D-426.md) | The owner opens a cup's recap to all its players while the window is in the lab | current |
 | [D-427](decisions/D-427.md) | La Copa's recap shows the final table as the image the cup shares | current |
-| [D-429](decisions/D-429.md) | A preview of each PR on GitHub Pages, and review rounds on it instead of a PR per round | current |
 | [D-428](decisions/D-428.md) | Faster releases without testing less: CI is the gate, and the groups fit the real times | current |
+| [D-429](decisions/D-429.md) | A preview of each PR on GitHub Pages, and review rounds on it instead of a PR per round | current |
 
 ## No longer in force (10)
 
