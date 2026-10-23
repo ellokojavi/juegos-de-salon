@@ -218,19 +218,27 @@ at the owner's request (D-213). The commands and the rules are in the `readme-an
 
 GitHub runs every `*.test.mjs` and `*.test.py` on each PR (`.github/workflows/tests.yml`), so
 a new test is not added to any list: one that tests something special says so on its first
-line. Run them here anyway before opening the PR.
+line. Run them here anyway before opening the PR, in parallel (~20 s instead of a minute):
 
 ```bash
-for f in $(git ls-files '*.test.mjs'); do node "$f" || echo "FALLA $f"; done
+git ls-files '*.test.mjs' | xargs -P8 -I{} sh -c 'node "{}" > /dev/null 2>&1 || echo "FALLA {}"'
 for f in $(git ls-files '*.test.py'); do python3 "$f" || echo "FALLA $f"; done
 ```
 
 **End-to-end** (D-193, D-199, D-204): `tools/e2e/` plays complete games in headless Chrome,
-and GitHub runs on each PR every script except those that open rooms in the production
-Firebase. For a script to fail red, it must print ✗ or ❌ or exit with an error.
+and GitHub runs on each PR every script its changes reach, except those that open rooms in the
+production Firebase. For a script to fail red, it must print ✗ or ❌ or exit with an error.
+
+**The `end-to-end` check is the gate, not your machine** (D-428): GitHub runs the PR's scripts in
+18 parallel jobs in 6–7 minutes; the same list one after another here took up to 10, and in October
+a third of the sessions' working time went to running locally what CI then ran again. Here, run
+only the script of the screen you changed while you work (in the background when it is long), and
+look at the screens with `look.mjs`; **never the whole `ci.mjs` before pushing**. To see which
+scripts the PR will run: `git diff --name-only origin/main > /tmp/changes && node tools/e2e/ci.mjs --list --changes /tmp/changes`.
+If the check goes red, its run summary and its `screenshots-g<n>` artifact say what failed.
 
 ```bash
-node tools/e2e/ci.mjs              # all the CI ones, with a summary; or: node tools/e2e/ci.mjs cup/tournament.mjs
+node tools/e2e/ci.mjs cup/tournament.mjs        # one script, with a summary (or one part: cup/tournament.mjs:cup)
 node tools/e2e/look.mjs ahorcado game --width 320 [--lang pt]       # a single screen (C-8)
 node tools/e2e/look.mjs panel data --width 900                      # the panel, with seeded data
 ```
