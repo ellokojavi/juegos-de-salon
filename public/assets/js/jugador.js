@@ -71,6 +71,8 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
   const leer = (k, def) => { try { return JSON.parse(storage.getItem(k)) ?? def; } catch (_) { return def; } };
   const escribir = (k, v) => { try { if (v === null) storage.removeItem(k); else storage.setItem(k, JSON.stringify(v)); } catch (_) { /* sin memoria */ } };
   const oyentes = new Set();
+  // The last read of each table, so a page that asks twice in a row reads once (`tabla`'s `reciente`)
+  const lecturas = new Map();
   const avisar = () => { for (const f of oyentes) try { f(api.yo()); } catch (_) { /* nada */ } };
 
   /** Mis mejores, por tabla y período, tal como los vio este celular. */
@@ -319,10 +321,20 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     /**
      * Una tabla tal como se muestra: `{ top, yo, vecinos, fuera }` (ver `vistaTabla`). Lee de una
      * vez las primeras 100; si quien mira está más abajo, lee aparte a sus vecinos.
+     * `reciente` (ms): reuse a read of the same table started that recently, or still on its way,
+     * instead of asking the server again (lab, D-436).
      */
-    async tabla(t, periodo = semana(now()), { top = 10 } = {}) {
+    async tabla(t, periodo = semana(now()), { top = 10, reciente = 0 } = {}) {
       const yo = api.yo();
-      const leidas = await almacen.top(t, periodo, LEER);
+      const clave = `${t}/${periodo}`, previa = lecturas.get(clave);
+      let lectura;
+      if (reciente && previa && now() - previa.at < reciente) lectura = previa.p;
+      else {
+        lectura = almacen.top(t, periodo, LEER);
+        lecturas.set(clave, { at: now(), p: lectura });
+        lectura.catch(() => { if (lecturas.get(clave)?.p === lectura) lecturas.delete(clave); });
+      }
+      const leidas = await lectura;
       let vecinosLeidos = null;
       if (yo && leidas.length >= LEER && !leidas.some(f => f.jid === yo.jid)) {
         const mio = await almacen.get(`records/${t}/${periodo}/${yo.jid}`);

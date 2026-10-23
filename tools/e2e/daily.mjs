@@ -148,7 +148,8 @@ await b.shot('today');
 
 /* ---------- The earlier form, with ?daily=button: the button next to the die ---------- */
 await b.go(`${SITE}/?daily=button`, 1500);
-await waitFor(`!!document.getElementById('btn-uno-al-dia')`);
+// If the button does not come, say why: the page's errors and what the slot holds
+if (!await waitFor(`!!document.getElementById('btn-uno-al-dia')`)) console.log('  ?daily=button without the button:', JSON.stringify({ errors: b.errors.slice(-5), logs: b.logs.slice(-5), slot: await ev(`document.getElementById('azar-slot')?.outerHTML.slice(0, 400)`) }));
 ok(await ev(`!!document.querySelector('.azar-slot #btn-uno-al-dia') && !document.querySelector('.fila-alta')`), 'with "Al lado del dado", it is a button in the Juego al azar row');
 ok((await text('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Al azar' && await noOverflow(), 'and the die shortens to "🎲 Al azar"');
 await b.shot('home-button');
