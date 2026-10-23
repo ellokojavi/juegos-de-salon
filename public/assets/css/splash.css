@@ -81,6 +81,8 @@ a.splash-item:hover, a.splash-item:focus-visible { transform: translateY(-3px); 
   .splash { padding: 14px 10px 6px; gap: 8px; }
   .splash-emoji { font-size: 1.7rem; }
   .splash-kicker { display: none; }
+  /* A teaser has no list to make room for, and "Muy pronto" is half its message */
+  .splash:has(.splash-teaser) .splash-kicker { display: block; }
   .splash-titulo { font-size: 1.9rem; }
   .splash-lead { font-size: 0.84rem; line-height: 1.3; }
   .splash-media { width: 92px; }
