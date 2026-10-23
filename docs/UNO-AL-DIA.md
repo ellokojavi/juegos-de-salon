@@ -124,7 +124,8 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
   `uno-al-dia-ui.js` uses `alAzar`, D-374). No cuenta para la racha, pero sí para "Juegos esta semana" y
   para los rankings normales de ese juego.
 - **Repetir el desafío de hoy** se puede, como práctica: el ranking del día toma solo el
-  primer intento completo, igual que en La Copa.
+  primer intento completo, igual que en La Copa. In the lab (D-433, lab key only) the first attempt
+  counts **from its start**, finished or not: see "The first attempt counts from its start" below.
 
 ### Se le olvida un día
 
@@ -799,3 +800,29 @@ were never uploaded. Since D-415 the walk also spends the 🧊 won by inviting a
 through the days a phone marked as saved, and `--rebuild` recomputes the whole month every night
 (above, "The nightly rebuild").
 
+### The first attempt counts from its start (D-433, in the lab)
+
+Only with a lab key (card `#seccion-uad-intento` in `/labs/`); without one, the first **finished**
+attempt still counts, as above. Before, a bad first attempt could be dropped (Back, reload, closing the
+tab) and the same board, already known, played from zero until one was finished.
+
+- Starting today's first attempt leaves a marker on the phone (`juegos-de-salon:uno-al-dia:empezado`,
+  `{ fecha, j, at }`) and, with a player, in Firebase (`unoAlDiaInicio/<jid>/<n>`, the server time,
+  written once; see [firebase/README.md](../firebase/README.md)). The intro of the first attempt adds
+  «Vale tu primer intento: si no lo terminas, queda en 0.»
+- A **solo game** left halfway goes on where it was, with its moves and its active time
+  (`juegos-de-salon:uno-al-dia:partida:<fecha>:<juego>`, saved on every move and when the page is
+  hidden, `dailySave` in `uno-al-dia.js`), and the intro says so.
+- A **group game** (El Ahorcado, Batalla Naval, Dudo, Generala) cannot resume: going back to it counts
+  0 and the new game is practice.
+- A day that ends with its attempt unfinished counts 0, recorded as that day's result (`settleStarted`,
+  run by `estado()` on any Uno al día screen). It keeps the streak and its bonus (D-414), and is charged
+  its time so far (at most a day), so it never ranks above an honest 0.
+- With a player, an attempt started on another phone and never finished also counts 0 here
+  (`empezadoEnOtro` in `uno-al-dia-red.js`; if Firebase does not answer in 2.5 s, the attempt is not
+  lost on a doubt). Without a player the marker lives only on the phone, so clearing the browser's
+  memory still resets it; those attempts reach no ranking.
+- Leaving mid-game by a back swipe asks first (D-432, also in the lab).
+- Tests: `daily-attempt.test.mjs` (the marker, the resume, the 0, the streak),
+  `uno-al-dia-jugador.test.mjs` (the Firebase start against the test store and the rules) and
+  `tools/e2e/daily-attempt.mjs`.

@@ -147,7 +147,7 @@ same write, seated with that PIN. They are loaded by `node tools/firebase/rankin
 
 The owner (their UID) can write and delete in all these branches, to moderate.
 
-## Uno al día (`unoAlDia`, `invitados`, D-230)
+## Uno al día (`unoAlDia`, `unoAlDiaInicio`, `invitados`, D-230)
 
 - `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w?, p? }`: the first Uno al día attempt of day `n` (days
   since 1970). Written once by whoever is seated as that player; `w` (the mark that it was already
@@ -156,6 +156,11 @@ The owner (their UID) can write and delete in all these branches, to moderate.
   it, never over a day played, and it never gets `w` or `p`. The rules check its shape, not whether
   the phone held a 🧊 (they can't count wildcards); the nightly rebuild bounds what an unbacked marker
   buys (see D-415).
+- `unoAlDiaInicio/<jid>/<n>` = a number, the server time when day `n`'s first attempt started (D-433,
+  in the lab: only phones with a lab key write it). Written once by whoever is seated as that player
+  (`jugadorSeats`), and only as `now` (within the last minute); never rewritten. Anyone can read a
+  player's; the whole branch only the owner. Another phone of the same player that finds a start here
+  and no `unoAlDia/<jid>/<n>` counts that attempt 0. Nothing sweeps it yet: a number per player and day.
 - `invitados/<jid>/<uid>` = `{ d, at, j?, p? }`: the `uid` phone finished its first Uno al día with an
   invitation from `jid`. Written by that phone, once, and not if it is seated as `jid`. Only the
   player `jid` reads it. `p` (D-414) is added once, by whoever is seated as `jid`, in the same write
@@ -166,7 +171,7 @@ The owner (their UID) can write and delete in all these branches, to moderate.
   didn't have `w` yet. The `uno-al-dia-pts` table (D-412, D-414) takes only a
   month (`s<yyyy>-<mm>`): each write adds a day `u` that didn't have `p` yet, its score plus the
   streak bonus (5 × `r`, up to 50), and the streak `r` (1–10) grows at most one per write. October 2026 was filled in from the history by `tools/firebase/uad-points-backfill.mjs` as administrator (D-414), and its `--rebuild` rewrites every month's totals each night from the history and the markers (the `uad-rebuild` workflow, D-415). Details and limits in [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
-- The owner reads all of `unoAlDia/` and `invitados/`, for the panel's Uno al día block, and
+- The owner reads all of `unoAlDia/`, `unoAlDiaInicio/` and `invitados/`, for the panel's Uno al día block, and
   can write and delete in both, to moderate.
 
 ## Phone notifications (`push`, `pushCopa`, `pushEnviados`, `pushDia`, `pushEnviadosDia`, D-223, D-224, D-230)
