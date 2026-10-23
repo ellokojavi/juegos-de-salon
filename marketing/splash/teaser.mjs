@@ -1,4 +1,4 @@
-// A splash teaser as a GIF (D-351): a drawn scene of a game that is coming, not its play. The
+// A splash teaser as a GIF (D-430): a drawn scene of a game that is coming, not its play. The
 // scene is a page in marketing/splash/teaser/ that draws one frame at a time with the game's own
 // sprites (window.frame(i) returns it as a PNG); this serves the repo, opens it in headless Chrome,
 // takes every frame and lets ffmpeg make the looping GIF (its own palette, scaled up with no
