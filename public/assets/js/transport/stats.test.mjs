@@ -26,6 +26,10 @@ assert.equal(envOf({ hostname: '127.0.0.1' }), 'dev');
 assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/timeline/' }), 'prod');
 assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon/bulls-and-cows/' }), 'prod');
 assert.equal(envOf({}), 'prod');
+// A PR's preview is the owner trying it (D-429); the site itself at github.io stays prod
+assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon-previews/pr-previews/hangman/' }), 'dev');
+assert.equal(envOf({ hostname: 'ellokojavi.github.io', pathname: '/juegos-de-salon-previews-x/' }), 'prod');
+assert.equal(envOf({ hostname: 'juegosdesalon.cl', pathname: '/juegos-de-salon-previews/x/' }), 'prod');
 // Tailscale y la red de la casa también son pruebas (D-138)
 assert.equal(envOf({ hostname: 'mac-mini.tail1234.ts.net' }), 'dev');
 assert.equal(envOf({ hostname: '192.168.1.40' }), 'dev');
