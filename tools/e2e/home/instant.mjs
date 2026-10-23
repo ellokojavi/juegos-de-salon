@@ -21,7 +21,9 @@ await b.send('Page.addScriptToEvaluateOnNewDocument', { source: `window.__before
   .observe(document, { subtree: true, childList: true });` });
 
 // The first visit: drawn by the module, and the copy saved
+// (the copy is removed only once the page that would save it is done, or it saves it again after)
 await b.go(`${SITE}/?test`, 300);
+await waitFor(`${drawn} && !!localStorage.getItem('${FOTO}')`);
 await ev(`localStorage.removeItem('${FOTO}')`);
 await b.go(`${SITE}/?test`, 300);
 ok(await waitFor(`${drawn} && !!localStorage.getItem('${FOTO}')`), 'the first visit saves a copy of the list');
