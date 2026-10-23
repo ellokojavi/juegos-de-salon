@@ -418,6 +418,8 @@ export function estado({ storage = globalThis.localStorage, ahora = Date.now() }
   const r = recorrer(d.dias, hoy, { regalos: d.regalos || [] });
   return {
     hoy, numero: numeroDel(hoy), juego: juegoDel(hoy), dia: d.dias[hoy] || null,
+    // Today's first attempt started and left unfinished (D-433): the way in goes straight to it
+    inProgress: !!unfinished(hoy, { storage }),
     racha: r.racha, mejor: r.mejor, comodines: r.comodines, salvados: r.salvados, ganados: r.ganados,
     jugados: Object.keys(d.dias).length, dias: d.dias,
   };

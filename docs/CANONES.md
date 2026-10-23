@@ -201,8 +201,9 @@ modo que el juego piensa tener.
   solo en cada pieza (D-86). Un gesto nuevo se prueba en un celular de verdad (D-67).
   The phone's own back gestures (iOS's edge swipe, Android's Back) cannot be blocked: in the lab
   (D-432, lab key only), while a game is on, `public/assets/js/back-guard.js` catches them and asks
-  «¿Salir de la partida?». `trackStart` arms it and `trackFinish` / `trackEnd` disarm it, so a game
-  that reports its start and end gets it without code of its own.
+  «¿Salir de la partida?»; the header's «‹ Menú» (`a.back`) asks the same, and Salir follows it.
+  `trackStart` arms it and `trackFinish` / `trackEnd` disarm it, so a game that reports its start and
+  end gets it without code of its own.
   Lo que se arrastra se dibuja en grande y **por sobre el dedo**: si el texto era chico en la
   lista, arrastrarlo bajo el dedo lo deja igual de ilegible y además tapado.
 - Se muestra en pantalla lo que el jugador necesita recordar (su número secreto, su flota), tapado si el celular pasa de mano.

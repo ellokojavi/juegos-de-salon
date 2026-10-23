@@ -1,6 +1,7 @@
-// Leaving a game midway (D-432, D-433), with the lab open as on localhost: a back swipe asks
-// «¿Salir de la partida?» and Seguir jugando stays; Uno al día's first attempt counts from its start,
-// so a group game left halfway counts 0, a solo game left halfway goes on where it was, and a day
+// Leaving a game midway (D-432, D-433), with the lab open as on localhost: a back swipe or «‹ Menú»
+// asks «¿Salir de la partida?» and Seguir jugando stays; Uno al día's first attempt counts from its start,
+// so a group game left halfway counts 0, a solo game left halfway goes on where it was (the home
+// page's Uno al día goes straight to it, without the die), and a day
 // that ended unfinished counts 0. The back swipe is `history.back()`: the phone's gesture does the
 // same, and no automated Chrome can make the gesture itself (D-86).
 import { output } from './output.mjs';
@@ -53,6 +54,13 @@ ok(await ev(`!document.getElementById('back-guard') && location.pathname === '/h
 await ev(`history.back(); 1`);
 ok(await waitFor(`!!document.getElementById('back-guard')`), 'a second swipe asks again');
 await click('#btn-back-guard-stay');
+await sleep(300);
+// «‹ Menú» is the same wish to leave: it asks the same
+await click('#btn-menu');
+ok(await waitFor(`!!document.getElementById('back-guard')`), '«‹ Menú» mid-game asks the same');
+await click('#btn-back-guard-stay');
+await sleep(400);
+ok(await ev(`location.pathname === '/hangman/'`), 'and Seguir jugando stays');
 
 // Leaving anyway (a reload, as closing the tab and coming back): it counts 0, and this one is practice
 await b.go(`${SITE}/hangman/?today`, 1500);
@@ -73,6 +81,13 @@ ok(await waitFor(`(document.getElementById('uad-intro')?.innerText||'') === ${JS
 const label = await ev(`document.getElementById('btn-empezar')?.textContent || ''`);
 ok(label.includes(LOCALES.es.resume), `the button says "${LOCALES.es.resume}" (${label})`);
 ok(!(await memory()).dias[QUEENS], 'nothing recorded yet');
+// From the home page, Uno al día goes straight to the game left halfway: no die
+await b.go(`${SITE}/`, 1500);
+ok(await waitFor(`(document.getElementById('btn-uad-chip')?.textContent||'').includes(${JSON.stringify(G.stay)})`), `the home page's button says "${G.stay}" (${await ev(`document.getElementById('btn-uad-chip')?.textContent`)})`);
+await click('#btn-uad-chip');
+ok(await waitFor(`location.pathname === '/queens/'`, 12), 'and goes straight to the game');
+ok(!await ev(`!!document.querySelector('.azar-capa')`), 'without the die');
+ok(await waitFor(`!document.getElementById('btn-empezar')?.disabled && (document.getElementById('btn-empezar')?.textContent||'').includes(${JSON.stringify(LOCALES.es.resume)})`), 'where it offers to keep playing');
 await click('#btn-empezar');
 ok(await waitFor(`document.querySelector('.screen.active')?.id === 'screen-jugar' && !document.getElementById('cuenta')`, 12), 'it goes on without the countdown');
 
