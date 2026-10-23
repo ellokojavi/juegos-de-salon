@@ -28,7 +28,7 @@ ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && await 
 const lan = Object.values(networkInterfaces()).flat().find(a => a && a.family === 'IPv4' && !a.internal)?.address;
 if (lan) {
   const port = new URL(SITE).port || '80';
-  await b.go(`http://${lan}:${port}/?test&lab&splash=${Object.keys(CAMPAIGNS).find(id => id !== ACTIVE?.id) || 'x'}`);
+  await b.go(`http://${lan}:${port}/?test&lab&splash=${Object.keys(CAMPAIGNS).find(id => !ACTIVE.some(a => a.id === id)) || 'x'}`);
   ok(await waitFor(`document.querySelectorAll('.game-card').length > 3`) && (await sleep(1200), await ev(`!!document.querySelector('.buscar-pill') && !document.getElementById('barra') && !document.getElementById('splash-titulo')`)), 'without a lab key, ?lab and a splash preview show nothing, and the search is there anyway');
   // The same address on localhost, where the lab opens by itself, does show them: the check above is not empty
   await b.go(`${SITE}/?test&lab`);
