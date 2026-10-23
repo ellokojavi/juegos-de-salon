@@ -427,8 +427,10 @@
        the whole page jumped down once the scripts arrived, a layout shift of 0.53 on a slow network */
     #lang-slot:empty { min-width: 194px; min-height: 54px; }
     @media (min-width: 441px) { #lang-slot:empty { min-width: 298px; } }
-    /* Sound, 🏅 and share: 🏅 is in the HTML, the other two arrive with the module */
-    .portada-barra .tools { min-width: 144px; min-height: 44px; }
+    /* Sound, 🏅 and share: 🏅 is in the HTML, the other two arrive with the module; their empty
+       slots hold a button's place so 🏅 does not sit alone on the left and then slide over (U-12) */
+    .portada-barra .tools { min-height: 44px; }
+    .portada-barra .tools > span:empty { width: 44px; height: 44px; }
     .azar-slot:empty { min-height: 48px; }
     /* Two rows: ⭐ ✨ 🔥 and the types (measured in the four languages; one row of 50 px before D-362) */
     .filtros:empty { min-height: 104px; }
@@ -477,8 +479,14 @@
           var f = JSON.parse(localStorage.getItem('juegos-de-salon:portada-foto') || 'null');
           if (!f || f.k !== k || typeof f.html !== 'string' || /[?&](type|tipo)=/.test(location.search)) return;
           var g = document.getElementById('games');
+          // The copy's words wrap as the drawn ones do (German hyphenates by the page's language)
+          if (/^(es|en|pt|de)$/.test(l)) document.documentElement.lang = l;
           g.innerHTML = f.html;
           g.classList.add('foto');
+          // The copy's ▶ chip is a button with no module behind it yet: a tap on it is kept and
+          // carried out by the real card when it arrives, instead of doing nothing (U-12)
+          var c = g.querySelector('button#btn-uad-chip');
+          if (c) c.addEventListener('click', function () { window.__fotoPortada.chip = true; c.disabled = true; });
         } catch (_) { /* without storage the list arrives with the modules, as always */ }
       })();
     </script>
@@ -629,6 +637,8 @@
       if (formaAcceso() === 'card' && reserva) {
         const card = tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() });
         reserva.replaceWith(card);
+        // A tap on the copy's ▶ chip before the modules arrived: carried out now. lab: #seccion-portada-al-tiro
+        if (window.__fotoPortada?.chip) { window.__fotoPortada.chip = false; card.querySelector('button#btn-uad-chip')?.click(); }
         // The month's place fresh from the server, once the page is drawn (the owner's request, in
         // the lab): until it answers, the chip shows the last one cached. lab: #seccion-portada-al-tiro
         conLab(() => (window.requestIdleCallback || (f => setTimeout(f, 300)))(() => import('./assets/js/uad-place.js')
