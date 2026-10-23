@@ -1,5 +1,5 @@
 {
-  "version": "0.200.7",
+  "version": "0.200.8",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1296,6 +1296,10 @@
     {
       "path": "docs/PANEL.md",
       "title": "Panel del dueño"
+    },
+    {
+      "path": "docs/PREVIEWS.md",
+      "title": "PR previews (D-429)"
     },
     {
       "path": "docs/PWA-NOTIFICACIONES.md",
