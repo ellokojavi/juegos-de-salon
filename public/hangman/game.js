@@ -19,7 +19,7 @@ import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stat
 import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../assets/js/ranking.js';
 import { rankingsVisibles } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
-import { modoHoy, introHoy, terminarHoy, ponerTarjeta } from '../assets/js/uno-al-dia-ui.js';
+import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
 import { azarDel, puntajeAhorcado } from '../assets/js/uno-al-dia.js';
 import {
   ALPHABETS, LIVES_OPTIONS, MAX_LETTERS, buildState, dealWords, normalize,
@@ -911,6 +911,7 @@ function startLocalMode(mode, names, config, hoy = null) {
   S.hoy = hoy;   // la revancha es una partida cualquiera: no lleva `hoy`
   document.getElementById('uad-tarjeta')?.remove();   // la de la partida anterior, si la hubo
   keepAwake();
+  if (hoy) empezarHoy(hoy);   // the first attempt counts from here (D-433, lab)
   trackStart({ game: GAME_ID, mode: hoy ? MODO_UNO_AL_DIA : mode, players: config.players.length, nombres: config.players.map(r => names?.[r]) }); // señal de uso (D-44, D-210)
 }
 

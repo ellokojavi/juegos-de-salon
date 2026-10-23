@@ -21,7 +21,7 @@ import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida, mmss } from '
 import { leerYo, rankingsVisibles } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { crearRecord } from '../cup/games/solo.js';
-import { modoHoy, introHoy, terminarHoy, ponerTarjeta } from '../assets/js/uno-al-dia-ui.js';
+import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
 import { azarDel } from '../assets/js/uno-al-dia.js';
 import {
   CATEGORIAS, NUMEROS, JUEGOS, TIROS, MIN_PLAYERS, MAX_PLAYERS,
@@ -591,6 +591,7 @@ function startMatch(mode, names, config, hoy = null) {
   S.uiRole = mode === 'solo' ? 'A' : null;
   S.shownHist = 0;
   keepAwake();
+  if (hoy) empezarHoy(hoy);   // the first attempt counts from here (D-433, lab)
   trackStart({ game: GAME_ID, mode: hoy ? MODO_UNO_AL_DIA : mode, players: players.length, nombres: players.map(r => names?.[r]) }); // señal de uso (D-44, D-210)
   onChange();
 }

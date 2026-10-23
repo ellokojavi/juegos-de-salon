@@ -101,6 +101,13 @@ assert.equal(await intento({ [pts]: fila(antesInv + 20, { u: (await db.get(pts))
 assert.equal(await cel1.anotarInvitado({ uid: 'uid3', mesP: periodoMes('2026-11-02') }), true, 'a month with no days yet starts with the friend\'s +10');
 assert.equal(await cel1.anotarPuntosDia({ n: n + 2, mesP: periodoMes('2026-11-02'), racha: 1 }), false, 'a day without history still adds nothing');
 
+// The start of a day's first attempt (D-433): once, by a phone seated as the player
+assert.equal(await cel1.inicioDia(n + 5), null, 'no start yet');
+assert.equal(await cel1.empezarDia({ n: n + 5 }), true);
+assert.equal(await cel1.inicioDia(n + 5), ahora.t, 'the start is the server time');
+assert.equal(await intento({ [`unoAlDiaInicio/${sara.jid}/${n + 5}`]: ahora.t + 1 }), false, 'a start is not rewritten');
+assert.equal(await crearAlmacenLocal({ storage, uid: 'uidX', now: () => ahora.t }).update({ [`unoAlDiaInicio/${sara.jid}/${n + 6}`]: ahora.t }).then(() => true, () => false), false, 'only a phone seated as the player marks it');
+
 // Las reglas de Firebase tienen las mismas ramas y lo mismo que revisa el almacén de prueba
 const reglas = JSON.parse(await readFile(new URL('../../../firebase/database.rules.json', import.meta.url), 'utf8')).rules;
 assert.ok(reglas.unoAlDia?.$jid?.$d && reglas.invitados?.$jid?.$uid, 'faltan unoAlDia o invitados en las reglas');
@@ -112,5 +119,6 @@ assert.match(reglas.records.$t.$p['.read'], /d\[0-9\]\{5\}/, 'las reglas no acep
 assert.match(reglas.invitados.$jid.$uid['.write'], /!root\.child\('jugadorSeats/, 'invitarse a sí mismo');
 assert.match(reglas.records.$t.$p.$jid['.write'], /invitados\/.*\/p'\)\.val\(\) === true.*\+ 10\)/, 'the rules check the invite +10 like the test store');
 assert.ok(reglas.invitados.$jid.$uid.p && reglas.records.$t.$p.$jid.i, 'the rules know the acceptance p and i');
+assert.match(reglas.unoAlDiaInicio?.$jid?.$d?.['.write'] || '', /!data\.exists\(\).*jugadorSeats/, 'the rules write a start once, by the player (D-433)');
 
 console.log('uno-al-dia-jugador: ok');
