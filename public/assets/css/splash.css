@@ -93,6 +93,8 @@ a.splash-item:hover, a.splash-item:focus-visible { transform: translateY(-3px); 
 .splash-teaser .splash-media, .splash-item.splash-teaser .splash-media {
   width: 100%; height: auto; aspect-ratio: var(--ratio, 1); image-rendering: pixelated;
 }
+/* Its title is short and alone: balanced lines, never one word left by itself ("VIENE…" at 320 px) */
+.splash:has(.splash-teaser) .splash-titulo { text-wrap: balance; }
 @media (prefers-reduced-motion: reduce) {
   .splash, .splash-fondo, .splash-emoji { animation: none; }
 }
