@@ -414,11 +414,11 @@ Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 ## What every game shares
 
 - **The menu:** filters by kind of game (kept in the link), ⭐ **Favorites** (in the browser, D-238), ✨ **New** and 🔥 **Popular** (D-362, D-364), a 🔎 search (D-387, D-403) and a 🎲 **Random game** die (D-188, D-374). New games sit after The Cup for two weeks (D-333, D-335); the rest are ordered by games finished in the last four weeks (D-361, D-369).
-- <a id="one-a-day"></a>**📅 One a Day** (D-230; #1 was 6 October 2026): every day at your midnight, a game and its content come from the date, the same for everyone, picked from every solo-playable game with no repeat within a week (D-334, D-405, D-421). [`/today/`](https://juegosdesalon.cl/today/) keeps your streak (a 🧊 freeze per 7 days, up to 2), a calendar and a **monthly points season**: the day's score plus a streak bonus (D-412, D-414). Signed in: leaderboards, invites that earn a freeze, and optional reminders ([docs/UNO-AL-DIA.md](docs/UNO-AL-DIA.md)). A recap window on the home page shows last month's season (D-424). In the lab, the first attempt counts from its start: left unfinished, it scores 0 (D-433).
+- <a id="one-a-day"></a>**📅 One a Day** (D-230; #1 was 6 October 2026): every day at your midnight, a game and its content come from the date, the same for everyone, picked from every solo-playable game with no repeat within a week (D-334, D-405, D-421). [`/today/`](https://juegosdesalon.cl/today/) keeps your streak (a 🧊 freeze per 7 days, up to 2), a calendar and a **monthly points season**: the day's score plus a streak bonus (D-412, D-414). Signed in: leaderboards, invites that earn a freeze, and optional reminders ([docs/UNO-AL-DIA.md](docs/UNO-AL-DIA.md)). A recap window on the home page shows last month's season (D-424). In the lab, the first attempt counts from its start: left unfinished, it scores 0, and the way back in skips the die (D-433).
 - **Leaderboards** (D-212, D-217): optional sign-in with a name and a 4-digit PIN, no account. Each game keeps your best score and its weekly, all-time, friends and Cup tables; `/records/` adds the All-Rounder and The Cup's medals (D-219); group games keep wins (D-215).
 - **Sharing** (D-165, D-171): every message has a `{emoji} *{title}* · {context}` header, one thing per line and the link last; results go out as an **image plus text**, and the text never repeats the image. The menu's share sheet shows the promo video and an **Invite to play** message listing the main features (D-253, D-271, D-410).
 - **Languages:** Spanish (default), English, Brazilian Portuguese and German, chosen by hand and saved on the device; the browser language is never guessed (D-47, D-48). See [Languages](#languages).
-- **Sound** synthesized with Web Audio, with a 🔊/🔇 button; **saved games** offer to continue; the screen stays awake while playing. In the lab, a back swipe mid-game asks before leaving (D-432).
+- **Sound** synthesized with Web Audio, with a 🔊/🔇 button; **saved games** offer to continue; the screen stays awake while playing. In the lab, a back swipe or «‹ Menú» mid-game asks before leaving (D-432).
 - **Installable** as a PWA, with a bubble showing the steps for each phone's browser (D-221, D-232); no offline mode yet.
 
 ---
@@ -665,7 +665,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   records/                    Leaderboards (D-212)
   today/                      One a Day (D-230, D-414)
   panel/                      Private owner dashboard (docs/PANEL.md)
-  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe mid-game asks, D-432), search.js, vigia.js (error reporting, D-251) …
+  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251) …
   assets/js/transport/        Local, Firebase room and usage-signal transports, with their helpers
   assets/og/                  Social card images
   manifest.webmanifest · sw.js   PWA manifest (one per language) and service worker (D-221, D-222)
