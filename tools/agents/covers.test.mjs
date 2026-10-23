@@ -52,3 +52,6 @@ assert.deepEqual(splashChanges(`@@ -40,3 +40,8 @@
 +  },
  };`), ['navidad']);
 assert.deepEqual(splashChanges(''), []);
+// ACTIVE is a queue: only the campaign it adds is new
+assert.deepEqual(splashChanges(`@@ -17,1 +17,1 @@\n-export const ACTIVE = [{ id: 'a', until: '2026-10-23' }];\n+export const ACTIVE = [{ id: 'a', until: '2026-10-23' }, { id: 'b' }];`), ['b']);
+assert.deepEqual(splashChanges(`@@ -17,1 +17,1 @@\n-export const ACTIVE = [{ id: 'a' }, { id: 'b' }];\n+export const ACTIVE = [{ id: 'b' }];`), [], 'turning one off shows nothing new');

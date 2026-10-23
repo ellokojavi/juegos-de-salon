@@ -87,6 +87,12 @@ a.splash-item:hover, a.splash-item:focus-visible { transform: translateY(-3px); 
   .splash-item p { font-size: 0.76rem; }
   .splash-jugar { padding: 4px 14px; font-size: 0.95rem; }
 }
+/* A teaser: only its picture (a drawn scene, pixel art), wide, as big as the window allows, on a
+   phone too. Scaled with no smoothing so the pixels stay crisp */
+.splash-teaser, .splash-items:has(.splash-teaser) { justify-self: center; width: 100%; max-width: 560px; }
+.splash-teaser .splash-media, .splash-item.splash-teaser .splash-media {
+  width: 100%; height: auto; aspect-ratio: var(--ratio, 1); image-rendering: pixelated;
+}
 @media (prefers-reduced-motion: reduce) {
   .splash, .splash-fondo, .splash-emoji { animation: none; }
 }
