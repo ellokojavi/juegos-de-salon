@@ -92,27 +92,6 @@
       <section class="grupo" id="mejoras">
         <h2>✨ Mejoras en prueba</h2>
         <p class="muted">Cambios al resto de la app, para mirarlos antes de que lleguen a todos.</p>
-        <section class="panel seccion" id="seccion-resumen-copa">
-          <h2>🏆 Resumen de la copa al volver</h2>
-          <p class="muted" style="margin:0">Cuando termina una copa que jugaste, la próxima vez que abres la portada sale una ventana con la tabla final, cómo cambió cada lugar día a día y un botón para ver la copa. Sale una vez por copa, solo durante la semana después de que terminó, y esa vez no sale el splash de novedades.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">El botón la muestra con la copa de ejemplo, sin guardar nada.</p>
-          <a class="btn btn--yellow" id="btn-resumen-copa" href="../?recap=demo">🏆 Ver el resumen de ejemplo</a>
-        </section>
-
-        <section class="panel seccion" id="seccion-resumen-temporada">
-          <h2>📅 Resumen de la temporada de Uno al día</h2>
-          <p class="muted" style="margin:0">Cuando termina el mes, la primera vez que abres la portada en la semana siguiente sale una ventana con cómo terminó la temporada de Uno al día: quién ganó, tu lugar y tus puntos, y el top 10 con el lugar de cada uno semana a semana. Sale si jugaste ese mes, una vez por temporada. A quien tiene los avisos de Uno al día le llega además uno que dice que la temporada terminó.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">El botón la muestra con una temporada de ejemplo, sin guardar nada.</p>
-          <a class="btn btn--yellow" id="btn-resumen-temporada" href="../?recap=season-demo">📅 Ver el resumen de ejemplo</a>
-        </section>
-
-        <section class="panel seccion" id="seccion-una-ventana">
-          <h2>🪟 Una ventana por visita en la portada</h2>
-          <p class="muted" style="margin:0">Al abrir la portada sale como máximo una ventana, en este orden: el resumen de una copa o de la temporada de Uno al día; si no hay, la novedad (el splash); y si tampoco, el globo para agregar la app a inicio. Lo demás espera a la próxima visita. Si hay dos novedades, sale una por visita, en orden.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Rige solo con tu llave del laboratorio: entra a la portada para verlo.</p>
-          <a class="btn btn--yellow" id="btn-una-ventana" href="../">🪟 Ir a la portada</a>
-        </section>
-
         <section class="panel seccion" id="seccion-copa-crear">
           <h2>🏆 La Copa: arma la semana con el dado</h2>
           <p class="muted" style="margin:0">Una pantalla más corta para crear una copa: la semana se ve de entrada, 🎲 Crear al azar sortea una semana nueva, y hay estilos de semana (Equilibrada, Puzzles, Saber y palabras, Lo nuevo). Toca un juego para cambiarlo por cualquiera de los 13, con una línea de qué es cada uno. Idioma, público y link quedan en Más opciones, y el PIN se escribe una vez.</p>
@@ -174,6 +153,38 @@
 
         <section class="subgrupo" id="bodega-mejoras">
           <h3>✨ Mejoras lanzadas</h3>
+          <section class="panel seccion plegada" id="seccion-resumen-copa">
+            <details>
+              <summary><h2>🏆 Resumen de la copa al volver</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Cuando termina una copa que jugaste, la próxima vez que abres la portada sale una ventana con la tabla final, cómo cambió cada lugar día a día y un botón para ver la copa. Sale una vez por copa, solo durante la semana después de que terminó, y esa vez no sale el splash de novedades.</p>
+                <p class="muted" style="margin:0;font-size:0.85rem">El botón la muestra con la copa de ejemplo, sin guardar nada.</p>
+                <a class="btn btn--yellow" id="btn-resumen-copa" href="../?recap=demo">🏆 Ver el resumen de ejemplo</a>
+              </div>
+            </details>
+          </section>
+
+          <section class="panel seccion plegada" id="seccion-resumen-temporada">
+            <details>
+              <summary><h2>📅 Resumen de la temporada de Uno al día</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Cuando termina el mes, la primera vez que abres la portada en la semana siguiente sale una ventana con cómo terminó la temporada de Uno al día: quién ganó, tu lugar y tus puntos, y el top 10 con el lugar de cada uno semana a semana. Sale si jugaste ese mes, una vez por temporada. A quien tiene los avisos de Uno al día le llega además uno que dice que la temporada terminó.</p>
+                <p class="muted" style="margin:0;font-size:0.85rem">El botón la muestra con una temporada de ejemplo, sin guardar nada.</p>
+                <a class="btn btn--yellow" id="btn-resumen-temporada" href="../?recap=season-demo">📅 Ver el resumen de ejemplo</a>
+              </div>
+            </details>
+          </section>
+
+          <section class="panel seccion plegada" id="seccion-una-ventana">
+            <details>
+              <summary><h2>🪟 Una ventana por visita en la portada</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Al abrir la portada sale como máximo una ventana, en este orden: el resumen de una copa o de la temporada de Uno al día; si no hay, la novedad (el splash); y si tampoco, el globo para agregar la app a inicio. Lo demás espera a la próxima visita. Si hay dos novedades, sale una por visita, en orden.</p>
+                <a class="btn btn--yellow" id="btn-una-ventana" href="../">🪟 Ir a la portada</a>
+              </div>
+            </details>
+          </section>
+
           <section class="panel seccion plegada" id="seccion-uad-invitar-jugar">
             <details>
               <summary><h2>📅 Uno al día: +10 por invitar</h2><span class="flecha" aria-hidden="true">›</span></summary>
@@ -221,7 +232,7 @@
                 <p class="muted" style="margin:0">La portada de verdad, con una barra abajo para prender y apagar lo que se probaba en ella, en cada idioma. Todo lo que se probó ya pasó a todos:</p>
                 <ul class="muted" style="margin:0;padding-left:1.2em;text-align:left">
                   <li>🚀 Lanzado · 🔎 Buscar: la píldora junto a Nuevos y Populares que se abre en un buscador de juegos.</li>
-                  <li>🚀 Lanzado · 🎉 Splash: la ventana de novedades sobre la portada, que el dueño enciende para una campaña; si hay varias encendidas, salen en fila: al cerrar una se abre la siguiente. En la barra se sigue pudiendo mirar cada campaña antes de encenderla.</li>
+                  <li>🚀 Lanzado · 🎉 Splash: la ventana de novedades sobre la portada, que el dueño enciende para una campaña; si hay varias encendidas, sale una por visita, en orden. En la barra se sigue pudiendo mirar cada campaña antes de encenderla.</li>
                   <li>🚀 Lanzado · la etiqueta 🔥 Popular, las fichas ✨ Nuevos y 🔥 Populares y el nombre de la app en el menú flotante.</li>
                 </ul>
                 <a class="btn btn--yellow" id="btn-portada" href="home/">🏠 Ver la portada con la barra</a>

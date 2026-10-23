@@ -50,10 +50,10 @@ ok(await waitFor(`!document.querySelector('.splash-capa')`, 2000) && await ev(`l
 await b.go(`${SITE}/?test`, 2500);
 ok(await ev(`!document.querySelector('.recap') && document.querySelectorAll('iframe').length === 0`), 'no cup due: no window and no frame');
 
-// Its card in the lab's improvements, with the demo's link (D-409)
+// Its card in the lab's La Bodega, launched, with the demo's link (D-409)
 await b.go(`${SITE}/labs/?test`);
-ok(await ev(`document.querySelector('#mejoras #seccion-resumen-copa #btn-resumen-copa')?.getAttribute('href') === '../?recap=demo'`), 'the lab lists it among the improvements, with the demo');
-ok(await ev(`document.querySelector('#mejoras #seccion-resumen-temporada #btn-resumen-temporada')?.getAttribute('href') === '../?recap=season-demo'`), "and Uno al día's season, with its demo");
+ok(await ev(`document.querySelector('#bodega #seccion-resumen-copa #btn-resumen-copa')?.getAttribute('href') === '../?recap=demo'`), 'the lab keeps it in La Bodega, launched, with the demo');
+ok(await ev(`document.querySelector('#bodega #seccion-resumen-temporada #btn-resumen-temporada')?.getAttribute('href') === '../?recap=season-demo'`), "and Uno al día's season, with its demo");
 
 console.log(failures ? `\n✗ ${failures} failure(s)` : '\n✓ recap: all green');
 process.exit(failures ? 1 : 0);
