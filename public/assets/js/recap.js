@@ -273,8 +273,8 @@ function askFrame(demo) {
 }
 
 /**
- * What the home page calls before the splash: resolves true when it opened a recap (the splash
- * then waits for the next visit). La Copa's goes first; a season of Uno al día, on a visit with no
+ * What the home page calls first, through home-windows.js (D-431): resolves true when it opened a
+ * recap (the splash then waits for the next visit). La Copa's goes first; a season of Uno al día, on a visit with no
  * cup to tell. Never under the end-to-end scripts (`?test`, automation) unless `?recap=` asks.
  */
 export async function startRecap({ lang = 'es', search = globalThis.location?.search ?? '' } = {}) {

@@ -35,7 +35,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367 |
@@ -53,7 +53,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (418)
+## In force (419)
 
 | D | Title | Status |
 |---|---|---|
@@ -395,7 +395,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-348](decisions/D-348.md) | The panel by domain: three bands, the period before, versions and CSV | current |
 | [D-349](decisions/D-349.md) | A random id per browser, to count users and cohorts | current |
 | [D-350](decisions/D-350.md) | The owner's panel in English | current |
-| [D-351](decisions/D-351.md) | A promotional splash over the home page, off by default and seen once | amended by D-355, D-389, D-395, D-430 |
+| [D-351](decisions/D-351.md) | A promotional splash over the home page, off by default and seen once | amended by D-355, D-389, D-395, D-430, D-431 |
 | [D-352](decisions/D-352.md) | A weekly report, as a PDF on disk and by email | current |
 | [D-353](decisions/D-353.md) | A result says each thing once | current |
 | [D-354](decisions/D-354.md) | The move to English gets an owner and a ratchet | current |
@@ -474,7 +474,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-427](decisions/D-427.md) | La Copa's recap shows the final table as the image the cup shares | current |
 | [D-428](decisions/D-428.md) | Faster releases without testing less: CI is the gate, and the groups fit the real times | current |
 | [D-429](decisions/D-429.md) | A preview of each PR on GitHub Pages, and review rounds on it instead of a PR per round | current |
-| [D-430](decisions/D-430.md) | Splash campaigns queue up, and a teaser can be a picture alone in Spanish and English | current |
+| [D-430](decisions/D-430.md) | Splash campaigns queue up, and a teaser can be a picture alone in Spanish and English | amended by D-431 |
+| [D-431](decisions/D-431.md) | One window per visit on the home page, through one gate | current |
 
 ## No longer in force (10)
 
