@@ -25,8 +25,9 @@ import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../ass
 import { azarDel } from '../assets/js/uno-al-dia.js';
 import {
   CATEGORIAS, NUMEROS, JUEGOS, TIROS, MIN_PLAYERS, MAX_PLAYERS,
-  buildState, tirar, writeDice, writeKeep, puntajeDia, VALOR,
+  buildState, tirar, writeDice, writeKeep, puntajeDia, VALOR, esEscaleraAlAs,
 } from './engine.js';
+import { labAccess } from '../assets/js/lab-access.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
@@ -46,6 +47,13 @@ const record = crearRecord(`juegos-de-salon:${GAME_ID}:record-solo`);
 const TABLA_SOLO = `${GAME_ID}_solo`;
 /** Uno al día (D-230): con `?today`, jugar solo con los dados del día. */
 const HOY = modoHoy(GAME_ID);
+
+/**
+ * Saying, under the dice, that 3-4-5-6-1 is a straight (feedback #736), for now only with a lab
+ * key. lab: #seccion-generala-escalera-as
+ */
+let avisoAs = false;
+labAccess().then(v => { avisoAs = v; if (v && S && M?.players && !view().done) renderPlay(view()); });
 
 let S = null;   // sesión: modo, transporte, roles de este celular, quién tiene el aparato, lo elegido
 let M = null;   // partida: config, nombres y la lista de jugadas
@@ -268,6 +276,7 @@ function renderMesa(v, mio) {
     }, dieEl(v.dados?.[i], { rueda: animar && !v.keep[i] }), el('span', { class: 'tag' }, T.kept)));
   }
   box.append(dados);
+  if (avisoAs && v.dados && 'escalera' in v.opciones && esEscaleraAlAs(v.dados)) box.append(el('div', { class: 'hint as' }, T.aceStraight));
   const hint = !mio ? (v.tiro === 0 ? fmt(T.rolling, { name: nameOf(v.current) }) : '')
     : v.tiro === 0 ? '' : v.tiro < TIROS ? T.keepHint : T.noMoreThrows;
   box.append(el('div', { class: 'hint' }, hint));

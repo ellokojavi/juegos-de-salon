@@ -72,6 +72,8 @@ export function tirar(dados, keep, azar = Math.random) {
 /* ------------------------------------------------------------------ */
 
 export const esEscalera = dados => ESCALERAS.has([...new Set(dados)].sort().join(''));
+/** The straight with the ace high (3-4-5-6-1): the one players do not expect, so the table says so. */
+export const esEscaleraAlAs = dados => [...new Set(dados)].sort().join('') === '13456';
 export const esFull = dados => cuentas(dados).filter(Boolean).sort().join('') === '23';
 export const esPoker = dados => Math.max(...cuentas(dados)) >= 4;
 export const esGenerala = dados => Math.max(...cuentas(dados)) === 5;
