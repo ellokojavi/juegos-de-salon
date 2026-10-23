@@ -2193,13 +2193,6 @@ function cuentaRegresiva(J) {
   return cuentaComun({ titulo: conEmoji(J.emoji, J.nombre), ya: T.letsPlay });
 }
 
-/**
- * A day resumed without its save (another phone, cleared memory, D-433), for now only with a lab key.
- * lab: #seccion-copa-reloj
- * In the test store (`?test`) the scripts see the clock of before unless the URL says `&lab`.
- */
-const relojDesdeServidor = () => (PRUEBA && !tiene('lab') ? Promise.resolve(false) : labAccess());
-
 async function jugar(d, { nuevo = false } = {}) {
   const Lc = L(), { meta } = Lc;
   const id = juegoDelDia(meta, d), J = juegoDia(meta, d), mod = JUEGOS[id], variante = varianteDelDia(meta, d);
@@ -2222,10 +2215,10 @@ async function jugar(d, { nuevo = false } = {}) {
   let detenido = !!guardado.detenido;
   // Uno nuevo parte cuando se fue la cuenta y terminó la entrada del juego (las cartas de El caso
   // que se dan vuelta): ni la cuenta ni la entrada son tiempo de juego
-  // Started before (Seguir jugando) but its save is not on this phone: with a lab key the clock goes
+  // Started before (Seguir jugando) but its save is not on this phone: the clock goes
   // on from when the day started on the server, so starting over elsewhere does not reset it (D-433)
   const empezo = !nuevo && !guardado.reloj ? Lc.started?.[d]?.[S.yo] : null;
-  const yaCorria = typeof empezo === 'number' && await relojDesdeServidor().catch(() => false) ? Math.max(0, now - empezo) : 0;
+  const yaCorria = typeof empezo === 'number' ? Math.max(0, now - empezo) : 0;
   document.getElementById('aviso-otro-celular')?.remove();
   let rel = guardado.reloj ? (detenido ? guardado.reloj : reloj.seguir(guardado.reloj, now)) : { ...reloj.nuevo(now + espera + (mod.entrada?.() || 0)), ms: yaCorria };
   let jugadas = guardado.jugadas;
@@ -2554,9 +2547,9 @@ function practica(id, varianteElegida = null) {
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(Jr, false))),
     rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });
-  // With a lab key, the first attempt counts from its start (D-433): the line says so, an attempt
-  // left halfway goes on where it was, and one started on another phone counts 0
-  // Empezar waits for that answer (at once without a key; with one, at most Firebase's 2.5 s)
+  // The first attempt counts from its start (D-433): the line says so, an attempt left halfway goes
+  // on where it was, and one started on another phone counts 0
+  // Empezar waits for that answer (at once without a player; with one, at most Firebase's 2.5 s)
   if (HOY) {
     const hoy = S.hoy, boton = $('#btn-empezar'), linea = $('#uad-intro');
     boton.disabled = true;
@@ -2594,7 +2587,7 @@ function jugarPractica(id, semilla, variante = null) {
   if ((!LABS || gameById(id)?.diario) && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
   // Un juego `diario` sigue donde iba al recargar (D-267): las jugadas y el tiempo, por caso
   let guardado = gameById(id)?.diario && !HOY ? partidaGuardada(id, semilla) : null;
-  // Today's first attempt with a lab key (D-433): it counts from here, and it goes on where it was if left
+  // Today's first attempt (D-433): it counts from here, and it goes on where it was if left
   if (HOY && !S.hoy.ya && (S.hoy.estadoLlave === 'new' || S.hoy.estadoLlave === 'resume')) {
     empezarHoy(S.hoy);
     if (S.hoy.estadoLlave === 'new') dailySave(S.hoy.fecha, id).borrar();

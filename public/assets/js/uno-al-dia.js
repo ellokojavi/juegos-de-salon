@@ -257,8 +257,8 @@ export function anotar(fecha, { j, s, ms }, { storage = globalThis.localStorage,
 /* ------------------------------------------------------------------ */
 /**
  * Without this, a bad first attempt could be dropped (Back, reload) and the same board played
- * again from zero, with the board already known, until one was finished. With a lab key (lab: #seccion-uad-intento; the screens
- * ask `labAccess()`), starting today's first attempt leaves a marker on this phone (and in Firebase
+ * again from zero, with the board already known, until one was finished. Now (for everyone since the
+ * owner validated it in the lab), starting today's first attempt leaves a marker on this phone (and in Firebase
  * with a player, `uno-al-dia-red.js`): a solo game left halfway goes on where it was, a group game
  * left halfway counts 0, and a day that ends with its attempt unfinished counts 0. Only the screens
  * write the marker, so without it everything here does nothing.

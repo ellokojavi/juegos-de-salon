@@ -157,7 +157,7 @@ The owner (their UID) can write and delete in all these branches, to moderate.
   the phone held a 🧊 (they can't count wildcards); the nightly rebuild bounds what an unbacked marker
   buys (see D-415).
 - `unoAlDiaInicio/<jid>/<n>` = a number, the server time when day `n`'s first attempt started (D-433,
-  in the lab: only phones with a lab key write it). Written once by whoever is seated as that player
+  for everyone since 2026-10-23). Written once by whoever is seated as that player
   (`jugadorSeats`), and only as `now` (within the last minute); never rewritten. Anyone can read a
   player's; the whole branch only the owner. Another phone of the same player that finds a start here
   and no `unoAlDia/<jid>/<n>` counts that attempt 0. Nothing sweeps it yet: a number per player and day.

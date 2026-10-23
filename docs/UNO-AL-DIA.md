@@ -124,7 +124,7 @@ lanzamiento: **Uno al día n.° 1, n.° 2…**, para compartir.
   `uno-al-dia-ui.js` uses `alAzar`, D-374). No cuenta para la racha, pero sí para "Juegos esta semana" y
   para los rankings normales de ese juego.
 - **Repetir el desafío de hoy** se puede, como práctica: el ranking del día toma solo el
-  primer intento completo, igual que en La Copa. In the lab (D-433, lab key only) the first attempt
+  primer intento completo, igual que en La Copa. Since D-433 (for everyone since 2026-10-23) the first attempt
   counts **from its start**, finished or not: see "The first attempt counts from its start" below.
 
 ### Se le olvida un día
@@ -800,10 +800,10 @@ were never uploaded. Since D-415 the walk also spends the 🧊 won by inviting a
 through the days a phone marked as saved, and `--rebuild` recomputes the whole month every night
 (above, "The nightly rebuild").
 
-### The first attempt counts from its start (D-433, in the lab)
+### The first attempt counts from its start (D-433)
 
-Only with a lab key (card `#seccion-uad-intento` in `/labs/`); without one, the first **finished**
-attempt still counts, as above. Before, a bad first attempt could be dropped (Back, reload, closing the
+Tried in the lab first (card `#seccion-uad-intento`, now in La Bodega, 🚀 Lanzado) and for everyone
+since 2026-10-23. Before, a bad first attempt could be dropped (Back, reload, closing the
 tab) and the same board, already known, played from zero until one was finished.
 
 - Starting today's first attempt leaves a marker on the phone (`juegos-de-salon:uno-al-dia:empezado`,
@@ -825,7 +825,7 @@ tab) and the same board, already known, played from zero until one was finished.
 - With an attempt left halfway, the way in skips the die: the home page's ▶ and /today/'s Jugar go
   straight to today's game (`tirarHoy`), saying «▶ Seguir jugando» for a solo game (`rotuloJugar`,
   `estado().inProgress`); a group game's keeps its label, since going back counts 0.
-- Leaving mid-game by a back swipe or «‹ Menú» asks first (D-432, also in the lab).
+- Leaving mid-game by a back swipe or «‹ Menú» asks first (D-432, for everyone since 2026-10-23).
 - Tests: `daily-attempt.test.mjs` (the marker, the resume, the 0, the streak),
   `uno-al-dia-jugador.test.mjs` (the Firebase start against the test store and the rules) and
   `tools/e2e/daily-attempt.mjs`.
