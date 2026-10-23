@@ -2973,7 +2973,8 @@ async function demo(nombre) {
   const e = sembrar(nombre, { now: st.now(), uid: st.uid });
   if (!e) { portada(); return; }
   if (e.pid) cuenta.recordar(e.code, e.pid, { nombre: e.nombre, copa: e.meta.name, fin: e.meta.end });
-  history.replaceState(null, '', `${location.pathname}?test&${e.code}`);
+  // `&lab` stays: the demo of a lab change (`&demo=resumed`) needs it after the code goes in the URL
+  history.replaceState(null, '', `${location.pathname}?test&${e.code}${tiene('lab') ? '&lab' : ''}`);
   await abrirCopa(e.code, { recienCreada: e.recien, pantalla: e.pantalla });
 }
 

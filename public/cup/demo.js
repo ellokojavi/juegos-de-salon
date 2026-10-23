@@ -76,6 +76,9 @@ export const ESCENAS = {
   out: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', faltas: { javi02: [1, 2] } },
   // The warning (D-347): whoever looks missed day 2, and day 3 is in its grace day
   risk: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', faltas: { javi02: [2, 3] } },
+  // A day started 4 minutes ago on another phone, its save not on this one (D-433, the lab's card
+  // #seccion-copa-reloj): «Seguir jugando» goes on with the clock from the server's start
+  resumed: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', enCurso: 4 },
 };
 
 /**
@@ -128,5 +131,6 @@ export function escena(nombre, { now, uid = 'demo' }) {
     }
   }
   if (e.jugaron >= 3) L.wild.panc03 = '2';
+  if (e.enCurso) (L.started[e.jugaron + 1] ||= {})[e.yo] = now - e.enCurso * 60000;
   return { L, e, meta };
 }
