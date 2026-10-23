@@ -129,7 +129,7 @@ uses these instead of `sleep` and `go(url, ms)`; `sleep` remains for what really
 clock (letting a timer run, a double tap).
 
 ```bash
-node tools/e2e/ci.mjs              # all the CI ones, one after another, with a summary
+node tools/e2e/ci.mjs              # all the CI ones, one after another (not before pushing: the check runs them, D-428)
 node tools/e2e/ci.mjs --groups     # the groups GitHub would run (JSON)
 node tools/e2e/groups.mjs show     # the same, with their estimated time
 node tools/e2e/ci.mjs cup/tournament.mjs   # just that one
