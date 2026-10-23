@@ -72,7 +72,7 @@ can vouch for a tree. After a PR whose last push was incremental, publishing tak
 
 | What | How it is known | Where |
 |---|---|---|
-| Which files each page loads | Derived: `<script src>`, `<link href>`, `import`, `import('…')`, `new URL('<file>', …)`, CSS `@import`/`url()` | `references()`, `assetsNamed()`, `closures()` |
+| Which files each page loads | Derived: `<script src>`, `<link href>`, `import`, `import('…')`, `new URL('<file>', …)`, media a script names by its path from the root (`'assets/…gif'`, D-430), CSS `@import`/`url()` | `references()`, `assetsNamed()`, `closures()` |
 | Which pages each script opens | Derived: `${SITE}/<page>/` (also `${BASE}`, `${SITIO}`), the game names a looping script names as strings, its folder | `scriptPages()`, `dynamicPages()` |
 | A page that runs another game's engine on purpose | Declared, with why | `REUSES` |
 | Small modules every page may load though they live in a game's folder | Declared, with why | `SHARED` |
