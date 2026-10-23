@@ -467,6 +467,7 @@ node public/assets/js/daily-recap.test.mjs
 node public/assets/js/favoritos.test.mjs
 node public/assets/js/fin.test.mjs
 node public/assets/js/games.test.mjs
+node public/assets/js/home-windows.test.mjs
 node public/assets/js/i18n.test.mjs
 node public/assets/js/instalable.test.mjs
 node public/assets/js/instalar.test.mjs
@@ -662,7 +663,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   records/                    Leaderboards (D-212)
   today/                      One a Day (D-230, D-414)
   panel/                      Private owner dashboard (docs/PANEL.md)
-  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, search.js, vigia.js (error reporting, D-251) …
+  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, home-windows.js (one window per visit on the home page, D-431), search.js, vigia.js (error reporting, D-251) …
   assets/js/transport/        Local, Firebase room and usage-signal transports, with their helpers
   assets/og/                  Social card images
   manifest.webmanifest · sw.js   PWA manifest (one per language) and service worker (D-221, D-222)
