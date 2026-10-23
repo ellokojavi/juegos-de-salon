@@ -1,6 +1,6 @@
 # Diseño: Julepe 🍹
 
-**Ruta:** `/julep/` (id `julepe`) · **Jugadores:** 2 a 6 · **Desde:** v0.34 · **Estado:** fuera del menú (v0.34, D-88) · **Idiomas:** es, en (“Julep”), pt (“Paga o Bolo”) y de (“Julepe”, D-191, D-197)
+**Ruta:** `/labs/julep/` (id `julepe`; `/julep/` and `/julepe/` are bridges) · **Jugadores:** 2 a 6 · **Desde:** v0.34 · **Estado:** in the lab's La Bodega (D-434; off the menu since D-88) · **Idiomas:** es, en (“Julep”), pt (“Paga o Bolo”) y de (“Julepe”, D-191, D-197)
 
 ## Resumen
 
@@ -15,7 +15,7 @@ El celular hace lo que en la mesa real se hace mal: baraja, **no deja tirar una 
 corresponde** —asistir, montar y fallar son tres reglas que en una mesa con sorbos se discuten
 toda la noche—, lleva la cuenta del plato y se acuerda de quién le debe sorbos a quién.
 
-**Estado:** en la portada como "Próximamente", al final de la lista y sin abrirse, mientras se reescriben las reglas (D-88, D-142): en `games.js` va con `available: false`. El juego sigue entero en `/julep/`.
+**Status:** kept in the lab's 📦 La Bodega since D-434, the owner's request: off the home page and the search, behind the lab's door at `/labs/julep/` (`labs: true`, `available: false`, `slug: 'julep'` in `games.js`). Before that it sat on the home page as a dimmed "Próximamente" card while its rules were reworked (D-88, D-142). The game is whole and unchanged.
 
 ## Reglas
 

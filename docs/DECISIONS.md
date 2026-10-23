@@ -23,7 +23,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 
 | Topic | Today's rule | Decisions |
 |---|---|---|
-| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422 |
+| Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434 |
 | Identity and texts | C-1 | D-11, D-30, D-49, D-177, D-184, D-324 |
 | Dated card decks | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
 | 🕵️ Agentes (board, clues in four languages, traps) | `docs/games/agents.md` | D-286, D-287, D-288, D-421 |
@@ -141,7 +141,6 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-85](decisions/D-85.md) | Dragging the card to the line is choosing, never placing | amended by D-86, D-87 |
 | [D-86](decisions/D-86.md) | The browser must not be able to take the drag gesture | current |
 | [D-87](decisions/D-87.md) | Choosing does not rebuild the line | current |
-| [D-88](decisions/D-88.md) | Julepe is withdrawn from the menu until its rules are understood | current |
 | [D-89](decisions/D-89.md) | A room drops after half an hour of inactivity | current |
 | [D-90](decisions/D-90.md) | Dragging a ship is choosing it | current |
 | [D-91](decisions/D-91.md) | The fleet is drawn in pixel art, seen from above | current |
@@ -478,14 +477,16 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-431](decisions/D-431.md) | One window per visit on the home page, through one gate | current |
 | [D-432](decisions/D-432.md) | A back swipe mid-game asks before leaving | current |
 | [D-433](decisions/D-433.md) | Uno al día's first attempt counts from its start; La Copa's clock survives another phone | current |
+| [D-434](decisions/D-434.md) | Julepe leaves the home page for La Bodega | current |
 
-## No longer in force (10)
+## No longer in force (11)
 
 | D | Title | Status |
 |---|---|---|
 | [D-13](decisions/D-13.md) | Publishing on GitHub Pages from `main` | replaced by D-192 |
 | [D-42](decisions/D-42.md) | A lab with its own URL to try out the interface | revoked |
 | [D-64](decisions/D-64.md) | The phone guesses with a real dictionary, not with the deck | revoked |
+| [D-88](decisions/D-88.md) | Julepe is withdrawn from the menu until its rules are understood | replaced by D-434 |
 | [D-98](decisions/D-98.md) | La Copa is Spanish-only for now | replaced by D-170 |
 | [D-145](decisions/D-145.md) | With the "Solo" filter, the game opens straight in its solo mode | replaced by D-149 |
 | [D-186](decisions/D-186.md) | The cup can be international: no Chile or Brazil themes | replaced by D-187 |

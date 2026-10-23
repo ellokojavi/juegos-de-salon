@@ -1,4 +1,4 @@
-// Ejecutar: node public/julep/engine.test.mjs
+// Ejecutar: node public/labs/julep/engine.test.mjs
 import assert from 'node:assert/strict';
 import {
   MANO, RESERVA, MIN_BAZAS, ENTRADA, PREMIO, leerPuestos, verifica,
