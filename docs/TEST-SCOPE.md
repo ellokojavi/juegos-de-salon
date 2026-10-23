@@ -78,7 +78,7 @@ can vouch for a tree. After a PR whose last push was incremental, publishing tak
 | Small modules every page may load though they live in a game's folder | Declared, with why | `SHARED` |
 | Scripts that open every page on purpose | Declared | `EVERY_PAGE` (today `smoke.mjs`) |
 | A long script split in parts named after pages | Declared | `PARTS` in `ci.mjs` |
-| Files no browser loads (docs, agents, workflows, rules) | Derived from the path | `changes.mjs` (`noBrowser`) |
+| Files no browser loads (docs, agents, workflows, rules, `durations.json`, D-428) | Derived from the path | `changes.mjs` (`noBrowser`) |
 
 ### 2. Decision
 
