@@ -132,7 +132,9 @@ function tarjetaDosDestinos({ lang, raiz, alTocar }) {
   const ir = () => { alTocar?.(); trackUnoAlDia('boton'); };
   const chip = hecho
     ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, onClick: ir }, ...chipPuntos(T, lang, racha))
-    : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', 'aria-label': T.ariaJugarHoy, onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, rotuloJugar(lang, `▶ ${T.jugar}`));
+    : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, rotuloJugar(lang, `▶ ${T.jugar}`));
+  // «Jugar hoy» says which game to the screen reader; «▶ Seguir jugando» is read as it shows (U-1)
+  if (!hecho && chip.textContent === `▶ ${T.jugar}`) chip.setAttribute('aria-label', T.ariaJugarHoy);
   // The screen reader hears the place and the points too, not only «your points»
   if (hecho) chip.setAttribute('aria-label', `${T.ariaTusPuntos}: ${chip.textContent}`);
   return el('div', { class: 'game-card alta uad-card dos' + (hecho ? ' hecho' : ''), id: 'btn-uno-al-dia' },
