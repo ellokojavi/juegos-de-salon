@@ -50,6 +50,7 @@ const OBSOLETE = new Set([
 // they run whole.
 export const PARTS = {
   'cup/tournament.mjs': ['cup', 'labs', 'demos'],
+  'cup/languages.mjs': ['cup', 'standalone', 'screens-a', 'screens-b'],
   'cup-games/languages.mjs': SUELTOS.map(m => m.slug),
 };
 
