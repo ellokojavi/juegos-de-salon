@@ -8,7 +8,7 @@
  *   node tools/agents/splash.mjs off [<id>]                    turns that one off, or all of them
  *
  * Several can be on: ACTIVE is a queue in the order they were turned on, and a player with more than
- * one to see gets them one after the other (closing one opens the next). A campaign is seen once per
+ * one to see gets them in that order, one per visit (D-430, D-431). A campaign is seen once per
  * phone. Preview any of them without turning it on: https://juegosdesalon.cl/?splash=<id>
  */
 import { readFileSync, writeFileSync } from 'node:fs';
