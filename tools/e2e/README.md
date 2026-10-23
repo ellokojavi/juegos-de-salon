@@ -189,6 +189,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `code/lab.mjs` | The lab's Code (D-270): the lab offers it in La Bodega (D-280); the cover (title, illustration and three steps, Word only in Spanish, without the 8 mode); tapping a card places and selects it, ✕ removes it, and without orienting the code can't be read; a stroke on top of another looks striped, without text; with the 4 upright the code is read without clashes; a wrong one counts and the right one opens with sharing and the form; in Word, flipping shows the other side and the word is read and opens. At 320 px and in the four languages |
 | `julep/local.mjs` | Table of three against the phone and a game on one phone, with resuming midway |
 | `julep/online.mjs` | Three phones against real Firebase: sealed deal, verified-cards seal, reload midway and chat |
+| `julep/lab.mjs` | Julepe in La Bodega (D-434): not on the home page, not even dimmed; in La Bodega's kept games folded, tagged 👋, a tap shows Play; `/julep/?room=` and `/julepe/?room=` lead to `/labs/julep/?room=`, which loads behind the lab's door and is not indexed |
 | `timeline/local.mjs` | One phone with three players, with resuming midway |
 | `timeline/solo.mjs` | Playing solo (⏳ Línea Relámpago): theme only, error in red, resuming, score, record per theme, cards not repeated, and in each language |
 | `timeline/error.mjs` | Error screen that stays until tapped; the opponent waits |

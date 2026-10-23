@@ -9,20 +9,20 @@
  * la llave que publicó cada uno (assets/js/sobre.js, D-81). Al cerrar la mano cada celular
  * destapa lo que le tocó y todos verifican que nadie jugó una carta que no tenía (C-10).
  */
-import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
-import { botonInvitar } from '../assets/js/compartir.js';
-import { gameById } from '../assets/js/games.js';
-import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
-import { param } from '../assets/js/parametros.js';
-import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { showHandoff, passBlock } from '../assets/js/handoff.js';
-import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
-import { createChat } from '../assets/js/chat.js';
-import { createLocalTransport } from '../assets/js/transport/local.js';
-import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
-import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
-import { createSessionStore, createNameStore } from '../assets/js/session.js';
-import { haySobres, nuevasLlaves, cierra, abre } from '../assets/js/sobre.js';
+import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../../assets/js/ui.js';
+import { botonInvitar } from '../../assets/js/compartir.js';
+import { gameById } from '../../assets/js/games.js';
+import { getLang, langToggle, applyStatic, COMMON, withLang } from '../../assets/js/i18n.js';
+import { param } from '../../assets/js/parametros.js';
+import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
+import { showHandoff, passBlock } from '../../assets/js/handoff.js';
+import { clearRoomError, tryRematch, tryRoom } from '../../assets/js/transport/errors.js';
+import { createChat } from '../../assets/js/chat.js';
+import { createLocalTransport } from '../../assets/js/transport/local.js';
+import { trackStart, trackVisit, trackFinish } from '../../assets/js/transport/stats.js';
+import { finDePartida, bloqueVictorias } from '../../assets/js/ranking.js';
+import { createSessionStore, createNameStore } from '../../assets/js/session.js';
+import { haySobres, nuevasLlaves, cierra, abre } from '../../assets/js/sobre.js';
 import {
   MANO, RESERVA, PREMIO, MIN_PLAYERS, MAX_PLAYERS,
   buildState, reparte, escribirCartas, leerCartas, enMano, enReserva,
@@ -680,7 +680,7 @@ function renderResult(v) {
       S.mode === 'online'
         ? el('button', { class: 'btn btn--ghost btn--sm', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode)
         : el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); renderModes(); showScreen('screen-intro'); } }, T.changePlayers),
-      el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backMenu),
+      el('a', { class: 'btn btn--ghost btn--sm', href: '../../' }, T.backMenu),
     ),
   );
   if (!S.shownWin) { S.shownWin = true; SFX.win(); confetti({ count: 220, duration: 3500 }); }
@@ -760,14 +760,14 @@ async function startOnline(transport, code, role, name, config, privadas = {}, l
 }
 
 async function createOnline(name, config) {
-  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+  const { createFirebaseTransport } = await import('../../assets/js/transport/firebase.js');
   const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
   const code = await t.create({ config, name });
   await startOnline(t, code, 'A', name, config);
 }
 
 async function joinOnline(code, name, previousRole = null, privadas = {}, llave = null) {
-  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+  const { createFirebaseTransport } = await import('../../assets/js/transport/firebase.js');
   const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
   const { role, config } = await t.join(code, { name, previousRole });
   await startOnline(t, code, role, name, config || DEFAULT_CONFIG, privadas, llave);
@@ -779,7 +779,7 @@ async function rematchOnline() {
   const propuesta = ROLES.filter(r => M.names[r] && r !== S.role).map(r => M.rematch[r]).find(c => typeof c === 'string');
   const nombre = M.names[S.role];
   if (propuesta) return joinOnline(propuesta, nombre);
-  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
+  const { createFirebaseTransport } = await import('../../assets/js/transport/firebase.js');
   const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
   const config = { ...M.config, players: null };
   const code = await t.create({ config, name: nombre });

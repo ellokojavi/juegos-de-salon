@@ -119,12 +119,6 @@ export const KEYWORDS = {
     pt: ['dados', 'sequência', 'full', 'poker', 'general', 'yahtzee', 'kniffel', 'yatzy', 'copo'],
     de: ['würfel', 'straße', 'full house', 'poker', 'kniffel', 'yatzy', 'yahtzee', 'becher'],
   },
-  julepe: {
-    es: ['cartas', 'naipes', 'baraja', 'bazas', 'apuesta'],
-    en: ['cards', 'deck', 'tricks', 'bet'],
-    pt: ['cartas', 'baralho', 'vazas', 'aposta'],
-    de: ['karten', 'kartenspiel', 'stiche', 'wette'],
-  },
 };
 
 /** "Lógica" → "logica": what is compared, so accents and capitals never get in the way. */

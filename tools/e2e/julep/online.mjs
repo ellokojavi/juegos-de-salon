@@ -50,7 +50,7 @@ const play = d => d.evaluate(`(()=>{
 })()`);
 
 /* ---------------- Room ---------------- */
-await A.go(`${hosts[0]}/julep/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${hosts[0]}/julep/`);
+await A.go(`${hosts[0]}/labs/julep/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${hosts[0]}/labs/julep/`);
 await click(A, '.modes .mode:nth-child(2)'); await sleep(400);
 await setName(A, NAME.A);
 await click(A, '#setup-actions .btn--yellow'); await sleep(5000);
@@ -60,8 +60,8 @@ console.log('room:', code, '| A\'s screen:', await screen(A));
 for (const [role, dev] of [['B', B], ['C', C]]) {
   const host = hosts[role === 'B' ? 1 : 2];
   // Joins through the invitation link, which is how it really arrives
-  await dev.go(`${host}/julep/?room=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
-  await dev.go(`${host}/julep/?room=${code}`); await sleep(1200);
+  await dev.go(`${host}/labs/julep/?room=${code}`); await dev.evaluate(`localStorage.clear(); 1`);
+  await dev.go(`${host}/labs/julep/?room=${code}`); await sleep(1200);
   await setName(dev, NAME[role]);
   await dev.evaluate(`[...document.querySelectorAll('#setup-actions .btn')].find(x=>/Unirse|Join|Entrar/i.test(x.textContent)).click(); 1`);
   await sleep(4500);
@@ -112,7 +112,7 @@ while (rounds++ < 500) {
   const vb = await view(B);
   if (!reconnected && vb.hand === 1 && vb.phase === 'baza') {
     reconnected = true;
-    await B.go(`${hosts[1]}/julep/?room=${code}`); await sleep(9000);   // joining the room has a 12 s cap
+    await B.go(`${hosts[1]}/labs/julep/?room=${code}`); await sleep(9000);   // joining the room has a 12 s cap
     const now = await view(B);
     console.log('B reloaded →', await screen(B), '· hand', now.hand, '· their cards:', (now.mine || []).join(' ') || '⚠️ lost their hand');
     // If it did not return to the table, the first thing to know is whether the game was saved

@@ -12,7 +12,7 @@ import { LOCALES as BS } from '../../public/battleship/rules.js';
 import { LOCALES as HM } from '../../public/hangman/rules.js';
 import { LOCALES as LD } from '../../public/liars-dice/rules.js';
 import { LOCALES as GE } from '../../public/generala/rules.js';
-import { LOCALES as JU } from '../../public/julep/rules.js';
+import { LOCALES as JU } from '../../public/labs/julep/rules.js';
 // With several sessions at once, each serves its worktree on its own port (D-135)
 const SITE = process.env.SITE || process.env.SITIO || 'http://localhost:8765';
 
@@ -41,7 +41,8 @@ async function attempt(lang, game, label) {
   await b.go(`${SITE}/${route}`);
   await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang','${lang}'); 1`);
   await b.go(`${SITE}/${route}`);
-  const preload = await b.evaluate(`import('../assets/js/transport/firebase.js').then(()=>'ok',e=>'failed: '+e)`);
+  // The site's root from the page's own vigia.js, so a game under /labs/ (Julepe, D-434) preloads the same module
+  const preload = await b.evaluate(`import(new URL('assets/js/transport/firebase.js', document.querySelector('script[src$="assets/js/vigia.js"]').src.split('assets/js/vigia.js')[0]).href).then(()=>'ok',e=>'failed: '+e)`);
   console.log(`${label} · SDK preloaded:`, preload);
   await network(false);
   await b.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(400);
