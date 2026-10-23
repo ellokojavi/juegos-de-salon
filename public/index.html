@@ -623,8 +623,9 @@
     // The row is drawn now, with an empty card in One a Day's place, so La Copa does not first show
     // at full width and then jump when the modules arrive
     const copa = tarjetas.find(t => t.g.torneo)?.card;
+    // null (never false) without one, so `reserva?.remove()` holds with ?daily=button
     const reserva = !['button', 'off'].includes(param('daily')) && copa
-      && (uadFoto || el('div', { class: 'game-card alta uad-card reserva', 'aria-hidden': 'true' }, el('div', { class: 'emoji' }, el('span', {}, '📅'))));
+      ? (uadFoto || el('div', { class: 'game-card alta uad-card reserva', 'aria-hidden': 'true' }, el('div', { class: 'emoji' }, el('span', {}, '📅')))) : null;
     if (reserva) {
       const fila = el('div', { class: 'fila-alta' });
       copa.replaceWith(fila);
