@@ -1,8 +1,8 @@
 # The promotional splash
 
 A window over the home page that announces something new (D-351): off by default, each phone sees
-a campaign once. Several can be on: they queue up in the order they were turned on, and closing one
-opens the next (D-430); since D-431 the home page shows only the first one per visit, the next on the next visit. This folder is its memory: every campaign that was made, and how they are made.
+a campaign once. Several can be on: they queue up in the order they were turned on (D-430), and the home page shows
+one per visit, the next on the next visit (D-431). This folder is its memory: every campaign that was made, and how they are made.
 
 | | |
 |---|---|
