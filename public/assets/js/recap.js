@@ -5,7 +5,7 @@
  * that visit (splash.css draws both), so the home page never stacks two windows; the splash comes
  * on the next one.
  *
- * In the lab (D-395, D-409): it opens only for a lab key holder until the owner validates it.
+ * For everyone since the owner validated it in the lab (2026-10-23, D-409).
  * `?recap=demo` shows it with La Copa's podium demo and `?recap=season-demo` with a made-up season,
  * without recording anything. `?recap=season` is the link of the notification that a season ended
  * (tools/push/daily.mjs): it opens last month's season for whoever taps it.
@@ -248,8 +248,9 @@ export function seasonView({ month, recap }, lang) {
 }
 
 /**
- * The cups whose recap every player of theirs sees, lab key or not (D-426): the owner opens a cup's
- * recap while the window is still in the lab. By code; a cup told and gone may stay listed.
+ * The cups the owner put first (D-426): among the cups due on a phone, one of these is told before the
+ * others. Born to open a cup's recap to everyone while the window was in the lab; since it left the lab
+ * (2026-10-23) only the order remains. By code; a cup told and gone may stay listed.
  */
 export const OPEN_CUPS = ['QNPFM']; // Thursday Guys #4, ends 2026-10-23
 
@@ -293,14 +294,8 @@ export async function startRecap({ lang = 'es', search = globalThis.location?.se
     const due = mode ? null : dueCup();
     const cupDue = mode === 'demo' || !!due;
     const seasonDue = mode === 'season-demo' || (!mode && !!season.dueSeason());
-    // Nothing due on this phone: no lab check, no network
+    // Nothing due on this phone: no network
     if (!cupDue && !seasonDue) return false;
-    // Still in the lab (D-395), except a cup the owner opened to all its players (OPEN_CUPS, D-426).
-    // lab: #seccion-resumen-copa, lab: #seccion-resumen-temporada
-    const open = !!due && OPEN_CUPS.includes(due.code);
-    const { labAccess } = await import('./lab-access.js');
-    const lab = open || await labAccess();
-    if (!lab) return false;
     if (cupDue) {
       const found = await askFrame(mode === 'demo');
       if (found?.recap) {
@@ -308,8 +303,7 @@ export async function startRecap({ lang = 'es', search = globalThis.location?.se
         return true;
       }
     }
-    // An open cup skipped the lab check: the season still needs it
-    if (!seasonDue || (open && !(await labAccess()))) return false;
+    if (!seasonDue) return false;
     const found = mode === 'season-demo' ? season.demoSeason() : await season.loadSeasonRecap();
     if (!found) return false;
     showRecap(seasonView(found, lang), { lang, onLeave: mode ? null : () => season.markSeasonSeen(found.month) });
