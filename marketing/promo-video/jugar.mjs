@@ -153,7 +153,7 @@ const PLAYS = {
     { tap: `document.getElementById('btn-tirar')`, after: 1400 },
     { tap: `document.querySelector('.casilla.libre')`, after: 900 },
   ] },
-  julepe: { url: '/julep/', steps: [
+  julepe: { url: '/labs/julep/', steps: [
     `document.querySelectorAll('.mode')[2].click()`, NOMBRE, `[...document.querySelectorAll('.btn')].find(b=>/A JUGAR|Deal me/i.test(b.textContent)).click()`, { wait: 1500 }, { snap: true },
     { tap: `[...document.querySelectorAll('.btn')].find(b=>/VOY|I am in/i.test(b.textContent))`, after: 1500 },
     { tap: `[...document.querySelectorAll('.pcard:not(.pcard--sm)')].find(c=>c.offsetParent)`, after: 1200 },

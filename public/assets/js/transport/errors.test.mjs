@@ -243,7 +243,7 @@ function fakeDom() {
 /* Every room game wires its rematch button through tryRematch (D-322) */
 {
   const { readFileSync } = await import('node:fs');
-  for (const g of ['battleship', 'bulls-and-cows', 'hangman', 'timeline', 'generala', 'julep', 'liars-dice']) {
+  for (const g of ['battleship', 'bulls-and-cows', 'hangman', 'timeline', 'generala', 'labs/julep', 'liars-dice']) {
     const src = readFileSync(new URL(`../../../${g}/game.js`, import.meta.url), 'utf8');
     assert.match(src, /tryRematch\(e\.currentTarget, (rematch|rematchOnline), \{ T, busy: COMMON\[lang\]\.opening/, `${g}: the rematch button goes through tryRematch, saying it is opening the room (U-37)`);
     assert.doesNotMatch(src, /onClick: rematch\b|rematchOnline\(\)\.catch/, `${g}: no rematch outside tryRematch`);
