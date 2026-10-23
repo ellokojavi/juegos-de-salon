@@ -4,14 +4,22 @@
 // words are in another language and that what is shared comes out in the cup's; then it opens the
 // standalone games. The expected texts come from the dictionaries: a new language joins on its own.
 //
-// Usage: python3 -m http.server 8765 (in another terminal) and node tools/e2e/cup/languages.mjs <output-folder>
+// With --part cup|standalone|screens-a|screens-b it runs only that part: they are independent, and GitHub runs
+// each in its own job, so this script (~6 min whole) no longer sets how long the check takes.
+//
+// Usage: python3 -m http.server 8765 (in another terminal) and node tools/e2e/cup/languages.mjs <output-folder> [--part <name>]
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { checkLanguages } from '../languages-common.mjs';
+import { PATHS } from '../paths.mjs';
 import { mkdirSync } from 'node:fs';
 import { LANGS, COMMON } from '../../../public/assets/js/i18n.js';
 import { SUELTOS } from '../../../public/assets/js/games.js';
 import { LOCALES } from '../../../public/cup/rules.js';
+
+const PART = process.argv.includes('--part') ? process.argv[process.argv.indexOf('--part') + 1] : null;
+if (PART && !['cup', 'standalone', 'screens-a', 'screens-b'].includes(PART)) throw new Error(`--part ${PART}: must be cup, standalone, screens-a or screens-b`);
+const runs = part => !PART || PART === part;
 
 const OUT = output('/tmp/cup-languages');
 mkdirSync(OUT, { recursive: true });
@@ -33,7 +41,7 @@ const OTHERS = LANGS.filter(l => l !== 'es');
 const noEmoji = t => t.replace(/^\P{L}+/u, '').trim();
 const has = (text, sought) => text.toLowerCase().includes(sought.toLowerCase());
 
-for (const [i, lang] of OTHERS.entries()) {
+for (const [i, lang] of (runs('cup') ? OTHERS : []).entries()) {
   const T = LOCALES[lang];
   // A new cup, created with the screen in `lang`: its words start in that language
   // No fixed pauses (D-307): each wait ends when met, with the old pause as its cap
@@ -78,7 +86,7 @@ for (const [i, lang] of OTHERS.entries()) {
 // ('letras'); the folder, in English ('word'): D-192. All their screens in every language are
 // walked by cup-games/languages.mjs; here, what depends on each language's content.
 const STANDALONE = Object.fromEntries(SUELTOS.map(m => [m.id, m]));
-for (const id of ['letras', 'agentes', 'conexiones', 'anio', 'reinas', 'donde']) for (const lang of OTHERS) {
+for (const id of runs('standalone') ? ['letras', 'agentes', 'conexiones', 'anio', 'reinas', 'donde'] : []) for (const lang of OTHERS) {
   await b.open(`${SITE}/${STANDALONE[id].slug}/?test&lang=${lang}`, 2000);
   const t = await screenText();
   ok(has(t, STANDALONE[id].name[lang]), `${id} (${lang}): the lobby is translated (${STANDALONE[id].name[lang]})`);
@@ -93,9 +101,11 @@ for (const id of ['letras', 'agentes', 'conexiones', 'anio', 'reinas', 'donde'])
   await check(`${lang}-standalone-${id}-game`, { buttons: false });
 }
 
-// The screens in paths.mjs in every language, against Spanish (D-199)
+// The screens in paths.mjs in every language, against Spanish (D-199), in two halves (screens-a, screens-b)
 b.close();
-await checkLanguages('copa', { dicts: [LOCALES], port: 9379, query: '?test', out: `${OUT}/screens` });
+const SCREENS = Object.keys(PATHS.copa), HALF = Math.ceil(SCREENS.length / 2);
+const screens = [...(runs('screens-a') ? SCREENS.slice(0, HALF) : []), ...(runs('screens-b') ? SCREENS.slice(HALF) : [])];
+if (screens.length) await checkLanguages('copa', { dicts: [LOCALES], port: 9379, query: '?test', out: `${OUT}/screens`, screens });
 
 ok(!b.errors.length, `no errors in the console${b.errors.length ? ': ' + b.errors.join(' | ') : ''}`);
 process.exit();

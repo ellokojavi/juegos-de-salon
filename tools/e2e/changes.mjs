@@ -16,6 +16,8 @@ const NO_BROWSER = [
   r => r.startsWith('tools/firebase/'),
   r => r.startsWith('firebase/'),
   r => r.startsWith('.github/') && r !== '.github/workflows/e2e.yml',
+  // How long each script took: it only sorts the scripts into groups, it checks nothing (D-428)
+  r => r === 'tools/e2e/durations.json',
 ];
 
 /** true if the list is not empty and nothing in it reaches the browser. */
