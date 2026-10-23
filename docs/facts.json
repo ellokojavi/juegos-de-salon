@@ -1,5 +1,5 @@
 {
-  "version": "0.201.1",
+  "version": "0.201.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -475,8 +475,8 @@
       "players": "1 to 6",
       "duration": "15–30",
       "available": false,
-      "labs": false,
-      "status": "v0.34",
+      "labs": true,
+      "status": null,
       "modes": [
         {
           "key": "modeLocal",
@@ -504,11 +504,7 @@
       ],
       "chat": true,
       "files": [
-        "public/julep/engine.js",
-        "public/julep/game.js",
-        "public/julep/index.html",
-        "public/julep/rules.js",
-        "public/julep/style.css"
+        "public/julep/index.html"
       ]
     },
     {
@@ -1030,9 +1026,6 @@
     "public/hangman/engine.js",
     "public/hangman/game.js",
     "public/hangman/rules.js",
-    "public/julep/engine.js",
-    "public/julep/game.js",
-    "public/julep/rules.js",
     "public/labs/bridges/engine.js",
     "public/labs/bridges/game.js",
     "public/labs/bridges/pixel.js",
@@ -1045,6 +1038,9 @@
     "public/labs/fourth-king/game.js",
     "public/labs/fourth-king/rules.js",
     "public/labs/home/experiments.js",
+    "public/labs/julep/engine.js",
+    "public/labs/julep/game.js",
+    "public/labs/julep/rules.js",
     "public/labs/pips/engine.js",
     "public/labs/pips/game.js",
     "public/liars-dice/engine.js",
@@ -1120,12 +1116,12 @@
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/home-preload.test.mjs",
-    "public/julep/engine.test.mjs",
     "public/labs/bridges/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
     "public/labs/fourth-king/engine.test.mjs",
+    "public/labs/julep/engine.test.mjs",
     "public/labs/listed.test.mjs",
     "public/labs/pips/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
@@ -1239,6 +1235,7 @@
     "install-prompt.mjs",
     "installable.mjs",
     "invite-link.mjs",
+    "julep/lab.mjs",
     "julep/languages.mjs",
     "julep/local.mjs",
     "julep/online.mjs",

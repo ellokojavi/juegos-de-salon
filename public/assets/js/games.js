@@ -113,9 +113,12 @@ export const GAMES = [
     players: '1–6',
     duration: '15–30',
     jugadas: ['va', 'paso', 'cambia', 'juega', 'regala'],
-    path: 'julep/',
-    // Fuera del menú por ahora: las reglas no quedaron claras y se están reescribiendo (D-88).
-    // El juego sigue entero en /julep/, solo no se ofrece desde acá.
+    // In La Bodega since D-434 (the owner's request, after D-88 had paused it): off the home page,
+    // behind the lab's door at /labs/julep/; /julep/ and /julepe/ are bridges there
+    path: 'labs/julep/',
+    // Its name in URLs and its docs/games/ and docs/screenshots/ folders, without the lab (C-18)
+    slug: 'julep',
+    labs: true,
     available: false,
   },
   {
@@ -318,7 +321,7 @@ export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'triv
  * goes after the ones that are, in the order of GAMES and SUELTOS.
  */
 export const POPULARIDAD_FECHA = '2026-10-18';
-export const POPULARIDAD = ['copa', 'reinas', 'linea-de-tiempo', 'tango', 'anio', 'letras', 'donde', 'toque-y-fama', 'zip', 'desenredo', 'batalla-naval', 'rutas', 'loteo', 'ahorcado', 'dudo', 'pintaminas', 'generala', 'julepe'];
+export const POPULARIDAD = ['copa', 'reinas', 'linea-de-tiempo', 'tango', 'anio', 'letras', 'donde', 'toque-y-fama', 'zip', 'desenredo', 'batalla-naval', 'rutas', 'loteo', 'ahorcado', 'dudo', 'pintaminas', 'generala'];
 const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
 
 /**
