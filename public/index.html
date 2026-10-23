@@ -477,7 +477,7 @@
           var k = [v, l, d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate())].join('|');
           window.__fotoPortada = { k: k };
           var f = JSON.parse(localStorage.getItem('juegos-de-salon:portada-foto') || 'null');
-          if (!f || f.k !== k || typeof f.html !== 'string' || /[?&](type|tipo)=/.test(location.search)) return;
+          if (!f || f.k !== k || typeof f.html !== 'string' || /[?&](type|tipo|daily)=/.test(location.search)) return;
           var g = document.getElementById('games');
           // The copy's words wrap as the drawn ones do (German hyphenates by the page's language)
           if (/^(es|en|pt|de)$/.test(l)) document.documentElement.lang = l;
@@ -552,12 +552,13 @@
     if (param('lab') !== null) import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => yes && import('./labs/home/experiments.js').then(({ drawBar }) => drawBar())).catch(() => {});
 
     // The copy of the list the next visit draws at once (D-435): only of the whole list, never a
-    // filtered or searched one
+    // filtered or searched one, nor one drawn with ?daily=
     const FOTO = 'juegos-de-salon:portada-foto';
     const guardarFoto = () => {
       try {
         const k = window.__fotoPortada?.k;
-        if (k && !list.querySelector('[hidden], .reserva')) localStorage.setItem(FOTO, JSON.stringify({ k, html: list.innerHTML }));
+        // Never from a link that changes the layout (?daily=button puts Uno al día next to the die)
+        if (k && param('daily') === null && !list.querySelector('[hidden], .reserva')) localStorage.setItem(FOTO, JSON.stringify({ k, html: list.innerHTML }));
       } catch (_) { /* without storage, every visit waits for the modules, as before */ }
     };
 
@@ -622,8 +623,9 @@
     // The row is drawn now, with an empty card in One a Day's place, so La Copa does not first show
     // at full width and then jump when the modules arrive
     const copa = tarjetas.find(t => t.g.torneo)?.card;
+    // null (never false) without one, so `reserva?.remove()` holds with ?daily=button
     const reserva = !['button', 'off'].includes(param('daily')) && copa
-      && (uadFoto || el('div', { class: 'game-card alta uad-card reserva', 'aria-hidden': 'true' }, el('div', { class: 'emoji' }, el('span', {}, '📅'))));
+      ? (uadFoto || el('div', { class: 'game-card alta uad-card reserva', 'aria-hidden': 'true' }, el('div', { class: 'emoji' }, el('span', {}, '📅')))) : null;
     if (reserva) {
       const fila = el('div', { class: 'fila-alta' });
       copa.replaceWith(fila);

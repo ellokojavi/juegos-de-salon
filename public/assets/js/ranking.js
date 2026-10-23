@@ -176,7 +176,7 @@ const PESTANAS = {
   amigosSemana: { rotulo: T => T.friends, vacio: T => T.emptyFriendsToday, leer: async (J, juego) => ({ top: await J.tablaAmigos(juego, semanaDe(fechaLocal())), amigos: true }) },
   // Uno al día points (lab, D-412): the month's season, everyone and friends; last month's winner
   // carries the 🏆 badge next to their name
-  mes: { rotulo: T => T.month, tabla: UAD_PUNTOS, leer: J => J.tabla(UAD_PUNTOS, periodoMes(fechaLocal())) },
+  mes: { rotulo: T => T.month, tabla: UAD_PUNTOS, leer: (J, juego, o) => J.tabla(UAD_PUNTOS, periodoMes(fechaLocal()), o) },
   amigosMes: { rotulo: T => T.friends, tabla: UAD_PUNTOS, vacio: T => T.emptyFriendsToday, leer: async J => ({ top: await J.tablaAmigos(UAD_PUNTOS, periodoMes(fechaLocal())), amigos: true }) },
 };
 
@@ -184,9 +184,13 @@ const PESTANAS = {
 export const mesAnterior = (fecha = fechaLocal()) => periodoMes(sumarDias(`${fecha.slice(0, 7)}-01`, -1));
 
 /** Last month's Uno al día points champion (D-412): their jid, or null. */
-export async function campeonDelMes(J) {
-  try { return (await J.tabla(UAD_PUNTOS, mesAnterior(), { top: 1 })).top[0]?.jid ?? null; } catch (_) { return null; }
+export async function campeonDelMes(J, { reciente = 0 } = {}) {
+  try { return (await J.tabla(UAD_PUNTOS, mesAnterior(), { top: 1, reciente })).top[0]?.jid ?? null; } catch (_) { return null; }
 }
+
+/** The list a tab showed last on this phone, for the instant before the server answers (D-436). */
+function leerVisto(k) { try { const v = JSON.parse(localStorage.getItem(k)); return v?.d === fechaLocal() ? v : null; } catch (_) { return null; } }
+function guardarVisto(k, v) { try { localStorage.setItem(k, JSON.stringify({ ...v, d: fechaLocal() })); } catch (_) { /* no storage */ } }
 
 function fila(f, yo, victorias = false, campeon = null) {
   const T = R();
@@ -205,40 +209,61 @@ function fila(f, yo, victorias = false, campeon = null) {
  * Un ranking con sus pestañas. `juego` es la tabla (el id del juego, o 'todoterreno').
  * `pestanas` elige cuáles se muestran y en qué orden; la primera es la que se ve al abrir.
  * Devuelve el nodo, con `.recargar()` para después de anotar una partida.
+ * `rapido` (lab, D-436): the table and last month's champion are read at once, a reload keeps the
+ * list on screen until the new one arrives, a read the page just made is reused, the list drawn last
+ * time on this phone shows while the first one loads, and the page (not the block) reloads it when
+ * the player signs in or out.
  */
-export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['semana', 'siempre', 'amigos'], alTocar = () => {} }) {
+export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['semana', 'siempre', 'amigos'], alTocar = () => {}, rapido = false }) {
   const T = R();
   let actual = pestanas[0];
   const lista = el('div', { class: 'rk-lista', 'aria-live': 'polite' });
   const seg = pestanas.length > 1 ? el('div', { class: 'rk-seg', role: 'tablist' }, pestanas.map(p => el('button', {
     type: 'button', role: 'tab', 'data-p': p, class: p === actual ? 'on' : '', 'aria-selected': String(p === actual),
-    onClick: () => { alTocar(); actual = p; marcar(); cargar(); },
+    onClick: () => { alTocar(); actual = p; caja.datos = null; pintado = false; marcar(); cargar(); },
   }, PESTANAS[p].rotulo(T)))) : null;
   const marcar = () => seg?.querySelectorAll('button').forEach(b => { const on = b.dataset.p === actual; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); });
   let turno = 0;
+  // A list (or its empty line) is on screen for this tab, so a fast reload keeps it until the new one
+  let pintado = false;
+  const guardada = () => `juegos-de-salon:rk-visto:${juego}:${actual}`;
   async function cargar() {
     const mio = ++turno;
-    lista.replaceChildren(el('p', { class: 'muted rk-centro' }, T.loading));
-    caja.datos = null;
+    const visto = rapido && !pintado && leerVisto(guardada());
+    if (visto) pintar(visto);
+    else if (!rapido || !pintado) { lista.replaceChildren(el('p', { class: 'muted rk-centro' }, T.loading)); caja.datos = null; }
     try {
       const J = await jugador();
-      const v = await PESTANAS[actual].leer(J, juego);
-      const campeon = (PESTANAS[actual].tabla || juego) === UAD_PUNTOS ? await campeonDelMes(J) : null;
+      const conPuntos = (PESTANAS[actual].tabla || juego) === UAD_PUNTOS;
+      const o = rapido ? { reciente: 5000 } : undefined;
+      let v, campeon = null;
+      if (rapido) [v, campeon] = await Promise.all([PESTANAS[actual].leer(J, juego, o), conPuntos ? campeonDelMes(J, o) : null]);
+      else {
+        v = await PESTANAS[actual].leer(J, juego);
+        campeon = conPuntos ? await campeonDelMes(J) : null;
+      }
       if (mio !== turno) return;
-      const yo = leerYo()?.jid;
-      lista.replaceChildren();
-      const sinAmigos = PESTANAS[actual].vacio?.(T) || T.emptyFriends;
-      if (!v.top.length) { lista.append(el('p', { class: 'muted rk-centro' }, v.amigos ? sinAmigos : T.empty)); return; }
-      const t = PESTANAS[actual].tabla || juego;
-      const tipo = t === PARTIDAS ? 'partidas' : t === UAD_RACHA ? 'racha' : t === UAD_PUNTOS ? 'puntos' : esVictorias(t);
-      lista.append(...v.top.map(f => fila(f, yo, tipo, campeon)));
-      // What is shown, for whoever draws it elsewhere (sharing the ranking as a picture)
-      caja.datos = { pestana: actual, rotulo: PESTANAS[actual].rotulo(T), top: v.top, vecinos: v.vecinos || [], yo, tipo, campeon };
-      if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, tipo, campeon)));
-      if (v.amigos && v.top.length < 2) lista.append(el('p', { class: 'muted rk-centro' }, sinAmigos));
+      if (rapido && !v.amigos) guardarVisto(guardada(), { top: v.top, vecinos: v.vecinos || [], campeon });
+      pintar({ ...v, campeon });
     } catch (e) {
-      if (mio === turno) lista.replaceChildren(el('p', { class: 'rk-error' }, T.error));
+      if (mio === turno && !(rapido && pintado)) lista.replaceChildren(el('p', { class: 'rk-error' }, T.error));
     }
+  }
+  function pintar(v) {
+    const campeon = v.campeon ?? null;
+    const yo = leerYo()?.jid;
+    caja.datos = null;
+    pintado = true;
+    lista.replaceChildren();
+    const sinAmigos = PESTANAS[actual].vacio?.(T) || T.emptyFriends;
+    if (!v.top.length) { lista.append(el('p', { class: 'muted rk-centro' }, v.amigos ? sinAmigos : T.empty)); return; }
+    const t = PESTANAS[actual].tabla || juego;
+    const tipo = t === PARTIDAS ? 'partidas' : t === UAD_RACHA ? 'racha' : t === UAD_PUNTOS ? 'puntos' : esVictorias(t);
+    lista.append(...v.top.map(f => fila(f, yo, tipo, campeon)));
+    // What is shown, for whoever draws it elsewhere (sharing the ranking as a picture)
+    caja.datos = { pestana: actual, rotulo: PESTANAS[actual].rotulo(T), top: v.top, vecinos: v.vecinos || [], yo, tipo, campeon };
+    if (v.vecinos?.length) lista.append(el('div', { class: 'rk-sep', 'aria-hidden': 'true' }, '⋯'), ...v.vecinos.map(f => fila(f, yo, tipo, campeon)));
+    if (v.amigos && v.top.length < 2) lista.append(el('p', { class: 'muted rk-centro' }, sinAmigos));
   }
   const caja = el('div', { class: 'panel rk-ranking', 'data-tabla': juego },
     el('p', { class: 'lead rk-titulo' }, titulo || T.title),
@@ -246,7 +271,7 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
     seg, lista);
   caja.recargar = cargar;
   cargar();
-  jugador().then(J => J.escuchar(() => cargar())).catch(() => {});
+  if (!rapido) jugador().then(J => J.escuchar(() => cargar())).catch(() => {});
   return caja;
 }
 
