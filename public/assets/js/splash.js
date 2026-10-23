@@ -8,16 +8,18 @@
  *   node tools/agents/splash.mjs off
  *
  * That rewrites ACTIVE below, and the change goes out like any other (a PR with auto-merge).
- * Each player sees a campaign once: closing it records its id in localStorage, and it does not come
- * back until a different campaign is turned on. `?splash=<id>` shows any campaign on demand, on
- * the home page or anywhere that calls showSplash (the lab demo, /labs/splash/), without recording it.
+ * More than one can be on at once: ACTIVE is a queue, in the order they were turned on, and a player
+ * with several still to see gets them one after the other, closing one opens the next (the owner's
+ * request). Each player sees a campaign once: closing it records its id in localStorage, and it does
+ * not come back. `?splash=<id>` shows any campaign on demand, on the home page or anywhere that
+ * calls showSplash (the lab demo, /labs/splash/), without recording it.
  *
- * The decision of whether to show it is pure (shouldShow), so node tests it without a DOM.
+ * The decision of what to show is pure (queue), so node tests it without a DOM.
  */
 import { param, tiene } from './parametros.js';
 
-/** The campaign that is on, or null. `until` (optional, inclusive) turns it off by itself. */
-export const ACTIVE = { id: 'tres-juegos-demo', until: '2026-10-23' };
+/** The campaigns that are on, in the order they were turned on. `until` (optional, inclusive) turns one off by itself. */
+export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-pronto', until: '2026-10-28' }];
 
 export const SEEN_KEY = 'juegos-de-salon:splash-visto';
 
@@ -26,7 +28,11 @@ export const SEEN_KEY = 'juegos-de-salon:splash-visto';
  * in the four languages, and its items, each one a game of games.js by id (name, emoji, tagline and
  * link come from there) or its own content (`title`, `text`, `href`). Each item shows a few seconds
  * of play: `video` (a looping MP4, muted) with its `img` as the poster, or just `img` (a still or a
- * GIF). Paths are from the site root; the clips are made with marketing/splash/capture.mjs, and each campaign is kept in marketing/splash/campaigns/<id>/ (D-355).
+ * GIF, with `still` for reduced motion). An item with no name, text or link is a teaser: its picture
+ * alone, wide (`ratio`). `langs` limits a campaign to some languages: the others get it in English
+ * (the owner's request for a teaser in Spanish and English). Paths are from the site root; the clips
+ * are made with marketing/splash/capture.mjs and the teasers with teaser.mjs, and each campaign is
+ * kept in marketing/splash/campaigns/<id>/ (D-355).
  */
 export const CAMPAIGNS = {
   'tres-juegos-demo': {
@@ -45,6 +51,16 @@ export const CAMPAIGNS = {
       { game: 'pintaminas', video: 'assets/splash/paint-mines.mp4', img: 'assets/splash/paint-mines.jpg' },
     ],
   },
+  // A teaser of 🚂 Tren en Vilo, still in the lab: a train stops at the edge of a gap where the bridge
+  // should be. It says something is coming, not what: no name, no link, and the texts say nothing of
+  // crossing (the owner's request: a mystery)
+  'tren-en-vilo-pronto': {
+    emoji: '🚂',
+    langs: ['es', 'en'],
+    kicker: { es: 'Muy pronto', en: 'Coming soon' },
+    title: { es: 'Algo nuevo se viene…', en: 'Something new is coming…' },
+    items: [{ img: 'assets/splash/bridges-teaser.gif', still: 'assets/splash/bridges-teaser.png', ratio: '8 / 5' }],
+  },
 };
 
 /** The words the window itself uses. */
@@ -55,24 +71,33 @@ const UI = {
 };
 
 const pick = (obj, lang) => (obj && typeof obj === 'object' ? obj[lang] ?? obj.es : obj);
+/** The language a campaign is shown in: the player's, or English if the campaign does not have it. */
+export const campaignLang = (c, lang) => (!c?.langs || c.langs.includes(lang) ? lang : 'en');
 
 /**
- * Whether the home page shows the splash: the forced id (`?splash=`) always wins; otherwise the
- * active campaign, if it exists, has not expired and this phone has not closed it.
+ * The campaigns the home page shows, in order: the forced id (`?splash=`) alone, always; otherwise
+ * each active one that exists, has not expired and this phone has not closed, in the order they
+ * were turned on. `seen` is the list of ids this phone closed.
  */
-export function shouldShow({ active = ACTIVE, campaigns = CAMPAIGNS, seen = null, forced = null, today = new Date(), automated = false } = {}) {
-  if (forced) return campaigns[forced] ? forced : null;
-  if (automated || !active?.id || !campaigns[active.id]) return null;
-  if (active.until) {
-    const end = Date.parse(`${active.until}T23:59:59`);
-    if (Number.isFinite(end) && today.getTime() > end) return null;
-  }
-  return seen === active.id ? null : active.id;
+export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], forced = null, today = new Date(), automated = false } = {}) {
+  if (forced) return campaigns[forced] ? [forced] : [];
+  if (automated) return [];
+  const live = a => {
+    if (!a?.id || !campaigns[a.id] || seen.includes(a.id)) return false;
+    const end = a.until ? Date.parse(`${a.until}T23:59:59`) : NaN;
+    return !(Number.isFinite(end) && today.getTime() > end);
+  };
+  return [...new Set((active || []).filter(live).map(a => a.id))];
 }
 
 const storage = () => { try { return globalThis.localStorage || null; } catch (_) { return null; } };
-export const seenId = () => { try { return storage()?.getItem(SEEN_KEY) ?? null; } catch (_) { return null; } };
-const markSeen = id => { try { storage()?.setItem(SEEN_KEY, id); } catch (_) {} };
+/** The ids this phone closed. It used to keep only the last one, as a bare id: that reads as a list of one. */
+export function seenIds(raw = (() => { try { return storage()?.getItem(SEEN_KEY) ?? null; } catch (_) { return null; } })()) {
+  if (!raw) return [];
+  try { const list = JSON.parse(raw); if (Array.isArray(list)) return list.filter(x => typeof x === 'string'); } catch (_) {}
+  return [raw];
+}
+const markSeen = id => { try { const list = seenIds(); if (!list.includes(id)) storage()?.setItem(SEEN_KEY, JSON.stringify([...list, id].slice(-20))); } catch (_) {} };
 
 const ROOT = new URL('../../', import.meta.url);
 
@@ -101,6 +126,8 @@ async function resolve(items, lang) {
       text: pick(i.text, lang) ?? pick(g?.tagline, lang) ?? '',
       href: i.href ? new URL(i.href, ROOT).href : g?.path ? new URL(g.path, ROOT).href : null,
       img: i.img ? new URL(i.img, ROOT).href : null,
+      still: i.still ? new URL(i.still, ROOT).href : null,
+      ratio: i.ratio ?? null,
       video: i.video ? new URL(i.video, ROOT).href : null,
     };
   });
@@ -113,6 +140,7 @@ async function resolve(items, lang) {
 export async function showSplash(id, { lang = 'es', record = true, onClose } = {}) {
   const c = CAMPAIGNS[id];
   if (!c || document.querySelector('.splash-capa')) return;
+  lang = campaignLang(c, lang);
   loadStyle();
   const items = await resolve(c.items || [], lang);
 
@@ -122,6 +150,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   card.setAttribute('role', 'dialog');
   card.setAttribute('aria-modal', 'true');
   card.setAttribute('aria-labelledby', 'splash-titulo');
+  card.lang = lang;
 
   const x = node('button', 'splash-x', '✕');
   x.type = 'button';
@@ -137,23 +166,26 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
 
   const list = node('div', 'splash-items');
   list.style.setProperty('--n', String(Math.max(1, items.length)));
+  const still = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   for (const it of items) {
     // The whole item is the way in: tapping the clip, the name or Play opens the game
-    const a = node(it.href ? 'a' : 'div', 'splash-item');
+    const teaser = !it.name && !it.text && !it.href;
+    const a = node(it.href ? 'a' : 'div', teaser ? 'splash-item splash-teaser' : 'splash-item');
+    if (it.ratio) a.style.setProperty('--ratio', it.ratio);
     if (it.href) a.href = it.href;
     if (it.video) {
       const v = node('video', 'splash-media');
       // With reduced motion, the poster: the board already solved, still
-      const still = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
       Object.assign(v, { src: it.video, muted: true, loop: true, autoplay: !still, playsInline: true, preload: still ? 'none' : 'auto' });
       v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
       if (it.img) v.poster = it.img;
       a.append(v);
     } else if (it.img) {
       const img = node('img', 'splash-media');
-      img.src = it.img; img.alt = ''; img.decoding = 'async';
+      img.src = still && it.still ? it.still : it.img; img.alt = ''; img.decoding = 'async';
       a.append(img);
     }
+    if (teaser) { list.append(a); continue; }
     const body = node('div', 'splash-item-cuerpo');
     body.append(node('h3', null, `${it.emoji} ${it.name}`.trim()));
     if (it.text) body.append(node('p', null, it.text));
@@ -195,20 +227,22 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
 }
 
 /**
- * What the home page calls: shows the active campaign once per phone, or the one in `?splash=`.
- * Never under the end-to-end scripts (`?test`, or a browser driven by automation).
+ * What the home page calls: shows each active campaign once per phone, one after the other (closing
+ * one opens the next), or the one in `?splash=`. Never under the end-to-end scripts (`?test`, or a
+ * browser driven by automation). Returns the ids it will show.
  */
 export function startSplash({ lang = 'es', search = globalThis.location?.search ?? '' } = {}) {
   const forced = param('splash', search);
   const automated = tiene('test', search) || globalThis.navigator?.webdriver === true;
-  const show = id => {
-    if (!id) return null;
-    // After the home page has drawn its list, so the window lands on a page that is already there
-    setTimeout(() => showSplash(id, { lang, record: !forced }), 350);
-    return id;
+  const show = ids => {
+    if (!ids.length) return null;
+    // After the home page has drawn its list, so the window lands on a page that is already there;
+    // the next one when the last one has finished leaving
+    const next = k => k < ids.length && showSplash(ids[k], { lang, record: !forced }).then(() => setTimeout(() => next(k + 1), 400));
+    setTimeout(() => next(0), 350);
+    return ids;
   };
-  // Previewing a campaign that is not on yet is development: only for lab key holders (D-395)
   // A campaign that is not on previews only with a lab key (D-395). lab: #seccion-portada
-  if (forced && forced !== ACTIVE?.id) return import('./lab-access.js').then(({ labAccess }) => labAccess()).then(yes => show(yes ? shouldShow({ forced }) : null));
-  return show(shouldShow({ seen: seenId(), forced, automated }));
+  if (forced && !ACTIVE.some(a => a.id === forced)) return import('./lab-access.js').then(({ labAccess }) => labAccess()).then(yes => show(yes ? queue({ forced }) : []));
+  return show(queue({ seen: seenIds(), forced, automated }));
 }

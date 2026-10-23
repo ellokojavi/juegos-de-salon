@@ -20,6 +20,18 @@ A new game: one entry in `GAMES` in `capture.mjs` (its page, its board's selecto
 ready, and how to play its solution through the game's test hook), then its item in the campaign
 (`video` and `img` in `public/assets/js/splash.js`).
 
+## Teasers
+
+A game that is still coming gets a drawn scene instead of its play (D-430): a page in
+[`teaser/`](teaser/) draws each frame with the game's own sprites, and [`teaser.mjs`](teaser.mjs)
+turns it into `public/assets/splash/<game>-teaser.gif` (512×320, crisp pixel art) and a
+`<game>-teaser.png` still for reduced motion. Its item has only the picture (`img`, `still`, `ratio`).
+
+```bash
+node marketing/splash/teaser.mjs [bridges]
+```
+
 ## History
 
 - **v1 · 2026-10-18:** the three games out of the lab (D-332), for the demo campaign `tres-juegos-demo`.
+- **Teaser v1 · 2026-10-22:** 🚂 Tren en Vilo (`bridges`), still in the lab, for `tren-en-vilo-pronto` (D-430).

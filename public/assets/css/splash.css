@@ -81,12 +81,22 @@ a.splash-item:hover, a.splash-item:focus-visible { transform: translateY(-3px); 
   .splash { padding: 14px 10px 6px; gap: 8px; }
   .splash-emoji { font-size: 1.7rem; }
   .splash-kicker { display: none; }
+  /* A teaser has no list to make room for, and "Muy pronto" is half its message */
+  .splash:has(.splash-teaser) .splash-kicker { display: block; }
   .splash-titulo { font-size: 1.9rem; }
   .splash-lead { font-size: 0.84rem; line-height: 1.3; }
   .splash-media { width: 92px; }
   .splash-item p { font-size: 0.76rem; }
   .splash-jugar { padding: 4px 14px; font-size: 0.95rem; }
 }
+/* A teaser: only its picture (a drawn scene, pixel art), wide, as big as the window allows, on a
+   phone too. Scaled with no smoothing so the pixels stay crisp */
+.splash-teaser, .splash-items:has(.splash-teaser) { justify-self: center; width: 100%; max-width: 560px; }
+.splash-teaser .splash-media, .splash-item.splash-teaser .splash-media {
+  width: 100%; height: auto; aspect-ratio: var(--ratio, 1); image-rendering: pixelated;
+}
+/* Its title is short and alone: balanced lines, never one word left by itself ("VIENE…" at 320 px) */
+.splash:has(.splash-teaser) .splash-titulo { text-wrap: balance; }
 @media (prefers-reduced-motion: reduce) {
   .splash, .splash-fondo, .splash-emoji { animation: none; }
 }

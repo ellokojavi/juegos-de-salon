@@ -1,0 +1,144 @@
+<!doctype html>
+<!--
+  The teaser of 🚂 Tren en Vilo for the splash (D-351): a train rolls across the cliff top at sunset,
+  birds fly over, and it stops where the bridge should start, at the edge of the gap; a "?" pops up.
+  The bridge is never shown: it is what is coming. Drawn with the game's own sprites (pixel.js), one
+  frame at a time and with a seeded chance, so the GIF is the same every time it is rebuilt.
+  marketing/splash/teaser.mjs serves the repo, opens this page and calls frame(i) for each frame.
+  Opened by hand (python3 -m http.server -d . from the repo root), it plays in a loop.
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Teaser · Tren en Vilo</title>
+<style>
+  body { margin: 0; background: #14081f; display: grid; place-items: center; min-height: 100vh; }
+  canvas { image-rendering: pixelated; width: 512px; height: 320px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import { pixelado, particulas, LOCO, CHIMENEA, VAGON, PALETA_TREN, PAJARO, PALETA_PAJARO, PREGUNTA, PALETA_PLATILLO } from '../../../public/labs/bridges/pixel.js';
+
+const FPS = 15, SECONDS = 8, FRAMES = FPS * SECONDS;
+const PX = 4, W = 128, H = 80;
+const canvas = document.getElementById('c');
+const dpr = window.devicePixelRatio || 1;
+canvas.width = W * PX * dpr; canvas.height = H * PX * dpr;
+const r = pixelado(canvas, { px: PX });
+
+// The game's sunset (game.js, SUNSET): the light of the middle stages
+const SKY = ['#3b2a6e', '#6b3a7e', '#a2477a', '#d45f6a', '#ee8458', '#f6a85a', '#f8c66c'];
+const RK = { base: '#6e3f5c', claro: '#8c5672', oscuro: '#4e2a42', borde: '#2a1424' };
+const WATER = ['#2c4f7e', '#1c3560'];
+const AGUA = ['#bff8ff', '#7af0ff', '#2ec4d6'];
+const CLOUDS = ['rgba(255,190,150,0.35)', 'rgba(255,220,180,0.25)'];
+const HUMO = ['rgba(255,255,255,0.95)', 'rgba(235,232,245,0.85)', 'rgba(200,196,220,0.7)', 'rgba(160,156,188,0.5)', 'rgba(130,126,160,0.3)'];
+const ruido = (x, y) => { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return n - Math.floor(n); };
+// A seeded chance (mulberry32): the same smoke and clouds on every build
+let seed = 7;
+const rnd = () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+
+const Y0 = 56;           // the cliff top, where the track runs
+const EDGE = 98;         // where the cliff ends and the gap begins
+const Y_WATER = 74;
+const STOP = EDGE - 14;  // the locomotive's centre when it stops, its nose at the edge
+const START = -26;
+const T_IN = 0.2, T_STOP = 4.6, T_ASK = 5.1;
+// Where the locomotive is at t: rolling in, braking to a stop at the edge
+const locoX = t => t <= T_IN ? START : t >= T_STOP ? STOP : START + (STOP - START) * (1 - (1 - (t - T_IN) / (T_STOP - T_IN)) ** 2);
+// The wagons behind it, as in the game (PIEZAS), coupled
+const PIECES = [{ dx: 0 }, { dx: -21 }, { dx: -39 }];
+
+const clouds = Array.from({ length: 3 }, (_, k) => {
+  const n = 3 + Math.floor(rnd() * 4), puffs = [];
+  let x = 0;
+  for (let i = 0; i < n; i++) { const rr = 2 + Math.floor(rnd() * 4); puffs.push([x, -Math.floor(rnd() * 3), rr]); x += rr + Math.floor(rnd() * 3); }
+  return { puffs, y: H * (0.1 + 0.13 * k), x0: rnd() * W, v: 1.5 + rnd() * 2.5 };
+});
+// A small flock, right to left, high over the cliff
+const birds = [0, 1, 2].map(k => ({ x0: W + 12 + k * 11, y: 17 + k * 4 - (k === 2 ? 6 : 0), fase: k * 0.37, v: -24 }));
+// The game's birds are muted for its night sky; against the sunset they go dark, as silhouettes
+const BIRD = { ...PALETA_PAJARO, k: '#3a1d4a' };
+
+const parts = particulas();
+let smokeClock = 0, steam = false;
+
+function frame(i) {
+  const t = i / FPS, dt = 1 / FPS;
+  if (i === 0) { seed = 7; parts.lista.length = 0; smokeClock = 0; steam = false; }
+  // The sky in bands, and the low sun behind the hills of the cliff
+  for (let y = 0; y < H; y++) r.rect(0, y, W, 1, SKY[Math.min(SKY.length - 1, Math.floor((y / H) * SKY.length * 1.3))]);
+  r.circulo(W * 0.28, H * 0.52, 9, 'rgba(255,160,80,0.35)'); r.circulo(W * 0.28, H * 0.52, 7, '#ffb347');
+  for (const c of clouds) {
+    const x = c.x0 + c.v * t;
+    for (const [dx, dy, rr] of c.puffs) r.circulo(x + dx, c.y + dy, rr, CLOUDS[0]);
+    for (const [dx, dy, rr] of c.puffs) r.circulo(x + dx, c.y + dy - 1, Math.max(1, rr - 1), CLOUDS[1]);
+  }
+  for (const b of birds) {
+    const ph = b.fase + t, ala = [0, 1, 2, 1][Math.floor(ph * 7) % 4];
+    r.sprite(PAJARO[ala], BIRD, b.x0 + b.v * t, b.y - (ala === 2 ? 1 : 0), { voltear: true });
+  }
+
+  // The water down in the gap, with its waves
+  r.rect(EDGE, Y_WATER, W - EDGE, H - Y_WATER, WATER[0]);
+  r.rect(EDGE, Y_WATER + 3, W - EDGE, H - Y_WATER, WATER[1]);
+  for (let x = EDGE; x < W; x++) {
+    const ola = Math.round(Math.sin(x * 0.35 + t * 2.2) * 1.2);
+    r.punto(x, Y_WATER + ola, AGUA[1]);
+    if (ruido(x, Math.floor(t * 3)) > 0.93) r.punto(x, Y_WATER + 2 + ola, AGUA[0]);
+  }
+  // The cliff: rock with grain, its outline at the edge and grass on top (game.js, roca)
+  r.rect(0, Y0, EDGE, H - Y0, RK.base);
+  for (let y = Y0 + 2; y < H; y++) for (let x = 0; x < EDGE; x++) { const n = ruido(x, y); if (n > 0.9) r.punto(x, y, RK.claro); else if (n < 0.08) r.punto(x, y, RK.oscuro); }
+  r.rect(EDGE, Y0, 1, H - Y0, RK.borde);
+  r.rect(0, Y0 - 1, EDGE, 2, '#6fd42a'); r.rect(0, Y0 - 2, EDGE, 1, '#9dff3a');
+  for (let x = 0; x < EDGE; x += 3) if (ruido(x, 7) > 0.5) r.punto(x, Y0 - 3, '#9dff3a');
+  // The track: sleepers and a rail, up to the bridge's first bolt, the pink plate at the edge, and nothing after it
+  for (let x = 1; x < EDGE - 2; x += 4) r.rect(x, Y0 - 2, 2, 1, '#3a1d10');
+  r.rect(0, Y0 - 3, EDGE - 2, 1, '#e6e6f0');
+  r.rect(EDGE - 2, Y0 - 4, 5, 5, '#25103f'); r.rect(EDGE - 1, Y0 - 3, 3, 3, '#ff2e88'); r.punto(EDGE - 1, Y0 - 3, '#ff9cc8');
+
+  // The train
+  const x = locoX(t), moving = t < T_STOP, wheel = Math.floor(Math.max(0, x - START) / 3);
+  const at = PIECES.map(p => x + p.dx), ground = Y0 - 3;
+  for (let k = 1; k < at.length; k++) r.linea(at[k] + 6, ground - 4, at[k - 1] - 9, ground - 4, '#14081f', 2);
+  for (let k = 0; k < 10; k++) r.rect(at[0] + 12 + k, ground - 9 - k / 4, 1, 2 + k / 2, `rgba(255,243,160,${0.32 - k * 0.03})`);
+  r.sprite(LOCO[wheel % 3], PALETA_TREN, at[0], ground - 1);
+  for (let k = 1; k < at.length; k++) r.sprite(VAGON[(wheel + k) % 2], PALETA_TREN, at[k], ground - 1);
+  // Smoke while it rolls, thicker the faster it goes; a hiss of steam from the wheels when it stops
+  smokeClock += dt;
+  const speed = Math.abs(locoX(t + dt) - x) / dt;
+  if (moving && smokeClock > (speed > 12 ? 0.1 : 0.22)) {
+    smokeClock = 0;
+    parts.agregar({ x: at[0] + CHIMENEA.dx, y: ground + CHIMENEA.dy, vx: -8 - rnd() * 8, vy: -16 - rnd() * 6, vida: 1.5, radio: 1, crece: 2.6, colores: HUMO });
+  }
+  if (!moving && !steam) {
+    steam = true;
+    for (let n = 0; n < 4; n++) for (const sx of [-1, 1]) parts.agregar({ x: at[0] + sx * 9, y: ground - 2, vx: sx * (6 + rnd() * 10), vy: -3 - rnd() * 3, vida: 0.6, radio: 1, crece: 1.5, colores: HUMO.slice(0, 3) });
+  }
+  if (!moving && smokeClock > 0.45) { smokeClock = 0; parts.agregar({ x: at[0] + CHIMENEA.dx, y: ground + CHIMENEA.dy, vx: -3 - rnd() * 3, vy: -9 - rnd() * 4, vida: 1.6, radio: 1, crece: 1.8, colores: HUMO }); }
+  parts.paso(dt);
+  parts.dibujar(r);
+
+  // The "?" over the locomotive, with a little hop as it appears: and now?
+  if (t >= T_ASK) {
+    const k = t - T_ASK, hop = k < 0.12 ? 3 : k < 0.25 ? 1 : Math.round(Math.sin(k * 5) * 0.8);
+    r.sprite(PREGUNTA, PALETA_PLATILLO, at[0] + 2, ground - 18 - hop);
+  }
+  // In and out of black, so the loop starts over cleanly
+  const fade = Math.max(0, 1 - t / 0.4, 1 - (SECONDS - t) / 0.5);
+  if (fade > 0) r.rect(0, 0, W, H, `rgba(11,7,22,${Math.min(1, fade).toFixed(3)})`);
+  r.volcar();
+}
+
+/** One frame as a PNG of the art buffer (128×80): the script scales it up with no smoothing. */
+window.frame = i => { frame(i); return r.ctx.canvas.toDataURL('image/png'); };
+window.FRAMES = FRAMES; window.FPS = FPS;
+window.ready = true;
+// Opened by hand: it plays in a loop
+if (!new URLSearchParams(location.search).has('capture')) { let i = 0; setInterval(() => { frame(i); i = (i + 1) % FRAMES; }, 1000 / FPS); }
+</script>
+</body>
+</html>

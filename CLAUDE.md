@@ -315,8 +315,9 @@ with that the screen also enters the language tests. To see it on a real phone,
   page before players see it is a URL parameter listed in `public/labs/home/experiments.js`, shown with
   checkboxes (none, one or several, D-389) by the bar `?lab` draws on the real home page, opened from `/labs/home/` (D-363; today only the splash campaign previews, which like `?lab` turn on only with a lab key, D-395; everything tried there reached everyone: the 🔥 Popular label, the ✨ Nuevos / 🔥 Populares filters and the name on the floating menu in D-369, the 🔎 search and the splash in D-403, and the project is kept in La Bodega, marked 🚀 Lanzado, D-372, D-403). The lab has three groups: games, improvements, La Bodega.
 - **Promotional splash** (D-351): a window over the home page announcing something new, off by
-  default. `node tools/agents/splash.mjs list | on <id> [--until YYYY-MM-DD] | off` rewrites the
-  `ACTIVE` line of `public/assets/js/splash.js`; it reaches players through a PR like any change.
+  default. `node tools/agents/splash.mjs list | on <id> [--until YYYY-MM-DD] | off [<id>]` rewrites the
+  `ACTIVE` line of `public/assets/js/splash.js`, a queue: several campaigns on are shown one after the
+  other, closing one opens the next (D-430); it reaches players through a PR like any change.
   `?splash=<id>` previews a campaign (one that is not on, only with a lab key, D-395), tried from the home page's lab bar with the other experiments (D-389), and the clips are recorded with
   `marketing/splash/capture.mjs`. Each campaign is kept in `marketing/splash/campaigns/<id>/` (its README), and a campaign that changes gets the usability agent's full pass before merging (D-355).
 - **Game ideas** (D-360): `.claude/agents/ideas.md` proposes what the app could try next, in three
