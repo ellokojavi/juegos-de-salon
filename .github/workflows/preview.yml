@@ -1,0 +1,98 @@
+# A preview of each PR on GitHub Pages (D-429), so the owner reviews a change before it merges
+# instead of merging a PR per review round. On each push, the PR's site (merged with main, as the
+# tests see it) goes to its branch's folder in the previews repo, which publishes itself with its
+# own Pages workflow, and the PR gets a comment with the link. When the PR closes, its folder goes.
+# Each push also deletes the folders of PRs no longer open, so nothing piles up.
+#
+# Needs, once: the previews repo with Pages from "GitHub Actions", and its deploy key (with write
+# access) in this repo's PREVIEWS_DEPLOY_KEY secret (docs/PREVIEWS.md). Without the secret it says
+# so and does nothing: a preview never stops a PR. Not for forks: GitHub gives them no secrets.
+# Previews count as test traffic (envOf, stats.js): they don't reach the panel or the rankings.
+
+name: Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+# A newer push to the same PR replaces the older one; two PRs at once are handled by update.sh
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  PREVIEWS_REPO: ${{ github.repository_owner }}/juegos-de-salon-previews
+  SOURCE_REPO: ${{ github.repository }}
+
+jobs:
+  preview:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - id: key
+        env:
+          KEY: ${{ secrets.PREVIEWS_DEPLOY_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::notice::No PREVIEWS_DEPLOY_KEY secret: no preview (docs/PREVIEWS.md)"
+            echo "ready=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          mkdir -p ~/.ssh && umask 077
+          printf '%s\n' "$KEY" > ~/.ssh/previews
+          echo "GIT_SSH_COMMAND=ssh -i $HOME/.ssh/previews -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new" >> "$GITHUB_ENV"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      # On close there is no merge to check out: main has the scripts
+      - if: steps.key.outputs.ready == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.action == 'closed' && github.event.repository.default_branch || '' }}
+          fetch-depth: 0
+          filter: blob:none
+
+      - if: steps.key.outputs.ready == 'true' && github.event.action == 'closed'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/previews/update.sh - -
+
+      # The site as publish.yml builds it, with the version stamped, plus noindex on every page:
+      # a preview must never compete with juegosdesalon.cl in a search. Without the CNAME, which
+      # would claim the real domain for the previews repo
+      - if: steps.key.outputs.ready == 'true' && github.event.action != 'closed'
+        id: build
+        env:
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          rsync -a --exclude='*.test.mjs' --exclude=CNAME public/ "$RUNNER_TEMP/site/"
+          python3 tools/release/set-version.py --site "$RUNNER_TEMP/site" --commit "$SHA"
+          find "$RUNNER_TEMP/site" -name '*.html' -exec sed -i 's|<head>|<head><meta name="robots" content="noindex">|' {} +
+          echo "folder=$(printf '%s' "$BRANCH" | tr 'A-Z' 'a-z' | sed 's/[^a-z0-9-]/-/g')" >> "$GITHUB_OUTPUT"
+
+      - if: steps.key.outputs.ready == 'true' && github.event.action != 'closed'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FOLDER: ${{ steps.build.outputs.folder }}
+        run: .github/previews/update.sh "$FOLDER" "$RUNNER_TEMP/site"
+
+      # One comment per PR, updated on each push
+      - if: steps.key.outputs.ready == 'true' && github.event.action != 'closed'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          FOLDER: ${{ steps.build.outputs.folder }}
+        run: |
+          url="https://${GITHUB_REPOSITORY_OWNER,,}.github.io/juegos-de-salon-previews/$FOLDER/"
+          body=$(printf '<!-- preview -->\n🔍 **Preview of this PR:** %s\n\nUpdated to %s; the link shows it about two minutes after this comment changes. Rooms are real (the real Firebase), but plays do not reach the panel or the rankings. For the lab, open your lab link once with this address in place of juegosdesalon.cl (D-429).' "$url" "${SHA:0:7}")
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate --jq '.[] | select(.body | startswith("<!-- preview -->")) | .id' | head -1)
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -f body="$body" > /dev/null
+          else
+            gh pr comment "$PR" -R "$GITHUB_REPOSITORY" --body "$body"
+          fi

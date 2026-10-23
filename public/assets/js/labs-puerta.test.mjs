@@ -27,17 +27,17 @@ const fetchFalso = async url => {
   return { ok: true, json: async () => (h && FIREBASE[h]) ?? null };
 };
 
-async function visitar(url, guardada = null) {
+async function visitar(url, guardada = null, script = null) {
   const u = new URL(url);
   const almacen = new Map(guardada ? [['juegos-de-salon:labs-llave', guardada]] : []);
   const r = { a: null, link: u.pathname + u.search + u.hash };
   const html = { style: { visibility: '' } };
   const ctx = {
-    document: { documentElement: html },
+    document: { documentElement: html, currentScript: script ? { src: script } : null },
     location: { search: u.search, pathname: u.pathname, hash: u.hash, hostname: u.hostname, replace: a => { r.a = a; } },
     history: { state: null, replaceState: (_, __, l) => { r.link = l; } },
     localStorage: { getItem: k => almacen.get(k) ?? null, setItem: (k, v) => almacen.set(k, v), removeItem: k => almacen.delete(k) },
-    URLSearchParams, TextEncoder, crypto: globalThis.crypto, fetch: fetchFalso,
+    URL, URLSearchParams, TextEncoder, crypto: globalThis.crypto, fetch: fetchFalso,
   };
   ctx.window = ctx;
   vm.runInNewContext(codigo, ctx);
@@ -49,6 +49,13 @@ const SITIO = 'https://juegosdesalon.cl';
 let r = await visitar(`${SITIO}/labs/`);
 assert.equal(r.a, '/', 'sin llave, al menú');
 assert.equal(r.visible, false, 'y sin mostrar nada');
+
+// The script's own address names the home: the site's root, or a PR preview's folder (D-429)
+r = await visitar(`${SITIO}/labs/`, null, `${SITIO}/assets/js/labs-puerta.js`);
+assert.equal(r.a, '/', 'on the site, to its home');
+const PREVIEW = 'https://ellokojavi.github.io/juegos-de-salon-previews/pr-previews';
+r = await visitar(`${PREVIEW}/labs/home/`, null, `${PREVIEW}/assets/js/labs-puerta.js`);
+assert.equal(r.a, '/juegos-de-salon-previews/pr-previews/', 'on a preview, to the preview\'s home, not the github.io root');
 
 r = await visitar(`${SITIO}/labs/?key=otra`);
 assert.equal(r.a, '/', 'con una llave equivocada, al menú');
