@@ -50,7 +50,7 @@ panel del dueño (D-137).
 |---|---|
 | Días | El día 1 parte a las 00:00 del día de inicio, en la zona de la copa (`meta.tz`: hora del Pacífico en las nuevas, D-113; hora de Chile en las anteriores). Cada día termina a las 23:59. |
 | Día de gracia | Un día se puede jugar ese día o el siguiente, con puntaje completo. La final no tiene gracia: la copa cierra a las 23:59 del último día, y ahí vence también la gracia del penúltimo. On its first day the card says so: "Puedes jugarlo hasta mañana a las 23:59 (48 h)". |
-| Un intento | "Cómo se juega" no cuenta. El intento empieza al tocar **Empezar**; recargar retoma el mismo intento (C-6). |
+| Un intento | "Cómo se juega" no cuenta. El intento empieza al tocar **Empezar**; recargar retoma el mismo intento (C-6). In the lab (D-433, lab key only): a day resumed with **Seguir jugando** where this phone has no save (another phone, the browser's memory cleared) takes its clock from the server's start (`started/<d>/<pid>`), not from zero, and the screen says so. |
 | Puntos del día | Por posición entre quienes jugaron: 10-8-6-5-4-3-2-1-1-1. Manda el puntaje del juego; a igual puntaje, el menor **tiempo activo** (D-95). Leer el dato de cada carta en Línea Relámpago (al errar y al acertar) o de cada hito en ¿En qué año? no cuenta, hasta 6 s cada vez (D-277, D-314). Empate total: comparten la mejor posición. |
 | Comodín ×2 | Uno por jugador y copa. Se activa antes de Empezar (el servidor lo rechaza después). No vale en la final. |
 | Final ×2 | El último día vale doble para todos. |

@@ -17,6 +17,7 @@ import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug, esNuevo } from '../assets/js/games.js';
 import { labAccess } from '../assets/js/lab-access.js';
+import { backGuard } from '../assets/js/back-guard.js';
 import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../assets/js/parametros.js';
 import {
   POZO, VARIANTES, entradaCal, varianteDelDia, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
@@ -35,8 +36,8 @@ import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones } from '../
 import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
 import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
-import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia } from '../assets/js/uno-al-dia.js';
-import { tarjetaResultado, rutaHoy } from '../assets/js/uno-al-dia-ui.js';
+import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia, settleStarted, dailySave } from '../assets/js/uno-al-dia.js';
+import { tarjetaResultado, rutaHoy, lockState, lockLine, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
 import { salidasFin } from '../assets/js/fin.js';
 import { formularioComentario, abrirComentario, campoCorreo } from '../assets/js/labs-idioma.js';
 import { enlaceBuzon, ponerBuzon, sinDoble } from '../assets/js/buzon.js';
@@ -2068,7 +2069,7 @@ function antesDeJugar(d) {
       // Una copa de ?test es de mentira (vive en este navegador): no suma en las estadísticas.
       // Las del laboratorio sí: hoy son las copas reales con amigos (D-101).
       if (!PRUEBA) trackStart({ game: GAME_ID, mode: GAME_ID, players: 1 });
-      jugar(d);
+      jugar(d, { nuevo: true });
     } catch (e) {
       if (e?.code === 'permiso') { sentarseDeNuevo(); return; }
       avisoError(err, errorDe(e)); empezar.disabled = false;
@@ -2192,12 +2193,21 @@ function cuentaRegresiva(J) {
   return cuentaComun({ titulo: conEmoji(J.emoji, J.nombre), ya: T.letsPlay });
 }
 
-async function jugar(d) {
+/**
+ * A day resumed without its save (another phone, cleared memory, D-433), for now only with a lab key.
+ * lab: #seccion-copa-reloj
+ * In the test store (`?test`) the scripts see the clock of before unless the URL says `&lab`.
+ */
+const relojDesdeServidor = () => (PRUEBA && !tiene('lab') ? Promise.resolve(false) : labAccess());
+
+async function jugar(d, { nuevo = false } = {}) {
   const Lc = L(), { meta } = Lc;
   const id = juegoDelDia(meta, d), J = juegoDia(meta, d), mod = JUEGOS[id], variante = varianteDelDia(meta, d);
   const guardado = cuenta.intento.leer(S.code, d, S.yo) || {};
   // Si ya había terminado pero no se alcanzó a guardar el resultado, se reintenta de una
   if (guardado.fin) { enviar(d, guardado.fin); return; }
+  // A day resumed with «Seguir jugando» is a game on too: a back swipe asks first (D-432)
+  backGuard().arm();
   mostrar('jugar');
   keepAwake();
   // La cuenta va solo al empezar: si se retoma una partida, el tablero vuelve de una
@@ -2212,7 +2222,12 @@ async function jugar(d) {
   let detenido = !!guardado.detenido;
   // Uno nuevo parte cuando se fue la cuenta y terminó la entrada del juego (las cartas de El caso
   // que se dan vuelta): ni la cuenta ni la entrada son tiempo de juego
-  let rel = guardado.reloj ? (detenido ? guardado.reloj : reloj.seguir(guardado.reloj, now)) : reloj.nuevo(now + espera + (mod.entrada?.() || 0));
+  // Started before (Seguir jugando) but its save is not on this phone: with a lab key the clock goes
+  // on from when the day started on the server, so starting over elsewhere does not reset it (D-433)
+  const empezo = !nuevo && !guardado.reloj ? Lc.started?.[d]?.[S.yo] : null;
+  const yaCorria = typeof empezo === 'number' && await relojDesdeServidor().catch(() => false) ? Math.max(0, now - empezo) : 0;
+  document.getElementById('aviso-otro-celular')?.remove();
+  let rel = guardado.reloj ? (detenido ? guardado.reloj : reloj.seguir(guardado.reloj, now)) : { ...reloj.nuevo(now + espera + (mod.entrada?.() || 0)), ms: yaCorria };
   let jugadas = guardado.jugadas;
   // El resultado se envía apenas termina el tablero, no al tocar "Ver resultado" (D-150): si el
   // jugador cierra sin tocarlo y el día cierra, igual cuenta
@@ -2231,6 +2246,7 @@ async function jugar(d) {
   const head = $('#jugar-head');
   head.innerHTML = '';
   head.append(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
+  if (yaCorria) head.after(el('p', { class: 'aviso', id: 'aviso-otro-celular' }, T.resumedElsewhere));
   // No clock in the header while playing (D-379), except in a game whose speed scores and that has
   // no countdown of its own (`clock` in its ui.js, D-384). The end-to-end scripts read the time
   // here to check that it stops with the board (D-130)
@@ -2293,6 +2309,7 @@ async function mandar(d, fin) {
 
 /** La pantalla de resultado: espera el envío (el que ya salió al terminar el tablero, o uno nuevo). */
 async function enviar(d, fin, envio = null) {
+  backGuard().disarm();
   mostrar('resultado');
   const body = $('#resultado-body');
   body.innerHTML = '';
@@ -2492,7 +2509,8 @@ function practica(id, varianteElegida = null) {
     // Si hoy toca otro juego (un link de ayer, o pasó la medianoche), se va al de hoy
     const fecha = fechaLocal(), deHoy = juegoDel(fecha);
     if (deHoy !== id) { location.replace(RAIZ + rutaHoy(deHoy)); return; }
-    S.hoy = { fecha, ya: !!leerUnoAlDia().dias[fecha] };
+    settleStarted();
+    S.hoy = { id, fecha, ya: !!leerUnoAlDia().dias[fecha] };
   }
   // Un juego `diario` (El caso, D-267), sin semilla en el link, es el del día: el mismo para todos
   const delDia = !HOY && !esCodigo(SEMILLA) && !!gameById(id)?.diario;
@@ -2536,6 +2554,21 @@ function practica(id, varianteElegida = null) {
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(Jr, false))),
     rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });
+  // With a lab key, the first attempt counts from its start (D-433): the line says so, an attempt
+  // left halfway goes on where it was, and one started on another phone counts 0
+  // Empezar waits for that answer (at once without a key; with one, at most Firebase's 2.5 s)
+  if (HOY) {
+    const hoy = S.hoy, boton = $('#btn-empezar'), linea = $('#uad-intro');
+    boton.disabled = true;
+    hoy.lock = lockState(hoy, { canResume: true }).catch(() => 'off').then(st => {
+      hoy.estadoLlave = st;
+      const line = lockLine(st, { lang: LANG });
+      if (line) linea.textContent = line;
+      if (st === 'resume') boton.textContent = `${J.emoji} ${T.resume}`;
+      boton.disabled = false;
+      return st;
+    });
+  }
 }
 
 /**
@@ -2560,7 +2593,15 @@ function jugarPractica(id, semilla, variante = null) {
   // El caso cuenta también desde el laboratorio: es lo que se quiere medir (D-267)
   if ((!LABS || gameById(id)?.diario) && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
   // Un juego `diario` sigue donde iba al recargar (D-267): las jugadas y el tiempo, por caso
-  const guardado = gameById(id)?.diario && !HOY ? partidaGuardada(id, semilla) : null;
+  let guardado = gameById(id)?.diario && !HOY ? partidaGuardada(id, semilla) : null;
+  // Today's first attempt with a lab key (D-433): it counts from here, and it goes on where it was if left
+  if (HOY && !S.hoy.ya && (S.hoy.estadoLlave === 'new' || S.hoy.estadoLlave === 'resume')) {
+    empezarHoy(S.hoy);
+    if (S.hoy.estadoLlave === 'new') dailySave(S.hoy.fecha, id).borrar();
+    guardado = dailySave(S.hoy.fecha, id);
+    // Going back to it goes on at once, also before its first move: the board was already seen
+    guardado.sigue = S.hoy.estadoLlave === 'resume';
+  }
   jugarSinPuntaje(id, p, r => resultadoPractica(id, semilla, r, variante), { variante, ...(guardado ? { guardado } : {}) });
 }
 
@@ -2618,7 +2659,7 @@ const chipPrueba = () => {
 async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = null, variante = null } = {}) {
   const J = conVariante(JUEGOS_COPA[id], variante), mod = JUEGOS[id];
   // Una partida a medias sigue sin la cuenta ni la entrada: el tablero ya se conoce (D-267)
-  const sigue = !!guardado?.jugadas;
+  const sigue = !!guardado?.jugadas || !!guardado?.sigue;
   pieComentario(null);   // durante la cuenta, nada más que la cuenta
   const espera = sigue ? 0 : await cuentaRegresiva(J);
   // Como en la copa: el reloj parte con la pantalla de juego a la vista, no con la cuenta
@@ -2631,7 +2672,13 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
   let detenido = false;
   let leyendo = null;
-  S.visibilidad = () => { if (!detenido) rel = document.hidden || leyendo ? reloj.pausar(rel, Date.now()) : reloj.seguir(rel, Date.now()); };
+  // A saved game also keeps the time up to leaving the page, not only up to its last move (D-433)
+  let ultimas = guardado?.jugadas || [];
+  S.visibilidad = () => {
+    if (detenido) return;
+    rel = document.hidden || leyendo ? reloj.pausar(rel, Date.now()) : reloj.seguir(rel, Date.now());
+    if (document.hidden) guardado?.guardar(ultimas, Math.round(reloj.leer(rel, Date.now())));
+  };
   document.addEventListener('visibilitychange', S.visibilidad);
   const body = $('#jugar-body');
   body.innerHTML = '';
@@ -2641,7 +2688,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
     p, jugadas: guardado?.jugadas, T, fmt, el, SFX, vibrate, lang: LANG, pantallaCompleta,
     textoFin: ensayo ? T.trialEnd : undefined,
     // No cuenta para nada; solo un juego `diario` lo guarda en el celular, para seguir al recargar
-    guardar(jugadas) { guardado?.guardar(jugadas, Math.round(reloj.leer(rel, Date.now()))); },
+    guardar(jugadas) { ultimas = jugadas; guardado?.guardar(jugadas, Math.round(reloj.leer(rel, Date.now()))); },
     tiempo: () => Math.round(reloj.leer(rel, Date.now())),
     pausa(ms) {
       if (detenido) return () => {};
@@ -2699,6 +2746,7 @@ function resultadoPractica(id, semilla, r, variante = null) {
   const J = conVariante(JUEGOS_COPA[id], variante), rk = varianteRk(id, variante);
   // Uno al día: el primer intento queda como el resultado de hoy; los demás son práctica
   const hoy = HOY ? anotarUnoAlDia(S.hoy.fecha, { j: id, s: r.s, ms: r.ms }) : null;
+  if (HOY) dailySave(S.hoy.fecha, id).borrar();   // finished: nothing to go on with (D-433)
   // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta.
   // De Uno al día, solo el primer intento: después el tablero ya se conoce (D-230)
   const cuentaRk = rankea(id) && (!hoy || hoy.primera);

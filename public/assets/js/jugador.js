@@ -423,6 +423,22 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       return true;
     },
 
+    /**
+     * The start of day `n`'s first attempt (D-433): `unoAlDiaInicio/<jid>/<n>`, the server's time, once.
+     * Another phone with the same player sees it and counts that attempt 0 if it never finished.
+     */
+    async empezarDia({ n }) {
+      const yo = api.yo();
+      if (!yo || !Number.isInteger(n) || n < 10000 || n > 99999) return false;
+      const ruta = `unoAlDiaInicio/${yo.jid}/${n}`;
+      try { await almacen.update({ [ruta]: HORA }); return true; } catch (_) { return !!(await almacen.get(ruta).catch(() => null)); }
+    },
+    /** When day `n`'s first attempt started (server time), or null. */
+    async inicioDia(n) {
+      const yo = api.yo();
+      return yo && Number.isInteger(n) ? (await almacen.get(`unoAlDiaInicio/${yo.jid}/${n}`)) ?? null : null;
+    },
+
     /** La historia de Uno al día de un jugador (el propio, si no se dice): `{ n: { j, s, ms } }`. */
     async historialDia(jid = api.yo()?.jid) {
       return jid ? ((await almacen.get(`unoAlDia/${jid}`)) || {}) : {};

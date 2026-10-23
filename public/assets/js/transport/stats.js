@@ -56,6 +56,7 @@ import { dayOf } from './cleanup.js';
 import { getLang } from '../i18n.js';
 import { isLocalMode, MAX_PLAYERS, MODES } from '../games.js';
 import { param, tiene, nombres, normalizarUrl, AVISO_CLAVE } from '../parametros.js';
+import { backGuard } from '../back-guard.js';
 
 // 'lab' salió con el laboratorio (D-67); queda en el panel para leer lo que quedó guardado
 export const ENVS = ['prod', 'dev'];
@@ -392,6 +393,7 @@ export function stats() {
 
 /** Atajo para el transporte: apunta al ganador de una sala. Nunca lanza ni se espera. */
 export function trackEnd(info) {
+  try { backGuard().disarm(); } catch (_) { /* the guard never stops the signal */ }
   try { const s = stats(); return noteEnd(s.api, s.fp, info); } catch (_) { return Promise.resolve(); }
 }
 
@@ -406,6 +408,8 @@ let anterior = null;
 /** Is this start a replay? Same game as the previous start in this page, and that one had finished. */
 export const esOtraVez = (prev, game) => !!(prev && game && prev.game === game && prev.finished);
 export function trackStart(info) {
+  // A back swipe mid-game asks before leaving (D-432); a replay arms it again
+  try { backGuard().arm(); } catch (_) { /* the guard never stops the signal */ }
   try {
     const s = stats();
     if (pararVivo) { pararVivo(); pararVivo = null; }
@@ -613,6 +617,7 @@ export function trackVisit() {
  * nada: ahí el ganador va por `trackEnd`. Nunca lanza ni se espera.
  */
 export function trackFinish(info) {
+  try { backGuard().disarm(); } catch (_) { /* the guard never stops the signal */ }
   try {
     const p = pararVivo;
     if (!p?.terminar) return Promise.resolve();

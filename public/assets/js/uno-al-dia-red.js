@@ -65,6 +65,28 @@ export async function subirHoy({ fecha, dia }) {
   return out;
 }
 
+/** The start of today's first attempt in Firebase (D-433), with a player. Best effort. */
+export async function empezarEnRed(fecha) {
+  const j = await J().catch(() => null);
+  return j?.yo() ? j.empezarDia({ n: numDia(fecha) }).catch(() => false) : false;
+}
+
+/**
+ * Today's first attempt started on another phone (or on this one before its memory was cleared)
+ * and never finished (D-433): `{ at }`, the server time it started, or null. Without a player, or
+ * if Firebase does not answer within `ms`, null: the attempt is not lost on a doubt.
+ */
+export async function empezadoEnOtro(fecha, { ms = 2500 } = {}) {
+  const leerlo = (async () => {
+    const j = await J().catch(() => null);
+    if (!j?.yo()) return null;
+    const n = numDia(fecha);
+    const [at, hist] = await Promise.all([j.inicioDia(n), j.historialDia()]);
+    return typeof at === 'number' && !hist?.[n]?.j ? { at } : null;
+  })().catch(() => null);
+  return Promise.race([leerlo, new Promise(r => setTimeout(() => r(null), ms))]);
+}
+
 /**
  * Al abrir /today/ (o entrar con el jugador): junta la historia de Firebase y los comodines por
  * invitar con lo del celular, suma a Amigos a quienes aceptaron los desafíos, y sube el de hoy si se

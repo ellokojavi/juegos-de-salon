@@ -9,7 +9,8 @@ import { GAMES, SUELTOS, PORTADA, gameById, SLUGS_SIN_PAGINA } from './games.js'
 import { tiene } from './parametros.js';
 import { tirar, alAzar, TEXTOS as AZAR } from './azar.js';
 import { botonCompartir, cabecera, laminaResultado, nombreArchivo, compartir, lamina, aArchivo, fuente, COLORES, MARCO } from './compartir.js';
-import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel } from './uno-al-dia.js';
+import { JUEGOS_DIA, estado, rutaDel, numeroDel, sumarDias, COMODINES_MAX, leer, anotar, fechaLocal, juegoDel, semillaDel, settleStarted, unfinished, forfeit, markStarted } from './uno-al-dia.js';
+import { labAccess } from './lab-access.js';
 import { UNO_AL_DIA, bandera } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
 import { walk, seasonPoints } from './daily-points.js';
@@ -354,16 +355,73 @@ export function modoHoy(id, { raiz = '../', loc = globalThis.location } = {}) {
   if (!tiene('today', loc.search)) return null;
   const fecha = fechaLocal(), deHoy = juegoDel(fecha);
   if (deHoy !== id) { loc.replace(raiz + rutaHoy(deHoy)); return { fuera: true }; }
+  settleStarted();
   return { id, fecha, semilla: semillaDel(fecha), ya: !!leer().dias[fecha], inicio: 0 };
+}
+
+/* ------------------------------------------------------------------ */
+/* The attempt counts from its start (D-433)                           */
+/* ------------------------------------------------------------------ */
+
+/**
+ * For now only with a lab key. lab: #seccion-uad-intento
+ * What today's game does about its first attempt, once the key answers: `'off'` (no key, or the day
+ * already has its result), `'new'` (the first attempt is about to start), `'resume'` (a solo game
+ * left halfway on this phone goes on where it was) or `'lost'` (a group game left halfway, or an
+ * attempt started on another phone and never finished: it counts 0, and this one is practice).
+ * `hoy` is `modoHoy`'s, or La Copa's for its solo games; `'lost'` marks it `ya`.
+ */
+export async function lockState(hoy, { canResume = false } = {}) {
+  // Played already (also in this same page, before "play again"): nothing to lock
+  const jugado = () => { if (leer().dias[hoy.fecha]) hoy.ya = true; return hoy.ya; };
+  if (jugado() || !(await labAccess().catch(() => false))) return 'off';
+  const mine = unfinished(hoy.fecha);
+  if (mine && canResume) return 'resume';
+  const R = await import('./uno-al-dia-red.js');
+  const elsewhere = mine ? null : await R.empezadoEnOtro(hoy.fecha);
+  if (jugado()) return 'off';
+  if (!mine && !elsewhere) return 'new';
+  const r = forfeit(hoy.fecha, { j: hoy.id, at: elsewhere?.at });
+  hoy.ya = true;
+  if (r?.primera) R.subirHoy({ fecha: hoy.fecha, dia: r.dia }).catch(() => {});
+  return 'lost';
+}
+
+/** The intro line under the lock: the rule after the intro, going on, or the lost attempt. */
+export function lockLine(state, { lang, extra = '' }) {
+  const T = textos(lang).uad;
+  if (state === 'new') return [T.intro, T.lockRule, extra].filter(Boolean).join(' ');
+  if (state === 'resume') return T.lockResume;
+  if (state === 'lost') return [T.lockLost, extra].filter(Boolean).join(' ');
+  return null;
+}
+
+/**
+ * The first attempt starts (D-433): marks it on this phone and, with a player, in Firebase. A tap
+ * that comes before the lab key answers is marked when it does.
+ */
+export function empezarHoy(hoy) {
+  if (!hoy || hoy.ya) return;
+  Promise.resolve(hoy.lock || lockState(hoy)).then(st => {
+    if ((st !== 'new' && st !== 'resume') || hoy.ya) return;
+    if (!unfinished(hoy.fecha) && markStarted(hoy.fecha, hoy.id)) import('./uno-al-dia-red.js').then(R => R.empezarEnRed(hoy.fecha)).catch(() => {});
+  }).catch(() => {});
 }
 
 /**
  * La línea de la intro: "📅 Uno al día: hoy todos juegan el mismo desafío." (o que es práctica),
  * y si el rival responde a lo que haces, qué es lo común (`extra`: "Todos parten con los mismos dados.").
+ * With a lab key, the line says the first attempt counts, or that it was lost (D-433).
  */
 export function introHoy(hoy, { lang, extra = '' }) {
   const T = textos(lang).uad;
-  return el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, [hoy.ya ? T.introRepite : T.intro, extra].filter(Boolean).join(' '));
+  const p = el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, [hoy.ya ? T.introRepite : T.intro, extra].filter(Boolean).join(' '));
+  hoy.lock = lockState(hoy).then(st => {
+    const line = lockLine(st, { lang, extra });
+    if (line) p.textContent = line;
+    return st;
+  }).catch(() => 'off');
+  return p;
 }
 
 /**

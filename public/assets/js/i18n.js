@@ -116,6 +116,8 @@ export const COMMON = {
     code: 'código en GitHub', volverMenu: '🏠 Volver al menú', menu: 'Menú', soon: 'Próximamente', newGame: 'Nuevo', popularGame: 'Popular', or: 'o',
     // Creating or joining a room (U-37): the button while it waits, and the way out when it can't
     opening: 'Abriendo sala…', joining: 'Entrando…', playOnePhone: '📱 Jugar en un celular',
+    // A back swipe mid-game (D-432): the sheet that asks before leaving
+    backGuard: { title: '¿Salir de la partida?', body: 'Si sales ahora, la partida queda a medias.', stay: '▶ Seguir jugando', leave: 'Salir' },
     share: 'Compartir Juegos de Salón',
     // Compartir la app (D-226): va con la tarjeta de la portada, que ya dice el nombre, la bajada,
     // "gratis, sin instalar" y el link. El texto cuenta lo demás, una idea por línea (U-30), y nombra
@@ -173,6 +175,10 @@ export const COMMON = {
       tocó: 'Uno al día n.° {n} · Hoy te toca',
       intro: '📅 Uno al día: hoy todos juegan el mismo desafío.',
       introRepite: '📅 Ya jugaste el de hoy: esta vez es práctica y tu resultado del día queda igual.',
+      // The first attempt counts from its start (D-433, lab): the rule goes after the intro, and what happens on coming back
+      lockRule: 'Vale tu primer intento: si no lo terminas, queda en 0.',
+      lockResume: '📅 Dejaste el de hoy a medias: sigue donde ibas.',
+      lockLost: '📅 Tu intento de hoy quedó sin terminar: cuenta 0. Esta vez es práctica.',
       racha1: '🔥 Racha: 1 día',
       racha: '🔥 Racha: {n} días',
       vuelve: 'Vuelve mañana para el día {n}.',
@@ -362,6 +368,7 @@ export const COMMON = {
     onlySpanish: 'In Spanish',
     code: 'code on GitHub', volverMenu: '🏠 Back to the menu', menu: 'Menu', soon: 'Coming soon', newGame: 'New', popularGame: 'Popular', or: 'or',
     opening: 'Opening room…', joining: 'Joining…', playOnePhone: '📱 Play on one phone',
+    backGuard: { title: 'Leave the game?', body: 'If you leave now, the game stays unfinished.', stay: '▶ Keep playing', leave: 'Leave' },
     share: 'Share Party Games',
     shareApp: {
       context: '{n} games for your phone',
@@ -410,6 +417,9 @@ export const COMMON = {
       tocó: 'One a Day #{n} · Today you got',
       intro: '📅 One a Day: everyone plays the same challenge today.',
       introRepite: "📅 You already played today's: this time is practice and your result for the day stays the same.",
+      lockRule: "Your first attempt counts: if you don't finish it, it scores 0.",
+      lockResume: "📅 You left today's unfinished: pick up where you left off.",
+      lockLost: "📅 Today's attempt was left unfinished: it counts as 0. This time is practice.",
       racha1: '🔥 Streak: 1 day',
       racha: '🔥 Streak: {n} days',
       vuelve: 'Come back tomorrow for day {n}.',
@@ -598,6 +608,7 @@ export const COMMON = {
     onlySpanish: 'Em espanhol',
     code: 'código no GitHub', volverMenu: '🏠 Voltar ao menu', menu: 'Menu', soon: 'Em breve', newGame: 'Novo', popularGame: 'Popular', or: 'ou',
     opening: 'Abrindo sala…', joining: 'Entrando…', playOnePhone: '📱 Jogar em um celular',
+    backGuard: { title: 'Sair da partida?', body: 'Se você sair agora, a partida fica pela metade.', stay: '▶ Continuar jogando', leave: 'Sair' },
     share: 'Compartilhar Jogos de Salão',
     shareApp: {
       context: '{n} jogos para o celular',
@@ -646,6 +657,9 @@ export const COMMON = {
       tocó: 'Um por dia n.º {n} · Hoje é',
       intro: '📅 Um por dia: hoje todos jogam o mesmo desafio.',
       introRepite: '📅 Você já jogou o de hoje: desta vez é treino e seu resultado do dia continua o mesmo.',
+      lockRule: 'Vale a sua primeira tentativa: se você não terminar, fica em 0.',
+      lockResume: '📅 Você deixou o de hoje pela metade: continue de onde parou.',
+      lockLost: '📅 Sua tentativa de hoje ficou sem terminar: conta 0. Desta vez é treino.',
       racha1: '🔥 Sequência: 1 dia',
       racha: '🔥 Sequência: {n} dias',
       vuelve: 'Volte amanhã para o dia {n}.',
@@ -834,6 +848,7 @@ export const COMMON = {
     onlySpanish: 'Auf Spanisch',
     code: 'Code auf GitHub', volverMenu: '🏠 Zurück zum Menü', menu: 'Menü', soon: 'Demnächst', newGame: 'Neu', popularGame: 'Beliebt', or: 'oder',
     opening: 'Raum wird geöffnet…', joining: 'Beitritt läuft…', playOnePhone: '📱 Mit einem Handy spielen',
+    backGuard: { title: 'Spiel verlassen?', body: 'Wenn du jetzt gehst, bleibt das Spiel unfertig.', stay: '▶ Weiterspielen', leave: 'Verlassen' },
     share: 'Salonspiele teilen',
     shareApp: {
       context: '{n} Spiele fürs Handy',
@@ -882,6 +897,9 @@ export const COMMON = {
       tocó: 'Spiel des Tages Nr. {n} · Heute dran:',
       intro: '📅 Spiel des Tages: Heute spielen alle dieselbe Aufgabe.',
       introRepite: '📅 Du hast das heutige schon gespielt: Diesmal ist es Übung, dein Tagesergebnis bleibt gleich.',
+      lockRule: 'Dein erster Versuch zählt: Beendest du ihn nicht, gibt es 0.',
+      lockResume: '📅 Du hast das heutige mittendrin verlassen: Mach dort weiter, wo du warst.',
+      lockLost: '📅 Dein heutiger Versuch wurde nicht beendet: Er zählt als 0. Diesmal ist es Übung.',
       racha1: '🔥 Serie: 1 Tag',
       racha: '🔥 Serie: {n} Tage',
       vuelve: 'Komm morgen wieder für Tag {n}.',
