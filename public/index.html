@@ -427,12 +427,19 @@
        the whole page jumped down once the scripts arrived, a layout shift of 0.53 on a slow network */
     #lang-slot:empty { min-width: 194px; min-height: 54px; }
     @media (min-width: 441px) { #lang-slot:empty { min-width: 298px; } }
-    .portada-barra .tools:not(:has(> :not(:empty):not([hidden]))) { min-width: 144px; min-height: 44px; }
+    /* Sound, 🏅 and share: 🏅 is in the HTML, the other two arrive with the module; their empty
+       slots hold a button's place so 🏅 does not sit alone on the left and then slide over (U-12) */
+    .portada-barra .tools { min-height: 44px; }
+    .portada-barra .tools > span:empty { width: 44px; height: 44px; }
     .azar-slot:empty { min-height: 48px; }
-    .filtros:empty { min-height: 50px; }
-    @media (min-width: 557px) { .filtros:empty { min-height: 44px; } }
+    /* Two rows: ⭐ ✨ 🔥 and the types (measured in the four languages; one row of 50 px before D-362) */
+    .filtros:empty { min-height: 104px; }
+    @media (min-width: 557px) { .filtros:empty { min-height: 98px; } }
     /* The list holds the footer below the fold until its cards arrive */
     .games:empty { min-height: 100vh; }
+    /* Over the last visit's copy the real cards come in still: the copy already made the entrance */
+    .games.foto .game-card, .games.foto .fav { animation: none; }
+    .games.foto .game-card.torneo { animation: copaFondo 7s ease-in-out infinite alternate; }
   </style>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Juegos de Salón">
@@ -440,7 +447,7 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar portada-barra"><div id="lang-slot"></div><div class="tools"><span id="sound-slot"></span><a class="icon-btn" id="btn-rankings" href="records/" title="Rankings" aria-label="Rankings" hidden>🏅</a><span id="share-slot"></span></div></div>
+    <div class="topbar portada-barra"><div id="lang-slot"></div><div class="tools"><span id="sound-slot"></span><a class="icon-btn" id="btn-rankings" href="records/" title="Rankings" aria-label="Rankings">🏅</a><span id="share-slot"></span></div></div>
     <header class="hero">
       <span class="emoji bounce"><span class="emoji-swap" id="hero-emoji" aria-hidden="true">🎲</span></span>
       <h1 class="display display--xl rainbow" data-i18n="appTitle">Juegos de Salón</h1>
@@ -455,6 +462,34 @@
     </div>
     <hr class="filtros-fin" aria-hidden="true">
     <section class="games" id="games" aria-label="Lista de juegos"></section>
+    <script>
+      /* The cards as they looked on the last visit, drawn before any module arrives (the owner's
+         request; in the lab, D-395, lab: #seccion-portada-al-tiro): the page's module saves a copy
+         of the list once drawn, and here it comes back at once. It is a link like any other card,
+         so a game opens even before the modules arrive. The copy counts only for the same version,
+         language and day (a ✨ Nuevo or Uno al día's state changes with the date) and with no
+         filter in the link; the module draws the real cards over it in the same instant. */
+      (function () {
+        try {
+          var m = document.getElementById('importmap'), d = new Date(), z = function (n) { return (n < 10 ? '0' : '') + n; };
+          var v = m ? ((m.textContent.match(/\?v=([^"]+)/) || [])[1] || '') : '';
+          var l = (new URLSearchParams(location.search).get('lang') || '').toLowerCase() || localStorage.getItem('juegos-de-salon:lang') || 'es';
+          var k = [v, l, d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate())].join('|');
+          window.__fotoPortada = { k: k };
+          var f = JSON.parse(localStorage.getItem('juegos-de-salon:portada-foto') || 'null');
+          if (!f || f.k !== k || typeof f.html !== 'string' || /[?&](type|tipo)=/.test(location.search)) return;
+          var g = document.getElementById('games');
+          // The copy's words wrap as the drawn ones do (German hyphenates by the page's language)
+          if (/^(es|en|pt|de)$/.test(l)) document.documentElement.lang = l;
+          g.innerHTML = f.html;
+          g.classList.add('foto');
+          // The copy's ▶ chip is a button with no module behind it yet: a tap on it is kept and
+          // carried out by the real card when it arrives, instead of doing nothing (U-12)
+          var c = g.querySelector('button#btn-uad-chip');
+          if (c) c.addEventListener('click', function () { window.__fotoPortada.chip = true; c.disabled = true; });
+        } catch (_) { /* without storage the list arrives with the modules, as always */ }
+      })();
+    </script>
 
     <footer>
       <p class="footer-msg" id="footer-msg" aria-live="polite">Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
@@ -516,8 +551,24 @@
     // The experiments' bar, only with a lab key (D-395). lab: #seccion-portada
     if (param('lab') !== null) import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => yes && import('./labs/home/experiments.js').then(({ drawBar }) => drawBar())).catch(() => {});
 
+    // What is still in development, only with a lab key (D-395); asked once, and only when needed
+    const conLab = f => import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => yes && f()).catch(() => {});
+    // The copy of the list the next visit draws at once (in the lab): only of the whole list, never a
+    // filtered or searched one, and without a lab key any copy left is forgotten. lab: #seccion-portada-al-tiro
+    const FOTO = 'juegos-de-salon:portada-foto';
+    const guardarFoto = () => import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => {
+      if (!yes) { localStorage.removeItem(FOTO); return; }
+      const k = window.__fotoPortada?.k;
+      if (k && !list.querySelector('[hidden], .reserva')) localStorage.setItem(FOTO, JSON.stringify({ k, html: list.innerHTML }));
+    }).catch(() => {});
+
     // 1) Lo importante primero: la lista de juegos, con los de La Copa al final (D-142).
     const list = document.getElementById('games');
+    // The last visit's copy (the script under #games, in the lab): the real cards take its place in
+    // this same task, so nothing blinks. Its Uno al día card stays until the real one arrives, as
+    // the empty card does without a copy. lab: #seccion-portada-al-tiro
+    const uadFoto = list.classList.contains('foto') ? list.querySelector('#btn-uno-al-dia') : null;
+    list.replaceChildren();
     const marcados = new Set(favoritos());
     const botonFavorito = (g, card) => {
       const b = el('button', { type: 'button', class: 'fav', 'data-id': g.id, style: card.getAttribute('style'),
@@ -573,19 +624,27 @@
     // at full width and then jump when the modules arrive
     const copa = tarjetas.find(t => t.g.torneo)?.card;
     const reserva = !['button', 'off'].includes(param('daily')) && copa
-      && el('div', { class: 'game-card alta uad-card reserva', 'aria-hidden': 'true' }, el('div', { class: 'emoji' }, el('span', {}, '📅')));
+      && (uadFoto || el('div', { class: 'game-card alta uad-card reserva', 'aria-hidden': 'true' }, el('div', { class: 'emoji' }, el('span', {}, '📅'))));
     if (reserva) {
       const fila = el('div', { class: 'fila-alta' });
       copa.replaceWith(fila);
       copa.classList.add('alta');
       fila.append(copa, reserva);
     }
-    Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
-      if (formaAcceso() === 'off') return;
+    const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
+      if (formaAcceso() === 'off') { reserva?.remove(); return; }
       import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});
       if (formaAcceso() === 'card' && reserva) {
-        reserva.replaceWith(tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() }));
+        const card = tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() });
+        reserva.replaceWith(card);
+        // A tap on the copy's ▶ chip before the modules arrived: carried out now. lab: #seccion-portada-al-tiro
+        if (window.__fotoPortada?.chip) { window.__fotoPortada.chip = false; card.querySelector('button#btn-uad-chip')?.click(); }
+        // The month's place fresh from the server, once the page is drawn (the owner's request, in
+        // the lab): until it answers, the chip shows the last one cached. lab: #seccion-portada-al-tiro
+        conLab(() => (window.requestIdleCallback || (f => setTimeout(f, 300)))(() => import('./assets/js/uad-place.js')
+          .then(({ refreshPlace }) => refreshPlace(card, { lang, alTocar: () => SFX.tap() })).then(cambio => cambio && guardarFoto()).catch(() => {})));
       } else {
+        reserva?.remove();
         const slot = document.getElementById('azar-slot');
         slot.classList.add('con-uad');
         // En la misma fila, los dos con etiqueta corta: "Al azar" y "Uno al día" (decisión del dueño)
@@ -595,6 +654,9 @@
       }
     // Without the modules (offline, an error) the empty card goes away and La Copa takes the row
     }).catch(() => reserva?.remove());
+    uadListo.then(() => guardarFoto());
+    // A ⭐ marked or unmarked shows on the next visit's copy too
+    document.addEventListener('favoritos', () => uadListo.then(guardarFoto));
 
     // Filtro por tipo (D-142, D-149): la lista ya es larga. Va en la URL (?type=logic, en inglés
     // como las rutas: D-214), así volver desde un juego lo deja como estaba y un link filtrado se
