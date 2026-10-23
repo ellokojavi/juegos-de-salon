@@ -10,7 +10,7 @@ const mem = () => {
 };
 const at = (f, h = 12) => new Date(`${f}T${String(h).padStart(2, '0')}:00:00`).getTime();
 
-// Without a marker nothing changes: the screens write it only with a lab key
+// Without a marker nothing changes: only starting today's first attempt writes it
 {
   const storage = mem();
   assert.equal(settleStarted({ storage, ahora: at('2026-10-08') }), null);

@@ -199,8 +199,8 @@ modo que el juego piensa tener.
   El navegador no se lo puede llevar: `overscroll-behavior: none` en `<html>` y `<body>` (que el
   deslizar para actualizar no recargue la partida) y `touch-action` en toda la zona de arrastre, no
   solo en cada pieza (D-86). Un gesto nuevo se prueba en un celular de verdad (D-67).
-  The phone's own back gestures (iOS's edge swipe, Android's Back) cannot be blocked: in the lab
-  (D-432, lab key only), while a game is on, `public/assets/js/back-guard.js` catches them and asks
+  The phone's own back gestures (iOS's edge swipe, Android's Back) cannot be blocked: since D-432
+  (for everyone since 2026-10-23), while a game is on, `public/assets/js/back-guard.js` catches them and asks
   «¿Salir de la partida?»; the header's «‹ Menú» (`a.back`) asks the same, and Salir follows it.
   `trackStart` arms it and `trackFinish` / `trackEnd` disarm it, so a game that reports its start and
   end gets it without code of its own.
