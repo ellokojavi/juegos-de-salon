@@ -101,7 +101,7 @@ reparto va en claro y el cierre de la mano lo dice, en vez de fingir un secreto 
 
 ### El celular que juega
 
-Tres decisiones, todas con lo que ese jugador ve y nada más (`public/julep/engine.js`):
+Tres decisiones, todas con lo que ese jugador ve y nada más (`public/labs/julep/engine.js`):
 
 - **Ir o pasarse.** Le pone número a la mano: un triunfo vale de 0,30 (el 2) a 0,90 (el as), porque
   aunque sea bajo corta; fuera del triunfo solo mandan el as (0,65) y el rey (0,45). Se descuenta
@@ -147,12 +147,12 @@ es la única verdad; lo que no corresponde se descarta en silencio.
 ## Archivos
 
 ```
-public/julep/
+public/labs/julep/
   index.html        Pantallas, barra superior, #handoff y #cover
   style.css         Naipes, mesa, plato, cierre de la mano
   rules.js          GAME_ID, DEFAULT_CONFIG, LARGOS y LOCALES = { es, en, pt, de }
   engine.js         Cartas, obligaciones, plato, julepe, bots y el reductor. Sin DOM
-  engine.test.mjs   node public/julep/engine.test.mjs
+  engine.test.mjs   node public/labs/julep/engine.test.mjs
   game.js           Máquina de estados y render; lo único que toca el DOM
 public/assets/js/sobre.js  Sobres cerrados de la sala (compartido, D-81)
 tools/e2e/julep/local.mjs    Partida completa contra el celular y en un celular
