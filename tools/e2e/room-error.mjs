@@ -41,7 +41,8 @@ async function attempt(lang, game, label) {
   await b.go(`${SITE}/${route}`);
   await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang','${lang}'); 1`);
   await b.go(`${SITE}/${route}`);
-  const preload = await b.evaluate(`import('../assets/js/transport/firebase.js').then(()=>'ok',e=>'failed: '+e)`);
+  // The site's root from the page's own vigia.js, so a game under /labs/ (Julepe, D-434) preloads the same module
+  const preload = await b.evaluate(`import(new URL('assets/js/transport/firebase.js', document.querySelector('script[src$="assets/js/vigia.js"]').src.split('assets/js/vigia.js')[0]).href).then(()=>'ok',e=>'failed: '+e)`);
   console.log(`${label} · SDK preloaded:`, preload);
   await network(false);
   await b.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(400);
