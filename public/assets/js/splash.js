@@ -228,7 +228,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
 
 /**
  * What the home page calls for a preview (home-windows.js, D-431): the one in `?splash=`; with no
- * preview, each active campaign once per phone, one after the other (closing one opens the next). Never under the end-to-end scripts (`?test`, or a
+ * preview, the first active campaign this phone has not closed (one per visit). Never under the end-to-end scripts (`?test`, or a
  * browser driven by automation). Returns the ids it will show.
  */
 export function startSplash({ lang = 'es', search = globalThis.location?.search ?? '' } = {}) {
@@ -236,11 +236,10 @@ export function startSplash({ lang = 'es', search = globalThis.location?.search 
   const automated = tiene('test', search) || globalThis.navigator?.webdriver === true;
   const show = ids => {
     if (!ids.length) return null;
-    // After the home page has drawn its list, so the window lands on a page that is already there;
-    // the next one when the last one has finished leaving
-    const next = k => k < ids.length && showSplash(ids[k], { lang, record: !forced }).then(() => setTimeout(() => next(k + 1), 400));
-    setTimeout(() => next(0), 350);
-    return ids;
+    // After the home page has drawn its list, so the window lands on a page that is already there.
+    // Only the first: one window per visit, the rest wait for the next one (D-431)
+    setTimeout(() => showSplash(ids[0], { lang, record: !forced }), 350);
+    return ids.slice(0, 1);
   };
   // A campaign that is not on previews only with a lab key (D-395). lab: #seccion-portada
   if (forced && !ACTIVE.some(a => a.id === forced)) return import('./lab-access.js').then(({ labAccess }) => labAccess()).then(yes => show(yes ? queue({ forced }) : []));
