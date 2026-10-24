@@ -561,8 +561,8 @@ test('the weekend cup: three days of three games (D-439)', () => {
   assert.equal(rondasDelDia(meta7, 1), null);
   assert.equal(varianteDelDia(m, 3), null);
   assert.ok(!esFinal(m, 3));
-  // Offered until the end of Sunday 2026-10-25, Pacific time
-  assert.ok(findeAbierto(Date.parse('2026-10-25T23:59:00-07:00')) && !findeAbierto(Date.parse('2026-10-26T00:00:00-07:00')) && FINDE_HASTA === Date.parse('2026-10-26T07:00:00Z'));
+  // Offered until Friday 2026-10-23 at 22:00 Pacific, when the owner closed it (it was until Sunday night)
+  assert.ok(findeAbierto(Date.parse('2026-10-23T21:59:00-07:00')) && !findeAbierto(Date.parse('2026-10-23T22:00:00-07:00')) && FINDE_HASTA === Date.parse('2026-10-24T05:00:00Z'));
 });
 
 await new Promise(r => setTimeout(r, 50));

@@ -482,7 +482,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-436](decisions/D-436.md) | Uno al día's ranking loads once and shows at once | current |
 | [D-437](decisions/D-437.md) | The 3-day Copa, offered on the new create screen (in the lab) | amended by D-438 |
 | [D-438](decisions/D-438.md) | The 3-day Copa has no Grand Final | current |
-| [D-439](decisions/D-439.md) | The weekend cup: three days of three games, for everyone until Sunday night | current |
+| [D-439](decisions/D-439.md) | The weekend cup: three days of three games, a one-off closed the night it opened | current |
 
 ## No longer in force (11)
 

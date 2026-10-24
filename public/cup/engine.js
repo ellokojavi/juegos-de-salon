@@ -63,8 +63,12 @@ export const tieneFinal = meta => (String(meta?.cal || 'final').split(',').at(-1
 export const TRIO = 'trio';
 export const TRIO_SEP = '+';
 export const TRIO_JUEGOS = 3;
-/** The end of Sunday 2026-10-25, Pacific time: after it no one can create a weekend cup (cups already made play on). */
-export const FINDE_HASTA = Date.parse('2026-10-26T07:00:00Z');
+/**
+ * After it no one can create a weekend cup (cups already made play on). It was the end of Sunday
+ * 2026-10-25, Pacific time; the owner closed it once their cup was created, Friday 2026-10-23 at
+ * night (a one-off cup for friends): 22:00 Pacific. The test store still offers it with `&weekend=on`.
+ */
+export const FINDE_HASTA = Date.parse('2026-10-24T05:00:00Z');
 export const findeAbierto = now => now < FINDE_HASTA;
 /** The games of a day of three, as calendar entries (`['linea', 'loteo:utilities', 'donde']`), or null. */
 export const rondasDelDia = (meta, d) => {
