@@ -74,7 +74,10 @@ The numbers come from `numbers.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RE
   each, every one with 9 or 10 words that go with it (`si`) and 3 temptations (`casi`): 100 of concrete
   things (`CLASICAS`) and 18 of ideas (`ABSTRACTAS`: MIEDO, SUERTE, LIBERTAD…, Cris's request in #383,
   approved in #387), where the words evoke the idea without being from its field (SUERTE → TRÉBOL,
-  SIETE; tempts ÉXITO, not GATO: bad luck is luck too, so it was right and cost points). The other languages are adapted, not translated: a Chilean item (ONCE, KUCHEN,
+  SIETE; it tempts ÉXITO). A temptation is never right for some table: SUERTE does not tempt GATO
+  (bad luck is luck too), PASCUA does not tempt NAVIDAD (in Chile Pascua *is* Christmas), TIEMPO
+  does not tempt CLIMA or LLUVIA (in Spanish tiempo is also the weather), and a season carries no month or
+  Easter (JULIO is winter in Santiago and summer in Madrid). The other languages are adapted, not translated: a Chilean item (ONCE, KUCHEN,
   VOLANTÍN) becomes the language's own (POPCORN, PIPA, DRACHEN), and a clue that does not work becomes
   another (TIEMPO is also the weather, so in Portuguese it is CALENDÁRIO). A new word is thought of as a
   player: the association has to be seen without explaining it.
@@ -83,19 +86,21 @@ The numbers come from `numbers.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RE
   PIX, CEP, BRIGADEIRO…) stay out of a cup for another audience: `mazoPara(lang, aud)` in `engine.js`.
   Standalone and Uno al día play the whole deck, like the other games.
 - `numbers.js`: the numbers, apart so the texts (merged into `rules.js`) say them without loading the decks.
-- `engine.js`: `generar(semilla, { lang })` picks 4 clues that do not step on each other (none is a word
+- `engine.js`: `generar(semilla, { lang, aud })` picks 4 clues that do not step on each other (none is a word
   or temptation of another) and, at random, the one with an agent less; the agents of each (3, or 2
   the short one) that are not of another chosen clue; the assassin from the temptations, not an agent of
   any, and the 3 neutrals from the temptations too, preferably of another clue than the assassin's. The
   assassin and the neutrals carry `tienta`, the clue they look like. No clue is on its own board.
-  `generarDia(código, día, { sal, palabras, ensayo })` is La Copa's (D-331). `estado(t, jugadas)`
+  `generarDia(código, día, { sal, palabras, aud, ensayo })` is La Copa's (D-331). `estado(t, jugadas)`
   rebuilds the game from the moves (`{i}` or `{pasar:true}`).
 - `ui.js`: the screen (`montar`), the waiting room's title and drawing, the result and the breakdown.
   `texts.js`: its texts in the four languages, keys prefixed `ag`. `style.css`: its classes prefixed `ag-`.
 - `engine.test.mjs` checks the four decks (one word per card in capitals, at most 15 letters, 9 or 10
   words and 3 temptations per clue, and no month or Easter in a season in Spanish, Portuguese or English,
   which are spoken in both hemispheres) and 300 boards in each language (each clue with the agents it says,
-  11 in all, and the assassin and the neutrals tempting the clue they say), the cup day and its trial,
+  11 in all, and the assassin and the neutrals tempting the clue they say), the local words (each in
+  some clue, marked `cl` or `br`) and 300 boards per audience without what it leaves out, the whole
+  deck without an audience, the cup day and its trial,
   and the state and the score; `tools/e2e/agents/game.mjs`, the whole game at `/agents/`.
 
 ## Exceptions to the canons
