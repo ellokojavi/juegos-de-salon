@@ -32,10 +32,15 @@ In `~/.config/juegos-de-salon/` (copy the folder to the new machine, by hand, ne
 |---|---|---|
 | `firebase-admin.json` | Firebase service account key (also the `FIREBASE_ADMIN_JSON` secret on GitHub) | panel, reports, `rules.mjs`, `labs-key.mjs`, `ideas.mjs` |
 | `buzon.json` | the inbox user, limited by the rules to `buzon/` (D-318) | `inbox.mjs`, `inbox-watch` |
-| `mail.json` | the account that sends the replies and the weekly report | `send-mail.py` |
+| `mail.json` | the Gmail account and app password that send the replies and the weekly report; `from` must be `hola@juegosdesalon.cl` (Gmail's "Send mail as" alias), or nothing is sent (D-443) | `send-mail.py` |
 | `vapid-privada.txt` | backup of the push notifications' private key (the real one is a GitHub secret) | `vapid.mjs` |
 | `inbox-log.jsonl`, `mail-log.jsonl` | what was triaged and what was sent (history, not needed to run) | `inbox.mjs`, `send-mail.py` |
 | `jobs/<id>.json` | each `mac` job's last run (recreated on its own) | `jobs.mjs status` |
+
+In that Gmail account, **IMAP must be on** (Settings → Forwarding and POP/IMAP): `send-mail.py` reads
+each email's copy in the Sent folder to confirm it left from hola@, and without IMAP no email to a
+player goes out (D-443). After moving, `python3 tools/agents/send-mail.py --check` sends the owner a
+test email and says whether it left from hola@.
 
 Signed in on the machine: `gh auth login` (the jobs create issues with it) and `claude` (the
 support agent runs headless). Logs: `~/Library/Logs/juegos-de-salon/`. Optional: Tailscale
@@ -52,3 +57,4 @@ support agent runs headless). Logs: `~/Library/Logs/juegos-de-salon/`. Optional:
    (their prompts are in `tools/jobs/prompts/`), so they no longer run on the old one.
 6. Keep it awake: System Settings → Energy → prevent automatic sleeping.
 7. `node tools/jobs/jobs.mjs status`: every `mac` job ✅ within 10 minutes.
+8. `python3 tools/agents/send-mail.py --check`: the owner gets a test email from hola@ (D-443).

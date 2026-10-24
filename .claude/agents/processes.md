@@ -187,7 +187,12 @@ that (after a new game, after a big text change), saying why.
       only queued or open.
    2. `node tools/agents/feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> --dry-run`,
       read it, then the same without `--dry-run`. It sends through Gmail (`send-mail.py`, account
-      in `~/.config/juegos-de-salon/mail.json`), deletes the address from Firebase, and on each
+      in `~/.config/juegos-de-salon/mail.json`), always from hola@juegosdesalon.cl and never from
+      the owner's personal Gmail (D-443): each email's copy in Gmail's Sent folder is read to confirm
+      it, and before writing to a player a weekly test email goes to the owner first. If that check
+      fails, nothing is sent, the command stops with an error and the issue stays open: say so in your
+      report (fix the "Send mail as" alias or turn IMAP on in Gmail, then
+      `python3 tools/agents/send-mail.py --check`). Once sent, it deletes the address from Firebase, and on each
       issue comments what we answered (quoted), adds the `replied` label and closes it as
       resolved (D-368): nothing is left to do by hand. It refuses issues that don't share the same address. `--test-to <address>`
       sends the same email to that address instead and touches nothing else (to show the owner
