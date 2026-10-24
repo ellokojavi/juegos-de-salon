@@ -74,10 +74,14 @@ The numbers come from `numbers.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RE
   each, every one with 9 or 10 words that go with it (`si`) and 3 temptations (`casi`): 100 of concrete
   things (`CLASICAS`) and 18 of ideas (`ABSTRACTAS`: MIEDO, SUERTE, LIBERTAD…, Cris's request in #383,
   approved in #387), where the words evoke the idea without being from its field (SUERTE → TRÉBOL,
-  SIETE; tempts GATO). The other languages are adapted, not translated: a Chilean item (ONCE, KUCHEN,
+  SIETE; tempts ÉXITO, not GATO: bad luck is luck too, so it was right and cost points). The other languages are adapted, not translated: a Chilean item (ONCE, KUCHEN,
   VOLANTÍN) becomes the language's own (POPCORN, PIPA, DRACHEN), and a clue that does not work becomes
   another (TIEMPO is also the weather, so in Portuguese it is CALENDÁRIO). A new word is thought of as a
   player: the association has to be seen without explaining it.
+- **What only one country knows** (D-187): the clues marked `local: 'cl'` (CHILE, DIECIOCHO, FERIA)
+  or `'br'` (BRASIL, ARRAIAL) and the words in each deck's `LOCALES` (COCHE, TACO, ONCE, CABRITAS…;
+  PIX, CEP, BRIGADEIRO…) stay out of a cup for another audience: `mazoPara(lang, aud)` in `engine.js`.
+  Standalone and Uno al día play the whole deck, like the other games.
 - `numbers.js`: the numbers, apart so the texts (merged into `rules.js`) say them without loading the decks.
 - `engine.js`: `generar(semilla, { lang })` picks 4 clues that do not step on each other (none is a word
   or temptation of another) and, at random, the one with an agent less; the agents of each (3, or 2

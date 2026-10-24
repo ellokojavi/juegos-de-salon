@@ -114,7 +114,7 @@ export const CLASICAS = [
 /**
  * The ideas: the clue is a concept and its words are things that evoke it without being from its
  * field (LUCK → CLOVER, HORSESHOE, SEVEN), so it takes a bit more thought. Their temptations evoke
- * it too, but backwards or sideways (LUCK → CAT, MIRROR, LADDER).
+ * it too, from the side without being it (LUCK → SUCCESS, TALENT): not bad luck, which is luck too.
  */
 export const ABSTRACTAS = [
   { pista: 'FEAR', si: ['DARKNESS', 'SPIDER', 'NIGHTMARE', 'SCREAM', 'SHADOW', 'THUNDER', 'SKULL', 'SHIVER', 'MONSTER'], casi: ['SURPRISE', 'NERVES', 'SHAME'] },
@@ -123,7 +123,7 @@ export const ABSTRACTAS = [
   { pista: 'FREEDOM', si: ['BIRD', 'WINGS', 'KEY', 'FLAG', 'VACATION', 'HORIZON', 'SAILBOAT', 'STATUE', 'ESCAPE'], casi: ['PRISON', 'CAGE', 'PADLOCK'] },
   { pista: 'LOVE', si: ['HEART', 'ROSE', 'KISS', 'RING', 'ARROW', 'VALENTINE', 'CHOCOLATE', 'HUG', 'CUPID', 'POEM'], casi: ['FRIENDSHIP', 'JEALOUSY', 'DIVORCE'] },
   { pista: 'POWER', si: ['CROWN', 'THRONE', 'SWORD', 'ENERGY', 'PALACE', 'EAGLE', 'LION', 'BATTERY', 'PRESIDENT'], casi: ['FAME', 'LUCK', 'GOVERNMENT'] },
-  { pista: 'LUCK', si: ['CLOVER', 'DICE', 'HORSESHOE', 'LOTTERY', 'COIN', 'CASINO', 'SEVEN', 'CHARM', 'ROULETTE'], casi: ['CAT', 'MIRROR', 'LADDER'] },
+  { pista: 'LUCK', si: ['CLOVER', 'DICE', 'HORSESHOE', 'LOTTERY', 'COIN', 'CASINO', 'SEVEN', 'CHARM', 'ROULETTE'], casi: ['SUCCESS', 'WEALTH', 'TALENT'] },
   { pista: 'LIGHT', si: ['SUN', 'BULB', 'CANDLE', 'BEACON', 'FIREFLY', 'LAMP', 'FLASH', 'LANTERN', 'LASER'], casi: ['SHADOW', 'NIGHT', 'MIRROR'] },
   { pista: 'HEIGHT', si: ['GIRAFFE', 'SKYSCRAPER', 'LADDER', 'BALLOON', 'TOWER', 'CLOUD', 'VERTIGO', 'STILTS', 'SUMMIT'], casi: ['WELL', 'SUBMARINE', 'CAVE'] },
   { pista: 'FAME', si: ['STAR', 'CARPET', 'AUTOGRAPH', 'PHOTOGRAPHER', 'STAGE', 'APPLAUSE', 'AWARD', 'PAPARAZZI', 'SELFIE'], casi: ['MONEY', 'POWER', 'SUCCESS'] },
