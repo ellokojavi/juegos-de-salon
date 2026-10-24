@@ -2216,7 +2216,7 @@ async function jugar(d, { nuevo = false } = {}) {
   // Uno nuevo parte cuando se fue la cuenta y terminó la entrada del juego (las cartas de El caso
   // que se dan vuelta): ni la cuenta ni la entrada son tiempo de juego
   // Started before (Seguir jugando) but its save is not on this phone: the clock goes
-  // on from when the day started on the server, so starting over elsewhere does not reset it (D-437)
+  // on from when the day started on the server, so starting over elsewhere does not reset it (D-433)
   const empezo = !nuevo && !guardado.reloj ? Lc.started?.[d]?.[S.yo] : null;
   const yaCorria = typeof empezo === 'number' ? Math.max(0, now - empezo) : 0;
   document.getElementById('aviso-otro-celular')?.remove();
@@ -2547,7 +2547,7 @@ function practica(id, varianteElegida = null) {
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(Jr, false))),
     rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });
-  // The first attempt counts from its start (D-437): the line says so, an attempt left halfway goes
+  // The first attempt counts from its start (D-433): the line says so, an attempt left halfway goes
   // on where it was, and one started on another phone counts 0
   // Empezar waits for that answer (at once without a player; with one, at most Firebase's 2.5 s)
   if (HOY) {
@@ -2587,7 +2587,7 @@ function jugarPractica(id, semilla, variante = null) {
   if ((!LABS || gameById(id)?.diario) && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
   // Un juego `diario` sigue donde iba al recargar (D-267): las jugadas y el tiempo, por caso
   let guardado = gameById(id)?.diario && !HOY ? partidaGuardada(id, semilla) : null;
-  // Today's first attempt (D-437): it counts from here, and it goes on where it was if left
+  // Today's first attempt (D-433): it counts from here, and it goes on where it was if left
   if (HOY && !S.hoy.ya && (S.hoy.estadoLlave === 'new' || S.hoy.estadoLlave === 'resume')) {
     empezarHoy(S.hoy);
     if (S.hoy.estadoLlave === 'new') dailySave(S.hoy.fecha, id).borrar();
@@ -2665,7 +2665,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
   let detenido = false;
   let leyendo = null;
-  // A saved game also keeps the time up to leaving the page, not only up to its last move (D-437)
+  // A saved game also keeps the time up to leaving the page, not only up to its last move (D-433)
   let ultimas = guardado?.jugadas || [];
   S.visibilidad = () => {
     if (detenido) return;
@@ -2739,7 +2739,7 @@ function resultadoPractica(id, semilla, r, variante = null) {
   const J = conVariante(JUEGOS_COPA[id], variante), rk = varianteRk(id, variante);
   // Uno al día: el primer intento queda como el resultado de hoy; los demás son práctica
   const hoy = HOY ? anotarUnoAlDia(S.hoy.fecha, { j: id, s: r.s, ms: r.ms }) : null;
-  if (HOY) dailySave(S.hoy.fecha, id).borrar();   // finished: nothing to go on with (D-437)
+  if (HOY) dailySave(S.hoy.fecha, id).borrar();   // finished: nothing to go on with (D-433)
   // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta.
   // De Uno al día, solo el primer intento: después el tablero ya se conoce (D-230)
   const cuentaRk = rankea(id) && (!hoy || hoy.primera);
