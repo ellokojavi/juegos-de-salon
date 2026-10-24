@@ -139,7 +139,7 @@ export function queued(issues) {
  */
 export function backlog(issues, now = Date.now()) {
   return issues
-    .filter(i => !i.labels.length && !/^main (en rojo|is red)/.test(i.title) && i.title !== 'Processes round missed')
+    .filter(i => !i.labels.length && !/^main (en rojo|is red)/.test(i.title) && !['Processes round missed', 'Pending work'].includes(i.title))
     .map(i => ({ number: i.number, title: i.title, days: Math.floor((now - Date.parse(i.createdAt)) / DAY) }))
     .sort((a, b) => b.days - a.days || a.number - b.number);
 }
@@ -225,6 +225,15 @@ async function check() {
     if (w.length) { n++; console.log(`- #${pr.number} ${pr.title} (${pr.createdAt.slice(0, 10)}): ${w.join('; ')}`); }
   }
   if (!n) console.log('None.');
+
+  // D-441: work on GitHub that has no open PR, so neither a session nor the list above sees it
+  heading('Branches with work that is not on main (D-441)');
+  try {
+    const { gather } = await import('./pending.mjs');
+    const { branches } = gather();
+    for (const b of branches) console.log(`- ${b.name}: ${b.why}`);
+    console.log(branches.length ? '→ Each one: open its PR if the work is still wanted, or delete the branch (git push origin --delete <branch>) if main already has it another way, saying which in your report.' : 'None.');
+  } catch (e) { console.log(`- could not read the branches: ${String(e.message).split('\n')[0]}`); }
 
   heading('Workflows on main');
   for (const w of ['publish.yml', 'e2e.yml', 'notifications.yml']) {

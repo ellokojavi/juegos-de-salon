@@ -42,6 +42,14 @@
       "decisions": ["D-440"]
     },
     {
+      "id": "pending-watch",
+      "where": "github",
+      "workflow": "pending-watch.yml",
+      "cron": "47 17 * * *",
+      "what": "Keeps the \"Pending work\" issue current with the open PRs that are stuck and the branches whose commits never reached main and have no PR; closes it when nothing is left.",
+      "decisions": ["D-441"]
+    },
+    {
       "id": "processes-round",
       "where": "app",
       "task": "Juegos de Salón · processes round",
