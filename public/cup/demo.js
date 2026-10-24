@@ -84,7 +84,7 @@ export const ESCENAS = {
 };
 
 /**
- * `&demo=mine` (lab: #seccion-copa-estado): one cup per state of the "Tus copas" status line,
+ * `&demo=mine` (#seccion-copa-estado): one cup per state of the "Tus copas" status line,
  * seeded together, and the home page with the list. Each is [scene, the cup's name].
  */
 export const MIS_COPAS = [
