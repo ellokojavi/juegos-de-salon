@@ -1034,6 +1034,12 @@ if (runs('weekend')) {
   const offered = await ev(`[...document.querySelectorAll('#crear-body .opcion')].some(x=>/Copa de fin de semana/.test(x.textContent))`);
   const open = await ev(`(async()=>{const {findeAbierto}=await import('/cup/engine.js');return findeAbierto(Date.now())})()`);
   ok(offered === open, `the weekend cup is offered while it is open (${open ? 'until Sunday night' : 'closed now'})`);
+  // Only in Spanish for now: a screen in English does not offer it
+  await b.go(`${BASE}?test&timer=6&lang=en`, 1200); await prepare();
+  await click('#btn-crear'); await sleep(900);
+  ok(!await ev(`[...document.querySelectorAll('#crear-body .opcion')].some(x=>/Weekend/.test(x.textContent))`), 'in English the weekend cup is not offered (only Spanish for now)');
+  await b.go(`${BASE}?test&timer=6&lang=es`, 1200); await prepare();
+  await click('#btn-crear'); await sleep(900);
   if (open) {
     await ev(`([...document.querySelectorAll('#crear-body .opcion')].find(x=>/Copa de fin de semana/.test(x.textContent)).click(), 1)`); await sleep(200);
     ok(await ev(`!document.getElementById('crear-finde').hidden && document.getElementById('crear-juegos').hidden`), 'choosing it shows its three days instead of the week');

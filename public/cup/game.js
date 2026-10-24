@@ -753,7 +753,8 @@ async function crearCopa() {
   const juegos = nuevo ? armarSemana() : elegirJuegos();
   // The weekend cup (D-439), for everyone on both screens until Sunday night: it takes the plain
   // 3-day cup's place on the new screen while it is offered
-  const finde = findeAbierto(Date.now()) ? armarFinde() : null;
+  // Only in Spanish for now (the owner's request): offered on a Spanish screen, and its words in Spanish
+  const finde = LANG === 'es' && findeAbierto(Date.now()) ? armarFinde() : null;
   const diasDe = v => (v === 'finde' ? 3 : v);
   const modo = opciones([
     finde ? { valor: 'finde', titulo: T.modeWeekend, sub: T.modeWeekendSub } : null,
@@ -761,6 +762,8 @@ async function crearCopa() {
     { valor: 7, titulo: T.mode7, sub: T.mode7Sub },
   ].filter(Boolean), v => {
     if (finde) finde.nodo.hidden = v !== 'finde';
+    // The weekend cup's words are always Spanish: its language field is not asked
+    campoIdioma.hidden = v === 'finde';
     juegos.nodo.hidden = v === 'finde';
     if (v === 'finde') { fechas(); return; }
     if (nuevo) { juegos.dias(v); fechas(); return; }
@@ -866,7 +869,7 @@ async function crearCopa() {
       const zona = zonaDeIdioma(idioma.valor);
       const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, zona), inicio.valor);
       // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
-      const meta = nuevaMeta({ nombre: n, dias: diasDe(modo.valor), inicio: fechaInicio, tz: zona, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: modo.valor === 'finde' ? finde.cal : juegos.cal, lang: idioma.valor, aud: alcance.valor });
+      const meta = nuevaMeta({ nombre: n, dias: diasDe(modo.valor), inicio: fechaInicio, tz: zona, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: modo.valor === 'finde' ? finde.cal : juegos.cal, lang: modo.valor === 'finde' ? 'es' : idioma.valor, aud: alcance.valor });
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pinCrear), co: miPais() });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
