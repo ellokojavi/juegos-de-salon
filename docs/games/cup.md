@@ -379,7 +379,7 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   ("play it today" when it closes tonight; "n days to play" with several), ⏸ one half played,
   ✅ played and when the next day opens (or nothing left to play), ⏳ how long until day 1, 🚪 out of the
   cup (D-347). With a single day to play, the cup's link opens it (`&day=<d>`). Finished cups carry
-  no line; without network the list stays as it was. Screens: `copa mine-status`, `mine-status-played`, `mine-status-all`; `/cup/?test&demo=mine` seeds one cup per status.
+  no line; without network the list stays as it was. Screen: `copa mine-status-all`; `/cup/?test&demo=mine` seeds one cup per status.
 
 ## Flujo
 

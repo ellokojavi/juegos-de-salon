@@ -88,8 +88,9 @@ export const ESCENAS = {
  * seeded together, and the home page with the list. Each is [scene, the cup's name].
  */
 export const MIS_COPAS = [
-  ['player', 'Copa de la oficina'], ['final', 'Copa de la familia'], ['risk', 'Los primos'], ['resumed', 'Copa del finde'],
-  ['played', 'Piratotes 1983'], ['waiting', 'Copa de noviembre'], ['out', 'Liga del barrio'],
+  // Names in no language, so the language tests read only the app's own text
+  ['player', 'Oficina 2026'], ['final', 'Familia 2026'], ['risk', 'Primos 2026'], ['resumed', 'Finde 2026'],
+  ['played', 'Piratotes 1983'], ['waiting', 'Noviembre 2026'], ['out', 'Barrio 2026'],
 ];
 
 /**
