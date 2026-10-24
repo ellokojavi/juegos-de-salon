@@ -9,6 +9,7 @@ from the repo:
 
     {"user": "the Gmail account", "appPassword": "a Gmail app password",
      "from": "hola@juegosdesalon.cl", "name": "Juegos de Salón",
+     "owner": "where the weekly check email goes (optional; `user` if missing)",
      "noLimit": ["addresses the 24-hour rule does not apply to, e.g. the owner's own, for tests"]}
 
 **Every email goes out from hola@juegosdesalon.cl** (`SENDER`, the owner's rule, D-443). `from` must
@@ -24,9 +25,9 @@ nothing is lost, and it goes out once the alias is fixed. `--check` runs the che
 
 Every email sent is logged in ~/.config/juegos-de-salon/mail-log.jsonl (or $JUEGOS_MAIL_LOG), on
 the owner's machine and never in the repo: date, the masked address, a hash of the address, the
-subject and the issues. Never the address itself (the form promises to delete it). And, owner's
-rule for prudence, plus whether its sender was checked (`from`: ok, other or unchecked); **at most one email to the same address every 24 hours**; a second one is
-refused before connecting, except to the addresses in `noLimit` (D-327). `python3 tools/agents/send-mail.py --log` prints the log.
+subject, the issues and whether its sender was checked (`from`: ok, other or unchecked). Never
+the address itself (the form promises to delete it). And, owner's rule for prudence: **at most one
+email to the same address every 24 hours**; a second one is refused before connecting, except to the addresses in `noLimit` (D-327). `python3 tools/agents/send-mail.py --log` prints the log.
 """
 import email
 import hashlib
@@ -48,10 +49,12 @@ SENDER = 'hola@juegosdesalon.cl'
 CHECKED = timedelta(days=7)
 
 
-BROKEN = (f'Not sent: the check email to the owner did not leave from {SENDER}; Gmail rewrote the sender. '
-          'Fix Settings → Accounts → "Send mail as" in Gmail, then run send-mail.py --check. The report stays pending (D-443).')
-UNREAD = (f'Not sent: could not confirm, by reading Gmail\'s Sent folder over IMAP, that the check email left from {SENDER}. '
-          'Is IMAP on in Gmail? Run send-mail.py --check once it is. The report stays pending (D-443).')
+BROKEN = (f'Not sent: the check email to the owner left from another address, not from {SENDER} (Gmail rewrote the sender). '
+          f'Fix it in Gmail: Settings → Accounts → "Send mail as" (re-add or re-verify {SENDER}), then run send-mail.py --check. '
+          'Nothing else went out; a feedback reply stays pending and goes out once the check passes (D-443).')
+UNREAD = (f'Not sent: could not confirm that the check email left from {SENDER}: its copy in Gmail\'s Sent folder could not be read over IMAP. '
+          'Check that IMAP is on in Gmail (Settings → Forwarding and POP/IMAP), then run send-mail.py --check. '
+          'Nothing else went out; a feedback reply stays pending and goes out once the check passes (D-443).')
 
 
 def fingerprint(to):
@@ -157,8 +160,11 @@ def send(cfg, m):
 def check(cfg):
     """A test email to the owner, and whether it left from hola@ (D-443)."""
     owner = cfg.get('owner') or cfg['user']
-    m = {'to': owner, 'subject': f'[Check] Juegos de Salón sends from {SENDER}', 'test': True,
-         'text': f'A check of the sender (D-443): this email should come from {SENDER}. Nothing to do.\n'}
+    m = {'to': owner, 'subject': f'[Check] Juegos de Salón: does this come from {SENDER}?', 'test': True,
+         'text': (f'An automatic check of the sender (D-443), sent at most once a week before emailing players.\n\n'
+                  f'If this email came from {SENDER}, there is nothing to do.\n'
+                  f'If it came from any other address, Gmail is no longer sending as {SENDER}: fix it under '
+                  f'Settings → Accounts → "Send mail as", then run send-mail.py --check. Until then no email goes to players.\n')}
     result = send(cfg, m)
     log_sent(m, sender=result)
     return result
@@ -202,8 +208,9 @@ def main():
     if '--check' in sys.argv:
         result = check(cfg)
         if result == 'ok':
-            print(f'Check sent to the owner: it left from {SENDER}.', file=sys.stderr)
-        sys.exit(0 if result == 'ok' else BROKEN if result == 'other' else UNREAD)
+            print(f'Check passed: the test email to the owner left from {SENDER}.', file=sys.stderr)
+        sys.exit(0 if result == 'ok' else BROKEN.replace('Not sent: the', 'Check failed: the') if result == 'other'
+                 else UNREAD.replace('Not sent: could', 'Check failed: could'))
     m = json.load(sys.stdin)
     if m.get('toOwner'):
         # A doubt for the owner (D-328): to their own account, never limited
@@ -223,7 +230,7 @@ def main():
     result = send(cfg, m)
     e = log_sent(m, sender=result)
     if result == 'other':
-        sys.exit(f"Sent to {e['to']}, but NOT from {SENDER}: Gmail rewrote the sender. Check Settings → Accounts → \"Send mail as\" (D-443).")
+        sys.exit(f"Sent to {e['to']}, but NOT from {SENDER}: Gmail rewrote the sender to another address. Fix Settings → Accounts → \"Send mail as\" in Gmail, then run send-mail.py --check (D-443).")
     note = '' if result == 'ok' else f' (could not read Gmail\'s Sent folder to confirm it left from {SENDER})'
     print(f"Sent to {e['to']} from {SENDER}{note}, logged in {LOG}.", file=sys.stderr)
 
