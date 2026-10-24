@@ -148,7 +148,7 @@ const ES = {
     final: {
       nombre: 'La Gran Final', habilidad: 'todo',
       como: [
-        'Juegas una ronda de cada juego de la semana, una tras otra. Antes de cada una verás cómo se juega.',
+        'Juegas una ronda de cada juego de la copa, una tras otra. Antes de cada una verás cómo se juega.',
       ],
       puntaje: 'Tu puntaje es el promedio de las rondas.',
       // Outside a cup there is no week: the five fixed short rounds (D-418)
@@ -965,7 +965,7 @@ const EN = {
     final: {
       nombre: 'The Grand Final', habilidad: 'everything',
       como: [
-        'You play one round of each game of the week, one after another. Before each one you\'ll see how it\'s played.',
+        'You play one round of each game of the cup, one after another. Before each one you\'ll see how it\'s played.',
       ],
       puntaje: 'Your score is the average of the rounds.',
       // Outside a cup there is no week: the five fixed short rounds (D-418)
@@ -1769,7 +1769,7 @@ const PT = {
     final: {
       nombre: 'A Grande Final', habilidad: 'tudo',
       como: [
-        'Você joga uma rodada de cada jogo da semana, uma atrás da outra. Antes de cada uma você vai ver como se joga.',
+        'Você joga uma rodada de cada jogo da copa, uma atrás da outra. Antes de cada uma você vai ver como se joga.',
       ],
       puntaje: 'Sua pontuação é a média das rodadas.',
       // Outside a cup there is no week: the five fixed short rounds (D-418)
@@ -2573,7 +2573,7 @@ const DE = {
     final: {
       nombre: 'Das große Finale', habilidad: 'Alles',
       como: [
-        'Du spielst eine Runde von jedem Spiel der Woche, eine nach der anderen. Vor jeder Runde siehst du, wie sie geht.',
+        'Du spielst eine Runde von jedem Spiel des Pokals, eine nach der anderen. Vor jeder Runde siehst du, wie sie geht.',
       ],
       puntaje: 'Dein Ergebnis ist der Durchschnitt der Runden.',
       // Outside a cup there is no week: the five fixed short rounds (D-418)
