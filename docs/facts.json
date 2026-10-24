@@ -1,5 +1,5 @@
 {
-  "version": "0.204.3",
+  "version": "0.204.4",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1116,6 +1116,7 @@
     "public/bulls-and-cows/engine.test.mjs",
     "public/cup/engine.test.mjs",
     "public/cup/games/agents/engine.test.mjs",
+    "public/cup/games/agents/palette.test.mjs",
     "public/cup/games/deshacer.test.mjs",
     "public/cup/games/juegos.test.mjs",
     "public/cup/games/paint-mines/engine.test.mjs",

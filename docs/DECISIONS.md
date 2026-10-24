@@ -26,7 +26,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Structure and paths | C-2, C-18 | D-1, D-2, D-3, D-24, D-192, D-198, D-214, D-256, D-266, D-269, D-270, D-280, D-281, D-284, D-286, D-289, D-293, D-297, D-310, D-311, D-316, D-372, D-420, D-422, D-434 |
 | Identity and texts | C-1 | D-11, D-30, D-49, D-177, D-184, D-324 |
 | Dated card decks | `docs/games/timeline.md` | D-37, D-277, D-278, D-314 |
-| 🕵️ Agentes (board, clues in four languages, traps) | `docs/games/agents.md` | D-286, D-287, D-288, D-421 |
+| 🕵️ Agentes (board, clues in four languages, traps) | `docs/games/agents.md` | D-286, D-287, D-288, D-421, D-442 |
 | 🖌️ Pintaminas, the lab's colour Minesweeper (drawings and their colours, brushes, no-guess board, hard mode, help, giving up) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298, D-332 |
 | 🚇 Rutas rotas (formerly Rutas), the lab's metro map (rectangle turns, exact minimum, five stages, 7-minute clock and layered score) | `docs/games/routes.md` | D-293, D-294, D-295, D-332 |
 | 💥 Números explosivos, the lab's number solitaire (equal pairs or pairs adding to 10, rows that clear, ➕, a board with a way out, explosions) | `docs/games/exploding-numbers.md` | D-297 |
@@ -53,7 +53,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (428)
+## In force (429)
 
 | D | Title | Status |
 |---|---|---|
@@ -331,7 +331,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-284](decisions/D-284.md) | Each person has their own lab key | current |
 | [D-285](decisions/D-285.md) | La Copa: a phone that lost its seat re-enters with its PIN | current |
 | [D-286](decisions/D-286.md) | Agentes: a mini Codenames, for one player, in the lab's Active projects | amended by D-287, D-288 |
-| [D-287](decisions/D-287.md) | Agentes: 15 cards, 4 clues (one of 2), tempting traps and a color per clue | current |
+| [D-287](decisions/D-287.md) | Agentes: 15 cards, 4 clues (one of 2), tempting traps and a color per clue | amended by D-442 |
 | [D-288](decisions/D-288.md) | Agentes: the spy story on the home page, 100 clues and a calendar with no repeats | amended by D-421 |
 | [D-289](decisions/D-289.md) | Pintaminas: a colorful Minesweeper in the lab's Active projects | amended by D-290 |
 | [D-290](decisions/D-290.md) | Pintaminas: «Pinta» and «No pinta», a random color per board and irregular drawings | amended by D-298 |
@@ -485,6 +485,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-439](decisions/D-439.md) | The weekend cup: three days of three games, a one-off closed the night it opened | current |
 | [D-440](decisions/D-440.md) | The processes round runs from a visible scheduled task, with a watchdog on GitHub | current |
 | [D-441](decisions/D-441.md) | Pending work is watched from GitHub: stuck PRs, branches without a PR, and a waiter that does not go blind | current |
+| [D-442](decisions/D-442.md) | Agentes: no clue is pink, red only means a mistake | current |
 
 ## No longer in force (11)
 

@@ -69,10 +69,10 @@
 .ag-carta.marca-sospecha::after { content: '📌'; }
 .ag-carta.marca-descarte::after { content: '🚫'; }
 .ag-ayuda { text-align: center; margin: 0; font-size: 0.85rem; }
-/* One color per clue (--g): the clue's sign and its agents. Neither yellow (the marks) nor red (the assassin) */
+/* One color per clue (--g): the clue's sign and its agents. Neither yellow (the marks) nor red or pink (the assassin, errors): a pink clue looked like a mistake (palette.test.mjs) */
 .ag-carta.agente { --g: 157, 255, 58; background: rgba(var(--g), 0.34); border-color: rgb(var(--g)); color: #fff; }
 .ag-carta.agente.g0, .ag-pista.g0 { --g: 157, 255, 58; } .ag-carta.agente.g1, .ag-pista.g1 { --g: 46, 230, 214; }
-.ag-carta.agente.g2, .ag-pista.g2 { --g: 255, 111, 168; } .ag-carta.agente.g3, .ag-pista.g3 { --g: 180, 139, 255; }
+.ag-carta.agente.g2, .ag-pista.g2 { --g: 77, 166, 255; } .ag-carta.agente.g3, .ag-pista.g3 { --g: 180, 139, 255; }
 /* Those of a clue already closed dim: they do not count for the one being played */
 .ag-carta.agente.cerrada { opacity: 0.4; border-style: solid; }
 .ag-carta.agente .ag-de-pista { color: rgb(var(--g)); }
@@ -95,7 +95,7 @@
 .ag-aviso { text-align: center; font-weight: 800; min-height: 2.8em; margin: 0; display: grid; place-items: center; line-height: 1.4; }
 .ag-aviso.marca { color: var(--yellow); } .ag-aviso.mal { color: #ff8a8a; }
 /* An agent found: the notice goes in its clue's color */
-.ag-aviso.g0 { color: rgb(157, 255, 58); } .ag-aviso.g1 { color: rgb(46, 230, 214); } .ag-aviso.g2 { color: rgb(255, 111, 168); } .ag-aviso.g3 { color: rgb(180, 139, 255); }
+.ag-aviso.g0 { color: rgb(157, 255, 58); } .ag-aviso.g1 { color: rgb(46, 230, 214); } .ag-aviso.g2 { color: rgb(77, 166, 255); } .ag-aviso.g3 { color: rgb(180, 139, 255); }
 .ag-botones { display: grid; }
 /* The end, as a stamp on the file: green if accomplished, yellow half done, red if it failed */
 /* The end stamp drops in at three times its size: clipped, so it never scrolls the page sideways */
