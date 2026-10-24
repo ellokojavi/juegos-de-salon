@@ -34,20 +34,30 @@
       "decisions": ["D-415", "D-424"]
     },
     {
+      "id": "round-watch",
+      "where": "github",
+      "workflow": "round-watch.yml",
+      "cron": "17 17 * * *",
+      "what": "Opens the \"Processes round missed\" issue when a commit on main has gone more than a day without the processes round looking at it, and closes it when the round catches up.",
+      "decisions": ["D-440"]
+    },
+    {
       "id": "processes-round",
       "where": "app",
-      "task": "ronda-procesos-juegos-de-salon",
+      "task": "Juegos de Salón · processes round",
+      "prompt": "tools/jobs/prompts/processes-round.md",
       "cron": "30 4 * * *",
-      "what": "The processes agent's daily round (Pacific time): launches documentation, usability, support and ideas, handles feedback, collects the changelog.",
-      "decisions": ["D-273", "D-276"]
+      "what": "The processes agent's daily round (Pacific time): launches documentation, usability, support and ideas, handles feedback, collects the changelog. A claude.ai scheduled task that runs on the Mac mini; round-watch checks it ran.",
+      "decisions": ["D-273", "D-276", "D-440"]
     },
     {
       "id": "weekly-report",
       "where": "app",
-      "task": "weekly-report",
+      "task": "Juegos de Salón · weekly report",
+      "prompt": "tools/jobs/prompts/weekly-report.md",
       "cron": "0 8 * * 0",
       "what": "Sunday: `node tools/reports/weekly.mjs --send`, the week's PDF emailed to the owner.",
-      "decisions": ["D-352"]
+      "decisions": ["D-352", "D-440"]
     },
     {
       "id": "clean-worktrees",

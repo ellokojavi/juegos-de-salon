@@ -11,13 +11,18 @@ machine needs. `machine.test.mjs` fails if a `mac` or `app` job, or a file under
 |---|---|---|---|
 | `inbox-watch` | launchd (`cl.juegosdesalon.inbox-watch`) | every 5 min | `node tools/jobs/jobs.mjs install` |
 | `feedback-watch` | launchd (`cl.juegosdesalon.feedback-watch`) | every 5 min | `node tools/jobs/jobs.mjs install` |
-| `processes-round` | scheduled task in the Claude app (`ronda-procesos-juegos-de-salon`) | 4:30 Pacific, daily | by hand in the app → Scheduled |
-| `weekly-report` | scheduled task in the Claude app | Sundays 08:00 local | by hand in the app → Scheduled |
+| `processes-round` | claude.ai scheduled task that runs on this computer (`Juegos de Salón · processes round`) | 4:30 Pacific, daily | claude.ai → Scheduled, with "Require this computer" and the main folder (D-440) |
+| `weekly-report` | claude.ai scheduled task that runs on this computer (`Juegos de Salón · weekly report`) | Sundays 08:00 Pacific | same |
 
 The launchd plists are generated from `jobs.json` (`~/Library/LaunchAgents/cl.juegosdesalon.<id>.plist`)
 and run the code of the **main folder** (today `~/Documents/Claude/Projects/juegos-de-salon`), which
-stays on `main`; `jobs.mjs run` fast-forwards it to origin/main before each run (only when clean and on `main`; the log says when it could not). The app's scheduled tasks live
-only in the Claude app: their prompts are not in the repo.
+stays on `main`; `jobs.mjs run` fast-forwards it to origin/main before each run (only when clean and on `main`; the log says when it could not). The two scheduled tasks
+are created on claude.ai and run here (D-440): they show up, with each run's result, on the owner's
+phone, unlike the old tasks that lived only inside the desktop app and stopped unseen in October 2026.
+Their prompt is one line, "read `tools/jobs/prompts/<id>.md` from origin/main and follow it": the
+real instructions are in the repo, and `jobs.test.mjs` fails if they name a file that no longer
+exists. They need the Mac awake, online and the Claude desktop app open. If the round stops anyway,
+`round-watch.yml` opens the "Processes round missed" issue within a day.
 
 ## What the machine holds (never in the repo)
 
@@ -43,6 +48,7 @@ support agent runs headless). Logs: `~/Library/Logs/juegos-de-salon/`. Optional:
 3. Copy `~/.config/juegos-de-salon/` from the old machine.
 4. `node tools/jobs/jobs.mjs install`, and on the old machine `node tools/jobs/jobs.mjs uninstall <id>`
    for each `mac` job, so the two do not both run.
-5. Recreate the app's scheduled tasks with the same ids and schedules, and turn them off on the old one.
+5. On claude.ai → Scheduled, point each task's "Require this computer" and folder at the new machine
+   (their prompts are in `tools/jobs/prompts/`), so they no longer run on the old one.
 6. Keep it awake: System Settings → Energy → prevent automatic sleeping.
 7. `node tools/jobs/jobs.mjs status`: every `mac` job ✅ within 10 minutes.
