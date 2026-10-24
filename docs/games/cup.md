@@ -29,9 +29,9 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   **Idioma:** español, inglés, portugués (D-170) y alemán (D-191, para todos desde D-197). La
   pantalla va en el idioma de quien mira; las palabras de Agentes, Conexiones (copas de antes de D-421) y Palabra, los mensajes al
   grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).
-- **Modalidades:** Copa de 7 días y Copa de 3 días (dos juegos y la final). The 3-day one is offered on the new create screen, in the lab, next to when it starts (D-437); on the screen of before only with `?three` or in the test store (D-100).
+- **Modalidades:** Copa de 7 días (six games and the Grand Final) y Copa de 3 días (three games, **no final**, D-438: nothing counts double for everyone, the wildcard goes on any day, the last day has no grace day and breaks a tie; the 3-day test cups from before keep their final). The 3-day one is offered on the new create screen, in the lab, next to when it starts (D-437); on the screen of before only with `?three` or in the test store (D-100).
 - **Calendario:** lo arma el admin al crear la copa (D-163): qué juegos entran y en qué orden,
-  a partir de una propuesta al azar. La final va siempre el último día y repite los juegos de la semana, en su orden (D-418).
+  a partir de una propuesta al azar. La final va siempre el último día y repite los juegos de la semana, en su orden (D-418); the 3-day cup has none since D-438, and its three days are all games of the pool.
   In the lab (D-425), a key holder sees a new create screen: the week in view from the start, 🎲 Crear al
   azar, week styles (Balanced, Puzzles, Trivia and words, What's new), a sheet with the
   13 games to change, move or pick the version of a day, Ahora/Mañana with their weekday, the PIN once with 👁, and the language, audience and
@@ -49,17 +49,17 @@ panel del dueño (D-137).
 | Regla | Detalle |
 |---|---|
 | Días | El día 1 parte a las 00:00 del día de inicio, en la zona de la copa (`meta.tz`: hora del Pacífico en las nuevas, D-113; hora de Chile en las anteriores). Cada día termina a las 23:59. |
-| Día de gracia | Un día se puede jugar ese día o el siguiente, con puntaje completo. La final no tiene gracia: la copa cierra a las 23:59 del último día, y ahí vence también la gracia del penúltimo. On its first day the card says so: "Puedes jugarlo hasta mañana a las 23:59 (48 h)". |
+| Día de gracia | Un día se puede jugar ese día o el siguiente, con puntaje completo. La final no tiene gracia: la copa cierra a las 23:59 del último día, y ahí vence también la gracia del penúltimo. Neither does the last day of a cup without a final (D-438): the card and the reminder say "until today". On its first day the card says so: "Puedes jugarlo hasta mañana a las 23:59 (48 h)". |
 | Un intento | "Cómo se juega" no cuenta. El intento empieza al tocar **Empezar**; recargar retoma el mismo intento (C-6). Since D-433 (for everyone since 2026-10-23): a day resumed with **Seguir jugando** where this phone has no save (another phone, the browser's memory cleared) takes its clock from the server's start (`started/<d>/<pid>`), not from zero, and the screen says so; the `resumed` demo shows it on one phone. |
 | Puntos del día | Por posición entre quienes jugaron: 10-8-6-5-4-3-2-1-1-1. Manda el puntaje del juego; a igual puntaje, el menor **tiempo activo** (D-95). Leer el dato de cada carta en Línea Relámpago (al errar y al acertar) o de cada hito en ¿En qué año? no cuenta, hasta 6 s cada vez (D-277, D-314). Empate total: comparten la mejor posición. |
-| Comodín ×2 | Uno por jugador y copa. Se activa antes de Empezar (el servidor lo rechaza después). No vale en la final. |
-| Final ×2 | El último día vale doble para todos. |
+| Comodín ×2 | Uno por jugador y copa. Se activa antes de Empezar (el servidor lo rechaza después). No vale en la final; in a cup without a final (D-438) it goes on any day, the last one included. |
+| Final ×2 | El último día vale doble para todos. The 3-day cup has no final: its last day counts single (D-438). |
 | Resultados ocultos | Los puntajes de un día se ven después de jugarlo o cuando cierra. La tabla y el gráfico tampoco lo delatan: suman solo los días que ya puedes ver. |
 | Nombre | El admin lo puede cambiar hasta que la copa termina; el link sigue igual (D-148). |
 | Terminar antes | El admin puede terminar la copa en cualquier momento desde que parte. Nadie más juega, la tabla de ese momento queda como la final y los días que no alcanzaron a abrirse no se juegan ni suman (D-161). |
-| Inscripción | Abierta hasta que empieza la final, salvo que el administrador la cierre o la copa llegue a 10 (quien llega lee por qué no puede entrar: terminó, cerrada, cerrada por el administrador o llena). Los días que ya cerraron quedan con 0; el aviso sale desde el día 3, porque el día 2 el día 1 sigue en su día de gracia (D-177). |
+| Inscripción | Abierta hasta que empieza la final (in a cup without one, the last day; whoever arrives later reads "Esta copa ya está en su último día…", D-438), salvo que el administrador la cierre o la copa llegue a 10 (quien llega lee por qué no puede entrar: terminó, cerrada, cerrada por el administrador o llena). Los días que ya cerraron quedan con 0; el aviso sale desde el día 3, porque el día 2 el día 1 sigue en su día de gracia (D-177). |
 | Out of the cup | Whoever lets **2 days in a row** close without playing them (each with its grace day) is out (D-347). Their points stay in the table, faded with 🚪, below everyone still playing, the days they will not play turned into one "Eliminado" pill; their line fades in the chart, and the shared image draws them faded with 🚪 and ELIMINADO (D-376); they can't play any more days, the final included, and nobody waits for them (the "missing" lists, the provisional table, the notifications). The day before, the board and the "Before closing" notification warn them. Only days that closed after they signed up count, and the last two days never do: they close with the cup. The admin can **bring them back** («Devolver a la copa»): the days missed before that are forgiven. It is not the admin removing someone (`out`). |
-| Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final; si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen cuál de los dos criterios decidió (dilema #79). Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
+| Tabla | Suma de puntos. Desempata quien ganó más días y después quien quedó mejor en la final (in the 3-day cup, on the last day, D-438); si el 1.° y el 2.° empatan en puntos, el podio y el resumen dicen cuál de los dos criterios decidió (dilema #79). Es **provisoria** mientras el último día que muestra sigue abierto y alguien no lo ha jugado (D-147). |
 | Medallas | Campeón, más días ganados, la remontada (más puestos subidos desde la mitad) y "al descenso" (el último). |
 
 ### Cuenta: nombre y PIN
@@ -180,10 +180,10 @@ al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`: 
 más Zip, Tango, ¿Dónde queda?, Desenredo and, since D-332, 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas; since D-421 🕵️ Agentes in 🔗 Conexiones' place), sin dos días seguidos de la misma habilidad. Es la mano y la línea
 de Línea de Tiempo con su arrastre: un día se arrastra a otro lugar de la semana (en un celular,
 por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando se llega a lo mismo
-(el juego y después la ranura o el día). 🎲 propone otro orden. La final queda fija al último y juega una ronda de cada juego elegido (D-418; the finals that opened before 2026-10-22 noon Pacific keep the five fixed rounds). El calendario se guarda en
+(el juego y después la ranura o el día). 🎲 propone otro orden. La final queda fija al último y juega una ronda de cada juego elegido (D-418; the finals that opened before 2026-10-22 noon Pacific keep the five fixed rounds). The 3-day cup of the new create screen has no final: its three days are games, the calendar ends with a game and `meta.final` is `'0'` (D-438); whether a cup has a final is read from its calendar (`tieneFinal(meta)`). El calendario se guarda en
 `meta.cal` y `nuevaMeta` rechaza uno que no se puede jugar (`calendarioValido`). Sin elección
 (las demos) se usa el de siempre, `CALENDARIOS`: Línea, Toque y Fama, Agentes, Reinas, Palabra,
-Año y la final; o Línea, Agentes y la final en la de 3 días (D-163; Agentes took Conexiones' place in D-421).
+Año y la final; o Línea, Agentes y la final en la de 3 días (D-163; Agentes took Conexiones' place in D-421), as the 3-day cups from before D-438 and the screen of before (`?three`) still make them.
 
 Los otros juegos del pozo, antes de los tres de D-332, son **〰️ Zip** (un solo trazo por todas las casillas, pasando por los números en orden; por niveles: diez, de 4 × 4 a 7 × 7, en tres minutos; con los diez son 100 y la partida termina ahí, y entre quienes los resuelven todos gana quien terminó antes, D-250) y **☀️ Tango**
 (soles y lunas, mitad y mitad por línea, nunca tres seguidos, con marcas = y ×), y **📍 ¿Dónde
@@ -348,7 +348,7 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   minutos, y `tools/push/schedule.mjs` decide con `engine.js` qué toca, en la hora y el idioma
   del celular y nunca entre las 22:00 y las 8:00: **se abrió el día** (desde las 9:00, si no lo ha
   jugado ni empezado), **se te acaba el plazo** (4 horas antes del cierre, o desde las 20:00 si
-  cierra de noche; to whoever already missed the day before, it also says that missing this one leaves them out of the cup, D-347; whoever is out gets nothing more), **La Gran Final** (con su lugar en la tabla), **terminó la copa** y, al admin
+  cierra de noche; to whoever already missed the day before, it also says that missing this one leaves them out of the cup, D-347; whoever is out gets nothing more), **La Gran Final** (con su lugar en la tabla; a cup without a final sends the usual "se abrió el día" on its last day, D-438), **terminó la copa** y, al admin
   que activó avisos, **quién se inscribió**. A lo más uno por copa y celular en cada vuelta, y dos
   por copa en un día (D-229). Los textos son los `avMsg*` de `rules.js`. Al tocarlo abre ese día
   (`&day=<d>`) o, el del cierre, el podio; en Android trae **Jugar** y **Silenciar esta copa**
@@ -390,7 +390,7 @@ No tiene: no hay sala ni mensajes entre celulares. Cada celular escribe su resul
 ### Datos (Firebase)
 
 ```
-torneos/<código>/meta               nombre, días, calendario (cal), ventanas, admin, joinUntil, final, idioma (lang), público (aud), zona (tz)
+torneos/<código>/meta               nombre, días, calendario (cal), ventanas, admin, joinUntil, final (the final's day as text, `'0'` without a final, D-438), idioma (lang), público (aud), zona (tz)
 torneos/<código>/players/<pid>      { name, at, out?, back?, co?, j? }   back: when the admin brought them back after being out of the cup (D-347); co: país, al inscribirse o al volver a abrir (D-207, D-209); j: su jugador de los rankings (D-212)
 torneos/<código>/started/<d>/<pid>  hora del servidor al tocar Empezar
 torneos/<código>/results/<d>/<pid>  { s, ms, t, r, at }
@@ -403,7 +403,7 @@ pushEnviados/<código>/<subId>/<clave>  hora en que se entregó ese aviso (dia:3
 ```
 
 Las reglas imponen: escribir una sola vez, las ventanas de cada día con la hora del servidor, el
-comodín antes de Empezar y fuera de la final, la inscripción antes de la final y que solo el admin
+comodín antes de Empezar y fuera de la final, la inscripción antes de la final (or of the last day, without a final, D-438) y que solo el admin
 renombre, saque o cambie PINes, and that a player out of the cup (D-347) can't press Empezar. El árbol no se llama `copas` porque las reglas no pueden nombrar
 juegos (C-16, `public/panel/adapta.test.mjs`).
 

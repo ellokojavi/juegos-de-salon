@@ -55,10 +55,10 @@ own tree because they last a week and rooms die after half an hour (D-89).
   Anonymous → Enable*. Each browser signs in anonymously, and the rules use its `auth.uid`.
 - `torneos/<código>` (5 letters without I or O) is readable by whoever has the code; all of `torneos/`, only by the owner.
 - `meta` is written once and carries each day's windows already computed (`win/<d>/{a,b,h}`),
-  `joinUntil` and `final`: the rules compare `now` against numbers, they know nothing about time zones.
+  `joinUntil` and `final` (the final's day as text, or `'0'` in a cup without a final, D-438): the rules compare `now` against numbers, they know nothing about time zones.
 - `players/<pid>` is created by the player themselves before the final; afterwards only the admin changes it.
 - `started`, `results` and `wild` are written only once, by the seated player and within the
-  window of their day. The wildcard, also, only before `started` and never on the final's day.
+  window of their day. The wildcard, also, only before `started` and never on the final's day (any day in a cup without a final).
 - `started` is also refused to a player out of the cup (D-347): two days in a row closed without a
   result, counting only days that closed after their `at` and after their `back` (the admin's
   «Devolver a la copa», server time). The rule repeats the condition for each pair of days up to

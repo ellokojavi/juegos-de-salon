@@ -456,7 +456,7 @@
             ".validate": "newData.isNumber()"
           },
           "final": {
-            ".validate": "newData.isString() && newData.val().matches(/^[37]$/)"
+            ".validate": "newData.isString() && newData.val().matches(/^[037]$/)"
           },
           "createdAt": {
             ".validate": "newData.isNumber() && ((data.exists() && newData.val() == data.val()) || (newData.val() <= now + 60000 && newData.val() > now - 60000))"
