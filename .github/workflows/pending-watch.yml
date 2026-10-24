@@ -1,0 +1,36 @@
+# Pending work nobody is watching (D-441): every day at 10:47 Pacific (17:47 UTC; 9:47 in winter),
+# tools/agents/pending.mjs lists the open PRs that are stuck (red or in conflict for hours, a day
+# without auto-merge, two days open) and the branches whose commits never reached main and have no
+# open PR. If there is any, it keeps one "Pending work" issue current (GitHub emails the owner when it
+# opens); when nothing is left, it closes it. It needs nothing from the Mac mini or from any session.
+
+name: Pending work watch
+
+on:
+  schedule:
+    - cron: '47 17 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+  issues: write
+
+concurrency:
+  group: pending-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Stuck PRs and stranded branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/agents/pending.mjs notify

@@ -519,6 +519,7 @@ node tools/agents/ideas.test.mjs
 node tools/agents/inbox.test.mjs
 node tools/agents/labs-key.test.mjs
 node tools/agents/marketing.test.mjs
+node tools/agents/pending.test.mjs
 node tools/agents/popularity.test.mjs
 node tools/agents/processes.test.mjs
 node tools/agents/round-watch.test.mjs
