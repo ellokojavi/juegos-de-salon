@@ -36,20 +36,24 @@ const ESTADO = {
 };
 
 const rondasDe = p => (Array.isArray(p?.rondas) ? p.rondas : final.RONDAS);
+/** A round played in its short version: never in a day of three, where every game is whole (D-439). */
+const esCorta = (p, r) => !p?.enteras && !!ESTADO[r];
 
 /** The result so far: `{ rondas, pts }` with the rounds finished, for the score and the card. */
 export function estados(p, jugadas) {
   const rondas = rondasDe(p), pts = {};
   for (const r of rondas) {
     if (!jugadas?.hechas?.[r]) continue;
-    pts[r] = ESTADO[r] ? final.puntosRonda[r](ESTADO[r](p[r], jugadas.sub?.[r])) : jugadas.pts?.[r] || 0;
+    pts[r] = esCorta(p, r) ? final.puntosRonda[r](ESTADO[r](p[r], jugadas.sub?.[r])) : jugadas.pts?.[r] || 0;
   }
   return { rondas, pts };
 }
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX } = ctx;
-  const JUEGOS_COPA = juegosCopa(ctx.lang), RONDAS_FINAL = rondasFinal(ctx.lang);
+  const JUEGOS_COPA = juegosCopa(ctx.lang), RONDAS_FINAL = p?.enteras ? {} : rondasFinal(ctx.lang);
+  // A day of three (D-439) counts games, not rounds: each one is played whole
+  const R = p?.enteras ? { ...T, roundOf: T.trioOf, roundStart: T.trioStart, roundNext: T.trioNext, finalSoFar: T.trioSoFar } : T;
   const rondas = rondasDe(p), n = rondas.length;
   const j = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) ? ctx.jugadas : {};
   const J = { ronda: j.ronda || 0, sub: { ...(j.sub || {}) }, hechas: { ...(j.hechas || {}) }, pts: { ...(j.pts || {}) }, t0: { ...(j.t0 || {}) }, jugando: !!j.jugando };
@@ -63,26 +67,26 @@ export function montar(raiz, ctx) {
     const M = ficha(r);
     const lleva = final.puntajeParcial(estados(p, J));
     poner(raiz, el('div', { class: 'stack' },
-      el('p', { class: 'muted center', style: 'margin:0' }, fmt(T.roundOf, { i: J.ronda + 1, n })),
+      el('p', { class: 'muted center', style: 'margin:0' }, fmt(R.roundOf, { i: J.ronda + 1, n })),
       el('div', { class: 'intro-hero' }, el('span', { class: 'icon' }, M.emoji), el('h2', { class: 'display display--md' }, M.nombre)),
       el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay),
         RONDAS_FINAL[r] ? el('p', {}, RONDAS_FINAL[r]) : el('ol', { class: 'como' }, M.como.map(x => el('li', {}, x))),
         // A game played whole says how it scores, as each short round's text does (U-18)
         RONDAS_FINAL[r] ? null : [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, M.puntaje)]),
-      J.ronda > 0 ? el('p', { class: 'muted center' }, fmt(T.finalSoFar, { pts: lleva })) : null,
+      J.ronda > 0 ? el('p', { class: 'muted center' }, fmt(R.finalSoFar, { pts: lleva })) : null,
       el('button', { class: 'btn btn--yellow', id: 'btn-ronda', onClick: () => {
-        SFX.tap(); J.jugando = true; if (!ESTADO[r] && J.t0[r] === undefined) J.t0[r] = ahora(); guardar(); ronda();
-      } }, `${M.emoji} ${T.roundStart}`)));
+        SFX.tap(); J.jugando = true; if (!esCorta(p, r) && J.t0[r] === undefined) J.t0[r] = ahora(); guardar(); ronda();
+      } }, `${M.emoji} ${R.roundStart}`)));
   };
 
   const ronda = () => {
     raiz.innerHTML = '';
     const r = rondas[J.ronda];
     const M = ficha(r);
-    const corta = !!ESTADO[r];
+    const corta = esCorta(p, r);
     const mod = corta ? UI[r] : ctx.juegos?.[r];
     const caja = el('div', { class: 'final-ronda' });
-    poner(raiz, el('p', { class: 'muted center', style: 'margin:0 0 8px' }, `${fmt(T.roundOf, { i: J.ronda + 1, n })} · ${M.emoji} ${M.nombre}`), caja);
+    poner(raiz, el('p', { class: 'muted center', style: 'margin:0 0 8px' }, `${fmt(R.roundOf, { i: J.ronda + 1, n })} · ${M.emoji} ${M.nombre}`), caja);
     const ultima = J.ronda === n - 1;
     // A game played whole scores with its own result (0 to 100) the moment its board ends (D-150)
     const puntos = e => (corta ? final.puntosRonda[r](e) : mod.resultado(e).s);
@@ -98,8 +102,8 @@ export function montar(raiz, ctx) {
       p: p[r],
       variante: p[r]?.variante ?? null,
       jugadas: J.sub[r],
-      max: r === 'numero' ? final.NUMERO_INTENTOS : undefined,
-      textoFin: ultima ? T.seeResults : T.roundNext,
+      max: corta && r === 'numero' ? final.NUMERO_INTENTOS : undefined,
+      textoFin: ultima ? T.seeResults : R.roundNext,
       cierreAbajo: true, // en la final, el botón para seguir va debajo del tablero, en todas las rondas
       ...(corta ? {} : { tiempo: () => Math.max(0, ahora() - (J.t0[r] || 0)) }),
       pararReloj,

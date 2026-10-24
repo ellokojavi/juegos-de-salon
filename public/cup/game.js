@@ -24,6 +24,7 @@ import {
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar, semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL,
+  findeAbierto, findeAlAzar, rondasDelDia, TRIO_SEP,
 } from './engine.js';
 import { GAME_ID, LOCALES, juegosCopa, rondasFinal, conVariante, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { createCuenta, juntarCopas } from './cuenta.js';
@@ -718,6 +719,28 @@ function armarSemana() {
   };
 }
 
+/**
+ * The weekend cup's three days (D-439): three games a day, drawn at random from the pool with no
+ * game twice, and 🎲 draws them again. Each day is played as one, like the Grand Final's rounds.
+ */
+function armarFinde() {
+  const familia = id => JUEGOS_COPA_ES[id].habilidad;
+  let cal = findeAlAzar({ familia });
+  const lista = el('div', { class: 'semana-dias', id: 'finde-dias' });
+  const pintar = () => lista.replaceChildren(...cal.map((x, i) => {
+    const ids = x.split(TRIO_SEP).map(y => diaDeCal(y).id);
+    return el('div', { class: 'semana-dia finde-dia', 'data-dia': i, 'data-juegos': ids.join(',') },
+      el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: i + 1 })), el('span', { class: 'em' }, JUEGOS_COPA.trio.emoji)),
+      el('span', { class: 'semana-juego' }, ...ids.map(id => el('small', { class: 'finde-juego' }, `${JUEGOS_COPA[id].emoji} ${JUEGOS_COPA[id].nombre}`))));
+  }));
+  const dado = el('button', { type: 'button', class: 'btn-dado', id: 'btn-dado-finde', onClick: () => { SFX.tap(); vibrate(15); cal = findeAlAzar({ familia }); pintar(); } }, T.weekDice);
+  const nodo = el('div', { class: 'panel', id: 'crear-finde', hidden: true },
+    el('div', { class: 'semana-cabeza' }, el('b', { class: 'semana-titulo' }, fmt(T.weekTitleDays, { n: 3 })), dado),
+    lista, el('small', { class: 'muted semana-ayuda' }, JUEGOS_COPA.trio.puntaje));
+  pintar();
+  return { nodo, get cal() { return [...cal]; } };
+}
+
 async function crearCopa() {
   const nuevo = await formularioNuevo();
   mostrar('crear');
@@ -728,12 +751,23 @@ async function crearCopa() {
   // On the screen of before, the 3-day cup is offered only with ?three or in the test store (D-100).
   // The new screen (D-425, a lab key) offers it always, next to the start (D-437), and starts at seven days.
   const juegos = nuevo ? armarSemana() : elegirJuegos();
+  // The weekend cup (D-439), for everyone on both screens until Sunday night: it takes the plain
+  // 3-day cup's place on the new screen while it is offered
+  // Only in Spanish for now (the owner's request): offered on a Spanish screen, and its words in Spanish
+  const finde = LANG === 'es' && findeAbierto(Date.now()) ? armarFinde() : null;
+  const diasDe = v => (v === 'finde' ? 3 : v);
   const modo = opciones([
-    nuevo || TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
+    finde ? { valor: 'finde', titulo: T.modeWeekend, sub: T.modeWeekendSub } : null,
+    (nuevo && !finde) || TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
     { valor: 7, titulo: T.mode7, sub: T.mode7Sub },
-  ].filter(Boolean), dias => {
-    if (nuevo) { juegos.dias(dias); fechas(); return; }
-    juegos.nodo.hidden = false; juegos.sortear(dias);
+  ].filter(Boolean), v => {
+    if (finde) finde.nodo.hidden = v !== 'finde';
+    // The weekend cup's words are always Spanish: its language field is not asked
+    campoIdioma.hidden = v === 'finde';
+    juegos.nodo.hidden = v === 'finde';
+    if (v === 'finde') { fechas(); return; }
+    if (nuevo) { juegos.dias(v); fechas(); return; }
+    juegos.sortear(v);
   }, { inicial: nuevo ? 7 : null });
   // El idioma de las palabras de Conexiones y de Palabra (D-170): parte en el de quien la crea
   const mayuscula = x => x[0].toUpperCase() + x.slice(1);
@@ -776,7 +810,7 @@ async function crearCopa() {
     if (!nuevo) return;
     const hoy = fechaEn(Date.now(), zonaDeIdioma(idioma.valor));
     const desde = inicio.valor === 'otra' ? (otraFecha.valida() ? otraFecha.input.value : null) : inicio.valor === null ? null : sumarDias(hoy, inicio.valor);
-    lineaFechas.textContent = desde ? fmt(T.startsLine, { inicio: fechaDia(desde), fin: fechaDia(sumarDias(desde, modo.valor - 1)) }) : '';
+    lineaFechas.textContent = desde ? fmt(T.startsLine, { inicio: fechaDia(desde), fin: fechaDia(sumarDias(desde, diasDe(modo.valor) - 1)) }) : '';
   }
   // "More options", folded, says in one line what is chosen inside
   const resumen = el('small', { class: 'muted', id: 'crear-resumen' });
@@ -811,7 +845,7 @@ async function crearCopa() {
     SFX.tap();
     const n = limpiarNombre(nombre.input.value, COPA_MAX), quien = limpiarNombre(yo.input.value);
     if (!n) return avisoError(err, T.errCopa);
-    if (!modo.valor) return avisoError(err, nuevo || TRES ? T.errMode : T.errMode7);
+    if (!modo.valor) return avisoError(err, nuevo || TRES || finde ? T.errMode : T.errMode7);
     if (inicio.valor === null) return avisoError(err, T.errStart);
     if (inicio.valor === 'otra' && !otraFecha.valida()) return avisoError(err, fmt(T.errStartDate, { n: MAX_DIAS_INICIO }));
     if (!quien) return avisoError(err, T.errNombre);
@@ -835,7 +869,7 @@ async function crearCopa() {
       const zona = zonaDeIdioma(idioma.valor);
       const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, zona), inicio.valor);
       // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
-      const meta = nuevaMeta({ nombre: n, dias: modo.valor, inicio: fechaInicio, tz: zona, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: juegos.cal, lang: idioma.valor, aud: alcance.valor });
+      const meta = nuevaMeta({ nombre: n, dias: diasDe(modo.valor), inicio: fechaInicio, tz: zona, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: modo.valor === 'finde' ? finde.cal : juegos.cal, lang: modo.valor === 'finde' ? 'es' : idioma.valor, aud: alcance.valor });
       await st.crear(code, meta, { pid, name: quien, at: now, pinHash: await hashPin(code, pid, pinCrear), co: miPais() });
       cuenta.nombre.set(quien);
       cuenta.recordar(code, pid, { nombre: quien, copa: n, fin: meta.end });
@@ -859,14 +893,14 @@ async function crearCopa() {
     el('div', { class: 'panel' }, nombre.nodo,
       el('div', { class: 'field', id: 'crear-modo' }, el('label', {}, T.fMode), modo.nodo),
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, notaZona)),
-    juegos.nodo,
+    juegos.nodo, finde?.nodo,
     el('div', { class: 'panel' }, yo.nodo, ...camposPin(pin1, pin2)),
     mas, err, boton, lineaFechas, volver);
   poner(body, 
     el('div', { class: 'panel' }, nombre.nodo,
       el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo),
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, notaZona)),
-    juegos.nodo,
+    juegos.nodo, finde?.nodo,
     el('div', { class: 'panel' }, campoIdioma, campoAlcance),
     el('div', { class: 'panel' }, link.nodo),
     el('div', { class: 'panel' }, yo.nodo, ...camposPin(pin1, pin2)),
@@ -1347,7 +1381,7 @@ function misDias(d, now) {
   const filas = [];
   for (let k = 1; k <= meta.days; k++) {
     if (k === d) { filas.push(tarjetaDia(k, T.today)); continue; }
-    const J = JUEGOS_COPA[juegoDelDia(meta, k)];
+    const J = juegoDia(meta, k);
     const est = estadoDia(Lc, k, S.yo, now);
     const x2 = esFinal(meta, k) || w === k;
     let detalle, accion = null, clase = est;
@@ -2063,8 +2097,8 @@ function antesDeJugar(d) {
   const empezar = el('button', { class: 'btn btn--yellow', id: 'btn-empezar', disabled: sinGente }, `${J.emoji} ${T.start}`);
   if (sinGente) avisoError(err, T.needSecond);
   precalentar(id,
-    () => JUEGOS[id].generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: finalRounds(meta) }),
-    () => JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: finalRounds(meta) }));
+    () => JUEGOS[id].generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: rondasPara(meta, d) }),
+    () => JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: rondasPara(meta, d) }));
   empezar.addEventListener('click', async () => {
     SFX.tap();
     empezar.disabled = true;
@@ -2086,7 +2120,7 @@ function antesDeJugar(d) {
     CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       // The final names its rounds, the games of this week (D-418)
-      id === 'final' ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.finalRounds), listaRondas()] : null,
+      CON_RONDAS.includes(id) ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, id === 'trio' ? T.trioGames : T.finalRounds), listaRondas({ d })] : null,
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
@@ -2104,7 +2138,7 @@ function antesDeJugar(d) {
  * desvanece solo sobre el tablero. Resuelve la promesa en ese momento.
  */
 /** Los juegos que se juegan con palabras del idioma de la copa (D-170). */
-const CON_PALABRAS = ['conexiones', 'agentes', 'letras', 'final'];
+const CON_PALABRAS = ['conexiones', 'agentes', 'letras', 'final', 'trio'];
 /** "Las palabras de esta copa van en inglés", solo si no es el idioma en que se está mirando. */
 /** El público de la copa se dice en la invitación y en el tablero (D-186, D-187). */
 const avisoAudiencia = meta => {
@@ -2134,7 +2168,13 @@ const detalle = (id, estado, o) => (JUEGOS[id]?.desglose && estado ? JUEGOS[id].
 /**
  * The game of day d as it is played that day (D-331): with its variant's steps and scoring.
  */
-const juegoDia = (meta, d) => conVariante(JUEGOS_COPA[juegoDelDia(meta, d)], varianteDelDia(meta, d));
+const juegoDia = (meta, d) => {
+  const tres = rondasDelDia(meta, d);
+  // A weekend cup's day of three (D-439) names its games by their emoji: "Tres juegos: 🧶 🔢 ⏳",
+  // the three kept together on one line (U-11)
+  if (tres) return { ...JUEGOS_COPA.trio, nombre: `${JUEGOS_COPA.trio.nombre}: ${tres.map(x => JUEGOS_COPA[diaDeCal(x).id]?.emoji || '').join('\u00a0')}` };
+  return conVariante(JUEGOS_COPA[juegoDelDia(meta, d)], varianteDelDia(meta, d));
+};
 /** The variant's name under the game's name in the waiting room, if it has one. */
 const rotuloVariante = J => (J?.varianteNombre ? el('p', { class: 'variante-dia', id: 'variante-dia' }, J.varianteNombre) : null);
 
@@ -2155,12 +2195,17 @@ const dibujo = (id, variante = null) => JUEGOS[id]?.ejemplo?.({ el, T, variante 
 /** Cómo se puntúa; el desempate solo dentro de una copa, donde hay con quién empatar (dilema #72). */
 const puntajeTexto = (J, copa = true) => (copa && J.desempate ? `${J.puntaje} ${J.desempate}` : J.puntaje);
 
+/** The rounds of day `d`: a weekend cup's three games (D-439), or the final's (D-418). */
+const rondasPara = (meta, d) => (meta && rondasDelDia(meta, d)) || finalRounds(meta);
+/** The games played as rounds: the final's and a weekend cup's day of three (D-439). */
+const CON_RONDAS = ['final', 'trio'];
 /** The rounds of the final being played (D-418): this cup's, or the five fixed ones in the lab's practice. */
-const rondasDeLaFinal = () => finalRounds(S.juego?.practica || !S.code ? null : L()?.meta);
-/** The final's rounds as a list: each game's name, and with `detalle` how its round is played. */
-const listaRondas = ({ detalle = false } = {}) => el('ul', { class: 'como', id: 'rondas-final' }, rondasDeLaFinal().map(x => {
+const rondasDeLaFinal = (d = S.juego?.d) => (S.juego?.practica || !S.code ? finalRounds(null) : rondasPara(L()?.meta, d));
+/** The final's rounds as a list: each game's name, and with `detalle` how its round is played (a day of three plays them whole). */
+const listaRondas = ({ detalle = false, d } = {}) => el('ul', { class: 'como', id: 'rondas-final' }, rondasDeLaFinal(d).map(x => {
   const { id: r, variante: v } = diaDeCal(x), R = conVariante(JUEGOS_COPA[r], v);
-  return el('li', {}, detalle && RONDAS_FINAL[r] ? `${R.emoji} ${R.nombre}: ${RONDAS_FINAL[r]}` : `${R.emoji} ${R.nombre}`);
+  const corta = detalle && !rondasDelDia(L()?.meta || {}, d ?? S.juego?.d) && RONDAS_FINAL[r];
+  return el('li', {}, corta ? `${R.emoji} ${R.nombre}: ${RONDAS_FINAL[r]}` : `${R.emoji} ${R.nombre}`);
 }));
 /** One line, above the detailed list, for the rounds played whole (instead of repeating it per round). */
 const notaRondasEnteras = () => (rondasDeLaFinal().some(x => !RONDAS_FINAL[diaDeCal(x).id]) ? el('p', { class: 'muted', id: 'nota-enteras' }, T.finalWholeNote) : null);
@@ -2181,6 +2226,7 @@ function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) 
     el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
     id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds), notaRondasEnteras(),
       listaRondas({ detalle: true })] : null,
+    id === 'trio' ? [el('p', { class: 'lead' }, T.trioGames), listaRondas()] : null,
     el('p', { class: 'lead' }, T.scoring),
     el('p', { class: 'muted' }, puntajeTexto(J, copa))));
 }
@@ -2212,7 +2258,10 @@ async function jugar(d, { nuevo = false } = {}) {
   // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
   // Los textos en el idioma de quien juega y las palabras en el de la copa (D-170)
   // El público de la copa decide qué contenido local entra (D-187)
-  const p = mod.generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: finalRounds(meta), ...(id === 'conexiones' ? { desde: meta.win[d].a } : {}) });
+  const p = mod.generar(S.code, d, { lang: LANG, palabras: palabrasDe(meta), aud: audienciaDe(meta), variante, rondas: rondasPara(meta, d), ...(id === 'conexiones' ? { desde: meta.win[d].a } : {}) });
+  // Only in the test store: `&timer=8` shortens the clock of the games played against it, also inside a day of three (D-439)
+  const seg = Number(param('timer'));
+  if (PRUEBA && seg > 0) for (const x of [p, ...Object.values(p || {})]) if (x && typeof x === 'object' && 'dia' in x && 'codigo' in x) x.tiempo = seg * 1000;
   const now = ahora();
   // El reloj se detiene cuando el tablero termina, no cuando se toca "Ver resultado" (D-130).
   // Detenido, queda así aunque se recargue la página.
@@ -2324,7 +2373,8 @@ async function enviar(d, fin, envio = null) {
   }
   cuenta.intento.borrar(S.code, d, S.yo);
   // El puntaje del día cuenta para el ranking de ese juego, pestaña "Copa" (D-212). No se espera.
-  if (leerYo() && !L().meta.lab) jugador().then(J => J.anotar({ juego: juegoDelDia(L().meta, d), variante: 'copa', s: fin.s, ms: fin.ms })).catch(() => {});
+  // A day of three (D-439) is not one game: it does not go to any game's ranking
+  if (leerYo() && !L().meta.lab && !rondasDelDia(L().meta, d)) jugador().then(J => J.anotar({ juego: juegoDelDia(L().meta, d), variante: 'copa', s: fin.s, ms: fin.ms })).catch(() => {});
   SFX.win(); vibrate([30, 50, 30]);
   // La copa llega por el oyente; si todavía no trae el resultado, se dibuja con el propio
   const Lc = L();
@@ -2384,7 +2434,7 @@ function resultado(d, { recien = false, det = null } = {}) {
           ? el('div', { class: 'con-x2' }, el('b', {}, j.name), el('span', { class: `${claseX2(esFinal(meta, d))} md-x2` }, T.x2))
           : el('b', {}, j.name), el('small', { class: 'muted' }, `${Lc.results[d][j.pid].r || Lc.results[d][j.pid].s} · ⏱ ${mmss(Lc.results[d][j.pid].ms)}`),
           // En la final, las rondas de cada uno (⏳75 🔢85 …), para comparar ronda a ronda (#259)
-          id === 'final' && Lc.results[d][j.pid].t ? el('small', { class: 'muted rondas' }, Lc.results[d][j.pid].t) : null),
+          CON_RONDAS.includes(id) && Lc.results[d][j.pid].t ? el('small', { class: 'muted rondas' }, Lc.results[d][j.pid].t) : null),
         el('span', { class: 'total' }, `+${pos[j.pid].pts * multiplicador(Lc, d, j.pid)}`))))),
     botonReporte({ juego: id, dia: d }),
   );
@@ -2715,7 +2765,7 @@ function ensayo(d) {
   const id = juegoDelDia(L().meta, d), variante = varianteDelDia(L().meta, d);
   mostrar('jugar');
   S.juego = { d, id, ensayo: true };
-  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(L().meta), aud: audienciaDe(L().meta), variante, rondas: finalRounds(L().meta) }), r => resultadoEnsayo(id, r, () => antesDeJugar(d), variante), { ensayo: true, variante });
+  jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(L().meta), aud: audienciaDe(L().meta), variante, rondas: rondasPara(L().meta, d) }), r => resultadoEnsayo(id, r, () => antesDeJugar(d), variante), { ensayo: true, variante });
 }
 
 /** La sesión de prueba desde la práctica del laboratorio: la misma que antes de un día (D-109). */

@@ -1,5 +1,5 @@
 {
-  "version": "0.201.2",
+  "version": "0.204.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -41,7 +41,18 @@
           "en": "Each on their own phone, one game a day"
         }
       ],
-      "variants": [],
+      "variants": [
+        {
+          "key": "modeWeekend",
+          "es": "🎉 Copa de fin de semana",
+          "en": "🎉 Weekend cup"
+        },
+        {
+          "key": "modeWeekendSub",
+          "es": "3 días, 3 juegos cada día.",
+          "en": "3 days, 3 games each day."
+        }
+      ],
       "screens": [
         "intro",
         "crear",

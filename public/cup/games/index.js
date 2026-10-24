@@ -114,4 +114,12 @@ export const JUEGOS = {
     ensayo: (c, d, o = {}) => final.generar(codigoEnsayo(c), d, { ...o, otro: (id, x) => JUEGOS[id].ensayo(c, d, x) }),
     montar: (raiz, ctx) => uiFinal.montar(raiz, { ...ctx, juegos: JUEGOS }),
   },
+  // A weekend cup's day of three (D-439): the final's screen, with the three games whole, each with
+  // its own content for that day; the score is the average of the three, from 0 to 100
+  trio: {
+    ...juego(final, uiFinal),
+    generar: (c, d, o = {}) => final.generar(c, d, { ...o, enteras: true, otro: (id, x) => JUEGOS[id].generar(c, d, x) }),
+    ensayo: (c, d, o = {}) => final.generar(codigoEnsayo(c), d, { ...o, enteras: true, otro: (id, x) => JUEGOS[id].ensayo(c, d, x) }),
+    montar: (raiz, ctx) => uiFinal.montar(raiz, { ...ctx, juegos: JUEGOS }),
+  },
 };

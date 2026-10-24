@@ -39,6 +39,7 @@ export const POZO = ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio', '
 export const VARIANTES = { pintaminas: ['easy', 'hard'], loteo: ['numbers', 'utilities'] };
 /** A calendar entry split into its game and its variant: `'loteo:utilities'` → `{ id: 'loteo', variante: 'utilities' }`. */
 export function diaDeCal(x) {
+  if (String(x || '').includes(TRIO_SEP)) return { id: TRIO, variante: null };
   const [id, v] = String(x || '').split(':');
   const vs = VARIANTES[id];
   return { id, variante: vs ? (vs.includes(v) ? v : vs[0]) : null };
@@ -54,12 +55,36 @@ export const SIN_FINAL = [3];
 /** Whether a cup ends with the Grand Final: its calendar says so (no calendar, as the 7-day cup always does). */
 export const tieneFinal = meta => (String(meta?.cal || 'final').split(',').at(-1) === 'final');
 
-/** ¿Es un calendario que se puede jugar? Juegos del pozo sin repetir, y la final al último (o, en la de 3 días, sin final, D-438). */
+/**
+ * The weekend cup (D-439, the owner's request): three days of three games each, the three played one
+ * after the other as a single day, like the Grand Final's rounds but each game whole. A day is written
+ * `linea+tango+donde` in `meta.cal` and its game is `trio`; it is offered until `FINDE_HASTA`.
+ */
+export const TRIO = 'trio';
+export const TRIO_SEP = '+';
+export const TRIO_JUEGOS = 3;
+/** The end of Sunday 2026-10-25, Pacific time: after it no one can create a weekend cup (cups already made play on). */
+export const FINDE_HASTA = Date.parse('2026-10-26T07:00:00Z');
+export const findeAbierto = now => now < FINDE_HASTA;
+/** The games of a day of three, as calendar entries (`['linea', 'loteo:utilities', 'donde']`), or null. */
+export const rondasDelDia = (meta, d) => {
+  const x = String(meta?.cal || '').split(',')[d - 1] || '';
+  return x.includes(TRIO_SEP) ? x.split(TRIO_SEP) : null;
+};
+/** A random weekend: nine different games of the pool, three a day, balanced like a week (D-425). */
+export function findeAlAzar({ rand = cryptoRand, familia = null } = {}) {
+  const w = semanaAlAzar(3 * TRIO_JUEGOS, { rand, familia, final: false });
+  return [0, 1, 2].map(i => w.slice(i * TRIO_JUEGOS, (i + 1) * TRIO_JUEGOS).join(TRIO_SEP));
+}
+
+/** ¿Es un calendario que se puede jugar? Juegos del pozo sin repetir, y la final al último (o, en la de 3 días, sin final, D-438, o de a tres por día, D-439). */
 export function calendarioValido(cal, dias) {
   if (!Array.isArray(cal) || cal.length !== dias) return false;
   const conFinal = cal[dias - 1] === 'final';
   if (!conFinal && !SIN_FINAL.includes(dias)) return false;
-  const dia = conFinal ? cal.slice(0, -1) : cal;
+  const tres = cal.filter(x => String(x).includes(TRIO_SEP));
+  if (tres.length && (conFinal || tres.length !== dias || tres.some(x => String(x).split(TRIO_SEP).length !== TRIO_JUEGOS))) return false;
+  const dia = (conFinal ? cal.slice(0, -1) : cal).flatMap(x => String(x).split(TRIO_SEP));
   const ids = dia.map(x => String(x).split(':')[0]);
   const variantesOk = dia.every(x => { const [id, v] = String(x).split(':'); return v === undefined || (VARIANTES[id] || []).includes(v); });
   return variantesOk && ids.every(id => POZO.includes(id)) && new Set(ids).size === ids.length;
@@ -261,7 +286,7 @@ export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab 
 /** Los juegos que salieron (D-102) se juegan como sus reemplazos, para no romper copas viejas. */
 const REEMPLAZOS = { solitario: 'reinas', dudo: 'letras' };
 // The game of each day, without its variant (D-331): everything that names a day's game reads this
-export const calendario = meta => String(meta.cal || '').split(',').map(x => { const id = x.split(':')[0]; return REEMPLAZOS[id] || id; });
+export const calendario = meta => String(meta.cal || '').split(',').map(x => { if (x.includes(TRIO_SEP)) return TRIO; const id = x.split(':')[0]; return REEMPLAZOS[id] || id; });
 export const juegoDelDia = (meta, d) => calendario(meta)[d - 1] || null;
 /** The variant a day is played in (D-331), or `null` if its game has none. */
 export const varianteDelDia = (meta, d) => { const x = String(meta.cal || '').split(',')[d - 1]; return x ? diaDeCal(x).variante : null; };
