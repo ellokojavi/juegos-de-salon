@@ -298,9 +298,8 @@ function portada() {
   pintarMias(lista);
   const delJugador = leerYo() ? copasDelJugador().catch(() => []) : Promise.resolve([]);
   delJugador.then(suyas => { if (suyas.length) { lista = juntarCopas(cuenta.mias(), suyas); repintar(); } });
-  // Each cup says whether the player has a day to play or is done for today (lab: #seccion-copa-estado)
-  conEstadoEnLista().then(async si => {
-    if (!si) return;
+  // Each cup says whether the player has a day to play or is done for today (launched from the lab: #seccion-copa-estado)
+  (async () => {
     const suyas = await delJugador;
     const ya = new Map(suyas.filter(Boolean).map(c => [c.code, c]));
     const st = await abrirStore();
@@ -312,7 +311,7 @@ function portada() {
         if (est) { estados.set(c.code, est); repintar(); }
       } catch (_) { /* without network the list stays as it was */ }
     }));
-  }).catch(() => {});
+  })().catch(() => {});
   poner(body, 
     // El idioma se elige a mano, como en todos los juegos (C-3)
     el('div', { class: 'center' }, langToggle()),
@@ -329,9 +328,6 @@ function portada() {
     rankingsVisibles() ? bloqueCampeones() : null,
   );
 }
-
-/** The status line under each cup in "Tus copas" (lab: #seccion-copa-estado), for a key holder; in the test store with `&lab`. */
-const conEstadoEnLista = () => (PRUEBA && !tiene('lab') ? Promise.resolve(false) : labAccess());
 
 /** `estadoEnLista` in words: `{ texto, clase, dia }`, with `dia` the one day to open straight away. */
 function textoEstado(e) {
@@ -3055,7 +3051,7 @@ async function demo(nombre) {
   await st.listo();
   st.reiniciarReloj();
   const { sembrar, MIS_COPAS } = await import('./demo.js');
-  // One cup per status of "Tus copas" (lab: #seccion-copa-estado), then the home page with them
+  // One cup per status of "Tus copas" (#seccion-copa-estado), then the home page with them
   if (nombre === 'mine') {
     for (const [escena, copa] of [...MIS_COPAS].reverse()) {
       const x = sembrar(escena, { now: st.now(), uid: st.uid, copa });
