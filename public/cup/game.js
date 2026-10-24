@@ -754,7 +754,8 @@ async function crearCopa() {
   // The weekend cup (D-439), for everyone on both screens until Sunday night: it takes the plain
   // 3-day cup's place on the new screen while it is offered
   // Only in Spanish for now (the owner's request): offered on a Spanish screen, and its words in Spanish
-  const finde = LANG === 'es' && findeAbierto(Date.now()) ? armarFinde() : null;
+  // Closed once the owner's cup was made; the test store still offers it with `&weekend=on`
+  const finde = LANG === 'es' && (findeAbierto(Date.now()) || (PRUEBA && param('weekend') === 'on')) ? armarFinde() : null;
   const diasDe = v => (v === 'finde' ? 3 : v);
   const modo = opciones([
     finde ? { valor: 'finde', titulo: T.modeWeekend, sub: T.modeWeekendSub } : null,
