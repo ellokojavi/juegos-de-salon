@@ -12,4 +12,5 @@ from `origin/main` and follow it.
    already exists, this week's report already went out: stop and say so in one line.
 3. `node tools/reports/weekly.mjs --send`. It writes the PDF and emails it to the owner.
 4. Report in two lines: the file written and whether the email went out. If it failed (the Firebase
-   key, the mail account, Chrome), say which step and its error.
+   key, the mail account or its sender, which must be hola@juegosdesalon.cl (D-443), Chrome), say
+   which step and its error.
