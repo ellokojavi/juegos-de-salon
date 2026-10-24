@@ -4,7 +4,7 @@
  * commits never reached `main` and have no open PR. A session waits for its own PR (wait-pr.mjs,
  * D-400) and the processes round looks at what waits (D-273), but both can stop: a session ends, its
  * waiter gives up after two hours, the round stalls (D-440). And a branch with no PR is invisible to
- * all of them: in October 2026 six branches held commits nobody had looked at for weeks, some pushed
+ * all of them: on 2026-10-24 ten branches held commits nobody had looked at for weeks, some pushed
  * after their PR had already merged, others pushed by the worktree cleanup "so nothing is lost".
  *
  *   node tools/agents/pending.mjs check    # lists stuck PRs and stranded branches (exit 0 either way)
