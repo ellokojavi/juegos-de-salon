@@ -298,7 +298,7 @@ export const PATHS = {
       `document.querySelector('#handoff .btn').click()`,
       `__generala.session().transport.send({t:'roll',from:'A',d:'44444',k:'00000'})`,
     ],
-    // Dice 1-3-6-5-4 set by hand: the note that 3-4-5-6-1 is a straight (lab key, feedback #736)
+    // Dice 1-3-6-5-4 set by hand: the note that 3-4-5-6-1 is a straight (feedback #736)
     'ace-straight': [
       `document.querySelector('[data-mode=solo]').click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
