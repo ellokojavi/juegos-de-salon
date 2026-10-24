@@ -148,7 +148,7 @@ const ES = {
     final: {
       nombre: 'La Gran Final', habilidad: 'todo',
       como: [
-        'Juegas una ronda de cada juego de la semana, una tras otra. Antes de cada una verás cómo se juega.',
+        'Juegas una ronda de cada juego de la copa, una tras otra. Antes de cada una verás cómo se juega.',
       ],
       puntaje: 'Tu puntaje es el promedio de las rondas.',
       // Outside a cup there is no week: the five fixed short rounds (D-418)
@@ -196,7 +196,7 @@ const ES = {
   fCopaPh: 'Copa de la oficina',
   fMode: '¿Cuánto dura?',
   mode3: 'Copa de 3 días',
-  mode3Sub: 'Para probar: dos juegos y la final.',
+  mode3Sub: 'Dos juegos y la final.',
   mode7: 'Copa de 7 días',
   mode7Sub: 'Seis juegos y la final.',
   fGames: '¿Qué se juega cada día?',
@@ -215,6 +215,7 @@ const ES = {
   gamesVariantsHint: 'Todos juegan esa versión ese día.',
   // The new create screen (D-425): the week in view, the 🎲 with locks and week styles
   weekTitle: 'La semana',
+  weekTitleDays: 'Los {n} días',
   weekDice: '🎲 Crear al azar',
   weekStylesLabel: 'Estilo de semana',
   weekStyles: { equilibrada: '⚖️ Equilibrada', puzzles: '🧩 Puzzles', saber: '🧠 Saber y palabras', nuevo: '✨ Lo nuevo' },
@@ -964,7 +965,7 @@ const EN = {
     final: {
       nombre: 'The Grand Final', habilidad: 'everything',
       como: [
-        'You play one round of each game of the week, one after another. Before each one you\'ll see how it\'s played.',
+        'You play one round of each game of the cup, one after another. Before each one you\'ll see how it\'s played.',
       ],
       puntaje: 'Your score is the average of the rounds.',
       // Outside a cup there is no week: the five fixed short rounds (D-418)
@@ -1011,7 +1012,7 @@ const EN = {
   fCopaPh: 'The Office Cup',
   fMode: 'How long does it last?',
   mode3: '3-day cup',
-  mode3Sub: 'To try it out: two games and the final.',
+  mode3Sub: 'Two games and the final.',
   mode7: '7-day cup',
   mode7Sub: 'Six games and the final.',
   fGames: 'What gets played each day?',
@@ -1029,6 +1030,7 @@ const EN = {
   gamesVariants: 'Which version?',
   gamesVariantsHint: 'Everyone plays that version that day.',
   weekTitle: 'The week',
+  weekTitleDays: 'The {n} days',
   weekDice: '🎲 Make it random',
   weekStylesLabel: 'Week style',
   weekStyles: { equilibrada: '⚖️ Balanced', puzzles: '🧩 Puzzles', saber: '🧠 Trivia and words', nuevo: '✨ What’s new' },
@@ -1767,7 +1769,7 @@ const PT = {
     final: {
       nombre: 'A Grande Final', habilidad: 'tudo',
       como: [
-        'Você joga uma rodada de cada jogo da semana, uma atrás da outra. Antes de cada uma você vai ver como se joga.',
+        'Você joga uma rodada de cada jogo da copa, uma atrás da outra. Antes de cada uma você vai ver como se joga.',
       ],
       puntaje: 'Sua pontuação é a média das rodadas.',
       // Outside a cup there is no week: the five fixed short rounds (D-418)
@@ -1814,7 +1816,7 @@ const PT = {
   fCopaPh: 'Copa do escritório',
   fMode: 'Quanto tempo dura?',
   mode3: 'Copa de 3 dias',
-  mode3Sub: 'Para testar: dois jogos e a final.',
+  mode3Sub: 'Dois jogos e a final.',
   mode7: 'Copa de 7 dias',
   mode7Sub: 'Seis jogos e a final.',
   fGames: 'O que se joga em cada dia?',
@@ -1832,6 +1834,7 @@ const PT = {
   gamesVariants: 'Qual versão?',
   gamesVariantsHint: 'Todos jogam essa versão nesse dia.',
   weekTitle: 'A semana',
+  weekTitleDays: 'Os {n} dias',
   weekDice: '🎲 Criar ao acaso',
   weekStylesLabel: 'Estilo da semana',
   weekStyles: { equilibrada: '⚖️ Equilibrada', puzzles: '🧩 Quebra-cabeças', saber: '🧠 Saber e palavras', nuevo: '✨ Novidades' },
@@ -2570,7 +2573,7 @@ const DE = {
     final: {
       nombre: 'Das große Finale', habilidad: 'Alles',
       como: [
-        'Du spielst eine Runde von jedem Spiel der Woche, eine nach der anderen. Vor jeder Runde siehst du, wie sie geht.',
+        'Du spielst eine Runde von jedem Spiel des Pokals, eine nach der anderen. Vor jeder Runde siehst du, wie sie geht.',
       ],
       puntaje: 'Dein Ergebnis ist der Durchschnitt der Runden.',
       // Outside a cup there is no week: the five fixed short rounds (D-418)
@@ -2617,7 +2620,7 @@ const DE = {
   fCopaPh: 'Büro-Pokal',
   fMode: 'Wie lange dauert er?',
   mode3: '3-Tage-Pokal',
-  mode3Sub: 'Zum Ausprobieren: zwei Spiele und das Finale.',
+  mode3Sub: 'Zwei Spiele und das Finale.',
   mode7: '7-Tage-Pokal',
   mode7Sub: 'Sechs Spiele und das Finale.',
   fGames: 'Was wird an welchem Tag gespielt?',
@@ -2635,6 +2638,7 @@ const DE = {
   gamesVariants: 'Welche Version?',
   gamesVariantsHint: 'An dem Tag spielen alle diese Version.',
   weekTitle: 'Die Woche',
+  weekTitleDays: 'Die {n} Tage',
   weekDice: '🎲 Zufällig erstellen',
   weekStylesLabel: 'Art der Woche',
   weekStyles: { equilibrada: '⚖️ Ausgewogen', puzzles: '🧩 Rätsel', saber: '🧠 Wissen und Wörter', nuevo: '✨ Neuheiten' },

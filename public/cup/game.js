@@ -684,8 +684,9 @@ function armarSemana() {
     cerrar.focus({ preventScroll: true });
   }
 
+  const titulo = el('b', { class: 'semana-titulo' }, T.weekTitle);
   const nodo = el('div', { class: 'panel', id: 'crear-semana' },
-    el('div', { class: 'semana-cabeza' }, el('b', { class: 'semana-titulo' }, T.weekTitle), dado),
+    el('div', { class: 'semana-cabeza' }, titulo, dado),
     chips, lista, finalFila, mezcla, el('small', { class: 'muted semana-ayuda' }, T.weekHint));
 
   // Dragging a day is choosing where it goes (D-85), the same as the sheet's arrows
@@ -709,8 +710,8 @@ function armarSemana() {
   return {
     nodo,
     get cal() { return cal.map(id => entradaCal(id, variantes[id])); },
-    /** The 3-day cup (tests and the lab, D-100): another length, another week. */
-    dias(n) { dias = n; tirar({ animar: false }); },
+    /** The 3-day cup (D-437): another length, another week, and the title says "The 3 days". */
+    dias(n) { dias = n; titulo.textContent = n === 7 ? T.weekTitle : fmt(T.weekTitleDays, { n }); tirar({ animar: false }); },
   };
 }
 
@@ -721,12 +722,11 @@ async function crearCopa() {
   body.innerHTML = '';
   const err = el('div', { class: 'form-error', role: 'alert' });
   const nombre = campo(T.fCopa, { placeholder: T.fCopaPh, maxlength: String(COPA_MAX) }, { contador: true });
-  // La Copa de 3 días es solo para probar con amigos (D-100): se ofrece con ?three en la URL
-  // o en el modo de prueba, nunca en la portada.
+  // On the screen of before, the 3-day cup is offered only with ?three or in the test store (D-100).
+  // The new screen (D-425, a lab key) offers it always, next to the start (D-437), and starts at seven days.
   const juegos = nuevo ? armarSemana() : elegirJuegos();
-  // The new screen (D-425) starts at seven days with the week in view: the 3-day cup goes under "More options"
-  const modo = nuevo && !TRES ? { valor: 7, nodo: null } : opciones([
-    TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
+  const modo = opciones([
+    nuevo || TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
     { valor: 7, titulo: T.mode7, sub: T.mode7Sub },
   ].filter(Boolean), dias => {
     if (nuevo) { juegos.dias(dias); fechas(); return; }
@@ -808,7 +808,7 @@ async function crearCopa() {
     SFX.tap();
     const n = limpiarNombre(nombre.input.value, COPA_MAX), quien = limpiarNombre(yo.input.value);
     if (!n) return avisoError(err, T.errCopa);
-    if (!modo.valor) return avisoError(err, TRES ? T.errMode : T.errMode7);
+    if (!modo.valor) return avisoError(err, nuevo || TRES ? T.errMode : T.errMode7);
     if (inicio.valor === null) return avisoError(err, T.errStart);
     if (inicio.valor === 'otra' && !otraFecha.valida()) return avisoError(err, fmt(T.errStartDate, { n: MAX_DIAS_INICIO }));
     if (!quien) return avisoError(err, T.errNombre);
@@ -850,11 +850,11 @@ async function crearCopa() {
   const campoAlcance = el('div', { class: 'field', id: 'crear-alcance' }, el('label', {}, T.fScope), alcance.nodo, el('small', { class: 'muted' }, T.fScopeHint));
   const mas = nuevo ? el('details', { class: 'panel mas-opciones', id: 'crear-mas' },
     el('summary', {}, el('span', { class: 'mas-t' }, T.moreOptions, resumen)),
-    modo.nodo ? el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo) : null,
     campoIdioma, campoAlcance, link.nodo) : null;
   resumir();
   if (nuevo) return poner(body,
     el('div', { class: 'panel' }, nombre.nodo,
+      el('div', { class: 'field', id: 'crear-modo' }, el('label', {}, T.fMode), modo.nodo),
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, notaZona)),
     juegos.nodo,
     el('div', { class: 'panel' }, yo.nodo, ...camposPin(pin1, pin2)),
