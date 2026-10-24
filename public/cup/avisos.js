@@ -30,7 +30,7 @@ const guardarCelular = subId => { try { localStorage.setItem(CELULAR, subId); } 
  * @param {string} o.lang     ese idioma (va con la suscripción: el aviso llega en él)
  * @param {object} o.cuenta   lo que La Copa recuerda en el celular (cuenta.js)
  * @param {() => object} o.store   el almacén (Firebase o el de prueba)
- * @param {() => {code, pid, nombre, url}} o.copa   la copa abierta y quién es este celular en ella
+ * @param {() => {code, pid, nombre, url, final}} o.copa   la copa abierta y quién es este celular en ella (`final`: false if it has no Grand Final, D-438)
  * @param {() => void} o.redibujar   vuelve a dibujar la pantalla cuando cambia el estado
  * @param {(t: string) => void} o.toast
  * @param {() => void} [o.tap]  el sonido del toque
@@ -129,7 +129,8 @@ export function crearAvisos({ T, lang, cuenta, store, copa, redibujar, toast, ta
     hoja('hoja-ajustes',
       el('h2', {}, T.avSetTitle),
       dia.nodo, plazo.nodo,
-      el('p', { class: 'muted' }, T.avSetNote),
+      // A cup without the Grand Final (the 3-day one, D-438) has only the end-of-cup notification to name
+      el('p', { class: 'muted' }, copa().final === false ? T.avSetNoteLast : T.avSetNote),
       el('button', { class: 'btn btn--ghost', id: 'btn-probar-avisos', onClick: async () => {
         tap();
         try { await avisoDePrueba({ titulo: titulo(), texto: T.avTestBody, url: copa().url }); } catch (_) { toast(T.avError); }

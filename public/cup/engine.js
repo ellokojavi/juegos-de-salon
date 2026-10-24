@@ -46,10 +46,20 @@ export function diaDeCal(x) {
 /** The calendar entry for a game and a variant: the default one is written without it. */
 export const entradaCal = (id, variante = null) => (VARIANTES[id] && variante && variante !== VARIANTES[id][0] ? `${id}:${variante}` : id);
 
-/** ¿Es un calendario que se puede jugar? Juegos del pozo sin repetir, y la final al último. */
+/**
+ * The 3-day cup is played without the Grand Final since D-438 (the owner's request): three games of
+ * the pool. The 3-day cups from before, made for testing (D-100), end with the final and keep it.
+ */
+export const SIN_FINAL = [3];
+/** Whether a cup ends with the Grand Final: its calendar says so (no calendar, as the 7-day cup always does). */
+export const tieneFinal = meta => (String(meta?.cal || 'final').split(',').at(-1) === 'final');
+
+/** ¿Es un calendario que se puede jugar? Juegos del pozo sin repetir, y la final al último (o, en la de 3 días, sin final, D-438). */
 export function calendarioValido(cal, dias) {
-  if (!Array.isArray(cal) || cal.length !== dias || cal[dias - 1] !== 'final') return false;
-  const dia = cal.slice(0, -1);
+  if (!Array.isArray(cal) || cal.length !== dias) return false;
+  const conFinal = cal[dias - 1] === 'final';
+  if (!conFinal && !SIN_FINAL.includes(dias)) return false;
+  const dia = conFinal ? cal.slice(0, -1) : cal;
   const ids = dia.map(x => String(x).split(':')[0]);
   const variantesOk = dia.every(x => { const [id, v] = String(x).split(':'); return v === undefined || (VARIANTES[id] || []).includes(v); });
   return variantesOk && ids.every(id => POZO.includes(id)) && new Set(ids).size === ids.length;
@@ -87,7 +97,7 @@ export const ESTILOS_SEMANA = {
  * games with the home page's New label, all of which New puts in. Without a week that meets every
  * rule, the last one drawn.
  */
-export function semanaAlAzar(dias, { rand = cryptoRand, familia = null, estilo = 'equilibrada', nuevos = [] } = {}) {
+export function semanaAlAzar(dias, { rand = cryptoRand, familia = null, estilo = 'equilibrada', nuevos = [], final = true } = {}) {
   const barajar = xs => { const a = [...xs]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const tope = estilo === 'equilibrada' || estilo === 'nuevo';
   const fam = id => (familia ? familia(id) : id);
@@ -99,10 +109,10 @@ export function semanaAlAzar(dias, { rand = cryptoRand, familia = null, estilo =
     let orden = [...barajar(propios), ...barajar(POZO.filter(id => !propios.includes(id)))];
     if (estilo === 'nuevo') { const ns = barajar(nuevos.filter(id => POZO.includes(id))); orden = [...ns, ...orden.filter(id => !ns.includes(id))]; }
     // Which games go in is decided first, then their order
-    semana = barajar(orden.slice(0, dias - 1));
+    semana = barajar(orden.slice(0, final ? dias - 1 : dias));
     if (seguidas(semana) && (!tope || hastaDos(semana))) break;
   }
-  return [...semana, 'final'];
+  return final ? [...semana, 'final'] : semana;
 }
 
 /** Puntos del día según la posición. Del décimo para abajo, uno por haber jugado. */
@@ -235,8 +245,9 @@ export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab 
     cal: (cal || CALENDARIOS[dias]).join(','), win: ventanas(inicio, dias, tz), createdAt: creada,
     end: medianoche(sumarDias(inicio, dias), tz),
     // Las reglas de la base no suman ni convierten números a texto: lo que necesitan comparar
-    // va ya calculado. `joinUntil` = cuándo empieza la final; `final` = el día de la final, como texto.
-    joinUntil: medianoche(sumarDias(inicio, dias - 1), tz), final: String(dias),
+    // va ya calculado. `joinUntil` = cuándo empieza la final (sin final, el último día); `final` = el día
+    // de la final, como texto, o '0' en una copa sin final (D-438), donde el comodín vale cualquier día
+    joinUntil: medianoche(sumarDias(inicio, dias - 1), tz), final: !cal || cal.at(-1) === 'final' ? String(dias) : '0',
     // Una copa del laboratorio (D-115): su admin puede pasarla al día siguiente para probar
     ...(lab ? { lab: true } : {}),
     ...(alias ? { alias } : {}),
@@ -254,7 +265,7 @@ export const calendario = meta => String(meta.cal || '').split(',').map(x => { c
 export const juegoDelDia = (meta, d) => calendario(meta)[d - 1] || null;
 /** The variant a day is played in (D-331), or `null` if its game has none. */
 export const varianteDelDia = (meta, d) => { const x = String(meta.cal || '').split(',')[d - 1]; return x ? diaDeCal(x).variante : null; };
-export const esFinal = (meta, d) => d === meta.days;
+export const esFinal = (meta, d) => d === meta.days && tieneFinal(meta);
 
 /**
  * Finals that open from this moment on repeat the week's games (D-418); one that opened before keeps
@@ -519,12 +530,13 @@ export function tabla(L, yo, now, { conFuera = true } = {}) {
 /**
  * Por qué el 1.° quedó arriba del 2.° con los mismos puntos (dilema #79): 'dias' si ganó más días,
  * 'final' si ganaron los mismos y quedó mejor en la final. Null si no empatan en puntos, o si
- * empatan en todo y comparten el primer lugar (el orden alfabético no es un desempate).
+ * empatan en todo y comparten el primer lugar (el orden alfabético no es un desempate). In a cup
+ * without a final (D-438) the last day breaks the tie the same way: 'ultimo'.
  */
-export function desempate(filas) {
+export function desempate(filas, meta = null) {
   const [a, b] = filas || [];
   if (!a || !b || a.total !== b.total || a.lugar === b.lugar) return null;
-  return { pts: a.total, criterio: a.ganados !== b.ganados ? 'dias' : 'final' };
+  return { pts: a.total, criterio: a.ganados !== b.ganados ? 'dias' : meta && !tieneFinal(meta) ? 'ultimo' : 'final' };
 }
 
 /**

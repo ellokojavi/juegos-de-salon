@@ -7,7 +7,7 @@ import {
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
-  semanaAlAzar, ESTILOS_SEMANA,
+  semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL, esFinal,
 } from './engine.js';
 import { JUEGOS_COPA } from './rules.js';
 
@@ -516,5 +516,30 @@ test('the 🎲 of the new create screen (D-425): styles and balance', () => {
     }
   }
 });
+test('the 3-day cup without the final (D-438)', () => {
+  assert.deepEqual(SIN_FINAL, [3]);
+  assert.ok(calendarioValido(['linea', 'tango', 'donde'], 3), 'three games of the pool');
+  assert.ok(calendarioValido(['linea', 'tango', 'final'], 3), 'the 3-day cups from before keep their final');
+  assert.ok(!calendarioValido(['linea', 'tango', 'donde', 'zip', 'reinas', 'anio', 'letras'], 7), 'the 7-day cup always ends with the final');
+  for (let k = 0; k < 30; k++) {
+    const w = semanaAlAzar(3, { final: false });
+    assert.ok(w.length === 3 && !w.includes('final') && calendarioValido(w, 3), w.join());
+  }
+  const m = nuevaMeta({ nombre: 'Finde', dias: 3, inicio: '2026-09-28', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0, cal: ['linea', 'tango', 'donde'] });
+  assert.equal(m.final, '0', 'the database knows there is no final: the wildcard works on day 3');
+  assert.ok(!tieneFinal(m) && !esFinal(m, 3));
+  const L = { meta: m, players: { aaaaaa: { name: 'Ana', at: 0 }, bbbbbb: { name: 'Beto', at: 0 } }, results: {}, wild: {} };
+  assert.equal(multiplicador(L, 3, 'aaaaaa'), 1, 'the last day is not worth double');
+  assert.ok(puedeComodin(L, 3, 'aaaaaa', m.win[3].a + 3600000), 'the wildcard can go on the last day');
+  const old = nuevaMeta({ nombre: 'Prueba', dias: 3, inicio: '2026-09-28', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0, cal: ['linea', 'tango', 'final'] });
+  assert.ok(old.final === '3' && tieneFinal(old) && esFinal(old, 3));
+  assert.ok(tieneFinal(meta7) && esFinal(meta7, 7));
+  // A tie in points and days won is broken by the last day, and it says so
+  const T = { meta: m, players: L.players, results: { 1: { aaaaaa: { s: 9, ms: 5 }, bbbbbb: { s: 5, ms: 5 } }, 2: {}, 3: { aaaaaa: { s: 5, ms: 5 }, bbbbbb: { s: 9, ms: 5 } } } };
+  const filas = tabla(T, null, m.end);
+  assert.equal(filas[0].name, 'Beto');
+  assert.deepEqual(desempate(filas, m), { pts: 18, criterio: 'ultimo' });
+});
+
 await new Promise(r => setTimeout(r, 50));
 console.log(`copa/engine: ${n} tests OK`);
