@@ -1,4 +1,4 @@
-// Agentes: the clue colors stay away from red and pink, which mean a mistake (the assassin, a cut
+// Agentes (D-442): the clue colors stay away from red and pink, which mean a mistake (the assassin, a cut
 // clue). A player read the old pink clue as an error; this keeps every clue color, on the cards,
 // the sign and the notice, out of the reds and away from the marks' yellow.
 import assert from 'node:assert/strict';
