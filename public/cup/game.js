@@ -684,8 +684,9 @@ function armarSemana() {
     cerrar.focus({ preventScroll: true });
   }
 
+  const titulo = el('b', { class: 'semana-titulo' }, T.weekTitle);
   const nodo = el('div', { class: 'panel', id: 'crear-semana' },
-    el('div', { class: 'semana-cabeza' }, el('b', { class: 'semana-titulo' }, T.weekTitle), dado),
+    el('div', { class: 'semana-cabeza' }, titulo, dado),
     chips, lista, finalFila, mezcla, el('small', { class: 'muted semana-ayuda' }, T.weekHint));
 
   // Dragging a day is choosing where it goes (D-85), the same as the sheet's arrows
@@ -709,8 +710,8 @@ function armarSemana() {
   return {
     nodo,
     get cal() { return cal.map(id => entradaCal(id, variantes[id])); },
-    /** The 3-day cup (tests and the lab, D-100): another length, another week. */
-    dias(n) { dias = n; tirar({ animar: false }); },
+    /** The 3-day cup (D-437): another length, another week, and the title says "The 3 days". */
+    dias(n) { dias = n; titulo.textContent = n === 7 ? T.weekTitle : fmt(T.weekTitleDays, { n }); tirar({ animar: false }); },
   };
 }
 
@@ -721,12 +722,11 @@ async function crearCopa() {
   body.innerHTML = '';
   const err = el('div', { class: 'form-error', role: 'alert' });
   const nombre = campo(T.fCopa, { placeholder: T.fCopaPh, maxlength: String(COPA_MAX) }, { contador: true });
-  // La Copa de 3 días es solo para probar con amigos (D-100): se ofrece con ?three en la URL
-  // o en el modo de prueba, nunca en la portada.
+  // On the screen of before, the 3-day cup is offered only with ?three or in the test store (D-100).
+  // The new screen (D-425, a lab key) offers it always, next to the start (D-437), and starts at seven days.
   const juegos = nuevo ? armarSemana() : elegirJuegos();
-  // The new screen (D-425) starts at seven days with the week in view: the 3-day cup goes under "More options"
-  const modo = nuevo && !TRES ? { valor: 7, nodo: null } : opciones([
-    TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
+  const modo = opciones([
+    nuevo || TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
     { valor: 7, titulo: T.mode7, sub: T.mode7Sub },
   ].filter(Boolean), dias => {
     if (nuevo) { juegos.dias(dias); fechas(); return; }
@@ -808,7 +808,7 @@ async function crearCopa() {
     SFX.tap();
     const n = limpiarNombre(nombre.input.value, COPA_MAX), quien = limpiarNombre(yo.input.value);
     if (!n) return avisoError(err, T.errCopa);
-    if (!modo.valor) return avisoError(err, TRES ? T.errMode : T.errMode7);
+    if (!modo.valor) return avisoError(err, nuevo || TRES ? T.errMode : T.errMode7);
     if (inicio.valor === null) return avisoError(err, T.errStart);
     if (inicio.valor === 'otra' && !otraFecha.valida()) return avisoError(err, fmt(T.errStartDate, { n: MAX_DIAS_INICIO }));
     if (!quien) return avisoError(err, T.errNombre);
@@ -850,11 +850,11 @@ async function crearCopa() {
   const campoAlcance = el('div', { class: 'field', id: 'crear-alcance' }, el('label', {}, T.fScope), alcance.nodo, el('small', { class: 'muted' }, T.fScopeHint));
   const mas = nuevo ? el('details', { class: 'panel mas-opciones', id: 'crear-mas' },
     el('summary', {}, el('span', { class: 'mas-t' }, T.moreOptions, resumen)),
-    modo.nodo ? el('div', { class: 'field' }, el('label', {}, T.fMode), modo.nodo) : null,
     campoIdioma, campoAlcance, link.nodo) : null;
   resumir();
   if (nuevo) return poner(body,
     el('div', { class: 'panel' }, nombre.nodo,
+      el('div', { class: 'field', id: 'crear-modo' }, el('label', {}, T.fMode), modo.nodo),
       el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, notaZona)),
     juegos.nodo,
     el('div', { class: 'panel' }, yo.nodo, ...camposPin(pin1, pin2)),
@@ -2216,7 +2216,7 @@ async function jugar(d, { nuevo = false } = {}) {
   // Uno nuevo parte cuando se fue la cuenta y terminó la entrada del juego (las cartas de El caso
   // que se dan vuelta): ni la cuenta ni la entrada son tiempo de juego
   // Started before (Seguir jugando) but its save is not on this phone: the clock goes
-  // on from when the day started on the server, so starting over elsewhere does not reset it (D-433)
+  // on from when the day started on the server, so starting over elsewhere does not reset it (D-437)
   const empezo = !nuevo && !guardado.reloj ? Lc.started?.[d]?.[S.yo] : null;
   const yaCorria = typeof empezo === 'number' ? Math.max(0, now - empezo) : 0;
   document.getElementById('aviso-otro-celular')?.remove();
@@ -2547,7 +2547,7 @@ function practica(id, varianteElegida = null) {
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(Jr, false))),
     rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });
-  // The first attempt counts from its start (D-433): the line says so, an attempt left halfway goes
+  // The first attempt counts from its start (D-437): the line says so, an attempt left halfway goes
   // on where it was, and one started on another phone counts 0
   // Empezar waits for that answer (at once without a player; with one, at most Firebase's 2.5 s)
   if (HOY) {
@@ -2587,7 +2587,7 @@ function jugarPractica(id, semilla, variante = null) {
   if ((!LABS || gameById(id)?.diario) && !PRUEBA) trackStart({ game: id, mode: HOY ? MODO_UNO_AL_DIA : 'solo', players: 1 });
   // Un juego `diario` sigue donde iba al recargar (D-267): las jugadas y el tiempo, por caso
   let guardado = gameById(id)?.diario && !HOY ? partidaGuardada(id, semilla) : null;
-  // Today's first attempt (D-433): it counts from here, and it goes on where it was if left
+  // Today's first attempt (D-437): it counts from here, and it goes on where it was if left
   if (HOY && !S.hoy.ya && (S.hoy.estadoLlave === 'new' || S.hoy.estadoLlave === 'resume')) {
     empezarHoy(S.hoy);
     if (S.hoy.estadoLlave === 'new') dailySave(S.hoy.fecha, id).borrar();
@@ -2665,7 +2665,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   S.visibilidad && document.removeEventListener('visibilitychange', S.visibilidad);
   let detenido = false;
   let leyendo = null;
-  // A saved game also keeps the time up to leaving the page, not only up to its last move (D-433)
+  // A saved game also keeps the time up to leaving the page, not only up to its last move (D-437)
   let ultimas = guardado?.jugadas || [];
   S.visibilidad = () => {
     if (detenido) return;
@@ -2739,7 +2739,7 @@ function resultadoPractica(id, semilla, r, variante = null) {
   const J = conVariante(JUEGOS_COPA[id], variante), rk = varianteRk(id, variante);
   // Uno al día: el primer intento queda como el resultado de hoy; los demás son práctica
   const hoy = HOY ? anotarUnoAlDia(S.hoy.fecha, { j: id, s: r.s, ms: r.ms }) : null;
-  if (HOY) dailySave(S.hoy.fecha, id).borrar();   // finished: nothing to go on with (D-433)
+  if (HOY) dailySave(S.hoy.fecha, id).borrar();   // finished: nothing to go on with (D-437)
   // Los rankings (D-212): se anota si hay jugador; si entra recién aquí, esta partida igual cuenta.
   // De Uno al día, solo el primer intento: después el tablero ya se conoce (D-230)
   const cuentaRk = rankea(id) && (!hoy || hoy.primera);

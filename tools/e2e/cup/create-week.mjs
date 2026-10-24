@@ -3,8 +3,8 @@
 // it again, the cards spinning like a slot machine, and on a small phone it scrolls the week into view; each week style draws by its rule; tapping a game opens the sheet
 // with the whole pool, which swaps, replaces, moves the day and picks
 // its version; a day is still dragged by its grip; the PIN goes once, with 👁; "More options"
-// folds the language, the audience, the link and (in the test store) the 3-day cup, and says in
-// one line what is chosen; under the button, when the cup starts and ends. The cup created saves
+// folds the language, the audience and the link, and says in one line what is chosen; the length
+// (3 or 7 days) goes up front (D-437); under the button, when the cup starts and ends. The cup created saves
 // the week as shown. Without `&lab` the test store keeps the screen of before (cup/tournament.mjs).
 // Last, the week and the sheet in English, Portuguese and German at 320 px: no sideways scroll.
 // Prints ✗ if anything fails.
@@ -107,10 +107,17 @@ try {
   await ev(`(()=>{const i=document.getElementById('crear-link');i.value='Primos';i.dispatchEvent(new Event('input'));return 1})()`); await sleep(500);
   await ev(`([...document.querySelectorAll('#crear-alcance .opcion')][0].click(), 1)`);
   ok(await ev(`document.getElementById('crear-resumen').textContent`) === 'Español · 🌎 Global · ?primos', 'the line follows the link and the audience');
-  await ev(`([...document.querySelectorAll('#crear-mas .opcion')].find(x=>/3 días/.test(x.textContent)).click(), 1)`); await sleep(200);
-  ok((await week()).length === 2, 'the 3-day cup draws a week of two games');
-  await ev(`([...document.querySelectorAll('#crear-mas .opcion')].find(x=>/7 días/.test(x.textContent)).click(), 1)`); await sleep(200);
-  ok((await week()).length === 6, 'and back to seven, six games');
+  ok(!await ev(`[...document.querySelectorAll('#crear-mas .opcion')].some(x=>/días/.test(x.textContent))`), 'the length is not in "More options" (D-437)');
+  await b.shot('03-more');
+  // The length goes up front, next to when it starts: 7 days by default, 3 draws two games (D-437)
+  ok(await ev(`document.querySelector('#crear-modo .opcion.on')?.textContent || ''`).then(t => /7 días/.test(t)), 'the length is in the first panel, at seven days');
+  await ev(`([...document.querySelectorAll('#crear-modo .opcion')].find(x=>/7 días/.test(x.textContent)).click(), 1)`);
+  await ev(`([...document.querySelectorAll('#crear-modo .opcion')].find(x=>/3 días/.test(x.textContent)).click(), 1)`); await sleep(200);
+  ok((await week()).length === 2 && await ev(`document.querySelector('.semana-titulo').textContent`) === 'Los 3 días', 'the 3-day cup draws two games under "Los 3 días"');
+  ok(/Repite los 2 juegos/.test(await ev(`document.querySelector('.semana-final').textContent`)), 'and its final replays the two');
+  await b.shot('05-three-days');
+  await ev(`([...document.querySelectorAll('#crear-modo .opcion')].find(x=>/7 días/.test(x.textContent)).click(), 1)`); await sleep(200);
+  ok((await week()).length === 6 && await ev(`document.querySelector('.semana-titulo').textContent`) === 'La semana', 'and back to seven, six games under "La semana"');
   await b.shot('03-more');
 
   // The sheet: the whole pool, each game with its tagline
