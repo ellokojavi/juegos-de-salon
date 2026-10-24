@@ -89,7 +89,8 @@ The numbers come from `numbers.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RE
 - `ui.js`: the screen (`montar`), the waiting room's title and drawing, the result and the breakdown.
   `texts.js`: its texts in the four languages, keys prefixed `ag`. `style.css`: its classes prefixed `ag-`.
 - `engine.test.mjs` checks the four decks (one word per card in capitals, at most 15 letters, 9 or 10
-  words and 3 temptations per clue) and 300 boards in each language (each clue with the agents it says,
+  words and 3 temptations per clue, and no month or Easter in a season in Spanish, Portuguese or English,
+  which are spoken in both hemispheres) and 300 boards in each language (each clue with the agents it says,
   11 in all, and the assassin and the neutrals tempting the clue they say), the cup day and its trial,
   and the state and the score; `tools/e2e/agents/game.mjs`, the whole game at `/agents/`.
 

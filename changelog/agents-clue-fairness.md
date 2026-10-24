@@ -1,0 +1,4 @@
+level: patch
+
+- **🕵️ Agentes: no more clue cards that depend on where you live.** A player found JULIO among the winter agents: that is winter in Santiago and summer in Madrid. The seasons no longer carry months, in Spanish (JULIO, ENERO, SEPTIEMBRE, MARZO, ABRIL, MAYO) and Portuguese (JULHO, JANEIRO, SETEMBRO, MARÇO, ABRIL, MAIO), nor EASTER for SPRING in English; they get ABRIGO, BRONCEADO, TULIPÁN, BELLOTA, COSECHA, MARRÓN (and their Portuguese and English counterparts) instead. A test stops a month from coming back into a season.
+- In Spanish, PASCUA no longer tempts NAVIDAD (in Chile, Pascua *is* Christmas, so tapping it was right and still cost points; it is HALLOWEEN now), and CLIMA and LLUVIA no longer tempt TIEMPO (in Spanish tiempo is also the weather; they are REGLA and BALANZA, as in English).

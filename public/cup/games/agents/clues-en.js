@@ -66,7 +66,7 @@ export const CLASICAS = [
   { pista: 'FIREFIGHTER', si: ['HOSE', 'LADDER', 'HELMET', 'SIREN', 'RESCUE', 'AXE', 'HYDRANT', 'DALMATIAN', 'FIRETRUCK'], casi: ['POLICE', 'AMBULANCE', 'LIFEGUARD'] },
   { pista: 'PLAYGROUND', si: ['SWING', 'SLIDE', 'SANDBOX', 'SEESAW', 'MONKEYBARS', 'CHILDREN', 'TAG', 'BENCH', 'HOPSCOTCH'], casi: ['GARDEN', 'SCHOOL', 'GYM'] },
   { pista: 'SHIP', si: ['CAPTAIN', 'SAIL', 'ANCHOR', 'DECK', 'PORT', 'CREW', 'CABIN', 'MAST', 'LIFEBOAT'], casi: ['FISH', 'AIRPLANE', 'SWIMMER'] },
-  { pista: 'SPRING', si: ['FLOWER', 'BLOSSOM', 'BEE', 'BUTTERFLY', 'TULIP', 'BUD', 'NEST', 'EASTER', 'LAMB'], casi: ['SUMMER', 'AUTUMN', 'GARDEN'] },
+  { pista: 'SPRING', si: ['FLOWER', 'BLOSSOM', 'BEE', 'BUTTERFLY', 'TULIP', 'BUD', 'NEST', 'DAFFODIL', 'LAMB'], casi: ['SUMMER', 'AUTUMN', 'GARDEN'] },
   { pista: 'AUTUMN', si: ['LEAF', 'PUMPKIN', 'ACORN', 'HARVEST', 'RAKE', 'CHESTNUT', 'SWEATER', 'SQUIRREL', 'WIND'], casi: ['WINTER', 'SPRING', 'TREE'] },
   { pista: 'THEATER', si: ['STAGE', 'CURTAIN', 'ACTOR', 'SCRIPT', 'AUDIENCE', 'APPLAUSE', 'COSTUME', 'PLAY', 'REHEARSAL'], casi: ['CINEMA', 'CIRCUS', 'CONCERT'] },
   { pista: 'RESTAURANT', si: ['WAITER', 'MENU', 'CHEF', 'TIP', 'RESERVATION', 'TABLE', 'NAPKIN', 'DESSERT', 'KITCHEN'], casi: ['PICNIC', 'CAFETERIA', 'HOTEL'] },

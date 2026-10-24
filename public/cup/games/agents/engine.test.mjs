@@ -6,6 +6,20 @@ import { MAZOS, generar, generarDia, estado, puntaje, tarjeta, agentesDe, AGENTE
 // The letters each language writes its words with: one word per card, in capitals
 const LETRAS = { es: /^[A-ZÁÉÍÓÚÑÜ]+$/, en: /^[A-Z]+$/, pt: /^[A-ZÁÂÃÀÇÉÊÍÓÔÕÚ]+$/, de: /^[A-ZÄÖÜ]+$/ };
 
+// A season has no month or Easter in a language spoken in both hemispheres: JULIO is winter in
+// Santiago and summer in Madrid (a player's report). German is spoken only in the north.
+const ESTACIONES = {
+  es: { pistas: ['INVIERNO', 'VERANO', 'PRIMAVERA', 'OTOÑO'], meses: ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE', 'PASCUA'] },
+  pt: { pistas: ['INVERNO', 'VERÃO', 'PRIMAVERA', 'OUTONO'], meses: ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO', 'PÁSCOA'] },
+  en: { pistas: ['WINTER', 'SUMMER', 'SPRING', 'AUTUMN'], meses: ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'EASTER'] },
+};
+for (const [lang, { pistas, meses }] of Object.entries(ESTACIONES)) {
+  for (const x of MAZOS[lang].filter(x => pistas.includes(x.pista))) {
+    const mes = [...x.si, ...x.casi].find(w => meses.includes(w));
+    assert.ok(!mes, `${lang} ${x.pista}: ${mes} depends on the hemisphere`);
+  }
+}
+
 for (const [lang, PISTAS] of Object.entries(MAZOS)) {
   assert.ok(PISTAS.length >= 100, `${lang}: only ${PISTAS.length} clues`);
   const nombres = PISTAS.map(x => x.pista);
