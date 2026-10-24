@@ -2117,7 +2117,7 @@ function antesDeJugar(d) {
     CON_PALABRAS.includes(id) ? avisoPalabras(meta) : null,
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
       // The final names its rounds, the games of this week (D-418)
-      CON_RONDAS.includes(id) ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.finalRounds), listaRondas({ d })] : null,
+      CON_RONDAS.includes(id) ? [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, id === 'trio' ? T.trioGames : T.finalRounds), listaRondas({ d })] : null,
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(J))),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.wildTitle), comodin),
     JUEGOS[id].ensayo ? [el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-ensayo', onClick: () => { SFX.tap(); ensayo(d); } }, `🧪 ${T.tryFirst}`),
@@ -2167,8 +2167,9 @@ const detalle = (id, estado, o) => (JUEGOS[id]?.desglose && estado ? JUEGOS[id].
  */
 const juegoDia = (meta, d) => {
   const tres = rondasDelDia(meta, d);
-  // A weekend cup's day of three (D-439) names its games by their emoji: "Tres juegos: 🧶 🔢 ⏳"
-  if (tres) return { ...JUEGOS_COPA.trio, nombre: `${JUEGOS_COPA.trio.nombre}: ${tres.map(x => JUEGOS_COPA[diaDeCal(x).id]?.emoji || '').join(' ')}` };
+  // A weekend cup's day of three (D-439) names its games by their emoji: "Tres juegos: 🧶 🔢 ⏳",
+  // the three kept together on one line (U-11)
+  if (tres) return { ...JUEGOS_COPA.trio, nombre: `${JUEGOS_COPA.trio.nombre}: ${tres.map(x => JUEGOS_COPA[diaDeCal(x).id]?.emoji || '').join('\u00a0')}` };
   return conVariante(JUEGOS_COPA[juegoDelDia(meta, d)], varianteDelDia(meta, d));
 };
 /** The variant's name under the game's name in the waiting room, if it has one. */
@@ -2222,7 +2223,7 @@ function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) 
     el('ol', { class: 'como' }, J.como.map(x => el('li', {}, x))),
     id === 'final' ? [el('p', { class: 'lead' }, T.finalRounds), notaRondasEnteras(),
       listaRondas({ detalle: true })] : null,
-    id === 'trio' ? [el('p', { class: 'lead' }, T.finalRounds), listaRondas()] : null,
+    id === 'trio' ? [el('p', { class: 'lead' }, T.trioGames), listaRondas()] : null,
     el('p', { class: 'lead' }, T.scoring),
     el('p', { class: 'muted' }, puntajeTexto(J, copa))));
 }

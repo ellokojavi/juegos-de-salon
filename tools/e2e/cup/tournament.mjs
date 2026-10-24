@@ -1050,7 +1050,7 @@ if (runs('weekend')) {
     const code = await ev('__copa.estado.code');
     await signUp(code, 'Beto', '2222');
     await sitDown(code, 'Cata', '1111');
-    ok(/Tres juegos: \S+ \S+ \S+/.test(await ev(`document.querySelector('.screen.active').innerText`)), 'the board names each day by its three games');
+    ok(/Tres juegos: \S+\s\S+\s\S+/.test(await ev(`document.querySelector('.screen.active').innerText`)), 'the board names each day by its three games');
     const id = await playDay(1, 2);
     ok(id === 'trio', `day 1 is played as one day of three (${id})`);
     const cata = await ev(`JSON.stringify(__copa.estado.copa.results[1][__copa.estado.yo])`).then(JSON.parse);
