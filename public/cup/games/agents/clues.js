@@ -10,10 +10,10 @@
  */
 export const CLASICAS = [
   { pista: 'MAR', si: ['OLA', 'BARCO', 'SAL', 'PLAYA', 'ANCLA', 'ISLA', 'MAREA', 'PUERTO', 'TIBURÓN'], casi: ['RÍO', 'LAGO', 'PISCINA'] },
-  { pista: 'NAVIDAD', si: ['REGALO', 'ÁRBOL', 'VIEJITO', 'PESEBRE', 'CENA', 'ESTRELLA', 'CAMPANA', 'DICIEMBRE', 'RENO'], casi: ['CUMPLEAÑOS', 'PASCUA', 'TORTA'] },
+  { pista: 'NAVIDAD', si: ['REGALO', 'ÁRBOL', 'VIEJITO', 'PESEBRE', 'CENA', 'ESTRELLA', 'CAMPANA', 'DICIEMBRE', 'RENO'], casi: ['CUMPLEAÑOS', 'HALLOWEEN', 'TORTA'] },
   { pista: 'FÚTBOL', si: ['ARCO', 'PELOTA', 'GOL', 'ÁRBITRO', 'CANCHA', 'PENAL', 'CAMISETA', 'ESTADIO', 'HINCHA'], casi: ['TENIS', 'RED', 'RAQUETA'] },
-  { pista: 'COCINA', si: ['OLLA', 'SARTÉN', 'HORNO', 'CUCHARA', 'RECETA', 'DELANTAL', 'FUEGO', 'SAL', 'CUCHILLO'], casi: ['BAÑO', 'MESA', 'REFRIGERADOR'] },
-  { pista: 'INVIERNO', si: ['FRÍO', 'LLUVIA', 'NIEVE', 'BUFANDA', 'ESTUFA', 'PARAGUAS', 'GORRO', 'JULIO', 'SOPA'], casi: ['OTOÑO', 'HOJA', 'VIENTO'] },
+  { pista: 'COCINA', si: ['OLLA', 'SARTÉN', 'HORNO', 'CUCHARA', 'RECETA', 'DELANTAL', 'FUEGO', 'SAL', 'CUCHILLO'], casi: ['BAÑO', 'MESA', 'DORMITORIO'] },
+  { pista: 'INVIERNO', si: ['FRÍO', 'LLUVIA', 'NIEVE', 'BUFANDA', 'ESTUFA', 'PARAGUAS', 'GORRO', 'ABRIGO', 'SOPA'], casi: ['OTOÑO', 'HOJA', 'VIENTO'] },
   { pista: 'ESCUELA', si: ['PROFESOR', 'CUADERNO', 'RECREO', 'PIZARRA', 'MOCHILA', 'PRUEBA', 'LÁPIZ', 'CURSO', 'UNIFORME'], casi: ['UNIVERSIDAD', 'LIBRO', 'OFICINA'] },
   { pista: 'HOSPITAL', si: ['DOCTOR', 'CAMILLA', 'JERINGA', 'ENFERMERA', 'REMEDIO', 'AMBULANCIA', 'VENDA', 'URGENCIA', 'RADIOGRAFÍA'], casi: ['FARMACIA', 'GIMNASIO', 'DENTISTA'] },
   { pista: 'ESPACIO', si: ['ASTRONAUTA', 'COHETE', 'LUNA', 'PLANETA', 'ESTRELLA', 'GALAXIA', 'SATÉLITE', 'MARTE', 'METEORITO'], casi: ['CIELO', 'AVIÓN', 'NUBE'] },
@@ -30,7 +30,7 @@ export const CLASICAS = [
   { pista: 'CINE', si: ['PELÍCULA', 'BUTACA', 'PANTALLA', 'CABRITAS', 'ENTRADA', 'ACTOR', 'ESTRENO', 'DIRECTOR', 'TAQUILLA'], casi: ['TEATRO', 'TELEVISIÓN', 'LIBRO'] },
   { pista: 'DESAYUNO', si: ['CAFÉ', 'TOSTADA', 'LECHE', 'MANTEQUILLA', 'MERMELADA', 'CEREAL', 'JUGO', 'HUEVO', 'PAN'], casi: ['ONCE', 'ALMUERZO', 'POSTRE'] },
   { pista: 'CASTILLO', si: ['REY', 'TORRE', 'PRINCESA', 'DRAGÓN', 'MURALLA', 'CABALLERO', 'TRONO', 'PUENTE', 'CORONA'], casi: ['PALACIO', 'IGLESIA', 'CASA'] },
-  { pista: 'TIEMPO', si: ['RELOJ', 'HORA', 'MINUTO', 'CALENDARIO', 'AÑO', 'ALARMA', 'SEGUNDO', 'SIGLO', 'ARENA'], casi: ['CLIMA', 'LLUVIA', 'VIEJO'] },
+  { pista: 'TIEMPO', si: ['RELOJ', 'HORA', 'MINUTO', 'CALENDARIO', 'AÑO', 'ALARMA', 'SEGUNDO', 'SIGLO', 'ARENA'], casi: ['REGLA', 'BALANZA', 'VIEJO'] },
   { pista: 'POLICÍA', si: ['PLACA', 'ESPOSAS', 'PATRULLA', 'LADRÓN', 'SIRENA', 'DETECTIVE', 'MULTA', 'CÁRCEL', 'PISTA'], casi: ['BOMBERO', 'SOLDADO', 'JUEZ'] },
   { pista: 'PLAYA', si: ['ARENA', 'TOALLA', 'QUITASOL', 'BLOQUEADOR', 'CASTILLO', 'CONCHA', 'TRAJE', 'OLA', 'SALVAVIDAS'], casi: ['PISCINA', 'DESIERTO', 'RÍO'] },
   { pista: 'OFICINA', si: ['COMPUTADOR', 'JEFE', 'REUNIÓN', 'ESCRITORIO', 'CORREO', 'IMPRESORA', 'CAFÉ', 'CORBATA', 'CARPETA'], casi: ['ESCUELA', 'BANCO', 'TIENDA'] },
@@ -46,11 +46,11 @@ export const CLASICAS = [
   { pista: 'LLUVIA', si: ['PARAGUAS', 'CHARCO', 'NUBE', 'GOTA', 'TRUENO', 'BOTA', 'IMPERMEABLE', 'ARCOÍRIS', 'TORMENTA'], casi: ['NIEVE', 'DUCHA', 'RÍO'] },
   { pista: 'BEBÉ', si: ['PAÑAL', 'CHUPETE', 'MAMADERA', 'CUNA', 'COCHE', 'SONAJERO', 'BABERO', 'LLANTO', 'GATEO'], casi: ['NIÑO', 'ABUELO', 'MUÑECA'] },
   { pista: 'AUTO', si: ['RUEDA', 'MOTOR', 'VOLANTE', 'BENCINA', 'FRENO', 'BOCINA', 'PATENTE', 'MANEJAR', 'ESTACIONAMIENTO'], casi: ['BICICLETA', 'TREN', 'BARCO'] },
-  { pista: 'CHILE', si: ['EMPANADA', 'CUECA', 'COPIHUE', 'HUASO', 'VINO', 'ANDES', 'SANTIAGO', 'PEBRE', 'DIECIOCHO'], casi: ['ARGENTINA', 'TANGO', 'MÉXICO'] },
-  { pista: 'DORMIR', si: ['CAMA', 'ALMOHADA', 'SUEÑO', 'SIESTA', 'FRAZADA', 'BOSTEZO', 'PIJAMA', 'RONQUIDO', 'COLCHÓN'], casi: ['DESCANSO', 'SOFÁ', 'NOCHE'] },
+  { pista: 'CHILE', local: 'cl', si: ['EMPANADA', 'CUECA', 'COPIHUE', 'HUASO', 'VINO', 'ANDES', 'SANTIAGO', 'PEBRE', 'DIECIOCHO'], casi: ['ARGENTINA', 'TANGO', 'MÉXICO'] },
+  { pista: 'DORMIR', si: ['CAMA', 'ALMOHADA', 'SUEÑO', 'SIESTA', 'FRAZADA', 'BOSTEZO', 'PIJAMA', 'RONQUIDO', 'COLCHÓN'], casi: ['DESCANSO', 'SOFÁ', 'CAFÉ'] },
   { pista: 'PINTURA', si: ['PINCEL', 'CUADRO', 'TELA', 'MUSEO', 'ACUARELA', 'PALETA', 'COLOR', 'ARTISTA', 'RETRATO'], casi: ['FOTO', 'DIBUJO', 'ESCULTURA'] },
   // Desde D-288: 60 más, para que quien juega todos los días no vea las mismas pistas
-  { pista: 'VERANO', si: ['SOL', 'CALOR', 'VACACIONES', 'HELADO', 'PISCINA', 'BLOQUEADOR', 'ENERO', 'SANDÍA', 'CHALAS', 'QUITASOL'], casi: ['PRIMAVERA', 'OTOÑO', 'DESIERTO'] },
+  { pista: 'VERANO', si: ['SOL', 'CALOR', 'VACACIONES', 'HELADO', 'PISCINA', 'BLOQUEADOR', 'BRONCEADO', 'SANDÍA', 'CHALAS', 'QUITASOL'], casi: ['PRIMAVERA', 'OTOÑO', 'DESIERTO'] },
   { pista: 'PERRO', si: ['LADRIDO', 'HUESO', 'CORREA', 'CACHORRO', 'COLLAR', 'PATA', 'CUCHA', 'VETERINARIO', 'PULGA', 'COLA'], casi: ['LOBO', 'ZORRO', 'COYOTE'] },
   { pista: 'BODA', si: ['NOVIA', 'NOVIO', 'ANILLO', 'VESTIDO', 'IGLESIA', 'BRINDIS', 'VALS', 'RAMO', 'VELO', 'ALTAR'], casi: ['DIVORCIO', 'CUMPLEAÑOS', 'BAUTIZO'] },
   { pista: 'SUPERMERCADO', si: ['CARRO', 'CAJA', 'OFERTA', 'BOLSA', 'GÓNDOLA', 'BOLETA', 'FILA', 'CAJERA', 'PASILLO', 'VERDURA'], casi: ['FERIA', 'ALMACÉN', 'BODEGA'] },
@@ -67,15 +67,15 @@ export const CLASICAS = [
   { pista: 'BOMBERO', si: ['MANGUERA', 'INCENDIO', 'CASCO', 'ESCALERA', 'SIRENA', 'HUMO', 'EXTINTOR', 'AGUA', 'VOLUNTARIO', 'CUARTEL'], casi: ['POLICÍA', 'AMBULANCIA', 'GUARDIA'] },
   { pista: 'PLAZA', si: ['BANCO', 'PALOMA', 'FUENTE', 'COLUMPIO', 'RESBALÍN', 'PASTO', 'ESTATUA', 'GLORIETA', 'FAROL', 'KIOSCO'], casi: ['PARQUE', 'JARDÍN', 'PATIO'] },
   { pista: 'BARCO', si: ['VELA', 'TIMÓN', 'CAPITÁN', 'ANCLA', 'PROA', 'POPA', 'MÁSTIL', 'MARINERO', 'CUBIERTA', 'NAUFRAGIO'], casi: ['PEZ', 'AVIÓN', 'NADADOR'] },
-  { pista: 'PRIMAVERA', si: ['FLOR', 'ABEJA', 'POLEN', 'ALERGIA', 'SEPTIEMBRE', 'MARIPOSA', 'BROTE', 'NIDO', 'PÉTALO', 'VOLANTÍN'], casi: ['VERANO', 'OTOÑO', 'JARDÍN'] },
-  { pista: 'OTOÑO', si: ['HOJA', 'MARZO', 'ABRIL', 'MAYO', 'CASTAÑA', 'RASTRILLO', 'VENDIMIA', 'AMARILLO', 'HOJARASCA'], casi: ['INVIERNO', 'PRIMAVERA', 'ÁRBOL'] },
+  { pista: 'PRIMAVERA', si: ['FLOR', 'ABEJA', 'POLEN', 'ALERGIA', 'TULIPÁN', 'MARIPOSA', 'BROTE', 'NIDO', 'PÉTALO', 'VOLANTÍN'], casi: ['VERANO', 'OTOÑO', 'JARDÍN'] },
+  { pista: 'OTOÑO', si: ['HOJA', 'BELLOTA', 'COSECHA', 'MARRÓN', 'CASTAÑA', 'RASTRILLO', 'VENDIMIA', 'AMARILLO', 'HOJARASCA'], casi: ['INVIERNO', 'PRIMAVERA', 'ÁRBOL'] },
   { pista: 'TEATRO', si: ['ESCENARIO', 'TELÓN', 'ACTOR', 'OBRA', 'BUTACA', 'APLAUSO', 'GUION', 'MÁSCARA', 'ENSAYO', 'CAMARÍN'], casi: ['CINE', 'CIRCO', 'CONCIERTO'] },
   { pista: 'RESTAURANTE', si: ['GARZÓN', 'MENÚ', 'PROPINA', 'CUENTA', 'CHEF', 'RESERVA', 'PLATO', 'MANTEL', 'CARTA', 'POSTRE'], casi: ['PICNIC', 'CAFETERÍA', 'HOTEL'] },
   { pista: 'HOTEL', si: ['HABITACIÓN', 'LLAVE', 'RECEPCIÓN', 'MALETA', 'CAMA', 'PISCINA', 'HUÉSPED', 'TOALLA', 'BOTONES', 'SUITE'], casi: ['HOSPITAL', 'CASA', 'CAMPING'] },
   { pista: 'CAMPING', si: ['CARPA', 'FOGATA', 'LINTERNA', 'COLCHONETA', 'MOCHILA', 'ESTACA', 'MOSQUITO', 'LEÑA', 'CANTIMPLORA', 'BRÚJULA'], casi: ['HOTEL', 'CIRCO', 'PICNIC'] },
   { pista: 'PICNIC', si: ['MANTEL', 'CANASTA', 'SÁNDWICH', 'PASTO', 'HORMIGA', 'JUGO', 'PARQUE', 'FRUTA', 'TERMO', 'SERVILLETA'], casi: ['RESTAURANTE', 'ASADO', 'CAMPING'] },
   { pista: 'ASADO', si: ['PARRILLA', 'CARBÓN', 'CHORIZO', 'CARNE', 'PEBRE', 'ANTICUCHO', 'LONGANIZA', 'BRASAS', 'VINO', 'ENSALADA'], casi: ['HORNO', 'FOGATA', 'COCINA'] },
-  { pista: 'DIECIOCHO', si: ['CUECA', 'EMPANADA', 'FONDA', 'VOLANTÍN', 'TERREMOTO', 'CHICHA', 'PAÑUELO', 'RAMADA', 'HUASO', 'BANDERA'], casi: ['NAVIDAD', 'CARNAVAL', 'HALLOWEEN'] },
+  { pista: 'DIECIOCHO', local: 'cl', si: ['CUECA', 'EMPANADA', 'FONDA', 'VOLANTÍN', 'TERREMOTO', 'CHICHA', 'PAÑUELO', 'RAMADA', 'HUASO', 'BANDERA'], casi: ['NAVIDAD', 'CARNAVAL', 'HALLOWEEN'] },
   { pista: 'VAMPIRO', si: ['COLMILLO', 'SANGRE', 'ATAÚD', 'CAPA', 'AJO', 'MURCIÉLAGO', 'DRÁCULA', 'ESTACA', 'TRANSILVANIA', 'CRUZ'], casi: ['FANTASMA', 'ZOMBI', 'LOBO'] },
   { pista: 'FANTASMA', si: ['SÁBANA', 'SUSTO', 'CADENA', 'ESPÍRITU', 'CEMENTERIO', 'APARICIÓN', 'ALMA', 'HALLOWEEN', 'CASONA'], casi: ['VAMPIRO', 'ZOMBI', 'MAGO'] },
   { pista: 'ROBOT', si: ['METAL', 'CIRCUITO', 'ANTENA', 'BATERÍA', 'ENGRANAJE', 'SENSOR', 'CHATARRA', 'ANDROIDE', 'TORNILLO', 'PROGRAMA'], casi: ['COMPUTADOR', 'MUÑECO', 'MARCIANO'] },
@@ -100,7 +100,7 @@ export const CLASICAS = [
   { pista: 'ELECCIONES', si: ['VOTO', 'URNA', 'CANDIDATO', 'PAPELETA', 'MESA', 'PRESIDENTE', 'CAMPAÑA', 'DEBATE', 'ENCUESTA', 'CONTEO'], casi: ['CONCURSO', 'SORTEO', 'CENSO'] },
   { pista: 'TELEVISIÓN', si: ['CONTROL', 'CANAL', 'NOTICIAS', 'TELESERIE', 'ANTENA', 'COMERCIAL', 'PROGRAMA', 'ANIMADOR', 'PANTALLA', 'SERIE'], casi: ['RADIO', 'CINE', 'COMPUTADOR'] },
   { pista: 'RADIO', si: ['LOCUTOR', 'DIAL', 'EMISORA', 'MICRÓFONO', 'FRECUENCIA', 'ONDA', 'ANTENA', 'OYENTE', 'PARLANTE', 'TRANSMISIÓN'], casi: ['TELEVISIÓN', 'TELÉFONO', 'TOCADISCOS'] },
-  { pista: 'FERIA', si: ['CASERO', 'PUESTO', 'VERDURA', 'FRUTA', 'KILO', 'TOLDO', 'PALTA', 'TOMATE', 'YAPA', 'CAJÓN'], casi: ['SUPERMERCADO', 'CIRCO', 'MALL'] },
+  { pista: 'FERIA', local: 'cl', si: ['CASERO', 'PUESTO', 'VERDURA', 'FRUTA', 'KILO', 'TOLDO', 'PALTA', 'TOMATE', 'YAPA', 'CAJÓN'], casi: ['SUPERMERCADO', 'CIRCO', 'MALL'] },
   { pista: 'MALL', si: ['TIENDA', 'VITRINA', 'ESTACIONAMIENTO', 'VENDEDOR', 'LIQUIDACIÓN', 'PROBADOR', 'ASCENSOR', 'BOLSA', 'OFERTA', 'ESCALERA'], casi: ['FERIA', 'SUPERMERCADO', 'AEROPUERTO'] },
   { pista: 'GIMNASIO', si: ['PESA', 'TROTADORA', 'MÚSCULO', 'ENTRENADOR', 'SUDOR', 'ABDOMINAL', 'CAMARÍN', 'MANCUERNA', 'PROTEÍNA', 'RUTINA'], casi: ['HOSPITAL', 'PISCINA', 'ESTADIO'] },
   { pista: 'BICICLETA', si: ['PEDAL', 'CADENA', 'RUEDA', 'CASCO', 'MANUBRIO', 'TIMBRE', 'SILLÍN', 'RAYO', 'CICLOVÍA', 'PINCHAZO'], casi: ['MOTO', 'AUTO', 'PATINETA'] },
@@ -115,7 +115,8 @@ export const CLASICAS = [
 /**
  * Las de ideas (#383, pedido de Cris): la pista es un concepto y sus palabras son cosas que lo
  * evocan sin ser de su mismo rubro (SUERTE → TRÉBOL, HERRADURA, SIETE), así que hay que pensar
- * un poco más. Sus tentaciones también lo evocan, pero al revés o de lado (SUERTE → GATO, MARTES).
+ * un poco más. Their temptations sit next to the idea without being it (SUERTE → ÉXITO, TALENTO):
+ * not bad luck, which is luck too (GATO or MARTES cost points to whoever got it right).
  */
 export const ABSTRACTAS = [
   { pista: 'MIEDO', si: ['OSCURIDAD', 'ARAÑA', 'PESADILLA', 'GRITO', 'SOMBRA', 'ALTURA', 'TRUENO', 'CALAVERA', 'ESCALOFRÍO'], casi: ['SORPRESA', 'NERVIOS', 'VERGÜENZA'] },
@@ -124,7 +125,7 @@ export const ABSTRACTAS = [
   { pista: 'LIBERTAD', si: ['PÁJARO', 'ALAS', 'LLAVE', 'BANDERA', 'VACACIONES', 'HORIZONTE', 'VELERO', 'ESTATUA', 'CABALLO'], casi: ['CÁRCEL', 'JAULA', 'CANDADO'] },
   { pista: 'AMOR', si: ['CORAZÓN', 'ROSA', 'BESO', 'ANILLO', 'FLECHA', 'CARTA', 'CHOCOLATE', 'ABRAZO', 'CUPIDO', 'POEMA'], casi: ['AMISTAD', 'CELOS', 'DIVORCIO'] },
   { pista: 'PODER', si: ['CORONA', 'TRONO', 'ESPADA', 'ENERGÍA', 'PALACIO', 'ÁGUILA', 'LEÓN', 'CETRO', 'PRESIDENTE'], casi: ['FAMA', 'SUERTE', 'GOBIERNO'] },
-  { pista: 'SUERTE', si: ['TRÉBOL', 'DADO', 'HERRADURA', 'LOTERÍA', 'MONEDA', 'CASINO', 'SIETE', 'AMULETO', 'RULETA'], casi: ['GATO', 'ESPEJO', 'MARTES'] },
+  { pista: 'SUERTE', si: ['TRÉBOL', 'DADO', 'HERRADURA', 'LOTERÍA', 'MONEDA', 'CASINO', 'SIETE', 'AMULETO', 'RULETA'], casi: ['ÉXITO', 'RIQUEZA', 'TALENTO'] },
   { pista: 'LUZ', si: ['SOL', 'AMPOLLETA', 'VELA', 'FARO', 'LINTERNA', 'RAYO', 'LUCIÉRNAGA', 'LÁMPARA', 'FLASH'], casi: ['SOMBRA', 'NOCHE', 'ESPEJO'] },
   { pista: 'ALTURA', si: ['JIRAFA', 'RASCACIELOS', 'ESCALERA', 'AVIÓN', 'GLOBO', 'CÓNDOR', 'TORRE', 'NUBE', 'VÉRTIGO'], casi: ['POZO', 'SUBMARINO', 'CUEVA'] },
   { pista: 'FAMA', si: ['ESTRELLA', 'ALFOMBRA', 'AUTÓGRAFO', 'FOTÓGRAFO', 'ESCENARIO', 'APLAUSO', 'PREMIO', 'PAPARAZZI', 'SELFIE'], casi: ['DINERO', 'PODER', 'ÉXITO'] },
@@ -139,3 +140,16 @@ export const ABSTRACTAS = [
 ];
 
 export const PISTAS = [...CLASICAS, ...ABSTRACTAS];
+
+/**
+ * What only Chile knows (D-187): a clue marked `local: 'cl'` (CHILE, DIECIOCHO, FERIA, the street
+ * market) and these words stay out of a 🌎 Global or 🇧🇷 Brazil cup. Elsewhere they mean something
+ * else or nothing (COCHE is a car in Spain, TACO a Mexican dish, ONCE a number).
+ */
+export const LOCALES = Object.fromEntries([
+  'VIEJITO', 'CABRITAS', 'ONCE', 'FRUTILLA', 'BENCINA', 'PATENTE', 'CHALAS', 'BOLETA', 'MARRAQUETA',
+  'HALLULLA', 'KUCHEN', 'RESBALÍN', 'VOLANTÍN', 'GARZÓN', 'PEBRE', 'ANTICUCHO', 'CHALLA', 'SOPAIPILLA',
+  'POLERA', 'TACO', 'CHILOÉ', 'RAPANUI', 'TAPADURA', 'CHASCA', 'CHASQUILLA', 'VILLARRICA', 'OSORNO',
+  'TELESERIE', 'CASERO', 'YAPA', 'PALTA', 'TROTADORA', 'AMPOLLETA', 'MANJAR', 'COCHE', 'MAMADERA', 'CUCHA',
+  'DIECIOCHO', 'FRENILLOS',
+].map(w => [w, 'cl']));

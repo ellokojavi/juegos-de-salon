@@ -1,10 +1,27 @@
 // Agentes (D-286, D-421): every deck, in the four languages, is fair —each agent goes only with its
 // clue, the assassin and the neutrals tempt but go with none— and the state and the score add up.
 import assert from 'node:assert/strict';
-import { MAZOS, generar, generarDia, estado, puntaje, tarjeta, agentesDe, AGENTES, CUANTAS, NEUTRALES, ENSAYO } from './engine.js';
+import { LOCALES as LOCALES_ES } from './clues.js';
+import { LOCALES as LOCALES_PT } from './clues-pt.js';
+import { AUDIENCIAS, fuera } from '../audiencia.js';
+import { MAZOS, mazoPara, generar, generarDia, estado, puntaje, tarjeta, agentesDe, AGENTES, CUANTAS, NEUTRALES, ENSAYO } from './engine.js';
 
 // The letters each language writes its words with: one word per card, in capitals
 const LETRAS = { es: /^[A-ZÁÉÍÓÚÑÜ]+$/, en: /^[A-Z]+$/, pt: /^[A-ZÁÂÃÀÇÉÊÍÓÔÕÚ]+$/, de: /^[A-ZÄÖÜ]+$/ };
+
+// A season has no month or Easter in a language spoken in both hemispheres: JULIO is winter in
+// Santiago and summer in Madrid (a player's report). German is spoken only in the north.
+const ESTACIONES = {
+  es: { pistas: ['INVIERNO', 'VERANO', 'PRIMAVERA', 'OTOÑO'], meses: ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE', 'PASCUA'] },
+  pt: { pistas: ['INVERNO', 'VERÃO', 'PRIMAVERA', 'OUTONO'], meses: ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO', 'PÁSCOA'] },
+  en: { pistas: ['WINTER', 'SUMMER', 'SPRING', 'AUTUMN'], meses: ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'EASTER'] },
+};
+for (const [lang, { pistas, meses }] of Object.entries(ESTACIONES)) {
+  for (const x of MAZOS[lang].filter(x => pistas.includes(x.pista))) {
+    const mes = [...x.si, ...x.casi].find(w => meses.includes(w));
+    assert.ok(!mes, `${lang} ${x.pista}: ${mes} depends on the hemisphere`);
+  }
+}
 
 for (const [lang, PISTAS] of Object.entries(MAZOS)) {
   assert.ok(PISTAS.length >= 100, `${lang}: only ${PISTAS.length} clues`);
@@ -39,6 +56,28 @@ for (const [lang, PISTAS] of Object.entries(MAZOS)) {
     assert.ok(!t.cartas.some(c => t.pistas.some(p => p.pista === c.w)), `${lang} ${n}: a clue is on the board`);
   }
 }
+
+// A cup's audience (D-187): what only Chile or Brazil knows is marked, and a cup for another
+// audience never deals it; without an audience the deck is whole, so old boards do not change
+for (const [lang, locales] of Object.entries({ es: LOCALES_ES, pt: LOCALES_PT })) {
+  const palabras = new Set(MAZOS[lang].flatMap(x => [...x.si, ...x.casi]));
+  for (const [w, pais] of Object.entries(locales)) {
+    assert.ok(palabras.has(w), `${lang}: the local word ${w} is in no clue`);
+    assert.ok(['cl', 'br'].includes(pais), `${lang} ${w}: ${pais} is not an audience's country`);
+  }
+  assert.equal(mazoPara(lang, null), MAZOS[lang], `${lang}: without an audience, the whole deck`);
+  for (const aud of AUDIENCIAS) {
+    const mazo = mazoPara(lang, aud);
+    assert.ok(mazo.length >= 100, `${lang} ${aud}: only ${mazo.length} clues`);
+    for (let n = 0; n < 300; n++) {
+      const t = generar(`aud-${n}`, { lang, aud });
+      for (const p of t.pistas) assert.ok(!fuera(MAZOS[lang].find(x => x.pista === p.pista).local, aud), `${lang} ${aud} ${n}: the clue ${p.pista} is local`);
+      for (const c of t.cartas) assert.ok(!fuera(locales[c.w], aud), `${lang} ${aud} ${n}: ${c.w} is local`);
+    }
+  }
+}
+assert.deepEqual(generarDia('KQRST', 2, { palabras: 'es', aud: null }), generarDia('KQRST', 2, { palabras: 'es' }));
+assert.ok(MAZOS.es.find(x => x.pista === 'CHILE').local === 'cl' && MAZOS.pt.find(x => x.pista === 'BRASIL').local === 'br');
 
 // A cup day: the same for everybody with the same code and day, in the cup's words; the trial is shorter
 {
