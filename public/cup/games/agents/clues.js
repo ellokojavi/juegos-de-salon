@@ -12,7 +12,7 @@ export const CLASICAS = [
   { pista: 'MAR', si: ['OLA', 'BARCO', 'SAL', 'PLAYA', 'ANCLA', 'ISLA', 'MAREA', 'PUERTO', 'TIBURÓN'], casi: ['RÍO', 'LAGO', 'PISCINA'] },
   { pista: 'NAVIDAD', si: ['REGALO', 'ÁRBOL', 'VIEJITO', 'PESEBRE', 'CENA', 'ESTRELLA', 'CAMPANA', 'DICIEMBRE', 'RENO'], casi: ['CUMPLEAÑOS', 'HALLOWEEN', 'TORTA'] },
   { pista: 'FÚTBOL', si: ['ARCO', 'PELOTA', 'GOL', 'ÁRBITRO', 'CANCHA', 'PENAL', 'CAMISETA', 'ESTADIO', 'HINCHA'], casi: ['TENIS', 'RED', 'RAQUETA'] },
-  { pista: 'COCINA', si: ['OLLA', 'SARTÉN', 'HORNO', 'CUCHARA', 'RECETA', 'DELANTAL', 'FUEGO', 'SAL', 'CUCHILLO'], casi: ['BAÑO', 'MESA', 'REFRIGERADOR'] },
+  { pista: 'COCINA', si: ['OLLA', 'SARTÉN', 'HORNO', 'CUCHARA', 'RECETA', 'DELANTAL', 'FUEGO', 'SAL', 'CUCHILLO'], casi: ['BAÑO', 'MESA', 'DORMITORIO'] },
   { pista: 'INVIERNO', si: ['FRÍO', 'LLUVIA', 'NIEVE', 'BUFANDA', 'ESTUFA', 'PARAGUAS', 'GORRO', 'ABRIGO', 'SOPA'], casi: ['OTOÑO', 'HOJA', 'VIENTO'] },
   { pista: 'ESCUELA', si: ['PROFESOR', 'CUADERNO', 'RECREO', 'PIZARRA', 'MOCHILA', 'PRUEBA', 'LÁPIZ', 'CURSO', 'UNIFORME'], casi: ['UNIVERSIDAD', 'LIBRO', 'OFICINA'] },
   { pista: 'HOSPITAL', si: ['DOCTOR', 'CAMILLA', 'JERINGA', 'ENFERMERA', 'REMEDIO', 'AMBULANCIA', 'VENDA', 'URGENCIA', 'RADIOGRAFÍA'], casi: ['FARMACIA', 'GIMNASIO', 'DENTISTA'] },
@@ -151,4 +151,5 @@ export const LOCALES = Object.fromEntries([
   'HALLULLA', 'KUCHEN', 'RESBALÍN', 'VOLANTÍN', 'GARZÓN', 'PEBRE', 'ANTICUCHO', 'CHALLA', 'SOPAIPILLA',
   'POLERA', 'TACO', 'CHILOÉ', 'RAPANUI', 'TAPADURA', 'CHASCA', 'CHASQUILLA', 'VILLARRICA', 'OSORNO',
   'TELESERIE', 'CASERO', 'YAPA', 'PALTA', 'TROTADORA', 'AMPOLLETA', 'MANJAR', 'COCHE', 'MAMADERA', 'CUCHA',
+  'DIECIOCHO', 'FRENILLOS',
 ].map(w => [w, 'cl']));
