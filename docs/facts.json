@@ -1,5 +1,5 @@
 {
-  "version": "0.204.1",
+  "version": "0.204.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1158,6 +1158,7 @@
     "tools/agents/marketing.test.mjs",
     "tools/agents/popularity.test.mjs",
     "tools/agents/processes.test.mjs",
+    "tools/agents/round-watch.test.mjs",
     "tools/agents/wait-pr.test.mjs",
     "tools/cloudflare/inbox-worker.test.mjs",
     "tools/e2e/affected.test.mjs",
