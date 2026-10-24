@@ -521,6 +521,7 @@ node tools/agents/labs-key.test.mjs
 node tools/agents/marketing.test.mjs
 node tools/agents/popularity.test.mjs
 node tools/agents/processes.test.mjs
+node tools/agents/round-watch.test.mjs
 node tools/agents/wait-pr.test.mjs
 node tools/cloudflare/inbox-worker.test.mjs
 node tools/e2e/affected.test.mjs
