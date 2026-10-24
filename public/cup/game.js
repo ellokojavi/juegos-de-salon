@@ -24,7 +24,7 @@ import {
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar, semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL,
-  findeAbierto, findeAlAzar, rondasDelDia, TRIO_SEP,
+  findeAbierto, findeAlAzar, rondasDelDia, TRIO_SEP, estadoEnLista,
 } from './engine.js';
 import { GAME_ID, LOCALES, juegosCopa, rondasFinal, conVariante, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { createCuenta, juntarCopas } from './cuenta.js';
@@ -266,6 +266,8 @@ function portada() {
   // Las terminadas llevan su etiqueta y se esconden tras un interruptor que parte apagado (D-234)
   const mias = el('div', { class: 'panel', id: 'tus-copas' });
   let verTerminadas = false;
+  // Where each cup in course stands for the player (code → { texto, clase, dia }), once read
+  const estados = new Map();
   const pintarMias = lista => {
     mias.hidden = !lista.length;
     mias.innerHTML = '';
@@ -280,15 +282,36 @@ function portada() {
     poner(mias,
       el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.mine),
       visibles.length ? null : el('p', { class: 'muted mias-vacia' }, T.mineNone),
-      el('div', { class: 'mias' }, visibles.map(c => el('a', { class: 'mia' + (terminada(c) ? ' terminada' : ''), href: urlCopa(c.code) },
-        el('b', {}, c.copa || c.code, terminada(c) ? el('span', { class: 'etiqueta-fin' }, T.mineOver) : null),
-        el('small', {}, `${c.nombre} · ${c.code}`), el('span', { class: 'go' }, '›')))),
+      el('div', { class: 'mias' }, visibles.map(c => {
+        const est = terminada(c) ? null : estados.get(c.code);
+        return el('a', { class: 'mia' + (terminada(c) ? ' terminada' : ''), href: est?.dia ? `${urlCopa(c.code)}&day=${est.dia}` : urlCopa(c.code) },
+          el('b', {}, c.copa || c.code, terminada(c) ? el('span', { class: 'etiqueta-fin' }, T.mineOver) : null),
+          el('small', {}, `${c.nombre} · ${c.code}`),
+          est ? el('span', { class: `mia-estado ${est.clase}` }, est.texto) : null,
+          el('span', { class: 'go' }, '›'));
+      })),
       nTerminadas ? el('label', { class: 'hoja-switch mias-switch', for: 'ver-terminadas' },
         el('span', {}, fmt(T.mineShowOver, { n: nTerminadas })), interruptor) : null);
   };
-  pintarMias(cuenta.mias());
-  if (leerYo()) copasDelJugador().then(delJugador => {
-    if (mias.isConnected && delJugador.length) pintarMias(juntarCopas(cuenta.mias(), delJugador));
+  let lista = cuenta.mias();
+  const repintar = () => { if (mias.isConnected) pintarMias(lista); };
+  pintarMias(lista);
+  const delJugador = leerYo() ? copasDelJugador().catch(() => []) : Promise.resolve([]);
+  delJugador.then(suyas => { if (suyas.length) { lista = juntarCopas(cuenta.mias(), suyas); repintar(); } });
+  // Each cup says whether the player has a day to play or is done for today (lab: #seccion-copa-estado)
+  conEstadoEnLista().then(async si => {
+    if (!si) return;
+    const suyas = await delJugador;
+    const ya = new Map(suyas.filter(Boolean).map(c => [c.code, c]));
+    const st = await abrirStore();
+    await Promise.all(juntarCopas(cuenta.mias(), suyas).filter(c => !c.fin || st.now() < c.fin).map(async c => {
+      try {
+        const pid = ya.get(c.code)?.pid || cuenta.quien(c.code);
+        const Lc = ya.get(c.code)?.L || await st.leer(c.code);
+        const est = textoEstado(estadoEnLista(Lc, pid, st.now()));
+        if (est) { estados.set(c.code, est); repintar(); }
+      } catch (_) { /* without network the list stays as it was */ }
+    }));
   }).catch(() => {});
   poner(body, 
     // El idioma se elige a mano, como en todos los juegos (C-3)
@@ -307,6 +330,20 @@ function portada() {
   );
 }
 
+/** The status line under each cup in "Tus copas" (lab: #seccion-copa-estado), for a key holder; in the test store with `&lab`. */
+const conEstadoEnLista = () => (PRUEBA && !tiene('lab') ? Promise.resolve(false) : labAccess());
+
+/** `estadoEnLista` in words: `{ texto, clase, dia }`, with `dia` the one day to open straight away. */
+function textoEstado(e) {
+  if (!e) return null;
+  if (e.tipo === 'empieza') return { texto: fmt(T.mineStarts, { t: faltaPara(e.en) }), clase: 'espera' };
+  if (e.tipo === 'fuera') return { texto: T.outTitle, clase: 'fuera' };
+  if (e.tipo === 'al-dia') return { texto: e.dia ? fmt(T.mineDone, { d: e.dia, t: faltaPara(e.en) }) : T.mineDoneAll, clase: 'ok' };
+  if (e.dias.length > 1) return { texto: fmt(T.mineReadyMany, { n: e.dias.length }), clase: 'jugar' };
+  const d = e.dias[0];
+  return { texto: fmt(e.enCurso ? T.mineResume : e.hoy ? T.mineReadyToday : T.mineReady, { d }), clase: 'jugar', dia: d };
+}
+
 /**
  * Las copas del jugador que entró, de cualquier celular (D-220), como las de "Tus copas". Las que
  * este celular ya conoce no se leen de nuevo; una copa que su admin borró sale de la lista.
@@ -320,7 +357,7 @@ async function copasDelJugador() {
     try {
       const Lc = await st.leer(code);
       if (!Lc?.meta) { J.olvidarCopa(code).catch(() => {}); return null; }
-      return { code, nombre: Lc.players?.[p]?.name || '?', copa: Lc.meta.name, fin: Lc.fin || Lc.meta.end };
+      return { code, pid: p, L: Lc, nombre: Lc.players?.[p]?.name || '?', copa: Lc.meta.name, fin: Lc.fin || Lc.meta.end };
     } catch (_) { return null; }
   }));
 }

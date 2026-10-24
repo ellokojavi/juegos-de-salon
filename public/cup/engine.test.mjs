@@ -8,7 +8,7 @@ import {
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
   semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL, esFinal,
-  TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia,
+  TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia, estadoEnLista,
 } from './engine.js';
 import { JUEGOS_COPA } from './rules.js';
 
@@ -189,6 +189,25 @@ test('estado de un día para un jugador', () => {
   assert.equal(estadoDia(L, 1, 'bbbbbb', dia(2)), 'perdido');
   assert.equal(estadoDia(L, 2, 'aaaaaa', dia(1)), 'en-curso');
   assert.equal(estadoDia(L, 3, 'aaaaaa', dia(1)), 'futuro');
+});
+
+test('"Tus copas": where each cup stands for the player, in one line', () => {
+  const L = { meta: meta7, players, started: { 2: { aaaaaa: 1 } }, results: { 1: { aaaaaa: { s: 5, ms: 1 } } } };
+  const antes = estadoEnLista(L, 'aaaaaa', meta7.win[1].a - 3 * H);
+  assert.equal(antes.tipo, 'empieza');
+  assert.equal(antes.en, 3 * H);
+  assert.deepEqual(estadoEnLista(L, 'bbbbbb', dia(0)), { tipo: 'jugar', dias: [1], enCurso: false, hoy: false }, 'day 1, with its grace day ahead');
+  assert.deepEqual(estadoEnLista(L, 'aaaaaa', dia(0)), { tipo: 'al-dia', dia: 2, en: meta7.win[2].a - dia(0) }, 'played: the next day and when it opens');
+  assert.deepEqual(estadoEnLista(L, 'bbbbbb', dia(1)), { tipo: 'jugar', dias: [1, 2], enCurso: false, hoy: true }, 'yesterday in its grace day closes tonight');
+  assert.deepEqual(estadoEnLista(L, 'aaaaaa', dia(1)), { tipo: 'jugar', dias: [2], enCurso: true, hoy: false }, 'started and not finished');
+  assert.deepEqual(estadoEnLista(L, 'cccccc', dia(3)), { tipo: 'fuera' }, 'two days missed in a row (D-347)');
+  assert.deepEqual(estadoEnLista({ ...L, players: { ...players, dddddd: { ...players.dddddd, out: 1 } } }, 'dddddd', dia(0)), { tipo: 'fuera' }, 'taken out by the admin');
+  const todos = { ...L, results: Object.fromEntries([1, 2, 3, 4, 5, 6, 7].map(d => [d, { bbbbbb: { s: 1, ms: 1 } }])) };
+  assert.deepEqual(estadoEnLista(todos, 'bbbbbb', dia(6)), { tipo: 'al-dia', dia: 0, en: 0 }, 'every day played');
+  const sinFinal = { ...todos, results: { ...todos.results, 7: {} } };
+  assert.deepEqual(estadoEnLista(sinFinal, 'bbbbbb', dia(6)), { tipo: 'jugar', dias: [7], enCurso: false, hoy: true }, 'the last day has no grace day');
+  assert.equal(estadoEnLista(L, 'bbbbbb', meta7.end), null, 'over');
+  assert.equal(estadoEnLista(L, 'zzzzzz', dia(0)), null, 'not in the cup');
 });
 
 test('comodín: antes de empezar, una vez, no en la final', () => {
