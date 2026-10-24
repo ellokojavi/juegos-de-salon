@@ -200,9 +200,9 @@ const ES = {
   mineReadyToday: '▶ Día {d}: juégalo hoy',
   mineReadyMany: '▶ {n} días por jugar',
   mineResume: '⏸ Día {d}: a medio jugar',
-  mineDone: '✅ Jugado · el día {d} abre en {t}',
-  mineDoneAll: '✅ Jugaste todos los días',
-  mineStarts: '⏳ Empieza en {t}',
+  mineDone: '✅ Ya lo jugaste: el día {d} abre en {t}',
+  mineDoneAll: '✅ No te queda nada por jugar',
+  mineStarts: '⏳ Parte en {t}',
   mineNone: 'No tienes copas en curso.',
 
   // Crear
@@ -1040,8 +1040,8 @@ const EN = {
   mineReadyToday: '▶ Day {d}: play it today',
   mineReadyMany: '▶ {n} days to play',
   mineResume: '⏸ Day {d}: half played',
-  mineDone: '✅ Played · day {d} opens in {t}',
-  mineDoneAll: '✅ You played every day',
+  mineDone: '✅ You played it: day {d} opens in {t}',
+  mineDoneAll: '✅ Nothing left for you to play',
   mineStarts: '⏳ Starts in {t}',
   mineNone: 'You have no cups in progress.',
 
@@ -1868,8 +1868,8 @@ const PT = {
   mineReadyToday: '▶ Dia {d}: jogue hoje',
   mineReadyMany: '▶ {n} dias para jogar',
   mineResume: '⏸ Dia {d}: pela metade',
-  mineDone: '✅ Jogado · o dia {d} abre em {t}',
-  mineDoneAll: '✅ Você jogou todos os dias',
+  mineDone: '✅ Você já jogou: o dia {d} abre em {t}',
+  mineDoneAll: '✅ Não sobrou nada para você jogar',
   mineStarts: '⏳ Começa em {t}',
   mineNone: 'Você não tem copas em andamento.',
 
@@ -2696,8 +2696,8 @@ const DE = {
   mineReadyToday: '▶ Tag {d}: heute spielen',
   mineReadyMany: '▶ {n} Tage zu spielen',
   mineResume: '⏸ Tag {d}: angefangen',
-  mineDone: '✅ Gespielt · Tag {d} öffnet in {t}',
-  mineDoneAll: '✅ Du hast jeden Tag gespielt',
+  mineDone: '✅ Schon gespielt: Tag {d} öffnet in {t}',
+  mineDoneAll: '✅ Für dich gibt es nichts mehr zu spielen',
   mineStarts: '⏳ Beginnt in {t}',
   mineNone: 'Gerade läuft keiner deiner Pokale.',
 
