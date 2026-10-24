@@ -47,7 +47,7 @@ The numbers come from `numbers.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RE
   A 🚫 does not turn over when tapped (it shakes), so the assassin already guessed is not touched by
   mistake. While held, the border fills (the mark is seen coming), and the notice line says what it
   did. Under the board, a line explains it until the first mark. The marks are saved with the moves.
-- **Colors per clue:** each clue has its color (green, cyan, blue, violet; neither yellow, the marks',
+- **Colors per clue (D-442):** each clue has its color (green, cyan, blue, violet; neither yellow, the marks',
   nor red or pink, which mean a mistake: a player read a pink clue as an error). The current clue's sign has it, and every agent turned over takes its
   clue's, also if found early. Those of clues already closed dim: they do not count for the current one.
 - **Between clues:** the closing clue gets a stamp (**Completa** green, **Cortada** red, **Pasada**
