@@ -40,7 +40,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { invalidAction, checkboxes, doneSet, readActions, normalizeAction, LABEL, settle, undecided, question, decisionQueuing } from './approve.mjs';
+import { invalidAction, checkboxes, doneSet, readActions, normalizeAction, LABEL, LABELS, settle, undecided, question, decisionQueuing } from './approve.mjs';
 import { wantsEmail, handled } from './feedback.mjs';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -134,11 +134,12 @@ export function queued(issues) {
 /** What an open PR is waiting for, or [] if nothing: each reason, one sentence. */
 /**
  * The owner's backlog (D-339): the open issues with no label are the to-dos the owner writes; no other
- * signal lists them. Oldest first, with their age in days; "main is red" issues are reported apart.
+ * signal lists them. Oldest first, with their age in days; "main is red" issues are reported apart, and the
+ * watchdog's "Processes round missed" (D-440) closes itself when the round catches up.
  */
 export function backlog(issues, now = Date.now()) {
   return issues
-    .filter(i => !i.labels.length && !/^main (en rojo|is red)/.test(i.title))
+    .filter(i => !i.labels.length && !/^main (en rojo|is red)/.test(i.title) && i.title !== 'Processes round missed')
     .map(i => ({ number: i.number, title: i.title, days: Math.floor((now - Date.parse(i.createdAt)) / DAY) }))
     .sort((a, b) => b.days - a.days || a.number - b.number);
 }
@@ -163,9 +164,11 @@ export const EXECUTORS = ['documentation', 'usability', 'ideas'];
  * since its `checkedUpTo`; `usability`, those that touched public/ since its last dispatch (or
  * `null` if it was never launched) and the days since then: once a week it goes anyway.
  * `support`, the emails waiting in the hola@ inbox (D-318). `ideas`, the days since its last
- * round (`null` if never): once a week, no more (D-360).
+ * round (`null` if never): once a week, no more (D-360), and not while its last issue still has
+ * questions the owner has not ticked (`ideasWaiting`, that issue's number, D-440): the round would
+ * only find that out and open nothing.
  */
-export function toDispatch({ docCommits, publicCommits, usabilityDays, emails = 0, ideasDays = 0 }) {
+export function toDispatch({ docCommits, publicCommits, usabilityDays, emails = 0, ideasDays = 0, ideasWaiting = null }) {
   const res = [];
   // D-318: the support agent only when hola@ left emails in the inbox
   if (emails > 0) res.push({ agent: 'support', reason: `${emails} email(s) in the hola@ inbox` });
@@ -175,8 +178,17 @@ export function toDispatch({ docCommits, publicCommits, usabilityDays, emails = 
   else if (usabilityDays >= 7) res.push({ agent: 'usability', reason: `a week without a round (${usabilityDays} days)` });
   // D-360: the game-ideas agent once a week, whatever changed; its round is the owner's time
   if (ideasDays === null) res.push({ agent: 'ideas', reason: 'it was never dispatched' });
-  else if (ideasDays >= 7) res.push({ agent: 'ideas', reason: `a week since its last round (${ideasDays} days)` });
+  else if (ideasDays >= 7 && !ideasWaiting) res.push({ agent: 'ideas', reason: `a week since its last round (${ideasDays} days)` });
   return res;
+}
+
+/**
+ * The open ideas issue whose questions the owner has not all answered (D-440), or null. Its title
+ * starts "Ideas:" and it carries the decisions label; `undecided` reads its boxes.
+ */
+export function ideasWaiting(issues) {
+  const i = issues.find(x => /^Ideas:/.test(x.title) && x.labels.some(l => LABELS.includes(l.name)) && undecided(x.body).length);
+  return i ? i.number : null;
 }
 
 /** Records that a pattern was seen again (or the first time). Returns how many times so far. */
@@ -283,10 +295,13 @@ async function check() {
     publicCommits: lastUsability ? count(`${lastUsability.to}..origin/main`, '--', 'public/') : null,
     usabilityDays: lastUsability ? Math.floor((Date.now() - Date.parse(lastUsability.date)) / DAY) : null,
     ideasDays: m.dispatches.ideas ? Math.floor((Date.now() - Date.parse(m.dispatches.ideas.date)) / DAY) : null,
+    ideasWaiting: ideasWaiting(issues),
     emails: await import('./inbox.mjs').then(i => i.count()).catch(e => { console.log(`- (the hola@ inbox could not be read: ${e.message})`); return 0; }),
   });
   for (const d of plan) console.log(`- ${d.agent}: ${d.reason}${d.agent === 'support' ? '' : ` (when launching it: dispatch ${d.agent} ${tip.slice(0, 7)})`}`);
   if (!plan.length) console.log('Nobody: nothing changed that needs a review.');
+  const waiting = ideasWaiting(issues);
+  if (waiting) console.log(`- ideas: not this week, #${waiting} still has questions the owner has not answered (D-440)`);
 
   heading("The home page's order (D-361)");
   const { POPULARIDAD_FECHA } = await import('../../public/assets/js/games.js');

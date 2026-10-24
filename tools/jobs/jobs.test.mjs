@@ -54,4 +54,15 @@ check('the plist runs the job through jobs.mjs run, from the main folder', () =>
   assert.match(p, /<key>WorkingDirectory<\/key><string>\/r<\/string>/);
 });
 
+check('app jobs keep their prompt in the repo, and it names only files that exist (D-440)', () => {
+  for (const j of list.filter(x => x.where === 'app')) {
+    assert.ok(j.prompt && existsSync(join(ROOT, j.prompt)), `${j.id}: prompt ${j.prompt} is missing`);
+    // The paths it names in backticks, like `.claude/agents/processes.md`: in October 2026 the old
+    // tasks kept naming procesos.md after it was renamed, and the round stopped without a word
+    const text = readFileSync(join(ROOT, j.prompt), 'utf8');
+    for (const [, path] of text.matchAll(/`((?:\.claude|tools|docs|\.github)\/[^`\s<>*]+\.(?:mjs|md|json|py|yml))`/g))
+      assert.ok(existsSync(join(ROOT, path)), `${j.prompt} names ${path}, which does not exist`);
+  }
+});
+
 if (failed) { console.log(`❌ ${failed} failed`); process.exit(1); }

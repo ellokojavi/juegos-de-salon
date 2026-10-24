@@ -16,7 +16,7 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
 |---|---|---|
 | `github` | a scheduled workflow in `.github/workflows/` | what needs no key on the Mac (push notifications) |
 | `mac` | a launchd job on the owner's Mac mini, a plain script | frequent checks: free to check, Claude only when there is work |
-| `app` | a scheduled task in the Claude app | rounds that are Claude's work every time (processes, weekly report) |
+| `app` | a claude.ai scheduled task that runs on the Mac mini, its prompt in `tools/jobs/prompts/<id>.md` | rounds that are Claude's work every time (processes, weekly report) |
 | `hook` | a Claude Code hook (`.claude/settings.json`) | what runs with each session |
 
 ## Adding a job
@@ -26,7 +26,10 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
 2. `mac`: a script in `tools/jobs/` that exits 0 when all went well and prints a last line that sums
    it up (`status` shows it). Then `node tools/jobs/jobs.mjs install` on the Mac mini, after merging and
    pulling the main folder: launchd runs the main folder's code, never a worktree's.
-3. `github`: the workflow, with the same cron. `app`: create the task in the app with the same `task` id.
+3. `github`: the workflow, with the same cron. `app`: its instructions in `tools/jobs/prompts/<id>.md`
+   (the job's `prompt`; `jobs.test.mjs` checks every file it names exists), and a claude.ai scheduled task
+   named as its `task`, with "Require this computer", whose prompt only says to read that file from
+   origin/main and follow it (D-440).
 
 ## The jobs on the Mac
 
@@ -37,7 +40,7 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
   `feedback/` as `feedback` issues (D-382). It was the GitHub workflow `feedback.yml`, which GitHub ran
   about 4 times a day instead of every 15 minutes; the workflow stays, by hand only.
 
-What the Mac mini holds besides the jobs (keys, sign-ins, the app's tasks) and how to move it all
+What the Mac mini holds besides the jobs (keys, sign-ins, the scheduled tasks) and how to move it all
 to another machine: [MAC-MINI.md](MAC-MINI.md).
 
 Logs: `~/Library/Logs/juegos-de-salon/<id>.log`. Last run: `~/.config/juegos-de-salon/jobs/<id>.json`.

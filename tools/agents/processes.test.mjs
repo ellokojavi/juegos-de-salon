@@ -1,7 +1,7 @@
 // The processes agent (D-273): which PRs count as "waiting", the queue of what was approved and the patterns.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { waits, backlog, queued, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS } from './processes.mjs';
+import { waits, backlog, queued, ideasWaiting, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS } from './processes.mjs';
 import { recordDone } from './approve.mjs';
 
 const now = Date.parse('2026-10-11T12:00:00Z');
@@ -67,6 +67,19 @@ assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2,
 assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2, ideasDays: 7 }).map(d => [d.agent, d.reason]), [['ideas', 'a week since its last round (7 days)']]);
 assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2, ideasDays: null }).map(d => d.agent), ['ideas'], 'never dispatched: it goes');
 assert.deepEqual(toDispatch({ docCommits: 2, publicCommits: 1, usabilityDays: 1, ideasDays: 9 }).map(d => d.agent), ['documentation', 'usability', 'ideas']);
+// D-440: the ideas agent is not launched while its last issue still has unanswered questions
+assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2, ideasDays: 9, ideasWaiting: 556 }), [], 'the owner has not answered #556 yet: no ideas round');
+assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2, ideasDays: null, ideasWaiting: 556 }).map(d => d.agent), ['ideas'], 'never dispatched still goes');
+{
+  const box = (n, done) => `- [${done ? 'x' : ' '}] Yes <!-- op:${n}:si -->${done ? ` — ✅ noted <!-- hecho:${n} -->` : ''}`;
+  const acts = '<!-- acciones {"1:si":[{"type":"nothing"}],"2:si":[{"type":"nothing"}]} -->';
+  const lab = [{ name: 'processes' }];
+  assert.equal(ideasWaiting([{ number: 556, title: 'Ideas: 2026-10-19', labels: lab, body: [box(1, true), box(2, false), acts].join('\n') }]), 556, 'one question unanswered: waiting');
+  assert.equal(ideasWaiting([{ number: 556, title: 'Ideas: 2026-10-19', labels: lab, body: [box(1, true), box(2, true), acts].join('\n') }]), null, 'all answered: the round goes and records them');
+  assert.equal(ideasWaiting([{ number: 600, title: 'Processes: 2026-10-20', labels: lab, body: [box(1, false), acts].join('\n') }]), null, 'a processes issue is not an ideas issue');
+}
+assert.deepEqual(backlog([{ number: 9, title: 'Processes round missed', labels: [], createdAt: '2026-10-20T00:00:00Z' }]), [], "the watchdog's issue is not an owner's to-do (D-440)");
+
 assert.ok(EXECUTORS.includes('ideas'), 'ideas can be recorded with dispatch');
 
 // The repo's memory has the shape the tool reads (keys in English since D-316)
