@@ -6,7 +6,8 @@
  *   github  a scheduled workflow in .github/workflows/ (its cron must match the registry's)
  *   mac     a launchd job on the owner's Mac mini, installed from the registry by this tool; it
  *           runs a plain script, with no Claude unless the script itself decides it needs one
- *   app     a scheduled task in the Claude app (it opens a Claude session every time it runs)
+ *   app     a claude.ai scheduled task that runs on the Mac mini (a Claude session every time it
+ *           runs), its instructions in tools/jobs/prompts/<id>.md (D-440)
  *   hook    a Claude Code hook in .claude/settings.json
  *
  * A job that runs often and usually finds nothing to do is a `mac` job: checking costs nothing,
@@ -88,7 +89,11 @@ function lastRun(j) {
       return r ? `${r.conclusion === 'success' ? '✅' : r.status !== 'completed' ? '⏳' : '❌'} ${ago(r.createdAt)}` : 'never';
     } catch { return '? (gh unavailable)'; }
   }
-  if (j.where === 'app') return 'see the app → Scheduled';
+  // The round leaves its date in its memory (D-440); round-watch.mjs says whether it is behind
+  if (j.id === 'processes-round') {
+    try { return `last recorded round ${JSON.parse(readFileSync(join(HERE, '../../docs/processes.json'), 'utf8')).rounds.at(-1)?.date || 'never'} (claude.ai → Scheduled)`; } catch (_) { /* fall through */ }
+  }
+  if (j.where === 'app') return 'see claude.ai → Scheduled';
   return 'runs on its trigger';
 }
 
