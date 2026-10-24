@@ -8,6 +8,7 @@ import {
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
   semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL, esFinal,
+  TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia,
 } from './engine.js';
 import { JUEGOS_COPA } from './rules.js';
 
@@ -539,6 +540,29 @@ test('the 3-day cup without the final (D-438)', () => {
   const filas = tabla(T, null, m.end);
   assert.equal(filas[0].name, 'Beto');
   assert.deepEqual(desempate(filas, m), { pts: 18, criterio: 'ultimo' });
+});
+
+test('the weekend cup: three days of three games (D-439)', () => {
+  for (let k = 0; k < 30; k++) {
+    const cal = findeAlAzar();
+    const ids = cal.flatMap(x => x.split('+'));
+    assert.ok(cal.length === 3 && ids.length === 9 && new Set(ids).size === 9 && ids.every(id => POZO.includes(id)) && calendarioValido(cal, 3), cal.join());
+  }
+  assert.ok(calendarioValido(['linea+tango+donde', 'zip+reinas+anio', 'numero+letras+loteo:utilities'], 3), 'variants inside a day of three');
+  assert.ok(!calendarioValido(['linea+tango+donde', 'zip+reinas+linea', 'numero+letras+loteo'], 3), 'no game twice in the weekend');
+  assert.ok(!calendarioValido(['linea+tango', 'zip+reinas+anio', 'numero+letras+loteo'], 3), 'three a day');
+  assert.ok(!calendarioValido(['linea+tango+donde', 'zip', 'numero+letras+loteo'], 3), 'every day of three, or none');
+  assert.ok(!calendarioValido(['linea+tango+donde', 'zip+reinas+anio', 'final'], 3), 'no final');
+  assert.ok(!calendarioValido(['a+b+c', 'linea', 'zip', 'reinas', 'anio', 'numero', 'final'], 7), 'only the 3-day cup');
+  const m = nuevaMeta({ nombre: 'Finde', dias: 3, inicio: '2026-10-23', tz: 'America/Los_Angeles', admin: 'aaaaaa', creada: 0, cal: ['linea+tango+donde', 'zip+reinas+anio', 'numero+letras+loteo:utilities'] });
+  assert.equal(m.final, '0');
+  assert.equal(juegoDelDia(m, 1), TRIO);
+  assert.deepEqual(rondasDelDia(m, 3), ['numero', 'letras', 'loteo:utilities']);
+  assert.equal(rondasDelDia(meta7, 1), null);
+  assert.equal(varianteDelDia(m, 3), null);
+  assert.ok(!esFinal(m, 3));
+  // Offered until the end of Sunday 2026-10-25, Pacific time
+  assert.ok(findeAbierto(Date.parse('2026-10-25T23:59:00-07:00')) && !findeAbierto(Date.parse('2026-10-26T00:00:00-07:00')) && FINDE_HASTA === Date.parse('2026-10-26T07:00:00Z'));
 });
 
 await new Promise(r => setTimeout(r, 50));

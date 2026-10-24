@@ -49,7 +49,7 @@ const OBSOLETE = new Set([
 // the whole check takes. Each part reaches the script as `--part <name>`. Here, without a part,
 // they run whole.
 export const PARTS = {
-  'cup/tournament.mjs': ['cup', 'labs', 'demos'],
+  'cup/tournament.mjs': ['cup', 'labs', 'demos', 'weekend'],
   'cup/languages.mjs': ['cup', 'standalone', 'screens-a', 'screens-b'],
   'cup-games/languages.mjs': SUELTOS.map(m => m.slug),
 };

@@ -4,7 +4,7 @@
 //
 // Usage: python3 -m http.server 8765 (in another terminal) and node tools/e2e/cup/tournament.mjs <output-folder>
 // With --tres it plays the 3-day Cup (the trial one, D-100), which is shorter.
-// With --part cup|labs|demos it runs only that part: they are independent, and GitHub runs
+// With --part cup|labs|demos|weekend it runs only that part (weekend: the weekend cup, three games a day, D-439): they are independent, and GitHub runs
 // each one in its own job so the PR doesn't wait for the whole script (ci.mjs).
 // The README screenshots come from here (docs/capturas.json): the shots with a fixed name.
 import { output } from '../output.mjs';
@@ -16,7 +16,7 @@ import { slugDe } from '../../../public/assets/js/games.js';
 const OUT = output('/tmp/cup');
 const SEVEN = !process.argv.includes('--tres');
 const PART = process.argv.includes('--part') ? process.argv[process.argv.indexOf('--part') + 1] : null;
-if (PART && !['cup', 'labs', 'demos'].includes(PART)) throw new Error(`--part ${PART}: must be cup, labs or demos`);
+if (PART && !['cup', 'labs', 'demos', 'weekend'].includes(PART)) throw new Error(`--part ${PART}: must be cup, labs, demos or weekend`);
 const runs = part => !PART || PART === part;
 mkdirSync(OUT, { recursive: true });
 // cdp.mjs picks the Chrome port (D-213); CDP_PORT pins it, if wanted
@@ -60,9 +60,11 @@ async function checkScreen(name) {
   await b.shot(name);
 }
 
+/** What every "phone" adds to the cup's link: the weekend part shortens the clocks with &timer. */
+let EXTRA = '';
 async function asPlayer(code) {
   await ev('sessionStorage.clear(); 1');
-  await b.open(`${BASE}?${code}&test`, 1200);
+  await b.open(`${BASE}?${code}&test${EXTRA}`, 1200);
   await prepare();
 }
 
@@ -336,7 +338,7 @@ const playFinal = async level => {
   }
 };
 
-const PLAY = { donde: playWhere, linea: playLine, numero: playNumber, anio: playYear, reinas: playQueens, letras: playLetters, zip: playZip, desenredo: playUntangle, tango: playTango, conexiones: playConnections, agentes: playAgents, final: playFinal };
+const PLAY = { donde: playWhere, linea: playLine, numero: playNumber, anio: playYear, reinas: playQueens, letras: playLetters, zip: playZip, desenredo: playUntangle, tango: playTango, conexiones: playConnections, agentes: playAgents, final: playFinal, trio: playFinal };
 
 /** The 3-to-1 countdown before each game (D-105): waits for "¡A jugar!" to show up. */
 async function waitCountdown({ check = false } = {}) {
@@ -380,11 +382,12 @@ async function playDay(d, level, { capture = false, joker = false } = {}) {
   }
   const id = await ev('__copa.estado.juego.id');
   // The final is built with this cup's rounds (D-418), as the screen builds it
-  await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const {finalRounds}=await import('/cup/engine.js');window.__playing={p:JUEGOS[${JSON.stringify(id)}].generar(__copa.estado.code, ${d}, {rondas: finalRounds(__copa.estado.copa.meta)})};return 1})()`);
+  // A weekend cup's day of three (D-439) is built with that day's three games
+  await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const {finalRounds,rondasDelDia}=await import('/cup/engine.js');const m=__copa.estado.copa.meta;window.__playing={p:JUEGOS[${JSON.stringify(id)}].generar(__copa.estado.code, ${d}, {rondas: rondasDelDia(m, ${d}) || finalRounds(m)})};return 1})()`);
   await PLAY[id](level, { drag: capture && id === 'linea' });
   if (capture) { await checkScreen(`game-${id}`); if (SHOTS[id]) await b.shot(SHOTS[id]); }
   // The result is saved as soon as the board ends, before tapping "Ver resultado" (D-150)
-  if (id !== 'final') {
+  if (id !== 'final' && id !== 'trio') {
     await b.until(`!!__copa.estado.copa.results?.[${d}]?.[__copa.estado.yo]`, 300, 30);
     ok(await ev(`!!__copa.estado.copa.results?.[${d}]?.[__copa.estado.yo] && __copa.estado.pantalla === 'jugar'`), `day ${d} (${id}): the result is in the cup before tapping "Ver resultado"`);
   }
@@ -404,7 +407,8 @@ if (runs('cup')) {
   await click('#btn-crear'); await sleep(900); // with several sessions testing at once, the machine runs slow
   await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Copa de la oficina';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
   ok(await ev(`document.getElementById('crear-juegos').hidden`), 'games are picked after the length: before that they are hidden');
-  await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[${SEVEN ? 1 : 0}].click();o[3].click();return 1})()`); // starts tomorrow
+  // By name: the weekend cup (D-439) may be offered before them
+  await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o.find(x=>/^Copa de ${SEVEN ? 7 : 3} días/.test(x.textContent)).click();o.find(x=>/^Mañana/.test(x.textContent)).click();return 1})()`); // starts tomorrow
   // Picking the games (D-163): a random proposal in the hand and the Línea de Tiempo line
   {
     const n = SEVEN ? 7 : 3;
@@ -1018,6 +1022,49 @@ if (runs('labs')) {
 }
 
 /* ---------- The demos (D-110): cups seeded in test mode, for the tests and the screenshots (D-262) ---------- */
+/* ---------- The weekend cup (D-439): three days of three games each, offered to everyone until Sunday night ---------- */
+if (runs('weekend')) {
+  // &timer shortens Zip's and Desenredo's clock in the test store, on every phone
+  EXTRA = '&timer=6';
+  await b.go(`${BASE}?test&timer=6`, 1200);
+  await ev('localStorage.clear(); sessionStorage.clear(); 1');
+  await b.go(`${BASE}?test&timer=6`, 1200);
+  await prepare();
+  await click('#btn-crear'); await sleep(900);
+  const offered = await ev(`[...document.querySelectorAll('#crear-body .opcion')].some(x=>/Copa de fin de semana/.test(x.textContent))`);
+  const open = await ev(`(async()=>{const {findeAbierto}=await import('/cup/engine.js');return findeAbierto(Date.now())})()`);
+  ok(offered === open, `the weekend cup is offered while it is open (${open ? 'until Sunday night' : 'closed now'})`);
+  if (open) {
+    await ev(`([...document.querySelectorAll('#crear-body .opcion')].find(x=>/Copa de fin de semana/.test(x.textContent)).click(), 1)`); await sleep(200);
+    ok(await ev(`!document.getElementById('crear-finde').hidden && document.getElementById('crear-juegos').hidden`), 'choosing it shows its three days instead of the week');
+    ok(await ev(`[...document.querySelectorAll('#finde-dias .finde-dia')].map(x=>x.dataset.juegos.split(',').length).join()`) === '3,3,3', 'three games on each of the three days');
+    // The 🎲 until every game is one this script knows how to play
+    const KNOWN = ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo'];
+    const rolled = await ev(`(()=>{for(let k=0;k<3000;k++){const ids=[...document.querySelectorAll('#finde-dias .finde-dia')].flatMap(x=>x.dataset.juegos.split(','));if(ids.every(id=>${JSON.stringify(KNOWN)}.includes(id)))return ids.length===9&&new Set(ids).size===9;document.getElementById('btn-dado-finde').click()}return false})()`);
+    ok(rolled, '🎲 draws nine different games of the pool');
+    await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Finde';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
+    await ev(`([...document.querySelectorAll('#crear-body .opcion')].find(x=>/^Hoy/.test(x.textContent)).click(), 1)`);
+    await click('#btn-crear-go'); await b.until(`!!__copa.estado.copa?.meta`, 3000, 50); await sleep(400);
+    const meta = await ev(`JSON.stringify(__copa.estado.copa.meta)`).then(JSON.parse);
+    ok(meta.days === 3 && meta.final === '0' && meta.cal.split(',').every(x => x.split('+').length === 3), `the cup saves three days of three games and no final (${meta.cal})`);
+    const code = await ev('__copa.estado.code');
+    await signUp(code, 'Beto', '2222');
+    await sitDown(code, 'Cata', '1111');
+    ok(/Tres juegos: \S+ \S+ \S+/.test(await ev(`document.querySelector('.screen.active').innerText`)), 'the board names each day by its three games');
+    const id = await playDay(1, 2);
+    ok(id === 'trio', `day 1 is played as one day of three (${id})`);
+    const cata = await ev(`JSON.stringify(__copa.estado.copa.results[1][__copa.estado.yo])`).then(JSON.parse);
+    ok(cata && cata.s >= 0 && cata.s <= 100 && /^(\S+\d+ ){2}\S+\d+$/.test(cata.t || ''), `Cata's day: one result, the average of the three out of 100 (${cata?.s}, ${cata?.t})`);
+    ok((await ev(`document.getElementById('explicacion')?.textContent || ''`)).split('\n').length >= 1 && /Promedio|promedio/.test(await ev(`document.getElementById('explicacion')?.textContent || ''`)), 'the result explains the three games and their average');
+    await b.shot('weekend-day1-result');
+    await sitDown(code, 'Beto', '2222');
+    await playDay(1, 0);
+    const tbl = await ev(`JSON.stringify(Object.fromEntries(Object.entries(__copa.estado.copa.results[1]).map(([p,x])=>[__copa.estado.copa.players[p].name,x.s])))`).then(JSON.parse);
+    const rows = await ev(`(async()=>{const {tabla}=await import('/cup/engine.js');return JSON.stringify(tabla(__copa.estado.copa, null, __copa.store.now()+3*${DAY}).map(f=>[f.name,f.total]))})()`).then(JSON.parse);
+    ok(tbl.Cata > tbl.Beto && JSON.stringify(rows) === '[["Cata",10],["Beto",8]]', `the day is ranked by the three games' average, with the usual points (${JSON.stringify(tbl)} → ${JSON.stringify(rows)})`);
+  }
+}
+
 if (runs('demos')) {
   const DEMOS = { new: 'admin', guest: 'entrar', waiting: 'tablero', 'not-started': 'admin', player: 'tablero', admin: 'admin', final: 'tablero', 'final-admin': 'admin', podium: 'tablero', full: 'tablero' };
   for (const [demo, expected] of Object.entries(DEMOS)) {

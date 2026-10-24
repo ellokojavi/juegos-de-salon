@@ -112,7 +112,7 @@ try {
   // The length goes up front, next to when it starts: 7 days by default, 3 draws two games (D-437)
   ok(await ev(`document.querySelector('#crear-modo .opcion.on')?.textContent || ''`).then(t => /7 días/.test(t)), 'the length is in the first panel, at seven days');
   await ev(`([...document.querySelectorAll('#crear-modo .opcion')].find(x=>/7 días/.test(x.textContent)).click(), 1)`);
-  await ev(`([...document.querySelectorAll('#crear-modo .opcion')].find(x=>/3 días/.test(x.textContent)).click(), 1)`); await sleep(200);
+  await ev(`([...document.querySelectorAll('#crear-modo .opcion')].find(x=>/Copa de 3 días/.test(x.textContent)).click(), 1)`); await sleep(200);
   { const w = await week(); ok(w.length === 3 && new Set(w).size === 3 && !w.includes('final') && await ev(`document.querySelector('.semana-titulo').textContent`) === 'Los 3 días', `the 3-day cup draws three games under "Los 3 días" (${w.join(', ')})`); }
   ok(await ev(`document.querySelector('.semana-final').hidden && getComputedStyle(document.querySelector('.semana-final')).display === 'none'`), 'and has no final (D-438)');
   ok(/Tres juegos, sin final/.test(await ev(`document.querySelector('#crear-modo').textContent`)), 'the option says it: "Tres juegos, sin final."');

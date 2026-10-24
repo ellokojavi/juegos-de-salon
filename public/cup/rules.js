@@ -35,6 +35,8 @@ const BASE = {
   pintaminas: { emoji: '🖌️' },
   agentes: { emoji: '🕵️' },
   final: { emoji: '🏁' },
+  // A weekend cup's day of three (D-439)
+  trio: { emoji: '🎯' },
 };
 
 /** Los textos, uno por idioma (C-3, D-170). */
@@ -156,6 +158,12 @@ const ES = {
       puntajeSuelto: 'Tu puntaje es el promedio de las 5 rondas.',
       desempate: 'Si empatas, gana quien tardó menos.',
     },
+    trio: {
+      nombre: 'Tres juegos', habilidad: 'todo',
+      como: ['Juegas los 3 juegos del día, uno tras otro, cada uno completo. Antes de cada uno verás cómo se juega.'],
+      puntaje: 'Cada juego da de 0 a 100. Tu puntaje del día es el promedio de los 3, y con él se ordena el día.',
+      desempate: 'Si empatas, gana quien tardó menos en los 3.',
+    },
   },
   // The short rounds of the Grand Final, with their own explanation; a game without one is played whole (D-418)
   rondas: {
@@ -197,6 +205,9 @@ const ES = {
   fMode: '¿Cuánto dura?',
   mode3: 'Copa de 3 días',
   mode3Sub: 'Tres juegos, sin final.',
+  modeWeekend: '🎉 Copa de fin de semana',
+  modeWeekendSub: '3 días, 3 juegos cada día.',
+  weekendDay: 'Día {d}: {juegos}',
   mode7: 'Copa de 7 días',
   mode7Sub: 'Seis juegos y la final.',
   fGames: '¿Qué se juega cada día?',
@@ -976,6 +987,12 @@ const EN = {
       puntajeSuelto: 'Your score is the average of the 5 rounds.',
       desempate: 'On a tie, the faster player wins.',
     },
+    trio: {
+      nombre: 'Three games', habilidad: 'everything',
+      como: ['You play the day\'s 3 games, one after another, each one whole. Before each one you\'ll see how it\'s played.'],
+      puntaje: 'Each game scores 0 to 100. Your score for the day is the average of the 3, and the day is ranked by it.',
+      desempate: 'On a tie, the faster player over the 3 wins.',
+    },
   },
   rondas: {
     linea: 'Place 3 cards on the timeline. All 3 right is 100 points.',
@@ -1016,6 +1033,9 @@ const EN = {
   fMode: 'How long does it last?',
   mode3: '3-day cup',
   mode3Sub: 'Three games, no final.',
+  modeWeekend: '🎉 Weekend cup',
+  modeWeekendSub: '3 days, 3 games each day.',
+  weekendDay: 'Day {d}: {juegos}',
   mode7: '7-day cup',
   mode7Sub: 'Six games and the final.',
   fGames: 'What gets played each day?',
@@ -1783,6 +1803,12 @@ const PT = {
       puntajeSuelto: 'Sua pontuação é a média das 5 rodadas.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
     },
+    trio: {
+      nombre: 'Três jogos', habilidad: 'tudo',
+      como: ['Você joga os 3 jogos do dia, um atrás do outro, cada um inteiro. Antes de cada um você vai ver como se joga.'],
+      puntaje: 'Cada jogo vale de 0 a 100. Sua pontuação do dia é a média dos 3, e o dia é ordenado por ela.',
+      desempate: 'Se empatar, ganha quem levou menos tempo nos 3.',
+    },
   },
   rondas: {
     linea: 'Coloque 3 cartas na linha. As 3 certas valem 100 pontos.',
@@ -1823,6 +1849,9 @@ const PT = {
   fMode: 'Quanto tempo dura?',
   mode3: 'Copa de 3 dias',
   mode3Sub: 'Três jogos, sem final.',
+  modeWeekend: '🎉 Copa de fim de semana',
+  modeWeekendSub: '3 dias, 3 jogos por dia.',
+  weekendDay: 'Dia {d}: {juegos}',
   mode7: 'Copa de 7 dias',
   mode7Sub: 'Seis jogos e a final.',
   fGames: 'O que se joga em cada dia?',
@@ -2590,6 +2619,12 @@ const DE = {
       puntajeSuelto: 'Dein Ergebnis ist der Durchschnitt der 5 Runden.',
       desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
     },
+    trio: {
+      nombre: 'Drei Spiele', habilidad: 'Alles',
+      como: ['Du spielst die 3 Spiele des Tages nacheinander, jedes ganz. Vor jedem siehst du, wie es geht.'],
+      puntaje: 'Jedes Spiel bringt 0 bis 100 Punkte. Dein Tagesergebnis ist der Durchschnitt der 3, und danach wird der Tag gewertet.',
+      desempate: 'Bei Gleichstand gewinnt, wer für alle 3 weniger Zeit brauchte.',
+    },
   },
   rondas: {
     linea: 'Lege 3 Karten in den Zeitstrahl. Alle 3 richtig sind 100 Punkte.',
@@ -2630,6 +2665,9 @@ const DE = {
   fMode: 'Wie lange dauert er?',
   mode3: '3-Tage-Pokal',
   mode3Sub: 'Drei Spiele, kein Finale.',
+  modeWeekend: '🎉 Wochenend-Pokal',
+  modeWeekendSub: '3 Tage, jeden Tag 3 Spiele.',
+  weekendDay: 'Tag {d}: {juegos}',
   mode7: '7-Tage-Pokal',
   mode7Sub: 'Sechs Spiele und das Finale.',
   fGames: 'Was wird an welchem Tag gespielt?',
