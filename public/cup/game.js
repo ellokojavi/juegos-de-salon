@@ -23,7 +23,7 @@ import {
   POZO, VARIANTES, entradaCal, varianteDelDia, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
-  conCierre, cerradaAntes, anulado, puedeCerrar, semanaAlAzar, ESTILOS_SEMANA,
+  conCierre, cerradaAntes, anulado, puedeCerrar, semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL,
 } from './engine.js';
 import { GAME_ID, LOCALES, juegosCopa, rondasFinal, conVariante, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { createCuenta, juntarCopas } from './cuenta.js';
@@ -550,14 +550,16 @@ function armarSemana() {
   const familia = id => JUEGOS_COPA_ES[id].habilidad;
   const nuevos = POZO.filter(id => esNuevo(juegoPortada(id)));
   const estilos = Object.keys(ESTILOS_SEMANA).filter(e => e !== 'nuevo' || nuevos.length);
-  const semana = () => cal.slice(0, -1);
+  // The 3-day cup has no final (D-438): its three days are all games of the pool
+  const conFinal = () => !SIN_FINAL.includes(dias);
+  const semana = () => (conFinal() ? cal.slice(0, -1) : [...cal]);
   const movido = k => { const d = semana(); d.splice(d.indexOf(sel), 1); d.splice(k, 0, sel); return d; };
   const vista = () => (arrastrando && destino ? movido(Number(destino.slice(1))) : semana());
   const nombreVariante = id => VARIANTES[id] && (JUEGOS_COPA[id].variantes?.[variantes[id] || VARIANTES[id][0]]?.nombre || '').replace(/^[\p{Extended_Pictographic}️‍]+\s*/u, '');
 
   const tirar = ({ animar = true } = {}) => {
     estilo = ultimo;
-    cal = semanaAlAzar(dias, { familia, estilo, nuevos });
+    cal = semanaAlAzar(dias, { familia, estilo, nuevos, final: conFinal() });
     pintar();
     if (animar) { aLaVista(); barajar(); }
   };
@@ -609,7 +611,7 @@ function armarSemana() {
     rueda = setInterval(paso, 70);
   }
   /** A change by hand: the week no longer matches a style, and the die goes back to the last one. */
-  const aMano = w => { cal = [...w, 'final']; estilo = null; };
+  const aMano = w => { cal = conFinal() ? [...w, 'final'] : [...w]; estilo = null; };
 
   const dado = el('button', { type: 'button', class: 'btn-dado', id: 'btn-dado', onClick: () => { SFX.tap(); vibrate(15); tirar(); } }, T.weekDice);
   const chips = el('div', { class: 'semana-estilos', id: 'semana-estilos', role: 'group', 'aria-label': T.weekStylesLabel });
@@ -631,6 +633,7 @@ function armarSemana() {
       onClick: () => { SFX.tap(); ultimo = e; tirar(); },
     }, T.weekStyles[e])));
     lista.replaceChildren(...vista().map(fila));
+    finalFila.hidden = !conFinal();
     finalFila.replaceChildren(el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: cal.length })), el('span', { class: 'em' }, JUEGOS_COPA.final.emoji)),
       el('span', { class: 'semana-juego' }, el('b', {}, JUEGOS_COPA.final.nombre), el('small', {}, fmt(T.weekFinal, { n: cal.length - 1 }))));
     const cuenta = {};
@@ -710,7 +713,7 @@ function armarSemana() {
   return {
     nodo,
     get cal() { return cal.map(id => entradaCal(id, variantes[id])); },
-    /** The 3-day cup (D-437): another length, another week, and the title says "The 3 days". */
+    /** The 3-day cup (D-437): another length, another week with no final (D-438), and the title says "The 3 days". */
     dias(n) { dias = n; titulo.textContent = n === 7 ? T.weekTitle : fmt(T.weekTitleDays, { n }); tirar({ animar: false }); },
   };
 }
@@ -1225,7 +1228,7 @@ function entrar({ mantener = false } = {}) {
     el('div', { class: 'cal-mini' }, calendario(meta).map(j => el('span', { title: JUEGOS_COPA[j].nombre, class: con('', JUEGOS_COPA[j].emoji) }, JUEGOS_COPA[j].emoji))),
     // Por qué no puede inscribirse: terminó, la cerró el administrador, está llena o ya va en la final
     puedeEntrar ? null : el('p', { class: 'muted center' }, terminada(meta, now) ? T.closedEnded
-      : !inscripcionAbierta(meta, now) ? T.errCerrada : L().closed ? T.closedByAdmin : T.errLlena),
+      : !inscripcionAbierta(meta, now) ? (tieneFinal(meta) ? T.errCerrada : T.errCerradaLast) : L().closed ? T.closedByAdmin : T.errLlena),
     tabs, caja,
   );
   if (!puedeEntrar || entrarModo === 'inscrito' || (mio && entrarModo !== 'nuevo')) $('#tab-inscrito').click();
@@ -1258,7 +1261,8 @@ function hastaCuando(d, est, now) {
   const { meta } = L();
   const falta = faltaPara(meta.win[d].b - now);
   if (est === 'jugado') return fmt(T.closesIn, { t: falta });
-  if (est === 'gracia' || esFinal(meta, d)) return fmt(T.untilTonight, { t: falta });
+  // The last day has no grace day, final or not (D-438): the cup closes with it
+  if (est === 'gracia' || d === meta.days) return fmt(T.untilTonight, { t: falta });
   return T.untilTomorrowNight;
 }
 
@@ -1572,8 +1576,8 @@ let celebrado = false;
 
 /** "⚖️ Empate en 68 puntos: desempató quien ganó más días.", si el 1.° y el 2.° empatan en puntos (#79). */
 function lineaDesempate(TT, filas) {
-  const e = desempate(filas);
-  return e ? fmt(e.criterio === 'dias' ? TT.tieDays : TT.tieFinal, { pts: e.pts }) : '';
+  const e = desempate(filas, L()?.meta);
+  return e ? fmt({ dias: TT.tieDays, ultimo: TT.tieLast }[e.criterio] || TT.tieFinal, { pts: e.pts }) : '';
 }
 
 function podio() {
@@ -1692,7 +1696,7 @@ function mensajeHoy() {
   }
   const hoy = Math.min(d, meta.days);
   const J = G().J[juegoDelDia(meta, hoy)];
-  const hasta = esFinal(meta, hoy) ? G().T.untilToday : G().T.untilTomorrow;
+  const hasta = hoy === meta.days ? G().T.untilToday : G().T.untilTomorrow;
   const partes = [fmt(G().T.shareTodayText, { emoji: J.emoji, juego: J.nombre, hasta })];
   if (hoy > 1 && abierto(meta, hoy - 1, now) && faltan(Lc, hoy - 1, now).length) {
     const Ja = G().J[juegoDelDia(meta, hoy - 1)];
