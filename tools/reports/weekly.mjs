@@ -74,6 +74,6 @@ if (args.includes('--send')) {
     ...r.titular.map(f => `${f.nombre}: ${f.ahora ?? '—'} (week before: ${f.antes ?? '—'})`), '', 'The full report is attached as a PDF.'].join('\n');
   const msg = { toOwner: true, subject: `📊 Juegos de Salón · week of ${r.desde} – ${r.hasta}`, text: texto, attachments: [archivo] };
   const res = spawnSync('python3', [join(ROOT, 'tools/agents/send-mail.py')], { input: JSON.stringify(msg), encoding: 'utf8' });
-  if (res.status !== 0) fail(`✗ The email was not sent: ${(res.stderr || res.stdout || '').trim()}`);
+  if (res.status !== 0) fail(`✗ send-mail.py failed (its reason says whether the email went out): ${(res.stderr || res.stdout || '').trim()}`);
   console.log(`✓ emailed to the owner (${(res.stderr || '').trim()})`);
 }
