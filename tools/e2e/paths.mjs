@@ -212,6 +212,8 @@ export const PATHS = {
     // "Tus copas" with one in progress and two finished: the switch off and on (D-234)
     mine: [MINE_SEED, `1`],
     'mine-finished': [MINE_SEED, `1`, `document.getElementById('ver-terminadas').click()`],
+    // Every status at once (`&demo=mine`): ready, play it today, two days, half played, played, starts, out
+    'mine-status-all': [`location.href='/cup/?test&demo=mine'`, `1`, `1`, `document.getElementById('tus-copas').scrollIntoView({ block: 'start' })`],
     // All finished: "No tienes copas en curso." above the switch
     'mine-none': [MINE_SEED.replace('now + 3 * D', 'now - 1 * D'), `1`],
     // The day table of La Gran Final, with each one's five-round card (#259)

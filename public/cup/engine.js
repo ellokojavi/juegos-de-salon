@@ -473,6 +473,35 @@ export function enRiesgo(L, pid, now) {
   return 0;
 }
 
+/**
+ * Where a cup stands for `pid`, in one line for the "Tus copas" list on the cup's home page:
+ * `{ tipo: 'empieza', en }` before day 1 opens (`en`: ms until it does) · `{ tipo: 'jugar', dias, enCurso, hoy }`
+ * with the days they can still play (`hoy`: one of them closes today) · `{ tipo: 'al-dia', dia, en }`
+ * with nothing to play, and the next day and ms until it opens (`dia` 0 when none is left) ·
+ * `{ tipo: 'fuera' }` out of the cup (D-347) or taken out by the admin · null if over or `pid` is not in it.
+ */
+export function estadoEnLista(L, pid, now) {
+  if (!L?.meta || !L.players?.[pid]) return null;
+  L = conCierre(L);
+  const { meta } = L;
+  if (terminada(meta, now)) return null;
+  if (L.players[pid].out || fuera(L, pid, now)) return { tipo: 'fuera' };
+  if (now < meta.win[1].a) return { tipo: 'empieza', en: meta.win[1].a - now };
+  const dias = [];
+  let enCurso = false, hoy = false;
+  for (let d = 1; d <= meta.days; d++) {
+    const est = estadoDia(L, d, pid, now);
+    if (est !== 'hoy' && est !== 'gracia' && est !== 'en-curso') continue;
+    dias.push(d);
+    if (est === 'en-curso') enCurso = true;
+    // It closes tonight: yesterday's day in its grace day, or a day without one (the last, D-438)
+    if (now >= meta.win[d].h || meta.win[d].b <= meta.win[d].h) hoy = true;
+  }
+  if (dias.length) return { tipo: 'jugar', dias, enCurso, hoy };
+  for (let d = 1; d <= meta.days; d++) if (now < meta.win[d].a && !anulado(meta, d)) return { tipo: 'al-dia', dia: d, en: meta.win[d].a - now };
+  return { tipo: 'al-dia', dia: 0, en: 0 };
+}
+
 /** Jugadores que cuentan: los inscritos que el admin no sacó. */
 /** Todavía no hay con quién competir: falta al menos un jugador más. */
 export const faltaGente = L => activos(L).length < MIN_JUGADORES;

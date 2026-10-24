@@ -373,11 +373,18 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   docs/UNO-AL-DIA.md); La Copa's goes first when both are due, one per visit.
   The owner can open one cup's recap to all its players before the window leaves the lab: its code
   goes in `OPEN_CUPS` (`assets/js/recap.js`, D-426); the first is Thursday Guys #4 (`QNPFM`).
+- **Where you stand, in "Tus copas"** (for everyone since 2026-10-24, after the lab; kept in La Bodega
+  as `#seccion-copa-estado`): under each cup in course, one line from
+  `estadoEnLista` (`engine.js`) in the player's words (`mine*` in `rules.js`): ▶ a day ready to play
+  ("play it today" when it closes tonight; "n days to play" with several), ⏸ one half played,
+  ✅ played and when the next day opens (or nothing left to play), ⏳ how long until day 1, 🚪 out of the
+  cup (D-347). With a single day to play, the cup's link opens it (`&day=<d>`). Finished cups carry
+  no line; without network the list stays as it was. Screen: `copa mine-status-all`; `/cup/?test&demo=mine` seeds one cup per status.
 
 ## Flujo
 
 `intro` (portada: crear, tus copas —las de este celular y, con jugador, las suyas de otros
-celulares, D-220; las terminadas con su etiqueta y escondidas tras "Mostrar copas terminadas", D-234, all of them, newest first, D-336—,
+celulares, D-220; las terminadas con su etiqueta y escondidas tras "Mostrar copas terminadas", D-234, all of them, newest first, D-336; each in course with its status line—,
 tengo un código) → `crear` → `entrar` (invitación: Soy nuevo
 / Ya estoy inscrito) → `tablero` → `jugar` (primero Cómo se juega y el comodín) → `resultado` →
 `admin`. En el tablero van **tus días** (los pasados con su resultado y deshabilitados, el de hoy
