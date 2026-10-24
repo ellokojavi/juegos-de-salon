@@ -267,9 +267,11 @@ with that the screen also enters the language tests. To see it on a real phone,
   card) to read them against what landed, and the main things they name are in `LO_PRINCIPAL`
   (`public/assets/js/compartir.js`).
 - **Processes** (D-273, D-275, D-276): **the head of the agents.** Daily round at 4:30 Pacific
-  time on the owner's Mac mini (a scheduled task in the app, not in the cloud): it launches the documentation
-  and usability agents when there is something to review, and the game-ideas agent once a week
-  (D-360; `processes.mjs check` says which)
+  time on the owner's Mac mini (a claude.ai scheduled task that runs there, its instructions in
+  `tools/jobs/prompts/processes-round.md`; `round-watch.yml` opens the "Processes round missed" issue
+  when `main` goes more than a day unreviewed, D-440): it launches the documentation
+  and usability agents when there is something to review, and the game-ideas agent once a week, not while its last issue still waits for the owner's answers
+  (D-360, D-440; `processes.mjs check` says which)
   and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
   README", check how fresh the README is) are asked of it: it decides who, launches them, checks and replies. It handles the 🐞 feedback and the "💬 Sugerencias y comentarios" inbox at the end of every game (D-341),
   which the Mac mini's `feedback-watch` job uploads every 5 minutes (D-382) as `feedback` issues (`tools/agents/feedback.mjs`,
@@ -339,7 +341,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   are `mac` jobs, plain scripts that call Claude only when there is work (`inbox-watch`: the hola@
   inbox every 5 minutes). Adding one: [tools/jobs/README.md](tools/jobs/README.md). What the Mac mini
   holds and how to move it to another machine: [tools/jobs/MAC-MINI.md](tools/jobs/MAC-MINI.md) (D-383).
-- **Weekly report** (D-352): every Sunday the app's scheduled task `weekly-report` runs
+- **Weekly report** (D-352): every Sunday the scheduled task `weekly-report` (D-440) runs
   `node tools/reports/weekly.mjs --send`: the week that ended on Saturday, with the panel's numbers,
   as a PDF in `~/Documents/Juegos de Salón/Weekly reports/` and emailed to the owner.
 - **Panel, La Copa reports and rankings** (D-44, D-104, D-207, D-212): in the `owner-tools` skill (`.claude/skills/owner-tools/SKILL.md`); read it before touching them.

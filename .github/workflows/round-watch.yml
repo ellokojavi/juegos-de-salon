@@ -1,0 +1,41 @@
+# The processes round's watchdog (D-440): the round runs on the owner's Mac mini, and when it stops
+# nothing else would say so. Every day at 10:17 Pacific (17:17 UTC; 9:17 in winter), well after the
+# 4:30 round and its PR's merge, tools/agents/round-watch.mjs looks at what the round left on main:
+# if a commit it has not looked at is more than a day old, it opens the "Processes round missed"
+# issue (GitHub emails the owner); when the round catches up, it closes it. It also runs when the
+# round's memory changes on main, so the issue closes as soon as the round's PR merges.
+
+name: Processes round watchdog
+
+on:
+  schedule:
+    - cron: '17 17 * * *'
+  push:
+    branches: [main]
+    paths: ['docs/processes.json']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: round-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # A week of merges fits easily; a checkedUpTo older than this counts as far behind
+          fetch-depth: 1500
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Is the round behind?
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/agents/round-watch.mjs notify

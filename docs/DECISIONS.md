@@ -48,12 +48,12 @@ Where today's rule is and which decisions explain it: those in force that still 
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439 |
-| Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429 |
+| Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440 |
 | Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436 |
 | Marketing | `marketing/README.md` | D-178, D-380, D-410 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (426)
+## In force (427)
 
 | D | Title | Status |
 |---|---|---|
@@ -320,7 +320,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-273](decisions/D-273.md) | A processes agent, and one-tap decisions | amended by D-275, D-276, D-302, D-409 |
 | [D-274](decisions/D-274.md) | Rankings: the game just played counts, the solo game on the home page and Ahorcado solo | amended by D-353 |
 | [D-275](decisions/D-275.md) | 🐞 feedback arrives as issues and the processes agent handles it | amended by D-279, D-306, D-341 |
-| [D-276](decisions/D-276.md) | The processes agent is the boss of the other agents, and everything runs on the Mac mini | current |
+| [D-276](decisions/D-276.md) | The processes agent is the boss of the other agents, and everything runs on the Mac mini | amended by D-440 |
 | [D-277](decisions/D-277.md) | The verdict of a dated card tells its fact, and reading it costs no time | amended by D-314, D-379 |
 | [D-278](decisions/D-278.md) | Dated cards: they neither state their year nor ask for a fact the player does not know | current |
 | [D-279](decisions/D-279.md) | Feedback issues carry the sender's name | amended by D-366 |
@@ -403,7 +403,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-357](decisions/D-357.md) | A La Copa win by name alone joins the only player with that name | current |
 | [D-358](decisions/D-358.md) | The usual name and PIN carry a player's history into La Copa | current |
 | [D-359](decisions/D-359.md) | With a player signed in, La Copa asks for no cup PIN | current |
-| [D-360](decisions/D-360.md) | A game-ideas agent: three ideas a week, each with evidence, as one-tap decisions | current |
+| [D-360](decisions/D-360.md) | A game-ideas agent: three ideas a week, each with evidence, as one-tap decisions | amended by D-440 |
 | [D-361](decisions/D-361.md) | The home page's order every week, a 🔥 "Popular" label in the lab, and the lab in three groups | amended by D-363, D-369, D-373 |
 | [D-362](decisions/D-362.md) | "✨ Nuevo" and "🔥 Populares" as filters, in the lab | amended by D-369 |
 | [D-363](decisions/D-363.md) | The home page's experiments run on the real home page, without a frame | amended by D-389, D-395 |
@@ -483,6 +483,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-437](decisions/D-437.md) | The 3-day Copa, offered on the new create screen (in the lab) | amended by D-438 |
 | [D-438](decisions/D-438.md) | The 3-day Copa has no Grand Final | current |
 | [D-439](decisions/D-439.md) | The weekend cup: three days of three games, a one-off closed the night it opened | current |
+| [D-440](decisions/D-440.md) | The processes round runs from a visible scheduled task, with a watchdog on GitHub | current |
 
 ## No longer in force (11)
 
