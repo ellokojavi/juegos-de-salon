@@ -229,6 +229,15 @@ that (after a new game, after a big text change), saying why.
      something that contradicts a decision): it goes as a one-tap decision (below).
    - **Belongs to another session at work** (a PR with commits from today): you don't touch it
      (D-135).
+   **Branches with work that is not on main** (D-441), which `check` lists (and `pending-watch.yml`
+   keeps in the "Pending work" issue): commits on GitHub with no open PR, idle more than a day,
+   often pushed after their PR merged or by the worktree cleanup. For each, look at what it holds
+   (`git log origin/main..origin/<branch>` and its diff) against `main` today: **already there
+   another way, or replaced by a later decision** → delete it (`git push origin --delete <branch>`)
+   and name it in your report; **still wanted** → open its PR from a fresh branch on `origin/main`
+   with the usual reviews and auto-merge; **only the owner can say** → a one-tap decision whose Yes
+   queues "open a PR from <branch>". The issue is not part of the owner's backlog, and it closes itself
+   once nothing is left.
    **The owner's backlog** (D-339, owner's request): `check` lists the open issues with no label,
    the to-dos the owner writes, oldest first. Each round: close the ones already done, with a comment
    linking the PR that did them; move one or two forward, the smallest first, each in its own PR with
