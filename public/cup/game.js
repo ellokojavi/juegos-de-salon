@@ -751,10 +751,11 @@ async function crearCopa() {
   // On the screen of before, the 3-day cup is offered only with ?three or in the test store (D-100).
   // The new screen (D-425, a lab key) offers it always, next to the start (D-437), and starts at seven days.
   const juegos = nuevo ? armarSemana() : elegirJuegos();
-  // The weekend cup (D-439), for everyone on both screens until Sunday night: it takes the plain
+  // The weekend cup (D-439), offered on both screens while `FINDE_HASTA` allows (closed since the owner's one-off cup): it takes the plain
   // 3-day cup's place on the new screen while it is offered
   // Only in Spanish for now (the owner's request): offered on a Spanish screen, and its words in Spanish
-  const finde = LANG === 'es' && findeAbierto(Date.now()) ? armarFinde() : null;
+  // Closed once the owner's cup was made; the test store still offers it with `&weekend=on`
+  const finde = LANG === 'es' && (findeAbierto(Date.now()) || (PRUEBA && param('weekend') === 'on')) ? armarFinde() : null;
   const diasDe = v => (v === 'finde' ? 3 : v);
   const modo = opciones([
     finde ? { valor: 'finde', titulo: T.modeWeekend, sub: T.modeWeekendSub } : null,
