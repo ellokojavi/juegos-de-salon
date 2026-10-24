@@ -9,7 +9,8 @@
  * - the **empty** ones: no commits of their own and no changes, created more than a day ago;
  * - the **abandoned** ones: with commits that are not in `main`, no open PR and not moving for
  *   more than three days. Before removing them, their branch is pushed to GitHub: the work is not
- *   lost and is picked up again with `git worktree add ../juegos-de-salon-<topic> <branch>`.
+ *   lost and is picked up again with `git worktree add ../juegos-de-salon-<topic> <branch>`; until
+ *   someone opens its PR or deletes it, `pending-watch.yml` lists it in the "Pending work" issue (D-441).
  *
  * **Test litter** does not count as a change (D-315): an untracked folder at the worktree's root
  * named like a lost argument (`undefined/`, `null/`, `--part/`…) with only Chrome profiles and

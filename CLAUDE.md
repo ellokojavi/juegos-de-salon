@@ -274,7 +274,8 @@ with that the screen also enters the language tests. To see it on a real phone,
 - **Processes** (D-273, D-275, D-276): **the head of the agents.** Daily round at 4:30 Pacific
   time on the owner's Mac mini (a claude.ai scheduled task that runs there, its instructions in
   `tools/jobs/prompts/processes-round.md`; `round-watch.yml` opens the "Processes round missed" issue
-  when `main` goes more than a day unreviewed, D-440): it launches the documentation
+  when `main` goes more than a day unreviewed, D-440; `pending-watch.yml` keeps the "Pending work" issue with the stuck PRs and
+  the branches whose commits have no PR, `node tools/agents/pending.mjs check | notify`, D-441): it launches the documentation
   and usability agents when there is something to review, and the game-ideas agent once a week, not while its last issue still waits for the owner's answers
   (D-360, D-440; `processes.mjs check` says which)
   and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
