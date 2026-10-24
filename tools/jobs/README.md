@@ -40,7 +40,7 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
   `feedback/` as `feedback` issues (D-382). It was the GitHub workflow `feedback.yml`, which GitHub ran
   about 4 times a day instead of every 15 minutes; the workflow stays, by hand only.
 
-What the Mac mini holds besides the jobs (keys, sign-ins, the app's tasks) and how to move it all
+What the Mac mini holds besides the jobs (keys, sign-ins, the scheduled tasks) and how to move it all
 to another machine: [MAC-MINI.md](MAC-MINI.md).
 
 Logs: `~/Library/Logs/juegos-de-salon/<id>.log`. Last run: `~/.config/juegos-de-salon/jobs/<id>.json`.

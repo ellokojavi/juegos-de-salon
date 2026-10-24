@@ -10,8 +10,8 @@
  *
  * It reads as administrator (the owner's key, D-122) what the panel reads, and computes it with
  * the panel's own accounts (`weekly-data.mjs`). The PDF is printed by the same headless Chrome the
- * end-to-end tests use. The scheduled task "weekly-report" (the app, on the owner's Mac mini) runs
- * it with --send every Sunday.
+ * end-to-end tests use. The scheduled task `weekly-report` (claude.ai, running on the owner's Mac mini, D-440) runs
+ * it with --send every Sunday, following tools/jobs/prompts/weekly-report.md.
  */
 import { mkdirSync, writeFileSync, readFileSync, existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { join, dirname } from 'node:path';
