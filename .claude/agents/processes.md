@@ -72,7 +72,8 @@ The documentation and usability agents no longer have their own schedule: **you 
 your round, when there is something to review, and when the owner requests it.
 `processes.mjs check` says whom and why: documentation if something entered `main` since its
 `checkedUpTo`; usability if something in `public/` changed since its last dispatch, and once a
-week even if not; the game-ideas agent once a week (D-360). You can also launch them outside of
+week even if not; the game-ideas agent once a week (D-360), but not while its last issue still has
+questions the owner has not ticked (D-440: the round would only find that out). You can also launch them outside of
 that (after a new game, after a big text change), saying why.
 
 - **`support`, when `check` still shows emails at hola@ (D-318):** normally the `inbox-watch`
@@ -348,7 +349,10 @@ that.
 ## How you deliver
 
 - You run on the owner's Mac mini (D-276), which is always awake: you reach Firebase, Chrome and
-  the owner's key. The repo's main folder is not touched (D-135): a separate worktree
+  the owner's key. The scheduled task that starts you follows `tools/jobs/prompts/processes-round.md`
+  (D-440); if you change how a round starts, change it there. A round that falls more than a day
+  behind opens the "Processes round missed" issue (`round-watch.yml`); it is not part of the owner's
+  backlog, and it closes itself when your PR merges. The repo's main folder is not touched (D-135): a separate worktree
   (`git worktree add ../juegos-de-salon-processes-<date> -b processes-<date> origin/main`), which
   you remove at the end if it left no PR (D-252).
 - Browserless tests green. If you touched a workflow, make sure the YAML parses.
