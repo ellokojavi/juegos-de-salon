@@ -10,16 +10,35 @@
  * `clues-pt.js` and `clues-de.js`. In a cup the words are the cup's language (`palabras`), so
  * everybody plays the same board.
  */
-import { PISTAS as ES } from './clues.js';
+import { PISTAS as ES, LOCALES as LOCALES_ES } from './clues.js';
 import { PISTAS as EN } from './clues-en.js';
-import { PISTAS as PT } from './clues-pt.js';
+import { PISTAS as PT, LOCALES as LOCALES_PT } from './clues-pt.js';
 import { PISTAS as DE } from './clues-de.js';
 import { hash32 } from '../semilla.js';
+import { fuera } from '../audiencia.js';
 import { rng } from '../../../assets/js/rng.js';
 
 export const MAZOS = { es: ES, en: EN, pt: PT, de: DE };
 /** The deck of a language; Spanish if there is none. */
 export const mazoDe = lang => MAZOS[lang] || ES;
+
+const LOCALES = { es: LOCALES_ES, pt: LOCALES_PT };
+const PARA = new Map();
+/**
+ * The deck a cup's audience plays (D-187): without the clues and the words only another country
+ * knows. Without an audience (`null`: standalone, Uno al día, the cups from before D-187), the
+ * whole deck, so those boards do not change.
+ */
+export function mazoPara(lang, aud = null) {
+  const mazo = mazoDe(lang);
+  if (!aud) return mazo;
+  const clave = `${lang}:${aud}`;
+  if (!PARA.has(clave)) {
+    const locales = LOCALES[lang] || {}, queda = w => !fuera(locales[w], aud);
+    PARA.set(clave, mazo.filter(x => !fuera(x.local, aud)).map(x => ({ ...x, si: x.si.filter(queda), casi: x.casi.filter(queda) })));
+  }
+  return PARA.get(clave);
+}
 
 import { POR_PISTA, CUANTAS, CORTAS, NEUTRALES, AGENTES, RESTA_NEUTRAL, RESTA_ASESINO, ENSAYO } from './numbers.js';
 export { POR_PISTA, CUANTAS, CORTAS, NEUTRALES, AGENTES, RESTA_NEUTRAL, RESTA_ASESINO, ENSAYO };
@@ -34,8 +53,8 @@ const barajar = (xs, r) => { const a = xs.slice(); for (let i = a.length - 1; i 
  * (they come from its temptations, `casi`) but go with none, so the cards that are not yours look
  * like some clue's. A clue that is a word (or a temptation) of another never shares a board with it.
  */
-export function generar(semilla, { lang = 'es', cuantas = CUANTAS, neutrales: nNeutrales = NEUTRALES } = {}) {
-  const PISTAS = mazoDe(lang);
+export function generar(semilla, { lang = 'es', aud = null, cuantas = CUANTAS, neutrales: nNeutrales = NEUTRALES } = {}) {
+  const PISTAS = mazoPara(lang, aud);
   const r = rng(hash32(`agentes:${semilla}`));
   for (let intento = 0; intento < 500; intento++) {
     const elegidas = barajar(PISTAS, r).slice(0, cuantas);
@@ -73,10 +92,11 @@ export function generar(semilla, { lang = 'es', cuantas = CUANTAS, neutrales: nN
 
 /**
  * The board of a cup day, its trial and the standalone game (D-331's `generarDia`): the code, the
- * day and the salt decide it, and the words are the cup's language (`palabras`), or the player's.
+ * day and the salt decide it, the words are the cup's language (`palabras`), or the player's, and
+ * the cup's audience (`aud`) leaves out what only another country knows.
  */
-export function generarDia(codigo, dia, { sal = '', lang = 'es', palabras = lang, ensayo = false } = {}) {
-  return generar(`${codigo}:${dia}${sal ? `:${sal}` : ''}`, { lang: palabras, ...(ensayo ? ENSAYO : {}) });
+export function generarDia(codigo, dia, { sal = '', lang = 'es', palabras = lang, aud = null, ensayo = false } = {}) {
+  return generar(`${codigo}:${dia}${sal ? `:${sal}` : ''}`, { lang: palabras, aud, ...(ensayo ? ENSAYO : {}) });
 }
 
 /** How many agents a board has: 11, or 5 in the trial. */
