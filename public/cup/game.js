@@ -1645,7 +1645,7 @@ let avisosCopa = null;
 const avisos = () => (avisosCopa ||= crearAvisos({
   T, lang: LANG, cuenta, fmt, toast,
   store: () => store,
-  copa: () => ({ code: S.code, pid: S.yo, nombre: L()?.meta?.name || '', url: urlPublica(S.code) }),
+  copa: () => ({ code: S.code, pid: S.yo, nombre: L()?.meta?.name || '', url: urlPublica(S.code), final: L()?.meta ? tieneFinal(L().meta) : true }),
   redibujar: () => { if (S.pantalla === 'resultado' && S.verDia) resultado(S.verDia); else if (S.pantalla === 'tablero') tablero(); },
   tap: () => SFX.tap(),
 }));
