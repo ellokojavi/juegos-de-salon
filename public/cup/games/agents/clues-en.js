@@ -47,7 +47,7 @@ export const CLASICAS = [
   { pista: 'BABY', si: ['DIAPER', 'BOTTLE', 'CRIB', 'RATTLE', 'STROLLER', 'PACIFIER', 'LULLABY', 'BIB', 'CRADLE'], casi: ['CHILD', 'GRANDPA', 'DOLL'] },
   { pista: 'CAR', si: ['WHEEL', 'ENGINE', 'TIRE', 'GASOLINE', 'SEATBELT', 'HORN', 'TRUNK', 'DRIVER', 'GARAGE'], casi: ['BICYCLE', 'TRAIN', 'BOAT'] },
   { pista: 'EGYPT', si: ['PYRAMID', 'PHARAOH', 'MUMMY', 'NILE', 'SPHINX', 'CAMEL', 'DESERT', 'CAIRO', 'PAPYRUS'], casi: ['GREECE', 'MEXICO', 'ROME'] },
-  { pista: 'SLEEP', si: ['BED', 'PILLOW', 'DREAM', 'PAJAMAS', 'BLANKET', 'SNORE', 'NAP', 'YAWN', 'LULLABY'], casi: ['REST', 'SOFA', 'NIGHT'] },
+  { pista: 'SLEEP', si: ['BED', 'PILLOW', 'DREAM', 'PAJAMAS', 'BLANKET', 'SNORE', 'NAP', 'YAWN', 'LULLABY'], casi: ['REST', 'SOFA', 'COFFEE'] },
   { pista: 'PAINTING', si: ['BRUSH', 'CANVAS', 'EASEL', 'PALETTE', 'COLOR', 'ARTIST', 'FRAME', 'PORTRAIT', 'MUSEUM'], casi: ['PHOTO', 'DRAWING', 'SCULPTURE'] },
   { pista: 'SUMMER', si: ['SUN', 'HEAT', 'BEACH', 'VACATION', 'SUNGLASSES', 'POPSICLE', 'POOL', 'SUNBURN', 'FAN'], casi: ['SPRING', 'AUTUMN', 'DESERT'] },
   { pista: 'DOG', si: ['BARK', 'BONE', 'LEASH', 'PUPPY', 'TAIL', 'COLLAR', 'KENNEL', 'FETCH', 'PAW'], casi: ['WOLF', 'FOX', 'COYOTE'] },

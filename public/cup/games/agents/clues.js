@@ -47,7 +47,7 @@ export const CLASICAS = [
   { pista: 'BEBÉ', si: ['PAÑAL', 'CHUPETE', 'MAMADERA', 'CUNA', 'COCHE', 'SONAJERO', 'BABERO', 'LLANTO', 'GATEO'], casi: ['NIÑO', 'ABUELO', 'MUÑECA'] },
   { pista: 'AUTO', si: ['RUEDA', 'MOTOR', 'VOLANTE', 'BENCINA', 'FRENO', 'BOCINA', 'PATENTE', 'MANEJAR', 'ESTACIONAMIENTO'], casi: ['BICICLETA', 'TREN', 'BARCO'] },
   { pista: 'CHILE', local: 'cl', si: ['EMPANADA', 'CUECA', 'COPIHUE', 'HUASO', 'VINO', 'ANDES', 'SANTIAGO', 'PEBRE', 'DIECIOCHO'], casi: ['ARGENTINA', 'TANGO', 'MÉXICO'] },
-  { pista: 'DORMIR', si: ['CAMA', 'ALMOHADA', 'SUEÑO', 'SIESTA', 'FRAZADA', 'BOSTEZO', 'PIJAMA', 'RONQUIDO', 'COLCHÓN'], casi: ['DESCANSO', 'SOFÁ', 'NOCHE'] },
+  { pista: 'DORMIR', si: ['CAMA', 'ALMOHADA', 'SUEÑO', 'SIESTA', 'FRAZADA', 'BOSTEZO', 'PIJAMA', 'RONQUIDO', 'COLCHÓN'], casi: ['DESCANSO', 'SOFÁ', 'CAFÉ'] },
   { pista: 'PINTURA', si: ['PINCEL', 'CUADRO', 'TELA', 'MUSEO', 'ACUARELA', 'PALETA', 'COLOR', 'ARTISTA', 'RETRATO'], casi: ['FOTO', 'DIBUJO', 'ESCULTURA'] },
   // Desde D-288: 60 más, para que quien juega todos los días no vea las mismas pistas
   { pista: 'VERANO', si: ['SOL', 'CALOR', 'VACACIONES', 'HELADO', 'PISCINA', 'BLOQUEADOR', 'BRONCEADO', 'SANDÍA', 'CHALAS', 'QUITASOL'], casi: ['PRIMAVERA', 'OTOÑO', 'DESIERTO'] },
