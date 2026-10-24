@@ -79,6 +79,7 @@ assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2,
   assert.equal(ideasWaiting([{ number: 600, title: 'Processes: 2026-10-20', labels: lab, body: [box(1, false), acts].join('\n') }]), null, 'a processes issue is not an ideas issue');
 }
 assert.deepEqual(backlog([{ number: 9, title: 'Processes round missed', labels: [], createdAt: '2026-10-20T00:00:00Z' }]), [], "the watchdog's issue is not an owner's to-do (D-440)");
+assert.deepEqual(backlog([{ number: 10, title: 'Pending work', labels: [], createdAt: '2026-10-20T00:00:00Z' }]), [], "pending-watch's issue is not an owner's to-do (D-441)");
 
 assert.ok(EXECUTORS.includes('ideas'), 'ideas can be recorded with dispatch');
 

@@ -99,7 +99,8 @@ Several Claude sessions may be working in this repo at the same time:
   waiting for the hook, and when its work is done only worktrees with an open PR remain. The hook sweeps
   whatever slips through, including the worktrees the Claude app creates (in .claude/worktrees): the **empty** ones (no commits
   of their own, older than a day) and the **abandoned** ones (commits outside `main`, no open PR and
-  idle for more than three days), which push their branch to GitHub before being deleted so nothing is lost.
+  idle for more than three days), which push their branch to GitHub before being deleted so nothing is lost
+  (and `pending-watch.yml` lists that branch until someone opens its PR or deletes it, D-441).
   It never touches a worktree with uncommitted changes; **test junk** (`undefined/`,
   `--parte/` with only Chrome profiles and screenshots) does not count as a change and goes with the worktree.
   It also deletes **local branches** without a worktree that already reached `main` or that no longer have a branch
@@ -172,7 +173,11 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    after the merge no longer waits for anyone: `publish.yml` runs the tests and the end-to-end suite on
    `main` (unless that same tree already passed it in the PR, D-308), publishes the Firebase rules and
    the site (D-302), and the worktree is deleted by the session-start hook. When `wait-pr.mjs` says
-   `merged`, the session checks it on GitHub, then does what follows (report, clean up, go on). With
+   `merged`, the session checks it on GitHub, then does what follows (report, clean up, go on).
+   Where `gh pr view` is refused (some cloud sessions) it reads the REST API instead, and after five
+   failed reads in a row it says `unreadable` and stops rather than retrying in silence (D-441).
+   A PR nobody is waiting for any more is still not lost: `pending-watch.yml` keeps a "Pending work"
+   issue every day with the stuck PRs and the branches whose commits have no PR (D-441). With
    auto-merge on, the `end-to-end` check still comments "✅ Both checks are green: auto-merge merges
    this PR now" (D-323), but no longer holds the check two minutes for the monitor (D-400), and
    `publish.yml` comments on the merged PR with the version that went live, as a record.
@@ -269,7 +274,8 @@ with that the screen also enters the language tests. To see it on a real phone,
 - **Processes** (D-273, D-275, D-276): **the head of the agents.** Daily round at 4:30 Pacific
   time on the owner's Mac mini (a claude.ai scheduled task that runs there, its instructions in
   `tools/jobs/prompts/processes-round.md`; `round-watch.yml` opens the "Processes round missed" issue
-  when `main` goes more than a day unreviewed, D-440): it launches the documentation
+  when `main` goes more than a day unreviewed, D-440; `pending-watch.yml` keeps the "Pending work" issue with the stuck PRs and
+  the branches whose commits have no PR, `node tools/agents/pending.mjs check | notify`, D-441): it launches the documentation
   and usability agents when there is something to review, and the game-ideas agent once a week, not while its last issue still waits for the owner's answers
   (D-360, D-440; `processes.mjs check` says which)
   and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
