@@ -26,7 +26,7 @@ try {
   await b.until(`document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)').length >= 4`, 5000);
   await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Copa variantes';i[1].value='Cata';i[2].value='1111';i[3].value='1111';return 1})()`);
   // The 3-day cup, starting today
-  await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o.find(x=>/3/.test(x.textContent)).click();o.find(x=>/^Hoy/.test(x.textContent.trim())).click();return 1})()`);
+  await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o.find(x=>/^Copa de 3 días/.test(x.textContent)).click();o.find(x=>/^Hoy/.test(x.textContent.trim())).click();return 1})()`);
   await sleep(200);
   // Shuffles until the two game days are Pintaminas and Loteo
   const both = await ev(`(()=>{const has=()=>{const d=[...document.querySelectorAll('#cal-elegir .event[data-dia]')].map(x=>x.dataset.juego);return d.includes('pintaminas')&&d.includes('loteo')};

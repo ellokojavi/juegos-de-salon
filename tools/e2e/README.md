@@ -70,7 +70,7 @@ what failed or passed on the second attempt. A new script gets in on its own, wi
 measured: each job leaves a "Durations" notice with how long each script took, and
 `node tools/e2e/groups.mjs measure` moves it into `durations.json` (the processes round, every round;
 that file alone runs no script, D-428). A script that goes over about 4 minutes is split into parts (`PARTS` in
-`ci.mjs`, D-204): `cup/tournament.mjs` into `cup`, `labs` and `demos`, `cup/languages.mjs` into `cup`,
+`ci.mjs`, D-204): `cup/tournament.mjs` into `cup`, `labs`, `demos` and `weekend` (D-439), `cup/languages.mjs` into `cup`,
 `standalone`, `screens-a` and `screens-b` (D-428), and `cup-games/languages.mjs` into one per game. Each part reaches the script as `--part <name>`; without a part, the script runs whole
 (that is how `readme.py screenshots` runs it, and anyone testing it by hand).
 
