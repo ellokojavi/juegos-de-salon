@@ -361,7 +361,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-314](decisions/D-314.md) | A hit also counts the card's fact, in the verdict | current |
 | [D-315](decisions/D-315.md) | The projects folder cleans itself, also branches and test junk | current |
 | [D-316](decisions/D-316.md) | Repository language: English, for everything internal | current |
-| [D-317](decisions/D-317.md) | Feedback: an optional email, kept private, and a friendly reply when it's resolved | amended by D-327, D-341, D-366, D-368, D-370, D-443 (only from hola@, checked on every email) |
+| [D-317](decisions/D-317.md) | Feedback: an optional email, kept private, and a friendly reply when it's resolved | amended by D-327, D-341, D-366, D-368, D-370, D-443 |
 | [D-318](decisions/D-318.md) | hola@juegosdesalon.cl: a Cloudflare Worker, a narrow inbox user and a support agent | current |
 | [D-319](decisions/D-319.md) | A room that doesn't open: the button says it's trying, and one tap goes to one phone | current |
 | [D-320](decisions/D-320.md) | Room writes nobody waits for are caught in the transport, and a denied resend is not a failure | current |
