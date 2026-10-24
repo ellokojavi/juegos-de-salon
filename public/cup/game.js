@@ -3054,7 +3054,17 @@ async function demo(nombre) {
   const st = await abrirStore();
   await st.listo();
   st.reiniciarReloj();
-  const { sembrar } = await import('./demo.js');
+  const { sembrar, MIS_COPAS } = await import('./demo.js');
+  // One cup per status of "Tus copas" (lab: #seccion-copa-estado), then the home page with them
+  if (nombre === 'mine') {
+    for (const [escena, copa] of [...MIS_COPAS].reverse()) {
+      const x = sembrar(escena, { now: st.now(), uid: st.uid, copa });
+      if (x?.pid) cuenta.recordar(x.code, x.pid, { nombre: x.nombre, copa: x.meta.name, fin: x.meta.end });
+    }
+    history.replaceState(null, '', `${location.pathname}?test${tiene('lab') ? '&lab' : ''}`);
+    portada();
+    return;
+  }
   const e = sembrar(nombre, { now: st.now(), uid: st.uid });
   if (!e) { portada(); return; }
   if (e.pid) cuenta.recordar(e.code, e.pid, { nombre: e.nombre, copa: e.meta.name, fin: e.meta.end });
