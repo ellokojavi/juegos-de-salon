@@ -56,7 +56,8 @@ for (const [i, lang] of (runs('cup') ? OTHERS : []).entries()) {
   await check(`${lang}-00-home`);
   await ev(`document.getElementById('btn-crear').click(); 1`); await b.until(`document.querySelectorAll('#crear-body input').length >= 4`, 800); await b.settle(800);
   await ev(`(()=>{const i=[...document.querySelectorAll('#crear-body input:not(.fecha):not(#crear-link)')];i[0].value='Copa ${lang}';i[1].value='Ana';i[2].value='1111';i[3].value='1111';return 1})()`);
-  await ev(`(()=>{const o=[...document.querySelectorAll('#crear-body .opcion')];o[1].click();o[3].click();return 1})()`);
+  // The 7-day cup is the length's last option (the weekend cup, D-439, may come first) and Tomorrow the start's second
+  await ev(`(()=>{const g=[...document.querySelectorAll('#crear-body .opciones')];g[0].lastElementChild.click();g[1].children[1].click();return 1})()`);
   const pickedLanguage = await ev(`[...document.querySelectorAll('#crear-body .opcion.on')].map(x=>x.textContent).join('|')`);
   ok(has(pickedLanguage, T.langNames[lang]), `${lang}: the words' language starts as the creator's (${pickedLanguage})`);
   await check(`${lang}-01-create`);

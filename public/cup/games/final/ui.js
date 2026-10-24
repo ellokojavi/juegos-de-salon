@@ -36,20 +36,22 @@ const ESTADO = {
 };
 
 const rondasDe = p => (Array.isArray(p?.rondas) ? p.rondas : final.RONDAS);
+/** A round played in its short version: never in a day of three, where every game is whole (D-439). */
+const esCorta = (p, r) => !p?.enteras && !!ESTADO[r];
 
 /** The result so far: `{ rondas, pts }` with the rounds finished, for the score and the card. */
 export function estados(p, jugadas) {
   const rondas = rondasDe(p), pts = {};
   for (const r of rondas) {
     if (!jugadas?.hechas?.[r]) continue;
-    pts[r] = ESTADO[r] ? final.puntosRonda[r](ESTADO[r](p[r], jugadas.sub?.[r])) : jugadas.pts?.[r] || 0;
+    pts[r] = esCorta(p, r) ? final.puntosRonda[r](ESTADO[r](p[r], jugadas.sub?.[r])) : jugadas.pts?.[r] || 0;
   }
   return { rondas, pts };
 }
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX } = ctx;
-  const JUEGOS_COPA = juegosCopa(ctx.lang), RONDAS_FINAL = rondasFinal(ctx.lang);
+  const JUEGOS_COPA = juegosCopa(ctx.lang), RONDAS_FINAL = p?.enteras ? {} : rondasFinal(ctx.lang);
   const rondas = rondasDe(p), n = rondas.length;
   const j = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) ? ctx.jugadas : {};
   const J = { ronda: j.ronda || 0, sub: { ...(j.sub || {}) }, hechas: { ...(j.hechas || {}) }, pts: { ...(j.pts || {}) }, t0: { ...(j.t0 || {}) }, jugando: !!j.jugando };
@@ -71,7 +73,7 @@ export function montar(raiz, ctx) {
         RONDAS_FINAL[r] ? null : [el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, M.puntaje)]),
       J.ronda > 0 ? el('p', { class: 'muted center' }, fmt(T.finalSoFar, { pts: lleva })) : null,
       el('button', { class: 'btn btn--yellow', id: 'btn-ronda', onClick: () => {
-        SFX.tap(); J.jugando = true; if (!ESTADO[r] && J.t0[r] === undefined) J.t0[r] = ahora(); guardar(); ronda();
+        SFX.tap(); J.jugando = true; if (!esCorta(p, r) && J.t0[r] === undefined) J.t0[r] = ahora(); guardar(); ronda();
       } }, `${M.emoji} ${T.roundStart}`)));
   };
 
@@ -79,7 +81,7 @@ export function montar(raiz, ctx) {
     raiz.innerHTML = '';
     const r = rondas[J.ronda];
     const M = ficha(r);
-    const corta = !!ESTADO[r];
+    const corta = esCorta(p, r);
     const mod = corta ? UI[r] : ctx.juegos?.[r];
     const caja = el('div', { class: 'final-ronda' });
     poner(raiz, el('p', { class: 'muted center', style: 'margin:0 0 8px' }, `${fmt(T.roundOf, { i: J.ronda + 1, n })} · ${M.emoji} ${M.nombre}`), caja);
@@ -98,7 +100,7 @@ export function montar(raiz, ctx) {
       p: p[r],
       variante: p[r]?.variante ?? null,
       jugadas: J.sub[r],
-      max: r === 'numero' ? final.NUMERO_INTENTOS : undefined,
+      max: corta && r === 'numero' ? final.NUMERO_INTENTOS : undefined,
       textoFin: ultima ? T.seeResults : T.roundNext,
       cierreAbajo: true, // en la final, el botón para seguir va debajo del tablero, en todas las rondas
       ...(corta ? {} : { tiempo: () => Math.max(0, ahora() - (J.t0[r] || 0)) }),

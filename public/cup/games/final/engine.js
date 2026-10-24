@@ -30,9 +30,10 @@ export const LETRAS_INTENTOS = 6;
  * `rondas`: the final's rounds as calendar entries (`finalRounds(meta)`); without it, the five fixed ones.
  * `otro(id, { variante, ... })`: builds a game without a short version (the registry passes it,
  * since this engine cannot import it without a cycle).
- * Returns `{ rondas: [ids], <id>: content, ... }`.
+ * `enteras`: every game is played whole, none in its short version (a weekend cup's day of three, D-439).
+ * Returns `{ rondas: [ids], <id>: content, ... }`, and `enteras: true` when asked.
  */
-export function generar(codigo, dia, { lang = 'es', palabras = lang, aud = null, rondas = RONDAS, otro = null } = {}) {
+export function generar(codigo, dia, { lang = 'es', palabras = lang, aud = null, rondas = RONDAS, otro = null, enteras = false } = {}) {
   const tema = temasDeLaCopa(codigo, { aud }).final;
   const corta = {
     linea: () => linea.generar(codigo, dia, { n: 4, tema, sal: 'final-linea', lang, aud }),
@@ -41,11 +42,11 @@ export function generar(codigo, dia, { lang = 'es', palabras = lang, aud = null,
     letras: () => letras.generar(codigo, dia, { max: LETRAS_INTENTOS, sal: 'final-letras', palabras, aud }),
     anio: () => anio.generar(codigo, dia, { n: 2, tema, sal: 'final-anio', lang, aud }),
   };
-  const out = { rondas: [] };
+  const out = { rondas: [], ...(enteras ? { enteras: true } : {}) };
   for (const x of rondas) {
     const { id, variante } = diaDeCal(x);
     if (out[id]) continue;
-    if (corta[id]) out[id] = corta[id]();
+    if (corta[id] && !enteras) out[id] = corta[id]();
     else if (otro) out[id] = otro(id, { lang, palabras, aud, variante });
     else continue;
     out.rondas.push(id);
