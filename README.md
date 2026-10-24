@@ -103,6 +103,7 @@ How it works:
 - **Language** (D-170): the screen follows each player's language; the cup's language, chosen at creation, sets the words of the word games and every shared message. **Audience** (D-186, D-187): 🌎 Global, 🇨🇱 Chile or 🇧🇷 Brazil decides which local content is in.
 - **Phone notifications** (D-223, D-224, D-228): a 🔔 bell per cup; reminders when a day opens or is running out, the final and the winner ([docs/PWA-NOTIFICACIONES.md](docs/PWA-NOTIFICACIONES.md)). A **recap window** on the home page shows how a cup you played ended, with the final table image the cup shares (D-423, D-426, D-427; `/?recap=demo`).
 - **Bug reports and comments need no account** (D-104, D-341): the 🐞 form and the "💬 Suggestions and comments" link at the end of every game post to `feedback/`; an optional email gets a reply when resolved (D-317). Emails to **hola@juegosdesalon.cl** land there too (D-318).
+- **🎉 The weekend cup** (D-439): until the end of Sunday, October 25, 2026 (Pacific time), a cup created on a Spanish screen can also last **3 days with 3 games each day**: 🎲 draws nine different games, each day plays its three one after the other, and the day's score is their average, which hands out the usual points by place. No final; cups already created play on after the option is gone.
 - **Testing:** `?three` makes a 3-day cup (D-100); `?test` plays with no Firebase, as the demos, the screenshots and the end-to-end scripts do.
 
 Spec and design: [docs/games/cup.md](docs/games/cup.md)
