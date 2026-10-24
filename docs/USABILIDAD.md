@@ -248,7 +248,7 @@ Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
 - **The final's texts outside a cup say five rounds** (D-418 review, option A, the owner on 2026-10-22):
   the lab's practice of 🏁 La Gran Final and its trial have no week, so they play the five fixed
   rounds and say so ("Son 5 rondas cortas seguidas…", `comoSuelta` and `puntajeSuelto` in the final's
-  texts); inside a cup the final says one round of each game of the week.
+  texts); inside a cup the final says one round of each game of the cup (not "of the week": a cup can last 3 days, D-437).
 - **One line for the rounds played whole** (D-418 review, option A, the owner on 2026-10-22): the
   final's folded rules say once, above the list, that games without a short version are played whole
   with new content (`finalWholeNote`); in the list only the short rounds carry their explanation and

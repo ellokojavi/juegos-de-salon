@@ -206,6 +206,9 @@ export const PATHS = {
   copa: {
     intro: [],
     create: [`document.getElementById('btn-crear').click()`],
+    // The new create screen (D-425, lab) with the 3-day cup chosen: "Los 3 días" and its two games (D-437)
+    'create-three': [`location.href='/cup/?test&lab'`, `1`, `1`, `document.getElementById('btn-crear').click()`, `1`,
+      `document.querySelector('#crear-modo .opcion').click()`, `1`, `document.getElementById('crear-modo').scrollIntoView({ block: 'start' })`],
     // "Tus copas" with one in progress and two finished: the switch off and on (D-234)
     mine: [MINE_SEED, `1`],
     'mine-finished': [MINE_SEED, `1`, `document.getElementById('ver-terminadas').click()`],

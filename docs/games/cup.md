@@ -12,8 +12,8 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 
 - **Estado:** en el menú desde v0.83.0 (D-175). `/labs/` ya no tiene nada de La Copa salvo El caso,
   que todavía no entra al pozo (D-262).
-- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?three` (ofrece la Copa de 3 días,
-  D-100, D-262) · `?test` (almacén local y reloj adelantable, sin
+- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?three` (ofrece la Copa de 3 días
+  en la pantalla de antes, D-100, D-262, D-437) · `?test` (almacén local y reloj adelantable, sin
   Firebase) · `/cup/?K7Q2X&day=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
   los avisos, D-229) · `/cup/?K7Q2X&mute` (silencia los avisos de esa copa: el botón del aviso
   en Android) · `/cup/?practice=<juego>&labs&seed=K7Q2X` (un juego suelto con la semilla a la vista,
@@ -29,13 +29,13 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   **Idioma:** español, inglés, portugués (D-170) y alemán (D-191, para todos desde D-197). La
   pantalla va en el idioma de quien mira; las palabras de Agentes, Conexiones (copas de antes de D-421) y Palabra, los mensajes al
   grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).
-- **Modalidades:** Copa de 7 días (la que se ofrece) y Copa de 3 días (solo pruebas).
+- **Modalidades:** Copa de 7 días y Copa de 3 días (dos juegos y la final). The 3-day one is offered on the new create screen, in the lab, next to when it starts (D-437); on the screen of before only with `?three` or in the test store (D-100).
 - **Calendario:** lo arma el admin al crear la copa (D-163): qué juegos entran y en qué orden,
   a partir de una propuesta al azar. La final va siempre el último día y repite los juegos de la semana, en su orden (D-418).
   In the lab (D-425), a key holder sees a new create screen: the week in view from the start, 🎲 Crear al
   azar, week styles (Balanced, Puzzles, Trivia and words, What's new), a sheet with the
   13 games to change, move or pick the version of a day, Ahora/Mañana with their weekday, the PIN once with 👁, and the language, audience and
-  link folded in "More options". The test store shows it only with `&lab` (`tools/e2e/cup/create-week.mjs`).
+  link folded in "More options"; the length (3 or 7 days) goes next to when it starts (D-437). The test store shows it only with `&lab` (`tools/e2e/cup/create-week.mjs`).
 
 ### Pendiente (después de la v1)
 
