@@ -492,6 +492,7 @@ node public/assets/js/uno-al-dia-avisos.test.mjs
 node public/assets/js/uno-al-dia-jugador.test.mjs
 node public/assets/js/uno-al-dia.test.mjs
 node public/assets/js/vigia.test.mjs
+node public/cup/games/agents/palette.test.mjs
 node public/cup/games/deshacer.test.mjs
 node public/cup/games/juegos.test.mjs
 node public/cup/planilla.test.mjs
