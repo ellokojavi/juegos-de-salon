@@ -196,6 +196,13 @@ const ES = {
   mineBefore: 'Parte el {fecha}',
   mineOver: 'Terminó',
   mineShowOver: 'Mostrar copas terminadas ({n})',
+  mineReady: '▶ Día {d}: listo para jugar',
+  mineReadyToday: '▶ Día {d}: juégalo hoy',
+  mineReadyMany: '▶ {n} días por jugar',
+  mineResume: '⏸ Día {d}: a medio jugar',
+  mineDone: '✅ Ya lo jugaste: el día {d} abre en {t}',
+  mineDoneAll: '✅ No te queda nada por jugar',
+  mineStarts: '⏳ Parte en {t}',
   mineNone: 'No tienes copas en curso.',
 
   // Crear
@@ -1029,6 +1036,13 @@ const EN = {
   mineBefore: 'Starts {fecha}',
   mineOver: 'Finished',
   mineShowOver: 'Show finished cups ({n})',
+  mineReady: '▶ Day {d}: ready to play',
+  mineReadyToday: '▶ Day {d}: play it today',
+  mineReadyMany: '▶ {n} days to play',
+  mineResume: '⏸ Day {d}: half played',
+  mineDone: '✅ You played it: day {d} opens in {t}',
+  mineDoneAll: '✅ Nothing left for you to play',
+  mineStarts: '⏳ Starts in {t}',
   mineNone: 'You have no cups in progress.',
 
   // Crear
@@ -1850,6 +1864,13 @@ const PT = {
   mineBefore: 'Começa {fecha}',
   mineOver: 'Terminou',
   mineShowOver: 'Mostrar copas encerradas ({n})',
+  mineReady: '▶ Dia {d}: pronto para jogar',
+  mineReadyToday: '▶ Dia {d}: jogue hoje',
+  mineReadyMany: '▶ {n} dias para jogar',
+  mineResume: '⏸ Dia {d}: pela metade',
+  mineDone: '✅ Você já jogou: o dia {d} abre em {t}',
+  mineDoneAll: '✅ Não sobrou nada para você jogar',
+  mineStarts: '⏳ Começa em {t}',
   mineNone: 'Você não tem copas em andamento.',
 
   // Crear
@@ -2671,6 +2692,13 @@ const DE = {
   mineBefore: 'Startet am {fecha}',
   mineOver: 'Vorbei',
   mineShowOver: 'Beendete Pokale anzeigen ({n})',
+  mineReady: '▶ Tag {d}: bereit zum Spielen',
+  mineReadyToday: '▶ Tag {d}: heute spielen',
+  mineReadyMany: '▶ {n} Tage zu spielen',
+  mineResume: '⏸ Tag {d}: angefangen',
+  mineDone: '✅ Schon gespielt: Tag {d} öffnet in {t}',
+  mineDoneAll: '✅ Für dich gibt es nichts mehr zu spielen',
+  mineStarts: '⏳ Beginnt in {t}',
   mineNone: 'Gerade läuft keiner deiner Pokale.',
 
   // Crear

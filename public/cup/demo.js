@@ -79,16 +79,29 @@ export const ESCENAS = {
   // A day started 4 minutes ago on another phone, its save not on this one (D-433, the lab's card
   // #seccion-copa-reloj): «Seguir jugando» goes on with the clock from the server's start
   resumed: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', enCurso: 4 },
+  // Whoever looks already played today's day: nothing left until tomorrow's opens
+  played: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', alDia: true },
 };
+
+/**
+ * `&demo=mine` (#seccion-copa-estado): one cup per state of the "Tus copas" status line,
+ * seeded together, and the home page with the list. Each is [scene, the cup's name].
+ */
+export const MIS_COPAS = [
+  // Names in no language, so the language tests read only the app's own text
+  ['player', 'Oficina 2026'], ['final', 'Familia 2026'], ['risk', 'Primos 2026'], ['resumed', 'Finde 2026'],
+  ['played', 'Piratotes 1983'], ['waiting', 'Noviembre 2026'], ['out', 'Barrio 2026'],
+];
 
 /**
  * Siembra la escena en el almacén local y devuelve `{ code, pid, pantalla, recien }`. `uid` es el
  * "celular" de esta pestaña: la sesión de quien mira queda sentada en él.
  */
-export function sembrar(nombre, { now, uid }) {
+export function sembrar(nombre, { now, uid, copa = null }) {
   const x = escena(nombre, { now, uid });
   if (!x) return null;
   const { L, e, meta } = x;
+  if (copa) meta.name = copa;
   try {
     const db = JSON.parse(localStorage.getItem(KEY) || '{}');
     let code = codigoAlAzar();
@@ -121,7 +134,7 @@ export function escena(nombre, { now, uid = 'demo' }) {
   for (let d = 1; e.jugaron > 0 && d <= Math.min(e.jugaron + 1, 7); d++) {
     for (const j of jug) {
       const hoyEsEste = d === e.jugaron + 1;
-      if (hoyEsEste && (j.pid === e.yo || azar(j.pid, d) < 0.5)) continue;
+      if (hoyEsEste && (j.pid === e.yo ? !e.alDia : azar(j.pid, d) < 0.5)) continue;
       if (e.faltas && (e.faltas === true ? FALTAS : e.faltas)[j.pid]?.includes(d)) continue;
       const k = 0.35 + 0.6 * azar(j.pid, d);
       const r = PUNTAJE[cal[d - 1]](k);
