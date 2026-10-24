@@ -12,8 +12,8 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 
 - **Estado:** en el menú desde v0.83.0 (D-175). `/labs/` ya no tiene nada de La Copa salvo El caso,
   que todavía no entra al pozo (D-262).
-- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?three` (ofrece la Copa de 3 días,
-  D-100, D-262) · `?test` (almacén local y reloj adelantable, sin
+- **URL:** `/cup/` (portada) · `/cup/?K7Q2X` (una copa) · `/cup/?three` (ofrece la Copa de 3 días
+  en la pantalla de antes, D-100, D-262, D-437) · `?test` (almacén local y reloj adelantable, sin
   Firebase) · `/cup/?K7Q2X&day=3` (abre el día 3 listo para empezar, si se puede jugar; lo usan
   los avisos, D-229) · `/cup/?K7Q2X&mute` (silencia los avisos de esa copa: el botón del aviso
   en Android) · `/cup/?practice=<juego>&labs&seed=K7Q2X` (un juego suelto con la semilla a la vista,
