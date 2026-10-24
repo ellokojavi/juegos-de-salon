@@ -214,6 +214,8 @@ export const PATHS = {
     'mine-finished': [MINE_SEED, `1`, `document.getElementById('ver-terminadas').click()`],
     // Each cup in course says where the player stands (lab): the demo's day ready to play, then the same cup played
     'mine-status': [`location.href='/cup/?test&demo=player'`, `1`, `1`, `location.href='/cup/?test&lab'`, `1`, `1`],
+    // Every status at once (`&demo=mine`): ready, play it today, two days, half played, played, starts, out
+    'mine-status-all': [`location.href='/cup/?test&lab&demo=mine'`, `1`, `1`, `document.getElementById('tus-copas').scrollIntoView({ block: 'start' })`],
     'mine-status-played': [`location.href='/cup/?test&demo=player'`, `1`, `1`,
       `(()=>{const k='juegos-de-salon:copa:prueba', db=JSON.parse(localStorage.getItem(k)), c=db[__copa.estado.code];
         for (const d of [3, 4]) { c.results = c.results || {}; c.results[d] = { ...(c.results[d] || {}), javi02: { s: 1, ms: 1000, at: Date.now() } }; }
