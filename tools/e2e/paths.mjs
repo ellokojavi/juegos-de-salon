@@ -212,6 +212,12 @@ export const PATHS = {
     // "Tus copas" with one in progress and two finished: the switch off and on (D-234)
     mine: [MINE_SEED, `1`],
     'mine-finished': [MINE_SEED, `1`, `document.getElementById('ver-terminadas').click()`],
+    // Each cup in course says where the player stands (lab): the demo's day ready to play, then the same cup played
+    'mine-status': [`location.href='/cup/?test&demo=player'`, `1`, `1`, `location.href='/cup/?test&lab'`, `1`, `1`],
+    'mine-status-played': [`location.href='/cup/?test&demo=player'`, `1`, `1`,
+      `(()=>{const k='juegos-de-salon:copa:prueba', db=JSON.parse(localStorage.getItem(k)), c=db[__copa.estado.code];
+        for (const d of [3, 4]) { c.results = c.results || {}; c.results[d] = { ...(c.results[d] || {}), javi02: { s: 1, ms: 1000, at: Date.now() } }; }
+        localStorage.setItem(k, JSON.stringify(db)); location.href='/cup/?test&lab'})()`, `1`, `1`],
     // All finished: "No tienes copas en curso." above the switch
     'mine-none': [MINE_SEED.replace('now + 3 * D', 'now - 1 * D'), `1`],
     // The day table of La Gran Final, with each one's five-round card (#259)
