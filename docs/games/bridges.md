@@ -17,6 +17,9 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
 
 ## How it plays
 
+- Each stage starts with the deck laid (`cubierta()` in `engine.js`, the owner's request): one beam per square
+  at y = 0 from bank to bank, since the train always needs it. Those beams cannot be removed (a tap on one
+  says so, 🧹 Clear leaves them) and they cost wood like any other, so the counter starts at the gap's width.
 - Drag from a marked point (the banks, the anchors, or a beam already placed) to lay a beam of up to
   two squares (or a 1×2 diagonal, `LARGO_MAX`); tap a beam to remove it. ↩ Undo, 🧹 Clear (two taps)
   and 🏳️ Give up (two taps).

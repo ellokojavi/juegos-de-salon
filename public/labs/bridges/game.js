@@ -7,7 +7,7 @@
 import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { ETAPAS, TIEMPO_S, fijos, crearSim, paso, DT, FISICA, puntajePartida, PUNTOS_ETAPA, PUNTOS_AHORRO, PUNTOS_SOLIDEZ, MARGEN_SOLIDO, BONO_RAPIDEZ, RAPIDO_S, picoDe, picoReferencia, costo, unirViga, puntosMedios, partir, trazo } from './engine.js';
+import { ETAPAS, TIEMPO_S, fijos, crearSim, paso, DT, FISICA, puntajePartida, PUNTOS_ETAPA, PUNTOS_AHORRO, PUNTOS_SOLIDEZ, MARGEN_SOLIDO, BONO_RAPIDEZ, RAPIDO_S, picoDe, picoReferencia, costo, unirViga, puntosMedios, partir, trazo, cubierta, esCubierta } from './engine.js';
 import { QUIETO, pct, aMundo, esfuerzoAhora, colorTension, timeOfDay, DEMO, trenMini, lienzo, medidor, dibujar, fueraDeEscena } from './scene.js';
 
 // The visitors' parameters are internal (the owner's request): they work in the workshop (a local server,
@@ -35,7 +35,7 @@ const T = {
   nombre: 'Tren en Vilo',
   lema: 'Arma un puente que aguante el tren.',
   como: [
-    ['🌉', 'Arrastra de un punto a otro para tender vigas. Toca una para quitarla.'],
+    ['🌉', 'La vía ya está puesta. Arrastra de un punto a otro para reforzarla con vigas. Toca una para quitarla.'],
     ['🚂', 'Toca Probar: cruza el tren. Si una viga se estira de más, se corta.'],
     ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con poca madera. Suman las etapas que pasa el tren, la madera que te sobra, la solidez y la rapidez.`],
   ],
@@ -44,10 +44,10 @@ const T = {
   probar: '🚂 Probar', arreglar: '✏️ Arreglar', deshacer: '↩ Deshacer', borrar: '🧹 Borrar', borrarSeguro: '🧹 ¿Seguro?',
   rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   aviso: {
-    inicio: 'Arrastra desde un punto marcado: las orillas o una viga que ya pusiste.',
+    inicio: 'La vía ya está puesta: arrastra desde un punto marcado para reforzarla.',
     larga: 'Ese trazo no se parte en vigas: prueba uno más corto o más recto.', fuera: 'Fuera del área de construcción.',
     repetida: 'Ya hay una viga ahí.', presupuesto: 'No te quedan vigas: quita alguna.', sinMadera: 'No te alcanza la madera: quita alguna viga.', suelta: 'Empieza en un punto marcado.',
-    quitada: 'Viga quitada.', borrado: 'Borraste el puente: ↩ Deshacer lo trae de vuelta.',
+    quitada: 'Viga quitada.', via: 'La vía no se quita: el tren la necesita.', borrado: 'Borraste el puente: ↩ Deshacer lo trae de vuelta.',
     cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.', cortada: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
   },
   maximo: 'máx. {p}', carga_titulo: 'Carga',
@@ -181,7 +181,7 @@ function empezar() {
     const etapaSorteada = forzado ? 0 : Math.floor(Math.random() * P.etapas.length);
     asignarVisita(quien, etapaSorteada, forzado ? 0.8 : 5 + Math.random() * 20);   // between 5 and 25 s into its stage
     P.etapas = sortearEtapas();
-    Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], picos: [], inicio: Date.now(), fin: null, vigas: [], historial: [] });
+    Object.assign(P, { rotasAntes: new Set(), etapa: 0, hechas: 0, usadas: [], picos: [], inicio: Date.now(), fin: null, vigas: cubierta(P.etapas[0]), historial: [] });
     jugar();
     clearInterval(P.reloj);
     P.reloj = setInterval(() => {
@@ -251,8 +251,9 @@ function jugar() {
     P.vigas = P.historial.pop(); SFX.tap(); repintar();
   } }, T.deshacer);
   const botonBorrar = conConfirmacion('borrar', T.borrar, T.borrarSeguro, () => {
-    if (!P.vigas.length) return;
-    P.historial.push(P.vigas); P.vigas = []; SFX.splash?.(); aviso.textContent = T.aviso.borrado; repintar();
+    if (!P.vigas.some(v => !esCubierta(v))) return;
+    // Clearing leaves the deck: it is never removed
+    P.historial.push(P.vigas); P.vigas = cubierta(e); SFX.splash?.(); aviso.textContent = T.aviso.borrado; repintar();
   }, { id: 'btn-borrar' });
   const botonRendirse = conConfirmacion('rendirse', T.rendirse, T.rendirseSeguro, () => terminar('rendido'), { id: 'btn-rendirse' });
   const fila = el('div', { class: 'tv-acciones' }, botonDeshacer, botonBorrar, botonRendirse);
@@ -276,8 +277,8 @@ function jugar() {
     cuenta.textContent = e.madera ? fmt(T.madera, { n: num(gastado), max: num(e.presupuesto) }) : fmt(T.vigas, { n: P.vigas.length, max: e.presupuesto });
     cuenta.classList.toggle('lleno', gastado >= e.presupuesto - 0.05);
     botonDeshacer.disabled = !P.historial.length || P.simulando;
-    botonProbar.disabled = P.simulando || !P.vigas.length;
-    botonBorrar.disabled = P.simulando || !P.vigas.length;
+    botonProbar.disabled = P.simulando;
+    botonBorrar.disabled = P.simulando || !P.vigas.some(v => !esCubierta(v));
     dibujar(c, e, { vigas: P.vigas, grilla: !P.simulando, arrastre, usados: usados(), rotasAntes: P.rotasAntes, visitas: visitasDe() });
   }
   repintar();
@@ -317,7 +318,8 @@ function jugar() {
     if (toque) {
       // A tap: removes the beam under the finger, if there is one
       const i = vigaBajo(m);
-      if (i >= 0) { P.historial.push(P.vigas); P.vigas = P.vigas.filter((_, k) => k !== i); SFX.tap(); aviso.textContent = T.aviso.quitada; }
+      if (i >= 0 && esCubierta(P.vigas[i])) { SFX.error(); vibrate([30, 30, 30]); aviso.textContent = T.aviso.via; }
+      else if (i >= 0) { P.historial.push(P.vigas); P.vigas = P.vigas.filter((_, k) => k !== i); SFX.tap(); aviso.textContent = T.aviso.quitada; }
       else if (!desde) aviso.textContent = T.aviso.suelta;
       desde = null; ultimoArrastre = null; repintar(); return;
     }
@@ -327,14 +329,13 @@ function jugar() {
       // longer than one beam is laid as a beam per grid step (trazo), the whole deck in one drag
       const base = e.madera && hasta ? partir(partir(P.vigas, desde), hasta) : P.vigas;
       const t = hasta ? trazo(e, base, desde, hasta) : { piezas: [], motivo: 'fuera' };
-      const motivo = t.motivo || (costo(e, P.vigas) + costo(e, t.piezas) > e.presupuesto + 1e-9 ? (e.madera ? 'sinMadera' : 'presupuesto') : null);
+      let vs = P.vigas;
+      for (const pz of t.piezas) vs = e.madera ? unirViga(vs, pz.a, pz.b, usados()) : [...vs, pz];
+      // What it costs is measured after joining: a long beam over the deck adds only what is not there yet
+      const motivo = t.motivo || (costo(e, vs) === costo(e, P.vigas) && vs.length === P.vigas.length ? 'repetida'
+        : costo(e, vs) > e.presupuesto + 1e-9 ? (e.madera ? 'sinMadera' : 'presupuesto') : null);
       if (motivo) { if (motivo !== 'cero') { aviso.textContent = T.aviso[motivo] || T.aviso.fuera; SFX.error(); vibrate([30, 30, 30]); } }
-      else {
-        P.historial.push(P.vigas);
-        let vs = P.vigas;
-        for (const pz of t.piezas) vs = e.madera ? unirViga(vs, pz.a, pz.b, usados()) : [...vs, pz];
-        P.vigas = vs; SFX.tap(); vibrate(10); aviso.textContent = '';
-      }
+      else { P.historial.push(P.vigas); P.vigas = vs; SFX.tap(); vibrate(10); aviso.textContent = ''; }
     }
     desde = null; ultimoArrastre = null; repintar();
   });
@@ -381,7 +382,7 @@ function jugar() {
           if (P.fin) return;
           P.simulando = false;
           if (P.hechas >= P.etapas.length) { terminar('todas'); return; }
-          mudarVisita(); P.etapa++; P.vigas = []; P.historial = []; P.rotasAntes = new Set(); jugar();
+          mudarVisita(); P.etapa++; P.vigas = cubierta(P.etapas[P.etapa]); P.historial = []; P.rotasAntes = new Set(); jugar();
           });
         }, 600);
         return;
