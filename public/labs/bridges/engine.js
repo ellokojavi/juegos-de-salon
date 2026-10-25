@@ -27,6 +27,13 @@ export const fijos = e => [[0, 0], [e.ancho, 0], ...e.anclas];
 const clave = (x, y) => `${x},${y}`;
 export const esFijo = (e, x, y) => fijos(e).some(([a, b]) => a === x && b === y);
 
+/**
+ * The deck (owner's request): the train always needs a road across the gap, so every stage starts with
+ * it laid, one beam per square at y = 0, and those beams cannot be removed. They cost wood like any other.
+ */
+export const cubierta = e => Array.from({ length: e.ancho }, (_, k) => ({ a: [k, 0], b: [k + 1, 0] }));
+export const esCubierta = v => v.a[1] === 0 && v.b[1] === 0 && Math.abs(v.b[0] - v.a[0]) === 1;
+
 /** May a beam go from (x1,y1) to (x2,y2)? Inside the area, not too long, not repeated, not zero. */
 export function vigaValida(e, vigas, a, b) {
   if (a[0] === b[0] && a[1] === b[1]) return 'cero';
@@ -70,7 +77,9 @@ export function unirViga(vigas, a, b, nudos = new Set()) {
   const partidas = partir(partir(vigas, a), b);
   let nueva = [{ a, b }];
   for (const k of nudos) { const p = k.split(',').map(Number); nueva = partir(nueva, p); }
-  return [...partidas, ...nueva];
+  // A piece that lands on a beam already there (a long beam over the deck) is not laid twice
+  const ya = new Set(partidas.flatMap(v => [`${v.a}|${v.b}`, `${v.b}|${v.a}`]));
+  return [...partidas, ...nueva.filter(v => !ya.has(`${v.a}|${v.b}`))];
 }
 
 /**
