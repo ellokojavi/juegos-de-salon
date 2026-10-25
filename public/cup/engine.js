@@ -414,25 +414,29 @@ export function puedeComodin(L, d, pid, now) {
 }
 
 /**
- * The wildcard that was never used is not lost (D-444): once the player can no longer use it on any
- * day before the final (each one played, started or closed), it lands on the last day before the
- * final that they played. Returns that day, or 0 while they can still choose, if they used it, if
- * they played no day, in a cup without a final or in one ended before its final. Nothing is written: it is read from the store.
- */
-/**
  * The cups the unused wildcard reaches (D-444): every cup still running when it was published,
  * retroactively, and every one after. A cup that had already ended keeps its table and its saved
  * podium as they were.
  */
 export const AUTO_WILD_FROM = Date.parse('2026-10-25T17:00:00Z');
 
+/** The last day a wildcard can go on: the one before the final, or the last day in a cup without one (D-438). */
+export const ultimoDiaComodin = meta => (tieneFinal(meta) ? meta.days - 1 : meta.days);
+
+/**
+ * The wildcard that was never used is not lost (D-444): once the player can no longer use it on any
+ * day it is valid on (each one played, started or closed), it lands on the last of those days that
+ * they played: before the final, or up to the last day in a cup without one (D-438). Returns that
+ * day, or 0 while they can still choose, if they used it, if they played no day, or in a cup the
+ * admin ended early. Nothing is written: it is read from the store.
+ */
 export function comodinAuto(L, pid, now) {
   const { meta } = L;
   if (!(meta.end > AUTO_WILD_FROM)) return 0;
-  // Only a cup that reaches its final: one the admin ended before it (D-161) keeps its unused wildcards unused
-  if (now == null || comodinDe(L, pid) || !tieneFinal(meta) || anulado(meta, meta.days)) return 0;
+  // Only a cup that reaches its last day: one the admin ended before it (D-161) keeps its unused wildcards unused
+  if (now == null || comodinDe(L, pid) || anulado(meta, meta.days)) return 0;
   let ultimo = 0;
-  for (let d = 1; d < meta.days; d++) {
+  for (let d = 1; d <= ultimoDiaComodin(meta); d++) {
     if (anulado(meta, d)) continue;
     if (L.results?.[d]?.[pid]) ultimo = d;
     else if (!L.started?.[d]?.[pid] && now < meta.win[d].b) return 0;

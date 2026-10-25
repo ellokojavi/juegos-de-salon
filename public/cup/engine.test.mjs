@@ -5,7 +5,7 @@ import {
   CALENDARIOS, POZO, calendarioValido, calendarioAlAzar, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
-  estadoDia, puedeComodin, multiplicador, comodinAuto, comodinEfectivo, AUTO_WILD_FROM, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
+  estadoDia, puedeComodin, multiplicador, comodinAuto, comodinEfectivo, ultimoDiaComodin, AUTO_WILD_FROM, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
   semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL, esFinal,
   TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia, estadoEnLista, recorteLista,
@@ -266,9 +266,15 @@ test('unused wildcard: it lands on the last day played before the final, once th
   assert.equal(comodinAuto({ ...base, results: {} }, 'aaaaaa', dia(7)), 0);
   // Never on the final
   assert.equal(multiplicador({ ...base, results: { 7: { aaaaaa: r } } }, 7, 'aaaaaa', dia(7)), 2);
-  // A cup without a final (D-438) keeps the old rule: an unused wildcard is not applied
+  // A cup without a final (D-438): it lands on the last day played, the last day of the cup included
   const sinFinal = nuevaMeta({ nombre: 'x', dias: 3, inicio: '2026-10-24', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0, cal: ['linea', 'numero', 'reinas'] });
-  assert.equal(comodinAuto({ meta: sinFinal, players, results: { 3: { aaaaaa: r } } }, 'aaaaaa', sinFinal.end), 0);
+  const enDia3 = sinFinal.win[3].a + 12 * H;
+  const sf = res => ({ meta: sinFinal, players, started: {}, results: res });
+  assert.equal(ultimoDiaComodin(sinFinal), 3);
+  assert.equal(comodinAuto(sf({ 2: { aaaaaa: r }, 3: { aaaaaa: r } }), 'aaaaaa', enDia3), 3, 'played the last day: applied right away');
+  assert.equal(comodinAuto(sf({ 1: { aaaaaa: r }, 2: { aaaaaa: r } }), 'aaaaaa', enDia3), 0, 'the last day is still open: they can still use it');
+  assert.equal(comodinAuto(sf({ 1: { aaaaaa: r }, 2: { aaaaaa: r } }), 'aaaaaa', sinFinal.end), 2, 'skipped the last day: the last one played');
+  assert.equal(multiplicador(sf({ 3: { aaaaaa: r } }), 3, 'aaaaaa', sinFinal.end), 2);
   // Retroactive for the cups still running when it was published; one already ended keeps its table
   assert.ok(meta7.end > AUTO_WILD_FROM, 'the test cup ends after it was published');
   const vieja = { ...base, meta: { ...meta7, end: AUTO_WILD_FROM - 1 } };

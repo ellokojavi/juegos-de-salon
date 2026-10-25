@@ -21,7 +21,7 @@ import { backGuard } from '../assets/js/back-guard.js';
 import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../assets/js/parametros.js';
 import {
   POZO, VARIANTES, entradaCal, varianteDelDia, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
-  fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, comodinEfectivo, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
+  fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, comodinEfectivo, ultimoDiaComodin, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar, semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL,
   findeAbierto, findeAlAzar, rondasDelDia, TRIO_SEP, estadoEnLista, recorteLista,
@@ -1363,7 +1363,7 @@ const claseX2 = final => `chip ${final ? 'chip--final' : 'chip--gold'}`;
  * The last day before the final, not played yet and the wildcard still unused: the card and the
  * cover say that today's points will count double on their own if nothing else is chosen (D-444).
  */
-const comodinHoy = (Lc, d, now) => tieneFinal(Lc.meta) && d === Lc.meta.days - 1 && !comodinDe(Lc, S.yo)
+const comodinHoy = (Lc, d, now) => d === ultimoDiaComodin(Lc.meta) && !comodinDe(Lc, S.yo)
   && !Lc.results?.[d]?.[S.yo] && !fuera(Lc, S.yo, now);
 
 function tarjetaDia(d, rotulo) {
@@ -2148,7 +2148,7 @@ function antesDeJugar(d) {
   else if (w) comodin = el('p', { class: 'muted' }, fmt(T.wildGone, { d: w }));
   else if (puedeComodin(Lc, d, S.yo, now)) {
     comodin = el('div', {},
-      comodinHoy(Lc, d, now) ? el('p', { class: 'aviso-comodin' }, T.wildToday) : el('p', { class: 'muted' }, tieneFinal(meta) ? T.wildOffAuto : T.wildOff),
+      comodinHoy(Lc, d, now) ? el('p', { class: 'aviso-comodin' }, T.wildToday) : el('p', { class: 'muted' }, tieneFinal(meta) ? T.wildOffAuto : T.wildOffAutoLast),
       el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-comodin', onClick: async ev => {
         if (!confirm(fmt(T.wildConfirm, { d }))) return;
         ev.currentTarget.disabled = true;
@@ -2480,7 +2480,7 @@ function resultado(d, { recien = false, det = null } = {}) {
       ? fmt(T.finalPos, { pos: ord(yo.pos), n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: ord(yo.pos), n })),
     // The unused wildcard that landed here on its own says so, next to the points it doubled (D-444)
-    autoAqui ? el('p', { class: 'ok center', id: 'comodin-auto' }, fmt(T.wildAutoNote, { d })) : null,
+    autoAqui ? el('p', { class: 'ok center', id: 'comodin-auto' }, fmt(tieneFinal(meta) ? T.wildAutoNote : T.wildAutoNoteLast, { d })) : null,
     // The end-screen order (C-19): the way back to the board first, then share and the next-day
     // notice (share before the notice: the notice's card is tall and pushed share under the fold
     // in German and Portuguese at 320 px); the breakdown folded and the day table below (C-8)
@@ -2489,7 +2489,7 @@ function resultado(d, { recien = false, det = null } = {}) {
     // Ofrece avisar del próximo día que todavía no se abre: no siempre es d + 1 (un día viejo, o
     // jugado con el siguiente ya abierto)
     diaActual(meta, now) < meta.days && !terminada(meta, now) ? avisos().tarjeta({ dia: diaActual(meta, now) + 1 }) : null,
-    explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d), auto: autoAqui }),
+    explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d), auto: autoAqui && (tieneFinal(meta) ? 'final' : 'last') }),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.dayTable),
       el('div', { class: 'tabla' }, ranking.map(j => el('div', { class: 'fila' + (j.pid === S.yo ? ' yo' : '') },
         el('span', { class: 'lugar' }, `${pos[j.pid].pos}`),
@@ -2555,7 +2555,7 @@ function explicacion(J, { s, ms, det, x = 1, final = false, auto = false, copa =
     copa && det?.length ? el('p', { class: 'explicacion-total' }, fmt(s === 1 ? T.bdTotalOne : T.bdTotal, { s })) : null,
     !copa || J === JUEGOS_COPA.zip || J === JUEGOS_COPA.desenredo ? null : el('p', { class: 'muted' }, fmt(T.bdTime, { t: mmss(ms) })),
     copa ? el('p', { class: 'muted' }, T.bdPlaces) : null,
-    copa && x > 1 ? el('p', { class: 'ok' }, final ? T.bdFinal : auto ? T.bdWildAuto : T.bdWild) : null);
+    copa && x > 1 ? el('p', { class: 'ok' }, final ? T.bdFinal : auto === 'last' ? T.bdWildAutoLast : auto ? T.bdWildAuto : T.bdWild) : null);
 }
 
 /* ------------------------------------------------------------------ */
