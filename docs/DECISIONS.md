@@ -146,7 +146,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-91](decisions/D-91.md) | The fleet is drawn in pixel art, seen from above | current |
 | [D-92](decisions/D-92.md) | Whose turn it is can be seen without reading | current |
 | [D-93](decisions/D-93.md) | A ship sinks in a second, not in a repaint | current |
-| [D-94](decisions/D-94.md) | La Copa: a multi-day tournament instead of one more room | current |
+| [D-94](decisions/D-94.md) | La Copa: a multi-day tournament instead of one more room | amended by D-444 |
 | [D-95](decisions/D-95.md) | Time breaks ties, and it is active time | current |
 | [D-96](decisions/D-96.md) | An account is a name and PIN inside a cup, with anonymous Firebase access | amended by D-359 |
 | [D-97](decisions/D-97.md) | The day's content comes from a public seed, and ¿Dudo o le creo? scores decisions | amended by D-102 |
