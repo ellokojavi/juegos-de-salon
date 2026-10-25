@@ -1,6 +1,6 @@
 // Tren en Vilo (lab): the physics is tuned so a bare deck falls and a truss holds, in every stage
 import assert from 'node:assert/strict';
-import { trazo, unirViga, puntosMedios, enMedio, costo as costoDe, ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './engine.js';
+import { cubierta as deckOf, esCubierta, trazo, unirViga, puntosMedios, enMedio, costo as costoDe, ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './engine.js';
 import { readFileSync } from 'node:fs';
 
 const V = (a, b) => ({ a, b });
@@ -67,6 +67,16 @@ assert.equal(p.ahorros[0].fraccion, 2 / 3); assert.equal(p.ahorros[1].fraccion, 
   assert.equal(costoDe(e, unida), costoDe(e, [larga, { a: [1, 0], b: [1, 1] }]), 'splitting keeps the wood');
   const sobre = unirViga([{ a: [1, 0], b: [1, 1] }], [0, 0], [2, 0], new Set(['1,0']));
   assert.deepEqual(sobre.map(v => `${v.a}>${v.b}`).sort(), ['0,0>1,0', '1,0>1,1', '1,0>2,0'], 'a new beam over a joint joins it');
+}
+// The deck comes laid (owner's request): one beam per square at y = 0; a long beam over it adds nothing twice
+{
+  const e = { ancho: 4, anclas: [], madera: true };
+  const d = deckOf(e);
+  assert.deepEqual(d.map(v => `${v.a}>${v.b}`), ['0,0>1,0', '1,0>2,0', '2,0>3,0', '3,0>4,0'], 'the deck, square by square');
+  assert.ok(d.every(esCubierta) && !esCubierta({ a: [1, 0], b: [1, 1] }), 'only the road beams are the deck');
+  assert.equal(costoDe(e, d), 4, 'the deck costs its wood');
+  assert.equal(unirViga(d, [0, 0], [2, 0], new Set(['1,0'])).length, 4, 'a beam over the deck is not laid twice');
+  for (const c of [...ETAPAS]) assert.ok(c.presupuesto >= costoDe(c, deckOf(c)), 'the budget covers the deck');
 }
 // A long stroke: one beam per grid step, the ones already there left out
 {
