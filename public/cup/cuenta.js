@@ -42,6 +42,7 @@ export function createCuenta({ prueba = false } = {}) {
     olvidar(code) {
       borrar(`${p}sesion:${code}`);
       borrar(`${p}avisos:${code}`);
+      borrar(`${p}lista:${code}`);
       escribir(`${p}mias`, (leer(`${p}mias`) || []).filter(c => c.code !== code));
     },
     /** Las copas en que este celular participa, para ofrecerlas en la portada. */
@@ -61,6 +62,11 @@ export function createCuenta({ prueba = false } = {}) {
       leer: code => leer(`${p}avisos:${code}`),
       guardar: (code, v) => escribir(`${p}avisos:${code}`, v),
       borrar: code => borrar(`${p}avisos:${code}`),
+    },
+    /** Each cup's last read for the "Tus copas" line (`recorteLista`), to draw it before the network answers. */
+    lista: {
+      leer: code => leer(`${p}lista:${code}`),
+      guardar: (code, v) => (v ? escribir(`${p}lista:${code}`, v) : borrar(`${p}lista:${code}`)),
     },
     /** El último nombre que se usó, para no escribirlo de nuevo en la próxima copa. */
     nombre: {

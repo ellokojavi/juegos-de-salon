@@ -502,6 +502,17 @@ export function estadoEnLista(L, pid, now) {
   return { tipo: 'al-dia', dia: 0, en: 0 };
 }
 
+/**
+ * What `estadoEnLista` needs of a cup for `pid`, small enough to keep on the phone: the meta, the
+ * early close, and only `pid`'s own player, starts and results. The list draws from it at once
+ * and then reads the cup again.
+ */
+export function recorteLista(L, pid) {
+  if (!L?.meta || !L.players?.[pid]) return null;
+  const mio = x => Object.fromEntries(Object.entries(x || {}).filter(([, v]) => v?.[pid]).map(([d]) => [d, { [pid]: 1 }]));
+  return { meta: L.meta, ...(L.fin ? { fin: L.fin } : {}), players: { [pid]: L.players[pid] }, started: mio(L.started), results: mio(L.results) };
+}
+
 /** Jugadores que cuentan: los inscritos que el admin no sacó. */
 /** Todavía no hay con quién competir: falta al menos un jugador más. */
 export const faltaGente = L => activos(L).length < MIN_JUGADORES;
