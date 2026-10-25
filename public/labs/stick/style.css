@@ -1,0 +1,129 @@
+/* Stick Ninja (lab, D-446). What is shared lives in assets/css/base.css. */
+
+/* The background is the app's own night (base.css): the canvas is transparent and stands on it */
+
+.portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
+.titulo-ninja { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
+.titulo-ninja .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-ninja .logo { font-size: 2.2rem; animation: ninja-salta 2.4s ease-in-out infinite; }
+.titulo-ninja.chico .display { font-size: 1.6rem; }
+.titulo-ninja.chico .logo { font-size: 1.5rem; }
+@keyframes ninja-salta { 0%, 70%, 100% { transform: translateY(0) rotate(0); } 80% { transform: translateY(-8px) rotate(-10deg); } 90% { transform: translateY(-3px) rotate(6deg); } }
+.credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.credito a { color: var(--cyan); }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+.hoy-nota { margin: 12px 0 0; font-size: 0.85rem; text-align: left; }
+.mejor-portada { margin: -2px 0 0; font-weight: 800; }
+
+/* The cover's run, playing itself */
+.demo-ninja { display: block; width: 100%; height: 220px; border-radius: 16px; }
+
+/* The heading, like the other games': the name on the left, the best on the right */
+.cabeza-ninja { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cabeza-ninja .titulo-ninja { gap: 8px; }
+.mejor-ninja { font: 800 0.95rem var(--font-body); color: var(--muted); font-variant-numeric: tabular-nums; transition: color 0.3s, text-shadow 0.3s; }
+.mejor-ninja.record { color: var(--yellow); text-shadow: 0 0 12px rgba(255, 210, 63, 0.6); animation: ninja-record 1.2s ease-out; }
+@keyframes ninja-record { 0% { transform: scale(1); } 25% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+/* The game: the night takes the screen between the heading and the comment link; a hold anywhere stretches */
+.escenario {
+  position: relative; height: calc(100svh - 200px); min-height: 360px; overflow: hidden;
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none; border-radius: 18px;
+}
+.lienzo-ninja { display: block; width: 100%; height: 100%; }
+/* The pillars fade into the night at the bottom instead of ending at a hard edge */
+.lienzo-ninja, .demo-ninja { -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent); mask-image: linear-gradient(to bottom, #000 80%, transparent); }
+
+/* A perfect: an emerging ring of light from the stage's edge, over the canvas' own pulse */
+.escenario::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; opacity: 0;
+  box-shadow: inset 0 0 0 2px rgba(255, 210, 63, 0.8), inset 0 0 40px rgba(255, 46, 136, 0.45);
+}
+.escenario.pulso::after { animation: ninja-pulso 0.7s ease-out; }
+@keyframes ninja-pulso { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+
+.marcador-ninja {
+  position: absolute; top: 5%; left: 0; right: 0; text-align: center; pointer-events: none;
+  font: 900 clamp(3.2rem, 18vw, 4.6rem)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35);
+}
+.marcador-ninja.salta { animation: ninja-suma 0.45s ease-out; }
+@keyframes ninja-suma { 0% { transform: scale(1); } 35% { transform: scale(1.22); color: #fff; } 100% { transform: scale(1); } }
+.racha-ninja {
+  position: absolute; top: calc(5% + clamp(3.5rem, 19.5vw, 5rem)); left: 50%; transform: translateX(-50%); pointer-events: none;
+  padding: 3px 12px; border-radius: 999px; white-space: nowrap;
+  font: 800 0.85rem var(--font-body); color: #3a1200; background: linear-gradient(90deg, var(--yellow), var(--orange));
+  box-shadow: 0 0 16px rgba(255, 122, 26, 0.55); animation: pop 0.35s ease-out;
+}
+.racha-ninja[hidden] { display: none; }
+.aviso-ninja {
+  position: absolute; top: calc(5% + clamp(5.2rem, 28vw, 7rem)); left: 8%; right: 8%; text-align: center; pointer-events: none;
+  font: 700 1rem var(--font-body); color: rgba(255,255,255,0.88); transition: opacity 0.4s;
+}
+.aviso-ninja.fuera { opacity: 0; }
+.aviso-ninja.brilla { font: 2rem var(--font-display); letter-spacing: 0.06em; animation: ninja-brilla 1s ease-out forwards; }
+.aviso-ninja.final { font: 2rem var(--font-display); letter-spacing: 0.05em; }
+@keyframes ninja-brilla { 0% { opacity: 0; transform: scale(0.6); } 20% { opacity: 1; transform: scale(1.15); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: translateY(-8px); } }
+
+/* Achievements: a banner that drops in near the bottom of the night, glows once, and goes */
+.logros-ninja { position: absolute; left: 0; right: 0; bottom: 9%; display: grid; justify-items: center; pointer-events: none; }
+.logro {
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 10px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(42, 10, 74, 0.92), rgba(21, 7, 38, 0.92));
+  border: 1.5px solid rgba(255, 210, 63, 0.75);
+  box-shadow: 0 0 0 0 rgba(255, 210, 63, 0.6), 0 8px 24px rgba(0, 0, 0, 0.4);
+  animation: logro-entra 0.45s cubic-bezier(.2, 1.4, .4, 1) both, logro-onda 1.1s ease-out 0.2s;
+}
+.logro.sale { animation: logro-sale 0.26s ease-in forwards; }
+.logro-ico { font-size: 1.7rem; line-height: 1; filter: drop-shadow(0 0 8px rgba(255, 210, 63, 0.7)); }
+.logro-txt { display: grid; text-align: left; line-height: 1.15; }
+.logro-txt b { font: 1.25rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+.logro-txt small { font: 700 0.8rem var(--font-body); color: rgba(255, 255, 255, 0.8); }
+@keyframes logro-entra { from { opacity: 0; transform: translateY(18px) scale(0.85); } to { opacity: 1; transform: none; } }
+@keyframes logro-onda { 0% { box-shadow: 0 0 0 0 rgba(255, 210, 63, 0.6), 0 8px 24px rgba(0,0,0,0.4); } 100% { box-shadow: 0 0 0 22px rgba(255, 210, 63, 0), 0 8px 24px rgba(0,0,0,0.4); } }
+@keyframes logro-sale { to { opacity: 0; transform: translateY(10px) scale(0.92); } }
+
+/* Paused (a call, another app): over the night, until a tap takes it off */
+.pausa-ninja {
+  position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; text-align: center; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(21, 7, 38, 0.82), rgba(21, 7, 38, 0.4) 70%, transparent);
+  font: 700 1.05rem var(--font-body); color: #fff;
+}
+.pausa-ninja[hidden] { display: none; }
+.titulo-pausa { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 2rem; }
+.pausa-ninja .display { font-size: 2.6rem; }
+
+/* The result, like the other lab games */
+.resultado { text-align: center; display: grid; gap: 10px; --gap-contenedor: 10px; }
+.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.sello-ninja { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+.resultado .comentario { text-align: left; }
+.divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
+.desglose { list-style: none; text-align: left; margin: 0 auto; padding: 0; display: grid; gap: 4px; }
+.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+
+/* Today's runs on this phone: a row of scores, the best one lit */
+.hoy-ninja { display: grid; gap: 8px; text-align: left; }
+.hoy-titulo { margin: 0; font: 800 0.95rem var(--font-body); }
+.corridas { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.corridas li { min-width: 2.4em; padding: 3px 8px; border-radius: 10px; text-align: center; font: 800 0.95rem var(--font-num); font-variant-numeric: tabular-nums;
+  background: rgba(255, 255, 255, 0.08); border: 1px solid var(--glass-border); }
+.corridas li.ultima { border-color: var(--cyan); }
+.corridas li.tope { background: var(--yellow); color: #3a1200; border-color: transparent; box-shadow: 0 0 12px rgba(255, 210, 63, 0.5); }
+
+@media (prefers-reduced-motion: reduce) {
+  .titulo-ninja .logo, .sello-ninja, .aviso-ninja.brilla, .marcador-ninja.salta, .logro, .logro.sale, .escenario.pulso::after, .mejor-ninja.record, .racha-ninja { animation: none; }
+}
+
+/* A short phone (320×568): the cover's run shrinks so 🥷 Play stays above the fold (U-39) */
+@media (max-height: 620px) {
+  .demo-ninja { height: 150px; }
+  /* and the achievements keep to the bottom edge, clear of the star under the bridge */
+  .logros-ninja { bottom: 2%; }
+  .logro { padding: 5px 12px 5px 8px; }
+  .logro-ico { font-size: 1.35rem; }
+  .logro-txt b { font-size: 1.05rem; }
+}
