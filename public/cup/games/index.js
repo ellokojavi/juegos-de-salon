@@ -27,6 +27,7 @@ import * as rutas from './routes/engine.js';
 import * as loteo from './plots/engine.js';
 import * as pintaminas from './paint-mines/engine.js';
 import * as agentes from './agents/engine.js';
+import * as puentes from './bridges/engine.js';
 import * as uiLinea from './timeline/ui.js';
 import * as uiNumero from './number/ui.js';
 import * as uiConexiones from './connections/ui.js';
@@ -43,6 +44,7 @@ import * as uiRutas from './routes/ui.js';
 import * as uiLoteo from './plots/ui.js';
 import * as uiPintaminas from './paint-mines/ui.js';
 import * as uiAgentes from './agents/ui.js';
+import * as uiPuentes from './bridges/ui.js';
 
 import { temasDeLaCopa, decksDe } from './mazos.js';
 import { LETRAS, VARIANTES } from '../engine.js';
@@ -105,6 +107,8 @@ export const JUEGOS = {
   pintaminas: delLab('pintaminas', pintaminas, uiPintaminas),
   // Out of the lab in D-421, in Conexiones' place: its words are the cup's language, like Conexiones'
   agentes: delLab('agentes', agentes, uiAgentes),
+  // 🚂 Tren en Vilo, from the lab: not in POZO, so only a cup whose calendar names it plays it (the owner's one-day cup of 2026-10-25)
+  puentes: delLab('puentes', puentes, uiPuentes),
   final: {
     ...juego(final, uiFinal),
     // A round with no short version is the game whole, built with its own generator for the final

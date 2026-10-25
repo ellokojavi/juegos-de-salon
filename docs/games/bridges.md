@@ -7,7 +7,10 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
 ## Summary
 
 - **Where:** only in the lab, `/labs/bridges/`, behind the lab's door (D-281, D-284), listed under the
-  lab's active projects. Folder `bridges`. Not in `games.js`, La Copa, Uno al día or the rankings.
+  lab's active projects. Folder `bridges`. Not in `games.js`, Uno al día or the rankings. **In La Copa only by name:**
+  registered as `puentes` (`cup/games/bridges/`, the owner's one-day cup of 2026-10-25) but not in `POZO`, so no
+  create screen offers it; five crossings drawn with the day's seed from catalog levels 2, 3, 3, 4, 5, and the Grand
+  Final skips it (`NOT_IN_FINAL` in `cup/engine.js`). The scene (canvas, drawing, gauge) is `scene.js`, shared by both.
 - **Stage:** a prototype for the owner, **Spanish only** (its texts live in the `T` object of
   `game.js`, not in `i18n.js`). It sends no usage signal and has no comment form yet.
 - **For whom:** one player.
