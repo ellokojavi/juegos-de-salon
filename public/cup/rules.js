@@ -2696,7 +2696,7 @@ const DE = {
   mineOver: 'Vorbei',
   mineShowOver: 'Beendete Pokale anzeigen ({n})',
   mineReady: '▶ Tag {d}: Komm spielen!',
-  mineReadyToday: '▶ Tag {d}: heute letzter Spieltag',
+  mineReadyToday: '▶ Tag {d}: nur noch heute spielbar',
   mineReadyMany: '▶ du hast {n} Tage zu spielen',
   mineResume: '⏸ Tag {d}: Beende dein Spiel',
   mineDone: '✅ Schon gespielt: Tag {d} öffnet in {t}',
