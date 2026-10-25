@@ -333,7 +333,7 @@ function portada() {
 function textoEstado(e) {
   if (!e) return null;
   if (e.tipo === 'empieza') return { texto: fmt(T.mineStarts, { t: faltaPara(e.en) }), clase: 'espera' };
-  if (e.tipo === 'fuera') return { texto: T.outTitle, clase: 'fuera' };
+  if (e.tipo === 'fuera') return { texto: T.mineOut, clase: 'fuera' };
   if (e.tipo === 'al-dia') return { texto: e.dia ? fmt(T.mineDone, { d: e.dia, t: faltaPara(e.en) }) : T.mineDoneAll, clase: 'ok' };
   if (e.dias.length > 1) return { texto: fmt(T.mineReadyMany, { n: e.dias.length }), clase: 'jugar' };
   const d = e.dias[0];
