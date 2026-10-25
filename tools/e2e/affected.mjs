@@ -147,12 +147,15 @@ export function select({ changes, graph, scripts, shared }) {
     // The site's own unit tests and notes: GitHub's `tests` check runs them, no page loads them
     if (raw.startsWith('public/') && /\.test\.m?js$|\.md$/.test(raw)) continue;
     if (raw.startsWith('public/')) changedPublic.push(raw.slice('public/'.length));
+    // What no browser loads (docs, the agents, durations.json…), before tools/e2e/'s own rule: a new
+    // script measured in durations.json, next to its game, used to make the whole PR run everything
+    else if (shared(raw)) continue;
     else if (raw.startsWith('tools/e2e/')) {
       const rel = raw.slice('tools/e2e/'.length);
       if (rel.endsWith('.test.mjs') || rel.endsWith('.md')) continue;
       if (scripts.some(s => s.name === rel)) changedScripts.add(rel);
-      else return null; // cdp.mjs, ci.mjs, paths.mjs, durations…: everything
-    } else if (shared(raw)) continue;
+      else return null; // cdp.mjs, ci.mjs, paths.mjs…: everything
+    }
     // The workshop the scripts don't import (tools/release/, tools/generators/…): it never reaches them
     else if (raw.startsWith('tools/') && !scripts.some(s => s.source.includes(raw.slice('tools/'.length)))) continue;
     else return null;

@@ -73,6 +73,7 @@
  "routes/game.mjs": 82,
  "share-home.mjs": 26,
  "smoke.mjs": 61,
+ "stick/lab.mjs": 30,
  "timeline/choice.mjs": 8,
  "timeline/decks.mjs": 30,
  "timeline/drag.mjs": 12,

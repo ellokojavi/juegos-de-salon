@@ -1,5 +1,5 @@
 {
-  "version": "0.207.3",
+  "version": "0.208.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1065,6 +1065,8 @@
     "public/labs/pips/game.js",
     "public/labs/stack/engine.js",
     "public/labs/stack/game.js",
+    "public/labs/stick/engine.js",
+    "public/labs/stick/game.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -1148,6 +1150,7 @@
     "public/labs/listed.test.mjs",
     "public/labs/pips/engine.test.mjs",
     "public/labs/stack/engine.test.mjs",
+    "public/labs/stick/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
@@ -1293,6 +1296,7 @@
     "spacing-common.mjs",
     "splash/languages.mjs",
     "stack/lab.mjs",
+    "stick/lab.mjs",
     "timeline/chat.mjs",
     "timeline/choice.mjs",
     "timeline/decks.mjs",
@@ -1429,6 +1433,10 @@
     {
       "path": "docs/games/stack.md",
       "title": "🧱 Stack (lab prototype, in Juegos en prueba)"
+    },
+    {
+      "path": "docs/games/stick.md",
+      "title": "🥷 Stick Ninja (lab prototype, in Juegos en prueba)"
     },
     {
       "path": "docs/games/timeline.md",
