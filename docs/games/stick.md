@@ -25,7 +25,7 @@ then, the star grabbed hanging under the bridge, and every so often a stick too 
 still with reduced motion). Then "🥷 Play", the best so far ("🏆 Best: n", once there is one), and the three
 steps (after the button, U-39):
 
-1. 👆 Hold to stretch the stick, let go to drop it across the gap.
+1. 👆 Hold to stretch the stick, let go to drop it across the gap. Later on, some pillars slide: aim where they will be.
 2. 🚩 Land its tip on the flag for a perfect: +1, then +2, +3… for each one in a row.
 3. ⭐ Tap while running to hang under the bridge and grab the star. Flip back before the pillar!
 
@@ -62,11 +62,21 @@ Under them: "📅 Today's course is the same for everyone. Pass the phone and co
   hangs ahead, until the phone has seen a flip, it says "Tap while running to grab the ⭐".
 - **Achievements** drop in as a banner near the bottom of the night, with an icon, a name and a line,
   glowing once, one after another: 🚩 Bullseye! (the first flag), 🔥 On fire (3 in a row), ⚡ Unstoppable
-  (5 in a row, the top bonus), 👑 Flag master (8 in a row), ⭐ Star grab (the first star), 🌟 Star collector
+  (5 in a row, the top bonus), 👑 Flag master (8 in a row), 🎯 Moving target (a flag on a moving pillar), ⭐ Star grab (the first star), 🌟 Star collector
   (3 stars), 🏆 New best! (beyond the record), and 🏯 10, 25, 50, 100, 150 and 200 points. Each one once a run.
-- **The course** is the day's, on the phone's calendar: the same pillars, gaps and stars for everyone today,
-  and another tomorrow. The pillars get narrower and the gaps wider over the first 45 pillars; every next
-  pillar always fits on the screen. `?seed=n` plays another course (the end-to-end script uses it).
+- **Moving pillars** (the owner's feedback, 2026-10-25: "a player who is comfortable on still pillars has to
+  think to aim at a moving one"): from the 10th pillar on, some pillars slide back and forth while they are
+  the one to reach, along a faint dashed cyan rail with an arrow at each end that shows their whole swing.
+  A few move at first, slowly (18 units each way, a swing every 4.4 s); by the 60th, about two in three
+  move, up to 60 units each way, a swing every 1.9 s. The stick is judged **where the pillar is when the
+  stick lands** (0.32 s after letting go), and the pillar stops right there, so the ninja can cross. A
+  moving pillar never comes closer than 26 units, its whole swing fits on the screen, and its gap has no
+  star. The first time one comes, until the phone has crossed one, it says "This pillar moves: aim where it
+  will be when the stick lands".
+- **The course** is the day's, on the phone's calendar: the same pillars, gaps, stars and slides for
+  everyone today, and another tomorrow. The pillars get narrower and the gaps wider over the first 40
+  pillars, from about 46–78 units wide to 10–24 at the hardest (the flag's strip is 9); every next pillar
+  always fits on the screen. `?seed=n` plays another course (the end-to-end script uses it).
 - **Interrupted** (a call, another app, the screen locked, the page losing focus): the game pauses, "⏸️
   Paused · Tap to continue". In the middle of a hold the stick stops where it was, and after the tap back
   it says "Hold to keep stretching": the next press goes on from that length. A running ninja freezes and
@@ -89,8 +99,9 @@ line, the comment form.
   `release(g, t)` measure the stick between the two timestamps; the page passes the events' own
   `timeStamp`, so a 60 Hz and a 120 Hz phone stretch the same stick. The running ninja's position depends
   only on the time since the stick fell (`runX`), and `flip(g, t)` records each flip's moment, so
-  `advance(g, t)` gives the same star, crash or arrival however often it is called. `suspend` and `pause`
-  handle the pauses. `holdFor(g, offset)` and `starTime(g)` serve the cover's demo and the end-to-end script.
+  `advance(g, t)` gives the same star, crash or arrival however often it is called. A moving pillar's place
+  depends only on the time since the ninja stepped on the pillar before (`g.moveT0`, `pillarAt(g, k, t)`).
+  `suspend` and `pause` handle the pauses (a pause also stops a moving pillar). `holdFor(g, offset)` and `starTime(g)` serve the cover's demo and the end-to-end script.
 - `game.js`: the canvas scene (the night, the pillars and flags, the stick, the ninja drawn as shapes, the
   pulses, sparks and floating points, a camera that slides to the next pillar), the cover, the game with its
   banners, and the result. The end-to-end hook is `window.__stick` (`S`, with `S.presionar(t)` and
@@ -99,5 +110,6 @@ line, the comment form.
 ## To tune
 
 The numbers at the top of `engine.js`: how fast the stick grows (`GROW`), the flag's margin (`PERFECT`), the
-top bonus (`MAX_BONUS`), the fall and run speeds (`TURN_MS`, `RUN`), and in `pillar()` the widths, gaps, how
-hard it gets (`hardness`) and how often a star hangs.
+top bonus (`MAX_BONUS`), the fall and run speeds (`TURN_MS`, `RUN`), when pillars start moving and how fast
+(`MOVE_FROM`, `MOVE_FULL`, `PERIOD_SLOW`, `PERIOD_FAST`, `MIN_GAP`), and in `pillar()` the widths, gaps, how
+hard it gets (`hardness`), how far and how many pillars move, and how often a star hangs.
