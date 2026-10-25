@@ -12,7 +12,7 @@ import { COMMON, SITIO } from '../../assets/js/i18n.js';
 import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
-import { newGame, drop, movingAt, perfectTime, score, top, card, SLAB } from './engine.js';
+import { newGame, drop, movingAt, perfectTime, pause, score, top, card, SLAB } from './engine.js';
 
 trackVisit();   // the site's traffic (D-208)
 
@@ -31,6 +31,7 @@ const T = {
   comoTitulo: 'How to play',
   jugar: '🧱 Play',
   toca: 'Tap anywhere to drop the block',
+  pausa: 'Paused', seguir: 'Tap to continue',
   perfecto: 'Perfect!', racha: 'Perfect ×{n}',
   fin: 'Game over',
   record: '🏆 New best!',
@@ -48,7 +49,7 @@ const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''
 
 const vista = document.getElementById('vista');
 const pie = document.getElementById('pie');
-const S = { g: null, kinds: [], fin: false, desde: 0, soltarEn: null };
+const S = { g: null, kinds: [], fin: false, desde: 0, antes: 0, pausa: 0, soltarEn: null, pausar: null };
 
 function pieComentario(pantalla) {
   pie.replaceChildren(el('button', {
@@ -139,7 +140,8 @@ function escena(canvas, { zoom = 1 } = {}) {
     poly([pt(x0, 0, z0), pt(x1, 0, z0), pt(x1, 0, z1), pt(x0, 0, z1)], rgb(claro(BASE_COLOR, 0.25)));
   }
 
-  function draw(g, now) {
+  /** `reloj`: the sliding slab's moment (frozen while the game is paused); `now` moves the rest. */
+  function draw(g, now, reloj = now) {
     const dt = ultimo ? Math.min(0.05, (now - ultimo) / 1000) : 0;
     ultimo = now;
     const n = score(g);
@@ -185,7 +187,7 @@ function escena(canvas, { zoom = 1 } = {}) {
     }
 
     // The sliding block, on top of everything
-    if (g.moving) caja(movingAt(g, now), n * SLAB, (n + 1) * SLAB, colorDe(n + 1));
+    if (g.moving) caja(movingAt(g, reloj), n * SLAB, (n + 1) * SLAB, colorDe(n + 1));
   }
 
   return {
@@ -277,14 +279,17 @@ function demo(lienzo) {
 
 function jugar() {
   const vez = ++animando;
-  S.g = newGame(performance.now() + 400); S.kinds = []; S.fin = false; S.desde = Date.now();
+  S.g = newGame(performance.now() + 400); S.kinds = []; S.fin = false; S.desde = Date.now(); S.pausa = 0;
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
   const lienzo = el('canvas', { class: 'lienzo-torre', 'aria-hidden': 'true' });
   const marcador = el('div', { class: 'marcador-torre', id: 'marcador', 'aria-live': 'polite' }, '0');
   const aviso = el('div', { class: 'aviso-torre', id: 'aviso' }, T.toca);
-  const escenario = el('div', { class: 'escenario', id: 'escenario', role: 'button', tabindex: 0, 'aria-label': T.toca }, lienzo, marcador, aviso);
+  const cartel = el('div', { class: 'pausa-torre', id: 'pausa', 'aria-live': 'polite', hidden: true },
+    // The emoji outside the rainbow: a gradient clipped to text paints an emoji as a colored square
+    el('span', { class: 'titulo-pausa' }, el('span', { 'aria-hidden': 'true' }, '⏸️'), el('span', { class: 'display rainbow' }, T.pausa)), el('span', {}, T.seguir));
+  const escenario = el('div', { class: 'escenario', id: 'escenario', role: 'button', tabindex: 0, 'aria-label': T.toca }, lienzo, marcador, aviso, cartel);
   // The heading, like the other games': the name, and the best so far (it lights up once beaten)
-  const antes = mejorAntes();
+  const antes = S.antes = mejorAntes();
   const mejor = el('span', { class: 'mejor-torre', id: 'mejor-juego' }, antes ? fmt(T.mejorCorto, { n: antes }) : '');
   vista.replaceChildren(el('div', { class: 'cabeza-torre' }, tituloJuego(true), mejor), escenario);
   pieComentario('juego');
@@ -293,7 +298,7 @@ function jugar() {
 
   // Drops the block at moment `t`; a tap passes its own timestamp
   const caer = t => {
-    if (S.fin) return;
+    if (S.fin || S.pausa) return;
     const n = score(S.g);
     const r = soltar(S.g, sc, t);
     if (!r) return;
@@ -301,6 +306,8 @@ function jugar() {
     if (r.kind === 'miss') return perder();
     S.kinds.push(r.kind);
     marcador.textContent = String(n + 1);
+    // A new best is kept the moment it happens, not at the end: a game the phone closes still keeps it
+    if (n + 1 > antes) guardarMejor(n + 1);
     if (antes && n + 1 > antes) { mejor.textContent = fmt(T.mejorCorto, { n: n + 1 }); mejor.classList.add('record'); }
     if (r.kind === 'perfect') {
       SFX.reveal(); vibrate(12);
@@ -311,21 +318,43 @@ function jugar() {
     } else { SFX.tap(); vibrate(8); }
   };
   S.soltarEn = caer;
-  const tocar = ev => { ev.preventDefault(); caer(momento(ev)); };
+
+  // Paused when the page is hidden or loses focus (a call, another app, the screen locked): the slab
+  // freezes where it was, and the first tap back only takes the pause off, it never drops (D-445)
+  const pausar = () => {
+    if (S.fin || S.pausa || vez !== animando) return;
+    S.pausa = performance.now();
+    cartel.hidden = false;
+  };
+  const reanudar = () => {
+    if (!S.pausa) return;
+    pause(S.g, performance.now() - S.pausa);
+    S.pausa = 0;
+    cartel.hidden = true;
+    SFX.tap();
+  };
+  S.pausar = pausar;
+  const fuera = new AbortController();
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pausar(); }, { signal: fuera.signal });
+  addEventListener('blur', pausar, { signal: fuera.signal });
+  addEventListener('pagehide', pausar, { signal: fuera.signal });
+
+  const tocar = ev => { ev.preventDefault(); if (S.pausa) return reanudar(); caer(momento(ev)); };
   escenario.addEventListener('pointerdown', ev => { if (ev.button > 0) return; tocar(ev); });
   escenario.addEventListener('keydown', ev => { if (ev.key === ' ' || ev.key === 'Enter') { if (!ev.repeat) tocar(ev); else ev.preventDefault(); } });
   escenario.focus({ preventScroll: true });
 
   function perder() {
     S.fin = true;
+    fuera.abort();
     SFX.error(); vibrate([40, 30, 60]);
     aviso.replaceChildren(el('span', { class: 'rainbow' }, T.fin)); aviso.classList.remove('fuera', 'brilla'); aviso.classList.add('final');
     setTimeout(() => { if (vez === animando) resultado(); }, QUIETO ? 400 : 1400);
   }
 
   const paso = now => {
-    if (vez !== animando || !lienzo.isConnected) return sc.cerrar();
-    sc.draw(S.g, now);
+    if (vez !== animando || !lienzo.isConnected) { fuera.abort(); return sc.cerrar(); }
+    sc.draw(S.g, now, S.pausa || now);
     requestAnimationFrame(paso);
   };
   requestAnimationFrame(paso);
@@ -341,8 +370,8 @@ function guardarMejor(n) { try { localStorage.setItem(BEST_KEY, String(n)); } ca
 function resultado() {
   ++animando;
   document.body.classList.remove('jugando');
-  const g = S.g, n = score(g), antes = mejorAntes(), record = n > antes && n > 0;
-  if (record) guardarMejor(n);
+  // The best from before this game (the new one is already kept, as it happened)
+  const g = S.g, n = score(g), antes = S.antes, record = n > antes && n > 0;
   const segundos = Math.round((Date.now() - S.desde) / 1000);
   trackFinish({ detalle: `${n} blocks · ${g.perfects} perfect · streak ${g.best} · ${segundos}s` });
   pie.replaceChildren();
@@ -369,6 +398,6 @@ document.getElementById('sound-slot').append(soundToggle());
 initSound();
 sparkles();
 portada();
-// For the end-to-end script: the game (S.soltarEn(t) drops at moment t, as a tap then would) and the
-// next moment the block is exactly over the tower
+// For the end-to-end script: the game (S.soltarEn(t) drops at moment t, as a tap then would; S.pausar()
+// pauses, as a hidden page does) and the next moment the block is exactly over the tower
 window.__stack = { S, perfecto: () => perfectTime(S.g, performance.now()) };

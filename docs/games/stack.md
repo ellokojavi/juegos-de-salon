@@ -49,11 +49,17 @@ over; still with reduced motion). Then "🧱 Play" and the three steps (after th
   of the night's purple. The original's pastel colors and its own sky were dropped so it looks like the
   rest of the app (the owner's request, 2026-10-25).
 - **No clock, no daily board:** every game starts the same; the score is the height.
+- **Interrupted** (a call, another app, the screen locked, the page losing focus): the game pauses. The
+  sliding slab freezes where it was and "⏸️ Paused · Tap to continue" covers the tower. The first tap
+  back only takes the pause off and never drops; the slab goes on from the same spot at the same speed
+  (`pause(g, ms)` moves its clock forward by the pause), so pausing gives no advantage. Before this, the
+  tap back dropped the slab wherever time had left it.
 
 ## The result
 
 The stamp (🏆 New best! or Game over), the score, "Your best: n" (when it is not a new best; kept on the
-phone, `juegos-de-salon:stack-best`), the perfect drops and the longest perfect streak, sharing (the
+phone, `juegos-de-salon:stack-best`, the moment each block beats it, so a game the phone closes halfway
+still keeps it), the perfect drops and the longest perfect streak, sharing (the
 last 20 blocks as 🟩 perfect and 🟨 cut, ten to a line, newest on top), 🔁 Play again, back to the lab
 and, after a line, the comment form.
 
@@ -62,12 +68,12 @@ and, after a line, the comment form.
 - `engine.js`, pure: where the sliding block is depends only on the time since it appeared
   (`offsetAt(m, t)`), never on how many frames were drawn, and `drop(g, t)` judges a drop at moment `t`.
   The page passes the tap's own `event.timeStamp`, so a 60 Hz and a 120 Hz phone play the same game, and
-  a frame drawn late does not move the drop. `perfectTime(g, t)` says when the block is next exactly
+  a frame drawn late does not move the drop. `pause(g, ms)` freezes the slab for a pause. `perfectTime(g, t)` says when the block is next exactly
   over the tower (the cover's demo and the end-to-end script use it).
 - `game.js`: the canvas scene (each block a box with its top and the two sides facing the viewer, the
   falling pieces with gravity, the perfect glow and its sparks, a camera that rises with the tower), the cover, the
   game and the result. The end-to-end hook is `window.__stack` (`S`, with `S.soltarEn(t)` to drop at a
-  moment, and `perfecto()`).
+  moment, `S.pausar()` to pause as a hidden page does, and `perfecto()`).
 
 ## To tune
 
@@ -79,8 +85,8 @@ much a streak grows the block (`GROW_FROM`, `GROW`) and the speed (`SPEED_START`
 
 `public/labs/stack/engine.test.mjs` (the slide, perfect drops, cuts on both axes, misses, growing back,
 the same position at 60 and 120 Hz, a long perfect game) and `tools/e2e/stack/lab.mjs` (the lab card,
-the cover and its moving tower, a real tap on the screen, perfect drops, a cut, a miss, the result, the
-best kept, Play again).
+the cover and its moving tower, a real tap on the screen, perfect drops, a cut, the best kept as it
+happens, a pause on losing focus and the tap back that only resumes, a miss, the result, Play again).
 
 ## Exceptions to the canons
 

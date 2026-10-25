@@ -3,7 +3,8 @@
 // Play opens the tower with "Tap anywhere"; a real tap on the screen drops the block; perfect drops keep
 // its size and say "Perfect ×n"; a late one cuts it; missing the tower ends the game with the score, the
 // best kept on the phone, share, Play again and the comment form; Play again starts at 0. At 375 px.
-// The game screen has the heading (the name and the best) and the comment link. Prints ✗ if anything fails.
+// The game screen has the heading (the name and the best) and the comment link. A new best is kept as it
+// happens; losing focus pauses the game, and the tap back resumes it without dropping. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output('/tmp/stack-lab');
@@ -58,24 +59,37 @@ await ev(`${P}.S.soltarEn(${P}.perfecto() + 120); 1`);
 const despues = await ev(area);
 ok(despues < antes, `a late drop cuts the block (${antes.toFixed(2)} → ${despues.toFixed(2)})`);
 ok(await ev(`document.getElementById('marcador').textContent`) === '5', 'the score says 5');
+ok(await ev(`localStorage.getItem('juegos-de-salon:stack-best')`) === '5', 'a new best is kept the moment it happens, before the game ends');
+
+// Interrupted (a call, another app): the page loses focus, the game pauses, and the tap back only resumes
+await ev(`window.dispatchEvent(new Event('blur')); 1`);
+ok(await ev(`!document.getElementById('pausa').hidden && ${P}.S.pausa > 0`), 'losing focus pauses the game and says so');
+await sleep(1200);
+const pausado = await ev(`${P}.S.pausa`);
+ok(await ev(`${P}.S.pausa`) === pausado, 'and it stays paused');
+await b.tap(r.x + r.width / 2, r.y + r.height / 2);
+ok(await ev(`document.getElementById('pausa').hidden && ${P}.S.pausa === 0`), 'a tap takes the pause off');
+ok(await ev(`${P}.S.g.slabs.length - 1`) === 5 && await ev(`!${P}.S.fin`), 'and does not drop the block');
+await ev(`${P}.S.soltarEn(${P}.perfecto()); 1`);
+ok(await ev(`${P}.S.g.slabs.length - 1`) === 6, 'after the pause, the game goes on (a perfect drop: 6)');
 
 // Missing the tower ends the game: the block is still far out when it is dropped
 await ev(`${P}.S.soltarEn(${P}.S.g.moving.t0); 1`);
 ok(await waitFor(`/Game over/.test(document.getElementById('aviso')?.textContent || '')`, 1000), 'missing the tower says Game over');
 ok(await waitFor(`!!document.getElementById('puntaje')`, 4000), 'and the result follows');
-ok(await ev(`document.getElementById('puntaje').textContent`) === '5', 'the result is the tower: 5');
+ok(await ev(`document.getElementById('puntaje').textContent`) === '6', 'the result is the tower: 6');
 ok(/New best/.test(await ev(`document.querySelector('.sello-torre').textContent`)), 'a first game is a new best');
-ok(await ev(`localStorage.getItem('juegos-de-salon:stack-best')`) === '5', 'kept on the phone');
+ok(await ev(`localStorage.getItem('juegos-de-salon:stack-best')`) === '6', 'kept on the phone');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado') && !!document.getElementById('btn-otra') && !!document.querySelector('.resultado .divisor')`), 'share, Play again, and the comment form after a line');
 ok(await ev(`document.documentElement.scrollWidth <= 375`), 'no sideways scroll on the result');
 
 // Play again: from 0; a worse game shows the best
 await ev(`document.getElementById('btn-otra').click(); 1`);
 ok(await waitFor(`document.getElementById('marcador')?.textContent === '0'`), 'Play again starts at 0');
-ok(/Best: 5/.test(await ev(`document.getElementById('mejor-juego').textContent`)), 'the heading shows the best: 5');
+ok(/Best: 6/.test(await ev(`document.getElementById('mejor-juego').textContent`)), 'the heading shows the best: 6');
 await ev(`${P}.S.soltarEn(${P}.S.g.moving.t0); 1`);
 ok(await waitFor(`!!document.getElementById('puntaje')`, 4000), 'a miss on the first block ends it');
-ok(/Your best: 5/.test(await ev(`document.getElementById('mejor')?.textContent || ''`)), 'and it shows the best: 5');
+ok(/Your best: 6/.test(await ev(`document.getElementById('mejor')?.textContent || ''`)), 'and it shows the best: 6');
 
 b.close();
 console.log(failures ? `✗ ${failures} failure(s)` : '✓ stack/lab.mjs');
