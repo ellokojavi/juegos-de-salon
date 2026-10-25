@@ -35,6 +35,7 @@ const T = {
   fin: 'Game over',
   record: '🏆 New best!',
   mejor: 'Your best: {n}',
+  mejorCorto: '🏆 Best: {n}',
   desglose: {
     perfectos: ['🎯 No perfect drops.', '🎯 1 perfect drop.', '🎯 {n} perfect drops.'],
     racha: '🔥 Longest perfect streak: {n}.',
@@ -65,19 +66,35 @@ const contexto = pantalla => ({
 /* ------------------------------------------------------------------ */
 
 const COS30 = Math.cos(Math.PI / 6), SIN30 = 0.5;
-/** Each level's color: the hue turns slowly as the tower grows, as in the original. */
-const HUE0 = 165;
-const hueOf = n => (HUE0 + n * 7) % 360;
+
+/**
+ * Each level's color: the house's neon (base.css), from pink through orange, yellow, lime and cyan to
+ * purple and back to pink, a sixth of the way each level, like the titles' rainbow.
+ */
+const NEON = [[255, 46, 136], [255, 122, 26], [255, 210, 63], [157, 255, 58], [46, 230, 214], [138, 77, 255]];
+const PASOS = 6;   // levels from one color to the next
+function colorDe(n) {
+  const k = (n / PASOS) % NEON.length, i = Math.floor(k), f = k - i;
+  const a = NEON[i], b = NEON[(i + 1) % NEON.length];
+  return a.map((v, j) => Math.round(v + (b[j] - v) * f));
+}
+const rgb = ([r, g, b], a = 1) => `rgba(${r},${g},${b},${a})`;
+const sombra = (c, k) => c.map(v => Math.round(v * k));
+const claro = (c, k) => c.map(v => Math.round(v + (255 - v) * k));
+/** The base: the night's purple (--bg2), that fades into the background going down. */
+const BASE_COLOR = [58, 20, 100];
 
 /**
  * A scene on a canvas: the tower, the sliding block, the pieces falling, and a camera that rises with
- * the tower. `draw(g, now)` paints one frame.
+ * the tower. The canvas is transparent: the tower stands on the app's own night. `draw(g, now)` paints
+ * one frame.
  */
 function escena(canvas, { zoom = 1 } = {}) {
   const ctx = canvas.getContext('2d');
   let W = 0, H = 0, u = 0, camY = 0, ultimo = 0;
-  const piezas = [];   // falling pieces: { slab, y, vy, born, hue }
-  const anillos = [];  // the flash of a perfect drop: { slab, y, born }
+  const piezas = [];   // falling pieces: { slab, y, vy, color }
+  const anillos = [];  // the glow of a perfect drop: { slab, y, born }
+  const chispas = [];  // its sparks: { x, y, z, vx, vy, vz, born, color }
 
   const medir = () => {
     const r = canvas.getBoundingClientRect(), dpr = Math.min(3, devicePixelRatio || 1);
@@ -92,17 +109,34 @@ function escena(canvas, { zoom = 1 } = {}) {
   const pt = (x, y, z) => [W / 2 + (x - z) * COS30 * u, H * 0.56 + (x + z) * SIN30 * u - (y - camY) * u];
   const poly = (pts, fill) => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); };
 
-  /** A box: its top, and the two sides that face the viewer (+x on the right, +z on the left). */
-  function caja(s, y0, y1, hue, alpha = 1) {
+  /** A box: its top (with a soft shine) and the two sides that face the viewer (+x on the right, +z on the left). */
+  function caja(s, y0, y1, c, alpha = 1) {
     const x0 = s.x - s.w / 2, x1 = s.x + s.w / 2, z0 = s.z - s.d / 2, z1 = s.z + s.d / 2;
     ctx.globalAlpha = alpha;
-    poly([pt(x1, y0, z0), pt(x1, y0, z1), pt(x1, y1, z1), pt(x1, y1, z0)], `hsl(${hue} 42% 44%)`);
-    poly([pt(x0, y0, z1), pt(x1, y0, z1), pt(x1, y1, z1), pt(x0, y1, z1)], `hsl(${hue} 40% 36%)`);
-    poly([pt(x0, y1, z0), pt(x1, y1, z0), pt(x1, y1, z1), pt(x0, y1, z1)], `hsl(${hue} 55% 62%)`);
+    poly([pt(x1, y0, z0), pt(x1, y0, z1), pt(x1, y1, z1), pt(x1, y1, z0)], rgb(sombra(c, 0.72)));
+    poly([pt(x0, y0, z1), pt(x1, y0, z1), pt(x1, y1, z1), pt(x0, y1, z1)], rgb(sombra(c, 0.55)));
+    const [ax, ay] = pt(x0, y1, z0), [bx, by] = pt(x1, y1, z1);
+    const brillo = ctx.createLinearGradient(ax, ay, bx, by);
+    brillo.addColorStop(0, rgb(claro(c, 0.45))); brillo.addColorStop(1, rgb(claro(c, 0.08)));
+    poly([pt(x0, y1, z0), pt(x1, y1, z0), pt(x1, y1, z1), pt(x0, y1, z1)], brillo);
     // A faint line under each slab, so the layers read apart
     ctx.beginPath(); [pt(x0, y0, z1), pt(x1, y0, z1), pt(x1, y0, z0)].forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-    ctx.strokeStyle = 'rgba(0,0,0,0.14)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,0,0,0.18)'; ctx.lineWidth = 1; ctx.stroke();
     ctx.globalAlpha = 1;
+  }
+
+  /** The base: a purple column whose sides fade into the night going down. */
+  function columna(s) {
+    const x0 = s.x - s.w / 2, x1 = s.x + s.w / 2, z0 = s.z - s.d / 2, z1 = s.z + s.d / 2, y0 = -3;
+    const lado = (pts, k) => {
+      const [, top] = pt(x1, 0, z1), [, bot] = pt(x1, y0, z1);
+      const gr = ctx.createLinearGradient(0, top, 0, bot);
+      gr.addColorStop(0, rgb(sombra(BASE_COLOR, k))); gr.addColorStop(1, rgb(sombra(BASE_COLOR, k), 0));
+      poly(pts, gr);
+    };
+    lado([pt(x1, y0, z0), pt(x1, y0, z1), pt(x1, 0, z1), pt(x1, 0, z0)], 1);
+    lado([pt(x0, y0, z1), pt(x1, y0, z1), pt(x1, 0, z1), pt(x0, 0, z1)], 0.75);
+    poly([pt(x0, 0, z0), pt(x1, 0, z0), pt(x1, 0, z1), pt(x0, 0, z1)], rgb(claro(BASE_COLOR, 0.25)));
   }
 
   function draw(g, now) {
@@ -112,47 +146,61 @@ function escena(canvas, { zoom = 1 } = {}) {
     // The camera follows the top of the tower, smoothly
     const meta = n * SLAB;
     camY = dt ? camY + (meta - camY) * Math.min(1, dt * 5) : meta;
-    // The sky: two tones that turn with the tower
-    const h = hueOf(n), cielo = ctx.createLinearGradient(0, 0, 0, H);
-    cielo.addColorStop(0, `hsl(${(h + 40) % 360} 45% 30%)`);
-    cielo.addColorStop(1, `hsl(${h} 40% 14%)`);
-    ctx.fillStyle = cielo; ctx.fillRect(0, 0, W, H);
+    ctx.clearRect(0, 0, W, H);
 
     // The pieces behind the tower first, the ones in front after it
     const t0 = top(g), detras = p => (p.slab.x - t0.x) + (p.slab.z - t0.z) < 0;
-    for (const p of piezas) {
-      p.vy -= 9 * dt; p.y += p.vy * dt;
-    }
+    for (const p of piezas) { p.vy -= 9 * dt; p.y += p.vy * dt; }
     for (let i = piezas.length - 1; i >= 0; i--) if (piezas[i].y < camY - 8) piezas.splice(i, 1);
-    piezas.filter(detras).forEach(p => caja(p.slab, p.y, p.y + SLAB, p.hue));
+    piezas.filter(detras).forEach(p => caja(p.slab, p.y, p.y + SLAB, p.color));
 
-    // The base, a column that goes down off the screen, then the slabs (only the ones in sight)
-    caja(g.slabs[0], -12, 0, hueOf(0));
+    // The base, then the slabs (only the ones in sight)
+    if (camY < 4) columna(g.slabs[0]);
     const desde = Math.max(1, n - Math.ceil(H / (SLAB * u)) - 4);
-    for (let i = desde; i <= n; i++) caja(g.slabs[i], (i - 1) * SLAB, i * SLAB, hueOf(i));
+    for (let i = desde; i <= n; i++) caja(g.slabs[i], (i - 1) * SLAB, i * SLAB, colorDe(i));
 
-    piezas.filter(p => !detras(p)).forEach(p => caja(p.slab, p.y, p.y + SLAB, p.hue));
+    piezas.filter(p => !detras(p)).forEach(p => caja(p.slab, p.y, p.y + SLAB, p.color));
 
-    // A perfect drop: a white outline that opens around the slab and fades
+    // A perfect drop: a neon outline that opens around the slab, glowing, and fades
     for (let i = anillos.length - 1; i >= 0; i--) {
-      const a = anillos[i], k = (now - a.born) / 500;
+      const a = anillos[i], k = (now - a.born) / 600;
       if (k >= 1) { anillos.splice(i, 1); continue; }
-      const m = 0.04 + k * 0.18, s = a.slab;
+      const m = 0.03 + k * 0.22, s = a.slab;
       const x0 = s.x - s.w / 2 - m, x1 = s.x + s.w / 2 + m, z0 = s.z - s.d / 2 - m, z1 = s.z + s.d / 2 + m;
       ctx.beginPath();
       [pt(x0, a.y, z0), pt(x1, a.y, z0), pt(x1, a.y, z1), pt(x0, a.y, z1)].forEach(([x, y], j) => (j ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
       ctx.closePath();
-      ctx.strokeStyle = `rgba(255,255,255,${0.9 * (1 - k)})`; ctx.lineWidth = 3; ctx.stroke();
+      ctx.save();
+      ctx.shadowColor = '#2ee6d6'; ctx.shadowBlur = 16;
+      ctx.strokeStyle = `rgba(160,255,248,${1 - k})`; ctx.lineWidth = 3.5; ctx.stroke();
+      ctx.restore();
+    }
+    // Its sparks: small squares of the house's colors that fly out and fall
+    for (let i = chispas.length - 1; i >= 0; i--) {
+      const c = chispas[i], k = (now - c.born) / 700;
+      if (k >= 1) { chispas.splice(i, 1); continue; }
+      c.vy -= 6 * dt; c.x += c.vx * dt; c.y += c.vy * dt; c.z += c.vz * dt;
+      const [sx, sy] = pt(c.x, c.y, c.z), r = 3.5 * (1 - k) + 1;
+      ctx.fillStyle = rgb(c.color, 1 - k); ctx.fillRect(sx - r, sy - r, r * 2, r * 2);
     }
 
     // The sliding block, on top of everything
-    if (g.moving) caja(movingAt(g, now), n * SLAB, (n + 1) * SLAB, hueOf(n + 1));
+    if (g.moving) caja(movingAt(g, now), n * SLAB, (n + 1) * SLAB, colorDe(n + 1));
   }
 
   return {
     draw,
-    caer(slab, y, hue) { piezas.push({ slab, y, vy: 0, hue }); },
-    brillar(slab, y) { anillos.push({ slab, y, born: performance.now() }); },
+    caer(slab, y, n) { piezas.push({ slab, y, vy: 0, color: colorDe(n) }); },
+    brillar(slab, y) {
+      const now = performance.now();
+      anillos.push({ slab, y, born: now });
+      if (QUIETO) return;
+      // Sparks from the slab's edges, outwards
+      for (let k = 0; k < 14; k++) {
+        const ang = (k / 14) * Math.PI * 2, r = Math.max(slab.w, slab.d) * 0.55;
+        chispas.push({ x: slab.x + Math.cos(ang) * r, y, z: slab.z + Math.sin(ang) * r, vx: Math.cos(ang) * 0.9, vy: 1.2 + (k % 3) * 0.4, vz: Math.sin(ang) * 0.9, born: now, color: NEON[k % NEON.length] });
+      }
+    },
     cerrar() { ro.disconnect(); },
   };
 }
@@ -170,7 +218,7 @@ function soltar(g, sc, t) {
   if (!r) return null;
   const y = n * SLAB;
   if (r.kind === 'perfect') sc.brillar(r.slab, y + SLAB);
-  else sc.caer(r.piece, y, hueOf(n + 1));
+  else sc.caer(r.piece, y, n + 1);
   return r;
 }
 
@@ -235,8 +283,11 @@ function jugar() {
   const marcador = el('div', { class: 'marcador-torre', id: 'marcador', 'aria-live': 'polite' }, '0');
   const aviso = el('div', { class: 'aviso-torre', id: 'aviso' }, T.toca);
   const escenario = el('div', { class: 'escenario', id: 'escenario', role: 'button', tabindex: 0, 'aria-label': T.toca }, lienzo, marcador, aviso);
-  vista.replaceChildren(escenario);
-  pie.replaceChildren();
+  // The heading, like the other games': the name, and the best so far (it lights up once beaten)
+  const antes = mejorAntes();
+  const mejor = el('span', { class: 'mejor-torre', id: 'mejor-juego' }, antes ? fmt(T.mejorCorto, { n: antes }) : '');
+  vista.replaceChildren(el('div', { class: 'cabeza-torre' }, tituloJuego(true), mejor), escenario);
+  pieComentario('juego');
   document.body.classList.add('jugando');
   const sc = escena(lienzo);
 
@@ -250,10 +301,13 @@ function jugar() {
     if (r.kind === 'miss') return perder();
     S.kinds.push(r.kind);
     marcador.textContent = String(n + 1);
+    if (antes && n + 1 > antes) { mejor.textContent = fmt(T.mejorCorto, { n: n + 1 }); mejor.classList.add('record'); }
     if (r.kind === 'perfect') {
       SFX.reveal(); vibrate(12);
-      aviso.textContent = S.g.combo > 1 ? fmt(T.racha, { n: S.g.combo }) : T.perfecto;
+      aviso.replaceChildren(el('span', { class: 'rainbow' }, S.g.combo > 1 ? fmt(T.racha, { n: S.g.combo }) : T.perfecto));
       aviso.classList.remove('fuera', 'brilla'); void aviso.offsetWidth; aviso.classList.add('brilla');
+      // A streak that grows the block back: a little confetti
+      if (r.grew && !QUIETO) confetti({ count: 40, duration: 900 });
     } else { SFX.tap(); vibrate(8); }
   };
   S.soltarEn = caer;
@@ -265,7 +319,7 @@ function jugar() {
   function perder() {
     S.fin = true;
     SFX.error(); vibrate([40, 30, 60]);
-    aviso.textContent = T.fin; aviso.classList.remove('fuera', 'brilla'); aviso.classList.add('final');
+    aviso.replaceChildren(el('span', { class: 'rainbow' }, T.fin)); aviso.classList.remove('fuera', 'brilla'); aviso.classList.add('final');
     setTimeout(() => { if (vez === animando) resultado(); }, QUIETO ? 400 : 1400);
   }
 
