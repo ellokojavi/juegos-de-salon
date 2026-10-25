@@ -237,7 +237,7 @@ test('comodín: antes de empezar, una vez, no en la final', () => {
   assert.equal(multiplicador(L, 7, 'aaaaaa'), 2);
 });
 
-test('unused wildcard: it lands on the last day played before the final, once there is no choice left (D-??)', () => {
+test('unused wildcard: it lands on the last day played before the final, once there is no choice left (D-444)', () => {
   const r = { s: 5, ms: 1 };
   const base = { meta: meta7, players, started: {}, results: { 1: { aaaaaa: r }, 5: { aaaaaa: r }, 6: { aaaaaa: r } }, wild: {} };
   // Day 6 played, day 5 played: on the final's day no day before it is left to choose
@@ -375,7 +375,7 @@ test('medallas', () => {
       3: { cccccc: { s: 500, ms: 1 }, bbbbbb: { s: 400, ms: 1 }, aaaaaa: { s: 10, ms: 1 } },
     },
   };
-  // Nobody used the wildcard, so it lands on the last day each one played before the final (D-??):
+  // Nobody used the wildcard, so it lands on the last day each one played before the final (D-444):
   // Cata 10+6·2+12=34 · Javi 8+10·2+16=44 · Pancho 6+8·2+20=42 · Tomás 5·2=10
   // (the tie broken by the final is in the desempate test)
   const m = medallas(L);
@@ -496,7 +496,7 @@ for (const l of ['es', 'en', 'pt', undefined]) assert.equal(zonaDeIdioma(l), ZON
 
 test('desempate del primer lugar: más días ganados y después la final (#79)', () => {
   const fin = meta7.end;
-  // The wildcards go on a day nobody played (4), so none lands on its own (D-??) and moves the totals
+  // The wildcards go on a day nobody played (4), so none lands on its own (D-444) and moves the totals
   const nada = { aaaaaa: '4', bbbbbb: '4' };
   // Cata gana los días 1 y 2 sola (20); Javi gana el 3 sola con comodín (20): más días ganados
   const porDias = { meta: meta7, players, wild: { ...nada, bbbbbb: 3 }, results: {

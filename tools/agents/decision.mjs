@@ -244,7 +244,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       if (attempts > 50) { console.error(`✗ 50 numbers in a row refused since D-${n - 50}: something more than other sessions' reservations`); process.exit(1); }
       const ref = `refs/heads/${PREFIX}/D-${n}`;
       try { sh('git', ['push', '-q', `--force-with-lease=${ref}:`, 'origin', `${sha}:${ref}`]); mine.push(n); }
-      catch (e) { if (!/stale info|already exists|rejected/.test(String(e.stderr || e.message))) { console.error(`✗ could not reserve D-${n}: ${String(e.stderr || e.message).trim()}\n  In a fork, the decision goes as D-?? (D-189).`); process.exit(1); } }
+      catch (e) { if (!/stale info|already exists|rejected/.test(String(e.stderr || e.message))) { console.error(`✗ could not reserve D-${n}: ${String(e.stderr || e.message).trim()}\n  In a fork, the decision goes as D-444 (D-189).`); process.exit(1); } }
       n++;
     }
     mkdirSync(join(ROOT, DIR), { recursive: true });

@@ -1361,7 +1361,7 @@ const claseX2 = final => `chip ${final ? 'chip--final' : 'chip--gold'}`;
 
 /**
  * The last day before the final, not played yet and the wildcard still unused: the card and the
- * cover say that today's points will count double on their own if nothing else is chosen (D-??).
+ * cover say that today's points will count double on their own if nothing else is chosen (D-444).
  */
 const comodinHoy = (Lc, d, now) => tieneFinal(Lc.meta) && d === Lc.meta.days - 1 && !comodinDe(Lc, S.yo)
   && !Lc.results?.[d]?.[S.yo] && !fuera(Lc, S.yo, now);
@@ -2479,7 +2479,7 @@ function resultado(d, { recien = false, det = null } = {}) {
     el('p', { class: 'lead center' }, cerrado(meta, d, now) || terminada(meta, now)
       ? fmt(T.finalPos, { pos: ord(yo.pos), n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: ord(yo.pos), n })),
-    // The unused wildcard that landed here on its own says so, next to the points it doubled (D-??)
+    // The unused wildcard that landed here on its own says so, next to the points it doubled (D-444)
     autoAqui ? el('p', { class: 'ok center', id: 'comodin-auto' }, fmt(T.wildAutoNote, { d })) : null,
     // The end-screen order (C-19): the way back to the board first, then share and the next-day
     // notice (share before the notice: the notice's card is tall and pushed share under the fold

@@ -79,7 +79,7 @@ export const ESCENAS = {
   // A day started 4 minutes ago on another phone, its save not on this one (D-433, the lab's card
   // #seccion-copa-reloj): «Seguir jugando» goes on with the clock from the server's start
   resumed: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', enCurso: 4 },
-  // Day 6, the last before the final, not played yet and the wildcard unused: it applies today on its own (D-??)
+  // Day 6, the last before the final, not played yet and the wildcard unused: it applies today on its own (D-444)
   'last-day': { inicio: 5, jugadores: 5, jugaron: 5, yo: 'javi02', pantalla: 'tablero' },
   // Whoever looks already played today's day: nothing left until tomorrow's opens
   played: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', alDia: true },
