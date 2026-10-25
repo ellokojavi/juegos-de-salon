@@ -130,8 +130,6 @@ const appPid = new URLSearchParams(location.search).get('app') || '';
 // Un aviso abre la copa en su día (`&day=3`), o la silencia (`&mute`, el botón del aviso en
 // Android, D-229). Se leen al cargar: el link propio de la copa reemplaza la dirección.
 const diaAviso = Number(param('day')) || 0;
-// REVIEW ROUND ONLY: which layout of the "Tus copas" line to show (a, b, c, d); removed once one is picked
-const LOOK = ['a', 'b', 'c', 'd'].includes(param('look')) ? param('look') : null;
 const silenciarAviso = tiene('mute');
 
 async function abrirStore() {
@@ -284,22 +282,16 @@ function portada() {
     poner(mias,
       el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.mine),
       visibles.length ? null : el('p', { class: 'muted mias-vacia' }, T.mineNone),
-      el('div', { class: 'mias' + (LOOK ? ` look-${LOOK}` : '') }, visibles.map(c => {
+      el('div', { class: 'mias' }, visibles.map(c => {
         const est = terminada(c) ? null : estados.get(c.code);
         const href = est?.dia ? `${urlCopa(c.code)}&day=${est.dia}` : urlCopa(c.code);
-        // REVIEW ROUND ONLY (&look=a|b|c|d): four ways to put the line without a row of its own
-        if (est && LOOK) {
-          const [glifo, ...resto] = est.texto.split(' ');
-          const titulo = el('b', {}, c.copa || c.code, el('span', { class: 'mia-cod' }, c.code));
-          if (LOOK === 'd') return el('a', { class: `mia est-${est.clase}`, href }, titulo, el('small', { class: 'mia-linea' }, resto.join(' ')), el('span', { class: 'go mia-icono' }, glifo));
-          return el('a', { class: `mia est-${est.clase}`, href }, titulo,
-            el('span', { class: LOOK === 'b' ? `mia-estado ${est.clase}` : 'mia-linea' }, est.texto), el('span', { class: 'go' }, '›'));
-        }
+        // With its status, the line takes the place of "name · code", and the code goes by the cup's name
+        if (est) return el('a', { class: `mia est-${est.clase}`, href },
+          el('b', {}, c.copa || c.code, el('span', { class: 'mia-cod' }, c.code)),
+          el('span', { class: 'mia-linea' }, est.texto), el('span', { class: 'go' }, '›'));
         return el('a', { class: 'mia' + (terminada(c) ? ' terminada' : ''), href },
           el('b', {}, c.copa || c.code, terminada(c) ? el('span', { class: 'etiqueta-fin' }, T.mineOver) : null),
-          el('small', {}, `${c.nombre} · ${c.code}`),
-          est ? el('span', { class: `mia-estado ${est.clase}` }, est.texto) : null,
-          el('span', { class: 'go' }, '›'));
+          el('small', {}, `${c.nombre} · ${c.code}`), el('span', { class: 'go' }, '›'));
       })),
       nTerminadas ? el('label', { class: 'hoja-switch mias-switch', for: 'ver-terminadas' },
         el('span', {}, fmt(T.mineShowOver, { n: nTerminadas })), interruptor) : null);
@@ -3084,7 +3076,7 @@ async function demo(nombre) {
       const x = sembrar(escena, { now: st.now(), uid: st.uid, copa });
       if (x?.pid) cuenta.recordar(x.code, x.pid, { nombre: x.nombre, copa: x.meta.name, fin: x.meta.end });
     }
-    history.replaceState(null, '', `${location.pathname}?test${tiene('lab') ? '&lab' : ''}${LOOK ? `&look=${LOOK}` : ''}`);
+    history.replaceState(null, '', `${location.pathname}?test${tiene('lab') ? '&lab' : ''}`);
     portada();
     return;
   }
