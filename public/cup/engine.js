@@ -413,8 +413,50 @@ export function puedeComodin(L, d, pid, now) {
   return !L.started?.[d]?.[pid] && !L.results?.[d]?.[pid];
 }
 
-/** Cuánto multiplica un día: la final ×2, el comodín ×2. No se acumulan (el comodín no vale en la final). */
-export const multiplicador = (L, d, pid) => (esFinal(L.meta, d) || comodinDe(L, pid) === d ? 2 : 1);
+/**
+ * The cups the unused wildcard reaches (D-444): every cup still running when it was published,
+ * retroactively, and every one after. A cup that had already ended keeps its table and its saved
+ * podium as they were.
+ */
+export const AUTO_WILD_FROM = Date.parse('2026-10-25T17:00:00Z');
+
+/** The last day a wildcard can go on: the one before the final, or the last day in a cup without one (D-438). */
+export const ultimoDiaComodin = meta => (tieneFinal(meta) ? meta.days - 1 : meta.days);
+
+/**
+ * The wildcard that was never used is not lost (D-444): once the player can no longer use it on any
+ * day it is valid on (each one played, started or closed), it lands on the last of those days that
+ * they played: before the final, or up to the last day in a cup without one (D-438). Returns that
+ * day, or 0 while they can still choose, if they used it, if they played no day, or in a cup the
+ * admin ended early. Nothing is written: it is read from the store.
+ */
+export function comodinAuto(L, pid, now) {
+  const { meta } = L;
+  if (!(meta.end > AUTO_WILD_FROM)) return 0;
+  // Only a cup that reaches its last day: one the admin ended before it (D-161) keeps its unused wildcards unused
+  if (now == null || comodinDe(L, pid) || anulado(meta, meta.days)) return 0;
+  let ultimo = 0;
+  for (let d = 1; d <= ultimoDiaComodin(meta); d++) {
+    if (anulado(meta, d)) continue;
+    if (L.results?.[d]?.[pid]) ultimo = d;
+    else if (!L.started?.[d]?.[pid] && now < meta.win[d].b) return 0;
+  }
+  return ultimo;
+}
+
+/** The day the wildcard doubles, chosen or automatic, and whether it was automatic. */
+export function comodinEfectivo(L, pid, now) {
+  const w = comodinDe(L, pid);
+  if (w) return { dia: w, auto: false };
+  const a = comodinAuto(L, pid, now);
+  return { dia: a, auto: !!a };
+}
+
+/**
+ * Cuánto multiplica un día: la final ×2, el comodín ×2. No se acumulan (el comodín no vale en la final).
+ * With `now`, an unused wildcard counts where it lands on its own (`comodinAuto`).
+ */
+export const multiplicador = (L, d, pid, now) => (esFinal(L.meta, d) || comodinEfectivo(L, pid, now).dia === d ? 2 : 1);
 
 /* ------------------------------------------------------------------ */
 /* Puntos y tabla                                                      */
@@ -566,7 +608,7 @@ export function tabla(L, yo, now, { conFuera = true } = {}) {
       for (const d of dias) {
         if (d > hasta) continue;
         const r = pos[d][j.pid];
-        const x = multiplicador(L, d, j.pid);
+        const x = multiplicador(L, d, j.pid, now);
         if (!vis[d]) { porDia[d] = { oculto: true, jugo: !!L.results?.[d]?.[j.pid] }; continue; }
         const pts = r ? r.pts * x : 0;
         total += pts;
@@ -671,7 +713,10 @@ export function ultimoDiaVisto(filas) {
 export function marcaDelDia(L, fila, d, now) {
   const x = fila.dias?.[d];
   const final = esFinal(L.meta, d);
-  if (x?.jugo) return { tipo: comodinDe(L, fila.pid) === d ? 'comodin' : 'pts', pts: x.pts, final };
+  if (x?.jugo) {
+    const w = comodinEfectivo(L, fila.pid, now);
+    return { tipo: w.dia === d ? 'comodin' : 'pts', pts: x.pts, final, ...(w.dia === d && w.auto ? { auto: true } : {}) };
+  }
   return { tipo: abierto(L.meta, d, now) ? 'falta' : 'no', pts: 0, final };
 }
 

@@ -832,3 +832,6 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 @media (max-height: 600px) {
   .intro-hero > :first-child:not(h1):not(h2):not(p) { zoom: 0.6; }
 }
+
+/* The last day before the final with the wildcard unused (D-444): gold, like the wildcard's ×2 (D-151) */
+.aviso-comodin { margin: 8px 0; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--yellow); background: rgba(255, 210, 63, .12); color: var(--yellow); font-weight: 700; line-height: 1.35; }
