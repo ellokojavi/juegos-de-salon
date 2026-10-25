@@ -5,7 +5,7 @@ import {
   CALENDARIOS, POZO, calendarioValido, calendarioAlAzar, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
-  estadoDia, puedeComodin, multiplicador, comodinAuto, comodinEfectivo, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
+  estadoDia, puedeComodin, multiplicador, comodinAuto, comodinEfectivo, AUTO_WILD_FROM, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
   semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL, esFinal,
   TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia, estadoEnLista, recorteLista,
@@ -238,6 +238,9 @@ test('comodín: antes de empezar, una vez, no en la final', () => {
 });
 
 test('unused wildcard: it lands on the last day played before the final, once there is no choice left (D-444)', () => {
+  // A cup still running when D-444 was published: it reaches it retroactively
+  const meta7 = nuevaMeta({ nombre: 'Copa de la oficina', dias: 7, inicio: '2026-10-20', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0 });
+  const dia = (k, horas = 12) => meta7.win[1].a + k * 24 * H + horas * H;
   const r = { s: 5, ms: 1 };
   const base = { meta: meta7, players, started: {}, results: { 1: { aaaaaa: r }, 5: { aaaaaa: r }, 6: { aaaaaa: r } }, wild: {} };
   // Day 6 played, day 5 played: on the final's day no day before it is left to choose
@@ -264,8 +267,13 @@ test('unused wildcard: it lands on the last day played before the final, once th
   // Never on the final
   assert.equal(multiplicador({ ...base, results: { 7: { aaaaaa: r } } }, 7, 'aaaaaa', dia(7)), 2);
   // A cup without a final (D-438) keeps the old rule: an unused wildcard is not applied
-  const sinFinal = nuevaMeta({ nombre: 'x', dias: 3, inicio: '2026-09-28', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0, cal: ['linea', 'numero', 'reinas'] });
+  const sinFinal = nuevaMeta({ nombre: 'x', dias: 3, inicio: '2026-10-24', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0, cal: ['linea', 'numero', 'reinas'] });
   assert.equal(comodinAuto({ meta: sinFinal, players, results: { 3: { aaaaaa: r } } }, 'aaaaaa', sinFinal.end), 0);
+  // Retroactive for the cups still running when it was published; one already ended keeps its table
+  assert.ok(meta7.end > AUTO_WILD_FROM, 'the test cup ends after it was published');
+  const vieja = { ...base, meta: { ...meta7, end: AUTO_WILD_FROM - 1 } };
+  assert.equal(comodinAuto(vieja, 'aaaaaa', dia(7)), 0);
+  assert.equal(comodinAuto({ ...base, meta: { ...meta7, end: AUTO_WILD_FROM + 1 } }, 'aaaaaa', dia(6)), 6, 'a cup whose final is on the day it was published gets it');
   // A cup the admin ended before its final (D-161) leaves it unused
   assert.equal(comodinAuto(conCierre({ ...base, fin: dia(5) }), 'aaaaaa', dia(6)), 0);
   // The table counts it
@@ -375,11 +383,11 @@ test('medallas', () => {
       3: { cccccc: { s: 500, ms: 1 }, bbbbbb: { s: 400, ms: 1 }, aaaaaa: { s: 10, ms: 1 } },
     },
   };
-  // Nobody used the wildcard, so it lands on the last day each one played before the final (D-444):
-  // Cata 10+6·2+12=34 · Javi 8+10·2+16=44 · Pancho 6+8·2+20=42 · Tomás 5·2=10
-  // (the tie broken by the final is in the desempate test)
+  // Cata 10+6+12=28 · Javi 8+10+16=34 · Pancho 6+8+20=34 · Tomás 5 (a cup that ended before D-444:
+  // the unused wildcards stay unused)
   const m = medallas(L);
-  assert.deepEqual(m.campeon.map(f => f.name), ['Javi']);
+  // Javi y Pancho empatan en 34 y en 1 día ganado; desempata la final: Pancho
+  assert.deepEqual(m.campeon.map(f => f.name), ['Pancho']);
   assert.equal(m.farolito[0].name, 'Tomás');
   assert.equal(m.remontada.filas[0].name, 'Pancho');
   assert.equal(m.ganador.n, 1);
@@ -496,10 +504,8 @@ for (const l of ['es', 'en', 'pt', undefined]) assert.equal(zonaDeIdioma(l), ZON
 
 test('desempate del primer lugar: más días ganados y después la final (#79)', () => {
   const fin = meta7.end;
-  // The wildcards go on a day nobody played (4), so none lands on its own (D-444) and moves the totals
-  const nada = { aaaaaa: '4', bbbbbb: '4' };
   // Cata gana los días 1 y 2 sola (20); Javi gana el 3 sola con comodín (20): más días ganados
-  const porDias = { meta: meta7, players, wild: { ...nada, bbbbbb: 3 }, results: {
+  const porDias = { meta: meta7, players, wild: { bbbbbb: 3 }, results: {
     1: { aaaaaa: { s: 5, ms: 5 } }, 2: { aaaaaa: { s: 5, ms: 5 } }, 3: { bbbbbb: { s: 5, ms: 5 } },
   } };
   const t1 = tabla(porDias, null, fin);
@@ -507,7 +513,7 @@ test('desempate del primer lugar: más días ganados y después la final (#79)',
   assert.deepEqual(desempate(t1), { pts: 20, criterio: 'dias' });
   // Un día ganado cada uno y 26 puntos: Javi gana el 1 (10) y es 2.° en la final (16); Cata es
   // 3.ª el día 2 (6) y gana la final (20). Desempata la final
-  const porFinal = { meta: meta7, players, wild: nada, results: {
+  const porFinal = { meta: meta7, players, results: {
     1: { bbbbbb: { s: 5, ms: 5 } },
     2: { cccccc: { s: 9, ms: 5 }, dddddd: { s: 7, ms: 5 }, aaaaaa: { s: 5, ms: 5 } },
     7: { aaaaaa: { s: 9, ms: 5 }, bbbbbb: { s: 5, ms: 5 } },
@@ -516,7 +522,7 @@ test('desempate del primer lugar: más días ganados y después la final (#79)',
   assert.deepEqual([t2[0].name, t2[0].total, t2[1].name, t2[1].total], ['Cata', 26, 'Javi', 26]);
   assert.deepEqual(desempate(t2), { pts: 26, criterio: 'final' });
   // Iguales en todo: comparten el primer lugar y no hay desempate que contar
-  const iguales = tabla({ meta: meta7, players, wild: nada, results: { 1: { aaaaaa: { s: 5, ms: 5 } }, 2: { bbbbbb: { s: 5, ms: 5 } } } }, null, fin);
+  const iguales = tabla({ meta: meta7, players, results: { 1: { aaaaaa: { s: 5, ms: 5 } }, 2: { bbbbbb: { s: 5, ms: 5 } } } }, null, fin);
   assert.equal(iguales[0].lugar, iguales[1].lugar);
   assert.equal(desempate(iguales), null);
   // Sin empate en puntos, nada
