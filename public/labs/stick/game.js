@@ -15,7 +15,7 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { param } from '../../assets/js/parametros.js';
 import {
-  newGame, pillar, current, next, press, release, suspend, stickAt, flip, advance, pause, runX, upsideAt, walkEnd,
+  newGame, pillar, pillarAt, current, next, press, release, suspend, stickAt, flip, advance, pause, runX, upsideAt, walkEnd,
   holdFor, starTime, restX, daySeed, card, VIEW, HOLD_X, TURN_MS, NINJA, PERFECT, MAX_BONUS,
 } from './engine.js';
 
@@ -27,11 +27,12 @@ const KETCHAPP = 'https://www.ketchappgames.com/';
 const BEST_KEY = 'juegos-de-salon:stick-best';
 const TODAY_KEY = 'juegos-de-salon:stick-today';
 const FLIPPED_KEY = 'juegos-de-salon:stick-flipped';
+const MOVING_KEY = 'juegos-de-salon:stick-moving';
 const T = {
   nombre: 'Stick Ninja',
   lema: 'Stretch the stick, cross the gap, plant the flag.',
   como: [
-    ['👆', 'Hold to stretch the stick, let go to drop it across the gap.'],
+    ['👆', 'Hold to stretch the stick, let go to drop it across the gap. Later on, some pillars slide: aim where they will be.'],
     ['🚩', 'Land its tip on the flag for a perfect: +1, then +2, +3… for each one in a row.'],
     ['⭐', 'Tap while running to hang under the bridge and grab the star. Flip back before the pillar!'],
   ],
@@ -40,6 +41,7 @@ const T = {
   sostener: 'Hold to stretch the stick',
   seguirSosteniendo: 'Hold to keep stretching',
   voltear: 'Tap while running to grab the ⭐',
+  movil: 'This pillar moves: aim where it will be when the stick lands',
   pausa: 'Paused', seguir: 'Tap to continue',
   perfecto: 'Perfect!', racha: 'Perfect ×{n}',
   fin: { short: 'Too short!', long: 'Too long!', crash: 'Ouch! Flip back sooner' },
@@ -52,6 +54,7 @@ const T = {
     racha3: ['🔥', 'On fire', '3 perfects in a row'],
     racha5: ['⚡', 'Unstoppable', 'Max bonus: +5 a bridge'],
     racha8: ['👑', 'Flag master', '8 perfects in a row'],
+    movil: ['🎯', 'Moving target', 'A flag on a moving pillar'],
     estrella: ['⭐', 'Star grab', 'Upside down and back'],
     estrellas3: ['🌟', 'Star collector', '3 stars this run'],
     mejor: ['🏆', 'New best!', 'Beyond your record'],
@@ -182,6 +185,7 @@ function escena(canvas, { compacto = false } = {}) {
   /* --- pillars, flags and stars --- */
   function columna(p, k, now, objetivo) {
     const x = sx(p.x), w = p.w * s;
+    if (p.move && objetivo) riel(pillar(lastG, k), now);
     if (x > W + 4 || x + w < -4) return;
     const gr = ctx.createLinearGradient(0, G, 0, H);
     const c = NEON[k % NEON.length];
@@ -202,6 +206,17 @@ function escena(canvas, { compacto = false } = {}) {
     ctx.fillStyle = oro ? rgb(GOLD) : objetivo ? 'rgba(255,46,136,0.95)' : 'rgba(255,46,136,0.5)';
     ctx.fillRect(cx - PERFECT * s, G - 1, PERFECT * 2 * s, 3);
     bandera(cx, k, now, oro, objetivo);
+  }
+  /** A moving pillar's rail: a faint dashed line along its whole swing, with an arrow at each end. */
+  function riel(base, now) {
+    const a = sx(base.x - base.move.amp), b = sx(base.x + base.w + base.move.amp), y = G + 9 * s;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(46,230,214,0.45)'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 5]);
+    ctx.lineDashOffset = QUIETO ? 0 : -now / 60;
+    ctx.beginPath(); ctx.moveTo(a, y); ctx.lineTo(b, y); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle = 'rgba(46,230,214,0.7)';
+    for (const [px, d] of [[a, -1], [b, 1]]) { ctx.beginPath(); ctx.moveTo(px + d * 5, y); ctx.lineTo(px, y - 4); ctx.lineTo(px, y + 4); ctx.closePath(); ctx.fill(); }
+    ctx.restore();
   }
   function bandera(cx, k, now, oro, objetivo) {
     let esc = 1;
@@ -345,7 +360,9 @@ function escena(canvas, { compacto = false } = {}) {
   };
 
   /** One frame. `reloj` is the game's clock (frozen while paused); `now` moves the rest. */
+  let lastG = null;
   function draw(g, now, reloj = now) {
+    lastG = g;
     const dt = ultimo ? Math.min(0.05, (now - ultimo) / 1000) : 0;
     ultimo = now;
     camara(now);
@@ -354,7 +371,7 @@ function escena(canvas, { compacto = false } = {}) {
 
     const w = g.walk, i = g.i;
     // The pillars in sight
-    for (let k = Math.max(0, i - 2); k <= i + 3; k++) columna(pillar(g, k), k, now, k === i + 1 && g.phase !== 'over');
+    for (let k = Math.max(0, i - 2); k <= i + 3; k++) columna(pillarAt(g, k, reloj), k, now, k === i + 1 && g.phase !== 'over');
     // The star in the next gap, bobbing under the bridge's line
     const nx = next(g);
     if (nx.star != null && estrellaTomada !== i + 1) estrella(sx(nx.star), G + (16 + (QUIETO ? 0 : Math.sin(now / 300) * 2)) * s, 7 * s, now);
@@ -473,7 +490,7 @@ function demo(lienzo) {
   const vez = ++animando;
   const sc = escena(lienzo, { compacto: true });
   let g, plan = null, ronda = 0;
-  const empezar = now => { g = newGame(1000 + ronda++); sc.empezar(g); plan = { at: now + 700 }; };
+  const empezar = now => { g = newGame(1000 + ronda++, now); sc.empezar(g); plan = { at: now + 700 }; };
   empezar(performance.now());
   if (QUIETO) { requestAnimationFrame(now => sc.draw(g, now)); return; }
   const paso = now => {
@@ -481,7 +498,7 @@ function demo(lienzo) {
     if (g.phase === 'ready' && plan && now >= plan.at) {
       const n = g.bridges, fallo = n >= 6 && n % 7 === 6;
       const off = fallo ? -next(g).w / 2 - 6 : n % 3 === 2 ? PERFECT * 2.5 : 0;
-      press(g, now); plan = { suelta: now + holdFor(g, off) };
+      press(g, now); plan = { suelta: now + holdFor(g, off, now) };
     }
     if (g.phase === 'growing' && plan?.suelta && now >= plan.suelta) {
       const r = release(g, plan.suelta);
@@ -514,7 +531,7 @@ function demo(lienzo) {
 
 function jugar() {
   const vez = ++animando;
-  S.g = newGame(semilla()); S.fin = false; S.desde = Date.now(); S.pausa = 0; S.logros = new Set();
+  S.g = newGame(semilla(), performance.now()); S.fin = false; S.desde = Date.now(); S.pausa = 0; S.logros = new Set();
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
   const lienzo = el('canvas', { class: 'lienzo-ninja', 'aria-hidden': 'true' });
   const marcador = el('div', { class: 'marcador-ninja', id: 'marcador', 'aria-live': 'polite' }, '0');
@@ -543,6 +560,7 @@ function jugar() {
   /** The hint for the moment: how to stretch, and the first time a star hangs ahead, how to grab it. */
   const pista = () => {
     if (g.phase === 'held') return decir(T.seguirSosteniendo);
+    if (next(g).move && !yaMovil()) return decir(T.movil);
     if (next(g).star != null && !yaVolteo()) return decir(T.voltear);
     if (g.bridges === 0) return decir(T.sostener);
   };
@@ -595,12 +613,14 @@ function jugar() {
   S.presionar = presionar; S.soltar = soltar;
 
   const llego = (e, x0, len) => {
+    if (e.moving) marcarMovil();
     marcador.textContent = String(g.score);
     marcador.classList.remove('salta'); void marcador.offsetWidth; marcador.classList.add('salta');
     sc.llegar(g, x0, len, e.kind === 'perfect');
     if (e.kind === 'perfect') {
       sc.puntos(current(g).x + current(g).w / 2, `+${e.gain}`, '#ffd23f');
       celebrar('primero');
+      if (e.moving) celebrar('movil');
       if (e.streak >= 3) celebrar('racha3');
       if (e.streak >= MAX_BONUS) celebrar('racha5');
       if (e.streak >= 8) celebrar('racha8');
@@ -728,6 +748,8 @@ function jugar() {
 function mejorAntes() { try { return Number(localStorage.getItem(BEST_KEY)) || 0; } catch { return 0; } }
 function guardarMejor(n) { try { localStorage.setItem(BEST_KEY, String(n)); } catch { /* private mode */ } }
 function yaVolteo() { try { return localStorage.getItem(FLIPPED_KEY) === '1'; } catch { return false; } }
+function yaMovil() { try { return localStorage.getItem(MOVING_KEY) === '1'; } catch { return false; } }
+function marcarMovil() { try { localStorage.setItem(MOVING_KEY, '1'); } catch { /* private mode */ } }
 function marcarVolteo() { try { localStorage.setItem(FLIPPED_KEY, '1'); } catch { /* private mode */ } }
 /** Today's runs on this phone, on today's course (a group passing the phone sees them all). */
 function corridasHoy() {
@@ -777,4 +799,4 @@ sparkles();
 portada();
 // For the end-to-end script: the game (S.presionar(t) / S.soltar(t) as a finger would, S.pausar() as a
 // hidden page does), how long to hold for the flag, and when the ninja is over the star
-window.__stick = { S, sostener: (off = 0) => holdFor(S.g, off), estrella: () => starTime(S.g), fin: () => walkEnd(S.g) };
+window.__stick = { S, sostener: (off = 0, t = performance.now()) => holdFor(S.g, off, t), estrella: () => starTime(S.g), fin: () => walkEnd(S.g), columna: k => pillarAt(S.g, k, performance.now()) };

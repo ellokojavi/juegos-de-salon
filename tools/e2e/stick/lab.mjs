@@ -5,7 +5,8 @@
 // the streak; hanging under the bridge grabs the star; a pause in the middle of a hold keeps the stick, and
 // the tap back does not drop it; upside down at the pillar is a crash with the result (score, new best kept
 // on the phone, breakdown, share, Play again, the comment after a line); a real short hold falls, and the
-// second run shows today's runs on this phone. At 375 px. Prints ✗ if anything fails.
+// second run shows today's runs on this phone. Moving pillars, from the 10th on, slide and say so, and aiming
+// where they will be is a perfect (Moving target). At 375 px. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output('/tmp/stick-lab');
@@ -23,7 +24,7 @@ ok(await ev(`/Stick Hero/.test(document.querySelector('#seccion-stick a[href*="k
 
 // A clean phone: no best, no runs today, no flip seen yet (the profile folder may be a rerun's)
 await b.go(`${SITE}/labs/stick/?test&seed=42`, 600);
-await ev(`['stick-best', 'stick-today', 'stick-flipped'].forEach(k => localStorage.removeItem('juegos-de-salon:' + k)); 1`);
+await ev(`['stick-best', 'stick-today', 'stick-flipped', 'stick-moving'].forEach(k => localStorage.removeItem('juegos-de-salon:' + k)); 1`);
 await b.go(`${SITE}/labs/stick/?test&seed=42`, 1200);
 ok(await waitFor(`!!document.getElementById('btn-jugar')`), 'the cover has Play');
 ok(await ev(`document.documentElement.lang`) === 'en', 'the page is in English');
@@ -63,7 +64,7 @@ ok(await waitFor(`/Bullseye/.test(document.getElementById('logros').textContent)
 /** One bridge with the stick's tip `off` from the flag, as a finger would, and waits until it is over. */
 const puente = async (off = 0, flips = '') => {
   await waitFor(`${G}.phase === 'ready'`, 4000);
-  await ev(`(() => { const t = performance.now(); ${P}.S.presionar(t); ${P}.S.soltar(t + ${P}.sostener(${off})); ${flips} })(); 1`);
+  await ev(`(() => { const t = performance.now(); ${P}.S.presionar(t); ${P}.S.soltar(t + ${P}.sostener(${off}, t)); ${flips} })(); 1`);
   await waitFor(`${G}.phase !== 'walking'`, 5000);
 };
 await puente(0); await puente(0);
@@ -96,9 +97,20 @@ await sleep(600);
 await b.tap(cx, cy);
 ok(await ev(`document.getElementById('pausa').hidden && ${G}.phase === 'held' && ${G}.held === ${largo}`), 'the tap back takes the pause off and does not drop the stick');
 ok(/keep stretching/.test(await ev(`document.getElementById('aviso').textContent`)), 'and says to hold to keep stretching');
-await ev(`(() => { const t = performance.now(); ${P}.S.presionar(t); ${P}.S.soltar(t + ${P}.sostener() - ${G}.held / 330 * 1000); })(); 1`);
+await ev(`(() => { const t = performance.now(); ${P}.S.presionar(t); ${P}.S.soltar(t + ${P}.sostener(0, t)); })(); 1`);
 await waitFor(`${G}.phase !== 'walking'`, 5000);
 ok(await ev(`${G}.kinds.at(-1)`) === 'perfect', 'the next press goes on from where it stopped: a perfect');
+
+// Moving pillars, later in the run: it says so, it slides, and aiming where it will be is a perfect
+for (let k = 0; k < 30 && !(await ev(`!!${G}.pillars[${G}.i + 1]?.move`)); k++) await puente(0);
+ok(await ev(`!!${G}.pillars[${G}.i + 1]?.move && ${G}.i + 1 >= 10`), `a moving pillar comes, from the 10th on (pillar ${await ev(`${G}.i + 1`)})`);
+ok(/aim where it will be/.test(await ev(`document.getElementById('aviso').textContent`)), 'and the hint says to aim where it will be');
+const x1 = await ev(`${P}.columna(${G}.i + 1).x`);
+await sleep(400);
+ok(Math.abs(await ev(`${P}.columna(${G}.i + 1).x`) - x1) > 0.5, 'it slides');
+await puente(0);
+ok(await ev(`${G}.kinds.at(-1)`) === 'perfect', 'aiming where it will be when the stick lands is a perfect');
+ok(await waitFor(`/Moving target/.test(document.getElementById('logros').textContent)`, 8000), 'a flag on a moving pillar: Moving target');
 
 // Upside down at the pillar: a crash, and the result
 const final = await ev(`${G}.score`);

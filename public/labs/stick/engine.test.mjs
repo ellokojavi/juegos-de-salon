@@ -1,15 +1,16 @@
-// Stick Ninja's engine (D-446): the seeded course, the stick's length from the hold, perfect, land, short and long, the streak bonus, flips, stars, crashes and pauses.
+// Stick Ninja's engine (D-446): the seeded course, the stick's length from the hold, perfect, land, short and long, the streak bonus, flips, stars, crashes, pauses and moving pillars.
 import assert from 'node:assert/strict';
+const NINJA_HALF = 9;
 import {
-  newGame, pillar, current, next, press, release, suspend, stickAt, advance, flip, pause, holdFor, starTime, walkEnd, runX,
-  daySeed, card, VIEW, HOLD_X, GROW, MAX_STICK, PERFECT, MAX_BONUS, TURN_MS,
+  newGame, pillar, pillarAt, current, next, press, release, suspend, stickAt, advance, flip, pause, holdFor, starTime, walkEnd, runX,
+  daySeed, card, motion, VIEW, HOLD_X, GROW, MAX_STICK, PERFECT, MAX_BONUS, TURN_MS, MIN_GAP, MOVE_FROM, PERIOD_SLOW, PERIOD_FAST,
 } from './engine.js';
 
 const near = (a, b, msg, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${msg}: ${a} ≠ ${b}`);
 /** Plays one bridge: holds for the stick that lands `offset` from the next center, and runs to the end. */
 function bridge(g, t, offset = 0) {
   press(g, t);
-  const r = release(g, t + holdFor(g, offset));
+  const r = release(g, t + holdFor(g, offset, t));
   const events = advance(g, walkEnd(g) + 1);
   return { r, events, t: walkEnd(g) + 2 };
 }
@@ -23,19 +24,22 @@ function bridge(g, t, offset = 0) {
   assert.notEqual(daySeed('2026-10-25'), daySeed('2026-10-26'), 'and the next day another');
 }
 
-// Every pillar fits on the screen with the one before it, and they get narrower
+// Every pillar fits on the screen with the one before it, all of its swing if it moves, and they get narrower
 {
   for (const seed of [1, 2, 3, 99, 12345]) {
     const g = newGame(seed);
     for (let k = 1; k < 200; k++) {
       const p = pillar(g, k), prev = pillar(g, k - 1);
-      assert.ok(p.x > prev.x + prev.w, `seed ${seed}: pillar ${k} after a gap`);
-      assert.ok(p.x + p.w - (prev.x + prev.w) <= VIEW - HOLD_X - 14 + 1e-9, `seed ${seed}: pillar ${k} fits on the screen`);
-      assert.ok(p.w >= 16 && p.w > PERFECT * 2, `seed ${seed}: pillar ${k} is wide enough for its flag`);
+      const amp = p.move ? p.move.amp : 0;
+      assert.ok(p.x - amp >= prev.x + prev.w + (p.move ? MIN_GAP : 1), `seed ${seed}: pillar ${k} after a gap, even at its closest`);
+      assert.ok(p.x + amp + p.w - (prev.x + prev.w) <= VIEW - HOLD_X - 14 + 1e-9, `seed ${seed}: pillar ${k} fits on the screen, even at its farthest`);
+      assert.ok(p.w >= 10 && p.w > PERFECT * 2, `seed ${seed}: pillar ${k} is wide enough for its flag`);
+      if (p.move) assert.ok(k >= MOVE_FROM && p.star == null, `seed ${seed}: pillar ${k} moves only from ${MOVE_FROM} on, and has no star`);
       if (p.star != null) assert.ok(p.star > prev.x + prev.w && p.star < p.x, `seed ${seed}: pillar ${k}'s star hangs in its gap`);
     }
     const avg = (a, b) => { let s = 0; for (let k = a; k < b; k++) s += pillar(g, k).w; return s / (b - a); };
     assert.ok(avg(1, 15) > avg(60, 120), `seed ${seed}: the pillars get narrower`);
+    assert.ok(avg(60, 200) < 20, `seed ${seed}: late in the run they are narrow (${avg(60, 200).toFixed(1)})`);
   }
 }
 
@@ -170,6 +174,8 @@ function withStar() {
   near(stickAt(g, 50000), GROW * 0.4, 'the stick waits where it was');
   press(g, 50000);
   near(release(g, 50300).len, GROW * 0.7, 'and the next press goes on from there');
+  const k = newGame(2); press(k, 0); suspend(k, 100);
+  near(holdFor(k, 0, 9000), holdFor(newGame(2), 0, 0) - 100, 'what is left to hold counts what was held');
 
   const h = newGame(2);
   press(h, 0); release(h, holdFor(h));
@@ -186,6 +192,84 @@ function withStar() {
   for (let k = 0; k < 150; k++) { const b = bridge(g, t, 0); assert.equal(b.r.kind, 'perfect', `bridge ${k}`); t = b.t; }
   assert.equal(g.bridges, 150);
   assert.equal(current(g), pillar(g, 150));
+}
+
+/** A game whose next pillar moves, played perfectly up to it, and the moment to start from. */
+function toMoving(seed = 1) {
+  const g = newGame(seed);
+  let t = 0;
+  while (!next(g).move) t = bridge(g, t, 0).t;
+  return { g, t };
+}
+
+// Moving pillars: none before MOVE_FROM, more and faster later
+{
+  let early = 0, late = 0, lateN = 0, earlyN = 0;
+  const slow = [], fast = [];
+  for (let seed = 1; seed <= 40; seed++) {
+    const g = newGame(seed);
+    for (let k = 1; k < 120; k++) {
+      const p = pillar(g, k);
+      if (k < MOVE_FROM) assert.ok(!p.move, `seed ${seed}: pillar ${k} stands still`);
+      if (k >= MOVE_FROM && k < MOVE_FROM + 10) { earlyN++; if (p.move) { early++; slow.push(p.move.period); } }
+      if (k >= 70) { lateN++; if (p.move) { late++; fast.push(p.move.period); } }
+    }
+  }
+  assert.ok(early / earlyN > 0.15 && late / lateN > early / earlyN, `more of them move later (${(early / earlyN).toFixed(2)} → ${(late / lateN).toFixed(2)})`);
+  const avg = a => a.reduce((x, y) => x + y, 0) / a.length;
+  assert.ok(avg(slow) > 3800 && avg(fast) === PERIOD_FAST, `slow at first, faster later (${avg(slow)} → ${avg(fast)} ms a swing)`);
+  assert.equal(motion(MOVE_FROM - 1), 0); assert.equal(motion(1000), 1);
+}
+
+// A moving pillar slides while it is the one to reach, only then, and always the same way
+{
+  const { g, t } = toMoving();
+  const p = next(g), k = g.i + 1;
+  const xs = [0, 500, 1000, 1500, 2000].map(d => pillarAt(g, k, t + d).x);
+  assert.ok(new Set(xs).size > 2, `it moves (${xs.map(x => x.toFixed(0))})`);
+  assert.ok(xs.every(x => Math.abs(x - p.x) <= p.move.amp + 1e-9), 'within its swing');
+  assert.equal(pillarAt(g, k + 1, t + 700).x, pillar(g, k + 1).x, 'the one after it waits its turn');
+  const { g: h, t: th } = toMoving();
+  assert.equal(pillarAt(h, k, th + 1234).x, pillarAt(g, k, t + 1234).x, 'the same course, the same slide');
+}
+
+// It is judged where it is when the stick lands, and stops there; the ninja crosses to where it stopped
+{
+  const { g, t } = toMoving();
+  const k = g.i + 1;
+  press(g, t);
+  const hold = holdFor(g, 0, t), rel = t + hold;
+  const there = pillarAt(g, k, rel + TURN_MS);
+  const r = release(g, rel);
+  assert.equal(r.kind, 'perfect', 'aiming where it will be is a perfect');
+  near(pillarAt(g, k, rel + TURN_MS / 2).x, pillarAt(toMoving().g, k, rel + TURN_MS / 2).x, 'it keeps sliding while the stick falls');
+  near(pillarAt(g, k, rel + TURN_MS + 5000).x, there.x, 'and stops where the stick caught it');
+  const ev = advance(g, walkEnd(g) + 1);
+  assert.equal(ev.at(-1).type, 'arrive'); assert.ok(ev.at(-1).moving, 'the arrival says it was a moving one');
+  near(current(g).x, there.x, 'standing on it, it stays where it stopped');
+  near(runX(g.walk, 1e12), there.x + there.w - NINJA_HALF - 1, 'the ninja ran to its edge');
+  assert.ok(pillar(g, k + 1).x - (current(g).x + current(g).w) >= 1, 'and the next gap is still a gap');
+}
+
+// Aiming at where it is now, not where it will be, misses once it moves fast
+{
+  let missed = 0;
+  for (let seed = 1; seed <= 20; seed++) {
+    const { g, t } = toMoving(seed);
+    const now = pillarAt(g, g.i + 1, t), cur = current(g);
+    press(g, t);
+    const r = release(g, t + (now.x + now.w / 2 - cur.x - cur.w) / GROW * 1000);
+    if (r.kind !== 'perfect') missed++;
+  }
+  assert.ok(missed >= 10, `aiming at where it is now is rarely perfect (${missed} of 20 not)`);
+}
+
+// A pause in front of a moving pillar: it comes back where it was
+{
+  const { g, t } = toMoving();
+  const k = g.i + 1, at = t + 800, x = pillarAt(g, k, at).x;
+  pause(g, 60000);
+  near(pillarAt(g, k, at + 60000).x, x, 'the pillar waits during the pause');
 }
 
 // The share card
