@@ -100,6 +100,15 @@ export function drop(g, t) {
 }
 
 /**
+ * A pause of `ms` (the page hidden by a call, another app, the screen locked): the sliding slab's clock
+ * moves forward by that much, so it comes back exactly where it was, at the same speed. Pausing gives no
+ * advantage: the slab is frozen, not slowed.
+ */
+export function pause(g, ms) {
+  if (g.moving && ms > 0) g.moving.t0 += ms;
+}
+
+/**
  * When, from `t` on, the sliding slab is exactly over the slab below (for the end-to-end script and
  * the cover's demo): the next time its offset crosses zero.
  */
