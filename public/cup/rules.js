@@ -12,6 +12,7 @@ import RUTAS from './games/routes/texts.js';
 import LOTEO from './games/plots/texts.js';
 import PINTAMINAS from './games/paint-mines/texts.js';
 import AGENTES from './games/agents/texts.js';
+import PUENTES from './games/bridges/texts.js';
 import { SHEETS } from '../assets/js/notification-sheets.js';
 
 /**
@@ -34,6 +35,7 @@ const BASE = {
   loteo: { emoji: '📐' },
   pintaminas: { emoji: '🖌️' },
   agentes: { emoji: '🕵️' },
+  puentes: { emoji: '🚂' },
   final: { emoji: '🏁' },
   // A weekend cup's day of three (D-439)
   trio: { emoji: '🎯' },
@@ -3416,7 +3418,7 @@ for (const [lang, L] of Object.entries(LOCALES)) {
   }
 }
 // Each game's own texts (D-331): its entry in `juegos` and the keys its screen reads
-for (const [id, textos] of Object.entries({ rutas: RUTAS, loteo: LOTEO, pintaminas: PINTAMINAS, agentes: AGENTES })) {
+for (const [id, textos] of Object.entries({ rutas: RUTAS, loteo: LOTEO, pintaminas: PINTAMINAS, agentes: AGENTES, puentes: PUENTES })) {
   for (const [lang, L] of Object.entries(LOCALES)) {
     const t = textos[lang] || textos.es;
     L.juegos[id] = t.juego;
