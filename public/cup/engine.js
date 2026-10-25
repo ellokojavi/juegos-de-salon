@@ -414,7 +414,7 @@ export function puedeComodin(L, d, pid, now) {
 }
 
 /**
- * The wildcard that was never used is not lost (D-??): once the player can no longer use it on any
+ * The wildcard that was never used is not lost (D-444): once the player can no longer use it on any
  * day before the final (each one played, started or closed), it lands on the last day before the
  * final that they played. Returns that day, or 0 while they can still choose, if they used it, if
  * they played no day, in a cup without a final or in one ended before its final. Nothing is written: it is read from the store.

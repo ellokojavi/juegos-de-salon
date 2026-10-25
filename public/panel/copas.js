@@ -269,7 +269,7 @@ export function buscarCopa(torneos, q) {
 export function casilla(L, d, j, filaTabla, now = Date.now()) {
   const m = L.meta;
   const w = m.win[d];
-  // The wildcard chosen, or the unused one that landed on its own (D-??)
+  // The wildcard chosen, or the unused one that landed on its own (D-444)
   const wc = comodinEfectivo(L, j.pid, now);
   const x2 = esFinal(m, d) || wc.dia === d;
   const comodin = wc.dia === d;

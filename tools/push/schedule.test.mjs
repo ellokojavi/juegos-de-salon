@@ -92,7 +92,7 @@ await test('The Grand Final: with their place in the table, even if they turned 
   const q = wants({ dia: false, plazo: false, at: 0 });
   const out = cupNotifications({ code: 'KQRST', cup, wants: q, subs, now: onDay(7, 10) });
   assert.equal(of(out, S1)[0].notification.body, '🏁 Hoy es La Gran Final y vale doble. Vas 1º: ¡a defender el primer lugar!');
-  // 12 from the six days, plus 2 from the unused wildcards that landed on day 6 on their own (D-??)
+  // 12 from the six days, plus 2 from the unused wildcards that landed on day 6 on their own (D-444)
   assert.equal(of(out, S2)[0].notification.body, '🏁 Hoje é a Grande Final e vale o dobro. Você está em 2º, a 14 pontos de Ana.');
   assert.deepEqual(of(out, S1)[0].keys, ['final']);
 });
