@@ -31,6 +31,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | 🚇 Rutas rotas (formerly Rutas), the lab's metro map (rectangle turns, exact minimum, five stages, 7-minute clock and layered score) | `docs/games/routes.md` | D-293, D-294, D-295, D-332 |
 | 💥 Números explosivos, the lab's number solitaire (equal pairs or pairs adding to 10, rows that clear, ➕, a board with a way out, explosions) | `docs/games/exploding-numbers.md` | D-297 |
 | 🎲 Pips, the dominoes puzzle of the lab (zones with a rule, one solution per board, three boards) | `docs/games/pips.md` | D-381, D-385, D-386 |
+| 🥷 Stick Ninja, the lab's hold-and-release bridge game (the day's course, flags for perfects, stars under the bridge, English only) | `docs/games/stick.md` | D-446 |
 | 🧱 Stack, the lab's one-tap tower game (the overhang is cut off, perfect drops, judged at the tap's own moment, English only) | `docs/games/stack.md` | D-445 |
 | 📐 Loteo, the lab's Shikaku (rectangles whose number is their area, unique solution, five boards against the clock: two warm-ups and three hard ones; the ⚡💧 Servicios mode, with same-size plots and one ⚡ and one 💧 in each) | `docs/games/plots.md` | D-310, D-311, D-312, D-332 |
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
@@ -54,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (432)
+## In force (433)
 
 | D | Title | Status |
 |---|---|---|
@@ -490,6 +491,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-443](decisions/D-443.md) | Every email leaves from hola@, and each one proves it | current |
 | [D-444](decisions/D-444.md) | An unused wildcard is applied on its own before the Grand Final | current |
 | [D-445](decisions/D-445.md) | Stack: a one-tap tower game in Juegos en prueba, in English | current |
+| [D-446](decisions/D-446.md) | Stick Ninja: a hold-and-release bridge game in Juegos en prueba, on the day's course, in English | current |
 
 ## No longer in force (11)
 

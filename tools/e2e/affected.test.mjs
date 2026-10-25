@@ -45,6 +45,8 @@ assert.deepEqual(run(['public/assets/js/ui.js']), ['hangman/local.mjs', 'case/la
 assert.deepEqual(run(['public/hangman/rules.test.mjs', 'docs/decisions/D-1.md', 'tools/release/changelog.mjs']), []);
 // A changed script runs itself
 assert.deepEqual(run(['tools/e2e/favorites.mjs']), ['favorites.mjs']);
+// durations.json only groups the scripts: next to a game's change it adds nothing (it used to make it all)
+assert.deepEqual(run(['public/hangman/game.js', 'tools/e2e/durations.json']), run(['public/hangman/game.js']));
 // When in doubt, all: a file no page loads, tools/e2e's shared code, the e2e workflow, a tool a script imports
 assert.equal(run(['public/sw.js']), 'all');
 assert.equal(run(['tools/e2e/cdp.mjs']), 'all');
