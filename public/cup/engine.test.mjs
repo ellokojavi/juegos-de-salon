@@ -8,7 +8,7 @@ import {
   estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
   semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL, esFinal,
-  TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia, estadoEnLista,
+  TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia, estadoEnLista, recorteLista,
 } from './engine.js';
 import { JUEGOS_COPA } from './rules.js';
 
@@ -208,6 +208,21 @@ test('"Tus copas": where each cup stands for the player, in one line', () => {
   assert.deepEqual(estadoEnLista(sinFinal, 'bbbbbb', dia(6)), { tipo: 'jugar', dias: [7], enCurso: false, hoy: true }, 'the last day has no grace day');
   assert.equal(estadoEnLista(L, 'bbbbbb', meta7.end), null, 'over');
   assert.equal(estadoEnLista(L, 'zzzzzz', dia(0)), null, 'not in the cup');
+});
+
+test('"Tus copas" from what the phone kept: the same line as from the whole cup', () => {
+  const L = { meta: meta7, players, started: { 2: { aaaaaa: 1, bbbbbb: 1 } }, results: { 1: { aaaaaa: { s: 5, ms: 1 }, cccccc: { s: 2, ms: 1 } } } };
+  for (const pid of Object.keys(players)) for (const k of [-1, 0, 1, 2, 3, 6]) {
+    const now = k < 0 ? meta7.win[1].a - H : dia(k);
+    assert.deepEqual(estadoEnLista(recorteLista(L, pid), pid, now), estadoEnLista(L, pid, now), `${pid} on day ${k}`);
+  }
+  const r = recorteLista(L, 'aaaaaa');
+  assert.deepEqual(Object.keys(r.players), ['aaaaaa'], 'only their own player');
+  assert.deepEqual(r.results, { 1: { aaaaaa: 1 } }, 'only their own results, without the scores');
+  assert.equal(recorteLista(L, 'zzzzzz'), null);
+  const cerrada = recorteLista({ ...L, fin: dia(1) }, 'bbbbbb');
+  assert.equal(cerrada.fin, dia(1), 'the early close goes with it');
+  assert.equal(estadoEnLista(cerrada, 'bbbbbb', dia(2)), null);
 });
 
 test('comodín: antes de empezar, una vez, no en la final', () => {
