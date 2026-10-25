@@ -3,7 +3,7 @@
 // Play opens the tower with "Tap anywhere"; a real tap on the screen drops the block; perfect drops keep
 // its size and say "Perfect ×n"; a late one cuts it; missing the tower ends the game with the score, the
 // best kept on the phone, share, Play again and the comment form; Play again starts at 0. At 375 px.
-// Prints ✗ if anything fails.
+// The game screen has the heading (the name and the best) and the comment link. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output('/tmp/stack-lab');
@@ -33,6 +33,8 @@ await ev(`document.getElementById('btn-jugar').click(); 1`);
 ok(await waitFor(`!!document.getElementById('escenario')`), 'Play opens the tower');
 ok(await ev(`document.getElementById('marcador').textContent`) === '0', 'the score starts at 0');
 ok(/Tap anywhere/.test(await ev(`document.getElementById('aviso').textContent`)), 'and says to tap anywhere');
+ok(await ev(`!!document.querySelector('.cabeza-torre .titulo-torre') && document.getElementById('mejor-juego').textContent === ''`), 'a heading with the name, and no best yet');
+ok(await ev(`!!document.getElementById('btn-comentario')`), 'and the comment link under the tower, as in the other games');
 
 // A real tap on the screen, while the block is over the tower, drops it
 const P = `window.__stack`;
@@ -70,6 +72,7 @@ ok(await ev(`document.documentElement.scrollWidth <= 375`), 'no sideways scroll 
 // Play again: from 0; a worse game shows the best
 await ev(`document.getElementById('btn-otra').click(); 1`);
 ok(await waitFor(`document.getElementById('marcador')?.textContent === '0'`), 'Play again starts at 0');
+ok(/Best: 5/.test(await ev(`document.getElementById('mejor-juego').textContent`)), 'the heading shows the best: 5');
 await ev(`${P}.S.soltarEn(${P}.S.g.moving.t0); 1`);
 ok(await waitFor(`!!document.getElementById('puntaje')`, 4000), 'a miss on the first block ends it');
 ok(/Your best: 5/.test(await ev(`document.getElementById('mejor')?.textContent || ''`)), 'and it shows the best: 5');

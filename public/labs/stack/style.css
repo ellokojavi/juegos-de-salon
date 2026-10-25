@@ -1,13 +1,6 @@
 /* Stack (lab, D-445). What is shared lives in assets/css/base.css. */
 
-/* The page's background: a deep teal, like the tower's first blocks */
-body {
-  --bg1: #0f2a2a; --bg2: #12203a; --bg3: #0a1420;
-  --fondo:
-    radial-gradient(1000px 560px at 0% -10%, rgba(46, 230, 214, 0.20), transparent 60%),
-    radial-gradient(800px 600px at 50% 120%, rgba(157, 255, 58, 0.12), transparent 60%),
-    linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
-}
+/* The background is the app's own night (base.css): the tower's canvas is transparent and stands on it */
 
 .portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
 .titulo-torre { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
@@ -23,25 +16,33 @@ body {
 .paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
 
 /* The cover's tower, building itself */
-.demo-torre { display: block; width: 100%; height: 230px; border-radius: 18px; }
+.demo-torre { display: block; width: 100%; height: 230px; }
 
-/* The game: the tower takes the whole screen below the top bar, and a tap anywhere on it drops */
+/* The heading, like the other games': the name on the left, the best on the right */
+.cabeza-torre { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cabeza-torre .titulo-torre { gap: 8px; }
+.mejor-torre { font: 800 0.95rem var(--font-body); color: var(--muted); font-variant-numeric: tabular-nums; transition: color 0.3s, text-shadow 0.3s; }
+.mejor-torre.record { color: var(--yellow); text-shadow: 0 0 12px rgba(255, 210, 63, 0.6); }
+
+/* The game: the tower takes the screen between the heading and the comment link, and a tap anywhere on it drops */
 .escenario {
-  position: relative; height: calc(100dvh - 120px); min-height: 360px; border-radius: 18px; overflow: hidden;
+  position: relative; height: calc(100svh - 200px); min-height: 340px; overflow: hidden;
   touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none;
 }
 .lienzo-torre { display: block; width: 100%; height: 100%; }
+/* The tower fades into the night at the bottom instead of ending at a hard edge */
+.lienzo-torre, .demo-torre { -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent); mask-image: linear-gradient(to bottom, #000 72%, transparent); }
 .marcador-torre {
   position: absolute; top: 6%; left: 0; right: 0; text-align: center; pointer-events: none;
-  font: 900 clamp(3.2rem, 18vw, 4.6rem)/1 var(--font-num); font-variant-numeric: tabular-nums; color: #fff; text-shadow: 0 3px 0 rgba(0,0,0,0.25);
+  font: 900 clamp(3.2rem, 18vw, 4.6rem)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35);
 }
 .aviso-torre {
   position: absolute; top: calc(6% + clamp(3.6rem, 20vw, 5rem)); left: 0; right: 0; text-align: center; pointer-events: none;
   font: 700 1rem var(--font-body); color: rgba(255,255,255,0.85); transition: opacity 0.4s;
 }
 .aviso-torre.fuera { opacity: 0; }
-.aviso-torre.brilla { font: 1.5rem var(--font-display); letter-spacing: 0.06em; color: #fff; animation: torre-brilla 0.9s ease-out forwards; }
-.aviso-torre.final { font: 1.8rem var(--font-display); letter-spacing: 0.06em; color: #fff; }
+.aviso-torre.brilla { font: 1.9rem var(--font-display); letter-spacing: 0.06em; animation: torre-brilla 0.9s ease-out forwards; }
+.aviso-torre.final { font: 2.2rem var(--font-display); letter-spacing: 0.06em; }
 @keyframes torre-brilla { 0% { opacity: 0; transform: scale(0.7); } 20% { opacity: 1; transform: scale(1.1); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
 
 /* The result, like the other lab games */

@@ -28,18 +28,26 @@ over; still with reduced motion). Then "🧱 Play" and the three steps (after th
 
 ## How it is played
 
-- **The tower** fills the screen below the top bar, drawn in isometric view on a canvas, with the score
-  (blocks placed) big at the top. Before the first drop it says "Tap anywhere to drop the block".
+- **The heading**, like the other games': "🧱 Stack" on the left and "🏆 Best: n" on the right (once
+  there is a best); it turns yellow and glows when this game beats it.
+- **The tower** fills the screen between the heading and "💬 Leave a comment", drawn in isometric view on
+  a transparent canvas, so it stands on the app's own night with its floating dots, and it fades into it
+  at the bottom. The score (blocks placed) is big and yellow at the top. Before the first drop it says
+  "Tap anywhere to drop the block".
 - **The block** slides in from one side, crosses the tower, goes out to the other side and back, again
   and again: the first along one axis, the next along the other. Each block is a little faster, up to a
   top speed.
 - **A tap anywhere on the tower** (or Space or Enter) drops it. What overlaps the block below stays; what
   hangs over falls away, and the next block is that smaller size.
-- **A perfect drop** (within 0.035 of the block below, 3.5% of the base's side) cuts nothing; a white
-  outline opens around it and it says "Perfect!", then "Perfect ×n" in a row. From the 4th in a row,
-  each perfect grows the block back 0.05 on each side that was cut, up to the base.
+- **A perfect drop** (within 0.035 of the block below, 3.5% of the base's side) cuts nothing; a glowing
+  cyan outline opens around it with sparks in the house's colors, and it says "Perfect!", then "Perfect
+  ×n" in a row, in the display font with the titles' rainbow. From the 4th in a row, each perfect grows
+  the block back 0.05 on each side that was cut, up to the base, with a little confetti.
 - **Missing the tower** ends the game: the whole block falls and it says "Game over".
-- **The colors** turn slowly as the tower grows (the blocks' hue and the sky), as in the original.
+- **The colors** are the house's neon (base.css): the blocks go from pink through orange, yellow, lime and
+  cyan to purple and back, a sixth of the way each level, with a soft shine on top. The base is a column
+  of the night's purple. The original's pastel colors and its own sky were dropped so it looks like the
+  rest of the app (the owner's request, 2026-10-25).
 - **No clock, no daily board:** every game starts the same; the score is the height.
 
 ## The result
@@ -57,7 +65,7 @@ and, after a line, the comment form.
   a frame drawn late does not move the drop. `perfectTime(g, t)` says when the block is next exactly
   over the tower (the cover's demo and the end-to-end script use it).
 - `game.js`: the canvas scene (each block a box with its top and the two sides facing the viewer, the
-  falling pieces with gravity, the perfect outline, a camera that rises with the tower), the cover, the
+  falling pieces with gravity, the perfect glow and its sparks, a camera that rises with the tower), the cover, the
   game and the result. The end-to-end hook is `window.__stack` (`S`, with `S.soltarEn(t)` to drop at a
   moment, and `perfecto()`).
 
