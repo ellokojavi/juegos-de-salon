@@ -1,5 +1,5 @@
 {
-  "version": "0.204.4",
+  "version": "0.207.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1055,6 +1055,8 @@
     "public/labs/julep/rules.js",
     "public/labs/pips/engine.js",
     "public/labs/pips/game.js",
+    "public/labs/stack/engine.js",
+    "public/labs/stack/game.js",
     "public/liars-dice/engine.js",
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
@@ -1137,6 +1139,7 @@
     "public/labs/julep/engine.test.mjs",
     "public/labs/listed.test.mjs",
     "public/labs/pips/engine.test.mjs",
+    "public/labs/stack/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
@@ -1281,6 +1284,7 @@
     "smoke.mjs",
     "spacing-common.mjs",
     "splash/languages.mjs",
+    "stack/lab.mjs",
     "timeline/chat.mjs",
     "timeline/choice.mjs",
     "timeline/decks.mjs",
@@ -1413,6 +1417,10 @@
     {
       "path": "docs/games/routes.md",
       "title": "🚇 Rutas rotas (Broken Routes)"
+    },
+    {
+      "path": "docs/games/stack.md",
+      "title": "🧱 Stack (lab prototype, in Juegos en prueba)"
     },
     {
       "path": "docs/games/timeline.md",

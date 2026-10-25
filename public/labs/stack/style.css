@@ -1,0 +1,64 @@
+/* Stack (lab, D-445). What is shared lives in assets/css/base.css. */
+
+/* The page's background: a deep teal, like the tower's first blocks */
+body {
+  --bg1: #0f2a2a; --bg2: #12203a; --bg3: #0a1420;
+  --fondo:
+    radial-gradient(1000px 560px at 0% -10%, rgba(46, 230, 214, 0.20), transparent 60%),
+    radial-gradient(800px 600px at 50% 120%, rgba(157, 255, 58, 0.12), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+}
+
+.portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
+.titulo-torre { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
+.titulo-torre .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-torre .logo { font-size: 2.2rem; animation: torre-mece 3s ease-in-out infinite; }
+.titulo-torre.chico .display { font-size: 1.6rem; }
+.titulo-torre.chico .logo { font-size: 1.5rem; }
+@keyframes torre-mece { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(6deg) translateY(-2px); } }
+.credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.credito a { color: var(--cyan); }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
+.pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
+
+/* The cover's tower, building itself */
+.demo-torre { display: block; width: 100%; height: 230px; border-radius: 18px; }
+
+/* The game: the tower takes the whole screen below the top bar, and a tap anywhere on it drops */
+.escenario {
+  position: relative; height: calc(100dvh - 120px); min-height: 360px; border-radius: 18px; overflow: hidden;
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none;
+}
+.lienzo-torre { display: block; width: 100%; height: 100%; }
+.marcador-torre {
+  position: absolute; top: 6%; left: 0; right: 0; text-align: center; pointer-events: none;
+  font: 900 clamp(3.2rem, 18vw, 4.6rem)/1 var(--font-num); font-variant-numeric: tabular-nums; color: #fff; text-shadow: 0 3px 0 rgba(0,0,0,0.25);
+}
+.aviso-torre {
+  position: absolute; top: calc(6% + clamp(3.6rem, 20vw, 5rem)); left: 0; right: 0; text-align: center; pointer-events: none;
+  font: 700 1rem var(--font-body); color: rgba(255,255,255,0.85); transition: opacity 0.4s;
+}
+.aviso-torre.fuera { opacity: 0; }
+.aviso-torre.brilla { font: 1.5rem var(--font-display); letter-spacing: 0.06em; color: #fff; animation: torre-brilla 0.9s ease-out forwards; }
+.aviso-torre.final { font: 1.8rem var(--font-display); letter-spacing: 0.06em; color: #fff; }
+@keyframes torre-brilla { 0% { opacity: 0; transform: scale(0.7); } 20% { opacity: 1; transform: scale(1.1); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
+
+/* The result, like the other lab games */
+.resultado { text-align: center; display: grid; gap: 10px; --gap-contenedor: 10px; }
+.resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.sello-torre { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+.resultado .comentario { text-align: left; }
+.divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
+.desglose { list-style: none; text-align: left; margin: 0 auto; padding: 0; display: grid; gap: 4px; }
+.link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .titulo-torre .logo, .sello-torre, .aviso-torre.brilla { animation: none; }
+}
+
+/* A short phone (320×568): the cover's tower shrinks so 🧱 Play stays above the fold (U-39) */
+@media (max-height: 620px) {
+  .demo-torre { height: 150px; }
+}
