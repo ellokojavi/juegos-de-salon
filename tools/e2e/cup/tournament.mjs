@@ -1068,7 +1068,8 @@ if (runs('weekend')) {
     await playDay(1, 0);
     const tbl = await ev(`JSON.stringify(Object.fromEntries(Object.entries(__copa.estado.copa.results[1]).map(([p,x])=>[__copa.estado.copa.players[p].name,x.s])))`).then(JSON.parse);
     const rows = await ev(`(async()=>{const {tabla}=await import('/cup/engine.js');return JSON.stringify(tabla(__copa.estado.copa, null, __copa.store.now()+3*${DAY}).map(f=>[f.name,f.total]))})()`).then(JSON.parse);
-    ok(tbl.Cata > tbl.Beto && JSON.stringify(rows) === '[["Cata",10],["Beto",8]]', `the day is ranked by the three games' average, with the usual points (${JSON.stringify(tbl)} → ${JSON.stringify(rows)})`);
+    // Three days later the cup is over: day 1 was the last one each played, so the unused wildcard lands there (D-444)
+    ok(tbl.Cata > tbl.Beto && JSON.stringify(rows) === '[["Cata",20],["Beto",16]]', `the day is ranked by the three games' average, with the usual points, doubled by the unused wildcard (${JSON.stringify(tbl)} → ${JSON.stringify(rows)})`);
   }
 }
 
