@@ -53,7 +53,8 @@ assert.deepEqual(c.participacion, { jugado: 2, esperado: 3 });
 assert.equal(pct(c.participacion), 67);
 // Día 1: empate en puntaje y gana quien tardó menos (Cata 10, Javi 8). Día 2: solo Javi (10).
 // El dueño ve la tabla completa, con el día 2 que los demás todavía no pueden ver.
-assert.deepEqual({ ...c.primero }, { name: 'Javi', co: 'CL', total: 18, empatados: 1 });
+// Day 3 is the final: Javi never used the wildcard, so it landed on day 2 on its own (D-??): 8 + 10·2
+assert.deepEqual({ ...c.primero }, { name: 'Javi', co: 'CL', total: 28, empatados: 1 });
 assert.equal(c.ultimo, meta.win[2].a + 201000);
 assert.equal(c.lab, true);
 assert.equal(c.alias, 'oficina');

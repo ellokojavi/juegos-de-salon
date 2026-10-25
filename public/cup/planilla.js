@@ -6,7 +6,7 @@
  * día (resultado, puntaje, tiempo, posición y puntos). Separado por punto y coma y con BOM: así
  * Excel en español lo abre en columnas y Google Sheets lo detecta solo.
  */
-import { tabla, evolucion, activos, posicionesDelDia, multiplicador, esFinal, comodinDe, juegoDelDia, mmss, cerradaAntes } from './engine.js';
+import { tabla, evolucion, activos, posicionesDelDia, multiplicador, esFinal, comodinEfectivo, juegoDelDia, mmss, cerradaAntes } from './engine.js';
 
 const SEP = ';';
 const celda = v => {
@@ -57,8 +57,9 @@ export function filasPlanilla(L, { T, juegos, fmt, fecha }) {
     const noJugaron = pids.filter(pid => !pos[pid]);
     for (const pid of jugaron) {
       const r = L.results[d][pid];
-      const x = multiplicador(L, d, pid);
-      const doble = x === 2 ? (esFinal(meta, d) ? T.csvFinal : comodinDe(L, pid) === d ? T.csvWild : '') : '';
+      const x = multiplicador(L, d, pid, now);
+      const w = comodinEfectivo(L, pid, now);
+      const doble = x === 2 ? (esFinal(meta, d) ? T.csvFinal : w.dia === d ? (w.auto ? T.csvWildAuto : T.csvWild) : '') : '';
       out.push([d, J?.nombre || juegoDelDia(meta, d), nombre[pid], r.r || r.s, r.s, mmss(Number(r.ms) || 0), pos[pid].pos, pos[pid].pts * x, doble]);
     }
     for (const pid of noJugaron) out.push([d, J?.nombre || juegoDelDia(meta, d), nombre[pid], T.csvNotPlayed, '', '', '', 0, '']);

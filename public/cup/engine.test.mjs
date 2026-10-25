@@ -5,7 +5,7 @@ import {
   CALENDARIOS, POZO, calendarioValido, calendarioAlAzar, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
-  estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
+  estadoDia, puedeComodin, multiplicador, comodinAuto, comodinEfectivo, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
   semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL, esFinal,
   TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia, estadoEnLista, recorteLista,
@@ -237,6 +237,42 @@ test('comodín: antes de empezar, una vez, no en la final', () => {
   assert.equal(multiplicador(L, 7, 'aaaaaa'), 2);
 });
 
+test('unused wildcard: it lands on the last day played before the final, once there is no choice left (D-??)', () => {
+  const r = { s: 5, ms: 1 };
+  const base = { meta: meta7, players, started: {}, results: { 1: { aaaaaa: r }, 5: { aaaaaa: r }, 6: { aaaaaa: r } }, wild: {} };
+  // Day 6 played, day 5 played: on the final's day no day before it is left to choose
+  assert.deepEqual(comodinEfectivo(base, 'aaaaaa', dia(6)), { dia: 6, auto: true });
+  assert.equal(multiplicador(base, 6, 'aaaaaa', dia(6)), 2);
+  assert.equal(multiplicador(base, 6, 'aaaaaa'), 1, 'without now nothing is automatic');
+  // On day 6 itself, day 6 is played but day 7 is the final: nothing left, so it already applies
+  assert.equal(comodinAuto(base, 'aaaaaa', dia(5)), 6);
+  // Day 6 played but day 5 still in its grace day and not played: the player can still use it there
+  const gracia = { ...base, results: { 1: { aaaaaa: r }, 6: { aaaaaa: r } } };
+  assert.equal(comodinAuto(gracia, 'aaaaaa', dia(5)), 0);
+  // Day 5 closed without playing it: the card goes on day 6
+  assert.equal(comodinAuto(gracia, 'aaaaaa', dia(6)), 6);
+  // Did not play day 6: it goes on the last day they played (day 1), not on a 0
+  const sin6 = { ...base, results: { 1: { aaaaaa: r } } };
+  assert.equal(comodinAuto(sin6, 'aaaaaa', dia(7)), 1);
+  // A day started and not finished cannot take the card, so it does not hold the choice open
+  const empezado = { ...base, started: { 6: { aaaaaa: 1 } }, results: { 1: { aaaaaa: r }, 5: { aaaaaa: r } } };
+  assert.equal(comodinAuto(empezado, 'aaaaaa', dia(5)), 5);
+  // Chosen by hand: never automatic
+  assert.deepEqual(comodinEfectivo({ ...base, wild: { aaaaaa: '1' } }, 'aaaaaa', dia(7)), { dia: 1, auto: false });
+  // Played nothing: nothing to double
+  assert.equal(comodinAuto({ ...base, results: {} }, 'aaaaaa', dia(7)), 0);
+  // Never on the final
+  assert.equal(multiplicador({ ...base, results: { 7: { aaaaaa: r } } }, 7, 'aaaaaa', dia(7)), 2);
+  // A cup without a final (D-438) keeps the old rule: an unused wildcard is not applied
+  const sinFinal = nuevaMeta({ nombre: 'x', dias: 3, inicio: '2026-09-28', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0, cal: ['linea', 'numero', 'reinas'] });
+  assert.equal(comodinAuto({ meta: sinFinal, players, results: { 3: { aaaaaa: r } } }, 'aaaaaa', sinFinal.end), 0);
+  // A cup the admin ended before its final (D-161) leaves it unused
+  assert.equal(comodinAuto(conCierre({ ...base, fin: dia(5) }), 'aaaaaa', dia(6)), 0);
+  // The table counts it
+  const t = tabla(base, 'aaaaaa', dia(7)).find(f => f.pid === 'aaaaaa');
+  assert.equal(t.dias[6].x, 2);
+});
+
 test('posiciones: puntaje, luego tiempo; empate total comparte', () => {
   const p = posicionesDelDia({
     aaaaaa: { s: 7, ms: 90000 }, bbbbbb: { s: 7, ms: 60000 }, cccccc: { s: 5, ms: 10 }, dddddd: { s: 5, ms: 10 },
@@ -339,10 +375,11 @@ test('medallas', () => {
       3: { cccccc: { s: 500, ms: 1 }, bbbbbb: { s: 400, ms: 1 }, aaaaaa: { s: 10, ms: 1 } },
     },
   };
-  // Cata 10+6+12=28 · Javi 8+10+16=34 · Pancho 6+8+20=34 · Tomás 5
+  // Nobody used the wildcard, so it lands on the last day each one played before the final (D-??):
+  // Cata 10+6·2+12=34 · Javi 8+10·2+16=44 · Pancho 6+8·2+20=42 · Tomás 5·2=10
+  // (the tie broken by the final is in the desempate test)
   const m = medallas(L);
-  // Javi y Pancho empatan en 34 y en 1 día ganado; desempata la final: Pancho
-  assert.deepEqual(m.campeon.map(f => f.name), ['Pancho']);
+  assert.deepEqual(m.campeon.map(f => f.name), ['Javi']);
   assert.equal(m.farolito[0].name, 'Tomás');
   assert.equal(m.remontada.filas[0].name, 'Pancho');
   assert.equal(m.ganador.n, 1);
@@ -459,8 +496,10 @@ for (const l of ['es', 'en', 'pt', undefined]) assert.equal(zonaDeIdioma(l), ZON
 
 test('desempate del primer lugar: más días ganados y después la final (#79)', () => {
   const fin = meta7.end;
+  // The wildcards go on a day nobody played (4), so none lands on its own (D-??) and moves the totals
+  const nada = { aaaaaa: '4', bbbbbb: '4' };
   // Cata gana los días 1 y 2 sola (20); Javi gana el 3 sola con comodín (20): más días ganados
-  const porDias = { meta: meta7, players, wild: { bbbbbb: 3 }, results: {
+  const porDias = { meta: meta7, players, wild: { ...nada, bbbbbb: 3 }, results: {
     1: { aaaaaa: { s: 5, ms: 5 } }, 2: { aaaaaa: { s: 5, ms: 5 } }, 3: { bbbbbb: { s: 5, ms: 5 } },
   } };
   const t1 = tabla(porDias, null, fin);
@@ -468,7 +507,7 @@ test('desempate del primer lugar: más días ganados y después la final (#79)',
   assert.deepEqual(desempate(t1), { pts: 20, criterio: 'dias' });
   // Un día ganado cada uno y 26 puntos: Javi gana el 1 (10) y es 2.° en la final (16); Cata es
   // 3.ª el día 2 (6) y gana la final (20). Desempata la final
-  const porFinal = { meta: meta7, players, results: {
+  const porFinal = { meta: meta7, players, wild: nada, results: {
     1: { bbbbbb: { s: 5, ms: 5 } },
     2: { cccccc: { s: 9, ms: 5 }, dddddd: { s: 7, ms: 5 }, aaaaaa: { s: 5, ms: 5 } },
     7: { aaaaaa: { s: 9, ms: 5 }, bbbbbb: { s: 5, ms: 5 } },
@@ -477,7 +516,7 @@ test('desempate del primer lugar: más días ganados y después la final (#79)',
   assert.deepEqual([t2[0].name, t2[0].total, t2[1].name, t2[1].total], ['Cata', 26, 'Javi', 26]);
   assert.deepEqual(desempate(t2), { pts: 26, criterio: 'final' });
   // Iguales en todo: comparten el primer lugar y no hay desempate que contar
-  const iguales = tabla({ meta: meta7, players, results: { 1: { aaaaaa: { s: 5, ms: 5 } }, 2: { bbbbbb: { s: 5, ms: 5 } } } }, null, fin);
+  const iguales = tabla({ meta: meta7, players, wild: nada, results: { 1: { aaaaaa: { s: 5, ms: 5 } }, 2: { bbbbbb: { s: 5, ms: 5 } } } }, null, fin);
   assert.equal(iguales[0].lugar, iguales[1].lugar);
   assert.equal(desempate(iguales), null);
   // Sin empate en puntos, nada
