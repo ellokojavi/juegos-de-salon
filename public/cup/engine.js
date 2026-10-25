@@ -419,8 +419,16 @@ export function puedeComodin(L, d, pid, now) {
  * final that they played. Returns that day, or 0 while they can still choose, if they used it, if
  * they played no day, in a cup without a final or in one ended before its final. Nothing is written: it is read from the store.
  */
+/**
+ * The cups the unused wildcard reaches (D-444): every cup still running when it was published,
+ * retroactively, and every one after. A cup that had already ended keeps its table and its saved
+ * podium as they were.
+ */
+export const AUTO_WILD_FROM = Date.parse('2026-10-25T17:00:00Z');
+
 export function comodinAuto(L, pid, now) {
   const { meta } = L;
+  if (!(meta.end > AUTO_WILD_FROM)) return 0;
   // Only a cup that reaches its final: one the admin ended before it (D-161) keeps its unused wildcards unused
   if (now == null || comodinDe(L, pid) || !tieneFinal(meta) || anulado(meta, meta.days)) return 0;
   let ultimo = 0;
