@@ -287,7 +287,7 @@ function portada() {
         const href = est?.dia ? `${urlCopa(c.code)}&day=${est.dia}` : urlCopa(c.code);
         // With its status, the line takes the place of "name · code", and the code goes by the cup's name
         if (est) return el('a', { class: `mia est-${est.clase}`, href },
-          el('b', {}, c.copa || c.code, el('span', { class: 'mia-cod' }, c.code)),
+          el('b', {}, c.copa || c.code, ' ', el('span', { class: 'mia-cod' }, c.code)),
           el('span', { class: 'mia-linea' }, est.texto), el('span', { class: 'go' }, '›'));
         return el('a', { class: 'mia' + (terminada(c) ? ' terminada' : ''), href },
           el('b', {}, c.copa || c.code, terminada(c) ? el('span', { class: 'etiqueta-fin' }, T.mineOver) : null),

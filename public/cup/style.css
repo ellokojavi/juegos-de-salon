@@ -67,7 +67,7 @@ ol.como li { line-height: 1.45; }
 .mia b { font-weight: 900; }
 .mia small { color: var(--muted); font-weight: 700; grid-row: 2; }
 .mia .go { grid-row: 1 / -1; grid-column: 2; font-family: var(--font-display); font-size: 1.8rem; color: var(--yellow); }
-.mia .mia-cod { margin-left: 8px; font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
+.mia .mia-cod { margin-left: 4px; font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
 /* The status line, in the second row: yellow to play, cyan when played, grey otherwise */
 .mia .mia-linea { grid-row: 2; font-weight: 800; font-size: 0.9rem; margin-top: 2px; }
 .mia.est-jugar .mia-linea { color: var(--yellow); }
