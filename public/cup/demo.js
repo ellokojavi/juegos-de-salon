@@ -81,6 +81,8 @@ export const ESCENAS = {
   resumed: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', enCurso: 4 },
   // Day 6, the last before the final, not played yet and the wildcard unused: it applies today on its own (D-444)
   'last-day': { inicio: 5, jugadores: 5, jugaron: 5, yo: 'javi02', pantalla: 'tablero' },
+  // The same in a 3-day cup without a final (D-438): its last day is the one the wildcard lands on
+  'last-day-three': { inicio: 2, jugadores: 5, jugaron: 2, yo: 'javi02', pantalla: 'tablero', cal: ['linea', 'numero', 'reinas'] },
   // Whoever looks already played today's day: nothing left until tomorrow's opens
   played: { inicio: 3, jugadores: 5, jugaron: 3, yo: 'javi02', pantalla: 'tablero', alDia: true },
 };
@@ -123,8 +125,8 @@ export function escena(nombre, { now, uid = 'demo' }) {
   if (!e) return null;
   const hoy = fechaEn(now, ZONA);
   const inicio = sumarDias(hoy, -e.inicio);
-  const meta = nuevaMeta({ nombre: 'Copa de la oficina', dias: 7, inicio, tz: ZONA, admin: 'cata01', creada: now - (e.inicio + 1) * 86400000, lab: true });
-  const cal = CALENDARIOS[7];
+  const meta = nuevaMeta({ nombre: 'Copa de la oficina', dias: e.cal ? e.cal.length : 7, inicio, tz: ZONA, admin: 'cata01', creada: now - (e.inicio + 1) * 86400000, lab: true, cal: e.cal || null });
+  const cal = e.cal || CALENDARIOS[7];
   const jug = JUGADORES.slice(0, e.jugadores);
   const L = { meta, players: {}, started: {}, results: {}, wild: {}, _keys: {}, _seats: {} };
   jug.forEach((j, i) => {
@@ -133,7 +135,7 @@ export function escena(nombre, { now, uid = 'demo' }) {
     L._seats[j.pid] = j.pid === e.yo ? { [uid]: true } : { [`otro-${j.pid}`]: true };
   });
   // Los días ya jugados: todos, menos quien mira el día de hoy (para que pueda jugarlo)
-  for (let d = 1; e.jugaron > 0 && d <= Math.min(e.jugaron + 1, 7); d++) {
+  for (let d = 1; e.jugaron > 0 && d <= Math.min(e.jugaron + 1, meta.days); d++) {
     for (const j of jug) {
       const hoyEsEste = d === e.jugaron + 1;
       if (hoyEsEste && (j.pid === e.yo ? !e.alDia : azar(j.pid, d) < 0.5)) continue;
