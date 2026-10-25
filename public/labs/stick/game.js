@@ -3,8 +3,8 @@
  * let go and it falls across the gap. English only for now, like Stack (D-445). The engine is engine.js;
  * this file draws the night, the pillars and the ninja on a canvas, reads the finger and celebrates.
  *
- * The hold is measured between the press's and the release's own timestamps, and a flip is judged at its
- * tap's, so a slow phone does not play a harder game (engine.js). The course is the day's: everyone
+ * The hold is measured between the press's and the release's own timestamps, so a slow phone does not
+ * play a harder game (engine.js). The course is the day's: everyone
  * crosses the same gaps today, and the phone keeps today's runs, so a group can pass it around.
  */
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
@@ -15,8 +15,8 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { param } from '../../assets/js/parametros.js';
 import {
-  newGame, pillar, pillarAt, current, next, press, release, suspend, stickAt, flip, advance, pause, runX, upsideAt, walkEnd,
-  holdFor, starTime, restX, daySeed, card, VIEW, HOLD_X, TURN_MS, NINJA, PERFECT, MAX_BONUS,
+  newGame, pillar, pillarAt, current, next, press, release, suspend, stickAt, advance, pause, runX, walkEnd,
+  holdFor, restX, daySeed, card, VIEW, HOLD_X, TURN_MS, NINJA, PERFECT, MAX_BONUS,
 } from './engine.js';
 
 trackVisit();   // the site's traffic (D-208)
@@ -26,25 +26,23 @@ const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const KETCHAPP = 'https://www.ketchappgames.com/';
 const BEST_KEY = 'juegos-de-salon:stick-best';
 const TODAY_KEY = 'juegos-de-salon:stick-today';
-const FLIPPED_KEY = 'juegos-de-salon:stick-flipped';
 const MOVING_KEY = 'juegos-de-salon:stick-moving';
 const T = {
   nombre: 'Stick Ninja',
   lema: 'Stretch the stick, cross the gap, plant the flag.',
   como: [
-    ['👆', 'Hold to stretch the stick, let go to drop it across the gap. Later on, some pillars slide: aim where they will be.'],
+    ['👆', 'Hold to stretch the stick, let go to drop it across the gap.'],
     ['🚩', 'Land its tip on the flag for a perfect: +1, then +2, +3… for each one in a row.'],
-    ['⭐', 'Tap while running to hang under the bridge and grab the star. Flip back before the pillar!'],
+    ['↔️', 'Later on, some pillars slide: aim where they will be when the stick lands.'],
   ],
   hoy: '📅 Today\'s course is the same for everyone. Pass the phone and compare.',
   jugar: '🥷 Play',
   sostener: 'Hold to stretch the stick',
   seguirSosteniendo: 'Hold to keep stretching',
-  voltear: 'Tap while running to grab the ⭐',
   movil: 'This pillar moves: aim where it will be when the stick lands',
   pausa: 'Paused', seguir: 'Tap to continue',
   perfecto: 'Perfect!', racha: 'Perfect ×{n}',
-  fin: { short: 'Too short!', long: 'Too long!', crash: 'Ouch! Flip back sooner' },
+  fin: { short: 'Too short!', long: 'Too long!' },
   finCorto: 'Game over',
   record: '🏆 New best!',
   mejor: 'Your best: {n}',
@@ -55,15 +53,12 @@ const T = {
     racha5: ['⚡', 'Unstoppable', 'Max bonus: +5 a bridge'],
     racha8: ['👑', 'Flag master', '8 perfects in a row'],
     movil: ['🎯', 'Moving target', 'A flag on a moving pillar'],
-    estrella: ['⭐', 'Star grab', 'Upside down and back'],
-    estrellas3: ['🌟', 'Star collector', '3 stars this run'],
     mejor: ['🏆', 'New best!', 'Beyond your record'],
     puntos: ['🏯', '{n} points', 'Keep going'],
   },
   desglose: {
     puentes: ['🌉 No bridges crossed.', '🌉 1 bridge crossed.', '🌉 {n} bridges crossed.'],
     perfectos: ['🚩 No flags.', '🚩 1 flag: +{b} bonus.', '🚩 {n} flags: +{b} bonus.'],
-    estrellas: ['', '⭐ 1 star.', '⭐ {n} stars.'],
     racha: '🔥 Longest flag streak: {n}.',
   },
   hoyTitulo: 'Today on this phone',
@@ -77,7 +72,7 @@ const plural = (arr, n, o = {}) => fmt(arr[Math.min(n, 2)], { n, ...o });
 
 const vista = document.getElementById('vista');
 const pie = document.getElementById('pie');
-const S = { g: null, fin: false, desde: 0, antes: 0, pausa: 0, logros: null, presionar: null, soltar: null, voltear: null, pausar: null };
+const S = { g: null, fin: false, desde: 0, antes: 0, pausa: 0, logros: null, presionar: null, soltar: null, pausar: null };
 
 /** Today, on the phone's calendar: the course's seed. `?seed=` plays another course (tests, sharing a run). */
 const hoy = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
@@ -124,8 +119,7 @@ function escena(canvas, { compacto = false } = {}) {
   const doradas = new Set();   // the pillars whose flag was hit: they keep a gold flag
   let golpe = null;    // the flag just hit, popping: { k, born }
   let previo = null;   // the last bridge, still lying across its gap: { x0, len }
-  let muerte = null;   // the fall at the end: { kind, born, x, y, vy, vx, rot, upside }
-  let estrellaTomada = -1;   // the pillar whose star was grabbed (it is not drawn any more)
+  let muerte = null;   // the fall at the end: { kind, born, x, y, vy, vx, rot }
   let destello = 0;    // a soft flash of the whole night, for a perfect
 
   const medir = () => {
@@ -182,7 +176,7 @@ function escena(canvas, { compacto = false } = {}) {
     ctx.strokeStyle = borde; ctx.lineWidth = 1.2; ctx.stroke();
   }
 
-  /* --- pillars, flags and stars --- */
+  /* --- pillars and flags --- */
   function columna(p, k, now, objetivo) {
     const x = sx(p.x), w = p.w * s;
     if (p.move && objetivo) riel(pillar(lastG, k), now);
@@ -237,21 +231,6 @@ function escena(canvas, { compacto = false } = {}) {
     ctx.closePath(); ctx.fill();
     ctx.restore();
   }
-  function estrella(x, y, r, now, alpha = 1) {
-    const giro = QUIETO ? 0 : now / 900;
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.shadowColor = rgb(GOLD); ctx.shadowBlur = 12;
-    ctx.fillStyle = rgb(GOLD);
-    ctx.beginPath();
-    for (let i = 0; i < 10; i++) {
-      const a = giro * 0.3 - Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r;
-      ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
-    }
-    ctx.closePath(); ctx.fill();
-    ctx.restore();
-  }
-
   /* --- the stick --- */
   function palo(x0, len, ang, brillo = 0) {
     const L = len * s, a = -Math.PI / 2 + ang;
@@ -267,14 +246,12 @@ function escena(canvas, { compacto = false } = {}) {
   /* --- the ninja --- */
   /**
    * The ninja, its feet at (x, y): a dark hood with a rim of light (so it reads on the night), the eye slit,
-   * a pink headband whose tails fly behind it as it runs, and legs that move. Upside down, it hangs under
-   * the line instead.
+   * a pink headband whose tails fly behind it as it runs, and legs that move.
    */
-  function ninja(x, y, now, { corre = false, upside = false, rot = 0, salto = 0 } = {}) {
+  function ninja(x, y, now, { corre = false, rot = 0, salto = 0 } = {}) {
     const u = s * (compacto ? 0.95 : 1), w = NINJA * u, h = NINJA * 1.2 * u;
     ctx.save();
     ctx.translate(x, y - salto * u);
-    if (upside) ctx.scale(1, -1);
     if (rot) ctx.rotate(rot);
     // A soft halo behind
     const halo = ctx.createRadialGradient(0, -h * 0.55, 2, 0, -h * 0.55, h * 1.3);
@@ -372,32 +349,29 @@ function escena(canvas, { compacto = false } = {}) {
     const w = g.walk, i = g.i;
     // The pillars in sight
     for (let k = Math.max(0, i - 2); k <= i + 3; k++) columna(pillarAt(g, k, reloj), k, now, k === i + 1 && g.phase !== 'over');
-    // The star in the next gap, bobbing under the bridge's line
-    const nx = next(g);
-    if (nx.star != null && estrellaTomada !== i + 1) estrella(sx(nx.star), G + (16 + (QUIETO ? 0 : Math.sin(now / 300) * 2)) * s, 7 * s, now);
 
     // The last bridge, still across its gap
     if (previo) palo(sx(previo.x0), previo.len, Math.PI / 2);
     // The stick: growing, falling across, lying, or dropping into the gap at the end
     const x0 = sx(current(g).x + current(g).w);
-    let ninjaX = restX(current(g)), corre = false, upside = false;
+    let ninjaX = restX(current(g)), corre = false;
     if (g.phase === 'growing' || g.phase === 'held') palo(x0, stickAt(g, reloj), 0);
     else if (w && (g.phase === 'walking' || g.phase === 'over')) {
       const k = clamp01((reloj - (w.t0 - TURN_MS)) / TURN_MS);
       let ang = easeIn(k) * Math.PI / 2;
       if (muerte && !w.ok) ang = Math.PI / 2 + easeIn(clamp01((now - muerte.born) / 380)) * Math.PI / 2;
       palo(x0, g.stick, ang, w.kind === 'perfect' && k >= 1 ? 1 : 0);
-      if (g.phase === 'walking') { ninjaX = runX(w, reloj); corre = reloj >= w.t0; upside = upsideAt(w, reloj); }
+      if (g.phase === 'walking') { ninjaX = runX(w, reloj); corre = reloj >= w.t0; }
     }
 
     // The ninja: standing, running (on top or hanging under), or falling at the end
     if (muerte) {
       const m = muerte;
       m.vy += 1500 * dt; m.y += m.vy * dt; m.x += m.vx * dt; m.rot += m.vr * dt;
-      if (m.y < H + 60) ninja(sx(m.x), m.y, now, { upside: m.upside, rot: m.rot });
+      if (m.y < H + 60) ninja(sx(m.x), m.y, now, { rot: m.rot });
     } else {
       const salto = g.phase === 'ready' && efectoSalto(now);
-      ninja(sx(ninjaX), G - 1, now, { corre, upside, salto: salto || 0 });
+      ninja(sx(ninjaX), G - 1, now, { corre, salto: salto || 0 });
     }
     efectos(now, dt);
   }
@@ -410,7 +384,7 @@ function escena(canvas, { compacto = false } = {}) {
     empezar(g) {
       cam.x = cam.from = cam.to = current(g).x + current(g).w - HOLD_X; cam.t0 = 0;
       pulsos.length = chispas.length = flotan.length = 0; doradas.clear();
-      previo = null; muerte = null; golpe = null; estrellaTomada = -1; destello = 0;
+      previo = null; muerte = null; golpe = null; destello = 0;
     },
     /** The stick just landed with its tip on the flag: the emerging pulse, sparks, the flag pops and turns gold. */
     perfecto(g, tip, racha) {
@@ -426,25 +400,15 @@ function escena(canvas, { compacto = false } = {}) {
     toque(tip) { lluvia(tip, G - 1, 6, [[255, 255, 255], [190, 160, 255]], 0.5); },
     /** Points rising from where they were won. */
     puntos(x, text, color = '#ffd23f') { flotan.push({ x, y: G - 30 * s, text, born: performance.now(), color }); },
-    /** The ninja grabbed the star. */
-    estrella(g, x) {
-      estrellaTomada = g.i + 1;
-      flotan.push({ x, y: G + 10 * s, text: '+1 ⭐', born: performance.now(), color: '#ffd23f' });
-      if (!QUIETO) pulsos.push({ x, y: G + 16 * s, born: performance.now(), color: GOLD, max: 30 });
-      lluvia(x, G + 16 * s, 14, [GOLD, [255, 255, 255]], 0.8);
-    },
     /** The ninja is on the next pillar: the camera slides, the bridge stays lying behind. */
     llegar(g, prevX0, len, perfecto) {
       previo = { x0: prevX0, len };
       cam.from = cam.x; cam.to = current(g).x + current(g).w - HOLD_X; cam.t0 = performance.now();
       if (perfecto) saltoDesde = performance.now();
     },
-    /** The end: the ninja drops into the gap (or bounces off the pillar it hit upside down). */
+    /** The end: the ninja drops into the gap from the stick's tip. */
     caer(g, kind) {
-      const w = g.walk, upside = kind === 'crash';
-      const x = kind === 'crash' ? w.wall : w.tip;
-      muerte = { kind, born: performance.now(), x, y: upside ? G + 17 * s : G - 1, vy: upside ? 40 : -60, vx: upside ? -40 : 10, rot: 0, vr: upside ? -5 : 3, upside };
-      if (upside) lluvia(w.wall, G + 8 * s, 10, [[255, 46, 136], [255, 255, 255]], 0.7);
+      muerte = { kind, born: performance.now(), x: g.walk.tip, y: G - 1, vy: -60, vx: 10, rot: 0, vr: 3 };
     },
     cerrar() { ro.disconnect(); },
   };
@@ -483,8 +447,8 @@ function portada() {
 }
 
 /**
- * The cover plays itself: mostly flags, a plain landing now and then, the star grabbed hanging under the
- * bridge, and every so often a stick too short; then it starts over on another course.
+ * The cover plays itself: mostly flags, a plain landing now and then, and every so often a stick too
+ * short; then it starts over on another course.
  */
 function demo(lienzo) {
   const vez = ++animando;
@@ -502,20 +466,18 @@ function demo(lienzo) {
     }
     if (g.phase === 'growing' && plan?.suelta && now >= plan.suelta) {
       const r = release(g, plan.suelta);
-      plan = { tip: r.tip, kind: r.kind, cayo: false, flips: g.walk.star != null && r.kind !== 'short' ? [g.walk.t0 + 30, starTime(g) + 60] : [] };
+      plan = { tip: r.tip, kind: r.kind, cayo: false };
     }
     if (g.phase === 'walking') {
       const w = g.walk;
-      if (plan.flips.length && now >= plan.flips[0]) flip(g, plan.flips.shift());
       if (!plan.cayo && now >= w.t0) {
         plan.cayo = true;
         if (plan.kind === 'perfect') sc.perfecto(g, plan.tip, g.streak + 1); else if (plan.kind === 'land') sc.toque(plan.tip);
       }
       const x0 = current(g).x + current(g).w, len = g.stick;
       for (const e of advance(g, now)) {
-        if (e.type === 'star') sc.estrella(g, w.star);
         if (e.type === 'arrive') { sc.llegar(g, x0, len, e.kind === 'perfect'); plan = { at: now + 520 }; }
-        if (e.type === 'fall' || e.type === 'crash') { sc.caer(g, e.type === 'crash' ? 'crash' : e.kind); plan = { fin: now + 1300 }; }
+        if (e.type === 'fall') { sc.caer(g, e.kind); plan = { fin: now + 1300 }; }
       }
     }
     if (g.phase === 'over' && plan?.fin && now >= plan.fin) empezar(now);
@@ -557,11 +519,10 @@ function jugar() {
     aviso.classList.remove('fuera', 'brilla', 'final'); void aviso.offsetWidth;
     if (clase) aviso.classList.add(clase);
   };
-  /** The hint for the moment: how to stretch, and the first time a star hangs ahead, how to grab it. */
+  /** The hint for the moment: how to stretch, and the first time a pillar moves, how to aim at it. */
   const pista = () => {
     if (g.phase === 'held') return decir(T.seguirSosteniendo);
     if (next(g).move && !yaMovil()) return decir(T.movil);
-    if (next(g).star != null && !yaVolteo()) return decir(T.voltear);
     if (g.bridges === 0) return decir(T.sostener);
   };
 
@@ -594,10 +555,6 @@ function jugar() {
 
   const presionar = t => {
     if (S.fin || S.pausa) return;
-    if (g.phase === 'walking') {
-      if (flip(g, t)) { SFX.flip(); vibrate(6); marcarVolteo(); }
-      return;
-    }
     if (!press(g, t)) return;
     ultimoTic = 0;
     aviso.classList.add('fuera');
@@ -664,7 +621,7 @@ function jugar() {
   addEventListener('blur', pausar, sig);
   addEventListener('pagehide', pausar, sig);
 
-  // The finger: down stretches (or flips, while running); up drops. Up is heard anywhere on the page
+  // The finger: down stretches; up drops. Up is heard anywhere on the page
   let tras = false;   // the press that took the pause off: its release does nothing
   escenario.addEventListener('pointerdown', ev => {
     if (ev.button > 0) return;
@@ -690,7 +647,7 @@ function jugar() {
     S.fin = true;
     fuera.abort();
     sc.caer(g, kind);
-    if (kind === 'crash') SFX.hit(); else SFX.letterMiss();
+    SFX.letterMiss();
     setTimeout(() => { if (vez === animando) SFX.error(); }, 380);
     vibrate([40, 30, 60]);
     racha.hidden = true;
@@ -724,15 +681,8 @@ function jugar() {
       }
       const x0 = current(g).x + current(g).w, len = g.stick;
       for (const e of advance(g, reloj)) {
-        if (e.type === 'star') {
-          sc.estrella(g, w.star); SFX.cheers(); vibrate(10);
-          puntaje();
-          celebrar('estrella');
-          if (g.stars >= 3) celebrar('estrellas3');
-        }
         if (e.type === 'arrive') llego(e, x0, len);
         if (e.type === 'fall') perder(e.kind);
-        if (e.type === 'crash') perder('crash');
       }
     }
     sc.draw(g, now, reloj);
@@ -747,10 +697,8 @@ function jugar() {
 
 function mejorAntes() { try { return Number(localStorage.getItem(BEST_KEY)) || 0; } catch { return 0; } }
 function guardarMejor(n) { try { localStorage.setItem(BEST_KEY, String(n)); } catch { /* private mode */ } }
-function yaVolteo() { try { return localStorage.getItem(FLIPPED_KEY) === '1'; } catch { return false; } }
 function yaMovil() { try { return localStorage.getItem(MOVING_KEY) === '1'; } catch { return false; } }
 function marcarMovil() { try { localStorage.setItem(MOVING_KEY, '1'); } catch { /* private mode */ } }
-function marcarVolteo() { try { localStorage.setItem(FLIPPED_KEY, '1'); } catch { /* private mode */ } }
 /** Today's runs on this phone, on today's course (a group passing the phone sees them all). */
 function corridasHoy() {
   try { const d = JSON.parse(localStorage.getItem(TODAY_KEY) || '{}'); return d.dia === hoy() && d.seed === semilla() ? d.runs || [] : []; } catch { return []; }
@@ -764,12 +712,11 @@ function resultado() {
   document.body.classList.remove('jugando');
   const g = S.g, n = g.score, antes = S.antes, record = n > antes && n > 0;
   const segundos = Math.round((Date.now() - S.desde) / 1000);
-  trackFinish({ detalle: `${n} points · ${g.bridges} bridges · ${g.perfects} flags · ${g.stars} stars · streak ${g.bestStreak} · ${segundos}s` });
+  trackFinish({ detalle: `${n} points · ${g.bridges} bridges · ${g.perfects} flags · streak ${g.bestStreak} · ${segundos}s` });
   pie.replaceChildren();
   const lineas = [
     plural(T.desglose.puentes, g.bridges),
     plural(T.desglose.perfectos, g.perfects, { b: g.bonus }),
-    ...(g.stars ? [plural(T.desglose.estrellas, g.stars)] : []),
     ...(g.bestStreak > 1 ? [fmt(T.desglose.racha, { n: g.bestStreak })] : []),
   ];
   const runs = corridasHoy(), tope = Math.max(...runs, 0);
@@ -798,5 +745,5 @@ initSound();
 sparkles();
 portada();
 // For the end-to-end script: the game (S.presionar(t) / S.soltar(t) as a finger would, S.pausar() as a
-// hidden page does), how long to hold for the flag, and when the ninja is over the star
-window.__stick = { S, sostener: (off = 0, t = performance.now()) => holdFor(S.g, off, t), estrella: () => starTime(S.g), fin: () => walkEnd(S.g), columna: k => pillarAt(S.g, k, performance.now()) };
+// hidden page does), how long to hold for the flag, and where a pillar is now
+window.__stick = { S, sostener: (off = 0, t = performance.now()) => holdFor(S.g, off, t), fin: () => walkEnd(S.g), columna: k => pillarAt(S.g, k, performance.now()) };

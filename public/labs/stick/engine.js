@@ -7,12 +7,11 @@
  * the release's own timestamps), and where the running ninja is depends only on the time since the stick
  * fell, never on how many frames were drawn.
  *
- * Fair between players: the course (the pillars, the gaps, the stars) comes from a seed, and the page
+ * Fair between players: the course (the pillars, the gaps, the slides) comes from a seed, and the page
  * seeds it with the day, so everyone who plays today crosses the same gaps.
  *
- * Units: the screen is VIEW wide; x grows to the right and a pillar is { x, w, star?, move? }: its left
- * edge, its width, the x of the star hanging in the gap before it, if there is one, and how it slides,
- * if it is a moving one (from MOVE_FROM on).
+ * Units: the screen is VIEW wide; x grows to the right and a pillar is { x, w, move? }: its left edge,
+ * its width, and how it slides, if it is a moving one (from MOVE_FROM on).
  *
  * A moving pillar slides back and forth while it is the one to reach; where it is depends only on the
  * time since the ninja stepped on the pillar before (`g.moveT0`). The stick is judged where the pillar is
@@ -50,7 +49,7 @@ export function daySeed(date) {
 export function newGame(seed = 1, t0 = 0) {
   return {
     seed, rand: rng(seed), pillars: [{ ...FIRST }], i: 0, moveT0: t0,
-    score: 0, bridges: 0, perfects: 0, bonus: 0, stars: 0, streak: 0, bestStreak: 0,
+    score: 0, bridges: 0, perfects: 0, bonus: 0, streak: 0, bestStreak: 0,
     phase: 'ready',        // ready → growing → walking → ready…, or over; 'held' when paused mid-hold
     hold: null, held: 0, stick: 0, walk: null, kinds: [],
   };
@@ -83,9 +82,6 @@ export function pillar(g, k) {
     }
     const p = { x: right(prev) + gap, w };
     if (move) p.move = move;
-    // Now and then a star hangs in a wide gap, under the bridge's line (not before a moving pillar)
-    const s = r();
-    if (!move && n > 2 && gap >= 70 && s < 0.38) p.star = Math.round(right(prev) + gap * (0.32 + r() * 0.36));
     g.pillars.push(p);
   }
   return g.pillars[k];
@@ -149,9 +145,7 @@ export function release(g, t) {
   const ok = kind === 'perfect' || kind === 'land';
   g.stick = len; g.phase = 'walking';
   g.walk = {
-    t0: t + TURN_MS, from: restX(cur), to: ok ? restX(nx) : tip, kind, tip, ok,
-    wall: nx.x - half,                 // upside down, the ninja hits the next pillar here
-    star: nx.star ?? null, flips: [], starTaken: false, done: false,
+    t0: t + TURN_MS, from: restX(cur), to: ok ? restX(nx) : tip, kind, tip, ok, done: false,
   };
   return { kind, len, tip, offset: tip - center };
 }
@@ -162,48 +156,23 @@ export function runX(w, t) {
 }
 /** When the running ninja's center reaches `x`. */
 const timeAt = (w, x) => w.t0 + (x - w.from) / RUN * 1000;
-/** Whether the ninja hangs under the bridge at `t`: each flip, before `t`, turns it over. */
-export const upsideAt = (w, t) => w.flips.filter(f => f <= t).length % 2 === 1;
-
 /**
- * A tap while running, at `t`: the ninja flips under the bridge (or back on top). Only while it is over
- * the gap: once it reaches the pillar, or before it starts running, a tap does nothing.
- */
-export function flip(g, t) {
-  const w = g.walk;
-  if (g.phase !== 'walking' || !w || w.done || t < w.t0) return false;
-  const x = runX(w, t);
-  if (x >= Math.min(w.to, w.ok ? w.wall : w.to) || x >= w.to) return false;
-  w.flips.push(t);
-  return true;
-}
-
-/**
- * Moves the game on to moment `t` and says what happened since the last call, in order:
- * `{ type: 'star' }` (the ninja grabbed the gap's star, hanging under the bridge), `{ type: 'crash' }`
- * (it was still upside down when it reached the next pillar: the game is over), `{ type: 'fall' }` (the
- * stick missed: it ran to the tip and fell), or `{ type: 'arrive', kind, gain, bonus, streak }` (it is on
- * the next pillar: a point, and a perfect's bonus).
- * Everything follows from the flips' and the release's timestamps, so it does not matter how often it is called.
+ * Moves the game on to moment `t` and says what happened, once the ninja is done running: `{ type: 'fall',
+ * kind }` (the stick missed: it ran to the tip and fell) or `{ type: 'arrive', kind, gain, bonus, streak,
+ * moving }` (it is on the next pillar: a point, and a perfect's bonus). Everything follows from the
+ * release's timestamp, so it does not matter how often it is called.
  */
 export function advance(g, t) {
   const w = g.walk, out = [];
   if (g.phase !== 'walking' || !w || w.done) return out;
-  const crashAt = w.ok && w.flips.length && upsideAt(w, timeAt(w, w.wall)) ? timeAt(w, w.wall) : Infinity;
-  const end = Math.min(crashAt, timeAt(w, w.to));
-  if (w.star != null && !w.starTaken && w.star >= w.from && w.star <= w.to) {
-    const ts = timeAt(w, w.star);
-    if (ts <= t && ts <= end && upsideAt(w, ts)) { w.starTaken = true; g.stars++; g.score++; out.push({ type: 'star' }); }
-  }
-  if (t < end) return out;
+  if (t < timeAt(w, w.to)) return out;
   w.done = true;
-  if (crashAt <= end && crashAt !== Infinity) { over(g, 'crash'); out.push({ type: 'crash' }); return out; }
-  if (!w.ok) { over(g, w.kind); out.push({ type: 'fall', kind: w.kind }); return out; }
+  if (!w.ok) { g.phase = 'over'; g.kinds.push('fall'); out.push({ type: 'fall', kind: w.kind }); return out; }
   g.i++; g.bridges++;
   // The pillars after a moving one move with where it stopped, so the gaps stay as they were made
   const now = g.pillars[g.i], delta = now.move ? now.landX - now.x : 0;
   now.x += delta;
-  if (delta) for (let k = g.i + 1; k < g.pillars.length; k++) { g.pillars[k].x += delta; if (g.pillars[k].star != null) g.pillars[k].star += delta; }
+  if (delta) for (let k = g.i + 1; k < g.pillars.length; k++) g.pillars[k].x += delta;
   g.moveT0 = timeAt(w, w.to);
   let bonus = 0;
   if (w.kind === 'perfect') { g.streak++; g.perfects++; bonus = Math.min(g.streak, MAX_BONUS); g.bonus += bonus; } else g.streak = 0;
@@ -211,30 +180,26 @@ export function advance(g, t) {
   g.score += 1 + bonus;
   g.kinds.push(w.kind);
   g.phase = 'ready'; g.stick = 0; g.held = 0;
-  out.push({ type: 'arrive', kind: w.kind, gain: 1 + bonus, bonus, streak: g.streak, star: w.starTaken, moving: !!g.pillars[g.i].move });
+  out.push({ type: 'arrive', kind: w.kind, gain: 1 + bonus, bonus, streak: g.streak, moving: !!g.pillars[g.i].move });
   return out;
 }
 
-function over(g, kind) { g.phase = 'over'; g.kinds.push(kind === 'crash' ? 'crash' : 'fall'); }
-
-/** When the ninja is done with this walk (it arrived, fell or crashed): for the page's animation. */
+/** When the ninja is done with this walk (it arrived or fell): for the page's animation. */
 export function walkEnd(g) {
   const w = g.walk;
-  if (!w) return 0;
-  const crash = w.ok && upsideAt(w, timeAt(w, w.wall)) ? timeAt(w, w.wall) : Infinity;
-  return Math.min(crash, timeAt(w, w.to));
+  return w ? timeAt(w, w.to) : 0;
 }
 
 /**
- * A pause of `ms`: a moving pillar's clock, and while the ninja runs its clock and its flips, move forward
- * by that much, so everything comes back where it was.
+ * A pause of `ms`: a moving pillar's clock, and while the ninja runs its clock, move forward by that
+ * much, so everything comes back where it was.
  */
 export function pause(g, ms) {
   if (ms <= 0 || g.phase === 'over') return;
   g.moveT0 += ms;
   const w = g.walk;
   if (g.phase !== 'walking' || !w) return;
-  w.t0 += ms; w.flips = w.flips.map(f => f + ms);
+  w.t0 += ms;
 }
 
 /**
@@ -252,15 +217,9 @@ export function holdFor(g, offset = 0, t = 0) {
   return h;
 }
 
-/** When the running ninja is right over the gap's star (the demo and the end-to-end script), or null. */
-export function starTime(g) {
-  const w = g.walk;
-  return w && w.star != null ? timeAt(w, w.star) : null;
-}
-
 /** The share card's line: each bridge a 🎯 perfect or a 🟩, then how it ended; the last 20, ten to a line. */
 export function card(kinds) {
-  const last = kinds.slice(-20).map(k => ({ perfect: '🎯', land: '🟩', crash: '💥', fall: '🕳️' }[k] || '🟩'));
+  const last = kinds.slice(-20).map(k => ({ perfect: '🎯', land: '🟩', fall: '🕳️' }[k] || '🟩'));
   const rows = [];
   for (let i = 0; i < last.length; i += 10) rows.push(last.slice(i, i + 10).join(''));
   return rows.join('\n');

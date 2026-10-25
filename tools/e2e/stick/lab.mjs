@@ -2,8 +2,8 @@
 // credit to Ketchapp's Stick Hero, which the English cover gives too; the cover plays itself; Play opens the
 // night with "Hold to stretch"; a real press stretches the stick; a stick on the flag is a perfect (+2, then +3
 // in a row, the pulse, "Perfect ×n", the streak chip and the achievements); a plain landing is +1 and breaks
-// the streak; hanging under the bridge grabs the star; a pause in the middle of a hold keeps the stick, and
-// the tap back does not drop it; upside down at the pillar is a crash with the result (score, new best kept
+// the streak; there are no stars; a pause in the middle of a hold keeps the stick, and the tap back does
+// not drop it; a stick too long falls, with the result (score, new best kept
 // on the phone, breakdown, share, Play again, the comment after a line); a real short hold falls, and the
 // second run shows today's runs on this phone. Moving pillars, from the 10th on, slide and say so, and aiming
 // where they will be is a perfect (Moving target). At 375 px. Prints ✗ if anything fails.
@@ -24,7 +24,7 @@ ok(await ev(`/Stick Hero/.test(document.querySelector('#seccion-stick a[href*="k
 
 // A clean phone: no best, no runs today, no flip seen yet (the profile folder may be a rerun's)
 await b.go(`${SITE}/labs/stick/?test&seed=42`, 600);
-await ev(`['stick-best', 'stick-today', 'stick-flipped', 'stick-moving'].forEach(k => localStorage.removeItem('juegos-de-salon:' + k)); 1`);
+await ev(`['stick-best', 'stick-today', 'stick-moving'].forEach(k => localStorage.removeItem('juegos-de-salon:' + k)); 1`);
 await b.go(`${SITE}/labs/stick/?test&seed=42`, 1200);
 ok(await waitFor(`!!document.getElementById('btn-jugar')`), 'the cover has Play');
 ok(await ev(`document.documentElement.lang`) === 'en', 'the page is in English');
@@ -62,9 +62,9 @@ ok(await waitFor(`document.getElementById('marcador').textContent === '2'`, 3000
 ok(await waitFor(`/Bullseye/.test(document.getElementById('logros').textContent)`, 2000), 'the first flag is an achievement: Bullseye!');
 
 /** One bridge with the stick's tip `off` from the flag, as a finger would, and waits until it is over. */
-const puente = async (off = 0, flips = '') => {
+const puente = async (off = 0) => {
   await waitFor(`${G}.phase === 'ready'`, 4000);
-  await ev(`(() => { const t = performance.now(); ${P}.S.presionar(t); ${P}.S.soltar(t + ${P}.sostener(${off}, t)); ${flips} })(); 1`);
+  await ev(`(() => { const t = performance.now(); ${P}.S.presionar(t); ${P}.S.soltar(t + ${P}.sostener(${off}, t)); })(); 1`);
   await waitFor(`${G}.phase !== 'walking'`, 5000);
 };
 await puente(0); await puente(0);
@@ -77,15 +77,6 @@ const antes = await ev(`${G}.score`);
 await puente(7);
 ok(await ev(`${G}.score`) === antes + 1 && await ev(`${G}.streak`) === 0, 'a landing off the flag is +1 and breaks the streak');
 ok(await ev(`document.getElementById('racha').hidden`), 'the streak chip goes');
-
-// The star: perfect bridges until one hangs in the next gap, then hang under the bridge and back
-for (let k = 0; k < 20 && !(await ev(`${G}.pillars[${G}.i + 1]?.star != null`)); k++) await puente(0);
-ok(await ev(`${G}.pillars[${G}.i + 1]?.star != null`), 'a star hangs in a gap');
-ok(/grab the ⭐/.test(await ev(`document.getElementById('aviso').textContent`)), 'and the hint says to tap while running to grab it');
-const conEstrella = await ev(`${G}.score`);
-await puente(0, `${P}.S.presionar(${G}.walk.t0 + 10); ${P}.S.presionar(${P}.estrella() + 20);`);
-ok(await ev(`${G}.stars`) === 1 && await ev(`${G}.phase`) === 'ready', 'hanging under the bridge grabs the star, and flipping back is safe');
-ok(await ev(`${G}.score`) > conEstrella + 1, 'the star is a point on top of the bridge');
 
 // A pause in the middle of a hold: the stick stays, the tap back only takes the pause off
 await ev(`${P}.S.presionar(performance.now()); 1`);
@@ -112,15 +103,18 @@ await puente(0);
 ok(await ev(`${G}.kinds.at(-1)`) === 'perfect', 'aiming where it will be when the stick lands is a perfect');
 ok(await waitFor(`/Moving target/.test(document.getElementById('logros').textContent)`, 8000), 'a flag on a moving pillar: Moving target');
 
-// Upside down at the pillar: a crash, and the result
+// No stars anywhere on the course, and a tap while running does nothing
+ok(await ev(`${G}.pillars.every(p => !('star' in p))`) && !(await ev(`/star/i.test(document.querySelector('.pasos')?.textContent || '')`)), 'no stars on the course');
+
+// A stick too long: the ninja falls, and the result
 const final = await ev(`${G}.score`);
-await puente(0, `${P}.S.presionar(${G}.walk.t0 + 10);`);
-ok(await waitFor(`/Ouch/.test(document.getElementById('aviso')?.textContent || '')`, 2000), 'upside down at the pillar: Ouch!');
+await puente(`${G}.pillars[${G}.i + 1].w / 2 + 6`);
+ok(await waitFor(`/Too long/.test(document.getElementById('aviso')?.textContent || '')`, 3000), 'a stick past the pillar: Too long!');
 ok(await waitFor(`!!document.getElementById('puntaje')`, 4000), 'and the result follows');
 ok(await ev(`document.getElementById('puntaje').textContent`) === String(final), `the result is the score: ${final}`);
 ok(/New best/.test(await ev(`document.querySelector('.sello-ninja').textContent`)), 'a first game is a new best');
 ok(await ev(`localStorage.getItem('juegos-de-salon:stick-best')`) === String(final), 'kept on the phone');
-ok(/flags: \+\d+ bonus/.test(await ev(`document.querySelector('.desglose').textContent`)) && /1 star/.test(await ev(`document.querySelector('.desglose').textContent`)), 'the breakdown counts the flags, their bonus and the star');
+ok(/flags: \+\d+ bonus/.test(await ev(`document.querySelector('.desglose').textContent`)) && !/star/.test(await ev(`document.querySelector('.desglose').textContent`)), 'the breakdown counts the flags and their bonus, and no stars');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado') && !!document.getElementById('btn-otra') && !!document.querySelector('.resultado .divisor')`), 'share, Play again, and the comment form after a line');
 ok(await ev(`!document.getElementById('hoy')`), 'one run: no list of today\'s runs yet');
 ok(await ev(`document.documentElement.scrollWidth <= 375`), 'no sideways scroll on the result');
