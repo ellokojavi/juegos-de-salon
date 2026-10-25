@@ -242,6 +242,7 @@ In the lab's 📦 La Bodega since D-420, at the owner's request: off the home pa
 | LIG-93 | Zip tiene diez niveles, de 4 × 4 a 7 × 7: con los diez son 100 puntos y la partida termina ahí, sin esperar el reloj; entre quienes los resuelven todos gana quien terminó antes (D-250). | ✅ v0.130.0 |
 | LIG-94 | The owner's request: someone gets history and continuity just by using their usual name and PIN. With no player on the phone, the cup PIN tried as the player PIN for that name signs them in as that player; a podium saved without them gets their player once they sit in that cup as it (D-358). | ✅ on merge (D-358) |
 | LIG-95 | The owner's request: no cup PINs are needed when someone is signed in as a player; the player PIN plus being signed up in the cup suffices. The cup PIN stays for people without a player (D-359). | ✅ on merge (D-359) |
+| LIG-96 | The owner's request: an unused ×2 wildcard is not lost. In a cup with a Grand Final it lands on its own on the last day before the final the player played; day 6 warns that it applies today and the day it lands on shows a gold **×2 auto** (D-444). | ✅ on merge (D-444) |
 
 ## Requerimientos no funcionales
 

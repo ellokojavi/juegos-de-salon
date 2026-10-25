@@ -5,7 +5,7 @@ import {
   CALENDARIOS, POZO, calendarioValido, calendarioAlAzar, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
-  estadoDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
+  estadoDia, puedeComodin, multiplicador, comodinAuto, comodinEfectivo, ultimoDiaComodin, AUTO_WILD_FROM, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
   fuera, enRiesgo, AUSENCIAS, cerrarEn, conCierre, cerradaAntes, anulado, puedeCerrar, VARIANTES, diaDeCal, entradaCal, varianteDelDia, calendario,
   semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL, esFinal,
   TRIO, findeAlAzar, findeAbierto, FINDE_HASTA, rondasDelDia, estadoEnLista, recorteLista,
@@ -237,6 +237,56 @@ test('comodín: antes de empezar, una vez, no en la final', () => {
   assert.equal(multiplicador(L, 7, 'aaaaaa'), 2);
 });
 
+test('unused wildcard: it lands on the last day played before the final, once there is no choice left (D-444)', () => {
+  // A cup still running when D-444 was published: it reaches it retroactively
+  const meta7 = nuevaMeta({ nombre: 'Copa de la oficina', dias: 7, inicio: '2026-10-20', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0 });
+  const dia = (k, horas = 12) => meta7.win[1].a + k * 24 * H + horas * H;
+  const r = { s: 5, ms: 1 };
+  const base = { meta: meta7, players, started: {}, results: { 1: { aaaaaa: r }, 5: { aaaaaa: r }, 6: { aaaaaa: r } }, wild: {} };
+  // Day 6 played, day 5 played: on the final's day no day before it is left to choose
+  assert.deepEqual(comodinEfectivo(base, 'aaaaaa', dia(6)), { dia: 6, auto: true });
+  assert.equal(multiplicador(base, 6, 'aaaaaa', dia(6)), 2);
+  assert.equal(multiplicador(base, 6, 'aaaaaa'), 1, 'without now nothing is automatic');
+  // On day 6 itself, day 6 is played but day 7 is the final: nothing left, so it already applies
+  assert.equal(comodinAuto(base, 'aaaaaa', dia(5)), 6);
+  // Day 6 played but day 5 still in its grace day and not played: the player can still use it there
+  const gracia = { ...base, results: { 1: { aaaaaa: r }, 6: { aaaaaa: r } } };
+  assert.equal(comodinAuto(gracia, 'aaaaaa', dia(5)), 0);
+  // Day 5 closed without playing it: the card goes on day 6
+  assert.equal(comodinAuto(gracia, 'aaaaaa', dia(6)), 6);
+  // Did not play day 6: it goes on the last day they played (day 1), not on a 0
+  const sin6 = { ...base, results: { 1: { aaaaaa: r } } };
+  assert.equal(comodinAuto(sin6, 'aaaaaa', dia(7)), 1);
+  // A day started and not finished cannot take the card, so it does not hold the choice open
+  const empezado = { ...base, started: { 6: { aaaaaa: 1 } }, results: { 1: { aaaaaa: r }, 5: { aaaaaa: r } } };
+  assert.equal(comodinAuto(empezado, 'aaaaaa', dia(5)), 5);
+  // Chosen by hand: never automatic
+  assert.deepEqual(comodinEfectivo({ ...base, wild: { aaaaaa: '1' } }, 'aaaaaa', dia(7)), { dia: 1, auto: false });
+  // Played nothing: nothing to double
+  assert.equal(comodinAuto({ ...base, results: {} }, 'aaaaaa', dia(7)), 0);
+  // Never on the final
+  assert.equal(multiplicador({ ...base, results: { 7: { aaaaaa: r } } }, 7, 'aaaaaa', dia(7)), 2);
+  // A cup without a final (D-438): it lands on the last day played, the last day of the cup included
+  const sinFinal = nuevaMeta({ nombre: 'x', dias: 3, inicio: '2026-10-24', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0, cal: ['linea', 'numero', 'reinas'] });
+  const enDia3 = sinFinal.win[3].a + 12 * H;
+  const sf = res => ({ meta: sinFinal, players, started: {}, results: res });
+  assert.equal(ultimoDiaComodin(sinFinal), 3);
+  assert.equal(comodinAuto(sf({ 2: { aaaaaa: r }, 3: { aaaaaa: r } }), 'aaaaaa', enDia3), 3, 'played the last day: applied right away');
+  assert.equal(comodinAuto(sf({ 1: { aaaaaa: r }, 2: { aaaaaa: r } }), 'aaaaaa', enDia3), 0, 'the last day is still open: they can still use it');
+  assert.equal(comodinAuto(sf({ 1: { aaaaaa: r }, 2: { aaaaaa: r } }), 'aaaaaa', sinFinal.end), 2, 'skipped the last day: the last one played');
+  assert.equal(multiplicador(sf({ 3: { aaaaaa: r } }), 3, 'aaaaaa', sinFinal.end), 2);
+  // Retroactive for the cups still running when it was published; one already ended keeps its table
+  assert.ok(meta7.end > AUTO_WILD_FROM, 'the test cup ends after it was published');
+  const vieja = { ...base, meta: { ...meta7, end: AUTO_WILD_FROM - 1 } };
+  assert.equal(comodinAuto(vieja, 'aaaaaa', dia(7)), 0);
+  assert.equal(comodinAuto({ ...base, meta: { ...meta7, end: AUTO_WILD_FROM + 1 } }, 'aaaaaa', dia(6)), 6, 'a cup whose final is on the day it was published gets it');
+  // A cup the admin ended before its final (D-161) leaves it unused
+  assert.equal(comodinAuto(conCierre({ ...base, fin: dia(5) }), 'aaaaaa', dia(6)), 0);
+  // The table counts it
+  const t = tabla(base, 'aaaaaa', dia(7)).find(f => f.pid === 'aaaaaa');
+  assert.equal(t.dias[6].x, 2);
+});
+
 test('posiciones: puntaje, luego tiempo; empate total comparte', () => {
   const p = posicionesDelDia({
     aaaaaa: { s: 7, ms: 90000 }, bbbbbb: { s: 7, ms: 60000 }, cccccc: { s: 5, ms: 10 }, dddddd: { s: 5, ms: 10 },
@@ -339,7 +389,8 @@ test('medallas', () => {
       3: { cccccc: { s: 500, ms: 1 }, bbbbbb: { s: 400, ms: 1 }, aaaaaa: { s: 10, ms: 1 } },
     },
   };
-  // Cata 10+6+12=28 · Javi 8+10+16=34 · Pancho 6+8+20=34 · Tomás 5
+  // Cata 10+6+12=28 · Javi 8+10+16=34 · Pancho 6+8+20=34 · Tomás 5 (a cup that ended before D-444:
+  // the unused wildcards stay unused)
   const m = medallas(L);
   // Javi y Pancho empatan en 34 y en 1 día ganado; desempata la final: Pancho
   assert.deepEqual(m.campeon.map(f => f.name), ['Pancho']);

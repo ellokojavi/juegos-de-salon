@@ -1,0 +1,3 @@
+level: minor
+
+- **La Copa: the ×2 wildcard is no longer lost.** Whoever reaches the Grand Final without having used it gets it on its own on the last day they played before the final (day 6, or an earlier one if they skipped it), marked with a gold **×2 auto**. On day 6 the card and the game's cover warn: "No has usado tu comodín ×2. Se aplicará hoy automáticamente." In the 3-day cups and the weekend cup, which have no final, it goes on the last day played, and the warning shows on the last day. It also counts in the cups already running (the ones already over keep their table and podium); not in one the admin ended early (D-444).

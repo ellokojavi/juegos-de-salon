@@ -53,7 +53,7 @@ panel del dueño (D-137).
 | Día de gracia | Un día se puede jugar ese día o el siguiente, con puntaje completo. La final no tiene gracia: la copa cierra a las 23:59 del último día, y ahí vence también la gracia del penúltimo. Neither does the last day of a cup without a final (D-438): the card and the reminder say "until today". On its first day the card says so: "Puedes jugarlo hasta mañana a las 23:59 (48 h)". |
 | Un intento | "Cómo se juega" no cuenta. El intento empieza al tocar **Empezar**; recargar retoma el mismo intento (C-6). Since D-433 (for everyone since 2026-10-23): a day resumed with **Seguir jugando** where this phone has no save (another phone, the browser's memory cleared) takes its clock from the server's start (`started/<d>/<pid>`), not from zero, and the screen says so; the `resumed` demo shows it on one phone. |
 | Puntos del día | Por posición entre quienes jugaron: 10-8-6-5-4-3-2-1-1-1. Manda el puntaje del juego; a igual puntaje, el menor **tiempo activo** (D-95). Leer el dato de cada carta en Línea Relámpago (al errar y al acertar) o de cada hito en ¿En qué año? no cuenta, hasta 6 s cada vez (D-277, D-314). Empate total: comparten la mejor posición. |
-| Comodín ×2 | Uno por jugador y copa. Se activa antes de Empezar (el servidor lo rechaza después). No vale en la final; in a cup without a final (D-438) it goes on any day, the last one included. |
+| Comodín ×2 | Uno por jugador y copa. Se activa antes de Empezar (el servidor lo rechaza después). No vale en la final; in a cup without a final (D-438) it goes on any day, the last one included. **Unused, it is not lost (D-444):** once no day it is valid on is left to use it on (each played, started or closed), it lands on the last of those days the player played: day 6 or an earlier one in a cup with a final; up to the last day in a cup without one (D-438, D-439). The last such day warns «No has usado tu comodín ×2. Se aplicará hoy automáticamente.» and the day it lands on carries a gold **×2 auto** pill. Retroactive for every cup still running on 2026-10-25 (`meta.end` after `AUTO_WILD_FROM` in `engine.js`); a cup ended before keeps its table and saved podium. Not in a cup the admin ended early. |
 | Final ×2 | El último día vale doble para todos. The 3-day cup has no final: its last day counts single (D-438). |
 | Resultados ocultos | Los puntajes de un día se ven después de jugarlo o cuando cierra. La tabla y el gráfico tampoco lo delatan: suman solo los días que ya puedes ver. |
 | Nombre | El admin lo puede cambiar hasta que la copa termina; el link sigue igual (D-148). |
@@ -156,7 +156,7 @@ Recién creada, la copa abre en **Administrar** con una guía para invitar (D-11
 comparte los mensajes, **cierra o reabre la inscripción** y **mueve el inicio a hoy o mañana**
 mientras nadie haya jugado. `?test&demo=<escena>` abre una copa de ejemplo en cualquier
 punto (`public/cup/demo.js`: `new`, `guest`, `waiting`, `not-started`, `player`, `admin`, `final`,
-`final-admin`, `podium`, `full`, and `out` and `risk` for D-347; los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262). Exception: `resumed` (D-433), a day started 4 minutes ago on another phone, opens with `?test&demo=resumed`, linked from its card `#seccion-copa-reloj` in La Bodega (🚀 Lanzado).
+`final-admin`, `podium`, `full`, `out` and `risk` for D-347, and `last-day` for D-444 (day 6 not played, the wildcard unused: its notice); los nombres en español de antes de D-266 se leen igual); el laboratorio ya no las ofrece, pero las usan las pruebas y las capturas (D-262). Exception: `resumed` (D-433), a day started 4 minutes ago on another phone, opens with `?test&demo=resumed`, linked from its card `#seccion-copa-reloj` in La Bodega (🚀 Lanzado).
 
 Al tocar Empezar, una **cuenta de 3 a 1** y "¡A jugar!" (D-105; la capa es
 `assets/js/cuenta-regresiva.js`, con sus estilos `.cuenta` en `assets/css/base.css`): recién ahí aparece el tablero, y
@@ -405,7 +405,7 @@ torneos/<código>/meta               nombre, días, calendario (cal), ventanas, 
 torneos/<código>/players/<pid>      { name, at, out?, back?, co?, j? }   back: when the admin brought them back after being out of the cup (D-347); co: país, al inscribirse o al volver a abrir (D-207, D-209); j: su jugador de los rankings (D-212)
 torneos/<código>/started/<d>/<pid>  hora del servidor al tocar Empezar
 torneos/<código>/results/<d>/<pid>  { s, ms, t, r, at }
-torneos/<código>/wild/<pid>         "3" (el día del comodín, como texto)
+torneos/<código>/wild/<pid>         "3" (el día del comodín, como texto): only the one chosen by hand; the one that lands on its own is read by the engine, never written (D-444)
 torneos/<código>/fin                hora del servidor en que el admin la terminó antes (D-161)
 torneoKeys/<código>/<pid>           hash del PIN (ilegible)
 torneoSeats/<código>/<pid>/<uid>    el mismo hash: el celular uid puede escribir por pid (ilegible)

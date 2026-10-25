@@ -230,6 +230,13 @@ export const PATHS = {
       `1`, `1`, `window.confirm=()=>true; document.getElementById('btn-empezar').click()`, `1`],
     // The board's open day card: "until 23:59 tomorrow (48 h)" under the game's name (every day but the final)
     board: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.querySelector('button[data-dia]')?.scrollIntoView({ block: 'center' })`],
+    // The unused wildcard on the final's day (D-444): day 6 in "Tus días" with ×2 auto, and its result screen saying why
+    // Day 6 not played, wildcard unused: the notice on the day card and on its cover (D-444)
+    'wild-today': [`location.href='/cup/?test&demo=last-day'`, `1`, `1`, `document.getElementById('comodin-hoy')?.scrollIntoView({ block: 'center' })`],
+    'wild-today-cover': [`location.href='/cup/?test&demo=last-day'`, `1`, `1`, `document.querySelector('button[data-dia]').click()`, `1`, `document.getElementById('btn-empezar')?.scrollIntoView({ block: 'end' })`],
+    'wild-today-three': [`location.href='/cup/?test&demo=last-day-three'`, `1`, `1`, `document.getElementById('comodin-hoy')?.scrollIntoView({ block: 'center' })`],
+    'wild-auto': [`location.href='/cup/?test&demo=final'`, `1`, `1`, `document.querySelector('.mis-dias')?.scrollIntoView({ block: 'end' })`],
+    'wild-auto-result': [`location.href='/cup/?test&demo=final'`, `1`, `1`, `[...document.querySelectorAll('.md-fila')][5].click()`, `1`],
     // Out of the cup (D-347): the notice on top of the board, and the grey row in the table
     out: [`location.href='/cup/?test&demo=out'`, `1`, `1`],
     'out-table': [`location.href='/cup/?test&demo=out'`, `1`, `1`, `document.querySelector('.fila.fuera')?.scrollIntoView({ block: 'center' })`],

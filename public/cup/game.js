@@ -21,7 +21,7 @@ import { backGuard } from '../assets/js/back-guard.js';
 import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../assets/js/parametros.js';
 import {
   POZO, VARIANTES, entradaCal, varianteDelDia, calendarioAlAzar, calendario, MAX_JUGADORES, COPA_MAX, aliasLimpio, esAlias, CODIGO, esCodigo, codigoAlAzar, pidAlAzar, limpiarNombre, claveNombre, esPin, hashPin,
-  fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
+  fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, comodinEfectivo, ultimoDiaComodin, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar, semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL,
   findeAbierto, findeAlAzar, rondasDelDia, TRIO_SEP, estadoEnLista, recorteLista,
@@ -1359,12 +1359,20 @@ function hastaCuando(d, est, now) {
  */
 const claseX2 = final => `chip ${final ? 'chip--final' : 'chip--gold'}`;
 
+/**
+ * The last day before the final, not played yet and the wildcard still unused: the card and the
+ * cover say that today's points will count double on their own if nothing else is chosen (D-444).
+ */
+const comodinHoy = (Lc, d, now) => d === ultimoDiaComodin(Lc.meta) && !comodinDe(Lc, S.yo)
+  && !Lc.results?.[d]?.[S.yo] && !fuera(Lc, S.yo, now);
+
 function tarjetaDia(d, rotulo) {
   const Lc = L(), { meta } = Lc;
   const id = juegoDelDia(meta, d), J = juegoDia(meta, d);
   const now = ahora();
   const est = estadoDia(Lc, d, S.yo, now);
-  const x2 = multiplicador(Lc, d, S.yo) === 2;
+  const x2 = multiplicador(Lc, d, S.yo, now) === 2;
+  const auto = !esFinal(meta, d) && x2 && comodinEfectivo(Lc, S.yo, now).auto;
   const jugaron = activos(Lc).filter(j => Lc.results?.[d]?.[j.pid]);
   const falta = faltan(Lc, d, now);
   let accion;
@@ -1379,9 +1387,10 @@ function tarjetaDia(d, rotulo) {
     el('div', { class: 'dia-top' },
       el('span', { class: 'chip' + (rotulo === T.today ? ' chip--hot' : '') }, rotulo),
       el('span', { class: 'muted' }, `${fmt(T.dayOf, { d, n: meta.days })} · ${fechaCorta(meta.win[d].a, meta.tz)}`),
-      x2 ? el('span', { class: claseX2(esFinal(meta, d)) }, esFinal(meta, d) ? T.x2 : `${T.x2} ${T.wildUsed}`) : null),
+      x2 ? el('span', { class: claseX2(esFinal(meta, d)) }, esFinal(meta, d) ? T.x2 : auto ? `${T.x2Auto}` : `${T.x2} ${T.wildUsed}`) : null),
     el('div', { class: 'dia-juego' }, el('span', { class: con('dia-emoji', J.emoji) }, J.emoji), el('div', {}, el('b', {}, J.nombre, J.varianteNombre ? el('span', { class: 'dia-variante' }, ` · ${J.varianteNombre}`) : null), el('small', { class: 'muted' }, est !== 'jugado' && fuera(Lc, S.yo, now) ? T.outTitle : hastaCuando(d, est, now)))),
     est === 'jugado' ? el('p', { class: 'ok' }, `✅ ${T.played}`) : null,
+    accion && comodinHoy(Lc, d, now) ? el('p', { class: 'aviso-comodin', id: 'comodin-hoy' }, T.wildToday) : null,
     accion,
     el('p', { class: 'muted quienes' }, jugaron.length ? fmt(T.whoPlayed, { names: jugaron.map(j => j.name).join(', ') }) : T.nobodyPlayed),
     falta.length && jugaron.length ? el('p', { class: 'muted quienes' }, fmt(T.missing, { names: falta.map(j => j.name).join(', ') })) : null,
@@ -1429,7 +1438,7 @@ function vistaTabla(filas, { dias, meta, now }) {
 function misDias(d, now) {
   const Lc = L(), { meta } = Lc;
   const pids = activos(Lc).map(j => j.pid);
-  const w = comodinDe(Lc, S.yo);
+  const { dia: w, auto } = comodinEfectivo(Lc, S.yo, now);
   const afuera = !!fuera(Lc, S.yo, now);
   const filas = [];
   for (let k = 1; k <= meta.days; k++) {
@@ -1441,7 +1450,7 @@ function misDias(d, now) {
     if (est === 'jugado') {
       const r = Lc.results[k][S.yo];
       const pos = posicionesDelDia(Lc.results[k], pids)[S.yo];
-      detalle = visibleDia(Lc, k, S.yo, now) && pos ? `${r.r || r.s} · ${ord(pos.pos)} · +${pos.pts * multiplicador(Lc, k, S.yo)} ${T.pts}` : `${r.r || r.s}`;
+      detalle = visibleDia(Lc, k, S.yo, now) && pos ? `${r.r || r.s} · ${ord(pos.pos)} · +${pos.pts * multiplicador(Lc, k, S.yo, now)} ${T.pts}` : `${r.r || r.s}`;
     } else if (est === 'gracia') {
       detalle = T.lastDay;
       accion = faltaGente(Lc) || afuera ? null : el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, `${J.emoji} ${T.play}`);
@@ -1454,7 +1463,7 @@ function misDias(d, now) {
     const contenido = [
       el('span', { class: 'md-dia' }, el('b', {}, fmt(T.dayShort, { d: k })), el('small', {}, fechaCorta(meta.win[k].a, meta.tz))),
       el('span', { class: con('md-emoji', J.emoji) }, J.emoji),
-      el('span', { class: 'md-info' }, el('b', {}, J.nombre, x2 ? el('span', { class: `${claseX2(esFinal(meta, k))} md-x2` }, T.x2) : null), el('small', {}, detalle)),
+      el('span', { class: 'md-info' }, el('b', {}, J.nombre, x2 ? el('span', { class: `${claseX2(esFinal(meta, k))} md-x2` }, auto && w === k ? T.x2Auto : T.x2) : null), el('small', {}, detalle)),
       est === 'jugado' ? el('span', { class: 'md-go' }, '›') : accion,
     ];
     filas.push(est === 'jugado'
@@ -2139,7 +2148,7 @@ function antesDeJugar(d) {
   else if (w) comodin = el('p', { class: 'muted' }, fmt(T.wildGone, { d: w }));
   else if (puedeComodin(Lc, d, S.yo, now)) {
     comodin = el('div', {},
-      el('p', { class: 'muted' }, T.wildOff),
+      comodinHoy(Lc, d, now) ? el('p', { class: 'aviso-comodin' }, T.wildToday) : el('p', { class: 'muted' }, tieneFinal(meta) ? T.wildOffAuto : T.wildOffAutoLast),
       el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-comodin', onClick: async ev => {
         if (!confirm(fmt(T.wildConfirm, { d }))) return;
         ev.currentTarget.disabled = true;
@@ -2453,7 +2462,9 @@ function resultado(d, { recien = false, det = null } = {}) {
   const jug = activos(Lc);
   const pos = posicionesDelDia(Lc.results[d], jug.map(j => j.pid));
   const n = Object.keys(pos).length;
-  const x = multiplicador(Lc, d, S.yo);
+  const x = multiplicador(Lc, d, S.yo, now);
+  const wAuto = comodinEfectivo(Lc, S.yo, now);
+  const autoAqui = wAuto.auto && wAuto.dia === d;
   const yo = pos[S.yo];
   const body = $('#resultado-body');
   body.innerHTML = '';
@@ -2468,6 +2479,8 @@ function resultado(d, { recien = false, det = null } = {}) {
     el('p', { class: 'lead center' }, cerrado(meta, d, now) || terminada(meta, now)
       ? fmt(T.finalPos, { pos: ord(yo.pos), n, pts: yo.pts * x })
       : fmt(T.provisional, { pos: ord(yo.pos), n })),
+    // The unused wildcard that landed here on its own says so, next to the points it doubled (D-444)
+    autoAqui ? el('p', { class: 'ok center', id: 'comodin-auto' }, fmt(tieneFinal(meta) ? T.wildAutoNote : T.wildAutoNoteLast, { d })) : null,
     // The end-screen order (C-19): the way back to the board first, then share and the next-day
     // notice (share before the notice: the notice's card is tall and pushed share under the fold
     // in German and Portuguese at 320 px); the breakdown folded and the day table below (C-8)
@@ -2476,19 +2489,19 @@ function resultado(d, { recien = false, det = null } = {}) {
     // Ofrece avisar del próximo día que todavía no se abre: no siempre es d + 1 (un día viejo, o
     // jugado con el siguiente ya abierto)
     diaActual(meta, now) < meta.days && !terminada(meta, now) ? avisos().tarjeta({ dia: diaActual(meta, now) + 1 }) : null,
-    explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d) }),
+    explicacion(J, { s: mio.s, ms: mio.ms, det, x, final: esFinal(meta, d), auto: autoAqui && (tieneFinal(meta) ? 'final' : 'last') }),
     el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.dayTable),
       el('div', { class: 'tabla' }, ranking.map(j => el('div', { class: 'fila' + (j.pid === S.yo ? ' yo' : '') },
         el('span', { class: 'lugar' }, `${pos[j.pid].pos}`),
         el('span', { class: 'flecha' }),
         // Quien usó el comodín (o todos, en la final) lleva "×2" junto al nombre: explica por qué
         // sus puntos no calzan con su lugar. El de la final va en otro color (D-151)
-        el('div', { class: 'quien' }, multiplicador(Lc, d, j.pid) === 2
-          ? el('div', { class: 'con-x2' }, el('b', {}, j.name), el('span', { class: `${claseX2(esFinal(meta, d))} md-x2` }, T.x2))
+        el('div', { class: 'quien' }, multiplicador(Lc, d, j.pid, now) === 2
+          ? el('div', { class: 'con-x2' }, el('b', {}, j.name), el('span', { class: `${claseX2(esFinal(meta, d))} md-x2` }, !esFinal(meta, d) && comodinEfectivo(Lc, j.pid, now).auto ? T.x2Auto : T.x2))
           : el('b', {}, j.name), el('small', { class: 'muted' }, `${Lc.results[d][j.pid].r || Lc.results[d][j.pid].s} · ⏱ ${mmss(Lc.results[d][j.pid].ms)}`),
           // En la final, las rondas de cada uno (⏳75 🔢85 …), para comparar ronda a ronda (#259)
           CON_RONDAS.includes(id) && Lc.results[d][j.pid].t ? el('small', { class: 'muted rondas' }, Lc.results[d][j.pid].t) : null),
-        el('span', { class: 'total' }, `+${pos[j.pid].pts * multiplicador(Lc, d, j.pid)}`))))),
+        el('span', { class: 'total' }, `+${pos[j.pid].pts * multiplicador(Lc, d, j.pid, now)}`))))),
     botonReporte({ juego: id, dia: d }),
   );
 }
@@ -2532,7 +2545,7 @@ function bajoElPuntaje(t, ms, id = null) {
  * mira después (el desglose no se guarda en la copa), la regla del juego. En la copa suma cómo el
  * lugar del día se vuelve puntos, y si ese día valía el doble.
  */
-function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
+function explicacion(J, { s, ms, det, x = 1, final = false, auto = false, copa = true }) {
   const lineas = det?.length ? det : [puntajeTexto(J, copa)];
   // Folded and after the exits, everywhere (C-19); on its own the score and the time are already above it,
   // so neither is said again here
@@ -2542,7 +2555,7 @@ function explicacion(J, { s, ms, det, x = 1, final = false, copa = true }) {
     copa && det?.length ? el('p', { class: 'explicacion-total' }, fmt(s === 1 ? T.bdTotalOne : T.bdTotal, { s })) : null,
     !copa || J === JUEGOS_COPA.zip || J === JUEGOS_COPA.desenredo ? null : el('p', { class: 'muted' }, fmt(T.bdTime, { t: mmss(ms) })),
     copa ? el('p', { class: 'muted' }, T.bdPlaces) : null,
-    copa && x > 1 ? el('p', { class: 'ok' }, final ? T.bdFinal : T.bdWild) : null);
+    copa && x > 1 ? el('p', { class: 'ok' }, final ? T.bdFinal : auto === 'last' ? T.bdWildAutoLast : auto ? T.bdWildAuto : T.bdWild) : null);
 }
 
 /* ------------------------------------------------------------------ */
