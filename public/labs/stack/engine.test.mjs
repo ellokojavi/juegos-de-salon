@@ -1,7 +1,7 @@
 // Stack's engine (D-445): the slide, perfect drops, cuts, misses, growing back, and fairness across frame rates.
 import assert from 'node:assert/strict';
 import {
-  newGame, drop, movingAt, offsetAt, perfectTime, score, top, speed, axisOf, card,
+  newGame, drop, movingAt, offsetAt, perfectTime, pause, score, top, speed, axisOf, card,
   BASE, RANGE, PERFECT, GROW_FROM, GROW, SPEED_MAX,
 } from './engine.js';
 
@@ -107,6 +107,21 @@ const near = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-9, `${msg}: ${a} ≠ 
   let t = 0;
   for (let k = 0; k < 200; k++) { t = perfectTime(g, t); assert.equal(drop(g, t).kind, 'perfect', `drop ${k}`); }
   assert.equal(score(g), 200);
+}
+
+// A pause freezes the slab where it was: after it, the slab is exactly where it was when it began
+{
+  const g = newGame(0);
+  const at = 900, ms = 45000;
+  const before = movingAt(g, at).x;
+  pause(g, ms);
+  near(movingAt(g, at + ms).x, before, 'it comes back where it was');
+  near(movingAt(g, at + ms + 100).x - movingAt(g, at + ms).x, movingAt(newGame(0), at + 100).x - movingAt(newGame(0), at).x, 'and at the same speed');
+  // A drop after the pause is judged as if there had been none
+  const t = perfectTime(g, at + ms);
+  assert.equal(drop(g, t).kind, 'perfect', 'a perfect drop after a pause');
+  const over = newGame(0); drop(over, 0); pause(over, 1000);
+  assert.equal(over.moving, null, 'nothing to pause once it is over');
 }
 
 // The share card: the last twenty, newest on top
