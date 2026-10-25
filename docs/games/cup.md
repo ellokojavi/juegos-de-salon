@@ -380,9 +380,9 @@ Abiertos a todos desde D-228: se ven en cualquier celular que pueda recibirlos, 
   with several), ⏸ "termina tu juego" for one half played, ✅ "Ya jugaste" and when the next day opens
   (or nothing left to play), ⏳ how long until day 1, 🚪 "Eliminado" when out of the cup (D-347). The line takes the place of "name · code" (the code goes next to the cup's name), in the state's
   color: yellow to play, cyan when played, grey otherwise. It is drawn at once from a slim copy of
-  each cup the phone keeps (`recorteLista` in `engine.js`, `cuenta.lista`; saved on every read, the
-  open cup's included) and corrected after the cup is read again. With a single day to play, the cup's link opens it (`&day=<d>`). Finished cups carry
-  no line; without network the list stays as it was. Screen: `copa mine-status-all`; `/cup/?test&demo=mine` seeds one cup per status.
+  each cup the phone keeps (`recorteLista` in `engine.js`, `cuenta.lista` in `copa:lista:<code>`, forgotten with the cup; saved
+  on every read, the open cup's included) and corrected after the cup is read again. With a single day to play, the cup's link opens it (`&day=<d>`). Finished cups carry
+  no line; without network the line stays as this phone last saw it. Screen: `copa mine-status-all`; `/cup/?test&demo=mine` seeds one cup per status.
 
 ## Flujo
 
