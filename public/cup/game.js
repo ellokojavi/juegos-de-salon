@@ -1359,6 +1359,13 @@ function hastaCuando(d, est, now) {
  */
 const claseX2 = final => `chip ${final ? 'chip--final' : 'chip--gold'}`;
 
+/**
+ * The last day before the final, not played yet and the wildcard still unused: the card and the
+ * cover say that today's points will count double on their own if nothing else is chosen (D-??).
+ */
+const comodinHoy = (Lc, d, now) => tieneFinal(Lc.meta) && d === Lc.meta.days - 1 && !comodinDe(Lc, S.yo)
+  && !Lc.results?.[d]?.[S.yo] && !fuera(Lc, S.yo, now);
+
 function tarjetaDia(d, rotulo) {
   const Lc = L(), { meta } = Lc;
   const id = juegoDelDia(meta, d), J = juegoDia(meta, d);
@@ -1383,6 +1390,7 @@ function tarjetaDia(d, rotulo) {
       x2 ? el('span', { class: claseX2(esFinal(meta, d)) }, esFinal(meta, d) ? T.x2 : auto ? `${T.x2Auto}` : `${T.x2} ${T.wildUsed}`) : null),
     el('div', { class: 'dia-juego' }, el('span', { class: con('dia-emoji', J.emoji) }, J.emoji), el('div', {}, el('b', {}, J.nombre, J.varianteNombre ? el('span', { class: 'dia-variante' }, ` · ${J.varianteNombre}`) : null), el('small', { class: 'muted' }, est !== 'jugado' && fuera(Lc, S.yo, now) ? T.outTitle : hastaCuando(d, est, now)))),
     est === 'jugado' ? el('p', { class: 'ok' }, `✅ ${T.played}`) : null,
+    accion && comodinHoy(Lc, d, now) ? el('p', { class: 'aviso-comodin', id: 'comodin-hoy' }, T.wildToday) : null,
     accion,
     el('p', { class: 'muted quienes' }, jugaron.length ? fmt(T.whoPlayed, { names: jugaron.map(j => j.name).join(', ') }) : T.nobodyPlayed),
     falta.length && jugaron.length ? el('p', { class: 'muted quienes' }, fmt(T.missing, { names: falta.map(j => j.name).join(', ') })) : null,
@@ -2140,7 +2148,7 @@ function antesDeJugar(d) {
   else if (w) comodin = el('p', { class: 'muted' }, fmt(T.wildGone, { d: w }));
   else if (puedeComodin(Lc, d, S.yo, now)) {
     comodin = el('div', {},
-      el('p', { class: 'muted' }, tieneFinal(meta) ? T.wildOffAuto : T.wildOff),
+      comodinHoy(Lc, d, now) ? el('p', { class: 'aviso-comodin' }, T.wildToday) : el('p', { class: 'muted' }, tieneFinal(meta) ? T.wildOffAuto : T.wildOff),
       el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-comodin', onClick: async ev => {
         if (!confirm(fmt(T.wildConfirm, { d }))) return;
         ev.currentTarget.disabled = true;
