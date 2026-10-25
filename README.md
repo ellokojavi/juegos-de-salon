@@ -147,6 +147,8 @@ Spec and design: [docs/games/agents.md](docs/games/agents.md)
 
 **🔗 Connections** (16 words, 4 groups) was day 3 until Agents replaced it (D-421); old cups keep it and it still opens at `/connections/`, in the lab's Storeroom. **🔍 The Case**, a *Clues by Sam*-style deduction mystery, also sits in the Storeroom at `/labs/case/`, playable but no longer worked on (D-257, D-263, D-267, D-280).
 
+**🚂 Tren en Vilo**, the lab's bridge builder, is registered as a cup game (`cup/games/bridges/`, sharing the lab's `labs/bridges/scene.js`) for the owner's one-day cup of 2026-10-25 only: it is not in the pool, so no create screen offers it, and the Grand Final skips it.
+
 ---
 
 ## ⏳ Timeline (Línea de Tiempo)
