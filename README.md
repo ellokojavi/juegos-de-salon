@@ -456,6 +456,7 @@ node public/labs/fourth-king/engine.test.mjs
 node public/labs/julep/engine.test.mjs
 node public/labs/pips/engine.test.mjs
 node public/labs/stack/engine.test.mjs
+node public/labs/stick/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node marketing/served.test.mjs
@@ -732,6 +733,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [📐 Loteo (Plots · Loteamento · Parzellen)](docs/games/plots.md)
 - [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)
 - [🧱 Stack (lab prototype, in Juegos en prueba)](docs/games/stack.md)
+- [🥷 Stick Ninja (lab prototype, in Juegos en prueba)](docs/games/stick.md)
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
 - [Changelog](CHANGELOG.md)
 - [El alemán](docs/ALEMAN.md)
