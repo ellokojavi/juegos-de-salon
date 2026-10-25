@@ -1,8 +1,8 @@
-// Stick Ninja's engine (D-446): the seeded course, the stick's length from the hold, perfect, land, short and long, the streak bonus, flips, stars, crashes, pauses and moving pillars.
+// Stick Ninja's engine (D-446): the seeded course, the stick's length from the hold, perfect, land, short and long, the streak bonus, pauses and moving pillars.
 import assert from 'node:assert/strict';
 const NINJA_HALF = 9;
 import {
-  newGame, pillar, pillarAt, current, next, press, release, suspend, stickAt, advance, flip, pause, holdFor, starTime, walkEnd, runX,
+  newGame, pillar, pillarAt, current, next, press, release, suspend, stickAt, advance, pause, holdFor, walkEnd, runX,
   daySeed, card, motion, VIEW, HOLD_X, GROW, MAX_STICK, PERFECT, MAX_BONUS, TURN_MS, MIN_GAP, MOVE_FROM, PERIOD_SLOW, PERIOD_FAST,
 } from './engine.js';
 
@@ -34,8 +34,8 @@ function bridge(g, t, offset = 0) {
       assert.ok(p.x - amp >= prev.x + prev.w + (p.move ? MIN_GAP : 1), `seed ${seed}: pillar ${k} after a gap, even at its closest`);
       assert.ok(p.x + amp + p.w - (prev.x + prev.w) <= VIEW - HOLD_X - 14 + 1e-9, `seed ${seed}: pillar ${k} fits on the screen, even at its farthest`);
       assert.ok(p.w >= 10 && p.w > PERFECT * 2, `seed ${seed}: pillar ${k} is wide enough for its flag`);
-      if (p.move) assert.ok(k >= MOVE_FROM && p.star == null, `seed ${seed}: pillar ${k} moves only from ${MOVE_FROM} on, and has no star`);
-      if (p.star != null) assert.ok(p.star > prev.x + prev.w && p.star < p.x, `seed ${seed}: pillar ${k}'s star hangs in its gap`);
+      if (p.move) assert.ok(k >= MOVE_FROM, `seed ${seed}: pillar ${k} moves only from ${MOVE_FROM} on`);
+      assert.ok(!('star' in p), `seed ${seed}: no stars any more`);
     }
     const avg = (a, b) => { let s = 0; for (let k = a; k < b; k++) s += pillar(g, k).w; return s / (b - a); };
     assert.ok(avg(1, 15) > avg(60, 120), `seed ${seed}: the pillars get narrower`);
@@ -105,66 +105,6 @@ function bridge(g, t, offset = 0) {
   assert.ok(runX(w, w.t0 + 200) > w.from);
   near(runX(w, 1e9), w.to, 'and stops on the next pillar');
   assert.equal(w.t0 - holdFor(newGame(1)), TURN_MS);
-}
-
-/** A game on a seed whose pillar 1 has a star, ready to run to it. */
-function withStar() {
-  for (let seed = 1; seed < 500; seed++) {
-    const g = newGame(seed);
-    let t = 0;
-    // Perfect bridges until the next gap has a star
-    for (let k = 0; k < 30 && next(g).star == null; k++) t = bridge(g, t, 0).t;
-    if (next(g).star != null) return { g, t };
-  }
-  throw new Error('no seed with a star');
-}
-
-// Hanging under the bridge grabs the star; flipping back before the pillar is safe
-{
-  const { g, t } = withStar();
-  const score = g.score;
-  press(g, t); release(g, t + holdFor(g));
-  const w = g.walk, ts = starTime(g);
-  assert.ok(flip(g, w.t0 + 10), 'a tap while running flips the ninja');
-  assert.ok(flip(g, ts + 5), 'and another flips it back');
-  const events = advance(g, walkEnd(g) + 1);
-  assert.deepEqual(events.map(e => e.type), ['star', 'arrive']);
-  assert.equal(g.stars, 1); assert.equal(g.score, score + 1 + events[1].gain, 'the star is a point, on top of the bridge');
-}
-
-// Still upside down at the pillar: a crash
-{
-  const { g, t } = withStar();
-  press(g, t); release(g, t + holdFor(g));
-  flip(g, g.walk.t0 + 10);
-  const ev = advance(g, walkEnd(g) + 1).map(e => e.type);
-  assert.deepEqual(ev, ['star', 'crash']);
-  assert.equal(g.phase, 'over'); assert.deepEqual(g.kinds.at(-1), 'crash');
-  assert.ok(walkEnd(g) < g.walk.t0 + (g.walk.to - g.walk.from) / 310 * 1000, 'it stops at the pillar, before the end of the run');
-}
-
-// A flip before the ninja runs, or once it is on the pillar, does nothing
-{
-  const { g, t } = withStar();
-  press(g, t); release(g, t + holdFor(g));
-  const w = g.walk;
-  assert.equal(flip(g, w.t0 - 50), false, 'not while the stick falls');
-  assert.equal(flip(g, walkEnd(g) - 1), false, 'not on the pillar');
-  assert.deepEqual(advance(g, walkEnd(g) + 1).map(e => e.type), ['arrive']);
-}
-
-// The events are the same however often the game is moved on
-{
-  const play = step => {
-    const { g, t } = withStar();
-    press(g, t); release(g, t + holdFor(g));
-    const ts = starTime(g); flip(g, g.walk.t0 + 1); flip(g, ts + 20);
-    const ev = [];
-    for (let x = t; x < walkEnd(g) + step; x += step) ev.push(...advance(g, x).map(e => e.type));
-    return ev;
-  };
-  assert.deepEqual(play(1000 / 60), play(1000 / 120));
-  assert.deepEqual(play(1000 / 60), ['star', 'arrive']);
 }
 
 // A pause: in the middle of a hold the stick stops and goes on with the next press; while running, the ninja freezes
