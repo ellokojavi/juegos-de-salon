@@ -71,6 +71,24 @@ ol.como li { line-height: 1.45; }
 .mia-estado.jugar { background: var(--yellow); color: #2a1300; }
 .mia-estado.ok { background: rgba(46, 230, 214, 0.16); color: var(--cyan); }
 .mia-estado.fuera, .mia-estado.espera { color: var(--muted); }
+/* REVIEW ROUND ONLY: the four layouts of the "Tus copas" line (&look=a|b|c|d) */
+.mia .mia-cod { margin-left: 8px; font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
+.mia .mia-linea { grid-row: 2; font-weight: 800; font-size: 0.9rem; margin-top: 2px; }
+.look-a .est-jugar .mia-linea { color: var(--yellow); }
+.look-a .est-ok .mia-linea { color: var(--cyan); }
+.look-a .est-espera .mia-linea, .look-a .est-fuera .mia-linea { color: var(--muted); }
+.look-b .mia > .mia-estado { grid-row: 2; }
+.look-c .mia { border-left: 5px solid rgba(255,255,255,0.25); padding-left: 12px; }
+.look-c .est-jugar { border-left-color: var(--yellow); background: rgba(255, 210, 63, 0.10); }
+.look-c .est-ok { border-left-color: var(--cyan); }
+.look-c .est-fuera { opacity: 0.75; }
+.look-c .mia-linea { color: var(--ink); font-weight: 700; }
+.look-c .est-jugar .go { color: var(--yellow); }
+.look-c .est-ok .go, .look-c .est-espera .go, .look-c .est-fuera .go { color: var(--muted); }
+.look-d .mia-linea { color: var(--ink); font-weight: 700; }
+.look-d .mia-icono { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; font-size: 1.1rem; font-family: inherit; background: rgba(255,255,255,0.12); color: var(--ink); }
+.look-d .est-jugar .mia-icono { background: var(--yellow); color: #2a1300; }
+.look-d .est-ok .mia-icono { background: rgba(46, 230, 214, 0.2); }
 .mia.terminada { background: rgba(0,0,0,0.15); }
 .mia.terminada b { color: var(--muted); }
 .etiqueta-fin { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; background: rgba(255,255,255,0.14); color: var(--ink); font-size: 0.75rem; font-weight: 800; vertical-align: 2px; }
