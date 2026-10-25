@@ -11,7 +11,7 @@
  * `torneos/` no está separado por entorno como `stats/`: una copa de prueba es tan real como
  * la de un grupo de amigos. Por eso cada copa trae su marca de laboratorio.
  */
-import { juegoDelDia, varianteDelDia, VARIANTES, diaActual, terminada, abierto, cerrado, activos, tabla, inscripcionAbierta, calendario, cerrarEn, comodinDe, esFinal } from '../cup/engine.js';
+import { juegoDelDia, varianteDelDia, VARIANTES, diaActual, terminada, abierto, cerrado, activos, tabla, inscripcionAbierta, calendario, cerrarEn, comodinEfectivo, esFinal } from '../cup/engine.js';
 import { dayOf } from './aggregate.js';
 
 /**
@@ -269,8 +269,10 @@ export function buscarCopa(torneos, q) {
 export function casilla(L, d, j, filaTabla, now = Date.now()) {
   const m = L.meta;
   const w = m.win[d];
-  const x2 = esFinal(m, d) || comodinDe(L, j.pid) === d;
-  const comodin = comodinDe(L, j.pid) === d;
+  // The wildcard chosen, or the unused one that landed on its own (D-??)
+  const wc = comodinEfectivo(L, j.pid, now);
+  const x2 = esFinal(m, d) || wc.dia === d;
+  const comodin = wc.dia === d;
   const r = L.results[d]?.[j.pid];
   if (r) return { tipo: 'jugo', s: Number(r.s) || 0, ms: Number(r.ms) || 0, at: r.at || 0, pts: filaTabla?.dias?.[d]?.pts ?? null, x2, comodin };
   if (L.fin && w.a >= L.fin) return { tipo: 'anulado', x2, comodin };
@@ -354,7 +356,7 @@ export function fichaCopa(L, now = Date.now()) {
   const orden = filas.length ? filas.map(f => jug.find(j => j.pid === f.pid)) : jug;
   const grilla = orden.map(j => {
     const f = porPid[j.pid];
-    return { pid: j.pid, name: j.name, co: paisDe(L, j.pid), at: j.at, lugar: f?.lugar ?? null, total: f?.total ?? 0, comodin: comodinDe(L, j.pid) || null,
+    return { pid: j.pid, name: j.name, co: paisDe(L, j.pid), at: j.at, lugar: f?.lugar ?? null, total: f?.total ?? 0, comodin: comodinEfectivo(L, j.pid, now).dia || null,
       casillas: dias.map(x => casilla(L, x.d, j, f, now)) };
   });
   const retirados = Object.entries(L.players).filter(([, p]) => p?.out).map(([pid, p]) => ({ pid, name: p.name, co: paisDe(L, pid) }));

@@ -230,6 +230,9 @@ export const PATHS = {
       `1`, `1`, `window.confirm=()=>true; document.getElementById('btn-empezar').click()`, `1`],
     // The board's open day card: "until 23:59 tomorrow (48 h)" under the game's name (every day but the final)
     board: [`location.href='/cup/?test&demo=player'`, `1`, `1`, `document.querySelector('button[data-dia]')?.scrollIntoView({ block: 'center' })`],
+    // The unused wildcard on the final's day (D-??): day 6 in "Tus días" with ×2 auto, and its result screen saying why
+    'wild-auto': [`location.href='/cup/?test&demo=final'`, `1`, `1`, `document.querySelector('.mis-dias')?.scrollIntoView({ block: 'end' })`],
+    'wild-auto-result': [`location.href='/cup/?test&demo=final'`, `1`, `1`, `[...document.querySelectorAll('.md-fila')][5].click()`, `1`],
     // Out of the cup (D-347): the notice on top of the board, and the grey row in the table
     out: [`location.href='/cup/?test&demo=out'`, `1`, `1`],
     'out-table': [`location.href='/cup/?test&demo=out'`, `1`, `1`, `document.querySelector('.fila.fuera')?.scrollIntoView({ block: 'center' })`],
