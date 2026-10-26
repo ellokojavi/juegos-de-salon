@@ -236,6 +236,10 @@ function jugar() {
   const puntos = el('div', { class: 'tv-puntos', 'aria-hidden': 'true' },
     ...P.etapas.map((_, k) => el('span', { class: k < P.hechas ? 'hecha' : k === P.etapa ? 'actual' : '' })));
   const cuenta = el('span', { class: 'tv-cuenta', id: 'tv-cuenta' });
+  // On wood, what is left as planks, one per meter (the last one shorter when the budget has decimals)
+  const tablones = e.madera ? el('div', { class: 'tv-tablones', id: 'tv-tablones', 'aria-hidden': 'true' },
+    ...Array.from({ length: Math.ceil(e.presupuesto - 1e-9) }, (_, k) =>
+      el('span', { style: `flex: ${Math.min(1, e.presupuesto - k)}` }, el('i')))) : null;
   const botonProbar = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-probar', onClick: () => probarPuente() }, T.probar);
   const armados = {};
   const conConfirmacion = (clave, rotulo, rotuloArmado, accion, attrs = {}) => {
@@ -267,7 +271,7 @@ function jugar() {
       el('h2', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })),
       el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, trenMini(e.carga, e), e.carga > 1 ? fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` }) : T.cargaNormal)),
     el('div', { class: 'tv-tablero' }, c, aguja.caja),
-    el('div', { class: 'tv-barra' }, cuenta, aviso),
+    el('div', { class: 'tv-barra' }, ...(tablones ? [tablones] : []), cuenta, aviso),
     botonProbar, fila);
   c._ajustar();
 
@@ -276,6 +280,10 @@ function jugar() {
     const gastado = costo(e, P.vigas);
     cuenta.textContent = e.madera ? fmt(T.madera, { n: num(gastado), max: num(e.presupuesto) }) : fmt(T.vigas, { n: P.vigas.length, max: e.presupuesto });
     cuenta.classList.toggle('lleno', gastado >= e.presupuesto - 0.05);
+    if (tablones) [...tablones.children].forEach((t, k) => {
+      const largo = Math.min(1, e.presupuesto - k), queda = Math.max(0, Math.min(largo, e.presupuesto - gastado - k));
+      t.firstChild.style.width = `${(queda / largo) * 100}%`;
+    });
     botonDeshacer.disabled = !P.historial.length || P.simulando;
     botonProbar.disabled = P.simulando;
     botonBorrar.disabled = P.simulando || !P.vigas.some(v => !esCubierta(v));
