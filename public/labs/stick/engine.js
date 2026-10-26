@@ -34,6 +34,7 @@ export const MOVE_FROM = 10;          // the first pillar that may move…
 export const MOVE_FULL = 60;          // …and from here on they move their widest and fastest
 export const PERIOD_SLOW = 4400;      // ms for a whole swing, on the first moving pillars…
 export const PERIOD_FAST = 1900;      // …down to this
+export const LIVES = 3;               // a fall costs one; the run ends with the last
 
 const half = NINJA / 2;
 const right = p => p.x + p.w;
@@ -49,8 +50,8 @@ export function daySeed(date) {
 export function newGame(seed = 1, t0 = 0) {
   return {
     seed, rand: rng(seed), pillars: [{ ...FIRST }], i: 0, moveT0: t0,
-    score: 0, bridges: 0, perfects: 0, bonus: 0, streak: 0, bestStreak: 0,
-    phase: 'ready',        // ready → growing → walking → ready…, or over; 'held' when paused mid-hold
+    lives: LIVES, score: 0, bridges: 0, perfects: 0, bonus: 0, streak: 0, bestStreak: 0,
+    phase: 'ready',        // ready → growing → walking → ready…, or lost → ready (a life gone), or over; 'held' when paused mid-hold
     hold: null, held: 0, stick: 0, walk: null, kinds: [],
   };
 }
@@ -167,7 +168,12 @@ export function advance(g, t) {
   if (g.phase !== 'walking' || !w || w.done) return out;
   if (t < timeAt(w, w.to)) return out;
   w.done = true;
-  if (!w.ok) { g.phase = 'over'; g.kinds.push('fall'); out.push({ type: 'fall', kind: w.kind }); return out; }
+  if (!w.ok) {
+    g.lives--; g.streak = 0; g.kinds.push('fall');
+    g.phase = g.lives > 0 ? 'lost' : 'over';
+    out.push({ type: 'fall', kind: w.kind, lives: g.lives, over: g.lives === 0 });
+    return out;
+  }
   g.i++; g.bridges++;
   // The pillars after a moving one move with where it stopped, so the gaps stay as they were made
   const now = g.pillars[g.i], delta = now.move ? now.landX - now.x : 0;
@@ -182,6 +188,18 @@ export function advance(g, t) {
   g.phase = 'ready'; g.stick = 0; g.held = 0;
   out.push({ type: 'arrive', kind: w.kind, gain: 1 + bonus, bonus, streak: g.streak, moving: !!g.pillars[g.i].move });
   return out;
+}
+
+/**
+ * After a fall that left lives, the ninja is back on the same pillar at `t`: a new stick, the streak gone,
+ * and a moving pillar sliding again from where its clock starts over.
+ */
+export function revive(g, t) {
+  if (g.phase !== 'lost') return false;
+  const p = next(g);
+  delete p.stopAt; delete p.landX;
+  g.phase = 'ready'; g.stick = 0; g.held = 0; g.walk = null; g.moveT0 = t;
+  return true;
 }
 
 /** When the ninja is done with this walk (it arrived or fell): for the page's animation. */

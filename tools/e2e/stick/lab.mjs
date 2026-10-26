@@ -3,9 +3,10 @@
 // night with "Hold to stretch"; a real press stretches the stick; a stick on the flag is a perfect (+2, then +3
 // in a row, the pulse, "Perfect ×n", the streak chip and the achievements); a plain landing is +1 and breaks
 // the streak; there are no stars; a pause in the middle of a hold keeps the stick, and the tap back does
-// not drop it; a stick too long falls, with the result (score, new best kept
+// not drop it; a stick too long costs one of the three lives and the ninja is back on its pillar, and the
+// third fall ends the run, with the result (score, new best kept
 // on the phone, breakdown, share, Play again, the comment after a line); a real short hold falls, and the
-// second run shows today's runs on this phone. Moving pillars, from the 10th on, slide and say so, and aiming
+// second run, three real quick taps, shows today's runs on this phone. Moving pillars, from the 10th on, slide and say so, and aiming
 // where they will be is a perfect (Moving target). At 375 px. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -106,10 +107,17 @@ ok(await waitFor(`/Moving target/.test(document.getElementById('logros').textCon
 // No stars anywhere on the course, and a tap while running does nothing
 ok(await ev(`${G}.pillars.every(p => !('star' in p))`) && !(await ev(`/star/i.test(document.querySelector('.pasos')?.textContent || '')`)), 'no stars on the course');
 
-// A stick too long: the ninja falls, and the result
-const final = await ev(`${G}.score`);
+// Three lives: a stick too long costs one, and the ninja is back on the same pillar; the third ends the run
+const final = await ev(`${G}.score`), aqui = await ev(`${G}.i`);
+ok(await ev(`document.querySelectorAll('#vidas span').length === 3 && !document.querySelector('#vidas .perdida')`), 'three lives to start');
 await puente(`${G}.pillars[${G}.i + 1].w / 2 + 6`);
 ok(await waitFor(`/Too long/.test(document.getElementById('aviso')?.textContent || '')`, 3000), 'a stick past the pillar: Too long!');
+ok(/2 lives left/.test(await ev(`document.getElementById('aviso').textContent`)) && await ev(`document.querySelectorAll('#vidas .perdida').length`) === 1, 'a heart goes dark: 2 lives left');
+await b.shot('3b-life-lost');
+ok(await waitFor(`${G}.phase === 'ready'`, 4000) && await ev(`${G}.i`) === aqui && await ev(`${G}.score`) === final && !(await ev(`!!document.getElementById('puntaje')`)), 'the ninja is back on the same pillar, the score kept');
+await puente(`${G}.pillars[${G}.i + 1].w / 2 + 6`);
+ok(await waitFor(`/Last life/.test(document.getElementById('aviso')?.textContent || '')`, 3000), 'the second fall: Last life!');
+await puente(`${G}.pillars[${G}.i + 1].w / 2 + 6`);
 ok(await waitFor(`!!document.getElementById('puntaje')`, 4000), 'and the result follows');
 ok(await ev(`document.getElementById('puntaje').textContent`) === String(final), `the result is the score: ${final}`);
 ok(/New best/.test(await ev(`document.querySelector('.sello-ninja').textContent`)), 'a first game is a new best');
@@ -124,7 +132,7 @@ await b.shot('4-result');
 await ev(`document.getElementById('btn-otra').click(); 1`);
 ok(await waitFor(`document.getElementById('marcador')?.textContent === '0'`), 'Play again starts at 0');
 ok(new RegExp(`Best: ${final}`).test(await ev(`document.getElementById('mejor-juego').textContent`)), `the heading shows the best: ${final}`);
-await b.tap(cx, cy);
+for (let k = 0; k < 3; k++) { await waitFor(`${G}.phase === 'ready'`, 4000); await b.tap(cx, cy); await waitFor(`${G}.phase !== 'walking'`, 4000); }
 ok(await waitFor(`/Too short/.test(document.getElementById('aviso')?.textContent || '')`, 3000), 'a real quick tap is a stick too short');
 ok(await waitFor(`!!document.getElementById('puntaje')`, 4000), 'and the result follows');
 ok(new RegExp(`Your best: ${final}`).test(await ev(`document.getElementById('mejor')?.textContent || ''`)), 'it shows the best');

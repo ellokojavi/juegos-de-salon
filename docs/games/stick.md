@@ -25,7 +25,7 @@ then, and every so often a stick too short; then another course;
 still with reduced motion). Then "🥷 Play", the best so far ("🏆 Best: n", once there is one), and the three
 steps (after the button, U-39):
 
-1. 👆 Hold to stretch the stick, let go to drop it across the gap.
+1. 👆 Hold to stretch the stick, let go to drop it across the gap. You have ❤️ 3 lives.
 2. 🚩 Land its tip on the flag for a perfect: +1, then +2, +3… for each one in a row.
 3. ↔️ Later on, some pillars slide: aim where they will be when the stick lands.
 
@@ -46,6 +46,11 @@ Under them: "📅 Today's course is the same for everyone. Pass the phone and co
 - **Its tip on the next pillar:** the ninja runs over, headband tails flying, and scores **1**. In the gap
   (too short) or past the pillar (too long), the ninja runs to the tip, the stick drops and the ninja falls:
   "Too short!" or "Too long!".
+- **Three lives** (the owner's request, 2026-10-26: one fall could end a run in ten seconds, so a run had
+  no length): three ❤️ at the top left of the night. A fall costs one, which goes dark: "Too short!" or
+  "Too long!" with "❤️ 2 lives left" or "Last life!" under it, and after a moment the ninja is back on the
+  same pillar with a new stick, the score kept and the flag streak gone (a moving pillar starts sliding
+  again). The third fall ends the run. The share card shows each fall as 🕳️ where it happened.
 - **The flag** stands at each pillar's center, a lit pink strip at its foot: the original's red dot, made a
   flag. The one to reach waves faster and glows. **A tip within 4.5 units of the center** (the strip) is a
   **perfect**: three rings of light (cyan, pink, gold) emerge from the tip one after the other, bigger with
@@ -97,7 +102,7 @@ line, the comment form.
   only on the time since the stick fell (`runX`), so `advance(g, t)` gives the same arrival or fall
   however often it is called. A moving pillar's place
   depends only on the time since the ninja stepped on the pillar before (`g.moveT0`, `pillarAt(g, k, t)`).
-  `suspend` and `pause` handle the pauses (a pause also stops a moving pillar). `holdFor(g, offset)` and `starTime(g)` serve the cover's demo and the end-to-end script.
+  `revive(g, t)` brings the ninja back after a fall that left lives (`LIVES`, phase `lost`). `suspend` and `pause` handle the pauses (a pause also stops a moving pillar). `holdFor(g, offset)` and `starTime(g)` serve the cover's demo and the end-to-end script.
 - `game.js`: the canvas scene (the night, the pillars and flags, the stick, the ninja drawn as shapes, the
   pulses, sparks and floating points, a camera that slides to the next pillar), the cover, the game with its
   banners, and the result. The end-to-end hook is `window.__stick` (`S`, with `S.presionar(t)` and
@@ -106,6 +111,6 @@ line, the comment form.
 ## To tune
 
 The numbers at the top of `engine.js`: how fast the stick grows (`GROW`), the flag's margin (`PERFECT`), the
-top bonus (`MAX_BONUS`), the fall and run speeds (`TURN_MS`, `RUN`), when pillars start moving and how fast
+top bonus (`MAX_BONUS`), the fall and run speeds (`TURN_MS`, `RUN`), the lives (`LIVES`), when pillars start moving and how fast
 (`MOVE_FROM`, `MOVE_FULL`, `PERIOD_SLOW`, `PERIOD_FAST`, `MIN_GAP`), and in `pillar()` the widths, gaps, how
 hard it gets (`hardness`), and how far and how many pillars move.
