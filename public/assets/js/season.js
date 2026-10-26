@@ -50,9 +50,6 @@ export function iconUrl({ emoji, colors: [a, b] }) {
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
-/** The template on this page, once it is known: `{ id, ...template }`, or null. */
-export const season = typeof document === 'undefined' ? Promise.resolve(null) : start();
-
 async function start() {
   try {
     const pick = chooseSeason();
@@ -104,3 +101,10 @@ function motes(emojis) {
   watch.observe(document.body, { childList: true });
   setTimeout(() => watch.disconnect(), 5000);
 }
+
+/**
+ * The template on this page, once it is known: `{ id, ...template }`, or null. Last in the module:
+ * a public template reaches decorate() with no await on the way, so every helper above must
+ * already exist (it threw "Cannot access 'deco' before initialization" and showed only the palette).
+ */
+export const season = typeof document === 'undefined' ? Promise.resolve(null) : start();

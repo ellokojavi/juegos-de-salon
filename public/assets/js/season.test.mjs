@@ -51,4 +51,10 @@ for (let m = 1; m <= 12; m++) for (let d = 1; d <= 31; d++) {
 const site = new URL('../../', import.meta.url);
 for (const page of ['index.html', 'records/index.html']) assert.match(readFileSync(new URL(page, site), 'utf8'), /season\.js/, `${page} should load season.js`);
 for (const shared of ['ui.js', 'i18n.js', 'sound.js', 'fin.js']) assert.doesNotMatch(readFileSync(new URL(shared, import.meta.url), 'utf8'), /season\.js/, `${shared} is loaded by the games: season.js does not go there`);
+// start() runs while the module loads, and a public template reaches decorate() with no await on
+// the way: every top-level const it uses must be declared before `season` (D-457: on launch day
+// it threw "Cannot access 'deco' before initialization" and only the palette showed).
+const engine = readFileSync(new URL('season.js', import.meta.url), 'utf8');
+const startsAt = engine.indexOf('export const season');
+for (const [, name] of engine.matchAll(/^const (\w+)/gm)) assert.ok(engine.indexOf(`const ${name}`) < startsAt, `season.js: const ${name} is declared after \`season = start()\``);
 console.log(`✓ seasons: ${Object.keys(TEMPLATES).join(', ')}`);
