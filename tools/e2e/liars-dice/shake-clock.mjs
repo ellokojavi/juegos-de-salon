@@ -26,7 +26,7 @@ const shake = async () => {
   buzzes = await ev(`window.__buzz`);
   await sleep(2000);   // the last roll (900 ms), a breath, and the flight into the hand (480 ms)
 };
-const covered = () => ev(`!!document.querySelector('#mine .cacho')`);
+const covered = () => ev(`!!document.querySelector('#mine.agitando .agite-caja')`);
 const myDice = () => ev(`document.querySelectorAll('#mine .dice-row .die').length`);
 const overlay = () => ev(`document.getElementById('handoff').hidden === false`);
 const proceed = () => ev(`(()=>{const h=document.getElementById('handoff');if(h.hidden)return 'no';const b=h.querySelector('.btn');b?b.click():h.click();return 'ok'})()`);
@@ -51,9 +51,8 @@ await sleep(300);
 
 check(await covered(), 'the round starts with the dice face down');
 const box = await tray();
-check(box?.faces === '00000', 'no face shows before shaking: they wait face down in a box of their own');
-const hand = await ev(`Math.round(document.querySelector('#mine .cacho .die').getBoundingClientRect().width)`);
-check(box?.size > hand, `the box's dice are bigger than the hand's (${box?.size} px against ${hand})`);
+check(box?.faces === '00000', 'no face shows before shaking: they wait face down on the cloth');
+check(await ev(`document.querySelectorAll('#mine .mine-label, #mine > .dice-row').length === 0`), 'the cloth is the only panel: the hand is not drawn beside it');
 check(/Tira tus dados/.test(await ev(`document.getElementById('actions').textContent`)), 'no bid buttons before rolling');
 check(await ev(`!document.getElementById('turn-clock').hidden`), 'the clock runs on my turn, rolling included');
 await b.shot('02-face-down');
@@ -61,7 +60,9 @@ await shake();
 check(tumbled, 'while the phone shakes, 3D dice tumble on screen');
 check(buzzes >= 5, `and the phone rattles with them: ${buzzes} vibrations`);
 check(!(await covered()) && (await myDice()) === 5, `then they land in the hand: ${await myDice()} dice`);
-check((await tray()) === null, 'and the box is gone');
+check((await tray()) === null && !(await ev(`document.getElementById('mine').classList.contains('agitando')`)), 'and the cloth turned back into the hand');
+const hand = await ev(`Math.round(document.querySelector('#mine .dice-row .die').getBoundingClientRect().width)`);
+check(box?.size > hand, `the cloth's dice were bigger than the hand's (${box?.size} px against ${hand})`);
 check(await ev(`document.querySelectorAll('.pinta').length === 6`), 'and the bid buttons show');
 await b.shot('03-clock');
 

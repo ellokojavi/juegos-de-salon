@@ -151,18 +151,18 @@ mentir, y ninguna de las dos lecturas le sirve a nadie.
 Two setup switches, offered only with a lab key (D-395) and off by default; in a room the
 creator's choice travels in the config, so it applies to every phone. Uno al día never has them.
 
-- **🫨 Shake to roll** (`config.shake`): each round your dice are rolled in a **box of their own**,
-  a green cloth over the table (under the header and the clock) with dice bigger than the hand's
-  (64 px against 46; the owner's request). They wait there face down, and their places in the hand
-  wait face down too. Shaking, they roll as the home page's 🎲 does (`dado3d.js`, D-188, D-374):
+- **🫨 Shake to roll** (`config.shake`): each round, while your dice are still to roll, the hand's
+  panel **is** a green cloth, the only one on screen, with dice bigger than the hand's (64 px
+  against 46; the owner's request). They wait there face down. Shaking, they roll as the home page's 🎲 does (`dado3d.js`, D-188, D-374):
   real 3D cubes with pips, all white (in the box the ace is not yellow, the owner's request; the
   hand keeps it yellow), and each jolt spins them faster, each its own way, while the speed drains
   away between jolts. The phone rattles with them, harder the faster they spin. Three jolts
   (13 m/s² beyond gravity, within 1.5 s) and they settle over 900 ms, with at least one more turn
-  and a small bounce, on their real faces, with a thud on the vibrator; then the cloth fades and
-  each die flies down and shrinks into its place in the hand (480 ms), lined up as always. The dice
+  and a small bounce, on their real faces, with a thud on the vibrator; then the same panel turns into the hand (480 ms): it loses its green
+  and shrinks to its usual size while the dice slide into their row, lined up as always (`llegar`
+  in `game.js`). The dice
   are rolled before, as always (and committed with their hash in a room, C-10): the shake only shows
-  them, so a round never waits on a sensor and the faces seen while rolling mean nothing. The box
+  them, so a round never waits on a sensor and the faces seen while rolling mean nothing. The cloth
   and its WebGL canvases live across renders (a message must not reset a roll), are off the page
   under a pass screen or a reveal, and are given back (`soltar()`) once the dice land. With no
   WebGL or with reduced motion, big flat dice swap faces instead. The page listens first; with no
