@@ -48,6 +48,9 @@ juego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el idio
 
 - **Reglas:** 4 cifras distintas, puede empezar con cero, 10 intentos. Puntaje de 0 a 100: 100 al
   primer intento y 10 menos por cada uno más; 0 si no lo saca (`public/cup/games/number/engine.js`).
+  In the lab (D-453): a lab key holder also sees, on the finished board, ⚠️ on each guess the
+  earlier clues had already ruled out and the line "🧪 Con la regla nueva: N/100" (`puntajeDescarte`:
+  100, −15 per ruled-out guess, minimum 10 if solved). What is recorded stays on D-113's rule.
 - **Número:** sale de un código de 5 letras al azar (`codigoAlAzar` de `public/cup/code.js`, D-377) con
   `numero.generar(codigo, 1)`. No hay secreto que guardar ni que verificar.
 - **Pantallas:** una previa con “Cómo se juega” (3 puntos), cómo se calcula el puntaje, el récord y
