@@ -199,6 +199,9 @@ los tres modos: el motor cuenta cuando conoce todos los dados de la ronda, y mie
 es `open` y la pantalla dice a quién se espera. While nobody holds the turn (`current` is null), the header never says
 whose turn it is: during `open` it names who called it ("Chan dudó de 7 quintas"), with the
 line underneath naming whose dice are missing, and during `roll` it names the round's `opener`.
+Before the first bid, only the phone that opens reads the invitation (`opens`, "Abre la ronda: apuesta lo
+que quieras."); every other phone in the room, and the player against the phone while the bot opens,
+reads who opens (`opensOther`, "Chan abre la ronda.").
 
 ```json
 {
