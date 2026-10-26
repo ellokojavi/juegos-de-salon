@@ -279,7 +279,7 @@ function closeOverlay() { const b = $('#handoff'); b.hidden = true; b.innerHTML 
 function render() {
   if (!M) return;
   agite.onRoll = null;   // the cup that is drawn now says again who it lifts for
-  vaso?.caja.remove();   // and puts the shaking box back, if it is still the table's
+  vaso?.caja.remove();   // and puts the shaking cloth back, if it is still the table's
   const v = view();
   if (v.lobby) return renderLobby();
   // Si hay una transición en pantalla, manda ella. Se pregunta por el overlay y no por una
@@ -330,13 +330,18 @@ function renderPlay(v) {
   mine.innerHTML = '';
   const dados = diceOf(v, yo) || [];
   const tapados = cubiertos(v, yo, dados);
-  mine.append(el('div', { class: 'mine-label' }, T.yourDice));
+  // While the dice are still to roll, the hand's panel is the shaking cloth (lab: #seccion-dudo-cacho)
+  mine.classList.toggle('agitando', tapados);
   if (tapados) mine.append(cacho(v, yo));
   else {
     agite.onRoll = null;
     soltarVaso();
-    mine.append(el('div', { class: 'dice-row' }, ...dados.map(d => dieEl(d))));
+    mine.append(el('div', { class: 'mine-label' }, T.yourDice));
+    const fila = el('div', { class: 'dice-row' }, ...dados.map(d => dieEl(d)));
+    mine.append(fila);
     if (dados.includes(1)) mine.append(el('div', { class: 'wild-note' }, '⚀ ', T.aceWild));
+    const llegada = S.llegada;
+    if (llegada?.clave === `${v.round}:${yo}`) { S.llegada = null; llegar(mine, fila, llegada); }
   }
   relojDelTurno(v, yo, miTurno);
 
@@ -467,7 +472,7 @@ function onMotion(e) {
   else if (g && g.x != null) fuerza = Math.abs(Math.hypot(g.x, g.y || 0, g.z || 0) - 9.81);
   else return;   // an event with no reading: a computer that says it has a sensor
   // The first reading: if the cup was offering the button, it now listens instead
-  if (agite.sensor !== true) { agite.sensor = true; if ($('#mine .cacho')) render(); }
+  if (agite.sensor !== true) { agite.sensor = true; if ($('#mine .agite-caja')) render(); }
   if (!agite.onRoll) return;
   const ahora = performance.now();
   if (fuerza < SACUDON || ahora - agite.lastJolt < 110) return;
@@ -484,7 +489,7 @@ function escucharAgite() {
   agite.waiting = true;
   setTimeout(() => {
     agite.waiting = false;
-    if (agite.sensor === null) { agite.sensor = false; if ($('#mine .cacho')) render(); }
+    if (agite.sensor === null) { agite.sensor = false; if ($('#mine .agite-caja')) render(); }
   }, SIN_SENSOR_MS);
 }
 
@@ -495,16 +500,16 @@ function cubiertos(v, role, dados) {
 
 /**
  * The dice still to roll, with what rolls them: shaking, or the button where there is no sensor.
- * They are rolled in a box of their own, over the table, with bigger dice than the hand's (the
- * owner's request): face down until the first jolt, then real cubes with pips that roll as the home
+ * They are rolled on a green cloth that takes the hand's place, with bigger dice than the hand's
+ * (the owner's request): face down until the first jolt, then real cubes with pips that roll as the home
  * page's 🎲 does (dado3d.js, D-188, D-374), spun by each jolt, harder the harder the shake, and
  * slowing down between jolts, while the phone rattles with them. On the last jolt each settles on
- * the face it really has, and then they fly down and shrink into the hand, lined up as always. The
+ * the face it really has, and the cloth turns into the hand's panel with the dice lined up as always. The
  * faces seen while rolling mean nothing: the dice were rolled before (C-10). With no WebGL, or with
  * reduced motion, flat dice swap faces instead.
  */
 const CAEN_MS = 900;      // the last roll, from the last jolt to landing
-const VUELO_MS = 480;     // from the box down into the hand
+const VUELO_MS = 480;     // the cloth turning into the hand
 const CARA_MS = 70;       // flat dice: a new face this often
 /** The faces in dado3d.js's order (front, right, back, left, top, bottom): opposite ones add up to 7. */
 const CARAS_3D = [1, 3, 6, 4, 2, 5];
@@ -513,9 +518,8 @@ const DE_FRENTE = { 1: [0, 0], 3: [0, -90], 6: [0, 180], 4: [0, 90], 2: [90, 0],
 const SIN_3D = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
- * The box of the round being rolled, with its dice. It lives across renders, outside #mine: a
- * message that redraws the table must not reset a roll. Each render takes it off the page and the
- * cup puts it back, so a pass screen or a reveal never shows it.
+ * The cloth of the round being rolled, with its dice. It lives across renders: a message that
+ * redraws the table must not reset a roll, so each render puts the same one back in #mine.
  */
 let vaso = null;
 
@@ -614,20 +618,28 @@ function aterrizar(t, dados, listo) {
   t.cae = { t0: performance.now(), listo };
 }
 
-/** Landed: the box fades and each die flies down and shrinks into its place in the hand. */
-function alinear(vs, fin) {
-  const huecos = [...document.querySelectorAll('#mine .cacho .die')];
-  const piezas = vs.tres ? vs.tres.dados.map(d => d.caja) : [...vs.mesa.children];
-  vs.caja.classList.add('vuela');
-  piezas.forEach((p, i) => {
-    const h = huecos[i];
-    if (!h) return;
-    const a = p.getBoundingClientRect(), b = h.getBoundingClientRect();
-    const dx = b.left + b.width / 2 - (a.left + a.width / 2), dy = b.top + b.height / 2 - (a.top + a.height / 2);
-    p.style.transition = `transform ${VUELO_MS}ms cubic-bezier(0.5, 0, 0.3, 1)`;
-    p.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${(b.width / a.width).toFixed(3)})`;
+/**
+ * Landed: the cloth turns into the hand's panel. The panel starts as tall and green as the cloth
+ * was, with each die where it landed and as big, and then shrinks to its usual size and colour
+ * while the dice slide into their row, the way they always sit.
+ */
+function llegar(mine, fila, { desde, alto }) {
+  const final = mine.getBoundingClientRect().height;
+  mine.classList.add('llega');
+  mine.style.height = `${alto}px`;
+  const dados = [...fila.children];
+  dados.forEach((d, i) => {
+    const a = desde[i];
+    if (!a) return;
+    const b = d.getBoundingClientRect();
+    d.style.transform = `translate(${(a.left + a.width / 2 - b.left - b.width / 2).toFixed(1)}px, ${(a.top + a.height / 2 - b.top - b.height / 2).toFixed(1)}px) scale(${(a.width / b.width).toFixed(3)})`;
   });
-  setTimeout(fin, VUELO_MS);
+  void mine.offsetWidth;
+  mine.classList.add('llega-anda');
+  mine.classList.remove('llega');
+  mine.style.height = `${final}px`;
+  dados.forEach(d => { d.style.transform = ''; });
+  setTimeout(() => { mine.classList.remove('llega-anda'); mine.style.height = ''; }, VUELO_MS);
 }
 
 /** Flat dice, where there is no 3D: a new face on each every few frames, for `ms` more. */
@@ -655,19 +667,11 @@ function rodar(ms) {
   paso();
 }
 
-/**
- * What #mine shows while the dice are still to roll: their places, face down, where they will
- * land. The box over the table, with the big dice and what rolls them, goes on the page here too.
- */
+/** What #mine shows while the dice are still to roll: the cloth, with the big dice and what rolls them. */
 function cacho(v, role) {
   const clave = `${v.round}:${role}`;
   const dados = diceOf(v, role) || [];
   const vs = vasoDe(clave, dados.length);
-  const huecos = el('div', { class: 'cacho' },
-    el('div', { class: 'dice-row bandeja', 'aria-hidden': 'true' }, ...dados.map(() => el('span', { class: 'die blank' }))));
-  document.body.append(vs.caja);
-  // Right under the header and the clock, over the hand and the bid
-  vs.caja.style.top = `${Math.round(($('#screen-play .status')?.getBoundingClientRect().bottom || 120) + 10)}px`;
 
   const tirar = () => {
     if (S.shaken.has(clave) || S.rolling === clave) return;
@@ -675,13 +679,16 @@ function cacho(v, role) {
     agite.onRoll = null; agite.onJolt = null;
     vs.pie.replaceChildren();   // rolling, there is nothing left to tap
     SFX.dice();
+    // Landed: where each die and the cloth are now, so the hand's panel can grow out of them
     const fin = () => {
+      const piezas = vs.tres ? vs.tres.dados.map(d => d.caja) : [...vs.mesa.children];
+      S.llegada = { clave, desde: piezas.map(p => p.getBoundingClientRect()), alto: $('#mine').getBoundingClientRect().height };
       soltarVaso();
       S.rolling = null;
       S.shaken.add(clave);
       render();
     };
-    const cayo = () => { SFX.dice(); vibrate([30, 40, 20, 40, 60]); setTimeout(() => alinear(vs, fin), 250); };
+    const cayo = () => { SFX.dice(); vibrate([30, 40, 20, 40, 60]); setTimeout(fin, 300); };
     const t = tresDe(vs);
     if (t) {
       // The button has no jolt before it: it throws them itself
@@ -692,7 +699,7 @@ function cacho(v, role) {
       setTimeout(cayo, CAEN_MS + 80);
     }
   };
-  if (S.rolling === clave) return huecos;   // already rolling: they land on their own
+  if (S.rolling === clave) return vs.caja;   // already rolling: they land on their own
 
   if (agite.sensor === false && PIDE_PERMISO && agite.permiso === null) {
     // Silent, and the phone can ask (an iPhone): only a tap may ask, and then it listens again
@@ -715,7 +722,7 @@ function cacho(v, role) {
       if (t) empujar(t); else rodar(450);
     };
   }
-  return huecos;
+  return vs.caja;
 }
 
 /* ---------- The turn's clock (lab: #seccion-dudo-cacho) ---------- */
