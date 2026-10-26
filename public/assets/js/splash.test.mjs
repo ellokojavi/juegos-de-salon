@@ -58,7 +58,12 @@ for (const [id, c] of Object.entries(CAMPAIGNS)) {
     if (c[k]) for (const l of langs) assert.ok(c[k][l], `${id}.${k} without ${l}`);
   }
   for (const it of c.items || []) {
-    for (const f of [it.img, it.video, it.still]) if (f) assert.ok(existsSync(new URL(`../../${f}`, import.meta.url)), `${id}: ${f} does not exist`);
+    // A clip from GIPHY is served from GIPHY (not copied into the site, for its rights); anything else is ours
+    for (const f of [it.img, it.video, it.still]) if (f) {
+      if (/^https?:/.test(f)) assert.ok(f.startsWith('https://media.giphy.com/'), `${id}: ${f} is from outside the site and not GIPHY`);
+      else assert.ok(existsSync(new URL(`../../${f}`, import.meta.url)), `${id}: ${f} does not exist`);
+    }
+    if (it.cta) for (const l of langs) assert.ok(it.cta[l], `${id}: a button without its text in ${l}`);
     if (it.game) assert.ok(ids.has(it.game), `${id}: game ${it.game} does not exist`);
     else if (it.title || it.text || it.href) for (const l of langs) assert.ok(it.title?.[l] && it.text?.[l], `${id}: an item without its texts in ${l}`);
     else assert.ok(it.img, `${id}: a teaser (an item with no texts) without its picture`);
