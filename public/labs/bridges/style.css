@@ -35,6 +35,10 @@
 .tv-barra { display: grid; gap: 2px; text-align: center; min-height: 3.2em; }
 .tv-cuenta { font-weight: 900; font-variant-numeric: tabular-nums; }
 .tv-cuenta.lleno { color: var(--yellow); }
+.tv-tablones { display: flex; gap: 3px; height: 14px; margin: 2px 0 4px; }
+.tv-tablones span { position: relative; overflow: hidden; border-radius: 3px; background: rgba(255, 255, 255, 0.08); border: 1px solid #3a1d10; }
+.tv-tablones i { position: absolute; inset: 0 auto 0 0; background: #b5743a; transition: width 0.2s; }
+.tv-tablones span:nth-child(even) i { background: #8a5226; }
 .tv-aviso { margin: 0; color: var(--muted); font-size: 0.92rem; }
 .tv-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .tv-acciones .btn { padding-inline: 6px; }
