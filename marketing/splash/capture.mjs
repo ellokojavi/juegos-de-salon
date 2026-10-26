@@ -58,9 +58,10 @@ const GAMES = {
     },
   },
   bridges: {
-    // 🚂 Tren en Vilo in its neon look: a level-1 stage (Math.random pinned, so the same one each time),
+    // 🚅 Tren en Vilo in its neon look: a level-1 stage (Math.random pinned, so the same one each time),
     // its solution's beams dragged in one by one with the mouse, then 🚂 Probar and the train crosses
     url: '/bridges/?test',
+    speed: 1.6, // played faster than it was recorded: the owner found it slow
     board: '.tv-lienzo',
     // The scene at its own shape, as big as the splash draws it (a hero, full width): no square, no margin
     native: 720,
@@ -128,7 +129,7 @@ try {
     await sleep(g.hold ?? 1400); // the solved board, held (Loteo brings its next board sooner: `keep` frames of it)
     recording = false; await loop;
     const mp4 = join(DEST, `${name}.mp4`);
-    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', `${frames}/%04d.png`, '-frames:v', String(Math.min(n, solvedAt + (g.keep ?? n))),
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(FPS * (g.speed ?? 1)), '-i', `${frames}/%04d.png`, '-frames:v', String(Math.min(n, solvedAt + (g.keep ?? n))),
       '-vf', `scale=${W}:${H}:flags=lanczos,tpad=stop_mode=clone:stop_duration=${g.keep ? 1.2 : 0},format=yuv420p`, '-c:v', 'libx264', '-crf', '30', '-preset', 'slow', '-movflags', '+faststart', '-an', mp4]);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', `${frames}/${String(Math.min(n - 1, solvedAt + Math.min(3, (g.keep ?? 4) - 1))).padStart(4, '0')}.png`, '-q:v', '5', join(DEST, `${name}.jpg`)]);
     // And its first frame, the poster while it loads, so the solved board does not flash before it plays
