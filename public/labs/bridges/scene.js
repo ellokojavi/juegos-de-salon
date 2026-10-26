@@ -35,8 +35,8 @@ const ARRIBA = ALTO[1] + 0.6, ABAJO = ALTO[0] - 1.1;
  * The stage's train in small, next to its weight in the title: the locomotive and a wagon as they will
  * cross (passenger cars, crates, logs, coal or containers), so the weight has a picture.
  */
-export function trenMini(carga, e) {
-  if (NEON) return trenMiniNeon(carga, e);
+export function trenMini(carga, e, t) {
+  if (NEON) return trenMiniNeon(carga, e, t);
   const { vagon, paleta } = trenDe(carga), dpr = window.devicePixelRatio || 1, px = 2;
   const ancho = 40, alto = Math.max(LOCO[0].length, vagon[0].length) + 1;
   const c = el('canvas', { class: 'tv-tren-mini', 'aria-hidden': 'true', width: ancho * px * dpr, height: alto * px * dpr });
