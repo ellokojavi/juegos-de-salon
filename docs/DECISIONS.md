@@ -37,7 +37,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246 |
-| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (435)
+## In force (436)
 
 | D | Title | Status |
 |---|---|---|
@@ -493,7 +493,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-445](decisions/D-445.md) | Stack: a one-tap tower game in Juegos en prueba, in English | current |
 | [D-446](decisions/D-446.md) | Stick Ninja: a hold-and-release bridge game in Juegos en prueba, on the day's course, in English | current |
 | [D-447](decisions/D-447.md) | Dudo: shake the phone to roll, and a turn clock that costs a die | current |
-| [D-448](decisions/D-448.md) | ☕ Buy me a coffee: voluntary support through a Stripe Payment Link, quiet and in two places (in the lab) | current |
+| [D-448](decisions/D-448.md) | ☕ Buy me a coffee: voluntary support through a Stripe Payment Link, quiet and in two places (in the lab) | amended by D-449 |
+| [D-449](decisions/D-449.md) | ☕ Invítame a un café is a card over the page, not a page of its own (in the lab) | current |
 
 ## No longer in force (11)
 
