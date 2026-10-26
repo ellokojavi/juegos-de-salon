@@ -238,7 +238,7 @@ roll* → bid+ → (dudo | calza) → open*
 | `dudo` | — | En su turno, si ya hay apuesta |
 | `calza` | — | En su turno, si la apuesta llegó a la mitad de la mesa |
 | `open` | `d` dados, `salt` sal | Después de dudar, uno por jugador vivo |
-| `timeout` | `r` the round | Lab, with `turnSecs`: sent by the player on turn, from their own phone, when their time runs out |
+| `timeout` | `r` the round | With `turnSecs` (D-447): sent by the player on turn, from their own phone, when their time runs out |
 
 Un `roll` con `d` se resuelve solo; uno con `h` obliga a esperar el `open`. Es el mismo camino para
 los tres modos: el motor cuenta cuando conoce todos los dados de la ronda, y mientras tanto la fase
@@ -271,7 +271,7 @@ public/liars-dice/index.html · public/liars-dice/style.css · public/liars-dice
 public/liars-dice/engine.js · public/liars-dice/engine.test.mjs
 tools/e2e/liars-dice/local.mjs   un celular y contra el celular
 tools/e2e/liars-dice/online.mjs  tres celulares contra Firebase real
-tools/e2e/liars-dice/shake-clock.mjs  lab: shake to roll and the turn's clock
+tools/e2e/liars-dice/shake-clock.mjs  shake to roll and the turn's clock (D-447)
 ```
 
 Gancho de pruebas (C-14): `window.__dudo` (`view`, `match`, `session`).
