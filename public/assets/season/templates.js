@@ -19,7 +19,7 @@
 export const TEMPLATES = {
   halloween: {
     from: '10-26', to: '10-31',
-    public: false,
+    public: true, // the owner approved it on 2026-10-26
     built: '2026-10-26',
     css: new URL('halloween.css', import.meta.url).href,
     icon: { emoji: '🎃', colors: ['#ff7a1a', '#5b1fb8'] },
