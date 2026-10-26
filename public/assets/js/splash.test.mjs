@@ -1,7 +1,7 @@
 // The splash (D-351): what the home page shows and in what order, the campaigns' texts, and the switch.
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { queue, seenIds, campaignLang, CAMPAIGNS, ACTIVE } from './splash.js';
+import { queue, seenIds, campaignLang, fromRemote, loadActive, CAMPAIGNS, ACTIVE } from './splash.js';
 import { activeLine, rewrite, turnOn } from '../../../tools/agents/splash.mjs';
 import { GAMES, SUELTOS } from './games.js';
 import { IDIOMAS } from './i18n.js';
@@ -65,3 +65,14 @@ for (const [id, c] of Object.entries(CAMPAIGNS)) {
   }
 }
 console.log('splash ✓');
+
+// from is inclusive too: a scheduled campaign waits for its day (D-454)
+assert.deepEqual(queue({ active: [{ id: 'a', from: '2026-10-20' }], campaigns, today }), ['a']);
+assert.deepEqual(queue({ active: [{ id: 'a', from: '2026-10-21' }], campaigns, today }), []);
+// The panel's switches in Firebase: only the ones on, by order; nothing written means ACTIVE holds
+assert.equal(fromRemote(null), null);
+assert.equal(fromRemote('x'), null);
+assert.deepEqual(fromRemote({ b: { on: true, order: 2, until: '2026-11-01' }, a: { on: true, order: 1, from: '2026-10-30' }, c: { on: false, order: 0 } }),
+  [{ id: 'a', from: '2026-10-30' }, { id: 'b', until: '2026-11-01' }]);
+assert.deepEqual(fromRemote({ c: { on: false, order: 0 } }), [], 'all off is off, not ACTIVE');
+assert.deepEqual(await loadActive({ fetchFn: async () => { throw new Error('offline'); } }), ACTIVE, 'no network: ACTIVE');

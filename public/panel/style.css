@@ -301,3 +301,43 @@ a.bar--link .label { text-decoration: underline; text-decoration-color: rgba(255
 .bars .bar-btn { width: calc(100% + 12px); }
 a.evento--link { color: inherit; text-decoration: none; border-radius: 8px; }
 a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); outline: none; }
+
+/* 📣 Campaigns (D-454): made for the phone first, one card per campaign */
+.campanas-hoy .lead { margin: 0 0 6px; }
+.campanas-cola { margin: 0 0 8px; padding-left: 22px; font-weight: 800; }
+.campanas-cruce { margin: 6px 0 0; color: var(--yellow); font-weight: 700; font-size: 0.9rem; }
+.campanas-msg { margin: 8px 0 0; color: var(--cyan); font-weight: 800; font-size: 0.9rem; }
+.campanas-tira { display: grid; gap: 6px; }
+.tira-ejes { display: flex; justify-content: space-between; margin-left: 30px; }
+.tira-fila { display: flex; align-items: center; gap: 8px; }
+.tira-emoji { width: 22px; text-align: center; }
+.tira-pista { position: relative; flex: 1; height: 14px; border-radius: 7px; background: var(--glass); }
+.tira-barra { position: absolute; top: 0; bottom: 0; border-radius: 7px; background: var(--cyan); }
+.tira-barra.abierta { border-radius: 7px 0 0 7px; background: linear-gradient(90deg, var(--cyan) 70%, transparent); }
+.campana { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.campana--off, .campana--ended { opacity: 0.75; }
+.campana-cabeza { display: flex; align-items: center; gap: 10px; }
+.campana-emoji { font-size: 1.8rem; line-height: 1; }
+.campana-nombre { flex: 1; min-width: 0; display: grid; }
+.campana-nombre strong { overflow-wrap: anywhere; }
+.campana-estado { margin: 0; font-weight: 800; font-size: 0.92rem; }
+.estado-live { color: var(--lime); }
+.estado-scheduled { color: var(--cyan); }
+.estado-ended, .estado-off { color: var(--muted); }
+.campana-fechas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 10px; }
+.campana-fecha { display: grid; gap: 4px; font-size: 0.8rem; font-weight: 800; color: var(--muted); }
+.campana-fecha-fila { display: flex; gap: 4px; }
+.campana-fecha input { flex: 1; min-width: 0; min-height: 44px; padding: 6px 8px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); font: inherit; color-scheme: dark; }
+.campana-borrar, .chip-btn { min-height: 44px; min-width: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); font: inherit; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.chip-btn:disabled { opacity: 0.35; cursor: default; }
+.chip-btn:not(:disabled):hover, .chip-btn:focus-visible { border-color: var(--cyan); outline: none; }
+.campana-atajos { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.campana-orden { display: inline-flex; gap: 6px; }
+.campana-atajos a.chip-btn { margin-left: auto; }
+.interruptor { position: relative; display: inline-flex; width: 56px; height: 32px; flex: none; cursor: pointer; }
+.interruptor input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.interruptor-pista { width: 100%; border-radius: 16px; background: var(--glass-border); transition: background 0.15s; }
+.interruptor-pista::after { content: ''; position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); transition: transform 0.15s; }
+.interruptor input:checked + .interruptor-pista { background: var(--lime); }
+.interruptor input:checked + .interruptor-pista::after { transform: translateX(24px); background: var(--bg1); }
+.interruptor input:focus-visible + .interruptor-pista { outline: 2px solid var(--cyan); outline-offset: 2px; }
