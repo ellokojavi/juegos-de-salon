@@ -35,9 +35,9 @@ const T = {
   nombre: 'Tren en Vilo',
   lema: 'Arma un puente que aguante el tren.',
   como: [
-    ['🌉', 'La vía ya está puesta. Arrastra de un punto a otro para reforzarla con vigas. Toca una para quitarla.'],
+    ['🌉', 'Arrastra de un punto a otro para reforzar la vía con vigas. Toca una para quitarla.'],
     ['🚂', 'Toca Probar: cruza el tren. Si una viga se estira de más, se corta.'],
-    ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con poca madera. Suman las etapas que pasa el tren, la madera que te sobra, la solidez y la rapidez.`],
+    ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con poca madera. Suman las etapas superadas, la madera que sobra, la solidez y la rapidez.`],
   ],
   empezar: '🚂 Empezar', aJugar: '¡A construir!',
   etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', madera: 'Madera: {n} de {max} m', carga: 'Tren {x} más pesado', cargaNormal: 'Tren de peso normal',
