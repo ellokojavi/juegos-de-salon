@@ -305,7 +305,7 @@ function renderPlay(v) {
   const yo = S.mode === 'online' ? S.role : S.mode === 'cpu' ? 'A' : S.uiRole;
   renderRivals(v);
   const miTurno = v.current === yo;
-  $('#status-who').textContent = miTurno ? T.yourTurn : `${T.turnOf} ${nameOf(v.current)}`;
+  $('#status-who').textContent = encabezado(v, miTurno);
   const esperando = v.waiting.filter(r => r !== yo);
   $('#status-sub').textContent = v.phase === 'open' && esperando.length
     ? fmt(T.waitDice, { name: esperando.map(nameOf).join(', ') })
@@ -336,11 +336,25 @@ function renderPlay(v) {
   renderActions(v, yo, miTurno);
 }
 
+/**
+ * Whose turn it is. While the dice are being rolled or revealed nobody has the turn
+ * (`current` is null, and the header said "Le toca a null"): rolling, the one who opens the
+ * round is next; revealing, the header says who called it.
+ */
+function encabezado(v, miTurno) {
+  if (miTurno) return T.yourTurn;
+  if (v.phase === 'open' && v.end && v.bid) {
+    return fmt(v.end.type === 'dudo' ? T.saidDudo : T.saidCalza, { name: nameOf(v.end.by), n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) });
+  }
+  return `${T.turnOf} ${nameOf(v.current || v.opener)}`;
+}
+
 function renderActions(v, yo, miTurno) {
   const box = $('#actions');
   box.innerHTML = '';
   if (!miTurno) {
-    box.append(el('p', { class: 'muted center' }, `${T.turnOf} ${nameOf(v.current)}…`));
+    // Revealing, the line under the board would repeat the header: it stays empty
+    if (v.phase !== 'open') box.append(el('p', { class: 'muted center' }, `${T.turnOf} ${nameOf(v.current || v.opener)}…`));
     return;
   }
 
