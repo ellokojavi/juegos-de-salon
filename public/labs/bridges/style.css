@@ -97,3 +97,8 @@
 .tv-fel-barra { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.15); overflow: hidden; }
 .tv-fel-barra span { display: block; height: 100%; background: var(--yellow); transform-origin: left; animation: tv-fel-barra linear forwards; }
 @keyframes tv-fel-barra { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+/* `?style=neon` (lab prototype, neon.js): the pieces around the board in the house style too */
+.tv-neon .tv-tren-mini { image-rendering: auto; }
+.tv-neon .tv-medidor { background: rgba(20, 8, 40, 0.82); border: 1px solid rgba(190, 160, 255, 0.35);
+  box-shadow: 0 0 14px rgba(255, 46, 136, 0.25); backdrop-filter: blur(4px); }
