@@ -35,7 +35,7 @@ const T = {
   nombre: 'Stick Ninja',
   lema: 'Stretch the stick, cross the gap, plant the flag.',
   como: [
-    ['👆', 'Hold to stretch the stick, let go to drop it across the gap. You have ❤️ 3 lives.'],
+    ['👆', 'Hold to stretch the stick, let go to drop it across the gap. You have 3 lives.'],
     ['🚩', 'Land its tip on the flag for a perfect: +1, then +2, +3… for each one in a row.'],
     ['↔️', 'Later on, some pillars slide: aim where they will be when the stick lands.'],
   ],
@@ -476,13 +476,15 @@ const pasos = () => el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el(
 function portada() {
   const lienzo = el('canvas', { class: 'demo-ninja', 'aria-hidden': 'true' });
   const antes = mejorAntes();
-  vista.replaceChildren(
-    el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead', style: 'margin:0' }, T.lema), credito(), lienzo),
-    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-jugar', onClick: () => { SFX.tap(); jugar(); } }, T.jugar),
-    antes ? el('p', { class: 'muted mejor-portada', id: 'mejor-portada' }, fmt(T.mejorCorto, { n: antes })) : '',
+  vista.replaceChildren(el('div', { class: 'portada-ninja' },
+    el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead lema-ninja' }, T.lema), credito(), lienzo),
+    // Play and the best, together under the run
+    el('div', { class: 'jugar-ninja' },
+      el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-jugar', onClick: () => { SFX.tap(); jugar(); } }, T.jugar),
+      antes ? el('p', { class: 'muted mejor-portada', id: 'mejor-portada' }, fmt(T.mejorCorto, { n: antes })) : ''),
     // The steps go after Play, so it is seen without scrolling on a small phone (U-39)
     el('div', { class: 'panel' }, pasos(), el('p', { class: 'muted hoy-nota' }, T.hoy)),
-  );
+  ));
   pieComentario('portada');
   demo(lienzo);
 }

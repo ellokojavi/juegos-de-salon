@@ -25,7 +25,7 @@ then, and every so often a stick too short; then another course;
 still with reduced motion). Then "🥷 Play", the best so far ("🏆 Best: n", once there is one), and the three
 steps (after the button, U-39):
 
-1. 👆 Hold to stretch the stick, let go to drop it across the gap. You have ❤️ 3 lives.
+1. 👆 Hold to stretch the stick, let go to drop it across the gap. You have 3 lives.
 2. 🚩 Land its tip on the flag for a perfect: +1, then +2, +3… for each one in a row.
 3. ↔️ Later on, some pillars slide: aim where they will be when the stick lands.
 
