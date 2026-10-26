@@ -24,14 +24,36 @@ function signo(ctx, texto) {
 /* Each sprite as shapes: (ctx) → draws it around its bottom-centre       */
 /* ------------------------------------------------------------------ */
 
-/** A bird, 11 × 5: a small dark-lilac silhouette, its wings up, spread or down. */
+/**
+ * A bird, 11 × 5, facing right: a soft lilac body with a lighter belly, a fanned tail, a beak and an
+ * eye, and two wings as feathered shapes (the far one darker, behind the body) up, spread or down.
+ */
+const ALAS = [
+  // [tip, elbow on the leading edge, curve of the trailing edge] for up, spread and down
+  { t: [-1.6, -6.4], c: [1, -4.8], d: [-1.8, -3.2] },
+  { t: [-4.4, -3.3], c: [-0.8, -3.9], d: [-2.8, -2.2] },
+  { t: [-1.4, 0.7], c: [0.8, -0.6], d: [-1.6, -1.1] },
+];
 const pajaro = ala => ctx => {
-  const color = '#8a76b8';
-  ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(0.5, -1.8, 2.4, 0.9, -0.1, 0, Math.PI * 2); ctx.fill();
-  circulo(ctx, 2.8, -2.2, 0.8, color);
-  ctx.fillStyle = '#e0b060'; ctx.beginPath(); ctx.moveTo(3.5, -2.4); ctx.lineTo(4.6, -2.1); ctx.lineTo(3.5, -1.9); ctx.closePath(); ctx.fill();
-  const punta = [[-3.6, -5], [-5, -2.6], [-3.4, 0]][ala], codo = [[-1.6, -3.6], [-2.6, -2.4], [-1.4, -0.8]][ala];
-  for (const s of [1, -0.6]) trazo(ctx, color, 0.8, () => { ctx.moveTo(0.2, -1.9); ctx.quadraticCurveTo(codo[0] * s + (s < 0 ? 1.4 : 0), codo[1], punta[0] * s + (s < 0 ? 2.6 : 0), punta[1]); });
+  const { t, c, d } = ALAS[ala];
+  const alaDe = (dx, color, borde) => {
+    ctx.fillStyle = color; ctx.beginPath();
+    ctx.moveTo(1.1 + dx, -2.3); ctx.quadraticCurveTo(c[0] + dx, c[1], t[0] + dx, t[1]);
+    ctx.quadraticCurveTo(d[0] + dx, d[1], -0.9 + dx, -1.9); ctx.closePath(); ctx.fill();
+    if (borde) trazo(ctx, borde, 0.3, () => { ctx.moveTo(1.1 + dx, -2.3); ctx.quadraticCurveTo(c[0] + dx, c[1], t[0] + dx, t[1]); });
+  };
+  // The far wing, behind
+  alaDe(0.9, '#5a4788');
+  // The tail, a small fan
+  ctx.fillStyle = '#6f5a9e'; ctx.beginPath(); ctx.moveTo(-1.6, -2.1); ctx.lineTo(-3.9, -2.6); ctx.quadraticCurveTo(-3.6, -1.9, -3.9, -1.3); ctx.lineTo(-1.6, -1.6); ctx.closePath(); ctx.fill();
+  // The body and the head, lighter underneath
+  ctx.fillStyle = grad(ctx, -3, -0.8, '#8a76b8', '#a08ccc', '#cbbbe8');
+  ctx.beginPath(); ctx.ellipse(0.3, -1.9, 2.3, 0.95, -0.08, 0, Math.PI * 2); ctx.fill();
+  circulo(ctx, 2.6, -2.35, 0.85, '#8a76b8');
+  ctx.fillStyle = '#e0b060'; ctx.beginPath(); ctx.moveTo(3.3, -2.6); ctx.lineTo(4.5, -2.25); ctx.lineTo(3.3, -2); ctx.closePath(); ctx.fill();
+  circulo(ctx, 2.9, -2.55, 0.2, OSCURO);
+  // The near wing, in front, its leading edge catching the light
+  alaDe(0, '#7d68b0', 'rgba(230,220,255,0.55)');
 };
 
 /** The flying saucer, 14 × 8: a chrome disc, a glass dome with a highlight and a ring of lights that blink. */
