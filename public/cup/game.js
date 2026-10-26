@@ -2682,6 +2682,13 @@ function practica(id, varianteElegida = null) {
       return st;
     });
   }
+  // `?play` (the splash's ▶ Jugar) opens the game already started, past this cover. Only once: it
+  // leaves the address, so going back or reloading lands on the cover
+  if (SUELTO && !HOY && tiene('play')) {
+    const q = new URLSearchParams(location.search); q.delete('play');
+    history.replaceState(null, '', `${location.pathname}${q.size ? `?${q}` : ''}`);
+    jugarPractica(id, semilla, variante);
+  }
 }
 
 /**
