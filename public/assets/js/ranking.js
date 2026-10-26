@@ -26,7 +26,11 @@ const buzonAlFinal = (juego, donde) => {
   }, 0);
 };
 
-const R = () => (COMMON[getLang()] || COMMON.es).rk;
+// A page in one language only (a lab game in English, D-445) shows its rankings in that language
+let idiomaFijo = null;
+/** The rankings' language on this page, whatever the app's is: `fijarIdioma('en')`. */
+export function fijarIdioma(lang) { idiomaFijo = COMMON[lang] ? lang : null; }
+const R = () => (COMMON[idiomaFijo || getLang()] || COMMON.es).rk;
 const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
 /** "3:07"; con horas, "1:02:10". */
 export function mmss(ms) {

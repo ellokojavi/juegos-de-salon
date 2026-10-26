@@ -14,6 +14,8 @@ import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { param } from '../../assets/js/parametros.js';
+import { bloqueTabla, avisoPartida, fijarIdioma } from '../../assets/js/ranking.js';
+import { rankingsVisibles, leerYo } from '../../assets/js/jugador.js';
 import {
   newGame, pillar, pillarAt, current, next, press, release, suspend, stickAt, advance, pause, runX, walkEnd,
   holdFor, restX, daySeed, card, VIEW, HOLD_X, TURN_MS, NINJA, PERFECT, MAX_BONUS,
@@ -478,12 +480,12 @@ function portada() {
   const antes = mejorAntes();
   vista.replaceChildren(el('div', { class: 'portada-ninja' },
     el('div', { class: 'portada' }, tituloJuego(), el('p', { class: 'lead lema-ninja' }, T.lema), credito(), lienzo),
-    // Play and the best, together under the run
-    el('div', { class: 'jugar-ninja' },
-      el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-jugar', onClick: () => { SFX.tap(); jugar(); } }, T.jugar),
+    el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-jugar', onClick: () => { SFX.tap(); jugar(); } }, T.jugar),
+    // The game's ranking and signing in, under Play, like every game played alone (D-212, D-249)
+    tabla(),
+    // The steps go after Play, so it is seen without scrolling on a small phone (U-39); this phone's best with them
+    el('div', { class: 'panel' }, pasos(), el('p', { class: 'muted hoy-nota' }, T.hoy),
       antes ? el('p', { class: 'muted mejor-portada', id: 'mejor-portada' }, fmt(T.mejorCorto, { n: antes })) : ''),
-    // The steps go after Play, so it is seen without scrolling on a small phone (U-39)
-    el('div', { class: 'panel' }, pasos(), el('p', { class: 'muted hoy-nota' }, T.hoy)),
   ));
   pieComentario('portada');
   demo(lienzo);
@@ -774,6 +776,11 @@ function mejorAntes() { try { return Number(localStorage.getItem(BEST_KEY)) || 0
 function guardarMejor(n) { try { localStorage.setItem(BEST_KEY, String(n)); } catch { /* private mode */ } }
 function yaMovil() { try { return localStorage.getItem(MOVING_KEY) === '1'; } catch { return false; } }
 function marcarMovil() { try { localStorage.setItem(MOVING_KEY, '1'); } catch { /* private mode */ } }
+/** Stick Ninja's ranking (D-212): the `stick` table, Week · All time · Friends, in English like the page. */
+function tabla({ entrar = true } = {}) {
+  return bloqueTabla({ tabla: GAME_ID, titulo: fmt(COMMON.en.rk.titleOf, { game: T.nombre }), alTocar: () => SFX.tap(), entrar });
+}
+
 /** Today's runs on this phone, on today's course (a group passing the phone sees them all). */
 function corridasHoy() {
   try { const d = JSON.parse(localStorage.getItem(TODAY_KEY) || '{}'); return d.dia === hoy() && d.seed === semilla() ? d.runs || [] : []; } catch { return []; }
@@ -786,9 +793,15 @@ function resultado() {
   ++animando;
   document.body.classList.remove('jugando');
   const g = S.g, n = g.score, antes = S.antes, record = n > antes && n > 0;
-  const segundos = Math.round((Date.now() - S.desde) / 1000);
+  const ms = Date.now() - S.desde, segundos = Math.round(ms / 1000);
   trackFinish({ detalle: `${n} points · ${g.bridges} bridges · ${g.perfects} flags · streak ${g.bestStreak} · ${segundos}s` });
   pie.replaceChildren();
+  // The table is made before the notice: saving the run reloads it
+  const tablaFin = tabla({ entrar: false });
+  // A course chosen in the link (?seed=) does not count: it would let the same gaps be replayed (D-212)
+  const cuenta = !param('seed');
+  const conRanking = cuenta && rankingsVisibles() && !!leerYo();
+  const aviso = () => avisoPartida({ juego: GAME_ID, s: n, ms, alAnotar: () => tablaFin.recargar(), alTocar: () => SFX.tap() });
   const lineas = [
     plural(T.desglose.puentes, g.bridges),
     plural(T.desglose.perfectos, g.perfects, { b: g.bonus }),
@@ -803,18 +816,23 @@ function resultado() {
     tituloJuego(true),
     el('p', { class: 'sello-ninja' }, record ? T.record : T.finCorto),
     el('div', { class: 'score-big', id: 'puntaje' }, String(n)),
-    record ? null : el('p', { class: 'muted', style: 'margin:0', id: 'mejor' }, fmt(T.mejor, { n: Math.max(antes, n) })),
+    // With a player, how the run did against their record replaces this phone's best (D-212)
+    conRanking ? aviso() : record ? null : el('p', { class: 'muted', style: 'margin:0', id: 'mejor' }, fmt(T.mejor, { n: Math.max(antes, n) })),
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
     hoyLista,
     botonResultadoSolo({ C: COMMON.en, emoji: '🥷', juego: T.nombre, puntaje: `🥷 ${n}`, tiempo: '', tarjeta: card(g.kinds), url: `${SITIO}labs/stick/`, alTocar: () => SFX.tap() }),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); jugar(); } }, T.otraVez),
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
+    // Without a player, "make this game count?" after the buttons, so they stay in sight (C-8, D-274); then the table
+    !conRanking && cuenta && rankingsVisibles() ? aviso() : null,
+    tablaFin,
     el('hr', { class: 'divisor' }),
     formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));
   scrollTo(0, 0);
   if (record) { SFX.win(); if (!QUIETO) confetti({ count: 140, duration: 2000 }); }
 }
 
+fijarIdioma('en');
 document.getElementById('sound-slot').append(soundToggle());
 initSound();
 sparkles();
