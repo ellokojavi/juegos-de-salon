@@ -360,7 +360,7 @@ const DE = {
     shakeLabel: '🫨 Schütteln zum Würfeln', shakeHint: 'Schüttle jede Runde das Handy wie einen Würfelbecher, um deine Würfel zu sehen.',
     timerLabel: '⏱️ {n} Sekunden pro Zug', timerHint: 'Wer nicht rechtzeitig spielt, verliert einen Würfel.',
     shakeNow: 'Schüttle das Handy, um zu würfeln', shakeAllow: '🫨 Schütteln erlauben', shakeTap: '🎲 Würfeln',
-    shakeFirst: 'Würfle zuerst, dann kannst du bieten.',
+    shakeFirst: 'Würfle zuerst, dann kannst du wetten.',
     timeUp: 'Die Zeit von {name} ist abgelaufen', histTimeout: '⏱️ Die Zeit von {who} ist abgelaufen', secs: '{n} s',
   },
 };
