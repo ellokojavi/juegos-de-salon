@@ -586,7 +586,7 @@ export const PATHS = {
     intro: [],
     game: [START, `1`, `1`, `1`],
   },
-  // "☕ Buy us a coffee" (support.js, in the lab): the page, and the thank-you Stripe sends the donor back to
+  // "☕ Buy me a coffee" (support.js, in the lab): the page, and the thank-you Stripe sends the donor back to
   'labs/support': {
     intro: [],
     thanks: [`location.search = '?thanks&test'`, `1`],
@@ -616,7 +616,7 @@ PATHS['cuarto-rey']['inbox-end'] = [INBOX_SEED,
   `document.querySelector('#resume-slot .btn--cyan').click()`, `document.getElementById('card').click()`, `1`, `1`,
   `document.querySelector('#result .actions .btn')?.click()`, `1`, `1`, TO_LINK];
 PATHS.copa['inbox-home'] = [`location.href='/'`, `1`, `1`, `document.querySelector('.footer-buzon')?.click()`, `1`];
-// "☕ Buy us a coffee" (lab): at the end of a Hangman game on a device past its first 5 games, with
+// "☕ Buy me a coffee" (lab): at the end of a Hangman game on a device past its first 5 games, with
 // no inbox link that day, and its fixed place under the inbox in the home page footer
 const SUPPORT_SEED = `localStorage.setItem('juegos-de-salon:support', JSON.stringify({ games: 5 })); localStorage.setItem('juegos-de-salon:buzon', JSON.stringify({ partidas: 0 }))`;
 if (PATHS.ahorcado?.result) PATHS.ahorcado['support-result'] = [SUPPORT_SEED, ...PATHS.ahorcado.result, `1`, `document.getElementById('apoyo-pie')?.scrollIntoView({ block: 'center' })`];

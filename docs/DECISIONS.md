@@ -492,7 +492,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-444](decisions/D-444.md) | An unused wildcard is applied on its own before the Grand Final | current |
 | [D-445](decisions/D-445.md) | Stack: a one-tap tower game in Juegos en prueba, in English | current |
 | [D-446](decisions/D-446.md) | Stick Ninja: a hold-and-release bridge game in Juegos en prueba, on the day's course, in English | current |
-| [D-448](decisions/D-448.md) | ☕ Buy us a coffee: voluntary support through a Stripe Payment Link, quiet and in two places (in the lab) | current |
+| [D-448](decisions/D-448.md) | ☕ Buy me a coffee: voluntary support through a Stripe Payment Link, quiet and in two places (in the lab) | current |
 
 ## No longer in force (11)
 

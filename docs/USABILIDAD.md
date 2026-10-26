@@ -102,7 +102,7 @@ la portada al día, va con los textos, and U-39, the start button above the fold
   form in place; it is never a popup, never shown during a game, and it never pushes the main
   buttons down. It shows at most once a day per device, not in a device's first 2 games, and rests
   14 days after the player sends something. The home footer has it always, opening the overlay.
-  One quiet link per ending: "☕ Buy us a coffee" (D-448, in the lab) follows the same manners —after
+  One quiet link per ending: "☕ Buy me a coffee" (D-448, in the lab) follows the same manners —after
   everything, never a popup, its own rule on the device— and never shows on an ending that already
   has the inbox link; in the home footer it sits under the inbox.
 
