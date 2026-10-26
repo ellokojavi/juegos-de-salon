@@ -457,7 +457,12 @@ const SACUDONES = 3;
 const QUIETO_MS = 350;
 /** With no reading from the sensor this long after listening, the phone has none: the button shows. */
 const SIN_SENSOR_MS = 1200;
-const PIDE_PERMISO = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
+/**
+ * Only a phone or a tablet asks for the motion permission: a desktop Chrome has the same
+ * requestPermission as an iPhone, and there "Allow shaking" over "Shake the phone" was a second tap
+ * before the 🎲 button that D-447 promises a computer.
+ */
+const PIDE_PERMISO = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function' && navigator.maxTouchPoints > 0;
 /**
  * `sensor`: null while it is not known, true with a reading, false with none in time. `permiso`:
  * null until asked. The page listens first and asks only when nothing arrives: Android answers
@@ -999,7 +1004,8 @@ function renderResult(v) {
       el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backMenu),
     ),
   );
-  if (!S.shownWin) { S.shownWin = true; SFX.win(); confetti({ count: 220, duration: 3500 }); }
+  // Losing to the phone is not celebrated: no fanfare and no confetti, as the 🎲 instead of the 🏆 says
+  if (!S.shownWin) { S.shownWin = true; if (S.mode !== 'cpu' || gane) { SFX.win(); confetti({ count: 220, duration: 3500 }); } }
 }
 
 /* ------------------------------------------------------------------ */
