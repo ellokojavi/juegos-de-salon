@@ -58,6 +58,11 @@
   box-shadow: 0 0 16px rgba(255, 122, 26, 0.55); animation: pop 0.35s ease-out;
 }
 .racha-ninja[hidden] { display: none; }
+/* The three lives, top left of the night: a fallen one goes dark */
+.vidas-ninja { position: absolute; top: 3%; left: 4%; display: flex; gap: 2px; pointer-events: none; font-size: 1.05rem; }
+.vidas-ninja span { transition: opacity 0.4s, filter 0.4s; }
+.vidas-ninja span.perdida { opacity: 0.3; filter: grayscale(1); animation: pop 0.35s ease-out; }
+.aviso-ninja .quedan { display: block; margin-top: 4px; font: 700 1rem var(--font-body); letter-spacing: 0; color: #fff; }
 .aviso-ninja {
   position: absolute; top: calc(5% + clamp(5.2rem, 28vw, 7rem)); left: 8%; right: 8%; text-align: center; pointer-events: none;
   font: 700 1rem var(--font-body); color: rgba(255,255,255,0.88); transition: opacity 0.4s;
