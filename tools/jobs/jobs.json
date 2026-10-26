@@ -59,21 +59,21 @@
     },
     {
       "id": "processes-round",
-      "where": "app",
-      "task": "Juegos de Salón · processes round",
-      "prompt": "tools/jobs/prompts/processes-round.md",
-      "cron": "30 4 * * *",
-      "what": "The processes agent's daily round (Pacific time): launches documentation, usability, support and ideas, handles feedback, collects the changelog. A claude.ai scheduled task that runs on the Mac mini; round-watch checks it ran.",
-      "decisions": ["D-273", "D-276", "D-440"]
+      "where": "mac",
+      "at": { "hour": 4, "minute": 30 },
+      "timeout": 10800,
+      "command": ["node", "tools/jobs/claude-task.mjs", "tools/jobs/prompts/processes-round.md"],
+      "what": "The processes agent's daily round at 4:30 (the Mac mini keeps Pacific time): a headless Claude session that follows its prompt, launching documentation, usability, support and ideas, handling feedback and collecting the changelog. round-watch checks it ran.",
+      "decisions": ["D-273", "D-276", "D-440", "D-451"]
     },
     {
       "id": "weekly-report",
-      "where": "app",
-      "task": "Juegos de Salón · weekly report",
-      "prompt": "tools/jobs/prompts/weekly-report.md",
-      "cron": "0 8 * * 0",
-      "what": "Sunday: `node tools/reports/weekly.mjs --send`, the week's PDF emailed to the owner.",
-      "decisions": ["D-352", "D-440"]
+      "where": "mac",
+      "at": { "weekday": 0, "hour": 8, "minute": 0 },
+      "timeout": 1800,
+      "command": ["node", "tools/jobs/claude-task.mjs", "tools/jobs/prompts/weekly-report.md"],
+      "what": "Sunday 8:00: a headless Claude session that runs `node tools/reports/weekly.mjs --send`, the week's PDF emailed to the owner.",
+      "decisions": ["D-352", "D-440", "D-451"]
     },
     {
       "id": "clean-worktrees",

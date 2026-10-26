@@ -1,6 +1,6 @@
-# The weekly report, as the scheduled task runs it (D-352, D-440)
+# The weekly report, as the scheduled job runs it (D-352, D-440, D-451)
 
-The scheduled task **Juegos de Salón · weekly report** (`weekly-report` in `tools/jobs/jobs.json`)
+The launchd job `weekly-report` (in `tools/jobs/jobs.json`, a headless Claude session, D-451)
 runs on the owner's Mac mini every Sunday at 8:00 Pacific. Its prompt only says to read this file
 from `origin/main` and follow it.
 
