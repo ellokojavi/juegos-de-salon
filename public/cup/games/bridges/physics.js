@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo — pure engine (lab prototype). A bridge of beams between grid points over a gap;
+ * 🚂 Tren en Vilo — pure engine (the lab's until D-456). A bridge of beams between grid points over a gap;
  * then a train crosses. Beams are springs that snap when stretched or squeezed too much.
  *
  * Coordinates are in grid units, y up; the deck is y = 0. The simulation uses a fixed step and only
@@ -8,7 +8,7 @@
 
 /**
  * The stages: gap width, anchors (besides the two cliff edges), the budget in beams and the fewest
- * beams a known bridge needs (`minimo`, from soluciones.json, which engine.test.mjs runs). The
+ * beams a known bridge needs (`minimo`, from solutions.json, which physics.test.mjs runs). The
  * budget leaves room in the first ones and none in the last: stage 5 is meant to stop most players.
  */
 export const ETAPAS = [

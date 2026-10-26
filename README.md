@@ -46,6 +46,7 @@ The games with their own section below come first; after them, the one-player ga
 | 📐 [Plots / Loteo / Loteamento](https://juegosdesalon.cl/plots/) | 1 | Play alone | Also in The Cup |
 | 🖌️ [Paint Mines / Pintaminas / Pinta-Minas](https://juegosdesalon.cl/paint-mines/) | 1 | Play alone | Also in The Cup |
 | 🕵️ [Agents / Agentes](https://juegosdesalon.cl/agents/) | 1 | Play alone | Also in The Cup |
+| 🚂 [Train on the Edge / Tren en Vilo / Trem no Vão](https://juegosdesalon.cl/bridges/) | 1 | Play alone | Also in The Cup |
 <!-- /generated -->
 
 ---
@@ -77,7 +78,7 @@ The games with their own section below come first; after them, the one-player ga
 
 Not a game but a **tournament that lasts a week**. Someone creates a cup and shares the link; everyone joins with their name and a 4-digit PIN, from any phone or computer. Every day a different game opens, **the same for everybody**, playable **once**. Each day hands out points by position (10, 8, 6, 5, 4, 3, 2, 1), so every day weighs the same and one crushing day does not decide the cup (D-94, D-113). The final is worth double, everyone gets one ×2 wildcard, and the most points on day 7 lifts the cup. It borrows what makes daily puzzles work (Wordle, Connections): same challenge, once a day, comparable scores, little luck, and a **share card** that does not give the answer away.
 
-**The admin picks the week** (D-163) from thirteen games, dragging them into place, or takes a random proposal with no two days of the same skill in a row. The Grand Final always closes the cup. The classic week:
+**The admin picks the week** (D-163) from fourteen games, dragging them into place, or takes a random proposal with no two days of the same skill in a row. The Grand Final always closes the cup. The classic week:
 
 | Day | Game | Skill |
 |---|---|---|
@@ -89,7 +90,7 @@ Not a game but a **tournament that lasts a week**. Someone creates a cup and sha
 | 6 | 📅 What year was it?: closer is better, older gets more slack | estimation |
 | 7 | 🏁 The Grand Final: one round of each game of the week, worth double | everything |
 
-The other seven: **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** (drop a pin for five cities on an unlabeled satellite globe; up to 100 points each, minus 4 per 100 km off, D-155, D-159), **🧶 Untangle** (Simon Tatham's puzzle: ten levels of knots against a four-minute clock, D-179), and the three below. Every cup game also plays on its own from the menu at `/<slug>/` (D-142, D-149, D-198), with its own social card (D-162). The Cup reuses the app's existing UX rather than inventing its own (D-102).
+The other eight: **〰️ Zip**, **☀️ Tango**, **📍 Where is it?** (drop a pin for five cities on an unlabeled satellite globe; up to 100 points each, minus 4 per 100 km off, D-155, D-159), **🧶 Untangle** (Simon Tatham's puzzle: ten levels of knots against a four-minute clock, D-179), **🚂 Train on the Edge** and the three below. Every cup game also plays on its own from the menu at `/<slug>/` (D-142, D-149, D-198), with its own social card (D-162). The Cup reuses the app's existing UX rather than inventing its own (D-102).
 
 How it works:
 
@@ -143,11 +144,16 @@ A one-player mini *Codenames* (inspired by [Codenames](https://czechgames.com/en
 
 Spec and design: [docs/games/agents.md](docs/games/agents.md)
 
+### 🚂 Train on the Edge (Tren en Vilo)
+
+A bridge builder inspired by [Poly Bridge](https://en.wikipedia.org/wiki/Poly_Bridge), out of the lab since D-456, at `/bridges/`, in The Cup's pool and in One a Day from 2026-10-27. Lay beams over a gap (the deck is already laid), then test: the train crosses or the bridge falls. Five crossings in 7 minutes, drawn from a catalog of 33 with the day's seed, scored on stages passed, wood saved against the cheapest known bridge, solidity and speed. The Grand Final skips it (seven minutes of building).
+
+Spec and design: [docs/games/bridges.md](docs/games/bridges.md)
+
 ### Retired cup games
 
 **🔗 Connections** (16 words, 4 groups) was day 3 until Agents replaced it (D-421); old cups keep it and it still opens at `/connections/`, in the lab's Storeroom. **🔍 The Case**, a *Clues by Sam*-style deduction mystery, also sits in the Storeroom at `/labs/case/`, playable but no longer worked on (D-257, D-263, D-267, D-280).
 
-**🚂 Tren en Vilo**, the lab's bridge builder, is registered as a cup game (`cup/games/bridges/`, sharing the lab's `labs/bridges/scene.js`) for the owner's one-day cup of 2026-10-25 only: it is not in the pool, so no create screen offers it, and the Grand Final skips it.
 
 ---
 
@@ -453,7 +459,6 @@ node public/cup/games/plots/engine.test.mjs
 node public/cup/games/routes/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
-node public/labs/bridges/engine.test.mjs
 node public/labs/code/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
 node public/labs/fourth-king/engine.test.mjs
@@ -501,6 +506,8 @@ node public/assets/js/uno-al-dia-jugador.test.mjs
 node public/assets/js/uno-al-dia.test.mjs
 node public/assets/js/vigia.test.mjs
 node public/cup/games/agents/palette.test.mjs
+node public/cup/games/bridges/contrast.test.mjs
+node public/cup/games/bridges/physics.test.mjs
 node public/cup/games/deshacer.test.mjs
 node public/cup/games/juegos.test.mjs
 node public/cup/planilla.test.mjs
@@ -508,7 +515,6 @@ node public/cup/recap.test.mjs
 node public/cup/reportes.test.mjs
 node public/cup/store.test.mjs
 node public/home-preload.test.mjs
-node public/labs/bridges/contrast.test.mjs
 node public/labs/code/engine-palabra.test.mjs
 node public/labs/listed.test.mjs
 node public/panel/adapta.test.mjs
@@ -637,6 +643,7 @@ The whole app is translated, Portuguese as spoken in Brazil and German for Germa
 | Loteo | Plots | Loteamento | Parzellen |
 | Pintaminas | Paint Mines | Pinta-Minas | Malminen |
 | Agentes | Agents | Agentes | Agenten |
+| Tren en Vilo | Train on the Edge | Trem no Vão | Zug am Abgrund |
 <!-- /generated -->
 
 <!-- generated: screenshots:idiomas · written by python3 tools/release/readme.py update -->
@@ -692,7 +699,7 @@ tools/
   push/                       Phone notifications for The Cup and One a Day (D-223 to D-230)
   release/                    Publishing: version stamp, this README, social cards, icons, changelog, merge reports
   firebase/                   Rules, Cup reports, live-game check, rankings history, room cleanup, One a Day points
-  generators/                 Generated content: the map, the Battleship fleet, the lab's bridges
+  generators/                 Generated content: the map, the Battleship fleet, Tren en Vilo's crossings
   agents/                     The owner's agents' tools: decisions, worktrees, processes, feedback, inbox, lab keys, splash, ideas
   cloudflare/                 The Email Worker behind hola@juegosdesalon.cl (D-318)
   e2e/                        Full games in headless Chrome, test scope for CI (D-307, D-329, D-308)
@@ -724,7 +731,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Firebase](firebase/README.md)
 - [🕵️ Agentes](docs/games/agents.md)
 - [Diseño: Batalla Naval](docs/games/battleship.md)
-- [🚂 Tren en Vilo (bridge builder, lab)](docs/games/bridges.md)
+- [🚂 Tren en Vilo (bridge builder)](docs/games/bridges.md)
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/games/bulls-and-cows-factibilidad.md)
 - [Especificación: Toque y Fama](docs/games/bulls-and-cows.md)
 - [El caso](docs/games/case.md)

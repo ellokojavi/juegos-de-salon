@@ -296,6 +296,18 @@ export const SUELTOS = [
     deLabs: true,
     nuevoDesde: '2026-10-22',
   },
+  {
+    // Out of the lab in D-456: its page was /labs/bridges/, now a bridge (`deLabs`); its id is La Copa's
+    id: 'puentes',
+    slug: 'bridges',
+    emoji: '🚂',
+    name: { es: 'Tren en Vilo', en: 'Train on the Edge', pt: 'Trem no Vão', de: 'Zug am Abgrund' },
+    tagline: { es: 'Arma un puente que aguante el tren.', en: 'Build a bridge that holds the train.', pt: 'Monte uma ponte que aguente o trem.', de: 'Bau eine Brücke, die den Zug trägt.' },
+    tipos: ['logic'],
+    duration: '5–7',
+    deLabs: true,
+    nuevoDesde: '2026-10-26',
+  },
   // Los del laboratorio viven en /labs/<slug>/ (D-267): al salir pasan a /<slug>/
 ].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true }));
 

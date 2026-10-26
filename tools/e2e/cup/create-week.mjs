@@ -125,7 +125,7 @@ try {
 
   // The sheet: the whole pool, each game with its tagline
   await openSheet(2);
-  ok(await ev(`document.querySelectorAll('#semana-hoja .hoja-juego').length`) === 13, 'tapping a game opens the sheet with the 13 games of the pool');
+  ok(await ev(`document.querySelectorAll('#semana-hoja .hoja-juego').length`) === 14, 'tapping a game opens the sheet with the 14 games of the pool');
   ok(await ev(`[...document.querySelectorAll('#semana-hoja .hoja-juego small')].every(x=>x.textContent.length>10)`), 'each one says what it is');
   await b.shot('02-sheet');
   // Replacing day 3 with a game outside the week

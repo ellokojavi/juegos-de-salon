@@ -1,6 +1,6 @@
 // Tren en Vilo (lab): the physics is tuned so a bare deck falls and a truss holds, in every stage
 import assert from 'node:assert/strict';
-import { cubierta as deckOf, esCubierta, trazo, unirViga, puntosMedios, enMedio, costo as costoDe, ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './engine.js';
+import { cubierta as deckOf, esCubierta, trazo, unirViga, puntosMedios, enMedio, costo as costoDe, ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './physics.js';
 import { readFileSync } from 'node:fs';
 
 const V = (a, b) => ({ a, b });
@@ -16,7 +16,7 @@ const cercha = W => {
 };
 
 // The cheapest known bridge of each stage (found by search): it passes and sets `minimo`
-const SOLUCIONES = JSON.parse(readFileSync(new URL('./soluciones.json', import.meta.url), 'utf8')).map(s => s.map(([a, b]) => V(a, b)));
+const SOLUCIONES = JSON.parse(readFileSync(new URL('./solutions.json', import.meta.url), 'utf8')).map(s => s.map(([a, b]) => V(a, b)));
 
 ETAPAS.forEach((e, k) => {
   assert.ok(!probar(e, cubierta(e.ancho)).llego, `stage ${k + 1}: a bare deck must fall`);
@@ -90,7 +90,7 @@ assert.equal(p.ahorros[0].fraccion, 2 / 3); assert.equal(p.ahorros[1].fraccion, 
 // The catalog of crossings (tools/generators/bridges.mjs): each one has a solution that passes, at its
 // minimum and within its budget, a bare deck that falls, and the level's spare beams
 {
-  const url = new URL('./catalogo.json', import.meta.url);
+  const url = new URL('./catalog-beams.json', import.meta.url);
   const { existsSync } = await import('node:fs');
   if (existsSync(url)) {
     const cat = JSON.parse(readFileSync(url, 'utf8'));

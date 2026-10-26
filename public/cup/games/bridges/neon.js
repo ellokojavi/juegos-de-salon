@@ -7,10 +7,10 @@
  * Everything is drawn in "art units" (16 per grid unit, as in the pixel scene), so the particles and
  * the train keep their sizes and speeds; the canvas scales them smoothly instead of in blocks.
  */
-import { el } from '../../assets/js/ui.js';
-import { ALTO, LARGO_MAX, PIEZAS, fijos, FISICA, alturaCamino } from './engine.js';
+import { el } from '../../../assets/js/ui.js';
+import { ALTO, LARGO_MAX, PIEZAS, fijos, FISICA, alturaCamino } from './physics.js';
 import { particulas } from './pixel.js';
-import { param } from '../../assets/js/parametros.js';
+import { param } from '../../../assets/js/parametros.js';
 import { TRENES, BALAS } from './trains.js';
 import { visitasCielo, visitaBallena, visitaLancha, visitaTopo } from './visitors.js';
 import { pincel } from './neon-visitors.js';

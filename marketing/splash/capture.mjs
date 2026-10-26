@@ -3,7 +3,7 @@
 // opens its page with a fixed seed, starts, and plays the solution slowly while it shoots the board
 // about 12 times a second; ffmpeg turns the frames into a small looping MP4 and its poster.
 //
-//   SITE=http://localhost:8771 node marketing/splash/capture.mjs [routes|plots|paint-mines]
+//   SITE=http://localhost:8771 node marketing/splash/capture.mjs [routes|plots|paint-mines|bridges]
 //
 // Output: public/assets/splash/<game>.mp4 and <game>.jpg (the last frame: the board solved).
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -15,7 +15,8 @@ import { launch, sleep } from '../../tools/e2e/cdp.mjs';
 
 const SITE = process.env.SITE || 'http://localhost:8765';
 const DEST = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'public', 'assets', 'splash');
-const OUT = output('/tmp/splash-clips');
+// argv[2] is the game to record, not the output folder: always the fallback
+const OUT = output('/tmp/splash-clips', []);
 const SIZE = 360; // px of the clip, square; the splash draws it at most at ~230 px (×1.5 for sharp screens)
 const FPS = 12;
 
@@ -56,11 +57,47 @@ const GAMES = {
       }
     },
   },
+  bridges: {
+    // 🚂 Tren en Vilo in its neon look: a level-1 stage (Math.random pinned, so the same one each time),
+    // its solution's beams dragged in one by one with the mouse, then 🚂 Probar and the train crosses
+    url: '/bridges/?test',
+    board: '.tv-lienzo',
+    // The scene at its own shape, as big as the splash draws it (a hero, full width): no square, no margin
+    native: 720,
+    // The gauge's words (Carga, máx.) hidden: one clip serves the four languages, so the dial speaks alone
+    before: `window.__rnd = Math.random; Math.random = () => 0.99; document.head.insertAdjacentHTML('beforeend', '<style>.tv-medidor-titulo, .tv-medidor text { display: none }</style>'); 1`,
+    hold: 0, keep: 4,
+    ready: `!!document.querySelector('.tv-lienzo') && !document.getElementById('cuenta')`,
+    play: async (ev, b) => {
+      const { beams, deck } = JSON.parse(await ev(`(() => { const t = window.__trenCopa, e = t.etapas[t.J.etapa]; return JSON.stringify({ beams: e.solucion, deck: t.J.vigas.map(v => [v.a, v.b]) }); })()`));
+      const k = ([a, b]) => [a.join(','), b.join(',')].sort().join('|');
+      const has = new Set(deck.map(k));
+      const at = async ([x, y]) => JSON.parse(await ev(`(() => { const c = document.querySelector('.tv-lienzo'), r = c.getBoundingClientRect(), s = c._m.escala; return JSON.stringify([r.left + (${x} + 1.3) * s, r.top + (c._v.arriba - (${y})) * s]); })()`));
+      const mouse = (type, [x, y]) => b.send('Input.dispatchMouseEvent', { type, x, y, button: 'left', buttons: type === 'mouseReleased' ? 0 : 1, clickCount: 1 });
+      // Two passes: a beam that starts at a joint not laid yet waits for the second
+      for (const beam of [...beams, ...beams]) {
+        const now = JSON.parse(await ev(`JSON.stringify(window.__trenCopa.J.vigas.map(v => [v.a, v.b]))`)).map(k);
+        if (has.has(k(beam)) || now.includes(k(beam))) continue;
+        const [p, q] = [await at(beam[0]), await at(beam[1])];
+        await mouse('mousePressed', p);
+        for (let i = 1; i <= 8; i++) { await mouse('mouseMoved', [p[0] + (q[0] - p[0]) * i / 8, p[1] + (q[1] - p[1]) * i / 8]); await sleep(40); }
+        await mouse('mouseReleased', q);
+        await sleep(450);
+      }
+      await ev(`Math.random = window.__rnd; 1`);
+      await sleep(500);
+      await ev(`document.getElementById('btn-probar').click(); 1`);
+      // Until the train reaches the far side, and a moment on, before the stage's summary covers the board
+      for (let t = 0; t < 150; t++) { if (await ev(`window.__trenCopa.J.hechas.length > 0`)) break; await sleep(100); }
+      await sleep(900);
+    },
+  },
 };
 
 const only = process.argv[2];
 mkdirSync(DEST, { recursive: true });
-const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 390, height: 844 });
+// The bridge's scene is drawn as wide as its page allows (560 px at most): a wider window gives a sharper clip
+const b = await launch({ dir: `${OUT}/p`, out: OUT, width: only === 'bridges' ? 600 : 390, height: 844 });
 const ev = e => b.evaluate(e);
 try {
   for (const [name, g] of Object.entries(GAMES)) {
@@ -68,6 +105,7 @@ try {
     const frames = `${OUT}/${name}`;
     rmSync(frames, { recursive: true, force: true }); mkdirSync(frames, { recursive: true });
     await b.go(`${SITE}${g.url}`, 1500);
+    if (g.before) await ev(g.before);
     if (!(await b.until(`document.getElementById('btn-empezar')`, 8000))) throw new Error(`${name}: no Start`);
     await ev(`document.getElementById('btn-empezar').click(); 1`);
     if (!(await b.until(g.ready, 10000))) throw new Error(`${name}: the board did not appear`);
@@ -75,22 +113,24 @@ try {
     // The board, with a margin, as a square
     const r = JSON.parse(await ev(`JSON.stringify(document.querySelector('${g.board}').getBoundingClientRect())`));
     const side = Math.max(r.width, r.height) + 16;
-    const clip = { x: r.left + r.width / 2 - side / 2, y: r.top + r.height / 2 - side / 2, width: side, height: side, };
+    const clip = g.native ? { x: r.left, y: r.top, width: r.width, height: r.height }
+      : { x: r.left + r.width / 2 - side / 2, y: r.top + r.height / 2 - side / 2, width: side, height: side, };
+    const W = g.native || SIZE, H = g.native ? 2 * Math.round(g.native * r.height / r.width / 2) : SIZE;
     let n = 0, recording = true;
     const shoot = async () => {
-      const s = await b.send('Page.captureScreenshot', { format: 'png', clip: { ...clip, scale: SIZE / side } });
+      const s = await b.send('Page.captureScreenshot', { format: 'png', clip: { ...clip, scale: W / clip.width } });
       writeFileSync(`${frames}/${String(n++).padStart(4, '0')}.png`, Buffer.from(s.result.data, 'base64'));
     };
     const loop = (async () => { while (recording) { const t0 = Date.now(); await shoot(); await sleep(Math.max(0, 1000 / FPS - (Date.now() - t0))); } })();
     await sleep(700);
-    await g.play(ev);
+    await g.play(ev, b);
     const solvedAt = n;
     await sleep(g.hold ?? 1400); // the solved board, held (Loteo brings its next board sooner: `keep` frames of it)
     recording = false; await loop;
     const mp4 = join(DEST, `${name}.mp4`);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', `${frames}/%04d.png`, '-frames:v', String(Math.min(n, solvedAt + (g.keep ?? n))),
-      '-vf', `scale=${SIZE}:${SIZE}:flags=lanczos,tpad=stop_mode=clone:stop_duration=${g.keep ? 1.2 : 0},format=yuv420p`, '-c:v', 'libx264', '-crf', '30', '-preset', 'slow', '-movflags', '+faststart', '-an', mp4]);
+      '-vf', `scale=${W}:${H}:flags=lanczos,tpad=stop_mode=clone:stop_duration=${g.keep ? 1.2 : 0},format=yuv420p`, '-c:v', 'libx264', '-crf', '30', '-preset', 'slow', '-movflags', '+faststart', '-an', mp4]);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', `${frames}/${String(Math.min(n - 1, solvedAt + Math.min(3, (g.keep ?? 4) - 1))).padStart(4, '0')}.png`, '-q:v', '5', join(DEST, `${name}.jpg`)]);
     console.log(`✓ ${name}: ${n} frames → ${mp4}`);
   }
-} finally { process.exit(0); }
+} catch (err) { console.error(`✗ ${err.message}`); process.exitCode = 1; } finally { process.exit(); }
