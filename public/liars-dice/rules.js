@@ -79,7 +79,7 @@ const ES = {
     tableDice: '{n} dados en la mesa',
     yourDice: 'Tus dados', turnOf: 'Le toca a', yourTurn: '¡Te toca!',
     aceWild: 'Los ases son comodín',
-    opens: 'Abre la ronda: apuesta lo que quieras.', opensOther: '{name} abre la ronda.',
+    opens: 'Abres la ronda: apuesta lo que quieras.', opensOther: '{name} abre la ronda.',
     standing: '{name} dijo', standingYou: 'Dijiste',
     pickPinta: 'Elige la pinta', pickAmount: '¿Cuántos hay en la mesa?',
     bidDo: 'Apuesto {n} {pinta}', bidNothing: 'Apostar', dudoDo: '¡Dudo!', calzaDo: '¡Calzo!',
