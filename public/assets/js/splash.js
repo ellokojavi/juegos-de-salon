@@ -131,12 +131,12 @@ export const CAMPAIGNS = {
       title: { es: 'Gracias por jugar', en: 'Thanks for playing', pt: 'Obrigado por jogar', de: 'Danke fürs Spielen' },
       text: {
         es: 'Por cada partida, cada risa y cada revancha. Juegos de Salón es gratis y lo seguirá siendo. Si quieres devolver el brindis, puedes apoyarlo desde US$1.',
-        en: 'To every game, every laugh and every rematch. Juegos de Salón is free and always will be. If you would like to return the toast, you can support it from US$1.',
-        pt: 'A cada partida, cada risada e cada revanche. O Juegos de Salón é grátis e sempre vai ser. Se quiser retribuir o brinde, pode apoiá-lo a partir de US$ 1.',
-        de: 'Auf jede Partie, jedes Lachen und jede Revanche. Juegos de Salón ist kostenlos und bleibt es. Wenn du den Toast erwidern willst, kannst du es ab 1 US$ unterstützen.',
+        en: 'To every game, every laugh and every rematch. Party Games is free and always will be. If you would like to return the toast, you can support it from US$1.',
+        pt: 'A cada partida, cada risada e cada revanche. O Jogos de Salão é grátis e sempre vai ser. Se quiser retribuir o brinde, pode apoiá-lo a partir de US$ 1.',
+        de: 'Auf jede Partie, jedes Lachen und jede Revanche. Salonspiele ist kostenlos und bleibt es. Wenn du den Toast erwidern willst, kannst du es ab 1 US$ unterstützen.',
       },
       href: '?support=open',
-      cta: { es: '💙 Apoyar Juegos de Salón', en: '💙 Support Juegos de Salón', pt: '💙 Apoiar o Juegos de Salón', de: '💙 Juegos de Salón unterstützen' },
+      cta: { es: '💙 Apoyar Juegos de Salón', en: '💙 Support Party Games', pt: '💙 Apoiar o Jogos de Salão', de: '💙 Salonspiele unterstützen' },
     }],
   },
 };
