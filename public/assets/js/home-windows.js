@@ -16,7 +16,7 @@
  *
  * The choice is pure (`readPending`, `choose`), so node tests it without a DOM.
  */
-import { queue, seenIds, SEEN_KEY as SPLASH_SEEN_KEY, showSplash, startSplash } from './splash.js';
+import { queue, seenIds, SEEN_KEY as SPLASH_SEEN_KEY, showSplash, startSplash, loadActive } from './splash.js';
 import { dueCup, startRecap, MINE_KEY, SEEN_KEY as CUP_SEEN_KEY } from './recap.js';
 import { dueSeason, DAILY_KEY, SEASON_SEEN_KEY, localDate } from './daily-recap.js';
 import { INSTALAR_NO_KEY, pasosDe, globoInstalar } from './instalar.js';
@@ -82,7 +82,9 @@ export async function startHomeWindows({ lang = 'es', T, url, tap, search = glob
   // the install bubble does open, as it always did, so install-prompt.mjs still finds it
   const automated = tiene('test', search) || globalThis.navigator?.webdriver === true;
   const get = k => { try { return globalThis.localStorage?.getItem(k) ?? null; } catch (_) { return null; } };
-  const pending = readPending({ get, installable: !!pasosDe(), automated });
+  // The campaigns on right now are the panel's, in Firebase (D-454); the scripts never ask
+  const active = automated ? [] : await loadActive();
+  const pending = readPending({ get, active, installable: !!pasosDe(), automated });
   for (const w of candidates(pending)) {
     if (w.kind === 'recap' && await recap()) return w;
     // After the home page has drawn its list, so the window lands on a page that is already there

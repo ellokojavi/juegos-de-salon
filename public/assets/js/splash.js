@@ -8,6 +8,11 @@
  *   node tools/agents/splash.mjs off
  *
  * That rewrites ACTIVE below, and the change goes out like any other (a PR with auto-merge).
+ * Since D-454 the owner also runs them from the panel (📣 Campaigns, `#/campaigns`), on the phone:
+ * on or off, start and end dates and their order, written to Firebase `splash/` and read by the
+ * home page on each visit, with no PR. Once the panel has written, Firebase wins; while `splash/`
+ * is empty or cannot be read, ACTIVE below is what holds. The campaigns themselves (texts,
+ * clips) are still made here, in CAMPAIGNS, through a PR.
  * More than one can be on at once: ACTIVE is a queue, in the order they were turned on, and a player
  * with several still to see gets them in that order (D-430, the owner's request), one per visit: the
  * home page's gate (home-windows.js, D-431) shows only the first, through showSplash. Each player sees a campaign once: closing it records its id in localStorage, and it does
@@ -18,10 +23,40 @@
  */
 import { param, tiene } from './parametros.js';
 
-/** The campaigns that are on, in the order they were turned on. `until` (optional, inclusive) turns one off by itself. */
+/** The campaigns that are on, in the order they were turned on. `from` and `until` (optional, inclusive) bound the days it shows. */
 export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-pronto', until: '2026-10-28' }];
 
 export const SEEN_KEY = 'juegos-de-salon:splash-visto';
+
+/** Where the panel keeps each campaign's switch (D-454): `splash/<id>` = { on, order, from?, until?, at }. */
+export const REMOTE = 'https://juegos-de-salon-default-rtdb.firebaseio.com/splash.json';
+
+/**
+ * Firebase's `splash/` as an ACTIVE queue: the campaigns that are on, by `order`. null when the
+ * panel never wrote (or the answer is not a list of campaigns): then ACTIVE holds.
+ */
+export function fromRemote(val) {
+  if (!val || typeof val !== 'object' || Array.isArray(val)) return null;
+  return Object.entries(val)
+    .filter(([, c]) => c && c.on === true)
+    .sort(([a, x], [b, y]) => (Number(x.order) || 0) - (Number(y.order) || 0) || a.localeCompare(b))
+    .map(([id, c]) => ({ id, ...(c.from ? { from: c.from } : {}), ...(c.until ? { until: c.until } : {}) }));
+}
+
+let remote = null;
+/** The queue this visit uses: Firebase's, or ACTIVE if it does not answer in time. Asked once per page. */
+export function loadActive({ fetchFn = globalThis.fetch, timeout = 2500 } = {}) {
+  remote ??= (async () => {
+    try {
+      const ctl = new AbortController();
+      const t = setTimeout(() => ctl.abort(), timeout);
+      const r = await fetchFn(REMOTE, { signal: ctl.signal, cache: 'no-store' });
+      clearTimeout(t);
+      return (r.ok && fromRemote(await r.json())) || ACTIVE;
+    } catch (_) { return ACTIVE; }
+  })();
+  return remote;
+}
 
 /**
  * The campaigns. Each one: an id (never reused: it is what a player's phone remembers), the texts
@@ -76,7 +111,7 @@ export const campaignLang = (c, lang) => (!c?.langs || c.langs.includes(lang) ? 
 
 /**
  * The campaigns the home page shows, in order: the forced id (`?splash=`) alone, always; otherwise
- * each active one that exists, has not expired and this phone has not closed, in the order they
+ * each active one that exists, has started, has not expired and this phone has not closed, in the order they
  * were turned on. `seen` is the list of ids this phone closed.
  */
 export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], forced = null, today = new Date(), automated = false } = {}) {
@@ -84,6 +119,8 @@ export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], force
   if (automated) return [];
   const live = a => {
     if (!a?.id || !campaigns[a.id] || seen.includes(a.id)) return false;
+    const start = a.from ? Date.parse(`${a.from}T00:00:00`) : NaN;
+    if (Number.isFinite(start) && today.getTime() < start) return false;
     const end = a.until ? Date.parse(`${a.until}T23:59:59`) : NaN;
     return !(Number.isFinite(end) && today.getTime() > end);
   };
@@ -231,7 +268,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
  * preview, the first active campaign this phone has not closed (one per visit). Never under the end-to-end scripts (`?test`, or a
  * browser driven by automation). Returns the ids it will show.
  */
-export function startSplash({ lang = 'es', search = globalThis.location?.search ?? '' } = {}) {
+export async function startSplash({ lang = 'es', search = globalThis.location?.search ?? '' } = {}) {
   const forced = param('splash', search);
   const automated = tiene('test', search) || globalThis.navigator?.webdriver === true;
   const show = ids => {
@@ -242,6 +279,7 @@ export function startSplash({ lang = 'es', search = globalThis.location?.search 
     return ids.slice(0, 1);
   };
   // A campaign that is not on previews only with a lab key (D-395). lab: #seccion-portada
-  if (forced && !ACTIVE.some(a => a.id === forced)) return import('./lab-access.js').then(({ labAccess }) => labAccess()).then(yes => show(yes ? queue({ forced }) : []));
-  return show(queue({ seen: seenIds(), forced, automated }));
+  const active = automated ? [] : await loadActive();
+  if (forced && !active.some(a => a.id === forced)) return import('./lab-access.js').then(({ labAccess }) => labAccess()).then(yes => show(yes ? queue({ forced }) : []));
+  return show(queue({ active, seen: seenIds(), forced, automated }));
 }

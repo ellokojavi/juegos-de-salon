@@ -228,6 +228,14 @@ Cloudflare Worker (`tools/cloudflare/inbox-worker.js`). **Only the inbox user** 
 players. The support agent turns each email into a `feedback/` report with
 `tools/agents/inbox.mjs` and deletes it.
 
+## Splash campaigns (`splash`, D-454)
+
+`splash/<id>` = `{ on, order, from?, until?, at }`: which campaigns of `CAMPAIGNS`
+(`public/assets/js/splash.js`) the home page shows, in what order and between which days
+(`yyyy-mm-dd`, `from` inclusive). Public read (the home page reads `splash.json` once per visit);
+only the owner's UID writes it, from the panel's 📣 Campaigns section. Ids match `[a-z0-9-]{1,40}`
+and any other field is rejected. While the node is empty, the home page uses `ACTIVE`.
+
 ## The trash bin (`cleanup`)
 
 Nobody deletes their room when they finish playing, so the same phones that play do the cleanup

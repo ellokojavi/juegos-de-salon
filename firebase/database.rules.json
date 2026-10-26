@@ -1024,6 +1024,31 @@
     "pushEnviadosDia": {
       ".read": false,
       ".write": false
+    },
+    "splash": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$id": {
+        ".validate": "$id.matches(/^[a-z0-9-]{1,40}$/) && newData.hasChildren(['on', 'order'])",
+        "on": {
+          ".validate": "newData.isBoolean()"
+        },
+        "order": {
+          ".validate": "newData.isNumber()"
+        },
+        "from": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)"
+        },
+        "until": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)"
+        },
+        "at": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
     }
   }
 }

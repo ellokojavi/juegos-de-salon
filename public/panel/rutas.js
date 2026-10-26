@@ -15,6 +15,7 @@
  *   #/room/ABCD                  la ficha de una sala; #/room/ABCD/20342 si es la de ese día
  *   #/traffic                    visitas al sitio, de dónde llegan y cuántas terminan jugando (D-208)
  *   (#/games and #/audience, from before D-348, open Group and Users)
+ *   #/campaigns                  the splash campaigns: on or off, their days and order (D-454)
  *   #/health                     lo que le falla a quien juega: no arrancó, errores, lentitud (D-251)
  *
  * En la URL van en inglés (C-18, D-266); por dentro las secciones siguen con su nombre de siempre
@@ -25,7 +26,7 @@
 import { slugDe, idDeSlug } from '../assets/js/games.js';
 
 /** Las secciones, en el orden de la navegación. La primera es la que abre el panel. */
-export const SECCIONES = ['resumen', 'timeline', 'grupo', 'individuales', 'torneo', 'unoaldia', 'usuarios', 'trafico', 'salud'];
+export const SECCIONES = ['resumen', 'timeline', 'grupo', 'individuales', 'torneo', 'unoaldia', 'usuarios', 'trafico', 'salud', 'campanas'];
 
 /** A qué sección pertenece cada ficha: es la que queda marcada en la navegación. */
 const FICHAS = { juego: 'grupo', sala: 'grupo' };
@@ -36,7 +37,7 @@ const SUELTAS = { ahora: 'resumen' };
 /** Cómo se escribe cada sección en la URL (D-266). */
 const EN_URL = {
   resumen: 'summary', timeline: 'timeline', ahora: 'now', grupo: 'group', individuales: 'individual', torneo: 'cup', unoaldia: 'daily',
-  usuarios: 'users', trafico: 'traffic', salud: 'health', juego: 'game', sala: 'room',
+  usuarios: 'users', trafico: 'traffic', salud: 'health', campanas: 'campaigns', juego: 'game', sala: 'room',
 };
 /** The sections before D-348 open the one that took their place. */
 const DE_URL = { ...Object.fromEntries(Object.entries(EN_URL).map(([es, en]) => [en, es])), games: 'grupo', juegos: 'grupo', audience: 'usuarios', audiencia: 'usuarios' };

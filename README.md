@@ -513,6 +513,7 @@ node public/labs/code/engine-palabra.test.mjs
 node public/labs/listed.test.mjs
 node public/panel/adapta.test.mjs
 node public/panel/aggregate.test.mjs
+node public/panel/campaigns.test.mjs
 node public/panel/copas.test.mjs
 node public/panel/dominios.test.mjs
 node public/panel/rutas.test.mjs
@@ -660,7 +661,7 @@ How it is put together (canon C-3):
 
 ## Owner dashboard
 
-`/panel/` is a private page, readable only by the owner's Google account, showing how much the app is played: six sections (**Now**, **La Copa**, **Games**, **Traffic**, **Audience**, **Health**), each against the period before, with a page per cup, game and room and every view in the URL (D-207, D-208, D-233, D-251, D-348). These are usage signals, not tracking: no IP or secret leaves the phone, a random browser id is never joined with names (D-349), and chat is counted, never read (D-138). It keeps no lists of its own: games are read from `public/assets/js/games.js`. See [docs/PANEL.md](docs/PANEL.md).
+`/panel/` is a private page, readable only by the owner's Google account, showing how much the app is played: six sections (**Now**, **La Copa**, **Games**, **Traffic**, **Audience**, **Health**), each against the period before, plus **📣 Campaigns**, where the owner turns the home page's splash campaigns on and off, dates and orders them (D-454), with a page per cup, game and room and every view in the URL (D-207, D-208, D-233, D-251, D-348). These are usage signals, not tracking: no IP or secret leaves the phone, a random browser id is never joined with names (D-349), and chat is counted, never read (D-138). It keeps no lists of its own: games are read from `public/assets/js/games.js`. See [docs/PANEL.md](docs/PANEL.md).
 
 ## Layout
 
