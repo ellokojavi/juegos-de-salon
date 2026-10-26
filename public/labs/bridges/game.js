@@ -295,7 +295,7 @@ function jugar() {
       el('span', { class: 'tv-reloj', id: 'tv-reloj' }, `⏱ ${mmss(Math.max(0, TIEMPO_S - segundos()))}`), ...(EN_LABS ? [botonSaltar] : [])),
     el('div', { class: 'tv-titulo-etapa' },
       el('h2', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })),
-      el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, trenMini(e.carga, e), e.carga > 1 ? fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` }) : T.cargaNormal)),
+      el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, trenMini(e.carga, e, c._time.t), e.carga > 1 ? fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` }) : T.cargaNormal)),
     el('div', { class: 'tv-tablero' }, c, aguja.caja),
     ...(materiales ? [materiales] : []),
     el('div', { class: 'tv-barra' },
