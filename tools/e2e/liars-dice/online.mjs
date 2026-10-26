@@ -39,6 +39,7 @@ const play = async (d, doubt = false) => d.evaluate(`(()=>{
 await A.go(`${hosts[0]}/liars-dice/`); await A.evaluate(`localStorage.clear(); 1`); await A.go(`${hosts[0]}/liars-dice/`);
 await click(A, '.modes .mode:nth-child(2)'); await sleep(400);
 await setName(A, NAME.A);
+await A.evaluate(`[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('🫨'))?.querySelector('.switch.on')?.click(); 1`);   // the shake (D-447) has its own script
 await click(A, '#setup-actions .btn--yellow'); await sleep(5000);
 const code = await A.evaluate(`document.querySelector('.code-big')?.textContent`);
 console.log('room:', code, '| A screen:', await screen(A));

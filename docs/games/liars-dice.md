@@ -146,10 +146,12 @@ gana todavía más contra el lector (+16 puntos), pero ahí **nunca** canta su p
 un patrón tan legible como cantarla siempre: en 0,7 dice la verdad una de cada tres veces que podría
 mentir, y ninguna de las dos lecturas le sirve a nadie.
 
-## In the lab: shake to roll and the turn's clock (lab: `#seccion-dudo-cacho`)
+## Shake to roll and the turn's clock (D-447)
 
-Two setup switches, offered only with a lab key (D-395) and off by default; in a room the
-creator's choice travels in the config, so it applies to every phone. Uno al día never has them.
+Two setup switches in every mode, built in the lab at the owner's request and published once the
+owner tried them on a phone (D-447). Shaking starts **on** and the clock **off**; in a room the
+creator's choice travels in the config, so it applies to every phone. Uno al día never has them
+(it plays with `DEFAULT_CONFIG`, where both are off, as are games saved before).
 
 - **🫨 Shake to roll** (`config.shake`): each round, while your dice are still to roll, the hand's
   panel **is** a green cloth, the only one on screen, with dice bigger than the hand's (64 px
@@ -236,7 +238,7 @@ roll* → bid+ → (dudo | calza) → open*
 | `dudo` | — | En su turno, si ya hay apuesta |
 | `calza` | — | En su turno, si la apuesta llegó a la mitad de la mesa |
 | `open` | `d` dados, `salt` sal | Después de dudar, uno por jugador vivo |
-| `timeout` | `r` the round | Lab, with `turnSecs`: sent by the player on turn, from their own phone, when their time runs out |
+| `timeout` | `r` the round | With `turnSecs` (D-447): sent by the player on turn, from their own phone, when their time runs out |
 
 Un `roll` con `d` se resuelve solo; uno con `h` obliga a esperar el `open`. Es el mismo camino para
 los tres modos: el motor cuenta cuando conoce todos los dados de la ronda, y mientras tanto la fase
@@ -269,7 +271,7 @@ public/liars-dice/index.html · public/liars-dice/style.css · public/liars-dice
 public/liars-dice/engine.js · public/liars-dice/engine.test.mjs
 tools/e2e/liars-dice/local.mjs   un celular y contra el celular
 tools/e2e/liars-dice/online.mjs  tres celulares contra Firebase real
-tools/e2e/liars-dice/shake-clock.mjs  lab: shake to roll and the turn's clock
+tools/e2e/liars-dice/shake-clock.mjs  shake to roll and the turn's clock (D-447)
 ```
 
 Gancho de pruebas (C-14): `window.__dudo` (`view`, `match`, `session`).
