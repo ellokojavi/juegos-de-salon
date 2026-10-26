@@ -10,6 +10,7 @@
  */
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
+import { labAccess } from '../assets/js/lab-access.js';
 import { gameById } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang, SITIO } from '../assets/js/i18n.js';
 import { param } from '../assets/js/parametros.js';
@@ -768,6 +769,9 @@ function renderModes() {
   const box = $('#modes'); box.innerHTML = '';
   const modes = [['local', T.modeLocal, T.modeLocalHint], ['online', T.modeOnline, T.modeOnlineHint], ['solo', T.modeSolo, T.modeSoloHint]];
   for (const [m, label, hint] of modes) box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); if (m === 'solo') soloIntro(); else renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, '›')));
+  // In the lab, 🔤 Palabra is a mode here instead of its own card on the home page (#767). lab: #seccion-tyf-una-tarjeta
+  labAccess().then(yes => yes && box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); location.href = '../word/'; } },
+    el('span', {}, el('b', {}, T.labWord), el('small', {}, T.labWordHint)), el('span', { class: 'go' }, '›')))).catch(() => {});
 }
 
 function renderResumeSlot() {
