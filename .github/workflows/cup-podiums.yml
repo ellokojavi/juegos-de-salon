@@ -10,8 +10,9 @@ name: Cup podiums
 
 on:
   schedule:
-    # Cups close at midnight Pacific; this is 0:47 PDT / 23:47 PST
-    - cron: '47 7 * * *'
+    # Cups close at midnight Pacific. Two runs cover both clocks: 0:47 and 1:47 PDT in summer,
+    # 23:47 (nothing yet) and 0:47 PST in winter. A single 7:47 UTC run fell before midnight in winter.
+    - cron: '47 7,8 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
