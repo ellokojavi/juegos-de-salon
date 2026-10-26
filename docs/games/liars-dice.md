@@ -196,7 +196,9 @@ roll* → bid+ → (dudo | calza) → open*
 
 Un `roll` con `d` se resuelve solo; uno con `h` obliga a esperar el `open`. Es el mismo camino para
 los tres modos: el motor cuenta cuando conoce todos los dados de la ronda, y mientras tanto la fase
-es `open` y la pantalla dice a quién se espera.
+es `open` y la pantalla dice a quién se espera. While nobody holds the turn (`current` is null), the header never says
+whose turn it is: during `open` it names who called it ("Chan dudó de 7 quintas"), with the
+line underneath naming whose dice are missing, and during `roll` it names the round's `opener`.
 
 ```json
 {
