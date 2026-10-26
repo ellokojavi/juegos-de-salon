@@ -302,7 +302,7 @@ stats/prod/days/20342/
   vuelta/d2-7: 4                       days since the browser's last visit, by band
   frec/f3-7: 6                         how many of the last 28 days the browser came, by band
   activos/k3j9x0q2ab: 2                a browser's random id: 1 visited, 2 started something (D-349)
-  support/open: 1                      ☕ Buy us a coffee, by step: shown, open, pay, thanks (D-448, in the lab)
+  support/open: 1                      ☕ Buy me a coffee, by step: shown, open, pay, thanks (D-448, in the lab)
 stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many subscriptions are still alive
 ```
 

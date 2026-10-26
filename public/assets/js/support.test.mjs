@@ -1,4 +1,4 @@
-// "☕ Buy us a coffee" at the end of a game (support.js): when it asks, and that it says the same in
+// "☕ Buy me a coffee" at the end of a game (support.js): when it asks, and that it says the same in
 // the four languages.
 import assert from 'node:assert/strict';
 import { dueSupport, supportOpened, supportPaid, TEXTS, MIN_GAMES, EVERY_DAYS, REST_AFTER_OPEN_DAYS, EVENTS } from './support.js';

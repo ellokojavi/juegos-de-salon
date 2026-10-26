@@ -523,7 +523,7 @@
     const btnBuzon = document.getElementById('btn-buzon-portada');
     btnBuzon.textContent = T.buzon.abrir;
     btnBuzon.addEventListener('click', () => import('./assets/js/buzon.js').then(m => m.abrirBuzon({ pantalla: 'portada' })));
-    // "☕ Buy us a coffee", always under the inbox, only with a lab key for now (D-395). lab: #seccion-apoyo
+    // "☕ Buy me a coffee", always under the inbox, only with a lab key for now (D-395). lab: #seccion-apoyo
     import('./assets/js/support.js').then(m => m.supportFooterLink(lang)).then(a => a && btnBuzon.parentElement.after(el('p', {}, a))).catch(() => {});
     document.title = `${T.appTitle} 🎲`;
     document.getElementById('lang-slot').append(langToggle());
