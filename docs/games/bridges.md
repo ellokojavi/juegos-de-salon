@@ -124,7 +124,8 @@ metallic finish. Of four designs (a chrome bullet train, a 1930s art deco stream
 metro and a glossy black one outlined in neon) the owner chose the bullet train, and asked for the same
 nose at both ends, since such a train runs either way, and for colors. `trains.js` draws it: the last car
 is the front car turned around, with red tail lights, drawn 3 art units back because it is longer than the
-wagon whose place it takes. It is the neon style's train (`?train=clasico` brings back the first one), in
+wagon whose place it takes. Its wheels are small and barely peek under a low dark skirt, so it seems to glide along the
+deck while still touching it (owner's request). It is the neon style's train (`?train=clasico` brings back the first one), in
 seven colors (`BALAS`: silver, pearl, graphite, ruby, gold, mint, lilac; `?train=bala-rubi`…), all shown
 at `/labs/bridges/trains/` ("🚄 Los colores del tren bala" on the lab card), each with a button to play
 with it. Each stage draws its color at random, never the same as the stage before (`trenDe(e)` in `neon.js`, the

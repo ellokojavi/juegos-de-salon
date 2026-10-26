@@ -39,13 +39,18 @@ function reflejo(ctx, x, top, bottom, ancho = 1.2) {
   ctx.fillStyle = 'rgba(255,255,255,0.28)';
   ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x + ancho, top); ctx.lineTo(x + ancho - (bottom - top) * 0.5, bottom); ctx.lineTo(x - (bottom - top) * 0.5, bottom); ctx.closePath(); ctx.fill();
 }
-/** Small bogie wheels peeking under a skirt. */
-function bogies(ctx, xs, giro, r = 1.15) {
+/**
+ * The running gear, low and mostly hidden (owner's request): a dark skirt from the body down close to the
+ * rail and small wheels that barely peek under it, so the train seems to glide along the deck while still
+ * touching it. `x0`…`x0 + ancho` is the skirt; `xs` the wheels.
+ */
+function bogies(ctx, x0, ancho, xs, r = 0.6) {
   for (const x of xs) {
     circulo(ctx, x, -r, r, '#1a1030');
-    ctx.strokeStyle = 'rgba(210,215,240,0.6)'; ctx.lineWidth = 0.25; ctx.beginPath(); ctx.arc(x, -r, r - 0.25, 0, Math.PI * 2); ctx.stroke();
-    ctx.strokeStyle = 'rgba(210,215,240,0.35)'; ctx.beginPath(); ctx.moveTo(x - Math.cos(giro) * (r - 0.4), -r - Math.sin(giro) * (r - 0.4)); ctx.lineTo(x + Math.cos(giro) * (r - 0.4), -r + Math.sin(giro) * (r - 0.4)); ctx.stroke();
+    ctx.strokeStyle = 'rgba(210,215,240,0.7)'; ctx.lineWidth = 0.2; ctx.beginPath(); ctx.arc(x, -r, r - 0.15, 0, Math.PI); ctx.stroke();
   }
+  caja(ctx, x0, -2.6, ancho, 1.85, 0.5, OSCURO);
+  ctx.fillStyle = 'rgba(210,215,240,0.25)'; ctx.fillRect(x0 + 0.4, -0.95, ancho - 0.8, 0.18);
 }
 /** A row of lit windows (the warm light of the passengers), each with its reflection. */
 function ventanas(ctx, xs, top, alto, ancho, r = 0.6, luz = '#ffd98a') {
@@ -67,8 +72,7 @@ function balaDe({ id, nombre, lema, tinte, franja, filo }) {
   /** An end car, its nose to the right; `cola` lights it as the back of the train. */
   const punta = (ctx, x, y, { giro = 0, cola = false } = {}) => {
     ctx.save(); ctx.translate(x, y);
-    caja(ctx, -11, -2.6, 20, 1.4, 0.4, OSCURO);
-    bogies(ctx, [-8, -4.6, 2.4, 5.8], giro);
+    bogies(ctx, -11, 20, [-8.4, -6.8, 3.6, 5.2]);
     cuerpo(ctx, () => {
       ctx.moveTo(-11, -2.4); ctx.lineTo(-11, -10); ctx.quadraticCurveTo(-11, -11.2, -9.8, -11.2); ctx.lineTo(0, -11.2);
       ctx.bezierCurveTo(6.5, -11.2, 11.4, -7.4, 11.9, -3.6); ctx.quadraticCurveTo(12, -2.4, 10.6, -2.4); ctx.closePath();
@@ -100,8 +104,7 @@ function balaDe({ id, nombre, lema, tinte, franja, filo }) {
     },
     vagon(ctx, x, y, carga = 1, giro = 0) {
       ctx.save(); ctx.translate(x, y);
-      caja(ctx, -8, -2.6, 16, 1.4, 0.4, OSCURO);
-      bogies(ctx, [-5.8, -3, 3, 5.8], giro);
+      bogies(ctx, -8, 16, [-6, -4.4, 4.4, 6]);
       cuerpo(ctx, () => ctx.roundRect(-8, -11.2, 16, 8.8, [1.4, 1.4, 0.4, 0.4]), metal(ctx));
       rayas(ctx, -8, 16);
       ctx.fillStyle = vidrio(ctx, -9.6, -7.2); ctx.beginPath(); ctx.roundRect(-7.2, -9.4, 14.4, 2, 0.8); ctx.fill();
