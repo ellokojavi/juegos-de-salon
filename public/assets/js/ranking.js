@@ -357,7 +357,9 @@ export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {},
       else caja.append(el('p', { class: 'rk-ok center' }, T.countedGame));
       alAnotar(r);
     } catch (e) {
-      caja.append(el('p', { class: 'rk-error' }, e?.code === 'pin' ? T.loggedOut : T.notSaved));
+      // Kept on the phone and sent when the signal is back, instead of lost (`subirPendientes`)
+      const guardada = e?.code !== 'pin' && await jugador().then(J => J.guardarPendiente({ juego, variante, s, ms })).catch(() => false);
+      caja.append(el('p', { class: guardada ? 'muted center' : 'rk-error' }, e?.code === 'pin' ? T.loggedOut : guardada ? T.savedLater : T.notSaved));
     }
   };
   if (!rankingsVisibles()) return caja;
