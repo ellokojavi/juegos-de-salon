@@ -24,6 +24,9 @@ trackVisit();   // the site's traffic (D-208)
 
 const GAME_ID = 'stick';
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// A lost life: the fall, then the rope shoots up, the ninja climbs it and hops on top; about 1.1 s in all
+const CAIDA_MS = 450, GANCHO_MS = 140, SUBIDA_MS = 330, SALTO_MS = 180;
+const RESCATE_MS = GANCHO_MS + SUBIDA_MS + SALTO_MS;
 const KETCHAPP = 'https://www.ketchappgames.com/';
 const BEST_KEY = 'juegos-de-salon:stick-best';
 const TODAY_KEY = 'juegos-de-salon:stick-today';
@@ -123,6 +126,8 @@ function escena(canvas, { compacto = false } = {}) {
   let golpe = null;    // the flag just hit, popping: { k, born }
   let previo = null;   // the last bridge, still lying across its gap: { x0, len }
   let muerte = null;   // the fall at the end: { kind, born, x, y, vy, vx, rot }
+  let rescate = null;  // a life lost: the grapple from below and the climb back: { born, x }
+  let hundido = 0;     // when the stick started dropping into the gap
   let destello = 0;    // a soft flash of the whole night, for a perfect
 
   const medir = () => {
@@ -362,13 +367,14 @@ function escena(canvas, { compacto = false } = {}) {
     else if (w && (g.phase === 'walking' || g.phase === 'lost' || g.phase === 'over')) {
       const k = clamp01((reloj - (w.t0 - TURN_MS)) / TURN_MS);
       let ang = easeIn(k) * Math.PI / 2;
-      if (muerte && !w.ok) ang = Math.PI / 2 + easeIn(clamp01((now - muerte.born) / 380)) * Math.PI / 2;
+      if ((muerte || rescate) && !w.ok) ang = Math.PI / 2 + easeIn(clamp01((now - hundido) / 380)) * Math.PI / 2;
       palo(x0, g.stick, ang, w.kind === 'perfect' && k >= 1 ? 1 : 0);
       if (g.phase === 'walking') { ninjaX = runX(w, reloj); corre = reloj >= w.t0; }
     }
 
     // The ninja: standing, running (on top or hanging under), or falling at the end
-    if (muerte) {
+    if (rescate) agarre(g, now);
+    else if (muerte) {
       const m = muerte;
       m.vy += 1500 * dt; m.y += m.vy * dt; m.x += m.vx * dt; m.rot += m.vr * dt;
       if (m.y < H + 60) ninja(sx(m.x), m.y, now, { rot: m.rot });
@@ -379,6 +385,33 @@ function escena(canvas, { compacto = false } = {}) {
     efectos(now, dt);
   }
   let saltoDesde = 0;
+
+  /**
+   * The way back after a lost life: a rope shoots up from below the screen and hooks the pillar's edge,
+   * the ninja climbs it and hops onto the top. Short on purpose (RESCATE_MS), so the game goes on.
+   */
+  function agarre(g, now) {
+    const t = now - rescate.born, ax = sx(rescate.x), top = G - 1;
+    const tiro = clamp01(t / GANCHO_MS), sube = clamp01((t - GANCHO_MS) / SUBIDA_MS), salta = clamp01((t - GANCHO_MS - SUBIDA_MS) / SALTO_MS);
+    const ropeY = H + 10 - (H + 10 - top) * easeOut(tiro);
+    if (salta < 1) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(230,220,255,0.85)'; ctx.lineWidth = Math.max(1, 1.6 * s);
+      ctx.beginPath(); ctx.moveTo(ax, H + 10); ctx.lineTo(ax, ropeY); ctx.stroke();
+      // The hook, biting the edge
+      ctx.strokeStyle = '#2ee6d6'; ctx.lineWidth = Math.max(1.5, 2.4 * s);
+      ctx.beginPath(); ctx.arc(ax - 4 * s, ropeY, 4 * s, 0, Math.PI, true); ctx.stroke();
+      ctx.restore();
+    }
+    if (tiro < 1) return;
+    const hang = ax + NINJA * 0.45 * s, bajo = H + NINJA * 1.3 * s;
+    if (salta <= 0) ninja(hang, bajo - (bajo - top - NINJA * 0.3 * s) * easeOut(sube), now, { corre: true });
+    else {
+      const x = hang + (sx(restX(current(g))) - hang) * easeOut(salta);
+      const y = top + NINJA * 0.3 * s * (1 - salta) - Math.sin(salta * Math.PI) * 18 * s;
+      ninja(x, y, now, { rot: (1 - salta) * -0.4 });
+    }
+  }
   const efectoSalto = now => { const k = (now - saltoDesde) / 380; return k >= 0 && k < 1 && !QUIETO ? Math.sin(k * Math.PI) * 9 : 0; };
 
   return {
@@ -411,10 +444,13 @@ function escena(canvas, { compacto = false } = {}) {
     },
     /** The end: the ninja drops into the gap from the stick's tip. */
     caer(g, kind) {
-      muerte = { kind, born: performance.now(), x: g.walk.tip, y: G - 1, vy: -60, vx: 10, rot: 0, vr: 3 };
+      hundido = performance.now();
+      muerte = { kind, born: hundido, x: g.walk.tip, y: G - 1, vy: -60, vx: 10, rot: 0, vr: 3 };
     },
-    /** A life lost, not the last: the ninja is back on its pillar, the fallen stick gone. */
-    revivir() { muerte = null; saltoDesde = performance.now(); },
+    /** A life lost, not the last: the rope from below and the climb back up (RESCATE_MS). */
+    rescatar(g) { muerte = null; rescate = QUIETO ? null : { born: performance.now(), x: current(g).x + current(g).w - 2 }; },
+    /** The ninja is back on its pillar, the fallen stick gone. */
+    revivir() { muerte = null; rescate = null; saltoDesde = performance.now(); },
     cerrar() { ro.disconnect(); },
   };
 }
@@ -666,13 +702,17 @@ function jugar() {
       const volver = () => {
         if (vez !== animando) return;
         if (S.pausa) return setTimeout(volver, 200);
-        revive(g, performance.now());
-        sc.revivir();
-        aviso.classList.add('fuera');
-        pista();
+        sc.rescatar(g);
+        setTimeout(() => {
+          if (vez !== animando) return;
+          revive(g, performance.now());
+          sc.revivir();
+          aviso.classList.add('fuera');
+          pista();
+        }, QUIETO ? 0 : RESCATE_MS);
       };
       volver();
-    }, QUIETO ? 600 : 1500);
+    }, QUIETO ? 600 : CAIDA_MS);
   }
 
   function perder(kind) {
