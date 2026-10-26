@@ -258,12 +258,14 @@ export const PATHS = {
     game: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('🫨'))?.querySelector('.switch.on')?.click()`,   // the table with the dice out: the shake (D-447) has its own script
       `document.querySelector('#setup-actions .btn--yellow').click()`,
     ],
     // With the face chosen the count selector appears, which is the tight part of the bar
     bid: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('🫨'))?.querySelector('.switch.on')?.click()`,   // the table with the dice out: the shake (D-447) has its own script
       `document.querySelector('#setup-actions .btn--yellow').click()`,
       `document.querySelectorAll('.pinta')[4].click()`,
     ],
@@ -271,6 +273,7 @@ export const PATHS = {
     reveal: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('🫨'))?.querySelector('.switch.on')?.click()`,   // the table with the dice out: the shake (D-447) has its own script
       `document.querySelector('#setup-actions .btn--yellow').click()`,
       `document.querySelectorAll('.pinta')[5].click()`,
       `document.querySelector('#actions .btn--yellow').click()`,
