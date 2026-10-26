@@ -129,8 +129,17 @@ is the front car turned around, with red tail lights, drawn 3 art units back bec
 wagon whose place it takes. It is the neon style's train (`?train=clasico` brings back the first one), in
 seven colors (`BALAS`: silver, pearl, graphite, ruby, gold, mint, lilac; `?train=bala-rubi`…), all shown
 at `/labs/bridges/trains/` ("🚄 Los colores del tren bala" on the lab card), each with a button to play
-with it. For now it always carries passengers: how the colors and the train's weight come together
-(crates, logs, coal, containers on the heavy stages) is still to be decided.
+with it. Each stage draws its color at random, never the same as the stage before (`trenDe(e)` in `neon.js`, the
+owner's request): the color is only paint, the weight stays the stage's, in the physics and in the title,
+and the small train beside the title has the stage's color (`trenMini(carga, e)`).
+
+The visitors live in `visitors.js` (when each comes and what it does), shared by both styles: they draw
+through a renderer, the pixel one or `neon-visitors.js`'s `pincel`, which has the same methods and draws
+each pixel sprite as shapes (a chrome saucer with a glass dome and blinking lights, an orange fish, a
+whale with a pale grooved belly, a velvet mole with a pink nose, a glossy petrol-green boat and its rider),
+plus four pieces drawn whole (the saucer's beam, the boat's wave, the rider in the water, the flag).
+`/labs/bridges/visitors/` ("🛸 Los visitantes" on the lab card) shows them up close, with buttons that play
+a game where each one comes in stage 1.
 
 Its sprites also draw the home page's first teaser (D-430): `tren-en-vilo-pronto`, on through
 2026-10-28, a GIF of a train stopping at the edge of a gap, no name and no link, made by

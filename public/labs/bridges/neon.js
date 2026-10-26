@@ -2,7 +2,7 @@
  * 🚂 Tren en Vilo — the scene in the house style (lab prototype, `?style=neon`): smooth shapes, soft
  * glows and the home page's palette (night purple, yellow → pink, cyan), like Stick Ninja, instead of
  * pixel art. Same entry as scene.js's `dibujar` and the same world; only the drawing changes. The
- * visitors (saucer, whale, mole, boat) are not drawn yet in this style.
+ * visitors come and go as in the pixel scene (visitors.js), drawn as shapes by neon-visitors.js.
  *
  * Everything is drawn in "art units" (16 per grid unit, as in the pixel scene), so the particles and
  * the train keep their sizes and speeds; the canvas scales them smoothly instead of in blocks.
@@ -11,7 +11,9 @@ import { el } from '../../assets/js/ui.js';
 import { ALTO, LARGO_MAX, PIEZAS, fijos, FISICA, alturaCamino } from './engine.js';
 import { particulas } from './pixel.js';
 import { param } from '../../assets/js/parametros.js';
-import { TRENES } from './trains.js';
+import { TRENES, BALAS } from './trains.js';
+import { visitasCielo, visitaBallena, visitaLancha, visitaTopo } from './visitors.js';
+import { pincel } from './neon-visitors.js';
 import { QUIETO, aPantalla, pasoPorEncima, PARPADEO_MS } from './scene.js';
 
 const ARTE = 16;
@@ -139,10 +141,26 @@ const CLASICO = {
   frente: (ctx, x, y, { giro = 0, carga = 1 } = {}) => locomotora(ctx, x, y, { giro, pesada: carga >= 1.6 }),
   vagon,
 };
-/** The train drawn: the owner's choice, the silver bullet train; `?train=bala-perla|…` another color, `?train=clasico` the first one. */
-const TREN = param('train') === 'clasico' ? CLASICO : TRENES[param('train')] || TRENES.bala;
+/**
+ * The train of a stage: the bullet train in a color drawn at random for each stage, never the same as the
+ * stage before (owner's request). The color is only paint: the weight is still the stage's (`e.carga`),
+ * in the physics and in the title. `?train=bala-perla|…` fixes one color, `?train=clasico` the first train.
+ */
+const FIJO = param('train') === 'clasico' ? CLASICO : TRENES[param('train')] || null;
+const colores = new WeakMap();
+let ultimo = null;
+export function trenDe(e) {
+  if (FIJO) return FIJO;
+  if (!e) return BALAS[0];
+  if (!colores.has(e)) {
+    const opciones = BALAS.filter(t => t !== ultimo);
+    colores.set(e, ultimo = opciones[Math.floor(Math.random() * opciones.length)]);
+  }
+  return colores.get(e);
+}
 
-export function trenMiniNeon(carga) {
+export function trenMiniNeon(carga, e) {
+  const TREN = trenDe(e);
   const dpr = window.devicePixelRatio || 1, k = 2, ancho = 44, alto = 17;
   const c = el('canvas', { class: 'tv-tren-mini', 'aria-hidden': 'true', width: ancho * k * dpr, height: alto * k * dpr });
   c.style.width = `${ancho * k}px`; c.style.height = `${alto * k}px`;
@@ -169,7 +187,7 @@ function sierra(ctx, W, base, alto, color, borde, semilla, hasta) {
 }
 
 /** Draws a stage in the house style: same arguments as scene.js's `dibujar`. */
-export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set() } = {}) {
+export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set(), visitas = null } = {}) {
   if (!c._m) return;
   const ctx = c.getContext('2d');
   const k = c._m.escala / ARTE, dpr = c._m.dpr;
@@ -184,6 +202,11 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
   const L = luz(c._time?.t ?? 1);
   const [x0, y0] = A(0, 0), [x1] = A(e.ancho, 0);
   const [, yAgua] = A(0, c._v.abajo + 0.7);
+  const TREN = trenDe(e);
+  // The visitors draw through a smooth renderer with the pixel one's methods (neon-visitors.js)
+  const r = c._pincel ||= pincel(ctx, W, H);
+  r.W = W; r.H = H;
+  const V = { r, esc, e, c, A, W, H, ahora, dt, visitas, yAgua, x0, x1, y0 };
 
   // The sky: one smooth gradient, the stars that twinkle, the sun or the moon with its halo
   const cielo = ctx.createLinearGradient(0, 0, 0, yAgua);
@@ -216,6 +239,8 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
   // (the near one low, over the water, so its ridge never reads as a wire under the deck)
   sierra(ctx, W, y0 + u * 0.1, u * 1.3, L.far, 'rgba(190,160,255,0.22)', 1.3, yAgua);
   sierra(ctx, W, yAgua, Math.min(u * 1.2, (yAgua - y0) * 0.45), L.near, 'rgba(190,160,255,0.08)', 4.1, yAgua);
+  // Birds and the flying saucer, in the game only (never on the cover: they are a surprise)
+  if (visitas) visitasCielo(V);
 
   // The water: a deep gradient and a lit surface that ripples
   const agua = ctx.createLinearGradient(0, yAgua, 0, H);
@@ -230,6 +255,7 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
     const x = ((ruido(n, 9) * W + ahora * (3 + n)) % (W + 10)) - 5, y = yAgua + 2.5 + ruido(n, 8) * (H - yAgua - 4);
     linea(ctx, x, y, x + 3 + ruido(n, 7) * 4, y, 'rgba(191,248,255,0.35)', 0.4);
   }
+  if (visitas) { visitaBallena(V); visitaLancha(V); }
 
   // The cliffs: dark silhouettes, their inner face faintly lit, a neon edge on top
   for (const [xa, xb, cara] of [[0, x0, x0], [x1, W, x1]]) {
@@ -241,6 +267,9 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
     ctx.fillStyle = lado; ctx.fillRect(cara - 0.4, y0, 0.8, H - y0);
     brilla(ctx, L.edge, 6, () => { ctx.fillStyle = L.edge; ctx.fillRect(xa, y0 - 0.5, xb - xa, 1); });
   }
+
+  // The mole digs through the cliff
+  if (visitas) visitaTopo(V);
 
   // The anchors: a stone tower above the deck, a pillar out of the water, or a ledge on the cliff
   for (const [ax, ay] of e.anclas) {
@@ -381,6 +410,6 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
       g.addColorStop(0, `rgba(240,230,255,${0.55 * (1 - t)})`); g.addColorStop(1, 'rgba(240,230,255,0)');
       ctx.fillStyle = g; ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
     } else if (p.tipo === 'chispa') brilla(ctx, col, 4, () => circulo(ctx, p.x, p.y, 0.6 * (1 - t) + 0.3, col));
-    else circulo(ctx, p.x, p.y, Math.max(0.5, p.radio), col);
+    else { ctx.globalAlpha = 1 - t * 0.7; circulo(ctx, p.x, p.y, Math.max(0.45, p.radio), col); ctx.globalAlpha = 1; }
   }
 }
