@@ -273,19 +273,19 @@ Spec and design: [docs/games/hangman.md](docs/games/hangman.md)
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/liars-dice/01-intro.png" width="180" alt="Game modes"><br><sub>Game modes</sub></td>
-    <td align="center"><img src="docs/screenshots/liars-dice/02-configuracion.png" width="180" alt="Who plays and whether calzar is on"><br><sub>Who plays and whether calzar is on</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/02-configuracion.png" width="180" alt="Who plays, calzar, shaking and the clock"><br><sub>Who plays, calzar, shaking and the clock</sub></td>
+    <td align="center"><img src="docs/screenshots/liars-dice/10-shake.png" width="180" alt="Shake the phone to roll"><br><sub>Shake the phone to roll</sub></td>
     <td align="center"><img src="docs/screenshots/liars-dice/03-mesa.png" width="180" alt="Your dice and the table"><br><sub>Your dice and the table</sub></td>
-    <td align="center"><img src="docs/screenshots/liars-dice/04-apuesta.png" width="180" alt="Pick face and count"><br><sub>Pick face and count</sub></td>
   </tr>
   <tr>
+    <td align="center"><img src="docs/screenshots/liars-dice/04-apuesta.png" width="180" alt="Pick face and count"><br><sub>Pick face and count</sub></td>
     <td align="center"><img src="docs/screenshots/liars-dice/05-destape.png" width="180" alt="The table opens up and counts"><br><sub>The table opens up and counts</sub></td>
     <td align="center"><img src="docs/screenshots/liars-dice/07-pase.png" width="180" alt="Pass the phone"><br><sub>Pass the phone</sub></td>
     <td align="center"><img src="docs/screenshots/liars-dice/08-sala.png" width="180" alt="Room with code and QR"><br><sub>Room with code and QR</sub></td>
-    <td align="center"><img src="docs/screenshots/liars-dice/09-destape-verificado.png" width="180" alt="The table opens up and verifies"><br><sub>The table opens up and verifies</sub></td>
   </tr>
   <tr>
+    <td align="center"><img src="docs/screenshots/liars-dice/09-destape-verificado.png" width="180" alt="The table opens up and verifies"><br><sub>The table opens up and verifies</sub></td>
     <td align="center"><img src="docs/screenshots/liars-dice/06-resultado.png" width="180" alt="Who won and how it went"><br><sub>Who won and how it went</sub></td>
-    <td></td>
     <td></td>
     <td></td>
   </tr>
@@ -293,6 +293,8 @@ Spec and design: [docs/games/hangman.md](docs/games/hangman.md)
 <!-- /generated -->
 
 Everyone rolls five dice and **only looks at their own**. You bet how many dice of one face are on **the whole table** ("four fives"); the next player raises or calls **dudo**, and whoever was wrong loses a die. **Aces are wild**; the last one with dice wins. The phone rolls, **refuses illegal bids** and counts instantly, which is what people argue about. **Calzar** (claiming the exact count) is offered only with three players or more (D-71). In Spanish the faces keep their Chilean names (**ases, tontos, trenes, cuadras, quintas, sextas**), switchable to numbers.
+
+**To roll, you shake the phone**, like the cup at a real table: your hand becomes a green cloth with the dice face down, they tumble in 3D while you shake and the phone rattles with them, and they stay as they fell when you stop (a 🎲 button where there is no motion sensor). It is on by default and can be turned off on the names screen, which also offers **⏱️ 30 seconds per turn** (off by default): whoever runs out of time loses a die (D-447).
 
 - **📱 One phone** (two to six, a handoff screen between players, C-9) · **🤖 Versus the phone** (it bets on probability and only looks at its own dice) · **📡 Several phones** (each phone rolls its own dice and publishes only a hash, verified on a call, C-10, D-70).
 

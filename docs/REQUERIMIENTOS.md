@@ -128,6 +128,8 @@ In the lab's 📦 La Bodega since D-420, at the owner's request: off the home pa
 | DU-13 | Repaso de la partida al final: qué se apostó, cuánto había y quién perdió el dado en cada ronda. | ✅ v0.28 |
 | DU-14 | Ronda obligada: con un jugador en un dado, esa ronda se juega sin comodín y sin cambiar de pinta. | ⏳ pendiente |
 | DU-15 | En español, las pintas se nombran como en la mesa chilena (ases, tontos, trenes, cuadras, quintas y sextas), con un interruptor para volver a los números. Encendido por defecto; inglés y portugués van por número (D-71). | ✅ v0.29 |
+| DU-16 | The owner's request: to get your dice you shake the phone, like the cup at a real table. The dice roll on screen in 3D while it shakes, on a green cloth with bigger dice, the phone vibrates with them, and they stay as they fell when the shaking stops. On by default; a button where there is no sensor (D-447). | ✅ v0.209 in the lab; for everyone with D-447 |
+| DU-17 | The owner's request: a fixed time to answer, or lose a die. ⏱️ 30 seconds per turn: out of time, the player loses a die without the table being revealed. Off by default (D-447). | ✅ v0.209 in the lab; for everyone with D-447 |
 
 ## Generala (GE) — ver [especificación](games/generala.md)
 
