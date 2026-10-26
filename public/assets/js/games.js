@@ -70,7 +70,7 @@ export const GAMES = [
     tipos: ['tabletop'],
     emoji: '🎲',
     name: { es: 'Dudo', en: 'Liar\'s Dice', pt: 'Dado Mentiroso', de: 'Lügenwürfel' },
-    tagline: { es: 'Apuesta cuántos dados hay en la mesa y aguanta la cara.', en: 'Bid how many dice are on the table and keep a straight face.', pt: 'Aposte quantos dados tem na mesa sem entregar o jogo.', de: 'Wette, wie viele Würfel auf dem Tisch liegen, und verzieh keine Miene.' },
+    tagline: { es: 'Agita el cacho, apuesta cuántos dados hay en la mesa y aguanta la cara.', en: 'Shake the cup, bid how many dice are on the table and keep a straight face.', pt: 'Sacuda o copo, aposte quantos dados tem na mesa sem entregar o jogo.', de: 'Schüttle den Becher, wette auf die Würfel am Tisch und verzieh keine Miene.' },
     players: '1–6',
     duration: '10–20',
     jugadas: ['bid', 'dudo', 'calza'],
