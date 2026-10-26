@@ -93,6 +93,40 @@
 .mine-label { font-weight: 900; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 .wild-note { font-weight: 800; font-size: 0.78rem; color: var(--yellow); }
 
+/* ---------- Shake to roll and the turn's clock (lab: #seccion-dudo-cacho) ---------- */
+/* The shaking cloth: while the dice are still to roll, the hand's panel turns green and holds
+   bigger dice, face down until the first jolt. Landed, the same panel shrinks back to the hand's
+   size and colour while the dice slide into their row (llegar in game.js). */
+.mine { transition: background-color 0.45s, box-shadow 0.45s; }
+.mine.agitando, .mine.llega { background-color: #1f6b4a; box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.45); }
+.mine.agitando, .mine.llega { padding: 26px 10px 16px; }   /* the sides as always: five dice must fit in one row while it shrinks */
+.mine.llega-anda { overflow: visible; transition: height 480ms cubic-bezier(0.5, 0, 0.3, 1), padding 480ms cubic-bezier(0.5, 0, 0.3, 1), background-color 480ms, box-shadow 480ms; }
+.mine.llega-anda .die { transition: transform 480ms cubic-bezier(0.5, 0, 0.3, 1); }
+/* Sliding in, the ace stays white like the rest of the cloth's dice */
+.mine.llega .die.ace, .mine.llega-anda .die.ace { background: var(--card); }
+.agite-caja { display: grid; gap: 12px; justify-items: center; }
+.agite-pie { display: grid; gap: 8px; justify-items: center; }
+.agite-mesa { display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 16px 14px; max-width: 260px; min-height: 150px; }
+.die--lg { width: 64px; height: 64px; padding: 9px; border-radius: 15px; }
+.die--lg i { width: 11px; height: 11px; }
+/* On the cloth the ace is a die like the others (the owner's request); the hand keeps it yellow */
+.agite-mesa .die.ace { background: var(--card); }
+.die.blank { opacity: 0.6; animation: dado-espera 2.4s ease-in-out infinite; }
+.die.blank:nth-child(even) { animation-delay: 0.15s; }
+.agite-mesa.rodando .die { opacity: 1; animation: none; transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--r, 0)); transition: transform 70ms linear; }
+@keyframes dado-espera { 0%, 80%, 100% { transform: rotate(0); } 85% { transform: rotate(-8deg); } 90% { transform: rotate(8deg); } 95% { transform: rotate(-4deg); } }
+/* The 3D dice (dado3d.js): the cube fills half its canvas, so the canvas is twice the die and
+   spills over its box, which keeps the row's spacing the same as the flat dice */
+.dado3d { position: relative; display: inline-block; width: 64px; height: 64px; }
+.dado3d-lienzo { position: absolute; left: -32px; top: -32px; width: 128px; height: 128px; pointer-events: none; }
+.cacho-txt { margin: 0; font-weight: 800; font-size: 0.95rem; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .die.blank { animation: none; } .agite-mesa.rodando .die { transform: none; } }
+
+.turn-clock { position: relative; height: 18px; margin: 6px auto 0; max-width: 260px; border-radius: 9px; background: rgba(0,0,0,0.3); overflow: hidden; }
+.turn-clock i { position: absolute; inset: 0 auto 0 0; background: var(--cyan); border-radius: 9px; transition: width 0.2s linear; }
+.turn-clock span { position: relative; display: block; text-align: center; font: 900 0.75rem/18px var(--font-num); color: var(--ink); text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+.turn-clock.apurado i { background: var(--pink); }
+
 .bid-board { margin: 10px 0 auto; }
 .standing { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; background: rgba(255,255,255,0.07); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px 14px; font-weight: 800; }
 .standing.opens { color: var(--muted); font-weight: 700; }
