@@ -634,11 +634,6 @@ export const PATHS = {
     intro: [],
     game: [START, `1`, `1`, `1`],
   },
-  // "☕ Buy me a coffee" (support.js, in the lab): the page, and the thank-you Stripe sends the donor back to
-  'labs/support': {
-    intro: [],
-    thanks: [`location.search = '?thanks&test'`, `1`],
-  },
 };
 
 /**
@@ -669,6 +664,10 @@ PATHS.copa['inbox-home'] = [`location.href='/'`, `1`, `1`, `document.querySelect
 const SUPPORT_SEED = `localStorage.setItem('juegos-de-salon:support', JSON.stringify({ games: 5 })); localStorage.setItem('juegos-de-salon:buzon', JSON.stringify({ partidas: 0 }))`;
 if (PATHS.ahorcado?.result) PATHS.ahorcado['support-result'] = [SUPPORT_SEED, ...PATHS.ahorcado.result, `1`, `document.getElementById('apoyo-pie')?.scrollIntoView({ block: 'center' })`];
 PATHS.copa['support-home'] = [`location.href='/?test'`, `1`, `1`, `document.getElementById('btn-apoyo-portada')?.scrollIntoView({ block: 'center' })`, `1`];
+// Its card over the page (D-449): opened from the end of the game, from the home footer, and the thank-you Stripe sends the donor back to
+if (PATHS.ahorcado?.result) PATHS.ahorcado['support-sheet'] = [...PATHS.ahorcado['support-result'], `document.getElementById('btn-apoyo')?.click(); 1`];
+PATHS.copa['support-sheet'] = [`location.href='/?test'`, `1`, `1`, `document.getElementById('btn-apoyo-portada')?.click(); 1`];
+PATHS.copa['support-thanks'] = [`location.href='/?support=thanks&test'`, `1`, `1`, `1`];
 
 /**
  * Each promotional splash campaign over the home page (D-351), as `?splash=<id>` shows it: with
@@ -678,3 +677,5 @@ PATHS.splash = Object.fromEntries(Object.keys(CAMPAIGNS).map(id => [id, [`locati
 
 /** The home page share sheet (D-410): the Short in its tab, and the two ways to share under it. */
 PATHS.copa['share-sheet'] = [`location.href='/?test'`, `1`, `1`, `document.getElementById('btn-compartir-portada')?.click()`, `1`];
+// Dudo's card on the home page, centered: its tagline wraps longest in Spanish (D-447)
+PATHS.copa['home-card-dudo'] = [`location.href='/?test'`, `1`, `1`, `[...document.querySelectorAll('.game-card')].find(c=>c.querySelector('h2')?.textContent.match(/dudo|liar|mentiroso|lügen/i))?.scrollIntoView({ block: 'center' })`, `1`];

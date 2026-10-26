@@ -71,6 +71,8 @@ export function candidates(pending) {
 export async function startHomeWindows({ lang = 'es', T, url, tap, search = globalThis.location?.search ?? '' } = {}) {
   const recap = () => startRecap({ lang, search }).catch(() => false);
   const install = () => { try { return !!globoInstalar({ T, url, tap }); } catch (_) { return false; } };
+  // ☕ The support card or its thank-you (`?support=`, support.js, D-449) is this visit's window
+  if (param('support', search) !== null) return null;
   // A preview (`?recap=`, `?splash=`) is the owner looking at one window: it opens that one, as before
   if (param('recap', search) !== null || param('splash', search) !== null) {
     recap().then(shown => shown || startSplash({ lang, search }));
