@@ -61,18 +61,19 @@ const GAMES = {
     // its solution's beams dragged in one by one with the mouse, then 🚂 Probar and the train crosses
     url: '/bridges/?test',
     board: '.tv-lienzo',
-    before: `window.__rnd = Math.random; Math.random = () => 0.99; 1`,
+    // The gauge's words (Carga, máx.) hidden: one clip serves the four languages, so the dial speaks alone
+    before: `window.__rnd = Math.random; Math.random = () => 0.99; document.head.insertAdjacentHTML('beforeend', '<style>.tv-medidor-titulo, .tv-medidor text { display: none }</style>'); 1`,
     hold: 0, keep: 4,
     ready: `!!document.querySelector('.tv-lienzo') && !document.getElementById('cuenta')`,
     play: async (ev, b) => {
-      const { beams, deck } = JSON.parse(await ev(`(() => { const P = window.__trenEnVilo.P, e = P.etapas[P.etapa]; return JSON.stringify({ beams: e.solucion, deck: P.vigas.map(v => [v.a, v.b]) }); })()`));
+      const { beams, deck } = JSON.parse(await ev(`(() => { const t = window.__trenCopa, e = t.etapas[t.J.etapa]; return JSON.stringify({ beams: e.solucion, deck: t.J.vigas.map(v => [v.a, v.b]) }); })()`));
       const k = ([a, b]) => [a.join(','), b.join(',')].sort().join('|');
       const has = new Set(deck.map(k));
       const at = async ([x, y]) => JSON.parse(await ev(`(() => { const c = document.querySelector('.tv-lienzo'), r = c.getBoundingClientRect(), s = c._m.escala; return JSON.stringify([r.left + (${x} + 1.3) * s, r.top + (c._v.arriba - (${y})) * s]); })()`));
       const mouse = (type, [x, y]) => b.send('Input.dispatchMouseEvent', { type, x, y, button: 'left', buttons: type === 'mouseReleased' ? 0 : 1, clickCount: 1 });
       // Two passes: a beam that starts at a joint not laid yet waits for the second
       for (const beam of [...beams, ...beams]) {
-        const now = JSON.parse(await ev(`JSON.stringify(window.__trenEnVilo.P.vigas.map(v => [v.a, v.b]))`)).map(k);
+        const now = JSON.parse(await ev(`JSON.stringify(window.__trenCopa.J.vigas.map(v => [v.a, v.b]))`)).map(k);
         if (has.has(k(beam)) || now.includes(k(beam))) continue;
         const [p, q] = [await at(beam[0]), await at(beam[1])];
         await mouse('mousePressed', p);
@@ -84,7 +85,7 @@ const GAMES = {
       await sleep(500);
       await ev(`document.getElementById('btn-probar').click(); 1`);
       // Until the train reaches the far side, and a moment on, before the stage's summary covers the board
-      for (let t = 0; t < 150; t++) { if (await ev(`window.__trenEnVilo.P.hechas > 0`)) break; await sleep(100); }
+      for (let t = 0; t < 150; t++) { if (await ev(`window.__trenCopa.J.hechas.length > 0`)) break; await sleep(100); }
       await sleep(900);
     },
   },

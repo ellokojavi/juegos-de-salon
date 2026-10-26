@@ -7,7 +7,7 @@ of the gap now crosses.
 | | |
 |---|---|
 | Texts | kicker "¡Nuevo!" · title "¡El tren ya cruza!" · a lead with what the game is (a bridge of beams over a gap: it holds and the train crosses, or it falls) and that it is in Uno al día and La Copa; in the four languages |
-| Item | 🚂 Tren en Vilo (`puentes`, `/bridges/`), with its clip `public/assets/splash/bridges.mp4` and poster `bridges.jpg`: a level-1 wood stage built beam by beam in the neon look, then the bullet train crossing it (made by [`capture.mjs`](../../capture.mjs) `bridges`) |
+| Item | 🚂 Tren en Vilo (`puentes`, `/bridges/`), with its clip `public/assets/splash/bridges.mp4` and poster `bridges.jpg`: a level-1 wood stage built beam by beam in the neon look, then the bullet train crossing it, the strain gauge without its words so one clip serves the four languages (made by [`capture.mjs`](../../capture.mjs) `bridges`) |
 | On | from its publish, through 2026-11-09 inclusive, replacing the teaser in `ACTIVE` (D-430) |
 | Usability | full pass before merging (D-355) |
 
