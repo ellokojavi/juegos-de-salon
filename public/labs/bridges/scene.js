@@ -137,8 +137,10 @@ export function medidor(referencia, T = { carga_titulo: 'Carga', maximo: 'máx. 
   };
 }
 /** How hard the bridge works right now: its most strained unbroken beam, from 0 to 1 of the snapping point. */
-export const esfuerzoAhora = sim => sim.vigas.reduce((m, v) => (v.rota ? m : Math.max(m, Math.abs(v.tension) / FISICA.quiebre)), 0);
-export const colorTension = t => TENSION[Math.min(TENSION.length - 1, Math.floor((Math.abs(t) / FISICA.quiebre) * TENSION.length))];
+export const esfuerzoAhora = sim => sim.vigas.reduce((m, v) => (v.rota ? m : Math.max(m, Math.abs(v.tension) / v.quiebre)), 0);
+export const colorTension = (t, quiebre = FISICA.quiebre, ramp = TENSION) => ramp[Math.min(ramp.length - 1, Math.floor((Math.abs(t) / quiebre) * ramp.length))];
+/** Steel by strain: cold gray that heats to orange and red, so it never reads as wood. */
+export const TENSION_ACERO = ['#a9b0c4', '#b9b4c0', '#d6a58a', '#f08a2c', '#ff5a3c', '#ff2e4a'];
 
 const CIELO = ['#1d0838', '#26093f', '#2f0c48', '#3a1152', '#46175c', '#521e66', '#5e2670'];
 const ROCA = { base: '#5a2f8a', claro: '#7444a8', oscuro: '#3d1d63', borde: '#25103f' };
@@ -168,7 +170,36 @@ const mix = (a, b, f) => ({
 });
 // `t` stays on it, so the neon scene can draw the same time of day in its own palette
 export const timeOfDay = t => ({ ...(t <= 0.5 ? mix(MORNING, SUNSET, t / 0.5) : mix(SUNSET, NIGHT, (t - 0.5) / 0.5)), t });
-const MADERA = { borde: '#3a1d10', riel: '#e6e6f0' };
+const MADERA = { borde: '#3a1d10', riel: '#e6e6f0', cuerpo: '#c8874a', veta: '#8a5226', nudo: '#5e3418' };
+const ACERO = { borde: '#1c1d2a', brillo: '#eef0f8', remache: '#3c4054' };
+
+/**
+ * A beam with its material's texture (owner's request: wood and steel must be told apart at a glance).
+ * Wood: a warm plank with a broken darker grain along it and a knot now and then. Steel: a cold gray
+ * bar with a bright top edge and rivets at even steps. `col` is the body color (the strain's, while it runs).
+ */
+function viga(r, ax, ay, bx, by, g, v, col) {
+  const l = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / l, uy = (by - ay) / l, nx = -uy, ny = ux;
+  const en = (d, o = 0) => [ax + ux * d + nx * o, ay + uy * d + ny * o];
+  if (v.acero) {
+    r.linea(ax, ay, bx, by, ACERO.borde, g + 2);
+    r.linea(ax, ay, bx, by, col, g + 1);
+    const o = -Math.max(1, (g + 1) / 2) + 0.5;
+    r.linea(...en(0, o), ...en(l, o), ACERO.brillo, 1);
+    for (let d = 3; d < l - 2; d += 5) r.punto(...en(d).map(Math.round), ACERO.remache);
+    return;
+  }
+  r.linea(ax, ay, bx, by, MADERA.borde, g + 1);
+  r.linea(ax, ay, bx, by, col, g);
+  // The grain: dashes of different lengths, from a seed by the beam's position, so it doesn't flicker
+  const semilla = Math.abs(Math.round(ax * 7 + ay * 13 + bx * 3 + by * 5));
+  for (let d = 1 + (semilla % 3), k = 0; d < l - 1; k++) {
+    const largo = 2 + ((semilla + k * 5) % 4);
+    r.linea(...en(d), ...en(Math.min(l - 1, d + largo)), MADERA.veta, 1);
+    d += largo + 2 + ((semilla + k) % 3);
+  }
+  if (l > 12) r.punto(...en(l * (0.3 + (semilla % 4) / 10)).map(Math.round), MADERA.nudo);
+}
 const HUMO = ['rgba(255,255,255,0.95)', 'rgba(235,232,245,0.85)', 'rgba(200,196,220,0.7)', 'rgba(160,156,188,0.5)', 'rgba(130,126,160,0.3)'];
 const CHISPAS = ['#fff3a0', '#ffd23f', '#ff8a3d', '#ff2e4a'];
 const ASTILLAS = ['#e8b070', '#c8874a', '#8a5a30'];
@@ -283,8 +314,9 @@ export function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre
   // Thin planks: on a phone the grid is small, and a thick beam hides where it starts and ends
   const grosor = Math.max(1, Math.round(u * 0.07));
   const pos = sim ? i => [sim.nudos[i].x, sim.nudos[i].y] : null;
-  const lista = sim ? sim.vigas.map((v, k) => ({ k, a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino }))
-    : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0 }));
+  const lista = sim ? sim.vigas.map((v, k) => ({ k, a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino, acero: v.acero, quiebre: v.quiebre }))
+    : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0, acero: !!v.acero }));
+  const cuerpo = v => (v.acero ? (sim ? colorTension(v.t, v.quiebre, TENSION_ACERO) : TENSION_ACERO[0]) : sim ? colorTension(v.t, v.quiebre) : MADERA.cuerpo);
   // It blinks for a few seconds after the test and then stops: a red that never ends gets in the way
   const parpadeo = Math.sin(ahora * 8) > 0 && Date.now() - (rotasAntes.desde || 0) < PARPADEO_MS;
   for (const v of lista) {
@@ -292,8 +324,7 @@ export function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre
     const [ax, ay] = A(...v.a), [bx, by] = A(...v.b), g = v.camino ? grosor + 1 : grosor;
     // A beam that snapped in the last test glows red while you fix the bridge
     if (!sim && rotasAntes.has(`${v.a}|${v.b}`) && parpadeo) r.linea(ax, ay, bx, by, '#ff2e4a', g + 3);
-    r.linea(ax, ay, bx, by, MADERA.borde, g + 1);
-    r.linea(ax, ay, bx, by, sim ? colorTension(v.t) : '#c8874a', g);
+    viga(r, ax, ay, bx, by, g, v, cuerpo(v));
     if (v.camino) r.linea(ax, ay - Math.ceil(g / 2), bx, by - Math.ceil(g / 2), MADERA.riel, 1);
   }
   // A beam that just snapped throws sparks and splinters
@@ -321,8 +352,8 @@ export function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre
   const pieza = (v, [x, y]) => {
     const [ax, ay] = A(...v.a), [bx, by] = A(...v.b), l = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / l, uy = (by - ay) / l;
     const [px, py] = A(x, y), m = 3, g = v.camino ? grosor + 1 : grosor;
-    r.linea(px - ux * m, py - uy * m, px + ux * m, py + uy * m, MADERA.borde, g + 3);
-    r.linea(px - ux * m, py - uy * m, px + ux * m, py + uy * m, sim ? colorTension(v.t) : '#c8874a', g);
+    r.linea(px - ux * m, py - uy * m, px + ux * m, py + uy * m, v.acero ? ACERO.borde : MADERA.borde, g + 3);
+    r.linea(px - ux * m, py - uy * m, px + ux * m, py + uy * m, cuerpo(v), v.acero ? g + 1 : g);
   };
   for (const [p, q] of pasoPorEncima(vivas, nudos)) pieza(p, q);
   // The beam being dragged: dashes, green if it can go, red if not
