@@ -28,11 +28,16 @@ ok(await waitFor(`location.pathname === '/' && new URLSearchParams(location.sear
 ok(await ev(`getComputedStyle(document.getElementById('barra')).position === 'fixed' && !!document.querySelector('#barra a[href$="/labs/"]')`), 'the bar floats and leads back to the lab');
 ok(await ev(`!document.querySelector('#barra [data-exp="search"]') && !!document.querySelector('#barra [data-exp^="splash:"]')`), 'no box for 🔎 Buscar, which every player has (D-403); one per splash campaign, to look at it before turning it on');
 ok(await waitFor(`!!document.querySelector('.buscar-pill')`), 'the 🔎 search is on the home page with no parameter');
-// It opens with the newest experiment on (D-399): today, the splash
-ok(await waitFor(`new URLSearchParams(location.search).has('splash') && !!document.querySelector('.splash, [class*=splash]')`), 'it opens with the splash on');
+// It opens with the newest experiment on (D-399): today, the Halloween template (D-457)
+ok(await waitFor(`new URLSearchParams(location.search).get('season') === 'halloween' && document.documentElement.classList.contains('season-halloween')`), 'it opens with the newest experiment on: the Halloween template');
+await ev(`document.querySelector('#barra [data-exp="season:halloween"]').click(); 1`);
+ok(await waitFor(`!new URLSearchParams(location.search).has('season') && !document.documentElement.classList.contains('season') && !!document.getElementById('barra')`), 'and none is the home page as players see it');
+// A splash campaign's box shows it over the home page
+await ev(`document.querySelector('#barra [data-exp^="splash:"]').click(); 1`);
+ok(await waitFor(`new URLSearchParams(location.search).has('splash') && !!document.querySelector('.splash, [class*=splash]')`), 'a splash box opens its campaign');
 await b.shot('bar-splash');
 await ev(`document.querySelector('#barra [data-exp^="splash:"]').click(); 1`);
-ok(await waitFor(`!new URLSearchParams(location.search).has('splash') && !!document.getElementById('barra')`), 'and none is the home page as players see it');
+ok(await waitFor(`!new URLSearchParams(location.search).has('splash') && !!document.getElementById('barra')`), 'and unticked, it is gone');
 await ev(`scrollTo(0, 1500); 1`);
 ok(await waitFor(`document.getElementById('filtros-barra').classList.contains('pegada') && Math.abs(document.getElementById('filtros-barra').getBoundingClientRect().top - parseFloat(getComputedStyle(document.getElementById('filtros-barra')).top)) < 2`), 'scrolling down, the filters stay stuck on top');
 await ev(`const s = document.getElementById('idioma'); s.value = 'de'; s.dispatchEvent(new Event('change')); 1`);

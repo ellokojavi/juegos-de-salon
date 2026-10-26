@@ -493,6 +493,7 @@ node public/assets/js/pending-scores.test.mjs
 node public/assets/js/push.test.mjs
 node public/assets/js/records.test.mjs
 node public/assets/js/search.test.mjs
+node public/assets/js/season.test.mjs
 node public/assets/js/splash.test.mjs
 node public/assets/js/support.test.mjs
 node public/assets/js/transport/best-effort.test.mjs
@@ -687,7 +688,8 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   records/                    Leaderboards (D-212)
   today/                      One a Day (D-230, D-414)
   panel/                      Private owner dashboard (docs/PANEL.md)
-  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, in the lab, D-448) …
+  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, in the lab, D-448), season.js (seasonal touches on the home page and Rankings, in the lab, D-457) …
+  assets/season/              The seasonal templates, one row per date, and each date's stylesheet (docs/SEASONS.md)
   assets/js/transport/        Local, Firebase room and usage-signal transports, with their helpers
   assets/og/                  Social card images
   manifest.webmanifest · sw.js   PWA manifest (one per language) and service worker (D-221, D-222)
@@ -754,6 +756,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [El alemán](docs/ALEMAN.md)
 - [PR previews (D-429)](docs/PREVIEWS.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
+- [Seasonal templates (D-457)](docs/SEASONS.md)
 - [Test scope: which tests a change runs, and how the system learns it (D-391, D-392)](docs/TEST-SCOPE.md)
 - [Uno al día](docs/UNO-AL-DIA.md)
 - [Guía de usabilidad](docs/USABILIDAD.md)
