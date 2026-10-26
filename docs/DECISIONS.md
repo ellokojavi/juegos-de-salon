@@ -485,7 +485,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-437](decisions/D-437.md) | The 3-day Copa, offered on the new create screen (in the lab) | amended by D-438 |
 | [D-438](decisions/D-438.md) | The 3-day Copa has no Grand Final | current |
 | [D-439](decisions/D-439.md) | The weekend cup: three days of three games, a one-off closed the night it opened | current |
-| [D-440](decisions/D-440.md) | The processes round runs from a visible scheduled task, with a watchdog on GitHub | current |
+| [D-440](decisions/D-440.md) | The processes round runs from a visible scheduled task, with a watchdog on GitHub | amended by D-451 |
 | [D-441](decisions/D-441.md) | Pending work is watched from GitHub: stuck PRs, branches without a PR, and a waiter that does not go blind | current |
 | [D-442](decisions/D-442.md) | Agentes: no clue is pink, red only means a mistake | current |
 | [D-443](decisions/D-443.md) | Every email leaves from hola@, and each one proves it | current |
