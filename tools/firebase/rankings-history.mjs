@@ -12,6 +12,7 @@
  *   node tools/firebase/rankings-history.mjs              # shows what it would write, touching nothing
  *   node tools/firebase/rankings-history.mjs --write      # writes it (as administrator)
  *   … --with-labs                                         # adds the cups created from /labs/
+ *   … --podiums                                           # only the podiums of finished cups nobody saved (D-450)
  *
  * It can be run again: each name's jid comes from the name, nothing is duplicated, a saved podium
  * is not touched and a record is only written if it beats the one there. The lab's cups do not
@@ -142,6 +143,25 @@ export function history(cups, base = {}, now = Date.now(), { withLabs = false } 
   return { changes, people: [...people.values()], podiums, best };
 }
 
+/**
+ * The podiums of the finished cups that have none, as the app saves them on opening a finished cup
+ * (`cup/game.js`): the app only saves one when someone opens the cup after it ends, so a cup nobody
+ * reopened never reached the medal table (D-450). Only players who linked their own player carry
+ * a jid; the rest add up by name, as in the app. Lab cups do not count. Pure: tested without network.
+ */
+export function missingPodiums(cups, saved = {}, now = Date.now()) {
+  const out = {};
+  for (const [code, L0] of Object.entries(cups || {})) {
+    const L = conCierre(L0);
+    if (!L?.meta || L.meta.lab || saved?.[code] || !terminada(L.meta, now) || activos(L).length < 2) continue;
+    const p = podioDe(tabla(L, null, L.meta.end), L.players);
+    const end = Math.min(L.meta.end, now);
+    // `de`, `dias` and `por` are the stored field names (D-316 section 6)
+    if (Object.keys(p).length) out[`torneoPodios/${code}`] = { name: L.meta.name, end, de: activos(L).length, dias: L.meta.days, por: Object.keys(L.players || {})[0], p, at: end };
+  }
+  return out;
+}
+
 /* ------------------------------------------------------------------ */
 /* From the console                                                    */
 /* ------------------------------------------------------------------ */
@@ -154,6 +174,22 @@ if (isMain) {
   const write = process.argv.includes('--write') || process.argv.includes('--escribir');
   const withLabs = process.argv.includes('--with-labs') || process.argv.includes('--con-laboratorio');
   const t = await token();
+  if (process.argv.includes('--podiums')) {
+    const [cups, saved] = await Promise.all(['torneos', 'torneoPodios'].map(r => read(r, t)));
+    const changes = missingPodiums(cups, saved || {});
+    for (const p of Object.values(changes)) {
+      const place = l => Object.values(p.p).filter(x => x.l === l).map(x => x.n).join(' · ') || '—';
+      console.log(`🏆 ${p.name}: 🥇 ${place(1)} · 🥈 ${place(2)} · 🥉 ${place(3)}`);
+    }
+    if (!Object.keys(changes).length) console.log('Every finished cup already has its podium.');
+    else if (!write) console.log('\nNothing was written. To write it: node tools/firebase/rankings-history.mjs --podiums --write');
+    else {
+      const res = await fetch(`${firebaseConfig.databaseURL}/.json?access_token=${encodeURIComponent(t)}`, { method: 'PATCH', body: JSON.stringify(changes) });
+      if (!res.ok) { console.error(`✗ Could not write (HTTP ${res.status}): ${(await res.text()).slice(0, 300)}`); process.exit(1); }
+      console.log(`\n✓ Written: ${Object.keys(changes).length} podiums.`);
+    }
+    process.exit(0);
+  }
   const [torneos, jugadores, records, torneoPodios, jugadorCopas] = await Promise.all(['torneos', 'jugadores', 'records', 'torneoPodios', 'jugadorCopas'].map(r => read(r, t)));
   const { changes, people, podiums } = history(torneos, { jugadores: jugadores || {}, records: records || {}, torneoPodios: torneoPodios || {}, jugadorCopas: jugadorCopas || {} }, Date.now(), { withLabs });
 
