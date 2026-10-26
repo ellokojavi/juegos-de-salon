@@ -330,7 +330,9 @@ function renderPlay(v) {
       el('span', { class: 'word' }, pintaName(v.bid.n, v.bid.p)),
     ));
   } else {
-    board.append(el('div', { class: 'standing opens' }, T.opens));
+    // The invitation to bid is for the one who opens; the rest of the room is told who does
+    const abre = v.current || v.opener;
+    board.append(el('div', { class: 'standing opens' }, abre === yo ? T.opens : fmt(T.opensOther, { name: nameOf(abre) })));
   }
 
   renderActions(v, yo, miTurno);
