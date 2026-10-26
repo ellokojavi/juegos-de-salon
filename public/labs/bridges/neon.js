@@ -392,7 +392,7 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
   const grosor = 1.2;
   const pos = sim ? i => [sim.nudos[i].x, sim.nudos[i].y] : null;
   const lista = sim ? sim.vigas.map((v, n) => ({ k: n, a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino, acero: v.acero, quiebre: v.quiebre }))
-    : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0, acero: !!v.acero }));
+    : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0, acero: !!e.acero }));
   const parpadeo = Math.sin(ahora * 8) > 0 && Date.now() - (rotasAntes.desde || 0) < PARPADEO_MS;
   // Each material has its texture (owner's request: told apart at a glance). Wood: the warm rod with a
   // broken darker grain along it. Steel: a thicker cold rod with a bright top edge and rivets at even steps

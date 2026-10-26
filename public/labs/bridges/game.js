@@ -7,7 +7,7 @@
 import { el, vibrate, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
-import { ETAPAS, TIEMPO_S, fijos, crearSim, paso, DT, FISICA, puntajePartida, PUNTOS_ETAPA, PUNTOS_AHORRO, PUNTOS_SOLIDEZ, MARGEN_SOLIDO, BONO_RAPIDEZ, RAPIDO_S, picoDe, picoReferencia, costo, aceroUsado, unirViga, puntosMedios, partir, trazo, cubierta, esCubierta } from './engine.js';
+import { ETAPAS, TIEMPO_S, fijos, crearSim, paso, DT, FISICA, puntajePartida, PUNTOS_ETAPA, PUNTOS_AHORRO, PUNTOS_SOLIDEZ, MARGEN_SOLIDO, BONO_RAPIDEZ, RAPIDO_S, picoDe, picoReferencia, costo, unirViga, puntosMedios, partir, trazo, cubierta, esCubierta } from './engine.js';
 import { QUIETO, pct, aMundo, esfuerzoAhora, colorTension, timeOfDay, DEMO, trenMini, lienzo, medidor, dibujar, fueraDeEscena } from './scene.js';
 
 // The visitors' parameters are internal (the owner's request): they work in the workshop (a local server,
@@ -40,20 +40,20 @@ const T = {
     ['⏱', `Son ${ETAPAS.length} etapas en ${TIEMPO_S / 60} minutos, con poca madera. Suman las etapas superadas, la madera que sobra, la solidez y la rapidez.`],
   ],
   empezar: '🚂 Empezar', aJugar: '¡A construir!',
-  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', madera: 'Madera: {n} de {max} m', acero: '🔩 {n} de {max} m', materialMadera: '🪵 Madera', materialAcero: '🔩 Acero', carga: 'Tren {x} más pesado', cargaNormal: 'Tren de peso normal',
+  etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', madera: 'Madera: {n} de {max} m', acero: 'Acero: {n} de {max} m', carga: 'Tren {x} más pesado', cargaNormal: 'Tren de peso normal',
   probar: '🚂 Probar', arreglar: '✏️ Arreglar', deshacer: '↩ Deshacer', borrar: '🧹 Borrar', borrarSeguro: '🧹 ¿Seguro?',
   saltar: 'Saltar etapa', rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   aviso: {
     inicio: 'La vía ya está puesta: arrastra desde un punto marcado para reforzarla.',
     larga: 'Ese trazo no se parte en vigas: prueba uno más corto o más recto.', fuera: 'Fuera del área de construcción.',
-    repetida: 'Ya hay una viga ahí.', presupuesto: 'No te quedan vigas: quita alguna.', sinMadera: 'No te alcanza la madera: quita alguna viga.', sinAcero: 'No te queda acero: usa madera o quita una viga de acero.', acero: 'El acero aguanta el doble, pero hay poco.', suelta: 'Empieza en un punto marcado.',
+    repetida: 'Ya hay una viga ahí.', presupuesto: 'No te quedan vigas: quita alguna.', sinMadera: 'No te alcanza la madera: quita alguna viga.', sinAcero: 'No te alcanza el acero: quita alguna viga.', suelta: 'Empieza en un punto marcado.',
     quitada: 'Viga quitada.', via: 'La vía no se quita: el tren la necesita.', borrado: 'Borraste el puente: ↩ Deshacer lo trae de vuelta.',
     cruza: '🚂 Cruzando…', paso: '✅ ¡El tren pasó!', cayo: '💥 Se cayó el puente. Arréglalo y prueba otra vez.', cortada: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
   },
   maximo: 'máx. {p}', carga_titulo: 'Carga',
   felicita: {
     titulo: '¡Etapa {n} superada!',
-    madera: '🪵 Madera', maderaValor: '{n} de {max} m', vigasValor: '{n} de {max} vigas', minimo: 'mínimo conocido: {n}',
+    madera: '🪵 Madera', acero: '🔩 Acero', maderaValor: '{n} de {max} m', vigasValor: '{n} de {max} vigas', minimo: 'mínimo conocido: {n}',
     esfuerzo: '🧱 Esfuerzo máximo', esfuerzoValor: '{p}', referencia: 'el puente más barato: {r}',
     tiempo: '⏱ Tiempo', puntos: '⭐ Puntos', puntosDetalle: 'etapa {e} + ahorro {a} + solidez {s}',
     seguir: 'Siguiente etapa ▶', resultado: '🏁 Ver el resultado',
@@ -216,7 +216,7 @@ function felicitar(e, k, seguir) {
   const capa = el('div', { class: 'tv-felicitacion', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'tv-fel-titulo', onClick: ev => { if (ev.target === capa) cerrar(); } },
     el('div', { class: 'panel tv-fel-caja' },
       el('h2', { id: 'tv-fel-titulo' }, `✅ ${fmt(F.titulo, { n: k + 1 })}`),
-      fila(F.madera, e.madera ? fmt(F.maderaValor, { n: num(a.usadas), max: num(e.presupuesto) }) : fmt(F.vigasValor, { n: a.usadas, max: e.presupuesto }), fmt(F.minimo, { n: num(e.minimo) })),
+      fila(e.acero ? F.acero : F.madera, e.madera ? fmt(F.maderaValor, { n: num(a.usadas), max: num(e.presupuesto) }) : fmt(F.vigasValor, { n: a.usadas, max: e.presupuesto }), fmt(F.minimo, { n: num(e.minimo) })),
       fila(F.esfuerzo, fmt(F.esfuerzoValor, { p: pct(a.pico) }), fmt(F.referencia, { r: pct(a.referencia) })),
       fila(F.tiempo, mmss(segs)),
       fila(F.puntos, num(PUNTOS_ETAPA + a.puntos + a.puntosSolidez), fmt(F.puntosDetalle, { e: PUNTOS_ETAPA, a: num(a.puntos), s: num(a.puntosSolidez) })),
@@ -234,30 +234,19 @@ function jugar() {
   const c = lienzo(e);
   c._time = timeOfDay(P.etapa / Math.max(1, P.etapas.length - 1));
   const aguja = medidor(picoReferencia(e), T);
-  const aviso = el('p', { class: 'tv-aviso', 'aria-live': 'polite' }, e.acero ? T.aviso.acero : T.aviso.inicio);
+  const aviso = el('p', { class: 'tv-aviso', 'aria-live': 'polite' }, T.aviso.inicio);
   const puntos = el('div', { class: 'tv-puntos', 'aria-hidden': 'true' },
     ...P.etapas.map((_, k) => el('span', { class: k < P.hechas ? 'hecha' : k === P.etapa ? 'actual' : '' })));
   const cuenta = el('span', { class: 'tv-cuenta', id: 'tv-cuenta' });
-  // On wood, what is left as planks, one per meter (the last one shorter when the budget has decimals);
-  // steel, when the crossing has it, as gray bars beside them
+  // What is left as planks, one per meter (the last one shorter when the budget has decimals), or as
+  // gray bars on the steel crossings
   const tiras = (total, clase) => el('div', { class: `tv-tablones ${clase}`, 'aria-hidden': 'true' },
     ...Array.from({ length: Math.ceil(total - 1e-9) }, (_, k) => el('span', { style: `flex: ${Math.min(1, total - k)}` }, el('i'))));
   const llenar = (fila, total, queda) => [...fila.children].forEach((t, k) => {
     const largo = Math.min(1, total - k);
     t.firstChild.style.width = `${(Math.max(0, Math.min(largo, queda - k)) / largo) * 100}%`;
   });
-  const tablones = e.madera ? tiras(e.presupuesto, 'madera') : null;
-  if (tablones && e.acero) tablones.style.flex = e.presupuesto;
-  const barras = e.acero ? tiras(e.acero, 'acero') : null;
-  if (barras) barras.style.flex = e.acero;
-  const cuentaAcero = e.acero ? el('span', { class: 'tv-cuenta tv-cuenta-acero', id: 'tv-cuenta-acero' }) : null;
-  // The material the next beam is laid in: only on crossings with steel
-  P.material = 'madera';
-  const materiales = e.acero ? el('div', { class: 'tv-material', role: 'group' }, ...['madera', 'acero'].map(m =>
-    el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: `btn-${m}`, 'aria-pressed': String(m === P.material), onClick: ev => {
-      P.material = m; SFX.tap();
-      for (const b of ev.currentTarget.parentNode.children) b.setAttribute('aria-pressed', String(b === ev.currentTarget));
-    } }, m === 'madera' ? T.materialMadera : T.materialAcero))) : null;
+  const tablones = e.madera ? tiras(e.presupuesto, e.acero ? 'acero' : 'madera') : null;
   const botonProbar = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-probar', onClick: () => probarPuente() }, T.probar);
   const armados = {};
   const conConfirmacion = (clave, rotulo, rotuloArmado, accion, attrs = {}) => {
@@ -297,25 +286,16 @@ function jugar() {
       el('h2', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })),
       el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, trenMini(e.carga, e, c._time.t), e.carga > 1 ? fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` }) : T.cargaNormal)),
     el('div', { class: 'tv-tablero' }, c, aguja.caja),
-    ...(materiales ? [materiales] : []),
-    el('div', { class: 'tv-barra' },
-      barras ? el('div', { class: 'tv-tiras' }, tablones, barras) : tablones,
-      barras ? el('p', { class: 'tv-cuentas' }, cuenta, cuentaAcero) : cuenta, aviso),
+    el('div', { class: 'tv-barra' }, ...[tablones, cuenta].filter(Boolean), aviso),
     botonProbar, fila);
   c._ajustar();
 
   const usados = () => new Set([...fijos(e).map(([x, y]) => `${x},${y}`), ...P.vigas.flatMap(v => [v.a.join(','), v.b.join(',')])]);
   function repintar(arrastre = null) {
     const gastado = costo(e, P.vigas);
-    cuenta.textContent = e.madera ? fmt(T.madera, { n: num(gastado), max: num(e.presupuesto) }) : fmt(T.vigas, { n: P.vigas.length, max: e.presupuesto });
+    cuenta.textContent = e.madera ? fmt(e.acero ? T.acero : T.madera, { n: num(gastado), max: num(e.presupuesto) }) : fmt(T.vigas, { n: P.vigas.length, max: e.presupuesto });
     cuenta.classList.toggle('lleno', gastado >= e.presupuesto - 0.05);
     if (tablones) llenar(tablones, e.presupuesto, e.presupuesto - gastado);
-    if (barras) {
-      const acero = aceroUsado(P.vigas);
-      llenar(barras, e.acero, e.acero - acero);
-      cuentaAcero.textContent = fmt(T.acero, { n: num(acero), max: num(e.acero) });
-      cuentaAcero.classList.toggle('lleno', acero >= e.acero - 0.05);
-    }
     botonDeshacer.disabled = !P.historial.length || P.simulando;
     botonProbar.disabled = P.simulando;
     botonBorrar.disabled = P.simulando || !P.vigas.some(v => !esCubierta(v));
@@ -349,8 +329,7 @@ function jugar() {
     const m = punto(ev), g = cercano(m);
     const hasta = cerca(m, g) ? g : m;
     const t = Array.isArray(hasta) && Number.isInteger(hasta[0]) && Number.isInteger(hasta[1]) ? trazo(e, P.vigas, desde, hasta) : { piezas: [], motivo: 'suelta' };
-    const conAcero = !!e.acero && P.material === 'acero', piezas = conAcero ? t.piezas.map(p => ({ ...p, acero: true })) : t.piezas;
-    ultimoArrastre = { a: desde, b: hasta, ok: !t.motivo && costo(e, P.vigas) + costo(e, piezas) <= e.presupuesto + 1e-9 && aceroUsado(P.vigas) + aceroUsado(piezas) <= (e.acero || 0) + 1e-9 };
+    ultimoArrastre = { a: desde, b: hasta, ok: !t.motivo && costo(e, P.vigas) + costo(e, t.piezas) <= e.presupuesto + 1e-9 };
     repintar(ultimoArrastre);
   });
   c.addEventListener('pointerup', ev => {
@@ -371,12 +350,10 @@ function jugar() {
       const base = e.madera && hasta ? partir(partir(P.vigas, desde), hasta) : P.vigas;
       const t = hasta ? trazo(e, base, desde, hasta) : { piezas: [], motivo: 'fuera' };
       let vs = P.vigas;
-      const deAcero = !!e.acero && P.material === 'acero';
-      for (const pz of t.piezas) vs = e.madera ? unirViga(vs, pz.a, pz.b, usados(), deAcero) : [...vs, pz];
+      for (const pz of t.piezas) vs = e.madera ? unirViga(vs, pz.a, pz.b, usados()) : [...vs, pz];
       // What it costs is measured after joining: a long beam over the deck adds only what is not there yet
-      const motivo = t.motivo || (costo(e, vs) === costo(e, P.vigas) && vs.length === P.vigas.length && aceroUsado(vs) === aceroUsado(P.vigas) ? 'repetida'
-        : costo(e, vs) > e.presupuesto + 1e-9 ? (e.madera ? 'sinMadera' : 'presupuesto')
-        : aceroUsado(vs) > (e.acero || 0) + 1e-9 ? 'sinAcero' : null);
+      const motivo = t.motivo || (costo(e, vs) === costo(e, P.vigas) && vs.length === P.vigas.length ? 'repetida'
+        : costo(e, vs) > e.presupuesto + 1e-9 ? (e.acero ? 'sinAcero' : e.madera ? 'sinMadera' : 'presupuesto') : null);
       if (motivo) { if (motivo !== 'cero') { aviso.textContent = T.aviso[motivo] || T.aviso.fuera; SFX.error(); vibrate([30, 30, 30]); } }
       else { P.historial.push(P.vigas); P.vigas = vs; SFX.tap(); vibrate(10); aviso.textContent = ''; }
     }

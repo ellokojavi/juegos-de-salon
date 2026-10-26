@@ -315,7 +315,7 @@ export function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre
   const grosor = Math.max(1, Math.round(u * 0.07));
   const pos = sim ? i => [sim.nudos[i].x, sim.nudos[i].y] : null;
   const lista = sim ? sim.vigas.map((v, k) => ({ k, a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino, acero: v.acero, quiebre: v.quiebre }))
-    : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0, acero: !!v.acero }));
+    : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0, acero: !!e.acero }));
   const cuerpo = v => (v.acero ? (sim ? colorTension(v.t, v.quiebre, TENSION_ACERO) : TENSION_ACERO[0]) : sim ? colorTension(v.t, v.quiebre) : MADERA.cuerpo);
   // It blinks for a few seconds after the test and then stops: a red that never ends gets in the way
   const parpadeo = Math.sin(ahora * 8) > 0 && Date.now() - (rotasAntes.desde || 0) < PARPADEO_MS;
