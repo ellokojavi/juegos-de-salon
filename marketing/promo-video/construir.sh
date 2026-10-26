@@ -21,8 +21,8 @@ node render.mjs trabajo-vertical.mp4
 node render.mjs trabajo-horizontal.mp4 --wide
 
 # La música (ver README, "La canción"): parte en su primer golpe (2,975 s del mp3) y dura lo que el
-# video (85 golpes, 39,2 s: alcanza sin repetir compases), con fundido de entrada y de salida de 1 s.
-DUR=$(node -e "console.log((85 * 60 / 130).toFixed(4))")
+# video (89 golpes, 41,1 s since v8: all the song has, without repeating bars), con fundido de entrada y de salida de 1 s.
+DUR=$(node -e "console.log((89 * 60 / 130).toFixed(4))")
 ffmpeg -y -loglevel error -i music/cancion.mp3 -filter_complex \
   "[0:a]atrim=start=2.975,asetpts=PTS-STARTPTS,atrim=end=$DUR,afade=t=in:st=0:d=1,afade=t=out:st=$(node -e "console.log(($DUR - 1).toFixed(4))"):d=1[o]" \
   -map "[o]" -ar 48000 trabajo-audio.wav

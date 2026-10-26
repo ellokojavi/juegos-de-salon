@@ -198,7 +198,9 @@ const BEAT = 60 / 130;
 const FPS = 30;
 const GAMES = [
   { emoji: '⏳', name: 'LÍNEA DE TIEMPO', line: '¿Qué pasó primero?',                 chip: '1–6 jugadores', img: 'linea',  color: [255, 210, 63], beats: 5 },
-  { emoji: '🎲', name: 'DUDO',            line: 'Apuesta y aguanta la cara',          chip: '1–6 jugadores', img: 'dudo',   color: [255, 122, 26], beats: 5 },
+  // v8: the phone shakes (D-447), the dice roll on the cloth and land in the hand, and Javi bids
+  { emoji: '🎲', name: 'DUDO',            line: 'Agita el cacho y apuesta',           chip: '1–6 jugadores', img: 'dudo',   color: [255, 122, 26], beats: 11,
+    guion: [[0.35, 0], [4.25, 't0'], [4.7, 't1']] },
   // gira el globo con el dedo, lo acerca con +, marca Santiago y confirma: el mapa se mueve solo
   { emoji: '📍', name: '¿DÓNDE QUEDA?',   line: 'Encuentra la ciudad en el globo',     chip: '2–5 min',       img: 'donde',  color: [46, 160, 255], beats: 8,
     guion: [[1.2, 't0'], [1.55, 't1'], [2.35, 't2'], [2.7, 't3']] },
@@ -226,7 +228,7 @@ if (EN) {
     e4: '📲 Add it to your home screen', e5: 'In 4 languages: 🇪🇸 🇬🇧 🇧🇷 🇩🇪',
   };
   for (const id in T) $(id).innerHTML = T[id];
-  const G = { linea: ['TIMELINE', 'What happened first?', '1–6 players'], dudo: ["LIAR'S DICE", 'Bid and keep a straight face', '1–6 players'],
+  const G = { linea: ['TIMELINE', 'What happened first?', '1–6 players'], dudo: ["LIAR'S DICE", 'Shake the cup and bid', '1–6 players'],
     donde: ['WHERE IS IT?', 'Find the city on the globe', '2–5 min'], zip: ['ZIP', 'One line through the whole board', '3 min'] };
   for (const g of GAMES) if (G[g.img]) [g.name, g.line, g.chip] = G[g.img];
   Object.assign(UAD, { name: 'ONE A DAY', line: 'A surprise game every day,<br>the same for everyone', chip: '🔥 Build your streak' });
@@ -234,8 +236,8 @@ if (EN) {
     anio: 'What Year?', reinas: 'Queens', tango: 'Tango', desenredo: 'Untangle', generala: 'Generala', julepe: 'Julep', rutas: 'Broken Routes', loteo: 'Plots', pintaminas: 'Paint Mines' };
   for (const m of MORE) m[1] = M[m[2]] || m[1];
 }
-// Escenas en golpes: gancho 6 · logo 6 · juegos 23 · más 10 · Uno al día 16 · La Copa 14 · cierre 10 = 85 (39,2 s; la canción alcanza sola, ver README)
-const S = {}; { let b = 0; for (const [k, n] of [['hook', 6], ['logo', 6], ['games', GAMES.reduce((s, g) => s + g.beats, 0)], ['more', 10], ['uad', 16], ['copa', 14], ['cta', 10]]) { S[k] = [b * BEAT, (b + n) * BEAT]; b += n; } }
+// Escenas en golpes: gancho 6 · logo 6 · juegos 29 · más 9 · Uno al día 16 · La Copa 14 · cierre 9 = 89 (41,1 s: all the song has, with no repeat; see README)
+const S = {}; { let b = 0; for (const [k, n] of [['hook', 6], ['logo', 6], ['games', GAMES.reduce((s, g) => s + g.beats, 0)], ['more', 9], ['uad', 16], ['copa', 14], ['cta', 9]]) { S[k] = [b * BEAT, (b + n) * BEAT]; b += n; } }
 const DURATION = S.cta[1];
 const G0 = S.games[0], G1 = S.games[1];
 { let t = G0; for (const g of GAMES) { g.len = g.beats * BEAT; g.t0 = t; t += g.len; } }
@@ -317,6 +319,8 @@ function makePlayer(box, play, sc, ox, touchSize = 74) {
     path: x.tap.path ? x.tap.path.map(([dx, dy]) => [dx * sc, dy * sc]) : (x.tap.dx || x.tap.dy) ? [[0, 0], [x.tap.dx * sc, x.tap.dy * sc]] : null,
     mids: x.tap.mids || 0 }));
   P.tras = play.map(f => f.tras ?? null);
+  P.sacude = play.map(f => !!f.sacude);   // the phone shaken by the player (Dudo, v8)
+  P.k = 0;
   P.raw.forEach(x => { x.lead = x.path ? (x.path.length > 2 ? 1.3 : x.mids ? 0.75 : 0.42) : 0; });
   return P;
 }
@@ -354,6 +358,7 @@ function playAt(P, lt) {
     k = x.k - x.mids - 1 + j;
   }
   P.frames.forEach((img, i) => { img.style.display = i === k ? '' : 'none'; });
+  P.k = k;
   P.touch.style.opacity = 0; P.ripple.style.opacity = 0;
   for (const x of P.taps) {
     if (x.quiet) continue;
@@ -481,8 +486,12 @@ function render(t) {
     const bump = gi > 0 ? Math.exp(-lt * 6) * Math.sin(lt * 14) : 0;
     const tilt = (gi % 2 ? 1 : -1) * 6;
     const leave = easeIn(prog(t, G1 - 0.4, G1));
+    // While the player shakes it (Dudo), the whole phone shakes with the dice rolling inside
+    if (g.P) playAt(g.P, t - g.t0);   // this frame's capture first: it says whether the phone shakes
+    const sac = g.P && g.P.sacude[g.P.k] ? 1 : 0;
+    const shake = sac ? ` translate(${(Math.sin(t * 57) * 22).toFixed(1)}px, ${(Math.cos(t * 43) * 16).toFixed(1)}px) rotateZ(${(Math.sin(t * 39) * 4).toFixed(2)}deg)` : '';
     css($('phone'), {
-      transform: `perspective(2400px) translateY(${lerp(1400, 0, enter) + Math.sin(t * 1.6) * 12 + leave * 1400}px) rotateY(${tilt * easeOut(clamp(lt / 0.6)) + bump * 6}deg) rotateZ(${bump * 2}deg) scale(${(1 + bump * 0.03) * PS})`,
+      transform: `perspective(2400px) translateY(${lerp(1400, 0, enter) + Math.sin(t * 1.6) * 12 + leave * 1400}px) rotateY(${tilt * easeOut(clamp(lt / 0.6)) + bump * 6}deg) rotateZ(${bump * 2}deg) scale(${(1 + bump * 0.03) * PS})${shake}`,
       boxShadow: `0 0 0 3px rgba(255,255,255,0.14), 0 40px 90px rgba(0,0,0,0.6), 0 0 90px rgba(${col},0.55)`,
     });
     shots.forEach((img, i) => {
