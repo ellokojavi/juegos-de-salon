@@ -10,6 +10,8 @@
 import { el } from '../../assets/js/ui.js';
 import { ALTO, LARGO_MAX, PIEZAS, fijos, FISICA, alturaCamino } from './engine.js';
 import { particulas } from './pixel.js';
+import { param } from '../../assets/js/parametros.js';
+import { TRENES } from './trains.js';
 import { QUIETO, aPantalla, pasoPorEncima, PARPADEO_MS } from './scene.js';
 
 const ARTE = 16;
@@ -131,13 +133,22 @@ export function vagon(ctx, x, y, carga = 1, giro = 0) {
 }
 
 /** The stage's train in small, next to its weight in the title (scene.js's trenMini, in this style). */
+/** The first neon train, as a design like those in trains.js. */
+export const CLASICO = {
+  id: 'clasico', nombre: 'Clásico', lema: 'El primer tren neón, el que se critica: locomotora a vapor de formas simples.', humo: CHIMENEA, luz: { dx: 10.2, dy: -8.6 },
+  frente: (ctx, x, y, { giro = 0, carga = 1 } = {}) => locomotora(ctx, x, y, { giro, pesada: carga >= 1.6 }),
+  vagon,
+};
+/** The train drawn: `?train=bala|deco|metro|nocturno` picks one of trains.js's designs (lab prototype). */
+const TREN = TRENES[param('train')] || CLASICO;
+
 export function trenMiniNeon(carga) {
   const dpr = window.devicePixelRatio || 1, k = 2, ancho = 44, alto = 17;
   const c = el('canvas', { class: 'tv-tren-mini', 'aria-hidden': 'true', width: ancho * k * dpr, height: alto * k * dpr });
   c.style.width = `${ancho * k}px`; c.style.height = `${alto * k}px`;
   const ctx = c.getContext('2d');
   ctx.setTransform(k * dpr, 0, 0, k * dpr, 0, 0);
-  vagon(ctx, 9, alto - 0.5, carga); locomotora(ctx, 30, alto - 0.5, { pesada: carga >= 1.6 });
+  TREN.vagon(ctx, 9, alto - 0.5, carga); TREN.frente(ctx, 30, alto - 0.5, { carga });
   return c;
 }
 
@@ -331,13 +342,13 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
       }
       linea(ctx, en[n][0] + 6, en[n][1] - 3.8, en[n - 1][0] - 9, en[n - 1][1] - 3.8, OSCURO, 1.2);
     }
-    if (!QUIETO && sim.t < 1.2 && Math.random() < 0.5) for (const s of [-1, 1]) esc.parts.agregar({ x: en[0][0] + s * 9, y: en[0][1] - 2, vx: s * (10 + Math.random() * 10), vy: -4, vida: 0.8, radio: 1, crece: 3, colores: ['rgba(255,255,255,0.7)'], tipo: 'humo' });
+    if (TREN.humo && !QUIETO && sim.t < 1.2 && Math.random() < 0.5) for (const s of [-1, 1]) esc.parts.agregar({ x: en[0][0] + s * 9, y: en[0][1] - 2, vx: s * (10 + Math.random() * 10), vy: -4, vida: 0.8, radio: 1, crece: 3, colores: ['rgba(255,255,255,0.7)'], tipo: 'humo' });
     // The headlight: a soft cone ahead
     if (!tr.cayo) {
-      const [lx, ly] = [en[0][0] + 10.2, en[0][1] - 9.6];
+      const [lx, ly] = [en[0][0] + TREN.luz.dx, en[0][1] + TREN.luz.dy];
       const cono = ctx.createLinearGradient(lx, 0, lx + 26, 0);
       cono.addColorStop(0, 'rgba(255,243,160,0.4)'); cono.addColorStop(1, 'rgba(255,243,160,0)');
-      ctx.fillStyle = cono; ctx.beginPath(); ctx.moveTo(lx, ly - 0.8); ctx.lineTo(lx + 26, ly - 5); ctx.lineTo(lx + 26, ly + 6); ctx.lineTo(lx, ly + 0.8); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = cono; ctx.beginPath(); ctx.moveTo(lx, ly - 0.8); ctx.lineTo(lx + 26, ly - 5); ctx.lineTo(lx + 26, ly + 5); ctx.lineTo(lx, ly + 0.8); ctx.closePath(); ctx.fill();
     }
     for (const p of piezas) {
       const [px, py] = en[p.k];
@@ -348,13 +359,13 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
         }
         continue;
       }
-      if (p.loco) locomotora(ctx, px, py - 0.5, { giro, pesada: e.carga >= 1.6 });
-      else vagon(ctx, px, py - 0.5, e.carga, giro + p.k);
-      if (p.loco && !tr.cayo && !QUIETO) {
+      if (p.loco) TREN.frente(ctx, px, py - 0.5, { giro, carga: e.carga });
+      else TREN.vagon(ctx, px, py - 0.5, e.carga, giro + p.k);
+      if (p.loco && TREN.humo && !tr.cayo && !QUIETO) {
         esc.humo += dt;
         if (esc.humo > 0.09) {
           esc.humo = 0;
-          esc.parts.agregar({ x: px + CHIMENEA.dx, y: py + CHIMENEA.dy, vx: -8 - Math.random() * 8, vy: -16 - Math.random() * 6, vida: 1.5, radio: 1, crece: 2.6, colores: ['rgba(255,240,255,1)'], tipo: 'humo' });
+          esc.parts.agregar({ x: px + TREN.humo.dx, y: py + TREN.humo.dy, vx: -8 - Math.random() * 8, vy: -16 - Math.random() * 6, vida: 1.5, radio: 1, crece: 2.6, colores: ['rgba(255,240,255,1)'], tipo: 'humo' });
         }
       }
     }

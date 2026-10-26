@@ -121,6 +121,14 @@ going by in the house's colors: a lilac dawn, a sunset in the title's yellow →
 style yet, so they never come. It is a prototype to compare: if the owner keeps it, it becomes the only
 style and `pixel.js` stays only for the teaser.
 
+The owner found that first neon train too childish and asked for smoother, more modern options with a
+metallic finish. `trains.js` holds four designs: **Bala** (a chrome high-speed train), **Aerodinámico** (a
+1930s art deco steam streamliner in purple enamel with chrome lines), **Metro** (a brushed aluminium
+electric train) and **Nocturno** (glossy black outlined in neon). `?train=<id>` picks one in the game, and
+`/labs/bridges/trains/` shows them all, the first one included, up close and crossing a deck, each with a
+button to play with it. For now the designs always draw passenger cars: the wagons that show the train's
+weight (crates, logs, coal, containers) come once a design is chosen.
+
 Its sprites also draw the home page's first teaser (D-430): `tren-en-vilo-pronto`, on through
 2026-10-28, a GIF of a train stopping at the edge of a gap, no name and no link, made by
 `marketing/splash/teaser.mjs` from `marketing/splash/teaser/bridges.html`, which imports `pixel.js`.
