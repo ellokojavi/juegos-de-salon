@@ -161,7 +161,8 @@ const FORMAS = new Map([
   ...PLATILLO.map((s, k) => [s, platillo(k)]),
   [PREGUNTA, ctx => signo(ctx, '?')], [EXCLAMACION, ctx => signo(ctx, '!')],
   [PEZ, pez],
-  [BALLENA.sube, ballena(-0.16)], [BALLENA.arriba, ballena(0)], [BALLENA.baja, ballena(0.16)],
+  // Steep on the way out and back in (owner's request), so it reads as a leap out of the water
+  [BALLENA.sube, ballena(-0.55)], [BALLENA.arriba, ballena(0)], [BALLENA.baja, ballena(0.55)],
   ...TOPO.map((s, k) => [s, topo(k)]), ...TOPO_MIEDO.map((s, k) => [s, topoMiedo(k)]),
   [LANCHA, lancha],
   [SURFISTA.arriba, jinete('arriba')], [SURFISTA.agachado, jinete('agachado')], [SURFISTA.cae, jinete('cae')],
