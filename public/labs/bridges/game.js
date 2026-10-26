@@ -42,7 +42,7 @@ const T = {
   empezar: '🚂 Empezar', aJugar: '¡A construir!',
   etapa: 'Etapa {n} de {total}', vigas: 'Vigas: {n} de {max}', madera: 'Madera: {n} de {max} m', acero: '🔩 {n} de {max} m', materialMadera: '🪵 Madera', materialAcero: '🔩 Acero', carga: 'Tren {x} más pesado', cargaNormal: 'Tren de peso normal',
   probar: '🚂 Probar', arreglar: '✏️ Arreglar', deshacer: '↩ Deshacer', borrar: '🧹 Borrar', borrarSeguro: '🧹 ¿Seguro?',
-  rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
+  saltar: 'Saltar etapa', rendirse: '🏳️ Rendirse', rendirseSeguro: '🏳️ ¿Seguro?',
   aviso: {
     inicio: 'La vía ya está puesta: arrastra desde un punto marcado para reforzarla.',
     larga: 'Ese trazo no se parte en vigas: prueba uno más corto o más recto.', fuera: 'Fuera del área de construcción.',
@@ -131,6 +131,8 @@ const segundos = () => (P.fin?.segundos ?? (Date.now() - P.inicio) / 1000);
 let CATALOGO = null;
 // The wood catalog (each beam costs its length) is the game; `?catalogo=vigas` loads the old beam-count
 // one and `?catalogo=prueba` the heavier-train one, kept for comparison
+// The game is in the lab while its page is under /labs/: there it offers lab-only tools (the stage skip)
+const EN_LABS = /\/labs\//.test(location.pathname);
 const ARCHIVO_CATALOGO = { prueba: './catalogo-prueba.json', vigas: './catalogo.json' }[new URLSearchParams(location.search).get('catalogo')] || './catalogo-madera.json';
 fetch(new URL(ARCHIVO_CATALOGO, import.meta.url)).then(r => (r.ok ? r.json() : null)).then(c => { CATALOGO = Array.isArray(c) && c.length ? c : null; }).catch(() => {});
 function sortearEtapas() {
@@ -277,12 +279,20 @@ function jugar() {
   }, { id: 'btn-borrar' });
   const botonRendirse = conConfirmacion('rendirse', T.rendirse, T.rendirseSeguro, () => terminar('rendido'), { id: 'btn-rendirse' });
   const fila = el('div', { class: 'tv-acciones' }, botonDeshacer, botonBorrar, botonRendirse);
+  // While the game is in the lab (owner's request): jump to the next stage without building, to try the
+  // later ones. A skipped stage counts as passed with all its wood spent and no strain, so the score holds
+  const botonSaltar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm tv-saltar', id: 'btn-saltar', 'aria-label': T.saltar, title: T.saltar, onClick: () => {
+    if (P.simulando || P.fin) return;
+    SFX.tap(); P.hechas++; P.usadas.push(e.presupuesto); P.picos.push(null);
+    if (P.hechas >= P.etapas.length) { terminar('todas'); return; }
+    mudarVisita(); P.etapa++; P.vigas = cubierta(P.etapas[P.etapa]); P.historial = []; P.rotasAntes = new Set(); jugar();
+  } }, '⏭');
 
   vista.replaceChildren(
     // On top, the progress and the clock; then the stage as the screen's title, with the train's weight
     // always in view (it was a sign that slid away); the board; what is spent and the notice; the buttons
     el('div', { class: 'tv-cabeza' }, puntos,
-      el('span', { class: 'tv-reloj', id: 'tv-reloj' }, `⏱ ${mmss(Math.max(0, TIEMPO_S - segundos()))}`)),
+      el('span', { class: 'tv-reloj', id: 'tv-reloj' }, `⏱ ${mmss(Math.max(0, TIEMPO_S - segundos()))}`), ...(EN_LABS ? [botonSaltar] : [])),
     el('div', { class: 'tv-titulo-etapa' },
       el('h2', { class: 'tv-etapa' }, fmt(T.etapa, { n: P.etapa + 1, total: P.etapas.length })),
       el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, trenMini(e.carga, e), e.carga > 1 ? fmt(T.carga, { x: `×${String(e.carga).replace('.', ',')}` }) : T.cargaNormal)),
