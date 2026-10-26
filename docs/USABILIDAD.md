@@ -262,7 +262,7 @@ Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
   acepta la escalera antes que achicar los botones de idioma bajo 44 px (C-8) o volver atrás D-231.
 - **Los avisos de La Copa, en el próximo video y no en la portada** (#210, opciones C y A): la
   versión 7 del video promocional muestra la notificación del día que se abre (anotado en
-  `marketing/promo-video/README.md`, "Pendiente: versión 7"). La bajada de La Copa en la portada
+  `marketing/promo-video/README.md`, "Pendiente: versión 7"; still not filmed in v7 or v8, it is under "Pendiente: versión 9" now). La bajada de La Copa en la portada
   queda como está, hasta ver en el panel si la gente activa los avisos.
 - **Reinas: ↩️ Deshacer** (#301, opción A, reporte 🐞 #319; D-283): a la izquierda de 🧹 Borrar
   todo, sin confirmación, quita el último gesto (un arrastre entero es uno) hasta el comienzo; el
