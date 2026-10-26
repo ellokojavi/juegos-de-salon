@@ -61,6 +61,8 @@ const GAMES = {
     // its solution's beams dragged in one by one with the mouse, then 🚂 Probar and the train crosses
     url: '/bridges/?test',
     board: '.tv-lienzo',
+    // The scene at its own shape, as big as the splash draws it (a hero, full width): no square, no margin
+    native: 720,
     // The gauge's words (Carga, máx.) hidden: one clip serves the four languages, so the dial speaks alone
     before: `window.__rnd = Math.random; Math.random = () => 0.99; document.head.insertAdjacentHTML('beforeend', '<style>.tv-medidor-titulo, .tv-medidor text { display: none }</style>'); 1`,
     hold: 0, keep: 4,
@@ -93,7 +95,8 @@ const GAMES = {
 
 const only = process.argv[2];
 mkdirSync(DEST, { recursive: true });
-const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 390, height: 844 });
+// The bridge's scene is drawn as wide as its page allows (560 px at most): a wider window gives a sharper clip
+const b = await launch({ dir: `${OUT}/p`, out: OUT, width: only === 'bridges' ? 600 : 390, height: 844 });
 const ev = e => b.evaluate(e);
 try {
   for (const [name, g] of Object.entries(GAMES)) {
@@ -109,10 +112,12 @@ try {
     // The board, with a margin, as a square
     const r = JSON.parse(await ev(`JSON.stringify(document.querySelector('${g.board}').getBoundingClientRect())`));
     const side = Math.max(r.width, r.height) + 16;
-    const clip = { x: r.left + r.width / 2 - side / 2, y: r.top + r.height / 2 - side / 2, width: side, height: side, };
+    const clip = g.native ? { x: r.left, y: r.top, width: r.width, height: r.height }
+      : { x: r.left + r.width / 2 - side / 2, y: r.top + r.height / 2 - side / 2, width: side, height: side, };
+    const W = g.native || SIZE, H = g.native ? 2 * Math.round(g.native * r.height / r.width / 2) : SIZE;
     let n = 0, recording = true;
     const shoot = async () => {
-      const s = await b.send('Page.captureScreenshot', { format: 'png', clip: { ...clip, scale: SIZE / side } });
+      const s = await b.send('Page.captureScreenshot', { format: 'png', clip: { ...clip, scale: W / clip.width } });
       writeFileSync(`${frames}/${String(n++).padStart(4, '0')}.png`, Buffer.from(s.result.data, 'base64'));
     };
     const loop = (async () => { while (recording) { const t0 = Date.now(); await shoot(); await sleep(Math.max(0, 1000 / FPS - (Date.now() - t0))); } })();
@@ -123,7 +128,7 @@ try {
     recording = false; await loop;
     const mp4 = join(DEST, `${name}.mp4`);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', `${frames}/%04d.png`, '-frames:v', String(Math.min(n, solvedAt + (g.keep ?? n))),
-      '-vf', `scale=${SIZE}:${SIZE}:flags=lanczos,tpad=stop_mode=clone:stop_duration=${g.keep ? 1.2 : 0},format=yuv420p`, '-c:v', 'libx264', '-crf', '30', '-preset', 'slow', '-movflags', '+faststart', '-an', mp4]);
+      '-vf', `scale=${W}:${H}:flags=lanczos,tpad=stop_mode=clone:stop_duration=${g.keep ? 1.2 : 0},format=yuv420p`, '-c:v', 'libx264', '-crf', '30', '-preset', 'slow', '-movflags', '+faststart', '-an', mp4]);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', `${frames}/${String(Math.min(n - 1, solvedAt + Math.min(3, (g.keep ?? 4) - 1))).padStart(4, '0')}.png`, '-q:v', '5', join(DEST, `${name}.jpg`)]);
     console.log(`✓ ${name}: ${n} frames → ${mp4}`);
   }
