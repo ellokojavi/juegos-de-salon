@@ -585,7 +585,8 @@ export const PATHS = {
   'labs/bridges': {
     intro: [],
     game: [START, `1`, `1`, `1`],
-  },  // "☕ Buy us a coffee" (support.js, in the lab): the page, and the thank-you Stripe sends back to
+  },
+  // "☕ Buy us a coffee" (support.js, in the lab): the page, and the thank-you Stripe sends the donor back to
   'labs/support': {
     intro: [],
     thanks: [`location.search = '?thanks&test'`, `1`],
