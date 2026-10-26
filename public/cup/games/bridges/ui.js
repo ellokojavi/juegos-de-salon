@@ -114,7 +114,7 @@ export function montar(raiz, ctx) {
       el('div', { class: 'tv-cabeza' }, progreso(), relojNodo),
       el('div', { class: 'tv-titulo-etapa' },
         el('h2', { class: 'tv-etapa', id: 'tv-etapa' }, fmt(T.tvStage, { n: J.etapa + 1, t: total })),
-        el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, trenMini(e.carga), e.carga > 1 ? fmt(T.tvLoad, { x: `×${n1(e.carga)}` }) : T.tvLoadNormal)),
+        el('p', { class: `tv-carga${e.carga > 1 ? ' pesado' : ''}`, id: 'tv-carga' }, trenMini(e.carga, e), e.carga > 1 ? fmt(T.tvLoad, { x: `×${n1(e.carga)}` }) : T.tvLoadNormal)),
       el('div', { class: 'tv-tablero' }, c, aguja.caja),
       el('div', { class: 'tv-barra' }, cuenta, aviso),
       botonProbar,
