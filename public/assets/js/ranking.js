@@ -330,10 +330,24 @@ export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {},
   const T = R();
   const caja = el('div', { class: 'rk-resultado', 'aria-live': 'polite' });
   buzonAlFinal(juego, () => caja.closest('.screen') || document.querySelector('.screen.active'));
+  // A save that fails for the network is tried again, twice, once the phone says it is back online
+  // or after a few seconds, before the card says it was not saved
+  const reintentos = async J => {
+    for (let i = 0; ; i++) {
+      try { return await J.anotar({ juego, variante, s, ms }); } catch (e) {
+        if (e?.code === 'pin' || i >= 2) throw e;
+        await new Promise(ok => {
+          const listo = () => { clearTimeout(t); globalThis.removeEventListener?.('online', listo); ok(); };
+          const t = setTimeout(listo, 4000 * (i + 1));
+          if (globalThis.navigator?.onLine === false) globalThis.addEventListener?.('online', listo);
+        });
+      }
+    }
+  };
   const anotar = async () => {
     try {
       const J = await jugador();
-      const r = await J.anotar({ juego, variante, s, ms });
+      const r = await reintentos(J);
       if (!r) return;
       // Un 0 (rendirse) no se celebra: "¡Récord nuevo!" bajo un 0/100 contradice la pantalla
       const celebra = Number(s) > 0;
@@ -343,7 +357,9 @@ export function avisoPartida({ juego, variante = '', s, ms, alAnotar = () => {},
       else caja.append(el('p', { class: 'rk-ok center' }, T.countedGame));
       alAnotar(r);
     } catch (e) {
-      caja.append(el('p', { class: 'rk-error' }, e?.code === 'pin' ? T.loggedOut : T.notSaved));
+      // Kept on the phone and sent when the signal is back, instead of lost (`subirPendientes`)
+      const guardada = e?.code !== 'pin' && await jugador().then(J => J.guardarPendiente({ juego, variante, s, ms })).catch(() => false);
+      caja.append(el('p', { class: guardada ? 'muted center' : 'rk-error' }, e?.code === 'pin' ? T.loggedOut : guardada ? T.savedLater : T.notSaved));
     }
   };
   if (!rankingsVisibles()) return caja;
