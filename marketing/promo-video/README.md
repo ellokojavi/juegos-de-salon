@@ -443,7 +443,9 @@ from 5). The seven beats came from the song's four spare ones, two from "¡Y muc
 (10 → 8) and one from the close (10 → 9): 89 beats, all the song has. The grid follows today's home page:
 Cuarto Rey, Conexiones and Julepe went to the lab and 🕵️ Agentes came in (13 phones). Everything
 was recaptured with app 0.211.3; Uno al día now starts from the card's ▶ Jugar hoy chip (see
-Trampas). The Cup notifications shot stays pending.
+Trampas). The Cup notifications shot stays pending. The usability review found the vertical grid's
+labels touching ("El Ahorcado⚓ Batalla Naval": 212 px labels on 205 px columns, there since v7):
+they are 200 px now and the Spanish vertical was rendered again (the English one came out the same).
 
 ## Ideas que quedaron en el aire
 
