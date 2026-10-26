@@ -51,11 +51,9 @@
       "estado": "v8 built 2026-10-26, not uploaded yet: the owner uploads it. On YouTube today, the v7 Shorts (ES https://youtube.com/shorts/zM9v2UwEsM8, EN https://youtube.com/shorts/UubTGcUoQD8) in the home page share sheet (D-410)",
       "revision": {
         "fecha": "2026-10-26",
-        "app": "0.211.3",
+        "app": "0.211.5",
         "al_dia": true,
-        "pendiente": [
-          "The Cup notifications shot (#210) stays pending for v9"
-        ]
+        "pendiente": []
       },
       "seleccion": true,
       "escenas": [
@@ -124,8 +122,8 @@
         "caso"
       ],
       "revision": {
-        "fecha": "2026-10-21",
-        "app": "0.190.2",
+        "fecha": "2026-10-26",
+        "app": "0.211.5",
         "al_dia": true,
         "pendiente": []
       }
@@ -165,8 +163,8 @@
       "seleccion": true,
       "estado": "entregado al dueño",
       "revision": {
-        "fecha": "2026-10-21",
-        "app": "0.190.2",
+        "fecha": "2026-10-26",
+        "app": "0.211.5",
         "al_dia": true,
         "pendiente": []
       }
@@ -216,8 +214,8 @@
         "agentes"
       ],
       "revision": {
-        "fecha": "2026-10-21",
-        "app": "0.190.2",
+        "fecha": "2026-10-26",
+        "app": "0.211.5",
         "al_dia": true,
         "pendiente": []
       },
@@ -258,8 +256,8 @@
         "numeros-explosivos"
       ],
       "revision": {
-        "fecha": "2026-10-21",
-        "app": "0.190.2",
+        "fecha": "2026-10-26",
+        "app": "0.211.5",
         "al_dia": true,
         "pendiente": []
       }
@@ -305,8 +303,8 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-21",
-        "app": "0.190.2",
+        "fecha": "2026-10-26",
+        "app": "0.211.5",
         "al_dia": true,
         "pendiente": []
       }
@@ -367,8 +365,8 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-21",
-        "app": "0.190.2",
+        "fecha": "2026-10-26",
+        "app": "0.211.5",
         "al_dia": true,
         "pendiente": []
       },
@@ -410,8 +408,8 @@
         "public/assets/email/header.jpg"
       ],
       "revision": {
-        "fecha": "2026-10-21",
-        "app": "0.190.2",
+        "fecha": "2026-10-26",
+        "app": "0.211.5",
         "al_dia": true,
         "pendiente": []
       }
@@ -451,11 +449,11 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-21",
-        "app": "0.190.2",
+        "fecha": "2026-10-26",
+        "app": "0.211.5",
         "al_dia": false,
         "pendiente": [
-          "The 👑 Reinas screenshot predates the ⏱ elapsed-time clock Reinas shows while playing since D-384."
+          "Its cards still show 👑 Cuarto Rey, which left the home page for the lab, and the 👑 Reinas screenshot predates the ⏱ clock (D-384)."
         ]
       }
     }
