@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo in La Copa: its texts in the four languages (C-3), merged into rules.js (D-331).
+ * 🚅 Tren en Vilo in La Copa: its texts in the four languages (C-3), merged into rules.js (D-331).
  * `juego` is its entry in `juegos`; `ui`, the keys its screen reads from T, all prefixed `tv`. Undo and
  * Give up reuse the cup's `undo` and `giveUp`.
  */
@@ -20,7 +20,7 @@ const ES = {
     tvLoad: 'Tren {x} más pesado',
     tvLoadNormal: 'Tren de peso normal',
     tvClock: '⏳ {t}',
-    tvTest: '🚂 Probar',
+    tvTest: '🚅 Probar',
     tvFix: '✏️ Arreglar',
     tvClear: 'Borrar',
     tvSure: '¿Seguro?',
@@ -34,7 +34,7 @@ const ES = {
     tvLoose: 'Empieza en un punto marcado.',
     tvRemoved: 'Viga quitada.',
     tvCleared: 'Borraste el puente: Deshacer lo trae de vuelta.',
-    tvCrossing: '🚂 Cruzando…',
+    tvCrossing: '🚅 Cruzando…',
     tvPassed: '✅ ¡El tren pasó!',
     tvFell: '💥 Se cayó el puente. Arréglalo y prueba otra vez.',
     tvSnapped: '💥 Se cortó una viga: el puente tiene que quedar en pie. Refuérzalo y prueba otra vez.',
@@ -85,7 +85,7 @@ const EN = {
     tvLoad: 'Train {x} heavier',
     tvLoadNormal: 'Train of normal weight',
     tvClock: '⏳ {t}',
-    tvTest: '🚂 Test',
+    tvTest: '🚅 Test',
     tvFix: '✏️ Fix',
     tvClear: 'Clear',
     tvSure: 'Sure?',
@@ -99,7 +99,7 @@ const EN = {
     tvLoose: 'Start at a marked point.',
     tvRemoved: 'Beam removed.',
     tvCleared: 'You cleared the bridge: Undo brings it back.',
-    tvCrossing: '🚂 Crossing…',
+    tvCrossing: '🚅 Crossing…',
     tvPassed: '✅ The train made it!',
     tvFell: '💥 The bridge fell. Fix it and test again.',
     tvSnapped: '💥 A beam snapped: the bridge has to stay standing. Reinforce it and test again.',
@@ -150,7 +150,7 @@ const PT = {
     tvLoad: 'Trem {x} mais pesado',
     tvLoadNormal: 'Trem de peso normal',
     tvClock: '⏳ {t}',
-    tvTest: '🚂 Testar',
+    tvTest: '🚅 Testar',
     tvFix: '✏️ Consertar',
     tvClear: 'Apagar',
     tvSure: 'Certeza?',
@@ -164,7 +164,7 @@ const PT = {
     tvLoose: 'Comece num ponto marcado.',
     tvRemoved: 'Viga retirada.',
     tvCleared: 'Você apagou a ponte: Desfazer a traz de volta.',
-    tvCrossing: '🚂 Atravessando…',
+    tvCrossing: '🚅 Atravessando…',
     tvPassed: '✅ O trem passou!',
     tvFell: '💥 A ponte caiu. Conserte e teste de novo.',
     tvSnapped: '💥 Uma viga se rompeu: a ponte tem que ficar de pé. Reforce e teste de novo.',
@@ -215,7 +215,7 @@ const DE = {
     tvLoad: 'Zug {x} schwerer',
     tvLoadNormal: 'Zug mit normalem Gewicht',
     tvClock: '⏳ {t}',
-    tvTest: '🚂 Testen',
+    tvTest: '🚅 Testen',
     tvFix: '✏️ Reparieren',
     tvClear: 'Löschen',
     tvSure: 'Sicher?',
@@ -229,7 +229,7 @@ const DE = {
     tvLoose: 'Fang an einem markierten Punkt an.',
     tvRemoved: 'Balken entfernt.',
     tvCleared: 'Du hast die Brücke gelöscht: Rückgängig holt sie zurück.',
-    tvCrossing: '🚂 Fährt…',
+    tvCrossing: '🚅 Fährt…',
     tvPassed: '✅ Der Zug hat es geschafft!',
     tvFell: '💥 Die Brücke ist eingestürzt. Repariere sie und teste noch einmal.',
     tvSnapped: '💥 Ein Balken ist gerissen: Die Brücke muss stehen bleiben. Verstärke sie und teste noch einmal.',

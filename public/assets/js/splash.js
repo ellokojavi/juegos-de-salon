@@ -97,17 +97,17 @@ export const CAMPAIGNS = {
     title: { es: 'Algo nuevo se viene…', en: 'Something new is coming…' },
     items: [{ img: 'assets/splash/bridges-teaser.gif', still: 'assets/splash/bridges-teaser.png', ratio: '8 / 5' }],
   },
-  // 🚂 Tren en Vilo leaves the lab: the train the teaser left at the edge of the gap now crosses. Its
+  // 🚅 Tren en Vilo leaves the lab: the train the teaser left at the edge of the gap now crosses. Its
   // clip is a bridge being built and the bullet train going over it; Play opens the game
   'tren-en-vilo-ya': {
-    emoji: '🚂',
+    emoji: '🚅',
     kicker: { es: '¡Nuevo!', en: 'New!', pt: 'Novo!', de: 'Neu!' },
     title: { es: '¡El tren ya cruza!', en: 'The train is crossing!', pt: 'O trem já está passando!', de: 'Der Zug fährt los!' },
     // One game, big (the owner's request): its scene as wide as the window, then its card with what it
     // is and Play
     hero: true,
     items: [{
-      game: 'puentes', video: 'assets/splash/bridges.mp4', img: 'assets/splash/bridges.jpg', ratio: '72 / 73',
+      game: 'puentes', video: 'assets/splash/bridges.mp4', img: 'assets/splash/bridges-start.jpg', still: 'assets/splash/bridges.jpg', ratio: '72 / 73',
       text: {
         es: 'Arma un puente de vigas sobre el abismo: si aguanta, el tren cruza; si no, se cae. Ya está en Uno al día y en La Copa.',
         en: 'Build a bridge of beams over the gap: if it holds, the train crosses; if not, down it goes. Now in One a Day and The Cup too.',
@@ -232,10 +232,12 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
     if (it.href) a.href = it.href;
     if (it.video) {
       const v = node('video', 'splash-media');
-      // With reduced motion, the poster: the board already solved, still
+      // With reduced motion, the poster: the board already solved, still (`still` when the clip has one:
+      // then `img` is the clip's first frame, so nothing flashes before it plays)
       Object.assign(v, { src: it.video, muted: true, loop: true, autoplay: !still, playsInline: true, preload: still ? 'none' : 'auto' });
       v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
-      if (it.img) v.poster = it.img;
+      const poster = still && it.still ? it.still : it.img;
+      if (poster) v.poster = poster;
       a.append(v);
     } else if (it.img) {
       const img = node('img', 'splash-media');
