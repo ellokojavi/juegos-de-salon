@@ -6,7 +6,7 @@ Stripe. Each phone sees it once, like every campaign.
 
 | | |
 |---|---|
-| Texts | kicker "Salud" · title "¡Un brindis por ti!"; the card: "Gracias por jugar", a toast to every game, laugh and rematch, then that the site is free and ad-free and can be supported; button "💛 Apoyar Juegos de Salón" (`cta`); in the four languages. The owner asked not to mention coffee here: a toast and a coffee together read oddly, so the coffee stays in the support card |
+| Texts | kicker "Salud" · title "¡Un brindis por ti!"; the card: "Gracias por jugar", a toast to every game, laugh and rematch, that the site is free and will stay free, and "si quieres devolver el brindis" the player can support it from US$1 (not "$1": in Chile that reads as one peso); button "💙 Apoyar Juegos de Salón" (`cta`, the blue heart the owner chose); in the four languages. The owner asked not to mention coffee here: a toast and a coffee together read oddly, so the coffee stays in the support card |
 | Layout | `hero`: the clip as wide as the window, at its 480×200 shape |
 | Item | GIPHY's clip [`rY93u9tQbybks`](https://giphy.com/gifs/great-dicaprio-leonardo-rY93u9tQbybks), as MP4 with its JPEG still as poster, **served from GIPHY's `media.giphy.com`**, not copied into `public/`: the scene belongs to the film, and GIPHY is what licenses it for sharing (`splash.test.mjs` allows outside media only from there). The version without letterbox bars was chosen among the `dicaprio-toast` results |
 | Link | `?support=open` on the home page, which opens the support card |
@@ -19,4 +19,4 @@ Screenshots at 390 px, as `node tools/e2e/look.mjs splash brindis-apoyo --lang <
 ## History
 
 - **2026-10-26:** made at the owner's request, first as a coffee invitation; the owner asked for
-  other words without the coffee, and the copy became a toast to the player.
+  other words without the coffee, and the copy became a toast to the player. The owner then wrote their own version (free forever, support from $1, a blue heart), which was tightened into "devolver el brindis" and US$1.
