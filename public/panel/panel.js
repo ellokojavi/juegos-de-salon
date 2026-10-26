@@ -61,7 +61,7 @@ const S = {
   // The timeline (D-408): feedback messages, and what is picked in that view
   feedback: {}, unsubFeedback: null,
   // 📣 Campaigns (D-454): Firebase `splash/` (undefined until it answers, null if never saved) and the last save's outcome
-  splash: undefined, unsubSplash: null, splashMsg: '', tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
+  splash: undefined, unsubSplash: null, splashMsg: '', campOpen: new Set(), tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
   unsubRooms: null, unsubDays: null, unsubTorneos: null, unsubPush: null, unsubUad: [], tick: null,
   // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
   desdeDia: null,
@@ -1613,31 +1613,50 @@ function vistaCampanas(now) {
     const c = CAMPAIGNS[s.id];
     const st = campaignStatus(s, today);
     const [ico, txt] = ESTADO_CAMPANA[st];
-    const fecha = (campo, label) => el('label', { class: 'campana-fecha' }, `${label}${s[campo] ? '' : campo === 'from' ? ' · empty: from now' : ' · empty: no end'}`,
-      el('span', { class: 'campana-fecha-fila' },
-        el('input', { type: 'date', value: s[campo] || '', min: campo === 'until' ? s.from || null : null, max: campo === 'from' ? s.until || null : null,
-          onChange: e => cambiar(s.id, { [campo]: e.target.value || null }) }),
-        s[campo] ? el('button', { class: 'campana-borrar', type: 'button', 'aria-label': campo === 'from' ? 'From now' : 'No end', title: campo === 'from' ? 'From now' : 'No end', onClick: () => cambiar(s.id, { [campo]: null }) }, '✕') : null));
-    return el('article', { class: `panel campana campana--${st}` },
+    const nombre = c.title?.es || s.id;
+    const abrir = () => { S.campOpen.add(s.id); render(); };
+    const cerrar = () => { S.campOpen.delete(s.id); render(); };
+    // An off campaign folds to its emoji and title; a tap opens it (the owner's request). It stays open for this visit
+    if (!s.on && !S.campOpen.has(s.id)) {
+      return el('button', { type: 'button', class: 'campana-plegada', 'aria-expanded': 'false', onClick: abrir },
+        el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
+        el('strong', { class: 'campana-titulo' }, nombre),
+        el('span', { class: 'campana-chev', 'aria-hidden': 'true' }, '›'));
+    }
+    const detalle = st === 'scheduled' ? `starts ${diaCorto(s.from)}` : st === 'live' ? (s.until ? `until ${diaCorto(s.until)}` : 'no end day')
+      : st === 'ended' ? `ended ${diaCorto(s.until)}` : '';
+    // A day is a pill with the native picker laid over it: one tap opens the phone's calendar
+    const dia = (campo, label, vacio) => el('div', { class: `campana-dia${s[campo] ? ' puesto' : ''}` },
+      el('span', { class: 'campana-dia-label' }, label),
+      el('span', { class: 'campana-dia-valor' }, s[campo] ? diaCorto(s[campo]) : vacio),
+      el('input', { type: 'date', value: s[campo] || '', 'aria-label': `${label}: ${s[campo] ? diaCorto(s[campo]) : vacio}`,
+        min: campo === 'until' ? s.from || null : null, max: campo === 'from' ? s.until || null : null,
+        onChange: e => cambiar(s.id, { [campo]: e.target.value || null }) }),
+      s[campo] ? el('button', { type: 'button', class: 'campana-dia-x', 'aria-label': `${label}: ${vacio}`, title: vacio, onClick: () => cambiar(s.id, { [campo]: null }) }, '✕') : null);
+    const base = s.from && s.from > today ? s.from : today;
+    return el('article', { class: `campana campana--${st}` },
       el('header', { class: 'campana-cabeza' },
         el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
-        el('div', { class: 'campana-nombre' }, el('strong', {}, c.title?.es || s.id), el('span', { class: 'muted small' }, `${s.id}${c.langs ? ` · ${c.langs.join(', ')} only` : ''}`)),
+        el('div', { class: 'campana-nombre' },
+          s.on ? el('strong', { class: 'campana-titulo' }, nombre)
+            : el('button', { type: 'button', class: 'campana-titulo campana-plegar', 'aria-expanded': 'true', onClick: cerrar }, nombre),
+          el('span', { class: `campana-estado estado-${st}` }, `${ico} ${txt}`, detalle ? el('span', { class: 'campana-detalle' }, ` · ${detalle}`) : null),
+          c.langs ? el('span', { class: 'campana-langs' }, `${c.langs.join(' · ').toUpperCase()} only`) : null),
         el('label', { class: 'interruptor' },
-          el('input', { type: 'checkbox', role: 'switch', checked: s.on, 'aria-label': `${c.title?.es || s.id} on`, onChange: e => cambiar(s.id, { on: e.target.checked }) }),
+          el('input', { type: 'checkbox', role: 'switch', checked: s.on, 'aria-label': `${nombre} on`, onChange: e => cambiar(s.id, { on: e.target.checked }) }),
           el('span', { class: 'interruptor-pista', 'aria-hidden': 'true' }))),
-      el('p', { class: `campana-estado estado-${st}` }, `${ico} ${txt}`,
-        st === 'scheduled' ? ` · starts ${diaCorto(s.from)}` : '', st === 'live' && s.until ? ` · until ${diaCorto(s.until)}` : '', st === 'live' && !s.until ? ' · no end day' : '',
-        st === 'ended' ? ` · ended ${diaCorto(s.until)}: give it a new end day to show it again` : ''),
-      el('div', { class: 'campana-fechas' }, fecha('from', 'Start'), fecha('until', 'End')),
-      el('div', { class: 'campana-atajos' },
-        el('span', { class: 'muted small' }, 'End in'),
-        ...[[7, '+1 week'], [14, '+2 weeks'], [30, '+1 month']].map(([d, t]) => el('button', { type: 'button', class: 'chip-btn', onClick: () => cambiar(s.id, { on: true, until: dayPlus(s.from && s.from > today ? s.from : today, d - 1) }) }, t))),
-      el('div', { class: 'campana-atajos' },
-        el('span', { class: 'muted small' }, 'Order'),
+      el('div', { class: 'campana-dias' }, dia('from', 'Starts', 'Now'), el('span', { class: 'campana-flecha', 'aria-hidden': 'true' }, '→'), dia('until', 'Ends', 'Never')),
+      el('div', { class: 'campana-segmento', role: 'group', 'aria-label': 'End in' },
+        ...[[7, '1 week'], [14, '2 weeks'], [30, '1 month']].map(([d, t]) => {
+          const fin = dayPlus(base, d - 1);
+          return el('button', { type: 'button', 'aria-pressed': s.until === fin ? 'true' : 'false', onClick: () => cambiar(s.id, { on: true, until: fin }) }, t);
+        })),
+      el('footer', { class: 'campana-pie' },
         el('span', { class: 'campana-orden' },
-          el('button', { type: 'button', class: 'chip-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas(move(rows, s.id, -1)) }, '▲'),
-          el('button', { type: 'button', class: 'chip-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas(move(rows, s.id, 1)) }, '▼')),
-        el('a', { class: 'chip-btn', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, '👁 Preview')));
+          el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas(move(rows, s.id, -1)) }, '↑'),
+          el('span', { class: 'campana-pos' }, `${i + 1} of ${rows.length}`),
+          el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas(move(rows, s.id, 1)) }, '↓')),
+        el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, '👁 Preview')));
   });
 
   return [
