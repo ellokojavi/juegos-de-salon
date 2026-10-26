@@ -38,7 +38,7 @@ Not started until the owner asks for it.
 Lo que fue pidiendo en cada vuelta, para no tener que volver a preguntarlo:
 
 - **Corto y poco denso: unos 35 segundos** (v6; quedó en 39,2 s al sumar la grilla que pidió
-  después). Pocos juegos en la pasada principal, cada uno con su tiempo; sin la escena de modos.
+  después, and 41,1 s in v8 for Dudo's shake). Pocos juegos en la pasada principal, cada uno con su tiempo; sin la escena de modos.
 - **El orden: unos juegos, "¡Y muchos más juegos!", 📅 Uno al día y al final 🏆 La Copa** (v6).
 - **"¡Y muchos más juegos!" con un recuadro animado de cada otro juego que existe** (v4, v5, v6):
   todos los de la portada que no salen en la pasada principal, cada uno jugando en bucle.
@@ -182,6 +182,7 @@ Another language is a new `LANG_PROMO`, its texts in `promo.html` and its answer
 - Partes: introducción hasta 10,36 s (compás 4), entra fuerte; un respiro cerca de 16,4–17,7 s;
   un tramo más tranquilo cerca de 23,5–32,4 s; fuerte otra vez hasta el final.
 - Sola alcanza 41,1 s: los 39,2 s de la v6 caben sin repetir nada y terminan en el tramo fuerte.
+  Since v8 the video is those 41,1 s, the whole song: a longer one has to repeat bars again.
   (Para los 48,5 s de la v5 se repetían los compases 4 a 8: después del respiro, 17,744 s, volvía
   al 10,36 s.)
 - Fundido de entrada y de salida de 1 s (pedido en v5).
@@ -438,8 +439,8 @@ agent said the video was behind and that the shake would be a good next round, t
 
 Dudo became the shake: the dice face down on the green cloth, the whole phone shaking while they
 roll in 3D, settling and landing in the hand, then the bid ("Agita el cacho y apuesta", 12 beats,
-from 5). The time came from the song's four spare beats and one each from "¡Y muchos más juegos!"
-(9 → 8) and the close (10 → 9): 89 beats, all the song has. The grid follows today's home page:
+from 5). The seven beats came from the song's four spare ones, two from "¡Y muchos más juegos!"
+(10 → 8) and one from the close (10 → 9): 89 beats, all the song has. The grid follows today's home page:
 Cuarto Rey, Conexiones and Julepe went to the lab and 🕵️ Agentes came in (13 phones). Everything
 was recaptured with app 0.211.3; Uno al día now starts from the card's ▶ Jugar hoy chip (see
 Trampas). The Cup notifications shot stays pending.
