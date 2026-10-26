@@ -34,7 +34,8 @@ Only `from`, `to` and `public` are required; a template shows only the touches i
 
 1. A row in `TEMPLATES` with `public: false`, and its `<id>.css` next to it if it has a palette or a corner.
 2. Look at it any day with `?season=<id>` (the home page's lab bar has a box per template); the rare
-   touches (the peek) show every time there.
+   touches (the peek) show every time there. While the template is `public: false` the parameter still
+   needs a lab key (localhost counts as one); `?season=off` turns today's template off.
 3. A card in `/labs/` already names `#seccion-temporadas`; update its text for the new date.
 4. When the owner approves it, `public: true`. It turns itself on and off every year from then on.
 
