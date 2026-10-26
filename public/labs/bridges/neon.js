@@ -56,6 +56,39 @@ function linea(ctx, ax, ay, bx, by, color, ancho) {
 function circulo(ctx, x, y, r, color) { ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); }
 function caja(ctx, x, y, w, h, r, color) { ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill(); }
 
+/**
+ * The moon at night: a crescent whose dark side follows the moon's own outline (owner's request), not
+ * a second disc in the sky's colour, which showed as a black circle over the halo and the gradient.
+ * The unlit part keeps a faint earthshine, and the lit one a few soft craters.
+ */
+function luna(ctx, x, y, sol) {
+  const r = sol.r, ox = x + r * 0.45, oy = y - r * 0.2, ro = r * 0.88;
+  ctx.save();
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.clip();
+  circulo(ctx, x, y, r, rgba(sol.color, 0.08));
+  brilla(ctx, sol.halo, 8, () => {
+    ctx.fillStyle = sol.color; ctx.beginPath();
+    ctx.rect(x - r - 1, y - r - 1, r * 2 + 2, r * 2 + 2); ctx.arc(ox, oy, ro, 0, Math.PI * 2);
+    ctx.fill('evenodd');
+  });
+  for (const [cx, cy, cr] of [[-0.62, -0.1, 0.13], [-0.45, 0.45, 0.09], [-0.25, 0.72, 0.07]]) circulo(ctx, x + cx * r, y + cy * r, cr * r, rgba(sol.halo, 0.45));
+  ctx.restore();
+}
+
+/** Faint layers in a rock face from xa to xb: gently sloped lines and a few short cracks, fixed by a seed. */
+function estratos(ctx, xa, xb, ya, yb, semilla) {
+  for (let n = 0, y = ya + 3 + ruido(semilla, 1) * 2; y < yb; n++, y += 3.2 + ruido(semilla, n) * 3) {
+    const inc = (ruido(semilla + n, 2) - 0.5) * 0.08;
+    for (let x = xa + ruido(semilla + n, 6) * 4, k = 0; x < xb; k++) {
+      const largo = 3 + ruido(semilla + n, k + 9) * 7, fin = Math.min(xb, x + largo);
+      linea(ctx, x, y + (x - xa) * inc, fin, y + (fin - xa) * inc, 'rgba(190,160,255,0.07)', 0.4);
+      x = fin + 1.5 + ruido(semilla + k, n + 11) * 4;
+    }
+    const cx = xa + ruido(semilla + n, 3) * (xb - xa);
+    if (ruido(semilla + n, 4) > 0.5) linea(ctx, cx, y + 0.6, cx + (ruido(semilla + n, 5) - 0.5) * 2, y + 2.4, 'rgba(0,0,0,0.25)', 0.35);
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* The train, as shapes                                                */
 /* ------------------------------------------------------------------ */
@@ -218,16 +251,25 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
   for (let s = 0; s < 40; s++) {
     if (ruido(s, 5) >= L.stars) continue;
     const a = QUIETO ? 0.5 : (Math.sin(ahora * (0.8 + ruido(s, 3) * 1.6) + s) + 1) / 2;
-    ctx.fillStyle = `rgba(255,255,255,${0.25 + 0.45 * a})`;
-    const r = 0.3 + ruido(s, 6) * 0.4;
-    ctx.fillRect(ruido(s, 1) * W, ruido(s, 2) * y0 * 0.85, r * 2, r * 2);
+    const r = 0.25 + ruido(s, 6) * 0.35, x = ruido(s, 1) * W, y = ruido(s, 2) * y0 * 0.85;
+    circulo(ctx, x, y, r, `rgba(255,255,255,${0.25 + 0.45 * a})`);
+    // The brightest few twinkle as a small four-pointed spark
+    if (ruido(s, 7) > 0.85) {
+      const l = r * (2.5 + 2 * a), col = `rgba(255,250,230,${0.15 + 0.4 * a})`;
+      linea(ctx, x - l, y, x + l, y, col, 0.18); linea(ctx, x, y - l, x, y + l, col, 0.18);
+    }
   }
   const sol = L.sun, sx = W * sol.x, sy = y0 * sol.y * 1.6;
   const halo = ctx.createRadialGradient(sx, sy, sol.r * 0.6, sx, sy, sol.r * 3.4);
   halo.addColorStop(0, rgba(sol.halo, 0.32)); halo.addColorStop(1, rgba(sol.halo, 0));
   ctx.fillStyle = halo; ctx.fillRect(sx - sol.r * 3.4, sy - sol.r * 3.4, sol.r * 6.8, sol.r * 6.8);
-  circulo(ctx, sx, sy, sol.r, sol.color);
-  if (sol.moon) circulo(ctx, sx + sol.r * 0.45, sy - sol.r * 0.2, sol.r * 0.88, L.sky[0]);
+  if (sol.moon) luna(ctx, sx, sy, sol);
+  else {
+    // The sun: a soft disc, brighter in its centre, with a glow of its own
+    const disco = ctx.createRadialGradient(sx, sy, 0, sx, sy, sol.r);
+    disco.addColorStop(0, '#fffbe8'); disco.addColorStop(0.7, sol.color); disco.addColorStop(1, mixColor(sol.color, sol.halo, 0.5));
+    brilla(ctx, sol.halo, 8, () => circulo(ctx, sx, sy, sol.r, disco));
+  }
   // Soft clouds drifting by
   esc.nubes ||= Array.from({ length: 3 }, (_, n) => ({ y: 0.1 + n * 0.14 + Math.random() * 0.05, w: 14 + Math.random() * 12, v: 1.2 + Math.random() * 2.4, d: Math.random() * 200 }));
   for (const nb of esc.nubes) {
@@ -258,6 +300,13 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
     const x = ((ruido(n, 9) * W + ahora * (3 + n)) % (W + 10)) - 5, y = yAgua + 2.5 + ruido(n, 8) * (H - yAgua - 4);
     linea(ctx, x, y, x + 3 + ruido(n, 7) * 4, y, 'rgba(191,248,255,0.35)', 0.4);
   }
+  // The sun or the moon on the water: a column of short glints that waver under it, kept inside the gap
+  const rx = Math.max(x0 + sol.r, Math.min(x1 - sol.r, sx));
+  for (let n = 0; n < 6; n++) {
+    const y = yAgua + 1.6 + n * 1.7, w = (sol.r * (1.1 - n * 0.13)) * (0.75 + 0.25 * Math.sin(ahora * 2.4 + n * 1.7));
+    if (y > H || w <= 0) continue;
+    linea(ctx, rx - w / 2 + Math.sin(ahora * 1.3 + n) * 0.6, y, rx + w / 2 + Math.sin(ahora * 1.3 + n) * 0.6, y, rgba(sol.color, 0.5 - n * 0.07), 0.55);
+  }
   if (visitas) { visitaBallena(V); visitaLancha(V); }
 
   // The cliffs: dark silhouettes, their inner face faintly lit, a neon edge on top
@@ -265,6 +314,7 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
     const roca = ctx.createLinearGradient(0, y0, 0, H);
     roca.addColorStop(0, L.rock[0]); roca.addColorStop(1, L.rock[1]);
     ctx.fillStyle = roca; ctx.fillRect(xa, y0, xb - xa, H - y0);
+    estratos(ctx, xa, xb, y0, H, xa === 0 ? 1 : 2);
     const lado = ctx.createLinearGradient(0, y0, 0, H);
     lado.addColorStop(0, rgba(L.edge, 0.5)); lado.addColorStop(1, rgba(L.edge, 0));
     ctx.fillStyle = lado; ctx.fillRect(cara - 0.4, y0, 0.8, H - y0);
@@ -286,11 +336,17 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
       ctx.fillStyle = 'rgba(190,160,255,0.35)'; ctx.fillRect(px - w / 2, py, 0.5, y0 - py);
       brilla(ctx, '#be9cff', 5, () => caja(ctx, px - w / 2 - 0.6, py - 0.6, w + 1.2, 1.2, 0.5, '#be9cff'));
     } else if (!enOrilla) {
-      const w = u * 0.7;
-      const g = ctx.createLinearGradient(0, py, 0, yAgua + 4);
+      // A rock pillar a little wider at its foot, layered like the cliffs, with foam where the water meets it
+      const w = u * 0.7, pie = w * 0.18, fondo = yAgua + 4;
+      const g = ctx.createLinearGradient(0, py, 0, fondo);
       g.addColorStop(0, L.rock[0]); g.addColorStop(1, L.rock[1]);
-      ctx.fillStyle = g; ctx.fillRect(px - w / 2, py, w, yAgua - py + 4);
-      ctx.fillStyle = rgba(L.edge, 0.35); ctx.fillRect(px - w / 2, py, 0.5, yAgua - py); ctx.fillRect(px + w / 2 - 0.5, py, 0.5, yAgua - py);
+      const borde = (lado, y) => px + lado * (w / 2 + pie * (y - py) / (fondo - py));
+      ctx.fillStyle = g; ctx.beginPath();
+      ctx.moveTo(borde(-1, py), py); ctx.lineTo(borde(1, py), py); ctx.lineTo(borde(1, fondo), fondo); ctx.lineTo(borde(-1, fondo), fondo); ctx.closePath(); ctx.fill();
+      ctx.save(); ctx.clip(); estratos(ctx, borde(-1, fondo), borde(1, fondo), py, fondo, ax * 5 + 3); ctx.restore();
+      for (const lado of [-1, 1]) linea(ctx, borde(lado, py) - lado * 0.25, py, borde(lado, yAgua) - lado * 0.25, yAgua, rgba(L.edge, 0.35), 0.5);
+      const espuma = 0.4 + 0.3 * Math.sin(ahora * 3 + ax);
+      for (const lado of [-1, 1]) linea(ctx, borde(lado, yAgua) + lado * 0.4, yAgua + 0.3, borde(lado, yAgua) + lado * (1.6 + espuma), yAgua + 0.3, `rgba(191,248,255,${0.5 + espuma * 0.4})`, 0.6);
       brilla(ctx, L.edge, 6, () => { ctx.fillStyle = L.edge; ctx.fillRect(px - w / 2, py - 0.5, w, 1); });
     } else {
       const lado = ax === 0 ? -1 : 1, w = u * 0.35;
