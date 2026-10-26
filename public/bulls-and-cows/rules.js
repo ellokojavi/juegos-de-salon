@@ -15,6 +15,7 @@ const ES = {
   modeLocal: '📱 Un celular, dos jugadores', modeLocalHint: 'Se pasan el celular. La pantalla se tapa entre turnos.',
   modeOnline: '📡 Dos celulares', modeOnlineHint: 'Cada uno en su celular, los dos a la vez.',
   modeSolo: '🧍 Jugar solo', modeSoloHint: 'El celular elige el número secreto y tú lo adivinas.',
+  labWord: '🔤 Palabra', labWordHint: 'Solo: adivina una palabra secreta de cinco letras.',
   // setup
   setupTitle: '¿Cómo jugamos?', digits: 'Cifras', replica: 'Derecho a réplica', replicaHint: 'Si quien empieza adivina, el otro tiene un último intento para empatar.',
   zeroFirst: 'Permitir cero al inicio', yourName: 'Tu nombre', p1: 'Jugador 1', p2: 'Jugador 2',
@@ -76,6 +77,7 @@ const EN = {
   modeLocal: '📱 One phone, two players', modeLocalHint: 'Pass the phone around. The screen hides between turns.',
   modeOnline: '📡 Two phones', modeOnlineHint: 'Each on their own phone, both at once.',
   modeSolo: '🧍 Play alone', modeSoloHint: 'The phone picks the secret number and you crack it.',
+  labWord: '🔤 Word', labWordHint: 'Alone: crack a five-letter secret word.',
   setupTitle: 'How do we play?', digits: 'Digits', replica: 'Right of reply', replicaHint: 'If the starter cracks it, the other player gets one last guess to tie.',
   zeroFirst: 'Allow leading zero', yourName: 'Your name', p1: 'Player 1', p2: 'Player 2',
   start: 'Let\'s play!', create: 'Create room', joinTitle: 'Join a room', codePlaceholder: 'CODE', join: 'Join',
@@ -131,6 +133,7 @@ const PT = {
   modeLocal: '📱 Um celular, dois jogadores', modeLocalHint: 'Vocês passam o celular. A tela fica coberta entre os turnos.',
   modeOnline: '📡 Dois celulares', modeOnlineHint: 'Cada um no seu celular, os dois ao mesmo tempo.',
   modeSolo: '🧍 Jogar sozinho', modeSoloHint: 'O celular escolhe o número secreto e você descobre.',
+  labWord: '🔤 Palavra', labWordHint: 'Sozinho: descubra uma palavra secreta de cinco letras.',
   // configuração
   setupTitle: 'Como vamos jogar?', digits: 'Algarismos', replica: 'Direito de resposta', replicaHint: 'Se quem começa acertar, o outro tem uma última tentativa para empatar.',
   zeroFirst: 'Permitir zero no início', yourName: 'Seu nome', p1: 'Jogador 1', p2: 'Jogador 2',
@@ -192,6 +195,7 @@ const DE = {
   modeLocal: '📱 Ein Handy, zwei Spieler', modeLocalHint: 'Ihr reicht das Handy weiter. Zwischen den Zügen wird der Bildschirm verdeckt.',
   modeOnline: '📡 Zwei Handys', modeOnlineHint: 'Jeder auf seinem Handy, beide gleichzeitig.',
   modeSolo: '🧍 Allein spielen', modeSoloHint: 'Das Handy wählt die geheime Zahl und du knackst sie.',
+  labWord: '🔤 Wort', labWordHint: 'Allein: Knack ein geheimes Wort aus fünf Buchstaben.',
   // Einstellungen
   setupTitle: 'Wie spielen wir?', digits: 'Ziffern', replica: 'Recht auf Antwort', replicaHint: 'Knackt der Startspieler die Zahl, hat der andere noch einen letzten Versuch zum Ausgleich.',
   zeroFirst: 'Null am Anfang erlauben', yourName: 'Dein Name', p1: 'Spieler 1', p2: 'Spieler 2',

@@ -47,6 +47,8 @@ export const GAMES = [
     emoji: '🔢',
     name: { es: 'Toque y Fama', en: 'Bulls and Cows', pt: 'Toque e Fama', de: 'Bullen und Kühe' },
     tagline: { es: 'Adivina el número secreto con toques y famas.', en: 'Crack the secret number with bulls and cows.', pt: 'Descubra o número secreto com toques e famas.', de: 'Knack die Geheimzahl mit Bullen und Kühen.' },
+    // In the lab its card also holds 🔤 Palabra (#767): the tagline names both
+    taglineLab: { es: 'Adivina el número o la palabra secreta con toques y famas.', en: 'Crack the secret number or word with bulls and cows.', pt: 'Descubra o número ou a palavra secreta com toques e famas.', de: 'Knack die Geheimzahl oder das geheime Wort mit Bullen und Kühen.' },
     players: '1–2',
     duration: '5–12',
     jugadas: ['guess'],
