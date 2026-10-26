@@ -508,6 +508,7 @@ node public/cup/recap.test.mjs
 node public/cup/reportes.test.mjs
 node public/cup/store.test.mjs
 node public/home-preload.test.mjs
+node public/labs/bridges/contrast.test.mjs
 node public/labs/code/engine-palabra.test.mjs
 node public/labs/listed.test.mjs
 node public/panel/adapta.test.mjs
