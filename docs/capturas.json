@@ -86,6 +86,11 @@
       "red": false,
       "que": "duelo contra el celular y tres jugadores en un celular"
     },
+    "dudo-shake": {
+      "archivo": "liars-dice/shake-clock.mjs",
+      "red": false,
+      "que": "shaking the phone to roll and the turn clock"
+    },
     "dudo-online": {
       "archivo": "liars-dice/online.mjs",
       "red": true,
@@ -426,9 +431,16 @@
     {
       "seccion": "dudo",
       "imagen": "docs/screenshots/liars-dice/02-configuracion.png",
-      "pie": "Who plays and whether calzar is on",
+      "pie": "Who plays, calzar, shaking and the clock",
       "guion": "dudo-local",
       "toma": "02-setup"
+    },
+    {
+      "seccion": "dudo",
+      "imagen": "docs/screenshots/liars-dice/10-shake.png",
+      "pie": "Shake the phone to roll",
+      "guion": "dudo-shake",
+      "toma": "02-rolling"
     },
     {
       "seccion": "dudo",

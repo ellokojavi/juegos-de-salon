@@ -253,17 +253,64 @@ export const PATHS = {
   },
   dudo: {
     intro: [],
+    // The folded rules, open, with the setup's two switches told before the last rule (D-447)
+    rules: [`(()=>{const d=document.querySelector('#screen-intro details');d.open=true;document.getElementById('rules-list').scrollIntoView({block:'center'});return 1})()`],
     setup: [`document.querySelectorAll('.mode')[0].click()`],
+    // The room creator's setup: the same switches travel to every phone (D-447)
+    'setup-room': [`document.querySelectorAll('.mode')[1].click()`],
+    // The shaking cloth (D-447) with the clock on, face down: headless Chrome has no sensor, so a button shows
+    cloth: [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('⏱️'))?.querySelector('.switch:not(.on)')?.click()`,
+      `document.querySelector('#setup-actions .btn--yellow').click()`,
+      1, 1,
+    ],
+    // Rolled with the button: the dice in the hand and the turn's clock running
+    clock: [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('⏱️'))?.querySelector('.switch:not(.on)')?.click()`,
+      `document.querySelector('#setup-actions .btn--yellow').click()`,
+      1, 1,
+      `document.getElementById('btn-permiso')?.click()`,   // a Chrome that can ask, as an iPhone does: asked, it hears nothing and offers the button
+      1, 1, 1,
+      `document.getElementById('btn-tirar')?.click()`,
+      1, 1, 1, 1, 1,
+    ],
+    // Out of time: the clock moved to its last second, and the screen that says a die is lost
+    'time-up': [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('⏱️'))?.querySelector('.switch:not(.on)')?.click()`,
+      `document.querySelector('#setup-actions .btn--yellow').click()`,
+      1,
+      `window.__dudo.session().turn.used = 29700`,
+      1,
+    ],
+    // The end after running out of time five times: the history keeps each timeout
+    history: [
+      `document.querySelectorAll('.mode')[2].click()`,
+      `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('⏱️'))?.querySelector('.switch:not(.on)')?.click()`,
+      `document.querySelector('#setup-actions .btn--yellow').click()`,
+      `(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));for(let k=0;k<5;k++){await w(400);window.__dudo.session().turn.used=29700;await w(900);const h=document.getElementById('handoff');if(!h.hidden){const b=h.querySelector('.btn');b?b.click():h.click();}}})()`,
+      1, 1, 1, 1, 1, 1, 1, 1,
+      `(()=>{const l=document.getElementById('history-list');l.closest('details').open=true;l.scrollIntoView({block:'center'})})()`,
+      1,
+    ],
     // Against the phone the table is reached without a handoff screen in between
     game: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('🫨'))?.querySelector('.switch.on')?.click()`,   // the table with the dice out: the shake (D-447) has its own script
       `document.querySelector('#setup-actions .btn--yellow').click()`,
     ],
     // With the face chosen the count selector appears, which is the tight part of the bar
     bid: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('🫨'))?.querySelector('.switch.on')?.click()`,   // the table with the dice out: the shake (D-447) has its own script
       `document.querySelector('#setup-actions .btn--yellow').click()`,
       `document.querySelectorAll('.pinta')[4].click()`,
     ],
@@ -271,6 +318,7 @@ export const PATHS = {
     reveal: [
       `document.querySelectorAll('.mode')[2].click()`,
       `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
+      `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('🫨'))?.querySelector('.switch.on')?.click()`,   // the table with the dice out: the shake (D-447) has its own script
       `document.querySelector('#setup-actions .btn--yellow').click()`,
       `document.querySelectorAll('.pinta')[5].click()`,
       `document.querySelector('#actions .btn--yellow').click()`,
