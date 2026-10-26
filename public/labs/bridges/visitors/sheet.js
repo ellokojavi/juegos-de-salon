@@ -4,8 +4,8 @@
  * in stage 1 (`?style=neon&ovni=pesca`…; those parameters work only with a lab key, INTERNO in game.js).
  */
 import { el } from '../../../assets/js/ui.js';
-import { pincel } from '../neon-visitors.js';
-import { PAJARO, PLATILLO, PREGUNTA, BALLENA, PEZ, TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, SURFISTA } from '../pixel.js';
+import { pincel } from '../../../cup/games/bridges/neon-visitors.js';
+import { PAJARO, PLATILLO, PREGUNTA, BALLENA, PEZ, TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, SURFISTA } from '../../../cup/games/bridges/pixel.js';
 
 const hoja = document.getElementById('hoja');
 

@@ -1,18 +1,29 @@
-# 🚂 Tren en Vilo (bridge builder, lab)
+# 🚂 Tren en Vilo (bridge builder)
 
 Build a bridge of wooden beams over a gap, then a train with wagons crosses it; a beam that stretches
 too much snaps. Five stages against a 7-minute clock. **Inspired by
-[Poly Bridge](https://en.wikipedia.org/wiki/Poly_Bridge)**, and the lab card says so.
+[Poly Bridge](https://en.wikipedia.org/wiki/Poly_Bridge)**, and the waiting room says so.
 
 ## Summary
 
-- **Where:** only in the lab, `/labs/bridges/`, behind the lab's door (D-281, D-284), listed under the
-  lab's active projects. Folder `bridges`. Not in `games.js`, Uno al día or the rankings. **In La Copa only by name:**
-  registered as `puentes` (`cup/games/bridges/`, the owner's one-day cup of 2026-10-25) but not in `POZO`, so no
-  create screen offers it; five crossings drawn with the day's seed from catalog levels 2, 3, 3, 4, 5, and the Grand
-  Final skips it (`NOT_IN_FINAL` in `cup/engine.js`). The scene (canvas, drawing, gauge) is `scene.js`, shared by both.
-- **Stage:** a prototype for the owner, **Spanish only** (its texts live in the `T` object of
-  `game.js`, not in `i18n.js`). It sends no usage signal and has no comment form yet.
+- **Where:** out of the lab since D-456, at `/bridges/` (id `puentes`, La Copa's; `/labs/bridges/`,
+  `/minigames/bridges/` and `/minijuegos/puentes/` are bridges there). On the home page as 🧩 Lógica, 5–7 min,
+  ✨ Nuevo from 2026-10-26. **In Uno al día** from 2026-10-27 (`DESDE_PUENTES` in `uno-al-dia.js`). **In La Copa's
+  pool** (`POZO`); the Gran Final skips it (`NOT_IN_FINAL` in `cup/engine.js`: seven minutes of building), and its
+  trial is two easy crossings in 90 s (`NIVELES_ENSAYO`, `TIEMPO_ENSAYO_S`).
+- **One screen for all three** (D-198, D-331, D-456): `cup/games/bridges/ui.js`, with the cup's clock (it pauses
+  with the screen hidden, survives a reload, and a stage's summary pauses it with `ctx.pausa`). Five crossings
+  drawn with the day's seed from catalog levels 2, 3, 3, 4, 5 (`NIVELES` in `engine.js`), so everyone builds
+  the same. The moves (`{ etapa, hechas, vigas, fin, seg, puntos }`) rebuild a stage on reload.
+- **Files** in `public/cup/games/bridges/`: `physics.js` (the physics, the fixed stages and the score; the lab's
+  `engine.js` until D-456), `engine.js` (the day's crossings), `scene.js` (canvas, drawing, gauge), `neon.js`,
+  `trains.js`, `pixel.js`, `visitors.js`, `neon-visitors.js` (the art), `texts.js` (the four languages),
+  `style.css`, and the data `catalog.json`, `catalog-beams.json` and `solutions.json`.
+- **Languages:** Spanish, English (Train on the Edge), Portuguese (Trem no Vão) and German (Zug am Abgrund).
+  With its ranking, share card and 🐞 report, like any cup game.
+- **What stays in the lab:** the sheets `/labs/bridges/trains/` and `/labs/bridges/visitors/`, listed in 📦 La Bodega
+  as 🚀 Lanzado; they load `cup/games/bridges/` (declared in `REUSES`, `tools/e2e/affected.mjs`). The lab's ⏭
+  stage skip did not come along.
 - **For whom:** one player.
 
 ## How it plays
@@ -41,7 +52,7 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
 
 ## Crossings and catalogs
 
-- Each game draws one crossing per level (1 to 5) from `catalogo-madera.json` (33 crossings, 6 or 7 per level, ordered by the wood their solution needs so each level asks more than the one before: about 9 to 12 m at level 1 up to 29 to 36 m at level 5; about 15,000 combinations): low anchors on the cliff faces,
+- Each game draws one crossing per level (2, 3, 3, 4, 5) from `catalog.json` (33 crossings, 6 or 7 per level, ordered by the wood their solution needs so each level asks more than the one before: about 9 to 12 m at level 1 up to 29 to 36 m at level 5; about 15,000 combinations): low anchors on the cliff faces,
   stone towers, rock pillars in the water, or a mix. Its budget is the cheapest bridge a search found
   plus the level's spare beams.
 - The wood catalog's solutions are readable trusses (`--legible`, owner's request): the cheapest bridge
@@ -49,12 +60,12 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
   from trusses a person would draw (under the deck, over it, or both, tied to the anchors, mirrored on
   a symmetric crossing) and are trimmed only while the peak strain stays at or under 85 %. That bridge
   is the known minimum, the budget's base and the solidity reference.
-- `tools/generators/bridges.mjs` builds the catalog (`--nivel n` per level in parallel, `--juntar` to
-  join them; `--prueba` / `--madera` for the catalogs under evaluation).
-- The wood catalog is the default since the owner chose it over counting beams. `?catalogo=vigas`
-  (the beam-count catalog) and `?catalogo=prueba` (tighter budgets, a heavier train per level) load
-  the others for comparison.
-- `soluciones.json` holds known bridges for the fixed stages; `engine.test.mjs` runs them through the
+- `tools/generators/bridges.mjs` builds the catalogs in `public/cup/games/bridges/` (`--madera` for
+  `catalog.json`, the one played; without it `catalog-beams.json`, the old beam count; `--nivel n` per level
+  in parallel, `--juntar` to join them, `--legible` for the readable trusses).
+- The wood catalog is the one played since the owner chose it over counting beams; the lab's
+  `?catalogo=` comparison did not come along.
+- `solutions.json` holds known bridges for the fixed stages; `physics.test.mjs` runs them through the
   physics.
 
 ## Score
@@ -102,17 +113,16 @@ It comes 5 to 25 s into its stage; if the stage is passed first, it moves to the
 no rock to dig) hands over to the boat or the saucer (`noCabe`). These only appear in the game, never on the cover.
 The cover (`portada()`) loops a demo train over a bridge; once it is gone, the empty bridge rests 3 to 5 s
 before the next one comes.
-Their parameters are internal: they work from a local server or the Tailscale link, and on the site
-only for someone who came in with a lab key (`INTERNO` in `game.js`), so a player without one never
+Their parameters are the owner's: they work from a local server or the Tailscale link, and on the site
+only for someone who came in with a lab key (`INTERNO` in `ui.js`), so a player without one never
 calls a visitor by hand.
 
 ### The house style (owner-approved; `?style=pixel` for the old art)
 
 Players said the pixel art does not look like the rest of the app, and Stick Ninja does (owner's request,
-2026-10-25). The lab's game is now drawn in the house style (`neon.js`), approved by the owner the same day
-with all its pieces (the scene, the bullet train and the visitors); `?style=pixel` brings back the pixel
-art there ("👾 La versión anterior, en pixel" on the lab card), and La Copa's screen keeps the pixel art
-unless `?style=neon` (`NEON` in `scene.js`). Smooth shapes and soft glows, the home page's
+2026-10-25). The game is drawn in the house style (`neon.js`), approved by the owner the same day
+with all its pieces (the scene, the bullet train and the visitors), and since D-456 everywhere it plays
+(`NEON` in `scene.js`); `?style=pixel` still brings back the pixel art. Smooth shapes and soft glows, the home page's
 palette and Stick Ninja's night. The cliffs and pillars are dark silhouettes with a neon edge, two ranges
 of hills stand behind the gap, the beams are glowing rods in the house's yellow that warm to pink and red
 with the strain, the fixed joints are pink lights. The day keeps going by in the house's colors: a bright
@@ -128,7 +138,7 @@ is the front car turned around, with red tail lights, drawn 3 art units back bec
 wagon whose place it takes. Its wheels are small and barely peek under a low dark skirt, so it seems to glide along the
 deck while still touching it (owner's request). It is the neon style's train (`?train=clasico` brings back the first one), in
 seven colors (`BALAS`: silver, pearl, graphite, ruby, gold, mint, lilac; `?train=bala-rubi`…), all shown
-at `/labs/bridges/trains/` ("🚄 Los colores del tren bala" on the lab card), each with a button to play
+at `/labs/bridges/trains/` ("🚄 Los colores del tren bala" on its La Bodega card), each with a button to play
 with it. Each stage draws its color at random, never the same as the stage before (`trenDe(e)` in `neon.js`, the
 owner's request): the color is only paint, the weight stays the stage's, in the physics and in the title,
 and the small train beside the title has the stage's color (`trenMini(carga, e)`).
@@ -143,16 +153,21 @@ each pixel sprite as shapes (a chrome saucer with a glass dome and blinking ligh
 whale with a pale grooved belly, a velvet mole with a pink nose, a glossy petrol-green boat and its rider),
 plus four pieces drawn whole (the saucer's beam, the boat's wave, the rider in the water, the flag).
 The whale leans steeply going out and coming back (owner's request), and leaps higher than before (in both styles).
-`/labs/bridges/visitors/` ("🛸 Los visitantes" on the lab card) shows them up close, with buttons that play
+`/labs/bridges/visitors/` ("🛸 Los visitantes" on its La Bodega card) shows them up close, with buttons that play
 a game where each one comes in stage 1.
 
 Its sprites also draw the home page's first teaser (D-430): `tren-en-vilo-pronto`, on through
 2026-10-28, a GIF of a train stopping at the edge of a gap, no name and no link, made by
 `marketing/splash/teaser.mjs` from `marketing/splash/teaser/bridges.html`, which imports `pixel.js`.
-A sprite changed there changes the teaser only once the GIF is remade.
+A sprite changed there changes the teaser only once the GIF is remade. At launch the splash
+`tren-en-vilo-ya` replaced it (D-456): a clip of a bridge built and crossed (`public/assets/splash/bridges.mp4`),
+the game's name, what it is, that it is in Uno al día and La Copa, and ▶ Jugar
+(`marketing/splash/campaigns/tren-en-vilo-ya/`).
 
-## Exceptions to the canons (while in the lab)
+## Exceptions to the canons
 
-- Spanish only, no i18n (C-3) and no usage signal: a local prototype.
-- Its URL parameters (`?catalogo`, `?ovni`, `?ballena`, `?topo`) are Spanish (`?wake` is already English) and read directly with
-  `URLSearchParams`, not through `parametros.js` (C-18, D-266). To be settled before it leaves the lab.
+- The visitors' parameters (`?ovni`, `?ballena`, `?topo`, `?wake`) and `?train=` are Spanish or read directly with
+  `URLSearchParams` (`param()` in `neon.js`), not through `parametros.js` (C-18, D-266). D-456 kept them as the
+  owner's tools, not player-facing URLs: the visitors' only work in the workshop or with a lab key.
+- The Gran Final skips it (`NOT_IN_FINAL`), the only game of the pool that does: seven minutes of building
+  do not fit a round of the final.

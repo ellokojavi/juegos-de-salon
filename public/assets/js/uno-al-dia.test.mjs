@@ -31,7 +31,7 @@ for (const j of JUEGOS_DIA) {
   if (GRUPO.includes(j.id)) assert.ok(GAMES.find(g => g.id === j.id)?.available, `${j.id}: no está en games.js`);
   else assert.ok(JUEGOS[j.id]?.generar, `${j.id}: no está en cup/games`);
 }
-assert.equal(JUEGOS_DIA.length, 18, '18 games: 14 solo (Conexiones until DESDE_AGENTES) and 4 with their own page (D-334, D-405, D-421)');
+assert.equal(JUEGOS_DIA.length, 19, '19 games: 15 solo (Conexiones until DESDE_AGENTES) and 4 with their own page (D-334, D-405, D-421, D-456)');
 // D-421: from DESDE_AGENTES Conexiones no longer comes out and Agentes joins the next deck; no day before changes
 {
   assert.equal(DESDE_AGENTES, '2026-10-24', 'Agentes takes Conexiones\' place on 2026-10-24 (D-421)');
@@ -83,7 +83,7 @@ for (let k = 0; k < salidos.length;) {
   if (mazo.length === n) assert.equal(new Set(mazo).size, n, `el mazo que empieza el ${dias[k]} repite un juego`);
   k += n;
 }
-assert.deepEqual(mazos.slice(0, 4).map(m => m.n), [7, 10, 16, 17], 'the first deck has 7 games, the second 10, the one shuffled on 2026-10-23 16 (Conexiones leaves it, D-421) and the next 17 with Agentes (D-334, D-405)');
+assert.deepEqual(mazos.slice(0, 4).map(m => m.n), [7, 10, 16, 18], 'the first deck has 7 games, the second 10, the one shuffled on 2026-10-23 16 (Conexiones leaves it, D-421) and the next 18 with Agentes and Tren en Vilo (D-334, D-405, D-456)');
 assert.equal(dias[mazos[2].k], '2026-10-23', 'the six games of D-334 enter with the deck shuffled on 2026-10-23');
 assert.equal(mazos[1].espera, 7, 'con 10 juegos, ninguno vuelve antes de 7 días');
 for (const { k, n, espera } of mazos) {

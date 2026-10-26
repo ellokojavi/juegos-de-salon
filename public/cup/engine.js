@@ -29,7 +29,7 @@ export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
  * Los juegos que el admin puede poner en los días antes de la final (D-163). Agentes took Conexiones'
  * place in D-421: the cups created before still play Conexiones, which stays registered in JUEGOS.
  */
-export const POZO = ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo', 'rutas', 'loteo', 'pintaminas'];
+export const POZO = ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo', 'rutas', 'loteo', 'pintaminas', 'puentes'];
 
 /**
  * The variants a game can be played in (D-331), the first one being the default. In a cup the admin

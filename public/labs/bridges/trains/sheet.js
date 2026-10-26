@@ -4,7 +4,7 @@
  * ends, with a button to play with it (`?style=neon&train=<id>`).
  */
 import { el } from '../../../assets/js/ui.js';
-import { BALAS } from '../trains.js';
+import { BALAS } from '../../../cup/games/bridges/trains.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hoja = document.getElementById('hoja');

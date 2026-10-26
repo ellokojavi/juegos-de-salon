@@ -1,11 +1,11 @@
 /**
  * 🚂 Tren en Vilo — the scene: the canvas, the pixel-art drawing of a stage (sky, cliffs, water, the
- * beams, the train and its visitors), the strain gauge and the cover's demo bridge. Shared by the lab's
- * page (game.js) and La Copa's screen (cup/games/bridges/ui.js). No game state: who calls it passes it.
+ * beams, the train and its visitors), the strain gauge and the cover's demo bridge, for the game's screen
+ * (ui.js) and the lab's sheets of trains and visitors. No game state: who calls it passes it.
  */
-import { el } from '../../assets/js/ui.js';
-import { ALTO, LARGO_MAX, PIEZAS, fijos, paso, FISICA, alturaCamino } from './engine.js';
-import { param } from '../../assets/js/parametros.js';
+import { el } from '../../../assets/js/ui.js';
+import { ALTO, LARGO_MAX, PIEZAS, fijos, paso, FISICA, alturaCamino } from './physics.js';
+import { param } from '../../../assets/js/parametros.js';
 import { dibujarNeon, trenMiniNeon } from './neon.js';
 import { pixelado, particulas, LOCO, CHIMENEA, trenDe } from './pixel.js';
 import { visitasCielo, visitaBallena, visitaLancha, visitaTopo } from './visitors.js';
@@ -13,10 +13,10 @@ import { visitasCielo, visitaBallena, visitaLancha, visitaTopo } from './visitor
 export const QUIETO = !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 /**
  * The scene in the house style (neon.js) instead of pixel art: the lab's game since the owner approved it
- * (2026-10-25). `?style=pixel` brings back the pixel art there, to compare; La Copa's screen keeps the pixel
- * art unless `?style=neon`. The page gets the `tv-neon` class for the pieces around the board.
+ * (2026-10-25), and everywhere since the game left the lab (D-456). `?style=pixel` brings back the pixel art,
+ * to compare. The page gets the `tv-neon` class for the pieces around the board.
  */
-export const NEON = param('style') === 'neon' || (param('style') !== 'pixel' && /\/labs\//.test(globalThis.location?.pathname ?? ''));
+export const NEON = param('style') !== 'pixel';
 if (NEON) globalThis.document?.documentElement.classList.add('tv-neon');
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 // How long the beams that snapped in the last test blink red, while fixing the bridge

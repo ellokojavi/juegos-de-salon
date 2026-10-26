@@ -527,6 +527,10 @@ export const PATHS = {
    * given sun with the played one (#61); `clash`, full with a last sun that clashes, which is the
    * only clash visible without touching another cell (#135).
    */
+  puentes: {
+    intro: [],
+    game: [START, `1`, `1`, `1`, `1`],
+  },
   tango: {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`, TANGO_FILL(false)],
@@ -629,10 +633,6 @@ export const PATHS = {
     rules: [UAD_SEED, `1`, `document.getElementById('btn-uad-reglas')?.click(); 1`],
     day: [UAD_SEED, `1`, `document.querySelector('#uad-cal button.l1, #uad-cal button.l2, #uad-cal button.l3')?.click(); document.getElementById('uad-calendario')?.scrollIntoView(); 1`],
     footer: [UAD_SEED, `1`, `document.getElementById('uad-pie')?.scrollIntoView({ block: 'end' }); 1`],
-  },
-  'labs/bridges': {
-    intro: [],
-    game: [START, `1`, `1`, `1`],
   },
 };
 

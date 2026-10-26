@@ -24,7 +24,7 @@
 import { param, tiene } from './parametros.js';
 
 /** The campaigns that are on, in the order they were turned on. `from` and `until` (optional, inclusive) bound the days it shows. */
-export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-pronto', until: '2026-10-28' }];
+export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-ya', until: '2026-11-09' }];
 
 export const SEEN_KEY = 'juegos-de-salon:splash-visto';
 
@@ -64,7 +64,8 @@ export function loadActive({ fetchFn = globalThis.fetch, timeout = 2500 } = {}) 
  * link come from there) or its own content (`title`, `text`, `href`). Each item shows a few seconds
  * of play: `video` (a looping MP4, muted) with its `img` as the poster, or just `img` (a still or a
  * GIF, with `still` for reduced motion). An item with no name, text or link is a teaser: its picture
- * alone, wide (`ratio`). `langs` limits a campaign to some languages: the others get it in English
+ * alone, wide (`ratio`). `hero` draws a campaign's one game big: its clip as wide as the window at its
+ * `ratio`, and under it its card, with the text and Play. `langs` limits a campaign to some languages: the others get it in English
  * (the owner's request for a teaser in Spanish and English). Paths are from the site root; the clips
  * are made with marketing/splash/capture.mjs and the teasers with teaser.mjs, and each campaign is
  * kept in marketing/splash/campaigns/<id>/ (D-355).
@@ -95,6 +96,25 @@ export const CAMPAIGNS = {
     kicker: { es: 'Muy pronto', en: 'Coming soon' },
     title: { es: 'Algo nuevo se viene…', en: 'Something new is coming…' },
     items: [{ img: 'assets/splash/bridges-teaser.gif', still: 'assets/splash/bridges-teaser.png', ratio: '8 / 5' }],
+  },
+  // 🚂 Tren en Vilo leaves the lab: the train the teaser left at the edge of the gap now crosses. Its
+  // clip is a bridge being built and the bullet train going over it; Play opens the game
+  'tren-en-vilo-ya': {
+    emoji: '🚂',
+    kicker: { es: '¡Nuevo!', en: 'New!', pt: 'Novo!', de: 'Neu!' },
+    title: { es: '¡El tren ya cruza!', en: 'The train is crossing!', pt: 'O trem já está passando!', de: 'Der Zug fährt los!' },
+    // One game, big (the owner's request): its scene as wide as the window, then its card with what it
+    // is and Play
+    hero: true,
+    items: [{
+      game: 'puentes', video: 'assets/splash/bridges.mp4', img: 'assets/splash/bridges.jpg', ratio: '72 / 73',
+      text: {
+        es: 'Arma un puente de vigas sobre el abismo: si aguanta, el tren cruza; si no, se cae. Ya está en Uno al día y en La Copa.',
+        en: 'Build a bridge of beams over the gap: if it holds, the train crosses; if not, down it goes. Now in One a Day and The Cup too.',
+        pt: 'Monte uma ponte de vigas sobre o abismo: se aguentar, o trem passa; se não, ela cai. Já está no Um por dia e na Copa.',
+        de: 'Bau eine Brücke aus Balken über die Schlucht: Hält sie, fährt der Zug hinüber, sonst stürzt sie ein. Jetzt auch im Spiel des Tages und im Pokal.',
+      },
+    }],
   },
 };
 
@@ -183,7 +203,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
 
   const layer = node('div', 'splash-capa');
   const backdrop = node('div', 'splash-fondo');
-  const card = node('section', 'splash');
+  const card = node('section', c.hero ? 'splash splash--hero' : 'splash');
   card.setAttribute('role', 'dialog');
   card.setAttribute('aria-modal', 'true');
   card.setAttribute('aria-labelledby', 'splash-titulo');
