@@ -34,6 +34,14 @@
       "decisions": ["D-415", "D-424"]
     },
     {
+      "id": "cup-podiums",
+      "where": "github",
+      "workflow": "cup-podiums.yml",
+      "cron": "47 7 * * *",
+      "what": "Saves the podium of every finished Cup nobody reopened, so its champions reach the medal table.",
+      "decisions": ["D-450"]
+    },
+    {
       "id": "round-watch",
       "where": "github",
       "workflow": "round-watch.yml",
