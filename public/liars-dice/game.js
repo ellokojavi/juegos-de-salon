@@ -337,7 +337,12 @@ function renderPlay(v) {
     agite.onJolt = null;
     soltarVaso();
     mine.append(el('div', { class: 'mine-label' }, T.yourDice));
-    const fila = el('div', { class: 'dice-row' }, ...dados.map(d => dieEl(d)));
+    const giros = S.giros?.[`${v.round}:${yo}`];
+    const fila = el('div', { class: 'dice-row' }, ...dados.map((d, i) => {
+      const dado = dieEl(d);
+      if (giros?.[i]) dado.style.rotate = `${giros[i]}deg`;   // as it landed on the cloth
+      return dado;
+    }));
     mine.append(fila);
     if (dados.includes(1)) mine.append(el('div', { class: 'wild-note' }, '⚀ ', T.aceWild));
     const llegada = S.llegada;
@@ -455,7 +460,7 @@ const SACUDONES = 3;
  * The dice keep rolling while the phone shakes, and settle only once it has been still this long
  * (the owner's request): a shake sends a jolt every 150–300 ms, so this is the hand stopping.
  */
-const QUIETO_MS = 550;
+const QUIETO_MS = 350;
 /** With no reading from the sensor this long after listening, the phone has none: the button shows. */
 const SIN_SENSOR_MS = 1200;
 const PIDE_PERMISO = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
@@ -511,14 +516,39 @@ function cubiertos(v, role, dados) {
  * faces seen while rolling mean nothing: the dice were rolled before (C-10). With no WebGL, or with
  * reduced motion, flat dice swap faces instead.
  */
-const CAEN_MS = 900;      // the last roll, from the last jolt to landing
+const CAEN_MS = 900;      // flat dice: how long they keep swapping faces after the last jolt
+/** How fast a spin drains away, in ms: the same friction while shaking and while coming to rest. */
+const FRICCION_MS = 450;
 const VUELO_MS = 480;     // the cloth turning into the hand
 const CARA_MS = 70;       // flat dice: a new face this often
 const PISO_GIRO = 0.07;   // degrees per ms: the slowest a die not yet settled turns (no rattle under 0.15)
 /** The faces in dado3d.js's order (front, right, back, left, top, bottom): opposite ones add up to 7. */
 const CARAS_3D = [1, 3, 6, 4, 2, 5];
-/** How each face ends up in front, as [ax, ay] for `dibujar`. */
-const DE_FRENTE = { 1: [0, 0], 3: [0, -90], 6: [0, 180], 4: [0, 90], 2: [90, 0], 5: [-90, 0] };
+/**
+ * Every square pose (both angles a multiple of 90°) that shows each face in front, as
+ * [ax, ay, giro] for `dibujar` (rotX(ax) after rotY(ay), as in dado3d.js). A die comes to rest on
+ * the one of its face nearest to where its own spin was taking it. `giro` is how far that face is
+ * turned on the table, in degrees clockwise: the flat die in the hand keeps it, so landing never
+ * flips a 2, a 3 or a 6.
+ */
+const POSES = (() => {
+  // Each face's normal and the way up on its drawing, in dado3d.js's order
+  const caras = [[[0, 0, 1], [0, 1, 0]], [[1, 0, 0], [0, 1, 0]], [[0, 0, -1], [0, 1, 0]], [[-1, 0, 0], [0, 1, 0]], [[0, 1, 0], [0, 0, -1]], [[0, -1, 0], [0, 0, 1]]];
+  const out = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+  for (const ax of [0, 90, 180, 270]) for (const ay of [0, 90, 180, 270]) {
+    const cx = Math.round(Math.cos(ax * Math.PI / 180)), sx = Math.round(Math.sin(ax * Math.PI / 180));
+    const cy = Math.round(Math.cos(ay * Math.PI / 180)), sy = Math.round(Math.sin(ay * Math.PI / 180));
+    const girar = ([x, y, z]) => {
+      const [x1, y1, z1] = [x * cy + z * sy, y, -x * sy + z * cy];
+      return [x1, y1 * cx - z1 * sx, y1 * sx + z1 * cx];
+    };
+    // Which face ends up looking at the camera (+z), and where its "up" points on screen
+    const i = caras.findIndex(([n]) => girar(n)[2] === 1);
+    const [ux, uy] = girar(caras[i][1]);
+    out[CARAS_3D[i]].push([ax, ay, (Math.round(Math.atan2(ux, uy) * 180 / Math.PI) + 360) % 360]);
+  }
+  return out;
+})();
 const SIN_3D = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
@@ -572,15 +602,21 @@ function tresDe(vs) {
     let fuerza = 0;
     for (const d of dados) {
       if (t.cae) {
-        // Settling: from where it was to its face, slowing down evenly until it stops
-        const k = Math.min(1, (ahora - t.cae.t0) / CAEN_MS), e = 1 - (1 - k) ** 3;
-        d.ax = d.desde[0] + (d.hasta[0] - d.desde[0]) * e;
-        d.ay = d.desde[1] + (d.hasta[1] - d.desde[1]) * e;
-        d.caja.style.transform = `translateY(${(-Math.abs(Math.sin(k * Math.PI * 2.5)) * (1 - k) * 20).toFixed(1)}px)`;
+        // Coming to rest: each angle goes on from the speed it had and slows down until it stops,
+        // with no turn of its own: it is the same roll running out (ease-out, velocity matched)
+        let w = 0;
+        for (const e of [0, 1]) {
+          const k = Math.min(1, (ahora - t.cae.t0) / d.dur[e]);
+          const recorrido = d.hasta[e] - d.desde[e];
+          (e ? (d.ay = d.desde[1] + recorrido * (1 - (1 - k) ** 3)) : (d.ax = d.desde[0] + recorrido * (1 - (1 - k) ** 3)));
+          w = Math.max(w, Math.abs(3 * (1 - k) ** 2 * recorrido / d.dur[e]));
+        }
+        fuerza = Math.max(fuerza, w);
+        d.caja.style.transform = `translate(${(Math.sin(ahora / 37 + d.fase) * w * 7).toFixed(1)}px, ${(-Math.abs(Math.cos(ahora / 53 + d.fase)) * w * 10).toFixed(1)}px)`;
       } else {
         // Spinning: each jolt adds speed, and it drains away between jolts, but never to a stop:
         // a die standing still would look settled, and they settle only when the hand stops
-        const freno = Math.exp(-dt / 450);
+        const freno = Math.exp(-dt / FRICCION_MS);
         d.wx *= freno; d.wy *= freno;
         const giro = Math.hypot(d.wx, d.wy);
         if (giro < PISO_GIRO) {
@@ -595,7 +631,7 @@ function tresDe(vs) {
     }
     // The phone rattles while the dice roll, harder the faster they spin
     if (fuerza > 0.15 && ahora - t.zumbido > 90) { t.zumbido = ahora; vibrate(Math.round(Math.min(30, 8 + fuerza * 14))); }
-    if (t.cae && ahora - t.cae.t0 >= CAEN_MS) return t.cae.listo();
+    if (t.cae && ahora - t.cae.t0 >= t.cae.dur) return t.cae.listo();
     t.raf = requestAnimationFrame(paso);
   };
   t.raf = requestAnimationFrame(paso);
@@ -610,22 +646,41 @@ function empujar(t) {
   }
 }
 
-/** The last roll: each die goes on to its real face, with at least one more turn in the way it spins. */
+/**
+ * The hand stopped: each die runs out its own spin and stops where it lies. Where its spin was
+ * taking it (with the same friction) decides the pose: of the poses that show its face, the
+ * nearest one ahead, so it never turns back or speeds up; it just brakes a little more or a
+ * little less. The faces were rolled before, fair and with the browser's chance (C-10): which pose
+ * it lands in is only how it looks.
+ */
 function aterrizar(t, dados, listo) {
-  const destino = (desde, cara, w) => {
+  const MIN_MS = 300, MAX_MS = 1500;
+  const ahead = (pose, desde, natural, w) => {
     const dir = w < 0 ? -1 : 1;
-    let fin = cara + 360 * Math.round((desde - cara) / 360);
-    while ((fin - desde) * dir < 360) fin += 360 * dir;
-    return fin;
+    let c = pose + 360 * Math.round((natural - pose) / 360);
+    if ((c - desde) * dir < 0) c += 360 * dir;
+    return c;
   };
+  let dur = 0;
   t.dados.forEach((d, i) => {
-    const [fx, fy] = DE_FRENTE[dados[i]];
-    if (Math.abs(d.wx) < 0.2) d.wx += Math.random() < 0.5 ? -0.3 : 0.3;
-    if (Math.abs(d.wy) < 0.2) d.wy += Math.random() < 0.5 ? -0.3 : 0.3;
+    const natural = [d.ax + d.wx * FRICCION_MS, d.ay + d.wy * FRICCION_MS];
+    let mejor = null;
+    for (const [px, py, giro] of POSES[dados[i]]) {
+      const hasta = [ahead(px, d.ax, natural[0], d.wx), ahead(py, d.ay, natural[1], d.wy)];
+      const lejos = Math.abs(hasta[0] - natural[0]) + Math.abs(hasta[1] - natural[1]);
+      if (!mejor || lejos < mejor.lejos) mejor = { hasta, lejos, giro };
+    }
     d.desde = [d.ax, d.ay];
-    d.hasta = [destino(d.ax, fx, d.wx), destino(d.ay, fy, d.wy)];
+    d.hasta = mejor.hasta;
+    d.giro = mejor.giro;
+    // An ease-out starts at three times its average speed: the time that keeps the die's speed
+    d.dur = [0, 1].map(e => {
+      const w = Math.abs(e ? d.wy : d.wx), recorrido = Math.abs(d.hasta[e] - d.desde[e]);
+      return Math.min(MAX_MS, Math.max(MIN_MS, w > 0.01 ? 3 * recorrido / w : MAX_MS));
+    });
+    dur = Math.max(dur, ...d.dur);
   });
-  t.cae = { t0: performance.now(), listo };
+  t.cae = { t0: performance.now(), listo, dur };
 }
 
 /**
@@ -683,7 +738,8 @@ function cacho(v, role) {
   const dados = diceOf(v, role) || [];
   const vs = vasoDe(clave, dados.length);
 
-  const tirar = () => {
+  // `boton`: thrown with the button, with no shake before it to set them spinning
+  const tirar = (boton = false) => {
     if (S.shaken.has(clave) || S.rolling === clave) return;
     S.rolling = clave;
     agite.onJolt = null;
@@ -694,16 +750,18 @@ function cacho(v, role) {
     const fin = () => {
       const piezas = vs.tres ? vs.tres.dados.map(d => d.caja) : [...vs.mesa.children];
       S.llegada = { clave, desde: piezas.map(p => p.getBoundingClientRect()), alto: $('#mine').getBoundingClientRect().height };
+      // How each one lies on the table: the hand keeps it for the whole round
+      if (vs.tres) S.giros = { ...S.giros, [clave]: vs.tres.dados.map(d => d.giro || 0) };
       soltarVaso();
       S.rolling = null;
       S.shaken.add(clave);
       render();
     };
-    const cayo = () => { SFX.dice(); vibrate([30, 40, 20, 40, 60]); setTimeout(fin, 300); };
+    const cayo = () => { vibrate(25); setTimeout(fin, 450); };
     const t = tresDe(vs);
     if (t) {
-      // The button has no jolt before it: it throws them itself
-      empujar(t); empujar(t);
+      // The button has no jolt before it: it throws them itself. Shaken, they go on as they were
+      if (boton) { empujar(t); empujar(t); }
       aterrizar(t, dados, cayo);
     } else {
       rodar(CAEN_MS);
@@ -722,7 +780,7 @@ function cacho(v, role) {
       },
     }, T.shakeAllow));
   } else if (agite.sensor === false) {
-    vs.pie.replaceChildren(el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-tirar', onClick: tirar }, T.shakeTap));
+    vs.pie.replaceChildren(el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-tirar', onClick: () => tirar(true) }, T.shakeTap));
   } else {
     vs.pie.replaceChildren(el('p', { class: 'cacho-txt' }, T.shakeNow));
     escucharAgite();

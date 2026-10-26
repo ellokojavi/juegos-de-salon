@@ -26,7 +26,7 @@ const shake = async () => {
   for (let i = 1; i < 9; i++) { await jolt(i); await sleep(200); }
   stillRolling = await ev(`!window.__dudo.session().rolling && !!document.querySelector('#mine.agitando .dado3d')`);
   buzzes = await ev(`window.__buzz`);
-  await sleep(2600);   // the hand still (550 ms), the last roll (900 ms), a breath, and the cloth turning into the hand (480 ms)
+  await sleep(3400);   // the hand still (350 ms), the dice running out their spin (up to 1.5 s), a breath, and the cloth turning into the hand (480 ms)
 };
 const covered = () => ev(`!!document.querySelector('#mine.agitando .agite-caja')`);
 const myDice = () => ev(`document.querySelectorAll('#mine .dice-row .die').length`);
@@ -111,7 +111,7 @@ check(await ev(`document.getElementById('turn-clock').hidden`), 'with the clock 
 await b.shot('06-no-sensor');
 await ev(`document.getElementById('btn-tirar').click(); 1`); await sleep(300);
 check((await tray())?.three, 'the button rolls them in 3D too');
-await sleep(2000);
+await sleep(3000);
 check((await myDice()) === 5, 'the button rolls the dice');
 
 await b.close();
