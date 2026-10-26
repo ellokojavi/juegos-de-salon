@@ -37,6 +37,7 @@ In `~/.config/juegos-de-salon/` (copy the folder to the new machine, by hand, ne
 | `mail.json` | the Gmail account and app password that send the replies and the weekly report; `from` must be `hola@juegosdesalon.cl` (Gmail's "Send mail as" alias), or nothing is sent (D-443) | `send-mail.py` |
 | `vapid-privada.txt` | backup of the push notifications' private key (the real one is a GitHub secret) | `vapid.mjs` |
 | `inbox-log.jsonl`, `mail-log.jsonl` | what was triaged and what was sent (history, not needed to run) | `inbox.mjs`, `send-mail.py` |
+| `inbox-skipped.jsonl` | the text of each email the support agent skipped, for the owner to check (D-452; history, not needed to run) | `inbox.mjs` |
 | `jobs/<id>.json` | each `mac` job's last run (recreated on its own) | `jobs.mjs status` |
 
 In that Gmail account, **IMAP must be on** (Settings → Forwarding and POP/IMAP): `send-mail.py` reads

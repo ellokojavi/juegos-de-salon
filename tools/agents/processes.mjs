@@ -284,6 +284,13 @@ async function check() {
   for (const i of doubts) console.log(`- ❓ #${i.number} ${i.title}${(i.comments || []).length ? ` (${i.comments.length} comment(s): read the owner's answer)` : ' (no answer yet)'}`);
   if (unanswered.length) console.log('  One email per player for all their comments: node tools/agents/feedback.mjs pending groups them and says what to run (or forget, if destructive).');
 
+  // D-452: a skip leaves no issue, so the round names each one (reason only, never the text)
+  heading('Emails the support agent skipped since the last round');
+  const lastRound = m.rounds.at(-1)?.date || new Date(Date.now() - 7 * DAY).toISOString().slice(0, 10);
+  const skips = await import('./inbox.mjs').then(i => i.skipped(lastRound)).catch(() => []);
+  for (const e of skips) console.log(`- ${e.at.replace('T', ' ').slice(0, 16)} UTC · <${e.from || 'no valid address'}> · ${e.reason}`);
+  console.log(skips.length ? '  Name them in your report to the owner; the text is only for them: node tools/agents/inbox.mjs skipped' : 'None.');
+
   heading('What the documentation agent carries over');
   const doc = JSON.parse(readFileSync(join(ROOT, 'docs/documentation.json'), 'utf8'));
   const last = doc.rounds.at(-1);
