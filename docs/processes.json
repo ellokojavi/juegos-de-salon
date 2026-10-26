@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "b75fac6",
+  "checkedUpTo": "a026231",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -393,12 +393,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-21",
-      "to": "b75fac6"
+      "date": "2026-10-26",
+      "to": "a026231"
     },
     "usability": {
-      "date": "2026-10-21",
-      "to": "b75fac6"
+      "date": "2026-10-26",
+      "to": "a026231"
     },
     "ideas": {
       "date": "2026-10-21",
@@ -477,6 +477,14 @@
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/607",
       "pr": null,
       "note": "Ad-hoc round for feedback: #604 to owner decision; 80 changelog entries collected; D-330 unused"
+    },
+    {
+      "date": "2026-10-26",
+      "from": "b75fac6",
+      "to": "a026231",
+      "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/780",
+      "pr": null,
+      "note": "Catch-up round b75fac6..a026231: collected 91 changelog entries, popularity, durations, fixed #771, asked #767"
     }
   ],
   "ownerDecisions": [
