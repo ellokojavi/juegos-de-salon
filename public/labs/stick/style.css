@@ -15,11 +15,10 @@
 .pasos li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; text-wrap: pretty; }
 .paso-ico { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); }
 .hoy-nota { margin: 12px 0 0; font-size: 0.85rem; text-align: left; }
-/* The cover's three blocks, with air between them: the run, Play with the best under it, the steps */
+/* The cover's blocks, with air between them: the run, Play, the ranking and signing in, the steps */
 .portada-ninja { display: grid; gap: 18px; }
 .lema-ninja { margin: 0; text-wrap: balance; }
-.jugar-ninja { display: grid; gap: 10px; justify-items: stretch; }
-.mejor-portada { margin: 0; text-align: center; font-weight: 800; }
+.mejor-portada { margin: 10px 0 0; font-weight: 800; }
 
 /* The cover's run, playing itself */
 .demo-ninja { display: block; width: 100%; height: 220px; border-radius: 16px; }

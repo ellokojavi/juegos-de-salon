@@ -22,8 +22,10 @@ the bonus. Find nice improvements".
 The title with a 🥷 that hops now and then, the tagline ("Stretch the stick, cross the gap, plant the
 flag."), the credit, and a run that plays itself on a small canvas (mostly flags, a plain landing now and
 then, and every so often a stick too short; then another course;
-still with reduced motion). Then "🥷 Play", the best so far ("🏆 Best: n", once there is one), and the three
-steps (after the button, U-39):
+still with reduced motion). Then "🥷 Play"; under it, like every game played alone (D-212, D-249), **the Stick Ninja
+leaderboard** (Week · All time · Friends, the `stick` table) and the card to sign in with a name and PIN;
+then the three steps (after the button, U-39), and with them this phone's best ("🏆 Best: n", once there
+is one):
 
 1. 👆 Hold to stretch the stick, let go to drop it across the gap. You have 3 lives.
 2. 🚩 Land its tip on the flag for a perfect: +1, then +2, +3… for each one in a row.
@@ -85,13 +87,14 @@ Under them: "📅 Today's course is the same for everyone. Pass the phone and co
 
 ## The result
 
-The stamp (🏆 New best! or Game over), the score, "Your best: n" (when it is not a new best; kept on the
+The stamp (🏆 New best! or Game over), the score, then **with a player signed in** how the run did
+against their record on the leaderboard (it replaces this phone's best), and **without one** "Your best: n" (when it is not a new best; kept on the
 phone, `juegos-de-salon:stick-best`, the moment each point beats it), the breakdown (bridges crossed, flags
 and their bonus, the longest flag streak), **today's runs on this phone** from the second one on (a
 row of scores, the best lit yellow, the last one outlined, with "Same course: pass the phone and compare.";
 `juegos-de-salon:stick-today`, the last 12, cleared by a new day or another course), sharing (each bridge a
-🎯 flag or a 🟩, then 🕳️ the fall, ten to a line), 🔁 Play again, back to the lab and, after a
-line, the comment form.
+🎯 flag or a 🟩, then 🕳️ the fall, ten to a line), 🔁 Play again, back to the lab, then without a player "Want this game to count on the leaderboard?" with Sign in (D-274), the leaderboard and, after a
+line, the comment form. **Rankings:** each run counts in the `stick` table (points first, then the shorter run), as a lab game, like Julepe (D-215), and outside the Todoterreno, which sums only the games out of the lab; a course chosen with `?seed=` does not count (D-212). The page is English, so it fixes the rankings' language with `fijarIdioma('en')` (`ranking.js`).
 
 ## How it works
 

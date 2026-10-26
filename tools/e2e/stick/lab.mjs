@@ -1,11 +1,11 @@
 // The lab's Stick Ninja (D-446) end to end, at /labs/stick/: the lab offers it under Juegos en prueba with the
-// credit to Ketchapp's Stick Hero, which the English cover gives too; the cover plays itself; Play opens the
+// credit to Ketchapp's Stick Hero, which the English cover gives too, with its English leaderboard under Play; the cover plays itself; Play opens the
 // night with "Hold to stretch"; a real press stretches the stick; a stick on the flag is a perfect (+2, then +3
 // in a row, the pulse, "Perfect ×n", the streak chip and the achievements); a plain landing is +1 and breaks
 // the streak; there are no stars; a pause in the middle of a hold keeps the stick, and the tap back does
 // not drop it; a stick too long costs one of the three lives and the ninja is back on its pillar, and the
 // third fall ends the run, with the result (score, new best kept
-// on the phone, breakdown, share, Play again, the comment after a line); a real short hold falls, and the
+// on the phone, breakdown, share, Play again, the leaderboard, the comment after a line); a real short hold falls, and the
 // second run, three real quick taps, shows today's runs on this phone. Moving pillars, from the 10th on, slide and say so, and aiming
 // where they will be is a perfect (Moving target). At 375 px. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
@@ -28,6 +28,9 @@ await b.go(`${SITE}/labs/stick/?test&seed=42`, 600);
 await ev(`['stick-best', 'stick-today', 'stick-moving'].forEach(k => localStorage.removeItem('juegos-de-salon:' + k)); 1`);
 await b.go(`${SITE}/labs/stick/?test&seed=42`, 1200);
 ok(await waitFor(`!!document.getElementById('btn-jugar')`), 'the cover has Play');
+// The game's ranking under Play, in English like the page, with signing in (D-212, D-249)
+ok(await waitFor(`/Stick Ninja leaderboard/.test(document.querySelector('.rk-ranking')?.textContent || '') && /All time/.test(document.querySelector('.rk-seg')?.textContent || '')`, 4000), 'the cover has the Stick Ninja leaderboard, in English');
+ok(await ev(`document.getElementById('btn-jugar').nextElementSibling?.classList.contains('rk-ranking') && !!document.querySelector('.rk-jugador')`), 'right under Play, with signing in after it');
 ok(await ev(`document.documentElement.lang`) === 'en', 'the page is in English');
 ok(/Inspired by Stick Hero, by Ketchapp/.test(await ev(`document.querySelector('.credito')?.textContent || ''`)), 'the cover credits Ketchapp\'s Stick Hero');
 ok(await ev(`document.querySelectorAll('.pasos li').length`) === 3, 'three steps under Play');
@@ -125,6 +128,7 @@ ok(await ev(`localStorage.getItem('juegos-de-salon:stick-best')`) === String(fin
 ok(/flags: \+\d+ bonus/.test(await ev(`document.querySelector('.desglose').textContent`)) && !/star/.test(await ev(`document.querySelector('.desglose').textContent`)), 'the breakdown counts the flags and their bonus, and no stars');
 ok(await ev(`!!document.getElementById('btn-compartir-resultado') && !!document.getElementById('btn-otra') && !!document.querySelector('.resultado .divisor')`), 'share, Play again, and the comment form after a line');
 ok(await ev(`!document.getElementById('hoy')`), 'one run: no list of today\'s runs yet');
+ok(await ev(`!!document.querySelector('.resultado .rk-ranking') && !document.querySelector('.resultado .rk-contar')`), 'the result has the leaderboard, and a ?seed= course does not offer to count');
 ok(await ev(`document.documentElement.scrollWidth <= 375`), 'no sideways scroll on the result');
 await b.shot('4-result');
 
