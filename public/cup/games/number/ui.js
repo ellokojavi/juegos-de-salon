@@ -9,6 +9,7 @@
 import * as motor from './engine.js';
 import { teclado, CIFRAS } from '../../../assets/js/teclado.js';
 import { LOCALES as TYF_LOCALES } from '../../../bulls-and-cows/rules.js';
+import { labAccess } from '../../../assets/js/lab-access.js';
 
 export const TYF = TYF_LOCALES.es;
 /** Los textos de Toque y Fama en el idioma de quien juega (D-170). */
@@ -37,14 +38,52 @@ export function pistas(el, g, largo, grande = false, completa = grande, TYF = ty
  * El tablero de intentos de Toque y Fama, de un solo jugador. `valor` dibuja el intento.
  * Las pistas van completas; Letras las abrevia porque sus letras de colores no dejan espacio.
  */
-export function tablero(el, { filas, largo, titulo, valor = f => f.v, completa = true, lang }) {
+export function tablero(el, { filas, largo, titulo, valor = f => f.v, completa = true, lang, marcar = false, notas = [] }) {
   const TYF = tyf(lang);
   const tries = n => (n === 1 ? TYF.tryOne : TYF.tryMany);
-  const lista = el('ol', {}, ...filas.map(f => el('li', { class: f.famas === largo ? 'hit' : '' }, valor(f), pistas(el, f, largo, false, completa, TYF))));
+  // With `marcar` (a finished board, lab only, D-453), each guess the clues had already ruled out
+  // carries ⚠️. Never while playing: it would tell the player that number cannot be the secret
+  const fila = f => {
+    const clue = pistas(el, f, largo, false, completa, TYF);
+    if (marcar && f.descartado) clue.prepend(el('span', { class: 'd' }, '⚠️'));
+    return el('li', { class: [f.famas === largo ? 'hit' : '', marcar && f.descartado ? 'out' : ''].filter(Boolean).join(' ') }, valor(f), clue);
+  };
   return el('div', { class: 'board turn board--solo', 'data-tablero': 'intentos' },
     el('h3', {}, titulo),
     el('div', { class: 'count' }, filas.length ? `${filas.length} ${tries(filas.length)}` : TYF.noGuesses),
-    filas.length ? lista : el('div', { class: 'empty' }, '—'));
+    filas.length ? el('ol', {}, ...filas.map(fila)) : el('div', { class: 'empty' }, '—'),
+    ...notas.map(t => el('p', { class: 'board-note' }, t)));
+}
+
+/**
+ * The ruled-out rule, tried in the lab (D-453; lab: #seccion-tyf-descarte). Scores keep the current
+ * rule for everyone, rankings and Cup totals included; a lab key holder also sees, on a finished
+ * board, the ⚠️ marks and what the new rule would have scored. Resolves to the lines to show, or
+ * null without a key.
+ */
+export async function lineasLab(e, lang) {
+  if (!e.fin || !(await labAccess())) return null;
+  const TYF = tyf(lang);
+  const f = (t, v) => t.replace(/\{(\w+)\}/g, (_, k) => v[k]);
+  return [
+    ...(e.descartados ? [f(TYF.discardedNote, { c: motor.PENA_DESCARTE })] : []),
+    f(TYF.labNewRule, { s: motor.puntajeDescarte(e) }),
+  ];
+}
+
+/** The new rule's line for a result screen: empty, and filled only for a lab key holder (D-453). */
+export function lineaLab(el, e, lang) {
+  const p = el('p', { class: 'muted nota-lab' });
+  lineasLab(e, lang).then(l => { if (l) p.textContent = l.at(-1); });
+  return p;
+}
+
+/** Redraws a finished board with the lab's marks and lines, when this visitor holds a key (D-453). */
+export function tableroLab(viejo, el, e, opciones) {
+  lineasLab(e, opciones.lang).then(notas => {
+    if (notas && viejo.isConnected) viejo.replaceWith(tablero(el, { ...opciones, filas: e.filas, marcar: true, notas }));
+  });
+  return viejo;
 }
 
 export function montar(raiz, ctx) {
@@ -84,7 +123,9 @@ export function montar(raiz, ctx) {
         })),
         el('p', { class: 'block-hint' }, T.blockHintDigits)); // "tachar", como en Palabra y en las reglas (U-5)
     }
-    caja.append(tablero(el, { filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) }));
+    const opciones = { filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) };
+    const tab = tablero(el, opciones);
+    caja.append(e.fin ? tableroLab(tab, el, e, opciones) : tab);
     if (ctx.cierreAbajo) caja.append(...cierre);
     raiz.append(caja);
   };
