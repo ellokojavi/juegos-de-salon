@@ -302,6 +302,7 @@ stats/prod/days/20342/
   vuelta/d2-7: 4                       days since the browser's last visit, by band
   frec/f3-7: 6                         how many of the last 28 days the browser came, by band
   activos/k3j9x0q2ab: 2                a browser's random id: 1 visited, 2 started something (D-349)
+  support/open: 1                      ☕ Buy us a coffee, by step: shown, open, pay, thanks (D-448, in the lab)
 stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many subscriptions are still alive
 ```
 
@@ -330,6 +331,9 @@ stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many
   others (start at 1, go up by one; keys by shape). `activos/<id>` is the only key that names a
   browser: a random 10-character id (`^[a-z0-9]{10}$`) kept in `localStorage`, whose value can only
   be 1 or 2 and never go down. Nothing else goes with it.
+- Support (D-448): `support/<event>` is a counter like the others, uploaded by `support.js`; unlike
+  the categories above, the event is validated **by list** (`shown`, `open`, `pay`, `thanks`), so a
+  new step does force touching the rules. Only counts: nothing says who supported or how much.
 
 - Health (D-251): `falla/<tipo>/<página>`, `listo/<página>/<tramo>` and `err/<firma>/n` are uploaded by
   `public/assets/js/vigia.js`, by one; type, page, bucket and signature are validated by shape. The detail,
