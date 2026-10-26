@@ -215,6 +215,7 @@ owner's key) and does not merge. Everything else in this guide applies the same.
   node tools/firebase/unnoted-rooms.mjs [--fix]   # rooms no cleanup bucket names, so never swept (D-321)
   node tools/firebase/uad-points-backfill.mjs [--apply]   # October 2026's Uno al día points from the history, once after D-414 publishes (dry run without --apply)
   node tools/firebase/uad-points-backfill.mjs --rebuild [--apply] [--month yyyy-mm]   # recomputes a month's totals from the history and the 🧊 markers; the uad-rebuild workflow runs it nightly (D-415)
+  node tools/firebase/rankings-history.mjs --podiums [--write]   # finished Cups' missing podiums (torneoPodios/); the cup-podiums workflow runs it nightly (D-450)
   ```
 - The worktree and the branch are deleted on their own (above, D-218, D-252); to do it now, `node tools/agents/clean-worktrees.mjs`.
 

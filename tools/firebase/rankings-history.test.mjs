@@ -1,7 +1,7 @@
 // Run: node tools/firebase/rankings-history.test.mjs
 // The Cup's history in the rankings (D-212): legacy players, records of the "Cup" tab, podiums and each player's cups (D-220).
 import assert from 'node:assert/strict';
-import { history, legacyJid } from './rankings-history.mjs';
+import { history, legacyJid, missingPodiums } from './rankings-history.mjs';
 import { nuevaMeta } from '../../public/cup/engine.js';
 import { esJid, claveOrden } from '../../public/assets/js/records.js';
 import { crearAlmacenLocal } from '../../public/assets/js/jugador-local.js';
@@ -84,5 +84,14 @@ assert.equal((await phone.tabla('reinas_copa', 'siempre')).yo.s, 95);
 // Already taken: another phone signs in with the same name and PIN, and with another PIN it is no longer offered
 assert.deepEqual(await mk('u2').entrar('pancho', '1234'), { estado: 'dentro', jid: pancho });
 assert.deepEqual(await mk('u3').entrar('Pancho', '9999'), { estado: 'nuevo', otros: 1 });
+
+// D-450: the podium of a finished cup nobody reopened, as the app saves it; not for a saved one, a lab one or one still running
+const linkedCup = cup(meta(), { p00001: { ...P('Pancho', 1, 'CL'), j: 'jiri0001' }, p00002: P('Cata', 1, 'AR'), p00003: P('Javi') }, finished.results);
+const mp = missingPodiums({ AAAAA: linkedCup, BBBBB: other, CCCCC: lab }, { BBBBB: { end: 1 } }, now);
+assert.deepEqual(Object.keys(mp), ['torneoPodios/AAAAA']);
+assert.equal(mp['torneoPodios/AAAAA'].p.p00001.j, 'jiri0001');
+assert.equal(mp['torneoPodios/AAAAA'].p.p00002.j, undefined, 'an unlinked player adds up by name, as in the app');
+assert.equal(mp['torneoPodios/AAAAA'].p.p00001.l, 1);
+assert.deepEqual(missingPodiums({ AAAAA: linkedCup }, {}, Date.UTC(2026, 8, 2)), {});
 
 console.log('rankings-history: ok');
