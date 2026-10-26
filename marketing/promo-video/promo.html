@@ -88,7 +88,7 @@
     box-shadow: 0 0 0 3px rgba(255,255,255,0.16), 0 20px 44px rgba(0,0,0,0.5); }
   .mscreen { position: relative; width: 100%; height: 100%; border-radius: 22px; overflow: hidden; background: var(--bg1); }
   .mscreen img { position: absolute; left: 0; top: 0; width: 100%; }
-  .mlabel { margin: 12px -18px 0; font-weight: 900; font-size: 26px; line-height: 1.15; }
+  .mlabel { margin: 12px -12px 0; font-weight: 900; font-size: 26px; line-height: 1.15; }   /* v8: -12, not -18: labels 200 px wide on 205 px columns, so "El Ahorcado" and "Batalla Naval" no longer touch (U-34) */ 
   .wide .mlabel { margin: 10px -40px 0; font-size: 24px; }
   /* Uno al día y La Copa tienen su propio fondo, para que se lean como algo aparte de los juegos */
   #tinte-uad { background: radial-gradient(circle at 18% 12%, rgba(46,230,214,0.5), transparent 55%), radial-gradient(circle at 85% 82%, rgba(157,255,58,0.32), transparent 55%), linear-gradient(160deg, #031f26, #05343c 55%, #0a2a3f); }
@@ -198,7 +198,9 @@ const BEAT = 60 / 130;
 const FPS = 30;
 const GAMES = [
   { emoji: '⏳', name: 'LÍNEA DE TIEMPO', line: '¿Qué pasó primero?',                 chip: '1–6 jugadores', img: 'linea',  color: [255, 210, 63], beats: 5 },
-  { emoji: '🎲', name: 'DUDO',            line: 'Apuesta y aguanta la cara',          chip: '1–6 jugadores', img: 'dudo',   color: [255, 122, 26], beats: 5 },
+  // v8: the phone shakes (D-447), the dice roll on the cloth and land in the hand, and Javi bids
+  { emoji: '🎲', name: 'DUDO',            line: 'Agita el cacho y apuesta',           chip: '1–6 jugadores', img: 'dudo',   color: [255, 122, 26], beats: 12,
+    guion: [[0.75, 0], [4.55, 't0'], [5.0, 't1']] },
   // gira el globo con el dedo, lo acerca con +, marca Santiago y confirma: el mapa se mueve solo
   { emoji: '📍', name: '¿DÓNDE QUEDA?',   line: 'Encuentra la ciudad en el globo',     chip: '2–5 min',       img: 'donde',  color: [46, 160, 255], beats: 8,
     guion: [[1.2, 't0'], [1.55, 't1'], [2.35, 't2'], [2.7, 't3']] },
@@ -208,10 +210,11 @@ const GAMES = [
 const UAD = { emoji: '📅', name: 'UNO AL DÍA', line: 'Un juego sorpresa cada día,<br>el mismo para todos', chip: '🔥 Arma tu racha', img: 'hoy', color: [46, 230, 214],
   guion: [[0.85, 't0'], [3.9, -4], [4.3, 't1'], [4.7, 't2'], [5.15, 't3']] };
 /** «¡Y muchos más juegos!»: todos los demás de la portada, cada uno jugando en bucle. */
+// v8: Cuarto Rey, Conexiones and Julepe went to the lab (D-421 and after); Agentes reached the home page
 const MORE = [['🔢', 'Toque y Fama', 'toque'], ['🔤', 'Toque y Fama: Palabra', 'letras'], ['🪢', 'El Ahorcado', 'ahorcado'], ['⚓', 'Batalla Naval', 'naval'],
-  ['👑', 'Cuarto Rey', 'rey'], ['🔗', 'Conexiones', 'conexiones'], ['📅', '¿En qué año?', 'anio'],
+  ['🕵️', 'Agentes', 'agentes'], ['📅', '¿En qué año?', 'anio'],
   ['👑', 'Reinas', 'reinas'], ['☀️', 'Tango', 'tango'], ['🧶', 'Desenredo', 'desenredo'],
-  ['📝', 'Generala', 'generala'], ['🍹', 'Julepe', 'julepe'], ['🚇', 'Rutas rotas', 'rutas'], ['📐', 'Loteo', 'loteo'], ['🖌️', 'Pintaminas', 'pintaminas']];
+  ['📝', 'Generala', 'generala'], ['🚇', 'Rutas rotas', 'rutas'], ['📐', 'Loteo', 'loteo'], ['🖌️', 'Pintaminas', 'pintaminas']];
 const EN = LANG === 'en';
 $('clarga').src = `${PDIR}/copa-larga.png`;
 if (EN) {
@@ -226,16 +229,16 @@ if (EN) {
     e4: '📲 Add it to your home screen', e5: 'In 4 languages: 🇪🇸 🇬🇧 🇧🇷 🇩🇪',
   };
   for (const id in T) $(id).innerHTML = T[id];
-  const G = { linea: ['TIMELINE', 'What happened first?', '1–6 players'], dudo: ["LIAR'S DICE", 'Bid and keep a straight face', '1–6 players'],
+  const G = { linea: ['TIMELINE', 'What happened first?', '1–6 players'], dudo: ["LIAR'S DICE", 'Shake the cup and bid', '1–6 players'],
     donde: ['WHERE IS IT?', 'Find the city on the globe', '2–5 min'], zip: ['ZIP', 'One line through the whole board', '3 min'] };
   for (const g of GAMES) if (G[g.img]) [g.name, g.line, g.chip] = G[g.img];
   Object.assign(UAD, { name: 'ONE A DAY', line: 'A surprise game every day,<br>the same for everyone', chip: '🔥 Build your streak' });
-  const M = { toque: 'Bulls and Cows', letras: 'Bulls and Cows: Word', ahorcado: 'Hangman', naval: 'Battleship', rey: 'Fourth King', conexiones: 'Connections',
-    anio: 'What Year?', reinas: 'Queens', tango: 'Tango', desenredo: 'Untangle', generala: 'Generala', julepe: 'Julep', rutas: 'Broken Routes', loteo: 'Plots', pintaminas: 'Paint Mines' };
+  const M = { toque: 'Bulls and Cows', letras: 'Bulls and Cows: Word', ahorcado: 'Hangman', naval: 'Battleship', agentes: 'Agents',
+    anio: 'What Year?', reinas: 'Queens', tango: 'Tango', desenredo: 'Untangle', generala: 'Generala', rutas: 'Broken Routes', loteo: 'Plots', pintaminas: 'Paint Mines' };
   for (const m of MORE) m[1] = M[m[2]] || m[1];
 }
-// Escenas en golpes: gancho 6 · logo 6 · juegos 23 · más 10 · Uno al día 16 · La Copa 14 · cierre 10 = 85 (39,2 s; la canción alcanza sola, ver README)
-const S = {}; { let b = 0; for (const [k, n] of [['hook', 6], ['logo', 6], ['games', GAMES.reduce((s, g) => s + g.beats, 0)], ['more', 10], ['uad', 16], ['copa', 14], ['cta', 10]]) { S[k] = [b * BEAT, (b + n) * BEAT]; b += n; } }
+// Escenas en golpes: gancho 6 · logo 6 · juegos 30 · más 8 · Uno al día 16 · La Copa 14 · cierre 9 = 89 (41,1 s: all the song has, with no repeat; see README)
+const S = {}; { let b = 0; for (const [k, n] of [['hook', 6], ['logo', 6], ['games', GAMES.reduce((s, g) => s + g.beats, 0)], ['more', 8], ['uad', 16], ['copa', 14], ['cta', 9]]) { S[k] = [b * BEAT, (b + n) * BEAT]; b += n; } }
 const DURATION = S.cta[1];
 const G0 = S.games[0], G1 = S.games[1];
 { let t = G0; for (const g of GAMES) { g.len = g.beats * BEAT; g.t0 = t; t += g.len; } }
@@ -317,6 +320,8 @@ function makePlayer(box, play, sc, ox, touchSize = 74) {
     path: x.tap.path ? x.tap.path.map(([dx, dy]) => [dx * sc, dy * sc]) : (x.tap.dx || x.tap.dy) ? [[0, 0], [x.tap.dx * sc, x.tap.dy * sc]] : null,
     mids: x.tap.mids || 0 }));
   P.tras = play.map(f => f.tras ?? null);
+  P.sacude = play.map(f => !!f.sacude);   // the phone shaken by the player (Dudo, v8)
+  P.k = 0;
   P.raw.forEach(x => { x.lead = x.path ? (x.path.length > 2 ? 1.3 : x.mids ? 0.75 : 0.42) : 0; });
   return P;
 }
@@ -344,16 +349,18 @@ const along = (path, m) => {
 };
 /** Una jugada: el dedo baja, (arrastra,) sube; la pantalla responde justo después. */
 function playAt(P, lt) {
-  let k = 0, at0 = 0;
-  P.taps.forEach(x => { if (lt >= x.at + 0.05) { k = x.k; at0 = x.at; } });
-  // Lo que pasó después del toque (el dado, el mapa que se mueve), al ritmo en que pasó
-  while (P.tras[k + 1] != null && lt >= at0 + P.tras[k + 1]) k++;
+  let k = 0, at0 = 0, empezo = false;
+  P.taps.forEach(x => { if (lt >= x.at + 0.05) { k = x.k; at0 = x.at; empezo = true; } });
+  // Lo que pasó después del toque (el dado, el mapa que se mueve), al ritmo en que pasó; no antes
+  // del primer momento del guion (Dudo's shake starts at its own time, v8)
+  while (empezo && P.tras[k + 1] != null && lt >= at0 + P.tras[k + 1]) k++;
   // Mientras dura un arrastre pasan sus capturas intermedias (el globo girando, el trazo creciendo)
   for (const x of P.taps) if (x.mids && lt >= x.at - x.lead && lt < x.at + 0.05) {
     const j = Math.min(x.mids, Math.floor(prog(lt, x.at - x.lead, x.at) * (x.mids + 1)));
     k = x.k - x.mids - 1 + j;
   }
   P.frames.forEach((img, i) => { img.style.display = i === k ? '' : 'none'; });
+  P.k = k;
   P.touch.style.opacity = 0; P.ripple.style.opacity = 0;
   for (const x of P.taps) {
     if (x.quiet) continue;
@@ -385,9 +392,10 @@ const uplay = document.createElement('div'); uplay.className = 'play'; $('uscree
 UAD.P = makePlayer(uplay, PLAYS[UAD.img], SC, OX); guionar(UAD.P, UAD.guion);
 
 /* «¡Y muchos más juegos!»: una grilla de celulares chicos, cada uno jugando el suyo en bucle */
-// 15 games (v7): in 16:9, two rows of 8 and 7; vertical, three rows of 5
-const MT = WIDE ? { sw: 130, cols: MORE.map((_, i) => { const r = i < 8 ? 0 : 1, c = r ? i - 8 : i, n = r ? 7 : 8; return [W / 2 + (c - (n - 1) / 2) * 225, 190 + r * 440]; }) }
-  : { sw: 160, cols: MORE.map((_, i) => { const r = Math.floor(i / 5), c = i % 5; return [W / 2 + (c - 2) * 205, 330 + r * 450]; }) };
+// 13 games (v8): in 16:9, two rows (7 and 6); vertical, rows of 5, the last one centered
+const MORE_N = MORE.length, MORE_A = Math.ceil(MORE_N / 2);
+const MT = WIDE ? { sw: 130, cols: MORE.map((_, i) => { const r = i < MORE_A ? 0 : 1, c = r ? i - MORE_A : i, n = r ? MORE_N - MORE_A : MORE_A; return [W / 2 + (c - (n - 1) / 2) * 225, 190 + r * 440]; }) }
+  : { sw: 160, cols: MORE.map((_, i) => { const r = Math.floor(i / 5), c = i % 5, n = Math.min(5, MORE_N - r * 5); return [W / 2 + (c - (n - 1) / 2) * 205, 330 + r * 450]; }) };
 const tiles = MORE.map(([emoji, name, id], i) => {
   const sh = Math.round(MT.sw * 844 / 390), [cx, top] = MT.cols[i];
   const t = document.createElement('div'); t.className = 'abs';
@@ -481,8 +489,12 @@ function render(t) {
     const bump = gi > 0 ? Math.exp(-lt * 6) * Math.sin(lt * 14) : 0;
     const tilt = (gi % 2 ? 1 : -1) * 6;
     const leave = easeIn(prog(t, G1 - 0.4, G1));
+    // While the player shakes it (Dudo), the whole phone shakes with the dice rolling inside
+    if (g.P) playAt(g.P, t - g.t0);   // this frame's capture first: it says whether the phone shakes
+    const sac = g.P && g.P.sacude[g.P.k] ? 1 : 0;
+    const shake = sac ? ` translate(${(Math.sin(t * 57) * 22).toFixed(1)}px, ${(Math.cos(t * 43) * 16).toFixed(1)}px) rotateZ(${(Math.sin(t * 39) * 4).toFixed(2)}deg)` : '';
     css($('phone'), {
-      transform: `perspective(2400px) translateY(${lerp(1400, 0, enter) + Math.sin(t * 1.6) * 12 + leave * 1400}px) rotateY(${tilt * easeOut(clamp(lt / 0.6)) + bump * 6}deg) rotateZ(${bump * 2}deg) scale(${(1 + bump * 0.03) * PS})`,
+      transform: `perspective(2400px) translateY(${lerp(1400, 0, enter) + Math.sin(t * 1.6) * 12 + leave * 1400}px) rotateY(${tilt * easeOut(clamp(lt / 0.6)) + bump * 6}deg) rotateZ(${bump * 2}deg) scale(${(1 + bump * 0.03) * PS})${shake}`,
       boxShadow: `0 0 0 3px rgba(255,255,255,0.14), 0 40px 90px rgba(0,0,0,0.6), 0 0 90px rgba(${col},0.55)`,
     });
     shots.forEach((img, i) => {
