@@ -354,7 +354,9 @@ function renderPlay(v) {
   } else {
     // The invitation to bid is for the one who opens; the rest of the room is told who does
     const abre = v.current || v.opener;
-    board.append(el('div', { class: 'standing opens' }, abre === yo ? T.opens : fmt(T.opensOther, { name: nameOf(abre) })));
+    // With the dice still to roll, "bid whatever you like" came before you could: first the shake (D-447)
+    const tuyo = tapados ? T.opensRoll : T.opens;
+    board.append(el('div', { class: 'standing opens' }, abre === yo ? tuyo : fmt(T.opensOther, { name: nameOf(abre) })));
   }
 
   renderActions(v, yo, miTurno, tapados);
