@@ -278,7 +278,7 @@ function closeOverlay() { const b = $('#handoff'); b.hidden = true; b.innerHTML 
 
 function render() {
   if (!M) return;
-  agite.onRoll = null;   // the cup that is drawn now says again who it lifts for
+  agite.onJolt = null;   // the cloth that is drawn now says again what a jolt moves
   vaso?.caja.remove();   // and puts the shaking cloth back, if it is still the table's
   const v = view();
   if (v.lobby) return renderLobby();
@@ -334,7 +334,7 @@ function renderPlay(v) {
   mine.classList.toggle('agitando', tapados);
   if (tapados) mine.append(cacho(v, yo));
   else {
-    agite.onRoll = null;
+    agite.onJolt = null;
     soltarVaso();
     mine.append(el('div', { class: 'mine-label' }, T.yourDice));
     const fila = el('div', { class: 'dice-row' }, ...dados.map(d => dieEl(d)));
@@ -449,9 +449,13 @@ function renderActions(v, yo, miTurno, tapados = false) {
  */
 /** A jolt is this much acceleration beyond gravity, in m/s²: walking with the phone stays under it. */
 const SACUDON = 13;
-/** This many jolts close together roll the dice: one bump on the table does not. */
+/** At least this many jolts before the dice may settle: one bump on the table does not roll them. */
 const SACUDONES = 3;
-const SACUDIDA_MS = 1500;
+/**
+ * The dice keep rolling while the phone shakes, and settle only once it has been still this long
+ * (the owner's request): a shake sends a jolt every 150–300 ms, so this is the hand stopping.
+ */
+const QUIETO_MS = 550;
 /** With no reading from the sensor this long after listening, the phone has none: the button shows. */
 const SIN_SENSOR_MS = 1200;
 const PIDE_PERMISO = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
@@ -462,7 +466,7 @@ const PIDE_PERMISO = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMo
  */
 const agite = {
   listening: false, waiting: false, sensor: typeof DeviceMotionEvent === 'undefined' ? false : null,
-  permiso: null, jolts: [], lastJolt: 0, onRoll: null, onJolt: null,
+  permiso: null, lastJolt: 0, onJolt: null,
 };
 
 function onMotion(e) {
@@ -473,13 +477,11 @@ function onMotion(e) {
   else return;   // an event with no reading: a computer that says it has a sensor
   // The first reading: if the cup was offering the button, it now listens instead
   if (agite.sensor !== true) { agite.sensor = true; if ($('#mine .agite-caja')) render(); }
-  if (!agite.onRoll) return;
+  if (!agite.onJolt) return;
   const ahora = performance.now();
   if (fuerza < SACUDON || ahora - agite.lastJolt < 110) return;
   agite.lastJolt = ahora;
-  agite.jolts = [...agite.jolts.filter(t => ahora - t < SACUDIDA_MS), ahora];
-  agite.onJolt?.();
-  if (agite.jolts.length >= SACUDONES) { agite.jolts = []; const tirar = agite.onRoll; agite.onRoll = null; tirar(); }
+  agite.onJolt();
 }
 
 function escucharAgite() {
@@ -503,14 +505,16 @@ function cubiertos(v, role, dados) {
  * They are rolled on a green cloth that takes the hand's place, with bigger dice than the hand's
  * (the owner's request): face down until the first jolt, then real cubes with pips that roll as the home
  * page's 🎲 does (dado3d.js, D-188, D-374), spun by each jolt, harder the harder the shake, and
- * slowing down between jolts, while the phone rattles with them. On the last jolt each settles on
- * the face it really has, and the cloth turns into the hand's panel with the dice lined up as always. The
+ * slowing down between jolts (never to a stop), while the phone rattles with them. They keep
+ * rolling as long as the phone shakes, and only once the hand stops (and it shook enough) each
+ * settles on the face it really has, and the cloth turns into the hand's panel with the dice lined up as always. The
  * faces seen while rolling mean nothing: the dice were rolled before (C-10). With no WebGL, or with
  * reduced motion, flat dice swap faces instead.
  */
 const CAEN_MS = 900;      // the last roll, from the last jolt to landing
 const VUELO_MS = 480;     // the cloth turning into the hand
 const CARA_MS = 70;       // flat dice: a new face this often
+const PISO_GIRO = 0.07;   // degrees per ms: the slowest a die not yet settled turns (no rattle under 0.15)
 /** The faces in dado3d.js's order (front, right, back, left, top, bottom): opposite ones add up to 7. */
 const CARAS_3D = [1, 3, 6, 4, 2, 5];
 /** How each face ends up in front, as [ax, ay] for `dibujar`. */
@@ -525,6 +529,7 @@ let vaso = null;
 
 function soltarVaso() {
   if (!vaso) return;
+  clearTimeout(vaso.quieto);
   if (vaso.tres) { cancelAnimationFrame(vaso.tres.raf); vaso.tres.dados.forEach(d => d.dado.soltar()); }
   vaso.caja.remove();
   vaso = null;
@@ -573,9 +578,14 @@ function tresDe(vs) {
         d.ay = d.desde[1] + (d.hasta[1] - d.desde[1]) * e;
         d.caja.style.transform = `translateY(${(-Math.abs(Math.sin(k * Math.PI * 2.5)) * (1 - k) * 20).toFixed(1)}px)`;
       } else {
-        // Spinning: each jolt adds speed, and it drains away between jolts
+        // Spinning: each jolt adds speed, and it drains away between jolts, but never to a stop:
+        // a die standing still would look settled, and they settle only when the hand stops
         const freno = Math.exp(-dt / 450);
         d.wx *= freno; d.wy *= freno;
+        const giro = Math.hypot(d.wx, d.wy);
+        if (giro < PISO_GIRO) {
+          if (giro > 0) { d.wx *= PISO_GIRO / giro; d.wy *= PISO_GIRO / giro; } else { d.wx = d.wy = PISO_GIRO / Math.SQRT2; }
+        }
         d.ax += d.wx * dt; d.ay += d.wy * dt;
         const w = Math.hypot(d.wx, d.wy);
         fuerza = Math.max(fuerza, w);
@@ -676,7 +686,8 @@ function cacho(v, role) {
   const tirar = () => {
     if (S.shaken.has(clave) || S.rolling === clave) return;
     S.rolling = clave;
-    agite.onRoll = null; agite.onJolt = null;
+    agite.onJolt = null;
+    clearTimeout(vs.quieto);
     vs.pie.replaceChildren();   // rolling, there is nothing left to tap
     SFX.dice();
     // Landed: where each die and the cloth are now, so the hand's panel can grow out of them
@@ -715,11 +726,14 @@ function cacho(v, role) {
   } else {
     vs.pie.replaceChildren(el('p', { class: 'cacho-txt' }, T.shakeNow));
     escucharAgite();
-    agite.onRoll = tirar;
+    // Every jolt keeps them rolling; once there were enough, the hand going still settles them
     agite.onJolt = () => {
       SFX.dice(); vibrate(20);
       const t = tresDe(vs);
-      if (t) empujar(t); else rodar(450);
+      if (t) empujar(t); else rodar(QUIETO_MS + 100);
+      vs.golpes = (vs.golpes || 0) + 1;
+      clearTimeout(vs.quieto);
+      if (vs.golpes >= SACUDONES) vs.quieto = setTimeout(tirar, QUIETO_MS);
     };
   }
   return vs.caja;
@@ -774,7 +788,7 @@ function tictac() {
   const v = view();
   if (v.phase !== 'bid' || v.current !== t.role || v.round !== t.round) return;
   S.sel = null;
-  agite.onRoll = null;
+  agite.onJolt = null;
   SFX.timeUp(); vibrate([60, 60, 120]);
   S.transport.send({ t: 'timeout', from: t.role, r: t.round });
 }
