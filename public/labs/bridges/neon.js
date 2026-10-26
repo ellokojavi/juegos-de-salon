@@ -349,6 +349,15 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
       const g = ctx.createLinearGradient(0, py, 0, y0);
       g.addColorStop(0, '#4a2c86'); g.addColorStop(1, '#2a1458');
       caja(ctx, px - w / 2, py, w, y0 - py, 0.8, g);
+      // Dressed stone: courses of blocks, their joints staggered, a lit left side and a shaded right one
+      ctx.save(); ctx.beginPath(); ctx.roundRect(px - w / 2, py, w, y0 - py, 0.8); ctx.clip();
+      for (let n = 0, y = py + 1.6; y < y0; n++, y += 2.4) {
+        linea(ctx, px - w / 2, y, px + w / 2, y, 'rgba(20,8,31,0.45)', 0.3);
+        for (const f of n % 2 ? [0.5] : [0.22, 0.78]) linea(ctx, px - w / 2 + w * f, y, px - w / 2 + w * f, Math.min(y0, y + 2.4), 'rgba(20,8,31,0.35)', 0.25);
+        linea(ctx, px - w / 2, y + 0.3, px + w / 2, y + 0.3, 'rgba(190,160,255,0.08)', 0.2);
+      }
+      ctx.fillStyle = 'rgba(20,8,31,0.3)'; ctx.fillRect(px + w / 2 - 1.4, py, 1.4, y0 - py);
+      ctx.restore();
       ctx.fillStyle = 'rgba(190,160,255,0.35)'; ctx.fillRect(px - w / 2, py, 0.5, y0 - py);
       brilla(ctx, '#be9cff', 5, () => caja(ctx, px - w / 2 - 0.6, py - 0.6, w + 1.2, 1.2, 0.5, '#be9cff'));
     } else if (!enOrilla) {
