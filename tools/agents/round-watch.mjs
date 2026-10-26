@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * The processes round's watchdog (D-440). The round runs on the owner's Mac mini; when it stops
- * (the Mac asleep, the Claude app closed, a task left pointing at renamed files), nothing used to say
+ * (the Mac off, `claude` signed out, a task left pointing at renamed files), nothing used to say
  * so: in October 2026 it stopped for six days and 91 merges went unreviewed before anyone noticed.
  * This runs on GitHub, away from the Mac, and looks only at what the round leaves on `main`.
  *
@@ -45,9 +45,9 @@ export function issueBody(s, { site = 'https://github.com/ellokojavi/juegos-de-s
     `Last recorded round: ${s.lastRound || 'none'}.`,
     '',
     'What to check, in order:',
-    '1. claude.ai → Scheduled → **Juegos de Salón · processes round**: did its last run fail, or not start?',
-    '2. The Mac mini: awake, online, and the Claude desktop app open (the task runs there).',
-    '3. Run it now from that page ("Run now"). This issue closes itself once the round catches up.',
+    '1. On the Mac mini, `node tools/jobs/jobs.mjs status`: did `processes-round` fail, or never run? Its output is in `~/Library/Logs/juegos-de-salon/processes-round.log`.',
+    '2. The Mac mini: on, online, and `claude` signed in (the round runs headless through launchd, D-451).',
+    '3. Run it now: `node tools/jobs/jobs.mjs run processes-round`. This issue closes itself once the round catches up.',
     '',
     `How it is set up: [tools/jobs/MAC-MINI.md](${site}/blob/main/tools/jobs/MAC-MINI.md). Opened by \`round-watch.yml\` (D-440).`,
   ].join('\n');

@@ -1,6 +1,6 @@
-# The processes round, as the scheduled task runs it (D-440)
+# The processes round, as the scheduled job runs it (D-440, D-451)
 
-The scheduled task **Juegos de Salón · processes round** (`processes-round` in `tools/jobs/jobs.json`)
+The launchd job `processes-round` (in `tools/jobs/jobs.json`, a headless Claude session, D-451)
 runs on the owner's Mac mini every day at 4:30 Pacific. Its prompt only says to read this file from
 `origin/main` and follow it, so the instructions live here, are reviewed like any change, and
 `tools/jobs/jobs.test.mjs` fails if they name a file that no longer exists (in October 2026 the old
