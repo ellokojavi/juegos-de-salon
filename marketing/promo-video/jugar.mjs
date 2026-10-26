@@ -31,7 +31,8 @@ const PLAYS = {
     { wait: 600 }, { snap: true },
     // El dado, a todo el cuadro: la página corre a un cuarto de velocidad y cada captura anota su
     // momento (`tras`), así promo.html lo pasa a la velocidad de verdad
-    { tap: `document.getElementById('btn-uno-al-dia')`, lento: 0.25, tras: 3300, after: 300 },
+    // v8: the home card's ▶ Jugar chip rolls the die (the card itself opens /today/ since D-414)
+    { tap: `document.getElementById('btn-uad-chip')`, lento: 0.25, tras: 3300, after: 300 },
     `new Promise(r=>{const f=()=>/queens/.test(location.pathname)?r():setTimeout(f,200);f()})`, { wait: 1500 },
     `document.getElementById('btn-empezar').click()`, { wait: 4500 },
     // la solución del día, del mismo motor; seis reinas fuera de cámara y las dos últimas en cámara
@@ -66,14 +67,16 @@ const PLAYS = {
     { tap: `(()=>{const w=__ahorcado.view().words.A.toUpperCase();const l=[...new Set(w.replace(/[^A-ZÑ]/g,''))][2];return [...document.querySelectorAll('button')].find(b=>b.textContent.trim()===l)})()`, after: 250 },
     { tap: `[...document.querySelectorAll('.btn')].find(b=>/Probar la|Try the/i.test(b.textContent))`, after: 700 },
   ] },
+  // v8: the shake (D-447) is on by default. One calm reading says the phone has a sensor (no roll
+  // button), then `agite` shakes it and films the dice rolling, settling and landing in the hand
   dudo: { url: '/liars-dice/', steps: [
     `document.querySelectorAll('.mode')[2].click()`,
     `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
-    `document.querySelector('#setup-actions .btn--yellow').click()`, { wait: 1200 }, { snap: true },
+    `document.querySelector('#setup-actions .btn--yellow').click()`, { wait: 300 },
+    `dispatchEvent(new DeviceMotionEvent('devicemotion', { acceleration: { x: 0.1, y: 0, z: 0.2 }, interval: 16 }))`, { wait: 600 }, { snap: true },
+    { agite: 5, cada: 200, lento: 0.5, tras: 3700, after: 400 },
     { tap: `document.querySelectorAll('.pinta')[4]`, after: 400 },
-    { tap: `[...document.querySelectorAll('#actions button')].find(b=>b.textContent.trim()==='+')`, after: 300 },
-    { tap: `document.querySelector('#actions .btn--yellow')`, after: 2600 },
-    { tap: `[...document.querySelectorAll('#actions .btn')].find(b=>/Dudo|Liar/i.test(b.textContent))`, after: 1500 },
+    { tap: `document.querySelector('#actions .btn--yellow')`, after: 700 },
   ] },
   naval: { url: '/battleship/', steps: [
     `document.querySelectorAll('.mode')[2].click()`,
@@ -274,6 +277,29 @@ for (const id of pedidos) {
       for (let k = 1; k <= n; k++) { await page.mouse.move(x + dx * k / n, y + dy * k / n, { steps: 3 }); await sleep(80); if (k < n) await snap(null); }
       await page.mouse.up();
       await sleep(s.after ?? 500); await snap({ x, y, dx, dy, mids: n - 1 });
+      continue;
+    }
+    if (s.agite) {
+      // The phone shaken (Dudo, D-447): `agite` jolts every `cada` ms of page time, run slowed down
+      // (`lento`) so the rolling dice come out smooth; every frame notes when it was (`tras`) and
+      // whether the phone was still shaking (`sacude`), for promo.html to shake the phone with them
+      const reloj = () => page.evaluate(() => performance.now());
+      const cdp = await page.context().newCDPSession(page);
+      await cdp.send('Animation.enable'); await cdp.send('Animation.setPlaybackRate', { playbackRate: s.lento });
+      await page.evaluate(f => window.__vel(f), s.lento);
+      const t0 = await reloj(), fin = (s.agite - 1) * s.cada + 120;
+      await page.evaluate(([n, cada]) => { for (let i = 0; i < n; i++) setTimeout(() => dispatchEvent(new DeviceMotionEvent('devicemotion',
+        { acceleration: { x: i % 2 ? -22 : 22, y: 4, z: 1 }, interval: 16 })), i * cada); }, [s.agite, s.cada]);
+      for (;;) {
+        const a = await reloj() - t0;
+        if (a > s.tras) break;
+        const f = `${id}-${frames.length}.png`;
+        await page.screenshot({ path: path.join(OUT, f) });
+        const cuando = (a + (await reloj() - t0)) / 2;
+        frames.push({ img: f, tap: null, tras: +(cuando / 1000).toFixed(3), ...(cuando < fin ? { sacude: true } : {}) });
+      }
+      await page.evaluate(() => window.__vel(1)).catch(() => {}); await cdp.send('Animation.setPlaybackRate', { playbackRate: 1 }).catch(() => {});
+      await sleep(s.after ?? 500);
       continue;
     }
     const expr = ESPECIALES[s.tap] || s.tap || s.drag[0];
