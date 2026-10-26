@@ -36,7 +36,7 @@ export const DESDE_GENERALA = '2026-10-23';
  */
 export const DESDE_AGENTES = '2026-10-24';
 
-/** The day 🚂 Tren en Vilo enters, out of the lab (D-456): it joins the next deck shuffled. */
+/** The day 🚅 Tren en Vilo enters, out of the lab (D-456): it joins the next deck shuffled. */
 export const DESDE_PUENTES = '2026-10-27';
 
 /**
@@ -71,7 +71,7 @@ export const JUEGOS_DIA = [
   // D-421: Agentes, out of the lab in Conexiones' place
   { id: 'agentes', emoji: '🕵️', desde: DESDE_AGENTES },
   // D-456: Tren en Vilo, out of the lab
-  { id: 'puentes', emoji: '🚂', desde: DESDE_PUENTES },
+  { id: 'puentes', emoji: '🚅', desde: DESDE_PUENTES },
 ];
 /** Whether a game can come out on a date: it already joined and has not left. */
 export const vigente = (j, fecha) => j.desde <= fecha && !(j.hasta && j.hasta <= fecha);

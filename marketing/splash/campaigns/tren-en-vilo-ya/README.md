@@ -8,7 +8,7 @@ of the gap now crosses.
 |---|---|
 | Texts | kicker "¡Nuevo!" · title "¡El tren ya cruza!" ; the game's card carries the description (a bridge of beams over a gap: it holds and the train crosses, or it falls; it is in Uno al día and La Copa) and ▶ Jugar; in the four languages |
 | Layout | `hero` (the owner's request, 2026-10-26): the game's scene as wide as the window at its own shape (720×730), not a thumbnail, and its card under it |
-| Item | 🚂 Tren en Vilo (`puentes`, `/bridges/`), with its clip `public/assets/splash/bridges.mp4` and poster `bridges.jpg`: a level-1 wood stage built beam by beam in the neon look, then the bullet train crossing it, the strain gauge without its words so one clip serves the four languages (made by [`capture.mjs`](../../capture.mjs) `bridges` at the canvas's own shape) |
+| Item | 🚂 Tren en Vilo (`puentes`, `/bridges/`), with its clip `public/assets/splash/bridges.mp4` its first frame `bridges-start.jpg` as the poster while it loads, and `bridges.jpg` (the bridge built) as the still for reduced motion: a level-1 wood stage built beam by beam in the neon look, then the bullet train crossing it, the strain gauge without its words so one clip serves the four languages (made by [`capture.mjs`](../../capture.mjs) `bridges` at the canvas's own shape) |
 | On | from its publish, through 2026-11-09 inclusive, replacing the teaser in `ACTIVE` (D-430) |
 | Usability | full pass before merging (D-355) |
 
@@ -19,3 +19,4 @@ Screenshots at 390 px, as `node tools/e2e/look.mjs splash tren-en-vilo-ya --lang
 
 - **2026-10-26:** made for the game's launch out of the lab; the teaser goes off.
 - **2026-10-26 (redesign):** the owner asked for the game's view as big as the window allows, with a building sequence and the train crossing, and the game's card with its description and Play: `hero` layout, the clip re-recorded at 720×730.
+- **2026-10-26 (poster):** the owner saw the built bridge flash and vanish as the clip started: the poster was the clip's last frame. Now the poster is its first frame, and the built bridge is only the reduced-motion still.

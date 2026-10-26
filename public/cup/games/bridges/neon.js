@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo — the scene in the house style (lab prototype, `?style=neon`): smooth shapes, soft
+ * 🚅 Tren en Vilo — the scene in the house style (lab prototype, `?style=neon`): smooth shapes, soft
  * glows and the home page's palette (night purple, yellow → pink, cyan), like Stick Ninja, instead of
  * pixel art. Same entry as scene.js's `dibujar` and the same world; only the drawing changes. The
  * visitors come and go as in the pixel scene (visitors.js), drawn as shapes by neon-visitors.js.
@@ -287,14 +287,21 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
     brilla(ctx, sol.halo, 8, () => circulo(ctx, sx, sy, sol.r, disco));
   }
   // Soft clouds drifting by
-  esc.nubes ||= Array.from({ length: 3 }, (_, n) => ({ y: 0.1 + n * 0.14 + Math.random() * 0.05, w: 14 + Math.random() * 12, v: 1.2 + Math.random() * 2.4, d: Math.random() * 200 }));
+  // Each cloud is a few puffs of its own shape, spread across the sky at its own height and speed
+  esc.nubes ||= [0.08, 0.2, 0.31].sort(() => Math.random() - 0.5).map((y, n) => ({
+    y: y + Math.random() * 0.04, v: 0.8 + n * 0.9 + Math.random() * 0.6, d: (n / 3 + Math.random() * 0.2) * (W + 120),
+    puffs: Array.from({ length: 2 + Math.floor(Math.random() * 3) }, () => ({ dx: (Math.random() - 0.5) * 30, dy: (Math.random() - 0.5) * 3, w: 8 + Math.random() * 14 })),
+  }));
   for (const nb of esc.nubes) {
-    const x = ((ahora * nb.v + nb.d) % (W + nb.w * 2)) - nb.w;
-    const g = ctx.createRadialGradient(x, nb.y * y0 * 1.4, 0, x, nb.y * y0 * 1.4, nb.w);
-    g.addColorStop(0, `rgba(255,240,255,${L.clouds})`); g.addColorStop(1, 'rgba(255,240,255,0)');
-    ctx.save(); ctx.translate(x, nb.y * y0 * 1.4); ctx.scale(1, 0.32); ctx.translate(-x, -nb.y * y0 * 1.4);
-    ctx.fillStyle = g; ctx.fillRect(x - nb.w, nb.y * y0 * 1.4 - nb.w, nb.w * 2, nb.w * 2);
-    ctx.restore();
+    const cx = ((ahora * nb.v + nb.d) % (W + 120)) - 60, cy = nb.y * y0 * 1.4;
+    for (const p of nb.puffs) {
+      const x = cx + p.dx, y = cy + p.dy;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, p.w);
+      g.addColorStop(0, `rgba(255,240,255,${L.clouds})`); g.addColorStop(1, 'rgba(255,240,255,0)');
+      ctx.save(); ctx.translate(x, y); ctx.scale(1, 0.36); ctx.translate(-x, -y);
+      ctx.fillStyle = g; ctx.fillRect(x - p.w, y - p.w, p.w * 2, p.w * 2);
+      ctx.restore();
+    }
   }
   // Two ranges of hills behind the gap, like Stick Ninja's night
   // (the near one low, over the water, so its ridge never reads as a wire under the deck)

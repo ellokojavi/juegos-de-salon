@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo — the bullet train's colors (lab, owner's request 2026-10-25): one crossing at the
+ * 🚅 Tren en Vilo — the bullet train's colors (lab, owner's request 2026-10-25): one crossing at the
  * game's size that changes color each pass, and each color up close, the whole train with a nose at both
  * ends, with a button to play with it (`?style=neon&train=<id>`).
  */

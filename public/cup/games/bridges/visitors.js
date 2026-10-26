@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo — the visitors (birds, the flying saucer and its fish, the whale, the boat and its wake
+ * 🚅 Tren en Vilo — the visitors (birds, the flying saucer and its fish, the whale, the boat and its wake
  * rider, the mole): when each one comes and what it does, shared by both styles. They draw through `r`,
  * the pixel renderer (pixel.js) or neon.js's smooth one, which draws the same sprites as shapes. All in art
  * units (16 per grid unit). `V` carries the scene: { r, esc (the scene's state, its particles), e (the
