@@ -14,7 +14,7 @@ description: The owner's panel (public/panel/), La Copa reports and the rankings
   gate, `RANKINGS_EN_LABS`, stays `false`). The
   history of La Copa (podiums, the "Copa" tab and each player's Cups for "Tus copas" (Your Cups), D-220,
   with inherited players that each one claims):
-  `node tools/firebase/rankings-history.mjs [--with-labs] [--write]`; `--podiums` writes only the missing podiums of finished Cups, which the `cup-podiums` workflow does every night (D-450). Group games
+  `node tools/firebase/rankings-history.mjs [--with-labs] [--write]`; `--podiums` writes only the missing podiums of finished Cups, which the `cup-podiums` workflow does twice a night (D-450). Group games
   record wins with `finDePartida` (`ranking.js`) when they end, and show their table with
   `bloqueVictorias` in the intro (D-215); those played solo (Toque y Fama, Generala, Ahorcado (Hangman))
   put their `<id>_solo` table on top with `bloqueTabla` (D-274). With no player signed in, `finDePartida` and

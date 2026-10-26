@@ -37,7 +37,7 @@
       "id": "cup-podiums",
       "where": "github",
       "workflow": "cup-podiums.yml",
-      "cron": "47 7 * * *",
+      "cron": "47 7,8 * * *",
       "what": "Saves the podium of every finished Cup nobody reopened, so its champions reach the medal table.",
       "decisions": ["D-450"]
     },
