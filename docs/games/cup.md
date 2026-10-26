@@ -299,6 +299,10 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   its trial is two clues, and the Gran Final plays it whole. **🔗 Conexiones** stays registered in
   `JUEGOS`, so the cups created before keep playing it, their final included; new cups cannot pick it,
   and outside La Copa it sits in the lab's 📦 La Bodega at `/connections/`.
+- **🚂 Tren en Vilo** (D-456) came from the lab into the pool (`POZO`); its page is [bridges.md](bridges.md).
+  It brings its texts, styles and breakdown (`games/bridges/`), its trial is two easy crossings in a minute and
+  a half (`NIVELES_ENSAYO`, `TIEMPO_ENSAYO_S`), and a stage's summary pauses the cup's clock (`ctx.pausa`). It is
+  the one game of the week the Gran Final skips (`NOT_IN_FINAL` in `engine.js`: seven minutes of building).
 
 ## Modos
 
