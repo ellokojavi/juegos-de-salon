@@ -85,6 +85,9 @@ that (after a new game, after a big text change), saying why.
   and no address in its report. The reports it creates come back to you as `feedback` issues in
   the next sync, and you handle them like any other (step 3), including the email reply. It has no
   `dispatch` entry: the inbox itself is its memory.
+  Every skip, too, goes in your report to the owner (D-452): `check` lists those since the last
+  round, with time, masked sender and reason. Only the reason: their text is for the owner
+  (`inbox.mjs skipped`), never read it yourself.
 - **`documentation`, round mode:** "Do your daily round according to your guide, from
   `origin/main` and in your own worktree (`git worktree add`); PR base `main`." Criteria: its PR
   open (or "nothing to document" if nothing entered), `document.mjs check` with no new ✗ and
