@@ -1,8 +1,6 @@
 {
-  "checkedUpTo": "b75fac6c0cbbd2651a7c8a70293d224160d3e93e",
-  "pending": [
-    "Stale README screenshots in 11 game sections (cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review offline"
-  ],
+  "checkedUpTo": "482caeee0653ec29cb6a0e3721e44c8bd823de7b",
+  "pending": [],
   "known": [],
   "rounds": [
     {
@@ -112,6 +110,13 @@
       "pending": [
         "Stale README screenshots in 11 game sections (cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games): redo and review offline"
       ]
+    },
+    {
+      "date": "2026-10-26",
+      "from": "b75fac6c0cbbd2651a7c8a70293d224160d3e93e",
+      "to": "482caeee0653ec29cb6a0e3721e44c8bd823de7b",
+      "pr": null,
+      "pending": []
     }
   ],
   "note": "Memoria del agente de documentación (D-172). La lee y la escribe tools/document.mjs: hasta qué commit de main se revisó, lo que quedó pendiente, los problemas ya conocidos que esperan al dueño y las rondas anteriores."
