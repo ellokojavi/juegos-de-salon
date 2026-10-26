@@ -1,5 +1,318 @@
 # Changelog
 
+## 0.211.4 — 2026-10-26
+- **🏆 Every finished Cup's champions reach the medal table, even if nobody opens the Cup again** (D-450). The podium used to be saved only when someone opened the Cup after it ended, so the Reno Farewell Cup and Copa Originales were missing; they are in now, and a nightly job saves any that is missing.
+
+## 0.211.3 — 2026-10-25
+- **☕ Invítame a un café opens as a card over the screen** (D-449), like the share sheet, instead of a page of its own: from the home page footer or the end of a game, it rises from the bottom with one sentence, how paying works, the button and "Ahora no", and fits a small phone in every language. Stripe brings the donor back to the home page, where the thank-you opens the same way. Still in the lab, only with a lab key.
+
+## 0.211.2 — 2026-10-25
+- **🎲 Dudo's tagline names the shake:** "Agita el cacho, apuesta cuántos dados hay en la mesa y aguanta la cara." (and "Shake the cup…", "Sacuda o copo…", "Schüttle den Becher…"), on the home page, its own page and its link card.
+- **While your dice are still to roll, the round no longer tells you to bid:** whoever opens it reads "Abres tú la ronda." until the dice are out, and then "Abres la ronda: apuesta lo que quieras.", as before.
+
+## 0.211.1 — 2026-10-25
+- **🚂 Tren en Vilo (lab): drawn in the house style.** Players said its pixel art didn't look like the rest of the app, so the lab's game is now drawn like Stick Ninja: smooth shapes and soft glows on the home page's night, cliffs and pillars as dark silhouettes with a neon edge, beams as glowing yellow rods that turn pink and red as they stretch. The train is a chrome bullet train with the same nose at both ends and small wheels under a low skirt, so it glides along the deck, in one of seven colors drawn at random for each stage ("🚄 Los colores del tren bala" shows them all). The day still goes by along the five stages, in the house's colors. The visitors (the saucer and its fish, the whale, the boat and its wakeboarder, the mole, the birds) are redrawn in the same style, and "🛸 Los visitantes" shows them up close. The whale leaps out steeply. "👾 La versión anterior, en pixel" on the lab card keeps the old art to compare; La Copa's screen keeps it too.
+
+## 0.211.0 — 2026-10-25
+- **☕ Invítame a un café, in the lab** (D-448): voluntary support through a Stripe Payment Link, in the first person. Lab key holders see it in two quiet places: always in the home page footer, under 💬 Sugerencias y comentarios, and at the end of a finished game, from the device's sixth game, at most once a week and never on the same ending as the inbox. Its page says the games stay free and opens Stripe; until the payment link is set, its button simulates the payment and shows the thank-you. Nothing changes for other players.
+
+## 0.210.0 — 2026-10-25
+- **🎲 Dudo: shake the phone to roll your dice, now for everyone** (D-447). Each round your hand becomes a green cloth with bigger dice, face down; shake the phone and they roll in 3D, faster with every shake while the phone rattles with them, and when your hand stops they stay as they fell, which is what you rolled. Then the cloth turns back into your hand. It comes on by default (🫨 Agitar para tirar, on the names screen); a computer, or an iPhone that doesn't allow motion, gets a 🎲 Tirar los dados button.
+- **⏱️ 30 segundos por turno**, also on the names screen and off by default: whoever doesn't bid, doubt or call it exactly in time loses a die, without the table being revealed, and opens the next round.
+
+## 0.209.0 — 2026-10-25
+- **🎲 Dudo, in the lab: shake the phone to roll your dice.** With a lab key, setup offers 🫨 Agitar para tirar: each round, while your dice are still to roll, your hand becomes a green cloth with bigger dice, and you shake the phone to roll them. While it shakes, they roll in 3D, like the home page's 🎲 random-game die, spinning faster with every shake while the phone rattles with them, and they keep rolling as long as you shake; when your hand stops they slow down on their own and stay as they fell, which is what you rolled, and the cloth turns back into your hand with the dice lined up as always. An iPhone asks for the motion permission with one tap; a computer, or a phone without a sensor, gets a 🎲 Tirar los dados button.
+- **⏱️ 30 seconds per turn, also in the lab:** whoever doesn't bid, doubt or call it exactly in time loses a die, without the table being revealed, and opens the next round. The clock shows on your own turn and pauses under a reveal, a pass screen or a hidden page (U-20). Both switches are off by default, and in a room the creator's choice applies to everyone. Listed in /labs/ under ✨ Mejoras en prueba.
+
+## 0.208.6 — 2026-10-25
+- **🎲 Dudo only asks the opener to bid.** In a room, at the start of each round every phone read "Abre la ronda: apuesta lo que quieras.", even those that weren't opening. The others now read "Chan abre la ronda." (in all four languages); the opener's phone keeps the invitation, now "Abres la ronda: …", in the second person like the other languages. Against the phone, while it opens, you read that it does.
+
+## 0.208.5 — 2026-10-25
+- **🎲 Dudo no longer says "Le toca a null" in a room.** While the table waited for everyone's dice after a *¡Dudo!* or a *¡Calzo!*, nobody had the turn and the header printed `null`. It now says who called it ("Chan dudó de 7 quintas") over the line that names whose dice are missing, and while the dice are being rolled it names who opens the round.
+
+## 0.208.4 — 2026-10-25
+- **🚂 Tren en Vilo (lab): the deck comes laid.** The train always needs the road across the gap, so every stage now starts with it, one beam per square from bank to bank, and those beams can't be removed: a tap on one says the train needs it, and 🧹 Clear leaves them. They still count as wood, so the counter starts at the gap's width. A long beam drawn over the deck no longer lays a second copy of it.
+
+## 0.208.3 — 2026-10-25
+- **🚂 Tren en Vilo can be played in La Copa**, for the owner's one-day cup of 2026-10-25 (it is not in the pool, so no create screen offers it): the lab's bridge builder with the cup's clock and texts in the four languages. Everyone builds the same five crossings, one notch harder than the lab's (catalog levels 2, 3, 3, 4, 5), in 7 minutes; the score is the lab's (stages, wood saved, solidity, speed), with its breakdown on the result. The Grand Final does not repeat it (`NOT_IN_FINAL`).
+- The lab's page draws with the same code: its scene (canvas, pixel art, strain gauge) moved to `labs/bridges/scene.js`, shared with the cup's screen.
+
+## 0.208.2 — 2026-10-25
+- **🥷 Stick Ninja: no more stars** (the owner's request). The ⭐ under the bridge, the tap to flip the ninja under it and the crash if it stayed upside down are gone; a tap while running does nothing now. The cover's third step tells about the moving pillars instead.
+
+## 0.208.1 — 2026-10-25
+- **🥷 Stick Ninja: moving pillars and narrower ones** (the owner's feedback). From the 10th pillar on, some pillars slide back and forth along a dashed rail: a few and slowly at first, more and faster as you go. The stick counts where the pillar is when it lands, and the pillar stops there, so aim where it will be. A flag on one is the new 🎯 Moving target achievement. Later in the run the pillars get narrower too, down to just over the flag's width.
+
+## 0.208.0 — 2026-10-25
+- **🥷 Stick Ninja, a new game in the lab** (D-446), inspired by Stick Hero (Ketchapp): hold to stretch the stick, let go and it falls across the gap. Land its tip on the next pillar's flag for a perfect: +1, then +2, +3… for each one in a row, with a pulse of light from the flag, which stays gold. Tap while running to hang under the bridge and grab the ⭐, and flip back before the pillar. Achievements pop up as you go (your first flag, streaks, stars, a new best, 10, 25, 50 points…).
+- Today's course is the same for everyone, and the result lists today's runs on the phone, so a group can pass it around and compare. In English only for now, at `/labs/stick/` with a lab key.
+- **Tests:** a PR that adds a game's end-to-end script and measures it in `durations.json` no longer runs every script: that file only groups the scripts, as `docs/TEST-SCOPE.md` already said, but next to any other change it used to count as the e2e tools changing.
+
+## 0.207.2 — 2026-10-25
+- **🧱 Stack (lab) pauses when you are interrupted**: a call, switching to another app or locking the screen freezes the block where it was, under "⏸️ Paused · Tap to continue". The tap back only resumes and never drops the block; before, it dropped the block wherever it happened to be, and you could lose for having been interrupted.
+- **Your best is kept the moment you beat it**, not only at the end, so a game the phone closes halfway still keeps your record.
+
+## 0.207.1 — 2026-10-25
+- **🧱 Stack (lab) looks like the rest of Juegos de Salón**: the tower now stands on the app's purple night with its floating dots, instead of a background of its own, and fades into it at the bottom. The blocks take the house's neon colors (pink, orange, yellow, lime, cyan, purple), changing as the tower grows. The game screen gets a heading like the other games, with the name and your best, which lights up when you beat it. The score is yellow, and "💬 Leave a comment" sits under the tower.
+- **A perfect drop is a small party**: a glowing outline with sparks, "Perfect ×n" in the rainbow of the titles, and confetti when a streak grows the block back.
+
+## 0.207.0 — 2026-10-25
+- **🧱 Stack, a new game in the lab** (D-445), inspired by Stack (Ketchapp): a block slides over the tower and a tap drops it. Whatever hangs over the edge is cut off, so the next block is smaller; a block dropped exactly on the one below cuts nothing, and four of those in a row grow the block back. Miss the tower and the game ends; the score is the height, and your best stays on the phone. In English only for now, at `/labs/stack/` with a lab key.
+- A tap counts at the moment the finger touches the screen, not at the next frame, so a slower phone does not play a harder game.
+
+## 0.206.0 — 2026-10-25
+- **La Copa: the ×2 wildcard is no longer lost.** Whoever reaches the Grand Final without having used it gets it on its own on the last day they played before the final (day 6, or an earlier one if they skipped it), marked with a gold **×2 auto**. On day 6 the card and the game's cover warn: "No has usado tu comodín ×2. Se aplicará hoy automáticamente." In the 3-day cups and the weekend cup, which have no final, it goes on the last day played, and the warning shows on the last day. It also counts in the cups already running (the ones already over keep their table and podium); not in one the admin ended early (D-444).
+
+## 0.205.5 — 2026-10-25
+- **La Copa: the "Tus copas" status line shows at once, and no longer takes a row of its own.** The phone keeps a small copy of each cup's state for the list, so the line is drawn with the list and corrected after the cup is read; this phone's cups are read right away instead of after the player's cups from other phones. The line now takes the place of "name · code", in the state's color (yellow to play, cyan when played, grey otherwise), and the cup's code goes next to its name.
+
+## 0.205.4 — 2026-10-24
+- **La Copa: new wording for the "Tus copas" status line**, the owner's copy: ▶ "Día 4: ¡entra a jugar!", "hoy último día para jugar", "tienes 2 días por jugar"; ⏸ "termina tu juego"; ✅ "Ya jugaste: día 5 abre en …"; 🚪 "Eliminado". In the four languages.
+
+## 0.205.3 — 2026-10-24
+- **Every email leaves from hola@juegosdesalon.cl, and each one proves it** (D-443): `send-mail.py` refuses any other sender (no fallback to the owner's personal Gmail), reads each email's copy in Gmail's Sent folder to confirm it left from hola@, and before writing to a player sends the owner a weekly test email first. If the check fails, nothing goes out and the report stays pending until the alias is fixed (`send-mail.py --check`).
+
+## 0.205.2 — 2026-10-24
+- **🕵️ Agentes: no clue is pink any more.** A player read the pink agents as mistakes; the third clue's
+  color is now blue, so red stays only for the assassin and for errors. A test
+  (`public/cup/games/agents/palette.test.mjs`) keeps every clue color out of the reds, pinks and the
+  marks' yellow (D-442).
+
+## 0.205.1 — 2026-10-24
+- **🕵️ Agentes: no more clue cards that depend on where you live.** A player found JULIO among the winter agents: that is winter in Santiago and summer in Madrid. The seasons no longer carry months, in Spanish (JULIO, ENERO, SEPTIEMBRE, MARZO, ABRIL, MAYO) and Portuguese (JULHO, JANEIRO, SETEMBRO, MARÇO, ABRIL, MAIO), nor EASTER for SPRING in English; they get ABRIGO, BRONCEADO, TULIPÁN, BELLOTA, COSECHA, MARRÓN (and their Portuguese and English counterparts) instead. A test stops a month from coming back into a season.
+- In Spanish, PASCUA no longer tempts NAVIDAD (in Chile, Pascua *is* Christmas, so tapping it was right and still cost points; it is HALLOWEEN now), and CLIMA and LLUVIA no longer tempt TIEMPO (in Spanish tiempo is also the weather; they are REGLA and BALANZA, as in English).
+- **🕵️ Agentes respects the cup's audience** (D-187), like the other games: a 🌎 Global cup no longer deals the clues only Chile knows (CHILE, DIECIOCHO, FERIA) or Brazil's (BRASIL, ARRAIAL), nor words that mean something else elsewhere (COCHE, TACO, ONCE, CABRITAS, MARRAQUETA…; PIX, CEP, BRIGADEIRO…). A 🇨🇱 Chile cup keeps the Chilean ones. Standalone and Uno al día play the whole deck, as before.
+- **SUERTE, LUCK and SORTE no longer tempt bad luck** (GATO, ESPEJO, MARTES; CAT, MIRROR, LADDER; GATO, ESPELHO, TREZE): bad luck is luck too, so tapping them was right and still cost 40. They are ÉXITO, RIQUEZA, TALENTO now (and the same in English and Portuguese).
+- **More temptations that were right answers:** COCINA no longer tempts REFRIGERADOR (it is DORMITORIO), DORMIR / SLEEP no longer tempt NOCHE / NIGHT (they tempt CAFÉ / COFFEE), and GLÜCK no longer tempts ZUFALL in German (it is TALENT).
+
+## 0.205.0 — 2026-10-24
+- **La Copa: "Tus copas" says where you stand in each cup.** Under each cup in course, a line tells the player whether a day is ready to play (▶, or "play it today" when it closes tonight), half played (⏸), already played and when the next day opens (✅), or how long until the cup starts (⏳); out of the cup shows 🚪. With a single day to play, tapping the cup opens that day. Tried in the lab and published the same day at the owner's request; kept in La Bodega as launched. `/cup/?test&demo=mine` seeds one cup per status.
+
+## 0.204.3 — 2026-10-24
+- **Pending work can no longer be forgotten quietly** (D-441): a daily check on GitHub keeps one "Pending work" issue with any pull request that is stuck and any branch holding work that never reached the site, and closes it when nothing is left; a session waiting for its pull request now reads GitHub another way when the first is refused, and says so instead of retrying in silence. Nothing changes for players.
+
+## 0.204.2 — 2026-10-24
+- **The agents' daily round can no longer stop unnoticed** (D-440): it now runs as a scheduled task the owner can see from the phone, its instructions live in the repo, and if a day goes by without it GitHub opens a "Processes round missed" issue that closes itself when the round catches up. The ideas agent waits for answers to its last questions before proposing more. Nothing changes for players.
+
+## 0.204.1 — 2026-10-23
+- **🎉 La Copa de fin de semana closed for new cups** (D-439): the owner's one-off weekend cup for friends is created, so no create screen offers the 3 × 3 cup any more. The cups already created play their three days as before.
+
+## 0.204.0 — 2026-10-23
+- **🎉 La Copa de fin de semana, for everyone until Sunday night, in Spanish** (D-439): a new length when creating a cup on a Spanish screen, **3 days with 3 games each day**. 🎲 draws nine different games, three a day; each day is played as one, the three games one after the other, and its score is the average of the three, which hands out the usual points by place. No final; everything else as in a normal cup. The option disappears at the end of Sunday, October 25 (Pacific time); the cups already created play on.
+
+## 0.203.1 — 2026-10-23
+- **🏆 La Copa de 3 días has no final** (D-438, in the lab): three games of the pool, each worth its points. The wildcard can go on any day, the last day closes with the cup (no grace day) and breaks a tie, and day 3 sends the usual "day opened" notification. The 3-day test cups from before keep their final.
+
+## 0.203.0 — 2026-10-23
+- **🏆 La Copa de 3 días, in the lab** (D-437): on the new create screen, a lab key holder chooses up front how long the cup lasts, next to when it starts: 3 days (two games and the final) or 7 (six games and the final). Three draws a week of two games under "Los 3 días", and the final replays both. The 3-day cup existed only for testing (`?three`, D-100); the screen of before is unchanged.
+
+## 0.202.5 — 2026-10-23
+- **Generala:** when the dice come up 3‑4‑5‑6‑1 and Escalera is still free, a line under the dice
+  says it is a straight too: the 1 also goes after the 6. Tried in the lab, now for everyone; its
+  card moved to La Bodega (feedback #736).
+
+## 0.202.4 — 2026-10-23
+- **Generala, in the lab:** when the dice come up 3‑4‑5‑6‑1 and Escalera is still free, a line under
+  the dice says it is a straight too: the 1 also goes after the 6. A player wrote in thinking it was
+  an error (feedback #736). It shows only with a lab key, listed in /labs/ under Mejoras en prueba.
+
+## 0.202.3 — 2026-10-23
+- **Uno al día: the ranking shows sooner, for everyone** (D-436, out of the lab, its card in La Bodega 🚀): /today/ draws the month's ranking once and keeps it while the page refreshes, shows the list seen last today while the new one arrives instead of "Cargando…", and reads its data once.
+
+## 0.202.2 — 2026-10-23
+- **Uno al día, in the lab: the ranking shows sooner.** With a lab key, /today/ draws the month's ranking once and keeps it while the page refreshes, shows the list seen last today while the new one arrives instead of "Cargando…", reads the table and last month's champion together, and reuses the read the page just made (D-436, card `#seccion-uad-ranking-rapido`).
+- For everyone: the home page no longer draws its last-visit copy (D-435) from a link with `?daily=` (Uno al día next to the die), whose layout the copy does not have, nor saves one from it.
+- For everyone: with `?daily=button`, the home page draws Uno al día's button next to the die again (an error had left it out).
+
+## 0.202.1 — 2026-10-23
+- **⚡ La portada al tiro, for everyone** (D-435, validated in the lab): from the second visit of the day the list of games, La Copa and Uno al día show with the page's first paint, from a copy of the list the phone keeps, and once today's Uno al día is played its card's place in the month refreshes on its own. Its card moves to La Bodega, 🚀 Lanzado.
+
+## 0.202.0 — 2026-10-23
+- **⚡ La portada al tiro, in the lab** (D-435, card in `/labs/`): from the second visit of the day the list of games, La Copa and Uno al día show with the page's first paint (1.4 s instead of 2.9 s on a slow 4G), from a copy of the list the phone keeps, and the real cards take its place unchanged. Once today's Uno al día is played, its card's place in the month refreshes on its own, without opening Uno al día.
+- For everyone: the home page reserves the right space for the filters (two rows) and shows the 🏅 rankings button from the start, so the list no longer jumps down when the page's code arrives (layout shift at 320 px from 0.127 to 0.02).
+
+## 0.201.2 — 2026-10-23
+- **Uno al día's card on the home page arrives together with La Copa**: the empty 📅 card no longer shows for a moment before turning into the real one (320 ms on a slow 4G). Two modules it imports (`fin.js`, `daily-points.js`) and the traffic module with the three it brings were fetched one after another; now they are preloaded with the page, and `home-preload.test.mjs` fails if one goes missing again.
+- Counting the visit (`trackVisit`, D-208) no longer holds up the home page's list: it loads on its own.
+
+## 0.201.1 — 2026-10-23
+- **🍹 Julepe leaves the home page for the lab's 📦 La Bodega** (D-434, the owner's request): its dimmed "Próximamente" card is gone from the home page, and it is no longer in the 🔎 search. The game is kept, unchanged, at `/labs/julep/`, behind the lab's key, folded in La Bodega's 🎲 Juegos guardados; the old links (`/julep/`, `/julepe/`, room invitations included) lead there, and without a key to the menu.
+
+## 0.201.0 — 2026-10-23
+- **👈 Leaving mid-game asks first, for everyone** (D-432): a back swipe (the iPhone's edge swipe, Android's Back) or «‹ Menú» during a game opens «¿Salir de la partida?» with ▶ Seguir jugando and Salir. Validated in the lab; its card moves to La Bodega, 🚀 Lanzado.
+- **📅 Uno al día's first attempt counts from its start, for everyone** (D-433): a solo game left halfway goes on where it was (and Uno al día goes straight to it, without the die); a group game left halfway, or a day that ends unfinished, counts 0; with a player, also across phones.
+- **🏆 La Copa's clock no longer resets on another phone, for everyone** (D-433): a day resumed where its save is missing goes on from when it started, and says so.
+
+## 0.200.17 — 2026-10-23
+- **🏆 La Copa's clock change can be tried in one tap** (D-433, lab): the lab card «La Copa: el reloj no vuelve a cero en otro celular» now opens a sample cup (`?test&lab&demo=resumed`, only on the phone) where your day started 4 minutes ago on another phone; «Seguir jugando» goes on from about 4:00 and says so.
+
+## 0.200.16 — 2026-10-23
+- **👈 «‹ Menú» mid-game asks too** (D-432, lab): tapping the header's Menú during a game opens the same «¿Salir de la partida?» as the back swipe; Salir goes to the menu.
+- **📅 Uno al día goes straight to an attempt left halfway** (D-433, lab): the home page's ▶ and /today/'s Jugar skip the die and open today's game, saying «▶ Seguir jugando» for a solo game.
+
+## 0.200.15 — 2026-10-23
+- **👈 A back swipe mid-game asks before leaving** (D-432, lab): with a lab key, the iPhone's edge swipe and Android's Back no longer take the game away. They open «¿Salir de la partida?» with ▶ Seguir jugando and Salir. Every game gets it, and Back works as usual once the game is over.
+- **📅 Uno al día: the first attempt counts from its start** (D-433, lab): with a lab key, leaving a bad attempt no longer lets you replay the same board from zero. A solo game left halfway goes on where it was, with its time; a group game left halfway, or a day that ends unfinished, counts 0. With a player, this also holds across phones (`unoAlDiaInicio/` in the Firebase rules).
+- **🏆 La Copa: the clock does not reset on another phone** (D-433, lab): with a lab key, a day resumed where its save is missing keeps its clock from when it started, and the screen says so.
+
+## 0.200.14 — 2026-10-23
+- **🏆 La Copa's and 📅 Uno al día's recaps, for everyone** (D-423, D-424, validated by the owner in the lab): when a cup you played ends, or a month of Uno al día, your next visit to the home page tells how it ended, once. Their lab cards move to La Bodega, 🚀 Lanzado.
+- **🪟 One window per visit on the home page, for everyone** (D-431, validated by the owner in the lab): the recap, the novelty splash and the add-to-home-screen bubble no longer pile up. At most one opens per visit, in that order, and the rest wait for the next visit. With two splash campaigns on, a player sees one per visit, in order. The lab card moves to La Bodega, 🚀 Lanzado.
+
+## 0.200.13 — 2026-10-22
+- **🧪 In the lab: one window per visit on the home page** (D-431, the owner's request): the La Copa or Uno al día recap, the novelty splash and the add-to-home-screen bubble no longer pile up. At most one opens per visit, in that order, and the rest wait for the next visit. With two splash campaigns on, a player sees one per visit, in order. Only with a lab key until the owner validates it (D-409).
+
+## 0.200.12 — 2026-10-22
+- **🚂 A teaser over the home page, through October 28** (D-430, the owner's request): "Muy pronto · Algo nuevo se viene…", a pixel-art train that stops at the edge of a gap at sunset, with no name and no link. In Spanish for Spanish players and in English for everyone else.
+- **Splash windows queue up:** with more than one campaign on, a player sees them in the order they were turned on, and closing one opens the next. Each one is still seen once per phone.
+
+## 0.200.11 — 2026-10-22
+- **Uno al día breathes under the header:** its calendar and title start 16 px lower, no longer pressed against the language buttons. The ▶ Jugar button still shows without scrolling, down to a 320×568 phone.
+
+## 0.200.10 — 2026-10-22
+- **One fixed link turns on the lab in every PR preview** (D-429): the previews front page saves a lab key opened as `ellokojavi.github.io/juegos-de-salon-previews/?key=…`, even when no PR is open. Nothing changes for players.
+
+## 0.200.9 — 2026-10-22
+- **Each PR gets a preview on GitHub Pages** (D-429): a link on the PR to the change running before it merges, so review rounds happen there instead of a PR per round. Previews are marked `noindex`, live apart from the real site, clean themselves up when the PR closes, and their plays count as test traffic, not in the panel or the rankings. Nothing changes for players.
+
+## 0.200.8 — 2026-10-22
+- **Releases get faster, with the same checks** (D-428): La Copa's languages test runs in four parallel parts instead of one six-minute job, and the test groups are re-measured every day, so the end-to-end check takes 6–7 minutes instead of 8–10. Sessions no longer run locally the whole end-to-end suite that GitHub runs anyway. Nothing changes for players.
+
+## 0.200.7 — 2026-10-22
+- **La Copa, in the lab:** the recap of an ended cup on the home page shows the same final table image the cup shares from its podium: the trajectory day by day and the first three on gold, silver and bronze plates (D-427).
+
+## 0.200.6 — 2026-10-22
+- **On a small phone, 🎲 Crear al azar brings the week into view** (D-425, lab): if the days are below the screen's edge, rolling scrolls the page so you see the cards spin.
+
+## 0.200.5 — 2026-10-22
+- **🎲 Crear al azar spins the cards** (D-425, lab): when you roll the week while creating a cup, each day's card runs through random games like a slot machine and lands one after the other, in under a second.
+
+## 0.200.4 — 2026-10-22
+- **README, half the size**: what a visitor needs first (the pitch, The Cup, One a Day, the games) comes first, the developer and owner material follows under its own heading, and repeated detail now points to each game's spec and the decisions.
+
+## 0.200.3 — 2026-10-22
+- **🏆 Creating a cup in the lab, after the owner tried it** (D-425): the yellow button now says **🎲 Crear al azar** and draws the whole week again; the 🔒 locks are gone (a day can still be changed or moved by hand); the sheet closes with a yellow **Listo**; and "When it starts" says each day of the week, with Now instead of Today: **Ahora (jue)**, **Mañana (vie)**, Otra fecha.
+
+## 0.200.2 — 2026-10-22
+- **La Copa:** Thursday Guys #4's recap goes first on its players' home page, even if another cup of theirs ended after it (D-426).
+
+## 0.200.1 — 2026-10-22
+- **La Copa:** the players of Thursday Guys #4 see the recap of their cup on the home page when it ends, without a lab key: the owner opened it for them while the window is still in the lab (D-426).
+
+## 0.200.0 — 2026-10-22
+- **🏆 Creating a cup, a new screen in the lab** (D-425): for lab key holders only, the week is in view from the start; **🎲 Another week** draws again and keeps the days locked with 🔒; four week styles (⚖️ Balanced, 🧩 Puzzles, 🧠 Trivia and words, ✨ What's new); tapping a game opens a sheet with the 13 games and what each one is, to replace, swap or move a day and pick its version. The PIN goes once with 👁, and the language, audience and custom link fold into "More options". The form is about 40% shorter. Everyone else keeps the screen of before.
+
+## 0.199.0 — 2026-10-22
+- **Uno al día, in the lab:** when a month ends, the first visit to the home page in the next week tells whoever played it how the season ended: who won, your place and points, the top 10 with each player's place week by week, "the new season has begun" and 📅 Ir a Uno al día. Once per season; La Copa's recap goes first if both are due. Only with a lab key until the owner validates it; `/?recap=season-demo` shows a made-up October (D-424).
+- **Uno al día:** a new notification on the 1st to the 3rd of the month, for whoever has One a Day's notifications on and played the month before: "🏆 Terminó la temporada de octubre. Toca para ver el ranking final.", which opens that season's recap (D-424).
+- **Uno al día:** the nightly points rebuild also keeps each season's places by week (`uadTemporada/`, public to read, written only by the administrator) (D-424).
+
+## 0.198.0 — 2026-10-22
+- **La Copa, in the lab:** when a cup you played ends, the next time you open the home page a window tells you how it ended: who won and your place, the final table with a small line of each player's place day by day and the places they climbed or lost, and 🏆 Ver la copa. Once per cup, during the week after it ended; that visit, the news splash waits for the next one. Only with a lab key until the owner validates it; `/?recap=demo` shows it with the demo cup (D-423).
+- **La Copa:** the notification that a cup ended now ends with "Toca para ver la tabla final." in the four languages (D-423).
+
+## 0.197.0 — 2026-10-22
+- **🕵️ Agentes leaves the lab, in Conexiones' place** (D-421): the one-player Codenames is on the home page with the ✨ Nuevo label, at `/agents/`, in the four languages, each with its own deck of about 118 clues. It joins La Copa's pool and its demo calendars, the Gran Final plays it whole, and Uno al día deals it from 2026-10-24. Standalone it is a random board every time.
+- **🔗 Conexiones goes to 📦 La Bodega:** off the home page, the search, the pool of new cups and Uno al día (from 2026-10-24). Its page `/connections/` still opens, the lab lists it folded in La Bodega, and the cups created before keep playing it.
+- `/labs/agents/` is now a bridge to `/agents/`.
+
+## 0.196.3 — 2026-10-22
+- **🧪 The lab's 📦 La Bodega in two subgroups** (D-422, the owner's request): 🎲 Juegos guardados (El caso and La clave, 💤 they did not prosper, and Cuarto Rey, 👋 it left the home page) and ✨ Mejoras lanzadas (the six improvements that reached everyone, 🚀). The cards stay folded to their title.
+
+## 0.196.2 — 2026-10-22
+- **👑 Cuarto Rey leaves the home page for the lab's 📦 La Bodega** (D-420, the owner's request): it is no longer on the home page, in 🎲 Juego al azar, in the 🔎 search or in the home page's link cards. The game is kept, unchanged, at `/labs/fourth-king/`, behind the lab's key, folded in La Bodega like the other stored projects; the old links (`/fourth-king/`, `/cuarto-rey/`) lead there, and without a key to the menu.
+
+## 0.196.1 — 2026-10-22
+- **La Copa:** the 🏁 Grand Final's folded rules say once that games without a short version are played whole with new content, instead of repeating it on every such round.
+- **Lab:** the practice of 🏁 La Gran Final, which has no week, says it is five short rounds again.
+
+## 0.196.0 — 2026-10-22
+- **La Copa:** the 🏁 Grand Final now repeats the week's games, one round of each in the order they were played, instead of five fixed rounds that could bring back games the cup never played (D-418). The five games with a short version play it; any other game (Zip, Tango, Conexiones, ¿Dónde queda?…) is played whole with new content. The waiting room lists the rounds and "Ronda i de n" counts them. Finals that opened before October 22 noon (Pacific) keep their five rounds.
+- **La Copa:** between the final's rounds, the running score is the average of the rounds played so far, out of 100 (as D-417 decided, for any number of rounds).
+
+## 0.195.11 — 2026-10-22
+- **🏁 La Gran Final shows your running score on the right scale** (D-417): between rounds it now reads the average of your rounds so far out of 100 ("Vas con 100 de 100…"), the same scale as the result, instead of mixing an average with a maximum of 100 per round ("60 de 300"). Scoring does not change (player's report, #637).
+
+## 0.195.10 — 2026-10-22
+- **Processes:** every ready PR gets auto-merge without asking; the only exception is the owner explicitly saying not to auto-merge it (D-419).
+
+## 0.195.9 — 2026-10-22
+- **La Copa: a player who joined with their player and whose phone lost its session can play again.** Before, "Ya estoy inscrito" hid the PIN field and answered "Ese PIN no es el de…" without asking for one; now it explains that the phone lost the player's session and asks for the player's PIN (a new cup PIN from the administrator works too). D-416.
+
+## 0.195.8 — 2026-10-21
+- **Home page:** once played, the 🔥 streak of the Uno al día card goes in the line under your place («871 pts · 🔥 6») instead of a row of its own.
+
+## 0.195.7 — 2026-10-21
+- **Uno al día:** each friend you invite who finishes their first Uno al día adds +10 pts to your month, for everyone (it was in the lab).
+
+## 0.195.6 — 2026-10-21
+- **Home page:** the 📅 Uno al día card opens your Uno al día, and its button plays today's game right away; once played, it shows your place in the month big, with the points under it.
+
+## 0.195.5 — 2026-10-21
+- **Uno al día:** the ranking on /today/ can be shared as a picture, with a short line and the link to play (your invite link if you are signed in). Once you have played, the ranking comes before today's block. «Compartir mi resultado» and the «Por juego» block leave /today/ (the result card of the game keeps its share).
+
+## 0.195.4 — 2026-10-21
+- **Uno al día:** your place in the month («#3 del mes · te faltan…») has its own line from the start, with the last one known, so the page no longer shifts down when the ranking answers.
+
+## 0.195.3 — 2026-10-21
+- **Uno al día:** your month's points on /today/ match the ranking and no longer jump when it loads. The days your 🧊 saved now count on the server too, so the streak bonus continues after them, and the month's totals are recalculated every night.
+
+## 0.195.2 — 2026-10-21
+- **Uno al día, in the lab:** each friend you invite who finishes their first Uno al día adds +10 pts to your month, once per friend; and on the home page the 📅 card opens your Uno al día while its «▶ Jugar hoy» goes straight to today's game («✅ Tus puntos» once played).
+
+## 0.195.1 — 2026-10-21
+- **Uno al día:** the wildcards and the invite are one box: how many you have, what a wildcard does, how to earn one, and the Invitar button.
+
+## 0.195.0 — 2026-10-21
+- **Uno al día has points:** every day adds the game's score plus a streak bonus (+5 a day, up to +50) to a monthly season, with its own ranking. /today/ opens with your points, your place and who you have to pass, the days left in the month and how points are earned; the calendar shows what each day added, and tapping a day shows its details. The 📅 card on the home page now opens Uno al día, and its Jugar rolls the die. Last month's winner wears a 🏆 next to their name. October's season was filled in from everyone's history, and November starts from 0. In the four languages.
+
+## 0.194.8 — 2026-10-21
+- **Uno al día, in the lab:** the real screen redesigned on the site's own layout, like /today/: one box for the season, points and today, fewer boxes overall, a single sign-in nudge, /today/'s calendar with the day's details right under it, «Compartir mi resultado» once today is played, four-point rules and a tidier footer.
+
+## 0.194.7 — 2026-10-21
+- **Uno al día, in the lab:** the points show at once from this phone; the place and the ranking fill in after, and the days already counted are no longer read one by one.
+
+## 0.194.6 — 2026-10-21
+- **Processes:** a change that only touches the lab takes a fast lane: the session makes it and checks it at 320 px itself, without the review agents, and runs only the tests for what changed (D-413).
+
+## 0.194.5 — 2026-10-21
+- **Uno al día, in the lab:** big centered title with the gradient, yellow points no longer cut, a plain «Jugar» button, the invite card under the calendar, and a day's details float over the calendar (✕, another day or a tap outside closes them).
+
+## 0.194.4 — 2026-10-21
+- **Lab, Uno al día:** the real screens get the owner's touches: the title "Uno al día" on the right, the month's points bigger and in the titles' rainbow, "quedan X días" in white (the owner's choice for the season's end), one invite card with the +10 pts, a tap on a calendar day shows its details (game, score, streak bonus, points or the 🧊 that saved it), and a footer with home, rankings, today's game and 💬 Sugerencias y comentarios (D-412).
+
+## 0.194.3 — 2026-10-21
+- **Lab, Uno al día points:** "Tu Uno al día" works with real data (`/labs/daily-score/live/`): your month's points and place, who to pass next, the champion's 🏆, the streak bonus and the month's calendar. Its ranking is the same one 🏅 Rankings and Uno al día's result show, with a lab key (D-412).
+
+## 0.194.2 — 2026-10-21
+- **Lab, Uno al día points:** the owner's answers are in the prototype: a "¿Cómo se ganan los puntos?" link under the chase line, the season's end shown three ways to choose from, a 🏆 champion badge for last month's winner, +10 points for inviting a friend, and Uno al día's notices and links opening your Uno al día. A lab key holder's points are now saved in Firebase, checked by the rules against their history (D-412).
+
+## 0.194.1 — 2026-10-21
+- **La Copa:** in 🔢 Toque y Fama: adivina el número, tapping a box chooses where the next digit goes, for everyone, as in Toque y Fama. Validated in the lab; its card moves to La Bodega, 🚀 Lanzado (D-409).
+
+## 0.194.0 — 2026-10-21
+- **Lab: Uno al día points** (`/labs/daily-score/`): a design prototype for a monthly Uno al día score and ranking. Each day adds the game's 0–100 score plus a streak bonus (+5 per day, up to +50); a wildcard 🧊 saves the streak and its bonus. The home card would open the player's Uno al día hub (points and rank first, then play, streak, wildcards, ranking and calendar) instead of rolling the dice. Screens, navigation map and open questions; it saves nothing.
+
+## 0.193.2 — 2026-10-21
+- **La Copa, in the lab:** in 🔢 Toque y Fama: adivina el número, tapping a box chooses where the next digit goes, as in Toque y Fama. Only with a lab key until the owner validates it (D-409).
+
+## 0.193.1 — 2026-10-21
+- **The home page no longer scrolls behind the open share card** (owner's report): with the card open, swiping moves only the card, and closing it leaves the home page where it was.
+
+## 0.193.0 — 2026-10-21
+- **Toque y Fama:** tap a box to choose where the next digit goes, instead of always filling left to right: handy once you know where a digit goes. It was asked for by a player (#604), tried in the lab and now reaches everyone; the hint under the keypad explains it in the four languages.
+
+## 0.192.0 — 2026-10-21
+- **🎬 The home page's share button now plays the new 40-second video right in the card** (D-410), as a tall vertical video with two tabs, 🇪🇸 Español and 🇬🇧 English. Spanish opens on the Spanish video and every other language on the English one; it starts on its own, muted, and the two ways to share stay underneath: "Invitar a jugar" and "Compartir el video", which sends the link of the video on show. The card now opens in all four languages. The video itself is new too (v7): it shows the five games added since the last one (Generala, Julepe, Rutas rotas, Loteo and Pintaminas) and has an English version.
+
+## 0.191.1 — 2026-10-21
+- **Processes:** every change goes to Labs first unless the owner says otherwise (D-409). The owner's one-tap decisions answer **Yes, in Labs**, **Yes, and publish** or **No**, and whatever is behind the lab key is listed in `/labs/` (a test checks it).
+
+## 0.191.0 — 2026-10-21
+- **Loteo:** the four buttons below the board go in two rows of two, all the same size: ↩️ Deshacer and 🧹 Borrar todo on top, 💡 Ayuda and 🏳️ Rendirse below. No label breaks into two lines on a small phone or in German (#441).
+- **Toque y Fama, in the lab:** tapping a box chooses where the next digit goes, instead of always filling left to right (#604). Only with a lab key until it is validated (D-395).
+- **Processes:** a one-tap decision whose Yes has no actions, or does nothing while its text says it queues or builds work, is refused when the issue is opened (#607).
+
 ## 0.190.2 — 2026-10-21
 - **The home page announces the three new logic games** (Rutas, Loteo and Pintaminas) in the promotional splash, through Friday, October 23 (D-351). Each phone sees it once: closing it or opening a game hides it for good.
 
