@@ -34,7 +34,7 @@ export const GAMES = [
     tipos: ['trivia'],
     emoji: '⏳',
     name: { es: 'Línea de Tiempo', en: 'Timeline', pt: 'Linha do Tempo', de: 'Zeitstrahl' },
-    tagline: { es: 'Ubica los hitos en el orden correcto. Seis temáticas, de la historia al fútbol.', en: 'Put the milestones in the right order. Six themes, from history to soccer.', pt: 'Coloque os marcos na ordem certa. Seis temas, da história ao futebol.', de: 'Bring die Ereignisse in die richtige Reihenfolge. Sechs Themen, von Geschichte bis Fußball.' },
+    tagline: { es: 'Ubica los hitos en el orden correcto. Seis temáticas, de la historia a la música.', en: 'Put the milestones in the right order. Six themes, from history to music.', pt: 'Coloque os marcos na ordem certa. Seis temas, da história à música.', de: 'Bring die Ereignisse in die richtige Reihenfolge. Sechs Themen, von Geschichte bis Musik.' },
     players: '1–6',
     duration: '10–20',
     jugadas: ['place'],
@@ -320,8 +320,8 @@ export const TIPOS_VIEJOS = { palabras: 'words', logica: 'logic', cultura: 'triv
  * when the order changed. The two lines below are written by that tool; a game not in the list
  * goes after the ones that are, in the order of GAMES and SUELTOS.
  */
-export const POPULARIDAD_FECHA = '2026-10-18';
-export const POPULARIDAD = ['copa', 'reinas', 'linea-de-tiempo', 'tango', 'anio', 'letras', 'donde', 'toque-y-fama', 'zip', 'desenredo', 'batalla-naval', 'rutas', 'loteo', 'ahorcado', 'dudo', 'pintaminas', 'generala'];
+export const POPULARIDAD_FECHA = '2026-10-26';
+export const POPULARIDAD = ['copa', 'reinas', 'donde', 'tango', 'anio', 'loteo', 'linea-de-tiempo', 'letras', 'desenredo', 'pintaminas', 'conexiones', 'agentes', 'zip', 'toque-y-fama', 'rutas', 'batalla-naval', 'generala', 'dudo', 'ahorcado'];
 const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
 
 /**
