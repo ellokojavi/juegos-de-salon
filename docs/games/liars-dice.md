@@ -158,9 +158,15 @@ creator's choice travels in the config, so it applies to every phone. Uno al dí
   hand keeps it yellow), and each jolt spins them faster, each its own way, while the speed drains
   away between jolts. The phone rattles with them, harder the faster they spin. They keep rolling as long as the phone
   shakes, and between jolts they slow down but never stop (0.07°/ms at the least), so a die never
-  looks settled before it is (the owner's request). Once the phone has been still for 550 ms, after
-  at least three jolts (13 m/s² beyond gravity), they settle over 900 ms, with at least one more
-  turn and a small bounce, on their real faces, with a thud on the vibrator; then the same panel turns into the hand (480 ms): it loses its green
+  looks settled before it is (the owner's request). Once the phone has been still for 350 ms, after
+  at least three jolts (13 m/s² beyond gravity), each die **runs out its own spin and stops where
+  it lies** (the owner's request: no second animation). There is no extra turn and no bounce: each
+  angle keeps the speed it had and brakes to a stop (an ease-out whose start matches that speed,
+  300 ms to 1.5 s). Of the square poses that show the die's face (`POSES`), it stops on the one
+  nearest to where its own friction was taking it, always ahead, so it brakes a little more or a
+  little less but never turns back. A die can lie turned on the table, and the flat die in the
+  hand keeps that turn (`S.giros`) for the round, so a 2, 3 or 6 never flips when it lands. A light
+  thud on the vibrator when they stop; then the same panel turns into the hand (480 ms): it loses its green
   and shrinks to its usual size while the dice slide into their row, lined up as always (`llegar`
   in `game.js`). The dice
   are rolled before, as always (and committed with their hash in a room, C-10): the shake only shows
