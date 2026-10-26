@@ -678,3 +678,5 @@ PATHS.splash = Object.fromEntries(Object.keys(CAMPAIGNS).map(id => [id, [`locati
 
 /** The home page share sheet (D-410): the Short in its tab, and the two ways to share under it. */
 PATHS.copa['share-sheet'] = [`location.href='/?test'`, `1`, `1`, `document.getElementById('btn-compartir-portada')?.click()`, `1`];
+// Dudo's card on the home page, centered: its tagline wraps longest in Spanish (D-447)
+PATHS.copa['home-card-dudo'] = [`location.href='/?test'`, `1`, `1`, `[...document.querySelectorAll('.game-card')].find(c=>c.querySelector('h2')?.textContent.match(/dudo|liar|mentiroso|lügen/i))?.scrollIntoView({ block: 'center' })`, `1`];
