@@ -14,10 +14,16 @@ import { sumarDias } from './uno-al-dia.js';
 import { fechaLocal, numDia, semanaDe } from './uno-al-dia.js';
 import { ponerBuzon } from './buzon.js';
 
-/** The inbox link at the end of the result screen, once it is drawn, after its buttons (D-345, U-38). */
+/**
+ * The inbox link at the end of the result screen, once it is drawn, after its buttons (D-345, U-38),
+ * and after it the "☕ Buy me a coffee" link when its rule says so (support.js, lab only, D-395).
+ */
 const buzonAlFinal = (juego, donde) => {
   if (typeof document === 'undefined') return;
-  setTimeout(() => { try { ponerBuzon(donde(), { juego }); } catch (_) { /* never in the way */ } }, 0);
+  setTimeout(() => {
+    try { ponerBuzon(donde(), { juego }); } catch (_) { /* never in the way */ }
+    import('./support.js').then(m => m.supportAtEnd(donde())).catch(() => {});
+  }, 0);
 };
 
 const R = () => (COMMON[getLang()] || COMMON.es).rk;
