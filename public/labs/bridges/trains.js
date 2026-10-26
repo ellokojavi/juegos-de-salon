@@ -91,7 +91,7 @@ function balaDe({ id, nombre, lema, tinte, franja, filo }) {
     ctx.restore();
   };
   return {
-    id, nombre, lema, humo: null, luz: { dx: 11, dy: -3.8 },
+    id, nombre, lema, tinte, humo: null, luz: { dx: 11, dy: -3.8 },
     frente: punta,
     /**
      * The last car: the front car turned around. Its centre is the last wagon's place in the train, but it

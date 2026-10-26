@@ -31,12 +31,12 @@ const VETA = '#a8611c', REMACHE = '#2a3550';
 const OSCURO = '#14081f';
 
 /**
- * The time of day in the house's colors: a lilac dawn, a sunset in the title's yellow → pink, and the
- * home page's night. Same `t` as scene.js's timeOfDay (0 = morning, 1 = night).
+ * The time of day in the house's colors: a bright blue morning (clearly day, owner's request 2026-10-26),
+ * a sunset in the title's yellow → pink, and the home page's night. Same `t` as scene.js's timeOfDay (0 = morning, 1 = night).
  */
-const MORNING = { sky: ['#2d1a6e', '#6a49b8', '#f0a6cb'], far: '#5a3a9e', near: '#3c1f78', water: ['#4a6fd8', '#24307a'], rock: ['#1f1046', '#0e0626'], edge: '#9dff3a', stars: 0, clouds: 0.22,
-  sun: { x: 0.8, y: 0.2, r: 6, color: '#fff1b8', halo: '#ffe08a', moon: false } };
-const SUNSET = { sky: ['#24104f', '#a2377e', '#ffb347'], far: '#5a1f6e', near: '#3a1250', water: ['#6a3fa8', '#2a1a5a'], rock: ['#22093e', '#0e0420'], edge: '#ffd23f', stars: 0.2, clouds: 0.16,
+const MORNING = { sky: ['#2f7fd6', '#5fb4ec', '#bfe9f5'], far: '#4a86b8', near: '#2f6496', water: ['#3fb0e0', '#1c5c9e'], rock: ['#5a4a7e', '#2e2450'], edge: '#9dff3a', stars: 0, clouds: 0.75,
+  sun: { x: 0.8, y: 0.2, r: 6, color: '#fff6c8', halo: '#ffe08a', moon: false } };
+const SUNSET = { sky: ['#4a2a8e', '#e0567e', '#ffc35a'], far: '#8a3f86', near: '#5e2a6e', water: ['#a85aa8', '#3a2272'], rock: ['#4a2058', '#1e0c34'], edge: '#ffd23f', stars: 0.1, clouds: 0.4,
   sun: { x: 0.24, y: 0.5, r: 9, color: '#ffcf5a', halo: '#ff8a50', moon: false } };
 const NIGHT = { sky: ['#12052a', '#2a0c4e', '#4a1a6e'], far: '#2e1258', near: '#1e0a3c', water: ['#173f7a', '#0a1a3a'], rock: ['#170838', '#0a0320'], edge: '#2ee6d6', stars: 1, clouds: 0.06,
   sun: { x: 0.8, y: 0.16, r: 6, color: '#ffe9a8', halo: '#ffd23f', moon: true } };
@@ -148,22 +148,38 @@ const CLASICO = {
  * The train of a stage: the bullet train in a color drawn at random for each stage, never the same as the
  * stage before (owner's request). The color is only paint: the weight is still the stage's (`e.carga`),
  * in the physics and in the title. `?train=bala-perla|…` fixes one color, `?train=clasico` the first train.
+ * Only colors that stand out against the stage's light are drawn (owner's request, 2026-10-26): a silver
+ * train on the morning's blue sky, or a ruby one on the sunset's pink, disappears. `contraste` measures
+ * the body's tint against the sky and the far hills right behind it (WCAG contrast ratio).
  */
 const FIJO = param('train') === 'clasico' ? CLASICO : TRENES[param('train')] || null;
+export const CONTRASTE_MIN = 1.8;
+const luminancia = ([r, g, b]) => [r, g, b].map(v => (v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+  .reduce((s, v, i) => s + v * [0.2126, 0.7152, 0.0722][i], 0);
+const razon = (a, b) => { const [x, y] = [luminancia(a), luminancia(b)].sort((m, n) => m - n); return (y + 0.05) / (x + 0.05); };
+/** The worst contrast of a train's body against what is behind it at time `t` (0 = morning, 1 = night). */
+export const contraste = (tren, t) => { const L = luz(t); return Math.min(razon(tren.tinte, hex(L.sky[1])), razon(tren.tinte, hex(L.far))); };
+/** The colors that read well at time `t` (in the morning only pearl); if none did, the one that stands out the most. */
+export const balasPara = t => {
+  const bien = BALAS.filter(b => contraste(b, t) >= CONTRASTE_MIN);
+  return bien.length ? bien : [...BALAS].sort((a, b) => contraste(b, t) - contraste(a, t)).slice(0, 1);
+};
 const colores = new WeakMap();
 let ultimo = null;
-export function trenDe(e) {
+export function trenDe(e, t = 1) {
   if (FIJO) return FIJO;
   if (!e) return BALAS[0];
   if (!colores.has(e)) {
-    const opciones = BALAS.filter(t => t !== ultimo);
-    colores.set(e, ultimo = opciones[Math.floor(Math.random() * opciones.length)]);
+    // Never the stage before's color, unless it is the only one that reads well
+    const validos = balasPara(t), opciones = validos.filter(b => b !== ultimo);
+    const lista = opciones.length ? opciones : validos;
+    colores.set(e, ultimo = lista[Math.floor(Math.random() * lista.length)]);
   }
   return colores.get(e);
 }
 
-export function trenMiniNeon(carga, e) {
-  const TREN = trenDe(e);
+export function trenMiniNeon(carga, e, t) {
+  const TREN = trenDe(e, t);
   const dpr = window.devicePixelRatio || 1, k = 2, ancho = 44, alto = 17;
   const c = el('canvas', { class: 'tv-tren-mini', 'aria-hidden': 'true', width: ancho * k * dpr, height: alto * k * dpr });
   c.style.width = `${ancho * k}px`; c.style.height = `${alto * k}px`;
@@ -205,7 +221,7 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
   const L = luz(c._time?.t ?? 1);
   const [x0, y0] = A(0, 0), [x1] = A(e.ancho, 0);
   const [, yAgua] = A(0, c._v.abajo + 0.7);
-  const TREN = trenDe(e);
+  const TREN = trenDe(e, c._time?.t ?? 1);
   // The visitors draw through a smooth renderer with the pixel one's methods (neon-visitors.js)
   const r = c._pincel ||= pincel(ctx, W, H);
   r.W = W; r.H = H;

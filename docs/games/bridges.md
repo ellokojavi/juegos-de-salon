@@ -115,8 +115,9 @@ art there ("👾 La versión anterior, en pixel" on the lab card), and La Copa's
 unless `?style=neon` (`NEON` in `scene.js`). Smooth shapes and soft glows, the home page's
 palette and Stick Ninja's night. The cliffs and pillars are dark silhouettes with a neon edge, two ranges
 of hills stand behind the gap, the beams are glowing rods in the house's yellow that warm to pink and red
-with the strain, the fixed joints are pink lights. The day keeps going by in the house's colors: a lilac
-dawn, a sunset in the title's yellow → pink, the home page's night. The page gets the `tv-neon` class (a
+with the strain, the fixed joints are pink lights. The day keeps going by in the house's colors: a bright
+blue morning with white clouds (the first neon palettes were all so dark that every stage read as night;
+the owner asked for a real day, 2026-10-26), a sunset in the title's yellow → pink, the home page's night. The page gets the `tv-neon` class (a
 glass gauge, no pixelated train beside the title).
 
 The owner found that first neon train too childish and asked for smoother, more modern options with a
@@ -131,6 +132,10 @@ at `/labs/bridges/trains/` ("🚄 Los colores del tren bala" on the lab card), e
 with it. Each stage draws its color at random, never the same as the stage before (`trenDe(e)` in `neon.js`, the
 owner's request): the color is only paint, the weight stays the stage's, in the physics and in the title,
 and the small train beside the title has the stage's color (`trenMini(carga, e)`).
+Each stage draws only the colors whose body stands out against that stage's sky and far hills (WCAG
+contrast ratio of at least 1.8, `CONTRASTE_MIN` and `balasPara(t)` in `neon.js`, owner's request): in the
+morning only pearl, at sunset silver, pearl, gold and mint, at night all seven. If no color passed, the
+one that stands out the most is used; `contrast.test.mjs` checks every stage has one.
 
 The visitors live in `visitors.js` (when each comes and what it does), shared by both styles: they draw
 through a renderer, the pixel one or `neon-visitors.js`'s `pincel`, which has the same methods and draws
