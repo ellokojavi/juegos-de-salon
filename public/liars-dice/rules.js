@@ -5,8 +5,9 @@
 
 export const GAME_ID = 'dudo';
 /**
- * `shake` (roll by shaking the phone) and `turnSecs` (the turn's clock; out of time, a die lost)
- * are tried in the lab (lab: #seccion-dudo-cacho): off unless the setup turns them on.
+ * `shake` (roll by shaking the phone) and `turnSecs` (the turn's clock; out of time, a die lost),
+ * D-447: off here, which is what Uno al día and older saved games play with. The setup's own
+ * switches start with the shake on and the clock off.
  */
 export const DEFAULT_CONFIG = { dice: 5, calzar: true, chileno: true, shake: false, turnSecs: 0 };
 /** How long a turn lasts when the clock is on. */
@@ -106,7 +107,7 @@ const ES = {
     endStats: '{rounds} rondas', endStatsOne: 'Una sola ronda',
     histDudo: '{who} dudó de {n} {pinta} · había {count}', histCalza: '{who} calzó {n} {pinta} · había {count}',
     histLost: '{name} −1', histGained: '{name} +1',
-    // Agitar para tirar y el reloj del turno (lab: #seccion-dudo-cacho)
+    // Agitar para tirar y el reloj del turno (D-447)
     shakeLabel: '🫨 Agitar para tirar', shakeHint: 'Cada ronda, agita el celular como un cacho para ver tus dados.',
     timerLabel: '⏱️ {n} segundos por turno', timerHint: 'Quien no juega a tiempo pierde un dado.',
     shakeNow: 'Agita el celular para tirar tus dados', shakeAllow: '🫨 Permitir agitar', shakeTap: '🎲 Tirar los dados',
