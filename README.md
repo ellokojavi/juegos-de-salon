@@ -46,7 +46,7 @@ The games with their own section below come first; after them, the one-player ga
 | 📐 [Plots / Loteo / Loteamento](https://juegosdesalon.cl/plots/) | 1 | Play alone | Also in The Cup |
 | 🖌️ [Paint Mines / Pintaminas / Pinta-Minas](https://juegosdesalon.cl/paint-mines/) | 1 | Play alone | Also in The Cup |
 | 🕵️ [Agents / Agentes](https://juegosdesalon.cl/agents/) | 1 | Play alone | Also in The Cup |
-| 🚂 [Train on the Edge / Tren en Vilo / Trem no Vão](https://juegosdesalon.cl/bridges/) | 1 | Play alone | Also in The Cup |
+| 🚅 [Train on the Edge / Tren en Vilo / Trem no Vão](https://juegosdesalon.cl/bridges/) | 1 | Play alone | Also in The Cup |
 <!-- /generated -->
 
 ---
@@ -733,7 +733,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Firebase](firebase/README.md)
 - [🕵️ Agentes](docs/games/agents.md)
 - [Diseño: Batalla Naval](docs/games/battleship.md)
-- [🚂 Tren en Vilo (bridge builder)](docs/games/bridges.md)
+- [🚅 Tren en Vilo (bridge builder)](docs/games/bridges.md)
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/games/bulls-and-cows-factibilidad.md)
 - [Especificación: Toque y Fama](docs/games/bulls-and-cows.md)
 - [El caso](docs/games/case.md)

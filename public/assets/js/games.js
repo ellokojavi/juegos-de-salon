@@ -300,7 +300,7 @@ export const SUELTOS = [
     // Out of the lab in D-456: its page was /labs/bridges/, now a bridge (`deLabs`); its id is La Copa's
     id: 'puentes',
     slug: 'bridges',
-    emoji: '🚂',
+    emoji: '🚅',
     name: { es: 'Tren en Vilo', en: 'Train on the Edge', pt: 'Trem no Vão', de: 'Zug am Abgrund' },
     tagline: { es: 'Arma un puente que aguante el tren.', en: 'Build a bridge that holds the train.', pt: 'Monte uma ponte que aguente o trem.', de: 'Bau eine Brücke, die den Zug trägt.' },
     tipos: ['logic'],

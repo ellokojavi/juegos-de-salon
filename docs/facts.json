@@ -786,7 +786,7 @@
     },
     {
       "id": "puentes",
-      "emoji": "🚂",
+      "emoji": "🚅",
       "name": {
         "es": "Tren en Vilo",
         "en": "Train on the Edge",
@@ -1415,7 +1415,7 @@
     },
     {
       "path": "docs/games/bridges.md",
-      "title": "🚂 Tren en Vilo (bridge builder)"
+      "title": "🚅 Tren en Vilo (bridge builder)"
     },
     {
       "path": "docs/games/bulls-and-cows-factibilidad.md",

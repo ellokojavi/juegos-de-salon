@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo in La Copa, Uno al día and its own page: the day's five crossings, the same for everyone.
+ * 🚅 Tren en Vilo in La Copa, Uno al día and its own page: the day's five crossings, the same for everyone.
  * The physics, the stages' catalog and the score are `physics.js` (the lab's engine until D-456); this
  * only picks the crossings from the catalog with the day's seed.
  */

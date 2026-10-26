@@ -35,7 +35,7 @@ const BASE = {
   loteo: { emoji: '📐' },
   pintaminas: { emoji: '🖌️' },
   agentes: { emoji: '🕵️' },
-  puentes: { emoji: '🚂' },
+  puentes: { emoji: '🚅' },
   final: { emoji: '🏁' },
   // A weekend cup's day of three (D-439)
   trio: { emoji: '🎯' },

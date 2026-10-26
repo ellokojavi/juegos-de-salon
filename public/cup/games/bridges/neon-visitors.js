@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo — the visitors in the house style (lab, owner's request 2026-10-25): the bird, the
+ * 🚅 Tren en Vilo — the visitors in the house style (lab, owner's request 2026-10-25): the bird, the
  * flying saucer and its fish, the whale, the boat and its wake rider, and the mole, drawn as smooth shapes
  * with soft light instead of pixel sprites. visitors.js moves them; it draws through a renderer, and
  * `pincel(ctx)` is the smooth one: it has the pixel renderer's methods, and its `sprite()` draws each pixel

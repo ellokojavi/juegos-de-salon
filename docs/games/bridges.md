@@ -1,4 +1,4 @@
-# 🚂 Tren en Vilo (bridge builder)
+# 🚅 Tren en Vilo (bridge builder)
 
 Build a bridge of wooden beams over a gap, then a train with wagons crosses it; a beam that stretches
 too much snaps. Five stages against a 7-minute clock. **Inspired by

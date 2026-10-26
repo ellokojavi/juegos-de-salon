@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo — the train for the house style (lab, owner's request 2026-10-25): the first neon train
+ * 🚅 Tren en Vilo — the train for the house style (lab, owner's request 2026-10-25): the first neon train
  * looked too childish. Of four smoother, metallic designs (a bullet train, a 1930s streamliner, a metro and
  * a neon-outlined one) the owner chose the bullet train, the same nose at both ends, in several colors.
  * `?train=<id>` picks a color in the game (with `?style=neon`); `trains/` shows them all side by side.

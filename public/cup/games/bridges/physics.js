@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo — pure engine (the lab's until D-456). A bridge of beams between grid points over a gap;
+ * 🚅 Tren en Vilo — pure engine (the lab's until D-456). A bridge of beams between grid points over a gap;
  * then a train crosses. Beams are springs that snap when stretched or squeezed too much.
  *
  * Coordinates are in grid units, y up; the deck is y = 0. The simulation uses a fixed step and only

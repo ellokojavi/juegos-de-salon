@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo — the scene: the canvas, the pixel-art drawing of a stage (sky, cliffs, water, the
+ * 🚅 Tren en Vilo — the scene: the canvas, the pixel-art drawing of a stage (sky, cliffs, water, the
  * beams, the train and its visitors), the strain gauge and the cover's demo bridge, for the game's screen
  * (ui.js) and the lab's sheets of trains and visitors. No game state: who calls it passes it.
  */

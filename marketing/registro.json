@@ -357,8 +357,13 @@
         },
         {
           "ruta": "public/assets/splash/bridges.mp4",
-          "formato": "MP4 360×360, 12 fps, en loop",
+          "formato": "MP4 720×730, 12 fps, en loop",
           "uso": "Clip de Tren en Vilo (campaña tren-en-vilo-ya)"
+        },
+        {
+          "ruta": "public/assets/splash/bridges-start.jpg",
+          "formato": "JPG 720×730",
+          "uso": "Póster del clip de Tren en Vilo mientras carga: su primer frame"
         },
         {
           "ruta": "marketing/splash/campaigns/tren-en-vilo-ya/es-390.jpg",
