@@ -15,21 +15,19 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
 | `where` | What it is | Use it for |
 |---|---|---|
 | `github` | a scheduled workflow in `.github/workflows/` | what needs no key on the Mac (push notifications) |
-| `mac` | a launchd job on the owner's Mac mini, a plain script | frequent checks: free to check, Claude only when there is work |
-| `app` | a claude.ai scheduled task that runs on the Mac mini, its prompt in `tools/jobs/prompts/<id>.md` | rounds that are Claude's work every time (processes, weekly report) |
+| `mac` | a launchd job on the owner's Mac mini: a plain script, or `claude-task.mjs <prompt>` for a headless Claude session (D-451) | frequent checks (free to check, Claude only when there is work) and the rounds that are Claude's work every time (processes, weekly report), their prompt in `tools/jobs/prompts/<id>.md` |
 | `hook` | a Claude Code hook (`.claude/settings.json`) | what runs with each session |
 
 ## Adding a job
 
-1. Add its entry to `jobs.json`: `id`, `where`, the schedule (`every` in seconds for `mac`, `cron` for
-   `github` and `app`), `what` and its `decisions`.
+1. Add its entry to `jobs.json`: `id`, `where`, the schedule (`every` in seconds or `at` a local `{ hour, minute, weekday? }` for
+   `mac`, `cron` for `github`), `what` and its `decisions`.
 2. `mac`: a script in `tools/jobs/` that exits 0 when all went well and prints a last line that sums
    it up (`status` shows it). Then `node tools/jobs/jobs.mjs install` on the Mac mini, after merging and
    pulling the main folder: launchd runs the main folder's code, never a worktree's.
-3. `github`: the workflow, with the same cron. `app`: its instructions in `tools/jobs/prompts/<id>.md`
-   (the job's `prompt`; `jobs.test.mjs` checks every file it names exists), and a claude.ai scheduled task
-   named as its `task`, with "Require this computer", whose prompt only says to read that file from
-   origin/main and follow it (D-440).
+3. `github`: the workflow, with the same cron. A Claude round: a `mac` job whose command is
+   `node tools/jobs/claude-task.mjs tools/jobs/prompts/<id>.md` (`jobs.test.mjs` checks every file the
+   prompt names exists); not a desktop-app or claude.ai scheduled task, which stop or cannot reach the Mac (D-451).
 
 ## The jobs on the Mac
 
