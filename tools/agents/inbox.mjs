@@ -10,6 +10,7 @@
  *   node tools/agents/inbox.mjs list                              # the emails waiting, oldest first
  *   node tools/agents/inbox.mjs ingest <id> <text.txt> --lang <es|en|pt|de>   # → a feedback report
  *   node tools/agents/inbox.mjs skip <id> "<reason>"              # spam, automatic, not for us
+ *   node tools/agents/inbox.mjs skipped [--days n]                # for the owner: the skipped emails' text (D-452)
  *
  * `ingest` turns the email into a feedback report through the same public path as the app's 🐞
  * (`enviarReporte`, D-104, D-317): `feedback/<id>` gets the text the agent chose (the sender's
@@ -18,6 +19,10 @@
  * The feedback workflow uploads it as an issue, and the processes agent answers it with
  * `feedback.mjs reply`. Either way the email is then deleted from `buzon/`. Every action is logged
  * on the owner's machine without the address (`~/.config/juegos-de-salon/inbox-log.jsonl`).
+ * A skipped email leaves no issue, so its text is kept on that machine too (`inbox-skipped.jsonl`,
+ * private, never on GitHub) for the owner to check a skip with `skipped`; the processes round
+ * lists the skips with their reasons, never their text (D-452): what a stranger wrote stays away
+ * from the agents with wider powers.
  *
  * The email's fields (`de`, `nombre`, `asunto`, `texto`, `automatico`) and the report's (`texto`,
  * `nombre`, `correo`, `contexto`) are Firebase data and keep their names.
@@ -31,6 +36,7 @@ import { enviarReporte as sendReport, correoValido as validEmail, enmascarar as 
 
 const CREDENTIAL = process.env.JUEGOS_INBOX || process.env.JUEGOS_BUZON || join(homedir(), '.config/juegos-de-salon/buzon.json');
 const LOG = process.env.JUEGOS_INBOX_LOG || join(homedir(), '.config/juegos-de-salon/inbox-log.jsonl');
+const SKIPPED = process.env.JUEGOS_INBOX_SKIPPED || join(homedir(), '.config/juegos-de-salon/inbox-skipped.jsonl');
 export const LANGUAGES = ['es', 'en', 'pt', 'de'];
 
 /* ------------------------------------------------------------------ */
@@ -69,13 +75,29 @@ export function show(id, c) {
   ].join('\n');
 }
 
+/** The skips in the log's text since `since` (an ISO date): what the processes round lists. */
+export function skipsSince(logText, since) {
+  return String(logText || '').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } })
+    .filter(e => e && e.action === 'skip' && e.at >= since);
+}
+
+/** What a skip keeps of the email: everything but the address, which stays masked. */
+export function kept(id, c, reason) {
+  return { email: id, reason, received: c.at ? new Date(c.at).toISOString().slice(0, 19) + 'Z' : null,
+    from: validEmail(c.de) ? maskEmail(c.de) : null, name: c.nombre || null, subject: c.asunto || null, text: c.texto || null };
+}
+
 /* ------------------------------------------------------------------ */
 
-const log = e => {
-  mkdirSync(dirname(LOG), { recursive: true });
-  appendFileSync(LOG, JSON.stringify({ at: new Date().toISOString().slice(0, 19) + 'Z', ...e }) + '\n');
-  chmodSync(LOG, 0o600);
+const append = (file, e) => {
+  mkdirSync(dirname(file), { recursive: true });
+  appendFileSync(file, JSON.stringify({ at: new Date().toISOString().slice(0, 19) + 'Z', ...e }) + '\n');
+  chmodSync(file, 0o600);
 };
+const log = e => append(LOG, e);
+
+/** The skips since `since`, for the processes round; [] without a log. */
+export const skipped = since => (existsSync(LOG) ? skipsSince(readFileSync(LOG, 'utf8'), since) : []);
 
 /** Signs in as the inbox user; returns a function for its requests to `buzon/`. */
 async function inbox() {
@@ -125,9 +147,19 @@ async function skip(id, reason) {
   const ask = await inbox();
   const c = await ask(`/${id}`);
   if (!c) throw new Error(`No email ${id} in the inbox.`);
+  // Kept before deleting: a skip must stay checkable (D-452)
+  append(SKIPPED, kept(id, c, reason));
   await ask(`/${id}`, 'DELETE');
   log({ email: id, action: 'skip', reason, from: validEmail(c.de) ? maskEmail(c.de) : null });
   console.log(`${id} skipped (${reason}) and deleted.`);
+}
+
+/** For the owner: the skipped emails of the last `days` days, with their text. */
+function showSkipped(days) {
+  const since = new Date(Date.now() - days * 864e5).toISOString();
+  const rows = (existsSync(SKIPPED) ? readFileSync(SKIPPED, 'utf8') : '').split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(r => r.at >= since);
+  if (!rows.length) return console.log(`No email skipped in the last ${days} day(s).`);
+  for (const r of rows) console.log(`── ${r.at.replace('T', ' ').slice(0, 16)} UTC · ${r.name || '(no name)'} <${r.from || 'no valid address'}> · ${r.reason}\nSubject: ${r.subject || '(none)'}\n${String(r.text || '(empty)').split('\n').map(l => `  ${l}`).join('\n')}\n`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -137,5 +169,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (command === 'list') list().catch(fail);
   else if (command === 'ingest' && a && b && option('--lang')) ingest(a, b, option('--lang')).catch(fail);
   else if (command === 'skip' && a) skip(a, b).catch(fail);
-  else { console.error('Usage: node tools/agents/inbox.mjs list | ingest <id> <text.txt> --lang <es|en|pt|de> | skip <id> "<reason>"'); process.exit(2); }
+  else if (command === 'skipped') showSkipped(Number(option('--days')) || 30);
+  else { console.error('Usage: node tools/agents/inbox.mjs list | ingest <id> <text.txt> --lang <es|en|pt|de> | skip <id> "<reason>" | skipped [--days n]'); process.exit(2); }
 }

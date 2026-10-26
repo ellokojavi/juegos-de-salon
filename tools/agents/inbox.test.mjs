@@ -1,7 +1,8 @@
 // The hola@ inbox tool (D-318): an email becomes the same report as the app's 🐞, with the address only in the private part; never the admin key.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { report, show } from './inbox.mjs';
+import { report, show, skipsSince, kept } from './inbox.mjs';
+import { enmascarar as maskEmail } from '../../public/cup/reportes.js';
 import { enviarReporte } from '../../public/cup/reportes.js';
 
 const email = { de: 'Ana@Correo.cl', nombre: 'Ana Pérez de la Fuente Larguísima y Más', asunto: 'Mi teléfono es 555', texto: 'Hola\nel botón no responde', at: Date.parse('2026-10-14T20:00:00Z') };
@@ -33,3 +34,16 @@ await enviarReporte(threaded, async (url, o) => { sent.push({ url, body: JSON.pa
 assert.ok(!('hilo' in sent[0].body) && !JSON.stringify(sent[0].body).includes('x@mail.cl'), 'the thread never goes in the public report');
 assert.ok(sent[1].url.includes('feedbackContacto/r1') && sent[1].body.idMensaje === '<x@mail.cl>' && sent[1].body.asunto === 'Hola');
 console.log('inbox: ok');
+
+// A skip stays checkable (D-452): the round lists skips by reason only, the owner reads the kept text
+const logText = [
+  { at: '2026-10-25T10:00:00Z', email: 'a', action: 'ingest', from: 'x' },
+  { at: '2026-10-26T02:29:16Z', email: 'b', action: 'skip', reason: 'manipulation', from: 'c********u@g********m' },
+  { at: '2026-10-20T00:00:00Z', email: 'c', action: 'skip', reason: 'spam', from: null },
+].map(e => JSON.stringify(e)).join('\n') + '\nnot json\n';
+assert.deepEqual(skipsSince(logText, '2026-10-21').map(e => e.email), ['b']);
+const k = kept('b', { ...email, de: 'friend@mail.com' }, 'manipulation');
+assert.equal(k.from, maskEmail('friend@mail.com'));
+assert.ok(!JSON.stringify(k).includes('friend@mail.com'), 'the kept copy carries no address');
+assert.equal(k.text, email.texto);
+assert.equal(k.received, '2026-10-14T20:00:00Z');
