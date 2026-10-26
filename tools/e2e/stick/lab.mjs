@@ -3,7 +3,7 @@
 // night with "Hold to stretch"; a real press stretches the stick; a stick on the flag is a perfect (+2, then +3
 // in a row, the pulse, "Perfect ×n", the streak chip and the achievements); a plain landing is +1 and breaks
 // the streak; there are no stars; a pause in the middle of a hold keeps the stick, and the tap back does
-// not drop it; a stick too long costs one of the three lives and the ninja is back on its pillar, and the
+// not drop it; a stick too long costs one of the three lives and the ninja climbs a rope back onto its pillar, and the
 // third fall ends the run, with the result (score, new best kept
 // on the phone, breakdown, share, Play again, the comment after a line); a real short hold falls, and the
 // second run, three real quick taps, shows today's runs on this phone. Moving pillars, from the 10th on, slide and say so, and aiming
