@@ -3,8 +3,9 @@
    stylesheet next to the templates (assets/season/<id>.css). Nothing here takes a tap. */
 .season-deco { position: fixed; pointer-events: none; user-select: none; -webkit-user-select: none; z-index: 40; }
 
-/* The corner: the template's css gives it its drawing (`background`) */
-.season-corner { top: 0; right: 0; width: 96px; height: 96px; opacity: 0.32; z-index: 1; background: no-repeat top right / contain; }
+/* The corner: the template's css gives it its drawing (`background`). Behind the page (z-index -1, over
+   the body's background), so its threads never cross a button or a flag of the header (D-457) */
+.season-corner { top: 0; right: 0; width: 96px; height: 96px; opacity: 0.32; z-index: -1; background: no-repeat top right / contain; }
 
 /* The background particles that became emojis: they float up like the rest, swaying instead of spinning */
 .bg-sparkles span.season-mote {
