@@ -26,9 +26,11 @@ trackVisit();   // the site's traffic (D-208)
 
 const GAME_ID = 'stick';
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
-// A lost life: the fall, then the rope shoots up, the ninja climbs it and hops on top; about 1.1 s in all
-const CAIDA_MS = 450, GANCHO_MS = 140, SUBIDA_MS = 330, SALTO_MS = 180;
-const RESCATE_MS = GANCHO_MS + SUBIDA_MS + SALTO_MS;
+// A lost life: the fall, then the ninja peeks up from below, throws the grapple in an arc, it bites the edge,
+// the ninja climbs hand over hand and pulls itself over the top; about 2.6 s in all
+const CAIDA_MS = 450, ASOMA_MS = 260, GANCHO_MS = 480, TENSA_MS = 200, SUBIDA_MS = 1250, SALTO_MS = 420;
+const TIRONES = 5;   // the pulls of the climb, one hand over the other
+const RESCATE_MS = ASOMA_MS + GANCHO_MS + TENSA_MS + SUBIDA_MS + SALTO_MS;
 const KETCHAPP = 'https://www.ketchappgames.com/';
 const BEST_KEY = 'juegos-de-salon:stick-best';
 const TODAY_KEY = 'juegos-de-salon:stick-today';
@@ -258,7 +260,7 @@ function escena(canvas, { compacto = false } = {}) {
    * The ninja, its feet at (x, y): a dark hood with a rim of light (so it reads on the night), the eye slit,
    * a pink headband whose tails fly behind it as it runs, and legs that move.
    */
-  function ninja(x, y, now, { corre = false, rot = 0, salto = 0 } = {}) {
+  function ninja(x, y, now, { corre = false, rot = 0, salto = 0, manos = null, paso: pasoFijo = null } = {}) {
     const u = s * (compacto ? 0.95 : 1), w = NINJA * u, h = NINJA * 1.2 * u;
     ctx.save();
     ctx.translate(x, y - salto * u);
@@ -268,7 +270,7 @@ function escena(canvas, { compacto = false } = {}) {
     halo.addColorStop(0, 'rgba(46,230,214,0.22)'); halo.addColorStop(1, 'rgba(46,230,214,0)');
     ctx.fillStyle = halo; ctx.fillRect(-h * 1.4, -h * 2, h * 2.8, h * 2.6);
     // Legs
-    const paso = corre && !QUIETO ? Math.sin(now / 45) : 0;
+    const paso = pasoFijo ?? (corre && !QUIETO ? Math.sin(now / 45) : 0);
     ctx.fillStyle = '#0d0619';
     ctx.fillRect(-w * 0.32 + paso * w * 0.12, -h * 0.28, w * 0.24, h * 0.28);
     ctx.fillRect(w * 0.08 - paso * w * 0.12, -h * 0.28, w * 0.24, h * 0.28);
@@ -296,6 +298,18 @@ function escena(canvas, { compacto = false } = {}) {
     ctx.fillRect(w * 0.08, -h * 0.64, 1.6 * u, 1.8 * u); ctx.fillRect(w * 0.3, -h * 0.64, 1.6 * u, 1.8 * u);
     // A belt
     ctx.fillStyle = 'rgba(46,230,214,0.7)'; ctx.fillRect(-w / 2, -h * 0.4, w, 1.4 * u);
+    // Arms, only while it climbs or throws: shoulder to hand, hands given relative to (x, y)
+    if (manos) {
+      ctx.lineCap = 'round';
+      for (const [hx, hy] of manos) {
+        const lx = hx, ly = hy + salto * u, sx0 = Math.sign(lx || 1) * w * 0.32;
+        ctx.strokeStyle = 'rgba(190,160,255,0.55)'; ctx.lineWidth = Math.max(2.5, 3.6 * u);
+        ctx.beginPath(); ctx.moveTo(sx0, -h * 0.68); ctx.lineTo(lx, ly); ctx.stroke();
+        ctx.strokeStyle = '#140a26'; ctx.lineWidth = Math.max(1.5, 2.4 * u);
+        ctx.beginPath(); ctx.moveTo(sx0, -h * 0.68); ctx.lineTo(lx, ly); ctx.stroke();
+        ctx.fillStyle = '#ffd9b8'; ctx.beginPath(); ctx.arc(lx, ly, Math.max(1.2, 1.7 * u), 0, Math.PI * 2); ctx.fill();
+      }
+    }
     ctx.restore();
   }
 
@@ -389,29 +403,86 @@ function escena(canvas, { compacto = false } = {}) {
   let saltoDesde = 0;
 
   /**
-   * The way back after a lost life: a rope shoots up from below the screen and hooks the pillar's edge,
-   * the ninja climbs it and hops onto the top. Short on purpose (RESCATE_MS), so the game goes on.
+   * The way back after a lost life: the ninja peeks up from below, swings the grapple up in an arc with
+   * the rope trailing slack, the hook bites the pillar's edge and the rope snaps taut, then the ninja climbs
+   * hand over hand, in pulls (TIRONES), swaying a little, and pulls itself over the edge (RESCATE_MS).
    */
   function agarre(g, now) {
     const t = now - rescate.born, ax = sx(rescate.x), top = G - 1;
-    const tiro = clamp01(t / GANCHO_MS), sube = clamp01((t - GANCHO_MS) / SUBIDA_MS), salta = clamp01((t - GANCHO_MS - SUBIDA_MS) / SALTO_MS);
-    const ropeY = H + 10 - (H + 10 - top) * easeOut(tiro);
-    if (salta < 1) {
+    const u = s * (compacto ? 0.95 : 1), h = NINJA * 1.2 * u;
+    const fase = (desde, ms) => clamp01((t - desde) / ms);
+    const t1 = ASOMA_MS, t2 = t1 + GANCHO_MS, t3 = t2 + TENSA_MS, t4 = t3 + SUBIDA_MS;
+    const asoma = fase(0, ASOMA_MS), tiro = fase(t1, GANCHO_MS), tensa = fase(t2, TENSA_MS);
+    const sube = fase(t3, SUBIDA_MS), salta = fase(t4, SALTO_MS);
+    const suave = k => k * k * (3 - 2 * k);
+    const hang = ax + NINJA * 0.5 * u;
+    const y0 = H + h * 0.45, yArriba = top + h * 0.95;   // feet: just the head showing / the head over the edge
+    const cuerda = (puntos, alfa = 0.85) => {
       ctx.save();
-      ctx.strokeStyle = 'rgba(230,220,255,0.85)'; ctx.lineWidth = Math.max(1, 1.6 * s);
-      ctx.beginPath(); ctx.moveTo(ax, H + 10); ctx.lineTo(ax, ropeY); ctx.stroke();
-      // The hook, biting the edge
-      ctx.strokeStyle = '#2ee6d6'; ctx.lineWidth = Math.max(1.5, 2.4 * s);
-      ctx.beginPath(); ctx.arc(ax - 4 * s, ropeY, 4 * s, 0, Math.PI, true); ctx.stroke();
-      ctx.restore();
+      ctx.strokeStyle = `rgba(230,220,255,${alfa})`; ctx.lineWidth = Math.max(1, 1.6 * s); ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(...puntos[0]);
+      if (puntos.length === 3) ctx.quadraticCurveTo(...puntos[1], ...puntos[2]); else ctx.lineTo(...puntos[1]);
+      ctx.stroke(); ctx.restore();
+    };
+    const gancho = (x, y, ang, alfa = 1) => {
+      ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.globalAlpha = alfa;
+      ctx.strokeStyle = '#2ee6d6'; ctx.lineWidth = Math.max(1.5, 2.4 * s); ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(0, 6 * s); ctx.lineTo(0, -2 * s);
+      ctx.moveTo(0, -2 * s); ctx.quadraticCurveTo(-5 * s, -2 * s, -5 * s, 3 * s);
+      ctx.moveTo(0, -2 * s); ctx.quadraticCurveTo(5 * s, -2 * s, 5 * s, 3 * s);
+      ctx.stroke(); ctx.restore();
+    };
+
+    // 1–2. Peeking up, then the throw: the hook flies in an arc, over the edge and down onto it
+    if (t < t2) {
+      const y = y0 + (h * 0.6) * (1 - easeOut(asoma));
+      const manoX = hang + NINJA * 0.1 * u, manoY = y - h * (asoma < 1 ? 0.9 : 0.9 + 0.35 * Math.sin(Math.min(1, tiro * 2.5) * Math.PI / 2));
+      if (asoma >= 1) {
+        const k = tiro, gx = manoX + (ax - manoX) * k;
+        const gy = manoY + (top - manoY) * easeOut(k) - Math.sin(k * Math.PI) * 46 * s;
+        const slack = (1 - k) * 30 * s + 8 * s;
+        cuerda([[manoX, manoY], [(manoX + gx) / 2 + 10 * s, (manoY + gy) / 2 + slack], [gx, gy]]);
+        gancho(gx, gy, (1 - k) * 4 * Math.PI);
+      }
+      ninja(hang, y, now, { manos: [[manoX - hang, manoY - y], [-NINJA * 0.2 * u, -h * 0.5]], paso: 0.4 });
+      return;
     }
-    if (tiro < 1) return;
-    const hang = ax + NINJA * 0.45 * s, bajo = H + NINJA * 1.3 * s;
-    if (salta <= 0) ninja(hang, bajo - (bajo - top - NINJA * 0.3 * s) * easeOut(sube), now, { corre: true });
-    else {
-      const x = hang + (sx(restX(current(g))) - hang) * easeOut(salta);
-      const y = top + NINJA * 0.3 * s * (1 - salta) - Math.sin(salta * Math.PI) * 18 * s;
-      ninja(x, y, now, { rot: (1 - salta) * -0.4 });
+
+    // 3–5. The rope taut from the edge, the climb in pulls, then over the top
+    const vibra = tensa < 1 ? Math.sin(tensa * 26) * (1 - tensa) * 5 * s : 0;
+    const balanceo = QUIETO ? 0 : Math.sin(now / 420) * (salta > 0 ? 0 : 1);
+    const pie = H + 10, ropeAlfa = 0.85 * (1 - salta);
+    const ropeBase = ax + balanceo * 6 * s + vibra;
+    if (ropeAlfa > 0) {
+      cuerda([[ax, top], [ax + vibra * 2, (top + pie) / 2], [ropeBase, pie]], ropeAlfa);
+      gancho(ax, top - 4 * s, Math.PI, 1 - salta);
+    }
+    if (salta <= 0) {
+      // Each pull: a reach (the free hand goes up the rope) then a heave (the body rises, the grip holds)
+      const p = sube * TIRONES, n = Math.min(TIRONES - 1, Math.floor(p)), f = p - n;
+      const alto = n => y0 - (y0 - yArriba) * (n / TIRONES);
+      const heave = suave(clamp01((f - 0.4) / 0.6));
+      const jolt = tensa < 1 ? -Math.sin(tensa * Math.PI) * 6 * s : 0;
+      const y = sube >= 1 ? yArriba : alto(n) + (alto(n + 1) - alto(n)) * heave + jolt;
+      const ropeX = y2 => ax + (ropeBase - ax) * clamp01((y2 - top) / (pie - top));
+      const agarra = n => alto(n + 1) - h * 1.15;               // where the top hand grips for pull n
+      const alcanza = suave(clamp01(f / 0.4));
+      const arriba = sube >= 1 ? agarra(TIRONES - 1) : agarra(n - 1) + (agarra(n) - agarra(n - 1)) * alcanza;
+      const abajo = agarra(n - 1);
+      const manoA = [ropeX(arriba) - hang, arriba - y], manoB = [ropeX(abajo) - hang, Math.min(abajo - y, -h * 0.55)];
+      const cuerpoX = hang + (ropeX(y - h * 0.6) - ax);
+      ninja(cuerpoX, y, now, {
+        manos: n % 2 ? [manoB, manoA] : [manoA, manoB],
+        paso: Math.sin((n + heave) * Math.PI) * 0.8,
+        rot: balanceo * 0.06,
+      });
+    } else {
+      // Over the edge: hands on the top, a heave up, a knee over, then standing at the rest spot
+      const sube2 = suave(clamp01(salta / 0.55)), avanza = suave(clamp01((salta - 0.35) / 0.65));
+      const x = hang + (sx(restX(current(g))) - hang) * avanza;
+      const y = yArriba + (top - yArriba) * sube2;
+      const manos = salta < 0.7 ? [[ax - x, top - y], [ax + 8 * u - x, top - y]] : null;
+      ninja(x, y, now, { manos, rot: -0.35 * Math.sin(salta * Math.PI) * (1 - avanza * 0.5), paso: salta < 0.6 ? 0.9 : 0 });
     }
   }
   const efectoSalto = now => { const k = (now - saltoDesde) / 380; return k >= 0 && k < 1 && !QUIETO ? Math.sin(k * Math.PI) * 9 : 0; };
