@@ -94,25 +94,37 @@
 .wild-note { font-weight: 800; font-size: 0.78rem; color: var(--yellow); }
 
 /* ---------- Shake to roll and the turn's clock (lab: #seccion-dudo-cacho) ---------- */
-/* The dice to roll lie face down; shaking, they tumble with a new face each frame (--x, --y, --r) */
-.cacho { display: grid; gap: 8px; justify-items: center; }
-.die.blank { opacity: 0.55; animation: dado-espera 2.4s ease-in-out infinite; }
+/* The shaking box: a cloth over the table with bigger dice than the hand's, face down until the
+   first jolt. Landed, the cloth fades and the dice fly down into the hand (alinear in game.js). */
+.agite-caja {
+  position: fixed; left: 50%; z-index: 25; transform: translateX(-50%); isolation: isolate;
+  width: min(92vw, 400px); display: grid; gap: 12px; justify-items: center; padding: 30px 14px 16px;
+}
+.agite-caja::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 22px;
+  background: radial-gradient(ellipse at 50% 35%, #2b7a56, #134432 75%);
+  border: 2px solid rgba(255, 255, 255, 0.14); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), inset 0 0 30px rgba(0, 0, 0, 0.35);
+  transition: opacity 0.35s;
+}
+.agite-caja.vuela::before, .agite-caja.vuela .agite-pie { opacity: 0; }
+.agite-pie { display: grid; gap: 8px; justify-items: center; transition: opacity 0.25s; }
+.agite-mesa { display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 16px 14px; max-width: 260px; min-height: 150px; }
+.die--lg { width: 64px; height: 64px; padding: 9px; border-radius: 15px; }
+.die--lg i { width: 11px; height: 11px; }
+/* In the box the ace is a die like the others (the owner's request); the hand keeps it yellow */
+.agite-mesa .die.ace { background: var(--card); }
+.die.blank { opacity: 0.6; animation: dado-espera 2.4s ease-in-out infinite; }
 .die.blank:nth-child(even) { animation-delay: 0.15s; }
-.bandeja.rodando .die { opacity: 1; animation: none; transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--r, 0)); transition: transform 70ms linear; }
+/* Their places in the hand, under the box, wait still */
+.cacho .die.blank { opacity: 0.3; animation: none; }
+.agite-mesa.rodando .die { opacity: 1; animation: none; transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--r, 0)); transition: transform 70ms linear; }
 @keyframes dado-espera { 0%, 80%, 100% { transform: rotate(0); } 85% { transform: rotate(-8deg); } 90% { transform: rotate(8deg); } 95% { transform: rotate(-4deg); } }
 /* The 3D dice (dado3d.js): the cube fills half its canvas, so the canvas is twice the die and
-   spills over its box, which keeps the row's spacing the same as the flat dice they land as */
-.dado3d { position: relative; display: inline-block; width: 46px; height: 46px; }
-.dado3d-lienzo { position: absolute; left: -23px; top: -23px; width: 92px; height: 92px; pointer-events: none; }
-.cacho-txt { margin: 0; font-weight: 800; font-size: 0.9rem; text-align: center; }
-.dice-row.rolled .die { animation: dado-sale 0.45s ease-out backwards; }
-.dice-row.rolled .die:nth-child(2) { animation-delay: 0.05s; }
-.dice-row.rolled .die:nth-child(3) { animation-delay: 0.1s; }
-.dice-row.rolled .die:nth-child(4) { animation-delay: 0.15s; }
-.dice-row.rolled .die:nth-child(5) { animation-delay: 0.2s; }
-/* Landing: a last bounce on the real faces */
-@keyframes dado-sale { 0% { transform: translateY(-10px) rotate(-30deg); } 60% { transform: translateY(2px) rotate(4deg); } 100% { transform: none; } }
-@media (prefers-reduced-motion: reduce) { .die.blank, .dice-row.rolled .die { animation: none; } .bandeja.rodando .die { transform: none; } }
+   spills over its box, which keeps the row's spacing the same as the flat dice */
+.dado3d { position: relative; display: inline-block; width: 64px; height: 64px; }
+.dado3d-lienzo { position: absolute; left: -32px; top: -32px; width: 128px; height: 128px; pointer-events: none; }
+.cacho-txt { margin: 0; font-weight: 800; font-size: 0.95rem; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .die.blank { animation: none; } .agite-mesa.rodando .die { transform: none; } }
 
 .turn-clock { position: relative; height: 18px; margin: 6px auto 0; max-width: 260px; border-radius: 9px; background: rgba(0,0,0,0.3); overflow: hidden; }
 .turn-clock i { position: absolute; inset: 0 auto 0 0; background: var(--cyan); border-radius: 9px; transition: width 0.2s linear; }
