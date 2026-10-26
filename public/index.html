@@ -524,7 +524,8 @@
     btnBuzon.textContent = T.buzon.abrir;
     btnBuzon.addEventListener('click', () => import('./assets/js/buzon.js').then(m => m.abrirBuzon({ pantalla: 'portada' })));
     // "☕ Buy me a coffee", always under the inbox, only with a lab key for now (D-395). lab: #seccion-apoyo
-    import('./assets/js/support.js').then(m => m.supportFooterLink(lang)).then(a => a && btnBuzon.parentElement.after(el('p', {}, a))).catch(() => {});
+    // Its card opens over the page; Stripe comes back with ?support=thanks, which opens the thank-you (D-449)
+    import('./assets/js/support.js').then(m => { m.supportFromUrl({ lang }); return m.supportFooterLink(lang); }).then(a => a && btnBuzon.parentElement.after(el('p', {}, a))).catch(() => {});
     document.title = `${T.appTitle} 🎲`;
     document.getElementById('lang-slot').append(langToggle());
     // Los rankings (D-212): un botón en la barra, que la portada no tiene espacio para más
