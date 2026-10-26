@@ -122,12 +122,15 @@ style yet, so they never come. It is a prototype to compare: if the owner keeps 
 style and `pixel.js` stays only for the teaser.
 
 The owner found that first neon train too childish and asked for smoother, more modern options with a
-metallic finish. `trains.js` holds four designs: **Bala** (a chrome high-speed train), **Aerodinámico** (a
-1930s art deco steam streamliner in purple enamel with chrome lines), **Metro** (a brushed aluminium
-electric train) and **Nocturno** (glossy black outlined in neon). `?train=<id>` picks one in the game, and
-`/labs/bridges/trains/` shows them all, the first one included, up close and crossing a deck, each with a
-button to play with it. For now the designs always draw passenger cars: the wagons that show the train's
-weight (crates, logs, coal, containers) come once a design is chosen.
+metallic finish. Of four designs (a chrome bullet train, a 1930s art deco streamliner, a brushed aluminium
+metro and a glossy black one outlined in neon) the owner chose the bullet train, and asked for the same
+nose at both ends, since such a train runs either way, and for colors. `trains.js` draws it: the last car
+is the front car turned around, with red tail lights, drawn 3 art units back because it is longer than the
+wagon whose place it takes. It is the neon style's train (`?train=clasico` brings back the first one), in
+seven colors (`BALAS`: silver, pearl, graphite, ruby, gold, mint, lilac; `?train=bala-rubi`…), all shown
+at `/labs/bridges/trains/` ("🚄 Los colores del tren bala" on the lab card), each with a button to play
+with it. For now it always carries passengers: how the colors and the train's weight come together
+(crates, logs, coal, containers on the heavy stages) is still to be decided.
 
 Its sprites also draw the home page's first teaser (D-430): `tren-en-vilo-pronto`, on through
 2026-10-28, a GIF of a train stopping at the edge of a gap, no name and no link, made by
