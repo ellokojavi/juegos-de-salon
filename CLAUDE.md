@@ -51,6 +51,7 @@ language. Older Spanish content and Spanish file and identifier names are being 
 | End-to-end tests | [tools/e2e/README.md](tools/e2e/README.md) | When running or writing a script |
 | Which tests a change runs | [docs/TEST-SCOPE.md](docs/TEST-SCOPE.md), the design (D-391, D-392): a push tests only what changed since the PR last passed | Before touching `tools/e2e/affected.mjs` or when a PR runs more than it should |
 | Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
+| Seasonal templates (Halloween…) | [docs/SEASONS.md](docs/SEASONS.md): the home page and Rankings dress up for a date (D-457) | Before adding a date or touching `season.js` |
 | PR previews | [docs/PREVIEWS.md](docs/PREVIEWS.md): each PR on GitHub Pages (D-429) | When the owner reviews a change, or a preview fails |
 
 **A rule that changes is changed in its place, in the same PR:** if a new decision changes a
@@ -323,7 +324,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   recounts the home page's order (`POPULARIDAD` in `games.js`) by games finished in the last four
   weeks; the processes round runs `update` once the list is a week old. What is tried on the home
   page before players see it is a URL parameter listed in `public/labs/home/experiments.js`, shown with
-  checkboxes (none, one or several, D-389) by the bar `?lab` draws on the real home page, opened from `/labs/home/` (D-363; today only the splash campaign previews, which like `?lab` turn on only with a lab key, D-395; everything tried there reached everyone: the 🔥 Popular label, the ✨ Nuevos / 🔥 Populares filters and the name on the floating menu in D-369, the 🔎 search and the splash in D-403, and the project is kept in La Bodega, marked 🚀 Lanzado, D-372, D-403). The lab has three groups: games, improvements, La Bodega.
+  checkboxes (none, one or several, D-389) by the bar `?lab` draws on the real home page, opened from `/labs/home/` (D-363; today the splash campaign previews and the seasonal templates (`?season=<id>`, D-457), which like `?lab` turn on only with a lab key, D-395; everything tried there reached everyone: the 🔥 Popular label, the ✨ Nuevos / 🔥 Populares filters and the name on the floating menu in D-369, the 🔎 search and the splash in D-403, and the project is kept in La Bodega, marked 🚀 Lanzado, D-372, D-403). The lab has three groups: games, improvements, La Bodega.
 - **Promotional splash** (D-351): a window over the home page announcing something new, off by
   default. **The switch is the panel's 📣 Campaigns section** (D-454): on/off, start and end days and
   order of each campaign, written to Firebase `splash/` and read by the home page once per visit; the
