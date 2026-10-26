@@ -106,20 +106,18 @@ Their parameters are internal: they work from a local server or the Tailscale li
 only for someone who came in with a lab key (`INTERNO` in `game.js`), so a player without one never
 calls a visitor by hand.
 
-### The house style prototype (`?style=neon`)
+### The house style (owner-approved; `?style=pixel` for the old art)
 
 Players said the pixel art does not look like the rest of the app, and Stick Ninja does (owner's request,
-2026-10-25). `?style=neon` (read with `parametros.js`; the lab card links it as "🎨 Probar el estilo nuevo")
-draws the same scene in the house style instead (`neon.js`): smooth shapes and soft glows, the home page's
+2026-10-25). The lab's game is now drawn in the house style (`neon.js`), approved by the owner the same day
+with all its pieces (the scene, the bullet train and the visitors); `?style=pixel` brings back the pixel
+art there ("👾 La versión anterior, en pixel" on the lab card), and La Copa's screen keeps the pixel art
+unless `?style=neon` (`NEON` in `scene.js`). Smooth shapes and soft glows, the home page's
 palette and Stick Ninja's night. The cliffs and pillars are dark silhouettes with a neon edge, two ranges
 of hills stand behind the gap, the beams are glowing rods in the house's yellow that warm to pink and red
-with the strain, the fixed joints are pink lights, and the train is drawn as shapes (a pink locomotive, or
-a green one on the heavy stages, and wagons that change with the weight like the sprites do). The day keeps
-going by in the house's colors: a lilac dawn, a sunset in the title's yellow → pink, the home page's night.
-`scene.js`'s `dibujar` and `trenMini` hand over to it when the parameter is on, and the page gets the
-`tv-neon` class (a glass gauge, no pixelated train beside the title). The visitors are not drawn in this
-style yet, so they never come. It is a prototype to compare: if the owner keeps it, it becomes the only
-style and `pixel.js` stays only for the teaser.
+with the strain, the fixed joints are pink lights. The day keeps going by in the house's colors: a lilac
+dawn, a sunset in the title's yellow → pink, the home page's night. The page gets the `tv-neon` class (a
+glass gauge, no pixelated train beside the title).
 
 The owner found that first neon train too childish and asked for smoother, more modern options with a
 metallic finish. Of four designs (a chrome bullet train, a 1930s art deco streamliner, a brushed aluminium
@@ -138,6 +136,7 @@ through a renderer, the pixel one or `neon-visitors.js`'s `pincel`, which has th
 each pixel sprite as shapes (a chrome saucer with a glass dome and blinking lights, an orange fish, a
 whale with a pale grooved belly, a velvet mole with a pink nose, a glossy petrol-green boat and its rider),
 plus four pieces drawn whole (the saucer's beam, the boat's wave, the rider in the water, the flag).
+The whale leans steeply going out and coming back (owner's request), and leaps higher than before (in both styles).
 `/labs/bridges/visitors/` ("🛸 Los visitantes" on the lab card) shows them up close, with buttons that play
 a game where each one comes in stage 1.
 

@@ -12,10 +12,11 @@ import { visitasCielo, visitaBallena, visitaLancha, visitaTopo } from './visitor
 
 export const QUIETO = !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 /**
- * `?style=neon` (lab prototype): the scene in the house style (neon.js) instead of pixel art, to compare
- * the two side by side. The page gets the `tv-neon` class for the pieces around the board.
+ * The scene in the house style (neon.js) instead of pixel art: the lab's game since the owner approved it
+ * (2026-10-25). `?style=pixel` brings back the pixel art there, to compare; La Copa's screen keeps the pixel
+ * art unless `?style=neon`. The page gets the `tv-neon` class for the pieces around the board.
  */
-export const NEON = param('style') === 'neon';
+export const NEON = param('style') === 'neon' || (param('style') !== 'pixel' && /\/labs\//.test(globalThis.location?.pathname ?? ''));
 if (NEON) globalThis.document?.documentElement.classList.add('tv-neon');
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 // How long the beams that snapped in the last test blink red, while fixing the bridge

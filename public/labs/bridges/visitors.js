@@ -103,7 +103,7 @@ export function visitaBallena({ r, esc, e, A, ahora, dt, visitas, yAgua }) {
       const dir = Math.random() < 0.5 ? 1 : -1, largo = Math.min(30, (gx1 - gx0) * 0.35);
       const x = dir > 0 ? gx0 + 14 + Math.random() * (gx1 - gx0 - largo - 28) : gx1 - 14 - Math.random() * (gx1 - gx0 - largo - 28);
       const modo = visitas.modoBallena;
-      esc.ballena = { modo, x, dir, largo, alto: 12 + Math.random() * 6, t: 0, dura: modo === 'chorro' ? 3 : 1.15, salpicoSalida: false, salpicoEntrada: false };
+      esc.ballena = { modo, x, dir, largo, alto: 18 + Math.random() * 6, t: 0, dura: modo === 'chorro' ? 3 : 1.15, salpicoSalida: false, salpicoEntrada: false };
     }
     if (esc.ballena && !esc.ballena.fuera) {
       const b = esc.ballena; b.t += dt;
