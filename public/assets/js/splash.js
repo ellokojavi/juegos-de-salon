@@ -22,6 +22,7 @@
  * The decision of what to show is pure (queue), so node tests it without a DOM.
  */
 import { param, tiene } from './parametros.js';
+import { PAYMENT_LINK } from './support.js';
 
 /** The campaigns that are on, in the order they were turned on. `from` and `until` (optional, inclusive) bound the days it shows. */
 export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-ya', until: '2026-11-09' }];
@@ -119,7 +120,7 @@ export const CAMPAIGNS = {
   },
   // 🥂 An invitation to support the site, with a laugh: Leonardo DiCaprio raising his glass in
   // The Great Gatsby. The clip is GIPHY's, served from GIPHY (not copied into the site); its button
-  // opens the support card (support.js, D-449), so it stays off while support is in the lab
+  // goes straight to Stripe's payment page (support.js's PAYMENT_LINK), so it stays off while support is in the lab
   'brindis-apoyo': {
     emoji: '🥂',
     kicker: { es: 'Salud', en: 'Cheers', pt: 'Saúde', de: 'Prost' },
@@ -136,7 +137,8 @@ export const CAMPAIGNS = {
         pt: 'A cada partida, cada risada e cada revanche. O Jogos de Salão é grátis e sempre vai ser. Se quiser retribuir o brinde, pode apoiá-lo a partir de US$ 1.',
         de: 'Auf jede Partie, jedes Lachen und jede Revanche. Salonspiele ist kostenlos und bleibt es. Wenn du den Toast erwidern willst, kannst du es ab 1 US$ unterstützen.',
       },
-      href: '?support=open',
+      // Straight to Stripe's checkout, not through the support card (the owner's request)
+      href: PAYMENT_LINK || '?support=open',
       cta: { es: '💙 Apoyar Juegos de Salón', en: '💙 Support Party Games', pt: '💙 Apoiar o Jogos de Salão', de: '💙 Salonspiele unterstützen' },
     }],
   },
