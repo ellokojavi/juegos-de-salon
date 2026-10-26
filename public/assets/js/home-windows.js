@@ -73,11 +73,10 @@ export async function startHomeWindows({ lang = 'es', T, url, tap, search = glob
   const install = () => { try { return !!globoInstalar({ T, url, tap }); } catch (_) { return false; } };
   // ☕ The support card or its thank-you (`?support=`, support.js, D-449) is this visit's window
   if (param('support', search) !== null) return null;
-  // A preview (`?recap=`, `?splash=`) is the owner looking at one window: it opens that one, as before
-  if (param('recap', search) !== null || param('splash', search) !== null) {
-    recap().then(shown => shown || startSplash({ lang, search }));
-    return;
-  }
+  // A preview is the owner looking at one window: it opens that one and nothing else. `?splash=`
+  // never yields to a recap this phone has pending (the panel's 👁 Preview, D-454)
+  if (param('splash', search) !== null) { startSplash({ lang, search }); return; }
+  if (param('recap', search) !== null) { recap(); return; }
   // Under the end-to-end scripts the splash never opens and the recap checks it itself (startRecap);
   // the install bubble does open, as it always did, so install-prompt.mjs still finds it
   const automated = tiene('test', search) || globalThis.navigator?.webdriver === true;
