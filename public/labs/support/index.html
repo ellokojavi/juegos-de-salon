@@ -14,7 +14,7 @@
   <style>
     /* The support page (support.js): who it is for, what it pays for, one button to Stripe */
     .hero { text-align: center; padding: 6px 0 4px; }
-    .hero .icon { font-size: 3.6rem; display: block; }
+    .hero .icon { font-size: 2.6rem; line-height: 1; display: block; }
     .hero h1 { margin: 4px 0; }
     .puntos { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
     .btn { text-decoration: none; display: flex; align-items: center; justify-content: center; }
@@ -64,18 +64,19 @@
       if (!tiene('test')) { supportPaid(); trackSupport('thanks'); }
       history.replaceState(null, '', location.pathname);
     } else {
-      document.getElementById('apoyo-titulo').textContent = T.title;
       const pagar = el('a', { class: 'btn btn--yellow', id: 'btn-apoyo-pagar', href: PAYMENT_LINK || '?thanks&test' }, T.pay);
       // Without a link the button only simulates a payment (?test: nothing is counted or remembered)
       if (PAYMENT_LINK) pagar.addEventListener('click', () => trackSupport('pay'));
+      // The button right under the lead, above the fold on the smallest phone (U-39); the details after it
+      document.getElementById('apoyo-titulo').textContent = T.title;
       caja.append(
-        el('p', { class: 'lead', style: 'text-align:center' }, T.lead),
-        el('div', { class: 'panel' }, el('ul', { class: 'puntos' }, T.points.map(p => el('li', {}, p)))),
+        el('p', { class: 'lead', style: 'text-align:center;margin:0' }, T.lead),
         pagar,
-        el('p', { class: 'muted nota' }, PAYMENT_LINK ? T.payNote : T.labNote));
+        el('p', { class: 'muted nota' }, PAYMENT_LINK ? T.payNote : T.labNote),
+        el('div', { class: 'panel' }, el('ul', { class: 'puntos' }, T.points.map(p => el('li', {}, p)))));
       if (!tiene('test')) { supportOpened(); trackSupport('open'); }
     }
-    document.title = `☕ ${thanks ? T.thanksTitle : T.title} · Juegos de Salón`;
+    document.title = `☕ ${thanks ? T.thanksTitle : T.title} · ${(COMMON[lang] || COMMON.es).appTitle}`;
   </script>
 </body>
 </html>
