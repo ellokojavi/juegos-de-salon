@@ -59,7 +59,7 @@ export function enMedio(v, p) {
   return t > EPS && t < 1 - EPS;
 }
 /** The beams with each one that has `p` inside split in two there. */
-export const partir = (vigas, p) => vigas.flatMap(v => (enMedio(v, p) ? [{ a: v.a, b: p }, { a: p, b: v.b }] : [v]));
+export const partir = (vigas, p) => vigas.flatMap(v => (enMedio(v, p) ? [{ ...v, a: v.a, b: p }, { ...v, a: p, b: v.b }] : [v]));
 /** The grid points inside beams (where a beam can now start or end): 'x,y'. */
 export function puntosMedios(vigas) {
   const out = new Set();
@@ -73,9 +73,9 @@ export function puntosMedios(vigas) {
  * The bridge with beam a→b added and joined everywhere it touches: the beams it starts or ends inside
  * are split there, and it is split at every joint (`nudos`, 'x,y') it runs over.
  */
-export function unirViga(vigas, a, b, nudos = new Set()) {
+export function unirViga(vigas, a, b, nudos = new Set(), acero = false) {
   const partidas = partir(partir(vigas, a), b);
-  let nueva = [{ a, b }];
+  let nueva = [acero ? { a, b, acero } : { a, b }];
   for (const k of nudos) { const p = k.split(',').map(Number); nueva = partir(nueva, p); }
   // A piece that lands on a beam already there (a long beam over the deck) is not laid twice
   const ya = new Set(partidas.flatMap(v => [`${v.a}|${v.b}`, `${v.b}|${v.a}`]));
@@ -111,8 +111,15 @@ export function trazo(e, vigas, a, b) {
  * one beam is one unit, as in the first stages.
  */
 export const largoViga = v => Math.hypot(v.b[0] - v.a[0], v.b[1] - v.a[1]);
-export const costoViga = (e, v) => (e.madera ? largoViga(v) : 1);
+export const costoViga = (e, v) => (v.acero ? 0 : e.madera ? largoViga(v) : 1);
 export const costo = (e, vigas) => vigas.reduce((s, v) => s + costoViga(e, v), 0);
+
+/**
+ * Steel (owner's request): on a crossing with `acero` (meters of steel, besides the wood) a beam may be
+ * laid in steel, which snaps at `FISICA.acero` times the strain of wood. Steel is measured by length
+ * like wood, from its own small reserve, so splitting a steel beam keeps it whole.
+ */
+export const aceroUsado = vigas => vigas.reduce((s, v) => s + (v.acero ? largoViga(v) : 0), 0);
 
 /** A beam is road when both its ends are on the deck (y = 0): the train runs on those. */
 export const esCamino = v => v.a[1] === 0 && v.b[1] === 0;
@@ -128,6 +135,7 @@ export const FISICA = {
   rigidez: 30000,                  // spring force per unit of strain
   amort: 0.985,                    // velocity kept each step
   quiebre: 0.007,                  // strain at which a beam snaps
+  acero: 2,                        // steel snaps at this many times wood's strain
   tren: 50,                        // the locomotive's weight, applied at its wheels
   vagon: 12,                       // each wagon's
   velTren: 1.6,                    // grid units per second
@@ -157,7 +165,7 @@ export function crearSim(e, vigas) {
   const vs = vigas.map(v => {
     const i = nudo(v.a), j = nudo(v.b);
     nudos[i].m += FISICA.masaViga / 2; nudos[j].m += FISICA.masaViga / 2;
-    return { i, j, largo: Math.hypot(v.b[0] - v.a[0], v.b[1] - v.a[1]), rota: false, tension: 0, camino: esCamino(v) };
+    return { i, j, largo: Math.hypot(v.b[0] - v.a[0], v.b[1] - v.a[1]), rota: false, tension: 0, camino: esCamino(v), acero: !!v.acero, quiebre: FISICA.quiebre * (v.acero ? FISICA.acero : 1) };
   });
   return { e, nudos, vigas: vs, t: 0, tren: { x: -1.2, y: 0, cayo: false, llego: false }, fin: false };
 }
@@ -201,8 +209,8 @@ export function paso(s) {
     const deform = (l - v.largo) / v.largo;
     v.tension = deform;
     // The peak strain while the train is on the bridge, as a fraction of the snapping point: how hard it worked
-    if (s.t > 0.6 && !s.fin) s.pico = Math.max(s.pico || 0, Math.abs(deform) / FISICA.quiebre);
-    if (deform > FISICA.quiebre || deform < -FISICA.quiebre) {
+    if (s.t > 0.6 && !s.fin) s.pico = Math.max(s.pico || 0, Math.abs(deform) / v.quiebre);
+    if (deform > v.quiebre || deform < -v.quiebre) {
       v.rota = true;
       // A crossing with `firme` asks for a bridge that stays standing: the first beam that snaps ends the test
       if (s.e.firme) { s.cortada = true; s.fin = true; }

@@ -24,7 +24,10 @@ const mixColor = (a, b, f) => { const [x, y] = [hex(a), hex(b)]; return '#' + x.
 
 /** The beam colors by strain: the house's yellow warming to pink and red (the gauge keeps its own). */
 const TENSION = ['#ffd23f', '#ffbe3a', '#ff9d3d', '#ff7a4a', '#ff4f7a', '#ff2e4a'];
-const colorTension = t => TENSION[Math.min(TENSION.length - 1, Math.floor((Math.abs(t) / FISICA.quiebre) * TENSION.length))];
+const colorTension = (t, quiebre = FISICA.quiebre, ramp = TENSION) => ramp[Math.min(ramp.length - 1, Math.floor((Math.abs(t) / quiebre) * ramp.length))];
+/** Steel by strain: a cold blue-white light that heats to pink and red, never the wood's yellow. */
+const TENSION_ACERO = ['#bfe6ff', '#d4dcff', '#f0c4ff', '#ff8fb0', '#ff4f7a', '#ff2e4a'];
+const VETA = '#a8611c', REMACHE = '#2a3550';
 const OSCURO = '#14081f';
 
 /**
@@ -307,13 +310,30 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
   // The beams: glowing rods, the house's yellow warming to red with the strain; the deck a little thicker, with its rail
   const grosor = 1.2;
   const pos = sim ? i => [sim.nudos[i].x, sim.nudos[i].y] : null;
-  const lista = sim ? sim.vigas.map((v, n) => ({ k: n, a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino }))
-    : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0 }));
+  const lista = sim ? sim.vigas.map((v, n) => ({ k: n, a: pos(v.i), b: pos(v.j), t: v.tension, rota: v.rota, camino: v.camino, acero: v.acero, quiebre: v.quiebre }))
+    : vigas.map(v => ({ a: v.a, b: v.b, t: 0, camino: v.a[1] === 0 && v.b[1] === 0, acero: !!v.acero }));
   const parpadeo = Math.sin(ahora * 8) > 0 && Date.now() - (rotasAntes.desde || 0) < PARPADEO_MS;
+  // Each material has its texture (owner's request: told apart at a glance). Wood: the warm rod with a
+  // broken darker grain along it. Steel: a thicker cold rod with a bright top edge and rivets at even steps
   const viga = (ax, ay, bx, by, v, extra = 0) => {
-    const g = v.camino ? grosor + 0.5 : grosor, col = sim ? colorTension(v.t) : TENSION[0];
+    const ramp = v.acero ? TENSION_ACERO : TENSION, col = sim ? colorTension(v.t, v.quiebre, ramp) : ramp[0];
+    const g = (v.camino ? grosor + 0.5 : grosor) + (v.acero ? 0.5 : 0);
+    const l = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / l, uy = (by - ay) / l;
+    const en = (d, o = 0) => [ax + ux * d - uy * o, ay + uy * d + ux * o];
     linea(ctx, ax, ay, bx, by, OSCURO, g + 1 + extra);
-    brilla(ctx, col, 5, () => linea(ctx, ax, ay, bx, by, col, g));
+    brilla(ctx, col, v.acero ? 7 : 5, () => linea(ctx, ax, ay, bx, by, col, g));
+    if (v.acero) {
+      linea(ctx, ...en(0.6, -g / 4), ...en(l - 0.6, -g / 4), 'rgba(255,255,255,0.9)', 0.35);
+      for (let d = 2.5; d < l - 1.5; d += 4) circulo(ctx, ...en(d, g / 6), 0.38, REMACHE);
+    } else {
+      // The grain: dashes of different lengths from a seed by where the beam is, so it doesn't flicker
+      const semilla = Math.abs(Math.round(v.a[0] * 7 + v.a[1] * 13 + v.b[0] * 3 + v.b[1] * 5));
+      for (let d = 1 + (semilla % 3) * 0.6, k = 0; d < l - 1; k++) {
+        const largo = 1.6 + ((semilla + k * 5) % 4) * 0.7, o = (((semilla + k) % 3) - 1) * g * 0.18;
+        linea(ctx, ...en(d, o), ...en(Math.min(l - 1, d + largo), o), VETA, 0.35);
+        d += largo + 1.2 + ((semilla + k) % 3) * 0.6;
+      }
+    }
     if (v.camino) linea(ctx, ax, ay - g / 2 - 0.2, bx, by - g / 2 - 0.2, 'rgba(255,246,214,0.85)', 0.4);
   };
   for (const v of lista) {
