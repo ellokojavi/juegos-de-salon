@@ -10,9 +10,11 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
-import { param } from '../assets/js/parametros.js';
+import { param, tiene } from '../assets/js/parametros.js';
+import { labAccess } from '../assets/js/lab-access.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
+import { crearDado } from '../assets/js/dado3d.js';
 import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
@@ -25,7 +27,7 @@ import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
   readDice, rollDice, writeDice, countPinta, sha256, randomSalt, verifyOpen,
 } from './engine.js';
-import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES } from './rules.js';
+import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES, TURN_SECS } from './rules.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -41,6 +43,13 @@ const store = createSessionStore(GAME_ID);
 const nameStore = createNameStore(GAME_ID);
 /** Uno al día (D-230): con `?today`, contra el celular y con los dados del día. */
 const HOY = modoHoy(GAME_ID);
+/**
+ * Shaking the phone to roll and the turn's clock are tried in the lab (D-395), so setup offers
+ * them only with a lab key. lab: #seccion-dudo-cacho
+ * In the test store (`?test`) the scripts see the setup of before unless the URL says `&lab`.
+ */
+let enLab = false;
+const LAB = (tiene('test') && !tiene('lab') ? Promise.resolve(false) : labAccess()).then(v => (enLab = v));
 
 /**
  * Los dados de un jugador en una ronda de Uno al día: salen de la semilla del día, la ronda y el
@@ -95,7 +104,7 @@ function newMatch(config) {
   return { config, players: config.players || null, names: {}, plays: [], seen: new Set(), presence: {}, rematch: {}, verify: null };
 }
 
-const JUGADAS = ['roll', 'bid', 'dudo', 'calza', 'open'];
+const JUGADAS = ['roll', 'bid', 'dudo', 'calza', 'open', 'timeout'];
 
 function apply(msg) {
   if (msg.id && M.seen.has(msg.id)) return;
@@ -138,6 +147,8 @@ function startSession({ mode, transport, roles, config, names, code = null, role
     // `Infinity` hasta saber por dónde va la partida: quien entra a una sala a mitad de camino
     // no tiene por qué ver el destape de una ronda que se jugó antes de que llegara.
     uiRole: null, sel: null, shownRound: Infinity, botAt: -1, rolled: new Set(), abriendo: new Set(),
+    // Shake to roll: the dice each role already shook out, round by round (`round:role`)
+    shaken: new Set(), turn: null,
   };
   M = newMatch(config);
   setupChat(mode);
@@ -267,6 +278,8 @@ function closeOverlay() { const b = $('#handoff'); b.hidden = true; b.innerHTML 
 
 function render() {
   if (!M) return;
+  agite.onJolt = null;   // the cloth that is drawn now says again what a jolt moves
+  vaso?.caja.remove();   // and puts the shaking cloth back, if it is still the table's
   const v = view();
   if (v.lobby) return renderLobby();
   // Si hay una transición en pantalla, manda ella. Se pregunta por el overlay y no por una
@@ -316,9 +329,26 @@ function renderPlay(v) {
   const mine = $('#mine');
   mine.innerHTML = '';
   const dados = diceOf(v, yo) || [];
-  mine.append(el('div', { class: 'mine-label' }, T.yourDice));
-  mine.append(el('div', { class: 'dice-row' }, ...dados.map(d => dieEl(d))));
-  if (dados.includes(1)) mine.append(el('div', { class: 'wild-note' }, '⚀ ', T.aceWild));
+  const tapados = cubiertos(v, yo, dados);
+  // While the dice are still to roll, the hand's panel is the shaking cloth (lab: #seccion-dudo-cacho)
+  mine.classList.toggle('agitando', tapados);
+  if (tapados) mine.append(cacho(v, yo));
+  else {
+    agite.onJolt = null;
+    soltarVaso();
+    mine.append(el('div', { class: 'mine-label' }, T.yourDice));
+    const giros = S.giros?.[`${v.round}:${yo}`];
+    const fila = el('div', { class: 'dice-row' }, ...dados.map((d, i) => {
+      const dado = dieEl(d);
+      if (giros?.[i]) dado.style.rotate = `${giros[i]}deg`;   // as it landed on the cloth
+      return dado;
+    }));
+    mine.append(fila);
+    if (dados.includes(1)) mine.append(el('div', { class: 'wild-note' }, '⚀ ', T.aceWild));
+    const llegada = S.llegada;
+    if (llegada?.clave === `${v.round}:${yo}`) { S.llegada = null; llegar(mine, fila, llegada); }
+  }
+  relojDelTurno(v, yo, miTurno);
 
   // La apuesta que está en pie
   const board = $('#bid-board');
@@ -335,7 +365,7 @@ function renderPlay(v) {
     board.append(el('div', { class: 'standing opens' }, abre === yo ? T.opens : fmt(T.opensOther, { name: nameOf(abre) })));
   }
 
-  renderActions(v, yo, miTurno);
+  renderActions(v, yo, miTurno, tapados);
 }
 
 /**
@@ -351,9 +381,11 @@ function encabezado(v, miTurno) {
   return `${T.turnOf} ${nameOf(v.current || v.opener)}`;
 }
 
-function renderActions(v, yo, miTurno) {
+function renderActions(v, yo, miTurno, tapados = false) {
   const box = $('#actions');
   box.innerHTML = '';
+  // With the dice still to roll there is nothing to bid on yet
+  if (miTurno && tapados) { box.append(el('p', { class: 'muted center' }, T.shakeFirst)); return; }
   if (!miTurno) {
     // Revealing, the line under the board would repeat the header: it stays empty
     if (v.phase !== 'open') box.append(el('p', { class: 'muted center' }, `${T.turnOf} ${nameOf(v.current || v.opener)}…`));
@@ -415,6 +447,412 @@ function renderActions(v, yo, miTurno) {
   box.append(acciones);
 }
 
+/* ---------- Shake to roll (lab: #seccion-dudo-cacho) ---------- */
+/**
+ * With `shake` on, each round's dice show face down and roll only when the player shakes the
+ * phone, like the cup at a real table. The dice are already rolled (and, in a room, committed with
+ * their hash, C-10): what the shake does is show them, so the round never waits on a sensor. A phone with no motion sensor (a computer) gets a button instead, and so does one
+ * whose owner said no to the motion permission (iPhone).
+ */
+/** A jolt is this much acceleration beyond gravity, in m/s²: walking with the phone stays under it. */
+const SACUDON = 13;
+/** At least this many jolts before the dice may settle: one bump on the table does not roll them. */
+const SACUDONES = 3;
+/**
+ * The dice keep rolling while the phone shakes, and settle only once it has been still this long
+ * (the owner's request): a shake sends a jolt every 150–300 ms, so this is the hand stopping.
+ */
+const QUIETO_MS = 350;
+/** With no reading from the sensor this long after listening, the phone has none: the button shows. */
+const SIN_SENSOR_MS = 1200;
+const PIDE_PERMISO = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
+/**
+ * `sensor`: null while it is not known, true with a reading, false with none in time. `permiso`:
+ * null until asked. The page listens first and asks only when nothing arrives: Android answers
+ * with no question, and an iPhone stays silent until the tap that grants it.
+ */
+const agite = {
+  listening: false, waiting: false, sensor: typeof DeviceMotionEvent === 'undefined' ? false : null,
+  permiso: null, lastJolt: 0, onJolt: null,
+};
+
+function onMotion(e) {
+  const a = e.acceleration, g = e.accelerationIncludingGravity;
+  let fuerza;
+  if (a && a.x != null) fuerza = Math.hypot(a.x, a.y || 0, a.z || 0);
+  else if (g && g.x != null) fuerza = Math.abs(Math.hypot(g.x, g.y || 0, g.z || 0) - 9.81);
+  else return;   // an event with no reading: a computer that says it has a sensor
+  // The first reading: if the cup was offering the button, it now listens instead
+  if (agite.sensor !== true) { agite.sensor = true; if ($('#mine .agite-caja')) render(); }
+  if (!agite.onJolt) return;
+  const ahora = performance.now();
+  if (fuerza < SACUDON || ahora - agite.lastJolt < 110) return;
+  agite.lastJolt = ahora;
+  agite.onJolt();
+}
+
+function escucharAgite() {
+  if (typeof DeviceMotionEvent === 'undefined') return;
+  if (!agite.listening) { agite.listening = true; window.addEventListener('devicemotion', onMotion); }
+  if (agite.sensor !== null || agite.waiting) return;
+  agite.waiting = true;
+  setTimeout(() => {
+    agite.waiting = false;
+    if (agite.sensor === null) { agite.sensor = false; if ($('#mine .agite-caja')) render(); }
+  }, SIN_SENSOR_MS);
+}
+
+/** Are this role's dice still to roll? */
+function cubiertos(v, role, dados) {
+  return !!M.config.shake && !!dados.length && !S.shaken.has(`${v.round}:${role}`) && v.phase !== 'open';
+}
+
+/**
+ * The dice still to roll, with what rolls them: shaking, or the button where there is no sensor.
+ * They are rolled on a green cloth that takes the hand's place, with bigger dice than the hand's
+ * (the owner's request): face down until the first jolt, then real cubes with pips that roll as the home
+ * page's 🎲 does (dado3d.js, D-188, D-374), spun by each jolt, harder the harder the shake, and
+ * slowing down between jolts (never to a stop), while the phone rattles with them. They keep
+ * rolling as long as the phone shakes, and only once the hand stops (and it shook enough) each
+ * settles on the face it really has, and the cloth turns into the hand's panel with the dice lined up as always. The
+ * faces seen while rolling mean nothing: the dice were rolled before (C-10). With no WebGL, or with
+ * reduced motion, flat dice swap faces instead.
+ */
+const CAEN_MS = 900;      // flat dice: how long they keep swapping faces after the last jolt
+/** How fast a spin drains away, in ms: the same friction while shaking and while coming to rest. */
+const FRICCION_MS = 450;
+const VUELO_MS = 480;     // the cloth turning into the hand
+const CARA_MS = 70;       // flat dice: a new face this often
+const PISO_GIRO = 0.07;   // degrees per ms: the slowest a die not yet settled turns (no rattle under 0.15)
+/** The faces in dado3d.js's order (front, right, back, left, top, bottom): opposite ones add up to 7. */
+const CARAS_3D = [1, 3, 6, 4, 2, 5];
+/**
+ * Every square pose (both angles a multiple of 90°) that shows each face in front, as
+ * [ax, ay, giro] for `dibujar` (rotX(ax) after rotY(ay), as in dado3d.js). A die comes to rest on
+ * the one of its face nearest to where its own spin was taking it. `giro` is how far that face is
+ * turned on the table, in degrees clockwise: the flat die in the hand keeps it, so landing never
+ * flips a 2, a 3 or a 6.
+ */
+const POSES = (() => {
+  // Each face's normal and the way up on its drawing, in dado3d.js's order
+  const caras = [[[0, 0, 1], [0, 1, 0]], [[1, 0, 0], [0, 1, 0]], [[0, 0, -1], [0, 1, 0]], [[-1, 0, 0], [0, 1, 0]], [[0, 1, 0], [0, 0, -1]], [[0, -1, 0], [0, 0, 1]]];
+  const out = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+  for (const ax of [0, 90, 180, 270]) for (const ay of [0, 90, 180, 270]) {
+    const cx = Math.round(Math.cos(ax * Math.PI / 180)), sx = Math.round(Math.sin(ax * Math.PI / 180));
+    const cy = Math.round(Math.cos(ay * Math.PI / 180)), sy = Math.round(Math.sin(ay * Math.PI / 180));
+    const girar = ([x, y, z]) => {
+      const [x1, y1, z1] = [x * cy + z * sy, y, -x * sy + z * cy];
+      return [x1, y1 * cx - z1 * sx, y1 * sx + z1 * cx];
+    };
+    // Which face ends up looking at the camera (+z), and where its "up" points on screen
+    const i = caras.findIndex(([n]) => girar(n)[2] === 1);
+    const [ux, uy] = girar(caras[i][1]);
+    out[CARAS_3D[i]].push([ax, ay, (Math.round(Math.atan2(ux, uy) * 180 / Math.PI) + 360) % 360]);
+  }
+  return out;
+})();
+const SIN_3D = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/**
+ * The cloth of the round being rolled, with its dice. It lives across renders: a message that
+ * redraws the table must not reset a roll, so each render puts the same one back in #mine.
+ */
+let vaso = null;
+
+function soltarVaso() {
+  if (!vaso) return;
+  clearTimeout(vaso.quieto);
+  if (vaso.tres) { cancelAnimationFrame(vaso.tres.raf); vaso.tres.dados.forEach(d => d.dado.soltar()); }
+  vaso.caja.remove();
+  vaso = null;
+}
+
+function vasoDe(clave, cuantos) {
+  if (vaso?.clave === clave) return vaso;
+  soltarVaso();
+  const mesa = el('div', { class: 'agite-mesa', 'aria-hidden': 'true' },
+    ...Array.from({ length: cuantos }, () => el('span', { class: 'die die--lg blank' })));
+  const pie = el('div', { class: 'agite-pie' });
+  vaso = { clave, caja: el('div', { class: 'agite-caja' }, mesa, pie), mesa, pie, tres: null, sin3d: SIN_3D };
+  return vaso;
+}
+
+/** The 3D dice in the box, spinning: the first jolt (or the button) puts them in. Null without WebGL. */
+function tresDe(vs) {
+  if (vs.tres || vs.sin3d) return vs.tres;
+  const blancos = [...vs.mesa.children];
+  const dados = blancos.map(() => {
+    const lienzo = el('canvas', { class: 'dado3d-lienzo' });
+    return { caja: el('span', { class: 'dado3d' }, lienzo), lienzo, ax: Math.random() * 360, ay: Math.random() * 360, wx: 0, wy: 0, fase: Math.random() * 6 };
+  });
+  // The canvases need their size before the cube is set up: the box is on the page by now
+  vs.mesa.replaceChildren(...dados.map(d => d.caja));
+  for (const d of dados) {
+    d.dado = crearDado(d.lienzo, CARAS_3D);
+    if (!d.dado) {
+      dados.forEach(x => x.dado?.soltar());
+      vs.mesa.replaceChildren(...blancos);
+      vs.sin3d = true;
+      return null;
+    }
+  }
+  const t = vs.tres = { dados, raf: 0, prev: performance.now(), zumbido: 0, cae: null };
+  const paso = ahora => {
+    if (vaso !== vs) return;
+    const dt = Math.min(50, ahora - t.prev);
+    t.prev = ahora;
+    let fuerza = 0;
+    for (const d of dados) {
+      if (t.cae) {
+        // Coming to rest: each angle goes on from the speed it had and slows down until it stops,
+        // with no turn of its own: it is the same roll running out (ease-out, velocity matched)
+        let w = 0;
+        for (const e of [0, 1]) {
+          const k = Math.min(1, (ahora - t.cae.t0) / d.dur[e]);
+          const recorrido = d.hasta[e] - d.desde[e];
+          (e ? (d.ay = d.desde[1] + recorrido * (1 - (1 - k) ** 3)) : (d.ax = d.desde[0] + recorrido * (1 - (1 - k) ** 3)));
+          w = Math.max(w, Math.abs(3 * (1 - k) ** 2 * recorrido / d.dur[e]));
+        }
+        fuerza = Math.max(fuerza, w);
+        d.caja.style.transform = `translate(${(Math.sin(ahora / 37 + d.fase) * w * 7).toFixed(1)}px, ${(-Math.abs(Math.cos(ahora / 53 + d.fase)) * w * 10).toFixed(1)}px)`;
+      } else {
+        // Spinning: each jolt adds speed, and it drains away between jolts, but never to a stop:
+        // a die standing still would look settled, and they settle only when the hand stops
+        const freno = Math.exp(-dt / FRICCION_MS);
+        d.wx *= freno; d.wy *= freno;
+        const giro = Math.hypot(d.wx, d.wy);
+        if (giro < PISO_GIRO) {
+          if (giro > 0) { d.wx *= PISO_GIRO / giro; d.wy *= PISO_GIRO / giro; } else { d.wx = d.wy = PISO_GIRO / Math.SQRT2; }
+        }
+        d.ax += d.wx * dt; d.ay += d.wy * dt;
+        const w = Math.hypot(d.wx, d.wy);
+        fuerza = Math.max(fuerza, w);
+        d.caja.style.transform = `translate(${(Math.sin(ahora / 37 + d.fase) * w * 7).toFixed(1)}px, ${(-Math.abs(Math.cos(ahora / 53 + d.fase)) * w * 10).toFixed(1)}px)`;
+      }
+      d.dado.dibujar(d.ax, d.ay);
+    }
+    // The phone rattles while the dice roll, harder the faster they spin
+    if (fuerza > 0.15 && ahora - t.zumbido > 90) { t.zumbido = ahora; vibrate(Math.round(Math.min(30, 8 + fuerza * 14))); }
+    if (t.cae && ahora - t.cae.t0 >= t.cae.dur) return t.cae.listo();
+    t.raf = requestAnimationFrame(paso);
+  };
+  t.raf = requestAnimationFrame(paso);
+  return t;
+}
+
+/** A jolt: every die spins faster, each its own way. */
+function empujar(t) {
+  for (const d of t.dados) {
+    d.wx += (0.35 + Math.random() * 0.5) * (Math.random() < 0.5 ? -1 : 1);
+    d.wy += (0.35 + Math.random() * 0.5) * (Math.random() < 0.5 ? -1 : 1);
+  }
+}
+
+/**
+ * The hand stopped: each die runs out its own spin and stops where it lies. Where its spin was
+ * taking it (with the same friction) decides the pose: of the poses that show its face, the
+ * nearest one ahead, so it never turns back or speeds up; it just brakes a little more or a
+ * little less. The faces were rolled before, fair and with the browser's chance (C-10): which pose
+ * it lands in is only how it looks.
+ */
+function aterrizar(t, dados, listo) {
+  const MIN_MS = 300, MAX_MS = 1500;
+  const ahead = (pose, desde, natural, w) => {
+    const dir = w < 0 ? -1 : 1;
+    let c = pose + 360 * Math.round((natural - pose) / 360);
+    if ((c - desde) * dir < 0) c += 360 * dir;
+    return c;
+  };
+  let dur = 0;
+  t.dados.forEach((d, i) => {
+    const natural = [d.ax + d.wx * FRICCION_MS, d.ay + d.wy * FRICCION_MS];
+    let mejor = null;
+    for (const [px, py, giro] of POSES[dados[i]]) {
+      const hasta = [ahead(px, d.ax, natural[0], d.wx), ahead(py, d.ay, natural[1], d.wy)];
+      const lejos = Math.abs(hasta[0] - natural[0]) + Math.abs(hasta[1] - natural[1]);
+      if (!mejor || lejos < mejor.lejos) mejor = { hasta, lejos, giro };
+    }
+    d.desde = [d.ax, d.ay];
+    d.hasta = mejor.hasta;
+    d.giro = mejor.giro;
+    // An ease-out starts at three times its average speed: the time that keeps the die's speed
+    d.dur = [0, 1].map(e => {
+      const w = Math.abs(e ? d.wy : d.wx), recorrido = Math.abs(d.hasta[e] - d.desde[e]);
+      return Math.min(MAX_MS, Math.max(MIN_MS, w > 0.01 ? 3 * recorrido / w : MAX_MS));
+    });
+    dur = Math.max(dur, ...d.dur);
+  });
+  t.cae = { t0: performance.now(), listo, dur };
+}
+
+/**
+ * Landed: the cloth turns into the hand's panel. The panel starts as tall and green as the cloth
+ * was, with each die where it landed and as big, and then shrinks to its usual size and colour
+ * while the dice slide into their row, the way they always sit.
+ */
+function llegar(mine, fila, { desde, alto }) {
+  const final = mine.getBoundingClientRect().height;
+  mine.classList.add('llega');
+  mine.style.height = `${alto}px`;
+  const dados = [...fila.children];
+  dados.forEach((d, i) => {
+    const a = desde[i];
+    if (!a) return;
+    const b = d.getBoundingClientRect();
+    d.style.transform = `translate(${(a.left + a.width / 2 - b.left - b.width / 2).toFixed(1)}px, ${(a.top + a.height / 2 - b.top - b.height / 2).toFixed(1)}px) scale(${(a.width / b.width).toFixed(3)})`;
+  });
+  void mine.offsetWidth;
+  mine.classList.add('llega-anda');
+  mine.classList.remove('llega');
+  mine.style.height = `${final}px`;
+  dados.forEach(d => { d.style.transform = ''; });
+  setTimeout(() => { mine.classList.remove('llega-anda'); mine.style.height = ''; }, VUELO_MS);
+}
+
+/** Flat dice, where there is no 3D: a new face on each every few frames, for `ms` more. */
+let rueda = { hasta: 0, timer: null };
+function rodar(ms) {
+  rueda.hasta = Math.max(rueda.hasta, performance.now() + ms);
+  if (rueda.timer) return;
+  const paso = () => {
+    const mesa = vaso?.mesa;
+    const sigue = performance.now() < rueda.hasta;
+    if (mesa) {
+      mesa.classList.toggle('rodando', sigue);
+      if (sigue) {
+        mesa.querySelectorAll('.die').forEach(d => {
+          const nuevo = dieEl(1 + Math.floor(Math.random() * 6));
+          nuevo.classList.add('die--lg');
+          nuevo.style.cssText = `--x:${(Math.random() * 16 - 8).toFixed(0)}px;--y:${(Math.random() * -14).toFixed(0)}px;--r:${(Math.random() * 360 - 180).toFixed(0)}deg`;
+          d.replaceWith(nuevo);
+        });
+        vibrate(12);
+      }
+    }
+    rueda.timer = sigue ? setTimeout(paso, CARA_MS) : null;
+  };
+  paso();
+}
+
+/** What #mine shows while the dice are still to roll: the cloth, with the big dice and what rolls them. */
+function cacho(v, role) {
+  const clave = `${v.round}:${role}`;
+  const dados = diceOf(v, role) || [];
+  const vs = vasoDe(clave, dados.length);
+
+  // `boton`: thrown with the button, with no shake before it to set them spinning
+  const tirar = (boton = false) => {
+    if (S.shaken.has(clave) || S.rolling === clave) return;
+    S.rolling = clave;
+    agite.onJolt = null;
+    clearTimeout(vs.quieto);
+    vs.pie.replaceChildren();   // rolling, there is nothing left to tap
+    SFX.dice();
+    // Landed: where each die and the cloth are now, so the hand's panel can grow out of them
+    const fin = () => {
+      const piezas = vs.tres ? vs.tres.dados.map(d => d.caja) : [...vs.mesa.children];
+      S.llegada = { clave, desde: piezas.map(p => p.getBoundingClientRect()), alto: $('#mine').getBoundingClientRect().height };
+      // How each one lies on the table: the hand keeps it for the whole round
+      if (vs.tres) S.giros = { ...S.giros, [clave]: vs.tres.dados.map(d => d.giro || 0) };
+      soltarVaso();
+      S.rolling = null;
+      S.shaken.add(clave);
+      render();
+    };
+    const cayo = () => { vibrate(25); setTimeout(fin, 450); };
+    const t = tresDe(vs);
+    if (t) {
+      // The button has no jolt before it: it throws them itself. Shaken, they go on as they were
+      if (boton) { empujar(t); empujar(t); }
+      aterrizar(t, dados, cayo);
+    } else {
+      rodar(CAEN_MS);
+      setTimeout(cayo, CAEN_MS + 80);
+    }
+  };
+  if (S.rolling === clave) return vs.caja;   // already rolling: they land on their own
+
+  if (agite.sensor === false && PIDE_PERMISO && agite.permiso === null) {
+    // Silent, and the phone can ask (an iPhone): only a tap may ask, and then it listens again
+    vs.pie.replaceChildren(el('p', { class: 'cacho-txt' }, T.shakeNow), el('button', {
+      class: 'btn btn--cyan btn--sm', id: 'btn-permiso', onClick: async () => {
+        try { agite.permiso = await DeviceMotionEvent.requestPermission(); } catch (_) { agite.permiso = 'denied'; }
+        if (agite.permiso === 'granted') { agite.sensor = null; escucharAgite(); }
+        render();
+      },
+    }, T.shakeAllow));
+  } else if (agite.sensor === false) {
+    vs.pie.replaceChildren(el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-tirar', onClick: () => tirar(true) }, T.shakeTap));
+  } else {
+    vs.pie.replaceChildren(el('p', { class: 'cacho-txt' }, T.shakeNow));
+    escucharAgite();
+    // Every jolt keeps them rolling; once there were enough, the hand going still settles them
+    agite.onJolt = () => {
+      SFX.dice(); vibrate(20);
+      const t = tresDe(vs);
+      if (t) empujar(t); else rodar(QUIETO_MS + 100);
+      vs.golpes = (vs.golpes || 0) + 1;
+      clearTimeout(vs.quieto);
+      if (vs.golpes >= SACUDONES) vs.quieto = setTimeout(tirar, QUIETO_MS);
+    };
+  }
+  return vs.caja;
+}
+
+/* ---------- The turn's clock (lab: #seccion-dudo-cacho) ---------- */
+/**
+ * With `turnSecs` on, whoever has the turn has that long to bid, doubt or call it exactly; out of
+ * time, their own phone sends `timeout` and they lose a die. The clock runs only while the table
+ * is on screen (U-20): it waits under a reveal, a pass screen or a hidden page. The cup counts:
+ * shaking is part of the turn.
+ */
+function relojDelTurno(v, yo, miTurno) {
+  const box = $('#turn-clock');
+  const corre = M.config.turnSecs > 0 && miTurno && v.phase === 'bid';
+  if (!corre) { S.turn = null; box.hidden = true; return; }
+  const clave = `${v.round}:${v.bids.length}:${yo}`;
+  if (S.turn?.key !== clave) {
+    S.turn = { key: clave, role: yo, round: v.round, total: M.config.turnSecs * 1000, used: 0, prev: performance.now(), sent: false, beep: null };
+  }
+  box.hidden = false;
+  pintarReloj();
+  if (!tick) tick = setInterval(tictac, 200);
+}
+
+function pintarReloj() {
+  const t = S.turn, box = $('#turn-clock');
+  if (!t) return;
+  const queda = Math.max(0, t.total - t.used);
+  const seg = Math.ceil(queda / 1000);
+  box.classList.toggle('apurado', seg <= 5);
+  box.replaceChildren(
+    el('i', { style: `width:${(100 * queda / t.total).toFixed(1)}%` }),
+    el('span', {}, fmt(T.secs, { n: seg })),
+  );
+}
+
+let tick = null;
+function tictac() {
+  const t = S?.turn;
+  const ahora = performance.now();
+  if (!t || t.sent) return;
+  const dt = ahora - t.prev;
+  t.prev = ahora;
+  if (document.hidden || !$('#handoff').hidden) return;   // paused (U-20)
+  t.used += dt;
+  const seg = Math.ceil((t.total - t.used) / 1000);
+  if (seg <= 5 && seg > 0 && t.beep !== seg) { t.beep = seg; SFX.tick(); vibrate(10); }
+  pintarReloj();
+  if (t.used < t.total) return;
+  t.sent = true;
+  const v = view();
+  if (v.phase !== 'bid' || v.current !== t.role || v.round !== t.round) return;
+  S.sel = null;
+  agite.onJolt = null;
+  SFX.timeUp(); vibrate([60, 60, 120]);
+  S.transport.send({ t: 'timeout', from: t.role, r: t.round });
+}
+
 /* ---------- Chat de la sala (C-15) ---------- */
 function setupChat(mode) {
   if (chat) { chat.destroy(); chat = null; }
@@ -440,6 +878,7 @@ function showPass(role) {
 function showReveal(v) {
   const last = v.last;
   S.shownRound = last.n + 1;
+  if (last.type === 'timeout') return showTimeUp(last);
   const pinta = pintaName(last.bid.n, last.bid.p);
 
   const mesa = el('div', { class: 'reveal-table' });
@@ -483,6 +922,22 @@ function showReveal(v) {
   });
 }
 
+/** Someone ran out of time: no reveal, the dice stay covered, and they lose a die. */
+function showTimeUp(last) {
+  const stage = el('div', { class: 'stage pop reveal' },
+    el('div', { class: 'count' }, '⏱️'),
+    el('div', { class: 'hint' }, fmt(T.timeUp, { name: nameOf(last.by) })),
+    el('div', { class: 'outcome' }, last.fuera ? fmt(T.isOut, { name: nameOf(last.fuera) }) : fmt(T.losesDie, { name: nameOf(last.loser) })),
+    el('div', { class: 'hint', style: 'margin-top:10px' }, T.goOn),
+  );
+  SFX.letterMiss();
+  vibrate(last.fuera ? [60, 60, 120] : 30);
+  showHandoff([stage], () => {
+    if (S.mode === 'local') S.uiRole = null;
+    onChange();
+  });
+}
+
 /**
  * En la sala, después de contar se dice si los dados que se destaparon son los que cada uno
  * había comprometido (C-10). En un celular no hay nada que verificar y no se muestra.
@@ -518,9 +973,8 @@ function renderResult(v) {
   const lista = $('#history-list');
   lista.innerHTML = '';
   v.history.forEach(h => {
-    const pinta = pintaName(h.bid.n, h.bid.p);
-    const texto = fmt(h.type === 'dudo' ? T.histDudo : T.histCalza,
-      { who: nameOf(h.by), n: h.bid.n, pinta, count: h.count });
+    const texto = h.type === 'timeout' ? fmt(T.histTimeout, { who: nameOf(h.by) })
+      : fmt(h.type === 'dudo' ? T.histDudo : T.histCalza, { who: nameOf(h.by), n: h.bid.n, pinta: pintaName(h.bid.n, h.bid.p), count: h.count });
     lista.append(el('li', {},
       el('span', { class: 'r' }, h.n + 1),
       el('span', { class: 'q' }, texto),
@@ -692,6 +1146,27 @@ function interruptor(encendido, label, hint, onChange) {
   return el('div', { class: 'toggle-row' }, el('div', { class: 'txt' }, el('b', {}, label), el('small', {}, hint)), sw);
 }
 
+/**
+ * The lab's two switches, shaking to roll and the turn's clock (lab: #seccion-dudo-cacho): off by
+ * default, and only with a lab key. The key is asked once per page; if the answer is still on its
+ * way, `redibujar` adds them when it comes.
+ */
+function ajustesDeLab(redibujar) {
+  let shake = false, reloj = false, puestos = false;
+  LAB.then(() => { if (enLab && !puestos) redibujar(); });
+  return {
+    switches: () => {
+      if (!enLab) return [];
+      puestos = true;
+      return [
+        interruptor(shake, T.shakeLabel, T.shakeHint, v => { shake = v; }),
+        interruptor(reloj, fmt(T.timerLabel, { n: TURN_SECS }), T.timerHint, v => { reloj = v; }),
+      ];
+    },
+    config: () => ({ shake: enLab && shake, turnSecs: enLab && reloj ? TURN_SECS : 0 }),
+  };
+}
+
 const MODES = [
   { id: 'local', title: () => T.modeLocal, sub: () => T.modeLocalHint },
   { id: 'online', title: () => T.modeOnline, sub: () => T.modeOnlineHint },
@@ -747,6 +1222,7 @@ function renderSetup(mode, codigoInvitado = '') {
     : [recordado || '', ''];
   let calzar = DEFAULT_CONFIG.calzar;
   let chileno = DEFAULT_CONFIG.chileno;
+  const lab = ajustesDeLab(() => dibujar());
 
   const dibujar = () => {
     form.innerHTML = '';
@@ -776,6 +1252,7 @@ function renderSetup(mode, codigoInvitado = '') {
     if (lang === 'es') {
       form.append(interruptor(chileno, CHILENO.label, CHILENO.hint, v => { chileno = v; }));
     }
+    form.append(...lab.switches());
   };
   dibujar();
 
@@ -813,7 +1290,7 @@ function renderSetup(mode, codigoInvitado = '') {
       const names = mode === 'cpu'
         ? { A: nombres[0], B: T.cpuName }
         : Object.fromEntries(players.map((r, i) => [r, nombres[i]]));
-      startMatch(mode, names, { ...DEFAULT_CONFIG, calzar, chileno, players });
+      startMatch(mode, names, { ...DEFAULT_CONFIG, calzar, chileno, ...lab.config(), players });
     },
   }, T.start));
   acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => showScreen('screen-intro') }, T.menu));
@@ -834,6 +1311,8 @@ function renderSetupOnline(codigoInvitado = '') {
   const err = $('#setup-error'); clearRoomError(err);
   let nombre = nameStore.get() || '';
   let calzar = DEFAULT_CONFIG.calzar, chileno = DEFAULT_CONFIG.chileno;
+  const labSlot = el('div', { class: 'lab-switches' });
+  const lab = ajustesDeLab(() => labSlot.replaceChildren(...lab.switches()));
 
   form.append(el('div', { class: 'player-row' },
     el('div', { class: 'num' }, '👤'),
@@ -846,6 +1325,8 @@ function renderSetupOnline(codigoInvitado = '') {
   if (!invitado) {
     form.append(interruptor(calzar, T.calzarLabel, T.calzarHint, v => { calzar = v; }));
     if (lang === 'es') form.append(interruptor(chileno, CHILENO.label, CHILENO.hint, v => { chileno = v; }));
+    labSlot.replaceChildren(...lab.switches());
+    form.append(labSlot);
   }
 
   const fallar = msg => {
@@ -876,7 +1357,7 @@ function renderSetupOnline(codigoInvitado = '') {
       const n = nombre.trim();
       if (!n) return fallar(T.errName);
       nameStore.set(n); SFX.tap();
-      await tryRoom(crear, () => createOnline(n, { ...DEFAULT_CONFIG, calzar, chileno, players: null }), { busy: C.opening, ...roomOpts });
+      await tryRoom(crear, () => createOnline(n, { ...DEFAULT_CONFIG, calzar, chileno, ...lab.config(), players: null }), { busy: C.opening, ...roomOpts });
     } }, T.create);
     acciones.append(crear, el('div', { class: 'or' }, `— ${COMMON[lang].or} —`),
       el('div', { class: 'panel' },

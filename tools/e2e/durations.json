@@ -64,6 +64,7 @@
  "landing-fold.mjs": 279,
  "liars-dice/languages.mjs": 49,
  "liars-dice/local.mjs": 51,
+ "liars-dice/shake-clock.mjs": 20,
  "paint-mines/game.mjs": 34,
  "pips/lab.mjs": 16,
  "plots/numbers.mjs": 46,

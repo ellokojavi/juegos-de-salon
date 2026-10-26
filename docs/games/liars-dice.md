@@ -146,6 +146,49 @@ gana todavía más contra el lector (+16 puntos), pero ahí **nunca** canta su p
 un patrón tan legible como cantarla siempre: en 0,7 dice la verdad una de cada tres veces que podría
 mentir, y ninguna de las dos lecturas le sirve a nadie.
 
+## In the lab: shake to roll and the turn's clock (lab: `#seccion-dudo-cacho`)
+
+Two setup switches, offered only with a lab key (D-395) and off by default; in a room the
+creator's choice travels in the config, so it applies to every phone. Uno al día never has them.
+
+- **🫨 Shake to roll** (`config.shake`): each round, while your dice are still to roll, the hand's
+  panel **is** a green cloth, the only one on screen, with dice bigger than the hand's (64 px
+  against 46; the owner's request). They wait there face down. Shaking, they roll as the home page's 🎲 does (`dado3d.js`, D-188, D-374):
+  real 3D cubes with pips, all white (in the box the ace is not yellow, the owner's request; the
+  hand keeps it yellow), and each jolt spins them faster, each its own way, while the speed drains
+  away between jolts. The phone rattles with them, harder the faster they spin. They keep rolling as long as the phone
+  shakes, and between jolts they slow down but never stop (0.07°/ms at the least), so a die never
+  looks settled before it is (the owner's request). Once the phone has been still for 350 ms, after
+  at least three jolts (13 m/s² beyond gravity), each die **runs out its own spin and stops where
+  it lies** (the owner's request: no second animation). There is no extra turn and no bounce: each
+  angle keeps the speed it had and brakes to a stop (an ease-out whose start matches that speed,
+  300 ms to 1.5 s). Of the square poses that show the die's face (`POSES`), it stops on the one
+  nearest to where its own friction was taking it, always ahead, so it brakes a little more or a
+  little less but never turns back. A die can lie turned on the table, and the flat die in the
+  hand keeps that turn (`S.giros`) for the round, so a 2, 3 or 6 never flips when it lands. A light
+  thud on the vibrator when they stop; then the same panel turns into the hand (480 ms): it loses its green
+  and shrinks to its usual size while the dice slide into their row, lined up as always (`llegar`
+  in `game.js`). The dice
+  are rolled before, as always (and committed with their hash in a room, C-10): the shake only shows
+  them, so a round never waits on a sensor and the faces seen while rolling mean nothing. The cloth
+  and its WebGL canvases live across renders (a message must not reset a roll), are off the page
+  under a pass screen or a reveal, and are given back (`soltar()`) once the dice land. With no
+  WebGL or with reduced motion, big flat dice swap faces instead. The page listens first; with no
+  reading in 1.2 s, a phone that can ask for the motion permission (iPhone) shows 🫨 Allow shaking,
+  and one with no sensor (a computer) or a refused permission gets 🎲 Roll the dice, which throws
+  them the same way. No bid until your dice are out. An iPhone does not vibrate: Safari has no
+  vibration API.
+- **⏱️ 30 seconds per turn** (`config.turnSecs`, `TURN_SECS` in `rules.js`): whoever has the turn
+  has that long to bid, doubt or call it exactly, and rolling is part of the turn. The clock shows
+  only on your own turn and pauses under a reveal, a pass screen or a hidden page (U-20). Out of
+  time, your phone sends `timeout`: you lose a die (or go out), the table is **not** revealed, and
+  you open the next round. The engine accepts it only with the clock on, from the player on turn
+  and for that round, so a repeat costs nothing. In a room, only your own phone sends it: a phone
+  that left still stalls the table, as before.
+
+Tested by `tools/e2e/liars-dice/shake-clock.mjs` (synthetic `devicemotion` events, and the clock
+moved to its last second).
+
 ## Flujo
 
 ```
@@ -193,6 +236,7 @@ roll* → bid+ → (dudo | calza) → open*
 | `dudo` | — | En su turno, si ya hay apuesta |
 | `calza` | — | En su turno, si la apuesta llegó a la mitad de la mesa |
 | `open` | `d` dados, `salt` sal | Después de dudar, uno por jugador vivo |
+| `timeout` | `r` the round | Lab, with `turnSecs`: sent by the player on turn, from their own phone, when their time runs out |
 
 Un `roll` con `d` se resuelve solo; uno con `h` obliga a esperar el `open`. Es el mismo camino para
 los tres modos: el motor cuenta cuando conoce todos los dados de la ronda, y mientras tanto la fase
@@ -225,6 +269,7 @@ public/liars-dice/index.html · public/liars-dice/style.css · public/liars-dice
 public/liars-dice/engine.js · public/liars-dice/engine.test.mjs
 tools/e2e/liars-dice/local.mjs   un celular y contra el celular
 tools/e2e/liars-dice/online.mjs  tres celulares contra Firebase real
+tools/e2e/liars-dice/shake-clock.mjs  lab: shake to roll and the turn's clock
 ```
 
 Gancho de pruebas (C-14): `window.__dudo` (`view`, `match`, `session`).
