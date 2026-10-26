@@ -304,16 +304,21 @@ export function pincel(ctx, W, H) {
         circulo(ctx, cx + dx, cy - 0.3 + dy, 0.28 * (1 - t * 0.6), `rgba(255,255,255,${0.9 * (1 - t)})`);
       }
     },
-    /** The mole's tunnel through the first `n` points it dug: a smooth dark bore with a rim of loose earth. */
+    /**
+     * The mole's tunnel through the first `n` points it dug: a bore of dug brown earth, warm against the
+     * purple rock at any time of day (a dark bore vanished in the night's rock), its rim of loose earth
+     * lighter, the ceiling in shadow and the floor a little lit.
+     */
     tunel(camino, n) {
       if (n < 1) return;
       // Its heights averaged over a few points, so the bore curves instead of stepping
       const alto = k => { let t = 0, c = 0; for (let j = Math.max(0, k - 2); j <= Math.min(n - 1, k + 2); j++, c++) t += camino[j][1]; return t / c; };
       const via = () => { ctx.beginPath(); for (let k = 0; k < n; k++) ctx[k ? 'lineTo' : 'moveTo'](camino[k][0] + 0.5, alto(k) - 2.5); };
       ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      via(); ctx.strokeStyle = 'rgba(154,100,64,0.45)'; ctx.lineWidth = 7.8; ctx.stroke();
-      via(); ctx.strokeStyle = 'rgba(26,11,46,0.95)'; ctx.lineWidth = 6.6; ctx.stroke();
-      via(); ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 2.4; ctx.stroke();
+      via(); ctx.strokeStyle = '#b07a50'; ctx.lineWidth = 8; ctx.stroke();
+      via(); ctx.strokeStyle = '#341c0e'; ctx.lineWidth = 6.6; ctx.stroke();
+      ctx.translate(0, -1.6); via(); ctx.strokeStyle = 'rgba(14,6,2,0.6)'; ctx.lineWidth = 2.2; ctx.stroke();
+      ctx.translate(0, 3.6); via(); ctx.strokeStyle = 'rgba(176,122,80,0.4)'; ctx.lineWidth = 1; ctx.stroke();
       ctx.restore();
     },
     /** The rider in the water: the head bobbing up to `asoma` (0 to 1) of its height, the board floating at `tabla`. */
