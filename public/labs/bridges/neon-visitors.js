@@ -111,31 +111,54 @@ const ballena = giro => ctx => {
   ctx.restore();
 };
 
-/** The mole, 11 × 6, digging: velvet brown, a pink nose, its big front claws in two positions. */
+/** Three short claws off a paw at (x, y), fanned along `ang`. */
+function garras(ctx, x, y, ang, largo = 0.9) {
+  trazo(ctx, '#fff3e0', 0.22, () => { for (const d of [-0.45, 0, 0.45]) { ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(ang + d) * largo, y + Math.sin(ang + d) * largo); } });
+}
+
+/**
+ * The mole, 11 × 6, digging, facing right: a velvet body that tapers to the snout, a little fur along the
+ * back, a pink nose with whiskers, a tiny eye, a short tail, and its big spade hands with their claws
+ * reaching forward and sweeping back in turn.
+ */
 const topo = cuadro => ctx => {
-  ctx.fillStyle = grad(ctx, -6, 0, '#b07a50', '#7a4a2a', '#4e2c18');
-  ctx.beginPath(); ctx.ellipse(-0.6, -3, 4.8, 2.9, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.beginPath(); ctx.ellipse(-1.2, -4.8, 3, 0.7, 0, 0, Math.PI * 2); ctx.fill();
-  // The snout and its pink nose
-  ctx.fillStyle = '#9a6440'; ctx.beginPath(); ctx.ellipse(3.8, -2.8, 1.6, 1.1, 0, 0, Math.PI * 2); ctx.fill();
-  circulo(ctx, 5.3, -2.9, 0.75, '#ff8aa8');
-  // A tiny eye
-  circulo(ctx, 2.6, -3.8, 0.35, OSCURO);
-  // The claws
-  const [cx, cy] = cuadro ? [5, -0.6] : [3.8, -0.3];
-  ctx.fillStyle = '#e8c8a0'; ctx.beginPath(); ctx.ellipse(cx, cy, 1.2, 0.6, cuadro ? -0.6 : 0.2, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#5a341e'; ctx.beginPath(); ctx.ellipse(-3, -0.4, 1, 0.5, 0, 0, Math.PI * 2); ctx.fill();
+  // The far hand, behind the body
+  const [lx, ly, la] = cuadro ? [2.6, -0.8, 0.6] : [4.4, -1.2, -0.2];
+  ctx.fillStyle = '#c99a78'; ctx.beginPath(); ctx.ellipse(lx, ly, 1.1, 0.7, la, 0, Math.PI * 2); ctx.fill();
+  // The tail and the hind foot
+  trazo(ctx, '#d8a888', 0.4, () => { ctx.moveTo(-5.2, -3); ctx.quadraticCurveTo(-6.2, -3.4, -6.4, -4.2); });
+  ctx.fillStyle = '#5a341e'; ctx.beginPath(); ctx.ellipse(-3.2, -0.4, 1.1, 0.5, 0, 0, Math.PI * 2); ctx.fill();
+  // The body, round behind and narrowing to the snout
+  ctx.fillStyle = grad(ctx, -6, 0, '#a87450', '#7a4a2a', '#4e2c18');
+  ctx.beginPath(); ctx.moveTo(-5.4, -3); ctx.bezierCurveTo(-5.4, -6.4, 2, -6.6, 4.2, -3.8); ctx.quadraticCurveTo(5.6, -2.8, 4.6, -2); ctx.bezierCurveTo(2.6, -0.2, -5.4, 0.6, -5.4, -3); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(255,230,200,0.14)'; ctx.beginPath(); ctx.ellipse(-1.2, -4.9, 3, 0.65, -0.05, 0, Math.PI * 2); ctx.fill();
+  // A little fur along the back
+  trazo(ctx, 'rgba(40,20,10,0.35)', 0.18, () => { for (let k = 0; k < 6; k++) { const x = -4.2 + k * 1.3, y = -5.1 - Math.sin((k + 0.5) / 6 * Math.PI) * 0.35; ctx.moveTo(x, y + 0.5); ctx.lineTo(x - 0.4, y); } });
+  // The pink nose and its whiskers, the tiny eye
+  ctx.fillStyle = '#ff8aa8'; ctx.beginPath(); ctx.ellipse(5.4, -2.9, 0.7, 0.6, 0, 0, Math.PI * 2); ctx.fill();
+  circulo(ctx, 5.6, -3.1, 0.2, 'rgba(255,255,255,0.7)');
+  trazo(ctx, 'rgba(255,240,230,0.55)', 0.12, () => { for (const d of [-0.6, 0, 0.6]) { ctx.moveTo(4.8, -2.6); ctx.lineTo(6.4, -2.4 + d); } });
+  circulo(ctx, 3, -3.9, 0.3, OSCURO); circulo(ctx, 3.08, -3.98, 0.1, 'rgba(255,255,255,0.8)');
+  // The near hand: a broad pale spade, palm out, with its claws
+  const [cx, cy, ca] = cuadro ? [5, -0.7, -0.5] : [3.6, -0.4, 0.3];
+  ctx.fillStyle = '#e8c8a0'; ctx.beginPath(); ctx.ellipse(cx, cy, 1.25, 0.8, ca, 0, Math.PI * 2); ctx.fill();
+  garras(ctx, cx + Math.cos(ca) * 1, cy + Math.sin(ca) * 1, ca);
 };
-/** The mole falling, scared, from the front, 11 × 10: eyes wide, mouth open, arms waving. */
+/** The mole falling, scared, from the front, 11 × 10: eyes wide, mouth open on two teeth, arms and feet flailing. */
 const topoMiedo = cuadro => ctx => {
   const brazo = cuadro ? -8 : -6.4;
-  for (const s of [-1, 1]) trazo(ctx, '#7a4a2a', 1.1, () => { ctx.moveTo(s * 2.6, -5.6); ctx.lineTo(s * 4.6, brazo); });
-  for (const s of [-1, 1]) circulo(ctx, s * 4.7, brazo - 0.2, 0.7, '#e8c8a0');
+  for (const s of [-1, 1]) trazo(ctx, '#7a4a2a', 1.1, () => { ctx.moveTo(s * 2.6, -5.4); ctx.quadraticCurveTo(s * 4, -5.4 + (brazo + 5.4) * 0.2, s * 4.6, brazo); });
+  for (const s of [-1, 1]) { ctx.fillStyle = '#e8c8a0'; ctx.beginPath(); ctx.ellipse(s * 4.8, brazo - 0.3, 0.9, 0.65, s * 0.5, 0, Math.PI * 2); ctx.fill(); garras(ctx, s * 5, brazo - 0.8, -Math.PI / 2 + s * 0.4, 0.75); }
+  // The feet, kicking
+  for (const s of [-1, 1]) { ctx.fillStyle = '#d8a888'; ctx.beginPath(); ctx.ellipse(s * 1.6, -0.3 + (cuadro === (s > 0) ? -0.3 : 0), 0.9, 0.5, 0, 0, Math.PI * 2); ctx.fill(); }
   ctx.fillStyle = grad(ctx, -8, 0, '#b07a50', '#7a4a2a', '#4e2c18');
   ctx.beginPath(); ctx.ellipse(0, -4.2, 3.2, 3.9, 0, 0, Math.PI * 2); ctx.fill();
-  for (const s of [-1, 1]) { circulo(ctx, s * 1.2, -5.6, 1, '#ffffff'); circulo(ctx, s * 1.2, -5.4, 0.4, OSCURO); }
+  ctx.fillStyle = 'rgba(255,225,190,0.22)'; ctx.beginPath(); ctx.ellipse(0, -2.6, 1.9, 2, 0, 0, Math.PI * 2); ctx.fill();
+  for (const s of [-1, 1]) { circulo(ctx, s * 1.2, -5.6, 1, '#ffffff'); circulo(ctx, s * 1.2, -5.4, 0.4, OSCURO); circulo(ctx, s * 1.2 - 0.15, -5.6, 0.14, '#ffffff'); }
   circulo(ctx, 0, -4.2, 0.5, '#ff8aa8');
+  trazo(ctx, 'rgba(255,240,230,0.5)', 0.12, () => { for (const s of [-1, 1]) for (const d of [-0.4, 0.3]) { ctx.moveTo(s * 0.6, -4.1); ctx.lineTo(s * 2.2, -4.2 + d); } });
   ctx.fillStyle = '#c2185b'; ctx.beginPath(); ctx.ellipse(0, -2.4, 1, 1.2, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fff6e0'; ctx.fillRect(-0.45, -3.55, 0.4, 0.5); ctx.fillRect(0.05, -3.55, 0.4, 0.5);
 };
 
 /**
@@ -280,6 +303,18 @@ export function pincel(ctx, W, H) {
         const t = (ahora * 1.6 + k * 0.37) % 1, dx = lado * (k - 1) * 0.9 + lado * t * 1.5, dy = -2.4 * t * (1 - t) * 4 * (0.6 + (k % 3) * 0.2);
         circulo(ctx, cx + dx, cy - 0.3 + dy, 0.28 * (1 - t * 0.6), `rgba(255,255,255,${0.9 * (1 - t)})`);
       }
+    },
+    /** The mole's tunnel through the first `n` points it dug: a smooth dark bore with a rim of loose earth. */
+    tunel(camino, n) {
+      if (n < 1) return;
+      // Its heights averaged over a few points, so the bore curves instead of stepping
+      const alto = k => { let t = 0, c = 0; for (let j = Math.max(0, k - 2); j <= Math.min(n - 1, k + 2); j++, c++) t += camino[j][1]; return t / c; };
+      const via = () => { ctx.beginPath(); for (let k = 0; k < n; k++) ctx[k ? 'lineTo' : 'moveTo'](camino[k][0] + 0.5, alto(k) - 2.5); };
+      ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      via(); ctx.strokeStyle = 'rgba(154,100,64,0.45)'; ctx.lineWidth = 7.8; ctx.stroke();
+      via(); ctx.strokeStyle = 'rgba(26,11,46,0.95)'; ctx.lineWidth = 6.6; ctx.stroke();
+      via(); ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 2.4; ctx.stroke();
+      ctx.restore();
     },
     /** The rider in the water: the head bobbing up to `asoma` (0 to 1) of its height, the board floating at `tabla`. */
     nadador(x, yAgua, { asoma, vaiven, tabla: tx }) {
