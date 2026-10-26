@@ -488,6 +488,7 @@ node public/assets/js/push.test.mjs
 node public/assets/js/records.test.mjs
 node public/assets/js/search.test.mjs
 node public/assets/js/splash.test.mjs
+node public/assets/js/support.test.mjs
 node public/assets/js/transport/best-effort.test.mjs
 node public/assets/js/transport/cleanup.test.mjs
 node public/assets/js/transport/dispose.test.mjs
@@ -676,7 +677,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   records/                    Leaderboards (D-212)
   today/                      One a Day (D-230, D-414)
   panel/                      Private owner dashboard (docs/PANEL.md)
-  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251) …
+  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, in the lab, D-448) …
   assets/js/transport/        Local, Firebase room and usage-signal transports, with their helpers
   assets/og/                  Social card images
   manifest.webmanifest · sw.js   PWA manifest (one per language) and service worker (D-221, D-222)
