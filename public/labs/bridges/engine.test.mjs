@@ -1,6 +1,6 @@
 // Tren en Vilo (lab): the physics is tuned so a bare deck falls and a truss holds, in every stage
 import assert from 'node:assert/strict';
-import { cubierta as deckOf, esCubierta, trazo, unirViga, puntosMedios, enMedio, costo as costoDe, ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './engine.js';
+import { aceroUsado, FISICA, partir, cubierta as deckOf, esCubierta, trazo, unirViga, puntosMedios, enMedio, costo as costoDe, ETAPAS, probar, vigaValida, puntajePartida, crearSim, paso, TIEMPO_S, picoReferencia, MARGEN_SOLIDO } from './engine.js';
 import { readFileSync } from 'node:fs';
 
 const V = (a, b) => ({ a, b });
@@ -106,6 +106,23 @@ assert.equal(p.ahorros[0].fraccion, 2 / 3); assert.equal(p.ahorros[1].fraccion, 
       for (const v of sol) { assert.equal(vigaValida(c, puestas, v.a, v.b), null, `${c.tipo} ${c.ancho}: ${JSON.stringify(v)}`); puestas.push(v); }
     }
     console.log(`  catalog: ${cat.length} crossings, each with a solution that passes`);
+  }
+}
+// Steel: it costs no wood, is measured by its length, keeps its material when split, and snaps later
+{
+  const e = { ancho: 4, anclas: [], madera: true, acero: 2 };
+  const vs = [...cubierta(4), { a: [0, 0], b: [2, 1], acero: true }];
+  assert.equal(costoDe(e, vs), 4, 'steel costs no wood');
+  assert.ok(Math.abs(aceroUsado(vs) - Math.hypot(2, 1)) < 1e-9, 'steel is measured by its length');
+  assert.ok(partir(vs, [1, 0.5]).filter(v => v.acero).length === 2, 'a split steel beam stays steel');
+  const sim = crearSim(e, vs);
+  assert.equal(sim.vigas.at(-1).quiebre, FISICA.quiebre * FISICA.acero, 'steel snaps at a higher strain');
+  assert.ok(unirViga([], [0, 0], [1, 1], new Set(), true)[0].acero, 'a beam laid in steel is steel');
+  // A bare deck in steel holds more than one in wood on a heavy crossing
+  const pesado = { ...ETAPAS[0], carga: 1, madera: true };
+  if (!probar(pesado, cubierta(pesado.ancho)).llego) {
+    const acero = cubierta(pesado.ancho).map(v => ({ ...v, acero: true }));
+    assert.ok(probar(pesado, acero).x >= probar(pesado, cubierta(pesado.ancho)).x, 'steel carries the train at least as far as wood');
   }
 }
 console.log('✓ Tren en Vilo (labs)');
