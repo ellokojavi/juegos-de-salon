@@ -25,6 +25,23 @@ import { getLang } from './i18n.js';
 import { labAccess } from './lab-access.js';
 import { param, tiene } from './parametros.js';
 
+/**
+ * A friendly clip on the card: Keanu Reeves saying thank you (GIPHY's, from Sky TV), served from
+ * GIPHY and not copied into the site, for its rights. Small and square, beside the title, so the card still fits a
+ * 320×568 phone without scrolling (D-449); with reduced motion, its still.
+ */
+export const CLIP = { video: 'https://media.giphy.com/media/fWfowxJtHySJ0SGCgN/giphy.mp4', still: 'https://media.giphy.com/media/fWfowxJtHySJ0SGCgN/480w_s.jpg' };
+
+function clip(doc) {
+  const still = doc.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const v = doc.createElement('video');
+  Object.assign(v, { src: CLIP.video, poster: CLIP.still, muted: true, loop: true, autoplay: !still, playsInline: true, preload: still ? 'none' : 'auto' });
+  v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
+  v.className = 'hoja-apoyo-clip';
+  v.style.cssText = 'display:block;flex:none;width:72px;height:72px;object-fit:cover;border-radius:14px';
+  return v;
+}
+
 /** The Stripe Payment Link ("customers choose what to pay"). Empty: the lab simulates the payment. Today the sandbox (test_) link, to try the whole flow in the lab with card 4242 4242 4242 4242; the live link replaces it. */
 export const PAYMENT_LINK = 'https://buy.stripe.com/test_dRm7sL17f2bI4sY19jds400';
 
@@ -156,7 +173,8 @@ export function openSupportSheet({ lang = getLang(), thanks = false, record = tr
   const body = thanks
     ? [el('h2', { id: 'hoja-apoyo-titulo' }, `💛 ${T.thanksTitle}`), el('p', {}, T.thanks), done]
     : [
-      el('h2', { id: 'hoja-apoyo-titulo' }, `☕ ${T.title}`),
+      // The clip beside the title, not above it: the card keeps fitting a small phone
+      el('div', { style: 'display:flex;align-items:center;gap:0.75rem' }, clip(doc), el('h2', { id: 'hoja-apoyo-titulo', style: 'margin:0' }, `☕ ${T.title}`)),
       el('p', {}, T.lead),
       ...T.points.map(p => el('p', { class: 'muted', style: 'font-size:0.85rem' }, p)),
       PAYMENT_LINK
