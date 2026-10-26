@@ -9,7 +9,8 @@
  *
  * Several can be on: ACTIVE is a queue in the order they were turned on, and a player with more than
  * one to see gets them in that order, one per visit (D-430, D-431). A campaign is seen once per
- * phone. Preview any of them without turning it on: https://juegosdesalon.cl/?splash=<id>
+ * phone. Since D-454 the panel's 📣 Campaigns (Firebase `splash/`) is the switch once it has saved
+ * once; ACTIVE is then only the fallback when the database cannot be read. Preview any of them without turning it on: https://juegosdesalon.cl/?splash=<id>
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
