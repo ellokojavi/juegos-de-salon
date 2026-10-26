@@ -5,12 +5,20 @@
  */
 import { el } from '../../assets/js/ui.js';
 import { ALTO, LARGO_MAX, PIEZAS, fijos, paso, FISICA, alturaCamino } from './engine.js';
+import { param } from '../../assets/js/parametros.js';
+import { dibujarNeon, trenMiniNeon } from './neon.js';
 import { pixelado, particulas, LOCO, CHIMENEA, trenDe, PAJARO, PALETA_PAJARO, PLATILLO, PALETA_PLATILLO, PREGUNTA, BALLENA, PALETA_BALLENA, PEZ, PALETA_PEZ, TOPO, PALETA_TOPO, TOPO_MIEDO, EXCLAMACION, LANCHA, PALETA_LANCHA, SURFISTA, PALETA_SURFISTA } from './pixel.js';
 
 export const QUIETO = !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+/**
+ * `?style=neon` (lab prototype): the scene in the house style (neon.js) instead of pixel art, to compare
+ * the two side by side. The page gets the `tv-neon` class for the pieces around the board.
+ */
+export const NEON = param('style') === 'neon';
+if (NEON) globalThis.document?.documentElement.classList.add('tv-neon');
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 // How long the beams that snapped in the last test blink red, while fixing the bridge
-const PARPADEO_MS = 8000;
+export const PARPADEO_MS = 8000;
 export const pct = x => `${Math.round(x * 100)} %`;
 
 /* ------------------------------------------------------------------ */
@@ -26,6 +34,7 @@ const ARRIBA = ALTO[1] + 0.6, ABAJO = ALTO[0] - 1.1;
  * cross (passenger cars, crates, logs, coal or containers), so the weight has a picture.
  */
 export function trenMini(carga) {
+  if (NEON) return trenMiniNeon(carga);
   const { vagon, paleta } = trenDe(carga), dpr = window.devicePixelRatio || 1, px = 2;
   const ancho = 40, alto = Math.max(LOCO[0].length, vagon[0].length) + 1;
   const c = el('canvas', { class: 'tv-tren-mini', 'aria-hidden': 'true', width: ancho * px * dpr, height: alto * px * dpr });
@@ -67,7 +76,7 @@ export const TENSION = ['#c8874a', '#d9a23a', '#e8b13a', '#f08a2c', '#ff5a3c', '
  * ends (the later one goes in front), and each bolt a beam runs over without ending there.
  * [[beam, [x, y]], …] in grid units.
  */
-function pasoPorEncima(vigas, nudos, eps = 0.04) {
+export function pasoPorEncima(vigas, nudos, eps = 0.04) {
   const res = [];
   const cerca = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]) < eps;
   for (let i = 0; i < vigas.length; i++) for (let j = i + 1; j < vigas.length; j++) {
@@ -155,7 +164,8 @@ const mix = (a, b, f) => ({
   clouds: f < 0.5 ? a.clouds : b.clouds,
   sun: f < 0.5 ? a.sun : b.sun,
 });
-export const timeOfDay = t => (t <= 0.5 ? mix(MORNING, SUNSET, t / 0.5) : mix(SUNSET, NIGHT, (t - 0.5) / 0.5));
+// `t` stays on it, so the neon scene can draw the same time of day in its own palette
+export const timeOfDay = t => ({ ...(t <= 0.5 ? mix(MORNING, SUNSET, t / 0.5) : mix(SUNSET, NIGHT, (t - 0.5) / 0.5)), t });
 const MADERA = { borde: '#3a1d10', riel: '#e6e6f0' };
 const HUMO = ['rgba(255,255,255,0.95)', 'rgba(235,232,245,0.85)', 'rgba(200,196,220,0.7)', 'rgba(160,156,188,0.5)', 'rgba(130,126,160,0.3)'];
 const CHISPAS = ['#fff3a0', '#ffd23f', '#ff8a3d', '#ff2e4a'];
@@ -171,6 +181,7 @@ const ruido = (x, y) => { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453
  * beams as laid. The scene keeps its own particles and clock on the canvas (`c._esc`).
  */
 export function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre = null, usados = new Set(), rotasAntes = new Set(), visitas = null } = {}) {
+  if (NEON) return dibujarNeon(c, e, arguments[2]);
   const r = c._r;
   if (!r) return;
   const ahora = performance.now() / 1000;
