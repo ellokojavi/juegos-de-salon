@@ -151,20 +151,25 @@ mentir, y ninguna de las dos lecturas le sirve a nadie.
 Two setup switches, offered only with a lab key (D-395) and off by default; in a room the
 creator's choice travels in the config, so it applies to every phone. Uno al día never has them.
 
-- **🫨 Shake to roll** (`config.shake`): each round your dice show face down and you shake the
-  phone to roll them. They roll as the home page's 🎲 does (`dado3d.js`, D-188, D-374): real 3D
-  cubes with pips (the ace face yellow, as in the hand), and each jolt spins them faster, each its
-  own way, while the speed drains away between jolts. The phone rattles with them, harder the
-  faster they spin. Three jolts (13 m/s² beyond gravity, within 1.5 s) and they settle over 900 ms,
-  with at least one more turn and a small bounce, on their real faces, then turn into the flat dice
-  of the hand with a thud on the vibrator. The dice are rolled before, as always (and committed
-  with their hash in a room, C-10): the shake only shows them, so a round never waits on a sensor
-  and the faces seen while rolling mean nothing. Each die is its own WebGL canvas, kept across
-  renders and given back (`soltar()`) once it lands. With no WebGL or with reduced motion, flat
-  dice swap faces instead. The page listens first; with no reading in 1.2 s, a phone that can ask
-  for the motion permission (iPhone) shows 🫨 Allow shaking, and one with no sensor (a computer) or
-  a refused permission gets 🎲 Roll the dice, which throws them the same way. No bid until your
-  dice are out. An iPhone does not vibrate: Safari has no vibration API.
+- **🫨 Shake to roll** (`config.shake`): each round your dice are rolled in a **box of their own**,
+  a green cloth over the table (under the header and the clock) with dice bigger than the hand's
+  (64 px against 46; the owner's request). They wait there face down, and their places in the hand
+  wait face down too. Shaking, they roll as the home page's 🎲 does (`dado3d.js`, D-188, D-374):
+  real 3D cubes with pips, all white (in the box the ace is not yellow, the owner's request; the
+  hand keeps it yellow), and each jolt spins them faster, each its own way, while the speed drains
+  away between jolts. The phone rattles with them, harder the faster they spin. Three jolts
+  (13 m/s² beyond gravity, within 1.5 s) and they settle over 900 ms, with at least one more turn
+  and a small bounce, on their real faces, with a thud on the vibrator; then the cloth fades and
+  each die flies down and shrinks into its place in the hand (480 ms), lined up as always. The dice
+  are rolled before, as always (and committed with their hash in a room, C-10): the shake only shows
+  them, so a round never waits on a sensor and the faces seen while rolling mean nothing. The box
+  and its WebGL canvases live across renders (a message must not reset a roll), are off the page
+  under a pass screen or a reveal, and are given back (`soltar()`) once the dice land. With no
+  WebGL or with reduced motion, big flat dice swap faces instead. The page listens first; with no
+  reading in 1.2 s, a phone that can ask for the motion permission (iPhone) shows 🫨 Allow shaking,
+  and one with no sensor (a computer) or a refused permission gets 🎲 Roll the dice, which throws
+  them the same way. No bid until your dice are out. An iPhone does not vibrate: Safari has no
+  vibration API.
 - **⏱️ 30 seconds per turn** (`config.turnSecs`, `TURN_SECS` in `rules.js`): whoever has the turn
   has that long to bid, doubt or call it exactly, and rolling is part of the turn. The clock shows
   only on your own turn and pauses under a reveal, a pass screen or a hidden page (U-20). Out of

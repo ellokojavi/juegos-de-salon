@@ -12,8 +12,8 @@ let fails = 0;
 const check = (ok, msg) => { console.log(`${ok ? '✓' : '✗'} ${msg}`); if (!ok) fails++; };
 const switches = () => ev(`[...document.querySelectorAll('#setup-form .toggle-row b')].map(b=>b.textContent).join(' | ')`);
 const jolt = i => ev(`window.dispatchEvent(new DeviceMotionEvent('devicemotion', { acceleration: { x: ${i % 2 ? -22 : 22}, y: 4, z: 1 }, accelerationIncludingGravity: { x: 22, y: 13, z: 1 }, interval: 16 })); 1`);
-/** What the tray shows right now: 3D dice or flat ones, rolling or not, and where the dice are. */
-const tray = () => ev(`(()=>{const t=document.querySelector('#mine .bandeja');if(!t)return null;const c=[...t.querySelectorAll('.dado3d')];return{three:t.classList.contains('bandeja-3d'),cubes:c.length,moves:c.map(d=>d.style.transform).join('|'),rolling:t.classList.contains('rodando'),faces:[...t.querySelectorAll('.die')].map(d=>d.querySelectorAll('i').length).join('')}})()`);
+/** The shaking box right now: 3D dice or flat ones, how big, and where the dice are. */
+const tray = () => ev(`(()=>{const m=document.querySelector('.agite-caja .agite-mesa');if(!m||!m.isConnected)return null;const c=[...m.querySelectorAll('.dado3d')];const one=m.firstElementChild;return{three:c.length>0,cubes:c.length,size:one?Math.round(one.getBoundingClientRect().width):0,moves:c.map(d=>d.style.transform).join('|'),faces:[...m.querySelectorAll('.die')].map(d=>d.querySelectorAll('i').length).join('')}})()`);
 let tumbled = null, buzzes = 0;
 const shake = async () => {
   // Counts the phone's vibrations: headless Chrome has none of its own
@@ -24,7 +24,7 @@ const shake = async () => {
   tumbled = !!(a?.three && a.cubes > 0 && a.moves !== c.moves);
   for (let i = 1; i < 4; i++) { await jolt(i); await sleep(180); }
   buzzes = await ev(`window.__buzz`);
-  await sleep(1200);   // the last roll (900 ms), then they land
+  await sleep(2000);   // the last roll (900 ms), a breath, and the flight into the hand (480 ms)
 };
 const covered = () => ev(`!!document.querySelector('#mine .cacho')`);
 const myDice = () => ev(`document.querySelectorAll('#mine .dice-row .die').length`);
@@ -50,14 +50,18 @@ await ev(`window.dispatchEvent(new DeviceMotionEvent('devicemotion', { accelerat
 await sleep(300);
 
 check(await covered(), 'the round starts with the dice face down');
-check((await tray())?.faces === '00000', 'no face shows before shaking');
+const box = await tray();
+check(box?.faces === '00000', 'no face shows before shaking: they wait face down in a box of their own');
+const hand = await ev(`Math.round(document.querySelector('#mine .cacho .die').getBoundingClientRect().width)`);
+check(box?.size > hand, `the box's dice are bigger than the hand's (${box?.size} px against ${hand})`);
 check(/Tira tus dados/.test(await ev(`document.getElementById('actions').textContent`)), 'no bid buttons before rolling');
 check(await ev(`!document.getElementById('turn-clock').hidden`), 'the clock runs on my turn, rolling included');
 await b.shot('02-face-down');
 await shake();
 check(tumbled, 'while the phone shakes, 3D dice tumble on screen');
 check(buzzes >= 5, `and the phone rattles with them: ${buzzes} vibrations`);
-check(!(await covered()) && (await myDice()) === 5, `then they land: ${await myDice()} dice`);
+check(!(await covered()) && (await myDice()) === 5, `then they land in the hand: ${await myDice()} dice`);
+check((await tray()) === null, 'and the box is gone');
 check(await ev(`document.querySelectorAll('.pinta').length === 6`), 'and the bid buttons show');
 await b.shot('03-clock');
 
@@ -103,7 +107,7 @@ check(await ev(`document.getElementById('turn-clock').hidden`), 'with the clock 
 await b.shot('06-no-sensor');
 await ev(`document.getElementById('btn-tirar').click(); 1`); await sleep(300);
 check((await tray())?.three, 'the button rolls them in 3D too');
-await sleep(1200);
+await sleep(2000);
 check((await myDice()) === 5, 'the button rolls the dice');
 
 await b.close();
