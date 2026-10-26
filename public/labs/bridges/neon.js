@@ -134,13 +134,13 @@ export function vagon(ctx, x, y, carga = 1, giro = 0) {
 
 /** The stage's train in small, next to its weight in the title (scene.js's trenMini, in this style). */
 /** The first neon train, as a design like those in trains.js. */
-export const CLASICO = {
+const CLASICO = {
   id: 'clasico', nombre: 'Clásico', lema: 'El primer tren neón, el que se critica: locomotora a vapor de formas simples.', humo: CHIMENEA, luz: { dx: 10.2, dy: -8.6 },
   frente: (ctx, x, y, { giro = 0, carga = 1 } = {}) => locomotora(ctx, x, y, { giro, pesada: carga >= 1.6 }),
   vagon,
 };
-/** The train drawn: `?train=bala|deco|metro|nocturno` picks one of trains.js's designs (lab prototype). */
-const TREN = TRENES[param('train')] || CLASICO;
+/** The train drawn: the owner's choice, the silver bullet train; `?train=bala-perla|…` another color, `?train=clasico` the first one. */
+const TREN = param('train') === 'clasico' ? CLASICO : TRENES[param('train')] || TRENES.bala;
 
 export function trenMiniNeon(carga) {
   const dpr = window.devicePixelRatio || 1, k = 2, ancho = 44, alto = 17;
@@ -360,6 +360,7 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
         continue;
       }
       if (p.loco) TREN.frente(ctx, px, py - 0.5, { giro, carga: e.carga });
+      else if (p.k === piezas.length - 1 && TREN.cola) TREN.cola(ctx, px, py - 0.5, { giro: giro + p.k });
       else TREN.vagon(ctx, px, py - 0.5, e.carga, giro + p.k);
       if (p.loco && TREN.humo && !tr.cayo && !QUIETO) {
         esc.humo += dt;

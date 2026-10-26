@@ -1,24 +1,22 @@
 /**
- * 🚂 Tren en Vilo — the sheet of train designs (lab, owner's request 2026-10-25): each design from
- * trains.js (and the first neon train, to compare) up close and crossing a deck at the game's size, with
- * a button to play with it (`?style=neon&train=<id>`).
+ * 🚂 Tren en Vilo — the bullet train's colors (lab, owner's request 2026-10-25): one crossing at the
+ * game's size that changes color each pass, and each color up close, the whole train with a nose at both
+ * ends, with a button to play with it (`?style=neon&train=<id>`).
  */
 import { el } from '../../../assets/js/ui.js';
-import { TRENES } from '../trains.js';
-import { CLASICO } from '../neon.js';
+import { BALAS } from '../trains.js';
 
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hoja = document.getElementById('hoja');
 
-/** A canvas `alto` CSS pixels high, drawn in art units at `k` CSS px each. */
+/** A canvas `alto` CSS pixels high, sized to its box. */
 function lienzo(alto) {
   const c = el('canvas', {});
-  const ajustar = () => {
+  c._ajustar = () => {
     const dpr = devicePixelRatio || 1, w = c.clientWidth || 340;
     c.width = Math.round(w * dpr); c.height = Math.round(alto * dpr); c.style.height = `${alto}px`;
     c._w = w; c._h = alto; c._dpr = dpr;
   };
-  c._ajustar = ajustar;
   return c;
 }
 /** The night of the house: a gradient, a few stars, a far ridge. */
@@ -39,45 +37,51 @@ function cubierta(ctx, W, piso, k) {
   ctx.beginPath(); ctx.moveTo(0, piso + 0.8 * k); ctx.lineTo(W, piso + 0.8 * k); ctx.stroke(); ctx.restore();
   for (let x = 16 * k; x < W; x += 16 * k) { ctx.fillStyle = '#14081f'; ctx.beginPath(); ctx.arc(x, piso + 0.8 * k, 1.3 * k, 0, 7); ctx.fill(); ctx.fillStyle = '#fff6e0'; ctx.beginPath(); ctx.arc(x, piso + 0.8 * k, 0.7 * k, 0, 7); ctx.fill(); }
 }
-/** The front car and two wagons, the front's bottom-centre at (x, y), in art units. */
+/** The whole train as the game places it: the front car at x, a wagon 20 art units back, the tail 37 back. */
 function tren(ctx, t, x, y, giro) {
-  t.vagon(ctx, x - 37, y, 1, giro + 2); t.vagon(ctx, x - 20, y, 1, giro + 1); t.frente(ctx, x, y, { giro });
+  t.cola(ctx, x - 37, y, { giro: giro + 2 }); t.vagon(ctx, x - 20, y, 1, giro + 1); t.frente(ctx, x, y, { giro });
+}
+/** The headlight's soft cone ahead of the train. */
+function cono(ctx, t, x) {
+  const g = ctx.createLinearGradient(x + t.luz.dx, 0, x + t.luz.dx + 26, 0);
+  g.addColorStop(0, 'rgba(255,243,160,0.4)'); g.addColorStop(1, 'rgba(255,243,160,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x + t.luz.dx, t.luz.dy - 0.8); ctx.lineTo(x + t.luz.dx + 26, t.luz.dy - 5); ctx.lineTo(x + t.luz.dx + 26, t.luz.dy + 5); ctx.lineTo(x + t.luz.dx, t.luz.dy + 0.8); ctx.closePath(); ctx.fill();
 }
 
-const cuadros = [];
-for (const t of [...Object.values(TRENES), CLASICO]) {
-  const cerca = lienzo(170), cruza = lienzo(120);
+const cruza = lienzo(120);
+hoja.append(el('section', { class: 'panel tren-op' }, el('h2', {}, 'Cruzando'), el('p', { class: 'muted', style: 'margin:0' }, 'Al tamaño del juego. Cambia de color en cada pasada.'), cruza));
+cruza._ajustar();
+const cuadros = BALAS.map(t => {
+  const cerca = lienzo(130);
   hoja.append(el('section', { class: 'panel tren-op', id: `tren-${t.id}` },
-    el('h2', {}, t.nombre), el('p', { class: 'muted', style: 'margin:0' }, t.lema),
-    cerca, cruza,
-    el('a', { class: `btn ${t.id === 'clasico' ? 'btn--ghost' : 'btn--yellow'}`, href: `../?style=neon&train=${t.id}` }, `🚂 Jugar con ${t.nombre === 'Clásico' ? 'el clásico' : `el ${t.nombre}`}`)));
-  cerca._ajustar(); cruza._ajustar();
-  cuadros.push({ t, cerca, cruza });
+    el('h2', {}, t.nombre), cerca,
+    el('a', { class: 'btn btn--yellow', href: `../?style=neon&train=${t.id}` }, `🚄 Jugar con el ${t.nombre.toLowerCase()}`)));
+  cerca._ajustar();
+  return { t, cerca };
+});
+
+function cerca({ t, cerca: c }) {
+  const ctx = c.getContext('2d'), W = c._w, H = c._h, piso = H - 22;
+  ctx.setTransform(c._dpr, 0, 0, c._dpr, 0, 0);
+  noche(ctx, W, H, piso);
+  const k = W / 66;
+  cubierta(ctx, W, piso, k);
+  ctx.save(); ctx.translate(W / 2 + 19 * k, piso); ctx.scale(k, k);
+  tren(ctx, t, 0, 0, 0);
+  ctx.restore();
 }
+cuadros.forEach(cerca);
 
 function pintar(ahora) {
-  for (const { t, cerca, cruza } of cuadros) {
-    // Up close: the front car and a wagon, big
-    let ctx = cerca.getContext('2d'), W = cerca._w, H = cerca._h, piso = H - 26;
-    ctx.setTransform(cerca._dpr, 0, 0, cerca._dpr, 0, 0);
-    noche(ctx, W, H, piso);
-    const k = Math.min(7, W / 44);
-    cubierta(ctx, W, piso, k);
-    ctx.save(); ctx.translate(W / 2 + 8 * k, piso); ctx.scale(k, k);
-    t.vagon(ctx, -20, 0, 1, 0); t.frente(ctx, 0, 0, { giro: 0 });
-    ctx.restore();
-    // Crossing, at about the game's size, slowly, over and over
-    ctx = cruza.getContext('2d'); W = cruza._w; H = cruza._h; piso = H - 30;
-    ctx.setTransform(cruza._dpr, 0, 0, cruza._dpr, 0, 0);
-    noche(ctx, W, H, piso);
-    const k2 = 3; cubierta(ctx, W, piso, k2);
-    const vuelta = W / k2 + 80, x = QUIETO ? W / k2 * 0.7 : ((ahora / 1000) * 14) % vuelta - 20;
-    ctx.save(); ctx.translate(0, piso); ctx.scale(k2, k2);
-    if (t.luz) { const g = ctx.createLinearGradient(x + t.luz.dx, 0, x + t.luz.dx + 26, 0); g.addColorStop(0, 'rgba(255,243,160,0.4)'); g.addColorStop(1, 'rgba(255,243,160,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x + t.luz.dx, t.luz.dy - 0.8); ctx.lineTo(x + t.luz.dx + 26, t.luz.dy - 5); ctx.lineTo(x + t.luz.dx + 26, t.luz.dy + 5); ctx.lineTo(x + t.luz.dx, t.luz.dy + 0.8); ctx.closePath(); ctx.fill(); }
-    tren(ctx, t, x, 0, x * 0.44);
-    ctx.restore();
-  }
+  const ctx = cruza.getContext('2d'), W = cruza._w, H = cruza._h, piso = H - 30, k = 3;
+  ctx.setTransform(cruza._dpr, 0, 0, cruza._dpr, 0, 0);
+  noche(ctx, W, H, piso); cubierta(ctx, W, piso, k);
+  const vuelta = W / k + 80, d = QUIETO ? W / k * 0.8 : (ahora / 1000) * 16;
+  const x = d % vuelta - 20 + 60, t = BALAS[Math.floor(d / vuelta) % BALAS.length];
+  ctx.save(); ctx.translate(0, piso); ctx.scale(k, k);
+  cono(ctx, t, x); tren(ctx, t, x, 0, x * 0.44);
+  ctx.restore();
   if (!QUIETO) requestAnimationFrame(pintar);
 }
 requestAnimationFrame(pintar);
-addEventListener('resize', () => cuadros.forEach(({ cerca, cruza }) => { cerca._ajustar(); cruza._ajustar(); }));
+addEventListener('resize', () => { cruza._ajustar(); cuadros.forEach(q => { q.cerca._ajustar(); cerca(q); }); });
