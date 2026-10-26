@@ -94,7 +94,8 @@
 .tv-medidor[hidden] { display: none; }
 
 /* The stage's summary, over the screen when a stage passes; the bar empties until it goes on its own */
-.tv-felicitacion { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: rgba(12, 4, 24, 0.72); }
+/* Under #confetti (z 50), so the stage confetti falls in front of it */
+.tv-felicitacion { position: fixed; inset: 0; z-index: 49; display: grid; place-items: center; padding: 16px; background: rgba(12, 4, 24, 0.72); }
 .tv-fel-caja { width: min(360px, 100%); display: grid; gap: 10px; text-align: left; }
 .tv-fel-caja h2 { margin: 0 0 4px; font: 1.35rem var(--font-display); color: var(--lime); text-align: center; letter-spacing: 0.03em; }
 .tv-fel-fila { display: grid; grid-template-columns: 1fr auto; column-gap: 10px; border-top: 1px solid var(--glass-border); padding-top: 8px; }
