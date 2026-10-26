@@ -272,7 +272,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   card) to read them against what landed, and the main things they name are in `LO_PRINCIPAL`
   (`public/assets/js/compartir.js`).
 - **Processes** (D-273, D-275, D-276): **the head of the agents.** Daily round at 4:30 Pacific
-  time on the owner's Mac mini (a claude.ai scheduled task that runs there, its instructions in
+  time on the owner's Mac mini (a launchd job that runs a headless Claude session, D-451, its instructions in
   `tools/jobs/prompts/processes-round.md`; `round-watch.yml` opens the "Processes round missed" issue
   when `main` goes more than a day unreviewed, D-440; `pending-watch.yml` keeps the "Pending work" issue with the stuck PRs and
   the branches whose commits have no PR, `node tools/agents/pending.mjs check | notify`, D-441): it launches the documentation
@@ -341,13 +341,13 @@ with that the screen also enters the language tests. To see it on a real phone,
   builds nothing itself and touches only its ledger, `docs/ideas.json` (`ideas.mjs record <id>
   <status> "why" | list | taste "…" | history`), which also keeps the owner's taste as their
   answers teach it. What was discarded is not proposed again as new.
-- **Jobs** (D-365): every job, wherever it runs (GitHub, launchd on the Mac mini, the claude.ai
-  scheduled tasks that run there, hooks), is listed in `tools/jobs/jobs.json`; `node tools/jobs/jobs.mjs status` shows them all
+- **Jobs** (D-365): every job, wherever it runs (GitHub, launchd on the Mac mini, including the
+  headless Claude rounds, hooks), is listed in `tools/jobs/jobs.json`; `node tools/jobs/jobs.mjs status` shows them all
   with their last run, and `jobs.test.mjs` fails if a scheduled workflow is missing. Frequent checks
   are `mac` jobs, plain scripts that call Claude only when there is work (`inbox-watch`: the hola@
   inbox every 5 minutes). Adding one: [tools/jobs/README.md](tools/jobs/README.md). What the Mac mini
   holds and how to move it to another machine: [tools/jobs/MAC-MINI.md](tools/jobs/MAC-MINI.md) (D-383).
-- **Weekly report** (D-352): every Sunday the scheduled task `weekly-report` (D-440) runs
+- **Weekly report** (D-352): every Sunday the launchd job `weekly-report` (D-440, D-451) runs
   `node tools/reports/weekly.mjs --send`: the week that ended on Saturday, with the panel's numbers,
   as a PDF in `~/Documents/Juegos de Salón/Weekly reports/` and emailed to the owner.
 - **Panel, La Copa reports and rankings** (D-44, D-104, D-207, D-212): in the `owner-tools` skill (`.claude/skills/owner-tools/SKILL.md`); read it before touching them.

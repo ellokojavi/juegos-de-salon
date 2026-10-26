@@ -2,7 +2,7 @@
 
 What runs on the Mac mini and what it holds that is not in the repo, so the project can move to
 another machine (D-383). `tools/jobs/jobs.json` is the list of jobs; this page is everything else the
-machine needs. `machine.test.mjs` fails if a `mac` or `app` job, or a file under
+machine needs. `machine.test.mjs` fails if a `mac` job, or a file under
 `~/.config/juegos-de-salon/` that the code reads, is missing here.
 
 ## What runs there
@@ -11,17 +11,19 @@ machine needs. `machine.test.mjs` fails if a `mac` or `app` job, or a file under
 |---|---|---|---|
 | `inbox-watch` | launchd (`cl.juegosdesalon.inbox-watch`) | every 5 min | `node tools/jobs/jobs.mjs install` |
 | `feedback-watch` | launchd (`cl.juegosdesalon.feedback-watch`) | every 5 min | `node tools/jobs/jobs.mjs install` |
-| `processes-round` | claude.ai scheduled task that runs on this computer (`Juegos de Salón · processes round`) | 4:30 Pacific, daily | claude.ai → Scheduled, with "Require this computer" and the main folder (D-440) |
-| `weekly-report` | claude.ai scheduled task that runs on this computer (`Juegos de Salón · weekly report`) | Sundays 08:00 Pacific | same |
+| `processes-round` | launchd (`cl.juegosdesalon.processes-round`), a headless `claude -p` | 4:30 Pacific, daily | `node tools/jobs/jobs.mjs install` (D-451) |
+| `weekly-report` | launchd (`cl.juegosdesalon.weekly-report`), a headless `claude -p` | Sundays 08:00 Pacific | `node tools/jobs/jobs.mjs install` (D-451) |
 
 The launchd plists are generated from `jobs.json` (`~/Library/LaunchAgents/cl.juegosdesalon.<id>.plist`)
 and run the code of the **main folder** (today `~/Documents/Claude/Projects/juegos-de-salon`), which
-stays on `main`; `jobs.mjs run` fast-forwards it to origin/main before each run (only when clean and on `main`; the log says when it could not). The two scheduled tasks
-are created on claude.ai and run here (D-440): they show up, with each run's result, on the owner's
-phone, unlike the old tasks that lived only inside the desktop app and stopped unseen in October 2026.
-Their prompt is one line, "read `tools/jobs/prompts/<id>.md` from origin/main and follow it": the
-real instructions are in the repo, and `jobs.test.mjs` fails if they name a file that no longer
-exists. They need the Mac awake, online and the Claude desktop app open. If the round stops anyway,
+stays on `main`; `jobs.mjs run` fast-forwards it to origin/main before each run (only when clean and on `main`; the log says when it could not). The two daily and
+weekly Claude rounds run through `tools/jobs/claude-task.mjs` (D-451): `claude -p --permission-mode auto`
+with a one-line prompt, "read `tools/jobs/prompts/<id>.md` from origin/main and follow it", so the
+real instructions are in the repo and `jobs.test.mjs` fails if they name a file that no longer
+exists. They need only the Mac on and `claude` signed in (`~/.local/bin/claude`), not the desktop app:
+the desktop app's scheduled tasks stopped on 2026-10-18 when the app was closed, and the cloud ones
+cannot reach this machine. A run missed while the Mac sleeps runs when it wakes. Each run's output
+is in `~/Library/Logs/juegos-de-salon/<id>.log`. If the round stops anyway,
 `round-watch.yml` opens the "Processes round missed" issue within a day.
 
 ## What the machine holds (never in the repo)
@@ -53,7 +55,7 @@ support agent runs headless). Logs: `~/Library/Logs/juegos-de-salon/`. Optional:
 3. Copy `~/.config/juegos-de-salon/` from the old machine.
 4. `node tools/jobs/jobs.mjs install`, and on the old machine `node tools/jobs/jobs.mjs uninstall <id>`
    for each `mac` job, so the two do not both run.
-5. On claude.ai → Scheduled, point each task's "Require this computer" and folder at the new machine
+5. `claude` installed and signed in on the new machine (the Claude rounds use it headless)
    (their prompts are in `tools/jobs/prompts/`), so they no longer run on the old one.
 6. Keep it awake: System Settings → Energy → prevent automatic sleeping.
 7. `node tools/jobs/jobs.mjs status`: every `mac` job ✅ within 10 minutes.
