@@ -4,10 +4,12 @@
  * job runs in one of four places:
  *
  *   github  a scheduled workflow in .github/workflows/ (its cron must match the registry's)
- *   mac     a launchd job on the owner's Mac mini, installed from the registry by this tool; it
- *           runs a plain script, with no Claude unless the script itself decides it needs one
- *   app     a claude.ai scheduled task that runs on the Mac mini (a Claude session every time it
- *           runs), its instructions in tools/jobs/prompts/<id>.md (D-440)
+ *   mac     a launchd job on the owner's Mac mini, installed from the registry by this tool, either
+ *           `every` n seconds or `at` a local time ({ hour, minute, weekday? }); it runs a plain
+ *           script, with no Claude unless the script decides it needs one, or `claude-task.mjs`,
+ *           a headless Claude session that follows tools/jobs/prompts/<id>.md (D-440)
+ *   app     a claude.ai scheduled task (none left: the desktop app's tasks stopped unseen when the
+ *           app was closed, so the daily ones moved to launchd in October 2026)
  *   hook    a Claude Code hook in .claude/settings.json
  *
  * A job that runs often and usually finds nothing to do is a `mac` job: checking costs nothing,
@@ -59,8 +61,7 @@ export function plist(job, { repo, node, path, user = 'owner' }) {
   <key>WorkingDirectory</key><string>${esc(repo)}</string>
   <key>EnvironmentVariables</key>
   <dict><key>PATH</key><string>${esc(path)}</string><key>USER</key><string>${esc(user)}</string><key>LOGNAME</key><string>${esc(user)}</string></dict>
-  <key>StartInterval</key><integer>${job.every}</integer>
-  <key>RunAtLoad</key><true/>
+${schedule(job)}
   <key>StandardOutPath</key><string>${esc(join(LOGS, `${job.id}.launchd.log`))}</string>
   <key>StandardErrorPath</key><string>${esc(join(LOGS, `${job.id}.launchd.log`))}</string>
 </dict>
@@ -68,12 +69,24 @@ export function plist(job, { repo, node, path, user = 'owner' }) {
 `;
 }
 
+/** launchd's schedule: an interval that also runs on load, or a calendar time that launchd runs on waking if it was missed. */
+function schedule(job) {
+  if (job.every) return `  <key>StartInterval</key><integer>${job.every}</integer>\n  <key>RunAtLoad</key><true/>`;
+  const keys = { hour: 'Hour', minute: 'Minute', weekday: 'Weekday' };
+  const dict = Object.entries(keys).filter(([k]) => job.at[k] !== undefined).map(([k, K]) => `<key>${K}</key><integer>${job.at[k]}</integer>`).join('');
+  return `  <key>StartCalendarInterval</key>\n  <dict>${dict}</dict>`;
+}
+
 const ago = iso => {
   if (!iso) return 'never';
   const m = Math.round((Date.now() - new Date(iso)) / 60000);
   return m < 60 ? `${m} min ago` : m < 2880 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`;
 };
-const when = j => j.every ? `every ${j.every >= 3600 ? `${j.every / 3600} h` : `${j.every / 60} min`}` : j.cron ? `cron ${j.cron}` : j.trigger;
+const pad = n => String(n).padStart(2, '0');
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const when = j => j.every ? `every ${j.every >= 3600 ? `${j.every / 3600} h` : `${j.every / 60} min`}`
+  : j.at ? `${j.at.weekday !== undefined ? `${DAYS[j.at.weekday]} ` : 'daily '}${j.at.hour}:${pad(j.at.minute)} local`
+  : j.cron ? `cron ${j.cron}` : j.trigger;
 
 function lastRun(j) {
   if (j.where === 'mac') {
@@ -89,11 +102,6 @@ function lastRun(j) {
       return r ? `${r.conclusion === 'success' ? '✅' : r.status !== 'completed' ? '⏳' : '❌'} ${ago(r.createdAt)}` : 'never';
     } catch { return '? (gh unavailable)'; }
   }
-  // The round leaves its date in its memory (D-440); round-watch.mjs says whether it is behind
-  if (j.id === 'processes-round') {
-    try { return `last recorded round ${JSON.parse(readFileSync(join(HERE, '../../docs/processes.json'), 'utf8')).rounds.at(-1)?.date || 'never'} (claude.ai → Scheduled)`; } catch (_) { /* fall through */ }
-  }
-  if (j.where === 'app') return 'see claude.ai → Scheduled';
   return 'runs on its trigger';
 }
 
