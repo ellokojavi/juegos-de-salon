@@ -332,7 +332,8 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .chip-btn:disabled { opacity: 0.35; cursor: default; }
 .chip-btn:not(:disabled):hover, .chip-btn:focus-visible { border-color: var(--cyan); outline: none; }
 .campana-atajos { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.campana-orden { display: inline-flex; gap: 6px; margin-left: auto; }
+.campana-orden { display: inline-flex; gap: 6px; }
+.campana-atajos a.chip-btn { margin-left: auto; }
 .interruptor { position: relative; display: inline-flex; width: 56px; height: 32px; flex: none; cursor: pointer; }
 .interruptor input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
 .interruptor-pista { width: 100%; border-radius: 16px; background: var(--glass-border); transition: background 0.15s; }
