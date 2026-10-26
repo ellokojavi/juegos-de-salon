@@ -1,0 +1,4 @@
+level: minor
+
+- **🎲 Dudo, in the lab: shake the phone to roll your dice.** With a lab key, setup offers 🫨 Agitar para tirar: each round your dice show face down, and you shake the phone to roll them. While it shakes, the dice tumble on screen with changing faces, then land on what you rolled. An iPhone asks for the motion permission with one tap; a computer, or a phone without a sensor, gets a 🎲 Tirar los dados button.
+- **⏱️ 30 seconds per turn, also in the lab:** whoever doesn't bid, doubt or call it exactly in time loses a die, without the table being revealed, and opens the next round. The clock shows on your own turn and pauses under a reveal, a pass screen or a hidden page (U-20). Both switches are off by default, and in a room the creator's choice applies to everyone. Listed in /labs/ under ✨ Mejoras en prueba.

@@ -386,4 +386,31 @@ const ronda3 = (a, b, c) => [
   }
 }
 
+/* ---------- running out of time costs a die (turnSecs, lab) ---------- */
+{
+  const roll = [{ t: 'roll', from: 'A', d: '1,2,3,4,5' }, { t: 'roll', from: 'B', d: '6,6,6,6,6' }];
+  const conReloj = { dice: 5, turnSecs: 30 };
+  // Without the clock the message is ignored: nobody can take a die off a table that has none
+  const sin = buildState({ players: P, plays: [...roll, { t: 'timeout', from: 'A', r: 0 }] });
+  assert.equal(sin.phase, 'bid'); assert.equal(sin.st.A.dice, 5);
+  // Only the player on turn, and only for the round it names
+  const ajeno = buildState({ players: P, config: conReloj, plays: [...roll, { t: 'timeout', from: 'B', r: 0 }] });
+  assert.equal(ajeno.st.B.dice, 5, 'a player who is not on turn cannot time out');
+  const viejo = buildState({ players: P, config: conReloj, plays: [...roll, { t: 'timeout', from: 'A', r: 3 }] });
+  assert.equal(viejo.st.A.dice, 5, 'a timeout for another round is ignored');
+  // A on turn runs out of time after B's bid: no reveal, A loses a die and opens the next round
+  const plays = [...roll, { t: 'bid', from: 'A', n: 2, p: 6 }, { t: 'bid', from: 'B', n: 3, p: 6 }, { t: 'timeout', from: 'A', r: 0 }];
+  const s = buildState({ players: P, config: conReloj, plays });
+  assert.equal(s.st.A.dice, 4); assert.equal(s.st.B.dice, 5);
+  assert.equal(s.phase, 'roll', 'the next round starts right away, with no dice to open');
+  assert.equal(s.opener, 'A');
+  assert.equal(s.last.type, 'timeout'); assert.equal(s.last.loser, 'A'); assert.deepEqual(s.last.dice, {});
+  // A repeated timeout (two phones, a reload) does not cost a second die
+  const doble = buildState({ players: P, config: conReloj, plays: [...plays, { t: 'timeout', from: 'A', r: 0 }] });
+  assert.equal(doble.st.A.dice, 4);
+  // Running out of time on the last die is going out
+  const uno = buildState({ players: P, config: { dice: 1, turnSecs: 30 }, plays: [{ t: 'roll', from: 'A', d: '3' }, { t: 'roll', from: 'B', d: '4' }, { t: 'timeout', from: 'A', r: 0 }] });
+  assert.ok(uno.done); assert.equal(uno.winner, 'B'); assert.equal(uno.last.fuera, 'A');
+}
+
 console.log('dudo: dados, apuestas, calzar, rondas, el celular que juega y el anti-trampa en orden');

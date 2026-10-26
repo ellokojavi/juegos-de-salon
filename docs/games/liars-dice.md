@@ -146,6 +146,30 @@ gana todavía más contra el lector (+16 puntos), pero ahí **nunca** canta su p
 un patrón tan legible como cantarla siempre: en 0,7 dice la verdad una de cada tres veces que podría
 mentir, y ninguna de las dos lecturas le sirve a nadie.
 
+## In the lab: shake to roll and the turn's clock (lab: `#seccion-dudo-cacho`)
+
+Two setup switches, offered only with a lab key (D-395) and off by default; in a room the
+creator's choice travels in the config, so it applies to every phone. Uno al día never has them.
+
+- **🫨 Shake to roll** (`config.shake`): each round your dice show face down and you shake the
+  phone to roll them. While it shakes, the dice tumble on screen with a new face every 70 ms; three
+  jolts (13 m/s² beyond gravity, within 1.5 s) and they keep rolling 750 ms, then land on their
+  real faces. The dice are rolled before, as always (and committed with their hash in a room, C-10):
+  the shake only shows them, so a round never waits on a sensor and the faces seen while rolling
+  mean nothing. The page listens first; with no reading in 1.2 s, a phone that can ask for the
+  motion permission (iPhone) shows 🫨 Allow shaking, and one with no sensor (a computer) or a refused
+  permission gets 🎲 Roll the dice. No bid until your dice are out.
+- **⏱️ 30 seconds per turn** (`config.turnSecs`, `TURN_SECS` in `rules.js`): whoever has the turn
+  has that long to bid, doubt or call it exactly, and rolling is part of the turn. The clock shows
+  only on your own turn and pauses under a reveal, a pass screen or a hidden page (U-20). Out of
+  time, your phone sends `timeout`: you lose a die (or go out), the table is **not** revealed, and
+  you open the next round. The engine accepts it only with the clock on, from the player on turn
+  and for that round, so a repeat costs nothing. In a room, only your own phone sends it: a phone
+  that left still stalls the table, as before.
+
+Tested by `tools/e2e/liars-dice/shake-clock.mjs` (synthetic `devicemotion` events, and the clock
+moved to its last second).
+
 ## Flujo
 
 ```
@@ -193,6 +217,7 @@ roll* → bid+ → (dudo | calza) → open*
 | `dudo` | — | En su turno, si ya hay apuesta |
 | `calza` | — | En su turno, si la apuesta llegó a la mitad de la mesa |
 | `open` | `d` dados, `salt` sal | Después de dudar, uno por jugador vivo |
+| `timeout` | `r` the round | Lab, with `turnSecs`: sent by the player on turn, from their own phone, when their time runs out |
 
 Un `roll` con `d` se resuelve solo; uno con `h` obliga a esperar el `open`. Es el mismo camino para
 los tres modos: el motor cuenta cuando conoce todos los dados de la ronda, y mientras tanto la fase
@@ -222,6 +247,7 @@ public/liars-dice/index.html · public/liars-dice/style.css · public/liars-dice
 public/liars-dice/engine.js · public/liars-dice/engine.test.mjs
 tools/e2e/liars-dice/local.mjs   un celular y contra el celular
 tools/e2e/liars-dice/online.mjs  tres celulares contra Firebase real
+tools/e2e/liars-dice/shake-clock.mjs  lab: shake to roll and the turn's clock
 ```
 
 Gancho de pruebas (C-14): `window.__dudo` (`view`, `match`, `session`).
