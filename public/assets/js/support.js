@@ -10,7 +10,7 @@
  *     · not before the device has finished 5 games;
  *     · at most once every 7 days;
  *     · not on an ending that already shows the inbox link: one quiet link per ending (U-1);
- *     · after opening the support page, it rests 30 days; after paying, it never asks again.
+ *     · after opening the support card, it rests 30 days; after paying, it never asks again.
  *
  * Both links open the same card over the page they are on, a sheet from the bottom like the home
  * page's share sheet (`openSupportSheet`, D-449): what the money is for, one button to Stripe, and
