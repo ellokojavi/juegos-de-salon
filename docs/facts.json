@@ -1,5 +1,5 @@
 {
-  "version": "0.211.5",
+  "version": "0.215.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1078,6 +1078,7 @@
     "public/liars-dice/game.js",
     "public/liars-dice/rules.js",
     "public/panel/aggregate.js",
+    "public/panel/campaigns.js",
     "public/panel/copas.js",
     "public/panel/dominios.js",
     "public/panel/panel.js",
@@ -1163,6 +1164,7 @@
     "public/liars-dice/engine.test.mjs",
     "public/panel/adapta.test.mjs",
     "public/panel/aggregate.test.mjs",
+    "public/panel/campaigns.test.mjs",
     "public/panel/copas.test.mjs",
     "public/panel/dominios.test.mjs",
     "public/panel/rutas.test.mjs",
