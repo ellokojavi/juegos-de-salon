@@ -10,8 +10,7 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
-import { param, tiene } from '../assets/js/parametros.js';
-import { labAccess } from '../assets/js/lab-access.js';
+import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { crearDado } from '../assets/js/dado3d.js';
@@ -43,13 +42,6 @@ const store = createSessionStore(GAME_ID);
 const nameStore = createNameStore(GAME_ID);
 /** Uno al día (D-230): con `?today`, contra el celular y con los dados del día. */
 const HOY = modoHoy(GAME_ID);
-/**
- * Shaking the phone to roll and the turn's clock are tried in the lab (D-395), so setup offers
- * them only with a lab key. lab: #seccion-dudo-cacho
- * In the test store (`?test`) the scripts see the setup of before unless the URL says `&lab`.
- */
-let enLab = false;
-const LAB = (tiene('test') && !tiene('lab') ? Promise.resolve(false) : labAccess()).then(v => (enLab = v));
 
 /**
  * Los dados de un jugador en una ronda de Uno al día: salen de la semilla del día, la ronda y el
@@ -330,7 +322,7 @@ function renderPlay(v) {
   mine.innerHTML = '';
   const dados = diceOf(v, yo) || [];
   const tapados = cubiertos(v, yo, dados);
-  // While the dice are still to roll, the hand's panel is the shaking cloth (lab: #seccion-dudo-cacho)
+  // While the dice are still to roll, the hand's panel is the shaking cloth (D-447)
   mine.classList.toggle('agitando', tapados);
   if (tapados) mine.append(cacho(v, yo));
   else {
@@ -447,7 +439,7 @@ function renderActions(v, yo, miTurno, tapados = false) {
   box.append(acciones);
 }
 
-/* ---------- Shake to roll (lab: #seccion-dudo-cacho) ---------- */
+/* ---------- Shake to roll (D-447) ---------- */
 /**
  * With `shake` on, each round's dice show face down and roll only when the player shakes the
  * phone, like the cup at a real table. The dice are already rolled (and, in a room, committed with
@@ -465,7 +457,12 @@ const SACUDONES = 3;
 const QUIETO_MS = 350;
 /** With no reading from the sensor this long after listening, the phone has none: the button shows. */
 const SIN_SENSOR_MS = 1200;
-const PIDE_PERMISO = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
+/**
+ * Only a phone or a tablet asks for the motion permission: a desktop Chrome has the same
+ * requestPermission as an iPhone, and there "Allow shaking" over "Shake the phone" was a second tap
+ * before the 🎲 button that D-447 promises a computer.
+ */
+const PIDE_PERMISO = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function' && navigator.maxTouchPoints > 0;
 /**
  * `sensor`: null while it is not known, true with a reading, false with none in time. `permiso`:
  * null until asked. The page listens first and asks only when nothing arrives: Android answers
@@ -799,7 +796,7 @@ function cacho(v, role) {
   return vs.caja;
 }
 
-/* ---------- The turn's clock (lab: #seccion-dudo-cacho) ---------- */
+/* ---------- The turn's clock (D-447) ---------- */
 /**
  * With `turnSecs` on, whoever has the turn has that long to bid, doubt or call it exactly; out of
  * time, their own phone sends `timeout` and they lose a die. The clock runs only while the table
@@ -1007,7 +1004,8 @@ function renderResult(v) {
       el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backMenu),
     ),
   );
-  if (!S.shownWin) { S.shownWin = true; SFX.win(); confetti({ count: 220, duration: 3500 }); }
+  // Losing to the phone is not celebrated: no fanfare and no confetti, as the 🎲 instead of the 🏆 says
+  if (!S.shownWin) { S.shownWin = true; if (S.mode !== 'cpu' || gane) { SFX.win(); confetti({ count: 220, duration: 3500 }); } }
 }
 
 /* ------------------------------------------------------------------ */
@@ -1147,23 +1145,18 @@ function interruptor(encendido, label, hint, onChange) {
 }
 
 /**
- * The lab's two switches, shaking to roll and the turn's clock (lab: #seccion-dudo-cacho): off by
- * default, and only with a lab key. The key is asked once per page; if the answer is still on its
- * way, `redibujar` adds them when it comes.
+ * The two switches of D-447: shaking to roll, on by default (it is how the dice come out; a phone
+ * with no sensor gets a button), and the turn's clock, off (it changes the rules: out of time
+ * costs a die, so each table chooses it).
  */
-function ajustesDeLab(redibujar) {
-  let shake = false, reloj = false, puestos = false;
-  LAB.then(() => { if (enLab && !puestos) redibujar(); });
+function ajustesDelCacho() {
+  let shake = true, reloj = false;
   return {
-    switches: () => {
-      if (!enLab) return [];
-      puestos = true;
-      return [
-        interruptor(shake, T.shakeLabel, T.shakeHint, v => { shake = v; }),
-        interruptor(reloj, fmt(T.timerLabel, { n: TURN_SECS }), T.timerHint, v => { reloj = v; }),
-      ];
-    },
-    config: () => ({ shake: enLab && shake, turnSecs: enLab && reloj ? TURN_SECS : 0 }),
+    switches: () => [
+      interruptor(shake, T.shakeLabel, T.shakeHint, v => { shake = v; }),
+      interruptor(reloj, fmt(T.timerLabel, { n: TURN_SECS }), T.timerHint, v => { reloj = v; }),
+    ],
+    config: () => ({ shake, turnSecs: reloj ? TURN_SECS : 0 }),
   };
 }
 
@@ -1186,7 +1179,9 @@ function renderModes() {
 function renderRules() {
   const list = $('#rules-list');
   list.innerHTML = '';
-  T.rules.forEach(r => list.append(el('li', { html: r })));
+  // The setup's two switches (D-447) go before the last rule, except in Uno al día, which plays with neither
+  const reglas = HOY ? T.rules : [...T.rules.slice(0, -1), T.ruleShake, fmt(T.ruleClock, { n: TURN_SECS }), T.rules.at(-1)];
+  reglas.forEach(r => list.append(el('li', { html: r })));
 }
 
 function renderResumeSlot() {
@@ -1222,7 +1217,7 @@ function renderSetup(mode, codigoInvitado = '') {
     : [recordado || '', ''];
   let calzar = DEFAULT_CONFIG.calzar;
   let chileno = DEFAULT_CONFIG.chileno;
-  const lab = ajustesDeLab(() => dibujar());
+  const ajustes = ajustesDelCacho();
 
   const dibujar = () => {
     form.innerHTML = '';
@@ -1252,7 +1247,7 @@ function renderSetup(mode, codigoInvitado = '') {
     if (lang === 'es') {
       form.append(interruptor(chileno, CHILENO.label, CHILENO.hint, v => { chileno = v; }));
     }
-    form.append(...lab.switches());
+    form.append(...ajustes.switches());
   };
   dibujar();
 
@@ -1290,7 +1285,7 @@ function renderSetup(mode, codigoInvitado = '') {
       const names = mode === 'cpu'
         ? { A: nombres[0], B: T.cpuName }
         : Object.fromEntries(players.map((r, i) => [r, nombres[i]]));
-      startMatch(mode, names, { ...DEFAULT_CONFIG, calzar, chileno, ...lab.config(), players });
+      startMatch(mode, names, { ...DEFAULT_CONFIG, calzar, chileno, ...ajustes.config(), players });
     },
   }, T.start));
   acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => showScreen('screen-intro') }, T.menu));
@@ -1311,8 +1306,7 @@ function renderSetupOnline(codigoInvitado = '') {
   const err = $('#setup-error'); clearRoomError(err);
   let nombre = nameStore.get() || '';
   let calzar = DEFAULT_CONFIG.calzar, chileno = DEFAULT_CONFIG.chileno;
-  const labSlot = el('div', { class: 'lab-switches' });
-  const lab = ajustesDeLab(() => labSlot.replaceChildren(...lab.switches()));
+  const ajustes = ajustesDelCacho();
 
   form.append(el('div', { class: 'player-row' },
     el('div', { class: 'num' }, '👤'),
@@ -1325,8 +1319,7 @@ function renderSetupOnline(codigoInvitado = '') {
   if (!invitado) {
     form.append(interruptor(calzar, T.calzarLabel, T.calzarHint, v => { calzar = v; }));
     if (lang === 'es') form.append(interruptor(chileno, CHILENO.label, CHILENO.hint, v => { chileno = v; }));
-    labSlot.replaceChildren(...lab.switches());
-    form.append(labSlot);
+    form.append(...ajustes.switches());
   }
 
   const fallar = msg => {
@@ -1357,7 +1350,7 @@ function renderSetupOnline(codigoInvitado = '') {
       const n = nombre.trim();
       if (!n) return fallar(T.errName);
       nameStore.set(n); SFX.tap();
-      await tryRoom(crear, () => createOnline(n, { ...DEFAULT_CONFIG, calzar, chileno, ...lab.config(), players: null }), { busy: C.opening, ...roomOpts });
+      await tryRoom(crear, () => createOnline(n, { ...DEFAULT_CONFIG, calzar, chileno, ...ajustes.config(), players: null }), { busy: C.opening, ...roomOpts });
     } }, T.create);
     acciones.append(crear, el('div', { class: 'or' }, `— ${COMMON[lang].or} —`),
       el('div', { class: 'panel' },

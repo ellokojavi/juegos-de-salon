@@ -1,4 +1,4 @@
-// Liar's Dice end to end, offline: a duel against the phone and a three-player game on one phone.
+// Liar's Dice end to end, offline (with the shake off: it has its own script, shake-clock.mjs): a duel against the phone and a three-player game on one phone.
 // Checks that the bid really goes up, that the reveal counts right, that the phone never
 // makes an illegal move and that the game can be resumed (C-6). Shots are named after
 // the README screenshots (docs/capturas.json).
@@ -37,7 +37,7 @@ console.log('modes:', await ev(`[...document.querySelectorAll('.mode')].map(m=>m
 /* ---------------- Against the phone ---------------- */
 await ev(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(400);
 await ev(`(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
-await ev(`document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(600);
+await ev(`[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('🫨'))?.querySelector('.switch.on')?.click(); document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(600);
 await shot('03-table');
 console.log('my dice:', await ev(`document.querySelectorAll('#mine .die').length`), '· table:', await ev(`document.getElementById('status-sub').textContent`));
 
@@ -79,7 +79,7 @@ await ev(`document.querySelector('#setup-actions .btn--ghost').click(); 1`); awa
 await shot('02-setup');
 console.log('with three players there are:', await ev(`[...document.querySelectorAll('#setup-form .toggle-row b')].map(b=>b.textContent).join(' + ')`));
 await ev(`(()=>{const n=['Javi','Cata','Nico'];[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))});return 1})()`);
-await ev(`document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(500);
+await ev(`[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes('🫨'))?.querySelector('.switch.on')?.click(); document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(500);
 console.log('on one phone it starts with the handoff:', await ev(`document.getElementById('handoff').innerText.replace(/\\n/g,' ')`));
 await shot('07-handoff');
 

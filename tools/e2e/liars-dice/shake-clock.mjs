@@ -1,5 +1,5 @@
-// Liar's Dice in the lab (lab: #seccion-dudo-cacho): shaking the phone to roll and the turn's clock.
-// Against the phone with both switches on: the dice come face down and a shake (synthetic
+// Liar's Dice: shaking the phone to roll and the turn's clock (D-447).
+// Against the phone with the shake on by default and the clock turned on: the dice come face down and a shake (synthetic
 // devicemotion events) rolls them on screen while it lasts, and they land once it stops; running out of time costs a die
 // with no reveal. Then, on a page that never hears from a sensor, a button rolls them.
 import { output } from '../output.mjs';
@@ -42,9 +42,10 @@ await b.go(`${SITE}/liars-dice/`);
 await ev(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(500);
 const labels = await switches();
 console.log('switches:', labels);
-check(/Agitar/.test(labels) && /segundos/.test(labels), 'with a lab key, setup offers shaking and the clock');
+check(/Agitar/.test(labels) && /segundos/.test(labels), 'setup offers shaking and the clock');
+check(await ev(`(()=>{const r=[...document.querySelectorAll('#setup-form .toggle-row')];const on=t=>r.find(x=>t.test(x.textContent))?.querySelector('.switch').classList.contains('on');return on(/Agitar/)===true&&on(/segundos/)===false})()`), 'the shake starts on and the clock off');
 await setName('Javi');
-await ev(`[...document.querySelectorAll('#setup-form .toggle-row')].filter(r=>/Agitar|segundos/.test(r.textContent)).forEach(r=>r.querySelector('.switch').click()); 1`);
+await ev(`[...document.querySelectorAll('#setup-form .toggle-row')].filter(r=>/segundos/.test(r.textContent)).forEach(r=>r.querySelector('.switch').click()); 1`);
 await b.shot('01-setup-switches');
 await ev(`document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(300);
 // A phone streams readings even when still: one calm reading says there is a sensor
@@ -99,7 +100,6 @@ await ev(`localStorage.clear(); 1`);
 await b.go(`${SITE}/liars-dice/`);
 await ev(`document.querySelectorAll('.mode')[2].click(); 1`); await sleep(500);
 await setName('Cata');
-await ev(`[...document.querySelectorAll('#setup-form .toggle-row')].filter(r=>/Agitar/.test(r.textContent)).forEach(r=>r.querySelector('.switch').click()); 1`);
 await ev(`document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(1400);
 // Chrome, like an iPhone, can ask for the motion permission: silent, the page asks first
 if (await ev(`!!document.getElementById('btn-permiso')`)) {
