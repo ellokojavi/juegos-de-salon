@@ -1,0 +1,50 @@
+# Saves the podium of every finished Cup that has none (D-450): the app saves it only when someone
+# opens the Cup after it ends, so a Cup nobody reopened never reached the medal table.
+# tools/firebase/rankings-history.mjs --podiums writes only those podiums, built as the app builds
+# them, and never touches a saved one. Running it twice writes nothing new.
+#
+# It needs the FIREBASE_ADMIN_JSON secret (the same as publish.yml's, D-218); without it, it warns
+# and ends green.
+
+name: Cup podiums
+
+on:
+  schedule:
+    # Cups close at midnight Pacific; this is 0:47 PDT / 23:47 PST
+    - cron: '47 7 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only say which podiums it would write'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cup-podiums
+  cancel-in-progress: false
+
+jobs:
+  podiums:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Save the missing podiums
+        env:
+          KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+          WRITE: ${{ inputs.dry_run && ' ' || '--write' }}
+        run: |
+          if [ -z "$KEY_JSON" ]; then
+            echo "::warning::The FIREBASE_ADMIN_JSON secret is missing: the podiums are not saved"
+            exit 0
+          fi
+          umask 077
+          printf '%s' "$KEY_JSON" > "$RUNNER_TEMP/key.json"
+          export FIREBASE_KEY="$RUNNER_TEMP/key.json"
+          node tools/firebase/rankings-history.mjs --podiums $WRITE

@@ -56,6 +56,13 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
 ## In force (437)
+| La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450 |
+| Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451 |
+| Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450 |
+| Marketing | `marketing/README.md` | D-178, D-380, D-410 |
+| Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
+
+## In force (438)
 
 | D | Title | Status |
 |---|---|---|
@@ -262,7 +269,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-209](decisions/D-209.md) | The flag next to each name, also for earlier ones | current |
 | [D-210](decisions/D-210.md) | Offline games say who played and how they ended | amended by D-213 |
 | [D-211](decisions/D-211.md) | Each cup, room and offline game says which language it was played in | current |
-| [D-212](decisions/D-212.md) | A player is a name and a PIN for all games, and their records go to rankings | amended by D-217, D-249, D-357 |
+| [D-212](decisions/D-212.md) | A player is a name and a PIN for all games, and their records go to rankings | amended by D-217, D-249, D-357, D-450 |
 | [D-213](decisions/D-213.md) | One source per rule: the canons state today's rule | amended by D-394 |
 | [D-214](decisions/D-214.md) | The home page filter is in English in the URL: `?type=logic` | current |
 | [D-215](decisions/D-215.md) | Wins per group game, and records for solo Toque y Fama and Línea Relámpago | amended by D-217 |
@@ -485,7 +492,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-437](decisions/D-437.md) | The 3-day Copa, offered on the new create screen (in the lab) | amended by D-438 |
 | [D-438](decisions/D-438.md) | The 3-day Copa has no Grand Final | current |
 | [D-439](decisions/D-439.md) | The weekend cup: three days of three games, a one-off closed the night it opened | current |
-| [D-440](decisions/D-440.md) | The processes round runs from a visible scheduled task, with a watchdog on GitHub | current |
+| [D-440](decisions/D-440.md) | The processes round runs from a visible scheduled task, with a watchdog on GitHub | amended by D-451 |
 | [D-441](decisions/D-441.md) | Pending work is watched from GitHub: stuck PRs, branches without a PR, and a waiter that does not go blind | current |
 | [D-442](decisions/D-442.md) | Agentes: no clue is pink, red only means a mistake | current |
 | [D-443](decisions/D-443.md) | Every email leaves from hola@, and each one proves it | current |
@@ -496,6 +503,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-448](decisions/D-448.md) | ☕ Buy me a coffee: voluntary support through a Stripe Payment Link, quiet and in two places (in the lab) | amended by D-449 |
 | [D-449](decisions/D-449.md) | ☕ Invítame a un café is a card over the page, not a page of its own (in the lab) | current |
 | [D-452](decisions/D-452.md) | A skipped email stays visible: the round lists it, the owner can read it | current |
+| [D-450](decisions/D-450.md) | A finished Cup's podium is saved every night, even if nobody reopens the Cup | current |
+| [D-451](decisions/D-451.md) | The Claude rounds run from launchd on the Mac mini | current |
 
 ## No longer in force (11)
 
