@@ -31,7 +31,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | 🚇 Rutas rotas (formerly Rutas), the lab's metro map (rectangle turns, exact minimum, five stages, 7-minute clock and layered score) | `docs/games/routes.md` | D-293, D-294, D-295, D-332 |
 | 💥 Números explosivos, the lab's number solitaire (equal pairs or pairs adding to 10, rows that clear, ➕, a board with a way out, explosions) | `docs/games/exploding-numbers.md` | D-297 |
 | 🎲 Pips, the dominoes puzzle of the lab (zones with a rule, one solution per board, three boards) | `docs/games/pips.md` | D-381, D-385, D-386 |
-| 🥷 Stick Ninja, the lab's hold-and-release bridge game (the day's course, flags for perfects, moving pillars, English only) | `docs/games/stick.md` | D-446 |
+| 🥷 Stick Ninja, the lab's hold-and-release bridge game (the day's course, flags for perfects, moving pillars, English only) | `docs/games/stick.md` | D-446, D-455 |
 | 🧱 Stack, the lab's one-tap tower game (the overhang is cut off, perfect drops, judged at the tap's own moment, English only) | `docs/games/stack.md` | D-445 |
 | 📐 Loteo, the lab's Shikaku (rectangles whose number is their area, unique solution, five boards against the clock: two warm-ups and three hard ones; the ⚡💧 Servicios mode, with same-size plots and one ⚡ and one 💧 in each) | `docs/games/plots.md` | D-310, D-311, D-312, D-332 |
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
@@ -51,11 +51,11 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453 |
 | Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451, D-452 |
-| Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450 |
+| Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450, D-455 |
 | Marketing | `marketing/README.md` | D-178, D-380, D-410 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (440)
+## In force (441)
 
 | D | Title | Status |
 |---|---|---|
@@ -262,7 +262,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-209](decisions/D-209.md) | The flag next to each name, also for earlier ones | current |
 | [D-210](decisions/D-210.md) | Offline games say who played and how they ended | amended by D-213 |
 | [D-211](decisions/D-211.md) | Each cup, room and offline game says which language it was played in | current |
-| [D-212](decisions/D-212.md) | A player is a name and a PIN for all games, and their records go to rankings | amended by D-217, D-249, D-357, D-450 |
+| [D-212](decisions/D-212.md) | A player is a name and a PIN for all games, and their records go to rankings | amended by D-217, D-249, D-357, D-450, D-455 |
 | [D-213](decisions/D-213.md) | One source per rule: the canons state today's rule | amended by D-394 |
 | [D-214](decisions/D-214.md) | The home page filter is in English in the URL: `?type=logic` | current |
 | [D-215](decisions/D-215.md) | Wins per group game, and records for solo Toque y Fama and Línea Relámpago | amended by D-217 |
@@ -499,6 +499,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-451](decisions/D-451.md) | The Claude rounds run from launchd on the Mac mini | current |
 | [D-452](decisions/D-452.md) | A skipped email stays visible: the round lists it, the owner can read it | current |
 | [D-453](decisions/D-453.md) | Toque y Fama's solo score, by deduction: tried in the lab first | current |
+| [D-455](decisions/D-455.md) | A lab game may keep its own leaderboard, outside the Todoterreno | current |
 
 ## No longer in force (11)
 
