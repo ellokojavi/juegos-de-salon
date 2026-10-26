@@ -1173,7 +1173,9 @@ function renderModes() {
 function renderRules() {
   const list = $('#rules-list');
   list.innerHTML = '';
-  T.rules.forEach(r => list.append(el('li', { html: r })));
+  // The setup's two switches (D-447) go before the last rule, except in Uno al día, which plays with neither
+  const reglas = HOY ? T.rules : [...T.rules.slice(0, -1), T.ruleShake, fmt(T.ruleClock, { n: TURN_SECS }), T.rules.at(-1)];
+  reglas.forEach(r => list.append(el('li', { html: r })));
 }
 
 function renderResumeSlot() {
