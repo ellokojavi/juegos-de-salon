@@ -15,7 +15,8 @@ import { launch, sleep } from '../../tools/e2e/cdp.mjs';
 
 const SITE = process.env.SITE || 'http://localhost:8765';
 const DEST = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'public', 'assets', 'splash');
-const OUT = output('/tmp/splash-clips');
+// argv[2] is the game to record, not the output folder: always the fallback
+const OUT = output('/tmp/splash-clips', []);
 const SIZE = 360; // px of the clip, square; the splash draws it at most at ~230 px (×1.5 for sharp screens)
 const FPS = 12;
 
