@@ -3,7 +3,7 @@
 // opens its page with a fixed seed, starts, and plays the solution slowly while it shoots the board
 // about 12 times a second; ffmpeg turns the frames into a small looping MP4 and its poster.
 //
-//   SITE=http://localhost:8771 node marketing/splash/capture.mjs [routes|plots|paint-mines]
+//   SITE=http://localhost:8771 node marketing/splash/capture.mjs [routes|plots|paint-mines|bridges]
 //
 // Output: public/assets/splash/<game>.mp4 and <game>.jpg (the last frame: the board solved).
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -56,6 +56,38 @@ const GAMES = {
       }
     },
   },
+  bridges: {
+    // 🚂 Tren en Vilo in its neon look: a level-1 stage (Math.random pinned, so the same one each time),
+    // its solution's beams dragged in one by one with the mouse, then 🚂 Probar and the train crosses
+    url: '/bridges/?test',
+    board: '.tv-lienzo',
+    before: `window.__rnd = Math.random; Math.random = () => 0.99; 1`,
+    hold: 0, keep: 4,
+    ready: `!!document.querySelector('.tv-lienzo') && !document.getElementById('cuenta')`,
+    play: async (ev, b) => {
+      const { beams, deck } = JSON.parse(await ev(`(() => { const P = window.__trenEnVilo.P, e = P.etapas[P.etapa]; return JSON.stringify({ beams: e.solucion, deck: P.vigas.map(v => [v.a, v.b]) }); })()`));
+      const k = ([a, b]) => [a.join(','), b.join(',')].sort().join('|');
+      const has = new Set(deck.map(k));
+      const at = async ([x, y]) => JSON.parse(await ev(`(() => { const c = document.querySelector('.tv-lienzo'), r = c.getBoundingClientRect(), s = c._m.escala; return JSON.stringify([r.left + (${x} + 1.3) * s, r.top + (c._v.arriba - (${y})) * s]); })()`));
+      const mouse = (type, [x, y]) => b.send('Input.dispatchMouseEvent', { type, x, y, button: 'left', buttons: type === 'mouseReleased' ? 0 : 1, clickCount: 1 });
+      // Two passes: a beam that starts at a joint not laid yet waits for the second
+      for (const beam of [...beams, ...beams]) {
+        const now = JSON.parse(await ev(`JSON.stringify(window.__trenEnVilo.P.vigas.map(v => [v.a, v.b]))`)).map(k);
+        if (has.has(k(beam)) || now.includes(k(beam))) continue;
+        const [p, q] = [await at(beam[0]), await at(beam[1])];
+        await mouse('mousePressed', p);
+        for (let i = 1; i <= 8; i++) { await mouse('mouseMoved', [p[0] + (q[0] - p[0]) * i / 8, p[1] + (q[1] - p[1]) * i / 8]); await sleep(40); }
+        await mouse('mouseReleased', q);
+        await sleep(450);
+      }
+      await ev(`Math.random = window.__rnd; 1`);
+      await sleep(500);
+      await ev(`document.getElementById('btn-probar').click(); 1`);
+      // Until the train reaches the far side, and a moment on, before the stage's summary covers the board
+      for (let t = 0; t < 150; t++) { if (await ev(`window.__trenEnVilo.P.hechas > 0`)) break; await sleep(100); }
+      await sleep(900);
+    },
+  },
 };
 
 const only = process.argv[2];
@@ -68,6 +100,7 @@ try {
     const frames = `${OUT}/${name}`;
     rmSync(frames, { recursive: true, force: true }); mkdirSync(frames, { recursive: true });
     await b.go(`${SITE}${g.url}`, 1500);
+    if (g.before) await ev(g.before);
     if (!(await b.until(`document.getElementById('btn-empezar')`, 8000))) throw new Error(`${name}: no Start`);
     await ev(`document.getElementById('btn-empezar').click(); 1`);
     if (!(await b.until(g.ready, 10000))) throw new Error(`${name}: the board did not appear`);
@@ -83,7 +116,7 @@ try {
     };
     const loop = (async () => { while (recording) { const t0 = Date.now(); await shoot(); await sleep(Math.max(0, 1000 / FPS - (Date.now() - t0))); } })();
     await sleep(700);
-    await g.play(ev);
+    await g.play(ev, b);
     const solvedAt = n;
     await sleep(g.hold ?? 1400); // the solved board, held (Loteo brings its next board sooner: `keep` frames of it)
     recording = false; await loop;
@@ -93,4 +126,4 @@ try {
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', `${frames}/${String(Math.min(n - 1, solvedAt + Math.min(3, (g.keep ?? 4) - 1))).padStart(4, '0')}.png`, '-q:v', '5', join(DEST, `${name}.jpg`)]);
     console.log(`✓ ${name}: ${n} frames → ${mp4}`);
   }
-} finally { process.exit(0); }
+} catch (err) { console.error(`✗ ${err.message}`); process.exitCode = 1; } finally { process.exit(); }

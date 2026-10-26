@@ -17,3 +17,5 @@ Screenshots at 390 px, as `node tools/e2e/look.mjs splash tren-en-vilo-pronto --
 ## History
 
 - **2026-10-22:** made with the owner, who trimmed the texts down to the kicker and the title.
+- **2026-10-26:** off, superseded by [`tren-en-vilo-ya`](../tren-en-vilo-ya/README.md) when the game left
+  the lab. Its entry stays in `CAMPAIGNS` (an id is never reused).

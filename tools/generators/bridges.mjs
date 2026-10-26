@@ -1,28 +1,28 @@
-// Tren en Vilo (lab): builds the catalog of crossings, public/labs/bridges/catalogo.json.
-//   node tools/generators/bridges.mjs [--por-nivel 12] [--nivel 1..5]   (one level writes catalogo-<n>.json, to run them in parallel)
-//   node tools/generators/bridges.mjs --juntar                          (joins catalogo-1..5.json into catalogo.json)
-//   node tools/generators/bridges.mjs --legible [catalogo-madera.json] (replaces each solution with a readable, solid truss)
+// Tren en Vilo: builds the catalogs of crossings in public/cup/games/bridges/ (catalog.json, the wood one the game plays; catalog-beams.json, the old beam count).
+//   node tools/generators/bridges.mjs [--por-nivel 12] [--nivel 1..5]   (one level writes <catalog>-<n>.json, to run them in parallel)
+//   node tools/generators/bridges.mjs --juntar                          (joins <catalog>-1..5.json into the catalog)
+//   node tools/generators/bridges.mjs --legible [catalog.json] (replaces each solution with a readable, solid truss)
 // For each difficulty level (1 to 5) it makes crossings of different kinds — anchors low on the cliff
 // faces, stone towers above the deck, rock pillars out of the water, or a mix — searches each one's
 // cheapest bridge that holds (greedy removal from rich starts, like the first stages), and keeps those
 // whose bare deck falls. The budget is that minimum plus the level's spare beams (3, 3, 2, 1, 0).
 // Each game draws one crossing per level, so a regular player rarely meets the same five.
 import { writeFileSync, readFileSync, existsSync, rmSync } from 'node:fs';
-import { probar, vigaValida, fijos, costo, fijarDT, DT } from '../../public/labs/bridges/engine.js';
+import { probar, vigaValida, fijos, costo, fijarDT, DT } from '../../public/cup/games/bridges/physics.js';
 
 const arg = n => (process.argv.includes(n) ? process.argv[process.argv.indexOf(n) + 1] : null);
 const POR_NIVEL = Number(arg('--por-nivel')) || 12;
 const SOLO = Number(arg('--nivel')) || 0;
-const CARPETA = new URL('../../public/labs/bridges/', import.meta.url);
+const CARPETA = new URL('../../public/cup/games/bridges/', import.meta.url);
 if (process.argv.includes('--juntar')) {
   const todo = [];
-  const base = `catalogo${process.argv.includes('--madera') ? '-madera' : process.argv.includes('--prueba') ? '-prueba' : ''}`;
+  const base = process.argv.includes('--madera') ? 'catalog' : process.argv.includes('--prueba') ? 'catalog-test' : 'catalog-beams';
   for (let n = 1; n <= 5; n++) { const f = new URL(`${base}-${n}.json`, CARPETA); if (existsSync(f)) { todo.push(...JSON.parse(readFileSync(f, 'utf8'))); rmSync(f); } }
   writeFileSync(new URL(`${base}.json`, CARPETA), JSON.stringify(todo) + '\n');
-  console.log(`✓ ${todo.length} crossings in public/labs/bridges/${base}.json`);
+  console.log(`✓ ${todo.length} crossings in public/cup/games/bridges/${base}.json`);
   process.exit(0);
 }
-// `--prueba`: the tighter version under evaluation (catalogo-prueba.json): fewer spare beams, one helper
+// `--prueba`: the tighter version under evaluation (catalog-test.json): fewer spare beams, one helper
 // per crossing (mixed ones only at levels 4 and 5) and a stronger search
 // `--madera`: the budget in wood (each beam costs its length), set by a build-up search that minimizes wood
 const MADERA = process.argv.includes('--madera');
@@ -222,7 +222,7 @@ function legible(e, vueltas = 10) {
   return mejor;
 }
 if (process.argv.includes('--legible')) {
-  const nombre = process.argv[process.argv.indexOf('--legible') + 1]?.endsWith('.json') ? process.argv[process.argv.indexOf('--legible') + 1] : 'catalogo-madera.json';
+  const nombre = process.argv[process.argv.indexOf('--legible') + 1]?.endsWith('.json') ? process.argv[process.argv.indexOf('--legible') + 1] : 'catalog.json';
   const f = new URL(nombre, CARPETA), cat = JSON.parse(readFileSync(f, 'utf8'));
   for (const e of cat) {
     const antes = probar(e, e.solucion.map(([a, b]) => V(a, b)));
@@ -254,6 +254,6 @@ for (let nivel = 0; nivel < 5; nivel++) {
     console.log(`level ${nivel + 1}: ${e.tipo} ancho ${e.ancho} → ${sol.length} beams${MADERA ? `, ${costo(e, sol).toFixed(1)} m of wood` : ''}`);
   }
 }
-const archivo = `catalogo${MADERA ? '-madera' : PRUEBA ? '-prueba' : ''}${SOLO ? `-${SOLO}` : ''}.json`;
+const archivo = `${MADERA ? 'catalog' : PRUEBA ? 'catalog-test' : 'catalog-beams'}${SOLO ? `-${SOLO}` : ''}.json`;
 writeFileSync(new URL(archivo, CARPETA), JSON.stringify(catalogo) + '\n');
-console.log(`✓ ${catalogo.length} crossings in public/labs/bridges/${archivo}`);
+console.log(`✓ ${catalogo.length} crossings in public/cup/games/bridges/${archivo}`);

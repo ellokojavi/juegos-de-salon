@@ -37,8 +37,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453 |
-| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449 |
-| Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456 |
+| Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433 |
 | Game memory | C-6 | D-25, D-150 |
@@ -49,13 +49,13 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428 |
-| La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453 |
+| La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456 |
 | Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451, D-452 |
 | Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450, D-455 |
-| Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454 |
+| Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (442)
+## In force (443)
 
 | D | Title | Status |
 |---|---|---|
@@ -215,7 +215,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-160](decisions/D-160.md) | The satellite globe looks sharp when zoomed in: tiles | amended by D-201 |
 | [D-161](decisions/D-161.md) | The admin can end the cup early, and the final table is exported | current |
 | [D-162](decisions/D-162.md) | Each standalone mini-game has its page and its social card | amended by D-198 |
-| [D-163](decisions/D-163.md) | The admin chooses the cup's games and their order | amended by D-418, D-421 |
+| [D-163](decisions/D-163.md) | The admin chooses the cup's games and their order | amended by D-418, D-421, D-456 |
 | [D-164](decisions/D-164.md) | Zip's 〰️ gets a light outline, and the lab plays on each mini-game's pages | amended by D-266 |
 | [D-165](decisions/D-165.md) | Everything shared follows one standard, with WhatsApp in mind | amended by D-171, D-226 |
 | [D-166](decisions/D-166.md) | Reinas: dragging from an empty cell paints X | amended by D-168 |
@@ -379,7 +379,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-331](decisions/D-331.md) | Game variants: the player picks one standalone, the admin picks one per cup day | current |
 | [D-332](decisions/D-332.md) | Rutas rotas, Loteo and Pintaminas leave the lab: home page and La Copa | amended by D-418 |
 | [D-333](decisions/D-333.md) | A new game says "New" on its home card for two weeks | amended by D-373 |
-| [D-334](decisions/D-334.md) | Uno al día adds six games: the three from the lab, Zip, Tango and ¿Dónde queda? | amended by D-421 |
+| [D-334](decisions/D-334.md) | Uno al día adds six games: the three from the lab, Zip, Tango and ¿Dónde queda? | amended by D-421, D-456 |
 | [D-335](decisions/D-335.md) | A new game goes on top of the home page while it is new | current |
 | [D-336](decisions/D-336.md) | "Tus copas" keeps the finished cups, behind the switch | current |
 | [D-337](decisions/D-337.md) | Tango's clash turns red 1.5 s after the player moves on | current |
@@ -501,6 +501,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-453](decisions/D-453.md) | Toque y Fama's solo score, by deduction: tried in the lab first | current |
 | [D-454](decisions/D-454.md) | The splash campaigns are run from the panel | current |
 | [D-455](decisions/D-455.md) | A lab game may keep its own leaderboard, outside the Todoterreno | current |
+| [D-456](decisions/D-456.md) | Tren en Vilo leaves the lab: its page, Uno al día and La Copa, launched with its splash | current |
 
 ## No longer in force (11)
 

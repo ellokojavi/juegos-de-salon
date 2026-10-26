@@ -354,6 +354,31 @@
           "ruta": "marketing/splash/campaigns/tren-en-vilo-pronto/en-390.jpg",
           "formato": "390 px",
           "uso": "Captura de la campaña (en)"
+        },
+        {
+          "ruta": "public/assets/splash/bridges.mp4",
+          "formato": "MP4 360×360, 12 fps, en loop",
+          "uso": "Clip de Tren en Vilo (campaña tren-en-vilo-ya)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/tren-en-vilo-ya/es-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña (es)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/tren-en-vilo-ya/en-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña (en)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/tren-en-vilo-ya/pt-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña (pt)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/tren-en-vilo-ya/de-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña (de)"
         }
       ],
       "fuente": "public/assets/js/splash.js",
@@ -361,7 +386,8 @@
       "juegos": [
         "rutas",
         "loteo",
-        "pintaminas"
+        "pintaminas",
+        "puentes"
       ],
       "seleccion": true,
       "revision": {

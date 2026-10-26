@@ -1,11 +1,10 @@
 /**
- * 🚂 Tren en Vilo in La Copa: the day's five crossings, the same for everyone. The physics, the stages'
- * catalog and the score are the lab's (`labs/bridges/engine.js`); this only picks the crossings from the
- * catalog with the day's seed. It is registered in the cup's games but not in `POZO`: a cup plays it only
- * when its calendar names it (the owner's one-day cup of 2026-10-25), like El caso (D-257).
+ * 🚂 Tren en Vilo in La Copa, Uno al día and its own page: the day's five crossings, the same for everyone.
+ * The physics, the stages' catalog and the score are `physics.js` (the lab's engine until D-456); this
+ * only picks the crossings from the catalog with the day's seed.
  */
 import { rng } from '../../../assets/js/rng.js';
-import { ETAPAS, TIEMPO_S } from '../../../labs/bridges/engine.js';
+import { ETAPAS, TIEMPO_S } from './physics.js';
 
 /** The catalog's levels of the five crossings: one notch harder than the lab's 1 to 5 (the owner asked for "slightly hard"). */
 export const NIVELES = [2, 3, 3, 4, 5];
@@ -14,8 +13,8 @@ export const NIVELES_ENSAYO = [1, 1];
 export const TIEMPO_ENSAYO_S = 90;
 export { TIEMPO_S };
 
-/** The catalog of crossings with wood budgets, the lab's game. */
-export const CATALOGO_URL = new URL('../../../labs/bridges/catalogo-madera.json', import.meta.url);
+/** The catalog of crossings with wood budgets (tools/generators/bridges.mjs). */
+export const CATALOGO_URL = new URL('./catalog.json', import.meta.url);
 
 /** The day's game: its seed, the levels of its crossings and its clock. */
 export function generarDia(codigo, dia, { sal = '', ensayo = false } = {}) {

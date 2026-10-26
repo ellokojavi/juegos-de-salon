@@ -24,7 +24,7 @@
 import { param, tiene } from './parametros.js';
 
 /** The campaigns that are on, in the order they were turned on. `from` and `until` (optional, inclusive) bound the days it shows. */
-export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-pronto', until: '2026-10-28' }];
+export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-ya', until: '2026-11-09' }];
 
 export const SEEN_KEY = 'juegos-de-salon:splash-visto';
 
@@ -95,6 +95,20 @@ export const CAMPAIGNS = {
     kicker: { es: 'Muy pronto', en: 'Coming soon' },
     title: { es: 'Algo nuevo se viene…', en: 'Something new is coming…' },
     items: [{ img: 'assets/splash/bridges-teaser.gif', still: 'assets/splash/bridges-teaser.png', ratio: '8 / 5' }],
+  },
+  // 🚂 Tren en Vilo leaves the lab: the train the teaser left at the edge of the gap now crosses. Its
+  // clip is a bridge being built and the bullet train going over it; Play opens the game
+  'tren-en-vilo-ya': {
+    emoji: '🚂',
+    kicker: { es: '¡Nuevo!', en: 'New!', pt: 'Novo!', de: 'Neu!' },
+    title: { es: '¡El tren ya cruza!', en: 'The train is crossing!', pt: 'O trem já está passando!', de: 'Der Zug fährt los!' },
+    lead: {
+      es: 'Arma un puente de vigas sobre el abismo: si aguanta, el tren cruza; si no, se cae. Ya está en Uno al día y en La Copa.',
+      en: 'Build a bridge of beams over the gap: if it holds, the train crosses; if not, down it goes. Now in One a Day and The Cup too.',
+      pt: 'Monte uma ponte de vigas sobre o abismo: se aguentar, o trem passa; se não, ela cai. Já está no Um por dia e na Copa.',
+      de: 'Bau eine Brücke aus Balken über die Schlucht: Hält sie, fährt der Zug hinüber, sonst stürzt sie ein. Jetzt auch im Spiel des Tages und im Pokal.',
+    },
+    items: [{ game: 'puentes', video: 'assets/splash/bridges.mp4', img: 'assets/splash/bridges.jpg' }],
   },
 };
 

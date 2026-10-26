@@ -295,6 +295,9 @@ export const REUSES = {
   'bulls-and-cows': ['cup/games/number/'],
   timeline: ['cup/games/timeline/', 'cup/games/year/engine.js', 'cup/games/mazos.js'],
   'labs/code': ['cup/games/word/'],
+  // The owner's sheets of 🚂 Tren en Vilo's trains and visitors, kept in the lab after the game left it (D-456)
+  'labs/bridges/trains': ['cup/games/bridges/'],
+  'labs/bridges/visitors': ['cup/games/bridges/'],
   // The home page's lab experiments (D-363, D-387): loaded only with ?lab or their parameter
   '': ['labs/home/', 'labs/experiments.css'],
 };

@@ -630,10 +630,6 @@ export const PATHS = {
     day: [UAD_SEED, `1`, `document.querySelector('#uad-cal button.l1, #uad-cal button.l2, #uad-cal button.l3')?.click(); document.getElementById('uad-calendario')?.scrollIntoView(); 1`],
     footer: [UAD_SEED, `1`, `document.getElementById('uad-pie')?.scrollIntoView({ block: 'end' }); 1`],
   },
-  'labs/bridges': {
-    intro: [],
-    game: [START, `1`, `1`, `1`],
-  },
 };
 
 /**

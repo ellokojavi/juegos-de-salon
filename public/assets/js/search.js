@@ -59,6 +59,12 @@ export const KEYWORDS = {
     pt: ['codenames', 'espiões', 'pistas', 'palavras', 'associar', 'assassino', 'agente', 'segredo'],
     de: ['codenames', 'spione', 'hinweise', 'wörter', 'assoziieren', 'attentäter', 'agent', 'geheim'],
   },
+  puentes: {
+    es: ['puente', 'puentes', 'tren', 'vigas', 'construir', 'fisica', 'ingenieria', 'poly bridge', 'logica'],
+    en: ['bridge', 'bridges', 'train', 'beams', 'build', 'physics', 'engineering', 'poly bridge', 'logic'],
+    pt: ['ponte', 'pontes', 'trem', 'vigas', 'construir', 'física', 'engenharia', 'poly bridge', 'lógica'],
+    de: ['brücke', 'brücken', 'zug', 'balken', 'bauen', 'physik', 'ingenieur', 'poly bridge', 'logik'],
+  },
   anio: {
     es: ['año', 'fechas', 'historia', 'adivinar', 'cultura', 'preguntas'],
     en: ['year', 'dates', 'history', 'guess', 'trivia', 'quiz'],
