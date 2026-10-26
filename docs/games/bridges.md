@@ -106,6 +106,21 @@ Their parameters are internal: they work from a local server or the Tailscale li
 only for someone who came in with a lab key (`INTERNO` in `game.js`), so a player without one never
 calls a visitor by hand.
 
+### The house style prototype (`?style=neon`)
+
+Players said the pixel art does not look like the rest of the app, and Stick Ninja does (owner's request,
+2026-10-25). `?style=neon` (read with `parametros.js`; the lab card links it as "🎨 Probar el estilo nuevo")
+draws the same scene in the house style instead (`neon.js`): smooth shapes and soft glows, the home page's
+palette and Stick Ninja's night. The cliffs and pillars are dark silhouettes with a neon edge, two ranges
+of hills stand behind the gap, the beams are glowing rods in the house's yellow that warm to pink and red
+with the strain, the fixed joints are pink lights, and the train is drawn as shapes (a pink locomotive, or
+a green one on the heavy stages, and wagons that change with the weight like the sprites do). The day keeps
+going by in the house's colors: a lilac dawn, a sunset in the title's yellow → pink, the home page's night.
+`scene.js`'s `dibujar` and `trenMini` hand over to it when the parameter is on, and the page gets the
+`tv-neon` class (a glass gauge, no pixelated train beside the title). The visitors are not drawn in this
+style yet, so they never come. It is a prototype to compare: if the owner keeps it, it becomes the only
+style and `pixel.js` stays only for the teaser.
+
 Its sprites also draw the home page's first teaser (D-430): `tren-en-vilo-pronto`, on through
 2026-10-28, a GIF of a train stopping at the edge of a gap, no name and no link, made by
 `marketing/splash/teaser.mjs` from `marketing/splash/teaser/bridges.html`, which imports `pixel.js`.
