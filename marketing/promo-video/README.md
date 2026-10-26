@@ -5,15 +5,15 @@ hecho, cómo se rehace y todo lo que pasó en cada versión. **Se lee entero ant
 video** (D-178), y al terminar cada vuelta se anota en [Historia](#historia) y en
 [`../registro.json`](../registro.json).
 
-## Hoy: versión 7 (2026-10-21)
+## Hoy: versión 8 (2026-10-26)
 
 | | |
 |---|---|
-| Archivos | [`output/promo-youtube-16x9.mp4`](output/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`output/promo-vertical.mp4`](output/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) · [`output/promo-vertical-en.mp4`](output/promo-vertical-en.mp4) (the vertical in English, v7) |
-| Duración | 39,2 s (85 golpes), H.264 + AAC 256 kb/s, 30 cuadros por segundo |
+| Archivos | [`output/promo-youtube-16x9.mp4`](output/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`output/promo-vertical.mp4`](output/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) · [`output/promo-vertical-en.mp4`](output/promo-vertical-en.mp4) (the vertical in English, since v7) |
+| Duración | 41,1 s (89 golpes, all the song has), H.264 + AAC 256 kb/s, 30 cuadros por segundo |
 | Idioma | Español (el cierre dice "En 4 idiomas" con las cuatro banderas); since v7 also a vertical in English (`?lang=en`, see [In English](#in-english)) |
 | Música | [`music/cancion.mp3`](music/cancion.mp3), la que puso el dueño (ver [La canción](#la-canción)) |
-| App que muestra | 0.190.2 |
+| App que muestra | 0.211.3 |
 
 En `output/` vive **solo la última versión**: al publicar una nueva, se reemplazan los dos mp4.
 Las anteriores quedan en la historia de git. Ojo: GitHub Pages publica el repo entero, así que
@@ -23,15 +23,15 @@ los mp4 también quedan en `juegosdesalon.cl/marketing/promo-video/output/…`.
 nuevo en la portada no deja atrás al video; `node tools/agents/marketing.mjs check` solo avisa si
 uno de los que salen ya no está, o si la app cambió de versión.
 
-## Pendiente: versión 8
+## Pendiente: versión 9
 
 Not started until the owner asks for it.
 
 - **Los avisos de La Copa** (#210, el dueño eligió C y A el 2026-10-11): un plano corto de la
   notificación que llega al celular el día que se abre un juego de la copa (la campana 🔔 y la
   tarjeta "¿Te avisamos…?"). En iPhone el aviso pide tener la app en inicio: se graba en Android o
-  se muestra la notificación sin el paso de instalar.
-- **Loteo**'s buttons are in two rows on `main` since #441 (v7 shows the earlier single row).
+  se muestra la notificación sin el paso de instalar. Left out of v8, which the owner asked for as
+  the Dudo shake's version. The song is used up (89 beats): a new shot takes beats from another scene.
 
 ## Lo que el dueño quiere
 
@@ -57,9 +57,11 @@ Lo que fue pidiendo en cada vuelta, para no tener que volver a preguntarlo:
 - **Su canción**, cortada al largo del video, con fundido de entrada y de salida de 1 s (v4, v5).
 - **Dos formatos:** 16:9 para YouTube y vertical para Shorts y redes, con el mismo contenido
   (v4).
+- **Dudo is played the way it is played now** (v8): the phone shakes, the dice roll on the cloth,
+  land and go to the hand (D-447), then the bid.
 - Le gustó el estilo desde la v1: neón, Bangers + Nunito, emojis, un celular flotando.
 
-## El guion de la v6 (v7: the same, with a bigger grid)
+## El guion de la v8 (v6's, with Dudo's shake and the grid of today's home page)
 
 La canción va a 130 BPM: un golpe dura 0,4615 s y cada corte cae en un golpe.
 
@@ -67,22 +69,22 @@ La canción va a 130 BPM: un golpe dura 0,4615 s y cada corte cae en un golpe.
 |---|---|---|---|
 | Gancho | 6 | 0 – 2,8 | "JUNTA A TUS AMIGOS · SACA EL CELULAR · ¡Y A JUGAR!", con emojis girando |
 | Logo | 6 | 2,8 – 5,5 | 🎲 cae, "JUEGOS DE SALÓN", "Los juegos de toda la vida, en tu celular" |
-| Juegos | 23 | 5,5 – 16,2 | Cuatro juegos jugados en un celular (tabla de abajo) |
-| ¡Y muchos más juegos! | 10 | 16,2 – 20,8 | Fifteen small phones (v7), each playing its own game in a loop: 🔢 Toque y Fama, 🔤 Toque y Fama: Palabra, 🪢 El Ahorcado, ⚓ Batalla Naval, 👑 Cuarto Rey, 🔗 Conexiones, 📅 ¿En qué año?, 👑 Reinas, ☀️ Tango, 🧶 Desenredo, 📝 Generala, 🍹 Julepe, 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas. Vertical: three rows of 5; 16:9: rows of 8 and 7 |
-| 📅 Uno al día | 16 | 20,8 – 28,2 | Fondo verde azulado. "Un juego sorpresa cada día, el mismo para todos" · "🔥 Arma tu racha". El dedo toca la tarjeta de la portada, el dado rueda (a todo el cuadro) y cae en 👑 Reinas, pone las dos últimas reinas y sale 100/100 con "Racha: 11 días" |
-| La Copa | 14 | 28,2 – 34,6 | Fondo dorado. "¿Te atreves a desafiar a tus amigos por una semana?", "🏆 LA COPA", el celular baja por podio, calendario, tabla y gráfico |
-| Cierre | 10 | 34,6 – 39,2 | "¡JUNTOS SE JUEGA MEJOR!", "Gratis · Sin descargar nada · Sin cuentas", **juegosdesalon.cl**, "📲 Agrégala a tu inicio" (D-232), "En 4 idiomas: 🇪🇸 🇬🇧 🇧🇷 🇩🇪" |
+| Juegos | 30 | 5,5 – 19,4 | Cuatro juegos jugados en un celular (tabla de abajo) |
+| ¡Y muchos más juegos! | 8 | 19,4 – 23,1 | Thirteen small phones (v8), each playing its own game in a loop: every home page game not in the main pass: 🔢 Toque y Fama, 🔤 Toque y Fama: Palabra, 🪢 El Ahorcado, ⚓ Batalla Naval, 🕵️ Agentes, 📅 ¿En qué año?, 👑 Reinas, ☀️ Tango, 🧶 Desenredo, 📝 Generala, 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas. Vertical: rows of 5, the last one centered; 16:9: rows of 7 and 6 |
+| 📅 Uno al día | 16 | 23,1 – 30,5 | Fondo verde azulado. "Un juego sorpresa cada día, el mismo para todos" · "🔥 Arma tu racha". El dedo toca el ▶ Jugar hoy de la tarjeta de la portada, el dado rueda (a todo el cuadro) y cae en 👑 Reinas, pone las dos últimas reinas y sale 100/100 con "Racha: 11 días" |
+| La Copa | 14 | 30,5 – 36,9 | Fondo dorado. "¿Te atreves a desafiar a tus amigos por una semana?", "🏆 LA COPA", el celular baja por podio, calendario, tabla y gráfico |
+| Cierre | 9 | 36,9 – 41,1 | "¡JUNTOS SE JUEGA MEJOR!", "Gratis · Sin descargar nada · Sin cuentas", **juegosdesalon.cl**, "📲 Agrégala a tu inicio" (D-232), "En 4 idiomas: 🇪🇸 🇬🇧 🇧🇷 🇩🇪" |
 
 Los juegos, en orden (cada uno con su semilla, ver `jugar.mjs`):
 
 | Juego | Golpes | La jugada |
 |---|---|---|
 | ⏳ Línea de Tiempo | 5 | Solo: elige una carta, la pone y sale "¡Correcto!" |
-| 🎲 Dudo | 5 | Contra el celular: pinta, sube a 2, apuesta, el celular canta, Javi duda y se destapa |
+| 🎲 Dudo | 12 | "Agita el cacho y apuesta". Contra el celular, with the shake (D-447): the dice face down on the green cloth, the whole phone shakes while they roll in 3D, they settle and the cloth turns back into the hand; then Javi picks quintas and bids "1 quinta" |
 | 📍 ¿Dónde queda? | 8 | Santiago, Chile: el dedo gira el globo hasta Sudamérica, lo acerca con +, marca Santiago y confirma; el mapa vuela hasta Chile: a 0 km, 100 puntos |
 | 〰️ Zip | 5 | Un solo trazo del 1 al 5 por las 16 casillas; queda en verde |
 
-Uno al día (`UAD`) tiene su propia escena y su propio celular. Él y ¿Dónde queda? llevan un
+Uno al día (`UAD`) tiene su propia escena y su propio celular. Él, ¿Dónde queda? y Dudo llevan un
 `guion` a mano ([segundo, cuadro], con el cuadro como `'tN'` = el toque N, o un índice negativo
 desde el final), porque su tiempo no se reparte parejo: el dado y el mapa necesitan su rato.
 
@@ -106,6 +108,10 @@ desde el final), porque su tiempo no se reparte parejo: el dado y el mapa necesi
   página corre más lenta mientras tanto (`performance.now`, `setTimeout` y `requestAnimationFrame`
   por un reloj propio, y las animaciones CSS por CDP): así el dado sale a unos 30 cuadros por
   segundo aunque cada captura tarde 100 ms.
+- **Dudo's shake** (`agite` in `jugar.mjs`, v8): one calm `devicemotion` reading says the phone
+  has a sensor (so no roll button), then jolts every 200 ms of page time, run at half speed, and
+  every frame notes its moment (`tras`) and whether the phone was still shaking (`sacude`).
+  `promo.html` shakes the whole phone while `sacude` frames play.
 - **El globo de ¿Dónde queda?** se gira con `globo.girarA` paso a paso (el paso `globo` de
   `jugar.mjs`), con el dedo dibujando el mismo arrastre.
 - **Uno al día** (`hoy` en `jugar.mjs`) fija el reloj de la página en el 29 de octubre de 2026 (un
@@ -181,7 +187,7 @@ Another language is a new `LANG_PROMO`, its texts in `promo.html` and its answer
 - Fundido de entrada y de salida de 1 s (pedido en v5).
 
 Si el video cambia de largo, se ajustan los golpes de las escenas para que sumen lo que alcanza
-la música (89 golpes sola) y la cuenta de `construir.sh` (hoy 85).
+la música (89 golpes sola) y la cuenta de `construir.sh` (since v8, 89: the song is used up).
 
 ## Trampas conocidas
 
@@ -210,6 +216,16 @@ la música (89 golpes sola) y la cuenta de `construir.sh` (hoy 85).
 - **Check that `SITIO` serves this worktree** (`lsof -iTCP:<port>` and its `cwd`): with several
   sessions, a port that seems free may be another session's server, and the captures come from its
   worktree. v7 was captured that way, from a worktree a few commits behind `main`.
+- **A killed `jugar.mjs` saves nothing:** `plays.json` is written once, at the end of the run. In
+  v8 a run hung on Uno al día (the app had changed) and the games before it were lost; run the
+  games one at a time with a time limit, as v8 did (`for g in …; do node jugar.mjs $g & …`).
+- **Uno al día's home card** (v8): tapping the card opens `/today/` since D-414; the die rolls
+  from its ▶ Jugar hoy chip (`#btn-uad-chip`). With the old `#btn-uno-al-dia` the run waits for
+  `/queens/` forever.
+- **Dudo's bid after the shake** has to wait until the cloth has turned back into the hand: a tap
+  during that transition is lost. `agite`'s `tras` (4.3 s) covers it.
+- **A `guion` whose first moment is not 0** (Dudo starts shaking at 0.75 s): the `tras` frames
+  after it count from that moment, not from the start of the scene (`playAt`, v8).
 - **Línea de Tiempo's deal changes with the app** (D-378 took the shuffle out of the game): in v7
   the card placed after 2001 came out wrong, so it goes in the first slot now. Check that the last
   capture says "¡Correcto!".
@@ -258,7 +274,7 @@ está en inglés. Ahí ya estaban "Juegos de Salón" y "Juegos de Salón - Promo
    Ofrece un "Related video" para enlazar el Short con el video largo: se agrega cuando el largo ya
    esté visible.
 
-### Los textos de la v6
+### Los textos (v6; the game lists brought up to date in v8)
 
 **16:9 · título:** Juegos de Salón: juegos para jugar con amigos en el celular, gratis
 
@@ -268,8 +284,8 @@ está en inglés. Ahí ya estaban "Juegos de Salón" y "Juegos de Salón - Promo
 Junta a tus amigos, saca el celular y a jugar: los juegos de toda la vida, gratis, sin descargar nada y sin crear cuentas.
 ▶ https://juegosdesalon.cl
 
-🎲 Para jugar en grupo: Dudo, Batalla Naval, El Ahorcado, Línea de Tiempo, Toque y Fama, y naipes, retos y el temido rey.
-🧩 Para jugar solo: Reinas, Tango, Zip, Desenredo, Conexiones, ¿En qué año?, ¿Dónde queda? y Toque y Fama: Palabra.
+🎲 Para jugar en grupo: Dudo (agitando el celular como un cacho), Generala, Batalla Naval, El Ahorcado, Línea de Tiempo y Toque y Fama.
+🧩 Para jugar solo: Reinas, Tango, Zip, Desenredo, Agentes, ¿En qué año?, ¿Dónde queda?, Toque y Fama: Palabra, Rutas rotas, Loteo y Pintaminas.
 
 📅 Uno al día: un juego sorpresa cada día, el mismo para todos. Arma tu racha.
 🏆 La Copa: desafía a tus amigos por una semana, con un juego distinto cada día. Quien suma más puntos, gana.
@@ -299,8 +315,9 @@ Junta a tus amigos, saca el celular y a jugar: los juegos de toda la vida, grati
 **Tags (los dos):** juegos de salón, juegos con amigos, juegos en el celular, juegos de mesa, juegos
 para fiestas, juegos gratis, uno al día, la copa, dudo, batalla naval, reinas, juegosdesalon.cl
 
-- **Cuarto Rey es de tomar:** para evitar la restricción de edad, en la descripción va como
-  "naipes, retos y el temido rey", sin nombrarlo.
+- **Cuarto Rey es de tomar:** para evitar la restricción de edad, en la descripción iba como
+  "naipes, retos y el temido rey", sin nombrarlo. Since v8 it is not on the home page (it went to
+  the lab) and the description no longer mentions it.
 - Al cambiar los juegos o lo que muestra el video, se revisan las listas de la descripción.
 
 ### Lo subido
@@ -413,6 +430,19 @@ painting from the engine's solution) and the grid went to 15 phones. Everything 
 app 0.190.2; Línea de Tiempo's card moved to the first slot (see Trampas). Then the English vertical
 (see [In English](#in-english)). The owner uploaded both Shorts from the phone to the game's new
 channel, and the home page share sheet now plays them, in Spanish and English tabs (D-410).
+
+### v8 · 2026-10-26 · 41,1 s, vertical and 16:9, and the vertical in English
+The owner had asked for Dudo's shake to roll (D-447) and tried it on a phone; when the usability
+agent said the video was behind and that the shake would be a good next round, the owner said
+"ok a las tres cosas".
+
+Dudo became the shake: the dice face down on the green cloth, the whole phone shaking while they
+roll in 3D, settling and landing in the hand, then the bid ("Agita el cacho y apuesta", 12 beats,
+from 5). The time came from the song's four spare beats and one each from "¡Y muchos más juegos!"
+(9 → 8) and the close (10 → 9): 89 beats, all the song has. The grid follows today's home page:
+Cuarto Rey, Conexiones and Julepe went to the lab and 🕵️ Agentes came in (13 phones). Everything
+was recaptured with app 0.211.3; Uno al día now starts from the card's ▶ Jugar hoy chip (see
+Trampas). The Cup notifications shot stays pending.
 
 ## Ideas que quedaron en el aire
 

@@ -74,7 +74,7 @@ const PLAYS = {
     `(()=>{const i=document.querySelector('#setup-form input');i.value='Javi';i.dispatchEvent(new Event('input',{bubbles:true}))})()`,
     `document.querySelector('#setup-actions .btn--yellow').click()`, { wait: 300 },
     `dispatchEvent(new DeviceMotionEvent('devicemotion', { acceleration: { x: 0.1, y: 0, z: 0.2 }, interval: 16 }))`, { wait: 600 }, { snap: true },
-    { agite: 5, cada: 200, lento: 0.5, tras: 3700, after: 400 },
+    { agite: 5, cada: 200, lento: 0.5, tras: 4300, after: 900 },
     { tap: `document.querySelectorAll('.pinta')[4]`, after: 400 },
     { tap: `document.querySelector('#actions .btn--yellow')`, after: 700 },
   ] },
@@ -180,6 +180,14 @@ const PLAYS = {
     `import('/cup/games/paint-mines/engine.js').then(m=>{const t=m.generarDia('WNDRN',1,{variante:'easy'});const d=new Set(t.dadas);window.__pm=[...t.sol.keys()].filter(i=>!d.has(i)&&t.sol[i]===1).slice(0,6)})`,
     { wait: 300 }, { snap: true },
     ...[0, 1, 2, 3, 4, 5].map(k => ({ tap: `document.querySelector('.pm-casilla[data-i="'+window.__pm[${k}]+'"]')`, after: 300 })),
+  ] },
+  // v8: Agentes reached the home page (D-421, in Conexiones' place in the grid). The board comes
+  // from the same engine; two agents of the first clue are tapped (the words are checked)
+  agentes: { url: '/agents/?seed=WNDRN', steps: [
+    `(document.getElementById('btn-empezar')||{click(){}}).click()`, { wait: 4500 },
+    `import('/cup/games/agents/engine.js').then(m=>{const j=__copa.estado.juego;const t=m.generarDia(j.semilla,j.d,{lang:'${LANG}'});const w=[...document.querySelectorAll('.ag-carta')].map(b=>b.textContent);window.__ag=t.cartas.every((c,i)=>c.w===w[i])?t.cartas.map((c,i)=>[c,i]).filter(([c])=>c.tipo==='agente'&&c.p===0).map(([,i])=>i):[0,1,2];console.log('agentes', window.__ag)})`,
+    { wait: 300 }, { snap: true },
+    ...[0, 1].map(k => ({ tap: `document.querySelector('.ag-carta[data-i="'+window.__ag[${k}]+'"]')`, after: 700 })),
   ] },
   donde: { url: '/where/?seed=WNDRN', steps: [
     `document.getElementById('btn-empezar').click()`, { wait: 5000 }, { snap: true },
