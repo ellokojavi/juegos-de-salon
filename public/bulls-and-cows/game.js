@@ -768,7 +768,7 @@ function renderModes() {
   for (const [m, label, hint] of modes) box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); if (m === 'solo') soloIntro(); else renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, '›')));
   // In the lab, 🔤 Palabra is a mode here instead of its own card on the home page (#767). lab: #seccion-tyf-una-tarjeta
   labAccess().then(yes => yes && box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); location.href = '../word/'; } },
-    el('span', {}, el('b', {}, T.modeWord), el('small', {}, T.modeWordHint)), el('span', { class: 'go' }, '›')))).catch(() => {});
+    el('span', {}, el('b', {}, T.labWord), el('small', {}, T.labWordHint)), el('span', { class: 'go' }, '›')))).catch(() => {});
 }
 
 function renderResumeSlot() {
