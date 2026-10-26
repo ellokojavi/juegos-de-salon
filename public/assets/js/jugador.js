@@ -37,6 +37,7 @@ export const MAS_UNO = { '.sv': { increment: 1 } };
 const KEY = 'juegos-de-salon:jugador';
 const MEJORES = 'juegos-de-salon:jugador:mejores';
 const AMIGOS = 'juegos-de-salon:jugador:amigos';
+const PENDIENTES = 'juegos-de-salon:jugador:pendientes';
 
 const falla = code => Object.assign(new Error(code), { code });
 
@@ -149,6 +150,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     return { jid: null, candidatos, heredado };
   }
 
+  let subiendo = null;
   const api = {
     /** El jugador de este celular, `{ jid, n }`, o null. */
     yo: () => leerYo(storage),
@@ -248,7 +250,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
      * hace nada y devuelve null. Si el PIN cambió en otro celular, este queda afuera ('pin').
      * Un 0 (rendirse) cuenta como partida jugada, pero no entra a las tablas (dilema #185).
      */
-    async anotar({ juego, variante = '', s, ms }) {
+    async anotar({ juego, variante = '', s, ms, cuando = now() }) {
       const yo = api.yo();
       const r = normalizar({ s, ms });
       if (!yo || !r) return null;
@@ -261,7 +263,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       }
       await sumarPartida(yo);
       const t = tablaId(juego, variante);
-      const sem = semana(now());
+      const sem = semana(cuando);
       const out = {};
       const cambios = {};
       for (const [nombre, p] of [['siempre', SIEMPRE], ['semana', sem]]) {
@@ -289,6 +291,41 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
         }
       }
       return out;
+    },
+
+    /**
+     * A finished game the network did not let `anotar` save: kept on this phone, with its time so
+     * it lands in the week it was played, until `subirPendientes` sends it. Up to 20, for 30 days.
+     */
+    guardarPendiente({ juego, variante = '', s, ms }) {
+      const yo = api.yo();
+      if (!yo || !normalizar({ s, ms })) return false;
+      escribir(PENDIENTES, [...leer(PENDIENTES, []), { jid: yo.jid, juego, variante, s, ms, t: now() }].slice(-20));
+      return true;
+    },
+    pendientes: () => leer(PENDIENTES, []),
+
+    /**
+     * Sends the games `guardarPendiente` kept (on loading the page and when the phone is back
+     * online). One that the network stops again stays for next time; one of another player, one
+     * older than 30 days or one the rules refuse is dropped. Returns how many it sent.
+     */
+    subirPendientes() {
+      // One run at a time: the page's load and the 'online' event can ask together
+      return subiendo ||= (async () => {
+        const yo = api.yo();
+        let enviados = 0;
+        if (!yo) return 0;   // signed out: kept until someone signs in, and then only theirs go
+        for (const x of leer(PENDIENTES, [])) {
+          const quitar = () => escribir(PENDIENTES, leer(PENDIENTES, []).filter(y => y.t !== x.t || y.juego !== x.juego));
+          if (x.jid !== yo.jid || now() - x.t > 30 * 86400000) { quitar(); continue; }
+          try { await api.anotar({ ...x, cuando: x.t }); quitar(); enviados++; } catch (e) {
+            if (e?.code === 'pin' || e?.code === 'permiso') { quitar(); continue; }
+            break;
+          }
+        }
+        return enviados;
+      })().finally(() => { subiendo = null; });
     },
 
     /**
@@ -593,5 +630,9 @@ async function crear() {
   const pais = () => { try { return countryOf({ tz: Intl.DateTimeFormat().resolvedOptions().timeZone, lang: navigator.language }); } catch (_) { return ''; } };
   const J = crearJugador({ almacen, juegos: SUELTOS.filter(g => !g.labs).map(g => g.id), pais });
   J.completarPais().catch(() => {});
+  // Games the network did not let save (`guardarPendiente`): sent now, and again when the signal is back
+  const subir = () => { J.subirPendientes().catch(() => {}); };
+  subir();
+  globalThis.addEventListener?.('online', subir);
   return J;
 }
