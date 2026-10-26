@@ -93,7 +93,7 @@
 .mine-label { font-weight: 900; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 .wild-note { font-weight: 800; font-size: 0.78rem; color: var(--yellow); }
 
-/* ---------- Shake to roll and the turn's clock (lab: #seccion-dudo-cacho) ---------- */
+/* ---------- Shake to roll and the turn's clock (D-447) ---------- */
 /* The shaking cloth: while the dice are still to roll, the hand's panel turns green and holds
    bigger dice, face down until the first jolt. Landed, the same panel shrinks back to the hand's
    size and colour while the dice slide into their row (llegar in game.js). */

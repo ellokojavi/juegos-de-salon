@@ -300,7 +300,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
 
   /**
    * A round ends with a die lost or won: whoever lost it opens the next one. A round where the
-   * player on turn ran out of time ends here too, with no reveal (`turnSecs`, lab: the dice
+   * player on turn ran out of time ends here too, with no reveal (`turnSecs`, D-447: the dice
    * stay covered, since nobody called anything).
    */
   const terminar = (r, end) => {
