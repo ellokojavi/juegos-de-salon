@@ -1,6 +1,6 @@
 // Liar's Dice in the lab (lab: #seccion-dudo-cacho): shaking the phone to roll and the turn's clock.
 // Against the phone with both switches on: the dice come face down and a shake (synthetic
-// devicemotion events) rolls them on screen until they land; running out of time costs a die
+// devicemotion events) rolls them on screen while it lasts, and they land once it stops; running out of time costs a die
 // with no reveal. Then, on a page that never hears from a sensor, a button rolls them.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -14,7 +14,7 @@ const switches = () => ev(`[...document.querySelectorAll('#setup-form .toggle-ro
 const jolt = i => ev(`window.dispatchEvent(new DeviceMotionEvent('devicemotion', { acceleration: { x: ${i % 2 ? -22 : 22}, y: 4, z: 1 }, accelerationIncludingGravity: { x: 22, y: 13, z: 1 }, interval: 16 })); 1`);
 /** The shaking box right now: 3D dice or flat ones, how big, and where the dice are. */
 const tray = () => ev(`(()=>{const m=document.querySelector('.agite-caja .agite-mesa');if(!m||!m.isConnected)return null;const c=[...m.querySelectorAll('.dado3d')];const one=m.firstElementChild;return{three:c.length>0,cubes:c.length,size:one?Math.round(one.getBoundingClientRect().width):0,moves:c.map(d=>d.style.transform).join('|'),faces:[...m.querySelectorAll('.die')].map(d=>d.querySelectorAll('i').length).join('')}})()`);
-let tumbled = null, buzzes = 0;
+let tumbled = null, buzzes = 0, stillRolling = null;
 const shake = async () => {
   // Counts the phone's vibrations: headless Chrome has none of its own
   await ev(`window.__buzz = 0; navigator.vibrate = () => { window.__buzz++; return true; }; 1`);
@@ -22,9 +22,11 @@ const shake = async () => {
   // Mid-shake the dice roll on screen: 3D cubes, moving frame to frame
   const a = await tray(); if (tumbled === null) await b.shot('02-rolling'); await sleep(60); const c = await tray();
   tumbled = !!(a?.three && a.cubes > 0 && a.moves !== c.moves);
-  for (let i = 1; i < 4; i++) { await jolt(i); await sleep(180); }
+  // Shaking on and on, well past the three jolts that are the minimum: they keep rolling
+  for (let i = 1; i < 9; i++) { await jolt(i); await sleep(200); }
+  stillRolling = await ev(`!window.__dudo.session().rolling && !!document.querySelector('#mine.agitando .dado3d')`);
   buzzes = await ev(`window.__buzz`);
-  await sleep(2000);   // the last roll (900 ms), a breath, and the flight into the hand (480 ms)
+  await sleep(2600);   // the hand still (550 ms), the last roll (900 ms), a breath, and the cloth turning into the hand (480 ms)
 };
 const covered = () => ev(`!!document.querySelector('#mine.agitando .agite-caja')`);
 const myDice = () => ev(`document.querySelectorAll('#mine .dice-row .die').length`);
@@ -59,6 +61,7 @@ await b.shot('02-face-down');
 await shake();
 check(tumbled, 'while the phone shakes, 3D dice tumble on screen');
 check(buzzes >= 5, `and the phone rattles with them: ${buzzes} vibrations`);
+check(stillRolling, 'while the phone keeps shaking they keep rolling: they settle only once it stops');
 check(!(await covered()) && (await myDice()) === 5, `then they land in the hand: ${await myDice()} dice`);
 check((await tray()) === null && !(await ev(`document.getElementById('mine').classList.contains('agitando')`)), 'and the cloth turned back into the hand');
 const hand = await ev(`Math.round(document.querySelector('#mine .dice-row .die').getBoundingClientRect().width)`);

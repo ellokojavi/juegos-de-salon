@@ -156,9 +156,11 @@ creator's choice travels in the config, so it applies to every phone. Uno al dí
   against 46; the owner's request). They wait there face down. Shaking, they roll as the home page's 🎲 does (`dado3d.js`, D-188, D-374):
   real 3D cubes with pips, all white (in the box the ace is not yellow, the owner's request; the
   hand keeps it yellow), and each jolt spins them faster, each its own way, while the speed drains
-  away between jolts. The phone rattles with them, harder the faster they spin. Three jolts
-  (13 m/s² beyond gravity, within 1.5 s) and they settle over 900 ms, with at least one more turn
-  and a small bounce, on their real faces, with a thud on the vibrator; then the same panel turns into the hand (480 ms): it loses its green
+  away between jolts. The phone rattles with them, harder the faster they spin. They keep rolling as long as the phone
+  shakes, and between jolts they slow down but never stop (0.07°/ms at the least), so a die never
+  looks settled before it is (the owner's request). Once the phone has been still for 550 ms, after
+  at least three jolts (13 m/s² beyond gravity), they settle over 900 ms, with at least one more
+  turn and a small bounce, on their real faces, with a thud on the vibrator; then the same panel turns into the hand (480 ms): it loses its green
   and shrinks to its usual size while the dice slide into their row, lined up as always (`llegar`
   in `game.js`). The dice
   are rolled before, as always (and committed with their hash in a room, C-10): the shake only shows
