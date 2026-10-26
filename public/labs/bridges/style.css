@@ -39,6 +39,14 @@
 .tv-tablones span { position: relative; overflow: hidden; border-radius: 3px; background: rgba(255, 255, 255, 0.08); border: 1px solid #3a1d10; }
 .tv-tablones i { position: absolute; inset: 0 auto 0 0; background: #b5743a; transition: width 0.2s; }
 .tv-tablones span:nth-child(even) i { background: #8a5226; }
+.tv-tablones.acero span { border-color: #1c1d2a; }
+.tv-tablones.acero i, .tv-tablones.acero span:nth-child(even) i { background: #a9b0c4; box-shadow: inset 0 2px 0 #eef0f8; }
+.tv-tiras { display: flex; gap: 8px; }
+.tv-tiras .tv-tablones { min-width: 0; }
+.tv-cuentas { margin: 0; display: flex; justify-content: center; gap: 14px; }
+.tv-cuenta-acero { color: #bfe6ff; }
+.tv-material { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tv-material .btn[aria-pressed="true"] { background: rgba(255, 255, 255, 0.18); border-color: var(--yellow); color: #fff; }
 .tv-aviso { margin: 0; color: var(--muted); font-size: 0.92rem; }
 .tv-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .tv-acciones .btn { padding-inline: 6px; }
