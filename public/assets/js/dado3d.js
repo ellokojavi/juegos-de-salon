@@ -6,7 +6,8 @@
  * huecos negros en las esquinas, y recalcular el sombreado de 80 capas en cada cuadro trababa
  * la animación en el celular.
  *
- * crearDado(lienzo, emojis) → { dibujar(ax, ay) } o null si no hay WebGL. Las caras van en el
+ * crearDado(lienzo, emojis) → { dibujar(ax, ay), soltar() } o null si no hay WebGL. A face can also be
+ * a number from 1 to 6: then it carries pips, as a real die (Dudo's, with the ace in yellow). Las caras van en el
  * orden: adelante, derecha, atrás, izquierda, arriba, abajo. ax y ay son grados (como
  * rotateX(ax) rotateY(ay) en CSS, pero con el eje y hacia arriba).
  */
@@ -51,7 +52,10 @@ function malla() {
   return { pos: new Float32Array(pos), nor: new Float32Array(nor), uv: new Float32Array(uv), idx: new Uint16Array(idx) };
 }
 
-/** La tira de texturas: seis casillas blancas con un emoji al centro. */
+/** Where each pip goes on a face, in its 3×3 grid (1 to 9, row by row). */
+const PUNTOS = { 1: [5], 2: [1, 9], 3: [1, 5, 9], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
+
+/** La tira de texturas: seis casillas blancas con un emoji al centro, o con los puntos de un dado. */
 function texturas(emojis) {
   const L = 256;
   const c = document.createElement('canvas');
@@ -61,7 +65,17 @@ function texturas(emojis) {
   x.fillRect(0, 0, c.width, c.height);
   x.textAlign = 'center'; x.textBaseline = 'middle';
   x.font = `${L * 0.5}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
-  emojis.forEach((e, i) => x.fillText(e, L * i + L / 2, L * 0.53));
+  emojis.forEach((e, i) => {
+    if (typeof e !== 'number') return x.fillText(e, L * i + L / 2, L * 0.53);
+    // The ace is wild in Dudo, and yellow there: the 3D die looks like the one it lands as
+    if (e === 1) { x.fillStyle = '#ffc93a'; x.fillRect(L * i, 0, L, L); }
+    x.fillStyle = '#1a1a1a';
+    for (const pos of PUNTOS[e]) {
+      const col = (pos - 1) % 3, fila = Math.floor((pos - 1) / 3);
+      x.beginPath(); x.arc(L * i + L * (0.25 + col * 0.25), L * (0.25 + fila * 0.25), L * 0.075, 0, 2 * Math.PI); x.fill();
+    }
+    x.fillStyle = '#fff';
+  });
   return c;
 }
 
@@ -162,5 +176,7 @@ export function crearDado(lienzo, emojis) {
       gl.uniformMatrix4fv(uModelo, false, mul(vista, mul(rotX(ax * Math.PI / 180), rotY(ay * Math.PI / 180))));
       gl.drawElements(gl.TRIANGLES, m.idx.length, gl.UNSIGNED_SHORT, 0);
     },
+    /** Gives the WebGL context back: a page that draws several dice per round would run out. */
+    soltar() { gl.getExtension('WEBGL_lose_context')?.loseContext(); },
   };
 }

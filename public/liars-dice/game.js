@@ -14,6 +14,7 @@ import { param, tiene } from '../assets/js/parametros.js';
 import { labAccess } from '../assets/js/lab-access.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
+import { crearDado } from '../assets/js/dado3d.js';
 import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
 import { createChat } from '../assets/js/chat.js';
 import { createLocalTransport } from '../assets/js/transport/local.js';
@@ -493,16 +494,111 @@ function cubiertos(v, role, dados) {
 
 /**
  * The dice still to roll, with what rolls them: shaking, or the button where there is no sensor.
- * Shaking, the dice tumble on screen, a new face on each one every few frames, as long as the
- * phone moves; on the last jolt they keep rolling a moment and land on the faces they really have.
- * The faces they show while rolling are only for the eye: the dice were rolled before (C-10).
+ * Shaking, they roll as the home page's 🎲 does (dado3d.js, D-374): real cubes with pips, spun by
+ * each jolt, harder the harder the shake, and slowing down between jolts; the phone rattles with
+ * them. On the last jolt they settle, each on the face it really has. The faces seen while rolling
+ * mean nothing: the dice were rolled before (C-10). With no WebGL, or with reduced motion, flat
+ * dice swap faces instead.
  */
-const RUEDA_MS = 450;     // how long they keep tumbling after a jolt
-const CAEN_MS = 750;      // the last roll, before they land
-const CARA_MS = 70;       // a new face this often while rolling
-let rueda = { hasta: 0, timer: null };
+const CAEN_MS = 900;      // the last roll, from the last jolt to landing
+const CARA_MS = 70;       // flat dice: a new face this often
+/** The faces in dado3d.js's order (front, right, back, left, top, bottom): opposite ones add up to 7. */
+const CARAS_3D = [1, 3, 6, 4, 2, 5];
+/** How each face ends up in front, as [ax, ay] for `dibujar`. */
+const DE_FRENTE = { 1: [0, 0], 3: [0, -90], 6: [0, 180], 4: [0, 90], 2: [90, 0], 5: [-90, 0] };
+const SIN_3D = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/** Rolls the dice on screen for `ms` more. It looks the tray up each frame: a render may redraw it. */
+/** The 3D dice of the round being rolled. They live across renders: a message must not reset them. */
+let mano = null;
+
+function soltarMano() {
+  if (!mano) return;
+  cancelAnimationFrame(mano.raf);
+  mano.dados.forEach(d => d.dado.soltar());
+  mano = null;
+}
+
+/** The 3D dice for `clave`, already spinning: the first jolt calls it. Null without WebGL. */
+function manoDe(clave, cuantos) {
+  if (mano?.clave === clave) return mano;
+  soltarMano();
+  if (SIN_3D) return null;
+  const dados = [];
+  for (let i = 0; i < cuantos; i++) {
+    const lienzo = el('canvas', { class: 'dado3d-lienzo' });
+    const caja = el('span', { class: 'dado3d' }, lienzo);
+    dados.push({ caja, lienzo, ax: Math.random() * 360, ay: Math.random() * 360, wx: 0, wy: 0, fase: Math.random() * 6 });
+  }
+  const bandeja = el('div', { class: 'dice-row bandeja bandeja-3d', 'aria-hidden': 'true' }, ...dados.map(d => d.caja));
+  // The canvases need their size before the cube is set up: they are drawn once in the page
+  document.body.append(bandeja);
+  for (const d of dados) {
+    d.dado = crearDado(d.lienzo, CARAS_3D);
+    if (!d.dado) { dados.forEach(x => x.dado?.soltar()); bandeja.remove(); return null; }
+  }
+  bandeja.remove();
+  mano = { clave, bandeja, dados, raf: 0, prev: performance.now(), zumbido: 0, cae: null };
+  const paso = ahora => {
+    if (!mano || mano.clave !== clave) return;
+    const dt = Math.min(50, ahora - mano.prev);
+    mano.prev = ahora;
+    let fuerza = 0;
+    for (const d of mano.dados) {
+      if (mano.cae) {
+        // Settling: from where it was to its face, slowing down evenly until it stops
+        const t = Math.min(1, (ahora - mano.cae.t0) / CAEN_MS), e = 1 - (1 - t) ** 3;
+        d.ax = d.desde[0] + (d.hasta[0] - d.desde[0]) * e;
+        d.ay = d.desde[1] + (d.hasta[1] - d.desde[1]) * e;
+        const bote = Math.abs(Math.sin(t * Math.PI * 2.5)) * (1 - t) * 14;
+        d.caja.style.transform = `translateY(${-bote}px)`;
+      } else {
+        // Spinning: each jolt adds speed, and it drains away between jolts
+        const freno = Math.exp(-dt / 450);
+        d.wx *= freno; d.wy *= freno;
+        d.ax += d.wx * dt; d.ay += d.wy * dt;
+        const w = Math.hypot(d.wx, d.wy);
+        fuerza = Math.max(fuerza, w);
+        d.caja.style.transform = `translate(${(Math.sin(ahora / 37 + d.fase) * w * 5).toFixed(1)}px, ${(-Math.abs(Math.cos(ahora / 53 + d.fase)) * w * 7).toFixed(1)}px)`;
+      }
+      d.dado.dibujar(d.ax, d.ay);
+    }
+    // The phone rattles while the dice roll, harder the faster they spin
+    if (fuerza > 0.15 && ahora - mano.zumbido > 90) { mano.zumbido = ahora; vibrate(Math.round(Math.min(30, 8 + fuerza * 14))); }
+    if (mano.cae && ahora - mano.cae.t0 >= CAEN_MS) return mano.cae.listo();
+    mano.raf = requestAnimationFrame(paso);
+  };
+  mano.raf = requestAnimationFrame(paso);
+  return mano;
+}
+
+/** A jolt: every die spins faster, each its own way. */
+function empujar(m) {
+  for (const d of m.dados) {
+    d.wx += (0.35 + Math.random() * 0.5) * (Math.random() < 0.5 ? -1 : 1);
+    d.wy += (0.35 + Math.random() * 0.5) * (Math.random() < 0.5 ? -1 : 1);
+  }
+}
+
+/** The last roll: each die goes on to its real face, with at least one more turn in the way it spins. */
+function aterrizar(m, dados, listo) {
+  m.dados.forEach((d, i) => {
+    const [fx, fy] = DE_FRENTE[dados[i]];
+    const destino = (desde, cara, w) => {
+      const dir = w < 0 ? -1 : 1;
+      let fin = cara + 360 * Math.round((desde - cara) / 360);
+      while ((fin - desde) * dir < 360) fin += 360 * dir;
+      return fin;
+    };
+    if (Math.abs(d.wx) < 0.2) d.wx += Math.random() < 0.5 ? -0.3 : 0.3;
+    if (Math.abs(d.wy) < 0.2) d.wy += Math.random() < 0.5 ? -0.3 : 0.3;
+    d.desde = [d.ax, d.ay];
+    d.hasta = [destino(d.ax, fx, d.wx), destino(d.ay, fy, d.wy)];
+  });
+  m.cae = { t0: performance.now(), listo };
+}
+
+/** Flat dice, where there is no 3D: a new face on each every few frames, for `ms` more. */
+let rueda = { hasta: 0, timer: null };
 function rodar(ms) {
   rueda.hasta = Math.max(rueda.hasta, performance.now() + ms);
   if (rueda.timer) return;
@@ -515,6 +611,7 @@ function rodar(ms) {
         const cara = 1 + Math.floor(Math.random() * 6);
         d.replaceWith(Object.assign(dieEl(cara), { style: `--x:${(Math.random() * 16 - 8).toFixed(0)}px;--y:${(Math.random() * -14).toFixed(0)}px;--r:${(Math.random() * 360 - 180).toFixed(0)}deg` }));
       });
+      if (sigue) vibrate(12);
     }
     rueda.timer = sigue ? setTimeout(paso, CARA_MS) : null;
   };
@@ -523,24 +620,38 @@ function rodar(ms) {
 
 function cacho(v, role) {
   const clave = `${v.round}:${role}`;
-  const cuantos = v.st[role]?.dice || 0;
-  const bandeja = el('div', { class: 'dice-row bandeja' + (performance.now() < rueda.hasta ? ' rodando' : ''), 'aria-hidden': 'true' },
-    ...Array.from({ length: cuantos }, () => el('span', { class: 'die blank' })));
+  const dados = diceOf(v, role) || [];
+  if (mano && mano.clave !== clave) soltarMano();
+  // Face down until the first jolt; then the 3D dice, the same ones from render to render
+  const bandeja = mano?.clave === clave ? mano.bandeja
+    : el('div', { class: 'dice-row bandeja' + (performance.now() < rueda.hasta ? ' rodando' : ''), 'aria-hidden': 'true' },
+      ...dados.map(() => el('span', { class: 'die blank' })));
+  const caja = el('div', { class: 'cacho' }, bandeja);
   const tirar = () => {
     if (S.shaken.has(clave) || S.rolling === clave) return;
     S.rolling = clave;
     agite.onRoll = null; agite.onJolt = null;
-    SFX.dice(); vibrate([20, 30, 20, 30, 40]);
-    rodar(CAEN_MS);
-    setTimeout(() => {
+    $('#btn-tirar')?.remove();   // rolling, there is nothing left to tap
+    SFX.dice();
+    const listo = () => {
+      soltarMano();
       S.rolling = null;
       S.shaken.add(clave);
-      S.justRolled = clave;
-      SFX.dice();
+      SFX.dice(); vibrate([30, 40, 20, 40, 60]);
       render();
-    }, CAEN_MS);
+    };
+    // The button has no jolt before it: it throws them itself
+    const m = manoDe(clave, dados.length);
+    if (m) {
+      if (!$('#mine .bandeja-3d')) $('#mine .bandeja')?.replaceWith(m.bandeja);
+      empujar(m); empujar(m);
+      aterrizar(m, dados, listo);
+    } else {
+      S.justRolled = clave;
+      rodar(CAEN_MS);
+      setTimeout(listo, CAEN_MS);
+    }
   };
-  const caja = el('div', { class: 'cacho' }, bandeja);
   if (S.rolling === clave) return caja;   // already rolling: they land on their own
   if (agite.sensor === false && PIDE_PERMISO && agite.permiso === null) {
     // Silent, and the phone can ask (an iPhone): only a tap may ask, and then it listens again
@@ -557,7 +668,13 @@ function cacho(v, role) {
     caja.append(el('p', { class: 'cacho-txt' }, T.shakeNow));
     escucharAgite();
     agite.onRoll = tirar;
-    agite.onJolt = () => { rodar(RUEDA_MS); SFX.dice(); vibrate(15); };
+    agite.onJolt = () => {
+      SFX.dice(); vibrate(20);
+      const m = manoDe(clave, dados.length);
+      if (!m) return rodar(450);
+      if (!$('#mine .bandeja-3d')) $('#mine .bandeja')?.replaceWith(m.bandeja);
+      empujar(m);
+    };
   }
   return caja;
 }
