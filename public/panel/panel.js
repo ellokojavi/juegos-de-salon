@@ -16,7 +16,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged, signOut,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import {
-  getDatabase, ref, onValue, query, orderByChild, orderByKey, startAt,
+  getDatabase, ref, onValue, query, orderByChild, orderByKey, startAt, set,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { GAMES, SUELTOS, gameById, gameLabel as etiquetaRegistro, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon, isIndividualMode } from '../assets/js/games.js';
@@ -32,6 +32,8 @@ import {
   avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango, salud, TRAMOS, navegadorLabel,
 } from './aggregate.js';
 import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KINDS, pacificRange } from './timeline.js';
+import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE } from '../assets/js/splash.js';
+import { switches, status as campaignStatus, overlaps, move, toRemote, span, todayOf, dayPlus } from './campaigns.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import {
   rangoAnterior, variacion, partidasDominio, finales, embudoSalas, dificultad, versiones, versionesEn, usuarios, cohortes,
@@ -57,7 +59,9 @@ const S = {
   // Uno al día (D-230): la historia de quienes entraron con jugador, las invitaciones y las rachas
   uad: { historia: {}, invitados: {}, rachas: {} },
   // The timeline (D-408): feedback messages, and what is picked in that view
-  feedback: {}, unsubFeedback: null, tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
+  feedback: {}, unsubFeedback: null,
+  // 📣 Campaigns (D-454): Firebase `splash/` (undefined until it answers, null if never saved) and the last save's outcome
+  splash: undefined, unsubSplash: null, splashMsg: '', tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
   unsubRooms: null, unsubDays: null, unsubTorneos: null, unsubPush: null, unsubUad: [], tick: null,
   // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
   desdeDia: null,
@@ -136,6 +140,7 @@ function stopListening() {
   if (S.unsubTorneos) { S.unsubTorneos(); S.unsubTorneos = null; }
   if (S.unsubPush) { S.unsubPush(); S.unsubPush = null; }
   if (S.unsubFeedback) { S.unsubFeedback(); S.unsubFeedback = null; }
+  if (S.unsubSplash) { S.unsubSplash(); S.unsubSplash = null; }
   for (const f of S.unsubUad) f();
   S.unsubUad = [];
   if (S.tick) { clearInterval(S.tick); S.tick = null; }
@@ -167,6 +172,8 @@ function listen() {
   }
   // Feedback for the timeline (D-408): the 🐞 reports and the inbox at the end of every game
   S.unsubFeedback = onValue(ref(db, 'feedback'), snap => { S.feedback = snap.val() || {}; render(); }, () => {});
+  // 📣 Campaigns (D-454): the switches the home page reads
+  S.unsubSplash = onValue(ref(db, 'splash'), snap => { S.splash = snap.val(); render(); }, () => { S.splash = null; });
   S.tick = setInterval(render, 30000); // "hace 3 min" se actualiza solo
 }
 
@@ -1562,6 +1569,81 @@ function vistaTimeline(now) {
 const periodLabelDia = d => new Date(d * DAY).toLocaleDateString('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' });
 
 /* ------------------------------------------------------------------ */
+/* 📣 Campaigns (D-454)                                                */
+/* ------------------------------------------------------------------ */
+const ESTADO_CAMPANA = { live: ['🟢', 'Showing'], scheduled: ['🕒', 'Scheduled'], ended: ['⏹', 'Ended'], off: ['⚪', 'Off'] };
+const STRIP_DAYS = 30;
+const diaCorto = d => new Date(`${d}T12:00:00`).toLocaleDateString(LOCALE, { month: 'short', day: 'numeric' });
+
+/** Saves every switch at once: what the home page reads on its next visit. */
+async function guardarCampanas(rows) {
+  S.splashMsg = 'Saving…'; render();
+  try { await set(ref(db, 'splash'), toRemote(rows)); S.splashMsg = `Saved ✓ ${horaLabel(Date.now())}: players get it on their next visit to the home page.`; }
+  catch (e) { S.splashMsg = `Not saved (${e?.code || e?.message || 'error'}). Nothing changed for players.`; }
+  render();
+}
+
+function vistaCampanas(now) {
+  const today = todayOf(now);
+  if (S.splash === undefined) return [el('p', { class: 'muted' }, 'Loading…')];
+  const rows = switches({ remote: S.splash, active: SPLASH_ACTIVE, campaigns: CAMPAIGNS });
+  const cambiar = (id, cambio) => guardarCampanas(rows.map(s => (s.id === id ? { ...s, ...cambio } : s)));
+  const vivas = rows.filter(s => campaignStatus(s, today) === 'live');
+  const cruces = overlaps(rows, today, 60);
+
+  const resumen = el('div', { class: 'panel campanas-hoy' },
+    el('p', { class: 'lead' }, vivas.length ? `Today the home page shows ${vivas.length === 1 ? 'one campaign' : `${vivas.length} campaigns, one per visit, in this order`}` : 'Today the home page shows no campaign'),
+    vivas.length ? el('ol', { class: 'campanas-cola' }, vivas.map(s => el('li', {}, `${CAMPAIGNS[s.id].emoji || ''} ${CAMPAIGNS[s.id].title?.es || s.id}`))) : null,
+    ...cruces.map(c => el('p', { class: 'campanas-cruce' }, `⚠️ ${c.from === c.to ? diaCorto(c.from) : `${diaCorto(c.from)}–${diaCorto(c.to)}`}: ${c.ids.length} on together. A player sees ${c.ids.map(id => `${CAMPAIGNS[id].emoji || ''} ${CAMPAIGNS[id].title?.es || id}`.trim()).join(', then ')}, one per visit.`)),
+    S.splash === null ? el('p', { class: 'muted small' }, 'Not saved from here yet: the home page uses the list in splash.js until the first change.') : null,
+    S.splashMsg ? el('p', { class: 'campanas-msg', role: 'status' }, S.splashMsg) : null);
+
+  // The next 30 days, one row per campaign that is on: overlaps are seen at a glance
+  const tiras = rows.filter(s => span(s, today, STRIP_DAYS));
+  const tira = tiras.length ? el('div', { class: 'panel campanas-tira' },
+    el('div', { class: 'tira-ejes muted small' }, el('span', {}, 'Today'), el('span', {}, diaCorto(dayPlus(today, 14))), el('span', {}, diaCorto(dayPlus(today, STRIP_DAYS - 1)))),
+    tiras.map(s => {
+      const sp = span(s, today, STRIP_DAYS);
+      return el('div', { class: 'tira-fila', title: s.id },
+        el('span', { class: 'tira-emoji', 'aria-hidden': 'true' }, CAMPAIGNS[s.id].emoji || '·'),
+        el('span', { class: 'tira-pista' }, el('span', { class: `tira-barra${sp.open ? ' abierta' : ''}`, style: `left:${(sp.start / STRIP_DAYS) * 100}%;width:${((sp.end - sp.start + 1) / STRIP_DAYS) * 100}%` })));
+    })) : null;
+
+  const tarjetas = rows.map((s, i) => {
+    const c = CAMPAIGNS[s.id];
+    const st = campaignStatus(s, today);
+    const [ico, txt] = ESTADO_CAMPANA[st];
+    const fecha = (campo, label) => el('label', { class: 'campana-fecha' }, label,
+      el('span', { class: 'campana-fecha-fila' },
+        el('input', { type: 'date', value: s[campo] || '', min: campo === 'until' ? s.from || null : null, max: campo === 'from' ? s.until || null : null,
+          onChange: e => cambiar(s.id, { [campo]: e.target.value || null }) }),
+        s[campo] ? el('button', { class: 'campana-borrar', type: 'button', 'aria-label': `Clear ${label.toLowerCase()}`, onClick: () => cambiar(s.id, { [campo]: null }) }, '✕') : null));
+    return el('article', { class: `panel campana campana--${st}` },
+      el('header', { class: 'campana-cabeza' },
+        el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
+        el('div', { class: 'campana-nombre' }, el('strong', {}, c.title?.es || s.id), el('span', { class: 'muted small' }, `${s.id}${c.langs ? ` · ${c.langs.join(', ')} only` : ''}`)),
+        el('label', { class: 'interruptor' },
+          el('input', { type: 'checkbox', role: 'switch', checked: s.on, 'aria-label': `${c.title?.es || s.id} on`, onChange: e => cambiar(s.id, { on: e.target.checked }) }),
+          el('span', { class: 'interruptor-pista', 'aria-hidden': 'true' }))),
+      el('p', { class: `campana-estado estado-${st}` }, `${ico} ${txt}`,
+        st === 'scheduled' ? ` · starts ${diaCorto(s.from)}` : '', st === 'live' && s.until ? ` · until ${diaCorto(s.until)}` : '', st === 'live' && !s.until ? ' · no end day' : '',
+        st === 'ended' ? ` · ended ${diaCorto(s.until)}` : ''),
+      el('div', { class: 'campana-fechas' }, fecha('from', 'Start'), fecha('until', 'End')),
+      el('div', { class: 'campana-atajos' },
+        ...[[7, '+1 week'], [14, '+2 weeks'], [30, '+1 month']].map(([d, t]) => el('button', { type: 'button', class: 'chip-btn', onClick: () => cambiar(s.id, { on: true, until: dayPlus(s.from && s.from > today ? s.from : today, d - 1) }) }, t)),
+        el('span', { class: 'campana-orden' },
+          el('button', { type: 'button', class: 'chip-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas(move(rows, s.id, -1)) }, '▲'),
+          el('button', { type: 'button', class: 'chip-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas(move(rows, s.id, 1)) }, '▼')),
+        el('a', { class: 'chip-btn', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, '👁 Preview')));
+  });
+
+  return [
+    ...titulo('📣 Campaigns', 'The splash over the home page. Each player sees a campaign once; with several on, one per visit, top first. New campaigns are made by asking Claude; here they are switched, dated and ordered.'),
+    resumen, tira, tarjetas,
+  ];
+}
+
+/* ------------------------------------------------------------------ */
 /* Navegación                                                          */
 /* ------------------------------------------------------------------ */
 /** Ícono y nombre de cada sección. El de The Cup sale del registro de juegos (C-16). */
@@ -1575,6 +1657,7 @@ const SECCION = {
   usuarios: ['🌎', 'Users'],
   trafico: ['📈', 'Traffic'],
   salud: ['🩺', 'Health'],
+  campanas: ['📣', 'Campaigns'],
 };
 
 function renderNav(now) {
@@ -1594,6 +1677,8 @@ function renderNav(now) {
 
 function render() {
   const now = Date.now();
+  // A date being picked is not redrawn under the finger: it saves on change, and that redraws
+  if (S.ruta.sec === 'campanas' && document.activeElement?.closest?.('#vista input')) return;
   MARCAS = versiones(S.days);
   const { sec, args } = S.ruta;
   let nodos;
@@ -1609,6 +1694,7 @@ function render() {
   else if (sec === 'trafico') nodos = vistaTrafico(now);
   else if (sec === 'salud') nodos = vistaSalud(now);
   else if (sec === 'timeline') nodos = vistaTimeline(now);
+  else if (sec === 'campanas') nodos = vistaCampanas(now);
   else nodos = vistaResumen(now);
   $('#vista').replaceChildren(...nodos.flat().filter(Boolean));
   renderNav(now);
@@ -1700,9 +1786,10 @@ $('#buscar').addEventListener('submit', e => { e.preventDefault(); buscar($('#bu
 // `vista` es una ruta (`/torneo/OFICI`) o, como antes, el nombre de una vista (`torneo`).
 window.__panel = {
   get state() { return S; },
-  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, feedback = {}, daysLoaded = true, vista }) {
+  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, feedback = {}, splash = null, daysLoaded = true, vista }) {
     stopListening();
     S.feedback = feedback;
+    S.splash = splash;
     S.rooms = rooms; S.days = days; S.daysLoaded = daysLoaded; S.torneos = torneos; S.torneosLoaded = true; S.push = push;
     if (uad) S.uad = { historia: {}, invitados: {}, rachas: {}, ...uad };
     S.desdeDia = rangoAnterior(rangeOf(S.range)).from;

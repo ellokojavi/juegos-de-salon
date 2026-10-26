@@ -31,6 +31,7 @@ or month, with 🚀 marking the versions that first showed up in each period). E
 | 🌎 Users | `#/users` | Active browsers per day, in 7 and 30 days, stickiness, new and returning, days since the last visit, frequency in 28 days, cohorts by week (returns on days 1, 7 and 30), and what Audience showed (where from, languages, hour, quota). |
 | 📈 Traffic | `#/traffic` | As before, plus what is shared and the visits each share brings (the viral factor). |
 | 🩺 Health | `#/health` | As before. |
+| 📣 Campaigns | `#/campaigns` | The splash campaigns (D-454): what the home page shows today, the overlaps of the next 60 days, a 30-day strip, and one card per campaign with its on switch, start and end days (+1 week, +2 weeks, +1 month), ▲▼ order and 👁 preview. Each change is saved to Firebase `splash/` and reaches players on their next visit, without a PR. New campaigns are still made in `splash.js` by asking Claude. |
 
 `#/games` opens Group and `#/audience` opens Users. Group and individual are split by the
 `individual` flag of `MODES` in `games.js` (C-16).

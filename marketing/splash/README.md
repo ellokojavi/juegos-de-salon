@@ -6,7 +6,7 @@ one per visit, the next on the next visit (D-431). This folder is its memory: ev
 
 | | |
 |---|---|
-| The code | `public/assets/js/splash.js` (`CAMPAIGNS` and the `ACTIVE` line) and `public/assets/css/splash.css` |
+| The code | `public/assets/js/splash.js` (`CAMPAIGNS` and the `ACTIVE` line, the fallback), Firebase `splash/` (the switches the panel writes, D-454) and `public/assets/css/splash.css` |
 | Turned on and off | `node tools/agents/splash.mjs list \| on <id> [--until YYYY-MM-DD] \| off [<id>]`, in a PR (`on` adds it at the end of the queue) |
 | Seen on demand | `/?splash=<id>` (a campaign that is not on: only with a lab key, D-395), and `node tools/e2e/look.mjs splash <id> [--width 320] [--lang de]` |
 | Clips | [`capture.mjs`](capture.mjs), see [clips.md](clips.md) |
@@ -23,7 +23,9 @@ one per visit, the next on the next visit (D-431). This folder is its memory: ev
    390 px in es, en, pt and de, as JPEG). A test fails if a campaign has no folder.
 3. `splash.mjs on <id> --until …` and the PR. **Before merging, the usability agent does a full
    pass of the campaign** (D-355): `covers.mjs check` names it, with its texts, and it is looked at
-   in the four languages at 390 and 320 px.
+   in the four languages at 390 and 320 px. Once merged, the owner turns it on, dates it and
+   orders it from the panel's 📣 Campaigns (`/panel/#/campaigns`, D-454), on the phone and with
+   no PR; `splash.mjs on` only sets the fallback the home page uses while the panel has never saved.
 4. When it ends, its README says how it went.
 
 ## Campaigns
