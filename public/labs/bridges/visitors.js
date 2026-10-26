@@ -269,7 +269,8 @@ export function visitaTopo({ r, esc, e, A, W, ahora, dt, visitas, yAgua, x0, x1,
       // from the edge inward, with some loose dirt where it closes
       const relleno = tp.fase === 'cae' ? Math.max(0, Math.min(1, (tp.t - 2.5) / 1.4)) : 0;
       const abiertos = Math.round(tp.camino.length * (1 - relleno));
-      for (let k = 0; k < abiertos; k++) { const [cx, cy] = tp.camino[k]; r.rect(cx - 1, cy - 6, 3, 7, 'rgba(26,11,46,0.92)'); }
+      if (r.tunel) r.tunel(tp.camino, abiertos);
+      else for (let k = 0; k < abiertos; k++) { const [cx, cy] = tp.camino[k]; r.rect(cx - 1, cy - 6, 3, 7, 'rgba(26,11,46,0.92)'); }
       if (relleno > 0 && relleno < 1 && abiertos > 0 && Math.random() < 0.5) {
         const [cx, cy] = tp.camino[abiertos - 1];
         esc.parts.agregar({ x: cx, y: cy - 3 + (Math.random() - 0.5) * 6, vx: (Math.random() - 0.5) * 10, vy: -4 - Math.random() * 6, g: 60, vida: 0.4, colores: ['#9a6440', '#7a4a2a', '#5a3a20'] });
