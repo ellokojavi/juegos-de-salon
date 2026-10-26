@@ -175,7 +175,8 @@ export function visitaLancha({ r, esc, e, A, W, ahora, dt, visitas, yAgua }) {
       };
       const lancha = (conJinete = false) => {
         r.sprite(LANCHA, PALETA_LANCHA, w.x, yAgua + 2, { voltear: w.dir < 0, cortarY: yAgua + 1 });
-        if (conJinete) { r.punto(w.x - w.dir * 4, yAgua - 4, PALETA_SURFISTA.s); r.punto(w.x - w.dir * 4, yAgua - 5, PALETA_SURFISTA.k); }
+        if (conJinete && r.pasajero) r.pasajero(w.x - w.dir * 4, yAgua - 4.6);
+        else if (conJinete) { r.punto(w.x - w.dir * 4, yAgua - 4, PALETA_SURFISTA.s); r.punto(w.x - w.dir * 4, yAgua - 5, PALETA_SURFISTA.k); }
       };
       // The black tow rope, from the rear top corner of the wake tower's roof, at the stern to the rider's front hand
       const cuerda = (rx, ry) => r.linea(w.x - w.dir * 6, yAgua - 6, rx + w.dir * 2, ry - 6, '#0a0a0a');
