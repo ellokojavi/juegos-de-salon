@@ -18,11 +18,11 @@ check('ids are unique and kebab-case', () => {
 
 check('each job says where, what and why', () => {
   for (const j of list) {
-    assert.ok(['github', 'mac', 'app', 'hook'].includes(j.where), `${j.id}: where`);
+    assert.ok(['github', 'mac', 'hook'].includes(j.where), `${j.id}: where`);
     assert.ok(j.what && j.decisions?.length, `${j.id}: what and decisions`);
     if (j.where === 'github') assert.ok(j.workflow && j.cron, `${j.id}: workflow and cron`);
-    if (j.where === 'mac') assert.ok(Number.isInteger(j.every) && j.every >= 60 && j.command?.length, `${j.id}: every and command`);
-    if (j.where === 'app') assert.ok(j.task && j.cron, `${j.id}: task and cron`);
+    if (j.where === 'mac') assert.ok(((Number.isInteger(j.every) && j.every >= 60) !== !!j.at) && j.command?.length, `${j.id}: every or at, and command`);
+    if (j.at) assert.ok(Number.isInteger(j.at.hour) && Number.isInteger(j.at.minute), `${j.id}: at.hour and at.minute`);
     if (j.where === 'hook') assert.ok(j.trigger, `${j.id}: trigger`);
   }
 });
@@ -52,11 +52,15 @@ check('the plist runs the job through jobs.mjs run, from the main folder', () =>
   assert.match(p, /<string>\/n\/node<\/string><string>\/r\/tools\/jobs\/jobs.mjs<\/string><string>run<\/string><string>x<\/string>/);
   assert.match(p, /<key>StartInterval<\/key><integer>300<\/integer>/);
   assert.match(p, /<key>WorkingDirectory<\/key><string>\/r<\/string>/);
+  const at = plist({ id: 'y', at: { weekday: 0, hour: 8, minute: 0 } }, { repo: '/r', node: '/n/node', path: '/n:/bin' });
+  assert.match(at, /<key>StartCalendarInterval<\/key>\s*<dict><key>Hour<\/key><integer>8<\/integer><key>Minute<\/key><integer>0<\/integer><key>Weekday<\/key><integer>0<\/integer><\/dict>/);
+  assert.doesNotMatch(at, /RunAtLoad/);
 });
 
-check('app jobs keep their prompt in the repo, and it names only files that exist (D-440)', () => {
-  for (const j of list.filter(x => x.where === 'app')) {
-    assert.ok(j.prompt && existsSync(join(ROOT, j.prompt)), `${j.id}: prompt ${j.prompt} is missing`);
+check('Claude jobs keep their prompt in the repo, and it names only files that exist (D-440, D-451)', () => {
+  for (const j of list.filter(x => x.command?.includes('tools/jobs/claude-task.mjs'))) {
+    j.prompt = j.command.at(-1);
+    assert.ok(existsSync(join(ROOT, j.prompt)), `${j.id}: prompt ${j.prompt} is missing`);
     // The paths it names in backticks, like `.claude/agents/processes.md`: in October 2026 the old
     // tasks kept naming procesos.md after it was renamed, and the round stopped without a word
     const text = readFileSync(join(ROOT, j.prompt), 'utf8');
