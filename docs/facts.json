@@ -1,5 +1,5 @@
 {
-  "version": "0.216.2",
+  "version": "0.217.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -84,10 +84,20 @@
         "public/cup/games/agents/texts.js",
         "public/cup/games/agents/ui.js",
         "public/cup/games/audiencia.js",
+        "public/cup/games/bridges/catalog-beams.json",
+        "public/cup/games/bridges/catalog.json",
         "public/cup/games/bridges/engine.js",
+        "public/cup/games/bridges/neon-visitors.js",
+        "public/cup/games/bridges/neon.js",
+        "public/cup/games/bridges/physics.js",
+        "public/cup/games/bridges/pixel.js",
+        "public/cup/games/bridges/scene.js",
+        "public/cup/games/bridges/solutions.json",
         "public/cup/games/bridges/style.css",
         "public/cup/games/bridges/texts.js",
+        "public/cup/games/bridges/trains.js",
         "public/cup/games/bridges/ui.js",
+        "public/cup/games/bridges/visitors.js",
         "public/cup/games/case/engine.js",
         "public/cup/games/case/ui.js",
         "public/cup/games/connections/engine.js",
@@ -773,6 +783,23 @@
       "labs": false,
       "bodega": false,
       "path": "agents/"
+    },
+    {
+      "id": "puentes",
+      "emoji": "🚂",
+      "name": {
+        "es": "Tren en Vilo",
+        "en": "Train on the Edge",
+        "pt": "Trem no Vão",
+        "de": "Zug am Abgrund"
+      },
+      "kinds": [
+        "logic"
+      ],
+      "duration": "5–7",
+      "labs": false,
+      "bodega": false,
+      "path": "bridges/"
     }
   ],
   "themes": [
@@ -977,8 +1004,15 @@
     "public/cup/games/agents/ui.js",
     "public/cup/games/audiencia.js",
     "public/cup/games/bridges/engine.js",
+    "public/cup/games/bridges/neon-visitors.js",
+    "public/cup/games/bridges/neon.js",
+    "public/cup/games/bridges/physics.js",
+    "public/cup/games/bridges/pixel.js",
+    "public/cup/games/bridges/scene.js",
     "public/cup/games/bridges/texts.js",
+    "public/cup/games/bridges/trains.js",
     "public/cup/games/bridges/ui.js",
+    "public/cup/games/bridges/visitors.js",
     "public/cup/games/case/engine.js",
     "public/cup/games/case/ui.js",
     "public/cup/games/connections/engine.js",
@@ -1046,15 +1080,7 @@
     "public/hangman/engine.js",
     "public/hangman/game.js",
     "public/hangman/rules.js",
-    "public/labs/bridges/engine.js",
-    "public/labs/bridges/game.js",
-    "public/labs/bridges/neon-visitors.js",
-    "public/labs/bridges/neon.js",
-    "public/labs/bridges/pixel.js",
-    "public/labs/bridges/scene.js",
-    "public/labs/bridges/trains.js",
     "public/labs/bridges/trains/sheet.js",
-    "public/labs/bridges/visitors.js",
     "public/labs/bridges/visitors/sheet.js",
     "public/labs/code/engine-palabra.js",
     "public/labs/code/engine.js",
@@ -1139,6 +1165,8 @@
     "public/cup/engine.test.mjs",
     "public/cup/games/agents/engine.test.mjs",
     "public/cup/games/agents/palette.test.mjs",
+    "public/cup/games/bridges/contrast.test.mjs",
+    "public/cup/games/bridges/physics.test.mjs",
     "public/cup/games/deshacer.test.mjs",
     "public/cup/games/juegos.test.mjs",
     "public/cup/games/paint-mines/engine.test.mjs",
@@ -1151,8 +1179,6 @@
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/home-preload.test.mjs",
-    "public/labs/bridges/contrast.test.mjs",
-    "public/labs/bridges/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
@@ -1224,6 +1250,7 @@
     "battleship/local.mjs",
     "battleship/online.mjs",
     "battleship/placement.mjs",
+    "bridges/game.mjs",
     "bulls-and-cows/chat.mjs",
     "bulls-and-cows/choose-box.mjs",
     "bulls-and-cows/languages.mjs",
@@ -1381,7 +1408,7 @@
     },
     {
       "path": "docs/games/bridges.md",
-      "title": "🚂 Tren en Vilo (bridge builder, lab)"
+      "title": "🚂 Tren en Vilo (bridge builder)"
     },
     {
       "path": "docs/games/bulls-and-cows-factibilidad.md",
