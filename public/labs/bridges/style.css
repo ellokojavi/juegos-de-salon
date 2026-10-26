@@ -114,3 +114,5 @@
 .tv-neon .tv-tren-mini { image-rendering: auto; }
 .tv-neon .tv-medidor { background: rgba(20, 8, 40, 0.82); border: 1px solid rgba(190, 160, 255, 0.35);
   box-shadow: 0 0 14px rgba(255, 46, 136, 0.25); backdrop-filter: blur(4px); }
+.tv-cabeza .tv-reloj { margin-left: auto; }
+.tv-saltar { min-width: 44px; padding-inline: 8px; }
