@@ -93,6 +93,28 @@
 .mine-label { font-weight: 900; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 .wild-note { font-weight: 800; font-size: 0.78rem; color: var(--yellow); }
 
+/* ---------- Shake to roll and the turn's clock (lab: #seccion-dudo-cacho) ---------- */
+/* The dice to roll lie face down; shaking, they tumble with a new face each frame (--x, --y, --r) */
+.cacho { display: grid; gap: 8px; justify-items: center; }
+.die.blank { opacity: 0.55; animation: dado-espera 2.4s ease-in-out infinite; }
+.die.blank:nth-child(even) { animation-delay: 0.15s; }
+.bandeja.rodando .die { opacity: 1; animation: none; transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--r, 0)); transition: transform 70ms linear; }
+@keyframes dado-espera { 0%, 80%, 100% { transform: rotate(0); } 85% { transform: rotate(-8deg); } 90% { transform: rotate(8deg); } 95% { transform: rotate(-4deg); } }
+.cacho-txt { margin: 0; font-weight: 800; font-size: 0.9rem; text-align: center; }
+.dice-row.rolled .die { animation: dado-sale 0.45s ease-out backwards; }
+.dice-row.rolled .die:nth-child(2) { animation-delay: 0.05s; }
+.dice-row.rolled .die:nth-child(3) { animation-delay: 0.1s; }
+.dice-row.rolled .die:nth-child(4) { animation-delay: 0.15s; }
+.dice-row.rolled .die:nth-child(5) { animation-delay: 0.2s; }
+/* Landing: a last bounce on the real faces */
+@keyframes dado-sale { 0% { transform: translateY(-10px) rotate(-30deg); } 60% { transform: translateY(2px) rotate(4deg); } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .die.blank, .dice-row.rolled .die { animation: none; } .bandeja.rodando .die { transform: none; } }
+
+.turn-clock { position: relative; height: 18px; margin: 6px auto 0; max-width: 260px; border-radius: 9px; background: rgba(0,0,0,0.3); overflow: hidden; }
+.turn-clock i { position: absolute; inset: 0 auto 0 0; background: var(--cyan); border-radius: 9px; transition: width 0.2s linear; }
+.turn-clock span { position: relative; display: block; text-align: center; font: 900 0.75rem/18px var(--font-num); color: var(--ink); text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+.turn-clock.apurado i { background: var(--pink); }
+
 .bid-board { margin: 10px 0 auto; }
 .standing { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; background: rgba(255,255,255,0.07); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px 14px; font-weight: 800; }
 .standing.opens { color: var(--muted); font-weight: 700; }

@@ -10,7 +10,8 @@ import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
 import { getLang, langToggle, applyStatic, COMMON, withLang } from '../assets/js/i18n.js';
-import { param } from '../assets/js/parametros.js';
+import { param, tiene } from '../assets/js/parametros.js';
+import { labAccess } from '../assets/js/lab-access.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { showHandoff, passBlock } from '../assets/js/handoff.js';
 import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
@@ -25,7 +26,7 @@ import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
   readDice, rollDice, writeDice, countPinta, sha256, randomSalt, verifyOpen,
 } from './engine.js';
-import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES } from './rules.js';
+import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES, TURN_SECS } from './rules.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -41,6 +42,13 @@ const store = createSessionStore(GAME_ID);
 const nameStore = createNameStore(GAME_ID);
 /** Uno al día (D-230): con `?today`, contra el celular y con los dados del día. */
 const HOY = modoHoy(GAME_ID);
+/**
+ * Shaking the phone to roll and the turn's clock are tried in the lab (D-395), so setup offers
+ * them only with a lab key. lab: #seccion-dudo-cacho
+ * In the test store (`?test`) the scripts see the setup of before unless the URL says `&lab`.
+ */
+let enLab = false;
+const LAB = (tiene('test') && !tiene('lab') ? Promise.resolve(false) : labAccess()).then(v => (enLab = v));
 
 /**
  * Los dados de un jugador en una ronda de Uno al día: salen de la semilla del día, la ronda y el
@@ -95,7 +103,7 @@ function newMatch(config) {
   return { config, players: config.players || null, names: {}, plays: [], seen: new Set(), presence: {}, rematch: {}, verify: null };
 }
 
-const JUGADAS = ['roll', 'bid', 'dudo', 'calza', 'open'];
+const JUGADAS = ['roll', 'bid', 'dudo', 'calza', 'open', 'timeout'];
 
 function apply(msg) {
   if (msg.id && M.seen.has(msg.id)) return;
@@ -138,6 +146,8 @@ function startSession({ mode, transport, roles, config, names, code = null, role
     // `Infinity` hasta saber por dónde va la partida: quien entra a una sala a mitad de camino
     // no tiene por qué ver el destape de una ronda que se jugó antes de que llegara.
     uiRole: null, sel: null, shownRound: Infinity, botAt: -1, rolled: new Set(), abriendo: new Set(),
+    // Shake to roll: the dice each role already shook out, round by round (`round:role`)
+    shaken: new Set(), turn: null,
   };
   M = newMatch(config);
   setupChat(mode);
@@ -267,6 +277,7 @@ function closeOverlay() { const b = $('#handoff'); b.hidden = true; b.innerHTML 
 
 function render() {
   if (!M) return;
+  agite.onRoll = null;   // the cup that is drawn now says again who it lifts for
   const v = view();
   if (v.lobby) return renderLobby();
   // Si hay una transición en pantalla, manda ella. Se pregunta por el overlay y no por una
@@ -316,9 +327,16 @@ function renderPlay(v) {
   const mine = $('#mine');
   mine.innerHTML = '';
   const dados = diceOf(v, yo) || [];
+  const tapados = cubiertos(v, yo, dados);
   mine.append(el('div', { class: 'mine-label' }, T.yourDice));
-  mine.append(el('div', { class: 'dice-row' }, ...dados.map(d => dieEl(d))));
-  if (dados.includes(1)) mine.append(el('div', { class: 'wild-note' }, '⚀ ', T.aceWild));
+  if (tapados) mine.append(cacho(v, yo));
+  else {
+    agite.onRoll = null;
+    const recien = S.justRolled === `${v.round}:${yo}`;
+    mine.append(el('div', { class: 'dice-row' + (recien ? ' rolled' : '') }, ...dados.map(d => dieEl(d))));
+    if (dados.includes(1)) mine.append(el('div', { class: 'wild-note' }, '⚀ ', T.aceWild));
+  }
+  relojDelTurno(v, yo, miTurno);
 
   // La apuesta que está en pie
   const board = $('#bid-board');
@@ -333,7 +351,7 @@ function renderPlay(v) {
     board.append(el('div', { class: 'standing opens' }, T.opens));
   }
 
-  renderActions(v, yo, miTurno);
+  renderActions(v, yo, miTurno, tapados);
 }
 
 /**
@@ -349,9 +367,11 @@ function encabezado(v, miTurno) {
   return `${T.turnOf} ${nameOf(v.current || v.opener)}`;
 }
 
-function renderActions(v, yo, miTurno) {
+function renderActions(v, yo, miTurno, tapados = false) {
   const box = $('#actions');
   box.innerHTML = '';
+  // With the dice still to roll there is nothing to bid on yet
+  if (miTurno && tapados) { box.append(el('p', { class: 'muted center' }, T.shakeFirst)); return; }
   if (!miTurno) {
     // Revealing, the line under the board would repeat the header: it stays empty
     if (v.phase !== 'open') box.append(el('p', { class: 'muted center' }, `${T.turnOf} ${nameOf(v.current || v.opener)}…`));
@@ -413,6 +433,189 @@ function renderActions(v, yo, miTurno) {
   box.append(acciones);
 }
 
+/* ---------- Shake to roll (lab: #seccion-dudo-cacho) ---------- */
+/**
+ * With `shake` on, each round's dice show face down and roll only when the player shakes the
+ * phone, like the cup at a real table. The dice are already rolled (and, in a room, committed with
+ * their hash, C-10): what the shake does is show them, so the round never waits on a sensor. A phone with no motion sensor (a computer) gets a button instead, and so does one
+ * whose owner said no to the motion permission (iPhone).
+ */
+/** A jolt is this much acceleration beyond gravity, in m/s²: walking with the phone stays under it. */
+const SACUDON = 13;
+/** This many jolts close together roll the dice: one bump on the table does not. */
+const SACUDONES = 3;
+const SACUDIDA_MS = 1500;
+/** With no reading from the sensor this long after listening, the phone has none: the button shows. */
+const SIN_SENSOR_MS = 1200;
+const PIDE_PERMISO = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
+/**
+ * `sensor`: null while it is not known, true with a reading, false with none in time. `permiso`:
+ * null until asked. The page listens first and asks only when nothing arrives: Android answers
+ * with no question, and an iPhone stays silent until the tap that grants it.
+ */
+const agite = {
+  listening: false, waiting: false, sensor: typeof DeviceMotionEvent === 'undefined' ? false : null,
+  permiso: null, jolts: [], lastJolt: 0, onRoll: null, onJolt: null,
+};
+
+function onMotion(e) {
+  const a = e.acceleration, g = e.accelerationIncludingGravity;
+  let fuerza;
+  if (a && a.x != null) fuerza = Math.hypot(a.x, a.y || 0, a.z || 0);
+  else if (g && g.x != null) fuerza = Math.abs(Math.hypot(g.x, g.y || 0, g.z || 0) - 9.81);
+  else return;   // an event with no reading: a computer that says it has a sensor
+  // The first reading: if the cup was offering the button, it now listens instead
+  if (agite.sensor !== true) { agite.sensor = true; if ($('#mine .cacho')) render(); }
+  if (!agite.onRoll) return;
+  const ahora = performance.now();
+  if (fuerza < SACUDON || ahora - agite.lastJolt < 110) return;
+  agite.lastJolt = ahora;
+  agite.jolts = [...agite.jolts.filter(t => ahora - t < SACUDIDA_MS), ahora];
+  agite.onJolt?.();
+  if (agite.jolts.length >= SACUDONES) { agite.jolts = []; const tirar = agite.onRoll; agite.onRoll = null; tirar(); }
+}
+
+function escucharAgite() {
+  if (typeof DeviceMotionEvent === 'undefined') return;
+  if (!agite.listening) { agite.listening = true; window.addEventListener('devicemotion', onMotion); }
+  if (agite.sensor !== null || agite.waiting) return;
+  agite.waiting = true;
+  setTimeout(() => {
+    agite.waiting = false;
+    if (agite.sensor === null) { agite.sensor = false; if ($('#mine .cacho')) render(); }
+  }, SIN_SENSOR_MS);
+}
+
+/** Are this role's dice still to roll? */
+function cubiertos(v, role, dados) {
+  return !!M.config.shake && !!dados.length && !S.shaken.has(`${v.round}:${role}`) && v.phase !== 'open';
+}
+
+/**
+ * The dice still to roll, with what rolls them: shaking, or the button where there is no sensor.
+ * Shaking, the dice tumble on screen, a new face on each one every few frames, as long as the
+ * phone moves; on the last jolt they keep rolling a moment and land on the faces they really have.
+ * The faces they show while rolling are only for the eye: the dice were rolled before (C-10).
+ */
+const RUEDA_MS = 450;     // how long they keep tumbling after a jolt
+const CAEN_MS = 750;      // the last roll, before they land
+const CARA_MS = 70;       // a new face this often while rolling
+let rueda = { hasta: 0, timer: null };
+
+/** Rolls the dice on screen for `ms` more. It looks the tray up each frame: a render may redraw it. */
+function rodar(ms) {
+  rueda.hasta = Math.max(rueda.hasta, performance.now() + ms);
+  if (rueda.timer) return;
+  const paso = () => {
+    const bandeja = document.querySelector('#mine .bandeja');
+    const sigue = performance.now() < rueda.hasta;
+    if (bandeja) {
+      bandeja.classList.toggle('rodando', sigue);
+      if (sigue) bandeja.querySelectorAll('.die').forEach(d => {
+        const cara = 1 + Math.floor(Math.random() * 6);
+        d.replaceWith(Object.assign(dieEl(cara), { style: `--x:${(Math.random() * 16 - 8).toFixed(0)}px;--y:${(Math.random() * -14).toFixed(0)}px;--r:${(Math.random() * 360 - 180).toFixed(0)}deg` }));
+      });
+    }
+    rueda.timer = sigue ? setTimeout(paso, CARA_MS) : null;
+  };
+  paso();
+}
+
+function cacho(v, role) {
+  const clave = `${v.round}:${role}`;
+  const cuantos = v.st[role]?.dice || 0;
+  const bandeja = el('div', { class: 'dice-row bandeja' + (performance.now() < rueda.hasta ? ' rodando' : ''), 'aria-hidden': 'true' },
+    ...Array.from({ length: cuantos }, () => el('span', { class: 'die blank' })));
+  const tirar = () => {
+    if (S.shaken.has(clave) || S.rolling === clave) return;
+    S.rolling = clave;
+    agite.onRoll = null; agite.onJolt = null;
+    SFX.dice(); vibrate([20, 30, 20, 30, 40]);
+    rodar(CAEN_MS);
+    setTimeout(() => {
+      S.rolling = null;
+      S.shaken.add(clave);
+      S.justRolled = clave;
+      SFX.dice();
+      render();
+    }, CAEN_MS);
+  };
+  const caja = el('div', { class: 'cacho' }, bandeja);
+  if (S.rolling === clave) return caja;   // already rolling: they land on their own
+  if (agite.sensor === false && PIDE_PERMISO && agite.permiso === null) {
+    // Silent, and the phone can ask (an iPhone): only a tap may ask, and then it listens again
+    caja.append(el('p', { class: 'cacho-txt' }, T.shakeNow), el('button', {
+      class: 'btn btn--cyan btn--sm', id: 'btn-permiso', onClick: async () => {
+        try { agite.permiso = await DeviceMotionEvent.requestPermission(); } catch (_) { agite.permiso = 'denied'; }
+        if (agite.permiso === 'granted') { agite.sensor = null; escucharAgite(); }
+        render();
+      },
+    }, T.shakeAllow));
+  } else if (agite.sensor === false) {
+    caja.append(el('button', { class: 'btn btn--cyan btn--sm', id: 'btn-tirar', onClick: tirar }, T.shakeTap));
+  } else {
+    caja.append(el('p', { class: 'cacho-txt' }, T.shakeNow));
+    escucharAgite();
+    agite.onRoll = tirar;
+    agite.onJolt = () => { rodar(RUEDA_MS); SFX.dice(); vibrate(15); };
+  }
+  return caja;
+}
+
+/* ---------- The turn's clock (lab: #seccion-dudo-cacho) ---------- */
+/**
+ * With `turnSecs` on, whoever has the turn has that long to bid, doubt or call it exactly; out of
+ * time, their own phone sends `timeout` and they lose a die. The clock runs only while the table
+ * is on screen (U-20): it waits under a reveal, a pass screen or a hidden page. The cup counts:
+ * shaking is part of the turn.
+ */
+function relojDelTurno(v, yo, miTurno) {
+  const box = $('#turn-clock');
+  const corre = M.config.turnSecs > 0 && miTurno && v.phase === 'bid';
+  if (!corre) { S.turn = null; box.hidden = true; return; }
+  const clave = `${v.round}:${v.bids.length}:${yo}`;
+  if (S.turn?.key !== clave) {
+    S.turn = { key: clave, role: yo, round: v.round, total: M.config.turnSecs * 1000, used: 0, prev: performance.now(), sent: false, beep: null };
+  }
+  box.hidden = false;
+  pintarReloj();
+  if (!tick) tick = setInterval(tictac, 200);
+}
+
+function pintarReloj() {
+  const t = S.turn, box = $('#turn-clock');
+  if (!t) return;
+  const queda = Math.max(0, t.total - t.used);
+  const seg = Math.ceil(queda / 1000);
+  box.classList.toggle('apurado', seg <= 5);
+  box.replaceChildren(
+    el('i', { style: `width:${(100 * queda / t.total).toFixed(1)}%` }),
+    el('span', {}, fmt(T.secs, { n: seg })),
+  );
+}
+
+let tick = null;
+function tictac() {
+  const t = S?.turn;
+  const ahora = performance.now();
+  if (!t || t.sent) return;
+  const dt = ahora - t.prev;
+  t.prev = ahora;
+  if (document.hidden || !$('#handoff').hidden) return;   // paused (U-20)
+  t.used += dt;
+  const seg = Math.ceil((t.total - t.used) / 1000);
+  if (seg <= 5 && seg > 0 && t.beep !== seg) { t.beep = seg; SFX.tick(); vibrate(10); }
+  pintarReloj();
+  if (t.used < t.total) return;
+  t.sent = true;
+  const v = view();
+  if (v.phase !== 'bid' || v.current !== t.role || v.round !== t.round) return;
+  S.sel = null;
+  agite.onRoll = null;
+  SFX.timeUp(); vibrate([60, 60, 120]);
+  S.transport.send({ t: 'timeout', from: t.role, r: t.round });
+}
+
 /* ---------- Chat de la sala (C-15) ---------- */
 function setupChat(mode) {
   if (chat) { chat.destroy(); chat = null; }
@@ -438,6 +641,7 @@ function showPass(role) {
 function showReveal(v) {
   const last = v.last;
   S.shownRound = last.n + 1;
+  if (last.type === 'timeout') return showTimeUp(last);
   const pinta = pintaName(last.bid.n, last.bid.p);
 
   const mesa = el('div', { class: 'reveal-table' });
@@ -481,6 +685,22 @@ function showReveal(v) {
   });
 }
 
+/** Someone ran out of time: no reveal, the dice stay covered, and they lose a die. */
+function showTimeUp(last) {
+  const stage = el('div', { class: 'stage pop reveal' },
+    el('div', { class: 'count' }, '⏱️'),
+    el('div', { class: 'hint' }, fmt(T.timeUp, { name: nameOf(last.by) })),
+    el('div', { class: 'outcome' }, last.fuera ? fmt(T.isOut, { name: nameOf(last.fuera) }) : fmt(T.losesDie, { name: nameOf(last.loser) })),
+    el('div', { class: 'hint', style: 'margin-top:10px' }, T.goOn),
+  );
+  SFX.letterMiss();
+  vibrate(last.fuera ? [60, 60, 120] : 30);
+  showHandoff([stage], () => {
+    if (S.mode === 'local') S.uiRole = null;
+    onChange();
+  });
+}
+
 /**
  * En la sala, después de contar se dice si los dados que se destaparon son los que cada uno
  * había comprometido (C-10). En un celular no hay nada que verificar y no se muestra.
@@ -516,9 +736,8 @@ function renderResult(v) {
   const lista = $('#history-list');
   lista.innerHTML = '';
   v.history.forEach(h => {
-    const pinta = pintaName(h.bid.n, h.bid.p);
-    const texto = fmt(h.type === 'dudo' ? T.histDudo : T.histCalza,
-      { who: nameOf(h.by), n: h.bid.n, pinta, count: h.count });
+    const texto = h.type === 'timeout' ? fmt(T.histTimeout, { who: nameOf(h.by) })
+      : fmt(h.type === 'dudo' ? T.histDudo : T.histCalza, { who: nameOf(h.by), n: h.bid.n, pinta: pintaName(h.bid.n, h.bid.p), count: h.count });
     lista.append(el('li', {},
       el('span', { class: 'r' }, h.n + 1),
       el('span', { class: 'q' }, texto),
@@ -690,6 +909,27 @@ function interruptor(encendido, label, hint, onChange) {
   return el('div', { class: 'toggle-row' }, el('div', { class: 'txt' }, el('b', {}, label), el('small', {}, hint)), sw);
 }
 
+/**
+ * The lab's two switches, shaking to roll and the turn's clock (lab: #seccion-dudo-cacho): off by
+ * default, and only with a lab key. The key is asked once per page; if the answer is still on its
+ * way, `redibujar` adds them when it comes.
+ */
+function ajustesDeLab(redibujar) {
+  let shake = false, reloj = false, puestos = false;
+  LAB.then(() => { if (enLab && !puestos) redibujar(); });
+  return {
+    switches: () => {
+      if (!enLab) return [];
+      puestos = true;
+      return [
+        interruptor(shake, T.shakeLabel, T.shakeHint, v => { shake = v; }),
+        interruptor(reloj, fmt(T.timerLabel, { n: TURN_SECS }), T.timerHint, v => { reloj = v; }),
+      ];
+    },
+    config: () => ({ shake: enLab && shake, turnSecs: enLab && reloj ? TURN_SECS : 0 }),
+  };
+}
+
 const MODES = [
   { id: 'local', title: () => T.modeLocal, sub: () => T.modeLocalHint },
   { id: 'online', title: () => T.modeOnline, sub: () => T.modeOnlineHint },
@@ -745,6 +985,7 @@ function renderSetup(mode, codigoInvitado = '') {
     : [recordado || '', ''];
   let calzar = DEFAULT_CONFIG.calzar;
   let chileno = DEFAULT_CONFIG.chileno;
+  const lab = ajustesDeLab(() => dibujar());
 
   const dibujar = () => {
     form.innerHTML = '';
@@ -774,6 +1015,7 @@ function renderSetup(mode, codigoInvitado = '') {
     if (lang === 'es') {
       form.append(interruptor(chileno, CHILENO.label, CHILENO.hint, v => { chileno = v; }));
     }
+    form.append(...lab.switches());
   };
   dibujar();
 
@@ -811,7 +1053,7 @@ function renderSetup(mode, codigoInvitado = '') {
       const names = mode === 'cpu'
         ? { A: nombres[0], B: T.cpuName }
         : Object.fromEntries(players.map((r, i) => [r, nombres[i]]));
-      startMatch(mode, names, { ...DEFAULT_CONFIG, calzar, chileno, players });
+      startMatch(mode, names, { ...DEFAULT_CONFIG, calzar, chileno, ...lab.config(), players });
     },
   }, T.start));
   acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => showScreen('screen-intro') }, T.menu));
@@ -832,6 +1074,8 @@ function renderSetupOnline(codigoInvitado = '') {
   const err = $('#setup-error'); clearRoomError(err);
   let nombre = nameStore.get() || '';
   let calzar = DEFAULT_CONFIG.calzar, chileno = DEFAULT_CONFIG.chileno;
+  const labSlot = el('div', { class: 'lab-switches' });
+  const lab = ajustesDeLab(() => labSlot.replaceChildren(...lab.switches()));
 
   form.append(el('div', { class: 'player-row' },
     el('div', { class: 'num' }, '👤'),
@@ -844,6 +1088,8 @@ function renderSetupOnline(codigoInvitado = '') {
   if (!invitado) {
     form.append(interruptor(calzar, T.calzarLabel, T.calzarHint, v => { calzar = v; }));
     if (lang === 'es') form.append(interruptor(chileno, CHILENO.label, CHILENO.hint, v => { chileno = v; }));
+    labSlot.replaceChildren(...lab.switches());
+    form.append(labSlot);
   }
 
   const fallar = msg => {
@@ -874,7 +1120,7 @@ function renderSetupOnline(codigoInvitado = '') {
       const n = nombre.trim();
       if (!n) return fallar(T.errName);
       nameStore.set(n); SFX.tap();
-      await tryRoom(crear, () => createOnline(n, { ...DEFAULT_CONFIG, calzar, chileno, players: null }), { busy: C.opening, ...roomOpts });
+      await tryRoom(crear, () => createOnline(n, { ...DEFAULT_CONFIG, calzar, chileno, ...lab.config(), players: null }), { busy: C.opening, ...roomOpts });
     } }, T.create);
     acciones.append(crear, el('div', { class: 'or' }, `— ${COMMON[lang].or} —`),
       el('div', { class: 'panel' },

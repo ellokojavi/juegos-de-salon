@@ -236,8 +236,8 @@ const nextIn = (list, from) => list[(list.indexOf(from) + 1) % list.length];
  * Arma el estado completo de la partida.
  *
  *  players  roles en orden de juego (A, B, …)
- *  config   { dice, calzar }
- *  plays    mensajes en orden: roll | bid | dudo | calza | open
+ *  config   { dice, calzar, turnSecs }
+ *  plays    mensajes en orden: roll | bid | dudo | calza | open | timeout
  *
  * Los mensajes que no corresponden —fuera de turno, apuesta que no sube, dados de otro
  * largo— se descartan en silencio, como manda C-7.
@@ -295,16 +295,26 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
     } else {
       loser = r.end.by;
     }
+    terminar(r, { type: r.end.type, by: r.end.by, bid: r.bid, count, exact, loser, gainer, dice });
+  };
+
+  /**
+   * A round ends with a die lost or won: whoever lost it opens the next one. A round where the
+   * player on turn ran out of time ends here too, with no reveal (`turnSecs`, lab: the dice
+   * stay covered, since nobody called anything).
+   */
+  const terminar = (r, end) => {
+    const { loser, gainer } = end;
     if (loser) st[loser].dice = Math.max(0, st[loser].dice - 1);
     if (gainer) st[gainer].dice = Math.min(perPlayer, st[gainer].dice + 1);
     const fuera = loser && st[loser].dice === 0 ? loser : null;
     if (fuera) st[fuera].out = true;
-    last = { n: r.n, type: r.end.type, by: r.end.by, bid: r.bid, count, exact, loser, gainer, fuera, dice };
+    last = { n: r.n, ...end, fuera };
     history.push(last);
     // Abre la ronda siguiente quien perdió el dado; si se fue, el de al lado
     const vivos = aliveNow();
     const abre = gainer || (loser && !st[loser].out ? loser : null);
-    opener = vivos.length ? (abre && vivos.includes(abre) ? abre : (vivos.includes(nextIn(players, loser || r.end.by)) ? nextIn(players, loser || r.end.by) : vivos[0])) : null;
+    opener = vivos.length ? (abre && vivos.includes(abre) ? abre : (vivos.includes(nextIn(players, loser || end.by)) ? nextIn(players, loser || end.by) : vivos[0])) : null;
     if (!vivos.includes(opener)) opener = vivos[0] || null;
     round = nuevaRonda();
   };
@@ -335,6 +345,9 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
         cerrar(round, { type: 'dudo', by: play.from });
       } else if (play.t === 'calza' && config.calzar !== false && calzarOk(round.bid, totalNow(), vivos.length)) {
         cerrar(round, { type: 'calza', by: play.from });
+      } else if (play.t === 'timeout' && config.turnSecs > 0 && Number(play.r) === round.n) {
+        // Only the player on turn sends it, from their own phone, and only for this round
+        terminar(round, { type: 'timeout', by: play.from, bid: round.bid, count: null, exact: false, loser: play.from, gainer: null, dice: {} });
       }
       continue;
     }

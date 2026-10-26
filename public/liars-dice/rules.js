@@ -4,7 +4,13 @@
  */
 
 export const GAME_ID = 'dudo';
-export const DEFAULT_CONFIG = { dice: 5, calzar: true, chileno: true };
+/**
+ * `shake` (roll by shaking the phone) and `turnSecs` (the turn's clock; out of time, a die lost)
+ * are tried in the lab (lab: #seccion-dudo-cacho): off unless the setup turns them on.
+ */
+export const DEFAULT_CONFIG = { dice: 5, calzar: true, chileno: true, shake: false, turnSecs: 0 };
+/** How long a turn lasts when the clock is on. */
+export const TURN_SECS = 30;
 
 /**
  * Como se nombran las pintas en una mesa chilena. Van aparte de LOCALES porque son de un solo
@@ -100,6 +106,12 @@ const ES = {
     endStats: '{rounds} rondas', endStatsOne: 'Una sola ronda',
     histDudo: '{who} dudó de {n} {pinta} · había {count}', histCalza: '{who} calzó {n} {pinta} · había {count}',
     histLost: '{name} −1', histGained: '{name} +1',
+    // Agitar para tirar y el reloj del turno (lab: #seccion-dudo-cacho)
+    shakeLabel: '🫨 Agitar para tirar', shakeHint: 'Cada ronda, agita el celular como un cacho para ver tus dados.',
+    timerLabel: '⏱️ {n} segundos por turno', timerHint: 'Quien no juega a tiempo pierde un dado.',
+    shakeNow: 'Agita el celular para tirar tus dados', shakeAllow: '🫨 Permitir agitar', shakeTap: '🎲 Tirar los dados',
+    shakeFirst: 'Tira tus dados para poder apostar.',
+    timeUp: 'A {name} se le acabó el tiempo', histTimeout: '⏱️ A {who} se le acabó el tiempo', secs: '{n} s',
   },
 };
 
@@ -178,6 +190,11 @@ const EN = {
     endStats: '{rounds} rounds', endStatsOne: 'A single round',
     histDudo: '{who} called {n} {pinta} · there were {count}', histCalza: '{who} said {n} {pinta} exactly · there were {count}',
     histLost: '{name} −1', histGained: '{name} +1',
+    shakeLabel: '🫨 Shake to roll', shakeHint: 'Each round, shake the phone like a dice cup to see your dice.',
+    timerLabel: '⏱️ {n} seconds per turn', timerHint: 'Whoever doesn’t play in time loses a die.',
+    shakeNow: 'Shake the phone to roll your dice', shakeAllow: '🫨 Allow shaking', shakeTap: '🎲 Roll the dice',
+    shakeFirst: 'Roll your dice to bid.',
+    timeUp: '{name} ran out of time', histTimeout: '⏱️ {who} ran out of time', secs: '{n} s',
   },
 };
 
@@ -256,6 +273,11 @@ const PT = {
     endStats: '{rounds} rodadas', endStatsOne: 'Uma rodada só',
     histDudo: '{who} duvidou de {n} {pinta} · tinha {count}', histCalza: '{who} cravou {n} {pinta} · tinha {count}',
     histLost: '{name} −1', histGained: '{name} +1',
+    shakeLabel: '🫨 Sacudir para jogar', shakeHint: 'A cada rodada, sacuda o celular como um copo de dados para ver seus dados.',
+    timerLabel: '⏱️ {n} segundos por vez', timerHint: 'Quem não joga a tempo perde um dado.',
+    shakeNow: 'Sacuda o celular para jogar seus dados', shakeAllow: '🫨 Permitir sacudir', shakeTap: '🎲 Jogar os dados',
+    shakeFirst: 'Jogue seus dados para poder apostar.',
+    timeUp: 'O tempo de {name} acabou', histTimeout: '⏱️ O tempo de {who} acabou', secs: '{n} s',
   },
 };
 
@@ -335,6 +357,11 @@ const DE = {
     endStats: '{rounds} Runden', endStatsOne: 'Nur eine Runde',
     histDudo: '{who} zweifelte {n} {pinta} an · es waren {count}', histCalza: '{who} sagte genau {n} {pinta} · es waren {count}',
     histLost: '{name} −1', histGained: '{name} +1',
+    shakeLabel: '🫨 Schütteln zum Würfeln', shakeHint: 'Schüttle jede Runde das Handy wie einen Würfelbecher, um deine Würfel zu sehen.',
+    timerLabel: '⏱️ {n} Sekunden pro Zug', timerHint: 'Wer nicht rechtzeitig spielt, verliert einen Würfel.',
+    shakeNow: 'Schüttle das Handy, um zu würfeln', shakeAllow: '🫨 Schütteln erlauben', shakeTap: '🎲 Würfeln',
+    shakeFirst: 'Würfle zuerst, dann kannst du bieten.',
+    timeUp: 'Die Zeit von {name} ist abgelaufen', histTimeout: '⏱️ Die Zeit von {who} ist abgelaufen', secs: '{n} s',
   },
 };
 
