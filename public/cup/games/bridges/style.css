@@ -1,4 +1,4 @@
-/* 🚂 Tren en Vilo (its page, Uno al día and La Copa): the board and its pieces, only its own .tv- classes */
+/* 🚅 Tren en Vilo (its page, Uno al día and La Copa): the board and its pieces, only its own .tv- classes */
 .tv-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 900; }
 .tv-puntos { justify-content: flex-start; }
 /* The stage is the screen's title, and under it the train's weight, which stays */

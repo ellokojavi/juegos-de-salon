@@ -107,7 +107,7 @@ export const JUEGOS = {
   pintaminas: delLab('pintaminas', pintaminas, uiPintaminas),
   // Out of the lab in D-421, in Conexiones' place: its words are the cup's language, like Conexiones'
   agentes: delLab('agentes', agentes, uiAgentes),
-  // 🚂 Tren en Vilo, out of the lab in D-456: in POZO since then (before, only the owner's one-day cup of 2026-10-25)
+  // 🚅 Tren en Vilo, out of the lab in D-456: in POZO since then (before, only the owner's one-day cup of 2026-10-25)
   puentes: delLab('puentes', puentes, uiPuentes),
   final: {
     ...juego(final, uiFinal),

@@ -131,6 +131,8 @@ try {
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', `${frames}/%04d.png`, '-frames:v', String(Math.min(n, solvedAt + (g.keep ?? n))),
       '-vf', `scale=${W}:${H}:flags=lanczos,tpad=stop_mode=clone:stop_duration=${g.keep ? 1.2 : 0},format=yuv420p`, '-c:v', 'libx264', '-crf', '30', '-preset', 'slow', '-movflags', '+faststart', '-an', mp4]);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', `${frames}/${String(Math.min(n - 1, solvedAt + Math.min(3, (g.keep ?? 4) - 1))).padStart(4, '0')}.png`, '-q:v', '5', join(DEST, `${name}.jpg`)]);
+    // And its first frame, the poster while it loads, so the solved board does not flash before it plays
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', mp4, '-frames:v', '1', '-q:v', '5', join(DEST, `${name}-start.jpg`)]);
     console.log(`✓ ${name}: ${n} frames → ${mp4}`);
   }
 } catch (err) { console.error(`✗ ${err.message}`); process.exitCode = 1; } finally { process.exit(); }

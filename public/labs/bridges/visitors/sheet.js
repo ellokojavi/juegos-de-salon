@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo — the visitors in the house style, up close (lab, owner's request 2026-10-25): each one
+ * 🚅 Tren en Vilo — the visitors in the house style, up close (lab, owner's request 2026-10-25): each one
  * drawn big by neon-visitors.js's renderer, in its moments, with buttons that play a game where it comes
  * in stage 1 (`?style=neon&ovni=pesca`…; those parameters work only with a lab key, INTERNO in game.js).
  */

@@ -301,7 +301,7 @@ export const esFinal = (meta, d) => d === meta.days && tieneFinal(meta);
  * the five fixed rounds it was started with, so nobody's final changes halfway (D-163).
  */
 export const FINAL_FROM_WEEK = Date.parse('2026-10-22T19:00:00Z');
-/** The games a final does not repeat: 🚂 Tren en Vilo is seven minutes of building (the owner's one-day cup of 2026-10-25). */
+/** The games a final does not repeat: 🚅 Tren en Vilo is seven minutes of building (the owner's one-day cup of 2026-10-25). */
 export const NOT_IN_FINAL = ['puentes'];
 /** The five fixed rounds of the finals from before D-418, and of the final played outside a cup. */
 export const FIXED_FINAL = ['linea', 'numero', 'reinas', 'letras', 'anio'];

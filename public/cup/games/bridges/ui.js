@@ -1,5 +1,5 @@
 /**
- * 🚂 Tren en Vilo: the screen for its own page (/bridges/), Uno al día and La Copa, out of the lab since
+ * 🚅 Tren en Vilo: the screen for its own page (/bridges/), Uno al día and La Copa, out of the lab since
  * D-456 with everything the owner approved there: the deck already laid, steel on the later crossings,
  * the visitors, a summary after each stage and, at the end, how the stage it stopped at could be
  * crossed. Lay beams over a gap, test, and the train crosses or the bridge falls. Five crossings in 7
