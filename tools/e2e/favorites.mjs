@@ -43,7 +43,7 @@ await tapStar('dudo');
 
 await b.evaluate(`document.querySelector('.ficha-fav').click(); 1`); await sleep(400);
 e = await read();
-check(e.filter === 'favorites' && e.visible.join() === 'ahorcado,dudo', `with ⭐ Favoritos only the two show (${e.visible.join()})`);
+check(e.filter === 'favorites' && [...e.visible].sort().join() === 'ahorcado,dudo', `with ⭐ Favoritos only the two show (${e.visible.join()})`);
 check(/2/.test(e.count) && e.url === '?type=favorites', `the count says how many and the filter goes in the URL (${e.count} · ${e.url})`);
 
 // Unmarking while in Favoritos, the card stays in view: it can be marked again
@@ -52,10 +52,11 @@ e = await read();
 check(e.visible.includes('dudo') && e.favorites.join() === 'ahorcado', 'unmarking in Favoritos does not take it out of view');
 await tapStar('dudo');
 
+// The home page's order follows popularity (D-361), so the two are compared in any order
 // They are remembered on reload, and the link with ?type=favorites comes back filtered
 await b.go(`${SITE}/?type=favorites`, 1500);
 e = await read();
-check(e.favorites.join() === 'ahorcado,dudo' && e.filter === 'favorites' && e.visible.join() === 'ahorcado,dudo', 'on reload they stay marked and filtered');
+check(e.favorites.join() === 'ahorcado,dudo' && e.filter === 'favorites' && [...e.visible].sort().join() === 'ahorcado,dudo', 'on reload they stay marked and filtered');
 
 // Unmarking the last one while in Favoritos: all show and the chip goes away
 await tapStar('ahorcado'); await tapStar('dudo');
