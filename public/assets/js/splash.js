@@ -61,7 +61,7 @@ export function loadActive({ fetchFn = globalThis.fetch, timeout = 2500 } = {}) 
 /**
  * The campaigns. Each one: an id (never reused: it is what a player's phone remembers), the texts
  * in the four languages, and its items, each one a game of games.js by id (name, emoji, tagline and
- * link come from there) or its own content (`title`, `text`, `href`). Each item shows a few seconds
+ * link come from there) or its own content (`title`, `text`, `href`, and `cta` for a button that is not Play). Each item shows a few seconds
  * of play: `video` (a looping MP4, muted) with its `img` as the poster, or just `img` (a still or a
  * GIF, with `still` for reduced motion). An item with no name, text or link is a teaser: its picture
  * alone, wide (`ratio`). `hero` draws a campaign's one game big: its clip as wide as the window at its
@@ -114,6 +114,29 @@ export const CAMPAIGNS = {
         pt: 'Monte uma ponte de vigas sobre o abismo: se aguentar, o trem passa; se não, ela cai. Já está no Um por dia e na Copa.',
         de: 'Bau eine Brücke aus Balken über die Schlucht: Hält sie, fährt der Zug hinüber, sonst stürzt sie ein. Jetzt auch im Spiel des Tages und im Pokal.',
       },
+    }],
+  },
+  // 🥂 An invitation to support the site, with a laugh: Leonardo DiCaprio raising his glass in
+  // The Great Gatsby. The clip is GIPHY's, served from GIPHY (not copied into the site); its button
+  // opens the support card (support.js, D-449), so it stays off while support is in the lab
+  'brindis-apoyo': {
+    emoji: '🥂',
+    kicker: { es: 'Salud', en: 'Cheers', pt: 'Saúde', de: 'Prost' },
+    title: { es: '¡Un brindis por ti!', en: 'A toast to you!', pt: 'Um brinde a você!', de: 'Ein Toast auf dich!' },
+    hero: true,
+    items: [{
+      video: 'https://media.giphy.com/media/rY93u9tQbybks/giphy.mp4',
+      img: 'https://media.giphy.com/media/rY93u9tQbybks/480w_s.jpg',
+      ratio: '12 / 5',
+      title: { es: 'Gracias por jugar', en: 'Thanks for playing', pt: 'Obrigado por jogar', de: 'Danke fürs Spielen' },
+      text: {
+        es: 'Por cada partida, cada risa y cada revancha. Juegos de Salón es gratis y sin anuncios: si quieres que siga así, puedes apoyarlo.',
+        en: 'To every game, every laugh and every rematch. Juegos de Salón is free and ad-free: if you want it to stay that way, you can support it.',
+        pt: 'A cada partida, cada risada e cada revanche. O Juegos de Salón é grátis e sem anúncios: se você quer que continue assim, pode apoiá-lo.',
+        de: 'Auf jede Partie, jedes Lachen und jede Revanche. Juegos de Salón ist kostenlos und werbefrei: Wenn es so bleiben soll, kannst du es unterstützen.',
+      },
+      href: '?support=open',
+      cta: { es: '💛 Apoyar Juegos de Salón', en: '💛 Support Juegos de Salón', pt: '💛 Apoiar o Juegos de Salón', de: '💛 Juegos de Salón unterstützen' },
     }],
   },
 };
@@ -186,6 +209,7 @@ async function resolve(items, lang) {
       still: i.still ? new URL(i.still, ROOT).href : null,
       ratio: i.ratio ?? null,
       video: i.video ? new URL(i.video, ROOT).href : null,
+      cta: pick(i.cta, lang) ?? null,
     };
   });
 }
@@ -248,7 +272,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
     const body = node('div', 'splash-item-cuerpo');
     body.append(node('h3', null, `${it.emoji} ${it.name}`.trim()));
     if (it.text) body.append(node('p', null, it.text));
-    if (it.href) body.append(node('span', 'btn btn--yellow splash-jugar', `▶ ${pick(UI.play, lang)}`));
+    if (it.href) body.append(node('span', 'btn btn--yellow splash-jugar', it.cta ?? `▶ ${pick(UI.play, lang)}`));
     a.append(body);
     list.append(a);
   }
