@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node tools/firebase/rules.mjs:*)",
+      "Bash(node tools/firebase/in-progress.mjs:*)",
+      "Bash(node tools/firebase/reports.mjs:*)",
+      "WebFetch(domain:juegos-de-salon-default-rtdb.firebaseio.com)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && [ -f tools/agents/clean-worktrees.mjs ] && node tools/agents/clean-worktrees.mjs --hook || true",
+            "timeout": 60,
+            "statusMessage": "Checking merged worktrees…"
+          }
+        ]
+      }
+    ]
+  }
+}
