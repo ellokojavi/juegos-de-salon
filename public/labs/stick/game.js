@@ -17,6 +17,7 @@ import { param } from '../../assets/js/parametros.js';
 import {
   newGame, pillar, pillarAt, current, next, press, release, suspend, stickAt, advance, pause, runX, walkEnd,
   holdFor, restX, daySeed, card, VIEW, HOLD_X, TURN_MS, NINJA, PERFECT, MAX_BONUS,
+  revive, LIVES,
 } from './engine.js';
 
 trackVisit();   // the site's traffic (D-208)
@@ -31,7 +32,7 @@ const T = {
   nombre: 'Stick Ninja',
   lema: 'Stretch the stick, cross the gap, plant the flag.',
   como: [
-    ['👆', 'Hold to stretch the stick, let go to drop it across the gap.'],
+    ['👆', 'Hold to stretch the stick, let go to drop it across the gap. You have ❤️ 3 lives.'],
     ['🚩', 'Land its tip on the flag for a perfect: +1, then +2, +3… for each one in a row.'],
     ['↔️', 'Later on, some pillars slide: aim where they will be when the stick lands.'],
   ],
@@ -43,6 +44,8 @@ const T = {
   pausa: 'Paused', seguir: 'Tap to continue',
   perfecto: 'Perfect!', racha: 'Perfect ×{n}',
   fin: { short: 'Too short!', long: 'Too long!' },
+  vidas: ['', 'Last life!', '❤️ 2 lives left'],
+  vidasAria: '{n} lives left',
   finCorto: 'Game over',
   record: '🏆 New best!',
   mejor: 'Your best: {n}',
@@ -356,7 +359,7 @@ function escena(canvas, { compacto = false } = {}) {
     const x0 = sx(current(g).x + current(g).w);
     let ninjaX = restX(current(g)), corre = false;
     if (g.phase === 'growing' || g.phase === 'held') palo(x0, stickAt(g, reloj), 0);
-    else if (w && (g.phase === 'walking' || g.phase === 'over')) {
+    else if (w && (g.phase === 'walking' || g.phase === 'lost' || g.phase === 'over')) {
       const k = clamp01((reloj - (w.t0 - TURN_MS)) / TURN_MS);
       let ang = easeIn(k) * Math.PI / 2;
       if (muerte && !w.ok) ang = Math.PI / 2 + easeIn(clamp01((now - muerte.born) / 380)) * Math.PI / 2;
@@ -410,6 +413,8 @@ function escena(canvas, { compacto = false } = {}) {
     caer(g, kind) {
       muerte = { kind, born: performance.now(), x: g.walk.tip, y: G - 1, vy: -60, vx: 10, rot: 0, vr: 3 };
     },
+    /** A life lost, not the last: the ninja is back on its pillar, the fallen stick gone. */
+    revivir() { muerte = null; saltoDesde = performance.now(); },
     cerrar() { ro.disconnect(); },
   };
 }
@@ -498,12 +503,14 @@ function jugar() {
   const lienzo = el('canvas', { class: 'lienzo-ninja', 'aria-hidden': 'true' });
   const marcador = el('div', { class: 'marcador-ninja', id: 'marcador', 'aria-live': 'polite' }, '0');
   const racha = el('div', { class: 'racha-ninja', id: 'racha', hidden: true });
+  const vidas = el('div', { class: 'vidas-ninja', id: 'vidas', 'aria-label': fmt(T.vidasAria, { n: LIVES }) },
+    ...Array.from({ length: LIVES }, () => el('span', { 'aria-hidden': 'true' }, '❤️')));
   const aviso = el('div', { class: 'aviso-ninja', id: 'aviso' }, T.sostener);
   const logro = el('div', { class: 'logros-ninja', id: 'logros', 'aria-live': 'polite' });
   const cartel = el('div', { class: 'pausa-ninja', id: 'pausa', 'aria-live': 'polite', hidden: true },
     // The emoji outside the rainbow: a gradient clipped to text paints an emoji as a colored square
     el('span', { class: 'titulo-pausa' }, el('span', { 'aria-hidden': 'true' }, '⏸️'), el('span', { class: 'display rainbow' }, T.pausa)), el('span', {}, T.seguir));
-  const escenario = el('div', { class: 'escenario', id: 'escenario', role: 'button', tabindex: 0, 'aria-label': T.sostener }, lienzo, marcador, racha, aviso, logro, cartel);
+  const escenario = el('div', { class: 'escenario', id: 'escenario', role: 'button', tabindex: 0, 'aria-label': T.sostener }, lienzo, marcador, vidas, racha, aviso, logro, cartel);
   const antes = S.antes = mejorAntes();
   const mejor = el('span', { class: 'mejor-ninja', id: 'mejor-juego' }, antes ? fmt(T.mejorCorto, { n: antes }) : '');
   vista.replaceChildren(el('div', { class: 'cabeza-ninja' }, tituloJuego(true), mejor), escenario);
@@ -643,8 +650,34 @@ function jugar() {
   escenario.addEventListener('keyup', ev => { if (ev.key === ' ' || ev.key === 'Enter') arriba(ev); });
   escenario.focus({ preventScroll: true });
 
+  /** A fall that leaves lives: a heart goes dark, and the ninja is back on the same pillar. */
+  function tropezar(kind, quedan) {
+    sc.caer(g, kind);
+    SFX.letterMiss();
+    vibrate([40, 30, 60]);
+    racha.hidden = true;
+    const corazon = vidas.children[quedan];
+    corazon.classList.add('perdida');
+    vidas.setAttribute('aria-label', fmt(T.vidasAria, { n: quedan }));
+    decir(el('span', {}, el('span', { class: 'rainbow' }, T.fin[kind]), el('small', { class: 'quedan' }, T.vidas[quedan])), 'final');
+    setTimeout(() => {
+      if (vez !== animando) return;
+      // A pause in between waits: the ninja comes back once the game goes on
+      const volver = () => {
+        if (vez !== animando) return;
+        if (S.pausa) return setTimeout(volver, 200);
+        revive(g, performance.now());
+        sc.revivir();
+        aviso.classList.add('fuera');
+        pista();
+      };
+      volver();
+    }, QUIETO ? 600 : 1500);
+  }
+
   function perder(kind) {
     S.fin = true;
+    vidas.children[0]?.classList.add('perdida');
     fuera.abort();
     sc.caer(g, kind);
     SFX.letterMiss();
@@ -682,7 +715,7 @@ function jugar() {
       const x0 = current(g).x + current(g).w, len = g.stick;
       for (const e of advance(g, reloj)) {
         if (e.type === 'arrive') llego(e, x0, len);
-        if (e.type === 'fall') perder(e.kind);
+        if (e.type === 'fall') (e.over ? perder(e.kind) : tropezar(e.kind, e.lives));
       }
     }
     sc.draw(g, now, reloj);
