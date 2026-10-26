@@ -1,0 +1,47 @@
+/* The seasonal touches every template shares (season.js, D-457): where each one sits and how it
+   moves. What belongs to one date —its palette, the drawing of its corner— is in its own
+   stylesheet next to the templates (assets/season/<id>.css). Nothing here takes a tap. */
+.season-deco { position: fixed; pointer-events: none; user-select: none; -webkit-user-select: none; z-index: 40; }
+
+/* The corner: the template's css gives it its drawing (`background`) */
+.season-corner { top: 0; right: 0; width: 96px; height: 96px; opacity: 0.32; z-index: 1; background: no-repeat top right / contain; }
+
+/* The background particles that became emojis: they float up like the rest, swaying instead of spinning */
+.bg-sparkles span.season-mote {
+  width: auto !important; height: auto !important; background: none !important; border-radius: 0;
+  font-size: 20px; line-height: 1; opacity: 0.55; animation-name: season-float;
+}
+@keyframes season-float {
+  0%   { transform: translate(0, 110vh) rotate(-8deg); }
+  25%  { transform: translate(14px, 80vh) rotate(8deg); }
+  50%  { transform: translate(0, 50vh) rotate(-8deg); }
+  75%  { transform: translate(-14px, 20vh) rotate(8deg); }
+  100% { transform: translate(0, -10vh) rotate(-8deg); }
+}
+
+/* The flyby: crosses the screen once, a little after the page opens */
+.season-flyby {
+  top: 22%; left: 0; font-size: 34px; line-height: 1;
+  animation: season-fly 4.2s cubic-bezier(.45, .05, .55, .95) 1.2s both;
+}
+@keyframes season-fly {
+  0%   { transform: translate(-60px, 0) scale(.8); }
+  25%  { transform: translate(25vw, -40px) scale(1); }
+  50%  { transform: translate(50vw, 10px) scale(.9); }
+  75%  { transform: translate(75vw, -30px) scale(1); }
+  100% { transform: translate(calc(100vw + 60px), -10px) scale(.8); }
+}
+
+/* The peek: rises from the bottom left edge, bobs a little and hides */
+.season-peek {
+  left: 14px; bottom: calc(var(--safe-bottom, 0px) - 8px); font-size: 44px; line-height: 1;
+  animation: season-rise .9s ease-out both, season-bob 1.6s ease-in-out .9s 3, season-hide .7s ease-in 6s forwards;
+}
+@keyframes season-rise { from { transform: translateY(110%); opacity: 0; } to { transform: translateY(0); opacity: .9; } }
+@keyframes season-bob { 50% { transform: translateY(-8px) rotate(-6deg); } }
+@keyframes season-hide { to { transform: translateY(110%); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .season-flyby, .season-peek { display: none; }
+  .bg-sparkles span.season-mote { animation: none; }
+}

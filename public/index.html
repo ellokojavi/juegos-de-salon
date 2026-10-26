@@ -509,6 +509,7 @@
     import { botonAzar, TEXTOS as AZAR } from './assets/js/azar.js';
     import { favoritos, alternarFavorito } from './assets/js/favoritos.js';
     import { param } from './assets/js/parametros.js';
+    import { season } from './assets/js/season.js';
     // The site's traffic (D-208), loaded on its own: counting the visit never holds up the list
     import('./assets/js/transport/stats.js').then(({ trackVisit }) => trackVisit()).catch(() => {});
     sparkles();
@@ -813,6 +814,13 @@
       const heroEmojis = ['🎲', '🍻', '🎯', '🍸', '🎈', '🍣', '🃏', '🎉', '🥳', '🍕', '🎤', '🔢', '🍹', '🕺', '🎊'];
       const heroEl = document.getElementById('hero-emoji');
       let heroIdx = 0;
+      // In a season (season.js) its template's emojis take turns with the dice's: 🎃 → 🎲 → 👻 → 🍻 …
+      season.then(s => {
+        if (!s?.hero?.length) return;
+        const mix = heroEmojis.flatMap((e, i) => (i < s.hero.length ? [s.hero[i], e] : [e]));
+        heroEmojis.splice(0, heroEmojis.length, ...mix);
+        heroEl.textContent = heroEmojis[heroIdx = 0];
+      });
       setInterval(() => {
         if (document.hidden) return;
         heroEl.classList.add('out');

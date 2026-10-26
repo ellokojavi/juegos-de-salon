@@ -51,6 +51,7 @@ language. Older Spanish content and Spanish file and identifier names are being 
 | End-to-end tests | [tools/e2e/README.md](tools/e2e/README.md) | When running or writing a script |
 | Which tests a change runs | [docs/TEST-SCOPE.md](docs/TEST-SCOPE.md), the design (D-391, D-392): a push tests only what changed since the PR last passed | Before touching `tools/e2e/affected.mjs` or when a PR runs more than it should |
 | Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
+| Seasonal templates (Halloween…) | [docs/SEASONS.md](docs/SEASONS.md): the home page and Rankings dress up for a date (D-457) | Before adding a date or touching `season.js` |
 | PR previews | [docs/PREVIEWS.md](docs/PREVIEWS.md): each PR on GitHub Pages (D-429) | When the owner reviews a change, or a preview fails |
 
 **A rule that changes is changed in its place, in the same PR:** if a new decision changes a
