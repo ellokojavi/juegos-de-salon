@@ -618,6 +618,15 @@
       return { g, card, caja };
     });
 
+    // In the lab, Toque y Fama: Palabra has no card of its own: it is a mode inside Toque y Fama (#767). lab: #seccion-tyf-una-tarjeta
+    import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess()).then(yes => {
+      if (!yes) return;
+      const i = tarjetas.findIndex(t => t.g.id === 'letras');
+      if (i >= 0) { tarjetas[i].caja.remove(); tarjetas.splice(i, 1); }
+      const tyf = tarjetas.find(t => t.g.id === 'toque-y-fama');
+      if (tyf?.g.taglineLab) tyf.card.querySelector('.tag').textContent = pickLang(tyf.g.taglineLab, lang);
+    }).catch(() => {});
+
     // Juego al azar (D-188): always from every game on the home page, whatever filter is on; only
     // `alAzar` leaves some out (La Copa, and the games that need a group, D-374)
     document.getElementById('azar-slot').append(botonAzar({ lang, candidatos: () => PORTADA }));
