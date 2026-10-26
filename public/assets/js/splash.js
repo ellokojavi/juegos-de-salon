@@ -107,7 +107,8 @@ export const CAMPAIGNS = {
     // is and Play
     hero: true,
     items: [{
-      game: 'puentes', video: 'assets/splash/bridges.mp4', img: 'assets/splash/bridges-start.jpg', still: 'assets/splash/bridges.jpg', ratio: '72 / 73',
+      // Play opens the game already started (`?play`), not its cover: the owner's request
+      game: 'puentes', href: 'bridges/?play', video: 'assets/splash/bridges.mp4', img: 'assets/splash/bridges-start.jpg', still: 'assets/splash/bridges.jpg', ratio: '72 / 73',
       text: {
         es: 'Arma un puente de vigas sobre el abismo: si aguanta, el tren cruza; si no, se cae. Ya está en Uno al día y en La Copa.',
         en: 'Build a bridge of beams over the gap: if it holds, the train crosses; if not, down it goes. Now in One a Day and The Cup too.',
