@@ -106,6 +106,41 @@ Their parameters are internal: they work from a local server or the Tailscale li
 only for someone who came in with a lab key (`INTERNO` in `game.js`), so a player without one never
 calls a visitor by hand.
 
+### The house style (owner-approved; `?style=pixel` for the old art)
+
+Players said the pixel art does not look like the rest of the app, and Stick Ninja does (owner's request,
+2026-10-25). The lab's game is now drawn in the house style (`neon.js`), approved by the owner the same day
+with all its pieces (the scene, the bullet train and the visitors); `?style=pixel` brings back the pixel
+art there ("👾 La versión anterior, en pixel" on the lab card), and La Copa's screen keeps the pixel art
+unless `?style=neon` (`NEON` in `scene.js`). Smooth shapes and soft glows, the home page's
+palette and Stick Ninja's night. The cliffs and pillars are dark silhouettes with a neon edge, two ranges
+of hills stand behind the gap, the beams are glowing rods in the house's yellow that warm to pink and red
+with the strain, the fixed joints are pink lights. The day keeps going by in the house's colors: a lilac
+dawn, a sunset in the title's yellow → pink, the home page's night. The page gets the `tv-neon` class (a
+glass gauge, no pixelated train beside the title).
+
+The owner found that first neon train too childish and asked for smoother, more modern options with a
+metallic finish. Of four designs (a chrome bullet train, a 1930s art deco streamliner, a brushed aluminium
+metro and a glossy black one outlined in neon) the owner chose the bullet train, and asked for the same
+nose at both ends, since such a train runs either way, and for colors. `trains.js` draws it: the last car
+is the front car turned around, with red tail lights, drawn 3 art units back because it is longer than the
+wagon whose place it takes. Its wheels are small and barely peek under a low dark skirt, so it seems to glide along the
+deck while still touching it (owner's request). It is the neon style's train (`?train=clasico` brings back the first one), in
+seven colors (`BALAS`: silver, pearl, graphite, ruby, gold, mint, lilac; `?train=bala-rubi`…), all shown
+at `/labs/bridges/trains/` ("🚄 Los colores del tren bala" on the lab card), each with a button to play
+with it. Each stage draws its color at random, never the same as the stage before (`trenDe(e)` in `neon.js`, the
+owner's request): the color is only paint, the weight stays the stage's, in the physics and in the title,
+and the small train beside the title has the stage's color (`trenMini(carga, e)`).
+
+The visitors live in `visitors.js` (when each comes and what it does), shared by both styles: they draw
+through a renderer, the pixel one or `neon-visitors.js`'s `pincel`, which has the same methods and draws
+each pixel sprite as shapes (a chrome saucer with a glass dome and blinking lights, an orange fish, a
+whale with a pale grooved belly, a velvet mole with a pink nose, a glossy petrol-green boat and its rider),
+plus four pieces drawn whole (the saucer's beam, the boat's wave, the rider in the water, the flag).
+The whale leans steeply going out and coming back (owner's request), and leaps higher than before (in both styles).
+`/labs/bridges/visitors/` ("🛸 Los visitantes" on the lab card) shows them up close, with buttons that play
+a game where each one comes in stage 1.
+
 Its sprites also draw the home page's first teaser (D-430): `tren-en-vilo-pronto`, on through
 2026-10-28, a GIF of a train stopping at the edge of a gap, no name and no link, made by
 `marketing/splash/teaser.mjs` from `marketing/splash/teaser/bridges.html`, which imports `pixel.js`.
