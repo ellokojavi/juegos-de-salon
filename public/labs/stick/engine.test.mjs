@@ -1,9 +1,9 @@
-// Stick Ninja's engine (D-446): the seeded course, the stick's length from the hold, perfect, land, short and long, the streak bonus, pauses and moving pillars.
+// Stick Ninja's engine (D-446): the seeded course, the stick's length from the hold, perfect, land, short and long, the streak bonus, pauses, moving pillars and the three lives.
 import assert from 'node:assert/strict';
 const NINJA_HALF = 9;
 import {
-  newGame, pillar, pillarAt, current, next, press, release, suspend, stickAt, advance, pause, holdFor, walkEnd, runX,
-  daySeed, card, motion, VIEW, HOLD_X, GROW, MAX_STICK, PERFECT, MAX_BONUS, TURN_MS, MIN_GAP, MOVE_FROM, PERIOD_SLOW, PERIOD_FAST,
+  newGame, pillar, pillarAt, current, next, press, release, suspend, stickAt, advance, pause, holdFor, revive, walkEnd, runX,
+  daySeed, card, motion, VIEW, HOLD_X, GROW, MAX_STICK, PERFECT, MAX_BONUS, TURN_MS, MIN_GAP, MOVE_FROM, LIVES, PERIOD_SLOW, PERIOD_FAST,
 } from './engine.js';
 
 const near = (a, b, msg, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${msg}: ${a} ≠ ${b}`);
@@ -74,12 +74,34 @@ function bridge(g, t, offset = 0) {
 
   const s = newGame(3), w = next(s).w;
   const short = bridge(s, 0, -w / 2 - 3);
-  assert.equal(short.r.kind, 'short'); assert.equal(short.events.at(-1).type, 'fall'); assert.equal(s.phase, 'over');
+  assert.equal(short.r.kind, 'short'); assert.equal(short.events.at(-1).type, 'fall'); assert.equal(s.phase, 'lost');
+  assert.equal(short.events.at(-1).lives, LIVES - 1); assert.equal(short.events.at(-1).over, false);
   const l = newGame(3);
   const long = bridge(l, 0, w / 2 + 3);
-  assert.equal(long.r.kind, 'long'); assert.equal(l.phase, 'over');
+  assert.equal(long.r.kind, 'long'); assert.equal(l.phase, 'lost');
   assert.deepEqual(l.kinds, ['fall']);
-  assert.equal(press(l, 1e6), false, 'nothing after the end');
+  assert.equal(press(l, 1e6), false, 'nothing until the ninja is back');
+}
+
+// Three lives: a fall costs one and the ninja is back on the same pillar, the streak gone; the last ends the run
+{
+  const g = newGame(3);
+  let t = bridge(g, 0, 0).t;
+  assert.equal(g.streak, 1);
+  const i = g.i, score = g.score;
+  for (let k = 1; k <= LIVES; k++) {
+    const b = bridge(g, t, next(g).w / 2 + 3), e = b.events.at(-1);
+    assert.equal(e.type, 'fall'); assert.equal(e.lives, LIVES - k); assert.equal(g.lives, LIVES - k);
+    assert.equal(g.streak, 0, 'a fall breaks the streak');
+    if (k < LIVES) {
+      assert.equal(e.over, false); assert.equal(g.phase, 'lost');
+      assert.ok(revive(g, b.t)); assert.equal(g.phase, 'ready');
+      assert.equal(g.i, i, 'back on the same pillar'); assert.equal(g.score, score, 'the score stays');
+      assert.equal(stickAt(g, b.t), 0, 'a new stick');
+    } else { assert.equal(e.over, true); assert.equal(g.phase, 'over'); assert.equal(revive(g, b.t), false); }
+    t = b.t + 1;
+  }
+  assert.deepEqual(g.kinds, ['perfect', 'fall', 'fall', 'fall']);
 }
 
 // Perfects in a row are worth more and more, up to MAX_BONUS; a plain landing breaks the streak
