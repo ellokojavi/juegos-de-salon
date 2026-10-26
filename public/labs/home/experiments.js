@@ -8,6 +8,7 @@
  * when it ships, the entry goes away and the home page does it for everyone.
  */
 import { CAMPAIGNS } from '../../assets/js/splash.js';
+import { TEMPLATES } from '../../assets/js/season.js';
 
 export const EXPERIMENTS = {
   // Shipped to everyone: 🔥 Populares (`popular`), ✨ Filtros (`picks`) and 🎲 Título (`brand`) in D-369,
@@ -15,6 +16,9 @@ export const EXPERIMENTS = {
   // `built`: the day it was last built or changed; the bar opens with the newest on (D-399)
   // The promotional splash (D-351): one box per campaign, shown with `?splash=<id>` (one at a time,
   // so ticking one unticks the others). With it, the window opens over the home page on every load.
+  // The seasonal templates (D-457): one box per template, shown on any day with `?season=<id>`
+  ...Object.fromEntries(Object.entries(TEMPLATES).map(([id, x]) => [`season:${id}`,
+    { built: x.built, emoji: x.icon?.emoji || '📅', name: `Temporada ${id}`, what: 'Los toques de una fecha en la portada y Rankings.', param: 'season', value: id }])),
   ...Object.fromEntries(Object.entries(CAMPAIGNS).map(([id, c]) => [`splash:${id}`,
     { built: c.built || '2026-10-18', emoji: c.emoji || '🎉', name: Object.keys(CAMPAIGNS).length > 1 ? `Splash ${id}` : 'Splash', what: 'La ventana de novedades sobre la portada.', param: 'splash', value: id }])),
 };
