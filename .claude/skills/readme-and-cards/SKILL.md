@@ -13,7 +13,7 @@ python3 tools/release/readme.py update     # rewrites the <!-- generated: ... --
 python3 tools/release/readme.py screenshots <section> [--offline]   # redoes the screenshots with Chrome
 python3 tools/release/readme.py seal         # "I reread the README with these facts"
 node tools/e2e/contact-sheet.mjs <section> --out /tmp/contact-sheet   # look at them together (D-76)
-node tools/release/og.mjs cards | images | check           # WhatsApp cards (D-72)
+node tools/release/og.mjs cards | images | check           # WhatsApp cards (D-72); cards also writes the JSON-LD, sitemap.xml and robots.txt (#887)
 node tools/release/icons.mjs                                    # PNG icons for the installable app, from assets/icon.svg (D-221)
 node tools/push/vapid.mjs                                        # the notifications key: already run (D-225), not redone
 node tools/push/notify.mjs --dry-run | --test <code>           # which notifications it would send (Cups and Uno al día (One a Day)), or a test one to a Cup (D-224, D-230)
@@ -26,3 +26,8 @@ node tools/push/notify.mjs --dry-run | --test <code>           # which notificat
   [docs/capturas.json](../../../docs/capturas.json) which `tools/e2e/` script and which shot it comes from.
 - The card images are redone **from a branch up to date with `main`**; they only change if
   a name, an emoji, a tagline or the design changes ([marketing/share-cards/card.html](../../../marketing/share-cards/card.html)).
+- **Search engines (#887):** `og.mjs cards` writes, inside each indexed page's generated og block, a
+  JSON-LD script (home-page games: VideoGame + WebApplication; the four doors: WebSite; nothing for lab,
+  La Bodega, switched-off pages or bridges), plus `public/sitemap.xml` (doors with hreflang alternates) and
+  `public/robots.txt`. They are generated from `games.js`: never edited by hand, and `og.mjs check` blocks
+  them stale (`tools/release/json-ld.test.mjs`).

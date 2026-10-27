@@ -58,7 +58,8 @@
 10. **El README**, en inglés (C-13): la sección del juego, sus tomas en `docs/capturas.json` y
     después `python3 tools/release/readme.py screenshots <seccion>`, `update` y, ya releído,
     `seal`. Las capturas se miran juntas con `node tools/e2e/contact-sheet.mjs <seccion>`. La tarjeta
-    social sale con `node tools/release/og.mjs cards` e `images`.
+    social sale con `node tools/release/og.mjs cards` e `images`; `cards` also writes the game's JSON-LD
+    (only once it is on the home page, not in the lab) and its line in `public/sitemap.xml` (#887).
 11. **La lista de chequeo** del final de los cánones, entera. La parte que se puede contar la
     cuenta `node public/assets/js/games.test.mjs`: motor, tests, gancho y especificación (C-12).
 
