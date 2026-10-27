@@ -323,6 +323,25 @@
     footer { margin-top: auto; padding-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
     .footer-msg { min-height: 3.2em; font-size: 1rem; line-height: 1.5; color: var(--ink); opacity: 0.9; transition: opacity 0.5s ease, transform 0.5s ease; font-weight: 700; }
     .footer-msg.out { opacity: 0; transform: translateY(6px); }
+    /* The footer's options. One alone is the quiet link it always was; two or more (today, with a lab
+       key: the inbox and the coffee) become a quiet grid of two columns, outlined and unfilled, so they
+       read as the site's corner and not as more game cards. A new option is one more child. lab: #seccion-apoyo */
+    .footer-links { margin: 1em 0; }
+    .footer-links.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-width: 380px; margin: 0 auto 1em; }
+    .footer-links.tiles::before {
+      content: '🎲'; content: '🎲' / ''; grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 6px 0 8px; font-size: 0.9rem; opacity: 0.55;
+      background: linear-gradient(var(--glass-border), var(--glass-border)) left center / calc(50% - 18px) 1px no-repeat,
+                  linear-gradient(var(--glass-border), var(--glass-border)) right center / calc(50% - 18px) 1px no-repeat;
+      justify-content: center;
+    }
+    .footer-links.tiles > * {
+      display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 6px 10px; margin: 0;
+      border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; background: none;
+      color: var(--muted); font: 700 0.8rem/1.25 var(--font-body); text-decoration: none; text-align: center; text-wrap: balance;
+    }
+    .footer-links.tiles > *:active { background: rgba(255, 255, 255, 0.05); }
+    .footer-links.tiles > #btn-apoyo-portada { border-color: rgba(255, 210, 63, 0.3); }
+    .footer-links.tiles > :last-child:nth-child(odd) { grid-column: 1 / -1; }
     /* Juego al azar (D-188): el botón bajo la bajada y el dado que rueda sobre la portada */
     .azar-slot { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin-top: 16px; }
     .btn-azar {
@@ -493,7 +512,7 @@
 
     <footer>
       <p class="footer-msg" id="footer-msg" aria-live="polite">Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
-      <p><button type="button" class="buzon-link footer-buzon" id="btn-buzon-portada"></button></p>
+      <div class="footer-links" id="footer-links"><button type="button" class="buzon-link footer-buzon" id="btn-buzon-portada"></button></div>
       <p class="muted">v0.0.0 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
     </footer>
   </main>
@@ -526,7 +545,7 @@
     btnBuzon.addEventListener('click', () => import('./assets/js/buzon.js').then(m => m.abrirBuzon({ pantalla: 'portada' })));
     // "☕ Buy me a coffee", always under the inbox, only with a lab key for now (D-395). lab: #seccion-apoyo
     // Its card opens over the page; Stripe comes back with ?support=thanks, which opens the thank-you (D-449)
-    import('./assets/js/support.js').then(m => { m.supportFromUrl({ lang }); return m.supportFooterLink(lang); }).then(a => a && btnBuzon.parentElement.after(el('p', {}, a))).catch(() => {});
+    import('./assets/js/support.js').then(m => { m.supportFromUrl({ lang }); return m.supportFooterLink(lang); }).then(a => { if (!a) return; const links = document.getElementById('footer-links'); links.append(a); links.classList.add('tiles'); }).catch(() => {});
     document.title = `${T.appTitle} 🎲`;
     document.getElementById('lang-slot').append(langToggle());
     // Los rankings (D-212): un botón en la barra, que la portada no tiene espacio para más
