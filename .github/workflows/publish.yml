@@ -155,7 +155,7 @@ jobs:
         run: |
           key="$(python3 tools/release/set-version.py --version)-${GITHUB_SHA:0:7}"
           for i in $(seq 1 20); do
-            if curl -sfL "${URL}?t=$(date +%s)" | grep -q "base.css?v=$key"; then
+            if curl -sfL "${URL}?t=$(date +%s)" | grep -q "<meta name=\"release\" content=\"$key\">"; then
               echo "published: $key"; echo "version=$(python3 tools/release/set-version.py --version)" >> "$GITHUB_OUTPUT"; exit 0
             fi
             sleep 15

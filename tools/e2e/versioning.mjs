@@ -1,4 +1,4 @@
-// That every module loads with the import map's `?v=` (run it against a stamped copy, served and
+// That every module loads with the import map's `?h=` content hash (D-467) (run it against a stamped copy, served and
 // passed in SITE). It also takes the README's home page screenshots (docs/capturas.json).
 import { output as output } from './output.mjs';
 import { launch, sleep } from './cdp.mjs';
@@ -19,7 +19,7 @@ await b.go(`${SITE}/labs/fourth-king/`);
 console.log('cuarto-rey → rules listed:', await b.evaluate(`document.querySelectorAll('#rules-list li').length`), '| resources:', JSON.stringify(await urls()));
 await b.go(`${SITE}/bulls-and-cows/`);
 console.log('toque-y-fama → modes:', await b.evaluate(`document.querySelectorAll('.mode').length`), '| resources:', JSON.stringify(await urls()));
-// the online mode loads firebase.js through a dynamic import(): it must come out versioned
+// the online mode loads firebase.js through a dynamic import(): it must come out with its hash
 await b.evaluate(`document.querySelectorAll('.mode')[1].click(); 1`); await sleep(300);
 await b.evaluate(`(()=>{document.querySelector('#setup-form input').value='Javi';return 1})()`);
 await b.evaluate(`document.querySelectorAll('#setup-actions .btn')[0].click(); 1`); await sleep(5000);

@@ -14,7 +14,7 @@ import { $, $$, el, con, conEmoji, vibrate, sparkles, keepAwake, confetti } from
 import { applyStatic, COMMON, SITIO, LANGS, getLang, langToggle, withLang } from '../assets/js/i18n.js';
 import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchivo, nombreArchivo, puntajeYTiempo, botonResultadoSolo, MARCO } from '../assets/js/compartir.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
-import { trackStart, versionOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
+import { trackStart, versionOf, releaseOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug, esNuevo } from '../assets/js/games.js';
 import { labAccess } from '../assets/js/lab-access.js';
 import { backGuard } from '../assets/js/back-guard.js';
@@ -3035,7 +3035,7 @@ function reportar(extra = {}) {
       await reportar({
         texto: t.slice(0, 1000), nombre: nombre.value.trim().slice(0, 40), ...(c ? { correo: c } : {}),
         contexto: JSON.stringify(contexto).slice(0, 500),
-        v: versionOf(document.getElementById('importmap')?.textContent || '') || 'dev',
+        v: versionOf(releaseOf(document)) || 'dev',
       });
       body.innerHTML = '';
       SFX.reveal();

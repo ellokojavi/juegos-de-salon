@@ -43,7 +43,7 @@
  *                        this browser, never tied to a name, an IP or anything else (D-349, amends D-44)
  *
  * Written by other modules into the same day: `support/<event>` (support.js, D-448) and
- * `splash/<campaign>/<event>` (splash.js: shown, reach, play, close, t0–t2 time open; D-461).
+ * `splash/<campaign>/<event>` (splash.js: shown, reach, play, close, t0–t2 time open; D-461; start and finish of the game its Play opened, D-466).
  *
  * Va por la REST API con un `fetch` y `keepalive`: los modos sin red no cargan el SDK de
  * Firebase ni abren una conexión persistente, así que no pesan en la carga ni gastan la
@@ -90,11 +90,14 @@ export function envOf({ hostname = '', pathname = '' } = {}) {
   return 'prod';
 }
 
-/** Versión de la app, leída del import map que estampa set-version.py (C-11). */
-export function versionOf(importmapText) {
-  const m = /\?v=(\d+\.\d+\.\d+)/.exec(importmapText || '');
+/** The app's version, from the release meta set-version.py writes (`0.98.1-09eb4db`, C-11, D-467). */
+export function versionOf(release) {
+  const m = /^(\d+\.\d+\.\d+)/.exec(release || '');
   return m ? m[1] : '0';
 }
+
+/** The page's release meta, or '' outside a published copy. */
+export const releaseOf = doc => doc?.querySelector?.('meta[name="release"]')?.content || '';
 
 /**
  * Zona horaria como clave de Firebase, acotada. La barra no puede ir en una clave y el
@@ -178,7 +181,7 @@ export function fingerprint({ loc = globalThis.location, nav = globalThis.naviga
   try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (_) { /* nada */ }
   return {
     env: envOf(loc || {}),
-    v: versionOf(doc?.getElementById?.('importmap')?.textContent),
+    v: versionOf(releaseOf(doc)),
     tz: tzKey(tz),
     co: countryOf({ tz, lang: nav?.language }),
     lang: langKey(nav?.language),
@@ -394,9 +397,35 @@ export function stats() {
   return shared;
 }
 
+/**
+ * A splash campaign's conversion (D-466): tapping its Play leaves `{ id, at }` in this tab's
+ * sessionStorage (splash.js); the first game started here afterwards counts `splash/<id>/start` and
+ * the first one finished `splash/<id>/finish`, each once, within SPLASH_VIA_MS of the tap.
+ */
+export const SPLASH_VIA_KEY = 'juegos-de-salon:splash-via';
+export const SPLASH_VIA_MS = 2 * 60 * 60 * 1000;
+/** The change for `step` ('start' | 'finish'), marking it done; empty when there is nothing to count. */
+export function splashStepChange(step, sesion = globalThis.sessionStorage, now = Date.now()) {
+  try {
+    const via = JSON.parse(leer(sesion, SPLASH_VIA_KEY) || 'null');
+    if (!via || !/^[a-z0-9-]{1,40}$/.test(via.id || '') || !(now - via.at < SPLASH_VIA_MS) || via[step]) return {};
+    // A finish without a start in this tab (a page that never called trackStart) still counts both
+    const steps = step === 'finish' && !via.start ? ['start', 'finish'] : [step];
+    poner(sesion, SPLASH_VIA_KEY, JSON.stringify({ ...via, ...Object.fromEntries(steps.map(k => [k, 1])) }));
+    return Object.fromEntries(steps.map(k => [`splash/${via.id}/${k}`, INC]));
+  } catch (_) { return {}; }
+}
+function noteSplashStep(step) {
+  const c = splashStepChange(step);
+  if (!Object.keys(c).length) return;
+  const s = stats();
+  quiet(() => s.api.patch(dayPath(s.fp.env, dayOf(Date.now())), c));
+}
+
 /** Atajo para el transporte: apunta al ganador de una sala. Nunca lanza ni se espera. */
 export function trackEnd(info) {
   try { backGuard().disarm(); } catch (_) { /* the guard never stops the signal */ }
+  try { noteSplashStep('finish'); } catch (_) { /* best effort */ }
   try { const s = stats(); return noteEnd(s.api, s.fp, info); } catch (_) { return Promise.resolve(); }
 }
 
@@ -423,6 +452,7 @@ export function trackStart(info) {
     if (esEnVivo(info?.mode)) pararVivo = startLive(s.api, s.fp, { ...info, name });
     notePlayed(s.api, s.fp);
     noteActive(s.api, s.fp, { level: 2 });
+    noteSplashStep('start');
     return noteStart(s.api, s.fp, info);
   } catch (_) { return Promise.resolve(); }
 }
@@ -627,6 +657,7 @@ export function trackFinish(info) {
     pararVivo = null;
     const prev = anterior;
     if (prev) prev.finished = true;
+    try { noteSplashStep('finish'); } catch (_) { /* best effort */ }
     if (prev?.game && isLocalMode(prev.mode)) {
       const st = stats();
       quiet(() => st.api.patch(dayPath(st.fp.env, dayOf(Date.now())), finChanges(prev)));

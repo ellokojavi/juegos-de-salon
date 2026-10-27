@@ -20,14 +20,15 @@ const UA = {
 };
 
 /** Un navegador de mentira: oyentes, relojes, fetch anotado y la página que se pida. */
-function navegador({ url = 'https://juegosdesalon.cl/hangman/?K7Q2X', ua = UA.android, oculta = false, ahora = 1000, importmap = '' } = {}) {
+function navegador({ url = 'https://juegosdesalon.cl/hangman/?K7Q2X', ua = UA.android, oculta = false, ahora = 1000, release = '' } = {}) {
   const oyentes = {}, envios = [], relojes = [];
   const on = quien => (tipo, f) => { (oyentes[`${quien}:${tipo}`] ||= []).push(f); };
   const loc = new URL(url);
   const doc = {
     visibilityState: oculta ? 'hidden' : 'visible',
     addEventListener: on('doc'),
-    getElementById: id => (id === 'importmap' && importmap ? { textContent: importmap } : null),
+    getElementById: () => null,
+    querySelector: sel => (sel === 'meta[name="release"]' && release ? { content: release } : null),
   };
   const win = {
     addEventListener: on('win'),
@@ -104,7 +105,7 @@ assert.equal(_.firma(['a', 'b']), _.firma(['a', 'b']), 'la firma es estable');
 
 // --- Un error sin atrapar --------------------------------------------------------
 {
-  const b = navegador({ importmap: '{"imports":{"../a.js":"../a.js?v=0.128.1-abc1234"}}' });
+  const b = navegador({ release: '0.128.1-abc1234' });
   b.error({ message: 'TypeError: x is undefined', filename: 'https://juegosdesalon.cl/hangman/game.js?v=0.128.1', lineno: 88, error: { name: 'TypeError' } });
   const c = b.cambios();
   assert.deepEqual(c['falla/js/hangman'], INC);
