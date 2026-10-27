@@ -505,7 +505,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-457](decisions/D-457.md) | Seasonal touches on the pages players move around in (Halloween first) | current |
 | [D-458](decisions/D-458.md) | A splash campaign can wait for regulars: 5 visit days and 10 finished games (the toast to support does) | current |
 | [D-459](decisions/D-459.md) | Feedback reports are readable only by the owner; the tools read them with the admin key | current |
-| [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit (in the lab) | current |
+| [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit | current |
 
 ## No longer in force (11)
 
