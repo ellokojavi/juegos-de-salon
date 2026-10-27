@@ -366,8 +366,8 @@ async function playDay(d, level, { capture = false, joker = false } = {}) {
     ok(/más corta/.test(await ev(`document.getElementById('nota-ensayo')?.textContent || ''`)), 'the lobby warns that the trial is shorter and does not count');
     await click('#btn-ensayo'); await waitCountdown({ check: true });
     ok(!!await ev(`document.querySelector('#reglas #nota-ensayo')`), 'the folded rules of the trial repeat the warning');
-    await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');window.__playing={p:JUEGOS.linea.ensayo(__copa.estado.code, 1)};return 1})()`);
-    const realTheme = await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');return JUEGOS.linea.generar(__copa.estado.code, 1).tema})()`);
+    await ev(`(async()=>{const JUEGOS=await (await import('/cup/games/index.js')).loadAll();window.__playing={p:JUEGOS.linea.ensayo(__copa.estado.code, 1)};return 1})()`);
+    const realTheme = await ev(`(async()=>{const JUEGOS=await (await import('/cup/games/index.js')).loadAll();return JUEGOS.linea.generar(__copa.estado.code, 1).tema})()`);
     ok(await ev('window.__playing.p.tema') !== realTheme && await ev(`document.querySelectorAll('.hand .card').length`) === 4, 'the trial session brings other content and is shorter');
     await checkScreen('trial');
     await playLine(2);
@@ -384,7 +384,7 @@ async function playDay(d, level, { capture = false, joker = false } = {}) {
   const id = await ev('__copa.estado.juego.id');
   // The final is built with this cup's rounds (D-418), as the screen builds it
   // A weekend cup's day of three (D-439) is built with that day's three games
-  await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const {finalRounds,rondasDelDia}=await import('/cup/engine.js');const m=__copa.estado.copa.meta;window.__playing={p:JUEGOS[${JSON.stringify(id)}].generar(__copa.estado.code, ${d}, {rondas: rondasDelDia(m, ${d}) || finalRounds(m)})};return 1})()`);
+  await ev(`(async()=>{const JUEGOS=await (await import('/cup/games/index.js')).loadAll();const {finalRounds,rondasDelDia}=await import('/cup/engine.js');const m=__copa.estado.copa.meta;window.__playing={p:JUEGOS[${JSON.stringify(id)}].generar(__copa.estado.code, ${d}, {rondas: rondasDelDia(m, ${d}) || finalRounds(m)})};return 1})()`);
   await PLAY[id](level, { drag: capture && id === 'linea' });
   if (capture) { await checkScreen(`game-${id}`); if (SHOTS[id]) await b.shot(SHOTS[id]); }
   // The result is saved as soon as the board ends, before tapping "Ver resultado" (D-150)
@@ -874,7 +874,7 @@ if (runs('labs')) {
     if (id === 'linea') {
       // The trial from the lab: the same as before a day (D-109), and it goes back to the lobby
       await click('#btn-ensayo'); await waitCountdown();
-      await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');window.__playing={p:JUEGOS.linea.ensayo(__copa.estado.juego.semilla, 1)};return 1})()`);
+      await ev(`(async()=>{const JUEGOS=await (await import('/cup/games/index.js')).loadAll();window.__playing={p:JUEGOS.linea.ensayo(__copa.estado.juego.semilla, 1)};return 1})()`);
       await playLine(2); await click('#btn-fin'); await sleep(300);
       ok(!!await ev(`document.getElementById('btn-volver-ensayo')`), 'the lab trial ends with the way back to the lobby');
       await click('#btn-volver-ensayo'); await sleep(300);
@@ -890,7 +890,7 @@ if (runs('labs')) {
         await ev(`document.querySelector('#reglas summary').click(); window.scrollTo(0,0); 1`);
       }
     }
-    await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');window.__playing={p:JUEGOS['${id}'].generar(__copa.estado.juego.semilla, 1)};return 1})()`);
+    await ev(`(async()=>{const JUEGOS=await (await import('/cup/games/index.js')).loadAll();window.__playing={p:JUEGOS['${id}'].generar(__copa.estado.juego.semilla, 1)};return 1})()`);
     if (id === 'zip') {
       // Reaching the last number without covering everything: the warning goes under the grid and doesn't move it, and the head doesn't hide the number
       const z = await ev(`(async()=>{const z=await import('/cup/games/zip/engine.js');const p=z.nivel(__copa.estado.juego.semilla,1,0);const N=p.n*p.n;
@@ -1169,7 +1169,7 @@ if (runs('demos')) {
     await ev('sessionStorage.clear(); 1');
     await b.go(`${BASE}?${code}&test`, 1500);
     ok(await ev(`document.getElementById('aviso-aud')?.dataset.aud`) === 'br' && /Brasil/.test(await ev(`document.getElementById('aviso-aud').textContent`)), 'cup for Brazil: the invitation says so');
-    ok(await ev(`(async()=>{const {JUEGOS}=await import('/cup/games/index.js');return [1,2,3,4,5,6,7].every(d=>JUEGOS.linea.generar('${code}',d,{aud:'br'}).tema!=='chile')})()`), 'cup for Brazil: Línea Relámpago does not use the Chile theme');
+    ok(await ev(`(async()=>{const JUEGOS=await (await import('/cup/games/index.js')).loadAll();return [1,2,3,4,5,6,7].every(d=>JUEGOS.linea.generar('${code}',d,{aud:'br'}).tema!=='chile')})()`), 'cup for Brazil: Línea Relámpago does not use the Chile theme');
     await b.shot('invitation-brazil');
   }
 }

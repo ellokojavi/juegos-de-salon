@@ -28,7 +28,7 @@ import {
 } from './engine.js';
 import { GAME_ID, LOCALES, juegosCopa, rondasFinal, conVariante, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { createCuenta, juntarCopas } from './cuenta.js';
-import { JUEGOS } from './games/index.js';
+import { JUEGOS, loadGame } from './games/index.js';
 import { audienciaDe } from './games/audiencia.js';
 import { desglose } from './desglose.js';
 import { imagenDeTabla, cabeceraTabla, colorDe, llegada } from './table-image.js';
@@ -2147,6 +2147,7 @@ function eliminada(nombre) {
 function antesDeJugar(d) {
   const Lc = L(), { meta } = Lc;
   const id = juegoDelDia(meta, d), J = juegoDia(meta, d), variante = varianteDelDia(meta, d);
+  if (!conJuego(id, () => antesDeJugar(d))) return;
   mostrar('jugar');
   S.antesala = true;
   rotuloMenu();
@@ -2223,6 +2224,18 @@ const avisoAudiencia = meta => {
 };
 const avisoPalabras = meta => (palabrasDe(meta) === LANG ? null
   : el('p', { class: 'muted center aviso-palabras', style: 'margin:0' }, fmt(T.wordsIn, { idioma: T.langNames[palabrasDe(meta)] })));
+
+/**
+ * Only the game being played loads (D-468): true if its code is already here; if not, it is fetched
+ * and `luego` runs once it is, and false says to stop now. An id that is not a Cup game is "here":
+ * the screen that asked handles it as before.
+ */
+function conJuego(id, luego) {
+  if (JUEGOS[id] || !id) return true;
+  loadGame(id).then(j => { if (j) luego(); else if (SUELTO) location.replace(RAIZ); else portada(); })
+    .catch(e => { console.error(e); espera(errorDe(e), { error: true, reintentar: () => location.reload() }); });
+  return false;
+}
 
 /** Lo de arriba de la antesala: la portada animada del juego si la tiene (el globo de ¿Dónde queda?), si no su emoji. */
 const heroe = (id, J) => JUEGOS[id]?.portada?.({ variante: J.variante || null }) ?? el('span', { class: con('icon', J.emoji) }, J.emoji);
@@ -2320,6 +2333,7 @@ function cuentaRegresiva(J) {
 }
 
 async function jugar(d, { nuevo = false } = {}) {
+  if (!conJuego(juegoDelDia(L().meta, d), () => jugar(d, { nuevo }))) return;
   const Lc = L(), { meta } = Lc;
   const id = juegoDelDia(meta, d), J = juegoDia(meta, d), mod = JUEGOS[id], variante = varianteDelDia(meta, d);
   const guardado = cuenta.intento.leer(S.code, d, S.yo) || {};
@@ -2632,6 +2646,7 @@ function selectorTyf() {
 }
 
 function practica(id, varianteElegida = null) {
+  if (!conJuego(id, () => practica(id, varianteElegida))) return;
   const mod = JUEGOS[id];
   if (!JUEGOS_COPA[id] || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
   // Uno al día is the same challenge for everyone (D-334): always the default variant, without the picker
@@ -2861,6 +2876,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
 /** La sesión de prueba de un día: otro contenido, la misma mecánica, y de vuelta a Empezar. */
 function ensayo(d) {
   const id = juegoDelDia(L().meta, d), variante = varianteDelDia(L().meta, d);
+  if (!conJuego(id, () => ensayo(d))) return;
   mostrar('jugar');
   S.juego = { d, id, ensayo: true };
   jugarSinPuntaje(id, JUEGOS[id].ensayo(S.code, d, { lang: LANG, palabras: palabrasDe(L().meta), aud: audienciaDe(L().meta), variante, rondas: rondasPara(L().meta, d) }), r => resultadoEnsayo(id, r, () => antesDeJugar(d), variante), { ensayo: true, variante });
