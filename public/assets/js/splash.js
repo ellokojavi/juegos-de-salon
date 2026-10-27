@@ -217,6 +217,23 @@ export function seenIds(raw = (() => { try { return storage()?.getItem(SEEN_KEY)
 }
 const markSeen = id => { try { const list = seenIds(); if (!list.includes(id)) storage()?.setItem(SEEN_KEY, JSON.stringify([...list, id].slice(-20))); } catch (_) {} };
 
+/**
+ * A soft close (a tap outside the window, or Escape) can be a slip: the window rises just as the
+ * player reaches for the page. The first soft close of a campaign does not mark it as seen, so it
+ * comes back on a later visit; the second does. The X, "Not now" and its links always mark it
+ * (D-462). Kept per campaign id in SOFT_KEY.
+ */
+export const SOFT_KEY = 'juegos-de-salon:splash-suave';
+export const SOFT_CLOSES = 2;
+/** Counts one soft close of `id` and says whether it now counts as seen. Pure apart from the store. */
+export function softClose(id, store = storage()) {
+  let soft = {};
+  try { soft = JSON.parse(store?.getItem(SOFT_KEY) || '{}') || {}; } catch (_) { soft = {}; }
+  soft[id] = (soft[id] || 0) + 1;
+  try { store?.setItem(SOFT_KEY, JSON.stringify(soft)); } catch (_) { /* no storage: it counts as seen */ return true; }
+  return soft[id] >= SOFT_CLOSES;
+}
+
 const ROOT = new URL('../../', import.meta.url);
 
 function loadStyle() {
@@ -330,18 +347,22 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   card.tabIndex = -1;
   card.focus({ preventScroll: true });
 
+  // Lab key holders first (D-395, D-409): for them a soft close is forgiven once. lab: #seccion-splash-cerrar
+  let forgive = false;
+  if (record) import('./lab-access.js').then(m => m.labAccess()).then(yes => { forgive = yes; }).catch(() => {});
   return new Promise(res => {
-    const close = () => {
-      if (record) markSeen(id);
+    const close = (soft = false) => {
+      if (record && (!soft || !forgive || softClose(id))) markSeen(id);
       document.removeEventListener('keydown', onKey);
       layer.classList.add('sale');
       setTimeout(() => { layer.remove(); document.body.style.overflow = prevOverflow; before?.focus?.({ preventScroll: true }); }, 180);
       onClose?.();
       res();
     };
-    const onKey = e => { if (e.key === 'Escape') close(); };
+    const onKey = e => { if (e.key === 'Escape') close(true); };
     document.addEventListener('keydown', onKey);
-    for (const b of [x, done, backdrop]) b.addEventListener('click', close);
+    for (const b of [x, done]) b.addEventListener('click', () => close());
+    backdrop.addEventListener('click', () => close(true));
     // Following a game's link also counts as having seen it
     list.addEventListener('click', e => { if (e.target.closest('a') && record) markSeen(id); });
   });
