@@ -342,7 +342,7 @@
     .footer-links.tiles > *:active { background: rgba(255, 255, 255, 0.05); }
     .footer-links.tiles > #btn-apoyo-portada { border-color: rgba(255, 210, 63, 0.3); }
     .footer-links.tiles > :last-child:nth-child(odd) { grid-column: 1 / -1; }
-    /* The sunset (lab: #seccion-pie): the page ends in a glow of the site's own purple and pink, the
+    /* The sunset, chosen from twelve variants in /labs/footer/: the page ends in a glow of the site's own purple and pink, the
        phrase in white, and each option on frosted glass with its color circle above the label */
     footer.atardecer { margin: 0 -18px -32px; padding: 28px 18px 32px; background: linear-gradient(180deg, transparent, rgba(138, 77, 255, 0.28) 45%, rgba(255, 46, 136, 0.32)); }
     footer.atardecer .footer-msg { color: var(--ink); opacity: 1; font-weight: 800; font-size: 1.04rem; }
@@ -522,7 +522,7 @@
       })();
     </script>
 
-    <footer>
+    <footer class="atardecer">
       <p class="footer-msg" id="footer-msg" aria-live="polite">Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
       <div class="footer-links" id="footer-links"><button type="button" class="buzon-link footer-buzon" id="btn-buzon-portada"></button></div>
       <p class="muted">v0.0.0 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
@@ -558,11 +558,8 @@
     // "☕ Buy me a coffee", always beside the inbox
     // Its card opens over the page; Stripe comes back with ?support=thanks, which opens the thank-you (D-449)
     const footerLinks = import('./assets/js/support.js').then(m => { m.supportFromUrl({ lang }); return m.supportFooterLink(lang); }).then(a => { if (!a) return; const links = document.getElementById('footer-links'); links.append(a); links.classList.add('tiles'); }).catch(() => {});
-    // The footer's sunset, only with a lab key for now (D-395). lab: #seccion-pie
-    // Each option's leading emoji becomes its color circle, so the label wraps under it
-    Promise.all([footerLinks, import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess())]).then(([, yes]) => {
-      if (!yes) return;
-      document.querySelector('footer').classList.add('atardecer');
+    // The footer's sunset: each option's leading emoji becomes its color circle, so the label wraps under it
+    footerLinks.then(() => {
       for (const b of document.getElementById('footer-links').children) {
         const [ic, ...label] = b.textContent.split(' ');
         b.replaceChildren(el('span', { class: 'ic', 'aria-hidden': 'true' }, ic), ' ', el('span', {}, label.join(' '))); // the space keeps the text whole
