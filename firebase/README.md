@@ -36,6 +36,10 @@ notices: the transport and the usage signals are best-effort and fail silently.
   six hours since `createdAt`, which is the hard cap— the room accepts nothing more. A room without
   `lastAt` predates the heartbeat: the six-hour cap applies.
 - `players/A` to `players/F` can be updated while the room is alive (up to six players).
+  Two phones never share a seat because the client takes it with a transaction that leaves a
+  seat held by another phone's `uid` alone (`transport/seat.js`). The rule does not require the
+  stored `uid` to match: a phone that reloads mid-game is a new transport with a new `uid`, and
+  resumes its seat by rewriting it.
   `left` (boolean) also goes there: the goodbye of whoever left on purpose (D-50).
 - `messages/<id>` are append-only (not edited or deleted) and must carry `t`, `from` (A to F) and `at`.
 - An expired room (half an hour without a heartbeat, or more than 6 hours) can be deleted by anyone (cleanup).
