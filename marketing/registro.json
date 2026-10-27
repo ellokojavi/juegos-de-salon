@@ -50,10 +50,12 @@
       ],
       "estado": "v8 built 2026-10-26, not uploaded yet: the owner uploads it. On YouTube today, the v7 Shorts (ES https://youtube.com/shorts/zM9v2UwEsM8, EN https://youtube.com/shorts/UubTGcUoQD8) in the home page share sheet (D-410)",
       "revision": {
-        "fecha": "2026-10-26",
-        "app": "0.211.5",
-        "al_dia": true,
-        "pendiente": []
+        "fecha": "2026-10-27",
+        "app": "0.219.4",
+        "al_dia": false,
+        "pendiente": [
+          "Tren en Vilo (D-456) left the lab and is now on the home page, in Uno al día and La Copa, and the v8 video does not show it; Toque y Fama is now one home card with a Número/Palabra toggle."
+        ]
       },
       "seleccion": true,
       "escenas": [
