@@ -968,8 +968,8 @@ if (runs('labs')) {
       if (await ev(`!!document.createElement('canvas').getContext('webgl')`)) {
         await ev(`document.querySelector('.mapa-globo').globo.girarA(-33, -70); for (let i = 0; i < 4; i++) document.getElementById('btn-acercar').click(); 1`);
         await sleep(1500);
-        const tiles = await ev(`JSON.stringify(performance.getEntriesByType('resource').filter(e => e.name.includes('earth-2004-09/')).map(e => e.name.split('/').pop()))`).then(JSON.parse);
-        ok(tiles.includes('5-4.jpg') && tiles.length <= 9, `¿Dónde queda?: zoomed in over Chile its tiles are downloaded (${tiles.join(', ')})`);
+        const tiles = await ev(`JSON.stringify(performance.getEntriesByType('resource').filter(e => e.name.includes('earth-2004-09/') && e.name.split('/').pop().includes('-')).map(e => e.name.split('/').pop()))`).then(JSON.parse);
+        ok(tiles.includes('5-4.webp') && tiles.length <= 9, `¿Dónde queda?: zoomed in over Chile its tiles are downloaded (${tiles.join(', ')})`);
         for (let i = 0; i < 4; i++) await click('#btn-alejar');
       }
       await b.shot('where-map');
