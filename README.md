@@ -470,6 +470,7 @@ node public/labs/stick/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node firebase/pin-attempts.test.mjs
+node firebase/room-limits.test.mjs
 node marketing/served.test.mjs
 node marketing/splash/campaigns.test.mjs
 node public/assets/css/fonts-preload.test.mjs
@@ -569,6 +570,7 @@ node tools/push/notify.test.mjs
 node tools/push/schedule.test.mjs
 node tools/push/webpush.test.mjs
 node tools/release/changelog.test.mjs
+node tools/release/json-ld.test.mjs
 node tools/release/merge-report.test.mjs
 node tools/release/syntax.test.mjs
 node tools/release/version.test.mjs
