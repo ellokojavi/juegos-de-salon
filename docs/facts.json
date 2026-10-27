@@ -1378,6 +1378,7 @@
     "tools/push/schedule.test.mjs",
     "tools/push/webpush.test.mjs",
     "tools/release/changelog.test.mjs",
+    "tools/release/json-ld.test.mjs",
     "tools/release/merge-report.test.mjs",
     "tools/release/syntax.test.mjs",
     "tools/release/version.test.mjs",
