@@ -15,7 +15,7 @@ that has not paid, and until then stays unseen. This folder is its memory: every
 | Clips | [`capture.mjs`](capture.mjs), see [clips.md](clips.md) |
 | Teasers | a drawn scene of a game that is coming, as a GIF: [`teaser.mjs`](teaser.mjs) records a page of [`teaser/`](teaser/) frame by frame (D-430) |
 | Gives way to | The recap window (`assets/js/recap.js`): La Copa's of an ended cup (D-423) or Uno al día's of an ended season (D-424); on a visit that opens it, the splash waits for the next one; it reuses `splash.css`. One gate (`assets/js/home-windows.js`, D-431) opens one window per visit: recap, then splash, then the install bubble |
-| Measured | Each window counts in the day's stats (D-461): shown, reach (new phones), play, close and time open; the panel's 📣 Campaigns shows 📊 How they did, by days shown |
+| Measured | Each window counts in the day's stats (D-461): shown, reach (new phones), play, close and time open, and since D-466 conversion: the game its Play opened started and finished; the panel's 📣 Campaigns shows 📊 How they did, by days shown |
 | Campaigns | [`campaigns/<id>/`](campaigns/): a README (what, when, which PR) and its screenshots in the four languages |
 
 ## Making a campaign

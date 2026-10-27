@@ -380,7 +380,7 @@ stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many
   new step does force touching the rules. Only counts: nothing says who supported or how much.
 - Splash campaigns (D-461): `splash/<id>/<event>` is a counter like the others, uploaded by
   `public/assets/js/splash.js` (`SPLASH_EVENTS`), never from a preview. The campaign id goes by shape
-  (`^[a-z0-9-]{1,40}$`), the event by list (`shown`, `reach`, `play`, `close`, `t0`, `t1`, `t2`), so a
+  (`^[a-z0-9-]{1,40}$`), the event by list (`shown`, `reach`, `play`, `close`, `t0`, `t1`, `t2`, and since D-466 `start`, `finish`), so a
   new event forces touching the rules. `reach` is the first window on a phone, remembered on the phone,
   so no id leaves it.
 
