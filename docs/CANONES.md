@@ -501,6 +501,11 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   El globo que invita a agregar la app a inicio sale abajo, solo en los celulares donde se puede
   agregar (no en el computador ni en la app ya instalada), y la ✕ lo apaga para siempre en ese
   navegador (D-232).
+- **The footer's last line links the privacy page** (D-463): the version, "código en GitHub" and
+  "Privacidad" (`COMMON.privacy`), which opens `/privacy/`. The same page is linked from the note
+  under the email field of every feedback form. **The page describes the code:** a PR that stores
+  something new about players, or keeps it for a different time, edits `public/privacy/texts.js`
+  in the same PR, in the four languages (`texts.test.mjs` checks their shape).
 - **Se prueba entera en Chrome:** `tools/e2e/favorites.mjs` (filtros, favoritos y 320 px en los
   cuatro idiomas), `share-home.mjs`, `install-prompt.mjs`, `daily.mjs` e
   `lang-from-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los

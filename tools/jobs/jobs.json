@@ -14,8 +14,8 @@
       "where": "mac",
       "every": 300,
       "command": ["node", "tools/agents/feedback.mjs", "sync"],
-      "what": "Uploads the new 🐞 and email feedback reports from Firebase as `feedback` issues (reads with the owner's admin key; `gh` makes the issues). `feedback.yml` stays as a manual fallback.",
-      "decisions": ["D-275", "D-382"]
+      "what": "Uploads the new 🐞 and email feedback reports from Firebase as `feedback` issues (reads with the owner's admin key; `gh` makes the issues). Each pass also deletes the reply emails left more than 90 days ago without a reply (D-463). `feedback.yml` stays as a manual fallback.",
+      "decisions": ["D-275", "D-382", "D-463"]
     },
     {
       "id": "notifications",

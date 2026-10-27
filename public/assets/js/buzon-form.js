@@ -14,13 +14,19 @@ const NOMBRE = 'juegos-de-salon:copa:reporte-nombre';
 
 /**
  * The optional email field (D-317), the same in every feedback form, in the page's language. It says
- * plainly what the address is for: only to reply to the player. Not saved on the device.
+ * plainly what the address is for: only to reply to the player, and when it is deleted: on the reply,
+ * or after 90 days without one (`feedback.mjs expire`, D-463). Its note links the privacy page. Not
+ * saved on the device.
  */
+/** Days an address waits for a reply before it is deleted (D-463); `feedback.mjs` deletes it. */
+export const DIAS_CORREO = 90;
+/** The privacy page (D-463), from this module: it works on the site and on a PR preview alike. */
+export const PRIVACY_URL = new URL('../../privacy/', import.meta.url).href;
 const CORREO = {
-  es: { correo: 'Tu correo (opcional)', correoNota: 'Solo para responderte. No lo usamos para nada más, no se publica y después lo borramos.', correoMalo: 'Revisa el correo: parece incompleto.' },
-  en: { correo: 'Your email (optional)', correoNota: "Only so we can reply to you. We don't use it for anything else, it's never published, and we delete it afterwards.", correoMalo: 'Check your email: it looks incomplete.' },
-  pt: { correo: 'Seu e-mail (opcional)', correoNota: 'Só para te responder. Não usamos para mais nada, não é publicado e depois o apagamos.', correoMalo: 'Confira o e-mail: parece incompleto.' },
-  de: { correo: 'Deine E-Mail (optional)', correoNota: 'Nur, damit wir dir antworten können. Wir nutzen sie für nichts anderes, sie wird nicht veröffentlicht und danach gelöscht.', correoMalo: 'Prüf deine E-Mail-Adresse: Sie scheint unvollständig zu sein.' },
+  es: { correo: 'Tu correo (opcional)', correoNota: 'Solo para responderte. No lo usamos para nada más ni se publica: lo borramos al responderte o, si no hubo respuesta, a los 90 días.', privacidad: 'Privacidad', correoMalo: 'Revisa el correo: parece incompleto.' },
+  en: { correo: 'Your email (optional)', correoNota: "Only so we can reply to you. We don't use it for anything else and it's never published: we delete it once we reply or, if there was no reply, after 90 days.", privacidad: 'Privacy', correoMalo: 'Check your email: it looks incomplete.' },
+  pt: { correo: 'Seu e-mail (opcional)', correoNota: 'Só para te responder. Não usamos para mais nada e não é publicado: apagamos ao responder ou, se não houver resposta, depois de 90 dias.', privacidad: 'Privacidade', correoMalo: 'Confira o e-mail: parece incompleto.' },
+  de: { correo: 'Deine E-Mail (optional)', correoNota: 'Nur, damit wir dir antworten können. Wir nutzen sie für nichts anderes und veröffentlichen sie nicht: Wir löschen sie nach der Antwort oder, falls keine kommt, nach 90 Tagen.', privacidad: 'Datenschutz', correoMalo: 'Prüf deine E-Mail-Adresse: Sie scheint unvollständig zu sein.' },
 };
 export const textosCorreo = (idioma = (typeof document !== 'undefined' && document.documentElement.lang) || 'es') => CORREO[String(idioma).slice(0, 2)] || CORREO.es;
 export const IDIOMAS_CORREO = Object.keys(CORREO);
@@ -29,7 +35,8 @@ export const IDIOMAS_CORREO = Object.keys(CORREO);
 export function campoCorreo(T = {}, id = 'feedback-correo') {
   const C = { ...textosCorreo(), ...T };
   const input = el('input', { class: 'labs-nombre labs-correo', id, type: 'email', inputmode: 'email', maxlength: '120', autocomplete: 'email', placeholder: C.correo, 'aria-label': C.correo, 'aria-describedby': `${id}-nota` });
-  const nota = el('p', { class: 'muted labs-correo-nota', id: `${id}-nota`, style: 'margin:0;font-size:.85em' }, C.correoNota);
+  const nota = el('p', { class: 'muted labs-correo-nota', id: `${id}-nota`, style: 'margin:0;font-size:.85em' },
+    `${C.correoNota} `, el('a', { href: PRIVACY_URL, target: '_blank', rel: 'noopener', style: 'color:inherit' }, C.privacidad || CORREO.es.privacidad));
   const valor = () => { const t = input.value.trim(); return t ? (correoValido(t) || null) : ''; };
   return { input, nota, valor, malo: C.correoMalo };
 }
