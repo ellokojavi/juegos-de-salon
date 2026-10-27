@@ -21,6 +21,7 @@ import { createChat } from '../assets/js/chat.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
 import { azarDel, puntajeNaval } from '../assets/js/uno-al-dia.js';
 import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
+import { mountFaq } from '../assets/js/faq.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import { FONDO_AGUA, barcoEn, barcoEntero, trozoDe } from './flota.js';
 import { renderQr } from '../assets/js/qr.js';
@@ -983,6 +984,7 @@ function init() {
   if (HOY?.fuera) return;   // se va al juego de hoy
   if (HOY) return introDeHoy();
   renderModes();
+  mountFaq($('#faq-slot'), GAME_ID, T, lang);
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();

@@ -26,6 +26,7 @@ import {
   positionsOf, randomNonce, randomSeed, rarest, readPos, sha256, shapeOf, shuffleSeeded, verifySetter, wordProblem,
 } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';
+import { mountFaq } from '../assets/js/faq.js';
 import { GAME_ID, DEFAULT_CONFIG, GALLOWS, PARTS, MAX_HINT, MIN_PLAYERS, MAX_PLAYERS, LOCALES } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
 
@@ -1076,6 +1077,7 @@ function init() {
   if (HOY?.fuera) return;   // se va al juego de hoy
   if (HOY) return introDeHoy();
   renderModes();
+  mountFaq($('#faq-slot'), GAME_ID, T, lang);
   // Los mejores puntajes jugando solo (D-274), y las victorias y entrar con nombre y PIN (D-212)
   $('#rk-slot')?.append(
     bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),
