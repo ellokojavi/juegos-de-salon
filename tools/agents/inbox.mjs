@@ -8,7 +8,9 @@
  * whatever it says can only reach this inbox and the public report path.
  *
  *   node tools/agents/inbox.mjs list                              # the emails waiting, oldest first
- *   node tools/agents/inbox.mjs ingest <id> <text.txt> --lang <es|en|pt|de>   # → a feedback report
+ *   node tools/agents/inbox.mjs ingest <id> - --lang <es|en|pt|de> <<'END_OF_REPORT'   # → a feedback report,
+ *   <the text>                                                     #   its text on stdin, never a file
+ *   END_OF_REPORT
  *   node tools/agents/inbox.mjs skip <id> "<reason>"              # spam, automatic, not for us
  *   node tools/agents/inbox.mjs skipped [--days n]                # for the owner: the skipped emails' text (D-452)
  *
@@ -24,6 +26,12 @@
  * lists the skips with their reasons, never their text (D-452): what a stranger wrote stays away
  * from the agents with wider powers.
  *
+ * The support agent's session has Bash for this tool and nothing else (no Read, no Write): the
+ * text goes on stdin, so it never needs to write a file, `ingest` takes no file path (one could
+ * point at a credential), and a report that looks like it carries a
+ * secret (a key, a token) is refused here and again by `feedback.mjs sync` before it can become a
+ * public issue.
+ *
  * The email's fields (`de`, `nombre`, `asunto`, `texto`, `automatico`) and the report's (`texto`,
  * `nombre`, `correo`, `contexto`) are Firebase data and keep their names.
  */
@@ -32,6 +40,7 @@ import { homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
+import { secretLike } from './feedback.mjs';
 import { enviarReporte as sendReport, correoValido as validEmail, enmascarar as maskEmail } from '../../public/cup/reportes.js';
 
 const CREDENTIAL = process.env.JUEGOS_INBOX || process.env.JUEGOS_BUZON || join(homedir(), '.config/juegos-de-salon/buzon.json');
@@ -51,6 +60,7 @@ export function report(email, text, lang) {
   if (!t) throw new Error('The text file is empty.');
   if (t.length > 1000) throw new Error(`The text is ${t.length} characters; a report takes 1000 at most (summarize).`);
   if (!LANGUAGES.includes(lang)) throw new Error(`--lang is one of ${LANGUAGES.join(', ')}.`);
+  if (secretLike(t)) throw new Error('The text looks like it carries a key or a token: not sent. Summarize the email without it, or skip it.');
   const address = validEmail(email.de);
   return {
     texto: t,
@@ -129,11 +139,11 @@ async function list() {
   for (const [id, c] of emails) console.log(`${show(id, c)}\n`);
 }
 
-async function ingest(id, file, lang) {
+async function ingest(id, lang) {
   const ask = await inbox();
   const c = await ask(`/${id}`);
   if (!c) throw new Error(`No email ${id} in the inbox.`);
-  const r = report(c, readFileSync(file, 'utf8'), lang);
+  const r = report(c, readFileSync(0, 'utf8'), lang);
   // The app's own path, without a device to keep it on: if it fails, it throws and nothing is deleted
   await sendReport(r, globalThis.fetch, null);
   await ask(`/${id}`, 'DELETE');
@@ -167,8 +177,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const option = n => (process.argv.includes(n) ? process.argv[process.argv.indexOf(n) + 1] : null);
   const fail = e => { console.error(e.message); process.exit(1); };
   if (command === 'list') list().catch(fail);
-  else if (command === 'ingest' && a && b && option('--lang')) ingest(a, b, option('--lang')).catch(fail);
+  // Only stdin: a path would let an injected email have its own credential file read and sent
+  else if (command === 'ingest' && a && b === '-' && option('--lang')) ingest(a, option('--lang')).catch(fail);
   else if (command === 'skip' && a) skip(a, b).catch(fail);
   else if (command === 'skipped') showSkipped(Number(option('--days')) || 30);
-  else { console.error('Usage: node tools/agents/inbox.mjs list | ingest <id> <text.txt> --lang <es|en|pt|de> | skip <id> "<reason>" | skipped [--days n]'); process.exit(2); }
+  else { console.error('Usage: node tools/agents/inbox.mjs list | ingest <id> - --lang <es|en|pt|de> (the text on stdin) | skip <id> "<reason>" | skipped [--days n]'); process.exit(2); }
 }
