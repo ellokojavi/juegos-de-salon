@@ -4,7 +4,8 @@
 # `feedback/` in Firebase, with the `feedback` label, so the processes agent handles them in its
 # round. As an issue, each report reaches the owner by email and stays linked to its reply and its
 # fix, even though the round (on the Mac mini, D-276) could read Firebase directly. The node is
-# read without a key.
+# readable only by the owner, so it reads with the FIREBASE_ADMIN_JSON secret (the same as
+# publish.yml's, D-218).
 
 name: Feedback
 
@@ -30,4 +31,13 @@ jobs:
           node-version: 24
       - env:
           GH_TOKEN: ${{ github.token }}
-        run: node tools/agents/feedback.mjs sync
+          KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+        run: |
+          if [ -z "$KEY_JSON" ]; then
+            echo "::error::The FIREBASE_ADMIN_JSON secret is missing: feedback/ cannot be read"
+            exit 1
+          fi
+          umask 077
+          printf '%s' "$KEY_JSON" > "$RUNNER_TEMP/key.json"
+          export FIREBASE_KEY="$RUNNER_TEMP/key.json"
+          node tools/agents/feedback.mjs sync

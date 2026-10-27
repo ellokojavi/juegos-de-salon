@@ -47,3 +47,6 @@ assert.equal(k.from, maskEmail('friend@mail.com'));
 assert.ok(!JSON.stringify(k).includes('friend@mail.com'), 'the kept copy carries no address');
 assert.equal(k.text, email.texto);
 assert.equal(k.received, '2026-10-14T20:00:00Z');
+
+// A text that looks like a key or a token is refused before it becomes a report (#838)
+assert.throws(() => report(email, '{"type": "service_account", "private_key": "-----BEGIN PRIVATE KEY-----"}', 'en'), /key or a token/);

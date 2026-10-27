@@ -32,10 +32,15 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
 ## The jobs on the Mac
 
 - **`inbox-watch`** ([`inbox-watch.mjs`](inbox-watch.mjs)), every 5 minutes: counts the emails in
-  `buzon/` (D-318). With one, runs the support agent headless with Haiku, allowed only
-  `inbox.mjs`, Read and Write, and uploads the reports right away so the issue appears at once.
+  `buzon/` (D-318). With one, runs the support agent headless with Haiku and uploads the reports
+  right away so the issue appears at once. The agent reads strangers' emails, so its session gets
+  only the Bash tool, allowed to run `node tools/agents/inbox.mjs` and nothing else (its
+  owner-only `skipped` denied), in restricted mode (no settings files, file reads only inside the
+  repo, no MCP servers); the report's text goes to `ingest` on stdin, so there is no Read or Write
+  (#838). `inbox-watch.test.mjs` checks those flags.
 - **`feedback-watch`** (`tools/agents/feedback.mjs sync`), every 5 minutes: uploads the new reports of
-  `feedback/` as `feedback` issues (D-382). It was the GitHub workflow `feedback.yml`, which GitHub ran
+  `feedback/` as `feedback` issues (D-382), except one that looks like it carries a key or a token,
+  which it logs instead of posting (`secretLike`, #838). It was the GitHub workflow `feedback.yml`, which GitHub ran
   about 4 times a day instead of every 15 minutes; the workflow stays, by hand only.
 
 What the Mac mini holds besides the jobs (keys, sign-ins, the scheduled tasks) and how to move it all

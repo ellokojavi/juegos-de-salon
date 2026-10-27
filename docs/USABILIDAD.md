@@ -107,7 +107,10 @@ la portada al día, va con los textos, and U-39, the start button above the fold
   already has the inbox link; in the home footer it sits beside the inbox: with two or more options
   the footer shows them as a quiet two-column grid of outlined, unfilled buttons under a thin rule
   with a 🎲 (an odd last one spans the row), so they read as the site's corner and not as more game
-  cards; a single option stays the plain link. Only a tap on it opens its
+  cards; a single option stays the plain link. In the lab (lab key only, D-395; card `#seccion-pie`)
+  the footer tries the "violet sunset" instead, chosen from the twelve variants in `/labs/footer/`:
+  the page ends in a purple-to-pink glow, the rotating phrase in white, and the grid's options become
+  frosted buttons with no rule, each with its emoji in a color circle above the label. Only a tap on it opens its
   card, a sheet from the bottom like the share sheet that "Ahora no" or a tap outside closes (D-449).
 
 ## Compartir
