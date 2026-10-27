@@ -62,7 +62,22 @@ import { param, tiene, nombres, normalizarUrl, AVISO_CLAVE } from '../parametros
 import { backGuard } from '../back-guard.js';
 
 // 'lab' salió con el laboratorio (D-67); queda en el panel para leer lo que quedó guardado
-export const ENVS = ['prod', 'dev'];
+export const ENVS = ['prod', 'dev', 'owner'];
+
+/**
+ * A browser the owner marked from the panel as not counted (D-471): its play and visits on the
+ * live site go to `stats/owner/` instead of `stats/prod/`, so the Live numbers are other people's.
+ * Only the published site changes: tests stay `dev`. A per-browser mark, nothing tied to a name.
+ */
+export const NOT_COUNTED_KEY = 'juegos-de-salon:not-counted';
+export function notCounted(storage = globalThis.localStorage) {
+  try { return storage?.getItem(NOT_COUNTED_KEY) === '1'; } catch (_) { return false; }
+}
+export function setNotCounted(on, storage = globalThis.localStorage) {
+  try { if (on) storage.setItem(NOT_COUNTED_KEY, '1'); else storage.removeItem(NOT_COUNTED_KEY); } catch (_) { /* no storage */ }
+}
+/** The environment this browser writes to: `envOf`, with a not-counted browser's live visits as `owner`. */
+export const envFor = (loc, storage) => { const e = envOf(loc || {}); return e === 'prod' && notCounted(storage) ? 'owner' : e; };
 // Los modos viven en `games.js` (C-16): acá solo se pregunta si el que llegó sube contador.
 
 /** Valores que resuelve el servidor (REST): hora y suma de a uno. */
@@ -176,11 +191,11 @@ export function langKey(lang) {
  * persona, y `app` es el que eligió en el juego, que dice en cuál prefiere jugar. Un celular
  * en `es-CL` jugando en inglés es información que solo se ve teniendo los dos.
  */
-export function fingerprint({ loc = globalThis.location, nav = globalThis.navigator, doc = globalThis.document, now = new Date(), app = getLang() } = {}) {
+export function fingerprint({ storage = globalThis.localStorage, loc = globalThis.location, nav = globalThis.navigator, doc = globalThis.document, now = new Date(), app = getLang() } = {}) {
   let tz = '';
   try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (_) { /* nada */ }
   return {
-    env: envOf(loc || {}),
+    env: envFor(loc, storage),
     v: versionOf(releaseOf(doc)),
     tz: tzKey(tz),
     co: countryOf({ tz, lang: nav?.language }),

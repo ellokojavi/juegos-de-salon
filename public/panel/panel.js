@@ -22,7 +22,8 @@ import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { GAMES, SUELTOS, gameById, gameLabel as etiquetaRegistro, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon, isIndividualMode } from '../assets/js/games.js';
 import { juegosCopa } from '../cup/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
-import { ENVS } from '../assets/js/transport/stats.js';
+import { ENVS, notCounted, setNotCounted } from '../assets/js/transport/stats.js';
+import { labAccess } from '../assets/js/lab-access.js';
 import { $, el } from '../assets/js/ui.js';
 import { copaDe, copasEnCurso, resumenCopas, bitacoraCopas, fichaCopa, buscarCopa, paisDe, pct, duracion, inicioLabel } from './copas.js';
 import {
@@ -187,7 +188,7 @@ function listen() {
  * o un idioma que el código ya manda y esta página todavía no conoce.
  */
 const ENV_VIEJOS = { lab: 'Lab' };                    // went away with the lab (D-67)
-const ENV_NOMBRE = { prod: 'Live', dev: 'Local tests', ...ENV_VIEJOS };
+const ENV_NOMBRE = { prod: 'Live', dev: 'Local tests', owner: 'My devices', ...ENV_VIEJOS };
 const envLabel = env => ENV_NOMBRE[env] || env;
 const ENV_OPCIONES = [...ENVS, ...Object.keys(ENV_VIEJOS).filter(e => !ENVS.includes(e))];
 
@@ -1853,6 +1854,16 @@ $('#btn-login').addEventListener('click', login);
 window.addEventListener('hashchange', alCambiarRuta);
 $('#env').addEventListener('change', e => cambiarEntorno(e.target.value));
 $('#range').addEventListener('change', e => cambiarRango(e.target.value));
+
+// "Don't count this browser": its live play goes to `owner`, not to Live (D-471). In the lab
+// until the owner validates it (D-395, lab: #seccion-no-contar).
+labAccess().then(ok => {
+  if (!ok) return;
+  const box = $('#no-contar');
+  box.checked = notCounted();
+  box.addEventListener('change', () => setNotCounted(box.checked));
+  $('#no-contar-label').hidden = false;
+}).catch(() => { /* stays hidden */ });
 $('#buscar').addEventListener('submit', e => { e.preventDefault(); buscar($('#buscar-q').value); });
 
 // Gancho de solo lectura para pruebas (C-14): permite dibujar con datos sembrados sin entrar.
