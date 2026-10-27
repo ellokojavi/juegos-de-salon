@@ -557,6 +557,7 @@ node tools/e2e/since-passed.test.mjs
 node tools/firebase/rankings-history.test.mjs
 node tools/firebase/uad-points-backfill.test.mjs
 node tools/firebase/unnoted-rooms.test.mjs
+node tools/jobs/claude-task.test.mjs
 node tools/jobs/inbox-watch.test.mjs
 node tools/jobs/jobs.test.mjs
 node tools/jobs/machine.test.mjs
