@@ -50,7 +50,7 @@ export const TEXTS = {
   },
   en: {
     title: 'Privacy',
-    lead: 'Juegos de Salón (juegosdesalon.cl) is played with no account, no ads and no tracking cookies. Here is the little we keep, what for, where and for how long.',
+    lead: 'Party Games (juegosdesalon.cl) is played with no account, no ads and no tracking cookies. Here is the little we keep, what for, where and for how long.',
     sections: [
       { h: '📱 On your phone', p: ['Your browser keeps the language, the sound, your favorites, the game in progress, your scores and the names you typed on your phone, so you don\'t have to repeat them. They are not cookies, and they go away when you clear this site\'s data in the browser.'] },
       {
@@ -69,11 +69,11 @@ export const TEXTS = {
       {
         h: '🤝 Who else sees them',
         p: [
-          'We have no servers of our own. These services see your IP address in order to deliver the site, under their own privacy rules: GitHub Pages (the site), Google Firebase (the database) and Google Fonts (the lettering). Only if you use them: YouTube (the video when sharing the app), Stripe (if you buy us a coffee), and Cloudflare and Gmail (emails to hola@juegosdesalon.cl).',
+          'We have no servers of our own. These services see your IP address in order to deliver the site, under their own privacy rules: GitHub Pages (the site), Google Firebase (the database) and Google Fonts (the fonts). Only if you use them: YouTube (the video when sharing the app), Stripe (if you buy us a coffee), and Cloudflare and Gmail (emails to hola@juegosdesalon.cl).',
           'We don\'t keep your IP address, we don\'t sell data and we don\'t use other companies\' analytics.',
         ],
       },
-      { h: '🧒 Children', p: ['The games are for everyone and ask for no data to play. If you are under age, use a nickname and ask an adult before leaving your email. If you are a parent or guardian and want us to delete something, write to us.'] },
+      { h: '🧒 Children', p: ['The games are for everyone and ask for no data to play. If you are a minor, use a nickname and ask an adult before leaving your email. If you are a parent or guardian and want us to delete something, write to us.'] },
       {
         h: '✋ Your rights',
         p: [
@@ -87,7 +87,7 @@ export const TEXTS = {
   },
   pt: {
     title: 'Privacidade',
-    lead: 'O Juegos de Salón (juegosdesalon.cl) se joga sem conta, sem anúncios e sem cookies de rastreamento. Aqui está o pouco que guardamos, para quê, onde e por quanto tempo.',
+    lead: 'O Jogos de Salão (juegosdesalon.cl) se joga sem conta, sem anúncios e sem cookies de rastreamento. Aqui está o pouco que guardamos, para quê, onde e por quanto tempo.',
     sections: [
       { h: '📱 No seu celular', p: ['Seu navegador guarda no celular o idioma, o som, seus favoritos, a partida em andamento, suas pontuações e os nomes que você digitou, para você não ter que repetir. Não são cookies, e somem quando você apaga os dados deste site no navegador.'] },
       {
@@ -95,18 +95,18 @@ export const TEXTS = {
         p: ['Usamos o Firebase, do Google, nos Estados Unidos. Guardamos só isto:'],
         items: [
           'Salas para jogar com outras pessoas: o nome ou apelido que você digita e as jogadas. São apagadas quando todos saem ou, se não, nos dias seguintes ao fechamento da sala.',
-          'A Copa: seu nome ou apelido, seus resultados e seu PIN de 4 dígitos, guardado como uma impressão (hash) que ninguém consegue ler. Fica guardada até quem a criou apagá-la.',
+          'A Copa: seu nome ou apelido, seus resultados e seu PIN de 4 dígitos, guardado como uma impressão digital (hash) que ninguém consegue ler. Fica guardada até quem a criou apagá-la.',
           'Rankings e Um por dia, se você entra com nome e PIN: seu nome, seu país, suas pontuações e os dias que jogou. O nome, o país e as pontuações aparecem nos rankings. São guardados enquanto o jogo existir ou até você pedir para apagá-los.',
           'Estatísticas de uso, para saber o que se joga e o que falha: contagens por dia (jogo, idioma, hora, tipo de aparelho, o site de onde você veio e o país, que sai do fuso horário), um número aleatório do seu navegador para contar quem volta, os nomes digitados em cada partida e os erros, com o navegador e a versão dele. Ainda não têm data para serem apagadas.',
-          'Avisos no celular, se você ativar: o endereço de avisos que seu navegador dá, o idioma, o fuso horário e os avisos que você pediu. São apagados quando você os desativa ou quando o navegador os dá por vencidos.',
-          'Sugestões e comentários: o que você escreve, seu nome ou apelido se você puser, a página e a versão. Copiamos para a lista de tarefas do projeto no GitHub, que é pública, com seu nome coberto menos a primeira letra de cada palavra e sem seu e-mail, então não escreva ali dados pessoais. Ainda não têm data para serem apagados.',
+          'Avisos no celular, se você ativar: o endereço de avisos que seu navegador dá, o idioma, o fuso horário e os avisos que você pediu. São apagados quando você os desativa ou quando expiram no navegador.',
+          'Sugestões e comentários: o que você escreve, seu nome ou apelido se você puser, a página e a versão. Copiamos para a lista de tarefas do projeto no GitHub, que é pública, com seu nome oculto, menos a primeira letra de cada palavra e sem seu e-mail, então não escreva ali dados pessoais. Ainda não têm data para serem apagados.',
           'Seu e-mail, se você deixar numa sugestão: só para te responder, e nunca é publicado. Apagamos ao responder ou, se não houver resposta, depois de 90 dias.',
         ],
       },
       {
         h: '🤝 Quem mais vê',
         p: [
-          'Não temos servidores próprios. Estes serviços veem seu endereço IP para entregar o site, com as próprias regras de privacidade: GitHub Pages (o site), Google Firebase (o banco de dados) e Google Fonts (as letras). Só se você usar: YouTube (o vídeo ao compartilhar o app), Stripe (se você nos pagar um café), e Cloudflare e Gmail (os e-mails para hola@juegosdesalon.cl).',
+          'Não temos servidores próprios. Estes serviços veem seu endereço IP para entregar o site, com as próprias regras de privacidade: GitHub Pages (o site), Google Firebase (o banco de dados) e Google Fonts (as fontes). Só se você usar: YouTube (o vídeo ao compartilhar o app), Stripe (se você nos pagar um café), e Cloudflare e Gmail (os e-mails para hola@juegosdesalon.cl).',
           'Nós não guardamos seu endereço IP, não vendemos dados e não usamos análises de outras empresas.',
         ],
       },
@@ -124,18 +124,18 @@ export const TEXTS = {
   },
   de: {
     title: 'Datenschutz',
-    lead: 'Juegos de Salón (juegosdesalon.cl) spielst du ohne Konto, ohne Werbung und ohne Tracking-Cookies. Hier steht das Wenige, das wir speichern, wozu, wo und wie lange.',
+    lead: 'Salonspiele (juegosdesalon.cl) spielst du ohne Konto, ohne Werbung und ohne Tracking-Cookies. Hier steht das Wenige, das wir speichern, wozu, wo und wie lange.',
     sections: [
       { h: '📱 Auf deinem Handy', p: ['Dein Browser speichert auf dem Handy die Sprache, den Ton, deine Favoriten, das laufende Spiel, deine Punkte und die Namen, die du eingegeben hast, damit du sie nicht wiederholen musst. Das sind keine Cookies, und sie verschwinden, wenn du die Daten dieser Seite im Browser löschst.'] },
       {
         h: '☁️ In unserer Datenbank',
-        p: ['Wir nutzen Firebase von Google, in den USA. Wir speichern nur das:'],
+        p: ['Wir nutzen Firebase von Google, in den USA. Wir speichern nur Folgendes:'],
         items: [
           'Räume, um mit anderen zu spielen: den Namen oder Spitznamen, den du eingibst, und die Züge. Sie werden gelöscht, wenn alle gehen, sonst in den Tagen, nachdem der Raum schließt.',
           'Der Pokal: deinen Namen oder Spitznamen, deine Ergebnisse und deine 4-stellige PIN, gespeichert als Fingerabdruck (Hash), den niemand lesen kann. Er bleibt, bis die Person, die ihn erstellt hat, ihn löscht.',
           'Ranglisten und Spiel des Tages, wenn du dich mit Namen und PIN anmeldest: deinen Namen, dein Land, deine Punkte und die Tage, an denen du gespielt hast. Name, Land und Punkte stehen in den Ranglisten. Sie bleiben, solange es das Spiel gibt oder bis du uns bittest, sie zu löschen.',
-          'Nutzungsstatistik, um zu wissen, was gespielt wird und was nicht klappt: Zählungen pro Tag (Spiel, Sprache, Uhrzeit, Art des Geräts, die Seite, von der du kamst, und das Land, das aus der Zeitzone kommt), eine Zufallszahl deines Browsers, um zu zählen, wer wiederkommt, die Namen in jedem Spiel und Fehler mit dem Browser und seiner Version. Für sie gibt es noch kein Löschdatum.',
-          'Benachrichtigungen aufs Handy, wenn du sie einschaltest: die Benachrichtigungsadresse deines Browsers, die Sprache, die Zeitzone und die Benachrichtigungen, die du wolltest. Sie werden gelöscht, wenn du sie ausschaltest oder der Browser sie verfallen lässt.',
+          'Nutzungsstatistik, um zu wissen, was gespielt wird und was nicht klappt: Zählungen pro Tag (Spiel, Sprache, Uhrzeit, Art des Geräts, die Seite, von der du kamst, und das Land, das aus der Zeitzone kommt), eine Zufallszahl deines Browsers, um zu zählen, wer wiederkommt, die in jedem Spiel eingegebenen Namen und Fehler mit dem Browser und seiner Version. Für sie gibt es noch kein Löschdatum.',
+          'Mitteilungen aufs Handy, wenn du sie einschaltest: die Mitteilungsadresse deines Browsers, die Sprache, die Zeitzone und die Mitteilungen, die du wolltest. Sie werden gelöscht, wenn du sie ausschaltest oder der Browser sie verfallen lässt.',
           'Vorschläge und Kommentare: was du schreibst, deinen Namen oder Spitznamen, wenn du einen angibst, die Seite und die Version. Wir kopieren sie in die Aufgabenliste des Projekts auf GitHub, die öffentlich ist, mit deinem Namen verdeckt bis auf den ersten Buchstaben jedes Worts und ohne deine E-Mail, also schreib dort nichts Persönliches. Für sie gibt es noch kein Löschdatum.',
           'Deine E-Mail, wenn du sie bei einem Vorschlag angibst: nur, um dir zu antworten, und sie wird nie veröffentlicht. Wir löschen sie nach der Antwort oder, falls keine kommt, nach 90 Tagen.',
         ],
