@@ -55,7 +55,7 @@ export const TEXTS = {
     qFree: 'É de graça? Precisa instalar alguma coisa?',
     aFree: 'É de graça, sem anúncios e sem conta. Joga-se no navegador do celular, sem instalar nada.',
     or: ' ou ',
-    local: 'todos em um celular, passando de mão em mão',
+    local: 'todos em um só celular passado de mão em mão',
     online: 'cada um no seu celular',
     alone: 'sozinho contra o celular',
     and: ' e ',
