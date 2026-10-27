@@ -21,7 +21,8 @@ function ensure() {
   if (muted) return null;
   try {
     if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (ctx.state === 'suspended') ctx.resume();
+    // iOS Safari reports 'interrupted' after a call or a lock, not 'suspended' (#890).
+    if (ctx.state === 'suspended' || ctx.state === 'interrupted') ctx.resume().catch(() => {});
     return ctx;
   } catch (_) { return null; }
 }
@@ -30,6 +31,8 @@ function ensure() {
 export function initSound() {
   const unlock = () => { ensure(); };
   ['pointerdown', 'touchstart', 'keydown'].forEach(ev => document.addEventListener(ev, unlock, { once: true, passive: true }));
+  // Coming back to the tab (after a call, a lock, another app) wakes an audio already unlocked.
+  document.addEventListener('visibilitychange', () => { if (ctx && document.visibilityState === 'visible') ensure(); });
 }
 
 /* ---------- primitivas ---------- */
