@@ -27,6 +27,8 @@
  * nothing new. Only what Firebase has counts: days played on a phone without signing in were never
  * uploaded. The 🧊 won by inviting (`invitados/`) and the days a phone's 🧊 saved (its markers, D-415)
  * count here as on the phone.
+ * Only days whose result reached the server near their date earn points (`onTime`, D-465), the
+ * same window the rules give a day's `p`; a day uploaded later still keeps the streak.
  * The next month starts at 0 on its own: its table is another period (`s2026-11`).
  *
  * Needs the service account key (see tools/firebase/firebase-admin.mjs).
@@ -48,13 +50,22 @@ export function mesDe(hist, month, antes = null, { gifts = [] } = {}) {
   for (const d of w.days) {
     if (!d.played || !d.date.startsWith(month)) continue;
     const n = numDia(d.date);
-    if (hist[n]?.p) continue;
+    if (hist[n]?.p || !onTime(n, hist[n])) continue;
     const r = Math.max(1, Math.min(RACHA_TOPE, d.streak, fila ? fila.r + 1 : RACHA_TOPE));
     fila = { s: (fila?.s || 0) + d.score + bonoRacha(r), r, u: String(n) };
     nuevos.push({ n, date: d.date, score: d.score, r, s: fila.s });
   }
   return nuevos.length ? { nuevos, fila } : null;
 }
+
+/**
+ * Whether a played day's result reached the server near its own date (D-465): its `at` (the server's
+ * time of the write) within the window the rules give a day's points, from two days before the day's
+ * UTC start to one day after it, so any time zone fits. A day uploaded later (played offline, or on a
+ * phone before signing in) keeps the streak but earns no points, as on the phone, where the rules
+ * refuse its `p`. A result without `at` (none today) is taken as on time.
+ */
+export const onTime = (n, x) => typeof x?.at !== 'number' || (n * 86400000 > x.at - 172800000 && n * 86400000 < x.at + 86400000);
 
 /**
  * The server's walk of a player's history up to the month's last day: the days played, and the
@@ -76,7 +87,7 @@ export function walkServer(hist, month, gifts = []) {
  * counted (`p`) accepted in that month. null when the month has no day played.
  */
 export function rehacerMes(hist, month, { gifts = [], invites = 0 } = {}) {
-  const dias = walkServer(hist, month, gifts).days.filter(d => d.played && d.date.startsWith(month));
+  const dias = walkServer(hist, month, gifts).days.filter(d => d.played && d.date.startsWith(month) && onTime(numDia(d.date), hist[numDia(d.date)]));
   if (!dias.length) return null;
   const last = dias.at(-1);
   const s = dias.reduce((a, d) => a + d.score + bonusFor(Math.min(RACHA_TOPE, d.streak)), 0) + invites * 10;
@@ -108,7 +119,7 @@ export function temporadaDe(players, month, today) {
   const cortes = cortesDe(month);
   const filas = [];
   for (const p of players) {
-    const dias = walkServer(p.hist, month, p.gifts).days.filter(d => d.played && d.date.startsWith(month));
+    const dias = walkServer(p.hist, month, p.gifts).days.filter(d => d.played && d.date.startsWith(month) && onTime(numDia(d.date), p.hist[numDia(d.date)]));
     const sumas = [...dias.map(d => [d.date, d.score + bonusFor(Math.min(RACHA_TOPE, d.streak))]), ...(p.invites || []).map(f => [f, 10])];
     if (!sumas.length) continue;
     const at = cortes.map(c => sumas.reduce((a, [f, x]) => a + (f <= c ? x : 0), 0));

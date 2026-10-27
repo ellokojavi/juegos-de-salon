@@ -51,6 +51,9 @@ export async function subirHoy({ fecha, dia }) {
   if (!j) return out;
   const e = estado();
   const n = numDia(fecha);
+  // The points need the day's start on the server (D-433, D-465): written when the attempt began,
+  // or now if that write did not get through
+  if (j.yo()) await j.empezarDia({ n }).catch(() => false);
   if (j.yo()) out.subido = await j.anotarDia({ n, j: dia.j, s: dia.s, ms: dia.ms, semanaP: semanaDe(fecha), mejor: e.mejor }).catch(() => null);
   // Uno al día points (D-412, D-414): today's, into the month's season
   if (j.yo()) out.puntos = await j.anotarPuntosDia({ n, mesP: periodoMes(fecha), racha: e.racha }).catch(() => false);
@@ -101,6 +104,7 @@ export async function sincronizar() {
   juntar({ dias, regalos: invitados.map(x => fechaDeNum(x.d)) });
   // Lo de hoy jugado en este celular antes de entrar con el jugador
   const hoy = fechaLocal(), locales = leer().dias, mio = locales[hoy];
+  if (mio && !dias[hoy]) await j.empezarDia({ n: numDia(hoy) }).catch(() => false);
   if (mio && !dias[hoy]) await j.anotarDia({ n: numDia(hoy), j: mio.j, s: mio.s, ms: mio.ms, semanaP: semanaDe(hoy), mejor: estado().mejor }).catch(() => null);
   // Los días viejos de este celular que Firebase no tiene van a la historia (no a los rankings de su
   // día ni de su semana, que ya pasaron): así la racha sigue en otro celular
@@ -113,9 +117,10 @@ export async function sincronizar() {
   const w = walk(leer().dias, hoy, { gifts: leer().regalos || [] });
   for (const d of w.days.filter(x => x.saved && !hist[numDia(x.date)])) await j.anotarSalvado({ n: numDia(d.date) }).catch(() => false);
   // Uno al día points (D-414): this month's days that don't count yet, in order (the streak of
-  // each, as walk() gives it); the history read above says which already do (`p`)
+  // each, as walk() gives it); the history read above says which already do (`p`). Only today and
+  // yesterday: the rules let a day's points in only near its own date (D-465)
   const mes = hoy.slice(0, 7);
-  for (const d of w.days.filter(x => x.played && x.date.startsWith(mes) && !hist[numDia(x.date)]?.p)) {
+  for (const d of w.days.filter(x => x.played && x.date.startsWith(mes) && numDia(x.date) >= numDia(hoy) - 1 && !hist[numDia(x.date)]?.p)) {
     await j.anotarPuntosDia({ n: numDia(d.date), mesP: periodoMes(hoy), racha: d.streak }).catch(() => false);
   }
   // Each friend who accepted adds +10 to the month they accepted in, once (D-414)
