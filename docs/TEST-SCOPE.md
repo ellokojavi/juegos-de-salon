@@ -72,7 +72,7 @@ can vouch for a tree. After a PR whose last push was incremental, publishing tak
 
 | What | How it is known | Where |
 |---|---|---|
-| Which files each page loads | Derived: `<script src>`, `<link href>`, `import`, `import('…')`, `new URL('<file>', …)`, media a script names by its path from the root (`'assets/…gif'`, D-430), CSS `@import`/`url()` | `references()`, `assetsNamed()`, `closures()` |
+| Which files each page loads | Derived: `<script src>`, `<link href>`, `import`, `import('…')`, `new URL('<file>', …)`, media a script names by its path from the root (`'assets/…gif'`, D-430), a media folder next to a script (`new URL('earth-2004-09/', import.meta.url)`, every file under it, D-460), CSS `@import`/`url()` | `references()`, `assetsNamed()`, `closures()` |
 | Which pages each script opens | Derived: `${SITE}/<page>/` (also `${BASE}`, `${SITIO}`), the game names a looping script names as strings, its folder | `scriptPages()`, `dynamicPages()` |
 | A page that runs another game's engine on purpose | Declared, with why | `REUSES` |
 | Small modules every page may load though they live in a game's folder | Declared, with why | `SHARED` |
@@ -141,6 +141,8 @@ catch in the PR) and moving the declared facts to their own module (tidier, but 
   touched the file run all 76 jobs (D-391).
 - **Reading every string that looks like a file name is too much.** A first try read any `'x.js'` in a
   script and pulled La Copa into the home page through a comment; only `new URL('…')` counts.
+- **A deleted file is not a doubt.** Removing a file nothing names any more cannot break a page, so it
+  narrows nothing; before D-460 it ran every script, because no page loaded it.
 - **The lab's own index is a lab page** (`labs`, not only `labs/…`).
 - **"When in doubt, run everything" hides the doubt.** Keep the safe fallback, but a guard must fail the
   PR that creates it.
