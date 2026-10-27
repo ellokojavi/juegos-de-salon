@@ -218,6 +218,7 @@ function errorDe(e) {
     ventana: 'errVentana', 'ya-jugado': 'errYaJugado', comodin: 'errComodin', permiso: 'errPermiso',
     config: 'errConfig', offline: 'errOffline', busy: 'errOffline', cerrada: 'errCerrada',
     reporte: 'errReport', empezada: 'errEmpezada', terminada: 'errTerminada', faltan: 'needSecond', alias: 'errAlias', fin: 'errFin',
+    espera: 'errEspera', 'pin-admin': 'errAdminPin',
   };
   if (!mapa[code]) console.error(e);
   return T[mapa[code] || 'errNet'];
@@ -2044,12 +2045,14 @@ function admin({ forzar = false } = {}) {
   const fila = (pid, p) => {
     const fueraPor = fuera(Lc, pid, now);
     const acciones = el('div', { class: 'acciones' });
-    const editar = (rotulo, attrs, guardar) => {
+    // `attrs2`: a second field (the admin's own PIN, to give a new PIN, D-464)
+    const editar = (rotulo, attrs, guardar, attrs2 = null) => {
       acciones.innerHTML = '';
       const input = el('input', { class: 'mini', ...attrs });
-      poner(acciones, input, el('button', {
+      const input2 = attrs2 ? el('input', { class: 'mini', ...attrs2 }) : null;
+      poner(acciones, input, input2, el('button', {
         class: 'btn btn--yellow btn--sm', onClick: async () => {
-          try { await guardar(input.value); err.textContent = ''; admin(); } catch (e) { avisoError(err, typeof e === 'string' ? e : errorDe(e)); }
+          try { await guardar(input.value, input2?.value); err.textContent = ''; admin(); } catch (e) { avisoError(err, typeof e === 'string' ? e : errorDe(e)); }
         },
       }, '✓'), el('button', { class: 'btn btn--ghost btn--sm', onClick: () => admin() }, '✕'));
       input.focus();
@@ -2063,11 +2066,14 @@ function admin({ forzar = false } = {}) {
         await store.renombrar(S.code, pid, n);
       }) }, T.rename);
     poner(acciones,
-      esElAdmin ? null : el('button', { class: 'mini-btn', onClick: () => editar(T.newPin, { inputmode: 'numeric', maxlength: '4', 'aria-label': fmt(T.pinPrompt, { name: p.name }) }, async v => {
-        if (!esPin(v)) throw T.errPin;
-        await store.cambiarPin(S.code, pid, await hashPin(S.code, pid, v));
+      esElAdmin ? null : el('button', { class: 'mini-btn', onClick: () => editar(T.newPin, { inputmode: 'numeric', maxlength: '4', placeholder: T.newPin, 'aria-label': fmt(T.pinPrompt, { name: p.name }) }, async (v, mio) => {
+        if (!esPin(v) || !esPin(mio)) throw T.errPin;
+        // The admin confirms with their own PIN (D-464): the cup one, or their player's if linked (D-359)
+        const a = meta.admin, j = Lc.players[a]?.j;
+        if (j && leerYo()?.jid === j) { try { await (await jugador()).probarPin(mio); } catch (e) { if (e?.code !== 'espera') throw e; } }
+        await store.cambiarPin(S.code, pid, await hashPin(S.code, pid, v), { admin: a, adminHash: await hashPin(S.code, a, mio) });
         toast(fmt(T.pinDone, { name: p.name, pin: v }));
-      }) }, T.newPin),
+      }, { type: 'password', inputmode: 'numeric', maxlength: '4', autocomplete: 'off', placeholder: T.adminPin, 'aria-label': T.adminPinPrompt }) }, T.newPin),
       // Terminada la copa, sacar a alguien cambiaría el podio: ya no se ofrece
       esElAdmin || terminada(meta, now) ? null : el('button', { class: 'mini-btn', onClick: async () => {
         if (!p.out && !confirm(fmt(T.kickConfirm, { name: p.name }))) return;

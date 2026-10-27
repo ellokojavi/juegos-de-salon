@@ -50,7 +50,7 @@ notices: the transport and the usage signals are best-effort and fail silently.
 - **Only the owner** (their UID in the rules) can list all of `rooms/` and read `stats/`.
   Nobody else: not even with a room's code can you reach `stats/`.
 
-## La Copa (the Cup) (`torneos`, `torneoKeys`, `torneoSeats`)
+## La Copa (the Cup) (`torneos`, `torneoKeys`, `torneoSeats`, `torneoIntentos`)
 
 Multi-day tournaments (D-94, [docs/games/cup.md](../docs/games/cup.md)) live in their
 own tree because they last a week and rooms die after half an hour (D-89).
@@ -70,7 +70,14 @@ own tree because they last a week and rooms die after half an hour (D-89).
 - `torneoKeys/<código>/<pid>` stores the PIN hash and `torneoSeats/<código>/<pid>/<uid>` the
   phones seated as that player. **Neither can be read**: sitting down requires sending
   the same hash, or (D-359) the cup player's linked jid (`players/<pid>/j`) from a phone seated as
-  that player (`jugadorSeats/<jid>/<uid>`), so a signed-in player needs no cup PIN. The admin can change the hash and delete the seats (new PIN).
+  that player (`jugadorSeats/<jid>/<uid>`), so a signed-in player needs no cup PIN. The admin can change the hash and delete the seats (new PIN),
+  confirming with their own PIN (D-464).
+- `torneoIntentos/<código>/<pid>` = `{ h, u, at }` (D-464): the last PIN attempt on that cup player, written
+  with the writer's own uid and the server time, only on a cup player with a key and only if the
+  previous attempt is more than 5 s old. A seat with the cup PIN needs the same uid's attempt from the
+  last minute holding the current key (not when the key is created in the same write). The admin's new
+  PIN for a player needs a fresh attempt by the admin's uid holding the admin's key, or their linked
+  player's (`jugadorIntentos`). Nobody reads it; only the admin deletes it, with the cup.
 - Cups aren't deleted yet (LIG-31).
 
 ## Publishing the rules (D-122, D-218)
@@ -108,7 +115,7 @@ it leaks it is revoked right there. Without the key, you can still paste by hand
   rewriting `meta`.
 
 - **Deleting the cup** (D-117): the phone seated as admin can delete at once
-  `torneos/<code>`, `torneoKeys/<code>` and `torneoSeats/<code>` (only the whole node, never partially).
+  `torneos/<code>`, `torneoKeys/<code>`, `torneoSeats/<code>` and `torneoIntentos/<code>` (only the whole node, never partially).
 
 ## La Copa: its own link (`torneoAlias`, D-121)
 
@@ -117,14 +124,18 @@ written if it doesn't exist, if it expired (`hasta < now`) or if it points to th
 admin of that cup and with `meta/alias` equal to the alias; it is deleted only by that admin. `hasta` is the end
 of the cup plus 7 days.
 
-## Players and rankings (`jugadores`, `jugadorKeys`, `jugadorSeats`, `jugadorNombres`, `jugadorCopas`, `records`, `torneoPodios`, D-212)
+## Players and rankings (`jugadores`, `jugadorKeys`, `jugadorSeats`, `jugadorIntentos`, `jugadorNombres`, `jugadorCopas`, `records`, `torneoPodios`, D-212)
 
 The same mechanism as La Copa, for the whole app:
 
 - `jugadores/<jid>` = `{ n, at, juegos: { <juego>: { n, at } } }`. Read without an account by jid (not
   listed). Created once, with the seat in the same write; `juegos/<juego>/n` only goes up by one.
-- `jugadorKeys/<jid>`: sha256 of the PIN. Nobody reads it. Created with the player; changed by whoever is seated.
-- `jugadorSeats/<jid>/<uid>`: the `uid` phone writes as `jid` if it brings the hash from `jugadorKeys`.
+- `jugadorKeys/<jid>`: sha256 of the PIN. Nobody reads it. Created with the player; changed by a seated
+  phone whose fresh attempt holds the current key (D-464).
+- `jugadorSeats/<jid>/<uid>`: the `uid` phone writes as `jid` if it brings the hash from `jugadorKeys`
+  and its own attempt from the last minute holds it (not when the key is created in the same write, D-464).
+- `jugadorIntentos/<jid>` = `{ h, u, at }` (D-464): the last PIN attempt on that player, with the
+  writer's uid and the server time, on a player with a key, one every 5 s. Nobody reads or deletes it.
   Whoever is seated can replace all the seats (changing the PIN kicks out the others).
 - `jugadorNombres/<clave>/<jid>` = `true`: who uses that name. Read by key, to sign in.
 - `records/<tabla>/<período>/<jid>` = `{ s, ms, k, at, n }`, with `.indexOn: k`. Read without an account.
