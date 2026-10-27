@@ -42,8 +42,8 @@ function clip(doc) {
   return v;
 }
 
-/** The Stripe Payment Link ("customers choose what to pay"). Empty: the lab simulates the payment. Today the sandbox (test_) link, to try the whole flow in the lab with card 4242 4242 4242 4242; the live link replaces it. */
-export const PAYMENT_LINK = 'https://buy.stripe.com/test_dRm7sL17f2bI4sY19jds400';
+/** The Stripe Payment Link ("customers choose what to pay"). Empty: the lab simulates the payment. The live link (real payments); the sandbox one was buy.stripe.com/test_dRm7sL17f2bI4sY19jds400. */
+export const PAYMENT_LINK = 'https://buy.stripe.com/eVq6oJah54J12Gv9NSgUM00';
 
 const KEY = 'juegos-de-salon:support';
 export const MIN_GAMES = 5;
