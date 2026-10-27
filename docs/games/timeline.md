@@ -154,6 +154,7 @@ En varios celulares, el anfitrión (rol A) crea la sala y abre la partida con el
 El botón de compartir usa el diálogo nativo del celular con el mensaje común de las salas, que dice quién invita (D-173); de qué se trata el juego lo cuenta la tarjeta que arma el chat con el link (D-72), así que el texto ya no nombra la temática.
 
 En la portada del juego, **🧭 ¿Cómo se juega?** va plegado (D-177, U-16): el lead ya dice de qué se trata, y las reglas se abren cuando hacen falta.
+Under it, a folded **❓ Preguntas frecuentes** (players and minutes from `games.js`, the modes the game offers) is drawn by `public/assets/js/faq.js`, for lab key holders only for now (#887, D-395).
 
 Desde v0.9, la sala tiene lobby con la lista de quienes van llegando, reconexión, presencia y una
 revancha que mueve a todos a la sala nueva. La memoria de partida (C-6) cubre todos los modos e

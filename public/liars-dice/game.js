@@ -26,6 +26,7 @@ import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
   readDice, rollDice, writeDice, countPinta, sha256, randomSalt, verifyOpen,
 } from './engine.js';
+import { mountFaq } from '../assets/js/faq.js';
 import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES, TURN_SECS } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
 
@@ -1386,6 +1387,7 @@ function init() {
   if (HOY?.fuera) return;   // se va al juego de hoy
   if (HOY) return introDeHoy();
   renderModes();
+  mountFaq($('#faq-slot'), GAME_ID, T, lang);
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
