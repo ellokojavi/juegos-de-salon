@@ -27,7 +27,7 @@ import { param, tiene } from './parametros.js';
 
 /**
  * A friendly clip on the card: Keanu Reeves saying thank you (GIPHY's, from Sky TV), served from
- * GIPHY and not copied into the site, for its rights. Small and square, beside the title, so the card still fits a
+ * GIPHY and not copied into the site, for its rights. Under the title, square and centered, its size following the screen's height (on the smallest phones it gives way), so the card still fits a
  * 320×568 phone without scrolling (D-449); with reduced motion, its still.
  */
 export const CLIP = { video: 'https://media.giphy.com/media/fWfowxJtHySJ0SGCgN/giphy.mp4', still: 'https://media.giphy.com/media/fWfowxJtHySJ0SGCgN/480w_s.jpg' };
@@ -38,7 +38,7 @@ function clip(doc) {
   Object.assign(v, { src: CLIP.video, poster: CLIP.still, muted: true, loop: true, autoplay: !still, playsInline: true, preload: still ? 'none' : 'auto' });
   v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
   v.className = 'hoja-apoyo-clip';
-  v.style.cssText = 'display:block;flex:none;width:72px;height:72px;object-fit:cover;border-radius:14px';
+  v.style.cssText = 'display:block;height:clamp(0px, calc(100svh - 560px), 200px);aspect-ratio:1;object-fit:cover;border-radius:14px;margin:0 auto';
   return v;
 }
 
@@ -173,8 +173,9 @@ export function openSupportSheet({ lang = getLang(), thanks = false, record = tr
   const body = thanks
     ? [el('h2', { id: 'hoja-apoyo-titulo' }, `💛 ${T.thanksTitle}`), el('p', {}, T.thanks), done]
     : [
-      // The clip beside the title, not above it: the card keeps fitting a small phone
-      el('div', { style: 'display:flex;align-items:center;gap:0.75rem' }, clip(doc), el('h2', { id: 'hoja-apoyo-titulo', style: 'margin:0' }, `☕ ${T.title}`)),
+      el('h2', { id: 'hoja-apoyo-titulo' }, `☕ ${T.title}`),
+      // The clip under the title (the owner's request), its height following the screen's so a small phone keeps it all
+      clip(doc),
       el('p', {}, T.lead),
       ...T.points.map(p => el('p', { class: 'muted', style: 'font-size:0.85rem' }, p)),
       PAYMENT_LINK
