@@ -493,8 +493,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-445](decisions/D-445.md) | Stack: a one-tap tower game in Juegos en prueba, in English | current |
 | [D-446](decisions/D-446.md) | Stick Ninja: a hold-and-release bridge game in Juegos en prueba, on the day's course, in English | current |
 | [D-447](decisions/D-447.md) | Dudo: shake the phone to roll, and a turn clock that costs a die | current |
-| [D-448](decisions/D-448.md) | ☕ Buy me a coffee: voluntary support through a Stripe Payment Link, quiet and in two places (in the lab) | amended by D-449 |
-| [D-449](decisions/D-449.md) | ☕ Invítame a un café is a card over the page, not a page of its own (in the lab) | current |
+| [D-448](decisions/D-448.md) | ☕ Buy me a coffee: voluntary support through a Stripe Payment Link, quiet and in two places (in the lab) | amended by D-449, D-458 |
+| [D-449](decisions/D-449.md) | ☕ Invítame a un café is a card over the page, not a page of its own (in the lab) | amended by D-458 |
 | [D-450](decisions/D-450.md) | A finished Cup's podium is saved within the hour of its close, even if nobody reopens the Cup | current |
 | [D-451](decisions/D-451.md) | The Claude rounds run from launchd on the Mac mini | current |
 | [D-452](decisions/D-452.md) | A skipped email stays visible: the round lists it, the owner can read it | current |

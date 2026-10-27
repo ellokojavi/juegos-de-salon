@@ -430,6 +430,7 @@ Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 - **Sharing** (D-165, D-171): every message has a `{emoji} *{title}* · {context}` header, one thing per line and the link last; results go out as an **image plus text**, and the text never repeats the image. The menu's share sheet shows the promo video and an **Invite to play** message listing the main features (D-253, D-271, D-410).
 - **Languages:** Spanish (default), English, Brazilian Portuguese and German, chosen by hand and saved on the device; the browser language is never guessed (D-47, D-48). See [Languages](#languages).
 - **Sound** synthesized with Web Audio, with a 🔊/🔇 button; **saved games** offer to continue; the screen stays awake while playing. A back swipe or «‹ Menú» mid-game asks before leaving (D-432).
+- **☕ Buy me a coffee** (D-448, D-449, D-458): voluntary support through a Stripe Payment Link, with no account and no backend. The home page footer has it beside 💬 Suggestions and comments, as a quiet two-column grid, and a finished game invites to it now and then (from a device's 6th game, at most once a week, never on the same ending as the inbox); it opens a card from the bottom of the page, and the games stay free.
 - **Installable** as a PWA, with a bubble showing the steps for each phone's browser (D-221, D-232); no offline mode yet.
 
 ---

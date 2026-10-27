@@ -34,4 +34,4 @@ one per visit, the next on the next visit (D-431). This folder is its memory: ev
 |---|---|---|
 | [🎉 `tres-juegos-demo`](campaigns/tres-juegos-demo/) · ¡Tres juegos nuevos! | 2026-10-18 → 2026-10-23 | before D-355 |
 | [🚂 `tren-en-vilo-pronto`](campaigns/tren-en-vilo-pronto/) · Algo nuevo se viene… (teaser) | 2026-10-22 → 2026-10-28 | full pass (D-355) |
-| [🥂 `brindis-apoyo`](campaigns/brindis-apoyo/) · ¡Un brindis por ti! (support) | off, until support leaves the lab | pending (D-355) |
+| [🥂 `brindis-apoyo`](campaigns/brindis-apoyo/) · ¡Un brindis por ti! (support) | off, until it is turned on from the panel's 📣 Campaigns (support is public since D-458) | pending (D-355) |

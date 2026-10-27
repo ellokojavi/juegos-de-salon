@@ -269,10 +269,10 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
 - **Since D-349:** `activos/<id>` = 1 (visited) or 2 (started something), once a day: `<id>` is a
   random 10-character id that lives in the browser (`juegos-de-salon:dispositivo`). Nothing goes
   with it, and it is never joined with names, rooms, Cups or rankings.
-- **Since D-448 (in the lab):** `support/<event>`, the steps of ☕ Buy me a coffee (`shown`: the
+- **Since D-448 (for every player since D-458):** `support/<event>`, the steps of ☕ Buy me a coffee (`shown`: the
   end-of-game invitation was shown; `open`: its card opened (D-449); `pay`: its button was tapped;
-  `thanks`: Stripe sent the donor back). The panel does not show them yet: they join it when support
-  leaves the lab (D-448).
+  `thanks`: Stripe sent the donor back). The panel does not show them yet, although D-448 planned
+  to add them when support left the lab (D-458).
 
 No sale nunca: dirección IP (no hay servidor que la vea y no se consulta a nadie), los
 secretos de las partidas ni el chat. En los modos sin red sale el nombre que la persona ya
