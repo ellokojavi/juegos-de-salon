@@ -6,6 +6,9 @@
  * ya escribió en la app, si lo hay (D-210). Lo que
  * se apunta, por día y por entorno, en `stats/<env>/days/<día>`:
  *
+ *   (envs: `prod` the live site, `dev` tests, previews and the home network (`envOf`), and
+ *   `owner` a live browser the owner marked as not counted from the panel (`envFor`, D-471))
+ *
  *   rooms/<CÓDIGO>: { game, at, v, players: { A: 'Javi' },     solo dos celulares: la sala ya
  *                     co: { A: 'CL' }, end: { winner, name, at } }  tiene esos nombres, y al
  *                                                             panel solo lo lee el dueño.
@@ -94,6 +97,7 @@ export const PREVIEWS = '/juegos-de-salon-previews/';
  * (10/8, 172.16/12, 192.168/16, `.local`) y Tailscale (`*.ts.net`, que es como se prueba en un
  * celular de verdad, D-67). Antes solo el computador contaba como prueba, y las partidas hechas
  * por Tailscale llegaban al panel como gente jugando (D-138).
+ * What a browser actually writes to is `envFor`, which turns a not-counted `prod` into `owner` (D-471).
  */
 export function envOf({ hostname = '', pathname = '' } = {}) {
   const h = String(hostname).toLowerCase();
