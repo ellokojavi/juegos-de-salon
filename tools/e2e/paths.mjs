@@ -608,6 +608,8 @@ export const PATHS = {
     'cellar-king': [`document.querySelector('#seccion-cuarto-rey summary').click(); document.getElementById('seccion-cuarto-rey').scrollIntoView(); 1`],
     // Julepe's card, in La Bodega since D-434
     'cellar-julep': [`document.querySelector('#seccion-julepe summary').click(); document.getElementById('seccion-julepe').scrollIntoView(); 1`],
+    // The home footer's sunset card, in La Bodega's launched improvements since it left the lab
+    'cellar-footer': [`document.querySelector('#seccion-pie summary').click(); document.getElementById('seccion-pie').scrollIntoView(); 1`],
   },
   'labs/exploding-numbers': {
     intro: [],

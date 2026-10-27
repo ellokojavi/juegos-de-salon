@@ -325,6 +325,7 @@ stats/prod/days/20342/
   frec/f3-7: 6                         how many of the last 28 days the browser came, by band
   activos/k3j9x0q2ab: 2                a browser's random id: 1 visited, 2 started something (D-349)
   support/open: 1                      ☕ Buy me a coffee, by step: shown, open, pay, thanks (D-448, in the lab)
+  splash/brindis-apoyo/reach: 4        splash windows, by campaign and event (D-461)
 stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many subscriptions are still alive
 ```
 
@@ -356,6 +357,11 @@ stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many
 - Support (D-448): `support/<event>` is a counter like the others, uploaded by `support.js`; unlike
   the categories above, the event is validated **by list** (`shown`, `open`, `pay`, `thanks`), so a
   new step does force touching the rules. Only counts: nothing says who supported or how much.
+- Splash campaigns (D-461): `splash/<id>/<event>` is a counter like the others, uploaded by
+  `public/assets/js/splash.js` (`SPLASH_EVENTS`), never from a preview. The campaign id goes by shape
+  (`^[a-z0-9-]{1,40}$`), the event by list (`shown`, `reach`, `play`, `close`, `t0`, `t1`, `t2`), so a
+  new event forces touching the rules. `reach` is the first window on a phone, remembered on the phone,
+  so no id leaves it.
 
 - Health (D-251): `falla/<tipo>/<página>`, `listo/<página>/<tramo>` and `err/<firma>/n` are uploaded by
   `public/assets/js/vigia.js`, by one; type, page, bucket and signature are validated by shape. The detail,

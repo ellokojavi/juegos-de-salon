@@ -333,7 +333,8 @@ with that the screen also enters the language tests. To see it on a real phone,
   its windows (D-430, `public/assets/js/home-windows.js`, D-431). Until the panel's first save, or if
   Firebase does not answer, the `ACTIVE` line of `public/assets/js/splash.js` holds, which
   `node tools/agents/splash.mjs list | on <id> [--until YYYY-MM-DD] | off [<id>]` rewrites through a PR.
-  Making a campaign (texts, clips in `CAMPAIGNS`) is still a PR.
+  Making a campaign (texts, clips in `CAMPAIGNS`) is still a PR. Each window is counted
+  (reach, taps, closes, time open) and the section's 📊 How they did reads it by days shown (D-461).
   `?splash=<id>` previews a campaign (one that is not on, only with a lab key, D-395), tried from the home page's lab bar with the other experiments (D-389), and the clips are recorded with
   `marketing/splash/capture.mjs`. Each campaign is kept in `marketing/splash/campaigns/<id>/` (its README), and a campaign that changes gets the usability agent's full pass before merging (D-355).
 - **Game ideas** (D-360): `.claude/agents/ideas.md` proposes what the app could try next, in three
