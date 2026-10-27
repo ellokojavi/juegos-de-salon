@@ -130,8 +130,9 @@
   };
 
   function version() {
-    var mapa = d.getElementById('importmap');
-    var m = /\?v=(\d+\.\d+\.\d+)/.exec((mapa && mapa.textContent) || '');
+    // The release meta set-version.py writes (D-467); the URLs carry content hashes, not the version
+    var meta = d.querySelector('meta[name="release"]');
+    var m = /^(\d+\.\d+\.\d+)/.exec((meta && meta.content) || '');
     return m ? m[1] : '0';
   }
 
