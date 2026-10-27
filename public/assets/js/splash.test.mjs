@@ -1,7 +1,7 @@
 // The splash (D-351): what the home page shows and in what order, the campaigns' texts, and the switch.
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { queue, seenIds, campaignLang, fromRemote, loadActive, readProfile, isRegular, REGULARS, softClose, SOFT_KEY, SOFT_CLOSES, CAMPAIGNS, ACTIVE } from './splash.js';
+import { queue, seenIds, campaignLang, fromRemote, loadActive, readProfile, isRegular, REGULARS, softClose, SOFT_KEY, SOFT_CLOSES, CAMPAIGNS, ACTIVE, dwellBand, firstReach, REACH_KEY, SPLASH_EVENTS } from './splash.js';
 import { activeLine, rewrite, turnOn } from '../../../tools/agents/splash.mjs';
 import { GAMES, SUELTOS } from './games.js';
 import { IDIOMAS } from './i18n.js';
@@ -94,7 +94,6 @@ for (const [id, c] of Object.entries(CAMPAIGNS)) {
     else assert.ok(it.img, `${id}: a teaser (an item with no texts) without its picture`);
   }
 }
-console.log('splash ✓');
 
 // from is inclusive too: a scheduled campaign waits for its day (D-454)
 assert.deepEqual(queue({ active: [{ id: 'a', from: '2026-10-20' }], campaigns, today }), ['a']);
@@ -121,3 +120,21 @@ assert.deepEqual(await loadActive({ fetchFn: async () => { throw new Error('offl
   assert.equal(softClose('a', { getItem: () => null, setItem: () => { throw new Error('full'); } }), true, 'no storage: it counts as seen, so it never nags');
 }
 
+{
+// What the panel counts (D-461): how long it stayed open, and each phone reached once per campaign
+assert.deepEqual([0, 2999, 3000, 9999, 10000, 60000].map(dwellBand), ['t0', 't0', 't1', 't1', 't2', 't2']);
+const mem = new Map();
+const store = { getItem: k => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v) };
+assert.equal(firstReach('a', store), true);
+assert.equal(firstReach('a', store), false, 'the second time it is not new reach');
+assert.equal(firstReach('b', store), true);
+mem.set(REACH_KEY, '{broken');
+assert.equal(firstReach('a', store), true, 'a broken list starts over');
+assert.equal(firstReach('a', { getItem: () => { throw new Error('blocked'); } }), false, 'blocked storage never throws');
+// The rules accept exactly these events
+const rules = readFileSync(new URL('../../../firebase/database.rules.json', import.meta.url), 'utf8');
+assert.ok(rules.includes(`$ev.matches(/^(${SPLASH_EVENTS.join('|')})$/)`), 'firebase rules list the same splash events');
+}
+
+
+console.log('splash ✓');
