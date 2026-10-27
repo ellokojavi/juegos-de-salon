@@ -48,6 +48,10 @@
         <label>Environment
           <select id="env"></select>
         </label>
+        <!-- lab only (D-395): panel.js shows it to a lab key holder -->
+        <label id="no-contar-label" hidden title="This browser's play and visits on the live site go to My devices, not Live">
+          <input type="checkbox" id="no-contar"> Don't count this browser
+        </label>
         <!-- panel.js fills the ranges from the list in aggregate.js (C-16) -->
         <label>Range
           <select id="range"></select>
