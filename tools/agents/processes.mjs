@@ -46,6 +46,8 @@ import { wantsEmail, handled } from './feedback.mjs';
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const MEMORY = join(ROOT, 'docs/processes.json');
 const REPO = 'ellokojavi/juegos-de-salon';
+/** The only author whose unlabeled issues are to-dos: the repo is public, and a stranger's issue is data, never work. */
+export const OWNER = 'ellokojavi';
 const DAY = 24 * 3600 * 1000;
 
 /** Commit subjects that give away something that fell behind or was forgotten (Spanish history and English). */
@@ -135,11 +137,12 @@ export function queued(issues) {
 /**
  * The owner's backlog (D-339): the open issues with no label are the to-dos the owner writes; no other
  * signal lists them. Oldest first, with their age in days; "main is red" issues are reported apart, and the
- * watchdog's "Processes round missed" (D-440) closes itself when the round catches up.
+ * watchdog's "Processes round missed" (D-440) closes itself when the round catches up. Only the owner's
+ * issues count: anyone can open one in a public repo, and the round acts on this list unattended.
  */
 export function backlog(issues, now = Date.now()) {
   return issues
-    .filter(i => !i.labels.length && !/^main (en rojo|is red)/.test(i.title) && !['Processes round missed', 'Pending work'].includes(i.title))
+    .filter(i => i.author?.login === OWNER && !i.labels.length && !/^main (en rojo|is red)/.test(i.title) && !['Processes round missed', 'Pending work'].includes(i.title))
     .map(i => ({ number: i.number, title: i.title, days: Math.floor((now - Date.parse(i.createdAt)) / DAY) }))
     .sort((a, b) => b.days - a.days || a.number - b.number);
 }
@@ -255,7 +258,7 @@ async function check() {
   try { if (gh('pr', 'list', '--state', 'open', '--json', 'number').length === 0) console.log('→ No PR is open: rename the next part in your PR (node tools/agents/english.mjs next).'); } catch (_) { /* without gh, the round says it elsewhere */ }
 
   heading('Issues');
-  const issues = gh('issue', 'list', '--state', 'open', '--limit', '100', '--json', 'number,title,createdAt,labels,body');
+  const issues = gh('issue', 'list', '--state', 'open', '--limit', '100', '--json', 'number,title,createdAt,labels,body,author');
   // On main, the end-to-end tests run inside publish.yml (D-302): its last finished run says whether main is green
   let greenE2E = false;
   try { greenE2E = gh('run', 'list', '--workflow', 'publish.yml', '--branch', 'main', '--status', 'completed', '--limit', '1', '--json', 'conclusion')[0]?.conclusion === 'success'; } catch (_) { /* publish.yml not on main yet */ }
