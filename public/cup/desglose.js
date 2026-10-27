@@ -3,13 +3,8 @@
  * estado con que terminó. Se muestra al terminar el día, la práctica y la sesión de prueba. Los
  * textos son de rules.js (C-3); aquí solo se hacen las cuentas, con las mismas funciones del motor.
  */
-import * as numero from './games/number/engine.js';
-import * as letras from './games/word/engine.js';
-import * as tango from './games/tango/engine.js';
-import * as anio from './games/year/engine.js';
-import * as final from './games/final/engine.js';
-import * as donde from './games/where/engine.js';
 import { juegosCopa } from './rules.js';
+import { engineOf } from './games/index.js';
 
 /**
  * Las líneas del desglose; la última es el total. `null` si el juego no lo tiene. Con `copa: false`
@@ -17,6 +12,8 @@ import { juegosCopa } from './rules.js';
  */
 export function desglose(id, e, { T, fmt, mmss, copa = true, lang = 'es' }) {
   if (!e) return null;
+  // The engine of the game just played, already loaded (D-468): this file does not load any
+  const numero = engineOf('numero'), letras = engineOf('letras'), tango = engineOf('tango'), anio = engineOf('anio'), donde = engineOf('donde'), final = engineOf(id);
   const intentos = (x, max) => (x.resuelto
     ? [fmt(T.bdTries, { u: x.usados, max }), fmt(T.bdTriesPts, { menos: 10 * (x.usados - 1), s: numero.puntaje(x, max) })]
     : [T.bdNotSolved]);

@@ -37,7 +37,7 @@ const MINE_SEED = `const D=864e5, now=Date.now(); sessionStorage.setItem('juegos
 const START = `document.getElementById('btn-empezar').click()`;
 // Agentes: passes every clue (the last one asks first, so it takes two taps), each as soon as its button is back
 const AG_FINISH = `(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));for(let k=0;k<40&&!document.querySelector('#ag-tablero .sin-tocar');k++){const b=document.getElementById('btn-pasar');if(b&&!b.disabled)b.click();await w(b&&!b.disabled?150:100);}})()`;
-const TANGO_FILL = clash => `(async()=>{const {JUEGOS}=await import('/cup/games/index.js');const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
+const TANGO_FILL = clash => `(async()=>{const JUEGOS=await (await import('/cup/games/index.js')).loadAll();const p=JUEGOS.tango.generar(__copa.estado.juego.semilla,1);
   const L=p.sol.map((v,i)=>i).filter(i=>p.dadas[i]===undefined), u=${clash}?L.filter(i=>p.sol[i]===2).at(-1):L.at(-1);
   const c=i=>document.querySelector('.tan[data-i="'+i+'"]');
   for(const i of L){if(i===u)continue;for(let k=0;k<3&&Number(c(i).dataset.v)!==p.sol[i];k++)c(i).click();}
