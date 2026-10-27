@@ -482,6 +482,7 @@ node public/assets/js/compartir.test.mjs
 node public/assets/js/daily-attempt.test.mjs
 node public/assets/js/daily-points.test.mjs
 node public/assets/js/daily-recap.test.mjs
+node public/assets/js/faq.test.mjs
 node public/assets/js/favoritos.test.mjs
 node public/assets/js/fin.test.mjs
 node public/assets/js/games.test.mjs
