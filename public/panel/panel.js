@@ -1600,7 +1600,7 @@ function bloqueResultados(rows) {
   const maxR = Math.max(0, ...todas.map(c => c.reach));
   const filas = todas.map(c => {
     const b = bar(nombre(c.id), [seg(C_PLAY, c.play), seg(C_REST, Math.max(0, c.reach - c.play))], maxR,
-      { cifra: c.reach, detail: `${tasa(c.ctr)} tapped · ${tasa(c.conversion)} finished a game · ${n(c.exposed)} ${c.exposed === 1 ? 'day' : 'days'} shown · ${unDecimal(c.reach / c.exposed)} new phones a day` });
+      { cifra: c.reach, detail: `${tasa(c.ctr)} tapped · ${tasa(c.conversion)} converted · ${n(c.exposed)} ${c.exposed === 1 ? 'day' : 'days'} shown · ${unDecimal(c.reach / c.exposed)} new phones a day` });
     return el('button', { type: 'button', class: 'campana-fila', 'aria-pressed': String(c === elegida), onClick: () => { S.campStats = c.id; render(); } }, b);
   });
 
