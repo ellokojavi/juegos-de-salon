@@ -30,7 +30,12 @@ notices: the transport and the usage signals are best-effort and fail silently.
   `stats` (the usage signals the owner's panel reads, D-44).
 - The room code is 4 uppercase letters.
 - Anyone with the code can read the room.
-- `createdAt`, `game` and `config` are written only once (when creating the room).
+- `createdAt`, `game` and `config` are written only once (when creating the room), and `createdAt`
+  only in the same write that notes the room in the trash bin (`cleanup/days/<day>/rooms/<CODE>`, for
+  today, yesterday or tomorrow UTC, D-469).
+- `config`, `players/<seat>` and `messages/<id>` take only the fields the games send, each with a
+  type and a size cap (D-469). A game that sends a new field or setting adds it to the rules in the
+  same PR; `firebase/room-limits.test.mjs` checks the shapes each game sends.
 - **A room is alive while it beats** (D-89): `lastAt` is the server time of the last
   move, anyone inside refreshes it and it lasts half an hour. After that half hour —or the
   six hours since `createdAt`, which is the hard cap— the room accepts nothing more. A room without
@@ -282,7 +287,8 @@ cleanup/
 
 - On creating a room its code is written into its day's bucket **in the same multi-path update that
   creates the room** (D-321), with `lastAt` the same server stamp as the room's `createdAt`; entering
-  a room overwrites `lastAt` with the server time. Codes are only added: a note can be written
+  a room overwrites `lastAt` with the server time. `lastAt` only moves forward, and only on today's
+  bucket, yesterday's or tomorrow's (D-469). Codes are only added: a note can be written
   again (a code reused the same day) but never removed or changed.
 - A room that no bucket names is never swept. `node tools/firebase/unnoted-rooms.mjs` lists them
   (admin key) and `--fix` deletes the expired ones and notes the live ones (D-321).
@@ -442,13 +448,12 @@ DB=https://juegos-de-salon-default-rtdb.firebaseio.com
 NOW=$(($(date +%s)*1000))
 # the room and the player go in two steps: the `players/` rules look at the `createdAt` already
 # in the database, so in a single write it doesn't exist yet and is rejected
-curl -X PATCH "$DB/rooms/ABCD.json" -d "{\"createdAt\":$NOW,\"game\":\"toque-y-fama\",\"config\":{\"digits\":4}}"
+# the room goes with its note in the trash bin, in one root update (D-321, D-469)
+DAY=$((NOW/86400000))
+curl -X PATCH "$DB/.json" -d "{\"rooms/ABCD/createdAt\":$NOW,\"rooms/ABCD/game\":\"toque-y-fama\",\"rooms/ABCD/config\":{\"digits\":4},\"cleanup/days/$DAY/lastAt\":$NOW,\"cleanup/days/$DAY/rooms/ABCD\":true}"
 curl -X PUT "$DB/rooms/ABCD/players/A.json" -d '{"name":"Javi","online":true}'
 
-# record the room in the trash bin (should pass) and try to open the bucket (should fail: just recorded).
-# The app writes this note in the same root update that creates the room (D-321)
-DAY=$((NOW/86400000))
-curl -X PATCH "$DB/cleanup/days/$DAY.json" -d "{\"lastAt\":$NOW,\"rooms/ABCD\":true}"
+# the bucket can't be opened yet (just recorded)
 curl -X PUT "$DB/cleanup/days/$DAY/rooms/ABCD.json" -d 'true'    # noting it again: should pass (D-321)
 curl -X PUT "$DB/cleanup/days/$DAY/rooms/ABCD.json" -d 'false'   # -> Permission denied
 curl "$DB/cleanup/days/$DAY.json"   # -> Permission denied
@@ -490,7 +495,13 @@ Confirm the numbers in the console before setting thresholds: Google has changed
    watches `firebasedatabase.googleapis.com/network/active_connections` and alerts by email
    (channel "JBot Mac Mini GCloud Notification") when it goes over 80. It was created by hand in the console: the
    service account key is for the database, not for configuring Google Cloud.
-3. **Monthly download: no alert yet.**
+3. **Monthly download alert: a manual console step** (it can't be code: the service account key is
+   for the database, not for configuring Google Cloud). In
+   [Cloud Monitoring → Alerting](https://console.cloud.google.com/monitoring/alerting?project=juegos-de-salon),
+   create a policy on `firebasedatabase.googleapis.com/network/sent_bytes_count`, aligned as a
+   **sum over 1 day**, alerting above **250 MB/day** (about 7.5 GB in a 30-day month, three quarters
+   of the ~10 GB cap; confirm the cap in the console first), with the same email channel as the
+   connections alert. Once it exists, note its link and date here.
 
 ### If usage really grows
 

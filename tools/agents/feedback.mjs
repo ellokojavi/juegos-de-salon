@@ -191,6 +191,14 @@ export function body(r) {
 
 const gh = (...args) => execFileSync('gh', [...args, '-R', REPO], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 
+/** Most issues one `sync` pass creates (#849). */
+export const MAX_PER_RUN = 20;
+/** The reports this pass uploads (oldest first, at most MAX_PER_RUN) and the warning when some wait. */
+export function firstBatch(fresh, max = MAX_PER_RUN) {
+  if (fresh.length <= max) return { batch: fresh, warning: null };
+  return { batch: fresh.slice(0, max), warning: `⚠️ ${fresh.length} new report(s): uploading the first ${max}, the rest wait for the next pass. That many at once is unusual: look at feedback/ in Firebase.` };
+}
+
 async function sync(dryRun) {
   // feedback/ is readable only by the owner: read it with the admin key, like feedbackIssues/
   const { read, write } = await import('../firebase/firebase-admin.mjs');
@@ -213,6 +221,10 @@ async function sync(dryRun) {
       throw new Error(`${fresh.length} of ${reports.length} report(s) without an issue: GitHub's issue list looks incomplete, nothing uploaded (--force if they really are new).`);
   }
   if (!fresh.length) return console.log(`Nothing new (${reports.length} report(s), all with an issue).`);
+  // At most MAX_PER_RUN issues per pass (#849): the rest wait for the next pass, oldest first.
+  const { batch, warning } = firstBatch(fresh);
+  if (warning) console.warn(warning);
+  fresh = batch;
   if (dryRun) { for (const r of fresh) console.log(secretLike(`${title(r)}\n${body(r)}`) ? `⚠️ ${r.id}: looks like it carries a key or a token, would not be posted\n` : `${title(r)}\n${body(r)}\n`); return; }
   const exists = JSON.parse(gh('label', 'list', '--limit', '200', '--json', 'name')).some(l => l.name === LABEL);
   if (!exists) gh('label', 'create', LABEL, '--color', 'd93f0b', '--description', 'A player\'s 🐞 report (D-275)');
