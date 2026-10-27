@@ -4,7 +4,7 @@
 // 76 jobs on every PR that touches them.
 import assert from 'node:assert/strict';
 import { siteGraph, siteFiles, scriptPages, dynamicPages, EVERY_PAGE } from './affected.mjs';
-import { scripts, PARTS } from './ci.mjs';
+import { scripts, PARTS, chosenJobs, jobs } from './ci.mjs';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -37,5 +37,11 @@ const blind = scripts().filter(name => {
 });
 assert.deepEqual(blind, [], `${blind.join(', ')} name no page, so they run on every PR.
 Open pages as \`\${SITE}/<page>/\`, name the games you loop over as strings, or add the script to EVERY_PAGE in affected.mjs if it really opens them all.`);
+
+// 3. A script CI never runs (it opens rooms in the production Firebase) runs no job when it changes;
+// a shared e2e tool still runs them all
+assert.deepEqual(chosenJobs(['tools/e2e/rooms/online.mjs', 'tools/e2e/bulls-and-cows/online.mjs']), [],
+  'changing a script left out of CI made the PR run end-to-end scripts');
+assert.equal(chosenJobs(['tools/e2e/cdp.mjs']).length, jobs().length, 'changing cdp.mjs must run every script');
 
 console.log(`scope guard: ${Object.keys(siteFiles()).length} site files and ${scripts().length} scripts, all placed, green`);
