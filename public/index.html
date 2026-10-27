@@ -558,7 +558,10 @@
     // Compartir la app: el botón abre una hoja con el video promocional y dos maneras de
     // compartir (compartir-portada.js): invitar a jugar, con la tarjeta social del idioma en que se
     // está mirando (D-74, D-226), o mandar el video
-    const app = compartirApp({ C: T, lang, juegos: PORTADA.filter(g => g.available).length });
+    // Toque y Fama: Palabra is not on the home page: Toque y Fama's page picks the number or the word (#767).
+    // It still plays in Uno al día and La Copa, and 🎲 still draws it (D-188)
+    const JUEGOS_PORTADA = PORTADA.filter(g => g.id !== 'letras');
+    const app = compartirApp({ C: T, lang, juegos: JUEGOS_PORTADA.filter(g => g.available).length });
     // The sheet with the vertical video in every language, on the Spanish or English tab (D-410)
     document.getElementById('share-slot').append(
       botonCompartirPortada({ C: T, app, url: homeUrl(lang), icono: ICONO_COMPARTIR, lang, tap: () => SFX.tap() }));
@@ -608,7 +611,7 @@
     };
     // The 🔥 "Popular" label on the top three (D-361; for everyone since D-369)
     const top = populares();
-    const tarjetas = PORTADA.map((g, i) => {
+    const tarjetas = JUEGOS_PORTADA.map((g, i) => {
       const [, max] = rangoJugadores(g.players);
       // Un juego que no está disponible se ve, pero no se abre: sin href, ni con el teclado (C-5)
       const card = el('a', { class: 'game-card' + (g.available ? '' : ' soon') + (g.torneo ? ' torneo' : ''), href: g.available ? g.path : null, 'aria-disabled': g.available ? null : 'true', 'data-id': g.id, style: `animation-delay:${i * 60}ms` },
@@ -638,11 +641,6 @@
       return { g, card, caja };
     });
 
-    // Toque y Fama: Palabra has no card of its own: it is a mode inside Toque y Fama (#767)
-    {
-      const i = tarjetas.findIndex(t => t.g.id === 'letras');
-      if (i >= 0) { tarjetas[i].caja.remove(); tarjetas.splice(i, 1); }
-    }
 
     // Juego al azar (D-188): always from every game on the home page, whatever filter is on; only
     // `alAzar` leaves some out (La Copa, and the games that need a group, D-374)
@@ -702,7 +700,7 @@
       const NEW = 'new', POP = 'popular';
       const top3 = populares();
       const atajo = { [NEW]: g => g.available && esNuevo(g), [POP]: g => top3.has(g.id) };
-      const tieneAtajo = k => PORTADA.some(atajo[k]);
+      const tieneAtajo = k => JUEGOS_PORTADA.some(atajo[k]);
       const filtro = { tipo: TIPOS[pedido] || (pedido === FAV && hayFavoritos()) || (atajo[pedido] && tieneAtajo(pedido)) ? pedido : null };
       // The search (D-390, for everyone since D-403): the games "see them all" filtered, or null with nothing typed
       const busca = { ids: null, clear: () => {} };
@@ -718,7 +716,7 @@
       botones.push(fav);
       // Solo los tipos que tiene algún juego que se puede abrir: así la lista nunca queda vacía
       for (const [id, t] of Object.entries(TIPOS)) {
-        if (!PORTADA.some(g => g.available && (g.tipos || []).includes(id))) continue;
+        if (!JUEGOS_PORTADA.some(g => g.available && (g.tipos || []).includes(id))) continue;
         const b = el('button', { type: 'button', 'data-tipo': id, onClick: () => { filtro.tipo = filtro.tipo === id ? null : id; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, t.emoji), el('span', {}, pickLang(t.name, lang)));
         tipos.append(b); botones.push(b);
       }
@@ -782,7 +780,7 @@
       aplicar(true);
       // The 🔎 search, for everyone (D-403): loaded after the list is drawn, so it never delays it
       import('./assets/js/search.js').then(({ drawSearch }) => {
-        Object.assign(busca, drawSearch({ into: caja, lang, games: PORTADA, pickName: pickLang, onChange: ids => { busca.ids = ids; aplicar(); } }));
+        Object.assign(busca, drawSearch({ into: caja, lang, games: JUEGOS_PORTADA, pickName: pickLang, onChange: ids => { busca.ids = ids; aplicar(); } }));
       }).catch(e => console.warn('búsqueda:', e));
       // Marcar el primero hace aparecer la ficha; desmarcar estando en Favoritos no saca la tarjeta
       // de la vista (se puede volver a marcar), salvo que ya no quede ninguno: ahí se ven todos

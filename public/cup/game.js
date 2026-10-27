@@ -2608,6 +2608,15 @@ function selectorVariante(id, variante, cambiar) {
   return o.nodo;
 }
 
+/** 🔢 Número or 🔤 Palabra on /word/, like a variant: the number is Toque y Fama's own page (#767). */
+function selectorTyf() {
+  const o = opciones([{ valor: 'numero', titulo: T.tyfNumber }, { valor: 'palabra', titulo: T.tyfWord }],
+    v => { if (v === 'numero') location.href = '../bulls-and-cows/'; }, { inicial: 'palabra' });
+  o.nodo.classList.add('dos', 'variantes');
+  o.nodo.id = 'selector-variante';
+  return o.nodo;
+}
+
 function practica(id, varianteElegida = null) {
   const mod = JUEGOS[id];
   if (!JUEGOS_COPA[id] || !mod) { if (SUELTO) location.replace(RAIZ); else portada(); return; }
@@ -2649,6 +2658,8 @@ function practica(id, varianteElegida = null) {
       el('div', { style: 'margin-top:6px' }, langToggle())),
     // The variant is picked here, before the steps, which are the variant's (D-331)
     variante && !HOY ? selectorVariante(id, variante, v => { guardarVariante(id, v); SFX.tap(); practica(id, v); }) : null,
+    // Toque y Fama: Palabra shares Toque y Fama's home card (#767): 🔢 Número goes back to it
+    id === 'letras' && SUELTO && !HOY ? selectorTyf() : null,
     // Uno al día: una línea arriba, y nada más; cómo se juega es lo del juego (U-18)
     HOY ? el('p', { class: 'aviso uad-intro', id: 'uad-intro' }, S.hoy.ya ? UAD().introRepite : UAD().intro) : null,
     delDia ? el('p', { class: 'aviso uad-intro', id: 'diario-intro' }, `📅 ${T.casoDelDia}`) : null,
