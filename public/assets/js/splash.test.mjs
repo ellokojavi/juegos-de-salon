@@ -1,7 +1,7 @@
 // The splash (D-351): what the home page shows and in what order, the campaigns' texts, and the switch.
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { queue, seenIds, campaignLang, fromRemote, loadActive, CAMPAIGNS, ACTIVE } from './splash.js';
+import { queue, seenIds, campaignLang, fromRemote, loadActive, readProfile, isRegular, REGULARS, CAMPAIGNS, ACTIVE } from './splash.js';
 import { activeLine, rewrite, turnOn } from '../../../tools/agents/splash.mjs';
 import { GAMES, SUELTOS } from './games.js';
 import { IDIOMAS } from './i18n.js';
@@ -28,6 +28,28 @@ assert.deepEqual(queue({ active: [{ id: 'c' }, { id: 'b' }], campaigns, today })
 assert.deepEqual(queue({ active: three, campaigns, today, automated: true }), []);
 assert.deepEqual(queue({ active: three, campaigns, seen: ['b'], forced: 'b', today }), ['b']);
 assert.deepEqual(queue({ active: [], campaigns, forced: 'nope', today }), []);
+
+// A campaign for regulars (D-458): only a phone with 5+ visit days and 10+ finished games that has
+// not paid yet; until then it waits unseen, and the ones for everyone go on as always
+const forRegulars = { ...campaigns, r: { title: { es: 'R' }, audience: 'regulars' } };
+const regular = { days: REGULARS.days, games: REGULARS.games, paid: false };
+assert.deepEqual(REGULARS, { days: 5, games: 10 }, "the owner's thresholds");
+assert.deepEqual(queue({ active: [{ id: 'r' }, { id: 'a' }], campaigns: forRegulars, today }), ['a'], 'no profile: a first visit never gets it');
+assert.deepEqual(queue({ active: [{ id: 'r' }], campaigns: forRegulars, today, profile: { ...regular, days: 4 } }), [], 'too few days');
+assert.deepEqual(queue({ active: [{ id: 'r' }], campaigns: forRegulars, today, profile: { ...regular, games: 9 } }), [], 'too few games');
+assert.deepEqual(queue({ active: [{ id: 'r' }], campaigns: forRegulars, today, profile: { ...regular, paid: true } }), [], 'never after paying');
+assert.deepEqual(queue({ active: [{ id: 'r' }, { id: 'a' }], campaigns: forRegulars, today, profile: regular }), ['r', 'a'], 'a regular gets it, in order');
+assert.deepEqual(queue({ active: [{ id: 'r' }], campaigns: forRegulars, today, profile: regular, seen: ['r'] }), [], 'still once per phone');
+assert.deepEqual(queue({ active: [], campaigns: forRegulars, forced: 'r', today }), ['r'], '?splash= previews it regardless');
+// The profile, from what the phone already keeps
+const kept = { 'juegos-de-salon:dias': '20380,20381,20383,20385,20386,20386', 'juegos-de-salon:buzon': JSON.stringify({ partidas: 12, visto: '2026-10-27' }), 'juegos-de-salon:support': JSON.stringify({ games: 3 }) };
+assert.deepEqual(readProfile(k => kept[k] ?? null), { days: 5, games: 12, paid: false });
+assert.ok(isRegular(readProfile(k => kept[k] ?? null)));
+assert.deepEqual(readProfile(k => (k === 'juegos-de-salon:support' ? JSON.stringify({ paid: 1 }) : kept[k] ?? null)).paid, true);
+assert.deepEqual(readProfile(() => null), { days: 0, games: 0, paid: false }, 'a new phone');
+assert.deepEqual(readProfile(() => '{broken'), { days: 1, games: 0, paid: false }, 'unreadable data never throws');
+assert.equal(isRegular(null), false);
+assert.equal(CAMPAIGNS['brindis-apoyo'].audience, 'regulars', 'the toast waits for regulars (the owner asked)');
 // What a phone remembers: a list, and the bare id it kept before reads as a list of one
 assert.deepEqual(seenIds(null), []);
 assert.deepEqual(seenIds('tres-juegos-demo'), ['tres-juegos-demo']);

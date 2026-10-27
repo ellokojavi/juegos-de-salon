@@ -16,7 +16,10 @@
  * More than one can be on at once: ACTIVE is a queue, in the order they were turned on, and a player
  * with several still to see gets them in that order (D-430, the owner's request), one per visit: the
  * home page's gate (home-windows.js, D-431) shows only the first, through showSplash. Each player sees a campaign once: closing it records its id in localStorage, and it does
- * not come back. `?splash=<id>` shows any campaign on demand, on the home page or anywhere that
+ * not come back. A campaign marked `audience: 'regulars'` waits for a phone that already plays
+ * here: 5 or more days visited in the last four weeks, 10 or more finished games, and no payment
+ * through the support card yet (`isRegular`, D-458); until then it is not marked as seen, so it
+ * shows the first visit the phone qualifies. `?splash=<id>` shows any campaign on demand, on the home page or anywhere that
  * calls showSplash (the lab demo, /labs/splash/), without recording it.
  *
  * The decision of what to show is pure (queue), so node tests it without a DOM.
@@ -28,6 +31,28 @@ import { PAYMENT_LINK } from './support.js';
 export const ACTIVE = [{ id: 'tres-juegos-demo', until: '2026-10-23' }, { id: 'tren-en-vilo-ya', until: '2026-11-09' }];
 
 export const SEEN_KEY = 'juegos-de-salon:splash-visto';
+
+/**
+ * Who an `audience: 'regulars'` campaign waits for (D-458, the owner's thresholds): a phone with
+ * this many distinct visit days in the last four weeks and this many finished games.
+ */
+export const REGULARS = { days: 5, games: 10 };
+// What the phone already keeps: its visit days (stats.js DIAS_KEY, comma-separated, the last 28),
+// its finished games (the inbox's count, buzon.js) and whether it paid (support.js)
+const DAYS_KEY = 'juegos-de-salon:dias';
+const INBOX_KEY = 'juegos-de-salon:buzon';
+const SUPPORT_KEY = 'juegos-de-salon:support';
+
+/** This phone's profile, from `get(key)` (localStorage): `{ days, games, paid }`. Never throws. */
+export function readProfile(get = k => { try { return globalThis.localStorage?.getItem(k) ?? null; } catch (_) { return null; } }) {
+  const obj = k => { try { return JSON.parse(get(k) || '{}') || {}; } catch (_) { return {}; } };
+  let days = 0;
+  try { days = new Set(String(get(DAYS_KEY) || '').split(',').map(s => s.trim()).filter(Boolean)).size; } catch (_) { /* none */ }
+  return { days, games: Number(obj(INBOX_KEY).partidas) || 0, paid: !!obj(SUPPORT_KEY).paid };
+}
+
+/** Whether a phone with this profile already plays here, for an `audience: 'regulars'` campaign. */
+export const isRegular = p => !!p && p.days >= REGULARS.days && p.games >= REGULARS.games && !p.paid;
 
 /** Where the panel keeps each campaign's switch (D-454): `splash/<id>` = { on, order, from?, until?, at }. */
 export const REMOTE = 'https://juegos-de-salon-default-rtdb.firebaseio.com/splash.json';
@@ -126,6 +151,8 @@ export const CAMPAIGNS = {
     kicker: { es: 'Salud', en: 'Cheers', pt: 'Saúde', de: 'Prost' },
     title: { es: '¡Un brindis por ti!', en: 'A toast to you!', pt: 'Um brinde a você!', de: 'Ein Toast auf dich!' },
     hero: true,
+    // Only for those who already play here, never a first visit (D-458)
+    audience: 'regulars',
     items: [{
       video: 'https://media.giphy.com/media/rY93u9tQbybks/giphy.mp4',
       img: 'https://media.giphy.com/media/rY93u9tQbybks/480w_s.jpg',
@@ -158,13 +185,16 @@ export const campaignLang = (c, lang) => (!c?.langs || c.langs.includes(lang) ? 
 /**
  * The campaigns the home page shows, in order: the forced id (`?splash=`) alone, always; otherwise
  * each active one that exists, has started, has not expired and this phone has not closed, in the order they
- * were turned on. `seen` is the list of ids this phone closed.
+ * were turned on. `seen` is the list of ids this phone closed; `profile` is this phone's
+ * (`readProfile`), which a campaign for regulars needs.
  */
-export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], forced = null, today = new Date(), automated = false } = {}) {
+export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], forced = null, today = new Date(), automated = false, profile = null } = {}) {
   if (forced) return campaigns[forced] ? [forced] : [];
   if (automated) return [];
   const live = a => {
     if (!a?.id || !campaigns[a.id] || seen.includes(a.id)) return false;
+    // A campaign for regulars waits, unseen, until this phone is one (D-458)
+    if (campaigns[a.id].audience === 'regulars' && !isRegular(profile)) return false;
     const start = a.from ? Date.parse(`${a.from}T00:00:00`) : NaN;
     if (Number.isFinite(start) && today.getTime() < start) return false;
     const end = a.until ? Date.parse(`${a.until}T23:59:59`) : NaN;
@@ -330,5 +360,5 @@ export async function startSplash({ lang = 'es', search = globalThis.location?.s
   // A campaign that is not on previews only with a lab key (D-395). lab: #seccion-portada
   const active = automated ? [] : await loadActive();
   if (forced && !active.some(a => a.id === forced)) return import('./lab-access.js').then(({ labAccess }) => labAccess()).then(yes => show(yes ? queue({ forced }) : []));
-  return show(queue({ active, seen: seenIds(), forced, automated }));
+  return show(queue({ active, seen: seenIds(), forced, automated, profile: readProfile() }));
 }

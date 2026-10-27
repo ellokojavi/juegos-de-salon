@@ -11,6 +11,7 @@ Stripe. Each phone sees it once, like every campaign.
 | Item | GIPHY's clip [`rY93u9tQbybks`](https://giphy.com/gifs/great-dicaprio-leonardo-rY93u9tQbybks), as MP4 with its JPEG still as poster, **served from GIPHY's `media.giphy.com`**, not copied into `public/`: the scene belongs to the film, and GIPHY is what licenses it for sharing (`splash.test.mjs` allows outside media only from there). The version without letterbox bars was chosen among the `dicaprio-toast` results |
 | Link | straight to Stripe's payment page (`PAYMENT_LINK` in `support.js`), not through the support card (the owner's request); Stripe brings the player back to `/?support=thanks` |
 | On | off. Support is still in the lab (D-395): turn it on from the panel's 📣 Campaigns only once support is public, or players would land on a card they cannot open |
+| Audience | `audience: 'regulars'` (D-458, the owner's request): only phones with 5 or more visit days in the last four weeks and 10 or more finished games that have not paid; never a first visit. A phone that does not qualify yet keeps it pending, unseen |
 | Usability | full pass before it goes on (D-355) |
 
 Screenshots at 390 px, as `node tools/e2e/look.mjs splash brindis-apoyo --lang <xx>` shows it:
