@@ -504,7 +504,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-456](decisions/D-456.md) | Tren en Vilo leaves the lab: its page, Uno al día and La Copa, launched with its splash | current |
 | [D-457](decisions/D-457.md) | Seasonal touches on the pages players move around in (Halloween first) | current |
 | [D-458](decisions/D-458.md) | A splash campaign can wait for regulars: 5 visit days and 10 finished games (the toast to support does) | current |
-| [D-460](decisions/D-460.md) | ¿Dónde queda?'s Earth in WebP, next to the game, and the 4096 px image only on big screens | current |
+| [D-460](decisions/D-460.md) | ¿Dónde queda?'s Earth in WebP, next to the game, and the 4096 px image only on big screens or zoomed in | current |
 
 ## No longer in force (11)
 
