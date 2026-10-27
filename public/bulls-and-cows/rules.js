@@ -8,7 +8,7 @@ export const DIGIT_OPTIONS = [3, 4, 5];
 const ES = {
   docTitle: 'Toque y Fama 🔢 · Juegos de Salón', gameChip: '🔢 Toque y Fama', menu: '‹ Menú',
   title: 'Toque y Fama',
-  lead: 'Cada uno elige un número secreto de cifras distintas. Adivina el del rival antes de que adivine el tuyo.',
+  lead: 'Cada uno elige un número secreto de cifras distintas. Adivina el del rival antes de que adivine el tuyo. ¿Prefieres una palabra? Elige 🔤 Palabra.',
   howTitle: '🧠 Cómo se juega',
   howText: 'Por cada intento recibes pistas: una <b>fama</b> es una cifra correcta en su lugar y un <b>toque</b> es una cifra correcta en otro lugar. Gana quien lo saca en menos intentos.',
   example: 'Ejemplo: número secreto 1234, intento 1356 → 1 fama (el 1) y 1 toque (el 3).',
@@ -70,7 +70,7 @@ const ES = {
 const EN = {
   docTitle: 'Bulls and Cows 🔢 · Party Games', gameChip: '🔢 Bulls and Cows', menu: '‹ Menu',
   title: 'Bulls and Cows',
-  lead: 'Each player picks a secret number with no repeated digits. Crack your rival\'s number before they crack yours.',
+  lead: 'Each player picks a secret number with no repeated digits. Crack your rival\'s number before they crack yours. Prefer a word? Pick 🔤 Word.',
   howTitle: '🧠 How to play',
   howText: 'Every guess gets clues: a <b>bull</b> is a right digit in the right spot and a <b>cow</b> is a right digit in the wrong spot. Whoever cracks it in fewer guesses wins.',
   example: 'Example: secret number 1234, guess 1356 → 1 bull (the 1) and 1 cow (the 3).',
@@ -126,7 +126,7 @@ const EN = {
 const PT = {
   docTitle: 'Toque e Fama 🔢 · Jogos de Salão', gameChip: '🔢 Toque e Fama', menu: '‹ Menu',
   title: 'Toque e Fama',
-  lead: 'Cada um escolhe um número secreto com algarismos diferentes. Descubra o do rival antes que ele descubra o seu.',
+  lead: 'Cada um escolhe um número secreto com algarismos diferentes. Descubra o do rival antes que ele descubra o seu. Prefere uma palavra? Escolha 🔤 Palavra.',
   howTitle: '🧠 Como se joga',
   howText: 'A cada tentativa você recebe pistas: uma <b>fama</b> é um algarismo certo no lugar certo e um <b>toque</b> é um algarismo certo em outro lugar. Ganha quem descobre com menos tentativas.',
   example: 'Exemplo: número secreto 1234, tentativa 1356 → 1 fama (o 1) e 1 toque (o 3).',
@@ -188,7 +188,7 @@ const PT = {
 const DE = {
   docTitle: 'Bullen und Kühe 🔢 · Salonspiele', gameChip: '🔢 Bullen und Kühe', menu: '‹ Menü',
   title: 'Bullen und Kühe',
-  lead: 'Jeder wählt eine geheime Zahl ohne doppelte Ziffern. Knack die Zahl deines Gegners, bevor er deine knackt.',
+  lead: 'Jeder wählt eine geheime Zahl ohne doppelte Ziffern. Knack die Zahl deines Gegners, bevor er deine knackt. Lieber ein Wort? Wähl 🔤 Wort.',
   howTitle: '🧠 So geht’s',
   howText: 'Für jeden Versuch bekommst du Hinweise: Ein <b>Bulle</b> ist eine richtige Ziffer an der richtigen Stelle, eine <b>Kuh</b> eine richtige Ziffer an der falschen Stelle. Wer die Zahl mit weniger Versuchen knackt, gewinnt.',
   example: 'Beispiel: geheime Zahl 1234, Versuch 1356 → 1 Bulle (die 1) und 1 Kuh (die 3).',
