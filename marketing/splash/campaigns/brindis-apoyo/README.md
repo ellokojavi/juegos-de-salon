@@ -1,8 +1,9 @@
 # 🥂 ¡Un brindis por ti! (`brindis-apoyo`)
 
 An invitation to support the site, with a laugh: Leonardo DiCaprio raising his glass in *The Great
-Gatsby*. Its button opens the support card (`support.js`, D-449), where the player pays through
-Stripe. Each phone sees it once, like every campaign.
+Gatsby*. Its button goes straight to Stripe's payment page (the support card, `support.js`, D-449,
+only while there is no payment link). Each phone sees it once, like every campaign, and only once it
+plays here regularly (Audience, below, D-458).
 
 | | |
 |---|---|
