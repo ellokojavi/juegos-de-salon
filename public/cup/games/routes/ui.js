@@ -15,6 +15,10 @@
  */
 import { el } from '../../../assets/js/ui.js';
 import { generar, generarEtapa, girar, resuelto, puntajePartida, tarjeta, RECTANGULOS, LADO, ETAPAS, TIEMPO_S } from './engine.js';
+import { loadCss } from '../../../assets/js/load-css.js';
+
+// Its own stylesheet, loaded with its code and before its first screen (D-468)
+await loadCss(new URL('./style.css', import.meta.url));
 
 const JUNCTION = 'https://bricksandchips.co/junction-nine';
 /** How long Give up waits for the second tap, like Clear all in Zip. */

@@ -12,6 +12,10 @@ import { el, confetti } from '../../../assets/js/ui.js';
 import { LONG_PRESS_MS } from '../../../assets/js/teclado.js';   // the long press of Toque y Fama's notes
 import { estado, puntaje, base, tarjeta, RESTA_NEUTRAL, RESTA_ASESINO } from './engine.js';
 import TEXTOS from './texts.js';
+import { loadCss } from '../../../assets/js/load-css.js';
+
+// Its own stylesheet, loaded with its code and before its first screen (D-468)
+await loadCss(new URL('./style.css', import.meta.url));
 
 const CODENAMES = 'https://czechgames.com/en/codenames/';
 const quieto = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
