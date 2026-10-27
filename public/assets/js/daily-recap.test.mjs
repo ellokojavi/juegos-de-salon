@@ -1,6 +1,6 @@
 // Uno al día's season recap on the home page (D-424): which season is due, the window's rows and its lead.
 import assert from 'node:assert/strict';
-import { dueSeason, seasonRecap, loadSeasonRecap, demoSeason, monthBefore, lastDayOf, seenSeasons, markSeasonSeen, DAILY_KEY, PLAYER_KEY, TOP } from './daily-recap.js';
+import { dueSeason, seasonRecap, seasonTop, loadSeasonRecap, demoSeason, monthBefore, lastDayOf, seenSeasons, markSeasonSeen, DAILY_KEY, PLAYER_KEY, TOP } from './daily-recap.js';
 import { KEY as UAD_KEY } from './uno-al-dia.js';
 import { seasonLead, seasonView, sparkPoints, TEXTS } from './recap.js';
 
@@ -51,14 +51,28 @@ for (const l of ['en', 'pt', 'de']) assert.deepEqual(Object.keys(TEXTS[l]).sort(
 // Loading: only once its last night was computed; a season with nobody is marked seen
 const mem = {};
 globalThis.localStorage = { getItem: k => (k in mem ? mem[k] : null), setItem: (k, x) => { mem[k] = String(x); }, removeItem: k => { delete mem[k]; } };
-const answer = data => async url => { assert.ok(url.endsWith('/uadTemporada/s2026-10.json'), url); return { ok: true, json: async () => data }; };
+const store = data => async url => {
+  const m = url.match(/\/uadTemporada\/s2026-10\/(top|j\/[a-z]+)\.json$/);
+  assert.ok(m, `only the top and the own row are read: ${url}`);
+  const top = data && seasonTop(data);
+  return { ok: true, json: async () => (m[1] === 'top' ? top : data?.j?.[m[1].slice(2)] ?? null) };
+};
 const full = { c: ['2026-10-31'], t: '2026-11-01', j: { aaaaaaaa: { n: 'Ana', s: 900, l: [1] }, bbbbbbbb: { n: 'Beto', s: 800, l: [2] } } };
-assert.equal((await loadSeasonRecap({ month: '2026-10', jid: 'bbbbbbbb', fetchFn: answer(full) })).recap.me.name, 'Beto');
-assert.equal(await loadSeasonRecap({ month: '2026-10', fetchFn: answer({ ...full, t: '2026-10-31' }) }), null, 'the last day not computed yet');
-assert.equal(await loadSeasonRecap({ month: '2026-10', fetchFn: answer(null) }), null, 'nothing written yet');
+assert.equal((await loadSeasonRecap({ month: '2026-10', jid: 'bbbbbbbb', fetchFn: store(full) })).recap.me.name, 'Beto');
+assert.equal(await loadSeasonRecap({ month: '2026-10', fetchFn: store({ ...full, t: '2026-10-31' }) }), null, 'the last day not computed yet');
+assert.equal(await loadSeasonRecap({ month: '2026-10', fetchFn: store(null) }), null, 'nothing written yet');
 assert.equal(await loadSeasonRecap({ month: '2026-10', fetchFn: async () => { throw new Error('offline'); } }), null);
+// The top and the own row give the same recap as the whole table, for every player of a big season
+const big = { c: ['2026-10-18', '2026-10-31'], t: '2026-11-01', j: {} };
+for (let k = 0; k < 40; k++) big.j[`p${String.fromCharCode(97 + (k % 26))}${String.fromCharCode(97 + Math.floor(k / 26))}aaaaa`] = { n: `P${k}`, s: 1000 - k * 20 + (k === 9 || k === 10 ? 0 : 0), l: [k % 7 ? k + 1 : 0, k < 3 ? 1 : k === 10 ? 10 : k + 1] };
+assert.ok(Object.keys(seasonTop(big).j).length < 15, 'the top is small');
+assert.equal(seasonTop(big).p, 40);
+for (const jid of [null, ...Object.keys(big.j)]) {
+  const a = (await loadSeasonRecap({ month: '2026-10', jid, fetchFn: store(big) })).recap, b = seasonRecap(big, jid);
+  assert.deepEqual(a, b, `same recap for ${jid}`);
+}
 assert.deepEqual(seenSeasons(), [], 'none of those is seen');
-assert.equal(await loadSeasonRecap({ month: '2026-10', fetchFn: answer({ ...full, j: {} }) }), null);
+assert.equal(await loadSeasonRecap({ month: '2026-10', fetchFn: store({ ...full, j: {} }) }), null);
 assert.deepEqual(seenSeasons(), ['2026-10'], 'a season with nobody is');
 markSeasonSeen('2026-11');
 assert.deepEqual(seenSeasons(), ['2026-11', '2026-10']);

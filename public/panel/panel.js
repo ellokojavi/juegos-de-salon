@@ -16,7 +16,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged, signOut,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import {
-  getDatabase, ref, onValue, query, orderByChild, orderByKey, startAt, set,
+  getDatabase, ref, onValue, get, query, orderByChild, orderByKey, startAt, equalTo, set,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { GAMES, SUELTOS, gameById, gameLabel as etiquetaRegistro, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon, isIndividualMode } from '../assets/js/games.js';
@@ -58,6 +58,8 @@ const JUEGOS_COPA = juegosCopa(PANEL_LANG);
 const S = {
   user: null, env: ENV_DEFECTO, range: RANGO_POR_DEFECTO, ruta: leerRuta(location.hash),
   rooms: {}, days: {}, daysLoaded: false, torneos: {}, torneosLoaded: false, push: null,
+  // Cups older than the period, read one by one when opened by code or link (D-473)
+  torneosSueltos: {}, renderTimer: null,
   // Uno al día (D-230): la historia de quienes entraron con jugador, las invitaciones y las rachas
   uad: { historia: {}, invitados: {}, rachas: {} },
   // The timeline (D-408): feedback messages, and what is picked in that view
@@ -74,6 +76,7 @@ if (S.ruta.r && RANGOS.some(r => r.id === S.ruta.r)) S.range = S.ruta.r;
 if (S.ruta.e) S.env = S.ruta.e;
 
 const POR_PAGINA = 20;
+const DAY_MS = 86400000;
 const SIN_RED_VISIBLES = 20;
 
 /* ------------------------------------------------------------------ */
@@ -154,7 +157,8 @@ function listen() {
   // createdAt sabe filtrar— y `liveRooms` descarta después las que llevan media hora sin latir
   // (D-89). Cada jugada llega como delta.
   const since = Date.now() - ROOM_TTL;
-  S.unsubRooms = onValue(query(ref(db, 'rooms'), orderByChild('createdAt'), startAt(since)), snap => { S.rooms = snap.val() || {}; render(); }, denied);
+  // Every move of every room arrives here: the panel redraws at most once a second for them (D-473)
+  S.unsubRooms = onValue(query(ref(db, 'rooms'), orderByChild('createdAt'), startAt(since)), snap => { S.rooms = snap.val() || {}; renderSoon(); }, denied);
   // Se baja solo hasta donde llega el rango elegido y nunca menos de lo que ya estaba bajado
   // (D-80): mirar un año son 365 días de registros, y no hay por qué pagarlos mientras se
   // mira la semana. Cambiar a un rango más corto no vuelve a pedir nada.
@@ -162,9 +166,13 @@ function listen() {
   const desde = Math.min(rangoAnterior(rangeOf(S.range)).from, S.desdeDia ?? Infinity);
   S.desdeDia = desde;
   S.unsubDays = onValue(query(ref(db, `stats/${S.env}/days`), orderByKey(), startAt(String(desde))), snap => { S.days = snap.val() || {}; S.daysLoaded = true; render(); }, denied);
-  // Las copas se bajan enteras: son pocas y cada una es chica. Cada resultado llega como delta,
-  // así que "jugando ahora" y la tabla se mueven solos.
-  S.unsubTorneos = onValue(ref(db, 'torneos'), snap => { S.torneos = snap.val() || {}; S.torneosLoaded = true; render(); }, denied);
+  // The cups that were still alive on the first day loaded (D-473): every number of a period
+  // (and of the one before it) only looks at cups that ended on or after its first day, so the
+  // older ones, which only grow in number, are not downloaded. Two days of margin for the
+  // Pacific-time timeline. A cup opened by its code or link is read on its own (`copaSuelta`).
+  // Each result still arrives as a delta, so "playing now" and the table move on their own.
+  const desdeMs = (desde - 2) * DAY_MS;
+  S.unsubTorneos = onValue(query(ref(db, 'torneos'), orderByChild('meta/end'), startAt(desdeMs)), snap => { S.torneos = { ...S.torneosSueltos, ...(snap.val() || {}) }; S.torneosLoaded = true; render(); }, denied);
   // Lo que deja notify.mjs en cada vuelta: la hora y las suscripciones vivas (D-233)
   S.unsubPush = onValue(ref(db, `stats/${S.env}/push`), snap => { S.push = snap.val() || {}; render(); }, denied);
   // Uno al día (D-230): son de todos los entornos (la historia vive fuera de stats/). Sin permiso
@@ -173,7 +181,8 @@ function listen() {
     S.unsubUad.push(onValue(ref(db, ruta), snap => { S.uad = { ...S.uad, [clave]: snap.val() || {} }; render(); }, () => {}));
   }
   // Feedback for the timeline (D-408): the 🐞 reports and the inbox at the end of every game
-  S.unsubFeedback = onValue(ref(db, 'feedback'), snap => { S.feedback = snap.val() || {}; render(); }, () => {});
+  // Only the messages from the first day loaded on (D-473): the timeline is the only one that reads them
+  S.unsubFeedback = onValue(query(ref(db, 'feedback'), orderByChild('at'), startAt(desdeMs)), snap => { S.feedback = snap.val() || {}; render(); }, () => {});
   // 📣 Campaigns (D-454): the switches the home page reads
   S.unsubSplash = onValue(ref(db, 'splash'), snap => { S.splash = snap.val(); render(); }, () => { S.splash = null; });
   S.tick = setInterval(render, 30000); // "hace 3 min" se actualiza solo
@@ -733,6 +742,12 @@ function filaEvento(L, e) {
 function vistaFichaCopa(code, now) {
   if (!S.torneosLoaded) return [migas([torneoLabel, 'torneo'], [code]), el('p', { class: 'empty' }, 'Loading the cups…')];
   const L = copaDe(code, S.torneos[code]);
+  // Not in the period: read it on its own, once (D-473)
+  if (!L && !(code in S.torneosSueltos) && S.user) {
+    S.torneosSueltos[code] = null;
+    copaSuelta(code).then(render);
+    return [migas([torneoLabel, 'torneo'], [code]), el('p', { class: 'empty' }, 'Loading the cup…')];
+  }
   if (!L) return [migas([torneoLabel, 'torneo'], [code]), ...titulo(code), el('p', { class: 'empty' }, `There is no cup with code ${code}. It may have been deleted.`)];
   const f = fichaCopa(L, now);
   const m = L.meta;
@@ -1773,6 +1788,33 @@ function renderNav(now) {
     el('span', { class: 'ico', 'aria-hidden': 'true' }, '🧪'), el('span', { class: 'nombre' }, 'Labs')));
 }
 
+/** A redraw within the second, not one per message: a live room sends many (D-473). */
+function renderSoon() {
+  if (S.renderTimer) return;
+  S.renderTimer = setTimeout(() => { S.renderTimer = null; render(); }, 1000);
+}
+
+/**
+ * A cup the period's query did not bring (it ended before it), read once by its code or its own
+ * link (D-473). Resolves to its code, or null if there is none.
+ */
+async function copaSuelta(q) {
+  const t = String(q || '').trim().replace(/^\//, '');
+  try {
+    if (/^[A-Za-z]{5}$/.test(t)) {
+      const code = t.toUpperCase();
+      const x = (await get(ref(db, `torneos/${code}`))).val();
+      if (x) {
+        S.torneosSueltos[code] = x; S.torneos = { ...S.torneos, [code]: x };
+        return code;
+      }
+    }
+    const found = (await get(query(ref(db, 'torneos'), orderByChild('meta/alias'), equalTo(t.toLowerCase())))).val() || {};
+    Object.assign(S.torneosSueltos, found); S.torneos = { ...S.torneos, ...found };
+    return Object.keys(found)[0] || null;
+  } catch (_) { return null; }
+}
+
 function render() {
   const now = Date.now();
   // A date being picked is not redrawn under the finger: it saves on change, and that redraws
@@ -1858,6 +1900,15 @@ function buscar(q) {
   const copa = buscarCopa(S.torneos, t);
   if (copa) { location.hash = ir('torneo', [copa.code]); return; }
   if (/^[A-Za-z]{4}$/.test(t)) { location.hash = ir('sala', [t.toUpperCase()]); return; }
+  // A cup older than the period is not downloaded: ask for it (D-473)
+  if (S.user) {
+    copaSuelta(t).then(code => {
+      if (code) { location.hash = ir('torneo', [code]); return; }
+      msg.textContent = `There is no cup or room with “${t}”. A room has 4 letters; a cup, 5 or its own link.`;
+      msg.hidden = false;
+    });
+    return;
+  }
   msg.textContent = `There is no cup or room with “${t}”. A room has 4 letters; a cup, 5 or its own link.`;
   msg.hidden = false;
 }

@@ -141,6 +141,8 @@ export const lastDay = month => {
   return `${month}-${String(new Date(Date.UTC(y, m, 0)).getUTCDate()).padStart(2, '0')}`;
 };
 
+import { seasonTop } from '../../public/assets/js/daily-recap.js';
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const { token, read, write, fail } = await import('./firebase-admin.mjs');
   const apply = process.argv.includes('--apply'), rebuild = process.argv.includes('--rebuild');
@@ -172,7 +174,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const podio = Object.entries(temporada.j).filter(([, x]) => x.l.at(-1) && x.l.at(-1) <= 3).sort((a, b) => a[1].l.at(-1) - b[1].l.at(-1));
     console.log(`${TEMPORADA}/${period}: ${Object.keys(temporada.j).length} players, places on ${temporada.c.join(', ')} · ${podio.map(([, x]) => `#${x.l.at(-1)} ${x.n} ${x.s}`).join(' · ') || 'nobody yet'}`);
     if (!apply) { console.log('Dry run: nothing written. Run it with --rebuild --apply to write.'); process.exit(0); }
-    await write(`${TEMPORADA}/${period}`, 'PUT', temporada, t);
+    // With its `top` (D-473): the home page's recap reads that and the player's own row, not the whole table
+    await write(`${TEMPORADA}/${period}`, 'PUT', { ...temporada, top: seasonTop(temporada) }, t);
     for (const c of cambios) {
       const w = { [`records/${UAD_PUNTOS}/${period}/${c.jid}`]: { s: c.s, ms: 0, k: claveOrden(c.s, 0), at: Date.now(), n: c.n, ...(c.co ? { co: c.co } : {}), u: c.u, r: c.r, ...(c.i ? { i: c.i } : {}) } };
       for (const n of c.faltaP) w[`unoAlDia/${c.jid}/${n}/p`] = true;

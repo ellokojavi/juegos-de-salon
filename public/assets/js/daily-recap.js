@@ -6,7 +6,8 @@
  *
  * The places by week are written every night by the points rebuild (`uadTemporada/s<yyyy-mm>`,
  * tools/firebase/uad-points-backfill.mjs) and read here over REST, so the home page loads nothing
- * else for it. A month is told only once its last night was computed (`t` after its last day).
+ * else for it. The rebuild also writes the season's `top` (`seasonTop`, D-473): the recap reads that
+ * and the player's own row, never the whole table, whose size grows with the players (#848). A month is told only once its last night was computed (`t` after its last day).
  * Pure where it can be, so node tests it.
  */
 
@@ -66,7 +67,23 @@ export function seasonRecap(data, jid = null) {
   const me = all.find(r => r.mine) || null;
   const rows = all.slice(0, TOP);
   if (me && !rows.includes(me)) rows.push(me);
-  return { rows, me, winners: all.filter(r => r.lugar === 1), players: all.length, days: data.c || [] };
+  return { rows, me, winners: all.filter(r => r.lugar === 1), players: Number.isInteger(data.p) ? data.p : all.length, days: data.c || [] };
+}
+
+/**
+ * What the recap needs from a whole season (`{ c, t, j }`), written by the nightly rebuild as
+ * `uadTemporada/s<month>/top`: `{ c, t, p: players, j: the rows the window can show }`. `j` keeps
+ * every player placed at or above the TOP-th row's place, so the winners and the first TOP rows
+ * come out as from the whole table; the player's own row is read apart (`j/<jid>`).
+ */
+export function seasonTop(data) {
+  const all = seasonRecap({ ...data, p: undefined });
+  const j = {};
+  if (all) {
+    const cut = all.rows[Math.min(TOP, all.rows.length) - 1]?.lugar ?? 0;
+    for (const [id, x] of Object.entries(data.j || {})) if (Array.isArray(x?.l) && x.l.at(-1) > 0 && x.l.at(-1) <= Math.max(cut, 1)) j[id] = x;
+  }
+  return { c: data?.c || [], t: data?.t || '', p: all ? all.players : 0, j };
 }
 
 /**
@@ -78,9 +95,9 @@ export async function loadSeasonRecap({ month = dueSeason(), jid = myJid(), fetc
   if (!month) return null;
   let data;
   try {
-    const r = await fetchFn(`${DB}/uadTemporada/s${month}.json`);
-    if (!r.ok) return null;
-    data = await r.json();
+    const get = async path => { const r = await fetchFn(`${DB}/uadTemporada/s${month}/${path}.json`); if (!r.ok) throw new Error(r.status); return r.json(); };
+    const [top, mine] = await Promise.all([get('top'), jid ? get(`j/${jid}`) : null]);
+    data = top && { ...top, j: { ...(top.j || {}), ...(mine ? { [jid]: mine } : {}) } };
   } catch (_) { return null; }
   if (!data || !(data.t > lastDayOf(month))) return null;
   const recap = seasonRecap(data, jid);
