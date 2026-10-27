@@ -111,7 +111,7 @@ const SEED_PANEL = view => `(async()=>{const DAY=86400000,now=Date.now(),today=M
       // With name and ending since D-210: one playing, one that won, a finished solo game and one without a name
       days[today].live={k3p9aaaaaa:{game:'dudo',mode:'cpu',n:1,co:'CL',l:'es',name:'Javi',v:'0.93.0',at:now-15*60000,beat:now-60000},q8w7aaaaaa:{game:'dudo',mode:'local',n:4,co:'AR',name:'Fran, Leo, Ana, Bia',v:'0.92.1',at:now-5*3600000,beat:now-4*3600000,fin:{at:now-4*3600000,g:'Leo',d:'9 rondas'}},t1t2aaaaaa:{game:'toque-y-fama',mode:'solo',n:1,co:'MX',l:'en',name:'Nico',v:'0.99.0',at:now-3*3600000,beat:now-3*3600000+120000,fin:{at:now-3*3600000+150000,d:'80/100 · 6 intentos · 2:30'}},s0s0aaaaaa:{game:'ahorcado',mode:'solo',n:1,co:'PE',v:'0.90.0',at:now-2*DAY,beat:now-2*DAY+300000}};
       // Cup days also send their signal: the panel doesn't count them among the games' matches
-      days[today].local.copa={copa:{1:9}};
+      days[today].local.copa={copa:{1:9}};for(let k=0;k<5;k++){const d=today-k;days[d]=days[d]||{};days[d].support={shown:6+k,open:3+(k%2),pay:k%3,thanks:k===1?1:0};}
       // Phone notifications (D-233): sent by notify.mjs, tapped, and openings of the installed app
       for(let k=0;k<7;k++){const d=today-k;Object.assign(days[d],{mandados:{dia:6,plazo:3,...(k===0?{final:4}:{})},aviso:{dia:3,plazo:2},pwa:{android:2,ios:k%2}});}
       const push={vuelta:now-9*60000,vivas:7,torneos:2};
