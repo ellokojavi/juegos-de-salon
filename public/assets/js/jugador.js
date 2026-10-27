@@ -8,9 +8,14 @@
  *
  *   jugadores/<jid>                 { n: nombre, at, juegos: { <juego>: { n: partidas, at } } }
  *   jugadorNombres/<clave>/<jid>    true: quiénes usan ese nombre. Se lee para entrar.
- *   jugadorKeys/<jid>               sha256 del PIN. Nadie lo puede leer.
+ *   jugadorKeys/<jid>               sha256 del PIN. Nadie lo puede leer. Changed only by a seated
+ *                                   phone that knows the current PIN (D-464).
  *   jugadorSeats/<jid>/<uid>        el celular `uid` escribe por `jid`; las reglas lo aceptan solo
- *                                   si trae el mismo hash que jugadorKeys (como en La Copa, D-96).
+ *                                   si trae el mismo hash que jugadorKeys (como en La Copa, D-96)
+ *                                   and this phone's fresh attempt holds it (D-464).
+ *   jugadorIntentos/<jid>           { h, u, at }: the last PIN attempt on that player (D-464). One
+ *                                   every 5 s; a seat or a key change needs this phone's attempt,
+ *                                   from the last minute, with the current key. Nobody reads it.
  *   records/<tabla>/<periodo>/<jid> { s, ms, k, at, n }: el mejor, y solo si mejora.
  *   torneoPodios/<código>           el podio de una copa terminada, para el medallero.
  *                                   `p/<pid>/j` is signed later by that cup player (D-358).
@@ -68,7 +73,11 @@ export const LEER = 100;
  * `juegos`: los que suman al Todoterreno (los sueltos de la portada). `storage` y `now` se
  * pueden cambiar en las pruebas.
  */
-export function crearJugador({ almacen, storage = globalThis.localStorage, now = () => Date.now(), juegos = [], pais = () => '' } = {}) {
+/** How long the rules make a player wait between two PIN attempts (D-464), plus a margin. */
+export const PAUSA_INTENTOS = 5500;
+const dormir = ms => new Promise(r => setTimeout(r, ms));
+
+export function crearJugador({ almacen, storage = globalThis.localStorage, now = () => Date.now(), juegos = [], pais = () => '', esperar = dormir } = {}) {
   const leer = (k, def) => { try { return JSON.parse(storage.getItem(k)) ?? def; } catch (_) { return def; } };
   const escribir = (k, v) => { try { if (v === null) storage.removeItem(k); else storage.setItem(k, JSON.stringify(v)); } catch (_) { /* sin memoria */ } };
   const oyentes = new Set();
@@ -130,23 +139,42 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
     await Promise.all(juegos.flatMap(j => periodos.map(async p => anotarMejor(j, p, await almacen.get(`records/${j}/${p}/${yo.jid}`)))));
   }
 
+  /**
+   * A PIN attempt on `jid` (D-464): the rules take one every 5 s per player, and a seat or a key
+   * change needs this phone's attempt with the current key. If the last attempt is too recent, it
+   * waits the 5 s once and tries again; if it is refused again, 'espera'. 'sin-clave' if the player
+   * has no key (a legacy one).
+   */
+  async function intentar(jid, h) {
+    const uid = await almacen.listo();
+    const escribirIntento = () => almacen.update({ [`jugadorIntentos/${jid}`]: { h, u: uid, at: HORA } });
+    try { await escribirIntento(); return; } catch (e) { if (e.code !== 'permiso') throw e; }
+    if (await almacen.get(`jugadores/${jid}/legado`)) throw falla('sin-clave');
+    await esperar(PAUSA_INTENTOS);
+    try { await escribirIntento(); } catch (e) { throw e.code === 'permiso' ? falla('espera') : e; }
+  }
+
   /** Probar el PIN contra los jugadores que usan ese nombre: el que lo acepta, es. */
   async function buscar(nombre, pin) {
     const clave = claveNombre(nombre);
     const candidatos = Object.keys((await almacen.get(`jugadorNombres/${clave}`)) || {}).filter(esJid);
     const uid = await almacen.listo();
-    let heredado = null;
+    let heredado = null, espera = false;
     for (const jid of candidatos) {
       const h = await hashPinJugador(jid, pin);
       try {
+        await intentar(jid, h);
         await almacen.update({ [`jugadorSeats/${jid}/${uid}`]: h });
         return { jid, candidatos };
       } catch (e) {
-        if (e.code !== 'permiso') throw e;
+        if (e.code === 'espera') { espera = true; continue; }
+        if (e.code !== 'permiso' && e.code !== 'sin-clave') throw e;
         // Un jugador de antes de los rankings (sin PIN): sus puntajes esperan a su dueño
         if (!heredado && await almacen.get(`jugadores/${jid}/legado`)) heredado = jid;
       }
     }
+    // A player with that name could not be tried: better wait than create a second one
+    if (espera) throw falla('espera');
     return { jid: null, candidatos, heredado };
   }
 
@@ -226,18 +254,36 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       if (!yo) throw falla('sin-jugador');
       if (!esPin(pin)) throw falla('pin-forma');
       const uid = await almacen.listo();
-      try { await almacen.update({ [`jugadorSeats/${yo.jid}/${uid}`]: await hashPinJugador(yo.jid, pin) }); }
+      const h = await hashPinJugador(yo.jid, pin);
+      await intentar(yo.jid, h);
+      try { await almacen.update({ [`jugadorSeats/${yo.jid}/${uid}`]: h }); }
       catch (e) { throw e?.code === 'permiso' ? falla('pin') : e; }
     },
 
-    /** Cambiar el PIN: los demás celulares donde estaba quedan afuera. */
-    async cambiarPin(pin) {
+    /**
+     * Cambiar el PIN: los demás celulares donde estaba quedan afuera. The current PIN is needed
+     * (D-464): a phone that is merely seated cannot change it. 'pin-actual' if it is not the PIN.
+     */
+    async cambiarPin(actual, pin) {
+      const yo = api.yo();
+      if (!yo) throw falla('sin-jugador');
+      if (!esPin(actual) || !esPin(pin)) throw falla('pin-forma');
+      const uid = await almacen.listo();
+      await intentar(yo.jid, await hashPinJugador(yo.jid, actual));
+      const h = await hashPinJugador(yo.jid, pin);
+      try { await almacen.update({ [`jugadorKeys/${yo.jid}`]: h, [`jugadorSeats/${yo.jid}`]: { [uid]: h } }); }
+      catch (e) { throw e?.code === 'permiso' ? falla('pin-actual') : e; }
+    },
+
+    /**
+     * Prove this player's PIN without sitting (D-464): La Copa's admin, linked to their player, uses
+     * it to give someone a new cup PIN. The rules decide whether it was the PIN.
+     */
+    async probarPin(pin) {
       const yo = api.yo();
       if (!yo) throw falla('sin-jugador');
       if (!esPin(pin)) throw falla('pin-forma');
-      const uid = await almacen.listo();
-      const h = await hashPinJugador(yo.jid, pin);
-      await almacen.update({ [`jugadorKeys/${yo.jid}`]: h, [`jugadorSeats/${yo.jid}`]: { [uid]: h } });
+      await intentar(yo.jid, await hashPinJugador(yo.jid, pin));
     },
 
     async perfil(jid = api.yo()?.jid) {

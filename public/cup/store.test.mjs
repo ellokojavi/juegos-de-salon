@@ -17,9 +17,10 @@ let n = 0;
 const test = async (name, fn) => { try { await fn(); n++; } catch (e) { console.error(`✗ ${name}`); throw e; } };
 const rechaza = async (p, code) => { await assert.rejects(p, e => e.code === code); };
 
-const admin = createLocalStore({ uid: 'u-admin' });
-const otro = createLocalStore({ uid: 'u-otro' });
-const intruso = createLocalStore({ uid: 'u-intruso' });
+// No pause between PIN attempts here: the pause itself is tested below (D-464)
+const admin = createLocalStore({ uid: 'u-admin', pausa: 0 });
+const otro = createLocalStore({ uid: 'u-otro', pausa: 0 });
+const intruso = createLocalStore({ uid: 'u-intruso', pausa: 0 });
 const CODE = 'KQRST';
 const hoy = fechaEn(admin.now());
 const meta = nuevaMeta({ nombre: 'Copa de prueba', dias: 3, inicio: hoy, admin: 'aaaaaa', creada: admin.now() });
@@ -169,9 +170,25 @@ await test('admin: sacar, renombrar y cambiar PIN; nadie más', async () => {
   assert.equal((await admin.leer(CODE)).players.p0aaaa.out, undefined);
   await rechaza(admin.renombrar(CODE, 'p0aaaa', 'CATA'), 'nombre-repetido');
   await admin.renombrar(CODE, 'p0aaaa', 'Coni');
-  await admin.cambiarPin(CODE, 'bbbbbb', await hashPin(CODE, 'bbbbbb', '9999'));
+  // A new PIN needs the admin's own PIN (D-464): the seat alone is not enough
+  await rechaza(admin.cambiarPin(CODE, 'bbbbbb', await hashPin(CODE, 'bbbbbb', '9999')), 'pin-admin');
+  await rechaza(admin.cambiarPin(CODE, 'bbbbbb', await hashPin(CODE, 'bbbbbb', '9999'), { admin: 'aaaaaa', adminHash: await hashPin(CODE, 'aaaaaa', '0000') }), 'pin-admin');
+  await rechaza(otro.cambiarPin(CODE, 'bbbbbb', await hashPin(CODE, 'bbbbbb', '9999'), { admin: 'aaaaaa', adminHash: await hashPin(CODE, 'aaaaaa', '1111') }), 'permiso');
+  await admin.cambiarPin(CODE, 'bbbbbb', await hashPin(CODE, 'bbbbbb', '9999'), { admin: 'aaaaaa', adminHash: await hashPin(CODE, 'aaaaaa', '1111') });
   await rechaza(otro.comodin(CODE, 2, 'bbbbbb'), 'permiso'); // su asiento se cayó
   await otro.sentarse(CODE, 'bbbbbb', await hashPin(CODE, 'bbbbbb', '9999'));
+});
+
+await test('PIN attempts: one every 5 s per cup player (D-464)', async () => {
+  let esperado = 0;
+  const lento = createLocalStore({ uid: 'u-lento', esperar: async ms => { esperado += ms; } });
+  await rechaza(lento.sentarse(CODE, 'p1aaaa', await hashPin(CODE, 'p1aaaa', '0000')), 'pin');
+  // Right away again: the phone waits once (here it does not really wait) and is still refused
+  await rechaza(lento.sentarse(CODE, 'p1aaaa', 'h'), 'espera');
+  assert.ok(esperado >= 5000, 'it waited the pause before the second try');
+  const L = JSON.parse(localStorage.getItem('juegos-de-salon:copa:prueba'))[CODE];
+  assert.equal(L._intentos.p1aaaa.u, 'u-lento', 'the attempt names the phone');
+  assert.equal((await lento.leer(CODE))._intentos, undefined, 'nobody reads the attempts');
 });
 
 await test('renombrar la copa: solo su admin y mientras no termine', async () => {

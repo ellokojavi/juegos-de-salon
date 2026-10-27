@@ -144,7 +144,8 @@ try {
   await ev(`document.querySelector('.chip-btn[data-pid="ana001"]').click(); document.querySelector('.chip-btn[data-pid="${pidJiri}"]').click(); 1`);
   ok(await pinVisible(), 'picking another name and back to Jiri keeps the PIN field');
   await ev(`document.querySelector('#entrar-body input.pin').value = '1234'; document.getElementById('btn-sentarse').click(); 1`);
-  await sleep(1500);
+  // A retry within 5 s waits the pause between PIN attempts (D-464)
+  await b.until(`__copa.estado.pantalla === 'tablero'`, 9000, 200);
   ok(await ev(`__copa.estado.pantalla`) === 'tablero' && await ev(`__copa.estado.yo`) === pidJiri, 'with the player\'s PIN it is back on the board as Jiri');
   ok(await ev(`!!JSON.parse(localStorage.getItem('juegos-de-salon:prueba:records-db')).jugadorSeats['${jiri}']['u-sesion-nueva']`), 'and the phone is seated as the player again');
 } finally {

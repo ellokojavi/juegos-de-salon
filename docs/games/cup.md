@@ -71,6 +71,11 @@ un jugador, su `uid` tiene que estar "sentado" como ese `pid`, y las reglas solo
 si trae el mismo `sha256("copa:código:pid:PIN")` que se guardó al inscribirse, en una rama que
 nadie puede leer.
 
+**PIN attempts (D-464).** Before the seat, the phone writes its attempt in
+`torneoIntentos/<código>/<pid>`, one every 5 s per cup player, and the seat is accepted only with
+this phone's attempt from the last minute holding the same hash. A quick retry after a typo waits
+the 5 s on its own; refused again, it says to wait a few seconds (`errEspera`).
+
 El celular recuerda con quién está sentado en `localStorage`, pero el asiento es del `uid`: si el
 navegador pierde la sesión de Firebase, o el admin le da un PIN nuevo al jugador, las reglas niegan
 empezar o enviar aunque el día esté abierto. Entonces la copa pide el PIN de nuevo, con el nombre
@@ -115,7 +120,7 @@ without the player seat, like the rules; `tools/e2e/cup/player-cups.mjs` plays i
 ### Admin
 
 Quien crea la copa también juega. Puede renombrar, sacar (y volver a meter) y ponerle PIN nuevo a
-un jugador, y compartir cuatro mensajes armados con el diálogo del celular (D-99): invitación,
+un jugador (confirming with their own PIN, the cup one or their linked player's, D-464), y compartir cuatro mensajes armados con el diálogo del celular (D-99): invitación,
 **recordatorio del día** (sirve cualquier día: antes de empezar, con el día de gracia y con quién
 falta), tabla parcial y resumen final. La **invitación** sigue en Administrar mientras alguien
 nuevo pueda entrar —inscripción abierta y menos de 10 jugadores—, no solo antes de partir; ya
@@ -416,6 +421,7 @@ torneos/<código>/wild/<pid>         "3" (el día del comodín, como texto): onl
 torneos/<código>/fin                hora del servidor en que el admin la terminó antes (D-161)
 torneoKeys/<código>/<pid>           hash del PIN (ilegible)
 torneoSeats/<código>/<pid>/<uid>    el mismo hash: el celular uid puede escribir por pid (ilegible)
+torneoIntentos/<código>/<pid>       { h, u, at }: the last PIN attempt, one every 5 s (unreadable, D-464)
 pushCopa/<código>/<pid>/<subId>     { dia, plazo, at }: qué avisos quiere ese celular (ilegible, D-223); la suscripción va en push/<subId>
 pushEnviados/<código>/<subId>/<clave>  hora en que se entregó ese aviso (dia:3, plazo:3, final, fin, insc:<pid>); solo la toca notify.mjs (D-224)
 ```
