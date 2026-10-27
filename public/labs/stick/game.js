@@ -726,6 +726,7 @@ function jugar() {
   };
   const reanudar = () => {
     if (!S.pausa) return;
+    S.despertar?.();
     pause(g, performance.now() - S.pausa);
     S.pausa = 0;
     cartel.hidden = true;
@@ -834,8 +835,12 @@ function jugar() {
       }
     }
     sc.draw(g, now, reloj);
+    // Paused for a second (effects done): the loop sleeps until the tap back, so a game left
+    // paused on the table does not burn battery (#892)
+    if (S.pausa && now - S.pausa > 1000) { S.dormido = true; return; }
     requestAnimationFrame(paso);
   };
+  S.despertar = () => { if (S.dormido) { S.dormido = false; requestAnimationFrame(paso); } };
   requestAnimationFrame(paso);
 }
 
