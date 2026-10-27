@@ -478,6 +478,8 @@ database. The ceiling doesn't come from the static design but from the free plan
 **There is no billing alert to set: the Spark plan has no billing.** Past the
 cap, Firebase rejects new connections and the player can't enter the room; it doesn't
 degrade gracefully, it goes down. Since v0.18 at least the player is told (D-40).
+So only what plays online holds a connection: the rankings are read over REST, and the SDK's
+websocket opens only when a player saves a score or signs in (D-470).
 
 Confirm the numbers in the console before setting thresholds: Google has changed them.
 
