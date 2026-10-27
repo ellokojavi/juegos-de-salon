@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (455)
+## In force (456)
 
 | D | Title | Status |
 |---|---|---|
@@ -513,8 +513,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-465](decisions/D-465.md) | Uno al día points count only near the day's own date, and only after its start | current |
 | [D-466](decisions/D-466.md) | A splash campaign's conversion: the game its Play opened, started and finished | current |
 | [D-467](decisions/D-467.md) | Cache busting by content hash, not by release | current |
-| [D-470](decisions/D-470.md) | Rankings are read over REST: a solo page opens no Firebase websocket | current |
 | [D-468](decisions/D-468.md) | La Copa loads only the game being played, and each Cup game brings its own stylesheet | current |
+| [D-470](decisions/D-470.md) | Rankings are read over REST: a solo page opens no Firebase websocket | current |
 
 ## No longer in force (11)
 
