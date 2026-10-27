@@ -1,6 +1,6 @@
 /**
  * "☕ Buy me a coffee": voluntary support through a Stripe Payment Link, for every player since it left
- * the lab (D-449).
+ * the lab (D-458).
  *
  * Where it shows, from the quietest to the most visible, and never during a game or as a popup (U-38):
  *
