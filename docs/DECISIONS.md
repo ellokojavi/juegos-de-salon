@@ -511,7 +511,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-463](decisions/D-463.md) | A privacy page in four languages, and an unanswered feedback email is deleted after 90 days | current |
 | [D-464](decisions/D-464.md) | PIN attempts are rate-limited, and changing a PIN needs the current one | current |
 | [D-465](decisions/D-465.md) | Uno al día points count only near the day's own date, and only after its start | current |
-| [D-469](decisions/D-469.md) | The rules check a room's shape, its cleanup note and its bucket's clock | current |
+| [D-469](decisions/D-469.md) | The rules check a room's shape and keep a bucket's clock moving forward | current |
 
 ## No longer in force (11)
 

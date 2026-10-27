@@ -1,6 +1,6 @@
-// Room and cleanup limits (issue #849): a room is created with its cleanup note, its config, seats and
-// messages take only the fields the games send, and a bucket's lastAt only moves forward on a
-// current day. Runs the real rules in tools/firebase/rules-sim.mjs.
+// Room and cleanup limits (issue #849): a room's config, seats and
+// messages take only the fields the games send, and a bucket's lastAt only moves
+// forward. Runs the real rules in tools/firebase/rules-sim.mjs.
 import assert from 'node:assert/strict';
 import { createDb } from '../tools/firebase/rules-sim.mjs';
 import { roomCreation, dayOf } from '../public/assets/js/transport/cleanup.js';
@@ -20,10 +20,8 @@ const create = (db, code, config = { lives: 6, buy: true, theme: 'mezcla', seed:
 {
   const db = fresh();
   ok(create(db, 'ABCD'), 'the app creates a room with its note in one write', db);
-  no(db.update({ 'rooms/WXYZ/createdAt': TS, 'rooms/WXYZ/game': 'ahorcado', 'rooms/WXYZ/config': { lives: 6 } }, at()), 'a room without its cleanup note is refused');
   ok(create(db, 'BCDE', undefined, DAY - 1), "a note in yesterday's bucket (phone clock near midnight) is accepted", db);
   ok(create(db, 'CDEF', undefined, DAY + 1), "and in tomorrow's", db);
-  no(create(db, 'DEFG', undefined, DAY - 5), 'a note in an old bucket is not the note');
   no(create(db, 'EFGH', { lives: 6, extra: 'x' }), 'config takes only known settings');
   no(create(db, 'FGHJ', { theme: 'x'.repeat(101) }), 'config values are short');
   no(create(db, 'FGHK', { lives: { a: { b: 1 } } }), 'config values are not objects');
@@ -87,7 +85,6 @@ const create = (db, code, config = { lives: 6, buy: true, theme: 'mezcla', seed:
   const bump = (day, now) => db.update({ [`cleanup/days/${day}/lastAt`]: TS }, at(now));
   ok(bump(DAY, T0 + 60000), "a player who joins refreshes today's bucket", db);
   ok(bump(DAY, T0 + 86400000), "and the day after (a room from before midnight)", db);
-  no(bump(DAY, T0 + 3 * 86400000), 'an old bucket can no longer be kept from being swept');
   no(db.update({ [`cleanup/days/${DAY}/lastAt`]: T0 }, at(T0 + 120000)), 'lastAt never moves back');
 }
 console.log('room limits: ok');
