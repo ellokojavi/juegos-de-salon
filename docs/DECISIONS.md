@@ -37,7 +37,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453 |
-| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463, D-466 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456, D-465 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433, D-465 |
@@ -47,6 +47,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272, D-410, D-427 |
 | Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461 |
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467 |
+| Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466 |
+| Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456, D-460, D-464 |
@@ -506,12 +508,13 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-458](decisions/D-458.md) | A splash campaign can wait for regulars: 5 visit days and 10 finished games (the toast to support does) | current |
 | [D-459](decisions/D-459.md) | Feedback reports are readable only by the owner; the tools read them with the admin key | current |
 | [D-460](decisions/D-460.md) | ¿Dónde queda?'s Earth in WebP, next to the game, and the 4096 px image only on big screens or zoomed in | current |
-| [D-461](decisions/D-461.md) | The splash campaigns are measured: reach, taps and closes against the days each one was shown | current |
+| [D-461](decisions/D-461.md) | The splash campaigns are measured: reach, taps and closes against the days each one was shown | amended by D-466 |
 | [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit | current |
 | [D-463](decisions/D-463.md) | A privacy page in four languages, and an unanswered feedback email is deleted after 90 days | current |
 | [D-464](decisions/D-464.md) | PIN attempts are rate-limited, and changing a PIN needs the current one | current |
 | [D-465](decisions/D-465.md) | Uno al día points count only near the day's own date, and only after its start | current |
 | [D-467](decisions/D-467.md) | Cache busting by content hash, not by release | current |
+| [D-466](decisions/D-466.md) | A splash campaign's conversion: the game its Play opened, started and finished | current |
 
 ## No longer in force (11)
 
