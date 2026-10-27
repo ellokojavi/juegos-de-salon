@@ -68,6 +68,14 @@ export function assetsNamed(path, text, files) {
   // And the media it names by path from the site's root (`img: 'assets/splash/bridges-teaser.gif'` in
   // splash.js): a changed clip or picture reaches the pages that load the script, not every page
   for (const m of text.matchAll(/["'`](assets\/[\w./-]+\.(?:gif|png|jpe?g|webp|svg|mp4|webm))["'`]/g)) out.push(posix.normalize(m[1]));
+  // And a folder next to it that it fetches files from by name (`new URL('earth-2004-09/', import.meta.url)`,
+  // the globe's images and its 128 tiles, D-460): kept with its slash, it reaches every file under it
+  // (`loads`). Only against the script's own URL, and not a page: `new URL('../../today/', import.meta.url)`
+  // is a link to one
+  for (const m of text.matchAll(/\bnew URL\(\s*["'`]((?:\.{1,2}\/)*[\w-][\w.-]*(?:\/[\w.-]+)*\/)["'`]\s*,\s*import\.meta\.url\s*\)/g)) {
+    const folder = posix.join(dir, m[1]);
+    if (files[`${folder}index.html`] == null) out.push(folder);
+  }
   return out;
 }
 
@@ -139,7 +147,18 @@ export function playedOn(f, hit, graph) {
   return hit.filter(p => !onlyImports(p));
 }
 
-export function select({ changes, graph, scripts, shared }) {
+/** Does this closure load `f`: by name, or under a media folder it names (`assets/img/earth-2004-09/`, D-460)? */
+export function loads(closure, f) {
+  if (closure.has(f)) return true;
+  for (const x of closure) if (x.endsWith('/') && f.startsWith(x)) return true;
+  return false;
+}
+
+/**
+ * `exists(f)`: is the site file still there? A deleted file that no page names any more cannot break a
+ * page (the one that used it changes in the same PR, and runs for that): it narrows nothing (D-460).
+ */
+export function select({ changes, graph, scripts, shared, exists = () => true }) {
   const pages = Object.keys(graph);
   const changedScripts = new Set();
   const changedPublic = [];
@@ -163,7 +182,8 @@ export function select({ changes, graph, scripts, shared }) {
   const affected = new Set();
   if (!changedPublic.length && !changedScripts.size) return { scripts: [], pages: affected, changedScripts };
   for (const f of changedPublic) {
-    const hit = pages.filter(p => graph[p].has(f));
+    const hit = pages.filter(p => loads(graph[p], f));
+    if (!hit.length && !exists(f)) continue; // deleted, and nothing names it any more
     if (!hit.length) return null; // no page loads it directly: it may be fetched at run time
     playedOn(f, hit, graph).forEach(p => affected.add(p));
   }
@@ -253,6 +273,8 @@ export function siteFiles() {
   for (const f of walk(PUBLIC)) if (/\.(html|m?js|css)$/.test(f) && !/\.test\.m?js$/.test(f)) files[f] = readFileSync(join(PUBLIC, f), 'utf8');
   return files;
 }
+/** Is this site file (from public/) still on disk? */
+const inPublic = f => existsSync(join(PUBLIC, f));
 export function siteGraph() {
   return closures(siteFiles());
 }
@@ -263,7 +285,7 @@ export function changeLevel(jobs, changes, shared, noBrowser = false) {
   const names = [...new Set(jobs.map(j => j.split(':')[0]))];
   const scripts = names.map(name => ({ name, source: existsSync(join(HERE, name)) ? readFileSync(join(HERE, name), 'utf8') : '' }));
   const graph = siteGraph();
-  return levelOf(select({ changes, graph, scripts, shared }), Object.keys(graph).length);
+  return levelOf(select({ changes, graph, scripts, shared, exists: inPublic }), Object.keys(graph).length);
 }
 
 /** Which of `jobs` (tools/e2e/ scripts, or `script:part`) to run for these changes; null means all. */
@@ -271,7 +293,7 @@ export function affectedJobs(jobs, changes, shared) {
   const names = [...new Set(jobs.map(j => j.split(':')[0]))];
   const scripts = names.map(name => ({ name, source: existsSync(join(HERE, name)) ? readFileSync(join(HERE, name), 'utf8') : '' }));
   const graph = siteGraph();
-  return chooseJobs(jobs, select({ changes, graph, scripts, shared }), Object.keys(graph));
+  return chooseJobs(jobs, select({ changes, graph, scripts, shared, exists: inPublic }), Object.keys(graph));
 }
 
 /* ------------------------------------------------------------------ */
@@ -352,7 +374,7 @@ export function scopeReport(jobs, changes, shared) {
   lines.push('', '| Changed file | Pages | Jobs | Reaches other games\' pages through |', '|---|---|---|---|');
   for (const c of site.slice(0, 40)) {
     const f = c.slice('public/'.length);
-    const on = pages.filter(p => graph[p].has(f));
+    const on = pages.filter(p => loads(graph[p], f));
     const jobsOf = affectedJobs(jobs, [c], shared);
     const owner = ownerIn(pages, f);
     const foreign = owner ? on.filter(p => !mayLoad(graph, p, f)) : [];

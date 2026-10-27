@@ -4,7 +4,7 @@
  *
  *   node tools/generators/map.mjs generate    # rewrites public/cup/games/where/mapa.js (needs internet)
  *   node tools/generators/map.mjs check       # does each city fall inside its country? is any country missing?
- *   node tools/generators/map.mjs satellite   # remakes the globe's satellite images (internet, macOS sips and PIL)
+ *   node tools/generators/map.mjs satellite [<nasa.jpg>]   # remakes the globe's satellite images in WebP (internet and PIL)
  *
  * The borders are Natural Earth 1:50m's (public domain), in `world-atlas`'s TopoJSON, downloaded
  * from jsDelivr. The map comes out without names, simplified and in whole tenths of a degree
@@ -189,37 +189,38 @@ async function check() {
  * September 2004, with relief and sea floor: little snow in both hemispheres, so deserts, jungles
  * and ice look like themselves. A small one that arrives fast and a sharper one. The name carries
  * the image's month: if the image changes, the name changes and no phone keeps the old one cached
- * (set-version.py does not stamp images).
+ * (set-version.py does not stamp images). In WebP (D-460): 60 % lighter than the JPEG they were,
+ * and every browser with WebGL reads it.
  */
 const SATELLITE = 'https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73801/world.topo.bathy.200409.3x21600x10800.jpg';
-export const IMAGES = { 2048: 'public/assets/img/earth-2004-09-2048.jpg', 4096: 'public/assets/img/earth-2004-09-4096.jpg' };
+export const IMAGES = { 2048: 'public/cup/games/where/earth-2004-09/2048.webp', 4096: 'public/cup/games/where/earth-2004-09/4096.webp' };
 /**
  * And the whole image (21600 × 10800) in 1350 px tiles, 16 columns by 8 rows, 22.5° per side
- * (D-160): the globe downloads only the ones seen when zooming in. `row-column.jpg`, from the top
+ * (D-160): the globe downloads only the ones seen when zooming in. `row-column.webp`, from the top
  * left (90° N, 180° W).
  */
-export const TILES = { dir: 'public/assets/img/earth-2004-09', columns: 16, rows: 8, size: 1350 };
+export const TILES = { dir: 'public/cup/games/where/earth-2004-09', columns: 16, rows: 8, size: 1350 };
 
-async function satellite() {
-  const tmp = `${tmpdir()}/earth-${process.pid}.jpg`;
-  // 30 MB: with curl and retries, because NASA's server sometimes cuts halfway
-  execFileSync('curl', ['-sSfL', '--retry', '4', '-C', '-', '-o', tmp, SATELLITE], { stdio: 'inherit' });
-  mkdirSync(`${ROOT}public/assets/img`, { recursive: true });
-  for (const [w, path] of Object.entries(IMAGES)) {
-    execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '78', '-z', String(w / 2), String(w), tmp, '--out', `${ROOT}${path}`], { stdio: 'ignore' });
-    console.log(path);
+/** `satellite [<nasa.jpg>]`: with the original already downloaded, it is not fetched again. */
+async function satellite(source) {
+  const tmp = source || `${tmpdir()}/earth-${process.pid}.jpg`;
+  // 30 MB: NASA's server often cuts halfway, so curl resumes (-C -) until the whole file is here
+  for (let i = 0; !source; i++) {
+    try { execFileSync('curl', ['-sSfL', '-C', '-', '-o', tmp, SATELLITE], { stdio: 'inherit' }); break; } catch (e) { if (i >= 40) throw e; }
   }
-  // The tiles, with PIL: sips cuts from the center when the cut starts at the corner (D-201)
+  // All with PIL (tiles.py): sips cuts from the center when the cut starts at the corner (D-201),
+  // and it does not write WebP
   const { dir, columns, rows, size } = TILES;
   rmSync(`${ROOT}${dir}`, { recursive: true, force: true });
   mkdirSync(`${ROOT}${dir}`, { recursive: true });
-  execFileSync('python3', [`${ROOT}tools/generators/tiles.py`, tmp, `${ROOT}${dir}`, String(columns), String(rows), String(size)], { stdio: 'inherit' });
+  const whole = Object.entries(IMAGES).map(([w, path]) => `${w}=${ROOT}${path}`);
+  execFileSync('python3', [`${ROOT}tools/generators/tiles.py`, tmp, `${ROOT}${dir}`, String(columns), String(rows), String(size), ...whole], { stdio: 'inherit' });
   console.log(`${dir}/: ${columns * rows} tiles of ${size} px`);
-  rmSync(tmp);
+  if (!source) rmSync(tmp);
 }
 
 const command = process.argv[2];
 if (command === 'generate') await generate();
 else if (command === 'check') await check();
-else if (command === 'satellite') await satellite();
-else { console.log('Usage: node tools/generators/map.mjs generate | check | satellite'); process.exitCode = 2; }
+else if (command === 'satellite') await satellite(process.argv[3]);
+else { console.log('Usage: node tools/generators/map.mjs generate | check | satellite [<nasa.jpg>]'); process.exitCode = 2; }

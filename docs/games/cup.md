@@ -199,7 +199,9 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   (Blue Marble de la NASA, con WebGL; D-159), y la distancia se mide sobre la esfera. Mientras la
   imagen baja el globo no se dibuja y aparece con un fundido al llegar (D-245); sin WebGL, o si la
   imagen no llega, se dibuja con el mapa vectorial, recortando cada país en el borde. La antesala muestra el globo girando solo
-  (`portada()` de `games/where/ui.js`).
+  (`portada()` de `games/where/ui.js`). The images are WebP, next to the game in `games/where/earth-2004-09/`
+  (`2048.webp`, `4096.webp` and the 128 tiles), and the 4096 px one is downloaded only on a canvas wider than
+  2048 device pixels: a phone gets about 200 KB of images (D-460).
 
 - **🧶 Desenredo** (D-179; fuera del laboratorio desde D-190) es el Untangle de Simon Tatham: nudos unidos por
   hilos que se cruzan, y se arrastran los nudos hasta que ningún hilo cruce a otro. Por niveles

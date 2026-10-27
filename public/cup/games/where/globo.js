@@ -245,29 +245,37 @@ export function ajustar(canvas) {
 
 /**
  * La Tierra vista desde el satélite (Blue Marble de la NASA, septiembre de 2004), pegada al globo
- * con WebGL: cada píxel del disco se invierte a latitud y longitud y se lee de la imagen. La chica
- * llega primero; la nítida la reemplaza cuando termina de bajar. Con WebGL el globo espera a la
- * imagen en vez de mostrar el mapa vectorial por un instante; sin WebGL, o si ninguna imagen llega
- * (fallan o tardan más de 4 s), se dibuja como antes, con el mapa vectorial.
+ * con WebGL: cada píxel del disco se invierte a latitud y longitud y se lee de la imagen. Con WebGL
+ * el globo espera a la imagen en vez de mostrar el mapa vectorial por un instante; sin WebGL, o si
+ * ninguna imagen llega (fallan o tardan más de 4 s), se dibuja como antes, con el mapa vectorial.
+ * In WebP, and the sharp 4096 px one only where it shows (D-460): on a canvas wider than 2048
+ * device pixels whose video card takes it. A phone downloads only the 2048 one; a big screen gets
+ * the 2048 first and the 4096 replaces it when it arrives.
  */
-const IMAGENES = [2048, 4096].map(w => ({ w, url: new URL(`../../../assets/img/earth-2004-09-${w}.jpg`, import.meta.url).href }));
-let cargadas = null, fallidas = 0, vencida = false;
+// The globe's images live next to it, whole (`2048.webp`, `4096.webp`) and in tiles (`row-column.webp`):
+// a folder named with `new URL`, so the end-to-end scope knows the pages that load them (D-460)
+const TIERRA = new URL('earth-2004-09/', import.meta.url);
+const NITIDA = 4096;
+const cargadas = [];
+let fallidas = 0, vencida = false, reloj = null;
+const pedidas = new Set();
 /** Tope de la espera: con una red que cuelga el pedido sin fallar, el globo no queda vacío para siempre. */
 const ESPERA_MAX = 4000;
 const avisos = new Set();
-/** Las imágenes que ya llegaron, de la más nítida a la más chica. Pide bajarlas la primera vez. */
+/** Asks for the image `w` px wide, once per page; the 4 s cap starts with the first request. */
+function pedir(w) {
+  if (pedidas.has(w)) return;
+  pedidas.add(w);
+  reloj ??= setTimeout(() => { vencida = true; for (const f of avisos) f(); }, ESPERA_MAX);
+  const img = new Image();
+  img.decoding = 'async';
+  img.onload = () => { cargadas.push({ w, img }); cargadas.sort((a, b) => b.w - a.w); for (const f of avisos) f(); };
+  img.onerror = () => { fallidas++; for (const f of avisos) f(); };
+  img.src = new URL(`${w}.webp`, TIERRA).href;
+}
+/** Las imágenes que ya llegaron, de la más nítida a la más chica. Pide la chica la primera vez. */
 function imagenes() {
-  if (!cargadas) {
-    cargadas = [];
-    setTimeout(() => { vencida = true; for (const f of avisos) f(); }, ESPERA_MAX);
-    for (const { w, url } of IMAGENES) {
-      const img = new Image();
-      img.decoding = 'async';
-      img.onload = () => { cargadas.push({ w, img }); cargadas.sort((a, b) => b.w - a.w); for (const f of avisos) f(); };
-      img.onerror = () => { fallidas++; for (const f of avisos) f(); };
-      img.src = url;
-    }
-  }
+  pedir(2048);
   return cargadas;
 }
 
@@ -311,7 +319,7 @@ void main() {
  * Las teselas nítidas: la imagen de 21600 × 10800 en 16 × 8 cuadrados de 22,5° (los genera
  * `tools/generators/map.mjs satellite`). Se bajan una vez y las comparten todos los globos de la página.
  */
-const TESELAS = { columnas: 16, filas: 8, lado: 1350, guardar: 36, dir: new URL('../../../assets/img/earth-2004-09/', import.meta.url).href };
+const TESELAS = { columnas: 16, filas: 8, lado: 1350, guardar: 36, dir: TIERRA.href };
 const bajadas = new Map();
 const tesela = clave => {
   if (!bajadas.has(clave)) {
@@ -320,7 +328,7 @@ const tesela = clave => {
       img.decoding = 'async';
       img.onload = () => ok(img);
       img.onerror = () => { bajadas.delete(clave); mal(); };
-      img.src = `${TESELAS.dir}${clave}.jpg`;
+      img.src = `${TESELAS.dir}${clave}.webp`;
     }));
   }
   return bajadas.get(clave);
@@ -395,6 +403,9 @@ export function satelite(canvas, alLlegar) {
   const teselas = new Map();
   let cuadro = 0;
   const conTeselas = maximo >= TESELAS.lado;
+  // Tiles from the zoom where the 4096 one would fall short, also while only the 2048 one is here:
+  // a phone that does not ask for the 4096 does not download tiles at rest either (D-460)
+  const umbralTeselas = (maximo >= NITIDA ? NITIDA : 2048) * 1.25;
   const usarTesela = clave => {
     let t = teselas.get(clave);
     if (!t) {
@@ -422,12 +433,14 @@ export function satelite(canvas, alLlegar) {
 
   return {
     lista: () => subida > 0,
-    esperando: () => !subida && !vencida && imagenes().length + fallidas < IMAGENES.length,
+    esperando: () => !subida && !vencida && imagenes().length + fallidas < pedidas.size,
     dibujar(V, w, h) {
       if (!canvas.isConnected) { avisos.delete(aviso); return; }
       const dpr = Math.min(3, window.devicePixelRatio || 1);
       const W = Math.round(w * dpr), H = Math.round(h * dpr);
       if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+      // The sharp image only on a canvas wider than the small one, if the video card takes it (D-460)
+      if (W > 2048 && maximo >= NITIDA) pedir(NITIDA);
       gl.viewport(0, 0, W, H);
       gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
       if (!subida) return;
@@ -440,7 +453,7 @@ export function satelite(canvas, alLlegar) {
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       // Acercado más de lo que da la imagen entera: encima, las teselas de lo que se ve
       cuadro++;
-      if (!conTeselas || 2 * Math.PI * V.r * dpr < subida * 1.25) return;
+      if (!conTeselas || 2 * Math.PI * V.r * dpr < umbralTeselas) return;
       gl.uniform1f(uBase, 0);
       for (const clave of visibles(V, w, h)) {
         const t = usarTesela(clave);
