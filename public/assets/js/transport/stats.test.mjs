@@ -40,7 +40,7 @@ assert.equal(envOf({ hostname: 'juegosdesalon.cl' }), 'prod');
 assert.equal(envOf({ hostname: '172.40.3.4' }), 'prod');
 
 // Versión desde el import map
-assert.equal(versionOf('{"imports": {"../assets/js/ui.js": "../assets/js/ui.js?v=0.19.0"}}'), '0.19.0');
+assert.equal(versionOf('0.19.0-09eb4db'), '0.19.0');
 assert.equal(versionOf(''), '0');
 assert.equal(versionOf(undefined), '0');
 
