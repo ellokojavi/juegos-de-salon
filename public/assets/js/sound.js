@@ -31,6 +31,8 @@ function ensure() {
 export function initSound() {
   const unlock = () => { ensure(); };
   ['pointerdown', 'touchstart', 'keydown'].forEach(ev => document.addEventListener(ev, unlock, { once: true, passive: true }));
+  // Every tap may wake an audio iOS interrupted: resume() needs a gesture there (#890).
+  document.addEventListener('pointerdown', () => { if (ctx && ctx.state !== 'running') ensure(); }, { passive: true });
   // Coming back to the tab (after a call, a lock, another app) wakes an audio already unlocked.
   document.addEventListener('visibilitychange', () => { if (ctx && document.visibilityState === 'visible') ensure(); });
 }
