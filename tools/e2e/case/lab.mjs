@@ -134,7 +134,7 @@ ok(await ev(`(()=>{const k=[...document.getElementById('resultado-body').childre
 await ev(`window.__sent = []; window.fetch = async (u, o) => { window.__sent.push({ u: String(u), o }); return { ok: true }; }; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(200);
 ok(/Escribe algo/.test(await ev(`document.querySelector('.comentario .labs-error').textContent`)), 'empty is not sent');
 // The optional email (D-317): it says what it's for, and a malformed one doesn't go
-ok(await ev(`(()=>{const c=document.querySelector('.comentario input[type=email]');return !!c && c.offsetParent!==null && /opcional/.test(c.placeholder) && /para nada más/.test(document.getElementById(c.getAttribute('aria-describedby'))?.textContent||'')})()`), 'the form has the optional email, with what it is for');
+ok(await ev(`(()=>{const c=document.querySelector('.comentario input[type=email]');return !!c && c.offsetParent!==null && /opcional/.test(c.placeholder) && /solo para responderte.*90 días/i.test(document.getElementById(c.getAttribute('aria-describedby'))?.textContent||'')})()`), 'the form has the optional email, with what it is for');
 await ev(`document.querySelector('.comentario textarea').value = 'Me trabé con una pista'; document.querySelector('.comentario input[type=email]').value = 'ana@'; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(200);
 ok(/correo/.test(await ev(`document.querySelector('.comentario .labs-error').textContent`)), 'a malformed email is not sent');
 await ev(`document.querySelector('.comentario input[type=email]').value = 'ana@correo.cl'; document.getElementById('btn-enviar-comentario').click(); 1`); await sleep(400);
