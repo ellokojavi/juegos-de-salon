@@ -33,7 +33,7 @@ import {
 } from './aggregate.js';
 import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KINDS, pacificRange } from './timeline.js';
 import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splash.js';
-import { switches, status as campaignStatus, overlaps, move, toRemote, span, todayOf, dayPlus, campaignStats, EARLY_DAYS } from './campaigns.js';
+import { switches, status as campaignStatus, overlaps, move, toRemote, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS } from './campaigns.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import {
   rangoAnterior, variacion, partidasDominio, finales, embudoSalas, dificultad, versiones, versionesEn, usuarios, cohortes,
@@ -1629,6 +1629,29 @@ function bloqueResultados(rows) {
     () => c.series.map(r => ({ day: new Date(r.day * DAY).toISOString().slice(0, 10), shown_day: r.n ?? '', shown: r.shown, reach: r.reach, play: r.play, close: r.close, under3s: r.t0, s3to10: r.t1, over10s: r.t2, home_views: r.home })));
 }
 
+/**
+ * ☕ Buy me a coffee, as an always-on campaign (D-448): its funnel in the range, from invitation to
+ * payment, and its days. It has no switch here: it is always in the home footer and at some endings.
+ */
+const C_OPEN = 'var(--yellow)';
+function bloqueApoyo() {
+  const c = supportStats(S.days, rangeOf(S.range));
+  const nota = `${tituloRango()}, UTC days; ?test never counts. Always on: the home footer link (not counted as shown) and an invitation at the end of some games (shown). Opened counts both.`;
+  if (!c) return bloque('☕ Invítame a un café', nota, el('p', { class: 'empty' }, S.daysLoaded ? 'Nothing counted in this range.' : 'Loading…'));
+  const maxD = Math.max(0, ...c.series.map(r => Math.max(r.shown, r.open)));
+  const dias = c.series.map(r => bar(periodLabelDia(r.day), [seg(C_OPEN, r.open), seg(C_REST, Math.max(0, r.shown - r.open))], maxD,
+    { cifra: r.open, sub: `${n(r.shown)} shown`, detail: `${n(r.pay)} to Stripe · ${n(r.thanks)} paid` }));
+  return conCsv(bloque('☕ Invítame a un café', nota,
+    el('div', { class: 'tiles' },
+      tile(c.shown, 'invitations shown', { info: 'at the end of games' }),
+      tile(c.open, `card opened · ${tasa(c.openRate)}`, { info: 'of invitations (the footer opens it too)' }),
+      tile(c.pay, `went to Stripe · ${tasa(c.payRate)}`, { info: 'of cards opened' }),
+      tile(c.thanks, `paid · ${tasa(c.thanksRate)}`, { info: 'of those who went to Stripe' })),
+    el('p', { class: 'muted small leyenda' }, el('span', { style: `color:${C_OPEN}` }, '■'), ' card opened · ', el('span', { style: `color:${C_REST}` }, '■'), ' invitations not opened. The number is the cards opened that day.'),
+    lista(dias, 'Nothing yet.', 'bars')), 'support',
+  () => c.series.map(r => ({ day: new Date(r.day * DAY).toISOString().slice(0, 10), shown: r.shown, open: r.open, pay: r.pay, thanks: r.thanks })));
+}
+
 function vistaCampanas(now) {
   const today = todayOf(now);
   if (S.splash === undefined) return [el('p', { class: 'muted' }, 'Loading…')];
@@ -1709,7 +1732,7 @@ function vistaCampanas(now) {
 
   return [
     ...titulo('📣 Campaigns', 'The splash over the home page. Each player sees a campaign once; with several on, one per visit, top first. New campaigns are made by asking Claude; here they are switched, dated and ordered.'),
-    resumen, tira, bloqueResultados(rows), tarjetas,
+    resumen, tira, bloqueResultados(rows), bloqueApoyo(), tarjetas,
   ];
 }
 

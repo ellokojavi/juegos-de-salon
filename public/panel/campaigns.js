@@ -140,3 +140,30 @@ export function campaignStats(days, id, { from, to }) {
     early: avg(early), late: avg(late), halfDays: half || null,
   };
 }
+
+/**
+ * ☕ Buy me a coffee as a campaign (D-448): an always-on one, with no switch here, whose day counters
+ * are `support/<event>` in `stats/<env>/days/<day>` (support.js). Its funnel over the UTC days
+ * `from`…`to`, one row per day from the first with anything counted:
+ *
+ * - shown: end-of-game invitations (the footer link is always there, so it is not counted).
+ * - open: the card opened, from the footer or from an ending. pay: taps on the pay button, which
+ *   leaves for Stripe. thanks: Stripe sent the donor back, a payment made.
+ * - openRate: opens over invitations (can pass 100%: the footer opens it too); payRate: pay taps over
+ *   opens; thanksRate: payments over pay taps.
+ */
+export function supportStats(days, { from, to }) {
+  const rows = [];
+  for (let d = from; d <= to; d++) {
+    const c = days?.[d]?.support || {};
+    const v = k => Number(c[k]) || 0;
+    rows.push({ day: d, shown: v('shown'), open: v('open'), pay: v('pay'), thanks: v('thanks') });
+  }
+  const first = rows.findIndex(r => r.shown || r.open || r.pay || r.thanks);
+  if (first < 0) return null;
+  const series = rows.slice(first);
+  const sum = k => series.reduce((a, r) => a + r[k], 0);
+  const t = { shown: sum('shown'), open: sum('open'), pay: sum('pay'), thanks: sum('thanks') };
+  const ratio = (a, b) => (b ? a / b : null);
+  return { series, ...t, days: series.length, openRate: ratio(t.open, t.shown), payRate: ratio(t.pay, t.open), thanksRate: ratio(t.thanks, t.pay) };
+}

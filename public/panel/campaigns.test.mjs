@@ -1,6 +1,6 @@
 // 📣 Campaigns in the panel (D-454): the switches, where each one stands, overlaps and order.
 import assert from 'node:assert/strict';
-import { switches, status, overlaps, move, toRemote, span, dayPlus, campaignStats } from './campaigns.js';
+import { switches, status, overlaps, move, toRemote, span, dayPlus, campaignStats, supportStats } from './campaigns.js';
 import { fromRemote } from '../assets/js/splash.js';
 
 const campaigns = { a: {}, b: {}, c: {} };
@@ -69,3 +69,12 @@ assert.equal(campaignStats(days, 'none', { from: D - 1, to: D + 5 }), null, 'nev
 assert.equal(campaignStats({}, 'x', { from: D, to: D }), null);
 
 console.log('campaigns ✓');
+
+// ☕ Buy me a coffee as a campaign: its funnel from the first day with anything counted
+const sd = { 10: {}, 11: { support: { shown: 4, open: 2 } }, 12: { support: { open: 3, pay: 2, thanks: 1 } } };
+const sup = supportStats(sd, { from: 10, to: 12 });
+assert.deepEqual([sup.days, sup.shown, sup.open, sup.pay, sup.thanks], [2, 4, 5, 2, 1]);
+assert.equal(sup.openRate, 5 / 4, 'the footer opens it too, so opens can pass invitations');
+assert.equal(sup.payRate, 2 / 5);
+assert.equal(sup.thanksRate, 1 / 2);
+assert.equal(supportStats({ 10: {} }, { from: 10, to: 12 }), null, 'nothing counted: no block');
