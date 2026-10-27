@@ -128,3 +128,26 @@ assert.deepEqual(unrecorded([], { a: 312 }), {}, 'an empty list from GitHub take
     'ghp_' + 'Ab1'.repeat(12), 'sk-ant-api03-' + 'x'.repeat(30), '0123456789abcdef0123456789abcdef01234567', 'mi clave es dGhpc2lzYXZlcnlsb25nc2VjcmV0dG9rZW4xMjM0NTY3']) assert.ok(secretLike(s), `a secret: ${s.slice(0, 30)}`);
   for (const s of [body(r), title(r), 'https://juegosdesalon.cl/labs/case/?labs&seed=HEJWN', 'juegos-de-salon-default-rtdb-and-more-words', 'Supercalifragilisticexpialidocious', '']) assert.ok(!secretLike(s), `not a secret: ${s.slice(0, 30)}`);
 }
+
+// The optional email's retention (D-463): an address unanswered after 90 days is deleted
+{
+  const { expired, expiredComment, RETENTION_DAYS } = await import('./feedback.mjs');
+  const { DIAS_CORREO } = await import('../../public/assets/js/buzon-form.js');
+  assert.equal(RETENTION_DAYS, 90);
+  assert.equal(RETENTION_DAYS, DIAS_CORREO, 'the form promises the same number of days the job applies');
+  const D = 86400000, now = Date.parse('2026-10-27T12:00:00Z');
+  const contacts = {
+    fresh: { correo: 'a@b.cl', at: now - 10 * D },
+    edge: { correo: 'c@d.cl', at: now - 90 * D + 60000 },
+    old: { correo: 'e@f.cl', at: now - 91 * D },
+    older: { correo: 'g@h.cl', at: now - 200 * D },
+    undated: { correo: 'i@j.cl' },
+  };
+  assert.deepEqual(expired(contacts, now), ['undated', 'older', 'old'], 'past 90 days (or with no date), oldest first; the rest stay');
+  assert.deepEqual(expired({}, now), []);
+  assert.deepEqual(expired(null, now), []);
+  assert.deepEqual(expired(contacts, now, 5), ['undated', 'older', 'old', 'edge', 'fresh']);
+  assert.ok(handled([{ body: expiredComment() }]), 'the note counts as handled: `pending` stops listing it');
+  assert.match(expiredComment(), /90 days/);
+  assert.doesNotMatch(expiredComment(), /@/, 'the note never carries an address');
+}

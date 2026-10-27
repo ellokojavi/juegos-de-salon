@@ -230,7 +230,9 @@ browser, and the processes agent handles them (D-275).
 never the address. The address goes to `feedbackContacto/<id>` (`correo`, up to 120, and server
 `at`): written once, only when `feedback/<id>` exists, and **never readable without the owner's
 key**. `tools/agents/feedback.mjs reply` reads it with the key, emails the reply and deletes it;
-`forget` deletes it without emailing.
+`forget` deletes it without emailing; and one left unanswered is deleted after 90 days by
+`feedback.mjs expire`, which every `sync` pass runs (D-463). What each node keeps, and for how long,
+is told to players on `/privacy/` (D-463): a change here that keeps something new edits that page too.
 
 **The hola@ inbox (D-318):** `buzon/<id>` keeps each email sent to hola@juegosdesalon.cl (`de`,
 `nombre`, `asunto`, `texto` up to 10000, `idMensaje`, `automatico`, server `at`), written by the
