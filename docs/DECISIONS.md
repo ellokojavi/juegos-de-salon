@@ -39,13 +39,15 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453 |
 | Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-462 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456, D-465 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461 |
+| Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433, D-465 |
 | Game memory | C-6 | D-25, D-150 |
 | Touch interface | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344, D-425, D-432, D-447 |
 | Errors and passing the phone | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272, D-410, D-427 |
-| Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454 |
+| Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461 |
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460 |
@@ -100,7 +102,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-40](decisions/D-40.md) | A network failure is not counted as "no internet" | current |
 | [D-41](decisions/D-41.md) | Cap on rooms per phone, knowing it does not stop someone who wants to abuse it | current |
 | [D-43](decisions/D-43.md) | Línea de Tiempo: all cards in view from the first turn | amended by D-52 |
-| [D-44](decisions/D-44.md) | Usage signals for a private owner panel, without identifying anyone | amended by D-79, D-210, D-349 |
+| [D-44](decisions/D-44.md) | Usage signals for a private owner panel, without identifying anyone | amended by D-79, D-210, D-349, D-461 |
 | [D-45](decisions/D-45.md) | The panel also separates live rooms by environment | current |
 | [D-46](decisions/D-46.md) | Two languages in the usage signals, not one | amended by D-47 |
 | [D-47](decisions/D-47.md) | Spanish by default; English and Portuguese only on request | amended by D-197, D-324 |
@@ -499,7 +501,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-451](decisions/D-451.md) | The Claude rounds run from launchd on the Mac mini | current |
 | [D-452](decisions/D-452.md) | A skipped email stays visible: the round lists it, the owner can read it | current |
 | [D-453](decisions/D-453.md) | Toque y Fama's solo score, by deduction: tried in the lab first | current |
-| [D-454](decisions/D-454.md) | The splash campaigns are run from the panel | current |
+| [D-454](decisions/D-454.md) | The splash campaigns are run from the panel | amended by D-461 |
 | [D-455](decisions/D-455.md) | A lab game may keep its own leaderboard, outside the Todoterreno | current |
 | [D-456](decisions/D-456.md) | Tren en Vilo leaves the lab: its page, Uno al día and La Copa, launched with its splash | current |
 | [D-457](decisions/D-457.md) | Seasonal touches on the pages players move around in (Halloween first) | current |
@@ -508,6 +510,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-460](decisions/D-460.md) | ¿Dónde queda?'s Earth in WebP, next to the game, and the 4096 px image only on big screens or zoomed in | current |
 | [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit (in the lab) | current |
 | [D-465](decisions/D-465.md) | Uno al día points count only near the day's own date, and only after its start | current |
+| [D-461](decisions/D-461.md) | The splash campaigns are measured: reach, taps and closes against the days each one was shown | current |
 
 ## No longer in force (11)
 
