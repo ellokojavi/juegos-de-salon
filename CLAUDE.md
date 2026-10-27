@@ -199,7 +199,7 @@ owner's key) and does not merge. Everything else in this guide applies the same.
   python3 tools/release/set-version.py --version             # today's version
   python3 tools/release/set-version.py --site /tmp/site    # stamps a copy, as when publishing
   ```
-- The pages in `public/` carry no `?v=` and no import map: `.github/workflows/publish.yml` runs
+- The pages in `public/` carry no `?h=` and no import map (on publish each file gets `?h=` of its own content, D-467): `.github/workflows/publish.yml` runs
   the tests **and the whole end-to-end suite** (D-302; if they fail twice, it does not publish and opens the
   "main is red" issue), unless the tree it publishes already passed it in a PR or only changes what does not
   reach the browser on top of one that passed (`tools/e2e/already-tested.mjs`, D-308), stamps the version on the copy it publishes and checks that the live site
