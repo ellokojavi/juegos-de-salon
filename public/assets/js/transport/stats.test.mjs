@@ -40,7 +40,7 @@ assert.equal(envOf({ hostname: 'juegosdesalon.cl' }), 'prod');
 assert.equal(envOf({ hostname: '172.40.3.4' }), 'prod');
 
 // Versión desde el import map
-assert.equal(versionOf('{"imports": {"../assets/js/ui.js": "../assets/js/ui.js?v=0.19.0"}}'), '0.19.0');
+assert.equal(versionOf('0.19.0-09eb4db'), '0.19.0');
 assert.equal(versionOf(''), '0');
 assert.equal(versionOf(undefined), '0');
 
@@ -482,6 +482,29 @@ assert.equal(shareKeyOfPage('/panel/'), '');
   const rx = (w, v) => new RegExp(w.match(new RegExp(`\\${v}\\.matches\\(/(.*?)/\\)`))[1]);
   for (const b of ['nueva', 'd1', 'd2-7', 'd8-30', 'd31']) assert.match(b, rx(rules.vuelta.$band['.write'], '$band'));
   for (const b of ['f1', 'f2-3', 'f4-7', 'f8-14', 'f15']) assert.match(b, rx(rules.frec.$band['.write'], '$band'));
+}
+
+
+// A splash campaign's conversion (D-466): after its Play, the first start and the first finish in the tab, once each
+{
+  const { splashStepChange, SPLASH_VIA_KEY, SPLASH_VIA_MS } = await import('./stats.js');
+  const { VIA_KEY } = await import('../splash.js');
+  assert.equal(VIA_KEY, SPLASH_VIA_KEY, 'splash.js writes the key stats.js reads');
+  const m = new Map(), ses = { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, v) };
+  const t = 1_000_000;
+  assert.deepEqual(splashStepChange('start', ses, t), {}, 'no tap, nothing');
+  m.set(SPLASH_VIA_KEY, JSON.stringify({ id: 'tren-en-vilo-ya', at: t }));
+  assert.deepEqual(Object.keys(splashStepChange('start', ses, t + 1000)), ['splash/tren-en-vilo-ya/start']);
+  assert.deepEqual(splashStepChange('start', ses, t + 2000), {}, 'a second start (Otra vez) does not count again');
+  assert.deepEqual(Object.keys(splashStepChange('finish', ses, t + 3000)), ['splash/tren-en-vilo-ya/finish']);
+  assert.deepEqual(splashStepChange('finish', ses, t + 4000), {}, 'once');
+  m.set(SPLASH_VIA_KEY, JSON.stringify({ id: 'x', at: t }));
+  assert.deepEqual(Object.keys(splashStepChange('finish', ses, t)), ['splash/x/start', 'splash/x/finish'], 'a finish with no start counts both');
+  m.set(SPLASH_VIA_KEY, JSON.stringify({ id: 'y', at: t }));
+  assert.deepEqual(splashStepChange('start', ses, t + SPLASH_VIA_MS), {}, 'too long after the tap');
+  m.set(SPLASH_VIA_KEY, '{broken');
+  assert.deepEqual(splashStepChange('start', ses, t), {});
+  assert.deepEqual(splashStepChange('start', { getItem: () => { throw new Error('blocked'); } }, t), {});
 }
 
 console.log('stats.test.mjs: todo en verde');

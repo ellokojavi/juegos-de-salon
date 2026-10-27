@@ -4,7 +4,7 @@
  * write (buzon.js imports it on demand), so game endings don't get heavier.
  */
 import { el } from './ui.js';
-import { versionOf } from './transport/stats.js';
+import { versionOf, releaseOf } from './transport/stats.js';
 import { enviarReporte, correoValido } from '../../cup/reportes.js';
 
 /** The kinds a message can be tagged with (D-345). The rules accept exactly these (`feedback/$id/tipo`). */
@@ -117,7 +117,7 @@ export function formularioComentario({ T, contexto: ctx, alCerrar = null, enviar
     try {
       await mandar({
         texto: t.slice(0, 1000), nombre: n, ...(tipo ? { tipo } : {}), ...(c ? { correo: c } : {}), contexto: JSON.stringify(ctx).slice(0, 500),
-        v: versionOf(document.getElementById('importmap')?.textContent || '') || 'dev',
+        v: versionOf(releaseOf(document)) || 'dev',
       });
       alEnviar();
       fin(T.gracias);

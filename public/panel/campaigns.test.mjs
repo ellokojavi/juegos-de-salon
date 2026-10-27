@@ -45,7 +45,7 @@ assert.equal(dayPlus('2026-10-31', 1), '2026-11-01');
 const D = 20000;
 const days = {
   [D - 1]: { vistas: { inicio: 50 } },                                   // before it started
-  [D]: { vistas: { inicio: 100 }, splash: { x: { shown: 40, reach: 30, play: 9, close: 20, t0: 10, t1: 12, t2: 7 } } },
+  [D]: { vistas: { inicio: 100 }, splash: { x: { shown: 40, reach: 30, play: 9, close: 20, t0: 10, t1: 12, t2: 7, start: 8, finish: 5 } } },
   [D + 1]: { vistas: { inicio: 80 }, splash: { x: { shown: 20, reach: 10, play: 3, close: 12, t0: 5, t1: 8, t2: 2 } } },
   [D + 2]: { vistas: { inicio: 90 } },                                   // switched off
   [D + 3]: { vistas: { inicio: 70 }, splash: { x: { shown: 10, reach: 4, play: 1, close: 8, t1: 9 } } },
@@ -57,6 +57,10 @@ assert.deepEqual(x.series.map(r => [r.day - D, r.n, r.off]), [[0, 1, false], [1,
 assert.equal(x.exposed, 4);
 assert.deepEqual([x.shown, x.reach, x.play, x.close, x.rest], [76, 46, 13, 45, 18]);
 assert.equal(x.ctr, 13 / 46);
+assert.deepEqual([x.start, x.finish], [8, 5]);
+assert.equal(x.startRate, 8 / 13);
+assert.equal(x.finishRate, 5 / 13);
+assert.equal(x.conversion, 5 / 46);
 assert.equal(x.coverage, 76 / 310, 'home views of the days it was shown only');
 assert.equal(x.stay3, (29 + 9) / (20 + 29 + 9));
 assert.equal(x.stay10, 9 / 58);
