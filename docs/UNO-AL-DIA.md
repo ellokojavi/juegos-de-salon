@@ -741,7 +741,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
   out in the next two decks) and `tools/e2e/daily-variants.mjs` (Loteo and Pintaminas, on the first
   day each is due, looked up in the deck since D-405, play their default variant with no picker, even when the phone remembers the other).
 
-### Uno al día points (D-412, D-414, D-415)
+### Uno al día points (D-412, D-414, D-415, D-465)
 
 One number ranks players in a **monthly season** (everyone starts at 0 on the 1st; the table is
 `records/uno-al-dia-pts/s<yyyy>-<mm>/`, so a new month is a new table):
@@ -754,7 +754,9 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
 - **The nightly rebuild** (D-415): `tools/firebase/uad-points-backfill.mjs --rebuild`, run by the
   `uad-rebuild` workflow at 08:23 UTC, recomputes each player's month from the history and the
   markers and corrects a total that differs. The server spends the 🧊 it can see (7 days in a row,
-  invited friends) and lends 2 more, once, for marked days it can't back.
+  invited friends) and lends 2 more, once, for marked days it can't back. A played day earns points
+  only if its result reached the server near its date (`onTime`, the rules' window below, D-465); a
+  day uploaded later still keeps the streak.
 - **No jump on /today/:** signed in, the first drawing shows the last total the ranking gave this phone
   (`uad-pts-cache`), then the fresh one.
 - **On the home page:** once today is played, the 📅 card's chip shows the month's place big and the
@@ -762,8 +764,12 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
 - **Last month's winner** wears a 🏆 next to their name in the month's ranking, and sees a 👑 chip on
   /today/. The season's end shows as "quedan X días" ("último día" on the last).
 - **Saving:** each day of the player's history in Firebase adds once (`p` marks it), checked by the
-  rules against the history; the streak `r` a phone claims grows at most one a day, up to 10. Today's
-  goes up when it is played; on opening /today/ the month's days not yet counted go up in order.
+  rules against the history; the streak `r` a phone claims grows at most one a day, up to 10. A day's
+  `w` and `p` go in only near its own date (its UTC start between two days before the server's `now`
+  and one day after, so every time zone fits) and once its start is in `unoAlDiaInicio/` (D-465): the
+  phone writes the start before the result if the attempt's own start did not get through. Today's
+  goes up when it is played; on opening /today/ today's and yesterday's points not yet counted go up
+  in order. Older days played offline still go up to the history and keep the streak, without points.
 - **Inviting:** each friend who finishes their first Uno al día with your invitation adds +10 to your
   month (`PUNTOS_INVITAR` in `records.js`), once per friend (D-414, see "+10 pts por invitar" above).
 - **The season's end, told** (D-424, in the lab: only with a lab key, listed in /labs/ as
@@ -836,6 +842,8 @@ tab) and the same board, already known, played from zero until one was finished.
   (`empezadoEnOtro` in `uno-al-dia-red.js`; if Firebase does not answer in 2.5 s, the attempt is not
   lost on a doubt). Without a player the marker lives only on the phone, so clearing the browser's
   memory still resets it; those attempts reach no ranking.
+- A day's points (`w`, `p`) need its start in Firebase (D-465): the rules refuse them without
+  `unoAlDiaInicio/<jid>/<n>`, and the phone writes it before uploading the result if it is missing.
 - With an attempt left halfway, the way in skips the die: the home page's ▶ and /today/'s Jugar go
   straight to today's game (`tirarHoy`), saying «▶ Seguir jugando» for a solo game (`rotuloJugar`,
   `estado().inProgress`); a group game's keeps its label, since going back counts 0.
