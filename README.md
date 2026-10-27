@@ -439,7 +439,7 @@ Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 
 ## Stack
 
-Plain HTML, CSS and JavaScript (ES modules). No build step, no npm dependencies. The site is the `public/` folder, published on GitHub Pages by a workflow on every merge to `main` once the tests pass (D-192); the rest of the repo is the workshop. Rooms use **Firebase Realtime Database** (free plan). See [firebase/README.md](firebase/README.md).
+Plain HTML, CSS and JavaScript (ES modules). No build step, no npm dependencies. The fonts (Bangers, Nunito) are served from `public/assets/fonts/`, not from Google Fonts. The site is the `public/` folder, published on GitHub Pages by a workflow on every merge to `main` once the tests pass (D-192); the rest of the repo is the workshop. Rooms use **Firebase Realtime Database** (free plan). See [firebase/README.md](firebase/README.md).
 
 ## Running it locally
 
@@ -471,6 +471,7 @@ node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node marketing/served.test.mjs
 node marketing/splash/campaigns.test.mjs
+node public/assets/css/fonts-preload.test.mjs
 node public/assets/js/arrastre.test.mjs
 node public/assets/js/azar.test.mjs
 node public/assets/js/back-guard.test.mjs
