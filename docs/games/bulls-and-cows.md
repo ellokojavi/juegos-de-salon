@@ -113,7 +113,7 @@ the keypad says it («Toca una casilla para elegir dónde va la cifra…»). Che
 `tools/e2e/bulls-and-cows/choose-box.mjs`.
 
 **One card on the home page** (#767, RP-75): 🔤 Palabra (`/word/`) no longer has its own card on the
-home page; Toque y Fama's card says "the number or the word" (its `taglineLab`), and on the game's
+home page; Toque y Fama's card says "the number or the word", and on the game's
 home 🔤 Palabra is a fourth mode under Local, Online and Solo that opens `/word/`. Tried in the lab
 first (D-409), now for every player; its lab card is in La Bodega, marked 🚀 Lanzado.
 
