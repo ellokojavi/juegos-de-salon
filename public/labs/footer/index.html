@@ -39,56 +39,89 @@
     .v-hoy .op { border: 1px solid rgba(255,255,255,0.12); background: none; color: var(--muted); }
     .v-hoy .op.cafe { border-color: rgba(255,210,63,0.3); }
 
-    /* 2 · Naipe: the phrase is a playing card on the table */
-    .v-naipe .carta { position: relative; margin: 4px auto 0; max-width: 300px; background: var(--card); color: var(--card-ink); border-radius: 14px; padding: 26px 26px 24px; transform: rotate(-2deg); box-shadow: 0 10px 24px rgba(0,0,0,0.45); }
-    .v-naipe .carta::before, .v-naipe .carta::after { position: absolute; font: 1.05rem/1 var(--font-display); color: var(--red); white-space: pre; text-align: center; }
-    .v-naipe .carta::before { content: 'A\A♥'; top: 8px; left: 10px; }
-    .v-naipe .carta::after { content: 'A\A♥'; bottom: 8px; right: 10px; transform: rotate(180deg); }
-    .v-naipe .frase { font-size: 0.98rem; font-weight: 800; }
-    .v-naipe .ops { margin-top: 22px; }
-    .v-naipe .op { background: rgba(255,253,247,0.06); border: 1px solid rgba(255,253,247,0.18); color: var(--ink); }
-    .v-naipe .op.cafe { border-color: rgba(255,210,63,0.45); }
+    .familia { margin: 18px 0 -8px; font: 1.9rem var(--font-display); letter-spacing: 0.04em; text-align: center; }
 
-    /* 3 · Paño verde: the end of the page is the card table's felt */
-    .v-pano { margin: 0 -14px -18px; padding: 24px 18px 18px; background: radial-gradient(120% 90% at 50% 0%, #1d6b4c, #0e3b2b 70%); border-top: 3px solid #c9a646; box-shadow: inset 0 0 0 6px rgba(0,0,0,0.12), inset 0 0 0 7px rgba(201,166,70,0.35); color: rgba(255,248,225,0.75); }
-    .v-pano .frase { color: #fff8e1; font-size: 1rem; }
-    .v-pano .op { background: rgba(0,0,0,0.22); border: 1px dashed rgba(201,166,70,0.55); color: #fff8e1; border-radius: 999px; }
-    .v-pano .op.cafe { background: rgba(201,166,70,0.18); border-style: solid; }
+    /* Hoy, con color: the same layout, with a warmer phrase and each option in its color */
+    .v-hoy-color .frase { color: #fff3d6; font-size: 1.04rem; }
+    .v-hoy-color .regla { display: flex; align-items: center; gap: 10px; margin: 16px 0 -6px; }
+    .v-hoy-color .regla::before, .v-hoy-color .regla::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,46,136,0.6)); }
+    .v-hoy-color .regla::after { transform: scaleX(-1); }
+    .v-hoy-color .op { background: rgba(255,255,255,0.04); color: var(--ink); border: 1px solid rgba(46,230,214,0.35); }
+    .v-hoy-color .op.cafe { border-color: rgba(255,210,63,0.45); } .v-hoy-color .op.extra { border-color: rgba(157,255,58,0.35); }
 
-    /* 4 · Neón de bar: a sign that glows, the options lit in two colors */
+    /* Neón de bar: the phrase glows pink, the options are lit in cyan and yellow */
     .v-neon .frase { color: #ffe1f0; font-size: 1.02rem; text-shadow: 0 0 6px rgba(255,46,136,0.85), 0 0 18px rgba(255,46,136,0.45); }
     .v-neon .op { background: rgba(0,0,0,0.25); color: var(--ink); border: 1.5px solid var(--cyan); box-shadow: 0 0 10px rgba(46,230,214,0.35), inset 0 0 8px rgba(46,230,214,0.15); }
     .v-neon .op.cafe { border-color: var(--yellow); box-shadow: 0 0 10px rgba(255,210,63,0.35), inset 0 0 8px rgba(255,210,63,0.15); }
-    .v-neon .ver { color: rgba(255,255,255,0.5); }
+    .v-neon .op.extra { border-color: var(--lime); box-shadow: 0 0 10px rgba(157,255,58,0.3), inset 0 0 8px rgba(157,255,58,0.12); }
 
-    /* 5 · Boleto: the footer is a cream ticket with torn edges */
-    .v-boleto .ticket { position: relative; background: var(--card); color: #5b4a3a; border-radius: 12px; padding: 20px 18px 16px;
-      -webkit-mask: radial-gradient(circle 9px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
-              mask: radial-gradient(circle 9px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat; }
-    .v-boleto .sello { font: 1.05rem var(--font-display); letter-spacing: 0.12em; color: var(--pink-deep); margin: 0 0 6px; }
-    .v-boleto .frase { color: var(--card-ink); font-size: 0.98rem; font-weight: 800; }
-    .v-boleto .ops { border-top: 2px dashed rgba(91,74,58,0.3); padding-top: 14px; }
-    .v-boleto .op { background: none; border: 1.5px solid rgba(26,26,26,0.25); color: var(--card-ink); }
-    .v-boleto .op.cafe { background: var(--yellow); border-color: transparent; }
-    .v-boleto .ver { color: var(--muted); }
+    /* Neón, letrero: only a short sign glows; the phrase is plain and calm */
+    .v-neon-letrero .letrero { display: inline-block; margin: 0 0 10px; padding: 2px 12px; font: 1.25rem var(--font-display); letter-spacing: 0.12em; color: #ffd9ec; border: 2px solid var(--pink); border-radius: 10px; text-shadow: 0 0 6px var(--pink), 0 0 16px rgba(255,46,136,0.6); box-shadow: 0 0 10px rgba(255,46,136,0.5), inset 0 0 10px rgba(255,46,136,0.35); animation: parpadeo 6s infinite; }
+    @keyframes parpadeo { 0%, 92%, 96%, 100% { opacity: 1; } 94% { opacity: 0.45; } }
+    @media (prefers-reduced-motion: reduce) { .v-neon-letrero .letrero { animation: none; } }
+    .v-neon-letrero .frase { color: var(--ink); font-size: 1rem; }
+    .v-neon-letrero .op { background: none; color: var(--ink); border: 1.5px solid rgba(46,230,214,0.6); }
+    .v-neon-letrero .op.cafe { border-color: rgba(255,210,63,0.7); } .v-neon-letrero .op.extra { border-color: rgba(157,255,58,0.6); }
 
-    /* 6 · Atardecer: the night ends in a warm glow, the options in the categories' colors */
-    .v-atardecer { margin: 0 -14px -18px; padding: 26px 18px 18px; background: linear-gradient(180deg, transparent, rgba(255,46,136,0.22) 55%, rgba(255,122,26,0.35)); }
+    /* Neón, tubo: the phrase sits inside a glowing pink tube */
+    .v-neon-tubo .tubo { border: 2px solid var(--pink); border-radius: 18px; padding: 14px 16px; box-shadow: 0 0 12px rgba(255,46,136,0.55), inset 0 0 12px rgba(255,46,136,0.3); background: rgba(0,0,0,0.2); }
+    .v-neon-tubo .frase { color: var(--ink); font-size: 1rem; }
+    .v-neon-tubo .op { background: var(--glass); color: var(--ink); border: 1px solid var(--glass-border); }
+    .v-neon-tubo .op .ic { filter: drop-shadow(0 0 6px rgba(46,230,214,0.9)); } .v-neon-tubo .op.cafe .ic { filter: drop-shadow(0 0 6px rgba(255,210,63,0.9)); }
+
+    /* Atardecer: the page ends in a warm glow, the options in the categories' colors */
+    .v-atardecer, .v-atardecer-violeta, .v-madrugada { margin: 0 -14px -18px; padding: 26px 18px 18px; }
+    .v-atardecer { background: linear-gradient(180deg, transparent, rgba(255,46,136,0.22) 55%, rgba(255,122,26,0.35)); }
     .v-atardecer .frase { color: var(--yellow); font-size: 1.05rem; font-weight: 900; }
-    .v-atardecer .op { background: rgba(255,255,255,0.1); border: 0; color: var(--ink); backdrop-filter: blur(6px); }
-    .v-atardecer .op .ic { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; vertical-align: middle; margin-right: 2px; }
-    .v-atardecer .op.buzon .ic { background: rgba(46,230,214,0.35); } .v-atardecer .op.cafe .ic { background: rgba(255,122,26,0.5); } .v-atardecer .op.extra .ic { background: rgba(157,255,58,0.35); }
-    .v-atardecer .ver { color: rgba(255,255,255,0.8); }
+    .v-atardecer .op, .v-atardecer-violeta .op, .v-madrugada .op { background: rgba(255,255,255,0.1); border: 0; color: var(--ink); backdrop-filter: blur(6px); }
+    .pie .op .ic { display: inline-block; }
+    .v-atardecer .op .ic, .v-atardecer-violeta .op .ic, .v-madrugada .op .ic { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; vertical-align: middle; margin-right: 2px; }
+    .v-atardecer .op.buzon .ic, .v-atardecer-violeta .op.buzon .ic, .v-madrugada .op.buzon .ic { background: rgba(46,230,214,0.35); }
+    .v-atardecer .op.cafe .ic, .v-atardecer-violeta .op.cafe .ic, .v-madrugada .op.cafe .ic { background: rgba(255,122,26,0.5); }
+    .v-atardecer .op.extra .ic, .v-atardecer-violeta .op.extra .ic, .v-madrugada .op.extra .ic { background: rgba(157,255,58,0.35); }
+    /* The color circle sits above the label in every button, so they all line up */
+    .v-atardecer .op > span, .v-atardecer-violeta .op > span, .v-madrugada .op > span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .v-atardecer .op .ic, .v-atardecer-violeta .op .ic, .v-madrugada .op .ic { margin-right: 0; }
+    .v-atardecer .ver, .v-atardecer-violeta .ver, .v-madrugada .ver { color: rgba(255,255,255,0.8); }
 
-    /* 7 · Bocadillo: the phrase is a comic speech bubble that the 🎲 says */
+    /* Atardecer violeta: the same glow in the site's own purple and pink, the phrase in white */
+    .v-atardecer-violeta { background: linear-gradient(180deg, transparent, rgba(138,77,255,0.28) 50%, rgba(255,46,136,0.32)); }
+    .v-atardecer-violeta .frase { color: var(--ink); font-size: 1.04rem; font-weight: 800; }
+
+    /* Madrugada: the night ends in a cold cyan light at the very bottom */
+    .v-madrugada { background: linear-gradient(180deg, transparent, rgba(11,30,63,0.7) 50%, rgba(46,230,214,0.22)); }
+    .v-madrugada .frase { color: #fff3d6; font-size: 1.04rem; font-weight: 800; }
+
+    /* Bocadillo: the 🎲 says the phrase in a white comic bubble */
     .v-bocadillo .globo { position: relative; margin: 0 auto 30px; max-width: 320px; background: var(--ink); color: var(--card-ink); border-radius: 22px; padding: 16px 18px; border: 3px solid var(--card-ink); box-shadow: 4px 4px 0 var(--pink); }
     .v-bocadillo .globo::after { content: ''; position: absolute; bottom: -16px; left: 50%; margin-left: -10px; border: 10px solid transparent; border-top: 14px solid var(--ink); border-bottom: 0; }
-    .v-bocadillo .habla { font-size: 2rem; margin: -18px 0 0; }
-    .v-bocadillo .frase { font-size: 0.98rem; font-weight: 800; }
-    .v-bocadillo .op { background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink); }
-    .v-bocadillo .op.cafe { box-shadow: 3px 3px 0 var(--yellow); border-color: rgba(255,210,63,0.5); }
-    .v-bocadillo .op.buzon { box-shadow: 3px 3px 0 var(--cyan); }
-    .v-bocadillo .op.extra { box-shadow: 3px 3px 0 var(--lime); }
+    .habla { font-size: 2rem; margin: -18px 0 0; }
+    .v-bocadillo .frase, .v-bocadillo-lateral .frase { font-size: 0.98rem; font-weight: 800; }
+    .v-bocadillo .op, .v-bocadillo-oscuro .op, .v-bocadillo-lateral .op { background: var(--glass); border: 1px solid var(--glass-border); color: var(--ink); }
+    .v-bocadillo .op.cafe, .v-bocadillo-oscuro .op.cafe, .v-bocadillo-lateral .op.cafe { box-shadow: 3px 3px 0 var(--yellow); border-color: rgba(255,210,63,0.5); }
+    .v-bocadillo .op.buzon, .v-bocadillo-oscuro .op.buzon, .v-bocadillo-lateral .op.buzon { box-shadow: 3px 3px 0 var(--cyan); }
+    .v-bocadillo .op.extra, .v-bocadillo-oscuro .op.extra, .v-bocadillo-lateral .op.extra { box-shadow: 3px 3px 0 var(--lime); }
+
+    /* Bocadillo oscuro: the same bubble in the night's colors, outlined in pink */
+    .v-bocadillo-oscuro .globo { position: relative; margin: 0 auto 30px; max-width: 320px; background: #2a0a4a; color: var(--ink); border-radius: 22px; padding: 16px 18px; border: 2px solid var(--pink); box-shadow: 4px 4px 0 rgba(255,46,136,0.45); }
+    .v-bocadillo-oscuro .globo::before { content: ''; position: absolute; bottom: -12px; left: 50%; width: 18px; height: 18px; margin-left: -9px; background: #2a0a4a; border-right: 2px solid var(--pink); border-bottom: 2px solid var(--pink); transform: rotate(45deg); }
+    .v-bocadillo-oscuro .frase { font-size: 1rem; font-weight: 800; position: relative; }
+
+    /* Pensamiento: the 🎲 thinks the phrase, in a soft cloud with two little bubbles */
+    .v-pensamiento .nube { position: relative; margin: 0 auto 34px; max-width: 320px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.22); border-radius: 30px; padding: 16px 20px; }
+    .v-pensamiento .nube::before, .v-pensamiento .nube::after { content: ''; position: absolute; left: 50%; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.22); }
+    .v-pensamiento .nube::before { width: 16px; height: 16px; bottom: -22px; margin-left: -4px; }
+    .v-pensamiento .nube::after { width: 9px; height: 9px; bottom: -34px; margin-left: 4px; }
+    .v-pensamiento .frase { color: var(--ink); font-size: 1rem; font-style: italic; }
+    .v-pensamiento .habla { margin-top: -6px; }
+    .v-pensamiento .op { background: none; border: 1px solid rgba(255,255,255,0.16); color: var(--ink); }
+    .v-pensamiento .op.cafe { border-color: rgba(255,210,63,0.45); }
+
+    /* Bocadillo al lado: the 🎲 on the left, the bubble beside it, shorter */
+    .v-bocadillo-lateral .fila { display: grid; grid-template-columns: 44px 1fr; gap: 10px; align-items: center; text-align: left; }
+    .v-bocadillo-lateral .fila .habla { margin: 0; text-align: center; }
+    .v-bocadillo-lateral .globo { position: relative; background: var(--ink); color: var(--card-ink); border-radius: 18px; padding: 12px 14px; border: 3px solid var(--card-ink); box-shadow: 3px 3px 0 var(--pink); }
+    .v-bocadillo-lateral .globo::after { content: ''; position: absolute; left: -13px; top: 50%; margin-top: -8px; border: 8px solid transparent; border-right: 11px solid var(--ink); border-left: 0; }
   </style>
 </head>
 <body>
@@ -99,7 +132,7 @@
     </div>
     <section class="pie-hoja stack" id="hoja">
       <h1 class="display rainbow">El pie de la portada</h1>
-      <p class="lead" style="margin:0;text-align:center">Siete maneras de terminar la portada: la frase que va cambiando, las opciones (💬 y ☕) y la versión. Se ve como al final de la lista de juegos.</p>
+      <p class="lead" style="margin:0;text-align:center">Doce maneras de terminar la portada, en cuatro familias: la frase que va cambiando, las opciones (💬 y ☕) y la versión. Se ve como al final de la lista de juegos.</p>
       <div class="controles">
         <button type="button" class="btn btn--ghost" id="btn-frase">🔀 Otra frase</button>
         <button type="button" class="btn btn--ghost" id="btn-extra" aria-pressed="false">＋ Una tercera opción</button>
@@ -111,20 +144,30 @@
     import { el } from '../../assets/js/ui.js';
 
     const VARIANTS = [
-      { id: 'hoy', name: '1 · Hoy', lead: 'El pie como está en la portada: frase, una línea con el 🎲 y dos botones delineados.',
-        op: 'Ordenado, pero apagado: la frase y los botones se pierden en el morado y el pie no tiene personalidad propia.' },
-      { id: 'naipe', name: '2 · Naipe', lead: 'La frase es un as de corazones sobre la mesa, un poco ladeado. Los botones, como hoy pero en crema.',
-        op: 'Mi favorita. Dice "juegos de salón" sin explicar nada, la frase se lee mejor (tinta sobre crema) y el naipe es un objeto: no se confunde con una tarjeta de juego.' },
-      { id: 'pano', name: '3 · Paño verde', lead: 'El final de la página es el paño de la mesa de cartas, con borde dorado. Los botones son fichas.',
-        op: 'Muy de salón y cálido. El verde rompe con la paleta morada: se siente como otro lugar, lo que es bueno para un pie, pero es el cambio más grande.' },
-      { id: 'neon', name: '4 · Neón de bar', lead: 'La frase brilla como un letrero rosado; los botones, encendidos en cian y amarillo.',
-        op: 'La más fiel a la paleta actual y lo más fácil de llevar. El brillo cansa en frases largas y compite con los juegos.' },
-      { id: 'boleto', name: '5 · Boleto', lead: 'Un boleto crema con bordes troquelados: la frase arriba, las opciones bajo una línea punteada.',
-        op: 'Muy legible y simpático. El café en amarillo lleno llama mucho la atención: pide más de lo que el sitio quiere pedir.' },
-      { id: 'atardecer', name: '6 · Atardecer', lead: 'La página termina en un resplandor rosado y naranja; la frase en amarillo y cada opción con su color.',
-        op: 'Bonito y sin objetos nuevos. Pero la frase en amarillo grueso cansa, y el resplandor se pelea con la temporada (el naranjo de Halloween).' },
-      { id: 'bocadillo', name: '7 · Bocadillo', lead: 'El 🎲 dice la frase en un globo de cómic, con sombra rosada; los botones con sombra de color.',
-        op: 'Lo más divertido: la frase tiene quien la diga. El globo blanco pesa mucho visualmente en una pantalla oscura.' },
+      { family: '📏 Hoy', id: 'hoy', name: 'Hoy', lead: 'El pie como está en la portada: frase, una línea con el 🎲 y dos botones delineados.',
+        op: 'Ordenado, pero apagado: la frase y los botones se pierden en el morado.' },
+      { family: '📏 Hoy', id: 'hoy-color', name: 'Hoy, con color', lead: 'El mismo orden, con la frase en crema, la línea en rosado y cada botón con el borde de su color.',
+        op: 'El cambio más chico que se nota: no agrega objetos y el pie gana calidez. Buena base si se quiere algo seguro.' },
+      { family: '💡 Neón', id: 'neon', name: 'Neón de bar', lead: 'La frase brilla como un letrero rosado; los botones, encendidos en cian y amarillo.',
+        op: 'Llamativo, pero el brillo cansa en frases largas y compite con los juegos.' },
+      { family: '💡 Neón', id: 'neon-letrero', name: 'Neón, letrero', lead: 'Solo un letrero corto brilla (y parpadea cada tanto); la frase va tranquila en blanco y los botones, delineados en color.',
+        op: 'Mi favorita de las nuevas. El brillo queda en tres palabras, así que la frase se lee bien, y el letrero le da al pie la cara de un bar de juegos.' },
+      { family: '💡 Neón', id: 'neon-tubo', name: 'Neón, tubo', lead: 'La frase va dentro de un tubo de neón rosado; los íconos de los botones brillan.',
+        op: 'Lindo marco, pero un rectángulo con borde vuelve a parecerse a una tarjeta.' },
+      { family: '🌅 Atardecer', id: 'atardecer', name: 'Atardecer', lead: 'La página termina en un resplandor rosado y naranja; la frase en amarillo y cada opción con su color.',
+        op: 'Bonito, pero el amarillo grueso cansa y el naranjo se pelea con Halloween.' },
+      { family: '🌅 Atardecer', id: 'atardecer-violeta', name: 'Atardecer violeta', lead: 'El mismo resplandor en el morado y rosado del sitio; la frase en blanco.',
+        op: 'Arregla lo del atardecer: usa solo colores de la casa y la frase se lee tranquila. Muy elegante, aunque menos juguetón.' },
+      { family: '🌅 Atardecer', id: 'madrugada', name: 'Madrugada', lead: 'La noche termina en una luz cian fría abajo; la frase en crema.',
+        op: 'Original y calmo, como el final de una noche de juegos. El cian frío puede verse triste.' },
+      { family: '💬 Bocadillo', id: 'bocadillo', name: 'Bocadillo', lead: 'El 🎲 dice la frase en un globo de cómic blanco, con sombra rosada; los botones con sombra de color.',
+        op: 'Lo más divertido, pero el globo blanco pesa mucho en la pantalla oscura.' },
+      { family: '💬 Bocadillo', id: 'bocadillo-oscuro', name: 'Bocadillo oscuro', lead: 'El mismo globo en morado noche, con borde y sombra rosados.',
+        op: 'Mi favorita en general. Conserva la gracia (el 🎲 habla), pero ya no encandila. Las sombras de color de los botones lo hacen juguetón sin que parezcan juegos.' },
+      { family: '💬 Bocadillo', id: 'pensamiento', name: 'Pensamiento', lead: 'El 🎲 piensa la frase en una nube suave, en cursiva.',
+        op: 'Suave y simpático; la cursiva le queda bien a las frases. Algo menos visible que el globo.' },
+      { family: '💬 Bocadillo', id: 'bocadillo-lateral', name: 'Bocadillo al lado', lead: 'El 🎲 a la izquierda y el globo blanco a su lado, más bajo.',
+        op: 'Ocupa menos alto, pero a 320 px el globo queda angosto y la frase se parte en muchas líneas.' },
     ];
 
     const frases = (FRASES.es || []).slice().sort(() => Math.random() - 0.5);
@@ -142,20 +185,29 @@
     const ver = () => el('p', { class: 'ver' }, 'v0.218.20 · ', el('a', { href: 'https://github.com/ellokojavi/juegos-de-salon' }, 'código en GitHub'));
     const p = () => el('p', { class: 'frase' }, frase());
 
+    const ops2 = () => el('div', { class: 'ops' }, ...ops());
+    const dado = () => el('p', { class: 'habla', 'aria-hidden': 'true' }, '🎲');
     const BODY = {
-      hoy: () => [p(), el('div', { class: 'regla', 'aria-hidden': 'true' }, '🎲'), el('div', { class: 'ops' }, ...ops()), ver()],
-      naipe: () => [el('div', { class: 'carta' }, p()), el('div', { class: 'ops' }, ...ops()), ver()],
-      pano: () => [p(), el('div', { class: 'ops' }, ...ops()), ver()],
-      neon: () => [p(), el('div', { class: 'ops' }, ...ops()), ver()],
-      boleto: () => [el('div', { class: 'ticket' }, el('p', { class: 'sello' }, '🎟️ ADMITE UNO'), p(), el('div', { class: 'ops' }, ...ops())), ver()],
-      atardecer: () => [p(), el('div', { class: 'ops' }, ...ops()), ver()],
-      bocadillo: () => [el('div', { class: 'globo' }, p()), el('p', { class: 'habla', 'aria-hidden': 'true' }, '🎲'), el('div', { class: 'ops' }, ...ops()), ver()],
+      'hoy': () => [p(), el('div', { class: 'regla', 'aria-hidden': 'true' }, '🎲'), ops2(), ver()],
+      'hoy-color': () => [p(), el('div', { class: 'regla', 'aria-hidden': 'true' }, '🎲'), ops2(), ver()],
+      'neon': () => [p(), ops2(), ver()],
+      'neon-letrero': () => [el('p', { class: 'letrero', 'aria-hidden': 'true' }, 'ABIERTO HASTA TARDE'), p(), ops2(), ver()],
+      'neon-tubo': () => [el('div', { class: 'tubo' }, p()), ops2(), ver()],
+      'atardecer': () => [p(), ops2(), ver()],
+      'atardecer-violeta': () => [p(), ops2(), ver()],
+      'madrugada': () => [p(), ops2(), ver()],
+      'bocadillo': () => [el('div', { class: 'globo' }, p()), dado(), ops2(), ver()],
+      'bocadillo-oscuro': () => [el('div', { class: 'globo' }, p()), dado(), ops2(), ver()],
+      'pensamiento': () => [el('div', { class: 'nube' }, p()), dado(), ops2(), ver()],
+      'bocadillo-lateral': () => [el('div', { class: 'fila' }, dado(), el('div', { class: 'globo' }, p())), ops2(), ver()],
     };
 
     const hoja = document.getElementById('hoja');
     const draw = () => {
       hoja.querySelectorAll('.pie-op').forEach(n => n.remove());
+      let family = '';
       for (const v of VARIANTS) {
+        if (v.family !== family) { family = v.family; hoja.append(el('h2', { class: 'familia pie-op' }, family)); }
         hoja.append(el('section', { class: 'pie-op', id: `pie-${v.id}` },
           el('h2', {}, v.name), el('p', {}, v.lead),
           el('div', { class: 'marco' },

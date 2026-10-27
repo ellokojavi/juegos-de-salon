@@ -79,6 +79,7 @@ can vouch for a tree. After a PR whose last push was incremental, publishing tak
 | Scripts that open every page on purpose | Declared | `EVERY_PAGE` (today `smoke.mjs`) |
 | A long script split in parts named after pages | Declared | `PARTS` in `ci.mjs` |
 | Files no browser loads (docs, agents, workflows, rules, `durations.json`, D-428) | Derived from the path | `changes.mjs` (`noBrowser`) |
+| Scripts CI never runs (`*/online.mjs`, `*/chat.mjs` and the rest that open rooms in the production Firebase, the obsolete ones) | Derived from `ci.mjs`'s own exclusions: changing one runs no job (#850) | `shared` in `ci.mjs` |
 
 ### 2. Decision
 

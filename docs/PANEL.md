@@ -146,6 +146,8 @@ En `#/cup`, debajo de las cifras de las copas, el bloque **🔔 Avisos al celula
   El porcentaje es tocados sobre mandados en el rango. Los mandados son siempre del sitio publicado.
   Los tipos que no son de La Copa salen después, con su nombre: los de Uno al día son `uaddia`,
   `uadracha`, `uadsemana` y `uadadios` (D-230), and `uadtemporada` (D-424, sent only, see above).
+- **Qué abre un aviso:** the service worker (`public/sw.js`, `notificationclick`) opens the notification's
+  page only if it is on this site; any other address opens the home page instead.
 - **Aperturas de la app instalada:** `pwa/<sistema>`, del `start_url` `./?pwa` de los manifests.
 - **Última vuelta:** la hora de `stats/prod/push/vuelta`. Si pasó más de una hora sale en rojo:
   GitHub pudo apagar el workflow programado (lo hace tras 60 días sin commits) o le faltan los
@@ -331,6 +333,9 @@ agregar un rango es sumar una línea.
 > por si alguna vez hay que cambiar de cuenta: son esas dos líneas `.read` y volver a
 > publicar. Para que sirvan dos cuentas a la vez, la comparación pasa a ser una lista:
 > `auth != null && (auth.uid === 'UNO' || auth.uid === 'OTRO')`.
+
+The panel never shows inside another site's frame: if it is framed it hides itself and takes over the
+window (an inline script in `public/panel/index.html`).
 
 Mientras el UID no esté en las reglas, nadie (ni el dueño) puede leer `stats/` ni listar
 `rooms/`: las reglas fallan cerradas.
