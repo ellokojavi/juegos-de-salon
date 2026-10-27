@@ -104,7 +104,10 @@ la portada al día, va con los textos, and U-39, the start button above the fold
   14 days after the player sends something. The home footer has it always, opening the overlay.
   One quiet link per ending: "☕ Buy me a coffee" (D-448, in the lab) follows the same manners —after
   everything, never a popup on its own, its own rule on the device— and never shows on an ending that
-  already has the inbox link; in the home footer it sits under the inbox. Only a tap on it opens its
+  already has the inbox link; in the home footer it sits beside the inbox: with two or more options
+  the footer shows them as a quiet two-column grid of outlined, unfilled buttons under a thin rule
+  with a 🎲 (an odd last one spans the row), so they read as the site's corner and not as more game
+  cards; a single option stays the plain link. Only a tap on it opens its
   card, a sheet from the bottom like the share sheet that "Ahora no" or a tap outside closes (D-449).
 
 ## Compartir
