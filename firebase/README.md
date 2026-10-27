@@ -157,6 +157,12 @@ The owner (their UID) can write and delete in all these branches, to moderate.
 - `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w?, p? }`: the first Uno al día attempt of day `n` (days
   since 1970). Written once by whoever is seated as that player; `w` (the mark that it was already
   added to the week) and `p` (already added to the month's points, D-412) are each added once. Anyone can read it.
+  `w` and `p` go in only near the day's own date and after its start (D-465): the day's UTC start
+  must lie between two days before `now` and one day after it (every time zone fits), and
+  `unoAlDiaInicio/<jid>/<n>` must already exist. The rules have no number-from-text, so they sum the
+  key's digits (`$d.matches(/^[0-9]{k}[d-9]/) ? …`); `uno-al-dia-jugador.test.mjs` runs that
+  expression as JavaScript against `numDia`. A day uploaded later (played offline) still goes into the
+  history, without `w` or `p`.
   A day a 🧊 saved is only a marker, `{ c: true, at }` (D-415): written once by the phone that saved
   it, never over a day played, and it never gets `w` or `p`. The rules check its shape, not whether
   the phone held a 🧊 (they can't count wildcards); the nightly rebuild bounds what an unbacked marker

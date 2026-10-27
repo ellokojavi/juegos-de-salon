@@ -115,9 +115,12 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
     // La historia de Uno al día: un día se escribe una vez; después solo se le pone `w`
     if (rama === 'unoAlDia') {
       if (!sentado(viejo, a) || !/^[0-9]{5}$/.test(b || '')) return false;
+      // `w` and `p` (the day's points) only near the day's own date and after its start (D-465)
+      const aTiempo = () => Number(b) * 86400000 > now() - 172800000 && Number(b) * 86400000 < now() + 86400000 && leerEn(viejo, `unoAlDiaInicio/${a}/${b}`) != null;
       // `w` and `p` only on a day played: a saved day's marker never gets them (D-415)
-      if (p.length === 4 && (c === 'w' || c === 'p')) return leerEn(viejo, ruta) == null && leerEn(nuevo, ruta) === true && leerEn(viejo, `unoAlDia/${a}/${b}/c`) == null;
+      if (p.length === 4 && (c === 'w' || c === 'p')) return leerEn(viejo, ruta) == null && leerEn(nuevo, ruta) === true && leerEn(viejo, `unoAlDia/${a}/${b}/c`) == null && aTiempo();
       const x = leerEn(nuevo, ruta);
+      if (p.length === 3 && (x?.w !== undefined || x?.p !== undefined) && !aTiempo()) return false;
       // A day a 🧊 saved (D-415): only the marker, no score
       if (p.length === 3 && leerEn(viejo, ruta) == null && x?.c !== undefined) return x.c === true && typeof x.at === 'number' && Object.keys(x).every(k => ['c', 'at'].includes(k));
       return p.length === 3 && leerEn(viejo, ruta) == null && !!x && typeof x.j === 'string' && x.s >= 0 && x.s <= 100 && x.ms >= 0 && typeof x.at === 'number'
