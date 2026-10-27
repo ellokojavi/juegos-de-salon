@@ -1,6 +1,6 @@
 // The October backfill of Uno al día points (uad-points-backfill.mjs, D-414): the same days and rows a phone writes
 import assert from 'node:assert/strict';
-import { mesDe, lastDay, rehacerMes, cortesDe, temporadaDe } from './uad-points-backfill.mjs';
+import { mesDe, lastDay, rehacerMes, cortesDe, temporadaDe, onTime } from './uad-points-backfill.mjs';
 import { numDia } from '../../public/assets/js/uno-al-dia.js';
 
 const n = f => numDia(f);
@@ -45,6 +45,21 @@ assert.equal(rehacerMes(contado, '2026-10', { invites: 2 }).s, 150 + 20);
 const sinMarca = { ...contado }; delete sinMarca[n('2026-10-07')];
 assert.equal(rehacerMes(sinMarca, '2026-10').s, 55 + 55 + 30, 'without the marker the streak starts over');
 assert.equal(rehacerMes(contado, '2026-11'), null);
+
+// A day earns points only if its result reached the server near its date (D-465), the window the
+// rules give its p; uploaded later (played offline) it keeps the streak and earns nothing
+{
+  const D = 86400000, d6 = n('2026-10-06');
+  assert.equal(onTime(d6, { at: d6 * D - 13 * 3600000 }), true, 'UTC+14 plays it before its UTC start');
+  assert.equal(onTime(d6, { at: d6 * D + 47 * 3600000 }), true, 'the next morning in UTC-12');
+  assert.equal(onTime(d6, { at: d6 * D + 3 * D }), false, 'three days later');
+  assert.equal(onTime(d6, { at: d6 * D - 2 * D }), false, 'before its day');
+  assert.equal(onTime(d6, {}), true, 'a result without at');
+  const tarde = { [n('2026-10-06')]: { j: 'q', s: 80, at: (n('2026-10-06') + 5) * D }, [n('2026-10-07')]: { j: 'q', s: 70, at: n('2026-10-07') * D } };
+  assert.deepEqual(rehacerMes(tarde, '2026-10'), { s: 70 + 10, r: 2, u: String(n('2026-10-07')), faltaP: [n('2026-10-07')] }, 'the late day keeps the streak, earns nothing and gets no p');
+  assert.deepEqual(mesDe(tarde, '2026-10').nuevos.map(d => [d.n, d.r]), [[n('2026-10-07'), 2]]);
+  assert.equal(temporadaDe([{ jid: 'aaaaaaaa', n: 'A', hist: tarde }], '2026-10', '2026-10-10').j.aaaaaaaa.s, 80);
+}
 
 // November is another table: October's days don't count there
 assert.equal(mesDe(hist, '2026-11'), null);

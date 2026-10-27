@@ -23,6 +23,7 @@ assert.ok(cel1.yo(), 'y no saca al jugador');
 // El primer intento del día: historia, día, semana y racha
 const n = numDia('2026-10-07'), sem = semanaDe('2026-10-07');
 assert.ok(PERIODO.test(periodoDia(n)));
+await cel1.empezarDia({ n }); await cel1.empezarDia({ n: n + 1 });
 let r = await cel1.anotarDia({ n, j: 'reinas', s: 87, ms: 60000, semanaP: sem, mejor: 3 });
 assert.deepEqual(r, { historia: true, dia: true, semana: true, racha: true });
 assert.equal((await db.get(`unoAlDia/${sara.jid}/${n}`)).s, 87);
@@ -42,10 +43,11 @@ assert.equal((await db.get(`records/${UNO_AL_DIA}/${sem}/${sara.jid}`)).s, 127);
 assert.equal(Object.keys(await cel1.historialDia()).length, 2);
 
 // Un día viejo de este celular, al entrar: solo a la historia, sin rankings
-r = await cel1.anotarDia({ n: n - 3, j: 'zip', s: 70, ms: 1, soloHistoria: true });
+r = await cel1.anotarDia({ n: n - 1, j: 'zip', s: 70, ms: 1, soloHistoria: true });
 assert.deepEqual(r, { historia: true, dia: false, semana: false, racha: false });
-assert.equal((await db.get(`unoAlDia/${sara.jid}/${n - 3}`)).s, 70);
-assert.equal(await db.get(`records/${UNO_AL_DIA}/${periodoDia(n - 3)}/${sara.jid}`), null);
+assert.equal((await db.get(`unoAlDia/${sara.jid}/${n - 1}`)).s, 70);
+assert.equal(await db.get(`records/${UNO_AL_DIA}/${periodoDia(n - 1)}/${sara.jid}`), null);
+assert.equal((await cel1.anotarDia({ n: n - 3, j: 'zip', s: 90, ms: 1, soloHistoria: true })).historia, true, 'an old day still goes up to the history (offline play)');
 
 // Las reglas: nadie anota un día con otro puntaje que el de su historia, ni suma un día dos veces
 const intento = async cambios => { try { await crearAlmacenLocal({ storage, uid: 'uid1', now: () => ahora.t }).update(cambios); return true; } catch (_) { return false; } };
@@ -64,9 +66,18 @@ assert.equal(await cel1.anotarPuntosDia({ n, mesP: mes, racha: 3 }), false, 'a d
 assert.equal(await cel1.anotarPuntosDia({ n: n + 1, mesP: mes, racha: 9 }), true);
 assert.deepEqual([(await db.get(pts)).s, (await db.get(pts)).r], [102 + 40 + 20, 4], 'the streak grows one a day, whatever the phone says');
 assert.equal(await cel1.anotarPuntosDia({ n: n + 5, mesP: mes, racha: 5 }), false, 'a day without history adds nothing');
-assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/p`]: true, [pts]: fila(162 + 70 + 50, { u: String(n - 3), r: 10 }) }), false, 'the streak cannot jump');
-assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/p`]: true, [pts]: fila(162 + 99, { u: String(n - 3), r: 5 }) }), false, 'the points are the history plus the bonus');
-assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/p`]: true, [pts]: fila(162 + 70 + 25, { u: String(n - 3), r: 5 }) }), true, 'an honest day goes in');
+const yday = { [`unoAlDia/${sara.jid}/${n - 1}/p`]: true };
+assert.equal(await intento({ ...yday, [pts]: fila(162 + 70 + 25, { u: String(n - 1), r: 5 }) }), false, 'no points without the day\'s start (D-465)');
+await cel1.empezarDia({ n: n - 1 }); await cel1.empezarDia({ n: n - 3 });
+assert.equal(await intento({ ...yday, [pts]: fila(162 + 70 + 50, { u: String(n - 1), r: 10 }) }), false, 'the streak cannot jump');
+assert.equal(await intento({ ...yday, [pts]: fila(162 + 99, { u: String(n - 1), r: 5 }) }), false, 'the points are the history plus the bonus');
+assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/p`]: true, [pts]: fila(162 + 90 + 25, { u: String(n - 3), r: 5 }) }), false, 'a day far from today earns no points, even with its start (D-465)');
+assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n - 3}/w`]: true }), false, 'nor its week');
+assert.equal(await intento({ ...yday, [pts]: fila(162 + 70 + 25, { u: String(n - 1), r: 5 }) }), true, 'an honest day goes in');
+// A result written with its flags at once is held to the same window (D-465)
+await cel1.empezarDia({ n: n + 4 });
+assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n + 4}`]: { j: 'reinas', s: 100, ms: 1, at: ahora.t, p: true } }), false, 'a future day gets no p');
+assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n + 4}`]: { j: 'reinas', s: 100, ms: 1, at: ahora.t } }), true, 'though its history can be written');
 
 // A day a 🧊 saved (D-415): only the marker, once, never over a day played, and it adds no points
 assert.equal(await cel1.anotarSalvado({ n: n - 2 }), true);
@@ -120,5 +131,27 @@ assert.match(reglas.invitados.$jid.$uid['.write'], /!root\.child\('jugadorSeats/
 assert.match(reglas.records.$t.$p.$jid['.write'], /invitados\/.*\/p'\)\.val\(\) === true.*\+ 10\)/, 'the rules check the invite +10 like the test store');
 assert.ok(reglas.invitados.$jid.$uid.p && reglas.records.$t.$p.$jid.i, 'the rules know the acceptance p and i');
 assert.match(reglas.unoAlDiaInicio?.$jid?.$d?.['.write'] || '', /!data\.exists\(\).*jugadorSeats/, 'the rules write a start once, by the player (D-433)');
+
+// The window of a day's points (D-465), the rule itself run as JavaScript: the rules have no
+// number-from-text, so the day key's value is summed digit by digit, and must match numDia's
+{
+  const { p, w } = reglas.unoAlDia.$jid.$d;
+  assert.equal(p['.validate'], w['.validate'], 'p and w are held to the same window');
+  const run = (d, now, start = true) => {
+    const js = p['.validate']
+      .replace(/\$d\.matches\((\/[^/]+\/)\)/g, '$1.test(d)').replace(/\$d\.beginsWith\('(\d)'\)/g, "d.startsWith('$1')")
+      .replace(/root\.child\([^)]*\)\.exists\(\)/, 'start').replace(/newData\.isBoolean\(\)/, 'true').replace(/newData\.val\(\)/, 'true');
+    assert.ok(!/\$d|root|newData/.test(js), 'everything in the rule is translated');
+    return new Function('d', 'now', 'start', `return ${js};`)(d, now, start);
+  };
+  const H = 3600000, at = (f, h) => Date.UTC(...f.split('-').map((x, i) => Number(x) - (i === 1 ? 1 : 0)), 0) + h * H;
+  for (const f of ['2026-10-07', '2027-01-01', '2029-12-31', '2030-01-09']) {
+    const d = String(numDia(f));
+    // Its own local day in any time zone (UTC-12 to UTC+14), and the next morning
+    for (const h of [-14, -13, 0, 12, 23, 35]) assert.equal(run(d, at(f, h)), true, `${f} counts at ${h} h UTC`);
+    for (const h of [-25, 48, 60]) assert.equal(run(d, at(f, h)), false, `${f} does not count at ${h} h UTC`);
+    assert.equal(run(d, at(f, 12), false), false, 'nor without its start');
+  }
+}
 
 console.log('uno-al-dia-jugador: ok');
