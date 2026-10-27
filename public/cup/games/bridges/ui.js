@@ -14,6 +14,10 @@ import { el, confetti } from '../../../assets/js/ui.js';
 import { fijos, crearSim, paso, DT, puntajePartida, picoDe, picoReferencia, costo, unirViga, puntosMedios, partir, trazo, cubierta, esCubierta, PUNTOS_ETAPA } from './physics.js';
 import { QUIETO, pct, aMundo, esfuerzoAhora, timeOfDay, DEMO, trenMini, lienzo, medidor, dibujar, fueraDeEscena } from './scene.js';
 import { etapasDe, tarjeta, CATALOGO_URL, NIVELES, TIEMPO_S } from './engine.js';
+import { loadCss } from '../../../assets/js/load-css.js';
+
+// Its own stylesheet, loaded with its code and before its first screen (D-468)
+await loadCss(new URL('./style.css', import.meta.url));
 
 const POLY_BRIDGE = 'https://en.wikipedia.org/wiki/Poly_Bridge';
 /** How long Clear and Give up wait for the second tap, like Clear all in Zip. */
