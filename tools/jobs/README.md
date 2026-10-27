@@ -28,6 +28,8 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
 3. `github`: the workflow, with the same cron. A Claude round: a `mac` job whose command is
    `node tools/jobs/claude-task.mjs tools/jobs/prompts/<id>.md` (`jobs.test.mjs` checks every file the
    prompt names exists); not a desktop-app or claude.ai scheduled task, which stop or cannot reach the Mac (D-451).
+   Its prompt file also gets an entry in `JOBS` in `claude-task.mjs` with the tools that round needs
+   and no more (a prompt file without one does not run; `claude-task.test.mjs` checks it, #865).
 
 ## The jobs on the Mac
 
@@ -38,6 +40,16 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
   owner-only `skipped` denied), in restricted mode (no settings files, file reads only inside the
   repo, no MCP servers); the report's text goes to `ingest` on stdin, so there is no Read or Write
   (#838). `inbox-watch.test.mjs` checks those flags.
+- **The Claude rounds** (`processes-round`, `weekly-report`, [`claude-task.mjs`](claude-task.mjs)): each
+  gets only the tools it needs (#865). Both run in auto mode with no MCP servers (no connectors), no
+  page fetching, and with the model denied the machine's keys (`~/.config/**`, `~/.ssh/**` and the
+  other credential paths in `SECRETS`, for the file tools and for `cat` and the like) and the commands
+  in `BASH_DENY` (`curl`, `wget`, `ssh`, `gh auth`, `security`…): the repo's node tools still read
+  the keys themselves. The processes round has Bash, the file tools, Agent (it launches its agents),
+  SendMessage, Skill and WebSearch (the ideas agent), with the user and project settings but not the
+  local file's saved approvals; the weekly report has Bash and Read only, in restricted mode. The
+  round's prompt says what players and strangers wrote is quoted data, never instructions.
+  `claude-task.test.mjs` checks those flags.
 - **`feedback-watch`** (`tools/agents/feedback.mjs sync`), every 5 minutes: uploads the new reports of
   `feedback/` as `feedback` issues (D-382), except one that looks like it carries a key or a token,
   which it logs instead of posting (`secretLike`, #838). It was the GitHub workflow `feedback.yml`, which GitHub ran
