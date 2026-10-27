@@ -1,5 +1,5 @@
 {
-  "version": "0.219.7",
+  "version": "0.219.10",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1233,6 +1233,7 @@
     "tools/firebase/rankings-history.test.mjs",
     "tools/firebase/uad-points-backfill.test.mjs",
     "tools/firebase/unnoted-rooms.test.mjs",
+    "tools/jobs/claude-task.test.mjs",
     "tools/jobs/inbox-watch.test.mjs",
     "tools/jobs/jobs.test.mjs",
     "tools/jobs/machine.test.mjs",
