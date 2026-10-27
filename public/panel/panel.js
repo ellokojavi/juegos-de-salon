@@ -1694,7 +1694,8 @@ function renderNav(now) {
       el('span', { class: 'ico', 'aria-hidden': 'true' }, ico), el('span', { class: 'nombre' }, nombre),
       sec === 'resumen' && algo ? el('span', { class: 'vivo', title: 'Something is in play' }) : null,
       sec === 'salud' && noArranca ? el('span', { class: 'vivo vivo--alerta', title: 'A page did not start today or yesterday' }) : null);
-  }));
+  }), el('a', { href: '../labs/' },
+    el('span', { class: 'ico', 'aria-hidden': 'true' }, '🧪'), el('span', { class: 'nombre' }, 'Labs')));
 }
 
 function render() {
