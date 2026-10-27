@@ -32,7 +32,7 @@ const code = await A.evaluate(`(async () => {
   ${LOAD}
   const t = __fb.createFirebaseTransport({ game: 'toque-y-fama', maxPlayers: 6 });
   window.__host = t;
-  return t.create({ config: { seats: 'test' }, name: 'Host' });
+  return t.create({ config: { digits: 4 }, name: 'Host' });
 })()`);
 console.log('room:', code);
 

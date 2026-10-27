@@ -1,6 +1,6 @@
 // The 🐞 feedback as issues (D-275, D-279): with the name and without the browser, without mentions, and never the same report twice.
 import assert from 'node:assert/strict';
-import { greetingName, title, body, pending, uploaded, unrecorded, looksShort, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN } from './feedback.mjs';
+import { greetingName, title, body, pending, uploaded, unrecorded, looksShort, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN, firstBatch, MAX_PER_RUN } from './feedback.mjs';
 
 const r = {
   id: '-P3bm', at: Date.parse('2026-10-10T18:28:23Z'), v: '0.144.0', nombre: 'Tu admirador secreto',
@@ -150,4 +150,14 @@ assert.deepEqual(unrecorded([], { a: 312 }), {}, 'an empty list from GitHub take
   assert.ok(handled([{ body: expiredComment() }]), 'the note counts as handled: `pending` stops listing it');
   assert.match(expiredComment(), /90 days/);
   assert.doesNotMatch(expiredComment(), /@/, 'the note never carries an address');
+}
+
+// One sync pass uploads at most MAX_PER_RUN reports, oldest first, and says so (#849)
+{
+  const list = Array.from({ length: 25 }, (_, i) => ({ id: `r${i}` }));
+  const { batch, warning } = firstBatch(list);
+  assert.equal(MAX_PER_RUN, 20);
+  assert.deepEqual(batch.map(r => r.id), list.slice(0, 20).map(r => r.id));
+  assert.match(warning, /25 new report\(s\).*first 20/);
+  assert.deepEqual(firstBatch(list.slice(0, 3)), { batch: list.slice(0, 3), warning: null });
 }
