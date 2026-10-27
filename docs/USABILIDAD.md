@@ -112,6 +112,8 @@ la portada al día, va con los textos, and U-39, the start button above the fold
   the page ends in a purple-to-pink glow, the rotating phrase in white, and the grid's options become
   frosted buttons with no rule, each with its emoji in a color circle above the label. Only a tap on it opens its
   card, a sheet from the bottom like the share sheet that "Ahora no" or a tap outside closes (D-449).
+  While the inbox overlay is open the page behind it stays put, as under the share and support sheets: only the card scrolls, and
+  closing it returns to the same place (`fijarFondo` in `buzon-form.js`).
 
 ## Compartir
 

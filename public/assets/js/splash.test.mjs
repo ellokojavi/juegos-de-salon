@@ -1,7 +1,7 @@
 // The splash (D-351): what the home page shows and in what order, the campaigns' texts, and the switch.
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { queue, seenIds, campaignLang, fromRemote, loadActive, readProfile, isRegular, REGULARS, CAMPAIGNS, ACTIVE } from './splash.js';
+import { queue, seenIds, campaignLang, fromRemote, loadActive, readProfile, isRegular, REGULARS, softClose, SOFT_KEY, SOFT_CLOSES, CAMPAIGNS, ACTIVE } from './splash.js';
 import { activeLine, rewrite, turnOn } from '../../../tools/agents/splash.mjs';
 import { GAMES, SUELTOS } from './games.js';
 import { IDIOMAS } from './i18n.js';
@@ -106,3 +106,18 @@ assert.deepEqual(fromRemote({ b: { on: true, order: 2, until: '2026-11-01' }, a:
   [{ id: 'a', from: '2026-10-30' }, { id: 'b', until: '2026-11-01' }]);
 assert.deepEqual(fromRemote({ c: { on: false, order: 0 } }), [], 'all off is off, not ACTIVE');
 assert.deepEqual(await loadActive({ fetchFn: async () => { throw new Error('offline'); } }), ACTIVE, 'no network: ACTIVE');
+
+// A soft close (a tap outside, Escape) is forgiven once per campaign (D-462): the first one leaves it
+// for another visit, the second counts as seen; each campaign keeps its own count
+{
+  const m = new Map(), store = { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) };
+  assert.equal(SOFT_CLOSES, 2);
+  assert.equal(softClose('a', store), false, 'the first soft close does not count as seen');
+  assert.equal(softClose('b', store), false, 'another campaign has its own count');
+  assert.equal(softClose('a', store), true, 'the second one does');
+  assert.deepEqual(JSON.parse(m.get(SOFT_KEY)), { a: 2, b: 1 });
+  m.set(SOFT_KEY, '{broken');
+  assert.equal(softClose('a', store), false, 'unreadable data starts over, never throws');
+  assert.equal(softClose('a', { getItem: () => null, setItem: () => { throw new Error('full'); } }), true, 'no storage: it counts as seen, so it never nags');
+}
+

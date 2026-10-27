@@ -38,14 +38,35 @@ export function campoCorreo(T = {}, id = 'feedback-correo') {
 export function abrirComentario({ T, contexto: ctx, enviar = undefined, alEnviar = undefined }) {
   if (document.querySelector('.labs-capa')) return;
   let capa = null;
-  const caja = formularioComentario({ T, contexto: ctx, enviar, alEnviar, alCerrar: () => capa.remove() });
+  let soltar = () => {};
+  const cerrar = () => { capa.remove(); soltar(); };
+  const caja = formularioComentario({ T, contexto: ctx, enviar, alEnviar, alCerrar: cerrar });
   caja.classList.add('labs-caja');
   caja.setAttribute('role', 'dialog');
   caja.setAttribute('aria-modal', 'true');
   capa = el('div', { class: 'labs-capa' }, caja);
-  capa.addEventListener('click', e => { if (e.target === capa) capa.remove(); });
+  capa.addEventListener('click', e => { if (e.target === capa) cerrar(); });
   document.body.append(capa);
   caja.querySelector('textarea').focus();
+  // The page behind stays put while the form is open, so only the card moves (the owner's request)
+  soltar = fijarFondo();
+}
+
+/**
+ * Pins the page under an overlay, the way the share and support sheets do: the body is fixed at its
+ * scroll position, so a finger on the backdrop or past the card's end cannot scroll it (iOS ignores
+ * `overflow: hidden` on the body). Returns the function that lets it go, back to the same place.
+ */
+export function fijarFondo(doc = document) {
+  const y = doc.defaultView?.scrollY || 0;
+  const antes = doc.body.getAttribute('style');
+  Object.assign(doc.body.style, { position: 'fixed', top: `-${y}px`, left: '0', right: '0', overflow: 'hidden' });
+  doc.documentElement.classList.add('fondo-fijo');
+  return () => {
+    if (antes === null) doc.body.removeAttribute('style'); else doc.body.setAttribute('style', antes);
+    doc.documentElement.classList.remove('fondo-fijo');
+    doc.defaultView?.scrollTo(0, y);
+  };
 }
 
 /**
