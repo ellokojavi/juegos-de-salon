@@ -395,6 +395,55 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
     else circulo(ctx, px, py, 0.55, arrastre ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.5)');
   }
 
+  // The train goes before the beams, so the truss passes in front of it as it crosses (owner's request)
+  // The train: the locomotive and two wagons on the deck, with its headlight and smoke
+  if (sim) {
+    const tr = sim.tren, giro = tr.x * 7;
+    if (tr.cayo && !esc.caida) esc.caida = { dy: 0, vy: 0, salpico: false };
+    if (esc.caida) { esc.caida.vy += 220 * dt; esc.caida.dy += esc.caida.vy * dt; }
+    const piezas = PIEZAS.map((pz, n) => ({ x: tr.x + pz.dx, k: n, loco: n === 0 }));
+    const en = piezas.map(p => { const h = alturaCamino(sim, p.x); const [px, py] = A(p.x, h ?? tr.y); return [px, py + (esc.caida && (h === null || p.k === tr.cayoPieza) ? esc.caida.dy : 0)]; });
+    for (let n = 1; n < en.length; n++) {
+      if (esc.sueltos.has(n)) continue;
+      if (Math.abs(en[n][1] - en[n - 1][1]) > 3) {
+        esc.sueltos.add(n);
+        if (!QUIETO) for (let s = 0; s < 8; s++) esc.parts.agregar({ x: en[n][0] + 10, y: en[n][1] - 4, vx: (Math.random() - 0.5) * 50, vy: -Math.random() * 40, g: 120, vida: 0.45, colores: ['#fff3a0', '#ffd23f', '#ff8a3d'], tipo: 'chispa' });
+        continue;
+      }
+      linea(ctx, en[n][0] + 6, en[n][1] - 3.8, en[n - 1][0] - 9, en[n - 1][1] - 3.8, OSCURO, 1.2);
+    }
+    if (TREN.humo && !QUIETO && sim.t < 1.2 && Math.random() < 0.5) for (const s of [-1, 1]) esc.parts.agregar({ x: en[0][0] + s * 9, y: en[0][1] - 2, vx: s * (10 + Math.random() * 10), vy: -4, vida: 0.8, radio: 1, crece: 3, colores: ['rgba(255,255,255,0.7)'], tipo: 'humo' });
+    // The headlight: a soft cone ahead
+    if (!tr.cayo) {
+      const [lx, ly] = [en[0][0] + TREN.luz.dx, en[0][1] + TREN.luz.dy];
+      const cono = ctx.createLinearGradient(lx, 0, lx + 26, 0);
+      cono.addColorStop(0, 'rgba(255,243,160,0.4)'); cono.addColorStop(1, 'rgba(255,243,160,0)');
+      ctx.fillStyle = cono; ctx.beginPath(); ctx.moveTo(lx, ly - 0.8); ctx.lineTo(lx + 26, ly - 5); ctx.lineTo(lx + 26, ly + 5); ctx.lineTo(lx, ly + 0.8); ctx.closePath(); ctx.fill();
+    }
+    for (const p of piezas) {
+      const [px, py] = en[p.k];
+      if (py > yAgua + 4) {
+        if (!esc.caida.salpico && !QUIETO) {
+          esc.caida.salpico = true;
+          for (let n = 0; n < 22; n++) esc.parts.agregar({ x: px, y: yAgua, vx: (Math.random() - 0.5) * 60, vy: -40 - Math.random() * 50, g: 140, vida: 1, colores: ['#bff8ff', '#7af0ff', '#2ec4d6'] });
+        }
+        continue;
+      }
+      if (p.loco) TREN.frente(ctx, px, py - 0.5, { giro, carga: e.carga });
+      else if (p.k === piezas.length - 1 && TREN.cola) TREN.cola(ctx, px, py - 0.5, { giro: giro + p.k });
+      else TREN.vagon(ctx, px, py - 0.5, e.carga, giro + p.k);
+      if (p.loco && TREN.humo && !tr.cayo && !QUIETO) {
+        esc.humo += dt;
+        if (esc.humo > 0.09) {
+          esc.humo = 0;
+          esc.parts.agregar({ x: px + TREN.humo.dx, y: py + TREN.humo.dy, vx: -8 - Math.random() * 8, vy: -16 - Math.random() * 6, vida: 1.5, radio: 1, crece: 2.6, colores: ['rgba(255,240,255,1)'], tipo: 'humo' });
+        }
+      }
+    }
+  }
+
+  // The particles: smoke as soft puffs, sparks that glow, drops and splinters
+
   // The beams: glowing rods, the house's yellow warming to red with the strain; the deck a little thicker, with its rail
   const grosor = 1.2;
   const pos = sim ? i => [sim.nudos[i].x, sim.nudos[i].y] : null;
@@ -463,53 +512,6 @@ export function dibujarNeon(c, e, { vigas = [], sim = null, grilla = false, arra
     });
   }
 
-  // The train: the locomotive and two wagons on the deck, with its headlight and smoke
-  if (sim) {
-    const tr = sim.tren, giro = tr.x * 7;
-    if (tr.cayo && !esc.caida) esc.caida = { dy: 0, vy: 0, salpico: false };
-    if (esc.caida) { esc.caida.vy += 220 * dt; esc.caida.dy += esc.caida.vy * dt; }
-    const piezas = PIEZAS.map((pz, n) => ({ x: tr.x + pz.dx, k: n, loco: n === 0 }));
-    const en = piezas.map(p => { const h = alturaCamino(sim, p.x); const [px, py] = A(p.x, h ?? tr.y); return [px, py + (esc.caida && (h === null || p.k === tr.cayoPieza) ? esc.caida.dy : 0)]; });
-    for (let n = 1; n < en.length; n++) {
-      if (esc.sueltos.has(n)) continue;
-      if (Math.abs(en[n][1] - en[n - 1][1]) > 3) {
-        esc.sueltos.add(n);
-        if (!QUIETO) for (let s = 0; s < 8; s++) esc.parts.agregar({ x: en[n][0] + 10, y: en[n][1] - 4, vx: (Math.random() - 0.5) * 50, vy: -Math.random() * 40, g: 120, vida: 0.45, colores: ['#fff3a0', '#ffd23f', '#ff8a3d'], tipo: 'chispa' });
-        continue;
-      }
-      linea(ctx, en[n][0] + 6, en[n][1] - 3.8, en[n - 1][0] - 9, en[n - 1][1] - 3.8, OSCURO, 1.2);
-    }
-    if (TREN.humo && !QUIETO && sim.t < 1.2 && Math.random() < 0.5) for (const s of [-1, 1]) esc.parts.agregar({ x: en[0][0] + s * 9, y: en[0][1] - 2, vx: s * (10 + Math.random() * 10), vy: -4, vida: 0.8, radio: 1, crece: 3, colores: ['rgba(255,255,255,0.7)'], tipo: 'humo' });
-    // The headlight: a soft cone ahead
-    if (!tr.cayo) {
-      const [lx, ly] = [en[0][0] + TREN.luz.dx, en[0][1] + TREN.luz.dy];
-      const cono = ctx.createLinearGradient(lx, 0, lx + 26, 0);
-      cono.addColorStop(0, 'rgba(255,243,160,0.4)'); cono.addColorStop(1, 'rgba(255,243,160,0)');
-      ctx.fillStyle = cono; ctx.beginPath(); ctx.moveTo(lx, ly - 0.8); ctx.lineTo(lx + 26, ly - 5); ctx.lineTo(lx + 26, ly + 5); ctx.lineTo(lx, ly + 0.8); ctx.closePath(); ctx.fill();
-    }
-    for (const p of piezas) {
-      const [px, py] = en[p.k];
-      if (py > yAgua + 4) {
-        if (!esc.caida.salpico && !QUIETO) {
-          esc.caida.salpico = true;
-          for (let n = 0; n < 22; n++) esc.parts.agregar({ x: px, y: yAgua, vx: (Math.random() - 0.5) * 60, vy: -40 - Math.random() * 50, g: 140, vida: 1, colores: ['#bff8ff', '#7af0ff', '#2ec4d6'] });
-        }
-        continue;
-      }
-      if (p.loco) TREN.frente(ctx, px, py - 0.5, { giro, carga: e.carga });
-      else if (p.k === piezas.length - 1 && TREN.cola) TREN.cola(ctx, px, py - 0.5, { giro: giro + p.k });
-      else TREN.vagon(ctx, px, py - 0.5, e.carga, giro + p.k);
-      if (p.loco && TREN.humo && !tr.cayo && !QUIETO) {
-        esc.humo += dt;
-        if (esc.humo > 0.09) {
-          esc.humo = 0;
-          esc.parts.agregar({ x: px + TREN.humo.dx, y: py + TREN.humo.dy, vx: -8 - Math.random() * 8, vy: -16 - Math.random() * 6, vida: 1.5, radio: 1, crece: 2.6, colores: ['rgba(255,240,255,1)'], tipo: 'humo' });
-        }
-      }
-    }
-  }
-
-  // The particles: smoke as soft puffs, sparks that glow, drops and splinters
   esc.parts.paso(dt);
   for (const p of esc.parts.lista) {
     const t = p.edad / p.vida, col = p.colores[Math.min(p.colores.length - 1, Math.floor(t * p.colores.length))];
