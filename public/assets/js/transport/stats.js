@@ -90,11 +90,14 @@ export function envOf({ hostname = '', pathname = '' } = {}) {
   return 'prod';
 }
 
-/** Versión de la app, leída del import map que estampa set-version.py (C-11). */
-export function versionOf(importmapText) {
-  const m = /\?v=(\d+\.\d+\.\d+)/.exec(importmapText || '');
+/** The app's version, from the release meta set-version.py writes (`0.98.1-09eb4db`, C-11, D-467). */
+export function versionOf(release) {
+  const m = /^(\d+\.\d+\.\d+)/.exec(release || '');
   return m ? m[1] : '0';
 }
+
+/** The page's release meta, or '' outside a published copy. */
+export const releaseOf = doc => doc?.querySelector?.('meta[name="release"]')?.content || '';
 
 /**
  * Zona horaria como clave de Firebase, acotada. La barra no puede ir en una clave y el
@@ -178,7 +181,7 @@ export function fingerprint({ loc = globalThis.location, nav = globalThis.naviga
   try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (_) { /* nada */ }
   return {
     env: envOf(loc || {}),
-    v: versionOf(doc?.getElementById?.('importmap')?.textContent),
+    v: versionOf(releaseOf(doc)),
     tz: tzKey(tz),
     co: countryOf({ tz, lang: nav?.language }),
     lang: langKey(nav?.language),
