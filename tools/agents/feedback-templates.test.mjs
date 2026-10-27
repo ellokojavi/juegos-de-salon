@@ -8,6 +8,8 @@ for (const [lang, T] of Object.entries(TEMPLATES)) {
   for (const k of ['openings', 'openingsMany']) {
     assert.equal(T[k].length, 10, `${lang}: ten ${k}`);
     assert.equal(new Set(T[k]).size, 10, `${lang}: all different`);
+    // Owner's request: every opening thanks the player for their time, or the email reads dry
+    for (const o of T[k]) assert.match(o, new RegExp({ es: "gracias", en: "thank", pt: "obrigad", de: "dank" }[lang], "i"), `${lang}: "${o}" thanks no one`);
   }
   const all = [T.subject, T.subjectMany, T.quoted('x'), T.greeting('Ana'), T.greeting(''), ...T.openings, ...T.openingsMany, T.closing, T.signature].join('\n');
   assert.doesNotMatch(all, /[—–]/, `${lang}: no em or en dashes`);
