@@ -306,7 +306,7 @@ regla: quien cambia algo lo documenta en su mismo PR.
 ## C-14 · Robustez
 
 - Nada de dependencias de npm ni de paso de compilación: el repo publicado se abre y funciona.
-- Las bibliotecas externas (QR) se cargan bajo demanda y su falla no rompe la pantalla.
+- Las bibliotecas externas (QR) se cargan bajo demanda y su falla no rompe la pantalla. The room QR is drawn by the shared module `public/assets/js/qr.js` (`renderQr`), which loads a copy of the library served by the site itself (`public/assets/js/vendor/qrcode.js`, qrcode-generator 1.4.4, unchanged), never from a CDN; a game does not carry its own copy of that code.
 - Cada juego expone un gancho de solo lectura `window.__…` para las pruebas automatizadas, nombrado en la especificación del juego (D-213).
 - La pantalla no se apaga jugando (`keepAwake()`).
 - Los errores previsibles se muestran al jugador en su idioma, con una salida clara; nunca una pantalla en blanco.
