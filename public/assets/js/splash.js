@@ -242,8 +242,15 @@ export function softClose(id, store = storage()) {
  * `shown` each time the window opens; `reach` the first time on this phone (unique phones); `play`
  * its link tapped; `close` closed (✕, Not now, the backdrop, Escape); and how long it stayed open
  * before either, in bands (`dwellBand`). A window left by closing the tab counts only `shown`.
+ * After Play, the game it opened counts `start` and `finish` (D-466, stats.js).
  */
-export const SPLASH_EVENTS = ['shown', 'reach', 'play', 'close', 't0', 't1', 't2'];
+export const SPLASH_EVENTS = ['shown', 'reach', 'play', 'close', 't0', 't1', 't2', 'start', 'finish'];
+/**
+ * Conversion (D-466): Play leaves the campaign in this tab (sessionStorage, the same key as
+ * stats.js's SPLASH_VIA_KEY), so the game it opens counts `start` and `finish` for it.
+ */
+export const VIA_KEY = 'juegos-de-salon:splash-via';
+const markVia = (id, now = Date.now()) => { try { globalThis.sessionStorage?.setItem(VIA_KEY, JSON.stringify({ id, at: now })); } catch (_) { /* best effort */ } };
 /** How long the window stayed open: under 3 s, 3 to 10 s, 10 s or more. */
 export const dwellBand = ms => (ms < 3000 ? 't0' : ms < 10000 ? 't1' : 't2');
 export const REACH_KEY = 'juegos-de-salon:splash-alcance';
@@ -416,7 +423,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
     for (const b of [x, done]) b.addEventListener('click', () => close());
     backdrop.addEventListener('click', () => close(true));
     // Following a game's link also counts as having seen it
-    list.addEventListener('click', e => { if (!e.target.closest('a')) return; answer('play'); if (record) markSeen(id); });
+    list.addEventListener('click', e => { if (!e.target.closest('a')) return; answer('play'); if (record) { markSeen(id); markVia(id); } });
   });
 }
 

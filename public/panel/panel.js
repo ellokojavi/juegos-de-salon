@@ -1594,13 +1594,13 @@ function bloqueResultados(rows) {
   const rango = rangeOf(S.range);
   const todas = rows.map(s => campaignStats(S.days, s.id, rango)).filter(Boolean);
   const nombre = id => `${CAMPAIGNS[id]?.emoji || ''} ${CAMPAIGNS[id]?.title?.es || id}`.trim();
-  const nota = `${tituloRango()}, UTC days; previews never count. Reach: phones that saw it for the first time. Tapped: taps on its Play link over reach. Only the days it was shown count, so switching it off and on is fine.`;
+  const nota = `${tituloRango()}, UTC days; previews never count. Reach: phones that saw it for the first time. Tapped: taps on its Play link over reach. Finished a game: in the same tab, within 2 hours of the tap. Only the days it was shown count, so switching it off and on is fine.`;
   if (!todas.length) return bloque('📊 How they did', nota, el('p', { class: 'empty' }, S.daysLoaded ? 'No campaign was shown in this range.' : 'Loading…'));
   const elegida = todas.find(c => c.id === S.campStats) || todas[0];
   const maxR = Math.max(0, ...todas.map(c => c.reach));
   const filas = todas.map(c => {
     const b = bar(nombre(c.id), [seg(C_PLAY, c.play), seg(C_REST, Math.max(0, c.reach - c.play))], maxR,
-      { cifra: c.reach, detail: `${tasa(c.ctr)} tapped · ${n(c.exposed)} ${c.exposed === 1 ? 'day' : 'days'} shown · ${unDecimal(c.reach / c.exposed)} new phones a day` });
+      { cifra: c.reach, detail: `${tasa(c.ctr)} tapped · ${tasa(c.conversion)} finished a game · ${n(c.exposed)} ${c.exposed === 1 ? 'day' : 'days'} shown · ${unDecimal(c.reach / c.exposed)} new phones a day` });
     return el('button', { type: 'button', class: 'campana-fila', 'aria-pressed': String(c === elegida), onClick: () => { S.campStats = c.id; render(); } }, b);
   });
 
@@ -1612,12 +1612,14 @@ function bloqueResultados(rows) {
     : `First ${EARLY_DAYS} days shown: ${unDecimal(c.early)} new phones a day; since then ${unDecimal(c.late)} a day (${caida > 0 ? '+' : ''}${caida}%). Half its reach came in its first ${n(c.halfDays)} ${c.halfDays === 1 ? 'day' : 'days'} shown.`) + antes;
   const maxD = Math.max(0, ...c.series.map(r => r.shown));
   const dias = c.series.map(r => bar(periodLabelDia(r.day), r.off ? [] : [seg(C_PLAY, r.play), seg(C_CLOSE, r.close), seg(C_REST, Math.max(0, r.shown - r.play - r.close))], maxD,
-    { cifra: r.shown, sub: r.off ? 'not shown' : `day ${r.n}`, detail: r.off ? '' : `${n(r.reach)} new phones · ${tasa(r.home ? r.shown / r.home : null)} of home views` }));
+    { cifra: r.shown, sub: r.off ? 'not shown' : `day ${r.n}`, detail: r.off ? '' : `${n(r.reach)} new phones · ${n(r.finish)} finished a game · ${tasa(r.home ? r.shown / r.home : null)} of home views` }));
   const detalle = el('div', { class: 'campana-resultado' },
     el('p', { class: 'lead' }, nombre(c.id)),
     el('div', { class: 'tiles' },
       tile(c.reach, 'phones reached', { info: `${unDecimal(c.perPhone)} windows per phone` }),
       tile(tasa(c.ctr), `tapped · ${n(c.play)}`, { info: 'of phones reached' }),
+      tile(tasa(c.finishRate), `finished a game · ${n(c.finish)}`, { info: `of taps · ${tasa(c.startRate)} started one` }),
+      tile(tasa(c.conversion), 'converted', { info: 'finished a game, of phones reached' }),
       tile(tasa(c.closeRate), `closed · ${n(c.close)}`, { info: 'of phones reached' }),
       tile(tasa(c.coverage), 'of home page views', { info: 'on the days it was shown' }),
       tile(tasa(c.stay3), 'stayed 3 s or more', { info: `${tasa(c.stay10)} 10 s or more` }),
@@ -1626,7 +1628,7 @@ function bloqueResultados(rows) {
     el('p', { class: 'muted small leyenda' }, el('span', { style: `color:${C_PLAY}` }, '■'), ' tapped · ', el('span', { style: `color:${C_CLOSE}` }, '■'), ' closed · ', el('span', { style: `color:${C_REST}` }, '■'), ' left without answering. Each bar is the windows shown that day.'),
     lista(dias, 'Nothing yet.', 'bars'));
   return conCsv(bloque('📊 How they did', nota, lista(filas, '', 'bars'), detalle), `campaign-${c.id}`,
-    () => c.series.map(r => ({ day: new Date(r.day * DAY).toISOString().slice(0, 10), shown_day: r.n ?? '', shown: r.shown, reach: r.reach, play: r.play, close: r.close, under3s: r.t0, s3to10: r.t1, over10s: r.t2, home_views: r.home })));
+    () => c.series.map(r => ({ day: new Date(r.day * DAY).toISOString().slice(0, 10), shown_day: r.n ?? '', shown: r.shown, reach: r.reach, play: r.play, start: r.start, finish: r.finish, close: r.close, under3s: r.t0, s3to10: r.t1, over10s: r.t2, home_views: r.home })));
 }
 
 function vistaCampanas(now) {
