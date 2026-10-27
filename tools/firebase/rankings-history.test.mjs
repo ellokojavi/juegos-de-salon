@@ -74,7 +74,8 @@ assert.deepEqual(history({}, withGames, now).changes['records/partidas/siempre/z
 const ls = new Map();
 const storage = { getItem: k => (ls.has(k) ? ls.get(k) : null), setItem: (k, v) => ls.set(k, String(v)), removeItem: k => ls.delete(k) };
 ls.set('juegos-de-salon:prueba:records-db', JSON.stringify(base));
-const mk = uid => crearJugador({ almacen: crearAlmacenLocal({ storage, uid, now: () => now }), storage: { getItem: k => storage.getItem(`${uid}:${k}`), setItem: (k, v) => storage.setItem(`${uid}:${k}`, v), removeItem: k => storage.removeItem(`${uid}:${k}`) }, now: () => now });
+let skew = 0; // the phone waits between PIN attempts (D-464): here the clock moves instead
+const mk = uid => crearJugador({ esperar: async ms => { skew += ms; }, almacen: crearAlmacenLocal({ storage, uid, now: () => now + skew }), storage: { getItem: k => storage.getItem(`${uid}:${k}`), setItem: (k, v) => storage.setItem(`${uid}:${k}`, v), removeItem: k => storage.removeItem(`${uid}:${k}`) }, now: () => now + skew });
 const phone = mk('u1');
 const r = await phone.entrar('Pancho', '1234');
 assert.deepEqual(r, { estado: 'nuevo', otros: 0, heredado: pancho, nombreHeredado: 'pancho' });

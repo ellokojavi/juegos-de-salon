@@ -38,7 +38,6 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453 |
 | Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463 |
-| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456, D-465 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433, D-465 |
@@ -50,14 +49,13 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460 |
-| La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456, D-460 |
+| La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456, D-460, D-464 |
 | Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451, D-452, D-459, D-463 |
-| Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450, D-455, D-465 |
+| Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450, D-455, D-464, D-465 |
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (451)
-## In force (450)
+## In force (452)
 
 | D | Title | Status |
 |---|---|---|
@@ -152,7 +150,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-93](decisions/D-93.md) | A ship sinks in a second, not in a repaint | current |
 | [D-94](decisions/D-94.md) | La Copa: a multi-day tournament instead of one more room | amended by D-444 |
 | [D-95](decisions/D-95.md) | Time breaks ties, and it is active time | current |
-| [D-96](decisions/D-96.md) | An account is a name and PIN inside a cup, with anonymous Firebase access | amended by D-359 |
+| [D-96](decisions/D-96.md) | An account is a name and PIN inside a cup, with anonymous Firebase access | amended by D-359, D-464 |
 | [D-97](decisions/D-97.md) | The day's content comes from a public seed, and ¿Dudo o le creo? scores decisions | amended by D-102 |
 | [D-99](decisions/D-99.md) | Group notices are sent by the admin, with pre-built messages | amended by D-221 |
 | [D-100](decisions/D-100.md) | The 3-day Copa is only for testing | amended by D-266, D-437, D-438 |
@@ -264,7 +262,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-209](decisions/D-209.md) | The flag next to each name, also for earlier ones | current |
 | [D-210](decisions/D-210.md) | Offline games say who played and how they ended | amended by D-213 |
 | [D-211](decisions/D-211.md) | Each cup, room and offline game says which language it was played in | current |
-| [D-212](decisions/D-212.md) | A player is a name and a PIN for all games, and their records go to rankings | amended by D-217, D-249, D-357, D-450, D-455 |
+| [D-212](decisions/D-212.md) | A player is a name and a PIN for all games, and their records go to rankings | amended by D-217, D-249, D-357, D-450, D-455, D-464 |
 | [D-213](decisions/D-213.md) | One source per rule: the canons state today's rule | amended by D-394 |
 | [D-214](decisions/D-214.md) | The home page filter is in English in the URL: `?type=logic` | current |
 | [D-215](decisions/D-215.md) | Wins per group game, and records for solo Toque y Fama and Línea Relámpago | amended by D-217 |
@@ -509,9 +507,9 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-459](decisions/D-459.md) | Feedback reports are readable only by the owner; the tools read them with the admin key | current |
 | [D-460](decisions/D-460.md) | ¿Dónde queda?'s Earth in WebP, next to the game, and the 4096 px image only on big screens or zoomed in | current |
 | [D-461](decisions/D-461.md) | The splash campaigns are measured: reach, taps and closes against the days each one was shown | current |
-| [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit (in the lab) | current |
-| [D-463](decisions/D-463.md) | A privacy page in four languages, and an unanswered feedback email is deleted after 90 days | current |
 | [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit | current |
+| [D-463](decisions/D-463.md) | A privacy page in four languages, and an unanswered feedback email is deleted after 90 days | current |
+| [D-464](decisions/D-464.md) | PIN attempts are rate-limited, and changing a PIN needs the current one | current |
 | [D-465](decisions/D-465.md) | Uno al día points count only near the day's own date, and only after its start | current |
 
 ## No longer in force (11)

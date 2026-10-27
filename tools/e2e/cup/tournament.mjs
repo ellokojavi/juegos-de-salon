@@ -84,7 +84,8 @@ async function sitDown(code, name, pin) {
   await click('#tab-inscrito'); await b.settle(150);
   await ev(`[...document.querySelectorAll('.chip-btn')].find(x=>x.textContent===${JSON.stringify(name)}).click(); 1`);
   await ev(`document.querySelector('#entrar-body input.pin').value='${pin}'; 1`);
-  await click('#btn-sentarse'); await b.until(`__copa.estado.pantalla === 'tablero'`, 500, 30);
+  // A second PIN attempt on a player within 5 s waits them (D-464)
+  await click('#btn-sentarse'); await b.until(`__copa.estado.pantalla === 'tablero'`, 9000, 30);
 }
 
 /* ---------- How each player plays each game. `level` from 0 (bad) to 2 (perfect). ---------- */
@@ -578,14 +579,30 @@ if (runs('cup')) {
   await asPlayer(CODE);
   await click('#tab-nuevo'); await sleep(100);
   await ev(`(()=>{const i=[...document.querySelectorAll('#entrar-body input')];i[0].value='javi ';i[1].value='4444';i[2].value='4444';return 1})()`);
-  await click('#btn-inscribir'); await sleep(300);
+  // PIN attempts wait 5 s between tries on a player (D-464)
+  await click('#btn-inscribir'); await b.until(`/Ya hay alguien/.test(document.querySelector('#entrar-body .form-error')?.textContent || '')`, 9000, 200);
   ok(/Ya hay alguien/.test(await ev(`document.querySelector('#entrar-body .form-error').textContent`)), 'a repeated name is rejected');
   await checkScreen('invitation');
   // Wrong PIN
   await click('#tab-inscrito'); await sleep(100);
   await ev(`[...document.querySelectorAll('.chip-btn')].find(x=>x.textContent==='Javi').click(); document.querySelector('#entrar-body input.pin').value='9999'; 1`);
-  await click('#btn-sentarse'); await sleep(300);
+  await click('#btn-sentarse'); await b.until(`/no es el de Javi/.test(document.querySelector('#entrar-body .form-error')?.textContent || '')`, 9000, 200);
   ok(/no es el de Javi/.test(await ev(`document.querySelector('#entrar-body .form-error').textContent`)), 'a wrong PIN is rejected');
+  // A new PIN for a player: the admin confirms with their own PIN (D-464)
+  await sitDown(CODE, 'Cata', '1111');
+  await click('#btn-admin'); await sleep(300);
+  const newPinFor = async (name, pin, mine) => {
+    await ev(`[...document.querySelectorAll('.admin-fila')].find(f => f.querySelector('.admin-nombre b').firstChild.textContent === ${JSON.stringify(name)}).querySelector('.acciones .mini-btn').click(); 1`);
+    await sleep(100);
+    await ev(`(()=>{const i=[...document.querySelectorAll('.acciones input.mini')];i[0].value='${pin}';i[1].value='${mine}';document.querySelector('.acciones .btn--yellow').click();return i.length})()`);
+  };
+  await newPinFor('Javi', '2222', '0000');
+  await b.until(`/no es tu PIN/.test(document.body.innerText)`, 9000, 200);
+  ok(/no es tu PIN/.test(await ev('document.body.innerText')), "the admin's wrong PIN gives no new PIN, and says so");
+  await b.shot('admin-new-pin');
+  await ev(`(()=>{const i=[...document.querySelectorAll('.acciones input.mini')];i[1].value='1111';document.querySelector('.acciones .btn--yellow').click();return 1})()`);
+  await b.until(`/nuevo PIN de Javi es 2222/.test(document.body.innerText)`, 9000, 200);
+  ok(/nuevo PIN de Javi es 2222/.test(await ev('document.body.innerText')), 'with their own PIN, the admin gives Javi a new PIN (D-464)');
   // Opening through the custom link leads to the same cup
   await ev('sessionStorage.clear(); 1');
   await b.go(`${BASE}?oficina&test`, 1200); await prepare();

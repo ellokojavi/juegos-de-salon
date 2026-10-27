@@ -42,7 +42,7 @@ export function mmss(ms) {
 export const URL_RECORDS = new URL('../../records/', import.meta.url).href;
 
 const MEDALLA = ['🥇', '🥈', '🥉'];
-const errorDe = e => (e?.code === 'pin' ? R().loggedOut : R().errNet);
+const errorDe = e => ({ pin: R().loggedOut, 'pin-actual': R().errCurrentPin, espera: R().errWait })[e?.code] || R().errNet;
 
 /* ------------------------------------------------------------------ */
 /* Entrar                                                              */
@@ -65,14 +65,16 @@ export function bloqueJugador({ abierto = false, destacado = false, compacto = f
     caja.replaceChildren();
     if (yo) {
       // Lo de la cuenta (cambiar el PIN, salir) se despliega al tocar el nombre: no es un récord
+      // The current PIN first (D-464): a phone that is only signed in cannot change it
+      const actual = el('input', { id: 'rk-pin-actual', class: 'rk-pin', type: 'password', inputmode: 'numeric', pattern: '[0-9]*', maxlength: '4', autocomplete: 'off', 'aria-label': T.currentPin });
       const pin = el('input', { id: 'rk-pin-nuevo', class: 'rk-pin', type: 'password', inputmode: 'numeric', pattern: '[0-9]*', maxlength: '4', autocomplete: 'off', 'aria-label': T.newPin });
       const aviso = el('p', { class: 'rk-error', role: 'alert' });
       const cambiar = el('button', { type: 'button', class: 'btn btn--ghost btn--sm', id: 'rk-cambiar-pin' }, T.changePin);
       cambiar.addEventListener('click', async () => {
         alTocar(); aviso.className = 'rk-error'; aviso.textContent = '';
-        if (!esPin(pin.value)) { aviso.textContent = T.errPin; return; }
+        if (!esPin(actual.value) || !esPin(pin.value)) { aviso.textContent = T.errPin; return; }
         cambiar.disabled = true;
-        try { await (await jugador()).cambiarPin(pin.value); pin.value = ''; aviso.className = 'rk-ok'; aviso.textContent = T.pinChanged; }
+        try { await (await jugador()).cambiarPin(actual.value, pin.value); actual.value = ''; pin.value = ''; aviso.className = 'rk-ok'; aviso.textContent = T.pinChanged; }
         catch (e) { aviso.textContent = errorDe(e); }
         cambiar.disabled = false;
       });
@@ -81,6 +83,7 @@ export function bloqueJugador({ abierto = false, destacado = false, compacto = f
         el('summary', {}, el('span', {}, '🏅 ', ...partirNombre(fmt(T.playingAs, { name: '\u0000' }), conBandera(yo.co, yo.n)))),
         el('div', { class: 'rk-cuenta' },
           el('p', { class: 'muted rk-hint' }, fmt(T.pinHint, { name: yo.n })),
+          el('label', { class: 'rk-campo' }, el('span', {}, T.currentPin), actual),
           el('label', { class: 'rk-campo' }, el('span', {}, T.newPin), pin),
           cambiar, aviso,
           el('button', { type: 'button', class: 'rk-link', id: 'rk-salir', onClick: async () => { alTocar(); mensaje = ''; (await jugador()).salir(); } }, T.logout))),

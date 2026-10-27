@@ -115,7 +115,7 @@ assert.deepEqual(ultimasCopas({ A: { name: 'a', end: 1, p: { x: { n: 'X', l: 1 }
 const ls = new Map();
 const storage = { getItem: k => (ls.has(k) ? ls.get(k) : null), setItem: (k, v) => ls.set(k, String(v)), removeItem: k => ls.delete(k) };
 const ahora = { t: Date.UTC(2026, 9, 7, 15) };
-const mkJugador = uid => crearJugador({ pais: () => (uid === 'uid1' ? 'CL' : ''), almacen: crearAlmacenLocal({ storage, uid, now: () => ahora.t }), storage: { ...storage, getItem: k => storage.getItem(`${uid}:${k}`), setItem: (k, val) => storage.setItem(`${uid}:${k}`, val), removeItem: k => storage.removeItem(`${uid}:${k}`) }, now: () => ahora.t, juegos: ['reinas', 'zip'] });
+const mkJugador = uid => crearJugador({ pais: () => (uid === 'uid1' ? 'CL' : ''), almacen: crearAlmacenLocal({ storage, uid, now: () => ahora.t }), storage: { ...storage, getItem: k => storage.getItem(`${uid}:${k}`), setItem: (k, val) => storage.setItem(`${uid}:${k}`, val), removeItem: k => storage.removeItem(`${uid}:${k}`) }, now: () => ahora.t, juegos: ['reinas', 'zip'], esperar: async ms => { ahora.t += ms; } });
 
 const cel1 = mkJugador('uid1'), cel2 = mkJugador('uid2'), cel3 = mkJugador('uid3');
 assert.deepEqual(await cel1.entrar('Javi', '1234'), { estado: 'nuevo', otros: 0 });
@@ -176,10 +176,32 @@ assert.deepEqual(t.top.map(f => [f.n, f.s]), [['Javi', 135], ['Javi', 110]]);
 const perfil = await cel1.perfil();
 assert.equal(perfil.juegos.reinas.n, 4);
 // Cambiar el PIN saca a los otros celulares
-await cel1.cambiarPin('4321');
+// The current PIN is needed (D-464): a seated phone alone cannot change it
+await assert.rejects(cel1.cambiarPin('0000', '4321'), { code: 'pin-actual' });
+await cel1.cambiarPin('1234', '4321');
 await assert.rejects(cel2.anotar({ juego: 'zip', s: 100, ms: 1 }), /pin/);
 assert.equal((await mkJugador('uid5').entrar('Javi', '1234')).estado, 'nuevo');
 assert.equal((await mkJugador('uid6').entrar('Javi', '4321')).estado, 'dentro');
+// PIN attempts (D-464): the store keeps the rules' 5 s between attempts on a player; the phone
+// waits them once on its own (here the clock moves), and an attempt never seats another phone
+{
+  const db7 = crearAlmacenLocal({ storage, uid: 'uid7', now: () => ahora.t });
+  const intento = h => db7.update({ [`jugadorIntentos/${javi.jid}`]: { h, u: 'uid7', at: { '.sv': 'timestamp' } } });
+  ahora.t += 10000;
+  const h = await hashPinJugador(javi.jid, '4321');
+  await assert.rejects(db7.update({ [`jugadorSeats/${javi.jid}/uid7`]: h }), { code: 'permiso' }, 'the right hash with no attempt');
+  await intento(await hashPinJugador(javi.jid, '0000'));
+  await assert.rejects(intento(h), { code: 'permiso' }, 'a second attempt within 5 s');
+  await assert.rejects(db7.update({ [`jugadorSeats/${javi.jid}/uid7`]: h }), { code: 'permiso' }, 'the attempt held another PIN');
+  ahora.t += 5001;
+  await intento(h);
+  await db7.update({ [`jugadorSeats/${javi.jid}/uid7`]: h });
+  ahora.t += 10000;
+  const t0 = ahora.t;
+  assert.equal((await mkJugador('uid8').entrar('Javi', '0000')).estado, 'nuevo');
+  assert.equal((await mkJugador('uid8').entrar('Javi', '4321')).estado, 'dentro', 'a quick second try waits and goes in');
+  assert.ok(ahora.t - t0 >= 5000, 'it waited the 5 s');
+}
 // Salir deja el celular sin jugador; los récords quedan
 cel1.salir();
 assert.equal(cel1.yo(), null);
