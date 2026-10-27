@@ -1,6 +1,5 @@
 /**
- * "☕ Buy me a coffee": voluntary support through a Stripe Payment Link (in the lab, D-395).
- * lab: #seccion-apoyo
+ * "☕ Buy me a coffee": voluntary support through a Stripe Payment Link, for every player (D-448, D-449).
  *
  * Where it shows, from the quietest to the most visible, and never during a game or as a popup (U-38):
  *
@@ -18,11 +17,10 @@
  * thank-you as the same sheet (`supportFromUrl`); `?support=open` opens the card (the lab's link).
  *
  * Every step is counted in the day's stats as `support/<event>` (shown, open, pay, thanks): only
- * counts, never who. Until PAYMENT_LINK is set, the button simulates a payment (lab only).
+ * counts, never who. Until PAYMENT_LINK is set, the button simulates a payment.
  */
 import { el } from './ui.js';
 import { getLang } from './i18n.js';
-import { labAccess } from './lab-access.js';
 import { param, tiene } from './parametros.js';
 
 /**
@@ -204,20 +202,19 @@ const link = (cls, id, T) => el('button', { type: 'button', class: cls, id, 'ari
 
 /**
  * On the home page: `?support=thanks` (Stripe's way back) opens the thank-you, `?support=open` the
- * card. Lab key holders only, for now. The parameter leaves the address, so a reload does not count again.
+ * card. The parameter leaves the address, so a reload does not count again.
  */
 export async function supportFromUrl({ lang = getLang(), search = globalThis.location?.search ?? '' } = {}) {
   const v = param('support', search);
-  if (v === null || !(await labAccess())) return false;
+  if (v === null) return false;
   try { const u = new URL(location.href); u.searchParams.delete('support'); history.replaceState(null, '', u); } catch (_) { /* the address stays */ }
   openSupportSheet({ lang, thanks: v === 'thanks', record: !tiene('test', search) });
   return true;
 }
 
 
-/** The home page footer's link, or null without a lab key. */
+/** The home page footer's link. */
 export async function supportFooterLink(lang = getLang()) {
-  if (!(await labAccess())) return null;
   return link('buzon-link footer-buzon', 'btn-apoyo-portada', texts(lang));
 }
 
@@ -230,7 +227,6 @@ export async function supportAtEnd(screen, { store = globalThis.localStorage, no
   try {
     if (!screen || now - last < 3000) return null;
     last = now;
-    if (!(await labAccess())) return null;
     screen.querySelector('#apoyo-pie')?.remove();
     if (!dueSupport(store, now, { busy: !!screen.querySelector('#buzon-pie') })) return null;
     const T = texts();
