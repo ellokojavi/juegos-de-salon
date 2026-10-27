@@ -43,11 +43,16 @@ const DAYS_KEY = 'juegos-de-salon:dias';
 const INBOX_KEY = 'juegos-de-salon:buzon';
 const SUPPORT_KEY = 'juegos-de-salon:support';
 
-/** This phone's profile, from `get(key)` (localStorage): `{ days, games, paid }`. Never throws. */
-export function readProfile(get = k => { try { return globalThis.localStorage?.getItem(k) ?? null; } catch (_) { return null; } }) {
+/**
+ * This phone's profile, from `get(key)` (localStorage): `{ days, games, paid }`. Never throws.
+ * Only the days of the last four weeks count: the list is pruned only when stats.js writes it, so a
+ * phone back after a long absence may still keep older ones.
+ */
+export function readProfile(get = k => { try { return globalThis.localStorage?.getItem(k) ?? null; } catch (_) { return null; } }, now = Date.now()) {
   const obj = k => { try { return JSON.parse(get(k) || '{}') || {}; } catch (_) { return {}; } };
+  const today = Math.floor(now / 86400000);   // stats.js's day number (cleanup.js dayOf)
   let days = 0;
-  try { days = new Set(String(get(DAYS_KEY) || '').split(',').map(s => s.trim()).filter(Boolean)).size; } catch (_) { /* none */ }
+  try { days = new Set(String(get(DAYS_KEY) || '').split(',').map(Number).filter(d => Number.isInteger(d) && d > today - 28 && d <= today)).size; } catch (_) { /* none */ }
   return { days, games: Number(obj(INBOX_KEY).partidas) || 0, paid: !!obj(SUPPORT_KEY).paid };
 }
 

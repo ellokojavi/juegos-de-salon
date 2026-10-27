@@ -43,11 +43,14 @@ assert.deepEqual(queue({ active: [{ id: 'r' }], campaigns: forRegulars, today, p
 assert.deepEqual(queue({ active: [], campaigns: forRegulars, forced: 'r', today }), ['r'], '?splash= previews it regardless');
 // The profile, from what the phone already keeps
 const kept = { 'juegos-de-salon:dias': '20380,20381,20383,20385,20386,20386', 'juegos-de-salon:buzon': JSON.stringify({ partidas: 12, visto: '2026-10-27' }), 'juegos-de-salon:support': JSON.stringify({ games: 3 }) };
-assert.deepEqual(readProfile(k => kept[k] ?? null), { days: 5, games: 12, paid: false });
-assert.ok(isRegular(readProfile(k => kept[k] ?? null)));
+const onDay = d => d * 86400000 + 3600000;   // a moment of stats.js's day number d
+assert.deepEqual(readProfile(k => kept[k] ?? null, onDay(20386)), { days: 5, games: 12, paid: false });
+assert.ok(isRegular(readProfile(k => kept[k] ?? null, onDay(20386))));
+assert.equal(readProfile(k => kept[k] ?? null, onDay(20408)).days, 4, 'only the last four weeks count, even if the list was not pruned yet');
+assert.equal(readProfile(k => kept[k] ?? null, onDay(20500)).days, 0, 'back after months: not a regular yet');
 assert.deepEqual(readProfile(k => (k === 'juegos-de-salon:support' ? JSON.stringify({ paid: 1 }) : kept[k] ?? null)).paid, true);
 assert.deepEqual(readProfile(() => null), { days: 0, games: 0, paid: false }, 'a new phone');
-assert.deepEqual(readProfile(() => '{broken'), { days: 1, games: 0, paid: false }, 'unreadable data never throws');
+assert.deepEqual(readProfile(() => '{broken'), { days: 0, games: 0, paid: false }, 'unreadable data never throws');
 assert.equal(isRegular(null), false);
 assert.equal(CAMPAIGNS['brindis-apoyo'].audience, 'regulars', 'the toast waits for regulars (the owner asked)');
 // What a phone remembers: a list, and the bare id it kept before reads as a list of one
