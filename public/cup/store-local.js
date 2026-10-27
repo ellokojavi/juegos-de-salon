@@ -148,13 +148,16 @@ export function createLocalStore({ uid = null, pausa = 5000, esperar = ms => new
 
     /** A PIN attempt on cup player `pid`, one every `pausa` per player, as the rules (D-464). */
     async intentar(code, pid, pinHash) {
-      const una = () => cambiar(db => {
-        const L = copa(db, code);
+      // Saved without telling the listeners: on the site the attempts live outside `torneos/<code>`,
+      // which is all a cup screen listens to, so an attempt never redraws a screen
+      const una = () => {
+        const db = leerTodo(), L = copa(db, code);
         if (!L._keys[pid]) throw falla('espera');
         const antes = L._intentos?.[pid];
         if (antes && antes.at > now() - pausa) throw falla('espera');
         (L._intentos ||= {})[pid] = { h: pinHash, u: yo, at: now() };
-      });
+        guardarTodo(db);
+      };
       try { await una(); return; } catch (e) { if (e.code !== 'espera') throw e; }
       await esperar(pausa + 500);
       await una();
