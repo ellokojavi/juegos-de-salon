@@ -97,6 +97,13 @@ It uses a service account key stored outside the repo at
 → Generate new private key. It gives admin access to the whole project: it isn't shared, and if
 it leaks it is revoked right there. Without the key, you can still paste by hand in the console.
 
+**Testing the rules without Firebase (D-464).** `tools/firebase/rules-sim.mjs` is a small simulator of
+`database.rules.json` (no emulator, no npm): `createDb(rules, tree)` gives a database whose
+`update(changes, { uid, now })` applies a multi-path update only if the rules accept every path, and
+says whether they did. It covers what the tests
+need, not the whole rules language. `firebase/pin-attempts.test.mjs` uses it to check the PIN attempts,
+seats and key changes on the real rules file.
+
 ## La Copa: closed sign-up and movable start (D-110)
 
 - `torneos/<code>/closed` (`true` or nothing): only the phone seated as admin writes it. With the
@@ -134,9 +141,9 @@ The same mechanism as La Copa, for the whole app:
   phone whose fresh attempt holds the current key (D-464).
 - `jugadorSeats/<jid>/<uid>`: the `uid` phone writes as `jid` if it brings the hash from `jugadorKeys`
   and its own attempt from the last minute holds it (not when the key is created in the same write, D-464).
+  Whoever is seated can replace all the seats (changing the PIN kicks out the others).
 - `jugadorIntentos/<jid>` = `{ h, u, at }` (D-464): the last PIN attempt on that player, with the
   writer's uid and the server time, on a player with a key, one every 5 s. Nobody reads or deletes it.
-  Whoever is seated can replace all the seats (changing the PIN kicks out the others).
 - `jugadorNombres/<clave>/<jid>` = `true`: who uses that name. Read by key, to sign in.
 - `records/<tabla>/<período>/<jid>` = `{ s, ms, k, at, n }`, with `.indexOn: k`. Read without an account.
   Only the seated player writes, with `k` recomputed, `n` equal to their name and `k` lower than the

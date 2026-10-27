@@ -5,7 +5,8 @@
  * Sirve para jugar una copa entera en un solo computador —varias pestañas son varios
  * jugadores— y para las pruebas de punta a punta, sin tocar la base de verdad. Se activa con
  * `?test` en la URL (`?prueba` antes de D-266). Imita las reglas del servidor que importan para jugar: escribir una
- * sola vez, la ventana de cada día, el PIN y el comodín antes de empezar.
+ * sola vez, la ventana de cada día, el PIN y el comodín antes de empezar, and the PIN attempts
+ * (one every 5 s per cup player, a seat or an admin's new PIN needs a fresh one, D-464).
  */
 import { aliasHasta, MAX_JUGADORES, faltaGente, claveNombre, esCodigo, abierto, puedeComodin, inscripcionAbierta, sinEmpezar, terminada, conCierre, puedeCerrar, fuera } from './engine.js';
 
