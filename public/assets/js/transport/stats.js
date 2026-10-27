@@ -42,6 +42,9 @@
  *   activos/<device id>: 1 visited, 2 started something. The id is a random pseudonym kept in
  *                        this browser, never tied to a name, an IP or anything else (D-349, amends D-44)
  *
+ * Written by other modules into the same day: `support/<event>` (support.js, D-448) and
+ * `splash/<campaign>/<event>` (splash.js: shown, reach, play, close, t0–t2 time open; D-461).
+ *
  * Va por la REST API con un `fetch` y `keepalive`: los modos sin red no cargan el SDK de
  * Firebase ni abren una conexión persistente, así que no pesan en la carga ni gastan la
  * cuota de conexiones simultáneas (D-41). Todo es mejor esfuerzo: si falla, nadie se entera
