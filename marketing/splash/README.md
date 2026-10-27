@@ -1,7 +1,7 @@
 # The promotional splash
 
 A window over the home page that announces something new (D-351): off by default, each phone sees
-a campaign once. ✕, "Ahora no" and its links mark it as seen; with a lab key, for now, a tap outside or Escape
+a campaign once. ✕, "Ahora no" and its links mark it as seen; a tap outside or Escape
 is forgiven once, so the campaign comes back on a later visit, and the second such close marks it (D-462). Several can be on: they queue up in the order they were turned on (D-430), and the home page shows
 one per visit, the next on the next visit (D-431). A campaign can wait for regulars (`audience: 'regulars'`, D-458):
 it shows only on a phone with 5 or more visit days in the last four weeks and 10 or more finished games
