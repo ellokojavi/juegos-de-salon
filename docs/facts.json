@@ -1,5 +1,5 @@
 {
-  "version": "0.219.7",
+  "version": "0.219.11",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1130,6 +1130,7 @@
   "tests": [
     "marketing/served.test.mjs",
     "marketing/splash/campaigns.test.mjs",
+    "public/assets/css/fonts-preload.test.mjs",
     "public/assets/js/arrastre.test.mjs",
     "public/assets/js/azar.test.mjs",
     "public/assets/js/back-guard.test.mjs",
