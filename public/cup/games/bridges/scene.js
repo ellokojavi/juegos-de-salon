@@ -310,6 +310,53 @@ export function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre
     if (alcanza) r.rect(px - 1, py - 1, 2, 2, 'rgba(157,255,58,0.85)'); else r.punto(px, py, arrastre ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.45)');
   }
 
+  // The train goes before the beams, so the truss passes in front of it as it crosses (owner's request)
+  // The train: the locomotive and two wagons, each on the deck where it is, with smoke from the chimney
+  if (sim) {
+    // The wheel frame, from the distance run (positive also while the train is still left of the gap)
+    const tr = sim.tren, cuadro = ((Math.floor(tr.x * 7) % 6) + 6) % 6;
+    // Its look follows its weight: old passenger cars at first, bigger loads on the heavier stages
+    const { vagon: VAGON, paleta: PALETA_TREN } = trenDe(e.carga);
+    const piezas = PIEZAS.map((pz, k) => ({ x: tr.x + pz.dx, k, loco: k === 0, spr: k === 0 ? LOCO[cuadro % 3] : VAGON[(cuadro + k) % 2] }));
+    if (tr.cayo && !esc.caida) esc.caida = { dy: 0, vy: 0, salpico: false };
+    if (esc.caida) { esc.caida.vy += 220 * dt; esc.caida.dy += esc.caida.vy * dt; }
+    // The couplings first, under the bodies: a short dark bar between each pair, at wheel height
+    const en = piezas.map(p => { const h = alturaCamino(sim, p.x); const [px, py] = A(p.x, h ?? tr.y); return [px, py + (esc.caida && (h === null || p.k === tr.cayoPieza) ? esc.caida.dy : 0)]; });
+    // A coupling is rigid: if two pieces part (one falls), it snaps for good, with a spark, and each falls on its own
+    esc.sueltos ||= new Set();
+    for (let k = 1; k < en.length; k++) {
+      if (esc.sueltos.has(k)) continue;
+      if (Math.abs(en[k][1] - en[k - 1][1]) > 3) {
+        esc.sueltos.add(k);
+        if (!QUIETO) for (let n = 0; n < 8; n++) esc.parts.agregar({ x: en[k][0] + 10, y: en[k][1] - 4, vx: (Math.random() - 0.5) * 50, vy: -Math.random() * 40, g: 120, vida: 0.45, colores: CHISPAS });
+        continue;
+      }
+      r.linea(en[k][0] + 6, en[k][1] - 4, en[k - 1][0] - 9, en[k - 1][1] - 4, '#14081f', 2);
+    }
+    // Departure: steam puffs from under the wheels while it starts
+    if (!QUIETO && sim.t < 1.2 && Math.random() < 0.5) for (const sx of [-1, 1]) esc.parts.agregar({ x: en[0][0] + sx * 9, y: en[0][1] - 2, vx: sx * (10 + Math.random() * 10), vy: -4, vida: 0.8, radio: 1, crece: 3, colores: HUMO });
+    // The headlight: a soft cone ahead of the locomotive
+    if (!tr.cayo) for (let k = 0; k < 10; k++) r.rect(en[0][0] + 12 + k, en[0][1] - 9 - k / 4, 1, 2 + k / 2, `rgba(255,243,160,${0.32 - k * 0.03})`);
+    for (const p of piezas) {
+      let [px, py] = en[p.k];
+      if (py > yAgua + 4) {
+        if (!esc.caida.salpico && !QUIETO) {
+          esc.caida.salpico = true;
+          for (let n = 0; n < 22; n++) esc.parts.agregar({ x: px, y: yAgua, vx: (Math.random() - 0.5) * 60, vy: -40 - Math.random() * 50, g: 140, vida: 1, colores: AGUA });
+        }
+        continue;
+      }
+      r.sprite(p.spr, PALETA_TREN, px, py - 1);
+      if (p.loco && !tr.cayo && !QUIETO) {
+        esc.humo += dt;
+        if (esc.humo > 0.09) {
+          esc.humo = 0;
+          esc.parts.agregar({ x: px + CHIMENEA.dx, y: py + CHIMENEA.dy, vx: -8 - Math.random() * 8, vy: -16 - Math.random() * 6, vida: 1.5, radio: 1, crece: 2.6, colores: HUMO });
+        }
+      }
+    }
+  }
+
   // The beams as planks: a dark edge, the wood (warming to red with the strain), rails on the road
   // Thin planks: on a phone the grid is small, and a thick beam hides where it starts and ends
   const grosor = Math.max(1, Math.round(u * 0.07));
@@ -364,51 +411,6 @@ export function dibujar(c, e, { vigas = [], sim = null, grilla = false, arrastre
     for (let k = 0; k < n; k += 2) r.linea(ax + (bx - ax) * k / n, ay + (by - ay) * k / n, ax + (bx - ax) * Math.min(1, (k + 1) / n), ay + (by - ay) * Math.min(1, (k + 1) / n), col, grosor);
   }
 
-  // The train: the locomotive and two wagons, each on the deck where it is, with smoke from the chimney
-  if (sim) {
-    // The wheel frame, from the distance run (positive also while the train is still left of the gap)
-    const tr = sim.tren, cuadro = ((Math.floor(tr.x * 7) % 6) + 6) % 6;
-    // Its look follows its weight: old passenger cars at first, bigger loads on the heavier stages
-    const { vagon: VAGON, paleta: PALETA_TREN } = trenDe(e.carga);
-    const piezas = PIEZAS.map((pz, k) => ({ x: tr.x + pz.dx, k, loco: k === 0, spr: k === 0 ? LOCO[cuadro % 3] : VAGON[(cuadro + k) % 2] }));
-    if (tr.cayo && !esc.caida) esc.caida = { dy: 0, vy: 0, salpico: false };
-    if (esc.caida) { esc.caida.vy += 220 * dt; esc.caida.dy += esc.caida.vy * dt; }
-    // The couplings first, under the bodies: a short dark bar between each pair, at wheel height
-    const en = piezas.map(p => { const h = alturaCamino(sim, p.x); const [px, py] = A(p.x, h ?? tr.y); return [px, py + (esc.caida && (h === null || p.k === tr.cayoPieza) ? esc.caida.dy : 0)]; });
-    // A coupling is rigid: if two pieces part (one falls), it snaps for good, with a spark, and each falls on its own
-    esc.sueltos ||= new Set();
-    for (let k = 1; k < en.length; k++) {
-      if (esc.sueltos.has(k)) continue;
-      if (Math.abs(en[k][1] - en[k - 1][1]) > 3) {
-        esc.sueltos.add(k);
-        if (!QUIETO) for (let n = 0; n < 8; n++) esc.parts.agregar({ x: en[k][0] + 10, y: en[k][1] - 4, vx: (Math.random() - 0.5) * 50, vy: -Math.random() * 40, g: 120, vida: 0.45, colores: CHISPAS });
-        continue;
-      }
-      r.linea(en[k][0] + 6, en[k][1] - 4, en[k - 1][0] - 9, en[k - 1][1] - 4, '#14081f', 2);
-    }
-    // Departure: steam puffs from under the wheels while it starts
-    if (!QUIETO && sim.t < 1.2 && Math.random() < 0.5) for (const sx of [-1, 1]) esc.parts.agregar({ x: en[0][0] + sx * 9, y: en[0][1] - 2, vx: sx * (10 + Math.random() * 10), vy: -4, vida: 0.8, radio: 1, crece: 3, colores: HUMO });
-    // The headlight: a soft cone ahead of the locomotive
-    if (!tr.cayo) for (let k = 0; k < 10; k++) r.rect(en[0][0] + 12 + k, en[0][1] - 9 - k / 4, 1, 2 + k / 2, `rgba(255,243,160,${0.32 - k * 0.03})`);
-    for (const p of piezas) {
-      let [px, py] = en[p.k];
-      if (py > yAgua + 4) {
-        if (!esc.caida.salpico && !QUIETO) {
-          esc.caida.salpico = true;
-          for (let n = 0; n < 22; n++) esc.parts.agregar({ x: px, y: yAgua, vx: (Math.random() - 0.5) * 60, vy: -40 - Math.random() * 50, g: 140, vida: 1, colores: AGUA });
-        }
-        continue;
-      }
-      r.sprite(p.spr, PALETA_TREN, px, py - 1);
-      if (p.loco && !tr.cayo && !QUIETO) {
-        esc.humo += dt;
-        if (esc.humo > 0.09) {
-          esc.humo = 0;
-          esc.parts.agregar({ x: px + CHIMENEA.dx, y: py + CHIMENEA.dy, vx: -8 - Math.random() * 8, vy: -16 - Math.random() * 6, vida: 1.5, radio: 1, crece: 2.6, colores: HUMO });
-        }
-      }
-    }
-  }
   esc.parts.paso(dt);
   esc.parts.dibujar(r);
   r.volcar();
