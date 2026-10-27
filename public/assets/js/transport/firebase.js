@@ -6,12 +6,13 @@
  */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import {
-  getDatabase, ref, get, set, update, push, onChildAdded, onValue, onDisconnect, serverTimestamp,
+  getDatabase, ref, get, set, update, push, onChildAdded, onValue, onDisconnect, runTransaction, serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../firebase-config.js';
 import { IDLE_TTL, ROOM_TTL, dayOf, dueForSweep, markSwept, noteRoom, roomCreation, sweep } from './cleanup.js';
 import { message, quiet } from './best-effort.js';
 import { disposeRoom } from './dispose.js';
+import { claimSeat } from './seat.js';
 import { CONNECT_MS, LEAVE_MS, OP_MS, waitConnected, withTimeout } from './errors.js';
 import { checkQuota, noteCreated } from './ratelimit.js';
 import { stats, noteRoom as recordRoom, notePlayer as recordPlayer, noteStart as recordStart, noteEnd as recordEnd } from './stats.js';
@@ -54,6 +55,10 @@ const dbApi = d => ({
   update: (path, changes) => update(ref(d, path), changes),
   remove: path => set(ref(d, path), null),
   stamp: () => serverTimestamp(),
+  transact: async (path, fn) => {
+    const r = await runTransaction(ref(d, path), fn);
+    return { committed: r.committed, value: r.snapshot.val() };
+  },
 });
 
 /**
@@ -153,7 +158,8 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
         // always noted, even if the page dies right after (D-321).
         const day = dayOf(await serverNow(d));
         await update(ref(d), roomCreation(code, { game, config, day, stamp: serverTimestamp() }));
-        await this._enter(code, 'A', name);
+        await claimSeat(dbApi(d), code, ['A'], { uid, name });
+        await this._enter(code, 'A', name, { claimed: true });
         // La hora la pone el servidor: el panel la usa para su registro. En segundo plano,
         // la sala ya está lista.
         quiet(get(ref(d, `rooms/${code}/createdAt`)).then(snap => {
@@ -185,8 +191,9 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       if (roomExpired(room)) throw new Error('expired');
       const players = room.players || {};
       let role = previousRole;
-      if (!role) role = await this._claimRole(code, ROLES.slice(0, maxPlayers).filter(r => !players[r]), name);
-      await this._enter(code, role, name);
+      // A new player takes a free seat with a transaction (seat.js); resuming rewrites its own.
+      if (!role) role = await claimSeat(dbApi(d), code, ROLES.slice(0, maxPlayers).filter(r => !players[r]), { uid, name });
+      await this._enter(code, role, name, { claimed: !previousRole });
       // El que entra no vuelve a apuntar el código (las reglas no dejan pisar el apunte):
       // solo refresca la marca del balde y, si le toca, barre.
       this.createdAt = room.createdAt || 0;
@@ -197,27 +204,16 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
     },
 
     /**
-     * Reclama el primer rol libre. Escribe y vuelve a leer: si otro dispositivo ganó
-     * la carrera, su identificador quedará en el nodo y probamos con el rol siguiente.
+     * Sits in `role`. A seat just `claimed` was already written by its transaction (seat.js) and
+     * is not written again; resuming (`previousRole`) rewrites it, with this page's new `uid`.
      */
-    async _claimRole(code, candidates, name) {
-      const d = getDb();
-      for (const role of candidates) {
-        const meRef = ref(d, `rooms/${code}/players/${role}`);
-        if ((await get(meRef)).exists()) continue;
-        await set(meRef, { name, online: true, uid });
-        if ((await get(meRef)).val()?.uid === uid) return role;
-      }
-      throw new Error('full');
-    },
-
-    async _enter(code, role, name) {
+    async _enter(code, role, name, { claimed = false } = {}) {
       const d = getDb();
       this.code = code; this.role = role; this.roles = [role];
       const meRef = ref(d, `rooms/${code}/players/${role}`);
       this._me = meRef;
       // `set` y no `update`: entrar borra la despedida de la vez anterior (dispose.js).
-      await set(meRef, { name, online: true, uid });
+      if (!claimed) await set(meRef, { name, online: true, uid });
       this._touch(d);   // entrar es actividad: la sala empieza (o sigue) viva
       // Presence is best effort, and nobody waits for it (best-effort.js, D-320)
       quiet(onDisconnect(meRef).update({ online: false }), 'presence');
