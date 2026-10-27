@@ -219,6 +219,7 @@ owner's key) and does not merge. Everything else in this guide applies the same.
   node tools/firebase/uad-points-backfill.mjs [--apply]   # October 2026's Uno al día points from the history, once after D-414 publishes (dry run without --apply)
   node tools/firebase/uad-points-backfill.mjs --rebuild [--apply] [--month yyyy-mm]   # recomputes a month's totals from the history and the 🧊 markers, a day's points only if it reached the server near its date; the uad-rebuild workflow runs it nightly (D-415, D-465)
   node tools/firebase/rankings-history.mjs --podiums [--write]   # finished Cups' missing podiums (torneoPodios/); the cup-podiums workflow runs it twice a night (D-450)
+  node tools/firebase/stats-retention.mjs [--apply]   # deletes the names in stats/ older than 24 months (dry run without --apply); the uad-rebuild workflow runs it nightly (D-472)
   ```
 - The worktree and the branch are deleted on their own (above, D-218, D-252); to do it now, `node tools/agents/clean-worktrees.mjs`.
 
