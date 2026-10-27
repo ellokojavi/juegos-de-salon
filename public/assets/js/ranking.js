@@ -16,7 +16,7 @@ import { ponerBuzon } from './buzon.js';
 
 /**
  * The inbox link at the end of the result screen, once it is drawn, after its buttons (D-345, U-38),
- * and after it the "☕ Buy me a coffee" link when its rule says so (support.js, lab only, D-395).
+ * and after it the "☕ Buy me a coffee" link when its rule says so (support.js, D-449).
  */
 const buzonAlFinal = (juego, donde) => {
   if (typeof document === 'undefined') return;

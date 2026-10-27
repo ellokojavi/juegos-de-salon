@@ -323,9 +323,9 @@
     footer { margin-top: auto; padding-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
     .footer-msg { min-height: 3.2em; font-size: 1rem; line-height: 1.5; color: var(--ink); opacity: 0.9; transition: opacity 0.5s ease, transform 0.5s ease; font-weight: 700; }
     .footer-msg.out { opacity: 0; transform: translateY(6px); }
-    /* The footer's options. One alone is the quiet link it always was; two or more (today, with a lab
-       key: the inbox and the coffee) become a quiet grid of two columns, outlined and unfilled, so they
-       read as the site's corner and not as more game cards. A new option is one more child. lab: #seccion-apoyo */
+    /* The footer's options. One alone is a quiet link; two or more (today the inbox and the coffee)
+       become a quiet grid of two columns, outlined and unfilled, so they read as the site's corner and
+       not as more game cards. A new option is one more child. */
     .footer-links { margin: 1em 0; }
     .footer-links.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-width: 380px; margin: 0 auto 1em; }
     .footer-links.tiles::before {
@@ -543,7 +543,7 @@
     const btnBuzon = document.getElementById('btn-buzon-portada');
     btnBuzon.textContent = T.buzon.abrir;
     btnBuzon.addEventListener('click', () => import('./assets/js/buzon.js').then(m => m.abrirBuzon({ pantalla: 'portada' })));
-    // "☕ Buy me a coffee", always under the inbox, only with a lab key for now (D-395). lab: #seccion-apoyo
+    // "☕ Buy me a coffee", always beside the inbox
     // Its card opens over the page; Stripe comes back with ?support=thanks, which opens the thank-you (D-449)
     import('./assets/js/support.js').then(m => { m.supportFromUrl({ lang }); return m.supportFooterLink(lang); }).then(a => { if (!a) return; const links = document.getElementById('footer-links'); links.append(a); links.classList.add('tiles'); }).catch(() => {});
     document.title = `${T.appTitle} 🎲`;

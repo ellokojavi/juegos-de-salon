@@ -120,7 +120,7 @@ export const CAMPAIGNS = {
   },
   // 🥂 An invitation to support the site, with a laugh: Leonardo DiCaprio raising his glass in
   // The Great Gatsby. The clip is GIPHY's, served from GIPHY (not copied into the site); its button
-  // goes straight to Stripe's payment page (support.js's PAYMENT_LINK), so it stays off while support is in the lab
+  // goes straight to Stripe's payment page (support.js's PAYMENT_LINK), and like every campaign it is turned on from the panel's 📣 Campaigns
   'brindis-apoyo': {
     emoji: '🥂',
     kicker: { es: 'Salud', en: 'Cheers', pt: 'Saúde', de: 'Prost' },
