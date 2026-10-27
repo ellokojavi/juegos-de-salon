@@ -679,3 +679,7 @@ PATHS.splash = Object.fromEntries(Object.keys(CAMPAIGNS).map(id => [id, [`locati
 PATHS.copa['share-sheet'] = [`location.href='/?test'`, `1`, `1`, `document.getElementById('btn-compartir-portada')?.click()`, `1`];
 // Dudo's card on the home page, centered: its tagline wraps longest in Spanish (D-447)
 PATHS.copa['home-card-dudo'] = [`location.href='/?test'`, `1`, `1`, `[...document.querySelectorAll('.game-card')].find(c=>c.querySelector('h2')?.textContent.match(/dudo|liar|mentiroso|lügen/i))?.scrollIntoView({ block: 'center' })`, `1`];
+// Toque y Fama's single card on the home page, with 🔤 Palabra inside (#767)
+PATHS.copa['home-card-tyf'] = [`location.href='/?test'`, `1`, `1`, `[...document.querySelectorAll('.game-card')].find(c=>c.querySelector('h2')?.textContent.match(/toque|bulls|bullen/i))?.scrollIntoView({ block: 'center' })`, `1`];
+// Rankings, with "Tus partidas" folded with its total when the player has plays (#783)
+PATHS.copa['records'] = [`location.href='/records/'`, `1`, `1`, `1`];
