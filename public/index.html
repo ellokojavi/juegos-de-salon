@@ -342,6 +342,18 @@
     .footer-links.tiles > *:active { background: rgba(255, 255, 255, 0.05); }
     .footer-links.tiles > #btn-apoyo-portada { border-color: rgba(255, 210, 63, 0.3); }
     .footer-links.tiles > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+    /* The sunset (lab: #seccion-pie): the page ends in a glow of the site's own purple and pink, the
+       phrase in white, and each option on frosted glass with its color circle above the label */
+    footer.atardecer { margin: 0 -18px -32px; padding: 28px 18px 32px; background: linear-gradient(180deg, transparent, rgba(138, 77, 255, 0.28) 45%, rgba(255, 46, 136, 0.32)); }
+    footer.atardecer .footer-msg { color: var(--ink); opacity: 1; font-weight: 800; font-size: 1.04rem; }
+    footer.atardecer .footer-links.tiles::before { content: none; }
+    footer.atardecer .footer-links.tiles { margin-top: 18px; }
+    footer.atardecer .footer-links.tiles > * { flex-direction: column; gap: 4px; min-height: 64px; border: 0; background: rgba(255, 255, 255, 0.1); color: var(--ink); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+    footer.atardecer .footer-links.tiles > *:active { background: rgba(255, 255, 255, 0.18); }
+    footer.atardecer .ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(157, 255, 58, 0.35); }
+    footer.atardecer #btn-buzon-portada .ic { background: rgba(46, 230, 214, 0.35); }
+    footer.atardecer #btn-apoyo-portada .ic { background: rgba(255, 122, 26, 0.5); }
+    footer.atardecer > .muted { color: rgba(255, 255, 255, 0.8); }
     /* Juego al azar (D-188): el botón bajo la bajada y el dado que rueda sobre la portada */
     .azar-slot { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin-top: 16px; }
     .btn-azar {
@@ -545,7 +557,17 @@
     btnBuzon.addEventListener('click', () => import('./assets/js/buzon.js').then(m => m.abrirBuzon({ pantalla: 'portada' })));
     // "☕ Buy me a coffee", always beside the inbox
     // Its card opens over the page; Stripe comes back with ?support=thanks, which opens the thank-you (D-449)
-    import('./assets/js/support.js').then(m => { m.supportFromUrl({ lang }); return m.supportFooterLink(lang); }).then(a => { if (!a) return; const links = document.getElementById('footer-links'); links.append(a); links.classList.add('tiles'); }).catch(() => {});
+    const footerLinks = import('./assets/js/support.js').then(m => { m.supportFromUrl({ lang }); return m.supportFooterLink(lang); }).then(a => { if (!a) return; const links = document.getElementById('footer-links'); links.append(a); links.classList.add('tiles'); }).catch(() => {});
+    // The footer's sunset, only with a lab key for now (D-395). lab: #seccion-pie
+    // Each option's leading emoji becomes its color circle, so the label wraps under it
+    Promise.all([footerLinks, import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess())]).then(([, yes]) => {
+      if (!yes) return;
+      document.querySelector('footer').classList.add('atardecer');
+      for (const b of document.getElementById('footer-links').children) {
+        const [ic, ...label] = b.textContent.split(' ');
+        b.replaceChildren(el('span', { class: 'ic', 'aria-hidden': 'true' }, ic), el('span', {}, label.join(' ')));
+      }
+    }).catch(() => {});
     document.title = `${T.appTitle} 🎲`;
     document.getElementById('lang-slot').append(langToggle());
     // Los rankings (D-212): un botón en la barra, que la portada no tiene espacio para más
