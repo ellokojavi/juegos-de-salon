@@ -1,5 +1,5 @@
 /**
- * "☕ Buy me a coffee": voluntary support through a Stripe Payment Link (out of the lab since D-449's follow-up).
+ * "☕ Buy me a coffee": voluntary support through a Stripe Payment Link, for every player (D-448, D-449).
  *
  * Where it shows, from the quietest to the most visible, and never during a game or as a popup (U-38):
  *
