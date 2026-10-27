@@ -32,7 +32,7 @@ import {
   avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango, salud, TRAMOS, navegadorLabel,
 } from './aggregate.js';
 import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KINDS, pacificRange } from './timeline.js';
-import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE } from '../assets/js/splash.js';
+import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splash.js';
 import { switches, status as campaignStatus, overlaps, move, toRemote, span, todayOf, dayPlus } from './campaigns.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import {
@@ -1641,7 +1641,9 @@ function vistaCampanas(now) {
           s.on ? el('strong', { class: 'campana-titulo' }, nombre)
             : el('button', { type: 'button', class: 'campana-titulo campana-plegar', 'aria-expanded': 'true', onClick: cerrar }, nombre),
           el('span', { class: `campana-estado estado-${st}` }, `${ico} ${txt}`, detalle ? el('span', { class: 'campana-detalle' }, ` · ${detalle}`) : null),
-          c.langs ? el('span', { class: 'campana-langs' }, `${c.langs.join(' · ').toUpperCase()} only`) : null),
+          c.langs ? el('span', { class: 'campana-langs' }, `${c.langs.join(' · ').toUpperCase()} only`) : null,
+          // A campaign for regulars reaches fewer phones than "live" suggests (D-458)
+          c.audience === 'regulars' ? el('span', { class: 'campana-langs' }, `Regulars only: ${REGULARS.days}+ days in 4 weeks, ${REGULARS.games}+ games, not paid`) : null),
         el('label', { class: 'interruptor' },
           el('input', { type: 'checkbox', role: 'switch', checked: s.on, 'aria-label': `${nombre} on`, onChange: e => cambiar(s.id, { on: e.target.checked }) }),
           el('span', { class: 'interruptor-pista', 'aria-hidden': 'true' }))),
