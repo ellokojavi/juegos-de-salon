@@ -2048,11 +2048,19 @@ function admin({ forzar = false } = {}) {
     // `attrs2`: a second field (the admin's own PIN, to give a new PIN, D-464)
     const editar = (rotulo, attrs, guardar, attrs2 = null) => {
       acciones.innerHTML = '';
-      const input = el('input', { class: 'mini', ...attrs });
-      const input2 = attrs2 ? el('input', { class: 'mini', ...attrs2 }) : null;
+      // With two fields, each takes its own line and ✓ ✕ stay together below: at 320 px ✕ wrapped alone (U-11)
+      const ancho = attrs2 ? { style: 'flex-basis:100%' } : {};
+      const input = el('input', { class: 'mini', ...ancho, ...attrs });
+      const input2 = attrs2 ? el('input', { class: 'mini', ...ancho, ...attrs2 }) : null;
+      // The error goes under the field, not after the whole player list, where it can be off screen (U-12)
+      const aviso = el('div', { class: 'form-error', role: 'alert', style: 'flex-basis:100%;margin:0' });
       poner(acciones, input, input2, el('button', {
-        class: 'btn btn--yellow btn--sm', onClick: async () => {
-          try { await guardar(input.value, input2?.value); err.textContent = ''; admin(); } catch (e) { avisoError(err, typeof e === 'string' ? e : errorDe(e)); }
+        class: 'btn btn--yellow btn--sm', onClick: async ev => {
+          // Disabled while it saves: checking a PIN can take a few seconds (D-464)
+          const b = ev.currentTarget; b.disabled = true;
+          try { await guardar(input.value, input2?.value); err.textContent = ''; admin(); }
+          catch (e) { if (!aviso.isConnected) acciones.append(aviso); avisoError(aviso, typeof e === 'string' ? e : errorDe(e)); }
+          finally { b.disabled = false; }
         },
       }, '✓'), el('button', { class: 'btn btn--ghost btn--sm', onClick: () => admin() }, '✕'));
       input.focus();
