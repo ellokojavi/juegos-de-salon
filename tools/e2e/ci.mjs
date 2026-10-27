@@ -60,6 +60,17 @@ const all = (dir = '') => readdirSync(join(HERE, dir)).flatMap(f => {
   return statSync(join(HERE, rel)).isDirectory() ? all(rel) : [rel];
 });
 
+/**
+ * Whether a changed file is nothing CI could run: a page loads none of it (changes.mjs), or it is
+ * a script left out above (it opens rooms in the production Firebase, or is obsolete), which no
+ * job runs, so changing it must not make the PR run every script.
+ */
+const shared = f => {
+  if (noBrowser([f])) return true;
+  const rel = f.startsWith('tools/e2e/') ? f.slice('tools/e2e/'.length) : null;
+  return !!rel && rel.endsWith('.mjs') && (WITH_FIREBASE.test(rel) || ALSO_FIREBASE.has(rel) || OBSOLETE.has(rel));
+};
+
 export const scripts = () => all()
   .filter(f => f.endsWith('.mjs') && !f.endsWith('.test.mjs'))
   .filter(f => !TOOLS.has(f) && !WITH_FIREBASE.test(f) && !ALSO_FIREBASE.has(f) && !OBSOLETE.has(f))
@@ -116,7 +127,7 @@ function run(script, suffix = '') {
 export function chosenJobs(changes = null) {
   if (!changes) return jobs();
   if (noBrowser(changes)) return [];
-  return affectedJobs(jobs(), changes, f => noBrowser([f])) || jobs();
+  return affectedJobs(jobs(), changes, shared) || jobs();
 }
 
 /** What GitHub runs, in groups (D-307); [] if there is nothing to run. */
@@ -153,10 +164,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const changesOf = () => args.includes('--changes') ? readFileSync(args[args.indexOf('--changes') + 1], 'utf8').split('\n') : null;
   // The change's test level (D-346), on stderr so the workflow logs it and the JSON stays clean
   const said = changesOf();
-  if (said) { const l = changeLevel(jobs(), said, f => noBrowser([f]), noBrowser(said)); console.error(`test level ${l.level} · ${l.name}: ${l.reason}`); }
+  if (said) { const l = changeLevel(jobs(), said, shared, noBrowser(said)); console.error(`test level ${l.level} · ${l.name}: ${l.reason}`); }
   if (args.includes('--scope')) {
     // The PR's test scope for the run's summary (D-378): what runs, and what reaches where through what
-    const report = scopeReport(jobs(), changesOf() || [], f => noBrowser([f])).join('\n');
+    const report = scopeReport(jobs(), changesOf() || [], shared).join('\n');
     console.log(report);
     if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, report + '\n');
   } else if (args.includes('--groups')) {
