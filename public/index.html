@@ -329,7 +329,7 @@
     .footer-links { margin: 1em 0; }
     .footer-links.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-width: 380px; margin: 0 auto 1em; }
     .footer-links.tiles::before {
-      content: '🎲'; grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 6px 0 8px; font-size: 0.9rem; opacity: 0.55;
+      content: '🎲'; content: '🎲' / ''; grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 6px 0 8px; font-size: 0.9rem; opacity: 0.55;
       background: linear-gradient(var(--glass-border), var(--glass-border)) left center / calc(50% - 18px) 1px no-repeat,
                   linear-gradient(var(--glass-border), var(--glass-border)) right center / calc(50% - 18px) 1px no-repeat;
       justify-content: center;
