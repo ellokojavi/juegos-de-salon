@@ -27,6 +27,7 @@ import {
 } from './engine.js';
 import { DECKS, getDeck } from './decks/index.js';
 import { GAME_ID, DEFAULT_CONFIG, GALLOWS, PARTS, MAX_HINT, MIN_PLAYERS, MAX_PLAYERS, LOCALES } from './rules.js';
+import { renderQr } from '../assets/js/qr.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -382,13 +383,6 @@ function shareButton(url) {
   return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, alTocar: () => SFX.tap() });
 }
 
-async function renderQr(url) {
-  try {
-    if (!window.qrcode) await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; sc.onload = res; sc.onerror = rej; document.head.append(sc); });
-    const qr = window.qrcode(0, 'M'); qr.addData(url); qr.make();
-    const box = $('#qr'); if (box) box.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
-  } catch (_) { const box = $('#qr'); if (box) box.remove(); }
-}
 
 /* ---------- Escribir la palabra (cadena) ---------- */
 /** Quién tiene que escribir ahora en este celular, y para quién. */

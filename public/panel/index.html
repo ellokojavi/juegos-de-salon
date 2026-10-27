@@ -9,6 +9,9 @@
   <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="style.css">
+  <!-- The panel never shows inside another site's frame: it hides itself and takes over the window -->
+  <style>html.framed { display: none !important; }</style>
+  <script>if (window.top !== window.self) { document.documentElement.classList.add('framed'); try { window.top.location = window.location.href; } catch (_) {} }</script>
 </head>
 <body>
   <main class="app app--panel" id="app">

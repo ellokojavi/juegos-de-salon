@@ -28,6 +28,7 @@ import { codigoAlAzar } from '../cup/code.js';
 import * as numero from '../cup/games/number/engine.js';
 import * as uiNumero from '../cup/games/number/ui.js';
 import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
+import { renderQr } from '../assets/js/qr.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -411,13 +412,6 @@ function shareButton(url) {
   return botonInvitar({ T, titulo: T.title, url, texto: textoInvitacion, alTocar: () => SFX.tap() });
 }
 
-async function renderQr(url) {
-  try {
-    if (!window.qrcode) await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; s.onload = res; s.onerror = rej; document.head.append(s); });
-    const qr = window.qrcode(0, 'M'); qr.addData(url); qr.make();
-    const box = $('#qr'); if (box) box.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
-  } catch (_) { const box = $('#qr'); if (box) box.remove(); }
-}
 
 /** Fase de secreto: cada rol local sin secreto lo ingresa (en modo un celular, por turnos con pantalla tapada). */
 function renderSecret() {

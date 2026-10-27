@@ -33,7 +33,11 @@ self.addEventListener('push', e => {
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   const datos = e.notification.data || {};
-  const url = new URL((e.action && datos.acciones?.[e.action]) || datos.url || './', self.registration.scope).href;
+  // Only a page of this site opens: a link to anywhere else goes to the site's home page instead
+  const scope = self.registration.scope;
+  let url;
+  try { url = new URL((e.action && datos.acciones?.[e.action]) || datos.url || './', scope); } catch (_) { url = null; }
+  url = url && url.origin === self.location.origin ? url.href : scope;
   e.waitUntil((async () => {
     const abiertas = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     const misma = abiertas.find(c => c.url === url) || abiertas.find(c => new URL(c.url).origin === self.location.origin);
