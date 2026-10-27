@@ -131,8 +131,9 @@ export function dynamicPages(source, pages) {
  */
 /**
  * Of the pages that load `f`, those that run it (D-378). A game's files that La Copa plays (cup/games/<game>/…,
- * and the engines it takes from bulls-and-cows/ and timeline/) are imported by every screen of La Copa,
- * through cup/games/index.js, but only played on that game's page, on La Copa's pages that play them all
+ * and the engines it takes from bulls-and-cows/ and timeline/) are named by every screen of La Copa,
+ * through the `import()`s of cup/games/index.js (each page fetches only the game it plays, D-468), but
+ * only played on that game's page, on La Copa's pages that play them all
  * (the cup and cup/suelto) and on a page that reuses it on purpose (REUSES). On the screens of La Copa's
  * other games they are only loaded, and a load error there is what smoke.mjs, which opens every page,
  * catches on any change.

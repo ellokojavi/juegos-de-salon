@@ -6,10 +6,13 @@ import {
   JUEGOS_DIA, LANZAMIENTO, SIN_REPETIR, DESDE_GRUPO, DESDE_MAS, DESDE_GENERALA, DESDE_AGENTES, vigente, GRUPO, azarDel, puntajeAhorcado, puntajeNaval, puntajeDudo, CASILLAS_FLOTA, crearCalendario, juegoDel, semillaDel, numeroDel, sumarDias, diasEntre,
   fechaLocal, faltaParaManana, racha, mejorRacha, recorrer, numDia, fechaDeNum, semanaDe, juntar, COMODINES_MAX, porJuego, anotar, leer, estado, rutaDel, formaAcceso, KEY,
 } from './uno-al-dia.js';
-import { JUEGOS } from '../../cup/games/index.js';
+import { JUEGOS, loadAll } from '../../cup/games/index.js';
 import { esCodigo } from '../../cup/engine.js';
 import { GAMES, SUELTOS, SLUGS_SIN_PAGINA } from './games.js';
 import { randomLayout, isValidLayout } from '../../battleship/engine.js';
+
+// Only the game being played loads (D-468): the tests take them all
+await loadAll();
 
 const almacen = () => { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k) }; };
 const juegoDiaDesde = id => JUEGOS_DIA.find(j => j.id === id)?.desde;
