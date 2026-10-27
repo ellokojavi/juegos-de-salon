@@ -515,6 +515,7 @@ node public/cup/games/bridges/contrast.test.mjs
 node public/cup/games/bridges/physics.test.mjs
 node public/cup/games/deshacer.test.mjs
 node public/cup/games/juegos.test.mjs
+node public/cup/games/lazy.test.mjs
 node public/cup/planilla.test.mjs
 node public/cup/recap.test.mjs
 node public/cup/reportes.test.mjs
