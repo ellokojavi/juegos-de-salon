@@ -1,5 +1,5 @@
 {
-  "version": "0.219.7",
+  "version": "0.219.11",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1128,6 +1128,7 @@
     "public/timeline/rules.js"
   ],
   "tests": [
+    "firebase/pin-attempts.test.mjs",
     "marketing/served.test.mjs",
     "marketing/splash/campaigns.test.mjs",
     "public/assets/js/arrastre.test.mjs",

@@ -8,9 +8,11 @@
  *
  *   jugadores/<jid>                 { n: nombre, at, juegos: { <juego>: { n: partidas, at } } }
  *   jugadorNombres/<clave>/<jid>    true: quiénes usan ese nombre. Se lee para entrar.
- *   jugadorKeys/<jid>               sha256 del PIN. Nadie lo puede leer.
+ *   jugadorKeys/<jid>               sha256 del PIN. Nadie lo puede leer. Changed only by a seated
+ *                                   phone that knows the current PIN (D-464).
  *   jugadorSeats/<jid>/<uid>        el celular `uid` escribe por `jid`; las reglas lo aceptan solo
- *                                   si trae el mismo hash que jugadorKeys (como en La Copa, D-96).
+ *                                   si trae el mismo hash que jugadorKeys (como en La Copa, D-96)
+ *                                   and this phone's fresh attempt holds it (D-464).
  *   jugadorIntentos/<jid>           { h, u, at }: the last PIN attempt on that player (D-464). One
  *                                   every 5 s; a seat or a key change needs this phone's attempt,
  *                                   from the last minute, with the current key. Nobody reads it.

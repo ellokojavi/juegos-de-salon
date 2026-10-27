@@ -11,7 +11,10 @@ description: The owner's panel (public/panel/), La Copa reports and the rankings
 - **Rankings** (D-212): `records.js` (logic), `jugador.js` (the player and their store:
   `jugador-firebase.js`, or `jugador-local.js` in tests and with `?test`; `?records=firebase` forces
   Firebase) and `ranking.js` + `ranking.css` (screen). Open to everyone since D-217 (the lab
-  gate, `RANKINGS_EN_LABS`, stays `false`). The
+  gate, `RANKINGS_EN_LABS`, stays `false`). Signing in is two writes: the PIN attempt
+  (`jugadorIntentos/<jid>`, one every 5 s per player) and then the seat, which needs that phone's fresh
+  attempt; changing the PIN asks for the current one (`cambiarPin(actual, nuevo)`, D-464). Both stores
+  enforce it (`jugador-local.js` mirrors the rules, [firebase/README.md](../../../firebase/README.md)). The
   history of La Copa (podiums, the "Copa" tab and each player's Cups for "Tus copas" (Your Cups), D-220,
   with inherited players that each one claims):
   `node tools/firebase/rankings-history.mjs [--with-labs] [--write]`; `--podiums` writes only the missing podiums of finished Cups, which the `cup-podiums` workflow does twice a night (D-450). Group games
