@@ -38,9 +38,9 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453 |
 | Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-462 |
-| Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456 |
+| Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456, D-465 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321 |
-| Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433 |
+| Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433, D-465 |
 | Game memory | C-6 | D-25, D-150 |
 | Touch interface | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344, D-425, D-432, D-447 |
 | Errors and passing the phone | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
@@ -51,11 +51,11 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456 |
 | Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451, D-452, D-459 |
-| Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450, D-455 |
+| Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450, D-455, D-465 |
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (447)
+## In force (448)
 
 | D | Title | Status |
 |---|---|---|
@@ -460,7 +460,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-412](decisions/D-412.md) | Uno al día points: the owner's answers, and the points saved in Firebase for lab key holders | amended by D-414 |
 | [D-413](decisions/D-413.md) | The lab's fast lane: the session does a lab-only change itself, without agents | current |
 | [D-414](decisions/D-414.md) | Uno al día points reach everyone, on /today/, and October is backfilled | amended by D-415 |
-| [D-415](decisions/D-415.md) | A day a 🧊 saved goes up to Firebase, and the month's points are rebuilt from it every night | current |
+| [D-415](decisions/D-415.md) | A day a 🧊 saved goes up to Firebase, and the month's points are rebuilt from it every night | amended by D-465 |
 | [D-416](decisions/D-416.md) | La Copa: a linked player who lost their session re-enters with the player's PIN | current |
 | [D-417](decisions/D-417.md) | La Gran Final's running score is the average so far, out of 100 | current |
 | [D-418](decisions/D-418.md) | The Grand Final repeats the week's games | current |
@@ -478,7 +478,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-430](decisions/D-430.md) | Splash campaigns queue up, and a teaser can be a picture alone in Spanish and English | amended by D-431 |
 | [D-431](decisions/D-431.md) | One window per visit on the home page, through one gate | amended by D-449 |
 | [D-432](decisions/D-432.md) | A back swipe mid-game asks before leaving | current |
-| [D-433](decisions/D-433.md) | Uno al día's first attempt counts from its start; La Copa's clock survives another phone | current |
+| [D-433](decisions/D-433.md) | Uno al día's first attempt counts from its start; La Copa's clock survives another phone | amended by D-465 |
 | [D-434](decisions/D-434.md) | Julepe leaves the home page for La Bodega | current |
 | [D-435](decisions/D-435.md) | The home page draws its last look at once; Uno al día's place refreshes on the card | current |
 | [D-436](decisions/D-436.md) | Uno al día's ranking loads once and shows at once | current |
@@ -506,6 +506,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-458](decisions/D-458.md) | A splash campaign can wait for regulars: 5 visit days and 10 finished games (the toast to support does) | current |
 | [D-459](decisions/D-459.md) | Feedback reports are readable only by the owner; the tools read them with the admin key | current |
 | [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit (in the lab) | current |
+| [D-465](decisions/D-465.md) | Uno al día points count only near the day's own date, and only after its start | current |
 
 ## No longer in force (11)
 
