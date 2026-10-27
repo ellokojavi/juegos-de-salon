@@ -33,6 +33,7 @@ import {
 } from './aggregate.js';
 import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KINDS, pacificRange } from './timeline.js';
 import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splash.js';
+import { TEXTS as SUPPORT_TEXTS } from '../assets/js/support.js';
 import { switches, status as campaignStatus, overlaps, move, toRemote, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS } from './campaigns.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import {
@@ -1593,7 +1594,7 @@ const unDecimal = x => (x === null ? '—' : x.toLocaleString(LOCALE, { maximumF
 function bloqueResultados(rows) {
   const rango = rangeOf(S.range);
   const todas = rows.map(s => campaignStats(S.days, s.id, rango)).filter(Boolean);
-  const nombre = id => `${CAMPAIGNS[id]?.emoji || ''} ${CAMPAIGNS[id]?.title?.es || id}`.trim();
+  const nombre = id => `${CAMPAIGNS[id]?.emoji || ''} ${(CAMPAIGNS[id]?.title?.[PANEL_LANG] || CAMPAIGNS[id]?.title?.es) || id}`.trim();
   const nota = `${tituloRango()}, UTC days; previews never count. Reach: phones that saw it for the first time. Tapped: taps on its Play link over reach. Only the days it was shown count, so switching it off and on is fine.`;
   if (!todas.length) return bloque('📊 How they did', nota, el('p', { class: 'empty' }, S.daysLoaded ? 'No campaign was shown in this range.' : 'Loading…'));
   const elegida = todas.find(c => c.id === S.campStats) || todas[0];
@@ -1637,11 +1638,11 @@ const C_OPEN = 'var(--yellow)';
 function bloqueApoyo() {
   const c = supportStats(S.days, rangeOf(S.range));
   const nota = `${tituloRango()}, UTC days; ?test never counts. Always on: the home footer link (not counted as shown) and an invitation at the end of some games (shown). Opened counts both.`;
-  if (!c) return bloque('☕ Invítame a un café', nota, el('p', { class: 'empty' }, S.daysLoaded ? 'Nothing counted in this range.' : 'Loading…'));
+  if (!c) return bloque(SUPPORT_TEXTS[PANEL_LANG].link, nota, el('p', { class: 'empty' }, S.daysLoaded ? 'Nothing counted in this range.' : 'Loading…'));
   const maxD = Math.max(0, ...c.series.map(r => Math.max(r.shown, r.open)));
   const dias = c.series.map(r => bar(periodLabelDia(r.day), [seg(C_OPEN, r.open), seg(C_REST, Math.max(0, r.shown - r.open))], maxD,
     { cifra: r.open, sub: `${n(r.shown)} shown`, detail: `${n(r.pay)} to Stripe · ${n(r.thanks)} paid` }));
-  return conCsv(bloque('☕ Invítame a un café', nota,
+  return conCsv(bloque(SUPPORT_TEXTS[PANEL_LANG].link, nota,
     el('div', { class: 'tiles' },
       tile(c.shown, 'invitations shown', { info: 'at the end of games' }),
       tile(c.open, `card opened · ${tasa(c.openRate)}`, { info: 'of invitations (the footer opens it too)' }),
@@ -1662,8 +1663,8 @@ function vistaCampanas(now) {
 
   const resumen = el('div', { class: 'panel campanas-hoy' },
     el('p', { class: 'lead' }, vivas.length ? `Today the home page shows ${vivas.length === 1 ? 'one campaign' : `${vivas.length} campaigns, one per visit, in this order`}` : 'Today the home page shows no campaign'),
-    vivas.length ? el('ol', { class: 'campanas-cola' }, vivas.map(s => el('li', {}, `${CAMPAIGNS[s.id].emoji || ''} ${CAMPAIGNS[s.id].title?.es || s.id}`))) : null,
-    ...cruces.map(c => el('p', { class: 'campanas-cruce' }, `⚠️ ${c.from === c.to ? diaCorto(c.from) : `${diaCorto(c.from)}–${diaCorto(c.to)}`}: ${c.ids.length} on together. A player sees ${c.ids.map(id => `${CAMPAIGNS[id].emoji || ''} ${CAMPAIGNS[id].title?.es || id}`.trim()).join(', then ')}, one per visit.`)),
+    vivas.length ? el('ol', { class: 'campanas-cola' }, vivas.map(s => el('li', {}, `${CAMPAIGNS[s.id].emoji || ''} ${(CAMPAIGNS[s.id].title?.[PANEL_LANG] || CAMPAIGNS[s.id].title?.es) || s.id}`))) : null,
+    ...cruces.map(c => el('p', { class: 'campanas-cruce' }, `⚠️ ${c.from === c.to ? diaCorto(c.from) : `${diaCorto(c.from)}–${diaCorto(c.to)}`}: ${c.ids.length} on together. A player sees ${c.ids.map(id => `${CAMPAIGNS[id].emoji || ''} ${(CAMPAIGNS[id].title?.[PANEL_LANG] || CAMPAIGNS[id].title?.es) || id}`.trim()).join(', then ')}, one per visit.`)),
     S.splash === null ? el('p', { class: 'muted small' }, 'Not saved from here yet: the home page uses the list in splash.js until the first change.') : null,
     S.splashMsg ? el('p', { class: 'campanas-msg', role: 'status' }, S.splashMsg) : null);
 
@@ -1682,7 +1683,7 @@ function vistaCampanas(now) {
     const c = CAMPAIGNS[s.id];
     const st = campaignStatus(s, today);
     const [ico, txt] = ESTADO_CAMPANA[st];
-    const nombre = c.title?.es || s.id;
+    const nombre = c.title?.[PANEL_LANG] || c.title?.es || s.id;
     const abrir = () => { S.campOpen.add(s.id); render(); };
     const cerrar = () => { S.campOpen.delete(s.id); render(); };
     // An off campaign folds to its emoji and title; a tap opens it (the owner's request). It stays open for this visit
