@@ -117,8 +117,12 @@ body.chat-on #screen-play, body.chat-on #screen-lobby, body.chat-on #screen-resu
 /* 🔢 Número or 🔤 Palabra, the same two buttons as a variant in La Copa's waiting room (cup/style.css, D-331) */
 .opciones.dos { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
 .opcion {
-  text-align: center; background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 16px; padding: 12px 6px;
-  color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 48px;
+  text-align: center; background: rgba(0,0,0,0.25); border: 2px solid var(--glass-border); border-radius: 16px; padding: 6px;
+  color: var(--ink); font-family: var(--font-body); cursor: pointer; min-height: 44px;
 }
-.opcion b { display: block; font-size: 1.05rem; font-weight: 900; }
+.opcion b { display: block; font-size: 1rem; font-weight: 900; }
+/* Under the language, inside the hero: the first mode stays above the fold at 320×568 (landing-fold.mjs) */
+#variant-slot { margin-top: 10px; }
 .opcion.on { border-color: var(--yellow); background: rgba(255, 210, 63, 0.14); box-shadow: 0 0 0 1px var(--yellow) inset; }
+/* A short phone (320×568): a smaller icon makes room for the Número / Palabra toggle, so the first mode stays above the fold */
+@media (max-height: 600px) { .intro-hero .icon { font-size: 3.2rem; } }
