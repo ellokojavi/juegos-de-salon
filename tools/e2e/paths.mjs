@@ -608,8 +608,6 @@ export const PATHS = {
     'cellar-king': [`document.querySelector('#seccion-cuarto-rey summary').click(); document.getElementById('seccion-cuarto-rey').scrollIntoView(); 1`],
     // Julepe's card, in La Bodega since D-434
     'cellar-julep': [`document.querySelector('#seccion-julepe summary').click(); document.getElementById('seccion-julepe').scrollIntoView(); 1`],
-    // The splash soft close's card, launched to everyone in D-462
-    'cellar-splash': [`document.querySelector('#seccion-splash-cerrar summary').click(); document.getElementById('seccion-splash-cerrar').scrollIntoView(); 1`],
   },
   'labs/exploding-numbers': {
     intro: [],
