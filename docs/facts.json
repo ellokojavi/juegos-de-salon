@@ -1,5 +1,5 @@
 {
-  "version": "0.218.0",
+  "version": "0.219.7",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -971,6 +971,7 @@
     "public/assets/js/transport/firebase.js",
     "public/assets/js/transport/local.js",
     "public/assets/js/transport/ratelimit.js",
+    "public/assets/js/transport/seat.js",
     "public/assets/js/transport/stats.js",
     "public/assets/js/uad-place.js",
     "public/assets/js/ui.js",
@@ -1158,6 +1159,7 @@
     "public/assets/js/transport/dispose.test.mjs",
     "public/assets/js/transport/errors.test.mjs",
     "public/assets/js/transport/ratelimit.test.mjs",
+    "public/assets/js/transport/seat.test.mjs",
     "public/assets/js/transport/stats.test.mjs",
     "public/assets/js/uno-al-dia-avisos.test.mjs",
     "public/assets/js/uno-al-dia-jugador.test.mjs",
@@ -1328,6 +1330,7 @@
     "plots/utilities.mjs",
     "room-cap.mjs",
     "room-error.mjs",
+    "rooms/online.mjs",
     "routes/game.mjs",
     "scope-guard.test.mjs",
     "scope.test.mjs",

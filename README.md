@@ -501,6 +501,7 @@ node public/assets/js/transport/cleanup.test.mjs
 node public/assets/js/transport/dispose.test.mjs
 node public/assets/js/transport/errors.test.mjs
 node public/assets/js/transport/ratelimit.test.mjs
+node public/assets/js/transport/seat.test.mjs
 node public/assets/js/transport/stats.test.mjs
 node public/assets/js/uno-al-dia-avisos.test.mjs
 node public/assets/js/uno-al-dia-jugador.test.mjs
