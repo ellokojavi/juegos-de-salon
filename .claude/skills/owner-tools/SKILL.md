@@ -9,7 +9,7 @@ description: The owner's panel (public/panel/), La Copa reports and the rankings
   draws it with seeded data without logging in. See [docs/PANEL.md](../../../docs/PANEL.md).
 - **La Copa (the Cup) reports** (D-104): `node tools/firebase/reports.mjs [--days 3] [--json]`.
 - **Rankings** (D-212): `records.js` (logic), `jugador.js` (the player and their store:
-  `jugador-firebase.js`, or `jugador-local.js` in tests and with `?test`; `?records=firebase` forces
+  `jugador-firebase.js`, which reads over REST and loads the SDK only to write or sign in (D-470), or `jugador-local.js` in tests and with `?test`; `?records=firebase` forces
   Firebase) and `ranking.js` + `ranking.css` (screen). Open to everyone since D-217 (the lab
   gate, `RANKINGS_EN_LABS`, stays `false`). Signing in is two writes: the PIN attempt
   (`jugadorIntentos/<jid>`, one every 5 s per player) and then the seat, which needs that phone's fresh
