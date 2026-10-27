@@ -124,6 +124,19 @@ export function where(r) {
   return c.juego || (c.labs && `lab ${c.labs}`) || (c.copa && `cup ${c.copa}`) || c.pantalla || c.url || 'the app';
 }
 
+/**
+ * Whether a text looks like it carries a secret: a private key, a service account, a token. The
+ * repo is public and the support agent reads strangers' emails, so a report like this is never
+ * posted (`sync` logs it instead) nor accepted by `inbox.mjs ingest`. Long runs of letters and
+ * digits count only with both in them, so long words, game codes and URLs pass.
+ */
+export function secretLike(text) {
+  const t = String(text || '');
+  if (/private_key|-----BEGIN [A-Z ]*-----|"type"\s*:\s*"service_account"|client_secret|refresh_token|"password"\s*:/i.test(t)) return true;
+  if (/\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|sk-ant-[A-Za-z0-9_-]{20,}|AIza[0-9A-Za-z_-]{35}|eyJ[A-Za-z0-9_-]{15,}\.eyJ[A-Za-z0-9_-]{15,})/.test(t)) return true;
+  return (t.match(/[A-Za-z0-9+_=-]{32,}/g) || []).some(w => /[0-9]/.test(w) && /[A-Za-z]/.test(w) && !/^[a-z]+(?:-[a-z]+)+$/i.test(w));
+}
+
 /** A player's @ or # mentions no one and links nothing. */
 const inert = t => String(t).replace(/@/g, '@​').replace(/#(\d)/g, '#​$1');
 
@@ -183,12 +196,13 @@ async function sync(dryRun) {
       throw new Error(`${fresh.length} of ${reports.length} report(s) without an issue: GitHub's issue list looks incomplete, nothing uploaded (--force if they really are new).`);
   }
   if (!fresh.length) return console.log(`Nothing new (${reports.length} report(s), all with an issue).`);
-  if (dryRun) { for (const r of fresh) console.log(`${title(r)}\n${body(r)}\n`); return; }
+  if (dryRun) { for (const r of fresh) console.log(secretLike(`${title(r)}\n${body(r)}`) ? `⚠️ ${r.id}: looks like it carries a key or a token, would not be posted\n` : `${title(r)}\n${body(r)}\n`); return; }
   const exists = JSON.parse(gh('label', 'list', '--limit', '200', '--json', 'name')).some(l => l.name === LABEL);
   if (!exists) gh('label', 'create', LABEL, '--color', 'd93f0b', '--description', 'A player\'s 🐞 report (D-275)');
   const have = new Set(JSON.parse(gh('label', 'list', '--limit', '200', '--json', 'name')).map(l => l.name));
   for (const name of Object.values(KIND_LABELS)) if (!have.has(name)) gh('label', 'create', name, '--color', 'c5def5', '--description', 'The kind the player picked in the inbox (D-345)');
   for (const r of fresh) {
+    if (secretLike(`${title(r)}\n${body(r)}`)) { console.error(`⚠️ report ${r.id} looks like it carries a key or a token: not posted. Look at feedback/${r.id} in Firebase and delete it.`); continue; }
     const url = gh('issue', 'create', '--title', title(r), '--label', labelsOf(r).join(','), '--body', body(r)).trim();
     await write('feedbackIssues', 'PATCH', { [r.id]: Number(url.split('/').pop()) }, t);
     console.log(url);

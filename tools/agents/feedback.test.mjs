@@ -120,3 +120,11 @@ const dup = [{ number: 683, body: marker('a') }, { number: 312, body: marker('a'
 assert.deepEqual(unrecorded(dup, {}), { a: 312, b: 9 }, 'the oldest issue of a duplicated report');
 assert.deepEqual(unrecorded(dup, { a: 312 }), { b: 9 }, 'what is recorded is not written again');
 assert.deepEqual(unrecorded([], { a: 312 }), {}, 'an empty list from GitHub takes nothing from the record');
+
+// A report that looks like it carries a secret is never posted (the repo is public, #838)
+{
+  const { secretLike } = await import('./feedback.mjs');
+  for (const s of ['{"type": "service_account", "project_id": "x"}', '"private_key": "abc"', '{"email":"x@y.cl","password":"hunter2"}', '-----BEGIN PRIVATE KEY-----\nMIIE',
+    'ghp_' + 'Ab1'.repeat(12), 'sk-ant-api03-' + 'x'.repeat(30), '0123456789abcdef0123456789abcdef01234567', 'mi clave es dGhpc2lzYXZlcnlsb25nc2VjcmV0dG9rZW4xMjM0NTY3']) assert.ok(secretLike(s), `a secret: ${s.slice(0, 30)}`);
+  for (const s of [body(r), title(r), 'https://juegosdesalon.cl/labs/case/?labs&seed=HEJWN', 'juegos-de-salon-default-rtdb-and-more-words', 'Supercalifragilisticexpialidocious', '']) assert.ok(!secretLike(s), `not a secret: ${s.slice(0, 30)}`);
+}
