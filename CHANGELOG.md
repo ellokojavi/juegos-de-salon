@@ -1,5 +1,166 @@
 # Changelog
 
+## 0.219.4 — 2026-10-26
+- **Toque y Fama:** 🔢 Número or 🔤 Palabra is picked with a two-button toggle at the top of the game, like Loteo's variants, on both pages, instead of a fourth mode. The home page has a single Toque y Fama: Palabra is gone from its list, its filters and its search (it still plays in Uno al día and La Copa).
+
+## 0.219.3 — 2026-10-26
+- **☕ Support: a warmer thank-you.** After buying a coffee, the thank-you now reads "¡Gracias por tu café!" and invites the player back to play, in the four languages.
+
+## 0.219.2 — 2026-10-26
+- **Email replies to players always thank them for their time**: every one of the ten openings, in the four languages, now opens with a thank-you (owner's request: one that went out as "Te debíamos unas respuestas" read dry). Nothing changes on the site.
+
+## 0.219.1 — 2026-10-26
+- **Rankings:** the list of how many times you played each game comes folded, with the total in its title, so the rankings show first (a player asked for it by email). Out of the lab, for every player.
+- **Toque y Fama:** one card on the home page for the number and the word; 🔤 Palabra is a mode inside the game (a player asked for it by email). Out of the lab, for every player.
+
+## 0.219.0 — 2026-10-26
+- **☕ Buy me a coffee, for everyone:** the home page footer and the end of some finished games now offer a voluntary contribution through Stripe, from US$1, for every player, not only lab key holders. The card moves to La Bodega in /labs/.
+
+## 0.218.14 — 2026-10-26
+- **Home page footer (lab)**: with a lab key, the footer's options (💬 Suggestions and comments,
+  ☕ Buy me a coffee) sit under a thin rule with a 🎲, as two outlined, unfilled buttons in a
+  two-column grid, so they read as the site's corner and not as more game cards. A new option is one
+  more button in the grid; an odd one spans the row. Without a key the footer is unchanged.
+
+## 0.218.13 — 2026-10-26
+- **Panel**: a 🧪 Labs link at the end of the section menu opens `/labs/`.
+
+## 0.218.12 — 2026-10-26
+- **☕ Buy me a coffee (lab):** the pay button and the 🥂 splash now open the live Stripe payment page: payments are real. Still only for lab key holders.
+
+## 0.218.11 — 2026-10-26
+- **☕ Buy me a coffee (lab):** the Keanu Reeves clip on the support card is bigger and sits under the title; on the smallest phones it shrinks so the card still fits.
+
+## 0.218.10 — 2026-10-26
+- **🥂 Brindis splash (off):** its "Apoyar Juegos de Salón" button goes straight to the Stripe payment page instead of opening the support card first.
+
+## 0.218.9 — 2026-10-26
+- **Tren en Vilo: the stage confetti falls in front**: it was hidden behind the stage summary, which now sits just under it.
+
+## 0.218.8 — 2026-10-26
+- **☕ Buy me a coffee (lab):** the support card shows a small clip beside its title, Keanu Reeves saying thank you, and still fits a small phone without scrolling.
+
+## 0.218.7 — 2026-10-26
+- **🥂 A new splash campaign, off for now:** "¡Un brindis por ti!", Leonardo DiCaprio raising his glass, invites players to support the site and opens the support card. It goes on from the panel once support leaves the lab.
+
+## 0.218.6 — 2026-10-26
+- 📣 **▶ Jugar in the Tren en Vilo window opens the game already started**, past its cover (`?play`).
+- 📣 **The Tren en Vilo window's clip is quicker**: 10 seconds instead of 17.
+
+## 0.218.5 — 2026-10-26
+- **☕ Buy me a coffee (lab):** the pay button now opens a real Stripe checkout in sandbox mode, so the whole flow, Stripe and the thank-you on return, can be tried in the lab with a test card. Players see no change (D-449).
+
+## 0.218.4 — 2026-10-26
+- 📣 **The Tren en Vilo window fits the screen like the others**: on a computer its clip filled the screen and left ▶ Jugar below the fold; now the clip takes the height left by its heading and card.
+
+## 0.218.3 — 2026-10-26
+- **📣 Campaigns, redesigned** (D-454): an off campaign folds to its emoji and title, and a tap opens it. Each card shows its status under the title, the days as two pills (Starts Now → Ends Never) that open the phone's calendar with one tap, a 1 week / 2 weeks / 1 month selector, and its place in the order (↑ 1 of 3 ↓) next to Preview.
+
+## 0.218.2 — 2026-10-26
+- **🎃 Halloween reaches every player** on the home page and Rankings until October 31: a pumpkin favicon, a pumpkin glow, a cobweb, bats, spiders and skulls among the particles, a bat that crosses and a ghost that sometimes peeks. The games stay as they are (D-457).
+
+## 0.218.1 — 2026-10-26
+- 📣 **The Tren en Vilo window no longer flashes the finished bridge** before its clip starts: it opens on the clip's first frame.
+- 🚅 **Tren en Vilo has a modern icon**: the bullet train of the game instead of the steam engine, on the home page, its card and its link.
+- ☁️ **Tren en Vilo's clouds look natural**: each one is a few puffs of its own shape, spread across the sky, instead of three identical ones stacked.
+
+## 0.218.0 — 2026-10-26
+- **🎃 Halloween on the home page and Rankings (lab)**: from October 26 to 31, a pumpkin favicon, a pumpkin glow in the background, a cobweb in the corner, 🎃 👻 🦇 in the hero's emoji cycle, bats, spiders, bugs and skulls among the background particles, a bat that crosses once and a ghost that sometimes peeks. The games stay as they are. Built as templates, so the next dates are one row each. For now only with a lab key, to look at before it goes out to everyone (D-457).
+
+## 0.217.0 — 2026-10-26
+- 🚂 **Tren en Vilo is out of the lab, for everyone.** Reinforce the track with beams over a gap and test whether the train crosses: five stages in seven minutes, from a bright morning to the night. It is on the home page (✨ Nuevo), in Uno al día from October 27 and in La Copa, in Spanish, English, Portuguese and German, with its ranking, its share card and the 🐞 report.
+- 📣 **A window on the home page announces it**, with a clip of a bridge built and crossed and a button to play; it replaces the "Algo nuevo se viene…" teaser.
+
+## 0.216.2 — 2026-10-26
+- **Stick Ninja (lab): the climb back after a lost life looks real.** The ninja peeks up from below, throws the grapple in an arc, the rope snaps taut on the edge, and the ninja climbs hand over hand and pulls itself over the top, in about 2.6 seconds instead of a quick jump.
+
+## 0.216.1 — 2026-10-26
+- **👁 Previewing a campaign shows only that campaign** (D-454): the panel's Preview (`?splash=`) no longer gives way to a La Copa or Uno al día recap this phone still had to see.
+
+## 0.216.0 — 2026-10-26
+- **📣 The owner runs the home page's campaigns from the panel** (D-454): a new Campaigns section, made for the phone, with each campaign's on switch, its start and end days, the order when several overlap and a preview. A change reaches the home page on the next visit, with no new version. Players see nothing different: the same campaign, on the same days.
+
+## 0.215.2 — 2026-10-26
+- 🐹 **Tren en Vilo (lab): the mole's tunnel stands out.** It is dug brown earth with a light rim, so it
+  shows against the purple rock at any time of day; before, its dark bore all but vanished in the night's rock.
+
+## 0.215.1 — 2026-10-26
+- **Tren en Vilo (lab): steel is only the look of the later stages.** Wood and steel are no longer mixed: levels 1 and 2 are built in wooden planks and levels 3 to 5 in steel beams, with the same budget, cost and strength. The picker and the separate steel reserve are gone; on steel stages the counter reads «Acero» and shows gray bars.
+
+## 0.215.0 — 2026-10-26
+- **Stick Ninja (lab) has its leaderboard**, like every game played alone: under 🥷 Play, the Stick Ninja leaderboard (Week · All time · Friends) and signing in with a name and PIN; on the result, how the run did against your record or "Want this game to count on the leaderboard?", and the table. In English, like the game. This phone's best moves in with the steps.
+
+## 0.214.7 — 2026-10-26
+- 🐹 **Tren en Vilo (lab): the mole and the stone towers, redrawn.** The mole tapers to its snout, with fur
+  along its back, whiskers, a tail and big spade hands with claws; scared, it shows its teeth and kicks its
+  feet. Its tunnel is a smooth bore with a rim of loose earth instead of a stack of squares. The towers over
+  the banks are dressed stone, in courses of staggered blocks.
+
+## 0.214.6 — 2026-10-26
+- 🚤 **Tren en Vilo (lab): the boat and the wakeboarder, redrawn.** The boat has white topsides with a pink
+  stripe, an arched wake tower, a raked windscreen, a driver at the wheel and white water at the bow and stern.
+  The rider wears a helmet and leans back against the pull, knees and elbows bent, both hands on the handle;
+  the fall throws the board away, and in the water the vest keeps them afloat. The wave glows at its crest and
+  throws spray.
+
+## 0.214.5 — 2026-10-26
+- **Tren en Vilo (lab): the day really goes by.** Stage 1 is a bright blue morning with white clouds, the middle ones head into a pink-and-gold sunset, the last is at night; in the house style every stage had looked like night.
+- **Tren en Vilo (lab): the train always stands out.** Each stage picks the bullet train's color only among those that contrast with its sky (pearl in the morning, all seven at night).
+
+## 0.214.4 — 2026-10-26
+- **Stick Ninja's cover (lab) breathes**: room between the run, 🥷 Play, "🏆 Best" (now centered under the button) and the steps; the tagline wraps evenly and the steps leave no word alone on a line.
+
+## 0.214.3 — 2026-10-26
+- **Stick Ninja (lab): a lost life climbs back up.** After a fall that leaves lives, a rope shoots up from below the screen and hooks the pillar, the ninja climbs it and hops back on top, in about a second (the wait went from 1.5 s to about 1.1 s).
+
+## 0.214.2 — 2026-10-26
+- 🚂 **Tren en Vilo (lab): a polished scene.** The moon is a real crescent: its shadow follows the moon's own
+  outline instead of a dark disc over the halo. The stars are round and the brightest twinkle, the sun has a soft
+  glow, the sun or moon shimmers on the water, the cliffs and rock pillars show their layers (the pillars wider
+  at the foot, with foam where the water meets them), and the birds have a body, a tail, an eye and full wings.
+
+## 0.214.1 — 2026-10-26
+- **Tren en Vilo (lab): skip a stage.** While the game is in the lab, a ⏭ button by the clock jumps to the next stage without building, to try the later ones. A skipped stage counts as passed with all its wood spent.
+
+## 0.214.0 — 2026-10-26
+- **Stick Ninja (lab) has three lives**: a run no longer ends on the first fall. A fall darkens one of the three ❤️ at the top of the night ("❤️ 2 lives left", "Last life!") and the ninja is back on the same pillar with the score kept and the flag streak gone; the third fall ends the run. The cover's first step says so.
+
+## 0.213.0 — 2026-10-26
+- **Toque y Fama, in the lab: the 100 points go to whoever deduces.** A new score rule is being tried for 🔢 (Jugar solo, La Copa and the Final's round): start at 100 and lose 15 for each guess the earlier clues had already ruled out. Scores still count with today's rule for everyone; with a lab key, the finished board marks those guesses with ⚠️ and says what the new rule would have given (D-453).
+
+## 0.212.0 — 2026-10-26
+- **Tren en Vilo (lab): steel beams.** On the heavier crossings (levels 3 to 5) a small reserve of steel (2 m) comes beside the wood: a 🪵 Madera / 🔩 Acero picker chooses what the next beam is laid in. Steel snaps at twice the strain of wood and costs no wood. Wood and steel each have their own texture: wood a warm rod with a grain, steel a thicker cold rod with a bright edge and rivets that heats to pink and red under strain. The steel left shows as gray bars beside the planks.
+
+## 0.211.13 — 2026-10-26
+- **Tren en Vilo (lab): the wood left is shown as planks**, one per meter above the counter, emptying as you build; the last plank is shorter when the budget has decimals.
+
+## 0.211.12 — 2026-10-26
+- **Línea de Tiempo:** after a solo game, "La línea quedó así" no longer sits against the share button.
+
+## 0.211.11 — 2026-10-26
+- **Toque y Fama, in the lab:** one card on the home page for the number and the word; 🔤 Palabra is now a mode inside the game (a player asked for it by email).
+
+## 0.211.10 — 2026-10-26
+- **Rankings, in the lab:** the list of your games played comes folded, with the total in its title, so the rankings show first (a player asked for it by email).
+
+## 0.211.9 — 2026-10-26
+- **Línea de Tiempo's tagline no longer reads as a football game**: "from history to soccer" became
+  "from history to music" in the four languages, on the home card, the page's description and its
+  link card (feedback #771).
+- **The home page's order** was recounted from the games finished in the last four weeks (D-361).
+
+## 0.211.8 — 2026-10-26
+- **Rankings:** a finished game's score is no longer lost to a bad connection. It is tried again twice (as soon as the phone is back online, or after a few seconds); if it still can't go, it waits on the phone ("No signal: your score goes up to the leaderboard as soon as you're back online") and is sent the next time a page opens or the signal returns, into the week it was played. A player had lost a 100/100 Zip on a weak signal.
+
+## 0.211.7 — 2026-10-26
+- 🚂 Tren en Vilo (lab): its cover steps fit in 280 characters again (U-18): the first step no longer opens with "La vía ya está puesta", and the scoring line reads "Suman las etapas superadas, la madera que sobra…".
+
+## 0.211.6 — 2026-10-26
+- **Skipped emails to hola@ no longer vanish** (D-452). The processes round lists every email the support agent skipped, with when, the masked sender and why, and the owner can read their text with `node tools/agents/inbox.mjs skipped`; it stays on the owner's machine, never on GitHub. Nothing changes for players.
+
+## 0.211.5 — 2026-10-26
+- **🏆 A finished Cup's champions reach the medal table within the hour of its close**, instead of a day late in winter time (D-450).
+
 ## 0.211.4 — 2026-10-26
 - **🏆 Every finished Cup's champions reach the medal table, even if nobody opens the Cup again** (D-450). The podium used to be saved only when someone opened the Cup after it ended, so the Reno Farewell Cup and Copa Originales were missing; they are in now, and a nightly job saves any that is missing.
 

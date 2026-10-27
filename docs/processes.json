@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "a026231",
+  "checkedUpTo": "4c89dbb",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -389,16 +389,17 @@
   "queueDone": [
     "#321:3",
     "#387:1",
-    "#494:2"
+    "#494:2",
+    "#780:1"
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-26",
-      "to": "a026231"
+      "date": "2026-10-27",
+      "to": "4c89dbb"
     },
     "usability": {
-      "date": "2026-10-26",
-      "to": "a026231"
+      "date": "2026-10-27",
+      "to": "4c89dbb"
     },
     "ideas": {
       "date": "2026-10-21",
@@ -485,6 +486,14 @@
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/780",
       "pr": null,
       "note": "Catch-up round b75fac6..a026231: collected 91 changelog entries, popularity, durations, fixed #771, asked #767"
+    },
+    {
+      "date": "2026-10-27",
+      "from": "a026231",
+      "to": "4c89dbb",
+      "issue": null,
+      "pr": null,
+      "note": "Dispatched documentation (#829) and usability (#831, dilemma #830); 46 changelog entries collected; #780:1 already done by #785"
     }
   ],
   "ownerDecisions": [
