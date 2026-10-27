@@ -5,6 +5,8 @@
 # morning. In the first three days of a month it also rebuilds the month before, for the markers
 # that arrive late. Running it twice writes nothing new. It also writes the season's places by week
 # (uadTemporada/, D-424), which the home page's season recap and its notification wait for.
+# A second step deletes the names in the usage statistics older than 24 months (D-472,
+# tools/firebase/stats-retention.mjs); the nameless counts stay.
 #
 # It needs the FIREBASE_ADMIN_JSON secret (the same as publish.yml's, D-218); without it, it warns
 # and ends green.
@@ -56,3 +58,4 @@ jobs:
           if [ "$(TZ=America/Santiago date +%d)" -le 3 ]; then
             node tools/firebase/uad-points-backfill.mjs --rebuild $APPLY --month "$(TZ=America/Santiago date -d "$month-01 -1 day" +%Y-%m)"
           fi
+          node tools/firebase/stats-retention.mjs $APPLY
