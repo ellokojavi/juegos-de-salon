@@ -17,6 +17,10 @@ import TEXTOS from './texts.js';
 import { botonDeshacer } from '../deshacer.js';
 import { el as crear, vibrate as vibrar } from '../../../assets/js/ui.js';
 import { getLang } from '../../../assets/js/i18n.js';
+import { loadCss } from '../../../assets/js/load-css.js';
+
+// Its own stylesheet, loaded with its code and before its first screen (D-468)
+await loadCss(new URL('./style.css', import.meta.url));
 
 const QUIETO = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
