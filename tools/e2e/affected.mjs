@@ -147,7 +147,7 @@ export function playedOn(f, hit, graph) {
   return hit.filter(p => !onlyImports(p));
 }
 
-/** Does this closure load `f`: by name, or under a media folder it names (`assets/img/earth-2004-09/`, D-460)? */
+/** Does this closure load `f`: by name, or under a media folder it names (`cup/games/where/earth-2004-09/`, D-460)? */
 export function loads(closure, f) {
   if (closure.has(f)) return true;
   for (const x of closure) if (x.endsWith('/') && f.startsWith(x)) return true;
