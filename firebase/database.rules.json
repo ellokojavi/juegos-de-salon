@@ -11,7 +11,7 @@
         ".validate": "newData.hasChildren(['createdAt', 'game'])",
         "createdAt": {
           ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists()",
-          ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+          ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000 && (newData.parent().parent().parent().child('cleanup/days/' + (((now - now % 86400000) / 86400000) + 0) + '/rooms/' + $room).val() == true || newData.parent().parent().parent().child('cleanup/days/' + (((now - now % 86400000) / 86400000) + -1) + '/rooms/' + $room).val() == true || newData.parent().parent().parent().child('cleanup/days/' + (((now - now % 86400000) / 86400000) + 1) + '/rooms/' + $room).val() == true)"
         },
         "lastAt": {
           ".write": "$room.matches(/^[A-Z]{4}$/) && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000 && (!root.child('rooms/' + $room + '/lastAt').exists() || root.child('rooms/' + $room + '/lastAt').val() > now - 1800000)",
@@ -310,7 +310,7 @@
           ".write": "data.exists() && !newData.exists() && data.child('lastAt').val() < now - 21600000",
           ".validate": "newData.hasChildren(['lastAt'])",
           "lastAt": {
-            ".write": "newData.exists() && (!data.exists() || newData.val() >= data.val())",
+            ".write": "newData.exists() && ($day === '' + ((now - now % 86400000) / 86400000) || $day === '' + (((now - now % 86400000) / 86400000) - 1) || $day === '' + (((now - now % 86400000) / 86400000) + 1)) && (!data.exists() || newData.val() >= data.val())",
             ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
           },
           "rooms": {
