@@ -17,7 +17,7 @@ machine needs. `machine.test.mjs` fails if a `mac` job, or a file under
 The launchd plists are generated from `jobs.json` (`~/Library/LaunchAgents/cl.juegosdesalon.<id>.plist`)
 and run the code of the **main folder** (today `~/Documents/Claude/Projects/juegos-de-salon`), which
 stays on `main`; `jobs.mjs run` fast-forwards it to origin/main before each run (only when clean and on `main`; the log says when it could not). The two daily and
-weekly Claude rounds run through `tools/jobs/claude-task.mjs` (D-451): `claude -p --permission-mode auto`
+weekly Claude rounds run through `tools/jobs/claude-task.mjs` (D-451): `claude -p --permission-mode auto`, each with only the tools it needs (#865, see README.md),
 with a one-line prompt, "read `tools/jobs/prompts/<id>.md` from origin/main and follow it", so the
 real instructions are in the repo and `jobs.test.mjs` fails if they name a file that no longer
 exists. They need only the Mac on and `claude` signed in (`~/.local/bin/claude`), not the desktop app:
