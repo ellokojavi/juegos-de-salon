@@ -273,8 +273,9 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
   with it, and it is never joined with names, rooms, Cups or rankings.
 - **Since D-448 (for every player since it left the lab):** `support/<event>`, the steps of ☕ Buy me a coffee (`shown`: the
   end-of-game invitation was shown; `open`: its card opened (D-449); `pay`: its button was tapped;
-  `thanks`: Stripe sent the donor back). The panel does not show them yet: D-448 said they join it when support
-  leaves the lab, and that is still to do.
+  `thanks`: Stripe sent the donor back). The panel shows them in 📣 Campaigns as an always-on campaign,
+  "☕ Invítame a un café": invitations, cards opened, taps to Stripe and payments in the range, with their
+  rates, one bar per day and a CSV (`supportStats` in `public/panel/campaigns.js`).
 - **Since D-461:** `splash/<campaign>/<event>`, what each splash window did: `shown`, `reach` (the first
   time on this phone, remembered in `juegos-de-salon:splash-alcance`), `play` (its link tapped), `close`,
   and how long it stayed open before either (`t0` under 3 s, `t1` 3–10 s, `t2` 10 s or more). A preview
