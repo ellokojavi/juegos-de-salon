@@ -51,6 +51,9 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456 |
 | Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451, D-452, D-459, D-463 |
+| Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460 |
+| La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456, D-460 |
+| Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451, D-452, D-459 |
 | Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450, D-455, D-465 |
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
@@ -211,8 +214,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-156](decisions/D-156.md) | ¿Dónde queda? is played on an endlessly spinning globe, and its cover spins on its own | amended by D-158, D-159 |
 | [D-157](decisions/D-157.md) | ¿Dónde queda? adds second-tier cities | current |
 | [D-158](decisions/D-158.md) | The ¿Dónde queda? globe goes without borders | current |
-| [D-159](decisions/D-159.md) | The ¿Dónde queda? globe is a satellite image | amended by D-202, D-245 |
-| [D-160](decisions/D-160.md) | The satellite globe looks sharp when zoomed in: tiles | amended by D-201 |
+| [D-159](decisions/D-159.md) | The ¿Dónde queda? globe is a satellite image | amended by D-202, D-245, D-460 |
+| [D-160](decisions/D-160.md) | The satellite globe looks sharp when zoomed in: tiles | amended by D-201, D-460 |
 | [D-161](decisions/D-161.md) | The admin can end the cup early, and the final table is exported | current |
 | [D-162](decisions/D-162.md) | Each standalone mini-game has its page and its social card | amended by D-198 |
 | [D-163](decisions/D-163.md) | The admin chooses the cup's games and their order | amended by D-418, D-421, D-456 |
@@ -251,7 +254,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-198](decisions/D-198.md) | There are no mini-games: La Copa's games are games | current |
 | [D-199](decisions/D-199.md) | All screens are tested in all languages | current |
 | [D-200](decisions/D-200.md) | ¿Dónde queda?: the globe rotates with two fingers and the compass straightens north | current |
-| [D-201](decisions/D-201.md) | Satellite tiles are cut with PIL, not with sips | current |
+| [D-201](decisions/D-201.md) | Satellite tiles are cut with PIL, not with sips | amended by D-460 |
 | [D-202](decisions/D-202.md) | ¿Dónde queda?: zoom reaches 64 times | current |
 | [D-203](decisions/D-203.md) | ¿Dónde queda? is played full screen | current |
 | [D-204](decisions/D-204.md) | Publishing faster: long scripts in parts and a bounded PR review | amended by D-213, D-304, D-307 |
@@ -505,6 +508,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-457](decisions/D-457.md) | Seasonal touches on the pages players move around in (Halloween first) | current |
 | [D-458](decisions/D-458.md) | A splash campaign can wait for regulars: 5 visit days and 10 finished games (the toast to support does) | current |
 | [D-459](decisions/D-459.md) | Feedback reports are readable only by the owner; the tools read them with the admin key | current |
+| [D-460](decisions/D-460.md) | ¿Dónde queda?'s Earth in WebP, next to the game, and the 4096 px image only on big screens or zoomed in | current |
 | [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit (in the lab) | current |
 | [D-463](decisions/D-463.md) | A privacy page in four languages, and an unanswered feedback email is deleted after 90 days | current |
 | [D-465](decisions/D-465.md) | Uno al día points count only near the day's own date, and only after its start | current |
