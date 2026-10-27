@@ -103,7 +103,8 @@ export function span(s, today, days) {
  * - dwell: of the windows answered, how many stayed open 3 s or more, and 10 s or more.
  * - early / late: reach per exposed day in its first 3 days shown and after them; halfDays: how many
  *   days shown it took to gather half its reach. Together they say whether it is still finding new
- *   phones or already reached the ones that come.
+ *   phones or already reached the ones that come. `clipped` says it was already showing on `from`:
+ *   then its days count from the range, not from its real start.
  */
 export const EARLY_DAYS = 3;
 export function campaignStats(days, id, { from, to }) {
@@ -131,6 +132,8 @@ export function campaignStats(days, id, { from, to }) {
   const ratio = (a, b) => (b ? a / b : null);
   return {
     id, series, ...t, exposed: on.length, firstDay: series[0].day, lastDay: series.at(-1).day,
+    // Shown on the range's first day: it may have started before, so its day numbers count from the range
+    clipped: first === 0,
     rest: Math.max(0, t.shown - t.play - t.close),
     ctr: ratio(t.play, t.reach), closeRate: ratio(t.close, t.reach), perPhone: ratio(t.shown, t.reach),
     coverage: ratio(t.shown, home), stay3: ratio(t.t1 + t.t2, answered), stay10: ratio(t.t2, answered),

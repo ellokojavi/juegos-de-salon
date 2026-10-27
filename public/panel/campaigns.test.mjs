@@ -63,6 +63,8 @@ assert.equal(x.stay10, 9 / 58);
 assert.equal(x.early, 44 / 3);
 assert.equal(x.late, 2);
 assert.equal(x.halfDays, 1, '30 of 46 on its first day');
+assert.equal(x.clipped, false);
+assert.equal(campaignStats(days, 'x', { from: D + 1, to: D + 5 }).clipped, true, 'already showing when the range starts');
 assert.equal(campaignStats(days, 'none', { from: D - 1, to: D + 5 }), null, 'never shown: nothing to say');
 assert.equal(campaignStats({}, 'x', { from: D, to: D }), null);
 

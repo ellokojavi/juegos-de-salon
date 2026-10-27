@@ -1606,9 +1606,10 @@ function bloqueResultados(rows) {
 
   const c = elegida;
   const caida = c.early && c.late !== null ? Math.round(((c.late - c.early) / c.early) * 100) : null;
-  const saturacion = c.late === null
+  const antes = c.clipped ? ' It was already showing when this range starts: pick a longer range to count from its first day.' : '';
+  const saturacion = (c.late === null
     ? `Shown ${n(c.exposed)} ${c.exposed === 1 ? 'day' : 'days'} so far: too soon to tell whether it still finds new phones.`
-    : `First ${EARLY_DAYS} days shown: ${unDecimal(c.early)} new phones a day; since then ${unDecimal(c.late)} a day (${caida > 0 ? '+' : ''}${caida}%). Half its reach came in its first ${n(c.halfDays)} ${c.halfDays === 1 ? 'day' : 'days'} shown.`;
+    : `First ${EARLY_DAYS} days shown: ${unDecimal(c.early)} new phones a day; since then ${unDecimal(c.late)} a day (${caida > 0 ? '+' : ''}${caida}%). Half its reach came in its first ${n(c.halfDays)} ${c.halfDays === 1 ? 'day' : 'days'} shown.`) + antes;
   const maxD = Math.max(0, ...c.series.map(r => r.shown));
   const dias = c.series.map(r => bar(periodLabelDia(r.day), r.off ? [] : [seg(C_PLAY, r.play), seg(C_CLOSE, r.close), seg(C_REST, Math.max(0, r.shown - r.play - r.close))], maxD,
     { cifra: r.shown, sub: r.off ? 'not shown' : `day ${r.n}`, detail: r.off ? '' : `${n(r.reach)} new phones · ${tasa(r.home ? r.shown / r.home : null)} of home views` }));
@@ -1616,8 +1617,8 @@ function bloqueResultados(rows) {
     el('p', { class: 'lead' }, nombre(c.id)),
     el('div', { class: 'tiles' },
       tile(c.reach, 'phones reached', { info: `${unDecimal(c.perPhone)} windows per phone` }),
-      tile(tasa(c.ctr), `tapped through · ${n(c.play)}`),
-      tile(tasa(c.closeRate), `closed · ${n(c.close)}`),
+      tile(tasa(c.ctr), `tapped · ${n(c.play)}`, { info: 'of phones reached' }),
+      tile(tasa(c.closeRate), `closed · ${n(c.close)}`, { info: 'of phones reached' }),
       tile(tasa(c.coverage), 'of home page views', { info: 'on the days it was shown' }),
       tile(tasa(c.stay3), 'stayed 3 s or more', { info: `${tasa(c.stay10)} 10 s or more` }),
       tile(c.exposed, c.exposed === 1 ? 'day shown' : 'days shown', { info: `${periodLabelDia(c.firstDay)} – ${periodLabelDia(c.lastDay)}` })),
