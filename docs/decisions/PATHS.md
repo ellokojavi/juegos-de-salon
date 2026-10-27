@@ -8,7 +8,7 @@ DECISIONES.md, D-394.)
 |---|---|
 | `index.html`, `CNAME`, `en/`, `pt/`, `labs/`, `panel/` | the same inside `public/` (D-192) |
 | `assets/` | `public/assets/` |
-| `assets/img/tierra-2004-09…` | `public/assets/img/earth-2004-09…` |
+| `assets/img/tierra-2004-09…` (JPEG) | `public/cup/games/where/earth-2004-09/` (WebP, D-460) |
 | `ahorcado/` | `public/hangman/` |
 | `batalla-naval/` | `public/battleship/` |
 | `copa/` | `public/cup/` |

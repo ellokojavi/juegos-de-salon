@@ -7,7 +7,8 @@
    `style.css`, `rules.js`, `engine.js`, `engine.test.mjs`, `game.js`). Las reglas van en
    `engine.js`, puras, con sus pruebas en `engine.test.mjs`. El `<head>` de `index.html` se copia
    de otro juego: trae el manifest, el ícono y el nombre del iPhone y `instalable.js` (C-2, D-221,
-   D-222).
+   D-222), and the preload of `nunito-latin.woff2` right before `base.css` (C-1's fonts line, #851;
+   `public/assets/css/fonts-preload.test.mjs` fails without it).
 2. **Los textos** en `LOCALES = { es, en, pt, de }` de `rules.js`: los cuatro idiomas se ofrecen a
    todos y la paridad los exige (C-3). El alemán respeta el glosario de [ALEMAN.md](ALEMAN.md).
    Las instrucciones siguen U-18.

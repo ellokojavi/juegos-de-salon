@@ -204,7 +204,9 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   (Blue Marble de la NASA, con WebGL; D-159), y la distancia se mide sobre la esfera. Mientras la
   imagen baja el globo no se dibuja y aparece con un fundido al llegar (D-245); sin WebGL, o si la
   imagen no llega, se dibuja con el mapa vectorial, recortando cada país en el borde. La antesala muestra el globo girando solo
-  (`portada()` de `games/where/ui.js`).
+  (`portada()` de `games/where/ui.js`). The images are WebP, next to the game in `games/where/earth-2004-09/`
+  (`2048.webp`, `4096.webp` and the 128 tiles), and the 4096 px one is downloaded only on a canvas wider than
+  2048 device pixels or once the globe is zoomed in: a phone at rest gets about 200 KB of images (D-460).
 
 - **🧶 Desenredo** (D-179; fuera del laboratorio desde D-190) es el Untangle de Simon Tatham: nudos unidos por
   hilos que se cruzan, y se arrastran los nudos hasta que ningún hilo cruce a otro. Por niveles
@@ -328,10 +330,11 @@ y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y nave
 no se muestra en el formulario, y quien entró al laboratorio con su llave manda también su etiqueta
 (`tester`, nunca la llave; D-306). Se leen con
 `node tools/firebase/reports.mjs`; en `?test` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
-Every one of these forms also has an optional **email** field (`campoCorreo` in `labs-idioma.js`, D-317)
+Every one of these forms also has an optional **email** field (`campoCorreo` in `buzon-form.js`, re-exported by `labs-idioma.js`, D-317)
 that says it is only to tell the player we replied: `feedback/<id>` gets only its mask
 (`correoMascara`, `j********n@g********m`, D-366), the address goes to `feedbackContacto/<id>`, readable only with the owner's key,
-and the processes agent emails the reply and deletes it (`tools/agents/feedback.mjs reply`).
+and the processes agent emails the reply and deletes it (`tools/agents/feedback.mjs reply`); one nobody answered is deleted
+after 90 days (`feedback.mjs expire`, D-463). The field's note links the privacy page, `/privacy/` (D-463).
 
 ### Avisos al celular (D-223, D-224, D-225, D-227, D-228)
 
@@ -444,7 +447,7 @@ Todo bajo `public/cup/`:
 | `avisos.js` | Los avisos al celular en pantalla: la campana, la tarjeta y sus hojas (D-223; la lógica del navegador está en `assets/js/push.js`). El estilo de la hoja de abajo (`.hoja`) es de todo el sitio y vive en `assets/css/base.css` (D-232); `style.css` guarda solo lo propio de los avisos |
 | `desglose.js` | Cómo se calculó el puntaje, línea por línea (D-106) |
 | `demo.js` | Las escenas de ejemplo de `?test&demo=`, para las pruebas y las capturas; `escena()` builds one without storing it, for the home page's recap demo (D-423) |
-| `recap.js` · `recap/index.html` | The recap of an ended cup for the home page (D-423): `/cup/recap/` is a page with no screen that the home page opens in a hidden frame; it reads the due cup over REST and posts back its table (`cupRecap`) and the final table's image (`cupImage`, D-427), so the home page never loads the engine; it loads the app's fonts (Bangers, Nunito) for the image, since it has no base.css. The window itself is `assets/js/recap.js` and `assets/css/recap.css` |
+| `recap.js` · `recap/index.html` | The recap of an ended cup for the home page (D-423): `/cup/recap/` is a page with no screen that the home page opens in a hidden frame; it reads the due cup over REST and posts back its table (`cupRecap`) and the final table's image (`cupImage`, D-427), so the home page never loads the engine; it links `base.css` (with the font preload, #851) only for the fonts the image is drawn with (Bangers, Nunito), and waits for them. The window itself is `assets/js/recap.js` and `assets/css/recap.css` |
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
 | `planilla.js` | La tabla final como CSV (D-161) |
 | `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`; the help sheets' texts come from `assets/js/notification-sheets.js`, shared with Uno al día, D-377) y la explicación de cada juego |

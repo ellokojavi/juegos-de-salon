@@ -14,7 +14,7 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 - Español chileno informal por defecto; inglés, portugués y alemán son opcionales y se eligen a mano (C-3, D-197). Tuteo, humor liviano, sin groserías fuertes.
 - **The audience is everyone, not only Chile** (D-324). The app was first made for Chilean tables, and the Chilean Spanish voice stays as its flavor, but no text, document or decision presents it as being for Chileans only. Content only one country knows is tagged and optional (D-186).
 - **Instrucciones concisas** (U-8, U-18, D-184): la meta primero y con verbo, a lo más 3 puntos, nada de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase. Un tope en `public/cup/games/juegos.test.mjs` frena lo que se pasa. Concisas no es telegrama: frases completas (U-1).
-- Paleta y tipografías compartidas desde `public/assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo.
+- Paleta y tipografías compartidas desde `public/assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo. The fonts are served from `public/assets/fonts/` (never from Google Fonts), with their OFL license, and every page that links `base.css` preloads `nunito-latin.woff2` right before it (#851, `public/assets/css/fonts-preload.test.mjs`).
 - **Las cifras que el jugador lee o compara** (teclados, intentos, números secretos) van en `var(--font-num)` (Nunito 900) con `tabular-nums`, nunca en Bangers: ahí el 1 y el 7 son casi el mismo trazo y los jugadores se equivocan (D-30). Bangers se queda en títulos, nombres, palabras y códigos de sala (letras, sin I ni O).
 - Nada de estilos "de marca" propios por juego: un juego puede tener colores temáticos (el mar en Batalla Naval), pero botones, paneles, chips y títulos salen de las clases comunes.
 - Cada juego tiene un emoji propio que lo identifica en el menú, la pestaña y la barra superior.
@@ -434,7 +434,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **A promotional splash, off by default** (D-351): when the owner turns on a campaign
   (`ACTIVE` in `splash.js`, with `node tools/agents/splash.mjs on <id> | off`), a window over the
   home page tells what is new, with the page darkened behind; each phone sees it once, and a new
-  campaign shows again. A campaign marked `audience: 'regulars'` waits, unseen, for a phone with 5 or more
+  campaign shows again. ✕, "Ahora no" and its links mark it as seen at once; a tap outside the window or Escape is forgiven once: the first such close leaves it for a later visit, the second marks it (D-462). A campaign marked `audience: 'regulars'` waits, unseen, for a phone with 5 or more
   visit days in the last four weeks and 10 or more finished games that has not paid (D-458): never a first visit. Each game in it shows a clip of real play (`marketing/splash/`) and
   opens with ▶ Play; the way out is a quiet "Ahora no". It fits a 320×640 screen with three games. `?splash=<id>` previews one (one that is not on, only with a lab key, D-395);
   `?test` and the scripts never see it. Tried in the lab from the home page's experiments bar (D-389).
@@ -501,6 +501,11 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   El globo que invita a agregar la app a inicio sale abajo, solo en los celulares donde se puede
   agregar (no en el computador ni en la app ya instalada), y la ✕ lo apaga para siempre en ese
   navegador (D-232).
+- **The footer's last line links the privacy page** (D-463): the version, "código en GitHub" and
+  "Privacidad" (`COMMON.privacy`), which opens `/privacy/`. The same page is linked from the note
+  under the email field of every feedback form. **The page describes the code:** a PR that stores
+  something new about players, or keeps it for a different time, edits `public/privacy/texts.js`
+  in the same PR, in the four languages (`texts.test.mjs` checks their shape).
 - **Se prueba entera en Chrome:** `tools/e2e/favorites.mjs` (filtros, favoritos y 320 px en los
   cuatro idiomas), `share-home.mjs`, `install-prompt.mjs`, `daily.mjs` e
   `lang-from-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los

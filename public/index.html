@@ -66,6 +66,7 @@
   </script>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <script src="assets/js/vigia.js"></script>
+  <link rel="preload" href="assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/base.css">
   <!-- One a Day's card and the modules only it brings, fetched with the page and not one after another
        (they used to arrive 1.4 s late on a slow network); stats.js too, which the page itself now
@@ -342,7 +343,7 @@
     .footer-links.tiles > *:active { background: rgba(255, 255, 255, 0.05); }
     .footer-links.tiles > #btn-apoyo-portada { border-color: rgba(255, 210, 63, 0.3); }
     .footer-links.tiles > :last-child:nth-child(odd) { grid-column: 1 / -1; }
-    /* The sunset (lab: #seccion-pie): the page ends in a glow of the site's own purple and pink, the
+    /* The sunset, chosen from twelve variants in /labs/footer/: the page ends in a glow of the site's own purple and pink, the
        phrase in white, and each option on frosted glass with its color circle above the label */
     footer.atardecer { margin: 0 -18px -32px; padding: 28px 18px 32px; background: linear-gradient(180deg, transparent, rgba(138, 77, 255, 0.28) 45%, rgba(255, 46, 136, 0.32)); }
     footer.atardecer .footer-msg { color: var(--ink); opacity: 1; font-weight: 800; font-size: 1.04rem; }
@@ -350,9 +351,10 @@
     footer.atardecer .footer-links.tiles { margin-top: 18px; }
     footer.atardecer .footer-links.tiles > * { flex-direction: column; gap: 4px; min-height: 64px; border: 0; background: rgba(255, 255, 255, 0.1); color: var(--ink); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
     footer.atardecer .footer-links.tiles > *:active { background: rgba(255, 255, 255, 0.18); }
-    footer.atardecer .ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(157, 255, 58, 0.35); }
-    footer.atardecer #btn-buzon-portada .ic { background: rgba(46, 230, 214, 0.35); }
-    footer.atardecer #btn-apoyo-portada .ic { background: rgba(255, 122, 26, 0.5); }
+    /* The circle only on the tiles: if the coffee link never loads, the inbox stays a plain centered link */
+    footer.atardecer .tiles .ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(157, 255, 58, 0.35); }
+    footer.atardecer .tiles #btn-buzon-portada .ic { background: rgba(46, 230, 214, 0.35); }
+    footer.atardecer .tiles #btn-apoyo-portada .ic { background: rgba(255, 122, 26, 0.5); }
     footer.atardecer > .muted { color: rgba(255, 255, 255, 0.8); }
     /* Juego al azar (D-188): el botón bajo la bajada y el dado que rueda sobre la portada */
     .azar-slot { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin-top: 16px; }
@@ -522,10 +524,10 @@
       })();
     </script>
 
-    <footer>
+    <footer class="atardecer">
       <p class="footer-msg" id="footer-msg" aria-live="polite">Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
       <div class="footer-links" id="footer-links"><button type="button" class="buzon-link footer-buzon" id="btn-buzon-portada"></button></div>
-      <p class="muted">v0.0.0 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a></p>
+      <p class="muted">v0.0.0 · <a href="https://github.com/ellokojavi/juegos-de-salon" style="color:inherit" data-i18n="code">código en GitHub</a> · <a href="privacy/" style="color:inherit" data-i18n="privacy">Privacidad</a></p>
     </footer>
   </main>
 
@@ -558,14 +560,11 @@
     // "☕ Buy me a coffee", always beside the inbox
     // Its card opens over the page; Stripe comes back with ?support=thanks, which opens the thank-you (D-449)
     const footerLinks = import('./assets/js/support.js').then(m => { m.supportFromUrl({ lang }); return m.supportFooterLink(lang); }).then(a => { if (!a) return; const links = document.getElementById('footer-links'); links.append(a); links.classList.add('tiles'); }).catch(() => {});
-    // The footer's sunset, only with a lab key for now (D-395). lab: #seccion-pie
-    // Each option's leading emoji becomes its color circle, so the label wraps under it
-    Promise.all([footerLinks, import('./assets/js/lab-access.js').then(({ labAccess }) => labAccess())]).then(([, yes]) => {
-      if (!yes) return;
-      document.querySelector('footer').classList.add('atardecer');
+    // The footer's sunset: each option's leading emoji becomes its color circle, so the label wraps under it
+    footerLinks.then(() => {
       for (const b of document.getElementById('footer-links').children) {
         const [ic, ...label] = b.textContent.split(' ');
-        b.replaceChildren(el('span', { class: 'ic', 'aria-hidden': 'true' }, ic), el('span', {}, label.join(' ')));
+        b.replaceChildren(el('span', { class: 'ic', 'aria-hidden': 'true' }, ic), ' ', el('span', {}, label.join(' '))); // the space keeps the text whole
       }
     }).catch(() => {});
     document.title = `${T.appTitle} 🎲`;

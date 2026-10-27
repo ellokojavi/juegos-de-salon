@@ -608,6 +608,8 @@ export const PATHS = {
     'cellar-king': [`document.querySelector('#seccion-cuarto-rey summary').click(); document.getElementById('seccion-cuarto-rey').scrollIntoView(); 1`],
     // Julepe's card, in La Bodega since D-434
     'cellar-julep': [`document.querySelector('#seccion-julepe summary').click(); document.getElementById('seccion-julepe').scrollIntoView(); 1`],
+    // The home footer's sunset card, in La Bodega's launched improvements since it left the lab
+    'cellar-footer': [`document.querySelector('#seccion-pie summary').click(); document.getElementById('seccion-pie').scrollIntoView(); 1`],
   },
   'labs/exploding-numbers': {
     intro: [],
@@ -683,3 +685,5 @@ PATHS.copa['home-card-dudo'] = [`location.href='/?test'`, `1`, `1`, `[...documen
 PATHS.copa['home-card-tyf'] = [`location.href='/?test'`, `1`, `1`, `[...document.querySelectorAll('.game-card')].find(c=>c.querySelector('h2')?.textContent.match(/toque|bulls|bullen/i))?.scrollIntoView({ block: 'center' })`, `1`];
 // Rankings, with "Tus partidas" folded with its total when the player has plays (#783)
 PATHS.copa['records'] = [`location.href='/records/'`, `1`, `1`, `1`];
+// The privacy page (D-463), linked from the home page footer and the email note of every feedback form
+PATHS.copa['privacy'] = [`location.href='/privacy/'`, `1`, `1`, `1`];

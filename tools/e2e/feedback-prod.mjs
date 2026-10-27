@@ -83,7 +83,9 @@ await b.go(`${SITE}/?test`, 1500);
 await b.evaluate(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', 'es'); 1`);
 await b.go(`${SITE}/?test`, 1500);
 const home = await b.evaluate(`JSON.stringify({ t: document.getElementById('btn-buzon-portada')?.textContent, foot: !!document.querySelector('footer #btn-buzon-portada') })`).then(JSON.parse);
-check(home.foot && home.t === COMMON.es.buzon.abrir, 'the home footer has the link, even on a new device');
+// The footer's violet sunset (U-38) splits the emoji into its own circle: compare without the spaces
+const bare = t => String(t ?? '').replace(/\s+/g, '');
+check(home.foot && bare(home.t) === bare(COMMON.es.buzon.abrir), 'the home footer has the link, even on a new device');
 await b.evaluate(`document.getElementById('btn-buzon-portada').click(); 1`); await sleep(900);
 check(await b.evaluate(`!!document.querySelector('.labs-capa [role="dialog"] textarea')`), 'and it opens the form in its overlay');
 await b.shot('home-overlay-320');

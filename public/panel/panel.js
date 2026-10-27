@@ -33,7 +33,7 @@ import {
 } from './aggregate.js';
 import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KINDS, pacificRange } from './timeline.js';
 import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splash.js';
-import { switches, status as campaignStatus, overlaps, move, toRemote, span, todayOf, dayPlus } from './campaigns.js';
+import { switches, status as campaignStatus, overlaps, move, toRemote, span, todayOf, dayPlus, campaignStats, EARLY_DAYS } from './campaigns.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import {
   rangoAnterior, variacion, partidasDominio, finales, embudoSalas, dificultad, versiones, versionesEn, usuarios, cohortes,
@@ -61,7 +61,7 @@ const S = {
   // The timeline (D-408): feedback messages, and what is picked in that view
   feedback: {}, unsubFeedback: null,
   // 📣 Campaigns (D-454): Firebase `splash/` (undefined until it answers, null if never saved) and the last save's outcome
-  splash: undefined, unsubSplash: null, splashMsg: '', campOpen: new Set(), tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
+  splash: undefined, unsubSplash: null, splashMsg: '', campOpen: new Set(), campStats: null, tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
   unsubRooms: null, unsubDays: null, unsubTorneos: null, unsubPush: null, unsubUad: [], tick: null,
   // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
   desdeDia: null,
@@ -1583,6 +1583,52 @@ async function guardarCampanas(rows) {
   render();
 }
 
+/**
+ * How each campaign did in the range (D-461): reach, taps and closes against the days it was shown.
+ * One row per campaign shown in the range; tapping one opens its days below.
+ */
+const C_PLAY = 'var(--lime)', C_CLOSE = 'var(--cyan)', C_REST = 'rgba(255, 255, 255, 0.28)';
+const tasa = x => (x === null ? '—' : `${Math.round(x * 100)}%`);
+const unDecimal = x => (x === null ? '—' : x.toLocaleString(LOCALE, { maximumFractionDigits: 1 }));
+function bloqueResultados(rows) {
+  const rango = rangeOf(S.range);
+  const todas = rows.map(s => campaignStats(S.days, s.id, rango)).filter(Boolean);
+  const nombre = id => `${CAMPAIGNS[id]?.emoji || ''} ${CAMPAIGNS[id]?.title?.es || id}`.trim();
+  const nota = `${tituloRango()}, UTC days; previews never count. Reach: phones that saw it for the first time. Tapped: taps on its Play link over reach. Only the days it was shown count, so switching it off and on is fine.`;
+  if (!todas.length) return bloque('📊 How they did', nota, el('p', { class: 'empty' }, S.daysLoaded ? 'No campaign was shown in this range.' : 'Loading…'));
+  const elegida = todas.find(c => c.id === S.campStats) || todas[0];
+  const maxR = Math.max(0, ...todas.map(c => c.reach));
+  const filas = todas.map(c => {
+    const b = bar(nombre(c.id), [seg(C_PLAY, c.play), seg(C_REST, Math.max(0, c.reach - c.play))], maxR,
+      { cifra: c.reach, detail: `${tasa(c.ctr)} tapped · ${n(c.exposed)} ${c.exposed === 1 ? 'day' : 'days'} shown · ${unDecimal(c.reach / c.exposed)} new phones a day` });
+    return el('button', { type: 'button', class: 'campana-fila', 'aria-pressed': String(c === elegida), onClick: () => { S.campStats = c.id; render(); } }, b);
+  });
+
+  const c = elegida;
+  const caida = c.early && c.late !== null ? Math.round(((c.late - c.early) / c.early) * 100) : null;
+  const antes = c.clipped ? ' It was already showing when this range starts: pick a longer range to count from its first day.' : '';
+  const saturacion = (c.late === null
+    ? `Shown ${n(c.exposed)} ${c.exposed === 1 ? 'day' : 'days'} so far: too soon to tell whether it still finds new phones.`
+    : `First ${EARLY_DAYS} days shown: ${unDecimal(c.early)} new phones a day; since then ${unDecimal(c.late)} a day (${caida > 0 ? '+' : ''}${caida}%). Half its reach came in its first ${n(c.halfDays)} ${c.halfDays === 1 ? 'day' : 'days'} shown.`) + antes;
+  const maxD = Math.max(0, ...c.series.map(r => r.shown));
+  const dias = c.series.map(r => bar(periodLabelDia(r.day), r.off ? [] : [seg(C_PLAY, r.play), seg(C_CLOSE, r.close), seg(C_REST, Math.max(0, r.shown - r.play - r.close))], maxD,
+    { cifra: r.shown, sub: r.off ? 'not shown' : `day ${r.n}`, detail: r.off ? '' : `${n(r.reach)} new phones · ${tasa(r.home ? r.shown / r.home : null)} of home views` }));
+  const detalle = el('div', { class: 'campana-resultado' },
+    el('p', { class: 'lead' }, nombre(c.id)),
+    el('div', { class: 'tiles' },
+      tile(c.reach, 'phones reached', { info: `${unDecimal(c.perPhone)} windows per phone` }),
+      tile(tasa(c.ctr), `tapped · ${n(c.play)}`, { info: 'of phones reached' }),
+      tile(tasa(c.closeRate), `closed · ${n(c.close)}`, { info: 'of phones reached' }),
+      tile(tasa(c.coverage), 'of home page views', { info: 'on the days it was shown' }),
+      tile(tasa(c.stay3), 'stayed 3 s or more', { info: `${tasa(c.stay10)} 10 s or more` }),
+      tile(c.exposed, c.exposed === 1 ? 'day shown' : 'days shown', { info: `${periodLabelDia(c.firstDay)} – ${periodLabelDia(c.lastDay)}` })),
+    el('p', { class: 'muted small' }, saturacion),
+    el('p', { class: 'muted small leyenda' }, el('span', { style: `color:${C_PLAY}` }, '■'), ' tapped · ', el('span', { style: `color:${C_CLOSE}` }, '■'), ' closed · ', el('span', { style: `color:${C_REST}` }, '■'), ' left without answering. Each bar is the windows shown that day.'),
+    lista(dias, 'Nothing yet.', 'bars'));
+  return conCsv(bloque('📊 How they did', nota, lista(filas, '', 'bars'), detalle), `campaign-${c.id}`,
+    () => c.series.map(r => ({ day: new Date(r.day * DAY).toISOString().slice(0, 10), shown_day: r.n ?? '', shown: r.shown, reach: r.reach, play: r.play, close: r.close, under3s: r.t0, s3to10: r.t1, over10s: r.t2, home_views: r.home })));
+}
+
 function vistaCampanas(now) {
   const today = todayOf(now);
   if (S.splash === undefined) return [el('p', { class: 'muted' }, 'Loading…')];
@@ -1663,7 +1709,7 @@ function vistaCampanas(now) {
 
   return [
     ...titulo('📣 Campaigns', 'The splash over the home page. Each player sees a campaign once; with several on, one per visit, top first. New campaigns are made by asking Claude; here they are switched, dated and ordered.'),
-    resumen, tira, tarjetas,
+    resumen, tira, bloqueResultados(rows), tarjetas,
   ];
 }
 

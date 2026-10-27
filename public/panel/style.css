@@ -367,3 +367,11 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .interruptor input:checked + .interruptor-pista { background: var(--lime); }
 .interruptor input:checked + .interruptor-pista::after { transform: translateX(24px); background: var(--bg1); }
 .interruptor input:focus-visible + .interruptor-pista { outline: 2px solid var(--cyan); outline-offset: 2px; }
+/* 📣 How each campaign did (D-461): a row per campaign, the chosen one's days below */
+.campana-fila { display: block; width: 100%; padding: 4px 8px; border: 1px solid transparent; border-radius: 14px; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.campana-fila[aria-pressed="true"] { border-color: var(--lime); background: rgba(157, 255, 58, 0.06); }
+.campana-fila:hover, .campana-fila:focus-visible { border-color: var(--cyan); outline: none; }
+.campana-resultado { display: grid; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--glass-border); }
+.campana-resultado .lead { margin: 0; }
+.campana-resultado .leyenda span { font-size: 1rem; }
+.campana-resultado .tiles { grid-template-columns: repeat(auto-fit, minmax(min(140px, 40%), 1fr)); margin-bottom: 0; }

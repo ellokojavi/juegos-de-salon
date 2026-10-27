@@ -10,6 +10,7 @@
  *   node tools/agents/feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> [--dry-run | --test-to <address>]
  *                                                                         # one email for all of a player's comments
  *   node tools/agents/feedback.mjs forget <issue> "<reason>"                 # deletes the address, no email
+ *   node tools/agents/feedback.mjs expire [--dry-run]                       # deletes the addresses older than 90 days (D-463)
  *
  * Optional email (D-317): a player who wants to hear back leaves an address. The issue only shows
  * its mask (`j********n@g********m`, D-366); the address lives in `feedbackContacto/<id>`, readable only
@@ -17,7 +18,9 @@
  * never in a workflow (its logs are public). `reply` sends the message through Gmail's SMTP
  * (`send-mail.py`), wrapped in one of the friendly templates of `feedback-templates.mjs`, in the
  * language the feedback was written in, deletes the address and notes it on the issue; `forget` (destructive feedback,
- * no email) only deletes it. Either way the address is gone after the issue is resolved.
+ * no email) only deletes it. Either way the address is gone after the issue is resolved. And an
+ * address nobody answered does not stay forever (D-463): after `RETENTION_DAYS` (90) it is deleted
+ * by `expire`, which `sync` runs on every pass of the `feedback-watch` job, and the issue says so.
  *
  * The repo is public: the issue carries the text as is, the game, the version and the screen, and
  * the name the player gave, so the owner can follow up (D-279), but not their browser. Each issue
@@ -60,6 +63,20 @@ export const inThread = (x, thread) => !!(thread?.id && x.thread?.id === thread.
 export const emailedComment = ({ mask, together = '', answer = '' }) =>
   `📧 Reply emailed to \`${mask}\`${together}; the address was then deleted (D-317). Marked replied and closed as resolved (D-368).` +
   (answer.trim() ? `\n\nWhat we answered:\n\n${answer.trim().split('\n').map(l => `> ${l}`).join('\n')}` : '') + `\n${EMAILED}`;
+/**
+ * Retention of the optional email (D-463): an address still in `feedbackContacto/` this many days
+ * after it was left is deleted, replied or not. The form promises it (`DIAS_CORREO` in
+ * `public/assets/js/buzon-form.js`, the same number) and the privacy page says it.
+ */
+export const RETENTION_DAYS = 90;
+/** The report ids whose address is older than the retention (or carries no date), oldest first. */
+export const expired = (contacts, now = Date.now(), days = RETENTION_DAYS) => Object.entries(contacts || {})
+  .filter(([, c]) => !(Number(c?.at) > now - days * 86400000))
+  .sort(([, a], [, b]) => (Number(a?.at) || 0) - (Number(b?.at) || 0)).map(([id]) => id);
+/** The comment on the issue whose address expired: the processes agent no longer has anyone to email. */
+export const expiredComment = (days = RETENTION_DAYS) =>
+  `No reply within ${days} days: the player's email address was deleted (D-463). Answer here if needed; no email can be sent any more.\n${FORGOTTEN}`;
+
 /** Already emailed or forgotten? */
 export const handled = comments => (comments || []).some(c => (c.body || '').includes(EMAILED) || (c.body || '').includes(FORGOTTEN));
 
@@ -311,6 +328,29 @@ async function forget(number, reason) {
   console.log(`#${number}: address deleted, no email.`);
 }
 
+/**
+ * Deletes every address older than `RETENTION_DAYS` (D-463) and notes it on its issue, so `pending`
+ * stops listing it. Runs after each `sync` (the `feedback-watch` job, every 5 minutes) and alone.
+ */
+async function expire(dryRun) {
+  const t = await adminToken();
+  const { read } = await import('../firebase/firebase-admin.mjs');
+  // Shallow would hide `at`: the node holds a few small entries, so it is read whole
+  const ids = expired((await read('feedbackContacto', t)) || {});
+  if (!ids.length) return;
+  const ledger = (await read('feedbackIssues', t)) || {};
+  for (const id of ids) {
+    const n = ledger[id];
+    if (dryRun) { console.log(`Would delete feedbackContacto/${id}${n ? ` (#${n})` : ''}: older than ${RETENTION_DAYS} days.`); continue; }
+    await remove(id, t);
+    // The address is gone either way; the note is best-effort
+    if (n) try {
+      if (!handled(JSON.parse(gh('issue', 'view', String(n), '--json', 'comments')).comments)) gh('issue', 'comment', String(n), '--body', expiredComment());
+    } catch (e) { console.error(`#${n}: address deleted, but the note failed (${e.message}).`); }
+    console.log(`feedbackContacto/${id}${n ? ` (#${n})` : ''}: no reply in ${RETENTION_DAYS} days, address deleted (D-463).`);
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* A doubt about the reply (D-328): details by email, a public pointer */
 /* ------------------------------------------------------------------ */
@@ -345,10 +385,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [command, a, b] = process.argv.slice(2);
   const option = n => (process.argv.includes(n) ? process.argv[process.argv.indexOf(n) + 1] : null);
   const fail = e => { console.error(e.message); process.exit(1); };
-  if (command === 'sync') sync(process.argv.includes('--dry-run')).catch(fail);
+  // Each pass of the job also applies the email's retention (D-463), even when the upload fails
+  if (command === 'sync') sync(process.argv.includes('--dry-run')).catch(e => { console.error(e.message); process.exitCode = 1; }).then(() => expire(process.argv.includes('--dry-run'))).catch(fail);
+  else if (command === 'expire') expire(process.argv.includes('--dry-run')).catch(fail);
   else if (command === 'pending') pendingEmails().catch(fail);
   else if (command === 'reply' && a && b && option('--lang')) reply(a, b, option('--lang'), { dryRun: process.argv.includes('--dry-run'), testTo: option('--test-to') }).catch(fail);
   else if (command === 'forget' && a) forget(a, b).catch(fail);
   else if (command === 'doubt' && a && b) doubt(a, b).catch(fail);
-  else { console.error('Usage: node tools/agents/feedback.mjs sync [--dry-run] | pending | reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> [--dry-run | --test-to <address>] | forget <issue> "<reason>" | doubt <issue> <notes.txt>'); process.exit(2); }
+  else { console.error('Usage: node tools/agents/feedback.mjs sync [--dry-run] | pending | reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> [--dry-run | --test-to <address>] | forget <issue> "<reason>" | expire [--dry-run] | doubt <issue> <notes.txt>'); process.exit(2); }
 }

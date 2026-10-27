@@ -22,6 +22,9 @@
  * shows the first visit the phone qualifies. `?splash=<id>` shows any campaign on demand, on the home page or anywhere that
  * calls showSplash (the lab demo, /labs/splash/), without recording it.
  *
+ * What each campaign does is counted for the panel's 📣 Campaigns (D-461): counters only, in the day's
+ * stats, `splash/<id>/<event>` (SPLASH_EVENTS), never a preview's.
+ *
  * The decision of what to show is pure (queue), so node tests it without a DOM.
  */
 import { param, tiene } from './parametros.js';
@@ -217,6 +220,62 @@ export function seenIds(raw = (() => { try { return storage()?.getItem(SEEN_KEY)
 }
 const markSeen = id => { try { const list = seenIds(); if (!list.includes(id)) storage()?.setItem(SEEN_KEY, JSON.stringify([...list, id].slice(-20))); } catch (_) {} };
 
+/**
+ * A soft close (a tap outside the window, or Escape) can be a slip: the window rises just as the
+ * player reaches for the page. The first soft close of a campaign does not mark it as seen, so it
+ * comes back on a later visit; the second does. The X, "Not now" and its links always mark it
+ * (D-462). Kept per campaign id in SOFT_KEY.
+ */
+export const SOFT_KEY = 'juegos-de-salon:splash-suave';
+export const SOFT_CLOSES = 2;
+/** Counts one soft close of `id` and says whether it now counts as seen. Pure apart from the store. */
+export function softClose(id, store = storage()) {
+  let soft = {};
+  try { soft = JSON.parse(store?.getItem(SOFT_KEY) || '{}') || {}; } catch (_) { soft = {}; }
+  soft[id] = (soft[id] || 0) + 1;
+  try { store?.setItem(SOFT_KEY, JSON.stringify(soft)); } catch (_) { /* no storage: it counts as seen */ return true; }
+  return soft[id] >= SOFT_CLOSES;
+}
+
+/**
+ * What the panel counts of each campaign (D-461), by day, in `stats/<env>/days/<day>/splash/<id>/<event>`:
+ * `shown` each time the window opens; `reach` the first time on this phone (unique phones); `play`
+ * its link tapped; `close` closed (✕, Not now, the backdrop, Escape); and how long it stayed open
+ * before either, in bands (`dwellBand`). A window left by closing the tab counts only `shown`.
+ */
+export const SPLASH_EVENTS = ['shown', 'reach', 'play', 'close', 't0', 't1', 't2'];
+/** How long the window stayed open: under 3 s, 3 to 10 s, 10 s or more. */
+export const dwellBand = ms => (ms < 3000 ? 't0' : ms < 10000 ? 't1' : 't2');
+export const REACH_KEY = 'juegos-de-salon:splash-alcance';
+/** Whether this is the first time this phone shows the campaign, and remember it. Never throws. */
+export function firstReach(id, store = storage()) {
+  try {
+    let list = [];
+    try { list = JSON.parse(store?.getItem(REACH_KEY) || '[]'); } catch (_) { /* a broken list starts over */ }
+    if (!Array.isArray(list)) list = [];
+    if (list.includes(id)) return false;
+    store?.setItem(REACH_KEY, JSON.stringify([...list, id].slice(-20)));
+    return true;
+  } catch (_) { return false; }
+}
+
+/**
+ * Counts campaign events (D-461). The stats module is loaded when the window opens, so the tap on Play
+ * sends its count before the page leaves (the request goes with keepalive). Never throws.
+ */
+function splashTracker(id) {
+  let mod = null;
+  const ready = Promise.all([import('./transport/stats.js'), import('./transport/cleanup.js')])
+    .then(([st, cl]) => { mod = { ...st, dayOf: cl.dayOf }; }).catch(() => {});
+  const send = events => {
+    try {
+      const s = mod.stats();
+      s.api.patch(mod.dayPath(s.fp.env, mod.dayOf(Date.now())), Object.fromEntries(events.map(e => [`splash/${id}/${e}`, { '.sv': { increment: 1 } }]))).catch(() => {});
+    } catch (_) { /* best effort */ }
+  };
+  return events => { if (mod) send(events); else ready.then(() => mod && send(events)); };
+}
+
 const ROOT = new URL('../../', import.meta.url);
 
 function loadStyle() {
@@ -330,20 +389,34 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   card.tabIndex = -1;
   card.focus({ preventScroll: true });
 
+  // The panel's counts (D-461): a preview never counts
+  const track = record ? splashTracker(id) : () => {};
+  track(firstReach(id) ? ['shown', 'reach'] : ['shown']);
+  const opened = Date.now();
+  let answered = false;
+  const answer = ev => { if (answered) return; answered = true; track([ev, dwellBand(Date.now() - opened)]); };
+
   return new Promise(res => {
-    const close = () => {
-      if (record) markSeen(id);
+    // Once: the backdrop stays tappable while it fades, and a double tap is one slip, not two
+    let closed = false;
+    const close = (soft = false) => {
+      if (closed) return;
+      closed = true;
+      answer('close');
+      // A soft close (a tap outside, Escape) is forgiven once (D-462): for everyone since the owner approved it
+      if (record && (!soft || softClose(id))) markSeen(id);
       document.removeEventListener('keydown', onKey);
       layer.classList.add('sale');
       setTimeout(() => { layer.remove(); document.body.style.overflow = prevOverflow; before?.focus?.({ preventScroll: true }); }, 180);
       onClose?.();
       res();
     };
-    const onKey = e => { if (e.key === 'Escape') close(); };
+    const onKey = e => { if (e.key === 'Escape') close(true); };
     document.addEventListener('keydown', onKey);
-    for (const b of [x, done, backdrop]) b.addEventListener('click', close);
+    for (const b of [x, done]) b.addEventListener('click', () => close());
+    backdrop.addEventListener('click', () => close(true));
     // Following a game's link also counts as having seen it
-    list.addEventListener('click', e => { if (e.target.closest('a') && record) markSeen(id); });
+    list.addEventListener('click', e => { if (!e.target.closest('a')) return; answer('play'); if (record) markSeen(id); });
   });
 }
 

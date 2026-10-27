@@ -11,6 +11,8 @@
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { checkLanguages } from '../languages-common.mjs';
+// The privacy page (D-463) is one of La Copa's shots: its texts say "Juegos de Salón" in every language, on purpose
+import { TEXTS as PRIVACY } from '../../../public/privacy/texts.js';
 import { PATHS } from '../paths.mjs';
 import { mkdirSync } from 'node:fs';
 import { LANGS, COMMON } from '../../../public/assets/js/i18n.js';
@@ -106,7 +108,7 @@ for (const id of runs('standalone') ? ['letras', 'agentes', 'conexiones', 'anio'
 b.close();
 const SCREENS = Object.keys(PATHS.copa), HALF = Math.ceil(SCREENS.length / 2);
 const screens = [...(runs('screens-a') ? SCREENS.slice(0, HALF) : []), ...(runs('screens-b') ? SCREENS.slice(HALF) : [])];
-if (screens.length) await checkLanguages('copa', { dicts: [LOCALES], port: 9379, query: '?test', out: `${OUT}/screens`, screens });
+if (screens.length) await checkLanguages('copa', { dicts: [LOCALES, PRIVACY], port: 9379, query: '?test', out: `${OUT}/screens`, screens });
 
 ok(!b.errors.length, `no errors in the console${b.errors.length ? ': ' + b.errors.join(' | ') : ''}`);
 process.exit();
