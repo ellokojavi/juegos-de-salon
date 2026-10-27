@@ -1647,7 +1647,7 @@ function bloqueApoyo() {
       tile(c.open, `card opened · ${tasa(c.openRate)}`, { info: 'of invitations (the footer opens it too)' }),
       tile(c.pay, `went to Stripe · ${tasa(c.payRate)}`, { info: 'of cards opened' }),
       tile(c.thanks, `paid · ${tasa(c.thanksRate)}`, { info: 'of those who went to Stripe' })),
-    el('p', { class: 'muted small leyenda' }, el('span', { style: `color:${C_OPEN}` }, '■'), ' card opened · ', el('span', { style: `color:${C_REST}` }, '■'), ' invitations not opened. The number is the cards opened that day.'),
+    el('p', { class: 'muted small leyenda' }, el('span', { style: `color:${C_OPEN}` }, '■'), ' card opened · ', el('span', { style: `color:${C_REST}` }, '■'), ' the rest of the invitations shown. The number is the cards opened that day, from the footer too.'),
     lista(dias, 'Nothing yet.', 'bars')), 'support',
   () => c.series.map(r => ({ day: new Date(r.day * DAY).toISOString().slice(0, 10), shown: r.shown, open: r.open, pay: r.pay, thanks: r.thanks })));
 }
