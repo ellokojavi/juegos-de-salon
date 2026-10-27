@@ -78,8 +78,8 @@ assert.deepEqual(toDispatch({ docCommits: 0, publicCommits: 0, usabilityDays: 2,
   assert.equal(ideasWaiting([{ number: 556, title: 'Ideas: 2026-10-19', labels: lab, body: [box(1, true), box(2, true), acts].join('\n') }]), null, 'all answered: the round goes and records them');
   assert.equal(ideasWaiting([{ number: 600, title: 'Processes: 2026-10-20', labels: lab, body: [box(1, false), acts].join('\n') }]), null, 'a processes issue is not an ideas issue');
 }
-assert.deepEqual(backlog([{ number: 9, title: 'Processes round missed', labels: [], createdAt: '2026-10-20T00:00:00Z' }]), [], "the watchdog's issue is not an owner's to-do (D-440)");
-assert.deepEqual(backlog([{ number: 10, title: 'Pending work', labels: [], createdAt: '2026-10-20T00:00:00Z' }]), [], "pending-watch's issue is not an owner's to-do (D-441)");
+assert.deepEqual(backlog([{ number: 9, title: 'Processes round missed', labels: [], createdAt: '2026-10-20T00:00:00Z', author: { login: 'ellokojavi' } }]), [], "the watchdog's issue is not an owner's to-do (D-440)");
+assert.deepEqual(backlog([{ number: 10, title: 'Pending work', labels: [], createdAt: '2026-10-20T00:00:00Z', author: { login: 'ellokojavi' } }]), [], "pending-watch's issue is not an owner's to-do (D-441)");
 
 assert.ok(EXECUTORS.includes('ideas'), 'ideas can be recorded with dispatch');
 
@@ -93,8 +93,8 @@ console.log('processes: ok');
 
 // The owner's backlog (D-339): issues with no label, oldest first; labelled ones and "main is red" stay out
 {
-  const i = (number, createdAt, labels = [], title = 'x') => ({ number, title, createdAt, labels: labels.map(name => ({ name })) });
-  const b = backlog([i(5, '2026-10-10T00:00:00Z'), i(6, '2026-10-01T00:00:00Z'), i(7, '2026-10-01T00:00:00Z', ['feedback']), i(8, '2026-10-01T00:00:00Z', [], 'main is red: x')], now);
+  const i = (number, createdAt, labels = [], title = 'x', login = 'ellokojavi') => ({ number, title, createdAt, labels: labels.map(name => ({ name })), author: { login } });
+  const b = backlog([i(5, '2026-10-10T00:00:00Z'), i(6, '2026-10-01T00:00:00Z'), i(7, '2026-10-01T00:00:00Z', ['feedback']), i(8, '2026-10-01T00:00:00Z', [], 'main is red: x'), i(11, '2026-10-01T00:00:00Z', [], 'x', 'stranger'), { ...i(12, '2026-10-01T00:00:00Z'), author: undefined }], now);
   assert.deepEqual(b.map(x => x.number), [6, 5]);
   assert.equal(b[0].days, 10);
 }

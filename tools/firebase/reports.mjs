@@ -1,25 +1,22 @@
 #!/usr/bin/env node
 /**
  * The reports and comments people sent from The Cup (D-104) and the lab (D-191, D-265), read from
- * `feedback/` in Firebase. No account: the node is readable by anyone.
+ * `feedback/` in Firebase, with the owner's admin key (the node is readable only by the owner;
+ * the key in ~/.config/juegos-de-salon/firebase-admin.json, see tools/firebase/firebase-admin.mjs).
  *
  *   node tools/firebase/reports.mjs              all of them, newest to oldest
  *   node tools/firebase/reports.mjs --days 3     only those from the last 3 days
  *   node tools/firebase/reports.mjs --json       as is, to process them
  */
-import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
+import { read, token } from './firebase-admin.mjs';
 
 const args = process.argv.slice(2);
 // --dias: the name from before D-316
 const flag = args.includes('--days') ? '--days' : args.includes('--dias') ? '--dias' : null;
 const days = flag ? Number(args[args.indexOf(flag) + 1]) || 1 : 0;
-const res = await fetch(`${firebaseConfig.databaseURL}/feedback.json`);
-if (!res.ok) {
-  console.error(`Could not read feedback/ (HTTP ${res.status}). Are the new rules published? See firebase/README.md.`);
-  process.exit(1);
-}
+const data = await read('feedback', await token());
 // The fields (texto, nombre, contexto…) are the ones stored in Firebase: persisted, not renamed (D-316)
-const all = Object.entries((await res.json()) || {}).map(([id, r]) => ({ id, ...r }));
+const all = Object.entries(data || {}).map(([id, r]) => ({ id, ...r }));
 const since = days ? Date.now() - days * 864e5 : 0;
 const list = all.filter(r => (r.at || 0) >= since).sort((a, b) => (b.at || 0) - (a.at || 0));
 if (args.includes('--json')) { console.log(JSON.stringify(list, null, 2)); process.exit(0); }

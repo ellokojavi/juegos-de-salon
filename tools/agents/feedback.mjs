@@ -175,11 +175,10 @@ export function body(r) {
 const gh = (...args) => execFileSync('gh', [...args, '-R', REPO], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 
 async function sync(dryRun) {
-  const res = await fetch(`${firebaseConfig.databaseURL}/feedback.json`);
-  if (!res.ok) throw new Error(`Could not read feedback/ (HTTP ${res.status}).`);
-  const reports = Object.entries((await res.json()) || {}).map(([id, r]) => ({ id, ...r }));
+  // feedback/ is readable only by the owner: read it with the admin key, like feedbackIssues/
   const { read, write } = await import('../firebase/firebase-admin.mjs');
   const t = await adminToken();
+  const reports = Object.entries((await read('feedback', t)) || {}).map(([id, r]) => ({ id, ...r }));
   const ledger = (await read('feedbackIssues', t)) || {};
   const list = () => JSON.parse(gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '1000', '--json', 'number,body'));
   const issues = list();
