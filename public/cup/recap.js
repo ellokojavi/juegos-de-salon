@@ -13,7 +13,7 @@ import { dueCup, markCupSeen } from '../assets/js/recap.js';
 
 const DB = 'https://juegos-de-salon-default-rtdb.firebaseio.com';
 
-/** The fonts the image is drawn with (base.css loads them on every page; this one has no CSS). */
+/** The fonts the image is drawn with (base.css declares them; the page links it only for them). */
 const FONTS = ['400 76px Bangers', '800 40px Nunito', '900 40px Nunito'];
 
 /**

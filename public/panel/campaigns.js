@@ -89,3 +89,54 @@ export function span(s, today, days) {
   const idx = d => Math.round((Date.parse(`${d}T12:00:00`) - Date.parse(`${today}T12:00:00`)) / DAY);
   return { start: idx(a), end: idx(b), open: !s.until || s.until > last };
 }
+
+/**
+ * How a campaign did (D-461), from the day's counters `splash/<id>/<event>` (splash.js) in
+ * `stats/<env>/days/<day>`, over the UTC days `from`…`to`. A campaign can be switched off and on
+ * again, so its exposure is the days it was actually shown, not the calendar: `exposed` counts the
+ * days with at least one window, and each day carries its exposure index `n` (1 = its first day
+ * shown, gaps not counted). Days in between with nothing shown are kept, `off`, so the gap is seen.
+ *
+ * - reach: phones that saw it for the first time (unique phones); shown: windows opened.
+ * - play / close: taps on its link, and closes; `rest` of the windows got neither (the tab was left).
+ * - ctr: play over reach. coverage: windows over home page views on its days (`vistas/inicio`).
+ * - dwell: of the windows answered, how many stayed open 3 s or more, and 10 s or more.
+ * - early / late: reach per exposed day in its first 3 days shown and after them; halfDays: how many
+ *   days shown it took to gather half its reach. Together they say whether it is still finding new
+ *   phones or already reached the ones that come. `clipped` says it was already showing on `from`:
+ *   then its days count from the range, not from its real start.
+ */
+export const EARLY_DAYS = 3;
+export function campaignStats(days, id, { from, to }) {
+  const rows = [];
+  for (let d = from; d <= to; d++) {
+    const c = days?.[d]?.splash?.[id] || {};
+    const v = k => Number(c[k]) || 0;
+    rows.push({ day: d, shown: v('shown'), reach: v('reach'), play: v('play'), close: v('close'), t0: v('t0'), t1: v('t1'), t2: v('t2'), home: Number(days?.[d]?.vistas?.inicio) || 0 });
+  }
+  const first = rows.findIndex(r => r.shown || r.reach || r.play || r.close);
+  if (first < 0) return null;
+  let last = rows.length - 1;
+  while (last > first && !(rows[last].shown || rows[last].play || rows[last].close)) last--;
+  let n = 0;
+  const series = rows.slice(first, last + 1).map(r => (r.shown ? { ...r, n: ++n, off: false } : { ...r, n: null, off: true }));
+  const sum = k => series.reduce((s, r) => s + r[k], 0);
+  const t = { shown: sum('shown'), reach: sum('reach'), play: sum('play'), close: sum('close'), t0: sum('t0'), t1: sum('t1'), t2: sum('t2') };
+  const home = series.filter(r => !r.off).reduce((s, r) => s + r.home, 0);
+  const answered = t.t0 + t.t1 + t.t2;
+  const on = series.filter(r => !r.off);
+  const early = on.slice(0, EARLY_DAYS), late = on.slice(EARLY_DAYS);
+  const avg = list => (list.length ? list.reduce((s, r) => s + r.reach, 0) / list.length : null);
+  let acc = 0;
+  const half = t.reach ? on.findIndex(r => (acc += r.reach) * 2 >= t.reach) + 1 : null;
+  const ratio = (a, b) => (b ? a / b : null);
+  return {
+    id, series, ...t, exposed: on.length, firstDay: series[0].day, lastDay: series.at(-1).day,
+    // Shown on the range's first day: it may have started before, so its day numbers count from the range
+    clipped: first === 0,
+    rest: Math.max(0, t.shown - t.play - t.close),
+    ctr: ratio(t.play, t.reach), closeRate: ratio(t.close, t.reach), perPhone: ratio(t.shown, t.reach),
+    coverage: ratio(t.shown, home), stay3: ratio(t.t1 + t.t2, answered), stay10: ratio(t.t2, answered),
+    early: avg(early), late: avg(late), halfDays: half || null,
+  };
+}
