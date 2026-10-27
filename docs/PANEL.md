@@ -162,6 +162,11 @@ reglas). El calendario de cada copa dice qué juego tocó cada día, y cada resu
 puntaje (0 a 100), su tiempo y su hora. Las cuentas de la copa (qué día va, la tabla) salen del
 motor de la copa, `public/cup/engine.js`; el panel no las repite.
 
+It reads only the cups that ended on or after two days before the first day it loads (the period and
+the one before it), by `meta/end`, and `feedback/` the same way by `at` (D-473): every number of a
+period comes out the same. A cup that ended earlier is read on its own when opened by code or link.
+Live rooms redraw the panel at most once a second.
+
 - **Jugando ahora:** tocó Empezar hace menos de media hora y todavía no hay resultado. Mira todos
   los días abiertos, porque el de ayer se puede jugar hasta el fin de hoy.
 - **Juego sin terminar:** tocó Empezar y no dejó resultado, y ya no lo está jugando (pasó
