@@ -23,10 +23,10 @@ export const DIAS_CORREO = 90;
 /** The privacy page (D-463), from this module: it works on the site and on a PR preview alike. */
 export const PRIVACY_URL = new URL('../../privacy/', import.meta.url).href;
 const CORREO = {
-  es: { correo: 'Tu correo (opcional)', correoNota: 'Solo para responderte. No lo usamos para nada más ni se publica: lo borramos al responderte o, si no hubo respuesta, a los 90 días.', privacidad: 'Privacidad', correoMalo: 'Revisa el correo: parece incompleto.' },
-  en: { correo: 'Your email (optional)', correoNota: "Only so we can reply to you. We don't use it for anything else and it's never published: we delete it once we reply or, if there was no reply, after 90 days.", privacidad: 'Privacy', correoMalo: 'Check your email: it looks incomplete.' },
-  pt: { correo: 'Seu e-mail (opcional)', correoNota: 'Só para te responder. Não usamos para mais nada e não é publicado: apagamos ao responder ou, se não houver resposta, depois de 90 dias.', privacidad: 'Privacidade', correoMalo: 'Confira o e-mail: parece incompleto.' },
-  de: { correo: 'Deine E-Mail (optional)', correoNota: 'Nur, damit wir dir antworten können. Wir nutzen sie für nichts anderes und veröffentlichen sie nicht: Wir löschen sie nach der Antwort oder, falls keine kommt, nach 90 Tagen.', privacidad: 'Datenschutz', correoMalo: 'Prüf deine E-Mail-Adresse: Sie scheint unvollständig zu sein.' },
+  es: { correo: 'Tu correo (opcional)', correoNota: 'Solo para responderte, y nunca se publica. Lo borramos al responderte o a los 90 días.', privacidad: 'Privacidad', correoMalo: 'Revisa el correo: parece incompleto.' },
+  en: { correo: 'Your email (optional)', correoNota: 'Only to reply to you, and never published. We delete it when we reply or after 90 days.', privacidad: 'Privacy', correoMalo: 'Check your email: it looks incomplete.' },
+  pt: { correo: 'Seu e-mail (opcional)', correoNota: 'Só para te responder, e nunca é publicado. Apagamos ao responder ou depois de 90 dias.', privacidad: 'Privacidade', correoMalo: 'Confira o e-mail: parece incompleto.' },
+  de: { correo: 'Deine E-Mail (optional)', correoNota: 'Nur für unsere Antwort, nie veröffentlicht. Wir löschen sie nach der Antwort oder nach 90 Tagen.', privacidad: 'Datenschutz', correoMalo: 'Prüf deine E-Mail-Adresse: Sie scheint unvollständig zu sein.' },
 };
 export const textosCorreo = (idioma = (typeof document !== 'undefined' && document.documentElement.lang) || 'es') => CORREO[String(idioma).slice(0, 2)] || CORREO.es;
 export const IDIOMAS_CORREO = Object.keys(CORREO);
