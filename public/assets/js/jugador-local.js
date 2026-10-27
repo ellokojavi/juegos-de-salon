@@ -49,19 +49,32 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
   };
 
   /** Lo que las reglas revisan en cada ruta de estas ramas. `viejo` es `root`, `nuevo` es `newData`. */
-  function permitido(ruta, viejo, nuevo, u) {
+  function permitido(ruta, viejo, nuevo, u, t) {
     const p = partes(ruta);
     const sentado = (base, jid) => leerEn(base, `jugadorSeats/${jid}/${u}`) != null;
+    // This phone's PIN attempt from the last minute holds `h` (D-464)
+    const probo = (jid, h) => {
+      const x = leerEn(viejo, `jugadorIntentos/${jid}`);
+      return !!x && x.u === u && x.at > t - 60000 && x.h === h;
+    };
     const [rama, a, b, c] = p;
+    // One PIN attempt every 5 s per player, on a player with a key, never deleted (D-464)
+    if (rama === 'jugadorIntentos') {
+      const x = leerEn(nuevo, ruta), antes = leerEn(viejo, ruta);
+      return p.length === 2 && !!x && leerEn(viejo, `jugadorKeys/${a}`) != null && (!antes || antes.at < t - 5000)
+        && /^[0-9a-f]{64}$/.test(x.h || '') && x.u === u && x.at === t && Object.keys(x).every(k => ['h', 'u', 'at'].includes(k));
+    }
     if (rama === 'jugadorSeats') {
-      if (p.length === 2) return sentado(viejo, a) && Object.entries(leerEn(nuevo, ruta) || {}).every(([k, h]) => k === u && h === leerEn(nuevo, `jugadorKeys/${a}`));
+      const clave = leerEn(viejo, `jugadorKeys/${a}`);
+      const vale = h => h === leerEn(nuevo, `jugadorKeys/${a}`) && (clave == null || probo(a, clave));
+      if (p.length === 2) return sentado(viejo, a) && Object.entries(leerEn(nuevo, ruta) || {}).every(([k, h]) => k === u && vale(h));
       const h = leerEn(nuevo, ruta);
-      return b === u && (h === null || h === leerEn(nuevo, `jugadorKeys/${a}`));
+      return b === u && (h === null || vale(h));
     }
     if (rama === 'jugadorKeys') {
       const antes = leerEn(viejo, ruta);
       const libre = !leerEn(viejo, `jugadores/${a}`) || leerEn(viejo, `jugadores/${a}/legado`) === true;
-      return antes == null ? libre && sentado(nuevo, a) : sentado(viejo, a);
+      return antes == null ? libre && sentado(nuevo, a) : sentado(viejo, a) && probo(a, antes);
     }
     if (rama === 'jugadorNombres') return leerEn(viejo, ruta) == null && leerEn(nuevo, ruta) === true && sentado(nuevo, b);
     if (rama === 'jugadores') {
@@ -156,7 +169,7 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
     async update(cambios) {
       const viejo = db(), nuevo = copia(viejo) || {}, u = miUid(), t = now();
       for (const [ruta, v] of Object.entries(cambios)) ponerEn(nuevo, ruta, resolver(copia(v), leerEn(viejo, ruta), t));
-      for (const ruta of Object.keys(cambios)) if (!permitido(ruta, viejo, nuevo, u)) throw falla('permiso');
+      for (const ruta of Object.keys(cambios)) if (!permitido(ruta, viejo, nuevo, u, t)) throw falla('permiso');
       guardar(nuevo);
     },
     async top(t, periodo, n) {

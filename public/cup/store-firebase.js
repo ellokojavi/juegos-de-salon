@@ -8,6 +8,9 @@
  *   torneoSeats/<código>/<pid>/<uid>   el celular `uid` puede escribir por `pid`. Las reglas
  *                                    aceptan el asiento solo si trae el mismo hash que torneoKeys,
  *                                    or the jid that `pid` is linked to, from a phone seated as that player (D-359).
+ *   torneoIntentos/<código>/<pid>    { h, u, at }: the last PIN attempt on that cup player (D-464). One
+ *                                    every 5 s; a seat with the PIN needs this phone's attempt from
+ *                                    the last minute with the same hash. Nobody reads it.
  */
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import {
@@ -20,6 +23,10 @@ import { enviarReporte } from './reportes.js';
 import { aliasHasta, abierto, conCierre } from './engine.js';
 
 const falla = code => Object.assign(new Error(code), { code });
+
+/** How long the rules make a cup player wait between two PIN attempts (D-464), plus a margin. */
+export const PAUSA_INTENTOS = 5500;
+const dormir = ms => new Promise(r => setTimeout(r, ms));
 
 /** Un rechazo de las reglas se ve como PERMISSION_DENIED; lo traducimos a lo que pasó. */
 function traducir(e, siNoHayPermiso = 'permiso') {
@@ -111,8 +118,21 @@ export function createFirebaseStore() {
       }, 'llena');
     },
 
+    /**
+     * A PIN attempt on cup player `pid` (D-464). If the last one is too recent, it waits the 5 s
+     * once and tries again; refused again, 'espera'.
+     */
+    async intentar(code, pid, pinHash) {
+      const uid = await listo();
+      const cambios = { [`torneoIntentos/${code}/${pid}`]: { h: pinHash, u: uid, at: serverTimestamp() } };
+      try { await escribir(cambios, 'espera'); return; } catch (e) { if (e.code !== 'espera') throw e; }
+      await dormir(PAUSA_INTENTOS);
+      await escribir(cambios, 'espera');
+    },
+
     async sentarse(code, pid, pinHash) {
       const uid = await listo();
+      await this.intentar(code, pid, pinHash);
       await escribir({ [`torneoSeats/${code}/${pid}/${uid}`]: pinHash }, 'pin');
     },
 
@@ -180,7 +200,7 @@ export function createFirebaseStore() {
     async eliminar(code) {
       const alias = (await withTimeout(get(ref(db, `torneos/${code}/meta/alias`)), OP_MS)).val();
       await escribir({
-        [`torneos/${code}`]: null, [`torneoKeys/${code}`]: null, [`torneoSeats/${code}`]: null,
+        [`torneos/${code}`]: null, [`torneoKeys/${code}`]: null, [`torneoSeats/${code}`]: null, [`torneoIntentos/${code}`]: null,
         // Y quién quería avisos de ella (D-223)
         [`pushCopa/${code}`]: null,
         // El link propio queda libre de inmediato (D-121)
@@ -251,9 +271,17 @@ export function createFirebaseStore() {
       await escribir({ [`pushCopa/${code}/${pid}/${subId}`]: null });
     },
 
-    async cambiarPin(code, pid, pinHash) {
-      // El PIN nuevo invalida los celulares que ya estaban sentados como ese jugador.
-      await escribir({ [`torneoKeys/${code}/${pid}`]: pinHash, [`torneoSeats/${code}/${pid}`]: null });
+    /**
+     * A new PIN for a cup player, by the admin, who proves their own PIN (D-464): `adminHash` is
+     * the admin's cup PIN hash, tried first as an attempt on the admin. An admin linked to their
+     * player proves the player's PIN instead (`jugador.probarPin`, before this). 'pin-admin' if
+     * neither was the PIN. El PIN nuevo invalida los celulares que ya estaban sentados como ese jugador.
+     */
+    async cambiarPin(code, pid, pinHash, { admin, adminHash } = {}) {
+      if (admin && adminHash) {
+        try { await this.intentar(code, admin, adminHash); } catch (e) { if (e.code !== 'espera') throw e; }
+      }
+      await escribir({ [`torneoKeys/${code}/${pid}`]: pinHash, [`torneoSeats/${code}/${pid}`]: null }, 'pin-admin');
     },
   };
 }

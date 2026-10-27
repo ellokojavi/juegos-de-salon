@@ -26,6 +26,16 @@ function sentadoComoJugador(jid) {
   } catch (_) { return false; }
 }
 
+/** This phone's fresh PIN attempt on player `jid` in the test player store holds its key (D-464). */
+function proboComoJugador(jid, t) {
+  try {
+    const u = localStorage.getItem('juegos-de-salon:prueba:records-uid');
+    const db = JSON.parse(localStorage.getItem('juegos-de-salon:prueba:records-db') || '{}');
+    const x = db.jugadorIntentos?.[jid];
+    return !!(u && x && x.u === u && x.at > t - 60000 && x.h === db.jugadorKeys?.[jid]);
+  } catch (_) { return false; }
+}
+
 function leerTodo() {
   try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (_) { return {}; }
 }
@@ -33,7 +43,11 @@ function guardarTodo(db) {
   try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (_) { /* nada */ }
 }
 
-export function createLocalStore({ uid = null } = {}) {
+/**
+ * `pausa`: the rules' time between two PIN attempts on a cup player (D-464); `esperar`, how the
+ * phone waits it once before trying again. Tests may shorten both.
+ */
+export function createLocalStore({ uid = null, pausa = 5000, esperar = ms => new Promise(r => setTimeout(r, ms)) } = {}) {
   // Cada pestaña es un "celular": su uid vive en sessionStorage.
   let yo = uid;
   if (!yo) {
@@ -72,7 +86,7 @@ export function createLocalStore({ uid = null } = {}) {
   const esAdmin = L => sentado(L, L.meta.admin);
   const publica = L => {
     if (!L) return null;
-    const { _keys, _seats, _avisos, ...resto } = L;
+    const { _keys, _seats, _avisos, _intentos, ...resto } = L;
     return JSON.parse(JSON.stringify(resto));
   };
 
@@ -131,10 +145,26 @@ export function createLocalStore({ uid = null } = {}) {
       });
     },
 
+    /** A PIN attempt on cup player `pid`, one every `pausa` per player, as the rules (D-464). */
+    async intentar(code, pid, pinHash) {
+      const una = () => cambiar(db => {
+        const L = copa(db, code);
+        if (!L._keys[pid]) throw falla('espera');
+        const antes = L._intentos?.[pid];
+        if (antes && antes.at > now() - pausa) throw falla('espera');
+        (L._intentos ||= {})[pid] = { h: pinHash, u: yo, at: now() };
+      });
+      try { await una(); return; } catch (e) { if (e.code !== 'espera') throw e; }
+      await esperar(pausa + 500);
+      await una();
+    },
+
     async sentarse(code, pid, pinHash) {
+      await this.intentar(code, pid, pinHash);
       return cambiar(db => {
         const L = copa(db, code);
-        if (!L._keys[pid] || L._keys[pid] !== pinHash) throw falla('pin');
+        const x = L._intentos?.[pid];
+        if (!L._keys[pid] || L._keys[pid] !== pinHash || !x || x.u !== yo || x.h !== pinHash || x.at <= now() - 60000) throw falla('pin');
         (L._seats[pid] ||= {})[yo] = true;
       });
     },
@@ -317,10 +347,17 @@ export function createLocalStore({ uid = null } = {}) {
     /** Solo en pruebas: lo que vería quien manda los avisos. */
     async avisosDe(code) { return JSON.parse(JSON.stringify(leerTodo()[code]?._avisos || {})); },
 
-    async cambiarPin(code, pid, pinHash) {
+    async cambiarPin(code, pid, pinHash, { admin, adminHash } = {}) {
+      if (admin && adminHash) {
+        try { await this.intentar(code, admin, adminHash); } catch (e) { if (e.code !== 'espera') throw e; }
+      }
       return cambiar(db => {
         const L = copa(db, code);
         if (!esAdmin(L)) throw falla('permiso');
+        // The admin proves their own PIN (D-464): the cup one, or their linked player's
+        const a = L.meta.admin, x = L._intentos?.[a], t = now();
+        const cupo = !!x && x.u === yo && x.at > t - 60000 && x.h === L._keys[a];
+        if (!cupo && !(L.players[a]?.j && proboComoJugador(L.players[a].j, Date.now()))) throw falla('pin-admin');
         L._keys[pid] = pinHash;
         if (pid !== L.meta.admin) L._seats[pid] = {};
       });
