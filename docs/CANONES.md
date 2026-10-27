@@ -434,7 +434,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 - **A promotional splash, off by default** (D-351): when the owner turns on a campaign
   (`ACTIVE` in `splash.js`, with `node tools/agents/splash.mjs on <id> | off`), a window over the
   home page tells what is new, with the page darkened behind; each phone sees it once, and a new
-  campaign shows again. ✕, "Ahora no" and its links mark it as seen at once: a tap outside the window or Escape is forgiven once: the first such close leaves it for a later visit, the second marks it (D-462). A campaign marked `audience: 'regulars'` waits, unseen, for a phone with 5 or more
+  campaign shows again. ✕, "Ahora no" and its links mark it as seen at once; a tap outside the window or Escape is forgiven once: the first such close leaves it for a later visit, the second marks it (D-462). A campaign marked `audience: 'regulars'` waits, unseen, for a phone with 5 or more
   visit days in the last four weeks and 10 or more finished games that has not paid (D-458): never a first visit. Each game in it shows a clip of real play (`marketing/splash/`) and
   opens with ▶ Play; the way out is a quiet "Ahora no". It fits a 320×640 screen with three games. `?splash=<id>` previews one (one that is not on, only with a lab key, D-395);
   `?test` and the scripts never see it. Tried in the lab from the home page's experiments bar (D-389).
