@@ -319,10 +319,6 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   const c = CAMPAIGNS[id];
   if (!c || document.querySelector('.splash-capa')) return;
   lang = campaignLang(c, lang);
-  // Lab key holders first (D-395, D-409): for them a soft close is forgiven once. Asked before the
-  // window rises, and a soft close waits for the answer: a slip as it appears is the case it is for.
-  // lab: #seccion-splash-cerrar
-  const forgive = record ? import('./lab-access.js').then(m => m.labAccess()).catch(() => false) : null;
   loadStyle();
   const items = await resolve(c.items || [], lang);
 
@@ -407,8 +403,8 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
       if (closed) return;
       closed = true;
       answer('close');
-      if (record && !soft) markSeen(id);
-      else if (record) forgive.then(yes => { if (!yes || softClose(id)) markSeen(id); });
+      // A soft close (a tap outside, Escape) is forgiven once (D-462): for everyone since the owner approved it
+      if (record && (!soft || softClose(id))) markSeen(id);
       document.removeEventListener('keydown', onKey);
       layer.classList.add('sale');
       setTimeout(() => { layer.remove(); document.body.style.overflow = prevOverflow; before?.focus?.({ preventScroll: true }); }, 180);
