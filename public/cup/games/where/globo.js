@@ -249,8 +249,8 @@ export function ajustar(canvas) {
  * el globo espera a la imagen en vez de mostrar el mapa vectorial por un instante; sin WebGL, o si
  * ninguna imagen llega (fallan o tardan más de 4 s), se dibuja como antes, con el mapa vectorial.
  * In WebP, and the sharp 4096 px one only where it shows (D-460): on a canvas wider than 2048
- * device pixels whose video card takes it. A phone downloads only the 2048 one; a big screen gets
- * the 2048 first and the 4096 replaces it when it arrives.
+ * device pixels, or zoomed in, if the video card takes it. A phone at rest downloads only the 2048
+ * one; the 4096 replaces it when it arrives.
  */
 // The globe's images live next to it, whole (`2048.webp`, `4096.webp`) and in tiles (`row-column.webp`):
 // a folder named with `new URL`, so the end-to-end scope knows the pages that load them (D-460)
@@ -439,8 +439,10 @@ export function satelite(canvas, alLlegar) {
       const dpr = Math.min(3, window.devicePixelRatio || 1);
       const W = Math.round(w * dpr), H = Math.round(h * dpr);
       if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
-      // The sharp image only on a canvas wider than the small one, if the video card takes it (D-460)
-      if (W > 2048 && maximo >= NITIDA) pedir(NITIDA);
+      // The sharp image only where the small one falls short, if the video card takes it (D-460): a
+      // canvas wider than 2048 px, or a globe zoomed in until the 2048 one stretches (its circumference
+      // over 4096 device pixels: a phone at rest stays below, its first zoom step does not)
+      if (maximo >= NITIDA && (W > 2048 || 2 * Math.PI * V.r * dpr > NITIDA)) pedir(NITIDA);
       gl.viewport(0, 0, W, H);
       gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
       if (!subida) return;
