@@ -1286,6 +1286,7 @@
     "public/assets/js/parametros.test.mjs",
     "public/assets/js/pending-scores.test.mjs",
     "public/assets/js/push.test.mjs",
+    "public/assets/js/rankings-rest.test.mjs",
     "public/assets/js/records.test.mjs",
     "public/assets/js/search.test.mjs",
     "public/assets/js/season.test.mjs",

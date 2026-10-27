@@ -495,6 +495,7 @@ node public/assets/js/llegada.test.mjs
 node public/assets/js/parametros.test.mjs
 node public/assets/js/pending-scores.test.mjs
 node public/assets/js/push.test.mjs
+node public/assets/js/rankings-rest.test.mjs
 node public/assets/js/records.test.mjs
 node public/assets/js/search.test.mjs
 node public/assets/js/season.test.mjs
