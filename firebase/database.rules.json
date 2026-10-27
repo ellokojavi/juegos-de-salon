@@ -23,7 +23,96 @@
         },
         "config": {
           ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists()",
-          ".validate": "newData.hasChildren()"
+          ".validate": "newData.hasChildren()",
+          "dice": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "calzar": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "chileno": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "shake": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "turnSecs": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "servidaGana": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "manos": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "source": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "theme": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "lives": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "buy": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "seed": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "away": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "turns": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "extraShot": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "confirmShot": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "starter": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "digits": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "replica": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "zeroFirst": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "parallel": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "handSize": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "shared": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "spread": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "gender": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "players": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100)) || newData.hasChildren()",
+            "$i": {
+              ".validate": "$i.matches(/^[0-5]$/) && newData.isString() && newData.val().matches(/^[A-F]$/)"
+            }
+          },
+          "skip": {
+            "$i": {
+              ".validate": "$i.matches(/^[0-9]{1,3}$/) && !newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 60))"
+            }
+          },
+          "$other": {
+            ".validate": false
+          }
         },
         "players": {
           "$p": {
@@ -31,13 +120,178 @@
             ".validate": "newData.hasChildren(['name']) && newData.child('name').isString() && newData.child('name').val().length <= 20",
             "left": {
               ".validate": "newData.isBoolean()"
+            },
+            "name": {
+              ".validate": "newData.isString()"
+            },
+            "uid": {
+              ".validate": "newData.isString() && newData.val().length <= 40"
+            },
+            "online": {
+              ".validate": "newData.isBoolean()"
+            },
+            "$other": {
+              ".validate": false
             }
           }
         },
         "messages": {
           "$id": {
             ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists() && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000 && (!root.child('rooms/' + $room + '/lastAt').exists() || root.child('rooms/' + $room + '/lastAt').val() > now - 1800000)",
-            ".validate": "newData.hasChildren(['t', 'from', 'at']) && newData.child('t').isString() && newData.child('t').val().length < 20 && newData.child('from').val().matches(/^[A-F]$/) && newData.child('at').isNumber() && newData.child('at').val() <= now + 60000 && (!newData.hasChild('text') || (newData.child('text').isString() && newData.child('text').val().length <= 200))"
+            ".validate": "newData.hasChildren(['t', 'from', 'at']) && newData.child('t').isString() && newData.child('t').val().length < 20 && newData.child('from').val().matches(/^[A-F]$/) && newData.child('at').isNumber() && newData.child('at').val() <= now + 60000 && (!newData.hasChild('text') || (newData.child('text').isString() && newData.child('text').val().length <= 200))",
+            "name": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "code": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "seed": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "h": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "d": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "salt": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "n": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "p": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "r": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "k": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "c": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "triunfo": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "i": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "a": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "to": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "letter": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "pos": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "word": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "shape": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "hint": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "hash": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "ms": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "result": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "ship": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "of": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "famas": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "toques": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "round": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "value": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "secret": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "card": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "slot": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 200))"
+            },
+            "pub": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 2000))"
+            },
+            "cs": {
+              ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 2000))"
+            },
+            "s": {
+              "$r": {
+                ".validate": "$r.matches(/^[A-F]$/) && !newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 2000))"
+              }
+            },
+            "m": {
+              "$r": {
+                ".validate": "$r.matches(/^[A-F]$/) && !newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 2000))"
+              }
+            },
+            "order": {
+              "$i": {
+                ".validate": "$i.matches(/^[0-5]$/) && newData.isString() && newData.val().matches(/^[A-F]$/)"
+              }
+            },
+            "cell": {
+              "$k": {
+                ".validate": "$k.matches(/^[a-z]{1,3}$/) && !newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 20))"
+              }
+            },
+            "cells": {
+              "$i": {
+                ".validate": "$i.matches(/^[0-9]{1,2}$/)",
+                "$k": {
+                  ".validate": "$k.matches(/^[a-z]{1,3}$/) && !newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 20))"
+                }
+              }
+            },
+            "layout": {
+              "$ship": {
+                ".validate": "$ship.matches(/^[a-zA-Z0-9]{1,20}$/)",
+                "$k": {
+                  ".validate": "$k.matches(/^[a-z]{1,3}$/) && !newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 20))"
+                }
+              }
+            },
+            "t": {
+              ".validate": "!newData.hasChildren()"
+            },
+            "from": {
+              ".validate": "!newData.hasChildren()"
+            },
+            "at": {
+              ".validate": "!newData.hasChildren()"
+            },
+            "text": {
+              ".validate": "!newData.hasChildren()"
+            },
+            "$other": {
+              ".validate": false
+            }
           }
         },
         "$other": {
@@ -56,7 +310,7 @@
           ".write": "data.exists() && !newData.exists() && data.child('lastAt').val() < now - 21600000",
           ".validate": "newData.hasChildren(['lastAt'])",
           "lastAt": {
-            ".write": "newData.exists()",
+            ".write": "newData.exists() && (!data.exists() || newData.val() >= data.val())",
             ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
           },
           "rooms": {
