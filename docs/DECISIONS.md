@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (456)
+## In force (457)
 
 | D | Title | Status |
 |---|---|---|
@@ -514,8 +514,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-466](decisions/D-466.md) | A splash campaign's conversion: the game its Play opened, started and finished | current |
 | [D-467](decisions/D-467.md) | Cache busting by content hash, not by release | current |
 | [D-468](decisions/D-468.md) | La Copa loads only the game being played, and each Cup game brings its own stylesheet | current |
-| [D-471](decisions/D-471.md) | The owner's own browsers are kept out of Live: the `owner` environment | current |
 | [D-469](decisions/D-469.md) | The rules check a room's shape and keep a bucket's clock moving forward | current |
+| [D-471](decisions/D-471.md) | The owner's own browsers are kept out of Live: the `owner` environment | current |
 
 ## No longer in force (11)
 
