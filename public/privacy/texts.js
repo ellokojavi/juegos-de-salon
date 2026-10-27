@@ -32,7 +32,7 @@ export const TEXTS = {
       {
         h: '🤝 Quién más los ve',
         p: [
-          'No tenemos servidores propios. Estos servicios ven tu dirección IP para entregarte el sitio, con sus propias reglas de privacidad: GitHub Pages (el sitio), Google Firebase (la base de datos) y Google Fonts (las letras). Solo si los usas: YouTube (el video al compartir la app), Stripe (si nos invitas un café), y Cloudflare y Gmail (los correos a hola@juegosdesalon.cl).',
+          'No tenemos servidores propios. Estos servicios ven tu dirección IP para entregarte el sitio, con sus propias reglas de privacidad: GitHub Pages (el sitio) y Google Firebase (la base de datos). Solo si los usas: YouTube (el video al compartir la app), Stripe (si nos invitas un café), y Cloudflare y Gmail (los correos a hola@juegosdesalon.cl).',
           'Nosotros no guardamos tu dirección IP, no vendemos datos y no usamos analítica de otras empresas.',
         ],
       },
@@ -69,7 +69,7 @@ export const TEXTS = {
       {
         h: '🤝 Who else sees them',
         p: [
-          'We have no servers of our own. These services see your IP address in order to deliver the site, under their own privacy rules: GitHub Pages (the site), Google Firebase (the database) and Google Fonts (the fonts). Only if you use them: YouTube (the video when sharing the app), Stripe (if you buy us a coffee), and Cloudflare and Gmail (emails to hola@juegosdesalon.cl).',
+          'We have no servers of our own. These services see your IP address in order to deliver the site, under their own privacy rules: GitHub Pages (the site) and Google Firebase (the database). Only if you use them: YouTube (the video when sharing the app), Stripe (if you buy us a coffee), and Cloudflare and Gmail (emails to hola@juegosdesalon.cl).',
           'We don\'t keep your IP address, we don\'t sell data and we don\'t use other companies\' analytics.',
         ],
       },
@@ -106,7 +106,7 @@ export const TEXTS = {
       {
         h: '🤝 Quem mais vê',
         p: [
-          'Não temos servidores próprios. Estes serviços veem seu endereço IP para entregar o site, com as próprias regras de privacidade: GitHub Pages (o site), Google Firebase (o banco de dados) e Google Fonts (as fontes). Só se você usar: YouTube (o vídeo ao compartilhar o app), Stripe (se você nos pagar um café), e Cloudflare e Gmail (os e-mails para hola@juegosdesalon.cl).',
+          'Não temos servidores próprios. Estes serviços veem seu endereço IP para entregar o site, com as próprias regras de privacidade: GitHub Pages (o site) e Google Firebase (o banco de dados). Só se você usar: YouTube (o vídeo ao compartilhar o app), Stripe (se você nos pagar um café), e Cloudflare e Gmail (os e-mails para hola@juegosdesalon.cl).',
           'Nós não guardamos seu endereço IP, não vendemos dados e não usamos análises de outras empresas.',
         ],
       },
@@ -143,7 +143,7 @@ export const TEXTS = {
       {
         h: '🤝 Wer sie noch sieht',
         p: [
-          'Wir haben keine eigenen Server. Diese Dienste sehen deine IP-Adresse, um dir die Seite auszuliefern, nach ihren eigenen Datenschutzregeln: GitHub Pages (die Seite), Google Firebase (die Datenbank) und Google Fonts (die Schriften). Nur wenn du sie nutzt: YouTube (das Video beim Teilen der App), Stripe (wenn du uns einen Kaffee spendierst), sowie Cloudflare und Gmail (E-Mails an hola@juegosdesalon.cl).',
+          'Wir haben keine eigenen Server. Diese Dienste sehen deine IP-Adresse, um dir die Seite auszuliefern, nach ihren eigenen Datenschutzregeln: GitHub Pages (die Seite) und Google Firebase (die Datenbank). Nur wenn du sie nutzt: YouTube (das Video beim Teilen der App), Stripe (wenn du uns einen Kaffee spendierst), sowie Cloudflare und Gmail (E-Mails an hola@juegosdesalon.cl).',
           'Wir speichern deine IP-Adresse nicht, verkaufen keine Daten und nutzen keine Analyse anderer Firmen.',
         ],
       },
