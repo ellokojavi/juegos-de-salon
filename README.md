@@ -431,6 +431,7 @@ Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 - **Languages:** Spanish (default), English, Brazilian Portuguese and German, chosen by hand and saved on the device; the browser language is never guessed (D-47, D-48). See [Languages](#languages).
 - **Sound** synthesized with Web Audio, with a 🔊/🔇 button; **saved games** offer to continue; the screen stays awake while playing. A back swipe or «‹ Menú» mid-game asks before leaving (D-432).
 - **Installable** as a PWA, with a bubble showing the steps for each phone's browser (D-221, D-232); no offline mode yet.
+- **Privacy** (D-463): [`/privacy/`](https://juegosdesalon.cl/privacy/), in the four languages and linked from the menu's footer and every feedback form, says what is kept on the phone and in Firebase, why, for how long and how to have it deleted; an email left for a reply is deleted once we answer or after 90 days.
 
 ---
 
@@ -527,6 +528,7 @@ node public/panel/copas.test.mjs
 node public/panel/dominios.test.mjs
 node public/panel/rutas.test.mjs
 node public/panel/timeline.test.mjs
+node public/privacy/texts.test.mjs
 node tools/agents/approve.test.mjs
 node tools/agents/clean-worktrees.test.mjs
 node tools/agents/covers.test.mjs
@@ -691,6 +693,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422)
   records/                    Leaderboards (D-212)
   today/                      One a Day (D-230, D-414)
+  privacy/                    The privacy page, its texts in texts.js in the four languages (D-463)
   panel/                      Private owner dashboard (docs/PANEL.md)
   assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, D-448, D-449), season.js (seasonal touches on the home page and Rankings, D-457), qr.js (the room QR, drawn with vendor/qrcode.js, a copy of qrcode-generator served by the site) …
   assets/season/              The seasonal templates, one row per date, and each date's stylesheet (docs/SEASONS.md)
