@@ -1594,7 +1594,7 @@ function bloqueResultados(rows) {
   const rango = rangeOf(S.range);
   const todas = rows.map(s => campaignStats(S.days, s.id, rango)).filter(Boolean);
   const nombre = id => `${CAMPAIGNS[id]?.emoji || ''} ${CAMPAIGNS[id]?.title?.es || id}`.trim();
-  const nota = `${tituloRango()}, UTC days, counted since D-461 (previews never count). Reach is phones that saw it for the first time; tapped is its link (Play) over reach. A campaign switched off and on again counts only the days it was shown.`;
+  const nota = `${tituloRango()}, UTC days; previews never count. Reach: phones that saw it for the first time. Tapped: taps on its Play link over reach. Only the days it was shown count, so switching it off and on is fine.`;
   if (!todas.length) return bloque('📊 How they did', nota, el('p', { class: 'empty' }, S.daysLoaded ? 'No campaign was shown in this range.' : 'Loading…'));
   const elegida = todas.find(c => c.id === S.campStats) || todas[0];
   const maxR = Math.max(0, ...todas.map(c => c.reach));
@@ -1611,7 +1611,7 @@ function bloqueResultados(rows) {
     : `First ${EARLY_DAYS} days shown: ${unDecimal(c.early)} new phones a day; since then ${unDecimal(c.late)} a day (${caida > 0 ? '+' : ''}${caida}%). Half its reach came in its first ${n(c.halfDays)} ${c.halfDays === 1 ? 'day' : 'days'} shown.`;
   const maxD = Math.max(0, ...c.series.map(r => r.shown));
   const dias = c.series.map(r => bar(periodLabelDia(r.day), r.off ? [] : [seg(C_PLAY, r.play), seg(C_CLOSE, r.close), seg(C_REST, Math.max(0, r.shown - r.play - r.close))], maxD,
-    { cifra: r.shown, sub: r.off ? 'off' : `day ${r.n}`, detail: r.off ? 'not shown' : `${n(r.reach)} new phones · ${tasa(r.home ? r.shown / r.home : null)} of home views` }));
+    { cifra: r.shown, sub: r.off ? 'not shown' : `day ${r.n}`, detail: r.off ? '' : `${n(r.reach)} new phones · ${tasa(r.home ? r.shown / r.home : null)} of home views` }));
   const detalle = el('div', { class: 'campana-resultado' },
     el('p', { class: 'lead' }, nombre(c.id)),
     el('div', { class: 'tiles' },
