@@ -2,7 +2,9 @@
 
 A window over the home page that announces something new (D-351): off by default, each phone sees
 a campaign once. Several can be on: they queue up in the order they were turned on (D-430), and the home page shows
-one per visit, the next on the next visit (D-431). This folder is its memory: every campaign that was made, and how they are made.
+one per visit, the next on the next visit (D-431). A campaign can wait for regulars (`audience: 'regulars'`, D-458):
+it shows only on a phone with 5 or more visit days in the last four weeks and 10 or more finished games
+that has not paid, and until then stays unseen. This folder is its memory: every campaign that was made, and how they are made.
 
 | | |
 |---|---|
@@ -19,6 +21,8 @@ one per visit, the next on the next visit (D-431). This folder is its memory: ev
 1. Its entry in `CAMPAIGNS` (a new id: it is what phones remember, never reused), texts in the
    four languages (or `langs: ['es', 'en']`, and the rest see English), and the clips of its games
    with `capture.mjs`, or a teaser with `teaser.mjs` (an item with only `img`, `still` and `ratio`).
+   If it is not for a first visit (an ask, like support), give it `audience: 'regulars'` (D-458) and
+   say so in its README's Audience row.
 2. Its folder `campaigns/<id>/` with the README and the screenshots (`look.mjs splash <id>` at
    390 px in es, en, pt and de, as JPEG). A test fails if a campaign has no folder.
 3. `splash.mjs on <id> --until …` and the PR. **Before merging, the usability agent does a full

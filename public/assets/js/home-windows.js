@@ -16,7 +16,7 @@
  *
  * The choice is pure (`readPending`, `choose`), so node tests it without a DOM.
  */
-import { queue, seenIds, SEEN_KEY as SPLASH_SEEN_KEY, showSplash, startSplash, loadActive } from './splash.js';
+import { queue, seenIds, readProfile, SEEN_KEY as SPLASH_SEEN_KEY, showSplash, startSplash, loadActive } from './splash.js';
 import { dueCup, startRecap, MINE_KEY, SEEN_KEY as CUP_SEEN_KEY } from './recap.js';
 import { dueSeason, DAILY_KEY, SEASON_SEEN_KEY, localDate } from './daily-recap.js';
 import { INSTALAR_NO_KEY, pasosDe, globoInstalar } from './instalar.js';
@@ -37,7 +37,7 @@ export function readPending({ get, now = Date.now(), today = localDate(now), act
   const days = Object.keys(json(get(DAILY_KEY), {})?.dias || {});
   return {
     recap: !!dueCup({ mine: list(MINE_KEY), seen: list(CUP_SEEN_KEY), now }) || !!dueSeason({ today, days, seen: list(SEASON_SEEN_KEY) }),
-    splash: queue({ ...(active ? { active } : {}), ...(campaigns ? { campaigns } : {}), seen: seenIds(get(SPLASH_SEEN_KEY)), today: new Date(now), automated }),
+    splash: queue({ ...(active ? { active } : {}), ...(campaigns ? { campaigns } : {}), seen: seenIds(get(SPLASH_SEEN_KEY)), today: new Date(now), automated, profile: readProfile(get) }),
     install: installable && get(INSTALAR_NO_KEY) !== '1',
   };
 }
