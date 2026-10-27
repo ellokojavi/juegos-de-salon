@@ -323,10 +323,11 @@ y un contexto en JSON: copa, jugador, pantalla, día, juego, semilla, URL y nave
 no se muestra en el formulario, y quien entró al laboratorio con su llave manda también su etiqueta
 (`tester`, nunca la llave; D-306). Se leen con
 `node tools/firebase/reports.mjs`; en `?test` queda en `localStorage` (`juegos-de-salon:copa:prueba:reportes`).
-Every one of these forms also has an optional **email** field (`campoCorreo` in `labs-idioma.js`, D-317)
+Every one of these forms also has an optional **email** field (`campoCorreo` in `buzon-form.js`, re-exported by `labs-idioma.js`, D-317)
 that says it is only to tell the player we replied: `feedback/<id>` gets only its mask
 (`correoMascara`, `j********n@g********m`, D-366), the address goes to `feedbackContacto/<id>`, readable only with the owner's key,
-and the processes agent emails the reply and deletes it (`tools/agents/feedback.mjs reply`).
+and the processes agent emails the reply and deletes it (`tools/agents/feedback.mjs reply`); one nobody answered is deleted
+after 90 days (`feedback.mjs expire`, D-463). The field's note links the privacy page, `/privacy/` (D-463).
 
 ### Avisos al celular (D-223, D-224, D-225, D-227, D-228)
 

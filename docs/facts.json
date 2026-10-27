@@ -1,5 +1,5 @@
 {
-  "version": "0.219.7",
+  "version": "0.220.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -18,7 +18,7 @@
     "pt": 100,
     "de": 100
   },
-  "commonKeys": 39,
+  "commonKeys": 40,
   "games": [
     {
       "id": "copa",
@@ -1115,6 +1115,7 @@
     "public/panel/panel.js",
     "public/panel/rutas.js",
     "public/panel/timeline.js",
+    "public/privacy/texts.js",
     "public/sw.js",
     "public/timeline/decks/brasil.js",
     "public/timeline/decks/chile.js",
@@ -1203,6 +1204,7 @@
     "public/panel/dominios.test.mjs",
     "public/panel/rutas.test.mjs",
     "public/panel/timeline.test.mjs",
+    "public/privacy/texts.test.mjs",
     "public/timeline/engine.test.mjs",
     "tools/agents/approve.test.mjs",
     "tools/agents/clean-worktrees.test.mjs",

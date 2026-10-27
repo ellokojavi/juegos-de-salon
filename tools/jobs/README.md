@@ -40,7 +40,8 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
   (#838). `inbox-watch.test.mjs` checks those flags.
 - **`feedback-watch`** (`tools/agents/feedback.mjs sync`), every 5 minutes: uploads the new reports of
   `feedback/` as `feedback` issues (D-382), except one that looks like it carries a key or a token,
-  which it logs instead of posting (`secretLike`, #838). It was the GitHub workflow `feedback.yml`, which GitHub ran
+  which it logs instead of posting (`secretLike`, #838). Each pass then runs `feedback.mjs expire`: a
+  reply email left in `feedbackContacto/` for more than 90 days is deleted and its issue says so (D-463). It was the GitHub workflow `feedback.yml`, which GitHub ran
   about 4 times a day instead of every 15 minutes; the workflow stays, by hand only.
 
 What the Mac mini holds besides the jobs (keys, sign-ins, the scheduled tasks) and how to move it all
