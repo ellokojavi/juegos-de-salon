@@ -31,7 +31,7 @@ or month, with 🚀 marking the versions that first showed up in each period). E
 | 🌎 Users | `#/users` | Active browsers per day, in 7 and 30 days, stickiness, new and returning, days since the last visit, frequency in 28 days, cohorts by week (returns on days 1, 7 and 30), and what Audience showed (where from, languages, hour, quota). |
 | 📈 Traffic | `#/traffic` | As before, plus what is shared and the visits each share brings (the viral factor). |
 | 🩺 Health | `#/health` | As before. |
-| 📣 Campaigns | `#/campaigns` | The splash campaigns (D-454): what the home page shows today, the overlaps of the next 60 days, a 30-day strip, and one card per campaign with its on switch, start and end days (+1 week, +2 weeks, +1 month), ▲▼ order and 👁 preview. Each change is saved to Firebase `splash/` and reaches players on their next visit, without a PR. A campaign marked `audience: 'regulars'` (D-458) reaches only regular players' phones even when it is on. New campaigns are still made in `splash.js` by asking Claude. Below the strip, **📊 How they did** (D-461) for the chosen range: per campaign its phones reached, % tapped through, % closed, coverage of home page views, how long the window stayed open, and one bar per day shown, where a day it was off is skipped (exposure counts days shown, so switching it off and on does not dilute it), with new phones a day in its first 3 days against later ones. |
+| 📣 Campaigns | `#/campaigns` | The splash campaigns (D-454): what the home page shows today, the overlaps of the next 60 days, a 30-day strip, and one card per campaign with its on switch, start and end days (+1 week, +2 weeks, +1 month), ▲▼ order and 👁 preview. Each change is saved to Firebase `splash/` and reaches players on their next visit, without a PR. A campaign marked `audience: 'regulars'` (D-458) reaches only regular players' phones even when it is on. New campaigns are still made in `splash.js` by asking Claude. Below the strip, **📊 How they did** (D-461) for the chosen range: per campaign its phones reached, % tapped through, % closed, coverage of home page views, how long the window stayed open, and one bar per day shown, where a day it was off is skipped (exposure counts days shown, so switching it off and on does not dilute it), with new phones a day in its first 3 days against later ones. Conversion (D-466): of the taps, how many finished a game in that tab, and finishes over phones reached. |
 
 `#/games` opens Group and `#/audience` opens Users. Group and individual are split by the
 `individual` flag of `MODES` in `games.js` (C-16).
@@ -278,7 +278,8 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
 - **Since D-461:** `splash/<campaign>/<event>`, what each splash window did: `shown`, `reach` (the first
   time on this phone, remembered in `juegos-de-salon:splash-alcance`), `play` (its link tapped), `close`,
   and how long it stayed open before either (`t0` under 3 s, `t1` 3–10 s, `t2` 10 s or more). A preview
-  never counts. Shown in 📣 Campaigns.
+  never counts. Shown in 📣 Campaigns. Since D-466 also `start` and `finish`: after a Play tap, the first
+  game started and the first finished in that tab within 2 hours (sessionStorage `juegos-de-salon:splash-via`).
 
 No sale nunca: dirección IP (no hay servidor que la vea y no se consulta a nadie), los
 secretos de las partidas ni el chat. En los modos sin red sale el nombre que la persona ya
