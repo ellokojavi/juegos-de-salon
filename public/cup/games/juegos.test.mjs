@@ -23,7 +23,10 @@ import * as GRILLAS_EN from './connections/grillas-en.js';
 import * as GRILLAS_PT from './connections/grillas-pt.js';
 import * as GRILLAS_DE from './connections/grillas-de.js';
 import { PAISES, CIUDADES as NOMBRES_CIUDADES } from './where/nombres.js';
-import { JUEGOS } from './index.js';
+import { JUEGOS, loadAll } from './index.js';
+
+// Only the game being played loads (D-468): the tests take them all
+await loadAll();
 import { temasDeLaCopa, DECKS } from './mazos.js';
 import { camino } from './queens/ui.js';
 
