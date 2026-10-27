@@ -1,6 +1,8 @@
 {
-  "checkedUpTo": "482caeee0653ec29cb6a0e3721e44c8bd823de7b",
-  "pending": [],
+  "checkedUpTo": "4c89dbb897a9adab2150f2fdfe0a06bec125c160",
+  "pending": [
+    "Stale README screenshots (judgment warnings): toque-y-fama 9 (toggle moved into the hero, #827), linea-de-tiempo 5, cup-new-games 8, portada 2, batalla-naval 2, dudo 2, ahorcado 2, generala 1, julepe 1; redo offline and review on the contact sheet"
+  ],
   "known": [],
   "rounds": [
     {
@@ -117,6 +119,15 @@
       "to": "482caeee0653ec29cb6a0e3721e44c8bd823de7b",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/790",
       "pending": []
+    },
+    {
+      "date": "2026-10-27",
+      "from": "482caeee0653ec29cb6a0e3721e44c8bd823de7b",
+      "to": "4c89dbb897a9adab2150f2fdfe0a06bec125c160",
+      "pr": null,
+      "pending": [
+        "Stale README screenshots (judgment warnings): toque-y-fama 9 (toggle moved into the hero, #827), linea-de-tiempo 5, cup-new-games 8, portada 2, batalla-naval 2, dudo 2, ahorcado 2, generala 1, julepe 1; redo offline and review on the contact sheet"
+      ]
     }
   ],
   "note": "Memoria del agente de documentación (D-172). La lee y la escribe tools/document.mjs: hasta qué commit de main se revisó, lo que quedó pendiente, los problemas ya conocidos que esperan al dueño y las rondas anteriores."
