@@ -1,5 +1,5 @@
 {
-  "version": "0.218.0",
+  "version": "0.219.7",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -952,6 +952,7 @@
     "public/assets/js/notification-sheets.js",
     "public/assets/js/parametros.js",
     "public/assets/js/push.js",
+    "public/assets/js/qr.js",
     "public/assets/js/ranking.js",
     "public/assets/js/recap.js",
     "public/assets/js/records.js",
@@ -979,6 +980,7 @@
     "public/assets/js/uno-al-dia-ui.js",
     "public/assets/js/uno-al-dia.js",
     "public/assets/js/vapid.js",
+    "public/assets/js/vendor/qrcode.js",
     "public/assets/js/vigia.js",
     "public/assets/season/templates.js",
     "public/battleship/engine.js",
