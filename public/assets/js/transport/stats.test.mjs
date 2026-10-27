@@ -508,3 +508,19 @@ assert.equal(shareKeyOfPage('/panel/'), '');
 }
 
 console.log('stats.test.mjs: todo en verde');
+
+// D-471: a browser marked not counted writes live activity to `owner`; tests stay `dev`
+{
+  const mem = (v = {}) => ({ getItem: k => v[k] ?? null, setItem: (k, x) => { v[k] = x; }, removeItem: k => { delete v[k]; } });
+  const { envFor, setNotCounted, notCounted, ENVS } = await import('./stats.js');
+  const s = mem();
+  assert.equal(envFor({ hostname: 'juegosdesalon.cl' }, s), 'prod');
+  setNotCounted(true, s);
+  assert.ok(notCounted(s));
+  assert.equal(envFor({ hostname: 'juegosdesalon.cl' }, s), 'owner');
+  assert.equal(envFor({ hostname: 'localhost' }, s), 'dev');
+  setNotCounted(false, s);
+  assert.equal(envFor({ hostname: 'juegosdesalon.cl' }, s), 'prod');
+  assert.equal(envFor({ hostname: 'juegosdesalon.cl' }, { getItem() { throw new Error('blocked'); } }), 'prod');
+  assert.ok(ENVS.includes('owner'));
+}

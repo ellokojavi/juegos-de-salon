@@ -45,7 +45,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Touch interface | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344, D-425, D-432, D-447 |
 | Errors and passing the phone | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272, D-410, D-427 |
-| Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466 |
+| Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466, D-471 |
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (456)
+## In force (457)
 
 | D | Title | Status |
 |---|---|---|
@@ -100,7 +100,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-40](decisions/D-40.md) | A network failure is not counted as "no internet" | current |
 | [D-41](decisions/D-41.md) | Cap on rooms per phone, knowing it does not stop someone who wants to abuse it | current |
 | [D-43](decisions/D-43.md) | Línea de Tiempo: all cards in view from the first turn | amended by D-52 |
-| [D-44](decisions/D-44.md) | Usage signals for a private owner panel, without identifying anyone | amended by D-79, D-210, D-349, D-461 |
+| [D-44](decisions/D-44.md) | Usage signals for a private owner panel, without identifying anyone | amended by D-79, D-210, D-349, D-461, D-471 |
 | [D-45](decisions/D-45.md) | The panel also separates live rooms by environment | current |
 | [D-46](decisions/D-46.md) | Two languages in the usage signals, not one | amended by D-47 |
 | [D-47](decisions/D-47.md) | Spanish by default; English and Portuguese only on request | amended by D-197, D-324 |
@@ -191,7 +191,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-135](decisions/D-135.md) | Several Claude sessions at once: each in its own copy of the repo | amended by D-213, D-300, D-301, D-303 |
 | [D-136](decisions/D-136.md) | Battleship: rotating a ship almost always rotates | current |
 | [D-137](decisions/D-137.md) | The panel separates La Copa from the other games, and measures its mini-games | amended by D-207 |
-| [D-138](decisions/D-138.md) | Chat in Battleship and a panel that counts what it says | current |
+| [D-138](decisions/D-138.md) | Chat in Battleship and a panel that counts what it says | amended by D-471 |
 | [D-139](decisions/D-139.md) | Tango and Zip: a drawing in the rules, like Reinas | current |
 | [D-140](decisions/D-140.md) | Offline games are seen live in the panel | amended by D-210 |
 | [D-141](decisions/D-141.md) | The table image: chart and table on the same axis | amended by D-153 |
@@ -515,6 +515,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-467](decisions/D-467.md) | Cache busting by content hash, not by release | current |
 | [D-468](decisions/D-468.md) | La Copa loads only the game being played, and each Cup game brings its own stylesheet | current |
 | [D-469](decisions/D-469.md) | The rules check a room's shape and keep a bucket's clock moving forward | current |
+| [D-471](decisions/D-471.md) | The owner's own browsers are kept out of Live: the `owner` environment | current |
 
 ## No longer in force (11)
 
