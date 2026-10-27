@@ -74,7 +74,7 @@ export const TEXTS = {
     payNote: "Opens Stripe's payment page.",
     labNote: '🧪 No payment link yet: the button simulates a payment to show the thank-you.',
     thanksTitle: 'Thanks for the coffee!',
-    thanks: 'We will keep making games for you to enjoy alone and with friends. Now, go play!',
+    thanks: 'We will keep making games for you to enjoy on your own or with friends. Now, go play!',
     close: 'Not now',
     back: '🎲 Back to the games',
   },
