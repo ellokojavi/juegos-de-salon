@@ -565,7 +565,7 @@
       document.querySelector('footer').classList.add('atardecer');
       for (const b of document.getElementById('footer-links').children) {
         const [ic, ...label] = b.textContent.split(' ');
-        b.replaceChildren(el('span', { class: 'ic', 'aria-hidden': 'true' }, ic), el('span', {}, label.join(' ')));
+        b.replaceChildren(el('span', { class: 'ic', 'aria-hidden': 'true' }, ic), ' ', el('span', {}, label.join(' '))); // the space keeps the text whole
       }
     }).catch(() => {});
     document.title = `${T.appTitle} 🎲`;
