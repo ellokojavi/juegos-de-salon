@@ -43,7 +43,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const on = k => ACTIVE.find(a => a.id === k);
   if (cmd === 'list' || !cmd) {
     for (const [k, c] of Object.entries(CAMPAIGNS)) {
-      console.log(`${on(k) ? '●' : '○'} ${k}  ${c.emoji ?? ''} ${c.title?.es ?? ''}${on(k)?.until ? `  (until ${on(k).until})` : ''}`);
+      console.log(`${on(k) ? '●' : '○'} ${k}  ${c.emoji ?? ''} ${c.title?.es ?? ''}${on(k)?.until ? `  (until ${on(k).until})` : ''}${c.audience === 'regulars' ? '  [regulars only, D-458]' : ''}`);
     }
     console.log(ACTIVE.length ? `\nOn, in this order: ${ACTIVE.map(a => a.id).join(', ')}` : '\nOff.');
   } else if (cmd === 'on') {
