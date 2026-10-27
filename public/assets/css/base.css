@@ -409,7 +409,7 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
   background: linear-gradient(180deg, rgba(42, 10, 74, 0.99), rgba(21, 7, 38, 0.99)); animation: slideUp 0.25s ease-out both;
 }
 .labs-caja h2 { margin: 0; }
-/* With the page pinned behind it (lab: #seccion-buzon-fijo), scrolling the card never carries over */
+/* With the page pinned behind it, scrolling the card never carries over */
 .fondo-fijo .labs-caja { overscroll-behavior: contain; }
 .labs-texto, .labs-nombre {
   width: 100%; font: 700 16px/1.4 var(--font-body); color: var(--ink); background: rgba(0, 0, 0, 0.3);

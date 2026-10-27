@@ -6,7 +6,6 @@
 import { el } from './ui.js';
 import { versionOf } from './transport/stats.js';
 import { enviarReporte, correoValido } from '../../cup/reportes.js';
-import { labAccess } from './lab-access.js';
 
 /** The kinds a message can be tagged with (D-345). The rules accept exactly these (`feedback/$id/tipo`). */
 export const TIPOS = ['sugerencia', 'problema', 'idea', 'otro'];
@@ -49,9 +48,8 @@ export function abrirComentario({ T, contexto: ctx, enviar = undefined, alEnviar
   capa.addEventListener('click', e => { if (e.target === capa) cerrar(); });
   document.body.append(capa);
   caja.querySelector('textarea').focus();
-  // The page behind stays put while the form is open, so only the card moves; only with a lab key
-  // for now (D-395). lab: #seccion-buzon-fijo
-  labAccess().then(yes => { if (yes && capa.isConnected) soltar = fijarFondo(); }).catch(() => {});
+  // The page behind stays put while the form is open, so only the card moves (the owner's request)
+  soltar = fijarFondo();
 }
 
 /**
