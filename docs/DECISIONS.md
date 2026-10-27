@@ -506,7 +506,6 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-458](decisions/D-458.md) | A splash campaign can wait for regulars: 5 visit days and 10 finished games (the toast to support does) | current |
 | [D-459](decisions/D-459.md) | Feedback reports are readable only by the owner; the tools read them with the admin key | current |
 | [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit | current |
-| [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit (in the lab) | current |
 | [D-465](decisions/D-465.md) | Uno al día points count only near the day's own date, and only after its start | current |
 
 ## No longer in force (11)
