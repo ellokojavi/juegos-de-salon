@@ -642,8 +642,6 @@
     {
       const i = tarjetas.findIndex(t => t.g.id === 'letras');
       if (i >= 0) { tarjetas[i].caja.remove(); tarjetas.splice(i, 1); }
-      const tyf = tarjetas.find(t => t.g.id === 'toque-y-fama');
-      if (tyf?.g.taglineLab) tyf.card.querySelector('.tag').textContent = pickLang(tyf.g.taglineLab, lang);
     }
 
     // Juego al azar (D-188): always from every game on the home page, whatever filter is on; only
