@@ -11,7 +11,7 @@
  * anonymous sign-in's ID token, which loads only the SDK's auth half (HTTP, no websocket).
  */
 import { firebaseConfig } from './firebase-config.js';
-import { OP_MS } from './transport/errors.js';
+import { OP_MS, waitConnected, withTimeout } from './transport/errors.js';
 
 const falla = code => Object.assign(new Error(code), { code });
 
@@ -114,16 +114,14 @@ async function cargarSdk() {
     return uidPromesa;
   };
   let base = null;
-  const db = () => (base ||= Promise.all([
-    import('https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js'),
-    import('./transport/errors.js'),
-  ]).then(([D, E]) => ({ D, E, db: D.getDatabase(app) })).catch(e => { base = null; throw e; }));
+  const db = () => (base ||= import('https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js')
+    .then(D => ({ D, db: D.getDatabase(app) })).catch(e => { base = null; throw e; }));
   return {
     listo,
     async token() { await listo(); return auth.currentUser.getIdToken(); },
     async update(cambios) {
       await listo();
-      const { D: { ref, update, onValue }, E: { waitConnected, withTimeout }, db: d } = await db();
+      const { D: { ref, update, onValue }, db: d } = await db();
       await waitConnected(cb => onValue(ref(d, '.info/connected'), x => cb(!!x.val())));
       try { await withTimeout(update(ref(d), cambios), OP_MS); } catch (e) { throw traducir(e); }
     },
