@@ -376,7 +376,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-327](decisions/D-327.md) | Emails to hola@: replies in the sender's thread, by kind, and an exempt list | current |
 | [D-328](decisions/D-328.md) | Support: a doubt goes to the owner's email, with a public pointer | current |
 | [D-329](decisions/D-329.md) | A PR runs only the end-to-end scripts its changes reach | amended by D-391 |
-| [D-331](decisions/D-331.md) | Game variants: the player picks one standalone, the admin picks one per cup day | current |
+| [D-331](decisions/D-331.md) | Game variants: the player picks one standalone, the admin picks one per cup day | amended by D-468 |
 | [D-332](decisions/D-332.md) | Rutas rotas, Loteo and Pintaminas leave the lab: home page and La Copa | amended by D-418 |
 | [D-333](decisions/D-333.md) | A new game says "New" on its home card for two weeks | amended by D-373 |
 | [D-334](decisions/D-334.md) | Uno al día adds six games: the three from the lab, Zip, Tango and ¿Dónde queda? | amended by D-421, D-456 |
