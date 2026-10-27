@@ -175,6 +175,12 @@ The owner (their UID) can write and delete in all these branches, to moderate.
 - `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w?, p? }`: the first Uno al día attempt of day `n` (days
   since 1970). Written once by whoever is seated as that player; `w` (the mark that it was already
   added to the week) and `p` (already added to the month's points, D-412) are each added once. Anyone can read it.
+  `w` and `p` go in only near the day's own date and after its start (D-465): the day's UTC start
+  must lie between two days before `now` and one day after it (every time zone fits), and
+  `unoAlDiaInicio/<jid>/<n>` must already exist. The rules have no number-from-text, so they sum the
+  key's digits (`$d.matches(/^[0-9]{k}[d-9]/) ? …`); `uno-al-dia-jugador.test.mjs` runs that
+  expression as JavaScript against `numDia`. A day uploaded later (played offline) still goes into the
+  history, without `w` or `p`.
   A day a 🧊 saved is only a marker, `{ c: true, at }` (D-415): written once by the phone that saved
   it, never over a day played, and it never gets `w` or `p`. The rules check its shape, not whether
   the phone held a 🧊 (they can't count wildcards); the nightly rebuild bounds what an unbacked marker
@@ -242,7 +248,9 @@ browser, and the processes agent handles them (D-275).
 never the address. The address goes to `feedbackContacto/<id>` (`correo`, up to 120, and server
 `at`): written once, only when `feedback/<id>` exists, and **never readable without the owner's
 key**. `tools/agents/feedback.mjs reply` reads it with the key, emails the reply and deletes it;
-`forget` deletes it without emailing.
+`forget` deletes it without emailing; and one left unanswered is deleted after 90 days by
+`feedback.mjs expire`, which every `sync` pass runs (D-463). What each node keeps, and for how long,
+is told to players on `/privacy/` (D-463): a change here that keeps something new edits that page too.
 
 **The hola@ inbox (D-318):** `buzon/<id>` keeps each email sent to hola@juegosdesalon.cl (`de`,
 `nombre`, `asunto`, `texto` up to 10000, `idMensaje`, `automatico`, server `at`), written by the
@@ -335,6 +343,7 @@ stats/prod/days/20342/
   frec/f3-7: 6                         how many of the last 28 days the browser came, by band
   activos/k3j9x0q2ab: 2                a browser's random id: 1 visited, 2 started something (D-349)
   support/open: 1                      ☕ Buy me a coffee, by step: shown, open, pay, thanks (D-448, in the lab)
+  splash/brindis-apoyo/reach: 4        splash windows, by campaign and event (D-461)
 stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many subscriptions are still alive
 ```
 
@@ -366,6 +375,11 @@ stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many
 - Support (D-448): `support/<event>` is a counter like the others, uploaded by `support.js`; unlike
   the categories above, the event is validated **by list** (`shown`, `open`, `pay`, `thanks`), so a
   new step does force touching the rules. Only counts: nothing says who supported or how much.
+- Splash campaigns (D-461): `splash/<id>/<event>` is a counter like the others, uploaded by
+  `public/assets/js/splash.js` (`SPLASH_EVENTS`), never from a preview. The campaign id goes by shape
+  (`^[a-z0-9-]{1,40}$`), the event by list (`shown`, `reach`, `play`, `close`, `t0`, `t1`, `t2`), so a
+  new event forces touching the rules. `reach` is the first window on a phone, remembered on the phone,
+  so no id leaves it.
 
 - Health (D-251): `falla/<tipo>/<página>`, `listo/<página>/<tramo>` and `err/<firma>/n` are uploaded by
   `public/assets/js/vigia.js`, by one; type, page, bucket and signature are validated by shape. The detail,

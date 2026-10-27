@@ -52,6 +52,7 @@ language. Older Spanish content and Spanish file and identifier names are being 
 | Which tests a change runs | [docs/TEST-SCOPE.md](docs/TEST-SCOPE.md), the design (D-391, D-392): a push tests only what changed since the PR last passed | Before touching `tools/e2e/affected.mjs` or when a PR runs more than it should |
 | Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
 | Seasonal templates (Halloween…) | [docs/SEASONS.md](docs/SEASONS.md): the home page and Rankings dress up for a date (D-457) | Before adding a date or touching `season.js` |
+| What players are told we keep | `public/privacy/texts.js`, the `/privacy/` page in four languages (D-463, C-17) | When a change stores something new about players, or keeps it for a different time: edit the page in the same PR |
 | PR previews | [docs/PREVIEWS.md](docs/PREVIEWS.md): each PR on GitHub Pages (D-429) | When the owner reviews a change, or a preview fails |
 
 **A rule that changes is changed in its place, in the same PR:** if a new decision changes a
@@ -216,7 +217,7 @@ owner's key) and does not merge. Everything else in this guide applies the same.
   node firebase/pin-attempts.test.mjs      # the rules file itself, through tools/firebase/rules-sim.mjs (D-464)
   node tools/firebase/unnoted-rooms.mjs [--fix]   # rooms no cleanup bucket names, so never swept (D-321)
   node tools/firebase/uad-points-backfill.mjs [--apply]   # October 2026's Uno al día points from the history, once after D-414 publishes (dry run without --apply)
-  node tools/firebase/uad-points-backfill.mjs --rebuild [--apply] [--month yyyy-mm]   # recomputes a month's totals from the history and the 🧊 markers; the uad-rebuild workflow runs it nightly (D-415)
+  node tools/firebase/uad-points-backfill.mjs --rebuild [--apply] [--month yyyy-mm]   # recomputes a month's totals from the history and the 🧊 markers, a day's points only if it reached the server near its date; the uad-rebuild workflow runs it nightly (D-415, D-465)
   node tools/firebase/rankings-history.mjs --podiums [--write]   # finished Cups' missing podiums (torneoPodios/); the cup-podiums workflow runs it twice a night (D-450)
   ```
 - The worktree and the branch are deleted on their own (above, D-218, D-252); to do it now, `node tools/agents/clean-worktrees.mjs`.
@@ -286,7 +287,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   which the Mac mini's `feedback-watch` job uploads every 5 minutes (D-382) as `feedback` issues (`tools/agents/feedback.mjs`,
   with the name the player entered and without their browser, D-279); a player who left an email gets a
   templated reply in their language when the report is resolved (`feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <xx>`, one email per player for all their comments, grouped by `feedback.mjs pending`,
-  through `send-mail.py`, always from hola@juegosdesalon.cl and checked in Gmail's Sent folder, or nothing is sent (D-443), then comments the quoted answer on each issue, labels it `replied` and closes it; a reply for a built suggestion goes out only once the change is live, in three parts: thanks, what changed, what stayed; `forget` only deletes the address of destructive feedback; D-317, D-368). It works the owner's
+  through `send-mail.py`, always from hola@juegosdesalon.cl and checked in Gmail's Sent folder, or nothing is sent (D-443), then comments the quoted answer on each issue, labels it `replied` and closes it; a reply for a built suggestion goes out only once the change is live, in three parts: thanks, what changed, what stayed; `forget` only deletes the address of destructive feedback, and `expire`, which every `sync` pass runs, deletes one left unanswered for 90 days (D-463); D-317, D-368). It works the owner's
   backlog, the open issues with no label that `processes.mjs check` lists (D-339). It closes what was left open and
   turns a recurring error into a mechanism (a test before an instruction). In its
   round it collects the `changelog/` entries into `CHANGELOG.md` (D-300) and deletes the decision
@@ -333,7 +334,8 @@ with that the screen also enters the language tests. To see it on a real phone,
   its windows (D-430, `public/assets/js/home-windows.js`, D-431). Until the panel's first save, or if
   Firebase does not answer, the `ACTIVE` line of `public/assets/js/splash.js` holds, which
   `node tools/agents/splash.mjs list | on <id> [--until YYYY-MM-DD] | off [<id>]` rewrites through a PR.
-  Making a campaign (texts, clips in `CAMPAIGNS`) is still a PR.
+  Making a campaign (texts, clips in `CAMPAIGNS`) is still a PR. Each window is counted
+  (reach, taps, closes, time open) and the section's 📊 How they did reads it by days shown (D-461).
   `?splash=<id>` previews a campaign (one that is not on, only with a lab key, D-395), tried from the home page's lab bar with the other experiments (D-389), and the clips are recorded with
   `marketing/splash/capture.mjs`. Each campaign is kept in `marketing/splash/campaigns/<id>/` (its README), and a campaign that changes gets the usability agent's full pass before merging (D-355).
 - **Game ideas** (D-360): `.claude/agents/ideas.md` proposes what the app could try next, in three

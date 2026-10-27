@@ -1,7 +1,8 @@
 # The promotional splash
 
 A window over the home page that announces something new (D-351): off by default, each phone sees
-a campaign once. Several can be on: they queue up in the order they were turned on (D-430), and the home page shows
+a campaign once. ✕, "Ahora no" and its links mark it as seen; a tap outside or Escape
+is forgiven once, so the campaign comes back on a later visit, and the second such close marks it (D-462). Several can be on: they queue up in the order they were turned on (D-430), and the home page shows
 one per visit, the next on the next visit (D-431). A campaign can wait for regulars (`audience: 'regulars'`, D-458):
 it shows only on a phone with 5 or more visit days in the last four weeks and 10 or more finished games
 that has not paid, and until then stays unseen. This folder is its memory: every campaign that was made, and how they are made.
@@ -14,6 +15,7 @@ that has not paid, and until then stays unseen. This folder is its memory: every
 | Clips | [`capture.mjs`](capture.mjs), see [clips.md](clips.md) |
 | Teasers | a drawn scene of a game that is coming, as a GIF: [`teaser.mjs`](teaser.mjs) records a page of [`teaser/`](teaser/) frame by frame (D-430) |
 | Gives way to | The recap window (`assets/js/recap.js`): La Copa's of an ended cup (D-423) or Uno al día's of an ended season (D-424); on a visit that opens it, the splash waits for the next one; it reuses `splash.css`. One gate (`assets/js/home-windows.js`, D-431) opens one window per visit: recap, then splash, then the install bubble |
+| Measured | Each window counts in the day's stats (D-461): shown, reach (new phones), play, close and time open; the panel's 📣 Campaigns shows 📊 How they did, by days shown |
 | Campaigns | [`campaigns/<id>/`](campaigns/): a README (what, when, which PR) and its screenshots in the four languages |
 
 ## Making a campaign
@@ -30,7 +32,8 @@ that has not paid, and until then stays unseen. This folder is its memory: every
    in the four languages at 390 and 320 px. Once merged, the owner turns it on, dates it and
    orders it from the panel's 📣 Campaigns (`/panel/#/campaigns`, D-454), on the phone and with
    no PR; `splash.mjs on` only sets the fallback the home page uses while the panel has never saved.
-4. When it ends, its README says how it went.
+4. When it ends, its README says how it went, with the numbers of the panel's 📊 How they did
+   (reach, % tapped, % closed, days shown; counted since D-461).
 
 ## Campaigns
 
