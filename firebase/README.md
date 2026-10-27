@@ -30,7 +30,9 @@ notices: the transport and the usage signals are best-effort and fail silently.
   `stats` (the usage signals the owner's panel reads, D-44).
 - The room code is 4 uppercase letters.
 - Anyone with the code can read the room.
-- `createdAt`, `game` and `config` are written only once (when creating the room).
+- `createdAt`, `game` and `config` are written only once (when creating the room), and `createdAt`
+  only in the same write that notes the room in the trash bin (`cleanup/days/<day>/rooms/<CODE>`, for
+  today, yesterday or tomorrow UTC, D-469).
 - `config`, `players/<seat>` and `messages/<id>` take only the fields the games send, each with a
   type and a size cap (D-469). A game that sends a new field or setting adds it to the rules in the
   same PR; `firebase/room-limits.test.mjs` checks the shapes each game sends.
@@ -285,7 +287,7 @@ cleanup/
 
 - On creating a room its code is written into its day's bucket **in the same multi-path update that
   creates the room** (D-321), with `lastAt` the same server stamp as the room's `createdAt`; entering
-  a room overwrites `lastAt` with the server time. `lastAt` only moves forward (D-469). Codes are only added: a note can be written
+  a room overwrites `lastAt` with the server time. `lastAt` only moves forward, and only on today's bucket, yesterday's or tomorrow's (D-469). Codes are only added: a note can be written
   again (a code reused the same day) but never removed or changed.
 - A room that no bucket names is never swept. `node tools/firebase/unnoted-rooms.mjs` lists them
   (admin key) and `--fix` deletes the expired ones and notes the live ones (D-321).
