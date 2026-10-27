@@ -374,3 +374,4 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campana-resultado { display: grid; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--glass-border); }
 .campana-resultado .lead { margin: 0; }
 .campana-resultado .leyenda span { font-size: 1rem; }
+.campana-resultado .tiles { grid-template-columns: repeat(auto-fit, minmax(min(140px, 40%), 1fr)); margin-bottom: 0; }
