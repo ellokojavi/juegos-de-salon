@@ -768,9 +768,10 @@ function renderModes() {
   const box = $('#modes'); box.innerHTML = '';
   const modes = [['local', T.modeLocal, T.modeLocalHint], ['online', T.modeOnline, T.modeOnlineHint], ['solo', T.modeSolo, T.modeSoloHint]];
   for (const [m, label, hint] of modes) box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); if (m === 'solo') soloIntro(); else renderSetup(m); } }, el('span', {}, el('b', {}, label), el('small', {}, hint)), el('span', { class: 'go' }, '›')));
-  // 🔤 Palabra is a mode here instead of its own card on the home page (#767)
-  box.append(el('button', { class: 'mode', onClick: () => { SFX.tap(); location.href = '../word/'; } },
-    el('span', {}, el('b', {}, T.labWord), el('small', {}, T.labWordHint)), el('span', { class: 'go' }, '›')));
+  // 🔢 Número or 🔤 Palabra, like a game's variants (D-331): one home card for both (#767)
+  $('#variant-slot').replaceChildren(el('div', { class: 'opciones dos variantes', id: 'selector-variante' },
+    el('button', { type: 'button', class: 'opcion on', 'aria-pressed': 'true' }, el('b', {}, T.variantNumber)),
+    el('button', { type: 'button', class: 'opcion', 'aria-pressed': 'false', onClick: () => { SFX.tap(); location.href = '../word/'; } }, el('b', {}, T.variantWord))));
 }
 
 function renderResumeSlot() {
