@@ -10,6 +10,7 @@
   <title>Laboratorio 🧪 · Juegos de Salón</title>
   <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
   <script src="../assets/js/vigia.js"></script>
+  <link rel="preload" href="../assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/base.css">
   <style>
     .hero { text-align: center; padding: 6px 0 4px; }
@@ -100,13 +101,6 @@
       <section class="grupo" id="mejoras">
         <h2>✨ Mejoras en prueba</h2>
         <p class="muted">Cambios al resto de la app, para mirarlos antes de que lleguen a todos.</p>
-        <section class="panel seccion" id="seccion-pie">
-          <h2>🌅 El pie de la portada: atardecer violeta</h2>
-          <p class="muted" style="margin:0">La portada termina en un resplandor morado y rosado, los colores del sitio. La frase que va cambiando queda en blanco, y 💬 Sugerencias y ☕ Invítame a un café pasan a ser botones de vidrio, cada uno con un círculo de color sobre el nombre. Se eligió entre doce variantes.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Se ve únicamente con tu llave del laboratorio, al final de la portada.</p>
-          <a class="btn btn--yellow" id="btn-pie" href="../">🌅 Ver la portada</a>
-          <a class="btn btn--ghost" id="btn-pie-variantes" href="footer/">🎲 Las doce variantes</a>
-        </section>
         <section class="panel seccion" id="seccion-temporadas">
           <h2>🎃 Halloween en la portada</h2>
           <p class="muted" style="margin:0">Del 26 al 31 de octubre, la portada y Rankings se disfrazan un poco. El ícono de la pestaña es una calabaza, el fondo brilla en naranjo, hay una telaraña en la esquina, el 🎲 del título se turna con 🎃 👻 🦇 y entre las partículas del fondo suben murciélagos, arañas, bichos y calaveras. Un murciélago cruza la pantalla una vez y, de vez en cuando, se asoma un fantasma. Los juegos quedan iguales. El 1 de noviembre se apaga solo.</p>
@@ -196,6 +190,16 @@
               <div class="detalle">
                 <p class="muted" style="margin:0">🚀 Lanzado. Una ventana de novedades sale una sola vez por celular, y un toque afuera por error la cerraba para siempre. Ahora, cerrarla tocando afuera (o con Escape) la deja para otra visita; si vuelves a cerrarla así, ya no sale más. La ✕, «Ahora no» y cualquier botón de la ventana la cierran de una vez, como antes.</p>
                 <a class="btn btn--yellow" id="btn-splash-cerrar" href="../">🎉 Ir a la portada</a>
+              </div>
+            </details>
+          </section>
+          <section class="panel seccion plegada" id="seccion-pie">
+            <details>
+              <summary><h2>🌅 El pie de la portada: atardecer violeta</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. La portada termina en un resplandor morado y rosado, los colores del sitio. La frase que va cambiando queda en blanco, y 💬 Sugerencias y ☕ Invítame a un café son botones de vidrio, cada uno con un círculo de color sobre el nombre. Se eligió entre doce variantes, que siguen acá.</p>
+                <a class="btn btn--yellow" id="btn-pie" href="../">🌅 Ver la portada</a>
+                <a class="btn btn--ghost" id="btn-pie-variantes" href="footer/">🎲 Las doce variantes</a>
               </div>
             </details>
           </section>

@@ -126,3 +126,19 @@ console.log('affected: played, not just imported, green');
   const g = closures({ 'index.html': '<script type="module" src="assets/js/splash.js"></script>', 'assets/js/splash.js': `const x = 'assets/splash/a.gif';`, 'hangman/index.html': '<p></p>' });
   assert.ok(g[''].has('assets/splash/a.gif') && !g.hangman.has('assets/splash/a.gif'));
 }
+
+// A folder a script fetches files from by name (`new URL('earth-2004-09/', import.meta.url)`) reaches
+// every file under it, and a deleted file that nothing names any more narrows nothing (D-460)
+{
+  const { assetsNamed, loads } = await import('./affected.mjs');
+  assert.deepEqual(assetsNamed('cup/games/where/globo.js', "new URL('earth-2004-09/', import.meta.url); new URL('../../../', import.meta.url)", {}),
+    ['cup/games/where/earth-2004-09/'], 'a named folder counts; a bare climb to the root does not');
+  const g = closures({ 'where/index.html': '<script type="module" src="../cup/games/where/globo.js"></script>', 'cup/games/where/globo.js': "const T = new URL('earth-2004-09/', import.meta.url);", 'hangman/index.html': '<p></p>' });
+  assert.ok(loads(g.where, 'cup/games/where/earth-2004-09/5-4.webp') && !loads(g.hangman, 'cup/games/where/earth-2004-09/5-4.webp'));
+  const s = [{ name: 'where.mjs', source: 'go(`${SITE}/where/`)' }, { name: 'hangman/local.mjs', source: 'go(`${SITE}/hangman/`)' }];
+  const pick = (changes, exists) => select({ changes, graph: g, scripts: s, shared: f => noBrowser([f]), exists })?.scripts ?? 'all';
+  assert.deepEqual(pick(['public/cup/games/where/earth-2004-09/5-4.webp']), ['where.mjs'], 'a tile reaches the page that loads its folder');
+  assert.deepEqual(pick(['public/assets/img/old.jpg', 'public/cup/games/where/globo.js'], () => false), ['where.mjs'], 'a deleted file nothing names narrows nothing');
+  assert.equal(pick(['public/assets/img/runtime.jpg'], () => true), 'all', 'a file that is there and nothing names may be fetched at run time: all');
+}
+console.log('affected: media folders and deleted files, green');
