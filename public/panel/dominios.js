@@ -76,11 +76,13 @@ export function partidasDominio(days, { from, to }) {
 /**
  * Finished games and replays (D-348): `fin/<game>/<mode>` and `otra/<game>`, against the games
  * started in local modes. Rooms finish through `end`, counted in `embudoSalas`.
- * `{ porJuego: { game: { empezadas, terminadas, otras, individual } }, terminadas, otras }`.
+ * `{ porJuego: { game: { empezadas, terminadas, otras, grupo, individual, finGrupo, finIndividual } }, terminadas, otras }`:
+ * `grupo`/`individual` are the games started in each domain, `finGrupo`/`finIndividual` those finished.
+ * `otra/<game>` carries no mode, so `otras` is not split by domain.
  */
 export function finales(days, { from, to }) {
   const porJuego = {};
-  const caja = g => (porJuego[g] ||= { empezadas: 0, terminadas: 0, otras: 0, grupo: 0, individual: 0 });
+  const caja = g => (porJuego[g] ||= { empezadas: 0, terminadas: 0, otras: 0, grupo: 0, individual: 0, finGrupo: 0, finIndividual: 0 });
   let terminadas = 0, otras = 0;
   for (let d = from; d <= to; d++) {
     const b = bucketOf(days, d);
@@ -92,6 +94,7 @@ export function finales(days, { from, to }) {
     for (const [game, modes] of Object.entries(b.fin || {})) for (const [mode, v] of Object.entries(modes || {})) {
       if (!isLocalMode(mode) || MODES[mode]?.torneo) continue;
       caja(game).terminadas += num(v); terminadas += num(v);
+      caja(game)[dominioDe(mode) === 'grupo' ? 'finGrupo' : 'finIndividual'] += num(v);
     }
     for (const [game, v] of Object.entries(b.otra || {})) { caja(game).otras += num(v); otras += num(v); }
   }
