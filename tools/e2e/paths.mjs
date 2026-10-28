@@ -47,6 +47,8 @@ const TANGO_FILL = clash => `(async()=>{const JUEGOS=await (await import('/cup/g
  * How to reach each screen. Each step is a JS snippet run in the page; if a game needs something
  * else, it is added here and not in a new script.
  */
+/** Opens the first splash card's Quick look; repeatable, since the panel draws a moment after its seed */
+const PEEK = `const v = document.querySelector('.vistazo'); if (!v) document.querySelector('.campana-plegada')?.click(); else if (!v.open) { v.querySelector('summary').click(); v.scrollIntoView(); }`;
 /** Seeds the panel with rooms, signals and cups, and opens the requested view (see `panel` below). */
 const SEED_PANEL = view => `(async()=>{const DAY=86400000,now=Date.now(),today=Math.floor(now/DAY);
       const rooms={ABCD:{createdAt:now-4*60000,lastAt:now-60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:now-4*60000},m2:{t:'bid',at:now-60000}}},EFGH:{createdAt:now-2*3600000,lastAt:now-12*60000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};
@@ -570,6 +572,8 @@ export const PATHS = {
       ['cup-card', '/cup/OFICI'], ['game-card', '/game/liars-dice'], ['room-card', '/room/CPSV'], ['traffic', '/traffic'], ['health', '/health'], ['campaigns', '/campaigns']].map(([shot, view]) => [shot, [SEED_PANEL(view)]])),
     // 📣 Campaigns' other two tabs (D-477)
     ...Object.fromEntries([['campaigns-features', 1], ['campaigns-skins', 2]].map(([shot, i]) => [shot, [SEED_PANEL('/campaigns'), `document.querySelectorAll('.campanas-tabs button')[${i}].click()`]])),
+    // A splash card's Quick look, opened
+    'campaigns-peek': [SEED_PANEL('/campaigns'), ...Array(6).fill(PEEK), `1`, `1`],
     // The other two tabs of a cup's card (D-207)
     'cup-days': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
     'cup-history': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
