@@ -38,6 +38,9 @@ export function loadControls({ fetchFn = globalThis.fetch, store = globalThis.lo
   return pending;
 }
 
+/** The read the home page already started (season.js), else the device's copy: never a new Firebase read. */
+export const currentControls = (store = globalThis.localStorage) => pending || Promise.resolve(cachedControls(store));
+
 /** Whether a part of a site feature is on: on unless the panel switched it off. */
 export const featureOn = (controls, id, part) => controls?.features?.[id]?.[part] !== false;
 
