@@ -2,15 +2,13 @@
  * A subtle texture per color region, for players who do not tell the colors apart well
  * (protanopia, deuteranopia: #896, D-481). Boards whose regions differ only by color (Queens) give
  * each region `--trama: <pattern(z)>` and paint it with `background: var(--trama), var(--zona)` (`--zona` its color) once the
- * board's container carries the `tramas` class. Always on (no option), but for now only with a lab
- * key (D-395): `withPatterns(node)` adds the class when labAccess() says yes.
+ * board's container carries the `tramas` class. Always on (no option), for everyone since the lab
+ * validated it (D-481): `withPatterns(node)` adds the class.
  *
  * The patterns are 1 px dark lines and dots at a low alpha (halved at the owner's request: the first ones read too strong), so a black crown and an ✕ still read on
  * top of them. Region 0 stays plain; the order is chosen so neighbouring indices look different.
  * Paint Mines already stripes its second color (#349) and Plots outlines each plot, so they need none.
  */
-import { labAccess } from './lab-access.js';
-
 const INK = 'rgba(26, 26, 26, 0.11)';
 const DOT = 'rgba(26, 26, 26, 0.15)';
 
@@ -30,8 +28,8 @@ export const PATTERNS = [
 /** The CSS `background` layers for region `z` (it wraps around past the last one). */
 export const pattern = z => PATTERNS[((z % PATTERNS.length) + PATTERNS.length) % PATTERNS.length];
 
-/** Turns the patterns on in `node` for a lab key holder (lab: #seccion-tramas). Returns the node. */
-export function withPatterns(node, access = labAccess) {
-  Promise.resolve(access()).then(ok => { if (ok) node.classList.add('tramas'); }, () => {});
+/** Turns the patterns on in `node`. Returns the node. */
+export function withPatterns(node) {
+  node.classList.add('tramas');
   return node;
 }
