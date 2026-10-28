@@ -321,6 +321,8 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campana-cabeza { display: flex; align-items: center; gap: 12px; }
 .campana-emoji { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: rgba(255, 255, 255, 0.1); font-size: 1.6rem; line-height: 1; }
 .campana-nombre { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.campana-titulo-fila { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.campana-renombrar { flex: none; background: none; border: 0; padding: 4px; font-size: 0.95rem; cursor: pointer; line-height: 1; }
 .campana-titulo { font-size: 1.05rem; font-weight: 900; line-height: 1.2; overflow-wrap: anywhere; }
 .campana-plegar { padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 900; text-align: left; cursor: pointer; }
 .campana-estado { font-weight: 800; font-size: 0.85rem; }
@@ -357,7 +359,7 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campana-preview:hover, .campana-preview:focus-visible { border-color: var(--cyan); outline: none; }
 .campana-plegada { display: flex; align-items: center; gap: 12px; width: 100%; margin-bottom: 8px; padding: 8px 14px 8px 8px; border-radius: 18px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.04); text-align: left; font: inherit; color: var(--muted); cursor: pointer; }
 .campana-plegada .campana-emoji { width: 40px; height: 40px; font-size: 1.3rem; filter: grayscale(0.6); }
-.campana-plegada .campana-titulo { flex: 1; min-width: 0; font-size: 0.95rem; }
+.campana-plegada .campana-titulo { flex: 0 1 auto; min-width: 0; font-size: 0.95rem; }
 .campana-plegada:hover, .campana-plegada:focus-visible { border-color: var(--cyan); color: var(--ink); outline: none; }
 .campana-chev { font-size: 1.4rem; font-weight: 900; }
 .interruptor { position: relative; display: inline-flex; width: 56px; height: 32px; flex: none; cursor: pointer; }
@@ -385,3 +387,4 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campanas-tab-hoy { font-size: 0.75rem; opacity: 0.75; }
 .control-parte { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--glass-border); }
 .control-parte p { margin: 2px 0 0; }
+.campana-plegada .campana-renombrar { margin-right: auto; }
