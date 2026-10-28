@@ -287,3 +287,6 @@ Las respuestas a dilemas (issues con la etiqueta `usability`) se anotan aquí:
 - **Rutas: el tablero no marca los bordes que calzan** (#359, opción A): ni las piezas ni los bordes
   se iluminan al calzar con su vecina; las líneas ya muestran dónde se cortan, y una pista por borde
   le haría daño a la dinámica del juego (invita a tantear). Solo al unirlas todas el tablero brilla.
+- **Toque y Fama's two Cup days follow one pattern** (#830, option A): the number day is "Toque y Fama:
+  Número" (Number, Número, Zahl), like "Toque y Fama: Palabra" and the home page's Número / Palabra
+  toggle; the rules under the name say what to guess. Renamed on a day no cup was playing either game (U-21).
