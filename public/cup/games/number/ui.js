@@ -9,21 +9,10 @@
 import * as motor from './engine.js';
 import { teclado, CIFRAS } from '../../../assets/js/teclado.js';
 import { LOCALES as TYF_LOCALES } from '../../../bulls-and-cows/rules.js';
-import { labAccess } from '../../../assets/js/lab-access.js';
 
 export const TYF = TYF_LOCALES.es;
 /** Los textos de Toque y Fama en el idioma de quien juega (D-170). */
 export const tyf = lang => TYF_LOCALES[lang] || TYF;
-
-/**
- * Deduction notes (#895), lab: a ✏️ toggle under the keypad turns a tap into a mark (🚫 → ? → ★)
- * instead of a digit. Same rules and score, so it works the same in every mode. Lab only:
- * lab: #seccion-tyf-notas
- */
-export function notasLab(pad, TYF) {
-  labAccess().then(ok => { if (ok) pad.activarMarcas({ notes: TYF.notesOn, typing: TYF.notesOff, hint: TYF.notesHint }); });
-  return pad;
-}
 
 export const leerJugadas = j => (Array.isArray(j) ? { i: j.slice(), n: [] } : { i: (j?.i || []).slice(), n: (j?.n || []).slice() });
 
@@ -95,7 +84,7 @@ export function montar(raiz, ctx) {
     } else {
       const quedan = max - e.usados;
       caja.append(el('p', { class: 'muted center', style: 'margin:0' }, quedan === 1 ? T.tryLeft1 : fmt(T.triesLeft, { n: quedan })),
-        notasLab(elegible(teclado({
+        elegible(teclado({
           largo: p.cifras, teclas: CIFRAS, submitLabel: TYF.guess, notes: notas, onNotesChange: guardar,
           valido: v => motor.valido(v, p.cifras),
           puede: (v, d) => !v.includes(d) && v.length < p.cifras,
@@ -105,7 +94,7 @@ export function montar(raiz, ctx) {
             if (u.famas === p.cifras) { SFX.win(); vibrate([30, 50, 30]); } else SFX.reveal();
             dibujar();
           },
-        })), TYF),
+        })),
         el('p', { class: 'block-hint' }, T.blockHintDigits)); // "tachar", como en Palabra y en las reglas (U-5)
     }
     const opciones = { filas: e.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) };
