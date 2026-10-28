@@ -4,7 +4,7 @@
 // takes every frame and lets ffmpeg make the MP4 (scaled up with no smoothing, so the pixel art stays
 // crisp), its first frame as the poster and a still for reduced motion.
 //
-//   node marketing/splash/teaser.mjs [bridges]
+//   node marketing/splash/teaser.mjs [bridges|ninja|stack]
 //
 // Output: public/assets/splash/<name>-teaser.mp4, <name>-teaser-start.png and <name>-teaser.png
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, statSync } from 'node:fs';
@@ -17,10 +17,11 @@ import { launch } from '../../tools/e2e/cdp.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DEST = join(ROOT, 'public', 'assets', 'splash');
-const OUT = output('/tmp/splash-teaser');
+// Its argument is a scene's name, not an output folder: output() would take it as one
+const OUT = output('/tmp/splash-teaser', [process.argv[0], process.argv[1]]);
 const SCALE = 4; // the art is 128×80: the MP4 is 512×320
-// The frame the still is taken from (for reduced motion): the train stopped at the edge, the "?" up
-const STILL = { bridges: 90 };
+// The frame the still is taken from (for reduced motion): the "?" up (the train at the edge, the ninja's stick tipping, the last slab hovering)
+const STILL = { bridges: 90, ninja: 95, stack: 100 };
 
 // The repo served as files, only for the scene page and the sprites it imports
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json' };
