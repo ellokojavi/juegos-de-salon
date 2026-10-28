@@ -1,7 +1,8 @@
 // 🚀 Publicar para todos on /labs/ (D-480): without the owner signed in, the page is as before
 // (only the 🔑 link at its foot); for the owner, each card being tried gets the button, the sheet
 // says it is not immediate, and each state of a request shows on its card with the PR, its checks
-// and its preview. The owner's sign-in is not driven here: the states are drawn with render().
+// and its preview. A card behind a runtime flag (D-498) says it is immediate and flips between
+// 🟢 Publicado and ↩️ Volver al laboratorio instead. The owner's sign-in is not driven here: the states are drawn with render().
 // Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -22,19 +23,33 @@ const cards = await ev(`document.querySelectorAll('#activos > .seccion, #mejoras
 ok(cards > 0 && await ev(`document.querySelectorAll('.publicar button').length`) === cards, `every card being tried has 🚀 Publicar para todos (${cards})`);
 ok(await ev(`!document.querySelector('#bodega .publicar')`), 'La Bodega has none');
 
-await ev(`__pub.ask(document.getElementById('seccion-copa-crear')), 1`); await sleep(400);
+await ev(`__pub.ask(document.getElementById('seccion-portada')), 1`); await sleep(400);
 ok(await ev(`/No es inmediato/.test(document.querySelector('.hoja').textContent) && /Mac mini/.test(document.querySelector('.hoja').textContent)`), 'the sheet says it is not immediate and why');
-ok(await ev(`/La Copa/.test(document.getElementById('publicar-titulo').nextElementSibling.textContent)`), 'and names the feature');
+ok(await ev(`/\\S/.test(document.getElementById('publicar-titulo').nextElementSibling.textContent)`), 'and names the feature');
 await b.shot('ask');
 await ev(`[...document.querySelectorAll('.hoja button')].find(x => /Cancelar/.test(x.textContent)).click(), 1`);
 ok(await ev(`!document.querySelector('.hoja')`), 'Cancelar closes it');
 
-const ids = await ev(`[...document.querySelectorAll('#activos > .seccion, #mejoras > .seccion')].map(c => c.id)`);
+// A flagged card: immediate, then live with the way back, then off
+await ev(`__pub.askFlag(document.getElementById('seccion-copa-crear'), 'copa-crear'), 1`); await sleep(300);
+ok(await ev(`/Es inmediato/.test(document.querySelector('.hoja').textContent) && !document.querySelector('.hoja textarea')`), 'a flagged card: the sheet says it is immediate, no note');
+ok(await ev(`/La Copa/.test(document.getElementById('publicar-titulo').nextElementSibling.textContent)`), 'and names the feature');
+await b.shot('ask-flag');
+await ev(`[...document.querySelectorAll('.hoja button')].find(x => /Cancelar/.test(x.textContent)).click(), 1`);
+await ev(`__pub.render({}, { 'copa-crear': { state: 'all', at: ${Date.now()} }, 'dudo-tradicional': { state: 'off', at: 1 } }), 1`); await sleep(200);
+ok(/Publicado para todos/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado')?.textContent || ''`))
+  && /Volver al laboratorio/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado button')?.textContent || ''`)), 'flag all: live, with ↩️ Volver al laboratorio');
+ok(/Apagado/.test(await ev(`document.querySelector('#seccion-dudo-tradicional .publicar-estado')?.textContent || ''`)), 'flag off: says so');
+await ev(`document.querySelector('#seccion-copa-crear').scrollIntoView(), 1`); await b.shot('flag-all');
+await ev(`__pub.render({}, {}), 1`);
+
+const ids = await ev(`[...document.querySelectorAll('#activos > .seccion, #mejoras > .seccion')].map(c => c.id).filter(id => !__pub.flagOf(id))`);
 const now = Date.now();
 const states = { requested: { state: 'requested', at: now }, working: { state: 'working', at: now, started: now },
   pr: { state: 'pr', at: now, pr: 921, branch: 'publish-x' }, merged: { state: 'merged', at: now, pr: 921, done: now },
   failed: { state: 'failed', at: now, msg: 'la tarjeta no nombra código.' } };
-const req = Object.fromEntries(Object.values(states).map((s, i) => [ids[i], s]));
+// fewer cards without a flag than states: the last ones wrap round, checked after a second draw
+const req = Object.fromEntries(Object.values(states).slice(0, 4).map((s, i) => [ids[i % ids.length], s]));
 await ev(`__pub.render(${JSON.stringify(req)}), 1`); await sleep(200);
 const text = id => ev(`document.querySelector('#${id} .publicar-estado')?.textContent || ''`);
 const hrefs = id => ev(`[...document.querySelectorAll('#${id} .publicar-estado a')].map(a => a.href)`);
@@ -45,10 +60,11 @@ const pr = await hrefs(ids[2]);
 ok(pr.some(h => h.endsWith('/pull/921')) && pr.some(h => h.endsWith('/pull/921/checks')) && pr.some(h => h.includes('juegos-de-salon-previews/publish-x/')), 'pr: the PR, its checks and its preview');
 ok(/auto-merge/.test(await text(ids[2])), 'pr: says it merges on its own');
 ok(/Fusionado/.test(await text(ids[3])), 'merged: says so');
-ok(/No se pudo publicar: la tarjeta no nombra código/.test(await text(ids[4])) && /Volver a pedir/.test(await text(ids[4])), 'failed: why, and Volver a pedir');
 ok(await ev(`[...document.querySelectorAll('.publicar-estado')].every(x => x.scrollWidth <= x.clientWidth + 1)`), 'nothing overflows at 320 px');
 await ev(`document.querySelector('#${ids[0]}').scrollIntoView(), 1`); await b.shot('states');
 await ev(`document.querySelector('#${ids[2]}').scrollIntoView(), 1`); await b.shot('states-pr');
+await ev(`__pub.render(${JSON.stringify({ [ids[0]]: states.failed })}), 1`); await sleep(200);
+ok(/No se pudo publicar: la tarjeta no nombra código/.test(await text(ids[0])) && /Volver a pedir/.test(await text(ids[0])), 'failed: why, and Volver a pedir');
 
 console.log('errors:', JSON.stringify(b.errors));
 ok(!b.errors.length, 'no errors on the page');

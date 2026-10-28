@@ -28,13 +28,13 @@ import {
 } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES, TURN_SECS } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
-import { labAccess } from '../assets/js/lab-access.js';
+import { flag } from '../assets/js/flags.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 
 // Traditional rules (no opening in aces, the obligada round, #897) are offered only to lab key
-// holders until the owner validates them (D-395, D-409). lab: #seccion-dudo-tradicional
+// holders until the owner flips their flag (D-395, D-498). lab: #seccion-dudo-tradicional
 let LAB = false;
-labAccess().then(v => { LAB = v; }, () => {});
+flag('dudo-tradicional').then(v => { LAB = v; }, () => {});
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
