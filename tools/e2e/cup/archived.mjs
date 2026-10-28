@@ -1,8 +1,7 @@
 // An archived cup's link (D-476): the nightly archive moved it out of `torneos/`, but its podium is
-// still in `torneoPodios/`. With a lab key (`&lab` in the test store) the link shows the memorial:
+// still in `torneoPodios/`. For everyone (D-492) the link shows the memorial:
 // its name, when it ended, the podium, and the buttons to create a new cup (with the same name) and
-// to see the medal table, in four languages at 320 px. Without the key, or without a podium, the
-// error of before. Only the test store (`?test`, localStorage): nothing is written to Firebase.
+// to see the medal table, in four languages at 320 px. Without a podium, the error of before. Only the test store (`?test`, localStorage): nothing is written to Firebase.
 // Prints ✗ if something fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -28,7 +27,7 @@ try {
   await ev(`localStorage.clear(); sessionStorage.clear(); ${SEED}`);
 
   for (const lang of ['es', 'en', 'pt', 'de']) {
-    await b.go(`${SITE}/cup/?${CODE}&test&lab&lang=${lang}`, 1500);
+    await b.go(`${SITE}/cup/?${CODE}&test&lang=${lang}`, 1500);
     const shown = await waitFor(`!!document.getElementById('copa-archivada')`);
     const m = await ev(`(() => {
       const c = document.getElementById('copa-archivada'); if (!c) return null;
@@ -51,14 +50,9 @@ try {
   const name = await ev(`document.querySelector('#crear-body input')?.value`);
   ok(name === NAME.slice(0, (await import('../../../public/cup/engine.js')).COPA_MAX), `the creator starts with the cup's name (${name})`);
 
-  // Without the lab key: the error of before
-  await b.go(`${SITE}/cup/?${CODE}&test&lang=es`, 1500);
-  await waitFor(`!!document.querySelector('#espera-body .form-error')`);
-  const noLab = await ev(`({ err: document.querySelector('#espera-body .form-error')?.textContent || '', memo: !!document.getElementById('copa-archivada') })`);
-  ok(!noLab.memo && noLab.err.startsWith(ERROR.es), `without the lab key: "No encontramos una copa…", as before (${JSON.stringify(noLab)})`);
 
-  // With the key but no podium: the error too
-  await b.go(`${SITE}/cup/?ZZZZZ&test&lab&lang=es`, 1500);
+  // No podium: the error too
+  await b.go(`${SITE}/cup/?ZZZZZ&test&lang=es`, 1500);
   await waitFor(`!!document.querySelector('#espera-body .form-error')`);
   const none = await ev(`({ err: document.querySelector('#espera-body .form-error')?.textContent || '', memo: !!document.getElementById('copa-archivada') })`);
   ok(!none.memo && none.err.startsWith(ERROR.es), 'a code with no podium: the error of before');
