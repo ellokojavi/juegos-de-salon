@@ -25,6 +25,11 @@
       "date": "2026-10-18",
       "what": "What brings people back is asked for quietly: a streak with wildcards, reminders the player chooses, a quiet link for comments, never a popup during a game.",
       "from": "D-230, D-224, D-341"
+    },
+    {
+      "date": "2026-10-28",
+      "what": "Rule changes to La Copa's dropout (self-service comeback) and first-time guided boards were both declined: do not propose loosening D-347 or tutorial boards without a new reason.",
+      "from": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
     }
   ],
   "ideas": [
@@ -38,7 +43,7 @@
       "proof": "Players brought back goes from 0 to at least a third of those out, and day-7 participation rises from 51% to 60% or more over the next 4 weeks.",
       "recommendation": "Yes: the drop is the biggest leak in the most played thing in the app, and the cost is one rule, not a new mode.",
       "question": "La Copa: let a player who went out come back on their own, once per cup?",
-      "status": "proposed",
+      "status": "discarded",
       "date": "2026-10-19",
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/556",
       "history": [
@@ -47,8 +52,15 @@
           "status": "proposed",
           "why": null,
           "link": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
+        },
+        {
+          "date": "2026-10-28",
+          "status": "discarded",
+          "why": "Owner answered No on #556 (no comment); D-347 stands: only the admin brings a player back.",
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
         }
-      ]
+      ],
+      "why": "Owner answered No on #556 (no comment); D-347 stands: only the admin brings a player back."
     },
     {
       "id": "tango-first-board-guide",
@@ -60,7 +72,7 @@
       "proof": "Tango's solo finish rate from 23% to 40% or more, and abandons per start down, in the 4 weeks after it ships.",
       "recommendation": "Yes: cheapest of the three, and the numbers say the puzzle is fine once it is understood.",
       "question": "Tango: try a short guided first board for new players?",
-      "status": "proposed",
+      "status": "discarded",
       "date": "2026-10-19",
       "issue": "https://github.com/ellokojavi/juegos-de-salon/issues/556",
       "history": [
@@ -69,8 +81,15 @@
           "status": "proposed",
           "why": null,
           "link": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
+        },
+        {
+          "date": "2026-10-28",
+          "status": "discarded",
+          "why": "Owner answered No on #556 (no comment).",
+          "link": "https://github.com/ellokojavi/juegos-de-salon/issues/556"
         }
-      ]
+      ],
+      "why": "Owner answered No on #556 (no comment)."
     },
     {
       "id": "pips-dominoes",
