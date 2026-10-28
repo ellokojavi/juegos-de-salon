@@ -1390,6 +1390,9 @@
         "at": {
           ".validate": "newData.isNumber()"
         },
+        "label": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"
+        },
         "$other": {
           ".validate": false
         }

@@ -37,7 +37,7 @@ import {
 import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KINDS, pacificRange } from './timeline.js';
 import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splash.js';
 import { TEXTS as SUPPORT_TEXTS } from '../assets/js/support.js';
-import { switches, status as campaignStatus, overlaps, move, toRemote, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
+import { switches, status as campaignStatus, overlaps, move, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
 import { TEMPLATES as SKINS } from '../assets/season/templates.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import {
@@ -1631,7 +1631,7 @@ const unDecimal = x => (x === null ? '—' : x.toLocaleString(LOCALE, { maximumF
 function bloqueResultados(rows) {
   const rango = rangeOf(S.range);
   const todas = rows.map(s => campaignStats(S.days, s.id, rango)).filter(Boolean);
-  const nombre = id => `${CAMPAIGNS[id]?.emoji || ''} ${(CAMPAIGNS[id]?.title?.[PANEL_LANG] || CAMPAIGNS[id]?.title?.es) || id}`.trim();
+  const nombre = id => `${CAMPAIGNS[id]?.emoji || ''} ${S.splash?.[id]?.label || (CAMPAIGNS[id]?.title?.[PANEL_LANG] || CAMPAIGNS[id]?.title?.es) || id}`.trim();
   const nota = `${tituloRango()}, UTC days; previews never count. Reach: phones that saw it for the first time. Tapped: taps on its Play link over reach. Finished a game: in the same tab, within 2 hours of the tap. Only the days it was shown count, so switching it off and on is fine.`;
   if (!todas.length) return bloque('📊 How they did', nota, el('p', { class: 'empty' }, S.daysLoaded ? 'No campaign was shown in this range.' : 'Loading…'));
   const elegida = todas.find(c => c.id === S.campStats) || todas[0];
@@ -1696,12 +1696,14 @@ function vistaSplash(today) {
   const rows = switches({ remote: S.splash, active: SPLASH_ACTIVE, campaigns: CAMPAIGNS });
   const cambiar = (id, cambio) => guardarCampanas(rows.map(s => (s.id === id ? { ...s, ...cambio } : s)));
   const vivas = rows.filter(s => campaignStatus(s, today) === 'live');
+  // The owner's label first, else the title players read
+  const nombreDe = id => rows.find(r => r.id === id)?.label || CAMPAIGNS[id].title?.[PANEL_LANG] || CAMPAIGNS[id].title?.es || id;
   const cruces = overlaps(rows, today, 60);
 
   const resumen = el('div', { class: 'panel campanas-hoy' },
     el('p', { class: 'lead' }, vivas.length ? `Today the home page shows ${vivas.length === 1 ? 'one campaign' : `${vivas.length} campaigns, one per visit, in this order`}` : 'Today the home page shows no campaign'),
-    vivas.length ? el('ol', { class: 'campanas-cola' }, vivas.map(s => el('li', {}, `${CAMPAIGNS[s.id].emoji || ''} ${(CAMPAIGNS[s.id].title?.[PANEL_LANG] || CAMPAIGNS[s.id].title?.es) || s.id}`))) : null,
-    ...cruces.map(c => el('p', { class: 'campanas-cruce' }, `⚠️ ${c.from === c.to ? diaCorto(c.from) : `${diaCorto(c.from)}–${diaCorto(c.to)}`}: ${c.ids.length} on together. A player sees ${c.ids.map(id => `${CAMPAIGNS[id].emoji || ''} ${(CAMPAIGNS[id].title?.[PANEL_LANG] || CAMPAIGNS[id].title?.es) || id}`.trim()).join(', then ')}, one per visit.`)),
+    vivas.length ? el('ol', { class: 'campanas-cola' }, vivas.map(s => el('li', {}, `${CAMPAIGNS[s.id].emoji || ''} ${nombreDe(s.id)}`))) : null,
+    ...cruces.map(c => el('p', { class: 'campanas-cruce' }, `⚠️ ${c.from === c.to ? diaCorto(c.from) : `${diaCorto(c.from)}–${diaCorto(c.to)}`}: ${c.ids.length} on together. A player sees ${c.ids.map(id => `${CAMPAIGNS[id].emoji || ''} ${nombreDe(id)}`.trim()).join(', then ')}, one per visit.`)),
     S.splash === null ? el('p', { class: 'muted small' }, 'Not saved from here yet: the home page uses the list in splash.js until the first change.') : null,
     S.splashMsg ? el('p', { class: 'campanas-msg', role: 'status' }, S.splashMsg) : null);
 
@@ -1720,7 +1722,12 @@ function vistaSplash(today) {
     const c = CAMPAIGNS[s.id];
     const st = campaignStatus(s, today);
     const [ico, txt] = ESTADO_CAMPANA[st];
-    const nombre = c.title?.[PANEL_LANG] || c.title?.es || s.id;
+    const nombre = nombreDe(s.id);
+    const titulo = c.title?.[PANEL_LANG] || c.title?.es || s.id;
+    const renombrar = () => {
+      const t = window.prompt('Your name for this campaign (only you see it; empty goes back to its title):', s.label || titulo);
+      if (t !== null) cambiar(s.id, { label: cleanLabel(t) === titulo ? null : cleanLabel(t) });
+    };
     const abrir = () => { S.campOpen.add(s.id); render(); };
     const cerrar = () => { S.campOpen.delete(s.id); render(); };
     // An off campaign folds to its emoji and title; a tap opens it (the owner's request). It stays open for this visit
@@ -1747,6 +1754,7 @@ function vistaSplash(today) {
         el('div', { class: 'campana-nombre' },
           s.on ? el('strong', { class: 'campana-titulo' }, nombre)
             : el('button', { type: 'button', class: 'campana-titulo campana-plegar', 'aria-expanded': 'true', onClick: cerrar }, nombre),
+          s.label ? el('span', { class: 'campana-langs' }, `Players see: ${titulo}`) : null,
           el('span', { class: `campana-estado estado-${st}` }, `${ico} ${txt}`, detalle ? el('span', { class: 'campana-detalle' }, ` · ${detalle}`) : null),
           c.langs ? el('span', { class: 'campana-langs' }, `${c.langs.join(' · ').toUpperCase()} only`) : null,
           // A campaign for regulars reaches fewer phones than "live" suggests (D-458)
@@ -1765,11 +1773,12 @@ function vistaSplash(today) {
           el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas(move(rows, s.id, -1)) }, '↑'),
           el('span', { class: 'campana-pos' }, `${i + 1} of ${rows.length}`),
           el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas(move(rows, s.id, 1)) }, '↓')),
+        el('button', { type: 'button', class: 'icono-btn', 'aria-label': `Rename ${nombre}`, title: 'Rename', onClick: renombrar }, '✏️'),
         el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, '👁 Preview')));
   });
 
   return [
-    el('p', { class: 'muted small' }, 'The splash over the home page. Each player sees a campaign once; with several on, one per visit, top first. New campaigns are made by asking Claude; here they are switched, dated and ordered.'),
+    el('p', { class: 'muted small' }, 'The splash over the home page. Each player sees a campaign once; with several on, one per visit, top first. New campaigns are made by asking Claude; here they are switched, dated, ordered and renamed (✏️, only you see the name).'),
     resumen, tira, bloqueResultados(rows), tarjetas,
   ];
 }

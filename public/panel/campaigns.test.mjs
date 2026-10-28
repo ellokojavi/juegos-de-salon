@@ -98,3 +98,16 @@ assert.equal(supportStats({ 10: {} }, { from: 10, to: 12 }), null, 'nothing coun
   assert.deepEqual(skinToRemote({ mode: 'off', from: '2026-11-01' }, 5), { mode: 'off', at: 5 }, 'off keeps no days');
   assert.deepEqual(skinToRemote({ mode: 'dates', from: '2026-11-01', until: null }, 5), { mode: 'dates', at: 5, from: '2026-11-01' });
 }
+
+// The owner's label (only in the panel) survives a save and is never sent empty
+{
+  const { cleanLabel } = await import('./campaigns.js');
+  assert.equal(cleanLabel('  Halloween   2026 '), 'Halloween 2026');
+  assert.equal(cleanLabel('   '), null);
+  assert.equal(cleanLabel('x'.repeat(80)).length, 60);
+  const r = switches({ remote: { c: { on: true, order: 0, label: 'Mine' } }, campaigns });
+  assert.equal(r.find(s => s.id === 'c').label, 'Mine');
+  const out = toRemote(r, 1);
+  assert.equal(out.c.label, 'Mine');
+  assert.equal('label' in out.a, false);
+}
