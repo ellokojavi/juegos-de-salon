@@ -75,6 +75,19 @@ takes the same `rules`. The audit against the traditional rules is in #897.
   all different, all equal or a full house: pass once per round; the next player may doubt the
   pass and only that hand is judged, so the reveal shows just that hand, with no count, and a room's header reads "X dudó del paso de Y"; a bluffed pass is allowed; a pass is a play like a bid) and **Dudar a la siciliana**
   (doubting the game's first bid is worth two dice). Picado and juego sucio are not built (#897).
+- **The rules say why** (playtest, still lab-only): a face closed by a rule (`.pinta.closed`, kept
+  tappable with `aria-disabled`) puts one muted line under the faces (`.face-why`: no opening in aces,
+  or the obligada round's fixed face with its one-die exception), which pulses when the face is tapped;
+  the calzar line has its own one-time version when it opened because you have one die
+  (`.calzar-hint.one-die`); the siciliana reveal adds "Primera apuesta de la partida: se pierden dos
+  dados". **Pasar** shows "Paso" plus "✋ Tienes mano para pasar" when the hand allows it, and
+  otherwise **"Paso de farol"** with a line saying the pass can be doubted: the bluff stays (it is part
+  of the traditional game), but the label tells a first-timer it is one. "De farol" because it is the
+  plain Spanish for bluffing, in the first person like Dudo and Calzo.
+- **Overlays are opaque from the first frame** in Dudo (`.handoff { animation: none }`): the shared
+  fade-in let the table show through the pass screen; the pass screen and the obligada notice also
+  clear the bid board and the buttons under them. `classic.mjs` fails if any die sits under an overlay
+  that is not the reveal.
 - **Why nobody saw Calzar at a table of five**: it was on and drawn right in every mode, but it
   shows only once the bid reaches half the dice (13 of 25); simulated, a five-player game first
   allows it around round 11 of ~23, in 16% of the rounds, with nothing announcing it.

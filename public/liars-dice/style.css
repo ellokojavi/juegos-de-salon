@@ -201,3 +201,14 @@
 .variants summary b { font-size: 0.95rem; }
 .variants summary small { display: block; color: var(--muted); font-weight: 700; font-size: 0.76rem; }
 .variants .toggle-row { background: rgba(0,0,0,0.25); }
+
+/* ---------- Clarity for first-time players (playtest, classic rules in the lab) ---------- */
+/* A face a rule closes looks like a disabled one, but stays tappable so the tap points at the reason */
+.pinta.closed { opacity: 0.3; cursor: not-allowed; }
+.face-why, .paso-why { margin: 0; font-size: 0.82rem; font-weight: 700; color: var(--muted); text-align: center; line-height: 1.3; }
+.paso-why.can { color: var(--lime); }
+.face-why.pulse { animation: faceWhy 0.6s ease-out; }
+@keyframes faceWhy { 0% { color: var(--yellow); transform: scale(1.06); } 100% { color: var(--muted); transform: none; } }
+/* Overlays are opaque from the first frame: fading in from transparent let the table show through
+   the pass screen (playtest). Only the stage pops. */
+.handoff { animation: none; }
