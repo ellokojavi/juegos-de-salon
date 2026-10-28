@@ -316,3 +316,13 @@ body.chat-on #screen-lobby, body.chat-on #screen-play, body.chat-on #screen-resu
 
 /* La fila de ¡Fuego! ya separa 10 px (margin): el resto del aire lo pone el mar (D-309) */
 #enemy-grid { --aire-ya: 10px; }
+
+/* Salvo (#894): the switch hides what does not apply, and a volley's answers read together */
+.toggle-row[hidden] { display: none; }
+.salvo-toast { font-size: 1.3rem; }
+.salvo-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 12px; }
+.salvo-shot .coord { font-size: 1.1rem; }
+.salvo-shot.agua { color: var(--cyan); } .salvo-shot.tocado { color: var(--orange); } .salvo-shot.hundido { color: var(--pink); }
+.salvo-rows { display: grid; gap: 6px; margin: 10px 0 4px; }
+.salvo-rows .shot-result { font-size: 1.3rem; }
+.salvo-rows .coord { font: 900 1.3rem var(--font-num); }
