@@ -4,10 +4,9 @@
  * separate FAQ beside it. Every fact is built from data the app already has —the players and
  * minutes in games.js, the modes the cover offers— so it cannot say something the game stopped doing.
  *
- * In the lab first (D-395, D-409): it shows only to a lab key holder. lab: #seccion-faq
+ * Tried in the lab first (D-395, D-409); everyone sees it since it launched (D-488).
  */
 import { gameById } from './games.js';
-import { labAccess } from './lab-access.js';
 
 const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k] ?? '');
 /** '1–6' → [1, 6]; '2' → [2, 2] */
@@ -72,10 +71,10 @@ export function factsLine(gameId, T, lang) {
   ].filter(Boolean).join(' ');
 }
 
-/** Puts the line first inside the game's "Cómo se juega", only for a lab key holder. */
-export async function mountHowToPlayFacts(gameId, T, lang) {
+/** Puts the line first inside the game's "Cómo se juega". */
+export function mountHowToPlayFacts(gameId, T, lang) {
   const title = document.querySelector('[data-i18n="howTitle"], [data-i18n="rulesSummary"]');
-  if (!title || !(await labAccess())) return;
+  if (!title) return;
   const p = document.createElement('p');
   p.className = 'muted how-facts';
   p.textContent = factsLine(gameId, T, lang);
