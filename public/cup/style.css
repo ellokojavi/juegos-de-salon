@@ -835,3 +835,8 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 
 /* The last day before the final with the wildcard unused (D-444): gold, like the wildcard's ×2 (D-151) */
 .aviso-comodin { margin: 8px 0; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--yellow); background: rgba(255, 210, 63, .12); color: var(--yellow); font-weight: 700; line-height: 1.35; }
+
+/* An archived cup's podium (D-476) */
+.podio-archivado { list-style: none; padding: 0; margin: 0.5rem 0; display: grid; gap: 0.35rem; font-size: 1.1rem; overflow-wrap: anywhere; }
+.podio-archivado .lugar { display: inline-block; min-width: 1.8em; }
+#copa-archivada h2 { overflow-wrap: anywhere; }
