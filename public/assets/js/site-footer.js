@@ -4,12 +4,10 @@
  * result screen, which keeps its one quiet link (U-38). With `phrase`, the rotating funny line on
  * top (Rankings and Uno al día); without it (the covers), only the options and the version.
  *
- * Only with a lab key for now (D-395). lab: #seccion-pie-sitio
  * The home page keeps its own footer markup; both share the classes in base.css.
  */
 import { el } from './ui.js';
 import { getLang, COMMON } from './i18n.js';
-import { labAccess } from './lab-access.js';
 import { versionOf, releaseOf } from './transport/stats.js';
 
 const SOURCE = 'https://github.com/ellokojavi/juegos-de-salon';
@@ -52,10 +50,10 @@ export async function siteFooter({ phrase = false, screen = 'pagina', lang = get
   return el('footer', { class: 'atardecer pie-sitio' }, msg, links, version);
 }
 
-/** Appends the footer at the end of `parent`, only with a lab key; never throws. */
+/** Appends the footer at the end of `parent`; never throws. */
 export async function mountFooter(parent, opts = {}) {
   try {
-    if (!parent || !(await labAccess())) return null;
+    if (!parent) return null;
     parent.querySelector(':scope > .pie-sitio')?.remove();
     const f = await siteFooter(opts);
     parent.append(f);

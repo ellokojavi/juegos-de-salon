@@ -289,7 +289,7 @@
       if (campana) nuevo.push(campana);
       nuevo.push(pie());
       pagina.replaceChildren(...nuevo);
-      // With a lab key, the site's footer takes the inbox's place under the page (lab: #seccion-pie-sitio)
+      // The site's footer takes the inbox's place under the page
       import('../assets/js/site-footer.js').then(async m => { if (await m.mountFooter(pagina, { phrase: true, screen: 'uno-al-dia' })) document.getElementById('btn-buzon-uad')?.parentElement.remove(); }).catch(() => {});
     };
 
