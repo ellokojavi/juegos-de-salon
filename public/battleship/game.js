@@ -790,7 +790,7 @@ function playResultSound(result) { if (result === 'agua') SFX.splash(); else if 
 /** Etapa del pase en modo un celular: resultado del último disparo y, si el turno cambia, el pase debajo. */
 function shotResultStage(shots, nextName) {
   const shot = shots[0];
-  const stage = el('div', { class: 'stage pop' }, el('div', { class: 'hint' }, `${M.names[shot.from]} · ${T.hoResult}`));
+  const stage = el('div', { class: 'stage pop' }, el('div', { class: 'hint' }, shots.length > 1 ? fmt(T.salvoOf, { name: M.names[shot.from] }) : `${M.names[shot.from]} · ${T.hoResult}`));
   if (shots.length === 1) stage.append(
     el('div', { class: 'shot-big' }, shot.cell),
     el('div', { class: 'shot-result ' + shot.result }, T[shot.result] + (shot.result === 'hundido' ? ` · ${T.ships[shot.ship]}` : '')),
