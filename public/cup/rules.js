@@ -2938,7 +2938,7 @@ const DE = {
   adminWelcomeAlias: 'Sobald alle dabei sind, schließ die Anmeldung: Dein Link ist leicht zu erraten, und so kommt niemand mehr dazu.',
   errNoExiste: 'Wir finden keinen Pokal mit diesem Code. Prüf, ob er richtig geschrieben ist.',
   archivedEnded: 'Beendet am {fecha}.',
-  archivedNote: 'Dieser Pokal ist schon lange vorbei und wurde archiviert: Hier ist sein Podium.',
+  archivedNote: 'Dieser Pokal ist vor einiger Zeit zu Ende gegangen und wurde archiviert: Hier ist sein Podium.',
   archivedNew: '🏆 Neuen Pokal erstellen',
   archivedMedals: '🥇 Medaillenspiegel ansehen',
   errCodigo: 'Der Code hat 5 Buchstaben.',
