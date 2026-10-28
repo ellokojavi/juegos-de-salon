@@ -16,7 +16,6 @@ import { labAccess } from './lab-access.js';
 
 /** Every flag a page asks, with the name the panel shows. A new one is a row here and its card. */
 export const FLAGS = {
-  'dudo-tradicional': '🎲 Dudo: traditional rules',
   'copa-crear': '🏆 La Copa: the new create screen',
   'bn-salva': '🎆 Battleship: Salvo',
 };

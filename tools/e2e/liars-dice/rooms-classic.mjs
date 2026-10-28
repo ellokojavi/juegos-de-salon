@@ -1,4 +1,4 @@
-// Liar's Dice's 🧪 classic rules (lab, D-487, D-490, D-491) in a ROOM, with N phones against the
+// Liar's Dice's 📜 classic rules (D-487, D-490, D-491) in a ROOM, with N phones against the
 // real Firebase: like online.mjs, it opens real rooms, so it is run by hand and never in CI.
 // It plays whole games and checks, on every phone, that the screens agree; that the obligada
 // round's notice reaches every phone, that each phone sees its rivals' dice and never its own;
@@ -50,8 +50,8 @@ await A.go(`${SITE}/liars-dice/`); await ev(A, `localStorage.clear(); 1`); await
 await ev(A, `document.querySelectorAll('.modes .mode')[1].click(); 1`); await sleep(400);
 await ev(A, `(()=>{const i=document.querySelector('#setup-form input');i.value='${NAME.A}';i.dispatchEvent(new Event('input',{bubbles:true}));return 1})()`);
 const toggle = label => ev(A, `[...document.querySelectorAll('#setup-form .toggle-row')].find(r=>r.textContent.includes(${JSON.stringify(label)}))?.querySelector('.switch')?.click(), 1`);
-await toggle('🫨'); await toggle('🧪');
-if (PATCH) { await shot(A, '00-setup'); await toggle('🧪'); }
+await toggle('🫨'); await toggle('📜');
+if (PATCH) { await shot(A, '00-setup'); await toggle('📜'); }
 const sw = await ev(A, `[...document.querySelectorAll('#setup-form details.variants .toggle-row .switch')].length`);
 if (PASAR && !PATCH) await ev(A, `document.querySelectorAll('#setup-form details.variants .toggle-row .switch')[0].click(), 1`);
 if (SICILIANA && !PATCH) await ev(A, `document.querySelectorAll('#setup-form details.variants .toggle-row .switch')[1].click(), 1`);
