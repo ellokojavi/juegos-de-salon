@@ -1,6 +1,6 @@
 /**
  * Who plays, how and what it costs, as the first line of a game's "Cómo se juega" (#887, #888).
- * The owner's rule (D-NNN): one block explains the game, so this is part of "Cómo se juega", never a
+ * The owner's rule (D-488): one block explains the game, so this is part of "Cómo se juega", never a
  * separate FAQ beside it. Every fact is built from data the app already has —the players and
  * minutes in games.js, the modes the cover offers— so it cannot say something the game stopped doing.
  *
