@@ -372,7 +372,7 @@ function renderPlay(v) {
     soltarVaso();
     // In the open obligada round your own die is the one you do not see (D-490)
     const oculto = v.rules.open;
-    mine.append(el('div', { class: 'mine-label' }, oculto ? T.yourDieHidden : T.yourDice));
+    mine.append(el('div', { class: 'mine-label' }, oculto ? (dados.length > 1 ? T.yourDiceHidden : T.yourDieHidden) : T.yourDice));
     const giros = S.giros?.[`${v.round}:${yo}`];
     const fila = el('div', { class: 'dice-row' }, ...dados.map((d, i) => {
       if (oculto) return el('span', { class: 'die hidden-die', 'aria-label': '?' }, '❓');
