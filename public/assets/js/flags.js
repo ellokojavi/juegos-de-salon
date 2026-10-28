@@ -18,6 +18,7 @@ import { labAccess } from './lab-access.js';
 export const FLAGS = {
   'copa-crear': '🏆 La Copa: the new create screen',
   'bn-salva': '🎆 Battleship: Salvo',
+  'keyboard-lift': '⌨️ Feedback form above the iOS keyboard',
 };
 export const STATES = ['lab', 'all', 'off'];
 
