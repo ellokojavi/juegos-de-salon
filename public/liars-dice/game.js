@@ -189,7 +189,7 @@ async function act() {
         const salt = randomSalt();
         S.secrets[v.round] = { dice: dados, salt };
         saveSession();
-        // In the open obligada round (D-488) everyone must see the others' die, so it travels in the
+        // In the open obligada round (D-490) everyone must see the others' die, so it travels in the
         // clear along with its hash; each screen hides the player's own (honour, as at the table)
         S.transport.send({ t: 'roll', from: r, h: await sha256(writeDice(dados) + salt), ...(v.rules.open ? { d: writeDice(dados) } : {}) });
       } else {
@@ -215,7 +215,7 @@ async function act() {
     const mine = diceOf(v, 'B');
     if (!mine) return;
     // Los dados que le quedan al rival: sin eso no sabe a quién apretar (ver docs/games/liars-dice.md)
-    // In the open obligada round (D-488) it sees the others' dice and not its own
+    // In the open obligada round (D-490) it sees the others' dice and not its own
     const vistos = v.rules.open ? v.alive.filter(r => r !== 'B').flatMap(r => diceOf(v, r) || []) : null;
     const jugada = botMove({
       myDice: mine, bid: v.bid, totalDice: v.totalDice, canCalzar: v.canCalzar, rules: v.rules,
@@ -299,7 +299,7 @@ function render() {
   if (v.done) return renderResult(v);
   showScreen('screen-play');
 
-  // The obligada round is announced to the whole table, once per phone and round (D-488)
+  // The obligada round is announced to the whole table, once per phone and round (D-490)
   if (v.obligada && S.obligadaSeen !== v.round) { S.obligadaSeen = v.round; return showObligada(v); }
 
   // 2. En un celular, el que tiene que jugar todavía no tiene el aparato en la mano
@@ -311,7 +311,7 @@ function render() {
 
 /**
  * La tira de arriba: cuántos dados le quedan a cada uno. Nunca cuáles, salvo en la ronda
- * obligada abierta (D-488): ahí se ven los de los demás, nunca los propios.
+ * obligada abierta (D-490): ahí se ven los de los demás, nunca los propios.
  */
 function renderRivals(v, yo) {
   const box = $('#rivals');
@@ -327,7 +327,7 @@ function renderRivals(v, yo) {
   }
 }
 
-/** The big notice of the obligada round, for everyone at the table (D-488). */
+/** The big notice of the obligada round, for everyone at the table (D-490). */
 function showObligada(v) {
   // One phone: what the previous player saw stays under the notice, and it holds the next one's die
   $('#rivals').innerHTML = ''; $('#mine').innerHTML = '';
@@ -367,7 +367,7 @@ function renderPlay(v) {
   else {
     agite.onJolt = null;
     soltarVaso();
-    // In the open obligada round your own die is the one you do not see (D-488)
+    // In the open obligada round your own die is the one you do not see (D-490)
     const oculto = v.rules.open;
     mine.append(el('div', { class: 'mine-label' }, oculto ? T.yourDieHidden : T.yourDice));
     const giros = S.giros?.[`${v.round}:${yo}`];
@@ -473,7 +473,7 @@ function renderActions(v, yo, miTurno, tapados = false) {
     fila.append(el('button', {
       class: 'btn btn--sm', title: fmt(T.dudoHint, { n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) }),
       onClick: () => { S.sel = null; SFX.reveal(); vibrate([30, 40, 30]); S.transport.send({ t: 'dudo', from: v.current }); },
-      // With a pass standing (variant Pasar, D-488), doubting is doubting the pass
+      // With a pass standing (variant Pasar, D-490), doubting is doubting the pass
     }, v.passStanding ? fmt(T.dudoPasoDo, { name: nameOf(v.pass.by) }) : T.dudoDo));
     if (v.canCalzar) {
       fila.append(el('button', {
@@ -488,7 +488,7 @@ function renderActions(v, yo, miTurno, tapados = false) {
       }, T.pasoDo));
     }
     acciones.append(fila);
-    // The first time calzar is open to a player in a game, it says what it is (D-488): the owner's
+    // The first time calzar is open to a player in a game, it says what it is (D-490): the owner's
     // table of six never noticed the button, which shows up only once the bid reaches half the dice
     S.calzarVisto ||= new Set();
     const aviso = `${v.round}:${v.bids.length}:${v.current}`;
@@ -1218,7 +1218,7 @@ function ajustesDelCacho() {
         interruptor(reloj, fmt(T.timerLabel, { n: TURN_SECS }), T.timerHint, v => { reloj = v; }),
       ];
       if (!LAB) return base;
-      // The regional variants (D-488) live in one folded row that shows only with the classic
+      // The regional variants (D-490) live in one folded row that shows only with the classic
       // rules on, so the setup stays calm; each one off by default.
       const fila = el('details', { class: 'variants' },
         el('summary', {}, el('b', {}, T.variantsLabel), el('small', {}, T.variantsHint)),

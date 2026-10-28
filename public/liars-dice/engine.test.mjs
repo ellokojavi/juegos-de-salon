@@ -458,7 +458,7 @@ const ronda3 = (a, b, c) => [
   }
 }
 
-/* ---------- classic rules, round 2 (lab, D-488) ---------- */
+/* ---------- classic rules, round 2 (lab, D-490) ---------- */
 {
   // Into aces: half plus one when even, half rounded up when odd; leaving them stays double plus one
   assert.equal(minBid({ n: 6, p: 5 }, 1), 3, 'without the classic rules, half');

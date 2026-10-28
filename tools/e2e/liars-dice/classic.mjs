@@ -1,4 +1,4 @@
-// Liar's Dice end to end, the 🧪 classic rules (lab, D-487, D-488): the folded Variants row, the
+// Liar's Dice end to end, the 🧪 classic rules (lab, D-487, D-490): the folded Variants row, the
 // open obligada round (its notice, the rivals' dice face up, your own as ❓), the one-time calzar
 // hint, against the phone and with three players on one phone. localhost opens the lab by itself.
 import { output } from '../output.mjs';
