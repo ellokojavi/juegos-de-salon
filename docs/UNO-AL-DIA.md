@@ -370,6 +370,7 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 | Qué | Dónde | Nota |
 |---|---|---|
 | El historial del jugador | `unoAlDia/<jid>/<fecha>` = `{ j, s, ms, at }` | Una vez por fecha: las reglas no dejan reescribirla, y la fecha tiene que estar a 14 horas o menos de la hora del servidor. A day a 🧊 saved is only a marker, `{ c: true, at }` (D-415). |
+| The index by day (D-475) | `unoAlDiaDias/<n>/<jid>` = the day's score | Written with the history day, in the same write; the owner's readers (panel, nightly rebuild, weekly report) query a range of days from it once `unoAlDiaIndice` marks it complete (`tools/firebase/uad-index.mjs`). |
 | **Ranking del día** | `records/uno-al-dia/d2026-10-05/<jid>` | Un período nuevo, `dAAAA-MM-DD`, en `PERIODO` de `records.js` y en las reglas. |
 | **Ranking de la semana** | `records/uno-al-dia/s2026-41/<jid>` | La suma de la semana. Solo sube, como cualquier récord, y las reglas exigen que suba lo que dice el historial del día. |
 | **Puntos del mes** (D-412, D-414) | `records/uno-al-dia-pts/s2026-10/<jid>` | The month's season: each day of the history adds once (`p` marks it), its score plus the streak bonus; the streak `r` grows at most one per day. In the lab, an invited friend adds +10 once (the write carries `i` = their `uid` and marks `p` on their acceptance, D-414). Shown in the Mes and Amigos tabs; the week's table is still saved, but no tab shows it since D-414. |

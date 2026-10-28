@@ -22,6 +22,7 @@
  *   jugadorCopas/<jid>/<código>     { p, at }: las copas en que está, como el jugador `p` de cada
  *                                   una (D-220). Solo la leen sus celulares.
  *   unoAlDia/<jid>/<n>              { j, s, ms, at, w? }: el primer intento de Uno al día del día `n`
+ *   unoAlDiaDias/<n>/<jid>          its score `s` again, the index by day the owner's readers query (D-475)
  *                                   (días desde 1970, D-230). Se escribe una vez; `w` marca que ya
  *                                   se sumó a la semana. La lee cualquiera (la racha de quien invita).
  *   invitados/<jid>/<uid>           { d, at, j? }: el celular `uid` terminó su primer Uno al día el
@@ -29,6 +30,7 @@
  */
 import { envOf, countryOf } from './transport/stats.js';
 import { tiene } from './parametros.js';
+import { UAD_DIAS } from './uad-days.js';
 import {
   claveNombre, limpiarNombre, esPin, esJid, nuevoJid, hashPinJugador, tablaId, normalizar, esMejor, semana,
   SIEMPRE, TODOTERRENO, todoterreno, vistaTabla, ordenar, VARIANTE_VICTORIAS, claveOrden, PARTIDAS, esPais,
@@ -459,7 +461,8 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
       if (!yo || !r || !Number.isInteger(n) || n < 10000 || n > 99999) return null;
       const out = { historia: false, dia: false, semana: false, racha: false };
       const h = `unoAlDia/${yo.jid}/${n}`;
-      try { await almacen.update({ [h]: { j, s: r.s, ms: r.ms, at: HORA } }); out.historia = true; } catch (e) {
+      // With its entry in the index by day (D-475), in the same write: the rules ask for both together
+      try { await almacen.update({ [h]: { j, s: r.s, ms: r.ms, at: HORA }, [`${UAD_DIAS}/${n}/${yo.jid}`]: r.s }); out.historia = true; } catch (e) {
         if (e.code === 'permiso' && !(await almacen.get(h).catch(() => null))) { escribir(KEY, null); avisar(); throw falla('pin'); }
       }
       const hist = await almacen.get(h).catch(() => null);

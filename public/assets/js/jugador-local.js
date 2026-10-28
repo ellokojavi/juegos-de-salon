@@ -139,6 +139,12 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
       return p.length === 3 && leerEn(viejo, ruta) == null && !!x && typeof x.j === 'string' && x.s >= 0 && x.s <= 100 && x.ms >= 0 && typeof x.at === 'number'
         && Object.keys(x).every(k => ['j', 's', 'ms', 'at', 'w', 'p'].includes(k));
     }
+    // The index by day (D-475): a played day's score, once, written with that day of the history
+    if (rama === 'unoAlDiaDias') {
+      const x = leerEn(nuevo, ruta);
+      return p.length === 3 && /^[0-9]{5}$/.test(a || '') && sentado(viejo, b) && leerEn(viejo, ruta) == null && typeof x === 'number'
+        && leerEn(viejo, `unoAlDia/${b}/${a}`) == null && x === leerEn(nuevo, `unoAlDia/${b}/${a}/s`);
+    }
     // When a day's first attempt of Uno al día started (D-433): once, by a phone seated as the player
     if (rama === 'unoAlDiaInicio') return p.length === 3 && sentado(viejo, a) && /^[0-9]{5}$/.test(b || '') && leerEn(viejo, ruta) == null && typeof leerEn(nuevo, ruta) === 'number';
     // Quién aceptó una invitación (D-230): cada celular una vez, y nadie se invita a sí mismo
