@@ -51,6 +51,7 @@ Each PR gets the least testing that still keeps the site safe, decided from what
 
 `smoke.mjs` is the floor of N1-N3: it opens every page and fails on an uncaught error or a blank screen,
 so even a game with no script of its own is covered (#482 left one blank and nothing failed).
+`structured-data.mjs` runs beside it on every level for the same reason: it opens every indexed page.
 `ci.mjs --list|--groups --changes <file>` prints the level on stderr (`test level N2 · game: …`).
 
 ## On GitHub (D-193, D-307, D-308)
@@ -218,6 +219,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `timeline/chat.mjs` | Room chat: unread, spam brake, verdict covering it, reconnection and death at the end |
 | `game-memory.mjs` | Saving and resuming in the three games (canon C-6) |
 | `versioning.mjs` | That all modules load with the import map's `?h=` content hash (D-467). Since D-205 `public/` doesn't carry it: run it against a stamped copy (`set-version.py --site /tmp/site`, served and passed in `SITE`) |
+| `structured-data.mjs` | On every indexed page, opened in Spanish as a crawler opens it, the JSON-LD's name is on the page and a game's FAQPage answer is, word for word, the "Cómo se juega" text the cover renders (#883). Like `smoke.mjs` it opens every page, so it is in `EVERY_PAGE` and runs on N1-N3 |
 | `installable.mjs` | The installable app (D-221): on the home page, a game, La Copa, a standalone game and `/records/`, Chrome registers `/sw.js` with scope `/`, reads the manifest without errors and allows installing. In the four languages, on the home page and in a game, checks that the app is named with the language's `appTitle`, in the manifest and in `apple-mobile-web-app-title` (D-222). Against a stamped copy (`SITE`) it also checks that the import map doesn't break |
 | `install-prompt.mjs` | The home page bubble that invites adding the app to the home screen (D-232): with each person's phone (Safari and Chrome on iPhone, Chrome and Samsung on Android, WhatsApp), checks the sheet's steps, Chrome's own dialog, that the ✕ and "Ya la agregué" turn it off for good, that it doesn't show on a computer or in the installed app, and that it fits at 320 px in the four languages |
 | `feedback-prod.mjs` | The "💬 Sugerencias y comentarios" inbox in production (D-345, U-38): at the end of a game, after its buttons, a quiet link that unfolds the form in place; sending saves the message (in `?test`'s local store) with its kind; the link rests the rest of the day and 14 days after sending; it reads well in the four languages at 320 px; the home footer link opens the form in its overlay |
