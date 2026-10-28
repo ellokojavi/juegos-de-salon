@@ -1,5 +1,5 @@
 {
-  "version": "0.229.1",
+  "version": "0.229.8",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1222,6 +1222,7 @@
     "public/hangman/engine.js",
     "public/hangman/game.js",
     "public/hangman/rules.js",
+    "public/labs/bodega.js",
     "public/labs/bridges/trains/sheet.js",
     "public/labs/bridges/visitors/sheet.js",
     "public/labs/code/engine-palabra.js",
