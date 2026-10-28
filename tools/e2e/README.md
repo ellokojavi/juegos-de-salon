@@ -351,3 +351,8 @@ Chrome doesn't show them. It leaves screenshots of each sheet.
 when it loses its Firebase session or the admin gives a new PIN), enters through the day's notification and taps
 Start: it checks that it doesn't say the day closed, that it asks for the PIN with the name already chosen and that,
 with the PIN, the day starts (D-285).
+
+`node tools/e2e/cup/rejoin.mjs [output]` is the fresh browser (#893): the `player` demo's Javi, with
+three days scored, loses everything the browser kept except the test store (which stands in for
+Firebase) and his seat, opens the cup's link, picks his name and types his PIN: he sits as the same
+player, no second Javi is created and his scores and his row on the board are unchanged.
