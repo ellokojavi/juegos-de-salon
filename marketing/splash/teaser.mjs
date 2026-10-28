@@ -1,12 +1,12 @@
-// A splash teaser as a GIF (D-430): a drawn scene of a game that is coming, not its play. The
+// A splash teaser as a looping MP4 (D-430; a GIF until #846, five times heavier): a drawn scene of a game that is coming, not its play. The
 // scene is a page in marketing/splash/teaser/ that draws one frame at a time with the game's own
 // sprites (window.frame(i) returns it as a PNG); this serves the repo, opens it in headless Chrome,
-// takes every frame and lets ffmpeg make the looping GIF (its own palette, scaled up with no
-// smoothing, so the pixel art stays crisp) and a still for reduced motion.
+// takes every frame and lets ffmpeg make the MP4 (scaled up with no smoothing, so the pixel art stays
+// crisp), its first frame as the poster and a still for reduced motion.
 //
 //   node marketing/splash/teaser.mjs [bridges]
 //
-// Output: public/assets/splash/<name>-teaser.gif and <name>-teaser.png
+// Output: public/assets/splash/<name>-teaser.mp4, <name>-teaser-start.png and <name>-teaser.png
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { execFileSync } from 'node:child_process';
@@ -48,10 +48,11 @@ try {
       const png = await b.evaluate(`window.frame(${i})`);
       writeFileSync(`${frames}/${String(i).padStart(4, '0')}.png`, Buffer.from(png.split(',')[1], 'base64'));
     }
-    const gif = join(DEST, `${name}-teaser.gif`), up = `scale=iw*${SCALE}:ih*${SCALE}:flags=neighbor`;
+    const clip = join(DEST, `${name}-teaser.mp4`), up = `scale=iw*${SCALE}:ih*${SCALE}:flags=neighbor`;
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', `${frames}/%04d.png`,
-      '-vf', `${up},split[a][b];[a]palettegen=max_colors=128:stats_mode=full[p];[b][p]paletteuse=dither=none`, '-loop', '0', gif]);
+      '-vf', up, '-c:v', 'libx264', '-preset', 'veryslow', '-crf', '20', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', clip]);
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', `${frames}/0000.png`, '-vf', up, join(DEST, `${name}-teaser-start.png`)]);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', `${frames}/${String(STILL[name]).padStart(4, '0')}.png`, '-vf', up, join(DEST, `${name}-teaser.png`)]);
-    console.log(`✓ ${name}: ${n} frames → ${gif} (${Math.round(statSync(gif).size / 1024)} KB)`);
+    console.log(`✓ ${name}: ${n} frames → ${clip} (${Math.round(statSync(clip).size / 1024)} KB)`);
   }
 } finally { server.close(); process.exit(0); }
