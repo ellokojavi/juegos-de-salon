@@ -324,7 +324,9 @@ function renderRivals(v, yo) {
     box.append(el('div', { class: 'rival' + (v.current === r ? ' turn' : '') + (s.out ? ' out' : '') + (vistos || propio ? ' seen' : '') },
       el('span', { class: 'n' }, nameOf(r)),
       vistos ? el('span', { class: 'd dice-row' }, ...vistos.map(d => dieEl(d, { small: true })))
-        : propio ? el('span', { class: 'd dice-row' }, el('span', { class: 'die die--sm hidden-die', 'aria-label': T.yourDieHidden }, '❓'))
+        // One ❓ per die you hold (rooms playtest: with three dice the strip showed a single one)
+        : propio ? el('span', { class: 'd dice-row', 'aria-label': s.dice > 1 ? T.yourDiceHidden : T.yourDieHidden },
+          ...Array.from({ length: s.dice }, () => el('span', { class: 'die die--sm hidden-die', 'aria-hidden': 'true' }, '❓')))
         : el('span', { class: 'd' }, s.out ? '—' : '🎲'.repeat(s.dice)),
     ));
   }
@@ -518,7 +520,9 @@ function renderActions(v, yo, miTurno, tapados = false) {
     const porUno = v.canCalzar && v.st[v.current]?.dice === 1 && v.bid.n * 2 < v.totalDice;
     const visto = porUno ? `${v.current}:1` : v.current;
     // lab: #seccion-dudo-tradicional (to everyone once the owner validates it, D-409)
-    if (LAB && v.canCalzar && (!S.calzarVisto.has(visto) || S.calzarAviso === aviso)) {
+    // A guest without a lab key in a room whose host chose the classic rules plays them, so it gets
+    // their explanations too (rooms playtest)
+    if ((LAB || M.config.traditional) && v.canCalzar && (!S.calzarVisto.has(visto) || S.calzarAviso === aviso)) {
       S.calzarVisto.add(visto); S.calzarAviso = aviso;
       acciones.append(el('p', { class: 'calzar-hint' + (porUno ? ' one-die' : '') }, '🎯 ', fmt(porUno ? T.calzarOneDie : T.calzarFirst, { n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) })));
     }
@@ -1123,6 +1127,10 @@ function renderLobby() {
     el('div', { class: 'qr', id: 'qr' }),
     el('p', { class: 'muted', style: 'font-size:0.9rem' }, T.lobbyShare),
     shareButton(url),
+    // The table's rules, for whoever joins (rooms playtest): a guest learnt the room played the
+    // classic rules only when the ace would not open. Lab: #seccion-dudo-tradicional, set by the host
+    ...(M.config.traditional ? [el('p', { class: 'hint lobby-rules' }, el('b', {}, `🧪 ${T.traditionalLabel}`), ' · ', T.traditionalHint,
+      ...[M.config.pasar && T.pasarLabel, M.config.siciliana && T.sicilianaLabel].filter(Boolean).map(x => el('span', {}, ' · ', el('b', {}, x))))] : []),
     el('p', { class: 'lead', style: 'margin:12px 0 4px' }, `${T.lobbyPlayers} (${entraron.length}/${MAX_PLAYERS})`),
     el('div', { class: 'lobby-players' }, ...entraron.map(r => el('span', {
       class: 'p' + (r === S.role ? ' me' : '') + (M.presence[r]?.online === false ? ' off' : ''),

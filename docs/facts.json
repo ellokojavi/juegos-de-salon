@@ -1,5 +1,5 @@
 {
-  "version": "0.229.8",
+  "version": "0.229.16",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1488,6 +1488,7 @@
     "liars-dice/languages.mjs",
     "liars-dice/local.mjs",
     "liars-dice/online.mjs",
+    "liars-dice/rooms-classic.mjs",
     "liars-dice/shake-clock.mjs",
     "look.mjs",
     "output.mjs",

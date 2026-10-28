@@ -96,6 +96,16 @@ The bot: in the open round it counts the dice it sees (`seen`) and treats its ow
 passes with a qualifying hand half the time and doubts a pass about a third of the time.
 Tested end to end by `tools/e2e/liars-dice/classic.mjs`.
 
+**In a room** (rooms playtest with 2 to 5 phones, D-490): the host's switch and variants travel in the
+room's config (`config.traditional`, `config.pasar`, `config.siciliana`), which the Firebase rules
+validate like the other config keys; before that, a room with the classic rules could not open
+(permission denied, also on rematch). The lobby names the table's rules and its variants
+(`.lobby-rules`) so a guest knows before the ace will not open; a guest without a lab key plays the
+host's rules and gets their explanations too (the calzar line keys on `LAB || config.traditional`);
+in the obligada round your own strip shows one ❓ per die you hold. The playtest is
+`tools/e2e/liars-dice/rooms-classic.mjs`: it opens rooms in the production Firebase, so it is in
+`ALSO_FIREBASE` and CI does not run it.
+
 ### Cómo se nombran las pintas
 
 En español la mesa chilena no dice "doses" ni "treses": dice **ases, tontos, trenes, cuadras,

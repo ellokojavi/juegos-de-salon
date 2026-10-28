@@ -43,6 +43,15 @@
           "turnSecs": {
             ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
           },
+          "traditional": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "pasar": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
+          "siciliana": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
           "servidaGana": {
             ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
           },
