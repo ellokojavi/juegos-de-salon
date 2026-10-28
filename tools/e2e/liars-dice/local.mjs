@@ -45,7 +45,7 @@ console.log('my dice:', await ev(`document.querySelectorAll('#mine .die').length
 console.log('before choosing a face, the button is', await ev(`document.querySelector('#actions .btn--yellow').disabled ? 'disabled' : '⚠️ ENABLED'`));
 await ev(`document.querySelectorAll('.pinta')[4].click(); 1`); await sleep(300);
 await shot('04-bid');
-// With the Chilean names on (the default) face 5 is called "quintas" (D-71)
+// With the Chilean names on (the default) face 5 is called "quinas" (D-71)
 console.log('proposed bid:', await ev(`document.querySelector('#actions .btn--yellow').textContent`));
 console.log('switches in a duel:', await ev(`[...document.querySelectorAll('#setup-form .toggle-row b')].map(b=>b.textContent).join(', ') || 'none'`) || '(already left the setup)');
 
