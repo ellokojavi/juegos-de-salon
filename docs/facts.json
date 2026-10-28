@@ -1,5 +1,5 @@
 {
-  "version": "0.222.14",
+  "version": "0.222.16",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1415,6 +1415,7 @@
     "code/lab.mjs",
     "contact-sheet.mjs",
     "cup-games/languages.mjs",
+    "cup/archived.mjs",
     "cup/create-week.mjs",
     "cup/languages.mjs",
     "cup/notifications.mjs",
