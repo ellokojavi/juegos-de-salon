@@ -303,6 +303,25 @@ cleanup/
 Logic and tests: [`public/assets/js/transport/cleanup.js`](../public/assets/js/transport/cleanup.js) ·
 `node public/assets/js/transport/cleanup.test.mjs`.
 
+## The archive (`archive`, D-476)
+
+What nobody reads any more leaves the live tree for `archive/`, in the same database, with the
+same path under it (`torneos/ABCD` → `archive/torneos/ABCD`): putting one back is moving it back.
+The rules close it to everyone (`.read` and `.write` false); only the admin key reads or writes it.
+
+| Moves | When | Why nobody misses it |
+|---|---|---|
+| `torneos/<code>` with `torneoIntentos`, `torneoSeats`, `torneoKeys` of that code | ended more than 733 days ago and its podium is in `torneoPodios/` (or it never gets one) | the panel reads back two years at most (a year and the year before, D-348), the medal table reads `torneoPodios/`; `rankings-history.mjs` reads `archive/torneos` too |
+| `stats/<env>/days/<day>`, without `rooms/` and `live/` | older than 733 days | same panel reason; `weekly.mjs` reads 7 weeks |
+| `records/<t>/d<day>` | older than 35 days | the app reads only today's table |
+| `unoAlDiaInicio/<jid>/<day>` | older than 35 days | read only for today |
+
+`node tools/firebase/archive.mjs` is a dry run; `--apply` copies each node, reads the copy back,
+compares it and only then deletes the live one. The `firebase-archive` workflow runs it nightly at
+09:41 UTC, as a dry run until the repository variable `FIREBASE_ARCHIVE_APPLY` is `true`.
+An old Cup link stops opening once its Cup is archived (two years after it ended).
+`unoAlDia/` and `rooms/` are not archived here.
+
 ## The goodbye (`left`)
 
 The trash bin is the back door: it can only touch a room once it expired. The front one
