@@ -1,5 +1,5 @@
 {
-  "version": "0.228.1",
+  "version": "0.229.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1483,6 +1483,7 @@
     "landing-fold.mjs",
     "lang-from-url.mjs",
     "languages-common.mjs",
+    "liars-dice/classic.mjs",
     "liars-dice/languages.mjs",
     "liars-dice/local.mjs",
     "liars-dice/online.mjs",

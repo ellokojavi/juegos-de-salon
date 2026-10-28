@@ -181,3 +181,22 @@
 .hist .q { color: var(--muted); }
 .hist .down { color: var(--pink); font-weight: 900; white-space: nowrap; }
 .hist .up { color: var(--lime); font-weight: 900; white-space: nowrap; }
+
+/* ---------- Classic rules, round 2 (lab, D-490) ---------- */
+/* The open obligada round: the rivals' dice face up, your own as ❓ */
+.rivals .rival.seen .d { font-size: inherit; letter-spacing: 0; gap: 3px; }
+.rivals .rival.seen .die--sm { width: 26px; height: 26px; padding: 4px; }
+.die.hidden-die { display: grid; place-items: center; font-size: 1.6rem; grid-template: none; }
+.obligada-banner { font-size: 0.9rem; text-align: center; margin-top: 6px; }
+.obligada-notice .next-name { font-size: clamp(2rem, 10vw, 3rem); }
+.obligada-notice .hint { max-width: 34ch; margin: 8px auto 0; }
+.obligada-notice .btn { margin-top: 14px; }
+/* The first time calzar opens to a player, a line says what it is */
+.calzar-hint { margin: 8px 0 0; padding: 8px 12px; border-radius: 12px; background: rgba(46, 230, 214, 0.14); border: 1px solid var(--cyan); font-weight: 800; font-size: 0.82rem; line-height: 1.3; }
+.standing .passed { display: block; color: var(--yellow); }
+/* The variants: one folded row under the classic rules */
+.variants { background: rgba(0,0,0,0.2); border-radius: 14px; padding: 10px 14px; margin-top: 8px; }
+.variants summary { cursor: pointer; }
+.variants summary b { font-size: 0.95rem; }
+.variants summary small { display: block; color: var(--muted); font-weight: 700; font-size: 0.76rem; }
+.variants .toggle-row { background: rgba(0,0,0,0.25); }
