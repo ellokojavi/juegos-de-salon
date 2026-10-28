@@ -38,6 +38,7 @@ const ALSO_FIREBASE = new Set([
   'lang-from-url.mjs',           // opens /liars-dice/?room=WFBN
   'timeline/verdict.mjs',        // two phones in a room
   'timeline/pool.mjs',           // the second half plays in a room
+  'liars-dice/rooms-classic.mjs', // the 🧪 classic rules in a room, with 2 to 5 phones
 ]);
 
 // They test something that no longer exists: left out until someone rewrites them
