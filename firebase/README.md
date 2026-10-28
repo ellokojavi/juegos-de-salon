@@ -291,6 +291,14 @@ and any other field is rejected. While the node is empty, the home page uses `AC
 visit and keeps a copy on the device, `public/assets/js/controls.js`); only the owner's UID writes it.
 Empty, the site is as the code says. Checked by `firebase/controls.test.mjs`.
 
+## Lab flags (`flags`, D-498)
+
+`flags/<id>` = `{ state: 'lab'|'all'|'off', at }`: a runtime gate for something still in the lab,
+switched from the panel's 🚩 Lab flags tab or a flagged /labs/ card's 🚀. Public read (the page asks
+`flag(<id>)`, `public/assets/js/flags.js`: `lab` means only lab key holders, `all` everyone, `off`
+no one); only the owner's UID writes it; ids match `[a-z0-9-]{1,40}` and any other field is rejected.
+Empty, a flag is `lab`. Checked by `firebase/flags.test.mjs`.
+
 ## Publishing a lab feature (`labsPublish`, D-480)
 
 `labsPublish/<card id>` = `{ state: 'requested'|'working'|'pr'|'merged'|'failed', at, title?, note?,

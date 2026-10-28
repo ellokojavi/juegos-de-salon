@@ -470,6 +470,7 @@ node public/labs/stick/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node firebase/controls.test.mjs
+node firebase/flags.test.mjs
 node firebase/labs-publish.test.mjs
 node firebase/pin-attempts.test.mjs
 node firebase/room-limits.test.mjs
@@ -487,6 +488,7 @@ node public/assets/js/daily-points.test.mjs
 node public/assets/js/daily-recap.test.mjs
 node public/assets/js/favoritos.test.mjs
 node public/assets/js/fin.test.mjs
+node public/assets/js/flags.test.mjs
 node public/assets/js/games.test.mjs
 node public/assets/js/home-windows.test.mjs
 node public/assets/js/how-to-play-facts.test.mjs
@@ -713,7 +715,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   today/                      One a Day (D-230, D-414)
   privacy/                    The privacy page, its texts in texts.js in the four languages (D-463)
   panel/                      Private owner dashboard (docs/PANEL.md)
-  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, share-grid.js (Uno al día's spoiler-free share grid, D-482), splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, D-448, D-449), site-footer.js (the home page's footer on the screens outside a game, the one-player games' covers included; not while playing), season.js (seasonal touches on the home page and Rankings, D-457), controls.js (the panel's skins and site-feature switches, D-477), region-patterns.js (a texture per Queens region for colorblind players, D-481),how-to-play-facts.js (in the lab, who plays, how and what it costs as the first line of «Cómo se juega» on six covers, D-488), qr.js (the room QR, drawn with vendor/qrcode.js, a copy of qrcode-generator served by the site) …
+  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, share-grid.js (Uno al día's spoiler-free share grid, D-482), splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, D-448, D-449), site-footer.js (the home page's footer on the screens outside a game, the one-player games' covers included; not while playing), season.js (seasonal touches on the home page and Rankings, D-457), controls.js (the panel's skins and site-feature switches, D-477), flags.js (runtime lab flags in Firebase, lab|all|off from the panel, D-498), region-patterns.js (a texture per Queens region for colorblind players, D-481),how-to-play-facts.js (in the lab, who plays, how and what it costs as the first line of «Cómo se juega» on six covers, D-488), qr.js (the room QR, drawn with vendor/qrcode.js, a copy of qrcode-generator served by the site) …
   assets/season/              The seasonal templates, one row per date, and each date's stylesheet (docs/SEASONS.md)
   assets/js/transport/        Local, Firebase room and usage-signal transports, with their helpers
   assets/og/                  Social card images

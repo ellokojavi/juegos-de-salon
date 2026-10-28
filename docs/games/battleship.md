@@ -28,7 +28,7 @@ Flota de 10 barcos, regla de “sin contacto” con agua automática alrededor d
 
 Discarded by the owner on 2026-10-28 (nobody liked it): its card moved to La Bodega as 💤 No prosperó, and the switch stays behind the lab key.
 
-A switch **🎆 Salva** in ¿Cómo jugamos?, shown only with a lab key (`labAccess()`, card
+A switch **🎆 Salva** in ¿Cómo jugamos?, shown only with a lab key while its flag `bn-salva` is `lab` (`flag()`, D-498; card
 `#seccion-bn-salva` in `/labs/`), in all three modes; One a Day stays classic. With it on, each
 turn you fire as many shots as ships you still have afloat (5, then one fewer per ship lost), and
 the turn passes once the whole volley is answered; the extra-shot and confirm switches hide. You
