@@ -16,39 +16,51 @@ const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 export const TEXTS = {
   es: {
     players: 'De {min} a {max} jugadores, {duration} minutos.',
+    pair: '{min} o {max} jugadores, {duration} minutos.',
     one: 'Un jugador, {duration} minutos.',
     free: 'Gratis, sin instalar nada y sin cuenta.',
     or: ' o ',
     local: 'todos en un mismo celular',
+    both: 'los dos en un mismo celular',
     online: 'cada uno en su celular',
-    alone: 'solo contra el celular',
+    solo: 'solo',
+    cpu: 'contra el celular',
   },
   en: {
     players: '{min} to {max} players, {duration} minutes.',
+    pair: '{min} or {max} players, {duration} minutes.',
     one: 'One player, {duration} minutes.',
     free: 'Free, nothing to install and no account.',
     or: ' or ',
     local: 'everyone sharing one phone',
+    both: 'both sharing one phone',
     online: 'each on their own phone',
-    alone: 'alone against the phone',
+    solo: 'solo',
+    cpu: 'against the phone',
   },
   pt: {
     players: 'De {min} a {max} jogadores, {duration} minutos.',
+    pair: '{min} ou {max} jogadores, {duration} minutos.',
     one: 'Um jogador, {duration} minutos.',
     free: 'De graça, sem instalar nada e sem conta.',
     or: ' ou ',
     local: 'todos em um celular que vai passando',
+    both: 'os dois em um celular que vai passando',
     online: 'cada um no seu celular',
-    alone: 'sozinho contra o celular',
+    solo: 'sozinho',
+    cpu: 'contra o celular',
   },
   de: {
     players: '{min} bis {max} Spieler, {duration} Minuten.',
+    pair: '{min} oder {max} Spieler, {duration} Minuten.',
     one: 'Ein Spieler, {duration} Minuten.',
     free: 'Kostenlos, ohne Installation und ohne Konto.',
     or: ' oder ',
     local: 'alle an einem Handy',
+    both: 'beide an einem Handy',
     online: 'jeder an seinem eigenen Handy',
-    alone: 'allein gegen das Handy',
+    solo: 'allein',
+    cpu: 'gegen das Handy',
   },
 };
 
@@ -61,11 +73,13 @@ export function factsLine(gameId, T, lang) {
   const g = gameById(gameId);
   const [min, max] = span(g.players);
   const duration = String(g.duration).replace('-', '–');
-  const modes = [['modeLocal', 'local'], ['modeOnline', 'online'], [T.modeSolo ? 'modeSolo' : 'modeCpu', 'alone']]
+  // Two-player games say "both", not "everyone"; a solo mode is just "solo" (Timeline and Generala
+  // solo have no opponent), a CPU mode is "against the phone"
+  const modes = [['modeLocal', max === 2 ? 'both' : 'local'], ['modeOnline', 'online'], ['modeSolo', 'solo'], ['modeCpu', 'cpu']]
     .filter(([k]) => T[k]).map(([, m]) => L[m]);
   const list = modes.length > 1 ? `${modes.slice(0, -1).join(', ')}${L.or}${modes.at(-1)}` : modes[0] || '';
   return [
-    fill(max > 1 ? L.players : L.one, { min, max, duration }),
+    fill(max === 1 ? L.one : max - min === 1 ? L.pair : L.players, { min, max, duration }),
     list && `${cap(list)}.`,
     L.free,
   ].filter(Boolean).join(' ');
