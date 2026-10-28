@@ -81,6 +81,15 @@ The numbers at the top of `engine.js`: the swing (`RANGE`), the perfect margin (
 much a streak grows the block (`GROW_FROM`, `GROW`) and the speed (`SPEED_START`, `SPEED_STEP`,
 `SPEED_MAX`). If it goes to La Copa, the height needs a 0-to-100 score.
 
+## The teaser
+
+The splash `stack-pronto` ("¿Hasta dónde llega?", off until the owner turns it on from the panel's
+📣 Campaigns) announces the game without naming it: a neon tower climbs into the stars until the last
+slab stops in the air (`public/assets/splash/stack-teaser.mp4`, recorded by
+`node marketing/splash/teaser.mjs stack` from `marketing/splash/teaser/stack.html`). The scene draws its own
+pixel art and imports nothing from the game, so a change here does not reach it; its memory is
+`marketing/splash/campaigns/stack-pronto/README.md`.
+
 ## Tests
 
 `public/labs/stack/engine.test.mjs` (the slide, perfect drops, cuts on both axes, misses, growing back,
