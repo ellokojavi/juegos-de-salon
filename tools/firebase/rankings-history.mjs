@@ -190,7 +190,9 @@ if (isMain) {
     }
     process.exit(0);
   }
-  const [torneos, jugadores, records, torneoPodios, jugadorCopas] = await Promise.all(['torneos', 'jugadores', 'records', 'torneoPodios', 'jugadorCopas'].map(r => read(r, t)));
+  const [live, archived, jugadores, records, torneoPodios, jugadorCopas] = await Promise.all(['torneos', 'archive/torneos', 'jugadores', 'records', 'torneoPodios', 'jugadorCopas'].map(r => read(r, t)));
+  // The Cups the nightly archive moved out (D-476) still count in the history
+  const torneos = { ...(archived || {}), ...(live || {}) };
   const { changes, people, podiums } = history(torneos, { jugadores: jugadores || {}, records: records || {}, torneoPodios: torneoPodios || {}, jugadorCopas: jugadorCopas || {} }, Date.now(), { withLabs });
 
   const recs = Object.keys(changes).filter(r => /^records\/[^/]+\/[^/]+\/[^/]+$/.test(r));

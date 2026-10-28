@@ -96,8 +96,8 @@ export function loadActive({ fetchFn = globalThis.fetch, timeout = 2500 } = {}) 
  * The campaigns. Each one: an id (never reused: it is what a player's phone remembers), the texts
  * in the four languages, and its items, each one a game of games.js by id (name, emoji, tagline and
  * link come from there) or its own content (`title`, `text`, `href`, and `cta` for a button that is not Play). Each item shows a few seconds
- * of play: `video` (a looping MP4, muted) with its `img` as the poster, or just `img` (a still or a
- * GIF, with `still` for reduced motion). An item with no name, text or link is a teaser: its picture
+ * of play: `video` (a looping MP4, muted) with its `img` as the poster, or just `img` (a still, with
+ * `still` for reduced motion; a clip is never a GIF: an MP4 weighs a fifth, #846). An item with no name, text or link is a teaser: its picture
  * alone, wide (`ratio`). `hero` draws a campaign's one game big: its clip as wide as the window at its
  * `ratio`, and under it its card, with the text and Play. `langs` limits a campaign to some languages: the others get it in English
  * (the owner's request for a teaser in Spanish and English). Paths are from the site root; the clips
@@ -129,7 +129,7 @@ export const CAMPAIGNS = {
     langs: ['es', 'en'],
     kicker: { es: 'Muy pronto', en: 'Coming soon' },
     title: { es: 'Algo nuevo se viene…', en: 'Something new is coming…' },
-    items: [{ img: 'assets/splash/bridges-teaser.gif', still: 'assets/splash/bridges-teaser.png', ratio: '8 / 5' }],
+    items: [{ video: 'assets/splash/bridges-teaser.mp4', img: 'assets/splash/bridges-teaser-start.png', still: 'assets/splash/bridges-teaser.png', ratio: '8 / 5' }],
   },
   // 🚅 Tren en Vilo leaves the lab: the train the teaser left at the edge of the gap now crosses. Its
   // clip is a bridge being built and the bullet train going over it; Play opens the game
