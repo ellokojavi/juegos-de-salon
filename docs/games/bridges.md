@@ -157,9 +157,9 @@ The whale leans steeply going out and coming back (owner's request), and leaps h
 a game where each one comes in stage 1.
 
 Its sprites also draw the home page's first teaser (D-430): `tren-en-vilo-pronto`, on through
-2026-10-28, a GIF of a train stopping at the edge of a gap, no name and no link, made by
+2026-10-28, a looping MP4 (a GIF until #846) of a train stopping at the edge of a gap, no name and no link, made by
 `marketing/splash/teaser.mjs` from `marketing/splash/teaser/bridges.html`, which imports `pixel.js`.
-A sprite changed there changes the teaser only once the GIF is remade. At launch the splash
+A sprite changed there changes the teaser only once the MP4 is remade. At launch the splash
 `tren-en-vilo-ya` replaced it (D-456): a clip of a bridge built and crossed (`public/assets/splash/bridges.mp4`),
 the game's name, what it is, that it is in Uno al día and La Copa, and ▶ Jugar
 (`marketing/splash/campaigns/tren-en-vilo-ya/`).
