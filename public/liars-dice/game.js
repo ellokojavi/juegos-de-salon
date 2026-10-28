@@ -189,7 +189,9 @@ async function act() {
         const salt = randomSalt();
         S.secrets[v.round] = { dice: dados, salt };
         saveSession();
-        S.transport.send({ t: 'roll', from: r, h: await sha256(writeDice(dados) + salt) });
+        // In the open obligada round (D-488) everyone must see the others' die, so it travels in the
+        // clear along with its hash; each screen hides the player's own (honour, as at the table)
+        S.transport.send({ t: 'roll', from: r, h: await sha256(writeDice(dados) + salt), ...(v.rules.open ? { d: writeDice(dados) } : {}) });
       } else {
         S.transport.send({ t: 'roll', from: r, d: writeDice(dados) });
       }
@@ -213,9 +215,12 @@ async function act() {
     const mine = diceOf(v, 'B');
     if (!mine) return;
     // Los dados que le quedan al rival: sin eso no sabe a quién apretar (ver docs/games/liars-dice.md)
+    // In the open obligada round (D-488) it sees the others' dice and not its own
+    const vistos = v.rules.open ? v.alive.filter(r => r !== 'B').flatMap(r => diceOf(v, r) || []) : null;
     const jugada = botMove({
       myDice: mine, bid: v.bid, totalDice: v.totalDice, canCalzar: v.canCalzar, rules: v.rules,
       rivales: v.alive.filter(r => r !== 'B').map(r => v.st[r].dice),
+      seen: vistos, canPass: v.canPass, passStanding: v.passStanding,
     });
     setTimeout(() => {
       if (!S || S.mode !== 'cpu') return;
@@ -294,6 +299,9 @@ function render() {
   if (v.done) return renderResult(v);
   showScreen('screen-play');
 
+  // The obligada round is announced to the whole table, once per phone and round (D-488)
+  if (v.obligada && S.obligadaSeen !== v.round) { S.obligadaSeen = v.round; return showObligada(v); }
+
   // 2. En un celular, el que tiene que jugar todavía no tiene el aparato en la mano
   if (S.mode === 'local' && v.phase === 'bid' && v.current && S.uiRole !== v.current) return showPass(v.current);
   if (chat) chat.show();
@@ -301,22 +309,45 @@ function render() {
   renderPlay(v);
 }
 
-/** La tira de arriba: cuántos dados le quedan a cada uno. Nunca cuáles. */
-function renderRivals(v) {
+/**
+ * La tira de arriba: cuántos dados le quedan a cada uno. Nunca cuáles, salvo en la ronda
+ * obligada abierta (D-488): ahí se ven los de los demás, nunca los propios.
+ */
+function renderRivals(v, yo) {
   const box = $('#rivals');
   box.innerHTML = '';
   for (const r of M.players) {
     const s = v.st[r];
-    box.append(el('div', { class: 'rival' + (v.current === r ? ' turn' : '') + (s.out ? ' out' : '') },
+    const vistos = v.rules.open && r !== yo && !s.out ? diceOf(v, r) : null;
+    box.append(el('div', { class: 'rival' + (v.current === r ? ' turn' : '') + (s.out ? ' out' : '') + (vistos ? ' seen' : '') },
       el('span', { class: 'n' }, nameOf(r)),
-      el('span', { class: 'd' }, s.out ? '—' : '🎲'.repeat(s.dice)),
+      vistos ? el('span', { class: 'd dice-row' }, ...vistos.map(d => dieEl(d, { small: true })))
+        : el('span', { class: 'd' }, s.out ? '—' : r === yo && v.rules.open ? '❓' : '🎲'.repeat(s.dice)),
     ));
   }
 }
 
+/** The big notice of the obligada round, for everyone at the table (D-488). */
+function showObligada(v) {
+  // One phone: what the previous player saw stays under the notice, and it holds the next one's die
+  $('#rivals').innerHTML = ''; $('#mine').innerHTML = '';
+  const local = S.mode === 'local';
+  let next = null;
+  const stage = el('div', { class: 'stage pop obligada-notice' },
+    el('div', { class: 'count' }, '☝️'),
+    el('div', { class: 'next-name' }, T.obligadaTitle),
+    el('div', { class: 'outcome' }, fmt(T.obligadaWho, { name: nameOf(v.opener) })),
+    el('p', { class: 'hint' }, T.obligadaOpen),
+    local ? el('p', { class: 'hint' }, T.obligadaLocal) : null,
+    el('button', { class: 'btn btn--cyan', onClick: e => { e.stopPropagation(); next && next(); } }, T.obligadaOk),
+  );
+  SFX.reveal(); vibrate([40, 40, 40]);
+  next = showHandoff([stage], () => onChange(), { tapAdvances: false });
+}
+
 function renderPlay(v) {
   const yo = S.mode === 'online' ? S.role : S.mode === 'cpu' ? 'A' : S.uiRole;
-  renderRivals(v);
+  renderRivals(v, yo);
   const miTurno = v.current === yo;
   $('#status-who').textContent = encabezado(v, miTurno);
   const esperando = v.waiting.filter(r => r !== yo);
@@ -336,15 +367,18 @@ function renderPlay(v) {
   else {
     agite.onJolt = null;
     soltarVaso();
-    mine.append(el('div', { class: 'mine-label' }, T.yourDice));
+    // In the open obligada round your own die is the one you do not see (D-488)
+    const oculto = v.rules.open;
+    mine.append(el('div', { class: 'mine-label' }, oculto ? T.yourDieHidden : T.yourDice));
     const giros = S.giros?.[`${v.round}:${yo}`];
     const fila = el('div', { class: 'dice-row' }, ...dados.map((d, i) => {
+      if (oculto) return el('span', { class: 'die hidden-die', 'aria-label': '?' }, '❓');
       const dado = dieEl(d);
       if (giros?.[i]) dado.style.rotate = `${giros[i]}deg`;   // as it landed on the cloth
       return dado;
     }));
     mine.append(fila);
-    if (v.obligada) mine.append(el('div', { class: 'wild-note' }, '☝️ ', T.obligadaNote));
+    if (v.obligada) mine.append(el('div', { class: 'wild-note obligada-banner' }, '☝️ ', fmt(T.obligadaWho, { name: nameOf(v.opener) }), ' · ', T.obligadaNote));
     else if (dados.includes(1)) mine.append(el('div', { class: 'wild-note' }, '⚀ ', T.aceWild));
     const llegada = S.llegada;
     if (llegada?.clave === `${v.round}:${yo}`) { S.llegada = null; llegar(mine, fila, llegada); }
@@ -359,6 +393,7 @@ function renderPlay(v) {
       el('span', { class: 'lbl' }, v.bid.by === yo ? T.standingYou : fmt(T.standing, { name: nameOf(v.bid.by) })),
       bidEl(v.bid.n, v.bid.p),
       el('span', { class: 'word' }, pintaName(v.bid.n, v.bid.p)),
+      v.passStanding ? el('span', { class: 'lbl passed' }, fmt(T.passed, { name: nameOf(v.pass.by) })) : null,
     ));
   } else {
     // The invitation to bid is for the one who opens; the rest of the room is told who does
@@ -438,14 +473,30 @@ function renderActions(v, yo, miTurno, tapados = false) {
     fila.append(el('button', {
       class: 'btn btn--sm', title: fmt(T.dudoHint, { n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) }),
       onClick: () => { S.sel = null; SFX.reveal(); vibrate([30, 40, 30]); S.transport.send({ t: 'dudo', from: v.current }); },
-    }, T.dudoDo));
+      // With a pass standing (variant Pasar, D-488), doubting is doubting the pass
+    }, v.passStanding ? fmt(T.dudoPasoDo, { name: nameOf(v.pass.by) }) : T.dudoDo));
     if (v.canCalzar) {
       fila.append(el('button', {
         class: 'btn btn--cyan btn--sm', title: fmt(T.calzaHint, { n: v.bid.n }),
         onClick: () => { S.sel = null; SFX.reveal(); vibrate([30, 40, 30]); S.transport.send({ t: 'calza', from: v.current }); },
       }, T.calzaDo));
     }
+    if (v.canPass) {
+      fila.append(el('button', {
+        class: 'btn btn--ghost btn--sm', title: T.pasarHint,
+        onClick: () => { S.sel = null; SFX.tap(); S.transport.send({ t: 'paso', from: v.current }); },
+      }, T.pasoDo));
+    }
     acciones.append(fila);
+    // The first time calzar is open to a player in a game, it says what it is (D-488): the owner's
+    // table of six never noticed the button, which shows up only once the bid reaches half the dice
+    S.calzarVisto ||= new Set();
+    const aviso = `${v.round}:${v.bids.length}:${v.current}`;
+    // lab: #seccion-dudo-tradicional (to everyone once the owner validates it, D-409)
+    if (LAB && v.canCalzar && (!S.calzarVisto.has(v.current) || S.calzarAviso === aviso)) {
+      S.calzarVisto.add(v.current); S.calzarAviso = aviso;
+      acciones.append(el('p', { class: 'calzar-hint' }, '🎯 ', fmt(T.calzarFirst, { n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) })));
+    }
   }
   box.append(acciones);
 }
@@ -512,7 +563,7 @@ function escucharAgite() {
 
 /** Are this role's dice still to roll? */
 function cubiertos(v, role, dados) {
-  return !!M.config.shake && !!dados.length && !S.shaken.has(`${v.round}:${role}`) && v.phase !== 'open';
+  return !!M.config.shake && !!dados.length && !S.shaken.has(`${v.round}:${role}`) && v.phase !== 'open' && !v.rules?.open;
 }
 
 /**
@@ -878,6 +929,8 @@ function setupChat(mode) {
 
 /* ---------- Pase del celular (C-9) ---------- */
 function showPass(role) {
+  // One phone in the open obligada round: the screen under the pass shows the next player's die
+  $('#rivals').innerHTML = ''; $('#mine').innerHTML = '';
   showHandoff([passBlock({ label: T.hoPass, name: nameOf(role), button: T.hoReady })],
     () => { S.uiRole = role; SFX.pass(); render(); }, { tapAdvances: false });
 }
@@ -902,12 +955,13 @@ function showReveal(v) {
     ));
   }
 
-  const quien = last.type === 'dudo'
+  const quien = last.type === 'dudoPaso' ? fmt(T.saidDudoPaso, { name: nameOf(last.by), other: nameOf(last.of) })
+    : last.type === 'dudo'
     ? fmt(T.saidDudo, { name: nameOf(last.by), n: last.bid.n, pinta })
     : fmt(T.saidCalza, { name: nameOf(last.by), n: last.bid.n, pinta });
   const desenlace = last.gainer ? fmt(T.gainsDie, { name: nameOf(last.gainer) })
     : last.fuera ? fmt(T.isOut, { name: nameOf(last.fuera) })
-    : fmt(T.losesDie, { name: nameOf(last.loser) });
+    : fmt(last.lost === 2 ? T.losesTwo : T.losesDie, { name: nameOf(last.loser) });
 
   const stage = el('div', { class: 'stage pop reveal' },
     el('div', { class: 'hint' }, quien),
@@ -917,6 +971,7 @@ function showReveal(v) {
     el('div', { class: 'count' }, fmt(last.count === 1 ? T.revealCountOne : T.revealCount,
       { n: last.count, pinta: pintaName(last.count, last.bid.p) })),
     last.type === 'calza' ? el('div', { class: 'exact ' + (last.exact ? 'yes' : 'no') }, last.exact ? T.exactYes : T.exactNo) : null,
+    last.type === 'dudoPaso' ? el('div', { class: 'exact ' + (last.exact ? 'yes' : 'no') }, last.exact ? T.pasoYes : T.pasoNo) : null,
     el('div', { class: 'outcome' }, desenlace),
     selloVerificado(last),
     el('div', { class: 'hint', style: 'margin-top:10px' }, T.goOn),
@@ -1155,15 +1210,26 @@ function interruptor(encendido, label, hint, onChange) {
  * costs a die, so each table chooses it).
  */
 function ajustesDelCacho() {
-  let shake = true, reloj = false, traditional = false;
+  let shake = true, reloj = false, traditional = false, pasar = false, siciliana = false;
   return {
-    switches: () => [
-      interruptor(shake, T.shakeLabel, T.shakeHint, v => { shake = v; }),
-      interruptor(reloj, fmt(T.timerLabel, { n: TURN_SECS }), T.timerHint, v => { reloj = v; }),
+    switches: () => {
+      const base = [
+        interruptor(shake, T.shakeLabel, T.shakeHint, v => { shake = v; }),
+        interruptor(reloj, fmt(T.timerLabel, { n: TURN_SECS }), T.timerHint, v => { reloj = v; }),
+      ];
+      if (!LAB) return base;
+      // The regional variants (D-488) live in one folded row that shows only with the classic
+      // rules on, so the setup stays calm; each one off by default.
+      const fila = el('details', { class: 'variants' },
+        el('summary', {}, el('b', {}, T.variantsLabel), el('small', {}, T.variantsHint)),
+        interruptor(pasar, T.pasarLabel, T.pasarHint, v => { pasar = v; }),
+        interruptor(siciliana, T.sicilianaLabel, T.sicilianaHint, v => { siciliana = v; }),
+      );
+      fila.hidden = !traditional;
       // lab: #seccion-dudo-tradicional
-      LAB ? interruptor(traditional, `🧪 ${T.traditionalLabel}`, T.traditionalHint, v => { traditional = v; }) : null,
-    ].filter(Boolean),
-    config: () => ({ shake, turnSecs: reloj ? TURN_SECS : 0, ...(LAB && traditional ? { traditional: true } : {}) }),
+      return [...base, interruptor(traditional, `🧪 ${T.traditionalLabel}`, T.traditionalHint, v => { traditional = v; fila.hidden = !v; }), fila];
+    },
+    config: () => ({ shake, turnSecs: reloj ? TURN_SECS : 0, ...(LAB && traditional ? { traditional: true, pasar, siciliana } : {}) }),
   };
 }
 

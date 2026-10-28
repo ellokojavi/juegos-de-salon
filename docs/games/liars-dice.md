@@ -53,8 +53,35 @@ lab key holders (`labAccess()`; card `#seccion-dudo-tradicional` in `/labs/`). W
 
 The engine: `minBid(prev, pinta, rules)` and `bidOk(…, rules)` with `rules = { obligada, noAceOpen }`
 (`Infinity` means not allowed); `buildState` returns `rules`, `obligada` and `last.obligada`; the bot
-takes the same `rules`. The audit against the traditional rules, and the questions left for the
-owner (table variants not built), are in #897.
+takes the same `rules`. The audit against the traditional rules is in #897.
+
+**Round two (D-490, the owner's answers in #897).** Also under the switch:
+
+- **Into aces is half plus one** when even (6 fives → 4 aces), half rounded up when odd.
+- **Calzar** also in a duel (D-71 stays for the public game), and a player with **one die may calzar
+  at any time**. A correct calza at five keeps five. The first time the button opens to a player
+  in a game, a cyan line under it says what calzar is (`.calzar-hint`).
+- **The obligada round is automatic and announced**: a full-screen notice for everyone (☝️ Ronda
+  obligada · «X quedó con un dado»), also with two players left, and a line in the hand all round.
+- **It is open**: the rivals' strip shows each other player's die face up and your own as ❓; your
+  hand shows ❓ ("Tu dado: esta ronda no lo ves"), and the shake does not apply that round.
+  In a room the dice of that round travel in the clear (`roll` with `d` and `h`), so nobody has to
+  reveal at the end; each phone hides its own. **One phone:** the pass screen and the notice clear
+  the table under them (the previous screen showed the next player's die), and the notice asks
+  whoever does not hold the phone not to look at it, since every screen shows their die.
+- **Changing the face**: in the obligada round a player other than the opener who also has one die
+  may change the face, always raising the quantity (`rules.changeFace`).
+- **Variantes**, a folded row that shows only with the switch on, each off: **Pasar** (five dice
+  all different, all equal or a full house: pass once per round; the next player may doubt the
+  pass and only that hand is judged; a bluffed pass is allowed) and **Dudar a la siciliana**
+  (doubting the game's first bid is worth two dice). Picado and juego sucio are not built (#897).
+- **Why nobody saw Calzar at a table of five**: it was on and drawn right in every mode, but it
+  shows only once the bid reaches half the dice (13 of 25); simulated, a five-player game first
+  allows it around round 11 of ~23, in 16% of the rounds, with nothing announcing it.
+
+The bot: in the open round it counts the dice it sees (`seen`) and treats its own as unknown; it
+passes with a qualifying hand half the time and doubts a pass about a third of the time.
+Tested end to end by `tools/e2e/liars-dice/classic.mjs`.
 
 ### Cómo se nombran las pintas
 

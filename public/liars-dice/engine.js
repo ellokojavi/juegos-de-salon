@@ -57,9 +57,12 @@ export function countPinta(dice, pinta, { acesWild = true } = {}) {
 export function minBid(prev, pinta, rules = {}) {
   // Traditional rules (lab, #897): no opening in aces, and in the obligada round the pinta is
   // fixed by the opener and only the quantity rises. Infinity means "not allowed".
-  if (rules.obligada) return !prev ? 1 : pinta === prev.p ? prev.n + 1 : Infinity;
+  // A player who also has one die may change the face there, always for a higher quantity
+  // (D-488, Wikipedia: "puede cambiar la pinta por una cantidad mayor").
+  if (rules.obligada) return !prev ? 1 : pinta === prev.p || rules.changeFace ? prev.n + 1 : Infinity;
   if (!prev) return rules.noAceOpen && pinta === 1 ? Infinity : 1;
-  if (pinta === 1) return prev.p === 1 ? prev.n + 1 : Math.ceil(prev.n / 2);
+  // Into aces: half rounded up, or with the classic rules half plus one when even (6 fives → 4 aces, D-488)
+  if (pinta === 1) return prev.p === 1 ? prev.n + 1 : rules.halfPlusOne ? Math.floor(prev.n / 2) + 1 : Math.ceil(prev.n / 2);
   if (prev.p === 1) return prev.n * 2 + 1;
   return pinta > prev.p ? prev.n : prev.n + 1;
 }
@@ -83,8 +86,21 @@ export const MIN_CALZAR = 3;
  * Lo de los tres jugadores es porque en un duelo solo hay una mano tapada, así que la cuenta
  * exacta deja de ser un riesgo y pasa a ser aritmética: el que calza ya sabe casi todo.
  */
-export function calzarOk(bid, totalDice, jugadores = MIN_CALZAR) {
-  return !!bid && jugadores >= MIN_CALZAR && bid.n * 2 >= totalDice;
+export function calzarOk(bid, totalDice, jugadores = MIN_CALZAR, rules = {}) {
+  // Classic rules (lab, D-488): calzar also in a duel, and a player with one die may calzar at any time
+  if (!bid || jugadores < (rules.classic ? MIN_PLAYERS : MIN_CALZAR)) return false;
+  return (rules.classic && rules.oneDie) || bid.n * 2 >= totalDice;
+}
+
+/**
+ * Pasar (classic-rules variant, D-488): a player with all five dice may pass once per round when the
+ * hand is all different, all the same, or a full house. Anyone may pass bluffing; the next player
+ * may doubt the pass, and then only that hand is judged.
+ */
+export function pasaOk(dice) {
+  if (!dice || dice.length !== DICE_PER_PLAYER) return false;
+  const counts = Object.values(dice.reduce((a, d) => ({ ...a, [d]: (a[d] || 0) + 1 }), {})).sort();
+  return counts.length === 5 || counts.length === 1 || counts.join() === '2,3';
 }
 
 /* ------------------------------------------------------------------ */
@@ -177,12 +193,21 @@ const unoDe = (lista, rand) => lista[Math.min(lista.length - 1, Math.floor(rand(
  */
 export function botMove({
   myDice, bid, totalDice, canCalzar = false, rivales = [], rules = {},
+  seen = null, canPass = false, passStanding = false,
   agresividad = AGRESIVIDAD, mezcla = MEZCLA, rand = Math.random,
 }) {
   const miente = que => rand() < agresividad * mezcla[que];
-  const unknown = Math.max(0, totalDice - myDice.length);
+  // In the open obligada round (D-488) the bot sees the others' dice and not its own: it counts
+  // what it sees, and its own dice are the unknown ones.
+  const contados = seen || myDice;
+  const unknown = Math.max(0, totalDice - contados.length);
+  // A pass on the table (variant Pasar): about one hand in seven qualifies, so it is doubted now and then
+  if (passStanding && rand() < 0.35) return { t: 'dudo' };
   const wild = !rules.obligada;
-  const mine = pinta => countPinta(myDice, pinta, { acesWild: wild });
+  const mine = pinta => countPinta(contados, pinta, { acesWild: wild });
+  // With a hand that allows passing, passing is free: half the time it does, and always rather than doubt
+  const pasar = canPass && pasaOk(myDice);
+  if (pasar && bid && rand() < 0.5) return { t: 'paso' };
   const creer = (n, p) => binomAtLeast(n - mine(p), unknown, chanceOf(p, wild));
 
   // Calzar: solo cuando la cantidad exacta es de verdad probable
@@ -211,7 +236,7 @@ export function botMove({
   // Contra la pared se duda antes: con uno o dos dados propios se ve menos mesa, la cuenta de
   // uno vale menos y seguir subiendo es apostar a ciegas.
   const umbral = 0.30 + (myDice.length <= 2 ? 0.15 : 0) - agresividad * 0.05;
-  if (creo < umbral && (!mejor || mejor.chance < 0.55)) return { t: 'dudo' };
+  if (creo < umbral && (!mejor || mejor.chance < 0.55)) return pasar ? { t: 'paso' } : passStanding && mejor ? apuesta(mejor) : { t: 'dudo' };
   if (!mejor) return { t: 'dudo' };
 
   // Apretar al que va perdiendo
@@ -267,11 +292,25 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
     const obligada = !!config.traditional && !!opener && st[opener].dice === 1 && !st[opener].obligado;
     if (obligada) st[opener].obligado = true;
     return {
-      n: history.length, opener, rolls: {}, bid: null, bids: [], obligada,
+      n: history.length, opener, rolls: {}, bid: null, bids: [], obligada, pass: null, passed: {},
       end: null, opens: {}, phase: 'roll', current: opener,
     };
   };
-  const rulesOf = r => ({ obligada: !!r.obligada, noAceOpen: !!config.traditional });
+  const classic = !!config.traditional;
+  /**
+   * The rules for `who` in this round. With the classic rules (D-488): going into aces is half
+   * plus one, the obligada round is open (everyone sees the others' dice, not their own), and in
+   * it a player who also has one die may change the face.
+   */
+  const rulesOf = (r, who = r.current) => ({
+    obligada: !!r.obligada, noAceOpen: classic, halfPlusOne: classic, open: !!r.obligada,
+    changeFace: !!r.obligada && !!who && who !== r.opener && st[who]?.dice === 1,
+  });
+  const calzaRules = who => ({ classic, oneDie: !!who && st[who]?.dice === 1 });
+  const pasarOn = classic && !!config.pasar;
+  const canPassNow = (r, who) => pasarOn && !!r.bid && !r.passed[who] && st[who]?.dice === perPlayer && perPlayer === DICE_PER_PLAYER;
+  // The pass still standing: nobody has bid since, so the player on turn may doubt it
+  const passStands = r => !!r.pass && r.pass.at === r.bids.length;
   round = nuevaRonda();
 
   /** Los dados de la ronda que este aparato conoce: del roll en claro o del open. */
@@ -299,8 +338,16 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
     const todos = Object.values(dice).flat();
     const count = countPinta(todos, r.bid.p, { acesWild: !r.obligada });
     const exact = count === r.bid.n;
-    let loser = null, gainer = null;
+    let loser = null, gainer = null, lost = 1;
+    if (r.end.type === 'dudoPaso') {
+      // Only the passer's hand is judged: if it allowed passing, the doubter was wrong
+      const ok = pasaOk(dice[r.end.of]);
+      loser = ok ? r.end.by : r.end.of;
+      return terminar(r, { type: 'dudoPaso', obligada: !!r.obligada, by: r.end.by, of: r.end.of, bid: r.bid, count, exact: ok, loser, gainer: null, dice, lost });
+    }
     if (r.end.type === 'dudo') {
+      // Dudar a la siciliana (variant, D-488): doubting the game's first bid is worth two dice
+      if (classic && config.siciliana && r.n === 0 && r.bids.length === 1) lost = 2;
       // Si hay tantos como se apostó o más, se equivocó quien dudó
       loser = count >= r.bid.n ? r.end.by : r.bid.by;
     } else if (exact) {
@@ -308,7 +355,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
     } else {
       loser = r.end.by;
     }
-    terminar(r, { type: r.end.type, obligada: !!r.obligada, by: r.end.by, bid: r.bid, count, exact, loser, gainer, dice });
+    terminar(r, { type: r.end.type, obligada: !!r.obligada, by: r.end.by, bid: r.bid, count, exact, loser, gainer, dice, lost });
   };
 
   /**
@@ -318,7 +365,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
    */
   const terminar = (r, end) => {
     const { loser, gainer } = end;
-    if (loser) st[loser].dice = Math.max(0, st[loser].dice - 1);
+    if (loser) st[loser].dice = Math.max(0, st[loser].dice - (end.lost || 1));
     if (gainer) st[gainer].dice = Math.min(perPlayer, st[gainer].dice + 1);
     const fuera = loser && st[loser].dice === 0 ? loser : null;
     if (fuera) st[fuera].out = true;
@@ -350,13 +397,19 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
       if (play.from !== round.current) continue;
       if (play.t === 'bid') {
         const next = { n: Number(play.n), p: Number(play.p) };
-        if (!bidOk(round.bid, next, totalNow(), rulesOf(round))) continue;
+        if (!bidOk(round.bid, next, totalNow(), rulesOf(round, play.from))) continue;
         round.bid = { ...next, by: play.from };
         round.bids.push(round.bid);
         round.current = nextIn(vivos, play.from);
+      } else if (play.t === 'paso' && canPassNow(round, play.from)) {
+        round.passed[play.from] = true;
+        round.pass = { by: play.from, at: round.bids.length };
+        round.current = nextIn(vivos, play.from);
+      } else if (play.t === 'dudo' && round.bid && passStands(round)) {
+        cerrar(round, { type: 'dudoPaso', by: play.from, of: round.pass.by });
       } else if (play.t === 'dudo' && round.bid) {
         cerrar(round, { type: 'dudo', by: play.from });
-      } else if (play.t === 'calza' && config.calzar !== false && calzarOk(round.bid, totalNow(), vivos.length)) {
+      } else if (play.t === 'calza' && config.calzar !== false && calzarOk(round.bid, totalNow(), vivos.length, calzaRules(play.from))) {
         cerrar(round, { type: 'calza', by: play.from });
       } else if (play.t === 'timeout' && config.turnSecs > 0 && Number(play.r) === round.n) {
         // Only the player on turn sends it, from their own phone, and only for this round
@@ -387,9 +440,10 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
     phase: done ? 'done' : round.phase,
     players, st, alive: vivos, totalDice,
     round: round.n, opener, current, waiting,
-    rules: rulesOf(round), obligada: !!round.obligada,
+    rules: rulesOf(round, current), obligada: !!round.obligada,
+    canPass: !!current && canPassNow(round, current), pass: round.pass, passStanding: passStands(round),
     rolls: round.rolls, bid: round.bid, bids: round.bids, end: round.end,
-    canCalzar: config.calzar !== false && calzarOk(round.bid, totalDice, vivos.length),
+    canCalzar: config.calzar !== false && calzarOk(round.bid, totalDice, vivos.length, calzaRules(current)),
     last, history, done,
     winner: done ? (vivos[0] || null) : null,
   };
