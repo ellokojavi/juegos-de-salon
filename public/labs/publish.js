@@ -25,9 +25,8 @@ const titleOf = card => $('h2', card)?.textContent.trim() || card.id;
 const when = ms => new Date(ms).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 const link = (href, text) => el('a', { href, target: '_blank', rel: 'noopener' }, text);
 
-const WAIT = 'No es inmediato: el Mac mini revisa los pedidos cada 5 minutos, una sesión de Claude hace el cambio, '
-  + 'pasa las revisiones y abre el PR, y las pruebas de GitHub toman unos 10 minutos más. En total, entre 30 y 60 minutos; '
-  + 'un juego, que lleva la revisión completa, puede tardar más. Si el Mac mini está apagado, empieza cuando se encienda.';
+const WAIT = 'No es inmediato: tarda entre 30 y 60 minutos (un juego, algo más). El Mac mini revisa los pedidos cada 5 minutos, '
+  + 'Claude hace el cambio y abre el PR, y se fusiona solo cuando pasan las pruebas. Si el Mac mini está apagado, empieza cuando se encienda.';
 
 /** What a card shows for its request. Pure but for the DOM nodes: one line per fact, the links last. */
 export function statusOf(id, e) {
@@ -35,7 +34,7 @@ export function statusOf(id, e) {
   const search = `${REPO}/pulls?q=is%3Apr+head%3A${branch}`;
   const pr = e.pr && [link(`${REPO}/pull/${e.pr}`, `🔀 Ver el PR #${e.pr}`), link(`${REPO}/pull/${e.pr}/checks`, '🧪 Estado de las pruebas'), link(`${PREVIEWS}/${branch}/`, '🔍 Vista previa')];
   switch (e.state) {
-    case 'requested': return { tone: 'wait', lines: [`⏳ Pedido el ${when(e.at)}. Esperando que el Mac mini lo tome.`, WAIT, `El PR saldrá de la rama ${branch}.`], links: [link(search, '🔎 Buscar su PR en GitHub')], cancel: true };
+    case 'requested': return { tone: 'wait', lines: [`⏳ Pedido el ${when(e.at)}: esperando que el Mac mini lo tome.`, WAIT, `El PR saldrá de la rama ${branch}.`], links: [link(search, '🔎 Buscar su PR en GitHub')], cancel: true };
     case 'working': return { tone: 'wait', lines: [`🛠️ Claude está trabajando en esto desde ${when(e.started || e.at)}: quita la puerta del laboratorio, mueve la tarjeta a La Bodega y pasa las revisiones.`, 'Cuando abra el PR, aparece acá con el link a sus pruebas.'], links: [link(search, '🔎 Buscar su PR en GitHub')] };
     case 'pr': return { tone: 'wait', lines: [`🔀 El PR #${e.pr} está abierto con auto-merge: se fusiona solo cuando pasen las pruebas, y unos minutos después queda publicado para todos.`], links: pr };
     case 'merged': return { tone: 'ok', lines: [`✅ Fusionado el ${when(e.done || e.at)}. El sitio se publica solo en unos minutos; con esa versión, esta tarjeta pasa a La Bodega.`], links: pr || [] };
