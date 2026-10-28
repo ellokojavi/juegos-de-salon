@@ -1,5 +1,5 @@
 {
-  "version": "0.227.10",
+  "version": "0.228.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1418,6 +1418,7 @@
     "battleship/local.mjs",
     "battleship/online.mjs",
     "battleship/placement.mjs",
+    "battleship/salvo.mjs",
     "bridges/game.mjs",
     "bulls-and-cows/chat.mjs",
     "bulls-and-cows/choose-box.mjs",

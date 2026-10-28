@@ -3,7 +3,7 @@
  "battleship/alignment.mjs": 44,
  "battleship/languages.mjs": 48,
  "battleship/local.mjs": 120,
- "battleship/placement.mjs": 10,
+ "battleship/placement.mjs": 10, "battleship/salvo.mjs": 30,
  "bridges/game.mjs": 81,
  "bulls-and-cows/choose-box.mjs": 7,
  "bulls-and-cows/languages.mjs": 100,

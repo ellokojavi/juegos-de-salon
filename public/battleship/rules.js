@@ -39,6 +39,7 @@ const ES = {
   agua: 'Agua', tocado: '¡Tocado!', hundido: '¡Hundido!', sunkShip: 'Hundiste el {ship} de {name}', sunkMine: '¡Te hundieron el {ship}!',
   shotAt: '{name} disparó a {cell}',
   hoResult: 'Resultado', hoContinue: 'Seguir',
+  salvo: 'Salva', salvoHint: 'Disparas tantas veces como barcos te queden a flote, y ves todo junto.', salvoSub: 'Marca {n} casillas y toca ¡Fuego!', salvoMine: 'Tu salva', salvoOf: 'Salva de {name}',
   // resultado
   winTitle: '¡Ganó {name}!', youWin: '¡Ganaste!', youLose: 'Te hundieron… esta vez.', stats: '{shots} disparos · {acc}% puntería', fleetsWere: 'Las flotas eran',
   verified: 'verificado ✅', notVerified: '⚠️ no coincide (¿trampa?)', replayTitle: '🔎 Ver todos los disparos', shotsOf: 'Disparos de {name}',
@@ -78,6 +79,7 @@ const EN = {
   agua: 'Miss', tocado: 'Hit!', hundido: 'Sunk!', sunkShip: 'You sank {name}\'s {ship}', sunkMine: 'They sank your {ship}!',
   shotAt: '{name} fired at {cell}',
   hoResult: 'Result', hoContinue: 'Continue',
+  salvo: 'Salvo', salvoHint: 'You fire once per ship you still have afloat, and see it all at once.', salvoSub: 'Mark {n} cells and tap Fire!', salvoMine: 'Your salvo', salvoOf: '{name}\'s salvo',
   winTitle: '{name} wins!', youWin: 'You win!', youLose: 'You got sunk… this time.', stats: '{shots} shots · {acc}% accuracy', fleetsWere: 'The fleets were',
   verified: 'verified ✅', notVerified: '⚠️ mismatch (cheating?)', replayTitle: '🔎 See all shots', shotsOf: '{name}\'s shots',
   rematch: '🔁 Rematch', changeMode: 'Change mode', backMenu: 'Back to menu',
@@ -119,6 +121,7 @@ const PT = {
   agua: 'Água', tocado: 'Acertou!', hundido: 'Afundou!', sunkShip: 'Você afundou o {ship} de {name}', sunkMine: 'Afundaram o seu {ship}!',
   shotAt: '{name} atirou em {cell}',
   hoResult: 'Resultado', hoContinue: 'Continuar',
+  salvo: 'Salva', salvoHint: 'Você atira uma vez por navio que ainda tem flutuando, e vê tudo junto.', salvoSub: 'Marque {n} casas e toque em Fogo!', salvoMine: 'Sua salva', salvoOf: 'Salva de {name}',
   // resultado
   winTitle: '{name} ganhou!', youWin: 'Você ganhou!', youLose: 'Afundaram você… desta vez.', stats: '{shots} tiros · {acc}% de pontaria', fleetsWere: 'As frotas eram',
   verified: 'verificado ✅', notVerified: '⚠️ não confere (roubou?)', replayTitle: '🔎 Ver todos os tiros', shotsOf: 'Tiros de {name}',
@@ -160,6 +163,7 @@ const DE = {
   agua: 'Wasser', tocado: 'Treffer!', hundido: 'Versenkt!', sunkShip: '{ship} von {name} versenkt!', sunkMine: 'Dein {ship} wurde versenkt!',
   shotAt: '{name} schoss auf {cell}',
   hoResult: 'Ergebnis', hoContinue: 'Weiter',
+  salvo: 'Salve', salvoHint: 'Du schießt einmal pro Schiff, das du noch hast, und siehst alles auf einmal.', salvoSub: 'Markiere {n} Felder und tippe auf Feuer!', salvoMine: 'Deine Salve', salvoOf: 'Salve von {name}',
   // Ergebnis
   winTitle: '{name} gewinnt!', youWin: 'Du hast gewonnen!', youLose: 'Versenkt… diesmal.', stats: '{shots} Schüsse · {acc} % Trefferquote', fleetsWere: 'Die Flotten waren',
   verified: 'geprüft ✅', notVerified: '⚠️ passt nicht (geschummelt?)', replayTitle: '🔎 Alle Schüsse ansehen', shotsOf: 'Schüsse von {name}',

@@ -186,6 +186,32 @@ export function nextShooter(shooter, result, extraShot) {
   return shooter === 'A' ? 'B' : 'A';
 }
 
+/**
+ * Salvo (#894): each turn the shooter fires as many shots as ships they still have afloat, and
+ * the turn passes once the whole volley is answered. Pure: from the shots in order (each
+ * `{ from, result }`, `result` null while unanswered) it says who fires, how big the volley is,
+ * how many shots are left to fire in it, and which shots form it and the volley before it.
+ */
+export function salvoTurn(shots, starter, n = N) {
+  const other = w => (w === 'A' ? 'B' : 'A');
+  const sizeAt = (who, upTo) => {
+    const before = shots.slice(0, upTo);
+    const afloat = FLEET.length - before.filter(s => s.from === other(who) && s.result === 'hundido').length;
+    const free = n * n - before.filter(s => s.from === who).length;
+    return Math.max(0, Math.min(afloat, free));
+  };
+  let shooter = starter, start = 0, size = sizeAt(starter, 0), prevStart = -1;
+  for (let i = 0; i < shots.length; i++) {
+    const volley = shots.slice(start, i + 1);
+    if (volley.length >= size && volley.every(s => s.result !== null)) {
+      prevStart = start; shooter = other(shooter); start = i + 1; size = sizeAt(shooter, start);
+    }
+  }
+  const volley = shots.slice(start);
+  const previous = prevStart < 0 ? [] : shots.slice(prevStart, start);
+  return { shooter, size, left: Math.max(0, size - volley.length), volley, previous };
+}
+
 /** SHA-256 en hexadecimal (requiere contexto seguro). */
 export async function sha256(text) {
   const data = new TextEncoder().encode(text);
