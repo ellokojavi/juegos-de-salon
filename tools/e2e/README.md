@@ -145,7 +145,7 @@ horizontal scroll, buttons under 44 px (C-8) and how much space there is between
 Also, **every `b.shot()` of any script measures that space** (`spacing-common.mjs`) and prints ✗ if a
 button is less than 24 px from a `data-tablero`: the script goes red (with `SPACING_REPORT=1`
 it prints the space of every screenshot, even when it passes). `--lang de` (or `en`, `pt`) opens it in that language;
-`--height`, `--notches` (a phone with a notch) and `--out <folder>` are the other options. The
+`--height`, `--notches` (a phone with a notch), `--chat` (mounts the room chat's 💬 bubble and names any button it covers, C-15) and `--out <folder>` are the other options. The
 panel is viewed with seeded data: `look.mjs panel <shot>`, with `data`, `now`, `tournament`, `games`,
 `audience`, `traffic`, `health` (D-251), `cup-card`, `cup-days`, `cup-history`, `game-card` or `room-card` (D-207); `tournament` also brings a week of seeded notifications (D-233). The
 paths to each screen are in [`paths.mjs`](paths.mjs), which it shares with the language tests.
@@ -176,7 +176,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `hangman/online.mjs` | Three phones against real Firebase: chain, reconnection midway and rematch |
 | `liars-dice/local.mjs` | Duel against the phone and a three-player game on one phone, with resuming midway |
 | `liars-dice/online.mjs` | Three phones against real Firebase: room, verified reveal, reload midway and rematch |
-| `liars-dice/rooms-classic.mjs` | The 📜 classic rules (D-490, D-495) in a room, 2 to 5 phones (`PHONES`, `PASAR`, `SICILIANA`, `REMATCH`), against real Firebase: every phone agrees, the obligada notice reaches all of them and none shows its own die, a reload mid-obligada; `NOLAB_SITE` makes the last guest a player without a lab key (since D-495 the rules need none). Every phone leaves for good at the end, so the room is deleted |
+| `liars-dice/rooms-classic.mjs` | The 📜 classic rules (D-490, D-495) in a room, 2 to 5 phones (`PHONES`, `PASAR`, `SICILIANA`, `REMATCH`), against real Firebase: every phone agrees, the obligada notice reaches all of them and none shows its own die, a reload mid-obligada; with `SICILIANA=1` it doubts the game's first bid and checks every phone shows the siciliana line and the same two-dice loss; `NOLAB_SITE` makes the last guest a player without a lab key (since D-495 the rules need none). Every phone leaves for good at the end, so the room is deleted |
 | `liars-dice/shake-clock.mjs` | Dudo's lab switches (`#seccion-dudo-cacho`), against the phone: the dice come face down and synthetic `devicemotion` shakes roll them on screen until they land; out of time on the 30 s clock costs a die with no reveal; a page with no sensor rolls with the 🎲 button |
 | `liars-dice/classic.mjs` | Dudo's 📜 classic rules (D-487, D-490, for everyone since D-495): the folded Variantes row, the announced and open obligada round (the rivals' die face up, your own as ❓) and the one-time calzar hint, against the phone and with three players on one phone |
 | `generala/local.mjs` | Playing solo all the way, three on one phone with reload midway and the served generala: nothing chosen beforehand (C-8), the held dice don't change and what the scoresheet promised is scored |
