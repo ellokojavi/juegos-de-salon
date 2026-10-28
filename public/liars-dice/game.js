@@ -104,7 +104,7 @@ function newMatch(config) {
   return { config, players: config.players || null, names: {}, plays: [], seen: new Set(), presence: {}, rematch: {}, verify: null };
 }
 
-const JUGADAS = ['roll', 'bid', 'dudo', 'calza', 'open', 'timeout'];
+const JUGADAS = ['roll', 'bid', 'dudo', 'calza', 'paso', 'open', 'timeout'];
 
 function apply(msg) {
   if (msg.id && M.seen.has(msg.id)) return;
@@ -417,7 +417,8 @@ function renderPlay(v) {
 function encabezado(v, miTurno) {
   if (miTurno) return T.yourTurn;
   if (v.phase === 'open' && v.end && v.bid) {
-    return fmt(v.end.type === 'dudo' ? T.saidDudo : T.saidCalza, { name: nameOf(v.end.by), n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) });
+    return v.end.type === 'dudoPaso' ? fmt(T.saidDudoPaso, { name: nameOf(v.end.by), other: nameOf(v.end.of) })
+      : fmt(v.end.type === 'dudo' ? T.saidDudo : T.saidCalza, { name: nameOf(v.end.by), n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) });
   }
   return `${T.turnOf} ${nameOf(v.current || v.opener)}`;
 }
@@ -949,11 +950,14 @@ function showReveal(v) {
   for (const r of M.players) {
     const dados = last.dice[r];
     if (!dados) continue;
+    // Doubting a pass judges only the passer's hand (variant Pasar, D-490): the rest would read as a count
+    const paso = last.type === 'dudoPaso';
+    if (paso && r !== last.of) continue;
     mesa.append(el('div', { class: 'reveal-row' },
       el('span', { class: 'n' }, nameOf(r)),
       el('span', { class: 'dice-row' }, ...dados.map(d => dieEl(d, {
-        small: true, on: countPinta([d], last.bid.p, { acesWild: !last.obligada }) > 0,
-        off: countPinta([d], last.bid.p, { acesWild: !last.obligada }) === 0,
+        small: true, on: paso ? false : countPinta([d], last.bid.p, { acesWild: !last.obligada }) > 0,
+        off: !paso && countPinta([d], last.bid.p, { acesWild: !last.obligada }) === 0,
       }))),
     ));
   }
@@ -971,7 +975,7 @@ function showReveal(v) {
     mesa,
     // El plural va con lo que había, no con lo que se apostó: dudar de "2 ases" y que hubiera
     // uno decía "había 1 ases"
-    el('div', { class: 'count' }, fmt(last.count === 1 ? T.revealCountOne : T.revealCount,
+    last.type === 'dudoPaso' ? null : el('div', { class: 'count' }, fmt(last.count === 1 ? T.revealCountOne : T.revealCount,
       { n: last.count, pinta: pintaName(last.count, last.bid.p) })),
     last.type === 'calza' ? el('div', { class: 'exact ' + (last.exact ? 'yes' : 'no') }, last.exact ? T.exactYes : T.exactNo) : null,
     last.type === 'dudoPaso' ? el('div', { class: 'exact ' + (last.exact ? 'yes' : 'no') }, last.exact ? T.pasoYes : T.pasoNo) : null,
