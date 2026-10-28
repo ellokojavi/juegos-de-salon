@@ -34,6 +34,12 @@ export const JOBS = {
     tools: ['Bash', 'Read', 'Edit', 'Write', 'Glob', 'Grep', 'Agent', 'SendMessage', 'Skill', 'WebSearch'],
     flags: ['--setting-sources', 'user,project'],
   },
+  // the lab's 🚀 Publicar (D-480), started by lab-publish-watch.mjs: it edits and commits in its own
+  // worktree and launches the usability and documentation agents before the PR, as any session does
+  'tools/jobs/prompts/lab-publish.md': {
+    tools: ['Bash', 'Read', 'Edit', 'Write', 'Glob', 'Grep', 'Agent', 'SendMessage', 'Skill'],
+    flags: ['--setting-sources', 'user,project'],
+  },
   // the report is one node command and a file check: no edits, no agents, no settings files
   'tools/jobs/prompts/weekly-report.md': {
     tools: ['Bash', 'Read'],

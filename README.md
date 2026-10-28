@@ -470,6 +470,7 @@ node public/labs/stick/engine.test.mjs
 node public/liars-dice/engine.test.mjs
 node public/timeline/engine.test.mjs
 node firebase/controls.test.mjs
+node firebase/labs-publish.test.mjs
 node firebase/pin-attempts.test.mjs
 node firebase/room-limits.test.mjs
 node marketing/served.test.mjs
@@ -547,6 +548,7 @@ node tools/agents/feedback-templates.test.mjs
 node tools/agents/feedback.test.mjs
 node tools/agents/ideas.test.mjs
 node tools/agents/inbox.test.mjs
+node tools/agents/lab-publish.test.mjs
 node tools/agents/labs-key.test.mjs
 node tools/agents/marketing.test.mjs
 node tools/agents/pending.test.mjs
