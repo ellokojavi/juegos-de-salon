@@ -1435,6 +1435,7 @@
     "cup/notifications.mjs",
     "cup/out.mjs",
     "cup/player-cups.mjs",
+    "cup/rejoin.mjs",
     "cup/resumed-clock.mjs",
     "cup/seat.mjs",
     "cup/tournament.mjs",
