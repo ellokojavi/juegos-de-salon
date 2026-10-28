@@ -35,8 +35,8 @@ What each agent (`.claude/agents/`) and owner tool does, and the command it runs
   backlog, the open issues with no label that `processes.mjs check` lists (D-339). It closes what was left open and
   turns a recurring error into a mechanism (a test before an instruction). In its
   round it collects the `changelog/` entries into `CHANGELOG.md` (D-300) and deletes the decision
-  reservations that are already in `main` (`decision.mjs clean`, D-301). It also moves the rename to English forward, a part at a time, when no other PR is open
-  (`tools/agents/english.mjs`, D-354). What
+  reservations that are already in `main` (`decision.mjs clean`, D-301). It no longer renames Spanish names in batches: a pending name is renamed only when a PR
+  touches that file anyway (`node tools/agents/english.mjs touched`, D-354, D-497). What
   needs the owner goes in a `processes` issue with Yes/No checkboxes, opened by the bot (`decide.yml`) so
   the owner gets the email: ticking one carries it out instantly
   (`.github/workflows/approve.yml` → `tools/agents/approve.mjs`, with a closed list of actions).
