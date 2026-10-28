@@ -29,6 +29,7 @@ import * as numero from '../cup/games/number/engine.js';
 import * as uiNumero from '../cup/games/number/ui.js';
 import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
 import { renderQr } from '../assets/js/qr.js';
+import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -852,6 +853,7 @@ function init() {
   initSound();
   sparkles(12);
   renderModes();
+  mountHowToPlayFacts(GAME_ID, T, lang);
   // Los mejores puntajes jugando solo, que es como más se juega (D-274), y las victorias y entrar con nombre y PIN (D-212)
   $('#rk-slot')?.append(
     bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),
