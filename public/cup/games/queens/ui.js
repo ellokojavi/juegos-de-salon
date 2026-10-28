@@ -10,7 +10,7 @@
  */
 import * as motor from './engine.js';
 import { pasos, botonDeshacer } from '../deshacer.js';
-// A texture per region over its color, for colorblind players (#896, D-481; lab: #seccion-tramas)
+// A texture per region over its color, for colorblind players (#896, D-481)
 import { pattern, withPatterns } from '../../../assets/js/region-patterns.js';
 
 /**

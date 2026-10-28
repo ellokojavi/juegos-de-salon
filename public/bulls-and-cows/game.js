@@ -502,7 +502,7 @@ function renderPlay(v) {
   if (myTurnRole && (v.parallel || !v.pending) && v.phase === 'play') {
     S.notes[myTurnRole] = S.notes[myTurnRole] || new Set();
     entry.append(
-      uiNumero.notasLab(keypad({ digits: M.config.digits, zeroFirst: M.config.zeroFirst, notes: S.notes[myTurnRole], onNotesChange: saveSession, onSubmit: val => { S.transport.send({ t: 'guess', from: myTurnRole, value: val }); } }), T), // lab: #seccion-tyf-notas
+      keypad({ digits: M.config.digits, zeroFirst: M.config.zeroFirst, notes: S.notes[myTurnRole], onNotesChange: saveSession, onSubmit: val => { S.transport.send({ t: 'guess', from: myTurnRole, value: val }); } }),
       el('p', { class: 'block-hint' }, T.blockHint),
     );
   }
