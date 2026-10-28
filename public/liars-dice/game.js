@@ -24,7 +24,7 @@ import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../ass
 import { azarDel, puntajeDudo } from '../assets/js/uno-al-dia.js';
 import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
-  readDice, rollDice, writeDice, countPinta, sha256, randomSalt, verifyOpen,
+  readDice, rollDice, writeDice, countPinta, sha256, randomSalt, verifyOpen, pasaOk,
 } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES, TURN_SECS } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
@@ -333,7 +333,7 @@ function renderRivals(v, yo) {
 /** The big notice of the obligada round, for everyone at the table (D-490). */
 function showObligada(v) {
   // One phone: what the previous player saw stays under the notice, and it holds the next one's die
-  $('#rivals').innerHTML = ''; $('#mine').innerHTML = '';
+  $('#rivals').innerHTML = ''; $('#mine').innerHTML = ''; $('#bid-board').innerHTML = ''; $('#actions').innerHTML = '';
   const local = S.mode === 'local';
   let next = null;
   const stage = el('div', { class: 'stage pop obligada-notice' },
@@ -437,14 +437,27 @@ function renderActions(v, yo, miTurno, tapados = false) {
   // Elegir la pinta: nada viene marcado, y el botón dice qué va a hacer (C-8)
   const sel = S.sel;
   box.append(el('p', { class: 'pick-label' }, sel ? T.pickAmount : T.pickPinta));
+  // A face a classic rule closes says why, in one calm line under the faces, as soon as it applies
+  // and again (a short pulse) when the closed face is tapped (playtest). lab: #seccion-dudo-tradicional
+  const porque = p => minBid(v.bid, p, v.rules) !== Infinity ? null
+    : v.rules.obligada ? T.obligadaWhy : v.rules.noAceOpen && !v.bid && p === 1 ? T.noAceOpenWhy : null;
+  const razones = PINTAS.map(porque).filter(Boolean);
+  const razon = razones.length ? el('p', { class: 'face-why' }, '☝️ ', razones[0]) : null;
   box.append(el('div', { class: 'pintas' }, ...PINTAS.map(p => {
     const posible = minBid(v.bid, p, v.rules) <= v.totalDice;
+    const cerrada = porque(p);
     return el('button', {
-      class: 'pinta' + (sel?.p === p ? ' on' : ''), disabled: !posible,
+      class: 'pinta' + (sel?.p === p ? ' on' : '') + (cerrada ? ' closed' : ''),
+      // A face closed by a rule stays tappable (aria-disabled) so the tap can point at the reason
+      ...(cerrada ? { 'aria-disabled': 'true' } : { disabled: !posible }),
       'aria-label': pintaName(2, p),
-      onClick: () => { S.sel = { p, n: minBid(v.bid, p, v.rules) }; SFX.tap(); vibrate(10); renderPlay(view()); },
+      onClick: () => {
+        if (cerrada) { razon.classList.remove('pulse'); void razon.offsetWidth; razon.classList.add('pulse'); vibrate(10); return; }
+        S.sel = { p, n: minBid(v.bid, p, v.rules) }; SFX.tap(); vibrate(10); renderPlay(view());
+      },
     }, dieEl(p, { small: true }));
   })));
+  if (razon) box.append(razon);
 
   if (sel) {
     const min = minBid(v.bid, sel.p, v.rules);
@@ -485,21 +498,29 @@ function renderActions(v, yo, miTurno, tapados = false) {
         onClick: () => { S.sel = null; SFX.reveal(); vibrate([30, 40, 30]); S.transport.send({ t: 'calza', from: v.current }); },
       }, T.calzaDo));
     }
+    // Pasar is honest about the hand (playtest): a hand that allows it says so; one that does not
+    // keeps the button, since a bluffed pass is part of the traditional game, but names it a bluff
+    const manoPasa = v.canPass && pasaOk(diceOf(v, yo) || []);
     if (v.canPass) {
       fila.append(el('button', {
-        class: 'btn btn--ghost btn--sm', title: T.pasarHint,
+        class: 'btn btn--ghost btn--sm paso' + (manoPasa ? ' can' : ' bluff'), title: T.pasarHint,
         onClick: () => { S.sel = null; SFX.tap(); S.transport.send({ t: 'paso', from: v.current }); },
-      }, T.pasoDo));
+      }, manoPasa ? T.pasoDo : T.pasoBluff));
     }
     acciones.append(fila);
+    if (v.canPass) acciones.append(el('p', { class: 'paso-why' + (manoPasa ? ' can' : '') }, manoPasa ? '✋ ' + T.pasoCan : T.pasoBluffHint));
     // The first time calzar is open to a player in a game, it says what it is (D-490): the owner's
     // table of six never noticed the button, which shows up only once the bid reaches half the dice
     S.calzarVisto ||= new Set();
     const aviso = `${v.round}:${v.bids.length}:${v.current}`;
+    // Open early because the player has one die (classic rules), not because the bid reached half
+    // the table: that is a different reason, so it gets its own one-time line that says why (playtest)
+    const porUno = v.canCalzar && v.st[v.current]?.dice === 1 && v.bid.n * 2 < v.totalDice;
+    const visto = porUno ? `${v.current}:1` : v.current;
     // lab: #seccion-dudo-tradicional (to everyone once the owner validates it, D-409)
-    if (LAB && v.canCalzar && (!S.calzarVisto.has(v.current) || S.calzarAviso === aviso)) {
-      S.calzarVisto.add(v.current); S.calzarAviso = aviso;
-      acciones.append(el('p', { class: 'calzar-hint' }, '🎯 ', fmt(T.calzarFirst, { n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) })));
+    if (LAB && v.canCalzar && (!S.calzarVisto.has(visto) || S.calzarAviso === aviso)) {
+      S.calzarVisto.add(visto); S.calzarAviso = aviso;
+      acciones.append(el('p', { class: 'calzar-hint' + (porUno ? ' one-die' : '') }, '🎯 ', fmt(porUno ? T.calzarOneDie : T.calzarFirst, { n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) })));
     }
   }
   box.append(acciones);
@@ -934,7 +955,8 @@ function setupChat(mode) {
 /* ---------- Pase del celular (C-9) ---------- */
 function showPass(role) {
   // One phone in the open obligada round: the screen under the pass shows the next player's die
-  $('#rivals').innerHTML = ''; $('#mine').innerHTML = '';
+  // The board and the buttons go too: the pass screen sits on an empty table (playtest)
+  $('#rivals').innerHTML = ''; $('#mine').innerHTML = ''; $('#bid-board').innerHTML = ''; $('#actions').innerHTML = '';
   showHandoff([passBlock({ label: T.hoPass, name: nameOf(role), button: T.hoReady })],
     () => { S.uiRole = role; SFX.pass(); render(); }, { tapAdvances: false });
 }
@@ -980,6 +1002,8 @@ function showReveal(v) {
     last.type === 'calza' ? el('div', { class: 'exact ' + (last.exact ? 'yes' : 'no') }, last.exact ? T.exactYes : T.exactNo) : null,
     last.type === 'dudoPaso' ? el('div', { class: 'exact ' + (last.exact ? 'yes' : 'no') }, last.exact ? T.pasoYes : T.pasoNo) : null,
     el('div', { class: 'outcome' }, desenlace),
+    // Dudar a la siciliana (D-490): the two dice need their reason, or they read as a bug (playtest)
+    last.lost === 2 ? el('div', { class: 'hint siciliana-why' }, T.sicilianaWhy) : null,
     selloVerificado(last),
     el('div', { class: 'hint', style: 'margin-top:10px' }, T.goOn),
   );
