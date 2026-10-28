@@ -14,7 +14,6 @@ import { UNO_AL_DIA, bandera } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
 import { walk, seasonPoints } from './daily-points.js';
 import { salidasFin } from './fin.js';
-import { labAccess } from './lab-access.js';
 
 export const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const textos = lang => (COMMON[lang] || COMMON.es);
@@ -166,8 +165,8 @@ export function compartirHoy({ lang, fecha, dia, alTocar, mmss, grid = '' }) {
     avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
     armar: async () => ({
       titulo, url,
-      // The spoiler-free grid (#889, D-482), only with a lab key while it is tried (lab: #seccion-uad-grilla)
-      texto: [cabecera(cab), grid && await labAccess() ? grid : '', textoRacha(estado().racha, lang)].filter(Boolean).join('\n'),
+      // The spoiler-free grid (#889, D-482), for everyone since D-485
+      texto: [cabecera(cab), grid, textoRacha(estado().racha, lang)].filter(Boolean).join('\n'),
       imagen: await laminaResultado({ cab, url, puntaje: fmt(C.uad.puntos, { s: dia.s }), detalle: dia.ms ? `⏱ ${mmss(dia.ms)}` : '', pie: C.shareSoloImage, archivo: nombreArchivo('uno-al-dia', String(numeroDel(fecha))) }),
     }),
   });
