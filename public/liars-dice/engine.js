@@ -58,10 +58,10 @@ export function minBid(prev, pinta, rules = {}) {
   // Traditional rules (lab, #897): no opening in aces, and in the obligada round the pinta is
   // fixed by the opener and only the quantity rises. Infinity means "not allowed".
   // A player who also has one die may change the face there, always for a higher quantity
-  // (D-488, Wikipedia: "puede cambiar la pinta por una cantidad mayor").
+  // (D-490, Wikipedia: "puede cambiar la pinta por una cantidad mayor").
   if (rules.obligada) return !prev ? 1 : pinta === prev.p || rules.changeFace ? prev.n + 1 : Infinity;
   if (!prev) return rules.noAceOpen && pinta === 1 ? Infinity : 1;
-  // Into aces: half rounded up, or with the classic rules half plus one when even (6 fives → 4 aces, D-488)
+  // Into aces: half rounded up, or with the classic rules half plus one when even (6 fives → 4 aces, D-490)
   if (pinta === 1) return prev.p === 1 ? prev.n + 1 : rules.halfPlusOne ? Math.floor(prev.n / 2) + 1 : Math.ceil(prev.n / 2);
   if (prev.p === 1) return prev.n * 2 + 1;
   return pinta > prev.p ? prev.n : prev.n + 1;
@@ -87,13 +87,13 @@ export const MIN_CALZAR = 3;
  * exacta deja de ser un riesgo y pasa a ser aritmética: el que calza ya sabe casi todo.
  */
 export function calzarOk(bid, totalDice, jugadores = MIN_CALZAR, rules = {}) {
-  // Classic rules (lab, D-488): calzar also in a duel, and a player with one die may calzar at any time
+  // Classic rules (lab, D-490): calzar also in a duel, and a player with one die may calzar at any time
   if (!bid || jugadores < (rules.classic ? MIN_PLAYERS : MIN_CALZAR)) return false;
   return (rules.classic && rules.oneDie) || bid.n * 2 >= totalDice;
 }
 
 /**
- * Pasar (classic-rules variant, D-488): a player with all five dice may pass once per round when the
+ * Pasar (classic-rules variant, D-490): a player with all five dice may pass once per round when the
  * hand is all different, all the same, or a full house. Anyone may pass bluffing; the next player
  * may doubt the pass, and then only that hand is judged.
  */
@@ -197,7 +197,7 @@ export function botMove({
   agresividad = AGRESIVIDAD, mezcla = MEZCLA, rand = Math.random,
 }) {
   const miente = que => rand() < agresividad * mezcla[que];
-  // In the open obligada round (D-488) the bot sees the others' dice and not its own: it counts
+  // In the open obligada round (D-490) the bot sees the others' dice and not its own: it counts
   // what it sees, and its own dice are the unknown ones.
   const contados = seen || myDice;
   const unknown = Math.max(0, totalDice - contados.length);
@@ -298,7 +298,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
   };
   const classic = !!config.traditional;
   /**
-   * The rules for `who` in this round. With the classic rules (D-488): going into aces is half
+   * The rules for `who` in this round. With the classic rules (D-490): going into aces is half
    * plus one, the obligada round is open (everyone sees the others' dice, not their own), and in
    * it a player who also has one die may change the face.
    */
@@ -346,7 +346,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
       return terminar(r, { type: 'dudoPaso', obligada: !!r.obligada, by: r.end.by, of: r.end.of, bid: r.bid, count, exact: ok, loser, gainer: null, dice, lost });
     }
     if (r.end.type === 'dudo') {
-      // Dudar a la siciliana (variant, D-488): doubting the game's first bid is worth two dice
+      // Dudar a la siciliana (variant, D-490): doubting the game's first bid is worth two dice
       if (classic && config.siciliana && r.n === 0 && r.bids.length === 1) lost = 2;
       // Si hay tantos como se apostó o más, se equivocó quien dudó
       loser = count >= r.bid.n ? r.end.by : r.bid.by;
