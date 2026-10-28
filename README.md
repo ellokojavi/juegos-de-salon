@@ -482,7 +482,6 @@ node public/assets/js/compartir.test.mjs
 node public/assets/js/daily-attempt.test.mjs
 node public/assets/js/daily-points.test.mjs
 node public/assets/js/daily-recap.test.mjs
-node public/assets/js/faq.test.mjs
 node public/assets/js/favoritos.test.mjs
 node public/assets/js/fin.test.mjs
 node public/assets/js/games.test.mjs
@@ -524,6 +523,7 @@ node public/cup/recap.test.mjs
 node public/cup/reportes.test.mjs
 node public/cup/store.test.mjs
 node public/home-preload.test.mjs
+node public/labs/bodega.test.mjs
 node public/labs/code/engine-palabra.test.mjs
 node public/labs/listed.test.mjs
 node public/panel/adapta.test.mjs
@@ -531,6 +531,7 @@ node public/panel/aggregate.test.mjs
 node public/panel/campaigns.test.mjs
 node public/panel/copas.test.mjs
 node public/panel/dominios.test.mjs
+node public/panel/rooms-watch.test.mjs
 node public/panel/rutas.test.mjs
 node public/panel/timeline.test.mjs
 node public/privacy/texts.test.mjs
@@ -703,7 +704,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   today/                      One a Day (D-230, D-414)
   privacy/                    The privacy page, its texts in texts.js in the four languages (D-463)
   panel/                      Private owner dashboard (docs/PANEL.md)
-  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, D-448, D-449), site-footer.js (the home page's footer on the screens outside a game; lab only, #seccion-pie-sitio), season.js (seasonal touches on the home page and Rankings, D-457), qr.js (the room QR, drawn with vendor/qrcode.js, a copy of qrcode-generator served by the site), faq.js (a folded ❓ FAQ under the group games' rules, built from games.js; lab only, #887) …
+  assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, D-448, D-449), site-footer.js (the home page's footer on the screens outside a game; lab only, #seccion-pie-sitio), season.js (seasonal touches on the home page and Rankings, D-457), qr.js (the room QR, drawn with vendor/qrcode.js, a copy of qrcode-generator served by the site) …
   assets/season/              The seasonal templates, one row per date, and each date's stylesheet (docs/SEASONS.md)
   assets/js/transport/        Local, Firebase room and usage-signal transports, with their helpers
   assets/og/                  Social card images

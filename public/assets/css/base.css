@@ -607,10 +607,6 @@ body.azar-abierto { overflow: hidden; }
 @keyframes cuenta-late { 0% { transform: scale(1.6); opacity: 0; } 25% { transform: scale(1); opacity: 1; } 100% { transform: scale(.85); opacity: .9; } }
 @keyframes cuenta-fuera { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .cuenta-num.late { animation: none; } }
-/* Frequently asked questions under a game's rules (faq.js, #887) */
-details.panel.faq h3 { font-size: 1rem; margin: 12px 0 4px; }
-details.panel.faq p { margin: 0; }
-
 /* --- The site's footer: the home page's, and the one site-footer.js puts on the screens outside a game --- */
 .pie-sitio { margin-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
 .footer-msg { min-height: 3.2em; font-size: 1rem; line-height: 1.5; color: var(--ink); opacity: 0.9; transition: opacity 0.5s ease, transform 0.5s ease; font-weight: 700; }
