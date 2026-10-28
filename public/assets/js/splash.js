@@ -164,7 +164,7 @@ export const CAMPAIGNS = {
   'stack-pronto': {
     emoji: '🧱',
     kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve', de: 'Demnächst' },
-    title: { es: '¿Hasta dónde llega?', en: 'How high can it go?', pt: 'Até onde ela chega?', de: 'Wie hoch geht es?' },
+    title: { es: '¿Hasta dónde llega?', en: 'How high can it go?', pt: 'Até onde chega?', de: 'Wie hoch geht es?' },
     items: [{ video: 'assets/splash/stack-teaser.mp4', img: 'assets/splash/stack-teaser-start.png', still: 'assets/splash/stack-teaser.png', ratio: '8 / 5' }],
   },
   // 🥂 An invitation to support the site, with a laugh: Leonardo DiCaprio raising his glass in
