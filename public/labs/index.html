@@ -55,6 +55,13 @@
     .publicar-nota { flex-shrink: 0; min-height: 88px; resize: vertical; width: 100%; box-sizing: border-box; border-radius: 12px; padding: 10px 12px; font: inherit; color: #fff; background: rgba(255, 255, 255, 0.08); border: 2px solid var(--glass-border); }
     .publicar-nota::placeholder { color: rgba(255, 255, 255, 0.55); }
     #publicar-dueno button { background: none; border: 0; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; min-height: 44px; }
+    /* ✨ Mejoras lanzadas: one fold per week or month, newest first and open */
+    .bodega-buscar { width: 100%; box-sizing: border-box; min-height: 44px; padding: 10px 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); color: #fff; font: inherit; }
+    .bodega-periodo { display: grid; gap: 10px; }
+    .bodega-periodo > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 44px; font-weight: 800; color: rgba(255,255,255,0.8); }
+    .bodega-periodo > summary::-webkit-details-marker { display: none; }
+    .bodega-periodo > summary .flecha { font: 900 1.5rem/1 var(--font-body); transition: transform 0.2s; }
+    .bodega-periodo[open] > summary .flecha { transform: rotate(90deg); }
   </style>
 </head>
 <body>
@@ -200,7 +207,10 @@
 
         <section class="subgrupo" id="bodega-mejoras">
           <h3>✨ Mejoras lanzadas</h3>
-          <section class="panel seccion plegada" id="seccion-copa-archivada">
+          <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
+          <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
+          <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <section class="panel seccion plegada" id="seccion-copa-archivada" data-launched="2026-10-28">
             <details>
               <summary><h2>🏆 La Copa: el podio de una copa archivada</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -209,7 +219,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-no-contar">
+          <section class="panel seccion plegada" id="seccion-no-contar" data-launched="2026-10-28">
             <details>
               <summary><h2>🙈 Panel: no contar este navegador</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -218,7 +228,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-faq">
+          <section class="panel seccion plegada" id="seccion-faq" data-launched="2026-10-28">
             <details>
               <summary><h2>🧭 «Cómo se juega» dice quiénes y cómo</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -227,7 +237,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-uad-grilla">
+          <section class="panel seccion plegada" id="seccion-uad-grilla" data-launched="2026-10-27">
             <details>
               <summary><h2>📅 Uno al día: tu resultado en cuadritos</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -236,7 +246,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-tramas">
+          <section class="panel seccion plegada" id="seccion-tramas" data-launched="2026-10-27">
             <details>
               <summary><h2>👑 Reinas: una textura por zona</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -245,7 +255,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-pie-sitio">
+          <section class="panel seccion plegada" id="seccion-pie-sitio" data-launched="2026-10-27">
             <details>
               <summary><h2>🌅 El pie en todas las pantallas fuera del juego</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -255,7 +265,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-tyf-descarte">
+          <section class="panel seccion plegada" id="seccion-tyf-descarte" data-launched="2026-10-27">
             <details>
               <summary><h2>🔢 Toque y Fama: los 100 puntos son de quien deduce</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -264,7 +274,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-temporadas">
+          <section class="panel seccion plegada" id="seccion-temporadas" data-launched="2026-10-26">
             <details>
               <summary><h2>🎃 Halloween en la portada</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -274,7 +284,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-splash-cerrar">
+          <section class="panel seccion plegada" id="seccion-splash-cerrar" data-launched="2026-10-27">
             <details>
               <summary><h2>🎉 Splash: un toque afuera no la pierde</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -283,7 +293,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-pie">
+          <section class="panel seccion plegada" id="seccion-pie" data-launched="2026-10-27">
             <details>
               <summary><h2>🌅 El pie de la portada: atardecer violeta</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -293,7 +303,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-partidas-plegadas">
+          <section class="panel seccion plegada" id="seccion-partidas-plegadas" data-launched="2026-10-26">
             <details>
               <summary><h2>👤 Rankings: Tus partidas, plegadas</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -302,7 +312,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-tyf-una-tarjeta">
+          <section class="panel seccion plegada" id="seccion-tyf-una-tarjeta" data-launched="2026-10-26">
             <details>
               <summary><h2>🔢 Toque y Fama: una sola tarjeta</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -311,7 +321,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-apoyo">
+          <section class="panel seccion plegada" id="seccion-apoyo" data-launched="2026-10-26">
             <details>
               <summary><h2>☕ Invítame a un café</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -320,7 +330,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-puentes">
+          <section class="panel seccion plegada" id="seccion-puentes" data-launched="2026-10-26">
             <details>
               <summary><h2>🚅 Tren en Vilo</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -332,7 +342,7 @@
             </details>
           </section>
 
-          <section class="panel seccion plegada" id="seccion-dudo-cacho">
+          <section class="panel seccion plegada" id="seccion-dudo-cacho" data-launched="2026-10-25">
             <details>
               <summary><h2>🎲 Dudo: agita el cacho y juega contra el reloj</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -341,7 +351,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-copa-estado">
+          <section class="panel seccion plegada" id="seccion-copa-estado" data-launched="2026-10-24">
             <details>
               <summary><h2>🏆 La Copa: qué te toca en cada copa</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -350,7 +360,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-generala-escalera-as">
+          <section class="panel seccion plegada" id="seccion-generala-escalera-as" data-launched="2026-10-23">
             <details>
               <summary><h2>🎲 Generala: la escalera con el as arriba</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -359,7 +369,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-uad-ranking-rapido">
+          <section class="panel seccion plegada" id="seccion-uad-ranking-rapido" data-launched="2026-10-23">
             <details>
               <summary><h2>📅 Uno al día: el ranking más rápido</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -368,7 +378,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-portada-al-tiro">
+          <section class="panel seccion plegada" id="seccion-portada-al-tiro" data-launched="2026-10-23">
             <details>
               <summary><h2>⚡ La portada al tiro</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -377,7 +387,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-volver-atras">
+          <section class="panel seccion plegada" id="seccion-volver-atras" data-launched="2026-10-23">
             <details>
               <summary><h2>👈 Salir en medio de una partida pregunta antes</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -386,7 +396,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-uad-intento">
+          <section class="panel seccion plegada" id="seccion-uad-intento" data-launched="2026-10-23">
             <details>
               <summary><h2>📅 Uno al día: el primer intento vale desde que empieza</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -395,7 +405,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-copa-reloj">
+          <section class="panel seccion plegada" id="seccion-copa-reloj" data-launched="2026-10-23">
             <details>
               <summary><h2>🏆 La Copa: el reloj no vuelve a cero en otro celular</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -404,7 +414,7 @@
               </div>
             </details>
           </section>
-          <section class="panel seccion plegada" id="seccion-resumen-copa">
+          <section class="panel seccion plegada" id="seccion-resumen-copa" data-launched="2026-10-23">
             <details>
               <summary><h2>🏆 Resumen de la copa al volver</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -415,7 +425,7 @@
             </details>
           </section>
 
-          <section class="panel seccion plegada" id="seccion-resumen-temporada">
+          <section class="panel seccion plegada" id="seccion-resumen-temporada" data-launched="2026-10-23">
             <details>
               <summary><h2>📅 Resumen de la temporada de Uno al día</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -426,7 +436,7 @@
             </details>
           </section>
 
-          <section class="panel seccion plegada" id="seccion-una-ventana">
+          <section class="panel seccion plegada" id="seccion-una-ventana" data-launched="2026-10-23">
             <details>
               <summary><h2>🪟 Una ventana por visita en la portada</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -436,7 +446,7 @@
             </details>
           </section>
 
-          <section class="panel seccion plegada" id="seccion-uad-invitar-jugar">
+          <section class="panel seccion plegada" id="seccion-uad-invitar-jugar" data-launched="2026-10-21">
             <details>
               <summary><h2>📅 Uno al día: +10 por invitar</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -446,7 +456,7 @@
             </details>
           </section>
 
-          <section class="panel seccion plegada" id="seccion-puntos-dia">
+          <section class="panel seccion plegada" id="seccion-puntos-dia" data-launched="2026-10-21">
             <details>
               <summary><h2>🏆 Puntos de Uno al día</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -456,7 +466,7 @@
             </details>
           </section>
 
-          <section class="panel seccion plegada" id="seccion-copa-casilla">
+          <section class="panel seccion plegada" id="seccion-copa-casilla" data-launched="2026-10-21">
             <details>
               <summary><h2>🏆 La Copa: elige la casilla en Toque y Fama</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -466,7 +476,7 @@
             </details>
           </section>
 
-          <section class="panel seccion plegada" id="seccion-elegir-casilla">
+          <section class="panel seccion plegada" id="seccion-elegir-casilla" data-launched="2026-10-21">
             <details>
               <summary><h2>🔢 Toque y Fama: elige la casilla</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -476,7 +486,7 @@
             </details>
           </section>
 
-          <section class="panel seccion plegada" id="seccion-portada">
+          <section class="panel seccion plegada" id="seccion-portada" data-launched="2026-10-20">
             <details>
               <summary><h2>🏠 Experimentos de la portada</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -491,7 +501,7 @@
             </details>
           </section>
 
-          <section class="panel seccion plegada" id="seccion-pildoras">
+          <section class="panel seccion plegada" id="seccion-pildoras" data-launched="2026-10-20">
             <details>
               <summary><h2>💊 Píldoras de filtros</h2><span class="flecha" aria-hidden="true">›</span></summary>
               <div class="detalle">
@@ -520,6 +530,7 @@
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
     document.addEventListener('click', e => { if (e.target.closest('a')) SFX.tap(); });
+    import('./bodega.js').then(m => m.start()); // ✨ Mejoras lanzadas by week and month, with search
     import('./publish.js').then(m => m.start()); // 🚀 Publicar para todos, only for the owner (D-480)
   </script>
 </body>
