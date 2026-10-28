@@ -54,8 +54,8 @@ assert.equal(sinLang('?lang=pt'), '');
 assert.equal(sinLang('?type=logic&LANG=en'), '?type=logic');
 same('COMMON', COMMON);
 same('FRASES', FRASES);
-for (const lang of IDIOMAS) assert.equal(FRASES[lang].length, 100, `FRASES.${lang}: deben ser 100 frases`);
-for (const lang of IDIOMAS) assert.equal(new Set(FRASES[lang]).size, 100, `FRASES.${lang}: hay frases repetidas`);
+for (const lang of IDIOMAS) assert.equal(FRASES[lang].length, 150, `FRASES.${lang}: must be 150 phrases`);
+for (const lang of IDIOMAS) assert.equal(new Set(FRASES[lang]).size, 150, `FRASES.${lang}: hay frases repetidas`);
 for (const g of GAMES) { leaf(`GAMES.${g.id}.name`, g.name); leaf(`GAMES.${g.id}.tagline`, g.tagline); }
 // Los juegos sueltos de la portada (D-142): su tarjeta va en los tres idiomas y cada uno
 // tiene que existir en La Copa, o la tarjeta abriría una práctica que no hay.

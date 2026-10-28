@@ -863,7 +863,7 @@
         setTimeout(() => { heroIdx = (heroIdx + 1) % heroEmojis.length; heroEl.textContent = heroEmojis[heroIdx]; heroEl.classList.remove('out'); }, 350);
       }, 3000);
       // Mensajes rotativos del pie: uno al azar al cargar, luego uno nuevo cada 10 segundos con fundido.
-      // 100 frases por idioma, barajadas en cada carga para que cada visita empiece distinto.
+      // 150 frases por idioma, barajadas en cada carga para que cada visita empiece distinto.
       const msgs = (FRASES[lang] || [T.footer]).slice().sort(() => Math.random() - 0.5);
       const msgEl = document.getElementById('footer-msg');
       let idx = 0;
