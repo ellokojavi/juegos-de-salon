@@ -29,6 +29,7 @@ const create = (db, code, config = { lives: 6, buy: true, theme: 'mezcla', seed:
   no(create(db, 'FGHK', { lives: { a: { b: 1 } } }), 'config values are not objects');
   ok(create(db, 'GHJK', { theme: 'historia', handSize: 5, shared: true, spread: true, seed: 9, skip: Array.from({ length: 200 }, (_, i) => `card-${i}`) }), "Timeline's config with its 200 skipped cards", db);
   ok(create(db, 'HJKL', { dice: 5, calzar: true, chileno: true, shake: false, turnSecs: 30, players: null }), "Liar's dice config", db);
+  ok(create(db, 'HJKM', { dice: 5, calzar: true, chileno: true, shake: false, turnSecs: 0, traditional: true, pasar: true, siciliana: false }), "Liar's dice config with the 🧪 classic rules and their variants (D-490): a room could not open with them", db);
 }
 
 // ---- Seats and messages ----

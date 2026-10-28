@@ -212,3 +212,6 @@
 /* Overlays are opaque from the first frame: fading in from transparent let the table show through
    the pass screen (playtest). Only the stage pops. */
 .handoff { animation: none; }
+
+/* The table's rules in the lobby, for whoever joins (rooms playtest) */
+#lobby-box .lobby-rules { font-size: 0.85rem; line-height: 1.35; margin: 14px 0 0; }

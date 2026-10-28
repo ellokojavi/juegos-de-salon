@@ -48,6 +48,8 @@ async function play(until, max = 400) {
       if (await ev(`!!document.querySelector('#mine .hidden-die') && !document.querySelector('#mine .die:not(.hidden-die)')`)) seen.hidden++;
       if (await ev(`!!document.querySelector('#rivals .rival.seen .die:not(.hidden-die)')`)) seen.faces++;
       if (await ev(`(()=>{const q=document.querySelector('#rivals .die--sm.hidden-die');return !!q&&q.getBoundingClientRect().width>=24})()`)) seen.ownStrip = (seen.ownStrip || 0) + 1;
+      // One ❓ in the strip per die you hold (rooms playtest: three dice showed a single ❓)
+      if (await ev(`(()=>{const v=window.__dudo.view();const i=window.__dudo.match().players.indexOf(v.current);const x=document.querySelectorAll('#rivals .rival')[i];return !!x&&x.querySelectorAll('.hidden-die').length!==v.st[v.current].dice})()`)) seen.stripBad = (seen.stripBad || 0) + 1;
       if (seen.hidden === 1) await b.shot('obligada-table');
       // A face the obligada round closes says why, under the faces (playtest)
       if (await ev(`!!document.querySelector('.pinta.closed') && !!document.querySelector('#actions .face-why')`)) {
@@ -91,6 +93,7 @@ check(tres.obligadaNotice > 0, 'three on one phone: the obligada round is announ
 check(tres.hidden > 0 && tres.faces > 0, "three on one phone: the others' dice face up, your own as ❓");
 check(tres.calzarHint > 0, 'the first time calzar opens, a line says what it is');
 check(duel.obligadaWhy > 0 || tres.obligadaWhy > 0, 'in the obligada round, a closed face says why under the faces');
+check(!tres.stripBad && !duel.stripBad, `in the obligada round your strip shows one ❓ per die you hold (${(tres.stripBad || 0) + (duel.stripBad || 0)} wrong)`);
 check(!tres.diceUnder, `three on one phone: no die under the pass screen or a notice (${tres.diceUnder || 0})`);
 console.log(`  (calzar opened by one die, with its reason: ${(duel.oneDie || 0) + (tres.oneDie || 0)} times)`);
 
