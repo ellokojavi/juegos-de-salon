@@ -38,3 +38,16 @@ for (const g of ['activos', 'mejoras']) for (const [, id, body] of cards(group(g
 }
 assert.ok(checked >= 1, 'no card on trial found: did the groups in public/labs/index.html change?');
 console.log(`✓ lab on trial: ${checked} card(s), none launched`);
+
+// ✨ Mejoras lanzadas folds by launch day (#956): every card says it, so bodega.js can place it
+const launched = group('bodega').slice(group('bodega').indexOf('id="bodega-mejoras"'));
+const undated = [...launched.matchAll(/<section class="panel seccion[^"]*" id="([\w-]+)"(?! data-launched="\d{4}-\d{2}-\d{2}")/g)].map(m => m[1]);
+assert.deepEqual(undated, [], `add data-launched="YYYY-MM-DD" (the day it reached everyone) to ${undated.map(id => `#${id}`).join(', ')}`);
+const { periodOf, group: fold } = await import('./bodega.js');
+const today = new Date('2026-10-28T12:00:00');
+assert.deepEqual(periodOf('2026-10-28', today), { key: '2026-10-26', title: 'Semana del 26 de octubre' });
+assert.deepEqual(periodOf('2026-10-25', today), { key: '2026-10-19', title: 'Semana del 19 de octubre' });
+assert.deepEqual(periodOf('2026-09-30', today), { key: '2026-09', title: 'Septiembre 2026' });
+assert.deepEqual(fold([{ launched: '2026-09-02' }, { launched: '2026-10-27' }, { launched: '2026-10-28' }], today).map(f => [f.key, f.cards.length]),
+  [['2026-10-26', 2], ['2026-09', 1]]);
+console.log('✓ La Bodega: every launched improvement is dated and folds by week and month');
