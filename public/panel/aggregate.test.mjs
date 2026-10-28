@@ -41,6 +41,23 @@ assert.deepEqual(liveRooms(null, now), []);
   assert.equal(r.lastPlayAt, now - 396000, 'la última jugada es el último disparo, no el chat');
   assert.equal(r.lastAt, now - 30000, 'la vida de la sala sí incluye la charla');
 }
+// The room's own counters (D-474) give the same numbers as its messages
+{
+  const m = {};
+  const counts = {};
+  const add = (t, dt) => {
+    m['m' + Object.keys(m).length] = { t, at: now - dt, from: 'A' };
+    counts[t] = { n: (counts[t]?.n || 0) + 1, at: Math.max(counts[t]?.at || 0, now - dt) };
+  };
+  add('hello', 600000); add('commit', 500000);
+  for (let i = 0; i < 5; i++) { add('shot', 400000 - i * 1000); add('reply', 399000 - i * 1000); }
+  add('chat', 60000); add('chat', 30000);
+  const base = { createdAt: now - 700000, game: 'batalla-naval', players: { A: { name: 'Tomi', online: true }, B: { name: 'SVS', online: true } } };
+  const [viejo] = liveRooms({ NAVE: { ...base, messages: m } }, now);
+  const [nuevo] = liveRooms({ NAVE: { ...base, counts } }, now);
+  assert.deepEqual(nuevo, viejo, 'counters and messages give the same room');
+  assert.equal(nuevo.jugadas, 5); assert.equal(nuevo.chat, 2); assert.equal(nuevo.lastAt, now - 30000);
+}
 // Un juego que no declara sus jugadas cuenta todo menos entradas y chat: inflado, nunca en cero
 assert.equal(esJugada('juego-nuevo', 'mueve'), true);
 assert.equal(esJugada('juego-nuevo', 'hello'), false);

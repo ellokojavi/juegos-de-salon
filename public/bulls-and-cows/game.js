@@ -16,7 +16,6 @@ import { param } from '../assets/js/parametros.js';
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { clearRoomError, tryRematch, tryRoom } from '../assets/js/transport/errors.js';
 import { score, isValid, sha256, randomNonce, verifyPlayer } from './engine.js';
-import { mountFaq } from '../assets/js/faq.js';
 import { GAME_ID, DEFAULT_CONFIG, DIGIT_OPTIONS, LOCALES } from './rules.js';
 import { createChat } from '../assets/js/chat.js';
 import { teclado, CIFRAS } from '../assets/js/teclado.js';
@@ -853,7 +852,6 @@ function init() {
   initSound();
   sparkles(12);
   renderModes();
-  mountFaq($('#faq-slot'), GAME_ID, T, lang);
   // Los mejores puntajes jugando solo, que es como más se juega (D-274), y las victorias y entrar con nombre y PIN (D-212)
   $('#rk-slot')?.append(
     bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),
