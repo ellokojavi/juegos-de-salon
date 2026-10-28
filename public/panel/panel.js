@@ -1735,6 +1735,8 @@ function vistaSplash(today) {
       return el('button', { type: 'button', class: 'campana-plegada', 'aria-expanded': 'false', onClick: abrir },
         el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
         el('strong', { class: 'campana-titulo' }, nombre),
+        el('span', { class: 'campana-renombrar', role: 'button', tabindex: '0', 'aria-label': `Rename ${nombre}`, title: 'Rename',
+          onClick: e => { e.stopPropagation(); renombrar(); }, onKeydown: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); renombrar(); } } }, '✏️'),
         el('span', { class: 'campana-chev', 'aria-hidden': 'true' }, '›'));
     }
     const detalle = st === 'scheduled' ? `starts ${diaCorto(s.from)}` : st === 'live' ? (s.until ? `until ${diaCorto(s.until)}` : 'no end day')
@@ -1752,8 +1754,10 @@ function vistaSplash(today) {
       el('header', { class: 'campana-cabeza' },
         el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
         el('div', { class: 'campana-nombre' },
-          s.on ? el('strong', { class: 'campana-titulo' }, nombre)
-            : el('button', { type: 'button', class: 'campana-titulo campana-plegar', 'aria-expanded': 'true', onClick: cerrar }, nombre),
+          el('span', { class: 'campana-titulo-fila' },
+            s.on ? el('strong', { class: 'campana-titulo' }, nombre)
+              : el('button', { type: 'button', class: 'campana-titulo campana-plegar', 'aria-expanded': 'true', onClick: cerrar }, nombre),
+            el('button', { type: 'button', class: 'campana-renombrar', 'aria-label': `Rename ${nombre}`, title: 'Rename', onClick: renombrar }, '✏️')),
           s.label ? el('span', { class: 'campana-langs' }, `Players see: ${titulo}`) : null,
           el('span', { class: `campana-estado estado-${st}` }, `${ico} ${txt}`, detalle ? el('span', { class: 'campana-detalle' }, ` · ${detalle}`) : null),
           c.langs ? el('span', { class: 'campana-langs' }, `${c.langs.join(' · ').toUpperCase()} only`) : null,
@@ -1773,7 +1777,6 @@ function vistaSplash(today) {
           el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas(move(rows, s.id, -1)) }, '↑'),
           el('span', { class: 'campana-pos' }, `${i + 1} of ${rows.length}`),
           el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas(move(rows, s.id, 1)) }, '↓')),
-        el('button', { type: 'button', class: 'icono-btn', 'aria-label': `Rename ${nombre}`, title: 'Rename', onClick: renombrar }, '✏️'),
         el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, '👁 Preview')));
   });
 
