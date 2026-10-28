@@ -378,7 +378,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 
 - **Everything on the home page can be searched, in every language (D-403, D-404).** The 🔎 search
   (`public/assets/js/search.js`) finds each card by its name, tagline and type in any language, and by
-  its `KEYWORDS`: what it is, what it is played with and what it is like, in es, en, pt and de, at
+  its `keywords`, kept in its `games.js` entry (the games manifest, #855): what it is, what it is played with and what it is like, in es, en, pt and de, at
   least three per language. A new game, or anything new with a card, brings its keywords in the same
   PR; something new inside an existing card (a new kind of La Copa, a new mode) adds its words to that
   card's keywords. `search.test.mjs` fails without them. A new language of the app adds its keywords
