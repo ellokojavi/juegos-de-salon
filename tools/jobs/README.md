@@ -45,6 +45,8 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
   when the owner confirmed one on `/labs/`, runs a headless session through `claude-task.mjs` with
   `prompts/lab-publish.md`, which takes the feature out of the lab, moves its card to La Bodega and
   opens the PR with auto-merge. A request the session leaves without a PR fails at once, with why.
+  A PR left in conflict with main for 15 minutes gets one session with `prompts/lab-publish-conflict.md`,
+  which merges main into it and pushes; still in conflict an hour later, the request fails (D-486).
 - **The Claude rounds** (`processes-round`, `weekly-report`, [`claude-task.mjs`](claude-task.mjs)): each
   gets only the tools it needs (#865). Both run in auto mode with no MCP servers (no connectors), no
   page fetching, and with the model denied the machine's keys (`~/.config/**`, `~/.ssh/**` and the

@@ -16,6 +16,13 @@
  *   node tools/agents/lab-publish.mjs opened <id> <pr>     its PR is open
  *   node tools/agents/lab-publish.mjs failed <id> "why"    it could not be done
  *   node tools/agents/lab-publish.mjs sync                 follows the open PRs on GitHub
+ *   node tools/agents/lab-publish.mjs conflicts            the PRs to bring up to date (exit 0 if some, 3 if none)
+ *
+ * A PR that GitHub reports in conflict with main gets no checks and never merges, and nobody was
+ * watching for that (#937 waited a night). `sync` now notes when the conflict was first seen
+ * (`conflictAt`); one still there CONFLICT_MS later (so a stale read right after a push does not
+ * count) is handed to a session that merges main in (`fixAt`, tools/jobs/prompts/lab-publish-conflict.md),
+ * and one still there FIX_MS after that fails, with Volver a pedir on the card.
  *
  * Needs the administrator key (tools/firebase/firebase-admin.mjs). The owner's note is data for
  * the session, never instructions beyond the feature it names.
@@ -28,6 +35,11 @@ export const REPO = 'ellokojavi/juegos-de-salon';
 /** A session that claimed a request and went quiet this long has died: the request fails. */
 export const STALE_MS = 4 * 3600 * 1000;
 
+/** A conflict must last this long before a session is sent to fix it. */
+export const CONFLICT_MS = 15 * 60 * 1000;
+/** A fix that has not cleared the conflict this long after it was asked fails the request. */
+export const FIX_MS = 60 * 60 * 1000;
+
 /** The branch a request's PR is opened from: its card id without `seccion-`. */
 export const branchOf = id => `publish-${id.replace(/^seccion-/, '')}`;
 
@@ -39,11 +51,19 @@ export function oldest(all) {
 
 /**
  * What `sync` changes in one entry, or null: a PR that merged or closed, a session that died.
- * `pr` is GitHub's answer for its PR ({ state, mergedAt }), or null when it has none.
+ * `pr` is GitHub's answer for its PR ({ state, mergeable }), or null when it has none.
  */
 export function next(entry, pr, now) {
   if (entry.state === 'pr' && pr?.state === 'MERGED') return { state: 'merged', done: now };
   if (entry.state === 'pr' && pr?.state === 'CLOSED') return { state: 'failed', msg: 'El PR se cerró sin fusionarse.', done: now };
+  if (entry.state === 'pr' && pr?.state === 'OPEN') {
+    const stuck = pr.mergeable === 'CONFLICTING';
+    if (!stuck) return entry.conflictAt || entry.fixAt ? { conflictAt: null, fixAt: null } : null;
+    if (!entry.conflictAt) return { conflictAt: now };
+    if (entry.fixAt && now - entry.fixAt > FIX_MS)
+      return { state: 'failed', msg: 'El PR quedó en conflicto con main y no se pudo poner al día solo. Toca Volver a pedir.', done: now };
+    if (!entry.fixAt && now - entry.conflictAt > CONFLICT_MS) return { fixAt: now };
+  }
   if (entry.state === 'working' && now - (entry.started || 0) > STALE_MS)
     return { state: 'failed', msg: 'La sesión que lo tomó terminó sin abrir un PR.', done: now };
   return null;
@@ -85,15 +105,20 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     for (const [k, e] of Object.entries(all)) {
       let pr = null;
       if (e.state === 'pr' && e.pr) {
-        const r = spawnSync('gh', ['pr', 'view', String(e.pr), '--repo', REPO, '--json', 'state,mergedAt'], { encoding: 'utf8' });
+        const r = spawnSync('gh', ['pr', 'view', String(e.pr), '--repo', REPO, '--json', 'state,mergeable'], { encoding: 'utf8' });
         if (r.status === 0) pr = JSON.parse(r.stdout);
       }
       const n = next(e, pr, Date.now());
-      if (n) { await patch(k, n); changed++; console.log(`${k}: ${n.state}`); }
+      if (n) { await patch(k, n); changed++; console.log(`${k}: ${n.state || (n.fixAt ? 'conflict, sent to be fixed' : n.conflictAt ? 'conflict seen' : 'conflict cleared')}`); }
     }
     console.log(`${changed} request(s) moved`);
+  } else if (cmd === 'conflicts') {
+    const rows = Object.entries(all).filter(([, e]) => e?.state === 'pr' && e.fixAt && e.pr)
+      .map(([k, e]) => ({ id: k, pr: e.pr, branch: e.branch || branchOf(k) }));
+    console.log(JSON.stringify(rows, null, 2));
+    process.exit(rows.length ? 0 : 3);
   } else {
-    console.error('Usage: node tools/agents/lab-publish.mjs list | pending | claim | opened <id> <pr> | failed <id> "why" | sync');
+    console.error('Usage: node tools/agents/lab-publish.mjs list | pending | claim | opened <id> <pr> | failed <id> "why" | sync | conflicts');
     process.exit(2);
   }
 }
