@@ -4,7 +4,8 @@
  * Salió de bulls-and-cows/game.js para que La Copa use el mismo: las casillas de arriba, las
  * teclas, borrar y confirmar, y las **notas**: un toque largo sobre una tecla la tacha (🚫) y
  * deja de escribirse, para descartar cifras o letras que ya se sabe que no van. Un toque
- * normal sobre una tachada solo la sacude. Nada de esto sabe de las reglas del juego: qué es
+ * normal sobre una tachada solo la sacude. With `activarMarcas` (#895, D-483, lab) a ✏️ toggle under
+ * the keypad turns taps into marks (🚫 → ? → ★), kept in the same `notes` set. Nada de esto sabe de las reglas del juego: qué es
  * un valor válido y qué tecla se puede agregar lo dice quien lo usa.
  *
  * Los estilos están en assets/css/teclado.css.
@@ -46,7 +47,12 @@ export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, c
   const others = () => slots.filter((x, i) => x && i !== at()).join('');
   const full = () => slots.every(Boolean);
   // Con `elegir` un hueco al medio no se confirma; sin él, lo escrito es siempre contiguo
-  const listo = () => (!elegir || full()) && valido(value());
+  const listo = () => !marcando && (!elegir || full()) && valido(value());
+  // Notes mode (#895, lab): a tap cycles the key's mark instead of typing it. The marks live in
+  // `notes` too, so they persist wherever the strikes already do: a bare key is struck (✕), and
+  // '?<key>' and '★<key>' are maybe and sure (they still type).
+  let marcando = false;
+  const marca = d => (notes?.has(d) ? 'x' : notes?.has('?' + d) ? '?' : notes?.has('★' + d) ? '★' : '');
   const boxes = Array.from({ length: largo }, (_, i) => el('div', { class: 'box', onClick: () => { if (!elegir) return; cursor = i; SFX.tap(); refresh(); } }));
   const entry = el('div', { class: 'entry' + (elegir ? ' entry--elegir' : '') }, ...boxes);
   const keys = [];
@@ -60,22 +66,37 @@ export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, c
   } }, '⌫');
   const refresh = () => {
     boxes.forEach((b, i) => { b.textContent = slots[i]; b.className = 'box' + (slots[i] ? ' filled' : '') + (hidden && slots[i] ? ' hidden-digit' : '') + (i === cursor && !full() || elegir && i === cursor ? ' active' : ''); });
-    keys.forEach(k => { const d = k.dataset.d; const blocked = notes ? notes.has(d) : false; k.classList.toggle('blocked', blocked); k.disabled = !blocked && !puede(others(), d, at()); });
-    ok.disabled = !listo();
+    keys.forEach(k => { const d = k.dataset.d; const m = marca(d); k.classList.toggle('blocked', m === 'x'); k.classList.toggle('mark-maybe', m === '?'); k.classList.toggle('mark-sure', m === '★'); k.disabled = !marcando && m !== 'x' && !puede(others(), d, at()); });
+    ok.disabled = !listo(); del.disabled = marcando;
+    pad?.classList.toggle('keypad--marcando', marcando);
   };
+  const tachar = d => {
+    notes.delete('?' + d); notes.delete('★' + d); notes.add(d);
+    slots.forEach((x, i) => { if (x === d) slots[i] = ''; });
+    if (!elegir) { const v = value(); slots.fill(''); [...v].forEach((x, i) => { slots[i] = x; }); }
+    cursor = firstEmpty(elegir ? cursor : 0);
+  };
+  // none → ✕ → ? → ★ → none
+  const ciclar = d => {
+    const m = marca(d);
+    notes.delete(d); notes.delete('?' + d); notes.delete('★' + d);
+    if (m === '') tachar(d); else if (m === 'x') notes.add('?' + d); else if (m === '?') notes.add('★' + d);
+  };
+  let pad = null;
   const key = d => {
     let timer = null, longPressed = false;
     const b = el('button', { 'data-d': d,
       onClick: () => {
         if (longPressed) { longPressed = false; return; }
+        if (marcando) { ciclar(d); vibrate(8); SFX.tap(); refresh(); onNotesChange && onNotesChange(); return; }
         if (notes && notes.has(d)) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); vibrate([20, 30, 20]); return; }
         if (puede(others(), d, at())) { slots[at()] = d; cursor = firstEmpty(cursor); vibrate(8); SFX.tap(); refresh(); }
       },
       onPointerdown: () => {
-        if (!notes) return;
+        if (!notes || marcando) return;
         timer = setTimeout(() => {
           timer = null; longPressed = true;
-          if (notes.has(d)) notes.delete(d); else { notes.add(d); slots.forEach((x, i) => { if (x === d) slots[i] = ''; }); if (!elegir) { const v = value(); slots.fill(''); [...v].forEach((x, i) => { slots[i] = x; }); } cursor = firstEmpty(elegir ? cursor : 0); }
+          if (notes.has(d)) notes.delete(d); else tachar(d);
           vibrate([30, 40, 30]); SFX.dice(); refresh(); onNotesChange && onNotesChange();
         }, LONG_PRESS_MS);
       },
@@ -89,11 +110,20 @@ export function teclado({ largo, teclas, valido, puede, onSubmit, submitLabel, c
   // Una tecla `null` es un hueco: ocupa su lugar en la grilla y no se aprieta
   const celdas = teclas.map(d => (d === null ? el('span', { class: 'hueco', 'aria-hidden': 'true' }) : key(d)));
   for (const c of celdas) if (c.dataset.d !== undefined) keys.push(c);
-  const pad = acciones === 'fin'
+  pad = acciones === 'fin'
     ? el('div', { class: 'keypad' }, ...celdas.slice(0, -1), del, celdas[celdas.length - 1], ok)
     : el('div', { class: 'keypad keypad--letras', style: `grid-template-columns: repeat(${columnas}, 1fr)` }, ...celdas, del, ok);
   refresh();
   const root = el('div', {}, entry, pad);
+  /** Notes mode (#895): a ✏️ toggle under the keypad; `t` = { notes, typing, hint }. */
+  root.activarMarcas = t => {
+    if (!notes || root.querySelector('.marcas')) return;
+    const hint = el('span', { class: 'marcas-hint', hidden: true }, t.hint);
+    const btn = el('button', { type: 'button', class: 'marcas-toggle', 'aria-pressed': 'false', onClick: () => {
+      marcando = !marcando; btn.textContent = marcando ? t.typing : t.notes; btn.setAttribute('aria-pressed', String(marcando)); hint.hidden = !marcando; SFX.tap(); refresh();
+    } }, t.notes);
+    root.append(el('div', { class: 'marcas' }, btn, hint));
+  };
   root.activarElegir = () => { if (elegir) return; elegir = true; entry.classList.add('entry--elegir'); cursor = firstEmpty(); refresh(); };
   return root;
 }

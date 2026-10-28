@@ -77,7 +77,7 @@ Los pasos que este documento dejaba anotados, y cómo quedaron:
 - Hecho: sacarlo de `EN_LABS`, la puerta `/de/` con su tarjeta (`og.mjs` y `marketing/share-cards/card.html`), el README, C-3 en CANONES, el CONTRIBUTING y el guion `lang-from-url.mjs` (prueba `/de/` y el puente de `/labs/de/`).
 - Revisado el 4 de octubre: **las imágenes que se comparten** (punto 4) caben en alemán. La tabla de
   La Copa (a mitad de semana y la final de 10 jugadores con podio) y los resultados, con el
-  minijuego de nombre más largo ("Bullen und Kühe: Zahl knacken"), se ven bien y las diéresis no se
+  juego de nombre más largo ("Bullen und Kühe: Zahl knacken"), se ven bien y las diéresis no se
   cortan. La leyenda completa de la tabla, el caso más ancho y que ninguna demo muestra, mide 810 px
   de 1080 en alemán (en inglés, 858).
 - Hecho el 4 de octubre (D-199): **los guiones de punta a punta** (punto 6) recorren todos los
