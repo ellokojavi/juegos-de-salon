@@ -43,7 +43,7 @@ test('semilla: determinista y distinta por día y por sal', () => {
   assert.deepEqual(x.slice().sort(), [1, 2, 3, 4, 5, 6, 7, 8]);
 });
 
-test('número: cifras distintas, mismo para todos, puntaje de 10 a 0', () => {
+test('número: cifras distintas, mismo para todos, puntaje de 100 a 0', () => {
   for (const c of CODIGOS) {
     const p = numero.generar(c, 2);
     assert.equal(p.secreto.length, 4);
@@ -63,27 +63,26 @@ test('número: cifras distintas, mismo para todos, puntaje de 10 a 0', () => {
   assert.equal(numero.puntaje(numero.estado(p, [...Array(9).fill('5678'), '1234'])), 10);
 });
 
-// The rule tried in the lab (D-453): 100 belongs to whoever deduces, not to whoever gets lucky
-test('número: the ruled-out rule, in the lab (D-453)', () => {
+// The deduction rule (D-453): 100 belongs to whoever deduces, not to whoever gets lucky
+test('número: the ruled-out rule (D-453)', () => {
   const p = { cifras: 4, secreto: '1234' };
-  // Six guesses, each possible with the clues on the table: 100 (today's rule gives 50)
+  // Six guesses, each possible with the clues on the table: 100 (D-113's count gave 50)
   const clean = numero.estado(p, ['0567', '4123', '2341', '3214', '3412', '1234']);
   assert.deepEqual(clean.filas.map(f => f.descartado), [false, false, false, false, false, false]);
   assert.equal(clean.descartados, 0);
-  assert.equal(numero.puntajeDescarte(clean), 100);
-  assert.equal(numero.puntaje(clean), 50);
-  assert.equal(numero.puntajeDescarte(numero.estado(p, ['1234'])), 100);
+  assert.equal(numero.puntaje(clean), 100);
+  assert.equal(numero.puntaje(numero.estado(p, ['1234'])), 100);
   // Repeating a guess gives it away: 15 off
   const dirty = numero.estado(p, ['5678', '5678', '9012', '1234']);
   assert.deepEqual(dirty.filas.map(f => f.descartado), [false, true, false, false]);
-  assert.equal(numero.puntajeDescarte(dirty), 85);
+  assert.equal(numero.puntaje(dirty), 85);
   // '0234' cannot be it: against '1239' it would give 2 bulls, and '1239' got 3
   const two = numero.estado(p, ['1239', '0234', '1234']);
   assert.equal(two.descartados, 1);
-  assert.equal(numero.puntajeDescarte(two), 85);
+  assert.equal(numero.puntaje(two), 85);
   // Solved never below 10; unsolved is 0
-  assert.equal(numero.puntajeDescarte(numero.estado(p, [...Array(9).fill('5678'), '1234'])), 10);
-  assert.equal(numero.puntajeDescarte(numero.estado(p, Array(10).fill('5678'))), 0);
+  assert.equal(numero.puntaje(numero.estado(p, [...Array(9).fill('5678'), '1234'])), 10);
+  assert.equal(numero.puntaje(numero.estado(p, Array(10).fill('5678'))), 0);
   assert.equal(numero.descartado('1234', []), false);
 });
 

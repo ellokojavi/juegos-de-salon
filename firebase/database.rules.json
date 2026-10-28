@@ -1120,6 +1120,20 @@
         }
       }
     },
+    "unoAlDiaDias": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$n": {
+        "$jid": {
+          ".write": "auth != null && $n.matches(/^[0-9]{5}$/) && $jid.matches(/^[a-z0-9]{8}$/) && !data.exists() && newData.exists() && root.child('jugadorSeats/' + $jid + '/' + auth.uid).exists() && !root.child('unoAlDia/' + $jid + '/' + $n).exists()",
+          ".validate": "newData.isNumber() && newData.val() === newData.parent().parent().parent().child('unoAlDia/' + $jid + '/' + $n + '/s').val()"
+        }
+      }
+    },
+    "unoAlDiaIndice": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'"
+    },
     "invitados": {
       ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",

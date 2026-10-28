@@ -25,6 +25,7 @@ import { juegosCopa } from '../cup/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS, notCounted, setNotCounted } from '../assets/js/transport/stats.js';
 import { labAccess } from '../assets/js/lab-access.js';
+import { UAD_DIAS, UAD_INDICE, historiaDeDias } from '../assets/js/uad-days.js';
 import { $, el } from '../assets/js/ui.js';
 import { copaDe, copasEnCurso, resumenCopas, bitacoraCopas, fichaCopa, buscarCopa, paisDe, pct, duracion, inicioLabel } from './copas.js';
 import {
@@ -144,6 +145,7 @@ function denied(e) {
 }
 
 function stopListening() {
+  S.listenGen = (S.listenGen || 0) + 1; // a pending read of the Uno al día index attaches nothing (D-475)
   if (S.unsubRooms) { S.unsubRooms(); S.unsubRooms = null; }
   if (S.unsubDays) { S.unsubDays(); S.unsubDays = null; }
   if (S.unsubTorneos) { S.unsubTorneos(); S.unsubTorneos = null; }
@@ -185,7 +187,17 @@ function listen() {
   S.unsubPush = onValue(ref(db, `stats/${S.env}/push`), snap => { S.push = snap.val() || {}; render(); }, denied);
   // Uno al día (D-230): son de todos los entornos (la historia vive fuera de stats/). Sin permiso
   // (reglas viejas), queda vacío y el resto del panel sigue
-  for (const [clave, ruta] of [['historia', 'unoAlDia'], ['invitados', 'invitados'], ['rachas', 'records/uno-al-dia-racha/siempre']]) {
+  // The history comes from the index by day (D-475), from the first day loaded on, once the migration
+  // marked it complete (`unoAlDiaIndice`); before that, the whole history, as before
+  const vuelta = (S.listenGen = (S.listenGen || 0) + 1);
+  get(ref(db, UAD_INDICE)).then(m => {
+    if (S.listenGen !== vuelta) return; // a newer listen() took over
+    const h = m.exists()
+      ? onValue(query(ref(db, UAD_DIAS), orderByKey(), startAt(String(desde))), snap => { S.uad = { ...S.uad, historia: historiaDeDias(snap.val() || {}) }; render(); }, () => {})
+      : onValue(ref(db, 'unoAlDia'), snap => { S.uad = { ...S.uad, historia: snap.val() || {} }; render(); }, () => {});
+    S.unsubUad.push(h);
+  }).catch(() => {});
+  for (const [clave, ruta] of [['invitados', 'invitados'], ['rachas', 'records/uno-al-dia-racha/siempre']]) {
     S.unsubUad.push(onValue(ref(db, ruta), snap => { S.uad = { ...S.uad, [clave]: snap.val() || {} }; render(); }, () => {}));
   }
   // Feedback for the timeline (D-408): the 🐞 reports and the inbox at the end of every game
