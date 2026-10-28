@@ -182,7 +182,7 @@
 .hist .down { color: var(--pink); font-weight: 900; white-space: nowrap; }
 .hist .up { color: var(--lime); font-weight: 900; white-space: nowrap; }
 
-/* ---------- Classic rules, round 2 (lab, D-488) ---------- */
+/* ---------- Classic rules, round 2 (lab, D-490) ---------- */
 /* The open obligada round: the rivals' dice face up, your own as ❓ */
 .rivals .rival.seen .d { font-size: inherit; letter-spacing: 0; gap: 3px; }
 .rivals .rival.seen .die--sm { width: 26px; height: 26px; padding: 4px; }
