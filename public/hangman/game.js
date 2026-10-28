@@ -29,6 +29,7 @@ import {
 import { DECKS, getDeck } from './decks/index.js';
 import { GAME_ID, DEFAULT_CONFIG, GALLOWS, PARTS, MAX_HINT, MIN_PLAYERS, MAX_PLAYERS, LOCALES } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
+import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -1077,6 +1078,7 @@ function init() {
   if (HOY?.fuera) return;   // se va al juego de hoy
   if (HOY) return introDeHoy();
   renderModes();
+  mountHowToPlayFacts(GAME_ID, T, lang);
   // Los mejores puntajes jugando solo (D-274), y las victorias y entrar con nombre y PIN (D-212)
   $('#rk-slot')?.append(
     bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),

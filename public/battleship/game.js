@@ -24,6 +24,7 @@ import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isVali
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import { FONDO_AGUA, barcoEn, barcoEntero, trozoDe } from './flota.js';
 import { renderQr } from '../assets/js/qr.js';
+import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -983,6 +984,7 @@ function init() {
   if (HOY?.fuera) return;   // se va al juego de hoy
   if (HOY) return introDeHoy();
   renderModes();
+  mountHowToPlayFacts(GAME_ID, T, lang);
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
