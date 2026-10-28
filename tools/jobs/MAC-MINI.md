@@ -10,6 +10,7 @@ machine needs. `machine.test.mjs` fails if a `mac` job, or a file under
 | Job | Kind | Schedule | How it is set up |
 |---|---|---|---|
 | `inbox-watch` | launchd (`cl.juegosdesalon.inbox-watch`) | every 5 min | `node tools/jobs/jobs.mjs install` |
+| `lab-publish-watch` | launchd (`cl.juegosdesalon.lab-publish-watch`) | every 5 min | `node tools/jobs/jobs.mjs install` |
 | `feedback-watch` | launchd (`cl.juegosdesalon.feedback-watch`) | every 5 min | `node tools/jobs/jobs.mjs install` |
 | `processes-round` | launchd (`cl.juegosdesalon.processes-round`), a headless `claude -p` | 4:30 Pacific, daily | `node tools/jobs/jobs.mjs install` (D-451) |
 | `weekly-report` | launchd (`cl.juegosdesalon.weekly-report`), a headless `claude -p` | Sundays 08:00 Pacific | `node tools/jobs/jobs.mjs install` (D-451) |

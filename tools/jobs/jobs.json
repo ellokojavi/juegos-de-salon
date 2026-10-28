@@ -10,6 +10,15 @@
       "decisions": ["D-318", "D-365"]
     },
     {
+      "id": "lab-publish-watch",
+      "where": "mac",
+      "every": 300,
+      "timeout": 7200,
+      "command": ["node", "tools/jobs/lab-publish-watch.mjs"],
+      "what": "Follows the PRs of the lab's 🚀 Publicar requests and, only when the owner asked for a feature to go live from /labs/, runs a headless Claude session that takes it out of the lab and opens its PR with auto-merge.",
+      "decisions": ["D-479", "D-480"]
+    },
+    {
       "id": "feedback-watch",
       "where": "mac",
       "every": 300,

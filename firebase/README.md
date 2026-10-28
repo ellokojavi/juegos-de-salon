@@ -291,6 +291,14 @@ and any other field is rejected. While the node is empty, the home page uses `AC
 visit and keeps a copy on the device, `public/assets/js/controls.js`); only the owner's UID writes it.
 Empty, the site is as the code says. Checked by `firebase/controls.test.mjs`.
 
+## Publishing a lab feature (`labsPublish`, D-480)
+
+`labsPublish/<card id>` = `{ state: 'requested'|'working'|'pr'|'merged'|'failed', at, title?, note?,
+started?, pr?, branch?, msg?, done? }`: the owner's 🚀 Publicar para todos request from a /labs/ card.
+Only the owner's UID reads and writes it (the button shows only when the read works); card ids match
+`seccion-[a-z0-9-]{1,40}` and any other field is rejected. The Mac mini's `lab-publish-watch` job and
+`tools/agents/lab-publish.mjs` move it through its states. Checked by `firebase/labs-publish.test.mjs`.
+
 ## The trash bin (`cleanup`)
 
 Nobody deletes their room when they finish playing, so the same phones that play do the cleanup
