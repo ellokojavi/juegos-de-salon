@@ -33,7 +33,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
 - **🎉 Copa de fin de semana** (D-439, a one-off for the owner's friends: offered in Spanish on both create screens on Friday 2026-10-23 only, closed that night by `FINDE_HASTA` in `engine.js`; the test store still offers it with `&weekend=on`; the cups created play on): 3 days, **3 games a day**, nine different games of the pool drawn by 🎲. A day (`linea+tango+donde` in `meta.cal`, game `trio`) is played like the Grand Final's rounds but with each game whole; the day's score is the average of the three (0 to 100) and hands out the usual points by place. No final, like the 3-day cup (D-438); a day of three counts for no game's ranking.
 - **Calendario:** lo arma el admin al crear la copa (D-163): qué juegos entran y en qué orden,
   a partir de una propuesta al azar. La final va siempre el último día y repite los juegos de la semana, en su orden (D-418); the 3-day cup has none since D-438, and its three days are all games of the pool.
-  In the lab (D-425), a key holder sees a new create screen: the week in view from the start, 🎲 Crear al
+  In the lab (D-425; flag `copa-crear`, D-498), a key holder sees a new create screen: the week in view from the start, 🎲 Crear al
   azar, week styles (Balanced, Puzzles, Trivia and words, What's new), a sheet with the
   13 games to change, move or pick the version of a day, Ahora/Mañana with their weekday, the PIN once with 👁, and the language, audience and
   link folded in "More options"; the length (3 or 7 days) goes next to when it starts (D-437). The test store shows it only with `&lab` (`tools/e2e/cup/create-week.mjs`).
@@ -86,7 +86,7 @@ player (D-359), the player's seat was lost with the same session, so it asks for
 toda la app), al inscribirse el nombre viene puesto, y al abrir la copa su jugador queda enlazado
 en `players/<pid>/j`. Con eso: los de la copa que también lo están pasan a ser sus **amigos** en
 los rankings; cada día jugado cuenta para la pestaña **Copa** del ranking de ese juego; y cuando la
-copa termina, el primero que la abre guarda su podio en `torneoPodios/<código>`, del que sale el
+copa termina, the nightly `cup-podiums` job saves its podium in `torneoPodios/<código>` (D-450, D-499; the app no longer writes it), del que sale el
 medallero de **Campeones de La Copa** al final de la portada. A win by name alone (without a player) joins the
 player with that name when exactly one has it (D-357). With a player on the phone there is no cup PIN (D-359, below).
 Las copas del laboratorio no cuentan.
