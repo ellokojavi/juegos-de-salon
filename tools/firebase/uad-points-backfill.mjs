@@ -35,7 +35,7 @@
  */
 import { fileURLToPath } from 'node:url';
 import { fechaDeNum, numDia } from '../../public/assets/js/uno-al-dia.js';
-import { walk, bonusFor } from '../../public/assets/js/daily-points.js';
+import { walk, bonusFor, onTime } from '../../public/assets/js/daily-points.js';
 import { UAD_PUNTOS, RACHA_TOPE, bonoRacha, claveOrden, esPais } from '../../public/assets/js/records.js';
 
 /**
@@ -58,14 +58,8 @@ export function mesDe(hist, month, antes = null, { gifts = [] } = {}) {
   return nuevos.length ? { nuevos, fila } : null;
 }
 
-/**
- * Whether a played day's result reached the server near its own date (D-465): its `at` (the server's
- * time of the write) within the window the rules give a day's points, from two days before the day's
- * UTC start to one day after it, so any time zone fits. A day uploaded later (played offline, or on a
- * phone before signing in) keeps the streak but earns no points, as on the phone, where the rules
- * refuse its `p`. A result without `at` (none today) is taken as on time.
- */
-export const onTime = (n, x) => typeof x?.at !== 'number' || (n * 86400000 > x.at - 172800000 && n * 86400000 < x.at + 86400000);
+/** Whether a played day reached the server on time for points (D-465): one definition, in the browser's module. */
+export { onTime };
 
 /**
  * The server's walk of a player's history up to the month's last day: the days played, and the

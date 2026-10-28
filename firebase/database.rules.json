@@ -1432,6 +1432,43 @@
       "$other": {
         ".validate": false
       }
+    },
+    "labsPublish": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$id": {
+        ".validate": "$id.matches(/^seccion-[a-z0-9-]{1,40}$/) && newData.hasChildren(['state', 'at'])",
+        "state": {
+          ".validate": "newData.isString() && newData.val().matches(/^(requested|working|pr|merged|failed)$/)"
+        },
+        "at": {
+          ".validate": "newData.isNumber()"
+        },
+        "title": {
+          ".validate": "newData.isString() && newData.val().length <= 120"
+        },
+        "note": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "started": {
+          ".validate": "newData.isNumber()"
+        },
+        "pr": {
+          ".validate": "newData.isNumber()"
+        },
+        "branch": {
+          ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9-]{1,60}$/)"
+        },
+        "msg": {
+          ".validate": "newData.isString() && newData.val().length <= 300"
+        },
+        "done": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
     }
   }
 }
