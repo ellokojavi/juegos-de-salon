@@ -101,6 +101,7 @@ const shared = await ev(`JSON.stringify(window.__compartido[0] ? {text: window._
 ok(shared && /Uno al día n\.° 1/.test(shared.text) && /Racha: 1 día/.test(shared.text) && /juegosdesalon\.cl\/today\//.test(shared.text), `the header, the streak and the link are shared (${shared?.text?.replace(/\n/g, ' / ')})`);
 ok(shared && !/Desenredo|🧶/.test(shared.text), "the text doesn't say which game came up");
 ok(shared?.files === 1, 'and it goes with the image');
+ok(shared && /\n[🟩⬛]+\n/u.test(shared.text), 'with a lab key (localhost), the spoiler-free grid goes between the header and the streak (#889, D-482)');
 
 /* ---------- The second attempt is practice ---------- */
 const s1 = m.dias[TODAY].s;
