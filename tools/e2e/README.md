@@ -3,6 +3,8 @@
 Scripts that play full games in headless Chrome, with no npm dependencies: they use Chrome's
 debugging protocol over WebSocket (`cdp.mjs`). Each script takes an output folder where it
 leaves PNG screenshots, and prints to the console what it checked.
+That folder, and the Chrome profiles the scripts create, never go into a commit: `tools/agents/repo-weight.test.mjs`
+fails on any Chrome profile file or any file over 5 MB (D-494).
 
 ## Requirements
 
