@@ -40,6 +40,11 @@ node tools/jobs/jobs.mjs run <id>          # runs one now, as launchd does
   owner-only `skipped` denied), in restricted mode (no settings files, file reads only inside the
   repo, no MCP servers); the report's text goes to `ingest` on stdin, so there is no Read or Write
   (#838). `inbox-watch.test.mjs` checks those flags.
+- **`lab-publish-watch`** ([`lab-publish-watch.mjs`](lab-publish-watch.mjs)), every 5 minutes: the lab's
+  🚀 Publicar para todos (D-480). It follows the requests' open PRs (`lab-publish.mjs sync`) and, only
+  when the owner confirmed one on `/labs/`, runs a headless session through `claude-task.mjs` with
+  `prompts/lab-publish.md`, which takes the feature out of the lab, moves its card to La Bodega and
+  opens the PR with auto-merge. A request the session leaves without a PR fails at once, with why.
 - **The Claude rounds** (`processes-round`, `weekly-report`, [`claude-task.mjs`](claude-task.mjs)): each
   gets only the tools it needs (#865). Both run in auto mode with no MCP servers (no connectors), no
   page fetching, and with the model denied the machine's keys (`~/.config/**`, `~/.ssh/**` and the
