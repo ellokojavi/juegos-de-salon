@@ -263,7 +263,6 @@
 @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
 
 /* Con el chat en pantalla, la burbuja flota abajo a la derecha: que no tape los botones */
-body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
 /* La burbuja del chat y la barra de acciones se peleaban por la esquina de abajo a la derecha:
    la burbuja va en z-index 20 y subir la barra taparía el panel abierto, y dejarle su hueco
    dejaba los botones cortos con el texto partido. Se mueve la burbuja, que es lo que sobra:
