@@ -22,6 +22,7 @@ import { token, fail } from '../firebase/firebase-admin.mjs';
 import { firebaseConfig } from '../../public/assets/js/firebase-config.js';
 import { launch, sleep } from '../e2e/cdp.mjs';
 import { semana, semanaCerrada } from './weekly-data.mjs';
+import { readHistory } from '../firebase/uad-index.mjs';
 import { htmlDelInforme, destacados } from './weekly-html.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -45,7 +46,8 @@ const t = await token();
 // Two weeks for the comparison, and 28 days more so returns and the users' first sight have history
 const [days, torneos, historia, invitados, rachas, feedback] = await Promise.all([
   leer('stats/prod/days', t, { orderBy: '$key', startAt: String(w.from - 7 - 28) }),
-  leer('torneos', t), leer('unoAlDia', t), leer('invitados', t), leer('records/uno-al-dia-racha/siempre', t), leer('feedback', t),
+  // Uno al día from the previous week on, through the index by day (D-475)
+  leer('torneos', t), readHistory(t, w.from - 7, { databaseURL: firebaseConfig.databaseURL }), leer('invitados', t), leer('records/uno-al-dia-racha/siempre', t), leer('feedback', t),
 ]);
 const changelog = existsSync(join(ROOT, 'CHANGELOG.md')) ? readFileSync(join(ROOT, 'CHANGELOG.md'), 'utf8') : '';
 const r = semana({ days, torneos, uad: { historia, invitados, rachas }, feedback, changelog }, now);
