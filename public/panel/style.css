@@ -357,6 +357,12 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .icono-btn:not(:disabled):hover, .icono-btn:focus-visible { background: var(--glass); outline: none; }
 .campana-preview { white-space: nowrap; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid var(--glass-border); color: var(--ink); font-weight: 800; font-size: 0.88rem; text-decoration: none; }
 .campana-preview:hover, .campana-preview:focus-visible { border-color: var(--cyan); outline: none; }
+.vistazo { margin-top: 4px; }
+.vistazo summary { display: inline-flex; align-items: center; min-height: 44px; cursor: pointer; color: var(--muted); font-size: 0.85rem; font-weight: 800; }
+.vistazo summary:hover, .vistazo summary:focus-visible { color: var(--ink); outline: none; }
+/* A 390×780 phone drawn at half size */
+.vistazo-marco { width: 195px; height: 390px; margin: 4px auto 8px; overflow: hidden; border-radius: 18px; border: 1px solid var(--glass-border); background: #000; }
+.vistazo-marco iframe { width: 390px; height: 780px; border: 0; transform: scale(0.5); transform-origin: 0 0; pointer-events: none; }
 .campana-plegada { display: flex; align-items: center; gap: 12px; width: 100%; margin-bottom: 8px; padding: 8px 14px 8px 8px; border-radius: 18px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.04); text-align: left; font: inherit; color: var(--muted); cursor: pointer; }
 .campana-plegada .campana-emoji { width: 40px; height: 40px; font-size: 1.3rem; filter: grayscale(0.6); }
 .campana-plegada .campana-titulo { flex: 0 1 auto; min-width: 0; font-size: 0.95rem; }

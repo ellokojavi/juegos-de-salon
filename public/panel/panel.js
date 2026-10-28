@@ -69,7 +69,7 @@ const S = {
   // 📣 Campaigns (D-454): Firebase `splash/` (undefined until it answers, null if never saved) and the last save's outcome
   splash: undefined, unsubSplash: null, splashMsg: '',
   // 🧩 Site features and 🎨 skins (D-477): Firebase `controls/` (undefined until it answers), the tab shown and the last save
-  controls: undefined, unsubControls: null, controlsMsg: '', campTab: 'splash', campOpen: new Set(), campStats: null, tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
+  controls: undefined, unsubControls: null, controlsMsg: '', campTab: 'splash', campOpen: new Set(), campPeek: new Set(), campStats: null, tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
   unsubRooms: null, unsubDays: null, unsubTorneos: null, unsubPush: null, unsubUad: [], tick: null,
   // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
   desdeDia: null,
@@ -1786,13 +1786,27 @@ function vistaSplash(today) {
           el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas(move(rows, s.id, -1)) }, '↑'),
           el('span', { class: 'campana-pos' }, `${i + 1} of ${rows.length}`),
           el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas(move(rows, s.id, 1)) }, '↓')),
-        el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, '👁 Preview')));
+        el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, '👁 Preview')),
+      vistazo(s.id, nombre));
   });
 
   return [
     el('p', { class: 'muted small' }, 'The splash over the home page. Each player sees a campaign once; with several on, one per visit, top first. New campaigns are made by asking Claude; here they are switched, dated, ordered and renamed (✏️, only you see the name).'),
     resumen, tira, bloqueResultados(rows), tarjetas,
   ];
+}
+
+/* A quick look at a splash without leaving the panel: the real home page with that campaign forced
+   (`?splash=`, which records nothing), drawn at phone size and shrunk. The frame loads only when opened,
+   and stays open across re-renders for this visit */
+function vistazo(id, nombre) {
+  const marco = () => el('div', { class: 'vistazo-marco' },
+    el('iframe', { src: `../?splash=${encodeURIComponent(id)}`, title: `${nombre}: splash preview`, loading: 'lazy', tabindex: '-1' }));
+  const abierto = S.campPeek.has(id);
+  const d = el('details', { class: 'vistazo', open: abierto, onToggle: () => {
+    if (d.open) { S.campPeek.add(id); if (!d.querySelector('iframe')) d.append(marco()); } else { S.campPeek.delete(id); d.querySelector('.vistazo-marco')?.remove(); }
+  } }, el('summary', {}, 'Quick look'), abierto ? marco() : null);
+  return d;
 }
 
 /* 🧩 Site features and 🎨 skins (D-477): `controls/`, read by the site through assets/js/controls.js */
