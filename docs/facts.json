@@ -1,5 +1,5 @@
 {
-  "version": "0.225.0",
+  "version": "0.225.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1485,6 +1485,7 @@
     "output.mjs",
     "output.test.mjs",
     "paint-mines/game.mjs",
+    "panel/views.mjs",
     "paths.mjs",
     "pips/lab.mjs",
     "plots/numbers.mjs",

@@ -157,6 +157,7 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 
 | Script | What it tests |
 |---|---|
+| `panel/views.mjs` | Every panel view in `PATHS.panel` at 900 and 390 px with seeded data: no uncaught error, no `undefined`/`NaN`/`Infinity`/`[object …]` on screen, no sideways overflow, and no offline-log row from the other domain (D-484) |
 | `landing-fold.mjs` | Every game's landing (the `intro` path of each game in `paths.mjs`) at 320×568 and 375×667 in every language: the start button, or the first mode, is above the fold (U-39, D-344) |
 | `fourth-king/lab.mjs` | Cuarto Rey in La Bodega (D-420): not on the home page, in the lab's La Bodega folded to its title, a tap shows Play; `/fourth-king/` and `/cuarto-rey/` lead to `/labs/fourth-king/`, which loads behind the lab's door and is not indexed |
 | `fourth-king/game.mjs` | At `/labs/fourth-king/` (D-420): sound button, full deck up to the fourth king and the menu in English; that the table is exactly the script's names, even if the remembered table brings more rows |

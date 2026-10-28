@@ -76,6 +76,7 @@
  "liars-dice/local.mjs": 48,
  "liars-dice/shake-clock.mjs": 29,
  "paint-mines/game.mjs": 34,
+ "panel/views.mjs": 35,
  "pips/lab.mjs": 16,
  "plots/numbers.mjs": 46,
  "plots/utilities.mjs": 28,
