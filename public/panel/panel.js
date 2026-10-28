@@ -1886,7 +1886,7 @@ function vistaCampanas(now) {
   const TABS = [
     ['splash', '📣 Splash', splashVivas ? `${splashVivas} showing` : 'none showing'],
     ['features', '🧩 Site features', funciones.map(([f, k]) => `${f.emoji} ${k ? 'on' : 'off'}`).join(' · ')],
-    ['skins', '🎨 Skins', skinViva.length ? skinViva.map(s => `${SKINS[s.id].icon?.emoji || '🎨'} on`).join(' · ') : 'none on'],
+    ['skins', '🎨 Site skins', skinViva.length ? skinViva.map(s => `${SKINS[s.id].icon?.emoji || '🎨'} on`).join(' · ') : 'none on'],
   ];
   const tab = TABS.some(([k]) => k === S.campTab) ? S.campTab : 'splash';
   const pestanas = el('div', { class: 'campanas-tabs', role: 'tablist', 'aria-label': 'Kind' },

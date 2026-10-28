@@ -346,7 +346,7 @@ with that the screen also enters the language tests. To see it on a real phone,
   `?splash=<id>` previews a campaign (one that is not on, only with a lab key, D-395), tried from the home page's lab bar with the other experiments (D-389), and the clips are recorded with
   `marketing/splash/capture.mjs`. Each campaign is kept in `marketing/splash/campaigns/<id>/` (its README), and a campaign that changes gets the usability agent's full pass before merging (D-355).
   The same 📣 Campaigns section is the control center for everything temporary (D-477): besides 📣 Splash,
-  its 🧩 Site features tab switches each place a fixed feature shows (☕ Buy me a coffee) and its 🎨 Skins
+  its 🧩 Site features tab switches each place a fixed feature shows (☕ Buy me a coffee) and its 🎨 Site skins
   tab moves a seasonal template to other days or turns it off, written to Firebase `controls/` and read
   through `public/assets/js/controls.js`, with no PR.
 - **Game ideas** (D-360): `.claude/agents/ideas.md` proposes what the app could try next, in three
