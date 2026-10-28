@@ -36,7 +36,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | 📐 Loteo, the lab's Shikaku (rectangles whose number is their area, unique solution, five boards against the clock: two warm-ups and three hard ones; the ⚡💧 Servicios mode, with same-size plots and one ⚡ and one 💧 in each) | `docs/games/plots.md` | D-310, D-311, D-312, D-332 |
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
 | Sound and vibration | C-4 | D-17, D-92 |
-| Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453, D-487, D-488, D-489, D-490, D-491 |
+| Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453, D-487, D-488, D-489, D-490, D-491, D-495 |
 | Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463, D-466, D-472, D-477 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456, D-465, D-473, D-475, D-482, D-485 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321, D-469, D-470, D-474 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (481)
+## In force (482)
 
 | D | Title | Status |
 |---|---|---|
@@ -531,14 +531,15 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-484](decisions/D-484.md) | Each panel domain counts and lists only its own games, and a script checks every view | current |
 | [D-485](decisions/D-485.md) | Uno al día's spoiler-free grid reaches everyone | current |
 | [D-486](decisions/D-486.md) | A conflict is a verdict only when it lasts: wait-pr confirms it, and the 🚀 Publicar watcher fixes it | current |
-| [D-487](decisions/D-487.md) | Dudo's traditional rules: no opening in aces and the obligada round, in the lab | amended by D-490 |
+| [D-487](decisions/D-487.md) | Dudo's traditional rules: no opening in aces and the obligada round, in the lab | amended by D-490, D-495 |
 | [D-488](decisions/D-488.md) | One "Cómo se juega" on a game's cover: who plays, how and what it costs go inside it, never in a separate FAQ | current |
 | [D-489](decisions/D-489.md) | Battleship's Salvo: one volley per turn, as big as your ships afloat, entered with taps and one ¡Fuego! | current |
-| [D-490](decisions/D-490.md) | Dudo's classic rules, round two: the owner's answers to #897 | amended by D-491 |
+| [D-490](decisions/D-490.md) | Dudo's classic rules, round two: the owner's answers to #897 | amended by D-491, D-495 |
 | [D-491](decisions/D-491.md) | Dudo's fives are "quinas", and the obligada notice names its exception | current |
 | [D-492](decisions/D-492.md) | An archived Cup's memorial, for everyone | current |
 | [D-493](decisions/D-493.md) | The panel's "Don't count this browser" checkbox leaves the lab | current |
 | [D-494](decisions/D-494.md) | No blob over 5 MB enters git; big media moves out without rewriting history | current |
+| [D-495](decisions/D-495.md) | Dudo's classic rules leave the lab, for everyone | current |
 | [D-497](decisions/D-497.md) | A lighter process: short CLAUDE.md, D-n only for policy, no translating history, CHANGELOG by month | current |
 
 ## No longer in force (12)
