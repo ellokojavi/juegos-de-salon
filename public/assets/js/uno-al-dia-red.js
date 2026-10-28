@@ -12,7 +12,7 @@ import {
   estado, leer, juntar, numDia, fechaDeNum, semanaDe, recorrer, porJuego, fechaLocal, KEY,
 } from './uno-al-dia.js';
 import { UNO_AL_DIA, UAD_RACHA, periodoDia, periodoMes, SIEMPRE, esJid } from './records.js';
-import { walk } from './daily-points.js';
+import { walk, lateDays } from './daily-points.js';
 import { trackUnoAlDia } from './transport/stats.js';
 
 /** Quién invitó a este celular (el `jid` del link), si alguien. */
@@ -93,12 +93,13 @@ export async function empezadoEnOtro(fecha, { ms = 2500 } = {}) {
 /**
  * Al abrir /today/ (o entrar con el jugador): junta la historia de Firebase y los comodines por
  * invitar con lo del celular, suma a Amigos a quienes aceptaron los desafíos, y sube el de hoy si se
- * jugó antes de entrar. Devuelve `{ nuevos }`: los desafíos aceptados desde la última vez, con nombre.
+ * jugó antes de entrar. Devuelve `{ nuevos, late }`: los desafíos aceptados desde la última vez, con
+ * nombre, and the dates uploaded too late for points (`lateDays`, #879), for the calendar.
  */
 export async function sincronizar() {
   const j = await J().catch(() => null);
   const yo = j?.yo();
-  if (!yo) return { nuevos: [] };
+  if (!yo) return { nuevos: [], late: [] };
   const [hist, invitados] = await Promise.all([j.historialDia().catch(() => ({})), j.invitados().catch(() => [])]);
   const dias = Object.fromEntries(Object.entries(hist).filter(([k]) => /^[0-9]{5}$/.test(k)).map(([k, x]) => [fechaDeNum(Number(k)), x]));
   juntar({ dias, regalos: invitados.map(x => fechaDeNum(x.d)) });
@@ -132,7 +133,7 @@ export async function sincronizar() {
   j.conocer(Object.fromEntries(conNombre.filter(x => x.j && x.n).map(x => [x.j, x.n])));
   const vistos = Number(leerLs(VISTOS_KEY, '0')) || 0;
   ponerLs(VISTOS_KEY, conNombre.length);
-  return { nuevos: conNombre.length > vistos ? conNombre.slice(vistos) : [] };
+  return { nuevos: conNombre.length > vistos ? conNombre.slice(vistos) : [], late: lateDays(hist) };
 }
 
 /** Las filas leídas de una tabla de Uno al día (hasta 100, en orden). */
