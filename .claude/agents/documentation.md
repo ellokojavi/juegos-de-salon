@@ -68,6 +68,9 @@ changelog entries are written in English, even inside files that are still in Sp
    - **`docs/decisions/`:** every D-n cited in the code or in a commit exists as `D-<n>.md`, has a
      date, a status and its topics, and the ones it amends or replaces say "amended by D-n" /
      "replaced by D-n". The index `docs/DECISIONS.md` is rebuilt with `node tools/agents/decision.mjs index`, never edited by hand (D-394).
+     A D-n is only for a real policy change (D-497): a small adjustment (a threshold, a wording, a
+     fix, a new flag of an existing tool) lives in its `changelog/` entry and the code comment; do
+     not ask for a decision for it, and do not flag its absence.
    - **`docs/REQUERIMIENTOS.md`:** a fulfilled requirement is marked ✅ with its version.
    - **`docs/games/<carpeta>.md`** of the game that changed, `docs/CANONES.md` if a general rule
      changed, `docs/USABILIDAD.md` only if the owner resolved a dilemma and it still needs recording.

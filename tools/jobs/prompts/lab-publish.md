@@ -27,7 +27,7 @@ session moves with `node tools/agents/lab-publish.mjs`. Nobody will answer quest
    `public/labs/bodega.test.mjs` checks it.
 6. The `changelog/<branch>.md` entry (`node tools/release/changelog.mjs new patch`, `minor` for a
    game), the decision that records the launch if the feature's decision said it waited in the lab,
-   the tests (`CLAUDE.md`, Tests), and the agents CLAUDE.md asks for before a merge: usability and
+   the tests (`docs/SESSIONS.md`, Tests), and the agents CLAUDE.md (detail in `docs/MERGING.md`) asks for before a merge: usability and
    documentation together; a game leaving the lab gets the full usability pass (D-304).
 7. Commit, push once, open the PR (title `Publish for everyone: <title>`; its description says the owner
    asked for it from /labs/ and quotes the note), turn on auto-merge (`gh pr merge <n> --auto --merge`), and
