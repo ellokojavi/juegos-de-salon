@@ -17,6 +17,7 @@ import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, releaseOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug, esNuevo } from '../assets/js/games.js';
 import { labAccess } from '../assets/js/lab-access.js';
+import { shareGrid } from '../assets/js/share-grid.js';
 import { backGuard } from '../assets/js/back-guard.js';
 import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../assets/js/parametros.js';
 import {
@@ -2991,7 +2992,7 @@ function resultadoPractica(id, semilla, r, variante = null) {
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),
       ...bajoElPuntaje(r.t, r.ms, id)),
     // Uno al día: la racha, compartir sin decir el juego, jugar otro o ver todo (D-230)
-    hoy ? tarjetaResultado({ lang: LANG, fecha: S.hoy.fecha, primera: hoy.primera, dia: hoy.dia, raiz: RAIZ, alTocar: () => SFX.tap(), mmss }) : null,
+    hoy ? tarjetaResultado({ lang: LANG, fecha: S.hoy.fecha, primera: hoy.primera, dia: hoy.dia, raiz: RAIZ, alTocar: () => SFX.tap(), mmss, grid: shareGrid(id, r.t) }) : null,
     aviso,
     // Suelto se comparte como cualquier juego jugado solo, con su página (D-162, D-165)
     // El de un juego `diario` lleva su semilla: quien lo recibe juega el mismo caso, también mañana
