@@ -1448,6 +1448,22 @@
         ".validate": false
       }
     },
+    "flags": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$id": {
+        ".validate": "$id.matches(/^[a-z0-9-]{1,40}$/) && newData.hasChildren(['state', 'at'])",
+        "state": {
+          ".validate": "newData.isString() && newData.val().matches(/^(lab|all|off)$/)"
+        },
+        "at": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
     "labsPublish": {
       ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",

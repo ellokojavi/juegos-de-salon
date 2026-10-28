@@ -38,6 +38,7 @@ import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splas
 import { TEXTS as SUPPORT_TEXTS } from '../assets/js/support.js';
 import { switches, status as campaignStatus, overlaps, move, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
 import { TEMPLATES as SKINS } from '../assets/season/templates.js';
+import { FLAGS, stateOf as flagState } from '../assets/js/flags.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import {
   rangoAnterior, variacion, partidasDominio, finales, embudoSalas, dificultad, versiones, versionesEn, usuarios, cohortes,
@@ -69,7 +70,7 @@ const S = {
   // 📣 Campaigns (D-454): Firebase `splash/` (undefined until it answers, null if never saved) and the last save's outcome
   splash: undefined, unsubSplash: null, splashMsg: '',
   // 🧩 Site features and 🎨 skins (D-477): Firebase `controls/` (undefined until it answers), the tab shown and the last save
-  controls: undefined, unsubControls: null, controlsMsg: '', campTab: 'splash', campOpen: new Set(), campPeek: new Set(), campStats: null, tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
+  controls: undefined, unsubControls: null, flags: undefined, unsubFlags: null, controlsMsg: '', campTab: 'splash', campOpen: new Set(), campPeek: new Set(), campStats: null, tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
   unsubRooms: null, unsubDays: null, unsubTorneos: null, unsubPush: null, unsubUad: [], tick: null,
   // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
   desdeDia: null,
@@ -152,6 +153,7 @@ function stopListening() {
   if (S.unsubFeedback) { S.unsubFeedback(); S.unsubFeedback = null; }
   if (S.unsubSplash) { S.unsubSplash(); S.unsubSplash = null; }
   if (S.unsubControls) { S.unsubControls(); S.unsubControls = null; }
+  if (S.unsubFlags) { S.unsubFlags(); S.unsubFlags = null; }
   for (const f of S.unsubUad) f();
   S.unsubUad = [];
   if (S.tick) { clearInterval(S.tick); S.tick = null; }
@@ -205,6 +207,7 @@ function listen() {
   // 📣 Campaigns (D-454): the switches the home page reads
   S.unsubSplash = onValue(ref(db, 'splash'), snap => { S.splash = snap.val(); render(); }, () => { S.splash = null; });
   S.unsubControls = onValue(ref(db, 'controls'), snap => { S.controls = snap.val() || {}; render(); }, () => { S.controls = {}; });
+  S.unsubFlags = onValue(ref(db, 'flags'), snap => { S.flags = snap.val() || {}; render(); }, () => { S.flags = {}; });
   S.tick = setInterval(render, 30000); // "hace 3 min" se actualiza solo
 }
 
@@ -1885,13 +1888,41 @@ function vistaSkins(today) {
     msgControles(), ...tarjetas];
 }
 
+/* 🚩 Lab flags (D-498): `flags/`, read by the site through assets/js/flags.js */
+const MODO_FLAG = [['lab', '🧪 Lab'], ['all', '🚀 Everyone'], ['off', '⚪ Off']];
+const ESTADO_FLAG = { lab: ['🧪', 'In the lab: only lab key holders'], all: ['🟢', 'Live for everyone'], off: ['⚪', 'Off for everyone, the lab too'] };
+async function guardarFlag(id, state) {
+  S.controlsMsg = 'Saving…'; render();
+  try { await set(ref(db, `flags/${id}`), { state, at: Date.now() }); S.controlsMsg = `Saved ✓ ${horaLabel(Date.now())}: players get it the next time they open that page.`; }
+  catch (e) { S.controlsMsg = `Not saved (${e?.code || e?.message || 'error'}). Nothing changed for players.`; }
+  render();
+}
+function vistaFlags() {
+  const tarjetas = Object.entries(FLAGS).map(([id, nombre]) => {
+    const st = flagState(S.flags, id);
+    const [ico, txt] = ESTADO_FLAG[st];
+    const at = S.flags?.[id]?.at;
+    return el('article', { class: `campana campana--${st === 'all' ? 'live' : 'off'}` },
+      el('header', { class: 'campana-cabeza' },
+        el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, '🚩'),
+        el('div', { class: 'campana-nombre' },
+          el('strong', { class: 'campana-titulo' }, nombre),
+          el('span', { class: `campana-estado estado-${st === 'all' ? 'live' : 'off'}` }, `${ico} ${txt}`, at ? el('span', { class: 'campana-detalle' }, ` · since ${diaCorto(todayOf(at))}`) : null))),
+      el('div', { class: 'campana-segmento', role: 'group', 'aria-label': 'Who gets it' },
+        ...MODO_FLAG.map(([m, l]) => el('button', { type: 'button', 'aria-pressed': String(st === m), onClick: () => guardarFlag(id, m) }, l))),
+      el('footer', { class: 'campana-pie' }, el('span'), el('a', { class: 'campana-preview', href: `../labs/#seccion-${id}`, target: '_blank', rel: 'noopener' }, 'Its lab card 🧪')));
+  });
+  return [el('p', { class: 'muted small' }, 'What is being tried on pages players visit. 🚀 Everyone publishes it at once, no PR; 🧪 Lab takes it back. A cleanup PR later removes the gates that stayed on Everyone.'),
+    msgControles(), ...tarjetas];
+}
+
 /**
  * 📣 Campaigns: the one place for everything temporary or switchable on the site (D-477), in three
  * tabs, with today's state of all three on top.
  */
 function vistaCampanas(now) {
   const today = todayOf(now);
-  if (S.splash === undefined || S.controls === undefined) return [el('p', { class: 'muted' }, 'Loading…')];
+  if (S.splash === undefined || S.controls === undefined || S.flags === undefined) return [el('p', { class: 'muted' }, 'Loading…')];
   const splashVivas = switches({ remote: S.splash, active: SPLASH_ACTIVE, campaigns: CAMPAIGNS }).filter(s => campaignStatus(s, today) === 'live').length;
   const skinViva = skinRows({ remote: S.controls?.skins, templates: SKINS, today }).filter(s => s.status === 'live');
   const funciones = Object.entries(FUNCIONES).map(([id, f]) => [f, f.parts.filter(([p]) => S.controls?.features?.[id]?.[p] !== false).length]);
@@ -1899,12 +1930,13 @@ function vistaCampanas(now) {
     ['splash', '📣 Splash screens', splashVivas ? `${splashVivas} showing` : 'none showing'],
     ['features', '🧩 Site features', funciones.map(([f, k]) => `${f.emoji} ${k ? 'on' : 'off'}`).join(' · ')],
     ['skins', '🎨 Site skins', skinViva.length ? skinViva.map(s => `${SKINS[s.id].icon?.emoji || '🎨'} on`).join(' · ') : 'none on'],
+    ['flags', '🚩 Lab flags', `${Object.keys(FLAGS).filter(id => flagState(S.flags, id) === 'all').length} of ${Object.keys(FLAGS).length} for everyone`],
   ];
   const tab = TABS.some(([k]) => k === S.campTab) ? S.campTab : 'splash';
   const pestanas = el('div', { class: 'campanas-tabs', role: 'tablist', 'aria-label': 'Kind' },
     ...TABS.map(([k, l, hoy]) => el('button', { type: 'button', role: 'tab', 'aria-selected': String(k === tab), onClick: () => { S.campTab = k; render(); } },
       el('span', { class: 'campanas-tab-nombre' }, l), el('span', { class: 'campanas-tab-hoy' }, hoy))));
-  const cuerpo = tab === 'features' ? vistaFunciones() : tab === 'skins' ? vistaSkins(today) : vistaSplash(today);
+  const cuerpo = tab === 'features' ? vistaFunciones() : tab === 'skins' ? vistaSkins(today) : tab === 'flags' ? vistaFlags() : vistaSplash(today);
   return [...titulo('📣 Campaigns', 'Everything temporary or switchable on the site, in one place. Each tab says what is on today.'), pestanas, ...cuerpo];
 }
 
@@ -2095,11 +2127,12 @@ $('#buscar').addEventListener('submit', e => { e.preventDefault(); buscar($('#bu
 // `vista` es una ruta (`/torneo/OFICI`) o, como antes, el nombre de una vista (`torneo`).
 window.__panel = {
   get state() { return S; },
-  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, feedback = {}, splash = null, controls = {}, campTab = null, daysLoaded = true, vista }) {
+  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, feedback = {}, splash = null, controls = {}, flags = {}, campTab = null, daysLoaded = true, vista }) {
     stopListening();
     S.feedback = feedback;
     S.splash = splash;
     S.controls = controls;
+    S.flags = flags;
     if (campTab) S.campTab = campTab;
     S.rooms = rooms; S.days = days; S.daysLoaded = daysLoaded; S.torneos = torneos; S.torneosLoaded = true; S.push = push;
     if (uad) S.uad = { historia: {}, invitados: {}, rachas: {}, ...uad };

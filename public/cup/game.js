@@ -16,7 +16,7 @@ import { compartir as compartirAlChat, cabecera, lamina, laminaResultado, aArchi
 import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, releaseOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug, esNuevo } from '../assets/js/games.js';
-import { labAccess } from '../assets/js/lab-access.js';
+import { flag } from '../assets/js/flags.js';
 import { shareGrid } from '../assets/js/share-grid.js';
 import { backGuard } from '../assets/js/back-guard.js';
 import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../assets/js/parametros.js';
@@ -575,10 +575,10 @@ function elegirJuegos() {
 }
 
 /**
- * The new create screen (D-425), for now only with a lab key. lab: #seccion-copa-crear
+ * The new create screen (D-425), behind its flag (D-498). lab: #seccion-copa-crear
  * In the test store (`?test`) the scripts see the screen of before unless the URL says `&lab`.
  */
-const formularioNuevo = () => (PRUEBA && !tiene('lab') ? Promise.resolve(false) : labAccess());
+const formularioNuevo = () => (PRUEBA && !tiene('lab') ? Promise.resolve(false) : flag('copa-crear'));
 /** Two cup games are a lighter version of a home page game: their tagline is that game's. */
 const DE_PORTADA = { linea: 'linea-de-tiempo', numero: 'toque-y-fama' };
 const juegoPortada = id => gameById(DE_PORTADA[id] || id);
