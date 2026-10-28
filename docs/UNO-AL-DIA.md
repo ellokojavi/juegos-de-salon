@@ -43,7 +43,7 @@ el contenido del día:
 
 | Juego | Modo | El desafío común del día | Puntaje del día (0 a 100) |
 |---|---|---|---|
-| ⏳ Línea Relámpago, 🔢 Toque y Fama: adivina el número, 🔗 Conexiones (until 2026-10-23; from 2026-10-24 🕵️ Agentes in its place, D-421), 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo; since D-334 also 🚇 Rutas rotas, 📐 Loteo, 🖌️ Pintaminas, 〰️ Zip, ☀️ Tango and 📍 ¿Dónde queda? (in their default variant: 🔢 Numbers, easy) | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
+| ⏳ Línea Relámpago, 🔢 Toque y Fama: Número, 🔗 Conexiones (until 2026-10-23; from 2026-10-24 🕵️ Agentes in its place, D-421), 🔤 Toque y Fama: Palabra, 📅 ¿En qué año?, 👑 Reinas, 🧶 Desenredo; since D-334 also 🚇 Rutas rotas, 📐 Loteo, 🖌️ Pintaminas, 〰️ Zip, ☀️ Tango and 📍 ¿Dónde queda? (in their default variant: 🔢 Numbers, easy) | Su pantalla suelta (D-142) | Todo el contenido, como un día de La Copa | El de La Copa, el mismo de siempre |
 | 🪢 El Ahorcado | 🎴 Mazo del celular, con 1 jugador | La palabra (ya sale de la semilla del mazo) | Las vidas que quedan, llevadas a 100, y el tiempo desempata |
 | ⚓ Batalla Naval | 🤖 Contra el celular | La flota del celular | Menos disparos para hundirla, más puntos. Si te hunden antes, cuentan las casillas de barco que acertaste |
 | 🎲 Dudo | 🤖 Contra el celular | Los dados de cada ronda | Ganar vale 60, y cada dado que te queda suma; perder suma por las rondas que aguantaste |
@@ -480,7 +480,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   El paso del dado al juego es el de Juego al azar (D-237): el juego abre con el mismo dado encima
   y el dado se desvanece cuando el juego está dibujado (`llegada.js`), only on the page it opened (D-375).
 - **The dice names its games without loading La Copa** (D-377): a game's name comes from
-  `games.js`, and the two only La Copa has (⏳ Línea Relámpago, 🔢 Toque y Fama: adivina el número)
+  `games.js`, and the two only La Copa has (⏳ Línea Relámpago, 🔢 Toque y Fama: Número)
   carry theirs in their `JUEGOS_DIA` entry (`name`), which `uno-al-dia.test.mjs` checks against
   `juegosCopa()`. That no page but La Copa's own (its screens, Uno al día, the records and the
   panel) loads `cup/rules.js` or `cup/engine.js` is checked, for every game, by

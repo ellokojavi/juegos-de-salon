@@ -151,7 +151,7 @@ export const GAMES = [
  * Uno con `labs: true` todavía no va en la portada, pero su link ya se comparte: tiene página y
  * tarjeta igual (como La Copa, D-101).
  *
- * Línea Relámpago y Toque y Fama: adivina el número no están: son el modo solo de Línea de Tiempo
+ * Línea Relámpago y Toque y Fama: Número no están: son el modo solo de Línea de Tiempo
  * y de Toque y Fama. La Gran Final tampoco: repite los otros y es el cierre de la copa.
  *
  * Se juegan en el idioma de quien juega, con contenido propio de cada idioma (D-170).
