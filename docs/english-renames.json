@@ -1,5 +1,6 @@
 {
   "about": "Spanish names left in the repo and what each becomes (D-316, D-354). Kept by tools/agents/english.mjs; english.test.mjs fails on a Spanish name not listed here.",
+  "policy": "Since D-497 nobody renames these in batches: a pending name is renamed only when its file is touched anyway in a PR (`node tools/agents/english.mjs touched` lists them for the branch), and historical decisions, CHANGELOG entries and old documents are not translated. New names are English (english.test.mjs).",
   "paths": {
     "docs/AGREGAR-JUEGO.md": {
       "to": "docs/ADD-GAME.md",
