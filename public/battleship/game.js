@@ -24,7 +24,7 @@ import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isVali
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import { FONDO_AGUA, barcoEn, barcoEntero, trozoDe } from './flota.js';
 import { renderQr } from '../assets/js/qr.js';
-import { labAccess } from '../assets/js/lab-access.js';
+import { flag } from '../assets/js/flags.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
@@ -974,8 +974,8 @@ function renderSetup(mode, prefillCode = '') {
   const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); syncSalvo(); SFX.tap(); } }); return el('div', { class: 'toggle-row', 'data-key': key }, el('div', {}, el('b', {}, label), hint ? el('small', {}, hint) : null), b); };
   // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
   if (!prefillCode) form.append(sw('extraShot', T.extraShot, T.extraShotHint), sw('confirmShot', T.confirmShot, T.confirmShotHint));
-  // Salvo (#894) is still in the lab (D-395): only a lab key holder sees its switch. lab: #seccion-bn-salva
-  if (!prefillCode) labAccess().then(ok => { if (ok && form.isConnected && !form.querySelector('[data-key="salvo"]')) form.append(sw('salvo', `🎆 ${T.salvo}`, T.salvoHint)); });
+  // Salvo (#894) is behind its flag (D-498): while 'lab', only a lab key holder sees its switch. lab: #seccion-bn-salva
+  if (!prefillCode) flag('bn-salva').then(ok => { if (ok && form.isConnected && !form.querySelector('[data-key="salvo"]')) form.append(sw('salvo', `🎆 ${T.salvo}`, T.salvoHint)); });
   const actions = $('#setup-actions'); actions.innerHTML = '';
   const fail = msg => { clearRoomError(err); err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const getName = k => inputs[k].value.trim();

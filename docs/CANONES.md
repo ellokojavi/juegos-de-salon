@@ -432,7 +432,10 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   switch for each; never in a frame, where an iPhone would not let anything stick (D-363).
   **Everything in development sits behind the lab** (D-395): an experiment, or anything else not yet
   validated, turns on only for a lab key holder (`labAccess()` in `public/assets/js/lab-access.js`);
-  without one its parameter shows the site as it is. It reaches everyone only once validated in the lab. With none
+  without one its parameter shows the site as it is. It reaches everyone only once validated in the lab.
+  A feature on a page players visit asks its runtime flag, `flag('<id>')` in `public/assets/js/flags.js`
+  (D-498): Firebase `flags/<id>` is *lab*, *all* or *off*, and the owner publishes it with a toggle
+  (📣 Campaigns → 🚩 Lab flags, or 🚀 on its `/labs/` card), not a PR. With none
   being tried, its 🏠 Experimentos de la portada card waits in La Bodega, folded (D-372).
 - **A promotional splash, off by default** (D-351): when the owner turns on a campaign
   (`ACTIVE` in `splash.js`, with `node tools/agents/splash.mjs on <id> | off`), a window over the
