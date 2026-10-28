@@ -13,6 +13,7 @@
  * end-to-end tests use. The scheduled task `weekly-report` (claude.ai, running on the owner's Mac mini, D-440) runs
  * it with --send every Sunday, following tools/jobs/prompts/weekly-report.md.
  */
+import { fullHistory } from '../release/changelog.mjs';
 import { mkdirSync, writeFileSync, readFileSync, existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { homedir, tmpdir } from 'node:os';
@@ -49,7 +50,8 @@ const [days, torneos, historia, invitados, rachas, feedback] = await Promise.all
   // Uno al día from the previous week on, through the index by day (D-475)
   leer('torneos', t), readHistory(t, w.from - 7, { databaseURL: firebaseConfig.databaseURL }), leer('invitados', t), leer('records/uno-al-dia-racha/siempre', t), leer('feedback', t),
 ]);
-const changelog = existsSync(join(ROOT, 'CHANGELOG.md')) ? readFileSync(join(ROOT, 'CHANGELOG.md'), 'utf8') : '';
+// CHANGELOG.md and its archived months (D-497): a week may start in the month before
+const changelog = existsSync(join(ROOT, 'CHANGELOG.md')) ? fullHistory(ROOT) : '';
 const r = semana({ days, torneos, uad: { historia, invitados, rachas }, feedback, changelog }, now);
 
 // The PDF, printed by headless Chrome from the page written to a temporary file
