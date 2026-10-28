@@ -168,7 +168,7 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    description, and waits for the owner to merge it.
 5. **Waiting for the merge** (D-400): right after turning on auto-merge, the session runs
    `node tools/agents/wait-pr.mjs <n>` in the background. It asks GitHub every minute and exits when
-   the PR merges or closes, a required check goes red, or a conflict appears: the only things that need
+   the PR merges or closes, a required check goes red, or a conflict lasts three reads in a row (D-486): the only things that need
    someone. It costs no tokens while it waits and works wherever `gh` does. The app's PR monitor
    (`set_monitor` with `auto_fix` and `address_comments`, D-218) may also be turned on where available,
    for review comments, but a session no longer depends on it to learn of the merge. What happens
@@ -327,7 +327,8 @@ with that the screen also enters the language tests. To see it on a real phone,
   What launches for everyone moves its card to La Bodega in the same PR (D-479). The owner sends a
   feature live from its own card: **🚀 Publicar para todos**, signed in as owner on `/labs/`, which the
   Mac mini's `lab-publish-watch` job hands to a headless session that opens the PR (D-480,
-  `node tools/agents/lab-publish.mjs list`).
+  `node tools/agents/lab-publish.mjs list`); if that PR stays in conflict with `main`, the watcher sends
+  one more session to bring it up to date, or fails the request after an hour (D-486).
 - **Home page order and lab experiments** (D-361): `node tools/agents/popularity.mjs check | update`
   recounts the home page's order (`POPULARIDAD` in `games.js`) by games finished in the last four
   weeks; the processes round runs `update` once the list is a week old. What is tried on the home
