@@ -5,6 +5,7 @@
 //   node tools/e2e/ci.mjs --list          # the scripts that run, in JSON
 //   node tools/e2e/ci.mjs --list --changes <file>      # [] if the PR touches nothing in the browser (D-205, D-299)
 //   node tools/e2e/ci.mjs --groups [--changes <file>]  # the same, in even groups for GitHub's matrix (D-307)
+//   node tools/e2e/ci.mjs --groups --changes <file> --smoke   # always with smoke.mjs: a merge on main (D-496)
 //   node tools/e2e/ci.mjs --scope --changes <file>     # the PR's test scope, as Markdown for the run's summary (D-378)
 //   node tools/e2e/ci.mjs cup/tournament.mjs        # only those (the path from tools/e2e/)
 //   node tools/e2e/ci.mjs cup/tournament.mjs:cup    # only one part of a long script (see PARTS)
@@ -125,15 +126,16 @@ function run(script, suffix = '') {
  * The jobs a PR needs: none if it touches nothing in the browser (D-205, D-299), only the scripts
  * whose pages load what it changed (affected.mjs, D-329), all of them without a list (main).
  */
-export function chosenJobs(changes = null) {
+export function chosenJobs(changes = null, { smoke = false } = {}) {
   if (!changes) return jobs();
-  if (noBrowser(changes)) return [];
-  return affectedJobs(jobs(), changes, shared) || jobs();
+  const chosen = noBrowser(changes) ? [] : affectedJobs(jobs(), changes, shared) || jobs();
+  // A merge on main always opens every page (D-496), also when its diff reaches no script
+  return smoke && !chosen.includes('smoke.mjs') ? [...chosen, 'smoke.mjs'] : chosen;
 }
 
 /** What GitHub runs, in groups (D-307); [] if there is nothing to run. */
-export function groups(changes = null) {
-  const chosen = chosenJobs(changes);
+export function groups(changes = null, opts = {}) {
+  const chosen = chosenJobs(changes, opts);
   return chosen.length ? group(chosen, readDurations()) : [];
 }
 
@@ -172,11 +174,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.log(report);
     if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, report + '\n');
   } else if (args.includes('--groups')) {
-    const gs = groups(changesOf());
+    const gs = groups(changesOf(), { smoke: args.includes('--smoke') });
     if (!gs.length) console.error('the PR changes nothing an end-to-end script loads: none runs (D-205, D-299, D-329)');
     console.log(JSON.stringify(gs.map(g => ({ name: g.name, scripts: g.scripts.join(' ') }))));
   } else if (args.includes('--list')) {
-    const chosen = chosenJobs(changesOf());
+    const chosen = chosenJobs(changesOf(), { smoke: args.includes('--smoke') });
     if (!chosen.length) console.error('the PR changes nothing an end-to-end script loads: none runs (D-205, D-299, D-329)');
     console.log(JSON.stringify(chosen));
   } else {
