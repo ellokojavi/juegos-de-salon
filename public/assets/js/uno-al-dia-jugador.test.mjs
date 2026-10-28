@@ -27,6 +27,7 @@ await cel1.empezarDia({ n }); await cel1.empezarDia({ n: n + 1 });
 let r = await cel1.anotarDia({ n, j: 'reinas', s: 87, ms: 60000, semanaP: sem, mejor: 3 });
 assert.deepEqual(r, { historia: true, dia: true, semana: true, racha: true });
 assert.equal((await db.get(`unoAlDia/${sara.jid}/${n}`)).s, 87);
+assert.equal(await db.get(`unoAlDiaDias/${n}/${sara.jid}`), 87, 'the day goes to the index by day too (D-475)');
 assert.equal((await db.get(`records/${UNO_AL_DIA}/${periodoDia(n)}/${sara.jid}`)).s, 87);
 assert.equal((await db.get(`records/${UNO_AL_DIA}/${sem}/${sara.jid}`)).s, 87);
 assert.equal((await db.get(`records/${UAD_RACHA}/${SIEMPRE}/${sara.jid}`)).s, 3);
@@ -56,6 +57,9 @@ assert.equal(await intento({ [`records/${UNO_AL_DIA}/${periodoDia(n + 2)}/${sara
 assert.equal(await intento({ [`records/${UNO_AL_DIA}/${sem}/${sara.jid}`]: fila(227, { u: String(n) }) }), false, 'la semana no suma dos veces el mismo día');
 assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n}`]: { j: 'reinas', s: 100, ms: 1, at: ahora.t } }), false, 'la historia de un día no se reescribe');
 assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n + 3}`]: { j: 'reinas', s: 101, ms: 1, at: ahora.t } }), false, 'el puntaje va de 0 a 100');
+assert.equal(await intento({ [`unoAlDiaDias/${n + 7}/${sara.jid}`]: 50 }), false, 'the index takes no day without its history in the same write (D-475)');
+assert.equal(await intento({ [`unoAlDiaDias/${n}/${sara.jid}`]: 87 }), false, 'nor an index entry for a day already written');
+assert.equal(await intento({ [`unoAlDia/${sara.jid}/${n + 7}`]: { j: 'reinas', s: 60, ms: 1, at: ahora.t }, [`unoAlDiaDias/${n + 7}/${sara.jid}`]: 61 }), false, "nor another score than the history's");
 
 // Uno al día points (lab, D-412): game score plus streak bonus, each day once, the streak growing
 // at most one a day
@@ -130,6 +134,8 @@ assert.match(reglas.records.$t.$p['.read'], /d\[0-9\]\{5\}/, 'las reglas no acep
 assert.match(reglas.invitados.$jid.$uid['.write'], /!root\.child\('jugadorSeats/, 'invitarse a sí mismo');
 assert.match(reglas.records.$t.$p.$jid['.write'], /invitados\/.*\/p'\)\.val\(\) === true.*\+ 10\)/, 'the rules check the invite +10 like the test store');
 assert.ok(reglas.invitados.$jid.$uid.p && reglas.records.$t.$p.$jid.i, 'the rules know the acceptance p and i');
+assert.match(reglas.unoAlDiaDias?.$n?.$jid?.['.write'] || '', /!data\.exists\(\).*jugadorSeats.*!root\.child\('unoAlDia\//, 'the rules write an index entry once, with its day of the history (D-475)');
+assert.match(reglas.unoAlDiaDias.$n.$jid['.validate'], /unoAlDia\/' \+ \$jid \+ '\/' \+ \$n \+ '\/s'/, "and with the history's score");
 assert.match(reglas.unoAlDiaInicio?.$jid?.$d?.['.write'] || '', /!data\.exists\(\).*jugadorSeats/, 'the rules write a start once, by the player (D-433)');
 
 // The window of a day's points (D-465), the rule itself run as JavaScript: the rules have no

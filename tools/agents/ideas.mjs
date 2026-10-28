@@ -241,7 +241,8 @@ async function numbers(weeks) {
   const t = await token();
   const [days, torneos, historia, invitados, rachas] = await Promise.all([
     leer('stats/prod/days', t, { orderBy: '$key', startAt: String(range.from - 28) }),
-    leer('torneos', t), leer('unoAlDia', t), leer('invitados', t), leer('records/uno-al-dia-racha/siempre', t),
+    leer('torneos', t), (await import('../firebase/uad-index.mjs')).readHistory(t, range.from), // the range's days only (D-475)
+    leer('invitados', t), leer('records/uno-al-dia-racha/siempre', t),
   ]);
 
   heading(`The range: ${weeks} closed week(s), ${fecha(range.from)} to ${fecha(range.to)} (UTC days, like the panel)`);

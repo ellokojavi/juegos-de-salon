@@ -56,6 +56,7 @@ ok(await waitFor(`!!JSON.parse(localStorage.getItem('${DB}')||'{}').unoAlDia?.['
 let d = await db();
 ok(d.records?.['uno-al-dia']?.[`d${N}`]?.[sara]?.s === d.unoAlDia[sara][N].s, "and to the day's ranking, with the history's score");
 ok(d.records?.['uno-al-dia-racha']?.siempre?.[sara]?.s === 1, 'and to the streaks table');
+ok(d.unoAlDiaDias?.[N]?.[sara] === d.unoAlDia[sara][N].s, 'and to the index by day, with the same score (D-475)');
 ok(await waitFor(`/^🧊 Si tu amigo termina/.test(document.getElementById('uad-inv-linea')?.textContent||'') && /Sara/.test(document.querySelector('#uad-tarjeta .rk-lista')?.innerText||'')`), 'and under the result, inviting no longer asks to sign in and the ranking shows her');
 // The month's points come first, the same table /records/ and /today/ show (D-412, D-414)
 ok(await ev(`document.querySelector('#uad-tarjeta .rk-seg button')?.dataset.p`) === 'mes', "Uno al día's ranking opens on the month's points");
