@@ -173,8 +173,8 @@ owner's key) and does not merge. Everything else in this guide applies the same.
    someone. It costs no tokens while it waits and works wherever `gh` does. The app's PR monitor
    (`set_monitor` with `auto_fix` and `address_comments`, D-218) may also be turned on where available,
    for review comments, but a session no longer depends on it to learn of the merge. What happens
-   after the merge no longer waits for anyone: `publish.yml` runs the tests and the end-to-end suite on
-   `main` (unless that same tree already passed it in the PR, D-308), publishes the Firebase rules and
+   after the merge no longer waits for anyone: `publish.yml` runs the tests and the end-to-end run on
+   `main` (smoke plus what the merge reaches when the PR head passed, D-496; nothing if that same tree already passed, D-308), publishes the Firebase rules and
    the site (D-302), and the worktree is deleted by the session-start hook. When `wait-pr.mjs` says
    `merged`, the session checks it on GitHub, then does what follows (report, clean up, go on).
    Where `gh pr view` is refused (some cloud sessions) it reads the REST API instead, and after five
