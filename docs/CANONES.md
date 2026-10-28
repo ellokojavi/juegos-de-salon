@@ -325,6 +325,7 @@ regla: quien cambia algo lo documenta en su mismo PR.
 Solo en los modos de **varios celulares**: en un celular la gente está mirando la misma pantalla y hablando en voz alta, y en solitario no hay con quién.
 
 - Se usa `public/assets/js/chat.js` (`createChat`), no una implementación propia. Los textos salen de `LOCALES` del juego (C-3).
+- A text field in a fixed layer (chat, the 💬 feedback form) keeps clear of the iOS keyboard with `public/assets/js/keyboard.js` (`followKeyboard`, which sets `--kb` from `visualViewport`), not its own listener. The feedback form uses it behind `flag('keyboard-lift')` (#883); `chat.js` still has its own copy of the same logic until it is moved over.
 - Vive en su propio contenedor (`<div id="chat">`), hermano de `#handoff` y **fuera** de las `.screen`: los re-render de la partida no pueden borrar lo que el jugador está escribiendo.
 - Los mensajes viajan por el mismo transporte que las jugadas (`{ t: 'chat', text }`), pero **no son parte del estado**: el reductor los dibuja y no los guarda. Un mensaje de chat no vuelve a dibujar la partida.
 - El chat **muere con la sala**, no con la partida: sigue vivo en la pantalla de victoria o derrota, que es donde la conversación se cierra sola (D-35). No se guarda en la memoria de partida (C-6), y la revancha crea una sala nueva y por lo tanto un chat en blanco. Al reconectar se recupera de la sala, sin sonido ni globito de no leídos.
