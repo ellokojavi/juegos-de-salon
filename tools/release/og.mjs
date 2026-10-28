@@ -59,14 +59,14 @@ const DOORS = [
 /** The tagline's closing. It is the only phrase that does not come from the app: it is said to the robots. */
 const FREE = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.', de: 'Kostenlos, ohne Installation und ohne Konto.' };
 /**
- * What the list of games does not say: One a Day and the minigames to play solo (D-271). Without
+ * What the list of games does not say: One a Day and the games to play solo (D-271). Without
  * this, the home page's card only told the group games. One a Day's name comes from the app.
  */
 const ALSO = {
-  es: n => `Además, ${n} y minijuegos para jugar solo.`,
-  en: n => `Plus ${n} and minigames to play solo.`,
-  pt: n => `E ainda ${n} e minijogos para jogar sozinho.`,
-  de: n => `Dazu das ${n} und Minispiele zum Alleinspielen.`,
+  es: n => `Además, ${n} y juegos para jugar solo.`,
+  en: n => `Plus ${n} and games to play solo.`,
+  pt: n => `E ainda ${n} e jogos para jogar sozinho.`,
+  de: n => `Dazu das ${n} und Spiele zum Alleinspielen.`,
 };
 /** "A, B and C" in each language. */
 const list = lang => available.map(g => g.name[lang]).join(', ')
