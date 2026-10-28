@@ -14,6 +14,7 @@ import { UNO_AL_DIA, bandera } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
 import { walk, seasonPoints } from './daily-points.js';
 import { salidasFin } from './fin.js';
+import { labAccess } from './lab-access.js';
 
 export const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const textos = lang => (COMMON[lang] || COMMON.es);
@@ -155,7 +156,7 @@ export function jugarOtro({ lang, raiz }) {
  * El botón de compartir el resultado: la imagen de siempre pero sin el juego, y el texto con la
  * cabecera, la racha y el link (U-30, U-33). Ni el texto ni la imagen dicen qué juego tocó (#215).
  */
-export function compartirHoy({ lang, fecha, dia, alTocar, mmss }) {
+export function compartirHoy({ lang, fecha, dia, alTocar, mmss, grid = '' }) {
   const C = textos(lang);
   const titulo = fmt(C.uad.compartirTitulo, { n: numeroDel(fecha) });
   const cab = { emoji: '📅', titulo };
@@ -165,7 +166,8 @@ export function compartirHoy({ lang, fecha, dia, alTocar, mmss }) {
     avisos: { copied: C.shareCopied, downloaded: C.shareDownloaded },
     armar: async () => ({
       titulo, url,
-      texto: [cabecera(cab), textoRacha(estado().racha, lang)].join('\n'),
+      // The spoiler-free grid (#889, D-482), only with a lab key while it is tried (lab: #seccion-uad-grilla)
+      texto: [cabecera(cab), grid && await labAccess() ? grid : '', textoRacha(estado().racha, lang)].filter(Boolean).join('\n'),
       imagen: await laminaResultado({ cab, url, puntaje: fmt(C.uad.puntos, { s: dia.s }), detalle: dia.ms ? `⏱ ${mmss(dia.ms)}` : '', pie: C.shareSoloImage, archivo: nombreArchivo('uno-al-dia', String(numeroDel(fecha))) }),
     }),
   });
@@ -176,7 +178,7 @@ export function compartirHoy({ lang, fecha, dia, alTocar, mmss }) {
  * y qué hacer ahora (compartir, jugar otro, repetirlo, volver a Uno al día o al menú). `primera` dice si esta partida
  * fue el resultado del día o una práctica; `dia` es lo anotado para hoy.
  */
-export function tarjetaResultado({ lang, fecha, primera, dia, raiz = '', alTocar, mmss }) {
+export function tarjetaResultado({ lang, fecha, primera, dia, raiz = '', alTocar, mmss, grid = '' }) {
   trackUnoAlDia(primera ? 'jugado' : 'repite');
   const T = textos(lang).uad;
   const e = estado();
@@ -196,7 +198,7 @@ export function tarjetaResultado({ lang, fecha, primera, dia, raiz = '', alTocar
     comodin,
     arriba,
     el('div', { class: 'uad-acciones' },
-      compartirHoy({ lang, fecha, dia, alTocar, mmss }),
+      compartirHoy({ lang, fecha, dia, alTocar, mmss, grid }),
       el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-uad-otro', onClick: () => { alTocar?.(); jugarOtro({ lang, raiz }); } }, T.jugarOtro)),
     el('a', { class: 'link-btn', id: 'btn-uad-repetir', href: `${raiz}${rutaHoy(dia.j)}` }, T.repetir),
     // The exits of a One a Day end screen live here, in every game (C-19): the game adds none
@@ -440,10 +442,10 @@ export function introHoy(hoy, { lang, extra = '' }) {
  * práctica) y devuelve la tarjeta del resultado, que el juego pone arriba de sus botones. Una sola
  * vez por partida: `hoy.anotado` la guarda para los redibujos de la misma pantalla.
  */
-export function terminarHoy(hoy, { s, ms, lang, alTocar }) {
+export function terminarHoy(hoy, { s, ms, lang, alTocar, grid = '' }) {
   if (!hoy.anotado) hoy.anotado = anotar(hoy.fecha, { j: hoy.id, s, ms });
   const { primera, dia } = hoy.anotado;
-  return tarjetaResultado({ lang, fecha: hoy.fecha, primera, dia, raiz: '../', alTocar, mmss });
+  return tarjetaResultado({ lang, fecha: hoy.fecha, primera, dia, raiz: '../', alTocar, mmss, grid });
 }
 
 /**
