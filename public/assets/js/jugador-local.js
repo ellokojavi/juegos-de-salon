@@ -155,7 +155,8 @@ export function crearAlmacenLocal({ storage = globalThis.localStorage, uid = nul
       return p.length === 3 && b === u && leerEn(viejo, ruta) == null && !!x && !sentado(viejo, a) && typeof x.d === 'number'
         && (x.j === undefined || (/^[a-z0-9]{8}$/.test(x.j) && x.j !== a)) && Object.keys(x).every(k => ['d', 'at', 'j'].includes(k));
     }
-    if (rama === 'torneoPodios') return leerEn(viejo, ruta) == null;
+    // A podium is the nightly job's (D-499); a phone only signs its own place on one, once (D-358)
+    if (rama === 'torneoPodios') return p.length === 5 && b === 'p' && p[4] === 'j' && leerEn(viejo, `torneoPodios/${a}`) != null && leerEn(viejo, ruta) == null;
     // Los avisos de Uno al día (D-230): la suscripción la escribe su celular, y lo de Uno al día solo
     // el celular dueño de esa suscripción (en el sitio publicado van a Firebase; aquí, para probar)
     if (rama === 'push') return p.length === 2 && (leerEn(viejo, `push/${a}/uid`) ?? u) === u && (leerEn(nuevo, ruta) === null || leerEn(nuevo, `push/${a}/uid`) === u);

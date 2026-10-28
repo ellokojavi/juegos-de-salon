@@ -260,7 +260,12 @@ assert.ok(textoReglas.includes(String(S_MAX)) && textoReglas.includes(String(MS_
 const celP = mkJugador('uid9');
 assert.equal(await celP.firmarPodio('PPPPP', 'pp0001'), false, 'sin jugador no firma');
 const pepe = await celP.crear('Pepenbauer', '4321');
-await celP.guardarPodio('PPPPP', { name: 'Copa P', end: 1, de: 2, dias: 3, por: 'pp0001', p: { pp0001: { n: 'Pepenbauer', l: 1 } } });
+// The nightly job saves the podium (D-499): a phone cannot, and it is seeded as the job writes it
+const celQ = crearAlmacenLocal({ storage, uid: 'uid9', now: () => ahora.t });
+await assert.rejects(celQ.update({ 'torneoPodios/PPPPP': { name: 'Copa P', end: 1, de: 2, dias: 3, por: 'pp0001', at: 1, p: { pp0001: { n: 'Pepenbauer', l: 1 } } } }), 'a phone no longer writes a podium');
+const DBK = 'juegos-de-salon:prueba:records-db', dbP = JSON.parse(storage.getItem(DBK) || '{}');
+storage.setItem(DBK, JSON.stringify({ ...dbP, torneoPodios: { PPPPP: { name: 'Copa P', end: 1, de: 2, dias: 3, por: 'pp0001', at: 1, p: { pp0001: { n: 'Pepenbauer', l: 1 } } } } }));
+assert.equal(reglas.torneoPodios.$code['.write'], undefined, 'the rules leave the podium to the owner (D-499)');
 assert.equal(await celP.firmarPodio('PPPPP', 'pp0001'), true);
 assert.equal(await celP.firmarPodio('PPPPP', 'pp0001'), false, 'una sola vez');
 assert.equal(await celP.firmarPodio('QQQQQ', 'pp0001'), false, 'sin podio no hay nada que firmar');

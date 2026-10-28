@@ -7,12 +7,17 @@
  * Confirming writes `labsPublish/<card id>`; the Mac mini's `lab-publish-watch` job picks it up
  * within 5 minutes and a headless session opens the PR (tools/jobs/prompts/lab-publish.md). Each
  * card shows its request's state live, with the PR, its checks and its preview once it exists.
+ *
+ * A card behind a runtime flag (D-498, `assets/js/flags.js`) needs no PR: its 🚀 writes
+ * `flags/<id>` = 'all' and everyone gets it on their next visit; ↩️ Volver al laboratorio takes it
+ * back. A later cleanup PR removes the gate and moves the card to La Bodega (D-479).
  */
 import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import { getDatabase, ref, onValue, set, remove } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { $, $$, el } from '../assets/js/ui.js';
+import { FLAGS, stateOf } from '../assets/js/flags.js';
 
 const REPO = 'https://github.com/ellokojavi/juegos-de-salon';
 const PREVIEWS = 'https://ellokojavi.github.io/juegos-de-salon-previews';
@@ -43,7 +48,39 @@ export function statusOf(id, e) {
   }
 }
 
-let db, requests = {};
+let db, requests = {}, flags = {};
+
+/** The flag a card is behind, or null: its id without `seccion-`, if FLAGS has it. */
+export const flagOf = id => { const f = id.replace(/^seccion-/, ''); return FLAGS[f] ? f : null; };
+const setFlag = (f, state) => set(ref(db, `flags/${f}`), { state, at: Date.now() });
+
+/** What a flagged card shows: its state and the one button that changes it. */
+export function flagStatusOf(state, at) {
+  if (state === 'all') return { tone: 'ok', lines: [`🟢 Publicado para todos${at ? ` el ${when(at)}` : ''}: cada jugador lo ve la próxima vez que abre esa página. Sin PR.`, 'Más adelante, un PR de limpieza quita la puerta y mueve esta tarjeta a La Bodega.'], to: 'lab', label: '↩️ Volver al laboratorio' };
+  if (state === 'off') return { tone: 'bad', lines: ['⚪ Apagado para todos, también en el laboratorio.'], to: 'lab', label: '🧪 Encender en el laboratorio' };
+  return null;
+}
+
+/** The confirmation for a flagged card: immediate, no note, no PR. */
+export function askFlag(card, f) {
+  const close = () => capa.remove();
+  const msg = el('p', { class: 'muted', role: 'alert' });
+  const btn = el('button', { class: 'btn btn--yellow', onClick: async () => {
+    btn.disabled = true;
+    try { await setFlag(f, 'all'); close(); } catch (err) { btn.disabled = false; msg.textContent = `No se pudo guardar (${err?.code || err?.message || 'error'}).`; }
+  } }, '🚀 Sí, publicar');
+  const panel = el('div', { class: 'hoja', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'publicar-titulo' },
+    el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),
+    el('h2', { id: 'publicar-titulo' }, '🚀 ¿Publicar para todos?'),
+    el('p', {}, el('b', {}, titleOf(card)), ' lo ven todos los jugadores desde la próxima vez que abran esa página.'),
+    el('p', { class: 'hoja-caja' }, 'Es inmediato: es un interruptor, no un PR. Si algo sale mal, lo devuelves al laboratorio desde esta misma tarjeta o desde el panel (📣 Campañas → 🚩).'),
+    msg,
+    el('div', { class: 'btn-row' }, btn, el('button', { class: 'btn btn--ghost', onClick: close }, 'Cancelar')),
+  );
+  const capa = el('div', { class: 'hoja-capa' }, el('div', { class: 'hoja-fondo', onClick: close }), panel);
+  document.body.append(capa);
+  btn.focus();
+}
 
 export function ask(card, existing) {
   const note = el('textarea', { rows: 3, maxlength: 500, placeholder: 'Nota opcional para Claude (por ejemplo: solo en español por ahora)', class: 'publicar-nota' }, existing?.note || '');
@@ -73,10 +110,21 @@ export function ask(card, existing) {
 }
 
 /** Draws the cards for these requests: the page's own listener, and tools/e2e/labs/publish.mjs. */
-export function render(r = requests) {
-  requests = r;
+export function render(r = requests, fl = flags) {
+  requests = r; flags = fl;
   for (const card of cards()) {
     $('.publicar', card)?.remove();
+    const f = flagOf(card.id);
+    if (f) {
+      const fs = flagStatusOf(stateOf(flags, f), flags?.[f]?.at);
+      const box = el('div', { class: 'publicar' });
+      if (!fs) box.append(el('button', { class: 'btn btn--ghost', onClick: () => askFlag(card, f) }, '🚀 Publicar para todos'));
+      else box.append(el('div', { class: `publicar-estado publicar-estado--${fs.tone}`, role: 'status' },
+        ...fs.lines.map(l => el('p', {}, l)),
+        el('button', { class: 'btn btn--ghost', onClick: () => setFlag(f, fs.to).catch(() => {}) }, fs.label)));
+      card.append(box);
+      continue;
+    }
     const e = requests[card.id];
     const s = e && statusOf(card.id, e);
     const box = el('div', { class: 'publicar' });
@@ -100,11 +148,14 @@ export function start() {
   let stop = null;
   const owner = $('#publicar-dueno');
   onAuthStateChanged(auth, user => {
-    stop?.(); stop = null; requests = {}; $$('.publicar').forEach(n => n.remove());
+    stop?.(); stop = null; requests = {}; flags = {}; $$('.publicar').forEach(n => n.remove());
     if (owner) owner.hidden = !!user;
     if (!user) return;
     // a read the rules refuse means this is not the owner: nothing is shown
-    stop = onValue(ref(db, 'labsPublish'), snap => { requests = snap.val() || {}; render(); }, () => {});
+    let owns = false;
+    const offFlags = onValue(ref(db, 'flags'), snap => { flags = snap.val() || {}; if (owns) render(); }, () => {});
+    const offReq = onValue(ref(db, 'labsPublish'), snap => { owns = true; requests = snap.val() || {}; render(); }, () => {});
+    stop = () => { offFlags(); offReq(); };
   });
   owner?.querySelector('button')?.addEventListener('click', () => {
     const provider = new GoogleAuthProvider();

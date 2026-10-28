@@ -75,7 +75,7 @@ la portada al día, va con los textos, and U-39, the start button above the fold
 - **U-39 · The start button is seen without scrolling** (D-344, #464). On every game's landing
   page the main action —Empezar, or the first mode of the picker— shows whole in the first screen
   of a small phone (320×568) and a common one (375×667), in the four languages. The order is
-  cover, title, language, the button, and then «Cómo se juega» and the rest; a cover that does not
+  cover, title, language, the button, and then «Cómo se juega», always a `<details>` collapsed by default (the owner's rule, 2026-10-28), and the rest; a cover that does not
   fit shrinks on a short screen. `node tools/e2e/landing-fold.mjs` checks it on every PR over the
   `intro` path of each game in `tools/e2e/paths.mjs`: a new game is checked as soon as it has one.
 - **U-17 · El botón dice la acción, nada más:** verbo y objeto, en una sola línea a 320 px (unos

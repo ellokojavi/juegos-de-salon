@@ -598,12 +598,6 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
 
     /** Los podios de las copas terminadas: `{ código: { name, end, de, p } }`. */
     podios: (n = 200) => almacen.podios(n),
-    /** Guardar el podio de una copa terminada, una sola vez. Lo hace cualquiera que la abra. */
-    async guardarPodio(code, podio) {
-      if (await almacen.get(`torneoPodios/${code}/end`)) return false;
-      await almacen.update({ [`torneoPodios/${code}`]: { ...podio, at: HORA } });
-      return true;
-    },
 
     /**
      * Sign this player's place on a podium saved without them (D-358): someone who won by name
