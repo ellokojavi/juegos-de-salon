@@ -28,7 +28,13 @@ import {
 } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES, TURN_SECS } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
+import { labAccess } from '../assets/js/lab-access.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
+
+// Traditional rules (no opening in aces, the obligada round, #897) are offered only to lab key
+// holders until the owner validates them (D-395, D-409). lab: #seccion-dudo-tradicional
+let LAB = false;
+labAccess().then(v => { LAB = v; }, () => {});
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -208,7 +214,7 @@ async function act() {
     if (!mine) return;
     // Los dados que le quedan al rival: sin eso no sabe a quién apretar (ver docs/games/liars-dice.md)
     const jugada = botMove({
-      myDice: mine, bid: v.bid, totalDice: v.totalDice, canCalzar: v.canCalzar,
+      myDice: mine, bid: v.bid, totalDice: v.totalDice, canCalzar: v.canCalzar, rules: v.rules,
       rivales: v.alive.filter(r => r !== 'B').map(r => v.st[r].dice),
     });
     setTimeout(() => {
@@ -338,7 +344,8 @@ function renderPlay(v) {
       return dado;
     }));
     mine.append(fila);
-    if (dados.includes(1)) mine.append(el('div', { class: 'wild-note' }, '⚀ ', T.aceWild));
+    if (v.obligada) mine.append(el('div', { class: 'wild-note' }, '☝️ ', T.obligadaNote));
+    else if (dados.includes(1)) mine.append(el('div', { class: 'wild-note' }, '⚀ ', T.aceWild));
     const llegada = S.llegada;
     if (llegada?.clave === `${v.round}:${yo}`) { S.llegada = null; llegar(mine, fila, llegada); }
   }
@@ -392,16 +399,16 @@ function renderActions(v, yo, miTurno, tapados = false) {
   const sel = S.sel;
   box.append(el('p', { class: 'pick-label' }, sel ? T.pickAmount : T.pickPinta));
   box.append(el('div', { class: 'pintas' }, ...PINTAS.map(p => {
-    const posible = minBid(v.bid, p) <= v.totalDice;
+    const posible = minBid(v.bid, p, v.rules) <= v.totalDice;
     return el('button', {
       class: 'pinta' + (sel?.p === p ? ' on' : ''), disabled: !posible,
       'aria-label': pintaName(2, p),
-      onClick: () => { S.sel = { p, n: minBid(v.bid, p) }; SFX.tap(); vibrate(10); renderPlay(view()); },
+      onClick: () => { S.sel = { p, n: minBid(v.bid, p, v.rules) }; SFX.tap(); vibrate(10); renderPlay(view()); },
     }, dieEl(p, { small: true }));
   })));
 
   if (sel) {
-    const min = minBid(v.bid, sel.p);
+    const min = minBid(v.bid, sel.p, v.rules);
     const max = v.totalDice;
     const paso = delta => {
       S.sel = { ...sel, n: Math.min(max, Math.max(min, sel.n + delta)) };
@@ -418,7 +425,7 @@ function renderActions(v, yo, miTurno, tapados = false) {
   acciones.append(el('button', {
     class: 'btn btn--yellow', disabled: !sel,
     onClick: () => {
-      if (!S.sel || !bidOk(v.bid, S.sel, v.totalDice)) return;
+      if (!S.sel || !bidOk(v.bid, S.sel, v.totalDice, v.rules)) return;
       const { n, p } = S.sel;
       S.sel = null;
       SFX.dice(); vibrate(20);
@@ -889,7 +896,8 @@ function showReveal(v) {
     mesa.append(el('div', { class: 'reveal-row' },
       el('span', { class: 'n' }, nameOf(r)),
       el('span', { class: 'dice-row' }, ...dados.map(d => dieEl(d, {
-        small: true, on: countPinta([d], last.bid.p) > 0, off: countPinta([d], last.bid.p) === 0,
+        small: true, on: countPinta([d], last.bid.p, { acesWild: !last.obligada }) > 0,
+        off: countPinta([d], last.bid.p, { acesWild: !last.obligada }) === 0,
       }))),
     ));
   }
@@ -1147,13 +1155,15 @@ function interruptor(encendido, label, hint, onChange) {
  * costs a die, so each table chooses it).
  */
 function ajustesDelCacho() {
-  let shake = true, reloj = false;
+  let shake = true, reloj = false, traditional = false;
   return {
     switches: () => [
       interruptor(shake, T.shakeLabel, T.shakeHint, v => { shake = v; }),
       interruptor(reloj, fmt(T.timerLabel, { n: TURN_SECS }), T.timerHint, v => { reloj = v; }),
-    ],
-    config: () => ({ shake, turnSecs: reloj ? TURN_SECS : 0 }),
+      // lab: #seccion-dudo-tradicional
+      LAB ? interruptor(traditional, `🧪 ${T.traditionalLabel}`, T.traditionalHint, v => { traditional = v; }) : null,
+    ].filter(Boolean),
+    config: () => ({ shake, turnSecs: reloj ? TURN_SECS : 0, ...(LAB && traditional ? { traditional: true } : {}) }),
   };
 }
 

@@ -35,11 +35,26 @@ ilegal**, cuenta al instante —que es justo lo que se discute a gritos— y lle
 
 ### Lo que no está y por qué
 
-**La ronda obligada** (cuando alguien queda con un dado, esa ronda se juega sin comodín y sin
-cambiar de pinta) es clásica en Chile y no está en esta versión. Es una regla que aparece tarde en
-la partida y hay que explicarla en varios idiomas justo cuando el juego ya se entendió; entra después,
-cuando la mesa pida el juego largo. El motor la tiene prevista: la resolución recibe `acesWild` y la
-apuesta legal recibe `obligada`, así que sumarla no es rehacer nada.
+**The obligada round** (when someone is down to one die, that round is played without wild aces
+and without changing pinta) is not in the public game (D-69): it shows up late in a game and has to
+be explained just when the game has been understood. It is being tried in the lab, below (D-487).
+
+### Traditional rules, in the lab (D-487, #897)
+
+A setup switch, **🧪 Classic rules** (`config.traditional`), off by default and shown only to
+lab key holders (`labAccess()`; card `#seccion-dudo-tradicional` in `/labs/`). With it on:
+
+- **Nobody opens a round in aces.** Going to aces later, at half, is still allowed.
+- **The obligada round.** The first time a player is down to one die, the round they open is
+  obligada: aces are not wild, and everyone keeps the pinta the opener named, only raising the
+  quantity. The opener may name aces. One per player per game; calzar keeps its usual conditions.
+  The hand shows "☝️ Ronda obligada…" instead of "Los ases son comodín", and the reveal marks only
+  the dice of that face.
+
+The engine: `minBid(prev, pinta, rules)` and `bidOk(…, rules)` with `rules = { obligada, noAceOpen }`
+(`Infinity` means not allowed); `buildState` returns `rules`, `obligada` and `last.obligada`; the bot
+takes the same `rules`. The audit against the traditional rules, and the questions left for the
+owner (table variants not built), are in #897.
 
 ### Cómo se nombran las pintas
 

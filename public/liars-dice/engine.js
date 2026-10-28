@@ -54,18 +54,21 @@ export function countPinta(dice, pinta, { acesWild = true } = {}) {
  * dos direcciones: entrar cuesta la mitad (de "seis cincos" a "tres ases") y salir cuesta
  * el doble más uno (de "tres ases" a "siete" de lo que sea).
  */
-export function minBid(prev, pinta) {
-  if (!prev) return 1;
+export function minBid(prev, pinta, rules = {}) {
+  // Traditional rules (lab, #897): no opening in aces, and in the obligada round the pinta is
+  // fixed by the opener and only the quantity rises. Infinity means "not allowed".
+  if (rules.obligada) return !prev ? 1 : pinta === prev.p ? prev.n + 1 : Infinity;
+  if (!prev) return rules.noAceOpen && pinta === 1 ? Infinity : 1;
   if (pinta === 1) return prev.p === 1 ? prev.n + 1 : Math.ceil(prev.n / 2);
   if (prev.p === 1) return prev.n * 2 + 1;
   return pinta > prev.p ? prev.n : prev.n + 1;
 }
 
 /** ¿La apuesta nueva le gana a la anterior y cabe en la mesa? */
-export function bidOk(prev, next, totalDice = Infinity) {
+export function bidOk(prev, next, totalDice = Infinity, rules = {}) {
   if (!next || !PINTAS.includes(next.p)) return false;
   if (!Number.isInteger(next.n) || next.n < 1 || next.n > totalDice) return false;
-  return next.n >= minBid(prev, next.p);
+  return next.n >= minBid(prev, next.p, rules);
 }
 
 /** Con dos jugadores no se puede calzar: hace falta una mesa de tres para arriba (D-71). */
@@ -111,7 +114,7 @@ export function binomAtLeast(k, n, p) {
 }
 
 /** Un dado desconocido tapa una pinta normal 1 de cada 3 veces (la pinta o un as). */
-export const chanceOf = pinta => (pinta === 1 ? 1 / 6 : 1 / 3);
+export const chanceOf = (pinta, wild = true) => (pinta === 1 || !wild ? 1 / 6 : 1 / 3);
 
 /**
  * Qué tan creíble es una apuesta para quien tiene `myDice`: la probabilidad de que entre
@@ -173,22 +176,23 @@ const unoDe = (lista, rand) => lista[Math.min(lista.length - 1, Math.floor(rand(
  * quién apretar.
  */
 export function botMove({
-  myDice, bid, totalDice, canCalzar = false, rivales = [],
+  myDice, bid, totalDice, canCalzar = false, rivales = [], rules = {},
   agresividad = AGRESIVIDAD, mezcla = MEZCLA, rand = Math.random,
 }) {
   const miente = que => rand() < agresividad * mezcla[que];
   const unknown = Math.max(0, totalDice - myDice.length);
-  const mine = pinta => countPinta(myDice, pinta);
-  const creer = (n, p) => binomAtLeast(n - mine(p), unknown, chanceOf(p));
+  const wild = !rules.obligada;
+  const mine = pinta => countPinta(myDice, pinta, { acesWild: wild });
+  const creer = (n, p) => binomAtLeast(n - mine(p), unknown, chanceOf(p, wild));
 
   // Calzar: solo cuando la cantidad exacta es de verdad probable
-  if (bid && canCalzar && binomExact(bid.n - mine(bid.p), unknown, chanceOf(bid.p)) > 0.32) {
+  if (bid && canCalzar && binomExact(bid.n - mine(bid.p), unknown, chanceOf(bid.p, wild)) > 0.32) {
     return { t: 'calza' };
   }
 
   // Todas las subidas legales, con lo creíble que sería cada una y cuántos tiene en la mano
   const subidas = PINTAS
-    .map(p => ({ p, n: minBid(bid, p) }))
+    .map(p => ({ p, n: minBid(bid, p, rules) }))
     .filter(s => s.n <= totalDice)
     .map(s => ({ ...s, chance: creer(s.n, s.p), tengo: mine(s.p) }));
   const mejor = subidas.reduce((a, b) => (!a || b.chance > a.chance ? b : a), null);
@@ -202,7 +206,7 @@ export function botMove({
     return mejor ? apuesta(mejor) : { t: 'bid', n: 1, p: 6 };
   }
 
-  const creo = credibility({ myDice, bid, totalDice });
+  const creo = creer(bid.n, bid.p);
   const rivalMin = rivales.length ? Math.min(...rivales) : myDice.length;
   // Contra la pared se duda antes: con uno o dos dados propios se ve menos mesa, la cuenta de
   // uno vale menos y seguir subiendo es apostar a ciegas.
@@ -236,7 +240,11 @@ const nextIn = (list, from) => list[(list.indexOf(from) + 1) % list.length];
  * Arma el estado completo de la partida.
  *
  *  players  roles en orden de juego (A, B, …)
- *  config   { dice, calzar, turnSecs }
+ *  config   { dice, calzar, turnSecs, traditional }
+ *
+ * `traditional` (lab, #897) turns on two Chilean table rules: nobody opens a round in aces, and
+ * the first time a player is down to one die, the round they open is **obligada**: aces are not
+ * wild and nobody changes the pinta the opener named, only the quantity rises.
  *  plays    mensajes en orden: roll | bid | dudo | calza | open | timeout
  *
  * Los mensajes que no corresponden —fuera de turno, apuesta que no sube, dados de otro
@@ -255,10 +263,15 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
   const history = [];
   let last = null;
 
-  const nuevaRonda = () => ({
-    n: history.length, opener, rolls: {}, bid: null, bids: [],
-    end: null, opens: {}, phase: 'roll', current: opener,
-  });
+  const nuevaRonda = () => {
+    const obligada = !!config.traditional && !!opener && st[opener].dice === 1 && !st[opener].obligado;
+    if (obligada) st[opener].obligado = true;
+    return {
+      n: history.length, opener, rolls: {}, bid: null, bids: [], obligada,
+      end: null, opens: {}, phase: 'roll', current: opener,
+    };
+  };
+  const rulesOf = r => ({ obligada: !!r.obligada, noAceOpen: !!config.traditional });
   round = nuevaRonda();
 
   /** Los dados de la ronda que este aparato conoce: del roll en claro o del open. */
@@ -284,7 +297,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
   const resolver = r => {
     const dice = known(r);
     const todos = Object.values(dice).flat();
-    const count = countPinta(todos, r.bid.p);
+    const count = countPinta(todos, r.bid.p, { acesWild: !r.obligada });
     const exact = count === r.bid.n;
     let loser = null, gainer = null;
     if (r.end.type === 'dudo') {
@@ -295,7 +308,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
     } else {
       loser = r.end.by;
     }
-    terminar(r, { type: r.end.type, by: r.end.by, bid: r.bid, count, exact, loser, gainer, dice });
+    terminar(r, { type: r.end.type, obligada: !!r.obligada, by: r.end.by, bid: r.bid, count, exact, loser, gainer, dice });
   };
 
   /**
@@ -337,7 +350,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
       if (play.from !== round.current) continue;
       if (play.t === 'bid') {
         const next = { n: Number(play.n), p: Number(play.p) };
-        if (!bidOk(round.bid, next, totalNow())) continue;
+        if (!bidOk(round.bid, next, totalNow(), rulesOf(round))) continue;
         round.bid = { ...next, by: play.from };
         round.bids.push(round.bid);
         round.current = nextIn(vivos, play.from);
@@ -374,6 +387,7 @@ export function buildState({ players = [], config = {}, plays = [] } = {}) {
     phase: done ? 'done' : round.phase,
     players, st, alive: vivos, totalDice,
     round: round.n, opener, current, waiting,
+    rules: rulesOf(round), obligada: !!round.obligada,
     rolls: round.rolls, bid: round.bid, bids: round.bids, end: round.end,
     canCalzar: config.calzar !== false && calzarOk(round.bid, totalDice, vivos.length),
     last, history, done,
