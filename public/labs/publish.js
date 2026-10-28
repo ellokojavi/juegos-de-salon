@@ -8,7 +8,7 @@
  * within 5 minutes and a headless session opens the PR (tools/jobs/prompts/lab-publish.md). Each
  * card shows its request's state live, with the PR, its checks and its preview once it exists.
  */
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import { getDatabase, ref, onValue, set, remove } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
@@ -92,7 +92,9 @@ export function render(r = requests) {
 }
 
 export function start() {
-  const app = initializeApp(firebaseConfig, 'labs-publish');
+  // the default app, as the panel's: Firebase keeps the sign-in per app name, so a named app would
+  // not see the owner signed in on /panel/
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   const auth = getAuth(app);
   db = getDatabase(app);
   let stop = null;
