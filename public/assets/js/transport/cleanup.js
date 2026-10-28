@@ -18,8 +18,9 @@
  * están vencidas y el índice nunca revela una sala viva.
  *
  * Barrer es entonces: leer los baldes de los días que faltan, borrar esas salas y borrar
- * el balde. Lo hace cualquier celular que cree o entre a una sala, en segundo plano y como
- * mucho una vez cada 6 horas (no hay servidor: el plan gratuito no tiene Cloud Functions).
+ * el balde. Since D-499 the phones no longer sweep: the nightly job does it as administrator
+ * (`tools/firebase/room-sweep.mjs`, with this same `sweep()`), and the rules leave reading and
+ * deleting a bucket to the owner alone.
  *
  * Todo el acceso a la base entra por `api` para poder probar esto con node sin Firebase:
  *   { read(ruta), update(ruta, cambios), remove(ruta), stamp() }
@@ -38,8 +39,6 @@ export const IDLE_TTL = 30 * 60 * 1000;       // media hora sin jugadas
 const DAY = 24 * 60 * 60 * 1000;
 const RESCUE_DAYS = 8;                        // días que se revisan siempre, ignorando la marca
 const MAX_DAYS = 30;                          // tope de baldes por barrido
-const SWEEP_EVERY = 6 * 60 * 60 * 1000;       // un barrido por celular cada 6 horas
-const SWEEP_KEY = 'juegos-de-salon:sweep';
 
 /** Día (balde) al que pertenece una marca de tiempo. */
 export const dayOf = ts => Math.floor(ts / DAY);
@@ -125,15 +124,4 @@ export async function sweep(api, now = Date.now()) {
   }
   if (last !== null && (swept === null || last > swept)) await api.update('cleanup', { sweptDay: last });
   return { days, rooms };
-}
-
-/** ¿Le toca barrer a este celular? Como mucho una vez cada 6 horas. */
-export function dueForSweep(now = Date.now()) {
-  try { return now - Number(localStorage.getItem(SWEEP_KEY) || 0) > SWEEP_EVERY; }
-  catch (_) { return false; } // modo privado: que barra otro
-}
-
-/** Se anota antes de barrer, para que dos pestañas no barran a la vez. */
-export function markSwept(now = Date.now()) {
-  try { localStorage.setItem(SWEEP_KEY, String(now)); } catch (_) { /* nada */ }
 }
