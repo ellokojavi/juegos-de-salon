@@ -1884,7 +1884,7 @@ function vistaCampanas(now) {
   const skinViva = skinRows({ remote: S.controls?.skins, templates: SKINS, today }).filter(s => s.status === 'live');
   const funciones = Object.entries(FUNCIONES).map(([id, f]) => [f, f.parts.filter(([p]) => S.controls?.features?.[id]?.[p] !== false).length]);
   const TABS = [
-    ['splash', '📣 Splash', splashVivas ? `${splashVivas} showing` : 'none showing'],
+    ['splash', '📣 Splash screens', splashVivas ? `${splashVivas} showing` : 'none showing'],
     ['features', '🧩 Site features', funciones.map(([f, k]) => `${f.emoji} ${k ? 'on' : 'off'}`).join(' · ')],
     ['skins', '🎨 Skins', skinViva.length ? skinViva.map(s => `${SKINS[s.id].icon?.emoji || '🎨'} on`).join(' · ') : 'none on'],
   ];
