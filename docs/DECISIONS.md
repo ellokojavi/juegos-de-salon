@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (472)
+## In force (473)
 
 | D | Title | Status |
 |---|---|---|
@@ -531,6 +531,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-484](decisions/D-484.md) | Each panel domain counts and lists only its own games, and a script checks every view | current |
 | [D-485](decisions/D-485.md) | Uno al día's spoiler-free grid reaches everyone | current |
 | [D-486](decisions/D-486.md) | A conflict is a verdict only when it lasts: wait-pr confirms it, and the 🚀 Publicar watcher fixes it | current |
+| [D-489](decisions/D-489.md) | Battleship's Salvo: one volley per turn, as big as your ships afloat, entered with taps and one ¡Fuego! | current |
 
 ## No longer in force (12)
 
