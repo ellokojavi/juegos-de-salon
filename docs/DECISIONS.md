@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (471)
+## In force (470)
 
 | D | Title | Status |
 |---|---|---|
@@ -528,10 +528,9 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-480](decisions/D-480.md) | 🚀 Publicar para todos: the owner sends a lab feature live from its card | current |
 | [D-481](decisions/D-481.md) | A texture per region on Queens' board, for colorblind players | current |
 | [D-482](decisions/D-482.md) | Uno al día's share carries a neutral emoji grid, never one that spoils | current |
-| [D-483](decisions/D-483.md) | Toque y Fama's deduction notes: a ✏️ Notes toggle under the keypad (lab) | current |
 | [D-484](decisions/D-484.md) | Each panel domain counts and lists only its own games, and a script checks every view | current |
 
-## No longer in force (11)
+## No longer in force (12)
 
 | D | Title | Status |
 |---|---|---|
@@ -546,5 +545,6 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-254](decisions/D-254.md) | The sheet with the video, only in the video's language | replaced by D-410 |
 | [D-256](decisions/D-256.md) | The case: a mystery prototype in the lab, Spanish only | replaced by D-261, D-264, D-267 |
 | [D-269](decisions/D-269.md) | Trick riddles, a prototype in the lab | revoked |
+| [D-483](decisions/D-483.md) | Toque y Fama's deduction notes: a ✏️ Notes toggle under the keypad (lab) | revoked |
 
 Numbers never used: D-180, D-330.

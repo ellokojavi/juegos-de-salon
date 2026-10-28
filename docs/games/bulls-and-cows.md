@@ -99,16 +99,6 @@ En la pantalla de juego aparece una ficha “🔒 Tu número secreto”. En dos 
 
 En el teclado de adivinar, una pulsación larga (450 ms) sobre una cifra la tacha: se ve con 🚫, se quita de la entrada actual y el toque corto no la ingresa. Otra pulsación larga la destacha. En pantalla se dice **tachar**, no bloquear (U-5, D-177). El teclado con notas es el compartido, `public/assets/js/teclado.js` (D-102). Las marcas son por jugador (en un celular cada uno tiene las suyas), duran toda la partida, se guardan con la sesión en modo dos celulares y se limpian en la revancha. Bajo el teclado hay una instrucción de una línea para usuarios nuevos.
 
-### Deduction notes (lab, D-483)
-
-#895: with a lab key, a **✏️ Notes** pill sits under the guess keypad. On, a tap on a digit cycles
-its mark instead of typing it (none → 🚫 not in it → ? maybe → ★ sure → none), ⌫ and the guess
-button are off, and a one-line hint explains the marks; **⌨️ Back to typing** turns it off. 🚫 is the
-same strike as the long press (the digit does not type); ? and ★ only mark. The marks are kept in the
-same `notes` set as the strikes (`?3`, `★5`), so they last the game wherever strikes already did. No
-rule or score change: solo, rooms, Uno al día and La Copa alike. Lab card `#seccion-tyf-notas`;
-checked at the end of `tools/e2e/bulls-and-cows/choose-box.mjs`.
-
 ### Choosing the box
 
 A player asked for it by email (#604, approved in #607): tapping a box chooses where the next digit
