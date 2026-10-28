@@ -135,6 +135,21 @@
             }
           }
         },
+        "counts": {
+          "$t": {
+            ".write": "$room.matches(/^[A-Z]{4}$/) && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000 && (!root.child('rooms/' + $room + '/lastAt').exists() || root.child('rooms/' + $room + '/lastAt').val() > now - 1800000)",
+            ".validate": "$t.matches(/^[A-Za-z0-9_-]{1,19}$/) && newData.hasChildren(['n', 'at'])",
+            "n": {
+              ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
+            },
+            "at": {
+              ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
         "messages": {
           "$id": {
             ".write": "$room.matches(/^[A-Z]{4}$/) && !data.exists() && root.child('rooms/' + $room + '/createdAt').val() > now - 21600000 && (!root.child('rooms/' + $room + '/lastAt').exists() || root.child('rooms/' + $room + '/lastAt').val() > now - 1800000)",
