@@ -2,11 +2,11 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { JOBS, DENY, SECRETS, command, prompt } from './claude-task.mjs';
-import { PROMPT_FILE as LAB_PUBLISH } from './lab-publish-watch.mjs';
+import { PROMPT_FILE as LAB_PUBLISH, CONFLICT_PROMPT } from './lab-publish-watch.mjs';
 
 const jobs = JSON.parse(readFileSync(new URL('./jobs.json', import.meta.url), 'utf8')).jobs;
 // a prompt runs straight from jobs.json, or from a watcher that calls claude-task.mjs only when there is work
-const tasks = [...jobs.filter(j => j.command?.includes('tools/jobs/claude-task.mjs')).map(j => j.command.at(-1)), LAB_PUBLISH];
+const tasks = [...jobs.filter(j => j.command?.includes('tools/jobs/claude-task.mjs')).map(j => j.command.at(-1)), LAB_PUBLISH, CONFLICT_PROMPT];
 assert.ok(tasks.length >= 2, 'the processes round and the weekly report run through claude-task.mjs');
 assert.deepEqual(Object.keys(JOBS).sort(), [...tasks].sort(), 'every claude-task job, and only those, has a tool list');
 assert.equal(command('tools/jobs/prompts/other.md'), null, 'a prompt file without a tool list does not run');

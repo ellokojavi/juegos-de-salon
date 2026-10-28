@@ -5,7 +5,9 @@
  * owner asked for a feature to go live from /labs/ it runs a headless Claude session through
  * claude-task.mjs, with the round's tools, following tools/jobs/prompts/lab-publish.md: one
  * request per session, the oldest first. A request the session claimed but left without a PR
- * fails here, so the card on /labs/ never waits forever.
+ * fails here, so the card on /labs/ never waits forever. A PR that stayed in conflict with main
+ * (sync marks it, lab-publish.mjs CONFLICT_MS) gets one session that brings it up to date
+ * (tools/jobs/prompts/lab-publish-conflict.md), started only on the sync that marks it.
  *
  *   node tools/jobs/lab-publish-watch.mjs     # usually run by `jobs.mjs run lab-publish-watch`
  */
@@ -13,12 +15,20 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 export const PROMPT_FILE = 'tools/jobs/prompts/lab-publish.md';
+export const CONFLICT_PROMPT = 'tools/jobs/prompts/lab-publish-conflict.md';
+
+/** The requests this sync just sent to be fixed (`<id>: conflict, sent to be fixed`). */
+export const toFix = out => out.split('\n').map(l => l.match(/^(\S+): conflict, sent to be fixed$/)?.[1]).filter(Boolean);
 
 const node = (...args) => spawnSync('node', args, { encoding: 'utf8' });
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const sync = node('tools/agents/lab-publish.mjs', 'sync');
   if (sync.status !== 0) { console.log(`❌ sync: ${(sync.stderr || sync.stdout).trim().slice(0, 300)}`); process.exit(1); }
+  if (toFix(sync.stdout).length) {
+    const f = node('tools/jobs/claude-task.mjs', CONFLICT_PROMPT);
+    console.log(`conflict fix: ${(f.stdout || '').trim().split('\n').at(-1) || f.status}`);
+  }
   const pending = node('tools/agents/lab-publish.mjs', 'pending');
   if (pending.status === 3) { console.log(`no requests; ${sync.stdout.trim().split('\n').at(-1)}`); process.exit(0); }
   if (pending.status !== 0) { console.log(`❌ pending: ${(pending.stderr || pending.stdout).trim().slice(0, 300)}`); process.exit(1); }

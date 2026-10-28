@@ -40,6 +40,12 @@ export const JOBS = {
     tools: ['Bash', 'Read', 'Edit', 'Write', 'Glob', 'Grep', 'Agent', 'SendMessage', 'Skill'],
     flags: ['--setting-sources', 'user,project'],
   },
+  // a 🚀 Publicar PR left in conflict with main (D-480): it merges main into that branch, checks and
+  // pushes; no agents, it only brings the same change up to date
+  'tools/jobs/prompts/lab-publish-conflict.md': {
+    tools: ['Bash', 'Read', 'Edit', 'Write', 'Glob', 'Grep'],
+    flags: ['--setting-sources', 'user,project'],
+  },
   // the report is one node command and a file check: no edits, no agents, no settings files
   'tools/jobs/prompts/weekly-report.md': {
     tools: ['Bash', 'Read'],

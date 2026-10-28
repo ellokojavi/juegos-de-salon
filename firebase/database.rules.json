@@ -1468,6 +1468,12 @@
         "done": {
           ".validate": "newData.isNumber()"
         },
+        "conflictAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "fixAt": {
+          ".validate": "newData.isNumber()"
+        },
         "$other": {
           ".validate": false
         }
