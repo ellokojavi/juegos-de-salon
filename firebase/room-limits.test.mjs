@@ -90,4 +90,18 @@ const create = (db, code, config = { lives: 6, buy: true, theme: 'mezcla', seed:
   no(bump(DAY, T0 + 3 * 86400000), 'an old bucket can no longer be kept from being swept');
   no(db.update({ [`cleanup/days/${DAY}/lastAt`]: T0 }, at(T0 + 120000)), 'lastAt never moves back');
 }
+// ---- The room's own counters (D-474) ----
+{
+  const db = fresh();
+  ok(create(db, 'ABCD'), 'room', db);
+  const INC = { '.sv': { increment: 1 } };
+  const count = (t, v = { n: INC, at: TS }, now = T0 + 1000) => db.update({ [`rooms/ABCD/counts/${t}`]: v }, at(now));
+  ok(count('hello'), 'the first message of a type starts its counter at 1', db);
+  ok(count('hello'), 'and the next one adds 1', db);
+  no(count('shot', { n: 5, at: TS }), 'a counter does not jump');
+  no(count('hello', { n: 1, at: TS }), 'nor go back');
+  no(count('bad.type'), 'the type is a plain key');
+  no(count('shot', { n: INC, at: TS, x: 1 }), 'a counter takes no other field');
+  no(count('shot', undefined, T0 + 7 * 3600000), 'a dead room counts nothing');
+}
 console.log('room limits: ok');

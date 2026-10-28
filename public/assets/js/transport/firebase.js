@@ -6,7 +6,7 @@
  */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import {
-  getDatabase, ref, get, set, update, push, onChildAdded, onValue, onDisconnect, runTransaction, serverTimestamp,
+  getDatabase, ref, get, set, update, push, onChildAdded, onValue, onDisconnect, runTransaction, serverTimestamp, increment,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../firebase-config.js';
 import { IDLE_TTL, ROOM_TTL, dayOf, dueForSweep, markSwept, noteRoom, roomCreation, sweep } from './cleanup.js';
@@ -249,6 +249,13 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
       this._touch(d);
       const path = `rooms/${this.code}/messages`;
       const p = push(ref(d, path), { ...msg, from: this.role, at: serverTimestamp() });
+      // The room counts its own messages by type, once the message is in, so the panel reads the
+      // room without them (D-474). Best effort: a missed count only makes the panel's number low.
+      const t = msg?.t;
+      if (typeof t === 'string' && /^[A-Za-z0-9_-]{1,19}$/.test(t)) {
+        p.then(() => update(ref(d, `rooms/${this.code}/counts/${t}`), { n: increment(1), at: serverTimestamp() }))
+          .catch(() => { /* best effort */ });
+      }
       return message(p, async () => (await get(ref(d, `${path}/${p.key}`))).exists());
     },
 

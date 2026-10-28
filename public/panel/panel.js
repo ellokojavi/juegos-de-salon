@@ -19,6 +19,7 @@ import {
   getDatabase, ref, onValue, get, query, orderByChild, orderByKey, startAt, equalTo, set,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
+import { watchRooms, shallowCodes } from './rooms-watch.js';
 import { GAMES, SUELTOS, gameById, gameLabel as etiquetaRegistro, isTorneo, MODES, MODE_IDS, ROOM_MODE, modeIcon, isIndividualMode } from '../assets/js/games.js';
 import { juegosCopa } from '../cup/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
@@ -153,12 +154,15 @@ function stopListening() {
 
 function listen() {
   stopListening();
-  // Se bajan las salas de las últimas 6 horas —el tope duro, que es lo que el índice por
-  // createdAt sabe filtrar— y `liveRooms` descarta después las que llevan media hora sin latir
-  // (D-89). Cada jugada llega como delta.
-  const since = Date.now() - ROOM_TTL;
-  // Every move of every room arrives here: the panel redraws at most once a second for them (D-473)
-  S.unsubRooms = onValue(query(ref(db, 'rooms'), orderByChild('createdAt'), startAt(since)), snap => { S.rooms = snap.val() || {}; renderSoon(); }, denied);
+  // The rooms without their messages: each one keeps its own counters (D-474). Updates still
+  // redraw the panel at most once a second (D-473).
+  S.unsubRooms = watchRooms({
+    fb: { db, ref, onValue },
+    codes: async () => shallowCodes(firebaseConfig.databaseURL, await auth.currentUser.getIdToken()),
+    since: () => Date.now() - ROOM_TTL,
+    onChange: rooms => { S.rooms = rooms; renderSoon(); },
+    onError: denied,
+  });
   // Se baja solo hasta donde llega el rango elegido y nunca menos de lo que ya estaba bajado
   // (D-80): mirar un año son 365 días de registros, y no hay por qué pagarlos mientras se
   // mira la semana. Cambiar a un rango más corto no vuelve a pedir nada.

@@ -252,13 +252,35 @@ export function esJugada(game, t) {
 }
 
 /**
+ * A room's messages by type: `[{ t, n, at }]`, with `at` the latest one of that type.
+ *
+ * A room keeps its own counters in `counts/<t>` (D-474), so the panel reads it without its
+ * messages. A room from before the counters (or seeded by a test) has only `messages`: they are
+ * counted as before, so its numbers do not change.
+ */
+export function porTipo(r) {
+  if (r?.counts && typeof r.counts === 'object') {
+    return Object.entries(r.counts).filter(([, c]) => c && typeof c.n === 'number')
+      .map(([t, c]) => ({ t, n: c.n, at: typeof c.at === 'number' ? c.at : 0 }));
+  }
+  const by = {};
+  for (const x of Object.values(r?.messages || {})) {
+    if (!x) continue;
+    const t = typeof x.t === 'string' ? x.t : '';
+    if (!by[t]) by[t] = { t, n: 0, at: 0 };
+    by[t].n++;
+    if (typeof x.at === 'number' && x.at > by[t].at) by[t].at = x.at;
+  }
+  return Object.values(by);
+}
+
+/**
  * Última señal de vida de una sala: el latido que escribe el transporte (`lastAt`), la última
  * jugada que llegó, o su nacimiento. Se miran los tres porque no siempre están los tres: una
  * sala de antes del latido no tiene `lastAt`, y una recién creada no tiene mensajes.
  */
 export function actividad(r) {
-  const msgs = Object.values(r?.messages || {});
-  const ultima = msgs.reduce((m, x) => (typeof x?.at === 'number' && x.at > m ? x.at : m), 0);
+  const ultima = porTipo(r).reduce((m, x) => (x.at > m ? x.at : m), 0);
   return Math.max(r?.createdAt || 0, typeof r?.lastAt === 'number' ? r.lastAt : 0, ultima);
 }
 
@@ -286,15 +308,15 @@ export function liveRooms(rooms, now = Date.now(), paises = {}, idiomas = {}) {
     if (deserted(r.players)) continue;
     const players = Object.entries(r.players || {}).sort(([a], [b]) => a.localeCompare(b))
       .map(([role, p]) => ({ role, name: p?.name || '?', online: !!p?.online, left: !!p?.left, co: paises[code]?.[role] || '', lang: idiomas[code]?.[role] || '' }));
-    const msgs = Object.values(r.messages || {}).filter(Boolean);
+    const tipos = porTipo(r);
     const game = r.game || '?';
     // Se separan las jugadas de la charla (D-138). Una sala trae además mensajes que nadie
     // escribió: un `hello` por cabeza al entrar y, según el juego, la respuesta automática a
     // cada disparo o intento y los compromisos del anti-trampa. Contar todo junto hacía decir
     // "176 msjs" a una Batalla Naval donde nadie escribió nada: eran 86 disparos y sus respuestas.
-    const jugadas = msgs.filter(x => esJugada(game, x.t));
-    const chat = msgs.filter(x => x.t === 'chat').length;
-    const lastPlayAt = jugadas.reduce((m, x) => (typeof x.at === 'number' && x.at > m ? x.at : m), 0) || null;
+    const jugadas = tipos.filter(x => esJugada(game, x.t));
+    const chat = tipos.filter(x => x.t === 'chat').reduce((k, x) => k + x.n, 0);
+    const lastPlayAt = jugadas.reduce((m, x) => (x.at > m ? x.at : m), 0) || null;
     // La hora de vida sí sale de todo: que alguien acabe de entrar también es actividad.
     const lastAt = actividad(r);
     const online = players.filter(p => p.online).length;
@@ -302,7 +324,7 @@ export function liveRooms(rooms, now = Date.now(), paises = {}, idiomas = {}) {
     const rival = players.filter(p => !p.left).length >= 2;
     out.push({
       code, game, createdAt: r.createdAt, players, online,
-      jugadas: jugadas.length, chat, lastPlayAt, lastAt,
+      jugadas: jugadas.reduce((k, x) => k + x.n, 0), chat, lastPlayAt, lastAt,
       active: rival && (online > 0 || lastAt > now - ACTIVE_MS),
     });
   }
