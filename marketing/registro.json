@@ -386,6 +386,56 @@
           "ruta": "marketing/splash/campaigns/tren-en-vilo-ya/de-390.jpg",
           "formato": "390 px",
           "uso": "Captura de la campaña (de)"
+        },
+        {
+          "ruta": "public/assets/splash/ninja-teaser.mp4",
+          "formato": "MP4 512×320, 8 s en loop",
+          "uso": "Teaser de Stick Ninja (campaña ninja-pronto)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/ninja-pronto/es-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña ninja-pronto (es)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/ninja-pronto/en-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña ninja-pronto (en)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/ninja-pronto/pt-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña ninja-pronto (pt)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/ninja-pronto/de-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña ninja-pronto (de)"
+        },
+        {
+          "ruta": "public/assets/splash/stack-teaser.mp4",
+          "formato": "MP4 512×320, 8 s en loop",
+          "uso": "Teaser de Stack (campaña stack-pronto)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/stack-pronto/es-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña stack-pronto (es)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/stack-pronto/en-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña stack-pronto (en)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/stack-pronto/pt-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña stack-pronto (pt)"
+        },
+        {
+          "ruta": "marketing/splash/campaigns/stack-pronto/de-390.jpg",
+          "formato": "390 px",
+          "uso": "Captura de la campaña stack-pronto (de)"
         }
       ],
       "fuente": "public/assets/js/splash.js",
