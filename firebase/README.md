@@ -171,7 +171,7 @@ The same mechanism as La Copa, for the whole app:
 
 A **legacy player** (`jugadores/<jid>.legado = true`, from La Copa's history) has no
 PIN: `jugadorKeys/<jid>` can be created for them, once, and whoever claims it deletes `legado` in the
-same write, seated with that PIN. They are loaded by `node tools/firebase/rankings-history.mjs --write`. A finished Cup's podium (`torneoPodios/<código>`) is written within the hour of its close by `rankings-history.mjs --podiums --write` (`cup-podiums` workflow, D-450), its only writer since D-499.
+same write, seated with that PIN. They are loaded by `node tools/firebase/rankings-history.mjs --write`. A finished Cup's podium (`torneoPodios/<código>`) is written the night after its close by `rankings-history.mjs --podiums --write` (`cup-podiums` workflow, D-450), its only writer since D-499.
 
 The owner (their UID) can write and delete in all these branches, to moderate.
 

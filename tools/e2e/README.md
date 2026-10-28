@@ -331,7 +331,7 @@ Spanish one. The expected texts come from the dictionaries, they aren't written 
 one phone signs in with its player and opens a cup where it is seated; another phone, which never saw it,
 signs in with the same player, finds it on the home page and enters it with no cup PIN (D-359).
 Last (D-358), a phone with no player sits in a cup with the usual name and PIN, enters as the player,
-and the podium saved without them gets their jid. Then, signed in, joining a new cup asks no cup PIN
+and the podium seeded without them (the nightly job writes podiums, D-499) gets their jid. Then, signed in, joining a new cup asks no cup PIN
 and links the player (D-359). Last (D-416), that phone loses its anonymous session: Empezar leads to
 "Ya estoy inscrito", which says the player's session was lost too and asks for the player's PIN; a
 wrong one is refused, switching names keeps the field, and the right one seats the phone as the
