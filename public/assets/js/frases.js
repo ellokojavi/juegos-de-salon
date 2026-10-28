@@ -572,7 +572,7 @@ export const FRASES = {
     'Mein Fünfjahresplan: bis Freitag durchhalten. 📅',
     'Wenn du verlierst, bist nicht du schuld. Schuld ist, wer dich eingeladen hat. 🫵',
     'Ich habe die emotionale Reife eines Kaugummis unter dem Tisch. 🫧',
-    'Nach dem zweiten Glas singe ich. Nach dem dritten tanze ich. Nach dem vierten rufe ich meinen Ex an. 🎶',
+    'Zweites Glas: Ich singe. Drittes: Ich tanze. Viertes: Ich rufe meinen Ex an. 🎶',
     'Du bist vergeben? Macht nichts, ich bin nicht eifersüchtig. 😏',
     'Mein Typ: jemand, der verliert, ohne zu weinen. 🏳️',
     'Schau mich nicht so an, sonst verliebe ich mich und du ghostest mich. 📵',
