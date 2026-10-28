@@ -115,6 +115,7 @@
     .detalle-dia dd { margin: 0; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
     .detalle-dia .ancha { display: grid; gap: 2px; }
     .detalle-dia .ancha dd { text-align: left; }
+    .dia .tarde { margin: 8px 0 0; font-size: 0.85rem; }
     .detalle-dia .suma { border-top: 1px solid var(--glass-border); padding-top: 6px; }
     /* By game */
     .uad-desafio { display: grid; gap: 10px; text-align: center; border-color: rgba(255, 46, 136, 0.6); background: linear-gradient(160deg, rgba(255, 95, 165, 0.3), rgba(138, 77, 255, 0.28)); }
@@ -220,12 +221,14 @@
     let abierto = null, mes = null;
     // The faster ranking (D-436): built once and kept across redraws
     let rkGuardado = null;
+    // The days uploaded too late for points (#879): Firebase says which, after the sync
+    let tarde = [];
 
     /** Todo lo de la página, con lo que haya en el celular; se vuelve a dibujar al llegar lo de Firebase. */
     const dibujar = async ({ avisos = [] } = {}) => {
       clearInterval(reloj);
       const e = estado();
-      const w = walk(leer().dias, e.hoy, { gifts: leer().regalos || [] });
+      const w = walk(leer().dias, e.hoy, { gifts: leer().regalos || [], late: tarde });
       const nuevo = [];
       for (const a of avisos) nuevo.push(el('p', { class: 'uad-aviso', 'data-aviso': 'aceptado' }, a));
 
@@ -373,7 +376,8 @@
         caja.append(el('div', { class: 'dia', id: 'uad-dia', role: 'region', 'aria-labelledby': 'uad-dia-t' },
           el('button', { type: 'button', class: 'x', 'aria-label': P.cerrar, onClick: () => { tap(); abierto = null; detalle(); } }, '✕'),
           el('h3', { id: 'uad-dia-t' }, mayus(cuando), ...(n >= 1 ? [' ', el('span', { class: 'muted' }, `· ${fmt(P.numero, { n })}`)] : [])),
-          el('dl', { class: 'detalle-dia' }, ...filas)));
+          el('dl', { class: 'detalle-dia' }, ...filas),
+          ...(x?.late ? [el('p', { class: 'muted tarde', 'data-tarde': '' }, P.tarde)] : [])));
       };
       const pintarMes = () => {
         const [y, m] = mes.split('-').map(Number);
@@ -419,7 +423,8 @@
       const R = await red;
       // Los comodines que había antes: cada aceptado da uno mientras quede lugar bajo el tope
       let libres = COMODINES_MAX - estado().comodines;
-      const { nuevos } = await R.sincronizar();
+      const { nuevos, late = [] } = await R.sincronizar();
+      tarde = late;
       await leerMes().catch(() => {});
       return nuevos.map(x => fmt(libres-- > 0 ? T.aceptado : T.aceptadoSin, { n: x.n || T.unAmigo }));
     };
@@ -442,7 +447,7 @@
     import('../assets/js/uno-al-dia-avisos.js').then(Av => { Av.globo(); Av.refrescar({ lang }).catch(() => {}); }).catch(() => {});
     sincronizar().then(avisos => dibujar({ avisos })).catch(() => {});
     // Entrar con el jugador desde esta página trae lo suyo
-    import('../assets/js/jugador.js').then(async ({ jugador }) => (await jugador()).escuchar(yo => { if (yo) sincronizar().then(avisos => dibujar({ avisos })).catch(() => {}); else { enRed = null; ponerCache(null); dibujar(); } })).catch(() => {});
+    import('../assets/js/jugador.js').then(async ({ jugador }) => (await jugador()).escuchar(yo => { if (yo) sincronizar().then(avisos => dibujar({ avisos })).catch(() => {}); else { enRed = null; tarde = []; ponerCache(null); dibujar(); } })).catch(() => {});
   </script>
 </body>
 </html>

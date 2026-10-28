@@ -1,6 +1,7 @@
 // The Uno al día points (public/assets/js/daily-points.js), shared by /today/, the lab prototype and the October backfill
 import assert from 'node:assert/strict';
-import { walk, bonusFor, seasonPoints, maxToday, rankAmong } from './daily-points.js';
+import { walk, bonusFor, seasonPoints, maxToday, rankAmong, onTime, lateDays } from './daily-points.js';
+import { numDia } from './uno-al-dia.js';
 
 assert.equal(bonusFor(0), 0);
 assert.equal(bonusFor(1), 5);
@@ -58,3 +59,25 @@ assert.equal(r.rank, 3);
 assert.equal(r.ahead.name, 'Beto');
 
 console.log('✓ daily-score');
+
+// A day uploaded more than a day late keeps the streak but adds 0, as the season total does (#879, D-465)
+{
+  const n2 = numDia('2026-10-02'), dia = n2 * 86400000;
+  const hist = {
+    [numDia('2026-10-01')]: { j: 'reinas', s: 80, at: numDia('2026-10-01') * 86400000 + 3600000, p: true },
+    [n2]: { j: 'zip', s: 70, at: dia + 3 * 86400000 },
+    [numDia('2026-10-03')]: { j: 'tango', s: 90, at: numDia('2026-10-03') * 86400000 + 3600000 },
+  };
+  assert.equal(onTime(n2, { at: dia + 3600000 }), true);
+  assert.equal(onTime(n2, hist[n2]), false);
+  assert.equal(onTime(n2, {}), true);
+  assert.deepEqual(lateDays(hist), ['2026-10-02']);
+  assert.deepEqual(lateDays({ [n2]: { ...hist[n2], p: true } }), []);
+  const days = { '2026-10-01': { j: 'reinas', s: 80 }, '2026-10-02': { j: 'zip', s: 70 }, '2026-10-03': { j: 'tango', s: 90 } };
+  const l = walk(days, '2026-10-03', { late: lateDays(hist) });
+  assert.deepEqual(l.days.map(d => d.points), [85, 0, 105]);
+  assert.equal(l.days[1].late, true);
+  assert.equal(l.days[1].played, true);
+  assert.equal(l.streak, 3);
+  assert.equal(seasonPoints(l, '2026-10-03'), 190);
+}
