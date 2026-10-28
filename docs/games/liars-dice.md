@@ -73,7 +73,7 @@ takes the same `rules`. The audit against the traditional rules is in #897.
   may change the face, always raising the quantity (`rules.changeFace`).
 - **Variantes**, a folded row that shows only with the switch on, each off: **Pasar** (five dice
   all different, all equal or a full house: pass once per round; the next player may doubt the
-  pass and only that hand is judged; a bluffed pass is allowed) and **Dudar a la siciliana**
+  pass and only that hand is judged, so the reveal shows just that hand, with no count, and a room's header reads "X dudó del paso de Y"; a bluffed pass is allowed; a pass is a play like a bid) and **Dudar a la siciliana**
   (doubting the game's first bid is worth two dice). Picado and juego sucio are not built (#897).
 - **Why nobody saw Calzar at a table of five**: it was on and drawn right in every mode, but it
   shows only once the bid reaches half the dice (13 of 25); simulated, a five-player game first
