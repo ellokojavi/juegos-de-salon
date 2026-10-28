@@ -267,7 +267,7 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   propia línea, **🏳️ Rendirse** (D-110). Deshacer quita el último gesto (un toque, un toque largo,
   un arrastre entero o un Borrar todo) hasta el comienzo, sin pedir confirmación, y el reloj sigue
   (D-283). El botón y sus pasos están en `games/deshacer.js`, listos para Zip.
-- **Queens' regions carry a texture** over their color (D-481, #896, for now only with a lab key,
+- **Queens' regions carry a texture** over their color (D-481, #896, for everyone since 2026-10-27, first tried in the lab as
   `#seccion-tramas`): thin lines, dots or a grid per region, from `assets/js/region-patterns.js`, so
   players with protanopia or deuteranopia tell the regions apart. Region 0 stays plain; a clash keeps
   its red stripes. Tango, Zip and Loteo need none (symbols, a path, outlined plots), and Pintaminas
