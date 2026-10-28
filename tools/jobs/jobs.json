@@ -55,8 +55,16 @@
       "where": "github",
       "workflow": "cup-podiums.yml",
       "cron": "47 7,8 * * *",
-      "what": "Saves the podium of every finished Cup nobody reopened, so its champions reach the medal table.",
-      "decisions": ["D-450"]
+      "what": "Saves the podium of every finished Cup, so its champions reach the medal table; since D-499 the app no longer saves podiums, so this is the only writer.",
+      "decisions": ["D-450", "D-499"]
+    },
+    {
+      "id": "room-sweep",
+      "where": "github",
+      "workflow": "room-sweep.yml",
+      "cron": "37 9 * * *",
+      "what": "Deletes the expired rooms: sweeps every closed cleanup bucket of a past day, however old, deletes the expired rooms no bucket names and notes the live ones (room-sweep.mjs). Phones no longer sweep.",
+      "decisions": ["D-321", "D-499"]
     },
     {
       "id": "round-watch",

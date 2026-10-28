@@ -36,7 +36,6 @@ import { imagenDeTabla, cabeceraTabla, colorDe, llegada } from './table-image.js
 import { planilla } from './planilla.js';
 import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones, URL_RECORDS } from '../assets/js/ranking.js';
 import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
-import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
 import { fechaLocal, juegoDel, semillaDel, anotar as anotarUnoAlDia, leer as leerUnoAlDia, settleStarted, dailySave } from '../assets/js/uno-al-dia.js';
 import { tarjetaResultado, rutaHoy, lockState, lockLine, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
@@ -1069,9 +1068,8 @@ async function abrirCopa(code,{ recienCreada = false, pantalla = null } = {}) {
 /**
  * La copa y los rankings (D-212). Si en este celular hay un jugador, el de la copa queda
  * enlazado a él y la copa, en su lista (D-220); los de la copa que también lo están pasan a ser sus amigos; y cuando la copa
- * termina, su podio se guarda una vez para el medallero. Todo es de adorno: nunca frena la copa.
+ * termina, su podio lo guarda el trabajo de la noche (D-450, D-499). Todo es de adorno: nunca frena la copa.
  */
-let podioGuardado = false;
 
 /** A phone whose player is linked to one of this cup's players sits as them, with no PIN (D-359). */
 async function sentarseSolo(Lc) {
@@ -1155,14 +1153,7 @@ async function vincularJugador(Lc) {
       // A podium saved while this cup player had no player of their own now carries theirs (D-358)
       await J.firmarPodio(S.code, S.yo).catch(() => {});
     }
-    if (!podioGuardado && !Lc.meta.lab && terminada(Lc.meta, ahora()) && activos(Lc).length >= 2) {
-      podioGuardado = true;
-      const fin = Lc.meta.end;
-      await J.guardarPodio(S.code, {
-        name: Lc.meta.name, end: Math.min(fin, ahora()), de: activos(Lc).length, dias: Lc.meta.days, por: S.yo,
-        p: podioDe(tabla(Lc, null, fin), Lc.players),
-      });
-    }
+    // The podium of a finished cup is the nightly job's (D-450, D-499): the app no longer writes it
   } catch (_) { /* sin red o sin permiso: la copa sigue igual */ }
 }
 
