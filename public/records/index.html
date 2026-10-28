@@ -245,5 +245,7 @@
     mostrar(/^copas?$/.test(pedido) ? 'copas' : 'juegos');
     window.__records = { get seccion() { return seccion; }, get juego() { return juegoElegido; } };
   </script>
+  <!-- The site's footer, with the funny line, under the rankings (lab: #seccion-pie-sitio) -->
+  <script type="module">import('../assets/js/site-footer.js').then(m => m.mountFooter(document.querySelector('main.app'), { phrase: true, screen: 'rankings' }));</script>
 </body>
 </html>

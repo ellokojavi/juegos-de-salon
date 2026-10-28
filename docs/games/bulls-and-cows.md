@@ -46,11 +46,11 @@ Hasta D-142 el modo solo pasaba por el reductor con un bot B que elegía el núm
 configurables, intentos ilimitados y récord por menos intentos (D-129). Ahora es exactamente el
 juego 🔢 de La Copa, con sus reglas, su pantalla y su puntaje, pero en el idioma de quien juega:
 
-- **Reglas:** 4 cifras distintas, puede empezar con cero, 10 intentos. Puntaje de 0 a 100: 100 al
-  primer intento y 10 menos por cada uno más; 0 si no lo saca (`public/cup/games/number/engine.js`).
-  In the lab (D-453): a lab key holder also sees, on the finished board, ⚠️ on each guess the
-  earlier clues had already ruled out and the line "🧪 Con la regla nueva: N/100" (`puntajeDescarte`:
-  100, −15 per ruled-out guess, minimum 10 if solved). What is recorded stays on D-113's rule.
+- **Reglas:** 4 cifras distintas, puede empezar con cero, 10 intentos. Score from 0 to 100 (D-453):
+  start at 100, 15 off for each guess the earlier clues had already ruled out (`descartado()`), never
+  below 10 if solved, 0 if not (`puntaje` in `public/cup/games/number/engine.js`). The finished board
+  marks each ruled-out guess with ⚠️ and says what each one cost; never while playing. Until D-453 it
+  was 100 on the first guess and 10 less for each one after it (D-113).
 - **Número:** sale de un código de 5 letras al azar (`codigoAlAzar` de `public/cup/code.js`, D-377) con
   `numero.generar(codigo, 1)`. No hay secreto que guardar ni que verificar.
 - **Pantallas:** una previa con “Cómo se juega” (3 puntos), cómo se calcula el puntaje, el récord y

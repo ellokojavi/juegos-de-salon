@@ -1,5 +1,5 @@
 {
-  "version": "0.222.19",
+  "version": "0.223.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -13,10 +13,10 @@
     "de"
   ],
   "phrases": {
-    "es": 100,
-    "en": 100,
-    "pt": 100,
-    "de": 100
+    "es": 150,
+    "en": 150,
+    "pt": 150,
+    "de": 150
   },
   "commonKeys": 40,
   "games": [
@@ -1091,6 +1091,7 @@
     "public/assets/js/search.js",
     "public/assets/js/season.js",
     "public/assets/js/session.js",
+    "public/assets/js/site-footer.js",
     "public/assets/js/sobre.js",
     "public/assets/js/sound.js",
     "public/assets/js/splash.js",
