@@ -82,7 +82,7 @@ const ES = {
       '<b>Calzar</b> es decir que la cantidad es exacta: si aciertas recuperas un dado y si no, pierdes uno. Se puede con tres jugadores o más y desde la mitad de los dados.',
       'Quien se queda sin dados sale. Gana el último con dados.',
     ],
-    // The two setup switches (D-447), told before the last rule; not in Uno al día, which plays with neither
+    // The setup switches (D-447, and the classic rules of D-495), told before the last rule; not in Uno al día, which plays with none
     ruleShake: 'Con <b>Agitar para tirar</b>, cada ronda tus dados salen cuando agitas el celular.',
     ruleClock: 'Con <b>{n} segundos por turno</b>, quien no juega a tiempo pierde un dado.',
     diceLeft: '{n} dados', diceLeftOne: '1 dado',
@@ -173,7 +173,7 @@ const EN = {
       '<b>Spot on</b> means the count is exact: get it right and you win a die back, and if not, you lose one. It takes three players or more and a bid of at least half the dice.',
       'Run out of dice and you\'re out. The last one with dice wins.',
     ],
-    // The two setup switches (D-447), told before the last rule; not in Uno al día, which plays with neither
+    // The setup switches (D-447, and the classic rules of D-495), told before the last rule; not in Uno al día, which plays with none
     ruleShake: 'With <b>Shake to roll</b>, each round your dice come out when you shake the phone.',
     ruleClock: 'With <b>{n} seconds per turn</b>, whoever doesn’t play in time loses a die.',
     diceLeft: '{n} dice', diceLeftOne: '1 die',
@@ -260,7 +260,7 @@ const PT = {
       '<b>Cravar</b> é dizer que a quantidade é exata: se acertar, ganha um dado de volta, e se não, perde um. Pode com três jogadores ou mais e a partir da metade dos dados.',
       'Quem fica sem dados sai. Ganha o último com dados.',
     ],
-    // The two setup switches (D-447), told before the last rule; not in Uno al día, which plays with neither
+    // The setup switches (D-447, and the classic rules of D-495), told before the last rule; not in Uno al día, which plays with none
     ruleShake: 'Com <b>Sacudir para jogar os dados</b>, a cada rodada seus dados saem quando você sacode o celular.',
     ruleClock: 'Com <b>{n} segundos por vez</b>, quem não joga a tempo perde um dado.',
     diceLeft: '{n} dados', diceLeftOne: '1 dado',
@@ -348,7 +348,7 @@ const DE = {
       'Bei der <b>Punktlandung</b> sagst du, dass die Zahl genau stimmt: Liegst du richtig, bekommst du einen Würfel zurück, sonst verlierst du einen. Das geht ab drei Spielern und ab der Hälfte der Würfel.',
       'Wer keine Würfel mehr hat, scheidet aus. Der Letzte mit Würfeln gewinnt.',
     ],
-    // The two setup switches (D-447), told before the last rule; not in Uno al día, which plays with neither
+    // The setup switches (D-447, and the classic rules of D-495), told before the last rule; not in Uno al día, which plays with none
     ruleShake: 'Mit <b>Schütteln zum Würfeln</b> kommen deine Würfel jede Runde heraus, wenn du das Handy schüttelst.',
     ruleClock: 'Mit <b>{n} Sekunden pro Zug</b> verliert, wer nicht rechtzeitig spielt, einen Würfel.',
     diceLeft: '{n} Würfel', diceLeftOne: '1 Würfel',
