@@ -1,7 +1,7 @@
 {
-  "checkedUpTo": "4c89dbb897a9adab2150f2fdfe0a06bec125c160",
+  "checkedUpTo": "dae3ca8781c448df0a886b0a41c09bb6efba59f9",
   "pending": [
-    "Stale README screenshots (judgment warnings): toque-y-fama 9 (toggle moved into the hero, #827), linea-de-tiempo 5, cup-new-games 8, portada 2, batalla-naval 2, dudo 2, ahorcado 2, generala 1, julepe 1; redo offline and review on the contact sheet"
+    "Stale README screenshots (judgment warnings, 107 across 12 sections: copa, linea-de-tiempo, cuarto-rey, dudo, julepe, ahorcado, toque-y-fama, generala, cup-new-games, batalla-naval, portada, idiomas); redo offline and review on the contact sheet"
   ],
   "known": [],
   "rounds": [
@@ -127,6 +127,15 @@
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/829",
       "pending": [
         "Stale README screenshots (judgment warnings): toque-y-fama 9 (toggle moved into the hero, #827), linea-de-tiempo 5, cup-new-games 8, portada 2, batalla-naval 2, dudo 2, ahorcado 2, generala 1, julepe 1; redo offline and review on the contact sheet"
+      ]
+    },
+    {
+      "date": "2026-10-28",
+      "from": "4c89dbb897a9adab2150f2fdfe0a06bec125c160",
+      "to": "dae3ca8781c448df0a886b0a41c09bb6efba59f9",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/939",
+      "pending": [
+        "Stale README screenshots (judgment warnings, 107 across 12 sections: copa, linea-de-tiempo, cuarto-rey, dudo, julepe, ahorcado, toque-y-fama, generala, cup-new-games, batalla-naval, portada, idiomas); redo offline and review on the contact sheet"
       ]
     }
   ],
