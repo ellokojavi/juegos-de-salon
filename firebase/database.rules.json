@@ -1,5 +1,9 @@
 {
   "rules": {
+    "archive": {
+      ".read": false,
+      ".write": false
+    },
     "rooms": {
       ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
       ".indexOn": [
