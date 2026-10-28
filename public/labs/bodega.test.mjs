@@ -21,6 +21,14 @@ const group = id => {
 };
 const cards = html => [...html.matchAll(/<section class="panel seccion[^"]*" id="([\w-]+)">([\s\S]*?)(?=<section class="panel seccion|$)/g)];
 
+// A card left without its closing tags swallows every card after it into its folded <details> (#958)
+const open = [];
+for (const [tag, close, name] of labs.matchAll(/<(\/?)(section|details|div)\b[^>]*>/g).map(m => [m[0], m[1], m[2]])) {
+  if (!close) { open.push(name); continue; }
+  assert.equal(open.pop(), name, `public/labs/index.html: ${tag} closes the wrong tag, so a card is missing its closing tags`);
+}
+assert.deepEqual(open, [], `public/labs/index.html leaves <${open.join('>, <')}> open`);
+
 let checked = 0;
 for (const g of ['activos', 'mejoras']) for (const [, id, body] of cards(group(g))) {
   checked++;
