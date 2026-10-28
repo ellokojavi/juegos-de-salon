@@ -1,5 +1,5 @@
 {
-  "version": "0.224.2",
+  "version": "0.225.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1092,6 +1092,7 @@
     "public/assets/js/search.js",
     "public/assets/js/season.js",
     "public/assets/js/session.js",
+    "public/assets/js/share-grid.js",
     "public/assets/js/site-footer.js",
     "public/assets/js/sobre.js",
     "public/assets/js/sound.js",
@@ -1296,6 +1297,7 @@
     "public/assets/js/records.test.mjs",
     "public/assets/js/search.test.mjs",
     "public/assets/js/season.test.mjs",
+    "public/assets/js/share-grid.test.mjs",
     "public/assets/js/splash.test.mjs",
     "public/assets/js/support.test.mjs",
     "public/assets/js/transport/best-effort.test.mjs",
