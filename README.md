@@ -499,6 +499,7 @@ node public/assets/js/pending-scores.test.mjs
 node public/assets/js/push.test.mjs
 node public/assets/js/rankings-rest.test.mjs
 node public/assets/js/records.test.mjs
+node public/assets/js/region-patterns.test.mjs
 node public/assets/js/search.test.mjs
 node public/assets/js/season.test.mjs
 node public/assets/js/splash.test.mjs
