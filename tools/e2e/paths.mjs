@@ -48,7 +48,7 @@ const TANGO_FILL = clash => `(async()=>{const JUEGOS=await (await import('/cup/g
  * else, it is added here and not in a new script.
  */
 /** Opens the first splash card's Quick look; repeatable, since the panel draws a moment after its seed */
-const PEEK = `const v = document.querySelector('.vistazo'); if (!v) document.querySelector('.campana-plegada')?.click(); else if (!v.open) { v.querySelector('summary').click(); v.scrollIntoView(); }`;
+const PEEK = `const b = document.querySelector('.vistazo-btn'); if (!b) document.querySelector('.campana-plegada')?.click(); else if (b.getAttribute('aria-expanded') !== 'true') b.click(); else document.querySelector('.vistazo-btn').closest('footer').scrollIntoView();`;
 /** Seeds the panel with rooms, signals and cups, and opens the requested view (see `panel` below). */
 const SEED_PANEL = view => `(async()=>{const DAY=86400000,now=Date.now(),today=Math.floor(now/DAY);
       const rooms={ABCD:{createdAt:now-4*60000,lastAt:now-60000,game:'dudo',players:{A:{name:'Javi',online:true},B:{name:'Cata',online:true}},messages:{m1:{t:'hello',at:now-4*60000},m2:{t:'bid',at:now-60000}}},EFGH:{createdAt:now-2*3600000,lastAt:now-12*60000,game:'juego-nuevo',players:{A:{name:'Fausto',online:false}}}};
