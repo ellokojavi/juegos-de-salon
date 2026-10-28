@@ -34,6 +34,14 @@
       "decisions": ["D-415", "D-424", "D-472"]
     },
     {
+      "id": "firebase-archive",
+      "where": "github",
+      "workflow": "firebase-archive.yml",
+      "cron": "41 9 * * *",
+      "what": "Moves finished Cups older than two years (podium saved), stats days older than two years, and daily tables and Uno al día day starts older than 35 days into archive/, copying and checking each one before deleting it. A dry run until the FIREBASE_ARCHIVE_APPLY variable is true.",
+      "decisions": ["D-476"]
+    },
+    {
       "id": "cup-podiums",
       "where": "github",
       "workflow": "cup-podiums.yml",
