@@ -15,11 +15,14 @@
  *   ?test          off, so the scripts and the screenshots see the site as always
  *
  * While a template is in the lab (`public: false`) it turns on only for a lab key holder (D-395).
+ * The panel's 🎨 Skins (D-477, controls.js) can move a template to other days or switch it off,
+ * with no PR: `controls/skins/<id>`, read before deciding.
  * lab: #seccion-temporadas
  */
 import { param, tiene } from './parametros.js';
 import { labAccess } from './lab-access.js';
 import { TEMPLATES } from '../season/templates.js';
+import { loadControls, skinOn } from './controls.js';
 
 export { TEMPLATES };
 const BASE_CSS = new URL('../css/season.css', import.meta.url).href;
@@ -28,19 +31,20 @@ const mmdd = d => `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDa
 /** Whether a day ('MM-DD') falls in from…to, both included; a range may cross New Year. */
 export const within = (day, from, to) => (from <= to ? from <= day && day <= to : day >= from || day <= to);
 
-/** The template a day falls in, if any (pure, for node). */
-export function seasonOf(date = new Date(), templates = TEMPLATES) {
+const ymd = d => `${d.getFullYear()}-${mmdd(d)}`;
+/** The template a day falls in, if any, after the panel's skins switches (pure, for node). */
+export function seasonOf(date = new Date(), templates = TEMPLATES, controls = {}) {
   const day = mmdd(date);
-  return Object.keys(templates).find(id => within(day, templates[id].from, templates[id].to)) || null;
+  return Object.keys(templates).find(id => skinOn(controls?.skins?.[id], ymd(date), () => within(day, templates[id].from, templates[id].to))) || null;
 }
 
 /** Which template this page shows, and whether that still needs a lab key; null for none. */
-export function chooseSeason({ search = globalThis.location?.search ?? '', date = new Date(), templates = TEMPLATES } = {}) {
+export function chooseSeason({ search = globalThis.location?.search ?? '', date = new Date(), templates = TEMPLATES, controls = {} } = {}) {
   const asked = param('season', search);
   if (asked === 'off') return null;
   if (asked && templates[asked]) return { id: asked, lab: !templates[asked].public, forced: true };
   if (tiene('test', search)) return null;
-  const id = seasonOf(date, templates);
+  const id = seasonOf(date, templates, controls);
   return id ? { id, lab: !templates[id].public, forced: false } : null;
 }
 
@@ -52,7 +56,7 @@ export function iconUrl({ emoji, colors: [a, b] }) {
 
 async function start() {
   try {
-    const pick = chooseSeason();
+    const pick = chooseSeason({ controls: tiene('test') ? {} : await loadControls() });
     if (!pick || (pick.lab && !(await labAccess()))) return null;
     const t = TEMPLATES[pick.id];
     document.documentElement.classList.add('season', `season-${pick.id}`);

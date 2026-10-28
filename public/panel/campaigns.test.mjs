@@ -82,3 +82,19 @@ assert.equal(sup.openRate, 5 / 4, 'the footer opens it too, so opens can pass in
 assert.equal(sup.payRate, 2 / 5);
 assert.equal(sup.thanksRate, 1 / 2);
 assert.equal(supportStats({ 10: {} }, { from: 10, to: 12 }), null, 'nothing counted: no block');
+
+// 🎨 Skins (D-477): yearly by its own days, moved to dates, or off
+{
+  const { skinRows, skinToRemote } = await import('./campaigns.js');
+  const templates = { halloween: { from: '10-26', to: '10-31' }, nye: { from: '12-31', to: '01-01' } };
+  const [h, n] = skinRows({ remote: null, templates, today: '2026-10-27' });
+  assert.deepEqual([h.mode, h.status, h.days], ['yearly', 'live', { from: '2026-10-26', to: '2026-10-31' }]);
+  assert.deepEqual([n.status, n.days], ['scheduled', { from: '2026-12-31', to: '2027-01-01' }], 'a run across New Year');
+  assert.deepEqual(skinRows({ remote: null, templates, today: '2026-11-01' })[0].days, { from: '2027-10-26', to: '2027-10-31' }, 'past: next year');
+  assert.equal(skinRows({ remote: null, templates, today: '2027-01-01' })[1].status, 'live', 'on its New Year day');
+  const moved = skinRows({ remote: { halloween: { mode: 'dates', from: '2026-11-01', until: '2026-11-02' } }, templates, today: '2026-10-27' })[0];
+  assert.deepEqual([moved.status, moved.days], ['scheduled', { from: '2026-11-01', to: '2026-11-02' }]);
+  assert.equal(skinRows({ remote: { halloween: { mode: 'off' } }, templates, today: '2026-10-27' })[0].status, 'off');
+  assert.deepEqual(skinToRemote({ mode: 'off', from: '2026-11-01' }, 5), { mode: 'off', at: 5 }, 'off keeps no days');
+  assert.deepEqual(skinToRemote({ mode: 'dates', from: '2026-11-01', until: null }, 5), { mode: 'dates', at: 5, from: '2026-11-01' });
+}

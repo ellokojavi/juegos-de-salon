@@ -39,6 +39,13 @@ Only `from`, `to` and `public` are required; a template shows only the touches i
 3. A card in `/labs/` already names `#seccion-temporadas`; update its text for the new date.
 4. When the owner approves it, `public: true`. It turns itself on and off every year from then on.
 
+## Moving or skipping one without a PR (D-477)
+
+The panel's 📣 Campaigns → 🎨 Skins lists every template: *Every year* (its own days, the default),
+*These days* (a start and an end date) or *Off*. It is saved to Firebase `controls/skins/<id>` and the
+home page reads it before choosing (`public/assets/js/controls.js`, `seasonOf(date, templates, controls)`);
+`?season=<id>` and `?test` still win over it.
+
 Rules: nothing takes a tap or covers a button (`pointer-events: none`), nothing is text the player
 reads (so nothing to translate), nothing moves under `prefers-reduced-motion`, and `?test` keeps it
 off so the scripts and screenshots do not change.
