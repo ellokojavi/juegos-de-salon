@@ -506,6 +506,9 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   under the email field of every feedback form. **The page describes the code:** a PR that stores
   something new about players, or keeps it for a different time, edits `public/privacy/texts.js`
   in the same PR, in the four languages (`texts.test.mjs` checks their shape).
+- **The footer outside the home page (in the lab):** with a lab key, game covers, La Copa's entrance,
+  Rankings and Uno al día end with the same violet-sunset footer (`site-footer.js`, U-38); only Rankings
+  and Uno al día carry the funny phrase. Never during a game or on a result screen.
 - **Se prueba entera en Chrome:** `tools/e2e/favorites.mjs` (filtros, favoritos y 320 px en los
   cuatro idiomas), `share-home.mjs`, `install-prompt.mjs`, `daily.mjs` e
   `lang-from-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los
