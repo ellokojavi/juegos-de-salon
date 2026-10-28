@@ -22,7 +22,7 @@ console.log('search: the name first, green');
 import { KEYWORDS, search } from './search.js';
 const LANGS = ['es', 'en', 'pt', 'de'];
 const missing = PORTADA.flatMap(x => LANGS.filter(l => !(KEYWORDS[x.id]?.[l]?.length >= 3)).map(l => `${x.id}:${l}`));
-assert.deepEqual(missing, [], 'every game on the home page has at least three search keywords in es, en, pt and de: add them to KEYWORDS in search.js');
+assert.deepEqual(missing, [], 'every game on the home page has at least three search keywords in es, en, pt and de: add `keywords` to its entry in games.js');
 assert.deepEqual(Object.keys(KEYWORDS).filter(id => !PORTADA.some(x => x.id === id)), [], 'no keywords left for a game that is no longer on the home page');
 // Each language finds by what a game is, not only by its name
 const finds = (q, id) => search(q, PORTADA)?.has(id);
