@@ -86,10 +86,10 @@ Tested end to end by `tools/e2e/liars-dice/classic.mjs`.
 ### Cómo se nombran las pintas
 
 En español la mesa chilena no dice "doses" ni "treses": dice **ases, tontos, trenes, cuadras,
-quintas y sextas**. Esos son los nombres que usa el juego por defecto —en la apuesta, en el
+quinas y sextas**. Esos son los nombres que usa el juego por defecto —en la apuesta, en el
 destape y en el repaso— y se pueden apagar en la configuración para volver a los números. Es una
 opción de un solo idioma: en inglés, portugués y alemán no hay un juego de nombres equivalente
-instalado, así que ahí las pintas van por su número y el interruptor ni se ofrece (D-71).
+instalado, así que ahí las pintas van por su número y el interruptor ni se ofrece (D-71). The fives are "quinas", not "quintas": the owner's correction (D-491).
 
 | Pinta | Chile | es (apagado) | en | pt | de |
 |---|---|---|---|---|---|
@@ -97,7 +97,7 @@ instalado, así que ahí las pintas van por su número y el interruptor ni se of
 | ⚁ | tontos | doses | twos | dois | Zweier |
 | ⚂ | trenes | treses | threes | três | Dreier |
 | ⚃ | cuadras | cuatros | fours | quatros | Vierer |
-| ⚄ | quintas | cincos | fives | cincos | Fünfer |
+| ⚄ | quinas | cincos | fives | cincos | Fünfer |
 | ⚅ | sextas | seises | sixes | seis | Sechser |
 
 ## Modos
@@ -245,7 +245,7 @@ Intro (modos) → Setup (nombres y ajustes) → [Lobby: código + QR] → Mesa (
 3. **Mesa:** arriba la tira de rivales con cuántos dados le quedan a cada uno (nunca cuáles);
    al centro, tus dados; abajo, la apuesta que está en pie y la botonera.
 4. **Apostar:** se elige la pinta y después la cantidad, que arranca en la mínima legal. Nada viene
-   preseleccionado y el botón dice qué va a hacer: **"Apuesto 4 quintas"** (C-8). Los dados de esa
+   preseleccionado y el botón dice qué va a hacer: **"Apuesto 4 quinas"** (C-8). Los dados de esa
    botonera van **dibujados en hueco**, con el contorno y los puntos en línea: son botones que
    nombran una pinta, no dados. Los de verdad —los de la mano— son los únicos con cara sólida, y
    así la mesa se lee de un vistazo (D-71).
@@ -285,7 +285,7 @@ roll* → bid+ → (dudo | calza) → open*
 Un `roll` con `d` se resuelve solo; uno con `h` obliga a esperar el `open`. Es el mismo camino para
 los tres modos: el motor cuenta cuando conoce todos los dados de la ronda, y mientras tanto la fase
 es `open` y la pantalla dice a quién se espera. While nobody holds the turn (`current` is null), the header never says
-whose turn it is: during `open` it names who called it ("Chan dudó de 7 quintas"), with the
+whose turn it is: during `open` it names who called it ("Chan dudó de 7 quinas"), with the
 line underneath naming whose dice are missing, and during `roll` it names the round's `opener`.
 Before the first bid, only the phone that opens reads the invitation (`opens`, "Abres la ronda: apuesta lo
 que quieras."); while its own dice are still to roll it reads only `opensRoll` ("Abres tú la ronda."), so

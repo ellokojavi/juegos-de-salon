@@ -186,6 +186,7 @@
 /* The open obligada round: the rivals' dice face up, your own as ❓ */
 .rivals .rival.seen .d { font-size: inherit; letter-spacing: 0; gap: 3px; }
 .rivals .rival.seen .die--sm { width: 26px; height: 26px; padding: 4px; }
+.rivals .rival.seen .die--sm.hidden-die { font-size: 1rem; padding: 0; }
 .die.hidden-die { display: grid; place-items: center; font-size: 1.6rem; grid-template: none; }
 .obligada-banner { font-size: 0.9rem; text-align: center; margin-top: 6px; }
 .obligada-notice .next-name { font-size: clamp(2rem, 10vw, 3rem); }
