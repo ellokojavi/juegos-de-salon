@@ -63,7 +63,7 @@ export function ask(card, existing) {
     el('h2', { id: 'publicar-titulo' }, '🚀 ¿Publicar para todos?'),
     el('p', {}, el('b', {}, titleOf(card)), ' deja el laboratorio y lo ven todos los jugadores. Su tarjeta pasa a La Bodega.'),
     el('p', { class: 'hoja-caja' }, WAIT),
-    el('p', { class: 'muted' }, 'Lo que pase lo vas a ver en esta tarjeta: el PR, sus pruebas y su vista previa. Si algo no se puede, te dice por qué y no publica nada.'),
+    el('p', { class: 'muted' }, 'Lo sigues en esta tarjeta: el PR, sus pruebas y su vista previa, o por qué no se pudo (y entonces no publica nada).'),
     note, msg,
     el('div', { class: 'btn-row' }, btn, el('button', { class: 'btn btn--ghost', onClick: close }, 'Cancelar')),
   );
