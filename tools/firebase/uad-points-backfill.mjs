@@ -142,6 +142,8 @@ export const lastDay = month => {
 };
 
 import { seasonTop } from '../../public/assets/js/daily-recap.js';
+import { UAD_INDICE } from '../../public/assets/js/uad-days.js';
+import { readHistory } from './uad-index.mjs';
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const { token, read, write, fail } = await import('./firebase-admin.mjs');
@@ -151,7 +153,16 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (!/^[0-9]{4}-[0-9]{2}$/.test(month || '')) fail('--month takes yyyy-mm');
   const period = `s${month}`;
   const t = await token();
-  const [todos, tabla, jugadores, invitados] = await Promise.all([read('unoAlDia', t), read(`records/${UAD_PUNTOS}/${period}`, t), read('jugadores', t), read('invitados', t)]);
+  const [tabla, jugadores, invitados, indexed] = await Promise.all([read(`records/${UAD_PUNTOS}/${period}`, t), read('jugadores', t), read('invitados', t), read(UAD_INDICE, t)]);
+  // With the index by day complete (D-475), the rebuild reads only the players who played from the
+  // month's first day on, or had a friend accept in it, each one's whole history (their streak walks
+  // back past the month); before it, the whole history, as before
+  let todos;
+  if (rebuild && indexed) {
+    const jids = new Set([...Object.keys(await readHistory(t, numDia(`${month}-01`))),
+      ...Object.entries(invitados || {}).filter(([, porUid]) => Object.values(porUid || {}).some(x => Number.isInteger(x?.d) && fechaDeNum(x.d).startsWith(month))).map(([jid]) => jid)]);
+    todos = Object.fromEntries(await Promise.all([...jids].filter(j => /^[a-z0-9]{8}$/.test(j)).map(async j => [j, (await read(`unoAlDia/${j}`, t)) || {}])));
+  } else todos = await read('unoAlDia', t);
   // The dates a friend accepted (the 🧊 they gave), and how many of them already gave +10 this month
   const giftsOf = jid => Object.values(invitados?.[jid] || {}).filter(x => Number.isInteger(x?.d)).map(x => fechaDeNum(x.d));
   const invitesOf = jid => Object.values(invitados?.[jid] || {}).filter(x => x?.p === true && Number.isInteger(x.d) && fechaDeNum(x.d).startsWith(month)).length;
