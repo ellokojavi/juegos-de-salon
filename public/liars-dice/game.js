@@ -29,6 +29,7 @@ import {
 import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES, TURN_SECS } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
 import { labAccess } from '../assets/js/lab-access.js';
+import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 
 // Traditional rules (no opening in aces, the obligada round, #897) are offered only to lab key
 // holders until the owner validates them (D-395, D-409). lab: #seccion-dudo-tradicional
@@ -1396,6 +1397,7 @@ function init() {
   if (HOY?.fuera) return;   // se va al juego de hoy
   if (HOY) return introDeHoy();
   renderModes();
+  mountHowToPlayFacts(GAME_ID, T, lang);
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
