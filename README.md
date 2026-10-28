@@ -532,6 +532,7 @@ node public/panel/aggregate.test.mjs
 node public/panel/campaigns.test.mjs
 node public/panel/copas.test.mjs
 node public/panel/dominios.test.mjs
+node public/panel/rooms-watch.test.mjs
 node public/panel/rutas.test.mjs
 node public/panel/timeline.test.mjs
 node public/privacy/texts.test.mjs
