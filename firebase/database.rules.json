@@ -332,13 +332,10 @@
     },
     "cleanup": {
       "sweptDay": {
-        ".read": true,
-        ".write": "newData.isNumber() && newData.val() * 86400000 <= now && (!data.exists() || newData.val() > data.val())"
+        ".read": true
       },
       "days": {
         "$day": {
-          ".read": "!data.exists() || data.child('lastAt').val() < now - 21600000",
-          ".write": "data.exists() && !newData.exists() && data.child('lastAt').val() < now - 21600000",
           ".validate": "newData.hasChildren(['lastAt'])",
           "lastAt": {
             ".write": "newData.exists() && ($day === '' + ((now - now % 86400000) / 86400000) || $day === '' + (((now - now % 86400000) / 86400000) - 1) || $day === '' + (((now - now % 86400000) / 86400000) + 1)) && (!data.exists() || newData.val() >= data.val())",
@@ -932,7 +929,6 @@
         "end"
       ],
       "$code": {
-        ".write": "auth != null && $code.matches(/^[A-HJ-NP-Z]{5}$/) && !data.exists() && newData.exists() && root.child('torneos/' + $code + '/meta').exists() && root.child('torneos/' + $code + '/meta/lab').val() != true && (root.child('torneos/' + $code + '/fin').exists() || root.child('torneos/' + $code + '/meta/end').val() < now) && root.child('torneoSeats/' + $code + '/' + newData.child('por').val() + '/' + auth.uid).exists()",
         ".validate": "newData.hasChildren(['name', 'end', 'de', 'dias', 'por', 'p', 'at'])",
         "name": {
           ".validate": "newData.isString() && newData.val() === root.child('torneos/' + $code + '/meta/name').val()"

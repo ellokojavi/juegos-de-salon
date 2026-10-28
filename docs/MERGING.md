@@ -97,6 +97,7 @@ From a finished branch to the live site: the review agents, the checks, auto-mer
   node tools/firebase/rules.mjs check      # is what is published what is in the repo?
   node firebase/pin-attempts.test.mjs      # the rules file itself, through tools/firebase/rules-sim.mjs (D-464)
   node tools/firebase/unnoted-rooms.mjs [--fix]   # rooms no cleanup bucket names, so never swept (D-321)
+  node tools/firebase/room-sweep.mjs [--apply]   # the nightly room sweep: every closed bucket, however old, and the unnoted rooms (D-499)
   node tools/firebase/uad-points-backfill.mjs [--apply]   # October 2026's Uno al día points from the history, once after D-414 publishes (dry run without --apply)
   node tools/firebase/uad-points-backfill.mjs --rebuild [--apply] [--month yyyy-mm]   # recomputes a month's totals from the history and the 🧊 markers, a day's points only if it reached the server near its date; the uad-rebuild workflow runs it nightly (D-415, D-465)
   node tools/firebase/uad-index.mjs [--apply]   # copies Uno al día's older history into the index by day (unoAlDiaDias/), checks it, then writes the unoAlDiaIndice mark the readers wait for; once after D-475 publishes (dry run without --apply)
