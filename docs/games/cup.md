@@ -91,6 +91,13 @@ medallero de **Campeones de La Copa** al final de la portada. A win by name alon
 player with that name when exactly one has it (D-357). With a player on the phone there is no cup PIN (D-359, below).
 Las copas del laboratorio no cuentan.
 
+**An archived cup's link (D-476, D-478, lab).** Two years after it ends, the nightly archive moves a
+cup out of `torneos/`. With a lab key, its link reads `torneoPodios/<code>` before saying it does
+not exist: if the podium is there, it shows the cup's name, the day it ended (with the year), its
+podium 🥇🥈🥉, a note that it was archived, **🏆 Crear una copa nueva** (the creator with the same
+name) and **🥇 Ver el medallero**. Without a key or a podium, the usual "No encontramos una copa".
+Tested by `tools/e2e/cup/archived.mjs`.
+
 **The usual name and PIN (D-358).** With no player on the phone, whoever creates, joins or sits in a
 cup with the name and PIN of their player enters as that player: the cup PIN is tried as the player
 PIN, and if it opens a player with that name, the phone signs in (a toast says so) and the cup links
