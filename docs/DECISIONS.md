@@ -36,7 +36,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | 📐 Loteo, the lab's Shikaku (rectangles whose number is their area, unique solution, five boards against the clock: two warm-ups and three hard ones; the ⚡💧 Servicios mode, with same-size plots and one ⚡ and one 💧 in each) | `docs/games/plots.md` | D-310, D-311, D-312, D-332 |
 | Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
 | Sound and vibration | C-4 | D-17, D-92 |
-| Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453 |
+| Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453, D-489 |
 | Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463, D-466, D-472, D-477 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456, D-465, D-473, D-475, D-482, D-485 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321, D-469, D-470, D-474 |
