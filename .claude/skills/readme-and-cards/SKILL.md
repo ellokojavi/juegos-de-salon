@@ -28,6 +28,8 @@ node tools/push/notify.mjs --dry-run | --test <code>           # which notificat
   a name, an emoji, a tagline or the design changes ([marketing/share-cards/card.html](../../../marketing/share-cards/card.html)).
 - **Search engines (#887):** `og.mjs cards` writes, inside each indexed page's generated og block, a
   JSON-LD script (home-page games: VideoGame + WebApplication; the four doors: WebSite; nothing for lab,
-  La Bodega, switched-off pages or bridges), plus `public/sitemap.xml` (doors with hreflang alternates) and
-  `public/robots.txt`. They are generated from `games.js`: never edited by hand, and `og.mjs check` blocks
+  La Bodega, switched-off pages or bridges; a game whose `rules.js` has `howText` or `rules` also gets its
+  "Cómo se juega" as a one-question FAQPage, the same text the cover shows: the owner chose that over a
+  separate FAQ block on the cover), plus `public/sitemap.xml` (doors with hreflang alternates) and
+  `public/robots.txt`. They are generated from `games.js` and each game's `rules.js`: never edited by hand, and `og.mjs check` blocks
   them stale (`tools/release/json-ld.test.mjs`).

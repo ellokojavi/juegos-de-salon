@@ -117,8 +117,7 @@ Intro (modos) → Setup (nombres y la servida) → [Lobby: código + QR] → Mes
    The folded "¿Cómo se juega?" has the three points (U-18) and, under them, **what each box asks
    for** (owner's request, 2026-10-20): Unos a Seises, Escalera, Full, Póker, Generala and Doble
    generala, each with what it needs in one line and what it is worth, normal and served. The worth
-   is read from `VALOR` in `engine.js`, so the list and the score cannot disagree. Under the
-   rules, a folded "❓ Preguntas frecuentes" (`public/assets/js/faq.js`, lab key holders only for now, #887).
+   is read from `VALOR` in `engine.js`, so the list and the score cannot disagree.
 2. **Setup:** nombres (2 a 6, o el tuyo jugando solo) y el interruptor "La generala servida gana".
 3. **Mesa:** arriba, el total de cada uno con el del turno encendido (jugando solo no va); el título
    dice de quién es el turno y la línea de abajo, la vuelta y el tiro. Al centro los cinco dados, que
