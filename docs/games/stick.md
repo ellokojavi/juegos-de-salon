@@ -117,3 +117,12 @@ The numbers at the top of `engine.js`: how fast the stick grows (`GROW`), the fl
 top bonus (`MAX_BONUS`), the fall and run speeds (`TURN_MS`, `RUN`), the lives (`LIVES`), when pillars start moving and how fast
 (`MOVE_FROM`, `MOVE_FULL`, `PERIOD_SLOW`, `PERIOD_FAST`, `MIN_GAP`), and in `pillar()` the widths, gaps, how
 hard it gets (`hardness`), and how far and how many pillars move.
+
+## The teaser
+
+The splash `ninja-pronto` ("¿Llegará al otro lado?", off until the owner turns it on from the panel's
+📣 Campaigns) announces the game without naming it: a ninja's stick tips toward the far pillar and the
+moon goes dark before it lands (`public/assets/splash/ninja-teaser.mp4`, recorded by
+`node marketing/splash/teaser.mjs ninja` from `marketing/splash/teaser/ninja.html`). The scene draws its own
+pixel art and imports nothing from the game, so a change here does not reach it; its memory is
+`marketing/splash/campaigns/ninja-pronto/README.md`.
