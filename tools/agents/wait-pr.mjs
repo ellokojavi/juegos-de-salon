@@ -13,11 +13,27 @@
 // GraphQL API), with the REST API; it no longer retries one error forever in silence (D-441: a
 // session's PR went red and its waiter kept "trying again" for 25 minutes). A PR it stops watching,
 // on a timeout or anything else, is not lost: pending-watch.yml lists stuck PRs every day.
+// A conflict counts only once it is read CONFLICT_READS times in a row: right after a push GitHub
+// still reports the head before it (and recomputes mergeability lazily), so a single read said
+// `conflict` for PRs that were mergeable (#919, #928).
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 /** Consecutive failed reads before giving up (D-441). */
 export const MAX_ERRORS = 5;
+
+/** Consecutive reads that must say conflict before it is reported (a stale read is not one). */
+export const CONFLICT_READS = 3;
+
+/**
+ * Whether to stop on what was just read. A conflict only stops after CONFLICT_READS reads in a
+ * row; anything else stops at once. Returns { stop, conflicts } with the updated streak.
+ */
+export function settle(seen, conflicts = 0) {
+  if (seen !== 'conflict') return { stop: !!seen, conflicts: 0 };
+  const n = conflicts + 1;
+  return { stop: n >= CONFLICT_READS, conflicts: n };
+}
 
 /** The checks `main` requires (D-216). */
 export const REQUIRED = ['tests', 'end-to-end'];
@@ -66,7 +82,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (!/^\d+$/.test(pr || '')) { console.error('usage: node tools/agents/wait-pr.mjs <n> [--every 60] [--max-hours 2]'); process.exit(2); }
   const every = arg('--every', 60) * 1000;
   const until = Date.now() + arg('--max-hours', 2) * 3600 * 1000;
-  let errors = 0;
+  let errors = 0, conflicts = 0;
   for (;;) {
     let seen = null;
     try {
@@ -77,7 +93,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       if (++errors >= MAX_ERRORS) { console.log(`#${pr}: unreadable (${why})`); process.exit(3); }
       console.error(`wait-pr: ${why}; trying again (${errors}/${MAX_ERRORS})`);
     }
-    if (seen) { console.log(`#${pr}: ${seen}`); process.exit(seen === 'merged' ? 0 : 1); }
+    if (seen || conflicts) {
+      const s = settle(seen, conflicts);
+      conflicts = s.conflicts;
+      if (s.stop) { console.log(`#${pr}: ${seen}`); process.exit(seen === 'merged' ? 0 : 1); }
+      if (conflicts) console.error(`wait-pr: GitHub says conflict (${conflicts}/${CONFLICT_READS}); reading again to be sure`);
+    }
     if (Date.now() > until) { console.log(`#${pr}: timeout`); process.exit(1); }
     await new Promise(r => setTimeout(r, every));
   }
