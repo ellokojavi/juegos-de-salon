@@ -5,6 +5,8 @@ import {
   versiones, versionesEn, usuarios, cohortes, senales, ordenTramos, embudoCopas, aCsv, ABANDONO_MS,
 } from './dominios.js';
 import { nuevaMeta } from '../cup/engine.js';
+import { summarize } from './aggregate.js';
+import { isIndividualMode } from '../assets/js/games.js';
 
 let n = 0;
 const test = (name, fn) => { try { fn(); n++; } catch (e) { console.error(`✗ ${name}`); throw e; } };
@@ -55,7 +57,7 @@ test('games by domain: group (rooms with a rival, local modes for several) and i
 
 test('finished and replayed', () => {
   const f = finales(days, { from: 100, to: 100 });
-  assert.deepEqual(f.porJuego.ahorcado, { empezadas: 10, terminadas: 7, otras: 2, grupo: 4, individual: 6 });
+  assert.deepEqual(f.porJuego.ahorcado, { empezadas: 10, terminadas: 7, otras: 2, grupo: 4, individual: 6, finGrupo: 3, finIndividual: 4 }, 'finished split by domain: 3 on one phone, 4 solo');
   assert.equal(f.terminadas, 11);
   assert.equal(f.otras, 2);
 });
@@ -117,3 +119,8 @@ test('CSV', () => {
 });
 
 console.log(`panel/dominios: ${n} tests OK`);
+
+test('summarize can keep only some modes (the Group view leaves out the individual ones, D-348)', () => {
+  const s = summarize(days, { from: 100, to: 100, modo: m => !isIndividualMode(m) });
+  assert.ok(Object.values(s.byGame).every(g => !g.solo && !g['uno-al-dia']), 'no solo or One a Day game in the group summary');
+});
