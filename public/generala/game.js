@@ -27,7 +27,6 @@ import {
   CATEGORIAS, NUMEROS, JUEGOS, TIROS, MIN_PLAYERS, MAX_PLAYERS,
   buildState, tirar, writeDice, writeKeep, puntajeDia, VALOR, esEscaleraAlAs,
 } from './engine.js';
-import { mountFaq } from '../assets/js/faq.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
 
@@ -833,7 +832,6 @@ function init() {
   if (HOY?.fuera) return;   // se va al juego de hoy
   if (HOY) return introDeHoy();
   renderModes();
-  mountFaq($('#faq-slot'), GAME_ID, T, lang);
   // Los mejores puntajes jugando solo (D-274), y las victorias y entrar con nombre y PIN (D-212, D-215)
   $('#rk-slot')?.append(
     bloqueTabla({ tabla: TABLA_SOLO, titulo: `🧍 ${COMMON[lang].rk.soloOf}`, alTocar: () => SFX.tap(), entrar: false }),
