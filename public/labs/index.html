@@ -44,6 +44,17 @@
     .subgrupo { display: grid; gap: 12px; }
     .subgrupo > h3 { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; margin: 8px 0 0; }
     .divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
+    /* 🚀 Publicar para todos (D-480): only the owner sees it, under each card being tried */
+    .publicar { display: grid; gap: 10px; }
+    .publicar-estado { display: grid; gap: 8px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.08); border: 2px solid rgba(255, 210, 63, 0.5); }
+    .publicar-estado--ok { border-color: rgba(120, 255, 160, 0.6); }
+    .publicar-estado--bad { border-color: rgba(255, 110, 110, 0.7); }
+    .publicar-estado p { margin: 0; line-height: 1.4; }
+    .publicar-links { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+    .publicar-links a { color: #a8fff6; text-decoration: none; font-weight: 800; min-height: 44px; display: inline-flex; align-items: center; }
+    .publicar-nota { flex-shrink: 0; min-height: 88px; resize: vertical; width: 100%; box-sizing: border-box; border-radius: 12px; padding: 10px 12px; font: inherit; color: #fff; background: rgba(255, 255, 255, 0.08); border: 2px solid var(--glass-border); }
+    .publicar-nota::placeholder { color: rgba(255, 255, 255, 0.55); }
+    #publicar-dueno button { background: none; border: 0; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; min-height: 44px; }
   </style>
 </head>
 <body>
@@ -444,6 +455,7 @@
     </div>
     <footer class="muted" style="text-align:center;padding-top:24px;font-size:0.85rem">
       <p id="labs-version">Versión activa: …</p>
+      <p id="publicar-dueno" hidden><button type="button">🔑 Entrar como dueño</button></p>
     </footer>
   </main>
 
@@ -458,6 +470,7 @@
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
     document.addEventListener('click', e => { if (e.target.closest('a')) SFX.tap(); });
+    import('./publish.js').then(m => m.start()); // 🚀 Publicar para todos, only for the owner (D-480)
   </script>
 </body>
 </html>
