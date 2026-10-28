@@ -298,7 +298,7 @@ Spec and design: [docs/games/hangman.md](docs/games/hangman.md)
 </table>
 <!-- /generated -->
 
-Everyone rolls five dice and **only looks at their own**. You bet how many dice of one face are on **the whole table** ("four fives"); the next player raises or calls **dudo**, and whoever was wrong loses a die. **Aces are wild**; the last one with dice wins. The phone rolls, **refuses illegal bids** and counts instantly, which is what people argue about. **Calzar** (claiming the exact count) is offered only with three players or more (D-71). In Spanish the faces keep their Chilean names (**ases, tontos, trenes, cuadras, quintas, sextas**), switchable to numbers.
+Everyone rolls five dice and **only looks at their own**. You bet how many dice of one face are on **the whole table** ("four fives"); the next player raises or calls **dudo**, and whoever was wrong loses a die. **Aces are wild**; the last one with dice wins. The phone rolls, **refuses illegal bids** and counts instantly, which is what people argue about. **Calzar** (claiming the exact count) is offered only with three players or more (D-71). In Spanish the faces keep their Chilean names (**ases, tontos, trenes, cuadras, quinas, sextas**), switchable to numbers (D-71, D-491).
 
 **To roll, you shake the phone**, like the cup at a real table: your hand becomes a green cloth with the dice face down, they tumble in 3D while you shake and the phone rattles with them, and they stay as they fell when you stop (a 🎲 button where there is no motion sensor). It is on by default and can be turned off on the names screen, which also offers **⏱️ 30 seconds per turn** (off by default): whoever runs out of time loses a die (D-447).
 

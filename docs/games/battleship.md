@@ -24,7 +24,9 @@ Reglas acordadas con el dueño del proyecto:
 
 Flota de 10 barcos, regla de “sin contacto” con agua automática alrededor del hundido, tableros de 8×8 para partidas rápidas, modo espectador.
 
-### Salvo (lab, #894, D-489)
+### Salvo (lab, #894, D-489; in La Bodega since 2026-10-28)
+
+Discarded by the owner on 2026-10-28 (nobody liked it): its card moved to La Bodega as 💤 No prosperó, and the switch stays behind the lab key.
 
 A switch **🎆 Salva** in ¿Cómo jugamos?, shown only with a lab key (`labAccess()`, card
 `#seccion-bn-salva` in `/labs/`), in all three modes; One a Day stays classic. With it on, each
