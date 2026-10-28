@@ -70,7 +70,7 @@ let chat = null; // chat de sala: solo en varios celulares (canon C-15)
 /* ------------------------------------------------------------------ */
 /**
  * Cómo se dice la pinta. En español la mesa las llama por su nombre —tontos, trenes, cuadras,
- * quintas y sextas— y eso viene encendido; apagado, y en los otros dos idiomas, van por número.
+ * quinas y sextas— y eso viene encendido; apagado, y en los otros dos idiomas, van por número.
  */
 const nombresChilenos = () => lang === 'es' && M?.config?.chileno !== false;
 const pintaName = (n, p) => {
@@ -319,10 +319,13 @@ function renderRivals(v, yo) {
   for (const r of M.players) {
     const s = v.st[r];
     const vistos = v.rules.open && r !== yo && !s.out ? diceOf(v, r) : null;
-    box.append(el('div', { class: 'rival' + (v.current === r ? ' turn' : '') + (s.out ? ' out' : '') + (vistos ? ' seen' : '') },
+    // Your own die in the open round: a die-sized ❓, as visible as the rivals' dice
+    const propio = v.rules.open && r === yo && !s.out;
+    box.append(el('div', { class: 'rival' + (v.current === r ? ' turn' : '') + (s.out ? ' out' : '') + (vistos || propio ? ' seen' : '') },
       el('span', { class: 'n' }, nameOf(r)),
       vistos ? el('span', { class: 'd dice-row' }, ...vistos.map(d => dieEl(d, { small: true })))
-        : el('span', { class: 'd' }, s.out ? '—' : r === yo && v.rules.open ? '❓' : '🎲'.repeat(s.dice)),
+        : propio ? el('span', { class: 'd dice-row' }, el('span', { class: 'die die--sm hidden-die', 'aria-label': T.yourDieHidden }, '❓'))
+        : el('span', { class: 'd' }, s.out ? '—' : '🎲'.repeat(s.dice)),
     ));
   }
 }
