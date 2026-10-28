@@ -1,5 +1,190 @@
 # Changelog
 
+## 0.227.7 — 2026-10-27
+- **👑 Reinas: a texture per region, for everyone**: each region of the board carries a subtle texture over its color (lines, dots, a grid), so players who do not tell the colors apart can still read it. Validated in the lab, published at the owner's request from /labs/; its card moves to La Bodega (#896, D-481).
+
+## 0.227.6 — 2026-10-27
+- **👑 Reinas (lab): the region textures are subtler**: half the ink and 1 px lines, at the owner's request, since the first ones read too strong. Regions still tell apart under simulated deuteranopia (#896, D-481).
+
+## 0.227.5 — 2026-10-27
+- **Toque y Fama: the lab's ✏️ Notes on the keypad are gone** (D-483, revoked): the owner tried the idea and discarded it, since switching to notes costs key time during the game for little gain. The long press to strike a digit stays as it was (#895).
+
+## 0.227.4 — 2026-10-27
+- **👑 Reinas: each region has a soft texture over its color** (lines, dots, a grid), so players who
+  do not tell colors apart well can still see the regions. For now only in the lab (#896, D-481).
+
+## 0.227.3 — 2026-10-27
+- **Panel → 📣 Campaigns: rename a campaign.** The ✏️ button on each campaign gives it your own name for sorting them out; it shows across the section (queue, overlaps, How they did), with the title players read beneath it. Players never see it; an empty name goes back to the title. Saved in Firebase `splash/<id>/label`.
+
+## 0.227.2 — 2026-10-27
+- **Owner panel:** 👥 Group and 🧍 Individual now each count and list only their own games (D-484). Group's "Offline games" log no longer shows solo games, and Individual has its own log. "Finished on one phone" and Individual's "finished" no longer mix the two domains. A new end-to-end script opens every panel view and fails on errors, broken values, overflow or mixed domains.
+
+## 0.227.1 — 2026-10-27
+- **Lab:** 🚀 Publicar para todos sees the owner signed in on the panel, without signing in again on /labs/ (D-480).
+
+## 0.227.0 — 2026-10-27
+- **📅 Uno al día shares a spoiler-free grid, in the lab** (#889, D-482): with a lab key, the
+  shared result adds the game's own squares (🟩🟨🟥…) without the game's emoji, numbers or times, so it
+  still does not say which game it was (#215). El Ahorcado shares its lives (🟩 kept, 🟥 lost).
+  Agentes gets none (its card is the board, it would show where the agents are), nor Dudo, Generala
+  and Batalla Naval. One helper, `public/assets/js/share-grid.js`; listed in /labs/.
+
+## 0.226.0 — 2026-10-27
+- **Toque y Fama: deduction notes, in the lab** (#895, D-483). Under the keypad, ✏️ Notes turns a tap
+  into a mark: 🚫 not in the number, ? maybe, ★ sure. ⌨️ Back to typing turns it off; the marks last
+  the game. Same rules and score, so it works the same solo, in rooms, in Uno al día and in La Copa.
+  Only with a lab key.
+
+## 0.225.1 — 2026-10-27
+- **The site footer on the one-player games' covers too**: Reinas, Zip, Tango, Conexiones and the rest now close their cover (the screen before Empezar) with the same footer as the group games, with 💬 Sugerencias y comentarios and ☕ Invítame un café, without the funny phrase. Never while playing, nor on the result, nor in Uno al día's game (U-38).
+- **No more "minijuegos"**: one game is not smaller than another. The share message and the home page's description now say "juegos para jugar solo" in the four languages.
+
+## 0.225.0 — 2026-10-27
+- **Lab:** 🚀 Publicar para todos on each card being tried, for the owner only (D-480). After confirming, the card says it is not immediate and follows the request: the PR that works on it, its checks and its preview, until it is live or why it could not be done.
+
+## 0.224.2 — 2026-10-27
+- **Uno al día**: on /today/, a day uploaded more than a day late now shows 0 points in the calendar and its detail, with a short note that it counts for the streak, not for points, so the days add up to the season total (#879). The on-time window (`onTime`) has one definition in `daily-points.js`, shared by the browser and the backfill.
+
+## 0.224.1 — 2026-10-27
+- **The site's footer outside the games, for everyone.** The home page's violet-sunset footer (💬 Suggestions and ☕ Buy me a coffee) now closes Rankings and Uno al día, with the funny line, and each game's cover and La Copa's entrance, without it; never while playing or on a result. Its lab card moves to La Bodega.
+
+## 0.224.0 — 2026-10-27
+- **📣 Campaigns, the control center** (owner's panel, D-477): three tabs, each saying what is on today: 📣 Splash (as before), 🧩 Site features (☕ Buy me a coffee, with a switch for the home footer link and another for the end-of-game invitation, and its numbers) and 🎨 Skins (each seasonal template comes on by its own days every year, or on the days set there, or is switched off). The switches are saved in Firebase `controls/` and reach players on their next visit, with no PR; with nothing saved the site stays as it was.
+
+## 0.223.2 — 2026-10-27
+- **La Copa** (lab): the link of a cup archived two years after it ended shows its name, when it ended and its podium, with buttons to create a new cup with the same name and to see the medal table, instead of "No encontramos una copa con ese código" (D-478).
+
+## 0.223.1 — 2026-10-27
+- **Uno al día's history is also indexed by day** (D-475): each day played goes to `unoAlDiaDias/<n>/<jid>` too, so the panel, the nightly points rebuild, the weekly report and the ideas agent read only the days they need instead of everyone's whole history, once `tools/firebase/uad-index.mjs --apply` has copied the older days. Nothing changes for players.
+
+## 0.223.0 — 2026-10-27
+- **🔢 Toque y Fama: the 100 points belong to whoever deduces** (D-453, out of the lab): in Jugar solo, La Copa's 🔢 and the Final's number round you start at 100 and each guess the clues had already ruled out takes off 15 (minimum 10 if solved). The finished board marks those guesses with ⚠️ for everyone, and La Copa's breakdown counts them. The rules texts changed in four languages; the lab card moved to La Bodega.
+
+## 0.222.20 — 2026-10-27
+- **The site's footer outside the games (lab).** With a lab key, the home page's violet-sunset footer (💬 Suggestions and ☕ Buy me a coffee) also closes Rankings and Uno al día, with the funny line, and each game's cover and La Copa's entrance, without it. Never while playing or on a result screen.
+
+## 0.222.19 — 2026-10-27
+- **Home page footer**: the rotating phrases are bolder. 20 of the softest ones (the wifi, Netflix and IKEA pickup lines, the coffee-mug mottos, the limp puns) were replaced, and 50 new ones were added: now 150 per language, in all four, about drinking rounds, cheating at the table, exes and shameless flirting, still with nothing crude.
+
+## 0.222.18 — 2026-10-27
+- **Lab:** whatever is launched for everyone moves to La Bodega (D-479). The 🎃 Halloween card, already launched, now waits folded under ✨ Mejoras lanzadas; a test keeps launched cards out of the groups on trial.
+
+## 0.222.17 — 2026-10-27
+- **Owner panel**: live rooms are read without their messages. Each room now keeps its own count of messages by type, and the panel shows Moves, Chat and Last move from it, with the same numbers (D-474, #848).
+
+## 0.222.16 — 2026-10-27
+- **Frequently asked questions, out of the lab**: the separate ❓ block under "How to play" is gone, at the owner's call (one block explaining the game is enough). Instead, search engines now read each game's "How to play" itself as its question and answer (FAQPage structured data), in Timeline, Bulls and Cows, Hangman, Liar's Dice, Generala and Battleship. Players see no change (#887).
+
+## 0.222.15 — 2026-10-27
+- **Behind the scenes**: a nightly job can move finished Cups older than two years, old usage days and old daily tables out of the live database into an archive, so what players and the panel download stops growing with the past (D-476). It only moves things once the owner switches it on.
+
+## 0.222.14 — 2026-10-27
+- **The 🚂 "Something new is coming…" teaser loads five times lighter**: its 8-second clip is now a looping MP4 (74 KB) instead of a 373 KB GIF, with its first frame as the poster; `marketing/splash/teaser.mjs` makes MP4s from now on (#846).
+
+## 0.222.13 — 2026-10-27
+- **Frequently asked questions, in the lab**: under "How to play" in Timeline, Bulls and Cows, Hangman, Liar's Dice, Generala and Battleship there is a collapsed ❓ block with three questions: how many play and for how long, one phone or several, and whether it is free. The answers come from each game's data, in the four languages. For now only lab key holders see it (#887, W1.2 of #883).
+
+## 0.222.12 — 2026-10-27
+- **Less Firebase download** (D-473, #848): the Uno al día season recap on the home page reads only the season's top and your own row, not the whole table, and the owner's panel downloads only the Cups and feedback of the period it shows.
+
+## 0.222.11 — 2026-10-27
+- **Privacy**: the names typed in games are deleted from the usage statistics after 24 months, and /privacy/ now says so in the four languages; the counts without names stay (D-472).
+
+## 0.222.10 — 2026-10-27
+- **Rooms:** a new room is accepted only together with its cleanup note, and a cleanup bucket's clock is refreshed only on recent days, so every room is swept when it expires (D-469).
+
+## 0.222.9 — 2026-10-27
+- **Rankings load lighter**: the tables at the end of a game, on /today/, in /records/ and the home page's Uno al día place are read without opening a live connection to the server, which now opens only when a score is saved or a player signs in. Pages load about 110 kB less, and many more people can play at once on the free plan (D-470).
+
+## 0.222.8 — 2026-10-27
+- **Panel (lab): Don't count this browser.** A checkbox next to Environment keeps that browser's play and visits on the live site out of Live, in a new My devices environment (D-471).
+
+## 0.222.7 — 2026-10-27
+- **Rooms:** the database rules check each room's settings, seats and messages against what the games send, and a cleanup bucket's clock only moves forward (D-469).
+- **Reports:** each pass of the 🐞 inbox upload creates at most 20 issues and warns when more are waiting (D-469).
+
+## 0.222.6 — 2026-10-27
+- **Search engines**: every game page on the home page and the four language doors now carry structured data (JSON-LD: the game's name in four languages, free, no account, number of players), and the site has a `sitemap.xml` with the doors' language alternates and a `robots.txt` that names it. All of it is generated from `games.js` by `node tools/release/og.mjs cards` and checked by `og.mjs check`, so it cannot fall behind; lab pages stay out (#887).
+
+## 0.222.5 — 2026-10-27
+- **Panel: ☕ Buy me a coffee as a campaign.** 📣 Campaigns shows its funnel in the range: invitations at the end of games, cards opened, taps to Stripe and payments, with their rates, one bar per day and a CSV.
+
+## 0.222.4 — 2026-10-27
+- **Sound comes back after a call or a lock on iPhone**: iOS left the audio "interrupted" and the games stayed silent until the page was reloaded; now it resumes on the next tap and when you return to the tab (#890).
+
+## 0.222.3 — 2026-10-27
+- **Labs: Stack and Stick rest while paused.** A game left paused stops redrawing after a second and wakes on the tap back, so it no longer drains the battery on the table (#892).
+
+## 0.222.2 — 2026-10-27
+- **La Copa and its games load half as much**: each page now downloads only the game being played, with its own styles, instead of all seventeen Cup games and every Timeline deck. `/zip/` goes from 140 requests and 2.5 MB to 67 and 1.2 MB, `/cup/` from 141 and 2.5 MB to 66 and 1.2 MB, `/where/` from 2.7 MB to 1.6 MB. Same games, same look (D-468).
+
+## 0.222.1 — 2026-10-27
+- **Tren al Vilo**: when the train tries to cross, the bridge's beams now pass in front of it instead of behind, in both the pixel and the neon styles.
+
+## 0.222.0 — 2026-10-27
+- **Splash campaigns: conversion, in the panel** (D-466): after a campaign's Play, the game it opened
+  counts as started and finished (once per tap, in that tab, within 2 hours), and 📣 Campaigns'
+  📊 How they did shows the % of taps that finished a game and conversion over phones reached, per
+  campaign and per day. Anonymous counters, as before.
+
+## 0.221.2 — 2026-10-27
+- **Faster updates**: after a new version is published, a returning player downloads only the files that changed, not the whole site again. Each file is stamped with a hash of its own content instead of the release number (D-467, #847).
+
+## 0.221.1 — 2026-10-27
+- **PIN attempts**: signing in with a name and PIN, sitting in La Copa with the cup PIN and re-entering after a lost session now take one attempt every 5 seconds per player; a quick retry after a typo waits a moment on its own, and if it still can't, the screen says to wait a few seconds (D-464).
+- **Changing a PIN**: the player card asks for the current PIN before the new one, and La Copa's admin confirms with their own PIN (the cup one, or their player's) before giving someone a new PIN (D-464).
+
+## 0.221.0 — 2026-10-27
+- **🔒 Privacy page** (`/privacy/`, in the four languages): what the games keep on your phone and in our database, why, for how long, who else sees it, a word for children and parents, and how to ask us to see or delete your data at hola@juegosdesalon.cl. Linked from the home page footer and from the note under the email field of every feedback form.
+- **Feedback emails don't wait forever**: an email address left for a reply is deleted when we answer or, if there was no answer, after 90 days, and the form's note now says so (D-463).
+
+## 0.220.1 — 2026-10-27
+- **A tap outside a splash no longer loses it, for everyone** (D-462): closing a campaign window by tapping outside it, or with Escape, leaves it for another visit; closing it that way a second time, or with ✕, "Ahora no" or any of its buttons, marks it as seen. It was tried in the lab first.
+
+## 0.220.0 — 2026-10-27
+- **📊 How the splash campaigns did, in the panel** (D-461): 📣 Campaigns now shows, for the chosen
+  range, each campaign's phones reached, % that tapped through, % that closed it, its share of home
+  page views and how long the window stayed open, with one bar per day it was shown. Exposure counts
+  the days a campaign was actually shown, so switching it off and on again does not dilute it, and it
+  says whether a campaign is still finding new phones. The window counts what it does (shown, first
+  time on a phone, tapped, closed, seconds open) as anonymous daily counters; a preview never counts.
+
+## 0.219.16 — 2026-10-27
+- **Home page footer: the violet sunset, for everyone.** The home page ends in a glow of the site's purple and pink, the rotating phrase in white, and 💬 Suggestions and ☕ Buy me a coffee as frosted buttons with a color circle above each label. Its lab card moves to La Bodega.
+
+## 0.219.15 — 2026-10-27
+- **Faster text on a first visit, and no call to Google:** the Bangers and Nunito fonts are now served by the site itself, preloaded by every page, instead of through Google Fonts. Text no longer waits on three hops to Google's servers, and opening a game no longer tells Google who is playing. The letters look exactly the same, in the four languages.
+
+## 0.219.14 — 2026-10-27
+- **¿Dónde queda? loads ten times lighter on a phone**: the Earth's satellite images are now WebP, and the sharp 4096 px one is downloaded only on big screens or when zooming in. A phone's first look at the globe drops from 2.1 MB of images to 0.2 MB, and zoomed in over a city from 2.7 MB to 1.3 MB; a computer from 2.1 MB to 0.9 MB. Same look (D-460).
+
+## 0.219.13 — 2026-10-27
+- **Uno al día:** a day's points count only for today's puzzle, give or take a day for time zones, and once that day's attempt has started. Days played offline still go up to your history and keep your streak; uploaded later, they add no points. The nightly recount of the season follows the same rule (D-465).
+
+## 0.219.12 — 2026-10-27
+- **A tap outside a splash no longer loses it, in the lab** (D-462): closing a campaign window by tapping outside it, or with Escape, leaves it for another visit; closing it that way a second time, or with ✕, "Ahora no" or its button, marks it as seen, as before. Only with a lab key for now.
+
+## 0.219.11 — 2026-10-27
+- **💬 Suggestions and comments: the page behind stays put.** While the feedback form is open over the page, the screen behind it no longer scrolls: only the card moves, and closing it returns to the same place.
+
+## 0.219.10 — 2026-10-27
+- **Online rooms: one phone per seat.** Two phones that join a room at the same instant now always get different seats; when only one seat is left, one sits and the other is told the room is full. A seat is taken with a transaction that leaves a seat held by another phone alone (`transport/seat.js`, #850).
+
+## 0.219.9 — 2026-10-27
+- **Home page footer (lab): the violet sunset.** With a lab key, the home page ends in a glow of the site's purple and pink, the rotating phrase in white, and 💬 and ☕ as frosted buttons with a color circle above each label. Chosen from the twelve variants in /labs/footer/.
+
+## 0.219.8 — 2026-10-27
+- **Hardening**: the room's QR code is drawn with a copy of its library served by the site itself (`assets/js/vendor/qrcode.js`, qrcode-generator 1.4.4, MIT), loaded by one shared module (`assets/js/qr.js`) instead of seven copies of the same code; a notification only opens pages of this site (anything else opens the home page); and the owner's panel does not show inside another site's frame.
+
+## 0.219.7 — 2026-10-27
+- **Lab: the home page footer, twelve ways** (`/labs/footer/`): the card, the felt and the ticket are out; today's footer (and with color), three neons, three sunsets and four speech bubbles for the 🎲, each with the rotating phrase and an opinion.
+
+## 0.219.6 — 2026-10-27
+- **The 🥂 toast to support the site waits for regular players** (D-458): when it is turned on, the splash shows only on a phone with 5 or more visit days in the last four weeks and 10 or more finished games that has not paid yet; a new player never sees it on a first visit. Any campaign can use the same rule. Nothing changes today: the campaign is still off.
+
+## 0.219.5 — 2026-10-27
+- **Lab: the home page footer, seven ways** (`/labs/footer/`): today's footer, a playing card, the green felt, a neon sign, a ticket, a sunset and a comic speech bubble, each with the rotating phrase, 💬 and ☕, and an opinion. One button changes the phrase, another adds a third option.
+
 ## 0.219.4 — 2026-10-26
 - **Toque y Fama:** 🔢 Número or 🔤 Palabra is picked with a two-button toggle at the top of the game, like Loteo's variants, on both pages, instead of a fourth mode. The home page has a single Toque y Fama: Palabra is gone from its list, its filters and its search (it still plays in Uno al día and La Copa).
 
