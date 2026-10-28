@@ -773,8 +773,9 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
   `uad-rebuild` workflow at 08:23 UTC, recomputes each player's month from the history and the
   markers and corrects a total that differs. The server spends the 🧊 it can see (7 days in a row,
   invited friends) and lends 2 more, once, for marked days it can't back. A played day earns points
-  only if its result reached the server near its date (`onTime`, the rules' window below, D-465); a
-  day uploaded later still keeps the streak.
+  only if its result reached the server near its date (`onTime` in `daily-points.js`, the rules' window below, D-465); a
+  day uploaded later still keeps the streak. /today/'s calendar shows such a day as 0 points with a
+  note (`lateDays` from `sincronizar`, passed to `walk` as `late`, #879), so the days add up to the total.
 - **No jump on /today/:** signed in, the first drawing shows the last total the ranking gave this phone
   (`uad-pts-cache`), then the fresh one.
 - **On the home page:** once today is played, the 📅 card's chip shows the month's place big and the
