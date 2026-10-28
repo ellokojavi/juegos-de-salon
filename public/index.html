@@ -323,40 +323,7 @@
     @keyframes copaFondo { to { background-position: 100% 50%; } }
     .game-card .meta span.idioma { background: rgba(46, 230, 214, 0.18); }
     footer { margin-top: auto; padding-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
-    .footer-msg { min-height: 3.2em; font-size: 1rem; line-height: 1.5; color: var(--ink); opacity: 0.9; transition: opacity 0.5s ease, transform 0.5s ease; font-weight: 700; }
-    .footer-msg.out { opacity: 0; transform: translateY(6px); }
-    /* The footer's options. One alone is a quiet link; two or more (today the inbox and the coffee)
-       become a quiet grid of two columns, outlined and unfilled, so they read as the site's corner and
-       not as more game cards. A new option is one more child. */
-    .footer-links { margin: 1em 0; }
-    .footer-links.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-width: 380px; margin: 0 auto 1em; }
-    .footer-links.tiles::before {
-      content: '🎲'; content: '🎲' / ''; grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 6px 0 8px; font-size: 0.9rem; opacity: 0.55;
-      background: linear-gradient(var(--glass-border), var(--glass-border)) left center / calc(50% - 18px) 1px no-repeat,
-                  linear-gradient(var(--glass-border), var(--glass-border)) right center / calc(50% - 18px) 1px no-repeat;
-      justify-content: center;
-    }
-    .footer-links.tiles > * {
-      display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 6px 10px; margin: 0;
-      border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; background: none;
-      color: var(--muted); font: 700 0.8rem/1.25 var(--font-body); text-decoration: none; text-align: center; text-wrap: balance;
-    }
-    .footer-links.tiles > *:active { background: rgba(255, 255, 255, 0.05); }
-    .footer-links.tiles > #btn-apoyo-portada { border-color: rgba(255, 210, 63, 0.3); }
-    .footer-links.tiles > :last-child:nth-child(odd) { grid-column: 1 / -1; }
-    /* The sunset, chosen from twelve variants in /labs/footer/: the page ends in a glow of the site's own purple and pink, the
-       phrase in white, and each option on frosted glass with its color circle above the label */
-    footer.atardecer { margin: 0 -18px -32px; padding: 28px 18px 32px; background: linear-gradient(180deg, transparent, rgba(138, 77, 255, 0.28) 45%, rgba(255, 46, 136, 0.32)); }
-    footer.atardecer .footer-msg { color: var(--ink); opacity: 1; font-weight: 800; font-size: 1.04rem; }
-    footer.atardecer .footer-links.tiles::before { content: none; }
-    footer.atardecer .footer-links.tiles { margin-top: 18px; }
-    footer.atardecer .footer-links.tiles > * { flex-direction: column; gap: 4px; min-height: 64px; border: 0; background: rgba(255, 255, 255, 0.1); color: var(--ink); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-    footer.atardecer .footer-links.tiles > *:active { background: rgba(255, 255, 255, 0.18); }
-    /* The circle only on the tiles: if the coffee link never loads, the inbox stays a plain centered link */
-    footer.atardecer .tiles .ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(157, 255, 58, 0.35); }
-    footer.atardecer .tiles #btn-buzon-portada .ic { background: rgba(46, 230, 214, 0.35); }
-    footer.atardecer .tiles #btn-apoyo-portada .ic { background: rgba(255, 122, 26, 0.5); }
-    footer.atardecer > .muted { color: rgba(255, 255, 255, 0.8); }
+    /* The footer's look (phrase, option tiles, the violet sunset) lives in base.css, shared with site-footer.js */
     /* Juego al azar (D-188): el botón bajo la bajada y el dado que rueda sobre la portada */
     .azar-slot { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin-top: 16px; }
     .btn-azar {
