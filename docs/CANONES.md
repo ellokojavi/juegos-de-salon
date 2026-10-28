@@ -171,7 +171,7 @@ modo que el juego piensa tener.
   presence write or room note only goes to `console.warn`. `send()` still returns the same promise.
   `best-effort.test.mjs` fails on any Firebase call in `firebase.js` that nobody awaits, returns or catches.
 - **Irse a propósito cierra la sala.** `leave()` suelta los oyentes y deja la sala esperando; `dispose()` es la despedida: escribe `left` en el rol y borra la sala si con eso no queda nadie adentro (`public/assets/js/transport/dispose.js`, D-50). Lo llaman el botón de cancelar o salir de la sala del lobby, el de cambiar de modo al final y el cambio a la sala de la revancha. **Cerrar la pestaña o quedarse sin señal no es irse:** eso solo apaga `online`, porque esa partida se puede retomar (C-6), así que nada de esto cuelga de `pagehide`. Nunca lanza, lleva tope corto y, si falla, la sala queda marcada y la borra la papelera.
-- **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`) y de vez en cuando barre los días pendientes borrando lo vencido (`public/assets/js/transport/cleanup.js`, D-39). A new room is noted in the same write that creates it, so a room that exists is always in a bucket (D-321). Nada de esto se le muestra al jugador ni puede voltear una partida: si falla, barre el celular siguiente.
+- **Las salas vencidas se borran solas.** Al crear o entrar a una sala, el celular la apunta en la papelera (`cleanup/days/<día>`, `public/assets/js/transport/cleanup.js`, D-39). A new room is noted in the same write that creates it, so a room that exists is always in a bucket (D-321). Phones do not sweep: the nightly `room-sweep` job deletes the expired rooms of every closed bucket and the unnoted ones (`tools/firebase/room-sweep.mjs`, D-499). Nada de esto se le muestra al jugador ni puede voltear una partida.
 - Taking a seat is a race: two phones can join at the same instant. A seat is taken with a Firebase transaction that writes the phone's `uid` only if no other phone holds that seat, so exactly one phone gets it and the other moves on to the next free seat, or hears the room is full (`public/assets/js/transport/seat.js`, #850). The first free seat that was read is never assumed to still be free.
 - Cuando hay más de dos jugadores, uno es anfitrión (rol A) y abre la partida cuando están todos.
 - Quien abre un enlace de sala (`?room=CÓDIGO`) llega a una pantalla que **solo** deja unirse a esa sala: título propio de invitación, nada de botón para crear otra, el código va fijo y de solo lectura, y los ajustes de la partida no se muestran porque los fija el anfitrión. Ofrecer las dos cosas confunde a quien fue invitado.
@@ -378,7 +378,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
 
 - **Everything on the home page can be searched, in every language (D-403, D-404).** The 🔎 search
   (`public/assets/js/search.js`) finds each card by its name, tagline and type in any language, and by
-  its `KEYWORDS`: what it is, what it is played with and what it is like, in es, en, pt and de, at
+  its `keywords`, kept in its `games.js` entry (the games manifest, #855): what it is, what it is played with and what it is like, in es, en, pt and de, at
   least three per language. A new game, or anything new with a card, brings its keywords in the same
   PR; something new inside an existing card (a new kind of La Copa, a new mode) adds its words to that
   card's keywords. `search.test.mjs` fails without them. A new language of the app adds its keywords
@@ -432,7 +432,10 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   switch for each; never in a frame, where an iPhone would not let anything stick (D-363).
   **Everything in development sits behind the lab** (D-395): an experiment, or anything else not yet
   validated, turns on only for a lab key holder (`labAccess()` in `public/assets/js/lab-access.js`);
-  without one its parameter shows the site as it is. It reaches everyone only once validated in the lab. With none
+  without one its parameter shows the site as it is. It reaches everyone only once validated in the lab.
+  A feature on a page players visit asks its runtime flag, `flag('<id>')` in `public/assets/js/flags.js`
+  (D-498): Firebase `flags/<id>` is *lab*, *all* or *off*, and the owner publishes it with a toggle
+  (📣 Campaigns → 🚩 Lab flags, or 🚀 on its `/labs/` card), not a PR. With none
   being tried, its 🏠 Experimentos de la portada card waits in La Bodega, folded (D-372).
 - **A promotional splash, off by default** (D-351): when the owner turns on a campaign
   (`ACTIVE` in `splash.js`, with `node tools/agents/splash.mjs on <id> | off`), a window over the

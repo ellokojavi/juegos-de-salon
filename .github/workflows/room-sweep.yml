@@ -1,0 +1,51 @@
+# Deletes the expired rooms every night (D-499): the single authority for the room sweep. Phones used
+# to sweep the cleanup buckets in the background (D-39), and a bucket no phone reached stayed
+# forever. tools/firebase/room-sweep.mjs sweeps every closed bucket of a past day, however old,
+# deletes the expired rooms no bucket names and notes the live ones (what unnoted-rooms.mjs --fix
+# does, D-321). It deletes only rooms expired by the rules' two clocks. Running it twice deletes
+# nothing new.
+#
+# It needs the FIREBASE_ADMIN_JSON secret (the same as publish.yml's, D-218); without it, it warns
+# and ends green.
+
+name: Room sweep
+
+on:
+  schedule:
+    - cron: '37 9 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only say what it would delete'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: room-sweep
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Sweep the expired rooms
+        env:
+          KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+          APPLY: ${{ inputs.dry_run && ' ' || '--apply' }}
+        run: |
+          if [ -z "$KEY_JSON" ]; then
+            echo "::warning::The FIREBASE_ADMIN_JSON secret is missing: the rooms are not swept"
+            exit 0
+          fi
+          umask 077
+          printf '%s' "$KEY_JSON" > "$RUNNER_TEMP/key.json"
+          export FIREBASE_KEY="$RUNNER_TEMP/key.json"
+          node tools/firebase/room-sweep.mjs $APPLY

@@ -179,9 +179,9 @@ node tools/e2e/contact-sheet.mjs cuarto-rey --out /tmp/contact-sheet
 | `hangman/online.mjs` | Three phones against real Firebase: chain, reconnection midway and rematch |
 | `liars-dice/local.mjs` | Duel against the phone and a three-player game on one phone, with resuming midway |
 | `liars-dice/online.mjs` | Three phones against real Firebase: room, verified reveal, reload midway and rematch |
-| `liars-dice/rooms-classic.mjs` | The 🧪 classic rules (D-490) in a room, 2 to 5 phones (`PHONES`, `PASAR`, `SICILIANA`, `REMATCH`), against real Firebase: every phone agrees, the obligada notice reaches all of them and none shows its own die, a reload mid-obligada; `NOLAB_SITE` makes the last guest a player without a lab key. Every phone leaves for good at the end, so the room is deleted |
+| `liars-dice/rooms-classic.mjs` | The 📜 classic rules (D-490, D-495) in a room, 2 to 5 phones (`PHONES`, `PASAR`, `SICILIANA`, `REMATCH`), against real Firebase: every phone agrees, the obligada notice reaches all of them and none shows its own die, a reload mid-obligada; `NOLAB_SITE` makes the last guest a player without a lab key (since D-495 the rules need none). Every phone leaves for good at the end, so the room is deleted |
 | `liars-dice/shake-clock.mjs` | Dudo's lab switches (`#seccion-dudo-cacho`), against the phone: the dice come face down and synthetic `devicemotion` shakes roll them on screen until they land; out of time on the 30 s clock costs a die with no reveal; a page with no sensor rolls with the 🎲 button |
-| `liars-dice/classic.mjs` | Dudo's 🧪 classic rules (`#seccion-dudo-tradicional`, D-487, D-490): the folded Variantes row, the announced and open obligada round (the rivals' die face up, your own as ❓) and the one-time calzar hint, against the phone and with three players on one phone |
+| `liars-dice/classic.mjs` | Dudo's 📜 classic rules (D-487, D-490, for everyone since D-495): the folded Variantes row, the announced and open obligada round (the rivals' die face up, your own as ❓) and the one-time calzar hint, against the phone and with three players on one phone |
 | `generala/local.mjs` | Playing solo all the way, three on one phone with reload midway and the served generala: nothing chosen beforehand (C-8), the held dice don't change and what the scoresheet promised is scored |
 | `generala/online.mjs` | Two phones against real Firebase: the dice of whoever plays in view of the other, reload midway, full game and rematch |
 | `case/lab.mjs` | The case in `/labs/case/` (D-267): the lab offers it in La Bodega (D-280), folded to its title while active projects are open, and a tap opens it and shows Play; `/case/` leads there; without a seed it is the case of the day and the link stays clean; with La Copa's screen, marking too early counts as an error (D-261), on reload it continues where it was without the countdown, and the case is solved without guessing; the end offers sharing, another case, today's and the feedback form, with the submission intercepted (D-265), whose optional email says what it is for and refuses a malformed address (D-317) |
@@ -334,7 +334,7 @@ Spanish one. The expected texts come from the dictionaries, they aren't written 
 one phone signs in with its player and opens a cup where it is seated; another phone, which never saw it,
 signs in with the same player, finds it on the home page and enters it with no cup PIN (D-359).
 Last (D-358), a phone with no player sits in a cup with the usual name and PIN, enters as the player,
-and the podium saved without them gets their jid. Then, signed in, joining a new cup asks no cup PIN
+and the podium seeded without them (the nightly job writes podiums, D-499) gets their jid. Then, signed in, joining a new cup asks no cup PIN
 and links the player (D-359). Last (D-416), that phone loses its anonymous session: Empezar leads to
 "Ya estoy inscrito", which says the player's session was lost too and asks for the player's PIN; a
 wrong one is refused, switching names keeps the field, and the right one seats the phone as the

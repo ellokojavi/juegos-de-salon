@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdtempSync, writeFileSync, mkdirSync, rmSync, readFileSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { bump, parseEntry, compute, collect, newEntries, levelBetween, checkPR, arrivalOrder, pending, todayVersion, firstVersion, ROOT } from './changelog.mjs';
+import { bump, parseEntry, compute, collect, newEntries, levelBetween, checkPR, arrivalOrder, pending, todayVersion, firstVersion, archive, ROOT } from './changelog.mjs';
 
 // Bump and parse
 assert.equal(bump('0.167.3', 'patch'), '0.167.4');
@@ -85,3 +85,13 @@ try {
 // The repo's entries can be understood
 for (const e of pending(ROOT)) assert.ok(!e.error, `${e.file}: ${e.error}`);
 console.log(`changelog: green · today's version ${todayVersion()}`);
+
+// Archive by month (D-497): CHANGELOG.md keeps the newest entry's month, older months leave it
+{
+  const { kept, months } = archive('# Changelog\n\n## 0.3.0 — 2026-11-01\n- c\n\n## 0.2.0 — 2026-10-31\n- b\n\n## 0.1.0 — 2026-09-30\n- a\n');
+  assert.equal(kept, '# Changelog\n\n## 0.3.0 — 2026-11-01\n- c\n');
+  assert.deepEqual(Object.keys(months).sort(), ['2026-09', '2026-10']);
+  assert.equal(months['2026-10'], '## 0.2.0 — 2026-10-31\n- b\n\n');
+  assert.equal(firstVersion(kept), '0.3.0');
+  assert.deepEqual(archive('# Changelog\n\n## 0.1.0 — 2026-10-01\n- a\n').months, {});
+}

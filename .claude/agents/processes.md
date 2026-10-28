@@ -315,23 +315,15 @@ that (after a new game, after a big text change), saying why.
 8. **The CHANGELOG, the decisions index and the reservations** (D-300, D-301, D-401), which `check` shows. If `node tools/agents/decision.mjs index --check` says `docs/DECISIONS.md` is stale on `main` (two PRs that touch decisions merged one after the other), `node tools/agents/decision.mjs index` in your worktree and it goes in your PR; the `tests` check only warns about it meanwhile. if `changelog/`
    on `main` has entries, `node tools/release/changelog.mjs collect` in your worktree (with the
    full history) and they go in your PR: it moves them to `CHANGELOG.md` with their number and the
-   published version doesn't change. `check` already deleted the `reserve/D-n` reservations (and the older `reserva/D-n`) that
+   published version doesn't change, and every month before the newest entry's moves to
+   `changelog/archive/<yyyy-mm>.md` (D-497). `check` already deleted the `reserve/D-n` reservations (and the older `reserva/D-n`) that
    are in `main`; one that has gone more than a week without a PR is recorded as
    a file in `docs/decisions/` with the heading `## D-n · (unused number)` in your PR and deleted
    (`git push origin --delete reserve/D-n`).
-   And **the move to English** (D-316, D-354), which `check` counts: when no other PR is open, you
-   rename the next part (`node tools/agents/english.mjs next`: one phase, up to ten names) in your
-   PR. Every name goes with `git mv`, every reference to it is updated in the same commit, the old
-   URL keeps its bridge page (D-192), and the tests and the whole end-to-end suite pass before the
-   push. A persisted key (a game id, a Firebase path, a `localStorage` key) is never renamed here:
-   it is `keep` in `docs/english-renames.json`. You mark each renamed one `done`. When nothing is
-   left, you replace this step with the weekly sanity review D-316 asks for.
-   The decisions' text goes the same way (D-394): `node tools/agents/english.mjs decisions 20`
-   names the next batch still written in Spanish, those in force first. You translate each file's
-   text, Relation and labels (`**Decisión:**` → `**Decision:**`, `**Por qué:**` → `**Why:**`…)
-   keeping the meaning, the IDs, the code and the quoted player text exactly, then
-   `node tools/agents/decision.mjs index`. One batch per round, in its own commit, only when no other
-   open PR touches those files.
+   **The move to English** (D-316, D-354, D-497) is no longer a round step: `check` only counts it.
+   Nobody renames in batches or translates decisions, CHANGELOG entries or old documents (they are
+   history); a PR renames a pending name only when it touches that file anyway
+   (`node tools/agents/english.mjs touched`), and the D-354 ratchet stops new Spanish names.
    And **the home page's order** (D-361, the owner's request): when `check` says it is due (the
    list is a week old), `node tools/agents/popularity.mjs update` in your worktree. It counts the
    games finished in the last four weeks and rewrites `POPULARIDAD` and `POPULARIDAD_FECHA` in

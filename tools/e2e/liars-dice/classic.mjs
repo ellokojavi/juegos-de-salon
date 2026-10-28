@@ -1,6 +1,6 @@
-// Liar's Dice end to end, the 🧪 classic rules (lab, D-487, D-490): the folded Variants row, the
+// Liar's Dice end to end, the 📜 classic rules (D-487, D-490): the folded Variants row, the
 // open obligada round (its notice, the rivals' dice face up, your own as ❓), the one-time calzar
-// hint, against the phone and with three players on one phone. localhost opens the lab by itself.
+// hint, against the phone and with three players on one phone. For everyone since D-495.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output();
@@ -22,7 +22,7 @@ async function setup(mode, names) {
   for (let i = 2; i < names.length; i++) { await ev(`document.querySelector('#setup-actions .btn--ghost').click(); 1`); await sleep(100); }
   await ev(`(()=>{const n=${JSON.stringify(names)};[...document.querySelectorAll('#setup-form input')].forEach((i,k)=>{i.value=n[k];i.dispatchEvent(new Event('input',{bubbles:true}))});return 1})()`);
   check(await ev(`document.querySelector('#setup-form details.variants').hidden`), 'the Variants row is hidden until the classic rules are on');
-  await toggle('🧪'); await toggle('🫨');
+  await toggle('📜'); await toggle('🫨');
   check(!(await ev(`document.querySelector('#setup-form details.variants').hidden`)), 'with the classic rules on, the Variants row shows, folded');
 }
 
