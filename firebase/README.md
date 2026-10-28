@@ -159,8 +159,8 @@ The same mechanism as La Copa, for the whole app:
 - `torneoPodios/<código>`: the podium of a finished cup, with `.indexOn: end`. Read without an account.
 - `uadTemporada/s<yyyy-mm>`: Uno al día's season places by week (D-424), `{ c, t, j: { <jid>: { n, co?, s, l } } }`. Read without an account; written only by the administrator, by the nightly points rebuild (`uad-points-backfill.mjs --rebuild`). It also holds `top` (D-473): `{ c, t, p: players, j: the rows down to the 10th place }`; the home page's season recap reads only `top` and the player's own `j/<jid>`, never the whole table.
 - **Indexes for the panel (D-473):** `torneos` is indexed on `meta/end` and `meta/alias`, and `feedback` on `at`, so the panel downloads only the period it shows.
-  Written once by someone seated in that cup (`por`), with the cup finished, without `lab`, and with
-  the names and `j` the cup has.
+  Written only by the administrator, by the nightly `cup-podiums` job (D-450, D-499); the app no
+  longer writes it. The shape (`por`, the names and `j` the cup has) is still validated as before.
   `torneoPodios/<código>/p/<pid>/j` can be written later, once and only while empty, by a phone seated
   as that cup player, with the jid that cup player is linked to: signing a podium saved without the player (D-358).
 - `torneos/<código>/players/<pid>/j`: the rankings player behind the cup's one. Written by
@@ -171,8 +171,7 @@ The same mechanism as La Copa, for the whole app:
 
 A **legacy player** (`jugadores/<jid>.legado = true`, from La Copa's history) has no
 PIN: `jugadorKeys/<jid>` can be created for them, once, and whoever claims it deletes `legado` in the
-same write, seated with that PIN. They are loaded by `node tools/firebase/rankings-history.mjs --write`. A finished Cup's podium (`torneoPodios/<código>`) the app did not save because nobody reopened
-the Cup is written within the hour of its close by `rankings-history.mjs --podiums --write` (`cup-podiums` workflow, D-450).
+same write, seated with that PIN. They are loaded by `node tools/firebase/rankings-history.mjs --write`. A finished Cup's podium (`torneoPodios/<código>`) is written within the hour of its close by `rankings-history.mjs --podiums --write` (`cup-podiums` workflow, D-450), its only writer since D-499.
 
 The owner (their UID) can write and delete in all these branches, to moderate.
 
@@ -301,8 +300,9 @@ Only the owner's UID reads and writes it (the button shows only when the read wo
 
 ## The trash bin (`cleanup`)
 
-Nobody deletes their room when they finish playing, so the same phones that play do the cleanup
-(D-39, canon C-7). The free plan has no Cloud Functions: there's nowhere to run a cron.
+Nobody deletes their room when they finish playing. Phones note each room in a bucket, and the
+nightly `room-sweep` job deletes them (D-39, D-499, canon C-7): the free plan has no Cloud Functions,
+so the cron is a GitHub workflow with the admin key.
 
 ```
 cleanup/
@@ -316,15 +316,17 @@ cleanup/
   creates the room** (D-321), with `lastAt` the same server stamp as the room's `createdAt`; entering
   a room overwrites `lastAt` with the server time. `lastAt` only moves forward, and only on today's bucket, yesterday's or tomorrow's (D-469). Codes are only added: a note can be written
   again (a code reused the same day) but never removed or changed.
-- A room that no bucket names is never swept. `node tools/firebase/unnoted-rooms.mjs` lists them
-  (admin key) and `--fix` deletes the expired ones and notes the live ones (D-321).
-- **A bucket can only be read and deleted 6 hours after its last entry.** That is the
-  condition that keeps the trash bin from ever revealing a live room: when it opens, all the
-  rooms it names have already expired, because none lasts over six hours (D-89). That's why `rooms/` still can't be listed.
-- Sweeping is reading the buckets of the days before today, deleting those rooms and deleting the bucket.
-  A phone does it each time it creates or enters a room, at most once every 6 hours.
-- `sweptDay` avoids repeating work, but anyone can move it forward (only forward and
-  never past today), so the sweep always goes over the last 8 days anyway.
+- A room that no bucket names is not in any bucket. `node tools/firebase/unnoted-rooms.mjs` lists them
+  (admin key) and `--fix` deletes the expired ones and notes the live ones (D-321); the nightly sweep does the same.
+- **Only the owner reads and deletes a bucket** (D-499); phones only write to it. A bucket is swept
+  6 hours after its last entry: when it opens, all the rooms it names have already expired, because
+  none lasts over six hours (D-89).
+- Sweeping is `node tools/firebase/room-sweep.mjs [--apply]`, run every night by the `room-sweep`
+  workflow: every closed bucket of a day before today, however old, has its rooms and itself
+  deleted, and the unnoted rooms are handled as `unnoted-rooms.mjs --fix` does. The admin key goes over
+  the rules, so the tool itself deletes only rooms expired by the two clocks, and keeps (and notes
+  again) a live room that reuses a code an old bucket names. Phones no longer sweep.
+- `sweptDay` is the last day swept, written by the job; public to read.
 
 Logic and tests: [`public/assets/js/transport/cleanup.js`](../public/assets/js/transport/cleanup.js) ·
 `node public/assets/js/transport/cleanup.test.mjs`.

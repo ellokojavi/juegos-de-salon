@@ -9,7 +9,7 @@ import {
   getDatabase, ref, get, set, update, push, onChildAdded, onValue, onDisconnect, runTransaction, serverTimestamp, increment,
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../firebase-config.js';
-import { IDLE_TTL, ROOM_TTL, dayOf, dueForSweep, markSwept, noteRoom, roomCreation, sweep } from './cleanup.js';
+import { IDLE_TTL, ROOM_TTL, dayOf, noteRoom, roomCreation } from './cleanup.js';
 import { message, quiet } from './best-effort.js';
 import { disposeRoom } from './dispose.js';
 import { claimSeat } from './seat.js';
@@ -82,20 +82,13 @@ function record(game, code, createdAt, { role, name, created }) {
 const serverNow = d => new Promise(resolve => onValue(ref(d, '.info/serverTimeOffset'),
   s => resolve(Date.now() + (Number(s.val()) || 0)), { onlyOnce: true }));
 
-/** Si a este celular le toca, barre las salas vencidas en segundo plano (canon C-7). */
-function sweepIfDue(d) {
-  if (!dueForSweep()) return;
-  markSwept();
-  setTimeout(() => { sweep(dbApi(d)).catch(() => { /* nada */ }); }, 10000); // primero que arranque la partida
-}
-
 /**
- * El que entra a una sala ajena refresca la marca de su balde y, si le toca, barre (canon C-7).
+ * El que entra a una sala ajena refresca la marca de su balde (canon C-7): the bucket stays closed
+ * while a room in it can be alive. The sweep itself is the nightly job's (D-499).
  * No se espera ni se muestra: si algo falla, la partida sigue igual.
  */
 async function cleanup(d, code, createdAt) {
   try { await noteRoom(dbApi(d), code, createdAt, { note: false }); } catch (_) { /* mejor esfuerzo */ }
-  sweepIfDue(d);
 }
 
 export function createFirebaseTransport({ game, maxPlayers = 2 }) {
@@ -165,7 +158,6 @@ export function createFirebaseTransport({ game, maxPlayers = 2 }) {
         quiet(get(ref(d, `rooms/${code}/createdAt`)).then(snap => {
           const createdAt = snap.val() || Date.now();
           this.createdAt = createdAt;
-          sweepIfDue(d);
           record(game, code, createdAt, { role: 'A', name, created: true });
         }), 'room note');
         return code;

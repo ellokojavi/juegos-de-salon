@@ -86,7 +86,7 @@ player (D-359), the player's seat was lost with the same session, so it asks for
 toda la app), al inscribirse el nombre viene puesto, y al abrir la copa su jugador queda enlazado
 en `players/<pid>/j`. Con eso: los de la copa que también lo están pasan a ser sus **amigos** en
 los rankings; cada día jugado cuenta para la pestaña **Copa** del ranking de ese juego; y cuando la
-copa termina, el primero que la abre guarda su podio en `torneoPodios/<código>`, del que sale el
+copa termina, the nightly `cup-podiums` job saves its podium in `torneoPodios/<código>` (D-450, D-499; the app no longer writes it), del que sale el
 medallero de **Campeones de La Copa** al final de la portada. A win by name alone (without a player) joins the
 player with that name when exactly one has it (D-357). With a player on the phone there is no cup PIN (D-359, below).
 Las copas del laboratorio no cuentan.

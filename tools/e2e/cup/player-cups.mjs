@@ -86,7 +86,10 @@ try {
     const st = createLocalStore();
     const meta = E.nuevaMeta({ nombre: 'Jueves', dias: 3, inicio: E.fechaEn(Date.now()), admin: 'jiri02', creada: Date.now() });
     await st.crear('${C2}', meta, { pid: 'jiri02', name: 'Jiri', at: Date.now(), pinHash: await E.hashPin('${C2}', 'jiri02', '1234') });
-    await J.guardarPodio('${C2}', { name: 'Jueves', end: 1, de: 2, dias: 3, por: 'jiri02', p: { jiri02: { n: 'Jiri', l: 1 } } });
+    // The nightly job saves podiums (D-499): seeded straight into the test database
+    const DB = 'juegos-de-salon:prueba:records-db', db = JSON.parse(localStorage.getItem(DB) || '{}');
+    db.torneoPodios = { ...db.torneoPodios, ${C2}: { name: 'Jueves', end: 1, de: 2, dias: 3, por: 'jiri02', at: Date.now(), p: { jiri02: { n: 'Jiri', l: 1 } } } };
+    localStorage.setItem(DB, JSON.stringify(db));
     const jid = J.yo().jid;
     J.salir();
     sessionStorage.clear();
