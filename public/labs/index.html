@@ -112,35 +112,17 @@
       <section class="grupo" id="mejoras">
         <h2>✨ Mejoras en prueba</h2>
         <p class="muted">Cambios al resto de la app, para mirarlos antes de que lleguen a todos.</p>
-        <section class="panel seccion" id="seccion-faq">
-          <h2>🧭 «Cómo se juega» dice quiénes y cómo</h2>
-          <p class="muted" style="margin:0">La primera línea de «Cómo se juega» dice cuántos juegan y cuánto dura, si es en un celular, en varios o solo, y que es gratis, sin instalar nada y sin cuenta. Va dentro de las reglas, no en un bloque aparte. Sale de los datos del juego, así que no queda vieja. Por ahora en Línea de Tiempo, Toque y Fama, El Ahorcado, Dudo, Generala y Batalla Naval.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Solo se ve con tu llave del laboratorio. Abre «Cómo se juega» en cualquiera de esos juegos.</p>
-          <a class="btn btn--yellow" id="btn-faq" href="../hangman/">🪢 Ir a El Ahorcado</a>
-        </section>
         <section class="panel seccion" id="seccion-copa-crear">
           <h2>🏆 La Copa: arma la semana con el dado</h2>
           <p class="muted" style="margin:0">Una pantalla más corta para crear una copa: la semana se ve de entrada, 🎲 Crear al azar sortea una semana nueva, y hay estilos de semana (Equilibrada, Puzzles, Saber y palabras, Lo nuevo). Toca un juego para cambiarlo por cualquiera de los 13, con una línea de qué es cada uno. También se puede elegir una Copa de 3 días: tres juegos, sin final. Idioma, público y link quedan en Más opciones, y el PIN se escribe una vez.</p>
           <p class="muted" style="margin:0;font-size:0.85rem">Pruébalo creando una copa: se ve únicamente con tu llave del laboratorio.</p>
           <a class="btn btn--yellow" id="btn-copa-crear" href="../cup/">🏆 Ir a La Copa</a>
         </section>
-        <section class="panel seccion" id="seccion-no-contar">
-          <h2>🙈 Panel: no contar este navegador</h2>
-          <p class="muted" style="margin:0">En el panel, junto a Environment, la casilla «Don't count this browser»: lo que juegues y visites en el sitio publicado desde este navegador va a «My devices» y no a Live. Se marca en cada celular y computador por separado; si borras los datos del navegador, hay que marcarla otra vez.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Solo se ve con tu llave del laboratorio.</p>
-          <a class="btn btn--yellow" id="btn-no-contar" href="../panel/">📊 Ir al panel</a>
-        </section>
         <section class="panel seccion" id="seccion-dudo-tradicional">
           <h2>🎲 Dudo: reglas tradicionales</h2>
           <p class="muted" style="margin:0">El interruptor «🧪 Reglas clásicas» al preparar la partida: nadie abre en ases, al as se pasa con la mitad más uno, se puede calzar en un duelo y, con un dado, en cualquier momento. Quien queda con un dado abre la ronda obligada, anunciada a toda la mesa y abierta: ves el dado de los demás, no el tuyo. Debajo, una fila plegada «Variantes» con Pasar y Dudar a la siciliana. Y la primera vez que puedes calzar, una línea te explica qué es.</p>
           <p class="muted" style="margin:0;font-size:0.85rem">Solo se ve con tu llave del laboratorio. Viene apagado: sin encenderlo, se juega como siempre.</p>
           <a class="btn btn--yellow" id="btn-dudo-tradicional" href="../liars-dice/">🎲 Jugar Dudo</a>
-        </section>
-        <section class="panel seccion" id="seccion-bn-salva">
-          <h2>⚓ Batalla Naval: modo Salva</h2>
-          <p class="muted" style="margin:0">Cada turno disparas tantas veces como barcos te queden a flote: marcas las casillas, tocas ¡Fuego! una vez y ves todos los resultados juntos. Se elige al armar la partida (un celular, contra el celular o dos celulares); la clásica sigue siendo la de siempre.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Solo se ve con tu llave del laboratorio: busca el interruptor 🎆 Salva en ¿Cómo jugamos?</p>
-          <a class="btn btn--yellow" id="btn-bn-salva" href="../battleship/">⚓ Jugar Batalla Naval</a>
         </section>
         </section>
       </section>
@@ -154,6 +136,17 @@
         <!-- Two subgroups (D-422): the games kept, each tagged with why it is here, and the improvements that reached everyone -->
         <section class="subgrupo" id="bodega-juegos">
           <h3>🎲 Juegos guardados</h3>
+          <section class="panel seccion plegada" id="seccion-bn-salva">
+            <details>
+              <summary><h2>⚓ Batalla Naval: modo Salva</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">💤 No prosperó. Cada turno disparabas tantas veces como barcos te quedaran a flote y veías todos los resultados juntos. A nadie le gustó: la clásica sigue siendo la de siempre.</p>
+                <p class="muted" style="margin:0;font-size:0.85rem">Sigue ahí con tu llave del laboratorio: el interruptor 🎆 Salva en ¿Cómo jugamos?</p>
+                <a class="btn btn--yellow" id="btn-bn-salva" href="../battleship/">⚓ Jugar Batalla Naval</a>
+              </div>
+            </details>
+          </section>
+
           <section class="panel seccion plegada" id="seccion-caso">
             <details>
               <summary><h2>🔍 El caso</h2><span class="flecha" aria-hidden="true">›</span></summary>
@@ -214,6 +207,24 @@
               <div class="detalle">
                 <p class="muted" style="margin:0">🚀 Lanzado. Todos ven ahora, al abrir el link de una copa que terminó hace más de dos años, su nombre, cuándo terminó y su podio 🥇🥈🥉, con dos botones: crear una copa nueva con el mismo nombre y ver el medallero.</p>
                 <a class="btn btn--yellow" id="btn-copa-archivada" href="../cup/">🏆 Ir a La Copa</a>
+              </div>
+            </details>
+          </section>
+          <section class="panel seccion plegada" id="seccion-no-contar">
+            <details>
+              <summary><h2>🙈 Panel: no contar este navegador</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. En el panel, junto a Environment, está siempre la casilla «Don't count this browser»: lo que juegues y visites en el sitio publicado desde ese navegador va a «My devices» y no a Live. Se marca en cada celular y computador por separado.</p>
+                <a class="btn btn--yellow" id="btn-no-contar" href="../panel/">📊 Ir al panel</a>
+              </div>
+            </details>
+          </section>
+          <section class="panel seccion plegada" id="seccion-faq">
+            <details>
+              <summary><h2>🧭 «Cómo se juega» dice quiénes y cómo</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Todos ven ahora, como primera línea de «Cómo se juega», cuántos juegan y cuánto dura, si es en un celular, en varios o solo, y que es gratis, sin instalar nada y sin cuenta. Está en Línea de Tiempo, Toque y Fama, El Ahorcado, Dudo, Generala y Batalla Naval, y también lo leen los buscadores.</p>
+                <a class="btn btn--yellow" id="btn-faq" href="../hangman/">🪢 Ir a El Ahorcado</a>
               </div>
             </details>
           </section>

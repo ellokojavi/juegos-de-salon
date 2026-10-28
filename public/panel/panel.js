@@ -24,7 +24,6 @@ import { GAMES, SUELTOS, gameById, gameLabel as etiquetaRegistro, isTorneo, MODE
 import { juegosCopa } from '../cup/rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { ENVS, notCounted, setNotCounted } from '../assets/js/transport/stats.js';
-import { labAccess } from '../assets/js/lab-access.js';
 import { UAD_DIAS, UAD_INDICE, historiaDeDias } from '../assets/js/uad-days.js';
 import { $, el } from '../assets/js/ui.js';
 import { copaDe, copasEnCurso, resumenCopas, bitacoraCopas, fichaCopa, buscarCopa, paisDe, pct, duracion, inicioLabel } from './copas.js';
@@ -2072,15 +2071,12 @@ window.addEventListener('hashchange', alCambiarRuta);
 $('#env').addEventListener('change', e => cambiarEntorno(e.target.value));
 $('#range').addEventListener('change', e => cambiarRango(e.target.value));
 
-// "Don't count this browser": its live play goes to `owner`, not to Live (D-471). In the lab
-// until the owner validates it (D-395, lab: #seccion-no-contar).
-labAccess().then(ok => {
-  if (!ok) return;
+// "Don't count this browser": its live play goes to `owner`, not to Live (D-471).
+{
   const box = $('#no-contar');
   box.checked = notCounted();
   box.addEventListener('change', () => setNotCounted(box.checked));
-  $('#no-contar-label').hidden = false;
-}).catch(() => { /* stays hidden */ });
+}
 $('#buscar').addEventListener('submit', e => { e.preventDefault(); buscar($('#buscar-q').value); });
 
 // Gancho de solo lectura para pruebas (C-14): permite dibujar con datos sembrados sin entrar.

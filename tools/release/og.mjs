@@ -32,6 +32,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { GAMES, SUELTOS } from '../../public/assets/js/games.js';
 import { COMMON, LANGS } from '../../public/assets/js/i18n.js';
+import { factsLine } from '../../public/assets/js/how-to-play-facts.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SITE = 'https://juegosdesalon.cl';
@@ -253,7 +254,12 @@ for (const g of GAMES) {
   const { LOCALES } = await import(file);
   const T = LOCALES?.es?.ui || LOCALES?.es;
   const text = T?.howText || (Array.isArray(T?.rules) && T.rules.join(' '));
-  if (text) HOW[g.id] = text.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  if (!text) continue;
+  const rules = text.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  // The facts line opens the answer where the cover shows it to everyone (D-488)
+  const game = join(ROOT, 'public', g.path, 'game.js');
+  const facts = existsSync(game) && readFileSync(game, 'utf8').includes('mountHowToPlayFacts(');
+  HOW[g.id] = facts ? `${factsLine(g.id, T, 'es')} ${rules}` : rules;
 }
 /** '1–6' → { min: 1, max: 6 } */
 const range = s => { const [a, b = a] = String(s).split(/[–-]/).map(Number); return { minValue: a, maxValue: b }; };

@@ -4,7 +4,7 @@
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output();
-const b = await launch({ dir: `${OUT}/p`, out: OUT });
+const b = await launch({ dir: `${OUT}/p`, out: OUT, width: +(process.env.WIDTH || 390) });
 const ev = e => b.evaluate(e);
 const SITE = process.env.SITE || 'http://localhost:8765';
 const screen = () => ev(`document.querySelector('.screen.active').id`);
@@ -41,7 +41,8 @@ async function play(until, max = 400) {
     const v = await ev(`(()=>{const v=window.__dudo.view();return {ob:v.obligada,can:v.canCalzar}})()`);
     if (v.ob) {
       if (await ev(`!!document.querySelector('#mine .hidden-die') && !document.querySelector('#mine .die:not(.hidden-die)')`)) seen.hidden++;
-      if (await ev(`!!document.querySelector('#rivals .rival.seen .die')`)) seen.faces++;
+      if (await ev(`!!document.querySelector('#rivals .rival.seen .die:not(.hidden-die)')`)) seen.faces++;
+      if (await ev(`(()=>{const q=document.querySelector('#rivals .die--sm.hidden-die');return !!q&&q.getBoundingClientRect().width>=24})()`)) seen.ownStrip = (seen.ownStrip || 0) + 1;
       if (seen.hidden === 1) await b.shot('obligada-table');
     }
     if (await ev(`!!document.querySelector('#actions .calzar-hint')`)) { if (!seen.calzarHint) await b.shot('calzar-hint'); seen.calzarHint++; }
@@ -61,6 +62,7 @@ const duel = await play(null);
 check(duel.obligadaNotice > 0, `the obligada round is announced in a duel (${duel.obligadaNotice} times)`);
 check(duel.hidden > 0, 'in the obligada round your own die shows as ❓');
 check(duel.faces > 0, "in the obligada round the phone's die shows face up");
+check(duel.ownStrip > 0, 'in the obligada round your own ❓ in the strip is die-sized');
 
 /* ---------- Three on one phone ---------- */
 await setup(0, ['Javi', 'Cata', 'Nico']);
