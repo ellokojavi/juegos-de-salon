@@ -133,7 +133,7 @@
       "date": "2026-10-28",
       "from": "4c89dbb897a9adab2150f2fdfe0a06bec125c160",
       "to": "dae3ca8781c448df0a886b0a41c09bb6efba59f9",
-      "pr": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/939",
       "pending": [
         "Stale README screenshots (judgment warnings, 107 across 12 sections: copa, linea-de-tiempo, cuarto-rey, dudo, julepe, ahorcado, toque-y-fama, generala, cup-new-games, batalla-naval, portada, idiomas); redo offline and review on the contact sheet"
       ]
