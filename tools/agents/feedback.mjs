@@ -154,11 +154,24 @@ export function secretLike(text) {
   return (t.match(/[A-Za-z0-9+_=-]{32,}/g) || []).some(w => /[0-9]/.test(w) && /[A-Za-z]/.test(w) && !/^[a-z]+(?:-[a-z]+)+$/i.test(w));
 }
 
+/**
+ * A player's own email address or phone number written inside the text is hidden before it reaches
+ * the public issue: the repo is public, and the address a player wants a reply at already lives
+ * apart, in `feedbackContacto/` (D-317). A phone is a run of 8 or more digits with spaces, dots,
+ * dashes or brackets between them; dates (2026-10-27) are left alone.
+ */
+export function hideContacts(text) {
+  return String(text)
+    .replace(/[\p{L}\p{N}._%+-]+@[\p{L}\p{N}.-]+\.[\p{L}]{2,}/gu, '[email hidden]')
+    .replace(/(?<![\w-])\+?\(?\d[\d\s().-]{6,}\d(?![\w-])/g, m =>
+      /^\d{4}-\d{2}-\d{2}$/.test(m) || (m.match(/\d/g) || []).length < 8 ? m : '[phone hidden]');
+}
+
 /** A player's @ or # mentions no one and links nothing. */
 const inert = t => String(t).replace(/@/g, '@​').replace(/#(\d)/g, '#​$1');
 
 export function title(r) {
-  const t = inert(String(r.texto).replace(/\s+/g, ' ').trim());
+  const t = inert(hideContacts(r.texto).replace(/\s+/g, ' ').trim());
   return `🐞 ${where(r)}: ${t.length > 70 ? `${t.slice(0, 69)}…` : t}`;
 }
 
@@ -176,7 +189,7 @@ export function body(r) {
     ['Email', mask(r.correoMascara) && `\`${mask(r.correoMascara)}\` (wants a reply by email: the processes agent sends it when resolving, D-317)`],
   ].filter(([, v]) => v !== undefined && v !== null && v !== '');
   return [
-    inert(String(r.texto).trim()).split('\n').map(l => `> ${l}`).join('\n'),
+    inert(hideContacts(r.texto).trim()).split('\n').map(l => `> ${l}`).join('\n'),
     '',
     data.map(([k, v]) => `- **${k}:** ${k === 'Email' ? v : inert(v)}`).join('\n'),
     '',
