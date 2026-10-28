@@ -3,8 +3,12 @@
  *
  *   node tools/agents/english.mjs scan        every tracked path with a Spanish word, with its proposal
  *   node tools/agents/english.mjs status      how many are left, by phase (the processes agent's round)
- *   node tools/agents/english.mjs next        the next part to rename: one phase, a few files
- *   node tools/agents/english.mjs decisions [n]   the next n decisions whose text is still Spanish (D-394)
+ *   node tools/agents/english.mjs touched [base]  the pending names among the files this branch changes
+ *   node tools/agents/english.mjs decisions [n]   the decisions whose text is still Spanish (counted, not translated)
+ *
+ * Since D-497 there are no rename batches: a pending name is renamed only when a PR touches its
+ * file anyway (`touched` says which), and historical text (decisions, CHANGELOG, old documents) is
+ * history, not translated. The D-354 ratchet still stops every new Spanish name.
  *
  * The list lives in `docs/english-renames.json`: each Spanish path, the English one it becomes, its
  * D-316 phase (3 workshop, 4 app code, 5 documents) and its state (`pending`, `done`, or `keep` with
@@ -12,8 +16,7 @@
  * Spanish path appears that the list does not name, so the list only shrinks.
  *
  * The decisions' text is not a name: since D-394 each one is a file in docs/decisions/, and one still
- * written in Spanish (its **Decisión:** / **Por qué:** labels) is counted here and translated in
- * batches, those in force first, keeping its meaning and quoted player text exactly.
+ * written in Spanish (its **Decisión:** / **Por qué:** labels) is counted here and left as it is (D-497).
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
@@ -113,13 +116,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.log(`English (D-316): ${left.length} Spanish names left — phase 3 (workshop) ${by(3)}, phase 4 (app code) ${by(4)}, phase 5 (documents) ${by(5)}; ${rows.filter(r => r.state === 'keep').length} kept on purpose`);
     const unlisted = rows.filter(r => r.state === 'unlisted');
     if (unlisted.length) console.log(`✗ ${unlisted.length} not in docs/english-renames.json: ${unlisted.map(r => r.path).join(', ')}`);
-    console.log(`Decisions still written in Spanish (D-394): ${spanishDecisions().length} — node tools/agents/english.mjs decisions 20`);
-  } else if (cmd === 'next') {
-    const phase = Math.min(...left.map(r => r.phase));
-    const part = left.filter(r => r.phase === phase).slice(0, 10);
-    console.log(part.length ? `Next part, phase ${phase} (rename with git mv, update every reference, run the tests and the end-to-end suite):\n${part.map(r => `  ${r.path}  →  ${r.to}`).join('\n')}` : 'Nothing left: replace this with the weekly sanity review (D-316).');
+    console.log(`Decisions still written in Spanish: ${spanishDecisions().length}, kept as history (D-497). Renames happen only when a PR touches the file: english.mjs touched`);
+  } else if (cmd === 'touched') {
+    const base = process.argv[3] || 'origin/main';
+    const changed = execFileSync('git', ['diff', '--name-only', `${base}...HEAD`], { cwd: ROOT, encoding: 'utf8' }).split('\n').filter(Boolean);
+    const hits = left.filter(r => changed.some(f => r.path.endsWith('/') ? f.startsWith(r.path) : f === r.path));
+    console.log(hits.length ? `This branch touches ${hits.length} pending Spanish name(s); rename them in this PR if it is cheap (git mv, every reference, its bridge page if it is a URL; D-497):\n${hits.map(r => `  ${r.path}  →  ${r.to}`).join('\n')}` : 'No pending Spanish name among the files this branch touches.');
   } else if (cmd === 'decisions') {
     const batch = spanishDecisions().slice(0, Number(process.argv[3]) || 20);
-    console.log(batch.length ? `Next decisions to translate (the text, the Relation and the labels; meaning, IDs, code and quoted player text exactly as they are; then decision.mjs index):\n${batch.map(d => `  docs/decisions/${d.file}  ${d.title}`).join('\n')}` : 'Every decision is in English.');
-  } else { console.error('usage: english.mjs scan | status | next | decisions [n]'); process.exit(2); }
+    console.log(batch.length ? `Decisions still in Spanish (history, not translated since D-497):\n${batch.map(d => `  docs/decisions/${d.file}  ${d.title}`).join('\n')}` : 'Every decision is in English.');
+  } else { console.error('usage: english.mjs scan | status | touched [base] | decisions [n]'); process.exit(2); }
 }
