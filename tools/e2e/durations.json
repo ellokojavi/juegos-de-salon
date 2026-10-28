@@ -34,6 +34,7 @@
  "cup/out.mjs": 13,
  "cup/player-cups.mjs": 30,
  "cup/resumed-clock.mjs": 8,
+ "cup/rejoin.mjs": 7,
  "cup/seat.mjs": 7,
  "cup/tournament.mjs:cup": 290,
  "cup/tournament.mjs:demos": 50,
