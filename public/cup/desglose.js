@@ -15,7 +15,7 @@ export function desglose(id, e, { T, fmt, mmss, copa = true, lang = 'es' }) {
   // The engine of the game just played, already loaded (D-468): this file does not load any
   const numero = engineOf('numero'), letras = engineOf('letras'), tango = engineOf('tango'), anio = engineOf('anio'), donde = engineOf('donde'), final = engineOf(id);
   const intentos = (x, max) => (x.resuelto
-    ? [fmt(T.bdTries, { u: x.usados, max }), fmt(T.bdTriesPts, { menos: 10 * (x.usados - 1), s: numero.puntaje(x, max) })]
+    ? [fmt(T.bdTries, { u: x.usados, max }), x.descartados ? fmt(T.bdTriesPts, { n: x.descartados, menos: 100 - numero.puntaje(x), s: numero.puntaje(x) }) : T.bdTriesClean]
     : [T.bdNotSolved]);
   // Un descuento en cero no se nombra; uno solo va en singular (las claves terminadas en One)
   const resta = (clave, n, v) => (n ? fmt(n === 1 ? T[`${clave}One`] : T[clave], { n, ...v }) : null);

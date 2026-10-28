@@ -166,7 +166,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-110](decisions/D-110.md) | The admin of a new cup, sign-up, a movable start and the lab demos | amended by D-262, D-266 |
 | [D-111](decisions/D-111.md) | The cup does not use the Brazil theme | amended by D-187 |
 | [D-112](decisions/D-112.md) | No test-mode bar, and Tango signs that can be told apart | current |
-| [D-113](decisions/D-113.md) | All mini-games from 0 to 100, Pacific time, and "Invitar" only before starting | amended by D-194 |
+| [D-113](decisions/D-113.md) | All mini-games from 0 to 100, Pacific time, and "Invitar" only before starting | amended by D-194, D-453 |
 | [D-114](decisions/D-114.md) | The card under the score, and TORRE instead of DAMA | current |
 | [D-115](decisions/D-115.md) | Another start date, and advancing the day in the lab cups | current |
 | [D-116](decisions/D-116.md) | Each thing at its moment in the cup | amended by D-176 |
@@ -498,7 +498,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-450](decisions/D-450.md) | A finished Cup's podium is saved within the hour of its close, even if nobody reopens the Cup | current |
 | [D-451](decisions/D-451.md) | The Claude rounds run from launchd on the Mac mini | current |
 | [D-452](decisions/D-452.md) | A skipped email stays visible: the round lists it, the owner can read it | current |
-| [D-453](decisions/D-453.md) | Toque y Fama's solo score, by deduction: tried in the lab first | current |
+| [D-453](decisions/D-453.md) | Toque y Fama's score, by deduction: tried in the lab, then published | current |
 | [D-454](decisions/D-454.md) | The splash campaigns are run from the panel | amended by D-461 |
 | [D-455](decisions/D-455.md) | A lab game may keep its own leaderboard, outside the Todoterreno | current |
 | [D-456](decisions/D-456.md) | Tren en Vilo leaves the lab: its page, Uno al día and La Copa, launched with its splash | current |
