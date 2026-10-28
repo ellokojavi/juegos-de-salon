@@ -53,6 +53,7 @@ language. Older Spanish content and Spanish file and identifier names are being 
 | Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
 | Seasonal templates (Halloween…) | [docs/SEASONS.md](docs/SEASONS.md): the home page and Rankings dress up for a date (D-457) | Before adding a date or touching `season.js` |
 | What players are told we keep | `public/privacy/texts.js`, the `/privacy/` page in four languages (D-463, C-17) | When a change stores something new about players, or keeps it for a different time: edit the page in the same PR |
+| Big files (videos, recordings) | [docs/REPO-WEIGHT.md](docs/REPO-WEIGHT.md): nothing over 5 MB enters git, `repo-weight.test.mjs` (D-494) | Before committing media |
 | PR previews | [docs/PREVIEWS.md](docs/PREVIEWS.md): each PR on GitHub Pages (D-429) | When the owner reviews a change, or a preview fails |
 
 **A rule that changes is changed in its place, in the same PR:** if a new decision changes a

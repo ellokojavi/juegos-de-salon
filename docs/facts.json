@@ -1375,6 +1375,7 @@
     "tools/agents/pending.test.mjs",
     "tools/agents/popularity.test.mjs",
     "tools/agents/processes.test.mjs",
+    "tools/agents/repo-weight.test.mjs",
     "tools/agents/round-watch.test.mjs",
     "tools/agents/wait-pr.test.mjs",
     "tools/cloudflare/inbox-worker.test.mjs",
@@ -1558,6 +1559,10 @@
     {
       "path": "docs/PWA-NOTIFICACIONES.md",
       "title": "App instalable y avisos al celular (PWA + Web Push)"
+    },
+    {
+      "path": "docs/REPO-WEIGHT.md",
+      "title": "Repo weight (D-494, #856)"
     },
     {
       "path": "docs/REQUERIMIENTOS.md",

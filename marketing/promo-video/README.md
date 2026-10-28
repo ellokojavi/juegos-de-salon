@@ -16,6 +16,9 @@ video** (D-178), y al terminar cada vuelta se anota en [Historia](#historia) y e
 | App que muestra | 0.211.3 |
 
 En `output/` vive **solo la última versión**: al publicar una nueva, se reemplazan los dos mp4.
+No file over 5 MB enters git except these three MP4s, grandfathered by path until they move to GitHub
+Releases ([docs/REPO-WEIGHT.md](../../docs/REPO-WEIGHT.md), D-494): a new mp4 under another name, or a render
+kept outside `output/`, fails `repo-weight.test.mjs`.
 Las anteriores quedan en la historia de git. Ojo: GitHub Pages publica el repo entero, así que
 los mp4 también quedan en `juegosdesalon.cl/marketing/promo-video/output/…`.
 
