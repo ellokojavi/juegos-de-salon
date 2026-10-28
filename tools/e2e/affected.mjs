@@ -266,7 +266,7 @@ const walk = (dir, base = dir) => readdirSync(dir).flatMap(f => {
  * The scripts that run on every change a page reaches, on purpose: they say no page because they open
  * them all. Any other script must name its pages, so the graph can leave it out (D-391).
  */
-export const EVERY_PAGE = new Set(['smoke.mjs']);
+export const EVERY_PAGE = new Set(['smoke.mjs', 'structured-data.mjs']);
 
 /** The site's text files, path → contents, and the page graph. */
 export function siteFiles() {
