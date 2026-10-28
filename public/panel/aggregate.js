@@ -366,7 +366,7 @@ export function modesOf(byGame) {
  * torneos del resto. Zona horaria, idiomas y hora no son de un juego sino del celular, y se
  * cuentan siempre enteros.
  */
-export function summarize(days, { from, to, incluye = () => true }) {
+export function summarize(days, { from, to, incluye = () => true, modo = () => true }) {
   const byGame = {}, byPlayers = {}, origin = {}, lang = {}, applang = {}, hour = Array(24).fill(0);
   const byDay = [];
   let online = 0, local = 0, devices = 0, sinRival = 0;
@@ -390,7 +390,7 @@ export function summarize(days, { from, to, incluye = () => true }) {
       for (const [mode, ns] of Object.entries(modes || {})) {
         // Se acepta por forma, no por lista: un modo que el código empezó a mandar ayer
         // cuenta hoy, sin tocar el panel (C-16). Lo que no tiene forma de modo es basura.
-        if (!isLocalMode(mode)) continue;
+        if (!isLocalMode(mode) || !modo(mode)) continue;
         for (const [n, count] of Object.entries(ns || {})) {
           const c = Number(count) || 0;
           const g = bump(byGame, game);

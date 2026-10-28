@@ -541,7 +541,7 @@ function filaSinRedLog(p, { conJuego = false } = {}) {
     : fin.empate ? el('span', { class: 'tie' }, '🤝 Tie')
       : fin.ganador ? el('span', { class: 'won' }, '🏆 ', quien(fin.ganador, p.co))
         : el('span', { class: 'va' }, '✓ finished');
-  return el('div', { class: 'log-row' },
+  return el('div', { class: 'log-row', 'data-mode': p.mode || '' },
     el('div', { class: 'when' }, whenLabel(p.at), p.v ? [el('br'), `v${p.v}`] : null),
     el('div', { class: 'game' }, conJuego ? [gameLabel(p.game), ' ', idiomaTag(p.lang), el('br')] : null, el('small', {}, modo, conJuego ? null : [' ', idiomaTag(p.lang)])),
     el('div', { class: 'who' },
@@ -893,17 +893,26 @@ const AVISOS_UAD = {
   ahorano: '🙅 "Not now"', silencio: '🔕 Muted them',
 };
 
-/** Las partidas sin red de todos los juegos (sin The Cup): ahí están quienes juegan solos (D-210). */
-function sinRedRecientes(rango) {
-  const todas = localLog(S.days, { from: rango.from, to: rango.to }).filter(p => esJuego(p.game));
+/**
+ * The offline games of one domain (D-210, D-348): Group gets vs. the phone and one phone, Individual
+ * gets solo and One a Day, so each log matches the numbers above it. The Cup is not here.
+ */
+function sinRedRecientes(rango, dominio) {
+  const todas = localLog(S.days, { from: rango.from, to: rango.to })
+    .filter(p => esJuego(p.game) && (isIndividualMode(p.mode) ? 'individual' : 'grupo') === dominio);
   const visibles = S.sinRedTodas ? todas : todas.slice(0, SIN_RED_VISIBLES);
-  return bloque('Offline games', NOTA_SIN_RED,
+  return bloque('Offline games', NOTA_SIN_RED[dominio],
     lista(visibles.map(p => filaSinRedLog(p, { conJuego: true })), 'None in this range.', 'log'),
     todas.length > SIN_RED_VISIBLES ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm mas', onClick: () => { S.sinRedTodas = !S.sinRedTodas; render(); } }, S.sinRedTodas ? 'Show fewer' : `Show all ${n(todas.length)}`) : null);
 }
 
-/** Qué dice cada partida sin red, y desde cuándo (D-140, D-210). */
-const NOTA_SIN_RED = 'Vs. the phone, on one phone or solo, newest to oldest. With time since version 0.64.7 (D-140); with name and result since 0.99.2 (D-210). The name is the one the person already typed in the app; if they never set one, it shows "no name". With no ending, "at least" runs from the start to its last signal.';
+/** What each offline game says, and since when (D-140, D-210); a game's card lists all its modes. */
+const NOTA_COMUN = 'Newest to oldest. With time since version 0.64.7 (D-140); with name and result since 0.99.2 (D-210). The name is the one the person already typed in the app; if they never set one, it shows "no name". With no ending, "at least" runs from the start to its last signal.';
+const NOTA_SIN_RED = {
+  grupo: `Vs. the phone and on one phone. ${NOTA_COMUN}`,
+  individual: `Solo and One a Day. ${NOTA_COMUN}`,
+  todas: `Vs. the phone, on one phone or solo. ${NOTA_COMUN}`,
+};
 
 /** Jugadores por partida y partidas por día: los mismos en la vista de juegos y en la ficha de uno. */
 function graficosJuego(s, rango) {
@@ -963,7 +972,7 @@ function vistaFichaJuego(id) {
       porIdioma('In which language', 'Once per player in each room and once per offline game. Recorded since D-211.', idiomasDelRango(S.days, { from: rango.from, to: rango.to, incluye: g => g === id }))),
     graficosJuego(s, rango),
     bitacora(rango, id),
-    bloque('Offline games', NOTA_SIN_RED,
+    bloque('Offline games', NOTA_SIN_RED.todas,
       lista(visibles.map(p => filaSinRedLog(p)), 'None in this range.', 'log'),
       sinRed.length > SIN_RED_VISIBLES ? el('button', { type: 'button', class: 'btn btn--ghost btn--sm mas', onClick: () => { S.sinRedTodas = !S.sinRedTodas; render(); } }, S.sinRedTodas ? 'Show fewer' : `Show all ${n(sinRed.length)}`) : null),
   ];
@@ -1322,7 +1331,7 @@ function vistaResumen(now) {
     ),
     el('div', { class: 'tiles' },
       tarjeta('grupo', pd.grupo.total, 'games', variacion(pd.grupo.total, pda.grupo.total)),
-      tarjeta('individuales', pd.individual.total, 'games', variacion(pd.individual.total, pda.individual.total)),
+      tarjeta('individuales', pd.individual.total, 'games', variacion(pd.individual.total, pda.individual.total), 'One a Day included'),
       tarjeta('torneo', rc.jugadas, 'games played', variacion(rc.jugadas, rca.jugadas), `participation ${pctTxt(pct(rc.participacion))}`),
       tarjeta('unoaldia', uad.partidas, 'games', variacion(uad.partidas, uada.partidas), `back the next day ${pctTxt(uad.d1)}`),
       tarjeta('usuarios', u.diario || '—', 'active per day', u.diario ? variacion(u.diario, ua.diario) : undefined, u.pegajosidad === null ? '' : `stickiness ${u.pegajosidad}%`),
@@ -1341,7 +1350,7 @@ function vistaGrupo(now) {
   const pd = partidasDominio(S.days, r).grupo, pda = partidasDominio(S.days, a).grupo;
   const e = embudoSalas(S.days, r), ea = embudoSalas(S.days, a);
   const f = finales(S.days, r);
-  const s = summarize(S.days, { from: r.from, to: r.to, incluye: esJuego });
+  const s = summarize(S.days, { from: r.from, to: r.to, incluye: esJuego, modo: m => !isIndividualMode(m) });
   MODOS = s.modes;
   const sum = k => Object.values(e).reduce((x, g) => x + g[k], 0);
   const conRival = sum('conRival'), creadas = sum('creadas'), term = sum('terminadas');
@@ -1350,8 +1359,8 @@ function vistaGrupo(now) {
   const maxJ = Math.max(0, ...juegos.map(([, v]) => v));
   const salas = Object.entries(e).sort((x, y) => y[1].creadas - x[1].creadas);
   const maxS = Math.max(0, ...salas.map(([, g]) => g.creadas));
-  const terminan = Object.entries(f.porJuego).filter(([, g]) => g.grupo).sort((x, y) => y[1].grupo - x[1].grupo);
-  const maxT = Math.max(0, ...terminan.map(([, g]) => g.grupo));
+  const terminan = Object.entries(f.porJuego).filter(([, g]) => g.grupo).sort((x, y) => y[1].finGrupo - x[1].finGrupo);
+  const maxT = Math.max(0, ...terminan.map(([, g]) => g.finGrupo));
   const modos = Object.entries(pd.byMode).sort((x, y) => y[1] - x[1]);
   const maxM = Math.max(0, ...modos.map(([, v]) => v));
   const players = Object.entries(s.byPlayers).filter(([k]) => k !== '1').sort((x, y) => Number(x[0]) - Number(y[0]));
@@ -1364,7 +1373,7 @@ function vistaGrupo(now) {
       tile(conRival, 'rooms with an opponent', { cambio: variacion(conRival, conRivalA) }),
       tile(pctTxt(pctDe(conRival, creadas)), 'rooms an opponent joined', { info: `${n(creadas - conRival)} were left alone` }),
       tile(pctTxt(pctDe(term, conRival)), 'rooms that reached the end', { info: 'with a winner or a tie' }),
-      tile(f.otras, 'rematches and "again"', { info: 'since D-348' }),
+      tile(f.otras, 'rematches and "again"', { info: 'all offline games: not split by domain' }),
     ),
     franja('diag'),
     conCsv(bloque('Games by game', `Tap a game to see its card. Its modes: ${MODE_IDS.filter(m => !MODES[m].torneo && !MODES[m].individual).map(m => `${modeIcon(m)} ${MODES[m].label}`).join(' · ')}.`,
@@ -1375,7 +1384,7 @@ function vistaGrupo(now) {
           cifra: g.creadas, detail: `${pctTxt(pctDe(g.conRival, g.creadas))} with opponent · ${pctTxt(pctDe(g.terminadas, g.conRival))} to the end${g.medianaMs ? ` · lasts ${minutos(g.medianaMs)}` : ''}`,
         })), 'No rooms in this range.', 'bars')), 'grupo-salas', salas.map(([id, g]) => ({ juego: id, ...g }))),
       conCsv(bloque('Finished on one phone', 'Offline group games that reached the end, against those started (D-348: counted since this version).',
-        lista(terminan.map(([id, g]) => bar(gameLabel(id), [seg(C_SIN_RED, g.grupo)], maxT, { detail: `${pctTxt(pctDe(g.terminadas, g.empezadas))} finished · ${n(g.otras)} again` })), 'Nothing yet.', 'bars')),
+        lista(terminan.map(([id, g]) => bar(gameLabel(id), [seg(C_SIN_RED, g.finGrupo)], maxT, { cifra: g.finGrupo, detail: `${pctTxt(pctDe(g.finGrupo, g.grupo))} of ${n(g.grupo)} started` })), 'Nothing yet.', 'bars')),
         'grupo-terminadas', terminan.map(([id, g]) => ({ juego: id, ...g }))),
     ),
     el('div', { class: 'grid2' },
@@ -1384,7 +1393,7 @@ function vistaGrupo(now) {
     ),
     franja('tend'),
     serie('Group games per period', null, pd.byDay, r, [['total', C_TOTAL]], 'grupo-serie'),
-    sinRedRecientes(r),
+    sinRedRecientes(r, 'grupo'),
     bitacora(r),
   ];
 }
@@ -1395,7 +1404,7 @@ function vistaIndividuales(now) {
   const pd = partidasDominio(S.days, r).individual, pda = partidasDominio(S.days, a).individual;
   const f = finales(S.days, r);
   const dif = dificultad(S.days, r, now);
-  const term = Object.values(f.porJuego).reduce((k, g) => k + Math.min(g.terminadas, g.individual), 0);
+  const term = Object.values(f.porJuego).reduce((k, g) => k + g.finIndividual, 0);
   const ab = dif.reduce((k, g) => k + g.abandonos, 0), emp = dif.reduce((k, g) => k + g.empezadas, 0);
   const juegos = Object.entries(pd.byGame).sort((x, y) => y[1] - x[1]);
   const maxJ = Math.max(0, ...juegos.map(([, v]) => v));
@@ -1409,7 +1418,7 @@ function vistaIndividuales(now) {
       tile(pd.total, 'individual games', { cambio: variacion(pd.total, pda.total) }),
       tile(pctTxt(pctDe(term, pd.total)), 'finished', { info: 'since D-348' }),
       tile(pctTxt(pctDe(ab, emp)), 'abandoned halfway', { info: 'no ending and an hour without signal', hot: emp > 0 && ab / emp > 0.3 }),
-      tile(Object.values(f.porJuego).reduce((k, g) => k + g.otras, 0), '"again"'),
+      tile(f.otras, '"again"', { info: 'all offline games: not split by domain' }),
     ),
     franja('diag'),
     conCsv(bloque('Real difficulty', 'Of finished games: the score (0 to 100) and the time in quartiles, the low, middle and high one. A game with a very high middle is easy; one with many abandoned halfway, frustrating. A variant counts separately.',
@@ -1421,6 +1430,7 @@ function vistaIndividuales(now) {
       'individuales-juegos', juegos.map(([id, v]) => ({ juego: id, partidas: v }))),
     franja('tend'),
     serie('Individual games per period', null, pd.byDay, r, [['total', C_SIN_RED]], 'individuales-serie'),
+    sinRedRecientes(r, 'individual'),
   ];
 }
 
