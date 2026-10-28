@@ -557,6 +557,7 @@ node tools/agents/marketing.test.mjs
 node tools/agents/pending.test.mjs
 node tools/agents/popularity.test.mjs
 node tools/agents/processes.test.mjs
+node tools/agents/repo-weight.test.mjs
 node tools/agents/round-watch.test.mjs
 node tools/agents/wait-pr.test.mjs
 node tools/cloudflare/inbox-worker.test.mjs
@@ -780,6 +781,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [El alemán](docs/ALEMAN.md)
 - [PR previews (D-429)](docs/PREVIEWS.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
+- [Repo weight (D-494, #856)](docs/REPO-WEIGHT.md)
 - [Seasonal templates (D-457)](docs/SEASONS.md)
 - [Test scope: which tests a change runs, and how the system learns it (D-391, D-392)](docs/TEST-SCOPE.md)
 - [Uno al día](docs/UNO-AL-DIA.md)
