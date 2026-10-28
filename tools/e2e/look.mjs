@@ -9,6 +9,8 @@
  *   node tools/e2e/look.mjs ahorcado result
  *   node tools/e2e/look.mjs linea-de-tiempo intro --lang pt
  *
+ *   node tools/e2e/look.mjs dudo bid --chat        (a room's 💬 bubble on top: it must cover no button)
+ *
  * It takes the screenshot and also checks what the canon asks to look at on every screen (C-8):
  * no horizontal scroll and no button under 44 px; and that the board has space before its
  * buttons (D-309, U-11).
@@ -36,6 +38,8 @@ const out = flag('out', '/tmp/look');
  * goes past every test without anyone seeing it (D-75).
  */
 const notches = args.includes('--notches');
+/** `--chat` mounts the shared room chat (chat.js) on the screen, as a room does, and names any button its bubble covers. */
+const withChat = args.includes('--chat');
 const base = flag('base', process.env.SITE || process.env.SITIO || 'http://localhost:8765');
 
 if (!game) {
@@ -68,6 +72,14 @@ await b.go(`${base}/${route}`, 1500);
 // before— is not the same: it paints the margins but doesn't change the viewport (D-77).
 if (notches) await b.send('Emulation.setSafeAreaInsetsOverride', { insets: { top: 47, bottom: 34, left: 0, right: 0 } });
 for (const step of path) { await b.evaluate(`(()=>{ ${step} ; return 1})()`); await sleep(700); }
+if (withChat) {
+  await b.evaluate(`import('/assets/js/chat.js').then(m=>{let el=document.getElementById('chat');if(!el){el=document.createElement('div');el.id='chat';document.body.append(el);}
+    m.createChat({mount:el,T:{chatOpen:'chat',chatTitle:'chat',chatEmpty:'',chatPlaceholder:'',chatSend:'send',chatClose:'x'},nameOf:r=>r,isMine:()=>false,onSend(){}}).show();return 1})`);
+  await sleep(900);
+  // A page taller than the phone scrolls under the bubble: what must clear it is where the page ends
+  await b.evaluate(`scrollTo(0, document.documentElement.scrollHeight); 1`);
+  await sleep(300);
+}
 await sleep(400);
 
 const review = await b.evaluate(`(()=>{
@@ -95,6 +107,14 @@ const review = await b.evaluate(`(()=>{
     belowBottom: [...new Set([...document.querySelectorAll(scr + ' .btn:not([aria-hidden="true"]), .confirm .btn')]
       .filter(x => x.offsetParent !== null && x.getBoundingClientRect().bottom > innerHeight)
       .map(x => (x.textContent || x.className).trim().slice(0, 18)))],
+    underChat: (() => {
+      const f = document.querySelector('.chat-fab'); if (!f || f.offsetParent === null) return null;
+      const c = f.getBoundingClientRect();
+      return [...new Set([...document.querySelectorAll(scr + ' button, ' + scr + ' a.btn, ' + scr + ' input')]
+        .filter(x => x.offsetParent !== null).filter(x => { const r = x.getBoundingClientRect();
+          return r.width && r.left < c.right && r.right > c.left && r.top < c.bottom && r.bottom > c.top; })
+        .map(x => (x.textContent || x.className).trim().slice(0, 18)))];
+    })(),
   });
 })()`).then(JSON.parse);
 
@@ -110,6 +130,7 @@ console.log(`  buttons under 44 px (C-8): ${review.smallButtons.length ? '⚠️
 console.log(`  board → buttons spacing (U-11, ${MIN_SPACING} px or more): ${!spacing.length ? 'no marked board' : lacksSpacing(spacing).length ? '⚠️  ' + lacksSpacing(spacing).join(', ') : spacing.map(f => `${f.spacing} px`).join(', ')}`);
 console.log(`  the page is taller than the screen: ${review.excess > 0 ? `⚠️  ${review.excess} px` : 'no'}${notches ? ' (with notches)' : ''}`);
 console.log(`  buttons off screen: ${review.belowBottom.length ? '⚠️  ' + review.belowBottom.join(', ') : 'none'}`);
+if (review.underChat) console.log(`  buttons under the chat bubble: ${review.underChat.length ? '⚠️  ' + review.underChat.join(', ') : 'none'}`);
 console.log(`  built with the small height (svh): ${review.usesSmallHeight ? 'yes' : '⚠️  NO (uses dvh: what rests at the bottom falls off on a phone)'}`);
 if (b.errors.length) console.log('  console errors:', JSON.stringify(b.errors.slice(0, 2)));
 b.close();

@@ -320,9 +320,12 @@ details.panel summary::-webkit-details-marker { display: none; }
    así el veredicto de una jugada siempre lo tapa. */
 .chat { position: fixed; inset: 0; z-index: 20; pointer-events: none; --kb: 0px; }
 .chat > * { pointer-events: auto; }
+/* The bubble lives in a strip of its own at the bottom: with the chat on, every room screen ends
+   above it, so it never covers the last button of a bar (¡CALZO!, ¡A JUGAR!, Revancha). */
+body.chat-on .screen.active { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 
 .chat-fab {
-  position: absolute; right: 12px; bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+  position: absolute; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--glass-border);
   background: linear-gradient(180deg, rgba(138, 77, 255, 0.95), rgba(42, 10, 74, 0.95));
   color: var(--ink); font-size: 1.5rem; cursor: pointer; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
@@ -340,7 +343,7 @@ details.panel summary::-webkit-details-marker { display: none; }
    toques: lo que está debajo ("Revancha", el tablero) hace lo suyo; solo la burbuja abre el chat (dilema #48). */
 .chat > .chat-peek { pointer-events: none; }
 .chat-peek {
-  position: absolute; right: 74px; bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+  position: absolute; right: 74px; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   max-width: min(64vw, 260px); min-height: 54px;
   display: flex; flex-direction: column; justify-content: center; gap: 1px; text-align: left;
   padding: 8px 12px; border-radius: 16px 16px 4px 16px;
