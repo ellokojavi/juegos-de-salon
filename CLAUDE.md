@@ -324,6 +324,10 @@ with that the screen also enters the language tests. To see it on a real phone,
   **Every change goes to Labs first** unless the owner says otherwise (D-409), and is listed in `/labs/`:
   the code that asks `labAccess()` names its card (`lab: #<id>`, `public/labs/listed.test.mjs`). The
   owner's decisions answer **Yes, in Labs**, **Yes, and publish** or **No**.
+  What launches for everyone moves its card to La Bodega in the same PR (D-479). The owner sends a
+  feature live from its own card: **🚀 Publicar para todos**, signed in as owner on `/labs/`, which the
+  Mac mini's `lab-publish-watch` job hands to a headless session that opens the PR (D-480,
+  `node tools/agents/lab-publish.mjs list`).
 - **Home page order and lab experiments** (D-361): `node tools/agents/popularity.mjs check | update`
   recounts the home page's order (`POPULARIDAD` in `games.js`) by games finished in the last four
   weeks; the processes round runs `update` once the list is a week old. What is tried on the home
