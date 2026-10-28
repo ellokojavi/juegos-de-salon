@@ -562,6 +562,7 @@ node tools/e2e/scope.test.mjs
 node tools/e2e/since-passed.test.mjs
 node tools/firebase/rankings-history.test.mjs
 node tools/firebase/stats-retention.test.mjs
+node tools/firebase/uad-index.test.mjs
 node tools/firebase/uad-points-backfill.test.mjs
 node tools/firebase/unnoted-rooms.test.mjs
 node tools/jobs/claude-task.test.mjs
