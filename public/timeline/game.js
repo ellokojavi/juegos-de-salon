@@ -29,7 +29,6 @@ import * as uiLinea from '../cup/games/timeline/ui.js';
 import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
 import { codigoAlAzar } from '../cup/code.js';
 import { DECKS, getDeck } from './decks/index.js';
-import { mountFaq } from '../assets/js/faq.js';
 import { GAME_ID, DEFAULT_CONFIG, HAND_SIZES, MIN_PLAYERS, MAX_PLAYERS, VISIBLE, SPREAD_FACTOR, LOCALES } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
 
@@ -986,7 +985,6 @@ function init() {
   initSound();
   sparkles(12);
   renderModes();
-  mountFaq($('#faq-slot'), GAME_ID, T, lang);
   // Las victorias de este juego y entrar con nombre y PIN (D-212); en el laboratorio, solo donde se activaron
   $('#rk-slot')?.append(bloqueVictorias({ juego: GAME_ID, nombre: T.title, alTocar: () => SFX.tap() }));
   renderResumeSlot();
