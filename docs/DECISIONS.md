@@ -124,7 +124,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-66](decisions/D-66.md) | In the room, turn-based play too | current |
 | [D-67](decisions/D-67.md) | The lab goes away: the working tree is served | current |
 | [D-68](decisions/D-68.md) | Cuarto Rey has no configurable variants | current |
-| [D-69](decisions/D-69.md) | Dudo: five dice, wild aces and calzar, but no mandatory round | amended by D-71 |
+| [D-69](decisions/D-69.md) | Dudo: five dice, wild aces and calzar, but no mandatory round | amended by D-71, D-487 |
 | [D-70](decisions/D-70.md) | The dice do not come from the seed | current |
 | [D-71](decisions/D-71.md) | Dudo is said in Chilean, and in a duel there is no calzar | current |
 | [D-72](decisions/D-72.md) | The card shown when sharing a link | amended by D-205 |
