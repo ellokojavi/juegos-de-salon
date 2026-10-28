@@ -1,0 +1,66 @@
+<!doctype html>
+<!--
+  The teaser of 🧱 Stack for the splash (D-351): neon slabs drop one on another, the overhang of each
+  one sliced off and falling; the tower climbs and the view climbs with it, past the clouds and into
+  the stars, each slab thinner than the last. At the top, the last one slides back and forth over a
+  sliver… and stops in the air: how high does it go? The game is never named or shown as a game.
+  marketing/splash/teaser.mjs captures it frame by frame; opened by hand, it plays in a loop.
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Teaser · Stack</title>
+<style>
+  body { margin: 0; background: #14081f; display: grid; place-items: center; min-height: 100vh; }
+  canvas { image-rendering: pixelated; width: 512px; height: 320px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import { W, H, scene, rect, noise, fade, ask } from './_common.js';
+
+const SECONDS = 8;
+// The game's levels go pink, orange, yellow, lime, cyan (game.js, colorDe): the house's neon
+const NEON = ['#ff2e88', '#ff8a3d', '#ffd23f', '#9dff3a', '#2ee6d6', '#7a5cff'];
+const SLAB = 4, CX = 64, N = 16, EVERY = 0.32;   // one slab every EVERY seconds
+// Each slab's span: a seeded miss on alternate sides, the tower thinning as it climbs
+const slabs = [{ x: CX - 20, w: 40 }];
+for (let n = 1; n < N; n++) { const p = slabs[n - 1], miss = Math.max(1, Math.round(noise(n, 9) * 3)) * (n % 2 ? 1 : -1); const x = Math.max(p.x, p.x + miss), r = Math.min(p.x + p.w, p.x + miss + p.w); slabs.push({ x, w: r - x, cut: { x: miss > 0 ? r : p.x + miss, w: Math.abs(miss), side: Math.sign(miss) } }); }
+const T_LAST = 0.6 + (N - 1) * EVERY;   // the last slab lands
+
+function draw(ctx, t) {
+  const placed = Math.max(0, Math.min(N, Math.floor((t - 0.6) / EVERY) + 1));
+  // The view climbs with the tower: the ground leaves, then clouds, then stars
+  const lift = Math.max(0, placed - 9) * SLAB + (placed > 9 && placed < N ? ((t - 0.6) % EVERY) / EVERY * SLAB : 0);
+  const up = Math.min(1, lift / 40);
+  for (let y = 0; y < H; y++) { const k = y / H; const a = [40 - 30 * up, 20 - 12 * up, 70 - 40 * up], b = [255 - 200 * up, 110 - 80 * up, 140 - 60 * up]; rect(ctx, 0, y, W, 1, `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * k)).join(',')})`); }
+  for (let k = 0; k < 30; k++) if (noise(k, 4) < up) rect(ctx, Math.floor(noise(k, 5) * W), Math.floor(noise(k, 6) * H), 1, 1, noise(k, Math.floor(t * 4)) > 0.3 ? '#fff6c8' : '#8f86c4');
+  // Clouds that sink past as it climbs
+  for (let k = 0; k < 3; k++) { const y = 20 + k * 22 + lift * 1.6 - 60; for (let i = 0; i < 4; i++) { ctx.fillStyle = 'rgba(255,210,230,0.18)'; ctx.beginPath(); ctx.arc((k * 47 + i * 6 + 10) % W, y - (i % 2) * 2, 4 + (i % 2) * 2, 0, 7); ctx.fill(); } }
+  const base = H - 6 + lift;   // the ground's line on screen
+  rect(ctx, 0, base, W, 10, '#14081f'); rect(ctx, 0, base, W, 1, '#3d2a6b');
+  const yOf = n => base - (n + 1) * SLAB;
+  const box = (x, y, w, c) => { rect(ctx, x, y, w, SLAB, c); rect(ctx, x, y, w, 1, 'rgba(255,255,255,0.45)'); rect(ctx, x, y + SLAB - 1, w, 1, 'rgba(0,0,0,0.3)'); };
+  for (let n = 0; n < Math.min(placed, N - 1); n++) {
+    box(slabs[n].x, yOf(n), slabs[n].w, NEON[Math.floor(n / 3) % NEON.length]);
+    // The piece sliced off as it landed falls and turns away
+    const cut = slabs[n].cut, k = t - (0.6 + n * EVERY);
+    if (cut && k < 1.2) box(cut.x + cut.side * k * 6, yOf(n) + 30 * k * k, cut.w, NEON[Math.floor(n / 3) % NEON.length]);
+  }
+  // A flash where each slab lands
+  const since = (t - 0.6) % EVERY;
+  if (placed > 0 && placed < N && since < 0.08) { const s = slabs[placed - 1]; rect(ctx, s.x - 1, yOf(placed - 1) - 1, s.w + 2, SLAB + 2, 'rgba(255,255,255,0.5)'); }
+  // The next one sliding in from the side, and at the end the last, swinging over a sliver… and stopped
+  const top = Math.min(placed, N - 1), s = slabs[top], c = NEON[Math.floor(top / 3) % NEON.length];
+  const hold = t > T_LAST + 1.2;
+  const swing = hold ? 0.7 : Math.sin((t - 0.6) / EVERY * Math.PI * 2 - Math.PI / 2);
+  const slide = placed < N - 1 ? (1 - since / EVERY) * (top % 2 ? 30 : -30) : swing * 22;
+  box(s.x + slide, yOf(top) - (placed < N - 1 ? 0 : 4), s.w, c);
+  if (hold) { const k = t - T_LAST - 1.2; ask(ctx, s.x + slide + s.w / 2 - 2, yOf(top) - 16 - (k < 0.12 ? 3 : k < 0.25 ? 1 : 0)); }
+  fade(ctx, t, SECONDS);
+}
+scene({ seconds: SECONDS, draw });
+</script>
+</body>
+</html>

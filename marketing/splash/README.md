@@ -41,4 +41,6 @@ that has not paid, and until then stays unseen. This folder is its memory: every
 |---|---|---|
 | [🎉 `tres-juegos-demo`](campaigns/tres-juegos-demo/) · ¡Tres juegos nuevos! | 2026-10-18 → 2026-10-23 | before D-355 |
 | [🚂 `tren-en-vilo-pronto`](campaigns/tren-en-vilo-pronto/) · Algo nuevo se viene… (teaser) | 2026-10-22 → 2026-10-28 | full pass (D-355) |
+| [🥷 `ninja-pronto`](campaigns/ninja-pronto/) · ¿Llegará al otro lado? (teaser of Stick Ninja) | off, made 2026-10-28 | pending (D-355) |
+| [🧱 `stack-pronto`](campaigns/stack-pronto/) · ¿Hasta dónde llega? (teaser of Stack) | off, made 2026-10-28 | pending (D-355) |
 | [🥂 `brindis-apoyo`](campaigns/brindis-apoyo/) · ¡Un brindis por ti! (support) | off, until support leaves the lab | pending (D-355) |

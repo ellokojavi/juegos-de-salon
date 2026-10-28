@@ -151,6 +151,22 @@ export const CAMPAIGNS = {
       },
     }],
   },
+  // A teaser of 🥷 Stick Ninja, still in the lab: under a full moon a ninja's stick grows and tips
+  // toward the far pillar, and the moon goes dark the instant before it lands. No name, no link
+  'ninja-pronto': {
+    emoji: '🥷',
+    kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve', de: 'Demnächst' },
+    title: { es: '¿Llegará al otro lado?', en: 'Will it reach the other side?', pt: 'Será que chega do outro lado?', de: 'Reicht es bis drüben?' },
+    items: [{ video: 'assets/splash/ninja-teaser.mp4', img: 'assets/splash/ninja-teaser-start.png', still: 'assets/splash/ninja-teaser.png', ratio: '8 / 5' }],
+  },
+  // A teaser of 🧱 Stack, still in the lab: neon slabs pile up and the view climbs past the clouds
+  // into the stars, until the last one stops in the air. No name, no link
+  'stack-pronto': {
+    emoji: '🧱',
+    kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve', de: 'Demnächst' },
+    title: { es: '¿Hasta dónde llega?', en: 'How high can it go?', pt: 'Até onde ela chega?', de: 'Wie hoch geht es?' },
+    items: [{ video: 'assets/splash/stack-teaser.mp4', img: 'assets/splash/stack-teaser-start.png', still: 'assets/splash/stack-teaser.png', ratio: '8 / 5' }],
+  },
   // 🥂 An invitation to support the site, with a laugh: Leonardo DiCaprio raising his glass in
   // The Great Gatsby. The clip is GIPHY's, served from GIPHY (not copied into the site); its button
   // goes straight to Stripe's payment page (support.js's PAYMENT_LINK), so it stays off while support is in the lab
