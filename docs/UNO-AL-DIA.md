@@ -758,7 +758,7 @@ textos los propone el agente de usabilidad y el dueño los corrige en el PR.
   out in the next two decks) and `tools/e2e/daily-variants.mjs` (Loteo and Pintaminas, on the first
   day each is due, looked up in the deck since D-405, play their default variant with no picker, even when the phone remembers the other).
 
-### Uno al día points (D-412, D-414, D-415, D-465)
+### Uno al día points (D-412, D-414, D-415, D-465, D-500)
 
 One number ranks players in a **monthly season** (everyone starts at 0 on the 1st; the table is
 `records/uno-al-dia-pts/s<yyyy>-<mm>/`, so a new month is a new table):
@@ -769,12 +769,20 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
   bonus; without one, the streak and its bonus start over. The phone uploads each day its 🧊 saved as a marker
   (`unoAlDia/<jid>/<n>: { c: true }`, D-415), so the server keeps the streak through it too.
 - **The nightly rebuild** (D-415): `tools/firebase/uad-points-backfill.mjs --rebuild`, run by the
-  `uad-rebuild` workflow at 08:23 UTC, recomputes each player's month from the history and the
+  `uad-rebuild` workflow every hour at :23 (nightly until D-500), recomputes each player's month from the history and the
   markers and corrects a total that differs. The server spends the 🧊 it can see (7 days in a row,
   invited friends) and lends 2 more, once, for marked days it can't back. A played day earns points
   only if its result reached the server near its date (`onTime` in `daily-points.js`, the rules' window below, D-465); a
   day uploaded later still keeps the streak. /today/'s calendar shows such a day as 0 points with a
   note (`lateDays` from `sincronizar`, passed to `walk` as `late`, #879), so the days add up to the total.
+- **The totals from the server, hourly** (D-500, in the lab: flag `uad-night-totals`, card
+  `#seccion-uad-night-totals`): with the flag on, the phone writes only raw events (history, day's
+  row, 🧊 markers, acceptances); the month's points, the +10 per friend, the week's sum and the best
+  streak are written only by the rebuild, which then runs every hour (`23 * * * *`) and counts every
+  friend who accepted in the month. /today/ adds to the rebuild's row this phone's days after its
+  last counted day `u` (`conMiCuenta`), so today's points show at once; other players' reach the
+  ranking within the hour. When it launches, a later PR removes the phone's writers and tightens
+  the rules so only the administrator writes those totals.
 - **No jump on /today/:** signed in, the first drawing shows the last total the ranking gave this phone
   (`uad-pts-cache`), then the fresh one.
 - **On the home page:** once today is played, the 📅 card's chip shows the month's place big and the
