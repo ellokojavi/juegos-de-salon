@@ -669,7 +669,8 @@ function renderPlay(v) {
     ? fmt(T.sunkShip, { ship: T.ships[hundiendo.shot.ship], name: M.names[enemy] })
     : fmt(T.sunkMine, { ship: T.ships[hundiendo.shot.ship] }));
   else if (v.phase !== 'play') setStatus('theirs', '⏳', '…', T.waitingReply);
-  else if (myTurn && v.salvo) setStatus('mine', '🎯', T.turnYou, v.pending ? T.waitingReply : fmt(T.salvoSub, { n: v.salvo.left }));
+  // Salvo: the volley's size, singular for the last cell ("Marca 1 casilla")
+  else if (myTurn && v.salvo) setStatus('mine', '🎯', T.turnYou, v.pending ? T.waitingReply : (v.salvo.left === 1 ? T.salvoSubOne : fmt(T.salvoSub, { n: v.salvo.left })));
   else if (myTurn) setStatus('mine', '🎯', T.turnYou, lastMine && lastMine.result !== 'agua' && M.config.extraShot
     ? fmt(T.extraGo, { result: T[lastMine.result] })
     : (v.pending ? T.waitingReply : fmt(T.turnYouSub, { name: M.names[enemy] })));
