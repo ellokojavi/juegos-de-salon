@@ -1,5 +1,5 @@
 {
-  "version": "0.229.18",
+  "version": "0.229.19",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1534,6 +1534,10 @@
   ],
   "documents": [
     {
+      "path": "docs/AGENTS.md",
+      "title": "The owner's agents and tools"
+    },
+    {
       "path": "docs/AGREGAR-JUEGO.md",
       "title": "Cómo agregar un juego nuevo"
     },
@@ -1548,6 +1552,10 @@
     {
       "path": "docs/DECISIONS.md",
       "title": "Decisions"
+    },
+    {
+      "path": "docs/MERGING.md",
+      "title": "Merging and publishing"
     },
     {
       "path": "docs/PANEL.md",
@@ -1572,6 +1580,10 @@
     {
       "path": "docs/SEASONS.md",
       "title": "Seasonal templates (D-457)"
+    },
+    {
+      "path": "docs/SESSIONS.md",
+      "title": "Working in parallel sessions"
     },
     {
       "path": "docs/TEST-SCOPE.md",

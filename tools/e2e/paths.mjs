@@ -693,3 +693,8 @@ PATHS.copa['home-card-tyf'] = [`location.href='/?test'`, `1`, `1`, `[...document
 PATHS.copa['records'] = [`location.href='/records/'`, `1`, `1`, `1`];
 // The privacy page (D-463), linked from the home page footer and the email note of every feedback form
 PATHS.copa['privacy'] = [`location.href='/privacy/'`, `1`, `1`, `1`];
+
+// The cover's «Cómo se juega», opened (collapsed by default, U-39)
+for (const g of ['ahorcado', 'batalla-naval', 'toque-y-fama']) {
+  if (PATHS[g]) PATHS[g]['intro-rules'] = [`document.querySelector('details.panel').open=true; document.querySelector('details.panel').scrollIntoView({block:'start'}); 1`, `1`];
+}
