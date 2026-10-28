@@ -568,6 +568,8 @@ export const PATHS = {
   panel: {
     ...Object.fromEntries([['data', '/users'], ['now', '/now'], ['summary', '/summary'], ['timeline', '/timeline'], ['tournament', '/cup'], ['games', '/group'], ['group', '/group'], ['individual', '/individual'], ['daily', '/daily'], ['users', '/users'], ['audience', '/users'],
       ['cup-card', '/cup/OFICI'], ['game-card', '/game/liars-dice'], ['room-card', '/room/CPSV'], ['traffic', '/traffic'], ['health', '/health'], ['campaigns', '/campaigns']].map(([shot, view]) => [shot, [SEED_PANEL(view)]])),
+    // 📣 Campaigns' other two tabs (D-477)
+    ...Object.fromEntries([['campaigns-features', 1], ['campaigns-skins', 2]].map(([shot, i]) => [shot, [SEED_PANEL('/campaigns'), `document.querySelectorAll('.campanas-tabs button')[${i}].click()`]])),
     // The other two tabs of a cup's card (D-207)
     'cup-days': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
     'cup-history': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],

@@ -273,6 +273,14 @@ players. The support agent turns each email into a `feedback/` report with
 only the owner's UID writes it, from the panel's 📣 Campaigns section. Ids match `[a-z0-9-]{1,40}`
 and any other field is rejected. While the node is empty, the home page uses `ACTIVE`.
 
+## Skins and site features (`controls`, D-477)
+
+`controls/skins/<id>` = `{ mode: 'yearly'|'dates'|'off', from?, until?, at }` and
+`controls/features/<id>` = `{ <part>: bool, at }` (☕: `support: { footer, endings }`): the panel's
+📣 Campaigns → 🎨 Skins and 🧩 Site features. Public read (the home page reads `controls.json` once per
+visit and keeps a copy on the device, `public/assets/js/controls.js`); only the owner's UID writes it.
+Empty, the site is as the code says. Checked by `firebase/controls.test.mjs`.
+
 ## The trash bin (`cleanup`)
 
 Nobody deletes their room when they finish playing, so the same phones that play do the cleanup

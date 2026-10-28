@@ -1365,6 +1365,44 @@
           ".validate": false
         }
       }
+    },
+    "controls": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "skins": {
+        "$id": {
+          ".validate": "$id.matches(/^[a-z0-9-]{1,40}$/) && newData.hasChild('mode')",
+          "mode": {
+            ".validate": "newData.isString() && newData.val().matches(/^(yearly|dates|off)$/)"
+          },
+          "from": {
+            ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)"
+          },
+          "until": {
+            ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)"
+          },
+          "at": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "features": {
+        "$id": {
+          ".validate": "$id.matches(/^[a-z0-9-]{1,40}$/)",
+          "at": {
+            ".validate": "newData.isNumber()"
+          },
+          "$part": {
+            ".validate": "$part.matches(/^[a-z0-9-]{1,40}$/) && newData.isBoolean()"
+          }
+        }
+      },
+      "$other": {
+        ".validate": false
+      }
     }
   }
 }
