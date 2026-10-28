@@ -4,7 +4,8 @@
 # First the tests (tests.yml) and the end-to-end tests (e2e.yml, D-302) run: with one red, the
 # published site does not change. The end-to-end run is not repeated if the tree being published
 # already passed it in a PR, or if it only changes what doesn't reach the browser on top of a tree
-# that passed it (D-308). The version is the CHANGELOG's plus the changelog/ entries not yet
+# that passed it (D-308). A merge whose PR head passed its own run runs smoke.mjs plus the scripts
+# the merge's diff reaches, not the whole suite (D-496). The version is the CHANGELOG's plus the changelog/ entries not yet
 # collected, in the order they reached main (D-300).
 #
 # Requires, once, Settings → Pages → Source: "GitHub Actions" (not "Deploy from a branch").
@@ -42,6 +43,7 @@ jobs:
       actions: read
     outputs:
       tested: ${{ steps.check.outputs.tested }}
+      base: ${{ steps.check.outputs.base }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,12 +65,14 @@ jobs:
           path: ${{ runner.temp }}/mark
           retention-days: 7
 
-  # All the end-to-end tests, on what is about to be published (D-302), unless they already passed
-  # on this same tree (D-308). If they fail twice, its `notify` job opens the "main is red" issue.
+  # The end-to-end tests, on what is about to be published (D-302), unless they already passed on
+  # this same tree (D-308); only smoke plus what the merge reaches when its PR passed (D-496). If they fail twice, its `notify` job opens the "main is red" issue.
   e2e:
     needs: already-tested
     if: ${{ !cancelled() && needs.already-tested.outputs.tested != 'true' }}
     uses: ./.github/workflows/e2e.yml
+    with:
+      base: ${{ needs.already-tested.outputs.base }}
     # A called workflow gets at most what the caller grants: end-to-end asks for checks and
     # pull-requests for its PR comment (D-323), which doesn't run here
     permissions:

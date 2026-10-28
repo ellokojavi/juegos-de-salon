@@ -61,10 +61,11 @@ What each agent (`.claude/agents/`) and owner tool does, and the command it runs
   The label: initials or a nickname. **It works at once**: no PR, no tests, no publish. **Asking for a
   key is asking for it to work** (D-284, the owner's request): the session creates it and delivers the link.
 - **Everything in development sits behind the lab** (D-395, the owner's rule): lab games under `/labs/`, and
-  anything tried on a page players visit turns on only for a lab key holder (`labAccess()`,
-  `public/assets/js/lab-access.js`). It goes to production for everyone only once validated in the lab.
+  anything tried on a page players visit turns on only for a lab key holder: it asks its runtime
+  flag, `flag('<id>')` (`public/assets/js/flags.js`, D-498), *lab* until the owner flips Firebase
+  `flags/<id>` to *all* (📣 Campaigns → 🚩 Lab flags, or 🚀 on its card), with no PR; previews keep `labAccess()`. It goes to production for everyone only once validated in the lab.
   **Every change goes to Labs first** unless the owner says otherwise (D-409), and is listed in `/labs/`:
-  the code that asks `labAccess()` names its card (`lab: #<id>`, `public/labs/listed.test.mjs`). The
+  the code that asks `flag()` or `labAccess()` names its card (`lab: #<id>`, `public/labs/listed.test.mjs`). The
   owner's decisions answer **Yes, in Labs**, **Yes, and publish** or **No**.
   What launches for everyone moves its card to La Bodega in the same PR (D-479). The owner sends a
   feature live from its own card: **🚀 Publicar para todos**, signed in as owner on `/labs/`, which the

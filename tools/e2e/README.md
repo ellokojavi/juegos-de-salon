@@ -106,18 +106,21 @@ game (`cup-games/languages.mjs:year`) runs only with that game. **When in doubt,
 a file in `public/` that no page loads (`sw.js`, an image fetched at run time), `tools/e2e/`'s shared
 code, `e2e.yml`, a tool a script imports, a file at the root, or a script that builds routes without
 naming them. A changed script always runs itself. `node tools/e2e/ci.mjs --list --changes <file>`
-shows what a list of files would run. A push to `main` (`publish.yml`) still runs everything unless
-that tree already passed (D-308).
+shows what a list of files would run. A push to `main` (`publish.yml`) skips it if that tree already
+passed (D-308), runs `smoke.mjs` plus what the merge reaches if the merged PR's head passed (D-496), and
+everything otherwise.
 
 A script that fails is repeated **once**, right away, inside its group (`CI_RETRIES=1`, D-299).
 If it passes on the second attempt, it stays green with a ⚠️ **Flaky** notice that names it, and the
 screenshots of the first attempt stay in the artifact: you have to look at why it sometimes fails, not take it
 as good. If it fails twice, the group goes red, with a notice that names the script.
 
-**On publishing** (D-302, D-308): each run that passes with scripts leaves a mark, the artifact
+**On publishing** (D-302, D-308, D-496): each run that passes with scripts leaves a mark, the artifact
 `e2e-tree-<tree>`, with the tree it tested (on a PR, the test merge with main). `publish.yml`
 runs [`already-tested.mjs`](already-tested.mjs): if the tree it is about to publish already has a mark, or only
-changes what doesn't reach the browser over a parent that has one, it doesn't repeat the end-to-end run. Otherwise,
+changes what doesn't reach the browser over a parent that has one, it doesn't repeat the end-to-end run. If it is a
+merge whose PR head passed its own run (`e2e-head-<sha>`), it runs `smoke.mjs` plus the scripts the merge's diff
+(`git diff HEAD^1 HEAD`) reaches, leaves no tree mark and closes no issue. Otherwise,
 it runs it whole (when it doesn't repeat it is tested by `node tools/e2e/already-tested.test.mjs`), and if it comes out
 red it doesn't publish and the `notify` job opens a "main is red:
 end-to-end" issue; when `main` is green again, `close-notice` closes it with the link to the run (D-273).
@@ -331,7 +334,7 @@ Spanish one. The expected texts come from the dictionaries, they aren't written 
 one phone signs in with its player and opens a cup where it is seated; another phone, which never saw it,
 signs in with the same player, finds it on the home page and enters it with no cup PIN (D-359).
 Last (D-358), a phone with no player sits in a cup with the usual name and PIN, enters as the player,
-and the podium saved without them gets their jid. Then, signed in, joining a new cup asks no cup PIN
+and the podium seeded without them (the nightly job writes podiums, D-499) gets their jid. Then, signed in, joining a new cup asks no cup PIN
 and links the player (D-359). Last (D-416), that phone loses its anonymous session: Empezar leads to
 "Ya estoy inscrito", which says the player's session was lost too and asks for the player's PIN; a
 wrong one is refused, switching names keeps the field, and the right one seats the phone as the
