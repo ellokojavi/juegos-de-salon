@@ -28,13 +28,7 @@ import {
 } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES, TURN_SECS } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
-import { flag } from '../assets/js/flags.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
-
-// Traditional rules (no opening in aces, the obligada round, #897) are offered only to lab key
-// holders until the owner flips their flag (D-395, D-498). lab: #seccion-dudo-tradicional
-let LAB = false;
-flag('dudo-tradicional').then(v => { LAB = v; }, () => {});
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -519,10 +513,8 @@ function renderActions(v, yo, miTurno, tapados = false) {
     // the table: that is a different reason, so it gets its own one-time line that says why (playtest)
     const porUno = v.canCalzar && v.st[v.current]?.dice === 1 && v.bid.n * 2 < v.totalDice;
     const visto = porUno ? `${v.current}:1` : v.current;
-    // lab: #seccion-dudo-tradicional (to everyone once the owner validates it, D-409)
-    // A guest without a lab key in a room whose host chose the classic rules plays them, so it gets
-    // their explanations too (rooms playtest)
-    if ((LAB || M.config.traditional) && v.canCalzar && (!S.calzarVisto.has(visto) || S.calzarAviso === aviso)) {
+    // The one-time calzar line is for everyone, with or without the classic rules (D-490, launched D-495)
+    if (v.canCalzar && (!S.calzarVisto.has(visto) || S.calzarAviso === aviso)) {
       S.calzarVisto.add(visto); S.calzarAviso = aviso;
       acciones.append(el('p', { class: 'calzar-hint' + (porUno ? ' one-die' : '') }, '🎯 ', fmt(porUno ? T.calzarOneDie : T.calzarFirst, { n: v.bid.n, pinta: pintaName(v.bid.n, v.bid.p) })));
     }
@@ -1129,7 +1121,7 @@ function renderLobby() {
     shareButton(url),
     // The table's rules, for whoever joins (rooms playtest): a guest learnt the room played the
     // classic rules only when the ace would not open. Lab: #seccion-dudo-tradicional, set by the host
-    ...(M.config.traditional ? [el('p', { class: 'hint lobby-rules' }, el('b', {}, `🧪 ${T.traditionalLabel}`), ' · ', T.traditionalHint,
+    ...(M.config.traditional ? [el('p', { class: 'hint lobby-rules' }, el('b', {}, `📜 ${T.traditionalLabel}`), ' · ', T.traditionalHint,
       ...[M.config.pasar && T.pasarLabel, M.config.siciliana && T.sicilianaLabel].filter(Boolean).map(x => el('span', {}, ' · ', el('b', {}, x))))] : []),
     el('p', { class: 'lead', style: 'margin:12px 0 4px' }, `${T.lobbyPlayers} (${entraron.length}/${MAX_PLAYERS})`),
     el('div', { class: 'lobby-players' }, ...entraron.map(r => el('span', {
@@ -1256,7 +1248,6 @@ function ajustesDelCacho() {
         interruptor(shake, T.shakeLabel, T.shakeHint, v => { shake = v; }),
         interruptor(reloj, fmt(T.timerLabel, { n: TURN_SECS }), T.timerHint, v => { reloj = v; }),
       ];
-      if (!LAB) return base;
       // The regional variants (D-490) live in one folded row that shows only with the classic
       // rules on, so the setup stays calm; each one off by default.
       const fila = el('details', { class: 'variants' },
@@ -1265,10 +1256,9 @@ function ajustesDelCacho() {
         interruptor(siciliana, T.sicilianaLabel, T.sicilianaHint, v => { siciliana = v; }),
       );
       fila.hidden = !traditional;
-      // lab: #seccion-dudo-tradicional
-      return [...base, interruptor(traditional, `🧪 ${T.traditionalLabel}`, T.traditionalHint, v => { traditional = v; fila.hidden = !v; }), fila];
+      return [...base, interruptor(traditional, `📜 ${T.traditionalLabel}`, T.traditionalHint, v => { traditional = v; fila.hidden = !v; }), fila];
     },
-    config: () => ({ shake, turnSecs: reloj ? TURN_SECS : 0, ...(LAB && traditional ? { traditional: true, pasar, siciliana } : {}) }),
+    config: () => ({ shake, turnSecs: reloj ? TURN_SECS : 0, ...(traditional ? { traditional: true, pasar, siciliana } : {}) }),
   };
 }
 
@@ -1291,8 +1281,8 @@ function renderModes() {
 function renderRules() {
   const list = $('#rules-list');
   list.innerHTML = '';
-  // The setup's two switches (D-447) go before the last rule, except in Uno al día, which plays with neither
-  const reglas = HOY ? T.rules : [...T.rules.slice(0, -1), T.ruleShake, fmt(T.ruleClock, { n: TURN_SECS }), T.rules.at(-1)];
+  // The setup's switches (D-447, D-495) go before the last rule, except in Uno al día, which plays with neither
+  const reglas = HOY ? T.rules : [...T.rules.slice(0, -1), T.ruleShake, fmt(T.ruleClock, { n: TURN_SECS }), `<b>${T.traditionalLabel}</b>: ${T.traditionalHint[0].toLowerCase()}${T.traditionalHint.slice(1)}`, T.rules.at(-1)];
   reglas.forEach(r => list.append(el('li', { html: r })));
 }
 

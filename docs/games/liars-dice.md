@@ -37,12 +37,12 @@ ilegal**, cuenta al instante —que es justo lo que se discute a gritos— y lle
 
 **The obligada round** (when someone is down to one die, that round is played without wild aces
 and without changing pinta) is not in the public game (D-69): it shows up late in a game and has to
-be explained just when the game has been understood. It is being tried in the lab, below (D-487).
+be explained just when the game has been understood. It is now an opt-in switch, below (D-487, D-495).
 
-### Traditional rules, in the lab (D-487, #897)
+### Classic rules, for everyone (D-487, D-490, D-495, #897)
 
-A setup switch, **🧪 Classic rules** (`config.traditional`), off by default and shown only to
-lab key holders while its flag `dudo-tradicional` is `lab` (`flag()`, D-498; card `#seccion-dudo-tradicional` in `/labs/`). With it on:
+A setup switch, **📜 Classic rules** (`config.traditional`), off by default, in every mode and for
+every player since D-495 (built in the lab, card `#seccion-dudo-tradicional`, now in La Bodega). With it on:
 
 - **Nobody opens a round in aces.** Going to aces later, at half, is still allowed.
 - **The obligada round.** The first time a player is down to one die, the round they open is
@@ -75,7 +75,7 @@ takes the same `rules`. The audit against the traditional rules is in #897.
   all different, all equal or a full house: pass once per round; the next player may doubt the
   pass and only that hand is judged, so the reveal shows just that hand, with no count, and a room's header reads "X dudó del paso de Y"; a bluffed pass is allowed; a pass is a play like a bid) and **Dudar a la siciliana**
   (doubting the game's first bid is worth two dice). Picado and juego sucio are not built (#897).
-- **The rules say why** (playtest, still lab-only): a face closed by a rule (`.pinta.closed`, kept
+- **The rules say why** (playtest): a face closed by a rule (`.pinta.closed`, kept
   tappable with `aria-disabled`) puts one muted line under the faces (`.face-why`: no opening in aces,
   or the obligada round's fixed face with its one-die exception), which pulses when the face is tapped;
   the calzar line has its own one-time version when it opened because you have one die
@@ -100,8 +100,9 @@ Tested end to end by `tools/e2e/liars-dice/classic.mjs`.
 room's config (`config.traditional`, `config.pasar`, `config.siciliana`), which the Firebase rules
 validate like the other config keys; before that, a room with the classic rules could not open
 (permission denied, also on rematch). The lobby names the table's rules and its variants
-(`.lobby-rules`) so a guest knows before the ace will not open; a guest without a lab key plays the
-host's rules and gets their explanations too (the calzar line keys on `LAB || config.traditional`);
+(`.lobby-rules`) so a guest knows before the ace will not open; a guest plays the
+host's rules and gets their explanations too; the one-time calzar line shows to everyone, with or without
+the classic rules (D-495);
 in the obligada round your own strip shows one ❓ per die you hold. The playtest is
 `tools/e2e/liars-dice/rooms-classic.mjs`: it opens rooms in the production Firebase, so it is in
 `ALSO_FIREBASE` and CI does not run it.

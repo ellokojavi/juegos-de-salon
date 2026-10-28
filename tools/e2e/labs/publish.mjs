@@ -36,11 +36,12 @@ ok(await ev(`/Es inmediato/.test(document.querySelector('.hoja').textContent) &&
 ok(await ev(`/La Copa/.test(document.getElementById('publicar-titulo').nextElementSibling.textContent)`), 'and names the feature');
 await b.shot('ask-flag');
 await ev(`[...document.querySelectorAll('.hoja button')].find(x => /Cancelar/.test(x.textContent)).click(), 1`);
-await ev(`__pub.render({}, { 'copa-crear': { state: 'all', at: ${Date.now()} }, 'dudo-tradicional': { state: 'off', at: 1 } }), 1`); await sleep(200);
+await ev(`__pub.render({}, { 'copa-crear': { state: 'all', at: ${Date.now()} } }), 1`); await sleep(200);
 ok(/Publicado para todos/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado')?.textContent || ''`))
   && /Volver al laboratorio/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado button')?.textContent || ''`)), 'flag all: live, with ↩️ Volver al laboratorio');
-ok(/Apagado/.test(await ev(`document.querySelector('#seccion-dudo-tradicional .publicar-estado')?.textContent || ''`)), 'flag off: says so');
 await ev(`document.querySelector('#seccion-copa-crear').scrollIntoView(), 1`); await b.shot('flag-all');
+await ev(`__pub.render({}, { 'copa-crear': { state: 'off', at: 1 } }), 1`); await sleep(200);
+ok(/Apagado/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado')?.textContent || ''`)), 'flag off: says so');
 await ev(`__pub.render({}, {}), 1`);
 
 const ids = await ev(`[...document.querySelectorAll('#activos > .seccion, #mejoras > .seccion')].map(c => c.id).filter(id => !__pub.flagOf(id))`);
