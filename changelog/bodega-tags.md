@@ -1,0 +1,1 @@
+- Labs: La Bodega shows all its launched improvements again. One card had lost its closing tags and folded the 28 cards after it inside itself; `public/labs/bodega.test.mjs` now checks that the page's tags close.
