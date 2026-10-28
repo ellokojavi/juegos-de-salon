@@ -1,5 +1,5 @@
 {
-  "version": "0.229.19",
+  "version": "0.231.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1066,6 +1066,7 @@
     "public/assets/js/favoritos.js",
     "public/assets/js/fin.js",
     "public/assets/js/firebase-config.js",
+    "public/assets/js/flags.js",
     "public/assets/js/frases.js",
     "public/assets/js/games.js",
     "public/assets/js/handoff.js",
@@ -1270,6 +1271,7 @@
   ],
   "tests": [
     "firebase/controls.test.mjs",
+    "firebase/flags.test.mjs",
     "firebase/labs-publish.test.mjs",
     "firebase/pin-attempts.test.mjs",
     "firebase/room-limits.test.mjs",
@@ -1287,6 +1289,7 @@
     "public/assets/js/daily-recap.test.mjs",
     "public/assets/js/favoritos.test.mjs",
     "public/assets/js/fin.test.mjs",
+    "public/assets/js/flags.test.mjs",
     "public/assets/js/games.test.mjs",
     "public/assets/js/home-windows.test.mjs",
     "public/assets/js/how-to-play-facts.test.mjs",
