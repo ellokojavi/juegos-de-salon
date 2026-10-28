@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "4c89dbb",
+  "checkedUpTo": "dae3ca8",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -233,6 +233,11 @@
           "date": "2026-10-21",
           "what": "Documentation round 2026-10-21 (#608) pushed twice again: the PR link commit went after opening the PR",
           "commit": null
+        },
+        {
+          "date": "2026-10-28",
+          "what": "Documentation round 2026-10-28 pushed twice to add its PR link (#939)",
+          "commit": null
         }
       ],
       "mechanism": null
@@ -316,6 +321,18 @@
         "what": "decide refuses a Yes with no actions, or a nothing Yes whose text says it queues or builds",
         "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/611"
       }
+    },
+    {
+      "key": "plots-finish-count",
+      "what": "Ideas check: solo Plots shows 32 starts, 2 finished, while the home count gives it 52 finished; finish reporting may be broken",
+      "seen": [
+        {
+          "date": "2026-10-28",
+          "what": "Ideas check: solo Plots shows 32 starts, 2 finished, while the home count gives it 52 finished; finish reporting may be broken",
+          "commit": null
+        }
+      ],
+      "mechanism": null
     }
   ],
   "mechanisms": [
@@ -394,16 +411,16 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-27",
-      "to": "4c89dbb"
+      "date": "2026-10-28",
+      "to": "dae3ca8"
     },
     "usability": {
-      "date": "2026-10-27",
-      "to": "4c89dbb"
+      "date": "2026-10-28",
+      "to": "dae3ca8"
     },
     "ideas": {
-      "date": "2026-10-21",
-      "to": "b75fac6"
+      "date": "2026-10-28",
+      "to": "dae3ca8"
     }
   },
   "rounds": [
@@ -494,6 +511,14 @@
       "issue": null,
       "pr": null,
       "note": "Dispatched documentation (#829) and usability (#831, dilemma #830); 46 changelog entries collected; #780:1 already done by #785"
+    },
+    {
+      "date": "2026-10-28",
+      "from": "4c89dbb",
+      "to": "dae3ca8",
+      "issue": null,
+      "pr": null,
+      "note": "Dispatched all three; collected 55 changelog entries"
     }
   ],
   "ownerDecisions": [
