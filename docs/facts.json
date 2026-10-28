@@ -1,5 +1,5 @@
 {
-  "version": "0.222.16",
+  "version": "0.222.17",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1324,6 +1324,7 @@
     "public/generala/engine.test.mjs",
     "public/hangman/engine.test.mjs",
     "public/home-preload.test.mjs",
+    "public/labs/bodega.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
