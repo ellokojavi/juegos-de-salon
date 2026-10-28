@@ -37,7 +37,7 @@ ok(await ev(`document.getElementById('btn-caso')?.getAttribute('href')`) === 'ca
 // Two groups (D-280): Active projects and La Bodega, where El caso ended up
 ok(await ev(`!!document.querySelector('#bodega #seccion-caso') && !document.querySelector('#activos #seccion-caso')`), 'El caso is in La Bodega, not in Active projects');
 // La Bodega comes folded to the title (owner's request): one tap opens it and shows its button
-ok(await ev(`[...document.querySelectorAll('#bodega details')].every(d => !d.open) && !document.getElementById('btn-caso').checkVisibility()`), 'La Bodega comes folded: only the titles');
+ok(await ev(`[...document.querySelectorAll('#bodega .seccion > details')].every(d => !d.open) && !document.getElementById('btn-caso').checkVisibility()`), 'La Bodega comes folded: only the titles');
 ok(await ev(`[...document.querySelectorAll('#activos .seccion')].every(x => !x.querySelector('details'))`), 'the active projects come open');
 await ev(`document.querySelector('#seccion-caso summary').click(); 1`); await sleep(100);
 ok(await ev(`document.querySelector('#seccion-caso details').open && document.getElementById('btn-caso').checkVisibility()`), 'one tap on the title opens it and shows Jugar');
