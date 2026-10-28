@@ -918,7 +918,7 @@ const EN = {
         'Guess a secret number with 4 different digits in 10 guesses. It can start with zero.',
         'Type 4 different digits and tap Guess. We tell you how many are in the right spot (bulls) and how many are in the wrong spot (cows).',
       ],
-      puntaje: 'Getting it on the first try is 100 points and each guess after the first takes off 10. If you don\'t crack it, it\'s 0 points.',
+      puntaje: 'You start with 100 points. Each guess the clues had already ruled out takes off 15; the minimum is 10. If you don\'t crack it, it\'s 0 points.',
       desempate: 'On a tie, the faster player wins.',
     },
     conexiones: {
@@ -1762,7 +1762,7 @@ const PT = {
         'Adivinhe em 10 tentativas um número secreto de 4 algarismos diferentes. Ele pode começar com zero.',
         'Escreva 4 algarismos diferentes e toque em Tentar. A gente diz quantos estão no lugar certo (famas) e quantos em outro lugar (toques).',
       ],
-      puntaje: 'Na primeira tentativa são 100 pontos e cada tentativa depois da primeira tira 10. Se não acertar, são 0 pontos.',
+      puntaje: 'Você começa com 100 pontos. Cada tentativa que as pistas já descartavam tira 15; o mínimo é 10. Se não acertar, são 0 pontos.',
       desempate: 'Se empatar, ganha quem levou menos tempo.',
     },
     conexiones: {
@@ -2606,7 +2606,7 @@ const DE = {
         'Errate in 10 Versuchen eine geheime Zahl aus 4 verschiedenen Ziffern. Sie kann mit einer Null beginnen.',
         'Gib 4 verschiedene Ziffern ein und tippe auf Raten. Wir sagen dir, wie viele an der richtigen Stelle stehen (Bullen) und wie viele an einer anderen (Kühe).',
       ],
-      puntaje: 'Beim ersten Versuch gibt es 100 Punkte, jeder weitere Versuch kostet 10. Knackst du sie nicht, gibt es 0 Punkte.',
+      puntaje: 'Du startest mit 100 Punkten. Jeder Versuch, den die Hinweise schon ausgeschlossen hatten, kostet 15; das Minimum ist 10. Knackst du sie nicht, gibt es 0 Punkte.',
       desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
     },
     conexiones: {
