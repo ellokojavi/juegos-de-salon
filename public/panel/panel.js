@@ -1786,8 +1786,11 @@ function vistaSplash(today) {
           el('button', { type: 'button', class: 'icono-btn', disabled: i === 0, 'aria-label': 'Move up', onClick: () => guardarCampanas(move(rows, s.id, -1)) }, '↑'),
           el('span', { class: 'campana-pos' }, `${i + 1} of ${rows.length}`),
           el('button', { type: 'button', class: 'icono-btn', disabled: i === rows.length - 1, 'aria-label': 'Move down', onClick: () => guardarCampanas(move(rows, s.id, 1)) }, '↓')),
-        el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, '👁 Preview')),
-      vistazo(s.id, nombre));
+        el('span', { class: 'campana-vistas' },
+          el('button', { type: 'button', class: 'campana-preview vistazo-btn', 'aria-expanded': S.campPeek.has(s.id) ? 'true' : 'false',
+            onClick: () => { S.campPeek.has(s.id) ? S.campPeek.delete(s.id) : S.campPeek.add(s.id); render(); } }, 'Quick look 👀'),
+          el('a', { class: 'campana-preview', href: `../?splash=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, 'Live Preview 🔎'))),
+      S.campPeek.has(s.id) ? vistazo(s.id, nombre) : null);
   });
 
   return [
@@ -1797,16 +1800,11 @@ function vistaSplash(today) {
 }
 
 /* A quick look at a splash without leaving the panel: the real home page with that campaign forced
-   (`?splash=`, which records nothing), drawn at phone size and shrunk. The frame loads only when opened,
-   and stays open across re-renders for this visit */
+   (`?splash=`, which records nothing), drawn at phone size and shrunk. Opened by Quick look 👀 in the card's footer;
+   it stays open across re-renders for this visit */
 function vistazo(id, nombre) {
-  const marco = () => el('div', { class: 'vistazo-marco' },
-    el('iframe', { src: `../?splash=${encodeURIComponent(id)}`, title: `${nombre}: splash preview`, loading: 'lazy', tabindex: '-1' }));
-  const abierto = S.campPeek.has(id);
-  const d = el('details', { class: 'vistazo', open: abierto, onToggle: () => {
-    if (d.open) { S.campPeek.add(id); if (!d.querySelector('iframe')) d.append(marco()); } else { S.campPeek.delete(id); d.querySelector('.vistazo-marco')?.remove(); }
-  } }, el('summary', {}, 'Quick look'), abierto ? marco() : null);
-  return d;
+  return el('div', { class: 'vistazo-marco' },
+    el('iframe', { src: `../?splash=${encodeURIComponent(id)}`, title: `${nombre}: splash preview`, tabindex: '-1' }));
 }
 
 /* 🧩 Site features and 🎨 skins (D-477): `controls/`, read by the site through assets/js/controls.js */
@@ -1845,7 +1843,7 @@ function vistaFunciones() {
       ...f.parts.map(([p, label, nota]) => el('div', { class: 'control-parte' },
         el('div', {}, el('strong', {}, label), el('p', { class: 'muted small' }, nota)),
         interruptor(on(p), `${label} on`, v => cambiar(p, v)))),
-      el('footer', { class: 'campana-pie' }, el('span'), el('a', { class: 'campana-preview', href: f.lab, target: '_blank', rel: 'noopener' }, '👁 Preview')));
+      el('footer', { class: 'campana-pie' }, el('span'), el('a', { class: 'campana-preview', href: f.lab, target: '_blank', rel: 'noopener' }, 'Live Preview 🔎')));
   });
   return [el('p', { class: 'muted small' }, 'Permanent parts of the site: switch each place they show on or off. How they did is below.'),
     msgControles(), ...tarjetas, bloqueApoyo()];
@@ -1881,7 +1879,7 @@ function vistaSkins(today) {
       el('div', { class: 'campana-segmento', role: 'group', 'aria-label': 'When' },
         ...MODO_SKIN.map(([m, l]) => el('button', { type: 'button', 'aria-pressed': String(s.mode === m), onClick: () => elegir(m) }, l))),
       s.mode === 'dates' ? el('div', { class: 'campana-dias' }, dia('from', 'Starts', 'Today'), el('span', { class: 'campana-flecha', 'aria-hidden': 'true' }, '→'), dia('until', 'Ends', 'Never')) : null,
-      el('footer', { class: 'campana-pie' }, el('span'), el('a', { class: 'campana-preview', href: `../?season=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, '👁 Preview')));
+      el('footer', { class: 'campana-pie' }, el('span'), el('a', { class: 'campana-preview', href: `../?season=${encodeURIComponent(s.id)}`, target: '_blank', rel: 'noopener' }, 'Live Preview 🔎')));
   });
   return [el('p', { class: 'muted small' }, 'The home page dressed for a date (D-457), never the games. Each skin comes on by its own days every year; move it or switch it off here. New ones: ask Claude.'),
     msgControles(), ...tarjetas];
