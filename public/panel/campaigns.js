@@ -178,7 +178,7 @@ export function supportStats(days, { from, to }) {
 }
 
 /**
- * 🎨 Skins (D-477): each seasonal template (season/templates.js) with the panel's control
+ * 🎨 Site skins (D-477): each seasonal template (season/templates.js) with the panel's control
  * `controls/skins/<id>`: { mode, from, until } and where it stands today. `days` is the run that
  * matters now (the current one, else the next), as 'YYYY-MM-DD', or null if it never comes back.
  * yearly: its own 'MM-DD' days, every year (a run may cross New Year); dates: only from…until.
