@@ -20,7 +20,7 @@ export const TEXTS = {
     one: 'Un jugador, {duration} minutos.',
     free: 'Gratis, sin instalar nada y sin cuenta.',
     or: ' o ',
-    local: 'todos en un celular que se van pasando',
+    local: 'todos en un mismo celular',
     online: 'cada uno en su celular',
     alone: 'solo contra el celular',
   },
