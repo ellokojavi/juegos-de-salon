@@ -2820,6 +2820,11 @@ function pieComentario(extra) {
   let pie = document.getElementById('comentario-pie');
   if (!pie) { pie = el('div', { id: 'comentario-pie', class: 'center', style: 'padding:14px 0 6px' }); pantalla.append(pie); }
   pie.replaceChildren();
+  // A standalone game's own page closes its cover with the site footer (U-38); never while playing
+  if (SUELTO && !LABS && !HOY && extra?.pantalla === 'antesala') {
+    import('../assets/js/site-footer.js').then(m => { if (document.getElementById('btn-empezar')?.isConnected && !pie.childElementCount) m.mountFooter(pie, { screen: `${slugDe(extra.juego)}-cover` }); });
+    return;
+  }
   // Solo en la página de un juego del laboratorio (/labs/case/); la práctica de /cup/?labs tiene su 🐞
   if (!LABS || !extra || !gameById(extra.juego)?.labs) return;
   pie.append(el('button', {
@@ -3012,7 +3017,7 @@ function resultadoPractica(id, semilla, r, variante = null) {
       juego: id, semilla, puntaje: r.s, resumen: r.resumen, tiempo: mmss(r.ms), url: location.pathname + location.search,
       pantallaTam: `${innerWidth}×${innerHeight}`, navegador: navigator.userAgent.slice(0, 160),
     } }) : null);
-  // Outside the lab, the quiet inbox link after everything (D-345): minigames and One a Day
+  // Outside the lab, the quiet inbox link after everything (D-345): one-player games and One a Day
   if (!enLab) ponerBuzon(body, { juego: id, contexto: { semilla, resumen: r.resumen ?? r.s, ...(hoy ? { dia: hoy.dia } : {}) } });
 }
 
