@@ -321,7 +321,7 @@ propia casilla, apagados hasta que el jugador diga que sí.
 | **Tu juego de hoy** | A la hora elegida, si no ha jugado | "📅 Uno al día n.° 13 ya está. 🔥 Racha: 6 días." (sin racha, solo la primera frase) |
 | **Se corta la racha** | 21:00 del jugador, si no ha jugado y tiene racha de 2 o más | Sin comodines: "🔥 Tu racha de 6 días se corta a medianoche. Te quedan 3 horas." Con comodines no se corta, así que no se dice que se corta: "🧊 Si no juegas hoy, gastas un comodín para salvar tu racha de 6 días. Te quedan 3 horas." |
 | **Tu semana** | Lunes, a la hora elegida (casilla aparte, encendida por defecto) | "📊 Tu semana: jugaste 6 de 7 días y quedaste 14.° de 230. Donde más mejoraste: Reinas." (sin "Semana 40": el número de la semana no lo lleva nadie en la cabeza. El puesto, solo con jugador.) El PR 4 dice solo cuántos días jugó: "📊 Tu semana: jugaste 6 de 7 días." |
-| **The season ended** (D-424) | The 1st to the 3rd of the month, from their hour, once, if they played since the month before began, and only once the nightly rebuild closed that month (`uadTemporada/s<m>/t` after its last day) | "🏆 Terminó la temporada de octubre. Toca para ver el ranking final." It opens `/?recap=season`, last month's season recap on the home page, with or without a lab key. Its texts are `SEASON_TEXT` in `tools/push/daily.mjs`, not in `i18n.js` |
+| **The season ended** (D-424) | The 1st to the 3rd of the month, from their hour, once, if they played since the month before began, and only once the hourly rebuild (nightly until D-500) closed that month (`uadTemporada/s<m>/t` after its last day) | "🏆 Terminó la temporada de octubre. Toca para ver el ranking final." It opens `/?recap=season`, last month's season recap on the home page, with or without a lab key. Its texts are `SEASON_TEXT` in `tools/push/daily.mjs`, not in `i18n.js` |
 
 - **El aviso no dice qué juego toca**: la sorpresa queda para el dado, y la curiosidad es un motivo
   más para tocarlo.
@@ -386,11 +386,11 @@ Sobre lo que ya hay en D-212 (`records/<tabla>/<periodo>/<jid>`), con lo mínimo
 | Qué | Dónde | Nota |
 |---|---|---|
 | El historial del jugador | `unoAlDia/<jid>/<fecha>` = `{ j, s, ms, at }` | Una vez por fecha: las reglas no dejan reescribirla, y la fecha tiene que estar a 14 horas o menos de la hora del servidor. A day a 🧊 saved is only a marker, `{ c: true, at }` (D-415). |
-| The index by day (D-475) | `unoAlDiaDias/<n>/<jid>` = the day's score | Written with the history day, in the same write; the owner's readers (panel, nightly rebuild, weekly report) query a range of days from it once `unoAlDiaIndice` marks it complete (`tools/firebase/uad-index.mjs`). |
+| The index by day (D-475) | `unoAlDiaDias/<n>/<jid>` = the day's score | Written with the history day, in the same write; the owner's readers (panel, hourly rebuild, weekly report) query a range of days from it once `unoAlDiaIndice` marks it complete (`tools/firebase/uad-index.mjs`). |
 | **Ranking del día** | `records/uno-al-dia/d2026-10-05/<jid>` | Un período nuevo, `dAAAA-MM-DD`, en `PERIODO` de `records.js` y en las reglas. |
 | **Ranking de la semana** | `records/uno-al-dia/s2026-41/<jid>` | La suma de la semana. Solo sube, como cualquier récord, y las reglas exigen que suba lo que dice el historial del día. |
 | **Puntos del mes** (D-412, D-414) | `records/uno-al-dia-pts/s2026-10/<jid>` | The month's season: each day of the history adds once (`p` marks it), its score plus the streak bonus; the streak `r` grows at most one per day. In the lab, an invited friend adds +10 once (the write carries `i` = their `uid` and marks `p` on their acceptance, D-414). Shown in the Mes and Amigos tabs; the week's table is still saved, but no tab shows it since D-414. |
-| **Season places by week** (D-424) | `uadTemporada/s2026-10` = `{ c, t, j: { <jid>: { n, co?, s, l } } }` | Written every night by the points rebuild (`uad-points-backfill.mjs --rebuild`), only by the administrator; public to read. `c` the cuts (each Sunday and the last day), `t` the day it ran, `l` each player's place at each cut (0 before their first points). The home page's season recap and its notification read it. |
+| **Season places by week** (D-424) | `uadTemporada/s2026-10` = `{ c, t, j: { <jid>: { n, co?, s, l } } }` | Written every hour by the points rebuild (nightly until D-500) (`uad-points-backfill.mjs --rebuild`), only by the administrator; public to read. `c` the cuts (each Sunday and the last day), `t` the day it ran, `l` each player's place at each cut (0 before their first points). The home page's season recap and its notification read it. |
 | **Mejor racha** | `records/uno-al-dia-racha/siempre/<jid>` | Solo sube. Las reglas exigen que no pase los días del historial. |
 | La racha de hoy y los comodines | El celular, y `jugadores/<jid>/unoAlDia` = `{ racha, comodines, ultimo }` | Se recalcula del historial, que es la fuente. |
 | Sin jugador | `localStorage` (`juegos-de-salon:uno-al-dia`) | Al entrar con jugador, lo del celular se sube al historial una vez. |
@@ -768,7 +768,7 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
 - **A wildcard 🧊 day** gives 0 points but keeps the streak, so the next day still earns the full
   bonus; without one, the streak and its bonus start over. The phone uploads each day its 🧊 saved as a marker
   (`unoAlDia/<jid>/<n>: { c: true }`, D-415), so the server keeps the streak through it too.
-- **The nightly rebuild** (D-415): `tools/firebase/uad-points-backfill.mjs --rebuild`, run by the
+- **The hourly rebuild** (D-415, D-500): `tools/firebase/uad-points-backfill.mjs --rebuild`, run by the
   `uad-rebuild` workflow every hour at :23 (nightly until D-500), recomputes each player's month from the history and the
   markers and corrects a total that differs. The server spends the 🧊 it can see (7 days in a row,
   invited friends) and lends 2 more, once, for marked days it can't back. A played day earns points
@@ -799,7 +799,7 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
 - **Inviting:** each friend who finishes their first Uno al día with your invitation adds +10 to your
   month (`PUNTOS_INVITAR` in `records.js`), once per friend (D-414, see "+10 pts por invitar" above).
 - **The season's end, told** (D-424, in the lab: only with a lab key, listed in /labs/ as
-  `#seccion-resumen-temporada`): the nightly rebuild also writes `uadTemporada/s<yyyy-mm>`, each
+  `#seccion-resumen-temporada`): the hourly rebuild also writes `uadTemporada/s<yyyy-mm>`, each
   player's place at each Sunday of the month and on its last day (ties share the place; an invited
   friend's +10 counts on the day they accepted). In the first 7 days of a month, a phone whose history
   has a day of the month before and has not seen that season gets La Copa's recap window (D-423) on the
@@ -843,8 +843,8 @@ October they would have had: it walks their history in Firebase as the phone doe
 October day not yet counted, in order, with the streak `r` the rules accept, marking its `p`. It is
 safe to run twice. What Firebase does not have does not count: days played on a phone without a name
 were never uploaded. Since D-415 the walk also spends the 🧊 won by inviting and keeps the streak
-through the days a phone marked as saved, and `--rebuild` recomputes the whole month every night
-(above, "The nightly rebuild").
+through the days a phone marked as saved, and `--rebuild` recomputes the whole month every hour
+(above, "The hourly rebuild").
 
 ### The first attempt counts from its start (D-433)
 
