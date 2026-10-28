@@ -62,11 +62,11 @@ a push after a red run, a force push) or when asking GitHub fails.
 
 What is not retested on the PR: changes on `main` that the PR did not merge. GitHub tests a PR merged
 with the `main` of that moment, so a later push tests its own files against a newer `main` without
-rerunning what the newer `main` brought. The safety net is `publish.yml`, which runs the whole suite on
-what it publishes unless that exact tree already passed (D-302, D-308). For that net to hold, **an
+rerunning what the newer `main` brought. The safety net is `publish.yml`, which tests what it publishes
+unless that exact tree already passed (D-302, D-308): when the merged PR's head passed its own run, only
+`smoke.mjs` plus the scripts the merge's diff reaches (D-496), and otherwise the whole suite. For that net to hold, **an
 incremental run never leaves the tree's mark** (`e2e-tree-<tree>`): only a run that tested the whole PR
-can vouch for a tree. After a PR whose last push was incremental, publishing takes the whole suite
-(~8 minutes of publishing, never of the PR).
+can vouch for a tree, and the narrowed run on `main` (D-496) leaves none either.
 
 ### 1. Knowledge
 
@@ -116,7 +116,7 @@ PR that creates them. What is left to catch is cheap to report where it happens:
 
 - **Over budget.** `ci.mjs --scope` already writes the scope to the run summary (D-378). When a run goes
   over its level's budget it adds a ⚠️ line naming the file that widened it, in the same summary.
-- **An escape.** If the whole suite on `main` (`publish.yml`) fails on a script the merged PR did not
+- **An escape.** If the end-to-end run on `main` (`publish.yml`) fails on a script the merged PR did not
   run, `merge-report.mjs` says so in the comment it already leaves on the PR (D-323): the PR's files and
   the failing script name the missing link in the graph, to fix with a test.
 
@@ -156,7 +156,7 @@ catch in the PR) and moving the declared facts to their own module (tidier, but 
 | What | File |
 |---|---|
 | This design | `docs/TEST-SCOPE.md` |
-| Why each step was taken | `docs/decisions/`: D-308, D-329, D-346, D-378, D-388, D-391, D-392 |
+| Why each step was taken | `docs/decisions/`: D-308, D-329, D-346, D-378, D-388, D-391, D-392, D-496 |
 | How to run and write scripts | `tools/e2e/README.md` |
 | The code | `tools/e2e/affected.mjs`, `changes.mjs`, `ci.mjs`, `since-passed.mjs` (D-392) |
 | The guards | `tools/e2e/*.test.mjs` |
