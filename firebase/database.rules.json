@@ -73,6 +73,9 @@
           "extraShot": {
             ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
           },
+          "salvo": {
+            ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
+          },
           "confirmShot": {
             ".validate": "!newData.hasChildren() && (newData.isNumber() || newData.isBoolean() || (newData.isString() && newData.val().length <= 100))"
           },
