@@ -10,6 +10,8 @@
  */
 import * as motor from './engine.js';
 import { pasos, botonDeshacer } from '../deshacer.js';
+// A texture per region over its color, for colorblind players (#896, D-481; lab: #seccion-tramas)
+import { pattern, withPatterns } from '../../../assets/js/region-patterns.js';
 
 /**
  * Colores de zona: claros, para que la reina negra y la X se lean encima (contraste ≥ 9:1), y
@@ -50,22 +52,23 @@ function tableroEjemplo(el, n, zonas, reinas, choque = false) {
     const reina = reinas.includes(i);
     g.append(el('span', {
       class: reina && choque ? 'choque' : '',
-      style: `background:${ZONAS[z % ZONAS.length]}`,
+      style: `background:${ZONAS[z % ZONAS.length]};--zona:${ZONAS[z % ZONAS.length]};--trama:${pattern(z)}`,
     }, reina ? '👑' : ''));
   });
   return g;
 }
 
 export function ejemplo({ el, T }) {
-  return el('div', { class: 'rej-ejemplo' },
+  return withPatterns(el('div', { class: 'rej-ejemplo' },
     el('figure', {}, tableroEjemplo(el, 5, EJ_ZONAS, EJ_REINAS), el('figcaption', {}, `✅ ${T.queensExOk}`)),
-    el('figure', {}, tableroEjemplo(el, 2, [0, 0, 1, 1], [0, 3], true), el('figcaption', {}, `❌ ${T.queensExBad}`)));
+    el('figure', {}, tableroEjemplo(el, 2, [0, 0, 1, 1], [0, 3], true), el('figcaption', {}, `❌ ${T.queensExBad}`))));
 }
 
 export function montar(raiz, ctx) {
   const { p, T, fmt, el, SFX, vibrate } = ctx;
   let jugadas = Array.isArray(ctx.jugadas) ? ctx.jugadas.slice() : [];
   const { n, zonas } = p;
+  withPatterns(raiz);
   // El toque largo termina con un click del mismo gesto (al levantar el dedo) que no tiene que
   // poner una reina. Se traga ese click y nada más: cualquier gesto nuevo empieza limpio.
   let tragar = false;
@@ -152,7 +155,7 @@ export function montar(raiz, ctx) {
       grilla.append(el('button', {
         type: 'button', class: 'rej' + (v === motor.REINA ? ' reina' : v === motor.MARCA ? ' marca' : '') + (e.conflictos.has(i) ? ' choque' : ''),
         'data-i': i, disabled: e.fin, 'aria-label': `${r + 1}-${c + 1}`,
-        style: `background:${ZONAS[z % ZONAS.length]}`,
+        style: `background:${ZONAS[z % ZONAS.length]};--zona:${ZONAS[z % ZONAS.length]};--trama:${pattern(z)}`,
         // El toque largo marca la X (como las notas del teclado de Toque y Fama); el toque normal
         // pasa por reina, X y vacía. Si el dedo se va a otra casilla antes, es un arrastre: pinta X si
         // empezó en una vacía y las borra si empezó en una X.

@@ -1,5 +1,5 @@
 {
-  "version": "0.225.1",
+  "version": "0.227.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1088,6 +1088,7 @@
     "public/assets/js/ranking.js",
     "public/assets/js/recap.js",
     "public/assets/js/records.js",
+    "public/assets/js/region-patterns.js",
     "public/assets/js/rng.js",
     "public/assets/js/search.js",
     "public/assets/js/season.js",
@@ -1297,6 +1298,7 @@
     "public/assets/js/push.test.mjs",
     "public/assets/js/rankings-rest.test.mjs",
     "public/assets/js/records.test.mjs",
+    "public/assets/js/region-patterns.test.mjs",
     "public/assets/js/search.test.mjs",
     "public/assets/js/season.test.mjs",
     "public/assets/js/share-grid.test.mjs",
