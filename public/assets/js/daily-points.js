@@ -12,13 +12,31 @@
  *
  * The season is the calendar month: everyone starts at 0 on the 1st, so a newcomer can compete.
  */
-import { COMODINES_MAX, COMODIN_CADA, FECHA, sumarDias } from './uno-al-dia.js';
+import { COMODINES_MAX, COMODIN_CADA, FECHA, fechaDeNum, sumarDias } from './uno-al-dia.js';
 
 export const BONUS_PER_DAY = 5;
 export const BONUS_MAX = 50;
 /** Inviting: when the friend finishes their first Uno al día, a 🧊 and these points (tunable, D-412). */
 export const INVITE_POINTS = 10;
 export const bonusFor = streak => Math.min(BONUS_MAX, Math.max(0, streak) * BONUS_PER_DAY);
+
+/**
+ * Whether a played day's result reached the server near its own date (D-465): its `at` (the server's
+ * time of the write) within the window the rules give a day's points, from two days before the day's
+ * UTC start to one day after it, so any time zone fits. A day uploaded later (played offline, or on a
+ * phone before signing in) keeps the streak but earns no points, as on the phone, where the rules
+ * refuse its `p`. A result without `at` (none today) is taken as on time. `n` is the day's number.
+ * The one definition: the backfill (`tools/firebase/uad-points-backfill.mjs`) and /today/ use it (#879).
+ */
+export const onTime = (n, x) => typeof x?.at !== 'number' || (n * 86400000 > x.at - 172800000 && n * 86400000 < x.at + 86400000);
+
+/**
+ * The dates of the server history `{ n: { j, s, at, p? } }` that earn no points: played, without a
+ * counted `p`, and uploaded outside `onTime`'s window. `walk`'s `late` option takes them.
+ */
+export const lateDays = hist => Object.entries(hist || {})
+  .filter(([k, x]) => /^[0-9]{5}$/.test(k) && x?.j && !x.p && !onTime(Number(k), x))
+  .map(([k]) => fechaDeNum(Number(k)));
 
 /**
  * Walks the history from the first day played to `today`, as `recorrer` does, and returns every day:
@@ -31,8 +49,11 @@ export const bonusFor = streak => Math.min(BONUS_MAX, Math.max(0, streak) * BONU
  *   see (every 7 days in a row, the gifts) on any missed day, as the phone does; a marked day it
  *   can't cover that way takes one of 2 more it lends once (the most a phone can hold, earned on days
  *   the server never saw). A missed day with neither breaks the streak.
+ * - `late`: the dates uploaded too late for points (`lateDays`, #879): played, they keep the streak
+ *   but add 0 points, as the season total from the server does (`late: true`).
  */
-export function walk(days, today, { gifts = [], saved = null } = {}) {
+export function walk(days, today, { gifts = [], saved = null, late = [] } = {}) {
+  const tarde = new Set(late);
   const dates = Object.keys(days).filter(f => FECHA.test(f) && f <= today).sort();
   const out = { days: [], streak: 0, wildcards: 0, best: 0 };
   if (!dates.length) return out;
@@ -48,7 +69,7 @@ export function walk(days, today, { gifts = [], saved = null } = {}) {
       out.streak++; row++;
       if (row % COMODIN_CADA === 0 && out.wildcards < COMODINES_MAX) out.wildcards++;
       const bonus = bonusFor(out.streak);
-      out.days.push({ date: f, played: true, game: d.j, score: d.s, streak: out.streak, bonus, points: d.s + bonus, saved: false });
+      out.days.push({ date: f, played: true, game: d.j, score: d.s, streak: out.streak, bonus, points: tarde.has(f) ? 0 : d.s + bonus, saved: false, ...(tarde.has(f) ? { late: true } : {}) });
     } else if (f !== today) {
       const own = out.streak > 0 && out.wildcards > 0;
       const borrowed = !own && out.streak > 0 && lent > 0 && marked?.has(f);
