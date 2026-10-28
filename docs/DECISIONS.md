@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (480)
+## In force (481)
 
 | D | Title | Status |
 |---|---|---|
@@ -538,8 +538,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-491](decisions/D-491.md) | Dudo's fives are "quinas", and the obligada notice names its exception | current |
 | [D-492](decisions/D-492.md) | An archived Cup's memorial, for everyone | current |
 | [D-493](decisions/D-493.md) | The panel's "Don't count this browser" checkbox leaves the lab | current |
-| [D-495](decisions/D-495.md) | Dudo's classic rules leave the lab, for everyone | current |
 | [D-494](decisions/D-494.md) | No blob over 5 MB enters git; big media moves out without rewriting history | current |
+| [D-495](decisions/D-495.md) | Dudo's classic rules leave the lab, for everyone | current |
 
 ## No longer in force (12)
 
