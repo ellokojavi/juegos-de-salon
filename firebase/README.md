@@ -497,13 +497,13 @@ Confirm the numbers in the console before setting thresholds: Google has changed
    watches `firebasedatabase.googleapis.com/network/active_connections` and alerts by email
    (channel "JBot Mac Mini GCloud Notification") when it goes over 80. It was created by hand in the console: the
    service account key is for the database, not for configuring Google Cloud.
-3. **Monthly download alert: a manual console step** (it can't be code: the service account key is
-   for the database, not for configuring Google Cloud). In
+3. **Daily download alert, in Google Cloud Monitoring** (created on 2026-10-27, by hand like the
+   one above): the policy **Firebase: descarga diaria > 250 MB**, listed in
    [Cloud Monitoring → Alerting](https://console.cloud.google.com/monitoring/alerting?project=juegos-de-salon),
-   create a policy on `firebasedatabase.googleapis.com/network/sent_bytes_count`, aligned as a
-   **sum over 1 day**, alerting above **250 MB/day** (about 7.5 GB in a 30-day month, three quarters
-   of the ~10 GB cap; confirm the cap in the console first), with the same email channel as the
-   connections alert. Once it exists, note its link and date here.
+   watches `firebasedatabase.googleapis.com/network/billed_bytes_count` ("Total billed bytes", the
+   console's only download metric under Network), summed over a rolling day, and alerts by email
+   (channel "Juegos-de-salon Firebase Notification Channel") above **250 MB/day**: about 7.5 GB in
+   a 30-day month, three quarters of the ~10 GB cap. It closes itself after a day without data.
 
 ### If usage really grows
 
