@@ -1,6 +1,6 @@
 // The 🐞 feedback as issues (D-275, D-279): with the name and without the browser, without mentions, and never the same report twice.
 import assert from 'node:assert/strict';
-import { greetingName, title, body, pending, uploaded, unrecorded, looksShort, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN, firstBatch, MAX_PER_RUN } from './feedback.mjs';
+import { greetingName, title, body, pending, uploaded, unrecorded, looksShort, marker, where, idOf, wantsEmail, handled, readAnswers, textOf, nameOf, EMAILED, FORGOTTEN, firstBatch, MAX_PER_RUN, hideContacts } from './feedback.mjs';
 
 const r = {
   id: '-P3bm', at: Date.parse('2026-10-10T18:28:23Z'), v: '0.144.0', nombre: 'Tu admirador secreto',
@@ -161,3 +161,11 @@ assert.deepEqual(unrecorded([], { a: 312 }), {}, 'an empty list from GitHub take
   assert.match(warning, /25 new report\(s\).*first 20/);
   assert.deepEqual(firstBatch(list.slice(0, 3)), { batch: list.slice(0, 3), warning: null });
 }
+
+// A player's own email or phone inside the text never reaches the public issue.
+assert.equal(hideContacts('escríbanme a juan.perez@gmail.com porfa'), 'escríbanme a [email hidden] porfa');
+assert.equal(hideContacts('mi cel +56 9 8765 4321'), 'mi cel [phone hidden]');
+assert.equal(hideContacts('llamar al (555) 123-4567.'), 'llamar al [phone hidden].');
+assert.equal(hideContacts('el 2026-10-27 perdí 3 de 10, código ABCD, v5.12.3, semilla 1234'), 'el 2026-10-27 perdí 3 de 10, código ABCD, v5.12.3, semilla 1234');
+assert.doesNotMatch(body({ texto: 'soy ana@mail.cl, +1 415 555 0100', at: 1 }), /ana@|415/);
+assert.doesNotMatch(title({ texto: 'soy ana@mail.cl' }), /ana@/);
