@@ -64,6 +64,14 @@ check(duel.hidden > 0, 'in the obligada round your own die shows as ❓');
 check(duel.faces > 0, "in the obligada round the phone's die shows face up");
 check(duel.ownStrip > 0, 'in the obligada round your own ❓ in the strip is die-sized');
 
+/* ---------- Against the phone with Pasar on: a pass is a play, the game goes on (playtest, the bot's pass froze it) ---------- */
+await setup(2, ['Javi']);
+await ev(`(()=>{const r=document.querySelector('#setup-form details.variants .toggle-row');r.querySelector('.switch').click();return 1})()`);
+await ev(`document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(600);
+check(await ev(`window.__dudo.match().config.pasar === true`), 'Pasar travels in the config');
+await play(null);
+check(await screen() === 'screen-result', 'with Pasar on, a game against the phone reaches the end');
+
 /* ---------- Three on one phone ---------- */
 await setup(0, ['Javi', 'Cata', 'Nico']);
 await ev(`document.querySelector('#setup-actions .btn--yellow').click(); 1`); await sleep(500);
