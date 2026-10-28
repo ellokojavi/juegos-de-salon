@@ -977,25 +977,21 @@ function espera(texto, { error = false, reintentar = null } = {}) {
 }
 
 /**
- * An archived cup's memorial (D-476), for now only with a lab key. lab: #seccion-copa-archivada
+ * An archived cup's memorial (D-476, D-478), for everyone since D-492.
  * The nightly archive moves a Cup finished more than 733 days ago out of `torneos/`, so its link
  * finds nothing: before saying so, its podium in `torneoPodios/` (public, kept for the medal table)
- * is read, and if it is there the link shows the cup's name, when it ended and its podium. In the
- * test store the scripts see the error of before unless the URL says `&lab`.
+ * is read, and if it is there the link shows the cup's name, when it ended and its podium.
  */
-const conMemorial = () => (PRUEBA && !tiene('lab') ? Promise.resolve(false) : labAccess());
 const fechaConAnio = ms => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: ZONA, day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(ms));
 
 async function noExiste(code) {
   let podio = null;
   try {
-    if (await conMemorial()) {
-      // A plain read, no account: the published site over REST, the test store from localStorage
-      const almacen = PRUEBA
-        ? (await import('../assets/js/jugador-local.js')).crearAlmacenLocal()
-        : (await import('../assets/js/jugador-firebase.js')).crearAlmacenFirebase();
-      podio = await almacen.get(`torneoPodios/${code}`);
-    }
+    // A plain read, no account: the published site over REST, the test store from localStorage
+    const almacen = PRUEBA
+      ? (await import('../assets/js/jugador-local.js')).crearAlmacenLocal()
+      : (await import('../assets/js/jugador-firebase.js')).crearAlmacenFirebase();
+    podio = await almacen.get(`torneoPodios/${code}`);
   } catch (_) { /* no network: the error of before */ }
   // Another cup was opened meanwhile, or the podium arrived late: only the cup still asked for is drawn
   if (S.code !== code || S.L?.meta) return;
