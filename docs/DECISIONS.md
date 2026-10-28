@@ -440,7 +440,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-392](decisions/D-392.md) | A push to a PR tests only what changed since the PR last passed | current |
 | [D-393](decisions/D-393.md) | The home page's search on a computer: ↓ ↑ Enter and Escape in the dropdown | current |
 | [D-394](decisions/D-394.md) | One file per decision, and a generated index | amended by D-401 |
-| [D-395](decisions/D-395.md) | Everything in development sits behind the lab door | amended by D-409 and D-498 |
+| [D-395](decisions/D-395.md) | Everything in development sits behind the lab door | amended by D-409, D-498 |
 | [D-396](decisions/D-396.md) | The home page's 🔎 pill goes first, left of ⭐ Favoritos | current |
 | [D-397](decisions/D-397.md) | The home page search lists the games whose name matches first | current |
 | [D-398](decisions/D-398.md) | The home page's 🔎 search opens and closes with a motion | amended by D-402 |

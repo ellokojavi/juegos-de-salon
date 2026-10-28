@@ -42,7 +42,7 @@ be explained just when the game has been understood. It is being tried in the la
 ### Traditional rules, in the lab (D-487, #897)
 
 A setup switch, **🧪 Classic rules** (`config.traditional`), off by default and shown only to
-lab key holders (`labAccess()`; card `#seccion-dudo-tradicional` in `/labs/`). With it on:
+lab key holders while its flag `dudo-tradicional` is `lab` (`flag()`, D-498; card `#seccion-dudo-tradicional` in `/labs/`). With it on:
 
 - **Nobody opens a round in aces.** Going to aces later, at half, is still allowed.
 - **The obligada round.** The first time a player is down to one die, the round they open is
