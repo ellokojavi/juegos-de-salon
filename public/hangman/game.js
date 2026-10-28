@@ -20,6 +20,7 @@ import { finDePartida, bloqueVictorias, bloqueTabla, avisoPartida } from '../ass
 import { rankingsVisibles } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
+import { vidasGrid } from '../assets/js/share-grid.js';
 import { azarDel, puntajeAhorcado } from '../assets/js/uno-al-dia.js';
 import {
   ALPHABETS, LIVES_OPTIONS, MAX_LETTERS, buildState, dealWords, normalize,
@@ -841,7 +842,7 @@ function renderResult(v) {
 
   const box = $('#result-actions'); box.innerHTML = '';
   // One a Day: the card goes under the hero and carries the screen's actions and exits (C-19)
-  if (S.hoy && soloYo) { ponerTarjeta(terminarHoy(S.hoy, { s: puntajeAhorcado({ vidas: mia.solved ? mia.score : 0, total: M.config.lives }), ms: mia.ms, lang, alTocar: () => SFX.tap() })); return; }
+  if (S.hoy && soloYo) { ponerTarjeta(terminarHoy(S.hoy, { s: puntajeAhorcado({ vidas: mia.solved ? mia.score : 0, total: M.config.lives }), ms: mia.ms, lang, alTocar: () => SFX.tap(), grid: vidasGrid(mia.solved ? mia.score : 0, M.config.lives) })); return; }
   if (S.mode === 'online' && !S.switching) {
     const proposed = ROLES.filter(r => r !== S.role).map(r => M.rematch[r]).find(c => typeof c === 'string');
     if (proposed && proposed !== S.code) { S.switching = true; joinOnline(proposed, M.names[S.role]).catch(e => { console.error(e); S.switching = false; }); }
