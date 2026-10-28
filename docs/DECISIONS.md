@@ -39,6 +39,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453 |
 | Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463, D-466, D-472, D-477 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456, D-465, D-473 |
+| Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463, D-466, D-472 |
+| Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456, D-465, D-473, D-475 |
 | Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321, D-469, D-470, D-474 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433, D-465 |
 | Game memory | C-6 | D-25, D-150 |
@@ -46,6 +48,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Errors and passing the phone | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272, D-410, D-427 |
 | Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466, D-471, D-473, D-474, D-476, D-477 |
+| Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466, D-471, D-473, D-474, D-475, D-476 |
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460 |
@@ -166,7 +169,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-110](decisions/D-110.md) | The admin of a new cup, sign-up, a movable start and the lab demos | amended by D-262, D-266 |
 | [D-111](decisions/D-111.md) | The cup does not use the Brazil theme | amended by D-187 |
 | [D-112](decisions/D-112.md) | No test-mode bar, and Tango signs that can be told apart | current |
-| [D-113](decisions/D-113.md) | All mini-games from 0 to 100, Pacific time, and "Invitar" only before starting | amended by D-194 |
+| [D-113](decisions/D-113.md) | All mini-games from 0 to 100, Pacific time, and "Invitar" only before starting | amended by D-194, D-453 |
 | [D-114](decisions/D-114.md) | The card under the score, and TORRE instead of DAMA | current |
 | [D-115](decisions/D-115.md) | Another start date, and advancing the day in the lab cups | current |
 | [D-116](decisions/D-116.md) | Each thing at its moment in the cup | amended by D-176 |
@@ -280,7 +283,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-227](decisions/D-227.md) | In the installed iPhone app, notifications are seen without the lab | current |
 | [D-228](decisions/D-228.md) | La Copa notifications open to everyone | current |
 | [D-229](decisions/D-229.md) | Notifications: cap of 2 per day, ties in plural, the exact day, buttons and cups together | amended by D-266 |
-| [D-230](decisions/D-230.md) | Uno al día: one game per day, the same for everyone, with a streak and notifications the player requests | amended by D-239, D-262, D-266, D-421, D-433 |
+| [D-230](decisions/D-230.md) | Uno al día: one game per day, the same for everyone, with a streak and notifications the player requests | amended by D-239, D-262, D-266, D-421, D-433, D-475 |
 | [D-231](decisions/D-231.md) | The language selector always carries the flags | amended by D-244 |
 | [D-232](decisions/D-232.md) | A globe on the home page invites adding the app to the home screen (first in the lab; for everyone since v0.121.0) | amended by D-262 |
 | [D-233](decisions/D-233.md) | Notifications are measured in the panel: sent, tapped, the installed app and the last round | amended by D-266 |
@@ -460,7 +463,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-412](decisions/D-412.md) | Uno al día points: the owner's answers, and the points saved in Firebase for lab key holders | amended by D-414 |
 | [D-413](decisions/D-413.md) | The lab's fast lane: the session does a lab-only change itself, without agents | current |
 | [D-414](decisions/D-414.md) | Uno al día points reach everyone, on /today/, and October is backfilled | amended by D-415 |
-| [D-415](decisions/D-415.md) | A day a 🧊 saved goes up to Firebase, and the month's points are rebuilt from it every night | amended by D-465 |
+| [D-415](decisions/D-415.md) | A day a 🧊 saved goes up to Firebase, and the month's points are rebuilt from it every night | amended by D-465, D-475 |
 | [D-416](decisions/D-416.md) | La Copa: a linked player who lost their session re-enters with the player's PIN | current |
 | [D-417](decisions/D-417.md) | La Gran Final's running score is the average so far, out of 100 | current |
 | [D-418](decisions/D-418.md) | The Grand Final repeats the week's games | current |
@@ -498,7 +501,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-450](decisions/D-450.md) | A finished Cup's podium is saved within the hour of its close, even if nobody reopens the Cup | current |
 | [D-451](decisions/D-451.md) | The Claude rounds run from launchd on the Mac mini | current |
 | [D-452](decisions/D-452.md) | A skipped email stays visible: the round lists it, the owner can read it | current |
-| [D-453](decisions/D-453.md) | Toque y Fama's solo score, by deduction: tried in the lab first | current |
+| [D-453](decisions/D-453.md) | Toque y Fama's score, by deduction: tried in the lab, then published | current |
 | [D-454](decisions/D-454.md) | The splash campaigns are run from the panel | amended by D-461 |
 | [D-455](decisions/D-455.md) | A lab game may keep its own leaderboard, outside the Todoterreno | current |
 | [D-456](decisions/D-456.md) | Tren en Vilo leaves the lab: its page, Uno al día and La Copa, launched with its splash | current |
@@ -518,8 +521,9 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-470](decisions/D-470.md) | Rankings are read over REST: a solo page opens no Firebase websocket | current |
 | [D-471](decisions/D-471.md) | The owner's own browsers are kept out of Live: the `owner` environment | current |
 | [D-472](decisions/D-472.md) | Names in the usage statistics are deleted after 24 months | current |
-| [D-473](decisions/D-473.md) | Bounded Firebase reads: the season recap reads its top, the panel queries by date | amended by D-474 |
+| [D-473](decisions/D-473.md) | Bounded Firebase reads: the season recap reads its top, the panel queries by date | amended by D-474, D-475 |
 | [D-474](decisions/D-474.md) | Rooms keep their own message counters, and the panel reads them without their messages | current |
+| [D-475](decisions/D-475.md) | Uno al día's history indexed by day, so the owner's readers query only the days they need | current |
 | [D-476](decisions/D-476.md) | A nightly job moves finished Cups and old daily tables to archive/ in the same database | current |
 | [D-477](decisions/D-477.md) | 📣 Campaigns is the control center for everything temporary: splash, site features and skins | current |
 | [D-479](decisions/D-479.md) | Whatever leaves the lab for everyone goes to La Bodega | current |

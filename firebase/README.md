@@ -176,7 +176,7 @@ the Cup is written within the hour of its close by `rankings-history.mjs --podiu
 
 The owner (their UID) can write and delete in all these branches, to moderate.
 
-## Uno al día (`unoAlDia`, `unoAlDiaInicio`, `invitados`, D-230)
+## Uno al día (`unoAlDia`, `unoAlDiaInicio`, `unoAlDiaDias`, `invitados`, D-230)
 
 - `unoAlDia/<jid>/<n>` = `{ j, s, ms, at, w?, p? }`: the first Uno al día attempt of day `n` (days
   since 1970). Written once by whoever is seated as that player; `w` (the mark that it was already
@@ -196,6 +196,16 @@ The owner (their UID) can write and delete in all these branches, to moderate.
   (`jugadorSeats`), and only as `now` (within the last minute); never rewritten. Anyone can read a
   player's; the whole branch only the owner. Another phone of the same player that finds a start here
   and no `unoAlDia/<jid>/<n>` counts that attempt 0. Nothing sweeps it yet: a number per player and day.
+- `unoAlDiaDias/<n>/<jid>` = a number, the score `s` of that played day again: the history's index by
+  day (D-475), so the readers that need everyone (the panel, the nightly rebuild, the weekly report, the
+  ideas agent) query a range of days (`orderBy="$key"&startAt="<n>"`) instead of downloading the whole
+  history. Written once by whoever is seated as that player, only in the same write as
+  `unoAlDia/<jid>/<n>` (the rules ask that the history day did not exist before and that the score is
+  the same); a 🧊 marker gets no entry. Only the owner reads it. `unoAlDiaIndice` = `{ desde, at }`
+  (owner only) says the index is complete: `tools/firebase/uad-index.mjs --apply` writes it after it
+  copies the older history and checks the copy, and until it exists every reader reads the whole
+  history as before. A day an old cached page wrote without its entry is filled in by running the
+  script again (its dry run says how many are missing).
 - `invitados/<jid>/<uid>` = `{ d, at, j?, p? }`: the `uid` phone finished its first Uno al día with an
   invitation from `jid`. Written by that phone, once, and not if it is seated as `jid`. Only the
   player `jid` reads it. `p` (D-414) is added once, by whoever is seated as `jid`, in the same write
@@ -206,7 +216,7 @@ The owner (their UID) can write and delete in all these branches, to moderate.
   didn't have `w` yet. The `uno-al-dia-pts` table (D-412, D-414) takes only a
   month (`s<yyyy>-<mm>`): each write adds a day `u` that didn't have `p` yet, its score plus the
   streak bonus (5 × `r`, up to 50), and the streak `r` (1–10) grows at most one per write. October 2026 was filled in from the history by `tools/firebase/uad-points-backfill.mjs` as administrator (D-414), and its `--rebuild` rewrites every month's totals each night from the history and the markers (the `uad-rebuild` workflow, D-415). Details and limits in [docs/UNO-AL-DIA.md](../docs/UNO-AL-DIA.md).
-- The owner reads all of `unoAlDia/`, `unoAlDiaInicio/` and `invitados/`, for the panel's Uno al día block, and
+- The owner reads all of `unoAlDia/`, `unoAlDiaInicio/`, `unoAlDiaDias/` and `invitados/`, for the panel's Uno al día block, and
   can write and delete in both, to moderate.
 
 ## Phone notifications (`push`, `pushCopa`, `pushEnviados`, `pushDia`, `pushEnviadosDia`, D-223, D-224, D-230)

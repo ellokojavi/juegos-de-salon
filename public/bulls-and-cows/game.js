@@ -729,7 +729,6 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
       el('p', { class: 'muted' }, T.yourScore),
       el('div', { class: 'score-big', id: 'solo-puntaje' }, `${s}/100`),
       el('p', { class: 'muted' }, fmt(T.soloSummary, { n, word: triesWord(n), t: mmss(ms) })),
-      uiNumero.lineaLab(el, estado, lang), // what the rule tried in the lab would score (D-453; lab: #seccion-tyf-descarte)
       // Con jugador, el aviso de los rankings reemplaza al récord del celular (D-212)
       conRanking ? avisoPartida({ juego: GAME_ID, variante: 'solo', s, ms, alAnotar: () => tablaFin.recargar() })
         : nuevo ? el('p', { class: 'lead', style: 'margin:4px 0 0' }, T.newRecord) : antes ? el('p', { class: 'muted', style: 'font-weight:900' }, recordTexto(antes)) : null),
@@ -738,9 +737,8 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
       el('div', { class: 'tarjeta' + (n > 5 ? ' tarjeta--2' : ''), 'aria-hidden': 'true' }, ...t.split('\n').map(fila => el('span', {}, fila)))),
     // El repaso va colapsado para que los botones queden a la vista (C-8)
     el('details', { class: 'panel replay', 'data-tablero': 'repaso' }, el('summary', {}, T.replayTitle),
-      // A lab key also shows the ruled-out marks and the new rule's score (D-453; lab: #seccion-tyf-descarte)
-      uiNumero.tableroLab(uiNumero.tablero(el, { filas: estado.filas, largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) }),
-        el, estado, { largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) })),
+      // The ruled-out guesses carry ⚠️, which is what the score counts (D-453)
+      uiNumero.tableroFin(el, estado, { largo: p.cifras, titulo: T.yourGuesses, lang, valor: f => el('span', { class: 'val' }, f.v) })),
     el('div', { class: 'stack', id: 'solo-actions' },
       // El mismo resultado que el juego de La Copa, con su imagen (D-165)
       botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '🔢', juego: T.title, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}bulls-and-cows/`), alTocar: () => SFX.tap() }),

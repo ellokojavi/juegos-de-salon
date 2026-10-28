@@ -120,7 +120,7 @@ En `#/games`, el bloque **📅 Uno al día**:
 - **Partidas de Uno al día**, de todos: las del modo `uno-al-dia` (`MODO_UNO_AL_DIA` en games.js),
   que cada juego manda al empezar el de hoy. Por día y por juego. En "Partidas por juego" aparece
   también como un modo más (📅).
-- De quienes entraron con su nombre y PIN (lee `unoAlDia/` e `invitados/`, que enteros solo los deja leer
+- De quienes entraron con su nombre y PIN (lee `unoAlDia/` —since D-475 only the days loaded, from its index by day `unoAlDiaDias/`, once the migration marked it complete— e `invitados/`, que enteros solo los deja leer
   al dueño, y la tabla `records/uno-al-dia-racha/siempre`): **jugadores**, **volvió al día siguiente**
   y **volvió a los 7 días** (de los días jugados cuyo siguiente, o séptimo, ya pasó, en cuántos
   volvió), los **jugadores por su mejor racha, desde siempre** (1 día, 2 a 6, 7 a 29, 30 o más) y las **invitaciones
