@@ -1,6 +1,6 @@
 // Ejecutar: node public/battleship/engine.test.mjs
 import assert from 'node:assert/strict';
-import { N, FLEET, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, sunkShips, allSunk, Hunter, nextShooter, sha256, verifyPlayer } from './engine.js';
+import { N, FLEET, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, sunkShips, allSunk, Hunter, nextShooter, salvoTurn, sha256, verifyPlayer } from './engine.js';
 
 assert.equal(cellName(0, 0), 'A1'); assert.equal(cellName(9, 9), 'J10'); assert.deepEqual(parseCell('B4'), { r: 3, c: 1 }); assert.deepEqual(parseCell('J10'), { r: 9, c: 9 });
 assert.ok(isCell('A1') && isCell('J10')); assert.ok(!isCell('K1') && !isCell('A11') && !isCell('A0'));
@@ -65,4 +65,21 @@ const salt = 's1'; const commit = await sha256(layoutKey(L) + salt);
 assert.equal((await verifyPlayer({ layout: L, salt, commit, repliesGiven: [{ cell: 'A5', result: 'tocado', ship: 'destroyer' }, { cell: 'B5', result: 'hundido', ship: 'destroyer' }] })).ok, true);
 assert.equal((await verifyPlayer({ layout: L, salt, commit, repliesGiven: [{ cell: 'A5', result: 'agua' }] })).ok, false, 'respuesta falsa');
 assert.equal((await verifyPlayer({ layout: { ...L, destroyer: { r: 9, c: 0, dir: 'h' } }, salt, commit, repliesGiven: [] })).ok, false, 'flota distinta al compromiso');
+
+// Salvo (#894): a volley as big as the ships afloat; the turn passes once it is all answered.
+{
+  const sh = (from, result = 'agua') => ({ from, result });
+  let t = salvoTurn([], 'B');
+  assert.deepEqual([t.shooter, t.size, t.left], ['B', 5, 5]);
+  t = salvoTurn([sh('B'), sh('B'), sh('B', null)], 'B');
+  assert.deepEqual([t.shooter, t.left, t.volley.length], ['B', 2, 3], 'mid-volley');
+  const five = [sh('B'), sh('B'), sh('B'), sh('B'), sh('B', null)];
+  assert.equal(salvoTurn(five, 'B').shooter, 'B', 'waits for the last answer');
+  assert.equal(salvoTurn(five, 'B').left, 0);
+  five[4] = sh('B', 'hundido');
+  t = salvoTurn(five, 'B');
+  assert.deepEqual([t.shooter, t.size, t.previous.length], ['A', 4, 5], 'A lost a ship: four shots');
+  t = salvoTurn([...five, sh('A'), sh('A'), sh('A'), sh('A')], 'B');
+  assert.deepEqual([t.shooter, t.size], ['B', 5], 'back to B with its five ships');
+}
 console.log('engine: todos los tests OK');
