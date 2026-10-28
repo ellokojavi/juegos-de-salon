@@ -167,6 +167,11 @@ the one before it), by `meta/end`, and `feedback/` the same way by `at` (D-473):
 period comes out the same. A cup that ended earlier is read on its own when opened by code or link.
 Live rooms redraw the panel at most once a second.
 
+Live rooms are read without their messages (D-474): each room keeps `counts/<type>` = `{ n, at }`,
+which the transport bumps on every message, and the panel lists the codes with a shallow read every
+30 s and listens per room to `createdAt`, `lastAt`, `game`, `players` and `counts`
+(`public/panel/rooms-watch.js`). A room without counters (from before) is read with its messages.
+
 - **Jugando ahora:** tocó Empezar hace menos de media hora y todavía no hay resultado. Mira todos
   los días abiertos, porque el de ayer se puede jugar hasta el fin de hoy.
 - **Juego sin terminar:** tocó Empezar y no dejó resultado, y ya no lo está jugando (pasó
