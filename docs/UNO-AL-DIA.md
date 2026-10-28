@@ -363,14 +363,13 @@ aviso (decisión 3 del dueño, abajo). La imagen va sin el nombre ni el emoji de
 🔗 juegosdesalon.cl/today/
 ```
 
-**The spoiler-free grid** (#889, D-482, lab only while it is tried: `labAccess()`, card
-`#seccion-uad-grilla` in /labs/): between the header and the streak the text adds the game's own
+**The spoiler-free grid** (#889, D-482, for everyone since D-485; tried in the lab as card
+`#seccion-uad-grilla`): between the header and the streak the text adds the game's own
 squares, filtered by `shareGrid(id, card)` in `public/assets/js/share-grid.js` from the result card
 the game already builds (`resultado().t`). Only neutral marks survive (🟩🟨🟧🟥🟦🟪⬛⬜🟢🟡⚪🎯✅❌💡),
 at most 8 rows, so no game emoji, number or time says which game it was. El Ahorcado shares its lives
 (`vidasGrid`: 🟩 kept, 🟥 lost). No grid for the games in `SPOILS` (Agentes: its card is the board
-and shows where the agents are; Conexiones) nor for Dudo, Generala and Batalla Naval. Going public is
-removing the `labAccess()` check in `compartirHoy` (`uno-al-dia-ui.js`).
+and shows where the agents are; Conexiones) nor for Dudo, Generala and Batalla Naval.
 
 ```
 📅 *Uno al día n.° 12*
