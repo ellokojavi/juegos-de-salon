@@ -33,7 +33,7 @@ import { audienciaDe } from './games/audiencia.js';
 import { desglose } from './desglose.js';
 import { imagenDeTabla, cabeceraTabla, colorDe, llegada } from './table-image.js';
 import { planilla } from './planilla.js';
-import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones } from '../assets/js/ranking.js';
+import { bloqueJugador, bloqueRanking, avisoPartida, bloqueCampeones, URL_RECORDS } from '../assets/js/ranking.js';
 import { jugador, leerYo, rankingsVisibles } from '../assets/js/jugador.js';
 import { podioDe } from '../assets/js/records.js';
 import { crearAvisos } from './avisos.js';
@@ -792,13 +792,15 @@ function armarFinde() {
   return { nodo, get cal() { return [...cal]; } };
 }
 
-async function crearCopa() {
+async function crearCopa({ nombreInicial = '' } = {}) {
   const nuevo = await formularioNuevo();
   mostrar('crear');
   const body = $('#crear-body');
   body.innerHTML = '';
   const err = el('div', { class: 'form-error', role: 'alert' });
   const nombre = campo(T.fCopa, { placeholder: T.fCopaPh, maxlength: String(COPA_MAX) }, { contador: true });
+  // From an archived cup's memorial (D-476): the same name, ready to change
+  if (nombreInicial) { nombre.input.value = String(nombreInicial).slice(0, COPA_MAX); nombre.input.dispatchEvent(new Event('input')); }
   // On the screen of before, the 3-day cup is offered only with ?three or in the test store (D-100).
   // The new screen (D-425, a lab key) offers it always, next to the start (D-437), and starts at seven days.
   const juegos = nuevo ? armarSemana() : elegirJuegos();
@@ -973,7 +975,50 @@ function espera(texto, { error = false, reintentar = null } = {}) {
   if (error) poner(body, el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?test' : '') }, T.menu));
 }
 
-async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
+/**
+ * An archived cup's memorial (D-476), for now only with a lab key. lab: #seccion-copa-archivada
+ * The nightly archive moves a Cup finished more than 733 days ago out of `torneos/`, so its link
+ * finds nothing: before saying so, its podium in `torneoPodios/` (public, kept for the medal table)
+ * is read, and if it is there the link shows the cup's name, when it ended and its podium. In the
+ * test store the scripts see the error of before unless the URL says `&lab`.
+ */
+const conMemorial = () => (PRUEBA && !tiene('lab') ? Promise.resolve(false) : labAccess());
+const fechaConAnio = ms => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: ZONA, day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(ms));
+
+async function noExiste(code) {
+  let podio = null;
+  try {
+    if (await conMemorial()) {
+      // A plain read, no account: the published site over REST, the test store from localStorage
+      const almacen = PRUEBA
+        ? (await import('../assets/js/jugador-local.js')).crearAlmacenLocal()
+        : (await import('../assets/js/jugador-firebase.js')).crearAlmacenFirebase();
+      podio = await almacen.get(`torneoPodios/${code}`);
+    }
+  } catch (_) { /* no network: the error of before */ }
+  // Another cup was opened meanwhile, or the podium arrived late: only the cup still asked for is drawn
+  if (S.code !== code || S.L?.meta) return;
+  if (!podio?.name || !podio?.p) { espera(T.errNoExiste, { error: true }); return; }
+  memorial(podio);
+}
+
+function memorial(podio) {
+  mostrar('espera');
+  const body = $('#espera-body');
+  body.innerHTML = '';
+  const MEDALLA = { 1: '🥇', 2: '🥈', 3: '🥉' };
+  const filas = Object.values(podio.p).filter(x => x?.n && Number.isInteger(x.l)).sort((a, b) => a.l - b.l || a.n.localeCompare(b.n));
+  poner(body, el('div', { class: 'panel center', id: 'copa-archivada' },
+    el('h2', {}, `🏆 ${podio.name}`),
+    Number(podio.end) ? el('p', { class: 'muted' }, fmt(T.archivedEnded, { fecha: fechaConAnio(Number(podio.end)) })) : null,
+    el('ol', { class: 'podio-archivado' }, filas.map(x => el('li', {}, el('span', { class: 'lugar' }, MEDALLA[x.l] || ord(x.l)), ' ', el('span', {}, x.n)))),
+    el('p', { class: 'muted' }, T.archivedNote)),
+  el('button', { class: 'btn btn--yellow', id: 'btn-archivada-crear', onClick: () => { SFX.tap(); crearCopa({ nombreInicial: podio.name }); } }, T.archivedNew),
+  el('a', { class: 'btn btn--cyan', id: 'btn-archivada-medallero', href: `${URL_RECORDS}#copas` }, T.archivedMedals),
+  el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?test' : '') }, T.menu));
+}
+
+async function abrirCopa(code,{ recienCreada = false, pantalla = null } = {}) {
   S.code = code;
   espera('…');
   let st;
@@ -991,7 +1036,7 @@ async function abrirCopa(code, { recienCreada = false, pantalla = null } = {}) {
       // La borró su admin (D-117): quien la tenía abierta se entera, y este celular la olvida
       if (S.eliminando) return;
       if (habia) { cuenta.olvidar(code); espera(T.copaDeleted, { error: true }); return; }
-      espera(T.errNoExiste, { error: true }); return;
+      noExiste(code); return;
     }
     if (primera) {
       primera = false;
