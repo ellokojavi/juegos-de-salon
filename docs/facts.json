@@ -1,5 +1,5 @@
 {
-  "version": "0.222.14",
+  "version": "0.222.16",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1092,6 +1092,7 @@
     "public/assets/js/search.js",
     "public/assets/js/season.js",
     "public/assets/js/session.js",
+    "public/assets/js/site-footer.js",
     "public/assets/js/sobre.js",
     "public/assets/js/sound.js",
     "public/assets/js/splash.js",
