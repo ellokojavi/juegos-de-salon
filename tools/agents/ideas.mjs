@@ -70,7 +70,7 @@ const slug = /^[a-z0-9]+(-[a-z0-9]+)*$/;
  * with an id `seccion-<id>` and its `<h2>`.
  */
 export function laboratorio(html) {
-  const parse = s => [...s.matchAll(/<section class="panel seccion[^"]*" id="seccion-([a-z0-9-]+)">[\s\S]*?<h2>([^<]+)<\/h2>/g)]
+  const parse = s => [...s.matchAll(/<section class="panel seccion[^"]*" id="seccion-([a-z0-9-]+)"[^>]*>[\s\S]*?<h2>([^<]+)<\/h2>/g)]
     .map(m => ({ id: m[1], title: m[2].trim() }));
   const grupos = [...String(html).matchAll(/<section class="grupo" id="([a-z]+)">/g)].map(m => ({ id: m[1], at: m.index }));
   const de = id => { const i = grupos.findIndex(g => g.id === id); return i < 0 ? [] : parse(html.slice(grupos[i].at, grupos[i + 1]?.at ?? html.length)); };
