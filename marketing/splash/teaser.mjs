@@ -18,7 +18,7 @@ import { launch } from '../../tools/e2e/cdp.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DEST = join(ROOT, 'public', 'assets', 'splash');
 const OUT = output('/tmp/splash-teaser');
-const SCALE = 4; // the art is 128×80: the GIF is 512×320
+const SCALE = 4; // the art is 128×80: the MP4 is 512×320
 // The frame the still is taken from (for reduced motion): the train stopped at the edge, the "?" up
 const STILL = { bridges: 90 };
 
