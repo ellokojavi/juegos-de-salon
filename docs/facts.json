@@ -1,5 +1,5 @@
 {
-  "version": "0.223.0",
+  "version": "0.224.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1057,6 +1057,7 @@
     "public/assets/js/chat.js",
     "public/assets/js/compartir-portada.js",
     "public/assets/js/compartir.js",
+    "public/assets/js/controls.js",
     "public/assets/js/cuenta-regresiva.js",
     "public/assets/js/dado3d.js",
     "public/assets/js/daily-points.js",
@@ -1263,6 +1264,7 @@
     "public/timeline/rules.js"
   ],
   "tests": [
+    "firebase/controls.test.mjs",
     "firebase/pin-attempts.test.mjs",
     "firebase/room-limits.test.mjs",
     "marketing/served.test.mjs",
@@ -1273,6 +1275,7 @@
     "public/assets/js/back-guard.test.mjs",
     "public/assets/js/buzon.test.mjs",
     "public/assets/js/compartir.test.mjs",
+    "public/assets/js/controls.test.mjs",
     "public/assets/js/daily-attempt.test.mjs",
     "public/assets/js/daily-points.test.mjs",
     "public/assets/js/daily-recap.test.mjs",

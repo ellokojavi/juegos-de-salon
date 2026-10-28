@@ -171,3 +171,35 @@ export function supportStats(days, { from, to }) {
   const ratio = (a, b) => (b ? a / b : null);
   return { series, ...t, days: series.length, openRate: ratio(t.open, t.shown), payRate: ratio(t.pay, t.open), thanksRate: ratio(t.thanks, t.pay) };
 }
+
+/**
+ * 🎨 Skins (D-477): each seasonal template (season/templates.js) with the panel's control
+ * `controls/skins/<id>`: { mode, from, until } and where it stands today. `days` is the run that
+ * matters now (the current one, else the next), as 'YYYY-MM-DD', or null if it never comes back.
+ * yearly: its own 'MM-DD' days, every year (a run may cross New Year); dates: only from…until.
+ */
+export function skinRows({ remote, templates = {}, today }) {
+  return Object.entries(templates).map(([id, t]) => {
+    const c = remote?.[id] || {};
+    const mode = ['yearly', 'dates', 'off'].includes(c.mode) ? c.mode : 'yearly';
+    const row = { id, mode, from: c.from || null, until: c.until || null, yearly: { from: t.from, to: t.to }, public: t.public !== false, saved: !!remote?.[id] };
+    if (mode === 'off') return { ...row, status: 'off', days: null };
+    if (mode === 'dates') {
+      if (!row.from) return { ...row, status: 'off', days: null };
+      const days = { from: row.from, to: row.until };
+      const status = today < row.from ? 'scheduled' : row.until && today > row.until ? 'ended' : 'live';
+      return { ...row, status, days };
+    }
+    const y = Number(today.slice(0, 4));
+    const runs = [y - 1, y, y + 1].map(a => ({ from: `${a}-${t.from}`, to: `${t.to < t.from ? a + 1 : a}-${t.to}` }));
+    const days = runs.find(r => r.to >= today);
+    return { ...row, status: today >= days.from ? 'live' : 'scheduled', days };
+  });
+}
+
+/** What is written to `controls/skins/<id>` for a row (no empty fields). */
+export const skinToRemote = (s, at = Date.now()) => ({
+  mode: s.mode, at,
+  ...(s.mode === 'dates' && s.from ? { from: s.from } : {}),
+  ...(s.mode === 'dates' && s.until ? { until: s.until } : {}),
+});

@@ -3,7 +3,8 @@
  *
  * Where it shows, from the quietest to the most visible, and never during a game or as a popup (U-38):
  *
- * - the home page footer, always, under "💬 Suggestions and comments" (`supportFooterLink`);
+ * - the home page footer, under "💬 Suggestions and comments" (`supportFooterLink`);
+ *   each of these two places can be switched off from the panel's 🧩 Site features (D-477, controls.js);
  * - the end of a finished game, after everything else, with its own rule kept on the device
  *   (`supportAtEnd`, `dueSupport`):
  *     · not before the device has finished 5 games;
@@ -22,6 +23,7 @@
 import { el } from './ui.js';
 import { getLang } from './i18n.js';
 import { param, tiene } from './parametros.js';
+import { cachedControls, currentControls, featureOn } from './controls.js';
 
 /**
  * A friendly clip on the card: Keanu Reeves saying thank you (GIPHY's, from Sky TV), served from
@@ -213,8 +215,9 @@ export async function supportFromUrl({ lang = getLang(), search = globalThis.loc
 }
 
 
-/** The home page footer's link. */
+/** The footer's link, unless the panel's 🧩 Site features switched it off (D-477): the home page's fresh read, elsewhere the device's copy. */
 export async function supportFooterLink(lang = getLang()) {
+  if (!tiene('test') && !featureOn(await currentControls(), 'support', 'footer')) return null;
   return link('buzon-link footer-buzon', 'btn-apoyo-portada', texts(lang));
 }
 
@@ -226,6 +229,8 @@ let last = -Infinity;
 export async function supportAtEnd(screen, { store = globalThis.localStorage, now = Date.now() } = {}) {
   try {
     if (!screen || now - last < 3000) return null;
+    // Switched off in the panel (D-477): the device's last copy of controls/, so an ending reads no Firebase
+    if (!featureOn(cachedControls(store), 'support', 'endings')) return null;
     last = now;
     screen.querySelector('#apoyo-pie')?.remove();
     if (!dueSupport(store, now, { busy: !!screen.querySelector('#buzon-pie') })) return null;
