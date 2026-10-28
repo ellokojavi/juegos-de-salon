@@ -14,6 +14,11 @@
 //   node tools/release/changelog.mjs check [--base <ref>] # the format; with --base, what the PR brings
 //   node tools/release/changelog.mjs migrate [--base <ref>]  # an old entry in CHANGELOG.md → changelog/
 //   node tools/release/changelog.mjs collect              # the pending ones into CHANGELOG.md (processes round)
+//   node tools/release/changelog.mjs archive              # months before the newest entry's → changelog/archive/ (D-497)
+//
+// CHANGELOG.md keeps only the month of its newest entry (D-497): `collect` moves every older month
+// to `changelog/archive/<yyyy-mm>.md`, newest first inside each file, so the file every session may
+// read stays small. The version still comes from CHANGELOG.md's first entry, which never moves.
 //
 // An entry:
 //   level: patch          (patch, minor or major: how much the version goes up)
@@ -112,6 +117,46 @@ export function collect(changelog, entries) {
   const i = changelog.search(HEADING);
   return i < 0 ? changelog.trimEnd() + '\n\n' + block : changelog.slice(0, i) + block + changelog.slice(i);
 }
+
+export const ARCHIVE = `${FOLDER}/archive`;
+
+/**
+ * CHANGELOG.md split by month (D-497): `{ kept, months }`, where `kept` is the text with only the
+ * newest entry's month and `months` maps each older `yyyy-mm` to its entries' text, newest first.
+ */
+export function archive(changelog) {
+  const i = changelog.search(HEADING);
+  if (i < 0) return { kept: changelog, months: {} };
+  const blocks = changelog.slice(i).split(/^(?=## \d+\.\d+\.\d+\b)/m);
+  const month = b => (b.match(/^## \S+\s+—\s+(\d{4}-\d{2})/) || [])[1];
+  const current = month(blocks[0]);
+  const months = {};
+  const kept = blocks.filter(b => {
+    const m = month(b);
+    if (!m || !current || m >= current) return true;
+    months[m] = (months[m] || '') + b.replace(/\s*$/, '\n\n');
+    return false;
+  });
+  return { kept: (changelog.slice(0, i) + kept.join('')).replace(/\s*$/, '\n'), months };
+}
+
+/** Writes the archived months into changelog/archive/, on top of what each file already has. */
+export function writeArchive(root, changelog) {
+  const { kept, months } = archive(changelog);
+  mkdirSync(join(root, ARCHIVE), { recursive: true });
+  for (const [m, text] of Object.entries(months)) {
+    const f = join(root, ARCHIVE, `${m}.md`);
+    const old = existsSync(f) ? readFileSync(f, 'utf8').replace(/^# .*\n+/, '') : '';
+    writeFileSync(f, `# Changelog · ${m}\n\n${text}${old}`.replace(/\s*$/, '\n'));
+  }
+  writeFileSync(join(root, 'CHANGELOG.md'), kept);
+  return Object.keys(months);
+}
+
+/** CHANGELOG.md and every archived month, as one text (for readers that look back, like the weekly report). */
+export const fullHistory = (root = ROOT) => [readFileSync(join(root, 'CHANGELOG.md'), 'utf8'),
+  ...(existsSync(join(root, ARCHIVE)) ? readdirSync(join(root, ARCHIVE)).filter(f => /^\d{4}-\d{2}\.md$/.test(f)).sort().reverse()
+    .map(f => readFileSync(join(root, ARCHIVE, f), 'utf8').replace(/^# .*\n+/, '')) : [])].join('\n');
 
 /** The `## X.Y.Z` entries of `now` that were not in `before`: `[{ version, date, body }]`. */
 export function newEntries(before, now) {
@@ -215,9 +260,13 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     if (!entries.length) { console.log('nothing to collect'); process.exit(0); }
     writeFileSync(join(ROOT, 'CHANGELOG.md'), collect(read('CHANGELOG.md'), entries));
     for (const e of entries) unlinkSync(join(ROOT, e.file));
-    console.log(`${entries.length} entr${entries.length === 1 ? 'y' : 'ies'} into CHANGELOG.md, up to ${version}: the version does not change when this merges.`);
+    const moved = writeArchive(ROOT, read('CHANGELOG.md'));
+    console.log(`${entries.length} entr${entries.length === 1 ? 'y' : 'ies'} into CHANGELOG.md, up to ${version}: the version does not change when this merges.${moved.length ? ` Archived: ${moved.join(', ')} → ${ARCHIVE}/.` : ''}`);
+  } else if (cmd === 'archive') {
+    const moved = writeArchive(ROOT, read('CHANGELOG.md'));
+    console.log(moved.length ? `${moved.join(', ')} → ${ARCHIVE}/` : 'nothing to archive: CHANGELOG.md holds one month');
   } else {
-    console.error('Usage: node tools/release/changelog.mjs new [level] | version | show | check [--base <ref>] | migrate [--base <ref>] | collect');
+    console.error('Usage: node tools/release/changelog.mjs new [level] | version | show | check [--base <ref>] | migrate [--base <ref>] | collect | archive');
     process.exit(1);
   }
 }

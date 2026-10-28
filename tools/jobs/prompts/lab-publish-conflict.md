@@ -19,6 +19,6 @@ and auto-merge never fires (#937 waited a night). The owner is not watching. Nob
    - Anything else where the two sides changed the same lines for different reasons, or that needs a
      judgement about the feature: do not guess. `git merge --abort`, then
      `node tools/agents/lab-publish.mjs failed <id> "<why, in Spanish, one sentence for the card>"`.
-5. Run the unit tests (`CLAUDE.md`, Tests). Commit the merge, push once (`git push origin <branch>`).
+5. Run the unit tests (`docs/SESSIONS.md`, Tests). Commit the merge, push once (`git push origin <branch>`).
    Auto-merge is already on; the watcher follows the PR from here.
 6. End with one line per request: the card and what happened.
