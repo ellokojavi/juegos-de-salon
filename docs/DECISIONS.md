@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (467)
+## In force (468)
 
 | D | Title | Status |
 |---|---|---|
@@ -525,8 +525,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-477](decisions/D-477.md) | 📣 Campaigns is the control center for everything temporary: splash, site features and skins | current |
 | [D-478](decisions/D-478.md) | An archived Cup's link shows its podium instead of "not found" (lab) | current |
 | [D-479](decisions/D-479.md) | Whatever leaves the lab for everyone goes to La Bodega | current |
-| [D-482](decisions/D-482.md) | Uno al día's share carries a neutral emoji grid, never one that spoils | current |
 | [D-480](decisions/D-480.md) | 🚀 Publicar para todos: the owner sends a lab feature live from its card | current |
+| [D-482](decisions/D-482.md) | Uno al día's share carries a neutral emoji grid, never one that spoils | current |
 
 ## No longer in force (11)
 
