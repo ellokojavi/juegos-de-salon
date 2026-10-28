@@ -15,7 +15,8 @@
  *                                made with another drawing or other texts? (D-181)
  *
  * `cards` also writes what search engines read (#887): each indexed page's block ends with its
- * JSON-LD (the games as `VideoGame` + `WebApplication`, the doors as `WebSite`), and
+ * JSON-LD (the games as `VideoGame` + `WebApplication`, the doors as `WebSite`; a game's
+ * "Cómo se juega" also as a `FAQPage`), and
  * public/sitemap.xml and public/robots.txt list the indexed pages. `check` blocks them stale too.
  *
  * The texts come from public/assets/js/games.js, which is also where the menu comes from: a single
@@ -240,6 +241,20 @@ const indexed = p => {
   const g = gameOf(p);
   return !p.route.startsWith('/labs/') && (!g || (g.available && !g.bodega));
 };
+/**
+ * A game's "Cómo se juega", as its cover shows it in Spanish: `howText`, or the list of `rules`
+ * (Dudo, Generala). It is the page's only question and answer: the owner kept the cover to that
+ * one block, so search engines read the same text the player does.
+ */
+const HOW = {};
+for (const g of GAMES) {
+  const file = join(ROOT, 'public', g.path, 'rules.js');
+  if (!existsSync(file)) continue;
+  const { LOCALES } = await import(file);
+  const T = LOCALES?.es?.ui || LOCALES?.es;
+  const text = T?.howText || (Array.isArray(T?.rules) && T.rules.join(' '));
+  if (text) HOW[g.id] = text.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+}
 /** '1–6' → { min: 1, max: 6 } */
 const range = s => { const [a, b = a] = String(s).split(/[–-]/).map(Number); return { minValue: a, maxValue: b }; };
 /**
@@ -272,8 +287,14 @@ function jsonLd(p) {
     url,
     inLanguage: p.lang,
   };
+  const how = g && HOW[g.id] && {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [{ '@type': 'Question', name: `¿Cómo se juega ${g.name.es}?`, acceptedAnswer: { '@type': 'Answer', text: HOW[g.id] } }],
+  };
   // `<` escaped, so no text can close the script
-  return `  <script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
+  const script = d => `  <script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`;
+  return [data, how].filter(Boolean).map(script).join('\n');
 }
 
 /** The indexed pages; the doors name each other as one page in four languages (D-74). */
