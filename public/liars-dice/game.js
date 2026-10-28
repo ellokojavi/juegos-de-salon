@@ -1281,8 +1281,8 @@ function renderModes() {
 function renderRules() {
   const list = $('#rules-list');
   list.innerHTML = '';
-  // The setup's two switches (D-447) go before the last rule, except in Uno al día, which plays with neither
-  const reglas = HOY ? T.rules : [...T.rules.slice(0, -1), T.ruleShake, fmt(T.ruleClock, { n: TURN_SECS }), T.rules.at(-1)];
+  // The setup's switches (D-447, D-495) go before the last rule, except in Uno al día, which plays with neither
+  const reglas = HOY ? T.rules : [...T.rules.slice(0, -1), T.ruleShake, fmt(T.ruleClock, { n: TURN_SECS }), `<b>${T.traditionalLabel}</b>: ${T.traditionalHint[0].toLowerCase()}${T.traditionalHint.slice(1)}`, T.rules.at(-1)];
   reglas.forEach(r => list.append(el('li', { html: r })));
 }
 
