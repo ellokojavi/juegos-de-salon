@@ -29,10 +29,12 @@ function prune(o) {
   for (const k of Object.keys(o)) { o[k] = prune(o[k]); if (o[k] == null) delete o[k]; }
   return Object.keys(o).length ? o : null;
 }
-const resolve = (v, now) => {
+// `old` is what is stored at the same path, for `{'.sv': {increment: n}}` (resolved before the rules run, as in Firebase)
+const resolve = (v, now, old) => {
   if (v && typeof v === 'object') {
     if (v['.sv'] === 'timestamp') return now;
-    return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, resolve(x, now)]));
+    if (typeof v['.sv']?.increment === 'number') return (typeof old === 'number' ? old : 0) + v['.sv'].increment;
+    return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, resolve(x, now, old?.[k])]));
   }
   return v;
 };
@@ -138,7 +140,7 @@ export function createDb(rules = loadRules(), initial = {}) {
       why.length = 0;
       const auth = uid ? { uid } : null;
       const oldT = tree, newT = clone(tree) || {};
-      for (const [p, v] of Object.entries(changes)) setAt(newT, p, resolve(clone(v), now));
+      for (const [p, v] of Object.entries(changes)) setAt(newT, p, resolve(clone(v), now, getAt(oldT, p)));
       prune(newT);
       for (const p of Object.keys(changes)) {
         if (!canWrite(p, oldT, newT, auth, now)) { why.push(`write ${p}`); return false; }
