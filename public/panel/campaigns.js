@@ -18,7 +18,8 @@ export const todayOf = (now = Date.now()) => iso(new Date(now));
 /**
  * The switches the panel edits: Firebase's when it has them; before the first save, ACTIVE's (in
  * its order, on) and every other campaign off. Each: { id, on, order, from, until }, one per
- * campaign of CAMPAIGNS, in order (the ones on first).
+ * campaign of CAMPAIGNS, in order (the ones on first). `label` is the owner's own name for it, only
+ * for sorting them out in the panel: players never see it.
  */
 export function switches({ remote, active = [], campaigns = {} }) {
   const ids = Object.keys(campaigns);
@@ -26,10 +27,10 @@ export function switches({ remote, active = [], campaigns = {} }) {
   const rows = ids.map((id, i) => {
     if (saved) {
       const c = saved[id] || {};
-      return { id, on: c.on === true, order: Number.isFinite(c.order) ? c.order : 1000 + i, from: c.from || null, until: c.until || null };
+      return { id, on: c.on === true, order: Number.isFinite(c.order) ? c.order : 1000 + i, from: c.from || null, until: c.until || null, label: c.label || null };
     }
     const k = active.findIndex(a => a.id === id);
-    return { id, on: k >= 0, order: k >= 0 ? k : 1000 + i, from: active[k]?.from || null, until: active[k]?.until || null };
+    return { id, on: k >= 0, order: k >= 0 ? k : 1000 + i, from: active[k]?.from || null, until: active[k]?.until || null, label: null };
   });
   return rows.sort((a, b) => a.order - b.order || ids.indexOf(a.id) - ids.indexOf(b.id));
 }
@@ -70,12 +71,16 @@ export function move(rows, id, dir) {
   return list.map((s, k) => ({ ...s, order: k }));
 }
 
-/** What is written to Firebase `splash/`: every campaign, its switch and its days (no empty fields). */
+/** The owner's name for a campaign, trimmed to 60 characters, or null to go back to its title. */
+export const cleanLabel = t => String(t ?? '').replace(/\s+/g, ' ').trim().slice(0, 60) || null;
+
+/** What is written to Firebase `splash/`: every campaign, its switch, its days and its label (no empty fields). */
 export function toRemote(rows, at = Date.now()) {
   return Object.fromEntries(rows.map((s, k) => [s.id, {
     on: !!s.on, order: k, at,
     ...(s.from ? { from: s.from } : {}),
     ...(s.until ? { until: s.until } : {}),
+    ...(s.label ? { label: s.label } : {}),
   }]));
 }
 
