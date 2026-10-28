@@ -50,7 +50,7 @@ export const JUEGOS_DIA = [
   // The two that only La Copa has carry their name here, so the dice does not load La Copa's rules
   // to say it (D-377); uno-al-dia.test.mjs checks they match juegosCopa()
   { id: 'linea', emoji: '⏳', desde: LANZAMIENTO, name: { es: 'Línea Relámpago', en: 'Timeline Flash', pt: 'Linha Relâmpago', de: 'Blitz-Zeitstrahl' } },
-  { id: 'numero', emoji: '🔢', desde: LANZAMIENTO, name: { es: 'Toque y Fama: adivina el número', en: 'Bulls and Cows: Crack the Number', pt: 'Toque e Fama: descubra o número', de: 'Bullen und Kühe: Zahl knacken' } },
+  { id: 'numero', emoji: '🔢', desde: LANZAMIENTO, name: { es: 'Toque y Fama: Número', en: 'Bulls and Cows: Number', pt: 'Toque e Fama: Número', de: 'Bullen und Kühe: Zahl' } },
   { id: 'conexiones', emoji: '🔗', desde: LANZAMIENTO, hasta: DESDE_AGENTES },
   { id: 'letras', emoji: '🔤', desde: LANZAMIENTO },
   { id: 'anio', emoji: '📅', desde: LANZAMIENTO },

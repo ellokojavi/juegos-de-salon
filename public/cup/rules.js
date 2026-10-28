@@ -56,7 +56,7 @@ const ES = {
       desempate: 'Si empatas, gana quien tardó menos.',
     },
     numero: {
-      nombre: 'Toque y Fama: adivina el número', habilidad: 'deducir',
+      nombre: 'Toque y Fama: Número', habilidad: 'deducir',
       como: [
         'Adivina en 10 intentos un número secreto de 4 cifras distintas. Puede empezar con cero.',
         'Escribe 4 cifras distintas y toca Probar. Te decimos cuántas están en su lugar (famas) y cuántas en otro lugar (toques).',
@@ -918,7 +918,7 @@ const EN = {
       desempate: 'On a tie, the faster player wins.',
     },
     numero: {
-      nombre: 'Bulls and Cows: Crack the Number', habilidad: 'deduction',
+      nombre: 'Bulls and Cows: Number', habilidad: 'deduction',
       como: [
         'Guess a secret number with 4 different digits in 10 guesses. It can start with zero.',
         'Type 4 different digits and tap Guess. We tell you how many are in the right spot (bulls) and how many are in the wrong spot (cows).',
@@ -1766,7 +1766,7 @@ const PT = {
       desempate: 'Se empatar, ganha quem levou menos tempo.',
     },
     numero: {
-      nombre: 'Toque e Fama: descubra o número', habilidad: 'dedução',
+      nombre: 'Toque e Fama: Número', habilidad: 'dedução',
       como: [
         'Adivinhe em 10 tentativas um número secreto de 4 algarismos diferentes. Ele pode começar com zero.',
         'Escreva 4 algarismos diferentes e toque em Tentar. A gente diz quantos estão no lugar certo (famas) e quantos em outro lugar (toques).',
@@ -2614,7 +2614,7 @@ const DE = {
       desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
     },
     numero: {
-      nombre: 'Bullen und Kühe: Zahl knacken', habilidad: 'Kombinieren',
+      nombre: 'Bullen und Kühe: Zahl', habilidad: 'Kombinieren',
       como: [
         'Errate in 10 Versuchen eine geheime Zahl aus 4 verschiedenen Ziffern. Sie kann mit einer Null beginnen.',
         'Gib 4 verschiedene Ziffern ein und tippe auf Raten. Wir sagen dir, wie viele an der richtigen Stelle stehen (Bullen) und wie viele an einer anderen (Kühe).',

@@ -1,5 +1,5 @@
 /**
- * 🔢 Toque y Fama: adivina el número — pantalla. Es la de Toque y Fama (D-102): el teclado
+ * 🔢 Toque y Fama: Número — pantalla. Es la de Toque y Fama (D-102): el teclado
  * compartido con notas (toque largo para tachar una cifra), el tablero de intentos y las
  * pistas de famas y toques, con sus textos. Los estilos son los de assets/css/teclado.css.
  *
