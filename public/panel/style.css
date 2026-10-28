@@ -375,3 +375,13 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .campana-resultado .lead { margin: 0; }
 .campana-resultado .leyenda span { font-size: 1rem; }
 .campana-resultado .tiles { grid-template-columns: repeat(auto-fit, minmax(min(140px, 40%), 1fr)); margin-bottom: 0; }
+
+/* 📣 Campaigns' three kinds (D-477): a tab each, with what is on today under its name */
+.campanas-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0 0 14px; }
+.campanas-tabs button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 56px; padding: 8px 10px; border: 1px solid var(--glass-border); border-radius: 14px; background: rgba(0, 0, 0, 0.18); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.campanas-tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg1); border-color: var(--ink); }
+.campanas-tabs button:focus-visible { outline: 2px solid var(--cyan); }
+.campanas-tab-nombre { font-weight: 800; font-size: 0.9rem; }
+.campanas-tab-hoy { font-size: 0.75rem; opacity: 0.75; }
+.control-parte { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--glass-border); }
+.control-parte p { margin: 2px 0 0; }
