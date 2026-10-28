@@ -41,6 +41,23 @@ la partida y hay que explicarla en varios idiomas justo cuando el juego ya se en
 cuando la mesa pida el juego largo. El motor la tiene prevista: la resolución recibe `acesWild` y la
 apuesta legal recibe `obligada`, así que sumarla no es rehacer nada.
 
+### Traditional rules, in the lab (D-487, #897)
+
+A setup switch, **🧪 Classic rules** (`config.traditional`), off by default and shown only to
+lab key holders (`labAccess()`; card `#seccion-dudo-tradicional` in `/labs/`). With it on:
+
+- **Nobody opens a round in aces.** Going to aces later, at half, is still allowed.
+- **The obligada round.** The first time a player is down to one die, the round they open is
+  obligada: aces are not wild, and everyone keeps the pinta the opener named, only raising the
+  quantity. The opener may name aces. One per player per game; calzar keeps its usual conditions.
+  The hand shows "☝️ Ronda obligada…" instead of "Los ases son comodín", and the reveal marks only
+  the dice of that face.
+
+The engine: `minBid(prev, pinta, rules)` and `bidOk(…, rules)` with `rules = { obligada, noAceOpen }`
+(`Infinity` means not allowed); `buildState` returns `rules`, `obligada` and `last.obligada`; the bot
+takes the same `rules`. The audit against the traditional rules, and the questions left for the
+owner (table variants not built), are in #897.
+
 ### Cómo se nombran las pintas
 
 En español la mesa chilena no dice "doses" ni "treses": dice **ases, tontos, trenes, cuadras,

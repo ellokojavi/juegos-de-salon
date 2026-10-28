@@ -413,4 +413,49 @@ const ronda3 = (a, b, c) => [
   assert.ok(uno.done); assert.equal(uno.winner, 'B'); assert.equal(uno.last.fuera, 'A');
 }
 
+/* ---------- traditional rules (lab, #897): no opening in aces, the obligada round ---------- */
+{
+  // Without the switch, nothing changes: opening in aces is allowed
+  assert.equal(minBid(null, 1), 1);
+  assert.equal(minBid(null, 1, { noAceOpen: true }), Infinity);
+  assert.equal(minBid(null, 5, { noAceOpen: true }), 1);
+  assert.equal(minBid({ n: 6, p: 5 }, 1, { noAceOpen: true }), 3, 'going to aces mid-round is still allowed');
+  // Obligada: only the opener's pinta, one more each time; the opener may name aces
+  assert.equal(minBid(null, 1, { obligada: true, noAceOpen: true }), 1);
+  assert.equal(minBid({ n: 2, p: 4 }, 4, { obligada: true }), 3);
+  assert.equal(minBid({ n: 2, p: 4 }, 6, { obligada: true }), Infinity);
+  assert.equal(bidOk({ n: 2, p: 4 }, { n: 5, p: 1 }, 10, { obligada: true }), false);
+
+  const T = { dice: 2, traditional: true };
+  const r0 = [{ t: 'roll', from: 'A', d: '1,1' }, { t: 'roll', from: 'B', d: '3,6' }];
+  const abreAses = buildState({ players: P, config: T, plays: [...r0, { t: 'bid', from: 'A', n: 1, p: 1 }] });
+  assert.equal(abreAses.bid, null, 'with traditional rules nobody opens in aces');
+  assert.equal(abreAses.obligada, false);
+  // A bids two sixes and B doubts: the aces are wild, there are three, A was right; B drops to one die
+  const r1 = [...r0, { t: 'bid', from: 'A', n: 2, p: 6 }, { t: 'dudo', from: 'B' }];
+  const s1 = buildState({ players: P, config: T, plays: r1 });
+  assert.equal(s1.st.B.dice, 1); assert.equal(s1.opener, 'B');
+  assert.equal(s1.obligada, true, 'B is down to one die for the first time: B opens an obligada round');
+  assert.deepEqual(s1.rules, { obligada: true, noAceOpen: true });
+  // In the obligada round aces are not wild: B bids two fives, A doubts, and A's aces do not count
+  const r2 = [...r1, { t: 'roll', from: 'A', d: '1,5' }, { t: 'roll', from: 'B', d: '1' },
+    { t: 'bid', from: 'B', n: 1, p: 5 }, { t: 'bid', from: 'A', n: 2, p: 6 }, { t: 'bid', from: 'A', n: 2, p: 5 }, { t: 'dudo', from: 'B' }];
+  const s2 = buildState({ players: P, config: T, plays: r2 });
+  assert.equal(s2.last.obligada, true);
+  assert.equal(s2.last.count, 1, 'in the obligada round an ace is only an ace');
+  assert.equal(s2.last.loser, 'A'); assert.equal(s2.st.A.dice, 1);
+  // A is down to one die for the first time: obligada again; B already had theirs
+  assert.equal(s2.obligada, true); assert.equal(s2.opener, 'A');
+  // The same table without the switch: aces wild, no obligada
+  const sin = buildState({ players: P, config: { dice: 2 }, plays: r1 });
+  assert.equal(sin.obligada, false); assert.deepEqual(sin.rules, { obligada: false, noAceOpen: false });
+  // The bot keeps to the rules: it never opens in aces, and in obligada it keeps the pinta
+  for (let i = 0; i < 200; i++) {
+    const abre = botMove({ myDice: [1, 1, 1, 2, 3], bid: null, totalDice: 10, rules: { noAceOpen: true } });
+    assert.ok(abre.t === 'bid' && abre.p !== 1);
+    const sigue = botMove({ myDice: [4, 4, 1], bid: { n: 2, p: 4 }, totalDice: 6, rules: { obligada: true } });
+    assert.ok(sigue.t === 'dudo' || (sigue.p === 4 && sigue.n === 3), JSON.stringify(sigue));
+  }
+}
+
 console.log('dudo: dados, apuestas, calzar, rondas, el celular que juega y el anti-trampa en orden');
