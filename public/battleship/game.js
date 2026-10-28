@@ -20,10 +20,11 @@ import { UMBRAL } from '../assets/js/arrastre.js';
 import { createChat } from '../assets/js/chat.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
 import { azarDel, puntajeNaval } from '../assets/js/uno-al-dia.js';
-import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, sha256, randomNonce, verifyPlayer } from './engine.js';
+import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, salvoTurn, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import { FONDO_AGUA, barcoEn, barcoEntero, trozoDe } from './flota.js';
 import { renderQr } from '../assets/js/qr.js';
+import { labAccess } from '../assets/js/lab-access.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -57,7 +58,8 @@ function apply(msg) {
     case 'commit': if (!M.commits[from]) M.commits[from] = { hash: msg.hash }; break;
     case 'shot': {
       const v = view();
-      if (v.phase !== 'play' || v.pending || v.shooter !== from || !isCell(msg.cell)) return;
+      // Salvo (#894): the whole volley goes at once, so a shot may arrive with others unanswered
+      if (v.phase !== 'play' || v.shooter !== from || !isCell(msg.cell) || (v.salvo ? v.salvo.left < 1 : v.pending)) return;
       if (M.shots.some(s => s.from === from && s.cell === msg.cell)) return;
       M.shots.push({ from, n: M.shots.length, cell: msg.cell, result: null, ship: null, cells: null });
       break;
@@ -84,7 +86,9 @@ function view() {
   const committed = M.commits.A && M.commits.B;
   const pending = M.shots.find(s => s.result === null) || null;
   let shooter = M.starter;
-  for (const s of M.shots) { if (s.result === null) break; shooter = nextShooter(s.from, s.result, M.config.extraShot); }
+  const salvo = M.config.salvo ? salvoTurn(M.shots, M.starter) : null;
+  if (salvo) shooter = salvo.shooter;
+  else for (const s of M.shots) { if (s.result === null) break; shooter = nextShooter(s.from, s.result, M.config.extraShot); }
   let winner = null;
   if (allSunk(repliesBy('A'))) winner = 'A';
   else if (allSunk(repliesBy('B'))) winner = 'B';
@@ -96,7 +100,7 @@ function view() {
   else if (!(M.reveals.A && M.reveals.B)) phase = 'reveal';
   else phase = 'done';
   const last = M.shots.length ? M.shots[M.shots.length - 1] : null;
-  return { phase, pending, shooter, done, winner, last };
+  return { phase, pending, shooter, done, winner, last, salvo };
 }
 
 /* ------------------------------------------------------------------ */
@@ -170,8 +174,14 @@ async function act() {
     // En Uno al día la flota del celular sale de la semilla del día: la misma para todos. Es local,
     // así que nadie la puede leer de una sala (C-10); el compromiso con hash sigue igual.
     if (v.phase === 'placing' && !S.layouts[b]) await setLayout(b, randomLayout(N, S.hoy ? azarDel(S.hoy.semilla, 'flota') : Math.random));
-    if (v.phase === 'play' && v.shooter === b && !v.pending && !S.cpuTimer) {
-      S.cpuTimer = setTimeout(() => { S.cpuTimer = null; S.transport.send({ t: 'shot', from: b, cell: S.bot.hunter.next() }); }, 1300);
+    if (v.phase === 'play' && v.shooter === b && !v.pending && !S.cpuTimer && (!v.salvo || v.salvo.left > 0)) {
+      S.cpuTimer = setTimeout(() => {
+        S.cpuTimer = null;
+        // Salvo: the whole volley at once; each cell is marked as shot so the next one differs
+        const cells = [];
+        for (let i = 0; i < (v.salvo ? v.salvo.left : 1); i++) { const c = S.bot.hunter.next(); S.bot.hunter.shot.add(c); cells.push(c); }
+        cells.forEach(cell => S.transport.send({ t: 'shot', from: b, cell }));
+      }, 1300);
     }
   }
   if (v.phase === 'done' && !M.verify.A) await verifyAll();
@@ -306,11 +316,18 @@ function espuma(wrap, r, c) {
 }
 
 /** Clases de una casilla del tablero enemigo: mis disparos. */
-function enemyCellClass(myShots, aim) {
+function enemyCellClass(myShots, aim, fired = null, aims = []) {
   const mark = {};
   myShots.forEach(s => { if (s.result) { mark[s.cell] = s.result; if (s.cells) s.cells.forEach(x => { mark[x] = 'hundido'; }); } });
-  return (r, c) => { const n = cellName(r, c); return (mark[n] || '') + (aim === n ? ' aim' : ''); };
+  // Salvo: a fired cell whose answer is still hidden keeps its target
+  return (r, c) => { const n = cellName(r, c); return (mark[n] || '') + (aim === n || aims.includes(n) || fired?.has(n) ? ' aim' : ''); };
 }
+
+const RESULT_ICON = { agua: '🌊', tocado: '💥', hundido: '🔥' };
+/** The loudest answer of a volley: the one its sound and colour follow. */
+const bestResult = shots => (shots.some(s => s.result === 'hundido') ? 'hundido' : shots.some(s => s.result === 'tocado') ? 'tocado' : 'agua');
+/** Salvo: the volley to show, the one just answered (or the one cut short by the end of the game). */
+const lastVolley = v => (v.phase === 'play' || !v.salvo.volley.length ? v.salvo.previous : v.salvo.volley);
 
 function fleetScore(sunkIds) {
   return el('span', { class: 'fleet' }, ...FLEET.map(f => el('span', { class: sunkIds.includes(f.id) ? 'sunk' : '' }, SHIP_EMOJI)));
@@ -610,24 +627,27 @@ function renderPlay(v) {
     S.lastShownShot = v.last.n;
     const turnPasses = v.phase === 'play' && v.shooter !== v.last.from;
     if (turnPasses || v.phase !== 'play') {
-      const stage = shotResultStage(v.last, turnPasses ? M.names[v.shooter] : null);
-      showHandoff([stage], () => { S.uiRole = v.shooter; S.aim = null; S.fleetShown = false; render(); }, { tapAdvances: !turnPasses });
-      playResultSound(v.last.result);
+      const shots = v.salvo ? lastVolley(v) : [v.last];
+      const stage = shotResultStage(shots, turnPasses ? M.names[v.shooter] : null);
+      showHandoff([stage], () => { S.uiRole = v.shooter; S.aim = null; S.aims = []; S.fleetShown = false; render(); }, { tapAdvances: !turnPasses });
+      playResultSound(bestResult(shots));
       return;
     }
   }
   if (S.mode === 'local' && v.shooter && S.uiRole !== v.shooter && !v.pending && $('#handoff').hidden) {
     const stage = passBlock({ label: T.hoPass, name: M.names[v.shooter], button: T.hoReady });
-    showHandoff([stage], () => { S.uiRole = v.shooter; S.aim = null; S.fleetShown = false; render(); }, { tapAdvances: false });
+    showHandoff([stage], () => { S.uiRole = v.shooter; S.aim = null; S.aims = []; S.fleetShown = false; render(); }, { tapAdvances: false });
     return;
   }
   // Rol que "mira" la pantalla
   const me = S.mode === 'local' ? v.shooter : (S.mode === 'online' ? S.role : 'A');
   const enemy = other(me);
-  const canShoot = shooterLocal && v.shooter === me && !v.pending && v.phase === 'play';
+  const canShoot = shooterLocal && v.shooter === me && !v.pending && v.phase === 'play' && (!v.salvo || v.salvo.left > 0);
   const myTurn = v.phase === 'play' && shooterLocal && v.shooter === me;
   // El hundimiento en curso: el más nuevo de la partida, mientras siga durando en pantalla.
-  const ultimoHundido = [...M.shots].reverse().find(x => x.result === 'hundido' && x.cells);
+  // In a salvo, a volley still being answered sinks nothing yet: its answers come out together
+  const enVuelo = v.salvo && v.phase === 'play' ? new Set(v.salvo.volley) : null;
+  const ultimoHundido = [...M.shots].reverse().find(x => x.result === 'hundido' && x.cells && !enVuelo?.has(x));
   if (ultimoHundido && S.hundimiento?.n !== ultimoHundido.n) S.hundimiento = { n: ultimoHundido.n, shot: ultimoHundido, inicio: Date.now(), espuma: false };
   const hundiendo = S.hundimiento && Date.now() - S.hundimiento.inicio < HUNDIR_MS ? S.hundimiento : null;
   /**
@@ -648,6 +668,7 @@ function renderPlay(v) {
     ? fmt(T.sunkShip, { ship: T.ships[hundiendo.shot.ship], name: M.names[enemy] })
     : fmt(T.sunkMine, { ship: T.ships[hundiendo.shot.ship] }));
   else if (v.phase !== 'play') setStatus('theirs', '⏳', '…', T.waitingReply);
+  else if (myTurn && v.salvo) setStatus('mine', '🎯', T.turnYou, v.pending ? T.waitingReply : fmt(T.salvoSub, { n: v.salvo.left }));
   else if (myTurn) setStatus('mine', '🎯', T.turnYou, lastMine && lastMine.result !== 'agua' && M.config.extraShot
     ? fmt(T.extraGo, { result: T[lastMine.result] })
     : (v.pending ? T.waitingReply : fmt(T.turnYouSub, { name: M.names[enemy] })));
@@ -672,6 +693,20 @@ function renderPlay(v) {
   $('#enemy-title').textContent = fmt(T.enemyBoard, { name: M.names[enemy] });
   const myShots = M.shots.filter(s => s.from === me);
   const fire = cell => { if (!canShoot) return; S.aim = null; S.transport.send({ t: 'shot', from: me, cell }); SFX.flip(); };
+  /**
+   * Salvo (#894): tap the cells (tap again to take one back) and one ¡Fuego! sends the whole
+   * volley. Its answers stay hidden on the board until the last one is in.
+   */
+  if (!S.aims || !canShoot) S.aims = [];
+  const needed = v.salvo ? Math.min(v.salvo.left, N * N - myShots.length) : 0;
+  const hidden = v.salvo && v.phase === 'play' ? new Set(v.salvo.volley.map(s => s.cell)) : null;
+  const fireLabel = () => `${T.fire} ${S.aims.length}/${needed}`;
+  const fireSalvo = () => {
+    if (!canShoot || S.aims.length !== needed) return;
+    const cells = S.aims; S.aims = [];
+    cells.forEach(cell => S.transport.send({ t: 'shot', from: me, cell }));
+    SFX.flip();
+  };
   const enemyBox = $('#enemy-grid'); enemyBox.innerHTML = '';
   // El tablero ocupa media pantalla: es el cartel más grande que hay para decir si puedes
   // disparar o no. Vivo cuando te toca, apagado cuando no.
@@ -689,10 +724,21 @@ function renderPlay(v) {
     if (v.phase === 'play' && !v.pending && v.shooter !== me) sub.textContent = fmt(T.notYourTurn, { name: M.names[v.shooter] });
     SFX.error(); vibrate([20, 30, 20]);
   };
-  enemyBox.append(gridEl({ cellClass: enemyCellClass(myShots, S.aim), cellArt: enemyCellArt(myShots), onTap: (r, c, cellEl) => {
+  const shownShots = hidden ? myShots.filter(s => !hidden.has(s.cell)) : myShots;
+  enemyBox.append(gridEl({ cellClass: enemyCellClass(shownShots, S.aim, hidden, S.aims), cellArt: enemyCellArt(shownShots), onTap: (r, c, cellEl) => {
     if (!canShoot) return denegar();
     const n = cellName(r, c);
-    if (myShots.some(s => s.cell === n)) { cellEl.classList.remove('shake'); void cellEl.offsetWidth; cellEl.classList.add('shake'); return; }
+    const shake = () => { cellEl.classList.remove('shake'); void cellEl.offsetWidth; cellEl.classList.add('shake'); };
+    if (myShots.some(s => s.cell === n)) return shake();
+    if (v.salvo) {
+      if (S.aims.includes(n)) S.aims = S.aims.filter(x => x !== n);
+      else if (S.aims.length < needed) S.aims = [...S.aims, n];
+      else { SFX.error(); return shake(); }
+      SFX.tap(); vibrate(8);
+      cellEl.classList.toggle('aim', S.aims.includes(n));
+      const b = $('#fire-btn'); b.disabled = S.aims.length !== needed; b.textContent = fireLabel();
+      return;
+    }
     if (!M.config.confirmShot) return fire(n);
     S.aim = S.aim === n ? null : n; SFX.tap(); vibrate(8);
     $$('#enemy-grid .cell').forEach(x => x.classList.toggle('aim', S.aim === cellName(+x.dataset.r, +x.dataset.c)));
@@ -700,9 +746,21 @@ function renderPlay(v) {
   } }));
   if (hundiendo && hundiendo.shot.from === me) pintaHundimiento(enemyBox, hundiendo);
   const fireRow = $('#fire-row'); fireRow.innerHTML = '';
-  if (M.config.confirmShot && canShoot) fireRow.append(el('button', { class: 'btn btn--yellow', id: 'fire-btn', disabled: !S.aim, onClick: () => fire(S.aim) }, T.fire));
+  if (v.salvo && canShoot) fireRow.append(el('button', { class: 'btn btn--yellow', id: 'fire-btn', disabled: S.aims.length !== needed, onClick: fireSalvo }, fireLabel()));
+  else if (M.config.confirmShot && canShoot) fireRow.append(el('button', { class: 'btn btn--yellow', id: 'fire-btn', disabled: !S.aim, onClick: () => fire(S.aim) }, T.fire));
   // Toast del último resultado (mío o del rival)
-  if (v.last && v.last.result) {
+  const volley = v.salvo ? lastVolley(v) : [];
+  if (v.salvo && volley.length && volley.every(s => s.result)) {
+    // The whole volley in one line: each cell with its answer, then the ships it sank
+    const mine = volley[0].from === me;
+    const t = el('div', { class: 'toast salvo-toast ' + bestResult(volley) },
+      el('div', {}, mine ? T.salvoMine : fmt(T.salvoOf, { name: M.names[volley[0].from] })),
+      el('div', { class: 'salvo-list' }, ...volley.map(s => el('span', { class: 'salvo-shot ' + s.result }, el('span', { class: 'coord' }, s.cell), ' ', RESULT_ICON[s.result]))));
+    for (const s of volley.filter(x => x.result === 'hundido')) t.append(el('div', { class: 'muted', style: 'font:800 0.85rem var(--font-body)' }, mine ? fmt(T.sunkShip, { ship: T.ships[s.ship], name: M.names[enemy] }) : fmt(T.sunkMine, { ship: T.ships[s.ship] })));
+    fireRow.append(t);
+    const lastN = volley[volley.length - 1].n;
+    if (lastN > S.lastShownShot) { S.lastShownShot = lastN; playResultSound(bestResult(volley)); }
+  } else if (!v.salvo && v.last && v.last.result) {
     // La casilla va en su propio span: las cifras no se leen en Bangers (D-30).
     // `fmt` deja {cell} sin reemplazar, así que sirve de marca para partir el texto.
     const withCoord = (text, cell) => { const [antes, despues = ''] = text.split('{cell}'); return [antes, el('span', { class: 'coord' }, cell), despues]; };
@@ -730,12 +788,16 @@ function renderPlay(v) {
 function playResultSound(result) { if (result === 'agua') SFX.splash(); else if (result === 'tocado') SFX.hit(); else SFX.sink(); vibrate(result === 'agua' ? 10 : result === 'tocado' ? [30, 30] : [60, 40, 120]); }
 
 /** Etapa del pase en modo un celular: resultado del último disparo y, si el turno cambia, el pase debajo. */
-function shotResultStage(shot, nextName) {
-  const stage = el('div', { class: 'stage pop' },
-    el('div', { class: 'hint' }, `${M.names[shot.from]} · ${T.hoResult}`),
+function shotResultStage(shots, nextName) {
+  const shot = shots[0];
+  const stage = el('div', { class: 'stage pop' }, el('div', { class: 'hint' }, `${M.names[shot.from]} · ${T.hoResult}`));
+  if (shots.length === 1) stage.append(
     el('div', { class: 'shot-big' }, shot.cell),
     el('div', { class: 'shot-result ' + shot.result }, T[shot.result] + (shot.result === 'hundido' ? ` · ${T.ships[shot.ship]}` : '')),
   );
+  // Salvo: one row per shot of the volley
+  else stage.append(el('div', { class: 'salvo-rows' }, ...shots.map(s => el('div', { class: 'shot-result ' + s.result },
+    el('span', { class: 'coord' }, s.cell), ` ${RESULT_ICON[s.result]} ${T[s.result]}` + (s.result === 'hundido' ? ` · ${T.ships[s.ship]}` : '')))));
   if (nextName) {
     stage.append(el('div', { class: 'pass-divider' }));
     const pb = passBlock({ label: T.hoPass, name: nextName, button: T.hoReady, small: true });
@@ -905,9 +967,13 @@ function renderSetup(mode, prefillCode = '') {
   const inputs = {};
   const nameField = (key, label, value = '') => { inputs[key] = el('input', { type: 'text', maxlength: 14, placeholder: label, value, autocomplete: 'off' }); return el('div', { class: 'field' }, el('label', {}, label), inputs[key]); };
   if (mode === 'local') form.append(nameField('A', T.p1), nameField('B', T.p2)); else form.append(nameField('A', T.yourName, savedName));
-  const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); SFX.tap(); } }); return el('div', { class: 'toggle-row' }, el('div', {}, el('b', {}, label), hint ? el('small', {}, hint) : null), b); };
+  // With Salvo on, the extra shot and the per-shot confirm do not apply: a volley has one ¡Fuego!
+  const syncSalvo = () => $$('#setup-form [data-key="extraShot"], #setup-form [data-key="confirmShot"]').forEach(r => { r.hidden = !!config.salvo; });
+  const sw = (key, label, hint) => { const b = el('button', { type: 'button', class: 'switch' + (config[key] ? ' on' : ''), onClick: () => { config[key] = !config[key]; b.classList.toggle('on', config[key]); syncSalvo(); SFX.tap(); } }); return el('div', { class: 'toggle-row', 'data-key': key }, el('div', {}, el('b', {}, label), hint ? el('small', {}, hint) : null), b); };
   // Quien llega invitado no configura nada: la partida ya viene armada por el anfitrión.
   if (!prefillCode) form.append(sw('extraShot', T.extraShot, T.extraShotHint), sw('confirmShot', T.confirmShot, T.confirmShotHint));
+  // Salvo (#894) is still in the lab (D-395): only a lab key holder sees its switch. lab: #seccion-bn-salva
+  if (!prefillCode) labAccess().then(ok => { if (ok && form.isConnected && !form.querySelector('[data-key="salvo"]')) form.append(sw('salvo', `🎆 ${T.salvo}`, T.salvoHint)); });
   const actions = $('#setup-actions'); actions.innerHTML = '';
   const fail = msg => { clearRoomError(err); err.textContent = msg; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); SFX.error(); vibrate([30, 30, 30]); };
   const getName = k => inputs[k].value.trim();

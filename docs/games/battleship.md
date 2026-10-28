@@ -22,7 +22,19 @@ Reglas acordadas con el dueño del proyecto:
 
 ### Variantes futuras (no en v1)
 
-Flota de 10 barcos, regla de “sin contacto” con agua automática alrededor del hundido, tableros de 8×8 para partidas rápidas, salvas (varios disparos por turno según barcos vivos), modo espectador.
+Flota de 10 barcos, regla de “sin contacto” con agua automática alrededor del hundido, tableros de 8×8 para partidas rápidas, modo espectador.
+
+### Salvo (lab, #894, D-489)
+
+A switch **🎆 Salva** in ¿Cómo jugamos?, shown only with a lab key (`labAccess()`, card
+`#seccion-bn-salva` in `/labs/`), in all three modes; One a Day stays classic. With it on, each
+turn you fire as many shots as ships you still have afloat (5, then one fewer per ship lost), and
+the turn passes once the whole volley is answered; the extra-shot and confirm switches hide. You
+tap the cells (tap again to take one back) and `🎯 ¡Fuego! n/N` sends the volley in one tap. The
+fired cells keep their 🎯 until every answer is in, then the board and one line (`Tu salva`: each
+cell with 🌊/💥/🔥, then the ships sunk) show them together; on one phone the hand-off lists the
+volley. Turn logic: `salvoTurn()` in `engine.js`; the phone fires its whole volley with `Hunter`.
+Test: `tools/e2e/battleship/salvo.mjs`.
 
 ## Modos
 
