@@ -88,6 +88,10 @@ that (after a new game, after a big text change), saying why.
   Every skip, too, goes in your report to the owner (D-452): `check` lists those since the last
   round, with time, masked sender and reason. Only the reason: their text is for the owner
   (`inbox.mjs skipped`), never read it yourself.
+- **Lab publish requests (D-480):** `node tools/agents/lab-publish.mjs list` shows the owner's 🚀 Publicar
+  para todos requests. The `lab-publish-watch` job on the Mac mini takes them within 5 minutes; one
+  still `requested` after hours means the job failed or is not installed (look at its log), and a
+  `failed` one goes in your report to the owner with its reason, so they can ask again from the card.
 - **`documentation`, round mode:** "Do your daily round according to your guide, from
   `origin/main` and in your own worktree (`git worktree add`); PR base `main`." Criteria: its PR
   open (or "nothing to document" if nothing entered), `document.mjs check` with no new ✗ and
