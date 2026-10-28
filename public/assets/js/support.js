@@ -23,7 +23,7 @@
 import { el } from './ui.js';
 import { getLang } from './i18n.js';
 import { param, tiene } from './parametros.js';
-import { cachedControls, featureOn, loadControls } from './controls.js';
+import { cachedControls, currentControls, featureOn } from './controls.js';
 
 /**
  * A friendly clip on the card: Keanu Reeves saying thank you (GIPHY's, from Sky TV), served from
@@ -215,9 +215,9 @@ export async function supportFromUrl({ lang = getLang(), search = globalThis.loc
 }
 
 
-/** The home page footer's link, unless the panel's 🧩 Site features switched it off (D-477). */
+/** The footer's link, unless the panel's 🧩 Site features switched it off (D-477): the home page's fresh read, elsewhere the device's copy. */
 export async function supportFooterLink(lang = getLang()) {
-  if (!tiene('test') && !featureOn(await loadControls(), 'support', 'footer')) return null;
+  if (!tiene('test') && !featureOn(await currentControls(), 'support', 'footer')) return null;
   return link('buzon-link footer-buzon', 'btn-apoyo-portada', texts(lang));
 }
 
