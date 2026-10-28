@@ -114,6 +114,10 @@ la portada al día, va con los textos, and U-39, the start button above the fold
   owner from the twelve variants in `/labs/footer/`: the page ends in a purple-to-pink glow, the rotating phrase in white, and the grid's options become
   frosted buttons with no rule, each with its emoji in a color circle above the label. Only a tap on it opens its
   card, a sheet from the bottom like the share sheet that "Ahora no" or a tap outside closes (D-449).
+  **In the lab** (lab key only, D-395, `lab: #seccion-pie-sitio`): the same footer closes the screens
+  outside a game, from one component (`public/assets/js/site-footer.js`, its CSS in `base.css`, shared with
+  the home page): Rankings and Uno al día with the funny phrase, each game's cover and La Copa's entrance
+  without it. Never while playing and never on a result screen, which keeps its one quiet link (the owner's call).
   While the inbox overlay is open the page behind it stays put, as under the share and support sheets: only the card scrolls, and
   closing it returns to the same place (`fijarFondo` in `buzon-form.js`).
 

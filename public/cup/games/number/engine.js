@@ -40,19 +40,14 @@ export function estado(p, intentos, max = MAX_INTENTOS) {
   };
 }
 
-/** Puntaje del día: 11 menos los intentos si lo sacó; 0 si no (de 1 a 10 intentos → 10 a 1). */
-/** De 0 a 100 (D-113): 100 al primer intento y 10 menos por cada uno más (con 10 intentos, 10 al último). */
-export const puntaje = (e, max = MAX_INTENTOS) => (e.resuelto ? Math.round((100 * (max + 1 - e.usados)) / max) : 0);
-
 export const PENA_DESCARTE = 15;
 /**
- * The rule being tried in the lab (D-453): 100 when every guess could have been the number, 15 off
- * for each guess the earlier clues had already ruled out, never below 10 when solved; 0 if not.
- * The first guess has no clues, so D-113's 100 was 1 in 5040 of luck, and a flawless deducer topped
- * out near 60. Always playing a possible number cracks any of the 5040 secrets in 10 guesses or
- * fewer, so 100 is reachable without luck. Nothing records it yet: "publish" swaps it for `puntaje`.
+ * From 0 to 100, for whoever deduces (D-453, replacing D-113's count of guesses): 100 when every guess
+ * could have been the number, 15 off for each guess the earlier clues had already ruled out, never
+ * below 10 when solved; 0 if not. The first guess has no clues, so D-113's 100 was 1 in 5040 of luck;
+ * always playing a possible number cracks any of the 5040 secrets in 10 guesses or fewer.
  */
-export const puntajeDescarte = e => (e.resuelto ? Math.max(10, 100 - PENA_DESCARTE * (e.descartados || 0)) : 0);
+export const puntaje = e => (e.resuelto ? Math.max(10, 100 - PENA_DESCARTE * (e.descartados || 0)) : 0);
 
 /** Cada intento es una fila: 🟢 por fama, 🟡 por toque y ⚪ por el resto. Nunca las cifras. */
 export function tarjeta(e) {
