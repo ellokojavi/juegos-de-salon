@@ -496,6 +496,7 @@ node public/assets/js/instalar.test.mjs
 node public/assets/js/lab-access.test.mjs
 node public/assets/js/labs-puerta.test.mjs
 node public/assets/js/llegada.test.mjs
+node public/assets/js/manifest.test.mjs
 node public/assets/js/parametros.test.mjs
 node public/assets/js/pending-scores.test.mjs
 node public/assets/js/push.test.mjs
