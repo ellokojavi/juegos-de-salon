@@ -1,5 +1,5 @@
 {
-  "version": "0.229.16",
+  "version": "0.229.18",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1296,6 +1296,7 @@
     "public/assets/js/lab-access.test.mjs",
     "public/assets/js/labs-puerta.test.mjs",
     "public/assets/js/llegada.test.mjs",
+    "public/assets/js/manifest.test.mjs",
     "public/assets/js/parametros.test.mjs",
     "public/assets/js/pending-scores.test.mjs",
     "public/assets/js/push.test.mjs",
