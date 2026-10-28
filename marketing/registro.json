@@ -343,8 +343,8 @@
           "uso": "Captura de la campaña (de)"
         },
         {
-          "ruta": "public/assets/splash/bridges-teaser.gif",
-          "formato": "GIF 512×320, 8 s en loop",
+          "ruta": "public/assets/splash/bridges-teaser.mp4",
+          "formato": "MP4 512×320, 8 s en loop",
           "uso": "Teaser de Tren en Vilo (campaña tren-en-vilo-pronto)"
         },
         {
@@ -406,7 +406,6 @@
       "servido": [
         "public/assets/splash/*.mp4",
         "public/assets/splash/*.jpg",
-        "public/assets/splash/*-teaser.gif",
         "public/assets/splash/*-teaser.png"
       ]
     },

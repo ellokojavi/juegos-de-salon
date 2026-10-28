@@ -24,8 +24,9 @@ ready, and how to play its solution through the game's test hook), then its item
 
 A game that is still coming gets a drawn scene instead of its play (D-430): a page in
 [`teaser/`](teaser/) draws each frame with the game's own sprites, and [`teaser.mjs`](teaser.mjs)
-turns it into `public/assets/splash/<game>-teaser.gif` (512×320, crisp pixel art) and a
-`<game>-teaser.png` still for reduced motion. Its item has only the picture (`img`, `still`, `ratio`).
+turns it into `public/assets/splash/<game>-teaser.mp4` (512×320, crisp pixel art; a GIF until #846,
+five times heavier), its first frame `<game>-teaser-start.png` as the poster and a `<game>-teaser.png`
+still for reduced motion. Its item has only the picture (`video`, `img`, `still`, `ratio`).
 
 ```bash
 node marketing/splash/teaser.mjs [bridges]
