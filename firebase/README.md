@@ -179,7 +179,7 @@ A **legacy player** (`jugadores/<jid>.legado = true`, from La Copa's history) ha
 PIN: `jugadorKeys/<jid>` can be created for them, once, and whoever claims it deletes `legado` in the
 same write, seated with that PIN. They are loaded by `node tools/firebase/rankings-history.mjs --write`. A finished Cup's podium (`torneoPodios/<código>`) is written the night after its close by `rankings-history.mjs --podiums --write` (`cup-podiums` workflow, D-450), its only writer since D-499.
 
-The owner (their UID) can write and delete in all these branches, to moderate.
+The owner (their UID) can write and delete in all these branches, to moderate: an offensive name is changed with `node tools/firebase/rename-player.mjs` (dry run by default), which rewrites `jugadores/<jid>/n`, its `jugadorNombres` key and every `records` row in one write (D-513).
 
 ## Uno al día (`unoAlDia`, `unoAlDiaInicio`, `unoAlDiaDias`, `invitados`, D-230)
 
