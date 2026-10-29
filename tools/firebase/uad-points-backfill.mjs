@@ -13,10 +13,16 @@
  * recap the home page shows when the month ends.
  *
  * `--rebuild` recomputes each player's month from scratch, from the history and the days their 🧊
- * saved (the markers a phone uploads, `{ c: true }`, D-415), plus +10 for each invited friend already
- * counted (`invitados/<jid>/<uid>/p`) that accepted in that month, and rewrites the row when it
- * differs (and gives `p` to any played day of the month that lacks it). It fixes a total a phone or
- * this backfill added with a streak the server didn't know. Running it twice writes nothing new.
+ * saved (the markers a phone uploads, `{ c: true }`, D-415), plus +10 for each invited friend that
+ * accepted in that month, and rewrites the row when it differs (and gives `p` to any played day of
+ * the month and any acceptance that lacks it, so a phone outside the lab never adds them again). It
+ * fixes a total a phone or this backfill added with a streak the server didn't know. Running it
+ * twice writes nothing new.
+ *
+ * It is the single writer of Uno al día's totals for phones in the night's totals lab (D-500), so it
+ * also rewrites the week's sum (`records/uno-al-dia/s<yyyy-ww>`, each week with a day in the month)
+ * when it differs and raises the best streak (`records/uno-al-dia-racha/siempre`), never lowering it:
+ * a phone's own days played without signing in may have made it longer.
  *
  * For each player, the days of their history are walked as `walk()` does on the phone
  * (`daily-points.js`: the streak, and the 🧊 earned every 7 days in a row that saves a missed
@@ -34,9 +40,9 @@
  * Needs the service account key (see tools/firebase/firebase-admin.mjs).
  */
 import { fileURLToPath } from 'node:url';
-import { fechaDeNum, numDia } from '../../public/assets/js/uno-al-dia.js';
+import { fechaDeNum, numDia, semanaDe } from '../../public/assets/js/uno-al-dia.js';
 import { walk, bonusFor, onTime } from '../../public/assets/js/daily-points.js';
-import { UAD_PUNTOS, RACHA_TOPE, bonoRacha, claveOrden, esPais } from '../../public/assets/js/records.js';
+import { UAD_PUNTOS, UNO_AL_DIA, UAD_RACHA, SIEMPRE, MS_MAX, RACHA_TOPE, bonoRacha, claveOrden, esPais } from '../../public/assets/js/records.js';
 
 /**
  * A player's month from their history `{ n: { j, s, ms, p? } }`: the days to add, in order, and the
@@ -87,6 +93,29 @@ export function rehacerMes(hist, month, { gifts = [], invites = 0 } = {}) {
   const s = dias.reduce((a, d) => a + d.score + bonusFor(Math.min(RACHA_TOPE, d.streak)), 0) + invites * 10;
   return { s, r: Math.max(1, Math.min(RACHA_TOPE, last.streak)), u: String(numDia(last.date)), faltaP: dias.map(d => numDia(d.date)).filter(n => !hist[n]?.p) };
 }
+
+/** The weeks (`s<yyyy-ww>`, Uno al día's, D-230) with a day in `month`. */
+export const semanasDelMes = month => [...new Set(Array.from({ length: Number(lastDay(month).slice(8)) }, (_, i) => semanaDe(`${month}-${String(i + 1).padStart(2, '0')}`)))];
+
+/**
+ * A player's week sums (D-500), as a phone adds them: each day played on time with points (`s` > 0)
+ * adds its score and time to its week. `{ <week>: { s, ms, u } }` for the weeks in `semanas`, `u` the
+ * week's last day counted.
+ */
+export function semanasDe(hist, semanas) {
+  const out = {};
+  for (const [k, x] of Object.entries(hist || {}).sort((a, b) => a[0] - b[0])) {
+    if (!/^[0-9]{5}$/.test(k) || !x?.j || !(x.s > 0) || !onTime(Number(k), x)) continue;
+    const w = semanaDe(fechaDeNum(Number(k)));
+    if (!semanas.includes(w)) continue;
+    const a = out[w] || { s: 0, ms: 0 };
+    out[w] = { s: a.s + x.s, ms: Math.min(MS_MAX, a.ms + (x.ms || 0)), u: k };
+  }
+  return out;
+}
+
+/** A player's best streak as the server's walk sees it up to `month`'s end (D-500). */
+export const mejorRachaDe = (hist, month, gifts = []) => walkServer(hist, month, gifts).best;
 
 /** Where the season's places by week are kept (D-424): `uadTemporada/s<yyyy-mm>`, public to read. */
 export const TEMPORADA = 'uadTemporada';
@@ -159,21 +188,42 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   } else todos = await read('unoAlDia', t);
   // The dates a friend accepted (the 🧊 they gave), and how many of them already gave +10 this month
   const giftsOf = jid => Object.values(invitados?.[jid] || {}).filter(x => Number.isInteger(x?.d)).map(x => fechaDeNum(x.d));
-  const invitesOf = jid => Object.values(invitados?.[jid] || {}).filter(x => x?.p === true && Number.isInteger(x.d) && fechaDeNum(x.d).startsWith(month)).length;
+  // Every friend who accepted in the month counts (D-500): phones in the lab no longer mark them `p`
+  const aceptadosDe = jid => Object.entries(invitados?.[jid] || {}).filter(([, x]) => Number.isInteger(x?.d) && fechaDeNum(x.d).startsWith(month));
+  const invitesOf = jid => aceptadosDe(jid).length;
   if (rebuild) {
     const cambios = [];
     for (const [jid, hist] of Object.entries(todos || {})) {
       if (!/^[a-z0-9]{8}$/.test(jid) || !jugadores?.[jid]?.n) continue;
       const m = rehacerMes(hist, month, { gifts: giftsOf(jid), invites: invitesOf(jid) });
       const antes = tabla?.[jid] || null;
-      if (!m || (antes && antes.s === m.s && antes.r === m.r && antes.u === m.u && !m.faltaP.length)) continue;
-      cambios.push({ jid, n: jugadores[jid].n, co: esPais(jugadores[jid].co) ? jugadores[jid].co : null, antes: antes?.s ?? null, i: antes?.i, ...m });
+      const sinP = aceptadosDe(jid).filter(([, x]) => !x.p).map(([uid]) => uid);
+      if (!m || (antes && antes.s === m.s && antes.r === m.r && antes.u === m.u && !m.faltaP.length && !sinP.length)) continue;
+      cambios.push({ jid, n: jugadores[jid].n, co: esPais(jugadores[jid].co) ? jugadores[jid].co : null, antes: antes?.s ?? null, i: antes?.i, sinP, ...m });
     }
+    // The week's sums and the best streak (D-500): the rows that differ from the history's
+    const semanas = semanasDelMes(month);
+    const [porSemana, rachas] = await Promise.all([Promise.all(semanas.map(w => read(`records/${UNO_AL_DIA}/${w}`, t))), read(`records/${UAD_RACHA}/${SIEMPRE}`, t)]);
+    const otras = {};
+    const quien = jid => ({ n: jugadores[jid].n, ...(esPais(jugadores[jid].co) ? { co: jugadores[jid].co } : {}) });
+    for (const [jid, hist] of Object.entries(todos || {})) {
+      if (!/^[a-z0-9]{8}$/.test(jid) || !jugadores?.[jid]?.n) continue;
+      for (const [w, x] of Object.entries(semanasDe(hist, semanas))) {
+        const antes = porSemana[semanas.indexOf(w)]?.[jid];
+        if (antes && antes.s === x.s && antes.ms === x.ms) continue;
+        console.log(`  ${jugadores[jid].n} (${jid})  week ${w}: ${antes?.s ?? '—'} → ${x.s}`);
+        otras[`records/${UNO_AL_DIA}/${w}/${jid}`] = { s: x.s, ms: x.ms, k: claveOrden(x.s, x.ms), at: Date.now(), ...quien(jid), u: x.u };
+      }
+      const mejor = mejorRachaDe(hist, month, giftsOf(jid));
+      if (mejor > (rachas?.[jid]?.s || 0)) console.log(`  ${jugadores[jid].n} (${jid})  best streak: ${rachas?.[jid]?.s ?? '—'} → ${mejor}`);
+      if (mejor > (rachas?.[jid]?.s || 0)) otras[`records/${UAD_RACHA}/${SIEMPRE}/${jid}`] = { s: mejor, ms: 0, k: claveOrden(mejor, 0), at: Date.now(), ...quien(jid) };
+    }
+    console.log(`Weeks ${semanas.join(', ')} and best streaks: ${Object.keys(otras).length} rows to rewrite`);
     console.log(`${period} rebuild: ${Object.keys(todos || {}).length} players with a history · ${cambios.length} to rewrite`);
     for (const c of cambios) console.log(`  ${c.n} (${c.jid})  ${c.antes ?? '—'} → ${c.s} pts · streak ${c.r}${c.faltaP.length ? ` · ${c.faltaP.length} days get p` : ''}`);
     // The season's places by week (D-424), every night: the home page's recap reads them once the month is over
     const hoy = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Santiago' }).format(new Date());
-    const datesOf = jid => Object.values(invitados?.[jid] || {}).filter(x => x?.p === true && Number.isInteger(x.d) && fechaDeNum(x.d).startsWith(month)).map(x => fechaDeNum(x.d));
+    const datesOf = jid => aceptadosDe(jid).map(([, x]) => fechaDeNum(x.d));
     const temporada = temporadaDe(Object.entries(todos || {}).filter(([jid]) => /^[a-z0-9]{8}$/.test(jid) && jugadores?.[jid]?.n)
       .map(([jid, hist]) => ({ jid, n: jugadores[jid].n, co: esPais(jugadores[jid].co) ? jugadores[jid].co : null, hist, gifts: giftsOf(jid), invites: datesOf(jid) })), month, hoy);
     const podio = Object.entries(temporada.j).filter(([, x]) => x.l.at(-1) && x.l.at(-1) <= 3).sort((a, b) => a[1].l.at(-1) - b[1].l.at(-1));
@@ -184,9 +234,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     for (const c of cambios) {
       const w = { [`records/${UAD_PUNTOS}/${period}/${c.jid}`]: { s: c.s, ms: 0, k: claveOrden(c.s, 0), at: Date.now(), n: c.n, ...(c.co ? { co: c.co } : {}), u: c.u, r: c.r, ...(c.i ? { i: c.i } : {}) } };
       for (const n of c.faltaP) w[`unoAlDia/${c.jid}/${n}/p`] = true;
+      for (const uid of c.sinP) w[`invitados/${c.jid}/${uid}/p`] = true;
       await write('', 'PATCH', w, t);
     }
-    console.log(`Rewritten: ${cambios.length} players.`);
+    if (Object.keys(otras).length) await write('', 'PATCH', otras, t);
+    console.log(`Rewritten: ${cambios.length} players, ${Object.keys(otras).length} week or streak rows.`);
     process.exit(0);
   }
   const filas = [];

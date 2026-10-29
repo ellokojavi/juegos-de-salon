@@ -12,8 +12,25 @@ import {
   estado, leer, juntar, numDia, fechaDeNum, semanaDe, recorrer, porJuego, fechaLocal, KEY,
 } from './uno-al-dia.js';
 import { UNO_AL_DIA, UAD_RACHA, periodoDia, periodoMes, SIEMPRE, esJid } from './records.js';
-import { walk, lateDays } from './daily-points.js';
+import { walk, lateDays, seasonOf } from './daily-points.js';
 import { trackUnoAlDia } from './transport/stats.js';
+import { flag } from './flags.js';
+import { tiene } from './parametros.js';
+
+/**
+ * The night's totals (D-500), behind their flag (D-498). lab: #seccion-uad-night-totals. On, this
+ * phone writes only raw events (the history, its 🧊 markers, the day's row, the acceptances): the
+ * month's points, the +10 per friend, the week's sum and the best streak are written only by the
+ * rebuild (`uad-rebuild.yml`, every hour), and /today/ adds this phone's own days the rebuild has
+ * not counted yet (`conMiCuenta`). Test scripts get it only with `?lab`; node, only through `forzarNoche`.
+ */
+let forzada = null;
+export const forzarNoche = v => { forzada = v; };
+export const nocheTotales = async () => {
+  if (forzada != null) return forzada;
+  if (!globalThis.location || (tiene('test') && !tiene('lab'))) return false;
+  return flag('uad-night-totals').catch(() => false);
+};
 
 /** Quién invitó a este celular (el `jid` del link), si alguien. */
 export const INV_KEY = 'juegos-de-salon:uno-al-dia:inv';
@@ -51,12 +68,13 @@ export async function subirHoy({ fecha, dia }) {
   if (!j) return out;
   const e = estado();
   const n = numDia(fecha);
+  const noche = await nocheTotales();
   // The points need the day's start on the server (D-433, D-465): written when the attempt began,
   // or now if that write did not get through
   if (j.yo()) await j.empezarDia({ n }).catch(() => false);
-  if (j.yo()) out.subido = await j.anotarDia({ n, j: dia.j, s: dia.s, ms: dia.ms, semanaP: semanaDe(fecha), mejor: e.mejor }).catch(() => null);
-  // Uno al día points (D-412, D-414): today's, into the month's season
-  if (j.yo()) out.puntos = await j.anotarPuntosDia({ n, mesP: periodoMes(fecha), racha: e.racha }).catch(() => false);
+  if (j.yo()) out.subido = await j.anotarDia({ n, j: dia.j, s: dia.s, ms: dia.ms, semanaP: semanaDe(fecha), mejor: e.mejor, totales: !noche }).catch(() => null);
+  // Uno al día points (D-412, D-414): today's, into the month's season (with the night's totals, the rebuild's)
+  if (j.yo() && !noche) out.puntos = await j.anotarPuntosDia({ n, mesP: periodoMes(fecha), racha: e.racha }).catch(() => false);
   const inv = invitador();
   // El primero de este celular: solo hay un día jugado, el de hoy
   if (inv && e.jugados === 1 && e.dias[fecha]) {
@@ -105,8 +123,9 @@ export async function sincronizar() {
   juntar({ dias, regalos: invitados.map(x => fechaDeNum(x.d)) });
   // Lo de hoy jugado en este celular antes de entrar con el jugador
   const hoy = fechaLocal(), locales = leer().dias, mio = locales[hoy];
+  const noche = await nocheTotales();
   if (mio && !dias[hoy]) await j.empezarDia({ n: numDia(hoy) }).catch(() => false);
-  if (mio && !dias[hoy]) await j.anotarDia({ n: numDia(hoy), j: mio.j, s: mio.s, ms: mio.ms, semanaP: semanaDe(hoy), mejor: estado().mejor }).catch(() => null);
+  if (mio && !dias[hoy]) await j.anotarDia({ n: numDia(hoy), j: mio.j, s: mio.s, ms: mio.ms, semanaP: semanaDe(hoy), mejor: estado().mejor, totales: !noche }).catch(() => null);
   // Los días viejos de este celular que Firebase no tiene van a la historia (no a los rankings de su
   // día ni de su semana, que ya pasaron): así la racha sigue en otro celular
   for (const [f, x] of Object.entries(locales)) {
@@ -121,11 +140,11 @@ export async function sincronizar() {
   // each, as walk() gives it); the history read above says which already do (`p`). Only today and
   // yesterday: the rules let a day's points in only near its own date (D-465)
   const mes = hoy.slice(0, 7);
-  for (const d of w.days.filter(x => x.played && x.date.startsWith(mes) && numDia(x.date) >= numDia(hoy) - 1 && !hist[numDia(x.date)]?.p)) {
+  if (!noche) for (const d of w.days.filter(x => x.played && x.date.startsWith(mes) && numDia(x.date) >= numDia(hoy) - 1 && !hist[numDia(x.date)]?.p)) {
     await j.anotarPuntosDia({ n: numDia(d.date), mesP: periodoMes(hoy), racha: d.streak }).catch(() => false);
   }
   // Each friend who accepted adds +10 to the month they accepted in, once (D-414)
-  if (invitados.some(x => !x.p && periodoMes(fechaDeNum(x.d)) >= 's2026-10')) {
+  if (!noche && invitados.some(x => !x.p && periodoMes(fechaDeNum(x.d)) >= 's2026-10')) {
     for (const x of invitados.filter(x => !x.p && periodoMes(fechaDeNum(x.d)) >= 's2026-10')) await j.anotarInvitado({ uid: x.uid, mesP: periodoMes(fechaDeNum(x.d)) }).catch(() => false);
   }
   // Los que aceptaron y tienen jugador quedan en Amigos
@@ -134,6 +153,26 @@ export async function sincronizar() {
   const vistos = Number(leerLs(VISTOS_KEY, '0')) || 0;
   ponerLs(VISTOS_KEY, conNombre.length);
   return { nuevos: conNombre.length > vistos ? conNombre.slice(vistos) : [], late: lateDays(hist) };
+}
+
+/**
+ * The month's table with this phone's own count (D-500): the rebuild's row `fila` (null before it
+ * counted anyone's day) plus the points of the days this phone played after its last counted day
+ * `u`, so /today/ shows today's points before the rebuild runs. `filas` are the table read, best
+ * first; `w` this phone's walk. Returns `{ fila, delante }` with the place among the others, or
+ * the same ones when nothing is pending.
+ */
+export function conMiCuenta({ filas, jid, w, hoy }) {
+  const i = filas.findIndex(f => f.jid === jid);
+  const fila = i >= 0 ? filas[i] : null;
+  const u = Number(fila?.u) || 0;
+  const mes = seasonOf(hoy);
+  const pend = w.days.filter(d => d.played && d.date.startsWith(mes) && numDia(d.date) > u).reduce((a, d) => a + d.points, 0);
+  if (!pend) return { fila, delante: i > 0 ? filas[i - 1] : null };
+  const s = (fila?.s || 0) + pend;
+  // Ties share the place, as the table does (the month's rows all have ms 0)
+  const arriba = filas.filter(f => f.jid !== jid && f.s > s);
+  return { fila: { ...(fila || { jid }), s, puesto: arriba.length + 1 }, delante: arriba.at(-1) || null };
 }
 
 /** Las filas leídas de una tabla de Uno al día (hasta 100, en orden). */

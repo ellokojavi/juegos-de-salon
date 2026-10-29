@@ -1,7 +1,7 @@
 // The October backfill of Uno al día points (uad-points-backfill.mjs, D-414): the same days and rows a phone writes
 import assert from 'node:assert/strict';
-import { mesDe, lastDay, rehacerMes, cortesDe, temporadaDe, onTime } from './uad-points-backfill.mjs';
-import { numDia } from '../../public/assets/js/uno-al-dia.js';
+import { mesDe, lastDay, rehacerMes, cortesDe, temporadaDe, onTime, semanasDelMes, semanasDe, mejorRachaDe } from './uad-points-backfill.mjs';
+import { numDia, semanaDe } from '../../public/assets/js/uno-al-dia.js';
 
 const n = f => numDia(f);
 assert.equal(lastDay('2026-10'), '2026-10-31');
@@ -86,6 +86,25 @@ assert.deepEqual(cortesDe('2026-05'), ['2026-05-03', '2026-05-10', '2026-05-17',
   assert.equal(t.j.carocaro.s, 115, 'the friend’s +10 counts on the day they accepted');
   const tie = temporadaDe([{ jid: 'aaaaaaaa', n: 'A', hist: { [n('2026-10-02')]: { j: 'q', s: 90 } } }, { jid: 'bbbbbbbb', n: 'B', hist: { [n('2026-10-02')]: { j: 'q', s: 90 } } }], '2026-10', '2026-10-10');
   assert.deepEqual([tie.j.aaaaaaaa.l[0], tie.j.bbbbbbbb.l[0]], [1, 1], 'the same points share the place');
+}
+
+// The night's totals (D-500): the week's sums and the best streak come from the history too
+{
+  const sem = semanasDelMes('2026-10');
+  assert.equal(sem[0], semanaDe('2026-10-01'));
+  assert.equal(sem.at(-1), semanaDe('2026-10-31'));
+  assert.equal(new Set(sem).size, sem.length);
+  // Monday the 5th and Tuesday the 6th are one week; Sunday the 4th is the one before; a 0 adds nothing; a late upload neither
+  const h = { [n('2026-10-04')]: { j: 'q', s: 30, ms: 5 }, [n('2026-10-05')]: { j: 'q', s: 40, ms: 10 }, [n('2026-10-06')]: { j: 'q', s: 50, ms: 20 },
+    [n('2026-10-07')]: { j: 'q', s: 0, ms: 1 }, [n('2026-10-08')]: { j: 'q', s: 99, ms: 1, at: n('2026-10-20') * 86400000 } };
+  const w = semanasDe(h, sem);
+  assert.deepEqual(w[semanaDe('2026-10-05')], { s: 90, ms: 30, u: String(n('2026-10-06')) });
+  assert.deepEqual(w[semanaDe('2026-10-04')], { s: 30, ms: 5, u: String(n('2026-10-04')) });
+  assert.deepEqual(semanasDe(h, [semanaDe('2026-10-05')]), { [semanaDe('2026-10-05')]: w[semanaDe('2026-10-05')] }, 'only the weeks asked');
+  // Five days in a row is a best streak of 5, a 🧊 marker keeps it going (it adds no day)
+  assert.equal(mejorRachaDe(h, '2026-10'), 5);
+  assert.equal(mejorRachaDe({ ...corte, [n('2026-10-07')]: { c: true, at: 1 } }, '2026-10'), 2, 'the saved day keeps the streak alive');
+  assert.equal(mejorRachaDe(corte, '2026-10'), 1, 'without it the streak starts over');
 }
 
 console.log('✓ uad-points-backfill');

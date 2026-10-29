@@ -14,6 +14,12 @@ name: End to end
 on:
   pull_request:
   workflow_call:
+    inputs:
+      # From publish.yml: the merge's first parent when the merged PR's head passed its own run
+      # (D-496). Then only smoke.mjs and the scripts the merge's diff reaches run, not the whole suite
+      base:
+        type: string
+        default: ''
   workflow_dispatch:
 
 # A new push to the same PR cancels the previous run. Called from publish.yml, `github.workflow`
@@ -36,6 +42,9 @@ jobs:
       since: ${{ steps.list.outputs.since }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The merge's first parent, for the diff a narrowed run on main tests (D-496)
+          fetch-depth: 2
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -48,6 +57,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
           HEAD: ${{ github.event.pull_request.head.sha }}
+          BASE: ${{ inputs.base }}
         run: |
           echo "tree=$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
           if [ -n "$PR" ]; then
@@ -56,6 +66,12 @@ jobs:
             node tools/e2e/since-passed.mjs --pr "$PR" --head "$HEAD" > "$RUNNER_TEMP/changes"
             echo "groups=$(node tools/e2e/ci.mjs --groups --changes "$RUNNER_TEMP/changes")" >> "$GITHUB_OUTPUT"
             # The PR's test scope in the run's summary: what runs, and through what each file reaches (D-378)
+            node tools/e2e/ci.mjs --scope --changes "$RUNNER_TEMP/changes" > /dev/null || true
+          elif [ -n "$BASE" ] && git diff --name-only "$BASE" HEAD > "$RUNNER_TEMP/changes"; then
+            # A merge whose PR already passed (D-496): smoke.mjs plus what the merge brings to main.
+            # `since` keeps this narrowed run from leaving the tree's mark
+            echo "since=$BASE" >> "$GITHUB_OUTPUT"
+            echo "groups=$(node tools/e2e/ci.mjs --groups --smoke --changes "$RUNNER_TEMP/changes")" >> "$GITHUB_OUTPUT"
             node tools/e2e/ci.mjs --scope --changes "$RUNNER_TEMP/changes" > /dev/null || true
           else
             echo "groups=$(node tools/e2e/ci.mjs --groups)" >> "$GITHUB_OUTPUT"
@@ -135,8 +151,8 @@ jobs:
           echo "tested" > "$RUNNER_TEMP/mark"
       # The mark of the tree that passed, with real scripts: publish.yml looks for it so as not to
       # repeat the end-to-end run on the same thing (tools/e2e/already-tested.mjs, D-308). Not after
-      # an incremental run (D-392): it tested only the last push, so it cannot vouch for the whole
-      # tree, and publish.yml then runs the whole suite before publishing
+      # an incremental run (D-392) or a narrowed one on main (D-496): it tested only part of it, so
+      # it cannot vouch for the whole tree
       - if: needs.e2e.result == 'success' && needs.list.outputs.since == ''
         uses: actions/upload-artifact@v4
         with:
@@ -202,7 +218,8 @@ jobs:
   # And if main goes green again, it closes that issue: it used to stay open days after being fixed (D-273).
   close-notice:
     needs: [list, e2e]
-    if: needs.e2e.result == 'success' && github.event_name != 'pull_request'
+    # Not after a narrowed run (D-496): the script that failed may not have run
+    if: needs.e2e.result == 'success' && github.event_name != 'pull_request' && needs.list.outputs.since == ''
     runs-on: ubuntu-latest
     permissions:
       issues: write
