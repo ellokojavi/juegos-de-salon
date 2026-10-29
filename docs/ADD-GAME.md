@@ -8,8 +8,8 @@
 
 `public/<folder>/`, in English, with C-2's files (`index.html`, `style.css`, `rules.js`,
 `engine.js`, `engine.test.mjs`, `game.js`). Copy `index.html`'s `<head>` from another game: it brings
-the manifest, the icon and the iPhone name, `instalable.js` (D-221, D-222), the preload of
-`nunito-latin.woff2` right before `base.css` (`fonts-preload.test.mjs`) and
+the manifest, the icon and the iPhone name, `instalable.js` (D-221, D-222), the preloads of
+`nunito-latin.woff2` and `bangers-latin.woff2` right before `base.css` (`fonts-preload.test.mjs`) and
 `<script src="../assets/js/vigia.js"></script>` with `trackVisit()` on load (D-251). A game in
 development lives under `public/labs/` (D-395).
 
