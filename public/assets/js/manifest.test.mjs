@@ -49,4 +49,14 @@ for (const id of POZO) assert.ok(new RegExp(`^  ${id}: \\(\\) =>`, 'm').test(idx
 // (the snippets stay there: they are code, not data); with that it also enters the language tests
 const { PATHS } = await import('../../../tools/e2e/paths.mjs');
 for (const g of ALL.filter(x => !x.bodega)) assert.ok(PATHS[g.id] && Object.keys(PATHS[g.id]).length, `${g.id}: tools/e2e/paths.mjs has its screens under '${g.id}'`);
-console.log('manifest: keywords, reuses, Uno al día, La Copa and e2e paths come from games.js, green');
+
+// The rest (phase 6), checked against the manifest: what they hold per game is code or copy, not data
+const known = new Set([...ids, 'linea', 'numero']);
+const splash = readFileSync(new URL('./splash.js', import.meta.url), 'utf8');
+for (const [, id] of splash.matchAll(/\bgame: '([\w-]+)'/g)) assert.ok(known.has(id), `splash.js: campaign game '${id}' is a game in games.js`);
+const demo = readFileSync(new URL('../../cup/demo.js', import.meta.url), 'utf8');
+const puntaje = new Set([...demo.slice(demo.indexOf('const PUNTAJE')).matchAll(/^  (\w+): k =>/gm)].map(x => x[1]));
+for (const id of POZO) assert.ok(puntaje.has(id), `cup/demo.js: '${id}' has its demo scores (PUNTAJE)`);
+const labs = readFileSync(new URL('../../labs/index.html', import.meta.url), 'utf8');
+for (const g of ALL.filter(x => x.path?.startsWith('labs/'))) assert.ok(labs.includes(`href="${g.path.slice('labs/'.length)}"`), `${g.id}: /labs/ has its button (href="${g.path.slice('labs/'.length)}")`);
+console.log('manifest: every registry comes from or is checked against games.js, green');
