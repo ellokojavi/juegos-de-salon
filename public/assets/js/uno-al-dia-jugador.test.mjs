@@ -43,6 +43,16 @@ assert.equal(r.semana, true);
 assert.equal((await db.get(`records/${UNO_AL_DIA}/${sem}/${sara.jid}`)).s, 127);
 assert.equal(Object.keys(await cel1.historialDia()).length, 2);
 
+// The night's totals (D-500): `totales: false` writes the history and the day's row, not the week or the streak
+{
+  const p = mk('uidp'), pepe = await p.crear('Pepe', '4444');
+  await p.empezarDia({ n });
+  assert.deepEqual(await p.anotarDia({ n, j: 'reinas', s: 60, ms: 1, semanaP: sem, mejor: 9, totales: false }), { historia: true, dia: true, semana: false, racha: false });
+  assert.equal(await db.get(`records/${UNO_AL_DIA}/${sem}/${pepe.jid}`), null);
+  assert.equal(await db.get(`records/${UAD_RACHA}/${SIEMPRE}/${pepe.jid}`), null);
+  assert.equal((await db.get(`records/${UNO_AL_DIA}/${periodoDia(n)}/${pepe.jid}`)).s, 60);
+}
+
 // Un día viejo de este celular, al entrar: solo a la historia, sin rankings
 r = await cel1.anotarDia({ n: n - 1, j: 'zip', s: 70, ms: 1, soloHistoria: true });
 assert.deepEqual(r, { historia: true, dia: false, semana: false, racha: false });
@@ -161,3 +171,23 @@ assert.match(reglas.unoAlDiaInicio?.$jid?.$d?.['.write'] || '', /!data\.exists\(
 }
 
 console.log('uno-al-dia-jugador: ok');
+
+// The night's totals on /today/ (D-500): the rebuild's row plus this phone's days it has not counted yet
+{
+  const { conMiCuenta, nocheTotales } = await import('./uno-al-dia-red.js');
+  const { walk } = await import('./daily-points.js');
+  assert.equal(await nocheTotales(), false, 'off in node unless forced');
+  const dias = { '2026-10-06': { j: 'q', s: 80 }, '2026-10-07': { j: 'q', s: 70 } };
+  const w = walk(dias, '2026-10-07');
+  const filas = [{ jid: 'aaaaaaaa', s: 400, puesto: 1 }, { jid: 'yoyoyoyo', s: 85, u: String(numDia('2026-10-06')), puesto: 2 }, { jid: 'bbbbbbbb', s: 150, puesto: 3 }].sort((a, b) => b.s - a.s);
+  // Yesterday is counted (85); today's 70 + 10 is this phone's: 165 passes 150
+  let c = conMiCuenta({ filas, jid: 'yoyoyoyo', w, hoy: '2026-10-07' });
+  assert.deepEqual([c.fila.s, c.fila.puesto, c.delante.jid], [165, 2, 'aaaaaaaa']);
+  // Everything counted: the table's row as it is
+  c = conMiCuenta({ filas: filas.map(f => (f.jid === 'yoyoyoyo' ? { ...f, s: 165, u: String(numDia('2026-10-07')) } : f)), jid: 'yoyoyoyo', w, hoy: '2026-10-07' });
+  assert.equal(c.fila.s, 165);
+  // No row yet: the phone's whole month, tied with someone shares their place
+  c = conMiCuenta({ filas: [{ jid: 'aaaaaaaa', s: 165 }], jid: 'yoyoyoyo', w, hoy: '2026-10-07' });
+  assert.deepEqual([c.fila.s, c.fila.puesto, c.delante], [165, 1, null]);
+}
+console.log('uno-al-dia-jugador (night totals): ok');
