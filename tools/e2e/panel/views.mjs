@@ -33,6 +33,7 @@ for (const width of [900, 390]) {
         text,
         overflow: document.documentElement.scrollWidth - innerWidth,
         modes: [...document.querySelectorAll('.log-row[data-mode]')].map(r => r.dataset.mode),
+        foco: document.querySelector('.campana--foco')?.id || '',
       };
     })())`));
     const errors = b.errors.slice(before);
@@ -45,6 +46,7 @@ for (const width of [900, 390]) {
       const own = shot === 'individual';
       ok(v.modes.length > 0 && v.modes.every(m => isIndividualMode(m) === own), `${shot}: its offline log lists only ${own ? 'solo and One a Day' : 'group'} games (D-348): ${[...new Set(v.modes)].join(', ') || 'none'}`);
     }
+    if (shot === 'campaigns-link') ok(v.foco === 'campana-stack-pronto', `${where}: a release link opens its campaign, ringed (D-504): ${v.foco || 'none'}`);
     if (failures) await b.shot(`${shot}-${width}`);
   }
   await b.close();
