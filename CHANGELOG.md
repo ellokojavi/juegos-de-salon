@@ -1,5 +1,233 @@
 # Changelog
 
+## 0.234.20 — 2026-10-29
+- **Titles no longer flash in another font**: every page preloads Bangers, the titles' font, next to Nunito, so the title shows in its own font from the start instead of switching a moment later.
+
+## 0.234.19 — 2026-10-29
+- La Copa: the day's result screen now loads on its own the first time it opens, so the Cup starts a little lighter (#860).
+
+## 0.234.18 — 2026-10-28
+- La Copa: the join screen (sign up or sit back down) now loads on its own the first time it opens, so the Cup starts a little lighter (#860).
+
+## 0.234.17 — 2026-10-28
+- **La Copa loads lighter for players**: the create-a-Cup screen (the week, the weekend and the picked games) is now its own file (`cup/create.js`), fetched only when someone creates a Cup; everyone who only plays one downloads about 500 lines less. Nothing changes on screen (#860).
+
+## 0.234.16 — 2026-10-28
+- **Lab (night totals, D-500): One a Day's month ranking agrees with your big number**: your row in the Month and Friends tabs on /today/ now includes today's points that the hourly count has not added yet, and moves to the place those points give it, so it shows the same total as the big number and the "te faltan" line.
+
+## 0.234.15 — 2026-10-28
+- **A cleaner panel header**: the environment is always Live and has no selector, the room or cup
+  code search is gone, the 📊 chip is an icon, and 🔔 is an icon in the top bar next to the owner's
+  photo, dim until this device is on, with its short messages fading after a few seconds.
+
+## 0.234.14 — 2026-10-28
+- **"New" lasts a week** (D-507): a game wears the "New" label for seven days after launch instead of fourteen, so the home page only marks Tren en Vilo today.
+
+## 0.234.13 — 2026-10-28
+- **The panel's 🔔 turns on**: it was refused (PERMISSION_DENIED) when the phone's clock ran a little
+  ahead of Firebase's, since the rules ask the record's time to be no later than now; the time is now
+  the server's.
+
+## 0.234.12 — 2026-10-28
+- **La Copa's demos can play ¿Dónde queda?**: it was in the pool of games without demo scores, so a demo Cup that drew it would have broken; the new manifest check found it (#855, phase 6).
+
+## 0.234.11 — 2026-10-28
+- **Merges go live faster**: publishing retests only what main gained since the PR passed, runs no longer queue behind each other, a Pages 5xx is retried, and `docs/facts.json` no longer carries the version that made open PRs conflict (D-506).
+
+## 0.234.10 — 2026-10-28
+- **Which games La Copa can play lives in each game's entry**: a game's place in the pool an admin picks the days from is now `copa: { pozo }` in `games.js`, and `cup/engine.js` builds the pool from there in the same order, so no Cup changes (#855, phase 4).
+
+## 0.234.9 — 2026-10-28
+- **☀️ Tango: 🏳️ Give up**, as in Queens: it asks to confirm, shows the solution and the game gives 0 points.
+
+## 0.234.8 — 2026-10-28
+- **The home page shows your One a Day place right after you play**: coming back from today's game (with "back" or the menu) no longer shows ▶ Jugar hoy, whose tap rolled the die again; the card shows the month's place and points.
+
+## 0.234.7 — 2026-10-28
+- **☕ Buy me a coffee counts real payments only**: the panel's "paid" now needs Stripe's payment id in the way back (`?support=thanks&session=…`), counted once per device; without it the thank-you does not open, so a reopened tab or a typed address neither thanks anyone nor shows as a payment. The false "paid" of Oct 26 2026 was removed from the stats.
+
+## 0.234.6 — 2026-10-28
+- 🎃 Halloween: the big frights are now part of the Halloween skin for everyone, a different one every 40 seconds on the home page (💀, 🕷️, 👀 or 🧟, never the same twice in a row).
+
+## 0.234.5 — 2026-10-28
+- **A teaser engine for the splash**: the rules for a teaser that builds expectation without giving
+  the game away (`marketing/splash/TEASERS.md`), the engine every teaser runs on
+  (`marketing/splash/teaser/_teaser.js`), and `teaser.mjs new <name> <game>` to start one. Stack's and
+  Stick Ninja's teasers now run on it, looking the same; a test checks the rules it can.
+
+## 0.234.4 — 2026-10-28
+- **Times show the same everywhere**: every clock and best time now uses one minutes:seconds formatter (`assets/js/time-format.js`), so a time over an hour reads `1:02:10` on every page instead of `62:10` on some (#860).
+
+## 0.234.3 — 2026-10-28
+- **La Copa loads a little lighter**: the admin screen is now its own file (`cup/admin.js`), fetched only when the Cup's admin opens it, so players who never manage a Cup don't download it. Nothing changes on screen (#860).
+
+## 0.234.2 — 2026-10-28
+- **The 🧱 Stack and 🥷 Stick Ninja teasers are cryptic now**: they no longer show how the games are
+  played. The view circles a tall tower already built and climbs it into the stars ("Llegar al cielo es
+  el objetivo"); the ninja runs to the edge of its pillar and stays there looking at the next one ("El
+  ninja enfrenta una misión nunca antes vista"). Both still off, waiting for the owner.
+
+## 0.234.1 — 2026-10-28
+- **Which games come out in Uno al día lives in each game's entry**: the date a game joins the daily deck, the day it leaves and whether it is a group game are now `unoAlDia` in `games.js`, and `uno-al-dia.js` builds its list from there, in the same order, so no day's game changes (#855, phase 3).
+
+## 0.234.0 — 2026-10-28
+- **The owner is notified when a change goes live** (D-504): the panel's 🔔 subscribes a device, and
+  each publish sends it `✅ v<version> en vivo · PR #<n>` with what launched and one tap to where it is
+  seen (📣 Campaigns at that campaign, the lab, the game…), or `❌` with the run if it did not publish.
+  Every PR now says where it is seen (`Ver en:`). Players see no change.
+
+## 0.233.3 — 2026-10-28
+- **What a game reuses of La Copa lives in its own entry**: Línea de Tiempo's and Toque y Fama's Cup files are listed as `reuses` in `games.js`, and the end-to-end scope reads them from there instead of a list of its own (#855, phase 2). Nothing changes for players.
+
+## 0.233.2 — 2026-10-28
+- 🎃 Halloween: the 🦇 that crosses the home page now flies head first (right to left), and only bats and ghosts rise from the floor; spiders, skulls, beetles, pumpkins and cobwebs no longer float up.
+- 🧪 Lab: big Halloween frights on the home page, a giant 💀 leaning in from the side, a huge 🕷️ running across, 👀 blinking in the dark or a 🧟 shambling up from below (flag `season-scares`).
+
+## 0.233.1 — 2026-10-28
+- **Rooms open the same way in every game**: creating and joining a room in El Ahorcado, Generala, Dudo, Batalla Naval, Toque y Fama and Línea de Tiempo now goes through one shared module (`assets/js/room-flow.js`), with nothing different for players (#860).
+
+## 0.233.0 — 2026-10-28
+- **Panel: the Timeline lists every campaign seen, with who.** A new 📣 *Campaigns seen* kind shows
+  who saw which splash campaign and who opened the donation card, next to feedback sent; skins are
+  not campaigns. /privacy/ says it, and the names go at 24 months like the others (D-503).
+
+## 0.232.7 — 2026-10-28
+- **The lab's dominoes puzzle is now Dominorama**: Pips is a registered name, so the game, its folder (`/labs/dominorama/`) and its id (`dominorama`) took the new one; `/labs/pips/` redirects there, and the cover still credits NYT's Pips as its inspiration.
+
+## 0.232.6 — 2026-10-28
+- **🥂 The toast to support now reaches regulars**: it waits only for 5 visit days in four weeks, counted back from what each phone already keeps; the 10 finished games it also asked for only counted La Copa's, so it had shown to no one. Every finished game is now counted on the phone, never sent (D-502).
+
+## 0.232.5 — 2026-10-28
+- **The 🧱 Stack teaser now looks like the game**: it is drawn with the game's own isometric scene
+  (now `public/labs/stack/scene.js`, shared by both) instead of a flat side view, and a teaser in the
+  splash is centered on a computer, where it sat to the left. Still off, waiting for the owner.
+- **The 🥷 Stick Ninja teaser now looks like the game too**: drawn with the game's own scene (now
+  `public/labs/stick/scene.js`) instead of its own pixel art with a full moon and black pillars. A new
+  test (`marketing/splash/teaser.test.mjs`) fails if a teaser draws nothing with its game's code.
+
+## 0.232.4 — 2026-10-28
+- **Lab: the 💬 feedback form stays above the iPhone keyboard** (#883): on iOS the keyboard covered the Send button and the card could not scroll to it. Behind `flag('keyboard-lift')`, the layer now ends where the keyboard starts and scrolls to Send, through a shared `visualViewport` helper (`assets/js/keyboard.js`). Checked: Hangman and Toque y Fama use their own keys, and La Copa's PIN and name fields sit in the page, which iOS scrolls on its own; `overscroll-behavior: none` was already on `html` and `body`.
+
+## 0.232.3 — 2026-10-28
+- **Search engines read the home page in its own language.** The English, Portuguese and German home pages now give search engines their own name (Party Games, Jogos de Salão, Salonspiele) instead of the Spanish one. A new check (`tools/e2e/structured-data.mjs`) opens every indexed page in a browser and fails when its structured data says something the page does not show, such as a «Cómo se juega» answer that differs from the rules on the cover (#883).
+
+## 0.232.2 — 2026-10-28
+- **The animated covers rest when you scroll away**: the demos on the covers of Bridges, Where in the World, Stack and Stick stop drawing while they are off the screen and pick up when they come back, so a phone spends less battery. Nothing changes on screen (#883).
+
+## 0.232.1 — 2026-10-28
+- **The room chat no longer covers buttons**: in every room game the 💬 bubble now sits in a strip of its own at the bottom of the screen, and the screen ends above it, so it never hides the right end of ¡CALZO!, ¡A JUGAR!, Me paso or ¡Zarpar! (one shared rule in `base.css` replaces each game's own padding; Julepe's sticky bar stops above the bubble).
+- **Tools:** `look.mjs --chat` mounts the room chat on any screen and names the buttons its bubble covers; `liars-dice/rooms-classic.mjs` with `SICILIANA=1` now always doubts the game's first bid, and checks that every phone shows the siciliana line and the same two-dice loss.
+
+## 0.232.0 — 2026-10-28
+- **Lab: El Camaleón 🦎, a party game for one phone passed around** (#898): 3 to 8 players, a grid of 16 words on a topic, and one hidden chameleon who does not know the secret word. One clue each, a vote, and a caught chameleon still escapes by guessing the word; first to 5 points wins. Six topics with our own words in Spanish, English, Portuguese and German. Inspired by The Chameleon, by Big Potato Games, as the cover and the lab say. Under Juegos en prueba in `/labs/`, behind the lab key.
+
+## 0.231.1 — 2026-10-28
+- **Uno al día's totals are counted by the server, in the lab**: with a lab key, your phone only uploads what you played and the server adds up the month's points, the +10 per friend, the week and the best streak every hour, the same for everyone; /today/ shows today's points at once with your phone's own count until then (#854, D-500).
+
+## 0.231.0 — 2026-10-28
+- **What is tried in the lab now goes live with a switch** (D-498): La Copa's new create screen and Battleship's Salvo each have a flag the owner turns to 🚀 Everyone from the panel (📣 Campaigns → 🚩 Lab flags) or from its card in `/labs/`, at once and without a new version; ↩️ takes it back to the lab.
+
+## 0.230.2 — 2026-10-28
+- **One place per game, phase 1 (#855).** `games.js` becomes the games manifest: each game's search
+  keywords now live in its own entry, and `search.js` reads them from there instead of keeping a list
+  of its own. Nothing changes for players: the 🔎 search finds the same games by the same words.
+  `manifest.test.mjs` fails if a hand-kept list comes back.
+
+## 0.230.1 — 2026-10-28
+- **Rooms and Cup podiums are now the night's job** (D-499, #854): phones no longer sweep expired rooms; a nightly job deletes them from every closed cleanup bucket, however old, plus the rooms no bucket names (`room-sweep.mjs`). A finished Cup's podium is saved only by the nightly `cup-podiums` job the night after its close; the app no longer writes it, and the rules refuse it. Nothing changes on screen.
+
+## 0.230.0 — 2026-10-28
+- **Dudo's classic rules, for everyone**: the setup has a **📜 Reglas clásicas** switch, off by default: nobody opens in aces, into aces is half plus one, calzar in a duel and with one die at any time, and the open obligada round when someone is down to one die. Under it, a folded **Variantes** row with Pasar and Dudar a la siciliana. The first time you can calzar, a line says what it is. Until now only with a lab key; the lab card moves to La Bodega (D-495).
+
+## 0.229.18 — 2026-10-28
+- **«Cómo se juega» starts collapsed on every game cover.** El Ahorcado, Batalla Naval and Toque y Fama showed their rules open; now, like Línea de Tiempo, Dudo and Generala, they are a panel you tap to open, so the cover stays short. The text is still in the page for search engines (U-39).
+
+## 0.229.17 — 2026-10-28
+- **Panel, 📣 Campaigns:** a splash card's **Quick look 👀** now sits next to **Live Preview 🔎** (the old 👁 Preview, renamed on every Campaigns card).
+
+## 0.229.16 — 2026-10-28
+- **🎲 Dudo, 🧪 classic rules in a room (lab)**: a room with the classic rules now opens. The Firebase rules did not accept the `traditional`, `pasar` and `siciliana` settings in a room's config, so creating the room (and the rematch) failed with "permission denied" for everyone; until now the classic rules had only been played on one phone. Found by a playtest with 2, 3, 4 and 5 phones (D-490).
+- The room's lobby says the table plays the classic rules, and which variants are on, so a guest knows before the ace will not open.
+- A guest without a lab key, in a room whose host chose the classic rules, plays them and now also gets the one-time line that explains calzar.
+- In the open obligada round, your own strip shows one ❓ per die you hold (it showed a single ❓ with three dice).
+
+## 0.229.15 — 2026-10-28
+- **Dudo's 🧪 classic rules explain themselves**, in the lab (playtest): a face a rule closes says why under the faces ("Esta ronda no se abre en ases", the obligada round's fixed face), also when tapped; the one-time calzar line says when it opened because you have one die; the siciliana reveal says why two dice go; and the pass button is honest about the hand ("Tienes mano para pasar", or "Paso de farol" with a line saying it can be doubted). The pass-the-phone screen and the notices are opaque from the first frame, over an empty table.
+
+## 0.229.14 — 2026-10-28
+- **Panel:** the 📣 Campaigns tab 🎨 Skins is now 🎨 Site skins, matching 🧩 Site features.
+
+## 0.229.13 — 2026-10-28
+- **Labs**: La Bodega's ✨ Mejoras lanzadas folds by when each improvement launched (one fold per week this month, one per month before, the newest open) and has a 🔎 search box, so the list stays short as it grows.
+
+## 0.229.12 — 2026-10-28
+- **Dudo, 🧪 classic rules (lab):** with the **Pasar** variant on, a pass now counts. Before, the
+  pass was dropped: against the phone the game froze the first time the phone passed, and on one
+  phone the same player was asked again. Found playtesting the lab (D-490).
+- **Dudo, doubting a pass (lab):** the reveal shows only the hand that passed, without the
+  "Había N…" count, since only that hand is judged; in a room the header says "X dudó del paso de Y"
+  instead of "X calzó".
+
+## 0.229.11 — 2026-10-28
+- **Two "coming soon" splash campaigns, off:** 🥷 `ninja-pronto` ("¿Llegará al otro lado?": under a
+  full moon a ninja's stick tips toward the far pillar and the moon goes dark before it lands) and
+  🧱 `stack-pronto` ("¿Hasta dónde llega?": a neon tower climbs into the stars until the last slab
+  stops in the air). Teasers of Stick Ninja and Stack, still in the lab, with no name or link; both
+  are listed in the panel's 📣 Campaigns for the owner to turn on. Drawn by `marketing/splash/teaser/ninja.html`
+  and `stack.html` (sharing `_common.js`) and recorded by `teaser.mjs`.
+
+## 0.229.10 — 2026-10-28
+- **Panel, 📣 Campaigns:** each splash card has a folded **Quick look** that shows the real splash, as a small phone, without leaving the panel. 👁 Preview still opens the home page to try it.
+
+## 0.229.9 — 2026-10-28
+- **Panel:** the 📣 Campaigns tab "Splash" is now "Splash screens".
+
+## 0.229.8 — 2026-10-28
+- **"Cómo se juega" says each mode right** (D-488): a solo mode now reads "o solo" instead of "solo contra el celular" (Timeline, Generala, Hangman and Bulls and Cows have no rival in solo), a game against the phone keeps "contra el celular" (Liar's Dice, Battleship), and the two-player games say "1 o 2 jugadores… Los dos en un mismo celular" instead of "De 1 a 2… Todos". In all four languages; the FAQPage JSON-LD picks it up on its own.
+
+## 0.229.7 — 2026-10-28
+- **Battleship Salvo (lab): the last shot reads right**: with one ship left, the status says "Marca 1 casilla" instead of "Marca 1 casillas" (and the same in English, Portuguese and German). Found by a playtest of the lab mode.
+
+## 0.229.6 — 2026-10-28
+- **Labs**: La Bodega shows all its launched improvements again: one card had lost its closing tags and hid the 28 cards after it inside itself. `public/labs/bodega.test.mjs` now checks that the page's tags close.
+
+## 0.229.5 — 2026-10-28
+- **La Copa: the link of an archived cup shows its podium, for everyone** (D-492): a cup that ended more than two years ago no longer says "No encontramos una copa con ese código"; its link shows the cup's name, when it ended and its podium 🥇🥈🥉, with buttons to create a new cup with the same name and to see the medal table. Until now only lab key holders saw it (D-478). Its lab card moves to La Bodega.
+
+## 0.229.4 — 2026-10-28
+- **Panel**: the "Don't count this browser" checkbox next to Environment is no longer lab-only (D-493); its lab card moves to La Bodega.
+
+## 0.229.3 — 2026-10-28
+- **Dudo says "quinas"**: with the Chilean names on, the fives are "quina" / "quinas", as at a Chilean table, not "quintas" (D-491).
+- **Classic rules (lab):** the obligada round's short notice now says who may still change the face, and your own hidden die in the top strip is a die-sized ❓ (D-491).
+
+## 0.229.2 — 2026-10-28
+- **Lab:** Battleship's Salvo mode moves to La Bodega as 💤 No prosperó: the owner discarded it (nobody liked it). The switch stays behind the lab key.
+
+## 0.229.1 — 2026-10-28
+- **«Cómo se juega» says who plays and how, for everyone**: its first line in Timeline, Bulls and Cows, Hangman, Liar's Dice, Generala and Battleship gives the players and minutes, one phone, several or alone, and that it is free with nothing to install and no account; search engines read it too. Launched from the lab at the owner's request (D-488).
+
+## 0.229.0 — 2026-10-28
+- **Dudo, 🧪 classic rules (lab):** going into aces is half plus one; calzar also in a duel and, with one die, at any time; the obligada round is announced to the whole table and played open (you see the others' die, not yours), and another player with one die may change the face; a folded **Variantes** row adds Pasar and Dudar a la siciliana; the first time calzar opens, a line says what it is (D-490).
+
+## 0.228.2 — 2026-10-28
+- **La Copa and Uno al día: the Toque y Fama number day is now "Toque y Fama: Número"** (en *Bulls and Cows: Number*, pt *Toque e Fama: Número*, de *Bullen und Kühe: Zahl*), the same pattern as the word day and the home page's Número / Palabra toggle, and it fits on one line on the calendar (#830, U-5).
+
+## 0.228.1 — 2026-10-28
+- **Dudo (lab): traditional rules.** A new setup switch, 🧪 Classic rules, only for lab key holders: nobody opens a round in aces, and the first time a player drops to one die they open an obligada round, with no wild aces and no change of pinta (D-487, #897). Off by default; everyone else plays as before.
+
+## 0.228.0 — 2026-10-28
+- **Battleship has a Salvo mode, in the lab**: each turn you fire as many shots as ships you have afloat; mark the cells, tap ¡Fuego! once and see every answer together. It is chosen in ¿Cómo jugamos? (one phone, against the phone or two phones) and only shows with a lab key; classic stays the default (#894, D-489).
+
+## 0.227.10 — 2026-10-28
+- **Lab: "How to play" says who plays and how**: in Timeline, Bulls and Cows, Hangman, Liar's Dice, Generala and Battleship, the first line of "How to play" now says how many play and for how long, whether on one phone, several or alone, and that it is free with nothing to install and no account. It sits inside the rules, never as a separate FAQ (D-488). Only with a lab key.
+
+## 0.227.9 — 2026-10-28
+- **A lab feature published with 🚀 Publicar para todos no longer stalls on a conflict**: if its PR collides with another change to `/labs/`, the Mac mini brings it up to date within about 20 minutes, or the card shows ❌ with Volver a pedir (D-486). Sessions no longer stop waiting on a conflict GitHub reports by mistake right after a push.
+
+## 0.227.8 — 2026-10-28
+- **Uno al día shares its result in squares for everyone** (D-485): the share text adds the spoiler-free 🟩🟨🟥 grid tried in the lab (D-482), never naming the game. Its lab card moves to La Bodega.
+
 ## 0.227.7 — 2026-10-27
 - **👑 Reinas: a texture per region, for everyone**: each region of the board carries a subtle texture over its color (lines, dots, a grid), so players who do not tell the colors apart can still read it. Validated in the lab, published at the owner's request from /labs/; its card moves to La Bodega (#896, D-481).
 
