@@ -605,7 +605,7 @@ body.pantalla-completa #jugar-reglas .reglas[open] > summary { position: sticky;
 .reinas-acciones { flex-wrap: wrap; }
 .reinas-acciones .btn { flex: 1 1 auto; white-space: nowrap; padding-left: 14px; padding-right: 14px; }
 .reinas-acciones .btn.armado { white-space: normal; }
-.reinas-acciones #btn-rendirse { flex-basis: 100%; }
+.reinas-acciones #btn-rendirse, .tango-acciones #btn-rendirse { flex-basis: 100%; }
 /* Tango's three buttons (D-342): Undo, Clear all and the hint, each on one line of text; the one
    that doesn't fit goes down instead of breaking its words. Armed, a long phrase may break. */
 .tango-acciones { flex-wrap: wrap; }

@@ -10,9 +10,10 @@
 //   2. if not, but the commit only changes what doesn't reach the browser (tools/e2e/changes.mjs)
 //      and its parent's tree has a mark, it is too: it inherits the parent's, and leaves its own;
 //   3. if not, but the commit is a merge whose PR head passed its own end-to-end run (the
-//      `e2e-head-<sha>` mark, D-392), only what the merge brings is retested (D-496): smoke.mjs plus
-//      the scripts affected.mjs selects for the diff against the first parent (main before the
-//      merge). The PR already tested its files; what is new here is the main they now meet;
+//      `e2e-head-<sha>` mark, D-392), only what is new to that head is retested (D-496, D-506): smoke.mjs plus
+//      the scripts affected.mjs selects for the diff against the second parent (the PR head): the
+//      commits that reached main after the PR last passed. The first parent retested the PR's whole
+//      diff again (#985, 2026-10-29: all 18 groups, 20 minutes);
 //   4. otherwise, or if asking fails, it is not tested and the end-to-end run goes whole.
 //
 //   node tools/e2e/already-tested.mjs        # writes tested, inherited, tree and base in $GITHUB_OUTPUT
@@ -34,7 +35,7 @@ export const validMark = artifacts => artifacts.find(a => !a.expired && a.workfl
  * @param {object|null} o.parentMark    the one of the parent commit's tree
  * @param {string[]|null} o.changes     what changed since the parent (null if there is no parent)
  * @param {object|null} [o.headMark]    the mark of the merged PR's head, if the commit is a merge
- * @param {string} [o.base]             the merge's first parent, the diff the narrowed run tests
+ * @param {string} [o.base]             the merge's second parent (the PR head), the diff the narrowed run tests (D-506)
  */
 export function decide({ mark, parentMark, changes, headMark = null, base = '' }) {
   if (mark) return { tested: true, inherited: false, reason: `this same tree passed the end-to-end run in run ${mark.workflow_run.id}` };
@@ -56,10 +57,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     if (!mark) {
       // A merge commit (`gh pr merge --merge`): its second parent is the PR's head
       try {
-        const [, first, second] = sh('git', 'rev-list', '--parents', '-n', '1', 'HEAD').split(' ');
+        const [, , second] = sh('git', 'rev-list', '--parents', '-n', '1', 'HEAD').split(' ');
         if (second) {
           headMark = validMark(JSON.parse(sh('gh', 'api', `repos/${repo}/actions/artifacts?name=e2e-head-${second}&per_page=20`)).artifacts || []);
-          base = first;
+          base = second; // D-506: what main brought since the PR head passed
         }
       } catch (_) { headMark = null; }
       try {

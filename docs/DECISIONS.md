@@ -46,9 +46,9 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Errors and passing the phone | C-8b, C-9, C-14 | D-36, D-40, D-56, D-60, D-123, D-213, D-277, D-314, D-319, D-322 |
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272, D-410, D-427, D-482, D-485 |
 | Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466, D-471, D-473, D-474, D-475, D-476, D-477, D-484, D-493, D-498, D-503, D-504 |
-| Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467, D-486, D-496, D-497, D-504 |
-| README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
-| Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460, D-484, D-494, D-496 |
+| Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467, D-486, D-496, D-497, D-504, D-506 |
+| README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316, D-506 |
+| Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460, D-484, D-494, D-496, D-506 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456, D-460, D-464, D-468, D-476, D-478, D-481, D-492, D-499 |
 | Agents (usability, documentation, processes, support, ideas) | [USABILIDAD.md](USABILIDAD.md) | D-132, D-135, D-172, D-204, D-206, D-213, D-218, D-252, D-273, D-275, D-276, D-279, D-301, D-303, D-304, D-306, D-313, D-315, D-317, D-318, D-341, D-360, D-361, D-365, D-382, D-383, D-394, D-400, D-401, D-409, D-411, D-413, D-429, D-440, D-441, D-443, D-451, D-452, D-459, D-463, D-472, D-480, D-486, D-497 |
 | Rankings and player (name and PIN) | C-7 | D-96, D-212, D-215, D-217, D-219, D-220, D-230, D-236, D-249, D-336, D-357, D-358, D-359, D-412, D-414, D-415, D-416, D-424, D-436, D-450, D-455, D-464, D-465, D-470, D-476, D-478, D-492, D-499, D-500 |
@@ -107,7 +107,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-48](decisions/D-48.md) | Brazilian Portuguese as the third language, with the same keys | amended by D-197, D-222 |
 | [D-49](decisions/D-49.md) | The footer phrases drop party humor for generic after-dinner jokes | current |
 | [D-50](decisions/D-50.md) | A canceled room closes itself: explicit goodbye and immediate deletion | current |
-| [D-51](decisions/D-51.md) | The README sustains itself: what can be derived is generated, what is written gets flagged, screenshots are redone | amended by D-205 |
+| [D-51](decisions/D-51.md) | The README sustains itself: what can be derived is generated, what is written gets flagged, screenshots are redone | amended by D-205, D-506 |
 | [D-52](decisions/D-52.md) | The Cartas selector goes in a row, like the language toggle | current |
 | [D-53](decisions/D-53.md) | Hangman is played in a chain: nobody is left watching | amended by D-66 |
 | [D-54](decisions/D-54.md) | The same word for everyone, only when they play at the same time | current |
@@ -348,7 +348,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-299](decisions/D-299.md) | End-to-end does not run on what does not reach the browser, and a failing script is repeated once | amended by D-307 |
 | [D-300](decisions/D-300.md) | CHANGELOG per file: each PR leaves its entry without a number and the version sets itself | amended by D-497 |
 | [D-301](decisions/D-301.md) | Decision numbers are reserved, and DECISIONES.md is merged decision by decision | amended by D-394 |
-| [D-302](decisions/D-302.md) | Publishing waits for main's end-to-end | amended by D-308, D-496 |
+| [D-302](decisions/D-302.md) | Publishing waits for main's end-to-end | amended by D-308, D-496, D-506 |
 | [D-303](decisions/D-303.md) | A single push at the end | current |
 | [D-304](decisions/D-304.md) | Usability review according to the game's stage | current |
 | [D-305](decisions/D-305.md) | La Copa and Uno al día pills, bottom left | current |
@@ -540,7 +540,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-493](decisions/D-493.md) | The panel's "Don't count this browser" checkbox leaves the lab | current |
 | [D-494](decisions/D-494.md) | No blob over 5 MB enters git; big media moves out without rewriting history | current |
 | [D-495](decisions/D-495.md) | Dudo's classic rules leave the lab, for everyone | current |
-| [D-496](decisions/D-496.md) | Publishing runs smoke plus what the merge reaches, not the whole suite | current |
+| [D-496](decisions/D-496.md) | Publishing runs smoke plus what the merge reaches, not the whole suite | amended by D-506 |
 | [D-497](decisions/D-497.md) | A lighter process: short CLAUDE.md, D-n only for policy, no translating history, CHANGELOG by month | current |
 | [D-498](decisions/D-498.md) | Lab gates are runtime flags: "Yes, and publish" is a toggle | current |
 | [D-499](decisions/D-499.md) | The nightly jobs are the single authority for room sweeping and Cup podiums; phones write only raw events | current |
@@ -550,6 +550,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-504](decisions/D-504.md) | The owner is notified when a PR goes live, and every PR says where it is seen | current |
 | [D-505](decisions/D-505.md) | Teasers build expectation and give the game away never, on one engine | current |
 | [D-507](decisions/D-507.md) | "New" lasts one week after launch | current |
+| [D-506](decisions/D-506.md) | From merge to live in minutes: narrow by the PR head, no run-wide queue, retry 5xx, no sealed version | current |
 
 ## No longer in force (12)
 

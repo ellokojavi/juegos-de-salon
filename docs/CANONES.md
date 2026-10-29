@@ -41,6 +41,8 @@ public/<carpeta>/
   página puente (la genera `node tools/release/og.mjs cards`).
 - Los juegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
+  A game enters the Cup pool (`POZO`) with `copa: { pozo }` in its `games.js` entry, plus its loader in
+  `cup/games/index.js`; `cup/engine.js` derives the pool and `manifest.test.mjs` checks both (#855).
   Uno suelto que todavía está en el laboratorio (`labs: true` en `SUELTOS`) tiene su página en
   `/labs/<slug>/`, y `/<slug>/` es página puente hasta que salga (D-267).
   Toda página de `/labs/` carga primero la puerta (`labs-puerta.js`) y lleva
@@ -387,7 +389,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   card's keywords. `search.test.mjs` fails without them. A new language of the app adds its keywords
   for every card when it comes in.
 - **The list is drawn at once from the last visit's copy (D-435).** The page saves the list's HTML
-  (`juegos-de-salon:portada-foto`, keyed by version, language and day) and a script under `#games`
+  (`juegos-de-salon:portada-foto`, keyed by version, language, day and today's One a Day played or not) and a script under `#games`
   puts it back before the modules arrive; the module clears `#games` and draws the real cards in the
   same task. So anything drawn into the list must look the same in the copy as drawn (no state that
   only the module knows, nothing random), and the space above the list (`#lang-slot`, `.tools`,

@@ -14,6 +14,7 @@
  * uno se queda atascado. Las jugadas son los índices tocados, 'C' (borrar todo) y { h } (pista).
  * ↩️ Undo (D-342) takes back the last tap or Clear all, one per tap; it is a play too ('U'), so an
  * error already counted stays counted and a hint stays revealed.
+ * 🏳️ Give up ('R'), as in Queens, shows the solution and gives 0 points.
  */
 import * as motor from './engine.js';
 import { botonDeshacer } from '../deshacer.js';
@@ -149,7 +150,7 @@ export function montar(raiz, ctx) {
       grilla.append(celda);
     }
     if (e.fin) {
-      caja.append(el('div', { class: 'aviso bien' }, `🎉 ${T.tangoOk}`),
+      caja.append(el('div', { class: 'aviso ' + (e.rendido ? 'mal' : 'bien') }, e.rendido ? T.queensGaveUp : `🎉 ${T.tangoOk}`),
         el('button', { class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(e); } }, ctx.textoFin || T.seeResults));
     }
     caja.append(grilla);
@@ -167,7 +168,16 @@ export function montar(raiz, ctx) {
           const i = motor.pista(p, e.g, e.fijas);
           if (i < 0) return;
           SFX.reveal(); jugar({ h: i });
-        }, { id: 'btn-pista' })),
+        }, { id: 'btn-pista' }),
+        // Giving up is final: it asks to confirm, as in Queens (D-110)
+        el('button', {
+          type: 'button', class: 'btn btn--ghost btn--sm', id: 'btn-rendirse',
+          onClick: () => {
+            armado = null; clearTimeout(armadoTimer); SFX.tap();
+            if (!confirm(T.giveUpConfirm)) return;
+            jugadas.push(motor.RENDIRSE); ctx.guardar(jugadas); SFX.error(); vibrate([40, 40, 40]); dibujar(true);
+          },
+        }, `🏳️ ${T.giveUp}`)),
         el('details', { class: 'panel tips' },
           el('summary', {}, `🧭 ${T.tipsTitle}`),
           el('ul', {}, T.tangoTips.map(t => el('li', {}, t)))));
