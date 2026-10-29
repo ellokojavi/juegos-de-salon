@@ -32,7 +32,8 @@ export function desglose(id, e, { T, fmt, mmss, copa = true, lang = 'es' }) {
     ].filter(Boolean);
     case 'reinas': if (e.rendido) return [T.bdGaveUp];
       return e.fin ? [fmt(T.bdQueensTime, { t: mmss(e.ms || 0) }), T.bdQueensScale] : [T.bdNotSolved];
-    case 'tango': return e.fin ? [
+    case 'tango': if (e.rendido) return [T.bdGaveUp];
+      return e.fin ? [
       T.bdStart100,
       resta('bdRuleBreaks', e.errores, { pts: 10 * e.errores }) || T.bdNoRuleBreaks,
       resta('bdHints', e.pistas || 0, { pts: tango.COSTO_PISTA * (e.pistas || 0), c: tango.COSTO_PISTA }),
