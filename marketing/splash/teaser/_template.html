@@ -1,0 +1,49 @@
+<!doctype html>
+<!--
+  The teaser of {{name}} for the splash (D-351), on the teaser engine (_teaser.js, TEASERS.md) with the
+  game's own scene (public/{{game}}/scene.js). Say here, in one sentence, the world it shows, the
+  goal it hints at and the moment it stops on, and what of the play it leaves out (TEASERS.md).
+  Made by `node marketing/splash/teaser.mjs new {{name}} {{game}}`.
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Teaser · {{name}}</title>
+<style>
+  body { margin: 0; background: #14081f; display: grid; place-items: center; min-height: 100vh; }
+  .marco { position: relative; width: 512px; height: 320px; }
+  .marco canvas { position: absolute; inset: 0; width: 512px; height: 320px; }
+</style>
+</head>
+<body>
+<div class="marco"><canvas id="fondo"></canvas><canvas id="juego"></canvas></div>
+<script type="module">
+import { teaser, beats, ease, W, H } from './_teaser.js';
+// The game's own state and drawing (TEASERS.md, rule 1). A game drawn inside game.js first moves its
+// drawing to scene.js, as Stack and Stick Ninja did, so the game and the teaser share it
+import { escena } from '../../../public/{{game}}/scene.js';
+
+const SECONDS = 8;
+// The story in three beats (TEASERS.md, rule 3): the world, the approach, the moment it stops on
+const STORY = [[0, 'world'], [2, 'approach'], [5, 'hold']];
+
+teaser({
+  seconds: SECONDS,
+  // The game's scene on its canvas, and the state it draws: a world set up by hand, never played
+  setup(canvas) {
+    const sc = escena(canvas);
+    return { sc };
+  },
+  // What stands behind the transparent scene: the game page's own background
+  background(ctx) {
+    ctx.fillStyle = '#1f0c3c'; ctx.fillRect(0, 0, W, H);
+  },
+  draw({ sc }, t) {
+    const b = beats(STORY, t, SECONDS);
+    // Move the camera or the world by b.name and ease(b.k); then draw the game's frame
+    void b; void ease;
+  },
+});
+</script>
+</body>
+</html>
