@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233 |
 
-## In force (488)
+## In force (489)
 
 | D | Title | Status |
 |---|---|---|
@@ -546,8 +546,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-499](decisions/D-499.md) | The nightly jobs are the single authority for room sweeping and Cup podiums; phones write only raw events | current |
 | [D-500](decisions/D-500.md) | Uno al día totals are written only by the hourly rebuild; /today/ adds the phone's own pending days (lab first) | current |
 | [D-502](decisions/D-502.md) | A campaign for regulars waits only for 5 visit days; every finished game is now counted on the phone | current |
-| [D-505](decisions/D-505.md) | Teasers build expectation and give the game away never, on one engine | current |
 | [D-503](decisions/D-503.md) | Every campaign seen is a key event on the Timeline, with who saw it | current |
+| [D-505](decisions/D-505.md) | Teasers build expectation and give the game away never, on one engine | current |
 
 ## No longer in force (12)
 
