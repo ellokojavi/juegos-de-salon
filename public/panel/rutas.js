@@ -16,6 +16,7 @@
  *   #/traffic                    visitas al sitio, de dónde llegan y cuántas terminan jugando (D-208)
  *   (#/games and #/audience, from before D-348, open Group and Users)
  *   #/campaigns                  the splash campaigns: on or off, their days and order (D-454)
+ *   #/campaigns/splash/<id>      that tab, with that campaign open and in view (the release notifications, D-504)
  *   #/health                     lo que le falla a quien juega: no arrancó, errores, lentitud (D-251)
  *
  * En la URL van en inglés (C-18, D-266); por dentro las secciones siguen con su nombre de siempre

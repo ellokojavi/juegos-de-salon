@@ -33,10 +33,14 @@ self.addEventListener('push', e => {
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   const datos = e.notification.data || {};
-  // Only a page of this site opens: a link to anywhere else goes to the site's home page instead
+  // Only a page of this site opens: a link to anywhere else goes to the site's home page instead.
+  // The one exception is the repo's own GitHub run, where the owner's "not published" notification
+  // points (tools/push/release.mjs, D-504)
   const scope = self.registration.scope;
   let url;
   try { url = new URL((e.action && datos.acciones?.[e.action]) || datos.url || './', scope); } catch (_) { url = null; }
+  const repo = url && url.origin === 'https://github.com' && url.pathname.startsWith('/ellokojavi/juegos-de-salon/');
+  if (repo) { e.waitUntil(self.clients.openWindow(url.href)); return; }
   url = url && url.origin === self.location.origin ? url.href : scope;
   e.waitUntil((async () => {
     const abiertas = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
