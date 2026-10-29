@@ -20,7 +20,7 @@ planilla y nadie depende de la jugada del otro. Por eso está listo para Uno al 
 tiran los mismos dados (D-247).
 
 **Open since D-405:** it was announced first as "Próximamente" (D-248) and the owner opened it on
-2026-10-20. It carries the "New" label for two weeks (`nuevoDesde`, D-333) and joins the dice, the
+2026-10-20. It carries the "New" label for a week (`nuevoDesde`, D-333, D-507) and joins the dice, the
 favorites and Uno al día like any other game.
 
 ## Reglas
