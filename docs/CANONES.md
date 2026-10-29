@@ -387,7 +387,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   card's keywords. `search.test.mjs` fails without them. A new language of the app adds its keywords
   for every card when it comes in.
 - **The list is drawn at once from the last visit's copy (D-435).** The page saves the list's HTML
-  (`juegos-de-salon:portada-foto`, keyed by version, language and day) and a script under `#games`
+  (`juegos-de-salon:portada-foto`, keyed by version, language, day and today's One a Day played or not) and a script under `#games`
   puts it back before the modules arrive; the module clears `#games` and draws the real cards in the
   same task. So anything drawn into the list must look the same in the copy as drawn (no state that
   only the module knows, nothing random), and the space above the list (`#lang-slot`, `.tools`,
