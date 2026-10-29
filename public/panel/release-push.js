@@ -52,7 +52,8 @@ export function wireReleasePush({ button, status, save, exists }) {
     try {
       const sub = await suscribir();
       const id = await subIdDe(sub.endpoint);
-      await save(id, deviceRecord(sub, { at: Date.now(), device: deviceName(navigator.userAgent) }));
+      // The server's clock, not the phone's: the rules ask `at <= now`, and a phone a few seconds ahead was refused
+      await save(id, deviceRecord(sub, { at: { '.sv': 'timestamp' }, device: deviceName(navigator.userAgent) }));
       button.textContent = '🔔 Notifications on here · send a test'; button.dataset.on = '1';
       say('Done: this device gets a notification each time a PR goes live, with a link to what it launched.');
     } catch (e) { say(`Could not turn them on: ${e?.message || e}`); }
