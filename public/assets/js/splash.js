@@ -159,13 +159,14 @@ export const CAMPAIGNS = {
     title: { es: '¿Llegará al otro lado?', en: 'Will it reach the other side?', pt: 'Será que chega do outro lado?', de: 'Reicht es bis drüben?' },
     items: [{ video: 'assets/splash/ninja-teaser.mp4', img: 'assets/splash/ninja-teaser-start.png', still: 'assets/splash/ninja-teaser.png', ratio: '8 / 5' }],
   },
-  // A teaser of 🧱 Stack, still in the lab: neon slabs pile up and the view climbs past the clouds
-  // into the stars, until the last one stops in the air. No name, no link
+  // A teaser of 🧱 Stack, still in the lab, drawn with the game's own isometric scene: the slabs pile up
+  // and the view climbs past the clouds into the stars, until the last one stops in the air. No name, no
+  // link. `smooth`: drawn at full size, not pixel art, so it is scaled smoothly
   'stack-pronto': {
     emoji: '🧱',
     kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve', de: 'Demnächst' },
     title: { es: '¿Hasta dónde llega?', en: 'How high can it go?', pt: 'Até onde chega?', de: 'Wie hoch geht es?' },
-    items: [{ video: 'assets/splash/stack-teaser.mp4', img: 'assets/splash/stack-teaser-start.png', still: 'assets/splash/stack-teaser.png', ratio: '8 / 5' }],
+    items: [{ video: 'assets/splash/stack-teaser.mp4', img: 'assets/splash/stack-teaser-start.png', still: 'assets/splash/stack-teaser.png', ratio: '8 / 5', smooth: true }],
   },
   // 🥂 An invitation to support the site, with a laugh: Leonardo DiCaprio raising his glass in
   // The Great Gatsby. The clip is GIPHY's, served from GIPHY (not copied into the site); its button
@@ -328,6 +329,7 @@ async function resolve(items, lang) {
       img: i.img ? new URL(i.img, ROOT).href : null,
       still: i.still ? new URL(i.still, ROOT).href : null,
       ratio: i.ratio ?? null,
+      smooth: !!i.smooth,
       video: i.video ? new URL(i.video, ROOT).href : null,
       cta: pick(i.cta, lang) ?? null,
     };
@@ -371,7 +373,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   for (const it of items) {
     // The whole item is the way in: tapping the clip, the name or Play opens the game
     const teaser = !it.name && !it.text && !it.href;
-    const a = node(it.href ? 'a' : 'div', teaser ? 'splash-item splash-teaser' : 'splash-item');
+    const a = node(it.href ? 'a' : 'div', teaser ? `splash-item splash-teaser${it.smooth ? ' splash-teaser--smooth' : ''}` : 'splash-item');
     if (it.ratio) a.style.setProperty('--ratio', it.ratio);
     if (it.href) a.href = it.href;
     if (it.video) {

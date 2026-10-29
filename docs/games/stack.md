@@ -70,9 +70,9 @@ and, after a line, the comment form.
   The page passes the tap's own `event.timeStamp`, so a 60 Hz and a 120 Hz phone play the same game, and
   a frame drawn late does not move the drop. `pause(g, ms)` freezes the slab for a pause. `perfectTime(g, t)` says when the block is next exactly
   over the tower (the cover's demo and the end-to-end script use it).
-- `game.js`: the canvas scene (each block a box with its top and the two sides facing the viewer, the
-  falling pieces with gravity, the perfect glow and its sparks, a camera that rises with the tower), the cover, the
-  game and the result. The end-to-end hook is `window.__stack` (`S`, with `S.soltarEn(t)` to drop at a
+- `scene.js`: the canvas scene, shared with the splash teaser (`marketing/splash/teaser/stack.html`) so it always looks like the game (each block a box with its top and the two sides facing the viewer, the
+  falling pieces with gravity, the perfect glow and its sparks, a camera that rises with the tower).
+- `game.js`: the cover, the game and the result. The end-to-end hook is `window.__stack` (`S`, with `S.soltarEn(t)` to drop at a
   moment, `S.pausar()` to pause as a hidden page does, and `perfecto()`).
 
 ## To tune
