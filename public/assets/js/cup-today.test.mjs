@@ -44,4 +44,9 @@ assert.equal(finalPlayed(lista({ ...todo, results: { 1: { aaaaaa: 1 } } }), fin)
 assert.equal(finalPlayed(lista(todo), meta.end), null, 'closed: nothing');
 assert.equal(finalPlayed(lista(todo), meta.win[6].a + H), null, 'not the last day yet');
 assert.equal(finalPlayed(lista(todo, []), fin), null, 'no cups');
+// A cup of the Rankings player joined on another phone: kept here, not in "Tus copas" (D-220)
+const full = m => ({ getItem: k => m[k] ?? null, get length() { return Object.keys(m).length; }, key: i => Object.keys(m)[i] ?? null });
+const otra = full({ 'juegos-de-salon:copa:mias': '[]', 'juegos-de-salon:copa:hoy:MENYF': JSON.stringify(porJugar(L, 'aaaaaa', dia(0))) });
+assert.deepEqual(nextCupDay(otra, dia(0)), { code: 'MENYF', dia: 2, at: meta.win[2].a }, "a Rankings player's cup counts too");
+assert.deepEqual(pendingCup(otra, dia(1)), { code: 'MENYF', dia: 2 }, "and its day to play");
 console.log('cup-today: ok');
