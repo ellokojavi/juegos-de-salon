@@ -15,6 +15,7 @@ import { fijos, crearSim, paso, DT, puntajePartida, picoDe, picoReferencia, cost
 import { QUIETO, pct, aMundo, esfuerzoAhora, timeOfDay, DEMO, trenMini, lienzo, medidor, dibujar, fueraDeEscena } from './scene.js';
 import { etapasDe, tarjeta, CATALOGO_URL, NIVELES, TIEMPO_S } from './engine.js';
 import { loadCss } from '../../../assets/js/load-css.js';
+import { onScreen } from '../../../assets/js/on-screen.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -91,9 +92,10 @@ export function portada() {
         pausa ||= performance.now() + 2500;
         if (performance.now() >= pausa) { sim = crearSim(e, DEMO); pausa = 0; }
       }
-      requestAnimationFrame(cuadro);
+      otro();
     };
-    requestAnimationFrame(cuadro);
+    const otro = onScreen(c, cuadro);
+    otro();
   };
   requestAnimationFrame(empezar);
   return caja;
