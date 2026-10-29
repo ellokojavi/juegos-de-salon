@@ -11,7 +11,9 @@
  *   follow the panel's environment, like the room log;
  * - cups: `torneos/`, read through the cup engine (`historiaCopa`), which has no environment: a lab
  *   cup carries its tag;
- * - feedback: `feedback/`, also with no environment.
+ * - feedback: `feedback/`, also with no environment;
+ * - campaigns seen: `stats/<env>/days/<day>/seen/` (D-503), one row per view of a splash campaign
+ *   or of the donation card (`c: 'support'`), with the name the phone knew; skins are not campaigns.
  *
  * Days are Pacific days (the panel's clock, the one La Copa splits its days with): "the last 7 days"
  * are the last 7 Pacific dates, ending today in Pacific time (`pacificRange`).
@@ -21,7 +23,7 @@ import { DAY, roomLog, localLog, ZONA_PANEL, diaPanel } from './aggregate.js';
 import { copasDe, estadoCopa, historiaCopa, paisDe } from './copas.js';
 
 /** The kinds, in the order the filters show them. The panel gives each its icon and name. */
-export const KINDS = ['cup-game', 'room', 'offline', 'daily', 'cup-new', 'cup-join', 'cup-end', 'feedback'];
+export const KINDS = ['cup-game', 'room', 'offline', 'daily', 'cup-new', 'cup-join', 'cup-end', 'feedback', 'campaign'];
 
 /** A day number as its calendar date ("2026-10-20"). */
 const isoOf = d => new Date(d * DAY).toISOString().slice(0, 10);
@@ -90,6 +92,14 @@ export function keyEvents({ days = {}, torneos = {}, feedback = {} } = {}, range
   for (const [id, f] of Object.entries(feedback || {})) {
     if (!f || typeof f.at !== 'number') continue;
     push({ at: f.at, kind: 'feedback', id, who: [{ name: f.nombre || '', co: '' }], tipo: f.tipo || '', text: String(f.texto || ''), tester: f.tester || '' });
+  }
+
+  // Campaigns seen (D-503): who saw which splash, or opened the donation card
+  for (let d = span.from; d <= span.to; d++) {
+    for (const [id, v] of Object.entries(days[String(d)]?.seen || {})) {
+      if (!v || typeof v.at !== 'number' || !v.c) continue;
+      push({ at: v.at, kind: 'campaign', id, campaign: v.c, who: [{ name: v.name || '', co: v.co || '' }] });
+    }
   }
 
   return out.sort((a, b) => b.at - a.at || KINDS.indexOf(a.kind) - KINDS.indexOf(b.kind));

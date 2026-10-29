@@ -47,6 +47,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Sharing | C-7 | D-72, D-162, D-165, D-171, D-173, D-181, D-226, D-242, D-243, D-253, D-254, D-271, D-272, D-410, D-427, D-482, D-485 |
 | Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466, D-471, D-473, D-474, D-475, D-476, D-477, D-484, D-493, D-498, D-504 |
 | Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467, D-486, D-496, D-497, D-504 |
+| Panel and usage signals (privacy) | C-16 | D-44, D-45, D-46, D-73, D-79, D-80, D-140, D-207, D-208, D-209, D-210, D-211, D-251, D-317, D-318, D-320, D-348, D-349, D-350, D-352, D-408, D-448, D-452, D-454, D-461, D-466, D-471, D-473, D-474, D-475, D-476, D-477, D-484, D-493, D-498, D-503 |
+| Publishing and version | C-11 | D-22, D-122, D-189, D-192, D-205, D-213, D-216, D-218, D-300, D-302, D-308, D-323, D-400, D-419, D-429, D-441, D-467, D-486, D-496, D-497 |
 | README and screenshots | C-13 | D-51, D-76, D-78, D-213, D-316 |
 | Tests | C-12 | D-143, D-193, D-199, D-204, D-216, D-299, D-307, D-315, D-377, D-378, D-388, D-391, D-392, D-401, D-428, D-460, D-484, D-494, D-496 |
 | La Copa (tournament, days, score) | `docs/games/cup.md` | D-94, D-95, D-96, D-97, D-99, D-106, D-113, D-118, D-150, D-161, D-163, D-170, D-175, D-187, D-212, D-220, D-234, D-250, D-257, D-258, D-259, D-260, D-261, D-262, D-263, D-264, D-267, D-268, D-282, D-285, D-325, D-326, D-331, D-332, D-336, D-347, D-359, D-376, D-379, D-384, D-416, D-417, D-418, D-421, D-423, D-425, D-426, D-427, D-433, D-437, D-438, D-439, D-444, D-450, D-453, D-456, D-460, D-464, D-468, D-476, D-478, D-481, D-492, D-499 |
@@ -453,7 +455,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-405](decisions/D-405.md) | Generala opens from the home page and joins Uno al día on October 23 | current |
 | [D-406](decisions/D-406.md) | A lab page to choose how the two filter rows look | amended by D-407 |
 | [D-407](decisions/D-407.md) | The shortcut pills are outlined, the type pills filled | current |
-| [D-408](decisions/D-408.md) | The panel's timeline of key events | current |
+| [D-408](decisions/D-408.md) | The panel's timeline of key events | amended by D-503 |
 | [D-409](decisions/D-409.md) | Every change goes to Labs first; decisions answer in three | amended by D-498 |
 | [D-410](decisions/D-410.md) | The share sheet shows the vertical Shorts, in a Spanish and an English tab, playing on their own | current |
 | [D-411](decisions/D-411.md) | A question that no longer needs an answer is settled, not left open | current |
@@ -506,7 +508,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-458](decisions/D-458.md) | A splash campaign can wait for regulars: 5 visit days and 10 finished games (the toast to support does) | amended by D-502 |
 | [D-459](decisions/D-459.md) | Feedback reports are readable only by the owner; the tools read them with the admin key | current |
 | [D-460](decisions/D-460.md) | ¿Dónde queda?'s Earth in WebP, next to the game, and the 4096 px image only on big screens or zoomed in | current |
-| [D-461](decisions/D-461.md) | The splash campaigns are measured: reach, taps and closes against the days each one was shown | amended by D-466 |
+| [D-461](decisions/D-461.md) | The splash campaigns are measured: reach, taps and closes against the days each one was shown | amended by D-466, D-503 |
 | [D-462](decisions/D-462.md) | A tap outside a splash is forgiven once: it comes back on another visit | current |
 | [D-463](decisions/D-463.md) | A privacy page in four languages, and an unanswered feedback email is deleted after 90 days | amended by D-472 |
 | [D-464](decisions/D-464.md) | PIN attempts are rate-limited, and changing a PIN needs the current one | current |
@@ -547,6 +549,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-500](decisions/D-500.md) | Uno al día totals are written only by the hourly rebuild; /today/ adds the phone's own pending days (lab first) | current |
 | [D-502](decisions/D-502.md) | A campaign for regulars waits only for 5 visit days; every finished game is now counted on the phone | current |
 | [D-504](decisions/D-504.md) | The owner is notified when a PR goes live, and every PR says where it is seen | current |
+| [D-503](decisions/D-503.md) | Every campaign seen is a key event on the Timeline, with who saw it | current |
 
 ## No longer in force (12)
 
