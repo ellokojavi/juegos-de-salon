@@ -29,14 +29,14 @@ assert.deepEqual(queue({ active: three, campaigns, today, automated: true }), []
 assert.deepEqual(queue({ active: three, campaigns, seen: ['b'], forced: 'b', today }), ['b']);
 assert.deepEqual(queue({ active: [], campaigns, forced: 'nope', today }), []);
 
-// A campaign for regulars (D-458): only a phone with 5+ visit days and 10+ finished games that has
+// A campaign for regulars (D-458, D-502): only a phone with 5+ visit days that has
 // not paid yet; until then it waits unseen, and the ones for everyone go on as always
 const forRegulars = { ...campaigns, r: { title: { es: 'R' }, audience: 'regulars' } };
 const regular = { days: REGULARS.days, games: REGULARS.games, paid: false };
-assert.deepEqual(REGULARS, { days: 5, games: 10 }, "the owner's thresholds");
+assert.deepEqual(REGULARS, { days: 5, games: 0 }, "the owner's thresholds: visit days only (D-502)");
 assert.deepEqual(queue({ active: [{ id: 'r' }, { id: 'a' }], campaigns: forRegulars, today }), ['a'], 'no profile: a first visit never gets it');
 assert.deepEqual(queue({ active: [{ id: 'r' }], campaigns: forRegulars, today, profile: { ...regular, days: 4 } }), [], 'too few days');
-assert.deepEqual(queue({ active: [{ id: 'r' }], campaigns: forRegulars, today, profile: { ...regular, games: 9 } }), [], 'too few games');
+assert.deepEqual(queue({ active: [{ id: 'r' }], campaigns: forRegulars, today, profile: { ...regular, games: 0 } }), ['r'], 'no finished games needed');
 assert.deepEqual(queue({ active: [{ id: 'r' }], campaigns: forRegulars, today, profile: { ...regular, paid: true } }), [], 'never after paying');
 assert.deepEqual(queue({ active: [{ id: 'r' }, { id: 'a' }], campaigns: forRegulars, today, profile: regular }), ['r', 'a'], 'a regular gets it, in order');
 assert.deepEqual(queue({ active: [{ id: 'r' }], campaigns: forRegulars, today, profile: regular, seen: ['r'] }), [], 'still once per phone');
@@ -46,6 +46,7 @@ const kept = { 'juegos-de-salon:dias': '20380,20381,20383,20385,20386,20386', 'j
 const onDay = d => d * 86400000 + 3600000;   // a moment of stats.js's day number d
 assert.deepEqual(readProfile(k => kept[k] ?? null, onDay(20386)), { days: 5, games: 12, paid: false });
 assert.ok(isRegular(readProfile(k => kept[k] ?? null, onDay(20386))));
+assert.equal(readProfile(k => ({ ...kept, 'juegos-de-salon:partidas': '30' })[k] ?? null, onDay(20386)).games, 30, 'every game counts, the higher of both counts');
 assert.equal(readProfile(k => kept[k] ?? null, onDay(20408)).days, 4, 'only the last four weeks count, even if the list was not pruned yet');
 assert.equal(readProfile(k => kept[k] ?? null, onDay(20500)).days, 0, 'back after months: not a regular yet');
 assert.deepEqual(readProfile(k => (k === 'juegos-de-salon:support' ? JSON.stringify({ paid: 1 }) : kept[k] ?? null)).paid, true);

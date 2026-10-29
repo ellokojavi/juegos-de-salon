@@ -1774,7 +1774,7 @@ function vistaSplash(today) {
           el('span', { class: `campana-estado estado-${st}` }, `${ico} ${txt}`, detalle ? el('span', { class: 'campana-detalle' }, ` · ${detalle}`) : null),
           c.langs ? el('span', { class: 'campana-langs' }, `${c.langs.join(' · ').toUpperCase()} only`) : null,
           // A campaign for regulars reaches fewer phones than "live" suggests (D-458)
-          c.audience === 'regulars' ? el('span', { class: 'campana-langs' }, `Regulars only: ${REGULARS.days}+ days in 4 weeks, ${REGULARS.games}+ games, not paid`) : null),
+          c.audience === 'regulars' ? el('span', { class: 'campana-langs' }, `Regulars only: ${REGULARS.days}+ days in 4 weeks${REGULARS.games ? `, ${REGULARS.games}+ games` : ''}, not paid`) : null),
         el('label', { class: 'interruptor' },
           el('input', { type: 'checkbox', role: 'switch', checked: s.on, 'aria-label': `${nombre} on`, onChange: e => cambiar(s.id, { on: e.target.checked }) }),
           el('span', { class: 'interruptor-pista', 'aria-hidden': 'true' }))),

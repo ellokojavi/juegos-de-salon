@@ -676,6 +676,7 @@ export function trackFinish(info) {
     pararVivo = null;
     const prev = anterior;
     if (prev) prev.finished = true;
+    try { const l = globalThis.localStorage; l?.setItem(PARTIDAS_KEY, String((Number(l.getItem(PARTIDAS_KEY)) || 0) + 1)); } catch (_) { /* no storage: nothing counted */ }
     try { noteSplashStep('finish'); } catch (_) { /* best effort */ }
     if (prev?.game && isLocalMode(prev.mode)) {
       const st = stats();
@@ -692,6 +693,7 @@ export const ULTIMA_KEY = 'juegos-de-salon:ultima';            // localStorage: 
 export const DIAS_KEY = 'juegos-de-salon:dias';                // localStorage: distinct visit days, last 28, comma-separated
 export const DISPOSITIVO_KEY = 'juegos-de-salon:dispositivo';  // localStorage: pseudonymous device id
 export const ACTIVO_KEY = 'juegos-de-salon:activo';            // localStorage: `<day>:<level>` already written
+export const PARTIDAS_KEY = 'juegos-de-salon:partidas';        // localStorage: finished games of every game, on the phone only (D-502)
 export const VENTANA_DIAS = 28;
 
 /** A finished local game: `fin/<game>/<mode>`. */
