@@ -26,3 +26,6 @@ body:has(> .demo-barra) .splash { max-height: calc(100dvh - var(--barra) - 24px 
 @media (max-width: 440px) { body:has(> .demo-barra) .splash-capa { --barra: 136px; } }
 /* ‹ Lab is a link: as a plain inline box its text sat at the top of its 44 px pill. Centered like the others */
 .demo-barra a { display: inline-flex; align-items: center; justify-content: center; }
+
+/* ✨ Mejoras en prueba says it is empty only while it has no card */
+#mejoras:has(> .seccion) .mejoras-vacio { display: none; }

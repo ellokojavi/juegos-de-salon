@@ -21,7 +21,8 @@ ok(await ev(`!document.getElementById('publicar-dueno').hidden`), 'the 🔑 Entr
 await ev(`import('/labs/publish.js').then(m => (window.__pub = m, m.render({}))), 1`); await sleep(300);
 const cards = await ev(`document.querySelectorAll('#activos > .seccion, #mejoras > .seccion').length`);
 ok(cards > 0 && await ev(`[...document.querySelectorAll('#activos > .seccion, #mejoras > .seccion')].every(c => [...c.querySelectorAll('.publicar button')].some(x => /Publicar para todos/.test(x.textContent)))`), `every card being tried has 🚀 Publicar para todos (${cards})`);
-ok(await ev(`!document.querySelector('#bodega .publicar')`), 'La Bodega has none');
+ok(await ev(`[...document.querySelectorAll('#bodega .seccion')].every(c => !!c.querySelector('.publicar') === !!__pub.flagOf(c.id))`), 'in La Bodega only the cards behind a flag have buttons, inside their fold (D-510)');
+ok(await ev(`!!document.querySelector('#seccion-copa-crear .detalle .publicar')`), 'a launched flag card keeps its switch in La Bodega');
 
 await ev(`__pub.ask(document.getElementById('seccion-portada')), 1`); await sleep(400);
 ok(await ev(`/No es inmediato/.test(document.querySelector('.hoja').textContent) && /Mac mini/.test(document.querySelector('.hoja').textContent)`), 'the sheet says it is not immediate and why');
