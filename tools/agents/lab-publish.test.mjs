@@ -4,6 +4,7 @@ import { branchOf, oldest, next, STALE_MS, CONFLICT_MS, FIX_MS } from './lab-pub
 import { toFix } from '../jobs/lab-publish-watch.mjs';
 
 assert.equal(branchOf('seccion-copa-crear'), 'publish-copa-crear');
+assert.equal(branchOf('seccion-copa-crear', 'bodega'), 'bodega-copa-crear', '📦 has its own branch (D-511)');
 assert.deepEqual(oldest({ a: { state: 'requested', at: 5 }, b: { state: 'requested', at: 2 }, c: { state: 'pr', at: 1 } })[0], 'b', 'the oldest waiting');
 assert.equal(oldest({ c: { state: 'merged', at: 1 } }), null, 'none waiting');
 assert.equal(oldest(null), null);

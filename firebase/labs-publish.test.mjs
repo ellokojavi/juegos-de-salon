@@ -15,4 +15,6 @@ assert.equal(w({ 'labsPublish/copa': ask }), false, 'the id is a card id');
 assert.equal(w({ 'labsPublish/seccion-x': { ...ask, state: 'now' } }), false, 'a state out of the list');
 assert.equal(w({ 'labsPublish/seccion-x': { ...ask, note: 'x'.repeat(501) } }), false, 'a short note');
 assert.equal(w({ 'labsPublish/seccion-x': { ...ask, run: 'rm' } }), false, 'no other fields');
+assert.equal(w({ 'labsPublish/seccion-x': { ...ask, kind: 'bodega' } }), true, '📦 Enviar a La Bodega is the same request, of another kind (D-511)');
+assert.equal(w({ 'labsPublish/seccion-x': { ...ask, kind: 'borrar' } }), false, 'a kind out of the list');
 console.log('✓ labsPublish rules');

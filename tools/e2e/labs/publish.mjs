@@ -31,6 +31,18 @@ await b.shot('ask');
 await ev(`[...document.querySelectorAll('.hoja button')].find(x => /Cancelar/.test(x.textContent)).click(), 1`);
 ok(await ev(`!document.querySelector('.hoja')`), 'Cancelar closes it');
 
+// 📦 Enviar a La Bodega (D-511): on every card being tried, its sheet says how the card goes
+ok(await ev(`[...document.querySelectorAll('#activos > .seccion, #mejoras > .seccion')].every(c => [...c.querySelectorAll('.publicar button')].some(x => /Enviar a La Bodega/.test(x.textContent)))`), 'every card being tried has 📦 Enviar a La Bodega');
+ok(await ev(`!document.querySelector('#bodega .publicar') || ![...document.querySelectorAll('#bodega .publicar button')].some(x => /Enviar a La Bodega/.test(x.textContent))`), 'La Bodega has no 📦');
+await ev(`__pub.askBodega(document.getElementById('seccion-portada')), 1`); await sleep(300);
+ok(await ev(`/Enviar a La Bodega/.test(document.getElementById('publicar-titulo').textContent) && /No prosperó/.test(document.querySelector('.hoja').textContent)`), 'a card not live goes as 💤 No prosperó');
+await b.shot('ask-bodega');
+await ev(`[...document.querySelectorAll('.hoja button')].find(x => /Cancelar/.test(x.textContent)).click(), 1`);
+const bid = await ev(`document.querySelector('#activos > .seccion, #mejoras > .seccion').id`);
+await ev(`__pub.render({ [${JSON.stringify(bid)}]: { state: 'pr', kind: 'bodega', at: 1, pr: 5 } }), 1`); await sleep(200);
+ok(/aparece en La Bodega/.test(await ev(`document.querySelector('#${bid} .publicar-estado')?.textContent || ''`)) && (await ev(`[...document.querySelectorAll('#${bid} .publicar-estado a')].map(a => a.href).join()`)).includes('previews/bodega-'), 'a 📦 request shows its PR from the bodega- branch');
+await ev(`__pub.render({}, {}), 1`);
+
 // A flagged card: immediate, then live with the way back, then off
 await ev(`__pub.askFlag(document.getElementById('seccion-copa-crear'), 'copa-crear'), 1`); await sleep(300);
 ok(await ev(`/Es inmediato/.test(document.querySelector('.hoja').textContent) && !document.querySelector('.hoja textarea')`), 'a flagged card: the sheet says it is immediate, no note');

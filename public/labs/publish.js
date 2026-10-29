@@ -22,7 +22,7 @@ import { FLAGS, stateOf } from '../assets/js/flags.js';
 const REPO = 'https://github.com/ellokojavi/juegos-de-salon';
 const PREVIEWS = 'https://ellokojavi.github.io/juegos-de-salon-previews';
 /** Same as tools/agents/lab-publish.mjs branchOf. */
-export const branchOf = id => `publish-${id.replace(/^seccion-/, '')}`;
+export const branchOf = (id, kind) => `${kind === 'bodega' ? 'bodega' : 'publish'}-${id.replace(/^seccion-/, '')}`;
 
 /** The cards with buttons: what is being tried, and in La Bodega the ones behind a flag, which keep their switch (D-510). */
 const cards = () => [...$$('#activos > .seccion, #mejoras > .seccion'), ...$$('#bodega .seccion').filter(c => flagOf(c.id))];
@@ -35,15 +35,16 @@ const WAIT = 'No es inmediato: tarda entre 30 y 60 minutos (un juego, algo más)
 
 /** What a card shows for its request. Pure but for the DOM nodes: one line per fact, the links last. */
 export function statusOf(id, e) {
-  const branch = e.branch || branchOf(id);
+  const branch = e.branch || branchOf(id, e.kind);
+  const bodega = e.kind === 'bodega';
   const search = `${REPO}/pulls?q=is%3Apr+head%3A${branch}`;
   const pr = e.pr && [link(`${REPO}/pull/${e.pr}`, `🔀 Ver el PR #${e.pr}`), link(`${REPO}/pull/${e.pr}/checks`, '🧪 Estado de las pruebas'), link(`${PREVIEWS}/${branch}/`, '🔍 Vista previa')];
   switch (e.state) {
-    case 'requested': return { tone: 'wait', lines: [`⏳ Pedido el ${when(e.at)}: esperando que el Mac mini lo tome.`, WAIT, `El PR saldrá de la rama ${branch}.`], links: [link(search, '🔎 Buscar su PR en GitHub')], cancel: true };
-    case 'working': return { tone: 'wait', lines: [`🛠️ Claude está trabajando en esto desde ${when(e.started || e.at)}: quita la puerta del laboratorio, mueve la tarjeta a La Bodega y pasa las revisiones.`, 'Cuando abra el PR, aparece acá con el link a sus pruebas.'], links: [link(search, '🔎 Buscar su PR en GitHub')] };
-    case 'pr': return { tone: 'wait', lines: [`🔀 El PR #${e.pr} está abierto con auto-merge: se fusiona solo cuando pasen las pruebas, y unos minutos después queda publicado para todos.`], links: pr };
+    case 'requested': return { tone: 'wait', lines: [`⏳ ${bodega ? '📦 ' : ''}Pedido el ${when(e.at)}: esperando que el Mac mini lo tome.`, WAIT, `El PR saldrá de la rama ${branch}.`], links: [link(search, '🔎 Buscar su PR en GitHub')], cancel: true };
+    case 'working': return { tone: 'wait', lines: [`🛠️ Claude está trabajando en esto desde ${when(e.started || e.at)}: ${bodega ? 'mueve la tarjeta a La Bodega' : 'quita la puerta del laboratorio, mueve la tarjeta a La Bodega'} y pasa las revisiones.`, 'Cuando abra el PR, aparece acá con el link a sus pruebas.'], links: [link(search, '🔎 Buscar su PR en GitHub')] };
+    case 'pr': return { tone: 'wait', lines: [`🔀 El PR #${e.pr} está abierto con auto-merge: se fusiona solo cuando pasen las pruebas, y unos minutos después ${bodega ? 'la tarjeta aparece en La Bodega' : 'queda publicado para todos'}.`], links: pr };
     case 'merged': return { tone: 'ok', lines: [`✅ Fusionado el ${when(e.done || e.at)}. El sitio se publica solo en unos minutos; con esa versión, esta tarjeta pasa a La Bodega.`], links: pr || [] };
-    case 'failed': return { tone: 'bad', lines: [`❌ No se pudo publicar: ${e.msg || 'sin detalle.'}`], links: pr || [], retry: true };
+    case 'failed': return { tone: 'bad', lines: [`❌ No se pudo ${bodega ? 'enviar a La Bodega' : 'publicar'}: ${e.msg || 'sin detalle.'}`], links: pr || [], retry: true };
     default: return null;
   }
 }
@@ -76,6 +77,35 @@ export function askFlag(card, f) {
     el('p', {}, el('b', {}, titleOf(card)), ' lo ven todos los jugadores desde la próxima vez que abran esa página.'),
     el('p', { class: 'hoja-caja' }, 'Es inmediato: es un interruptor, no un PR. Si algo sale mal, lo devuelves al laboratorio desde esta misma tarjeta.'),
     msg,
+    el('div', { class: 'btn-row' }, btn, el('button', { class: 'btn btn--ghost', onClick: close }, 'Cancelar')),
+  );
+  const capa = el('div', { class: 'hoja-capa' }, el('div', { class: 'hoja-fondo', onClick: close }), panel);
+  document.body.append(capa);
+  btn.focus();
+}
+
+/** 📦 Enviar a La Bodega (D-511): the same request, of kind 'bodega'. A card live for everyone goes as 🚀 Lanzado, any other as 💤 No prosperó. */
+export function askBodega(card, existing) {
+  const f = flagOf(card.id);
+  const launched = f && stateOf(flags, f) === 'all';
+  const note = el('textarea', { rows: 3, maxlength: 500, placeholder: launched ? 'Nota opcional para Claude' : 'Nota opcional para Claude (por ejemplo: por qué no prosperó)', class: 'publicar-nota' }, existing?.note || '');
+  const close = () => capa.remove();
+  const msg = el('p', { class: 'muted', role: 'alert' });
+  const btn = el('button', { class: 'btn btn--yellow', onClick: async () => {
+    btn.disabled = true;
+    try {
+      await set(ref(db, `labsPublish/${card.id}`), { state: 'requested', kind: 'bodega', at: Date.now(), title: titleOf(card).slice(0, 120), ...(note.value.trim() ? { note: note.value.trim().slice(0, 500) } : {}) });
+      close();
+    } catch (err) { btn.disabled = false; msg.textContent = `No se pudo guardar el pedido (${err?.code || err?.message || 'error'}).`; }
+  } }, '📦 Sí, enviar');
+  const panel = el('div', { class: 'hoja', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'publicar-titulo' },
+    el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),
+    el('h2', { id: 'publicar-titulo' }, '📦 ¿Enviar a La Bodega?'),
+    el('p', {}, el('b', {}, titleOf(card)), launched
+      ? ' ya está publicado para todos: su tarjeta pasa a La Bodega como 🚀 Lanzado, y conserva sus botones.'
+      : ' deja de estar en prueba: su tarjeta pasa a La Bodega como 💤 No prosperó. Los jugadores no lo ven; con tu llave se sigue abriendo.'),
+    el('p', { class: 'hoja-caja' }, WAIT),
+    note, msg,
     el('div', { class: 'btn-row' }, btn, el('button', { class: 'btn btn--ghost', onClick: close }, 'Cancelar')),
   );
   const capa = el('div', { class: 'hoja-capa' }, el('div', { class: 'hoja-fondo', onClick: close }), panel);
@@ -116,23 +146,28 @@ export function render(r = requests, fl = flags) {
   for (const card of cards()) {
     $('.publicar', card)?.remove();
     const f = flagOf(card.id);
-    if (f) {
+    const inBodega = !!card.closest('#bodega');
+    const toBodega = () => el('button', { class: 'btn btn--ghost', onClick: () => askBodega(card) }, '📦 Enviar a La Bodega');
+    // a flagged card shows its switch, unless a 📦 request is on its way (until the card is in La Bodega)
+    const sending = requests[card.id]?.kind === 'bodega' && !(inBodega && requests[card.id].state === 'merged');
+    if (f && !sending) {
       const fs = flagStatusOf(stateOf(flags, f), flags?.[f]?.at);
       const box = el('div', { class: 'publicar' }, el('div', { class: `publicar-estado publicar-estado--${fs.tone}`, role: 'status' },
         ...fs.lines.map(l => el('p', {}, l)),
-        el('div', { class: 'btn-row' }, ...fs.to.map(([to, label]) => el('button', { class: 'btn btn--ghost', onClick: () => (to === 'all' ? askFlag(card, f) : setFlag(f, to).catch(() => {})) }, label)))));
+        el('div', { class: 'btn-row' }, ...fs.to.map(([to, label]) => el('button', { class: 'btn btn--ghost', onClick: () => (to === 'all' ? askFlag(card, f) : setFlag(f, to).catch(() => {})) }, label)),
+          inBodega ? null : toBodega())));
       ($('.detalle', card) || card).append(box);
       continue;
     }
     const e = requests[card.id];
     const s = e && statusOf(card.id, e);
     const box = el('div', { class: 'publicar' });
-    if (!s) box.append(el('button', { class: 'btn btn--ghost', onClick: () => ask(card) }, '🚀 Publicar para todos'));
+    if (!s) box.append(el('div', { class: 'btn-row' }, el('button', { class: 'btn btn--ghost', onClick: () => ask(card) }, '🚀 Publicar para todos'), toBodega()));
     else box.append(el('div', { class: `publicar-estado publicar-estado--${s.tone}`, role: 'status' },
       ...s.lines.map(l => el('p', {}, l)),
       s.links.length ? el('p', { class: 'publicar-links' }, ...s.links) : null,
       s.cancel ? el('button', { class: 'btn btn--ghost', onClick: () => remove(ref(db, `labsPublish/${card.id}`)) }, 'Cancelar el pedido') : null,
-      s.retry ? el('button', { class: 'btn btn--ghost', onClick: () => ask(card, e) }, '🚀 Volver a pedir') : null,
+      s.retry ? el('button', { class: 'btn btn--ghost', onClick: () => (e.kind === 'bodega' ? askBodega(card, e) : ask(card, e)) }, e.kind === 'bodega' ? '📦 Volver a pedir' : '🚀 Volver a pedir') : null,
     ));
     card.append(box);
   }
