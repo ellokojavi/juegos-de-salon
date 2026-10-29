@@ -88,7 +88,7 @@ The splash `stack-pronto` ("Llegar al cielo es el objetivo", off until the owner
 already built, and climbs it into the stars (`public/assets/splash/stack-teaser.mp4`, recorded by
 `node marketing/splash/teaser.mjs stack` from `marketing/splash/teaser/stack.html`). The scene imports the game's
 own `scene.js` and draws with it in the same isometric view (turned by the camera's `yaw`, which the game leaves at 0), so a change to the game's drawing reaches the
-teaser on its next recording (`teaser.mjs stack`); its memory is
+teaser on its next recording (`teaser.mjs stack`); it follows `marketing/splash/TEASERS.md` on the engine `teaser/_teaser.js` (D-505); its memory is
 `marketing/splash/campaigns/stack-pronto/README.md`.
 
 ## Tests

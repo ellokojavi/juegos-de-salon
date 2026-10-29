@@ -15,6 +15,7 @@ import { teclado, CIFRAS } from '../../assets/js/teclado.js';
 import { generar, girar, voltear, choques, mover, CIFRAS_CODIGO } from './engine.js';
 import * as palabra from './engine-palabra.js';
 import { alfabeto } from '../../cup/games/word/engine.js';
+import { mmss } from '../../assets/js/time-format.js';
 
 trackVisit();   // el tráfico del sitio (D-208)
 
@@ -67,7 +68,6 @@ const TEXTOS = {
 };
 const T = TEXTOS[lang] || TEXTOS.es;
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
-const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 
 /* ------------------------------------------------------------------ */
 /* Las cartas                                                          */
