@@ -71,7 +71,8 @@ export const TEXTS = {
 export function factsLine(gameId, T, lang) {
   const L = TEXTS[lang] || TEXTS.es;
   const g = gameById(gameId);
-  const [min, max] = span(g.players);
+  // The Cup's games have no `players`: on their own page they are played alone
+  const [min, max] = span(g.players ?? '1');
   const duration = String(g.duration).replace('-', '–');
   // Two-player games say "both", not "everyone"; a solo mode is just "solo" (Timeline and Generala
   // solo have no opponent), a CPU mode is "against the phone"
