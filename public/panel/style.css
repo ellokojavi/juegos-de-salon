@@ -174,6 +174,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
   border-radius: 999px; padding: 10px 14px; font: inherit; font-weight: 800;
 }
 .buscar input::placeholder { color: var(--muted); font-weight: 700; }
+.btn-avisos-dueno { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); font: inherit; font-weight: 800; cursor: pointer; min-height: 44px; }
 .buscar-msg { margin: 0 0 10px; color: var(--yellow); font-weight: 800; font-size: 0.9rem; }
 
 /* Filtros dentro de un bloque */
@@ -315,6 +316,8 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .tira-barra { position: absolute; top: 0; bottom: 0; border-radius: 7px; background: var(--cyan); }
 .tira-barra.abierta { border-radius: 7px 0 0 7px; background: linear-gradient(90deg, var(--cyan) 70%, transparent); }
 .campana { display: grid; gap: 14px; margin-bottom: 12px; padding: 16px; border-radius: var(--radius); background: var(--glass); border: 1px solid var(--glass-border); border-left: 4px solid var(--glass-border); }
+/* The campaign a release notification points at (#/campaigns/splash/<id>): ringed in the house yellow */
+.campana--foco { box-shadow: 0 0 0 2px var(--yellow); }
 .campana--live { border-left-color: var(--lime); }
 .campana--scheduled { border-left-color: var(--cyan); }
 .campana--ended { border-left-color: var(--orange); }

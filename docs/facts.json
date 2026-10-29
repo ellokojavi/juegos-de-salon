@@ -1,5 +1,5 @@
 {
-  "version": "0.232.4",
+  "version": "0.233.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1260,6 +1260,7 @@
     "public/panel/copas.js",
     "public/panel/dominios.js",
     "public/panel/panel.js",
+    "public/panel/release-push.js",
     "public/panel/rooms-watch.js",
     "public/panel/rutas.js",
     "public/panel/timeline.js",
@@ -1280,6 +1281,7 @@
     "firebase/controls.test.mjs",
     "firebase/flags.test.mjs",
     "firebase/labs-publish.test.mjs",
+    "firebase/owner-push.test.mjs",
     "firebase/pin-attempts.test.mjs",
     "firebase/room-limits.test.mjs",
     "marketing/served.test.mjs",
@@ -1415,6 +1417,7 @@
     "tools/jobs/machine.test.mjs",
     "tools/push/daily.test.mjs",
     "tools/push/notify.test.mjs",
+    "tools/push/release.test.mjs",
     "tools/push/schedule.test.mjs",
     "tools/push/webpush.test.mjs",
     "tools/release/changelog.test.mjs",

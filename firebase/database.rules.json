@@ -1502,6 +1502,24 @@
           ".validate": false
         }
       }
+    },
+    "ownerPush": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      ".write": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      "$subId": {
+        ".validate": "$subId.matches(/^[0-9a-f]{32}$/) && newData.hasChildren(['endpoint', 'keys', 'at']) && newData.child('endpoint').isString() && newData.child('endpoint').val().beginsWith('https://') && newData.child('endpoint').val().length <= 1000 && newData.child('keys/p256dh').isString() && newData.child('keys/p256dh').val().length <= 200 && newData.child('keys/auth').isString() && newData.child('keys/auth').val().length <= 100 && newData.child('at').isNumber() && newData.child('at').val() <= now",
+        "keys": {
+          "$k": {
+            ".validate": "$k === 'p256dh' || $k === 'auth'"
+          }
+        },
+        "device": {
+          ".validate": "newData.isString() && newData.val().length <= 80"
+        },
+        "$other": {
+          ".validate": "$other === 'endpoint' || $other === 'keys' || $other === 'at'"
+        }
+      }
     }
   }
 }
