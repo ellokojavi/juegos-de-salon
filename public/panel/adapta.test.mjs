@@ -79,7 +79,7 @@ for (const [ruta, src] of fuentes) {
   for (const l of LANGS.filter(x => x !== 'es' && x !== 'en')) assert.ok(!src.includes(`'${l}'`), `${ruta} names the language ${l}: the panel is English only (D-350) and languages come from i18n.js`);
 }
 const html = leer('public/panel/index.html');
-assert.match(html, /<select id="env"><\/select>/, 'los entornos los pone panel.js, no el HTML');
+assert.match(html, /<select id="env"[^>]*><\/select>/, 'los entornos los pone panel.js, no el HTML');
 assert.match(fuentes[0][1], /MODE_IDS\.filter\(m => !MODES\[m\]\.torneo[^)]*\)\.map/, 'la leyenda de modos la escribe panel.js desde el registro');
 for (const m of MODE_IDS) assert.ok(!html.includes(MODES[m].icon), `el HTML del panel dibuja el ícono de ${m} a mano`);
 
