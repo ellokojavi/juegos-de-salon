@@ -44,4 +44,9 @@ assert.deepEqual(pozo, pozo.map((_, i) => i), 'copa.pozo: each place in the pool
 assert.deepEqual(POZO.slice(2).sort(), ALL.filter(x => x.copa).map(x => x.id).sort(), 'POZO is the manifest\'s copa games');
 const idx = readFileSync(new URL('../../cup/games/index.js', import.meta.url), 'utf8');
 for (const id of POZO) assert.ok(new RegExp(`^  ${id}: \\(\\) =>`, 'm').test(idx), `${id}: cup/games/index.js has its CODE loader`);
-console.log('manifest: keywords, reuses, Uno al día and La Copa come from games.js, green');
+
+// e2e paths (phase 5): every game outside La Bodega has its screens in tools/e2e/paths.mjs, under its id
+// (the snippets stay there: they are code, not data); with that it also enters the language tests
+const { PATHS } = await import('../../../tools/e2e/paths.mjs');
+for (const g of ALL.filter(x => !x.bodega)) assert.ok(PATHS[g.id] && Object.keys(PATHS[g.id]).length, `${g.id}: tools/e2e/paths.mjs has its screens under '${g.id}'`);
+console.log('manifest: keywords, reuses, Uno al día, La Copa and e2e paths come from games.js, green');
