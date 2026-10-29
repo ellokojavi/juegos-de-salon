@@ -53,8 +53,8 @@ From a finished branch to the live site: the review agents, the checks, auto-mer
    someone. It costs no tokens while it waits and works wherever `gh` does. The app's PR monitor
    (`set_monitor` with `auto_fix` and `address_comments`, D-218) may also be turned on where available,
    for review comments, but a session no longer depends on it to learn of the merge. What happens
-   after the merge no longer waits for anyone: `publish.yml` runs the tests and the end-to-end suite on
-   `main` (unless that same tree already passed it in the PR, D-308), publishes the Firebase rules and
+   after the merge no longer waits for anyone: `publish.yml` runs the tests and the end-to-end run on
+   `main` (smoke plus what the merge reaches when the PR head passed, D-496; nothing if that same tree already passed, D-308), publishes the Firebase rules and
    the site (D-302), and the worktree is deleted by the session-start hook. When `wait-pr.mjs` says
    `merged`, the session checks it on GitHub, then does what follows (report, clean up, go on).
    Where `gh pr view` is refused (some cloud sessions) it reads the REST API instead, and after five
@@ -81,7 +81,7 @@ From a finished branch to the live site: the review agents, the checks, auto-mer
   python3 tools/release/set-version.py --site /tmp/site    # stamps a copy, as when publishing
   ```
 - The pages in `public/` carry no `?h=` and no import map (on publish each file gets `?h=` of its own content, D-467): `.github/workflows/publish.yml` runs
-  the tests **and the whole end-to-end suite** (D-302; if they fail twice, it does not publish and opens the
+  the tests **and the end-to-end suite** (D-302; a merge whose PR passed runs only `smoke.mjs` plus the scripts the merge reaches, D-496; if they fail twice, it does not publish and opens the
   "main is red" issue), unless the tree it publishes already passed it in a PR or only changes what does not
   reach the browser on top of one that passed (`tools/e2e/already-tested.mjs`, D-308), stamps the version on the copy it publishes and checks that the live site
   serves it. Its last job, `report`, always runs on a push to `main` (also when an earlier job failed) and
@@ -99,10 +99,10 @@ From a finished branch to the live site: the review agents, the checks, auto-mer
   node tools/firebase/unnoted-rooms.mjs [--fix]   # rooms no cleanup bucket names, so never swept (D-321)
   node tools/firebase/room-sweep.mjs [--apply]   # the nightly room sweep: every closed bucket, however old, and the unnoted rooms (D-499)
   node tools/firebase/uad-points-backfill.mjs [--apply]   # October 2026's Uno al día points from the history, once after D-414 publishes (dry run without --apply)
-  node tools/firebase/uad-points-backfill.mjs --rebuild [--apply] [--month yyyy-mm]   # recomputes a month's totals from the history and the 🧊 markers, a day's points only if it reached the server near its date; the uad-rebuild workflow runs it nightly (D-415, D-465)
+  node tools/firebase/uad-points-backfill.mjs --rebuild [--apply] [--month yyyy-mm]   # recomputes a month's totals from the history and the 🧊 markers, a day's points only if it reached the server near its date; the uad-rebuild workflow runs it every hour, with the week's sums and best streaks (D-415, D-465, D-500)
   node tools/firebase/uad-index.mjs [--apply]   # copies Uno al día's older history into the index by day (unoAlDiaDias/), checks it, then writes the unoAlDiaIndice mark the readers wait for; once after D-475 publishes (dry run without --apply)
   node tools/firebase/rankings-history.mjs --podiums [--write]   # finished Cups' missing podiums (torneoPodios/); the cup-podiums workflow runs it twice a night (D-450)
-  node tools/firebase/stats-retention.mjs [--apply]   # deletes the names in stats/ older than 24 months (dry run without --apply); the uad-rebuild workflow runs it nightly (D-472)
+  node tools/firebase/stats-retention.mjs [--apply]   # deletes the names in stats/ older than 24 months (dry run without --apply); the uad-rebuild workflow runs it once a day, in its 08 UTC run (D-472)
   ```
 - The worktree and the branch are deleted on their own (above, D-218, D-252); to do it now, `node tools/agents/clean-worktrees.mjs`.
 
