@@ -95,7 +95,7 @@ From a finished branch to the live site: the review agents, the checks, auto-mer
   serves it. Its last job, `report`, always runs on a push to `main` (also when an earlier job failed) and
   There is no run-wide queue (D-506): each merge's tests start at once; only `rules` and `publish` wait
   their turn, and a run a newer merge overtook publishes nothing (the newer one carries it, and the
-  report says so). The Pages deploy is retried twice only on a 5xx (`tools/release/pages-5xx.mjs`).
+  report says so). The Pages deploy is retried twice only on a 5xx, or after cancelling an older commit's deployment left stuck in progress (`tools/release/pages-5xx.mjs`).
   `docs/facts.json` no longer carries the version (D-506), so two PRs that seal conflict only when
   they change the same fact.
   comments on the merged PR with the version that went live or the first step that stopped it
