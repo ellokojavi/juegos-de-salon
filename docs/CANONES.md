@@ -312,6 +312,7 @@ regla: quien cambia algo lo documenta en su mismo PR.
 - Las bibliotecas externas (QR) se cargan bajo demanda y su falla no rompe la pantalla. The room QR is drawn by the shared module `public/assets/js/qr.js` (`renderQr`), which loads a copy of the library served by the site itself (`public/assets/js/vendor/qrcode.js`, qrcode-generator 1.4.4, unchanged), never from a CDN; a game does not carry its own copy of that code.
 - Cada juego expone un gancho de solo lectura `window.__…` para las pruebas automatizadas, nombrado en la especificación del juego (D-213).
 - La pantalla no se apaga jugando (`keepAwake()`).
+- An animation that runs on its own (a cover's demo) draws through `onScreen` (`public/assets/js/on-screen.js`), so it stops asking for frames while scrolled off screen; a loop bounded in time or tied to a turn does not need it (#883).
 - Los errores previsibles se muestran al jugador en su idioma, con una salida clara; nunca una pantalla en blanco.
 - **El mensaje no inventa la causa.** Si desde el navegador no se puede distinguir entre dos causas (quedarse sin señal y toparse con el tope de conexiones se ven igual), el texto las nombra a las dos en vez de elegir una. Precisión falsa es peor que vaguedad honesta (D-40).
 - Los errores del transporte se traducen con `errText`/`failWith` de `public/assets/js/transport/errors.js`, nunca con un mapa propio en cada juego.
@@ -329,7 +330,7 @@ Solo en los modos de **varios celulares**: en un celular la gente está mirando 
 - Los mensajes viajan por el mismo transporte que las jugadas (`{ t: 'chat', text }`), pero **no son parte del estado**: el reductor los dibuja y no los guarda. Un mensaje de chat no vuelve a dibujar la partida.
 - El chat **muere con la sala**, no con la partida: sigue vivo en la pantalla de victoria o derrota, que es donde la conversación se cierra sola (D-35). No se guarda en la memoria de partida (C-6), y la revancha crea una sala nueva y por lo tanto un chat en blanco. Al reconectar se recupera de la sala, sin sonido ni globito de no leídos.
 - No aparece sobre las pantallas de veredicto: el chat va por debajo de `#handoff` y se cierra solo cuando llega el turno del jugador (salvo que esté escribiendo).
-- Donde esté la burbuja, la pantalla deja aire abajo para que no tape lo que importa: el último intento del tablero o los botones del final (C-8).
+- The bubble lives in a strip of its own at the bottom of the screen: with the chat on, one shared rule in `base.css` (`body.chat-on .screen.active`) makes every room screen end above it, so it never covers a button or the board (C-8). A game does not add its own padding for the bubble; a sticky bar stops above it. Check a screen with `node tools/e2e/look.mjs <game> <shot> --chat`.
 - Burbuja flotante con globito de no leídos; sonido discreto y vibración corta al recibir, sujetos al botón de silencio (C-4).
 - Un mensaje nuevo se asoma unos segundos al lado de la burbuja, con el nombre de quien escribe: el globito dice *cuántos*, la etiqueta dice *qué*. Se puede tocar para abrir el chat y desaparece sola.
 - Límites: 120 caracteres por mensaje, un mensaje cada 1,2 s por celular y los últimos 60 en pantalla. Las reglas de Firebase validan el largo del texto.

@@ -1,12 +1,15 @@
-# Rebuilds Uno al día's month of points every night (D-415): tools/firebase/uad-points-backfill.mjs
+# Rebuilds Uno al día's month of points every hour (D-415, D-500): tools/firebase/uad-points-backfill.mjs
 # --rebuild recomputes each player's month from their history in Firebase, including the days their
 # phone said a 🧊 saved (the markers it uploads on opening /today/), and rewrites a total that
 # differs. So a total a phone added with a streak the server didn't know is corrected by the next
 # morning. In the first three days of a month it also rebuilds the month before, for the markers
 # that arrive late. Running it twice writes nothing new. It also writes the season's places by week
-# (uadTemporada/, D-424), which the home page's season recap and its notification wait for.
-# A second step deletes the names in the usage statistics older than 24 months (D-472,
-# tools/firebase/stats-retention.mjs); the nameless counts stay.
+# (uadTemporada/, D-424), which the home page's season recap and its notification wait for, and
+# the week's sums and best streaks (D-500). For phones in the night's totals lab it is the only
+# writer of those totals, so it runs every hour: another player's points reach the ranking within
+# the hour, and /today/ adds a player's own days before that (each run reads about 20 KB, D-500).
+# Once a day (the 08:xx UTC run, 01:xx Pacific) a second step deletes the names in the usage
+# statistics older than 24 months (D-472, tools/firebase/stats-retention.mjs); the nameless counts stay.
 #
 # It needs the FIREBASE_ADMIN_JSON secret (the same as publish.yml's, D-218); without it, it warns
 # and ends green.
@@ -15,7 +18,7 @@ name: Uno al día points rebuild
 
 on:
   schedule:
-    - cron: '23 8 * * *'
+    - cron: '23 * * * *'
   # To rebuild now (Actions → Uno al día points rebuild → Run workflow), or only see what it would do
   workflow_dispatch:
     inputs:
@@ -58,4 +61,5 @@ jobs:
           if [ "$(TZ=America/Santiago date +%d)" -le 3 ]; then
             node tools/firebase/uad-points-backfill.mjs --rebuild $APPLY --month "$(TZ=America/Santiago date -d "$month-01 -1 day" +%Y-%m)"
           fi
-          node tools/firebase/stats-retention.mjs $APPLY
+          # Once a day is enough for the names in the statistics
+          if [ "$(date -u +%H)" = 08 ] || [ "${{ github.event_name }}" = workflow_dispatch ]; then node tools/firebase/stats-retention.mjs $APPLY; fi

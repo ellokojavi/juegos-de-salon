@@ -8,6 +8,7 @@
  */
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
+import { onScreen } from '../../assets/js/on-screen.js';
 import { COMMON, SITIO } from '../../assets/js/i18n.js';
 import { botonResultadoSolo } from '../../assets/js/compartir.js';
 import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/stats.js';
@@ -107,9 +108,10 @@ function demo(lienzo) {
       if (score(g) >= 14 || Math.min(top(g).w, top(g).d) < 0.45) { g = newGame(now + 600); k = 0; }
     }
     sc.draw(g, now);
-    requestAnimationFrame(paso);
+    otro();
   };
-  requestAnimationFrame(paso);
+  const otro = onScreen(lienzo, paso);
+  otro();
 }
 
 /* ------------------------------------------------------------------ */

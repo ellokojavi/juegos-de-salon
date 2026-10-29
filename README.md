@@ -460,6 +460,7 @@ node public/cup/games/plots/engine.test.mjs
 node public/cup/games/routes/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
+node public/labs/chameleon/engine.test.mjs
 node public/labs/code/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
 node public/labs/fourth-king/engine.test.mjs
@@ -500,6 +501,7 @@ node public/assets/js/lab-access.test.mjs
 node public/assets/js/labs-puerta.test.mjs
 node public/assets/js/llegada.test.mjs
 node public/assets/js/manifest.test.mjs
+node public/assets/js/on-screen.test.mjs
 node public/assets/js/parametros.test.mjs
 node public/assets/js/pending-scores.test.mjs
 node public/assets/js/push.test.mjs
@@ -767,6 +769,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Toque y Fama: estudio de factibilidad y propuesta de mecánica](docs/games/bulls-and-cows-factibilidad.md)
 - [Especificación: Toque y Fama](docs/games/bulls-and-cows.md)
 - [El caso](docs/games/case.md)
+- [🦎 El Camaleón (lab prototype, in Juegos en prueba)](docs/games/chameleon.md)
 - [🔐 La clave (prototipo del laboratorio, en La Bodega)](docs/games/code.md)
 - [La Copa](docs/games/cup.md)
 - [💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)](docs/games/exploding-numbers.md)
