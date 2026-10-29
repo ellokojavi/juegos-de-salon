@@ -130,6 +130,8 @@ export function tocar(p, g, i, fijas = new Set()) {
 export const BORRAR = 'C';
 /** ↩️ Undo (D-342): a play that takes the board back to before the last tap or Clear all. */
 export const DESHACER = 'U';
+/** 🏳️ Give up, as in Queens: the solution shows and the game gives 0 points. */
+export const RENDIRSE = 'R';
 export const COSTO_PISTA = 15;
 
 /**
@@ -168,6 +170,10 @@ export function pista(p, g, fijas = new Set()) {
  * rule forgives it, like tapping the same cell again. `deshacibles` is how many steps can be undone.
  */
 export function estado(p, jugadas) {
+  if (jugadas.includes(RENDIRSE)) {
+    const { errores, pistas } = estado(p, jugadas.slice(0, jugadas.indexOf(RENDIRSE)));
+    return { g: p.sol.slice(), errores, pistas, fijas: new Set(), mal: new Set(), pendiente: -1, deshacibles: 0, fin: true, rendido: true };
+  }
   let g = inicial(p);
   let errores = 0, pistas = 0, pendiente = -1;
   const fijas = new Set();
@@ -193,5 +199,5 @@ export function estado(p, jugadas) {
 }
 
 /** 100 menos 10 por jugada que rompe una regla y 15 por pista, con piso de 10. */
-export const puntaje = e => (e.fin ? Math.max(10, 100 - 10 * e.errores - COSTO_PISTA * (e.pistas || 0)) : 0);
-export const tarjeta = e => `☀️🌙${'❌'.repeat(e.errores)}${'💡'.repeat(e.pistas || 0)}✅`;
+export const puntaje = e => (e.fin && !e.rendido ? Math.max(10, 100 - 10 * e.errores - COSTO_PISTA * (e.pistas || 0)) : 0);
+export const tarjeta = e => e.rendido ? '☀️🌙 🏳️' : `☀️🌙${'❌'.repeat(e.errores)}${'💡'.repeat(e.pistas || 0)}✅`;
