@@ -464,8 +464,9 @@ Todo bajo `public/cup/`:
 | `reportes.js` | El botón 🐞 y los reportes que esperan reenvío |
 | `planilla.js` | La tabla final como CSV (D-161) |
 | `rules.js` | Textos (`LOCALES` es, en, pt, de, también los de los avisos al celular, `avMsg*`; the help sheets' texts come from `assets/js/notification-sheets.js`, shared with Uno al día, D-377) y la explicación de cada juego |
-| `table-image.js` | The cup's table as a 1080 × 1350 image (D-126, D-141, D-153): the trajectory chart and the table, with the podium on plates once the cup ended (`imagenDeTabla`, `cabeceraTabla`, `COLORES_GRAFICO`). No screen state: `game.js` shares it from the board, the podium and Administrar, and `recap.js` draws it for the home page's recap (D-427) |
-| `game.js` | Pantallas |
+| `table-image.js` | The cup's table as a 1080 × 1350 image (D-126, D-141, D-153): the trajectory chart and the table, with the podium on plates once the cup ended (`imagenDeTabla`, `cabeceraTabla`, `COLORES_GRAFICO`). No screen state: `game.js` shares it from the board and the podium, `admin.js` from Administrar, and `recap.js` draws it for the home page's recap (D-427) |
+| `game.js` | Pantallas, except Administrar |
+| `admin.js` | The admin screen (Administrar), loaded with `import()` the first time it opens (#860); what it needs from `game.js` comes in its context `c` |
 | `suelto/index.html` | La página de un juego suelto (`/<slug>/`), de la que `og.mjs cards` genera las demás |
 
 Gancho de pruebas (C-14): `window.__copa`, en `game.js` (LIG-27).
