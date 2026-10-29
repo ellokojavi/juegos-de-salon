@@ -14,7 +14,7 @@
  *
  * Both links open the same card over the page they are on, a sheet from the bottom like the home
  * page's share sheet (`openSupportSheet`, D-449): what the money is for, one button to Stripe, and
- * "Not now". Stripe sends the donor back to the home page with `?support=thanks`, which opens the
+ * "Not now". Stripe sends the donor back to the home page with `?support=thanks&session=<id>`, which opens the
  * thank-you as the same sheet (`supportFromUrl`); `?support=open` opens the card (the lab's link).
  *
  * Every step is counted in the day's stats as `support/<event>` (shown, open, pay, thanks): only
@@ -136,6 +136,20 @@ export const supportOpened = (store = globalThis.localStorage, now = Date.now())
 /** The player paid: the end of the games never asks again (the footer link stays). */
 export const supportPaid = (store = globalThis.localStorage, now = Date.now()) => write(store, { ...read(store), paid: now });
 
+/**
+ * Stripe's way back carries the payment's id (`{CHECKOUT_SESSION_ID}` in the link's return address):
+ * true only the first time this device sees a real one, and it is remembered. A return without an
+ * id (an address typed or reopened, a test) or one already counted is not a payment.
+ */
+export function newPayment(session, store = globalThis.localStorage) {
+  if (!/^cs_[A-Za-z0-9_]{8,}$/.test(session || '')) return false;
+  const s = read(store);
+  const seen = Array.isArray(s.sessions) ? s.sessions : [];
+  if (seen.includes(session)) return false;
+  write(store, { ...s, sessions: [...seen, session].slice(-20) });
+  return true;
+}
+
 export const EVENTS = ['shown', 'open', 'pay', 'thanks'];
 /** One step of the funnel, counted in the day's stats (`support/<event>`). Never throws. */
 export async function trackSupport(event) {
@@ -205,13 +219,16 @@ const link = (cls, id, T) => el('button', { type: 'button', class: cls, id, 'ari
 
 /**
  * On the home page: `?support=thanks` (Stripe's way back) opens the thank-you, `?support=open` the
- * card. The parameter leaves the address, so a reload does not count again.
+ * card. The parameters leave the address, so a reload does not count again; the thank-you counts a
+ * payment only with a new Stripe id (`newPayment`), so a reopened tab or a typed address does not either.
  */
 export async function supportFromUrl({ lang = getLang(), search = globalThis.location?.search ?? '' } = {}) {
   const v = param('support', search);
   if (v === null) return false;
-  try { const u = new URL(location.href); u.searchParams.delete('support'); history.replaceState(null, '', u); } catch (_) { /* the address stays */ }
-  openSupportSheet({ lang, thanks: v === 'thanks', record: !tiene('test', search) });
+  try { const u = new URL(location.href); u.searchParams.delete('support'); u.searchParams.delete('session'); history.replaceState(null, '', u); } catch (_) { /* the address stays */ }
+  const thanks = v === 'thanks';
+  const record = !tiene('test', search) && (!thanks || newPayment(param('session', search)));
+  openSupportSheet({ lang, thanks, record });
   return true;
 }
 
