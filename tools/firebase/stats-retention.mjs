@@ -2,8 +2,8 @@
 /**
  * Names in the usage statistics are kept 24 months (D-472, amends D-463). The only parts of
  * `stats/<env>/days/<day>` that hold a name a player typed are `rooms/` (`players`, `end.name`) and
- * `live/` (`name`); see public/assets/js/transport/stats.js. Once a day is older than
- * STATS_NAME_MONTHS, this deletes those two subtrees and leaves the day's nameless counts
+ * `live/` (`name`) and `seen/` (`name`, D-503); see public/assets/js/transport/stats.js. Once a day is older than
+ * STATS_NAME_MONTHS, this deletes those subtrees and leaves the day's nameless counts
  * (games, languages, hours, pages…) as they are. /privacy/ states the same period
  * (`public/privacy/texts.test.mjs` checks it).
  *
@@ -18,7 +18,7 @@ import { dayOf } from '../../public/assets/js/transport/cleanup.js';
 
 export const STATS_NAME_MONTHS = 24;
 /** The parts of a stats day that carry names. */
-export const NAMED = ['rooms', 'live'];
+export const NAMED = ['rooms', 'live', 'seen'];
 /** The cutoff in days: 24 months of 365/12 days, rounded (730). */
 export const RETENTION_DAYS = Math.round(STATS_NAME_MONTHS * 365 / 12);
 
