@@ -21,6 +21,8 @@ import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stat
 import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
+import { vidasGrid } from '../assets/js/share-grid.js';
+import { flag } from '../assets/js/flags.js';
 import { azarDel, puntajeDudo } from '../assets/js/uno-al-dia.js';
 import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
@@ -30,6 +32,10 @@ import { GAME_ID, DEFAULT_CONFIG, CHILENO, LOCALES, TURN_SECS } from './rules.js
 import { renderQr } from '../assets/js/qr.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
+
+// The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
+let gridsNuevos = false;
+flag('uad-share-grids').then(v => { gridsNuevos = v; });
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -1082,7 +1088,7 @@ function renderResult(v) {
   if (S.hoy) {
     const gano = v.winner === 'A';
     const s = puntajeDudo({ gano, dados: v.st.A.dice, rondas: gano ? v.history.length : v.history.length - 1 });
-    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }));
+    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap(), grid: gridsNuevos ? vidasGrid(v.st.A.dice, M.config.dice || 5) : undefined }));
   } else acciones.append(
     el('button', {
       class: 'btn btn--yellow',
