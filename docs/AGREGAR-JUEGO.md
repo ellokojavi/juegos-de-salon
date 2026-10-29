@@ -53,6 +53,9 @@
 8. **Las pruebas de punta a punta** (C-12): las pantallas del juego como entradas en
    `tools/e2e/paths.mjs`, su `tools/e2e/<carpeta>/languages.mjs` y los guiones de partida en
    `tools/e2e/<carpeta>/`. `node tools/e2e/look.mjs <juego> <pantalla> --width 320` para mirar.
+8a. **La Copa's pool** (#855): a one-player game a cup week can pick gets `copa: { pozo }` in its
+   `games.js` entry and its loader in `public/cup/games/index.js`; `POZO` in `cup/engine.js` is
+   derived from there, never edited by hand. `manifest.test.mjs` fails if the loader is missing.
 8b. **Variants** (D-331): if a one-player game of La Copa can be played in more than one way, its
    variants go in `VARIANTES` (`public/cup/engine.js`, the default first), its engine's
    `generarDia` takes `variante`, and its `texts.js` names each one (`variantes`). The waiting room

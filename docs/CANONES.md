@@ -41,6 +41,8 @@ public/<carpeta>/
   página puente (la genera `node tools/release/og.mjs cards`).
 - Los juegos de La Copa siguen la misma idea en `public/cup/games/<carpeta>/`: `engine.js`
   (reglas puras), `ui.js` (pantalla) y sus datos propios; lo común a todos queda en `games/`.
+  A game enters the Cup pool (`POZO`) with `copa: { pozo }` in its `games.js` entry, plus its loader in
+  `cup/games/index.js`; `cup/engine.js` derives the pool and `manifest.test.mjs` checks both (#855).
   Uno suelto que todavía está en el laboratorio (`labs: true` en `SUELTOS`) tiene su página en
   `/labs/<slug>/`, y `/<slug>/` es página puente hasta que salga (D-267).
   Toda página de `/labs/` carga primero la puerta (`labs-puerta.js`) y lleva

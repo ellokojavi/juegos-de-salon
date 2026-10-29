@@ -189,7 +189,7 @@ y las reglas plegadas de la prueba lo repiten: "La prueba es más corta que el j
 cuenta para la copa" (`trialNote`, D-177).
 
 Al crear la copa, apenas se elige la duración aparece **¿Qué se juega cada día?** con una propuesta
-al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`: los seis de siempre
+al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`, derived since #855 from the `copa: { pozo }` of each entry in `games.js`, in that order: los seis de siempre
 más Zip, Tango, ¿Dónde queda?, Desenredo and, since D-332, 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas; since D-421 🕵️ Agentes in 🔗 Conexiones' place), sin dos días seguidos de la misma habilidad. Es la mano y la línea
 de Línea de Tiempo con su arrastre: un día se arrastra a otro lugar de la semana (en un celular,
 por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando se llega a lo mismo
