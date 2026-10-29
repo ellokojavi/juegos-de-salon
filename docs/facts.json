@@ -1,5 +1,5 @@
 {
-  "version": "0.231.1",
+  "version": "0.232.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1226,6 +1226,9 @@
     "public/labs/bodega.js",
     "public/labs/bridges/trains/sheet.js",
     "public/labs/bridges/visitors/sheet.js",
+    "public/labs/chameleon/engine.js",
+    "public/labs/chameleon/game.js",
+    "public/labs/chameleon/rules.js",
     "public/labs/code/engine-palabra.js",
     "public/labs/code/engine.js",
     "public/labs/code/game.js",
@@ -1343,6 +1346,7 @@
     "public/hangman/engine.test.mjs",
     "public/home-preload.test.mjs",
     "public/labs/bodega.test.mjs",
+    "public/labs/chameleon/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
@@ -1433,6 +1437,7 @@
     "bulls-and-cows/local.mjs",
     "bulls-and-cows/online.mjs",
     "case/lab.mjs",
+    "chameleon/lab.mjs",
     "changes.mjs",
     "changes.test.mjs",
     "ci.mjs",
@@ -1625,6 +1630,10 @@
     {
       "path": "docs/games/case.md",
       "title": "El caso"
+    },
+    {
+      "path": "docs/games/chameleon.md",
+      "title": "🦎 El Camaleón (lab prototype, in Juegos en prueba)"
     },
     {
       "path": "docs/games/code.md",
