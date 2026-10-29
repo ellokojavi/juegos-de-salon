@@ -13,6 +13,8 @@ import { semana, SIEMPRE, tablaId, VARIANTE_COPA, VARIANTE_VICTORIAS, esVictoria
 import { sumarDias } from './uno-al-dia.js';
 import { fechaLocal, numDia, semanaDe } from './uno-al-dia.js';
 import { ponerBuzon } from './buzon.js';
+import { flag } from './flags.js';
+import { nombreOfensivo } from './name-guard.js';
 
 /**
  * The inbox link at the end of the result screen, once it is drawn, after its buttons (D-345, U-38),
@@ -95,6 +97,8 @@ export function bloqueJugador({ abierto = false, destacado = false, compacto = f
     const ocupado = si => { b.disabled = si; b.textContent = si ? T.joining : T.join; };
     const crear = async () => {
       ocupado(true);
+      // A new name on the public tables: the obvious insults are refused (D-513); lab: #seccion-name-guard
+      if (nombreOfensivo(nombre.value) && await flag('name-guard').catch(() => false)) { err.textContent = T.errNameBad; ocupado(false); return; }
       try {
         const J = await jugador();
         const yo = await J.crear(nombre.value, pin.value);
