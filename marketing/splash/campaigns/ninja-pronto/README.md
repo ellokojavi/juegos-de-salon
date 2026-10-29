@@ -1,7 +1,7 @@
-# 🥷 ¿Llegará al otro lado? (`ninja-pronto`)
+# 🥷 El ninja enfrenta una misión nunca antes vista (`ninja-pronto`)
 
 A teaser of 🥷 Stick Ninja, still in the lab (D-446): it says something is coming, not what. No game
-name and no link: a question the game answers once it launches.
+name and no link: a hint the game makes clear once it launches.
 
 | | |
 |---|---|
