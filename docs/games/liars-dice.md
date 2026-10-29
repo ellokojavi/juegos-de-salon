@@ -105,7 +105,7 @@ host's rules and gets their explanations too; the one-time calzar line shows to 
 the classic rules (D-495);
 in the obligada round your own strip shows one ❓ per die you hold. The playtest is
 `tools/e2e/liars-dice/rooms-classic.mjs`: it opens rooms in the production Firebase, so it is in
-`ALSO_FIREBASE` and CI does not run it.
+`ALSO_FIREBASE` and CI does not run it. With `SICILIANA=1` it always doubts the first bid and checks that every phone shows the siciliana line and the same two-dice loss.
 
 ### Cómo se nombran las pintas
 
