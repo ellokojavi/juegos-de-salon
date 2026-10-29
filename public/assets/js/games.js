@@ -442,7 +442,7 @@ export const SUELTOS = [
     tipos: ['words'],
     duration: '3–6',
     deLabs: true,
-    nuevoDesde: '2026-10-22',
+    nuevoDesde: '2026-10-21', // launched 2026-10-22; the owner retired its "New" a day early (D-507)
   },
   {
     // Out of the lab in D-456: its page was /labs/bridges/, now a bridge (`deLabs`); its id is La Copa's
@@ -495,11 +495,11 @@ export const POPULARIDAD = ['copa', 'reinas', 'donde', 'tango', 'anio', 'loteo',
 const puesto = id => { const i = POPULARIDAD.indexOf(id); return i < 0 ? POPULARIDAD.length : i; };
 
 /**
- * A new game carries a "New" label on its home card for a while (D-333, the owner's request): from
+ * A new game carries a "New" label on its home card for a week (D-333, D-507, the owner's request): from
  * `nuevoDesde`, the day it reached the home page, for DIAS_NUEVO days. Every game added after D-333
  * brings its date, and games.test.mjs stops one that doesn't (YA_ESTABAN is the list from before).
  */
-export const DIAS_NUEVO = 14;
+export const DIAS_NUEVO = 7;
 export const esNuevo = (g, hoy = new Date()) => {
   if (!g?.nuevoDesde) return false;
   const desde = Date.parse(`${g.nuevoDesde}T00:00:00`);

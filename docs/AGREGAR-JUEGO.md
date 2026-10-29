@@ -18,7 +18,7 @@
    Su `id` va también en `POPULARIDAD`, el orden de la portada (D-255): sin partidas que contar,
    al final de los disponibles; si no está en la lista, igual queda al final.
    It also brings `nuevoDesde: 'YYYY-MM-DD'`, the day it reaches the home page: its card says
-   "New" for two weeks (D-333).
+   "New" for a week (D-333, D-507).
    Si estrena un modo, se agrega a `MODES` y basta.
    **Its search keywords** (D-404): `keywords` in its own `games.js` entry (the manifest, #855; `search.js` reads them from there), in es,
    en, pt and de, at least three each: what the game is, what it is played with, what it is like
