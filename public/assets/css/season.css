@@ -20,17 +20,18 @@
   100% { transform: translate(0, -10vh) rotate(-8deg); }
 }
 
-/* The flyby: crosses the screen once, a little after the page opens */
+/* The flyby: crosses the screen once, a little after the page opens. Right to left: the 🦇 of
+   Apple and Google faces left, and going the other way it flew backwards */
 .season-flyby {
-  top: 22%; left: 0; font-size: 34px; line-height: 1;
+  top: 22%; right: 0; font-size: 34px; line-height: 1;
   animation: season-fly 4.2s cubic-bezier(.45, .05, .55, .95) 1.2s both;
 }
 @keyframes season-fly {
-  0%   { transform: translate(-60px, 0) scale(.8); }
-  25%  { transform: translate(25vw, -40px) scale(1); }
-  50%  { transform: translate(50vw, 10px) scale(.9); }
-  75%  { transform: translate(75vw, -30px) scale(1); }
-  100% { transform: translate(calc(100vw + 60px), -10px) scale(.8); }
+  0%   { transform: translate(60px, 0) scale(.8); }
+  25%  { transform: translate(-25vw, -40px) scale(1); }
+  50%  { transform: translate(-50vw, 10px) scale(.9); }
+  75%  { transform: translate(-75vw, -30px) scale(1); }
+  100% { transform: translate(calc(-100vw - 60px), -10px) scale(.8); }
 }
 
 /* The peek: rises from the bottom left edge, bobs a little and hides */
@@ -42,7 +43,61 @@
 @keyframes season-bob { 50% { transform: translateY(-8px) rotate(-6deg); } }
 @keyframes season-hide { to { transform: translateY(110%); opacity: 0; } }
 
+/* The scares (flag season-scares): a giant 💀 leans in from the right edge and pulls back; a big 🕷️
+   scuttles left to right along the bottom, legs first (the emoji is seen from above, any way is forward) */
+.season-loom {
+  right: 0; top: 30%; font-size: min(55vw, 320px); line-height: 1;
+  animation: season-loom 2.6s cubic-bezier(.2, .9, .3, 1) both;
+}
+@keyframes season-loom {
+  0%   { transform: translateX(100%) rotate(-25deg); opacity: 0; }
+  25%  { transform: translateX(40%) rotate(-12deg); opacity: .95; }
+  70%  { transform: translateX(40%) rotate(-8deg); opacity: .95; }
+  100% { transform: translateX(100%) rotate(-25deg); opacity: 0; }
+}
+.season-scuttle {
+  left: 0; bottom: 12%; font-size: min(40vw, 220px); line-height: 1;
+  animation: season-scuttle 1.4s linear both;
+}
+@keyframes season-scuttle {
+  0%   { transform: translateX(-110%) rotate(90deg); }
+  20%  { transform: translateX(10vw) rotate(84deg); }
+  40%  { transform: translateX(35vw) rotate(96deg); }
+  60%  { transform: translateX(60vw) rotate(84deg); }
+  80%  { transform: translateX(85vw) rotate(96deg); }
+  100% { transform: translateX(calc(100vw + 10%)) rotate(90deg); }
+}
+/* 👀 open in the dark low on the left, blink twice and close; 🧟 rises from the bottom right edge,
+   sways like it is walking towards you and sinks back */
+.season-stare {
+  left: 8%; top: 58%; font-size: min(30vw, 160px); line-height: 1;
+  animation: season-stare 3.2s ease-in-out both;
+}
+@keyframes season-stare {
+  0%   { transform: scaleY(0); opacity: 0; }
+  12%  { transform: scaleY(1); opacity: .9; }
+  40%  { transform: scaleY(1) translateX(0); }
+  44%  { transform: scaleY(.05); }
+  48%  { transform: scaleY(1); }
+  60%  { transform: scaleY(1) translateX(12px); }
+  64%  { transform: scaleY(.05) translateX(12px); }
+  68%  { transform: scaleY(1) translateX(12px); opacity: .9; }
+  100% { transform: scaleY(0) translateX(12px); opacity: 0; }
+}
+.season-shamble {
+  right: 4%; bottom: calc(var(--safe-bottom, 0px) - 10px); font-size: min(45vw, 240px); line-height: 1;
+  transform-origin: bottom center; animation: season-shamble 4s ease-in-out both;
+}
+@keyframes season-shamble {
+  0%   { transform: translateY(100%) rotate(0); opacity: 0; }
+  20%  { transform: translateY(30%) rotate(-6deg); opacity: .95; }
+  40%  { transform: translateY(20%) rotate(6deg) scale(1.05); }
+  60%  { transform: translateY(15%) rotate(-6deg) scale(1.1); }
+  80%  { transform: translateY(30%) rotate(4deg) scale(1.1); opacity: .95; }
+  100% { transform: translateY(100%) rotate(0); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .season-flyby, .season-peek { display: none; }
+  .season-flyby, .season-peek, .season-loom, .season-scuttle, .season-stare, .season-shamble { display: none; }
   .bg-sparkles span.season-mote { animation: none; }
 }

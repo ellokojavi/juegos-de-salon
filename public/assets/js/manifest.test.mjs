@@ -17,6 +17,15 @@ for (const g of ALL.filter(x => x.keywords)) {
   for (const [l, w] of Object.entries(g.keywords)) assert.ok(w.every(x => typeof x === 'string' && x === x.toLowerCase()), `${g.id}:${l}: keywords are lowercase strings`);
 }
 
+// e2e reuses (phase 2): affected.mjs keeps no row for a game the manifest lists, and reads exactly its reuses
+const { REUSES } = await import('../../../tools/e2e/affected.mjs');
+const aff = readFileSync(new URL('../../../tools/e2e/affected.mjs', import.meta.url), 'utf8');
+const page = g => g.path.replace(/\/$/, '');
+for (const g of ALL.filter(x => x.path)) {
+  assert.ok(!new RegExp(`^\\s*'?${page(g).replace('/', '\\/')}'?:\\s*\\[`, 'm').test(aff), `${g.id}: its reuses go in its entry in games.js, not in affected.mjs`);
+  assert.deepEqual(REUSES[page(g)], g.reuses, `${g.id}: REUSES is the manifest's reuses`);
+}
+
 // Uno al día (phase 3): uno-al-dia.js keeps a row only for the two Cup-only ids; the rest come from `unoAlDia` here
 const { JUEGOS_DIA, GRUPO } = await import('./uno-al-dia.js');
 const uad = readFileSync(new URL('./uno-al-dia.js', import.meta.url), 'utf8');
@@ -25,4 +34,4 @@ const orden = [...ALL.filter(x => x.unoAlDia).map(x => x.unoAlDia.orden), 0, 1].
 assert.deepEqual(orden, orden.map((_, i) => i), 'unoAlDia.orden: each place in the deck once, none skipped (the shuffle depends on the order)');
 assert.deepEqual(JUEGOS_DIA.map(j => j.id).filter(id => id !== 'linea' && id !== 'numero').sort(), ALL.filter(x => x.unoAlDia).map(x => x.id).sort(), 'JUEGOS_DIA is the manifest\'s unoAlDia games');
 assert.deepEqual([...GRUPO].sort(), ALL.filter(x => x.unoAlDia?.grupo).map(x => x.id).sort(), 'GRUPO is the manifest\'s unoAlDia.grupo');
-console.log('manifest: keywords and Uno al día come from games.js, green');
+console.log('manifest: keywords, reuses and Uno al día come from games.js, green');
