@@ -1,6 +1,6 @@
 // The fonts are served from the site (#851): no page asks Google for them, every @font-face file
-// exists with its license, and every page that links base.css preloads Nunito's latin file, so the
-// text does not wait for base.css to be read before its font starts downloading.
+// exists with its license, and every page that links base.css preloads Nunito's and Bangers' latin files, so
+// the text and the titles do not wait for base.css to be read before its font starts downloading.
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
@@ -40,11 +40,14 @@ for (const f of files.filter(f => f.endsWith('.html'))) {
   const html = readFileSync(f, 'utf8');
   const sheet = html.match(/<link rel="stylesheet" href="([^"]*)assets\/css\/base\.css">/);
   if (!sheet) continue;
-  const preload = `<link rel="preload" href="${sheet[1]}assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>`;
-  const at = html.indexOf(preload);
-  if (at < 0 || at > sheet.index) missing.push(relative(PUBLIC, f));
+  // Nunito for the text and Bangers for the titles: without it the title first shows in the fallback
+  for (const font of ['nunito-latin', 'bangers-latin']) {
+    const at = html.indexOf(`<link rel="preload" href="${sheet[1]}assets/fonts/${font}.woff2" as="font" type="font/woff2" crossorigin>`);
+    if (at < 0 || at > sheet.index) missing.push(`${relative(PUBLIC, f)} (${font})`);
+  }
 }
-assert.deepEqual(missing, [], `these pages link base.css without preloading Nunito before it; add, right before the sheet:
-<link rel="preload" href="<same prefix>assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>`);
+assert.deepEqual(missing, [], `these pages link base.css without preloading Nunito and Bangers before it; add, right before the sheet:
+<link rel="preload" href="<same prefix>assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="<same prefix>assets/fonts/bangers-latin.woff2" as="font" type="font/woff2" crossorigin>`);
 
-console.log(`fonts: ${faces.length} faces served from the site, the pages preload Nunito, green`);
+console.log(`fonts: ${faces.length} faces served from the site, the pages preload Nunito and Bangers, green`);
