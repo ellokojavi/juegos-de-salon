@@ -29,6 +29,10 @@ import { flag } from '../assets/js/flags.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
 
+// The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
+let gridsNuevos = false;
+flag('uad-share-grids').then(v => { gridsNuevos = v; });
+
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
 
@@ -853,7 +857,7 @@ function renderResult(v) {
     $('#result-actions').innerHTML = '';
     const mios = repliesBy('A');
     const s = puntajeNaval({ gano: v.winner === 'A', disparos: mios.length, aciertos: mios.filter(x => x.result !== 'agua').length });
-    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap(), grid: disparosGrid(mios.map(x => x.result)) }));
+    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap(), grid: gridsNuevos ? disparosGrid(mios.map(x => x.result)) : undefined }));
   }
 }
 

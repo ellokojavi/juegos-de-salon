@@ -23,6 +23,7 @@ import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { crearRecord } from '../cup/games/solo.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
 import { planillaGrid } from '../assets/js/share-grid.js';
+import { flag } from '../assets/js/flags.js';
 import { azarDel } from '../assets/js/uno-al-dia.js';
 import {
   CATEGORIAS, NUMEROS, JUEGOS, TIROS, MIN_PLAYERS, MAX_PLAYERS,
@@ -32,6 +33,10 @@ import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
+
+// The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
+let gridsNuevos = false;
+flag('uad-share-grids').then(v => { gridsNuevos = v; });
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -476,7 +481,7 @@ function renderResultSolo(v, already) {
   acciones.innerHTML = '';
   // One a Day: the card goes under the hero and carries the screen's actions and exits (C-19);
   // the first try counts and the rest are practice
-  if (S.hoy) ponerTarjeta(terminarHoy(S.hoy, { s: puntajeDia(total), ms: S.ms, lang, alTocar: () => SFX.tap(), grid: planillaGrid(v.st.A.tarjeta, [NUMEROS, JUEGOS]) }));
+  if (S.hoy) ponerTarjeta(terminarHoy(S.hoy, { s: puntajeDia(total), ms: S.ms, lang, alTocar: () => SFX.tap(), grid: gridsNuevos ? planillaGrid(v.st.A.tarjeta, [NUMEROS, JUEGOS]) : undefined }));
   else acciones.append(
     el('button', { class: 'btn btn--yellow', id: 'btn-otra', onClick: () => startMatch('solo', M.names, M.config) }, T.endAgain),
     el('div', { class: 'btn-row' },
