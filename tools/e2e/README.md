@@ -94,7 +94,8 @@ The design behind all this is [docs/TEST-SCOPE.md](../../docs/TEST-SCOPE.md). [`
 names no page, since either makes the graph run every script (D-391): a page loads what its tags, imports,
 `import('…')` and `new URL('<file>', …)` name. [`scope.test.mjs`](scope.test.mjs) fails if a page loads another game's files, unless `affected.mjs`
 lists it in `SHARED` (a small module every page may load) or `REUSES` (a game that plays another's
-engine on purpose), each with its reason (D-378). A game's file that La Copa plays (`cup/games/<game>/…`,
+engine on purpose: built from each game's `reuses` in `public/assets/js/games.js`, #855, plus the pages outside
+the manifest such as `labs/code`), each with its reason (D-378). A game's file that La Copa plays (`cup/games/<game>/…`,
 and the engines it takes from `bulls-and-cows/` and `timeline/`) is imported by every screen of La Copa
 but counts only for the pages that play it: that game's page, the cup and `cup/suelto` and its declared
 reuses (`playedOn()`); a load error on the other screens is what `smoke.mjs` catches on any change.
