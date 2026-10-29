@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504 |
 
-## In force (491)
+## In force (492)
 
 | D | Title | Status |
 |---|---|---|
@@ -549,8 +549,8 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-503](decisions/D-503.md) | Every campaign seen is a key event on the Timeline, with who saw it | current |
 | [D-504](decisions/D-504.md) | The owner is notified when a PR goes live, and every PR says where it is seen | current |
 | [D-505](decisions/D-505.md) | Teasers build expectation and give the game away never, on one engine | current |
-| [D-507](decisions/D-507.md) | "New" lasts one week after launch | current |
 | [D-506](decisions/D-506.md) | From merge to live in minutes: narrow by the PR head, no run-wide queue, retry 5xx, no sealed version | current |
+| [D-507](decisions/D-507.md) | "New" lasts one week after launch | current |
 
 ## No longer in force (12)
 
