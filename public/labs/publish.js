@@ -24,8 +24,8 @@ const PREVIEWS = 'https://ellokojavi.github.io/juegos-de-salon-previews';
 /** Same as tools/agents/lab-publish.mjs branchOf. */
 export const branchOf = id => `publish-${id.replace(/^seccion-/, '')}`;
 
-/** The cards that can still go live: what is being tried, not La Bodega. */
-const cards = () => $$('#activos > .seccion, #mejoras > .seccion');
+/** The cards with buttons: what is being tried, and in La Bodega the ones behind a flag, which keep their switch (D-510). */
+const cards = () => [...$$('#activos > .seccion, #mejoras > .seccion'), ...$$('#bodega .seccion').filter(c => flagOf(c.id))];
 const titleOf = card => $('h2', card)?.textContent.trim() || card.id;
 const when = ms => new Date(ms).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 const link = (href, text) => el('a', { href, target: '_blank', rel: 'noopener' }, text);
@@ -57,7 +57,7 @@ const setFlag = (f, state) => set(ref(db, `flags/${f}`), { state, at: Date.now()
 /** What a flagged card shows (D-498): its state and the buttons to the other two; /labs/ is the one place to switch them. */
 export function flagStatusOf(state, at) {
   const since = at ? ` desde el ${when(at)}` : '';
-  if (state === 'all') return { tone: 'ok', lines: [`🟢 Publicado para todos${since}: cada jugador lo ve la próxima vez que abre esa página. Sin PR.`, 'Más adelante, un PR de limpieza quita la puerta y mueve esta tarjeta a La Bodega.'], to: [['lab', '↩️ Volver al laboratorio'], ['off', '⚪ Apagar para todos']] };
+  if (state === 'all') return { tone: 'ok', lines: [`🟢 Publicado para todos${since}: cada jugador lo ve la próxima vez que abre esa página. Sin PR.`, 'Su tarjeta ya está en La Bodega; más adelante, un PR de limpieza quita la puerta del código.'], to: [['lab', '↩️ Volver al laboratorio'], ['off', '⚪ Apagar para todos']] };
   if (state === 'off') return { tone: 'bad', lines: [`⚪ Apagado para todos${since}, también en el laboratorio.`], to: [['lab', '🧪 Encender en el laboratorio']] };
   return { tone: 'wait', lines: ['🧪 En el laboratorio: solo lo ven quienes tienen la llave.'], to: [['all', '🚀 Publicar para todos'], ['off', '⚪ Apagar para todos']] };
 }
@@ -121,7 +121,7 @@ export function render(r = requests, fl = flags) {
       const box = el('div', { class: 'publicar' }, el('div', { class: `publicar-estado publicar-estado--${fs.tone}`, role: 'status' },
         ...fs.lines.map(l => el('p', {}, l)),
         el('div', { class: 'btn-row' }, ...fs.to.map(([to, label]) => el('button', { class: 'btn btn--ghost', onClick: () => (to === 'all' ? askFlag(card, f) : setFlag(f, to).catch(() => {})) }, label)))));
-      card.append(box);
+      ($('.detalle', card) || card).append(box);
       continue;
     }
     const e = requests[card.id];
