@@ -411,7 +411,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // One a Day (D-230): the home button, the die, the result card and /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Play today', aria: "Play today's day of The Cup" },
+    cupToday: { play: 'Play today', aria: 'Play your day of The Cup today' },
     uad: {
       nombre: 'One a Day',
       jugar: 'Play today',
