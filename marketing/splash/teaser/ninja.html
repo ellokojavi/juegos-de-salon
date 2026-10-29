@@ -1,11 +1,9 @@
 <!doctype html>
 <!--
-  The teaser of 🥷 Stick Ninja for the splash (D-351), drawn with the game's own scene
-  (public/labs/stick/scene.js): under the night's moon the ninja dashes to the edge of its pillar and
-  stops there, looking across the gap at the next one, and stays. Cryptic on purpose (the owner's
-  request): no stick grows or falls, so the game's play is not given away.
-  marketing/splash/teaser.mjs captures it frame by frame; opened by hand
-  (python3 -m http.server -d . from the repo root), it plays in a loop.
+  The teaser of 🥷 Stick Ninja for the splash (D-351), on the teaser engine (_teaser.js, TEASERS.md)
+  with the game's own scene (public/labs/stick/scene.js): under the night's moon the ninja dashes to
+  the edge of its pillar and stops there, looking across the gap at the next one, and stays. No stick
+  grows or falls: the play is not given away (TEASERS.md, rule 2).
 -->
 <html lang="es">
 <head>
@@ -18,56 +16,33 @@
 </style>
 </head>
 <body>
-<div class="marco"><canvas id="noche" width="512" height="320"></canvas><canvas id="juego"></canvas></div>
+<div class="marco"><canvas id="fondo"></canvas><canvas id="juego"></canvas></div>
 <script type="module">
-// The scene reads performance.now() for its own effects: in the teaser it is the clip's clock, so
-// every capture draws the same frames
-let reloj = 0;
-performance.now = () => reloj;
-const { newGame, current, restX } = await import('../../../public/labs/stick/engine.js');
-const { escena } = await import('../../../public/labs/stick/scene.js');
+import { teaser, W, H } from './_teaser.js';
+import { newGame, current, restX } from '../../../public/labs/stick/engine.js';
+import { escena } from '../../../public/labs/stick/scene.js';
 
-const W = 512, H = 320, FPS = 30, SECONDS = 8, FRAMES = FPS * SECONDS;
-const SEED = 7, RUN_AT = 1200;   // when the ninja dashes to the edge
+const SEED = 7, RUN_AT = 1.2;   // when the ninja dashes to the edge (seconds)
 
-const noche = document.getElementById('noche').getContext('2d');
-const juego = document.getElementById('juego');
-const sc = escena(juego, { compacto: true });
-const g = newGame(SEED, 0); sc.empezar(g);
-// The ninja starts back from the edge and runs to it, with no stick: a walk of the game's own, its
-// stick 0 long, that is never advanced, so it stops at the edge and stays
-const cur = current(g);
-g.stick = 0; g.phase = 'walking';
-g.walk = { t0: RUN_AT, from: cur.x + 14, to: restX(cur), kind: 'land', tip: cur.x + cur.w, ok: true, done: false };
-
-/** The app's night behind the transparent scene, as the game's page has it. */
-function pintarNoche() {
-  const gr = noche.createLinearGradient(0, 0, 0, H);
-  gr.addColorStop(0, '#3a1450'); gr.addColorStop(0.55, '#1f0c3c'); gr.addColorStop(1, '#170a2e');
-  noche.fillStyle = gr; noche.fillRect(0, 0, W, H);
-}
-
-const salida = Object.assign(document.createElement('canvas'), { width: W, height: H });
-function frame(i) {
-  const t = (i / FPS) * 1000;
-  reloj = t;
-  pintarNoche();
-  sc.draw(g, t);
-  const o = salida.getContext('2d');
-  o.drawImage(document.getElementById('noche'), 0, 0);
-  o.drawImage(juego, 0, 0, W, H);
-  // In and out of black, so the loop starts over cleanly
-  const s = t / 1000, f = Math.max(0, 1 - s / 0.4, 1 - (SECONDS - s) / 0.5);
-  if (f > 0) { o.fillStyle = `rgba(11,7,22,${Math.min(1, f).toFixed(3)})`; o.fillRect(0, 0, W, H); }
-  return salida;
-}
-
-window.frame = i => frame(i).toDataURL('image/png');
-window.FRAMES = FRAMES; window.FPS = FPS; window.SCALE = 1; window.ready = true;
-if (!new URLSearchParams(location.search).has('capture')) {
-  const vista = document.getElementById('noche').getContext('2d');
-  let i = 0; setInterval(() => { vista.drawImage(frame(i), 0, 0); i = (i + 1) % FRAMES; }, 1000 / FPS);
-}
+teaser({
+  setup(canvas) {
+    const sc = escena(canvas, { compacto: true });
+    const g = newGame(SEED, 0); sc.empezar(g);
+    // The ninja starts back from the edge and runs to it, with no stick: a walk of the game's own, its
+    // stick 0 long, that is never advanced, so it stops at the edge and stays
+    const cur = current(g);
+    g.stick = 0; g.phase = 'walking';
+    g.walk = { t0: RUN_AT * 1000, from: cur.x + 14, to: restX(cur), kind: 'land', tip: cur.x + cur.w, ok: true, done: false };
+    return { g, sc };
+  },
+  // The app's night behind the transparent scene, as the game's page has it
+  background(ctx) {
+    const gr = ctx.createLinearGradient(0, 0, 0, H);
+    gr.addColorStop(0, '#3a1450'); gr.addColorStop(0.55, '#1f0c3c'); gr.addColorStop(1, '#170a2e');
+    ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
+  },
+  draw: ({ g, sc }, t) => sc.draw(g, t * 1000),
+});
 </script>
 </body>
 </html>
