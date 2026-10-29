@@ -106,9 +106,9 @@ line, the comment form. **Rankings:** each run counts in the `stick` table (poin
   however often it is called. A moving pillar's place
   depends only on the time since the ninja stepped on the pillar before (`g.moveT0`, `pillarAt(g, k, t)`).
   `revive(g, t)` brings the ninja back after a fall that left lives (`LIVES`, phase `lost`). `suspend` and `pause` handle the pauses (a pause also stops a moving pillar). `holdFor(g, offset)` and `starTime(g)` serve the cover's demo and the end-to-end script.
-- `game.js`: the canvas scene (the night, the pillars and flags, the stick, the ninja drawn as shapes, the
-  pulses, sparks and floating points, a camera that slides to the next pillar), the cover, the game with its
-  banners, and the result. The end-to-end hook is `window.__stick` (`S`, with `S.presionar(t)` and
+- `scene.js`: the canvas scene, shared with the splash teaser (the night, the pillars and flags, the stick, the ninja drawn as shapes, the
+  pulses, sparks and floating points, a camera that slides to the next pillar).
+- `game.js`: the cover, the game with its banners, and the result. The end-to-end hook is `window.__stick` (`S`, with `S.presionar(t)` and
   `S.soltar(t)` as a finger would, `S.pausar()` as a hidden page does, `sostener(offset)` and `estrella()`).
 
 ## To tune
@@ -121,8 +121,8 @@ hard it gets (`hardness`), and how far and how many pillars move.
 ## The teaser
 
 The splash `ninja-pronto` ("¿Llegará al otro lado?", off until the owner turns it on from the panel's
-📣 Campaigns) announces the game without naming it: a ninja's stick tips toward the far pillar and the
-moon goes dark before it lands (`public/assets/splash/ninja-teaser.mp4`, recorded by
-`node marketing/splash/teaser.mjs ninja` from `marketing/splash/teaser/ninja.html`). The scene draws its own
-pixel art and imports nothing from the game, so a change here does not reach it; its memory is
+📣 Campaigns) announces the game without naming it: the ninja crosses twice, then its stick tips toward the far
+pillar and the night stops before it lands (`public/assets/splash/ninja-teaser.mp4`, recorded by
+`node marketing/splash/teaser.mjs ninja` from `marketing/splash/teaser/ninja.html`). The scene draws with the
+game's own `scene.js`, so a change to the game's drawing reaches it the next time it is recorded; its memory is
 `marketing/splash/campaigns/ninja-pronto/README.md`.

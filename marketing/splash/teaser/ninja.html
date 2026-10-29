@@ -1,10 +1,11 @@
 <!doctype html>
 <!--
-  The teaser of 🥷 Stick Ninja for the splash (D-351): under a full moon a ninja waits at the edge of
-  a rooftop pillar, a gap and a far pillar with its red flag ahead. The stick grows up out of the
-  pillar, trembles, tips over… and the moon goes dark the instant before it lands: does it reach?
-  The game is never named or shown playing. marketing/splash/teaser.mjs captures it frame by frame;
-  opened by hand (python3 -m http.server -d . from the repo root), it plays in a loop.
+  The teaser of 🥷 Stick Ninja for the splash (D-351), drawn with the game's own scene
+  (public/labs/stick/scene.js), so it looks like the game: the night with its moon and mountains, the
+  neon-edged pillars with their flags, the ninja. It crosses once onto the flag and once more, then
+  the stick grows again, tips over… and the night stops the instant before it lands: does it reach?
+  The game is never named. marketing/splash/teaser.mjs captures it frame by frame; opened by hand
+  (python3 -m http.server -d . from the repo root), it plays in a loop.
 -->
 <html lang="es">
 <head>
@@ -12,67 +13,98 @@
 <title>Teaser · Stick Ninja</title>
 <style>
   body { margin: 0; background: #14081f; display: grid; place-items: center; min-height: 100vh; }
-  canvas { image-rendering: pixelated; width: 512px; height: 320px; }
+  .marco { position: relative; width: 512px; height: 320px; }
+  .marco canvas { position: absolute; inset: 0; width: 512px; height: 320px; }
 </style>
 </head>
 <body>
-<canvas id="c"></canvas>
+<div class="marco"><canvas id="noche" width="512" height="320"></canvas><canvas id="juego"></canvas></div>
 <script type="module">
-import { W, H, scene, rect, noise, ease, fade, ask } from './_common.js';
+// The scene reads performance.now() for its own effects: in the teaser it is the clip's clock, so
+// every capture draws the same frames
+let reloj = 0;
+performance.now = () => reloj;
+const engine = await import('../../../public/labs/stick/engine.js');
+const { newGame, press, release, advance, holdFor, TURN_MS } = engine;
+const { escena } = await import('../../../public/labs/stick/scene.js');
 
-const SECONDS = 8;
-const SKY = ['#0b0716', '#140a26', '#1d0f38', '#28144a', '#331a58'];
-const TOP = 52;                    // the pillars' top
-const A = { x: 14, w: 22 };        // the near pillar, the ninja on its edge
-const B = { x: 84, w: 14 };        // the far one, with the flag in its middle
-const REACH = B.x + B.w / 2 - (A.x + A.w);   // the stick that lands on the flag
-const T_GROW = 1.6, T_HOLD = 4.2, T_TIP = 4.9, T_DARK = 5.25;
-// The ninja: 6×8, a black body with the red band and its tails, eyes white
-const NINJA = ['..##..', '.####.', '.#ww#.', 'rrrrrr', '.####.', '######', '.####.', '.#..#.'];
-const COL = { '#': '#05030a', w: '#f4f1ff', r: '#ff2e88' };
+const W = 512, H = 320, FPS = 30, SECONDS = 8, FRAMES = FPS * SECONDS;
+const SEED = 7;
+// The crossings: a flag, a plain landing, then the one that stops in the air (its offset: a hair short)
+const PLAN = [0, 9, -1];
+const T_STOP = TURN_MS * 0.62;   // how far into the last stick's fall the night stops
 
-function draw(ctx, t) {
-  for (let y = 0; y < H; y++) rect(ctx, 0, y, W, 1, SKY[Math.min(SKY.length - 1, Math.floor(y / H * SKY.length))]);
-  // Stars that twinkle
-  for (let k = 0; k < 40; k++) { const x = Math.floor(noise(k, 1) * W), y = Math.floor(noise(k, 2) * 44); if (noise(k, Math.floor(t * 4)) > 0.25) rect(ctx, x, y, 1, 1, noise(k, 3) > 0.7 ? '#fff6c8' : '#8f86c4'); }
-  // The moon, big behind the gap; it goes dark at the end (a cloud crosses it)
-  const dark = Math.min(1, Math.max(0, (t - T_DARK) / 0.35));
-  ctx.globalAlpha = 1 - dark * 0.85;
-  ctx.fillStyle = 'rgba(255,240,190,0.12)'; ctx.beginPath(); ctx.arc(70, 30, 22, 0, 7); ctx.fill();
-  ctx.fillStyle = '#fbeec2'; ctx.beginPath(); ctx.arc(70, 30, 16, 0, 7); ctx.fill();
-  ctx.fillStyle = '#e8d79e'; for (const [x, y, r] of [[64, 25, 3], [75, 34, 4], [72, 22, 2]]) { ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); }
-  ctx.globalAlpha = 1;
-  // A far skyline of pagoda roofs
-  for (let x = 0; x < W; x++) { const h = 8 + Math.floor(noise(Math.floor(x / 9), 5) * 10); rect(ctx, x, H - h - 6, 1, h + 6, '#1a0e30'); }
-  // The two pillars, fading to the night at the bottom
-  for (const p of [A, B]) {
-    rect(ctx, p.x, TOP, p.w, H - TOP, '#07040e');
-    rect(ctx, p.x, TOP, p.w, 1, '#3d2a6b');
-  }
-  // The flag on the far pillar, waving
-  const fx = B.x + B.w / 2;
-  rect(ctx, fx, TOP - 7, 1, 7, '#c9c3e6');
-  for (let i = 0; i < 4; i++) rect(ctx, fx + 1 + i, TOP - 7 + Math.round(Math.sin(t * 6 + i) * 0.6), 1, 3, '#ff3b5c');
-  // The stick: grows straight up, trembles at the top, then tips over toward the flag
-  const len = REACH * ease((t - T_GROW) / (T_HOLD - T_GROW - 0.6));
-  const tip = ease((t - T_HOLD - 0.05) / (T_TIP - T_HOLD)) ** 1.6;
-  const shake = t > T_HOLD - 0.6 && t < T_HOLD ? Math.sin(t * 60) * 0.03 : 0;
-  if (t > T_GROW) {
-    const ang = -Math.PI / 2 + tip * Math.PI / 2 * 0.93 + shake;   // stops short of flat: the dark comes first
-    const ox = A.x + A.w - 1, oy = TOP;
-    ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(ox + 0.5, oy); ctx.lineTo(ox + 0.5 + Math.cos(ang) * len, oy + Math.sin(ang) * len); ctx.stroke();
-  }
-  // The ninja, breathing; its band's tails blow in the wind
-  const nx = A.x + A.w - 8, ny = TOP - 8 - (Math.floor(t * 2) % 2 && t < T_GROW ? 1 : 0);
-  NINJA.forEach((row, j) => [...row].forEach((c, i) => { if (COL[c]) rect(ctx, nx + i, ny + j, 1, 1, COL[c]); }));
-  for (let i = 1; i <= 3; i++) rect(ctx, nx - i, ny + 3 + Math.round(Math.sin(t * 8 + i) * 0.7), 1, 1, '#ff2e88');
-  // The moon is out: only the stick's glint and a "?" over the ninja
-  if (dark > 0) rect(ctx, 0, 0, W, H, `rgba(5,3,10,${(dark * 0.75).toFixed(3)})`);
-  if (t > T_DARK + 0.35) { const k = t - T_DARK - 0.35; ask(ctx, nx, ny - 11 - (k < 0.12 ? 3 : k < 0.25 ? 1 : 0)); }
-  fade(ctx, t, SECONDS);
+const noche = document.getElementById('noche').getContext('2d');
+const juego = document.getElementById('juego');
+let g, sc, paso, plan, alto;
+
+function empezar() {
+  sc?.cerrar();
+  reloj = 0;
+  sc = escena(juego, { compacto: true });
+  g = newGame(SEED, 0); sc.empezar(g);
+  paso = 0; plan = { at: 700 }; alto = null;
 }
-scene({ seconds: SECONDS, draw });
+
+/** The app's night behind the transparent scene, as the game's page has it. */
+function pintarNoche() {
+  const gr = noche.createLinearGradient(0, 0, 0, H);
+  gr.addColorStop(0, '#3a1450'); gr.addColorStop(0.55, '#1f0c3c'); gr.addColorStop(1, '#170a2e');
+  noche.fillStyle = gr; noche.fillRect(0, 0, W, H);
+}
+
+/** The "?" over the gap, in the house's yellow, outlined. */
+function pregunta(ctx, x, y) {
+  ctx.save(); ctx.font = '900 44px system-ui, sans-serif'; ctx.textAlign = 'center';
+  ctx.lineWidth = 7; ctx.strokeStyle = '#14081f'; ctx.strokeText('?', x, y);
+  ctx.fillStyle = '#ffd23f'; ctx.fillText('?', x, y); ctx.restore();
+}
+
+const salida = Object.assign(document.createElement('canvas'), { width: W, height: H });
+function frame(i) {
+  if (i === 0 || !g) empezar();
+  const t = (i / FPS) * 1000;
+  if (alto == null) {
+    reloj = t;
+    if (g.phase === 'ready' && plan.at != null && t >= plan.at && paso < PLAN.length) {
+      press(g, plan.at); plan = { suelta: plan.at + holdFor(g, PLAN[paso], plan.at) };
+    }
+    if (g.phase === 'growing' && plan.suelta != null && t >= plan.suelta) {
+      const r = release(g, plan.suelta);
+      plan = { tip: r.tip, kind: r.kind, cayo: false, soltado: plan.suelta };
+    }
+    if (g.phase === 'walking') {
+      // The last crossing: the night stops while the stick is still falling
+      if (paso === PLAN.length - 1 && t >= plan.soltado + T_STOP) { alto = plan.soltado + T_STOP; reloj = alto; }
+      else {
+        if (!plan.cayo && t >= g.walk.t0) { plan.cayo = true; if (plan.kind === 'perfect') sc.perfecto(g, plan.tip, g.streak + 1); else if (plan.kind === 'land') sc.toque(plan.tip); }
+        const { current } = engine, x0 = current(g).x + current(g).w, len = g.stick;
+        for (const e of advance(g, t)) if (e.type === 'arrive') { sc.llegar(g, x0, len, e.kind === 'perfect'); paso++; plan = { at: t + 450 }; }
+      }
+    }
+  }
+  pintarNoche();
+  sc.draw(g, reloj);
+  const o = salida.getContext('2d');
+  o.drawImage(document.getElementById('noche'), 0, 0);
+  o.drawImage(juego, 0, 0, W, H);
+  if (alto != null) {
+    const k = Math.min(1, (t - alto) / 350);
+    o.fillStyle = `rgba(8,4,18,${(0.45 * k).toFixed(3)})`; o.fillRect(0, 0, W, H);
+    if (t - alto > 300) pregunta(o, W / 2, 120 - (t - alto < 420 ? 6 : 0));
+  }
+  // In and out of black, so the loop starts over cleanly
+  const s = t / 1000, f = Math.max(0, 1 - s / 0.4, 1 - (SECONDS - s) / 0.5);
+  if (f > 0) { o.fillStyle = `rgba(11,7,22,${Math.min(1, f).toFixed(3)})`; o.fillRect(0, 0, W, H); }
+  return salida;
+}
+
+window.frame = i => frame(i).toDataURL('image/png');
+window.FRAMES = FRAMES; window.FPS = FPS; window.SCALE = 1; window.ready = true;
+if (!new URLSearchParams(location.search).has('capture')) {
+  const vista = document.getElementById('noche').getContext('2d');
+  let i = 0; setInterval(() => { vista.drawImage(frame(i), 0, 0); i = (i + 1) % FRAMES; }, 1000 / FPS);
+}
 </script>
 </body>
 </html>
