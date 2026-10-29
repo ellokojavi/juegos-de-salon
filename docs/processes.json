@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "dae3ca8",
+  "checkedUpTo": "db45669",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -411,12 +411,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-28",
-      "to": "dae3ca8"
+      "date": "2026-10-29",
+      "to": "db45669"
     },
     "usability": {
-      "date": "2026-10-28",
-      "to": "dae3ca8"
+      "date": "2026-10-29",
+      "to": "db45669"
     },
     "ideas": {
       "date": "2026-10-28",
@@ -519,6 +519,14 @@
       "issue": null,
       "pr": null,
       "note": "Dispatched all three; collected 55 changelog entries"
+    },
+    {
+      "date": "2026-10-29",
+      "from": "dae3ca8",
+      "to": "db45669",
+      "issue": null,
+      "pr": null,
+      "note": "Dispatched documentation (#1011) and usability (nothing to fix); collected 63 changelog entries; durations measured."
     }
   ],
   "ownerDecisions": [
