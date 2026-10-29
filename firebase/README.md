@@ -348,7 +348,7 @@ The rules close it to everyone (`.read` and `.write` false); only the admin key 
 | Moves | When | Why nobody misses it |
 |---|---|---|
 | `torneos/<code>` with `torneoIntentos`, `torneoSeats`, `torneoKeys` of that code | ended more than 733 days ago and its podium is in `torneoPodios/` (or it never gets one) | the panel reads back two years at most (a year and the year before, D-348), the medal table reads `torneoPodios/`; `rankings-history.mjs` reads `archive/torneos` too |
-| `stats/<env>/days/<day>`, without `rooms/` and `live/` | older than 733 days | same panel reason; `weekly.mjs` reads 7 weeks |
+| `stats/<env>/days/<day>`, without `rooms/`, `live/` and `seen/` | older than 733 days | same panel reason; `weekly.mjs` reads 7 weeks |
 | `records/<t>/d<day>` | older than 35 days | the app reads only today's table |
 | `unoAlDiaInicio/<jid>/<day>` | older than 35 days | read only for today |
 
@@ -413,7 +413,7 @@ stats/prod/push: { vuelta, vivas, torneos }   notify.mjs's last run and how many
   `{".sv": {"increment": 1}}` over REST and the rules reject any other value.
 - The time zone goes with `__` instead of `/` (`America__Sao_Paulo`), because the slash can't
   go in a key and names already use the underscore.
-- `stats/` doesn't go in the trash bin: it's a few hundred bytes per game. Its names (`rooms/` and `live/` of each day) are deleted after 24 months by `tools/firebase/stats-retention.mjs`, run once a day by the `uad-rebuild` workflow, in its 08 UTC run (D-472); the nameless counts stay.
+- `stats/` doesn't go in the trash bin: it's a few hundred bytes per game. Its names (`rooms/`, `live/` and `seen/` of each day, D-503) are deleted after 24 months by `tools/firebase/stats-retention.mjs`, run once a day by the `uad-rebuild` workflow, in its 08 UTC run (D-472); the nameless counts stay.
 - **Keys are validated by shape, not by list** (canon C-16, D-73): the game
   (`^[a-z-]{1,40}$`), the mode (`^[a-z][a-z-]{0,15}$`, the same shape as `MODE_KEY` in
   `public/assets/js/games.js`), the number of players (`^[1-9][0-9]?$`) and the environment
