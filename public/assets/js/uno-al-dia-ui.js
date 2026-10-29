@@ -105,14 +105,19 @@ export function tarjetaUnoAlDia({ lang, raiz = '', alTocar }) {
 
 /**
  * The chip once today is played: the month's points and place (owner's request). The last ones the
- * server gave, cached by /today/, if they already count today; otherwise this phone's own count.
+ * server gave, cached by /today/, if they already count today; an older cache plus the days played
+ * since, without the place; with no cache, this phone's own count.
  */
 function chipPuntos(T, lang, racha = 0) {
   const P = T.pts, hoy = fechaLocal(), mes = `s${hoy.slice(0, 7)}`;
   let c = null;
   try { c = JSON.parse(localStorage.getItem('uad-pts-cache') || 'null'); } catch (_) { /* sin memoria */ }
-  if (c?.p !== mes) c = null;
-  const pts = c && c.d === hoy && c.h ? c.s : seasonPoints(walk(leer().dias, hoy), hoy);
+  if (c?.p !== mes || !Number.isFinite(c?.s)) c = null;
+  // A cache from before today's game: its total plus the days this phone played since, and no place,
+  // which only the server knows (the card showed an old place beside a count of its own, owner's report)
+  const fresco = c && c.d === hoy && c.h;
+  if (c && !fresco) c = { s: c.s + walk(leer().dias, hoy).days.filter(d => d.date.startsWith(hoy.slice(0, 7)) && (c.h ? d.date > c.d : d.date >= c.d)).reduce((a, d) => a + d.points, 0) };
+  const pts = c ? c.s : seasonPoints(walk(leer().dias, hoy), hoy);
   const n = fmt(P.ptsN, { n: Number(pts || 0).toLocaleString(lang) });
   // Once played the streak goes in the line under the place, not in a row of its own (owner's choice)
   const fuego = racha ? [el('span', { class: 'uad-card-fuego' }, ` · 🔥 ${racha}`)] : [];
