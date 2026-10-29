@@ -74,7 +74,7 @@ can vouch for a tree, and the narrowed run on `main` (D-496) leaves none either.
 |---|---|---|
 | Which files each page loads | Derived: `<script src>`, `<link href>`, `import`, `import('…')`, `new URL('<file>', …)`, media a script names by its path from the root (`'assets/…gif'`, D-430), a media folder next to a script (`new URL('earth-2004-09/', import.meta.url)`, every file under it, D-460), CSS `@import`/`url()` | `references()`, `assetsNamed()`, `closures()` |
 | Which pages each script opens | Derived: `${SITE}/<page>/` (also `${BASE}`, `${SITIO}`), the game names a looping script names as strings, its folder | `scriptPages()`, `dynamicPages()` |
-| A page that runs another game's engine on purpose | Declared, with why | `REUSES` |
+| A page that runs another game's engine on purpose | Declared, with why: a game's in its `reuses` in `public/assets/js/games.js` (#855); pages outside the manifest (`labs/code`, `labs/bridges/*`, the cup) in `REUSES` | `reuses` → `REUSES` |
 | Small modules every page may load though they live in a game's folder | Declared, with why | `SHARED` |
 | Scripts that open every page on purpose | Declared | `EVERY_PAGE` (today `smoke.mjs` and `structured-data.mjs`) |
 | A long script split in parts named after pages | Declared | `PARTS` in `ci.mjs` |
@@ -101,7 +101,7 @@ knowledge is too coarse somewhere.
 | Test | Fails when | Says to |
 |---|---|---|
 | `tools/e2e/scope-guard.test.mjs` | A site file is loaded by no page, or a CI script names no page | Load it in a way the graph reads, or add the script to `EVERY_PAGE` |
-| `tools/e2e/scope.test.mjs` | A page loads another game's files (D-378) | Move the shared code to `assets/`, or declare it in `SHARED` / `REUSES` |
+| `tools/e2e/scope.test.mjs` | A page loads another game's files (D-378) | Move the shared code to `assets/`, or declare it in `SHARED` / the game's `reuses` in `games.js` (`REUSES` for a page outside the manifest) |
 | `tools/e2e/affected.test.mjs` | The graph or the levels stop working as designed | — (unit tests of the decision) |
 
 A new capability (a new page, a new way to load a module, a new kind of script) either fits what the
