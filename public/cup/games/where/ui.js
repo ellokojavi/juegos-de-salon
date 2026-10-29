@@ -14,6 +14,7 @@
 import * as motor from './engine.js';
 import * as globo from './globo.js';
 import { UMBRAL } from '../../../assets/js/arrastre.js';
+import { onScreen } from '../../../assets/js/on-screen.js';
 
 /** `append` que descarta los hijos nulos, como `el()` (sin esto, un null se escribe como texto). */
 const poner = (nodo, ...hijos) => nodo.append(...hijos.flat().filter(x => x !== null && x !== undefined && x !== false));
@@ -280,8 +281,9 @@ export function portada() {
         if (!esperar(sat, canvas, w, h, fondo)) globo.dibujar(canvas.getContext('2d'), w, h, vista, { marcas, liviano: true, escala: 0.7, perspectiva: true, satelital: !!sat?.lista() });
       }
     }
-    if (!quieto) requestAnimationFrame(cuadro);
+    if (!quieto) otro();
   };
+  const otro = onScreen(caja, cuadro);
   requestAnimationFrame(cuadro);
   return caja;
 }

@@ -97,7 +97,6 @@
 
 
 /* Con el chat en pantalla, la burbuja flota abajo a la derecha: que no tape los botones del final */
-body.chat-on #screen-result { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
 
 
 /* ---------- Jugar solo: la ⏳ Línea Relámpago (D-142) ----------
