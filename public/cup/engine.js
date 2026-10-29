@@ -552,6 +552,23 @@ export function estadoEnLista(L, pid, now) {
 }
 
 /**
+ * The days `pid` can still play, as `[d, opens, closes]`, for the site's home page (flag copa-hoy):
+ * it says ▶ Jugar hoy while `now` falls in one, without loading La Copa (D-378). Empty when out of
+ * the cup, over, or with nothing left; kept on the phone next to the "Tus copas" line.
+ */
+export function porJugar(L, pid, now) {
+  const e = estadoEnLista(L, pid, now);
+  if (!e || e.tipo === 'fuera') return [];
+  const { meta } = conCierre(L);
+  const out = [];
+  for (let d = 1; d <= meta.days; d++) {
+    if (L.results?.[d]?.[pid] || anulado(meta, d) || now >= meta.win[d].b) continue;
+    out.push([d, meta.win[d].a, Math.min(meta.win[d].b, meta.end)]);
+  }
+  return out;
+}
+
+/**
  * What `estadoEnLista` needs of a cup for `pid`, small enough to keep on the phone: the meta, the
  * early close, and only `pid`'s own player, starts and results. The list draws from it at once
  * and then reads the cup again.

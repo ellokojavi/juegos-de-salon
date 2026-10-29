@@ -398,6 +398,9 @@
     .uad-card .tag { color: rgba(255, 255, 255, 0.88); }
     .uad-card .meta .uad-card-estado { background: rgba(0, 0, 0, 0.32); white-space: normal; }
     .uad-card .btn-uad-punto { top: 10px; right: 10px; }
+    /* La Copa with a day to play today (lab flag copa-hoy): One a Day's ▶ chip, in the Cup's gold */
+    .game-card.torneo .meta .copa-hoy-chip { min-height: 44px; flex: 0 1 auto; max-width: 100%; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border-radius: 999px; border: 0; background: var(--yellow); color: #2a1600; font: 900 0.9rem/1.1 var(--font-body); text-align: center; white-space: normal; }
+    @media (max-width: 340px) { .game-card.torneo .meta .copa-hoy-chip { padding: 0 10px; font-size: 0.82rem; } }
     /* Two destinations (lab, D-414): the link covers the card; the chip sits above it */
     .uad-card.dos { position: relative; }
     .uad-card-link { position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
@@ -654,6 +657,9 @@
       copa.classList.add('alta');
       fila.append(copa, reserva);
     }
+    // La Copa's card says what to do today (flag copa-hoy): ▶ Jugar hoy with a day to play. lab: #seccion-copa-hoy
+    if (copa) import('./assets/js/flags.js').then(({ flag }) => flag('copa-hoy')).then(on => on && import('./assets/js/cup-today.js'))
+      .then(m => m?.decorateCupCard(copa, { lang })).catch(() => {});
     const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso, estado }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
       if (formaAcceso() === 'off') { reserva?.remove(); return; }
       import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});
