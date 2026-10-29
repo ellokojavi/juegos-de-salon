@@ -15,6 +15,8 @@
  *   flyby      an emoji that crosses the home page once per visit
  *   peek       { emoji, chance }: now and then it peeks from the bottom edge of the home page
  *   corner     true: a decoration in the top right corner, drawn by the template's css
+ *   scares     emojis for a big fright now and then on the home page: 💀 looms from a side, 🕷️
+ *              scuttles across, 👀 stare and blink from the dark, 🧟 shambles in from below; behind flag('season-scares') (D-498), lab: #seccion-season-scares
  */
 export const TEMPLATES = {
   halloween: {
@@ -24,9 +26,11 @@ export const TEMPLATES = {
     css: new URL('halloween.css', import.meta.url).href,
     icon: { emoji: '🎃', colors: ['#ff7a1a', '#5b1fb8'] },
     hero: ['🎃', '👻', '🦇', '🍬', '🕸️'],
-    motes: ['🦇', '🕷️', '🪲', '💀', '🎃', '👻', '🕸️'],
+    // only what floats or flies rises from the floor: spiders, beetles, skulls and pumpkins do not
+    motes: ['🦇', '👻'],
     flyby: '🦇',
     peek: { emoji: '👻', chance: 1 / 15 },
     corner: true,
+    scares: ['💀', '🕷️', '👀', '🧟'],
   },
 };
