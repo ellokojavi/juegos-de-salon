@@ -1,4 +1,4 @@
-# Teasers: the rules and the engine
+# Teasers: the rules and the engine (D-505)
 
 A teaser is a splash campaign for a game that is coming: it builds expectation and gives nothing
 away. Players should want the game before they know what it is. These are the owner's rules
