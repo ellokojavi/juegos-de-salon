@@ -1,10 +1,9 @@
 <!doctype html>
 <!--
   The teaser of 🧱 Stack for the splash (D-351), drawn with the game's own scene
-  (public/labs/stack/scene.js), so it looks like the game: the isometric tower, each slab sliding in
-  along x, then z, the overhang sliced off and falling. The tower climbs and the view climbs with it,
-  from dusk past the clouds into the stars. At the top the last slab swings over a sliver… and stops
-  in the air: how high does it go? The game is never named.
+  (public/labs/stack/scene.js): a tall tower of neon slabs, already built, that the view circles and
+  climbs, from dusk at its foot past the clouds to its top among the stars. Cryptic on purpose (the
+  owner's request): nothing slides, drops or is cut, so the game's play is not given away.
   marketing/splash/teaser.mjs captures it frame by frame; opened by hand, it plays in a loop.
 -->
 <html lang="es">
@@ -20,80 +19,55 @@
 <body>
 <div class="marco"><canvas id="cielo" width="512" height="320"></canvas><canvas id="torre"></canvas></div>
 <script type="module">
-import { newGame, perfectTime, score, RANGE, speed } from '../../../public/labs/stack/engine.js';
-import { escena, soltar } from '../../../public/labs/stack/scene.js';
+import { newGame, perfectTime, drop, score, SLAB } from '../../../public/labs/stack/engine.js';
+import { escena } from '../../../public/labs/stack/scene.js';
 import { noise } from './_common.js';
 
 const W = 512, H = 320, FPS = 30, SECONDS = 8, FRAMES = FPS * SECONDS;
-const N = 15;                 // slabs dropped before the last one
-const NEAR = 0.5;   // how far from the tower each slab enters
-// A miss (ms off the perfect moment) for each drop: mostly small cuts, a perfect now and then
-const MISS = [0, 60, -50, 0, 70, -60, 50, 0, -70, 60, -50, 70, 0, -60, 60];
+const N = 34;   // the tower's slabs
+// The tower, built once: mostly near-perfect drops, a small cut now and then, so its sides are uneven
+const g = newGame(0);
+for (let n = 0, t = 0; n < N; n++) { t = perfectTime(g, t + 1); drop(g, t + (n % 3 === 1 ? 45 : n % 5 === 3 ? -35 : 0)); }
+g.moving = null;
+const ALTO = score(g) * SLAB;
 
 const cielo = document.getElementById('cielo').getContext('2d');
 const torre = document.getElementById('torre');
-let g, sc, hecho, alto, fin;
+const sc = escena(torre, { zoom: 0.62 });
+const ease = k => k * k * (3 - 2 * k);
 
-/** A new run: the game's state and scene, from nothing, so the loop starts over cleanly. */
-function empezar() {
-  sc?.cerrar();
-  sc = escena(torre, { zoom: 0.78 });
-  g = newGame(0); hecho = 0; alto = null; fin = null;
-  acercar(300);
-}
-/** The next slab enters already near the tower (the game's swing is too slow for 8 seconds). */
-function acercar(t) { g.moving.t0 = t - (RANGE - NEAR) / speed(g.moving.level) * 1000; }
-
-/** The sky: dusk at the ground, night as the tower climbs, the stars coming out, clouds sinking past. */
+/** The sky: dusk at the foot, night as the view climbs, the stars coming out, clouds sinking past. */
 function pintarCielo(sube) {
-  const k = Math.min(1, sube);
+  const k = Math.min(1, Math.max(0, sube));
   const mezcla = (a, b) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
   const gr = cielo.createLinearGradient(0, 0, 0, H);
-  gr.addColorStop(0, `rgb(${mezcla([58, 22, 92], [12, 6, 30])})`);
-  gr.addColorStop(1, `rgb(${mezcla([255, 112, 140], [44, 18, 84])})`);
+  gr.addColorStop(0, `rgb(${mezcla([58, 22, 92], [10, 5, 26])})`);
+  gr.addColorStop(1, `rgb(${mezcla([255, 112, 140], [40, 16, 80])})`);
   cielo.fillStyle = gr; cielo.fillRect(0, 0, W, H);
-  for (let i = 0; i < 60; i++) if (noise(i, 4) < k) {
+  for (let i = 0; i < 70; i++) if (noise(i, 4) < k * 1.1) {
     cielo.fillStyle = noise(i, 7) > 0.3 ? 'rgba(255,246,200,0.9)' : 'rgba(150,140,210,0.8)';
     cielo.fillRect(Math.floor(noise(i, 5) * W), Math.floor(noise(i, 6) * H), 2, 2);
   }
   for (let c = 0; c < 3; c++) {
-    const y = 60 + c * 90 + sube * 260 - 120, x = (c * 173 + 60) % W;
-    cielo.fillStyle = `rgba(255,210,230,${0.16 * (1 - k * 0.5)})`;
+    const y = 40 + c * 110 + sube * 420 - 160, x = (c * 173 + 60) % W;
+    cielo.fillStyle = 'rgba(255,210,230,0.14)';
     for (let i = 0; i < 4; i++) { cielo.beginPath(); cielo.arc(x + i * 22, y - (i % 2) * 8, 16 + (i % 2) * 8, 0, 7); cielo.fill(); }
   }
 }
 
-/** The "?" over the stopped slab, in the house's yellow, outlined. */
-function pregunta(ctx, x, y) {
-  ctx.save(); ctx.font = '900 44px system-ui, sans-serif'; ctx.textAlign = 'center';
-  ctx.lineWidth = 7; ctx.strokeStyle = '#14081f'; ctx.strokeText('?', x, y);
-  ctx.fillStyle = '#ffd23f'; ctx.fillText('?', x, y); ctx.restore();
-}
-
 const salida = Object.assign(document.createElement('canvas'), { width: W, height: H });
 function frame(i) {
-  if (i === 0 || !g) empezar();
-  const t = (i / FPS) * 1000;
-  // Every drop due by now, at its moment: the game's own drop, its cut piece falling, its perfect shining
-  while (hecho < N && g.moving) {
-    const at = perfectTime(g, g.moving.t0) + MISS[hecho];
-    if (at > t) break;
-    soltar(g, sc, at, t);
-    hecho++;
-    if (g.moving) acercar(at);
-  }
-  // The last slab swings, then stops in the air over the sliver
-  if (hecho === N && fin == null) fin = t;
-  if (fin != null && t - fin >= 900 && alto == null) alto = t;
-  const reloj = alto ?? t;
-  sc.draw(g, t, reloj);
-  pintarCielo(Math.max(0, score(g) - 4) / (N - 4));
+  const t = i / FPS, k = ease(Math.min(1, t / (SECONDS - 1.2)));
+  // The view climbs from the foot to just over the top, and swings around the tower as it goes
+  const y = -0.25 + k * (ALTO + 0.1);
+  sc.camara({ y, yaw: 0.62 * Math.sin((t / SECONDS) * Math.PI * 2) });
+  sc.draw(g, t * 1000);
+  pintarCielo(k);
   const o = salida.getContext('2d');
   o.drawImage(document.getElementById('cielo'), 0, 0);
   o.drawImage(torre, 0, 0, W, H);
-  if (alto != null && t - alto > 300) pregunta(o, W / 2, 70 - (t - alto < 420 ? 6 : 0));
   // In and out of black, so the loop starts over cleanly
-  const s = t / 1000, f = Math.max(0, 1 - s / 0.4, 1 - (SECONDS - s) / 0.5);
+  const f = Math.max(0, 1 - t / 0.4, 1 - (SECONDS - t) / 0.5);
   if (f > 0) { o.fillStyle = `rgba(11,7,22,${Math.min(1, f).toFixed(3)})`; o.fillRect(0, 0, W, H); }
   return salida;
 }
