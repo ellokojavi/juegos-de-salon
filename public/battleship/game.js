@@ -19,6 +19,7 @@ import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
 import { createChat } from '../assets/js/chat.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
+import { disparosGrid } from '../assets/js/share-grid.js';
 import { azarDel, puntajeNaval } from '../assets/js/uno-al-dia.js';
 import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, salvoTurn, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
@@ -852,7 +853,7 @@ function renderResult(v) {
     $('#result-actions').innerHTML = '';
     const mios = repliesBy('A');
     const s = puntajeNaval({ gano: v.winner === 'A', disparos: mios.length, aciertos: mios.filter(x => x.result !== 'agua').length });
-    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }));
+    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap(), grid: disparosGrid(mios.map(x => x.result)) }));
   }
 }
 

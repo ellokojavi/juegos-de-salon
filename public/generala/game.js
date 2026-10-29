@@ -22,6 +22,7 @@ import { leerYo, rankingsVisibles } from '../assets/js/jugador.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { crearRecord } from '../cup/games/solo.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
+import { planillaGrid } from '../assets/js/share-grid.js';
 import { azarDel } from '../assets/js/uno-al-dia.js';
 import {
   CATEGORIAS, NUMEROS, JUEGOS, TIROS, MIN_PLAYERS, MAX_PLAYERS,
@@ -475,7 +476,7 @@ function renderResultSolo(v, already) {
   acciones.innerHTML = '';
   // One a Day: the card goes under the hero and carries the screen's actions and exits (C-19);
   // the first try counts and the rest are practice
-  if (S.hoy) ponerTarjeta(terminarHoy(S.hoy, { s: puntajeDia(total), ms: S.ms, lang, alTocar: () => SFX.tap() }));
+  if (S.hoy) ponerTarjeta(terminarHoy(S.hoy, { s: puntajeDia(total), ms: S.ms, lang, alTocar: () => SFX.tap(), grid: planillaGrid(v.st.A.tarjeta, [NUMEROS, JUEGOS]) }));
   else acciones.append(
     el('button', { class: 'btn btn--yellow', id: 'btn-otra', onClick: () => startMatch('solo', M.names, M.config) }, T.endAgain),
     el('div', { class: 'btn-row' },
