@@ -13,7 +13,7 @@ import { flag } from '../assets/js/flags.js';
 import { leerYo } from '../assets/js/jugador.js';
 import { param, tiene } from '../assets/js/parametros.js';
 
-let c;
+let c;   // the context, kept for what may need game.js live
 let G, JUEGOS_COPA, LABS, LANG, LOCALE, PRUEBA, RESERVADAS, T, TRES, abrirCopa, abrirStore, admin, avisoError, campo, campoFecha, campoPin, camposPin, cuenta, entrarComoJugador, errorDe, fechaLarga, fmt, memorial, miPais, mostrar, opciones, opcionesVariante, pinAlAzar, poner, portada, sinPinDeCopa, zonaTexto;
 
 /** Draws it; `ctx` is game.js's context (its `let`s are read live). */
