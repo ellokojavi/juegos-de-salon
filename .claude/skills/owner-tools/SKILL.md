@@ -7,6 +7,8 @@ description: The owner's panel (public/panel/), La Copa reports and the rankings
 
 - **Panel** (`public/panel/`, D-44, D-207): `window.__panel.seed({ rooms, days, torneos, push, vista })`
   draws it with seeded data without logging in. See [docs/PANEL.md](../../../docs/PANEL.md).
+- **Offensive names** (D-513): `name-guard.js` refuses them on sign-up (flag `name-guard`); to rename one already there,
+  `node tools/firebase/rename-player.mjs <jid | name> ["New name"] [--write]` (dry run without `--write`).
 - **La Copa (the Cup) reports** (D-104): `node tools/firebase/reports.mjs [--days 3] [--json]`.
 - **Rankings** (D-212): `records.js` (logic), `jugador.js` (the player and their store:
   `jugador-firebase.js`, which reads over REST and loads the SDK only to write or sign in (D-470), or `jugador-local.js` in tests and with `?test`; `?records=firebase` forces
