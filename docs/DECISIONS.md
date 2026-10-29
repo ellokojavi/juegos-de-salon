@@ -30,7 +30,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | 🖌️ Pintaminas, the lab's colour Minesweeper (drawings and their colours, brushes, no-guess board, hard mode, help, giving up) | `docs/games/paint-mines.md` | D-289, D-290, D-291, D-292, D-296, D-298, D-332 |
 | 🚇 Rutas rotas (formerly Rutas), the lab's metro map (rectangle turns, exact minimum, five stages, 7-minute clock and layered score) | `docs/games/routes.md` | D-293, D-294, D-295, D-332 |
 | 💥 Números explosivos, the lab's number solitaire (equal pairs or pairs adding to 10, rows that clear, ➕, a board with a way out, explosions) | `docs/games/exploding-numbers.md` | D-297 |
-| 🎲 Pips, the dominoes puzzle of the lab (zones with a rule, one solution per board, three boards) | `docs/games/pips.md` | D-381, D-385, D-386 |
+| 🎲 Dominorama (formerly Pips), the dominoes puzzle of the lab (zones with a rule, one solution per board, three boards) | `docs/games/dominorama.md` | D-381, D-385, D-386 |
 | 🥷 Stick Ninja, the lab's hold-and-release bridge game (the day's course, flags for perfects, moving pillars, English only) | `docs/games/stick.md` | D-446, D-455 |
 | 🧱 Stack, the lab's one-tap tower game (the overhang is cut off, perfect drops, judged at the tap's own moment, English only) | `docs/games/stack.md` | D-445 |
 | 📐 Loteo, the lab's Shikaku (rectangles whose number is their area, unique solution, five boards against the clock: two warm-ups and three hard ones; the ⚡💧 Servicios mode, with same-size plots and one ⚡ and one 💧 in each) | `docs/games/plots.md` | D-310, D-311, D-312, D-332 |

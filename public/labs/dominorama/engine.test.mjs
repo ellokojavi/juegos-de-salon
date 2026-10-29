@@ -1,4 +1,4 @@
-// Pips (D-381): rules, one solution per board, laying dominoes, the help and the score.
+// Dominorama (D-381): rules, one solution per board, laying dominoes, the help and the score.
 import assert from 'node:assert/strict';
 import { cumple, etiqueta, resolver, generar, nuevaPartida, lugar, poner, sacar, valores, estadoZonas, resuelto, lleno, ayudar, puntaje, tarjeta, NIVELES, MAXIMO, PUNTOS_TABLERO, RESTA_AYUDA, unida } from './engine.js';
 
@@ -105,4 +105,4 @@ assert.equal(tarjeta({ resueltos: 2, ayudas: 1 }), '✅✅⬜ 2 de 3 · 💡 1')
   for (const tipo of ['suma', 'igual', 'distinto', 'menor', 'mayor']) assert.ok(tipos.has(tipo), `some zone asks ${tipo}`);
 }
 
-console.log('✓ pips engine');
+console.log('✓ dominorama engine');
