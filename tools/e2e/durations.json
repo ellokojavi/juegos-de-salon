@@ -90,6 +90,7 @@
  "splash/languages.mjs": 82,
  "stack/lab.mjs": 11,
  "stick/lab.mjs": 47,
+ "structured-data.mjs": 35,
  "timeline/choice.mjs": 8,
  "timeline/decks.mjs": 30,
  "timeline/drag.mjs": 12,

@@ -76,7 +76,7 @@ can vouch for a tree, and the narrowed run on `main` (D-496) leaves none either.
 | Which pages each script opens | Derived: `${SITE}/<page>/` (also `${BASE}`, `${SITIO}`), the game names a looping script names as strings, its folder | `scriptPages()`, `dynamicPages()` |
 | A page that runs another game's engine on purpose | Declared, with why | `REUSES` |
 | Small modules every page may load though they live in a game's folder | Declared, with why | `SHARED` |
-| Scripts that open every page on purpose | Declared | `EVERY_PAGE` (today `smoke.mjs`) |
+| Scripts that open every page on purpose | Declared | `EVERY_PAGE` (today `smoke.mjs` and `structured-data.mjs`) |
 | A long script split in parts named after pages | Declared | `PARTS` in `ci.mjs` |
 | Files no browser loads (docs, agents, workflows, rules, `durations.json`, D-428) | Derived from the path | `changes.mjs` (`noBrowser`) |
 | Scripts CI never runs (`*/online.mjs`, `*/chat.mjs` and the rest that open rooms in the production Firebase, the obsolete ones) | Derived from `ci.mjs`'s own exclusions: changing one runs no job (#850) | `shared` in `ci.mjs` |
