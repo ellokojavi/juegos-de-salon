@@ -1917,7 +1917,8 @@ const adminCtx = {
   L, LABS, PRUEBA, S, T, ahora, avisoError, campo, campoFecha, compartir, compartirTabla, conBoton, cuenta, descargarPlanilla, entrar, errorDe, esAdmin, espera, fechaLarga, fmt, invitar, jugar, mensajeFinal, mensajeHoy, mensajeInvitacion, mensajeTabla, mostrar, podio, poner, portada, tablero, toast, zonaTexto,
 };
 function admin(opciones) {
-  import('./admin.js').then(m => m.admin(adminCtx, opciones));
+  // Offline, the first open can fail to load it: say so instead of a button that does nothing
+  import('./admin.js').then(m => m.admin(adminCtx, opciones), e => espera(errorDe(e), { error: true, reintentar: () => location.reload() }));
 }
 /* ------------------------------------------------------------------ */
 /* Antes de jugar: cómo se juega y el comodín                          */
