@@ -190,4 +190,22 @@ console.log('uno-al-dia-jugador: ok');
   c = conMiCuenta({ filas: [{ jid: 'aaaaaaaa', s: 165 }], jid: 'yoyoyoyo', w, hoy: '2026-10-07' });
   assert.deepEqual([c.fila.s, c.fila.puesto, c.delante], [165, 1, null]);
 }
+// The month's list on /today/ carries the same total, ordered again (the owner saw 1512 above, 1462 in the list)
+{
+  const { tablaConMiCuenta } = await import('./uno-al-dia-red.js');
+  const { walk } = await import('./daily-points.js');
+  const w = walk({ '2026-10-06': { j: 'q', s: 80 }, '2026-10-07': { j: 'q', s: 70 } }, '2026-10-07');
+  const top = [{ jid: 'aaaaaaaa', s: 400, ms: 0, puesto: 1, n: 'A' }, { jid: 'bbbbbbbb', s: 150, ms: 0, puesto: 2, n: 'B' }, { jid: 'yoyoyoyo', s: 85, ms: 0, u: String(numDia('2026-10-06')), puesto: 3, n: 'Yo' }];
+  const v = tablaConMiCuenta({ top }, { jid: 'yoyoyoyo', w, hoy: '2026-10-07' });
+  assert.deepEqual(v.top.map(f => [f.jid, f.s, f.puesto]), [['aaaaaaaa', 400, 1], ['yoyoyoyo', 165, 2], ['bbbbbbbb', 150, 3]]);
+  assert.equal(v.top[1].n, 'Yo');
+  // Nothing pending, or not in the list: the table as read
+  const todo = { top: top.map(f => (f.jid === 'yoyoyoyo' ? { ...f, s: 165, u: String(numDia('2026-10-07')) } : f)) };
+  assert.equal(tablaConMiCuenta(todo, { jid: 'yoyoyoyo', w, hoy: '2026-10-07' }), todo);
+  const otro = { top: top.slice(0, 2) };
+  assert.equal(tablaConMiCuenta(otro, { jid: 'yoyoyoyo', w, hoy: '2026-10-07' }), otro);
+  // Among the neighbours: its points and place change, nothing moves
+  const vec = tablaConMiCuenta({ top: top.slice(0, 2), vecinos: [top[2]] }, { jid: 'yoyoyoyo', w, hoy: '2026-10-07' });
+  assert.deepEqual([vec.vecinos[0].s, vec.vecinos[0].puesto], [165, 2]);
+}
 console.log('uno-al-dia-jugador (night totals): ok');
