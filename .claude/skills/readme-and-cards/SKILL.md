@@ -31,7 +31,7 @@ node tools/push/release.mjs --pr <n> --version <x.y.z> [--failed <job>] [--run-u
   JSON-LD script (home-page games: VideoGame + WebApplication; the four doors: WebSite; nothing for lab,
   La Bodega, switched-off pages or bridges; a game whose `rules.js` has `howText` or `rules` also gets its
   "Cómo se juega" as a one-question FAQPage, the same text the cover shows: the owner chose that over a
-  separate FAQ block on the cover), plus `public/sitemap.xml` (doors with hreflang alternates) and
+  separate FAQ block on the cover, D-488; a Cup game's own page gets its `como` steps from `public/cup/rules.js`), plus `public/sitemap.xml` (doors with hreflang alternates) and
   `public/robots.txt`. They are generated from `games.js` and each game's `rules.js`: never edited by hand, and `og.mjs check` blocks
   them stale (`tools/release/json-ld.test.mjs`). Each door's WebSite name is in its own language, and
   `tools/e2e/structured-data.mjs` checks against the rendered page that every name and FAQ answer is what it shows.
