@@ -18,13 +18,11 @@
  * The panel's 🎨 Skins (D-477, controls.js) can move a template to other days or switch it off,
  * with no PR: `controls/skins/<id>`, read before deciding.
  * lab: #seccion-temporadas
- * lab: #seccion-season-scares
  */
 import { param, tiene } from './parametros.js';
 import { labAccess } from './lab-access.js';
 import { TEMPLATES } from '../season/templates.js';
 import { loadControls, skinOn } from './controls.js';
-import { flag } from './flags.js';
 
 export { TEMPLATES };
 const BASE_CSS = new URL('../css/season.css', import.meta.url).href;
@@ -91,17 +89,23 @@ function decorate(t, forced) {
     const p = deco('season-peek', t.peek.emoji); once(p);
     setTimeout(() => document.body.append(p), 4000);
   }
-  if (t.scares?.length) flag('season-scares').then(ok => ok && scare(t.scares, forced));
+  if (t.scares?.length) scares(t.scares);
 }
 
 /** How each scare moves (season.css); an emoji not listed looms. */
 const SCARE = { '💀': 'season-loom', '🕷️': 'season-scuttle', '👀': 'season-stare', '🧟': 'season-shamble' };
-/** A big fright, once per visit at most (one in four, always with ?season), one of the template's scares. */
-function scare(emojis, forced) {
-  if (!forced && Math.random() >= 0.25) return;
-  const e = pickOne(emojis);
-  const s = deco(SCARE[e] || 'season-loom', e); once(s);
-  setTimeout(() => document.body.append(s), 7000 + Math.random() * 5000);
+const EVERY = 40000;
+/** A big fright every 40 s while the page is in view, each a random one but never the last one again. */
+function scares(emojis) {
+  let last = null;
+  const next = () => {
+    if (document.hidden) return; // a tab in the background does not pile them up
+    const e = pickOne(emojis.length > 1 ? emojis.filter(x => x !== last) : emojis);
+    last = e;
+    const s = deco(SCARE[e] || 'season-loom', e); once(s);
+    document.body.append(s);
+  };
+  setTimeout(() => { next(); setInterval(next, EVERY); }, 8000);
 }
 
 /** One background particle in three (ui.js `sparkles`) becomes one of the template's emojis. */
