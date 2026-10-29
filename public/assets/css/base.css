@@ -425,6 +425,9 @@ html:lang(de) body { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-
   background: linear-gradient(180deg, rgba(42, 10, 74, 0.99), rgba(21, 7, 38, 0.99)); animation: slideUp 0.25s ease-out both;
 }
 .labs-caja h2 { margin: 0; }
+/* Behind flag('keyboard-lift'): the layer ends where the iOS keyboard starts, so Send stays above it */
+.labs-capa.sigue-teclado { padding-bottom: calc(12px + max(var(--kb, 0px), env(safe-area-inset-bottom, 0px))); }
+.labs-capa.sigue-teclado .labs-caja { max-height: calc(100svh - 24px - var(--kb, 0px)); }
 /* With the page pinned behind it, scrolling the card never carries over */
 .fondo-fijo .labs-caja { overscroll-behavior: contain; }
 .labs-texto, .labs-nombre {

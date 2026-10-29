@@ -6,6 +6,8 @@
 import { el } from './ui.js';
 import { versionOf, releaseOf } from './transport/stats.js';
 import { enviarReporte, correoValido } from '../../cup/reportes.js';
+import { flag } from './flags.js';
+import { followKeyboard } from './keyboard.js';
 
 /** The kinds a message can be tagged with (D-345). The rules accept exactly these (`feedback/$id/tipo`). */
 export const TIPOS = ['sugerencia', 'problema', 'idea', 'otro'];
@@ -46,7 +48,8 @@ export function abrirComentario({ T, contexto: ctx, enviar = undefined, alEnviar
   if (document.querySelector('.labs-capa')) return;
   let capa = null;
   let soltar = () => {};
-  const cerrar = () => { capa.remove(); soltar(); };
+  let teclado = () => {};
+  const cerrar = () => { capa.remove(); soltar(); teclado(); };
   const caja = formularioComentario({ T, contexto: ctx, enviar, alEnviar, alCerrar: cerrar });
   caja.classList.add('labs-caja');
   caja.setAttribute('role', 'dialog');
@@ -57,6 +60,13 @@ export function abrirComentario({ T, contexto: ctx, enviar = undefined, alEnviar
   caja.querySelector('textarea').focus();
   // The page behind stays put while the form is open, so only the card moves (the owner's request)
   soltar = fijarFondo();
+  // On iOS the keyboard covered the Send button, and the card could not scroll to it (#883).
+  // The layer lifts itself above the keyboard; lab: #seccion-keyboard-lift (D-498)
+  flag('keyboard-lift').then(ok => {
+    if (!ok || !capa.isConnected) return;
+    capa.classList.add('sigue-teclado');
+    teclado = followKeyboard(capa);
+  });
 }
 
 /**
