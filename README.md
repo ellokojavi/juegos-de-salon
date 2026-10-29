@@ -504,6 +504,7 @@ node public/assets/js/lab-access.test.mjs
 node public/assets/js/labs-puerta.test.mjs
 node public/assets/js/llegada.test.mjs
 node public/assets/js/manifest.test.mjs
+node public/assets/js/name-guard.test.mjs
 node public/assets/js/on-screen.test.mjs
 node public/assets/js/parametros.test.mjs
 node public/assets/js/pending-scores.test.mjs
@@ -580,6 +581,7 @@ node tools/e2e/scope.test.mjs
 node tools/e2e/since-passed.test.mjs
 node tools/firebase/archive.test.mjs
 node tools/firebase/rankings-history.test.mjs
+node tools/firebase/rename-player.test.mjs
 node tools/firebase/room-sweep.test.mjs
 node tools/firebase/stats-retention.test.mjs
 node tools/firebase/uad-index.test.mjs
