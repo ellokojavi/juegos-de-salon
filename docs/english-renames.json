@@ -5,7 +5,7 @@
     "docs/AGREGAR-JUEGO.md": {
       "to": "docs/ADD-GAME.md",
       "phase": 5,
-      "state": "pending"
+      "state": "done"
     },
     "docs/ALEMAN.md": {
       "to": "docs/GERMAN.md",
