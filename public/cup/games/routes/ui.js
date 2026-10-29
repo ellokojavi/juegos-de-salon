@@ -16,6 +16,7 @@
 import { el } from '../../../assets/js/ui.js';
 import { generar, generarEtapa, girar, resuelto, puntajePartida, tarjeta, RECTANGULOS, LADO, ETAPAS, TIEMPO_S } from './engine.js';
 import { loadCss } from '../../../assets/js/load-css.js';
+import { mmss } from '../../../assets/js/time-format.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -25,7 +26,6 @@ const JUNCTION = 'https://bricksandchips.co/junction-nine';
 const CONFIRMAR_MS = 3000;
 const quieto = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const META = Array.from({ length: LADO * LADO }, (_, p) => ({ p, v: 0 }));
-const mmss = ms => { const t = Math.max(0, Math.round((ms || 0) / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 const indice = r => RECTANGULOS.findIndex(x => x.f1 === r.f1 && x.c1 === r.c1 && x.f2 === r.f2 && x.c2 === r.c2);
 
 // ——— The pieces, in SVG: each segment joins two doors with a curve, with a station halfway ———
