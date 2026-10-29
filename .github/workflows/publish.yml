@@ -193,3 +193,23 @@ jobs:
           SITE_URL: ${{ needs.publish.outputs.url }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: node tools/release/merge-report.mjs
+      # The owner's release notification (D-504): to each device subscribed from the panel's 🔔, with
+      # the version, the PR and a tap that opens what it launched (or the run, if it did not publish)
+      - name: Notify the owner's devices
+        if: ${{ always() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
+          # The secret keeps its Spanish name (owner's decision, D-316)
+          VAPID_PRIVADA: ${{ secrets.VAPID_PRIVADA }}
+          RESULTS: ${{ toJSON(needs) }}
+          VERSION: ${{ needs.publish.outputs.version }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$KEY_JSON" ] || [ -z "$VAPID_PRIVADA" ]; then
+            echo "::warning::The FIREBASE_ADMIN_JSON or VAPID_PRIVADA secrets are missing: the owner is not notified"
+            exit 0
+          fi
+          umask 077
+          printf '%s' "$KEY_JSON" > "$RUNNER_TEMP/key.json"
+          FIREBASE_KEY="$RUNNER_TEMP/key.json" node tools/push/release.mjs || echo "::warning::the owner's release notification failed"
