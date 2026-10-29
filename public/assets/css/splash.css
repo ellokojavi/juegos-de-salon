@@ -91,10 +91,12 @@ a.splash-item:hover, a.splash-item:focus-visible { transform: translateY(-3px); 
 }
 /* A teaser: only its picture (a drawn scene, pixel art), wide, as big as the window allows, on a
    phone too. Scaled with no smoothing so the pixels stay crisp */
-.splash-teaser, .splash-items:has(.splash-teaser) { justify-self: center; width: 100%; max-width: 560px; }
+.splash-teaser, .splash-items:has(.splash-teaser) { align-self: center; width: 100%; max-width: 560px; }
 .splash-teaser .splash-media, .splash-item.splash-teaser .splash-media {
   width: 100%; height: auto; aspect-ratio: var(--ratio, 1); image-rendering: pixelated;
 }
+/* A teaser drawn at full size (Stack's, with the game's own scene) is not pixel art */
+.splash-teaser--smooth .splash-media { image-rendering: auto; }
 /* Its title is short and alone: balanced lines, never one word left by itself ("VIENE…" at 320 px) */
 .splash:has(.splash-teaser) .splash-titulo { text-wrap: balance; }
 /* A hero (`hero` in splash.js): one game, its scene as wide as the window at its own shape, and under

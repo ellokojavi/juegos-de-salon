@@ -13,7 +13,7 @@ that has not paid, and until then stays unseen. This folder is its memory: every
 | Turned on and off | `node tools/agents/splash.mjs list \| on <id> [--until YYYY-MM-DD] \| off [<id>]`, in a PR (`on` adds it at the end of the queue) |
 | Seen on demand | `/?splash=<id>` (a campaign that is not on: only with a lab key, D-395), and `node tools/e2e/look.mjs splash <id> [--width 320] [--lang de]` |
 | Clips | [`capture.mjs`](capture.mjs), see [clips.md](clips.md) |
-| Teasers | a drawn scene of a game that is coming, as a looping MP4 (a GIF weighed five times as much, #846): [`teaser.mjs`](teaser.mjs) records a page of [`teaser/`](teaser/) frame by frame (D-430) |
+| Teasers | a drawn scene of a game that is coming, as a looping MP4 (a GIF weighed five times as much, #846): [`teaser.mjs`](teaser.mjs) records a page of [`teaser/`](teaser/) frame by frame (D-430). **A teaser looks like its game**: the same view and the same drawing (Stack's draws with the game's own `scene.js`, in isometric view, not a flat side view of it), so the player recognizes it on launch day |
 | Gives way to | The recap window (`assets/js/recap.js`): La Copa's of an ended cup (D-423) or Uno al día's of an ended season (D-424); on a visit that opens it, the splash waits for the next one; it reuses `splash.css`. One gate (`assets/js/home-windows.js`, D-431) opens one window per visit: recap, then splash, then the install bubble |
 | Measured | Each window counts in the day's stats (D-461): shown, reach (new phones), play, close and time open, and since D-466 conversion: the game its Play opened started and finished; the panel's 📣 Campaigns shows 📊 How they did, by days shown |
 | Campaigns | [`campaigns/<id>/`](campaigns/): a README (what, when, which PR) and its screenshots in the four languages |
@@ -22,11 +22,12 @@ that has not paid, and until then stays unseen. This folder is its memory: every
 
 1. Its entry in `CAMPAIGNS` (a new id: it is what phones remember, never reused), texts in the
    four languages (or `langs: ['es', 'en']`, and the rest see English), and the clips of its games
-   with `capture.mjs`, or a teaser with `teaser.mjs` (an item with only `img`, `still` and `ratio`).
+   with `capture.mjs`, or a teaser with `teaser.mjs` (an item with only `img`, `still` and `ratio`, plus `smooth: true` when it is drawn at full size rather than pixel art).
    If it is not for a first visit (an ask, like support), give it `audience: 'regulars'` (D-458) and
    say so in its README's Audience row.
 2. Its folder `campaigns/<id>/` with the README and the screenshots (`look.mjs splash <id>` at
-   390 px in es, en, pt and de, as JPEG). A test fails if a campaign has no folder.
+   390 px in es, en, pt and de, as JPEG), and one look at a computer's width too (`--width 1280
+   --height 900`): a window laid out wrong there passes every phone screenshot. A test fails if a campaign has no folder.
 3. `splash.mjs on <id> --until …` and the PR. **Before merging, the usability agent does a full
    pass of the campaign** (D-355): `covers.mjs check` names it, with its texts, and it is looked at
    in the four languages at 390 and 320 px. Once merged, the owner turns it on, dates it and
