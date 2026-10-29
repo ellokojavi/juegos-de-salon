@@ -14,6 +14,7 @@
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, dirname, relative, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { GAMES, SUELTOS } from '../../public/assets/js/games.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '../..');
@@ -315,8 +316,8 @@ export const SHARED = {
 };
 // A game that plays another one's engine on purpose: its solo mode is that game
 export const REUSES = {
-  'bulls-and-cows': ['cup/games/number/'],
-  timeline: ['cup/games/timeline/', 'cup/games/year/engine.js', 'cup/games/mazos.js'],
+  // A game's reuses live in its entry in games.js, the manifest (#855); the rows below are pages it doesn't list
+  ...Object.fromEntries([...GAMES, ...SUELTOS].filter(g => g.reuses).map(g => [g.path.replace(/\/$/, ''), g.reuses])),
   'labs/code': ['cup/games/word/'],
   // The owner's sheets of 🚂 Tren en Vilo's trains and visitors, kept in the lab after the game left it (D-456)
   'labs/bridges/trains': ['cup/games/bridges/'],
