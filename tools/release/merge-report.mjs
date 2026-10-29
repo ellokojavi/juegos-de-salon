@@ -48,6 +48,10 @@ export function ready({ autoMerge, tests }) {
  */
 export function report({ results, version, siteUrl, runUrl }) {
   const run = runUrl ? ` ([run](${runUrl}))` : '';
+  // A newer merge reached main before this one deployed, and its run publishes both (D-506)
+  if ([results.rules, results.publish].some(j => j?.outputs?.newest === 'false')) {
+    return { ok: true, body: `${MARKER}\n✅ Merged. A newer merge reached main first, and its run publishes this change with it${run}.` };
+  }
   if (results.publish?.result === 'success') {
     return { ok: true, body: `${MARKER}\n✅ Merged and published: **${version}** is live on ${siteUrl}${run}.` };
   }
