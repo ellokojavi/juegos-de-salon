@@ -26,7 +26,7 @@ import {
   fechaEn, sumarDias, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta, estadoDia, comodinDe, comodinEfectivo, ultimoDiaComodin, moverInicio, sinEmpezar, pasarDia, MAX_DIAS_INICIO, faltaGente,
   medianoche, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, puedeComodin, multiplicador, posicionesDelDia, tabla, desempate, faltan, fuera, enRiesgo, medallas, evolucion, visibleDia, reloj, pausaDeLectura, mmss, juegoDelDia, esFinal, finalRounds, diaDeCal, activos, ZONA, zonaDeIdioma,
   conCierre, cerradaAntes, anulado, puedeCerrar, semanaAlAzar, ESTILOS_SEMANA, tieneFinal, SIN_FINAL,
-  findeAbierto, findeAlAzar, rondasDelDia, TRIO_SEP, estadoEnLista, recorteLista,
+  findeAbierto, findeAlAzar, rondasDelDia, TRIO_SEP, estadoEnLista, recorteLista, porJugar,
 } from './engine.js';
 import { GAME_ID, LOCALES, juegosCopa, rondasFinal, conVariante, JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { createCuenta, juntarCopas } from './cuenta.js';
@@ -322,6 +322,7 @@ function portada() {
       Lc ||= await st.leer(c.code);
       if (!Lc) return;
       cuenta.lista.guardar(c.code, recorteLista(Lc, pid));
+      cuenta.porJugar.guardar(c.code, porJugar(Lc, pid, st.now()));
       ponerEstado(c.code, Lc, pid, st.now());
       repintar();
     } catch (_) { /* without network the line stays as this phone last saw it */ }
@@ -514,7 +515,7 @@ async function abrirCopa(code,{ recienCreada = false, pantalla = null } = {}) {
     L = conCierre(L);
     S.L = L;
     // Kept for the "Tus copas" line, so the list shows it straight away on the way back
-    if (cuenta.quien(code) && L?.meta) cuenta.lista.guardar(code, recorteLista(L, cuenta.quien(code)));
+    if (cuenta.quien(code) && L?.meta) { cuenta.lista.guardar(code, recorteLista(L, cuenta.quien(code))); cuenta.porJugar.guardar(code, porJugar(L, cuenta.quien(code), st.now())); }
     if (!L || !L.meta) {
       // La borró su admin (D-117): quien la tenía abierta se entera, y este celular la olvida
       if (S.eliminando) return;
