@@ -410,6 +410,7 @@ Lo que no se puede automatizar: un iPhone real, con iOS 16.4 o más (ideal: 17, 
 - `node tools/push/notify.mjs --dry-run` imprime qué mandaría sin mandar nada.
   `--test <código>` manda un aviso de prueba a cada celular con avisos en esa copa. Los dos
   están en Actions → Avisos → *Run workflow*.
+- The owner's own release notifications (D-504) use the same keys but another path, `ownerPush/`, and another sender, `tools/push/release.mjs`, run by publish.yml: see docs/PANEL.md.
 - Workflow a los minutos 7, 22, 37 y 52 de cada hora, y `workflow_dispatch`. Necesita los secretos
   `FIREBASE_ADMIN_JSON` y `VAPID_PRIVADA`; sin ellos avisa y termina en verde. GitHub no garantiza la hora
   exacta (se atrasa 5–20 minutos en horas de carga), por eso los avisos se planifican por
