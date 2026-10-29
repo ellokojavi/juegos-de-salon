@@ -151,13 +151,14 @@ export const CAMPAIGNS = {
       },
     }],
   },
-  // A teaser of 🥷 Stick Ninja, still in the lab: under a full moon a ninja's stick grows and tips
-  // toward the far pillar, and the moon goes dark the instant before it lands. No name, no link
+  // A teaser of 🥷 Stick Ninja, still in the lab, drawn with the game's own scene: the ninja crosses
+  // twice, then its stick tips toward the far pillar and the night stops the instant before it lands.
+  // No name, no link
   'ninja-pronto': {
     emoji: '🥷',
     kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve', de: 'Demnächst' },
     title: { es: '¿Llegará al otro lado?', en: 'Will it reach the other side?', pt: 'Será que chega do outro lado?', de: 'Reicht es bis drüben?' },
-    items: [{ video: 'assets/splash/ninja-teaser.mp4', img: 'assets/splash/ninja-teaser-start.png', still: 'assets/splash/ninja-teaser.png', ratio: '8 / 5' }],
+    items: [{ video: 'assets/splash/ninja-teaser.mp4', img: 'assets/splash/ninja-teaser-start.png', still: 'assets/splash/ninja-teaser.png', ratio: '8 / 5', smooth: true }],
   },
   // A teaser of 🧱 Stack, still in the lab, drawn with the game's own isometric scene: the slabs pile up
   // and the view climbs past the clouds into the stars, until the last one stops in the air. No name, no
