@@ -155,6 +155,16 @@ En `#/cup`, debajo de las cifras de las copas, el bloque **🔔 Avisos al celula
 
 Con `window.__panel.seed({ …, push: { vuelta, vivas, torneos } })` se dibuja con datos sembrados.
 
+### The owner's release notifications (D-504)
+
+**🔔 Notify me when something goes live**, in the panel's top bar (`release-push.js`), subscribes the
+device it is tapped on to the site's Web Push and keeps it in `ownerPush/<subId>` (`{ endpoint, keys,
+at, device }`, only the owner reads and writes it). Tapped again, it sends a test. publish.yml's last job
+runs `tools/push/release.mjs`, which notifies each of those devices when a PR goes live (or does not),
+with a tap to the PR's `Ver en:` path (docs/MERGING.md); a dead subscription is removed. On an iPhone it
+works only from the site installed on the home screen. A notification's deep link into 📣 Campaigns is
+`#/campaigns/<tab>/<id>` (`splash`, `features`, `skins`, `flags`): that tab, the campaign open and ringed.
+
 ## La Copa en el panel (D-137)
 
 No usa señales aparte: lee `torneos/` tal como lo guarda la copa (el dueño ya podía leerlo en las
