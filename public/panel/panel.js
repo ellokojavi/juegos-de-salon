@@ -26,7 +26,7 @@ import { LANGS } from '../assets/js/i18n.js';
 import { ENVS, notCounted, setNotCounted } from '../assets/js/transport/stats.js';
 import { UAD_DIAS, UAD_INDICE, historiaDeDias } from '../assets/js/uad-days.js';
 import { $, el } from '../assets/js/ui.js';
-import { copaDe, copasEnCurso, resumenCopas, bitacoraCopas, fichaCopa, buscarCopa, paisDe, pct, duracion, inicioLabel } from './copas.js';
+import { copaDe, copasEnCurso, resumenCopas, bitacoraCopas, fichaCopa, paisDe, pct, duracion, inicioLabel } from './copas.js';
 import {
   DAY, ROOM_TTL, liveRooms, connections, summarize, top, tzLabel, ago, dayOf, codesOfDays, splitByEnv, liveLocal, roomLog,
   paginate, flagOf, whenLabel, horaLabel, fechaLabel, diaPanel, ZONA_PANEL, ZONA_NOMBRE, RANGOS, RANGO_POR_DEFECTO, rangeOf,
@@ -128,10 +128,11 @@ function renderUser() {
 onAuthStateChanged(auth, user => {
   S.user = user;
   renderUser();
-  if (!user) { stopListening(); showScreen('screen-login'); $('#uid-help').hidden = true; return; }
+  if (!user) { stopListening(); showScreen('screen-login'); $('#uid-help').hidden = true; $('#avisos-dueno').hidden = true; return; }
   $('#uid').textContent = user.uid;
   showScreen('screen-panel');
   listen();
+  $('#avisos-dueno').hidden = false;
   if (!S.releasePushWired) {
     S.releasePushWired = true;
     wireReleasePush({
@@ -2061,7 +2062,6 @@ function alCambiarRuta() {
       if (id) S.campOpen.add(id);
     }
   }
-  $('#buscar-msg').hidden = true;
   render();
   const foco = otra && S.campFoco ? document.getElementById(`campana-${S.campFoco}`) : null;
   if (foco) foco.scrollIntoView({ block: 'center' });
@@ -2098,31 +2098,6 @@ function cambiarEntorno(env, anotar = true) {
 }
 
 /**
- * Buscar por código o link (D-207): cinco letras o un link propio es una copa, cuatro letras una
- * sala. No se busca por nombre de jugador: juntar todo lo de una persona en una pantalla es
- * seguirla, y el panel mira señales, no personas (D-44).
- */
-function buscar(q) {
-  const t = String(q || '').trim();
-  const msg = $('#buscar-msg');
-  if (!t) return;
-  const copa = buscarCopa(S.torneos, t);
-  if (copa) { location.hash = ir('torneo', [copa.code]); return; }
-  if (/^[A-Za-z]{4}$/.test(t)) { location.hash = ir('sala', [t.toUpperCase()]); return; }
-  // A cup older than the period is not downloaded: ask for it (D-473)
-  if (S.user) {
-    copaSuelta(t).then(code => {
-      if (code) { location.hash = ir('torneo', [code]); return; }
-      msg.textContent = `There is no cup or room with “${t}”. A room has 4 letters; a cup, 5 or its own link.`;
-      msg.hidden = false;
-    });
-    return;
-  }
-  msg.textContent = `There is no cup or room with “${t}”. A room has 4 letters; a cup, 5 or its own link.`;
-  msg.hidden = false;
-}
-
-/**
  * El selector de entornos y de rangos se arman con lo que dice el código, no con lo que
  * alguien escribió en el HTML: un entorno nuevo aparece en el panel el mismo día que empieza a
  * mandar señales (C-16).
@@ -2145,7 +2120,6 @@ $('#range').addEventListener('change', e => cambiarRango(e.target.value));
   box.checked = notCounted();
   box.addEventListener('change', () => setNotCounted(box.checked));
 }
-$('#buscar').addEventListener('submit', e => { e.preventDefault(); buscar($('#buscar-q').value); });
 
 // Gancho de solo lectura para pruebas (C-14): permite dibujar con datos sembrados sin entrar.
 // `vista` es una ruta (`/torneo/OFICI`) o, como antes, el nombre de una vista (`torneo`).

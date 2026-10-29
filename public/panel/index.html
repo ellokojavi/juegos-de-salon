@@ -18,7 +18,7 @@
   <main class="app app--panel" id="app">
     <div class="topbar">
       <a class="back" href="../">‹ Menu</a>
-      <div class="tools"><span class="chip">📊 Panel</span><span id="user-slot"></span></div>
+      <div class="tools"><span class="chip" title="Panel" aria-label="Panel">📊</span><!-- The owner's release notifications (D-504): release-push.js wires it; hidden until signed in --><button type="button" class="btn-avisos-dueno" id="avisos-dueno" hidden aria-label="Notify me when something goes live" title="Notify me when something goes live">🔔</button><span id="user-slot"></span></div>
     </div>
 
     <!-- SIGN IN -->
@@ -44,10 +44,9 @@
     <!-- PANEL: a fixed bar, the navigation and the view the URL asks for (D-207) -->
     <section class="screen" id="screen-panel">
       <div class="filters">
-        <!-- panel.js fills the options with the environments the app sends (C-16) -->
-        <label>Environment
-          <select id="env"></select>
-        </label>
+        <!-- Always Live: the owner only looks at it, so the environment has no control on screen. panel.js
+             still fills it (C-16), and a view's link can name another one (`e=`) -->
+        <select id="env" hidden aria-hidden="true"></select>
         <!-- "Don't count this browser" (D-471): panel.js wires it -->
         <label id="no-contar-label" title="This browser's play and visits on the live site go to My devices, not Live">
           <input type="checkbox" id="no-contar"> Don't count this browser
@@ -56,15 +55,9 @@
         <label>Range
           <select id="range"></select>
         </label>
-        <form class="buscar" id="buscar" role="search">
-          <input id="buscar-q" type="search" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Room or cup code or link" aria-label="Find a room or a cup by its code or link">
-        </form>
         <span class="muted" id="updated"></span>
-        <!-- The owner's release notifications (D-504): release-push.js wires it -->
-        <button type="button" class="btn-avisos-dueno" id="avisos-dueno">🔔 Notify me when something goes live</button>
       </div>
       <p class="buscar-msg" id="avisos-dueno-msg" role="status" hidden></p>
-      <p class="buscar-msg" id="buscar-msg" role="status" hidden></p>
 
       <div class="cuerpo-panel">
         <!-- panel.js fills the sections: the tournament name comes from the game registry (C-16) -->
