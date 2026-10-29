@@ -138,12 +138,6 @@
           <p class="muted" style="margin:0;font-size:0.85rem">Pruébalo en un iPhone: abre 💬 al final de la portada y toca el texto. Se ve únicamente con tu llave del laboratorio.</p>
           <a class="btn btn--yellow" id="btn-keyboard-lift" href="../">🏠 Ir a la portada</a>
         </section>
-        <section class="panel seccion" id="seccion-season-scares">
-          <h2>💀 Halloween: sustos grandes</h2>
-          <p class="muted" style="margin:0">Durante Halloween, de vez en cuando, aparece un susto grande en la portada: una calavera gigante que se asoma por el borde, una araña enorme que la cruza corriendo, unos ojos que se abren en la oscuridad y parpadean, o un zombi que sube desde abajo tambaleándose. Pasa unos segundos por encima de la portada, pero no recibe toques: los botones siguen funcionando debajo.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Pruébalo abriendo la portada con ?season=halloween: aparece un susto entre 7 y 12 segundos después. Se ve únicamente con tu llave del laboratorio.</p>
-          <a class="btn btn--yellow" id="btn-season-scares" href="../?season=halloween">🏠 Ir a la portada</a>
-        </section>
         <section class="panel seccion" id="seccion-uad-night-totals">
           <h2>📅 Uno al día: los puntos los suma el servidor</h2>
           <p class="muted" style="margin:0">Tu celular ya no suma tus puntos del mes, tu semana ni tu mejor racha: solo sube lo que jugaste, y el servidor lo cuenta cada hora para todos por igual. En Uno al día ves tus puntos de hoy al tiro, porque tu celular los agrega mientras tanto; en 🏅 Rankings, los tuyos y los de todos aparecen dentro de la hora.</p>
@@ -229,6 +223,15 @@
           <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <section class="panel seccion plegada" id="seccion-season-scares" data-launched="2026-10-28">
+            <details>
+              <summary><h2>💀 Halloween: sustos grandes</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Durante Halloween, cada 40 segundos aparece en la portada un susto distinto: una calavera gigante que se asoma por el borde, una araña enorme que la cruza corriendo, unos ojos que parpadean en la oscuridad o un zombi que sube tambaleándose. No recibe toques: los botones siguen funcionando debajo.</p>
+                <a class="btn btn--yellow" id="btn-season-scares" href="../?season=halloween">🏠 Ir a la portada</a>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-copa-archivada" data-launched="2026-10-28">
             <details>
               <summary><h2>🏆 La Copa: el podio de una copa archivada</h2><span class="flecha" aria-hidden="true">›</span></summary>
