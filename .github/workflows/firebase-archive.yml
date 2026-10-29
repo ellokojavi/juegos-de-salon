@@ -14,7 +14,7 @@ name: Firebase archive
 
 on:
   schedule:
-    # After the stats names retention (uad-rebuild, 08:23 UTC), so archived days carry no names
+    # After the stats names retention (uad-rebuild's 08:23 UTC run), so archived days carry no names
     - cron: '41 9 * * *'
   workflow_dispatch:
     inputs:
