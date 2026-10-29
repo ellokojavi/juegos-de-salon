@@ -150,6 +150,7 @@ modo que el juego piensa tener.
   próximos tiros (D-246).
 - Todos los modos usan la misma lógica: cambia el transporte, no el juego.
   `public/assets/js/transport/local.js` (mismo dispositivo, también para la IA) y `firebase.js` (sala remota).
+- Creating and joining an online room goes through `public/assets/js/room-flow.js` (`roomFlow({ game, maxPlayers, defaultConfig, start })`, #860): the game keeps only its own `startOnline`.
 - Interfaz del transporte: `create`, `join`, `send`, `onMessage`, `onPresence`, `leave`, `dispose`.
 - **Campos reservados del transporte:** `from`, `at` (marca de tiempo) e `id`. Un juego que necesite enviar una posición o una cantidad usa otro nombre, o el transporte se lo pisará sin avisar.
 - **Firebase no guarda una lista vacía:** el campo simplemente no queda. Una lista que puede ir vacía viaja como texto (`"1,4,8"`, o `""`) y el motor la lee aceptando la cadena, la lista cruda del transporte local y el campo ausente (D-60).

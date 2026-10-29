@@ -30,6 +30,7 @@ import { DECKS, getDeck } from './decks/index.js';
 import { GAME_ID, DEFAULT_CONFIG, GALLOWS, PARTS, MAX_HINT, MIN_PLAYERS, MAX_PLAYERS, LOCALES } from './rules.js';
 import { renderQr } from '../assets/js/qr.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
+import { roomFlow } from '../assets/js/room-flow.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -884,18 +885,9 @@ async function startOnline(transport, code, role, name, config, secrets = {}) {
   saveSession();
   render();
 }
-async function createOnline(name, config) {
-  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
-  const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
-  const code = await t.create({ config, name });
-  await startOnline(t, code, 'A', name, config);
-}
-async function joinOnline(code, name, previousRole = null, secrets = {}) {
-  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
-  const t = createFirebaseTransport({ game: GAME_ID, maxPlayers: MAX_PLAYERS });
-  const { role, config } = await t.join(code, { name, previousRole });
-  await startOnline(t, code, role, name, config || DEFAULT_CONFIG, secrets);
-}
+const room = () => roomFlow({ game: GAME_ID, maxPlayers: MAX_PLAYERS, defaultConfig: DEFAULT_CONFIG, start: startOnline });
+async function createOnline(name, config) { await room().create(name, config); }
+async function joinOnline(code, name, previousRole = null, secrets = {}) { await room().join(code, name, previousRole, secrets); }
 
 /* ------------------------------------------------------------------ */
 /* Modos y arranque                                                    */

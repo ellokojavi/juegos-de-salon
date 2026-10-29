@@ -30,6 +30,7 @@ import * as uiNumero from '../cup/games/number/ui.js';
 import { jugarSolo, crearRecord, mmss } from '../cup/games/solo.js';
 import { renderQr } from '../assets/js/qr.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
+import { roomFlow } from '../assets/js/room-flow.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -633,19 +634,14 @@ async function startOnline(transport, code, role, name, config) {
   render();
 }
 
+const room = () => roomFlow({ game: GAME_ID, defaultConfig: DEFAULT_CONFIG, start: startOnline });
 async function createOnline(name, config) {
-  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
-  const t = createFirebaseTransport({ game: GAME_ID });
   config = { ...config, parallel: true, replica: false }; // dos celulares: a la vez, sin réplica (D-367)
-  const code = await t.create({ config, name });
-  await startOnline(t, code, 'A', name, config);
+  await room().create(name, config);
 }
 
 async function joinOnline(code, name, previousRole = null, savedSecret = null, savedNotes = null) {
-  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
-  const t = createFirebaseTransport({ game: GAME_ID });
-  const { role, config } = await t.join(code, { name, previousRole });
-  await startOnline(t, code, role, name, config || DEFAULT_CONFIG);
+  const role = await room().join(code, name, previousRole);
   if (savedNotes) S.notes[role] = new Set(savedNotes);
   if (savedSecret) { S.secrets[role] = savedSecret; onChange(); }
 }
