@@ -87,7 +87,7 @@ What each agent (`.claude/agents/`) and owner tool does, and the command it runs
   Making a campaign (texts, clips in `CAMPAIGNS`) is still a PR. Each window is counted
   (reach, taps, closes, time open) and the section's 📊 How they did reads it by days shown (D-461).
   `?splash=<id>` previews a campaign (one that is not on, only with a lab key, D-395), tried from the home page's lab bar with the other experiments (D-389), and the clips are recorded with
-  `marketing/splash/capture.mjs`. Each campaign is kept in `marketing/splash/campaigns/<id>/` (its README), and a campaign that changes gets the usability agent's full pass before merging (D-355).
+  `marketing/splash/capture.mjs`, or a drawn teaser with `marketing/splash/teaser.mjs` by the rules of `marketing/splash/TEASERS.md` (`teaser.mjs new` starts one, D-505). Each campaign is kept in `marketing/splash/campaigns/<id>/` (its README), and a campaign that changes gets the usability agent's full pass before merging (D-355).
   The same 📣 Campaigns section is the control center for everything temporary (D-477): besides 📣 Splash,
   its 🧩 Site features tab switches each place a fixed feature shows (☕ Buy me a coffee) and its 🎨 Site skins
   tab moves a seasonal template to other days or turns it off, written to Firebase `controls/` and read
