@@ -20,7 +20,7 @@ session moves with `node tools/agents/lab-publish.mjs`. Nobody will answer quest
      (`grep -rn "lab: #<id>" public`). Take its `labAccess()` gate away so everyone gets it, and the
      lab-only parts with it (a `?lab` preview may stay if the card's text says so).
    - **a game** (a card under `#activos`): it loses `labs: true` in `games.js` and its folder leaves
-     `public/labs/` (`docs/AGREGAR-JUEGO.md`, C-1), with its home-page card.
+     `public/labs/` (`docs/ADD-GAME.md`, C-1), with its home-page card.
    Read the decision the card's code or doc names before changing it.
 5. Move the card to La Bodega in the same PR (D-479): folded, under `✨ Mejoras lanzadas` or
    `🎲 Juegos guardados`, its text opening with `🚀 Lanzado.` and saying what everyone sees now.

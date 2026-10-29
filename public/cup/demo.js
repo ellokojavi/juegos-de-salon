@@ -36,6 +36,8 @@ const PUNTAJE = {
   desenredo: k => { const s = 10 * Math.round(9 * k); return { s, r: `${s}/100` }; },
   tango: k => { const s = Math.max(10, Math.round(100 * k)); return { s, r: `${s}/100` }; },
   anio: k => { const s = Math.round(100 * k); return { s, r: `${s}/100` }; },
+  // ¿Dónde queda? (D-334): the places found, from 0 to 100; it was in the pool without demo scores (#855)
+  donde: k => { const s = Math.round(100 * k); return { s, r: `${s}/100` }; },
   // The three that came from the lab (D-332): stages, boards and a painting, all from 0 to 100
   rutas: k => { const s = 17 * Math.round(5 * k) + (k > 0.9 ? 12 : 0); return { s, r: `${s}/100` }; },
   loteo: k => { const s = 12 * Math.round(5 * k) + (k > 0.9 ? 30 : 0); return { s, r: `${s}/100` }; },
