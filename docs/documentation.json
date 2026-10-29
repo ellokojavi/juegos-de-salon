@@ -1,7 +1,7 @@
 {
-  "checkedUpTo": "dae3ca8781c448df0a886b0a41c09bb6efba59f9",
+  "checkedUpTo": "db456690530173559c5c28bedb5bac89d4a40fec",
   "pending": [
-    "Stale README screenshots (judgment warnings, 107 across 12 sections: copa, linea-de-tiempo, cuarto-rey, dudo, julepe, ahorcado, toque-y-fama, generala, cup-new-games, batalla-naval, portada, idiomas); redo offline and review on the contact sheet"
+    "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games), mostly after the Bangers font preload (#1010): redo and review on contact sheets"
   ],
   "known": [],
   "rounds": [
@@ -136,6 +136,15 @@
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/939",
       "pending": [
         "Stale README screenshots (judgment warnings, 107 across 12 sections: copa, linea-de-tiempo, cuarto-rey, dudo, julepe, ahorcado, toque-y-fama, generala, cup-new-games, batalla-naval, portada, idiomas); redo offline and review on the contact sheet"
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "from": "dae3ca8781c448df0a886b0a41c09bb6efba59f9",
+      "to": "db456690530173559c5c28bedb5bac89d4a40fec",
+      "pr": null,
+      "pending": [
+        "README screenshots stale in 12 sections (portada, cuarto-rey, toque-y-fama, batalla-naval, linea-de-tiempo, dudo, generala, idiomas, ahorcado, julepe, copa, cup-new-games), mostly after the Bangers font preload (#1010): redo and review on contact sheets"
       ]
     }
   ],
