@@ -762,7 +762,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Cánones y estándares de Juegos de Salón](docs/CANONES.md)
 - [Requerimientos](docs/REQUERIMIENTOS.md)
 - [Decisions](docs/DECISIONS.md)
-- [Cómo agregar un juego nuevo](docs/AGREGAR-JUEGO.md)
+- [Adding a game](docs/ADD-GAME.md)
 - [Panel del dueño](docs/PANEL.md)
 - [End-to-end tests (headless Chrome over CDP)](tools/e2e/README.md)
 - [Firebase](firebase/README.md)

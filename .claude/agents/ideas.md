@@ -29,7 +29,7 @@ A game's name is quoted as the app shows it (Spanish, C-3).
    scoring is 0 to 100 in every cup game and variant (D-331), the result screen credits nobody
    (D-288: the credit goes on the cover page).
 3. `docs/CANONES.md` (C-n) and `docs/USABILIDAD.md` (U-n): what a game must be to be built here.
-   `docs/AGREGAR-JUEGO.md` is the real cost of a new game: engine with tests, four languages,
+   `docs/ADD-GAME.md` is the real cost of a new game: engine with tests, four languages,
    modes, the panel signal, the result screen, end-to-end scripts, its document, the README and
    the social card. Quote that cost honestly.
 4. Each game's document in `docs/games/` before saying anything about that game.
@@ -119,7 +119,7 @@ mini like the processes round (D-276). Without the key it prints what needs no k
    `title`, `lane` (`meta`, `existing`, `new-game`), `inspiration` (required for a new game: name,
    author, link), `evidence` (the numbers or the issues, as `check` printed them), `cost` (PRs
    and what they touch: a new mode, Firebase rules, four languages, a new game is the whole of
-   `docs/AGREGAR-JUEGO.md`), `prototype` (how it is tried first: a lab project in Proyectos
+   `docs/ADD-GAME.md`), `prototype` (how it is tried first: a lab project in Proyectos
    activos, Spanish only, D-304; a flag; a variant), `proof` (the panel number that should move,
    and by how much, so the next round can say if it worked) and `recommendation` (one line: your
    call and why). `question` is optional: the yes/no line the owner reads (by default "Try

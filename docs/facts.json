@@ -1558,12 +1558,12 @@
   ],
   "documents": [
     {
-      "path": "docs/AGENTS.md",
-      "title": "The owner's agents and tools"
+      "path": "docs/ADD-GAME.md",
+      "title": "Adding a game"
     },
     {
-      "path": "docs/AGREGAR-JUEGO.md",
-      "title": "Cómo agregar un juego nuevo"
+      "path": "docs/AGENTS.md",
+      "title": "The owner's agents and tools"
     },
     {
       "path": "docs/ALEMAN.md",

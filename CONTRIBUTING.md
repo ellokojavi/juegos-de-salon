@@ -35,7 +35,7 @@ many as you need.
   game memory, touch interface, anti-cheating, tests, documentation). At the end it has a
   checklist.
 - **[docs/USABILIDAD.md](docs/USABILIDAD.md)**: how texts are written and where buttons go.
-- **[docs/AGREGAR-JUEGO.md](docs/AGREGAR-JUEGO.md)**, if it is a new game.
+- **[docs/ADD-GAME.md](docs/ADD-GAME.md)**, if it is a new game.
 - **[docs/DECISIONS.md](docs/DECISIONS.md)**: why things are the way they are. Before changing something
   that looks odd, look it up there.
 
