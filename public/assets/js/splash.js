@@ -301,7 +301,10 @@ function splashTracker(id) {
       s.api.patch(mod.dayPath(s.fp.env, mod.dayOf(Date.now())), Object.fromEntries(events.map(e => [`splash/${id}/${e}`, { '.sv': { increment: 1 } }]))).catch(() => {});
     } catch (_) { /* best effort */ }
   };
-  return events => { if (mod) send(events); else ready.then(() => mod && send(events)); };
+  return events => {
+    const go = () => { send(events); if (events.includes('shown')) mod.noteSeen(id); };
+    if (mod) go(); else ready.then(() => mod && go());
+  };
 }
 
 const ROOT = new URL('../../', import.meta.url);
