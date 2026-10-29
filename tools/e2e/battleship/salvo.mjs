@@ -3,7 +3,7 @@
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const SITE = process.env.SITE || 'http://localhost:8765';
-// The owner can turn the flag off for everyone from the panel (D-498): then there is no Salvo to try
+// The owner can turn the flag off for everyone on its /labs/ card (D-498, D-509): then there is no Salvo to try
 const { loadFlags, stateOf } = await import('../../../public/assets/js/flags.js');
 if (stateOf(await loadFlags({ store: null }), 'bn-salva') === 'off') { console.log('– bn-salva is off in the panel: nothing to try'); process.exit(0); }
 const OUT = output();

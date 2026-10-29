@@ -70,7 +70,7 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
 - **A single push at the end** (D-303), with the agents' fixes included.
 - **Everything in development sits behind the lab** (D-395, D-409, D-498): lab games under `/labs/`, anything
   new on a player page behind its runtime flag `flag('<id>')` (`public/assets/js/flags.js`) and listed in
-  `/labs/`; the owner publishes it by flipping `flags/<id>` to *all* in the panel (📣 Campaigns → 🚩 Lab flags),
+  `/labs/`; the owner publishes it by flipping `flags/<id>` to *all* on its `/labs/` card (the one place, D-498),
   no PR, and a later PR removes the gate and moves its card to La Bodega (D-479). Details: [docs/AGENTS.md](docs/AGENTS.md).
 - **Tests**: run every `*.test.mjs` / `*.test.py` before the PR (commands in [docs/SESSIONS.md](docs/SESSIONS.md));
   for end-to-end, run only the script of the screen you changed, never the whole `ci.mjs` (D-428):
