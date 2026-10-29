@@ -18,6 +18,7 @@ import { labAccess } from './lab-access.js';
 export const FLAGS = {
   'copa-crear': '🏆 La Copa: the new create screen',
   'copa-hoy': '🏆 La Copa: ▶ Jugar hoy on its home page card',
+  'copa-espera': '🏆 La Copa: ✅ Día N abre en… on its home page card',
   'bn-salva': '🎆 Battleship: Salvo',
   'keyboard-lift': '⌨️ Feedback form above the iOS keyboard',
   'uad-share-grids': '🟩 Uno al día: share grids for Agentes, Dudo, Generala and Battleship',
