@@ -1,5 +1,5 @@
 {
-  "version": "0.231.2",
+  "version": "0.231.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1520,6 +1520,7 @@
     "splash/languages.mjs",
     "stack/lab.mjs",
     "stick/lab.mjs",
+    "structured-data.mjs",
     "timeline/chat.mjs",
     "timeline/choice.mjs",
     "timeline/decks.mjs",
