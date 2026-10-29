@@ -19,6 +19,7 @@ import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { UMBRAL } from '../assets/js/arrastre.js';
 import { createChat } from '../assets/js/chat.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
+import { disparosGrid } from '../assets/js/share-grid.js';
 import { azarDel, puntajeNaval } from '../assets/js/uno-al-dia.js';
 import { N, COLS, FLEET, SHIP_SIZE, cellName, parseCell, isCell, cellsOf, isValidPlacement, isValidLayout, randomLayout, rotateNear, occupancy, layoutKey, shoot, allSunk, Hunter, nextShooter, salvoTurn, sha256, randomNonce, verifyPlayer } from './engine.js';
 import { GAME_ID, DEFAULT_CONFIG, LOCALES } from './rules.js';
@@ -27,6 +28,10 @@ import { renderQr } from '../assets/js/qr.js';
 import { flag } from '../assets/js/flags.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
 import { roomFlow } from '../assets/js/room-flow.js';
+
+// The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
+let gridsNuevos = false;
+flag('uad-share-grids').then(v => { gridsNuevos = v; });
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -852,7 +857,7 @@ function renderResult(v) {
     $('#result-actions').innerHTML = '';
     const mios = repliesBy('A');
     const s = puntajeNaval({ gano: v.winner === 'A', disparos: mios.length, aciertos: mios.filter(x => x.result !== 'agua').length });
-    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }));
+    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap(), grid: gridsNuevos ? disparosGrid(mios.map(x => x.result)) : undefined }));
   }
 }
 
