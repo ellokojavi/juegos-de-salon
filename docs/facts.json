@@ -1527,6 +1527,7 @@
     "splash/languages.mjs",
     "stack/lab.mjs",
     "stick/lab.mjs",
+    "structured-data.mjs",
     "timeline/chat.mjs",
     "timeline/choice.mjs",
     "timeline/decks.mjs",

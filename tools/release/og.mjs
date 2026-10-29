@@ -288,7 +288,9 @@ function jsonLd(p) {
   } : {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Juegos de Salón',
+    // The name the door shows in its language (Party Games, Jogos de Salão…), Juegos de Salón kept as the other name
+    name: COMMON[p.lang].appTitle,
+    ...(p.lang !== 'es' && { alternateName: 'Juegos de Salón' }),
     description: p.description,
     url,
     inLanguage: p.lang,

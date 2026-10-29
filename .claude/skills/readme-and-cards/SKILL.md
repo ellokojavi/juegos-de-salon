@@ -32,4 +32,5 @@ node tools/push/notify.mjs --dry-run | --test <code>           # which notificat
   "Cómo se juega" as a one-question FAQPage, the same text the cover shows: the owner chose that over a
   separate FAQ block on the cover), plus `public/sitemap.xml` (doors with hreflang alternates) and
   `public/robots.txt`. They are generated from `games.js` and each game's `rules.js`: never edited by hand, and `og.mjs check` blocks
-  them stale (`tools/release/json-ld.test.mjs`).
+  them stale (`tools/release/json-ld.test.mjs`). Each door's WebSite name is in its own language, and
+  `tools/e2e/structured-data.mjs` checks against the rendered page that every name and FAQ answer is what it shows.
