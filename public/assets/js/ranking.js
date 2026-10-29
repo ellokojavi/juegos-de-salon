@@ -223,7 +223,7 @@ function fila(f, yo, victorias = false, campeon = null) {
  * time on this phone shows while the first one loads, and the page (not the block) reloads it when
  * the player signs in or out.
  */
-export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['semana', 'siempre', 'amigos'], alTocar = () => {}, rapido = false }) {
+export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['semana', 'siempre', 'amigos'], alTocar = () => {}, rapido = false, ajustar = null }) {
   const T = R();
   let actual = pestanas[0];
   const lista = el('div', { class: 'rk-lista', 'aria-live': 'polite' });
@@ -251,6 +251,8 @@ export function bloqueRanking({ juego, titulo = null, hint = null, pestanas = ['
         v = await PESTANAS[actual].leer(J, juego);
         campeon = conPuntos ? await campeonDelMes(J) : null;
       }
+      // The page's own correction of the month's points (D-500: /today/ adds this phone's pending days)
+      if (ajustar && conPuntos) v = (await ajustar(v)) || v;
       if (mio !== turno) return;
       if (rapido && !v.amigos) guardarVisto(guardada(), { top: v.top, vecinos: v.vecinos || [], campeon });
       pintar({ ...v, campeon });

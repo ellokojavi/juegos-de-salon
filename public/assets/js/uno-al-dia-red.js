@@ -11,7 +11,7 @@
 import {
   estado, leer, juntar, numDia, fechaDeNum, semanaDe, recorrer, porJuego, fechaLocal, KEY,
 } from './uno-al-dia.js';
-import { UNO_AL_DIA, UAD_RACHA, periodoDia, periodoMes, SIEMPRE, esJid } from './records.js';
+import { UNO_AL_DIA, UAD_RACHA, periodoDia, periodoMes, SIEMPRE, esJid, ordenar } from './records.js';
 import { walk, lateDays, seasonOf } from './daily-points.js';
 import { trackUnoAlDia } from './transport/stats.js';
 import { flag } from './flags.js';
@@ -173,6 +173,21 @@ export function conMiCuenta({ filas, jid, w, hoy }) {
   // Ties share the place, as the table does (the month's rows all have ms 0)
   const arriba = filas.filter(f => f.jid !== jid && f.s > s);
   return { fila: { ...(fila || { jid }), s, puesto: arriba.length + 1 }, delante: arriba.at(-1) || null };
+}
+
+/**
+ * The month's ranking as /today/ lists it (D-500): this player's row with the same total the big
+ * number shows (`conMiCuenta`), and the list ordered again, so the two never disagree. `v` is a read
+ * table, `{ top, vecinos }`; a row among the neighbours only changes its points and place.
+ */
+export function tablaConMiCuenta(v, { jid, w, hoy }) {
+  const top = v?.top || [], vecinos = v?.vecinos || [];
+  const c = conMiCuenta({ filas: [...top, ...vecinos], jid, w, hoy });
+  const antes = [...top, ...vecinos].find(f => f.jid === jid);
+  // Not listed (no row before the rebuild counts a day) or nothing pending: the table as read
+  if (!antes || c.fila === antes) return v;
+  if (vecinos.some(f => f.jid === jid)) return { ...v, vecinos: vecinos.map(f => (f.jid === jid ? { ...f, s: c.fila.s, puesto: c.fila.puesto } : f)) };
+  return { ...v, top: ordenar(top.map(f => (f.jid === jid ? { ...f, s: c.fila.s, ms: 0 } : f))) };
 }
 
 /** Las filas leídas de una tabla de Uno al día (hasta 100, en orden). */
