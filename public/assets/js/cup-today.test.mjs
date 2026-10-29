@@ -1,7 +1,7 @@
 // La Copa's ▶ Jugar hoy on the home page (flag copa-hoy): which cup and day it opens, from what La Copa kept
 import assert from 'node:assert/strict';
 import { nuevaMeta, porJugar } from '../../cup/engine.js';
-import { pendingCup, nextCupDay, untilText } from './cup-today.js';
+import { pendingCup, nextCupDay, untilText, finalPlayed } from './cup-today.js';
 
 const H = 60 * 60 * 1000;
 const meta = nuevaMeta({ nombre: 'Copa', dias: 7, inicio: '2026-09-28', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0 });
@@ -35,4 +35,13 @@ assert.equal(nextCupDay(store('bbbbbb', []), dia(0)), null, 'no cups: no countdo
 assert.equal(untilText(5 * H + 12 * 60000), '5 h 12 min');
 assert.equal(untilText(27 * H), '1 d 3 h');
 assert.equal(untilText(30000), '1 min');
+// The final played: nothing to come, the cup still open
+const fin = meta.win[7].a + H;
+const todo = { meta, players: { aaaaaa: players.aaaaaa }, results: Object.fromEntries([1, 2, 3, 4, 5, 6, 7].map(d => [d, { aaaaaa: 1 }])) };
+const lista = (x, cups = [{ code: 'K7Q2X' }]) => { const m = { 'juegos-de-salon:copa:mias': JSON.stringify(cups), 'juegos-de-salon:copa:lista:K7Q2X': JSON.stringify(x) }; return { getItem: k => m[k] ?? null }; };
+assert.deepEqual(finalPlayed(lista(todo), fin), { code: 'K7Q2X', at: meta.end }, 'final played: closes at the end');
+assert.equal(finalPlayed(lista({ ...todo, results: { 1: { aaaaaa: 1 } } }), fin), null, 'final not played: nothing');
+assert.equal(finalPlayed(lista(todo), meta.end), null, 'closed: nothing');
+assert.equal(finalPlayed(lista(todo), meta.win[6].a + H), null, 'not the last day yet');
+assert.equal(finalPlayed(lista(todo, []), fin), null, 'no cups');
 console.log('cup-today: ok');
