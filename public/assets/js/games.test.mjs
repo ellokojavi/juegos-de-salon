@@ -97,8 +97,8 @@ console.log(`games: los ${GAMES.length} juegos tienen motor, tests, gancho y esp
   assert.deepEqual(sinFecha.map(g => g.id), [], 'a new game on the home page brings `nuevoDesde: \'YYYY-MM-DD\'` (D-333)');
   const g = { nuevoDesde: '2026-10-15' };
   assert.ok(esNuevo(g, new Date('2026-10-15T09:00:00')), 'new from its day');
-  assert.ok(esNuevo(g, new Date('2026-10-28T23:00:00')), `and for ${DIAS_NUEVO} days`);
-  assert.ok(!esNuevo(g, new Date('2026-10-29T01:00:00')), 'and not after');
+  assert.ok(esNuevo(g, new Date('2026-10-21T23:00:00')), `and for ${DIAS_NUEVO} days`);
+  assert.ok(!esNuevo(g, new Date('2026-10-22T01:00:00')), 'and not after');
   assert.ok(!esNuevo(g, new Date('2026-10-14T23:00:00')), 'nor before');
   assert.ok(!esNuevo({}, new Date()), 'without a date it is not new');
   // D-335: while new, a game goes right after La Copa; afterwards, back to its place by popularity
