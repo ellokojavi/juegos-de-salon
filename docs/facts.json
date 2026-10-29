@@ -17,7 +17,7 @@
     "pt": 150,
     "de": 150
   },
-  "commonKeys": 40,
+  "commonKeys": 41,
   "games": [
     {
       "id": "copa",
@@ -1062,6 +1062,7 @@
     "public/assets/js/compartir.js",
     "public/assets/js/controls.js",
     "public/assets/js/cuenta-regresiva.js",
+    "public/assets/js/cup-today.js",
     "public/assets/js/dado3d.js",
     "public/assets/js/daily-points.js",
     "public/assets/js/daily-recap.js",
@@ -1303,6 +1304,7 @@
     "public/assets/js/buzon.test.mjs",
     "public/assets/js/compartir.test.mjs",
     "public/assets/js/controls.test.mjs",
+    "public/assets/js/cup-today.test.mjs",
     "public/assets/js/daily-attempt.test.mjs",
     "public/assets/js/daily-points.test.mjs",
     "public/assets/js/daily-recap.test.mjs",
@@ -1499,6 +1501,7 @@
     "hangman/languages.mjs",
     "hangman/local.mjs",
     "hangman/online.mjs",
+    "home/cup-today.mjs",
     "home/dice.mjs",
     "home/instant.mjs",
     "home/lab.mjs",
