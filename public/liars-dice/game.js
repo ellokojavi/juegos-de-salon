@@ -21,6 +21,7 @@ import { trackStart, trackVisit, trackFinish } from '../assets/js/transport/stat
 import { finDePartida, bloqueVictorias } from '../assets/js/ranking.js';
 import { createSessionStore, createNameStore } from '../assets/js/session.js';
 import { modoHoy, introHoy, terminarHoy, ponerTarjeta, empezarHoy } from '../assets/js/uno-al-dia-ui.js';
+import { vidasGrid } from '../assets/js/share-grid.js';
 import { azarDel, puntajeDudo } from '../assets/js/uno-al-dia.js';
 import {
   PINTAS, MIN_PLAYERS, MAX_PLAYERS, MIN_CALZAR, buildState, botMove, minBid, bidOk,
@@ -1082,7 +1083,7 @@ function renderResult(v) {
   if (S.hoy) {
     const gano = v.winner === 'A';
     const s = puntajeDudo({ gano, dados: v.st.A.dice, rondas: gano ? v.history.length : v.history.length - 1 });
-    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap() }));
+    ponerTarjeta(terminarHoy(S.hoy, { s, ms: Date.now() - S.hoy.inicio, lang, alTocar: () => SFX.tap(), grid: vidasGrid(v.st.A.dice, M.config.dice || 5) }));
   } else acciones.append(
     el('button', {
       class: 'btn btn--yellow',
