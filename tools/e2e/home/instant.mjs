@@ -1,7 +1,8 @@
 // The home page drawn at once (D-435): the first visit saves a
 // copy of the list, the next one draws it before any module arrives and the real cards take its place
 // unchanged; a link with a filter never uses it; and once today's Uno al día is played, the card's place
-// comes fresh from the month's table (the test store), over the stale one cached. Prints ✗ if something fails.
+// comes fresh from the month's table (the test store), over the stale one cached, and a copy
+// saved before playing is not drawn. Prints ✗ if something fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 const OUT = output('/tmp/home-instant');
@@ -53,6 +54,8 @@ await ev(`(() => {
   localStorage.setItem('uad-pts-cache', JSON.stringify({ p: '${mes}', s: 120, r: 9, d: '2000-01-01', h: true, l: '#9 del mes' }));
 })()`);
 await b.go(`${SITE}/?test`, 300);
+// The copy was saved before today was played: its ▶ Jugar hoy is never shown once it is
+ok(await ev(`window.__before !== true`), 'a copy drawn before today was played is not used after');
 ok(await waitFor(`/#2/.test(document.getElementById('btn-uad-chip')?.textContent || '')`), 'the card\'s chip changes to the fresh place, #2');
 const cache = await ev(`JSON.parse(localStorage.getItem('uad-pts-cache'))`);
 ok(cache?.r === 2 && cache.s === 300 && cache.d === hoy && /Ana/.test(cache.l || ''), `the cache /today/ reads has the fresh place and who is ahead (${JSON.stringify(cache)})`);
