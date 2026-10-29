@@ -3,7 +3,9 @@
 // It plays whole games and checks, on every phone, that the screens agree; that the obligada
 // round's notice reaches every phone, that each phone sees its rivals' dice and never its own;
 // the calzar hint, the closed ace and its reason, half plus one into aces, Pasar and doubting it,
-// the siciliana, a reload mid-obligada and the rematch. At the end every phone leaves the room
+// the siciliana, a reload mid-obligada and the rematch. With SICILIANA=1 the first bid of the game
+// is always doubted, so the siciliana really happens: every phone must show its line and the
+// loser must be down two dice on every phone. At the end every phone leaves the room
 // for good (`transport.dispose()`), so the room is deleted at once instead of waiting to expire.
 //
 //   PHONES=3 [PASAR=1] [SICILIANA=1] [NOLAB_SITE=http://localhost:87yy] [REMATCH=1] node tools/e2e/liars-dice/rooms-classic.mjs [out]
@@ -100,6 +102,8 @@ async function sync() {
 }
 
 /* ---------------- The game ---------------- */
+let firstRound = null, sicForced = false, sicBefore = null;
+const sicSaw = new Set();
 async function playGame(tag) {
   let k = 0, lastRound = -1;
   while (k++ < 600) {
@@ -114,7 +118,7 @@ async function playGame(tag) {
         (seen.notice[rd] ||= new Set()).add(r);
         if (seen.notice[rd].size === 1) await shot(d, `obligada-notice-r${rd}-${r}`);
       }
-      if (await ev(d, `!!document.querySelector('#handoff .siciliana-why')`)) { seen.sicWhy++; if (seen.sicWhy === 1) await shot(d, 'siciliana-why'); }
+      if (await ev(d, `!!document.querySelector('#handoff .siciliana-why')`)) { seen.sicWhy++; sicSaw.add(r); if (sicSaw.size === 1) await shot(d, 'siciliana-why'); }
       if (await ev(d, `!!document.querySelector('#handoff .reveal')`) && /pas/i.test(o) && seen.passDoubted && !seen.passRevealShot) { seen.passRevealShot = 1; await shot(d, 'pass-reveal'); }
       await closeOverlay(d); await sleep(150);
     }
@@ -123,6 +127,16 @@ async function playGame(tag) {
     const v = ss[0];
     if (v.done || (await screen(A)) === 'screen-result') break;
     if (v.round !== lastRound) { lastRound = v.round; }
+    if (firstRound === null) firstRound = v.round;
+    // The siciliana's outcome, once the forced doubt was revealed: the same loss on every phone
+    if (sicBefore && v.round !== firstRound) {
+      const lost = ss.map(s => Object.fromEntries(Object.entries(sicBefore).map(([r, n]) => [r, n - (s.dice[r] || 0)])));
+      const same = lost.every(x => JSON.stringify(x) === JSON.stringify(lost[0]));
+      const losers = Object.entries(lost[0]).filter(([, n]) => n > 0);
+      check(same && losers.length === 1 && losers[0][1] === 2, `siciliana: ${losers.map(([r, n]) => `${r} lost ${n}`).join(', ')} on every phone (${lost.map(x => JSON.stringify(x)).join(' / ')})`);
+      seen.sicOutcome = losers.map(([r, n]) => `${r}-${n}`).join(',');
+      sicBefore = null;
+    }
     // Open obligada round: everyone sees the others' dice and never their own
     if (v.ob && v.phase === 'bid') {
       seen.obTurns++;
@@ -146,7 +160,7 @@ async function playGame(tag) {
         await d.go(`${h}/liars-dice/?room=${code}`, 500);
         const ok = await d.until(`window.__dudo?.view()?.round === ${v.round}`, 15000);
         if (PATCH) await patch(d);
-        for (let j = 0; j < 6 && (await overlay(d)); j++) { if (await ev(d, `!!document.querySelector('#handoff .obligada-notice')`)) seen.reloadNotice = true; await closeOverlay(d); await sleep(200); }
+        for (let j = 0; j < 6 && (await overlay(d)); j++) { if (await ev(d, `!!document.querySelector('#handoff .obligada-notice')`)) { seen.reloadNotice = true; (seen.notice[v.round] ||= new Set()).add(r); } await closeOverlay(d); await sleep(200); }
         const own = PATCH ? false : await ev(d, `!!document.querySelector('#mine .die:not(.hidden-die)')`);
         if (PATCH) seen.skipOwn = r;
         check(ok && !own, `${r} reloaded mid-obligada: back in round ${v.round} in ${Date.now() - t0} ms, own die still hidden`);
@@ -157,6 +171,13 @@ async function playGame(tag) {
     if (v.phase !== 'bid' || !v.current) { await sleep(300); continue; }
     const d = devs[v.current];
     if (!(await d.until(`!!document.querySelector('#actions .btn--yellow')`, 4000))) { await sleep(300); continue; }
+    // SICILIANA=1: doubt the game's first bid, the only one the variant makes cost two dice
+    if (SICILIANA && !sicForced && v.round === firstRound && v.bids === 1) {
+      sicForced = true; sicBefore = { ...v.dice };
+      const t = await ev(d, `(()=>{const b=document.querySelector('#actions .btn-row .btn');const t=b?.textContent;b?.click();return t})()`);
+      console.log(`  ${v.current} doubts the first bid (${v.bid}) a la siciliana: "${t}"`);
+      await sleep(1200); continue;
+    }
     // Hints on the phone on turn
     if (await ev(d, `!!document.querySelector('#actions .calzar-hint')`)) {
       const one = await ev(d, `!!document.querySelector('#actions .calzar-hint.one-die')`);
@@ -239,6 +260,11 @@ if (REMATCH && end.done) {
 const rounds = Object.keys(seen.notice);
 const alive0 = N;
 for (const rd of rounds) check(seen.notice[rd].size >= 2, `round ${rd}: the obligada notice reached ${[...seen.notice[rd]].join(',')}`);
+if (SICILIANA) {
+  check(sicForced, 'siciliana: the first bid of the game was doubted');
+  check(ROLES.every(r => sicSaw.has(r)), `siciliana: every phone saw its line (${[...sicSaw].join(',')})`);
+  check(!!seen.sicOutcome, `siciliana: the outcome was checked on every phone (${seen.sicOutcome || 'never'})`);
+}
 check(seen.ownShown === 0, `no phone ever showed its own die in obligada (${seen.ownShown})`);
 console.log('seen:', JSON.stringify({ ...seen, notice: Object.fromEntries(rounds.map(k => [k, [...seen.notice[k]]])), syncAvg: seen.syncN ? Math.round(seen.syncSum / seen.syncN) : 0 }));
 for (const r of ROLES) {
