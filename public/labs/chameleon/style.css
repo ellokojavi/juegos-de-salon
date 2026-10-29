@@ -1,0 +1,69 @@
+/* ==========================================================
+   El Camaleón — the game's own styles (lab, #898)
+   ========================================================== */
+
+.screen { display: none; flex-direction: column; flex: 1; gap: 12px; }
+.screen.active { display: flex; animation: slideUp 0.3s ease-out both; }
+.center { text-align: center; }
+
+/* ---------- Intro ---------- */
+.intro-hero { text-align: center; padding: 10px 0 8px; }
+.lizard { font-size: 4.5rem; display: block; text-align: center; filter: drop-shadow(0 0 20px rgba(46, 230, 120, 0.6)); }
+.how { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
+.credito { font-size: 0.85rem; margin: 0; }
+.credito a { color: inherit; }
+
+/* ---------- Setup ---------- */
+.setup-hint { text-align: center; color: var(--muted); margin: 0; }
+.players-form { display: grid; gap: 10px; }
+.player-row {
+  display: grid; grid-template-columns: 26px 1fr 44px; gap: 8px; align-items: center;
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; padding: 6px 8px;
+}
+.player-row .num { font: 900 1.2rem var(--font-num); color: var(--yellow); text-align: center; }
+.player-row input {
+  width: 100%; min-width: 0; font: 900 1.05rem var(--font-body); color: var(--ink);
+  background: rgba(0, 0, 0, 0.25); border: 2px solid transparent; border-radius: 12px; padding: 11px 12px; outline: none;
+}
+.player-row input:focus { border-color: var(--cyan); }
+.player-row .del { border: 0; background: transparent; color: var(--muted); font-size: 1.3rem; width: 44px; height: 44px; cursor: pointer; }
+.player-row .del:disabled { opacity: 0.2; }
+
+/* ---------- Topic ---------- */
+.round-label { margin: 0; }
+.topics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.topics #btn-topic-random { grid-column: 1 / -1; }
+.topics .topic { min-height: 56px; }
+
+/* ---------- Card ---------- */
+.secret-card { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; padding-top: 24px; }
+.card-topic { font: 900 1.2rem var(--font-body); color: var(--muted); }
+.secret-word { font-family: var(--font-display); font-size: clamp(2.2rem, 12vw, 3.4rem); color: var(--cyan); line-height: 1.05; overflow-wrap: anywhere; }
+.secret-word.chameleon { color: var(--yellow); font-size: clamp(1.8rem, 9vw, 2.6rem); }
+.big-lizard { font-size: 5rem; }
+
+/* ---------- Table ---------- */
+.table-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.topic-name { font: 900 1.15rem var(--font-body); }
+/* 4 × 4 words: at 320 px each cell is ~68 px, so long words break with hyphens */
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.grid .cell {
+  min-height: 52px; display: grid; place-items: center; text-align: center; padding: 4px 3px;
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 10px;
+  font: 800 clamp(0.68rem, 3.4vw, 0.9rem)/1.1 var(--font-body); color: var(--ink); hyphens: auto;
+}
+.grid.pick .cell { cursor: pointer; border-color: var(--cyan); }
+.grid.pick .cell:active { transform: scale(0.96); }
+.grid .cell.secret { background: var(--cyan); color: #03302c; }
+.grid .cell.miss { background: var(--pink); color: #fff; }
+.step { display: grid; gap: 8px; }
+.step p { margin: 0; }
+.suspects { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.secret-was b { color: var(--cyan); }
+.ranking { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.ranking li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 2px; }
+.ranking li:first-child { font-weight: 900; }
+.ranking .pts { font-family: var(--font-num); color: var(--yellow); }
+
+/* ---------- End ---------- */
+.finale { text-align: center; }
