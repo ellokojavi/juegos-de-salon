@@ -163,6 +163,8 @@ export const COMMON = {
     // Los rankings y el jugador (D-212): nombre y PIN, como en La Copa, pero para todos los juegos
     // El globo de la portada para agregar la app a inicio (D-232)
     // Uno al día (D-230): el botón de la portada, el dado, la tarjeta del resultado y /today/
+    // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
+    cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa' },
     uad: {
       nombre: 'Uno al día',
       jugar: 'Jugar hoy',
@@ -408,6 +410,8 @@ export const COMMON = {
     shareDownloaded: 'The image was downloaded and the text was copied.',
     // El globo de la portada para agregar la app a inicio (D-232)
     // One a Day (D-230): the home button, the die, the result card and /today/
+    // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
+    cupToday: { play: 'Play today', aria: 'Play your day of The Cup today' },
     uad: {
       nombre: 'One a Day',
       jugar: 'Play today',
@@ -651,6 +655,8 @@ export const COMMON = {
     shareDownloaded: 'A imagem foi baixada e o texto foi copiado.',
     // El globo de la portada para agregar la app a inicio (D-232)
     // Um por dia (D-230): o botão da página inicial, o dado, o cartão do resultado e /today/
+    // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
+    cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa' },
     uad: {
       nombre: 'Um por dia',
       jugar: 'Jogar hoje',
@@ -894,6 +900,8 @@ export const COMMON = {
     shareDownloaded: 'Das Bild wurde gespeichert und der Text kopiert.',
     // El globo de la portada para agregar la app a inicio (D-232)
     // Spiel des Tages (D-230): der Knopf auf der Startseite, der Würfel, die Ergebniskarte und /today/
+    // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
+    cupToday: { play: 'Heute spielen', aria: 'Heute deinen Tag im Pokal spielen' },
     uad: {
       nombre: 'Spiel des Tages',
       jugar: 'Heute spielen',

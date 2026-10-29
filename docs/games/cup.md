@@ -38,6 +38,8 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   13 games to change, move or pick the version of a day, Ahora/Mañana with their weekday, the PIN once with 👁, and the language, audience and
   link folded in "More options"; the length (3 or 7 days) goes next to when it starts (D-437). The test store shows it only with `&lab` (`tools/e2e/cup/create-week.mjs`).
 
+- **On the site's home page** (lab, flag `copa-hoy`): La Copa's card shows **▶ Jugar hoy** and opens `/cup/?<code>&day=<n>` when one of this phone's cups has a day to play (the days left, `porJugar` in `engine.js`, which the cup keeps on the phone each time it is read; `assets/js/cup-today.js` reads them without loading La Copa, D-378); with nothing to play it stays as always. A day played on another phone shows until this phone opens the cup again (`tools/e2e/home/cup-today.mjs`).
+
 ### Pendiente (después de la v1)
 
 Recordatorios `.ics` (LIG-29), verificación cruzada de puntajes (LIG-30), papelera de copas

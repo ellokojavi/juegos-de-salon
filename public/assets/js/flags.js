@@ -17,6 +17,7 @@ import { labAccess } from './lab-access.js';
 /** Every flag a page asks, with the name the panel shows. A new one is a row here and its card. */
 export const FLAGS = {
   'copa-crear': '🏆 La Copa: the new create screen',
+  'copa-hoy': '🏆 La Copa: ▶ Jugar hoy on its home page card',
   'bn-salva': '🎆 Battleship: Salvo',
   'keyboard-lift': '⌨️ Feedback form above the iOS keyboard',
   'uad-share-grids': '🟩 Uno al día: share grids for Agentes, Dudo, Generala and Battleship',
