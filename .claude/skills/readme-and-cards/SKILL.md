@@ -1,6 +1,6 @@
 ---
 name: readme-and-cards
-description: The README, its screenshots and the WhatsApp/social link cards of Juegos de Salón (C-13, D-51, D-181). Use before touching README.md, docs/capturas.json, screenshots, og cards, the app icons or the push-notification tools (vapid.mjs, notify.mjs), and whenever the owner says "Actualiza el README".
+description: The README, its screenshots and the WhatsApp/social link cards of Juegos de Salón (C-13, D-51, D-181). Use before touching README.md, docs/capturas.json, screenshots, og cards, the app icons or the push-notification tools (vapid.mjs, notify.mjs, release.mjs), and whenever the owner says "Actualiza el README".
 ---
 
 # README, screenshots and social cards (C-13, D-51, D-181)
@@ -17,6 +17,7 @@ node tools/release/og.mjs cards | images | check           # WhatsApp cards (D-7
 node tools/release/icons.mjs                                    # PNG icons for the installable app, from assets/icon.svg (D-221)
 node tools/push/vapid.mjs                                        # the notifications key: already run (D-225), not redone
 node tools/push/notify.mjs --dry-run | --test <code>           # which notifications it would send (Cups and Uno al día (One a Day)), or a test one to a Cup (D-224, D-230)
+node tools/push/release.mjs --pr <n> --version <x.y.z> [--failed <job>] [--run-url URL] [--dry-run]   # the owner's "live" notification, run by publish.yml (D-504)
 ```
 
 - **An out-of-date screenshot is a warning in an ordinary PR. "Actualiza el README" (update the README) is a full pass**,
