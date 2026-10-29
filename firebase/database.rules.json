@@ -1498,6 +1498,9 @@
         "note": {
           ".validate": "newData.isString() && newData.val().length <= 500"
         },
+        "kind": {
+          ".validate": "newData.isString() && newData.val().matches(/^(publish|bodega)$/)"
+        },
         "started": {
           ".validate": "newData.isNumber()"
         },
