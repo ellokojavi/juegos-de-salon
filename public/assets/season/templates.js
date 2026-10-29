@@ -15,8 +15,8 @@
  *   flyby      an emoji that crosses the home page once per visit
  *   peek       { emoji, chance }: now and then it peeks from the bottom edge of the home page
  *   corner     true: a decoration in the top right corner, drawn by the template's css
- *   scares     emojis for a big fright now and then on the home page: 💀 looms from a side, 🕷️
- *              scuttles across, 👀 stare and blink from the dark, 🧟 shambles in from below; behind flag('season-scares') (D-498), lab: #seccion-season-scares
+ *   scares     emojis for a big fright on the home page, a different one every 40 s: 💀 looms from a side, 🕷️
+ *              scuttles across, 👀 stare and blink from the dark, 🧟 shambles in from below
  */
 export const TEMPLATES = {
   halloween: {
