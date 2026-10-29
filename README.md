@@ -462,10 +462,10 @@ node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/labs/chameleon/engine.test.mjs
 node public/labs/code/engine.test.mjs
+node public/labs/dominorama/engine.test.mjs
 node public/labs/exploding-numbers/engine.test.mjs
 node public/labs/fourth-king/engine.test.mjs
 node public/labs/julep/engine.test.mjs
-node public/labs/pips/engine.test.mjs
 node public/labs/stack/engine.test.mjs
 node public/labs/stick/engine.test.mjs
 node public/liars-dice/engine.test.mjs
@@ -775,6 +775,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🦎 El Camaleón (lab prototype, in Juegos en prueba)](docs/games/chameleon.md)
 - [🔐 La clave (prototipo del laboratorio, en La Bodega)](docs/games/code.md)
 - [La Copa](docs/games/cup.md)
+- [🎲 Dominorama (lab prototype, in Juegos en prueba)](docs/games/dominorama.md)
 - [💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)](docs/games/exploding-numbers.md)
 - [Especificación: Cuarto Rey](docs/games/fourth-king.md)
 - [Diseño: Generala](docs/games/generala.md)
@@ -782,7 +783,6 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Diseño: Julepe](docs/games/julep.md)
 - [Diseño: Dudo](docs/games/liars-dice.md)
 - [🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)](docs/games/paint-mines.md)
-- [🎲 Pips (lab prototype, in Juegos en prueba)](docs/games/pips.md)
 - [📐 Loteo (Plots · Loteamento · Parzellen)](docs/games/plots.md)
 - [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)
 - [🧱 Stack (lab prototype, in Juegos en prueba)](docs/games/stack.md)

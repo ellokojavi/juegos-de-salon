@@ -1,5 +1,5 @@
 {
-  "version": "0.233.0",
+  "version": "0.233.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1234,6 +1234,8 @@
     "public/labs/code/engine-palabra.js",
     "public/labs/code/engine.js",
     "public/labs/code/game.js",
+    "public/labs/dominorama/engine.js",
+    "public/labs/dominorama/game.js",
     "public/labs/exploding-numbers/engine.js",
     "public/labs/exploding-numbers/game.js",
     "public/labs/fourth-king/engine.js",
@@ -1243,8 +1245,6 @@
     "public/labs/julep/engine.js",
     "public/labs/julep/game.js",
     "public/labs/julep/rules.js",
-    "public/labs/pips/engine.js",
-    "public/labs/pips/game.js",
     "public/labs/publish.js",
     "public/labs/stack/engine.js",
     "public/labs/stack/game.js",
@@ -1358,11 +1358,11 @@
     "public/labs/chameleon/engine.test.mjs",
     "public/labs/code/engine-palabra.test.mjs",
     "public/labs/code/engine.test.mjs",
+    "public/labs/dominorama/engine.test.mjs",
     "public/labs/exploding-numbers/engine.test.mjs",
     "public/labs/fourth-king/engine.test.mjs",
     "public/labs/julep/engine.test.mjs",
     "public/labs/listed.test.mjs",
-    "public/labs/pips/engine.test.mjs",
     "public/labs/stack/engine.test.mjs",
     "public/labs/stick/engine.test.mjs",
     "public/liars-dice/engine.test.mjs",
@@ -1473,6 +1473,7 @@
     "daily-player.mjs",
     "daily-variants.mjs",
     "daily.mjs",
+    "dominorama/lab.mjs",
     "exploding-numbers/lab.mjs",
     "favorites.mjs",
     "feedback-prod.mjs",
@@ -1517,7 +1518,6 @@
     "paint-mines/game.mjs",
     "panel/views.mjs",
     "paths.mjs",
-    "pips/lab.mjs",
     "plots/numbers.mjs",
     "plots/utilities.mjs",
     "room-cap.mjs",
@@ -1654,6 +1654,10 @@
       "title": "La Copa"
     },
     {
+      "path": "docs/games/dominorama.md",
+      "title": "🎲 Dominorama (lab prototype, in Juegos en prueba)"
+    },
+    {
       "path": "docs/games/exploding-numbers.md",
       "title": "💥 Números explosivos (prototipo del laboratorio, en Juegos en prueba)"
     },
@@ -1680,10 +1684,6 @@
     {
       "path": "docs/games/paint-mines.md",
       "title": "🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)"
-    },
-    {
-      "path": "docs/games/pips.md",
-      "title": "🎲 Pips (lab prototype, in Juegos en prueba)"
     },
     {
       "path": "docs/games/plots.md",

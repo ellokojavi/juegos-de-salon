@@ -1,4 +1,4 @@
-/* Pips (lab, D-381). What is shared lives in assets/css/base.css. */
+/* Dominorama (lab, D-381). What is shared lives in assets/css/base.css. */
 
 /* The page's background: a deep night with a little color, like a game table */
 body {
@@ -11,12 +11,12 @@ body {
 }
 
 .portada { text-align: center; display: grid; gap: 10px; padding-top: 8px; }
-.titulo-pips { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
-.titulo-pips .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
-.titulo-pips .logo { --t: 26px; transform: rotate(-12deg); animation: pips-mece 3s ease-in-out infinite; }
-.titulo-pips.chico .display { font-size: 1.6rem; }
-.titulo-pips.chico .logo { --t: 18px; }
-@keyframes pips-mece { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(6deg) translateY(-2px); } }
+.titulo-dominorama { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
+.titulo-dominorama .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.titulo-dominorama .logo { --t: 26px; transform: rotate(-12deg); animation: dominorama-mece 3s ease-in-out infinite; }
+.titulo-dominorama.chico .display { font-size: 1.6rem; }
+.titulo-dominorama.chico .logo { --t: 18px; }
+@keyframes dominorama-mece { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(6deg) translateY(-2px); } }
 .credito { margin: 0; font-size: 0.85rem; color: var(--muted); }
 .credito a { color: var(--cyan); }
 .pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
@@ -41,12 +41,12 @@ button.ficha { cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
 button.ficha:active { transform: scale(0.94); }
 
 /* The board: one square cell of --s per place, colored by its zone (--z), its edges where the zone ends */
-.tablero-pips {
+.tablero-dominorama {
   --s: min(64px, calc((100vw - 40px) / var(--w)), calc((100svh - 400px) / var(--h)));
   position: relative; display: grid; grid-template-columns: repeat(var(--w), var(--s)); grid-template-rows: repeat(var(--h), var(--s));
   justify-content: center; margin: 4px auto; transition: filter 0.3s;
 }
-.tablero-pips.chico { --s: min(52px, calc((100vw - 64px) / var(--w))); }
+.tablero-dominorama.chico { --s: min(52px, calc((100vw - 64px) / var(--w))); }
 .celda {
   --z: rgba(255,255,255,0.35);
   margin: 1px; padding: 0; border: 0; border-radius: 6px; cursor: pointer;
@@ -58,8 +58,8 @@ button.ficha:active { transform: scale(0.94); }
 .celda.bt { border-top: 2px dashed var(--z); } .celda.br { border-right: 2px dashed var(--z); }
 .celda.bb { border-bottom: 2px dashed var(--z); } .celda.bl { border-left: 2px dashed var(--z); }
 .celda.libre.bt, .celda.libre.br, .celda.libre.bb, .celda.libre.bl { border-color: rgba(255,255,255,0.18); }
-.celda.no { animation: pips-no 0.35s; }
-@keyframes pips-no { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.celda.no { animation: dominorama-no 0.35s; }
+@keyframes dominorama-no { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 /* The rule: a small diamond inside the zone's last cell, bottom right (D-385); a tap lights its zone */
 .regla {
   z-index: 2; cursor: pointer; align-self: end; justify-self: end; margin: 0 4px 4px 0;
@@ -68,34 +68,34 @@ button.ficha:active { transform: scale(0.94); }
 }
 .regla > span { transform: rotate(-45deg); font: 900 0.72rem var(--font-num); color: #140a28; white-space: nowrap; }
 .regla.ok { box-shadow: 0 0 0 3px #9dff3a, 0 2px 6px rgba(0,0,0,0.45); }
-.regla.mal { background: #ff3b3b; animation: pips-no 0.35s; }
+.regla.mal { background: #ff3b3b; animation: dominorama-no 0.35s; }
 .regla.mal > span { color: #fff; }
-.tablero-pips.chico .regla { width: 22px; height: 22px; margin: 0 2px 2px 0; pointer-events: none; }
+.tablero-dominorama.chico .regla { width: 22px; height: 22px; margin: 0 2px 2px 0; pointer-events: none; }
 /* The zone in focus: its cells light up and the rest dim */
-.tablero-pips .celda, .tablero-pips .regla { transition: opacity 0.15s, box-shadow 0.15s, background 0.15s; }
-.tablero-pips.foco .celda:not(.encendida), .tablero-pips.foco .regla:not(.encendida) { opacity: 0.45; }
-.tablero-pips .celda.encendida:not(.libre) { background: color-mix(in srgb, var(--z) 55%, transparent); box-shadow: 0 0 14px var(--z); }
-.tablero-pips .regla.encendida { transform: rotate(45deg) scale(1.25); }
+.tablero-dominorama .celda, .tablero-dominorama .regla { transition: opacity 0.15s, box-shadow 0.15s, background 0.15s; }
+.tablero-dominorama.foco .celda:not(.encendida), .tablero-dominorama.foco .regla:not(.encendida) { opacity: 0.45; }
+.tablero-dominorama .celda.encendida:not(.libre) { background: color-mix(in srgb, var(--z) 55%, transparent); box-shadow: 0 0 14px var(--z); }
+.tablero-dominorama .regla.encendida { transform: rotate(45deg) scale(1.25); }
 /* Dragging: the cells it would land on (red when taken), the domino that follows the finger */
 .celda.destino { outline: 3px solid #fff; outline-offset: -3px; }
 .celda.destino.no { outline-color: #ff3b3b; }
-.bandeja .ficha, .tablero-pips .puesta { touch-action: none; -webkit-touch-callout: none; }
+.bandeja .ficha, .tablero-dominorama .puesta { touch-action: none; -webkit-touch-callout: none; }
 .ficha.arrastrada { opacity: 0.3; }
 .ficha.fantasma { position: fixed; z-index: 50; pointer-events: none; transform: scale(1.06); box-shadow: 0 10px 24px rgba(0,0,0,0.55); }
-.tablero-pips.chico .regla > span { font-size: 0.8rem; }
+.tablero-dominorama.chico .regla > span { font-size: 0.8rem; }
 /* A placed domino covers its two cells */
 .puesta { --t: calc(var(--s) - 4px); z-index: 1; align-self: center; justify-self: center; }
-.tablero-pips .puesta.cae { animation: pips-cae 0.28s ease-out; }
-.tablero-pips .puesta.pista { box-shadow: 0 0 0 3px var(--yellow), 0 0 18px var(--yellow); }
-@keyframes pips-cae { from { transform: scale(1.25); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
-.tablero-pips.resuelto { filter: drop-shadow(0 0 14px rgba(157, 255, 58, 0.6)); }
+.tablero-dominorama .puesta.cae { animation: dominorama-cae 0.28s ease-out; }
+.tablero-dominorama .puesta.pista { box-shadow: 0 0 0 3px var(--yellow), 0 0 18px var(--yellow); }
+@keyframes dominorama-cae { from { transform: scale(1.25); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
+.tablero-dominorama.resuelto { filter: drop-shadow(0 0 14px rgba(157, 255, 58, 0.6)); }
 
 /* While playing */
-.cabeza-pips { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.cabeza-dominorama { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .marcador { margin: 0; font-weight: 800; }
 .reloj { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--muted); }
-.aviso-pips { margin: 0; min-height: 2.6em; text-align: center; font-weight: 700; color: var(--muted); }
-.aviso-pips.mal { color: #ff8a8a; } .aviso-pips.bien { color: #9dff3a; } .aviso-pips.ayuda { color: var(--yellow); } .aviso-pips.ojo { color: var(--yellow); }
+.aviso-dominorama { margin: 0; min-height: 2.6em; text-align: center; font-weight: 700; color: var(--muted); }
+.aviso-dominorama.mal { color: #ff8a8a; } .aviso-dominorama.bien { color: #9dff3a; } .aviso-dominorama.ayuda { color: var(--yellow); } .aviso-dominorama.ojo { color: var(--yellow); }
 /* The tray: the dominoes not yet placed; the chosen one lifts and shines */
 .bandeja { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0; padding: 6px 0; }
 /* Each domino has a square slot as big as it is long (D-385): turning it, or laying it, moves nothing */
@@ -103,27 +103,27 @@ button.ficha:active { transform: scale(0.94); }
 .bandeja > .hueco { flex: none; width: var(--hueco); height: var(--hueco); display: grid; place-items: center; }
 .bandeja .ficha { --t: calc(var(--hueco) * 0.46); }
 .bandeja .ficha.sel { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--cyan), 0 0 18px var(--cyan), 0 4px 10px rgba(0,0,0,0.35); }
-.acciones-pips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-.acciones-pips .armado { background: var(--yellow); color: #3a1200; }
+.acciones-dominorama { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.acciones-dominorama .armado { background: var(--yellow); color: #3a1200; }
 
 /* The result, like the other lab games */
 .resultado { text-align: center; display: grid; gap: 10px; --gap-contenedor: 10px; }
 .resultado .score-big { font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
-.sello-pips { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+.sello-dominorama { justify-self: center; margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
   padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
-.sello-pips.mal { color: #ff8a8a; }
+.sello-dominorama.mal { color: #ff8a8a; }
 .resultado .comentario { text-align: left; }
 .divisor { width: 100%; border: 0; height: 2px; margin: 18px 0 6px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0.45) 85%, transparent); }
 .desglose { list-style: none; text-align: left; margin: 0 auto; padding: 0; display: grid; gap: 4px; }
 .link-btn { background: none; border: 0; color: var(--muted); font: 700 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; min-height: 44px; margin: 0 auto; display: block; }
 
 @media (prefers-reduced-motion: reduce) {
-  .titulo-pips .logo, .tablero-pips .puesta.cae, .celda.no, .regla.mal, .sello-pips { animation: none; }
+  .titulo-dominorama .logo, .tablero-dominorama .puesta.cae, .celda.no, .regla.mal, .sello-dominorama { animation: none; }
 }
-.como-pips { text-align: left; }
+.como-dominorama { text-align: left; }
 
 /* A short phone (320×568): the cover's demo board shrinks so 🎲 Empezar stays above the fold (U-39) */
 @media (max-height: 620px) {
   .demo { min-height: 0; }
-  .tablero-pips.chico { --s: min(40px, calc((100vw - 64px) / var(--w))); }
+  .tablero-dominorama.chico { --s: min(40px, calc((100vw - 64px) / var(--w))); }
 }

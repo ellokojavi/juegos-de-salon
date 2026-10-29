@@ -1,5 +1,5 @@
 /**
- * Pips — lab prototype (D-381), inspired by Pips (The New York Times Games, 2025): lay every domino on
+ * Dominorama — lab prototype (D-381), inspired by Pips (The New York Times Games, 2025): lay every domino on
  * the board so each colored zone keeps its rule. Three boards against the clock, easy to hard. Spanish
  * only, for friends to try. Without `?seed=` it is today's game, the same for everyone. The engine is
  * engine.js.
@@ -19,11 +19,11 @@ import {
 
 trackVisit();   // the site's traffic (D-208)
 
-const GAME_ID = 'pips';
+const GAME_ID = 'dominorama';
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const NYT_PIPS = 'https://www.nytimes.com/games/pips';
 const T = {
-  nombre: 'Pips',
+  nombre: 'Dominorama',
   lema: 'Pon todas las fichas de dominó para que cada zona cumpla su regla.',
   hoy: 'Los tableros de hoy son los mismos para todos.',
   como: [
@@ -95,7 +95,7 @@ function tableroVacio(t, { chico = false } = {}) {
   const zonaDe = Array(t.celdas.length);
   t.zonas.forEach((z, k) => z.celdas.forEach(i => { zonaDe[i] = k; }));
   const en = (r, c) => t.celdas.findIndex(x => x.r === r && x.c === c);
-  const g = el('div', { class: `tablero-pips${chico ? ' chico' : ''}`, style: `--w:${t.ancho};--h:${t.alto}`, 'data-tablero': 'pips' });
+  const g = el('div', { class: `tablero-dominorama${chico ? ' chico' : ''}`, style: `--w:${t.ancho};--h:${t.alto}`, 'data-tablero': 'dominorama' });
   let color = 0;
   const colorDe = t.zonas.map(z => (z.tipo === 'libre' ? null : COLORES[color++ % COLORES.length]));
   t.celdas.forEach((c, i) => {
@@ -138,10 +138,10 @@ function fichasPuestas(g, p, { conBotones = false } = {}) {
 /* The cover                                                           */
 /* ------------------------------------------------------------------ */
 
-const tituloJuego = (chico = false) => el('h1', { class: `titulo-pips${chico ? ' chico' : ''}` },
+const tituloJuego = (chico = false) => el('h1', { class: `titulo-dominorama${chico ? ' chico' : ''}` },
   ficha([6, 3], { class: 'logo' }), el('span', { class: `display ${chico ? '' : 'display--lg '}rainbow` }, T.nombre));
 const credito = () => el('p', { class: 'credito' }, 'Inspirado en ',
-  el('a', { href: NYT_PIPS, target: '_blank', rel: 'noopener', id: 'link-pips' }, 'Pips'), ', de The New York Times Games.');
+  el('a', { href: NYT_PIPS, target: '_blank', rel: 'noopener', id: 'link-nyt' }, 'Pips'), ', de The New York Times Games.');
 
 /** The three steps, on the cover and, folded, under the board. */
 const pasos = () => el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))));
@@ -194,7 +194,7 @@ function empezar() {
   trackStart({ game: GAME_ID, mode: 'solo', players: 1 });
   // La Copa's 3, 2, 1 (D-105): the clock runs from "¡A jugar!"
   vista.replaceChildren(); pie.replaceChildren();
-  cuentaRegresiva({ titulo: '🎲 Pips', ya: T.aJugar }).then(() => { P.desde = Date.now(); tablero(); });
+  cuentaRegresiva({ titulo: '🎲 Dominorama', ya: T.aJugar }).then(() => { P.desde = Date.now(); tablero(); });
 }
 
 /** Ends the board's drag: its ghost and its window listeners (set by each board). */
@@ -216,8 +216,8 @@ function tablero() {
   const g = tableroVacio(t);
   g.id = 'tablero';
   const bandeja = el('div', { class: 'bandeja', id: 'bandeja', role: 'group', 'aria-label': 'Fichas' });
-  const aviso = el('p', { class: 'aviso-pips', 'aria-live': 'polite' }, T.elegir);
-  const decir = (texto, clase = '') => { aviso.className = `aviso-pips ${clase}`; aviso.textContent = texto; };
+  const aviso = el('p', { class: 'aviso-dominorama', 'aria-live': 'polite' }, T.elegir);
+  const decir = (texto, clase = '') => { aviso.className = `aviso-dominorama ${clase}`; aviso.textContent = texto; };
 
   const dosToques = (boton, { listo, seguro, accion }) => {
     let armado = false, timer = null;
@@ -430,8 +430,8 @@ function tablero() {
     P.k++; tablero();
   }
 
-  vista.replaceChildren(tituloJuego(true), el('div', { class: 'cabeza-pips' }, encabezado, reloj), g, aviso, bandeja, el('div', { class: 'acciones-pips' }, botonDeshacer, botonLimpiar), el('div', { class: 'acciones-pips' }, botonAyuda, botonRendirse),
-    el('details', { class: 'panel como-pips', id: 'como-pips' }, el('summary', {}, T.comoTitulo), pasos()));
+  vista.replaceChildren(tituloJuego(true), el('div', { class: 'cabeza-dominorama' }, encabezado, reloj), g, aviso, bandeja, el('div', { class: 'acciones-dominorama' }, botonDeshacer, botonLimpiar), el('div', { class: 'acciones-dominorama' }, botonAyuda, botonRendirse),
+    el('details', { class: 'panel como-dominorama', id: 'como-dominorama' }, el('summary', {}, T.comoTitulo), pasos()));
   dibujar();
   pieComentario('juego');
   const tic = setInterval(() => { if (!reloj.isConnected || P.fin) return clearInterval(tic); reloj.textContent = `⏱️ ${mmss(Date.now() - P.desde)}`; }, 500);
@@ -462,11 +462,11 @@ function resultado() {
   if (P.ayudas) lineas.push(fmt(T.desglose.ayudas[P.ayudas === 1 ? 0 : 1], { n: P.ayudas, pts: RESTA_AYUDA * P.ayudas }));
   vista.replaceChildren(el('div', { class: 'resultado' },
     tituloJuego(true),
-    el('p', { class: `sello-pips${todos ? '' : ' mal'}` }, T.fin[P.fin]),
+    el('p', { class: `sello-dominorama${todos ? '' : ' mal'}` }, T.fin[P.fin]),
     el('div', { class: 'score-big', id: 'puntaje' }, `${s}/${MAXIMO}`),
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
     el('p', { class: 'lead', style: 'margin:0' }, fmt(T.tiempo, { t: mmss(ms) })),
-    botonResultadoSolo({ C: COMMON.es, emoji: '🎲', juego: T.nombre, puntaje: `${s}/${MAXIMO}`, tiempo: mmss(ms), tarjeta: tarjeta({ resueltos: P.resueltos, ayudas: P.ayudas }), url: `${SITIO}labs/pips/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
+    botonResultadoSolo({ C: COMMON.es, emoji: '🎲', juego: T.nombre, puntaje: `${s}/${MAXIMO}`, tiempo: mmss(ms), tarjeta: tarjeta({ resueltos: P.resueltos, ayudas: P.ayudas }), url: `${SITIO}labs/dominorama/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: enlace(Math.random().toString(36).slice(2, 8)) }, T.otraVez),
     SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname }, T.deHoy) : null,
     el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
@@ -482,4 +482,4 @@ initSound();
 sparkles();
 portada();
 // For the end-to-end script: the game, and the engine's solution of the board on screen
-window.__pips = { P, solucion: () => P.p?.t.solucion };
+window.__dominorama = { P, solucion: () => P.p?.t.solucion };
