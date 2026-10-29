@@ -234,7 +234,9 @@ def cmd_update():
 
 def cmd_seal():
     F = facts()
-    SEAL.write_text(json.dumps(F, ensure_ascii=False, indent=2) + '\n')
+    # Without the version: every PR's changelog entry moves it, so two open PRs always collided on that
+    # line, and the README does not quote it (check skips it, D-205)
+    SEAL.write_text(json.dumps({k: v for k, v in F.items() if k != 'version'}, ensure_ascii=False, indent=2) + '\n')
     print(f'sealed: docs/facts.json with today\'s facts '
           f"({len(F['games'])} games, {len(F['themes'])} themes, v{F['version']})")
     return 0
