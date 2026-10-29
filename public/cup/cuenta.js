@@ -43,6 +43,7 @@ export function createCuenta({ prueba = false } = {}) {
       borrar(`${p}sesion:${code}`);
       borrar(`${p}avisos:${code}`);
       borrar(`${p}lista:${code}`);
+      borrar(`${p}hoy:${code}`);
       escribir(`${p}mias`, (leer(`${p}mias`) || []).filter(c => c.code !== code));
     },
     /** Las copas en que este celular participa, para ofrecerlas en la portada. */
@@ -67,6 +68,10 @@ export function createCuenta({ prueba = false } = {}) {
     lista: {
       leer: code => leer(`${p}lista:${code}`),
       guardar: (code, v) => (v ? escribir(`${p}lista:${code}`, v) : borrar(`${p}lista:${code}`)),
+    },
+    /** The days left to play in each cup (`porJugar`), read by the site's home page (`assets/js/cup-today.js`). */
+    porJugar: {
+      guardar: (code, v) => (v?.length ? escribir(`${p}hoy:${code}`, v) : borrar(`${p}hoy:${code}`)),
     },
     /** El último nombre que se usó, para no escribirlo de nuevo en la próxima copa. */
     nombre: {
