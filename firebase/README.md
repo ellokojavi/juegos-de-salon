@@ -220,6 +220,10 @@ The owner (their UID) can write and delete in all these branches, to moderate.
 
 ## Phone notifications (`push`, `pushCopa`, `pushEnviados`, `pushDia`, `pushEnviadosDia`, D-223, D-224, D-230)
 
+- `ownerPush/<subId>` = `{ endpoint, keys: { p256dh, auth }, at, device? }`: the owner's own devices
+  for the release notifications (D-504), subscribed from the panel. **Only the owner** reads and writes it,
+  in that shape; `tools/push/release.mjs` reads it as administrator and deletes a dead one.
+  `firebase/owner-push.test.mjs` checks it.
 - `push/<subId>` = `{ endpoint, keys: { p256dh, auth }, lang, tz, uid, at }`: a phone's Web
   Push subscription. `subId` is 32 hex characters (the first ones of the endpoint's
   sha256). **Nobody reads it**: only the service account that sends the notifications (`tools/push/notify.mjs`, D-224), which doesn't go through

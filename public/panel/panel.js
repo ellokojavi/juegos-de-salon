@@ -40,6 +40,7 @@ import { switches, status as campaignStatus, overlaps, move, toRemote, cleanLabe
 import { TEMPLATES as SKINS } from '../assets/season/templates.js';
 import { FLAGS, stateOf as flagState } from '../assets/js/flags.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
+import { wireReleasePush } from './release-push.js';
 import {
   rangoAnterior, variacion, partidasDominio, finales, embudoSalas, dificultad, versiones, versionesEn, usuarios, cohortes,
   senales, ordenTramos, embudoCopas, aCsv,
@@ -70,7 +71,7 @@ const S = {
   // 📣 Campaigns (D-454): Firebase `splash/` (undefined until it answers, null if never saved) and the last save's outcome
   splash: undefined, unsubSplash: null, splashMsg: '',
   // 🧩 Site features and 🎨 skins (D-477): Firebase `controls/` (undefined until it answers), the tab shown and the last save
-  controls: undefined, unsubControls: null, flags: undefined, unsubFlags: null, controlsMsg: '', campTab: 'splash', campOpen: new Set(), campPeek: new Set(), campStats: null, tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
+  controls: undefined, unsubControls: null, flags: undefined, unsubFlags: null, controlsMsg: '', campTab: 'splash', campOpen: new Set(), campFoco: null, campPeek: new Set(), campStats: null, tlGrain: null, tlKinds: null, tlPeriod: null, tlAll: false,
   unsubRooms: null, unsubDays: null, unsubTorneos: null, unsubPush: null, unsubUad: [], tick: null,
   // Desde qué día está bajado `days`: un rango más largo obliga a pedir de nuevo, uno más corto no
   desdeDia: null,
@@ -131,6 +132,14 @@ onAuthStateChanged(auth, user => {
   $('#uid').textContent = user.uid;
   showScreen('screen-panel');
   listen();
+  if (!S.releasePushWired) {
+    S.releasePushWired = true;
+    wireReleasePush({
+      button: $('#avisos-dueno'), status: $('#avisos-dueno-msg'),
+      save: (id, rec) => set(ref(db, `ownerPush/${id}`), rec),
+      exists: async id => (await get(ref(db, `ownerPush/${id}`))).exists(),
+    });
+  }
 });
 
 /* ------------------------------------------------------------------ */
@@ -1744,7 +1753,7 @@ function vistaSplash(today) {
     const cerrar = () => { S.campOpen.delete(s.id); render(); };
     // An off campaign folds to its emoji and title; a tap opens it (the owner's request). It stays open for this visit
     if (!s.on && !S.campOpen.has(s.id)) {
-      return el('button', { type: 'button', class: 'campana-plegada', 'aria-expanded': 'false', onClick: abrir },
+      return el('button', { type: 'button', class: 'campana-plegada', id: `campana-${s.id}`, 'aria-expanded': 'false', onClick: abrir },
         el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
         el('strong', { class: 'campana-titulo' }, nombre),
         el('span', { class: 'campana-renombrar', role: 'button', tabindex: '0', 'aria-label': `Rename ${nombre}`, title: 'Rename',
@@ -1762,7 +1771,7 @@ function vistaSplash(today) {
         onChange: e => cambiar(s.id, { [campo]: e.target.value || null }) }),
       s[campo] ? el('button', { type: 'button', class: 'campana-dia-x', 'aria-label': `${label}: ${vacio}`, title: vacio, onClick: () => cambiar(s.id, { [campo]: null }) }, '✕') : null);
     const base = s.from && s.from > today ? s.from : today;
-    return el('article', { class: `campana campana--${st}` },
+    return el('article', { class: `campana campana--${st}${S.campFoco === s.id ? ' campana--foco' : ''}`, id: `campana-${s.id}` },
       el('header', { class: 'campana-cabeza' },
         el('span', { class: 'campana-emoji', 'aria-hidden': 'true' }, c.emoji || '📣'),
         el('div', { class: 'campana-nombre' },
@@ -2038,10 +2047,20 @@ function alCambiarRuta() {
   if (otra) {
     S.logPage = 1; S.sinRedTodas = false; S.erroresTodos = false; S.tlPeriod = null; S.tlAll = false;
     if (S.ruta.args[0] !== antes.args[0]) S.fichaTab = 'tabla';
+    // A deep link into 📣 Campaigns (the owner's release notifications, D-504): `#/campaigns/<tab>/<id>`
+    // opens that tab, unfolds that campaign and brings it into view
+    if (S.ruta.sec === 'campanas') {
+      const [tab, id] = S.ruta.args;
+      if (['splash', 'features', 'skins', 'flags'].includes(tab)) S.campTab = tab;
+      S.campFoco = id || null;
+      if (id) S.campOpen.add(id);
+    }
   }
   $('#buscar-msg').hidden = true;
   render();
-  if (otra) window.scrollTo(0, 0);
+  const foco = otra && S.campFoco ? document.getElementById(`campana-${S.campFoco}`) : null;
+  if (foco) foco.scrollIntoView({ block: 'center' });
+  else if (otra) window.scrollTo(0, 0);
 }
 
 /** Una dirección de antes (`#/torneo/OFICI`) queda escrita en inglés, sin sumar un paso (C-18, D-266). */

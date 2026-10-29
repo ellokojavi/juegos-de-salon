@@ -574,6 +574,8 @@ export const PATHS = {
     ...Object.fromEntries([['campaigns-features', 1], ['campaigns-skins', 2]].map(([shot, i]) => [shot, [SEED_PANEL('/campaigns'), `document.querySelectorAll('.campanas-tabs button')[${i}].click()`]])),
     // A splash card's Quick look, opened
     'campaigns-peek': [SEED_PANEL('/campaigns'), ...Array(6).fill(PEEK), `1`, `1`],
+    // Where an owner's release notification lands (D-504): that campaign open, ringed and in view
+    'campaigns-link': [SEED_PANEL('/campaigns/splash/stack-pronto')],
     // The other two tabs of a cup's card (D-207)
     'cup-days': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][1].click()`],
     'cup-history': [SEED_PANEL('/cup/OFICI'), `[...document.querySelectorAll('.subtabs button')][2].click()`],
