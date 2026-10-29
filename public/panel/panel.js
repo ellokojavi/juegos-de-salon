@@ -1525,7 +1525,11 @@ const KIND = {
   'cup-join': ['✍️', 'Cup sign-ups', 'var(--purple)'],
   'cup-end': ['🏁', 'Cups finished', C_TORNEO],
   feedback: ['💬', 'Feedback', 'var(--yellow)'],
+  campaign: ['📣', 'Campaigns seen', 'var(--pink)'],
 };
+/** A campaign seen, by its name in the panel: the splash's label or title, or the donation card. */
+const campanaTxt = id => (id === 'support' ? '☕ the donation card'
+  : `${CAMPAIGNS[id]?.emoji || ''} ${S.splash?.[id]?.label || CAMPAIGNS[id]?.title?.[PANEL_LANG] || CAMPAIGNS[id]?.title?.es || id}`.trim());
 const TL_GRAINS = [['day', 'By day'], ['week', 'By week'], ['month', 'By month']];
 const GRANO_TL = { dia: 'day', semana: 'week', mes: 'month' };
 const TL_VISIBLES = 100;
@@ -1554,6 +1558,7 @@ function frase(e) {
     case 'cup-end': return [[...copaTxt(e.cup), ' finished: ', e.tie ? 'tied at the top, ' : '🏆 ', quien(e.who[0].name, e.who[0].co), e.tie ? ' among them' : ' won'], e.detail];
     case 'feedback': return [[...quienes(e.who), ` sent ${FEEDBACK_TIPO[e.tipo] || 'feedback'}`, e.tester ? el('span', { class: 'tag' }, 'lab') : null],
       `“${e.text.length > 160 ? `${e.text.slice(0, 157)}…` : e.text}”`];
+    case 'campaign': return [[...quienes(e.who), e.campaign === 'support' ? ' opened ' : ' saw the campaign ', campanaTxt(e.campaign)], ''];
     default: return [[e.kind], ''];
   }
 }
@@ -1600,10 +1605,10 @@ function vistaTimeline(now) {
   const total = todos.filter(e => kinds.has(e.kind)).length;
   const totalA = antes.filter(e => kinds.has(e.kind)).length;
   const csv = () => enLista.map(e => ({ date: e.day, time: horaLabel(e.at), kind: e.kind, who: e.who.map(w => w.name || 'Someone').join(' + '),
-    game: e.game || '', cup: e.cup?.name || '', detail: frase(e)[1] || '' }));
+    game: e.game || '', cup: e.cup?.name || '', campaign: e.campaign || '', detail: frase(e)[1] || '' }));
 
   return [
-    ...titulo(`🕑 Timeline · ${tituloRango()}`, `The moments of truth, one by one: every game that reached its end, every cup created, joined or finished, and every feedback message. Opening a page, starting a game or leaving it halfway is not here. Rooms and offline games follow the environment above; cups and feedback have none. ${ZONA_NOMBRE}, Pacific dates.`),
+    ...titulo(`🕑 Timeline · ${tituloRango()}`, `The moments of truth, one by one: every game that reached its end, every cup created, joined or finished, every feedback message, and every campaign seen (a splash, or the donation card opened; skins are always on and are not here). Opening a page, starting a game or leaving it halfway is not here. Rooms and offline games follow the environment above; cups and feedback have none. ${ZONA_NOMBRE}, Pacific dates.`),
     el('div', { class: 'tiles' },
       tile(total, `⭐ key events${kinds.size < KINDS.length ? ' (filtered)' : ''}`, { cambio: variacion(total, totalA), info: `${n(evs.filter(e => ['cup-game', 'room', 'offline', 'daily'].includes(e.kind)).length)} games finished` }),
       ...KINDS.map(k => tile(cuenta[k], `${KIND[k][0]} ${KIND[k][1]}`, { onClick: () => alternar(k), pressed: kinds.has(k), cambio: variacion(cuenta[k], cuentaA[k]) }))),

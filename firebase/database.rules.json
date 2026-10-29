@@ -582,6 +582,27 @@
                 ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || newData.val() == data.val() + 1)"
               }
             },
+            "seen": {
+              "$id": {
+                ".write": "$env.matches(/^[a-z]{2,10}$/) && $day.matches(/^[0-9]{5}$/) && $id.matches(/^[a-z0-9]{10}$/) && !data.exists()",
+                ".validate": "newData.hasChildren(['c', 'at'])",
+                "c": {
+                  ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9-]{1,40}$/)"
+                },
+                "at": {
+                  ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() > now - 60000"
+                },
+                "co": {
+                  ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{2}$/)"
+                },
+                "name": {
+                  ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"
+                },
+                "$other": {
+                  ".validate": false
+                }
+              }
+            },
             "splash": {
               "$id": {
                 "$ev": {
