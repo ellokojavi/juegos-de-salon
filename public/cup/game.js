@@ -434,7 +434,6 @@ function campoFecha(hoy) {
 /** The create-a-Cup screen lives in create.js, loaded the first time it opens (#860). */
 // Built when it opens: where this sits in the file, some of what it holds is not defined yet
 const crearCopaCtx = () => ({
-  get store() { return store; },
   G, JUEGOS_COPA, LABS, LANG, LOCALE, PRUEBA, RESERVADAS, T, TRES, abrirCopa, abrirStore, admin, avisoError, campo, campoFecha, campoPin, camposPin, cuenta, entrarComoJugador, errorDe, fechaLarga, fmt, memorial, miPais, mostrar, opciones, opcionesVariante, pinAlAzar, poner, portada, sinPinDeCopa, zonaTexto,
 });
 let crearCopaModulo = null;
