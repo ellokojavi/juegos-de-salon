@@ -16,4 +16,13 @@ for (const g of ALL.filter(x => x.keywords)) {
   assert.deepEqual(Object.keys(g.keywords).sort(), ['de', 'en', 'es', 'pt'], `${g.id}: keywords in es, en, pt and de, nothing else`);
   for (const [l, w] of Object.entries(g.keywords)) assert.ok(w.every(x => typeof x === 'string' && x === x.toLowerCase()), `${g.id}:${l}: keywords are lowercase strings`);
 }
-console.log('manifest: keywords come from games.js, green');
+
+// e2e reuses (phase 2): affected.mjs keeps no row for a game the manifest lists, and reads exactly its reuses
+const { REUSES } = await import('../../../tools/e2e/affected.mjs');
+const aff = readFileSync(new URL('../../../tools/e2e/affected.mjs', import.meta.url), 'utf8');
+const page = g => g.path.replace(/\/$/, '');
+for (const g of ALL.filter(x => x.path)) {
+  assert.ok(!new RegExp(`^\\s*'?${page(g).replace('/', '\\/')}'?:\\s*\\[`, 'm').test(aff), `${g.id}: its reuses go in its entry in games.js, not in affected.mjs`);
+  assert.deepEqual(REUSES[page(g)], g.reuses, `${g.id}: REUSES is the manifest's reuses`);
+}
+console.log('manifest: keywords and reuses come from games.js, green');

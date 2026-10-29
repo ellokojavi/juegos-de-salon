@@ -56,6 +56,8 @@ export const GAMES = [
     duration: '10–20',
     jugadas: ['place'],
     path: 'timeline/',
+    // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
+    reuses: ['cup/games/timeline/', 'cup/games/year/engine.js', 'cup/games/mazos.js'],
     available: true,
   },
   {
@@ -75,6 +77,8 @@ export const GAMES = [
     duration: '5–12',
     jugadas: ['guess'],
     path: 'bulls-and-cows/',
+    // What it plays of La Copa's games, for the end-to-end scope (tools/e2e/affected.mjs, #855)
+    reuses: ['cup/games/number/'],
     available: true,
   },
   {
