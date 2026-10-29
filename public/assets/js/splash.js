@@ -98,7 +98,7 @@ export function loadActive({ fetchFn = globalThis.fetch, timeout = 2500 } = {}) 
  * link come from there) or its own content (`title`, `text`, `href`, and `cta` for a button that is not Play). Each item shows a few seconds
  * of play: `video` (a looping MP4, muted) with its `img` as the poster, or just `img` (a still, with
  * `still` for reduced motion; a clip is never a GIF: an MP4 weighs a fifth, #846). An item with no name, text or link is a teaser: its picture
- * alone, wide (`ratio`). `hero` draws a campaign's one game big: its clip as wide as the window at its
+ * alone, wide (`ratio`), scaled as pixel art unless `smooth` (a teaser drawn at full size). `hero` draws a campaign's one game big: its clip as wide as the window at its
  * `ratio`, and under it its card, with the text and Play. `langs` limits a campaign to some languages: the others get it in English
  * (the owner's request for a teaser in Spanish and English). Paths are from the site root; the clips
  * are made with marketing/splash/capture.mjs and the teasers with teaser.mjs, and each campaign is
@@ -151,21 +151,23 @@ export const CAMPAIGNS = {
       },
     }],
   },
-  // A teaser of 🥷 Stick Ninja, still in the lab: under a full moon a ninja's stick grows and tips
-  // toward the far pillar, and the moon goes dark the instant before it lands. No name, no link
+  // A teaser of 🥷 Stick Ninja, still in the lab, drawn with the game's own scene: the ninja crosses
+  // twice, then its stick tips toward the far pillar and the night stops the instant before it lands.
+  // No name, no link
   'ninja-pronto': {
     emoji: '🥷',
     kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve', de: 'Demnächst' },
     title: { es: '¿Llegará al otro lado?', en: 'Will it reach the other side?', pt: 'Será que chega do outro lado?', de: 'Reicht es bis drüben?' },
-    items: [{ video: 'assets/splash/ninja-teaser.mp4', img: 'assets/splash/ninja-teaser-start.png', still: 'assets/splash/ninja-teaser.png', ratio: '8 / 5' }],
+    items: [{ video: 'assets/splash/ninja-teaser.mp4', img: 'assets/splash/ninja-teaser-start.png', still: 'assets/splash/ninja-teaser.png', ratio: '8 / 5', smooth: true }],
   },
-  // A teaser of 🧱 Stack, still in the lab: neon slabs pile up and the view climbs past the clouds
-  // into the stars, until the last one stops in the air. No name, no link
+  // A teaser of 🧱 Stack, still in the lab, drawn with the game's own isometric scene: the slabs pile up
+  // and the view climbs past the clouds into the stars, until the last one stops in the air. No name, no
+  // link. `smooth`: drawn at full size, not pixel art, so it is scaled smoothly
   'stack-pronto': {
     emoji: '🧱',
     kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve', de: 'Demnächst' },
     title: { es: '¿Hasta dónde llega?', en: 'How high can it go?', pt: 'Até onde chega?', de: 'Wie hoch geht es?' },
-    items: [{ video: 'assets/splash/stack-teaser.mp4', img: 'assets/splash/stack-teaser-start.png', still: 'assets/splash/stack-teaser.png', ratio: '8 / 5' }],
+    items: [{ video: 'assets/splash/stack-teaser.mp4', img: 'assets/splash/stack-teaser-start.png', still: 'assets/splash/stack-teaser.png', ratio: '8 / 5', smooth: true }],
   },
   // 🥂 An invitation to support the site, with a laugh: Leonardo DiCaprio raising his glass in
   // The Great Gatsby. The clip is GIPHY's, served from GIPHY (not copied into the site); its button
@@ -328,6 +330,7 @@ async function resolve(items, lang) {
       img: i.img ? new URL(i.img, ROOT).href : null,
       still: i.still ? new URL(i.still, ROOT).href : null,
       ratio: i.ratio ?? null,
+      smooth: !!i.smooth,
       video: i.video ? new URL(i.video, ROOT).href : null,
       cta: pick(i.cta, lang) ?? null,
     };
@@ -371,7 +374,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   for (const it of items) {
     // The whole item is the way in: tapping the clip, the name or Play opens the game
     const teaser = !it.name && !it.text && !it.href;
-    const a = node(it.href ? 'a' : 'div', teaser ? 'splash-item splash-teaser' : 'splash-item');
+    const a = node(it.href ? 'a' : 'div', teaser ? `splash-item splash-teaser${it.smooth ? ' splash-teaser--smooth' : ''}` : 'splash-item');
     if (it.ratio) a.style.setProperty('--ratio', it.ratio);
     if (it.href) a.href = it.href;
     if (it.video) {
