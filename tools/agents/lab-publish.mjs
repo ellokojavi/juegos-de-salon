@@ -4,7 +4,8 @@
  * the page writes `labsPublish/<card id>` with `state: 'requested'`. The `lab-publish-watch` job
  * on the Mac mini (tools/jobs/lab-publish-watch.mjs) sees it within 5 minutes and runs a headless
  * session (tools/jobs/prompts/lab-publish.md) that takes the feature out of the lab, moves its
- * card to La Bodega (D-479) and opens the PR with auto-merge. This tool is how both move the
+ * card to La Bodega (D-479) and opens the PR with auto-merge. 📦 Enviar a La Bodega (D-511) is the
+ * same request with `kind: 'bodega'`: the session only moves the card. This tool is how both move the
  * request along; /labs/ shows each state on the card:
  *
  *   requested → working (claimed by a session) → pr (its PR is open) → merged (live)
@@ -40,8 +41,8 @@ export const CONFLICT_MS = 15 * 60 * 1000;
 /** A fix that has not cleared the conflict this long after it was asked fails the request. */
 export const FIX_MS = 60 * 60 * 1000;
 
-/** The branch a request's PR is opened from: its card id without `seccion-`. */
-export const branchOf = id => `publish-${id.replace(/^seccion-/, '')}`;
+/** The branch a request's PR is opened from: its card id without `seccion-`, `bodega-` for 📦 (D-511). */
+export const branchOf = (id, kind) => `${kind === 'bodega' ? 'bodega' : 'publish'}-${id.replace(/^seccion-/, '')}`;
 
 /** The oldest request still waiting, as [id, entry], or null. */
 export function oldest(all) {
@@ -89,9 +90,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const o = oldest(all);
     if (!o) { console.log('null'); process.exit(3); }
     const [k, e] = o;
-    const branch = branchOf(k);
+    const branch = branchOf(k, e.kind);
     await patch(k, { state: 'working', started: Date.now(), branch });
-    console.log(JSON.stringify({ id: k, title: e.title || '', note: e.note || '', branch }, null, 2));
+    console.log(JSON.stringify({ id: k, kind: e.kind || 'publish', title: e.title || '', note: e.note || '', branch }, null, 2));
   } else if (cmd === 'opened' && id && /^\d+$/.test(arg || '')) {
     known(id);
     await patch(id, { state: 'pr', pr: Number(arg) });
@@ -114,7 +115,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.log(`${changed} request(s) moved`);
   } else if (cmd === 'conflicts') {
     const rows = Object.entries(all).filter(([, e]) => e?.state === 'pr' && e.fixAt && e.pr)
-      .map(([k, e]) => ({ id: k, pr: e.pr, branch: e.branch || branchOf(k) }));
+      .map(([k, e]) => ({ id: k, pr: e.pr, branch: e.branch || branchOf(k, e.kind) }));
     console.log(JSON.stringify(rows, null, 2));
     process.exit(rows.length ? 0 : 3);
   } else {
