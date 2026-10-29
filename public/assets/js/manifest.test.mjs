@@ -34,4 +34,14 @@ const orden = [...ALL.filter(x => x.unoAlDia).map(x => x.unoAlDia.orden), 0, 1].
 assert.deepEqual(orden, orden.map((_, i) => i), 'unoAlDia.orden: each place in the deck once, none skipped (the shuffle depends on the order)');
 assert.deepEqual(JUEGOS_DIA.map(j => j.id).filter(id => id !== 'linea' && id !== 'numero').sort(), ALL.filter(x => x.unoAlDia).map(x => x.id).sort(), 'JUEGOS_DIA is the manifest\'s unoAlDia games');
 assert.deepEqual([...GRUPO].sort(), ALL.filter(x => x.unoAlDia?.grupo).map(x => x.id).sort(), 'GRUPO is the manifest\'s unoAlDia.grupo');
-console.log('manifest: keywords, reuses and Uno al día come from games.js, green');
+
+// La Copa (phase 4): POZO is the two Cup-only games plus the manifest's `copa`, and every one has its code
+const { POZO } = await import('../../cup/engine.js');
+const eng = readFileSync(new URL('../../cup/engine.js', import.meta.url), 'utf8');
+assert.ok(!/POZO = \['/.test(eng), 'cup/engine.js keeps no POZO list of its own: a Cup game says `copa: { pozo }` in games.js');
+const pozo = [0, 1, ...ALL.filter(x => x.copa).map(x => x.copa.pozo)].sort((a, b) => a - b);
+assert.deepEqual(pozo, pozo.map((_, i) => i), 'copa.pozo: each place in the pool once, none skipped');
+assert.deepEqual(POZO.slice(2).sort(), ALL.filter(x => x.copa).map(x => x.id).sort(), 'POZO is the manifest\'s copa games');
+const idx = readFileSync(new URL('../../cup/games/index.js', import.meta.url), 'utf8');
+for (const id of POZO) assert.ok(new RegExp(`^  ${id}: \\(\\) =>`, 'm').test(idx), `${id}: cup/games/index.js has its CODE loader`);
+console.log('manifest: keywords, reuses, Uno al día and La Copa come from games.js, green');
