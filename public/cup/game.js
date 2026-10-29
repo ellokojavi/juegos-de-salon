@@ -17,6 +17,7 @@ import { SFX, soundToggle, initSound } from '../assets/js/sound.js';
 import { trackStart, versionOf, releaseOf, countryOf, trackVisit, trackFinish } from '../assets/js/transport/stats.js';
 import { gameById, MODO_UNO_AL_DIA, slugDe, idDeSlug, esNuevo } from '../assets/js/games.js';
 import { flag } from '../assets/js/flags.js';
+import { factsLine } from '../assets/js/how-to-play-facts.js';
 import { shareGrid } from '../assets/js/share-grid.js';
 import { backGuard } from '../assets/js/back-guard.js';
 import { param, tiene, nombres, BANDERAS, ALIAS as PARAMS_ANTES } from '../assets/js/parametros.js';
@@ -1703,6 +1704,12 @@ function practica(id, varianteElegida = null) {
   mostrar('jugar');
   $('#jugar-head').innerHTML = '';
   $('#jugar-reglas').innerHTML = ''; // en la antesala las reglas ya están a la vista
+  // On a game's own page, its one "Cómo se juega" opens with who plays, how long and what it
+  // costs, as the party games' covers do (D-488). lab: #seccion-cover-facts
+  if (SUELTO) flag('cover-facts').then(on => {
+    const titulo = on && $('#como-titulo');
+    if (titulo && !titulo.nextElementSibling?.classList.contains('how-facts')) titulo.after(el('p', { class: 'muted how-facts' }, factsLine(id, {}, LANG)));
+  });
   const body = $('#jugar-body');
   body.innerHTML = '';
   poner(body, el('div', { class: 'stack' },
@@ -1728,7 +1735,7 @@ function practica(id, varianteElegida = null) {
     // ranking. Arriba de las reglas, o entre los dos, bajaba los botones en alemán (C-8)
     rankea(id) ? bloqueJugador({ destacado: true, alTocar: () => SFX.tap() }) : null,
     // How to play goes after Empezar, so the button is seen without scrolling on a small phone (U-39)
-    el('div', { class: 'panel' }, el('p', { class: 'lead' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, Jr.como.map(x => el('li', {}, x))),
+    el('div', { class: 'panel' }, el('p', { class: 'lead', id: 'como-titulo' }, T.howToPlay), dibujo(id, variante), el('ol', { class: 'como' }, Jr.como.map(x => el('li', {}, x))),
       el('p', { class: 'lead', style: 'margin:10px 0 4px' }, T.scoring), el('p', { class: 'muted' }, puntajeTexto(Jr, false))),
     rankea(id) ? bloqueRanking({ juego: tablaRk(id, variante), titulo: tituloRk(J), pestanas: varianteRk(id, variante) ? ['semana', 'siempre', 'amigos'] : ['semana', 'siempre', 'amigos', 'copa'], alTocar: () => SFX.tap() }) : null));
   pieComentario({ juego: id, semilla, pantalla: 'antesala' });

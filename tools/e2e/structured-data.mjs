@@ -28,7 +28,9 @@ const READ = `(()=>{
   const norm = s => s.replace(/\\s+/g, ' ').trim();
   const ld = [...document.querySelectorAll('script[type="application/ld+json"]')].map(s => JSON.parse(s.textContent));
   const how = [...document.querySelectorAll('details')].filter(d => /c[oó]mo se juega/i.test(d.querySelector('summary')?.textContent || ''))
-    .map(d => { d.open = true; return norm(d.innerText.slice(d.querySelector('summary').innerText.length)); });
+    .map(d => { d.open = true; return norm(d.innerText.slice(d.querySelector('summary').innerText.length)); })
+    // A Cup game's own page shows it open, as a panel under its title (#883)
+    .concat([...document.querySelectorAll('#como-titulo')].map(t => norm(t.parentElement.innerText.slice(t.innerText.length))));
   return JSON.stringify({ ld, how, path: location.pathname, text: norm(document.title + ' ' + document.body.innerText) });
 })()`;
 
