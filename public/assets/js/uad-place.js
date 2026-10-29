@@ -7,7 +7,9 @@
  * page alone, after the list is drawn.
  */
 import { tarjetaUnoAlDia, fmt } from './uno-al-dia-ui.js';
-import { estado, fechaLocal } from './uno-al-dia.js';
+import { estado, fechaLocal, leer } from './uno-al-dia.js';
+import { walk } from './daily-points.js';
+import { nocheTotales, conMiCuenta } from './uno-al-dia-red.js';
 import { UAD_PUNTOS, periodoMes } from './records.js';
 import { COMMON } from './i18n.js';
 
@@ -28,7 +30,10 @@ export async function refreshPlace(card, { lang, alTocar } = {}) {
     const filas = v ? [...v.top, ...(v.vecinos || [])] : [];
     const i = filas.findIndex(f => f.jid === yo.jid);
     if (i < 0) return false;
-    const fila = filas[i], delante = i > 0 ? filas[i - 1] : null;
+    let fila = filas[i], delante = i > 0 ? filas[i - 1] : null;
+    // The night's totals (D-500): the same total and place /today/ shows, the rebuild's row plus this
+    // phone's days it has not counted yet (the card showed the bare row, 50 pts and two places behind)
+    if (await nocheTotales()) ({ fila, delante } = conMiCuenta({ filas, jid: yo.jid, w: walk(leer().dias, hoy, { gifts: leer().regalos || [] }), hoy }));
     const P = (COMMON[lang] || COMMON.es).uad.pts, miles = n => Number(n || 0).toLocaleString(lang);
     const antes = leerCache();
     // The same fields /today/ writes, its «faltan» line included
