@@ -68,7 +68,7 @@ From a finished branch to the live site: the review agents, the checks, auto-mer
 ## On merge and publish (C-11, D-205, D-300, D-302, D-323)
 
 - **Every PR body says where its change is seen** (D-504): a line `Ver en: <path of the site>`, and
-  optionally `Qué: <the feature in one line, in Spanish>`. When publish.yml puts it live,
+  `Qué: <the feature in one line, in Spanish>` (without it the notification falls back to the English PR title). When publish.yml puts it live,
   `tools/push/release.mjs` notifies the owner's devices (`✅ v<version> en vivo · PR #<n>`, the line,
   `👉 <where>`) and the tap opens that path; if it did not publish, `❌` and the run. Pick the place
   the change is actually seen: a splash campaign still off is `/panel/#/campaigns/splash/<id>`, on is
