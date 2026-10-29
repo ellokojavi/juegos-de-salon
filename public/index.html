@@ -476,7 +476,11 @@
           var m = document.getElementById('importmap'), d = new Date(), z = function (n) { return (n < 10 ? '0' : '') + n; };
           var v = m ? ((m.textContent.match(/\?v=([^"]+)/) || [])[1] || '') : '';
           var l = (new URLSearchParams(location.search).get('lang') || '').toLowerCase() || localStorage.getItem('juegos-de-salon:lang') || 'es';
-          var k = [v, l, d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate())].join('|');
+          var hoy = d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate());
+          // Today played or not is part of the key: a copy drawn before playing would show ▶ Jugar hoy
+          // after it, and its tap would roll the die again
+          var uad = JSON.parse(localStorage.getItem('juegos-de-salon:uno-al-dia') || 'null');
+          var k = [v, l, hoy, uad && uad.dias && uad.dias[hoy] ? 1 : 0].join('|');
           window.__fotoPortada = { k: k };
           var f = JSON.parse(localStorage.getItem('juegos-de-salon:portada-foto') || 'null');
           if (!f || f.k !== k || typeof f.html !== 'string' || /[?&](type|tipo|daily)=/.test(location.search)) return;
@@ -649,12 +653,21 @@
       copa.classList.add('alta');
       fila.append(copa, reserva);
     }
-    const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
+    const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso, estado }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
       if (formaAcceso() === 'off') { reserva?.remove(); return; }
       import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});
       if (formaAcceso() === 'card' && reserva) {
         const card = tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() });
         reserva.replaceWith(card);
+        // Back from today's game (bfcache) brings the page as it was, ▶ Jugar hoy included: once
+        // today is played the card is drawn again, with its place
+        let actual = card;
+        addEventListener('pageshow', e => {
+          if (!e.persisted || actual.classList.contains('hecho') || !estado().dia) return;
+          const nueva = tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() });
+          actual.replaceWith(nueva); actual = nueva;
+          import('./assets/js/uad-place.js').then(({ refreshPlace }) => refreshPlace(nueva, { lang, alTocar: () => SFX.tap() })).then(() => guardarFoto()).catch(() => {});
+        });
         // A tap on the copy's ▶ chip before the modules arrived: carried out now
         if (window.__fotoPortada?.chip) { window.__fotoPortada.chip = false; card.querySelector('button#btn-uad-chip')?.click(); }
         // The month's place fresh from the server, once the page is drawn (D-435): until it
