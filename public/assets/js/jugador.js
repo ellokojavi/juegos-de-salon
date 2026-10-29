@@ -639,6 +639,18 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
 
     sincronizar,
 
+    /**
+     * The name the server holds, if the owner renamed this player (D-513, `rename-player.mjs`):
+     * the rules refuse a row whose name is not the player's, so an old name here would lose scores.
+     * One small read, without waiting.
+     */
+    async refrescarNombre() {
+      const yo = api.yo();
+      if (!yo) return;
+      const n = await almacen.get(`jugadores/${yo.jid}/n`);
+      if (typeof n === 'string' && n && n !== yo.n) { escribir(KEY, { ...leerYo(storage), n }); avisar(); }
+    },
+
     /** Quien entró antes de que se guardara el país (D-219) lo completa solo, una vez, sin esperar. */
     async completarPais() {
       const yo = api.yo();
@@ -675,6 +687,7 @@ async function crear() {
   const pais = () => { try { return countryOf({ tz: Intl.DateTimeFormat().resolvedOptions().timeZone, lang: navigator.language }); } catch (_) { return ''; } };
   const J = crearJugador({ almacen, juegos: SUELTOS.filter(g => !g.labs).map(g => g.id), pais });
   J.completarPais().catch(() => {});
+  J.refrescarNombre().catch(() => {});
   // Games the network did not let save (`guardarPendiente`): sent now, and again when the signal is back
   const subir = () => { J.subirPendientes().catch(() => {}); };
   subir();
