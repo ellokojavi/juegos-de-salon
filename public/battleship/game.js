@@ -26,6 +26,7 @@ import { FONDO_AGUA, barcoEn, barcoEntero, trozoDe } from './flota.js';
 import { renderQr } from '../assets/js/qr.js';
 import { flag } from '../assets/js/flags.js';
 import { mountHowToPlayFacts } from '../assets/js/how-to-play-facts.js';
+import { roomFlow } from '../assets/js/room-flow.js';
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -901,17 +902,10 @@ async function startOnline(transport, code, role, name, config) {
   saveSession();
   render();
 }
-async function createOnline(name, config) {
-  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
-  const t = createFirebaseTransport({ game: GAME_ID });
-  const code = await t.create({ config, name });
-  await startOnline(t, code, 'A', name, config);
-}
+const room = () => roomFlow({ game: GAME_ID, defaultConfig: DEFAULT_CONFIG, start: startOnline });
+async function createOnline(name, config) { await room().create(name, config); }
 async function joinOnline(code, name, previousRole = null, savedLayout = null) {
-  const { createFirebaseTransport } = await import('../assets/js/transport/firebase.js');
-  const t = createFirebaseTransport({ game: GAME_ID });
-  const { role, config } = await t.join(code, { name, previousRole });
-  await startOnline(t, code, role, name, config || DEFAULT_CONFIG);
+  const role = await room().join(code, name, previousRole);
   if (savedLayout) { S.layouts[role] = savedLayout; onChange(); }
 }
 

@@ -26,7 +26,8 @@
    existing card (a new kind of La Copa, a new mode) adds its words to that card's keywords.
 4. **Los modos** que le tocan según C-5, con el transporte de C-7 (`create`, `join`, `send`,
    `onMessage`, `onPresence`, `leave`, `dispose`) y, si tiene sala, sus reglas en
-   `firebase/database.rules.json`.
+   `firebase/database.rules.json`; creating and joining the room through
+   `public/assets/js/room-flow.js`, as the games with a room do (#860).
 5. **La memoria**: la partida con `createSessionStore(GAME_ID)` y el nombre con
    `createNameStore(GAME_ID)`, de `public/assets/js/session.js` (C-6).
 6. **Los módulos compartidos**, nunca uno propio: `handoff.js` para pasar el celular (C-9),
