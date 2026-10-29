@@ -486,6 +486,7 @@ node public/assets/js/back-guard.test.mjs
 node public/assets/js/buzon.test.mjs
 node public/assets/js/compartir.test.mjs
 node public/assets/js/controls.test.mjs
+node public/assets/js/cup-today.test.mjs
 node public/assets/js/daily-attempt.test.mjs
 node public/assets/js/daily-points.test.mjs
 node public/assets/js/daily-recap.test.mjs
