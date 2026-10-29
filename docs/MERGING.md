@@ -67,6 +67,14 @@ From a finished branch to the live site: the review agents, the checks, auto-mer
 
 ## On merge and publish (C-11, D-205, D-300, D-302, D-323)
 
+- **Every PR body says where its change is seen** (D-504): a line `Ver en: <path of the site>`, and
+  `Qué: <the feature in one line, in Spanish>` (without it the notification falls back to the English PR title). When publish.yml puts it live,
+  `tools/push/release.mjs` notifies the owner's devices (`✅ v<version> en vivo · PR #<n>`, the line,
+  `👉 <where>`) and the tap opens that path; if it did not publish, `❌` and the run. Pick the place
+  the change is actually seen: a splash campaign still off is `/panel/#/campaigns/splash/<id>`, on is
+  `/?splash=<id>`; a lab game `/labs/<game>/`; a flag `/labs/`; a panel change `/panel/#/<section>`.
+  Without the line it is worked out from the files (`destination` in release.mjs). Report to the
+  owner only once it is live, with that same link: a merged PR is not live yet.
 - The entry goes without a number in `changelog/<branch>.md` (D-300). Today's version is the first
   entry of `CHANGELOG.md` bumped once for each `changelog/` entry not yet collected,
   in the order they reached `main`; the processes agent collects them into `CHANGELOG.md`, with their
