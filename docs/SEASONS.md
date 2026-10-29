@@ -27,7 +27,7 @@ Only `from`, `to` and `public` are required; a template shows only the touches i
 | `hero` | `['🎃', '👻']` | take turns with the home page's 🎲 cycle |
 | `motes` | `['🦇', '👻']` (only what floats or flies) | one background particle in three becomes one of these (on pages that draw them: today the home page) |
 | `flyby` | `'🦇'` | crosses the home page once per visit, right to left (the emoji faces left) |
-| `scares` | `['💀', '🕷️', '👀', '🧟']` | at most one big fright per visit on the home page (one visit in four, always with `?season`), 7 to 12 s after it opens: 💀 looms from the right, 🕷️ scuttles across, 👀 blink in the dark, 🧟 shambles up from below; behind `flag('season-scares')` |
+| `scares` | `['💀', '🕷️', '👀', '🧟']` | a big fright on the home page 8 s after it opens and then every 40 s, a random one but never the same twice in a row: 💀 looms from the right, 🕷️ scuttles across, 👀 blink in the dark, 🧟 shambles up from below |
 | `peek` | `{ emoji: '👻', chance: 1 / 15 }` | now and then rises from the bottom left edge of the home page and hides |
 | `corner` | `true` | a decoration in the top right corner, drawn by the template's css |
 

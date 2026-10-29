@@ -43,7 +43,7 @@
 @keyframes season-bob { 50% { transform: translateY(-8px) rotate(-6deg); } }
 @keyframes season-hide { to { transform: translateY(110%); opacity: 0; } }
 
-/* The scares (flag season-scares): a giant 💀 leans in from the right edge and pulls back; a big 🕷️
+/* The scares (the template's `scares`, every 40 s): a giant 💀 leans in from the right edge and pulls back; a big 🕷️
    scuttles left to right along the bottom, legs first (the emoji is seen from above, any way is forward) */
 .season-loom {
   right: 0; top: 30%; font-size: min(55vw, 320px); line-height: 1;
