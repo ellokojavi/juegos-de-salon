@@ -32,14 +32,23 @@ export function deviceName(ua = '') {
  * Wires the button and its line of status. `save(id, record)` writes `ownerPush/<id>`; `exists(id)`
  * says whether this device is already there.
  */
+/** The bell, on: it stays an icon; its name says that a tap sends a test. */
+function marcarActivo(button) {
+  button.dataset.on = '1';
+  button.title = 'Notifications on here · tap to send a test';
+  button.setAttribute('aria-label', button.title);
+}
+
 export function wireReleasePush({ button, status, save, exists }) {
-  const say = t => { status.textContent = t; status.hidden = !t; };
+  // A message shows a few seconds and goes, so the bar stays clean
+  let tapa = 0;
+  const say = t => { status.textContent = t; status.hidden = !t; clearTimeout(tapa); if (t) tapa = setTimeout(() => { status.hidden = true; }, 6000); };
   const way = camino(celular());
   if (way === 'no') { button.hidden = true; return; }
   registrar();
   (async () => {
     const sub = permiso() === 'granted' ? await suscripcionActual() : null;
-    if (sub && await exists(await subIdDe(sub.endpoint))) { button.textContent = '🔔 Notifications on here · send a test'; button.dataset.on = '1'; }
+    if (sub && await exists(await subIdDe(sub.endpoint))) { marcarActivo(button); }
   })().catch(() => {});
   button.addEventListener('click', async () => {
     if (way === 'instalar') return say('On an iPhone, notifications only reach the app on the home screen: Share → Add to Home Screen, open the panel from there, and tap again.');
@@ -54,8 +63,8 @@ export function wireReleasePush({ button, status, save, exists }) {
       const id = await subIdDe(sub.endpoint);
       // The server's clock, not the phone's: the rules ask `at <= now`, and a phone a few seconds ahead was refused
       await save(id, deviceRecord(sub, { at: { '.sv': 'timestamp' }, device: deviceName(navigator.userAgent) }));
-      button.textContent = '🔔 Notifications on here · send a test'; button.dataset.on = '1';
-      say('Done: this device gets a notification each time a PR goes live, with a link to what it launched.');
+      marcarActivo(button);
+      say('🔔 On: this device gets a notification each time a PR goes live.');
     } catch (e) { say(`Could not turn them on: ${e?.message || e}`); }
   });
 }

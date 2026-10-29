@@ -56,9 +56,10 @@ Los enlaces de antes (`#torneo`, `#resumen`, `#juegos`) siguen sirviendo.
 | `#/audience` | Opens 🌎 Users since D-348, which keeps what it showed: cifras del rango, La Copa contra los otros juegos, de dónde (zona horaria), el país de los jugadores de salas, idiomas, hora y cuota. |
 | `#/health` | **Lo que le falla a quien juega** (D-251): cargas que no arrancaron, cargas con fallas por día y por tipo, los errores juntados por qué son (página, navegador, versión, días), páginas con fallas, navegador de los errores y cuánto tarda cada página en poder jugar. |
 
-Arriba, además del entorno y el rango, un **buscador**: un código de cinco letras o un link propio
-abre la ficha de esa copa; uno de cuatro, la de esa sala. No se busca por nombre de jugador:
-juntar todo lo de una persona en una pantalla es seguirla, y el panel mira señales (D-44).
+The bar on top is only what the owner uses (2026-10-28, the owner's request): **Don't count this
+browser** and the **range**. The environment is always Live and has no control on screen (a view's
+link can still name another, `e=`); the search box by room or cup code is gone (a cup or a room is
+still opened by its link, `#/cup/<code>`, `#/room/<code>`).
 
 **La hora es la del Pacífico** (Los Ángeles), la misma con que La Copa parte sus días: la hora de
 un juego y la ventana de su día se leen en el mismo reloj. Los contadores de `stats/` siguen por
@@ -157,7 +158,7 @@ Con `window.__panel.seed({ …, push: { vuelta, vivas, torneos } })` se dibuja c
 
 ### The owner's release notifications (D-504)
 
-**🔔 Notify me when something goes live**, in the panel's top bar (`release-push.js`), subscribes the
+**🔔**, an icon in the panel's top bar next to the owner's photo (dim until this device is on, lit after; its name says what a tap does) (`release-push.js`), subscribes the
 device it is tapped on to the site's Web Push and keeps it in `ownerPush/<subId>` (`{ endpoint, keys,
 at, device }`, only the owner reads and writes it). Tapped again, it sends a test. publish.yml's last job
 runs `tools/push/release.mjs`, which notifies each of those devices when a PR goes live (or does not),
