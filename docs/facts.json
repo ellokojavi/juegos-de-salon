@@ -1539,6 +1539,7 @@
     "stack/lab.mjs",
     "stick/lab.mjs",
     "structured-data.mjs",
+    "tango/give-up.mjs",
     "timeline/chat.mjs",
     "timeline/choice.mjs",
     "timeline/decks.mjs",
