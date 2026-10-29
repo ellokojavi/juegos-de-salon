@@ -4,11 +4,13 @@ import assert from 'node:assert/strict';
 import { nombreOfensivo } from './name-guard.js';
 
 for (const n of ['Puta', 'hijo de puta', 'CONCHETUMADRE', 'p u t a', 'MrFuck', 'fuuuck', 'F u c k', 'Culiao 69',
-  'xXputitaXx', 'Hurensohn', 'caralho', 'n1gger', 'sh1t', '$hit', 'Culo', 'Coño', 'Hitler88', 'el nazi'])
+  'xXputitaXx', 'Hurensohn', 'caralho', 'n1gger', 'sh1t', '$hit', 'Culo', 'Coño', 'Hitler88', 'el nazi',
+  'Hiperpene', 'HiperPene', 'Superpico', 'Elculo', 'Penecito', 'Culito', 'Putas', 'Megaverga', 'MrDick', 'Picote'])
   assert.ok(nombreOfensivo(n), `should stop ${n}`);
 
 for (const n of ['Cata', 'Pancho', 'Película', 'Computadora', 'Vergara', 'Porras', 'Nazir', 'Hancock', 'Toshitaka',
-  'Mer Dávila', 'Diputada', 'Cono Sur', 'Ana', 'Raja', 'Pau', 'Dickens', 'Héctor M', 'Sebastián', 'Joaquín', '🦊', '', 'Ñandú'])
+  'Mer Dávila', 'Diputada', 'Cono Sur', 'Ana', 'Raja', 'Pau', 'Dickens', 'Héctor M', 'Sebastián', 'Joaquín', '🦊', '', 'Ñandú',
+  'Penélope', 'Picón', 'Pichón', 'Elvis', 'Lacunza', 'Dickson', 'Cockburn', 'Mariposa', 'Hipertenso', 'Superman', 'Elena', 'Lautaro', 'Tupac', 'Miguel', 'McDonald', 'DiCaprio', 'Vergarita', 'Peneda', 'Assunta', 'Míster Pi', 'Donato', 'Picasso', 'Pacoco', 'Tetaz', 'Sussana'])
   assert.ok(!nombreOfensivo(n), `should let ${n} through`);
 
 console.log('✓ name-guard');
