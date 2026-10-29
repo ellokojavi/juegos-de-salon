@@ -54,11 +54,12 @@ let db, requests = {}, flags = {};
 export const flagOf = id => { const f = id.replace(/^seccion-/, ''); return FLAGS[f] ? f : null; };
 const setFlag = (f, state) => set(ref(db, `flags/${f}`), { state, at: Date.now() });
 
-/** What a flagged card shows: its state and the one button that changes it. */
+/** What a flagged card shows (D-498): its state and the buttons to the other two; /labs/ is the one place to switch them. */
 export function flagStatusOf(state, at) {
-  if (state === 'all') return { tone: 'ok', lines: [`🟢 Publicado para todos${at ? ` el ${when(at)}` : ''}: cada jugador lo ve la próxima vez que abre esa página. Sin PR.`, 'Más adelante, un PR de limpieza quita la puerta y mueve esta tarjeta a La Bodega.'], to: 'lab', label: '↩️ Volver al laboratorio' };
-  if (state === 'off') return { tone: 'bad', lines: ['⚪ Apagado para todos, también en el laboratorio.'], to: 'lab', label: '🧪 Encender en el laboratorio' };
-  return null;
+  const since = at ? ` desde el ${when(at)}` : '';
+  if (state === 'all') return { tone: 'ok', lines: [`🟢 Publicado para todos${since}: cada jugador lo ve la próxima vez que abre esa página. Sin PR.`, 'Más adelante, un PR de limpieza quita la puerta y mueve esta tarjeta a La Bodega.'], to: [['lab', '↩️ Volver al laboratorio'], ['off', '⚪ Apagar para todos']] };
+  if (state === 'off') return { tone: 'bad', lines: [`⚪ Apagado para todos${since}, también en el laboratorio.`], to: [['lab', '🧪 Encender en el laboratorio']] };
+  return { tone: 'wait', lines: ['🧪 En el laboratorio: solo lo ven quienes tienen la llave.'], to: [['all', '🚀 Publicar para todos'], ['off', '⚪ Apagar']] };
 }
 
 /** The confirmation for a flagged card: immediate, no note, no PR. */
@@ -73,7 +74,7 @@ export function askFlag(card, f) {
     el('div', { class: 'hoja-asa', 'aria-hidden': 'true' }),
     el('h2', { id: 'publicar-titulo' }, '🚀 ¿Publicar para todos?'),
     el('p', {}, el('b', {}, titleOf(card)), ' lo ven todos los jugadores desde la próxima vez que abran esa página.'),
-    el('p', { class: 'hoja-caja' }, 'Es inmediato: es un interruptor, no un PR. Si algo sale mal, lo devuelves al laboratorio desde esta misma tarjeta o desde el panel (📣 Campañas → 🚩).'),
+    el('p', { class: 'hoja-caja' }, 'Es inmediato: es un interruptor, no un PR. Si algo sale mal, lo devuelves al laboratorio desde esta misma tarjeta.'),
     msg,
     el('div', { class: 'btn-row' }, btn, el('button', { class: 'btn btn--ghost', onClick: close }, 'Cancelar')),
   );
@@ -117,11 +118,9 @@ export function render(r = requests, fl = flags) {
     const f = flagOf(card.id);
     if (f) {
       const fs = flagStatusOf(stateOf(flags, f), flags?.[f]?.at);
-      const box = el('div', { class: 'publicar' });
-      if (!fs) box.append(el('button', { class: 'btn btn--ghost', onClick: () => askFlag(card, f) }, '🚀 Publicar para todos'));
-      else box.append(el('div', { class: `publicar-estado publicar-estado--${fs.tone}`, role: 'status' },
+      const box = el('div', { class: 'publicar' }, el('div', { class: `publicar-estado publicar-estado--${fs.tone}`, role: 'status' },
         ...fs.lines.map(l => el('p', {}, l)),
-        el('button', { class: 'btn btn--ghost', onClick: () => setFlag(f, fs.to).catch(() => {}) }, fs.label)));
+        el('div', { class: 'btn-row' }, ...fs.to.map(([to, label]) => el('button', { class: 'btn btn--ghost', onClick: () => (to === 'all' ? askFlag(card, f) : setFlag(f, to).catch(() => {})) }, label)))));
       card.append(box);
       continue;
     }

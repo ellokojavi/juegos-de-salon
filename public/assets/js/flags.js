@@ -1,14 +1,14 @@
 /**
  * The lab's runtime flags (D-498): what is tried on a page players visit asks `flag('<id>')`
- * instead of `labAccess()`, and the owner decides who gets it without a PR, from the panel's
- * 📣 Campaigns → 🚩 Lab flags or the card's 🚀 Publicar para todos in /labs/. Firebase `flags/`,
+ * instead of `labAccess()`, and the owner decides who gets it without a PR, on its card in /labs/
+ * (🧪 / 🚀 / ⚪), the one place to switch it. Firebase `flags/`,
  * public to read, only the owner writes:
  *
  *   flags/<id>   { state: 'lab' | 'all' | 'off', at }
  *                lab: only lab key holders (D-395); all: every player; off: nobody, not even the lab.
  *
  * With nothing saved, or if Firebase does not answer, a flag is 'lab', as before flags existed.
- * Each id is a card of /labs/ (`seccion-<id>`), and is listed in FLAGS for the panel to show it;
+ * Each id is a card of /labs/ (`seccion-<id>`), and is listed in FLAGS (the panel's 🧪 Labs link counts them);
  * `public/labs/listed.test.mjs` checks both. Read once per page and kept on the device, so an
  * answer that does not come in time is the last one this phone saw.
  */

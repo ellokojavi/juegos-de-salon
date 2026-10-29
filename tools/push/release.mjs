@@ -45,7 +45,6 @@ function toPath(x) {
 
 /** The call to action for a path: what the owner will see on tapping. */
 export function ctaFor(path) {
-  if (path.startsWith('/panel/#/campaigns/flags')) return 'Ver en 🚩 Lab flags';
   if (path.startsWith('/panel/#/campaigns')) return 'Ver en 📣 Campañas';
   if (path.startsWith('/panel/')) return 'Abrir el panel';
   if (/[?&]splash=/.test(path)) return 'Ver el splash';
