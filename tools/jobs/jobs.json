@@ -38,9 +38,9 @@
       "id": "uad-rebuild",
       "where": "github",
       "workflow": "uad-rebuild.yml",
-      "cron": "23 8 * * *",
-      "what": "Rebuilds Uno al día's month of points from the history, with the days a phone's 🧊 saved, and corrects any total that differs; also writes the season's places by week (uadTemporada/). Then deletes the names in stats/ older than 24 months (stats-retention.mjs).",
-      "decisions": ["D-415", "D-424", "D-472"]
+      "cron": "23 * * * *",
+      "what": "Every hour: rebuilds Uno al día's month of points from the history, with the days a phone's 🧊 saved, and corrects any total that differs, and the week's sums and best streaks, the only writer of them for phones in the night's totals lab (D-500); also writes the season's places by week (uadTemporada/). In the 08 UTC run, deletes the names in stats/ older than 24 months (stats-retention.mjs).",
+      "decisions": ["D-415", "D-424", "D-472", "D-500"]
     },
     {
       "id": "firebase-archive",

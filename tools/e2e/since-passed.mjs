@@ -12,7 +12,7 @@
 //   3. no commit passed, history was rewritten (a force push), the compare fails or is too long:
 //      the PR's files, as before.
 // What main changed without the PR merging it is not retested here: main passed it, and publish.yml
-// runs the whole suite on what it publishes unless that exact tree passed (D-302, D-308).
+// runs smoke plus what the merge reaches (D-496), or the whole suite, unless that exact tree passed (D-302, D-308).
 //
 //   node tools/e2e/since-passed.mjs --pr <n> --head <sha> > changes   # also writes `since` to $GITHUB_OUTPUT
 import { execFileSync } from 'node:child_process';
