@@ -44,6 +44,10 @@ import { formularioComentario, abrirComentario, campoCorreo } from '../assets/js
 import { enlaceBuzon, ponerBuzon, sinDoble } from '../assets/js/buzon.js';
 import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js';
 
+// The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
+let gridsNuevos = false;
+flag('uad-share-grids').then(v => { gridsNuevos = v; });
+
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
 
@@ -1972,7 +1976,7 @@ function resultadoPractica(id, semilla, r, variante = null) {
       el('div', { class: 'score-big' }, r.resumen || String(r.s)),
       ...bajoElPuntaje(r.t, r.ms, id)),
     // Uno al día: la racha, compartir sin decir el juego, jugar otro o ver todo (D-230)
-    hoy ? tarjetaResultado({ lang: LANG, fecha: S.hoy.fecha, primera: hoy.primera, dia: hoy.dia, raiz: RAIZ, alTocar: () => SFX.tap(), mmss, grid: shareGrid(id, r.t) }) : null,
+    hoy ? tarjetaResultado({ lang: LANG, fecha: S.hoy.fecha, primera: hoy.primera, dia: hoy.dia, raiz: RAIZ, alTocar: () => SFX.tap(), mmss, grid: id === 'agentes' && !gridsNuevos ? null : shareGrid(id, r.t) }) : null,
     aviso,
     // Suelto se comparte como cualquier juego jugado solo, con su página (D-162, D-165)
     // El de un juego `diario` lleva su semilla: quien lo recibe juega el mismo caso, también mañana
