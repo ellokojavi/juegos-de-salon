@@ -39,7 +39,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453, D-487, D-488, D-489, D-490, D-491, D-495 |
 | Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463, D-466, D-472, D-477, D-502, D-505, D-507 |
 | Random game and Uno al día | [UNO-AL-DIA.md](UNO-AL-DIA.md) | D-188, D-230, D-235, D-237, D-239, D-247, D-305, D-334, D-374, D-375, D-405, D-412, D-414, D-415, D-421, D-424, D-433, D-435, D-436, D-456, D-465, D-473, D-475, D-482, D-485, D-499, D-500, D-508 |
-| Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321, D-469, D-470, D-474, D-499 |
+| Rooms and transport | C-7, C-15 | D-18, D-20, D-29, D-35, D-39, D-41, D-50, D-89, D-138, D-320, D-321, D-469, D-470, D-474, D-499, D-512 |
 | Anti-cheat and secrets | C-10, C-7 | D-19, D-21, D-55, D-70, D-81, D-82, D-97, D-246, D-367, D-433, D-465 |
 | Game memory | C-6 | D-25, D-150 |
 | Touch interface | C-8 | D-38, D-52, D-77, D-85, D-86, D-87, D-90, D-92, D-163, D-213, D-283, D-309, D-342, D-344, D-425, D-432, D-447, D-481, D-483 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504 |
 
-## In force (496)
+## In force (497)
 
 | D | Title | Status |
 |---|---|---|
@@ -75,7 +75,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-15](decisions/D-15.md) | Big card that shrinks when revealed | current |
 | [D-16](decisions/D-16.md) | Simple internationalization with per-language dictionaries | current |
 | [D-17](decisions/D-17.md) | Sounds synthesized with Web Audio, no files | current |
-| [D-18](decisions/D-18.md) | Transport for games with several phones | amended by D-89 |
+| [D-18](decisions/D-18.md) | Transport for games with several phones | amended by D-89, D-512 |
 | [D-19](decisions/D-19.md) | Who starts in Toque y Fama: deterministic, no draw | amended by D-367 |
 | [D-20](decisions/D-20.md) | A single message reducer for the three modes | amended by D-129 |
 | [D-21](decisions/D-21.md) | Secret commitment with a private salt | current |
@@ -555,6 +555,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-509](decisions/D-509.md) | Lab flags are switched only on their /labs/ card | current |
 | [D-510](decisions/D-510.md) | A flag launched for everyone moves its card to La Bodega at once, with its switch | current |
 | [D-511](decisions/D-511.md) | 📦 Enviar a La Bodega, a button next to 🚀 on every card being tried | current |
+| [D-512](decisions/D-512.md) | Firebase moves to the pay-as-you-go Blaze plan, with a US$10 alert-only budget | current |
 
 ## No longer in force (12)
 

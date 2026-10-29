@@ -593,7 +593,7 @@ function vistaAhora(now) {
     tile(active.length, `rooms in play · ${n(live.length)} alive`, { hot: active.length > 0, onClick: filtrar('sala'), pressed: S.filtroAhora === 'sala', info: 'see which' }),
     tile(sinRed.length, 'offline games now', { hot: sinRed.length > 0, onClick: filtrar('sinred'), pressed: S.filtroAhora === 'sinred', info: 'see which' }),
     tile(enCurso.length, `cups in progress · ${n(jugandoMini)} playing a cup game`, { hot: jugandoMini > 0, onClick: filtrar('torneo'), pressed: S.filtroAhora === 'torneo', info: 'see which' }),
-    tile(connections(live), 'phones connected', { info: 'free plan cap: ~100' }),
+    tile(connections(live), 'phones connected', { info: 'Blaze: no practical cap (alert at 80)' }),
   );
 
   // Una sola lista, de lo que dio señal más recién a lo más quieto
@@ -1182,7 +1182,7 @@ function vistaAudiencia(now) {
     ),
     bloque('What time people play', 'Local time of each phone.',
       el('div', { class: 'hours' }, ...todo.hour.map((v, h) => el('div', { class: 'h', style: `height:${Math.max(2, (v / maxH) * 100)}%`, title: `${h}:00 · ${n(v)}`, 'data-h': h % 6 === 0 ? h : null })))),
-    bloque('Free plan quota', 'Firebase usage cannot be read from the browser. The phones connected in Now are the best approximation of simultaneous connections (cap ~100). The detail is in the console:',
+    bloque('Firebase quota', 'Firebase usage cannot be read from the browser. On Blaze (D-512) the free download is ~10 GB/month and beyond it is billed; the phones connected in Now approximate simultaneous connections. The detail is in the console:',
       el('a', { class: 'btn btn--ghost btn--sm', href: 'https://console.firebase.google.com/project/juegos-de-salon/database/juegos-de-salon-default-rtdb/usage', target: '_blank', rel: 'noopener' }, 'Usage in Firebase ↗')),
   ];
 }

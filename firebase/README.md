@@ -1,6 +1,12 @@
 # Firebase
 
-Project: `juegos-de-salon` (Spark plan, free). Created on 2026-09-08.
+Project: `juegos-de-salon`, on the pay-as-you-go **Blaze** plan since 2026-10-29 (D-512; created on Spark on 2026-09-08).
+
+**Billing (D-512):** the project belongs to `la cuenta de la máquina`, and is billed to the Cloud Billing
+account **Juegos de Salón** (`01B627-966553-2CB035`, United States), owned by the owner's personal account,
+with the machine's account as *Billing Account User*. Budget **Juegos de Salón - monthly**: US$10/month,
+alerts only at 50 %, 90 % and 100 %, by email to the billing admins. There is no enforced spend cap on
+purpose: it would pause the database mid-game. To go back to Spark, unlink billing in the Firebase console.
 
 > **Watch the account.** The project belongs to **`la cuenta de la máquina`**, the machine's
 > account, which is **not** the identity used to commit (`la cuenta de administrador`, GitHub
@@ -528,21 +534,21 @@ curl -X PUT "$DB/stats/dev/days/$DAY/local/toque-y-fama/cpu/1.json" -d '50'   # 
 curl "$DB/stats/dev/days/$DAY.json"                                            # -> Permission denied
 ```
 
-## Spark plan quotas and limits
+## Quotas and limits (Blaze, D-512)
 
 The app is static: there is no server of its own, so all of multiplayer depends on this
-database. The ceiling doesn't come from the static design but from the free plan:
+database. Blaze keeps the free quotas below and charges only beyond them, so the expected bill is $0:
 
-| Resource | Usual cap | What it means when playing |
+| Resource | Free each month | What it means when playing |
 |---|---|---|
-| Simultaneous connections | ~100 | ≈50 two-phone games, ≈16 six-phone ones |
-| Download | ~10 GB/month | |
-| Storage | 1 GB | Barely relevant since D-39: the trash bin deletes what expired |
+| Simultaneous connections | ~200,000 per database (not billed) | Was ~100 on Spark (≈50 two-phone games); no longer the ceiling |
+| Download | ~10 GB/month, then billed per GB | The one that costs money: keep reads small (D-470, D-473, D-499) |
+| Storage | 1 GB, then billed per GB | Barely relevant since D-39: the trash bin deletes what expired |
 
-**There is no billing alert to set: the Spark plan has no billing.** Past the
-cap, Firebase rejects new connections and the player can't enter the room; it doesn't
-degrade gracefully, it goes down. Since v0.18 at least the player is told (D-40).
-So only what plays online holds a connection: the rankings are read over REST, and the SDK's
+**Past the free quota the database does not go down: it bills.** The budget email (above) and the
+alerts below warn before it matters. On Spark, past ~100 connections Firebase rejected new ones and
+the player could not enter the room (since v0.18 at least the player is told, D-40); that message stays.
+Only what plays online holds a connection: the rankings are read over REST, and the SDK's
 websocket opens only when a player saves a score or signs in (D-470).
 
 Confirm the numbers in the console before setting thresholds: Google has changed them.
@@ -554,7 +560,8 @@ Confirm the numbers in the console before setting thresholds: Google has changed
 2. **Connections alert, in Google Cloud Monitoring** (created on 2026-10-12): the policy
    [Firebase: 80 de 100 conexiones](https://console.cloud.google.com/monitoring/alerting/policies/2345084699692281801?project=juegos-de-salon)
    watches `firebasedatabase.googleapis.com/network/active_connections` and alerts by email
-   (channel "JBot Mac Mini GCloud Notification") when it goes over 80. It was created by hand in the console: the
+   (channel "JBot Mac Mini GCloud Notification") when it goes over 80. Since Blaze (D-512) 80 is no
+   longer near a cap: it now means "traffic is growing", not "about to go down"; the name stays. It was created by hand in the console: the
    service account key is for the database, not for configuring Google Cloud.
 3. **Daily download alert, in Google Cloud Monitoring** (created on 2026-10-27, by hand like the
    one above): the policy **Firebase: descarga diaria > 250 MB**, listed in
@@ -570,5 +577,5 @@ The cap on rooms per phone (D-41) stops accidental abuse, not the determined kin
 abuse hits the REST API with `curl`. The only thing that closes that door is **anonymous
 authentication** (`signInAnonymously`) with rules that require `auth != null`, which would also allow
 per-user rules instead of "anyone with the code". It's another security model and
-deserves its own decision; moving to Blaze solves the ceiling but opens the door to a
-bill from abuse, so it calls for a spending cap.
+deserves its own decision. Blaze (D-512) solved the ceiling and opened the door to a bill from
+abuse: the US$10 alert-only budget is the warning, and Firebase App Check is the next step if abuse appears.
