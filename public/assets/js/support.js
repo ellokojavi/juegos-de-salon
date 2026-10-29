@@ -219,16 +219,17 @@ const link = (cls, id, T) => el('button', { type: 'button', class: cls, id, 'ari
 
 /**
  * On the home page: `?support=thanks` (Stripe's way back) opens the thank-you, `?support=open` the
- * card. The parameters leave the address, so a reload does not count again; the thank-you counts a
- * payment only with a new Stripe id (`newPayment`), so a reopened tab or a typed address does not either.
+ * card. The parameters leave the address, so a reload does not count again; the thank-you opens only
+ * with a new Stripe id (`newPayment`): a reopened tab or a typed address shows nothing and counts nothing.
  */
 export async function supportFromUrl({ lang = getLang(), search = globalThis.location?.search ?? '' } = {}) {
   const v = param('support', search);
   if (v === null) return false;
   try { const u = new URL(location.href); u.searchParams.delete('support'); u.searchParams.delete('session'); history.replaceState(null, '', u); } catch (_) { /* the address stays */ }
-  const thanks = v === 'thanks';
-  const record = !tiene('test', search) && (!thanks || newPayment(param('session', search)));
-  openSupportSheet({ lang, thanks, record });
+  const thanks = v === 'thanks', test = tiene('test', search);
+  // No thank-you without a payment: only a new Stripe id opens it (?test shows it, counting nothing)
+  if (thanks && !test && !newPayment(param('session', search))) return false;
+  openSupportSheet({ lang, thanks, record: !test });
   return true;
 }
 
