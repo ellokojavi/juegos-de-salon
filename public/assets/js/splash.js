@@ -37,12 +37,16 @@ export const SEEN_KEY = 'juegos-de-salon:splash-visto';
 
 /**
  * Who an `audience: 'regulars'` campaign waits for (D-458, the owner's thresholds): a phone with
- * this many distinct visit days in the last four weeks and this many finished games.
+ * this many distinct visit days in the last four weeks and this many finished games. Games ask
+ * for none (D-502): the phone counted only La Copa's, so no regular reached 10; the visit days
+ * reach back to Oct 17, so a phone that already comes back qualifies at once.
  */
-export const REGULARS = { days: 5, games: 10 };
+export const REGULARS = { days: 5, games: 0 };
 // What the phone already keeps: its visit days (stats.js DIAS_KEY, comma-separated, the last 28),
-// its finished games (the inbox's count, buzon.js) and whether it paid (support.js)
+// its finished games (stats.js PARTIDAS_KEY for every game since D-502, or the inbox's older count
+// of La Copa's, buzon.js, whichever is higher) and whether it paid (support.js)
 const DAYS_KEY = 'juegos-de-salon:dias';
+const GAMES_KEY = 'juegos-de-salon:partidas';
 const INBOX_KEY = 'juegos-de-salon:buzon';
 const SUPPORT_KEY = 'juegos-de-salon:support';
 
@@ -56,7 +60,7 @@ export function readProfile(get = k => { try { return globalThis.localStorage?.g
   const today = Math.floor(now / 86400000);   // stats.js's day number (cleanup.js dayOf)
   let days = 0;
   try { days = new Set(String(get(DAYS_KEY) || '').split(',').map(Number).filter(d => Number.isInteger(d) && d > today - 28 && d <= today)).size; } catch (_) { /* none */ }
-  return { days, games: Number(obj(INBOX_KEY).partidas) || 0, paid: !!obj(SUPPORT_KEY).paid };
+  return { days, games: Math.max(Number(get(GAMES_KEY)) || 0, Number(obj(INBOX_KEY).partidas) || 0), paid: !!obj(SUPPORT_KEY).paid };
 }
 
 /** Whether a phone with this profile already plays here, for an `audience: 'regulars'` campaign. */
