@@ -19,6 +19,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
 .filters label { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; font-size: 0.95rem; }
 .filters select { appearance: none; -webkit-appearance: none; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); border-radius: 999px; padding: 10px 14px; font: inherit; font-weight: 800; min-height: 44px; }
 .filters #updated { margin-left: auto; font-size: 0.85rem; }
+/* The bell lit once this device is on (release-push.js) */
+.btn-avisos-dueno[data-on='1'] { opacity: 1; border-color: var(--yellow); }
 
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 12px; }
 .tile { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; text-align: left; color: var(--ink); font: inherit; text-decoration: none; }
@@ -167,14 +169,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
   #screen-panel { padding-bottom: calc(130px + var(--safe-bottom)); }
 }
 
-/* Buscar por código o link */
-.buscar { flex: 1 1 200px; display: flex; }
-.buscar input {
-  flex: 1; min-width: 0; min-height: 44px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink);
-  border-radius: 999px; padding: 10px 14px; font: inherit; font-weight: 800;
-}
-.buscar input::placeholder { color: var(--muted); font-weight: 700; }
-.btn-avisos-dueno { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); font: inherit; font-weight: 800; cursor: pointer; min-height: 44px; }
+/* The owner's bell (D-504): an icon, dim until this device is on */
+.btn-avisos-dueno { width: 44px; padding: 0; opacity: 0.55; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--ink); font: inherit; font-size: 1.2rem; cursor: pointer; min-height: 44px; }
 .buscar-msg { margin: 0 0 10px; color: var(--yellow); font-weight: 800; font-size: 0.9rem; }
 
 /* Filtros dentro de un bloque */
