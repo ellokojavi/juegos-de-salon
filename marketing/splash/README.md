@@ -22,7 +22,7 @@ that has not paid, and until then stays unseen. This folder is its memory: every
 
 1. Its entry in `CAMPAIGNS` (a new id: it is what phones remember, never reused), texts in the
    four languages (or `langs: ['es', 'en']`, and the rest see English), and the clips of its games
-   with `capture.mjs`, or a teaser with `teaser.mjs` (an item with only `img`, `still` and `ratio`).
+   with `capture.mjs`, or a teaser with `teaser.mjs` (an item with only `img`, `still` and `ratio`, plus `smooth: true` when it is drawn at full size rather than pixel art).
    If it is not for a first visit (an ask, like support), give it `audience: 'regulars'` (D-458) and
    say so in its README's Audience row.
 2. Its folder `campaigns/<id>/` with the README and the screenshots (`look.mjs splash <id>` at
