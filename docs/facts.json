@@ -1426,6 +1426,7 @@
     "tools/release/changelog.test.mjs",
     "tools/release/json-ld.test.mjs",
     "tools/release/merge-report.test.mjs",
+    "tools/release/pages-5xx.test.mjs",
     "tools/release/syntax.test.mjs",
     "tools/release/version.test.mjs",
     "tools/reports/weekly-data.test.mjs"

@@ -64,7 +64,7 @@ What is not retested on the PR: changes on `main` that the PR did not merge. Git
 with the `main` of that moment, so a later push tests its own files against a newer `main` without
 rerunning what the newer `main` brought. The safety net is `publish.yml`, which tests what it publishes
 unless that exact tree already passed (D-302, D-308): when the merged PR's head passed its own run, only
-`smoke.mjs` plus the scripts the merge's diff reaches (D-496), and otherwise the whole suite. For that net to hold, **an
+`smoke.mjs` plus the scripts reached by what main gained since the PR head passed (D-496, D-506), and otherwise the whole suite. For that net to hold, **an
 incremental run never leaves the tree's mark** (`e2e-tree-<tree>`): only a run that tested the whole PR
 can vouch for a tree, and the narrowed run on `main` (D-496) leaves none either.
 
@@ -156,7 +156,7 @@ catch in the PR) and moving the declared facts to their own module (tidier, but 
 | What | File |
 |---|---|
 | This design | `docs/TEST-SCOPE.md` |
-| Why each step was taken | `docs/decisions/`: D-308, D-329, D-346, D-378, D-388, D-391, D-392, D-496 |
+| Why each step was taken | `docs/decisions/`: D-308, D-329, D-346, D-378, D-388, D-391, D-392, D-496, D-506 |
 | How to run and write scripts | `tools/e2e/README.md` |
 | The code | `tools/e2e/affected.mjs`, `changes.mjs`, `ci.mjs`, `since-passed.mjs` (D-392) |
 | The guards | `tools/e2e/*.test.mjs` |
