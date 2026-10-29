@@ -1,5 +1,5 @@
 {
-  "version": "0.231.2",
+  "version": "0.231.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1084,6 +1084,7 @@
     "public/assets/js/llegada.js",
     "public/assets/js/load-css.js",
     "public/assets/js/notification-sheets.js",
+    "public/assets/js/on-screen.js",
     "public/assets/js/parametros.js",
     "public/assets/js/push.js",
     "public/assets/js/qr.js",
@@ -1300,6 +1301,7 @@
     "public/assets/js/labs-puerta.test.mjs",
     "public/assets/js/llegada.test.mjs",
     "public/assets/js/manifest.test.mjs",
+    "public/assets/js/on-screen.test.mjs",
     "public/assets/js/parametros.test.mjs",
     "public/assets/js/pending-scores.test.mjs",
     "public/assets/js/push.test.mjs",
