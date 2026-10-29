@@ -33,7 +33,7 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 | How a game is built (C-n) | [docs/CANONES.md](docs/CANONES.md), with its checklist at the end | Before building or changing a game or the home page (C-17), and when done |
 | Texts, buttons, sharing (U-n) | [docs/USABILIDAD.md](docs/USABILIDAD.md): U-1, U-8 and **U-18** before writing instructions | Before writing anything the player reads |
 | Why it is this way (D-n) | [docs/DECISIONS.md](docs/DECISIONS.md), the index (by topic, then one row each), and `docs/decisions/D-<n>.md` for each one (D-394): read the index, open only the ones you need | Before changing something that looks odd |
-| A new game, step by step | [docs/AGREGAR-JUEGO.md](docs/AGREGAR-JUEGO.md) | When starting one |
+| A new game, step by step | [docs/ADD-GAME.md](docs/ADD-GAME.md) | When starting one |
 | Each game | `docs/games/<folder>.md`, with its exceptions to the canons | Before touching it |
 | What was requested (RP-n…) | [docs/REQUERIMIENTOS.md](docs/REQUERIMIENTOS.md) | When closing one |
 | German | [docs/ALEMAN.md](docs/ALEMAN.md), the glossary | When translating |
