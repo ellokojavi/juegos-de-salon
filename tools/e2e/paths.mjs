@@ -211,6 +211,10 @@ export const PATHS = {
     // The new create screen (D-425, lab) with the 3-day cup chosen: "Los 3 días" and its three games, no final (D-437, D-438)
     'create-three': [`location.href='/cup/?test&lab'`, `1`, `1`, `document.getElementById('btn-crear').click()`, `1`,
       `(o => o[o.length - 2].click())([...document.querySelectorAll('#crear-modo .opcion')])`, `1`, `document.getElementById('crear-modo').scrollIntoView({ block: 'start' })`],
+    // Administrar (admin.js, loaded on first open, #860): just created with the guide, mid-cup, and on the last day
+    'admin-new': [`location.href='/cup/?test&demo=new'`, `1`, `1`],
+    admin: [`location.href='/cup/?test&demo=admin'`, `1`, `1`],
+    'admin-final': [`location.href='/cup/?test&demo=final-admin'`, `1`, `1`],
     // "Tus copas" with one in progress and two finished: the switch off and on (D-234)
     mine: [MINE_SEED, `1`],
     'mine-finished': [MINE_SEED, `1`, `document.getElementById('ver-terminadas').click()`],
