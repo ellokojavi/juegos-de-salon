@@ -17,6 +17,7 @@ import { hash32 } from '../../cup/games/semilla.js';
 import { rng as mulberry } from './rng.js';
 import { semana } from './records.js';
 import { param } from './parametros.js';
+import { GAMES, SUELTOS } from './games.js';
 
 /** El día n.° 1: el día en que Uno al día salió del laboratorio (D-230). Queda fijo: moverlo cambia el juego de días ya jugados. */
 export const LANZAMIENTO = '2026-10-06';
@@ -49,34 +50,15 @@ export const DESDE_PUENTES = '2026-10-27';
 export const JUEGOS_DIA = [
   // The two that only La Copa has carry their name here, so the dice does not load La Copa's rules
   // to say it (D-377); uno-al-dia.test.mjs checks they match juegosCopa()
-  { id: 'linea', emoji: '⏳', desde: LANZAMIENTO, name: { es: 'Línea Relámpago', en: 'Timeline Flash', pt: 'Linha Relâmpago', de: 'Blitz-Zeitstrahl' } },
-  { id: 'numero', emoji: '🔢', desde: LANZAMIENTO, name: { es: 'Toque y Fama: Número', en: 'Bulls and Cows: Number', pt: 'Toque e Fama: Número', de: 'Bullen und Kühe: Zahl' } },
-  { id: 'conexiones', emoji: '🔗', desde: LANZAMIENTO, hasta: DESDE_AGENTES },
-  { id: 'letras', emoji: '🔤', desde: LANZAMIENTO },
-  { id: 'anio', emoji: '📅', desde: LANZAMIENTO },
-  { id: 'reinas', emoji: '👑', desde: LANZAMIENTO },
-  { id: 'desenredo', emoji: '🧶', desde: LANZAMIENTO },
-  { id: 'ahorcado', emoji: '🪢', desde: DESDE_GRUPO },
-  { id: 'batalla-naval', emoji: '⚓', desde: DESDE_GRUPO },
-  { id: 'dudo', emoji: '🎲', desde: DESDE_GRUPO },
-  // D-334: the three that left the lab (D-332) and the solo games that were missing, from the next deck on
-  { id: 'rutas', emoji: '🚇', desde: DESDE_MAS },
-  { id: 'loteo', emoji: '📐', desde: DESDE_MAS },
-  { id: 'pintaminas', emoji: '🖌️', desde: DESDE_MAS },
-  { id: 'zip', emoji: '〰️', desde: DESDE_MAS },
-  { id: 'tango', emoji: '☀️', desde: DESDE_MAS },
-  { id: 'donde', emoji: '📍', desde: DESDE_MAS },
-  // D-405: Generala, opened from the home page, plays solo with the day's dice (D-247)
-  { id: 'generala', emoji: '📝', desde: DESDE_GENERALA },
-  // D-421: Agentes, out of the lab in Conexiones' place
-  { id: 'agentes', emoji: '🕵️', desde: DESDE_AGENTES },
-  // D-456: Tren en Vilo, out of the lab
-  { id: 'puentes', emoji: '🚅', desde: DESDE_PUENTES },
-];
+  { orden: 0, id: 'linea', emoji: '⏳', desde: LANZAMIENTO, name: { es: 'Línea Relámpago', en: 'Timeline Flash', pt: 'Linha Relâmpago', de: 'Blitz-Zeitstrahl' } },
+  { orden: 1, id: 'numero', emoji: '🔢', desde: LANZAMIENTO, name: { es: 'Toque y Fama: Número', en: 'Bulls and Cows: Number', pt: 'Toque e Fama: Número', de: 'Bullen und Kühe: Zahl' } },
+  // Every other one is in its entry in games.js, the manifest (#855): `unoAlDia: { orden, desde, hasta?, grupo? }`
+  ...[...GAMES, ...SUELTOS].filter(g => g.unoAlDia).map(g => ({ orden: g.unoAlDia.orden, id: g.id, emoji: g.emoji, desde: g.unoAlDia.desde, ...(g.unoAlDia.hasta ? { hasta: g.unoAlDia.hasta } : {}) })),
+].sort((x, y) => x.orden - y.orden).map(({ orden, ...j }) => j);
 /** Whether a game can come out on a date: it already joined and has not left. */
 export const vigente = (j, fecha) => j.desde <= fecha && !(j.hasta && j.hasta <= fecha);
 /** Los de grupo: tienen su propio motor y su modo para uno (contra el celular o con su mazo). */
-export const GRUPO = ['ahorcado', 'batalla-naval', 'dudo', 'generala'];
+export const GRUPO = JUEGOS_DIA.filter(j => [...GAMES, ...SUELTOS].find(g => g.id === j.id)?.unoAlDia?.grupo).map(j => j.id);
 export const juegoDia = id => JUEGOS_DIA.find(j => j.id === id) || null;
 
 /**
