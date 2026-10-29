@@ -782,7 +782,8 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
   row, 🧊 markers, acceptances); the month's points, the +10 per friend, the week's sum and the best
   streak are written only by the rebuild, which then runs every hour (`23 * * * *`) and counts every
   friend who accepted in the month. /today/ adds to the rebuild's row this phone's days after its
-  last counted day `u` (`conMiCuenta`), so today's points show at once; other players' reach the
+  last counted day `u` (`conMiCuenta`), so today's points show at once, in the big number and in the player's own row of
+  the month's tabs, placed again (`tablaConMiCuenta`, `bloqueRanking`'s `ajustar`); other players' reach the
   ranking within the hour. When it launches, a later PR removes the phone's writers and tightens
   the rules so only the administrator writes those totals.
 - **No jump on /today/:** signed in, the first drawing shows the last total the ranking gave this phone
