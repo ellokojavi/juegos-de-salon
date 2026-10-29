@@ -450,7 +450,7 @@ Todo bajo `public/cup/`:
 | Archivo | Qué hace |
 |---|---|
 | `engine.js` | Calendario, ventanas con zona horaria, puntos, tabla, evolución, medallas; re-exports `code.js` and `clock.js` |
-| `code.js` · `clock.js` | The cup code (`codigoAlAzar`) and the active-time clock (`reloj`, `mmss`, `pausaDeLectura`), apart so Toque y Fama, Línea de tiempo and Generala alone use them without loading La Copa (D-377) |
+| `code.js` · `clock.js` | The cup code (`codigoAlAzar`) and the active-time clock (`reloj`, `pausaDeLectura`, and `mmss` re-exported from `assets/js/time-format.js`, the one copy every page uses), apart so Toque y Fama, Línea de tiempo and Generala alone use them without loading La Copa (D-377) |
 | `games/<carpeta>/engine.js` | Motor puro de cada juego (`agents`, `case`, `connections`, `final`, `number`, `queens`, `tango`, `timeline`, `untangle`, `where`, `word`, `year`, `zip`), con sus datos propios al lado |
 | `games/<carpeta>/ui.js` | La pantalla de cada juego; its optional flags (`caro`, `pruebaCompleta`, `pantallaCompleta`, `clock`) are read by `games/index.js`: a new game whose speed scores and that has no ⏳ countdown sets `clock = true` (D-384) |
 | `games/index.js` · `games/semilla.js` · `games/mazos.js` · `games/audiencia.js` · `games/solo.js` | Lo común a los juegos: el registro, la semilla, los mazos, el público y el modo suelto con su récord |
