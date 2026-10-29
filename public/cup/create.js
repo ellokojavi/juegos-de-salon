@@ -167,7 +167,7 @@ function elegirJuegos() {
 
 /**
  * The new create screen (D-425), behind its flag (D-498). lab: #seccion-copa-crear
- * In the test c.store (`?test`) the scripts see the screen of before unless the URL says `&lab`.
+ * In the test store (`?test`) the scripts see the screen of before unless the URL says `&lab`.
  */
 const formularioNuevo = () => (PRUEBA && !tiene('lab') ? Promise.resolve(false) : flag('copa-crear'));
 /** Two cup games are a lighter version of a home page game: their tagline is that game's. */
@@ -393,13 +393,13 @@ async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
   const nombre = campo(T.fCopa, { placeholder: T.fCopaPh, maxlength: String(COPA_MAX) }, { contador: true });
   // From an archived cup's memorial (D-476): the same name, ready to change
   if (nombreInicial) { nombre.input.value = String(nombreInicial).slice(0, COPA_MAX); nombre.input.dispatchEvent(new Event('input')); }
-  // On the screen of before, the 3-day cup is offered only with ?three or in the test c.store (D-100).
+  // On the screen of before, the 3-day cup is offered only with ?three or in the test store (D-100).
   // The new screen (D-425, a lab key) offers it always, next to the start (D-437), and starts at seven days.
   const juegos = nuevo ? armarSemana() : elegirJuegos();
   // The weekend cup (D-439), offered on both screens while `FINDE_HASTA` allows (closed since the owner's one-off cup): it takes the plain
   // 3-day cup's place on the new screen while it is offered
   // Only in Spanish for now (the owner's request): offered on a Spanish screen, and its words in Spanish
-  // Closed once the owner's cup was made; the test c.store still offers it with `&weekend=on`
+  // Closed once the owner's cup was made; the test store still offers it with `&weekend=on`
   const finde = LANG === 'es' && (findeAbierto(Date.now()) || (PRUEBA && param('weekend') === 'on')) ? armarFinde() : null;
   const diasDe = v => (v === 'finde' ? 3 : v);
   const modo = opciones([
