@@ -20,6 +20,7 @@ export const FLAGS = {
   'bn-salva': '🎆 Battleship: Salvo',
   'keyboard-lift': '⌨️ Feedback form above the iOS keyboard',
   'uad-share-grids': '🟩 Uno al día: share grids for Agentes, Dudo, Generala and Battleship',
+  'cover-facts': '📖 Game pages: who plays and how long, in the rules',
   'uad-night-totals': '📅 Uno al día: totals written by the hourly rebuild',
 };
 export const STATES = ['lab', 'all', 'off'];
