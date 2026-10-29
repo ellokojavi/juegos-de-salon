@@ -613,7 +613,7 @@
         el('div', { class: 'texto' },
           // "Próximamente" va pegado al nombre: abajo, entre las píldoras, no se veía
           el('h2', {}, el('span', {}, pickLang(g.name, lang)), !g.available && el('span', { class: 'proximamente' }, T.soon),
-            // A new game says so for two weeks (D-333)
+            // A new game says so for a week (D-333, D-507)
             g.available && esNuevo(g) && el('span', { class: 'nuevo' }, el('span', {}, T.newGame)),
             top.has(g.id) && el('span', { class: 'popular' }, el('span', {}, '🔥 '), el('span', {}, T.popularGame))),
           el('div', { class: 'tag' }, pickLang(g.tagline, lang)),

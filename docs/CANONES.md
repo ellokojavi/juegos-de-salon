@@ -407,7 +407,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   y si el juego no está en el idioma elegido lo dice antes de abrirlo ("🇪🇸 En español",
   `idiomas` en `games.js`; hoy ninguno lo declara, D-170). Uno de `SUELTOS` con `labs: true` no
   sale en la portada, aunque su link ya se comparta.
-- **A new game says "New" for two weeks** (D-333): next to its name, like "Próximamente", from its
+- **A new game says "New" for a week** (D-333, D-507): next to its name, like "Próximamente", from its
   `nuevoDesde` date in `games.js` for `DIAS_NUEVO` days (`esNuevo`). Every game that reaches the
   home page brings that date; `games.test.mjs` stops one that doesn't.
   Unlike the plain yellow "Próximamente" pill, it is a sticker that shines softly, so it sits on the
