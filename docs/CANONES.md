@@ -312,6 +312,7 @@ regla: quien cambia algo lo documenta en su mismo PR.
 - Las bibliotecas externas (QR) se cargan bajo demanda y su falla no rompe la pantalla. The room QR is drawn by the shared module `public/assets/js/qr.js` (`renderQr`), which loads a copy of the library served by the site itself (`public/assets/js/vendor/qrcode.js`, qrcode-generator 1.4.4, unchanged), never from a CDN; a game does not carry its own copy of that code.
 - Cada juego expone un gancho de solo lectura `window.__…` para las pruebas automatizadas, nombrado en la especificación del juego (D-213).
 - La pantalla no se apaga jugando (`keepAwake()`).
+- An animation that runs on its own (a cover's demo) draws through `onScreen` (`public/assets/js/on-screen.js`), so it stops asking for frames while scrolled off screen; a loop bounded in time or tied to a turn does not need it (#883).
 - Los errores previsibles se muestran al jugador en su idioma, con una salida clara; nunca una pantalla en blanco.
 - **El mensaje no inventa la causa.** Si desde el navegador no se puede distinguir entre dos causas (quedarse sin señal y toparse con el tope de conexiones se ven igual), el texto las nombra a las dos en vez de elegir una. Precisión falsa es peor que vaguedad honesta (D-40).
 - Los errores del transporte se traducen con `errText`/`failWith` de `public/assets/js/transport/errors.js`, nunca con un mapa propio en cada juego.
