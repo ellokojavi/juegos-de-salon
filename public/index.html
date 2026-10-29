@@ -659,8 +659,9 @@
       fila.append(copa, reserva);
     }
     // La Copa's card says what to do today (flag copa-hoy): ▶ Jugar hoy with a day to play. lab: #seccion-copa-hoy
+    // With today's day played, ✅ Día N abre en X h Y min (flag copa-espera). lab: #seccion-copa-espera
     if (copa) import('./assets/js/flags.js').then(({ flag }) => flag('copa-hoy')).then(on => on && import('./assets/js/cup-today.js'))
-      .then(m => m?.decorateCupCard(copa, { lang })).catch(() => {});
+      .then(m => m && import('./assets/js/flags.js').then(({ flag }) => flag('copa-espera')).then(wait => m.decorateCupCard(copa, { lang, wait }))).catch(() => {});
     const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso, estado }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
       if (formaAcceso() === 'off') { reserva?.remove(); return; }
       import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});
