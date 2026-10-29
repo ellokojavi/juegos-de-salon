@@ -1,5 +1,5 @@
 {
-  "version": "0.233.0",
+  "version": "0.233.2",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1094,6 +1094,7 @@
     "public/assets/js/records.js",
     "public/assets/js/region-patterns.js",
     "public/assets/js/rng.js",
+    "public/assets/js/room-flow.js",
     "public/assets/js/search.js",
     "public/assets/js/season.js",
     "public/assets/js/session.js",
