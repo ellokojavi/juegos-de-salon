@@ -1,7 +1,7 @@
 // La Copa's ▶ Jugar hoy on the home page (flag copa-hoy): which cup and day it opens, from what La Copa kept
 import assert from 'node:assert/strict';
 import { nuevaMeta, porJugar } from '../../cup/engine.js';
-import { pendingCup } from './cup-today.js';
+import { pendingCup, nextCupDay, untilText } from './cup-today.js';
 
 const H = 60 * 60 * 1000;
 const meta = nuevaMeta({ nombre: 'Copa', dias: 7, inicio: '2026-09-28', tz: 'America/Santiago', admin: 'aaaaaa', creada: 0 });
@@ -30,4 +30,9 @@ assert.equal(pendingCup(store('bbbbbb'), meta.win[1].a - H), null, 'before the c
 assert.equal(pendingCup(store('bbbbbb', []), dia(0)), null, 'no cups');
 assert.equal(pendingCup({ getItem: () => '{bad' }, dia(0)), null, 'a broken storage');
 assert.equal(pendingCup(null, dia(0)), null, 'no storage');
+assert.deepEqual(nextCupDay(store('aaaaaa'), dia(0)), { code: 'K7Q2X', dia: 2, at: meta.win[2].a }, 'played today: day 2 is next');
+assert.equal(nextCupDay(store('bbbbbb', []), dia(0)), null, 'no cups: no countdown');
+assert.equal(untilText(5 * H + 12 * 60000), '5 h 12 min');
+assert.equal(untilText(27 * H), '1 d 3 h');
+assert.equal(untilText(30000), '1 min');
 console.log('cup-today: ok');
