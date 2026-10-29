@@ -59,7 +59,7 @@ export function flagStatusOf(state, at) {
   const since = at ? ` desde el ${when(at)}` : '';
   if (state === 'all') return { tone: 'ok', lines: [`🟢 Publicado para todos${since}: cada jugador lo ve la próxima vez que abre esa página. Sin PR.`, 'Más adelante, un PR de limpieza quita la puerta y mueve esta tarjeta a La Bodega.'], to: [['lab', '↩️ Volver al laboratorio'], ['off', '⚪ Apagar para todos']] };
   if (state === 'off') return { tone: 'bad', lines: [`⚪ Apagado para todos${since}, también en el laboratorio.`], to: [['lab', '🧪 Encender en el laboratorio']] };
-  return { tone: 'wait', lines: ['🧪 En el laboratorio: solo lo ven quienes tienen la llave.'], to: [['all', '🚀 Publicar para todos'], ['off', '⚪ Apagar']] };
+  return { tone: 'wait', lines: ['🧪 En el laboratorio: solo lo ven quienes tienen la llave.'], to: [['all', '🚀 Publicar para todos'], ['off', '⚪ Apagar para todos']] };
 }
 
 /** The confirmation for a flagged card: immediate, no note, no PR. */
