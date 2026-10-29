@@ -32,12 +32,8 @@ let idiomaFijo = null;
 export function fijarIdioma(lang) { idiomaFijo = COMMON[lang] ? lang : null; }
 const R = () => (COMMON[idiomaFijo || getLang()] || COMMON.es).rk;
 const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
-/** "3:07"; con horas, "1:02:10". */
-export function mmss(ms) {
-  const s = Math.max(0, Math.round((Number(ms) || 0) / 1000));
-  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
-  return h ? `${h}:${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}` : `${m}:${String(r).padStart(2, '0')}`;
-}
+import { mmss } from './time-format.js';
+export { mmss };
 /** Dónde está /records/, desde cualquier página. */
 export const URL_RECORDS = new URL('../../records/', import.meta.url).href;
 

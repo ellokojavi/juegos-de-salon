@@ -1,5 +1,5 @@
 {
-  "version": "0.232.6",
+  "version": "0.232.8",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1104,6 +1104,7 @@
     "public/assets/js/splash.js",
     "public/assets/js/support.js",
     "public/assets/js/teclado.js",
+    "public/assets/js/time-format.js",
     "public/assets/js/transport/best-effort.js",
     "public/assets/js/transport/cleanup.js",
     "public/assets/js/transport/dispose.js",

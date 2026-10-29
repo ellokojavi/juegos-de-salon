@@ -14,6 +14,7 @@ import { UNO_AL_DIA, bandera } from './records.js';
 import { trackUnoAlDia } from './transport/stats.js';
 import { walk, seasonPoints } from './daily-points.js';
 import { salidasFin } from './fin.js';
+import { mmss } from './time-format.js';
 
 export const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
 const textos = lang => (COMMON[lang] || COMMON.es);
@@ -356,7 +357,6 @@ export async function tarjetaDesafio({ lang, raiz = '', inv, alTocar }) {
 /* ------------------------------------------------------------------ */
 
 /** "1:05", como el reloj de La Copa. */
-const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 
 /**
  * El modo `?today` (o `?hoy`, el de antes de D-266) de un juego de grupo (El Ahorcado, Batalla Naval, Dudo), como el de los
@@ -461,9 +461,8 @@ export function ponerTarjeta(tarjeta, despues = document.querySelector('#screen-
 /* ------------------------------------------------------------------ */
 
 const MEDALLAS = ['🥇', '🥈', '🥉'];
-const mmssCorto = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 /** What a row shows on the right, as on screen: the month's points (and streak), the streak, or the score and time. */
-const valorFila = (f, tipo, P) => (tipo === 'puntos' ? `${fmt(P.ptsN, { n: f.s })} · 🔥${f.r || 0}` : tipo === 'racha' ? `🔥 ${f.s}` : `${f.s}${f.ms ? ` · ⏱ ${mmssCorto(f.ms)}` : ''}`);
+const valorFila = (f, tipo, P) => (tipo === 'puntos' ? `${fmt(P.ptsN, { n: f.s })} · 🔥${f.r || 0}` : tipo === 'racha' ? `🔥 ${f.s}` : `${f.s}${f.ms ? ` · ⏱ ${mmss(f.ms)}` : ''}`);
 
 /** The tab shared, in words: "Ranking de octubre" for the month's (and the friends' month), else "Ranking · <tab>". */
 function contextoRanking(T, lang, d) {
