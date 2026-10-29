@@ -19,9 +19,9 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DEST = join(ROOT, 'public', 'assets', 'splash');
 // Its argument is a scene's name, not an output folder: output() would take it as one
 const OUT = output('/tmp/splash-teaser', [process.argv[0], process.argv[1]]);
-const SCALE = 4; // the art is 128×80: the MP4 is 512×320
+const SCALE = 4; // the art is 128×80: the MP4 is 512×320. A scene drawn at full size (Stack's, with the game's own drawing) sets window.SCALE = 1
 // The frame the still is taken from (for reduced motion): the "?" up (the train at the edge, the ninja's stick tipping, the last slab hovering)
-const STILL = { bridges: 90, ninja: 95, stack: 100 };
+const STILL = { bridges: 90, ninja: 95, stack: 225 };
 
 // The repo served as files, only for the scene page and the sprites it imports
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json' };
@@ -44,12 +44,12 @@ try {
     rmSync(frames, { recursive: true, force: true }); mkdirSync(frames, { recursive: true });
     await b.go(`${SITE}/marketing/splash/teaser/${name}.html?capture`, 800);
     if (!(await b.until('window.ready', 8000))) throw new Error(`${name}: the scene did not load`);
-    const [n, fps] = await b.evaluate('[window.FRAMES, window.FPS]');
+    const [n, fps, scale] = await b.evaluate('[window.FRAMES, window.FPS, window.SCALE || SCALE]');
     for (let i = 0; i < n; i++) {
       const png = await b.evaluate(`window.frame(${i})`);
       writeFileSync(`${frames}/${String(i).padStart(4, '0')}.png`, Buffer.from(png.split(',')[1], 'base64'));
     }
-    const clip = join(DEST, `${name}-teaser.mp4`), up = `scale=iw*${SCALE}:ih*${SCALE}:flags=neighbor`;
+    const clip = join(DEST, `${name}-teaser.mp4`), up = scale === 1 ? 'null' : `scale=iw*${scale}:ih*${scale}:flags=neighbor`;
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', `${frames}/%04d.png`,
       '-vf', up, '-c:v', 'libx264', '-preset', 'veryslow', '-crf', '20', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', clip]);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', `${frames}/0000.png`, '-vf', up, join(DEST, `${name}-teaser-start.png`)]);
