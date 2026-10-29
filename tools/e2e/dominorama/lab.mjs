@@ -1,4 +1,4 @@
-// The lab's Pips (D-381) end to end, at /labs/pips/: the lab offers it under Juegos en prueba with the
+// The lab's Dominorama (D-381) end to end, at /labs/dominorama/: the lab offers it under Juegos en prueba with the
 // credit to NYT Pips, which the cover gives too; the cover board solves itself; Empezar goes through the
 // 3, 2, 1 countdown to board 1 of 3; a domino is chosen, turned with a second tap and laid with a tap on
 // a cell; one that does not fit shakes and says why; a placed one comes off with a tap; laying the
@@ -7,14 +7,14 @@
 // giving up asks for a second tap; a drag let go anywhere, or cut short by a redraw, leaves no ghost. At 375 px. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
-const OUT = output('/tmp/pips-lab');
+const OUT = output('/tmp/dominorama-lab');
 const b = await launch({ dir: `${OUT}/p`, out: OUT, width: 375, height: 812 });
 const ev = e => b.evaluate(e);
 const SITE = process.env.SITE || 'http://localhost:8765';
 let failures = 0;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) failures++; };
 const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
-const { generar, lugar, NIVELES } = await import('../../../public/labs/pips/engine.js');
+const { generar, lugar, NIVELES } = await import('../../../public/labs/dominorama/engine.js');
 const SEED = 'e2e1';
 
 /** The tap on a cell and the turns that lay domino `f` of the solution on its cells `a` (its x) and `b` (its y). */
@@ -31,7 +31,7 @@ async function girarA(f, g) {
   const n = (g - cur + 4) % 4 || (sel ? 0 : 4);
   for (let k = 0; k < n; k++) await tocarFicha(f);
 }
-const aviso = () => ev(`document.querySelector('.aviso-pips').textContent`);
+const aviso = () => ev(`document.querySelector('.aviso-dominorama').textContent`);
 async function resolverTablero(t) {
   for (const s of t.solucion) {
     // One the help already laid is not in the tray any more
@@ -43,10 +43,10 @@ async function resolverTablero(t) {
 }
 
 await b.go(`${SITE}/labs/`);
-ok(await ev(`document.querySelector('#activos #seccion-pips #btn-pips')?.getAttribute('href')`) === 'pips/', 'the lab offers Pips under Juegos en prueba');
-ok(await ev(`/Pips/.test(document.querySelector('#seccion-pips a[href*="nytimes.com/games/pips"]')?.textContent || '')`), 'and says it is inspired by NYT Pips, with its link');
+ok(await ev(`document.querySelector('#activos #seccion-dominorama #btn-dominorama')?.getAttribute('href')`) === 'dominorama/', 'the lab offers Dominorama under Juegos en prueba');
+ok(await ev(`/Pips/.test(document.querySelector('#seccion-dominorama a[href*="nytimes.com/games/pips"]')?.textContent || '')`), 'and says it is inspired by NYT Pips, with its link');
 
-await b.go(`${SITE}/labs/pips/?test&seed=${SEED}`, 1200);
+await b.go(`${SITE}/labs/dominorama/?test&seed=${SEED}`, 1200);
 ok(await waitFor(`!!document.getElementById('btn-empezar')`), 'the cover has Empezar');
 ok(/Inspirado en Pips, de The New York Times Games/.test(await ev(`document.querySelector('.credito')?.textContent || ''`)), 'the cover credits NYT Pips');
 ok(await waitFor(`document.querySelectorAll('.demo .puesta').length >= 2`, 8000), 'the cover board solves itself, a domino at a time');
@@ -57,7 +57,7 @@ ok(await waitFor(`!!document.getElementById('tablero')`, 9000), 'Empezar goes th
 ok(/Tablero 1 de 3 · fácil/.test(await ev(`document.querySelector('.marcador').textContent`)), 'it says board 1 of 3, easy');
 const t0 = generar(SEED, 'facil');
 ok(await ev(`document.querySelectorAll('#tablero .celda').length`) === t0.celdas.length && await ev(`document.querySelectorAll('#bandeja .ficha').length`) === t0.fichas.length, 'the board and the tray are the engine\'s');
-ok(await ev(`(d => d && !d.open && d.querySelector('summary').textContent === '¿Cómo se juega?' && d.querySelectorAll('.pasos li').length === 3)(document.getElementById('como-pips'))`), 'under the board, a folded ¿Cómo se juega? with the cover\'s three steps');
+ok(await ev(`(d => d && !d.open && d.querySelector('summary').textContent === '¿Cómo se juega?' && d.querySelectorAll('.pasos li').length === 3)(document.getElementById('como-dominorama'))`), 'under the board, a folded ¿Cómo se juega? with the cover\'s three steps');
 
 // A tap turns and chooses; lay; one that does not fit; take it off
 const s0 = t0.solucion[0];
@@ -111,7 +111,7 @@ ok(await ev(`!!document.getElementById('btn-otro') && !!document.querySelector('
 ok(await ev(`document.documentElement.scrollWidth <= 375`), 'no sideways scroll on the result');
 
 // Giving up asks for a second tap
-await b.go(`${SITE}/labs/pips/?test&seed=${SEED}`, 1200);
+await b.go(`${SITE}/labs/dominorama/?test&seed=${SEED}`, 1200);
 await ev(`document.getElementById('btn-empezar').click(); 1`);
 await waitFor(`!!document.getElementById('tablero')`, 9000);
 await ev(`document.getElementById('btn-rendirse').click(); 1`);
@@ -120,5 +120,5 @@ await ev(`document.getElementById('btn-rendirse').click(); 1`);
 ok(await waitFor(`document.getElementById('puntaje')?.textContent === '0/100'`), 'and gives up with nothing solved: 0/100');
 
 b.close();
-console.log(failures ? `✗ ${failures} failure(s)` : '✓ pips/lab.mjs');
+console.log(failures ? `✗ ${failures} failure(s)` : '✓ dominorama/lab.mjs');
 process.exit(failures ? 1 : 0);
