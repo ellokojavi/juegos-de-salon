@@ -83,6 +83,8 @@ export const GAMES = [
   },
   {
     id: 'ahorcado',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 7, desde: '2026-10-07', grupo: true },
     tipos: ['words'],
     emoji: '🪢',
     name: { es: 'El Ahorcado', en: 'Hangman', pt: 'Forca', de: 'Galgenmännchen' },
@@ -101,6 +103,8 @@ export const GAMES = [
   },
   {
     id: 'dudo',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 9, desde: '2026-10-07', grupo: true },
     tipos: ['tabletop'],
     emoji: '🎲',
     name: { es: 'Dudo', en: 'Liar\'s Dice', pt: 'Dado Mentiroso', de: 'Lügenwürfel' },
@@ -119,6 +123,8 @@ export const GAMES = [
   },
   {
     id: 'generala',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 16, desde: '2026-10-23', grupo: true },
     tipos: ['tabletop'],
     emoji: '📝',
     name: { es: 'Generala', en: 'Generala', pt: 'General', de: 'Generala' },
@@ -140,6 +146,8 @@ export const GAMES = [
   },
   {
     id: 'batalla-naval',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 8, desde: '2026-10-07', grupo: true },
     tipos: ['logic'],
     emoji: '⚓',
     name: { es: 'Batalla Naval', en: 'Battleship', pt: 'Batalha Naval', de: 'Schiffe versenken' },
@@ -213,6 +221,8 @@ export const SUELTOS = [
     // and in Uno al día. Its page /connections/ still opens (old links, the lab's Bodega card) and the
     // cups created before keep playing it; `bodega` leaves it off the home page and the search
     id: 'conexiones',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 2, desde: '2026-10-06', hasta: '2026-10-24' },
     slug: 'connections',
     emoji: '🔗',
     name: { es: 'Conexiones', en: 'Connections', pt: 'Conexões', de: 'Verbindungen' },
@@ -223,6 +233,8 @@ export const SUELTOS = [
   },
   {
     id: 'letras',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 3, desde: '2026-10-06' },
     slug: 'word',
     emoji: '🔤',
     name: { es: 'Toque y Fama: Palabra', en: 'Bulls and Cows: Word', pt: 'Toque e Fama: Palavra', de: 'Bullen und Kühe: Wort' },
@@ -238,6 +250,8 @@ export const SUELTOS = [
   },
   {
     id: 'anio',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 4, desde: '2026-10-06' },
     slug: 'year',
     emoji: '📅',
     name: { es: '¿En qué año?', en: 'What Year?', pt: 'Em que ano?', de: 'Welches Jahr?' },
@@ -253,6 +267,8 @@ export const SUELTOS = [
   },
   {
     id: 'reinas',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 5, desde: '2026-10-06' },
     slug: 'queens',
     emoji: '👑',
     name: { es: 'Reinas', en: 'Queens', pt: 'Rainhas', de: 'Damen' },
@@ -268,6 +284,8 @@ export const SUELTOS = [
   },
   {
     id: 'tango',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 14, desde: '2026-10-16' },
     slug: 'tango',
     emoji: '☀️',
     name: { es: 'Tango', en: 'Tango', pt: 'Tango', de: 'Tango' },
@@ -283,6 +301,8 @@ export const SUELTOS = [
   },
   {
     id: 'zip',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 13, desde: '2026-10-16' },
     slug: 'zip',
     emoji: '〰️',
     name: { es: 'Zip', en: 'Zip', pt: 'Zip', de: 'Zip' },
@@ -298,6 +318,8 @@ export const SUELTOS = [
   },
   {
     id: 'desenredo',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 6, desde: '2026-10-06' },
     slug: 'untangle',
     emoji: '🧶',
     name: { es: 'Desenredo', en: 'Untangle', pt: 'Desenrola', de: 'Entwirren' },
@@ -313,6 +335,8 @@ export const SUELTOS = [
   },
   {
     id: 'donde',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 15, desde: '2026-10-16' },
     slug: 'where',
     emoji: '📍',
     name: { es: '¿Dónde queda?', en: 'Where Is It?', pt: 'Onde fica?', de: 'Wo liegt das?' },
@@ -343,6 +367,8 @@ export const SUELTOS = [
   {
     // Out of the lab since D-332, with Loteo and Pintaminas: their page was /labs/<slug>/, now a bridge (`deLabs`)
     id: 'rutas',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 10, desde: '2026-10-16' },
     slug: 'routes',
     emoji: '🚇',
     name: { es: 'Rutas rotas', en: 'Broken Routes', pt: 'Rotas Quebradas', de: 'Kaputte Linien' },
@@ -361,6 +387,8 @@ export const SUELTOS = [
   {
     // Two variants (D-331): 🔢 Numbers and ⚡💧 Utilities, picked in the waiting room
     id: 'loteo',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 11, desde: '2026-10-16' },
     slug: 'plots',
     emoji: '📐',
     name: { es: 'Loteo', en: 'Plots', pt: 'Loteamento', de: 'Parzellen' },
@@ -379,6 +407,8 @@ export const SUELTOS = [
   {
     // Two variants (D-331): easy (one color) and hard (two colors), picked in the waiting room
     id: 'pintaminas',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 12, desde: '2026-10-16' },
     slug: 'paint-mines',
     emoji: '🖌️',
     name: { es: 'Pintaminas', en: 'Paint Mines', pt: 'Pinta-Minas', de: 'Malminen' },
@@ -397,6 +427,8 @@ export const SUELTOS = [
   {
     // Out of the lab in D-421, in Conexiones' place (the owner's request): its page was /labs/agents/, now a bridge (`deLabs`)
     id: 'agentes',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 17, desde: '2026-10-24' },
     slug: 'agents',
     emoji: '🕵️',
     name: { es: 'Agentes', en: 'Agents', pt: 'Agentes', de: 'Agenten' },
@@ -415,6 +447,8 @@ export const SUELTOS = [
   {
     // Out of the lab in D-456: its page was /labs/bridges/, now a bridge (`deLabs`); its id is La Copa's
     id: 'puentes',
+    // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
+    unoAlDia: { orden: 18, desde: '2026-10-27' },
     slug: 'bridges',
     emoji: '🚅',
     name: { es: 'Tren en Vilo', en: 'Train on the Edge', pt: 'Trem no Vão', de: 'Zug am Abgrund' },
