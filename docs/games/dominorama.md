@@ -1,13 +1,19 @@
-# 🎲 Pips (lab prototype, in Juegos en prueba)
+# 🎲 Dominorama (lab prototype, in Juegos en prueba)
 
 A dominoes puzzle for one player (D-381): lay every domino on the board so each colored zone keeps its
 rule. **Inspired by [Pips](https://www.nytimes.com/games/pips), by The New York Times Games (2025)**, and
 it says so on the cover and in the lab. It came from the game-ideas agent's first round (D-360,
 issue #556, idea `pips-dominoes`), approved by the owner: "Hagamos una demo de Pips en Labs".
 
+**Its name.** It was called Pips until 2026-10-28, when the owner renamed it Dominorama because Pips
+is a registered mark: no "Dominorama" turned up in INAPI (Chile) nor the USPTO that day. The folder,
+the id (`pips` → `dominorama`; the usage counted before stays under `pips`) and every internal name
+moved with it; `/labs/pips/` is a small redirect for the links already shared. The credit to NYT's
+Pips stays, as the inspiration.
+
 ## Summary
 
-- **Where:** `https://juegosdesalon.cl/labs/pips/`, in the lab (each person's key, D-281, D-284). Id `pips`
+- **Where:** `https://juegosdesalon.cl/labs/dominorama/`, in the lab (each person's key, D-281, D-284). Id `dominorama`
   in the usage signal.
 - **For whom:** one player. Spanish only (a prototype).
 - **Status:** active project, to try with friends. If it catches on, the idea is that it joins La Copa.
@@ -88,7 +94,7 @@ as an empty box.
 - `cumple(zona, valores)` decides a rule (and prunes the solver while a zone is partial); `lugar`,
   `poner`, `sacar`, `estadoZonas`, `resuelto`, `ayudar`, `puntaje` and `tarjeta` are the game.
 - `game.js` draws the board with a CSS grid (cells, edges, diamonds) and the dominoes over it; the
-  end-to-end hook is `window.__pips` (`P`, and `solucion()` of the board on screen).
+  end-to-end hook is `window.__dominorama` (`P`, and `solucion()` of the board on screen).
 - Today's boards: without `?seed=`, `dia:<date>`, the same for everyone.
 
 ## To tune
@@ -99,8 +105,8 @@ friends have played it.
 
 ## Tests
 
-`public/labs/pips/engine.test.mjs` (rules, one solution per board, laying, help, score) and
-`tools/e2e/pips/lab.mjs` (the lab card, the cover, choosing, turning and laying with taps, the three
+`public/labs/dominorama/engine.test.mjs` (rules, one solution per board, laying, help, score) and
+`tools/e2e/dominorama/lab.mjs` (the lab card, the cover, choosing, turning and laying with taps, the three
 boards solved by taps, the help, the result, giving up).
 
 ## Exceptions to the canons

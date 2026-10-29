@@ -1,5 +1,5 @@
 /**
- * Pips — lab prototype (D-381), inspired by Pips (The New York Times Games, 2025): place every domino
+ * Dominorama — lab prototype (D-381), inspired by Pips (The New York Times Games, 2025): place every domino
  * on the board so each colored zone keeps its rule: its pips add up to a number (6), are all equal
  * (=), all different (≠), add up to less (<5) or more (>9) than a number, or anything goes.
  *
