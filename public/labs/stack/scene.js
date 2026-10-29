@@ -32,6 +32,7 @@ const BASE_COLOR = [58, 20, 100];
 export function escena(canvas, { zoom = 1 } = {}) {
   const ctx = canvas.getContext('2d');
   let W = 0, H = 0, u = 0, camY = 0, ultimo = 0;
+  let fija = null;     // a camera set from outside (the teaser): { y, yaw }; the game leaves it null
   const piezas = [];   // falling pieces: { slab, y, vy, color }
   const anillos = [];  // the glow of a perfect drop: { slab, y, born }
   const chispas = [];  // its sparks: { x, y, z, vx, vy, vz, born, color }
@@ -46,7 +47,12 @@ export function escena(canvas, { zoom = 1 } = {}) {
   };
   const ro = new ResizeObserver(medir); ro.observe(canvas); medir();
 
-  const pt = (x, y, z) => [W / 2 + (x - z) * COS30 * u, H * 0.56 + (x + z) * SIN30 * u - (y - camY) * u];
+  // The yaw turns the view around the tower (the teaser's; the game's is 0). Under 45° either way the
+  // same two sides keep facing the viewer
+  const pt = (x, y, z) => {
+    if (fija?.yaw) { const c = Math.cos(fija.yaw), s = Math.sin(fija.yaw); [x, z] = [x * c - z * s, x * s + z * c]; }
+    return [W / 2 + (x - z) * COS30 * u, H * 0.56 + (x + z) * SIN30 * u - (y - camY) * u];
+  };
   const poly = (pts, fill) => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); };
 
   /** A box: its top (with a soft shine) and the two sides that face the viewer (+x on the right, +z on the left). */
@@ -86,7 +92,7 @@ export function escena(canvas, { zoom = 1 } = {}) {
     const n = score(g);
     // The camera follows the top of the tower, smoothly
     const meta = n * SLAB;
-    camY = dt ? camY + (meta - camY) * Math.min(1, dt * 5) : meta;
+    camY = fija ? fija.y : dt ? camY + (meta - camY) * Math.min(1, dt * 5) : meta;
     ctx.clearRect(0, 0, W, H);
 
     // The pieces behind the tower first, the ones in front after it
@@ -97,7 +103,7 @@ export function escena(canvas, { zoom = 1 } = {}) {
 
     // The base, then the slabs (only the ones in sight)
     if (camY < 4) columna(g.slabs[0]);
-    const desde = Math.max(1, n - Math.ceil(H / (SLAB * u)) - 4);
+    const desde = fija ? 1 : Math.max(1, n - Math.ceil(H / (SLAB * u)) - 4);
     for (let i = desde; i <= n; i++) caja(g.slabs[i], (i - 1) * SLAB, i * SLAB, colorDe(i));
 
     piezas.filter(p => !detras(p)).forEach(p => caja(p.slab, p.y, p.y + SLAB, p.color));
@@ -130,6 +136,8 @@ export function escena(canvas, { zoom = 1 } = {}) {
   }
 
   return {
+    /** Sets the camera by hand: its height and its yaw (the teaser); `null` gives it back to the tower. */
+    camara(c) { fija = c; },
     draw,
     caer(slab, y, n) { piezas.push({ slab, y, vy: 0, color: colorDe(n) }); },
     brillar(slab, y, now = performance.now()) {

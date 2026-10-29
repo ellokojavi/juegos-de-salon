@@ -1,10 +1,10 @@
 <!doctype html>
 <!--
   The teaser of 🥷 Stick Ninja for the splash (D-351), drawn with the game's own scene
-  (public/labs/stick/scene.js), so it looks like the game: the night with its moon and mountains, the
-  neon-edged pillars with their flags, the ninja. It crosses once onto the flag and once more, then
-  the stick grows again, tips over… and the night stops the instant before it lands: does it reach?
-  The game is never named. marketing/splash/teaser.mjs captures it frame by frame; opened by hand
+  (public/labs/stick/scene.js): under the night's moon the ninja dashes to the edge of its pillar and
+  stops there, looking across the gap at the next one, and stays. Cryptic on purpose (the owner's
+  request): no stick grows or falls, so the game's play is not given away.
+  marketing/splash/teaser.mjs captures it frame by frame; opened by hand
   (python3 -m http.server -d . from the repo root), it plays in a loop.
 -->
 <html lang="es">
@@ -24,27 +24,21 @@
 // every capture draws the same frames
 let reloj = 0;
 performance.now = () => reloj;
-const engine = await import('../../../public/labs/stick/engine.js');
-const { newGame, press, release, advance, holdFor, TURN_MS } = engine;
+const { newGame, current, restX } = await import('../../../public/labs/stick/engine.js');
 const { escena } = await import('../../../public/labs/stick/scene.js');
 
 const W = 512, H = 320, FPS = 30, SECONDS = 8, FRAMES = FPS * SECONDS;
-const SEED = 7;
-// The crossings: a flag, a plain landing, then the one that stops in the air (its offset: a hair short)
-const PLAN = [0, 9, -1];
-const T_STOP = TURN_MS * 0.62;   // how far into the last stick's fall the night stops
+const SEED = 7, RUN_AT = 1200;   // when the ninja dashes to the edge
 
 const noche = document.getElementById('noche').getContext('2d');
 const juego = document.getElementById('juego');
-let g, sc, paso, plan, alto;
-
-function empezar() {
-  sc?.cerrar();
-  reloj = 0;
-  sc = escena(juego, { compacto: true });
-  g = newGame(SEED, 0); sc.empezar(g);
-  paso = 0; plan = { at: 700 }; alto = null;
-}
+const sc = escena(juego, { compacto: true });
+const g = newGame(SEED, 0); sc.empezar(g);
+// The ninja starts back from the edge and runs to it, with no stick: a walk of the game's own, its
+// stick 0 long, that is never advanced, so it stops at the edge and stays
+const cur = current(g);
+g.stick = 0; g.phase = 'walking';
+g.walk = { t0: RUN_AT, from: cur.x + 14, to: restX(cur), kind: 'land', tip: cur.x + cur.w, ok: true, done: false };
 
 /** The app's night behind the transparent scene, as the game's page has it. */
 function pintarNoche() {
@@ -53,46 +47,15 @@ function pintarNoche() {
   noche.fillStyle = gr; noche.fillRect(0, 0, W, H);
 }
 
-/** The "?" over the gap, in the house's yellow, outlined. */
-function pregunta(ctx, x, y) {
-  ctx.save(); ctx.font = '900 44px system-ui, sans-serif'; ctx.textAlign = 'center';
-  ctx.lineWidth = 7; ctx.strokeStyle = '#14081f'; ctx.strokeText('?', x, y);
-  ctx.fillStyle = '#ffd23f'; ctx.fillText('?', x, y); ctx.restore();
-}
-
 const salida = Object.assign(document.createElement('canvas'), { width: W, height: H });
 function frame(i) {
-  if (i === 0 || !g) empezar();
   const t = (i / FPS) * 1000;
-  if (alto == null) {
-    reloj = t;
-    if (g.phase === 'ready' && plan.at != null && t >= plan.at && paso < PLAN.length) {
-      press(g, plan.at); plan = { suelta: plan.at + holdFor(g, PLAN[paso], plan.at) };
-    }
-    if (g.phase === 'growing' && plan.suelta != null && t >= plan.suelta) {
-      const r = release(g, plan.suelta);
-      plan = { tip: r.tip, kind: r.kind, cayo: false, soltado: plan.suelta };
-    }
-    if (g.phase === 'walking') {
-      // The last crossing: the night stops while the stick is still falling
-      if (paso === PLAN.length - 1 && t >= plan.soltado + T_STOP) { alto = plan.soltado + T_STOP; reloj = alto; }
-      else {
-        if (!plan.cayo && t >= g.walk.t0) { plan.cayo = true; if (plan.kind === 'perfect') sc.perfecto(g, plan.tip, g.streak + 1); else if (plan.kind === 'land') sc.toque(plan.tip); }
-        const { current } = engine, x0 = current(g).x + current(g).w, len = g.stick;
-        for (const e of advance(g, t)) if (e.type === 'arrive') { sc.llegar(g, x0, len, e.kind === 'perfect'); paso++; plan = { at: t + 450 }; }
-      }
-    }
-  }
+  reloj = t;
   pintarNoche();
-  sc.draw(g, reloj);
+  sc.draw(g, t);
   const o = salida.getContext('2d');
   o.drawImage(document.getElementById('noche'), 0, 0);
   o.drawImage(juego, 0, 0, W, H);
-  if (alto != null) {
-    const k = Math.min(1, (t - alto) / 350);
-    o.fillStyle = `rgba(8,4,18,${(0.45 * k).toFixed(3)})`; o.fillRect(0, 0, W, H);
-    if (t - alto > 300) pregunta(o, W / 2, 120 - (t - alto < 420 ? 6 : 0));
-  }
   // In and out of black, so the loop starts over cleanly
   const s = t / 1000, f = Math.max(0, 1 - s / 0.4, 1 - (SECONDS - s) / 0.5);
   if (f > 0) { o.fillStyle = `rgba(11,7,22,${Math.min(1, f).toFixed(3)})`; o.fillRect(0, 0, W, H); }

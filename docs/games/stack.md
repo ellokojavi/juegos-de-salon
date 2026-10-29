@@ -83,11 +83,11 @@ much a streak grows the block (`GROW_FROM`, `GROW`) and the speed (`SPEED_START`
 
 ## The teaser
 
-The splash `stack-pronto` ("¿Hasta dónde llega?", off until the owner turns it on from the panel's
-📣 Campaigns) announces the game without naming it: a neon tower climbs into the stars until the last
-slab stops in the air (`public/assets/splash/stack-teaser.mp4`, recorded by
+The splash `stack-pronto` ("Llegar al cielo es el objetivo", off until the owner turns it on from the panel's
+📣 Campaigns) announces the game without naming it or showing its play: the view circles a tall neon tower,
+already built, and climbs it into the stars (`public/assets/splash/stack-teaser.mp4`, recorded by
 `node marketing/splash/teaser.mjs stack` from `marketing/splash/teaser/stack.html`). The scene imports the game's
-own `scene.js` and draws with it in the same isometric view, so a change to the game's drawing reaches the
+own `scene.js` and draws with it in the same isometric view (turned by the camera's `yaw`, which the game leaves at 0), so a change to the game's drawing reaches the
 teaser on its next recording (`teaser.mjs stack`); its memory is
 `marketing/splash/campaigns/stack-pronto/README.md`.
 
