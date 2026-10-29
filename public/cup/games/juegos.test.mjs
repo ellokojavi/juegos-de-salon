@@ -980,4 +980,14 @@ test('¿Dónde queda?: todos los países en inglés y portugués', () => {
   assert.equal(donde.km(1250, 'en'), '1,250 km');
 });
 
+test('tango: giving up shows the solution and scores 0', () => {
+  const p = tango.generar('ABCD', 3);
+  const e = tango.estado(p, [0, tango.RENDIRSE]);
+  assert.ok(e.fin && e.rendido);
+  assert.deepEqual(e.g, p.sol);
+  assert.equal(tango.puntaje(e), 0);
+  assert.equal(tango.tarjeta(e), '☀️🌙 🏳️');
+});
+
 console.log(`copa/juegos: ${n} tests OK`);
+

@@ -103,6 +103,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (!pr && process.env.GITHUB_SHA) { console.log('A push without a merged PR: no notification'); process.exit(0); }
   if (!/^\d+$/.test(pr)) { console.error('Usage: node tools/push/release.mjs --pr <n> --version <x.y.z> [--failed <job>] [--run-url URL] [--dry-run]'); process.exit(2); }
   const results = JSON.parse(process.env.RESULTS || '{}');
+  if ([results.rules, results.publish].some(j => j?.outputs?.newest === 'false')) { console.log('A newer merge publishes this one (D-506): its run notifies'); process.exit(0); }
   const stopped = results.publish && results.publish.result !== 'success' ? STEPS.map(([job]) => job).find(j => ['failure', 'cancelled'].includes(results[j]?.result)) || 'publish' : '';
   const info = JSON.parse(gh('pr', 'view', pr, '--repo', repo, '--json', 'title,body,files'));
   const files = (info.files || []).map(x => x.path);

@@ -189,7 +189,7 @@ y las reglas plegadas de la prueba lo repiten: "La prueba es más corta que el j
 cuenta para la copa" (`trialNote`, D-177).
 
 Al crear la copa, apenas se elige la duración aparece **¿Qué se juega cada día?** con una propuesta
-al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`: los seis de siempre
+al azar (`calendarioAlAzar`): juegos distintos del pozo (`POZO` en `engine.js`, derived since #855 from the `copa: { pozo }` of each entry in `games.js`, in that order: los seis de siempre
 más Zip, Tango, ¿Dónde queda?, Desenredo and, since D-332, 🚇 Rutas rotas, 📐 Loteo and 🖌️ Pintaminas; since D-421 🕵️ Agentes in 🔗 Conexiones' place), sin dos días seguidos de la misma habilidad. Es la mano y la línea
 de Línea de Tiempo con su arrastre: un día se arrastra a otro lugar de la semana (en un celular,
 por su agarre ⠿) y un juego de la mano, hasta el día que reemplaza; tocando se llega a lo mismo
@@ -275,6 +275,8 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 - **Tango** has **↩️ Undo** too (D-342), to the left of Clear all: it takes back the last tap or
   Clear all, but it is kept as a play (`'U'`), so a mistake already counted and a hint stay in the
   score; undoing the tap that just broke a rule forgives it.
+- **Tango** has **🏳️ Give up** too, on its own line under Clear all and the hint, as in Reinas
+  (D-110): it asks to confirm, shows the solution and the game gives 0 points (`'R'`).
 - **Tango** no cuenta como error pasar por el sol para llegar a la luna: solo dejar la casilla
   rompiendo una regla (D-102). La pantalla dice lo mismo: el choque se pinta en rojo recién cuando
   el jugador toca otra casilla (never on a timer alone); con el tablero lleno se muestra sin contarse,

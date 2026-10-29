@@ -233,6 +233,8 @@ export const SUELTOS = [
   },
   {
     id: 'letras',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 4 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 3, desde: '2026-10-06' },
     slug: 'word',
@@ -250,6 +252,8 @@ export const SUELTOS = [
   },
   {
     id: 'anio',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 5 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 4, desde: '2026-10-06' },
     slug: 'year',
@@ -267,6 +271,8 @@ export const SUELTOS = [
   },
   {
     id: 'reinas',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 3 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 5, desde: '2026-10-06' },
     slug: 'queens',
@@ -284,6 +290,8 @@ export const SUELTOS = [
   },
   {
     id: 'tango',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 7 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 14, desde: '2026-10-16' },
     slug: 'tango',
@@ -301,6 +309,8 @@ export const SUELTOS = [
   },
   {
     id: 'zip',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 6 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 13, desde: '2026-10-16' },
     slug: 'zip',
@@ -318,6 +328,8 @@ export const SUELTOS = [
   },
   {
     id: 'desenredo',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 9 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 6, desde: '2026-10-06' },
     slug: 'untangle',
@@ -335,6 +347,8 @@ export const SUELTOS = [
   },
   {
     id: 'donde',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 8 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 15, desde: '2026-10-16' },
     slug: 'where',
@@ -367,6 +381,8 @@ export const SUELTOS = [
   {
     // Out of the lab since D-332, with Loteo and Pintaminas: their page was /labs/<slug>/, now a bridge (`deLabs`)
     id: 'rutas',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 10 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 10, desde: '2026-10-16' },
     slug: 'routes',
@@ -387,6 +403,8 @@ export const SUELTOS = [
   {
     // Two variants (D-331): 🔢 Numbers and ⚡💧 Utilities, picked in the waiting room
     id: 'loteo',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 11 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 11, desde: '2026-10-16' },
     slug: 'plots',
@@ -407,6 +425,8 @@ export const SUELTOS = [
   {
     // Two variants (D-331): easy (one color) and hard (two colors), picked in the waiting room
     id: 'pintaminas',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 12 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 12, desde: '2026-10-16' },
     slug: 'paint-mines',
@@ -427,6 +447,8 @@ export const SUELTOS = [
   {
     // Out of the lab in D-421, in Conexiones' place (the owner's request): its page was /labs/agents/, now a bridge (`deLabs`)
     id: 'agentes',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 2 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 17, desde: '2026-10-24' },
     slug: 'agents',
@@ -447,6 +469,8 @@ export const SUELTOS = [
   {
     // Out of the lab in D-456: its page was /labs/bridges/, now a bridge (`deLabs`); its id is La Copa's
     id: 'puentes',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 13 },
     // Uno al día: its place in the deck order (never reorder: the shuffle depends on it) and since when it comes out (#855)
     unoAlDia: { orden: 18, desde: '2026-10-27' },
     slug: 'bridges',
