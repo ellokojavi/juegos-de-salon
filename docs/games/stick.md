@@ -120,9 +120,9 @@ hard it gets (`hardness`), and how far and how many pillars move.
 
 ## The teaser
 
-The splash `ninja-pronto` ("¿Llegará al otro lado?", off until the owner turns it on from the panel's
-📣 Campaigns) announces the game without naming it: the ninja crosses twice, then its stick tips toward the far
-pillar and the night stops before it lands (`public/assets/splash/ninja-teaser.mp4`, recorded by
+The splash `ninja-pronto` ("El ninja enfrenta una misión nunca antes vista", off until the owner turns it on from the panel's
+📣 Campaigns) announces the game without naming it or showing its play: the ninja dashes to the edge of its
+pillar and stays there, looking at the next one, with no stick (`public/assets/splash/ninja-teaser.mp4`, recorded by
 `node marketing/splash/teaser.mjs ninja` from `marketing/splash/teaser/ninja.html`). The scene draws with the
 game's own `scene.js`, so a change to the game's drawing reaches it the next time it is recorded; its memory is
 `marketing/splash/campaigns/ninja-pronto/README.md`.

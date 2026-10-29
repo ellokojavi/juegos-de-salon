@@ -20,8 +20,8 @@ const DEST = join(ROOT, 'public', 'assets', 'splash');
 // Its argument is a scene's name, not an output folder: output() would take it as one
 const OUT = output('/tmp/splash-teaser', [process.argv[0], process.argv[1]]);
 const SCALE = 4; // the art is 128×80: the MP4 is 512×320. A scene drawn at full size (Stack's, with the game's own drawing) sets window.SCALE = 1
-// The frame the still is taken from (for reduced motion): the "?" up (the train at the edge, the ninja's stick tipping, the last slab hovering)
-const STILL = { bridges: 90, ninja: 200, stack: 225 };
+// The frame the still is taken from (for reduced motion): the train at the edge with its "?", the ninja looking across at the next pillar, the view high on the tower
+const STILL = { bridges: 90, ninja: 200, stack: 200 };
 
 // The repo served as files, only for the scene page and the sprites it imports
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json' };
