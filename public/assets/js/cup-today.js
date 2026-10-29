@@ -15,14 +15,29 @@ import { COMMON } from './i18n.js';
 
 const PREFIX = 'juegos-de-salon:copa:';
 
+/**
+ * The codes of the cups this phone keeps: "Tus copas" (`mias`), then those it keeps a copy of
+ * without being in that list, the cups of the Rankings player joined on another phone (D-220).
+ */
+function cupCodes(store, read) {
+  const mias = read('mias');
+  const codes = (Array.isArray(mias) ? mias : []).map(c => c?.code).filter(Boolean);
+  try {
+    for (let i = 0; i < (store?.length ?? 0); i++) {
+      const m = /^juegos-de-salon:copa:(?:hoy|lista):([A-Z0-9]+)$/.exec(store.key(i) || '');
+      if (m && !codes.includes(m[1])) codes.push(m[1]);
+    }
+  } catch (_) { /* only "Tus copas" */ }
+  return codes;
+}
+
 /** The first of this phone's cups with a day open now: `{ code, dia }`, or null. Pure, for node. */
 export function pendingCup(store = globalThis.localStorage, now = Date.now()) {
   const read = k => { try { return JSON.parse(store?.getItem(PREFIX + k) || 'null'); } catch (_) { return null; } };
-  const cups = read('mias');
-  for (const c of Array.isArray(cups) ? cups : []) {
-    const days = c?.code && read(`hoy:${c.code}`);
+  for (const code of cupCodes(store, read)) {
+    const days = read(`hoy:${code}`);
     const open = Array.isArray(days) && days.find(([, a, b]) => now >= a && now < b);
-    if (open) return { code: c.code, dia: open[0] };
+    if (open) return { code, dia: open[0] };
   }
   return null;
 }
@@ -30,11 +45,10 @@ export function pendingCup(store = globalThis.localStorage, now = Date.now()) {
 /** With nothing open now, the next day of this phone's cups to open: `{ code, dia, at }`, or null. Pure, for node. */
 export function nextCupDay(store = globalThis.localStorage, now = Date.now()) {
   const read = k => { try { return JSON.parse(store?.getItem(PREFIX + k) || 'null'); } catch (_) { return null; } };
-  const cups = read('mias');
   let best = null;
-  for (const c of Array.isArray(cups) ? cups : []) {
-    const days = c?.code && read(`hoy:${c.code}`);
-    for (const [d, a] of Array.isArray(days) ? days : []) if (a > now && (!best || a < best.at)) best = { code: c.code, dia: d, at: a };
+  for (const code of cupCodes(store, read)) {
+    const days = read(`hoy:${code}`);
+    for (const [d, a] of Array.isArray(days) ? days : []) if (a > now && (!best || a < best.at)) best = { code, dia: d, at: a };
   }
   return best;
 }
@@ -45,12 +59,11 @@ export function nextCupDay(store = globalThis.localStorage, now = Date.now()) {
  */
 export function finalPlayed(store = globalThis.localStorage, now = Date.now()) {
   const read = k => { try { return JSON.parse(store?.getItem(PREFIX + k) || 'null'); } catch (_) { return null; } };
-  const cups = read('mias');
-  for (const c of Array.isArray(cups) ? cups : []) {
-    const L = c?.code && read(`lista:${c.code}`);
+  for (const code of cupCodes(store, read)) {
+    const L = read(`lista:${code}`);
     const m = L?.meta, pid = Object.keys(L?.players || {})[0], last = m?.days;
     const end = Math.min(m?.end ?? 0, L?.fin ?? Infinity);
-    if (pid && m?.win?.[last] && now >= m.win[last].a && now < end && L.results?.[last]?.[pid]) return { code: c.code, at: end };
+    if (pid && m?.win?.[last] && now >= m.win[last].a && now < end && L.results?.[last]?.[pid]) return { code, at: end };
   }
   return null;
 }
