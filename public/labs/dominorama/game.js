@@ -12,6 +12,7 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
+import { mmss } from '../../assets/js/time-format.js';
 import {
   generar, nuevaPartida, lugar, poner, sacar, valores, ocupacion, estadoZonas, resuelto, ayudar, etiqueta, puntaje, tarjeta,
   NIVELES, MAXIMO, PUNTOS_TABLERO, PUNTOS_RAPIDEZ, RESTA_AYUDA,
@@ -55,7 +56,6 @@ const T = {
   comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendían las reglas de las zonas, si costaba poner o girar las fichas y qué le cambiarías.', ph: 'Por ejemplo: no sabía que podía girar la ficha.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
 };
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
-const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 const espera = ms => new Promise(r => setTimeout(r, ms));
 
 /** One color per zone, in order; a zone with no rule is plain. */

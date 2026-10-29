@@ -13,6 +13,7 @@ import { trackVisit, trackStart, trackFinish } from '../../assets/js/transport/s
 import { formularioComentario, abrirComentario } from '../../assets/js/labs-idioma.js';
 import { fechaLocal } from '../../assets/js/uno-al-dia.js';
 import { cuentaRegresiva } from '../../assets/js/cuenta-regresiva.js';
+import { mmss } from '../../assets/js/time-format.js';
 import {
   generar, nuevaPartida, une, quitar, agregar, pares, indice, quedan, avance, puntaje, tarjeta,
   COLUMNAS, MAS, MAXIMO, PUNTOS_LIMPIO, PUNTOS_MAS, RESTA_AYUDA,
@@ -59,7 +60,6 @@ const T = {
   comentario: { titulo: '¿Qué te pareció?', lead: 'Cuéntanos si se entendía qué números se pueden unir, si te quedaste sin jugadas y qué le cambiarías.', ph: 'Por ejemplo: no veía que se podía unir en diagonal.', nombre: 'Nombre o apodo (opcional)', enviar: 'Enviar comentario', enviando: 'Enviando…', vacio: 'Escribe algo primero.', gracias: '¡Gracias! 🙌 Tu comentario llegó.', guardado: 'Ahora no hay internet: tu comentario quedó en el celular y se envía solo después.', error: 'No se pudo enviar. Prueba de nuevo en un rato.', cancelar: 'Cancelar', cerrar: 'Cerrar' },
 };
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
-const mmss = ms => { const t = Math.round((ms || 0) / 1000); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 const espera = ms => new Promise(r => setTimeout(r, ms));
 /** ➕ es un emoji gris oscuro que sobre el fondo no se ve: va con el halo claro de base.css. */
 const conMas = texto => String(texto).split('➕').flatMap((x, k) => (k ? [el('span', { class: 'emoji-claro' }, '➕'), x] : [x])).filter(x => x !== '');

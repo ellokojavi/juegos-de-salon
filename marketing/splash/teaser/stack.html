@@ -1,10 +1,9 @@
 <!doctype html>
 <!--
-  The teaser of 🧱 Stack for the splash (D-351), drawn with the game's own scene
-  (public/labs/stack/scene.js): a tall tower of neon slabs, already built, that the view circles and
-  climbs, from dusk at its foot past the clouds to its top among the stars. Cryptic on purpose (the
-  owner's request): nothing slides, drops or is cut, so the game's play is not given away.
-  marketing/splash/teaser.mjs captures it frame by frame; opened by hand, it plays in a loop.
+  The teaser of 🧱 Stack for the splash (D-351), on the teaser engine (_teaser.js, TEASERS.md) with the
+  game's own scene (public/labs/stack/scene.js): a tall tower of neon slabs, already built, that the
+  view circles and climbs, from dusk at its foot past the clouds to its top among the stars. Nothing
+  slides, drops or is cut: the play is not given away (TEASERS.md, rule 2).
 -->
 <html lang="es">
 <head>
@@ -17,67 +16,51 @@
 </style>
 </head>
 <body>
-<div class="marco"><canvas id="cielo" width="512" height="320"></canvas><canvas id="torre"></canvas></div>
+<div class="marco"><canvas id="fondo"></canvas><canvas id="juego"></canvas></div>
 <script type="module">
+import { teaser, beats, ease, noise, W, H } from './_teaser.js';
 import { newGame, perfectTime, drop, score, SLAB } from '../../../public/labs/stack/engine.js';
 import { escena } from '../../../public/labs/stack/scene.js';
-import { noise } from './_common.js';
 
-const W = 512, H = 320, FPS = 30, SECONDS = 8, FRAMES = FPS * SECONDS;
-const N = 34;   // the tower's slabs
-// The tower, built once: mostly near-perfect drops, a small cut now and then, so its sides are uneven
-const g = newGame(0);
-for (let n = 0, t = 0; n < N; n++) { t = perfectTime(g, t + 1); drop(g, t + (n % 3 === 1 ? 45 : n % 5 === 3 ? -35 : 0)); }
-g.moving = null;
-const ALTO = score(g) * SLAB;
-
-const cielo = document.getElementById('cielo').getContext('2d');
-const torre = document.getElementById('torre');
-const sc = escena(torre, { zoom: 0.62 });
-const ease = k => k * k * (3 - 2 * k);
+const SECONDS = 8, N = 34;   // the tower's slabs
+// The story: the foot of the tower at dusk, the climb around it, the top among the stars
+const STORY = [[0, 'foot'], [0.6, 'climb'], [6.8, 'top']];
 
 /** The sky: dusk at the foot, night as the view climbs, the stars coming out, clouds sinking past. */
-function pintarCielo(sube) {
-  const k = Math.min(1, Math.max(0, sube));
-  const mezcla = (a, b) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
-  const gr = cielo.createLinearGradient(0, 0, 0, H);
-  gr.addColorStop(0, `rgb(${mezcla([58, 22, 92], [10, 5, 26])})`);
-  gr.addColorStop(1, `rgb(${mezcla([255, 112, 140], [40, 16, 80])})`);
-  cielo.fillStyle = gr; cielo.fillRect(0, 0, W, H);
+function sky(ctx, k) {
+  const mix = (a, b) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
+  const gr = ctx.createLinearGradient(0, 0, 0, H);
+  gr.addColorStop(0, `rgb(${mix([58, 22, 92], [10, 5, 26])})`);
+  gr.addColorStop(1, `rgb(${mix([255, 112, 140], [40, 16, 80])})`);
+  ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
   for (let i = 0; i < 70; i++) if (noise(i, 4) < k * 1.1) {
-    cielo.fillStyle = noise(i, 7) > 0.3 ? 'rgba(255,246,200,0.9)' : 'rgba(150,140,210,0.8)';
-    cielo.fillRect(Math.floor(noise(i, 5) * W), Math.floor(noise(i, 6) * H), 2, 2);
+    ctx.fillStyle = noise(i, 7) > 0.3 ? 'rgba(255,246,200,0.9)' : 'rgba(150,140,210,0.8)';
+    ctx.fillRect(Math.floor(noise(i, 5) * W), Math.floor(noise(i, 6) * H), 2, 2);
   }
   for (let c = 0; c < 3; c++) {
-    const y = 40 + c * 110 + sube * 420 - 160, x = (c * 173 + 60) % W;
-    cielo.fillStyle = 'rgba(255,210,230,0.14)';
-    for (let i = 0; i < 4; i++) { cielo.beginPath(); cielo.arc(x + i * 22, y - (i % 2) * 8, 16 + (i % 2) * 8, 0, 7); cielo.fill(); }
+    const y = 40 + c * 110 + k * 420 - 160, x = (c * 173 + 60) % W;
+    ctx.fillStyle = 'rgba(255,210,230,0.14)';
+    for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(x + i * 22, y - (i % 2) * 8, 16 + (i % 2) * 8, 0, 7); ctx.fill(); }
   }
 }
+const climb = t => { const b = beats(STORY, t, SECONDS); return b.name === 'foot' ? 0 : b.name === 'top' ? 1 : ease(b.k); };
 
-const salida = Object.assign(document.createElement('canvas'), { width: W, height: H });
-function frame(i) {
-  const t = i / FPS, k = ease(Math.min(1, t / (SECONDS - 1.2)));
-  // The view climbs from the foot to just over the top, and swings around the tower as it goes
-  const y = -0.25 + k * (ALTO + 0.1);
-  sc.camara({ y, yaw: 0.62 * Math.sin((t / SECONDS) * Math.PI * 2) });
-  sc.draw(g, t * 1000);
-  pintarCielo(k);
-  const o = salida.getContext('2d');
-  o.drawImage(document.getElementById('cielo'), 0, 0);
-  o.drawImage(torre, 0, 0, W, H);
-  // In and out of black, so the loop starts over cleanly
-  const f = Math.max(0, 1 - t / 0.4, 1 - (SECONDS - t) / 0.5);
-  if (f > 0) { o.fillStyle = `rgba(11,7,22,${Math.min(1, f).toFixed(3)})`; o.fillRect(0, 0, W, H); }
-  return salida;
-}
-
-window.frame = i => frame(i).toDataURL('image/png');
-window.FRAMES = FRAMES; window.FPS = FPS; window.SCALE = 1; window.ready = true;
-if (!new URLSearchParams(location.search).has('capture')) {
-  const vista = document.getElementById('cielo').getContext('2d');
-  let i = 0; setInterval(() => { vista.drawImage(frame(i), 0, 0); i = (i + 1) % FRAMES; }, 1000 / FPS);
-}
+teaser({
+  seconds: SECONDS,
+  setup(canvas) {
+    // The tower, built once: mostly near-perfect drops, a small cut now and then, so its sides are uneven
+    const g = newGame(0);
+    for (let n = 0, t = 0; n < N; n++) { t = perfectTime(g, t + 1); drop(g, t + (n % 3 === 1 ? 45 : n % 5 === 3 ? -35 : 0)); }
+    g.moving = null;
+    return { g, sc: escena(canvas, { zoom: 0.62 }), alto: score(g) * SLAB };
+  },
+  background: (ctx, t) => sky(ctx, climb(t)),
+  draw({ g, sc, alto }, t) {
+    // The view climbs from the foot to just over the top, and swings around the tower as it goes
+    sc.camara({ y: -0.25 + climb(t) * (alto + 0.1), yaw: 0.62 * Math.sin((t / SECONDS) * Math.PI * 2) });
+    sc.draw(g, t * 1000);
+  },
+});
 </script>
 </body>
 </html>
