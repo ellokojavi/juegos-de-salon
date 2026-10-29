@@ -67,7 +67,7 @@ What each agent (`.claude/agents/`) and owner tool does, and the command it runs
   **Every change goes to Labs first** unless the owner says otherwise (D-409), and is listed in `/labs/`:
   the code that asks `flag()` or `labAccess()` names its card (`lab: #<id>`, `public/labs/listed.test.mjs`). The
   owner's decisions answer **Yes, in Labs**, **Yes, and publish** or **No**.
-  What launches for everyone moves its card to La Bodega in the same PR (D-479). The owner sends a
+  What launches for everyone moves its card to La Bodega in the same PR (D-479); a flag flipped to *all* moves it in the next PR, keeping its switch (D-510). The owner sends a
   feature live from its own card: **🚀 Publicar para todos**, signed in as owner on `/labs/`, which the
   Mac mini's `lab-publish-watch` job hands to a headless session that opens the PR (D-480,
   `node tools/agents/lab-publish.mjs list`); if that PR stays in conflict with `main`, the watcher sends
