@@ -19,6 +19,7 @@ export const FLAGS = {
   'copa-crear': '🏆 La Copa: the new create screen',
   'bn-salva': '🎆 Battleship: Salvo',
   'keyboard-lift': '⌨️ Feedback form above the iOS keyboard',
+  'season-scares': '💀 Halloween: big frights on the home page',
   'uad-night-totals': '📅 Uno al día: totals written by the hourly rebuild',
 };
 export const STATES = ['lab', 'all', 'off'];

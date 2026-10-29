@@ -409,6 +409,22 @@ export function startLive(api, fp, { game, mode, players, name = '' }, {
   return parar;
 }
 
+/**
+ * A campaign seen, for the panel's timeline: who saw which one and when. `c` is the splash
+ * campaign's id, or `support` for the donation card (the Keanu one) when it opens. The name is the
+ * one this phone already knows (`nombreDelCelular`); none is asked for. One row per view, in
+ * `seen/<id>` of the day, deleted with the other names at 24 months (stats-retention.mjs).
+ */
+export function seenRecord(fp, { c, name = '' }) {
+  const r = { c: String(c).slice(0, 40), at: STAMP };
+  if (fp.co) r.co = fp.co;
+  if (name) r.name = String(name).slice(0, NOMBRE_MAX);
+  return r;
+}
+export function noteSeen(c, { api, fp } = stats(), { id = liveId(), now = Date.now(), name = nombreDelCelular('') } = {}) {
+  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), { [`seen/${id}`]: seenRecord(fp, { c, name }) }));
+}
+
 /** Lo que usan los juegos y el transporte: la API real y la huella del navegador, de una. */
 let shared = null;
 export function stats() {
