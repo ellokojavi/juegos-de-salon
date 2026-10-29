@@ -1406,7 +1406,8 @@ function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) 
       listaRondas({ detalle: true })] : null,
     id === 'trio' ? [el('p', { class: 'lead' }, T.trioGames), listaRondas()] : null,
     el('p', { class: 'lead' }, T.scoring),
-    el('p', { class: 'muted' }, puntajeTexto(J, copa))));}
+    el('p', { class: 'muted' }, puntajeTexto(J, copa))));
+}
 
 /**
  * El 3, 2, 1, ¡A jugar! antes de cada juego (D-105), el de assets/js/cuenta-regresiva.js. Devuelve
