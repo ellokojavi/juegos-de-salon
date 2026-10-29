@@ -98,7 +98,7 @@ export function loadActive({ fetchFn = globalThis.fetch, timeout = 2500 } = {}) 
  * link come from there) or its own content (`title`, `text`, `href`, and `cta` for a button that is not Play). Each item shows a few seconds
  * of play: `video` (a looping MP4, muted) with its `img` as the poster, or just `img` (a still, with
  * `still` for reduced motion; a clip is never a GIF: an MP4 weighs a fifth, #846). An item with no name, text or link is a teaser: its picture
- * alone, wide (`ratio`). `hero` draws a campaign's one game big: its clip as wide as the window at its
+ * alone, wide (`ratio`), scaled as pixel art unless `smooth` (a teaser drawn at full size). `hero` draws a campaign's one game big: its clip as wide as the window at its
  * `ratio`, and under it its card, with the text and Play. `langs` limits a campaign to some languages: the others get it in English
  * (the owner's request for a teaser in Spanish and English). Paths are from the site root; the clips
  * are made with marketing/splash/capture.mjs and the teasers with teaser.mjs, and each campaign is
