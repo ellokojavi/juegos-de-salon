@@ -16,7 +16,8 @@ away. Players should want the game before they know what it is. These are the ow
    stops on (`beats()` in the engine). The loop ends before anything is answered.
 4. **No words in the clip.** The splash's title carries them: a statement or a hint that intrigues
    ("Llegar al cielo es el objetivo", "El ninja enfrenta una misión nunca antes vista"), never how to
-   play. Kicker "Muy pronto"; no game name, no link, no Play. *(tested: no `fillText`)*
+   play. It may name the world or the character (the ninja, the sky), never the game. Kicker "Muy
+   pronto"; no game name, no link, no Play. *(tested: no `fillText`)*
 5. **One format.** 8 s at 30 fps, 512×320 (`ratio: '8 / 5'`, `smooth: true`), in and out of black,
    all given by the engine. *(tested: on the engine)*
 6. **Looked at as players see it.** `look.mjs splash <id>` at 320, 390 and 1280 px, in the four
