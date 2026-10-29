@@ -106,3 +106,10 @@ const all = r => Object.fromEntries(['tests', 'already-tested', 'e2e', 'rules', 
 }
 
 console.log('ok merge-report');
+
+// D-506: overtaken by a newer merge, which publishes it: not a failure
+{
+  const r = report({ results: { tests: { result: 'success' }, rules: { result: 'success', outputs: { newest: 'false' } }, publish: { result: 'skipped' } }, version: '', siteUrl: '', runUrl: '' });
+  assert.equal(r.ok, true);
+  assert.match(r.body, /newer merge/);
+}

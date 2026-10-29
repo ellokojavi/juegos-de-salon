@@ -23,11 +23,16 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  # The deploy's annotations, to tell a 5xx from another failure (pages-5xx.mjs, D-506)
+  actions: read
+  checks: read
 
-# One publication at a time, and the one going out is not cut short
-concurrency:
-  group: pages
-  cancel-in-progress: false
+# No workflow-wide queue (D-506): the tests and the end-to-end run of each merge start at once, in
+# parallel with the run before. Only the two jobs that change what is live wait their turn (`rules`
+# and `publish`, each in its own group), and each first asks whether its commit is still main's head:
+# an older run that a newer merge overtook publishes nothing, so the newest main always goes out and
+# never gets overwritten by an older one. Until D-506 the whole run queued behind the previous one
+# (2026-10-29: #987 waited 23 minutes without starting, #993 was cancelled).
 
 jobs:
   tests:
@@ -93,12 +98,28 @@ jobs:
     if: ${{ !cancelled() && needs.tests.result == 'success' && (needs.e2e.result == 'success' || (needs.e2e.result == 'skipped' && needs.already-tested.outputs.tested == 'true')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    concurrency:
+      group: firebase-rules
+      cancel-in-progress: false
+    outputs:
+      newest: ${{ steps.newest.outputs.newest }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      # D-506: a newer merge already on main publishes its own rules and site; this one stops here
+      - id: newest
+        run: |
+          head="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ "$GITHUB_EVENT_NAME" = push ] && [ -n "$head" ] && [ "$head" != "$GITHUB_SHA" ]; then
+            echo "newest=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::main moved on to ${head:0:7}: its run publishes, this one does not"
+          else
+            echo "newest=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Publish the Firebase rules
+        if: steps.newest.outputs.newest == 'true'
         env:
           KEY_JSON: ${{ secrets.FIREBASE_ADMIN_JSON }}
         run: |
@@ -112,47 +133,97 @@ jobs:
 
   publish:
     needs: [tests, already-tested, e2e, rules]
-    if: ${{ !cancelled() && needs.rules.result == 'success' }}
+    if: ${{ !cancelled() && needs.rules.result == 'success' && needs.rules.outputs.newest == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    # One deploy at a time; a newer one waiting replaces an older one waiting (D-506)
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     outputs:
       version: ${{ steps.served.outputs.version }}
       url: ${{ steps.deploy.outputs.page_url }}
+      newest: ${{ steps.head.outputs.go }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           filter: blob:none
 
+      # D-506: asked again here, since this job may have waited behind another deploy
+      - name: Is this still main's head?
+        id: head
+        run: |
+          head="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ "$GITHUB_EVENT_NAME" = push ] && [ -n "$head" ] && [ "$head" != "$GITHUB_SHA" ]; then
+            echo "::notice::main moved on to ${head:0:7} while this waited: its run publishes"; echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/setup-node@v4
+        if: steps.head.outputs.go == 'true'
         with:
           node-version: 24
 
       - name: Build the site (public/ without the tests)
+        if: steps.head.outputs.go == 'true'
         run: rsync -a --exclude='*.test.mjs' public/ _site/
 
       # The version is not in git: it is stamped here, only on the copy that gets published (D-205).
       # The number is CHANGELOG.md's first entry bumped by the pending changelog/ entries (D-300),
       # and the cache key carries the commit. The run summary says which number each one got.
       - name: Stamp the version
+        if: steps.head.outputs.go == 'true'
         run: |
           python3 tools/release/set-version.py --site _site --commit "$GITHUB_SHA"
           node tools/release/changelog.mjs show >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/configure-pages@v5
+        if: steps.head.outputs.go == 'true'
 
       - uses: actions/upload-pages-artifact@v3
+        if: steps.head.outputs.go == 'true'
         with:
           path: _site
 
-      - id: deploy
+      # The deploy is retried only when GitHub answers with a server error (5xx, D-506): on 2026-10-29
+      # a 502 threw away a 39-minute run. Any other failure stops here as before
+      - id: deploy1
+        if: steps.head.outputs.go == 'true'
         uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - id: retry1
+        if: ${{ steps.head.outputs.go == 'true' && (steps.deploy1.outcome == 'failure') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/release/pages-5xx.mjs && sleep 60
+      - id: deploy2
+        if: ${{ steps.head.outputs.go == 'true' && (steps.retry1.outcome == 'success') }}
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - id: retry2
+        if: ${{ steps.head.outputs.go == 'true' && (steps.deploy2.outcome == 'failure') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/release/pages-5xx.mjs && sleep 120
+      - id: deploy3
+        if: ${{ steps.head.outputs.go == 'true' && (steps.retry2.outcome == 'success') }}
+        uses: actions/deploy-pages@v4
+      - id: deploy
+        if: ${{ steps.head.outputs.go == 'true' && (!cancelled()) }}
+        env:
+          URL: ${{ steps.deploy1.outputs.page_url || steps.deploy2.outputs.page_url || steps.deploy3.outputs.page_url }}
+        run: |
+          [ -n "$URL" ] || { echo "::error::the Pages deploy failed"; exit 1; }
+          echo "page_url=$URL" >> "$GITHUB_OUTPUT"
 
       # C-11: it counts as published when the site serves the new version, not when the upload ends
       - name: Check that the site serves the new version
+        if: steps.head.outputs.go == 'true'
         id: served
         env:
           URL: ${{ steps.deploy.outputs.page_url }}
