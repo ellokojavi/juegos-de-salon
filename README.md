@@ -496,6 +496,7 @@ node public/assets/js/how-to-play-facts.test.mjs
 node public/assets/js/i18n.test.mjs
 node public/assets/js/instalable.test.mjs
 node public/assets/js/instalar.test.mjs
+node public/assets/js/keyboard.test.mjs
 node public/assets/js/lab-access.test.mjs
 node public/assets/js/labs-puerta.test.mjs
 node public/assets/js/llegada.test.mjs
