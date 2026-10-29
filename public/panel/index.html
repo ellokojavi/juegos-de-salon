@@ -60,7 +60,10 @@
           <input id="buscar-q" type="search" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Room or cup code or link" aria-label="Find a room or a cup by its code or link">
         </form>
         <span class="muted" id="updated"></span>
+        <!-- The owner's release notifications (D-504): release-push.js wires it -->
+        <button type="button" class="btn-avisos-dueno" id="avisos-dueno">🔔 Notify me when something goes live</button>
       </div>
+      <p class="buscar-msg" id="avisos-dueno-msg" role="status" hidden></p>
       <p class="buscar-msg" id="buscar-msg" role="status" hidden></p>
 
       <div class="cuerpo-panel">
