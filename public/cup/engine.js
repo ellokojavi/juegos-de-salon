@@ -12,6 +12,7 @@
 // Small pieces other games use too, in modules of their own so a page that needs only them does not
 // load La Copa (D-377): the cup code and a random one, and the active-time clock
 import { cryptoRand } from './code.js';
+import { GAMES, SUELTOS } from '../assets/js/games.js';
 export { LETRAS, CODIGO, esCodigo, codigoAlAzar } from './code.js';
 export { reloj, pausaDeLectura, mmss } from './clock.js';
 
@@ -29,7 +30,11 @@ export const MODALIDADES = Object.keys(CALENDARIOS).map(Number);
  * Los juegos que el admin puede poner en los días antes de la final (D-163). Agentes took Conexiones'
  * place in D-421: the cups created before still play Conexiones, which stays registered in JUEGOS.
  */
-export const POZO = ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo', 'rutas', 'loteo', 'pintaminas', 'puentes'];
+// The two Cup-only games first; every other one says its place in its entry in games.js, the manifest (#855)
+export const POZO = [
+  { id: 'linea', pozo: 0 }, { id: 'numero', pozo: 1 },
+  ...[...GAMES, ...SUELTOS].filter(g => g.copa).map(g => ({ id: g.id, pozo: g.copa.pozo })),
+].sort((a, b) => a.pozo - b.pozo).map(x => x.id);
 
 /**
  * The variants a game can be played in (D-331), the first one being the default. In a cup the admin
