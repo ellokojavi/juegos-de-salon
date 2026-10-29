@@ -164,7 +164,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // Uno al día (D-230): el botón de la portada, el dado, la tarjeta del resultado y /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa' },
+    cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa', opens: 'Día {day} abre en {time}' },
     uad: {
       nombre: 'Uno al día',
       jugar: 'Jugar hoy',
@@ -411,7 +411,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // One a Day (D-230): the home button, the die, the result card and /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Play today', aria: 'Play your day of The Cup today' },
+    cupToday: { play: 'Play today', aria: 'Play your day of The Cup today', opens: 'Day {day} opens in {time}' },
     uad: {
       nombre: 'One a Day',
       jugar: 'Play today',
@@ -656,7 +656,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // Um por dia (D-230): o botão da página inicial, o dado, o cartão do resultado e /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa' },
+    cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa', opens: 'Dia {day} abre em {time}' },
     uad: {
       nombre: 'Um por dia',
       jugar: 'Jogar hoje',
@@ -901,7 +901,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // Spiel des Tages (D-230): der Knopf auf der Startseite, der Würfel, die Ergebniskarte und /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Heute spielen', aria: 'Heute deinen Tag im Pokal spielen' },
+    cupToday: { play: 'Heute spielen', aria: 'Heute deinen Tag im Pokal spielen', opens: 'Tag {day} öffnet in {time}' },
     uad: {
       nombre: 'Spiel des Tages',
       jugar: 'Heute spielen',

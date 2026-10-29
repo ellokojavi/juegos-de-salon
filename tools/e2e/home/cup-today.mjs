@@ -1,5 +1,6 @@
 // La Copa's card on the home page (flag copa-hoy, in the lab): with a day of this phone's cup left to
-// play, ▶ Jugar hoy and a link to that day, at One a Day's height; once played, the card as always.
+// play, ▶ Jugar hoy and a link to that day, at One a Day's height; once played, ✅ Día 3 abre en…
+// (flag copa-espera, in the lab), still at One a Day's height.
 // Prints ✗ if something fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -31,8 +32,9 @@ for (const [width, cup, name] of [[390, L, 'pending'], [320, L, 'pending-320'], 
     ok(await ev(`Math.abs(${card}.offsetHeight - document.querySelector('.uad-card').offsetHeight) <= 1`), `${width}px: as tall as One a Day's card`);
     ok(await ev(`${card}.scrollWidth <= ${card}.clientWidth + 1`), `${width}px: nothing overflows the card`);
   } else {
-    await sleep(1500);
-    ok(await ev(`!document.getElementById('copa-hoy-chip') && ${card}.getAttribute('href') === 'cup/'`), 'played today: the card as always');
+    ok(await waitFor(`/^✅ Día 3 abre en \\d/.test(document.getElementById('copa-hoy-chip')?.textContent || '')`), 'played today: ✅ Día 3 abre en…');
+    ok(await ev(`${card}.getAttribute('href').endsWith('cup/?K7Q2X')`), 'played today: it opens the cup');
+    ok(await ev(`Math.abs(${card}.offsetHeight - document.querySelector('.uad-card').offsetHeight) <= 1`), 'played today: as tall as One a Day\'s card');
   }
   await b.shot(name);
   b.close();
