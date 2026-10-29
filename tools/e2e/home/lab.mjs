@@ -16,7 +16,7 @@ const labels = `[...document.querySelectorAll('.game-card')].filter(c => c.query
 await b.go(`${SITE}/labs/?test`);
 ok(await ev(`!!document.querySelector('#bodega #seccion-portada details #btn-portada') && !document.querySelector('#mejoras #seccion-portada')`), 'the home page experiments are in La Bodega, folded');
 ok(await ev(`(t => /🚀 Lanzado · 🔎 Buscar/.test(t) && /🚀 Lanzado · 🎉 Splash/.test(t))(document.getElementById('seccion-portada').textContent)`), '🔎 Buscar and 🎉 Splash are marked launched');
-ok(await ev(`!!document.querySelector('#activos #seccion-pips') && !document.querySelector('#activos #seccion-portada')`), 'the games being tried are apart from the improvements');
+ok(await ev(`!!document.querySelector('#activos #seccion-dominorama') && !document.querySelector('#activos #seccion-portada')`), 'the games being tried are apart from the improvements');
 // Conexiones left the home page for La Bodega when 🕵️ Agentes took its place (D-421): folded, and still playable
 ok(await ev(`(d => !!d && !d.open && d.querySelector('#btn-conexiones')?.getAttribute('href') === '../connections/')(document.querySelector('#bodega #seccion-conexiones details'))`), 'Conexiones is in La Bodega, folded, with its link to /connections/');
 ok(await ev(`!document.querySelector('#seccion-agentes')`), 'and Agentes, out of the lab, is no longer a lab project');
