@@ -1,7 +1,7 @@
-# 🧱 ¿Hasta dónde llega? (`stack-pronto`)
+# 🧱 Llegar al cielo es el objetivo (`stack-pronto`)
 
 A teaser of 🧱 Stack, still in the lab: it says something is coming, not what. No game name and no
-link: a question the game answers once it launches.
+link: a hint the game makes clear once it launches.
 
 | | |
 |---|---|
