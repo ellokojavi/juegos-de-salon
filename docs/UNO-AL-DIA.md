@@ -53,7 +53,7 @@ el contenido del día:
   documento lo explica), and since D-420 it is in the lab's La Bodega, off the home page. **Julepe** tampoco, porque hoy no se ofrece en la portada; si vuelve,
   entra con su modo contra el celular.
 - Zip, Tango and ¿Dónde queda? came in with D-334, together with the three that left the lab (D-332), and 📝 Generala with D-405: 17 games from the deck shuffled on October 23, 2026 (`DESDE_MAS`, `DESDE_GENERALA`).
-- **A game that leaves** says from which date it no longer comes out (`hasta` in `JUEGOS_DIA`, checked by `vigente()`): from that day it is dropped also from the deck in play, and the days before keep their game. 🔗 Conexiones left on 2026-10-24 (`DESDE_AGENTES`, D-421), when 🕵️ Agentes left the lab in its place and joined the next deck shuffled; `uno-al-dia.test.mjs` checks that no day before changes.
+- **A game that leaves** says from which date it no longer comes out (`hasta` in the game's `unoAlDia` in `games.js`, read into `JUEGOS_DIA` and checked by `vigente()`): from that day it is dropped also from the deck in play, and the days before keep their game. 🔗 Conexiones left on 2026-10-24 (`DESDE_AGENTES`, D-421), when 🕵️ Agentes left the lab in its place and joined the next deck shuffled; `uno-al-dia.test.mjs` checks that no day before changes.
 - **A game with variants** (D-331) plays its default one in Uno al día, with no picker: the challenge is the same for everyone. The phone keeps the variant picked standalone for the next standalone game.
 - En Dudo y Batalla Naval el rival responde a lo que haces, así que lo común es el punto de partida
   (los dados, la flota) y no la partida entera. Igual se pueden comparar, y lo dicen la intro (desde el PR 2)
@@ -481,7 +481,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   y el dado se desvanece cuando el juego está dibujado (`llegada.js`), only on the page it opened (D-375).
 - **The dice names its games without loading La Copa** (D-377): a game's name comes from
   `games.js`, and the two only La Copa has (⏳ Línea Relámpago, 🔢 Toque y Fama: Número)
-  carry theirs in their `JUEGOS_DIA` entry (`name`), which `uno-al-dia.test.mjs` checks against
+  carry theirs in their `JUEGOS_DIA` entry (`name`; they are the only rows kept in `uno-al-dia.js`), which `uno-al-dia.test.mjs` checks against
   `juegosCopa()`. That no page but La Copa's own (its screens, Uno al día, the records and the
   panel) loads `cup/rules.js` or `cup/engine.js` is checked, for every game, by
   `tools/e2e/scope.test.mjs` (D-378). The day's seed takes `rng` from `assets/js/rng.js`, not from
@@ -661,10 +661,12 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   día que no juegas. Tienes 1 de 2: …", y lo mismo en la tarjeta de invitar y al ganar uno (el dueño:
   que se entienda y den ganas de ganarlos).
 
+- **A game joins Uno al día from its `games.js` entry** (#855): `unoAlDia: { orden, desde, hasta?, grupo? }`. `uno-al-dia.js` derives `JUEGOS_DIA` (by `orden`) and `GRUPO` (`grupo: true`) from it; only the two La Copa-only rows (`linea`, `numero`) stay written there. `manifest.test.mjs` guards it. Do not add a game to `JUEGOS_DIA` by hand.
+
 ### Generala, lista para entrar al mazo (v0.128.0; in the deck since v0.189.0)
 
 - **📝 Generala** (D-246) was announced as "Próximamente" (D-248) and opened with D-405: it is in
-  `JUEGOS_DIA` and `GRUPO` with `desde: '2026-10-23'` (`DESDE_GENERALA`), the first day of the deck
+  `JUEGOS_DIA` and `GRUPO` (today through its `unoAlDia` in `games.js`, #855) with `desde: '2026-10-23'` (`DESDE_GENERALA`), the first day of the deck
   shuffled after it opened, so no day already played changed (D-247); `uno-al-dia.test.mjs` checks it.
 - **`/generala/?today`** abre 🧍 Jugar solo, sin elegir modo, con el botón **Jugar hoy** y la
   línea "Los dados salen iguales para todos: lo que cambia es qué guardas." No tiene rival, así que
