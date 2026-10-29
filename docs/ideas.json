@@ -96,7 +96,7 @@
       "title": "Pips: dominoes on a board",
       "lane": "new-game",
       "evidence": "No game-idea requests from players yet; the case is the house's own pattern: the number puzzles from the daily waves carry the solo plays (Queens 103, Tango 94, Bulls and Cows 95), and Pips is the NYT's newest daily puzzle. It needs no words (travels to the four languages), is deducible without guessing, takes 1 to 5 minutes and has easy/medium/hard sizes for a seed.",
-      "cost": "The whole of docs/AGREGAR-JUEGO.md: engine and generator with a unique-solution check and tests, solo mode with a daily seed, 0-to-100 scoring, panel signal, result screen, end-to-end scripts, its document, four languages, README and social card; then La Copa's pool (not the Gran Final, D-332). Three to four PRs.",
+      "cost": "The whole of docs/ADD-GAME.md: engine and generator with a unique-solution check and tests, solo mode with a daily seed, 0-to-100 scoring, panel signal, result screen, end-to-end scripts, its document, four languages, README and social card; then La Copa's pool (not the Gran Final, D-332). Three to four PRs.",
       "prototype": "A Spanish-only solo lab project in Proyectos activos (D-304), one daily board, with the cover page crediting NYT Pips.",
       "proof": "In the lab, a finish rate of 50% or more with 20+ starts within 3 weeks; after graduating, 40+ plays in its first 4 weeks (Zip's level).",
       "recommendation": "Yes, after the two above: it fits the house exactly, but it is the most expensive.",
