@@ -1,5 +1,5 @@
 {
-  "version": "0.231.2",
+  "version": "0.231.1",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -1243,6 +1243,7 @@
     "public/labs/publish.js",
     "public/labs/stack/engine.js",
     "public/labs/stack/game.js",
+    "public/labs/stack/scene.js",
     "public/labs/stick/engine.js",
     "public/labs/stick/game.js",
     "public/liars-dice/engine.js",
