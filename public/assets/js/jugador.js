@@ -453,9 +453,10 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
      * Anota el primer intento de Uno al día del día `n` (número desde 1970): la historia, el ranking
      * del día, la suma de la semana `semanaP` y, si mejoró, la mejor racha `mejor`. Cada paso es
      * aparte y de mejor esfuerzo: si la historia ya estaba (otro celular), sigue con lo demás.
-     * Sin jugador, null.
+     * Sin jugador, null. With `totales: false` (the lab's night totals, D-500) it writes only the raw
+     * events, the history and the day's row: the week's sum and the best streak are the rebuild's.
      */
-    async anotarDia({ n, j, s, ms, semanaP, mejor = 0, soloHistoria = false }) {
+    async anotarDia({ n, j, s, ms, semanaP, mejor = 0, soloHistoria = false, totales = true }) {
       const yo = api.yo();
       const r = normalizar({ s, ms });
       if (!yo || !r || !Number.isInteger(n) || n < 10000 || n > 99999) return null;
@@ -475,6 +476,7 @@ export function crearJugador({ almacen, storage = globalThis.localStorage, now =
           await almacen.update({ [`records/${UNO_AL_DIA}/${p}/${yo.jid}`]: fila({ s: hist.s, ms: hist.ms }) }); out.dia = true;
         }
       } catch (_) { /* el ranking del día es aparte: la historia ya quedó */ }
+      if (!totales) return out;
       try {
         if (hist.s > 0 && !hist.w && semanaP) {
           const antes = await almacen.get(`records/${UNO_AL_DIA}/${semanaP}/${yo.jid}`);
