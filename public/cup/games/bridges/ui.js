@@ -16,6 +16,7 @@ import { QUIETO, pct, aMundo, esfuerzoAhora, timeOfDay, DEMO, trenMini, lienzo, 
 import { etapasDe, tarjeta, CATALOGO_URL, NIVELES, TIEMPO_S } from './engine.js';
 import { loadCss } from '../../../assets/js/load-css.js';
 import { onScreen } from '../../../assets/js/on-screen.js';
+import { mmss } from '../../../assets/js/time-format.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -64,7 +65,6 @@ function visitante(total) {
     }),
   };
 }
-const mmss = ms => { const t = Math.max(0, Math.round((ms || 0) / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 /** A number with at most one decimal, with a comma in Spanish and Portuguese and German, a dot in English. */
 const num = (x, lang = 'es') => { const s = (Math.round(x * 10) / 10).toString(); return lang === 'en' ? s : s.replace('.', ','); };
 
