@@ -63,7 +63,7 @@ What each agent (`.claude/agents/`) and owner tool does, and the command it runs
 - **Everything in development sits behind the lab** (D-395, the owner's rule): lab games under `/labs/`, and
   anything tried on a page players visit turns on only for a lab key holder: it asks its runtime
   flag, `flag('<id>')` (`public/assets/js/flags.js`, D-498), *lab* until the owner flips Firebase
-  `flags/<id>` to *all* (📣 Campaigns → 🚩 Lab flags, or 🚀 on its card), with no PR; previews keep `labAccess()`. It goes to production for everyone only once validated in the lab.
+  `flags/<id>` to *all* (on its `/labs/` card: 🧪 / 🚀 / ⚪), with no PR; previews keep `labAccess()`. It goes to production for everyone only once validated in the lab.
   **Every change goes to Labs first** unless the owner says otherwise (D-409), and is listed in `/labs/`:
   the code that asks `flag()` or `labAccess()` names its card (`lab: #<id>`, `public/labs/listed.test.mjs`). The
   owner's decisions answer **Yes, in Labs**, **Yes, and publish** or **No**.

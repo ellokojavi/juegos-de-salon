@@ -2,7 +2,7 @@
 // (only the 🔑 link at its foot); for the owner, each card being tried gets the button, the sheet
 // says it is not immediate, and each state of a request shows on its card with the PR, its checks
 // and its preview. A card behind a runtime flag (D-498) says it is immediate and flips between
-// 🟢 Publicado and ↩️ Volver al laboratorio instead. The owner's sign-in is not driven here: the states are drawn with render().
+// 🧪 / 🟢 / ⚪ with a button to each other state instead (D-498: /labs/ is the one place). The owner's sign-in is not driven here: the states are drawn with render().
 // Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -20,7 +20,7 @@ ok(await ev(`!document.getElementById('publicar-dueno').hidden`), 'the 🔑 Entr
 // The owner's view: no request yet, then one card in each state
 await ev(`import('/labs/publish.js').then(m => (window.__pub = m, m.render({}))), 1`); await sleep(300);
 const cards = await ev(`document.querySelectorAll('#activos > .seccion, #mejoras > .seccion').length`);
-ok(cards > 0 && await ev(`document.querySelectorAll('.publicar button').length`) === cards, `every card being tried has 🚀 Publicar para todos (${cards})`);
+ok(cards > 0 && await ev(`[...document.querySelectorAll('#activos > .seccion, #mejoras > .seccion')].every(c => [...c.querySelectorAll('.publicar button')].some(x => /Publicar para todos/.test(x.textContent)))`), `every card being tried has 🚀 Publicar para todos (${cards})`);
 ok(await ev(`!document.querySelector('#bodega .publicar')`), 'La Bodega has none');
 
 await ev(`__pub.ask(document.getElementById('seccion-portada')), 1`); await sleep(400);
@@ -40,6 +40,8 @@ await ev(`__pub.render({}, { 'copa-crear': { state: 'all', at: ${Date.now()} } }
 ok(/Publicado para todos/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado')?.textContent || ''`))
   && /Volver al laboratorio/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado button')?.textContent || ''`)), 'flag all: live, with ↩️ Volver al laboratorio');
 await ev(`document.querySelector('#seccion-copa-crear').scrollIntoView(), 1`); await b.shot('flag-all');
+await ev(`__pub.render({}, {}), 1`); await sleep(200);
+ok(/En el laboratorio/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado')?.textContent || ''`)) && await ev(`document.querySelectorAll('#seccion-copa-crear .publicar-estado button').length`) === 2, 'flag lab: says so, with 🚀 and ⚪');
 await ev(`__pub.render({}, { 'copa-crear': { state: 'off', at: 1 } }), 1`); await sleep(200);
 ok(/Apagado/.test(await ev(`document.querySelector('#seccion-copa-crear .publicar-estado')?.textContent || ''`)), 'flag off: says so');
 await ev(`__pub.render({}, {}), 1`);
