@@ -1,5 +1,5 @@
 {
-  "version": "0.232.6",
+  "version": "0.233.0",
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
@@ -66,6 +66,7 @@
       ],
       "chat": false,
       "files": [
+        "public/cup/admin.js",
         "public/cup/avisos.js",
         "public/cup/clock.js",
         "public/cup/code.js",
@@ -1131,6 +1132,7 @@
     "public/bulls-and-cows/engine.js",
     "public/bulls-and-cows/game.js",
     "public/bulls-and-cows/rules.js",
+    "public/cup/admin.js",
     "public/cup/avisos.js",
     "public/cup/clock.js",
     "public/cup/code.js",
