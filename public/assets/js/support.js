@@ -141,9 +141,10 @@ export const EVENTS = ['shown', 'open', 'pay', 'thanks'];
 export async function trackSupport(event) {
   try {
     if (!EVENTS.includes(event)) return;
-    const [{ stats, dayPath }, { dayOf }] = await Promise.all([import('./transport/stats.js'), import('./transport/cleanup.js')]);
+    const [{ stats, dayPath, noteSeen }, { dayOf }] = await Promise.all([import('./transport/stats.js'), import('./transport/cleanup.js')]);
     const s = stats();
     await s.api.patch(dayPath(s.fp.env, dayOf(Date.now())), { [`support/${event}`]: { '.sv': { increment: 1 } } });
+    if (event === 'open') noteSeen('support', s);
   } catch (_) { /* best effort */ }
 }
 

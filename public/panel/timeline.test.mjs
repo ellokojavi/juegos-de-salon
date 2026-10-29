@@ -113,3 +113,16 @@ assert.equal(c.room, 2);
 assert.deepEqual(keyEvents({}, range, now), []);
 
 console.log('timeline.test.mjs ✓');
+
+// Campaigns seen (D-503): a splash and the donation card, each with who saw it
+{
+  const seen = { [today]: { seen: {
+    s1: { c: 'tres-juegos-demo', at: now - 5 * 60000, name: 'Cata', co: 'AR' },
+    s2: { c: 'support', at: now - 6 * 60000 },
+    bad: { at: now },
+  } } };
+  const evs = keyEvents({ days: seen }, { from: today - 6, to: today }, now);
+  assert.deepEqual(evs.map(e => [e.kind, e.campaign, e.who[0].name]), [['campaign', 'tres-juegos-demo', 'Cata'], ['campaign', 'support', '']]);
+  assert.equal(countKinds(evs).campaign, 2);
+}
+console.log('timeline campaigns ok');
