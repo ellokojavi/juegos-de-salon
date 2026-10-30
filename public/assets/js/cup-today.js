@@ -73,7 +73,7 @@ export function untilText(ms) {
   const m = Math.max(1, Math.ceil(ms / 60000)), h = Math.floor(m / 60), d = Math.floor(h / 24);
   // Compact (#1029): «6h» keeps the chip on one line at 320 px and reads the same in the four
   // languages; the minutes show only in the last hour, where they matter (the player's own suggestion)
-  const hr = m >= 60 ? Math.round(m / 60) : 0;
+  const hr = m >= 60 ? Math.floor(m / 60) : 0;
   return d ? `${d}d${h % 24 ? ` ${h % 24}h` : ''}` : hr ? `${hr}h` : `${m}m`;
 }
 
