@@ -820,6 +820,17 @@ One number ranks players in a **monthly season** (everyone starts at 0 on the 1s
   temporada de octubre…" (see "Los avisos") opens `/?recap=season`, which shows last month's season to
   whoever taps it, lab key or not. Tested by `daily-recap.test.mjs`, the season cases of
   `uad-points-backfill.test.mjs` and `daily.test.mjs`, and `tools/e2e/home/recap.mjs`.
+- **The month-end window** (the owner's request, 2026-10-30; in the lab behind the `uad-month-end` flag,
+  listed in /labs/ as `#seccion-uad-month-end`): it takes the season recap's first showing above. On the
+  first visit after the nightly rebuild closes the month's last day (in practice the 1st), once per season
+  and phone (the same "seen" mark), a player in the table sees their final place before the table: 1st,
+  2nd and 3rd get a gold, silver or bronze **medal** (never a cup: that is La Copa's), fireworks and comic
+  rays; everyone else, their place in big. All are thanked for playing and invited to next month, and
+  **See the table** opens the season's table window as before. It is not a splash campaign (D-351): it
+  always runs, in the recap window's slot (`showSeason` in `assets/js/recap.js`). A player not in the
+  table, or with the flag off, gets the table window alone. Code: `assets/js/month-end.js`,
+  `assets/css/month-end.css`, texts in es/en/pt in its `TEXTS`; `/?recap=month-end-demo&place=N` shows a
+  made-up season, recording nothing. Tested by `month-end.test.mjs`.
 
 The rules are pure functions in `public/assets/js/daily-points.js` (over the same history and streak
 rules as `uno-al-dia.js`), tested by `daily-points.test.mjs`, and shared by /today/, the lab prototype
