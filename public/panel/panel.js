@@ -34,6 +34,7 @@ import {
   avisosDelRango, AVISO_TIPOS, vueltaAtrasada, unoAlDiaDelRango, salud, TRAMOS, navegadorLabel,
 } from './aggregate.js';
 import { keyEvents, periods as periodosClave, periodOf, byHour, countKinds, KINDS, pacificRange } from './timeline.js';
+import { feedbackRows, countStages, STAGES, FILTERS } from './feedback.js';
 import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splash.js';
 import { TEXTS as SUPPORT_TEXTS } from '../assets/js/support.js';
 import { switches, status as campaignStatus, overlaps, move, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
@@ -68,6 +69,8 @@ const S = {
   uad: { historia: {}, invitados: {}, rachas: {} },
   // The timeline (D-408): feedback messages, and what is picked in that view
   feedback: {}, unsubFeedback: null,
+  // 💬 Feedback: every message (not only the range's) and where each one stands, read on first visit
+  fbTodo: null, fbEstado: {}, fbFiltro: 'open',
   // 📣 Campaigns (D-454): Firebase `splash/` (undefined until it answers, null if never saved) and the last save's outcome
   splash: undefined, unsubSplash: null, splashMsg: '',
   // 🧩 Site features and 🎨 skins (D-477): Firebase `controls/` (undefined until it answers), the tab shown and the last save
@@ -1631,6 +1634,59 @@ function vistaTimeline(now) {
     'timeline', csv),
   ];
 }
+/* ------------------------------------------------------------------ */
+/* 💬 Feedback                                                         */
+/* ------------------------------------------------------------------ */
+const REPO_URL = 'https://github.com/ellokojavi/juegos-de-salon';
+const FB_STAGE = {
+  new: ['🆕', 'New', 'No issue yet: the next sync pass (every 5 minutes) uploads it'],
+  open: ['📥', 'Open', 'An issue, no PR yet'],
+  'in-pr': ['🛠️', 'In a PR', 'A PR for it is open'],
+  merged: ['✅', 'Fixed', 'Its PR was merged; the issue stays open until the player is answered'],
+  closed: ['🔒', 'Closed', 'The issue is closed'],
+};
+const FB_FILTROS = [['open', 'Pending'], ['closed', 'Closed'], ['all', 'All']];
+
+/** Every message, not only the range's, and where each stands: read the first time the section opens. */
+function escucharFeedback() {
+  if (S.fbTodo !== null) return;
+  S.fbTodo = {};
+  onValue(ref(db, 'feedback'), snap => { S.fbTodo = snap.val() || {}; render(); }, () => {});
+  onValue(ref(db, 'feedbackEstado'), snap => { S.fbEstado = snap.val() || {}; render(); }, () => {});
+}
+
+function filaFeedback(f) {
+  const [ico, etapa, ayuda] = FB_STAGE[f.stage];
+  const gh = (tipo, num, txt) => el('a', { href: `${REPO_URL}/${tipo}/${num}`, target: '_blank', rel: 'noopener' }, txt);
+  const prs = f.prs.map(p => [' · ', gh('pull', p.n, `PR #${p.n}`), ` ${p.state}`, p.title ? el('span', { class: 'muted' }, ` (${p.title})`) : null]).flat();
+  return el('div', { class: 'evento fb' },
+    el('span', { class: 'hora' }, fechaLabel(f.at)),
+    el('span', { class: 'ico', title: ayuda }, ico),
+    el('span', { class: 'que' },
+      f.name ? quien(f.name, '') : 'Someone', ` sent ${FEEDBACK_TIPO[f.tipo] || 'feedback'}`,
+      f.game ? ` · ${gameLabel(f.game)}` : '', f.tester ? el('span', { class: 'tag' }, 'lab') : null,
+      el('p', { class: 'fb-texto' }, f.text),
+      el('small', {}, `${etapa}`, f.issue ? [' · ', gh('issues', f.issue, `issue #${f.issue}`)] : '', ...prs,
+        f.replied ? ' · 📧 replied' : f.email ? ` · 📧 wants a reply (${f.email})` : '')));
+}
+
+function vistaFeedback() {
+  escucharFeedback();
+  const todas = feedbackRows(S.fbTodo || {}, S.fbEstado);
+  const cuenta = countStages(todas);
+  const filas = todas.filter(r => FILTERS[S.fbFiltro](r.stage));
+  const csv = () => filas.map(f => ({ date: new Date(f.at).toISOString(), who: f.name, kind: f.tipo, game: f.game, stage: f.stage,
+    issue: f.issue || '', prs: f.prs.map(p => `#${p.n} ${p.state}`).join(' '), replied: f.replied ? 'yes' : '', text: f.text }));
+  return [
+    ...titulo('💬 Feedback', 'Every message players sent (🐞 and the inbox at the end of every game), in full and from the start, not only this range. Each one becomes a GitHub issue; its stage follows the issue and the PRs that close it or name it, updated every 5 minutes by the feedback-watch job.'),
+    el('div', { class: 'tiles' }, ...STAGES.map(s => tile(cuenta[s], `${FB_STAGE[s][0]} ${FB_STAGE[s][1]}`, { info: FB_STAGE[s][2] }))),
+    filtros(FB_FILTROS, S.fbFiltro, v => { S.fbFiltro = v; render(); }, 'Show'),
+    conCsv(bloque(`Messages · ${n(filas.length)}`, 'Newest first. Tap an issue or a PR to open it on GitHub.',
+      filas.length ? el('div', { class: 'historia' }, ...filas.map(filaFeedback)) : el('p', { class: 'empty' }, S.fbTodo && Object.keys(S.fbTodo).length ? 'Nothing here.' : 'Loading…')),
+    'feedback', csv),
+  ];
+}
+
 const periodLabelDia = d => new Date(d * DAY).toLocaleDateString('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' });
 
 /* ------------------------------------------------------------------ */
@@ -1940,6 +1996,7 @@ const SECCION = {
   usuarios: ['🌎', 'Users'],
   trafico: ['📈', 'Traffic'],
   salud: ['🩺', 'Health'],
+  feedback: ['💬', 'Feedback'],
   campanas: ['📣', 'Campaigns'],
 };
 
@@ -2006,6 +2063,7 @@ function render() {
   else if (sec === 'trafico') nodos = vistaTrafico(now);
   else if (sec === 'salud') nodos = vistaSalud(now);
   else if (sec === 'timeline') nodos = vistaTimeline(now);
+  else if (sec === 'feedback') nodos = vistaFeedback(now);
   else if (sec === 'campanas') nodos = vistaCampanas(now);
   else nodos = vistaResumen(now);
   $('#vista').replaceChildren(...nodos.flat().filter(Boolean));
@@ -2097,9 +2155,10 @@ $('#range').addEventListener('change', e => cambiarRango(e.target.value));
 // `vista` es una ruta (`/torneo/OFICI`) o, como antes, el nombre de una vista (`torneo`).
 window.__panel = {
   get state() { return S; },
-  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, feedback = {}, splash = null, controls = {}, flags = {}, campTab = null, daysLoaded = true, vista }) {
+  seed({ rooms = {}, days = {}, torneos = {}, push = null, uad = null, feedback = {}, feedbackEstado = {}, splash = null, controls = {}, flags = {}, campTab = null, daysLoaded = true, vista }) {
     stopListening();
     S.feedback = feedback;
+    S.fbTodo = feedback; S.fbEstado = feedbackEstado;
     S.splash = splash;
     S.controls = controls;
     S.flags = flags;

@@ -169,3 +169,15 @@ assert.equal(hideContacts('llamar al (555) 123-4567.'), 'llamar al [phone hidden
 assert.equal(hideContacts('el 2026-10-27 perdí 3 de 10, código ABCD, v5.12.3, semilla 1234'), 'el 2026-10-27 perdí 3 de 10, código ABCD, v5.12.3, semilla 1234');
 assert.doesNotMatch(body({ texto: 'soy ana@mail.cl, +1 415 555 0100', at: 1 }), /ana@|415/);
 assert.doesNotMatch(title({ texto: 'soy ana@mail.cl' }), /ana@/);
+
+// statusOf: each report's issue and the PRs that close it or name it
+{
+  const { statusOf } = await import('./feedback.mjs');
+  const issues = [{ number: 10, state: 'OPEN', labels: [], body: '<!-- feedback:aa -->' }, { number: 11, state: 'CLOSED', labels: [{ name: 'replied' }], body: '<!-- feedback:bb -->' }, { number: 12, body: 'no marker' }];
+  const prs = [{ number: 20, state: 'MERGED', title: 'Fix', body: 'Closes #10', closingIssuesReferences: [{ number: 10 }] }, { number: 21, state: 'OPEN', title: 'More', body: 'See #10 and #100' }];
+  const st = statusOf(issues, prs);
+  assert.deepEqual(Object.keys(st), ['aa', 'bb']);
+  assert.deepEqual(st.aa, { issue: 10, state: 'open', replied: false, prs: [{ n: 20, state: 'merged', title: 'Fix' }, { n: 21, state: 'open', title: 'More' }] });
+  assert.equal(st.bb.replied, true);
+  assert.deepEqual(st.bb.prs, []);
+}
