@@ -25,6 +25,7 @@ export const FLAGS = {
   'cover-facts': '📖 Game pages: who plays and how long, in the rules',
   'uad-night-totals': '📅 Uno al día: totals written by the hourly rebuild',
   'home-pill-bar': '💊 Home page: top bar buttons as pills of one height',
+  'cup-back-board': '🏆 La Copa: the header ‹ goes back to the board while playing a day',
   'name-guard': '🛡️ Rankings: offensive names refused on sign-up',
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
 };
