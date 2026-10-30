@@ -105,6 +105,7 @@ export const COMMON = {
   es: {
     appTitle: 'Juegos de Salón',
     appSub: 'Juegos cortos de mesa, de lógica y de destreza para jugar solo o con amigos.',
+    appFree: 'Gratis, sin instalar y sin cuenta.',
     players: 'jugadores', minutes: 'min',
     footer: 'Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕',
     player: 'jugador',
@@ -364,6 +365,7 @@ export const COMMON = {
   en: {
     appTitle: 'Party Games',
     appSub: 'Short tabletop, logic and skill games to play alone or with friends.',
+    appFree: 'Free, no install, no account.',
     players: 'players', minutes: 'min',
     footer: 'Drink responsibly and keep water nearby. If you drive, you don\'t drink. 🚕',
     player: 'player',
@@ -609,6 +611,7 @@ export const COMMON = {
   pt: {
     appTitle: 'Jogos de Salão',
     appSub: 'Jogos curtos de mesa, de lógica e de destreza pra jogar sozinho ou com amigos.',
+    appFree: 'De graça, sem instalar e sem conta.',
     players: 'jogadores', minutes: 'min',
     footer: 'Beba com responsabilidade e com água por perto. Se for dirigir, não beba. 🚕',
     player: 'jogador',
@@ -854,6 +857,7 @@ export const COMMON = {
   de: {
     appTitle: 'Salonspiele',
     appSub: 'Kurze Gesellschafts-, Logik- und Geschicklichkeitsspiele für allein oder mit Freunden.',
+    appFree: 'Kostenlos, ohne Installation und ohne Konto.',
     players: 'Spieler', minutes: 'Min.',
     footer: 'Trink verantwortungsvoll und hab Wasser dabei. Wer fährt, trinkt nicht. 🚕',
     player: 'Spieler',
