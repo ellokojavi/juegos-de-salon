@@ -83,6 +83,26 @@ assert readme.verified_date(IMAGE, {}) == 0, 'invents a date'
 assert readme.screenshot_date(IMAGE, {IMAGE: {'sha256': real, 'date': 4102444800}}) == 4102444800
 assert readme.screenshot_date(IMAGE, {}) == readme.git_date([IMAGE])
 
+# A retake that moved fewer than 0.5 % of the pixels keeps the committed PNG (#1037)
+import io, tempfile
+from PIL import Image
+def png_bytes(im):
+    b = io.BytesIO(); im.save(b, 'PNG'); return b.getvalue()
+base = Image.new('RGB', (100, 100), 'white')
+with tempfile.TemporaryDirectory() as d:
+    shot = pathlib.Path(d) / 'shot.png'
+    def retake(dots, size=(100, 100)):
+        im = base.copy().resize(size)
+        for i in range(dots):
+            im.putpixel((i % size[0], i // size[0]), (0, 0, 0))
+        shot.write_bytes(png_bytes(im))
+        return readme.barely_changed(png_bytes(base), shot)
+    assert retake(0), 'an identical retake counts as a change'
+    assert retake(49), '49 of 10 000 pixels (0.49 %) count as a change'
+    assert not retake(50), '0.5 % is a real change'
+    assert not retake(0, (100, 101)), 'a new size is a real change'
+    assert not readme.barely_changed(None, shot), 'a new screenshot counts as unchanged'
+
 if failures:
     sys.exit(f'readme: {failures} case(s) wrong')
 print(f'readme: {len(CASES)} "this is only a stamp" cases green')
