@@ -8,7 +8,7 @@
  * becomes a link when drawn.
  */
 export const CONTACT = 'hola@juegosdesalon.cl';
-export const UPDATED = '2026-10-27';
+export const UPDATED = '2026-10-29';
 
 export const TEXTS = {
   es: {
@@ -21,12 +21,13 @@ export const TEXTS = {
         p: ['Usamos Firebase, de Google, en Estados Unidos. Guardamos solo esto:'],
         items: [
           'Salas para jugar con otros: el nombre o apodo que escribes y las jugadas. Se borran cuando todos salen o, si no, en los días siguientes a que la sala se cierra.',
-          'La Copa: tu nombre o apodo, tus resultados y tu PIN de 4 cifras, guardado como una huella (hash) que nadie puede leer. Queda guardada hasta que quien la creó la borra.',
+          'La Copa: tu nombre o apodo, tus resultados y tu PIN de 4 cifras, guardado como una huella (hash) que nadie puede leer. Para que nadie adivine tu PIN, guardamos el último intento de cada jugador. Quien la creó puede borrarla; si no, dos años después de terminar pasa a un archivo cerrado que solo nosotros podemos leer.',
           'Rankings y Uno al día, si entras con nombre y PIN: tu nombre, tu país, tus puntajes y los días que jugaste. El nombre, el país y los puntajes se ven en los rankings. Se guardan mientras exista el juego o hasta que nos pidas borrarlos.',
-          'Estadísticas de uso, para saber qué se juega y qué falla: conteos por día (juego, idioma, hora, tipo de aparato, el sitio desde donde llegaste y el país, que sale del huso horario), un número al azar de tu navegador para contar quién vuelve, los nombres escritos en cada partida, qué anuncios del sitio viste con ese nombre y los errores, con el navegador y su versión. Los nombres se borran a los 24 meses; los conteos sin nombres se quedan.',
+          'Para no pedirte el PIN cada vez, guardamos un número anónimo de cada aparato donde entras, y el último intento de PIN para frenar a quien quiera adivinarlo. Si invitas a alguien a Uno al día, anotamos que llegó por tu invitación. Si un nombre es ofensivo, podemos cambiarlo; los puntajes y el PIN se mantienen.',
+          'Estadísticas de uso, para saber qué se juega y qué falla: conteos por día (juego, idioma, hora, tipo de aparato, el sitio y el enlace por donde llegaste y el país, que sale del huso horario), un número al azar de tu navegador para contar quién vuelve, los nombres escritos en cada partida, qué anuncios del sitio viste con ese nombre y los errores, con el navegador y su versión. Los nombres se borran a los 24 meses; los conteos sin nombres se quedan.',
           'Avisos al celular, si los activas: la dirección de avisos que da tu navegador, el idioma, el huso horario y los avisos que pediste. Se borran al desactivarlos o cuando el navegador los da por vencidos.',
           'Sugerencias y comentarios: lo que escribes, tu nombre o apodo si lo pones, la página y la versión. Los copiamos a la lista de tareas del proyecto en GitHub, que es pública, con tu nombre tapado salvo la primera letra de cada palabra y sin tu correo, así que no escribas ahí datos personales. Todavía no tienen fecha de borrado.',
-          'Tu correo, si lo dejas en una sugerencia: solo para responderte, y nunca se publica. Lo borramos al responderte o, si no hubo respuesta, a los 90 días.',
+          'Tu correo, si lo dejas en una sugerencia o nos escribes a hola@juegosdesalon.cl: solo para responderte, y nunca se publica. Lo borramos al responderte o, si no hubo respuesta, a los 90 días.',
         ],
       },
       {
@@ -46,7 +47,7 @@ export const TEXTS = {
       },
     ],
     who: 'Responsable: Juegos de Salón (juegosdesalon.cl), hola@juegosdesalon.cl.',
-    updated: 'Actualizada el 27 de octubre de 2026.',
+    updated: 'Actualizada el 29 de octubre de 2026.',
   },
   en: {
     title: 'Privacy',
@@ -58,12 +59,13 @@ export const TEXTS = {
         p: ['We use Google\'s Firebase, in the United States. We keep only this:'],
         items: [
           'Rooms to play with others: the name or nickname you type and the moves. They are deleted when everyone leaves or, if not, in the days after the room closes.',
-          'The Cup: your name or nickname, your results and your 4-digit PIN, stored as a fingerprint (hash) nobody can read. It stays until whoever created the Cup deletes it.',
+          'The Cup: your name or nickname, your results and your 4-digit PIN, stored as a fingerprint (hash) nobody can read. So nobody can guess your PIN, we keep each player\'s last attempt. Whoever created the Cup can delete it; otherwise, two years after it ends it moves to a closed archive only we can read.',
           'Leaderboards and One a Day, if you sign in with a name and PIN: your name, your country, your scores and the days you played. The name, the country and the scores show on the leaderboards. They are kept while the game exists or until you ask us to delete them.',
-          'Usage statistics, to know what gets played and what breaks: daily counts (game, language, hour, kind of device, the site you came from and the country, taken from the time zone), a random number from your browser to count who comes back, the names typed in each game, which of the site\'s announcements you saw with that name, and errors with the browser and its version. The names are deleted after 24 months; the counts without names stay.',
+          'So you don\'t type your PIN every time, we keep an anonymous number for each device you sign in on, and the last PIN attempt, to stop anyone trying to guess it. If you invite someone to One a Day, we note that they came through your invitation. If a name is offensive, we may change it; the scores and the PIN stay.',
+          'Usage statistics, to know what gets played and what breaks: daily counts (game, language, hour, kind of device, the site and the link you came from and the country, taken from the time zone), a random number from your browser to count who comes back, the names typed in each game, which of the site\'s announcements you saw with that name, and errors with the browser and its version. The names are deleted after 24 months; the counts without names stay.',
           'Phone notifications, if you turn them on: the notification address your browser gives, the language, the time zone and the notifications you asked for. They are deleted when you turn them off or when the browser expires them.',
           'Suggestions and comments: what you write, your name or nickname if you give one, the page and the version. We copy them to the project\'s task list on GitHub, which is public, with your name hidden except the first letter of each word and without your email, so don\'t write personal details there. They have no deletion date yet.',
-          'Your email, if you leave it with a suggestion: only to reply to you, and it is never published. We delete it once we reply or, if there was no reply, after 90 days.',
+          'Your email, if you leave it with a suggestion or write to us at hola@juegosdesalon.cl: only to reply to you, and it is never published. We delete it once we reply or, if there was no reply, after 90 days.',
         ],
       },
       {
@@ -83,7 +85,7 @@ export const TEXTS = {
       },
     ],
     who: 'Controller: Juegos de Salón (juegosdesalon.cl), hola@juegosdesalon.cl.',
-    updated: 'Updated on October 27, 2026.',
+    updated: 'Updated on October 29, 2026.',
   },
   pt: {
     title: 'Privacidade',
@@ -95,12 +97,13 @@ export const TEXTS = {
         p: ['Usamos o Firebase, do Google, nos Estados Unidos. Guardamos só isto:'],
         items: [
           'Salas para jogar com outras pessoas: o nome ou apelido que você digita e as jogadas. São apagadas quando todos saem ou, se não, nos dias seguintes ao fechamento da sala.',
-          'A Copa: seu nome ou apelido, seus resultados e seu PIN de 4 dígitos, guardado como uma impressão digital (hash) que ninguém consegue ler. Fica guardada até quem a criou apagá-la.',
+          'A Copa: seu nome ou apelido, seus resultados e seu PIN de 4 dígitos, guardado como uma impressão digital (hash) que ninguém consegue ler. Para que ninguém adivinhe seu PIN, guardamos a última tentativa de cada jogador. Quem a criou pode apagá-la; senão, dois anos depois de terminar ela passa para um arquivo fechado que só nós podemos ler.',
           'Rankings e Um por dia, se você entra com nome e PIN: seu nome, seu país, suas pontuações e os dias que jogou. O nome, o país e as pontuações aparecem nos rankings. São guardados enquanto o jogo existir ou até você pedir para apagá-los.',
-          'Estatísticas de uso, para saber o que se joga e o que falha: contagens por dia (jogo, idioma, hora, tipo de aparelho, o site de onde você veio e o país, que sai do fuso horário), um número aleatório do seu navegador para contar quem volta, os nomes digitados em cada partida, quais anúncios do site você viu com esse nome e os erros, com o navegador e a versão dele. Os nomes são apagados após 24 meses; as contagens sem nomes ficam.',
+          'Para não pedir seu PIN toda vez, guardamos um número anônimo de cada aparelho onde você entra, e a última tentativa de PIN, para frear quem tente adivinhá-lo. Se você convida alguém para o Um por dia, anotamos que a pessoa chegou pelo seu convite. Se um nome for ofensivo, podemos trocá-lo; as pontuações e o PIN continuam.',
+          'Estatísticas de uso, para saber o que se joga e o que falha: contagens por dia (jogo, idioma, hora, tipo de aparelho, o site e o link de onde você veio e o país, que sai do fuso horário), um número aleatório do seu navegador para contar quem volta, os nomes digitados em cada partida, quais anúncios do site você viu com esse nome e os erros, com o navegador e a versão dele. Os nomes são apagados após 24 meses; as contagens sem nomes ficam.',
           'Avisos no celular, se você ativar: o endereço de avisos que seu navegador dá, o idioma, o fuso horário e os avisos que você pediu. São apagados quando você os desativa ou quando expiram no navegador.',
           'Sugestões e comentários: o que você escreve, seu nome ou apelido se você puser, a página e a versão. Copiamos para a lista de tarefas do projeto no GitHub, que é pública, com seu nome oculto, menos a primeira letra de cada palavra e sem seu e-mail, então não escreva ali dados pessoais. Ainda não têm data para serem apagados.',
-          'Seu e-mail, se você deixar numa sugestão: só para te responder, e nunca é publicado. Apagamos ao responder ou, se não houver resposta, depois de 90 dias.',
+          'Seu e-mail, se você deixar numa sugestão ou nos escrever em hola@juegosdesalon.cl: só para te responder, e nunca é publicado. Apagamos ao responder ou, se não houver resposta, depois de 90 dias.',
         ],
       },
       {
@@ -120,7 +123,7 @@ export const TEXTS = {
       },
     ],
     who: 'Responsável: Juegos de Salón (juegosdesalon.cl), hola@juegosdesalon.cl.',
-    updated: 'Atualizada em 27 de outubro de 2026.',
+    updated: 'Atualizada em 29 de outubro de 2026.',
   },
   de: {
     title: 'Datenschutz',
@@ -132,12 +135,13 @@ export const TEXTS = {
         p: ['Wir nutzen Firebase von Google, in den USA. Wir speichern nur Folgendes:'],
         items: [
           'Räume, um mit anderen zu spielen: den Namen oder Spitznamen, den du eingibst, und die Züge. Sie werden gelöscht, wenn alle gehen, sonst in den Tagen, nachdem der Raum schließt.',
-          'Der Pokal: deinen Namen oder Spitznamen, deine Ergebnisse und deine 4-stellige PIN, gespeichert als Fingerabdruck (Hash), den niemand lesen kann. Er bleibt, bis die Person, die ihn erstellt hat, ihn löscht.',
+          'Der Pokal: deinen Namen oder Spitznamen, deine Ergebnisse und deine 4-stellige PIN, gespeichert als Fingerabdruck (Hash), den niemand lesen kann. Damit niemand deine PIN errät, speichern wir den letzten Versuch jedes Spielers. Wer den Pokal erstellt hat, kann ihn löschen; sonst kommt er zwei Jahre nach seinem Ende in ein geschlossenes Archiv, das nur wir lesen können.',
           'Ranglisten und Spiel des Tages, wenn du dich mit Namen und PIN anmeldest: deinen Namen, dein Land, deine Punkte und die Tage, an denen du gespielt hast. Name, Land und Punkte stehen in den Ranglisten. Sie bleiben, solange es das Spiel gibt oder bis du uns bittest, sie zu löschen.',
-          'Nutzungsstatistik, um zu wissen, was gespielt wird und was nicht klappt: Zählungen pro Tag (Spiel, Sprache, Uhrzeit, Art des Geräts, die Seite, von der du kamst, und das Land, das aus der Zeitzone kommt), eine Zufallszahl deines Browsers, um zu zählen, wer wiederkommt, die Namen aus jedem Spiel, welche Hinweise der Seite du damit gesehen hast, und Fehler mit Browser und Version. Die Namen werden nach 24 Monaten gelöscht, die Zählungen ohne Namen bleiben.',
+          'Damit du nicht jedes Mal deine PIN eingibst, speichern wir eine anonyme Nummer für jedes Gerät, auf dem du dich anmeldest, und den letzten PIN-Versuch, um zu bremsen, wer sie erraten will. Wenn du jemanden zum Spiel des Tages einlädst, vermerken wir, dass die Person über deine Einladung kam. Ist ein Name beleidigend, können wir ihn ändern; Punkte und PIN bleiben.',
+          'Nutzungsstatistik, um zu sehen, was gespielt wird und was hakt: Zählungen pro Tag (Spiel, Sprache, Uhrzeit, Art des Geräts, woher du kamst (Seite, Link) und das Land, das aus der Zeitzone kommt), eine Zufallszahl deines Browsers, um zu zählen, wer wiederkommt, die Namen aus jedem Spiel, welche Hinweise der Seite du damit gesehen hast, und Fehler mit Browser und Version. Die Namen werden nach 24 Monaten gelöscht, die Zählungen ohne Namen bleiben.',
           'Mitteilungen aufs Handy, wenn du sie einschaltest: die Mitteilungsadresse deines Browsers, die Sprache, die Zeitzone und die Mitteilungen, die du wolltest. Sie werden gelöscht, wenn du sie ausschaltest oder der Browser sie verfallen lässt.',
           'Vorschläge und Kommentare: was du schreibst, deinen Namen oder Spitznamen, wenn du einen angibst, die Seite und die Version. Wir kopieren sie in die Aufgabenliste des Projekts auf GitHub, die öffentlich ist, mit deinem Namen verdeckt bis auf den ersten Buchstaben jedes Worts und ohne deine E-Mail, also schreib dort nichts Persönliches. Für sie gibt es noch kein Löschdatum.',
-          'Deine E-Mail, wenn du sie bei einem Vorschlag angibst: nur, um dir zu antworten, und sie wird nie veröffentlicht. Wir löschen sie nach der Antwort oder, falls keine kommt, nach 90 Tagen.',
+          'Deine E-Mail, wenn du sie bei einem Vorschlag angibst oder uns an hola@juegosdesalon.cl schreibst: nur, um dir zu antworten, und sie wird nie veröffentlicht. Wir löschen sie nach der Antwort oder, falls keine kommt, nach 90 Tagen.',
         ],
       },
       {
@@ -157,6 +161,6 @@ export const TEXTS = {
       },
     ],
     who: 'Verantwortlich: Juegos de Salón (juegosdesalon.cl), hola@juegosdesalon.cl.',
-    updated: 'Aktualisiert am 27. Oktober 2026.',
+    updated: 'Aktualisiert am 29. Oktober 2026.',
   },
 };
