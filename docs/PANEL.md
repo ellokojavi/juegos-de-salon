@@ -282,7 +282,8 @@ Sale del celular, por día y por entorno (`public/assets/js/transport/stats.js`)
 - **Cualquier página que se abra** (D-208): `vistas/<página>`; y una vez por pestaña,
   `entradas/<página>`, `ref/<dominio>` (solo el dominio, nunca la dirección), `via/<marca>`,
   `retorno/<nueva|vuelve>`, `disp/<aparato>` y `pais/<país>`. Si esa visita empieza algo,
-  `juegan/<página de entrada>`. El panel no se cuenta.
+  `juegan/<página de entrada>`, and, if it came with a mark, `viaJuegan/<marca>` (since 2026-10-29: the
+  panel's "Through which link" shows in green how many of each mark went on to play). El panel no se cuenta.
 - **Lo que falla al cargar o al jugar** (D-251, ver *Salud*): `falla/`, `err/` y `listo/`, que manda
   `vigia.js` y no `stats.js`.
 - **Since D-348:** `fin/<game>/<mode>` (an offline game finished), `otra/<game>` (a replay: the
