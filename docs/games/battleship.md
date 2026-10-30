@@ -122,7 +122,7 @@ Ganador, disparos totales y precisión de cada uno (when the winner is the playe
 
 - Misma identidad: fondo neón, Bangers en títulos, botones pill, confeti al ganar. Paleta del mar: casillas azul profundo, agua gris-azul, tocado naranjo, hundido rojo con brillo.
 - Grilla táctil: casillas mínimas de 30 px en 375 px de ancho. Es una sola grilla CSS de 11×11 donde la primera fila y la primera columna son las etiquetas, así números y letras quedan alineados con las casillas en todos los navegadores (v0.9.4). Sin scroll horizontal.
-- Todo en español, inglés, portugués y alemán (“Battleship”, “Batalha Naval”, “Schiffe versenken”): agua/miss/água/Wasser, tocado/hit/acertou/Treffer, hundido/sunk/afundou/versenkt, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar! (D-191, D-197).
+- Todo en español, inglés y portugués (“Battleship”, “Batalha Naval”): agua/miss/água, tocado/hit/acertou, hundido/sunk/afundou, ¡Fuego!/Fire!/Fogo!, ¡Zarpar!/Set sail!/Zarpar! (D-170; el alemán salió con D-514).
 - Accesible con dedo: selección + confirmación antes de disparar; vibración en tocado/hundido.
 - Las dos pantallas de turno se miran sin jugar una partida: `node tools/e2e/look.mjs batalla-naval game` y `… waiting`.
 - El hundimiento no se mira con una captura sino con varias seguidas: el guion que las saca vive en la historia de D-93.

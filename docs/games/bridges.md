@@ -17,9 +17,9 @@ too much snaps. Five stages against a 7-minute clock. **Inspired by
   the same. The moves (`{ etapa, hechas, vigas, fin, seg, puntos }`) rebuild a stage on reload.
 - **Files** in `public/cup/games/bridges/`: `physics.js` (the physics, the fixed stages and the score; the lab's
   `engine.js` until D-456), `engine.js` (the day's crossings), `scene.js` (canvas, drawing, gauge), `neon.js`,
-  `trains.js`, `pixel.js`, `visitors.js`, `neon-visitors.js` (the art), `texts.js` (the four languages),
+  `trains.js`, `pixel.js`, `visitors.js`, `neon-visitors.js` (the art), `texts.js` (the three languages),
   `style.css`, and the data `catalog.json`, `catalog-beams.json` and `solutions.json`.
-- **Languages:** Spanish, English (Train on the Edge), Portuguese (Trem no Vão) and German (Zug am Abgrund).
+- **Languages:** Spanish, English (Train on the Edge) and Portuguese (Trem no Vão).
   With its ranking, share card and 🐞 report, like any cup game.
 - **What stays in the lab:** the sheets `/labs/bridges/trains/` and `/labs/bridges/visitors/`, listed in 📦 La Bodega
   as 🚀 Lanzado; they load `cup/games/bridges/` (declared in `REUSES`, `tools/e2e/affected.mjs`). The lab's ⏭

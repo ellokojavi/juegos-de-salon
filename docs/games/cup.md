@@ -26,7 +26,7 @@ de construcción, se discutió en el documento *La Copa — requisitos del torne
   With `?today`, a game with variants plays its default one and the waiting room hides the picker (`practica()`, D-334).
 - **Jugadores:** de 2 a 10 por copa (`MIN_JUGADORES` y `MAX_JUGADORES` en `engine.js`, D-118). Con
   el administrador solo, la copa no parte y el tablero pide "al menos un jugador más". **Público:** 🌎 global, 🇨🇱 Chile o 🇧🇷 Brasil, que se elige al crear la copa (D-187, `meta.aud`; las copas `intl` de D-186 se leen como global). Decide qué contenido local entra (`public/cup/games/audiencia.js`).
-  **Idioma:** español, inglés, portugués (D-170) y alemán (D-191, para todos desde D-197). La
+  **Idioma:** español, inglés, portugués (D-170); el alemán salió de la app con D-514. La
   pantalla va en el idioma de quien mira; las palabras de Agentes, Conexiones (copas de antes de D-421) y Palabra, los mensajes al
   grupo y su link, en el de la copa (`meta.lang`, se elige al crearla).
 - **Modalidades:** Copa de 7 días (six games and the Grand Final) y Copa de 3 días (three games, **no final**, D-438: nothing counts double for everyone, the wildcard goes on any day, the last day has no grace day and breaks a tie; the 3-day test cups from before keep their final). The 3-day one is offered on the new create screen, in the lab, next to when it starts (D-437); on the screen of before only with `?three` or in the test store (D-100).
@@ -239,7 +239,7 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
   resolver, 0. La **💡 Ayuda** (D-263, jugada `{ ayuda: i }`, `ayuda()` del motor) elige a alguien que ya se
   puede deducir y dice qué pistas juntar; en la tarjeta su celda va en 🟨. Las pistas son datos (`{ t, a, b, k, g, h }`) y la frase la arma `texto()` en el
   idioma de quien juega, con las plantillas de `casoTexto` en `rules.js`: el caso es el mismo en los
-  cuatro idiomas. La antesala muestra cartas de espaldas que se dan vuelta solas mientras una lupa
+  tres idiomas. La antesala muestra cartas de espaldas que se dan vuelta solas mientras una lupa
   las recorre (`portada()` de `games/case/ui.js`), y el título lleva la lupa y los colores que se
   mueven (`titulo()`, un gancho opcional de `games/index.js` que la antesala y la práctica usan si
   el juego lo trae; los demás muestran su nombre como siempre). Las cartas del tablero se dan vuelta
@@ -289,9 +289,9 @@ por ciudad menos 4 cada 100 km, D-155, D-156, D-200).
 - **Toque y Fama: Palabra** acepta cualquier combinación de 5 letras distintas como intento, sin
   diccionario, igual que Toque y Fama acepta cualquier número de cifras distintas. La palabra
   secreta sale de la lista del idioma de la copa (`games/word/palabras.js`: 120 en español, 185 en
-  inglés, 143 en portugués y 162 en alemán). El teclado es QWERTY con Ñ en español; en inglés y
-  portugués deja un hueco donde iría la Ñ, y en alemán es QWERTZ con el mismo hueco, así la tercera
-  fila empieza en su letra (`alfabeto(lang)` en `games/word/engine.js`, D-170, D-191).
+  inglés y 143 en portugués). El teclado es QWERTY con Ñ en español; en inglés y
+  portugués deja un hueco donde iría la Ñ, así la tercera
+  fila empieza en su letra (`alfabeto(lang)` en `games/word/engine.js`, D-170).
   Cada letra se pinta verde si está en su lugar (fama) y amarilla si está en otro (toque), como en
   Wordle; la tarjeta usa 🟩 y 🟨 (#196).
 - **¿En qué año?** has a margin that grows with the event's age: `max(12, (2026 − year) / 3)` years

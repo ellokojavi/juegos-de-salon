@@ -8,8 +8,8 @@ código en el teclado (D-270). Como las tarjetas transparentes de los juegos de 
 ## Resumen
 
 - **Dónde:** `https://juegosdesalon.cl/labs/code/`, en el laboratorio. Id `clave` en la señal de uso.
-- **Para quién:** uno solo. En los cuatro idiomas, con su diccionario en `game.js`.
-- **Modos:** 🔢 Cifras (en los cuatro idiomas) y 🔤 Palabra (solo en español, más abajo).
+- **Para quién:** uno solo. En los tres idiomas, con su diccionario en `game.js`.
+- **Modos:** 🔢 Cifras (en los tres idiomas) y 🔤 Palabra (solo en español, más abajo).
 - **Cartas:** 4, ninguna viene derecha. Hubo un modo de 8 y el dueño lo sacó: demasiado complejo.
 - **Estado:** prototipo en el laboratorio desde v0.147.0, aprobado por el dueño; no prosperó y
   desde D-280 está en La Bodega, jugable pero sin trabajarse; ahí se ve solo su título y un
@@ -82,10 +82,10 @@ que nunca se repite igual. Todo en `style.css`; con movimiento reducido, quietas
 public/labs/code/index.html · style.css · game.js (pantalla y textos)
 public/labs/code/engine.js · engine.test.mjs (cifras: orientaciones, reparto, lectura única; sin DOM)
 public/labs/code/engine-palabra.js · engine-palabra.test.mjs (palabra: catorce segmentos y dos caras)
-tools/e2e/code/lab.mjs   poner, elegir, girar, voltear y quitar cartas; los choques rayados; leer y escribir el código, en los cuatro idiomas a 320 px
+tools/e2e/code/lab.mjs   poner, elegir, girar, voltear y quitar cartas; los choques rayados; leer y escribir el código, en los tres idiomas a 320 px
 ```
 
 ## Excepciones a los cánones
 
 - **C-3 (los textos en `i18n.js` o `rules.js`):** el prototipo trae su diccionario en `game.js`, en
-  los cuatro idiomas, como lo hizo el de El caso (D-256).
+  los tres idiomas, como lo hizo el de El caso (D-256).

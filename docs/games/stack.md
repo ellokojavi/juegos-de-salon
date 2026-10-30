@@ -101,6 +101,6 @@ happens, a pause on losing focus and the tap back that only resumes, a miss, the
 ## Exceptions to the canons
 
 - **English only** (the owner's request), where a lab prototype is usually Spanish only (D-304): the
-  four languages come when it leaves the lab.
+  three languages come when it leaves the lab.
 - **No 3, 2, 1 countdown:** the block waits 0.4 s at its side before it slides, and the game is the
   tower, not a clock.

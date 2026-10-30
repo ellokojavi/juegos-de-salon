@@ -12,7 +12,7 @@ our own.
 - **Where:** `https://juegosdesalon.cl/labs/chameleon/`, behind the lab's door (D-281), `noindex`. Not in
   `games.js` nor on the home page while it is in the lab. Id `camaleon` in the usage signal and in
   `localStorage` (`juegos-de-salon:camaleon:session`, `…:names`).
-- **For whom:** 3 to 8 players, one phone. In the four languages (es, en, pt, de); the names are
+- **For whom:** 3 to 8 players, one phone. In the three languages (es, en, pt); the names are
   El Camaleón, Chameleon, Camaleão and Chamäleon.
 - **Status:** active project. What would prove it: groups that play more than one game in a visit.
 

@@ -82,19 +82,19 @@ Seis temáticas, cada una en su archivo dentro de `decks/`:
 
 - Hitos **reconocibles**, con años indiscutibles: si la fecha se discute, la carta no entra.
 - Y que se puedan **situar**: nada de “un gran incendio”, “un terremoto” o “la era del swing”, porque eso pasa cada pocos años o dura una década. El ancla es algo que el jugador sabe (un nombre propio, un hecho único), no un superlativo o una cifra que solo la carta dice (“el mayor incendio de su historia”): si no la hay, la carta no entra (D-37, D-278).
-- Y que **no digan su año**, ni entero ni abreviado (“la Constitución de 1980”, “Italia 90”): el test del motor lo frena en los cuatro idiomas. Un año que no es el de la carta sí puede ir (*2001: Odisea del espacio*, de 1968).
+- Y que **no digan su año**, ni entero ni abreviado (“la Constitución de 1980”, “Italia 90”): el test del motor lo frena en los tres idiomas. Un año que no es el de la carta sí puede ir (*2001: Odisea del espacio*, de 1968).
 - Cada mazo trae al menos noventa cartas, bien repartidas en el tiempo.
 - Los mazos se registran en `decks/index.js` con su nombre, su pista y su emoji por idioma. El archivo
   nuevo entra solo al import map (C-11, D-192), así que el navegador no mezcla un índice nuevo con un
   mazo en caché. Nada más hay que tocar:
   la grilla de temáticas se dibuja sola a partir del registro.
-- El test del motor exige por carta `id` único, `year` numérico entre -4000 y 2026, `emoji` y los cuatro
-  idiomas, y rechaza el apóstrofo recto en `pt` y en `de` (se usa ’).
+- El test del motor exige por carta `id` único, `year` numérico entre -4000 y 2026, `emoji` y los tres
+  idiomas, y rechaza el apóstrofo recto en `pt` (se usa ’).
 - Los mazos temáticos (Brasil, Fútbol) pueden repetir hitos de otros mazos (el Maracanazo, el Mundial
   del 62): cada mazo se juega solo, así que no hay choque de ids mientras lleven su prefijo (`br-`, `fut-`).
 
 #### El dato de cada carta (D-277, D-314)
-Cada carta puede llevar un `dato` en los cuatro idiomas: una frase, un porqué o una anécdota, que se
+Cada carta puede llevar un `dato` en los tres idiomas: una frase, un porqué o una anécdota, que se
 lee en unos 3 segundos. Decir entre qué hitos iba una carta no enseña nada (el año grande ya lo
 dice); el dato deja algo aprendido en cada jugada, también en ¿En qué año? y en La Copa.
 
