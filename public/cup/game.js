@@ -48,6 +48,10 @@ import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js
 // The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
 let gridsNuevos = false;
 flag('uad-share-grids').then(v => { gridsNuevos = v; });
+// Inside a cup, the header's ‹ goes back to the cup's board while playing a day or reading its result,
+// not to the menu (#1040). lab: #seccion-cup-back-board
+let pillCopa = false;
+flag('cup-back-board').then(v => { pillCopa = v; rotuloMenu(); });
 
 // Cuenta la visita al abrir la página, aunque nadie llegue a jugar (D-208)
 trackVisit();
@@ -155,8 +159,13 @@ const urlCopa = code => `${location.origin}${location.pathname}?${enlace(code)}$
 const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/cup/?${enlace(code)}`);
 
 // On a day's cover the top-left button goes back to the cup, and says so ("‹ La Copa")
+const enCopa = () => !SUELTO && !!S.code && !S.juego?.practica;
+const pillAlTablero = () => pillCopa && enCopa() && (S.pantalla === 'jugar' || S.pantalla === 'resultado');
 function rotuloMenu() {
-  $('#btn-menu').textContent = S.antesala ? `‹\u00a0${T.toBoard}` : LABS ? T.backToLabsShort : T.menu;
+  const aCopa = S.antesala || pillAlTablero();
+  $('#btn-menu').textContent = aCopa ? `‹\u00a0${T.toBoard}` : LABS ? T.backToLabsShort : T.menu;
+  // A real address, so a long press or a new tab lands on the board too
+  if (pillCopa) $('#btn-menu').setAttribute('href', aCopa && S.code ? urlCopa(S.code) : LABS ? `${RAIZ}labs/` : RAIZ);
   // That button already names the cup: the "🏆 La Copa" chip steps aside, or at 320 px it is cut to "🏆 …" (U-12)
   document.body.classList.toggle('antesala', !!S.antesala);
 }
@@ -2136,10 +2145,17 @@ if (LABS) {
 // In a day's cover (before playing), the top-left button goes back to the cup's board, not to
 // the app's menu: it replaces the "Back to the cup" button that closed the screen
 $('#btn-menu').addEventListener('click', ev => {
-  if (S.pantalla !== 'jugar' || !S.antesala) return;
+  if (ev.button > 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
+  // A trial run goes back to its day's cover; a result, to the board. A real day in play keeps the
+  // link, so the back guard asks «¿Salir de la partida?» first (D-432)
+  const portadaDia = S.pantalla === 'jugar' && S.antesala;
+  const ensayoDia = pillAlTablero() && S.pantalla === 'jugar' && S.juego?.ensayo;
+  const resultadoDia = pillAlTablero() && S.pantalla === 'resultado';
+  if (!portadaDia && !ensayoDia && !resultadoDia) return;
   ev.preventDefault();
   SFX.tap();
-  tablero();
+  if (ensayoDia) antesDeJugar(S.juego.d);
+  else tablero();
 });
 // Los reportes que no alcanzaron a enviarse se reintentan al abrir (D-109). En el modo de prueba
 // no hay barra para adelantar el reloj (D-112): las demos y los guiones lo hacen por su cuenta.
