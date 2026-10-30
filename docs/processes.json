@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "db45669",
+  "checkedUpTo": "525888f",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -248,7 +248,7 @@
       "mechanism": {
         "date": "2026-10-30",
         "what": "documentation guide and document.mjs check no longer ask for a post-PR commit with the PR link",
-        "pr": "pending"
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1052"
       }
     },
     {
@@ -415,7 +415,7 @@
       "date": "2026-10-30",
       "key": "doble-push-documentacion",
       "what": "documentation guide and document.mjs check no longer ask for a post-PR commit with the PR link",
-      "pr": "pending"
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1052"
     }
   ],
   "queueDone": [
@@ -542,6 +542,14 @@
       "issue": null,
       "pr": null,
       "note": "Dispatched documentation (#1011) and usability (nothing to fix); collected 63 changelog entries; durations measured."
+    },
+    {
+      "date": "2026-10-30",
+      "from": "db45669",
+      "to": "525888f",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1052",
+      "note": "docs #1051; usability running"
     }
   ],
   "ownerDecisions": [
