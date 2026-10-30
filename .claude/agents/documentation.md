@@ -127,9 +127,8 @@ write it in the PR as a question for the owner.
 - A `docs-<date>` branch from `origin/main` (in a separate worktree if other sessions are
   working, D-135), with local commits and a single push at the end (D-303). Before the last commit, close the round in your memory:
   `node tools/agents/document.mjs record --to <commit revisado> --pending "…"` (once for each
-  thing left pending). After opening the PR, add its link with
-  `node tools/agents/document.mjs record --to <el mismo commit> --pr <url>` in the next commit:
-  with the same commit it completes that round, without duplicating it or deleting what is pending.
+  thing left pending). Do not add the PR link in a later commit: that forces a second push
+  (D-303). The PR is found by its `docs-<date>` branch; `--pr` is only for a round recorded after its PR exists.
 - Browserless tests green (`*.test.mjs`, `tools/release/readme.test.py`), `readme.py check`
   without ERROR, `og.mjs check` green and `node tools/agents/document.mjs check` without new ✗.
 - **A PR with auto-merge** (`gh pr merge <n> --auto --merge`, D-313; not if the owner explicitly said not to auto-merge, D-419), titled `Documentation up to date: <date>`,
