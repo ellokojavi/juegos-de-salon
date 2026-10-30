@@ -315,6 +315,9 @@ assert.equal(dispositivoDe({ ua: 'Mozilla/5.0 (Macintosh)', platform: 'MacIntel'
   assert.deepEqual(api.calls.at(-1).changes['retorno/vuelve'], INC);
   assert.deepEqual(api.calls.at(-1).changes['via/link'], INC);
   assert.deepEqual(api.calls.at(-1).changes['ref/directo'], INC);
+  // That visit came with a mark: when it plays, the mark counts as a channel that brings players
+  await notePlayed(api, { env: 'prod' }, { sesion, now });
+  assert.deepEqual(api.calls.at(-1).changes, { 'juegan/cup': INC, 'viaJuegan/link': INC });
   // Un aviso tocado y la app instalada se cuentan aunque no sea la primera página de la visita (D-233)
   const hist = { state: null, url: '', replaceState(_s, _t, u) { this.url = u; } };
   await noteVisit(api, { env: 'prod' }, { ...ctx('/cup/'), loc: { pathname: '/cup/', search: '?oficina&day=3&notif=day', hostname: 'juegosdesalon.cl' }, hist });

@@ -540,7 +540,7 @@ export function dayLabel(day) {
  * `desde` es el primer día con visitas registradas.
  */
 export function trafico(days, { from, to }) {
-  const paginas = {}, ref = {}, via = {}, retorno = {}, disp = {}, pais = {};
+  const paginas = {}, ref = {}, via = {}, viaJuegan = {}, retorno = {}, disp = {}, pais = {};
   const porDia = [];
   let visitas = 0, vistas = 0, juegan = 0, desde = null;
   const pagina = k => (paginas[k] ||= { vistas: 0, entradas: 0, juegan: 0 });
@@ -552,6 +552,7 @@ export function trafico(days, { from, to }) {
     for (const [k, v] of Object.entries(b.juegan || {})) { pagina(k).juegan += Number(v) || 0; fila.juegan += Number(v) || 0; }
     for (const [k, v] of Object.entries(b.ref || {})) add(ref, k, Number(v) || 0);
     for (const [k, v] of Object.entries(b.via || {})) add(via, k, Number(v) || 0);
+    for (const [k, v] of Object.entries(b.viaJuegan || {})) add(viaJuegan, k, Number(v) || 0);
     for (const [k, v] of Object.entries(b.retorno || {})) add(retorno, k, Number(v) || 0);
     for (const [k, v] of Object.entries(b.disp || {})) add(disp, k, Number(v) || 0);
     for (const [k, v] of Object.entries(b.pais || {})) add(pais, k, Number(v) || 0);
@@ -559,7 +560,7 @@ export function trafico(days, { from, to }) {
     visitas += fila.visitas; vistas += fila.vistas; juegan += fila.juegan;
     porDia.push(fila);
   }
-  return { visitas, vistas, juegan, desde, porDia, paginas, ref, via, retorno, disp, pais };
+  return { visitas, vistas, juegan, desde, porDia, paginas, ref, via, viaJuegan, retorno, disp, pais };
 }
 
 /**
