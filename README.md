@@ -1,6 +1,6 @@
 # 🎲 Juegos de Salón
 
-Mobile-first web app with party games to play with friends: card and dice games, word and logic puzzles, guessing games. Open it on a phone, pick a game, type in the players, and the phone runs the game. In Spanish, English, Portuguese and German, with no account needed.
+Mobile-first web app with party games to play with friends: card and dice games, word and logic puzzles, guessing games. Open it on a phone, pick a game, type in the players, and the phone runs the game. In Spanish, English and Portuguese, with no account needed.
 
 **Play:** https://juegosdesalon.cl/
 
