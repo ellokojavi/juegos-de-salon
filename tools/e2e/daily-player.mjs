@@ -82,13 +82,13 @@ ok(/Te desafío/.test(inv) && /¿Te atreves\?/.test(inv) && /primer Uno al día/
 ok(!/comodín/.test(inv), 'and without saying anything about the wildcard');
 await b.shot('sara-today');
 // In another language the link already brings `?lang=`: the inviter has to go as one more parameter
-await ev(`localStorage.setItem('juegos-de-salon:lang','de'); 1`);
+await ev(`localStorage.setItem('juegos-de-salon:lang','pt'); 1`);
 await b.go(`${SITE}/today/`, 1800);
 await waitFor(`!!document.getElementById('btn-uad-invitar')`);
 await click('#btn-uad-invitar');
 await waitFor(`window.__compartido.length > 0`, 20);
 const linkDe = (await ev(`window.__compartido[0]?.text || ''`)).match(/🔗 (\S+)/)?.[1] || '';
-ok(new URL(linkDe || 'about:blank').searchParams.get('inv') === sara && new URL(linkDe || 'about:blank').searchParams.get('lang') === 'de', `in German, the link carries language and inviter (${linkDe})`);
+ok(new URL(linkDe || 'about:blank').searchParams.get('inv') === sara && new URL(linkDe || 'about:blank').searchParams.get('lang') === 'pt', `in Portuguese, the link carries language and inviter (${linkDe})`);
 await ev(`localStorage.setItem('juegos-de-salon:lang','es'); 1`);
 
 /* ---------- Pedro opens the invitation on another phone ---------- */
