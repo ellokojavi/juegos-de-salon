@@ -30,13 +30,14 @@ Every future marketing video takes the same path: git ignores `marketing/**/*.mp
 prints the URLs. The small clips already in git (`share-tutorial`, `caso-teaser`, ~2 MB) stay; a new
 version of one goes to a release too.
 
-## 3. README screenshots: re-commit only real changes (#1037)
+## 3. README screenshots: re-commit only real changes (done for 1, #1037)
 
 `docs/screenshots/` is 6 MB today but changed 778 times (268 MB of history): a documentation round
 re-saves 76–95 PNGs whose pixels barely moved (antialiasing, a clock, a version number).
 
 1. The screenshot tool (the `readme-and-cards` skill's capture) compares each new PNG with the
-   committed one and keeps the old file when fewer than ~0.5 % of pixels differ.
+   committed one and keeps the old file when fewer than ~0.5 % of pixels differ (`NOISE` and
+   `barely_changed` in `tools/release/readme.py`, tested in `readme.test.py`). Done.
 2. If that is not enough, the PNGs move to an orphan branch (`screenshots`) that the README links via
    `raw.githubusercontent.com`; then `main` stops carrying them at all.
 

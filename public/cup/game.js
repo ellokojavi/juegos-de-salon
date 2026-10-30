@@ -1639,9 +1639,7 @@ function explicacion(J, { s, ms, det, x = 1, final = false, auto = false, copa =
  * de prueba (jugar otra vez ya es probar) ni muestra la semilla, y manda su señal de uso. Desde el
  * laboratorio llega con `&labs` y queda como estaba.
  */
-const volverDePractica = () => (LABS
-  ? el('a', { class: 'btn btn--ghost btn--sm', href: `${RAIZ}labs/` }, T.backToLabs)
-  : salidasFin('suelto', { lang: LANG, raiz: RAIZ }));
+const volverDePractica = () => salidasFin(LABS ? 'lab' : 'suelto', { lang: LANG, raiz: RAIZ });
 
 /**
  * The variant of a standalone game (D-331): the link's (`?mode=hard`; Pintaminas' `?colors=2`

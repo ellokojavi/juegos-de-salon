@@ -575,7 +575,13 @@ that moment, and only those, in the same order everywhere (D-343):
 - **No exit twice:** where the header's ‹ already goes to the menu, the result does not add a
   second "back to the menu" next to another exit (One a Day).
 - **The exits come from `public/assets/js/fin.js`** (`salidasFin(contexto)`): the same words and
-  look in every game. A game does not build its own "back to the menu" for these contexts.
+  look in every game. A game does not build its own "back to the menu" (or "back to the lab",
+  `salidasFin('lab')`) for these contexts; `fin.test.mjs` fails on a hand-built one (#1042).
+- **The header's ‹ goes to the screen's logical parent and names it** (#1042): «‹ Menú» on a hub
+  or a game played on its own, «‹ Laboratorio» in a game opened from the lab, «‹ Volver a la copa»
+  on a Cup day (its cover, while playing it, its result; behind the `cup-back-board` flag until
+  it is published) and a trial run goes back to its day's cover. Mid-game it asks first (D-432).
+  A button that goes back one step inside a game (setup → intro) says «‹ Volver», never «Menú».
 - **One a Day is one card in every game**: `tarjetaResultado` (`uno-al-dia-ui.js`) carries its
   actions and exits, and `ponerTarjeta` puts it right under the hero. In today mode the game adds
   no buttons of its own: no rematch (#226), no change mode, no second menu button.
@@ -610,7 +616,7 @@ that moment, and only those, in the same order everywhere (D-343):
 - [ ] Hay sonido y vibración en las acciones clave, con botón de silencio (C-4).
 - [ ] On its landing the start button (or the first mode) is above the fold at 320×568 and 375×667 in every language, with the rules below it: `node tools/e2e/landing-fold.mjs` green (U-39, D-344).
 - [ ] Los botones tienen 44 px, los botones finales se ven sin desplazar y no hay scroll horizontal (C-8).
-- [ ] Its result screen follows C-19: the exits from `fin.js` for each context it is played in, and each fact said once (score, time, winner, name), the long detail folded or after the exits, Sign in in one line, one share button (D-343, D-353).
+- [ ] Its result screen follows C-19: the exits from `fin.js` for each context it is played in, none built by hand (`salidasFin('lab')` from the lab), the header's ‹ naming its logical parent, and each fact said once (score, time, winner, name), the long detail folded or after the exits, Sign in in one line, one share button (D-343, D-353).
 - [ ] En un celular, el resultado se ve antes del pase, y lo secreto va tapado (C-9).
 - [ ] Los secretos se comprometen y verifican (C-10).
 - [ ] Las fallas de sala se ven en pantalla, en todos los idiomas, y la consola queda limpia; creating or joining a room goes through `tryRoom` (C-14, U-37).

@@ -517,6 +517,31 @@ def shrink(png, pixels):
                 dither=Image.Dither.FLOYDSTEINBERG).save(png, 'PNG', optimize=True)
 
 
+#: Below this share of changed pixels a retake is noise (antialiasing, a clock, a version number)
+#: and the committed PNG stays: each re-saved PNG weighed on git history forever (#1037, D-494)
+NOISE = 0.005
+
+
+def barely_changed(before, png):
+    """True when the retake at `png` differs from the committed bytes `before` in fewer than NOISE
+    of its pixels, same size. Without Pillow only identical bytes count as unchanged."""
+    if before is None:
+        return False
+    if before == png.read_bytes():
+        return True
+    try:
+        from PIL import Image, ImageChops
+    except ImportError:
+        return False
+    import io
+    old = Image.open(io.BytesIO(before)).convert('RGB')
+    new = Image.open(png).convert('RGB')
+    if old.size != new.size:
+        return False
+    diff = ImageChops.difference(old, new).convert('L').point(lambda v: 255 if v else 0)
+    return diff.histogram()[255] < NOISE * old.width * old.height
+
+
 def server_alive():
     with socket.socket() as s:
         s.settimeout(0.5)
@@ -593,7 +618,9 @@ def cmd_screenshots(section=None, offline=False):
                     target.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(origin, target)
                     shrink(target, 2 * width(C, c['seccion']))
-                    equal = before == target.read_bytes()
+                    equal = barely_changed(before, target)
+                    if equal:  # noise only: the committed file stays, so git sees no change
+                        target.write_bytes(before)
                     (same if equal else new).append(c['imagen'])
                     if equal:  # no commit will date it: the record does (D-51)
                         seen[c['imagen']] = {'sha256': sha256(target), 'date': int(time.time())}
