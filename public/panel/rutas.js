@@ -5,6 +5,7 @@
  *   #/summary                    the analyst's front page: each domain's headline, against the period before (D-348)
  *   #/now                        lo que está pasando (part of Summary)
  *   #/timeline                   the key events, one by one: games finished, cups, feedback (D-408)
+ *   #/feedback                   every player message in full, who sent it, its issue and the PRs that fix it
  *   #/group                      group games: rooms, one phone, against the phone (D-348)
  *   #/individual                 individual games: solo and their real difficulty (D-348)
  *   #/cup                        La Copa: cifras, juegos y la lista de copas
@@ -27,7 +28,7 @@
 import { slugDe, idDeSlug } from '../assets/js/games.js';
 
 /** Las secciones, en el orden de la navegación. La primera es la que abre el panel. */
-export const SECCIONES = ['resumen', 'timeline', 'grupo', 'individuales', 'torneo', 'unoaldia', 'usuarios', 'trafico', 'salud', 'campanas'];
+export const SECCIONES = ['resumen', 'timeline', 'grupo', 'individuales', 'torneo', 'unoaldia', 'usuarios', 'trafico', 'salud', 'feedback', 'campanas'];
 
 /** A qué sección pertenece cada ficha: es la que queda marcada en la navegación. */
 const FICHAS = { juego: 'grupo', sala: 'grupo' };
@@ -38,7 +39,7 @@ const SUELTAS = { ahora: 'resumen' };
 /** Cómo se escribe cada sección en la URL (D-266). */
 const EN_URL = {
   resumen: 'summary', timeline: 'timeline', ahora: 'now', grupo: 'group', individuales: 'individual', torneo: 'cup', unoaldia: 'daily',
-  usuarios: 'users', trafico: 'traffic', salud: 'health', campanas: 'campaigns', juego: 'game', sala: 'room',
+  usuarios: 'users', trafico: 'traffic', salud: 'health', feedback: 'feedback', campanas: 'campaigns', juego: 'game', sala: 'room',
 };
 /** The sections before D-348 open the one that took their place. */
 const DE_URL = { ...Object.fromEntries(Object.entries(EN_URL).map(([es, en]) => [en, es])), games: 'grupo', juegos: 'grupo', audience: 'usuarios', audiencia: 'usuarios' };
