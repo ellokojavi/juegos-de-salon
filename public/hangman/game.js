@@ -5,6 +5,7 @@
  * Con mazo la palabra sale de la semilla y cada aparato la resuelve solo; con cadena vive en el
  * celular de quien la escribió, que responde letra por letra y la revela al final (C-10).
  */
+import { salidasFin } from '../assets/js/fin.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
@@ -852,7 +853,8 @@ function renderResult(v) {
   box.append(
     el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, busy: COMMON[lang].opening, reset: () => { S.switching = false; } }) }, T.rematch),
     S.mode === 'online' ? el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode) : el('button', { class: 'btn btn--ghost', onClick: () => { clearSession(); location.href = location.pathname; } }, T.changeMode),
-    el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+    // One a Day played by several: its exit is back to One a Day, as on the card (C-19)
+    S.hoy ? salidasFin('hoy', { lang }) : el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
   );
 }
 
