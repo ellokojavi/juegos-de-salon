@@ -134,12 +134,6 @@
           <p class="muted" style="margin:0;font-size:0.85rem">Abre la portada y mira la barra de arriba. Se ve únicamente con tu llave del laboratorio.</p>
           <a class="btn btn--yellow" id="btn-home-pill-bar" href="../">🏠 Ir a la portada</a>
         </section>
-        <section class="panel seccion" id="seccion-cup-back-board">
-          <h2>🏆 La Copa: ‹ vuelve a la copa, no al menú</h2>
-          <p class="muted" style="margin:0">Mientras juegas un día de una copa o miras su resultado, el botón ‹ de arriba dice «Volver a la copa» y lleva al tablero, en vez de sacarte al menú. Si el día está en juego, primero pregunta «¿Salir de la partida?». En la partida de prueba, vuelve a la portada del día.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Entra a una copa, abre un día y toca ‹ mientras juegas. Se ve únicamente con tu llave del laboratorio.</p>
-          <a class="btn btn--yellow" id="btn-cup-back-board" href="../cup/">🏆 Ir a La Copa</a>
-        </section>
       </section>
 
       <!-- Una línea separa lo que se está probando de lo que quedó guardado, como la de antes del comentario en los juegos -->
@@ -219,6 +213,15 @@
           <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <section class="panel seccion plegada" id="seccion-cup-back-board" data-launched="2026-10-30">
+            <details>
+              <summary><h2>🏆 La Copa: ‹ vuelve a la copa, no al menú</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Dentro de una copa, el botón ‹ de arriba sube un nivel a la vez: mientras juegas un día o miras su resultado dice «Volver a la copa» y lleva al tablero (si el día está en juego, primero pregunta «¿Salir de la partida?»; la partida de prueba vuelve a la portada del día), y en el tablero dice «‹ La Copa» y lleva a la portada de La Copa, con tus copas.</p>
+                <a class="btn btn--yellow" id="btn-cup-back-board" href="../cup/">🏆 Ir a La Copa</a>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-no-double-tap-zoom" data-launched="2026-10-30">
             <details>
               <summary><h2>👆 Juegos: sin zoom al tocar rápido</h2><span class="flecha" aria-hidden="true">›</span></summary>

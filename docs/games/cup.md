@@ -510,8 +510,9 @@ node tools/push/webpush.test.mjs                   # el cifrado y la firma, cont
   puntajes sigue pendiente (LIG-30).
 - **The top-left button on a day's cover is "‹ Volver a la copa" and goes to the cup's board**, not to the app's menu: there
   the cup is the menu, and the button replaces the "Volver a la copa" that used to close that screen.
-  Everywhere else in the cup it goes to the app's menu (or to the lab, with `?labs`).
-  **In the lab** (flag `cup-back-board`, #1040) it also says «‹ Volver a la copa» while playing a day and on
-  the day's result, and goes to the board: mid-day the back guard asks «¿Salir de la partida?» first (D-432),
-  and a trial run goes back to the day's cover instead. With the flag the button carries a real `href`
-  (the cup's link), so a long press or a new tab lands on the board too.
+  While playing a day and on the day's result it also says «‹ Volver a la copa» and goes to the board:
+  mid-day the back guard asks «¿Salir de la partida?» first (D-432), and a trial run goes back to the
+  day's cover instead. On the board it says «‹ La Copa» and goes up to La Copa's home (`/cup/`, with
+  «Tus copas»), so the button climbs one level at a time (#1040, C-19); the menu is one more tap.
+  With `?labs` it goes to the lab. It carries a real `href`, so a long press or a new tab lands right
+  too. Behind flag `cup-back-board`, published for everyone on 2026-10-30.
