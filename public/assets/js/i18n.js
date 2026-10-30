@@ -179,7 +179,7 @@ export const COMMON = {
     cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa', opens: 'Día {day} en {time}', finalDone: 'Final · cierra en {time}' },
     uad: {
       nombre: 'Uno al día',
-      jugar: 'Jugar hoy',
+      jugar: 'Jugar hoy', unirse: 'Únete al mes',
       tusPuntos: '✅ Tus puntos',
       ariaJugarHoy: 'Jugar hoy el Uno al día',
       ariaTusPuntos: 'Uno al día: tus puntos del mes',
@@ -427,7 +427,7 @@ export const COMMON = {
     cupToday: { play: 'Play today', aria: 'Play your day of The Cup today', opens: 'Day {day} in {time}', finalDone: 'Final · closes in {time}' },
     uad: {
       nombre: 'One a Day',
-      jugar: 'Play today',
+      jugar: 'Play today', unirse: 'Join this month',
       tusPuntos: '✅ Your points',
       ariaJugarHoy: "Play today's One a Day",
       ariaTusPuntos: 'One a Day: your points this month',
@@ -673,7 +673,7 @@ export const COMMON = {
     cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa', opens: 'Dia {day} em {time}', finalDone: 'Final · fecha em {time}' },
     uad: {
       nombre: 'Um por dia',
-      jugar: 'Jogar hoje',
+      jugar: 'Jogar hoje', unirse: 'Entre no mês',
       tusPuntos: '✅ Seus pontos',
       ariaJugarHoy: 'Jogar hoje o Um por dia',
       ariaTusPuntos: 'Um por dia: seus pontos do mês',
