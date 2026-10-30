@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { TEXTS, factsLine } from './how-to-play-facts.js';
 
 const langs = Object.keys(TEXTS);
-assert.deepEqual(langs, ['es', 'en', 'pt', 'de']);
+assert.deepEqual(langs, ['es', 'en', 'pt']);
 for (const l of langs) assert.deepEqual(Object.keys(TEXTS[l]), Object.keys(TEXTS.es), `${l}: different keys`);
 
 const GAMES = { ahorcado: 'hangman', dudo: 'liars-dice', 'linea-de-tiempo': 'timeline', generala: 'generala', 'toque-y-fama': 'bulls-and-cows', 'batalla-naval': 'battleship' };

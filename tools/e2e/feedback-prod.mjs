@@ -66,7 +66,7 @@ await run(result);
 check((await state()).link, '15 days after sending, it is back');
 
 // The four languages at 320 px
-for (const lang of ['es', 'en', 'pt', 'de']) {
+for (const lang of ['es', 'en', 'pt']) {
   await fresh(lang, { partidas: 2 });
   await run(result);
   e = await state();

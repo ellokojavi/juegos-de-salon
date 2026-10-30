@@ -501,10 +501,10 @@ test('el nombre de la copa llega a 40 caracteres; el de un jugador, a 20 (D-119)
   assert.equal(limpiarNombre('y'.repeat(30)).length, 20);
 });
 
-// Una copa en alemán cambia de día a medianoche de Europa central; las demás, del Pacífico (D-194)
-assert.equal(zonaDeIdioma('de'), 'Europe/Berlin');
-for (const l of ['es', 'en', 'pt', undefined]) assert.equal(zonaDeIdioma(l), ZONA);
-{ const m = nuevaMeta({ nombre: 'Büro-Pokal', dias: 7, inicio: '2026-10-05', tz: zonaDeIdioma('de'), admin: 'A', creada: Date.UTC(2026, 9, 3), lang: 'de' });
+// Las copas nuevas, del Pacífico en todo idioma (D-514); una copa que ya guardó la zona de Berlín
+// cambia de día a medianoche de Europa central (D-194)
+for (const l of ['es', 'en', 'pt', 'de', undefined]) assert.equal(zonaDeIdioma(l), ZONA);
+{ const m = nuevaMeta({ nombre: 'Büro-Pokal', dias: 7, inicio: '2026-10-05', tz: 'Europe/Berlin', admin: 'A', creada: Date.UTC(2026, 9, 3), lang: 'en' });
   assert.equal(m.tz, 'Europe/Berlin');
   assert.equal(new Date(m.win[1].a).toISOString(), '2026-10-04T22:00:00.000Z', 'el día 1 parte a medianoche de Berlín (UTC+2 en octubre)'); }
 

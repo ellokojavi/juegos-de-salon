@@ -13,7 +13,7 @@ const src = readFileSync(new URL('./search.js', import.meta.url), 'utf8');
 assert.ok(!/KEYWORDS\s*=\s*\{/.test(src), 'search.js keeps no KEYWORDS of its own: each game\'s `keywords` go in its entry in games.js');
 assert.deepEqual(Object.keys(KEYWORDS).sort(), ALL.filter(g => g.keywords).map(g => g.id).sort(), 'KEYWORDS is the manifest\'s keywords, game by game');
 for (const g of ALL.filter(x => x.keywords)) {
-  assert.deepEqual(Object.keys(g.keywords).sort(), ['de', 'en', 'es', 'pt'], `${g.id}: keywords in es, en, pt and de, nothing else`);
+  assert.deepEqual(Object.keys(g.keywords).sort(), ['en', 'es', 'pt'], `${g.id}: keywords in es, en and pt, nothing else`);
   for (const [l, w] of Object.entries(g.keywords)) assert.ok(w.every(x => typeof x === 'string' && x === x.toLowerCase()), `${g.id}:${l}: keywords are lowercase strings`);
 }
 

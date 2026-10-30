@@ -106,8 +106,8 @@ await caso('nombrar: cambia el manifest y el nombre del iPhone al idioma elegido
   assert.equal(d.link.href, 'https://juegosdesalon.cl/manifest.pt.webmanifest');
   assert.equal(d.meta.content, 'Jogos de Salão');
   const sinMeta = documento({ conMeta: false });
-  nombrar({ doc: sinMeta, lang: 'de', raiz });
-  assert.equal(sinMeta.meta.content, 'Salonspiele');
+  nombrar({ doc: sinMeta, lang: 'en', raiz });
+  assert.equal(sinMeta.meta.content, 'Party Games');
   assert.equal(sinMeta.meta.name, 'apple-mobile-web-app-title');
   const es = documento();
   nombrar({ doc: es, lang: 'es', raiz });

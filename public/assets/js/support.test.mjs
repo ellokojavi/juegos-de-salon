@@ -36,7 +36,7 @@ assert.equal(dueSupport(null, t0), false);
 
 // The same texts in the four languages
 const keys = o => Object.keys(o).sort().join();
-for (const lang of ['en', 'pt', 'de']) {
+for (const lang of ['en', 'pt']) {
   assert.equal(keys(TEXTS[lang]), keys(TEXTS.es), `${lang} has the same texts as es`);
   assert.equal(TEXTS[lang].points.length, TEXTS.es.points.length, `${lang} has every point`);
 }

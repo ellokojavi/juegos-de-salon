@@ -1,5 +1,8 @@
 # El alemán
 
+> **Retired (D-514, 2026-10-30):** German left the app; this glossary is history. A stored `de` or a
+> `?lang=de` link opens English, and `/de/` sends to `/en/`.
+
 Juegos de Salón en alemán (**Salonspiele**). **Salió del laboratorio** (D-197): se ofrece a
 todos en el toggle, con su puerta `https://juegosdesalon.cl/de/` y su tarjeta social, como el
 inglés y el portugués. El link del laboratorio, `/labs/de/`, fue una página puente hacia `/de/`

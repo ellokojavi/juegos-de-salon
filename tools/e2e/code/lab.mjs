@@ -23,7 +23,7 @@ const noOverflow = () => ev(`document.documentElement.scrollWidth <= innerWidth`
 await b.go(`${SITE}/labs/`);
 ok(await ev(`document.querySelector('#bodega #btn-clave')?.getAttribute('href')`) === 'code/', 'the lab offers La clave, in La Bodega (D-280)');
 
-for (const lang of ['es', 'en', 'pt', 'de']) {
+for (const lang of ['es', 'en', 'pt']) {
   const n = 4;
   await b.go(`${SITE}/labs/code/`);
   await ev(`localStorage.clear(); localStorage.setItem('juegos-de-salon:lang', '${lang}'); 1`);

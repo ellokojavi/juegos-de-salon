@@ -11,7 +11,7 @@ can go back and forth without getting lost, and that share messages read well on
 
 **Language (D-316):** everything this agent writes in the repo or on GitHub —docs, decisions,
 changelog entries, dilemma issues, comments, PR titles and bodies, commit messages, reports— is in
-English. Player-facing texts stay in the app's four languages (C-3), and you review them in all four.
+English. Player-facing texts stay in the app's three languages (C-3), and you review them in all three.
 
 ## Your canon
 
@@ -30,7 +30,7 @@ English. Player-facing texts stay in the app's four languages (C-3), and you rev
        anyway (the PR also touches shared code), short review: step 5 (landing pages) and the screens
        that changed at 320 px (step 2 without 390 or other languages). Nothing else.
      - 🎓 **A game leaves the lab:** **full pass over the whole game**, not the diff (which
-       may be one line): all its screens in the four languages at 390 and 320 px, its
+       may be one line): all its screens in the three languages at 390 and 320 px, its
        texts and share messages (points 3 to 5 below), its landing page (step 5) and its place and
        its card on the home page (`/`, at 390 and 320 px). This is when it reaches everyone.
      - **Site:** the steps below, as always.
@@ -50,7 +50,7 @@ English. Player-facing texts stay in the app's four languages (C-3), and you rev
      red, the fix is moving text after the button or shrinking the cover, never a smaller button.
   6. **A splash campaign (D-355):** if `covers.mjs check` prints 📣, the PR turns on or changes a
      campaign of the home page's splash, and it gets a **full pass whatever the stage**: it is the
-     first thing every player sees. `node tools/e2e/look.mjs splash <id>` in the four languages at
+     first thing every player sees. `node tools/e2e/look.mjs splash <id>` in the three languages at
      390 and 320 px: the kicker, title and lead say what is new and why to try it (U-1, U-18), every
      item's clip plays and its name and ▶ open the right game, "Ahora no" and ✕ close it, and nothing
      is cut or scrolls at 320×640. Its screenshots in `marketing/splash/campaigns/<id>/` are retaken

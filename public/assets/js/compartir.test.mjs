@@ -127,11 +127,11 @@ await caso('compartir la app: la tarjeta de la portada y el texto, en el idioma 
   globalThis.fetch = async () => ({ ok: false, status: 404 });
   assert.equal(await compartirApp({ C: COMMON.es, lang: 'es', juegos: 15 }).imagen(), null);
   const r = navegador();
-  const { titulo, texto } = compartirApp({ C: COMMON.de, lang: 'de', juegos: 15 });
-  assert.equal(await compartir({ titulo, texto, url: 'https://juegosdesalon.cl/de/', imagen: f }), 'shared');
+  const { titulo, texto } = compartirApp({ C: COMMON.en, lang: 'en', juegos: 15 });
+  assert.equal(await compartir({ titulo, texto, url: 'https://juegosdesalon.cl/en/', imagen: f }), 'shared');
   assert.deepEqual(r.compartido[0].files, [f]);
-  assert.ok(r.compartido[0].text.startsWith('🎲 *Salonspiele* · 15 Spiele'));
-  assert.ok(r.compartido[0].text.endsWith('🔗 https://juegosdesalon.cl/de/?from=link'));
+  assert.ok(r.compartido[0].text.startsWith('🎲 *Party Games* · 15 games'));
+  assert.ok(r.compartido[0].text.endsWith('🔗 https://juegosdesalon.cl/en/?from=link'));
 });
 
 console.log(`compartir: ${n} casos en verde`);

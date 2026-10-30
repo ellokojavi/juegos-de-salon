@@ -95,7 +95,6 @@ export const TEXTS = {
   es: { placeholder: 'Buscar: lógica, dados…', label: 'Buscar un juego', none: 'Ningún juego con «{q}».', clear: 'Cerrar la búsqueda', all: 'Ver los {n} juegos con «{q}»', one: 'Ver el juego con «{q}» en la lista', soon: 'Próximamente' },
   en: { placeholder: 'Search: logic, dice…', label: 'Find a game', none: 'No game matches “{q}”.', clear: 'Close the search', all: 'See the {n} games with “{q}”', one: 'See the game with “{q}” in the list', soon: 'Coming soon' },
   pt: { placeholder: 'Buscar: lógica, dados…', label: 'Buscar um jogo', none: 'Nenhum jogo com “{q}”.', clear: 'Fechar a busca', all: 'Ver os {n} jogos com “{q}”', one: 'Ver o jogo com “{q}” na lista', soon: 'Em breve' },
-  de: { placeholder: 'Suchen: Logik, Würfel…', label: 'Spiel suchen', none: 'Kein Spiel passt zu „{q}“.', clear: 'Suche schließen', all: 'Die {n} Spiele mit „{q}“ zeigen', one: 'Das Spiel mit „{q}“ in der Liste zeigen', soon: 'Demnächst' },
 };
 
 /** How many games the dropdown names before "see them all". */

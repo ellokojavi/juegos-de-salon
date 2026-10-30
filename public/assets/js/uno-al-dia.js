@@ -50,8 +50,8 @@ export const DESDE_PUENTES = '2026-10-27';
 export const JUEGOS_DIA = [
   // The two that only La Copa has carry their name here, so the dice does not load La Copa's rules
   // to say it (D-377); uno-al-dia.test.mjs checks they match juegosCopa()
-  { orden: 0, id: 'linea', emoji: '⏳', desde: LANZAMIENTO, name: { es: 'Línea Relámpago', en: 'Timeline Flash', pt: 'Linha Relâmpago', de: 'Blitz-Zeitstrahl' } },
-  { orden: 1, id: 'numero', emoji: '🔢', desde: LANZAMIENTO, name: { es: 'Toque y Fama: Número', en: 'Bulls and Cows: Number', pt: 'Toque e Fama: Número', de: 'Bullen und Kühe: Zahl' } },
+  { orden: 0, id: 'linea', emoji: '⏳', desde: LANZAMIENTO, name: { es: 'Línea Relámpago', en: 'Timeline Flash', pt: 'Linha Relâmpago' } },
+  { orden: 1, id: 'numero', emoji: '🔢', desde: LANZAMIENTO, name: { es: 'Toque y Fama: Número', en: 'Bulls and Cows: Number', pt: 'Toque e Fama: Número' } },
   // Every other one is in its entry in games.js, the manifest (#855): `unoAlDia: { orden, desde, hasta?, grupo? }`
   ...[...GAMES, ...SUELTOS].filter(g => g.unoAlDia).map(g => ({ orden: g.unoAlDia.orden, id: g.id, emoji: g.emoji, desde: g.unoAlDia.desde, ...(g.unoAlDia.hasta ? { hasta: g.unoAlDia.hasta } : {}) })),
 ].sort((x, y) => x.orden - y.orden).map(({ orden, ...j }) => j);

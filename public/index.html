@@ -41,11 +41,9 @@
   <meta property="og:locale" content="es_CL">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="pt_BR">
-  <meta property="og:locale:alternate" content="de_DE">
   <link rel="alternate" hreflang="es" href="https://juegosdesalon.cl/">
   <link rel="alternate" hreflang="pt" href="https://juegosdesalon.cl/pt/">
   <link rel="alternate" hreflang="en" href="https://juegosdesalon.cl/en/">
-  <link rel="alternate" hreflang="de" href="https://juegosdesalon.cl/de/">
   <link rel="alternate" hreflang="x-default" href="https://juegosdesalon.cl/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Juegos de Salón 🎲">
@@ -61,7 +59,7 @@
       try {
         var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
         var m = document.querySelector('link[rel="manifest"]');
-        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+        if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
       } catch (_) { /* queda el del español */ }
     })();
   </script>
@@ -491,7 +489,7 @@
           if (!f || f.k !== k || typeof f.html !== 'string' || /[?&](type|tipo|daily)=/.test(location.search)) return;
           var g = document.getElementById('games');
           // The copy's words wrap as the drawn ones do (German hyphenates by the page's language)
-          if (/^(es|en|pt|de)$/.test(l)) document.documentElement.lang = l;
+          if (/^(es|en|pt)$/.test(l)) document.documentElement.lang = l;
           g.innerHTML = f.html;
           g.classList.add('foto');
           // The copy's ▶ chip is a button with no module behind it yet: a tap on it is kept and

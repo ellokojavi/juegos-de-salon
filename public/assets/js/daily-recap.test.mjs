@@ -42,11 +42,11 @@ assert.equal(seasonLead({ ...d.recap, me: null }, 'es'), '🥇 Ganó Chan con 10
 const won = seasonRecap({ c: ['2026-10-31'], t: '2026-11-01', j: { aaaaaaaa: { n: 'Ana', s: 900, l: [1] }, bbbbbbbb: { n: 'Beto', s: 900, l: [1] } } }, 'aaaaaaaa');
 assert.equal(seasonLead(won, 'pt'), '🥇 Você ganhou a temporada com 900 pts, junto com Beto!');
 assert.equal(seasonLead({ ...won, me: null }, 'es'), '🥇 Ganaron Ana y Beto con 900 pts.', 'a tie for first, not signed in: plural (U-6)');
-const v = seasonView(d, 'de');
-assert.equal(v.title, 'Spiel des Tages: Oktober');
-assert.equal(v.note, 'Die Saison im November hat begonnen: Alle starten bei 0.');
+const v = seasonView(d, 'en');
+assert.equal(v.title, 'One a Day: October');
+assert.equal(v.note, "November's season has begun: everyone starts from 0.");
 assert.equal(v.scale, 8);
-for (const l of ['en', 'pt', 'de']) assert.deepEqual(Object.keys(TEXTS[l]).sort(), Object.keys(TEXTS.es).sort(), `recap texts in ${l}`);
+for (const l of ['en', 'pt']) assert.deepEqual(Object.keys(TEXTS[l]).sort(), Object.keys(TEXTS.es).sort(), `recap texts in ${l}`);
 
 // Loading: only once its last night was computed; a season with nobody is marked seen
 const mem = {};

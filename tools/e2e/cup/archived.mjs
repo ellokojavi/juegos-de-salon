@@ -15,8 +15,8 @@ const END = Date.UTC(2024, 6, 14, 4);
 const SEED = `localStorage.setItem('juegos-de-salon:prueba:records-db', JSON.stringify({ torneoPodios: { ${CODE}: {
   name: ${JSON.stringify(NAME)}, end: ${END}, de: 'jiri01', dias: 7, por: 'jiri01', at: ${END},
   p: { jiri01: { n: 'Jiri', l: 1 }, cata02: { n: 'Cata', l: 2 }, leo003: { n: 'Leo', l: 3 }, ana004: { n: 'Ana', l: 3 } } } } })); 1`;
-const NEW = { es: 'Crear una copa nueva', en: 'Create a new cup', pt: 'Criar uma copa nova', de: 'Neuen Pokal erstellen' };
-const ERROR = { es: 'No encontramos una copa', en: 'We couldn\'t find a cup', pt: 'Não encontramos uma copa', de: 'Wir finden keinen Pokal' };
+const NEW = { es: 'Crear una copa nueva', en: 'Create a new cup', pt: 'Criar uma copa nova' };
+const ERROR = { es: 'No encontramos una copa', en: 'We couldn\'t find a cup', pt: 'Não encontramos uma copa' };
 const YEAR = /2024/;
 
 const b = await launch({ dir: `${OUT}/profile`, out: OUT, width: 320, height: 640 });
@@ -26,7 +26,7 @@ try {
   await b.go(`${SITE}/cup/?test`, 1200);
   await ev(`localStorage.clear(); sessionStorage.clear(); ${SEED}`);
 
-  for (const lang of ['es', 'en', 'pt', 'de']) {
+  for (const lang of ['es', 'en', 'pt']) {
     await b.go(`${SITE}/cup/?${CODE}&test&lang=${lang}`, 1500);
     const shown = await waitFor(`!!document.getElementById('copa-archivada')`);
     const m = await ev(`(() => {

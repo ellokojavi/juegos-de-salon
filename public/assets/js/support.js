@@ -94,20 +94,6 @@ export const TEXTS = {
     close: 'Agora não',
     back: '🎲 Voltar aos jogos',
   },
-  de: {
-    link: '☕ Spendier mir einen Kaffee',
-    end: 'Salonspiele ist kostenlos und werbefrei. Wenn es dir gefällt, kannst du es unterstützen.',
-    title: 'Spendier mir einen Kaffee',
-    lead: 'Salonspiele ist kostenlos und werbefrei, und das bleibt so. Deine Unterstützung hilft mir, es am Laufen zu halten und neue Spiele zu bauen.',
-    points: ['Du entscheidest, wie viel. Bezahlt wird über Stripe (Karte, Apple Pay oder Google Pay), deine Kartendaten sehe ich nie.'],
-    pay: '☕ Kaffee spendieren',
-    payNote: 'Öffnet die Bezahlseite von Stripe.',
-    labNote: '🧪 Noch kein Zahlungslink: Der Knopf spielt eine Zahlung nur durch, um das Dankeschön zu zeigen.',
-    thanksTitle: 'Danke für den Kaffee!',
-    thanks: 'Wir machen weiter Spiele, die du allein und mit Freunden genießen kannst. Und jetzt: los, spielen!',
-    close: 'Jetzt nicht',
-    back: '🎲 Zu den Spielen',
-  },
 };
 export const texts = (lang = getLang()) => TEXTS[lang] || TEXTS.es;
 

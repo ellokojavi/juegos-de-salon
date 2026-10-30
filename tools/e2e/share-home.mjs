@@ -17,7 +17,6 @@ const EXPECTED = {
   es: { photo: 'menu.jpg', head: '🎲 *Juegos de Salón* · ', file: 'juegos-de-salon.jpg' },
   en: { photo: 'menu-en.jpg', head: '🎲 *Party Games* · ', file: 'party-games.jpg' },
   pt: { photo: 'menu-pt.jpg', head: '🎲 *Jogos de Salão* · ', file: 'jogos-de-salao.jpg' },
-  de: { photo: 'menu-de.jpg', head: '🎲 *Salonspiele* · ', file: 'salonspiele.jpg' },
 };
 // A phone that shares files: keeps what reached the menu and how many cards were requested
 const PHONE = `(() => {

@@ -6,19 +6,18 @@
  * another clue's: it is one of yours); a neutral or the assassin subtract and cut the clue. You can
  * pass to the next clue whenever you want. No DOM: engine.test.mjs tests it.
  *
- * Each language has its own deck (D-170): `clues.js` (Spanish, from Chile), `clues-en.js`,
- * `clues-pt.js` and `clues-de.js`. In a cup the words are the cup's language (`palabras`), so
+ * Each language has its own deck (D-170): `clues.js` (Spanish, from Chile), `clues-en.js` and
+ * `clues-pt.js`. In a cup the words are the cup's language (`palabras`), so
  * everybody plays the same board.
  */
 import { PISTAS as ES, LOCALES as LOCALES_ES } from './clues.js';
 import { PISTAS as EN } from './clues-en.js';
 import { PISTAS as PT, LOCALES as LOCALES_PT } from './clues-pt.js';
-import { PISTAS as DE } from './clues-de.js';
 import { hash32 } from '../semilla.js';
 import { fuera } from '../audiencia.js';
 import { rng } from '../../../assets/js/rng.js';
 
-export const MAZOS = { es: ES, en: EN, pt: PT, de: DE };
+export const MAZOS = { es: ES, en: EN, pt: PT };
 /** The deck of a language; Spanish if there is none. */
 export const mazoDe = lang => MAZOS[lang] || ES;
 
