@@ -34,6 +34,7 @@
  *   retorno/<nueva|vuelve>: si este navegador ya había venido (una marca local, sin id)
  *   disp/<celular|tableta|computador>, pais/<CL>: de la visita
  *   juegan/<página>: visitas que llegaron a empezar algo, por su página de entrada
+ *   viaJuegan/<canal>: of those, the ones whose link carried a mark (`via/`), by mark
  *
  * Usage captures (D-348, D-349):
  *
@@ -506,6 +507,7 @@ export function trackStart(info) {
  */
 export const VISITA_KEY = 'juegos-de-salon:visita';    // sessionStorage: la página donde empezó esta visita
 export const JUGO_KEY = 'juegos-de-salon:visita-jugo'; // sessionStorage: esta visita ya empezó algo
+export const VIA_KEY = 'juegos-de-salon:visita-via';   // sessionStorage: the link mark this visit came with, for viaJuegan
 export const VINO_KEY = 'juegos-de-salon:vino';        // localStorage: este navegador ya había venido
 export const REF_KEY = 'juegos-de-salon:ref';           // sessionStorage: el origen, guardado por una página puente
 
@@ -638,6 +640,7 @@ export function noteVisit(api, fp, {
       disp: dispositivoDe({ ua: nav?.userAgent, platform: nav?.platform, touch: nav?.maxTouchPoints }),
     };
     poner(sesion, VISITA_KEY, pagina);
+    if (datos.canal) poner(sesion, VIA_KEY, datos.canal);
     poner(local, VINO_KEY, '1');
   }
   const cambios = visitChanges(fp, datos);
@@ -651,7 +654,11 @@ export function notePlayed(api, fp, { sesion = globalThis.sessionStorage, now = 
   const entrada = leer(sesion, VISITA_KEY);
   if (!entrada || leer(sesion, JUGO_KEY)) return Promise.resolve();
   poner(sesion, JUGO_KEY, '1');
-  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), { [`juegan/${clave(entrada)}`]: INC }));
+  const c = { [`juegan/${clave(entrada)}`]: INC };
+  // Which channels bring players, not only visits: `?from=reddit-chile` that went on to play
+  const via = leer(sesion, VIA_KEY);
+  if (via) c[`viaJuegan/${clave(via, 20)}`] = INC;
+  return quiet(() => api.patch(dayPath(fp.env, dayOf(now)), c));
 }
 
 /**

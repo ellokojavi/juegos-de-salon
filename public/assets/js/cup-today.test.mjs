@@ -32,9 +32,12 @@ assert.equal(pendingCup({ getItem: () => '{bad' }, dia(0)), null, 'a broken stor
 assert.equal(pendingCup(null, dia(0)), null, 'no storage');
 assert.deepEqual(nextCupDay(store('aaaaaa'), dia(0)), { code: 'K7Q2X', dia: 2, at: meta.win[2].a }, 'played today: day 2 is next');
 assert.equal(nextCupDay(store('bbbbbb', []), dia(0)), null, 'no cups: no countdown');
-assert.equal(untilText(5 * H + 12 * 60000), '5 h 12 min');
-assert.equal(untilText(27 * H), '1 d 3 h');
-assert.equal(untilText(30000), '1 min');
+assert.equal(untilText(5 * H + 12 * 60000), '5h');
+assert.equal(untilText(27 * H), '1d 3h');
+assert.equal(untilText(30000), '1m');
+assert.equal(untilText(5 * H + 40 * 60000), '5h');
+assert.equal(untilText(25 * 60000), '25m');
+assert.equal(untilText(45 * 60000), '45m');
 // The final played: nothing to come, the cup still open
 const fin = meta.win[7].a + H;
 const todo = { meta, players: { aaaaaa: players.aaaaaa }, results: Object.fromEntries([1, 2, 3, 4, 5, 6, 7].map(d => [d, { aaaaaa: 1 }])) };

@@ -116,6 +116,7 @@ export const COMMON = {
   es: {
     appTitle: 'Juegos de Salón',
     appSub: 'Juegos tradicionales llevados a tu celular para pasar el tiempo solo o con amigos.',
+    appFree: 'Gratis, sin instalar y sin cuenta.',
     players: 'jugadores', minutes: 'min',
     footer: 'Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕',
     player: 'jugador',
@@ -175,7 +176,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // Uno al día (D-230): el botón de la portada, el dado, la tarjeta del resultado y /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa', opens: 'Día {day} abre en {time}', finalDone: 'Final jugada · cierra en {time}' },
+    cupToday: { play: 'Jugar hoy', aria: 'Jugar hoy tu día de La Copa', opens: 'Día {day} · {time}', finalDone: 'Final · cierra en {time}' },
     uad: {
       nombre: 'Uno al día',
       jugar: 'Jugar hoy',
@@ -375,6 +376,7 @@ export const COMMON = {
   en: {
     appTitle: 'Party Games',
     appSub: 'Traditional games brought to your phone, to pass the time alone or with friends.',
+    appFree: 'Free, no install, no account.',
     players: 'players', minutes: 'min',
     footer: 'Drink responsibly and keep water nearby. If you drive, you don\'t drink. 🚕',
     player: 'player',
@@ -422,7 +424,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // One a Day (D-230): the home button, the die, the result card and /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Play today', aria: 'Play your day of The Cup today', opens: 'Day {day} opens in {time}', finalDone: 'Final played · closes in {time}' },
+    cupToday: { play: 'Play today', aria: 'Play your day of The Cup today', opens: 'Day {day} · {time}', finalDone: 'Final · closes in {time}' },
     uad: {
       nombre: 'One a Day',
       jugar: 'Play today',
@@ -620,6 +622,7 @@ export const COMMON = {
   pt: {
     appTitle: 'Jogos de Salão',
     appSub: 'Jogos tradicionais trazidos pro seu celular, pra passar o tempo sozinho ou com amigos.',
+    appFree: 'De graça, sem instalar e sem conta.',
     players: 'jogadores', minutes: 'min',
     footer: 'Beba com responsabilidade e com água por perto. Se for dirigir, não beba. 🚕',
     player: 'jogador',
@@ -667,7 +670,7 @@ export const COMMON = {
     // El globo de la portada para agregar la app a inicio (D-232)
     // Um por dia (D-230): o botão da página inicial, o dado, o cartão do resultado e /today/
     // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa', opens: 'Dia {day} abre em {time}', finalDone: 'Final jogada · fecha em {time}' },
+    cupToday: { play: 'Jogar hoje', aria: 'Jogar hoje o seu dia da Copa', opens: 'Dia {day} · {time}', finalDone: 'Final · fecha em {time}' },
     uad: {
       nombre: 'Um por dia',
       jugar: 'Jogar hoje',
