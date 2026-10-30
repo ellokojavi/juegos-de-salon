@@ -19,6 +19,7 @@ export const TEXTS = {
     praise2: '{name}, te llevaste la plata en Uno al día de {mes}. {d} días peleándolo, y se notó.',
     praise3: '{name}, te llevaste el bronce en Uno al día de {mes}. {d} días para subirte al podio a pulso. ¡Bien jugado!',
     place: 'Quedaste en el lugar {p} de {n}, con {s} puntos.',
+    big: '{p}.º',
     pts: '{s} pts',
     thanks: 'Gracias por jugar en Juegos de Salón. 💛',
     invite1: 'Uno al día de {sig} parte de cero: ¿defiendes tu medalla?',
@@ -32,6 +33,7 @@ export const TEXTS = {
     praise2: '{name}, you took silver in One a Day in {mes}. {d} days of fighting for it, and it showed.',
     praise3: '{name}, you took bronze in One a Day in {mes}. {d} days to climb onto the podium. Well played!',
     place: 'You finished #{p} of {n}, with {s} points.',
+    big: '#{p}',
     pts: '{s} pts',
     thanks: 'Thanks for playing Juegos de Salón. 💛',
     invite1: 'One a Day starts from zero in {sig}: will you defend your medal?',
@@ -45,6 +47,7 @@ export const TEXTS = {
     praise2: '{name}, você levou a prata no Um por dia de {mes}. {d} dias de luta, e deu para ver.',
     praise3: '{name}, você levou o bronze no Um por dia de {mes}. {d} dias para subir ao pódio na raça. Muito bem!',
     place: 'Você ficou em {p}º de {n}, com {s} pontos.',
+    big: '{p}º',
     pts: '{s} pts',
     thanks: 'Obrigado por jogar no Juegos de Salón. 💛',
     invite1: 'O Um por dia de {sig} começa do zero: vai defender sua medalha?',
@@ -71,7 +74,7 @@ export function monthEndView({ month, recap }, lang = 'es', { days = 0 } = {}) {
   };
   const podium = me.lugar <= 3 ? me.lugar : 0;
   return {
-    place: me.lugar, podium,
+    place: me.lugar, podium, big: fmt(T.big, v),
     kicker: fmt(T.kicker, v),
     title: fmt(podium ? T[`title${podium}`] : T.titleRest, v),
     lines: podium
@@ -143,7 +146,7 @@ export function showMonthEnd(view, { onLeave } = {}) {
   card.setAttribute('aria-labelledby', 'me-titulo');
   if (view.podium) card.insertAdjacentHTML('beforeend', medal(view.podium));
   card.append(el('div', 'me-kicker', view.kicker));
-  if (!view.podium) card.append(el('div', 'me-lugar', `${view.place}.º`));
+  if (!view.podium) card.append(el('div', 'me-lugar', view.big));
   const h = el('h2', 'me-titulo', view.title);
   h.id = 'me-titulo';
   card.append(h);
