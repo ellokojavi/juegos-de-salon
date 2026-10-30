@@ -52,7 +52,7 @@ export function homeUrl(on, lang, base = '/') {
 export function drawBar(doc = document, loc = location) {
   const q = new URLSearchParams(loc.search);
   const on = experimentsOn(loc.search);
-  const lang = ['es', 'en', 'pt', 'de'].includes(q.get('lang')) ? q.get('lang') : (doc.documentElement.lang || 'es').slice(0, 2);
+  const lang = ['es', 'en', 'pt'].includes(q.get('lang')) ? q.get('lang') : (doc.documentElement.lang || 'es').slice(0, 2);
   const ir = () => loc.replace(homeUrl(on, idioma.value, loc.pathname));
   const css = doc.createElement('link');
   css.rel = 'stylesheet'; css.href = new URL('../experiments.css', import.meta.url).href;
@@ -81,7 +81,7 @@ export function drawBar(doc = document, loc = location) {
   }
   const idioma = doc.createElement('select');
   idioma.id = 'idioma'; idioma.setAttribute('aria-label', 'Idioma');
-  for (const l of ['es', 'en', 'pt', 'de']) idioma.append(new Option(l.toUpperCase(), l, false, l === lang));
+  for (const l of ['es', 'en', 'pt']) idioma.append(new Option(l.toUpperCase(), l, false, l === lang));
   idioma.addEventListener('change', ir);
   barra.append(idioma);
   doc.body.append(barra);

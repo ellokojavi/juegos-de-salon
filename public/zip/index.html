@@ -42,13 +42,12 @@
   <meta property="og:locale" content="es_CL">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="pt_BR">
-  <meta property="og:locale:alternate" content="de_DE">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Zip 〰️ · Juegos de Salón">
   <meta name="twitter:description" content="Une los números en orden con un solo trazo que pase por todas las casillas. Un jugador, 3 min. Gratis, sin instalar y sin cuenta.">
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/zip.jpg">
   <meta name="twitter:image:alt" content="Zip: Une los números en orden con un solo trazo que pase por todas las casillas.">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Zip","alternateName":[],"description":"Une los números en orden con un solo trazo que pase por todas las casillas.","url":"https://juegosdesalon.cl/zip/","image":"https://juegosdesalon.cl/assets/og/zip.jpg","inLanguage":["es","en","pt","de"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":1},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Zip","alternateName":[],"description":"Une los números en orden con un solo trazo que pase por todas las casillas.","url":"https://juegosdesalon.cl/zip/","image":"https://juegosdesalon.cl/assets/og/zip.jpg","inLanguage":["es","en","pt"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":1},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo se juega Zip?","acceptedAnswer":{"@type":"Answer","text":"Une los números en orden con un solo trazo que parta en el 1, pase una vez por cada casilla y termine en el último número. Arrastra el dedo desde el 1. Para corregir, retrocede por el mismo camino. Tienes 3 minutos para resolver 10 niveles, que van creciendo."}}]}</script>
   <!-- /generated -->
   <link rel="manifest" href="../manifest.webmanifest">
@@ -58,7 +57,7 @@
       try {
         var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
         var m = document.querySelector('link[rel="manifest"]');
-        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+        if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
       } catch (_) { /* queda el del español */ }
     })();
   </script>

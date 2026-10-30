@@ -127,7 +127,7 @@ medir (D-267). El panel lo muestra con su clave cruda (C-16).
 ```
 public/cup/games/case/engine.js   motor: genera el caso, el solver, la ayuda y el puntaje (sin DOM)
 public/cup/games/case/ui.js       pantalla: grilla, pistas, sellos, portada de la antesala
-public/cup/rules.js               casoTexto (las plantillas de cada pista) y los textos del caso, en los cuatro idiomas
+public/cup/rules.js               casoTexto (las plantillas de cada pista) y los textos del caso, en los tres idiomas
 public/cup/game.js                lo de `diario`: el caso del día, seguir al recargar y el final
 public/cup/games/juegos.test.mjs  sus pruebas, con las de los demás juegos de La Copa
 public/labs/case/index.html       generada por node tools/release/og.mjs cards desde public/cup/suelto/: no se edita
@@ -140,7 +140,7 @@ por la grilla), cinco oficios de cuatro personas, de 7 a 10 criminales y con qui
 después simula al jugador y le reparte a cada persona deducida una pista elegida para que haya que
 combinarlas (`notaPista`, D-259). De cada semilla arma cuatro casos y se queda con el que más hace
 pensar (`dificultad`, D-260). Las pistas son datos (`{ t, a, b, k, g, h }`) y la frase la arma
-`texto()` en el idioma de quien juega: el caso es el mismo en los cuatro idiomas. Cómo se eligen
+`texto()` en el idioma de quien juega: el caso es el mismo en los tres idiomas. Cómo se eligen
 las pistas, en detalle, está en [cup.md](cup.md).
 
 **El solver** busca con vuelta atrás y poda por rangos (cuántos criminales caben todavía en cada

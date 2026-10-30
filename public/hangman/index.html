@@ -41,13 +41,12 @@
   <meta property="og:locale" content="es_CL">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="pt_BR">
-  <meta property="og:locale:alternate" content="de_DE">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="El Ahorcado 🪢 · Juegos de Salón">
   <meta name="twitter:description" content="Adivina tu palabra antes de quedarte sin vidas. Acá nadie se queda mirando. 1–6 jugadores, 5–12 min. Gratis, sin instalar y sin cuenta.">
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/ahorcado.jpg">
   <meta name="twitter:image:alt" content="El Ahorcado: Adivina tu palabra antes de quedarte sin vidas. Acá nadie se queda mirando.">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"El Ahorcado","alternateName":["Hangman","Forca","Galgenmännchen"],"description":"Adivina tu palabra antes de quedarte sin vidas. Acá nadie se queda mirando.","url":"https://juegosdesalon.cl/hangman/","image":"https://juegosdesalon.cl/assets/og/ahorcado.jpg","inLanguage":["es","en","pt","de"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":6},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"El Ahorcado","alternateName":["Hangman","Forca"],"description":"Adivina tu palabra antes de quedarte sin vidas. Acá nadie se queda mirando.","url":"https://juegosdesalon.cl/hangman/","image":"https://juegosdesalon.cl/assets/og/ahorcado.jpg","inLanguage":["es","en","pt"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":6},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo se juega El Ahorcado?","acceptedAnswer":{"@type":"Answer","text":"De 1 a 6 jugadores, 5–12 minutos. Todos en un mismo celular, cada uno en su celular o solo. Gratis, sin instalar nada y sin cuenta. Prueba letras de a una. Si la letra está, aparece en todos sus lugares. Si no está, se dibuja una parte del ahorcado. Si se completa el dibujo, te colgaron. Gana quien adivina su palabra con más vidas."}}]}</script>
   <!-- /generated -->
   <link rel="manifest" href="../manifest.webmanifest">
@@ -57,7 +56,7 @@
       try {
         var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
         var m = document.querySelector('link[rel="manifest"]');
-        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+        if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
       } catch (_) { /* queda el del español */ }
     })();
   </script>

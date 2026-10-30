@@ -34,7 +34,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | 🥷 Stick Ninja, the lab's hold-and-release bridge game (the day's course, flags for perfects, moving pillars, English only) | `docs/games/stick.md` | D-446, D-455 |
 | 🧱 Stack, the lab's one-tap tower game (the overhang is cut off, perfect drops, judged at the tap's own moment, English only) | `docs/games/stack.md` | D-445 |
 | 📐 Loteo, the lab's Shikaku (rectangles whose number is their area, unique solution, five boards against the clock: two warm-ups and three hard ones; the ⚡💧 Servicios mode, with same-size plots and one ⚡ and one 💧 in each) | `docs/games/plots.md` | D-310, D-311, D-312, D-332 |
-| Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404 |
+| Languages | C-3 | D-47, D-74, D-170, D-191, D-194, D-197, D-199, D-231, D-244, D-256, D-269, D-270, D-286, D-289, D-293, D-297, D-310, D-404, D-514 |
 | Sound and vibration | C-4 | D-17, D-92 |
 | Game modes | C-5 | D-27, D-65, D-129, D-142, D-213, D-246, D-453, D-487, D-488, D-489, D-490, D-491, D-495 |
 | Home page: order, filters and favourites | C-17 | D-142, D-144, D-149, D-196, D-214, D-238, D-239, D-240, D-241, D-255, D-305, D-333, D-335, D-351, D-355, D-361, D-362, D-363, D-364, D-369, D-371, D-373, D-387, D-389, D-390, D-393, D-395, D-396, D-397, D-398, D-399, D-402, D-403, D-404, D-405, D-406, D-407, D-409, D-421, D-423, D-424, D-426, D-427, D-430, D-431, D-435, D-448, D-449, D-456, D-457, D-458, D-461, D-462, D-463, D-466, D-472, D-477, D-502, D-505, D-507 |
@@ -55,7 +55,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | Marketing | `marketing/README.md` | D-178, D-380, D-410, D-454, D-456, D-494, D-505 |
 | Installable app and phone notifications | C-2, [PWA-NOTIFICACIONES.md](PWA-NOTIFICACIONES.md) | D-221, D-222, D-223, D-224, D-225, D-227, D-228, D-229, D-230, D-232, D-233, D-504 |
 
-## In force (498)
+## In force (499)
 
 | D | Title | Status |
 |---|---|---|
@@ -103,7 +103,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-44](decisions/D-44.md) | Usage signals for a private owner panel, without identifying anyone | amended by D-79, D-210, D-349, D-461, D-471 |
 | [D-45](decisions/D-45.md) | The panel also separates live rooms by environment | current |
 | [D-46](decisions/D-46.md) | Two languages in the usage signals, not one | amended by D-47 |
-| [D-47](decisions/D-47.md) | Spanish by default; English and Portuguese only on request | amended by D-197, D-324 |
+| [D-47](decisions/D-47.md) | Spanish by default; English and Portuguese only on request | amended by D-197, D-324, D-514 |
 | [D-48](decisions/D-48.md) | Brazilian Portuguese as the third language, with the same keys | amended by D-197, D-222 |
 | [D-49](decisions/D-49.md) | The footer phrases drop party humor for generic after-dinner jokes | current |
 | [D-50](decisions/D-50.md) | A canceled room closes itself: explicit goodbye and immediate deletion | current |
@@ -247,7 +247,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-194](decisions/D-194.md) | German: Hochdeutsch for the three countries, Central European time, spoken umlauts and no flash | current |
 | [D-195](decisions/D-195.md) | In a language's lab, the menu depends on the chosen language | current |
 | [D-196](decisions/D-196.md) | The home page filters stay stuck at the top | current |
-| [D-197](decisions/D-197.md) | German leaves the lab | amended by D-262 |
+| [D-197](decisions/D-197.md) | German leaves the lab | amended by D-262, D-514 |
 | [D-198](decisions/D-198.md) | There are no mini-games: La Copa's games are games | current |
 | [D-199](decisions/D-199.md) | All screens are tested in all languages | current |
 | [D-200](decisions/D-200.md) | ¿Dónde queda?: the globe rotates with two fingers and the compass straightens north | current |
@@ -557,6 +557,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-511](decisions/D-511.md) | 📦 Enviar a La Bodega, a button next to 🚀 on every card being tried | current |
 | [D-512](decisions/D-512.md) | Firebase moves to the pay-as-you-go Blaze plan, with a US$10 alert-only budget | current |
 | [D-513](decisions/D-513.md) | Offensive names: a word list on sign-up and an owner rename tool | current |
+| [D-514](decisions/D-514.md) | German leaves the app | current |
 
 ## No longer in force (12)
 

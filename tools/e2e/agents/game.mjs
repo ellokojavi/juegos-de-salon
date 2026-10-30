@@ -176,7 +176,7 @@ try {
 
   // ——— At 320 × 568, in the four languages ———
   b = await launch({ dir: `${OUT}/p320`, out: OUT, width: 320, height: 568 });
-  for (const lang of ['es', 'en', 'pt', 'de']) {
+  for (const lang of ['es', 'en', 'pt']) {
     await b.open(`${SITE}/agents/?test&lang=${lang}&seed=${SEED}`, 2500);
     await b.until(`document.getElementById('btn-empezar')`, 6000);
     ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), `${lang} 320 px: no sideways scroll in the waiting room`);

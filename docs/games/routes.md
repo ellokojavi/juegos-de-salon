@@ -114,7 +114,7 @@ Empezar goes through the cup's 3, 2, 1 countdown (D-105).
 - `tools/e2e/routes/game.mjs` plays `/routes/` end to end: a real drag and a tap against the engine, undo,
   restart, the countdown paused with the screen hidden, the five stages, the result and its breakdown
   against the engine, giving up, running out of time (the page clock pushed 7 minutes ahead), resuming
-  from saved moves, La Copa's practice and its trial, and 320 × 568 in the four languages.
+  from saved moves, La Copa's practice and its trial, and 320 × 568 in the three languages.
 
 ## Exceptions to the canons
 

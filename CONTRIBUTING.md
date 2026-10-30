@@ -41,9 +41,9 @@ many as you need.
 
 What gets forgotten most:
 
-- **Every player-facing text goes in Spanish, English, Brazilian Portuguese and German**, with the same keys in
-  all of them (C-3). Chilean Spanish, informal "tú". The others adapted, not copied word for word. The German glossary
-  is in [docs/ALEMAN.md](docs/ALEMAN.md).
+- **Every player-facing text goes in Spanish, English and Brazilian Portuguese**, with the same keys in
+  all of them (C-3). Chilean Spanish, informal "tú". The others adapted, not copied word for word. German left the
+  app (D-514).
 - **Reuse before inventing**: drag and drop, the keyboard, the chat, the pass-the-phone
   screens and what gets shared already exist in `public/assets/` (D-102).
 - **44 px buttons and no horizontal scroll** at 320 px width (C-8).

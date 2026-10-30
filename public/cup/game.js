@@ -237,9 +237,9 @@ function avisoError(caja, texto) {
 }
 
 // Las fechas en el idioma de quien mira o, en lo que va al grupo, en el de la copa (D-170).
-// En inglés y en alemán la coma va ("Thursday, October 1", "Donnerstag, 1. Oktober"); en español y portugués se saca
-const LOCALE = { es: 'es-CL', en: 'en-US', pt: 'pt-BR', de: 'de-DE' };
-const fechaLarga = (ms, tz = ZONA, lang = LANG) => { const f = new Intl.DateTimeFormat(LOCALE[lang] || LOCALE.es, { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)); return lang === 'en' || lang === 'de' ? f : f.replace(',', ''); };
+// En inglés la coma va ("Thursday, October 1"); en español y portugués se saca
+const LOCALE = { es: 'es-CL', en: 'en-US', pt: 'pt-BR' };
+const fechaLarga = (ms, tz = ZONA, lang = LANG) => { const f = new Intl.DateTimeFormat(LOCALE[lang] || LOCALE.es, { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)); return lang === 'en' ? f : f.replace(',', ''); };
 /** El nombre de la zona horaria de una copa, para decirlo en palabras (D-113). */
 const zonaTexto = tz => T.zones[tz] || fmt(T.zoneOther, { tz });
 const fechaCorta = (ms, tz = ZONA) => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, weekday: 'short', day: 'numeric' }).format(new Date(ms));

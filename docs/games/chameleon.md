@@ -12,7 +12,7 @@ our own.
 - **Where:** `https://juegosdesalon.cl/labs/chameleon/`, behind the lab's door (D-281), `noindex`. Not in
   `games.js` nor on the home page while it is in the lab. Id `camaleon` in the usage signal and in
   `localStorage` (`juegos-de-salon:camaleon:session`, `…:names`).
-- **For whom:** 3 to 8 players, one phone. In the four languages (es, en, pt, de); the names are
+- **For whom:** 3 to 8 players, one phone. In the three languages (es, en, pt); the names are
   El Camaleón, Chameleon, Camaleão and Chamäleon.
 - **Status:** active project. What would prove it: groups that play more than one game in a visit.
 
@@ -36,7 +36,7 @@ points, Play again (same players, from 0), Change players and Back to the menu (
 ## Pieces
 
 - `public/labs/chameleon/rules.js`: the topics and words (16 each, ≤16 letters so they fit a cell at
-  320 px) and the interface texts, in `LOCALES`. German words common to the three countries (ALEMAN.md).
+  320 px) and the interface texts, in `LOCALES`.
 - `engine.js`: pure rules (`newGame`, `startRound`, `cardHolder`, `cardFor`, `cardSeen`, `toVote`,
   `accuse`, `guess`, `standings`, `fromSaved`), tested by `engine.test.mjs` (packs, phases, points, winners).
 - `game.js`: screens and memory (C-6: a reload resumes at the same phase). Test hook `window.__camaleon`

@@ -50,18 +50,6 @@ export const TEXTS = {
     solo: 'sozinho',
     cpu: 'contra o celular',
   },
-  de: {
-    players: '{min} bis {max} Spieler, {duration} Minuten.',
-    pair: '{min} oder {max} Spieler, {duration} Minuten.',
-    one: 'Ein Spieler, {duration} Minuten.',
-    free: 'Kostenlos, ohne Installation und ohne Konto.',
-    or: ' oder ',
-    local: 'alle an einem Handy',
-    both: 'beide an einem Handy',
-    online: 'jeder an seinem eigenen Handy',
-    solo: 'allein',
-    cpu: 'gegen das Handy',
-  },
 };
 
 /**

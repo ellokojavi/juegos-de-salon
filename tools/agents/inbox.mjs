@@ -8,7 +8,7 @@
  * whatever it says can only reach this inbox and the public report path.
  *
  *   node tools/agents/inbox.mjs list                              # the emails waiting, oldest first
- *   node tools/agents/inbox.mjs ingest <id> - --lang <es|en|pt|de> <<'END_OF_REPORT'   # → a feedback report,
+ *   node tools/agents/inbox.mjs ingest <id> - --lang <es|en|pt> <<'END_OF_REPORT'   # → a feedback report,
  *   <the text>                                                     #   its text on stdin, never a file
  *   END_OF_REPORT
  *   node tools/agents/inbox.mjs skip <id> "<reason>"              # spam, automatic, not for us
@@ -46,7 +46,7 @@ import { enviarReporte as sendReport, correoValido as validEmail, enmascarar as 
 const CREDENTIAL = process.env.JUEGOS_INBOX || process.env.JUEGOS_BUZON || join(homedir(), '.config/juegos-de-salon/buzon.json');
 const LOG = process.env.JUEGOS_INBOX_LOG || join(homedir(), '.config/juegos-de-salon/inbox-log.jsonl');
 const SKIPPED = process.env.JUEGOS_INBOX_SKIPPED || join(homedir(), '.config/juegos-de-salon/inbox-skipped.jsonl');
-export const LANGUAGES = ['es', 'en', 'pt', 'de'];
+export const LANGUAGES = ['es', 'en', 'pt'];
 
 /* ------------------------------------------------------------------ */
 /* Pure (tested by inbox.test.mjs)                                     */
@@ -181,5 +181,5 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   else if (command === 'ingest' && a && b === '-' && option('--lang')) ingest(a, option('--lang')).catch(fail);
   else if (command === 'skip' && a) skip(a, b).catch(fail);
   else if (command === 'skipped') showSkipped(Number(option('--days')) || 30);
-  else { console.error('Usage: node tools/agents/inbox.mjs list | ingest <id> - --lang <es|en|pt|de> (the text on stdin) | skip <id> "<reason>" | skipped [--days n]'); process.exit(2); }
+  else { console.error('Usage: node tools/agents/inbox.mjs list | ingest <id> - --lang <es|en|pt> (the text on stdin) | skip <id> "<reason>" | skipped [--days n]'); process.exit(2); }
 }

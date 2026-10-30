@@ -21,7 +21,7 @@ The README is **in English** (C-13, D-78), and since D-316 so is everything else
 
 **Language (D-316):** everything this agent writes in the repo or on GitHub —docs, decisions,
 changelog entries, dilemma issues, comments, PR titles and bodies, commit messages, reports— is in
-English. Player-facing texts stay in the app's four languages (C-3). New D-n decisions, canons and
+English. Player-facing texts stay in the app's three languages (C-3). New D-n decisions, canons and
 changelog entries are written in English, even inside files that are still in Spanish.
 
 ## Your memory
@@ -93,8 +93,8 @@ changelog entries are written in English, even inside files that are still in Sp
    announced as big news), is there something that no longer exists, or did something stop being true? If so:
    - add or remove the entry in `LO_PRINCIPAL` (`public/assets/js/compartir.js`), with the decision
      that brought it;
-   - write its line in `shareApp.lines` of `public/assets/js/i18n.js` in all **four** languages
-     (U-30: one emoji at the start, one idea; German, with [ALEMAN.md](../../docs/ALEMAN.md));
+   - write its line in `shareApp.lines` of `public/assets/js/i18n.js` in all **three** languages
+     (U-30: one emoji at the start, one idea);
    - if what the app is changes, also `shareSheet.videoLines` and `ALSO` in
      `tools/release/og.mjs` (afterwards, `node tools/release/og.mjs cards`);
    - run `node public/assets/js/compartir.test.mjs`, and in the PR show the message before and after.

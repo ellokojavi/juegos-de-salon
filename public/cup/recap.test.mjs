@@ -44,7 +44,7 @@ assert.equal(lead([row('Ana', 1), row('Beto', 2, true)], 'en'), '🥇 Ana won. Y
 assert.equal(lead([row('Ana', 1), row('Beto', 1), row('Caro', 3, true)], 'pt'), '🥇 Ana e Beto ganharam. Você ficou em 3º.');
 
 // The four languages, with the same words (C-3)
-for (const l of ['en', 'pt', 'de']) assert.deepEqual(Object.keys(TEXTS[l]).sort(), Object.keys(TEXTS.es).sort(), `recap texts in ${l}`);
+for (const l of ['en', 'pt']) assert.deepEqual(Object.keys(TEXTS[l]).sort(), Object.keys(TEXTS.es).sort(), `recap texts in ${l}`);
 
 // The line: 1st at the top, last at the bottom, inside its box
 const pts = sparkPoints([3, 1, 5], 5, { w: 56, h: 20, pad: 3 });

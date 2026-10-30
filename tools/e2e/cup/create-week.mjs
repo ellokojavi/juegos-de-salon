@@ -209,7 +209,7 @@ try {
   ok(/\?primos&test$/.test(await ev('location.search')), 'with its own link');
   // The other three languages at 320 px: the week and a day's sheet fit, with no sideways scroll
   await b.send('Emulation.setDeviceMetricsOverride', { width: 320, height: 760, deviceScaleFactor: 2, mobile: true });
-  for (const lang of ['en', 'pt', 'de']) {
+  for (const lang of ['en', 'pt']) {
     await b.open(`${SITE}/cup/?test&lab&lang=${lang}`, 1200);
     await b.until(`!!document.getElementById('btn-crear')`, 5000);
     await click('#btn-crear');

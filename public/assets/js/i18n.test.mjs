@@ -36,10 +36,10 @@ function same(name, dict) {
   }
 }
 
-// Se ofrecen todos los que tienen diccionario: el alemán salió del laboratorio (D-197), que queda
-// vacío hasta el próximo idioma (D-191)
-assert.deepEqual(LANGS, ['es', 'en', 'pt', 'de']);
-assert.deepEqual(IDIOMAS, ['es', 'en', 'pt', 'de']);
+// Se ofrecen todos los que tienen diccionario; el laboratorio queda vacío hasta el próximo idioma
+// (D-191). El alemán salió de la app (D-514)
+assert.deepEqual(LANGS, ['es', 'en', 'pt']);
+assert.deepEqual(IDIOMAS, ['es', 'en', 'pt']);
 assert.deepEqual(EN_LABS, []);
 // Cada idioma trae su bandera y su nombre para el toggle (D-231, C-3): sin ellos el botón sale vacío
 for (const l of IDIOMAS) {

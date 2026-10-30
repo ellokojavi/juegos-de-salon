@@ -125,42 +125,4 @@ export const TEXTS = {
     who: 'Responsável: Juegos de Salón (juegosdesalon.cl), hola@juegosdesalon.cl.',
     updated: 'Atualizada em 29 de outubro de 2026.',
   },
-  de: {
-    title: 'Datenschutz',
-    lead: 'Salonspiele (juegosdesalon.cl) spielst du ohne Konto, ohne Werbung und ohne Tracking-Cookies. Hier steht das Wenige, das wir speichern, wozu, wo und wie lange.',
-    sections: [
-      { h: '📱 Auf deinem Handy', p: ['Dein Browser speichert auf dem Handy die Sprache, den Ton, deine Favoriten, das laufende Spiel, deine Punkte und die Namen, die du eingegeben hast, damit du sie nicht wiederholen musst. Das sind keine Cookies, und sie verschwinden, wenn du die Daten dieser Seite im Browser löschst.'] },
-      {
-        h: '☁️ In unserer Datenbank',
-        p: ['Wir nutzen Firebase von Google, in den USA. Wir speichern nur Folgendes:'],
-        items: [
-          'Räume, um mit anderen zu spielen: den Namen oder Spitznamen, den du eingibst, und die Züge. Sie werden gelöscht, wenn alle gehen, sonst in den Tagen, nachdem der Raum schließt.',
-          'Der Pokal: deinen Namen oder Spitznamen, deine Ergebnisse und deine 4-stellige PIN, gespeichert als Fingerabdruck (Hash), den niemand lesen kann. Damit niemand deine PIN errät, speichern wir den letzten Versuch jedes Spielers. Wer den Pokal erstellt hat, kann ihn löschen; sonst kommt er zwei Jahre nach seinem Ende in ein geschlossenes Archiv, das nur wir lesen können.',
-          'Ranglisten und Spiel des Tages, wenn du dich mit Namen und PIN anmeldest: deinen Namen, dein Land, deine Punkte und die Tage, an denen du gespielt hast. Name, Land und Punkte stehen in den Ranglisten. Sie bleiben, solange es das Spiel gibt oder bis du uns bittest, sie zu löschen.',
-          'Damit du nicht jedes Mal deine PIN eingibst, speichern wir eine anonyme Nummer für jedes Gerät, auf dem du dich anmeldest, und den letzten PIN-Versuch, um zu bremsen, wer sie erraten will. Wenn du jemanden zum Spiel des Tages einlädst, vermerken wir, dass die Person über deine Einladung kam. Ist ein Name beleidigend, können wir ihn ändern; Punkte und PIN bleiben.',
-          'Nutzungsstatistik, um zu sehen, was gespielt wird und was hakt: Zählungen pro Tag (Spiel, Sprache, Uhrzeit, Art des Geräts, woher du kamst (Seite, Link) und das Land, das aus der Zeitzone kommt), eine Zufallszahl deines Browsers, um zu zählen, wer wiederkommt, die Namen aus jedem Spiel, welche Hinweise der Seite du damit gesehen hast, und Fehler mit Browser und Version. Die Namen werden nach 24 Monaten gelöscht, die Zählungen ohne Namen bleiben.',
-          'Mitteilungen aufs Handy, wenn du sie einschaltest: die Mitteilungsadresse deines Browsers, die Sprache, die Zeitzone und die Mitteilungen, die du wolltest. Sie werden gelöscht, wenn du sie ausschaltest oder der Browser sie verfallen lässt.',
-          'Vorschläge und Kommentare: was du schreibst, deinen Namen oder Spitznamen, wenn du einen angibst, die Seite und die Version. Wir kopieren sie in die Aufgabenliste des Projekts auf GitHub, die öffentlich ist, mit deinem Namen verdeckt bis auf den ersten Buchstaben jedes Worts und ohne deine E-Mail, also schreib dort nichts Persönliches. Für sie gibt es noch kein Löschdatum.',
-          'Deine E-Mail, wenn du sie bei einem Vorschlag angibst oder uns an hola@juegosdesalon.cl schreibst: nur, um dir zu antworten, und sie wird nie veröffentlicht. Wir löschen sie nach der Antwort oder, falls keine kommt, nach 90 Tagen.',
-        ],
-      },
-      {
-        h: '🤝 Wer sie noch sieht',
-        p: [
-          'Wir haben keine eigenen Server. Diese Dienste sehen deine IP-Adresse, um dir die Seite auszuliefern, nach ihren eigenen Datenschutzregeln: GitHub Pages (die Seite) und Google Firebase (die Datenbank). Nur wenn du sie nutzt: YouTube (das Video beim Teilen der App), Stripe (wenn du uns einen Kaffee spendierst), sowie Cloudflare und Gmail (E-Mails an hola@juegosdesalon.cl).',
-          'Wir speichern deine IP-Adresse nicht, verkaufen keine Daten und nutzen keine Analyse anderer Firmen.',
-        ],
-      },
-      { h: '🧒 Kinder', p: ['Die Spiele sind für alle und fragen zum Spielen nach keinen Daten. Wenn du minderjährig bist, nimm einen Spitznamen und frag einen Erwachsenen, bevor du deine E-Mail angibst. Wenn du Elternteil oder Vormund bist und willst, dass wir etwas löschen, schreib uns.'] },
-      {
-        h: '✋ Deine Rechte',
-        p: [
-          'Du kannst verlangen, deine Daten zu sehen, zu berichtigen oder zu löschen, oder ihrer Nutzung widersprechen. Schreib an hola@juegosdesalon.cl mit deinem Namen in der Rangliste oder dem Code deines Pokals; nach deiner PIN fragen wir nie. Wir antworten innerhalb von 30 Tagen.',
-          'Wir haben diese Seite nach dem chilenischen Gesetz 21.719 und der europäischen Datenschutz-Grundverordnung (DSGVO) geschrieben. Wenn du nicht zufrieden bist, kannst du dich bei der Datenschutzbehörde deines Landes beschweren.',
-        ],
-      },
-    ],
-    who: 'Verantwortlich: Juegos de Salón (juegosdesalon.cl), hola@juegosdesalon.cl.',
-    updated: 'Aktualisiert am 29. Oktober 2026.',
-  },
 };

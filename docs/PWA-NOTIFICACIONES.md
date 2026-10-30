@@ -270,7 +270,7 @@ bloqueados. Con eso se ve dónde se cae la gente y si el esfuerzo en iPhone vale
 - **Android y computador**: los guiones de `tools/e2e/` ya manejan Chrome. Chrome puede dar el
   permiso por su cuenta y recibir un aviso de prueba, así que el camino completo entra a CI.
 - **La hoja de iPhone y los estados del botón**: con `look.mjs` imitando un iPhone (el
-  identificador del navegador y el tamaño de pantalla), a 320 px y en los cuatro idiomas (C-8).
+  identificador del navegador y el tamaño de pantalla), a 320 px y en los tres idiomas (C-8).
 - **iPhone de verdad**: no se puede automatizar. El PR 2 trae una lista de pasos para probar a mano
   en iOS 17, 18 y 26, y el dueño la corre antes de fusionar.
 

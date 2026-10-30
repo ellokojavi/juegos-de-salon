@@ -10,7 +10,7 @@ chose Loteo before publishing it.
 ## Summary
 
 - **Where:** its own page, `https://juegosdesalon.cl/plots/`, on the home page (logic, 5–15 min), in
-  the four languages (C-3). Id `loteo` (rooms, rankings, signals, `localStorage`), folder and slug
+  the three languages (C-3). Id `loteo` (rooms, rankings, signals, `localStorage`), folder and slug
   `plots`. It left the lab in D-332: `/labs/plots/` and `/minigames/plots/`, `/minijuegos/loteo/`
   are bridges to `/plots/`.
 - **In La Copa:** it is in `POZO`, so a week can pick it, and then the Gran Final plays it again whole (D-418). The admin
@@ -80,7 +80,7 @@ time counts from there, paused with the screen hidden (U-20); the ⏱ elapsed ti
 - **The hard ones of Utilities:** on reaching board 3, the first hard one, the notice says «Difíciles:
   si un lote deja una casilla sin lote posible, no va.» (only there).
 - **Below, four equal controls in two rows of two** (#441: the owner's earlier row of three wrapped
-  «Borrar todo» at 320 px and in German, U-17): ↩️ Deshacer · 🧹 Borrar todo on top, 💡 Ayuda ·
+  «Borrar todo» at 320 px, U-17): ↩️ Deshacer · 🧹 Borrar todo on top, 💡 Ayuda ·
   🏳️ Rendirse below, the cup's words:
   - **↩️ Deshacer** (the shared `deshacer.js` button): back to before the last move (draw, erase a
     plot, clear the board or a hint); free. It does not go back to an earlier board, and undoing a
@@ -159,7 +159,7 @@ time counts from there, paused with the screen hidden (U-20); the ⏱ elapsed ti
   three layers (the squared background, the plots and the numbers) and the drag frame on top; the
   drag is Rutas rotas' (`pointerdown/move/up` with `setPointerCapture`). Numbers are sized with
   container units, so the same rules serve the 8×8, the demo and the drawing.
-- `texts.js`: the texts in the four languages, merged into `rules.js` (`juego` and the `lt*` keys of
+- `texts.js`: the texts in the three languages, merged into `rules.js` (`juego` and the `lt*` keys of
   `ui`); `portada` and `titulo`, which get no `T`, read it directly with the page's language.
 - `style.css`: every selector starts with `.lt-` (the cup's style.css is shared).
 - The test hook, `window.__loteo = { P, dibujar(r), tocar(f, c) }`: the state (`P.p`, `P.t`,

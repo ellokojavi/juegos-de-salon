@@ -7,7 +7,7 @@
  *
  *   node tools/agents/feedback.mjs sync [--dry-run]   # creates the missing issues
  *   node tools/agents/feedback.mjs pending                                   # who is waiting, grouped by player (D-317)
- *   node tools/agents/feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> [--dry-run | --test-to <address>]
+ *   node tools/agents/feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <es|en|pt> [--dry-run | --test-to <address>]
  *                                                                         # one email for all of a player's comments
  *   node tools/agents/feedback.mjs forget <issue> "<reason>"                 # deletes the address, no email
  *   node tools/agents/feedback.mjs expire [--dry-run]                       # deletes the addresses older than 90 days (D-463)
@@ -417,5 +417,5 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   else if (command === 'reply' && a && b && option('--lang')) reply(a, b, option('--lang'), { dryRun: process.argv.includes('--dry-run'), testTo: option('--test-to') }).catch(fail);
   else if (command === 'forget' && a) forget(a, b).catch(fail);
   else if (command === 'doubt' && a && b) doubt(a, b).catch(fail);
-  else { console.error('Usage: node tools/agents/feedback.mjs sync [--dry-run] | pending | reply <n>[,<n>…] <answer.txt> --lang <es|en|pt|de> [--dry-run | --test-to <address>] | forget <issue> "<reason>" | expire [--dry-run] | doubt <issue> <notes.txt>'); process.exit(2); }
+  else { console.error('Usage: node tools/agents/feedback.mjs sync [--dry-run] | pending | reply <n>[,<n>…] <answer.txt> --lang <es|en|pt> [--dry-run | --test-to <address>] | forget <issue> "<reason>" | expire [--dry-run] | doubt <issue> <notes.txt>'); process.exit(2); }
 }

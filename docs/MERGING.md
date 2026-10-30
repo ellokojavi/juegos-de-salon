@@ -17,7 +17,7 @@ From a finished branch to the live site: the review agents, the checks, auto-mer
      shared code or Firebase rules gets both agents.
    - **PR that takes a game out of the lab** (it loses `labs: true`, or its folder leaves
      `public/labs/`): a **full usability pass** over the whole game —all its screens, the
-     four languages, 320 px, its home page and its place on the main home page— and documentation with the
+     three languages, 320 px, its home page and its place on the main home page— and documentation with the
      README and the social card.
    - **Everything else:** both, as always.
 2. **Is anyone playing?** `node tools/firebase/in-progress.mjs` (exits with 3 if there are live rooms

@@ -13,7 +13,7 @@ let failures = 0;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) failures++; };
 const waitFor = async (expr, ms = 10000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
 
-for (const lang of ['es', 'en', 'pt', 'de']) {
+for (const lang of ['es', 'en', 'pt']) {
   await b.go(`${SITE}/?recap=demo&lang=${lang}`, 300);
   ok(await waitFor(`(i => !!i && i.complete && i.naturalWidth === 1080)(document.querySelector('.recap .recap-imagen'))`), `${lang}: the window opens with the demo cup's final table, as the cup shares it (D-427)`);
   await sleep(500);
@@ -32,7 +32,7 @@ ok(await waitFor(`!document.querySelector('.splash-capa') && document.body.style
 ok(await ev(`localStorage.getItem('${SEEN_KEY}') === null`), 'the demo is not recorded as seen');
 
 // Uno al día's season (D-424): the made-up October, this phone 3rd of 8
-for (const lang of ['es', 'en', 'pt', 'de']) {
+for (const lang of ['es', 'en', 'pt']) {
   await b.go(`${SITE}/?recap=season-demo&lang=${lang}`, 300);
   ok(await waitFor(`!!document.querySelector('.recap .recap-tabla tbody tr')`), `${lang}: the season's window opens`);
   await sleep(500);

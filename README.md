@@ -428,10 +428,10 @@ Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 - <a id="one-a-day"></a>**📅 One a Day** (D-230; #1 was 6 October 2026): every day at your midnight, a game and its content come from the date, the same for everyone, picked from every solo-playable game with no repeat within a week (D-334, D-405, D-421). [`/today/`](https://juegosdesalon.cl/today/) keeps your streak (a 🧊 freeze per 7 days, up to 2), a calendar and a **monthly points season**: the day's score plus a streak bonus (D-412, D-414). Signed in: leaderboards, invites that earn a freeze, and optional reminders ([docs/UNO-AL-DIA.md](docs/UNO-AL-DIA.md)). A recap window on the home page shows last month's season (D-424). The first attempt counts from its start: left unfinished, it scores 0, and the way back in skips the die (D-433).
 - **Leaderboards** (D-212, D-217): optional sign-in with a name and a 4-digit PIN, no account. Each game keeps your best score and its weekly, all-time, friends and Cup tables; `/records/` adds the All-Rounder and The Cup's medals (D-219); group games keep wins (D-215).
 - **Sharing** (D-165, D-171): every message has a `{emoji} *{title}* · {context}` header, one thing per line and the link last; results go out as an **image plus text**, and the text never repeats the image. The menu's share sheet shows the promo video and an **Invite to play** message listing the main features (D-253, D-271, D-410).
-- **Languages:** Spanish (default), English, Brazilian Portuguese and German, chosen by hand and saved on the device; the browser language is never guessed (D-47, D-48). See [Languages](#languages).
+- **Languages:** Spanish (default), English and Brazilian Portuguese, chosen by hand and saved on the device; the browser language is never guessed (D-47, D-48). See [Languages](#languages).
 - **Sound** synthesized with Web Audio, with a 🔊/🔇 button; **saved games** offer to continue; the screen stays awake while playing. A back swipe or «‹ Menú» mid-game asks before leaving (D-432).
 - **Installable** as a PWA, with a bubble showing the steps for each phone's browser (D-221, D-232); no offline mode yet.
-- **Privacy** (D-463): [`/privacy/`](https://juegosdesalon.cl/privacy/), in the four languages and linked from the menu's footer and every feedback form, says what is kept on the phone and in Firebase, why, for how long and how to have it deleted; an email left for a reply is deleted once we answer or after 90 days.
+- **Privacy** (D-463): [`/privacy/`](https://juegosdesalon.cl/privacy/), in the three languages and linked from the menu's footer and every feedback form, says what is kept on the phone and in Firebase, why, for how long and how to have it deleted; an email left for a reply is deleted once we answer or after 90 days.
 
 ---
 
@@ -654,35 +654,35 @@ python3 tools/release/readme.py seal             # "I have read it again against
 
 ## Languages
 
-The whole app is translated, Portuguese as spoken in Brazil and German for Germany, Austria and Switzerland (D-194). The names:
+The whole app is translated, Portuguese as spoken in Brazil (German left in D-514). The names:
 
 <!-- generated: languages · written by python3 tools/release/readme.py update -->
-| Español | English | Português | Deutsch |
-|---|---|---|---|
-| Juegos de Salón | Party Games | Jogos de Salão | Salonspiele |
-| La Copa | The Cup | A Copa | Der Pokal |
-| Línea de Tiempo | Timeline | Linha do Tempo | Zeitstrahl |
-| Toque y Fama | Bulls and Cows | Toque e Fama | Bullen und Kühe |
-| El Ahorcado | Hangman | Forca | Galgenmännchen |
-| Dudo | Liar's Dice | Dado Mentiroso | Lügenwürfel |
-| Generala | Generala | General | Generala |
-| Batalla Naval | Battleship | Batalha Naval | Schiffe versenken |
-| Julepe | Julep | Paga o Bolo | Julepe |
-| Cuarto Rey | Fourth King | Quarto Rei | Der vierte König |
-| Conexiones | Connections | Conexões | Verbindungen |
-| Toque y Fama: Palabra | Bulls and Cows: Word | Toque e Fama: Palavra | Bullen und Kühe: Wort |
-| ¿En qué año? | What Year? | Em que ano? | Welches Jahr? |
-| Reinas | Queens | Rainhas | Damen |
-| Tango | Tango | Tango | Tango |
-| Zip | Zip | Zip | Zip |
-| Desenredo | Untangle | Desenrola | Entwirren |
-| ¿Dónde queda? | Where Is It? | Onde fica? | Wo liegt das? |
-| El caso | The Case | O Caso | Der Fall |
-| Rutas rotas | Broken Routes | Rotas Quebradas | Kaputte Linien |
-| Loteo | Plots | Loteamento | Parzellen |
-| Pintaminas | Paint Mines | Pinta-Minas | Malminen |
-| Agentes | Agents | Agentes | Agenten |
-| Tren en Vilo | Train on the Edge | Trem no Vão | Zug am Abgrund |
+| Español | English | Português |
+|---|---|---|
+| Juegos de Salón | Party Games | Jogos de Salão |
+| La Copa | The Cup | A Copa |
+| Línea de Tiempo | Timeline | Linha do Tempo |
+| Toque y Fama | Bulls and Cows | Toque e Fama |
+| El Ahorcado | Hangman | Forca |
+| Dudo | Liar's Dice | Dado Mentiroso |
+| Generala | Generala | General |
+| Batalla Naval | Battleship | Batalha Naval |
+| Julepe | Julep | Paga o Bolo |
+| Cuarto Rey | Fourth King | Quarto Rei |
+| Conexiones | Connections | Conexões |
+| Toque y Fama: Palabra | Bulls and Cows: Word | Toque e Fama: Palavra |
+| ¿En qué año? | What Year? | Em que ano? |
+| Reinas | Queens | Rainhas |
+| Tango | Tango | Tango |
+| Zip | Zip | Zip |
+| Desenredo | Untangle | Desenrola |
+| ¿Dónde queda? | Where Is It? | Onde fica? |
+| El caso | The Case | O Caso |
+| Rutas rotas | Broken Routes | Rotas Quebradas |
+| Loteo | Plots | Loteamento |
+| Pintaminas | Paint Mines | Pinta-Minas |
+| Agentes | Agents | Agentes |
+| Tren en Vilo | Train on the Edge | Trem no Vão |
 <!-- /generated -->
 
 <!-- generated: screenshots:idiomas · written by python3 tools/release/readme.py update -->
@@ -701,8 +701,8 @@ How it is put together (canon C-3):
 - `public/assets/js/i18n.js` keeps the language in `localStorage` (`juegos-de-salon:lang`), draws the toggle and holds the shared text (`COMMON`). Each game keeps its text in `LOCALES = { es, en, pt, de }` in its `rules.js`, with no literal string in `game.js`; fixed HTML is marked `data-i18n`.
 - **The four dictionaries have the same keys**: `node public/assets/js/i18n.test.mjs` checks keys, list lengths, `{braces}` and empty texts. **Every screen is tested in every language** by `tools/e2e/<folder>/languages.mjs` (D-199).
 - Translations are adapted, not copied (Santiago's districts become bairros in Portuguese).
-- **The language can travel in the link** (D-74): `?lang=pt` on any page, or the `/en/`, `/pt/` and `/de/` doors; room invitations carry it.
-- **A new language starts in the lab** (D-191, `EN_LABS`), offered only through `/labs/<lang>/`; German went through it (D-197; glossary in [docs/ALEMAN.md](docs/ALEMAN.md)).
+- **The language can travel in the link** (D-74): `?lang=pt` on any page, or the `/en/` and `/pt/` doors (`/de/` and `?lang=de` now open English, D-514); room invitations carry it.
+- **A new language starts in the lab** (D-191, `EN_LABS`), offered only through `/labs/<lang>/`; German went through it (D-197) and later left the app (D-514).
 - The owner dashboard is English only (D-350); the installed app is named in the player's language, one manifest per language (D-222).
 
 ## Owner dashboard
@@ -725,7 +725,7 @@ public/                     The site (juegosdesalon.cl/): the only folder that g
   labs/                       The lab, behind a per-person key (D-281, D-284): Active projects and the Storeroom (D-280, D-422)
   records/                    Leaderboards (D-212)
   today/                      One a Day (D-230, D-414)
-  privacy/                    The privacy page, its texts in texts.js in the four languages (D-463)
+  privacy/                    The privacy page, its texts in texts.js in the three languages (D-463)
   panel/                      Private owner dashboard (docs/PANEL.md); release-push.js, its 🔔 for the owner's release notifications (D-504)
   assets/css/ · assets/js/    Shared styles and modules: games.js (registry), i18n.js, compartir.js (sharing), parametros.js, records.js, uno-al-dia*.js, share-grid.js (Uno al día's spoiler-free share grid, D-482), splash.js, home-windows.js (one window per visit on the home page, D-431), back-guard.js (a back swipe or «‹ Menú» mid-game asks, D-432), search.js, vigia.js (error reporting, D-251), support.js (☕ Buy me a coffee, D-448, D-449), site-footer.js (the home page's footer on the screens outside a game, the one-player games' covers included; not while playing), season.js (seasonal touches on the home page and Rankings, D-457), controls.js (the panel's skins and site-feature switches, D-477), flags.js (runtime lab flags in Firebase, lab|all|off switched on their /labs/ card, D-498, D-509), region-patterns.js (a texture per Queens region for colorblind players, D-481),how-to-play-facts.js (in the lab, who plays, how and what it costs as the first line of «Cómo se juega» on six covers, D-488), qr.js (the room QR, drawn with vendor/qrcode.js, a copy of qrcode-generator served by the site) …
   assets/season/              The seasonal templates, one row per date, and each date's stylesheet (docs/SEASONS.md)

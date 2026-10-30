@@ -162,10 +162,11 @@ export const DIA_MS = 24 * 60 * 60 * 1000;
 // suya en `meta.tz`, así que las ya creadas siguen con la hora de Chile.
 export const ZONA = 'America/Los_Angeles';
 /**
- * Una copa en alemán cambia de día a medianoche de Europa central (D-194): con la del Pacífico,
- * el día nuevo partía a las 9:00 en Berlín. Berlín vale también para Viena y Zúrich.
+ * La zona de las copas nuevas de cada idioma, si no es la de siempre. Hoy ninguno: las copas en
+ * alemán partían a medianoche de Berlín (D-194), y el alemán salió (D-514). Las ya creadas guardan
+ * su `meta.tz`, por eso `zones` sigue nombrando Europe/Berlin.
  */
-export const ZONAS_POR_IDIOMA = { de: 'Europe/Berlin' };
+export const ZONAS_POR_IDIOMA = {};
 export const zonaDeIdioma = lang => ZONAS_POR_IDIOMA[lang] || ZONA;
 
 /** Identificador de jugador dentro de la copa: 6 letras minúsculas o cifras. */

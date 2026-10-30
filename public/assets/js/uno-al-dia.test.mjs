@@ -261,8 +261,8 @@ for (let r = 0; r < 20; r++) assert.ok(puntajeDudo({ gano: false, dados: 0, rond
   const { gameById } = await import('./games.js');
   for (const j of JUEGOS_DIA) {
     const name = gameById(j.id)?.name || j.name;
-    for (const l of ['es', 'en', 'pt', 'de']) assert.ok(name?.[l], `${j.id} has its name in ${l} for the dice`);
-    if (j.name) for (const l of ['es', 'en', 'pt', 'de']) assert.equal(j.name[l], juegosCopa(l)[j.id].nombre, `${j.id} is named as in La Copa (${l})`);
+    for (const l of ['es', 'en', 'pt']) assert.ok(name?.[l], `${j.id} has its name in ${l} for the dice`);
+    if (j.name) for (const l of ['es', 'en', 'pt']) assert.equal(j.name[l], juegosCopa(l)[j.id].nombre, `${j.id} is named as in La Copa (${l})`);
   }
 }
 
