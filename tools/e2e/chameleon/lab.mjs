@@ -121,7 +121,7 @@ await click('#btn-again');
 ok(await waitFor(`${H}.screen() === 'screen-topic' && ${H}.state().players.every(p => p.score === 0)`), 'Play again starts from 0 with the same players');
 
 // The cover in the other languages
-for (const [lang, credit, word] of [['en', /Inspired by The Chameleon, by Big Potato Games/, 'Play!'], ['pt', /Inspirado em The Chameleon, da Big Potato Games/, 'Jogar!'], ['de', /Inspiriert von The Chameleon/, 'Spielen!']]) {
+for (const [lang, credit, word] of [['en', /Inspired by The Chameleon, by Big Potato Games/, 'Play!'], ['pt', /Inspirado em The Chameleon, da Big Potato Games/, 'Jogar!']]) {
   await b.go(`${SITE}/labs/chameleon/?test&lang=${lang}`, 1200);
   ok(credit.test(await ev(`document.querySelector('.credito').textContent`)), `${lang}: the cover in ${lang}`);
   ok(await ev(`document.getElementById('btn-start').textContent`) === word, `${lang}: the setup button`);

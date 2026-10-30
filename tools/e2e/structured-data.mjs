@@ -45,7 +45,7 @@ for (const route of routes) {
   await b.open(`${SITE}${route}`);
   await b.settle(1000);
   let p = JSON.parse(await b.evaluate(READ));
-  // A language door (/pt/, /en/, /de/) sends the browser on to the app: what it says is its served HTML
+  // A language door (/pt/, /en/) sends the browser on to the app: what it says is its served HTML
   if (p.path !== route) {
     const html = await (await fetch(`${SITE}${route}`)).text();
     p = { how: [], text: html.match(/<title>(.*?)<\/title>/s)[1], ld: [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(m => JSON.parse(m[1])) };
