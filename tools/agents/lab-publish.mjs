@@ -92,7 +92,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const [k, e] = o;
     const branch = branchOf(k, e.kind);
     await patch(k, { state: 'working', started: Date.now(), branch });
-    console.log(JSON.stringify({ id: k, kind: e.kind || 'publish', title: e.title || '', note: e.note || '', branch }, null, 2));
+    // The card's flag as Firebase holds it ('all', 'lab', 'off', or null with none saved): the
+    // session cannot read Firebase itself (its curl is denied), and 📦 files the card by it (D-511)
+    const flag = (await read(`flags/${k.replace(/^seccion-/, '')}`, t))?.state ?? null;
+    console.log(JSON.stringify({ id: k, kind: e.kind || 'publish', title: e.title || '', note: e.note || '', branch, flag }, null, 2));
   } else if (cmd === 'opened' && id && /^\d+$/.test(arg || '')) {
     known(id);
     await patch(id, { state: 'pr', pr: Number(arg) });
