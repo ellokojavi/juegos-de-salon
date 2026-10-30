@@ -108,5 +108,5 @@ for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt']) {
 }
 // At 320 px the 🔎 pill shares the ✨ / 🔥 row (D-396, for everyone since D-403): ⭐ goes where it fits in each
 // language (D-364), checked above; here, that it always found a place
-check(at320.length === 4 && at320.every(s => /^(picks|row|line)/.test(s)), `at 320 px, ⭐ finds a place beside the 🔎 pill in every language (${at320.join(', ')})`);
+check(at320.length === 3 && at320.every(s => /^(picks|row|line)/.test(s)), `at 320 px, ⭐ finds a place beside the 🔎 pill in every language (${at320.join(', ')})`);
 if (bad) process.exit(1);
