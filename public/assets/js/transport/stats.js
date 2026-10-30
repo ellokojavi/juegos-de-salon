@@ -684,6 +684,9 @@ export function trackVisit() {
   try { globalThis.__vigia?.listo?.(); } catch (_) { /* sin vigía, nada */ }
   // Un link viejo (`?sala=`, `?prueba`) queda escrito en inglés en la barra (D-266)
   normalizarUrl();
+  // Double tap no longer zooms while playing (flag no-double-tap-zoom, #1045): `touch-action: manipulation`
+  // in base.css under `.no-dtz`; pinch zoom still works. lab: #seccion-no-double-tap-zoom
+  if (typeof document !== 'undefined') import('../flags.js').then(({ flag }) => flag('no-double-tap-zoom')).then(on => on && document.documentElement.classList.add('no-dtz')).catch(() => {});
   try { const s = stats(); return noteVisit(s.api, s.fp); } catch (_) { return Promise.resolve(); }
 }
 
