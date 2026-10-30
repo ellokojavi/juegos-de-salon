@@ -678,7 +678,11 @@
     // The top bar's buttons as pills of one height (flag home-pill-bar, #1027). lab: #seccion-home-pill-bar
     import('./assets/js/flags.js').then(({ flag }) => flag('home-pill-bar')).then(on => on && document.documentElement.classList.add('pill-bar')).catch(() => {});
     if (copa) import('./assets/js/flags.js').then(({ flag }) => flag('copa-hoy')).then(on => on && import('./assets/js/cup-today.js'))
-      .then(m => m && import('./assets/js/flags.js').then(({ flag }) => flag('copa-espera')).then(wait => m.decorateCupCard(copa, { lang, wait }))).catch(() => {});
+      .then(m => m && import('./assets/js/flags.js').then(({ flag }) => flag('copa-espera')).then(wait => {
+        m.decorateCupCard(copa, { lang, wait });
+        // ▶ Jugar hoy only for a day the server does not have played (another phone, a late read)
+        if (param('test') === null) m.confirmCupCard(copa, { lang, wait });
+      })).catch(() => {});
     const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso, estado }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
       if (formaAcceso() === 'off') { reserva?.remove(); return; }
       import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});
@@ -688,12 +692,21 @@
         // Back from today's game (bfcache) brings the page as it was, ▶ Jugar hoy included: once
         // today is played the card is drawn again, with its place
         let actual = card;
-        addEventListener('pageshow', e => {
-          if (!e.persisted || actual.classList.contains('hecho') || !estado().dia) return;
+        const siJugado = () => {
+          if (actual.classList.contains('hecho') || !estado().dia) return;
           const nueva = tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() });
           actual.replaceWith(nueva); actual = nueva;
+          // The next visit's copy goes under today-played's key, which the script under #games reads
+          if (window.__fotoPortada?.k) window.__fotoPortada.k = window.__fotoPortada.k.replace(/\|0$/, '|1');
           import('./assets/js/uad-place.js').then(({ refreshPlace }) => refreshPlace(nueva, { lang, alTocar: () => SFX.tap() })).then(() => guardarFoto()).catch(() => {});
-        });
+        };
+        addEventListener('pageshow', e => { if (e.persisted) siJugado(); });
+        // Played in another tab while this one waited in the background
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) siJugado(); });
+        // Played on another phone, or before this one's memory was cleared: the server says so,
+        // and the card shows it played instead of inviting to play again. Once the page is drawn
+        if (!card.classList.contains('hecho')) (window.requestIdleCallback || (f => setTimeout(f, 300)))(() => import('./assets/js/uno-al-dia-red.js')
+          .then(R => R.hoyJugadoEnRed()).then(si => si && siJugado()).catch(() => {}));
         // A tap on the copy's ▶ chip before the modules arrived: carried out now
         if (window.__fotoPortada?.chip) { window.__fotoPortada.chip = false; card.querySelector('button#btn-uad-chip')?.click(); }
         // The month's place fresh from the server, once the page is drawn (D-435): until it
