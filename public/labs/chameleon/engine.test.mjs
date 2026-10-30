@@ -20,7 +20,7 @@ for (const [lang, L] of Object.entries(LOCALES)) {
 for (const t of TOPIC_IDS) assert.ok(TOPIC_EMOJI[t], `${t} has an emoji`);
 // The same placeholders in every language
 const holes = s => [...s.matchAll(/\{(\w+)\}/g)].map(m => m[1]).sort().join();
-for (const k of keys) for (const lang of ['en', 'pt', 'de']) assert.equal(holes(LOCALES[lang].ui[k]), holes(LOCALES.es.ui[k]), `${lang}.${k}: same {placeholders} as es`);
+for (const k of keys) for (const lang of ['en', 'pt']) assert.equal(holes(LOCALES[lang].ui[k]), holes(LOCALES.es.ui[k]), `${lang}.${k}: same {placeholders} as es`);
 
 // Names
 assert.equal(E.validateNames(['Ana', ' ', 'Beto']).error, 'few');

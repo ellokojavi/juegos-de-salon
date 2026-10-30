@@ -41,13 +41,12 @@
   <meta property="og:locale" content="es_CL">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="pt_BR">
-  <meta property="og:locale:alternate" content="de_DE">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Toque y Fama 🔢 · Juegos de Salón">
   <meta name="twitter:description" content="Adivina el número o la palabra secreta con toques y famas. 1–2 jugadores, 5–12 min. Gratis, sin instalar y sin cuenta.">
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/toque-y-fama.jpg">
   <meta name="twitter:image:alt" content="Toque y Fama: Adivina el número o la palabra secreta con toques y famas.">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Toque y Fama","alternateName":["Bulls and Cows","Toque e Fama","Bullen und Kühe"],"description":"Adivina el número o la palabra secreta con toques y famas.","url":"https://juegosdesalon.cl/bulls-and-cows/","image":"https://juegosdesalon.cl/assets/og/toque-y-fama.jpg","inLanguage":["es","en","pt","de"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":2},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Toque y Fama","alternateName":["Bulls and Cows","Toque e Fama"],"description":"Adivina el número o la palabra secreta con toques y famas.","url":"https://juegosdesalon.cl/bulls-and-cows/","image":"https://juegosdesalon.cl/assets/og/toque-y-fama.jpg","inLanguage":["es","en","pt"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":2},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo se juega Toque y Fama?","acceptedAnswer":{"@type":"Answer","text":"1 o 2 jugadores, 5–12 minutos. Los dos en un mismo celular, cada uno en su celular o solo. Gratis, sin instalar nada y sin cuenta. Por cada intento recibes pistas: una fama es una cifra correcta en su lugar y un toque es una cifra correcta en otro lugar. Gana quien lo saca en menos intentos."}}]}</script>
   <!-- /generated -->
   <link rel="manifest" href="../manifest.webmanifest">
@@ -57,7 +56,7 @@
       try {
         var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
         var m = document.querySelector('link[rel="manifest"]');
-        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+        if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
       } catch (_) { /* queda el del español */ }
     })();
   </script>

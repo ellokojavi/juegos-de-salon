@@ -112,17 +112,17 @@ in the obligada round your own strip shows one ❓ per die you hold. The playtes
 En español la mesa chilena no dice "doses" ni "treses": dice **ases, tontos, trenes, cuadras,
 quinas y sextas**. Esos son los nombres que usa el juego por defecto —en la apuesta, en el
 destape y en el repaso— y se pueden apagar en la configuración para volver a los números. Es una
-opción de un solo idioma: en inglés, portugués y alemán no hay un juego de nombres equivalente
+opción de un solo idioma: en inglés y portugués no hay un juego de nombres equivalente
 instalado, así que ahí las pintas van por su número y el interruptor ni se ofrece (D-71). The fives are "quinas", not "quintas": the owner's correction (D-491).
 
-| Pinta | Chile | es (apagado) | en | pt | de |
-|---|---|---|---|---|---|
-| ⚀ | ases | ases | aces | ases | Asse |
-| ⚁ | tontos | doses | twos | dois | Zweier |
-| ⚂ | trenes | treses | threes | três | Dreier |
-| ⚃ | cuadras | cuatros | fours | quatros | Vierer |
-| ⚄ | quinas | cincos | fives | cincos | Fünfer |
-| ⚅ | sextas | seises | sixes | seis | Sechser |
+| Pinta | Chile | es (apagado) | en | pt |
+|---|---|---|---|---|
+| ⚀ | ases | ases | aces | ases |
+| ⚁ | tontos | doses | twos | dois |
+| ⚂ | trenes | treses | threes | três |
+| ⚃ | cuadras | cuatros | fours | quatros |
+| ⚄ | quinas | cincos | fives | cincos |
+| ⚅ | sextas | seises | sixes | seis |
 
 ## Modos
 

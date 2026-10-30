@@ -44,16 +44,6 @@ const PT_TOPICS = {
   places: { name: 'Lugares', words: ['Praia', 'Hospital', 'Escola', 'Aeroporto', 'Cinema', 'Supermercado', 'Estádio', 'Museu', 'Igreja', 'Biblioteca', 'Academia', 'Parque', 'Prisão', 'Zoológico', 'Restaurante', 'Balada'] },
 };
 
-// German: words common to Germany, Austria and Switzerland (docs/ALEMAN.md)
-const DE_TOPICS = {
-  animals: { name: 'Tiere', words: ['Hund', 'Katze', 'Pferd', 'Kuh', 'Löwe', 'Tiger', 'Elefant', 'Giraffe', 'Affe', 'Delfin', 'Hai', 'Adler', 'Pinguin', 'Schlange', 'Frosch', 'Bär'] },
-  food: { name: 'Essen', words: ['Pizza', 'Brezel', 'Sushi', 'Hotdog', 'Burger', 'Nudeln', 'Reis', 'Salat', 'Suppe', 'Eis', 'Torte', 'Schokolade', 'Brot', 'Käse', 'Ei', 'Pommes'] },
-  sports: { name: 'Sport', words: ['Fußball', 'Tennis', 'Basketball', 'Volleyball', 'Schwimmen', 'Radfahren', 'Boxen', 'Golf', 'Rugby', 'Skifahren', 'Surfen', 'Laufen', 'Schach', 'Karate', 'Baseball', 'Eislaufen'] },
-  jobs: { name: 'Berufe', words: ['Arzt', 'Lehrerin', 'Feuerwehrmann', 'Polizist', 'Koch', 'Pilot', 'Anwältin', 'Friseur', 'Astronaut', 'Bauer', 'Zahnarzt', 'Maler', 'Briefträger', 'Schauspielerin', 'Gärtner', 'Ingenieurin'] },
-  home: { name: 'Zuhause', words: ['Sofa', 'Bett', 'Kühlschrank', 'Waschmaschine', 'Fernseher', 'Lampe', 'Spiegel', 'Dusche', 'Tisch', 'Stuhl', 'Teppich', 'Vorhang', 'Ofen', 'Uhr', 'Kissen', 'Treppe'] },
-  places: { name: 'Orte', words: ['Strand', 'Krankenhaus', 'Schule', 'Flughafen', 'Kino', 'Supermarkt', 'Stadion', 'Museum', 'Kirche', 'Bibliothek', 'Fitnessstudio', 'Park', 'Gefängnis', 'Zoo', 'Restaurant', 'Disco'] },
-};
-
 /* ================================================================== */
 /* Interface texts                                                     */
 /* ================================================================== */
@@ -174,48 +164,8 @@ const PT = {
   and: ' e ',
 };
 
-const DE = {
-  docTitle: 'Chamäleon 🦎 · Salonspiele',
-  menu: '‹ Menü', gameChip: '🦎 Chamäleon', title: 'Chamäleon',
-  lead: 'Alle kennen das geheime Wort, nur einer nicht. Entlarvt das Chamäleon, bevor es entkommt.',
-  credit: 'Inspiriert von The Chameleon, von Big Potato Games.',
-  goSetup: 'Tisch decken!',
-  howTitle: '🦎 So wird gespielt',
-  how1: 'Alle sehen das geheime Wort auf dem Handy, nur das Chamäleon nicht: Es sieht nur das Thema.',
-  how2: 'Reihum sagt jeder ein Wort, das zum geheimen Wort passt. Das Chamäleon muss sich tarnen.',
-  how3: 'Dann wird abgestimmt. Wird das Chamäleon erwischt, entkommt es trotzdem, wenn es das Wort errät.',
-  scoring: 'Unentdeckt entkommen bringt dem Chamäleon 2 Punkte, das Wort erraten 1. Liegt es falsch, bekommen alle anderen 1. Wer zuerst 5 hat, gewinnt.',
-  whoPlays: 'Wer spielt mit?',
-  setupHint: 'Tragt euch in der Reihenfolge ein, in der ihr sitzt. 3 bis 8 Spieler.',
-  playerPlaceholder: 'Spieler {n}', addPlayer: '+ Spieler hinzufügen', removePlayer: 'Spieler entfernen', start: 'Spielen!',
-  errorFew: 'Es fehlen Namen: Ihr braucht mindestens 3 Spieler.', errorRepeated: 'Zwei Spieler haben denselben Namen.',
-  resumeTitle: '🦎 Ein Spiel ist noch offen', resumeText: 'Runde {round}, mit {names}.', resume: 'Weiter', delete: 'Löschen',
-  topicTitle: 'Wähle das Thema', topicRandom: '🎲 Zufällig', roundLabel: 'Runde {n}',
-  passTo: 'Gib das Handy an', seeCard: 'Meine Karte ansehen',
-  yourWord: 'Das geheime Wort ist', youAreChameleon: 'Du bist das Chamäleon!',
-  chameleonHint: 'Du kennst das Wort nicht. Hör den anderen zu und tarn dich.',
-  hideCard: 'Fertig, verdecken',
-  cluesTitle: 'Ein Hinweis pro Person',
-  cluesText: '{name} beginnt, dann geht es nach rechts. Jeder sagt ein einziges Wort.',
-  goVote: 'Abstimmen!',
-  voteTitle: 'Wer ist das Chamäleon?',
-  voteText: 'Auf drei zeigen alle auf jemanden. Tippe auf den, auf den die meisten zeigen. Bei Gleichstand entscheidet {name}.',
-  caughtTitle: '{name} wurde erwischt!',
-  guessText: '{name}, errätst du das geheime Wort, entkommst du.',
-  resultEscaped: '🦎 Das Chamäleon ist entkommen!', resultGuessed: '🦎 Das Chamäleon hat es erraten!', resultCaught: '🎉 Das Chamäleon wurde erwischt!',
-  resultWhoEscaped: 'Es war {name}, und ihr habt {accused} beschuldigt. +2 für das Chamäleon.',
-  resultWhoGuessed: 'Es war {name}, und das Wort wurde erraten. +1 für das Chamäleon.',
-  resultWhoCaught: 'Es war {name}, mit dem Tipp „{guess}“. +1 für alle anderen.',
-  secretWas: 'Das Wort war', scoreTitle: '📊 Punkte', points: '{n} Pkt.', point: '1 Pkt.',
-  nextRound: 'Nächste Runde',
-  winnerTitle: '🏆 {name} gewinnt!', winnerTie: '🏆 Unentschieden: {names}!',
-  again: 'Nochmal!', changePlayers: 'Spieler ändern', backMenu: 'Zurück zum Menü',
-  and: ' und ',
-};
-
 export const LOCALES = {
   es: { ui: ES, topics: ES_TOPICS },
   en: { ui: EN, topics: EN_TOPICS },
   pt: { ui: PT, topics: PT_TOPICS },
-  de: { ui: DE, topics: DE_TOPICS },
 };

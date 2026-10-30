@@ -41,13 +41,12 @@
   <meta property="og:locale" content="es_CL">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="pt_BR">
-  <meta property="og:locale:alternate" content="de_DE">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Dudo 🎲 · Juegos de Salón">
   <meta name="twitter:description" content="Agita el cacho, apuesta cuántos dados hay en la mesa y aguanta la cara. 1–6 jugadores, 10–20 min. Gratis, sin instalar y sin cuenta.">
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/dudo.jpg">
   <meta name="twitter:image:alt" content="Dudo: Agita el cacho, apuesta cuántos dados hay en la mesa y aguanta la cara.">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Dudo","alternateName":["Liar's Dice","Dado Mentiroso","Lügenwürfel"],"description":"Agita el cacho, apuesta cuántos dados hay en la mesa y aguanta la cara.","url":"https://juegosdesalon.cl/liars-dice/","image":"https://juegosdesalon.cl/assets/og/dudo.jpg","inLanguage":["es","en","pt","de"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":6},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Dudo","alternateName":["Liar's Dice","Dado Mentiroso"],"description":"Agita el cacho, apuesta cuántos dados hay en la mesa y aguanta la cara.","url":"https://juegosdesalon.cl/liars-dice/","image":"https://juegosdesalon.cl/assets/og/dudo.jpg","inLanguage":["es","en","pt"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":6},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo se juega Dudo?","acceptedAnswer":{"@type":"Answer","text":"De 1 a 6 jugadores, 10–20 minutos. Todos en un mismo celular, cada uno en su celular o contra el celular. Gratis, sin instalar nada y sin cuenta. Cada uno tiene cinco dados y ve solo los suyos. Se apuesta cuántos dados de una pinta hay en toda la mesa, como \"cuatro quinas\". Los ases son comodín: cuentan como la pinta apostada. El siguiente sube la apuesta (más dados, o los mismos con pinta mayor) o dice \"dudo\". Pasar a ases pide la mitad de los dados, y salir de ases, el doble más uno. Al dudar se cuentan los dados: si hay los apostados o más, pierde un dado quien dudó, y si no, quien apostó. Calzar es decir que la cantidad es exacta: si aciertas recuperas un dado y si no, pierdes uno. Se puede con tres jugadores o más y desde la mitad de los dados. Quien se queda sin dados sale. Gana el último con dados."}}]}</script>
   <!-- /generated -->
   <link rel="manifest" href="../manifest.webmanifest">
@@ -57,7 +56,7 @@
       try {
         var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
         var m = document.querySelector('link[rel="manifest"]');
-        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+        if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
       } catch (_) { /* queda el del español */ }
     })();
   </script>

@@ -75,7 +75,7 @@ b.close();
 // shows. The types always go in one row and nothing overflows.
 const WIDTHS = [[320, 'where it fits'], [390, 'row'], [900, 'row']];
 const at320 = [];
-for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt', 'de']) {
+for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt']) {
   const c = await launch({ dir: `${OUT}/p${width}${lang}`, out: OUT, width, height: 700 });
   await c.go(`${SITE}/?lang=${lang}`, 1500);
   await c.evaluate(`localStorage.setItem('juegos-de-salon:favoritos', '["ahorcado","tango"]'); 1`);
@@ -108,5 +108,5 @@ for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt', 'de'
 }
 // At 320 px the 🔎 pill shares the ✨ / 🔥 row (D-396, for everyone since D-403): ⭐ goes where it fits in each
 // language (D-364), checked above; here, that it always found a place
-check(at320.length === 4 && at320.every(s => /^(picks|row|line)/.test(s)), `at 320 px, ⭐ finds a place beside the 🔎 pill in every language (${at320.join(', ')})`);
+check(at320.length === 3 && at320.every(s => /^(picks|row|line)/.test(s)), `at 320 px, ⭐ finds a place beside the 🔎 pill in every language (${at320.join(', ')})`);
 if (bad) process.exit(1);

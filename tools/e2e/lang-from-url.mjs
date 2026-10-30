@@ -36,7 +36,7 @@ for (const lang of OTHERS) {
 await clean('/?lang=fr');
 console.log('/?lang=fr (absent)  →', JSON.stringify(await look()));
 
-/* 4. Each language's entry gate (/pt/, /en/, /de/…) leaves it chosen and sends to the home page */
+/* 4. Each language's entry gate (/pt/, /en/…) leaves it chosen and sends to the home page */
 for (const route of OTHERS.map(l => `/${l}/`)) {
   const lang = route.split('/').at(-2);
   await clean(route);
@@ -45,6 +45,11 @@ for (const route of OTHERS.map(l => `/${l}/`)) {
   console.log(`${route.padEnd(20)}→`, JSON.stringify(m));
   if (m.lang !== lang || m.saved !== lang || m.url !== '/') bad(`${route} doesn't leave the app in ${lang} on the home page`);
 }
+// German left the app (D-514): its door, a `?lang=de` link and a stored `de` open English
+await clean('/de/'); await sleep(2200);
+{ const m = await look(); console.log('/de/ (retired)      →', JSON.stringify(m)); if (m.lang !== 'en' || m.saved !== 'en') bad('/de/ does not open English'); }
+await clean('/?lang=de');
+{ const m = await look(); if (m.lang !== 'en' || m.saved !== 'en') bad('?lang=de does not open English'); }
 
 /* 5. It stays saved: the next visit, with nothing in the link, stays in that language */
 await b.go(`${SITE}/`, 1500);

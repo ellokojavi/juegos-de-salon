@@ -11,7 +11,7 @@ the waiting room says so, with the link.
   2026-10-22, in La Copa's pool and in Uno al día from 2026-10-24. Id `agentes` (the same as in the
   lab's usage signal). It left the lab in D-421, in Conexiones' place; `/labs/agents/` is a bridge
   to `/agents/`.
-- **For whom:** one player. In the four languages, each with its own deck of clues (D-170).
+- **For whom:** one player. In the three languages, each with its own deck of clues (D-170).
 - **History:** lab project from v0.157.0 (RP-55), with 100 concrete clues and a board of the day
   (D-288), 18 clues of ideas (#383), and out of the lab in D-421.
 
@@ -94,7 +94,7 @@ The numbers come from `numbers.js` (`CUANTAS`, `NEUTRALES`, `RESTA_NEUTRAL`, `RE
   `generarDia(código, día, { sal, palabras, aud, ensayo })` is La Copa's (D-331). `estado(t, jugadas)`
   rebuilds the game from the moves (`{i}` or `{pasar:true}`).
 - `ui.js`: the screen (`montar`), the waiting room's title and drawing, the result and the breakdown.
-  `texts.js`: its texts in the four languages, keys prefixed `ag`. `style.css`: its classes prefixed `ag-`.
+  `texts.js`: its texts in the three languages, keys prefixed `ag`. `style.css`: its classes prefixed `ag-`.
 - `engine.test.mjs` checks the four decks (one word per card in capitals, at most 15 letters, 9 or 10
   words and 3 temptations per clue, and no month or Easter in a season in Spanish, Portuguese or English,
   which are spoken in both hemispheres) and 300 boards in each language (each clue with the agents it says,

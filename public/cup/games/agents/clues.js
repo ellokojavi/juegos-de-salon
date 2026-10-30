@@ -6,7 +6,7 @@
  *
  * A word can be in several clues: the generator never puts on a board a word that goes with two of
  * its clues, nor an assassin that really goes with one. English, Portuguese and German have their
- * own decks (clues-en.js, clues-pt.js, clues-de.js), adapted, not translated.
+ * own decks (clues-en.js, clues-pt.js), adapted, not translated.
  */
 export const CLASICAS = [
   { pista: 'MAR', si: ['OLA', 'BARCO', 'SAL', 'PLAYA', 'ANCLA', 'ISLA', 'MAREA', 'PUERTO', 'TIBURÓN'], casi: ['RÍO', 'LAGO', 'PISCINA'] },

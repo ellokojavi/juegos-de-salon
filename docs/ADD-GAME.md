@@ -15,8 +15,7 @@ development lives under `public/labs/` (D-395).
 
 Inside it, what the canons ask, using the shared modules and never one of its own:
 
-- **Texts** in `LOCALES = { es, en, pt, de }` in `rules.js` (C-3, parity test); German with
-  [ALEMAN.md](ALEMAN.md); instructions per U-18.
+- **Texts** in `LOCALES = { es, en, pt }` in `rules.js` (C-3, parity test); instructions per U-18.
 - **Modes** per C-5, with C-7's transport and, with a room, `room-flow.js` and its rules in
   `firebase/database.rules.json`.
 - **Memory** with `createSessionStore` / `createNameStore` from `session.js` (C-6); `handoff.js`,

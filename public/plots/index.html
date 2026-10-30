@@ -42,13 +42,12 @@
   <meta property="og:locale" content="es_CL">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="pt_BR">
-  <meta property="og:locale:alternate" content="de_DE">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Loteo 📐 · Juegos de Salón">
   <meta name="twitter:description" content="Divide el tablero en lotes: cada número dice cuántas casillas tiene el suyo. Un jugador, 5–15 min. Gratis, sin instalar y sin cuenta.">
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/loteo.jpg">
   <meta name="twitter:image:alt" content="Loteo: Divide el tablero en lotes: cada número dice cuántas casillas tiene el suyo.">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Loteo","alternateName":["Plots","Loteamento","Parzellen"],"description":"Divide el tablero en lotes: cada número dice cuántas casillas tiene el suyo.","url":"https://juegosdesalon.cl/plots/","image":"https://juegosdesalon.cl/assets/og/loteo.jpg","inLanguage":["es","en","pt","de"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":1},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Loteo","alternateName":["Plots","Loteamento"],"description":"Divide el tablero en lotes: cada número dice cuántas casillas tiene el suyo.","url":"https://juegosdesalon.cl/plots/","image":"https://juegosdesalon.cl/assets/og/loteo.jpg","inLanguage":["es","en","pt"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":1},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo se juega Loteo?","acceptedAnswer":{"@type":"Answer","text":"Divide el tablero en lotes: rectángulos con un solo número cada uno. El número dice cuántas casillas tiene su lote: un 6 puede ser de 2×3 o de 1×6. Arrastra de una esquina a otra para dibujar un lote y tócalo para borrarlo. Son 5 tableros contra el reloj."}}]}</script>
   <!-- /generated -->
   <link rel="manifest" href="../manifest.webmanifest">
@@ -58,7 +57,7 @@
       try {
         var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
         var m = document.querySelector('link[rel="manifest"]');
-        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+        if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
       } catch (_) { /* queda el del español */ }
     })();
   </script>

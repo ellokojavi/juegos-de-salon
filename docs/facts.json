@@ -2,20 +2,17 @@
   "app": {
     "es": "Juegos de Salón",
     "en": "Party Games",
-    "pt": "Jogos de Salão",
-    "de": "Salonspiele"
+    "pt": "Jogos de Salão"
   },
   "languages": [
     "es",
     "en",
-    "pt",
-    "de"
+    "pt"
   ],
   "phrases": {
     "es": 150,
     "en": 150,
-    "pt": 150,
-    "de": 150
+    "pt": 150
   },
   "commonKeys": 42,
   "games": [
@@ -25,8 +22,7 @@
       "name": {
         "es": "La Copa",
         "en": "The Cup",
-        "pt": "A Copa",
-        "de": "Der Pokal"
+        "pt": "A Copa"
       },
       "players": "2 to 10",
       "duration": "7",
@@ -75,7 +71,6 @@
         "public/cup/desglose.js",
         "public/cup/engine.js",
         "public/cup/game.js",
-        "public/cup/games/agents/clues-de.js",
         "public/cup/games/agents/clues-en.js",
         "public/cup/games/agents/clues-pt.js",
         "public/cup/games/agents/clues.js",
@@ -102,7 +97,6 @@
         "public/cup/games/case/engine.js",
         "public/cup/games/case/ui.js",
         "public/cup/games/connections/engine.js",
-        "public/cup/games/connections/grillas-de.js",
         "public/cup/games/connections/grillas-en.js",
         "public/cup/games/connections/grillas-pt.js",
         "public/cup/games/connections/grillas.js",
@@ -301,8 +295,7 @@
       "name": {
         "es": "Línea de Tiempo",
         "en": "Timeline",
-        "pt": "Linha do Tempo",
-        "de": "Zeitstrahl"
+        "pt": "Linha do Tempo"
       },
       "players": "1 to 6",
       "duration": "10–20",
@@ -374,8 +367,7 @@
       "name": {
         "es": "Toque y Fama",
         "en": "Bulls and Cows",
-        "pt": "Toque e Fama",
-        "de": "Bullen und Kühe"
+        "pt": "Toque e Fama"
       },
       "players": "1 to 2",
       "duration": "5–12",
@@ -426,8 +418,7 @@
       "name": {
         "es": "El Ahorcado",
         "en": "Hangman",
-        "pt": "Forca",
-        "de": "Galgenmännchen"
+        "pt": "Forca"
       },
       "players": "1 to 6",
       "duration": "5–12",
@@ -481,8 +472,7 @@
       "name": {
         "es": "Dudo",
         "en": "Liar's Dice",
-        "pt": "Dado Mentiroso",
-        "de": "Lügenwürfel"
+        "pt": "Dado Mentiroso"
       },
       "players": "1 to 6",
       "duration": "10–20",
@@ -529,8 +519,7 @@
       "name": {
         "es": "Generala",
         "en": "Generala",
-        "pt": "General",
-        "de": "Generala"
+        "pt": "General"
       },
       "players": "1 to 6",
       "duration": "5–30",
@@ -577,8 +566,7 @@
       "name": {
         "es": "Batalla Naval",
         "en": "Battleship",
-        "pt": "Batalha Naval",
-        "de": "Schiffe versenken"
+        "pt": "Batalha Naval"
       },
       "players": "1 to 2",
       "duration": "10–20",
@@ -627,8 +615,7 @@
       "name": {
         "es": "Julepe",
         "en": "Julep",
-        "pt": "Paga o Bolo",
-        "de": "Julepe"
+        "pt": "Paga o Bolo"
       },
       "players": "1 to 6",
       "duration": "15–30",
@@ -671,8 +658,7 @@
       "name": {
         "es": "Cuarto Rey",
         "en": "Fourth King",
-        "pt": "Quarto Rei",
-        "de": "Der vierte König"
+        "pt": "Quarto Rei"
       },
       "players": "4 to 6",
       "duration": "20–40",
@@ -700,8 +686,7 @@
       "name": {
         "es": "Conexiones",
         "en": "Connections",
-        "pt": "Conexões",
-        "de": "Verbindungen"
+        "pt": "Conexões"
       },
       "kinds": [
         "words",
@@ -718,8 +703,7 @@
       "name": {
         "es": "Toque y Fama: Palabra",
         "en": "Bulls and Cows: Word",
-        "pt": "Toque e Fama: Palavra",
-        "de": "Bullen und Kühe: Wort"
+        "pt": "Toque e Fama: Palavra"
       },
       "kinds": [
         "words",
@@ -736,8 +720,7 @@
       "name": {
         "es": "¿En qué año?",
         "en": "What Year?",
-        "pt": "Em que ano?",
-        "de": "Welches Jahr?"
+        "pt": "Em que ano?"
       },
       "kinds": [
         "trivia"
@@ -753,8 +736,7 @@
       "name": {
         "es": "Reinas",
         "en": "Queens",
-        "pt": "Rainhas",
-        "de": "Damen"
+        "pt": "Rainhas"
       },
       "kinds": [
         "logic"
@@ -770,8 +752,7 @@
       "name": {
         "es": "Tango",
         "en": "Tango",
-        "pt": "Tango",
-        "de": "Tango"
+        "pt": "Tango"
       },
       "kinds": [
         "logic"
@@ -787,8 +768,7 @@
       "name": {
         "es": "Zip",
         "en": "Zip",
-        "pt": "Zip",
-        "de": "Zip"
+        "pt": "Zip"
       },
       "kinds": [
         "logic"
@@ -804,8 +784,7 @@
       "name": {
         "es": "Desenredo",
         "en": "Untangle",
-        "pt": "Desenrola",
-        "de": "Entwirren"
+        "pt": "Desenrola"
       },
       "kinds": [
         "logic"
@@ -821,8 +800,7 @@
       "name": {
         "es": "¿Dónde queda?",
         "en": "Where Is It?",
-        "pt": "Onde fica?",
-        "de": "Wo liegt das?"
+        "pt": "Onde fica?"
       },
       "kinds": [
         "trivia"
@@ -838,8 +816,7 @@
       "name": {
         "es": "El caso",
         "en": "The Case",
-        "pt": "O Caso",
-        "de": "Der Fall"
+        "pt": "O Caso"
       },
       "kinds": [
         "logic"
@@ -855,8 +832,7 @@
       "name": {
         "es": "Rutas rotas",
         "en": "Broken Routes",
-        "pt": "Rotas Quebradas",
-        "de": "Kaputte Linien"
+        "pt": "Rotas Quebradas"
       },
       "kinds": [
         "logic"
@@ -872,8 +848,7 @@
       "name": {
         "es": "Loteo",
         "en": "Plots",
-        "pt": "Loteamento",
-        "de": "Parzellen"
+        "pt": "Loteamento"
       },
       "kinds": [
         "logic"
@@ -889,8 +864,7 @@
       "name": {
         "es": "Pintaminas",
         "en": "Paint Mines",
-        "pt": "Pinta-Minas",
-        "de": "Malminen"
+        "pt": "Pinta-Minas"
       },
       "kinds": [
         "logic"
@@ -906,8 +880,7 @@
       "name": {
         "es": "Agentes",
         "en": "Agents",
-        "pt": "Agentes",
-        "de": "Agenten"
+        "pt": "Agentes"
       },
       "kinds": [
         "words"
@@ -923,8 +896,7 @@
       "name": {
         "es": "Tren en Vilo",
         "en": "Train on the Edge",
-        "pt": "Trem no Vão",
-        "de": "Zug am Abgrund"
+        "pt": "Trem no Vão"
       },
       "kinds": [
         "logic"
@@ -942,14 +914,12 @@
       "name": {
         "es": "Historia",
         "en": "History",
-        "pt": "História",
-        "de": "Geschichte"
+        "pt": "História"
       },
       "hint": {
         "es": "Hitos de la humanidad",
         "en": "Milestones of humankind",
-        "pt": "Marcos da humanidade",
-        "de": "Meilensteine der Menschheit"
+        "pt": "Marcos da humanidade"
       },
       "cards": 96,
       "from": -2560,
@@ -961,14 +931,12 @@
       "name": {
         "es": "Música",
         "en": "Music",
-        "pt": "Música",
-        "de": "Musik"
+        "pt": "Música"
       },
       "hint": {
         "es": "De Beethoven a Taylor Swift",
         "en": "From Beethoven to Taylor Swift",
-        "pt": "De Beethoven até Taylor Swift",
-        "de": "Von Beethoven bis Taylor Swift"
+        "pt": "De Beethoven até Taylor Swift"
       },
       "cards": 91,
       "from": 1600,
@@ -980,14 +948,12 @@
       "name": {
         "es": "Chile",
         "en": "Chile",
-        "pt": "Chile",
-        "de": "Chile"
+        "pt": "Chile"
       },
       "hint": {
         "es": "Del terremoto del 60 al estallido",
         "en": "From the 1960 quake to the uprising",
-        "pt": "Do terremoto de 1960 aos protestos de 2019",
-        "de": "Vom Erdbeben 1960 bis zu den Protesten 2019"
+        "pt": "Do terremoto de 1960 aos protestos de 2019"
       },
       "cards": 120,
       "from": 1520,
@@ -999,14 +965,12 @@
       "name": {
         "es": "Cultura pop",
         "en": "Pop culture",
-        "pt": "Cultura pop",
-        "de": "Popkultur"
+        "pt": "Cultura pop"
       },
       "hint": {
         "es": "Cine, memes y videojuegos",
         "en": "Movies, memes and video games",
-        "pt": "Cinema, memes e videogames",
-        "de": "Filme, Memes und Videospiele"
+        "pt": "Cinema, memes e videogames"
       },
       "cards": 108,
       "from": 1928,
@@ -1018,14 +982,12 @@
       "name": {
         "es": "Brasil",
         "en": "Brazil",
-        "pt": "Brasil",
-        "de": "Brasilien"
+        "pt": "Brasil"
       },
       "hint": {
         "es": "De Cabral a la COP30, con novelas y carnaval",
         "en": "From Cabral to COP30, telenovelas and carnival included",
-        "pt": "De Cabral à COP30, com novela e carnaval",
-        "de": "Von Cabral bis zur COP30, mit Telenovelas und Karneval"
+        "pt": "De Cabral à COP30, com novela e carnaval"
       },
       "cards": 139,
       "from": 1500,
@@ -1037,14 +999,12 @@
       "name": {
         "es": "Fútbol",
         "en": "Soccer",
-        "pt": "Futebol",
-        "de": "Fußball"
+        "pt": "Futebol"
       },
       "hint": {
         "es": "Mundiales, clubes, goles y fichajes",
         "en": "World Cups, clubs, goals and transfers",
-        "pt": "Copas, clubes, gols e contratações",
-        "de": "WMs, Vereine, Tore und Transfers"
+        "pt": "Copas, clubes, gols e contratações"
       },
       "cards": 121,
       "from": 1863,
@@ -1148,7 +1108,6 @@
     "public/cup/desglose.js",
     "public/cup/engine.js",
     "public/cup/game.js",
-    "public/cup/games/agents/clues-de.js",
     "public/cup/games/agents/clues-en.js",
     "public/cup/games/agents/clues-pt.js",
     "public/cup/games/agents/clues.js",
@@ -1170,7 +1129,6 @@
     "public/cup/games/case/engine.js",
     "public/cup/games/case/ui.js",
     "public/cup/games/connections/engine.js",
-    "public/cup/games/connections/grillas-de.js",
     "public/cup/games/connections/grillas-en.js",
     "public/cup/games/connections/grillas-pt.js",
     "public/cup/games/connections/grillas.js",

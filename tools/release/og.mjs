@@ -49,16 +49,15 @@ const withCard = GAMES.filter(g => g.available || g.labs || existsSync(join(ROOT
 
 /**
  * The entrance doors: the home page in Spanish and the ones that leave the language chosen (/pt/,
- * /en/ and /de/). Each one is shared in its language, so its card is too (D-74, D-197).
+ * /en/). Each one is shared in its language, so its card is too (D-74). /de/ only sends to /en/ (D-514).
  */
 const DOORS = [
   { lang: 'es', file: 'public/index.html', route: '/', image: 'menu' },
   { lang: 'pt', file: 'public/pt/index.html', route: '/pt/', image: 'menu-pt' },
   { lang: 'en', file: 'public/en/index.html', route: '/en/', image: 'menu-en' },
-  { lang: 'de', file: 'public/de/index.html', route: '/de/', image: 'menu-de' },
 ];
 /** The tagline's closing. It is the only phrase that does not come from the app: it is said to the robots. */
-const FREE = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.', de: 'Kostenlos, ohne Installation und ohne Konto.' };
+const FREE = { es: 'Gratis, sin instalar y sin cuenta.', en: 'Free, no install, no account.', pt: 'De graça, sem instalar e sem conta.' };
 /**
  * What the list of games does not say: One a Day and the games to play solo (D-271). Without
  * this, the home page's card only told the group games. One a Day's name comes from the app.
@@ -67,11 +66,10 @@ const ALSO = {
   es: n => `Además, ${n} y juegos para jugar solo.`,
   en: n => `Plus ${n} and games to play solo.`,
   pt: n => `E ainda ${n} e jogos para jogar sozinho.`,
-  de: n => `Dazu das ${n} und Spiele zum Alleinspielen.`,
 };
 /** "A, B and C" in each language. */
 const list = lang => available.map(g => g.name[lang]).join(', ')
-  .replace(/, ([^,]*)$/, ` ${{ es: 'y', en: 'and', pt: 'e', de: 'und' }[lang]} $1`);
+  .replace(/, ([^,]*)$/, ` ${{ es: 'y', en: 'and', pt: 'e' }[lang]} $1`);
 
 const door = p => ({
   ...p,
@@ -228,7 +226,7 @@ const OLD_CLOSE = '  <!-- /generado -->';
 const escape = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const reEscape = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-const LOCALE = { es: 'es_CL', en: 'en_US', pt: 'pt_BR', de: 'de_DE' };
+const LOCALE = { es: 'es_CL', en: 'en_US', pt: 'pt_BR' };
 
 /* ------------------------------------------------------------------ */
 /* What search engines read (#887)                                     */

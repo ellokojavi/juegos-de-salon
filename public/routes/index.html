@@ -42,13 +42,12 @@
   <meta property="og:locale" content="es_CL">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="pt_BR">
-  <meta property="og:locale:alternate" content="de_DE">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Rutas rotas 🚇 · Juegos de Salón">
   <meta name="twitter:description" content="Une todas las líneas del metro girando partes del tablero. Un jugador, 7 min. Gratis, sin instalar y sin cuenta.">
   <meta name="twitter:image" content="https://juegosdesalon.cl/assets/og/rutas.jpg">
   <meta name="twitter:image:alt" content="Rutas rotas: Une todas las líneas del metro girando partes del tablero.">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Rutas rotas","alternateName":["Broken Routes","Rotas Quebradas","Kaputte Linien"],"description":"Une todas las líneas del metro girando partes del tablero.","url":"https://juegosdesalon.cl/routes/","image":"https://juegosdesalon.cl/assets/og/rutas.jpg","inLanguage":["es","en","pt","de"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":1},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Rutas rotas","alternateName":["Broken Routes","Rotas Quebradas"],"description":"Une todas las líneas del metro girando partes del tablero.","url":"https://juegosdesalon.cl/routes/","image":"https://juegosdesalon.cl/assets/og/rutas.jpg","inLanguage":["es","en","pt"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"applicationCategory":"GameApplication","operatingSystem":"Any","numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":1},"isPartOf":{"@type":"WebSite","name":"Juegos de Salón","url":"https://juegosdesalon.cl/"}}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo se juega Rutas rotas?","acceptedAnswer":{"@type":"Answer","text":"Une cada color en una sola línea, sin cortes entre piezas. Arrastra de una pieza a otra: el rectángulo entre ellas da media vuelta y sus piezas quedan al revés. Un toque gira una sola. Son 5 etapas en 7 minutos. Deshacer y reiniciar son gratis."}}]}</script>
   <!-- /generated -->
   <link rel="manifest" href="../manifest.webmanifest">
@@ -58,7 +57,7 @@
       try {
         var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
         var m = document.querySelector('link[rel="manifest"]');
-        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+        if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
       } catch (_) { /* queda el del español */ }
     })();
   </script>

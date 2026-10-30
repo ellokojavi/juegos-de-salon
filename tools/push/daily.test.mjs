@@ -57,8 +57,9 @@ assert.match(r[0].notification.body, /mejor racha fue de 5 días/);
 assert.equal(run({ ...base, u: N - 30, c: 1, m: 1 }, at('2026-10-07', 10))[0].notification.body, '📅 Uno al día te espera cuando quieras.', 'with a best streak of 1, no "fue de 1 días" (U-6)');
 
 // In the recipient's language
-assert.match(run(base, Date.parse('2026-10-07T07:10:00Z'), {}, sub('Europe/Berlin', 'de'))[0].notification.body, /^📅 Spiel des Tages Nr\./);
-assert.match(run(base, Date.parse('2026-10-07T07:10:00Z'), {}, sub('Europe/Berlin', 'de'))[0].notification.url, /&lang=de$/);
+assert.match(run(base, Date.parse('2026-10-07T07:10:00Z'), {}, sub('Europe/Berlin', 'pt'))[0].notification.url, /&lang=pt$/);
+// German left the app (D-514): a phone subscribed in German gets English
+assert.match(run(base, Date.parse('2026-10-07T07:10:00Z'), {}, sub('Europe/Berlin', 'de'))[0].notification.url, /&lang=en$/);
 
 // No subscription, nothing; the old is cleaned
 assert.deepEqual(dailyNotifications({ wants: { a: base }, subs: {}, sent: {}, now: at('2026-10-07', 10) }), []);
@@ -81,9 +82,9 @@ assert.deepEqual(stale({ a: { 'dia:1': 0, 'dia:2': Date.parse('2026-10-07') } },
   assert.deepEqual(run(q, at('2026-11-04', 9)), [], 'not after the 3rd');
   assert.ok(run({ ...q, u: numDia('2026-09-29') }, at('2026-11-01', 9)).every(x => x.kind !== 'temporada'), 'not to whoever did not play that month');
   assert.equal(run({ ...q, u: NOV }, at('2026-11-01', 9))[0]?.key, 'temporada:2026-10', 'playing on the 1st does not take it away');
-  s = run(q, at('2026-11-01', 9), {}, sub('America/Santiago', 'de'));
-  assert.equal(s[0].notification.body, '🏆 Die Saison im Oktober ist vorbei. Tippe, um die Endrangliste zu sehen.');
-  assert.match(s[0].notification.url, /&lang=de$/);
+  s = run(q, at('2026-11-01', 9), {}, sub('America/Santiago', 'pt'));
+  assert.equal(s[0].notification.body, '🏆 A temporada de outubro terminou. Toque para ver o ranking final.');
+  assert.match(s[0].notification.url, /&lang=pt$/);
 }
 
 console.log('One a Day notifications: ok');

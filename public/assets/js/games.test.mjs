@@ -2,7 +2,7 @@
 // C-2 (motor y sus tests, C-12), el gancho de pruebas de C-14 ni su especificación con la plantilla
 // común de C-13. Mira los archivos de verdad, no lo que dice el registro.
 // Los juegos de La Copa (SUELTOS) no pasan por aquí: los cubren cup.md y cup/games/juegos.test.mjs.
-// La paridad de LOCALES (es, en, pt, de) tampoco: la revisa i18n.test.mjs.
+// La paridad de LOCALES (es, en, pt) tampoco: la revisa i18n.test.mjs.
 // Uso: node public/assets/js/games.test.mjs
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';

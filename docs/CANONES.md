@@ -11,7 +11,7 @@ Cada canon tiene un ID (C-n) para citarlo en el código, en los commits y en las
 
 ## C-1 · Identidad y tono
 
-- Español chileno informal por defecto; inglés, portugués y alemán son opcionales y se eligen a mano (C-3, D-197). Tuteo, humor liviano, sin groserías fuertes.
+- Español chileno informal por defecto; inglés y portugués son opcionales y se eligen a mano (C-3, D-514). Tuteo, humor liviano, sin groserías fuertes.
 - **The audience is everyone, not only Chile** (D-324). The app was first made for Chilean tables, and the Chilean Spanish voice stays as its flavor, but no text, document or decision presents it as being for Chileans only. Content only one country knows is tagged and optional (D-186).
 - **Instrucciones concisas** (U-8, U-18, D-184): la meta primero y con verbo, a lo más 3 puntos, nada de lo que el dibujo de ejemplo ya muestra y el puntaje en una frase. Un tope en `public/cup/games/juegos.test.mjs` frena lo que se pasa. Concisas no es telegrama: frases completas (U-1).
 - Paleta y tipografías compartidas desde `public/assets/css/base.css`: fondo oscuro con degradados, acentos neón (rosado, amarillo, cian, lima), **Bangers** en títulos y **Nunito** en el cuerpo. The fonts are served from `public/assets/fonts/` (never from Google Fonts), with their OFL license, and every page that links `base.css` preloads `nunito-latin.woff2` and `bangers-latin.woff2` (the title font, so titles do not flash in the fallback) right before it (#851, `public/assets/css/fonts-preload.test.mjs`).
@@ -73,15 +73,15 @@ public/<carpeta>/
 
 ## C-3 · Idiomas
 
-- **Español es el idioma por defecto.** Quien entra a juegosdesalon.cl sin haber elegido nada ve la app en español, sea cual sea el idioma de su navegador: nunca se detecta con `navigator.language`. Inglés, portugués y alemán son opcionales: solo se activan cuando la persona toca el toggle, y la elección queda guardada en el dispositivo (D-47, D-197).
-- **El idioma también puede venir en el link:** `?lang=pt` en cualquier página, o las puertas `/pt/`, `/en/` y `/de/`. Se aplica, se guarda y el parámetro se saca de la barra. No es detección: alguien lo eligió, para sí mismo o para quien recibe el link. La invitación a una sala lo lleva pegado con `withLang()` (D-74).
-- Todo texto visible vive en `LOCALES.es`, `LOCALES.en`, `LOCALES.pt` y `LOCALES.de` de `rules.js`. Ninguna cadena literal en `game.js`.
+- **Español es el idioma por defecto.** Quien entra a juegosdesalon.cl sin haber elegido nada ve la app en español, sea cual sea el idioma de su navegador: nunca se detecta con `navigator.language`. Inglés y portugués son opcionales: solo se activan cuando la persona toca el toggle, y la elección queda guardada en el dispositivo (D-47). El alemán salió (D-514): quien lo tenía guardado, o llega con `?lang=de` o por `/de/`, queda en inglés (`RETIRADOS` en `i18n.js`).
+- **El idioma también puede venir en el link:** `?lang=pt` en cualquier página, o las puertas `/pt/` y `/en/`. Se aplica, se guarda y el parámetro se saca de la barra. No es detección: alguien lo eligió, para sí mismo o para quien recibe el link. La invitación a una sala lo lleva pegado con `withLang()` (D-74).
+- Todo texto visible vive en `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` de `rules.js`. Ninguna cadena literal en `game.js`.
 - Los textos fijos del HTML se marcan con `data-i18n="clave"` (o `data-i18n-html`) y se aplican con `applyStatic(T)`.
 - El idioma se lee con `getLang()` y el toggle `langToggle()` va en la intro de cada juego.
 - **El selector de idioma es uno solo, `langToggle()`, y se ve igual en toda la app** (D-231).
   Ninguna pantalla arma el suyo. Su estándar:
   - Una píldora de vidrio (`--glass`) con un botón por idioma de `LANGS`, en el orden de `LANGS`.
-  - **Cada botón lleva la bandera y el código en mayúsculas, siempre** (🇪🇸 ES, 🇬🇧 EN, 🇧🇷 PT, 🇩🇪 DE).
+  - **Cada botón lleva la bandera y el código en mayúsculas, siempre** (🇪🇸 ES, 🇬🇧 EN, 🇧🇷 PT).
     La bandera identifica el idioma, no el país de quien juega: el español va con 🇪🇸 (D-244). Salen de `BANDERAS` en `i18n.js`, en emoji, nunca
     en SVG: en Windows se ve como dos letras y se acepta (D-231). Nunca se esconde:
     en una pantalla ancha va al lado del código, y en un celular angosto (≤ 440 px), arriba, para
@@ -101,7 +101,7 @@ public/<carpeta>/
 - **Un idioma nuevo entra por el laboratorio** (D-191): con todos sus textos (la paridad recorre
   `IDIOMAS`), pero en `EN_LABS`, que lo ofrece solo en el dispositivo que entró por
   `/labs/<idioma>/`. Sale del laboratorio cuando quienes lo hablan lo revisaron. Hoy no hay
-  ninguno: el alemán pasó por ahí y salió (D-197); su glosario fijo está en [ALEMAN.md](ALEMAN.md).
+  ninguno: el alemán pasó por ahí, salió (D-197) y después dejó la app (D-514).
 
 ## C-4 · Sonido y vibración
 
@@ -487,7 +487,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   result is too short to scroll that far: an empty space under the list (`.filtros-relleno`) holds
   them, and shrinks as the player scrolls up, so they leave at the first pixel up; the jump is
   rounded up to a whole pixel (D-371).
-- **Los tipos van en una sola fila**, a cualquier ancho desde 320 px y en los cuatro idiomas:
+- **Los tipos van en una sola fila**, a cualquier ancho desde 320 px y en los tres idiomas:
   bajo 520 px el emoji sube arriba del nombre, y bajo 300 px de caja las fichas se aprietan para
   no quedar pegadas al borde (D-144, D-149, U-11). Lo que se suma a la fila entra solo si cabe,
   y eso se mide en la página, no se supone: ⭐ Favoritos va primera, con su nombre o con la ⭐
@@ -516,12 +516,12 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   "Privacidad" (`COMMON.privacy`), which opens `/privacy/`. The same page is linked from the note
   under the email field of every feedback form. **The page describes the code:** a PR that stores
   something new about players, or keeps it for a different time, edits `public/privacy/texts.js`
-  in the same PR, in the four languages (`texts.test.mjs` checks their shape).
+  in the same PR, in the three languages (`texts.test.mjs` checks their shape).
 - **The footer outside the home page:** game covers (the one-player games' too, on their own page, not in La Copa or Uno al día), La Copa's entrance,
   Rankings and Uno al día end with the same violet-sunset footer (`site-footer.js`, U-38); only Rankings
   and Uno al día carry the funny phrase. Never during a game or on a result screen. **Every game is a game** (the owner, 2026-10-27): no player text or doc calls one a "minigame"; only La Copa's Gran Final plays shortened versions.
 - **Se prueba entera en Chrome:** `tools/e2e/favorites.mjs` (filtros, favoritos y 320 px en los
-  cuatro idiomas), `share-home.mjs`, `install-prompt.mjs`, `daily.mjs` e
+  tres idiomas), `share-home.mjs`, `install-prompt.mjs`, `daily.mjs` e
   `lang-from-url.mjs`. `window.__portada` dice el filtro, las tarjetas que se ven y los
   favoritos. Un cambio que se ve rehace la captura `docs/screenshots/menu.png` (C-13).
 
@@ -605,7 +605,7 @@ that moment, and only those, in the same order everywhere (D-343):
 
 - [ ] Los modos que ofrece (los tres, si es para dos) funcionan y la partida se puede retomar en **todos** (C-5, C-6).
 - [ ] Las instrucciones siguen U-18: la meta primero, a lo más 3 puntos, sin repetir el dibujo de ejemplo (C-1).
-- [ ] Todo el texto está en español, inglés, portugués y alemán (el de `IDIOMAS`, también el del laboratorio), con las mismas claves en todos, sin cadenas sueltas en el código (C-3, D-191).
+- [ ] Todo el texto está en español, inglés y portugués (el de `IDIOMAS`, también el del laboratorio), con las mismas claves en todos, sin cadenas sueltas en el código (C-3, D-191).
 - [ ] Sus pantallas están en `tools/e2e/paths.mjs` y su `languages.mjs` pasa en todos los idiomas (C-12, D-199).
 - [ ] Hay sonido y vibración en las acciones clave, con botón de silencio (C-4).
 - [ ] On its landing the start button (or the first mode) is above the fold at 320×568 and 375×667 in every language, with the rules below it: `node tools/e2e/landing-fold.mjs` green (U-39, D-344).
@@ -618,7 +618,7 @@ that moment, and only those, in the same order everywhere (D-343):
 - [ ] Lo que cambió, en `changelog/<rama>.md` sin número (`node tools/release/changelog.mjs new`); publicada y comprobada en la URL pública por `publish.yml` (C-11, D-205, D-300).
 - [ ] Si tiene varios celulares, el chat de sala usa el módulo compartido y muere con la sala (C-15).
 - [ ] Lo que comparte (sala, resultado) sale de `compartir.js`, con la cabecera del estándar, y un resultado va con su imagen (C-7, D-165).
-- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17). A new one brings `nuevoDesde` for its "New" label (D-333) and its search keywords in the four languages (D-404).
+- [ ] Registro en el menú, README, especificación, requerimientos y decisiones (C-2, C-13). En la portada, con su tipo, entra al dado y a los favoritos y cabe a 320 px (C-17). A new one brings `nuevoDesde` for its "New" label (D-333) and its search keywords in the three languages (D-404).
 - [ ] Las excepciones a los cánones están escritas en su especificación (C-13).
 - [ ] Sus URL van en inglés: carpeta, parámetros y valores, leídos con `parametros.js`, con los nombres de antes como alias (C-18).
 - [ ] Su `index.html` lleva el vigía antes de las hojas de estilo y llama `trackVisit()` al cargar: `node public/assets/js/vigia.test.mjs` en verde (C-7, D-251).

@@ -118,41 +118,4 @@ const PT = {
   },
 };
 
-const DE = {
-  juego: {
-    nombre: 'Agenten', habilidad: 'Assoziieren',
-    como: [
-      `Jedes Wort ist ein Deckname. Tipp die an, die zum Hinweis passen: „MEER · 3“ heißt 3. Es kommen ${CUANTAS} Hinweise.`,
-      `Meide die ${NEUTRALES} Unbeteiligten (−${RESTA_NEUTRAL}) und den Attentäter (−${RESTA_ASESINO}): Sie beenden den Hinweis.`,
-      'Unsicher? Halt eine Karte gedrückt, um sie zu markieren, oder überspring den Hinweis.',
-    ],
-    puntaje: `Die gefundenen Agenten bringen bis zu 100 Punkte; jeder Unbeteiligte zieht ${RESTA_NEUTRAL} ab, der Attentäter ${RESTA_ASESINO}.`,
-    desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
-  },
-  ui: {
-    agStamp: 'Geheim',
-    agCredit: 'Inspiriert von {juego} von Vlaada Chvátil (Czech Games Edition).',
-    agDemo: [
-      { pista: 'MEER', cartas: ['MOND', 'WELLE', 'FLUSS', 'SCHIFF', 'WOLKE', 'INSEL'], agentes: [1, 3, 5], asesino: 2 },
-      { pista: 'NACHT', cartas: ['KERZE', 'BROT', 'EULE', 'AUTO', 'TAG', 'MOND'], agentes: [0, 2, 5], asesino: 4 },
-      { pista: 'ZIRKUS', cartas: ['TIGER', 'CLOWN', 'TISCH', 'ZELT', 'ZOO', 'BUCH'], agentes: [1, 3, 0], asesino: 4 },
-    ],
-    agClue: 'Hinweis {n} von {t}', agMissing: 'Noch {n}', agMissingOne: 'Noch 1',
-    agPass: '⏭️ Nächster Hinweis', agFinish: '🏁 Beenden', agFinishSure: '🏁 Ja, beenden',
-    agLeftOne: '1 Agent ist noch nicht gefunden. Trotzdem beenden?', agLeft: '{n} Agenten sind noch nicht gefunden. Trotzdem beenden?',
-    agMarksHelp: '💡 Halt eine Karte gedrückt, um sie als verdächtig zu markieren 📌. Noch einmal, um sie auszuschließen 🚫, und noch einmal, um die Markierung zu löschen.',
-    agDiscarded: '🚫 Ausgeschlossen: Halt sie gedrückt, um die Markierung zu löschen.',
-    agMarkSuspect: '📌 Markiert, nicht aufgedeckt. Tipp sie an, um sie aufzudecken.', agMarkDiscard: '🚫 Ausgeschlossen: So deckst du sie nicht aus Versehen auf.', agMarkNone: 'Keine Markierung.',
-    agSuspectLabel: '(verdächtig)', agDiscardLabel: '(ausgeschlossen)',
-    agGood: 'Gut! Einer von deinen.', agOther: 'Einer von deinen! Von einem anderen Hinweis, zählt aber trotzdem.',
-    agNeutral: `Unbeteiligt: −${RESTA_NEUTRAL}. Der Hinweis bricht ab.`, agAssassin: `Der Attentäter! −${RESTA_ASESINO}. Der Hinweis bricht ab.`,
-    agSealDone: 'Komplett', agSealCut: 'Abgebrochen', agSealPassed: 'Übersprungen',
-    agEndWin: 'Mission erfüllt!', agEndHalf: 'Mission halb erfüllt', agEndFail: 'Mission gescheitert', agEndAssassin: 'Der Attentäter hat dich erwischt',
-    agTrapHit: '💀 Du bist auf {w} hereingefallen: Es sah nach {p} aus, war aber keiner von deinen.', agTrapDodged: '💀 Du bist dem Attentäter ausgewichen: {w} sah nach {p} aus.',
-    agTempts: '≈ {p}', agWholeBoard: '🗺️ Das ganze Brett',
-    agBdFound: '🕵️ Du hast {n} von {t} Agenten gefunden: +{pts}.', agBdNeutralOne: '⬜ Du hast 1 Unbeteiligten erwischt: −{pts}.', agBdNeutrals: '⬜ Du hast {n} Unbeteiligte erwischt: −{pts}.',
-    agBdAssassin: '💀 Du hast den Attentäter erwischt: −{pts}.',
-  },
-};
-
-export default { es: ES, en: EN, pt: PT, de: DE };
+export default { es: ES, en: EN, pt: PT };

@@ -35,7 +35,7 @@ for (const loc of locs) {
   if (!d.name || !d.description) fails.push(`${loc}: JSON-LD without name or description`);
   if (d['@type'] !== 'WebSite') {
     if (d.isAccessibleForFree !== true || d.offers?.price !== '0') fails.push(`${loc}: not marked free`);
-    if (!['es', 'en', 'pt', 'de'].every(l => d.inLanguage?.includes(l))) fails.push(`${loc}: inLanguage is not the four languages`);
+    if (!['es', 'en', 'pt'].every(l => d.inLanguage?.includes(l))) fails.push(`${loc}: inLanguage is not the languages of the app`);
     if (!(d.numberOfPlayers?.minValue >= 1 && d.numberOfPlayers.maxValue >= d.numberOfPlayers.minValue)) fails.push(`${loc}: bad numberOfPlayers`);
     if ('aggregateRating' in d) fails.push(`${loc}: a rating we do not have`);
   }

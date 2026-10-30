@@ -1,14 +1,20 @@
 /**
  * Idioma compartido por toda la app.
  * El idioma se elige con un toggle en el menú (y en la intro de cada juego)
- * y se guarda en localStorage. Por defecto: español. Idiomas: es, en, pt (D-47) y de (D-197).
+ * y se guarda en localStorage. Por defecto: español. Idiomas: es, en y pt (D-47); el alemán salió (D-514).
  */
 import { el } from './ui.js';
 
 const KEY = 'juegos-de-salon:lang';
 
 /** Todos los idiomas que tienen diccionario. Las pruebas de paridad los recorren todos (C-3). */
-export const IDIOMAS = ['es', 'en', 'pt', 'de'];
+export const IDIOMAS = ['es', 'en', 'pt'];
+
+/**
+ * Idiomas que ya no se ofrecen, con el que los reemplaza (D-514): quien tenía el alemán guardado o
+ * abre un link con `?lang=de` sigue en inglés, sin quedar en el español por defecto.
+ */
+export const RETIRADOS = { de: 'en' };
 
 /**
  * Los idiomas que están en el laboratorio (D-191): tienen sus textos, pero solo se ofrecen en el
@@ -36,7 +42,11 @@ export const LABS_IDIOMA = idiomaDeLabs();
 export const LANGS = IDIOMAS.filter(l => !EN_LABS.includes(l) || l === LABS_IDIOMA);
 
 export function getLang() {
-  try { const v = localStorage.getItem(KEY); if (LANGS.includes(v)) return v; } catch (_) { /* nada */ }
+  try {
+    const v = localStorage.getItem(KEY);
+    if (LANGS.includes(v)) return v;
+    if (RETIRADOS[v]) { localStorage.setItem(KEY, RETIRADOS[v]); return RETIRADOS[v]; }
+  } catch (_) { /* nada */ }
   return 'es';
 }
 
@@ -68,7 +78,8 @@ export const sinLang = search => {
 
 function idiomaDeLaUrl() {
   try {
-    const pedido = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+    const crudo = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+    const pedido = RETIRADOS[crudo] || crudo;
     if (!LANGS.includes(pedido)) return;
     setLang(pedido);
     history.replaceState(null, '', location.pathname + sinLang(location.search) + location.hash);
@@ -81,11 +92,11 @@ if (LABS_IDIOMA && typeof document !== 'undefined') {
   import('./labs-idioma.js').then(m => m.iniciarLabs(LABS_IDIOMA)).catch(() => {});
 }
 
-/** La app en la web. Las puertas por idioma son /pt/, /en/ y /de/ (D-74, D-197). */
+/** La app en la web. Las puertas por idioma son /pt/ y /en/ (D-74); /de/ manda a la de inglés (D-514). */
 export const SITIO = 'https://juegosdesalon.cl/';
 
 /**
- * La portada para compartir, en el idioma de quien comparte: la de siempre, `/pt/`, `/en/` o `/de/`.
+ * La portada para compartir, en el idioma de quien comparte: la de siempre, `/pt/` o `/en/`.
  * Es la misma idea que `withLang` —quien manda el link elige con qué idioma llega— pero con
  * las puertas, que son las que traen su propia tarjeta social en ese idioma (D-74).
  */
@@ -133,7 +144,7 @@ export const COMMON = {
         '🏅 Rankings: tus mejores puntajes contra los de tus amigos y los de todos.',
         '🔓 Sin cuenta: tocas el link y juegas.',
         '📲 Como app: la agregas a tu pantalla de inicio y, si quieres, te avisa cuando te toca jugar.',
-        '🌎 En español, inglés, portugués y alemán.',
+        '🌎 En español, inglés y portugués.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir. Sale en
@@ -387,7 +398,7 @@ export const COMMON = {
         '🏅 Leaderboards: your best scores against your friends\' and everyone else\'s.',
         '🔓 No account: tap the link and play.',
         '📲 Like an app: add it to your home screen and, if you want, it tells you when it\'s your turn to play.',
-        '🌎 In Spanish, English, Portuguese and German.',
+        '🌎 In Spanish, English and Portuguese.',
       ],
     },
     // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
@@ -854,252 +865,6 @@ export const COMMON = {
       rankings: 'Rankings',
     },
   },
-  de: {
-    appTitle: 'Salonspiele',
-    appSub: 'Kurze Gesellschafts-, Logik- und Geschicklichkeitsspiele für allein oder mit Freunden.',
-    appFree: 'Kostenlos, ohne Installation und ohne Konto.',
-    players: 'Spieler', minutes: 'Min.',
-    footer: 'Trink verantwortungsvoll und hab Wasser dabei. Wer fährt, trinkt nicht. 🚕',
-    player: 'Spieler',
-    filters: 'Spiele filtern',
-    shown: 'Du siehst {n} von {total} Spielen.', clearFilters: 'Alle zeigen',
-    favorites: 'Favoriten', filterNew: 'Neu', filterPopular: 'Beliebt', favorite: '{juego} als Favorit markieren',
-    onlySpanish: 'Auf Spanisch',
-    code: 'Code auf GitHub', privacy: 'Datenschutz', volverMenu: '🏠 Zurück zum Menü', menu: 'Menü', soon: 'Demnächst', newGame: 'Neu', popularGame: 'Beliebt', or: 'oder',
-    opening: 'Raum wird geöffnet…', joining: 'Beitritt läuft…', playOnePhone: '📱 Mit einem Handy spielen',
-    backGuard: { title: 'Spiel verlassen?', body: 'Wenn du jetzt gehst, bleibt das Spiel unfertig.', stay: '▶ Weiterspielen', leave: 'Verlassen' },
-    share: 'Salonspiele teilen',
-    shareApp: {
-      context: '{n} Spiele fürs Handy',
-      lines: [
-        '🏆 Der Pokal: ein Turnier unter Freunden, eine Woche lang, mit einem anderen Spiel pro Tag.',
-        '📅 Spiel des Tages: jeden Tag eine neue Aufgabe, für alle dieselbe, mit eigener Monatsrangliste.',
-        '👥 In der Gruppe: auf einem Handy oder jeder auf seinem.',
-        '🧩 Allein: Spiele mit Wörtern, Logik und Wissen.',
-        '🏅 Ranglisten: deine besten Punkte gegen die deiner Freunde und aller anderen.',
-        '🔓 Ohne Konto: Link antippen und losspielen.',
-        '📲 Wie eine App: zum Startbildschirm hinzufügen und, wenn du willst, meldet sie sich, wenn du dran bist.',
-        '🌎 Auf Spanisch, Englisch, Portugiesisch und Deutsch.',
-      ],
-    },
-    // La hoja del botón de compartir de la portada: el video y las dos maneras de compartir
-    shareSheet: {
-      title: 'Salonspiele teilen',
-      videoTitle: 'Video von Salonspiele',
-      invite: '💬 Zum Spielen einladen',
-      inviteNote: 'Eine Nachricht mit dem Link zum Mitspielen.',
-      video: '🎬 Video teilen',
-      videoNote: 'Das 40-Sekunden-Video, das die Spiele zeigt.',
-      copied: '✅ Kopiert',
-      close: 'Schließen',
-      videoContext: 'Video ansehen',
-      videoLines: ['🎲 Die Spieleklassiker auf dem Handy, kostenlos und ohne Konto.', '🏆 In der Gruppe, allein, in einem Turnier über eine Woche oder mit einer neuen Aufgabe jeden Tag.'],
-    },
-    invite: '{emoji} *{game}* · Raum {code}\n\n👋 {name} lädt dich zum Spielen auf juegosdesalon.cl ein.',
-    shareResult: '📤 Ergebnis teilen',
-    shareSoloContext: 'Allein gespielt',
-    shareSoloCta: '🤔 Schlägst du mich? Gratis auf dem Handy spielen:',
-    shareSoloImage: '🤔 Schlägst du mich?',
-    shareCopied: 'Kopiert! Füg es im Chat ein.',
-    shareDownloaded: 'Das Bild wurde gespeichert und der Text kopiert.',
-    // El globo de la portada para agregar la app a inicio (D-232)
-    // Spiel des Tages (D-230): der Knopf auf der Startseite, der Würfel, die Ergebniskarte und /today/
-    // La Copa's card on the home page: a day left to play today (lab flag copa-hoy)
-    cupToday: { play: 'Heute spielen', aria: 'Heute deinen Tag im Pokal spielen', opens: 'Tag {day} · {time}', finalDone: 'Finale · endet in {time}' },
-    uad: {
-      nombre: 'Spiel des Tages',
-      jugar: 'Heute spielen',
-      tusPuntos: '✅ Deine Punkte',
-      ariaJugarHoy: 'Heute spielen: Spiel des Tages',
-      ariaTusPuntos: 'Spiel des Tages: deine Punkte im Monat',
-      listo: 'Erledigt',
-      aria: 'Spiel des Tages: deine Punkte und das heutige Spiel',
-      ariaListo: 'Spiel des Tages: deine Übersicht ansehen',
-      tocó: 'Spiel des Tages Nr. {n} · Heute dran:',
-      intro: '📅 Spiel des Tages: Heute spielen alle dieselbe Aufgabe.',
-      introRepite: '📅 Du hast das heutige schon gespielt: Diesmal ist es Übung, dein Tagesergebnis bleibt gleich.',
-      lockRule: 'Dein erster Versuch zählt: Beendest du ihn nicht, gibt es 0.',
-      lockResume: '📅 Du hast das heutige mittendrin verlassen: Mach dort weiter, wo du warst.',
-      lockLost: '📅 Dein heutiger Versuch wurde nicht beendet: Er zählt als 0. Diesmal ist es Übung.',
-      racha1: '🔥 Serie: 1 Tag',
-      racha: '🔥 Serie: {n} Tage',
-      vuelve: 'Komm morgen wieder für Tag {n}.',
-      practica: 'Diesmal war es Übung: Es zählt der erste Versuch des Tages mit {s} Punkten.',
-      puntos: '{s} Punkte',
-      jugarOtro: '🎲 Anderes spielen',
-      repetir: 'Nochmal spielen',
-      verTodo: '📅 Zurück zum Spiel des Tages',
-      compartirTitulo: 'Spiel des Tages Nr. {n}',
-      sub: 'Jeden Tag ein Überraschungsspiel, dieselbe Aufgabe für alle.',
-      hoyTitulo: 'Heute',
-      hoyFalta: 'Das heutige Spiel wartet. Der Würfel verrät, welches.',
-      hoyListo: 'Heute hast du {juego} gespielt: {s} Punkte.',
-      proximo: 'Nächstes Spiel in {t}.',
-      horas: '{h}\u00a0Std. {m}\u00a0Min',
-      minutos: '{m}\u00a0Min',
-      rachaLabel: 'Serie',
-      mejorLabel: 'beste Serie',
-      jugadosLabel: 'Tage gespielt',
-      rachaCortada: 'Deine beste Serie: {n} Tage. Schaffst du mehr?',
-      calendario: 'Kalender',
-      mesAnterior: 'Voriger Monat',
-      mesSiguiente: 'Nächster Monat',
-      vacio: 'Du hast noch kein Spiel des Tages gespielt. Das erste wartet.',
-      // Mit Spieler und Einladungen (PR 3)
-      pct: 'Besser als {p} % derer, die heute gespielt haben.',
-      comodinUsado: '🧊 Du hast gestern einen Joker eingesetzt, deine Serie läuft weiter: {n} Tage.',
-      comodinGanado: '🧊 Du hast einen Joker für 7 Tage am Stück bekommen: Wenn du einen Tag aussetzt, rettet er deine Serie. Einen gibt es auch, wenn ein eingeladener Freund sein erstes Spiel des Tages beendet.',
-      sinComodines: '🧊 Du hast keine Joker. Lade einen Freund ein und hol dir einen.',
-      comodinesTitulo: '🧊 Joker: {n} von 2',
-      comodinesLogica: 'Ein Joker rettet deine Serie an einem Tag, an dem du nicht spielst. Du bekommst einen alle 7 Tage am Stück und einen weiteren, wenn ein eingeladener Freund sein erstes Spiel des Tages beendet.',
-      comodinesEntrar: 'Melde dich an, um auch die Joker deiner Freunde zu bekommen.',
-      comodinesLabel: 'Joker',
-      guardaRacha: 'Behalte deine Serie auf jedem Handy.',
-      invTitulo: '👋 Lade einen Freund ein',
-      rkCompartir: '📤 Rangliste teilen',
-      rkCompCab: 'Rangliste {mes}', rkPalabra: 'Rangliste',
-      rkCompVoy: 'Ich bin #{p} in der Rangliste von Spiel des Tages. Holst du mich ein? Spiel das heutige:',
-      rkCompSin: 'Schau dir die Rangliste von Spiel des Tages an. Traust du dich rein? Spiel das heutige:',
-      rkCompImagen: 'Jeden Tag ein neues Spiel. Kostenlos, ohne Download.',
-      invComodin: '🧊 Wenn dein Freund sein erstes Spiel des Tages beendet, bekommst du einen Joker, der deine Serie an einem Tag rettet, an dem du nicht spielst.',
-      invEntrar: '🧊 Wenn du dich anmeldest, bekommst du einen Joker, sobald ein eingeladener Freund sein erstes Spiel des Tages beendet.',
-      invitar: 'Einladen',
-      invCab: 'Ich fordere dich heraus',
-      atreves: 'Traust du dich?',
-      desafia: '🔥 {n} fordert dich heraus',
-      invGeneral: '📅 Du wurdest zum Spiel des Tages eingeladen.',
-      invGeneralSub: 'Jeden Tag ein Überraschungsspiel, dieselbe Aufgabe für alle. Traust du dich?',
-      duelo: 'Du {a} · {n} {b}. Morgen gibt es das nächste.',
-      dueloPend: '{n} hat das heutige noch nicht gespielt.',
-      aceptado: '🧊 {n} hat deine Herausforderung angenommen: Du hast einen Joker bekommen.',
-      aceptadoSin: '👋 {n} hat deine Herausforderung angenommen.',
-      unAmigo: 'Ein Freund',
-      rankingTitulo: '🏅 Rangliste: Spiel des Tages',
-      // The month's points (D-412): the season, a day's details and the rules, on /today/
-      pts: {"temporada": "Saison {mes}", "quedan": "noch {n} Tage", "ultimo": "letzter Tag", "pts": "Pkt.", "hoySumaste": "✅ Heute hast du {p} Pkt. geholt: {s} aus dem Spiel + {b} aus der Serie.", "puesto": "Platz {p} im Monat", "faltan": "Platz {p} im Monat · noch {f} Pkt., um {n} zu überholen", "juegaHoy": "Spiel heute, um in die Monatsrangliste zu kommen.", "enUnMomento": "Deine Punkte erscheinen gleich in der Rangliste.", "campeon": "👑 Sieger im {mes}", "bonoHoy": "Bonus heute", "como": "Wie bekommt man Punkte?", "entendido": "Verstanden", "jugar": "Spielen", "titulo": "🏅 Rangliste des Monats", "leyenda": "Punkte pro Tag: Spiel + Serie. Tippe auf einen Tag, um die Details zu sehen.", "numero": "Nr. {n}", "juego": "Spiel", "puntaje": "Punkte im Spiel", "racha": "Serie", "dia1": "{n} Tag", "dias": "{n} Tage", "bono": "Serienbonus", "sumo": "Dazu", "ptsN": "{n} Pkt.", "noJugaste": "Nicht gespielt", "salvo": "🧊 ein Joker hat ihn gerettet", "siguio": "🔥 {n} Tage, nicht gerissen", "noExistia": "gab es noch nicht", "hoy": "Heute", "todaviaNo": "noch nicht gespielt", "cortada": "die Serie ist gerissen", "tarde": "Zu spät hochgeladen: zählt für die Serie, nicht für die Punkte.", "cerrar": "Schließen", "comodinAria": "{d}: Joker", "diaAria": "{d}: {p} Pkt.", "chipPuesto": "#{p}", "delMes": "im Monat", "reglas": [["🎮", "Das Spiel:", "jedes Spiel des Tages zählt seine Punkte, von 0 bis 100."], ["🔥", "Die Serie:", "+5 für jeden Tag in Folge, bis +50."], ["🧊", "Joker:", "rettet einen Tag, an dem du nicht gespielt hast; Serie und Bonus laufen weiter."], ["🏆", "Saison:", "der Monat. Am 1. starten alle bei 0, und wer den Monat gewinnt, trägt im nächsten Monat den 🏆 neben dem Namen."]], "invitarPts": "👋 Und jeder eingeladene Freund bringt dir +10 Pkt. für deinen Monat.", "reglaInvitar": ["👋", "Einladen:", "Jeder eingeladene Freund, der sein erstes Spiel des Tages beendet, bringt dir +10 Pkt. für deinen Monat."]},
-      y: 'und',
-      yo: { racha: 'ich habe eine Serie von {n} Tagen', puesto: 'ich bin unter den besten {p} % {tabla}', hoy: 'ich habe heute {s} geholt, besser als {p} %', mejora: 'ich werde besser bei {juego}', constancia: 'ich habe schon an {n} Tagen das Spiel des Tages gespielt', constancia1: 'ich habe mein erstes Spiel des Tages gespielt' },
-      el: { racha: 'hat eine Serie von {n} Tagen', puesto: 'ist unter den besten {p} % {tabla}', hoy: 'hat heute {s} geholt, besser als {p} %', mejora: 'wird besser bei {juego}', constancia: 'hat schon an {n} Tagen das Spiel des Tages gespielt', constancia1: 'hat das erste Spiel des Tages gespielt' },
-      tablas: { semana: 'der Woche', rachas: 'bei den Serien' },
-      // Benachrichtigungen (PR 4)
-      avTitulo: '📅 Spiel des Tages',
-      avDia: '📅 Spiel des Tages Nr. {n} ist da. 🔥 Serie: {c} Tage.',
-      avDiaSin: '📅 Spiel des Tages Nr. {n} ist da.',
-      avRacha: '🔥 Deine Serie von {c} Tagen endet um Mitternacht. Dir bleiben {h} Stunden.',
-      avRachaCom: '🧊 Wenn du heute nicht spielst, setzt du einen Joker ein, um deine Serie von {c} Tagen zu retten. Dir bleiben {h} Stunden.',
-      avSemana: '📊 Deine Woche: Du hast an {n} von 7 Tagen gespielt.',
-      avAdios: '🔥 Deine beste Serie waren {m} Tage. Das Spiel des Tages wartet, wann immer du willst.',
-      avAdiosSin: '📅 Das Spiel des Tages wartet, wann immer du willst.',
-      avPregunta: '🔔 Sollen wir dich jeden Tag erinnern? Wähle die Uhrzeit.',
-      avManana: 'Morgens · 9:00',
-      avAlmuerzo: 'Mittags · 13:00',
-      avTarde: 'Abends · 19:00',
-      avAhoraNo: 'Jetzt nicht',
-      avActivar: '🔔 Mitteilungen einschalten',
-      avActivos: '🔔 Mitteilungen aktiv',
-      avBloqueados: '🔕 Mitteilungen blockiert',
-      avHoja: '🔔 Mitteilungen: Spiel des Tages',
-      avDiario: 'Tägliche Erinnerung',
-      avDiarioSub: 'Zur gewählten Uhrzeit, wenn du noch nicht gespielt hast.',
-      avRachaSw: 'Serie endet bald',
-      avRachaSub: 'Um 21:00, wenn du nicht gespielt hast.',
-      avSemanaSw: 'Deine Woche',
-      avSemanaSub: 'Montags.',
-      avHora: 'Uhrzeit der Mitteilung',
-      avProbar: 'Mitteilungen testen',
-      avSilenciar: 'Stummschalten',
-      avSilenciado: 'Fertig: Du bekommst keine Mitteilungen mehr zum Spiel des Tages.',
-      avListo: '✅ Fertig. Wir erinnern dich jeden Tag um {h}:00.',
-      avPrueba: 'So sehen die Mitteilungen zum Spiel des Tages aus.',
-      avPaso3: 'Öffne **Salonspiele** über das neue Symbol, tippe auf **Spiel des Tages** und wähle noch mal die Uhrzeit.',
-      avOtraApp: 'Du bist in einer anderen App, und dort lässt sich Salonspiele nicht zum Home-Bildschirm hinzufügen. Kopier den Link, öffne ihn in Safari und wähle noch mal die Uhrzeit.',
-      avError: 'Die Mitteilungen ließen sich nicht einschalten. Versuch es noch mal.',
-      mismosDados: 'Alle starten mit denselben Würfeln.',
-      mismaFlota: 'Alle treten gegen dieselbe Flotte des Handys an.',
-    },
-    ins: {
-      title: "Salonspiele als App",
-      sub: "Leg sie auf deinen Home-Bildschirm und öffne sie mit einem Tipp.",
-      add: "Hinzufügen",
-      dismiss: "Nicht mehr anzeigen",
-      sheetTitle: "Füge die App zu deinem Home-Bildschirm hinzu",
-      iosShare: "Tippe in der Safari-Leiste auf **Teilen**.",
-      iosShareNote: "Unter iOS 26 steckt es im ⋯-Knopf der Leiste.",
-      chromeIosShare: "Tippe in der Adressleiste oben rechts auf **Teilen**.",
-      iosAdd: "Wähle **Zum Home-Bildschirm**. Wenn du es nicht siehst, scrolle in der Liste nach unten.",
-      iosConfirm: "Tippe oben rechts auf **Hinzufügen**.",
-      androidMenu: "Tippe oben rechts auf das Menü **⋮**.",
-      androidAdd: "Wähle **Zum Startbildschirm hinzufügen** oder **App installieren**.",
-      androidConfirm: "Bestätige mit **Installieren**.",
-      samsungMenu: "Tippe unten rechts auf das Menü **☰**.",
-      samsungAdd: "Wähle **Seite hinzufügen zu** und dann **Startbildschirm**.",
-      samsungConfirm: "Bestätige mit **Hinzufügen**.",
-      done: "Hab ich gemacht",
-      doneNext: "Fertig. Öffne sie ab jetzt über das Symbol auf deinem Home-Bildschirm.",
-      close: "Schließen",
-      otherTitleIos: "Öffne den Link in Safari",
-      otherTitleAndroid: "Öffne den Link in Chrome",
-      otherLeadIos: "Du bist in einer anderen App, und dort lässt sich Salonspiele nicht zum Home-Bildschirm hinzufügen. Kopier den Link, öffne ihn in **Safari** und tippe noch mal auf **Hinzufügen**.",
-      otherLeadAndroid: "Du bist in einer anderen App, und dort lässt sich Salonspiele nicht zum Startbildschirm hinzufügen. Kopier den Link, öffne ihn in **Chrome** und tippe noch mal auf **Hinzufügen**.",
-      copy: "Link kopieren",
-      copied: "Link kopiert.",
-    },
-    // The inbox at the end of the experience and in the home footer (D-345)
-    buzon: { abrir: '💬 Vorschläge und Kommentare', titulo: 'Vorschläge und Kommentare', lead: 'Schreib uns, was du willst: einen Vorschlag, einen Kommentar, eine Idee, etwas, das nicht geklappt hat, oder ein Spiel, das du dir wünschst.', ph: 'Zum Beispiel: Ich würde gern Domino spielen.', tipo: 'Worum geht es? (optional)', tipos: { sugerencia: '💡 Vorschlag', problema: '🐞 Problem', idea: '🎲 Spielidee', otro: '💬 Anderes' }, nombre: 'Name oder Spitzname (opt.)', enviar: 'Senden', enviando: 'Wird gesendet …', cancelar: 'Abbrechen', cerrar: 'Schließen', vacio: 'Schreib erst etwas rein.', gracias: 'Danke! 🙌 Deine Nachricht ist angekommen.', guardado: 'Gerade kein Netz: Deine Nachricht ist auf dem Handy gespeichert und wird später automatisch gesendet.', error: 'Das hat nicht geklappt. Versuch es gleich nochmal.' },
-    rk: {
-      title: 'Rangliste', titleOf: 'Rangliste: {game}',
-      week: 'Woche', always: 'Allzeit', friends: 'Freunde', cup: 'Pokal', today: 'Heute', streaks: 'Serien',
-      month: 'Monat', champion: 'Sieger des Vormonats', dailyPoints: 'Punkte im Spiel des Tages', dailyPointsHint: 'Die Saison ist der Monat: Jeder Tag zählt die Punkte des Spiels plus den Serienbonus. 🔥 ist die Serie.',
-      loading: 'Rangliste wird geladen…',
-      error: 'Die Rangliste konnte nicht geladen werden. Prüf deine Verbindung.',
-      empty: 'Noch niemand. Sei der Erste!',
-      emptyFriends: 'Hier erscheinen deine Freunde aus dem Pokal, sobald sie sich mit Name und PIN anmelden.',
-      emptyFriendsToday: 'Hier erscheinen deine Freunde aus dem Pokal und die, die du zum Spiel des Tages eingeladen hast oder die dich eingeladen haben, sobald sie sich mit Name und PIN anmelden.',
-      you: 'du',
-      joinTitle: '🏅 Melde dich an, um in die Rangliste zu kommen',
-      joinCard: '🏅 Komm in die Rangliste',
-      joinHint: 'Dein Name und eine 4-stellige PIN speichern deine Rekorde. Sie funktionieren auf jedem Handy, ganz ohne Konto.',
-      join: 'Anmelden', joining: 'Anmelden…',
-      nameLabel: 'Dein Name', namePh: 'Wie deine Freunde dich nennen', pinLabel: 'Deine 4-stellige PIN',
-      pinWarn: 'Nimm nicht die PIN deiner Bank.',
-      playingAs: 'Du spielst als {name}', logout: 'Abmelden',
-      sameName: 'Es gibt schon {n} mit diesem Namen und einer anderen PIN. Wenn du das bist, prüf die PIN. Wenn nicht, leg deinen Spieler an.',
-      create: 'Meinen Spieler anlegen', retry: 'Andere PIN probieren',
-      created: 'Fertig, {name}! Ab jetzt zählen deine Punkte.',
-      welcome: 'Schön, dich wiederzusehen, {name}!',
-      errName: 'Schreib deinen Namen.', errNameBad: 'Dieser Name kommt nicht in die Ranglisten: such dir einen anderen aus.', errPin: 'Die PIN hat 4 Ziffern.',
-      errNet: 'Keine Verbindung. Prüf dein Netz und versuch es nochmal.',
-      loggedOut: 'Deine PIN wurde auf einem anderen Handy geändert. Melde dich neu an, um weiter Punkte zu sammeln.',
-      currentPin: 'Aktuelle PIN', errCurrentPin: 'Das ist nicht deine aktuelle PIN. Prüf sie und versuch es nochmal.',
-      errWait: 'Es gab mehrere Versuche hintereinander bei diesem Spieler. Warte ein paar Sekunden und versuch es nochmal.',
-      newRecord: '🏆 Neuer Rekord!', newWeek: '🏆 Deine beste Punktzahl der Woche!',
-      best: 'Deine beste Punktzahl: {s} in {t}.',
-      notSaved: 'Diesmal konnte es nicht in der Rangliste gespeichert werden.',
-      savedLater: 'Kein Empfang: Deine Punkte kommen in die Rangliste, sobald du wieder online bist.',
-      allRounder: 'Allrounder', allRounderHint: 'Zählt deine beste Punktzahl in jedem Spiel zusammen: Es gewinnt, wer alles gut kann.',
-      champions: 'Pokalsieger', championsHint: 'Medaillen aus beendeten Pokalen: Gold, Silber und Bronze.',
-      noChampions: 'Noch kein Pokal ist zu Ende.',
-      lastCups: 'Letzte Pokale', cupChampion: '{copa}: gewonnen von {names}',
-      seeAll: '🏅 Alle Ranglisten ansehen',
-      pageTitle: 'Ranglisten', pageSub: 'Die besten Punktzahlen und die meisten Siege in jedem Spiel, der Woche und aller Zeiten.',
-      gamePick: 'Wähl ein Spiel',
-      myPlays: 'Deine Spiele', plays: '{n} Spiele', playsOne: '1 Spiel',
-      changePin: 'PIN ändern', newPin: 'Neue PIN',
-      pinHint: 'Mit deiner PIN meldest du dich auf einem anderen Handy als {name} an. Wenn du sie änderst, müssen sich andere Handys neu anmelden.',
-      pinChanged: 'Fertig: Die neue PIN gilt ab jetzt, und andere Handys müssen sich neu anmelden.',
-      legacyFound: 'Es gibt Pokal-Punkte unter dem Namen {name}, aus der Zeit vor den Ranglisten. Wenn es deine sind, übernimm sie mit dieser PIN.',
-      legacyMine: 'Das bin ich', legacyNotMe: 'Bin ich nicht',
-      legacyClaimed: 'Fertig, {name}! Deine Pokal-Punkte gehören jetzt dir.',
-      winsOf: 'Meiste Siege: {game}', wins: 'Siege', soloRecords: 'Allein spielen',
-      winsHint: 'Jeder Sieg mit deinem Namen und deiner PIN zählt. Auf einem einzigen Handy: Spiel unter diesem Namen, damit er zählt.',
-      soloOf: "Bestwerte allein", countThis: "Soll dieses Spiel in der Rangliste zählen?", countedGame: "✅ Fertig: Dieses Spiel wurde eingetragen.", countedWin: "🏆 Fertig: Dein Sieg wurde eingetragen.", notInGame: "Dieser Name spielt hier nicht mit: Ab dem nächsten Spiel zählt es.",
-      general: 'Gesamtrangliste', playsTitle: 'Meiste gespielte Partien',
-      playsHint: 'Zählt jede Partie, die du mit Name und PIN beendest, in jedem Spiel.',
-      tabGames: '🎮 Spiele', tabCups: '🏆 Pokale', groupOne: 'Allein', groupMany: 'In der Gruppe',
-      cupBestDay: 'Bester Pokaltag', cupBestDayHint: 'Die beste Punktzahl jedes Spielers an einem Pokaltag, Spiel für Spiel.',
-      rankings: 'Ranglisten',
-    },
-  },
 };
 
 /** Devuelve `obj[lang]` si es un objeto por idioma; si no, el valor tal cual. */
@@ -1113,8 +878,8 @@ export function pickLang(obj, lang = getLang()) {
  * los dos: la prueba de paridad lo exige. La bandera identifica el idioma, no el país de quien
  * juega: el español va con 🇪🇸 (D-244); el portugués, con 🇧🇷, porque es el de Brasil (D-191, D-194).
  */
-export const BANDERAS = { es: '🇪🇸', en: '🇬🇧', pt: '🇧🇷', de: '🇩🇪' };
-export const NOMBRES_IDIOMA = { es: 'Español', en: 'English', pt: 'Português', de: 'Deutsch' };
+export const BANDERAS = { es: '🇪🇸', en: '🇬🇧', pt: '🇧🇷' };
+export const NOMBRES_IDIOMA = { es: 'Español', en: 'English', pt: 'Português' };
 
 /**
  * El selector de idioma, el único de la app (D-231): cada botón lleva su bandera y su código,
@@ -1123,7 +888,7 @@ export const NOMBRES_IDIOMA = { es: 'Español', en: 'English', pt: 'Português',
  */
 export function langToggle(onChange = () => location.reload()) {
   const current = getLang();
-  const wrap = el('div', { class: 'lang-toggle', role: 'group', 'aria-label': 'Idioma / Language / Idioma / Sprache' });
+  const wrap = el('div', { class: 'lang-toggle', role: 'group', 'aria-label': 'Idioma / Language / Idioma' });
   for (const lang of LANGS) {
     wrap.append(el('button', {
       type: 'button', class: lang === current ? 'on' : '', 'aria-pressed': lang === current ? 'true' : 'false',

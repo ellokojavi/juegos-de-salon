@@ -10,7 +10,7 @@ unless every session needs it.
 ## Language (D-316, D-497)
 
 Everything in the repo is English (docs, decisions, comments, commits, PRs, issues), even when the
-owner writes in Spanish. Exceptions: what the player reads (four languages, Spanish by default, C-3),
+owner writes in Spanish. Exceptions: what the player reads (three languages, Spanish by default, C-3),
 text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado'`, Firebase paths,
 `localStorage` keys). Old Spanish text is history and is not translated; a pending Spanish name in
 `docs/english-renames.json` is renamed only when a PR touches its file anyway
@@ -36,7 +36,6 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 | A new game, step by step | [docs/ADD-GAME.md](docs/ADD-GAME.md) | When starting one |
 | Each game | `docs/games/<folder>.md`, with its exceptions to the canons | Before touching it |
 | What was requested (RP-n…) | [docs/REQUERIMIENTOS.md](docs/REQUERIMIENTOS.md) | When closing one |
-| German | [docs/ALEMAN.md](docs/ALEMAN.md), the glossary | When translating |
 | Owner panel | [docs/PANEL.md](docs/PANEL.md) | When touching signals or the panel |
 | README, screenshots, link cards | the `readme-and-cards` skill (`.claude/skills/readme-and-cards/`) | Before touching them, and on "Actualiza el README" |
 | Panel, Cup reports, rankings code | the `owner-tools` skill (`.claude/skills/owner-tools/`) | Before touching them |
@@ -44,7 +43,7 @@ text by outsiders (player feedback) and persisted keys (game ids like `'ahorcado
 | Which tests a change runs | [docs/TEST-SCOPE.md](docs/TEST-SCOPE.md), the design (D-391, D-392): a push tests only what changed since the PR last passed | Before touching `tools/e2e/affected.mjs` or when a PR runs more than it should |
 | Firebase | [firebase/README.md](firebase/README.md) | When touching the rules |
 | Seasonal templates (Halloween…) | [docs/SEASONS.md](docs/SEASONS.md): the home page and Rankings dress up for a date (D-457) | Before adding a date or touching `season.js` |
-| What players are told we keep | `public/privacy/texts.js`, the `/privacy/` page in four languages (D-463, C-17) | When a change stores something new about players, or keeps it for a different time: edit the page in the same PR |
+| What players are told we keep | `public/privacy/texts.js`, the `/privacy/` page in three languages (D-463, C-17) | When a change stores something new about players, or keeps it for a different time: edit the page in the same PR |
 | Big files (videos, recordings) | [docs/REPO-WEIGHT.md](docs/REPO-WEIGHT.md): nothing over 5 MB enters git, `repo-weight.test.mjs` (D-494) | Before committing media |
 | PR previews | [docs/PREVIEWS.md](docs/PREVIEWS.md): each PR on GitHub Pages (D-429) | When the owner reviews a change, or a preview fails |
 
@@ -87,8 +86,8 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
    reviewing round by round on the preview (D-429).
 5. Then `node tools/agents/wait-pr.mjs <n>` in the background (D-400); on `merged`, check GitHub and go on.
 
-## Languages (C-3, D-197)
+## Languages (C-3, D-514)
 
-Spanish by default; English, Portuguese and German are chosen by hand. A new text for the player
-goes in all four: the parity test requires it. A new language comes in through the lab
+Spanish by default; English and Portuguese are chosen by hand. German left in D-514. A new text for the player
+goes in all three: the parity test requires it. A new language comes in through the lab
 (`EN_LABS` in `i18n.js`, empty today; D-191).

@@ -116,7 +116,7 @@ for (const lang of IDIOMAS) {
   await click('#btn-globo-agregar'); await sleep(400);
   const h = await ev(`(()=>{const p=document.querySelector('.hoja');return p?{scroll:document.documentElement.scrollWidth,width:innerWidth,height:p.scrollHeight,seen:p.clientHeight}:null})()`);
   ok(h && h.scroll <= h.width, `${lang}: the sheet fits at 320 px`);
-  if (lang === 'de') await b.shot('sheet-320-de');
+  if (lang === 'pt') await b.shot('sheet-320-pt');
 }
 
 const errors = b.errors.filter(e => !/firebase|gstatic/i.test(e));

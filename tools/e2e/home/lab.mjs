@@ -40,8 +40,8 @@ await ev(`document.querySelector('#barra [data-exp^="splash:"]').click(); 1`);
 ok(await waitFor(`!new URLSearchParams(location.search).has('splash') && !!document.getElementById('barra')`), 'and unticked, it is gone');
 await ev(`scrollTo(0, 1500); 1`);
 ok(await waitFor(`document.getElementById('filtros-barra').classList.contains('pegada') && Math.abs(document.getElementById('filtros-barra').getBoundingClientRect().top - parseFloat(getComputedStyle(document.getElementById('filtros-barra')).top)) < 2`), 'scrolling down, the filters stay stuck on top');
-await ev(`const s = document.getElementById('idioma'); s.value = 'de'; s.dispatchEvent(new Event('change')); 1`);
-ok(await waitFor(`document.documentElement.lang.startsWith('de') && !!document.getElementById('barra')`), 'changing the language keeps the bar');
+await ev(`const s = document.getElementById('idioma'); s.value = 'pt'; s.dispatchEvent(new Event('change')); 1`);
+ok(await waitFor(`document.documentElement.lang.startsWith('pt') && !!document.getElementById('barra')`), 'changing the language keeps the bar');
 
 // A filter rewrites the address without the empty `=` of the flags: `?test&lab`, not `?test=&lab=`
 await b.go(`${SITE}/?test&lab`);

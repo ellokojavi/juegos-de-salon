@@ -24,7 +24,6 @@ export const TEXTOS = {
   es: { boton: 'Juego al azar', corto: 'Al azar', tocó: '¡Te tocó!', aria: 'Abrir un juego al azar' },
   en: { boton: 'Random game', corto: 'Random', tocó: 'You got…', aria: 'Open a random game' },
   pt: { boton: 'Jogo aleatório', corto: 'Aleatório', tocó: 'Você tirou…', aria: 'Abrir um jogo aleatório' },
-  de: { boton: 'Zufallsspiel', corto: 'Zufall', tocó: 'Gewürfelt:', aria: 'Ein zufälliges Spiel öffnen' },
 };
 
 const azar = n => Math.floor(Math.random() * n);

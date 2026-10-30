@@ -28,7 +28,6 @@ const CORREO = {
   es: { correo: 'Tu correo (opcional)', correoNota: 'Solo para responderte, y nunca se publica. Lo borramos al responderte o a los 90 días.', privacidad: 'Privacidad', correoMalo: 'Revisa el correo: parece incompleto.' },
   en: { correo: 'Your email (optional)', correoNota: 'Only to reply to you, and never published. We delete it when we reply or after 90 days.', privacidad: 'Privacy', correoMalo: 'Check your email: it looks incomplete.' },
   pt: { correo: 'Seu e-mail (opcional)', correoNota: 'Só para te responder, e nunca é publicado. Apagamos ao responder ou depois de 90 dias.', privacidad: 'Privacidade', correoMalo: 'Confira o e-mail: parece incompleto.' },
-  de: { correo: 'Deine E-Mail (optional)', correoNota: 'Nur für unsere Antwort, nie veröffentlicht. Wir löschen sie nach der Antwort oder nach 90 Tagen.', privacidad: 'Datenschutz', correoMalo: 'Prüf deine E-Mail-Adresse: Sie scheint unvollständig zu sein.' },
 };
 export const textosCorreo = (idioma = (typeof document !== 'undefined' && document.documentElement.lang) || 'es') => CORREO[String(idioma).slice(0, 2)] || CORREO.es;
 export const IDIOMAS_CORREO = Object.keys(CORREO);

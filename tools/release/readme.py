@@ -127,10 +127,10 @@ def block_themes(F, C):
 
 
 def block_languages(F, C):
-    rows = ['| Español | English | Português | Deutsch |', '|---|---|---|---|',
-            f"| {F['app']['es']} | {F['app']['en']} | {F['app']['pt']} | {F['app']['de']} |"]
+    rows = ['| Español | English | Português |', '|---|---|---|',
+            f"| {F['app']['es']} | {F['app']['en']} | {F['app']['pt']} |"]
     for g in F['games'] + F.get('standalone', []):
-        rows.append(f"| {g['name']['es']} | {g['name']['en']} | {g['name']['pt']} | {g['name']['de']} |")
+        rows.append(f"| {g['name']['es']} | {g['name']['en']} | {g['name']['pt']} |")
     return '\n'.join(rows) + '\n'
 
 

@@ -19,25 +19,8 @@ import { el } from './ui.js';
 import { LABS_IDIOMA, getLang } from './i18n.js';
 import { reenviarPendientes } from '../../cup/reportes.js';
 
-const TEXTOS = {
-  de: {
-    labor: 'Deutsch-Labor',
-    volver: 'Zurück zum Labor',
-    abrir: 'Feedback geben',
-    titulo: 'Feedback zum Deutsch-Labor',
-    lead: 'Was klingt komisch, ist abgeschnitten oder falsch übersetzt? Schreib einfach, was dir auffällt – gern auch auf Englisch oder Spanisch.',
-    ph: 'Zum Beispiel: Auf dem Startbildschirm ist „Galgenmännchen“ abgeschnitten.',
-    nombre: 'Name oder Spitzname (opt.)',
-    enviar: 'Senden',
-    enviando: 'Wird gesendet …',
-    cancelar: 'Abbrechen',
-    vacio: 'Schreib erst etwas rein.',
-    gracias: 'Danke! 🙌 Dein Feedback ist angekommen.',
-    guardado: 'Gerade kein Netz: Dein Feedback ist auf dem Handy gespeichert und wird später automatisch gesendet.',
-    error: 'Das hat nicht geklappt. Versuch es gleich nochmal.',
-    cerrar: 'Schließen',
-  },
-};
+// The texts of each language in the lab, by its code; empty since German left (D-514)
+const TEXTOS = {};
 
 // The form, the overlay and the email field moved to buzon-form.js (D-345); re-exported for the lab games
 export { formularioComentario, abrirComentario, campoCorreo, textosCorreo, IDIOMAS_CORREO } from './buzon-form.js';
@@ -91,7 +74,7 @@ function contexto(idioma) {
 }
 
 /** El formulario de comentarios, para un botón propio (la portada del laboratorio lo tiene). */
-export const abrirFeedback = () => abrir(TEXTOS[LABS_IDIOMA] || TEXTOS.de, LABS_IDIOMA || 'de');
+export const abrirFeedback = () => { if (TEXTOS[LABS_IDIOMA]) abrir(TEXTOS[LABS_IDIOMA], LABS_IDIOMA); };
 
 function abrir(T, idioma) { abrirComentario({ T, contexto: contexto(idioma) }); }
 
