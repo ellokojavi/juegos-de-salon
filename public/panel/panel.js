@@ -1661,7 +1661,7 @@ function filaFeedback(f) {
   const gh = (tipo, num, txt) => el('a', { href: `${REPO_URL}/${tipo}/${num}`, target: '_blank', rel: 'noopener' }, txt);
   const prs = f.prs.map(p => [' · ', gh('pull', p.n, `PR #${p.n}`), ` ${p.state}`, p.title ? el('span', { class: 'muted' }, ` (${p.title})`) : null]).flat();
   return el('div', { class: 'evento fb' },
-    el('span', { class: 'hora' }, fechaLabel(f.at)),
+    el('span', { class: 'hora' }, fechaLabel(f.at), el('br'), horaLabel(f.at)),
     el('span', { class: 'ico', title: ayuda }, ico),
     el('span', { class: 'que' },
       f.name ? quien(f.name, '') : 'Someone', f.channel === 'email' ? ' emailed hola@' : ` sent ${FEEDBACK_TIPO[f.tipo] || 'feedback'}`,
@@ -1676,10 +1676,10 @@ function vistaFeedback() {
   const todas = feedbackRows(S.fbTodo || {}, S.fbEstado, 'all', S.fbCanal);
   const cuenta = countStages(todas);
   const filas = todas.filter(r => FILTERS[S.fbFiltro](r.stage));
-  const csv = () => filas.map(f => ({ date: new Date(f.at).toISOString(), channel: f.channel, who: f.name, kind: f.tipo, game: f.game, stage: f.stage,
+  const csv = () => filas.map(f => ({ date: fechaLabel(f.at), time: horaLabel(f.at), channel: f.channel, who: f.name, kind: f.tipo, game: f.game, stage: f.stage,
     issue: f.issue || '', prs: f.prs.map(p => `#${p.n} ${p.state}`).join(' '), replied: f.replied ? 'yes' : '', text: f.text }));
   return [
-    ...titulo('💬 Feedback', 'Every message, in full and from the start: from the app (🐞 and the end-of-game inbox) and by email to hola@ (the support agent files each one). Its stage follows its GitHub issue and PRs.'),
+    ...titulo('💬 Feedback', `Every message, in full and from the start: from the app (🐞 and the end-of-game inbox) and by email to hola@ (the support agent files each one). Its stage follows its GitHub issue and PRs. Times in ${ZONA_NOMBRE}.`),
     el('div', { class: 'tiles' }, ...STAGES.map(s => tile(cuenta[s], `${FB_STAGE[s][0]} ${FB_STAGE[s][1]}`, { info: FB_STAGE[s][2] }))),
     filtros(FB_FILTROS, S.fbFiltro, v => { S.fbFiltro = v; render(); }, 'Show'),
     filtros(FB_CANALES, S.fbCanal, v => { S.fbCanal = v; render(); }, 'From'),
