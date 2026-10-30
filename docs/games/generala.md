@@ -59,8 +59,8 @@ card went to La Bodega. The screen is `look.mjs generala ace-straight`.
 - **Rival de máquina:** no hay información oculta ni decisiones contra otro, así que un rival que
   tira sus dados no agrega nada. Es un juego de "🧍 Jugar solo" con récord, como Toque y Fama (C-5).
 - **Kniffel y Yahtzee** son marcas (de Schmidt y de Hasbro) y además otro juego (otras casillas, el
-  bono, el "chance"). En alemán se llama Generala, con las casillas con nombre alemán. On the owner's
-  request (2026-10-20) the home card tagline says it is like Kniffel or Yatzy, in the four languages,
+  bono, el "chance"). On the owner's
+  request (2026-10-20) the home card tagline says it is like Kniffel or Yatzy, in the three languages,
   and "kniffel" and "yatzy" are search keywords in every language, so a player who knows the game by
   those names finds it; the game is still called Generala.
 
@@ -170,7 +170,7 @@ public/generala/index.html · public/generala/style.css · public/generala/rules
 public/generala/engine.js · public/generala/engine.test.mjs
 tools/e2e/generala/local.mjs    jugar solo, tres en un celular con recarga y la generala servida
 tools/e2e/generala/online.mjs   dos celulares contra Firebase real, con recarga y revancha
-tools/e2e/generala/languages.mjs  cada pantalla de paths.mjs en los cuatro idiomas
+tools/e2e/generala/languages.mjs  cada pantalla de paths.mjs en los tres idiomas
 ```
 
 Gancho de pruebas (C-14): `window.__generala` (`view`, `match`, `session`).

@@ -118,7 +118,7 @@ No tiene: solo un celular.
 
 - `public/labs/fourth-king/index.html`: pantallas.
 - `public/labs/fourth-king/rules.js`: `GAME_ID`, `DEFAULT_CONFIG`, palos, rangos, `CARD_RULES`, límites de jugadores y
-  `LOCALES` (es, en, pt, de).
+  `LOCALES` (es, en, pt).
 - `public/labs/fourth-king/engine.js`: las reglas puras (C-2): el mazo barajado con azar inyectable (`rng(semilla)` en los
   tests), `drawCard` (saca y aplica lo automático: sorbos, reyes, la penitencia o la categoría sorteada),
   `resolveTargets` y `genderFallback` (quién toma, D-04, D-05), el regalo del 8, el turno, el cuarto rey y el ranking.

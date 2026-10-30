@@ -255,8 +255,7 @@ On 2026-10-22 there were no acceptances in Firebase yet, so October needed no ba
 For everyone since 2026-10-22 (it was tried in the lab first, D-409), the 📅 card on the home page has
 two controls side by side, never one inside the other: the card itself is a link to /today/, and its
 chip **▶ Jugar hoy** rolls today's die and opens the game straight away. Once today is played the
-chip opens /today/ and shows the month's **place big** (the site's yellow-to-pink gradient: "#3", in
-German too, "#3") with the points and the streak under it ("871 pts · 🔥 6"; the 🔥 pill leaves
+chip opens /today/ and shows the month's **place big** (the site's yellow-to-pink gradient: "#3") with the points and the streak under it ("871 pts · 🔥 6"; the 🔥 pill leaves
 its own row once played, the owner's choice); with no place known yet, the points are the big
 number (`chipPuntos` in `uno-al-dia-ui.js`). With no streak the line says "del mes · 871 pts", and
 on a phone 340 px wide or less "del mes" is dropped.
@@ -487,7 +486,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
   `tools/e2e/scope.test.mjs` (D-378). The day's seed takes `rng` from `assets/js/rng.js`, not from
   Timeline's engine (D-378).
 - Se prueba con `uno-al-dia.test.mjs` (el mazo, la semilla, la racha, lo anotado) y
-  `tools/e2e/daily.mjs` (de la portada a `/today/`, a 320 px y en los cuatro idiomas).
+  `tools/e2e/daily.mjs` (de la portada a `/today/`, a 320 px y en los tres idiomas).
 
 ### Lo que el PR 2 hizo (v0.116.0)
 
@@ -685,8 +684,7 @@ celular saca la palabra, la flota o los dados de la semilla del día.
 2. **El día cambia a la medianoche de cada jugador.**
 3. **El aviso no dice qué juego toca.**
 4. **Comodines**: uno cada 7 días seguidos, hasta 2.
-5. **Nombres:** *One a Day*, *Um por dia*, *Spiel des Tages* (el alemán se revisa contra
-   [ALEMAN.md](ALEMAN.md)).
+5. **Nombres:** *One a Day*, *Um por dia* (German, *Spiel des Tages*, left with D-514).
 6. **El resumen de la semana viene encendido** al activar los avisos, con su interruptor.
 7. **Entran todos los juegos con modo para uno** (agregado del dueño).
 8. **Invitar a un amigo** después de jugar, con un dato de quien invita (agregado del dueño).
@@ -824,7 +822,7 @@ and the backfill.
 **The lab, then everyone.** It was tried as a click-through prototype with notes
 (`/labs/daily-score/`, still there) and as real screens behind the lab key (D-395, D-412), redesigned
 from a usability critique the owner approved in full, and published on /today/ (D-414, 2026-10-22)
-in the four languages. **One ranking everywhere:** `bloqueRanking` with the tabs Mes · Hoy · Rachas ·
+in the three languages. **One ranking everywhere:** `bloqueRanking` with the tabs Mes · Hoy · Rachas ·
 Amigos on /today/ and under the result, and the points table (Mes · Amigos) in /records/;
 `tools/e2e/daily-player.mjs` checks they agree, and `tools/e2e/daily-languages.mjs` checks /today/'s
 screens in every language.
