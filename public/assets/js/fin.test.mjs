@@ -10,6 +10,17 @@ const fin = leer('assets/js/fin.js');
 assert.match(fin, /hoy: \['hoy'\]/, 'One a Day: back to One a Day (the header goes to the menu)');
 assert.match(fin, /podio: \['menu'\]/, 'the podium: back to the menu');
 assert.match(fin, /suelto: \['menu'\]/, 'a game on its own: back to the menu');
+assert.match(fin, /lab: \['lab'\]/, 'a game from the lab: back to the lab');
+
+// Every exit comes from salidasFin: no game builds its own link back to the menu or the lab (C-19, #1042)
+import { readdirSync, statSync } from 'node:fs';
+const juegos = [];
+const buscar = dir => { for (const n of readdirSync(new URL(dir, raiz))) { const p = `${dir}${n}`; if (statSync(new URL(p, raiz)).isDirectory()) buscar(`${p}/`); else if (n === 'game.js') juegos.push(p); } };
+buscar('');
+// Julepe and Cuarto Rey stay as they are: lab games not played, likely to be discarded (#1039)
+for (const p of juegos.filter(p => !/^labs\/(julep|fourth-king)\//.test(p))) {
+  assert.doesNotMatch(leer(p), /el\('a', \{[^}]*href: (?:'(?:\.\.\/)+'|`\$\{RAIZ\}(?:labs\/)?`)\s*\}/, `${p}: a link back to the menu or the lab is built by salidasFin (C-19)`);
+}
 
 // The One a Day card carries its exits, and goes under the hero
 const ui = leer('assets/js/uno-al-dia-ui.js');

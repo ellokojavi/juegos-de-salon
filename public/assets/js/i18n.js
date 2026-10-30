@@ -125,7 +125,7 @@ export const COMMON = {
     shown: 'Se ven {n} de {total} juegos.', clearFilters: 'Ver todos',
     favorites: 'Favoritos', favorite: 'Marcar {juego} como favorito', filterNew: 'Nuevos', filterPopular: 'Populares',
     onlySpanish: 'En español',
-    code: 'código en GitHub', privacy: 'Privacidad', volverMenu: '🏠 Volver al menú', atras: '‹ Volver', menu: 'Menú', soon: 'Próximamente', newGame: 'Nuevo', popularGame: 'Popular', or: 'o',
+    code: 'código en GitHub', privacy: 'Privacidad', volverMenu: '🏠 Volver al menú', volverLab: '🧪 Volver al laboratorio', atras: '‹ Volver', menu: 'Menú', soon: 'Próximamente', newGame: 'Nuevo', popularGame: 'Popular', or: 'o',
     // Creating or joining a room (U-37): the button while it waits, and the way out when it can't
     opening: 'Abriendo sala…', joining: 'Entrando…', playOnePhone: '📱 Jugar en un celular',
     // A back swipe mid-game (D-432): the sheet that asks before leaving
@@ -384,7 +384,7 @@ export const COMMON = {
     shown: 'Showing {n} of {total} games.', clearFilters: 'Show all',
     favorites: 'Favorites', filterNew: 'New', filterPopular: 'Popular', favorite: 'Mark {juego} as a favorite',
     onlySpanish: 'In Spanish',
-    code: 'code on GitHub', privacy: 'Privacy', volverMenu: '🏠 Back to the menu', atras: '‹ Back', menu: 'Menu', soon: 'Coming soon', newGame: 'New', popularGame: 'Popular', or: 'or',
+    code: 'code on GitHub', privacy: 'Privacy', volverMenu: '🏠 Back to the menu', volverLab: '🧪 Back to the lab', atras: '‹ Back', menu: 'Menu', soon: 'Coming soon', newGame: 'New', popularGame: 'Popular', or: 'or',
     opening: 'Opening room…', joining: 'Joining…', playOnePhone: '📱 Play on one phone',
     backGuard: { title: 'Leave the game?', body: 'If you leave now, the game stays unfinished.', stay: '▶ Keep playing', leave: 'Leave' },
     share: 'Share Party Games',
@@ -630,7 +630,7 @@ export const COMMON = {
     shown: 'Mostrando {n} de {total} jogos.', clearFilters: 'Ver todos',
     favorites: 'Favoritos', favorite: 'Marcar {juego} como favorito', filterNew: 'Novos', filterPopular: 'Populares',
     onlySpanish: 'Em espanhol',
-    code: 'código no GitHub', privacy: 'Privacidade', volverMenu: '🏠 Voltar ao menu', atras: '‹ Voltar', menu: 'Menu', soon: 'Em breve', newGame: 'Novo', popularGame: 'Popular', or: 'ou',
+    code: 'código no GitHub', privacy: 'Privacidade', volverMenu: '🏠 Voltar ao menu', volverLab: '🧪 Voltar ao laboratório', atras: '‹ Voltar', menu: 'Menu', soon: 'Em breve', newGame: 'Novo', popularGame: 'Popular', or: 'ou',
     opening: 'Abrindo sala…', joining: 'Entrando…', playOnePhone: '📱 Jogar em um celular',
     backGuard: { title: 'Sair da partida?', body: 'Se você sair agora, a partida fica pela metade.', stay: '▶ Continuar jogando', leave: 'Sair' },
     share: 'Compartilhar Jogos de Salão',
