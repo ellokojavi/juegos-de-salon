@@ -671,7 +671,7 @@
       fila.append(copa, reserva);
     }
     // La Copa's card says what to do today (flag copa-hoy): ▶ Jugar hoy with a day to play. lab: #seccion-copa-hoy
-    // With today's day played, ✅ Día N · Xh Ym (flag copa-espera). lab: #seccion-copa-espera
+    // With today's day played, Día N en Xh Ym (flag copa-espera). lab: #seccion-copa-espera
     // The top bar's buttons as pills of one height (flag home-pill-bar, #1027). lab: #seccion-home-pill-bar
     import('./assets/js/flags.js').then(({ flag }) => flag('home-pill-bar')).then(on => on && document.documentElement.classList.add('pill-bar')).catch(() => {});
     if (copa) import('./assets/js/flags.js').then(({ flag }) => flag('copa-hoy')).then(on => on && import('./assets/js/cup-today.js'))
