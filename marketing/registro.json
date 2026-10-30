@@ -503,10 +503,10 @@
       "titulo": "Reddit r/chile: solo o con amigos",
       "carpeta": "marketing/reddit-chile/",
       "memoria": "marketing/reddit-chile/README.md",
-      "version": 1,
-      "fecha": "2026-10-19",
+      "version": 2,
+      "fecha": "2026-10-29",
       "idioma": "es",
-      "app": "0.186.12",
+      "app": "0.234.20",
       "archivos": [
         {
           "ruta": "marketing/reddit-chile/output/reddit-chile-1080x1350.jpg",
@@ -524,7 +524,7 @@
       "fuente": "marketing/reddit-chile/card.html",
       "construir": "marketing/reddit-chile/build.mjs",
       "juegos": [
-        "cuarto-rey",
+        "generala",
         "dudo",
         "copa",
         "reinas",
@@ -532,12 +532,10 @@
       ],
       "seleccion": true,
       "revision": {
-        "fecha": "2026-10-28",
-        "app": "0.227.7",
-        "al_dia": false,
-        "pendiente": [
-          "Its cards still show 👑 Cuarto Rey, which left the home page for the lab, and the 👑 Reinas screenshot predates the ⏱ clock (D-384) and the region textures (D-481)."
-        ]
+        "fecha": "2026-10-29",
+        "app": "0.234.20",
+        "al_dia": true,
+        "pendiente": []
       }
     }
   ]
