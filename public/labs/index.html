@@ -128,12 +128,6 @@
         <h2>✨ Mejoras en prueba</h2>
         <p class="muted">Cambios al resto de la app, para mirarlos antes de que lleguen a todos.</p>
         <p class="muted mejoras-vacio">Ahora no hay ninguna en prueba: las lanzadas están en La Bodega.</p>
-        <section class="panel seccion" id="seccion-home-pill-bar">
-          <h2>💊 Portada: botones de arriba parejos</h2>
-          <p class="muted" style="margin:0">En la barra de arriba de la portada, los botones de sonido, 🏅 Rankings y compartir pasan de círculos a píldoras de la misma altura que el selector de idioma, para que se vean alineados.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Abre la portada y mira la barra de arriba. Se ve únicamente con tu llave del laboratorio.</p>
-          <a class="btn btn--yellow" id="btn-home-pill-bar" href="../">🏠 Ir a la portada</a>
-        </section>
       </section>
 
       <!-- Una línea separa lo que se está probando de lo que quedó guardado, como la de antes del comentario en los juegos -->
@@ -213,6 +207,15 @@
           <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <section class="panel seccion plegada" id="seccion-home-pill-bar" data-launched="2026-10-30">
+            <details>
+              <summary><h2>💊 Portada: botones de arriba parejos</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. En la barra de arriba de la portada, los botones de sonido, 🏅 Rankings y compartir son píldoras de la misma altura que el selector de idioma, y se ven alineados.</p>
+                <a class="btn btn--yellow" id="btn-home-pill-bar" href="../">🏠 Ir a la portada</a>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-cup-back-board" data-launched="2026-10-30">
             <details>
               <summary><h2>🏆 La Copa: ‹ vuelve a la copa, no al menú</h2><span class="flecha" aria-hidden="true">›</span></summary>
