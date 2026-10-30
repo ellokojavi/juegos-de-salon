@@ -1,5 +1,5 @@
 // La Copa's card on the home page (flag copa-hoy, in the lab): with a day of this phone's cup left to
-// play, ▶ Jugar hoy and a link to that day, at One a Day's height; once played, Día 3 en 5h on one line
+// play, ▶ Jugar hoy and a link to that day, at One a Day's height; once played, ✅ Día 3 en 5h on one line
 // (flag copa-espera, in the lab), still at One a Day's height; with the final played, ✅ Final jugada · cierra en….
 // Prints ✗ if something fails.
 import { output } from '../output.mjs';
@@ -40,7 +40,7 @@ for (const [width, cup, name] of [[390, L, 'pending'], [320, L, 'pending-320'], 
     ok(await waitFor(`/^✅ Final · cierra en \\d/.test(document.getElementById('copa-hoy-chip')?.textContent || '')`), 'final played: ✅ Final · cierra en…');
     ok(await ev(`${card}.getAttribute('href').endsWith('cup/?K7Q2X')`), 'final played: it opens the cup');
   } else {
-    ok(await waitFor(`/^Día 3 en \\d+[hm]/.test(document.getElementById('copa-hoy-chip')?.textContent || '')`), `${width}px played today: Día 3 en Xh`);
+    ok(await waitFor(`/^✅ Día 3 en \\d+[hm]/.test(document.getElementById('copa-hoy-chip')?.textContent || '')`), `${width}px played today: ✅ Día 3 en Xh`);
     // One line (#1029): a chip of two lines is taller than 44 px
     ok(await ev(`(() => { const r = document.createRange(); r.selectNodeContents(document.getElementById('copa-hoy-chip')); return r.getBoundingClientRect().height < 30; })()`), `${width}px played today: the chip fits on one line`);
     // Beside One a Day played, both boxes are the same height (#1029)
