@@ -14,7 +14,7 @@ const route = id => gameById(id)?.path || `${id}/`;
 const SHOTS = [
   { name: 'home', url: '?test', steps: [] },
   { name: 'liars-dice', url: route('dudo'), steps: PATHS.dudo.reveal },
-  { name: 'fourth-king', url: route('cuarto-rey'), steps: [...PATHS['cuarto-rey'].table, `document.getElementById('card').click()`, `1`, `1`] },
+  { name: 'generala', url: route('generala'), steps: PATHS.generala.game },
   { name: 'cup', url: 'cup/?test&demo=podium', steps: [`1`, `1`] },
   { name: 'queens', url: route('reinas'), steps: PATHS.reinas.game },
   { name: 'routes', url: route('rutas'), steps: PATHS.rutas.stage },
