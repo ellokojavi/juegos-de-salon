@@ -287,7 +287,16 @@ export async function startRecap({ lang = 'es', search = globalThis.location?.se
       const month = season.monthBefore(season.localDate().slice(0, 7));
       const found = await season.loadSeasonRecap({ month });
       if (!found) return false;
-      showRecap(seasonView(found, lang), { lang, onLeave: () => season.markSeasonSeen(month) });
+      showSeason(found, lang, season, () => season.markSeasonSeen(month));
+      return true;
+    }
+    // The month-end window's demo: a made-up season, this phone at ?place= (1 by default)
+    if (mode === 'month-end-demo') {
+      const found = season.demoSeason();
+      const p = Math.max(1, Number(param('place', search)) || 1);
+      found.recap.me = { ...found.recap.me, lugar: p };
+      found.recap.players = Math.max(found.recap.players, p);
+      showSeason(found, lang, season, null, { demo: true, days: 29 });
       return true;
     }
     const due = mode ? null : dueCup();
@@ -305,7 +314,27 @@ export async function startRecap({ lang = 'es', search = globalThis.location?.se
     if (!seasonDue) return false;
     const found = mode === 'season-demo' ? season.demoSeason() : await season.loadSeasonRecap();
     if (!found) return false;
-    showRecap(seasonView(found, lang), { lang, onLeave: mode ? null : () => season.markSeasonSeen(found.month) });
+    showSeason(found, lang, season, mode ? null : () => season.markSeasonSeen(found.month));
     return true;
   } catch (_) { return false; }
+}
+
+/**
+ * A season, told first by the month-end window (month-end.js) behind its flag (lab: #seccion-uad-month-end): the player's place,
+ * a medal and fireworks for the podium; its «See the table» opens the table window after it. A
+ * player not in the table, or the flag off, gets the table window alone, as before.
+ */
+async function showSeason(found, lang, season, onLeave, { demo = false, days } = {}) {
+  try {
+    const { flag } = await import('./flags.js');
+    if (demo || await flag('uad-month-end')) {
+      const M = await import('./month-end.js');
+      const view = M.monthEndView(found, lang, { days: days ?? season.playedDays().filter(d => d.startsWith(`${found.month}-`)).length });
+      if (view) {
+        M.showMonthEnd(view, { onLeave }).then(how => { if (how === 'table') showRecap(seasonView(found, lang), { lang }); });
+        return;
+      }
+    }
+  } catch (_) { /* the table window, as before */ }
+  showRecap(seasonView(found, lang), { lang, onLeave });
 }
