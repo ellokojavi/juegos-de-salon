@@ -178,6 +178,7 @@ const ES = {
 
   title: 'La Copa',
   menu: '‹ Menú',
+  cupHome: '🏆 Ir al inicio de La Copa',
   chip: '🏆 La Copa',
   lead: 'Cada día hay un juego que todos juegan una sola vez. Gana quien suma más puntos.',
   howTitle: 'Cómo funciona',
@@ -1039,6 +1040,7 @@ const EN = {
 
   title: 'The Cup',
   menu: '‹ Menu',
+  cupHome: '🏆 Back to The Cup',
   chip: '🏆 The Cup',
   lead: 'Every day there is a game that everyone plays just once. Whoever scores the most points wins.',
   howTitle: 'How it works',
@@ -1887,6 +1889,7 @@ const PT = {
 
   title: 'A Copa',
   menu: '‹ Menu',
+  cupHome: '🏆 Ir ao início da Copa',
   chip: '🏆 A Copa',
   lead: 'Todo dia tem um jogo que todos jogam uma vez só. Ganha quem somar mais pontos.',
   howTitle: 'Como funciona',
