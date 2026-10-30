@@ -75,7 +75,7 @@ b.close();
 // shows. The types always go in one row and nothing overflows.
 const WIDTHS = [[320, 'where it fits'], [390, 'row'], [900, 'row']];
 const at320 = [];
-for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt', 'de']) {
+for (const [width, expect] of WIDTHS) for (const lang of ['es', 'en', 'pt']) {
   const c = await launch({ dir: `${OUT}/p${width}${lang}`, out: OUT, width, height: 700 });
   await c.go(`${SITE}/?lang=${lang}`, 1500);
   await c.evaluate(`localStorage.setItem('juegos-de-salon:favoritos', '["ahorcado","tango"]'); 1`);

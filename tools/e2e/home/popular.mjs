@@ -24,7 +24,7 @@ await b.go(`${SITE}/?test&lang=de`);
 ok(await waitFor(`(${labels}).length === 3 && document.querySelector('.popular').textContent.replace(/\\s+/g, ' ').trim() === '🔥 Beliebt'`), 'in German: 🔥 Beliebt');
 
 // ✨ Nuevos and 🔥 Populares (D-362): a row above the types, each one filters, in every language at 320 px
-for (const lang of ['es', 'en', 'pt', 'de']) {
+for (const lang of ['es', 'en', 'pt']) {
   await b.go(`${SITE}/?test&lang=${lang}`);
   // The row's own pills, the 🔎 among them (D-403); not the ✕ inside the folded search field
   await waitFor(`!!document.querySelector('.filtros .atajos .buscar-pill')`);

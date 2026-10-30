@@ -108,7 +108,7 @@ vez que se abre la mesa, si la clave nueva está vacía y la vieja tiene una lis
 gana —el cuarto rey es un castigo—, así que el final va como `detalle` (`👑 Javi · 37 cartas`) y no como `ganador`.
 
 ### Idiomas
-Todos los textos viven en `rules.js` bajo `LOCALES.es`, `LOCALES.en`, `LOCALES.pt` y `LOCALES.de` (reglas, mensajes de reyes, minijuegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz), con las mismas claves en todos. Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare. En portugués de Brasil: Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, Prenda; los sorbos son "goles" y el fondo es "vira, vira, vira" (D-48). En alemán (D-191; para todos desde D-197), `LOCALES.de` adapta el juego a un grupo alemán en vez de calcarlo: Der vierte König, Wort für Wort, Hamsterbacken, Kategorien, Ich hab noch nie, Aufgabe; el glosario está en [ALEMAN.md](../ALEMAN.md).
+Todos los textos viven en `rules.js` bajo `LOCALES.es`, `LOCALES.en` y `LOCALES.pt` (reglas, mensajes de reyes, minijuegos, 24 penitencias, 35 categorías, 16 ideas de Nunca Nunca y la interfaz), con las mismas claves en todos. Nombres en inglés: Fourth King, Story Time, Puffer Pig, Categories, Never Have I Ever, Dare. En portugués de Brasil: Quarto Rei, Era Uma Vez, Porquinho Bochechudo, Cultura de Boteco, Eu Nunca, Prenda; los sorbos son "goles" y el fondo es "vira, vira, vira" (D-48). En alemán (D-191; para todos desde D-197), `LOCALES.de` adapta el juego a un grupo alemán en vez de calcarlo: Der vierte König, Wort für Wort, Hamsterbacken, Kategorien, Ich hab noch nie, Aufgabe; el glosario está en [ALEMAN.md](../ALEMAN.md).
 
 ## Protocolo de mensajes
 

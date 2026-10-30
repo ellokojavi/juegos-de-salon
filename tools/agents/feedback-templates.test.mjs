@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import { TEMPLATES, LANGUAGES, buildEmail, quote, HEADER } from './feedback-templates.mjs';
 
-assert.deepEqual(LANGUAGES, ['es', 'en', 'pt', 'de'], 'the four languages of the app');
+assert.deepEqual(LANGUAGES, ['es', 'en', 'pt'], 'the languages of the app');
 for (const [lang, T] of Object.entries(TEMPLATES)) {
   for (const k of ['openings', 'openingsMany']) {
     assert.equal(T[k].length, 10, `${lang}: ten ${k}`);
     assert.equal(new Set(T[k]).size, 10, `${lang}: all different`);
     // Owner's request: every opening thanks the player for their time, or the email reads dry
-    for (const o of T[k]) assert.match(o, new RegExp({ es: "gracias", en: "thank", pt: "obrigad", de: "dank" }[lang], "i"), `${lang}: "${o}" thanks no one`);
+    for (const o of T[k]) assert.match(o, new RegExp({ es: "gracias", en: "thank", pt: "obrigad" }[lang], "i"), `${lang}: "${o}" thanks no one`);
   }
   const all = [T.subject, T.subjectMany, T.quoted('x'), T.greeting('Ana'), T.greeting(''), ...T.openings, ...T.openingsMany, T.closing, T.signature].join('\n');
   assert.doesNotMatch(all, /[—–]/, `${lang}: no em or en dashes`);
@@ -28,7 +28,6 @@ assert.match(e.html, /<p style="[^"]*color:#6b6b6b;font-style:italic">«Las pist
 assert.ok(existsSync(new URL(`../../public/${HEADER.replace('https://juegosdesalon.cl/', '')}`, import.meta.url)), `${HEADER} is not in public/`);
 for (const lang of LANGUAGES) assert.ok(buildEmail({ lang, items: one }).html.includes(`src="${HEADER}"`));
 assert.notEqual(buildEmail({ lang: 'en', items: [{ answer: 'x' }], n: 1 }).text.split('\n')[2], buildEmail({ lang: 'en', items: [{ answer: 'x' }], n: 2 }).text.split('\n')[2], 'two replies in a row open differently');
-assert.ok(buildEmail({ lang: 'de', items: [{ answer: 'x' }] }).text.startsWith('Hallo,\n'));
 // Several comments of the same player: one email, plural, each answer under its quote, in order
 const many = buildEmail({ lang: 'es', name: 'Cris', n: 0, items: [{ quote: 'Primero', answer: 'Uno.' }, { quote: 'Segundo', answer: 'Dos.' }] });
 assert.equal(many.subject, TEMPLATES.es.subjectMany);

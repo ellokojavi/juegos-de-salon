@@ -105,38 +105,6 @@ export const TEMPLATES = {
     closing: "Outra ideia? É só responder a este e-mail.",
     signature: 'A equipe do Juegos de Salón',
   },
-  de: {
-    subject: 'Zu deinem Kommentar bei Juegos de Salón',
-    subjectMany: 'Zu deinen Kommentaren bei Juegos de Salón',
-    quoted: t => `„${t}“`,
-    greeting: n => (n ? `Hallo ${n},` : 'Hallo,'),
-    openings: [
-      'Danke für deine Zeit und deine Nachricht.',
-      'Danke, dass du dir Zeit genommen hast.',
-      'Danke für deinen Kommentar und deine Zeit.',
-      'Danke, dass du uns Bescheid gibst.',
-      'Gelesen: danke für deine Zeit.',
-      'Danke fürs Spielen und Schreiben.',
-      'Danke, dass du an uns gedacht hast.',
-      'Vielen Dank für deine Nachricht.',
-      'Danke, dass du uns hilfst, besser zu werden.',
-      'Danke: Dein Kommentar hat uns sehr geholfen.',
-    ],
-    openingsMany: [
-      'Danke für deine Zeit und deine Nachrichten.',
-      'Danke, dass du dir Zeit genommen hast.',
-      'Danke für deine Kommentare und deine Zeit.',
-      'Danke für die vielen Hinweise.',
-      'Alles gelesen: danke für deine Zeit.',
-      'Danke fürs Spielen und Schreiben.',
-      'Danke, dass du an uns gedacht hast.',
-      'Vielen Dank für deine Nachrichten.',
-      'Danke, dass du uns hilfst, besser zu werden.',
-      'Danke, deine Hinweise helfen uns sehr.',
-    ],
-    closing: "Noch eine Idee? Antworte einfach auf diese E-Mail.",
-    signature: 'Das Team von Juegos de Salón',
-  },
 };
 
 export const LANGUAGES = Object.keys(TEMPLATES);

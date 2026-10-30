@@ -4,7 +4,7 @@ import { checkLanguages } from '../languages-common.mjs';
 import { CAMPAIGNS } from '../../../public/assets/js/splash.js';
 
 // The campaigns' texts as a dictionary per language, so nothing is left in Spanish
-const LANGS = ['es', 'en', 'pt', 'de'];
+const LANGS = ['es', 'en', 'pt'];
 const texts = Object.fromEntries(LANGS.map(l => [l, Object.fromEntries(Object.entries(CAMPAIGNS).flatMap(([id, c]) =>
   ['kicker', 'title', 'lead'].filter(k => c[k]?.[l]).map(k => [`${id}.${k}`, c[k][l]])))]));
 

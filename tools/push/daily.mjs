@@ -20,7 +20,7 @@
  * not say which game is due (the owner's decision): the surprise belongs to the die. After 14 days
  * without playing, the daily one goes out every other day.
  */
-import { COMMON } from '../../public/assets/js/i18n.js';
+import { COMMON, RETIRADOS } from '../../public/assets/js/i18n.js';
 import { numeroDel, fechaDeNum, numDia, semanaDe, sumarDias } from '../../public/assets/js/uno-al-dia.js';
 import { localDate, localHour, FROM_HOUR, TO_HOUR, SITE } from './schedule.mjs';
 import { VALORES } from '../../public/assets/js/parametros.js';
@@ -29,14 +29,13 @@ export const STREAK_HOUR = 21;
 /** The season's notification goes out on the first days of the next month, from their hour (D-424). */
 export const SEASON_DAYS = 3;
 /**
- * The season's notification (D-424), in the four languages: here and not in i18n.js, which every
+ * The season's notification (D-424), in the app's languages: here and not in i18n.js, which every
  * page loads, because only this sender says it. Its link opens the season's recap on the home page.
  */
 export const SEASON_TEXT = {
   es: '🏆 Terminó la temporada de {mes}. Toca para ver el ranking final.',
   en: "🏆 {mes}'s season is over. Tap to see the final leaderboard.",
   pt: '🏆 A temporada de {mes} terminou. Toque para ver o ranking final.',
-  de: '🏆 Die Saison im {mes} ist vorbei. Tippe, um die Endrangliste zu sehen.',
 };
 const monthName = (m, lang) => new Intl.DateTimeFormat(lang, { month: 'long', timeZone: 'UTC' }).format(new Date(`${m}-15T12:00:00Z`));
 export const DAILY_CAP = 2;
@@ -70,7 +69,7 @@ export function dailyNotifications({ wants = {}, subs = {}, sent = {}, now, seas
     const already = sent[subId] || {};
     // At most 2 a day per phone, in its date
     if (Object.values(already).filter(t => typeof t === 'number' && localDate(t, tz) === today).length >= DAILY_CAP) continue;
-    const lang = COMMON[sub.lang] ? sub.lang : 'es';
+    const lang = COMMON[sub.lang] ? sub.lang : RETIRADOS[sub.lang] || 'es';
     const T = COMMON[lang].uad;
     // `uad<kind>`: the dashboard counts the taps apart from La Copa's, which also have `dia` (D-233);
     // no dash, because the rules of `aviso/` and `mandados/` ask for letters only

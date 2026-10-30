@@ -40,7 +40,7 @@ la portada al día, va con los textos, and U-39, the start button above the fold
     jugando, y ya los dice la ayuda bajo el tablero.
   - **El puntaje en una frase**, sin topes que salen solos de la regla ("10 niveles, 10 puntos
     cada uno" ya dice que son 100).
-  - **Tope que vigila una prueba** (`public/cup/games/juegos.test.mjs`), en los cuatro idiomas: a
+  - **Tope que vigila una prueba** (`public/cup/games/juegos.test.mjs`), en los tres idiomas: a
     lo más 3 puntos y 280 caracteres para "Cómo se juega", y 170 para el puntaje. Además frena un
     primer punto que describe la pantalla ("Hay…", "There is…", "Há…", "Es gibt…"). Es un techo, no una meta: la mitad de los juegos queda bajo 210.
   - **One block explains the game** (the owner's call, #887): the cover has "Cómo se juega" and
@@ -74,7 +74,7 @@ la portada al día, va con los textos, and U-39, the start button above the fold
   (D-133), con las mismas palabras de los botones.
 - **U-39 · The start button is seen without scrolling** (D-344, #464). On every game's landing
   page the main action —Empezar, or the first mode of the picker— shows whole in the first screen
-  of a small phone (320×568) and a common one (375×667), in the four languages. The order is
+  of a small phone (320×568) and a common one (375×667), in the three languages. The order is
   cover, title, language, the button, and then «Cómo se juega», always a `<details>` collapsed by default (the owner's rule, 2026-10-28), and the rest; a cover that does not
   fit shrinks on a short screen. `node tools/e2e/landing-fold.mjs` checks it on every PR over the
   `intro` path of each game in `tools/e2e/paths.mjs`: a new game is checked as soon as it has one.
@@ -140,7 +140,7 @@ la portada al día, va con los textos, and U-39, the start button above the fold
 - **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los juegos que vienen.
 - **U-35 · La app se presenta entera:** el mensaje de compartir la app nombra todo lo principal
   (`LO_PRINCIPAL` en `compartir.js`: La Copa, Uno al día, jugar en grupo, jugar solo, rankings, sin
-  cuenta, la app instalable con sus avisos y los cuatro idiomas), una línea cada cosa y en los cuatro idiomas; el del video y la bajada de la tarjeta del
+  cuenta, la app instalable con sus avisos y los tres idiomas), una línea cada cosa y en los tres idiomas; el del video y la bajada de la tarjeta del
   link no dicen menos de lo que hay. Lo que entra a la app como algo principal se suma ahí en el mismo
   PR, y el agente de documentación lo revisa en cada ronda y en cada PR (D-271, D-272).
 

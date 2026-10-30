@@ -55,16 +55,6 @@ const TEXTOS = {
     otra: '🔁 Outra senha', comentarAbrir: '💬 Deixar um comentário',
     comentario: { titulo: 'O que você achou?', lead: 'Conte se deu para entender, se foi fácil ou difícil e o que você mudaria.', ph: 'Por exemplo: não percebi que dava para virar uma carta.', nombre: 'Nome ou apelido (opcional)', enviar: 'Enviar comentário', enviando: 'Enviando…', vacio: 'Escreva algo primeiro.', gracias: 'Obrigado! 🙌 Seu comentário chegou.', guardado: 'Sem internet agora: seu comentário ficou no celular e será enviado depois.', error: 'Não deu para enviar. Tente de novo daqui a pouco.', cancelar: 'Cancelar', cerrar: 'Fechar' },
   },
-  de: {
-    nombre: 'Der Code', laboratorio: '‹ Labor',
-    lema: 'Durchsichtige Karten verstecken einen Code. Keine zeigt ihn allein.',
-    como: ['Finde den 5-stelligen Code und tippe ihn ein.', 'Tippe auf eine Karte, um sie auf die Basis zu legen. ↻ dreht sie, ⇋ spiegelt sie.', 'Liegen alle richtig herum, ergeben die Striche die Ziffern, ohne sich zu überlagern.'],
-    empezar: '🔐 Los geht’s', girar: '↻ Drehen', voltear: '⇋ Spiegeln', ok: 'OK',
-    comoSeJuega: 'So wird gespielt', quitar: '✕ Entfernen', elige: 'Tippe unten auf eine Karte, um sie aufzulegen.', elegida: 'Karte {n}', mal: 'Das ist nicht der Code. 🔒',
-    abierto: 'Offen!', resumen: 'In {tiempo}, mit {e} Fehlversuchen.', resumenSin: 'In {tiempo}, ohne Fehlversuch.', resumenUno: 'In {tiempo}, mit 1 Fehlversuch.',
-    otra: '🔁 Neuer Code', comentarAbrir: '💬 Kommentar schreiben',
-    comentario: { titulo: 'Wie fandest du es?', lead: 'Erzähl uns, ob es verständlich war, ob es leicht oder schwer war und was du ändern würdest.', ph: 'Zum Beispiel: Ich habe nicht gemerkt, dass man eine Karte spiegeln kann.', nombre: 'Name oder Spitzname (opt.)', enviar: 'Kommentar senden', enviando: 'Wird gesendet …', vacio: 'Schreib erst etwas rein.', gracias: 'Danke! 🙌 Dein Kommentar ist angekommen.', guardado: 'Gerade kein Netz: Dein Kommentar ist auf dem Handy gespeichert und wird später automatisch gesendet.', error: 'Das hat nicht geklappt. Versuch es gleich nochmal.', cancelar: 'Abbrechen', cerrar: 'Schließen' },
-  },
 };
 const T = TEXTOS[lang] || TEXTOS.es;
 const fmt = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));

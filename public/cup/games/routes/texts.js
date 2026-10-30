@@ -117,42 +117,4 @@ const PT = {
   },
 };
 
-const DE = {
-  juego: {
-    nombre: 'Kaputte Linien', habilidad: 'Raumgefühl',
-    como: [
-      'Verbinde jede Farbe zu einer Linie, ohne Lücken zwischen den Teilen.',
-      'Zieh von einem Teil zu einem anderen: Das Rechteck dazwischen dreht sich halb um, und seine Teile stehen kopf. Antippen dreht nur ein Teil.',
-      'Es sind 5 Etappen in 7 Minuten. Rückgängig und Neustart sind gratis.',
-    ],
-    puntaje: 'Jede Etappe bringt 17 Punkte. Mit allen fünf bis zu 10 mehr fürs Tempo und bis zu 5 für die wenigsten Drehungen.',
-    desempate: 'Bei Gleichstand gewinnt, wer schneller war.',
-  },
-  ui: {
-    rrStage: 'Etappe {n} von {t}',
-    rrScoreboard: 'Drehungen: {g} · Minimum: {m}',
-    rrClock: '⏳ {t}',
-    rrRestart: 'Neustart',
-    rrGiveUpSure: 'Sicher?',
-    rrUndone: 'Du hast die letzte Drehung rückgängig gemacht: Sie zählt nicht.',
-    rrRestarted: 'Zurück zum Anfang: Die Drehungen stehen wieder auf 0.',
-    rrStageDone: '🚇 Etappe {n} geschafft!',
-    rrStagePerfect: '🚇 Etappe {n} mit dem Minimum!',
-    rrEndPerfect: 'Alle mit dem Minimum!',
-    rrEndDone: 'Linien verbunden!',
-    rrEndTime: 'Die Zeit ist um',
-    rrEndGaveUp: 'Du hast aufgegeben',
-    rrExBad: 'Vorher: Linien unterbrochen.',
-    rrExOk: 'Nach halber Drehung: verbunden.',
-    rrCredit: 'Inspiriert von {juego} von Bricks and Chips.',
-    rrBdStages: '🚇 Etappen ({n} von {t}): +{p}.',
-    rrBdSpeed: '⏱ Tempo ({t}): +{p}.',
-    rrBdNoSpeed: '⏱ Tempo: +0 (Etappen fehlen).',
-    rrBdTurns: '🔄 Drehungen ({g}, Minimum {m}): +{p}.',
-    rrBdStage: '{c} Etappe {n}: {g} Drehungen (Minimum {m}).',
-    rrBdRestartOne: 'Du hast 1-mal neu gestartet.',
-    rrBdRestarts: 'Du hast {n}-mal neu gestartet.',
-  },
-};
-
-export default { es: ES, en: EN, pt: PT, de: DE };
+export default { es: ES, en: EN, pt: PT };

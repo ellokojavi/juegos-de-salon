@@ -61,7 +61,7 @@ When the owner asks you for something another agent executes ("check how fresh t
 **A PR, by the game's stage** (D-304): `node tools/agents/covers.mjs check <base>` says it in
 its first line. Lab only → the fast lane, no agents: the session looks at the changed screens at 320 px itself
 (D-413); with shared code or Firebase rules, both agents. Takes a game out of the lab → full usability pass over the whole game (all its
-screens, the four languages, 320 px, its cover page and its place on the main cover page) and
+screens, the three languages, 320 px, its cover page and its place on the main cover page) and
 documentation with the README and the social card. Everything else, both as always.
 While the owner reviews a change round by round, the PR stays open without auto-merge and each
 round is a push; the owner looks at its preview (the 🔍 comment, D-429) and auto-merge goes on when they approve.
@@ -179,7 +179,7 @@ that (after a new game, after a big text change), saying why.
    with the key and shows only masks). If some of that player's reports are still open and you
    can resolve them this round, do it first and answer them all together.
    1. Write only the specific answers in a text file, **in the language the feedback was written
-      in** (Spanish, English, Portuguese or German; if it mixes, the one most of it is in): what
+      in** (Spanish, English or Portuguese, else English; if it mixes, the one most of it is in): what
       you did or what will happen, **short** (the owner's rule: people read less and less; about 50 words, one short sentence per idea, no thanks the opening already gives), warm and grateful, neutral
       language (no local slang), no jargon, no PR or issue numbers, and **no em or en dashes**
       (the tool refuses them). With several reports, each answer goes under a line `#<n>`; the
@@ -355,7 +355,7 @@ that (after a new game, after a big text change), saying why.
 decision, with its reserved number: `node tools/agents/decision.mjs reserve`, D-301).
 
 **The app's code (`public/`), only for 🐞 feedback** (step 3) or to export a value a mechanism
-needs. With the canons (C-n), their checklist, the four languages (C-3), the end-to-end test of the
+needs. With the canons (C-n), their checklist, the three languages (C-3), the end-to-end test of the
 game you touched green and its unnumbered entry in `changelog/<rama>.md` (`changelog.mjs new`,
 D-300). You never change what a cup is playing that day (U-21).
 

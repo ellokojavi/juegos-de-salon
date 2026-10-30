@@ -8,9 +8,9 @@ const OUT = output('/tmp/cup-out');
 const SITE = process.env.SITE || 'http://localhost:8765';
 let failures = 0;
 const ok = (cond, msg) => { console.log(`${cond ? '✓' : '✗'} ${msg}`); if (!cond) failures++; };
-const BADGE = { es: 'Eliminado', en: 'Eliminated', pt: 'Eliminado', de: 'Ausgeschieden' };
+const BADGE = { es: 'Eliminado', en: 'Eliminated', pt: 'Eliminado' };
 
-for (const lang of ['es', 'en', 'pt', 'de']) {
+for (const lang of ['es', 'en', 'pt']) {
   const b = await launch({ dir: `${OUT}/p-${lang}`, out: OUT, width: 320, height: 640 });
   const ev = e => b.evaluate(e);
   await b.go(`${SITE}/cup/?test&demo=out&lang=${lang}`, 2500);

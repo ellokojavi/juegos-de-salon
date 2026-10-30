@@ -111,13 +111,12 @@ export function loadActive({ fetchFn = globalThis.fetch, timeout = 2500 } = {}) 
 export const CAMPAIGNS = {
   'tres-juegos-demo': {
     emoji: '🎉',
-    kicker: { es: 'Novedades', en: "What's new", pt: 'Novidades', de: 'Neuigkeiten' },
-    title: { es: '¡Upa, papá! Tres juegos nuevos', en: 'Three new games!', pt: 'Três jogos novos!', de: 'Drei neue Spiele!' },
+    kicker: { es: 'Novedades', en: "What's new", pt: 'Novidades' },
+    title: { es: '¡Upa, papá! Tres juegos nuevos', en: 'Three new games!', pt: 'Três jogos novos!' },
     lead: {
       es: 'Tres desafíos de lógica para jugar solo. Elige uno y empieza.',
       en: 'Three logic puzzles to play on your own. Pick one and start.',
       pt: 'Três desafios de lógica para jogar sozinho. Escolha um e comece.',
-      de: 'Drei Logikrätsel für dich allein. Such dir eins aus und leg los.',
     },
     items: [
       { game: 'rutas', video: 'assets/splash/routes.mp4', img: 'assets/splash/routes.jpg' },
@@ -139,8 +138,8 @@ export const CAMPAIGNS = {
   // clip is a bridge being built and the bullet train going over it; Play opens the game
   'tren-en-vilo-ya': {
     emoji: '🚅',
-    kicker: { es: '¡Nuevo!', en: 'New!', pt: 'Novo!', de: 'Neu!' },
-    title: { es: '¡El tren ya cruza!', en: 'The train is crossing!', pt: 'O trem já está passando!', de: 'Der Zug fährt los!' },
+    kicker: { es: '¡Nuevo!', en: 'New!', pt: 'Novo!' },
+    title: { es: '¡El tren ya cruza!', en: 'The train is crossing!', pt: 'O trem já está passando!' },
     // One game, big (the owner's request): its scene as wide as the window, then its card with what it
     // is and Play
     hero: true,
@@ -151,7 +150,6 @@ export const CAMPAIGNS = {
         es: 'Arma un puente de vigas sobre el abismo: si aguanta, el tren cruza; si no, se cae. Ya está en Uno al día y en La Copa.',
         en: 'Build a bridge of beams over the gap: if it holds, the train crosses; if not, down it goes. Now in One a Day and The Cup too.',
         pt: 'Monte uma ponte de vigas sobre o abismo: se aguentar, o trem passa; se não, ela cai. Já está no Um por dia e na Copa.',
-        de: 'Bau eine Brücke aus Balken über die Schlucht: Hält sie, fährt der Zug hinüber, sonst stürzt sie ein. Jetzt auch im Spiel des Tages und im Pokal.',
       },
     }],
   },
@@ -159,8 +157,8 @@ export const CAMPAIGNS = {
   // purpose: the ninja dashes to the edge of its pillar and stays, looking at the next one. No name, no link
   'ninja-pronto': {
     emoji: '🥷',
-    kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve', de: 'Demnächst' },
-    title: { es: 'El ninja enfrenta una misión nunca antes vista', en: 'The ninja faces a mission never seen before', pt: 'O ninja enfrenta uma missão nunca vista', de: 'Eine Mission wie keine andere für den Ninja' },
+    kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve' },
+    title: { es: 'El ninja enfrenta una misión nunca antes vista', en: 'The ninja faces a mission never seen before', pt: 'O ninja enfrenta uma missão nunca vista' },
     items: [{ video: 'assets/splash/ninja-teaser.mp4', img: 'assets/splash/ninja-teaser-start.png', still: 'assets/splash/ninja-teaser.png', ratio: '8 / 5', smooth: true }],
   },
   // A teaser of 🧱 Stack, still in the lab, drawn with the game's own scene and cryptic on purpose:
@@ -168,8 +166,8 @@ export const CAMPAIGNS = {
   // `smooth`: drawn at full size, not pixel art, so it is scaled smoothly
   'stack-pronto': {
     emoji: '🧱',
-    kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve', de: 'Demnächst' },
-    title: { es: 'Llegar al cielo es el objetivo', en: 'Reaching the sky is the goal', pt: 'Chegar ao céu é o objetivo', de: 'Das Ziel ist der Himmel' },
+    kicker: { es: 'Muy pronto', en: 'Coming soon', pt: 'Em breve' },
+    title: { es: 'Llegar al cielo es el objetivo', en: 'Reaching the sky is the goal', pt: 'Chegar ao céu é o objetivo' },
     items: [{ video: 'assets/splash/stack-teaser.mp4', img: 'assets/splash/stack-teaser-start.png', still: 'assets/splash/stack-teaser.png', ratio: '8 / 5', smooth: true }],
   },
   // 🥂 An invitation to support the site, with a laugh: Leonardo DiCaprio raising his glass in
@@ -177,8 +175,8 @@ export const CAMPAIGNS = {
   // goes straight to Stripe's payment page (support.js's PAYMENT_LINK), so it stays off while support is in the lab
   'brindis-apoyo': {
     emoji: '🥂',
-    kicker: { es: 'Salud', en: 'Cheers', pt: 'Saúde', de: 'Prost' },
-    title: { es: '¡Un brindis por ti!', en: 'A toast to you!', pt: 'Um brinde a você!', de: 'Ein Toast auf dich!' },
+    kicker: { es: 'Salud', en: 'Cheers', pt: 'Saúde' },
+    title: { es: '¡Un brindis por ti!', en: 'A toast to you!', pt: 'Um brinde a você!' },
     hero: true,
     // Only for those who already play here, never a first visit (D-458)
     audience: 'regulars',
@@ -186,25 +184,24 @@ export const CAMPAIGNS = {
       video: 'https://media.giphy.com/media/rY93u9tQbybks/giphy.mp4',
       img: 'https://media.giphy.com/media/rY93u9tQbybks/480w_s.jpg',
       ratio: '12 / 5',
-      title: { es: 'Gracias por jugar', en: 'Thanks for playing', pt: 'Obrigado por jogar', de: 'Danke fürs Spielen' },
+      title: { es: 'Gracias por jugar', en: 'Thanks for playing', pt: 'Obrigado por jogar' },
       text: {
         es: 'Por cada partida, cada risa y cada revancha. Juegos de Salón es gratis y lo seguirá siendo. Si quieres devolver el brindis, puedes apoyarlo desde US$1.',
         en: 'To every game, every laugh and every rematch. Party Games is free and always will be. If you would like to return the toast, you can support it from US$1.',
         pt: 'A cada partida, cada risada e cada revanche. O Jogos de Salão é grátis e sempre vai ser. Se quiser retribuir o brinde, pode apoiá-lo a partir de US$ 1.',
-        de: 'Auf jede Partie, jedes Lachen und jede Revanche. Salonspiele ist kostenlos und bleibt es. Wenn du den Toast erwidern willst, kannst du es ab 1 US$ unterstützen.',
       },
       // Straight to Stripe's checkout, not through the support card (the owner's request)
       href: PAYMENT_LINK || '?support=open',
-      cta: { es: '💙 Apoyar Juegos de Salón', en: '💙 Support Party Games', pt: '💙 Apoiar o Jogos de Salão', de: '💙 Salonspiele unterstützen' },
+      cta: { es: '💙 Apoyar Juegos de Salón', en: '💙 Support Party Games', pt: '💙 Apoiar o Jogos de Salão' },
     }],
   },
 };
 
 /** The words the window itself uses. */
 const UI = {
-  play: { es: 'Jugar', en: 'Play', pt: 'Jogar', de: 'Spielen' },
-  dismiss: { es: 'Cerrar', en: 'Close', pt: 'Fechar', de: 'Schließen' },
-  later: { es: 'Ahora no', en: 'Not now', pt: 'Agora não', de: 'Jetzt nicht' },
+  play: { es: 'Jugar', en: 'Play', pt: 'Jogar' },
+  dismiss: { es: 'Cerrar', en: 'Close', pt: 'Fechar' },
+  later: { es: 'Ahora no', en: 'Not now', pt: 'Agora não' },
 };
 
 const pick = (obj, lang) => (obj && typeof obj === 'object' ? obj[lang] ?? obj.es : obj);

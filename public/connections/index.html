@@ -42,7 +42,6 @@
   <meta property="og:locale" content="es_CL">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="pt_BR">
-  <meta property="og:locale:alternate" content="de_DE">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Conexiones 🔗 · Juegos de Salón">
   <meta name="twitter:description" content="Arma cuatro grupos de cuatro palabras que tienen algo en común. Un jugador, 3–8 min. Gratis, sin instalar y sin cuenta.">
@@ -56,7 +55,7 @@
       try {
         var l = (new URLSearchParams(location.search).get('lang') || localStorage.getItem('juegos-de-salon:lang') || '').toLowerCase();
         var m = document.querySelector('link[rel="manifest"]');
-        if (m && /^(en|pt|de)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
+        if (m && /^(en|pt)$/.test(l)) m.href = m.href.replace(/manifest\.webmanifest$/, 'manifest.' + l + '.webmanifest');
       } catch (_) { /* queda el del español */ }
     })();
   </script>

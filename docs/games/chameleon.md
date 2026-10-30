@@ -36,7 +36,7 @@ points, Play again (same players, from 0), Change players and Back to the menu (
 ## Pieces
 
 - `public/labs/chameleon/rules.js`: the topics and words (16 each, ≤16 letters so they fit a cell at
-  320 px) and the interface texts, in `LOCALES`. German words common to the three countries (ALEMAN.md).
+  320 px) and the interface texts, in `LOCALES`.
 - `engine.js`: pure rules (`newGame`, `startRound`, `cardHolder`, `cardFor`, `cardSeen`, `toVote`,
   `accuse`, `guess`, `standings`, `fromSaved`), tested by `engine.test.mjs` (packs, phases, points, winners).
 - `game.js`: screens and memory (C-6: a reload resumes at the same phase). Test hook `window.__camaleon`
