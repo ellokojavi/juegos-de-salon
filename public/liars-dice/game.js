@@ -1388,7 +1388,7 @@ function renderSetup(mode, codigoInvitado = '') {
       startMatch(mode, names, { ...DEFAULT_CONFIG, calzar, chileno, ...ajustes.config(), players });
     },
   }, T.start));
-  acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => showScreen('screen-intro') }, T.menu));
+  acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => showScreen('screen-intro') }, COMMON[lang].atras));
   clearRoomError($('#setup-error'));
   showScreen('screen-setup');
 }
@@ -1457,7 +1457,7 @@ function renderSetupOnline(codigoInvitado = '') {
         el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle),
         el('div', { class: 'field' }, codigo), entrar));
   }
-  acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { showScreen('screen-intro'); } }, T.menu));
+  acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { showScreen('screen-intro'); } }, COMMON[lang].atras));
 }
 
 /* ------------------------------------------------------------------ */
