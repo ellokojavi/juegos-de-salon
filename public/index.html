@@ -403,7 +403,11 @@
     /* La Copa with a day to play today (lab flag copa-hoy): One a Day's ▶ chip, in the Cup's gold */
     .game-card.torneo .meta .copa-hoy-chip { min-height: 44px; flex: 0 1 auto; max-width: 100%; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border-radius: 999px; border: 0; background: var(--yellow); color: #2a1600; font: 900 0.9rem/1.1 var(--font-body); text-align: center; white-space: normal; }
     .game-card.torneo .meta .copa-hoy-chip.espera { background: rgba(255,255,255,0.16); color: inherit; font-weight: 800; }
+    @media (max-width: 340px) { .game-card.torneo .meta .copa-hoy-chip.espera { padding: 0 8px; font-size: 0.78rem; letter-spacing: -0.01em; } }
     @media (max-width: 340px) { .game-card.torneo .meta .copa-hoy-chip { padding: 0 10px; font-size: 0.82rem; } }
+    /* Beside One a Day's played box (#1 and its points), La Copa's chip is as wide and as tall (#1029) */
+    .fila-alta:has(.uad-card.hecho) .game-card.torneo .meta { align-self: stretch; width: 100%; }
+    .fila-alta:has(.uad-card.hecho) .game-card.torneo .meta .copa-hoy-chip { width: 100%; flex: 1 1 100%; border-radius: 18px; min-height: calc(14px + 2.1rem * 0.95 + 0.78rem * 1.1); }
     /* Two destinations (lab, D-414): the link covers the card; the chip sits above it */
     .uad-card.dos { position: relative; }
     .uad-card-link { position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
@@ -441,6 +445,13 @@
     .portada-barra .tools { min-height: 44px; }
     .portada-barra .tools > span:empty { width: 44px; height: 44px; }
     .azar-slot:empty { min-height: 48px; }
+    /* Lab flag home-pill-bar (#1027): the round buttons become pills as tall as the language toggle, so the bar reads as one row */
+    .pill-bar .portada-barra, .pill-bar .portada-barra .tools { align-items: stretch; }
+    .pill-bar .portada-barra .tools > span { display: flex; }
+    .pill-bar .portada-barra .tools .icon-btn, .pill-bar .portada-barra .tools .sound-toggle { width: 48px; height: auto; min-height: 44px; }
+    .pill-bar .portada-barra .tools > span:empty { width: 48px; }
+    /* Below 441 px the toggle stacks flag over code (54 px) and the buttons may drop to their own row: same height there too */
+    @media (max-width: 440px) { .pill-bar .portada-barra .tools .icon-btn, .pill-bar .portada-barra .tools .sound-toggle { min-height: 54px; } }
     /* Two rows: ⭐ ✨ 🔥 and the types (measured in the four languages; one row of 50 px before D-362) */
     .filtros:empty { min-height: 104px; }
     @media (min-width: 557px) { .filtros:empty { min-height: 98px; } }
@@ -662,7 +673,9 @@
       fila.append(copa, reserva);
     }
     // La Copa's card says what to do today (flag copa-hoy): ▶ Jugar hoy with a day to play. lab: #seccion-copa-hoy
-    // With today's day played, ✅ Día N abre en X h Y min (flag copa-espera). lab: #seccion-copa-espera
+    // With today's day played, ✅ Día N · Xh Ym (flag copa-espera). lab: #seccion-copa-espera
+    // The top bar's buttons as pills of one height (flag home-pill-bar, #1027). lab: #seccion-home-pill-bar
+    import('./assets/js/flags.js').then(({ flag }) => flag('home-pill-bar')).then(on => on && document.documentElement.classList.add('pill-bar')).catch(() => {});
     if (copa) import('./assets/js/flags.js').then(({ flag }) => flag('copa-hoy')).then(on => on && import('./assets/js/cup-today.js'))
       .then(m => m && import('./assets/js/flags.js').then(({ flag }) => flag('copa-espera')).then(wait => m.decorateCupCard(copa, { lang, wait }))).catch(() => {});
     const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso, estado }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {

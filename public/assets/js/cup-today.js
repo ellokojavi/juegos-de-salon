@@ -1,7 +1,7 @@
 /**
  * La Copa's card on the home page says what to do today (lab flag `copa-hoy`): with a day of one of
  * this phone's cups left to play, a ▶ Jugar hoy chip like One a Day's, and the card opens that day;
- * with today's day played and another to come (lab flag `copa-espera`), a ✅ Día N abre en X h Y min chip that counts down;
+ * with today's day played and another to come (lab flag `copa-espera`), a ✅ Día N · Xh chip that counts down;
  * with the final played and nothing else to come, ✅ Final jugada · cierra en X h Y min (same flag);
  * with nothing left, the card stays as it always was.
  *
@@ -71,7 +71,10 @@ export function finalPlayed(store = globalThis.localStorage, now = Date.now()) {
 /** "5 h 12 min", "1 d 3 h", "12 min": how long until `ms` from now, never below a minute. */
 export function untilText(ms) {
   const m = Math.max(1, Math.ceil(ms / 60000)), h = Math.floor(m / 60), d = Math.floor(h / 24);
-  return d ? `${d} d${h % 24 ? ` ${h % 24} h` : ''}` : h ? `${h} h${m % 60 ? ` ${m % 60} min` : ''}` : `${m} min`;
+  // Compact (#1029): «6h» keeps the chip on one line at 320 px and reads the same in the four
+  // languages; the minutes show only in the last hour, where they matter (the player's own suggestion)
+  const hr = m >= 60 ? Math.floor(m / 60) : 0;
+  return d ? `${d}d${h % 24 ? ` ${h % 24}h` : ''}` : hr ? `${hr}h` : `${m}m`;
 }
 
 /** Puts the chip on La Copa's card when a day is waiting; returns whether it did. */
@@ -89,7 +92,7 @@ export function decorateCupCard(card, { lang = 'es', store, now = Date.now(), wa
   return true;
 }
 
-/** Today's day already played: ✅ Día N abre en X h Y min, counting down each minute while the page is open. */
+/** Today's day already played: ✅ Día N · Xh, counting down each minute while the page is open. */
 function waitChip(card, meta, T, n, now) {
   if (!n) return false;
   const text = t => `✅ ${T.opens.replace('{day}', n.dia).replace('{time}', untilText(n.at - t))}`;

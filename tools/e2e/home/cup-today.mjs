@@ -1,5 +1,5 @@
 // La Copa's card on the home page (flag copa-hoy, in the lab): with a day of this phone's cup left to
-// play, ▶ Jugar hoy and a link to that day, at One a Day's height; once played, ✅ Día 3 abre en…
+// play, ▶ Jugar hoy and a link to that day, at One a Day's height; once played, ✅ Día 3 · 5h on one line
 // (flag copa-espera, in the lab), still at One a Day's height; with the final played, ✅ Final jugada · cierra en….
 // Prints ✗ if something fails.
 import { output } from '../output.mjs';
@@ -20,7 +20,7 @@ const jugada = { ...L, results: { 1: { aaaaaa: { s: 1, ms: 1 } }, 2: { aaaaaa: {
 const ultimo = nuevaMeta({ nombre: 'Copa', dias: 7, inicio: new Date(Date.now() - 6 * 24 * 3600e3).toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' }), tz: 'America/Los_Angeles', admin: 'aaaaaa', creada: 0 });
 const final = { meta: ultimo, players: L.players, results: Object.fromEntries([1, 2, 3, 4, 5, 6, 7].map(d => [d, { aaaaaa: { s: 1, ms: 1 } }])) };
 
-for (const [width, cup, name] of [[390, L, 'pending'], [320, L, 'pending-320'], [390, jugada, 'played'], [390, final, 'final']]) {
+for (const [width, cup, name] of [[390, L, 'pending'], [320, L, 'pending-320'], [390, jugada, 'played'], [320, jugada, 'played-320'], [390, final, 'final']]) {
   const b = await launch({ dir: `${OUT}/p-${name}`, out: OUT, width, height: 800 });
   const ev = e => b.evaluate(e);
   const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) { if (await ev(expr)) return true; await sleep(100); } return false; };
@@ -37,13 +37,19 @@ for (const [width, cup, name] of [[390, L, 'pending'], [320, L, 'pending-320'], 
     ok(await ev(`Math.abs(${card}.offsetHeight - document.querySelector('.uad-card').offsetHeight) <= 1`), `${width}px: as tall as One a Day's card`);
     ok(await ev(`${card}.scrollWidth <= ${card}.clientWidth + 1`), `${width}px: nothing overflows the card`);
   } else if (cup === final) {
-    ok(await waitFor(`/^✅ Final jugada · cierra en \\d/.test(document.getElementById('copa-hoy-chip')?.textContent || '')`), 'final played: ✅ Final jugada · cierra en…');
+    ok(await waitFor(`/^✅ Final · cierra en \\d/.test(document.getElementById('copa-hoy-chip')?.textContent || '')`), 'final played: ✅ Final · cierra en…');
     ok(await ev(`${card}.getAttribute('href').endsWith('cup/?K7Q2X')`), 'final played: it opens the cup');
   } else {
-    ok(await waitFor(`/^✅ Día 3 abre en \\d/.test(document.getElementById('copa-hoy-chip')?.textContent || '')`), 'played today: ✅ Día 3 abre en…');
+    ok(await waitFor(`/^✅ Día 3 · \\d+[hm]/.test(document.getElementById('copa-hoy-chip')?.textContent || '')`), `${width}px played today: ✅ Día 3 · Xh`);
+    // One line (#1029): a chip of two lines is taller than 44 px
+    ok(await ev(`(() => { const r = document.createRange(); r.selectNodeContents(document.getElementById('copa-hoy-chip')); return r.getBoundingClientRect().height < 30; })()`), `${width}px played today: the chip fits on one line`);
+    // Beside One a Day played, both boxes are the same height (#1029)
+    ok(await ev(`!document.querySelector('.uad-card.hecho') || Math.abs(document.getElementById('copa-hoy-chip').offsetHeight - document.querySelector('.uad-card.hecho .uad-card-chip').offsetHeight) <= 2`), `${width}px played today: as tall as One a Day's box`);
     ok(await ev(`${card}.getAttribute('href').endsWith('cup/?K7Q2X')`), 'played today: it opens the cup');
     ok(await ev(`Math.abs(${card}.offsetHeight - document.querySelector('.uad-card').offsetHeight) <= 1`), 'played today: as tall as One a Day\'s card');
   }
+  // The top bar (flag home-pill-bar, #1027): its buttons as tall as the language toggle
+  ok(await ev(`[...document.querySelectorAll('.portada-barra .tools .icon-btn, .portada-barra .tools .sound-toggle')].every(x => Math.abs(x.offsetHeight - document.querySelector('.portada-barra .lang-toggle').offsetHeight) <= 1)`), `${width}px: the top bar's buttons are as tall as the language toggle`);
   await b.shot(name);
   b.close();
 }
