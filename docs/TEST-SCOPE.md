@@ -32,7 +32,8 @@ missing, and a light report when something still slips.
  push to a PR
         │
         ▼
- 0. INCREMENT   only the files changed since the PR last passed   since-passed.mjs (D-392)
+ 0. INCREMENT   only the files changed since the PR last passed   since-passed.mjs (D-392),
+                minus comment-only changes                    inert.mjs (D-515)
         │
         ▼
  1. KNOWLEDGE   page graph (derived) + declared facts         affected.mjs
@@ -149,6 +150,10 @@ catch in the PR) and moving the declared facts to their own module (tidier, but 
 - **A narrowed run must not vouch for more than it tested.** A first version of D-392 left the tree's
   mark after an incremental run, which would have let `publish.yml` skip the whole suite on a tree only
   partly tested.
+- **A comment or a panel label is not a page change** (D-515). #1058 ran 106 jobs for one character
+  because it reworded a flag's name in `flags.js`, which every page loads, and a comment in `index.html`.
+  Comment-only patches are dropped (`inert.mjs`), and data only one page reads lives in its own module
+  (`flag-list.js`), not in a module every page loads.
 - **Check the scope before pushing**, with the command below; a surprise in CI costs a whole run.
 
 ## Where this knowledge lives
@@ -156,9 +161,9 @@ catch in the PR) and moving the declared facts to their own module (tidier, but 
 | What | File |
 |---|---|
 | This design | `docs/TEST-SCOPE.md` |
-| Why each step was taken | `docs/decisions/`: D-308, D-329, D-346, D-378, D-388, D-391, D-392, D-496, D-506 |
+| Why each step was taken | `docs/decisions/`: D-308, D-329, D-346, D-378, D-388, D-391, D-392, D-496, D-506, D-515 |
 | How to run and write scripts | `tools/e2e/README.md` |
-| The code | `tools/e2e/affected.mjs`, `changes.mjs`, `ci.mjs`, `since-passed.mjs` (D-392) |
+| The code | `tools/e2e/affected.mjs`, `changes.mjs`, `ci.mjs`, `since-passed.mjs` (D-392), `inert.mjs` (D-515) |
 | The guards | `tools/e2e/*.test.mjs` |
 | Who watches it | `.claude/agents/processes.md` (owns the test-level criterion, D-346) |
 

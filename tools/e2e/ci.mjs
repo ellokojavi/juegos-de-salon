@@ -29,7 +29,7 @@ const OUT = process.env.E2E_OUT || process.env.SALIDA_E2E || '/tmp/e2e';
 const CAP_MS = 15 * 60 * 1000;
 
 // Not tests: they look at screens or build screenshot sheets
-const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs', 'affected.mjs', 'since-passed.mjs']);
+const TOOLS = new Set(['cdp.mjs', 'ci.mjs', 'look.mjs', 'spacing-common.mjs', 'contact-sheet.mjs', 'paths.mjs', 'languages-common.mjs', 'changes.mjs', 'groups.mjs', 'already-tested.mjs', 'output.mjs', 'affected.mjs', 'since-passed.mjs', 'inert.mjs']);
 // They open rooms or join them in the production Firebase: still run by hand
 const WITH_FIREBASE = /(^|\/)(online|chat)\.mjs$/;
 const ALSO_FIREBASE = new Set([
