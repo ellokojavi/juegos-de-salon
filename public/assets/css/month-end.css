@@ -21,14 +21,21 @@
 @keyframes me-vaiven { 50% { transform: rotate(4deg); } }
 .me-brillo { animation: me-brilla 2.6s ease-in-out infinite; }
 @keyframes me-brilla { 0%, 60% { transform: translateX(-120px) skewX(-20deg); } 100% { transform: translateX(120px) skewX(-20deg); } }
+/* Clear of the ✕ in the corner */
+.me-resto .me-kicker { padding: 0 34px; }
 .me-kicker { font-size: 0.78rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: #6b5a7a; }
 .me-lugar { font: 900 4.2rem/1 var(--font-num); color: var(--pink); -webkit-text-stroke: 2px #1a1a1a; text-shadow: 4px 4px 0 #1a1a1a; }
 .me-titulo { margin: 0; font: 400 clamp(2rem, 10vw, 2.7rem)/1.02 var(--font-display); letter-spacing: 0.03em; color: var(--pink); -webkit-text-stroke: 1.5px #1a1a1a; text-shadow: 3px 3px 0 #1a1a1a; }
 .me-linea { margin: 0; font-weight: 700; line-height: 1.45; }
 .me-pts { margin: 0; font: 900 1.1rem var(--font-num); font-variant-numeric: tabular-nums; }
 .me-jugar { margin-top: 4px; width: 100%; box-sizing: border-box; text-align: center; text-decoration: none; }
-.me-tabla { background: none; border: 0; color: #4a3a5a; font: 800 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; padding: 6px; }
-.me-x { position: absolute; top: 8px; right: 10px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(0, 0, 0, 0.06); color: #1a1a1a; font-size: 1rem; cursor: pointer; }
+.me-tabla { background: none; border: 0; color: #4a3a5a; font: 800 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; padding: 6px 12px; min-height: 44px; }
+.me-x { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(0, 0, 0, 0.06); color: #1a1a1a; font-size: 1rem; cursor: pointer; }
+/* A short phone (320 × 640): a smaller medal so «Play» stays on screen */
+@media (max-height: 700px) {
+  .me-p1 .me-tarjeta, .me-p2 .me-tarjeta, .me-p3 .me-tarjeta { margin-top: 64px; gap: 8px; }
+  .me-medalla { width: 100px; height: 127px; margin-top: -84px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .me-rayos, .me-medalla, .me-brillo, .me-tarjeta { animation: none; }
 }
