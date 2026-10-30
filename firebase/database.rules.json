@@ -1302,6 +1302,10 @@
         ".validate": "!newData.exists() || (newData.hasChildren(['de', 'texto', 'at']) && newData.child('de').isString() && newData.child('de').val().length <= 200 && newData.child('texto').isString() && newData.child('texto').val().length <= 10001 && newData.child('at').isNumber() && newData.child('at').val() <= now + 60000)"
       }
     },
+    "feedbackEstado": {
+      ".read": "auth != null && auth.uid === 'TrNylkeOFXNhnTPWAApebKvbI3F2'",
+      ".write": false
+    },
     "feedbackContacto": {
       ".read": false,
       "$id": {

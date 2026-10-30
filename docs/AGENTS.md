@@ -29,7 +29,7 @@ What each agent (`.claude/agents/`) and owner tool does, and the command it runs
   and reviews what they deliver. The owner's requests that another agent carries out ("revisa la frescura del
   README", check how fresh the README is) are asked of it: it decides who, launches them, checks and replies. It handles the 🐞 feedback and the "💬 Sugerencias y comentarios" inbox at the end of every game (D-341),
   which the Mac mini's `feedback-watch` job uploads every 5 minutes (D-382) as `feedback` issues (`tools/agents/feedback.mjs`,
-  with the name the player entered and without their browser, D-279); a player who left an email gets a
+  with the name the player entered and without their browser, D-279; each pass also writes the issue and PRs of every report to `feedbackEstado/`, shown in the panel's 💬 Feedback section); a player who left an email gets a
   templated reply in their language when the report is resolved (`feedback.mjs reply <n>[,<n>…] <answer.txt> --lang <xx>`, one email per player for all their comments, grouped by `feedback.mjs pending`,
   through `send-mail.py`, always from hola@juegosdesalon.cl and checked in Gmail's Sent folder, or nothing is sent (D-443), then comments the quoted answer on each issue, labels it `replied` and closes it; a reply for a built suggestion goes out only once the change is live, in three parts: thanks, what changed, what stayed; `forget` only deletes the address of destructive feedback, and `expire`, which every `sync` pass runs, deletes one left unanswered for 90 days (D-463); D-317, D-368). It works the owner's
   backlog, the open issues with no label that `processes.mjs check` lists (D-339). It closes what was left open and
