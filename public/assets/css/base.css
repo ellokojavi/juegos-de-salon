@@ -57,6 +57,8 @@
    abajo desde arriba dispara el "deslizar para actualizar" de Chrome y se lleva el gesto
    puesto —y con él la partida, porque recarga la página (D-86)—. Va en los dos. */
 html, body { margin: 0; min-height: 100%; overscroll-behavior: none; }
+/* Lab flag no-double-tap-zoom (#1045): quick taps in a game never zoom the page on iPhone; pinch zoom still works */
+html.no-dtz, html.no-dtz body, html.no-dtz button, html.no-dtz a, html.no-dtz [role="button"] { touch-action: manipulation; }
 
 body {
   font-family: var(--font-body);
