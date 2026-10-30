@@ -1,7 +1,7 @@
 # Repo weight (D-494, #856)
 
 The git pack was 887 MB on 2026-10-27, three weeks in. This is the plan to stop it growing and to move
-the media that weighs most out of the repo. **History is not rewritten**: `git filter-repo` would break
+the media that weighs most out of the repo. **History is not rewritten** (until #1038): `git filter-repo` would break
 every open worktree and PR, and only the owner can approve it (a `processes` decision, once the steps
 below are done and no PR is open).
 
@@ -9,10 +9,11 @@ below are done and no PR is open).
 
 `tools/agents/repo-weight.test.mjs`, in the `tests` check: no tracked file over 5 MB, no Chrome profile
 file (`Default/`, `Local State`, `*.tflite`…), and the same for every blob the branch's commits add, so
-a file added and then deleted in a PR still fails. Its `GRANDFATHERED` list holds the three promo MP4s
-until step 2; it may only shrink, and the test fails when a listed file leaves or shrinks.
+a file added and then deleted in a PR still fails. Its `GRANDFATHERED` list is empty since step 2 and
+may only shrink. Since step 2 it also rejects any video (`.mp4`, `.mov`, `.webm`) a branch adds under
+`marketing/`, whatever its size.
 
-## 2. Promo video → GitHub Releases
+## 2. Promo video → GitHub Releases (done, #1036)
 
 `marketing/promo-video/output/*.mp4` (~22 MB each, replaced on every version, 335 MB of history).
 
@@ -24,10 +25,12 @@ until step 2; it may only shrink, and the test fails when a listed file leaves o
    `marketing/README.md` and `marketing/registro.json` link the release instead of `output/`.
 4. `git rm` the three MP4s and empty `GRANDFATHERED`. Thumbnails (`miniatura-*.jpg`) stay: small.
 
-The smaller clips (`share-tutorial`, `caso-teaser`, ~2 MB) stay under the limit; they follow the same
-path if they start being re-committed.
+Every future marketing video takes the same path: git ignores `marketing/**/*.mp4|mov|webm` and
+`tools/release/video-release.mjs <folder> <version> <file>...` makes the release `<folder>-v<n>` and
+prints the URLs. The small clips already in git (`share-tutorial`, `caso-teaser`, ~2 MB) stay; a new
+version of one goes to a release too.
 
-## 3. README screenshots: re-commit only real changes
+## 3. README screenshots: re-commit only real changes (#1037)
 
 `docs/screenshots/` is 6 MB today but changed 778 times (268 MB of history): a documentation round
 re-saves 76–95 PNGs whose pixels barely moved (antialiasing, a clock, a version number).

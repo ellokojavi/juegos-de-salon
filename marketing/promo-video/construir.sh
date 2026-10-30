@@ -32,3 +32,4 @@ for f in vertical:promo-vertical horizontal:promo-youtube-16x9; do
 done
 rm -f trabajo-*.mp4 trabajo-audio.wav
 ls -la output
+echo "output/ is not in git: publish with node tools/release/video-release.mjs promo-video <n> marketing/promo-video/output/*.mp4 (D-494)"

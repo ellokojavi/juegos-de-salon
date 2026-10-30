@@ -12,3 +12,9 @@ arte-original/
 
 # Caché de Python que deja tools/release/readme.py al correr
 __pycache__/
+
+# Marketing videos go to GitHub Releases, not git (D-494, docs/REPO-WEIGHT.md):
+# node tools/release/video-release.mjs <folder> <version> <file>...
+marketing/**/*.mp4
+marketing/**/*.mov
+marketing/**/*.webm
