@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Party Games",
   "short_name": "Party Games",
-  "description": "Traditional games brought to your phone, to pass the time alone or with friends.",
+  "description": "Short tabletop, logic and skill games to play alone or with friends.",
   "start_url": "./?pwa",
   "scope": "./",
   "display": "standalone",
