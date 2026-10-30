@@ -45,6 +45,11 @@ for (const [width, cup, name] of [[390, L, 'pending'], [320, L, 'pending-320'], 
     ok(await ev(`(() => { const r = document.createRange(); r.selectNodeContents(document.getElementById('copa-hoy-chip')); return r.getBoundingClientRect().height < 30; })()`), `${width}px played today: the chip fits on one line`);
     // Beside One a Day played, both boxes are the same height (#1029)
     ok(await ev(`!document.querySelector('.uad-card.hecho') || Math.abs(document.getElementById('copa-hoy-chip').offsetHeight - document.querySelector('.uad-card.hecho .uad-card-chip').offsetHeight) <= 2`), `${width}px played today: as tall as One a Day's box`);
+    // Lined up: a longer blurb on one card does not push its box lower than the other's (owner's screenshot)
+    // One a Day played as in the screenshot (its #2 box), and La Copa's blurb a line longer than One a Day's
+    await ev(`(() => { const u = document.querySelector('.uad-card'); u.classList.add('hecho'); u.querySelector('.meta').innerHTML = '<a class="uad-card-chip"><span class="uad-card-pos">#2</span><span class="uad-card-sub"><b>1562 pts</b></span></a>';
+      const t = ${card}.querySelector('.tag'); t.textContent += ' ' + t.textContent; })()`);
+    ok(await ev(`!document.querySelector('.uad-card.hecho') || ['top', 'bottom'].every(k => Math.abs(document.getElementById('copa-hoy-chip').getBoundingClientRect()[k] - document.querySelector('.uad-card.hecho .uad-card-chip').getBoundingClientRect()[k]) <= 2)`), `${width}px played today: lined up with One a Day's box`);
     ok(await ev(`${card}.getAttribute('href').endsWith('cup/?K7Q2X')`), 'played today: it opens the cup');
     ok(await ev(`Math.abs(${card}.offsetHeight - document.querySelector('.uad-card').offsetHeight) <= 1`), 'played today: as tall as One a Day\'s card');
   }

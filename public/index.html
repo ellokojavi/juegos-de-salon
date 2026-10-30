@@ -404,7 +404,7 @@
     @media (max-width: 340px) { .game-card.torneo .meta .copa-hoy-chip.espera { padding: 0 8px; font-size: 0.78rem; letter-spacing: -0.01em; } }
     @media (max-width: 340px) { .game-card.torneo .meta .copa-hoy-chip { padding: 0 10px; font-size: 0.82rem; } }
     /* Beside One a Day's played box (#1 and its points), La Copa's chip is as wide and as tall (#1029) */
-    .fila-alta:has(.uad-card.hecho) .game-card.torneo .meta { align-self: stretch; width: 100%; }
+    .fila-alta:has(.uad-card.hecho) .game-card.torneo .meta { align-self: end; justify-self: stretch; width: 100%; }
     .fila-alta:has(.uad-card.hecho) .game-card.torneo .meta .copa-hoy-chip { width: 100%; flex: 1 1 100%; border-radius: 18px; min-height: calc(14px + 2.1rem * 0.95 + 0.78rem * 1.1); }
     /* Two destinations (lab, D-414): the link covers the card; the chip sits above it */
     .uad-card.dos { position: relative; }
@@ -416,7 +416,7 @@
     @media (max-width: 340px) { .uad-card-chip { padding: 0 10px; font-size: 0.82rem; } }
     .uad-card.hecho .uad-card-chip { background: rgba(0, 0, 0, 0.32); color: var(--ink); }
     /* Played today: the month's place big, with the site's gradient, and the points under it (owner-approved) */
-    .uad-card.hecho .meta { align-self: stretch; width: 100%; }
+    .uad-card.hecho .meta { align-self: end; justify-self: stretch; width: 100%; }
     .uad-card.hecho .meta .uad-card-chip { width: 100%; flex: 1 1 100%; flex-direction: column; gap: 2px; padding: 6px 10px; border-radius: 18px; }
     .uad-card .meta .uad-card-chip span { background: none; padding: 0; border: 0; border-radius: 0; white-space: nowrap; }
     .uad-card .meta .uad-card-chip .uad-card-pos { font: 800 2.1rem/0.95 var(--font-num); letter-spacing: -0.02em; padding-right: 0.06em; background: linear-gradient(90deg, var(--yellow), var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
