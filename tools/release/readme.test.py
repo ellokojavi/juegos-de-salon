@@ -85,23 +85,28 @@ assert readme.screenshot_date(IMAGE, {}) == readme.git_date([IMAGE])
 
 # A retake that moved fewer than 0.5 % of the pixels keeps the committed PNG (#1037)
 import io, tempfile
-from PIL import Image
-def png_bytes(im):
-    b = io.BytesIO(); im.save(b, 'PNG'); return b.getvalue()
-base = Image.new('RGB', (100, 100), 'white')
+try:
+    from PIL import Image
+except ImportError:  # CI has no Pillow: the code falls back to identical bytes, checked here
+    Image = None
 with tempfile.TemporaryDirectory() as d:
     shot = pathlib.Path(d) / 'shot.png'
-    def retake(dots, size=(100, 100)):
-        im = base.copy().resize(size)
-        for i in range(dots):
-            im.putpixel((i % size[0], i // size[0]), (0, 0, 0))
-        shot.write_bytes(png_bytes(im))
-        return readme.barely_changed(png_bytes(base), shot)
-    assert retake(0), 'an identical retake counts as a change'
-    assert retake(49), '49 of 10 000 pixels (0.49 %) count as a change'
-    assert not retake(50), '0.5 % is a real change'
-    assert not retake(0, (100, 101)), 'a new size is a real change'
+    shot.write_bytes(b'png')
+    assert readme.barely_changed(b'png', shot), 'identical bytes count as a change'
     assert not readme.barely_changed(None, shot), 'a new screenshot counts as unchanged'
+    if Image:
+        def png_bytes(im):
+            b = io.BytesIO(); im.save(b, 'PNG'); return b.getvalue()
+        base = Image.new('RGB', (100, 100), 'white')
+        def retake(dots, size=(100, 100)):
+            im = base.copy().resize(size)
+            for i in range(dots):
+                im.putpixel((i % size[0], i // size[0]), (0, 0, 0))
+            shot.write_bytes(png_bytes(im))
+            return readme.barely_changed(png_bytes(base), shot)
+        assert retake(49), '49 of 10 000 pixels (0.49 %) count as a change'
+        assert not retake(50), '0.5 % is a real change'
+        assert not retake(0, (100, 101)), 'a new size is a real change'
 
 if failures:
     sys.exit(f'readme: {failures} case(s) wrong')
