@@ -135,19 +135,32 @@ function chipPuntos(T, lang, racha = 0) {
 function tarjetaDosDestinos({ lang, raiz, alTocar }) {
   const { T, hecho, aria, racha } = estadoAcceso(lang, raiz, alTocar);
   const ir = () => { alTocar?.(); trackUnoAlDia('boton'); };
+  // No game yet in this month's season: the chip invites to join it (owner's request)
+  const hoy = fechaLocal(), mes = mesTemporada(lang, hoy);
+  const invita = !hecho && !Object.keys(leer().dias || {}).some(f => f.startsWith(hoy.slice(0, 7)));
+  const rotulo = invita ? `▶ ${T.unirse}` : `▶ ${T.jugar}`;
   const chip = hecho
     ? el('a', { class: 'uad-card-chip', id: 'btn-uad-chip', href: `${raiz}today/`, onClick: ir }, ...chipPuntos(T, lang, racha))
-    : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, rotuloJugar(lang, `▶ ${T.jugar}`));
+    : el('button', { type: 'button', class: 'uad-card-chip', id: 'btn-uad-chip', onClick: () => { alTocar?.(); tirarHoy({ lang, raiz }); } }, rotuloJugar(lang, rotulo));
   // «Jugar hoy» says which game to the screen reader; «▶ Seguir jugando» is read as it shows (U-1)
   if (!hecho && chip.textContent === `▶ ${T.jugar}`) chip.setAttribute('aria-label', T.ariaJugarHoy);
   // The screen reader hears the place and the points too, not only «your points»
   if (hecho) chip.setAttribute('aria-label', `${T.ariaTusPuntos}: ${chip.textContent}`);
-  return el('div', { class: 'game-card alta uad-card dos' + (hecho ? ' hecho' : ''), id: 'btn-uno-al-dia' },
+  return el('div', { class: 'game-card alta uad-card dos' + (hecho ? ' hecho' : '') + (invita ? ' invita' : ''), id: 'btn-uno-al-dia' },
+    // The season's month on a tab over the top border, out of the layout, so the card keeps its size (owner's pick)
+    el('span', { class: 'uad-card-mes', 'aria-hidden': 'true' }, mes),
     el('a', { class: 'uad-card-link', id: 'btn-uad-abrir', href: `${raiz}today/`, 'aria-label': aria, onClick: ir }),
     el('div', { class: 'emoji' }, el('span', { 'aria-hidden': 'true' }, '📅')),
     el('div', { class: 'texto' }, el('h2', {}, el('span', {}, T.nombre)), el('div', { class: 'tag' }, T.sub)),
     el('div', { class: 'meta' }, racha && !hecho ? el('span', { class: 'uad-card-estado', 'aria-hidden': 'true' }, `🔥 ${racha}`) : null, chip),
     hecho ? null : el('span', { class: 'btn-uad-punto', 'aria-hidden': 'true' }));
+}
+
+/** The season's month and year, short and without a dot: «Oct 2026», «Out 2026». Pure, for node. */
+export function mesTemporada(lang, fecha = fechaLocal()) {
+  const [y, m] = fecha.split('-').map(Number);
+  const mes = new Date(Date.UTC(y, m - 1, 15)).toLocaleDateString(lang, { month: 'short', timeZone: 'UTC' }).replace('.', '');
+  return `${mes.charAt(0).toUpperCase()}${mes.slice(1)} ${y}`;
 }
 
 /** Tira el dado de Juego al azar con los juegos de la portada: "🎲 Jugar otro". */

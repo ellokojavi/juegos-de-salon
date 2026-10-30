@@ -34,7 +34,7 @@ await b.go(`${SITE}/`, 1500);
 ok(await waitFor(`!!document.getElementById('btn-uno-al-dia')`), 'the home page has the Uno al día card');
 await waitFor(`!!document.getElementById('btn-uad-chip')`, 4); // the two-destination card (D-414)
 ok(await ev(`document.getElementById('btn-uno-al-dia').parentElement.querySelector('.game-card.torneo') !== null`), 'it goes in the same row as La Copa, half and half (D-239)');
-ok(/Jugar hoy/.test(await text('#btn-uno-al-dia .meta')), `it says "Jugar hoy", no streak yet (${await text('#btn-uno-al-dia .meta')})`);
+ok(/Únete al mes/.test(await text("#btn-uno-al-dia .meta")) && /invita/.test(await ev("document.getElementById('btn-uno-al-dia').className")), `with nothing played this month it invites to join (${await text("#btn-uno-al-dia .meta")})`);
 // Two destinations (D-414, for everyone): the card opens /today/, its chip plays
 ok(await ev(`!!document.querySelector('#btn-uno-al-dia > a.uad-card-link[href$="today/"]') && document.querySelector('#btn-uad-chip')?.tagName === 'BUTTON' && !document.querySelector('a #btn-uad-chip, button #btn-uad-chip')`), 'the card is a link to /today/ and «▶ Jugar hoy» a separate button beside it');
 ok(await ev(`document.getElementById('btn-uad-chip').getBoundingClientRect().height >= 44`), 'the chip is a 44 px target');
