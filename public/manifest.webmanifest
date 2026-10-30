@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Juegos de Salón",
   "short_name": "Juegos de Salón",
-  "description": "Juegos tradicionales llevados a tu celular para pasar el tiempo solo o con amigos.",
+  "description": "Juegos cortos de mesa, de lógica y de destreza para jugar solo o con amigos.",
   "start_url": "./?pwa",
   "scope": "./",
   "display": "standalone",
