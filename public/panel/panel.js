@@ -1645,7 +1645,7 @@ const FB_STAGE = {
   merged: ['✅', 'Fixed', 'Its PR was merged; the issue stays open until the player is answered'],
   closed: ['🔒', 'Closed', 'The issue is closed'],
 };
-const FB_FILTROS = [['open', 'Pending'], ['closed', 'Closed'], ['all', 'All']];
+const FB_FILTROS = [['open', 'Not closed'], ['closed', 'Closed'], ['all', 'All']];
 
 /** Every message, not only the range's, and where each stands: read the first time the section opens. */
 function escucharFeedback() {
@@ -1678,7 +1678,7 @@ function vistaFeedback() {
   const csv = () => filas.map(f => ({ date: new Date(f.at).toISOString(), who: f.name, kind: f.tipo, game: f.game, stage: f.stage,
     issue: f.issue || '', prs: f.prs.map(p => `#${p.n} ${p.state}`).join(' '), replied: f.replied ? 'yes' : '', text: f.text }));
   return [
-    ...titulo('💬 Feedback', 'Every message players sent (🐞 and the inbox at the end of every game), in full and from the start, not only this range. Each one becomes a GitHub issue; its stage follows the issue and the PRs that close it or name it, updated every 5 minutes by the feedback-watch job.'),
+    ...titulo('💬 Feedback', 'Every message players sent (🐞 and the inbox at the end of every game), in full and from the start, not only this range. Each one becomes a GitHub issue; its stage follows the issue and the PRs that close it or name it.'),
     el('div', { class: 'tiles' }, ...STAGES.map(s => tile(cuenta[s], `${FB_STAGE[s][0]} ${FB_STAGE[s][1]}`, { info: FB_STAGE[s][2] }))),
     filtros(FB_FILTROS, S.fbFiltro, v => { S.fbFiltro = v; render(); }, 'Show'),
     conCsv(bloque(`Messages · ${n(filas.length)}`, 'Newest first. Tap an issue or a PR to open it on GitHub.',
