@@ -104,7 +104,7 @@ export function withLang(url, lang = getLang()) {
 export const COMMON = {
   es: {
     appTitle: 'Juegos de Salón',
-    appSub: 'Juegos tradicionales llevados a tu celular para pasar el tiempo solo o con amigos.',
+    appSub: 'Juegos cortos de mesa, de lógica y de destreza para jugar solo o con amigos.',
     players: 'jugadores', minutes: 'min',
     footer: 'Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕',
     player: 'jugador',
@@ -363,7 +363,7 @@ export const COMMON = {
   },
   en: {
     appTitle: 'Party Games',
-    appSub: 'Traditional games brought to your phone, to pass the time alone or with friends.',
+    appSub: 'Short tabletop, logic and skill games to play alone or with friends.',
     players: 'players', minutes: 'min',
     footer: 'Drink responsibly and keep water nearby. If you drive, you don\'t drink. 🚕',
     player: 'player',
@@ -608,7 +608,7 @@ export const COMMON = {
   },
   pt: {
     appTitle: 'Jogos de Salão',
-    appSub: 'Jogos tradicionais trazidos pro seu celular, pra passar o tempo sozinho ou com amigos.',
+    appSub: 'Jogos curtos de mesa, de lógica e de destreza pra jogar sozinho ou com amigos.',
     players: 'jogadores', minutes: 'min',
     footer: 'Beba com responsabilidade e com água por perto. Se for dirigir, não beba. 🚕',
     player: 'jogador',
@@ -853,7 +853,7 @@ export const COMMON = {
   },
   de: {
     appTitle: 'Salonspiele',
-    appSub: 'Klassische Spiele auf deinem Handy, für allein oder mit Freunden.',
+    appSub: 'Kurze Gesellschafts-, Logik- und Geschicklichkeitsspiele für allein oder mit Freunden.',
     players: 'Spieler', minutes: 'Min.',
     footer: 'Trink verantwortungsvoll und hab Wasser dabei. Wer fährt, trinkt nicht. 🚕',
     player: 'Spieler',
