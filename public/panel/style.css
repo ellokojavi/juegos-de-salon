@@ -395,3 +395,7 @@ a.evento--link:hover, a.evento--link:focus-visible { background: var(--glass); o
 .control-parte { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--glass-border); }
 .control-parte p { margin: 2px 0 0; }
 .campana-plegada .campana-renombrar { margin-right: auto; }
+
+/* 💬 Feedback: the whole message, as written */
+.fb-texto { margin: 4px 0; font-weight: 600; white-space: pre-wrap; overflow-wrap: anywhere; }
+.fb .que small a { color: var(--yellow); }

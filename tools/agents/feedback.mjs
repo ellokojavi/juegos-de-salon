@@ -202,6 +202,35 @@ export function body(r) {
 
 /* ------------------------------------------------------------------ */
 
+/**
+ * Where each report stands, for the panel's 💬 Feedback section: its issue (open or closed, replied
+ * or not) and the PRs that close it or name it (`#n` in their body), with their state. Written to
+ * `feedbackEstado/<id>` (owner-only) on every `sync` pass; a report whose issue GitHub's list left
+ * out keeps the last status written (PATCH, never PUT: the list comes back partial at random).
+ */
+export function statusOf(issues, prs) {
+  const byIssue = new Map();
+  for (const p of prs || []) {
+    const ns = new Set([...(p.closingIssuesReferences || []).map(r => r.number), ...[...String(p.body || '').matchAll(/#(\d+)\b/g)].map(m => Number(m[1]))]);
+    for (const n of ns) {
+      if (!byIssue.has(n)) byIssue.set(n, []);
+      byIssue.get(n).push({ n: p.number, state: String(p.state || '').toLowerCase(), title: String(p.title || '').slice(0, 140) });
+    }
+  }
+  const out = {};
+  for (const i of issues || []) {
+    const id = idOf(i.body);
+    if (!id) continue;
+    out[id] = {
+      issue: i.number,
+      state: String(i.state || '').toLowerCase(),
+      replied: (i.labels || []).some(l => l.name === REPLIED),
+      prs: (byIssue.get(i.number) || []).sort((a, b) => a.n - b.n),
+    };
+  }
+  return out;
+}
+
 const gh = (...args) => execFileSync('gh', [...args, '-R', REPO], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 
 /** Most issues one `sync` pass creates (#849). */
@@ -218,12 +247,18 @@ async function sync(dryRun) {
   const t = await adminToken();
   const reports = Object.entries((await read('feedback', t)) || {}).map(([id, r]) => ({ id, ...r }));
   const ledger = (await read('feedbackIssues', t)) || {};
-  const list = () => JSON.parse(gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '1000', '--json', 'number,body'));
+  const list = () => JSON.parse(gh('issue', 'list', '--label', LABEL, '--state', 'all', '--limit', '1000', '--json', 'number,body,state,labels'));
   const issues = list();
   // What GitHub shows and the record lacks goes into the record (the issues from before it existed)
   const missing = unrecorded(issues, ledger);
   if (Object.keys(missing).length && !dryRun) await write('feedbackIssues', 'PATCH', missing, t);
   Object.assign(ledger, missing);
+  // Each report's issue and PRs, for the panel's 💬 Feedback section
+  try {
+    const prs = JSON.parse(gh('pr', 'list', '--state', 'all', '--limit', '400', '--json', 'number,state,title,body,closingIssuesReferences'));
+    const status = statusOf(issues, prs);
+    if (Object.keys(status).length && !dryRun) await write('feedbackEstado', 'PATCH', status, t);
+  } catch (e) { console.warn(`⚠️ feedbackEstado not updated: ${e.message}`); }
   const known = new Set([...Object.keys(ledger), ...uploaded(issues)]);
   let fresh = pending(reports, known);
   if (looksShort(reports, fresh)) {

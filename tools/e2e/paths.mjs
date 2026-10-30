@@ -133,8 +133,10 @@ const SEED_PANEL = view => `(async()=>{const DAY=86400000,now=Date.now(),today=M
         b.vuelta={nueva:4+k%3,d1:6,'d2-7':5,'d8-30':2,d31:1};b.frec={f1:5,'f2-3':4,'f4-7':3,'f8-14':2,f15:1};b.comparte={'resultado-tango':3,copa:2,app:1,invita:k%2};
         b.fin={dudo:{local:3,cpu:2},'toque-y-fama':{solo:2}};b.otra={dudo:2,'toque-y-fama':1};}
       // Feedback for the timeline (D-408): a suggestion with a name, an anonymous problem report and a lab tester's idea
-      const feedback={f1:{texto:'Me encantó la Generala, ¿pueden agregar más idiomas?',at:now-50*60000,nombre:'Cata',tipo:'sugerencia'},f2:{texto:'El botón de compartir no hace nada en mi celular',at:now-26*3600000,tipo:'problema'},f3:{texto:'Una copa de solo palabras',at:now-3*DAY,nombre:'Leo',tipo:'idea',tester:'LV'}};
-      window.__panel.seed({rooms,days,torneos:cups,push,uad,feedback,vista:'${view}'});})()`;
+      const feedback={f1:{texto:'Me encantó la Generala, ¿pueden agregar más idiomas?',at:now-50*60000,nombre:'Cata',tipo:'sugerencia'},f2:{texto:'El botón de compartir no hace nada en mi celular',at:now-26*3600000,tipo:'problema'},f3:{texto:'Una copa de solo palabras',at:now-3*DAY,nombre:'Leo',tipo:'idea',tester:'LV'},f4:{texto:'Hola, ¿se puede jugar sin internet?',at:now-5*3600000,nombre:'Bia',v:'email',contexto:JSON.stringify({canal:'email',idioma:'pt'}),correoMascara:'b********a@g********m'}};
+      // 💬 Feedback: where each message stands (f1 in an open PR, f3 closed and replied, f2 with no issue yet)
+      const feedbackEstado={f1:{issue:901,state:'open',replied:false,prs:[{n:950,state:'open',title:'More languages'}]},f3:{issue:880,state:'closed',replied:true,prs:[{n:890,state:'merged',title:'A words-only cup'}]}};
+      window.__panel.seed({rooms,days,torneos:cups,push,uad,feedback,feedbackEstado,vista:'${view}'});})()`;
 
 /* --- Pintaminas: the variant the phone remembers, and painting the whole board with the engine's solution --- */
 /* --- Loteo: the phone remembers the variant too, so each path starts from Numbers --- */
@@ -569,7 +571,7 @@ export const PATHS = {
    */
   panel: {
     ...Object.fromEntries([['data', '/users'], ['now', '/now'], ['summary', '/summary'], ['timeline', '/timeline'], ['tournament', '/cup'], ['games', '/group'], ['group', '/group'], ['individual', '/individual'], ['daily', '/daily'], ['users', '/users'], ['audience', '/users'],
-      ['cup-card', '/cup/OFICI'], ['game-card', '/game/liars-dice'], ['room-card', '/room/CPSV'], ['traffic', '/traffic'], ['health', '/health'], ['campaigns', '/campaigns']].map(([shot, view]) => [shot, [SEED_PANEL(view)]])),
+      ['cup-card', '/cup/OFICI'], ['game-card', '/game/liars-dice'], ['room-card', '/room/CPSV'], ['traffic', '/traffic'], ['health', '/health'], ['campaigns', '/campaigns'], ['feedback', '/feedback']].map(([shot, view]) => [shot, [SEED_PANEL(view)]])),
     // 📣 Campaigns' other two tabs (D-477)
     ...Object.fromEntries([['campaigns-features', 1], ['campaigns-skins', 2]].map(([shot, i]) => [shot, [SEED_PANEL('/campaigns'), `document.querySelectorAll('.campanas-tabs button')[${i}].click()`]])),
     // A splash card's Quick look, opened

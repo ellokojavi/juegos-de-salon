@@ -269,6 +269,8 @@ GitHub issues with the `feedback` label (plus `feedback:suggestion`, `feedback:p
 `feedback:game-idea` or `feedback:other` when it carries a `tipo`, D-341), with the name masked (`C******* A*******`, D-279, D-366) and the key (D-306) and without the
 browser, and the processes agent handles them (D-275).
 
+**Where each report stands:** `feedbackEstado/<id>` (`issue`, `state`, `replied`, `prs`), readable only by the owner and written only with the admin key by `tools/agents/feedback.mjs sync`, for the panel's 💬 Feedback section.
+
 **The optional email (D-317):** `feedback/<id>` may carry `correoMascara` (`j********n@g********m`, D-366; the older `j********@********m` still validates),
 never the address. The address goes to `feedbackContacto/<id>` (`correo`, up to 120, and server
 `at`): written once, only when `feedback/<id>` exists, and **never readable without the owner's
