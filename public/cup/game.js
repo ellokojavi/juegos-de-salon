@@ -1574,6 +1574,9 @@ async function enviar(d, fin, envio = null) {
     Lc.results ||= {}; Lc.results[d] ||= {};
     Lc.results[d][S.yo] = { s: fin.s, ms: fin.ms, t: fin.t, r: fin.resumen };
   }
+  // The home page's card knows at once that this day is played, even if the player leaves before
+  // the listener brings the cup back (it said ▶ Jugar hoy for a day already played)
+  if (Lc?.meta) { cuenta.lista.guardar(S.code, recorteLista(Lc, S.yo)); cuenta.porJugar.guardar(S.code, porJugar(Lc, S.yo, Date.now())); }
   resultado(d, { recien: true, det: fin.det });
 }
 
