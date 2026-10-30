@@ -24,6 +24,7 @@ export const FLAGS = {
   'uad-share-grids': '🟩 Uno al día: share grids for Agentes, Dudo, Generala and Battleship',
   'cover-facts': '📖 Game pages: who plays and how long, in the rules',
   'uad-night-totals': '📅 Uno al día: totals written by the hourly rebuild',
+  'home-pill-bar': '💊 Home page: top bar buttons as pills of one height',
   'name-guard': '🛡️ Rankings: offensive names refused on sign-up',
 };
 export const STATES = ['lab', 'all', 'off'];
