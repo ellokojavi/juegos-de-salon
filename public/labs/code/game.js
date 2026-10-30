@@ -5,6 +5,7 @@
  * que se escribe en el teclado. Nada avisa que una carta quedó bien: se sabe leyendo. El motor está
  * en engine.js; el teclado es el compartido (teclado.js).
  */
+import { salidasFin } from '../../assets/js/fin.js';
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { getLang, langToggle, COMMON, SITIO, withLang } from '../../assets/js/i18n.js';
@@ -454,7 +455,7 @@ function resultado() {
     el('p', { class: 'lead', id: 'resumen', style: 'margin:0' }, fmt(P.errores > 1 ? T.resumen : P.errores ? T.resumenUno : T.resumenSin, { tiempo: mmss(ms), e: P.errores })),
     botonResultadoSolo({ C: COMMON[lang] || COMMON.es, emoji: '🔐', juego: T.nombre, puntaje: '🔓', tiempo: mmss(ms), url: withLang(`${SITIO}labs/code/`, lang), alTocar: () => SFX.tap() }),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); if (P.modo === 'palabra') empezarPalabra(); else empezar(); } }, T.otra),
-    el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
+    salidasFin('lab', { lang, raiz: '../../' }),
     // El comentario va abierto y al final de todo (D-265, D-268)
     formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));
 }

@@ -7,6 +7,7 @@
  * Jugar solo es la ⏳ Línea Relámpago de La Copa (D-142): no pasa por el reductor, la monta
  * cup/games/solo.js con la pantalla de cup/games/timeline/ui.js. Ver la sección "Jugar solo".
  */
+import { salidasFin } from '../assets/js/fin.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
 import { gameById } from '../assets/js/games.js';
@@ -650,7 +651,7 @@ function renderResult(v) {
   box.append(
     el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, busy: COMMON[lang].opening, reset: () => { S.switching = false; } }) }, T.rematch),
     el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode),
-    el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+    salidasFin('suelto', { lang }),
   );
 }
 
@@ -963,7 +964,7 @@ function terminarSolo(partida, p, { s, t, ms, estado }) {
     botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '⏳', juego: `${T.title}: ${deck.name[lang]}`, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}timeline/`), alTocar: () => SFX.tap() }),
     el('button', { class: 'btn btn--yellow', id: 'btn-solo-otra', onClick: () => { SFX.tap(); empezarSolo(partida.tema); } }, T.playAgain),
     el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); renderResumeSlot(); showScreen('screen-intro'); } }, T.changeMode),
-    el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+    salidasFin('suelto', { lang }),
     // En el resultado, solo la tabla: entrar se ofrece en la antesala (C-8, los botones a la vista)
     tablaFin,
   );

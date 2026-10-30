@@ -6,6 +6,7 @@
  * A tap is judged at its own timestamp (the event's), not at the next frame, so a slow phone does not
  * play a harder game (engine.js).
  */
+import { salidasFin } from '../../assets/js/fin.js';
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { onScreen } from '../../assets/js/on-screen.js';
@@ -233,7 +234,7 @@ function resultado() {
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
     botonResultadoSolo({ C: COMMON.en, emoji: '🧱', juego: T.nombre, puntaje: `🧱 ${n}`, tiempo: '', tarjeta: card(S.kinds), url: `${SITIO}labs/stack/`, alTocar: () => SFX.tap() }),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); jugar(); } }, T.otraVez),
-    el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
+    salidasFin('lab', { raiz: '../../' }),
     el('hr', { class: 'divisor' }),
     formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));
   scrollTo(0, 0);

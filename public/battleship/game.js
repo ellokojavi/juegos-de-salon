@@ -4,6 +4,7 @@
  *  - local: ambos jugadores en este celular · cpu: B es un bot (Hunter) · online: sala con chat (C-15)
  * Cada dispositivo responde los disparos contra SU flota.
  */
+import { salidasFin } from '../assets/js/fin.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
@@ -868,7 +869,7 @@ function renderResultActions() {
   box.append(
     waiting ? el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.rematchWaiting, { name: M.names[o] }))) : el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, busy: COMMON[lang].opening, reset: () => { S.switching = false; } }) }, T.rematch),
     el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode),
-    el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+    salidasFin('suelto', { lang }),
   );
   // Revancha propuesta por el rival: me uno a su sala nueva
   if (S.mode === 'online') {

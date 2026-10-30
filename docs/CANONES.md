@@ -575,7 +575,13 @@ that moment, and only those, in the same order everywhere (D-343):
 - **No exit twice:** where the header's ‹ already goes to the menu, the result does not add a
   second "back to the menu" next to another exit (One a Day).
 - **The exits come from `public/assets/js/fin.js`** (`salidasFin(contexto)`): the same words and
-  look in every game. A game does not build its own "back to the menu" for these contexts.
+  look in every game. A game does not build its own "back to the menu" (or "back to the lab",
+  `salidasFin('lab')`) for these contexts; `fin.test.mjs` fails on a hand-built one (#1042).
+- **The header's ‹ goes to the screen's logical parent and names it** (#1042): «‹ Menú» on a hub
+  or a game played on its own, «‹ Laboratorio» in a game opened from the lab, «‹ Volver a la copa»
+  on a Cup day (its cover, while playing it, its result; behind the `cup-back-board` flag until
+  it is published) and a trial run goes back to its day's cover. Mid-game it asks first (D-432).
+  A button that goes back one step inside a game (setup → intro) says «‹ Volver», never «Menú».
 - **One a Day is one card in every game**: `tarjetaResultado` (`uno-al-dia-ui.js`) carries its
   actions and exits, and `ponerTarjeta` puts it right under the hero. In today mode the game adds
   no buttons of its own: no rematch (#226), no change mode, no second menu button.

@@ -7,6 +7,7 @@
  * play a harder game (engine.js). The course is the day's: everyone
  * crosses the same gaps today, and the phone keeps today's runs, so a group can pass it around.
  */
+import { salidasFin } from '../../assets/js/fin.js';
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { onScreen } from '../../assets/js/on-screen.js';
@@ -461,7 +462,7 @@ function resultado() {
     hoyLista,
     botonResultadoSolo({ C: COMMON.en, emoji: '🥷', juego: T.nombre, puntaje: `🥷 ${n}`, tiempo: '', tarjeta: card(g.kinds), url: `${SITIO}labs/stick/`, alTocar: () => SFX.tap() }),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); jugar(); } }, T.otraVez),
-    el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
+    salidasFin('lab', { raiz: '../../' }),
     // Without a player, "make this game count?" after the buttons, so they stay in sight (C-8, D-274); then the table
     !conRanking && cuenta && rankingsVisibles() ? aviso() : null,
     tablaFin,
