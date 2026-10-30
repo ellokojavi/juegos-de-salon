@@ -27,6 +27,7 @@ export const FLAGS = {
   'home-pill-bar': '💊 Home page: top bar buttons as pills of one height',
   'cup-back-board': '🏆 La Copa: the header ‹ goes back to the board while playing a day',
   'name-guard': '🛡️ Rankings: offensive names refused on sign-up',
+  'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
 };
 export const STATES = ['lab', 'all', 'off'];

@@ -504,6 +504,7 @@ node public/assets/js/lab-access.test.mjs
 node public/assets/js/labs-puerta.test.mjs
 node public/assets/js/llegada.test.mjs
 node public/assets/js/manifest.test.mjs
+node public/assets/js/month-end.test.mjs
 node public/assets/js/name-guard.test.mjs
 node public/assets/js/on-screen.test.mjs
 node public/assets/js/parametros.test.mjs
