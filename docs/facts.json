@@ -1430,6 +1430,7 @@
     "contact-sheet.mjs",
     "cup-games/languages.mjs",
     "cup/archived.mjs",
+    "cup/back-board.mjs",
     "cup/create-week.mjs",
     "cup/languages.mjs",
     "cup/notifications.mjs",
