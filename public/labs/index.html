@@ -128,23 +128,11 @@
         <h2>✨ Mejoras en prueba</h2>
         <p class="muted">Cambios al resto de la app, para mirarlos antes de que lleguen a todos.</p>
         <p class="muted mejoras-vacio">Ahora no hay ninguna en prueba: las lanzadas están en La Bodega.</p>
-        <section class="panel seccion" id="seccion-copa-espera">
-          <h2>🏆 La Copa: cuánto falta para tu próximo día</h2>
-          <p class="muted" style="margin:0">Si ya jugaste tu día de La Copa, su tarjeta en la portada muestra «✅ Día 2 · 5h» y va descontando. Cuando el día abre, cambia a «▶ Jugar hoy». Si ya jugaste la final, muestra «✅ Final · cierra en 3h».</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Pruébalo con una copa en curso en la que ya hayas jugado hoy: abre la portada. Se ve únicamente con tu llave del laboratorio.</p>
-          <a class="btn btn--yellow" id="btn-copa-espera" href="../">🏠 Ir a la portada</a>
-        </section>
         <section class="panel seccion" id="seccion-home-pill-bar">
           <h2>💊 Portada: botones de arriba parejos</h2>
           <p class="muted" style="margin:0">En la barra de arriba de la portada, los botones de sonido, 🏅 Rankings y compartir pasan de círculos a píldoras de la misma altura que el selector de idioma, para que se vean alineados.</p>
           <p class="muted" style="margin:0;font-size:0.85rem">Abre la portada y mira la barra de arriba. Se ve únicamente con tu llave del laboratorio.</p>
           <a class="btn btn--yellow" id="btn-home-pill-bar" href="../">🏠 Ir a la portada</a>
-        </section>
-        <section class="panel seccion" id="seccion-name-guard">
-          <h2>🛡️ Nombres ofensivos fuera de los rankings</h2>
-          <p class="muted" style="margin:0">Al crear un jugador para los rankings, un nombre con un insulto o una grosería, en cualquiera de los cuatro idiomas y aunque venga con espacios o números en vez de letras, no se acepta: pide elegir otro. Los nombres que ya existen no cambian; si alguno se cuela, se le cambia el nombre a mano.</p>
-          <p class="muted" style="margin:0;font-size:0.85rem">Abre 🏅 Rankings, toca entrar y prueba crear un jugador con un nombre feo. Se ve únicamente con tu llave del laboratorio.</p>
-          <a class="btn btn--yellow" id="btn-name-guard" href="../records/">🏅 Ir a Rankings</a>
         </section>
       </section>
 
@@ -225,6 +213,24 @@
           <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <section class="panel seccion plegada" id="seccion-name-guard" data-launched="2026-10-29">
+            <details>
+              <summary><h2>🛡️ Nombres ofensivos fuera de los rankings</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Al crear un jugador para los rankings, un nombre con un insulto o una grosería, en cualquiera de los cuatro idiomas y aunque venga con espacios, números en vez de letras o pegado a otra palabra, no se acepta: pide elegir otro. Si alguno se cuela, se le cambia el nombre a mano.</p>
+                <a class="btn btn--yellow" id="btn-name-guard" href="../records/">🏅 Ir a Rankings</a>
+              </div>
+            </details>
+          </section>
+          <section class="panel seccion plegada" id="seccion-copa-espera" data-launched="2026-10-29">
+            <details>
+              <summary><h2>🏆 La Copa: cuánto falta para tu próximo día</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Si ya jugaste tu día de La Copa, su tarjeta en la portada muestra «✅ Día 2 · 5h» y va descontando. Cuando el día abre, cambia a «▶ Jugar hoy». Si ya jugaste la final, muestra «✅ Final · cierra en 3h».</p>
+                <a class="btn btn--yellow" id="btn-copa-espera" href="../">🏠 Ir a la portada</a>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-uad-share-grids" data-launched="2026-10-29">
             <details>
               <summary><h2>🟩 Uno al día: más juegos comparten su resultado con emojis</h2><span class="flecha" aria-hidden="true">›</span></summary>
