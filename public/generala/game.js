@@ -727,7 +727,7 @@ function renderSetup(mode, codigoInvitado = '') {
       startMatch(mode, names, { ...DEFAULT_CONFIG, servidaGana, players });
     },
   }, T.start));
-  acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => showScreen('screen-intro') }, T.menu));
+  acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => showScreen('screen-intro') }, COMMON[lang].atras));
   // Jugando solo, el ranking va debajo de empezar, como en Toque y Fama (D-212)
   if (solo) acciones.append(bloqueTabla({ tabla: TABLA_SOLO, titulo: fmt(COMMON[lang].rk.titleOf, { game: T.title }), alTocar: () => SFX.tap() }));
   clearRoomError($('#setup-error'));
@@ -793,7 +793,7 @@ function renderSetupOnline(codigoInvitado = '') {
         el('p', { class: 'lead', style: 'margin-bottom:8px' }, T.joinTitle),
         el('div', { class: 'field' }, codigo), entrar));
   }
-  acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { showScreen('screen-intro'); } }, T.menu));
+  acciones.append(el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { showScreen('screen-intro'); } }, COMMON[lang].atras));
 }
 
 /* ------------------------------------------------------------------ */

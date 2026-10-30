@@ -460,7 +460,7 @@ function espera(texto, { error = false, reintentar = null } = {}) {
   body.innerHTML = '';
   poner(body, el('div', { class: error ? 'form-error' : 'waiting' }, texto));
   if (reintentar) poner(body, el('button', { class: 'btn btn--cyan', onClick: reintentar }, T.retry));
-  if (error) poner(body, el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?test' : '') }, T.menu));
+  if (error) poner(body, el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?test' : '') }, T.cupHome));
 }
 
 /**
@@ -499,7 +499,7 @@ function memorial(podio) {
     el('p', { class: 'muted' }, T.archivedNote)),
   el('button', { class: 'btn btn--yellow', id: 'btn-archivada-crear', onClick: () => { SFX.tap(); crearCopa({ nombreInicial: podio.name }); } }, T.archivedNew),
   el('a', { class: 'btn btn--cyan', id: 'btn-archivada-medallero', href: `${URL_RECORDS}#copas` }, T.archivedMedals),
-  el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?test' : '') }, T.menu));
+  el('a', { class: 'btn btn--ghost btn--sm', href: location.pathname + (PRUEBA ? '?test' : '') }, T.cupHome));
 }
 
 async function abrirCopa(code,{ recienCreada = false, pantalla = null } = {}) {
