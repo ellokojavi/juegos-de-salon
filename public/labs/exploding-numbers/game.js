@@ -5,6 +5,7 @@
  * (pedido del dueño). Solo en español, para probar con amigos. Sin `?seed=` es el tablero de hoy, el
  * mismo para todos. El motor está en engine.js.
  */
+import { salidasFin } from '../../assets/js/fin.js';
 import { el, vibrate, sparkles, confetti } from '../../assets/js/ui.js';
 import { SFX, soundToggle, initSound } from '../../assets/js/sound.js';
 import { COMMON, SITIO } from '../../assets/js/i18n.js';
@@ -397,7 +398,7 @@ function resultado() {
     botonResultadoSolo({ C: COMMON.es, emoji: '💥', juego: T.nombre, puntaje: `${s}/${MAXIMO}`, tiempo: mmss(ms), tarjeta: tarjeta(p), url: `${SITIO}labs/exploding-numbers/${enlace(SEMILLA_URL)}`, alTocar: () => SFX.tap() }),
     el('a', { class: 'btn btn--yellow', id: 'btn-otro', href: enlace(Math.random().toString(36).slice(2, 8)) }, T.otraVez),
     SEMILLA_URL ? el('a', { class: 'btn btn--ghost btn--sm', id: 'btn-de-hoy', href: location.pathname }, T.deHoy) : null,
-    el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.laboratorio),
+    salidasFin('lab', { raiz: '../../' }),
     // Una línea separa lo del juego del comentario para quienes lo prueban, como en los otros del laboratorio
     el('hr', { class: 'divisor' }),
     formularioComentario({ T: T.comentario, contexto: contexto('resultado') })));

@@ -854,7 +854,7 @@ function renderResult(v) {
     el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, busy: COMMON[lang].opening, reset: () => { S.switching = false; } }) }, T.rematch),
     S.mode === 'online' ? el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode) : el('button', { class: 'btn btn--ghost', onClick: () => { clearSession(); location.href = location.pathname; } }, T.changeMode),
     // One a Day played by several: its exit is back to One a Day, as on the card (C-19)
-    S.hoy ? salidasFin('hoy', { lang }) : el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+    S.hoy ? salidasFin('hoy', { lang }) : salidasFin('suelto', { lang }),
   );
 }
 

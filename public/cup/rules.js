@@ -816,7 +816,6 @@ const ES = {
   roundOf: 'Ronda {i} de {n}',
 
   // Laboratorio y práctica (D-101)
-  backToLabs: '🧪 Volver al laboratorio',
   // Con espacio que no parte, para que el ‹ no quede solo en la primera línea (U-12)
   backToLabsShort: '‹\u00a0Laboratorio',
   // El juego suelto, abierto desde la portada (D-142)
@@ -1668,7 +1667,6 @@ const EN = {
   roundOf: 'Round {i} of {n}',
 
   // Laboratorio y práctica
-  backToLabs: '🧪 Back to the lab',
   backToLabsShort: '‹\u00a0Lab',
   practiceHint: 'It\'s practice: it doesn\'t count for any cup and you can play it as many times as you like.',
   tyfNumber: '🔢 Number', tyfWord: '🔤 Word',
@@ -2517,7 +2515,6 @@ const PT = {
   roundOf: 'Rodada {i} de {n}',
 
   // Laboratorio y práctica
-  backToLabs: '🧪 Voltar ao laboratório',
   backToLabsShort: '‹\u00a0Laboratório',
   practiceHint: 'É um treino: não conta para nenhuma copa e dá para jogar quantas vezes quiser.',
   tyfNumber: '🔢 Número', tyfWord: '🔤 Palavra',
