@@ -20,4 +20,10 @@ assert.equal(all[1].game, 'ahorcado');
 assert.deepEqual(feedbackRows(fb, est, 'open').map(r => r.id), ['b']);
 assert.deepEqual(feedbackRows(fb, est, 'closed').map(r => r.id), ['a']);
 assert.deepEqual(countStages(all), { new: 1, open: 0, 'in-pr': 0, merged: 0, closed: 1 });
+// Emails to hola@ arrive as reports too (inbox.mjs ingest): v 'email', contexto as JSON text
+const mix = { m: { at: 5, texto: 'Por correo', v: 'email', contexto: JSON.stringify({ canal: 'email', idioma: 'es' }) },
+  n: { at: 4, texto: 'Desde la app', contexto: JSON.stringify({ juego: 'dudo' }) } };
+assert.deepEqual(feedbackRows(mix).map(r => r.channel), ['email', 'app']);
+assert.equal(feedbackRows(mix)[1].game, 'dudo');
+assert.deepEqual(feedbackRows(mix, {}, 'all', 'email').map(r => r.id), ['m']);
 console.log('feedback panel: ok');

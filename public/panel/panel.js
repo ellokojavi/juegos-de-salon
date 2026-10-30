@@ -70,7 +70,7 @@ const S = {
   // The timeline (D-408): feedback messages, and what is picked in that view
   feedback: {}, unsubFeedback: null,
   // 💬 Feedback: every message (not only the range's) and where each one stands, read on first visit
-  fbTodo: null, fbEstado: {}, fbFiltro: 'open',
+  fbTodo: null, fbEstado: {}, fbFiltro: 'open', fbCanal: 'all',
   // 📣 Campaigns (D-454): Firebase `splash/` (undefined until it answers, null if never saved) and the last save's outcome
   splash: undefined, unsubSplash: null, splashMsg: '',
   // 🧩 Site features and 🎨 skins (D-477): Firebase `controls/` (undefined until it answers), the tab shown and the last save
@@ -1646,6 +1646,7 @@ const FB_STAGE = {
   closed: ['🔒', 'Closed', 'The issue is closed'],
 };
 const FB_FILTROS = [['open', 'Not closed'], ['closed', 'Closed'], ['all', 'All']];
+const FB_CANALES = [['all', 'App and email'], ['app', '🐞 App'], ['email', '✉️ Email']];
 
 /** Every message, not only the range's, and where each stands: read the first time the section opens. */
 function escucharFeedback() {
@@ -1663,7 +1664,7 @@ function filaFeedback(f) {
     el('span', { class: 'hora' }, fechaLabel(f.at)),
     el('span', { class: 'ico', title: ayuda }, ico),
     el('span', { class: 'que' },
-      f.name ? quien(f.name, '') : 'Someone', ` sent ${FEEDBACK_TIPO[f.tipo] || 'feedback'}`,
+      f.name ? quien(f.name, '') : 'Someone', f.channel === 'email' ? ' emailed hola@' : ` sent ${FEEDBACK_TIPO[f.tipo] || 'feedback'}`,
       f.game ? ` · ${gameLabel(f.game)}` : '', f.tester ? el('span', { class: 'tag' }, 'lab') : null,
       el('p', { class: 'fb-texto' }, f.text),
       el('small', {}, `${etapa}`, f.issue ? [' · ', gh('issues', f.issue, `issue #${f.issue}`)] : '', ...prs,
@@ -1672,15 +1673,16 @@ function filaFeedback(f) {
 
 function vistaFeedback() {
   escucharFeedback();
-  const todas = feedbackRows(S.fbTodo || {}, S.fbEstado);
+  const todas = feedbackRows(S.fbTodo || {}, S.fbEstado, 'all', S.fbCanal);
   const cuenta = countStages(todas);
   const filas = todas.filter(r => FILTERS[S.fbFiltro](r.stage));
-  const csv = () => filas.map(f => ({ date: new Date(f.at).toISOString(), who: f.name, kind: f.tipo, game: f.game, stage: f.stage,
+  const csv = () => filas.map(f => ({ date: new Date(f.at).toISOString(), channel: f.channel, who: f.name, kind: f.tipo, game: f.game, stage: f.stage,
     issue: f.issue || '', prs: f.prs.map(p => `#${p.n} ${p.state}`).join(' '), replied: f.replied ? 'yes' : '', text: f.text }));
   return [
-    ...titulo('💬 Feedback', 'Every message players sent (🐞 and the inbox at the end of every game), in full and from the start, not only this range. Each one becomes a GitHub issue; its stage follows the issue and the PRs that close it or name it.'),
+    ...titulo('💬 Feedback', 'Every message, in full and from the start: from the app (🐞 and the end-of-game inbox) and by email to hola@ (the support agent files each one). Its stage follows its GitHub issue and PRs.'),
     el('div', { class: 'tiles' }, ...STAGES.map(s => tile(cuenta[s], `${FB_STAGE[s][0]} ${FB_STAGE[s][1]}`, { info: FB_STAGE[s][2] }))),
     filtros(FB_FILTROS, S.fbFiltro, v => { S.fbFiltro = v; render(); }, 'Show'),
+    filtros(FB_CANALES, S.fbCanal, v => { S.fbCanal = v; render(); }, 'From'),
     conCsv(bloque(`Messages · ${n(filas.length)}`, 'Newest first. Tap an issue or a PR to open it on GitHub.',
       filas.length ? el('div', { class: 'historia' }, ...filas.map(filaFeedback)) : el('p', { class: 'empty' }, S.fbTodo && Object.keys(S.fbTodo).length ? 'Nothing here.' : 'Loading…')),
     'feedback', csv),

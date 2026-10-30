@@ -27,20 +27,32 @@ export function stageOf(st) {
 /** The filter's buckets: what still needs something, what is done, everything. */
 export const FILTERS = { open: s => s !== 'closed', closed: s => s === 'closed', all: () => true };
 
+/** The report's context: an object, or the JSON text the app and the inbox write (`contexto`). */
+export function contextOf(f) {
+  const c = f?.contexto;
+  if (c && typeof c === 'object') return c;
+  try { return JSON.parse(c) || {}; } catch (_) { return {}; }
+}
+
+/** Where the message came from: an email to hola@ (the support agent's `inbox.mjs ingest`) or the app. */
+export const channelOf = f => (f?.v === 'email' || contextOf(f).canal === 'email' ? 'email' : 'app');
+
 /** One row per message, newest first, with its stage. */
-export function feedbackRows(feedback = {}, estado = {}, filter = 'all') {
+export function feedbackRows(feedback = {}, estado = {}, filter = 'all', channel = 'all') {
   const keep = FILTERS[filter] || FILTERS.all;
   return Object.entries(feedback || {})
     .filter(([, f]) => f && String(f.texto || '').trim())
     .map(([id, f]) => {
       const st = estado?.[id] || null;
+      const ctx = contextOf(f);
       return {
+        channel: channelOf(f),
         id, at: Number(f.at) || 0, name: String(f.nombre || ''), text: String(f.texto || ''), tipo: f.tipo || '',
-        game: f.contexto?.juego || '', email: f.correoMascara || '', tester: !!f.tester,
+        game: ctx.juego || '', email: f.correoMascara || '', tester: !!f.tester,
         issue: st?.issue || null, replied: !!st?.replied, prs: st?.prs || [], stage: stageOf(st),
       };
     })
-    .filter(r => keep(r.stage))
+    .filter(r => keep(r.stage) && (channel === 'all' || r.channel === channel))
     .sort((a, b) => b.at - a.at);
 }
 
