@@ -26,6 +26,7 @@ export const FLAGS = {
   'uad-night-totals': '📅 Uno al día: totals written by the hourly rebuild',
   'home-pill-bar': '💊 Home page: top bar buttons as pills of one height',
   'name-guard': '🛡️ Rankings: offensive names refused on sign-up',
+  'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
 };
 export const STATES = ['lab', 'all', 'off'];
 
