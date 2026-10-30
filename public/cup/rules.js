@@ -1040,7 +1040,7 @@ const EN = {
 
   title: 'The Cup',
   menu: '‹ Menu',
-  cupHome: '🏆 Go to The Cup\'s home',
+  cupHome: '🏆 Back to The Cup',
   chip: '🏆 The Cup',
   lead: 'Every day there is a game that everyone plays just once. Whoever scores the most points wins.',
   howTitle: 'How it works',
