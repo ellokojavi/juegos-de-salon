@@ -9,18 +9,18 @@ video** (D-178), y al terminar cada vuelta se anota en [Historia](#historia) y e
 
 | | |
 |---|---|
-| Archivos | [`output/promo-youtube-16x9.mp4`](output/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`output/promo-vertical.mp4`](output/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) · [`output/promo-vertical-en.mp4`](output/promo-vertical-en.mp4) (the vertical in English, since v7) |
+| Archivos | [`promo-youtube-16x9.mp4`](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-youtube-16x9.mp4) (1920×1080, YouTube) · [`promo-vertical.mp4`](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-vertical.mp4) (1080×1920, Shorts, Reels, estados de WhatsApp) · [`promo-vertical-en.mp4`](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-vertical-en.mp4) (the vertical in English, since v7) |
 | Duración | 41,1 s (89 golpes, all the song has), H.264 + AAC 256 kb/s, 30 cuadros por segundo |
 | Idioma | Español (el cierre dice "En 4 idiomas" con las cuatro banderas); since v7 also a vertical in English (`?lang=en`, see [In English](#in-english)) |
 | Música | [`music/cancion.mp3`](music/cancion.mp3), la que puso el dueño (ver [La canción](#la-canción)) |
 | App que muestra | 0.211.3 |
 
-En `output/` vive **solo la última versión**: al publicar una nueva, se reemplazan los dos mp4.
-No file over 5 MB enters git except these three MP4s, grandfathered by path until they move to GitHub
-Releases ([docs/REPO-WEIGHT.md](../../docs/REPO-WEIGHT.md), D-494): a new mp4 under another name, or a render
-kept outside `output/`, fails `repo-weight.test.mjs`.
-Las anteriores quedan en la historia de git. Ojo: GitHub Pages publica el repo entero, así que
-los mp4 también quedan en `juegosdesalon.cl/marketing/promo-video/output/…`.
+Each version lives in a GitHub release `promo-video-v<n>` (since v8, D-494,
+[docs/REPO-WEIGHT.md](../../docs/REPO-WEIGHT.md)); YouTube keeps the public copy. `construir.sh`
+still writes the mp4s to `output/`, which git ignores, and to publish a version:
+`node tools/release/video-release.mjs promo-video <n> marketing/promo-video/output/*.mp4`, then
+the URLs it prints go here, in `../README.md` and in `../registro.json`. Any video a branch adds
+under `marketing/` fails `repo-weight.test.mjs`. Versions up to v8 remain in git history.
 
 **Muestra una selección de juegos, no todos** (`"seleccion": true` en `registro.json`): un juego
 nuevo en la portada no deja atrás al video; `node tools/agents/marketing.mjs check` solo avisa si

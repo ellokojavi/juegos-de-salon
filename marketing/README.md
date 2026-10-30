@@ -6,7 +6,7 @@ rehacerse (D-178).
 
 | Asset | Versión | Archivos | Memoria |
 |---|---|---|---|
-| Video promocional | 8 · 2026-10-26 · 41,1 s | [16:9 para YouTube](promo-video/output/promo-youtube-16x9.mp4) · [vertical](promo-video/output/promo-vertical.mp4) · [vertical in English](promo-video/output/promo-vertical-en.mp4) | [promo-video/README.md](promo-video/README.md) |
+| Video promocional | 8 · 2026-10-26 · 41,1 s | [16:9 para YouTube](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-youtube-16x9.mp4) · [vertical](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-vertical.mp4) · [vertical in English](https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-vertical-en.mp4) | [promo-video/README.md](promo-video/README.md) |
 | Tutorial: cómo compartir (iOS) | 1 · 2026-10-09 · 6,0 s, sin audio | [vertical](share-tutorial/output/compartir-vertical.mp4) · [16:9](share-tutorial/output/compartir-16x9.mp4) | [share-tutorial/README.md](share-tutorial/README.md) |
 | Teaser de El caso | 1 · 2026-10-10 · 6,0 s | [vertical](caso-teaser/output/el-caso-6s.mp4) · [GIF](caso-teaser/output/el-caso-6s.gif) | [caso-teaser/README.md](caso-teaser/README.md) |
 | Tarjeta de Agentes (imagen y video; off the site since D-421) | 2 · 2026-10-11 · 6,0 s, sin audio | [imagen 1200×630](agentes-tarjeta/output/agentes-1200x630.jpg) · [video](agentes-tarjeta/output/agentes-6s.mp4) · [GIF](agentes-tarjeta/output/agentes-6s.gif) | [agentes-tarjeta/README.md](agentes-tarjeta/README.md) |
