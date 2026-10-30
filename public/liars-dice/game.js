@@ -6,6 +6,7 @@
  * Los dados de cada ronda viajan como mensaje `roll`. En un celular van en claro —no hay a quién
  * escondérselos—; en la sala va el hash y se destapan al dudar, y ahí se verifican (C-10, D-70).
  */
+import { salidasFin } from '../assets/js/fin.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
@@ -1102,7 +1103,7 @@ function renderResult(v) {
       S.mode === 'online'
         ? el('button', { class: 'btn btn--ghost btn--sm', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode)
         : el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); renderModes(); showScreen('screen-intro'); } }, T.changePlayers),
-      el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backMenu),
+      salidasFin('suelto', { lang }),
     ),
   );
   // Losing to the phone is not celebrated: no fanfare and no confetti, as the 🎲 instead of the 🏆 says

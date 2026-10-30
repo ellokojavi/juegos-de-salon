@@ -8,6 +8,7 @@
  * Jugar solo no pasa por el reductor: es el juego 🔢 de La Copa (D-142), con sus 10 intentos,
  * su puntaje de 0 a 100 y su reloj (cup/games/number/ui.js montado con cup/games/solo.js).
  */
+import { salidasFin } from '../assets/js/fin.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar, botonResultadoSolo } from '../assets/js/compartir.js';
 import { gameById } from '../assets/js/games.js';
@@ -576,7 +577,7 @@ function renderResultActions() {
   box.append(
     waiting ? el('p', { class: 'waiting' }, el('span', { class: 'dots' }, fmt(T.rematchWaiting, { name: M.names[o] }))) : el('button', { class: 'btn btn--yellow', onClick: e => tryRematch(e.currentTarget, rematch, { T, busy: COMMON[lang].opening, reset: () => { S.switching = false; } }) }, T.rematch),
     el('button', { class: 'btn btn--ghost', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode),
-    el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu),
+    salidasFin('suelto', { lang }),
   );
   // Revancha propuesta por el rival (online): me uno a su sala nueva
   if (S.mode === 'online') {
@@ -741,7 +742,7 @@ function soloFin(codigo, p, { s, t, ms, estado }) {
       botonResultadoSolo({ C: COMMON[lang], emoji: gameById(GAME_ID)?.emoji || '🔢', juego: T.title, puntaje: `${s}/100`, tiempo: mmss(ms), tarjeta: t, url: withLang(`${SITIO}bulls-and-cows/`), alTocar: () => SFX.tap() }),
       el('button', { class: 'btn btn--yellow', onClick: () => { SFX.tap(); soloNueva(); } }, T.playAgain),
       el('button', { class: 'btn btn--ghost', onClick: () => { SFX.tap(); clearSession(); location.href = location.pathname; } }, T.changeMode),
-      el('a', { class: 'btn btn--ghost', href: '../' }, T.backMenu)),
+      salidasFin('suelto', { lang })),
     // Sin jugador abierto, "¿quieres que esta partida cuente?" en su propio bloque, después de los
     // botones para que sigan a la vista (C-8, D-274); y la tabla
     !conRanking && rankingsVisibles() ? avisoPartida({ juego: GAME_ID, variante: 'solo', s, ms, alAnotar: () => tablaFin.recargar(), alTocar: () => SFX.tap() }) : null,

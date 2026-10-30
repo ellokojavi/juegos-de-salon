@@ -6,6 +6,7 @@
  * Los dados no esconden nada: quien tiene el turno los tira en su celular y viajan en claro en el
  * mensaje `roll`, igual que en la mesa todos ven el cubilete (D-246). Ver docs/games/generala.md.
  */
+import { salidasFin } from '../assets/js/fin.js';
 import { $, $$, el, vibrate, sparkles, keepAwake, confetti } from '../assets/js/ui.js';
 import { botonInvitar } from '../assets/js/compartir.js';
 import { gameById, MODO_UNO_AL_DIA } from '../assets/js/games.js';
@@ -434,7 +435,7 @@ function renderResult(v) {
       S.mode === 'online'
         ? el('button', { class: 'btn btn--ghost btn--sm', onClick: e => leaveRoom(e.currentTarget) }, T.changeMode)
         : el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); renderModes(); showScreen('screen-intro'); } }, T.changePlayers),
-      el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backMenu),
+      salidasFin('suelto', { lang }),
     ),
   );
   if (!S.shownWin) { S.shownWin = true; SFX.win(); confetti({ count: 220, duration: 3500 }); }
@@ -486,7 +487,7 @@ function renderResultSolo(v, already) {
     el('button', { class: 'btn btn--yellow', id: 'btn-otra', onClick: () => startMatch('solo', M.names, M.config) }, T.endAgain),
     el('div', { class: 'btn-row' },
       el('button', { class: 'btn btn--ghost btn--sm', onClick: () => { store.clear(); location.href = location.pathname; } }, T.changeMode),
-      el('a', { class: 'btn btn--ghost btn--sm', href: '../' }, T.backMenu)),
+      salidasFin('suelto', { lang })),
   );
   // La tabla, después de "¿quieres que cuente?" si está: los dos bajo los botones, en el orden de los otros juegos (D-274)
   if (!already && S.tablaFin) ($('#screen-result .rk-contar-solo') || acciones).after(S.tablaFin);
