@@ -1,7 +1,7 @@
 /**
  * La Copa's card on the home page says what to do today (lab flag `copa-hoy`): with a day of one of
  * this phone's cups left to play, a ▶ Jugar hoy chip like One a Day's, and the card opens that day;
- * with today's day played and another to come (lab flag `copa-espera`), a Día N en Xh chip that counts down;
+ * with today's day played and another to come (lab flag `copa-espera`), a ✅ Día N en Xh chip that counts down;
  * with the final played and nothing else to come, ✅ Final jugada · cierra en X h Y min (same flag);
  * with nothing left, the card stays as it always was.
  *
@@ -92,10 +92,10 @@ export function decorateCupCard(card, { lang = 'es', store, now = Date.now(), wa
   return true;
 }
 
-/** Today's day already played: Día N en Xh, counting down each minute while the page is open. */
+/** Today's day already played: ✅ Día N en Xh, counting down each minute while the page is open. */
 function waitChip(card, meta, T, n, now) {
   if (!n) return false;
-  const text = t => `${T.opens.replace('{day}', n.dia).replace('{time}', untilText(n.at - t))}`;
+  const text = t => `✅ ${T.opens.replace('{day}', n.dia).replace('{time}', untilText(n.at - t))}`;
   const chip = el('span', { class: 'copa-hoy-chip espera', id: 'copa-hoy-chip' }, text(now));
   card.href = `${card.getAttribute('href')}?${n.code}`;
   card.classList.add('copa-hoy');
