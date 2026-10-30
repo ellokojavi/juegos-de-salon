@@ -10,7 +10,7 @@ The `tests` check on each PR blocks an out-of-date README or card.
 ```bash
 python3 tools/release/readme.py check        # is anything behind?
 python3 tools/release/readme.py update     # rewrites the <!-- generated: ... --> blocks
-python3 tools/release/readme.py screenshots <section> [--offline]   # redoes the screenshots with Chrome
+python3 tools/release/readme.py screenshots <section> [--offline]   # redoes the screenshots with Chrome; a retake under 0.5 % changed pixels keeps the old PNG (#1037)
 python3 tools/release/readme.py seal         # "I reread the README with these facts"
 node tools/e2e/contact-sheet.mjs <section> --out /tmp/contact-sheet   # look at them together (D-76)
 node tools/release/og.mjs cards | images | check           # WhatsApp cards (D-72); cards also writes the JSON-LD, sitemap.xml and robots.txt (#887)
