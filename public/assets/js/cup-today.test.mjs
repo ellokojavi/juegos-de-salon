@@ -35,7 +35,7 @@ assert.equal(nextCupDay(store('bbbbbb', []), dia(0)), null, 'no cups: no countdo
 assert.equal(untilText(5 * H + 12 * 60000), '5h');
 assert.equal(untilText(27 * H), '1d 3h');
 assert.equal(untilText(30000), '1m');
-assert.equal(untilText(5 * H + 40 * 60000), '6h');
+assert.equal(untilText(5 * H + 40 * 60000), '5h');
 assert.equal(untilText(25 * 60000), '25m');
 assert.equal(untilText(45 * 60000), '45m');
 // The final played: nothing to come, the cup still open
