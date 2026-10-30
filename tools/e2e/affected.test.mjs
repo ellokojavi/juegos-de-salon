@@ -52,6 +52,8 @@ assert.equal(run(['public/sw.js']), 'all');
 assert.equal(run(['tools/e2e/cdp.mjs']), 'all');
 assert.equal(run(['.github/workflows/e2e.yml']), 'all');
 assert.equal(select({ changes: ['tools/push/vapid.mjs'], graph, scripts: [{ name: 'daily.mjs', source: "import '../push/vapid.mjs'" }], shared }), null);
+// Named only in a comment, it is not imported: no doubt, nothing runs (#1060)
+assert.deepEqual(select({ changes: ['tools/release/readme.py'], graph, scripts: [{ name: 'k.mjs', source: '// tools/release/readme.py redoes them\n/* see release/readme.py */' }], shared }).scripts, []);
 
 // Parts named after a game run only with that game
 const choice = select({ changes: ['public/hangman/game.js'], graph, scripts: [{ name: 'cup-games/languages.mjs', source: 'SUELTOS' }], shared });
