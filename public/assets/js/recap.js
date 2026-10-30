@@ -314,7 +314,9 @@ export async function startRecap({ lang = 'es', search = globalThis.location?.se
     if (!seasonDue) return false;
     const found = mode === 'season-demo' ? season.demoSeason() : await season.loadSeasonRecap();
     if (!found) return false;
-    showSeason(found, lang, season, mode ? null : () => season.markSeasonSeen(found.month));
+    // The table's own demo stays the table window; the month-end window has its own demo
+    if (mode === 'season-demo') showRecap(seasonView(found, lang), { lang });
+    else showSeason(found, lang, season, () => season.markSeasonSeen(found.month));
     return true;
   } catch (_) { return false; }
 }
