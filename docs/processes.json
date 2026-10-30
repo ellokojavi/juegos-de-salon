@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "db45669",
+  "checkedUpTo": "525888f",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -238,9 +238,18 @@
           "date": "2026-10-28",
           "what": "Documentation round 2026-10-28 pushed twice to add its PR link (#939)",
           "commit": null
+        },
+        {
+          "date": "2026-10-30",
+          "what": "Documentation round of 10-30 pushed the PR-link commit separately (#1051)",
+          "commit": null
         }
       ],
-      "mechanism": null
+      "mechanism": {
+        "date": "2026-10-30",
+        "what": "documentation guide and document.mjs check no longer ask for a post-PR commit with the PR link",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1052"
+      }
     },
     {
       "key": "timed-unit-test",
@@ -401,6 +410,12 @@
       "key": "empty-yes-noted",
       "what": "decide refuses a Yes with no actions, or a nothing Yes whose text says it queues or builds",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/611"
+    },
+    {
+      "date": "2026-10-30",
+      "key": "doble-push-documentacion",
+      "what": "documentation guide and document.mjs check no longer ask for a post-PR commit with the PR link",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1052"
     }
   ],
   "queueDone": [
@@ -411,12 +426,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-29",
-      "to": "db45669"
+      "date": "2026-10-30",
+      "to": "525888f"
     },
     "usability": {
-      "date": "2026-10-29",
-      "to": "db45669"
+      "date": "2026-10-30",
+      "to": "525888f"
     },
     "ideas": {
       "date": "2026-10-28",
@@ -527,6 +542,14 @@
       "issue": null,
       "pr": null,
       "note": "Dispatched documentation (#1011) and usability (nothing to fix); collected 63 changelog entries; durations measured."
+    },
+    {
+      "date": "2026-10-30",
+      "from": "db45669",
+      "to": "525888f",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1052",
+      "note": "docs #1051; usability running"
     }
   ],
   "ownerDecisions": [

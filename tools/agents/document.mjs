@@ -331,7 +331,7 @@ function check(from) {
     for (const p of old) console.log(`  · ${p}`);
   }
   appMessages();
-  if (!from) console.log(`\nWhen closing the round: node tools/agents/document.mjs record --to ${tip.slice(0, 7)} [--pending "…"], and with the PR open: record --to ${tip.slice(0, 7)} --pr <url>`);
+  if (!from) console.log(`\nWhen closing the round: node tools/agents/document.mjs record --to ${tip.slice(0, 7)} [--pending "…"] before your last commit (no second commit for the PR link, D-303)`);
   return fresh.length ? 1 : 0;
 }
 

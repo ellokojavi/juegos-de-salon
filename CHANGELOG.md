@@ -1,5 +1,92 @@
 # Changelog
 
+## 0.237.3 — 2026-10-29
+- **Launched: no zoom on quick taps** (#1045). On iPhone, tapping fast in a game no longer zooms the page; its lab card moves to La Bodega.
+
+## 0.237.2 — 2026-10-29
+- **Lab: no zoom on quick taps** (flag `no-double-tap-zoom`, #1045). On iPhone, tapping fast in a game no longer zooms the page; pinch zoom still works.
+
+## 0.237.1 — 2026-10-29
+- **Panel, 💬 Feedback:** each message shows the time it arrived (Pacific time) under its date, and the CSV carries the date and time in Pacific too.
+
+## 0.237.0 — 2026-10-29
+- **Panel: a 💬 Feedback section** (`#/feedback`). Every player message in full, from the start, from the app and by email to hola@ (filter by channel): who sent it, the game, whether they want a reply, and where it stands (new, open issue, in a PR, fixed, closed), with links to its issue and PRs. The `feedback-watch` job now also writes each report's issue and PRs to `feedbackEstado/` (owner-only) on every pass.
+
+## 0.236.1 — 2026-10-29
+- **Home page: La Copa's and Uno al día's boxes line up**: when Uno al día is played, both boxes sit at the bottom of their cards at the same height, even when one card's description takes an extra line (owner's screenshot).
+
+## 0.236.0 — 2026-10-29
+- **German leaves the app** (D-514): the language selector offers Spanish, English and Portuguese. Whoever had
+  German chosen, opens a `?lang=de` link or comes in through `/de/` gets English; a phone subscribed to One a
+  Day's notifications in German gets them in English. Cups already created on Berlin time keep it.
+
+## 0.235.17 — 2026-10-29
+- Repo: the promo video's MP4s leave git for a GitHub release (`promo-video-v8`), and every future marketing video goes there too: git ignores them, `tools/release/video-release.mjs` publishes them and `repo-weight.test.mjs` rejects any video a branch adds under `marketing/` (#1036, D-494).
+
+## 0.235.16 — 2026-10-29
+- New tagline on the home page, the app and the share cards, in four languages: "Juegos cortos de mesa, de lógica y de destreza para jugar solo o con amigos." The old "Juegos tradicionales" no longer described half the site.
+
+## 0.235.15 — 2026-10-29
+- **La Copa's home card waits on one line** (#1029): «✅ Día 2 · 6h» instead of «Día 2 abre en 6 h 2 min», which broke into two lines; the minutes show only in the last hour, and the final reads «✅ Final · cierra en 3h». Beside One a Day already played, La Copa's box is as wide and as tall as its #1 box. In the four languages.
+- **Home top bar buttons as pills of one height** (#1027, lab flag `home-pill-bar`): sound, 🏅 and share are as tall as the language toggle, so the bar reads as one row.
+
+## 0.235.14 — 2026-10-29
+- Owner panel: "Through which link" now shows, for each link mark (`?from=reddit-chile`…), how many of those visits went on to play, in green, not only how many arrived.
+
+## 0.235.13 — 2026-10-29
+- **Home page: says it is free, with no install and no account, before the first button**, in the four languages ("Gratis, sin instalar y sin cuenta."), so a first visitor from a shared link knows it at a glance (U-1, usability review of the first visit).
+
+## 0.235.12 — 2026-10-29
+- **What changed**, for players.
+
+## 0.235.11 — 2026-10-29
+- In the lab: 🛡️ the offensive-name check and 🏆 La Copa's countdown to your next day, live for everyone, move to La Bodega. 📦 Enviar a La Bodega no longer fails when it needs to know whether a card's flag is on for everyone: the Mac mini job reads it and hands it to the session (D-511).
+
+## 0.235.10 — 2026-10-29
+- Marketing: the Reddit r/chile post and image are up to date (18 games, Generala in place of Cuarto Rey, which went to the lab), its link is tagged `?from=reddit-chile`, and `marketing/reddit-chile/channels.md` ranks where else to post and what each community allows.
+
+## 0.235.9 — 2026-10-29
+- **La Copa's home card also knows the cups of your Rankings player** joined on another phone: ▶ Jugar hoy, ✅ Día N abre en… and ✅ Final jugada now show for them too.
+
+## 0.235.8 — 2026-10-29
+- **La Copa's home card after the final** (lab `copa-espera`): with the final played and the cup still open, it says ✅ Final jugada · cierra en X h Y min.
+
+## 0.235.7 — 2026-10-29
+- **La Copa's home card counts down to your next day** (lab `copa-espera`): with today's day played, it says ✅ Día N abre en X h Y min and turns into ▶ Jugar hoy when it opens.
+
+## 0.235.6 — 2026-10-29
+- In the lab: the offensive-name check also catches a rude word glued to a prefix or a diminutive ending, or joined by a capital ("Hiperpene", "Penecito", "HiperPene"), while real names like Penélope, Picón or Dickson still pass (D-513).
+
+## 0.235.5 — 2026-10-29
+- In the lab: creating a rankings player with an insult or a rude word as the name, in any of the four languages, asks for another name (D-513). The owner can also rename a player already on the tables, who keeps their scores and PIN.
+
+## 0.235.4 — 2026-10-29
+- Behind the scenes: the online games no longer stop at about 100 phones connected at once. The database moved to Firebase's pay-as-you-go plan, which keeps the free quotas, with a US$10 monthly budget that only sends an email (D-512).
+
+## 0.235.3 — 2026-10-29
+- **/labs/: 📦 Enviar a La Bodega** (D-511): next to 🚀 Publicar para todos, every card being tried has a button that sends it to La Bodega, as 🚀 Lanzado if it is live for everyone or 💤 No prosperó if not. The Mac mini opens the PR, and the card follows it as it does for 🚀.
+
+## 0.235.2 — 2026-10-29
+- **/labs/: what launched is in La Bodega** (D-510): the six improvements already live for everyone (La Copa's create screen and Play today, rules with the essentials, the feedback form above the keyboard, One a Day totals and share grids) moved from ✨ Mejoras en prueba to La Bodega, and keep their buttons to take them back to the lab or switch them off.
+
+## 0.235.1 — 2026-10-29
+- **Lab flags in one place** (D-509): each card in /labs/ now shows whether it is 🧪 in the lab, 🟢 live for everyone or ⚪ off, with a button to each other state. The panel's 🚩 Lab flags tab is gone; its 🧪 Labs link counts how many are live.
+
+## 0.235.0 — 2026-10-29
+- **La Copa's card on the home page says what to do today** (in the lab, flag `copa-hoy`): with a day of one of your cups left to play, it shows **▶ Jugar hoy**, like One a Day's card next to it, and opens that day; once you have played, the card stays as always. It reads what La Copa keeps on the phone, so the home page loads nothing of La Copa and asks the network for nothing; a cup starts showing it once it is opened on this phone after this change.
+
+## 0.234.24 — 2026-10-29
+- In the lab: on the page of each Cup game (Reinas, Zip, Tango…), "Cómo se juega" now opens with one line saying how many play, how long it takes and that it is free, like the party games already do. Search engines read the same rules.
+
+## 0.234.23 — 2026-10-29
+- **Uno al día on the home page really shows the same points and place as /today/**: the card's refresh read the server's nightly row alone (1512 · #4) while /today/ adds this phone's days the night has not counted yet (1562 · #2). The card now adds them too.
+
+## 0.234.22 — 2026-10-29
+- In the lab: in One a Day, Agents, Liar's Dice, Generala and Battleship now share a spoiler-free emoji result too.
+
+## 0.234.21 — 2026-10-29
+- **Uno al día on the home page shows the same points as /today/**: before today's ranking was cached, the card paired yesterday's place with this phone's own count (1512 pts · #4 beside 1562 · #2 on /today/). It now adds the days played since the last server total to that total, and hides the place until the server gives the current one.
+
 ## 0.234.20 — 2026-10-29
 - **Titles no longer flash in another font**: every page preloads Bangers, the titles' font, next to Nunito, so the title shows in its own font from the start instead of switching a moment later.
 
