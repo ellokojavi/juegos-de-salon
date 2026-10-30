@@ -13,7 +13,7 @@
       "app": "0.211.3",
       "archivos": [
         {
-          "ruta": "marketing/promo-video/output/promo-youtube-16x9.mp4",
+          "ruta": "https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-youtube-16x9.mp4",
           "formato": "16:9",
           "ancho": 1920,
           "alto": 1080,
@@ -21,7 +21,7 @@
           "uso": "YouTube"
         },
         {
-          "ruta": "marketing/promo-video/output/promo-vertical.mp4",
+          "ruta": "https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-vertical.mp4",
           "formato": "9:16",
           "ancho": 1080,
           "alto": 1920,
@@ -29,7 +29,7 @@
           "uso": "Shorts, Reels, estados de WhatsApp"
         },
         {
-          "ruta": "marketing/promo-video/output/promo-vertical-en.mp4",
+          "ruta": "https://github.com/ellokojavi/juegos-de-salon/releases/download/promo-video-v8/promo-vertical-en.mp4",
           "formato": "9:16",
           "ancho": 1080,
           "alto": 1920,

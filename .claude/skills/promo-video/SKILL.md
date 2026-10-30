@@ -31,4 +31,8 @@ The video and its memory live in `marketing/promo-video/` (D-178).
      it matters) and what was done;
    - "Hoy", "Lo que el dueño quiere", "El guion" and "Trampas conocidas" up to date;
    - `marketing/registro.json` and the table in `marketing/README.md` with the new version;
-   - the mp4s in `salida/` replaced (only the latest version lives in the repo).
+   - the mp4s published as the release `promo-video-v<n>` with
+     `node tools/release/video-release.mjs promo-video <n> marketing/promo-video/output/*.mp4`
+     (D-494, docs/REPO-WEIGHT.md): `output/` is gitignored and `repo-weight.test.mjs` rejects any
+     video a branch adds under `marketing/`; the URLs it prints go in the README, `marketing/README.md`
+     and `registro.json`.

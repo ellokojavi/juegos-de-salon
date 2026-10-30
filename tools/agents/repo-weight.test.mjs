@@ -7,11 +7,9 @@ import { execFileSync } from 'node:child_process';
 import { statSync } from 'node:fs';
 
 const LIMIT = 5 * 1024 * 1024;
-const GRANDFATHERED = new Set([
-  'marketing/promo-video/output/promo-vertical.mp4',
-  'marketing/promo-video/output/promo-vertical-en.mp4',
-  'marketing/promo-video/output/promo-youtube-16x9.mp4',
-]);
+const GRANDFATHERED = new Set([]);
+// Marketing videos go to GitHub Releases whatever their size (tools/release/video-release.mjs).
+const VIDEO = /^marketing\/.*\.(mp4|mov|webm)$/;
 // A Chrome profile left by a test (c77d0836 committed one with a 37 MB model.tflite).
 const PROFILE = /(^|\/)(Default|Crash Reports|ShaderCache|GrShaderCache|optimization_guide_model_store)\/|(^|\/)(Local State|First Run)$|\.tflite$/;
 
@@ -43,6 +41,7 @@ if (base) {
       const [sha, size] = line.split(' ');
       const path = blobs.get(sha);
       if (PROFILE.test(path)) errors.push(`${path} (in a branch commit): looks like a Chrome profile file`);
+      else if (VIDEO.test(path)) errors.push(`${path} (in a branch commit): a marketing video, publish it with tools/release/video-release.mjs`);
       else if (Number(size) > LIMIT && !GRANDFATHERED.has(path)) errors.push(`${path} (in a branch commit): ${mb(Number(size))}`);
     }
   }
