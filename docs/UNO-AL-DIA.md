@@ -260,6 +260,12 @@ its own row once played, the owner's choice); with no place known yet, the point
 number (`chipPuntos` in `uno-al-dia-ui.js`). With no streak the line says "del mes · 871 pts", and
 on a phone 340 px wide or less "del mes" is dropped.
 
+Since 2026-10-30 the card also carries the season's month («Oct 2026», `mesTemporada` in
+`uno-al-dia-ui.js`) on a small tab over its top border, outside the layout so the card keeps its
+size. When this phone has played no day of the current month, the card gets the `invita` class: the
+tab turns pink and the chip says **▶ Únete al mes** (*Join this month*, *Entre no mês*) instead of
+**▶ Jugar hoy**; it still rolls today's die.
+
 The place comes from `uad-pts-cache` in `localStorage`, which /today/ writes each time the server
 answers (`p` the month, `s` the points, `r` the place, `d` the day and `h` whether that day was
 already played when it was read). A cache from another month is ignored. Its points count only if
