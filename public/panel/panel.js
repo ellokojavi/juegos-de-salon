@@ -39,7 +39,8 @@ import { CAMPAIGNS, ACTIVE as SPLASH_ACTIVE, REGULARS } from '../assets/js/splas
 import { TEXTS as SUPPORT_TEXTS } from '../assets/js/support.js';
 import { switches, status as campaignStatus, overlaps, move, toRemote, cleanLabel, span, todayOf, dayPlus, campaignStats, supportStats, EARLY_DAYS, skinRows, skinToRemote } from './campaigns.js';
 import { TEMPLATES as SKINS } from '../assets/season/templates.js';
-import { FLAGS, stateOf as flagState } from '../assets/js/flags.js';
+import { stateOf as flagState } from '../assets/js/flags.js';
+import { FLAGS } from '../assets/js/flag-list.js';
 import { SECCIONES, leerRuta, rutaA, rutaEnIngles, seccionDe } from './rutas.js';
 import { wireReleasePush } from './release-push.js';
 import {
