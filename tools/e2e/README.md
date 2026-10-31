@@ -90,6 +90,8 @@ Any other PR runs **only the scripts whose pages load what it changed** (D-329,
 the graph is read straight from the files: each `index.html`, what it links, and what that imports.
 A file whose diff only touches comments or blank lines is dropped first (D-515,
 [`inert.mjs`](inert.mjs), tested by `node tools/e2e/inert.test.mjs`): no browser can notice it.
+A module whose diff changes only some functions, or some texts of `i18n.js`, runs only the pages
+that use those names (D-516, [`narrow.mjs`](narrow.mjs), tested by `node tools/e2e/narrow.test.mjs`).
 So a page is only as narrow as its imports: what other pages need from a game (La Copa's code, clock
 and notification sheets' texts, D-377; the seeded `rng`, D-378) lives in small modules of its own, and
 The design behind all this is [docs/TEST-SCOPE.md](../../docs/TEST-SCOPE.md). [`scope-guard.test.mjs`](scope-guard.test.mjs) fails if a file of the site is loaded by no page, or a script

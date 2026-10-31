@@ -578,6 +578,7 @@ node tools/e2e/already-tested.test.mjs
 node tools/e2e/changes.test.mjs
 node tools/e2e/groups.test.mjs
 node tools/e2e/inert.test.mjs
+node tools/e2e/narrow.test.mjs
 node tools/e2e/output.test.mjs
 node tools/e2e/scope-guard.test.mjs
 node tools/e2e/scope.test.mjs

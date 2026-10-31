@@ -15,12 +15,61 @@ import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, dirname, relative, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { GAMES, SUELTOS } from '../../public/assets/js/games.js';
+import { parseChange, reach } from './narrow.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '../..');
 const PUBLIC = join(ROOT, 'public');
 // The lab's pages, its own index (`labs`) among them (D-391)
 const isLab = p => p === 'labs' || p.startsWith('labs/');
+
+/**
+ * Site files no page's closure contains but whose readers are known (D-516): they run these scripts,
+ * not every one. The app manifests are read by Chrome to install the app; the link cards' fingerprints
+ * only by tools/release/og.mjs.
+ */
+export const READ_BY = [
+  { test: f => /^manifest(\.\w+)?\.webmanifest$/.test(f), scripts: ['installable.mjs', 'smoke.mjs'], why: 'Chrome reads it to install the app' },
+  { test: f => f === 'assets/og/huellas.json', scripts: [], why: 'the link cards\' fingerprints, read only by tools/release/og.mjs' },
+];
+
+/** Does a closure file other than `f` name one of `uses` (D-516)? Word match on the uncommented source. */
+export function names(text, uses) {
+  const src = uncommented(text);
+  // `uad` in `.uad-card` or `'uad-month-end'` is another name
+  return uses.some(u => new RegExp(`(^|[^\\w$-])${u.replace(/\$/g, '\\$')}(?![\\w$-])`).test(src));
+}
+
+/**
+ * The pages among `hit` that may notice a change to `f` narrowed to the names `uses` (narrow.mjs):
+ * those where another file of their closure names one of them. null: no site file names any (a name
+ * reached some other way, `M[name]`), so the whole file counts.
+ */
+export function usedOn(f, uses, hit, graph, files) {
+  if (!uses || !files) return hit;
+  // Follow the names through the modules that use them only inside functions (D-516): a page counts
+  // when a file it loads uses them where it runs (top-level code, its HTML, a file that can't be read)
+  const reads = x => x !== f && files[x] != null && !x.endsWith('.css');
+  const ends = new Set(); // files that reach their pages
+  const seen = new Set();
+  const queue = [[f, uses]];
+  let named = false;
+  while (queue.length) {
+    const [from, ns] = queue.shift();
+    for (const x of Object.keys(files)) {
+      if (x === from || !reads(x) || ends.has(x) || !names(files[x], ns)) continue;
+      named = true;
+      if (!/\.m?js$/.test(x)) { ends.add(x); continue; }
+      const r = reach(files[x], ns);
+      if (r.top) { ends.add(x); continue; }
+      const next = r.decls.filter(d => !seen.has(`${x}:${d}`));
+      next.forEach(d => seen.add(`${x}:${d}`));
+      if (next.length) queue.push([x, next]);
+    }
+  }
+  if (!named) return null;
+  return hit.filter(p => [...graph[p]].some(x => ends.has(x)));
+}
 
 /* ------------------------------------------------------------------ */
 /* Pure: the references in a file, and the closures                  */
@@ -163,14 +212,25 @@ export function loads(closure, f) {
  * `exists(f)`: is the site file still there? A deleted file that no page names any more cannot break a
  * page (the one that used it changes in the same PR, and runs for that): it narrows nothing (D-460).
  */
-export function select({ changes, graph, scripts, shared, exists = () => true }) {
+export function select({ changes, graph, scripts, shared, exists = () => true, files = null }) {
   const pages = Object.keys(graph);
   const changedScripts = new Set();
   const changedPublic = [];
-  for (const raw of changes.map(c => c.trim()).filter(Boolean)) {
+  const uses = {}; // site file → the names its change reaches (narrow.mjs), or absent for the whole file
+  const readers = new Set(); // scripts that READ_BY files bring in
+  for (const change of changes.map(c => c.trim()).filter(Boolean)) {
+    const { file: raw, uses: u } = parseChange(change);
     // The site's own unit tests and notes: GitHub's `tests` check runs them, no page loads them
     if (raw.startsWith('public/') && /\.test\.m?js$|\.md$/.test(raw)) continue;
-    if (raw.startsWith('public/')) changedPublic.push(raw.slice('public/'.length));
+    if (raw.startsWith('public/')) {
+      const f = raw.slice('public/'.length);
+      const known = READ_BY.find(r => r.test(f));
+      if (known) { known.scripts.forEach(s => readers.add(s)); continue; }
+      // The same file whole and narrowed (two pushes): whole wins
+      if (changedPublic.includes(f)) { if (!u) delete uses[f]; else if (uses[f]) uses[f] = [...new Set([...uses[f], ...u])]; continue; }
+      changedPublic.push(f);
+      if (u) uses[f] = u;
+    }
     // What no browser loads (docs, the agents, durations.json…), before tools/e2e/'s own rule: a new
     // script measured in durations.json, next to its game, used to make the whole PR run everything
     else if (shared(raw)) continue;
@@ -186,12 +246,13 @@ export function select({ changes, graph, scripts, shared, exists = () => true })
     else return null;
   }
   const affected = new Set();
-  if (!changedPublic.length && !changedScripts.size) return { scripts: [], pages: affected, changedScripts };
+  if (!changedPublic.length && !changedScripts.size) return { scripts: scripts.filter(s => readers.has(s.name)).map(s => s.name), pages: affected, changedScripts };
   for (const f of changedPublic) {
     const hit = pages.filter(p => loads(graph[p], f));
     if (!hit.length && !exists(f)) continue; // deleted, and nothing names it any more
     if (!hit.length) return null; // no page loads it directly: it may be fetched at run time
-    playedOn(f, hit, graph).forEach(p => affected.add(p));
+    const used = usedOn(f, uses[f], hit, graph, files) ?? hit;
+    playedOn(f, used, graph).forEach(p => affected.add(p));
   }
   // Only the home page changed, maybe with lab pages (D-388): its own scripts run (home/*, smoke.mjs,
   // and those that never leave it, like favorites.mjs) and the lab pages' ones, not the games that
@@ -199,7 +260,7 @@ export function select({ changes, graph, scripts, shared, exists = () => true })
   const labs = [...affected].filter(p => isLab(p));
   const homeOnly = affected.has('') && affected.size === labs.length + 1;
   const runs = scripts.filter(s => {
-    if (changedScripts.has(s.name)) return true;
+    if (changedScripts.has(s.name) || readers.has(s.name)) return true;
     if (homeOnly) {
       if (s.name.startsWith('home/') || s.name === 'smoke.mjs') return true;
       if (changedPublic.some(f => s.source.includes(`public/${f}`))) return true;
@@ -290,16 +351,16 @@ export function changeLevel(jobs, changes, shared, noBrowser = false) {
   if (noBrowser) return levelOf({ scripts: [], pages: new Set(), changedScripts: new Set() }, 1);
   const names = [...new Set(jobs.map(j => j.split(':')[0]))];
   const scripts = names.map(name => ({ name, source: existsSync(join(HERE, name)) ? readFileSync(join(HERE, name), 'utf8') : '' }));
-  const graph = siteGraph();
-  return levelOf(select({ changes, graph, scripts, shared, exists: inPublic }), Object.keys(graph).length);
+  const files = siteFiles(), graph = closures(files);
+  return levelOf(select({ changes, graph, scripts, shared, exists: inPublic, files }), Object.keys(graph).length);
 }
 
 /** Which of `jobs` (tools/e2e/ scripts, or `script:part`) to run for these changes; null means all. */
 export function affectedJobs(jobs, changes, shared) {
   const names = [...new Set(jobs.map(j => j.split(':')[0]))];
   const scripts = names.map(name => ({ name, source: existsSync(join(HERE, name)) ? readFileSync(join(HERE, name), 'utf8') : '' }));
-  const graph = siteGraph();
-  return chooseJobs(jobs, select({ changes, graph, scripts, shared, exists: inPublic }), Object.keys(graph));
+  const files = siteFiles(), graph = closures(files);
+  return chooseJobs(jobs, select({ changes, graph, scripts, shared, exists: inPublic, files }), Object.keys(graph));
 }
 
 /* ------------------------------------------------------------------ */
@@ -379,7 +440,8 @@ export function scopeReport(jobs, changes, shared) {
   };
   lines.push('', '| Changed file | Pages | Jobs | Reaches other games\' pages through |', '|---|---|---|---|');
   for (const c of site.slice(0, 40)) {
-    const f = c.slice('public/'.length);
+    const { file, uses } = parseChange(c);
+    const f = file.slice('public/'.length);
     const on = pages.filter(p => loads(graph[p], f));
     const jobsOf = affectedJobs(jobs, [c], shared);
     const owner = ownerIn(pages, f);
@@ -387,7 +449,7 @@ export function scopeReport(jobs, changes, shared) {
     const hops = {};
     for (const p of foreign) { const h = via(p, f); if (h && h !== f) (hops[h] ||= []).push(p || 'home'); }
     const how = Object.entries(hops).sort((a, b) => b[1].length - a[1].length).slice(0, 3).map(([h, ps]) => `\`${h}\` (${ps.length})`).join(', ');
-    lines.push(`| \`${f}\` | ${on.length} | ${jobsOf === null ? 'all' : jobsOf.length} | ${owner ? how || '—' : 'shared module'} |`);
+    lines.push(`| \`${f}\`${uses ? ` (${uses.slice(0, 6).join(', ')}${uses.length > 6 ? '…' : ''})` : ''} | ${on.length} | ${jobsOf === null ? 'all' : jobsOf.length} | ${owner ? how || '—' : 'shared module'} |`);
   }
   return lines;
 }
