@@ -1,5 +1,5 @@
 /**
- * 🧱 Babel — its screen in La Copa, Uno al día and on its standalone page, moved from the lab
+ * 🗼 Babel — its screen in La Copa, Uno al día and on its standalone page, moved from the lab
  * (labs/stack/game.js, D-445) as Tren en Vilo was (D-456): a block slides over the tower, a tap drops
  * it, and whatever hangs over the edge is cut off. The engine is engine.js; the drawing, scene.js.
  *
@@ -92,14 +92,14 @@ export function portada() {
   return raiz;
 }
 
-/** The name in the waiting room, as in the lab: the 🧱 that sways and the moving colors. */
+/** The name in the waiting room, as in the lab: the 🗼 that sways and the moving colors. */
 const UI = () => { let l = 'es'; try { l = getLang(); } catch (_) { /* outside the browser */ } return (TEXTOS[l] || TEXTOS.es).ui; };
 /** The name in the waiting room, with the credit to the original right under it, as Loteo does (the owner's call). */
 export function titulo({ el, J }) {
   const [antes, despues] = String(UI().skCredit).split('{juego}');
   return el('div', { class: 'sk-cabeza' },
     el('h2', { class: 'sk-titulo' },
-      el('span', { class: 'sk-logo', 'aria-hidden': 'true' }, '🧱'),
+      el('span', { class: 'sk-logo', 'aria-hidden': 'true' }, '🗼'),
       el('span', { class: 'display display--lg rainbow' }, J.nombre)),
     el('p', { class: 'sk-credito', id: 'sk-credito' }, antes, el('a', { href: ORIGINAL, target: '_blank', rel: 'noopener', id: 'link-stack' }, 'Stack'), despues || ''));
 }

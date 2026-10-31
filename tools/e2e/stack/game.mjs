@@ -1,4 +1,4 @@
-// 🧱 Babel, out of the lab (D-445), end to end at its standalone page /babel/: the waiting room with
+// 🗼 Babel, out of the lab (D-445), end to end at its standalone page /babel/: the waiting room with
 // the self-building tower and the credit to Ketchapp's Stack with its link; Empezar goes through the
 // countdown to the tower at 0 with "Toca donde sea"; a real tap drops the block; perfect drops say
 // "Perfecto ×n"; a late one cuts it; losing focus pauses and the tap back only resumes; missing the

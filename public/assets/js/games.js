@@ -517,9 +517,9 @@ export const SUELTOS = [
     copa: { pozo: 15 },
     unoAlDia: { orden: 20, desde: '2026-11-03' },
     slug: 'babel',
-    emoji: '🧱',
+    emoji: '🗼',
     name: { es: 'Babel', en: 'Babel', pt: 'Babel' },
-    tagline: { es: 'Levanta tu Babel lo más alto que puedas.', en: 'Raise your Babel as high as you can.', pt: 'Erga sua Babel o mais alto que puder.' },
+    tagline: { es: 'Levanta tu torre lo más alto que puedas.', en: 'Raise your tower as high as you can.', pt: 'Erga sua torre o mais alto que puder.' },
     keywords: {
       es: ['torre', 'apilar', 'bloques', 'babel', 'stack', 'habilidad', 'reflejos', 'pulso', 'altura'],
       en: ['tower', 'stack', 'blocks', 'babel', 'skill', 'reflexes', 'timing', 'height'],

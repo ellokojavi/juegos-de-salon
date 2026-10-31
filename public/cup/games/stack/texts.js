@@ -1,5 +1,5 @@
 /**
- * 🧱 Babel in La Copa: its texts in the three languages (C-3), merged into rules.js (D-331).
+ * 🗼 Babel in La Copa: its texts in the three languages (C-3), merged into rules.js (D-331).
  * `juego` is its entry in `juegos`; `ui`, the keys its screen reads from T, all prefixed `sk`.
  * The name is Babel in every language; `skCredit` credits the original (its link is the game's name). Plural forms are [none, one, many].
  */

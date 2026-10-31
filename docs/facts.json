@@ -934,7 +934,7 @@
     },
     {
       "id": "stack",
-      "emoji": "🧱",
+      "emoji": "🗼",
       "name": {
         "es": "Babel",
         "en": "Babel",
@@ -1736,7 +1736,7 @@
     },
     {
       "path": "docs/games/stack.md",
-      "title": "🧱 Babel (La Copa game, launched by flag; Stack in the lab)"
+      "title": "🗼 Babel (La Copa game, launched by flag; Stack in the lab)"
     },
     {
       "path": "docs/games/stick.md",

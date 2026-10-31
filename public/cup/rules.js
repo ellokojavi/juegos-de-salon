@@ -39,7 +39,7 @@ const BASE = {
   agentes: { emoji: '🕵️' },
   puentes: { emoji: '🚅' },
   stick: { emoji: '🥷' },
-  stack: { emoji: '🧱' },
+  stack: { emoji: '🗼' },
   final: { emoji: '🏁' },
   // A weekend cup's day of three (D-439)
   trio: { emoji: '🎯' },

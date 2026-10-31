@@ -1,4 +1,4 @@
-// 🧱 Babel' engine (D-445, moved from the lab to La Copa): the slide, perfect drops, cuts, misses, growing back, and fairness across frame rates.
+// 🗼 Babel' engine (D-445, moved from the lab to La Copa): the slide, perfect drops, cuts, misses, growing back, and fairness across frame rates.
 import assert from 'node:assert/strict';
 import {
   newGame, drop, movingAt, offsetAt, perfectTime, pause, score, top, speed, axisOf, card,

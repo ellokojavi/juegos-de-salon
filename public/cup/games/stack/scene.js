@@ -1,5 +1,5 @@
 /**
- * 🧱 Babel' drawing: the tower in isometric view on a canvas, for the game and the cover (ui.js).
+ * 🗼 Babel' drawing: the tower in isometric view on a canvas, for the game and the cover (ui.js).
  * Moved from the lab (labs/stack/scene.js), the same drawing.
  */
 import { drop, movingAt, score, top, SLAB } from './engine.js';
