@@ -616,6 +616,7 @@ body.azar-abierto { overflow: hidden; }
 @keyframes cuenta-fuera { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .cuenta-num.late { animation: none; } }
 /* --- The site's footer: the home page's, and the one site-footer.js puts on the screens outside a game --- */
+.pie-linea { border: 0; height: 1px; margin: 0 6% 20px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent); }
 .pie-sitio { margin-top: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
 .footer-msg { min-height: 3.2em; font-size: 1rem; line-height: 1.5; color: var(--ink); opacity: 0.9; transition: opacity 0.5s ease, transform 0.5s ease; font-weight: 700; }
 .footer-msg.out { opacity: 0; transform: translateY(6px); }
