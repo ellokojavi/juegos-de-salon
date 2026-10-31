@@ -50,11 +50,11 @@
       ],
       "estado": "v8 built 2026-10-26, not uploaded yet: the owner uploads it. On YouTube today, the v7 Shorts (ES https://youtube.com/shorts/zM9v2UwEsM8, EN https://youtube.com/shorts/UubTGcUoQD8) in the home page share sheet (D-410)",
       "revision": {
-        "fecha": "2026-10-28",
-        "app": "0.227.7",
+        "fecha": "2026-10-31",
+        "app": "0.239.1",
         "al_dia": false,
         "pendiente": [
-          "Tren en Vilo (D-456) left the lab and is now on the home page, in Uno al día and La Copa, and the v8 video does not show it; Toque y Fama is now one home card with a Número/Palabra toggle; Reinas boards now carry a texture per color region (D-481), which its Reinas shots lack."
+          "The home page's La Copa card now says '▶ Jugar hoy' or 'Día N en Xh Ym' and the Uno al día card carries a month badge, which the video's home shots predate."
         ]
       },
       "seleccion": true,
