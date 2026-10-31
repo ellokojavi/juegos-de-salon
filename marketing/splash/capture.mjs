@@ -3,7 +3,10 @@
 // opens its page with a fixed seed, starts, and plays the solution slowly while it shoots the board
 // about 12 times a second; ffmpeg turns the frames into a small looping MP4 and its poster.
 //
-//   SITE=http://localhost:8771 node marketing/splash/capture.mjs [routes|plots|paint-mines|bridges]
+//   SITE=http://localhost:8771 node marketing/splash/capture.mjs [routes|plots|paint-mines|bridges|shinobi|babel]
+//
+// A skill game (`cover`) is not played by the script: its waiting room already plays itself (the cover's
+// demo, drawn by the game's own scene), so the clip is that canvas for `duration` ms.
 //
 // Output: public/assets/splash/<game>.mp4 and <game>.jpg (the last frame: the board solved).
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -93,6 +96,9 @@ const GAMES = {
       await sleep(900);
     },
   },
+  // 🥷 Shinobi and 🗼 Babel (D-517): the waiting room's own demo, at its own shape (a cartridge's screen)
+  shinobi: { url: '/shinobi/?test', cover: '.sn-demo', native: 360, duration: 9000 },
+  babel: { url: '/babel/?test', cover: '.sk-demo', native: 360, duration: 9000 },
 };
 
 const only = process.argv[2];
@@ -108,11 +114,13 @@ try {
     await b.go(`${SITE}${g.url}`, 1500);
     if (g.before) await ev(g.before);
     if (!(await b.until(`document.getElementById('btn-empezar')`, 8000))) throw new Error(`${name}: no Start`);
-    await ev(`document.getElementById('btn-empezar').click(); 1`);
-    if (!(await b.until(g.ready, 10000))) throw new Error(`${name}: the board did not appear`);
+    if (!g.cover) {
+      await ev(`document.getElementById('btn-empezar').click(); 1`);
+      if (!(await b.until(g.ready, 10000))) throw new Error(`${name}: the board did not appear`);
+    } else if (!(await b.until(`!!document.querySelector('${g.cover}')`, 8000))) throw new Error(`${name}: no cover demo`);
     await sleep(600);
     // The board, with a margin, as a square
-    const r = JSON.parse(await ev(`JSON.stringify(document.querySelector('${g.board}').getBoundingClientRect())`));
+    const r = JSON.parse(await ev(`JSON.stringify(document.querySelector('${g.cover || g.board}').getBoundingClientRect())`));
     const side = Math.max(r.width, r.height) + 16;
     const clip = g.native ? { x: r.left, y: r.top, width: r.width, height: r.height }
       : { x: r.left + r.width / 2 - side / 2, y: r.top + r.height / 2 - side / 2, width: side, height: side, };
@@ -124,7 +132,7 @@ try {
     };
     const loop = (async () => { while (recording) { const t0 = Date.now(); await shoot(); await sleep(Math.max(0, 1000 / FPS - (Date.now() - t0))); } })();
     await sleep(700);
-    await g.play(ev, b);
+    if (g.cover) await sleep(g.duration); else await g.play(ev, b);
     const solvedAt = n;
     await sleep(g.hold ?? 1400); // the solved board, held (Loteo brings its next board sooner: `keep` frames of it)
     recording = false; await loop;

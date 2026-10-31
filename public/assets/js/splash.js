@@ -153,6 +153,29 @@ export const CAMPAIGNS = {
       },
     }],
   },
+  // 🥷 Shinobi and 🗼 Babel leave the lab (D-517): two game cartridges with a pixel HUD (the owner's choice,
+  // option B3 of the prototypes). `requires` keeps it waiting until both launch flags are on for this
+  // visitor, so it can be switched on in the panel before the owner's 🚀 and appear with the games
+  'shinobi-babel': {
+    look: 'cartuchos',
+    requires: ['stick', 'stack'],
+    title: { es: '¿Cansado de pensar?', en: 'Tired of thinking?', pt: 'Cansado de pensar?' },
+    lead: {
+      es: 'Llegó el momento de demostrar destreza: los dos primeros juegos de habilidad de Juegos de Salón.',
+      en: 'Time to show some skill: the first two skill games on Party Games.',
+      pt: 'Chegou a hora de mostrar destreza: os dois primeiros jogos de habilidade do Jogos de Salão.',
+    },
+    // «COMPATIBLE CON 🏆 La Copa Y 📅 Uno al Día»: one sentence, the joiners in the HUD's pixel type
+    compat: {
+      es: ['COMPATIBLE CON', '🏆 La Copa', 'Y', '📅 Uno al Día'],
+      en: ['COMPATIBLE WITH', '🏆 The Cup', 'AND', '📅 One a Day'],
+      pt: ['COMPATÍVEL COM', '🏆 A Copa', 'E', '📅 Um por Dia'],
+    },
+    items: [
+      { game: 'stick', color: 'yellow', video: 'assets/splash/shinobi.mp4', img: 'assets/splash/shinobi-start.jpg', still: 'assets/splash/shinobi.jpg', ratio: '360 / 203', smooth: true },
+      { game: 'stack', color: 'cyan', video: 'assets/splash/babel.mp4', img: 'assets/splash/babel-start.jpg', still: 'assets/splash/babel.jpg', ratio: '360 / 234', smooth: true },
+    ],
+  },
   // A teaser of 🥷 Stick Ninja, still in the lab, drawn with the game's own scene and cryptic on
   // purpose: the ninja dashes to the edge of its pillar and stays, looking at the next one. No name, no link
   'ninja-pronto': {
@@ -202,6 +225,8 @@ const UI = {
   play: { es: 'Jugar', en: 'Play', pt: 'Jogar' },
   dismiss: { es: 'Cerrar', en: 'Close', pt: 'Fechar' },
   later: { es: 'Ahora no', en: 'Not now', pt: 'Agora não' },
+  // A cartridge's sticker (look: 'cartuchos')
+  player: { es: '1 JUGADOR', en: '1 PLAYER', pt: '1 JOGADOR' },
 };
 
 const pick = (obj, lang) => (obj && typeof obj === 'object' ? obj[lang] ?? obj.es : obj);
@@ -214,13 +239,15 @@ export const campaignLang = (c, lang) => (!c?.langs || c.langs.includes(lang) ? 
  * were turned on. `seen` is the list of ids this phone closed; `profile` is this phone's
  * (`readProfile`), which a campaign for regulars needs.
  */
-export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], forced = null, today = new Date(), automated = false, profile = null } = {}) {
+export function queue({ active = ACTIVE, campaigns = CAMPAIGNS, seen = [], forced = null, today = new Date(), automated = false, profile = null, launched = () => true } = {}) {
   if (forced) return campaigns[forced] ? [forced] : [];
   if (automated) return [];
   const live = a => {
     if (!a?.id || !campaigns[a.id] || seen.includes(a.id)) return false;
     // A campaign for regulars waits, unseen, until this phone is one (D-458)
     if (campaigns[a.id].audience === 'regulars' && !isRegular(profile)) return false;
+    // A campaign announcing games launched by a flag waits for them (D-517): `launched(flag)` for this visitor
+    if ((campaigns[a.id].requires || []).some(f => !launched(f))) return false;
     const start = a.from ? Date.parse(`${a.from}T00:00:00`) : NaN;
     if (Number.isFinite(start) && today.getTime() < start) return false;
     const end = a.until ? Date.parse(`${a.until}T23:59:59`) : NaN;
@@ -336,6 +363,7 @@ async function resolve(items, lang) {
       smooth: !!i.smooth,
       video: i.video ? new URL(i.video, ROOT).href : null,
       cta: pick(i.cta, lang) ?? null,
+      color: i.color ?? null,
     };
   });
 }
@@ -353,7 +381,7 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
 
   const layer = node('div', 'splash-capa');
   const backdrop = node('div', 'splash-fondo');
-  const card = node('section', c.hero ? 'splash splash--hero' : 'splash');
+  const card = node('section', c.hero ? 'splash splash--hero' : c.look === 'cartuchos' ? 'splash splash--cartuchos' : 'splash');
   card.setAttribute('role', 'dialog');
   card.setAttribute('aria-modal', 'true');
   card.setAttribute('aria-labelledby', 'splash-titulo');
@@ -364,6 +392,18 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   x.setAttribute('aria-label', pick(UI.dismiss, lang));
 
   const head = node('header', 'splash-cabeza');
+  // The cartridges' pixel HUD: three hearts, 1P and a score that counts up
+  if (c.look === 'cartuchos') {
+    const hud = node('div', 'splash-hud');
+    hud.setAttribute('aria-hidden', 'true');
+    const score = node('span', 'splash-hud-score', 'SCORE 000000');
+    hud.append(node('span', 'splash-hud-vidas', '♥♥♥'), node('span', null, '1P'), score);
+    head.append(hud);
+    if (!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      let s = 0;
+      const tick = setInterval(() => { if (!score.isConnected) return clearInterval(tick); s = (s + 50) % 1e6; score.textContent = `SCORE ${String(s).padStart(6, '0')}`; }, 120);
+    }
+  }
   if (c.emoji) head.append(node('div', 'splash-emoji', c.emoji));
   if (c.kicker) head.append(node('p', 'splash-kicker', pick(c.kicker, lang)));
   const h = node('h2', 'splash-titulo', pick(c.title, lang));
@@ -395,6 +435,20 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
       a.append(img);
     }
     if (teaser) { list.append(a); continue; }
+    // A cartridge: its screen framed in its color, the sticker with its name, Play, and the gold pins
+    if (c.look === 'cartuchos') {
+      a.className = `splash-item splash-cart${it.color ? ` splash-cart--${it.color}` : ''}`;
+      const screen = node('div', 'splash-cart-pantalla');
+      screen.append(...a.childNodes);
+      const sticker = node('div', 'splash-cart-sticker');
+      sticker.append(node('b', null, it.name.toUpperCase()), node('small', null, pick(UI.player, lang)));
+      const play = node('span', `btn ${it.color === 'cyan' ? 'btn--cyan' : ''} splash-jugar`, `${it.emoji} ${pick(UI.play, lang)}`);
+      const pins = node('div', 'splash-cart-pines');
+      pins.setAttribute('aria-hidden', 'true');
+      a.append(screen, sticker, play, pins);
+      list.append(a);
+      continue;
+    }
     const body = node('div', 'splash-item-cuerpo');
     body.append(node('h3', null, `${it.emoji} ${it.name}`.trim()));
     if (it.text) body.append(node('p', null, it.text));
@@ -408,7 +462,10 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
   const done = node('button', hasLinks ? 'splash-luego' : 'btn btn--yellow splash-cerrar', pick(c.close, lang) ?? pick(hasLinks ? UI.later : UI.dismiss, lang));
   done.type = 'button';
 
-  card.append(x, head, list, done);
+  // «COMPATIBLE CON 🏆 La Copa Y 📅 Uno al Día»: information, not buttons
+  const compat = c.compat ? node('p', 'splash-compat') : null;
+  if (compat) pick(c.compat, lang).forEach((t, i) => compat.append(node('span', i % 2 ? 'splash-compat-sitio' : 'splash-compat-nexo', t)));
+  card.append(...[x, head, list, compat, done].filter(Boolean));
   layer.append(backdrop, card);
   document.body.append(layer);
   const prevOverflow = document.body.style.overflow;
@@ -467,5 +524,9 @@ export async function startSplash({ lang = 'es', search = globalThis.location?.s
   // A campaign that is not on previews only with a lab key (D-395). lab: #seccion-portada
   const active = automated ? [] : await loadActive();
   if (forced && !active.some(a => a.id === forced)) return import('./lab-access.js').then(({ labAccess }) => labAccess()).then(yes => show(yes ? queue({ forced }) : []));
-  return show(queue({ active, seen: seenIds(), forced, automated, profile: readProfile() }));
+  // The games' launch flags, fresh (D-517): only a campaign that `requires` some asks
+  const asks = active.some(a => CAMPAIGNS[a.id]?.requires);
+  const flags = asks ? await import('./flags.js').then(m => m.loadFlags()).catch(() => ({})) : {};
+  const launched = asks ? await import('./games.js').then(m => f => m.lanzado(f, { flags })) : () => true;
+  return show(queue({ active, seen: seenIds(), forced, automated, profile: readProfile(), launched }));
 }

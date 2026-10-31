@@ -137,5 +137,14 @@ const rules = readFileSync(new URL('../../../firebase/database.rules.json', impo
 assert.ok(rules.includes(`$ev.matches(/^(${SPLASH_EVENTS.join('|')})$/)`), 'firebase rules list the same splash events');
 }
 
+// A campaign naming flag-launched games (D-517) waits until those flags are on for the visitor
+{
+  const active = [{ id: 'shinobi-babel' }];
+  assert.deepEqual(queue({ active, launched: () => false }), [], 'shinobi-babel waits while the games are hidden');
+  assert.deepEqual(queue({ active, launched: f => f === 'stick' }), [], 'and while only one of them is out');
+  assert.deepEqual(queue({ active, launched: () => true }), ['shinobi-babel'], 'and shows once both are launched');
+  assert.deepEqual(CAMPAIGNS['shinobi-babel'].requires, ['stick', 'stack']);
+  for (const l of ['es', 'en', 'pt']) assert.equal(CAMPAIGNS['shinobi-babel'].compat[l].length, 4, `the compat sentence in ${l}: joiner, place, joiner, place`);
+}
 
 console.log('splash ✓');
