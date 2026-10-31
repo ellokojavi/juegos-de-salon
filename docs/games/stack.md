@@ -1,4 +1,4 @@
-# 🧱 Stack (lab prototype, in Juegos en prueba)
+# 🧱 Stacks (La Copa game, launched by flag; Stack in the lab)
 
 > **Ready to launch (D-517).** The game is now **🧱 Stacks**, a La Copa game in `public/cup/games/stack/`
 > (engine, scene, screen, texts in es, en and pt) that serves its page `/stacks/`, Uno al día (from the

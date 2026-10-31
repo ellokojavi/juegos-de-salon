@@ -47,6 +47,8 @@ The games with their own section below come first; after them, the one-player ga
 | 🖌️ [Paint Mines / Pintaminas / Pinta-Minas](https://juegosdesalon.cl/paint-mines/) | 1 | Play alone | Also in The Cup |
 | 🕵️ [Agents / Agentes](https://juegosdesalon.cl/agents/) | 1 | Play alone | Also in The Cup |
 | 🚅 [Train on the Edge / Tren en Vilo / Trem no Vão](https://juegosdesalon.cl/bridges/) | 1 | Play alone | Also in The Cup |
+| 🥷 [Ninja](https://juegosdesalon.cl/ninja/) | 1 | Play alone | Also in The Cup |
+| 🧱 [Stacks](https://juegosdesalon.cl/stacks/) | 1 | Play alone | Also in The Cup |
 <!-- /generated -->
 
 ---
@@ -149,6 +151,12 @@ Spec and design: [docs/games/agents.md](docs/games/agents.md)
 A bridge builder inspired by [Poly Bridge](https://en.wikipedia.org/wiki/Poly_Bridge), out of the lab since D-456, at `/bridges/`, in The Cup's pool and in One a Day from 2026-10-27. Lay beams over a gap (the deck is already laid), then test: the train crosses or the bridge falls. Five crossings in 7 minutes, drawn from a catalog of 33 with the day's seed, scored on stages passed, wood saved against the cheapest known bridge, solidity and speed. The Grand Final skips it (seven minutes of building).
 
 Spec and design: [docs/games/bridges.md](docs/games/bridges.md)
+
+### 🥷 Ninja and 🧱 Stacks (ready, waiting for their flag)
+
+Two one-player reflex games built as La Copa games (D-517), with their pages `/ninja/` and `/stacks/`: **Ninja**, inspired by Ketchapp's Stick Hero (hold to stretch a stick across the gap), and **Stacks**, inspired by Ketchapp's Stack (tap to drop each block on the tower); each cover credits the original with a link. They are hidden (`lanza` in the manifest) from the home page, the search, the filters, /records/ and a new cup's pool until the owner switches the flags `stick` and `stack` on their /labs/ cards; Uno al día may deal them from the deck shuffled on 2026-11-08. Scores are 0–100.
+
+Spec and design: [docs/games/stick.md](docs/games/stick.md), [docs/games/stack.md](docs/games/stack.md)
 
 ### Retired cup games
 
@@ -424,7 +432,7 @@ Spec: [docs/games/fourth-king.md](docs/games/fourth-king.md)
 
 ## What every game shares
 
-- **The menu:** filters by kind of game (kept in the link), ⭐ **Favorites** (in the browser, D-238), ✨ **New** and 🔥 **Popular** (D-362, D-364), a 🔎 search (D-387, D-403) and a 🎲 **Random game** die (D-188, D-374). New games sit after The Cup for one week (D-333, D-335, D-507); the rest are ordered by games finished in the last four weeks (D-361, D-369).
+- **The menu:** filters by kind of game (kept in the link; five since D-517, with 🎯 Pulso and 🎲 Dados), ⭐ **Favorites** (in the browser, D-238), ✨ **New** and 🔥 **Popular** (D-362, D-364), a 🔎 search (D-387, D-403) and a 🎲 **Random game** die (D-188, D-374). New games sit after The Cup for one week (D-333, D-335, D-507); the rest are ordered by games finished in the last four weeks (D-361, D-369).
 - <a id="one-a-day"></a>**📅 One a Day** (D-230; #1 was 6 October 2026): every day at your midnight, a game and its content come from the date, the same for everyone, picked from every solo-playable game with no repeat within a week (D-334, D-405, D-421). [`/today/`](https://juegosdesalon.cl/today/) keeps your streak (a 🧊 freeze per 7 days, up to 2), a calendar and a **monthly points season**: the day's score plus a streak bonus (D-412, D-414). Signed in: leaderboards, invites that earn a freeze, and optional reminders ([docs/UNO-AL-DIA.md](docs/UNO-AL-DIA.md)). A recap window on the home page shows last month's season (D-424). The first attempt counts from its start: left unfinished, it scores 0, and the way back in skips the die (D-433).
 - **Leaderboards** (D-212, D-217): optional sign-in with a name and a 4-digit PIN, no account. Each game keeps your best score and its weekly, all-time, friends and Cup tables; `/records/` adds the All-Rounder and The Cup's medals (D-219); group games keep wins (D-215).
 - **Sharing** (D-165, D-171): every message has a `{emoji} *{title}* · {context}` header, one thing per line and the link last; results go out as an **image plus text**, and the text never repeats the image. The menu's share sheet shows the promo video and an **Invite to play** message listing the main features (D-253, D-271, D-410).
@@ -458,6 +466,8 @@ node public/cup/games/agents/engine.test.mjs
 node public/cup/games/paint-mines/engine.test.mjs
 node public/cup/games/plots/engine.test.mjs
 node public/cup/games/routes/engine.test.mjs
+node public/cup/games/stack/engine.test.mjs
+node public/cup/games/stick/engine.test.mjs
 node public/generala/engine.test.mjs
 node public/hangman/engine.test.mjs
 node public/labs/chameleon/engine.test.mjs
@@ -687,6 +697,8 @@ The whole app is translated, Portuguese as spoken in Brazil (German left in D-51
 | Pintaminas | Paint Mines | Pinta-Minas |
 | Agentes | Agents | Agentes |
 | Tren en Vilo | Train on the Edge | Trem no Vão |
+| Ninja | Ninja | Ninja |
+| Stacks | Stacks | Stacks |
 <!-- /generated -->
 
 <!-- generated: screenshots:idiomas · written by python3 tools/release/readme.py update -->
@@ -793,8 +805,8 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [🖌️ Pintaminas (Paint Mines · Pinta-Minas · Malminen)](docs/games/paint-mines.md)
 - [📐 Loteo (Plots · Loteamento · Parzellen)](docs/games/plots.md)
 - [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)
-- [🧱 Stack (lab prototype, in Juegos en prueba)](docs/games/stack.md)
-- [🥷 Stick Ninja (lab prototype, in Juegos en prueba)](docs/games/stick.md)
+- [🧱 Stacks (La Copa game, launched by flag; Stack in the lab)](docs/games/stack.md)
+- [🥷 Ninja (La Copa game, launched by flag; Stick Ninja in the lab)](docs/games/stick.md)
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
 - [Changelog](CHANGELOG.md)
 - [The owner's agents and tools](docs/AGENTS.md)

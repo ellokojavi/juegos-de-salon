@@ -1,4 +1,4 @@
-# 🥷 Stick Ninja (lab prototype, in Juegos en prueba)
+# 🥷 Ninja (La Copa game, launched by flag; Stick Ninja in the lab)
 
 > **Ready to launch (D-517).** The game is now **🥷 Ninja**, a La Copa game in `public/cup/games/stick/`
 > (engine, scene, screen, texts in es, en and pt) that serves its page `/ninja/`, Uno al día (from the

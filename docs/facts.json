@@ -14,7 +14,7 @@
     "en": 150,
     "pt": 150
   },
-  "commonKeys": 44,
+  "commonKeys": 47,
   "games": [
     {
       "id": "copa",
@@ -125,6 +125,16 @@
         "public/cup/games/routes/ui.js",
         "public/cup/games/semilla.js",
         "public/cup/games/solo.js",
+        "public/cup/games/stack/engine.js",
+        "public/cup/games/stack/scene.js",
+        "public/cup/games/stack/style.css",
+        "public/cup/games/stack/texts.js",
+        "public/cup/games/stack/ui.js",
+        "public/cup/games/stick/engine.js",
+        "public/cup/games/stick/scene.js",
+        "public/cup/games/stick/style.css",
+        "public/cup/games/stick/texts.js",
+        "public/cup/games/stick/ui.js",
         "public/cup/games/tango/engine.js",
         "public/cup/games/tango/ui.js",
         "public/cup/games/timeline/engine.js",
@@ -905,6 +915,38 @@
       "labs": false,
       "bodega": false,
       "path": "bridges/"
+    },
+    {
+      "id": "stick",
+      "emoji": "🥷",
+      "name": {
+        "es": "Ninja",
+        "en": "Ninja",
+        "pt": "Ninja"
+      },
+      "kinds": [
+        "skill"
+      ],
+      "duration": "1–3",
+      "labs": false,
+      "bodega": false,
+      "path": "ninja/"
+    },
+    {
+      "id": "stack",
+      "emoji": "🧱",
+      "name": {
+        "es": "Stacks",
+        "en": "Stacks",
+        "pt": "Stacks"
+      },
+      "kinds": [
+        "skill"
+      ],
+      "duration": "1–3",
+      "labs": false,
+      "bodega": false,
+      "path": "stacks/"
     }
   ],
   "themes": [
@@ -1156,6 +1198,14 @@
     "public/cup/games/routes/ui.js",
     "public/cup/games/semilla.js",
     "public/cup/games/solo.js",
+    "public/cup/games/stack/engine.js",
+    "public/cup/games/stack/scene.js",
+    "public/cup/games/stack/texts.js",
+    "public/cup/games/stack/ui.js",
+    "public/cup/games/stick/engine.js",
+    "public/cup/games/stick/scene.js",
+    "public/cup/games/stick/texts.js",
+    "public/cup/games/stick/ui.js",
     "public/cup/games/tango/engine.js",
     "public/cup/games/tango/ui.js",
     "public/cup/games/timeline/engine.js",
@@ -1322,6 +1372,8 @@
     "public/cup/games/paint-mines/engine.test.mjs",
     "public/cup/games/plots/engine.test.mjs",
     "public/cup/games/routes/engine.test.mjs",
+    "public/cup/games/stack/engine.test.mjs",
+    "public/cup/games/stick/engine.test.mjs",
     "public/cup/planilla.test.mjs",
     "public/cup/recap.test.mjs",
     "public/cup/reportes.test.mjs",
@@ -1519,7 +1571,9 @@
     "smoke.mjs",
     "spacing-common.mjs",
     "splash/languages.mjs",
+    "stack/game.mjs",
     "stack/lab.mjs",
+    "stick/game.mjs",
     "stick/lab.mjs",
     "structured-data.mjs",
     "tango/give-up.mjs",
@@ -1682,11 +1736,11 @@
     },
     {
       "path": "docs/games/stack.md",
-      "title": "🧱 Stack (lab prototype, in Juegos en prueba)"
+      "title": "🧱 Stacks (La Copa game, launched by flag; Stack in the lab)"
     },
     {
       "path": "docs/games/stick.md",
-      "title": "🥷 Stick Ninja (lab prototype, in Juegos en prueba)"
+      "title": "🥷 Ninja (La Copa game, launched by flag; Stick Ninja in the lab)"
     },
     {
       "path": "docs/games/timeline.md",
