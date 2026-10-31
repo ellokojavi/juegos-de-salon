@@ -59,7 +59,7 @@ await b.send('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, de
 
 // The end
 await ev(`${P}.soltarEn(${P}.S.g.moving.t0); 1`);
-ok(await waitFor(`/Se acabó/.test(document.getElementById('sk-aviso')?.textContent || '')`, 1000), 'missing the tower says Se acabó');
+ok(await waitFor(`/Fin del juego/.test(document.getElementById('sk-aviso')?.textContent || '')`, 1000), 'missing the tower says Fin del juego');
 ok(await waitFor(`!!document.getElementById('btn-fin')`, 4000), 'and «Ver resultado» follows');
 ok(/5 bloques/.test(await ev(`document.getElementById('sk-sello').textContent`)), 'the stamp says 5 bloques');
 await b.shot('03-end');
