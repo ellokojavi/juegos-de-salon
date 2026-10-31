@@ -1,5 +1,5 @@
 /**
- * 🥷 Ninja (id `stick`): the screen for its own page (/ninja/), Uno al día and La Copa, moved over from
+ * 🥷 Shinobi (id `stick`): the screen for its own page (/shinobi/), Uno al día and La Copa, moved over from
  * the lab (D-446) as Tren en Vilo was (D-456). Hold to stretch a stick, let go and it falls across the
  * gap; land it on the next pillar and the ninja runs over. Everything the lab's game had in play comes
  * along: the hold measured with the events' own timestamps, 3 lives with the climb back up, flags with
@@ -100,7 +100,7 @@ function demo(lienzo) {
 
 /**
  * The name in the waiting room, with the credit to the original right under it, as Loteo does (the
- * owner's call: transparency; the name stays Ninja). `titulo` gets no T: the texts in the page's language.
+ * owner's call: transparency; the name stays Shinobi). `titulo` gets no T: the texts in the page's language.
  */
 const KETCHAPP = 'https://www.ketchappgames.com/';
 const UI = () => { let l = 'es'; try { l = getLang(); } catch (_) { /* outside the browser */ } return (TEXTOS[l] || TEXTOS.es).ui; };

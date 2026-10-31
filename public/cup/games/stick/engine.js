@@ -1,5 +1,5 @@
 /**
- * 🥷 Ninja (id `stick`) — its engine in La Copa, Uno al día and its own page, moved over from the lab
+ * 🥷 Shinobi (id `stick`) — its engine in La Copa, Uno al día and its own page, moved over from the lab
  * (D-446): hold to stretch a stick, let go and it falls across the gap; land it on the next pillar and the
  * ninja runs over. Pure functions, no DOM.
  *

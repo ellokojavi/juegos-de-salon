@@ -1,4 +1,4 @@
-// 🥷 Ninja's engine (id `stick`, out of the lab from D-446): the seeded course, the stick's length from the hold, perfect, land, short and long, the streak bonus, pauses, moving pillars and the three lives.
+// 🥷 Shinobi's engine (id `stick`, out of the lab from D-446): the seeded course, the stick's length from the hold, perfect, land, short and long, the streak bonus, pauses, moving pillars and the three lives.
 import assert from 'node:assert/strict';
 const NINJA_HALF = 9;
 import {

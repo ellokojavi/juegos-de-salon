@@ -1,4 +1,4 @@
-// 🥷 Ninja (id `stick`), out of the lab, end to end at its standalone page /ninja/: the waiting room with
+// 🥷 Shinobi (id `stick`), out of the lab, end to end at its standalone page /shinobi/: the waiting room with
 // the self-playing demo and the credit to Stick Hero (Ketchapp) with its link; Empezar goes to the night with the score, the
 // three lives and the hint. A real tap (a stick far too short) costs a life and the ninja climbs back;
 // three flags in a row through the page's own hook score 2 + 3 + 4 and show the streak chip; a hidden
@@ -31,15 +31,15 @@ async function start(url) {
 
 try {
   // ——— The waiting room ———
-  await b.open(`${SITE}/ninja/?test`, 2500);
-  ok(await b.until(`document.getElementById('btn-empezar')`, 6000), 'the standalone page /ninja/ opens its waiting room');
+  await b.open(`${SITE}/shinobi/?test`, 2500);
+  ok(await b.until(`document.getElementById('btn-empezar')`, 6000), 'the standalone page /shinobi/ opens its waiting room');
   ok(await b.until(`!!document.querySelector('canvas.sn-demo')`, 4000), 'with the self-playing demo on the cover');
   ok(/Stick Hero/.test(await text('#sn-credito')) && await ev(`!!document.querySelector('#sn-credito a[href*="ketchappgames.com"]')`), 'it credits Stick Hero, by Ketchapp, with its link');
-  ok(/Ninja/.test(await ev(`document.body.innerText`)), 'its name is Ninja');
+  ok(/Shinobi/.test(await ev(`document.body.innerText`)), 'its name is Shinobi');
   await b.shot('01-waiting-room');
 
   // ——— A run ———
-  ok(await start(`${SITE}/ninja/?test&seed=NINJA`), 'Empezar goes to the night');
+  ok(await start(`${SITE}/shinobi/?test&seed=NINJA`), 'Empezar goes to the night');
   ok(await b.until(READY, 4000), 'the ninja waits on its pillar');
   ok(await ev(`document.querySelectorAll('#sn-vidas span').length`) === 3, 'three lives');
   ok((await text('#sn-aviso')).length > 0, `the hint: «${await text('#sn-aviso')}»`);
@@ -88,7 +88,7 @@ try {
   await b.close();
   b = await launch({ dir: `${OUT}/p320`, out: OUT, width: 320, height: 568 });
   for (const lang of ['es', 'en', 'pt']) {
-    await b.open(`${SITE}/ninja/?test&lang=${lang}&seed=L${lang}`, 2500);
+    await b.open(`${SITE}/shinobi/?test&lang=${lang}&seed=L${lang}`, 2500);
     await b.until(`document.getElementById('btn-empezar')`, 6000);
     ok(await ev(`document.documentElement.scrollWidth <= innerWidth`), `${lang}: no sideways scroll in the waiting room`);
     await ev(`document.getElementById('btn-empezar').click(); 1`);
@@ -100,6 +100,6 @@ try {
   ok(false, `the script failed: ${e.message}`);
 } finally {
   await b.close();
-  console.log(failures ? `✗ ${failures} failed` : '✓ Ninja end to end');
+  console.log(failures ? `✗ ${failures} failed` : '✓ Shinobi end to end');
   process.exit(failures ? 1 : 0);
 }

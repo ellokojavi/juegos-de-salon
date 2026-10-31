@@ -45,7 +45,7 @@ const PUNTAJE = {
   // Agentes (D-421): the agents found, minus a neutral now and then
   agentes: k => { const s = Math.max(0, Math.round(100 * Math.round(11 * k) / 11) - (k < 0.5 ? 15 : 0)); return { s, r: `${s}/100` }; },
   // Tren en Vilo (D-456): ten a stage crossed, plus savings, solidity and speed
-  // Ninja: its points, up to 100 (D-517)
+  // Shinobi: its points, up to 100 (D-517)
   stick: k => { const s = Math.min(100, Math.round(60 * k + 40 * k * k)); return { s, r: `🥷 ${s}` }; },
   // Babel: two points a block, up to 100 (D-517)
   stack: k => { const s = Math.min(100, 2 * Math.round(50 * k * k)); return { s, r: `${s}/100` }; },

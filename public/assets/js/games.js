@@ -491,26 +491,27 @@ export const SUELTOS = [
     // (`oculto`). Its lab page /labs/stick/ stays until the cleanup PR makes it a bridge
     id: 'stick',
     lanza: 'stick',
+    // Its name is Shinobi (the owner's choice, first called Ninja); the id stays `stick`
     // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
     copa: { pozo: 14 },
     // Uno al día: by date, never by flag (the deck must be the same on every phone): from the day after
     // the launch, joining the next deck
     unoAlDia: { orden: 19, desde: '2026-11-03' },
-    slug: 'ninja',
+    slug: 'shinobi',
     emoji: '🥷',
-    name: { es: 'Ninja', en: 'Ninja', pt: 'Ninja' },
+    name: { es: 'Shinobi', en: 'Shinobi', pt: 'Shinobi' },
     tagline: { es: 'Estira el palo, cruza el abismo y clava la bandera.', en: 'Stretch the stick, cross the gap, plant the flag.', pt: 'Estique o bastão, atravesse o abismo e finque a bandeira.' },
     keywords: {
-      es: ['ninja', 'palo', 'puente', 'saltar', 'habilidad', 'reflejos', 'pulso', 'bandera', 'abismo'],
-      en: ['ninja', 'stick', 'bridge', 'jump', 'skill', 'reflexes', 'timing', 'flag', 'gap'],
-      pt: ['ninja', 'bastão', 'ponte', 'pular', 'habilidade', 'reflexos', 'precisão', 'bandeira', 'abismo'],
+      es: ['shinobi', 'ninja', 'palo', 'puente', 'saltar', 'habilidad', 'reflejos', 'pulso', 'bandera', 'abismo'],
+      en: ['shinobi', 'ninja', 'stick', 'bridge', 'jump', 'skill', 'reflexes', 'timing', 'flag', 'gap'],
+      pt: ['shinobi', 'ninja', 'bastão', 'ponte', 'pular', 'habilidade', 'reflexos', 'precisão', 'bandeira', 'abismo'],
     },
     tipos: ['skill'],
     duration: '1–3',
     nuevoDesde: '2026-11-02',
   },
   {
-    // Out of the lab in D-517 with Ninja, launched the same way by flags/stack (see Ninja). Its name is Babel (the
+    // Out of the lab in D-517 with Shinobi, launched the same way by flags/stack (see Shinobi). Its name is Babel (the
     // owner's choice): not the original's (Stack); the id stays `stack`
     id: 'stack',
     lanza: 'stack',
@@ -543,7 +544,7 @@ export const TIPOS = {
   trivia: { emoji: '🧠', name: { es: 'Cultura', en: 'Trivia', pt: 'Cultura' } },
   // Only dice since Julepe and Cuarto Rey left the home page (D-420): the key stays, the name says what is there (D-517)
   tabletop: { emoji: '🎲', name: { es: 'Dados', en: 'Dice', pt: 'Dados' } },
-  // The first skill games, Ninja and Babel (D-517): the home page offers a type only while it has a game to show.
+  // The first skill games, Shinobi and Babel (D-517): the home page offers a type only while it has a game to show.
   // A short name, so five types fit one row on a 320 px phone in every language
   skill: { emoji: '🎯', name: { es: 'Pulso', en: 'Skill', pt: 'Reflexo' } },
 };

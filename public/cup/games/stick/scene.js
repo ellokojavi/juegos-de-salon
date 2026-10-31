@@ -1,5 +1,5 @@
 /**
- * 🥷 Ninja's drawing, moved over from the lab (D-446): the night, the pillars, the stick and the ninja on
+ * 🥷 Shinobi's drawing, moved over from the lab (D-446): the night, the pillars, the stick and the ninja on
  * a canvas. The screen (ui.js) draws the game and the cover's demo with it.
  */
 import { pillar, pillarAt, current, next, stickAt, runX, restX, VIEW, HOLD_X, TURN_MS, NINJA, PERFECT, MAX_BONUS } from './engine.js';

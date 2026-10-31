@@ -1,11 +1,11 @@
 /**
- * 🥷 Ninja (id `stick`) in La Copa: its texts in the three languages (C-3), merged into rules.js (D-331).
+ * 🥷 Shinobi (id `stick`) in La Copa: its texts in the three languages (C-3), merged into rules.js (D-331).
  * `juego` is its entry in `juegos`; `ui`, the keys its screen reads from T, all prefixed `sn`. The end
  * button reuses the cup's `seeResults` (or the trial's `trialEnd`).
  */
 const ES = {
   juego: {
-    nombre: 'Ninja', habilidad: 'reflejos',
+    nombre: 'Shinobi', habilidad: 'reflejos',
     como: [
       'Mantén apretado para estirar el palo y suelta para que caiga sobre el vacío: si llega al pilar siguiente, el ninja cruza.',
       'Si la punta cae en la bandera, suma más por cada una seguida.',
@@ -50,7 +50,7 @@ const ES = {
 
 const EN = {
   juego: {
-    nombre: 'Ninja', habilidad: 'reflexes',
+    nombre: 'Shinobi', habilidad: 'reflexes',
     como: [
       'Hold to stretch the stick and let go to drop it across the gap: if it reaches the next pillar, the ninja crosses.',
       'Land its tip on the flag for extra points, more for each one in a row.',
@@ -95,7 +95,7 @@ const EN = {
 
 const PT = {
   juego: {
-    nombre: 'Ninja', habilidad: 'reflexos',
+    nombre: 'Shinobi', habilidad: 'reflexos',
     como: [
       'Segure para esticar o bastão e solte para ele cair sobre o vão: se alcançar o próximo pilar, o ninja atravessa.',
       'Se a ponta cair na bandeira, ganha mais a cada uma seguida.',

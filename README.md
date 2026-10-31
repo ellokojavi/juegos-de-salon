@@ -47,7 +47,7 @@ The games with their own section below come first; after them, the one-player ga
 | 🖌️ [Paint Mines / Pintaminas / Pinta-Minas](https://juegosdesalon.cl/paint-mines/) | 1 | Play alone | Also in The Cup |
 | 🕵️ [Agents / Agentes](https://juegosdesalon.cl/agents/) | 1 | Play alone | Also in The Cup |
 | 🚅 [Train on the Edge / Tren en Vilo / Trem no Vão](https://juegosdesalon.cl/bridges/) | 1 | Play alone | Also in The Cup |
-| 🥷 [Ninja](https://juegosdesalon.cl/ninja/) | 1 | Play alone | Also in The Cup |
+| 🥷 [Shinobi](https://juegosdesalon.cl/shinobi/) | 1 | Play alone | Also in The Cup |
 | 🗼 [Babel](https://juegosdesalon.cl/babel/) | 1 | Play alone | Also in The Cup |
 <!-- /generated -->
 
@@ -152,9 +152,9 @@ A bridge builder inspired by [Poly Bridge](https://en.wikipedia.org/wiki/Poly_Br
 
 Spec and design: [docs/games/bridges.md](docs/games/bridges.md)
 
-### 🥷 Ninja and 🗼 Babel (ready, waiting for their flag)
+### 🥷 Shinobi and 🗼 Babel (ready, waiting for their flag)
 
-Two one-player reflex games built as La Copa games (D-517), with their pages `/ninja/` and `/babel/`: **Ninja**, inspired by Ketchapp's Stick Hero (hold to stretch a stick across the gap), and **Babel**, inspired by Ketchapp's Stack (tap to drop each block on the tower); each cover credits the original with a link. They are hidden (`lanza` in the manifest) from the home page, the search, the filters, /records/ and a new cup's pool until the owner switches the flags `stick` and `stack` on their /labs/ cards; Uno al día may deal them from the deck shuffled on 2026-11-08. Scores are 0–100.
+Two one-player reflex games built as La Copa games (D-517), with their pages `/shinobi/` and `/babel/`: **Shinobi**, inspired by Ketchapp's Stick Hero (hold to stretch a stick across the gap), and **Babel**, inspired by Ketchapp's Stack (tap to drop each block on the tower); each cover credits the original with a link. They are hidden (`lanza` in the manifest) from the home page, the search, the filters, /records/ and a new cup's pool until the owner switches the flags `stick` and `stack` on their /labs/ cards; Uno al día may deal them from the deck shuffled on 2026-11-08. Scores are 0–100.
 
 Spec and design: [docs/games/stick.md](docs/games/stick.md), [docs/games/stack.md](docs/games/stack.md)
 
@@ -697,7 +697,7 @@ The whole app is translated, Portuguese as spoken in Brazil (German left in D-51
 | Pintaminas | Paint Mines | Pinta-Minas |
 | Agentes | Agents | Agentes |
 | Tren en Vilo | Train on the Edge | Trem no Vão |
-| Ninja | Ninja | Ninja |
+| Shinobi | Shinobi | Shinobi |
 | Babel | Babel | Babel |
 <!-- /generated -->
 
@@ -806,7 +806,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [📐 Loteo (Plots · Loteamento · Parzellen)](docs/games/plots.md)
 - [🚇 Rutas rotas (Broken Routes)](docs/games/routes.md)
 - [🗼 Babel (La Copa game, launched by flag; Stack in the lab)](docs/games/stack.md)
-- [🥷 Ninja (La Copa game, launched by flag; Stick Ninja in the lab)](docs/games/stick.md)
+- [🥷 Shinobi (La Copa game, launched by flag; Stick Ninja in the lab)](docs/games/stick.md)
 - [Diseño: Línea de Tiempo](docs/games/timeline.md)
 - [Changelog](CHANGELOG.md)
 - [The owner's agents and tools](docs/AGENTS.md)
