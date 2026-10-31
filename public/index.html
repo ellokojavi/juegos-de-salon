@@ -261,6 +261,8 @@
     .filtros-cuenta[hidden] { display: none; }
     /* Una línea que se apaga en las puntas: acá terminan los filtros y empiezan los juegos */
     .filtros-fin { border: 0; height: 1px; margin: 12px 6% 4px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent); }
+    /* The same line closes the list, between the last card and the footer's phrase */
+    .lista-fin { margin: 16px 6% 4px; }
     /* Al bajar por la lista, los filtros se quedan pegados arriba: cambiar de tipo no obliga a
        volver a subir. Sin fondo mientras están en su lugar; pegados, toman el del sitio. */
     /* While they float, the filters stop 36 px below the top and the app's name (D-364) fills that
@@ -520,6 +522,7 @@
       })();
     </script>
 
+    <hr class="filtros-fin lista-fin" aria-hidden="true">
     <footer class="atardecer">
       <p class="footer-msg" id="footer-msg" aria-live="polite">Toma con responsabilidad y con agua a mano. Si manejas, no tomas. 🚕</p>
       <div class="footer-links" id="footer-links"><button type="button" class="buzon-link footer-buzon" id="btn-buzon-portada"></button></div>
