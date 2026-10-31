@@ -13,6 +13,22 @@
  * test that fails when they disagree (manifest.test.mjs). Moved in so far: `keywords` (the 🔎 search's
  * words in es, en and pt, D-404; search.js derives KEYWORDS from them).
  */
+import { cachedFlags, stateOf } from './flags.js';
+import { SAVED_KEY } from './lab-access.js';
+
+/**
+ * Whether a game launched by a flag (`lanza`, D-517) is out for this visitor, read at once from what
+ * this phone last saw of `flags/` (flags.js keeps it; the home page and the game's page refresh it):
+ * 🚀 everyone, or 🧪 lab with a lab key saved here. In node (the tools, the tests) nothing is saved,
+ * so the game counts as not launched. Never used for Uno al día's deck, which goes by date.
+ */
+export function lanzado(id, { flags = cachedFlags(), store = globalThis.localStorage } = {}) {
+  const state = stateOf(flags, id);
+  if (state === 'all') return true;
+  if (state === 'off') return false;
+  try { return !!store?.getItem(SAVED_KEY); } catch (_) { return false; }
+}
+
 export const GAMES = [
   {
     id: 'copa',
@@ -469,8 +485,51 @@ export const SUELTOS = [
     deLabs: true,
     nuevoDesde: '2026-10-26',
   },
+  {
+    // Out of the lab in D-517, launched by its flag (`lanza`): until the owner switches flags/stick to
+    // 🚀 on its /labs/ card, it is hidden from the home page, the search, the rankings and new cups
+    // (`oculto`). Its lab page /labs/stick/ stays until the cleanup PR makes it a bridge
+    id: 'stick',
+    lanza: 'stick',
+    // La Copa: its place in the pool an admin picks the days from (cup/engine.js POZO, #855)
+    copa: { pozo: 14 },
+    // Uno al día: by date, never by flag (the deck must be the same on every phone): from the day after
+    // the launch, joining the next deck
+    unoAlDia: { orden: 19, desde: '2026-11-03' },
+    slug: 'ninja',
+    emoji: '🥷',
+    name: { es: 'Ninja', en: 'Ninja', pt: 'Ninja' },
+    tagline: { es: 'Estira el palo, cruza el abismo y clava la bandera.', en: 'Stretch the stick, cross the gap, plant the flag.', pt: 'Estique o bastão, atravesse o abismo e finque a bandeira.' },
+    keywords: {
+      es: ['ninja', 'palo', 'puente', 'saltar', 'habilidad', 'reflejos', 'pulso', 'bandera', 'abismo'],
+      en: ['ninja', 'stick', 'bridge', 'jump', 'skill', 'reflexes', 'timing', 'flag', 'gap'],
+      pt: ['ninja', 'bastão', 'ponte', 'pular', 'habilidade', 'reflexos', 'precisão', 'bandeira', 'abismo'],
+    },
+    tipos: ['skill'],
+    duration: '1–3',
+    nuevoDesde: '2026-11-02',
+  },
+  {
+    // Out of the lab in D-517 with Ninja, launched the same way by flags/stack (see Ninja)
+    id: 'stack',
+    lanza: 'stack',
+    copa: { pozo: 15 },
+    unoAlDia: { orden: 20, desde: '2026-11-03' },
+    slug: 'stacks',
+    emoji: '🧱',
+    name: { es: 'Stacks', en: 'Stacks', pt: 'Stacks' },
+    tagline: { es: 'Apila los bloques lo más alto que puedas.', en: 'Stack the blocks as high as you can.', pt: 'Empilhe os blocos o mais alto que puder.' },
+    keywords: {
+      es: ['torre', 'apilar', 'bloques', 'stacks', 'habilidad', 'reflejos', 'pulso', 'altura'],
+      en: ['tower', 'stack', 'blocks', 'stacks', 'skill', 'reflexes', 'timing', 'height'],
+      pt: ['torre', 'empilhar', 'blocos', 'stacks', 'habilidade', 'reflexos', 'precisão', 'altura'],
+    },
+    tipos: ['skill'],
+    duration: '1–3',
+    nuevoDesde: '2026-11-02',
+  },
   // Los del laboratorio viven en /labs/<slug>/ (D-267): al salir pasan a /<slug>/
-].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true }));
+].map(m => ({ ...m, players: '1', path: `${m.labs ? 'labs/' : ''}${m.slug}/`, available: !m.labs, suelto: true, ...(m.lanza ? { oculto: !lanzado(m.lanza) } : {}) }));
 
 /**
  * Los tipos de juego con que se filtra la portada (D-142), en el orden en que se ofrecen.
@@ -482,6 +541,8 @@ export const TIPOS = {
   logic: { emoji: '🧩', name: { es: 'Lógica', en: 'Logic', pt: 'Lógica' } },
   trivia: { emoji: '🧠', name: { es: 'Cultura', en: 'Trivia', pt: 'Cultura' } },
   tabletop: { emoji: '🎲', name: { es: 'Cartas/Dados', en: 'Cards/Dice', pt: 'Cartas/Dados' } },
+  // The first skill games, Ninja and Stacks (D-517): the home page offers a type only while it has a game to show
+  skill: { emoji: '🎯', name: { es: 'Habilidad', en: 'Skill', pt: 'Habilidade' } },
 };
 
 /** Los tipos de antes de D-214 (`?tipo=mesa`): un link viejo sigue filtrando lo mismo. */
@@ -518,7 +579,7 @@ export const esNuevo = (g, hoy = new Date()) => {
  * request: it has no plays yet, so by popularity it would be last); when the label goes, so does that.
  */
 export function ordenPortada(hoy = new Date()) {
-  const ofrecidos = [...GAMES, ...SUELTOS].filter(g => !g.labs && !g.bodega).sort((a, b) => puesto(a.id) - puesto(b.id));
+  const ofrecidos = [...GAMES, ...SUELTOS].filter(g => !g.labs && !g.bodega && !g.oculto).sort((a, b) => puesto(a.id) - puesto(b.id));
   const arriba = g => (g.torneo ? 0 : esNuevo(g, hoy) ? 1 : 2);
   const disponibles = ofrecidos.filter(g => g.available).sort((a, b) => arriba(a) - arriba(b));
   return [...disponibles, ...ofrecidos.filter(g => !g.available)];

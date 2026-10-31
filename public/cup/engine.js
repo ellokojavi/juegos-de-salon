@@ -35,6 +35,16 @@ export const POZO = [
   { id: 'linea', pozo: 0 }, { id: 'numero', pozo: 1 },
   ...[...GAMES, ...SUELTOS].filter(g => g.copa).map(g => ({ id: g.id, pozo: g.copa.pozo })),
 ].sort((a, b) => a.pozo - b.pozo).map(x => x.id);
+/**
+ * The pool a new cup is offered (D-517): POZO without the games still waiting for their launch flag on
+ * this phone (`oculto` in games.js). POZO itself stays whole, so a cup made after the launch reads the
+ * same on a phone whose flags are older. POZO_FIJO never has a flag-launched game: what every phone
+ * must draw alike (a day of three's rounds) cannot depend on one phone's flags; the cleanup PR that
+ * removes the flag puts them in.
+ */
+const LANZADOS = [...GAMES, ...SUELTOS].filter(g => g.lanza);
+export const POZO_ABIERTO = POZO.filter(id => !LANZADOS.find(g => g.id === id)?.oculto);
+export const POZO_FIJO = POZO.filter(id => !LANZADOS.some(g => g.id === id));
 
 /**
  * The variants a game can be played in (D-331), the first one being the default. In a cup the admin
@@ -82,7 +92,7 @@ export const rondasDelDia = (meta, d) => {
 };
 /** A random weekend: nine different games of the pool, three a day, balanced like a week (D-425). */
 export function findeAlAzar({ rand = cryptoRand, familia = null } = {}) {
-  const w = semanaAlAzar(3 * TRIO_JUEGOS, { rand, familia, final: false });
+  const w = semanaAlAzar(3 * TRIO_JUEGOS, { rand, familia, final: false, pozo: POZO_FIJO });
   return [0, 1, 2].map(i => w.slice(i * TRIO_JUEGOS, (i + 1) * TRIO_JUEGOS).join(TRIO_SEP));
 }
 
@@ -104,11 +114,11 @@ export function calendarioValido(cal, dias) {
  * final. Si se le pasa `familia` (la habilidad de cada juego), evita dos días seguidos de la
  * misma, para que la semana no sea tres de lógica al hilo.
  */
-export function calendarioAlAzar(dias, { rand = cryptoRand, familia = null } = {}) {
+export function calendarioAlAzar(dias, { rand = cryptoRand, familia = null, pozo = POZO_ABIERTO } = {}) {
   const barajar = xs => { const a = [...xs]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   let cal = null;
   for (let k = 0; k < 50; k++) {
-    cal = barajar(POZO).slice(0, dias - 1);
+    cal = barajar(pozo).slice(0, dias - 1);
     if (!familia || cal.every((id, i) => i === 0 || familia(id) !== familia(cal[i - 1]))) break;
   }
   return [...cal, 'final'];
@@ -131,7 +141,7 @@ export const ESTILOS_SEMANA = {
  * games with the home page's New label, all of which New puts in. Without a week that meets every
  * rule, the last one drawn.
  */
-export function semanaAlAzar(dias, { rand = cryptoRand, familia = null, estilo = 'equilibrada', nuevos = [], final = true } = {}) {
+export function semanaAlAzar(dias, { rand = cryptoRand, familia = null, estilo = 'equilibrada', nuevos = [], final = true, pozo = POZO_ABIERTO } = {}) {
   const barajar = xs => { const a = [...xs]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const tope = estilo === 'equilibrada' || estilo === 'nuevo';
   const fam = id => (familia ? familia(id) : id);
@@ -139,9 +149,9 @@ export function semanaAlAzar(dias, { rand = cryptoRand, familia = null, estilo =
   const hastaDos = w => { const c = {}; return w.every(id => (c[fam(id)] = (c[fam(id)] || 0) + 1) <= 2); };
   let semana = null;
   for (let k = 0; k < 400; k++) {
-    const propios = ESTILOS_SEMANA[estilo] || POZO;
-    let orden = [...barajar(propios), ...barajar(POZO.filter(id => !propios.includes(id)))];
-    if (estilo === 'nuevo') { const ns = barajar(nuevos.filter(id => POZO.includes(id))); orden = [...ns, ...orden.filter(id => !ns.includes(id))]; }
+    const propios = (ESTILOS_SEMANA[estilo] || pozo).filter(id => pozo.includes(id));
+    let orden = [...barajar(propios), ...barajar(pozo.filter(id => !propios.includes(id)))];
+    if (estilo === 'nuevo') { const ns = barajar(nuevos.filter(id => pozo.includes(id))); orden = [...ns, ...orden.filter(id => !ns.includes(id))]; }
     // Which games go in is decided first, then their order
     semana = barajar(orden.slice(0, final ? dias - 1 : dias));
     if (seguidas(semana) && (!tope || hastaDos(semana))) break;

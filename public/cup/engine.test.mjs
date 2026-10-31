@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { zonaDeIdioma, ZONA } from './engine.js';
 import {
-  CALENDARIOS, POZO, calendarioValido, calendarioAlAzar, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
+  CALENDARIOS, POZO, POZO_ABIERTO, POZO_FIJO, calendarioValido, calendarioAlAzar, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
   aliasLimpio, esAlias, menosJuegos, provisoria, ultimoDiaVisto, marcaDelDia, aliasHasta, ALIAS_LIBRE_MS,
   estadoDia, puedeComodin, multiplicador, comodinAuto, comodinEfectivo, ultimoDiaComodin, AUTO_WILD_FROM, posicionesDelDia, tabla, desempate, faltan, medallas, reloj, pausaDeLectura, mmss, juegoDelDia, evolucion,
@@ -75,7 +75,9 @@ test('calendario a elección (D-163): juegos del pozo sin repetir y la final al 
       vistos.add(cal[0]);
     }
   }
-  assert.equal(vistos.size, POZO.length, 'cualquier juego puede tocar el primer día');
+  // The games still waiting for their launch flag (D-517) are not drawn: in node no flag is saved
+  assert.equal(vistos.size, POZO_ABIERTO.length, 'cualquier juego puede tocar el primer día');
+  assert.ok(POZO_ABIERTO.length < POZO.length && !POZO_ABIERTO.includes('stick') && POZO_FIJO.every(id => POZO_ABIERTO.includes(id)), 'a flag-launched game is in POZO but not drawn before its launch');
   // nuevaMeta guarda el calendario elegido y rechaza uno que no se puede jugar
   const base = { nombre: 'X', dias: 3, inicio: '2026-10-01', admin: 'abc123', creada: 0 };
   assert.equal(nuevaMeta({ ...base, cal: ['donde', 'zip', 'final'] }).cal, 'donde,zip,final');

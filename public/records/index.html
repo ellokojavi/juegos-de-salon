@@ -110,7 +110,8 @@
     const fmt = (s, v = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (v[k] !== undefined ? v[k] : `{${k}}`));
     const tap = () => SFX.tap();
 
-    const juegos = SUELTOS.filter(g => !g.labs);
+    // A game waiting for its launch flag (D-517) gets its tab once launched
+    const juegos = SUELTOS.filter(g => !g.labs && !g.oculto);
     const pagina = document.getElementById('rk-pagina');
 
     /* Tus partidas: cuántas veces jugó cada cosa (solo con jugador). Cambiar el PIN va en "Juegas como". */

@@ -541,6 +541,17 @@
     import { season } from './assets/js/season.js';
     // The site's traffic (D-208), loaded on its own: counting the visit never holds up the list
     import('./assets/js/transport/stats.js').then(({ trackVisit }) => trackVisit()).catch(() => {});
+    // The games launched by a flag (D-517) are drawn from what this phone last saw of `flags/`: refresh it,
+    // and if one came out (or went back) since, draw the list again once, so a launch shows on this visit
+    import('./assets/js/games.js').then(async ({ SUELTOS, lanzado }) => {
+      const { loadFlags } = await import('./assets/js/flags.js');
+      const flags = await loadFlags();
+      const cambio = SUELTOS.some(g => g.lanza && g.oculto === lanzado(g.lanza, { flags }));
+      if (!cambio) return;
+      // At most once a session: a phone that cannot keep the answer would otherwise reload forever
+      try { if (sessionStorage.getItem('juegos-de-salon:lanza-recarga')) return; sessionStorage.setItem('juegos-de-salon:lanza-recarga', '1'); } catch (_) { return; }
+      location.reload();
+    }).catch(() => {});
     sparkles();
     initSound();
     document.getElementById('sound-slot').append(soundToggle());

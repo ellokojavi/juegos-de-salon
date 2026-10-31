@@ -118,6 +118,15 @@ const semillaUrl = { semilla: SEMILLA, zipSeg: param('timer'), modo: param('mode
 // laboratorio que no tienen página (Línea Relámpago, el número, la final) siguen en /cup/.
 if (!SUELTO && PRACTICA && (!LABS || gameById(PRACTICA)?.suelto)) location.replace(paginaSuelta(PRACTICA, semillaUrl));
 if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) location.replace(paginaSuelta(PRACTICA, semillaUrl));
+/**
+ * A game launched by a flag (D-517) opens on its own page only once launched for this visitor (🚀
+ * everyone, or 🧪 with a lab key): the answer this phone kept may be old, so a hidden one asks Firebase
+ * before sending the visitor to the home page. Inside a cup and in Uno al día (`?today`, which deals it by
+ * date) it always opens: they chose it for everyone alike, and a cup chose it when it
+ * was out. lab: #seccion-stick, lab: #seccion-stack
+ */
+const LANZA = { stick: () => flag('stick'), stack: () => flag('stack') };
+if (SUELTO && !HOY && gameById(PRACTICA)?.oculto && !(await (LANZA[PRACTICA]?.() ?? false))) location.replace(RAIZ);
 // En la genérica, el juego queda con su nombre en inglés: `?linea&hoy` → `?timeline-flash&today` (D-266)
 if (SUELTO && !document.body.dataset.suelto && PRACTICA) {
   const q = location.search.slice(1).split('&').map(x => (!x.includes('=') && idDeSlug(x) === PRACTICA ? slugDe(PRACTICA) : x)).join('&');

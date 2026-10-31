@@ -16,5 +16,7 @@ export const FLAGS = {
   'cup-back-board': '🏆 La Copa: the header ‹ goes back to the board while playing a day',
   'name-guard': '🛡️ Rankings: offensive names refused on sign-up',
   'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
+  'stick': '🥷 Ninja: the game, on the home page, the search and new cups (D-517)',
+  'stack': '🧱 Stacks: the game, on the home page, the search and new cups (D-517)',
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
 };
