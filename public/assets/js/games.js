@@ -540,7 +540,8 @@ export const TIPOS = {
   words: { emoji: '🔤', name: { es: 'Palabras', en: 'Words', pt: 'Palavras' } },
   logic: { emoji: '🧩', name: { es: 'Lógica', en: 'Logic', pt: 'Lógica' } },
   trivia: { emoji: '🧠', name: { es: 'Cultura', en: 'Trivia', pt: 'Cultura' } },
-  tabletop: { emoji: '🎲', name: { es: 'Cartas/Dados', en: 'Cards/Dice', pt: 'Cartas/Dados' } },
+  // Only dice since Julepe and Cuarto Rey left the home page (D-420): the key stays, the name says what is there (D-517)
+  tabletop: { emoji: '🎲', name: { es: 'Dados', en: 'Dice', pt: 'Dados' } },
   // The first skill games, Ninja and Stacks (D-517): the home page offers a type only while it has a game to show.
   // A short name, so five types fit one row on a 320 px phone in every language
   skill: { emoji: '🎯', name: { es: 'Pulso', en: 'Skill', pt: 'Reflexo' } },

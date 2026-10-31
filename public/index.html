@@ -212,7 +212,7 @@
       .filtros .tipos { gap: 6px; }
       .filtros .tipos button { flex: 1 1 auto; flex-direction: column; gap: 0; padding: 6px 6px; border-radius: 18px; font-size: 0.8rem; line-height: 1.15; }
       .filtros .tipos button .ficha-emoji { font-size: 1.15rem; }
-      /* Five or more (🎯 Pulso, D-517): equal columns, a little smaller, and only Cartas/Dados breaks, at its slash */
+      /* Five or more (🎯 Pulso, D-517): equal columns, a little smaller; a name with a slash may break there */
       .filtros .tipos.cinco { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 4px; }
       .filtros .tipos.cinco button { min-width: 0; white-space: normal; word-break: keep-all; padding: 6px 2px; font-size: 0.72rem; line-height: 1.1; text-align: center; }
     }

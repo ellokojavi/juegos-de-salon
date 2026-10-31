@@ -69,7 +69,7 @@ export function relevance(query, g, lang = 'es') {
     [4, own],
     [3, Object.values(g.name || {}).flatMap(words)],
     [2, Object.values(KEYWORDS[g.id] || {}).flat().flatMap(words)],
-    // A type is coarse ("Cartas/Dados" holds both): below the game's own keywords
+    // A type is coarse ("Dados" holds several games): below the game's own keywords
     [1.5, (g.tipos || []).flatMap(t => [t, ...Object.values(TIPOS[t]?.name || {})]).flatMap(words)],
     [1, Object.values(g.tagline || {}).flatMap(words)],
   ];
