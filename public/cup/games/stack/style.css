@@ -2,6 +2,7 @@
    The tower's canvas is transparent: it stands on the app's own night (base.css). */
 
 /* The waiting room's name, with the 🧱 that sways */
+.sk-cabeza { display: grid; justify-items: center; gap: 2px; }
 .sk-titulo { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
 .sk-titulo .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
 .sk-logo { font-size: 2.2rem; animation: sk-mece 3s ease-in-out infinite; }

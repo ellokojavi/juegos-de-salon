@@ -5,6 +5,10 @@
 .sn-demo { display: block; width: 100%; height: 200px; border-radius: 16px; }
 
 /* Under the rules, the credit to the original, like Pintaminas' */
+.sn-titulo { display: grid; justify-items: center; gap: 2px; }
+.sn-nombre { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 4px 0 0; }
+.sn-nombre .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.sn-logo { font-size: 2.2rem; }
 .sn-credito { margin: 0; font-size: 0.85rem; color: var(--muted); text-align: center; }
 .sn-credito a { color: var(--cyan); }
 

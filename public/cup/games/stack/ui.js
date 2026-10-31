@@ -25,6 +25,8 @@ import { escena, soltar, momento } from './scene.js';
 import { confetti } from '../../../assets/js/ui.js';
 import { onScreen } from '../../../assets/js/on-screen.js';
 import { loadCss } from '../../../assets/js/load-css.js';
+import { getLang } from '../../../assets/js/i18n.js';
+import TEXTOS from './texts.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -91,16 +93,14 @@ export function portada() {
 }
 
 /** The name in the waiting room, as in the lab: the 🧱 that sways and the moving colors. */
+const UI = () => { let l = 'es'; try { l = getLang(); } catch (_) { /* outside the browser */ } return (TEXTOS[l] || TEXTOS.es).ui; };
+/** The name in the waiting room, with the credit to the original right under it, as Loteo does (the owner's call). */
 export function titulo({ el, J }) {
-  return el('h2', { class: 'sk-titulo' },
-    el('span', { class: 'sk-logo', 'aria-hidden': 'true' }, '🧱'),
-    el('span', { class: 'display display--lg rainbow' }, J.nombre));
-}
-
-/** The how-to block of the waiting room: the credit to the original, with its link (as Pintaminas credits ColorSweeper). */
-export function ejemplo({ el, T }) {
-  const [antes, despues] = String(T.skCredit).split('{juego}');
-  return el('div', { class: 'rej-ejemplo sk-ejemplo-caja' },
+  const [antes, despues] = String(UI().skCredit).split('{juego}');
+  return el('div', { class: 'sk-cabeza' },
+    el('h2', { class: 'sk-titulo' },
+      el('span', { class: 'sk-logo', 'aria-hidden': 'true' }, '🧱'),
+      el('span', { class: 'display display--lg rainbow' }, J.nombre)),
     el('p', { class: 'sk-credito', id: 'sk-credito' }, antes, el('a', { href: ORIGINAL, target: '_blank', rel: 'noopener', id: 'link-stack' }, 'Stack'), despues || ''));
 }
 

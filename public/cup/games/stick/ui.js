@@ -15,6 +15,8 @@
  */
 import { el, confetti } from '../../../assets/js/ui.js';
 import { loadCss } from '../../../assets/js/load-css.js';
+import { getLang } from '../../../assets/js/i18n.js';
+import TEXTOS from './texts.js';
 import { onScreen } from '../../../assets/js/on-screen.js';
 import {
   newGame, pillarAt, current, next, press, release, suspend, stickAt, advance, pause, walkEnd,
@@ -96,11 +98,17 @@ function demo(lienzo) {
   otro();
 }
 
-/** Under the rules, the credit to the original (the owner's call: transparency, like Pintaminas'; the name stays Ninja). */
+/**
+ * The name in the waiting room, with the credit to the original right under it, as Loteo does (the
+ * owner's call: transparency; the name stays Ninja). `titulo` gets no T: the texts in the page's language.
+ */
 const KETCHAPP = 'https://www.ketchappgames.com/';
-export function ejemplo({ el: h = el, T }) {
-  const [antes, despues] = String(T.snCredit).split('{juego}');
-  return h('p', { class: 'sn-credito', id: 'sn-credito' }, antes, h('a', { href: KETCHAPP, target: '_blank', rel: 'noopener', id: 'link-stick-hero' }, 'Stick Hero'), despues || '');
+const UI = () => { let l = 'es'; try { l = getLang(); } catch (_) { /* outside the browser */ } return (TEXTOS[l] || TEXTOS.es).ui; };
+export function titulo({ el: h = el, J }) {
+  const [antes, despues] = String(UI().snCredit).split('{juego}');
+  return h('div', { class: 'sn-titulo' },
+    h('h2', { class: 'sn-nombre' }, h('span', { class: 'sn-logo', 'aria-hidden': 'true' }, '🥷'), h('span', { class: 'display display--lg rainbow' }, J.nombre)),
+    h('p', { class: 'sn-credito', id: 'sn-credito' }, antes, h('a', { href: KETCHAPP, target: '_blank', rel: 'noopener', id: 'link-stick-hero' }, 'Stick Hero'), despues || ''));
 }
 
 export function montar(raiz, ctx) {
