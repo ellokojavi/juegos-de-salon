@@ -20,7 +20,7 @@ const ES = {
     skResume: 'Toca para seguir',
     skPerfect: '¡Perfecto!',
     skStreak: 'Perfecto ×{n}',
-    skOver: 'Se acabó',
+    skOver: 'Fin del juego',
     skTrialDone: '¡Listo!',
     skBlocks: ['Ningún bloque', '1 bloque', '{n} bloques'],
     skBdBlocks: ['🧱 Ningún bloque en la torre: 0 puntos.', '🧱 1 bloque en la torre: 2 puntos.', '🧱 {n} bloques en la torre: {p} puntos.'],
