@@ -438,7 +438,7 @@ de dónde viene. Lo que cambie la portada se cambia aquí, en el mismo PR.
   **Everything in development sits behind the lab** (D-395): an experiment, or anything else not yet
   validated, turns on only for a lab key holder (`labAccess()` in `public/assets/js/lab-access.js`);
   without one its parameter shows the site as it is. It reaches everyone only once validated in the lab.
-  A feature on a page players visit asks its runtime flag, `flag('<id>')` in `public/assets/js/flags.js`
+  A feature on a page players visit asks its runtime flag, `flag('<id>')` in `public/assets/js/flags.js`, named in `flag-list.js` (D-515)
   (D-498): Firebase `flags/<id>` is *lab*, *all* or *off*, and the owner publishes it with a toggle
   (on its `/labs/` card, the one place), not a PR. With none
   being tried, its 🏠 Experimentos de la portada card waits in La Bodega, folded (D-372).

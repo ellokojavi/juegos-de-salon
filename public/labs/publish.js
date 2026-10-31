@@ -17,7 +17,8 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from
 import { getDatabase, ref, onValue, set, remove } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js';
 import { firebaseConfig } from '../assets/js/firebase-config.js';
 import { $, $$, el } from '../assets/js/ui.js';
-import { FLAGS, stateOf } from '../assets/js/flags.js';
+import { stateOf } from '../assets/js/flags.js';
+import { FLAGS } from '../assets/js/flag-list.js';
 
 const REPO = 'https://github.com/ellokojavi/juegos-de-salon';
 const PREVIEWS = 'https://ellokojavi.github.io/juegos-de-salon-previews';

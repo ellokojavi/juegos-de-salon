@@ -19,6 +19,7 @@ import { execFileSync } from 'node:child_process';
 import { appendFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { validMark } from './already-tested.mjs';
+import { noticeable } from './inert.mjs';
 
 export const HEAD_MARK = sha => `e2e-head-${sha}`;
 // GitHub's compare lists at most 300 files: past that, the PR's own list is safer
@@ -49,13 +50,18 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const repo = process.env.GITHUB_REPOSITORY;
   const gh = (...a) => execFileSync('gh', ['api', ...a], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
   const lines = s => s.split('\n').filter(Boolean);
-  const prFiles = lines(gh(`repos/${repo}/pulls/${pr}/files`, '--paginate', '--jq', '.[].filename'));
+  // Each file with its patch, so a comment-only change runs nothing (inert.mjs)
+  const withPatch = (...a) => lines(gh(...a, '--jq', `${a[0].includes('/compare/') ? '.files' : '.'}[] | {filename, status, patch}`)).map(l => JSON.parse(l));
+  const prAll = withPatch(`repos/${repo}/pulls/${pr}/files`, '--paginate');
+  const prFiles = noticeable(prAll);
+  const quiet = prAll.length - prFiles.length;
   let result = { files: prFiles, since: null };
   try {
     const commits = lines(gh(`repos/${repo}/pulls/${pr}/commits`, '--paginate', '--jq', '.[].sha'));
     const passed = sha => !!validMark(JSON.parse(gh(`repos/${repo}/actions/artifacts?name=${HEAD_MARK(sha)}`)).artifacts || []);
     const since = lastPassed(commits, head, passed);
-    const compared = since ? lines(gh(`repos/${repo}/compare/${since}...${head}`, '--jq', '.files[].filename')) : null;
+    const comparedAll = since ? withPatch(`repos/${repo}/compare/${since}...${head}`) : null;
+    const compared = comparedAll && (comparedAll.length >= COMPARE_LIMIT ? comparedAll.map(f => f.filename) : noticeable(comparedAll));
     result = filesToTest({ since, compared, prFiles });
   } catch (e) {
     console.error(`since-passed: ${e.message.split('\n')[0]}; testing the whole PR`);
@@ -63,6 +69,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   console.error(result.since
     ? `since-passed: ${result.files.length} file(s) changed since ${result.since.slice(0, 7)}, the last commit of this PR that passed`
     : `since-passed: no earlier commit of this PR passed: the whole PR (${result.files.length} file(s))`);
+  if (quiet) console.error(`since-passed: ${quiet} file(s) of the PR change only comments: no script runs for them (inert.mjs)`);
   if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `since=${result.since || ''}\n`);
   process.stdout.write(result.files.join('\n') + (result.files.length ? '\n' : ''));
 }

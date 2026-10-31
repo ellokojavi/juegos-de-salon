@@ -8,28 +8,12 @@
  *                lab: only lab key holders (D-395); all: every player; off: nobody, not even the lab.
  *
  * With nothing saved, or if Firebase does not answer, a flag is 'lab', as before flags existed.
- * Each id is a card of /labs/ (`seccion-<id>`), and is listed in FLAGS (the panel's 🧪 Labs link counts them);
+ * Each id is a card of /labs/ (`seccion-<id>`), and is listed in FLAGS in flag-list.js (the panel's 🧪 Labs link counts them);
  * `public/labs/listed.test.mjs` checks both. Read once per page and kept on the device, so an
  * answer that does not come in time is the last one this phone saw.
  */
 import { labAccess } from './lab-access.js';
 
-/** Every flag a page asks, with the name the panel shows. A new one is a row here and its card. */
-export const FLAGS = {
-  'copa-crear': '🏆 La Copa: the new create screen',
-  'copa-hoy': '🏆 La Copa: ▶ Jugar hoy on its home page card',
-  'copa-espera': '🏆 La Copa: Día N en Xh on its home page card',
-  'bn-salva': '🎆 Battleship: Salvo',
-  'keyboard-lift': '⌨️ Feedback form above the iOS keyboard',
-  'uad-share-grids': '🟩 Uno al día: share grids for Agentes, Dudo, Generala and Battleship',
-  'cover-facts': '📖 Game pages: who plays and how long, in the rules',
-  'uad-night-totals': '📅 Uno al día: totals written by the hourly rebuild',
-  'home-pill-bar': '💊 Home page: top bar buttons as pills of one height',
-  'cup-back-board': '🏆 La Copa: the header ‹ goes back to the board while playing a day',
-  'name-guard': '🛡️ Rankings: offensive names refused on sign-up',
-  'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
-  'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
-};
 export const STATES = ['lab', 'all', 'off'];
 
 const KEY = 'juegos-de-salon:flags';
