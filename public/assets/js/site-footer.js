@@ -47,7 +47,9 @@ export async function siteFooter({ phrase = false, screen = 'pagina', lang = get
       setTimeout(() => { i = (i + 1) % all.length; msg.textContent = all[i]; msg.classList.remove('out'); }, 500);
     }, 10000) : null;
   }
-  return el('footer', { class: 'atardecer pie-sitio' }, msg, links, version);
+  // The thin line that closes the page's content, as on the home page (under its filters and its list)
+  const line = el('hr', { class: 'pie-linea', 'aria-hidden': 'true' });
+  return el('footer', { class: 'atardecer pie-sitio' }, line, msg, links, version);
 }
 
 /** Appends the footer at the end of `parent`; never throws. */
