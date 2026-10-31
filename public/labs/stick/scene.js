@@ -77,11 +77,28 @@ export function escena(canvas, { compacto = false } = {}) {
     const halo = ctx.createRadialGradient(mx, my, mr * 0.6, mx, my, mr * 3.2);
     halo.addColorStop(0, 'rgba(255,210,63,0.25)'); halo.addColorStop(1, 'rgba(255,210,63,0)');
     ctx.fillStyle = halo; ctx.fillRect(mx - mr * 3.2, my - mr * 3.2, mr * 6.4, mr * 6.4);
-    ctx.fillStyle = '#ffe9a8'; ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = 'rgba(42,10,74,0.9)'; ctx.beginPath(); ctx.arc(mx + mr * 0.45, my - mr * 0.2, mr * 0.88, 0, Math.PI * 2); ctx.fill();
+    luna(mx, my, mr);
     // Two ranges of mountains: the far one slow and faint, the near one darker
     sierra(0.12, G * 0.66, G * 0.4, [34, 10, 62], 0.55, 'rgba(190,160,255,0.22)', 0.8);
     sierra(0.3, G * 0.9, G * 0.32, [21, 7, 38], 0.8, 'rgba(255,210,63,0.16)', 1.3);
+  }
+  /**
+   * The moon: a crescent whose dark side follows the moon's own outline (as in Tren en Vilo), not a
+   * second disc in the night's colour, which showed as a dark circle over the halo and the stars.
+   * The unlit part keeps a faint earthshine, and the lit one a few soft craters.
+   */
+  function luna(x, y, r) {
+    const ox = x + r * 0.45, oy = y - r * 0.2, ro = r * 0.88;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = 'rgba(255,233,168,0.08)'; ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    ctx.shadowColor = '#ffd23f'; ctx.shadowBlur = 10;
+    ctx.fillStyle = '#ffe9a8'; ctx.beginPath();
+    ctx.rect(x - r - 1, y - r - 1, r * 2 + 2, r * 2 + 2); ctx.arc(ox, oy, ro, 0, Math.PI * 2);
+    ctx.fill('evenodd');
+    ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,210,63,0.45)';
+    for (const [cx, cy, cr] of [[-0.62, -0.1, 0.13], [-0.45, 0.45, 0.09], [-0.25, 0.72, 0.07]]) { ctx.beginPath(); ctx.arc(x + cx * r, y + cy * r, cr * r, 0, Math.PI * 2); ctx.fill(); }
+    ctx.restore();
   }
   /** A range of mountains: a dark silhouette, its ridge faintly lit by the moon. */
   function sierra(par, base, alto, color, opacidad, borde, f) {
