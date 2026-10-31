@@ -1,5 +1,55 @@
 # Changelog
 
+## 0.239.1 — 2026-10-30
+- **Fewer spare end-to-end jobs** (D-515): a change that only touches comments runs none, and the lab flags' names live in `flag-list.js`, so naming a flag no longer tests every page.
+
+## 0.239.0 — 2026-10-30
+- Uno al día (lab): when the month ends, the first visit shows your final place once. First, second and third get a gold, silver or bronze medal with fireworks; everyone else sees their place in big. All get thanks for playing and an invitation to next month, and "See the table" opens the month's table as before. Behind the `uad-month-end` flag; demo at `/?recap=month-end-demo&place=1`.
+
+## 0.238.7 — 2026-10-30
+- **The lab card «💊 Portada: botones de arriba parejos»** moves to La Bodega under ✨ Mejoras lanzadas: the even pill buttons on the home page top bar are already live for everyone.
+
+## 0.238.6 — 2026-10-30
+- **The home page's Uno al día and La Copa cards no longer invite to play what was already played.**
+  Uno al día's card asks the server when this phone does not know today was played (played on another
+  phone, or the phone's memory cleared) and shows it played; its ▶ chip checks too before rolling the
+  die, and opens /today/ instead. It also updates when today is played in another tab. La Copa keeps
+  the day as played on the phone the moment its result is sent, and its ▶ Jugar hoy is confirmed with
+  the server, so a day played elsewhere no longer shows as pending.
+
+## 0.238.5 — 2026-10-30
+- **La Copa: ‹ climbs one level at a time, for everyone.** While playing a day or on its result, ‹ says «Volver a la copa» and goes to the board (mid-day it asks first); on a cup's board it now says «‹ La Copa» and goes to La Copa's home, with your cups, instead of the menu. The `cup-back-board` card moves to La Bodega (D-510).
+
+## 0.238.4 — 2026-10-30
+- Home: the Uno al día month pill gets room above the section divider and sits closer to its card corner.
+- Home: the green "pending today" dot no longer shows on the Uno al día card while it invites you to join the month.
+- Home: the green dot sits lower when the month pill is shown, so the two never overlap.
+
+## 0.238.3 — 2026-10-30
+- **Repo:** retaking the README screenshots keeps the committed PNG when fewer than 0.5 % of its pixels moved (antialiasing, a clock), so documentation rounds stop re-saving near-identical images into git history (D-494, #1037).
+- **Tests:** a tool named only in an end-to-end script's comment no longer makes a PR run every end-to-end job.
+
+## 0.238.2 — 2026-10-30
+- **La Copa's home card chip brings back the ✅**: «✅ Día 3 en 15h».
+
+## 0.238.1 — 2026-10-30
+- **Every result screen's way out looks the same:** El Ahorcado, Batalla Naval, Generala, Dudo, Toque y Fama and Línea de Tiempo now end with the shared «🏠 Volver al menú» button (C-19), and the lab's games with «🧪 Volver al laboratorio». A test keeps any game from building its own. CANONES C-19 gains the rule for the header's ‹: it goes to the screen's logical parent and names it (#1042).
+
+## 0.238.0 — 2026-10-30
+- **Uno al día's home card shows its season month** («Oct 2026») on a tab over its top border, without changing the card's size. With nothing played yet this month, the tab turns pink and the button says «▶ Únete al mes».
+
+## 0.237.7 — 2026-10-30
+- **La Copa (lab):** while playing a day, or reading its result, the header's ‹ says «Volver a la copa» and goes to the cup's board instead of the menu; mid-day it asks «¿Salir de la partida?» first, and a trial run goes back to the day's cover. The cover's ‹ now has a real link to the board. Behind the `cup-back-board` flag (#1040).
+
+## 0.237.6 — 2026-10-30
+- **Buttons say where they go:** in Generala and Dudo, the setup screens' «‹ Menú» button, which went back to the game's intro, now says «‹ Volver». La Copa's error screens say «🏆 Ir al inicio de La Copa» instead of «‹ Menú». El Ahorcado in One a Day played by several ends with «📅 Volver a Uno al día» instead of its own «Volver al menú» (C-19) (#1041).
+
+## 0.237.5 — 2026-10-30
+- **La Copa's home card reads «Día 3 en 15h»** once today's day is played, instead of «✅ Día 3 · 15h», whose ✅ looked like day 3 was already done.
+
+## 0.237.4 — 2026-10-30
+- **Workshop:** the documentation round no longer needs a second commit (and push) to record its PR link.
+
 ## 0.237.3 — 2026-10-29
 - **Launched: no zoom on quick taps** (#1045). On iPhone, tapping fast in a game no longer zooms the page; its lab card moves to La Bodega.
 

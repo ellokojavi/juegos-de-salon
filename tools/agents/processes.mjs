@@ -387,8 +387,19 @@ function decide(file) {
 
 const flag = (args, name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : null; };
 
+// A recorded commit must exist on main, saved as its full sha: on 2026-10-30 the round recorded
+// 525888f, which never existed, and the next check could not compute its range.
+export function resolveCommit(ref, git = a => execFileSync('git', a, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()) {
+  let sha;
+  try { sha = git(['rev-parse', '--verify', '--quiet', `${ref}^{commit}`]); } catch { sha = ''; }
+  if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error(`${ref} is not a commit in this repo: record a commit on origin/main.`);
+  try { git(['merge-base', '--is-ancestor', sha, 'origin/main']); } catch { throw new Error(`${ref} is not on origin/main: record a commit on main, not your branch's.`); }
+  return sha;
+}
+
 function record(args) {
-  const m = readMemory(), to = flag(args, '--to'), queue = flag(args, '--queue');
+  const m = readMemory(), queue = flag(args, '--queue');
+  const to = flag(args, '--to') && resolveCommit(flag(args, '--to'));
   if (queue) { if (!m.queueDone.includes(queue)) m.queueDone.push(queue); }
   if (to) {
     m.rounds.push({ date: today(), from: m.checkedUpTo, to, issue: flag(args, '--issue'), pr: flag(args, '--pr'), note: flag(args, '--note') });
@@ -431,7 +442,7 @@ function main([command, ...args]) {
     case 'dispatch': {
       const [agent, to] = args;
       if (!EXECUTORS.includes(agent) || !to) throw new Error(`Usage: dispatch <${EXECUTORS.join('|')}> <commit>`);
-      m.dispatches[agent] = { date: today(), to };
+      m.dispatches[agent] = { date: today(), to: resolveCommit(to) };
       save(m);
       return console.log(`${agent}: dispatched up to ${to}.`);
     }
