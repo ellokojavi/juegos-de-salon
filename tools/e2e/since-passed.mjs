@@ -20,6 +20,7 @@ import { appendFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { validMark } from './already-tested.mjs';
 import { noticeable } from './inert.mjs';
+import { narrowed } from './narrow.mjs';
 
 export const HEAD_MARK = sha => `e2e-head-${sha}`;
 // GitHub's compare lists at most 300 files: past that, the PR's own list is safer
@@ -38,6 +39,20 @@ export function lastPassed(commits, head, passed) {
   return null;
 }
 
+/**
+ * Each file as `narrowed()` gives it (D-516): a module whose patch changes only some declarations, or
+ * some texts of a language-keyed object, travels as `public/f.js#uses=a,b`. `at(file)` reads the file
+ * as the head has it (null when it can't: then the file stays whole).
+ */
+export function narrowAll(files, patches, at) {
+  return files.map(f => {
+    const p = patches.get(f);
+    if (!p || p.status !== 'modified' || !/^public\/.*\.m?js$/.test(f)) return f;
+    const after = at(f);
+    return after == null ? f : narrowed(f, after, p.patch);
+  });
+}
+
 /** The files to test: those since `since`, or the PR's when there is no `since` or the compare can't be trusted. */
 export function filesToTest({ since, compared, prFiles }) {
   if (!since || !compared || compared.length >= COMPARE_LIMIT) return { files: prFiles, since: null };
@@ -53,6 +68,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   // Each file with its patch, so a comment-only change runs nothing (inert.mjs)
   const withPatch = (...a) => lines(gh(...a, '--jq', `${a[0].includes('/compare/') ? '.files' : '.'}[] | {filename, status, patch}`)).map(l => JSON.parse(l));
   const prAll = withPatch(`repos/${repo}/pulls/${pr}/files`, '--paginate');
+  let patches = new Map(prAll.map(f => [f.filename, f]));
   const prFiles = noticeable(prAll);
   const quiet = prAll.length - prFiles.length;
   let result = { files: prFiles, since: null };
@@ -63,6 +79,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const comparedAll = since ? withPatch(`repos/${repo}/compare/${since}...${head}`) : null;
     const compared = comparedAll && (comparedAll.length >= COMPARE_LIMIT ? comparedAll.map(f => f.filename) : noticeable(comparedAll));
     result = filesToTest({ since, compared, prFiles });
+    if (result.since) patches = new Map(comparedAll.map(f => [f.filename, f]));
   } catch (e) {
     console.error(`since-passed: ${e.message.split('\n')[0]}; testing the whole PR`);
   }
@@ -70,6 +87,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     ? `since-passed: ${result.files.length} file(s) changed since ${result.since.slice(0, 7)}, the last commit of this PR that passed`
     : `since-passed: no earlier commit of this PR passed: the whole PR (${result.files.length} file(s))`);
   if (quiet) console.error(`since-passed: ${quiet} file(s) of the PR change only comments: no script runs for them (inert.mjs)`);
+  // The head is the test merge's second parent, fetched with it (fetch-depth: 2)
+  const at = f => { try { return execFileSync('git', ['show', `${head}:${f}`], { encoding: 'utf8', maxBuffer: 1e8, stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return null; } };
+  result.files = narrowAll(result.files, patches, at);
+  const narrow = result.files.filter(f => f.includes('#uses='));
+  if (narrow.length) console.error(`since-passed: ${narrow.length} module(s) narrowed to the names they change (narrow.mjs): ${narrow.join(' ').slice(0, 300)}`);
   if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `since=${result.since || ''}\n`);
   process.stdout.write(result.files.join('\n') + (result.files.length ? '\n' : ''));
 }

@@ -34,6 +34,7 @@ missing, and a light report when something still slips.
         ▼
  0. INCREMENT   only the files changed since the PR last passed   since-passed.mjs (D-392),
                 minus comment-only changes                    inert.mjs (D-515)
+                a module narrowed to the names it changes      narrow.mjs (D-516)
         │
         ▼
  1. KNOWLEDGE   page graph (derived) + declared facts         affected.mjs
@@ -69,6 +70,18 @@ unless that exact tree already passed (D-302, D-308): when the merged PR's head 
 incremental run never leaves the tree's mark** (`e2e-tree-<tree>`): only a run that tested the whole PR
 can vouch for a tree, and the narrowed run on `main` (D-496) leaves none either.
 
+### 0b. Narrow: a module by the names it changes (D-516)
+
+A shared module every page loads (`i18n.js`, `stats.js`, `uno-al-dia-ui.js`) used to run every
+script for any edit. `narrow.mjs` reads its patch and names what changed: the top-level declarations,
+and in a texts object keyed by language (`COMMON = { es: {…}, en: {…} }`) the keys. The file travels
+as `public/f.js#uses=a,b`, and `usedOn()` in `affected.mjs` keeps the pages where a loaded file uses
+one of those names where it runs: in its HTML, in top-level code, or in a function that in turn is
+used that way (followed from module to module with `reach()`). Word match, comments and CSS aside, so a
+common name over-tests and never under-tests. It keeps the whole file for an import or other top-level
+code, a change to a texts object's shape, a name no other file writes (reached as `M[name]`), a scan
+that does not balance or a patch that does not fit.
+
 ### 1. Knowledge
 
 | What | How it is known | Where |
@@ -79,6 +92,7 @@ can vouch for a tree, and the narrowed run on `main` (D-496) leaves none either.
 | Small modules every page may load though they live in a game's folder | Declared, with why | `SHARED` |
 | Scripts that open every page on purpose | Declared | `EVERY_PAGE` (today `smoke.mjs` and `structured-data.mjs`) |
 | A long script split in parts named after pages | Declared | `PARTS` in `ci.mjs` |
+| Site files no page loads whose readers are known: the manifests (`installable.mjs`), the link cards' fingerprints (none) | Declared | `READ_BY` (D-516) |
 | Files no browser loads (docs, agents, workflows, rules, `durations.json`, D-428) | Derived from the path | `changes.mjs` (`noBrowser`) |
 | Scripts CI never runs (`*/online.mjs`, `*/chat.mjs` and the rest that open rooms in the production Firebase, the obsolete ones) | Derived from `ci.mjs`'s own exclusions: changing one runs no job (#850) | `shared` in `ci.mjs` |
 
@@ -163,7 +177,7 @@ catch in the PR) and moving the declared facts to their own module (tidier, but 
 | This design | `docs/TEST-SCOPE.md` |
 | Why each step was taken | `docs/decisions/`: D-308, D-329, D-346, D-378, D-388, D-391, D-392, D-496, D-506, D-515 |
 | How to run and write scripts | `tools/e2e/README.md` |
-| The code | `tools/e2e/affected.mjs`, `changes.mjs`, `ci.mjs`, `since-passed.mjs` (D-392), `inert.mjs` (D-515) |
+| The code | `tools/e2e/affected.mjs`, `changes.mjs`, `ci.mjs`, `since-passed.mjs` (D-392), `inert.mjs` (D-515), `narrow.mjs` (D-516) |
 | The guards | `tools/e2e/*.test.mjs` |
 | Who watches it | `.claude/agents/processes.md` (owns the test-level criterion, D-346) |
 
