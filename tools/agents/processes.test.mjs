@@ -1,7 +1,7 @@
 // The processes agent (D-273): which PRs count as "waiting", the queue of what was approved and the patterns.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { waits, backlog, queued, ideasWaiting, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS } from './processes.mjs';
+import { waits, backlog, queued, ideasWaiting, recordPattern, decisionsBody, FIX, toDispatch, MEMORY, EXECUTORS, resolveCommit } from './processes.mjs';
 import { recordDone } from './approve.mjs';
 
 const now = Date.parse('2026-10-11T12:00:00Z');
@@ -107,3 +107,9 @@ assert.throws(q([{ type: 'nothing' }], 'It changes the shared keyboard, so it is
 assert.throws(q([{ type: 'nothing' }], 'Built first behind the lab key.'), /does nothing/);
 assert.doesNotThrow(q([{ type: 'nothing' }], 'A Yes only records your taste.'));
 assert.match(decisionsBody({ decisions: [{ question: 'x', context: 'queued for the next round', yes: [{ type: 'queue', task: 'build it' }] }] }), /queues it for the next round/);
+
+// record/dispatch refuse a commit that does not exist or is not on main (525888f, 2026-10-30)
+const full = 'a'.repeat(40);
+assert.equal(resolveCommit('aaaa', () => full), full);
+assert.throws(() => resolveCommit('525888f', () => { throw new Error('bad'); }), /not a commit/);
+assert.throws(() => resolveCommit('aaaa', a => { if (a[0] === 'merge-base') throw new Error('no'); return full; }), /not on origin\/main/);

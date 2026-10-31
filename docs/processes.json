@@ -342,6 +342,18 @@
         }
       ],
       "mechanism": null
+    },
+    {
+      "key": "memory-bad-sha",
+      "what": "round 2026-10-30 recorded checkedUpTo/dispatches 525888f, a commit not on main; check could not compute its range",
+      "seen": [
+        {
+          "date": "2026-10-31",
+          "what": "round 2026-10-30 recorded checkedUpTo/dispatches 525888f, a commit not on main; check could not compute its range",
+          "commit": "548af02c"
+        }
+      ],
+      "mechanism": null
     }
   ],
   "mechanisms": [
@@ -426,12 +438,12 @@
   ],
   "dispatches": {
     "documentation": {
-      "date": "2026-10-30",
-      "to": "525888f"
+      "date": "2026-10-31",
+      "to": "0f0a6181fa66beeb40a65e3de09b2b841f69b03a"
     },
     "usability": {
-      "date": "2026-10-30",
-      "to": "525888f"
+      "date": "2026-10-31",
+      "to": "0f0a6181fa66beeb40a65e3de09b2b841f69b03a"
     },
     "ideas": {
       "date": "2026-10-28",
