@@ -1,5 +1,5 @@
 /**
- * 🧱 Stacks — the engine (out of the lab, D-445, into La Copa, Uno al día and its own page): a slab
+ * 🧱 Babel — the engine (out of the lab, D-445, into La Copa, Uno al día and its own page): a slab
  * slides over the tower, a tap drops it, and whatever hangs over the edge is cut off. Pure functions,
  * no DOM.
  *

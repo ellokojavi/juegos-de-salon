@@ -1,4 +1,4 @@
-// 🧱 Stacks, out of the lab (D-445), end to end at its standalone page /stacks/: the waiting room with
+// 🧱 Babel, out of the lab (D-445), end to end at its standalone page /babel/: the waiting room with
 // the self-building tower and the credit to Ketchapp's Stack with its link; Empezar goes through the
 // countdown to the tower at 0 with "Toca donde sea"; a real tap drops the block; perfect drops say
 // "Perfecto ×n"; a late one cuts it; losing focus pauses and the tap back only resumes; missing the
@@ -17,7 +17,7 @@ const noSideScroll = () => ev(`document.documentElement.scrollWidth <= innerWidt
 const P = `window.__stack`;
 
 // The waiting room
-await b.go(`${SITE}/stacks/?test`, 1500);
+await b.go(`${SITE}/babel/?test`, 1500);
 ok(await waitFor(`!!document.getElementById('btn-empezar')`), 'the waiting room has Empezar');
 ok(await waitFor(`!!document.querySelector('.sk-demo')`), 'with the cover\'s tower');
 await ev(`window.__shot = document.querySelector('.sk-demo').toDataURL(); 1`);

@@ -510,19 +510,20 @@ export const SUELTOS = [
     nuevoDesde: '2026-11-02',
   },
   {
-    // Out of the lab in D-517 with Ninja, launched the same way by flags/stack (see Ninja)
+    // Out of the lab in D-517 with Ninja, launched the same way by flags/stack (see Ninja). Its name is Babel (the
+    // owner's choice): not the original's (Stack); the id stays `stack`
     id: 'stack',
     lanza: 'stack',
     copa: { pozo: 15 },
     unoAlDia: { orden: 20, desde: '2026-11-03' },
-    slug: 'stacks',
+    slug: 'babel',
     emoji: '🧱',
-    name: { es: 'Stacks', en: 'Stacks', pt: 'Stacks' },
-    tagline: { es: 'Apila los bloques lo más alto que puedas.', en: 'Stack the blocks as high as you can.', pt: 'Empilhe os blocos o mais alto que puder.' },
+    name: { es: 'Babel', en: 'Babel', pt: 'Babel' },
+    tagline: { es: 'Levanta tu Babel lo más alto que puedas.', en: 'Raise your Babel as high as you can.', pt: 'Erga sua Babel o mais alto que puder.' },
     keywords: {
-      es: ['torre', 'apilar', 'bloques', 'stacks', 'habilidad', 'reflejos', 'pulso', 'altura'],
-      en: ['tower', 'stack', 'blocks', 'stacks', 'skill', 'reflexes', 'timing', 'height'],
-      pt: ['torre', 'empilhar', 'blocos', 'stacks', 'habilidade', 'reflexos', 'precisão', 'altura'],
+      es: ['torre', 'apilar', 'bloques', 'babel', 'stack', 'habilidad', 'reflejos', 'pulso', 'altura'],
+      en: ['tower', 'stack', 'blocks', 'babel', 'skill', 'reflexes', 'timing', 'height'],
+      pt: ['torre', 'empilhar', 'blocos', 'babel', 'stack', 'habilidade', 'reflexos', 'precisão', 'altura'],
     },
     tipos: ['skill'],
     duration: '1–3',
@@ -542,7 +543,7 @@ export const TIPOS = {
   trivia: { emoji: '🧠', name: { es: 'Cultura', en: 'Trivia', pt: 'Cultura' } },
   // Only dice since Julepe and Cuarto Rey left the home page (D-420): the key stays, the name says what is there (D-517)
   tabletop: { emoji: '🎲', name: { es: 'Dados', en: 'Dice', pt: 'Dados' } },
-  // The first skill games, Ninja and Stacks (D-517): the home page offers a type only while it has a game to show.
+  // The first skill games, Ninja and Babel (D-517): the home page offers a type only while it has a game to show.
   // A short name, so five types fit one row on a 320 px phone in every language
   skill: { emoji: '🎯', name: { es: 'Pulso', en: 'Skill', pt: 'Reflexo' } },
 };

@@ -560,7 +560,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-514](decisions/D-514.md) | German leaves the app | current |
 | [D-515](decisions/D-515.md) | A change no browser can notice runs no end-to-end script | current |
 | [D-516](decisions/D-516.md) | A change to a module runs only the pages that use what it changed | current |
-| [D-517](decisions/D-517.md) | A game can launch by flag: Ninja and Stacks wait, finished, for the owner's 🚀 | current |
+| [D-517](decisions/D-517.md) | A game can launch by flag: Ninja and Babel wait, finished, for the owner's 🚀 | current |
 
 ## No longer in force (12)
 

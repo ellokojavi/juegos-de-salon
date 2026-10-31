@@ -1,7 +1,7 @@
-# 🧱 Stacks (La Copa game, launched by flag; Stack in the lab)
+# 🧱 Babel (La Copa game, launched by flag; Stack in the lab)
 
-> **Ready to launch (D-517).** The game is now **🧱 Stacks**, a La Copa game in `public/cup/games/stack/`
-> (engine, scene, screen, texts in es, en and pt) that serves its page `/stacks/`, Uno al día (from the
+> **Ready to launch (D-517).** The game is now **🧱 Babel**, a La Copa game in `public/cup/games/stack/`
+> (engine, scene, screen, texts in es, en and pt) that serves its page `/babel/`, Uno al día (from the
 > deck shuffled on 2026-11-08) and La Copa (score 0–100). It stays hidden until the owner switches the
 > flag `stack` on its /labs/ card. The cover credits the original with a link, as every inspired game
 > does. What follows describes the English lab prototype, still at `/labs/stack/` until the cleanup PR;

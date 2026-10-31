@@ -936,9 +936,9 @@
       "id": "stack",
       "emoji": "🧱",
       "name": {
-        "es": "Stacks",
-        "en": "Stacks",
-        "pt": "Stacks"
+        "es": "Babel",
+        "en": "Babel",
+        "pt": "Babel"
       },
       "kinds": [
         "skill"
@@ -946,7 +946,7 @@
       "duration": "1–3",
       "labs": false,
       "bodega": false,
-      "path": "stacks/"
+      "path": "babel/"
     }
   ],
   "themes": [
@@ -1736,7 +1736,7 @@
     },
     {
       "path": "docs/games/stack.md",
-      "title": "🧱 Stacks (La Copa game, launched by flag; Stack in the lab)"
+      "title": "🧱 Babel (La Copa game, launched by flag; Stack in the lab)"
     },
     {
       "path": "docs/games/stick.md",

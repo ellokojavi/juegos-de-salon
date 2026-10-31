@@ -1,5 +1,5 @@
 /**
- * 🧱 Stacks — its screen in La Copa, Uno al día and on its standalone page, moved from the lab
+ * 🧱 Babel — its screen in La Copa, Uno al día and on its standalone page, moved from the lab
  * (labs/stack/game.js, D-445) as Tren en Vilo was (D-456): a block slides over the tower, a tap drops
  * it, and whatever hangs over the edge is cut off. The engine is engine.js; the drawing, scene.js.
  *

@@ -1,11 +1,11 @@
 /**
- * 🧱 Stacks in La Copa: its texts in the three languages (C-3), merged into rules.js (D-331).
+ * 🧱 Babel in La Copa: its texts in the three languages (C-3), merged into rules.js (D-331).
  * `juego` is its entry in `juegos`; `ui`, the keys its screen reads from T, all prefixed `sk`.
- * The name is Stacks in every language; `skCredit` credits the original (its link is the game's name). Plural forms are [none, one, many].
+ * The name is Babel in every language; `skCredit` credits the original (its link is the game's name). Plural forms are [none, one, many].
  */
 const ES = {
   juego: {
-    nombre: 'Stacks', habilidad: 'reflejos',
+    nombre: 'Babel', habilidad: 'reflejos',
     como: [
       'Toca la pantalla para soltar el bloque que se desliza sobre la torre.',
       'Lo que sobresale se corta y el siguiente sale más chico. Si no cae sobre la torre, se acaba.',
@@ -33,7 +33,7 @@ const ES = {
 
 const EN = {
   juego: {
-    nombre: 'Stacks', habilidad: 'reflexes',
+    nombre: 'Babel', habilidad: 'reflexes',
     como: [
       'Tap the screen to drop the block sliding over the tower.',
       'Whatever hangs over the edge is cut off, and the next block is smaller. If it misses the tower, the game ends.',
@@ -61,7 +61,7 @@ const EN = {
 
 const PT = {
   juego: {
-    nombre: 'Stacks', habilidad: 'reflexos',
+    nombre: 'Babel', habilidad: 'reflexos',
     como: [
       'Toque a tela para soltar o bloco que desliza sobre a torre.',
       'O que sobra para fora é cortado, e o próximo bloco fica menor. Se ele não cair sobre a torre, o jogo acaba.',
