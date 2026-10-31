@@ -24,7 +24,7 @@ const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const KETCHAPP_STACK = 'https://www.ketchappgames.com/';
 const BEST_KEY = 'juegos-de-salon:stack-best';
 const T = {
-  nombre: 'Stack',
+  nombre: 'Babel',
   lema: 'Stack the blocks as high as you can.',
   como: [
     ['👆', 'Tap to drop each sliding block onto the tower.'],
@@ -32,7 +32,7 @@ const T = {
     ['🎯', 'Drop a block exactly on the one below and nothing is cut. Do it 4 times in a row and the block grows back.'],
   ],
   comoTitulo: 'How to play',
-  jugar: '🧱 Play',
+  jugar: '🗼 Play',
   toca: 'Tap anywhere to drop the block',
   pausa: 'Paused', seguir: 'Tap to continue',
   perfecto: 'Perfect!', racha: 'Perfect ×{n}',
@@ -72,7 +72,7 @@ const contexto = pantalla => ({
 let animando = 0;   // the frame loop on screen; a new screen stops the old one
 
 const tituloJuego = (chico = false) => el('h1', { class: `titulo-torre${chico ? ' chico' : ''}` },
-  el('span', { class: 'logo', 'aria-hidden': 'true' }, '🧱'), el('span', { class: `display ${chico ? '' : 'display--lg '}rainbow` }, T.nombre));
+  el('span', { class: 'logo', 'aria-hidden': 'true' }, '🗼'), el('span', { class: `display ${chico ? '' : 'display--lg '}rainbow` }, T.nombre));
 const credito = () => el('p', { class: 'credito' }, 'Inspired by ',
   el('a', { href: KETCHAPP_STACK, target: '_blank', rel: 'noopener', id: 'link-stack' }, 'Stack'), ', by Ketchapp.');
 const pasos = () => el('ol', { class: 'pasos' }, ...T.como.map(([ico, x]) => el('li', {}, el('span', { class: 'paso-ico', 'aria-hidden': 'true' }, ico), el('span', {}, x))));
@@ -232,7 +232,7 @@ function resultado() {
     el('div', { class: 'score-big', id: 'puntaje' }, String(n)),
     record ? null : el('p', { class: 'muted', style: 'margin:0', id: 'mejor' }, fmt(T.mejor, { n: Math.max(antes, n) })),
     el('ul', { class: 'desglose muted' }, ...lineas.map(x => el('li', {}, x))),
-    botonResultadoSolo({ C: COMMON.en, emoji: '🧱', juego: T.nombre, puntaje: `🧱 ${n}`, tiempo: '', tarjeta: card(S.kinds), url: `${SITIO}labs/stack/`, alTocar: () => SFX.tap() }),
+    botonResultadoSolo({ C: COMMON.en, emoji: '🗼', juego: T.nombre, puntaje: `🗼 ${n}`, tiempo: '', tarjeta: card(S.kinds), url: `${SITIO}labs/stack/`, alTocar: () => SFX.tap() }),
     el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-otra', onClick: () => { SFX.tap(); jugar(); } }, T.otraVez),
     salidasFin('lab', { raiz: '../../' }),
     el('hr', { class: 'divisor' }),
