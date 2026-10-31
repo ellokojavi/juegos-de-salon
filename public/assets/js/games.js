@@ -541,8 +541,9 @@ export const TIPOS = {
   logic: { emoji: '🧩', name: { es: 'Lógica', en: 'Logic', pt: 'Lógica' } },
   trivia: { emoji: '🧠', name: { es: 'Cultura', en: 'Trivia', pt: 'Cultura' } },
   tabletop: { emoji: '🎲', name: { es: 'Cartas/Dados', en: 'Cards/Dice', pt: 'Cartas/Dados' } },
-  // The first skill games, Ninja and Stacks (D-517): the home page offers a type only while it has a game to show
-  skill: { emoji: '🎯', name: { es: 'Habilidad', en: 'Skill', pt: 'Habilidade' } },
+  // The first skill games, Ninja and Stacks (D-517): the home page offers a type only while it has a game to show.
+  // A short name, so five types fit one row on a 320 px phone in every language
+  skill: { emoji: '🎯', name: { es: 'Pulso', en: 'Skill', pt: 'Reflexo' } },
 };
 
 /** Los tipos de antes de D-214 (`?tipo=mesa`): un link viejo sigue filtrando lo mismo. */
