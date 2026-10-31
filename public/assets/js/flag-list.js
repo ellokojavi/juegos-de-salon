@@ -6,7 +6,7 @@
 export const FLAGS = {
   'copa-crear': '🏆 La Copa: the new create screen',
   'copa-hoy': '🏆 La Copa: ▶ Jugar hoy on its home page card',
-  'copa-espera': '🏆 La Copa: ✅ Día N en Xh on its home page card',
+  'copa-espera': '🏆 La Copa: Día N en Xh on its home page card',
   'bn-salva': '🎆 Battleship: Salvo',
   'keyboard-lift': '⌨️ Feedback form above the iOS keyboard',
   'uad-share-grids': '🟩 Uno al día: share grids for Agentes, Dudo, Generala and Battleship',
@@ -15,5 +15,6 @@ export const FLAGS = {
   'home-pill-bar': '💊 Home page: top bar buttons as pills of one height',
   'cup-back-board': '🏆 La Copa: the header ‹ goes back to the board while playing a day',
   'name-guard': '🛡️ Rankings: offensive names refused on sign-up',
+  'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
 };

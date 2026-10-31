@@ -1,4 +1,4 @@
-// The header's ‹ inside a cup (#1040): on a day's cover, while playing it and on its result it says
+// The header's ‹ inside a cup (#1040): on the board it says «‹ La Copa» and goes to La Copa's home; on a day's cover, while playing it and on its result it says
 // «Volver a la copa» and goes to the cup's board, never to the menu; mid-day it asks first (D-432).
 // Runs with the lab flag `cup-back-board` on: localhost holds the lab key.
 import { output } from '../output.mjs';
@@ -19,7 +19,7 @@ const toBoard = h => /\/cup\/\?[A-Za-z0-9-]+/.test(h) && !h.endsWith('/cup/');
 
 await b.go(`${SITE}/cup/?test&demo=player`, 2000);
 const board = await pill();
-ok(board.s === 'screen-tablero' && board.h === `${SITE}/`, `on the board, ‹ goes to the menu (${board.t} → ${board.h})`);
+ok(board.s === 'screen-tablero' && board.t === `‹\u00a0${T.title}` && board.h === `${SITE}/cup/?test`, `on the board, ‹ goes up to La Copa's home, not the menu (${board.t} → ${board.h})`);
 
 await ev(`document.querySelector('button[data-dia]').click()`);
 await sleep(800);

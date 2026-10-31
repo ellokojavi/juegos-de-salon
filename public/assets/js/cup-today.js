@@ -1,14 +1,15 @@
 /**
  * La Copa's card on the home page says what to do today (lab flag `copa-hoy`): with a day of one of
  * this phone's cups left to play, a ▶ Jugar hoy chip like One a Day's, and the card opens that day;
- * with today's day played and another to come (lab flag `copa-espera`), a Día N en Xh chip that counts down;
+ * with today's day played and another to come (lab flag `copa-espera`), a ✅ Día N en Xh chip that counts down;
  * with the final played and nothing else to come, ✅ Final jugada · cierra en X h Y min (same flag);
  * with nothing left, the card stays as it always was.
  *
  * It reads only what La Copa keeps on this phone each time a cup is opened (cup/cuenta.js
- * `porJugar`: the days left, with when each opens and closes), so the home page neither loads La
- * Copa (D-378) nor asks the network. A day played on another phone still shows here until this
- * phone opens the cup again, which then says it is done.
+ * `porJugar`: the days left, with when each opens and closes, written again the moment a day's
+ * result is sent), so the home page does not load La Copa (D-378). A ▶ Jugar hoy is then confirmed
+ * with one small read of that day's result (`confirmCupCard`): a day played on another phone does
+ * not invite to play it again.
  */
 import { el } from './ui.js';
 import { COMMON } from './i18n.js';
@@ -36,7 +37,9 @@ export function pendingCup(store = globalThis.localStorage, now = Date.now()) {
   const read = k => { try { return JSON.parse(store?.getItem(PREFIX + k) || 'null'); } catch (_) { return null; } };
   for (const code of cupCodes(store, read)) {
     const days = read(`hoy:${code}`);
-    const open = Array.isArray(days) && days.find(([, a, b]) => now >= a && now < b);
+    // A day the cup's kept copy already shows played is not offered again
+    const L = read(`lista:${code}`), pid = read(`sesion:${code}`)?.pid;
+    const open = Array.isArray(days) && days.find(([d, a, b]) => now >= a && now < b && !(pid && L?.results?.[d]?.[pid]));
     if (open) return { code, dia: open[0] };
   }
   return null;
@@ -82,6 +85,8 @@ export function decorateCupCard(card, { lang = 'es', store, now = Date.now(), wa
   const p = pendingCup(store, now);
   const meta = card?.querySelector('.meta');
   if (!meta) return false;
+  // How the card was before any chip, to draw it again once the server says a day is played
+  card.__original ||= { href: card.getAttribute('href'), meta: meta.cloneNode(true) };
   const T = (COMMON[lang] || COMMON.es).cupToday;
   if (!p) return wait && (waitChip(card, meta, T, nextCupDay(store, now), now) || finalChip(card, meta, T, finalPlayed(store, now), now));
   card.href = `${card.getAttribute('href')}?${p.code}&day=${p.dia}`;
@@ -92,10 +97,35 @@ export function decorateCupCard(card, { lang = 'es', store, now = Date.now(), wa
   return true;
 }
 
-/** Today's day already played: Día N en Xh, counting down each minute while the page is open. */
+/**
+ * The ▶ Jugar hoy chip, confirmed with the server (`torneos/<code>/results/<day>/<pid>`, public over
+ * REST, D-470): a day played on another phone, or whose result reached the server after this phone
+ * last read the cup, leaves this phone's list of days to play, and the card is drawn again from
+ * it. `fetchFn` and `base` are for node. Resolves true when it changed the card.
+ */
+export async function confirmCupCard(card, { lang = 'es', store = globalThis.localStorage, wait = false, fetchFn = (...a) => globalThis.fetch(...a), base } = {}) {
+  try {
+    const p = pendingCup(store);
+    const pid = p && JSON.parse(store.getItem(`${PREFIX}sesion:${p.code}`) || 'null')?.pid;
+    if (!pid || !card?.classList.contains('copa-hoy')) return false;
+    base ||= (await import('./firebase-config.js')).firebaseConfig.databaseURL;
+    const r = await fetchFn(`${base}/torneos/${p.code}/results/${p.dia}/${pid}.json`);
+    if (!r.ok || (await r.json()) == null) return false;
+    const days = JSON.parse(store.getItem(`${PREFIX}hoy:${p.code}`) || '[]').filter(([d]) => d !== p.dia);
+    if (days.length) store.setItem(`${PREFIX}hoy:${p.code}`, JSON.stringify(days)); else store.removeItem(`${PREFIX}hoy:${p.code}`);
+    // The card as it was, then decorated again from what is left
+    if (card.__original) { card.href = card.__original.href; card.classList.remove('copa-hoy'); card.removeAttribute('aria-label'); card.querySelector('.meta')?.replaceWith(card.__original.meta.cloneNode(true)); }
+    decorateCupCard(card, { lang, store, wait });
+    // Another day of another cup may still be open: confirm that one too
+    await confirmCupCard(card, { lang, store, wait, fetchFn, base });
+    return true;
+  } catch (_) { return false; }
+}
+
+/** Today's day already played: ✅ Día N en Xh, counting down each minute while the page is open. */
 function waitChip(card, meta, T, n, now) {
   if (!n) return false;
-  const text = t => `${T.opens.replace('{day}', n.dia).replace('{time}', untilText(n.at - t))}`;
+  const text = t => `✅ ${T.opens.replace('{day}', n.dia).replace('{time}', untilText(n.at - t))}`;
   const chip = el('span', { class: 'copa-hoy-chip espera', id: 'copa-hoy-chip' }, text(now));
   card.href = `${card.getAttribute('href')}?${n.code}`;
   card.classList.add('copa-hoy');

@@ -398,6 +398,8 @@
     .uad-card .tag { color: rgba(255, 255, 255, 0.88); }
     .uad-card .meta .uad-card-estado { background: rgba(0, 0, 0, 0.32); white-space: normal; }
     .uad-card .btn-uad-punto { top: 10px; right: 10px; }
+    .uad-card.invita .btn-uad-punto { display: none; }
+    .uad-card:has(.uad-card-mes) .btn-uad-punto { top: 18px; }
     /* La Copa with a day to play today (lab flag copa-hoy): One a Day's ▶ chip, in the Cup's gold */
     .game-card.torneo .meta .copa-hoy-chip { min-height: 44px; flex: 0 1 auto; max-width: 100%; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border-radius: 999px; border: 0; background: var(--yellow); color: #2a1600; font: 900 0.9rem/1.1 var(--font-body); text-align: center; white-space: normal; }
     .game-card.torneo .meta .copa-hoy-chip.espera { background: rgba(255,255,255,0.16); color: inherit; font-weight: 800; }
@@ -408,7 +410,8 @@
     .fila-alta:has(.uad-card.hecho) .game-card.torneo .meta .copa-hoy-chip { width: 100%; flex: 1 1 100%; border-radius: 18px; min-height: calc(14px + 2.1rem * 0.95 + 0.78rem * 1.1); }
     /* Two destinations (lab, D-414): the link covers the card; the chip sits above it */
     .uad-card.dos { position: relative; }
-    .uad-card .uad-card-mes { position: absolute; top: -11px; right: 28px; z-index: 3; padding: 1px 12px; border-radius: 999px; border: 1px solid rgba(255, 46, 136, 0.6); background: #2a1a4f; color: #ff8cc0; font: 900 0.75rem/1.4 var(--font-body); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
+    .uad-card .uad-card-mes { position: absolute; top: -11px; right: 12px; z-index: 3; padding: 1px 12px; border-radius: 999px; border: 1px solid rgba(255, 46, 136, 0.6); background: #2a1a4f; color: #ff8cc0; font: 900 0.75rem/1.4 var(--font-body); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
+    .fila-alta:has(.uad-card-mes) { margin-top: 14px; }
     .uad-card.invita .uad-card-mes { background: #ff2e88; color: #fff; border-color: #ff8cc0; }
     .uad-card.hecho .uad-card-mes { border-color: rgba(46, 230, 214, 0.6); color: #5ee6d8; }
     .uad-card-link { position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
@@ -678,7 +681,11 @@
     // The top bar's buttons as pills of one height (flag home-pill-bar, #1027). lab: #seccion-home-pill-bar
     import('./assets/js/flags.js').then(({ flag }) => flag('home-pill-bar')).then(on => on && document.documentElement.classList.add('pill-bar')).catch(() => {});
     if (copa) import('./assets/js/flags.js').then(({ flag }) => flag('copa-hoy')).then(on => on && import('./assets/js/cup-today.js'))
-      .then(m => m && import('./assets/js/flags.js').then(({ flag }) => flag('copa-espera')).then(wait => m.decorateCupCard(copa, { lang, wait }))).catch(() => {});
+      .then(m => m && import('./assets/js/flags.js').then(({ flag }) => flag('copa-espera')).then(wait => {
+        m.decorateCupCard(copa, { lang, wait });
+        // ▶ Jugar hoy only for a day the server does not have played (another phone, a late read)
+        if (param('test') === null) m.confirmCupCard(copa, { lang, wait });
+      })).catch(() => {});
     const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso, estado }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
       if (formaAcceso() === 'off') { reserva?.remove(); return; }
       import('./assets/js/uno-al-dia-avisos.js').then(Av => Av.globo()).catch(() => {});
@@ -688,12 +695,21 @@
         // Back from today's game (bfcache) brings the page as it was, ▶ Jugar hoy included: once
         // today is played the card is drawn again, with its place
         let actual = card;
-        addEventListener('pageshow', e => {
-          if (!e.persisted || actual.classList.contains('hecho') || !estado().dia) return;
+        const siJugado = () => {
+          if (actual.classList.contains('hecho') || !estado().dia) return;
           const nueva = tarjetaUnoAlDia({ lang, alTocar: () => SFX.tap() });
           actual.replaceWith(nueva); actual = nueva;
+          // The next visit's copy goes under today-played's key, which the script under #games reads
+          if (window.__fotoPortada?.k) window.__fotoPortada.k = window.__fotoPortada.k.replace(/\|0$/, '|1');
           import('./assets/js/uad-place.js').then(({ refreshPlace }) => refreshPlace(nueva, { lang, alTocar: () => SFX.tap() })).then(() => guardarFoto()).catch(() => {});
-        });
+        };
+        addEventListener('pageshow', e => { if (e.persisted) siJugado(); });
+        // Played in another tab while this one waited in the background
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) siJugado(); });
+        // Played on another phone, or before this one's memory was cleared: the server says so,
+        // and the card shows it played instead of inviting to play again. Once the page is drawn
+        if (!card.classList.contains('hecho')) (window.requestIdleCallback || (f => setTimeout(f, 300)))(() => import('./assets/js/uno-al-dia-red.js')
+          .then(R => R.hoyJugadoEnRed()).then(si => si && siJugado()).catch(() => {}));
         // A tap on the copy's ▶ chip before the modules arrived: carried out now
         if (window.__fotoPortada?.chip) { window.__fotoPortada.chip = false; card.querySelector('button#btn-uad-chip')?.click(); }
         // The month's place fresh from the server, once the page is drawn (D-435): until it

@@ -1,0 +1,41 @@
+/* Uno al día's month-end window (month-end.js): the comic treatment the owner chose (2026-10-30),
+   sunburst rays and fireworks behind a white card, a medal hanging over it for the podium. */
+.me-capa { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 18px; padding-top: calc(18px + var(--safe-top)); background: rgba(10, 4, 25, 0.8); overflow-y: auto; animation: me-entra 0.25s ease-out; }
+.me-capa.sale { opacity: 0; transition: opacity 0.18s; }
+@keyframes me-entra { from { opacity: 0; } }
+.me-p1 { --m1: #fff3b0; --m2: #ffd23f; --m3: #b8860b; }
+.me-p2 { --m1: #ffffff; --m2: #c9d2dc; --m3: #6b7785; }
+.me-p3 { --m1: #ffd9b8; --m2: #d98b4a; --m3: #7a3f12; }
+.me-resto { --m2: #2ee6d6; backdrop-filter: blur(4px); }
+.me-rayos { position: fixed; width: 900px; height: 900px; left: 50%; top: 50%; margin: -450px 0 0 -450px; pointer-events: none;
+  background: repeating-conic-gradient(color-mix(in srgb, var(--m2) 55%, transparent) 0 8deg, transparent 8deg 18deg);
+  mask: radial-gradient(circle, #000 15%, transparent 60%); -webkit-mask: radial-gradient(circle, #000 15%, transparent 60%); animation: me-gira 30s linear infinite; }
+@keyframes me-gira { to { transform: rotate(1turn); } }
+.me-fuegos { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.me-tarjeta { position: relative; width: min(380px, 100%); box-sizing: border-box; display: grid; gap: 10px; justify-items: center; text-align: center;
+  padding: 22px 20px 16px; border-radius: 26px; background: var(--card); color: var(--card-ink); border: 4px solid #1a1a1a; box-shadow: 8px 8px 0 #1a1a1a;
+  transform: rotate(-1.5deg); animation: me-pop 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) both; outline: none; }
+.me-p1 .me-tarjeta, .me-p2 .me-tarjeta, .me-p3 .me-tarjeta { margin-top: 90px; }
+@keyframes me-pop { from { transform: rotate(-1.5deg) scale(0.6); opacity: 0; } }
+.me-medalla { width: 140px; height: 177px; margin-top: -110px; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.4)); transform-origin: 50% 0; animation: me-vaiven 3s ease-in-out infinite; }
+@keyframes me-vaiven { 50% { transform: rotate(4deg); } }
+.me-brillo { animation: me-brilla 2.6s ease-in-out infinite; }
+@keyframes me-brilla { 0%, 60% { transform: translateX(-120px) skewX(-20deg); } 100% { transform: translateX(120px) skewX(-20deg); } }
+/* Clear of the ✕ in the corner */
+.me-resto .me-kicker { padding: 0 34px; }
+.me-kicker { font-size: 0.78rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: #6b5a7a; }
+.me-lugar { font: 900 4.2rem/1 var(--font-num); color: var(--pink); -webkit-text-stroke: 2px #1a1a1a; text-shadow: 4px 4px 0 #1a1a1a; }
+.me-titulo { margin: 0; font: 400 clamp(2rem, 10vw, 2.7rem)/1.02 var(--font-display); letter-spacing: 0.03em; color: var(--pink); -webkit-text-stroke: 1.5px #1a1a1a; text-shadow: 3px 3px 0 #1a1a1a; }
+.me-linea { margin: 0; font-weight: 700; line-height: 1.45; }
+.me-pts { margin: 0; font: 900 1.1rem var(--font-num); font-variant-numeric: tabular-nums; }
+.me-jugar { margin-top: 4px; width: 100%; box-sizing: border-box; text-align: center; text-decoration: none; }
+.me-tabla { background: none; border: 0; color: #4a3a5a; font: 800 0.95rem var(--font-body); text-decoration: underline; cursor: pointer; padding: 6px 12px; min-height: 44px; }
+.me-x { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(0, 0, 0, 0.06); color: #1a1a1a; font-size: 1rem; cursor: pointer; }
+/* A short phone (320 × 640): a smaller medal so «Play» stays on screen */
+@media (max-height: 700px) {
+  .me-p1 .me-tarjeta, .me-p2 .me-tarjeta, .me-p3 .me-tarjeta { margin-top: 64px; gap: 8px; }
+  .me-medalla { width: 100px; height: 127px; margin-top: -84px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .me-rayos, .me-medalla, .me-brillo, .me-tarjeta { animation: none; }
+}

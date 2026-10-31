@@ -579,8 +579,8 @@ that moment, and only those, in the same order everywhere (D-343):
   `salidasFin('lab')`) for these contexts; `fin.test.mjs` fails on a hand-built one (#1042).
 - **The header's ‹ goes to the screen's logical parent and names it** (#1042): «‹ Menú» on a hub
   or a game played on its own, «‹ Laboratorio» in a game opened from the lab, «‹ Volver a la copa»
-  on a Cup day (its cover, while playing it, its result; behind the `cup-back-board` flag until
-  it is published) and a trial run goes back to its day's cover. Mid-game it asks first (D-432).
+  on a Cup day (its cover, while playing it, its result) and a trial run goes back to its day's
+  cover; a cup's board says «‹ La Copa» and goes to La Copa's home (`/cup/`, with «Tus copas»). Mid-game it asks first (D-432).
   A button that goes back one step inside a game (setup → intro) says «‹ Volver», never «Menú».
 - **One a Day is one card in every game**: `tarjetaResultado` (`uno-al-dia-ui.js`) carries its
   actions and exits, and `ponerTarjeta` puts it right under the hero. In today mode the game adds
