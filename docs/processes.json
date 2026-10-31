@@ -1,5 +1,5 @@
 {
-  "checkedUpTo": "525888f",
+  "checkedUpTo": "0f0a6181fa66beeb40a65e3de09b2b841f69b03a",
   "patterns": [
     {
       "key": "version-hacia-atras",
@@ -353,7 +353,11 @@
           "commit": "548af02c"
         }
       ],
-      "mechanism": null
+      "mechanism": {
+        "date": "2026-10-31",
+        "what": "record/dispatch resolve the commit to a full sha on origin/main, else refuse (processes.test.mjs)",
+        "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1069"
+      }
     }
   ],
   "mechanisms": [
@@ -428,6 +432,12 @@
       "key": "doble-push-documentacion",
       "what": "documentation guide and document.mjs check no longer ask for a post-PR commit with the PR link",
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1052"
+    },
+    {
+      "date": "2026-10-31",
+      "key": "memory-bad-sha",
+      "what": "record/dispatch resolve the commit to a full sha on origin/main, else refuse (processes.test.mjs)",
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1069"
     }
   ],
   "queueDone": [
@@ -562,6 +572,14 @@
       "issue": null,
       "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1052",
       "note": "docs #1051; usability running"
+    },
+    {
+      "date": "2026-10-31",
+      "from": "525888f",
+      "to": "0f0a6181fa66beeb40a65e3de09b2b841f69b03a",
+      "issue": null,
+      "pr": "https://github.com/ellokojavi/juegos-de-salon/pull/1069",
+      "note": "catch-up; docs #1067, usability #1068"
     }
   ],
   "ownerDecisions": [
