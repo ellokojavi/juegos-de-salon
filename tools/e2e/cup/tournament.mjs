@@ -10,7 +10,7 @@
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
 import { mkdirSync } from 'node:fs';
-import { POZO } from '../../../public/cup/engine.js';
+import { POZO_ABIERTO as POZO } from '../../../public/cup/engine.js';
 import { slugDe } from '../../../public/assets/js/games.js';
 
 const OUT = output('/tmp/cup');
@@ -434,7 +434,7 @@ if (runs('cup')) {
     const proposal = await cal();
     ok(!await ev(`document.getElementById('crear-juegos').hidden`) && proposal.length === n - 1 && new Set(proposal).size === n - 1
       && /La Gran Final/.test(await ev(`document.querySelector('#cal-elegir .event.fija').textContent`)), `on picking the length a random proposal of ${n - 1} games appears, with the final last (${proposal.join(', ')})`);
-    // From the real pool: a new game doesn't break the count (C-16)
+    // From the real pool: a new game doesn't break the count (C-16); the ones still waiting for their launch flag are not offered (D-517)
     ok((await outside()).length === POZO.length - (n - 1), 'the ones left out stay outside, in the hand');
     const helpHeight = () => ev(`Math.round(document.querySelector('#crear-juegos .cal-estado').getBoundingClientRect().height)`);
     const height0 = await helpHeight();
