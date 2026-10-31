@@ -100,6 +100,9 @@ export function closures(files) {
   return out;
 }
 
+/** The source without its comments: whole `//` lines and `/* … *\/` blocks (a URL's `//` stays). */
+export const uncommented = source => source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+
 /** The pages a script opens, read from its source: `${SITE}/hangman/` → 'hangman'; `${SITE}/` → ''. */
 export function scriptPages(source, pages) {
   const known = new Set(pages);
@@ -178,7 +181,8 @@ export function select({ changes, graph, scripts, shared, exists = () => true })
       else return null; // cdp.mjs, ci.mjs, paths.mjs…: everything
     }
     // The workshop the scripts don't import (tools/release/, tools/generators/…): it never reaches them
-    else if (raw.startsWith('tools/') && !scripts.some(s => s.source.includes(raw.slice('tools/'.length)))) continue;
+    // A path named only in a comment («readme.py screenshots redoes them») is not a dependency (#1060)
+    else if (raw.startsWith('tools/') && !scripts.some(s => uncommented(s.source).includes(raw.slice('tools/'.length)))) continue;
     else return null;
   }
   const affected = new Set();

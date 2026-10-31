@@ -47,6 +47,9 @@ export async function tirarHoy({ lang, raiz = '' }) {
   if (!e.juego) return;
   // An attempt left halfway (D-433): no die, the game is already known; straight to it
   if (e.inProgress) { location.href = raiz + rutaHoy(e.juego); return; }
+  // Played already on another phone (or before this one's memory was cleared): no die, today's
+  // result is on /today/, so the player never thinks the game was lost
+  if (e.dia || await import('./uno-al-dia-red.js').then(R => R.hoyJugadoEnRed({ ms: 1500 })).catch(() => false)) { location.href = `${raiz}today/`; return; }
   trackUnoAlDia('dado');
   const pool = await caras();
   const T = textos(lang).uad;

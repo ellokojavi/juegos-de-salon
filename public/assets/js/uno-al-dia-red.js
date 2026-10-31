@@ -109,6 +109,28 @@ export async function empezadoEnOtro(fecha, { ms = 2500 } = {}) {
 }
 
 /**
+ * Whether today is already played, asking the server when this phone does not know it (played on
+ * another phone, or this phone's memory cleared): its history is joined into this phone's, so every
+ * screen shows it played. A read only, over REST (D-470). Without a player, or if Firebase does not
+ * answer within `ms`, false: the card stays as this phone sees it.
+ */
+export async function hoyJugadoEnRed({ ms = 2500 } = {}) {
+  const hoy = fechaLocal();
+  if (leer().dias[hoy]) return true;
+  // Nobody signed in on this phone: nothing to ask, and nothing loaded
+  try { if (!JSON.parse(localStorage.getItem('juegos-de-salon:jugador') || 'null')?.jid) return false; } catch (_) { return false; }
+  const leerlo = (async () => {
+    const j = await J().catch(() => null);
+    if (!j?.yo()) return false;
+    const hist = await j.historialDia();
+    if (!hist?.[numDia(hoy)]?.j) return false;
+    juntar({ dias: Object.fromEntries(Object.entries(hist).filter(([k]) => /^[0-9]{5}$/.test(k)).map(([k, x]) => [fechaDeNum(Number(k)), x])) });
+    return !!leer().dias[hoy];
+  })().catch(() => false);
+  return Promise.race([leerlo, new Promise(r => setTimeout(() => r(false), ms))]);
+}
+
+/**
  * Al abrir /today/ (o entrar con el jugador): junta la historia de Firebase y los comodines por
  * invitar con lo del celular, suma a Amigos a quienes aceptaron los desafíos, y sube el de hoy si se
  * jugó antes de entrar. Devuelve `{ nuevos, late }`: los desafíos aceptados desde la última vez, con

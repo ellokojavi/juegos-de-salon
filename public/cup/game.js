@@ -161,13 +161,16 @@ const urlPublica = code => (PRUEBA ? urlCopa(code) : `https://juegosdesalon.cl/c
 // On a day's cover the top-left button goes back to the cup, and says so ("‹ La Copa")
 const enCopa = () => !SUELTO && !!S.code && !S.juego?.practica;
 const pillAlTablero = () => pillCopa && enCopa() && (S.pantalla === 'jugar' || S.pantalla === 'resultado');
+// On a cup's board (or its other screens), ‹ goes up one level: La Copa's home with «Tus copas», not the menu
+const pillAInicioCopa = () => pillCopa && enCopa() && !LABS && !pillAlTablero() && !S.antesala;
 function rotuloMenu() {
   const aCopa = S.antesala || pillAlTablero();
-  $('#btn-menu').textContent = aCopa ? `‹\u00a0${T.toBoard}` : LABS ? T.backToLabsShort : T.menu;
+  const aInicio = pillAInicioCopa();
+  $('#btn-menu').textContent = aCopa ? `‹\u00a0${T.toBoard}` : aInicio ? `‹\u00a0${T.title}` : LABS ? T.backToLabsShort : T.menu;
   // A real address, so a long press or a new tab lands on the board too
-  if (pillCopa) $('#btn-menu').setAttribute('href', aCopa && S.code ? urlCopa(S.code) : LABS ? `${RAIZ}labs/` : RAIZ);
+  if (pillCopa) $('#btn-menu').setAttribute('href', aCopa && S.code ? urlCopa(S.code) : aInicio ? `${location.pathname}${PRUEBA ? '?test' : ''}` : LABS ? `${RAIZ}labs/` : RAIZ);
   // That button already names the cup: the "🏆 La Copa" chip steps aside, or at 320 px it is cut to "🏆 …" (U-12)
-  document.body.classList.toggle('antesala', !!S.antesala);
+  document.body.classList.toggle('antesala', !!S.antesala || aInicio);
 }
 
 function mostrar(id) {
@@ -1571,6 +1574,9 @@ async function enviar(d, fin, envio = null) {
     Lc.results ||= {}; Lc.results[d] ||= {};
     Lc.results[d][S.yo] = { s: fin.s, ms: fin.ms, t: fin.t, r: fin.resumen };
   }
+  // The home page's card knows at once that this day is played, even if the player leaves before
+  // the listener brings the cup back (it said ▶ Jugar hoy for a day already played)
+  if (Lc?.meta) { cuenta.lista.guardar(S.code, recorteLista(Lc, S.yo)); cuenta.porJugar.guardar(S.code, porJugar(Lc, S.yo, Date.now())); }
   resultado(d, { recien: true, det: fin.det });
 }
 

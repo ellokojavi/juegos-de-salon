@@ -53,3 +53,14 @@ const otra = full({ 'juegos-de-salon:copa:mias': '[]', 'juegos-de-salon:copa:hoy
 assert.deepEqual(nextCupDay(otra, dia(0)), { code: 'MENYF', dia: 2, at: meta.win[2].a }, "a Rankings player's cup counts too");
 assert.deepEqual(pendingCup(otra, dia(1)), { code: 'MENYF', dia: 2 }, "and its day to play");
 console.log('cup-today: ok');
+
+// A day the kept copy of the cup shows played is not offered, even if the days to play are older
+{
+  const m = {
+    'juegos-de-salon:copa:mias': JSON.stringify([{ code: 'K7Q2X' }]),
+    'juegos-de-salon:copa:hoy:K7Q2X': JSON.stringify(porJugar(L, 'bbbbbb', dia(0))),
+    'juegos-de-salon:copa:sesion:K7Q2X': JSON.stringify({ pid: 'bbbbbb' }),
+    'juegos-de-salon:copa:lista:K7Q2X': JSON.stringify({ results: { 1: { bbbbbb: 1 } } }),
+  };
+  assert.equal(pendingCup({ getItem: k => m[k] ?? null }, dia(0)), null, 'played per the kept copy: no ▶ Jugar hoy');
+}
