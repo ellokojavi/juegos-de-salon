@@ -20,7 +20,7 @@ const waitFor = async (expr, ms = 8000) => { for (let t = 0; t < ms; t += 100) {
 const P = 'window.__stick', G = `${P}.S.g`;
 
 await b.go(`${SITE}/labs/`);
-ok(await ev(`document.querySelector('#activos #seccion-stick #btn-stick')?.getAttribute('href')`) === 'stick/', 'the lab offers Stick Ninja under Juegos en prueba');
+ok(await ev(`document.querySelector('#activos #seccion-stick #btn-stick-lab')?.getAttribute('href')`) === 'stick/', 'the lab keeps the English prototype under Juegos en prueba, beside Shinobi (D-517)');
 ok(await ev(`/Stick Hero/.test(document.querySelector('#seccion-stick a[href*="ketchapp"]')?.textContent || '')`), 'and says it is inspired by Ketchapp\'s Stick Hero, with its link');
 
 // A clean phone: no best, no runs today, no flip seen yet (the profile folder may be a rerun's)

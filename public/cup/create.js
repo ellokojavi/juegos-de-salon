@@ -3,7 +3,7 @@
  * Everything else it needs from game.js comes in `c`, the screen's context.
  */
 import { $, con, conEmoji, el, vibrate } from '../assets/js/ui.js';
-import { COPA_MAX, ESTILOS_SEMANA, MAX_DIAS_INICIO, POZO, SIN_FINAL, TRIO_SEP, VARIANTES, aliasLimpio, calendario, calendarioAlAzar, codigoAlAzar, diaDeCal, entradaCal, esAlias, esPin, fechaEn, findeAbierto, findeAlAzar, fuera, hashPin, limpiarNombre, nuevaMeta, pidAlAzar, semanaAlAzar, sumarDias, zonaDeIdioma } from './engine.js';
+import { COPA_MAX, ESTILOS_SEMANA, MAX_DIAS_INICIO, POZO_ABIERTO as POZO, SIN_FINAL, TRIO_SEP, VARIANTES, aliasLimpio, calendario, calendarioAlAzar, codigoAlAzar, diaDeCal, entradaCal, esAlias, esPin, fechaEn, findeAbierto, findeAlAzar, fuera, hashPin, limpiarNombre, nuevaMeta, pidAlAzar, semanaAlAzar, sumarDias, zonaDeIdioma } from './engine.js';
 import { JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { SFX } from '../assets/js/sound.js';

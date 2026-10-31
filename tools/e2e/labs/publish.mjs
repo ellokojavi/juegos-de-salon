@@ -64,21 +64,27 @@ const now = Date.now();
 const states = { requested: { state: 'requested', at: now }, working: { state: 'working', at: now, started: now },
   pr: { state: 'pr', at: now, pr: 921, branch: 'publish-x' }, merged: { state: 'merged', at: now, pr: 921, done: now },
   failed: { state: 'failed', at: now, msg: 'la tarjeta no nombra código.' } };
-// fewer cards without a flag than states: the last ones wrap round, checked after a second draw
-const req = Object.fromEntries(Object.values(states).slice(0, 4).map((s, i) => [ids[i % ids.length], s]));
-await ev(`__pub.render(${JSON.stringify(req)}), 1`); await sleep(200);
+// Each state is drawn on its own card when there are enough cards without a flag, and one at a time on the
+// first card when there are fewer (the games launched by a flag, D-517, left only a few)
 const text = id => ev(`document.querySelector('#${id} .publicar-estado')?.textContent || ''`);
 const hrefs = id => ev(`[...document.querySelectorAll('#${id} .publicar-estado a')].map(a => a.href)`);
-ok(/No es inmediato/.test(await text(ids[0])) && /Cancelar el pedido/.test(await text(ids[0])), 'requested: the delay, and it can be cancelled');
-ok((await hrefs(ids[0]))[0]?.includes(`head%3Apublish-${ids[0].replace('seccion-', '')}`), 'requested: a link finds its PR by its branch');
-ok(/Claude está trabajando/.test(await text(ids[1])), 'working: says Claude is on it');
-const pr = await hrefs(ids[2]);
+const card = k => ids[ids.length >= 4 ? k : 0];
+const draw = async k => { const req = ids.length >= 4 ? Object.fromEntries(Object.values(states).slice(0, 4).map((s, i) => [ids[i], s])) : { [ids[0]]: Object.values(states)[k] };
+  await ev(`__pub.render(${JSON.stringify(req)}), 1`); await sleep(200); };
+await draw(0);
+ok(/No es inmediato/.test(await text(card(0))) && /Cancelar el pedido/.test(await text(card(0))), 'requested: the delay, and it can be cancelled');
+ok((await hrefs(card(0)))[0]?.includes(`head%3Apublish-${card(0).replace('seccion-', '')}`), 'requested: a link finds its PR by its branch');
+await ev(`document.querySelector('#${card(0)}').scrollIntoView(), 1`); await b.shot('states');
+await draw(1);
+ok(/Claude está trabajando/.test(await text(card(1))), 'working: says Claude is on it');
+await draw(2);
+const pr = await hrefs(card(2));
 ok(pr.some(h => h.endsWith('/pull/921')) && pr.some(h => h.endsWith('/pull/921/checks')) && pr.some(h => h.includes('juegos-de-salon-previews/publish-x/')), 'pr: the PR, its checks and its preview');
-ok(/auto-merge/.test(await text(ids[2])), 'pr: says it merges on its own');
-ok(/Fusionado/.test(await text(ids[3])), 'merged: says so');
+ok(/auto-merge/.test(await text(card(2))), 'pr: says it merges on its own');
+await ev(`document.querySelector('#${card(2)}').scrollIntoView(), 1`); await b.shot('states-pr');
+await draw(3);
+ok(/Fusionado/.test(await text(card(3))), 'merged: says so');
 ok(await ev(`[...document.querySelectorAll('.publicar-estado')].every(x => x.scrollWidth <= x.clientWidth + 1)`), 'nothing overflows at 320 px');
-await ev(`document.querySelector('#${ids[0]}').scrollIntoView(), 1`); await b.shot('states');
-await ev(`document.querySelector('#${ids[2]}').scrollIntoView(), 1`); await b.shot('states-pr');
 await ev(`__pub.render(${JSON.stringify({ [ids[0]]: states.failed })}), 1`); await sleep(200);
 ok(/No se pudo publicar: la tarjeta no nombra código/.test(await text(ids[0])) && /Volver a pedir/.test(await text(ids[0])), 'failed: why, and Volver a pedir');
 

@@ -531,6 +531,8 @@ export const PATHS = {
    * given sun with the played one (#61); `clash`, full with a last sun that clashes, which is the
    * only clash visible without touching another cell (#135).
    */
+  stick: { intro: [], game: [START, `1`, `1`, `1`, `1`] },
+  stack: { intro: [], game: [START, `1`, `1`, `1`, `1`] },
   puentes: {
     intro: [],
     game: [START, `1`, `1`, `1`, `1`],

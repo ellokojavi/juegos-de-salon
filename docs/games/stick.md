@@ -1,4 +1,11 @@
-# 🥷 Stick Ninja (lab prototype, in Juegos en prueba)
+# 🥷 Shinobi (La Copa game, launched by flag; Stick Ninja in the lab)
+
+> **Ready to launch (D-517).** The game is now **🥷 Shinobi**, a La Copa game in `public/cup/games/stick/`
+> (engine, scene, screen, texts in es, en and pt) that serves its page `/shinobi/`, Uno al día (from the
+> deck shuffled on 2026-11-08) and La Copa (score 0–100). It stays hidden until the owner switches the
+> flag `stick` on its /labs/ card. The cover credits the original with a link, as every inspired game
+> does. What follows describes the English lab prototype, still at `/labs/stick/` until the cleanup PR;
+> the play is the same in the new module. End to end: `tools/e2e/stick/game.mjs`.
 
 A hold-and-release bridge game for one player, or for a group passing the phone (D-446): hold to stretch a
 stick, let go and it falls across the gap. **Inspired by [Stick Hero](https://www.ketchappgames.com/), by

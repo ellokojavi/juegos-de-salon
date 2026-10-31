@@ -212,6 +212,9 @@
       .filtros .tipos { gap: 6px; }
       .filtros .tipos button { flex: 1 1 auto; flex-direction: column; gap: 0; padding: 6px 6px; border-radius: 18px; font-size: 0.8rem; line-height: 1.15; }
       .filtros .tipos button .ficha-emoji { font-size: 1.15rem; }
+      /* Five or more (🎯 Pulso, D-517): equal columns, a little smaller; a name with a slash may break there */
+      .filtros .tipos.cinco { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 4px; }
+      .filtros .tipos.cinco button { min-width: 0; white-space: normal; word-break: keep-all; padding: 6px 2px; font-size: 0.72rem; line-height: 1.1; text-align: center; }
     }
     /* A 320 px (284 de caja) las cuatro fichas pedían 299: se salían por la derecha y quedaban
        pegadas al borde, sin el margen de la izquierda (U-11). Menos aire adentro, y cabe. */
@@ -246,6 +249,9 @@
     .filtros .atajos .ficha-fav.sola span:last-child { display: none; }
     .filtros .atajos.apretada { gap: 4px; }
     .filtros .atajos.apretada button { padding-inline: 10px; gap: 4px; }
+    /* Still too wide with ⭐ in it: the short names (Nuevo · Pop · Favs, D-517) and a little less air */
+    .filtros .atajos .corto, .filtros .atajos.corta .largo { display: none; }
+    .filtros .atajos.corta .corto { display: inline; }
     .filtros .atajos[hidden], .filtros .atajos button[hidden] { display: none; }
     .filtros .atajos button {
       display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 6px 16px; cursor: pointer; white-space: nowrap;
@@ -254,6 +260,9 @@
     }
     /* The shortcuts (🔎 ⭐ ✨ 🔥) are outlined and the types filled (D-407, option B of /labs/pills/): two
        kinds of filter, one choice, so the chosen one is the same cyan in both rows */
+    /* After the base rule, which would otherwise win: short names, a little less air (D-517) */
+    .filtros .atajos.corta.corta { gap: 4px; }
+    .filtros .atajos.corta.corta > * { padding-inline: 7px; gap: 3px; }
     .filtros .atajos button:not(.on), .filtros .ficha-fav:not(.on) { background: transparent; border-color: rgba(255, 255, 255, 0.28); }
     .filtros .atajos button.on, .filtros .tipos button.on, .filtros .ficha-fav.on { background: var(--cyan); border-color: transparent; color: #03302c; }
     .filtros button:active { transform: scale(0.96); }
@@ -544,6 +553,17 @@
     import { season } from './assets/js/season.js';
     // The site's traffic (D-208), loaded on its own: counting the visit never holds up the list
     import('./assets/js/transport/stats.js').then(({ trackVisit }) => trackVisit()).catch(() => {});
+    // The games launched by a flag (D-517) are drawn from what this phone last saw of `flags/`: refresh it,
+    // and if one came out (or went back) since, draw the list again once, so a launch shows on this visit
+    import('./assets/js/games.js').then(async ({ SUELTOS, lanzado }) => {
+      const { loadFlags } = await import('./assets/js/flags.js');
+      const flags = await loadFlags();
+      const cambio = SUELTOS.some(g => g.lanza && g.oculto === lanzado(g.lanza, { flags }));
+      if (!cambio) return;
+      // At most once a session: a phone that cannot keep the answer would otherwise reload forever
+      try { if (sessionStorage.getItem('juegos-de-salon:lanza-recarga')) return; sessionStorage.setItem('juegos-de-salon:lanza-recarga', '1'); } catch (_) { return; }
+      location.reload();
+    }).catch(() => {});
     sparkles();
     initSound();
     document.getElementById('sound-slot').append(soundToggle());
@@ -759,18 +779,18 @@
       const tipos = el('div', { class: 'tipos', role: 'group', 'aria-label': T.filters });
       const cuenta = document.getElementById('filtros-cuenta');
       const botones = [];
-      const fav = el('button', { type: 'button', class: 'ficha-fav', 'data-tipo': FAV, 'aria-label': T.favorites, title: T.favorites, onClick: () => { filtro.tipo = filtro.tipo === FAV ? null : FAV; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, '⭐'), el('span', {}, T.favorites));
+      const fav = el('button', { type: 'button', class: 'ficha-fav', 'data-tipo': FAV, 'aria-label': T.favorites, title: T.favorites, onClick: () => { filtro.tipo = filtro.tipo === FAV ? null : FAV; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, '⭐'), el('span', {}, el('span', { class: 'largo' }, T.favorites), el('span', { class: 'corto' }, T.favoritesShort)));
       const favs = el('div', { class: 'favs' }, fav);
       botones.push(fav);
       // Solo los tipos que tiene algún juego que se puede abrir: así la lista nunca queda vacía
       for (const [id, t] of Object.entries(TIPOS)) {
         if (!JUEGOS_PORTADA.some(g => g.available && (g.tipos || []).includes(id))) continue;
-        const b = el('button', { type: 'button', 'data-tipo': id, onClick: () => { filtro.tipo = filtro.tipo === id ? null : id; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, t.emoji), el('span', {}, pickLang(t.name, lang)));
+        const b = el('button', { type: 'button', 'data-tipo': id, onClick: () => { filtro.tipo = filtro.tipo === id ? null : id; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, t.emoji), el('span', {}, pickLang(t.name, lang).replace('/', '/\u200b')));
         tipos.append(b); botones.push(b);
       }
       const atajos = el('div', { class: 'atajos', role: 'group', 'aria-label': T.filters });
-      for (const [k, emoji, texto] of [[NEW, '✨', T.filterNew], [POP, '🔥', T.filterPopular]]) {
-        const b = el('button', { type: 'button', 'data-tipo': k, hidden: !tieneAtajo(k), onClick: () => { filtro.tipo = filtro.tipo === k ? null : k; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, emoji), el('span', {}, texto));
+      for (const [k, emoji, texto, corto] of [[NEW, '✨', T.filterNew, T.filterNewShort], [POP, '🔥', T.filterPopular, T.filterPopularShort]]) {
+        const b = el('button', { type: 'button', 'data-tipo': k, hidden: !tieneAtajo(k), onClick: () => { filtro.tipo = filtro.tipo === k ? null : k; aplicar(); } }, el('span', { class: 'ficha-emoji', 'aria-hidden': 'true' }, emoji), el('span', {}, el('span', { class: 'largo' }, texto), el('span', { class: 'corto' }, corto)));
         atajos.append(b); botones.push(b);
       }
       atajos.hidden = ![NEW, POP].some(tieneAtajo);
@@ -785,14 +805,18 @@
         // With ✨ Nuevo and 🔥 Populares (D-362), ⭐ goes first in their row, with its name if it fits (D-364)
         const conFila = hay && [NEW, POP].some(tieneAtajo);
         // In that row: with its name; with its name and less air; the ⭐ alone
-        const formas = hay ? [...(conFila ? [['atajos', false, false], ['atajos', false, true], ['atajos', true, true]] : []), ['fila', false], ['fila', true], ['linea', false]] : [['linea', false]];
-        for (const [donde, sola, justa = sola] of formas) {
+        // …and with the short names, Nuevo · Pop · Favs (D-517), before giving up the row
+        const formas = hay ? [...(conFila ? [['atajos', false, false], ['atajos', false, true], ['atajos', false, true, true], ['atajos', true, true, true]] : []), ['fila', false], ['fila', true], ['linea', false]] : [['linea', false]];
+        for (const [donde, sola, justa = sola, corta = false] of formas) {
           if (donde === 'atajos') { if (fav.parentNode !== atajos) atajos.prepend(fav); }
           else if (donde === 'fila') { if (fav.parentNode !== tipos) tipos.prepend(fav); }
           else if (fav.parentNode !== favs) favs.append(fav);
           fav.classList.toggle('sola', sola);
           tipos.classList.toggle('apretada', donde === 'fila' && sola);
           atajos.classList.toggle('apretada', donde === 'atajos' && justa);
+          atajos.classList.toggle('corta', donde === 'atajos' && corta);
+          const n = [...tipos.children].filter(b => !b.hidden).length;
+          tipos.style.setProperty('--n', n); tipos.classList.toggle('cinco', n >= 5);
           const fila = donde === 'atajos' ? atajos : tipos;
           if (donde === 'linea' || fila.scrollWidth <= fila.clientWidth + 0.5) break;
         }

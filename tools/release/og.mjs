@@ -238,7 +238,9 @@ const gameOf = p => p.game && [...GAMES, ...SUELTOS].find(g => g.id === p.game);
  */
 const indexed = p => {
   const g = gameOf(p);
-  return !p.route.startsWith('/labs/') && (!g || (g.available && !g.bodega));
+  // A game launched by a flag (D-517) is announced by the cleanup PR that removes the flag: a static
+  // sitemap cannot know whether the owner switched it on
+  return !p.route.startsWith('/labs/') && (!g || (g.available && !g.bodega && !g.lanza));
 };
 /**
  * A game's "Cómo se juega", as its cover shows it in Spanish: `howText`, or the list of `rules`

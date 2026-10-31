@@ -72,6 +72,8 @@ const CODE = {
   pintaminas: () => Promise.all([import('./paint-mines/engine.js'), import('./paint-mines/ui.js')]),
   agentes: () => Promise.all([import('./agents/engine.js'), import('./agents/ui.js')]),
   puentes: () => Promise.all([import('./bridges/engine.js'), import('./bridges/ui.js')]),
+  stick: () => Promise.all([import('./stick/engine.js'), import('./stick/ui.js')]),
+  stack: () => Promise.all([import('./stack/engine.js'), import('./stack/ui.js')]),
   final: () => Promise.all([import('./final/engine.js'), import('./final/ui.js')]),
 };
 CODE.trio = CODE.final;
@@ -107,6 +109,8 @@ const BUILD = {
   agentes: ([m, ui]) => delLab('agentes', m, ui),
   // 🚅 Tren en Vilo, out of the lab in D-456: in POZO since then (before, only the owner's one-day cup of 2026-10-25)
   puentes: ([m, ui]) => delLab('puentes', m, ui),
+  stick: ([m, ui]) => delLab('stick', m, ui),
+  stack: ([m, ui]) => delLab('stack', m, ui),
   final: ([final, uiFinal]) => ({
     ...juego(final, uiFinal),
     // A round with no short version is the game whole, built with its own generator for the final

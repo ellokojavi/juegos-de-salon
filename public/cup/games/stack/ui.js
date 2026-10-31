@@ -1,0 +1,265 @@
+/**
+ * 🗼 Babel — its screen in La Copa, Uno al día and on its standalone page, moved from the lab
+ * (labs/stack/game.js, D-445) as Tren en Vilo was (D-456): a block slides over the tower, a tap drops
+ * it, and whatever hangs over the edge is cut off. The engine is engine.js; the drawing, scene.js.
+ *
+ * What the lab had in play comes along: a drop is judged at the tap's own timestamp, not at the next
+ * frame (`momento`); the cut piece falls; a perfect drop glows, counts its streak and, from the 4th in a
+ * row, grows the block back (with a little confetti); each block slides a little faster. The page
+ * hidden or losing focus pauses the game: the slab freezes, the first tap back only resumes, and the
+ * drawing loop sleeps while paused. Reduced motion: no sparks, no confetti, no swaying.
+ *
+ * What the cup page now provides stays out: the lab's cover, its comment form, the local best, the
+ * usage signal and the share button. The credit to the original is `ejemplo`, in the waiting room. The cup's game.js does the result, rankings, sharing and
+ * telemetry.
+ *
+ * A real-time game cannot be resumed: after each block the state is saved with `ctx.guardar`, and a
+ * page reloaded mid-game ends that game with the blocks it had (no retry by reloading). A finished
+ * game in `ctx.jugadas` shows finished. The state is engine.js's
+ * `{ fin, n, perfects, best, kinds, ms, tope, slabs }` (`slabs` only to draw the tower again).
+ *
+ * The trial (`p.tope`, engine.js BLOQUES_ENSAYO) ends on its own after that many blocks.
+ */
+import { newGame, perfectTime, pause, score, puntaje, tarjeta } from './engine.js';
+import { escena, soltar, momento } from './scene.js';
+import { confetti } from '../../../assets/js/ui.js';
+import { onScreen } from '../../../assets/js/on-screen.js';
+import { loadCss } from '../../../assets/js/load-css.js';
+import { getLang } from '../../../assets/js/i18n.js';
+import TEXTOS from './texts.js';
+
+// Its own stylesheet, loaded with its code and before its first screen (D-468)
+await loadCss(new URL('./style.css', import.meta.url));
+
+const QUIETO = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+const fmtLocal = (s, o = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? ''));
+/** [none, one, many] */
+const forma = n => (n === 0 ? 0 : n === 1 ? 1 : 2);
+/** How long the end lingers on the tower (the last piece falling) before «See results» shows. */
+const FIN_MS = 1400;
+/** The original this game is inspired by, credited on the waiting room (the owner's request, for transparency). */
+const ORIGINAL = 'https://www.ketchappgames.com/';
+/** A slab, rounded to save it small. */
+const redondo = s => ({ x: +s.x.toFixed(4), z: +s.z.toFixed(4), w: +s.w.toFixed(4), d: +s.d.toFixed(4) });
+
+/** `portada` gets no `el`: a small one of its own. */
+function h(tag, attrs = {}, ...hijos) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) if (k === 'class') n.className = v; else if (v !== null && v !== undefined && v !== false) n.setAttribute(k, v);
+  for (const x of hijos.flat()) if (x !== null && x !== undefined && x !== false) n.append(x instanceof Node ? x : String(x));
+  return n;
+}
+
+/* ------------------------------------------------------------------ */
+/* Waiting room                                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The cover (the lab's `demo`): the tower builds itself, mostly perfect drops, a cut now and then, and
+ * starts over. Still, and already built, with reduced motion. The loop sleeps off screen (onScreen).
+ */
+let demoVez = 0;
+export function portada() {
+  const lienzo = h('canvas', { class: 'sk-demo', 'aria-hidden': 'true' });
+  const raiz = h('div', { class: 'sk-portada', 'aria-hidden': 'true' }, lienzo);
+  const vez = ++demoVez;
+  const sc = escena(lienzo, { zoom: 0.8 });
+  let g = newGame(performance.now()), proxima = 0, k = 0, visto = false;
+  const desde = performance.now();
+  if (QUIETO()) {
+    let t = 0;
+    for (let i = 0; i < 10; i++) { t = perfectTime(g, t); soltar(g, { brillar() {}, caer() {} }, t + (i % 3 === 2 ? 40 : 0)); }
+    g.moving = null;
+    // Drawn once it is on the page and measured
+    const una = () => { if (!lienzo.isConnected) return requestAnimationFrame(una); requestAnimationFrame(now => { sc.draw(g, now); sc.cerrar(); }); };
+    requestAnimationFrame(una);
+    return raiz;
+  }
+  const paso = now => {
+    // It stops when another cover replaces it, when it leaves the page, or if it never arrived
+    if (lienzo.isConnected) visto = true;
+    if (vez !== demoVez || (!lienzo.isConnected && (visto || now - desde > 5000))) return sc.cerrar();
+    if (!proxima) proxima = perfectTime(g, now) + (k % 4 === 3 ? 60 : 0);
+    if (now >= proxima) {
+      soltar(g, sc, proxima); k++; proxima = 0;
+      if (score(g) >= 14 || Math.min(g.slabs.at(-1).w, g.slabs.at(-1).d) < 0.45) { g = newGame(now + 600); k = 0; }
+    }
+    sc.draw(g, now);
+    otro();
+  };
+  const otro = onScreen(lienzo, paso);
+  otro();
+  return raiz;
+}
+
+/** The name in the waiting room, as in the lab: the 🗼 that sways and the moving colors. */
+const UI = () => { let l = 'es'; try { l = getLang(); } catch (_) { /* outside the browser */ } return (TEXTOS[l] || TEXTOS.es).ui; };
+/** The name in the waiting room, with the credit to the original right under it, as Loteo does (the owner's call). */
+export function titulo({ el, J }) {
+  const [antes, despues] = String(UI().skCredit).split('{juego}');
+  return el('div', { class: 'sk-cabeza' },
+    el('h2', { class: 'sk-titulo' },
+      el('span', { class: 'sk-logo', 'aria-hidden': 'true' }, '🗼'),
+      el('span', { class: 'display display--lg rainbow' }, J.nombre)),
+    el('p', { class: 'sk-credito', id: 'sk-credito' }, antes, el('a', { href: ORIGINAL, target: '_blank', rel: 'noopener', id: 'link-stack' }, 'Stack'), despues || ''));
+}
+
+/* ------------------------------------------------------------------ */
+/* The game                                                           */
+/* ------------------------------------------------------------------ */
+
+let partidas = 0;   // the game on screen; a new one stops the old one's loop
+
+export function montar(raiz, ctx) {
+  const { p = {}, T, el, SFX, vibrate } = ctx;
+  const fmt = ctx.fmt || fmtLocal;
+  const tope = p.tope || null;
+  const previa = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) && Number.isFinite(ctx.jugadas.n) ? ctx.jugadas : null;
+  const vez = ++partidas;
+  const S = { g: newGame(performance.now() + 400), kinds: [], fin: false, pausa: 0, pausado: 0, inicio: performance.now(), finEn: 0, dormido: false, ms: 0 };
+
+  const lienzo = el('canvas', { class: 'sk-lienzo', 'aria-hidden': 'true' });
+  const marcador = el('div', { class: 'sk-marcador', id: 'sk-marcador', 'aria-live': 'polite' }, '0');
+  const aviso = el('div', { class: 'sk-aviso', id: 'sk-aviso' }, T.skTap);
+  const cartel = el('div', { class: 'sk-pausa', id: 'sk-pausa', 'aria-live': 'polite', hidden: true },
+    // The emoji outside the rainbow: a gradient clipped to text paints an emoji as a colored square
+    el('span', { class: 'sk-titulo-pausa' }, el('span', { 'aria-hidden': 'true' }, '⏸️'), el('span', { class: 'display rainbow' }, T.skPaused)), el('span', {}, T.skResume));
+  const escenario = el('div', { class: 'sk-escenario', id: 'sk-escenario', role: 'button', tabindex: 0, 'aria-label': T.skTap }, lienzo, marcador, aviso, cartel);
+  const fin = el('div', { class: 'sk-fin', id: 'sk-fin' });
+  const juego = el('div', { class: 'sk-juego' }, escenario, fin);
+  raiz.append(juego);
+  const sc = escena(lienzo);
+
+  /** The game as it is saved and handed to the cup. */
+  const estado = () => ({
+    fin: S.fin, n: score(S.g), perfects: S.g.perfects, best: S.g.best, kinds: S.kinds.slice(), tope,
+    ms: S.fin ? S.ms : Math.round(performance.now() - S.inicio - S.pausado), slabs: S.g.slabs.map(redondo),
+  });
+
+  // Drops the block at moment `t`; a tap passes its own timestamp
+  const caer = t => {
+    if (S.fin || S.pausa || vez !== partidas) return;
+    const r = soltar(S.g, sc, t);
+    if (!r) return;
+    aviso.classList.add('fuera');
+    if (r.kind === 'miss') return acabar('miss');
+    S.kinds.push(r.kind);
+    const n = score(S.g);
+    marcador.textContent = String(n);
+    if (r.kind === 'perfect') {
+      SFX.reveal(); vibrate(12);
+      aviso.replaceChildren(el('span', { class: 'rainbow' }, S.g.combo > 1 ? fmt(T.skStreak, { n: S.g.combo }) : T.skPerfect));
+      aviso.classList.remove('fuera', 'brilla'); void aviso.offsetWidth; aviso.classList.add('brilla');
+      // A streak that grows the block back: a little confetti
+      if (r.grew && !QUIETO()) confetti({ count: 40, duration: 900 });
+    } else { SFX.tap(); vibrate(8); }
+    if (tope && n >= tope) return acabar('tope');
+    // Saved after each block: a reload ends the game here, it does not start it over
+    ctx.guardar?.(estado());
+  };
+
+  // Paused when the page is hidden or loses focus (a call, another app, the screen locked): the slab
+  // freezes where it was, and the first tap back only takes the pause off, it never drops (D-445)
+  const fuera = new AbortController();
+  const pausar = () => {
+    if (!lienzo.isConnected) { fuera.abort(); return; }
+    if (S.fin || S.pausa || vez !== partidas) return;
+    S.pausa = performance.now();
+    cartel.hidden = false;
+  };
+  const reanudar = () => {
+    if (!S.pausa) return;
+    despertar();
+    const ms = performance.now() - S.pausa;
+    pause(S.g, ms);
+    S.pausado += ms;
+    S.pausa = 0;
+    cartel.hidden = true;
+    SFX.tap();
+  };
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pausar(); }, { signal: fuera.signal });
+  addEventListener('blur', pausar, { signal: fuera.signal });
+  addEventListener('pagehide', pausar, { signal: fuera.signal });
+
+  const tocar = ev => { ev.preventDefault(); if (S.fin) return; if (S.pausa) return reanudar(); caer(momento(ev)); };
+  escenario.addEventListener('pointerdown', ev => { if (ev.button > 0) return; tocar(ev); }, { signal: fuera.signal });
+  escenario.addEventListener('keydown', ev => { if (ev.key === ' ' || ev.key === 'Enter') { if (!ev.repeat) tocar(ev); else ev.preventDefault(); } }, { signal: fuera.signal });
+
+  /**
+   * The end: missed the tower, the trial's cap reached, or a game left halfway (`recien` false: a
+   * reload, or one already finished). The cup's clock stops right here (D-130) and, with the final
+   * state, the result goes out now (D-150).
+   */
+  function acabar(motivo, { recien = true } = {}) {
+    if (S.fin) return;
+    S.ms = Math.round(performance.now() - S.inicio - S.pausado - (S.pausa ? performance.now() - S.pausa : 0));
+    S.fin = true; S.finEn = performance.now(); S.pausa = 0; cartel.hidden = true;
+    S.g.over = true; S.g.moving = null;
+    fuera.abort();
+    despertar();
+    const e = estado();
+    ctx.guardar?.(e);
+    ctx.pararReloj?.(e);
+    const listo = motivo === 'tope';
+    if (recien) {
+      if (listo) { SFX.win?.(); vibrate([30, 50, 30]); if (!QUIETO()) confetti({ count: 120, duration: 1600 }); }
+      else { SFX.error(); vibrate([40, 30, 60]); }
+    }
+    aviso.replaceChildren(el('span', { class: 'rainbow' }, listo ? T.skTrialDone : T.skOver));
+    aviso.classList.remove('fuera', 'brilla'); aviso.classList.add('final');
+    const mostrar = () => {
+      if (vez !== partidas || !raiz.isConnected) return;
+      juego.classList.add('terminado');
+      const n = e.n;
+      fin.replaceChildren(
+        el('p', { class: 'sk-sello', id: 'sk-sello' }, fmt(T.skBlocks[forma(n)], { n })),
+        el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(estado()); } }, ctx.textoFin || T.seeResults));
+    };
+    if (recien) setTimeout(mostrar, QUIETO() ? 400 : FIN_MS); else mostrar();
+  }
+
+  const paso = now => {
+    if (vez !== partidas || !lienzo.isConnected) { fuera.abort(); return sc.cerrar(); }
+    sc.draw(S.g, now, S.pausa || now);
+    // Paused for a second (effects done), or finished and the last piece fallen: the loop sleeps until
+    // the tap back, so a game left on the table does not burn battery (#892)
+    if ((S.pausa && now - S.pausa > 1000) || (S.fin && now - S.finEn > 3000)) { S.dormido = true; return; }
+    requestAnimationFrame(paso);
+  };
+  function despertar() { if (S.dormido) { S.dormido = false; requestAnimationFrame(paso); } }
+
+  // A game already played on this phone: finished, it shows finished; halfway, it ends where it was
+  if (previa) {
+    S.kinds = Array.isArray(previa.kinds) ? previa.kinds.slice() : [];
+    S.g.perfects = previa.perfects | 0; S.g.best = previa.best | 0;
+    if (Array.isArray(previa.slabs) && previa.slabs.length) S.g.slabs = previa.slabs.map(s => ({ ...s }));
+    else for (let i = 0; i < previa.n; i++) S.g.slabs.push({ ...S.g.slabs[0] });
+    S.inicio = performance.now() - (previa.ms || 0);
+    marcador.textContent = String(score(S.g));
+    acabar(previa.fin ? (tope && previa.n >= tope ? 'tope' : 'miss') : 'miss', { recien: false });
+    S.ms = previa.ms || 0;
+  } else escenario.focus({ preventScroll: true });
+  requestAnimationFrame(paso);
+
+  // For the end-to-end script: `soltarEn(t)` drops at moment t, as a tap then would; `pausar()` pauses,
+  // as a hidden page does; `perfecto()` is the next moment the block is exactly over the tower
+  globalThis.__stack = { S, soltarEn: caer, pausar, perfecto: () => perfectTime(S.g, performance.now()), estado };
+}
+
+/** What goes to the cup and to the result: 0 to 100 (2 a block), its card, and the playing time without pauses. */
+export function resultado(e) {
+  const s = puntaje(e);
+  return { s, t: tarjeta(e), resumen: `${s}/100`, ms: Number.isFinite(e?.ms) ? Math.round(e.ms) : undefined };
+}
+
+/** How the score was reached (D-106): the blocks, the perfect drops and the longest streak. */
+export function desglose(e, { T, fmt = fmtLocal }) {
+  if (!e) return [];
+  const n = Math.max(0, e.n | 0), pf = Math.max(0, e.perfects | 0), best = Math.max(0, e.best | 0);
+  return [
+    fmt(T.skBdBlocks[forma(n)], { n, p: puntaje(e) }),
+    puntaje(e) >= 100 ? T.skBdCap : null,
+    fmt(T.skBdPerfects[forma(pf)], { n: pf }),
+    best > 1 ? fmt(T.skBdStreak, { n: best }) : null,
+  ].filter(Boolean);
+}
