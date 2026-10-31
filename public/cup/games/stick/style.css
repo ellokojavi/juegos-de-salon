@@ -20,7 +20,13 @@
 }
 .sn-lienzo { display: block; width: 100%; height: 100%; }
 /* The pillars fade into the night at the bottom instead of ending at a hard edge */
-.sn-lienzo, .sn-demo { -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent); mask-image: linear-gradient(to bottom, #000 80%, transparent); }
+/* The night melts into the page on every side (no straight edge where the canvas ends, nor a halo cut flat) */
+.sn-lienzo, .sn-demo {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 80%, transparent), linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 80%, transparent), linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-composite: intersect;
+}
 
 /* A perfect: an emerging ring of light from the stage's edge, over the canvas' own pulse */
 .sn-escenario::after {
