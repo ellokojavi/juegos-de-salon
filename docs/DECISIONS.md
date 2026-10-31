@@ -525,7 +525,7 @@ Where today's rule is and which decisions explain it: those in force that still 
 | [D-477](decisions/D-477.md) | 📣 Campaigns is the control center for everything temporary: splash, site features and skins | current |
 | [D-478](decisions/D-478.md) | An archived Cup's link shows its podium instead of "not found" (lab) | amended by D-492 |
 | [D-479](decisions/D-479.md) | Whatever leaves the lab for everyone goes to La Bodega | amended by D-510 |
-| [D-480](decisions/D-480.md) | 🚀 Publicar para todos: the owner sends a lab feature live from its card | amended by D-486 |
+| [D-480](decisions/D-480.md) | 🚀 Publicar para todos: the owner sends a lab feature live from its card | amended by D-486, D-517 |
 | [D-481](decisions/D-481.md) | A texture per region on Queens' board, for colorblind players | current |
 | [D-482](decisions/D-482.md) | Uno al día's share carries a neutral emoji grid, never one that spoils | amended by D-485, D-508 |
 | [D-484](decisions/D-484.md) | Each panel domain counts and lists only its own games, and a script checks every view | current |

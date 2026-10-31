@@ -1,5 +1,12 @@
 # 🧱 Stack (lab prototype, in Juegos en prueba)
 
+> **Ready to launch (D-517).** The game is now **🧱 Stacks**, a La Copa game in `public/cup/games/stack/`
+> (engine, scene, screen, texts in es, en and pt) that serves its page `/stacks/`, Uno al día (from the
+> deck shuffled on 2026-11-08) and La Copa (score 0–100). It stays hidden until the owner switches the
+> flag `stack` on its /labs/ card. The cover credits the original with a link, as every inspired game
+> does. What follows describes the English lab prototype, still at `/labs/stack/` until the cleanup PR;
+> the play is the same in the new module. End to end: `tools/e2e/stack/game.mjs`.
+
 A one-tap tower game for one player (D-445): a block slides over the tower, a tap drops it, and whatever
 hangs over the edge is cut off. **Inspired by [Stack](https://www.ketchappgames.com/), by Ketchapp
 (2016)**, and it says so on the cover and in the lab. The owner sent a video of the original and asked:

@@ -1,0 +1,65 @@
+/* 🧱 Stacks in La Copa (from the lab's style.css, D-445). Loaded by ui.js; every class starts with `sk-`.
+   The tower's canvas is transparent: it stands on the app's own night (base.css). */
+
+/* The waiting room's name, with the 🧱 that sways */
+.sk-titulo { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
+.sk-titulo .rainbow { padding: 0.2em 0.12em 0 0; margin: -0.2em -0.12em 0 0; }
+.sk-logo { font-size: 2.2rem; animation: sk-mece 3s ease-in-out infinite; }
+@keyframes sk-mece { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(6deg) translateY(-2px); } }
+
+/* The cover's tower, building itself */
+.sk-portada { display: block; }
+.sk-demo { display: block; width: 100%; height: 230px; }
+
+/* The game: the tower takes the screen under the cup's heading, and a tap anywhere on it drops */
+.sk-juego { display: grid; gap: 10px; }
+.sk-escenario {
+  position: relative; height: calc(100svh - 220px); min-height: 340px; overflow: hidden;
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none;
+}
+.sk-lienzo { display: block; width: 100%; height: 100%; }
+/* The tower fades into the night at the bottom instead of ending at a hard edge */
+.sk-lienzo, .sk-demo { -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent); mask-image: linear-gradient(to bottom, #000 72%, transparent); }
+.sk-marcador {
+  position: absolute; top: 6%; left: 0; right: 0; text-align: center; pointer-events: none;
+  font: 900 clamp(3.2rem, 18vw, 4.6rem)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35);
+}
+.sk-aviso {
+  position: absolute; top: calc(6% + clamp(3.6rem, 20vw, 5rem)); left: 0; right: 0; text-align: center; pointer-events: none;
+  font: 700 1rem var(--font-body); color: rgba(255,255,255,0.85); transition: opacity 0.4s; padding: 0 16px;
+}
+.sk-aviso.fuera { opacity: 0; }
+.sk-aviso.brilla { font: 1.9rem var(--font-display); letter-spacing: 0.06em; animation: sk-brilla 0.9s ease-out forwards; }
+.sk-aviso.final { font: 2.2rem var(--font-display); letter-spacing: 0.06em; }
+@keyframes sk-brilla { 0% { opacity: 0; transform: scale(0.7); } 20% { opacity: 1; transform: scale(1.1); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
+
+/* Paused (a call, another app): over the tower, until a tap takes it off */
+.sk-pausa {
+  position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; text-align: center; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(21, 7, 38, 0.8), rgba(21, 7, 38, 0.35) 70%, transparent);
+  font: 700 1.05rem var(--font-body); color: #fff;
+}
+.sk-pausa[hidden] { display: none; }
+.sk-titulo-pausa { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 2rem; }
+.sk-pausa .display { font-size: 2.6rem; }
+
+/* The end, under the tower: the blocks and «See results» */
+.sk-fin { display: grid; gap: 10px; justify-items: center; text-align: center; }
+.sk-fin:empty { display: none; }
+.sk-sello { margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+/* Finished: the tower shrinks to leave room for the button */
+.sk-juego.terminado .sk-escenario { height: calc(100svh - 360px); min-height: 260px; cursor: default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-logo, .sk-sello, .sk-aviso.brilla { animation: none; }
+}
+
+/* A short phone (320×568): the cover's tower shrinks so Start stays near the fold (U-39) */
+@media (max-height: 620px) {
+  .sk-demo { height: 150px; }
+}
+
+/* The credit to the original, in the waiting room (like Pintaminas' .pm-credito) */
+.sk-credito { margin: 0; font-size: 0.85rem; color: var(--muted); text-align: center; }
+.sk-credito a { color: var(--cyan); }

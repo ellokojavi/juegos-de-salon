@@ -1,0 +1,102 @@
+/* 🥷 Ninja (id `stick`) in La Copa, from the lab's style (D-446); loaded by ui.js (D-468). Every class
+   starts with `sn-`, so nothing clashes with the cup's page. What is shared lives in assets/css/base.css. */
+
+/* The cover's run, playing itself; the canvas is transparent and stands on the app's night */
+.sn-demo { display: block; width: 100%; height: 200px; border-radius: 16px; }
+
+/* Under the rules, the credit to the original, like Pintaminas' */
+.sn-credito { margin: 0; font-size: 0.85rem; color: var(--muted); text-align: center; }
+.sn-credito a { color: var(--cyan); }
+
+/* The game: the night takes the screen under the cup's heading; a hold anywhere stretches */
+.sn-escenario {
+  position: relative; height: calc(100svh - 190px); min-height: 360px; overflow: hidden;
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none; border-radius: 18px;
+}
+.sn-lienzo { display: block; width: 100%; height: 100%; }
+/* The pillars fade into the night at the bottom instead of ending at a hard edge */
+.sn-lienzo, .sn-demo { -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent); mask-image: linear-gradient(to bottom, #000 80%, transparent); }
+
+/* A perfect: an emerging ring of light from the stage's edge, over the canvas' own pulse */
+.sn-escenario::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; opacity: 0;
+  box-shadow: inset 0 0 0 2px rgba(255, 210, 63, 0.8), inset 0 0 40px rgba(255, 46, 136, 0.45);
+}
+.sn-escenario.sn-pulso::after { animation: sn-pulso 0.7s ease-out; }
+@keyframes sn-pulso { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+
+.sn-marcador {
+  position: absolute; top: 5%; left: 0; right: 0; text-align: center; pointer-events: none;
+  font: 900 clamp(3.2rem, 18vw, 4.6rem)/1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35);
+}
+.sn-marcador.sn-salta { animation: sn-suma 0.45s ease-out; }
+@keyframes sn-suma { 0% { transform: scale(1); } 35% { transform: scale(1.22); color: #fff; } 100% { transform: scale(1); } }
+.sn-racha {
+  position: absolute; top: calc(5% + clamp(3.5rem, 19.5vw, 5rem)); left: 50%; transform: translateX(-50%); pointer-events: none;
+  padding: 3px 12px; border-radius: 999px; white-space: nowrap;
+  font: 800 0.85rem var(--font-body); color: #3a1200; background: linear-gradient(90deg, var(--yellow), var(--orange));
+  box-shadow: 0 0 16px rgba(255, 122, 26, 0.55); animation: pop 0.35s ease-out;
+}
+.sn-racha[hidden] { display: none; }
+/* The lives, top left of the night: a fallen one goes dark */
+.sn-vidas { position: absolute; top: 3%; left: 4%; display: flex; gap: 2px; pointer-events: none; font-size: 1.05rem; }
+.sn-vidas span { transition: opacity 0.4s, filter 0.4s; }
+.sn-vidas span.sn-perdida { opacity: 0.3; filter: grayscale(1); animation: pop 0.35s ease-out; }
+.sn-aviso .sn-quedan { display: block; margin-top: 4px; font: 700 1rem var(--font-body); letter-spacing: 0; color: #fff; }
+.sn-aviso {
+  position: absolute; top: calc(5% + clamp(5.2rem, 28vw, 7rem)); left: 8%; right: 8%; text-align: center; pointer-events: none;
+  font: 700 1rem var(--font-body); color: rgba(255,255,255,0.88); transition: opacity 0.4s;
+}
+.sn-aviso.sn-fuera { opacity: 0; }
+.sn-aviso.sn-brilla { font: 2rem var(--font-display); letter-spacing: 0.06em; animation: sn-brilla 1s ease-out forwards; }
+.sn-aviso.sn-final { font: 2rem var(--font-display); letter-spacing: 0.05em; }
+@keyframes sn-brilla { 0% { opacity: 0; transform: scale(0.6); } 20% { opacity: 1; transform: scale(1.15); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: translateY(-8px); } }
+
+/* Achievements: a banner that drops in near the bottom of the night, glows once, and goes */
+.sn-logros { position: absolute; left: 0; right: 0; bottom: 9%; display: grid; justify-items: center; pointer-events: none; }
+.sn-logro {
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 10px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(42, 10, 74, 0.92), rgba(21, 7, 38, 0.92));
+  border: 1.5px solid rgba(255, 210, 63, 0.75);
+  box-shadow: 0 0 0 0 rgba(255, 210, 63, 0.6), 0 8px 24px rgba(0, 0, 0, 0.4);
+  animation: sn-logro-entra 0.45s cubic-bezier(.2, 1.4, .4, 1) both, sn-logro-onda 1.1s ease-out 0.2s;
+}
+.sn-logro.sn-sale { animation: sn-logro-sale 0.26s ease-in forwards; }
+.sn-logro-ico { font-size: 1.7rem; line-height: 1; filter: drop-shadow(0 0 8px rgba(255, 210, 63, 0.7)); }
+.sn-logro-txt { display: grid; text-align: left; line-height: 1.15; }
+.sn-logro-txt b { font: 1.25rem var(--font-display); letter-spacing: 0.05em; color: var(--yellow); }
+.sn-logro-txt small { font: 700 0.8rem var(--font-body); color: rgba(255, 255, 255, 0.8); }
+@keyframes sn-logro-entra { from { opacity: 0; transform: translateY(18px) scale(0.85); } to { opacity: 1; transform: none; } }
+@keyframes sn-logro-onda { 0% { box-shadow: 0 0 0 0 rgba(255, 210, 63, 0.6), 0 8px 24px rgba(0,0,0,0.4); } 100% { box-shadow: 0 0 0 22px rgba(255, 210, 63, 0), 0 8px 24px rgba(0,0,0,0.4); } }
+@keyframes sn-logro-sale { to { opacity: 0; transform: translateY(10px) scale(0.92); } }
+
+/* Paused (a call, another app): over the night, until a tap takes it off */
+.sn-pausa {
+  position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; text-align: center; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(21, 7, 38, 0.82), rgba(21, 7, 38, 0.4) 70%, transparent);
+  font: 700 1.05rem var(--font-body); color: #fff;
+}
+.sn-pausa[hidden] { display: none; }
+.sn-titulo-pausa { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 2rem; }
+.sn-pausa .display { font-size: 2.6rem; }
+
+/* The end of the run, before the cup's result */
+.sn-fin { text-align: center; display: grid; gap: 12px; justify-items: center; padding-top: 12px; }
+.sn-fin .score-big { margin: 0; font: 900 clamp(2.6rem, 14vw, 3.6rem)/1.1 var(--font-num); font-variant-numeric: tabular-nums; color: var(--yellow); text-shadow: 0 4px 0 rgba(0,0,0,0.35); }
+.sn-sello { margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
+  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
+.sn-desglose { list-style: none; text-align: left; margin: 0 auto; padding: 0; display: grid; gap: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sn-sello, .sn-aviso.sn-brilla, .sn-marcador.sn-salta, .sn-logro, .sn-logro.sn-sale, .sn-escenario.sn-pulso::after, .sn-racha, .sn-vidas span.sn-perdida { animation: none; }
+}
+
+/* A short phone (320×568): the cover's run shrinks, and the achievements keep to the bottom edge */
+@media (max-height: 620px) {
+  .sn-demo { height: 140px; }
+  .sn-logros { bottom: 2%; }
+  .sn-logro { padding: 5px 12px 5px 8px; }
+  .sn-logro-ico { font-size: 1.35rem; }
+  .sn-logro-txt b { font-size: 1.05rem; }
+}

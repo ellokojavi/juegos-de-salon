@@ -1,5 +1,12 @@
 # 🥷 Stick Ninja (lab prototype, in Juegos en prueba)
 
+> **Ready to launch (D-517).** The game is now **🥷 Ninja**, a La Copa game in `public/cup/games/stick/`
+> (engine, scene, screen, texts in es, en and pt) that serves its page `/ninja/`, Uno al día (from the
+> deck shuffled on 2026-11-08) and La Copa (score 0–100). It stays hidden until the owner switches the
+> flag `stick` on its /labs/ card. The cover credits the original with a link, as every inspired game
+> does. What follows describes the English lab prototype, still at `/labs/stick/` until the cleanup PR;
+> the play is the same in the new module. End to end: `tools/e2e/stick/game.mjs`.
+
 A hold-and-release bridge game for one player, or for a group passing the phone (D-446): hold to stretch a
 stick, let go and it falls across the gap. **Inspired by [Stick Hero](https://www.ketchappgames.com/), by
 Ketchapp (2014)**, and it says so on the cover and in the lab. The owner sent a video of the original, asked

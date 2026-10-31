@@ -126,7 +126,8 @@ if (SUELTO && !document.body.dataset.suelto && gameById(PRACTICA)?.suelto) locat
  * was out. lab: #seccion-stick, lab: #seccion-stack
  */
 const LANZA = { stick: () => flag('stick'), stack: () => flag('stack') };
-if (SUELTO && !HOY && gameById(PRACTICA)?.oculto && !(await (LANZA[PRACTICA]?.() ?? false))) location.replace(RAIZ);
+// Not awaited: the module must not pause halfway, its listeners need everything below defined
+if (SUELTO && !HOY && gameById(PRACTICA)?.oculto) (LANZA[PRACTICA]?.() ?? Promise.resolve(false)).then(si => { if (!si) location.replace(RAIZ); }).catch(() => location.replace(RAIZ));
 // En la genérica, el juego queda con su nombre en inglés: `?linea&hoy` → `?timeline-flash&today` (D-266)
 if (SUELTO && !document.body.dataset.suelto && PRACTICA) {
   const q = location.search.slice(1).split('&').map(x => (!x.includes('=') && idDeSlug(x) === PRACTICA ? slugDe(PRACTICA) : x)).join('&');
