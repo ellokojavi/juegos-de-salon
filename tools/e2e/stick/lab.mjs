@@ -29,7 +29,7 @@ await ev(`['stick-best', 'stick-today', 'stick-moving'].forEach(k => localStorag
 await b.go(`${SITE}/labs/stick/?test&seed=42`, 1200);
 ok(await waitFor(`!!document.getElementById('btn-jugar')`), 'the cover has Play');
 // The game's ranking under Play, in English like the page, with signing in (D-212, D-249)
-ok(await waitFor(`/Stick Ninja leaderboard/.test(document.querySelector('.rk-ranking')?.textContent || '') && /All time/.test(document.querySelector('.rk-seg')?.textContent || '')`, 4000), 'the cover has the Stick Ninja leaderboard, in English');
+ok(await waitFor(`/Shinobi leaderboard/.test(document.querySelector('.rk-ranking')?.textContent || '') && /All time/.test(document.querySelector('.rk-seg')?.textContent || '')`, 4000), 'the cover has the Shinobi leaderboard, in English');
 ok(await ev(`document.getElementById('btn-jugar').nextElementSibling?.classList.contains('rk-ranking') && !!document.querySelector('.rk-jugador')`), 'right under Play, with signing in after it');
 ok(await ev(`document.documentElement.lang`) === 'en', 'the page is in English');
 ok(/Inspired by Stick Hero, by Ketchapp/.test(await ev(`document.querySelector('.credito')?.textContent || ''`)), 'the cover credits Ketchapp\'s Stick Hero');

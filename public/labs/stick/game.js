@@ -34,7 +34,7 @@ const BEST_KEY = 'juegos-de-salon:stick-best';
 const TODAY_KEY = 'juegos-de-salon:stick-today';
 const MOVING_KEY = 'juegos-de-salon:stick-moving';
 const T = {
-  nombre: 'Stick Ninja',
+  nombre: 'Shinobi',
   lema: 'Stretch the stick, cross the gap, plant the flag.',
   como: [
     ['👆', 'Hold to stretch the stick, let go to drop it across the gap. You have 3 lives.'],
