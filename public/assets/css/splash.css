@@ -141,10 +141,9 @@ a.splash-item:hover, a.splash-item:focus-visible { transform: translateY(-3px); 
 .splash-cart--cyan .splash-cart-pantalla { border-color: var(--cyan); box-shadow: 0 0 0 3px #03302c; }
 .splash-cart-pantalla .splash-media { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .splash-cart-pantalla::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 2px, transparent 2px 4px); }
-.splash-cart-sticker { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 2px; }
+.splash-cart-sticker { display: flex; align-items: center; justify-content: center; padding: 0 2px; line-height: 1; }
 .splash-cart-sticker b { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; letter-spacing: 0.05em; color: var(--yellow); text-shadow: 2px 2px 0 var(--pink-deep); }
 .splash-cart--cyan .splash-cart-sticker b { color: var(--cyan); text-shadow: 2px 2px 0 #0b5f57; }
-.splash-cart-sticker small { font-family: 'Press Start 2P', var(--font-num); font-size: 0.45rem; color: var(--muted); }
 .splash-cart .splash-jugar { margin: auto 0 0; width: 100%; box-sizing: border-box; }
 .splash-cart-pines { position: absolute; left: 14%; right: 14%; bottom: -26px; height: 26px; border: 2px solid rgba(255, 255, 255, 0.18); border-top: 0;
   border-radius: 0 0 6px 6px; background: linear-gradient(180deg, #2a0f4a, #1d0835); }
@@ -159,5 +158,4 @@ a.splash-cart:hover, a.splash-cart:focus-visible { transform: translateY(-3px); 
 @media (max-width: 440px) {
   .splash-cart { padding: 16px 7px 8px; }
   .splash-cart-sticker b { font-size: 1.15rem; }
-  .splash-cart-sticker small { display: none; }
 }

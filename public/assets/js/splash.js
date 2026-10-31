@@ -225,8 +225,6 @@ const UI = {
   play: { es: 'Jugar', en: 'Play', pt: 'Jogar' },
   dismiss: { es: 'Cerrar', en: 'Close', pt: 'Fechar' },
   later: { es: 'Ahora no', en: 'Not now', pt: 'Agora não' },
-  // A cartridge's sticker (look: 'cartuchos')
-  player: { es: '1 JUGADOR', en: '1 PLAYER', pt: '1 JOGADOR' },
 };
 
 const pick = (obj, lang) => (obj && typeof obj === 'object' ? obj[lang] ?? obj.es : obj);
@@ -435,17 +433,18 @@ export async function showSplash(id, { lang = 'es', record = true, onClose } = {
       a.append(img);
     }
     if (teaser) { list.append(a); continue; }
-    // A cartridge: its screen framed in its color, the sticker with its name, Play, and the gold pins
+    // A cartridge: its name, its screen framed in its color, Play, and the gold pins
     if (c.look === 'cartuchos') {
       a.className = `splash-item splash-cart${it.color ? ` splash-cart--${it.color}` : ''}`;
       const screen = node('div', 'splash-cart-pantalla');
       screen.append(...a.childNodes);
       const sticker = node('div', 'splash-cart-sticker');
-      sticker.append(node('b', null, it.name.toUpperCase()), node('small', null, pick(UI.player, lang)));
+      sticker.append(node('b', null, it.name.toUpperCase()));
       const play = node('span', `btn ${it.color === 'cyan' ? 'btn--cyan' : ''} splash-jugar`, `${it.emoji} ${pick(UI.play, lang)}`);
       const pins = node('div', 'splash-cart-pines');
       pins.setAttribute('aria-hidden', 'true');
-      a.append(screen, sticker, play, pins);
+      // The name on top, inside the cartridge, over its screen (the owner's request)
+      a.append(sticker, screen, play, pins);
       list.append(a);
       continue;
     }
