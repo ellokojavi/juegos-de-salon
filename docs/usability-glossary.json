@@ -1,0 +1,10 @@
+{
+  "_about": "U-5: one concept, one word (D-177, D-520). For each settled concept, the word per language and the synonyms the lint rejects (tools/agents/usability-lint.mjs). A new settled term from 'Resuelto con el dueño' in docs/USABILIDAD.md goes here.",
+  "terms": {
+    "game": { "use": { "es": "juego", "en": "game", "pt": "jogo" }, "banned": { "es": ["minijuegos?"], "en": ["mini-?games?"], "pt": ["minijogos?"] }, "why": "No minigames: only the Gran Final shortens games (the owner's rule)." },
+    "phone": { "use": { "es": "celular", "en": "phone", "pt": "celular" }, "banned": { "es": ["móvil(?:es)?", "smartphones?"], "en": ["mobiles?", "cellphones?", "smartphones?"], "pt": ["smartphones?"] }, "why": "U-5: el celular." },
+    "link": { "use": { "es": "link", "en": "link", "pt": "link" }, "banned": { "es": ["vínculos?", "hipervínculos?"], "en": ["hyperlinks?"], "pt": ["hiperlinks?"] }, "why": "U-5: link." },
+    "pin": { "use": { "es": "PIN", "en": "PIN", "pt": "PIN" }, "banned": { "es": ["contraseñas?"], "en": ["passwords?", "passcodes?"], "pt": ["senhas?"] }, "why": "U-5: PIN, never a password." },
+    "grace day": { "use": { "es": "día de gracia", "en": "grace day", "pt": "dia de graça" }, "banned": { "es": ["día de descanso", "día libre"], "en": ["rest day", "day off"], "pt": ["dia de folga", "dia livre"] }, "why": "U-5: día de gracia." }
+  }
+}

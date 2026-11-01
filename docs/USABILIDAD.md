@@ -8,27 +8,42 @@ Cada regla tiene un ID (U-n) para citarla en los PR y en los issues. Los IDs van
 (1–18 textos, pantallas y botones; 20–23 interacciones; 30–35 compartir y marketing; la U-36,
 la portada al día, va con los textos, and U-39, the start button above the fold, with the screens, and U-40, promotional material looks like the app, with marketing): U-9 y U-19 nunca se usaron, y no se renumera.
 
+**Checked or judged (D-520):** each rule is marked 🤖 when a program checks it and fails loudly, 👁
+when it needs judgment, and 🤖👁 when a program checks the measurable part and the agent judges the
+rest. The checks:
+- `node tools/agents/usability-lint.mjs` (run by `tests` through `usability-lint.test.mjs`) over the
+  player's texts in es/en/pt: U-2 emoji mid-sentence, U-4 article before a proper name, U-5 the
+  glossary's banned synonyms (`docs/usability-glossary.json`, which also holds the no-minigames
+  rule), U-6 a "1" before a plural or a plural in a singular slot, U-17 button labels over the
+  320 px budget, U-18 steps and length of the lab and menu games (La Copa's: `juegos.test.mjs`).
+  An exception goes in `docs/usability-allowlist.json` with its reason; none is silent.
+- Every screenshot of the e2e scripts (`b.shot()`): U-11 the board's spacing and U-12 no two
+  buttons on top of each other (`tools/e2e/spacing-common.mjs`); `revisarPantalla`/`checkScreen` and
+  `languages-common.mjs` U-10; `landing-fold.mjs` U-39; `covers.mjs check` U-36; `marketing.mjs check` U-34.
+
+The usability agent runs the lint first, never re-reports what it covers, and spends its review on 👁.
+
 ## Textos
 
-- **U-1 · Frases completas y explícitas.** Sin comas que fragmentan ni abreviaciones de la jerga de
+- 👁 **U-1 · Frases completas y explícitas.** Sin comas que fragmentan ni abreviaciones de la jerga de
   la app. Los modos y pantallas se nombran completos. Más largo pero inequívoco vale más que breve.
   En los botones no: ver U-17.
-- **U-2 · Emojis al inicio de línea o en botones y títulos**, no en medio de una frase.
-- **U-3 · Los textos nuevos salen con la mejor propuesta** y se anotan en el PR para que el dueño
+- 🤖 **U-2 · Emojis al inicio de línea o en botones y títulos**, no en medio de una frase.
+- 👁 **U-3 · Los textos nuevos salen con la mejor propuesta** y se anotan en el PR para que el dueño
   los vea; si algo no le gusta, lo corrige después (D-213, como "Dilemas sin backlog"). Corregir
   ortografía, gramática o concordancia no es un texto nuevo. La excepción es lo que una copa está
   jugando hoy: eso no cambia, ni siquiera el texto (U-21).
-- **U-4 · Nombres propios sin artículo:** "La Copa: Valdenenas", nunca "la Valdenenas".
-- **U-5 · Un mismo concepto, una misma palabra** en toda la app (día de gracia, inscripción,
+- 🤖 **U-4 · Nombres propios sin artículo:** "La Copa: Valdenenas", nunca "la Valdenenas".
+- 🤖👁 **U-5 · Un mismo concepto, una misma palabra** en toda la app (día de gracia, inscripción,
   jugadores, link, PIN, administrador, el celular, tachar, vidas, sorbos, "cada intento después
   del primero", cantidades en cifras; D-177).
-- **U-6 · El plural y el singular concuerdan con el número** ("1 jugador inscrito", "2 pistas").
-- **U-7 · Los juegos por significado, no por juegos de palabras** (D-128): en Conexiones, lo que
+- 🤖👁 **U-6 · El plural y el singular concuerdan con el número** ("1 jugador inscrito", "2 pistas").
+- 👁 **U-7 · Los juegos por significado, no por juegos de palabras** (D-128): en Conexiones, lo que
   las cosas son; nada de "___ roja" o "esconden un animal".
-- **U-8 · Cada regla, una vez por pantalla** (D-177): si ya la dice un botón, la pantalla de justo
+- 👁 **U-8 · Cada regla, una vez por pantalla** (D-177): si ya la dice un botón, la pantalla de justo
   antes o una ayuda bajo el tablero, sale del texto de arriba. Sin frases que solo tranquilizan
   ("hay una sola solución") ni que describen lo que ya se ve. Corto no es telegrama (U-1).
-- **U-18 · Instrucciones concisas** (D-184). Al escribir "Cómo se juega" y "Puntaje" de un
+- 🤖👁 **U-18 · Instrucciones concisas** (D-184). Al escribir "Cómo se juega" y "Puntaje" de un
   juego:
   - **La meta primero, en una frase con verbo:** qué hace el jugador ("Arrastra los nudos hasta
     que ningún hilo se cruce"), no qué hay en pantalla ("Hay nudos unidos por hilos").
@@ -48,7 +63,7 @@ la portada al día, va con los textos, and U-39, the start button above the fold
     as a one-question FAQPage (`tools/release/og.mjs`), never a second block for players. Who plays,
     how and what it costs go inside it, as its first line (`how-to-play-facts.js`, for everyone since 2026-10-28), not
     as questions (D-488).
-- **U-36 · La portada al día:** si un PR cambia las reglas, los controles, el puntaje, los modos o
+- 🤖👁 **U-36 · La portada al día:** si un PR cambia las reglas, los controles, el puntaje, los modos o
   los tiempos de un juego, el mismo PR relee y corrige lo que el jugador lee antes de jugar: el lema,
   los pasos de «Cómo se juega» (U-18) y su tarjeta en el laboratorio o el menú. Pasó con Pintaminas:
   sumó un modo de dos colores, la ayuda y rendirse, y su portada siguió diciendo lo del primer día.
@@ -57,28 +72,28 @@ la portada al día, va con los textos, and U-39, the start button above the fold
 
 ## Pantallas y botones
 
-- **U-10 · Botones de 44 px o más** y sin scroll horizontal (C-8). Lo verifica `revisarPantalla`.
-- **U-11 · Botones con aire:** separados de lo que tienen arriba y centrados en su caja cuando van
+- 🤖 **U-10 · Botones de 44 px o más** y sin scroll horizontal (C-8). Lo verifica `revisarPantalla`.
+- 🤖 **U-11 · Botones con aire:** separados de lo que tienen arriba y centrados en su caja cuando van
   solos. Entre un tablero (o lo que resume la partida) y sus botones, el aire común de C-8
   (`data-tablero`, D-309), que miden las pruebas. El botón que cierra un tablero va debajo de lo
   que resume, no encima (La Gran Final).
-- **U-12 · Nada se encima:** nombres largos parten línea; etiquetas de empatados se apilan.
-- **U-13 · Lo que se muestra es lo que se juega:** el laboratorio tiene la misma UX que producción.
-- **U-14 · Cada cosa en su momento de la copa** (D-116): la invitación mientras se pueda
+- 🤖👁 **U-12 · Nada se encima:** nombres largos parten línea; etiquetas de empatados se apilan.
+- 👁 **U-13 · Lo que se muestra es lo que se juega:** el laboratorio tiene la misma UX que producción.
+- 👁 **U-14 · Cada cosa en su momento de la copa** (D-116): la invitación mientras se pueda
   entrar (en Administrar, D-176), la tabla parcial mientras se juega, el resumen al terminar,
   "sacar" nunca con la copa terminada.
-- **U-15 · Las acciones que no se deshacen piden confirmación** (rendirse, eliminar la copa,
+- 👁 **U-15 · Las acciones que no se deshacen piden confirmación** (rendirse, eliminar la copa,
   cerrar la inscripción, mover el inicio). Eliminar pide escribir el nombre.
 
-- **U-16 · Las reglas están a mano sin estorbar:** plegadas debajo del tablero en cada juego
+- 👁 **U-16 · Las reglas están a mano sin estorbar:** plegadas debajo del tablero en cada juego
   (D-133), con las mismas palabras de los botones.
-- **U-39 · The start button is seen without scrolling** (D-344, #464). On every game's landing
+- 🤖 **U-39 · The start button is seen without scrolling** (D-344, #464). On every game's landing
   page the main action —Empezar, or the first mode of the picker— shows whole in the first screen
   of a small phone (320×568) and a common one (375×667), in the three languages. The order is
   cover, title, language, the button, and then «Cómo se juega», always a `<details>` collapsed by default (the owner's rule, 2026-10-28), and the rest; a cover that does not
   fit shrinks on a short screen. `node tools/e2e/landing-fold.mjs` checks it on every PR over the
   `intro` path of each game in `tools/e2e/paths.mjs`: a new game is checked as soon as it has one.
-- **U-17 · El botón dice la acción, nada más:** verbo y objeto, en una sola línea a 320 px (unos
+- 🤖👁 **U-17 · El botón dice la acción, nada más:** verbo y objeto, en una sola línea a 320 px (unos
   18 caracteres). Lo que haya que explicar va en el texto de arriba. Si dos botones se parecen,
   se distinguen en la palabra principal y no con una cola ("Jugar de nuevo" / "Repetir esta
   partida", no "Jugar otra vez con otro contenido"). Lo secundario o técnico va en botón chico.
@@ -86,22 +101,22 @@ la portada al día, va con los textos, and U-39, the start button above the fold
 
 ## Interacciones
 
-- **U-20 · El reloj corre solo mientras se juega:** parte con la pantalla de juego a la vista (después
+- 👁 **U-20 · El reloj corre solo mientras se juega:** parte con la pantalla de juego a la vista (después
   de la cuenta regresiva y de la entrada del juego, si la tiene), se pausa con la pantalla oculta y se
   detiene al terminar el tablero (D-105, D-130, D-258). In La Copa's games it does not show while playing, only at the end; a game's own ⏳ countdown does (D-379), and so does the ⏱ elapsed time of a game whose speed scores and that has no countdown (Loteo, Reinas; D-384).
-- **U-21 · Nada cambia a mitad de un día:** contenido, grilla o reglas nuevas entran para los días
+- 👁 **U-21 · Nada cambia a mitad de un día:** contenido, grilla o reglas nuevas entran para los días
   que todavía no empiezan (D-128).
-- **U-22 · Un reintento nunca traba:** si algo llegó aunque el celular mostró error, el segundo
+- 👁 **U-22 · Un reintento nunca traba:** si algo llegó aunque el celular mostró error, el segundo
   intento sigue normal (D-123).
-- **U-23 · Lo que se escribe no se pierde** con una actualización de la pantalla (campos enfocados,
+- 👁 **U-23 · Lo que se escribe no se pierde** con una actualización de la pantalla (campos enfocados,
   reportes guardados).
-- **U-37 · Waiting on the network shows, and a room that doesn't open has a way out** (D-319):
+- 👁 **U-37 · Waiting on the network shows, and a room that doesn't open has a way out** (D-319):
   while creating or joining a room the button says what it is doing ("Abriendo sala…") and the old
   error goes away; if the room can't be reached, a "📱 Jugar en un celular" button goes under the
   message. The create/join button is the retry; no reload link. The rematch button follows the
   same rule: the room text under it and the button back as the retry, without the one-phone button,
   since "Cambiar modo" is already next to it (D-322).
-- **U-38 · The inbox sits at the end of the experience and never interrupts** (D-341): "💬
+- 👁 **U-38 · The inbox sits at the end of the experience and never interrupts** (D-341): "💬
   Sugerencias y comentarios" is a quiet underlined link, the last thing on a result screen, after
   the result and after the main buttons (play again, share) and the rankings. Tapping it unfolds the
   form in place; it is never a popup, never shown during a game, and it never pushes the main
@@ -125,20 +140,20 @@ la portada al día, va con los textos, and U-39, the start button above the fold
 
 ## Compartir
 
-- **U-30 · Formato de los mensajes:** cabecera `{emoji} *{título}* · {contexto}` (en la copa,
+- 👁 **U-30 · Formato de los mensajes:** cabecera `{emoji} *{título}* · {contexto}` (en la copa,
   "La Copa: {nombre}"), una idea por línea con su emoji al inicio, y el link solo en la última
   línea ("🔗 …"). Vale para todo lo que se comparte, también las salas (D-165).
-- **U-33 · La imagen dice lo mismo que el texto:** arriba la misma cabecera (título y contexto),
+- 👁 **U-33 · La imagen dice lo mismo que el texto:** arriba la misma cabecera (título y contexto),
   abajo el mismo link. Un resultado o una tabla se comparten siempre con imagen y texto juntos,
   desde cualquier botón; una invitación, solo con texto (la imagen la pone la tarjeta del link).
   La app, desde la portada ("Invitar a jugar"), va con esa tarjeta como imagen, la de su idioma
   (D-226); el video de la portada (the Short of the tab on show, D-410), solo con texto: la vista previa la arma
   el chat con la miniatura de YouTube (D-253).
-- **U-31 · Completo:** el resultado dice copa, día, juego, jugador y puntaje; la tabla dice quién
+- 👁 **U-31 · Completo:** el resultado dice copa, día, juego, jugador y puntaje; la tabla dice quién
   falta y marca "(-1J)" a quien lleva menos juegos. Excepción: el resultado de Uno al día no
   nombra el juego de hoy (#215).
-- **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los juegos que vienen.
-- **U-35 · La app se presenta entera:** el mensaje de compartir la app nombra todo lo principal
+- 👁 **U-32 · Sin spoilers:** lo que se comparte no revela respuestas ni los juegos que vienen.
+- 👁 **U-35 · La app se presenta entera:** el mensaje de compartir la app nombra todo lo principal
   (`LO_PRINCIPAL` en `compartir.js`: La Copa, Uno al día, jugar en grupo, jugar solo, rankings, sin
   cuenta, la app instalable con sus avisos y los tres idiomas), una línea cada cosa y en los tres idiomas; el del video y la bajada de la tarjeta del
   link no dicen menos de lo que hay. Lo que entra a la app como algo principal se suma ahí en el mismo
@@ -146,7 +161,7 @@ la portada al día, va con los textos, and U-39, the start button above the fold
 
 ## Marketing
 
-- **U-34 · El marketing muestra la app de hoy:** cada asset de `marketing/` (el video y lo que
+- 🤖👁 **U-34 · El marketing muestra la app de hoy:** cada asset de `marketing/` (el video y lo que
   venga) y las tarjetas sociales enseñan los juegos que hay, con sus nombres, emojis, textos y
   pantallas actuales. Un juego nuevo que no sale, uno que ya no está, un nombre o un texto viejo o
   una pantalla que cambió se anotan como pendiente del asset (`node tools/agents/marketing.mjs record`).
@@ -156,7 +171,7 @@ la portada al día, va con los textos, and U-39, the start button above the fold
   uno que ya no está o una pantalla que cambió. Un juego que sale a propósito sin estar en la
   portada, porque todavía está en el laboratorio (`"laboratorio": ["caso"]`; el teaser de El caso),
   tampoco cuenta como "uno que ya no está".
-- **U-40 · Promotional material looks like the app (D-380):** every promotional item uses the
+- 👁 **U-40 · Promotional material looks like the app (D-380):** every promotional item uses the
   app's colors, fonts (Bangers for titles and game names, Nunito for text; see `--font-display`
   and `--font-body` in `public/assets/css/base.css`), emojis and look. A missing font is
   downloaded, never swapped for a look-alike.

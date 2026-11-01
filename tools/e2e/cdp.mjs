@@ -2,6 +2,7 @@
 import { spawn } from 'node:child_process';
 import { writeFileSync, readFileSync, rmSync, mkdirSync } from 'node:fs';
 import { measureSpacing, lacksSpacing, MIN_SPACING } from './spacing-common.mjs';
+import { measureOverlap } from './spacing-common.mjs';
 import { isFolder as isFolder } from './output.mjs';
 // CHROME: another path to the browser (Linux, a cloud session)
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -162,6 +163,19 @@ export async function launch({ port: requested, dir, out, width = 390, height = 
         const bad = lacksSpacing(rows);
         if (bad.length) console.log(`✗ ${name}: button without space below the board (U-11, ${MIN_SPACING} px or more): ${bad.join(', ')}`);
       } catch (_) { /* a page without the app (about:blank) has no boards */ }
+      // And that no two buttons cover each other (U-12, D-520)
+      try {
+        // Measured twice, 600 ms apart: a sheet still sliding in is not an overlap, one that stays is
+        const first = JSON.parse(await api.evaluate(measureOverlap));
+        let pairs = [];
+        if (first.length) {
+          await sleep(600);
+          const who = p => p.replace(/ \(\d+×\d+ px\)$/, '');
+          const again = new Set(JSON.parse(await api.evaluate(measureOverlap)).map(who));
+          pairs = first.filter(p => again.has(who(p)));
+        }
+        if (pairs.length) console.log(`✗ ${name}: buttons on top of each other (U-12): ${pairs.join(', ')}`);
+      } catch (_) { /* no page */ }
     },
     close: () => { ws.close(); chrome.kill(); },
     /**

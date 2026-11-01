@@ -8,7 +8,7 @@ What each agent (`.claude/agents/`) and owner tool does, and the command it runs
 
 - **Usability** (D-132): reviews each PR and does its round when the processes agent launches it (D-276).
   Dilemmas are GitHub issues: `node tools/agents/dilemmas.mjs list | show <n> | create <file.md> | resolve <n> "decision" | archive <n> "reason" | reopen <n>`;
-  what is resolved is recorded in `docs/USABILIDAD.md`. On each PR it runs `node tools/agents/covers.mjs check [base]`,
+  what is resolved is recorded in `docs/USABILIDAD.md`. On each PR it first reads `node tools/agents/usability-lint.mjs` (the measurable rules, D-520: `tests` runs it too) and runs `node tools/agents/covers.mjs check [base]`,
   which shows the motto, the steps and the card of each game the PR touches and warns ⚠️ if the game
   changed and its home page did not (U-36).
 - **Documentation** (D-172): a round when the processes agent launches it (D-276), a review of each PR, and on

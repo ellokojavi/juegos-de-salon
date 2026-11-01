@@ -23,6 +23,7 @@ import { EN_LABS, LABS_KEY } from '../../public/assets/js/i18n.js';
 import { gameById } from '../../public/assets/js/games.js';
 import { PATHS } from './paths.mjs';
 import { measureSpacing, lacksSpacing, MIN_SPACING } from './spacing-common.mjs';
+import { measureOverlap } from './spacing-common.mjs';
 
 const args = process.argv.slice(2);
 const pos = args.filter(a => !a.startsWith('--'));
@@ -119,6 +120,7 @@ const review = await b.evaluate(`(()=>{
 })()`).then(JSON.parse);
 
 const spacing = JSON.parse(await b.evaluate(measureSpacing));
+const overlaps = JSON.parse(await b.evaluate(measureOverlap));
 
 // In case an entry ever carries a slash: the screenshot stays flat
 const name = `${game.replace(/\//g, "-")}-${screen}-${width}`;
@@ -128,6 +130,7 @@ console.log(`  screen: ${review.screen}`);
 console.log(`  horizontal scroll (C-8): ${review.horizontalScroll ? '⚠️  YES' : 'no'}`);
 console.log(`  buttons under 44 px (C-8): ${review.smallButtons.length ? '⚠️  ' + review.smallButtons.join(', ') : 'none'}`);
 console.log(`  board → buttons spacing (U-11, ${MIN_SPACING} px or more): ${!spacing.length ? 'no marked board' : lacksSpacing(spacing).length ? '⚠️  ' + lacksSpacing(spacing).join(', ') : spacing.map(f => `${f.spacing} px`).join(', ')}`);
+console.log(`  buttons on top of each other (U-12): ${overlaps.length ? '⚠️  ' + overlaps.join(', ') : 'none'}`);
 console.log(`  the page is taller than the screen: ${review.excess > 0 ? `⚠️  ${review.excess} px` : 'no'}${notches ? ' (with notches)' : ''}`);
 console.log(`  buttons off screen: ${review.belowBottom.length ? '⚠️  ' + review.belowBottom.join(', ') : 'none'}`);
 if (review.underChat) console.log(`  buttons under the chat bubble: ${review.underChat.length ? '⚠️  ' + review.underChat.join(', ') : 'none'}`);
