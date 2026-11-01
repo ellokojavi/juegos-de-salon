@@ -35,3 +35,34 @@ export const measureSpacing = `(()=>{
 
 /** The ones that fail, one line each: "board → button (12 px)". */
 export const lacksSpacing = rows => rows.filter(f => f.spacing < MIN_SPACING).map(f => `${f.board} → ${f.button} (${f.spacing} px)`);
+
+/**
+ * Nothing overlaps (U-12, D-520): two buttons of the same screen never cover each other. Every
+ * screenshot of the scripts checks it (`b.shot()` in cdp.mjs), like the board spacing (U-11,
+ * spacing-common.mjs), and `look.mjs` reports it, so every e2e script watches it on every screen it
+ * photographs and the scope rules (D-391) still decide which scripts run.
+ *
+ * A button is a visible `button` or `a.btn` of the active screen (or the open dialog). Floating
+ * ones (position fixed or sticky: the chat bubble, a toast) float on purpose and are left out, as is
+ * a button inside another one. Two overlap when they share more than MIN_OVERLAP px in both
+ * directions. An element marked `data-overlap-ok` (a deliberate stack) is left out too.
+ */
+export const MIN_OVERLAP = 4;
+
+/** Code to evaluate in the page: returns JSON with the pairs of buttons that overlap. */
+export const measureOverlap = `(()=>{
+  const root = document.querySelector('.screen.active') || document.body;
+  const floating = x => { for (let e = x; e && e !== document.body; e = e.parentElement) { const p = getComputedStyle(e).position; if (p === 'fixed' || p === 'sticky') return true; } return false; };
+  const visible = x => { const s = getComputedStyle(x); const r = x.getBoundingClientRect(); return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && Number(s.opacity) > 0 && x.closest('[aria-hidden="true"]') === null; };
+  const scopes = [root, ...document.querySelectorAll('dialog[open], .confirm')].filter((x, i, a) => a.indexOf(x) === i);
+  const buttons = [...new Set(scopes.flatMap(s => [...s.querySelectorAll('button, a.btn')]))]
+    .filter(x => visible(x) && !floating(x) && !x.closest('[data-overlap-ok]') && !x.parentElement.closest('button, a.btn'));
+  const label = x => (x.textContent || x.getAttribute('aria-label') || x.className || x.tagName).toString().trim().replace(/\\s+/g, ' ').slice(0, 20);
+  const pairs = [];
+  for (let i = 0; i < buttons.length; i++) for (let j = i + 1; j < buttons.length; j++) {
+    const a = buttons[i].getBoundingClientRect(), b = buttons[j].getBoundingClientRect();
+    const w = Math.min(a.right, b.right) - Math.max(a.left, b.left), h = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+    if (w > ${MIN_OVERLAP} && h > ${MIN_OVERLAP}) pairs.push(label(buttons[i]) + ' × ' + label(buttons[j]) + ' (' + Math.round(w) + '×' + Math.round(h) + ' px)');
+  }
+  return JSON.stringify(pairs);
+})()`;

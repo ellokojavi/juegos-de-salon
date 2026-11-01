@@ -1,0 +1,25 @@
+{
+  "_about": "Exceptions to the usability lint (tools/agents/usability-lint.mjs, D-520), each with its reason: none is silent. Per rule, entries { file, path, lang, reason }; `*` matches any run of characters. An entry that no longer hits fails as stale, so remove it when its text changes.",
+  "U-2": [
+    { "file": "public/cup/games/plots/texts.js", "path": "default.*", "lang": "*", "reason": "The ⚡ and 💧 are the board's own symbols (Loteo's utilities variant): the emoji is the noun, the way the player sees it on the board." },
+    { "file": "public/cup/games/agents/texts.js", "path": "default.*.ui.agMarksHelp", "lang": "*", "reason": "📌 and 🚫 are the marks the card shows after each long press: naming them by their symbol is how the player recognizes them." },
+    { "file": "public/assets/js/i18n.js", "path": "COMMON.*.uad.pts.reglas.3.2", "lang": "*", "reason": "The 🏆 is the badge shown next to the name: the emoji is the thing being described." },
+    { "file": "public/labs/exploding-numbers/game.js", "path": "T.como.2.1", "lang": "lab", "reason": "➕ is the game's button, named by its symbol in the rules." }
+  ],
+  "U-5": [
+    { "file": "public/cup/games/stick/texts.js", "path": "default.es.ui.snAchMoving", "lang": "es", "reason": "«Blanco móvil» is a moving target, not a phone: móvil as an adjective." },
+    { "file": "public/assets/js/i18n.js", "path": "COMMON.pt.rk.pinWarn", "lang": "pt", "reason": "It warns not to reuse the bank's password (senha) as the PIN: the bank's word is the right one there." }
+  ],
+  "U-6": [
+    { "file": "public/cup/games/plots/texts.js", "path": "default.en.ui.ltAreaOne", "lang": "en", "reason": "«The 1 asks for 1 square»: asks is a verb, not a plural noun." },
+    { "file": "public/labs/fourth-king/rules.js", "path": "LOCALES.*.ui.hoDrinkOne", "lang": "*", "reason": "One is the number of drinkers; {n} is SORBOS, a constant above 1." }
+  ],
+  "U-17": [
+    { "file": "public/assets/js/how-to-play-facts.js", "path": "TEXTS.*.one", "lang": "*", "reason": "Not a button: its key «one» is the same as search.js's list button in public/assets." },
+    { "file": "public/assets/js/search.js", "path": "TEXTS.*.one", "lang": "*", "reason": "A full-width row at the end of the search list (.buscar-todos), not a centered button: it may wrap with a long query." },
+    { "file": "public/cup/rules.js", "path": "LOCALES.*.reportButton", "lang": "*", "reason": "A small text link (link-btn) at the bottom, the secondary kind U-17 allows to be longer." },
+    { "file": "public/cup/rules.js", "path": "LOCALES.*.casoAyudaSure", "lang": "*", "reason": "The armed hint (the owner's choice in #351): it says what the second tap does, and it wraps centered." },
+    { "file": "public/cup/rules.js", "path": "LOCALES.*.leave", "lang": "*", "reason": "Leaving a cup on this phone needs both parts to be unmistakable; a wide secondary button that wraps centered." },
+    { "file": "public/generala/rules.js", "path": "LOCALES.*.ui.allKept", "lang": "*", "reason": "The disabled roll button's state message, not an action label: it explains why it cannot roll." }
+  ]
+}
