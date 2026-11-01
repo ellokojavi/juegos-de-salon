@@ -133,7 +133,6 @@ export function escena(canvas, { zoom = 1 } = {}) {
     if (cortes.has(n)) { plano(cortes.get(n)); linea(g.slabs[n], cortes.get(n)); }
 
     piezas.filter(p => !detras(p)).forEach(p => caja(p.slab, p.y, p.y + SLAB, p.color));
-    if (vista) vista.marcas.forEach(rotulo);
 
     // A perfect drop: a neon outline that opens around the slab, glowing, and fades
     for (let i = anillos.length - 1; i >= 0; i--) {
@@ -171,6 +170,19 @@ export function escena(canvas, { zoom = 1 } = {}) {
     ctx.fillStyle = `rgba(46,230,214,${0.1 + 0.16 * luz})`; ctx.fill();
     ctx.shadowColor = '#2ee6d6'; ctx.shadowBlur = 6 + 14 * luz;
     ctx.strokeStyle = `rgba(160,255,248,${0.35 + 0.65 * luz})`; ctx.lineWidth = 1.5 + 1.5 * luz; ctx.stroke();
+    // Its number, big and lying on the plane, in its right-hand corner past the tower's foot: it turns
+    // with the tower, and reads upright when the view faces front (the tour's start and end)
+    const r = Math.SQRT1_2, [ox, oy] = pt(0, y, 0), [ux, uy] = pt(r, y, -r), [vx, vy] = pt(r, y, r), e = 1 / 100;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const dpr = canvas.width / W;
+    ctx.setTransform(dpr * (ux - ox) * e, dpr * (uy - oy) * e, dpr * (vx - ox) * e, dpr * (vy - oy) * e, dpr * ox, dpr * oy);
+    ctx.shadowBlur = 0;
+    // Behind the tower it would show through the slabs in front of it: it fades out as it goes round the back
+    // (its corner's depth toward the viewer: 0 at the side, as it starts; -2 straight behind)
+    const fondo = -2 * Math.sin(fija?.yaw || giro);
+    ctx.globalAlpha = Math.min(1, Math.max(0, (fondo + 1.2) / 0.6));
+    ctx.font = '26px Bangers, system-ui, sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = `rgba(220,255,252,${0.55 + 0.45 * luz})`; ctx.fillText(String(k), (m * Math.SQRT2 - 0.12) * 100, 0.12 * 100);
     ctx.restore();
   }
   /** Where the plane meets the tower: a dark slit and a bright line around the slab's foot. */
@@ -182,17 +194,6 @@ export function escena(canvas, { zoom = 1 } = {}) {
     trazo(borde(x0, x1, z0, z1, y), `rgba(220,255,252,${0.6 + 0.4 * luz})`, 2 + 2 * luz);
     ctx.restore();
   }
-  /** The cut's number, beside the plane's right corner (whichever is rightmost as the view turns). */
-  function rotulo({ k, luz }) {
-    const y = k * SLAB, m = ANCHO;
-    const [lx, ly] = [pt(-m, y, -m), pt(m, y, -m), pt(m, y, m), pt(-m, y, m)].reduce((a, b) => (b[0] > a[0] ? b : a));
-    ctx.save();
-    ctx.font = `${Math.round(18 + 8 * luz)}px Bangers, system-ui, sans-serif`;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = `rgba(255,255,255,${0.45 + 0.55 * luz})`; ctx.fillText(String(k), lx + 10, ly);
-    ctx.restore();
-  }
-
   return {
     /** The end's tour (`n` levels): from the top down to the base, a cut every ten, and back up. */
     recorrer(n, now = performance.now()) { gira = { n, born: now }; },
