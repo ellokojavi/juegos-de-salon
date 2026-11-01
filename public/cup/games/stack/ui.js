@@ -28,6 +28,8 @@ import { loadCss } from '../../../assets/js/load-css.js';
 import { getLang } from '../../../assets/js/i18n.js';
 import TEXTOS from './texts.js';
 import { labAccess } from '../../../assets/js/lab-access.js';
+import { flag } from '../../../assets/js/flags.js';
+import { musicOn, setMusicOn } from '../../../assets/js/music.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -103,6 +105,15 @@ export function titulo({ el, J }) {
       el('span', { class: 'sk-logo', 'aria-hidden': 'true' }, '🗼'),
       el('span', { class: 'display display--lg rainbow' }, J.nombre)),
     el('p', { class: 'sk-credito', id: 'sk-credito' }, antes, el('a', { href: ORIGINAL, target: '_blank', rel: 'noopener', id: 'link-stack' }, 'Stack'), despues || ''));
+  // The background music's switch (flag babel-music), remembered on this phone
+  flag('babel-music').then(si => {
+    if (!si || !cabeza.isConnected) return;
+    const boton = el('button', { type: 'button', class: 'btn btn--ghost btn--sm sk-musica', id: 'btn-musica', 'aria-pressed': String(musicOn()) });
+    const pintar = () => { const on = musicOn(); boton.textContent = on ? UI().skMusicOn : UI().skMusicOff; boton.setAttribute('aria-pressed', String(on)); };
+    boton.addEventListener('click', () => { setMusicOn(!musicOn()); pintar(); });
+    pintar();
+    cabeza.append(boton);
+  }).catch(() => {});
   // Only for a lab key, on Babel's own page: the owner's way to see a game's last blocks and its end
   // without playing (it never reaches a ranking: «See results» comes back here). lab: #seccion-stack
   if (document.body?.dataset.suelto === 'stack') labAccess().then(ok => {

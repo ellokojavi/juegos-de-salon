@@ -8,6 +8,11 @@
 import { isMuted } from './sound.js';
 
 const VOLUME = 0.22;
+const PREF = 'juegos-de-salon:music';
+
+/** Whether the player wants the music (the switch on the game's cover); on unless turned off. */
+export function musicOn() { try { return localStorage.getItem(PREF) !== '0'; } catch (_) { return true; } }
+export function setMusicOn(v) { try { localStorage.setItem(PREF, v ? '1' : '0'); } catch (_) { /* this time only */ } }
 let audio = null, ctx = null, gain = null, fade = null, syncing = null, later = null;
 
 /** Mute pressed mid-game: the music follows it at once. */
@@ -15,7 +20,7 @@ function sync() { if (audio) audio.muted = isMuted(); }
 
 export function start(tracks) {
   stop();
-  if (!tracks?.length) return;
+  if (!tracks?.length || !musicOn()) return;
   const src = tracks[Math.floor(Math.random() * tracks.length)];
   audio = new Audio(src);
   audio.loop = true;

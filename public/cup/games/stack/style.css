@@ -76,3 +76,4 @@
 /* The credit to the original, in the waiting room (like Pintaminas' .pm-credito) */
 .sk-credito { margin: 0; font-size: 0.85rem; color: var(--muted); text-align: center; }
 .sk-credito a { color: var(--cyan); }
+.sk-musica { display: block; margin: 8px auto 0; }

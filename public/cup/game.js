@@ -1436,7 +1436,7 @@ function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) 
 }
 
 /** Background music by game, an experiment behind the flag babel-music: one track at random each game. */
-const MUSICA = { stack: [`${RAIZ}assets/music/babel/track.mp3`] };
+const MUSICA = { stack: [1, 2, 3, 4].map(n => `${RAIZ}assets/music/babel/track-${n}.mp3`) };
 
 /**
  * El 3, 2, 1, ¡A jugar! antes de cada juego (D-105), el de assets/js/cuenta-regresiva.js. Devuelve

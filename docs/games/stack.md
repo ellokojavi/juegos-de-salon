@@ -127,6 +127,7 @@ happens, a pause on losing focus and the tap back that only resumes, a miss, the
 
 ## Background music (experiment, flag `babel-music`)
 
-From the countdown until 5 s after the game is lost, when it fades out over 2 s (leaving the result screen sooner stops it), one retro track
-("Retro Game" by The Mountain, Pixabay), at 22% volume through a Web Audio gain so the sound effects play over it;
+From the countdown until 5 s after the game is lost, when it fades out over 2 s (leaving the result screen sooner stops it), one of four retro tracks at random each game
+(Pixabay: The Mountain, Bransboynd, Hitslab, DeepMusicEveryday), at 22% volume through a Web Audio gain so the sound effects play over it;
 it follows the mute button. `public/assets/js/music.js`, hooked in `cup/game.js` (`MUSICA`, `mostrar`).
+The cover has «🎵 Música: sí / no» (`#btn-musica`), kept on the phone in `juegos-de-salon:music`.
