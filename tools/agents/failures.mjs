@@ -43,7 +43,7 @@ export function normalize(text) {
     .replace(/\d{4}-\d\d-\d\dT[\d:.]+Z?/g, '<time>')
     .replace(/\b\d{4}-\d\d-\d\d\b/g, '<date>')
     .replace(/\b\d\d:\d\d(:\d\d(\.\d+)?)?\b/g, '<time>')
-    .replace(/(file:\/\/)?(\/[\w.@-]+)+\/([\w.@-]+)/g, '$3')
+    .replace(/(file:\/\/)?\/?([\w.@-]+\/)+([\w.@-]+)/g, '$3')
     .replace(/(\.m?[jt]sx?|\.py|\.html|\.json):\d+(:\d+)?/g, '$1')
     .replace(/\bline \d+\b/gi, 'line <n>')
     .replace(/\b[0-9a-f]{7,40}\b/g, '<hash>')
@@ -60,7 +60,7 @@ export function signature(test, error) {
 /** A line of `gh run view --log-failed` is "job<TAB>step<TAB>time text": the text alone. */
 const text = line => line.replace(/^[^\t]*\t[^\t]*\t\S+Z ?/, '');
 const NOISE = /^\s+at |^Node\.js v|^\s*\^?\s*$|^##\[(endgroup|group)\]/;
-const ERRORISH = /✗|Error\b|AssertionError|assert|expected|FAIL|Cannot|not defined|not a function|Timeout/i;
+const ERRORISH = /✗|\bERROR\b|Error\b|AssertionError|assert|expected|FAIL|Cannot|not defined|not a function|Timeout/i;
 
 /**
  * The failing tests of a failed run's log, each with its first error lines. `tests` marks a failure
@@ -69,23 +69,31 @@ const ERRORISH = /✗|Error\b|AssertionError|assert|expected|FAIL|Cannot|not def
  */
 export function parseLog(log) {
   const failures = [];
-  let current = null, lines = [];
+  let current = null, lines = [], step = null, stepLines = [];
   for (const raw of String(log).split('\n')) {
     const t = text(raw);
+    const s = raw.split('\t')[1];
+    if (s !== step) { step = s; stepLines = []; }
     let m;
+    // A step that failed with no test of its own (the README check, a lint): the step is the test
+    if (/^##\[error\]Process completed with exit code/.test(t)) {
+      if (step && !failures.some(f => f.step === step)) failures.push({ test: step, error: excerpt(stepLines), step });
+      continue;
+    }
+    if (!NOISE.test(t)) stepLines.push(t);
     if ((m = t.match(/^##\[group\](\S+\.(?:m?js|py))\s*$/))) { current = m[1]; lines = []; continue; }
     if ((m = t.match(/^▶ (\S+)/))) { current = m[1]; lines = []; continue; }
     if ((m = t.match(/^##\[error\](\S+) failed\s*$/))) {
-      failures.push({ test: m[1], error: excerpt(lines) });
+      failures.push({ test: m[1], error: excerpt(lines), step });
       continue;
     }
     if ((m = t.match(/^##\[error\]exited with \d+: (.*)$/)) && current) {
-      if (!failures.some(f => f.test === current)) failures.push({ test: current, error: m[1].trim() || excerpt(lines) });
+      if (!failures.some(f => f.test === current)) failures.push({ test: current, error: m[1].trim() || excerpt(lines), step });
       continue;
     }
     if (current && !NOISE.test(t)) lines.push(t);
   }
-  return failures;
+  return failures.map(({ test, error }) => ({ test, error }));
 }
 
 /** The first three lines that look like an error, or the last three lines when none does. */

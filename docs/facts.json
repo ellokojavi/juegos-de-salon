@@ -1410,6 +1410,7 @@
     "tools/agents/decision.test.mjs",
     "tools/agents/document.test.mjs",
     "tools/agents/english.test.mjs",
+    "tools/agents/failures.test.mjs",
     "tools/agents/feedback-templates.test.mjs",
     "tools/agents/feedback.test.mjs",
     "tools/agents/ideas.test.mjs",

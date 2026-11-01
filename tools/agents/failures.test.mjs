@@ -13,6 +13,15 @@ assert.notEqual(signature('x.test.mjs', a), signature('x.test.mjs', 'TypeError: 
 assert.equal(normalize('took 1234ms, 58 px'), 'took <n>ms, <n>px');
 assert.match(signature('t', 'e'), /^[0-9a-f]{10}$/);
 
+assert.equal(normalize('see tools/release/readme.py and /a/b/c.js'), 'see readme.py and c.js', 'relative paths too');
+
+// A step that fails with no test of its own: the step is the test
+const step = ['tests\tREADME up to date\t2026-11-01T03:44:48.3Z ##[group]Run python3 tools/release/readme.py check',
+  'tests\tREADME up to date\t2026-11-01T03:44:51.2Z   warning · portada: 2 screenshot(s) older',
+  'tests\tREADME up to date\t2026-11-01T03:44:51.3Z   ERROR · the block "tests" went stale',
+  'tests\tREADME up to date\t2026-11-01T03:44:51.4Z ##[error]Process completed with exit code 1.'].join('\n');
+assert.deepEqual(parseLog(step), [{ test: 'README up to date', error: 'ERROR · the block "tests" went stale' }]);
+
 // A `tests` log and an end-to-end log
 const T = s => `tests\tNode tests\t2026-11-01T03:08:28.1Z ${s}`;
 const testsLog = [
