@@ -1,6 +1,6 @@
 // The lab's 🚀 Publicar requests (D-480): which one is taken first and how sync moves them.
 import assert from 'node:assert/strict';
-import { branchOf, oldest, next, STALE_MS, CONFLICT_MS, FIX_MS } from './lab-publish.mjs';
+import { isRed, MAX_FIXES, branchOf, oldest, next, STALE_MS, CONFLICT_MS, FIX_MS } from './lab-publish.mjs';
 import { toFix } from '../jobs/lab-publish-watch.mjs';
 
 assert.equal(branchOf('seccion-copa-crear'), 'publish-copa-crear');
@@ -18,12 +18,21 @@ assert.equal(next({ state: 'working', started: 0 }, null, 60000), null, 'one sti
 assert.equal(next({ state: 'requested', at: 0 }, null, STALE_MS * 9), null, 'a request waits for the job');
 // A PR in conflict with main (#937): seen, then sent to be fixed once it lasts, then failed
 const C = { state: 'OPEN', mergeable: 'CONFLICTING' };
-assert.deepEqual(next({ state: 'pr', pr: 1 }, C, 100), { conflictAt: 100 }, 'first seen: noted, nothing else');
+assert.deepEqual(next({ state: 'pr', pr: 1 }, C, 100), { conflictAt: 100, why: 'conflict' }, 'first seen: noted, nothing else');
 assert.equal(next({ state: 'pr', pr: 1, conflictAt: 100 }, C, 100 + CONFLICT_MS - 1), null, 'a stale read right after a push does not send anyone');
-assert.deepEqual(next({ state: 'pr', pr: 1, conflictAt: 100 }, C, 100 + CONFLICT_MS + 1), { fixAt: 100 + CONFLICT_MS + 1 }, 'it lasted: a session brings it up to date');
+assert.deepEqual(next({ state: 'pr', pr: 1, conflictAt: 100 }, C, 100 + CONFLICT_MS + 1), { fixAt: 100 + CONFLICT_MS + 1, why: 'conflict', fixes: 1 }, 'it lasted: a session brings it up to date');
 assert.equal(next({ state: 'pr', pr: 1, conflictAt: 1, fixAt: 5 }, C, 5 + FIX_MS - 1), null, 'the fix is under way');
 assert.equal(next({ state: 'pr', pr: 1, conflictAt: 1, fixAt: 5 }, C, 5 + FIX_MS + 1).state, 'failed', 'the fix did not take: Volver a pedir');
-assert.deepEqual(next({ state: 'pr', pr: 1, conflictAt: 1, fixAt: 5 }, { state: 'OPEN', mergeable: 'MERGEABLE' }, 9), { conflictAt: null, fixAt: null }, 'cleared');
+assert.deepEqual(next({ state: 'pr', pr: 1, conflictAt: 1, fixAt: 5 }, { state: 'OPEN', mergeable: 'MERGEABLE' }, 9), { conflictAt: null, fixAt: null, why: null }, 'cleared');
 assert.equal(next({ state: 'pr', pr: 1 }, { state: 'OPEN', mergeable: 'UNKNOWN' }, 9), null, 'still being computed: wait');
 assert.deepEqual(toFix('a: conflict seen\nseccion-x: conflict, sent to be fixed\n1 request(s) moved'), ['seccion-x'], 'the watcher starts a fix only for the sync that sent it');
+// Red checks are stuck too (#1099 waited hours red): same timers, sent to the same fix
+const R = { state: 'OPEN', mergeable: 'MERGEABLE', red: true };
+assert.deepEqual(next({ state: 'pr', pr: 1 }, R, 100), { conflictAt: 100, why: 'checks' }, 'red checks seen');
+assert.deepEqual(next({ state: 'pr', pr: 1, conflictAt: 100 }, R, 100 + CONFLICT_MS + 1), { fixAt: 100 + CONFLICT_MS + 1, why: 'checks', fixes: 1 }, 'still red: a session fixes it');
+assert.match(next({ state: 'pr', pr: 1, conflictAt: 1, fixAt: 5 }, R, 5 + FIX_MS + 1).msg, /rojo/, 'the fix did not take');
+assert.equal(next({ state: 'pr', pr: 1, conflictAt: 1, fixes: MAX_FIXES }, R, 1 + CONFLICT_MS + 1).state, 'failed', 'red again after every fix: no loop');
+assert.equal(isRed([{ conclusion: 'SUCCESS' }, { conclusion: 'FAILURE' }]), true);
+assert.equal(isRed([{ conclusion: 'SUCCESS' }, { conclusion: 'CANCELLED' }, { conclusion: null }]), false, 'cancelled or pending is not red');
+assert.equal(isRed(null), false);
 console.log('✓ lab publish');

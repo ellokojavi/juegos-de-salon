@@ -82,8 +82,8 @@ or any other here), launch it and report what it found; do not ask the owner fir
   What launches for everyone moves its card to La Bodega in the same PR (D-479); a flag flipped to *all* moves it in the next PR, keeping its switch (D-510). The owner sends a
   feature live from its own card: **🚀 Publicar para todos**, signed in as owner on `/labs/`, which the
   Mac mini's `lab-publish-watch` job hands to a headless session that opens the PR (D-480,
-  `node tools/agents/lab-publish.mjs list`); if that PR stays in conflict with `main`, the watcher sends
-  one more session to bring it up to date, or fails the request after an hour (D-486).
+  `node tools/agents/lab-publish.mjs list`); if that PR stays in conflict with `main` or with red checks, the watcher sends
+  one more session to bring it up to date, rerun or fix it (at most twice), or fails the request after an hour (D-486).
 - **Home page order and lab experiments** (D-361): `node tools/agents/popularity.mjs check | update`
   recounts the home page's order (`POPULARIDAD` in `games.js`) by games finished in the last four
   weeks; the processes round runs `update` once the list is a week old. What is tried on the home
