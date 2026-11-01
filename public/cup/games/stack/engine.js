@@ -146,8 +146,9 @@ export function card(kinds) {
  * slide, the cut and a perfect drop, short enough not to tire before the real game.
  */
 export const BLOQUES_ENSAYO = 8;
-/** Each block is worth 2 points: 50 blocks reach the 100 of La Copa. */
-export const PUNTOS_BLOQUE = 2;
+/** Each block is worth 1 point, and a perfect drop 1 more: height and precision weigh the same. */
+export const PUNTOS_BLOQUE = 1;
+export const PUNTOS_PERFECTA = 1;
 
 /**
  * The day's game. Every game starts the same (nothing is random: the slide only depends on the time),
@@ -161,11 +162,16 @@ export function generarDia(codigo, dia, { variante = null, sal = '', ensayo = fa
 /** The blocks of a finished (or saved) game. */
 const bloques = e => Math.max(0, Math.floor(Number(e?.n) || 0));
 
+/** The perfect drops of a finished (or saved) game, never more than its blocks. */
+const perfectas = e => Math.min(bloques(e), Math.max(0, Math.floor(Number(e?.perfects) || 0)));
+
 /**
- * The score, 0 to 100: `Math.min(100, 2 * blocks)`, two points a block up to 50 blocks. Perfect drops
- * and streaks do not add points: they keep the slab wide, which is what lets the tower go on.
+ * The score, 0 to 100: blocks + perfect drops (a cut block 1 point, a perfect one 2), up to 100.
+ * Height and precision weigh the same, and precision only counts while the tower grows: 100 takes
+ * 50 perfect blocks, or a taller tower with fewer. The longest streak does not add: it already pays
+ * in height (from GROW_FROM in a row the slab grows back) and one slip would erase a good game.
  */
-export const puntaje = e => Math.min(100, PUNTOS_BLOQUE * bloques(e));
+export const puntaje = e => Math.min(100, PUNTOS_BLOQUE * bloques(e) + PUNTOS_PERFECTA * perfectas(e));
 
 /** The share card: the tower's last twenty blocks (🟩 perfect, 🟨 cut), and 💥 if none was placed. */
 export function tarjeta(e) {

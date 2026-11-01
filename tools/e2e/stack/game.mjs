@@ -2,7 +2,7 @@
 // the self-building tower and the credit to Ketchapp's Stack with its link; Empezar goes through the
 // countdown to the tower at 0 with "Toca donde sea"; a real tap drops the block; perfect drops say
 // "Perfecto ×n"; a late one cuts it; losing focus pauses and the tap back only resumes; missing the
-// tower ends the game, and «Continuar» gives 2 points a block with the breakdown and the share card.
+// tower ends the game, and «Continuar» gives a point a block plus one a perfect drop with the breakdown and the share card.
 // At 320 px nothing scrolls sideways. Prints ✗ if anything fails.
 import { output } from '../output.mjs';
 import { launch, sleep } from '../cdp.mjs';
@@ -64,7 +64,8 @@ ok(await waitFor(`!!document.getElementById('btn-fin')`, 4000), 'and «Continuar
 ok(/^5 pisos$/.test(await ev(`document.getElementById('sk-marcador').textContent`)), 'up top it says 5 pisos');
 await b.shot('03-end');
 await ev(`document.getElementById('btn-fin').click(); 1`);
-ok(await waitFor(`document.querySelector('#screen-resultado.active .score-big')?.textContent === '10/100'`, 5000), 'the result: 10/100, two points a block');
+const esperado = 5 + await ev(`${P}.S.g.perfects`);
+ok(await waitFor(`document.querySelector('#screen-resultado.active .score-big')?.textContent === '${esperado}/100'`, 5000), `the result: ${esperado}/100, a point a block plus one a perfect drop`);
 ok(/5 bloques en la torre/.test(await ev(`document.getElementById('explicacion')?.textContent || ''`)), 'the breakdown counts the blocks');
 ok(/🟩/.test(await ev(`document.querySelector('#screen-resultado pre.tarjeta')?.textContent || ''`)), 'the share card shows the tower');
 ok(await noSideScroll(), 'no sideways scroll in the result');

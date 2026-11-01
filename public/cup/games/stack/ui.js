@@ -356,7 +356,7 @@ export function montar(raiz, ctx) {
   globalThis.__stack = { S, soltarEn: caer, pausar, perfecto: () => perfectTime(S.g, performance.now()), estado };
 }
 
-/** What goes to the cup and to the result: 0 to 100 (2 a block), its card, and the playing time without pauses. */
+/** What goes to the cup and to the result: 0 to 100 (a block 1, a perfect drop 1 more), its card, and the playing time without pauses. */
 export function resultado(e) {
   const s = puntaje(e);
   return { s, t: tarjeta(e), resumen: `${s}/100`, ms: Number.isFinite(e?.ms) ? Math.round(e.ms) : undefined };
@@ -367,9 +367,9 @@ export function desglose(e, { T, fmt = fmtLocal }) {
   if (!e) return [];
   const n = Math.max(0, e.n | 0), pf = Math.max(0, e.perfects | 0), best = Math.max(0, e.best | 0);
   return [
-    fmt(T.skBdBlocks[forma(n)], { n, p: puntaje(e) }),
+    fmt(T.skBdBlocks[forma(n)], { n }),
+    fmt(T.skBdPerfects[forma(Math.min(pf, n))], { n: Math.min(pf, n) }),
     puntaje(e) >= 100 ? T.skBdCap : null,
-    fmt(T.skBdPerfects[forma(pf)], { n: pf }),
     best > 1 ? fmt(T.skBdStreak, { n: best }) : null,
   ].filter(Boolean);
 }

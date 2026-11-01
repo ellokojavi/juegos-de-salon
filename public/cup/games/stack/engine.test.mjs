@@ -139,15 +139,18 @@ assert.equal(card(Array(12).fill('perfect')).split('\n').length, 2);
   assert.equal(JSON.parse(JSON.stringify(a)).semilla, a.semilla, 'it survives being saved');
 }
 
-// The score: two points a block, from 0 up to 100
+// The score: a point a block plus a point a perfect drop, from 0 up to 100
 {
   assert.equal(puntaje({ n: 0 }), 0);
-  assert.equal(puntaje({ n: 1 }), 2);
-  assert.equal(puntaje({ n: 37 }), 74);
-  assert.equal(puntaje({ n: 50 }), 100);
-  assert.equal(puntaje({ n: 200 }), 100, 'never over 100');
+  assert.equal(puntaje({ n: 1 }), 1, 'a cut block: 1 point');
+  assert.equal(puntaje({ n: 1, perfects: 1 }), 2, 'a perfect block: 2 points');
+  assert.equal(puntaje({ n: 51, perfects: 26 }), 77, 'height and precision weigh the same');
+  assert.equal(puntaje({ n: 50, perfects: 50 }), 100);
+  assert.equal(puntaje({ n: 99 }), 99, 'all cut: 100 needs a taller tower');
+  assert.equal(puntaje({ n: 5, perfects: 40 }), 10, 'never more perfect drops than blocks');
+  assert.equal(puntaje({ n: 200, perfects: 80 }), 100, 'never over 100');
   assert.equal(puntaje(null), 0); assert.equal(puntaje({ n: -3 }), 0); assert.equal(puntaje({ n: 'x' }), 0);
-  for (let n = 0; n < 300; n++) { const s = puntaje({ n }); assert.ok(s >= 0 && s <= 100 && Number.isInteger(s)); }
+  for (let n = 0; n < 300; n++) { const s = puntaje({ n, perfects: n >> 1 }); assert.ok(s >= 0 && s <= 100 && Number.isInteger(s)); }
 }
 
 // The share card, from a finished game

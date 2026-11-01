@@ -47,8 +47,8 @@ const PUNTAJE = {
   // Tren en Vilo (D-456): ten a stage crossed, plus savings, solidity and speed
   // Shinobi: its points, up to 100 (D-517)
   stick: k => { const s = Math.min(100, Math.round(60 * k + 40 * k * k)); return { s, r: `🥷 ${s}` }; },
-  // Babel: two points a block, up to 100 (D-517)
-  stack: k => { const s = Math.min(100, 2 * Math.round(50 * k * k)); return { s, r: `${s}/100` }; },
+  // Babel: a point a block plus a point a perfect drop, up to 100 (D-517)
+  stack: k => { const n = Math.round(70 * k * k), s = Math.min(100, n + Math.round(n * k * 0.6)); return { s, r: `${s}/100` }; },
   puentes: k => { const s = Math.min(100, 10 * Math.round(5 * k) + Math.round(30 * k * k)); return { s, r: `${s}/100` }; },
   // La final trae su tarjeta de rondas (⏳75 🔢85 …), que la tabla del día muestra (#259)
   final: k => {

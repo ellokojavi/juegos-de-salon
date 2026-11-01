@@ -100,7 +100,7 @@ and, after a line, the comment form.
 
 The numbers at the top of `engine.js`: the swing (`RANGE`), the perfect margin (`PERFECT`), when and how
 much a streak grows the block (`GROW_FROM`, `GROW`) and the speed (`SPEED_START`, `SPEED_STEP`,
-`SPEED_MAX`). If it goes to La Copa, the height needs a 0-to-100 score.
+`SPEED_MAX`). La Copa's score (D-523) is `min(100, blocks + perfect drops)`: a cut block 1 point, a perfect one 2; the longest streak is shown but does not add.
 
 ## The teaser
 
