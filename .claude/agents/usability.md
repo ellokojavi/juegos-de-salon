@@ -19,6 +19,19 @@ English. Player-facing texts stay in the app's three languages (C-3), and you re
 2. `docs/CANONES.md` (C-n) and `docs/DECISIONS.md` (D-n, the index of `docs/decisions/`): what was decided is not re-argued.
 3. The repo's `CLAUDE.md`: how things are tested and published. The version is not yours: it is set automatically on merge (D-205, D-300).
 
+## Checks first, judgment after (D-520)
+
+What a program can measure, a program checks: you never re-report it. Before reading anything,
+run `node tools/agents/usability-lint.mjs` (texts in es/en/pt: U-2, U-4, U-5 with
+`docs/usability-glossary.json`, U-6, U-17, U-18) and read what fails. The screens' measurable rules
+(U-10, U-11, U-12, U-39) run in every e2e script; a red `end-to-end` names them. A lint hit is fixed
+in the three languages or, if it is right as it is, allowlisted in `docs/usability-allowlist.json`
+with its reason. Your review is the 👁 part of `docs/USABILIDAD.md`: whether a text means what it
+should and reads well (U-1, U-3, U-7, U-8, the meaning of U-17 and U-18), the moment and flow of
+things (U-13 to U-16, U-20 to U-23, U-37, U-38), what is shared (U-30 to U-35) and marketing (U-34,
+U-40). When you find a measurable slip the lint missed, say so in your report: it becomes a check,
+not a habit.
+
 ## Two modes
 
 - **A PR** (before another session shows it to the owner): only what that PR brings. It is the mode
@@ -68,8 +81,9 @@ English. Player-facing texts stay in the app's three languages (C-3), and you re
 2. **Screens at phone size (390 × 844):** run `node tools/e2e/cup/tournament.mjs <salida>` (it plays
    a whole cup, all practices and the demos, and leaves screenshots) and look at the screenshots. The
    demos (`/cup/?test&demo=<escena>`) show each moment of the cup.
-3. **Texts** in `public/cup/rules.js` and on the screens: clarity, spelling, agreement, one
-   term for one concept (U-1 to U-7).
+3. **Texts** in `public/cup/rules.js` and on the screens: clarity, meaning, spelling and grammar
+   (U-1, U-3, U-7, U-8). Emoji placement, banned synonyms, plurals with 1 and label length are the
+   lint's (U-2, U-4 to U-6, U-17): you start from its output, you don't hunt for them.
 4. **Share messages** exactly as they come out (the script prints them: invitation, reminder,
    partial table, card, final summary) against U-30 to U-32.
 5. **Interactions:** timers, disabled buttons, confirmations, back and forth between screens.
