@@ -137,16 +137,6 @@
         <h2>✨ Mejoras en prueba</h2>
         <p class="muted">Cambios al resto de la app, para mirarlos antes de que lleguen a todos.</p>
         <p class="muted mejoras-vacio">Ahora no hay ninguna en prueba: las lanzadas están en La Bodega.</p>
-        <section class="panel seccion" id="seccion-uad-month-end">
-          <h2>🥇 Uno al día: tu lugar al cerrar el mes</h2>
-          <p class="muted" style="margin:0">Cuando termina el mes, la primera visita a la portada muestra tu lugar final, una sola vez. El 1.º, el 2.º y el 3.º reciben una medalla de oro, plata o bronce, con fuegos artificiales y rayos. El resto ve su lugar en grande. Todos reciben un agradecimiento y la invitación a jugar el mes siguiente, y «Ver la tabla» abre la tabla del mes como antes.</p>
-          <div class="fila-botones" style="display:flex;flex-wrap:wrap;gap:8px">
-            <a class="btn btn--yellow" id="btn-uad-month-end" href="../?recap=month-end-demo">🥇 Ver como 1.º</a>
-            <a class="btn" href="../?recap=month-end-demo&amp;place=2">🥈 2.º</a>
-            <a class="btn" href="../?recap=month-end-demo&amp;place=3">🥉 3.º</a>
-            <a class="btn" href="../?recap=month-end-demo&amp;place=14">14.º</a>
-          </div>
-        </section>
       </section>
 
       <!-- Una línea separa lo que se está probando de lo que quedó guardado, como la de antes del comentario en los juegos -->
@@ -226,6 +216,20 @@
           <!-- Each card carries the day it launched; bodega.js folds them by week this month and by month before (#956) -->
           <input type="search" class="bodega-buscar" id="bodega-buscar" placeholder="🔎 Buscar una mejora" aria-label="Buscar una mejora">
           <p class="muted bodega-nada" id="bodega-nada" hidden>Ninguna mejora lanzada tiene esa palabra.</p>
+          <section class="panel seccion plegada" id="seccion-uad-month-end" data-launched="2026-11-01">
+            <details>
+              <summary><h2>🥇 Uno al día: tu lugar al cerrar el mes</h2><span class="flecha" aria-hidden="true">›</span></summary>
+              <div class="detalle">
+                <p class="muted" style="margin:0">🚀 Lanzado. Cuando termina el mes, la primera visita a la portada muestra tu lugar final en Uno al día, una sola vez: medalla de oro, plata o bronce con fuegos artificiales para los tres primeros, y tu lugar en grande para el resto, con la invitación a jugar el mes siguiente.</p>
+                <div class="fila-botones" style="display:flex;flex-wrap:wrap;gap:8px">
+                  <a class="btn btn--yellow" id="btn-uad-month-end" href="../?recap=month-end-demo">🥇 Ver como 1.º</a>
+                  <a class="btn" href="../?recap=month-end-demo&amp;place=2">🥈 2.º</a>
+                  <a class="btn" href="../?recap=month-end-demo&amp;place=3">🥉 3.º</a>
+                  <a class="btn" href="../?recap=month-end-demo&amp;place=14">14.º</a>
+                </div>
+              </div>
+            </details>
+          </section>
           <section class="panel seccion plegada" id="seccion-home-pill-bar" data-launched="2026-10-30">
             <details>
               <summary><h2>💊 Portada: botones de arriba parejos</h2><span class="flecha" aria-hidden="true">›</span></summary>
