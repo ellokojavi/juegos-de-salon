@@ -426,7 +426,8 @@
     .fila-alta:has(.uad-card.hecho) .game-card.torneo .meta { align-self: end; justify-self: stretch; width: 100%; }
     .fila-alta:has(.uad-card.hecho) .game-card.torneo .meta .copa-hoy-chip { width: 100%; flex: 1 1 100%; border-radius: 18px; min-height: calc(14px + 2.1rem * 0.95 + 0.78rem * 1.1); }
     /* La Copa's card with its context (lab flag copa-contexto): the cup's name in a pill on the border like
-       One a Day's month, in the Cup's gold; a bar of its days; a louder ▶ (yellow to orange, pressed edge) */
+       One a Day's month, in the Cup's gold; a bar of its days; a louder ▶ (yellow to orange, pressed edge);
+       the no-cup invite keeps the plain pill, matching One a Day's «Únete al mes» */
     .game-card.torneo.copa-ctx { position: relative; overflow: visible; }
     .game-card.torneo.copa-ctx .texto, .game-card.torneo.copa-ctx .tag { min-width: 0; max-width: 100%; }
     /* The card's grid puts its items at the start: the text must take the whole width, or with only the bar in it (a cup kept before the place was) it shrinks to nothing */
@@ -443,7 +444,7 @@
     .game-card.torneo .copa-dias + .copa-fila { margin-top: 8px; }
     .game-card.torneo .copa-fila b { min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; }
     .game-card.torneo .copa-fila span { flex: none; padding-left: 0.25em; }
-    .game-card.torneo.copa-ctx .meta .copa-hoy-chip:not(.espera) { font-size: clamp(0.95rem, 3.4vw, 1.15rem); color: #1a0d00; background: linear-gradient(180deg, #ffe066, var(--orange)); box-shadow: 0 4px 0 #b34a00, 0 6px 18px rgba(255, 122, 26, 0.45); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); }
+    .game-card.torneo.copa-ctx .meta .copa-hoy-chip:not(.espera):not(.invita) { font-size: clamp(0.95rem, 3.4vw, 1.15rem); color: #1a0d00; background: linear-gradient(180deg, #ffe066, var(--orange)); box-shadow: 0 4px 0 #b34a00, 0 6px 18px rgba(255, 122, 26, 0.45); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); }
     /* Two destinations (lab, D-414): the link covers the card; the chip sits above it */
     .uad-card.dos { position: relative; }
     .uad-card .uad-card-mes { position: absolute; top: -11px; right: 12px; z-index: 3; padding: 1px 12px; border-radius: 999px; border: 1px solid rgba(255, 46, 136, 0.6); background: #2a1a4f; color: #ff8cc0; font: 900 0.75rem/1.4 var(--font-body); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }

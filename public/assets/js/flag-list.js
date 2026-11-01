@@ -4,7 +4,7 @@
  * end-to-end scripts of every page (D-515). A new flag is a row here and its card in /labs/.
  */
 export const FLAGS = {
-  'copa-crear': '🏆 La Copa: the new create screen',
+  'copa-crear': '🏆 La Copa: the new create screen, with the length from 3 to 14 days and the cup\'s zone, and each player\'s own hours in a cup of another zone (D-521)',
   'copa-hoy': '🏆 La Copa: ▶ Jugar hoy on its home page card',
   'copa-espera': '🏆 La Copa: Día N en Xh on its home page card',
   'copa-contexto': '🏆 La Copa: which cup, your place and the day\'s game on its home page card',
