@@ -44,17 +44,14 @@
 .sk-titulo-pausa { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 2rem; }
 .sk-pausa .display { font-size: 2.6rem; }
 
-/* The end, under the tower: the blocks and «See results» */
+/* The end, under the tower: «See results» */
 .sk-fin { display: grid; gap: 10px; justify-items: center; text-align: center; }
 .sk-fin:empty { display: none; }
-.sk-sello { margin: 0; font: 1.3rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--lime);
-  padding: 2px 12px; border: 3px solid currentColor; border-radius: 10px; transform: rotate(-5deg); animation: pop 0.5s ease-out 0.3s both; }
-/* Finished: the tower shrinks to leave room for the button */
-.sk-juego.terminado .sk-escenario { height: calc(100svh - 360px); min-height: 260px; cursor: default; }
+/* Finished: the tower takes the whole screen for the tour (scene.js recorrer) */
+.sk-juego.terminado .sk-escenario { height: calc(100svh - 150px); min-height: 380px; cursor: default; }
 
-/* The end's tour (flag stack-tour): the tower takes the whole screen, nothing fades it at the bottom,
+/* The end's tour : the tower takes the whole screen, nothing fades it at the bottom,
    and «See results» sits on a blurred strip over it that melts upward */
-.sk-juego.terminado.gira .sk-escenario { height: calc(100svh - 150px); min-height: 380px; }
 .sk-juego.gira .sk-lienzo { -webkit-mask-image: none; mask-image: none; }
 .sk-juego.gira .sk-fin { position: relative; z-index: 1; margin-top: -110px; padding: 44px 0 6px;
   background: linear-gradient(to bottom, transparent, rgba(29,11,58,0.8) 45%);
@@ -64,7 +61,7 @@
 .sk-pisos { font: 0.5em var(--font-display); letter-spacing: 0.04em; vertical-align: 0.3em; }
 
 @media (prefers-reduced-motion: reduce) {
-  .sk-logo, .sk-sello, .sk-aviso.brilla { animation: none; }
+  .sk-logo, .sk-aviso.brilla { animation: none; }
 }
 
 /* A short phone (320×568): the cover's tower shrinks so Start stays near the fold (U-39) */

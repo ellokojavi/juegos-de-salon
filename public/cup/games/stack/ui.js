@@ -26,7 +26,6 @@ import { confetti } from '../../../assets/js/ui.js';
 import { onScreen } from '../../../assets/js/on-screen.js';
 import { loadCss } from '../../../assets/js/load-css.js';
 import { getLang } from '../../../assets/js/i18n.js';
-import { flag } from '../../../assets/js/flags.js';
 import TEXTOS from './texts.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
@@ -130,10 +129,6 @@ export function montar(raiz, ctx) {
   const juego = el('div', { class: 'sk-juego' }, escenario, fin);
   raiz.append(juego);
   const sc = escena(lienzo);
-  // The end's tour (flag stack-tour, lab: #seccion-stack-tour): the camera goes down the finished tower
-  // turning a full circle, a cut every ten floors, and back up; the tower takes the whole screen
-  let gira = false;
-  const conGira = flag('stack-tour').then(on => (gira = !!on)).catch(() => false);
 
   /** The game as it is saved and handed to the cup. */
   const estado = () => ({
@@ -217,8 +212,8 @@ export function montar(raiz, ctx) {
       juego.classList.add('terminado');
       const n = e.n;
       const boton = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(estado()); } }, ctx.textoFin || T.seeResults);
-      if (!gira) { fin.replaceChildren(el('p', { class: 'sk-sello', id: 'sk-sello' }, fmt(T.skBlocks[forma(n)], { n })), boton); return; }
-      // The tour: «51 floors» up top instead of the seal, the tower under a blurred strip with the button,
+      // The end's tour: the tower takes the whole screen and the camera goes down it turning a full
+      // circle, a cut every ten floors, and back up; «51 floors» up top, the tower under a blurred strip with the button,
       // its top resting halfway between «Game over» and the button
       juego.classList.add('gira');
       marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
@@ -230,8 +225,7 @@ export function montar(raiz, ctx) {
         despertar();
       });
     };
-    const espera = recien ? new Promise(r => setTimeout(r, QUIETO() ? 400 : FIN_MS)) : Promise.resolve();
-    Promise.all([espera, Promise.race([conGira, new Promise(r => setTimeout(r, 1600))])]).then(mostrar);
+    if (recien) setTimeout(mostrar, QUIETO() ? 400 : FIN_MS); else mostrar();
   }
 
   const paso = now => {

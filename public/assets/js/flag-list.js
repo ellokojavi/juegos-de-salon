@@ -18,6 +18,5 @@ export const FLAGS = {
   'uad-month-end': '🥇 Uno al día: month-end window with your place, a medal for the podium',
   'stick': '🥷 Shinobi: the game, on the home page, the search and new cups (D-517)',
   'stack': '🗼 Babel: the game, on the home page, the search and new cups (D-517)',
-  'stack-tour': '🗼 Babel: the end tours the finished tower, a cut every ten floors',
   'no-double-tap-zoom': '👆 Games: a double tap no longer zooms the page (iPhone)',
 };
