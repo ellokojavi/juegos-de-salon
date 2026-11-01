@@ -21,7 +21,7 @@ ok(await ev(`!!document.querySelector('#bodega #seccion-cuarto-rey') && !documen
 // La Bodega in two subgroups (D-422): the games kept, each tagged with why, and the improvements launched
 ok(await ev(`['seccion-caso','seccion-clave','seccion-cuarto-rey'].every(id => document.querySelector('#bodega-juegos #' + id))`), 'La Bodega\'s games are under 🎲 Juegos guardados');
 ok(await ev(`[...document.querySelectorAll('#bodega-juegos .detalle > p:first-child')].every(p => /^(💤|👋)/.test(p.textContent))`), 'each game kept says why it is there (💤 or 👋)');
-ok(await ev(`[...document.querySelectorAll('#bodega-mejoras .seccion')].length >= 6 && [...document.querySelectorAll('#bodega-mejoras .seccion')].every(x => x.textContent.includes('🚀'))`), 'the launched improvements are under ✨ Mejoras lanzadas');
+ok(await ev(`[...document.querySelectorAll('#bodega-mejoras .seccion')].length >= 6 && [...document.querySelectorAll('#bodega-mejoras .seccion')].every(x => /🚀|💤/.test(x.textContent))`), 'the improvements sent to La Bodega (🚀 or 💤, D-511) are under ✨ Mejoras lanzadas');
 ok(await ev(`[...document.querySelectorAll('#bodega .seccion')].every(x => x.closest('.subgrupo'))`), 'every card in La Bodega sits in a subgroup');
 ok(await ev(`!document.querySelector('#seccion-cuarto-rey details').open && !document.getElementById('btn-cuarto-rey').checkVisibility()`), 'it comes folded: only its title');
 await ev(`document.querySelector('#seccion-cuarto-rey summary').click(); 1`); await sleep(100);
