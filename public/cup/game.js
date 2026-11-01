@@ -44,7 +44,6 @@ import { salidasFin } from '../assets/js/fin.js';
 import { formularioComentario, abrirComentario, campoCorreo } from '../assets/js/labs-idioma.js';
 import { enlaceBuzon, ponerBuzon, sinDoble } from '../assets/js/buzon.js';
 import { cuentaRegresiva as cuentaComun } from '../assets/js/cuenta-regresiva.js';
-import * as musica from '../assets/js/music.js';
 
 // The four new One a Day share grids wait in the lab (D-508). lab: #seccion-uad-share-grids
 let gridsNuevos = false;
@@ -185,8 +184,6 @@ function rotuloMenu() {
 }
 
 function mostrar(id) {
-  // The game's background music (flag babel-music) lasts from the countdown to leaving the result
-  if (id !== 'jugar' && id !== 'resultado') musica.stop();
   S.pantalla = id;
   S.antesala = false;
   rotuloMenu();
@@ -1435,15 +1432,11 @@ function panelReglas(id, { copa = true, prueba = false, variante = null } = {}) 
     el('p', { class: 'muted' }, puntajeTexto(J, copa))));
 }
 
-/** Background music by game, an experiment behind the flag babel-music: one track at random each game. */
-const MUSICA = { stack: [1, 2, 3, 4].map(n => `${RAIZ}assets/music/babel/track-${n}.mp3`) };
-
 /**
  * El 3, 2, 1, ¡A jugar! antes de cada juego (D-105), el de assets/js/cuenta-regresiva.js. Devuelve
  * cuánto falta para que se vaya la capa: el reloj parte recién ahí.
  */
-function cuentaRegresiva(J, id = null) {
-  if (MUSICA[id]) flag('babel-music').then(si => { if (si && S.pantalla === 'jugar') musica.start(MUSICA[id]); });
+function cuentaRegresiva(J) {
   // La Gran Final no la lleva: cada ronda ya parte con su propia presentación
   if (J === JUEGOS_COPA.final) return Promise.resolve(0);
   $('#jugar-head').replaceChildren(el('span', { class: 'jugar-titulo' }, conEmoji(J.emoji, J.nombre)));
@@ -1463,7 +1456,7 @@ async function jugar(d, { nuevo = false } = {}) {
   mostrar('jugar');
   keepAwake();
   // La cuenta va solo al empezar: si se retoma una partida, el tablero vuelve de una
-  const espera = guardado.reloj ? 0 : await cuentaRegresiva(J, id);
+  const espera = guardado.reloj ? 0 : await cuentaRegresiva(J);
   // Conexiones necesita saber cuándo empezó su día, para no cambiar de grilla a mitad (D-128)
   // Los textos en el idioma de quien juega y las palabras en el de la copa (D-170)
   // El público de la copa decide qué contenido local entra (D-187)
@@ -1539,7 +1532,6 @@ async function jugar(d, { nuevo = false } = {}) {
     // queda ahí, y lo que se tarde en tocar "Ver resultado" no cuenta (D-130). Con el estado
     // final, además, el resultado sale en ese momento (D-150)
     pararReloj(estado) {
-      musica.fadeOutLater();
       if (!detenido) { rel = reloj.pausar(rel, ahora()); detenido = true; persistir(); }
       pararMuestra(cron, () => reloj.leer(rel, ahora()));
       if (estado && !fin) cerrar(estado);
@@ -1890,7 +1882,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
   // Una partida a medias sigue sin la cuenta ni la entrada: el tablero ya se conoce (D-267)
   const sigue = !!guardado?.jugadas || !!guardado?.sigue;
   pieComentario(null);   // durante la cuenta, nada más que la cuenta
-  const espera = sigue ? 0 : await cuentaRegresiva(J, id);
+  const espera = sigue ? 0 : await cuentaRegresiva(J);
   // Como en la copa: el reloj parte con la pantalla de juego a la vista, no con la cuenta
   let rel = { ...reloj.nuevo(Date.now() + espera + (sigue ? 0 : mod.entrada?.() || 0)), ms: guardado?.ms || 0 };
   const head = $('#jugar-head');
@@ -1929,7 +1921,6 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
       return leyendo;
     },
     pararReloj() {
-      musica.fadeOutLater();
       if (!detenido) { rel = reloj.pausar(rel, Date.now()); detenido = true; }
       pararMuestra(cron, () => reloj.leer(rel, Date.now()));
     },

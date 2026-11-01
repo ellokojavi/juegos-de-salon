@@ -18,6 +18,9 @@ let audio = null, ctx = null, gain = null, fade = null, syncing = null, later = 
 /** Mute pressed mid-game: the music follows it at once. */
 function sync() { if (audio) audio.muted = isMuted(); }
 
+/** Whether a track is on (fading out counts as off). */
+export function playing() { return !!audio; }
+
 export function start(tracks) {
   stop();
   if (!tracks?.length || !musicOn()) return;

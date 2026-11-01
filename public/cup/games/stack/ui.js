@@ -29,7 +29,15 @@ import { getLang } from '../../../assets/js/i18n.js';
 import TEXTOS from './texts.js';
 import { labAccess } from '../../../assets/js/lab-access.js';
 import { flag } from '../../../assets/js/flags.js';
-import { musicOn, setMusicOn } from '../../../assets/js/music.js';
+import { musicOn, setMusicOn, start as musicStart, fadeOutLater, playing } from '../../../assets/js/music.js';
+
+/** Background music, an experiment behind the flag babel-music: one of four tracks at random each game. */
+const TRACKS = [1, 2, 3, 4].map(n => new URL(`../../../assets/music/babel/track-${n}.mp3`, import.meta.url).href);
+const musica = () => flag('babel-music').then(si => { if (si && !playing()) musicStart(TRACKS); }).catch(() => {});
+// It starts with the countdown: «Empezar» (or «Simular final») on Babel's cover
+globalThis.document?.addEventListener('click', ev => {
+  if (ev.target?.closest?.('#btn-empezar') && document.querySelector('.sk-cabeza')) musica();
+}, true);
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -146,6 +154,7 @@ let simulacion = 0;
 let partidas = 0;   // the game on screen; a new one stops the old one's loop
 
 export function montar(raiz, ctx) {
+  musica();   // a La Copa day has no cover: the music starts with the tower
   const { p = {}, T, el, SFX, vibrate } = ctx;
   const fmt = ctx.fmt || fmtLocal;
   const tope = p.tope || null;
@@ -236,6 +245,7 @@ export function montar(raiz, ctx) {
     const e = estado();
     ctx.guardar?.(e);
     ctx.pararReloj?.(e);
+    fadeOutLater();   // the music fades out 5 s after the end
     const listo = motivo === 'tope';
     if (recien) {
       if (listo) { SFX.win?.(); vibrate([30, 50, 30]); if (!QUIETO()) confetti({ count: 120, duration: 1600 }); }
