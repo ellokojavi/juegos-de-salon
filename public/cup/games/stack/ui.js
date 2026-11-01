@@ -20,13 +20,14 @@
  *
  * The trial (`p.tope`, engine.js BLOQUES_ENSAYO) ends on its own after that many blocks.
  */
-import { newGame, perfectTime, pause, score, puntaje, tarjeta } from './engine.js';
+import { newGame, perfectTime, pause, score, puntaje, tarjeta, drop, speed } from './engine.js';
 import { escena, soltar, momento } from './scene.js';
 import { confetti } from '../../../assets/js/ui.js';
 import { onScreen } from '../../../assets/js/on-screen.js';
 import { loadCss } from '../../../assets/js/load-css.js';
 import { getLang } from '../../../assets/js/i18n.js';
 import TEXTOS from './texts.js';
+import { labAccess } from '../../../assets/js/lab-access.js';
 
 // Its own stylesheet, loaded with its code and before its first screen (D-468)
 await loadCss(new URL('./style.css', import.meta.url));
@@ -97,12 +98,26 @@ const UI = () => { let l = 'es'; try { l = getLang(); } catch (_) { /* outside t
 /** The name in the waiting room, with the credit to the original right under it, as Loteo does (the owner's call). */
 export function titulo({ el, J }) {
   const [antes, despues] = String(UI().skCredit).split('{juego}');
-  return el('div', { class: 'sk-cabeza' },
+  const cabeza = el('div', { class: 'sk-cabeza' },
     el('h2', { class: 'sk-titulo' },
       el('span', { class: 'sk-logo', 'aria-hidden': 'true' }, '🗼'),
       el('span', { class: 'display display--lg rainbow' }, J.nombre)),
     el('p', { class: 'sk-credito', id: 'sk-credito' }, antes, el('a', { href: ORIGINAL, target: '_blank', rel: 'noopener', id: 'link-stack' }, 'Stack'), despues || ''));
+  // Only for a lab key, on Babel's own page: the owner's way to see a game's last blocks and its end
+  // without playing (it never reaches a ranking: «See results» comes back here). lab: #seccion-stack
+  if (document.body?.dataset.suelto === 'stack') labAccess().then(ok => {
+    if (!ok || !cabeza.isConnected) return;
+    const pisos = el('input', { type: 'number', min: 4, max: 200, value: 51, class: 'sk-sim-n', id: 'sk-sim-n', 'aria-label': 'Pisos' });
+    cabeza.append(el('div', { class: 'sk-sim', id: 'sk-sim' }, pisos,
+      el('button', { type: 'button', class: 'btn btn--cyan btn--sm', id: 'btn-simular', onClick: () => {
+        simulacion = Math.max(4, Math.min(200, Math.round(Number(pisos.value) || 51)));
+        document.getElementById('btn-empezar')?.click();
+      } }, '🧪 Simular final')));
+  }).catch(() => {});
+  return cabeza;
 }
+/** The simulated end's tower height, set by «Simular final» and taken by the next game (0: a real game). */
+let simulacion = 0;
 
 /* ------------------------------------------------------------------ */
 /* The game                                                           */
@@ -116,6 +131,7 @@ export function montar(raiz, ctx) {
   const tope = p.tope || null;
   const previa = ctx.jugadas && typeof ctx.jugadas === 'object' && !Array.isArray(ctx.jugadas) && Number.isFinite(ctx.jugadas.n) ? ctx.jugadas : null;
   const vez = ++partidas;
+  const sim = simulacion; simulacion = 0;
   const S = { g: newGame(performance.now() + 400), kinds: [], fin: false, pausa: 0, pausado: 0, inicio: performance.now(), finEn: 0, dormido: false, ms: 0 };
 
   const lienzo = el('canvas', { class: 'sk-lienzo', 'aria-hidden': 'true' });
@@ -181,7 +197,7 @@ export function montar(raiz, ctx) {
   addEventListener('blur', pausar, { signal: fuera.signal });
   addEventListener('pagehide', pausar, { signal: fuera.signal });
 
-  const tocar = ev => { ev.preventDefault(); if (S.fin) return; if (S.pausa) return reanudar(); caer(momento(ev)); };
+  const tocar = ev => { ev.preventDefault(); if (S.fin || sim) return; if (S.pausa) return reanudar(); caer(momento(ev)); };
   escenario.addEventListener('pointerdown', ev => { if (ev.button > 0) return; tocar(ev); }, { signal: fuera.signal });
   escenario.addEventListener('keydown', ev => { if (ev.key === ' ' || ev.key === 'Enter') { if (!ev.repeat) tocar(ev); else ev.preventDefault(); } }, { signal: fuera.signal });
 
@@ -211,7 +227,7 @@ export function montar(raiz, ctx) {
       if (vez !== partidas || !raiz.isConnected) return;
       juego.classList.add('terminado');
       const n = e.n;
-      const boton = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(estado()); } }, ctx.textoFin || T.seeResults);
+      const boton = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); if (sim) location.reload(); else ctx.terminar(estado()); } }, ctx.textoFin || T.seeResults);
       // The end's tour: the tower takes the whole screen and the camera goes down it turning a full
       // circle, a cut every ten floors, and back up; «51 floors» up top, the tower under a blurred strip with the button,
       // its top resting halfway between «Game over» and the button
@@ -248,8 +264,31 @@ export function montar(raiz, ctx) {
     marcador.textContent = String(score(S.g));
     acabar(previa.fin ? (tope && previa.n >= tope ? 'tope' : 'miss') : 'miss', { recien: false });
     S.ms = previa.ms || 0;
-  } else escenario.focus({ preventScroll: true });
+  } else if (sim) simular(sim);
+  else escenario.focus({ preventScroll: true });
   requestAnimationFrame(paso);
+
+  /**
+   * «Simular final» (lab key only): the tower is built at once to `n` − 3 floors (mostly perfect, a
+   * small cut now and then), then three blocks drop on their own, perfect, and the fourth misses, as
+   * a player who reaches `n` and loses would see it. Taps do nothing meanwhile.
+   */
+  function simular(n) {
+    let t = 0;
+    for (let i = 0; i < n - 3; i++) { t = perfectTime(S.g, t) + (i % 6 === 5 ? 12 : 0); const r = drop(S.g, t); if (r) S.kinds.push(r.kind); }
+    S.g.moving.t0 = performance.now() + 500;
+    marcador.textContent = String(score(S.g));
+    aviso.classList.add('fuera');
+    let k = 0;
+    const otro = () => {
+      if (vez !== partidas || S.fin) return;
+      const m = S.g.moving;
+      // Three perfect drops, then one that leaves the tower: dropped at its start, far off to the side
+      const at = k < 3 ? perfectTime(S.g, performance.now() + 250) : m.t0 + (0.4 / speed(m.level)) * 1000;
+      setTimeout(() => { caer(at); k++; otro(); }, Math.max(0, at - performance.now()));
+    };
+    otro();
+  }
 
   // For the end-to-end script: `soltarEn(t)` drops at moment t, as a tap then would; `pausar()` pauses,
   // as a hidden page does; `perfecto()` is the next moment the block is exactly over the tower

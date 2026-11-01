@@ -13,6 +13,12 @@
 > slices the tower every ten floors, its number lying on the plane in two opposite corners. Up top it
 > reads «N pisos» (no blocks stamp); «Ver resultado» sits on a blurred strip over the tower. No tour
 > with reduced motion.
+>
+> **«🧪 Simular final»** (only with a lab key, on `/babel/`): a floors box and a button on the cover.
+> The game starts with the tower already built to that height minus three, the last three blocks drop
+> on their own and the next one misses, so the owner sees the end without playing it. Taps do nothing
+> meanwhile; «Ver resultado» reloads the cover instead of opening the result, so it is never ranked
+> (it still counts as a game started in the panel's usage).
 
 A one-tap tower game for one player (D-445): a block slides over the tower, a tap drops it, and whatever
 hangs over the edge is cut off. **Inspired by [Stack](https://www.ketchappgames.com/), by Ketchapp
