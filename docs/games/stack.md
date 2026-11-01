@@ -124,3 +124,9 @@ happens, a pause on losing focus and the tap back that only resumes, a miss, the
   three languages come when it leaves the lab.
 - **No 3, 2, 1 countdown:** the block waits 0.4 s at its side before it slides, and the game is the
   tower, not a clock.
+
+## Background music (experiment, flag `babel-music`)
+
+From the countdown to leaving the result screen (a reload or another screen stops it), one of five
+tracks at random each game, at 22% volume through a Web Audio gain so the sound effects play over it;
+it follows the mute button. `public/assets/js/music.js`, hooked in `cup/game.js` (`MUSICA`, `mostrar`).
