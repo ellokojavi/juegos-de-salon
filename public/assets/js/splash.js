@@ -173,7 +173,7 @@ export const CAMPAIGNS = {
     },
     items: [
       { game: 'stick', color: 'yellow',
-        text: { es: 'Mantén apretado, estira el palo y cruza. ¿Le achuntas a la bandera?', en: 'Hold to stretch the stick and cross. Can you land on the flag?', pt: 'Segure para esticar o bastão e atravessar. Consegue acertar a bandeira?' }, video: 'assets/splash/shinobi.mp4', img: 'assets/splash/shinobi-start.jpg', still: 'assets/splash/shinobi.jpg', ratio: '360 / 203', smooth: true },
+        text: { es: 'Mantén apretado, estira el palo y cruza. ¿Le apuntas a la bandera?', en: 'Hold to stretch the stick and cross. Can you land on the flag?', pt: 'Segure para esticar o bastão e atravessar. Consegue acertar a bandeira?' }, video: 'assets/splash/shinobi.mp4', img: 'assets/splash/shinobi-start.jpg', still: 'assets/splash/shinobi.jpg', ratio: '360 / 203', smooth: true },
       { game: 'stack', color: 'cyan',
         text: { es: 'Toca para soltar cada bloque y levanta tu torre. ¿Hasta dónde llegas?', en: 'Tap to drop each block and raise your tower. How high can you go?', pt: 'Toque para soltar cada bloco e erga sua torre. Até onde você chega?' }, video: 'assets/splash/babel.mp4', img: 'assets/splash/babel-start.jpg', still: 'assets/splash/babel.jpg', ratio: '360 / 234', smooth: true },
     ],
