@@ -39,7 +39,10 @@ ok(/Únete al mes/.test(await text("#btn-uno-al-dia .meta")) && /invita/.test(aw
 ok(await ev(`!!document.querySelector('#btn-uno-al-dia > a.uad-card-link[href$="today/"]') && document.querySelector('#btn-uad-chip')?.tagName === 'BUTTON' && !document.querySelector('a #btn-uad-chip, button #btn-uad-chip')`), 'the card is a link to /today/ and «▶ Jugar hoy» a separate button beside it');
 ok(await ev(`document.getElementById('btn-uad-chip').getBoundingClientRect().height >= 44`), 'the chip is a 44 px target');
 ok((await text('.azar-slot .btn-azar')).replace(/\s+/g, ' ').trim() === '🎲 Juego al azar', `and the die still says "🎲 Juego al azar" (${await text('.azar-slot .btn-azar')})`);
-ok(await ev(`(()=>{const s=[...document.querySelectorAll('.game-card.torneo .meta > span')];return s.length===2&&s[0].getBoundingClientRect().top===s[1].getBoundingClientRect().top})()`), "La Copa's players and duration, on one line");
+// With no cup, La Copa's card shows its players and duration on one line, or (lab flag copa-contexto,
+// on in the lab and on localhost) «Crea o únete a una Copa» in their place
+const COPA_META = `(()=>{const c=document.querySelector('.game-card.torneo'),r=c.getBoundingClientRect(),j=document.getElementById('copa-hoy-chip');if(j)return [1,true,j.getBoundingClientRect().right<=r.right];const s=[...c.querySelectorAll('.meta > span')].map(x=>x.getBoundingClientRect());return [s.length/2,s[0].top===s[1].top,Math.max(...s.map(x=>x.right))<=r.right]})()`;
+ok(await waitFor(`(${COPA_META})[0]===1&&(${COPA_META})[1]`), "La Copa's players and duration on one line, or ▶ Crea o únete a una Copa");
 ok(/tus puntos y el juego de hoy/.test(await ev(`(document.querySelector('#btn-uno-al-dia .uad-card-link') || document.getElementById('btn-uno-al-dia')).getAttribute('aria-label')`)), 'what it does goes in aria-label');
 ok(await ev(`!!document.querySelector('#btn-uno-al-dia .btn-uad-punto')`), "and a dot shines: today hasn't been played");
 ok(await noOverflow(), "the home page doesn't overflow sideways");
@@ -163,8 +166,9 @@ for (const lang of IDIOMAS) {
   await waitFor(`!!document.getElementById('btn-uno-al-dia')`);
   const r = await ev(`JSON.stringify((()=>{const e=document.getElementById('btn-uno-al-dia').getBoundingClientRect();return [e.left,e.right]})())`).then(JSON.parse);
   ok(r[0] >= 0 && r[1] <= 320 && await noOverflow(), `${lang}: the home page card fits at 320 px (${r.map(Math.round)})`);
-  const m = await ev(`JSON.stringify((()=>{const c=document.querySelector('.game-card.torneo').getBoundingClientRect(),s=[...document.querySelectorAll('.game-card.torneo .meta > span')].map(x=>x.getBoundingClientRect());return [s.length,s[0].top===s[1].top,Math.max(...s.map(x=>x.right))<=c.right]})())`).then(JSON.parse);
-  ok(m[0] === 2 && m[1] && m[2], `${lang}: in La Copa, players and duration on one line and inside (${m})`);
+  await waitFor(`!!document.getElementById('copa-hoy-chip')`, 12);
+  const m = await ev(`JSON.stringify(${COPA_META})`).then(JSON.parse);
+  ok(m[0] === 1 && m[1] && m[2], `${lang}: in La Copa, players and duration on one line and inside, or its ▶ inside (${m})`);
   ok((await ev(`document.querySelector('#btn-uno-al-dia h2').textContent`)).includes(U.nombre), `${lang}: it is called "${U.nombre}"`);
   await b.go(`${SITE}/today/?lang=${lang}`, 1500);
   ok(await noOverflow(), `${lang}: /today/ doesn't overflow sideways`);

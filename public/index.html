@@ -732,8 +732,10 @@
     if (copa) import('./assets/js/flags.js').then(({ flag }) => flag('copa-hoy')).then(on => on && import('./assets/js/cup-today.js'))
       .then(m => m && import('./assets/js/flags.js').then(({ flag }) => Promise.all([flag('copa-espera'), flag('copa-contexto')])).then(([wait, context]) => {
         m.decorateCupCard(copa, { lang, wait, context });
+        // The copy the next visit draws (D-435) is the card as decorated, not as it was before
+        uadListo.then(guardarFoto);
         // ▶ Jugar hoy only for a day the server does not have played (another phone, a late read)
-        if (param('test') === null) m.confirmCupCard(copa, { lang, wait, context });
+        if (param('test') === null) m.confirmCupCard(copa, { lang, wait, context }).then(c => c && uadListo.then(guardarFoto));
       })).catch(() => {});
     const uadListo = Promise.all([import('./assets/js/uno-al-dia.js'), import('./assets/js/uno-al-dia-ui.js')]).then(([{ formaAcceso, estado }, { botonUnoAlDia, tarjetaUnoAlDia }]) => {
       if (formaAcceso() === 'off') { reserva?.remove(); return; }
