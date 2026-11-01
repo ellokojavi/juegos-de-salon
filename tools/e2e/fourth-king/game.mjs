@@ -106,7 +106,7 @@ console.log(migrated === JSON.stringify({ rows: ['Ana', 'Beto', 'Cami', 'Dani', 
 
 // ---- English: the menu toggle rules every screen (C-3) ----
 await b.go(`${SITE}/`); await ev(`localStorage.removeItem('juegos-de-salon:cuarto-rey:session'); 1`);
-await ev(`[...document.querySelectorAll('.lang-toggle button')].find(x=>/EN/.test(x.textContent)).click(); 1`); await sleep(1200);
+await ev(`document.querySelector('.lang-toggle button[lang=en]').click(); 1`); await sleep(1200);
 console.log('menu in English:', await ev(`document.querySelector('.game-card')?.innerText.replace(/\\n/g,' | ')`));
 await shot('11-menu-en');
 await b.go(`${SITE}/labs/fourth-king/`);
