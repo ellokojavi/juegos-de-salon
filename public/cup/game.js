@@ -263,7 +263,25 @@ function avisoError(caja, texto) {
 const LOCALE = { es: 'es-CL', en: 'en-US', pt: 'pt-BR' };
 const fechaLarga = (ms, tz = ZONA, lang = LANG) => { const f = new Intl.DateTimeFormat(LOCALE[lang] || LOCALE.es, { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms)); return lang === 'en' ? f : f.replace(',', ''); };
 /** El nombre de la zona horaria de una copa, para decirlo en palabras (D-113). */
-const zonaTexto = tz => T.zones[tz] || fmt(T.zoneOther, { tz });
+const zonaTexto = tz => T.zones[tz] || T.zonesMore?.[tz] || fmt(T.zoneOther, { tz });
+/**
+ * The viewer's own time (D-521): when the phone's zone is not the cup's (hours apart now), the closing
+ * times are said in the phone's hours too. Behind the create screen's flag, like the zones it brings.
+ */
+let horaPropia = false;
+// A board already drawn when the flag arrives is drawn again, with the viewer's hours
+flag('copa-crear').then(v => { horaPropia = v; if (v && L()?.meta && document.getElementById('tablero-body')?.childElementCount && !document.getElementById('tablero-body').closest('[hidden]')) tablero(); });
+const zonaPropia = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch (_) { return null; } })();
+const horaEn = (ms, tz) => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(ms));
+const otraHora = meta => horaPropia && !!zonaPropia && !!meta?.tz && horaEn(Date.now(), meta.tz) !== horaEn(Date.now(), zonaPropia);
+/** The last minute of a day (its window ends at midnight), in the viewer's hours. */
+const cierreMio = b => horaEn(b - 60000, zonaPropia);
+/** The cup's zone in one line; in another zone, with the viewer's hours (D-521). */
+const lineaZona = meta => { const w = diaDeHoy(meta); return otraHora(meta)
+  ? fmt(T.zoneYours, { zona: zonaTexto(meta.tz).replace(/\s*\(.*\)$/, ''), a: horaEn(w.a, zonaPropia), b: cierreMio(w.h) })
+  : fmt(T.startZone, { zona: zonaTexto(meta.tz) }); };
+/** Today's window of the cup, or the first day's before it starts: its hours, as the clocks are now. */
+const diaDeHoy = meta => { const now = Date.now(); let w = meta.win[1]; for (let k = 1; k <= meta.days; k++) if (meta.win[k]?.a <= now) w = meta.win[k]; return w; };
 const fechaCorta = (ms, tz = ZONA) => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { timeZone: tz, weekday: 'short', day: 'numeric' }).format(new Date(ms));
 
 function faltaPara(ms) {
@@ -712,8 +730,9 @@ function hastaCuando(d, est, now) {
   const falta = faltaPara(meta.win[d].b - now);
   if (est === 'jugado') return fmt(T.closesIn, { t: falta });
   // The last day has no grace day, final or not (D-438): the cup closes with it
-  if (est === 'gracia' || d === meta.days) return fmt(T.untilTonight, { t: falta });
-  return T.untilTomorrowNight;
+  const mia = otraHora(meta);
+  if (est === 'gracia' || d === meta.days) return mia ? fmt(T.untilLocal, { h: cierreMio(meta.win[d].b), t: falta }) : fmt(T.untilTonight, { t: falta });
+  return mia ? fmt(T.untilLocal48, { h: cierreMio(meta.win[d].b), dia: fechaCorta(meta.win[d].b - 60000, zonaPropia) }) : T.untilTomorrowNight;
 }
 
 /**
@@ -815,10 +834,10 @@ function misDias(d, now) {
       const pos = posicionesDelDia(Lc.results[k], pids)[S.yo];
       detalle = visibleDia(Lc, k, S.yo, now) && pos ? `${r.r || r.s} · ${ord(pos.pos)} · +${pos.pts * multiplicador(Lc, k, S.yo, now)} ${T.pts}` : `${r.r || r.s}`;
     } else if (est === 'gracia') {
-      detalle = T.lastDay;
+      detalle = otraHora(meta) ? fmt(T.lastDayLocal, { h: cierreMio(meta.win[k].b) }) : T.lastDay;
       accion = faltaGente(Lc) || afuera ? null : el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); antesDeJugar(k); } }, `${J.emoji} ${T.play}`);
     } else if (est === 'en-curso') {
-      detalle = T.lastDay;
+      detalle = otraHora(meta) ? fmt(T.lastDayLocal, { h: cierreMio(meta.win[k].b) }) : T.lastDay;
       accion = el('button', { class: 'btn btn--yellow btn--sm', 'data-dia': k, onClick: () => { SFX.tap(); jugar(k); } }, `${J.emoji} ${T.resume}`);
     } else if (est === 'perdido') detalle = T.notPlayed;
     else if (est === 'anulado') detalle = T.dayCancelled;
@@ -958,6 +977,8 @@ function tablero() {
     el('h1', { class: 'display display--md rainbow' }, `🏆 ${meta.name}`),
     el('p', { class: 'lead', style: 'margin:0' }, estadoTxt),
     avisoAudiencia(meta),
+    // In another zone, the cup's days in the viewer's hours (D-521)
+    otraHora(meta) && !terminada(meta, now) ? el('p', { class: 'muted', id: 'zona-propia', style: 'margin:0' }, lineaZona(meta)) : null,
     el('div', { class: 'btn-row' },
       // Invitar tiene sentido antes de que parta; después, el admin lo tiene en Administrar
       d === 0 && !L().closed ? el('button', { class: 'btn btn--ghost btn--sm', id: 'btn-invitar', onClick: () => { SFX.tap(); invitar(); } }, T.shareInvite) : null,
@@ -1243,7 +1264,7 @@ function mensajeFinal() {
 /** The admin screen lives in admin.js, loaded the first time it opens (#860). */
 const adminCtx = {
   get store() { return store; },
-  L, LABS, PRUEBA, S, T, ahora, avisoError, campo, campoFecha, compartir, compartirTabla, conBoton, cuenta, descargarPlanilla, entrar, errorDe, esAdmin, espera, fechaLarga, fmt, invitar, jugar, mensajeFinal, mensajeHoy, mensajeInvitacion, mensajeTabla, mostrar, podio, poner, portada, tablero, toast, zonaTexto,
+  L, LABS, PRUEBA, S, T, ahora, avisoError, campo, campoFecha, compartir, compartirTabla, conBoton, cuenta, descargarPlanilla, entrar, errorDe, esAdmin, espera, fechaLarga, fmt, invitar, jugar, mensajeFinal, mensajeHoy, mensajeInvitacion, mensajeTabla, mostrar, podio, poner, portada, tablero, toast, zonaTexto, lineaZona,
 };
 let adminModulo = null;
 function admin(opciones) {

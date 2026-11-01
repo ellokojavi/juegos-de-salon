@@ -1,6 +1,6 @@
 // Tests del motor de La Copa: node public/cup/engine.test.mjs
 import assert from 'node:assert/strict';
-import { zonaDeIdioma, ZONA } from './engine.js';
+import { zonaDeIdioma, ZONA, DIAS_MIN, DIAS_MAX, FINAL_DESDE, FINAL_RONDAS, FINAL_FIVE_FROM, finalRounds, largoValido, admiteFinal } from './engine.js';
 import {
   CALENDARIOS, POZO, POZO_ABIERTO, POZO_FIJO, calendarioValido, calendarioAlAzar, PUNTOS, esCodigo, codigoAlAzar, pidAlAzar, PID, limpiarNombre, claveNombre, esPin, hashPin,
   fechaEn, sumarDias, medianoche, ventanas, nuevaMeta, diaActual, abierto, cerrado, terminada, inscripcionAbierta,
@@ -608,7 +608,8 @@ test('the 3-day cup without the final (D-438)', () => {
   assert.deepEqual(SIN_FINAL, [3]);
   assert.ok(calendarioValido(['linea', 'tango', 'donde'], 3), 'three games of the pool');
   assert.ok(calendarioValido(['linea', 'tango', 'final'], 3), 'the 3-day cups from before keep their final');
-  assert.ok(!calendarioValido(['linea', 'tango', 'donde', 'zip', 'reinas', 'anio', 'letras'], 7), 'the 7-day cup always ends with the final');
+  // Since D-521 a 7-day cup may go without the final (the admin's switch)
+  assert.ok(calendarioValido(['linea', 'tango', 'donde', 'zip', 'reinas', 'anio', 'letras'], 7), 'a 7-day cup without the final (D-521)');
   for (let k = 0; k < 30; k++) {
     const w = semanaAlAzar(3, { final: false });
     assert.ok(w.length === 3 && !w.includes('final') && calendarioValido(w, 3), w.join());
@@ -654,3 +655,24 @@ test('the weekend cup: three days of three games (D-439)', () => {
 
 await new Promise(r => setTimeout(r, 50));
 console.log(`copa/engine: ${n} tests OK`);
+
+test('the length is the admin\'s choice, 3 to 14 days, the final from 5 (D-521)', () => {
+  assert.deepEqual([DIAS_MIN, DIAS_MAX, FINAL_DESDE, FINAL_RONDAS], [3, 14, 5, 5]);
+  assert.ok(!largoValido(2) && largoValido(3) && largoValido(14) && !largoValido(15) && !largoValido(4.5));
+  assert.ok(!admiteFinal(4) && admiteFinal(5) && admiteFinal(3), 'no final at 4 days; the 3-day cups from before keep theirs');
+  const pozo = ['linea', 'numero', 'agentes', 'reinas', 'letras', 'anio', 'zip', 'tango', 'donde', 'desenredo', 'rutas', 'loteo', 'pintaminas'];
+  assert.ok(calendarioValido(pozo.slice(0, 4), 4), 'four games, no final');
+  assert.ok(!calendarioValido([...pozo.slice(0, 3), 'final'], 4), 'a 4-day cup cannot end with the final');
+  assert.ok(calendarioValido([...pozo.slice(0, 13), 'final'], 14), 'fourteen days: thirteen games and the final');
+  assert.ok(!calendarioValido([...pozo, 'linea', 'final'], 15), 'not fifteen');
+  const meta = nuevaMeta({ nombre: 'Larga', dias: 10, inicio: '2026-11-09', admin: 'abc123', creada: FINAL_FIVE_FROM + 1, cal: [...pozo.slice(0, 9), 'final'] });
+  assert.equal(meta.days, 10); assert.equal(meta.final, '10'); assert.equal(Object.keys(meta.win).length, 10);
+  const r = finalRounds(meta);
+  assert.equal(r.length, 5, 'five rounds');
+  assert.deepEqual(r, pozo.slice(0, 9).filter(id => r.includes(id)), 'in the order they were played, from the cup\'s games');
+  assert.deepEqual(finalRounds({ ...meta }), r, 'the same on every phone');
+  assert.equal(finalRounds({ ...meta, createdAt: FINAL_FIVE_FROM - 1 }).length, 9, 'a cup created before keeps every game of its week');
+  const sin = nuevaMeta({ nombre: 'Corta', dias: 4, inicio: '2026-11-09', admin: 'abc123', creada: 1, cal: pozo.slice(0, 4) });
+  assert.equal(sin.final, '0');
+  assert.throws(() => nuevaMeta({ nombre: 'X', dias: 9, inicio: '2026-11-09', admin: 'abc123', creada: 1 }), /modalidad/, 'a new length needs its calendar');
+});

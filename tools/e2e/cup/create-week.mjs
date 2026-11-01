@@ -41,8 +41,8 @@ try {
   // The week, in view from the start: six games and the final, a balanced draw
   const w0 = await week();
   ok(w0.length === 6 && new Set(w0).size === 6, `the week is in view from the start, six different games (${w0.join(', ')})`);
-  ok(/La Gran Final/.test(await ev(`document.querySelector('.semana-final').textContent`)) && /Repite los 6 juegos/.test(await ev(`document.querySelector('.semana-final').textContent`)),
-    'the final closes the week and says it replays the six games (D-418)');
+  ok(/La Gran Final/.test(await ev(`document.querySelector('.semana-final').textContent`)) && /5 juegos de la copa al azar/.test(await ev(`document.querySelector('.semana-final').textContent`)),
+    'the final closes the week and says it plays five of the cup\'s games at random (D-521)');
   ok(await ev(`document.querySelector('#semana-estilos [data-estilo="equilibrada"]').getAttribute('aria-pressed')`) === 'true', 'it starts as a Balanced week');
   ok(!await ev(`document.querySelector('#semana-mezcla .muchas')`), 'a balanced week has no skill more than twice');
   ok(!await ev(`document.documentElement.scrollWidth > innerWidth`), 'no sideways scroll at 360 px');
@@ -109,18 +109,43 @@ try {
   ok(await ev(`document.getElementById('crear-resumen').textContent`) === 'Español · 🌎 Global · ?primos', 'the line follows the link and the audience');
   ok(!await ev(`[...document.querySelectorAll('#crear-mas .opcion')].some(x=>/días/.test(x.textContent))`), 'the length is not in "More options" (D-437)');
   await b.shot('03-more');
-  // The length goes up front, next to when it starts: 7 days by default, 3 draws two games (D-437)
-  ok(await ev(`document.querySelector('#crear-modo .opcion.on')?.textContent || ''`).then(t => /7 días/.test(t)), 'the length is in the first panel, at seven days');
-  await ev(`([...document.querySelectorAll('#crear-modo .opcion')].find(x=>/7 días/.test(x.textContent)).click(), 1)`);
-  await ev(`([...document.querySelectorAll('#crear-modo .opcion')].find(x=>/Copa de 3 días/.test(x.textContent)).click(), 1)`); await sleep(200);
-  { const w = await week(); ok(w.length === 3 && new Set(w).size === 3 && !w.includes('final') && await ev(`document.querySelector('.semana-titulo').textContent`) === 'Los 3 días', `the 3-day cup draws three games under "Los 3 días" (${w.join(', ')})`); }
-  ok(await ev(`document.querySelector('.semana-final').hidden && getComputedStyle(document.querySelector('.semana-final')).display === 'none'`), 'and has no final (D-438)');
-  ok(/Tres juegos, sin final/.test(await ev(`document.querySelector('#crear-modo').textContent`)), 'the option says it: "Tres juegos, sin final."');
+  // The length (D-521): − n days +, from 3 to 14, starting at seven; the final a switch from five days
+  const n = () => ev(`document.getElementById('dur-n').textContent`);
+  const fin = () => ev(`document.getElementById('dur-final').getAttribute('aria-checked')`);
+  const hasFinal = () => ev(`!document.querySelector('.semana-final').hidden`);
+  ok(await n() === '7 días' && await fin() === 'true', 'the length starts at seven days, with the final');
+  ok(await ev(`(()=>{const f=[...document.querySelectorAll('#crear-body .field label')].map(x=>x.textContent);return f.indexOf('¿Cuándo parte?') < f.indexOf('¿Cuánto dura?')})()`), 'when it starts goes before how long');
+  for (let i = 0; i < 6; i++) await click('#dur-menos');
+  await sleep(200);
+  { const w = await week(); ok(await n() === '3 días' && w.length === 3 && new Set(w).size === 3 && !await hasFinal() && await ev(`document.querySelector('.semana-titulo').textContent`) === 'Los 3 días', `down to 3 days: three games, no final, "Los 3 días" (${w.join(', ')})`); }
+  ok(await ev(`document.getElementById('dur-menos').disabled`) && await ev(`document.getElementById('dur-final').disabled`) && /Desde 5 días/.test(await ev(`document.querySelector('.dur-final').textContent`)), 'not below 3, and the final waits for five days');
   await click('#btn-dado'); await sleep(900);
   ok((await week()).length === 3, '🎲 keeps three games');
   await b.shot('05-three-days');
-  await ev(`([...document.querySelectorAll('#crear-modo .opcion')].find(x=>/7 días/.test(x.textContent)).click(), 1)`); await sleep(200);
-  ok((await week()).length === 6 && await ev(`document.querySelector('.semana-titulo').textContent`) === 'La semana' && !await ev(`document.querySelector('.semana-final').hidden`), 'and back to seven, six games and the final under "La semana"');
+  await click('#dur-mas'); await sleep(150);
+  ok((await week()).length === 4 && !await hasFinal(), 'four days: four games, still no final');
+  await click('#dur-mas'); await sleep(150);
+  ok((await week()).length === 4 && await hasFinal() && await fin() === 'true', 'five days: four games and the final');
+  await click('#dur-final'); await sleep(150);
+  ok((await week()).length === 5 && !await hasFinal(), 'the switch off: five games, no final');
+  await click('#dur-final');
+  await ev(`([...document.querySelectorAll('#dur-atajos .dur-atajo')].find(x=>/^14/.test(x.textContent)).click(), 1)`); await sleep(200);
+  { const w = await week(); ok(await n() === '14 días' && w.length === 13 && new Set(w).size === 13 && await hasFinal(), `14 days: thirteen different games and the final (${w.length})`); }
+  ok(await ev(`document.getElementById('dur-mas').disabled`) && !await ev(`document.getElementById('dur-aviso').hidden`), 'not above 14, and the long-cup warning shows');
+  await ev(`([...document.querySelectorAll('#crear-body .opcion')].find(x=>/Mañana/.test(x.textContent)).click(), 1)`); await sleep(150);
+  ok(await ev(`document.querySelectorAll('#semana-dias .semana-sep').length`) === 2, 'a two-week cup shows its days by week');
+  ok(/→/.test(await ev(`document.getElementById('dur-rango').textContent`)), `under the days, from when to when (${await ev(`document.getElementById('dur-rango').textContent`)})`);
+  await b.shot('06-fourteen-days');
+  await ev(`([...document.querySelectorAll('#dur-atajos .dur-atajo')].find(x=>/^7/.test(x.textContent)).click(), 1)`); await sleep(200);
+  ok((await week()).length === 6 && await ev(`document.querySelector('.semana-titulo').textContent`) === 'La semana' && await hasFinal() && await ev(`document.getElementById('dur-aviso').hidden`), 'and back to seven, six games and the final under "La semana"');
+  // The cup's zone (D-521): the global audience chosen above, so the phone's; Chile suggests Chile's time
+  ok(/La de tu celular/.test(await ev(`document.getElementById('crear-zona').textContent`)), `with a global audience, the phone's zone (${await ev(`document.getElementById('crear-zona').textContent`)})`);
+  await ev(`([...document.querySelectorAll('#crear-alcance .opcion')][1].click(), 1)`); await sleep(100);
+  ok(/hora de Chile · Cambiar/.test(await ev(`document.getElementById('crear-zona').textContent`)) && /Según el público/.test(await ev(`document.getElementById('crear-zona').textContent`)), 'with Chile, Chile\'s time, said to come from the audience');
+  await click('#crear-zona-cambiar');
+  ok(!await ev(`document.getElementById('crear-zona-sel').hidden`), 'Change opens the list of zones');
+  await ev(`(()=>{const s=document.getElementById('crear-zona-sel');s.value='America/Sao_Paulo';s.dispatchEvent(new Event('change'));return 1})()`); await sleep(100);
+  ok(/hora de Brasil/.test(await ev(`document.getElementById('crear-zona').textContent`)), 'and the chosen one shows');
   await b.shot('03-more');
 
   // The sheet: the whole pool, each game with its tagline
@@ -190,7 +215,7 @@ try {
   ok(await ev(`document.querySelector('#crear-body input.pin').type`) === 'text' && await ev(`document.getElementById('ver-pin').getAttribute('aria-pressed')`) === 'true', '👁 shows the PIN');
   await click('#ver-pin');
   ok(await ev(`document.querySelector('#crear-body input.pin').type`) === 'password', 'and hides it again');
-  ok(await ev(`document.getElementById('crear-fechas').textContent`) === '', 'no dates before choosing when it starts');
+  
   {
     const starts = await ev(`[...document.querySelectorAll('#crear-body .opciones.tres')][0].textContent`);
     ok(/^Ahora \(\p{L}{2,4}\)Mañana \(\p{L}{2,4}\)Otra fecha$/u.test(starts.trim()), `the start says Now and Tomorrow with their weekday (${starts.trim()})`);
@@ -207,6 +232,7 @@ try {
   const expected = [...final.map((id, i) => (i === pinta ? 'pintaminas:hard' : id)), 'final'].join(',');
   ok(pinta >= 0 && cal === expected, `the cup saves the week as shown, with its version (${cal})`);
   ok(/\?primos&test$/.test(await ev('location.search')), 'with its own link');
+  ok(await ev('__copa.estado.copa.meta.tz') === 'America/Sao_Paulo', 'and in the zone chosen (D-521)');
   // The other three languages at 320 px: the week and a day's sheet fit, with no sideways scroll
   await b.send('Emulation.setDeviceMetricsOverride', { width: 320, height: 760, deviceScaleFactor: 2, mobile: true });
   for (const lang of ['en', 'pt']) {
