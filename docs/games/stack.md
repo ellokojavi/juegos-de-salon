@@ -126,7 +126,7 @@ happens, a pause on losing focus and the tap back that only resumes, a miss, the
 - **No 3, 2, 1 countdown:** the block waits 0.4 s at its side before it slides, and the game is the
   tower, not a clock.
 
-## Background music (experiment, flag `babel-music`)
+## Background music (behind Babel's flag `stack`)
 
 From the countdown until 7 s after the game is lost, when it fades out over 2 s (leaving the page sooner stops it), one of four retro tracks at random each game
 (Pixabay: The Mountain, Bransboynd, Hitslab, DeepMusicEveryday), at 22% volume through a Web Audio gain so the sound effects play over it;
