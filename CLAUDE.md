@@ -75,6 +75,8 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
   for end-to-end, run only the script of the screen you changed, never the whole `ci.mjs` (D-428):
   the `end-to-end` check on GitHub is the gate.
 - **Big files**: nothing over 5 MB enters git (D-494).
+- **Visual proposals come as images**: when the owner asks for visual treatments, render mockups
+  (HTML + the pre-installed Playwright, screenshot) and send the image, not only text.
 
 ## Before proposing a merge (detail in [docs/MERGING.md](docs/MERGING.md))
 
