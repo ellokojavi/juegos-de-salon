@@ -31,12 +31,13 @@ const BASE_COLOR = [58, 20, 100];
  */
 export function escena(canvas, { zoom = 1, foco = 0.56 } = {}) {
   const ctx = canvas.getContext('2d');
-  let W = 0, H = 0, u = 0, camY = 0, ultimo = 0;
+  let W = 0, H = 0, u = 0, camY = 0, ultimo = 0, focoY = 0;
   let fija = null;     // a camera set from outside (the teaser): { y, yaw }; the game leaves it null
   const piezas = [];   // falling pieces: { slab, y, vy, color }
   const anillos = [];  // the glow of a perfect drop: { slab, y, born }
   const chispas = [];  // its sparks: { x, y, z, vx, vy, vz, born, color }
-  let gira = null, giro = 0;     // the end's tour: { n, born } (recorrer)
+  let gira = null, giro = 0;
+  let alto = null;     // the top's height set in pixels, gliding from one to another: { de, a, t0, ms } (enfocar)     // the end's tour: { n, born } (recorrer)
 
   const medir = () => {
     const r = canvas.getBoundingClientRect(), dpr = Math.min(3, devicePixelRatio || 1);
@@ -53,7 +54,7 @@ export function escena(canvas, { zoom = 1, foco = 0.56 } = {}) {
   const pt = (x, y, z) => {
     const yaw = fija?.yaw || giro;
     if (yaw) { const c = Math.cos(yaw), s = Math.sin(yaw); [x, z] = [x * c - z * s, x * s + z * c]; }
-    return [W / 2 + (x - z) * COS30 * u, H * foco + (x + z) * SIN30 * u - (y - camY) * u];
+    return [W / 2 + (x - z) * COS30 * u, focoY + (x + z) * SIN30 * u - (y - camY) * u];
   };
   const poly = (pts, fill) => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); };
 
@@ -107,6 +108,8 @@ export function escena(canvas, { zoom = 1, foco = 0.56 } = {}) {
     const n = score(g);
     // The camera follows the top of the tower, smoothly
     const meta = n * SLAB;
+    if (alto) { const k = Math.min(1, Math.max(0, (now - alto.t0) / Math.max(1, alto.ms))); focoY = alto.de + (alto.a - alto.de) * (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2); }
+    else focoY = H * foco;
     const vista = gira && tour(gira.n, now - gira.born);
     giro = vista ? vista.yaw : 0;
     camY = fija ? fija.y : vista ? vista.y : dt ? camY + (meta - camY) * Math.min(1, dt * 5) : meta;
@@ -193,8 +196,12 @@ export function escena(canvas, { zoom = 1, foco = 0.56 } = {}) {
     ctx.restore();
   }
   return {
-    /** Where the top of the tower sits, as a share of the canvas's height (the end screen centers it between its texts). */
-    enfocar(f) { foco = f; },
+    /** Where the top of the tower sits, as a share of the canvas's height. */
+    enfocar(f) { foco = f; alto = null; },
+    /** Where the top of the tower sits on screen now, in pixels from the canvas's top. */
+    altura() { return focoY || H * foco; },
+    /** Moves the top of the tower to `a` pixels from the canvas's top, from `de`, gliding over `ms`. */
+    deslizar(de, a, ms = 900, now = performance.now()) { alto = { de, a, t0: now, ms }; },
     /** The end's tour (`n` levels): from the top down to the base, a cut every ten, and back up. */
     recorrer(n, now = performance.now()) { gira = { n, born: now }; },
     /** Whether the tour is still moving (the loop keeps drawing while it is). */
