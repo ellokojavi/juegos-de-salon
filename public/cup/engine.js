@@ -1,7 +1,7 @@
 /**
  * La Copa — motor del torneo (sin DOM). Testeable con node.
  *
- * Un torneo de 3 o 7 días entre amigos: cada día un juego idéntico para todos, que se
+ * Un torneo de 3 a 14 días entre amigos (D-521): cada día un juego idéntico para todos, que se
  * juega una vez y reparte puntos por posición (ver docs/games/cup.md).
  *
  * Todo lo de acá son funciones puras sobre los datos de la copa tal como vienen del
@@ -67,6 +67,17 @@ export const entradaCal = (id, variante = null) => (VARIANTES[id] && variante &&
  * the pool. The 3-day cups from before, made for testing (D-100), end with the final and keep it.
  */
 export const SIN_FINAL = [3];
+/**
+ * A cup's length is the admin's choice since D-521: from DIAS_MIN to DIAS_MAX days, the Grand Final
+ * offered from FINAL_DESDE days on (a switch on the create screen). DIAS_MAX fits the pool with room
+ * to spare (16 games). The rules of the database say the same (firebase/database.rules.json).
+ */
+export const DIAS_MIN = 3;
+export const DIAS_MAX = 14;
+export const FINAL_DESDE = 5;
+/** Whether a length can be created, and whether it can end with the Grand Final (the 3-day cups from before kept theirs, D-438). */
+export const largoValido = dias => Number.isInteger(dias) && dias >= DIAS_MIN && dias <= DIAS_MAX;
+export const admiteFinal = dias => dias >= FINAL_DESDE || dias === 3;
 /** Whether a cup ends with the Grand Final: its calendar says so (no calendar, as the 7-day cup always does). */
 export const tieneFinal = meta => (String(meta?.cal || 'final').split(',').at(-1) === 'final');
 
@@ -98,9 +109,9 @@ export function findeAlAzar({ rand = cryptoRand, familia = null } = {}) {
 
 /** ¿Es un calendario que se puede jugar? Juegos del pozo sin repetir, y la final al último (o, en la de 3 días, sin final, D-438, o de a tres por día, D-439). */
 export function calendarioValido(cal, dias) {
-  if (!Array.isArray(cal) || cal.length !== dias) return false;
+  if (!Array.isArray(cal) || cal.length !== dias || !largoValido(dias)) return false;
   const conFinal = cal[dias - 1] === 'final';
-  if (!conFinal && !SIN_FINAL.includes(dias)) return false;
+  if (conFinal && !admiteFinal(dias)) return false;
   const tres = cal.filter(x => String(x).includes(TRIO_SEP));
   if (tres.length && (conFinal || tres.length !== dias || tres.some(x => String(x).split(TRIO_SEP).length !== TRIO_JUEGOS))) return false;
   const dia = (conFinal ? cal.slice(0, -1) : cal).flatMap(x => String(x).split(TRIO_SEP));
@@ -146,7 +157,10 @@ export function semanaAlAzar(dias, { rand = cryptoRand, familia = null, estilo =
   const tope = estilo === 'equilibrada' || estilo === 'nuevo';
   const fam = id => (familia ? familia(id) : id);
   const seguidas = w => w.every((id, i) => i === 0 || fam(id) !== fam(w[i - 1]));
-  const hastaDos = w => { const c = {}; return w.every(id => (c[fam(id)] = (c[fam(id)] || 0) + 1) <= 2); };
+  // At most two of one skill; a long cup (D-521) allows as many as its length needs
+  const n = final ? dias - 1 : dias;
+  const maxFam = Math.max(2, Math.ceil(n / new Set(pozo.map(fam)).size));
+  const hastaDos = w => { const c = {}; return w.every(id => (c[fam(id)] = (c[fam(id)] || 0) + 1) <= maxFam); };
   let semana = null;
   for (let k = 0; k < 400; k++) {
     const propios = (ESTILOS_SEMANA[estilo] || pozo).filter(id => pozo.includes(id));
@@ -283,7 +297,7 @@ export function ventanas(inicio, dias, tz = ZONA) {
  * reglas de la base no saben de zonas horarias: comparan `now` contra estos números.
  */
 export function nuevaMeta({ nombre, dias, inicio, tz = ZONA, admin, creada, lab = false, alias = null, cal = null, lang = 'es', aud = null }) {
-  if (!CALENDARIOS[dias]) throw new Error('modalidad');
+  if (!CALENDARIOS[dias] && !(cal && largoValido(dias))) throw new Error('modalidad');
   if (cal && !calendarioValido(cal, dias)) throw new Error('calendario');
   return {
     v: 1, name: limpiarNombre(nombre, COPA_MAX), days: dias, start: inicio, tz, admin,
@@ -331,7 +345,23 @@ export function finalRounds(meta) {
   const week = cal.slice(0, -1).filter(x => !NOT_IN_FINAL.includes(diaDeCal(x).id)).map(x => { const { id, variante } = diaDeCal(x); return entradaCal(REEMPLAZOS[id] || id, variante); });
   const opens = meta?.win?.[meta?.days]?.a;
   if (!week.length || (typeof opens === 'number' && opens < FINAL_FROM_WEEK)) return [...FIXED_FINAL];
-  return week;
+  if (week.length <= FINAL_RONDAS || !(meta?.createdAt >= FINAL_FIVE_FROM)) return week;
+  // Five of the cup's games, drawn alike on every phone from the cup itself, in the order they were played (D-521)
+  const rand = rngDe(`${meta.admin}|${meta.createdAt}|${meta.cal}`);
+  const idx = week.map((_, i) => i);
+  for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+  const elegidos = new Set(idx.slice(0, FINAL_RONDAS));
+  return week.filter((_, i) => elegidos.has(i));
+}
+/** How many rounds a final plays at most, and from when (cups created since then; before, every game of the week, D-418). */
+export const FINAL_RONDAS = 5;
+export const FINAL_FIVE_FROM = Date.parse('2026-11-02T08:00:00Z');
+/** A small seeded generator (FNV-1a for the seed, mulberry32 for the numbers): the same text, the same numbers. */
+function rngDe(texto) {
+  let h = 2166136261;
+  for (const c of String(texto)) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); }
+  let a = h >>> 0;
+  return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
 
 /** El número de día que se vive en `now`: 0 antes de empezar, `days + 1` después de terminar. */

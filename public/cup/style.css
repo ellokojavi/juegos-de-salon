@@ -843,3 +843,36 @@ input.fecha { width: 100%; min-height: 48px; border-radius: 12px; border: 1px so
 .podio-archivado { list-style: none; padding: 0; margin: 0.5rem 0; display: grid; gap: 0.35rem; font-size: 1.1rem; overflow-wrap: anywhere; }
 .podio-archivado .lugar { display: inline-block; min-width: 1.8em; }
 #copa-archivada h2 { overflow-wrap: anywhere; }
+
+/* The new create screen's length (D-521): − n days +, shortcuts, the 🏁 switch and the long-cup warning */
+.dur { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 16px; background: rgba(0, 0, 0, 0.3); border: 2px solid var(--yellow); }
+.dur-btn { width: 52px; height: 52px; flex: none; border-radius: 50%; font: inherit; font-size: 1.8rem; font-weight: 800; line-height: 1; color: #fff; background: var(--glass); border: 2px solid var(--glass-border); cursor: pointer; }
+.dur-btn:disabled { opacity: 0.35; cursor: default; }
+.dur-num { text-align: center; min-width: 0; }
+.dur-num b { display: block; font-size: 1.9rem; line-height: 1.1; }
+.dur-num small { color: var(--muted); font-size: 0.82rem; }
+.dur-atajos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.dur-atajo { min-height: 44px; padding: 6px 12px; border-radius: 999px; font: inherit; font-size: 0.85rem; font-weight: 800; color: #fff; background: var(--glass); border: 1px solid var(--glass-border); cursor: pointer; display: inline-flex; align-items: center; }
+.dur-atajo.on { border-color: var(--yellow); color: var(--yellow); }
+.dur-final { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 12px; border-radius: 16px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); }
+.dur-final .em { font-size: 1.6rem; }
+.dur-final .t { flex: 1; min-width: 0; }
+.dur-final .t b { display: block; }
+.dur-final .t small { color: var(--muted); font-size: 0.82rem; }
+.dur-final.off { opacity: 0.6; }
+.dur-switch { width: 52px; height: 30px; flex: none; border-radius: 999px; position: relative; border: 0; background: rgba(255, 255, 255, 0.2); cursor: pointer; transition: background 0.15s; }
+.dur-switch::after { content: ''; position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: left 0.15s; }
+.dur-switch[aria-checked="true"] { background: var(--yellow); }
+.dur-switch[aria-checked="true"]::after { left: 25px; }
+.dur-switch:disabled { cursor: default; }
+.dur-aviso { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--glass); font-size: 0.85rem; font-weight: 700; }
+.dur-aviso[hidden] { display: none; }
+/* The cup's zone, one short line and who suggested it (D-521) */
+.crear-zona .zona-linea { display: block; }
+.crear-zona .zona-por { display: block; }
+.zona-cambiar { font: inherit; font-weight: 800; color: var(--yellow); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.zona-sel { display: block; margin-top: 8px; width: 100%; min-height: 44px; font: inherit; color: #fff; background: rgba(0, 0, 0, 0.35); border: 1px solid var(--glass-border); border-radius: 12px; padding: 0 10px; }
+.zona-sel[hidden] { display: none; }
+.zona-sel option { color: #000; }
+/* A cup longer than a week shows its days by week (D-521) */
+.semana-sep { margin: 12px 0 4px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }

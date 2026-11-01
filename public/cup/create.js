@@ -3,7 +3,7 @@
  * Everything else it needs from game.js comes in `c`, the screen's context.
  */
 import { $, con, conEmoji, el, vibrate } from '../assets/js/ui.js';
-import { COPA_MAX, ESTILOS_SEMANA, MAX_DIAS_INICIO, POZO_ABIERTO as POZO, SIN_FINAL, TRIO_SEP, VARIANTES, aliasLimpio, calendario, calendarioAlAzar, codigoAlAzar, diaDeCal, entradaCal, esAlias, esPin, fechaEn, findeAbierto, findeAlAzar, fuera, hashPin, limpiarNombre, nuevaMeta, pidAlAzar, semanaAlAzar, sumarDias, zonaDeIdioma } from './engine.js';
+import { ZONA, DIAS_MIN, DIAS_MAX, FINAL_DESDE, FINAL_RONDAS, COPA_MAX, ESTILOS_SEMANA, MAX_DIAS_INICIO, POZO_ABIERTO as POZO, TRIO_SEP, VARIANTES, aliasLimpio, calendario, calendarioAlAzar, codigoAlAzar, diaDeCal, entradaCal, esAlias, esPin, fechaEn, findeAbierto, findeAlAzar, fuera, hashPin, limpiarNombre, nuevaMeta, pidAlAzar, semanaAlAzar, sumarDias, zonaDeIdioma } from './engine.js';
 import { JUEGOS_COPA as JUEGOS_COPA_ES } from './rules.js';
 import { LANGS } from '../assets/js/i18n.js';
 import { SFX } from '../assets/js/sound.js';
@@ -188,14 +188,14 @@ const diaCorto = f => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { weekd
  * its version. A day is still dragged by its ⠿ grip, as a shortcut (D-85: dragging is choosing).
  */
 function armarSemana() {
-  let dias = 7, cal = [], estilo = 'equilibrada', ultimo = 'equilibrada', sel = null, destino = null, arrastrando = false, capa = null;
+  let dias = 7, conF = true, inicio = null, cal = [], estilo = 'equilibrada', ultimo = 'equilibrada', sel = null, destino = null, arrastrando = false, capa = null;
   const variantes = {};
   // The skill is compared in Spanish: the same rules whatever the screen's language
   const familia = id => JUEGOS_COPA_ES[id].habilidad;
   const nuevos = POZO.filter(id => esNuevo(juegoPortada(id)));
   const estilos = Object.keys(ESTILOS_SEMANA).filter(e => e !== 'nuevo' || nuevos.length);
-  // The 3-day cup has no final (D-438): its three days are all games of the pool
-  const conFinal = () => !SIN_FINAL.includes(dias);
+  // The final is the admin's switch, offered from FINAL_DESDE days (D-521; the 3-day cup has none, D-438)
+  const conFinal = () => conF && dias >= FINAL_DESDE;
   const semana = () => (conFinal() ? cal.slice(0, -1) : [...cal]);
   const movido = k => { const d = semana(); d.splice(d.indexOf(sel), 1); d.splice(k, 0, sel); return d; };
   const vista = () => (arrastrando && destino ? movido(Number(destino.slice(1))) : semana());
@@ -276,10 +276,16 @@ function armarSemana() {
       type: 'button', class: 'estilo' + (estilo === e ? ' on' : ''), 'data-estilo': e, 'aria-pressed': String(estilo === e),
       onClick: () => { SFX.tap(); ultimo = e; tirar(); },
     }, T.weekStyles[e])));
-    lista.replaceChildren(...vista().map(fila));
+    // A cup longer than a week shows its days by week, with their dates (D-521)
+    const filas = vista().map(fila);
+    if (dias > 7 && inicio) {
+      const et = k => { const f = sumarDias(inicio, k); return `${diaCorto(f)} ${Number(f.slice(8))}`; };
+      for (let k = Math.floor((filas.length - 1) / 7) * 7; k >= 0; k -= 7) filas.splice(k, 0, el('div', { class: 'semana-sep', 'aria-hidden': 'true' }, `${et(k)} – ${et(Math.min(k + 6, dias - 1))}`));
+    }
+    lista.replaceChildren(...filas);
     finalFila.hidden = !conFinal();
     finalFila.replaceChildren(el('span', { class: 'cab' }, el('span', { class: 'y' }, fmt(T.gamesDay, { d: cal.length })), el('span', { class: 'em' }, JUEGOS_COPA.final.emoji)),
-      el('span', { class: 'semana-juego' }, el('b', {}, JUEGOS_COPA.final.nombre), el('small', {}, fmt(T.weekFinal, { n: cal.length - 1 }))));
+      el('span', { class: 'semana-juego' }, el('b', {}, JUEGOS_COPA.final.nombre), el('small', {}, cal.length - 1 > FINAL_RONDAS ? fmt(T.weekFinalDraw, { n: FINAL_RONDAS }) : fmt(T.weekFinal, { n: cal.length - 1 }))));
     const cuenta = {};
     for (const id of semana()) (cuenta[familia(id)] ||= { n: 0, nombre: JUEGOS_COPA[id].habilidad }).n++;
     // More than two of one skill is marked, unless the style asked for it (Puzzles, Trivia and words)
@@ -358,7 +364,9 @@ function armarSemana() {
     nodo,
     get cal() { return cal.map(id => entradaCal(id, variantes[id])); },
     /** The 3-day cup (D-437): another length, another week with no final (D-438), and the title says "The 3 days". */
-    dias(n) { dias = n; titulo.textContent = n === 7 ? T.weekTitle : fmt(T.weekTitleDays, { n }); tirar({ animar: false }); },
+    dias(n, final = true) { dias = n; conF = final; titulo.textContent = n === 7 ? T.weekTitle : fmt(T.weekTitleDays, { n }); tirar({ animar: false }); },
+    /** The first day, for the week separators of a long cup (D-521). */
+    desde(f) { if (f !== inicio) { inicio = f; pintar(); } },
   };
 }
 
@@ -384,6 +392,47 @@ function armarFinde() {
   return { nodo, get cal() { return [...cal]; } };
 }
 
+/**
+ * How long the cup lasts on the new create screen (D-521): − n days +, from DIAS_MIN to DIAS_MAX,
+ * with shortcuts for the usual lengths; the 🏁 switch from FINAL_DESDE days; a warning on long cups.
+ */
+function controlDuracion(alCambiar) {
+  let n = 7, final = true;
+  const fijar = k => { k = Math.max(DIAS_MIN, Math.min(DIAS_MAX, k)); if (k === n) return; SFX.tap(); n = k; pintar(); alCambiar(); };
+  const menos = el('button', { type: 'button', class: 'dur-btn', id: 'dur-menos', 'aria-label': T.lenLess, onClick: () => fijar(n - 1) }, '−');
+  const mas = el('button', { type: 'button', class: 'dur-btn', id: 'dur-mas', 'aria-label': T.lenMore, onClick: () => fijar(n + 1) }, '+');
+  const num = el('b', { id: 'dur-n' }), rango = el('small', { id: 'dur-rango' });
+  const atajos = el('div', { class: 'dur-atajos', id: 'dur-atajos' });
+  const sw = el('button', { type: 'button', class: 'dur-switch', role: 'switch', id: 'dur-final', 'aria-label': T.finalOn, onClick: () => { if (n < FINAL_DESDE) return; SFX.tap(); final = !final; pintar(); alCambiar(); } });
+  const finSub = el('small', {});
+  const filaFinal = el('div', { class: 'dur-final' }, el('span', { class: 'em', 'aria-hidden': 'true' }, '🏁'), el('span', { class: 't' }, el('b', {}, T.finalOn), finSub), sw);
+  const aviso = el('div', { class: 'dur-aviso', id: 'dur-aviso' }, `⚠️ ${T.longWarn}`);
+  const ATAJOS = [3, 7, 14];
+  function pintar() {
+    num.textContent = fmt(T.lenDays, { n });
+    menos.disabled = n <= DIAS_MIN; mas.disabled = n >= DIAS_MAX;
+    atajos.replaceChildren(...ATAJOS.map(k => el('button', { type: 'button', class: 'dur-atajo' + (k === n ? ' on' : ''), 'aria-pressed': String(k === n), onClick: () => fijar(k) }, `${k} · ${T.lenPresets[k]}`)),
+      ...(ATAJOS.includes(n) ? [] : [el('span', { class: 'dur-atajo on' }, String(n))]));
+    const puede = n >= FINAL_DESDE;
+    sw.disabled = !puede; sw.setAttribute('aria-checked', String(puede && final));
+    filaFinal.classList.toggle('off', !puede);
+    finSub.textContent = puede ? fmt(T.finalOnSub, { n: Math.min(FINAL_RONDAS, n - 1) }) : fmt(T.finalFrom, { n: FINAL_DESDE });
+    aviso.hidden = n < 10;
+  }
+  pintar();
+  return {
+    nodo: el('div', { class: 'dur-campo' }, el('div', { class: 'dur', id: 'dur' }, menos, el('div', { class: 'dur-num', 'aria-live': 'polite' }, num, rango), mas), atajos, filaFinal, aviso),
+    get valor() { return n; },
+    get final() { return n >= FINAL_DESDE && final; },
+    rango,
+  };
+}
+
+/** The zone a new cup is suggested (D-521): the audience's when it names a country, else the phone's. */
+const ZONA_PUBLICO = { cl: 'America/Santiago', br: 'America/Sao_Paulo' };
+const BANDERA_PUBLICO = { cl: '🇨🇱', br: '🇧🇷' };
+const zonaDelTelefono = () => { try { const z = Intl.DateTimeFormat().resolvedOptions().timeZone; return z && z.length <= 40 ? z : ZONA; } catch (_) { return ZONA; } };
+
 async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
   const nuevo = await formularioNuevo();
   mostrar('crear');
@@ -402,7 +451,8 @@ async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
   // Closed once the owner's cup was made; the test store still offers it with `&weekend=on`
   const finde = LANG === 'es' && (findeAbierto(Date.now()) || (PRUEBA && param('weekend') === 'on')) ? armarFinde() : null;
   const diasDe = v => (v === 'finde' ? 3 : v);
-  const modo = opciones([
+  // The new screen (D-521): the length is − n +, and the final a switch; the weekend cup (test store) keeps its options
+  const modo = nuevo && !finde ? controlDuracion(() => { juegos.dias(modo.valor, modo.final); fechas(); }) : opciones([
     finde ? { valor: 'finde', titulo: T.modeWeekend, sub: T.modeWeekendSub } : null,
     (nuevo && !finde) || TRES ? { valor: 3, titulo: T.mode3, sub: T.mode3Sub } : null,
     { valor: 7, titulo: T.mode7, sub: T.mode7Sub },
@@ -418,16 +468,35 @@ async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
   // El idioma de las palabras de Conexiones y de Palabra (D-170): parte en el de quien la crea
   const mayuscula = x => x[0].toUpperCase() + x.slice(1);
   // La hora de la copa sigue al idioma de sus palabras (D-194): en alemán, la de Europa central
-  const notaZona = el('small', { class: 'muted', id: 'crear-zona' }, fmt(T.startZone, { zona: zonaTexto(zonaDeIdioma(LANG)) }));
+  const notaZona = el('small', { class: 'muted crear-zona', id: 'crear-zona' }, fmt(T.startZone, { zona: zonaTexto(zonaDeIdioma(LANG)) }));
   const idioma = opciones(LANGS.map(l => ({ valor: l, titulo: mayuscula(T.langNames[l]) })),
-    l => { notaZona.textContent = fmt(T.startZone, { zona: zonaTexto(zonaDeIdioma(l)) }); resumir(); fechas(); }, { inicial: LANG });
+    l => { if (!nuevo) notaZona.textContent = fmt(T.startZone, { zona: zonaTexto(zonaDeIdioma(l)) }); resumir(); fechas(); }, { inicial: LANG });
   // El público (D-187): global, Chile o Brasil. Parte en el del idioma de quien la crea
   const PUBLICOS = { global: T.audGlobal, cl: T.audCl, br: T.audBr };
-  const alcance = opciones(Object.entries(PUBLICOS).map(([valor, titulo]) => ({ valor, titulo })), () => resumir(),
+  const alcance = opciones(Object.entries(PUBLICOS).map(([valor, titulo]) => ({ valor, titulo })), () => { resumir(); pintarZona(); fechas(); },
     { inicial: { es: 'cl', pt: 'br' }[LANG] || 'global' });
   alcance.nodo.classList.add('tres');
+  // The cup's zone (D-521, new screen): suggested by the audience or the phone, the admin can change it;
+  // the screen of before keeps the language's zone (D-113, D-194)
+  let zonaElegida = null;
+  const zonaCopa = () => (nuevo ? zonaElegida || ZONA_PUBLICO[alcance.valor] || zonaDelTelefono() : zonaDeIdioma(idioma.valor));
+  const nombreZona = tz => (T.zones[tz] || T.zonesMore[tz] || fmt(T.zoneOther, { tz: tz.split('/').pop().replace(/_/g, ' ') })).replace(/\s*\(.*\)$/, '');
+  const zonaSel = el('select', { class: 'zona-sel', id: 'crear-zona-sel', 'aria-label': T.zonePick, hidden: true });
+  const zonaTxt = el('span', {}), zonaPor = el('span', { class: 'zona-por', id: 'crear-zona-por' });
+  const zonaCambiar = el('button', { type: 'button', class: 'zona-cambiar', id: 'crear-zona-cambiar', onClick: () => { SFX.tap(); zonaSel.hidden = false; zonaSel.focus(); } }, T.zoneChange);
+  zonaSel.addEventListener('change', () => { zonaElegida = zonaSel.value; pintarZona(); fechas(); });
+  function pintarZona() {
+    if (!nuevo) return;
+    const tz = zonaCopa();
+    const [a, b] = T.zoneLine.split('{zona}');
+    zonaTxt.replaceChildren(a, el('b', {}, nombreZona(tz)), b || '');
+    zonaPor.textContent = zonaElegida ? '' : ZONA_PUBLICO[alcance.valor] ? `${BANDERA_PUBLICO[alcance.valor]} ${T.zoneFromAud}` : T.zoneFromPhone;
+    const zonas = [...new Set([tz, zonaDelTelefono(), ...Object.values(ZONA_PUBLICO), ZONA, ...Object.keys(T.zonesMore)])];
+    zonaSel.replaceChildren(...zonas.map(z => el('option', { value: z, ...(z === tz ? { selected: true } : {}) }, nombreZona(z))));
+  }
+  if (nuevo) notaZona.replaceChildren(el('span', { class: 'zona-linea' }, zonaTxt, ' · ', zonaCambiar), zonaPor, zonaSel);
   // Hoy, mañana u otra fecha de un calendario, hasta 30 días desde hoy (D-115)
-  const hoyCrear = fechaEn(Date.now(), zonaDeIdioma(idioma.valor));
+  const hoyCrear = fechaEn(Date.now(), zonaCopa());
   const otraFecha = campoFecha(hoyCrear);
   // On the new screen (D-425, the owner's review) Today is Now, and each says its day of the week: "Ahora (jue)"
   const conDia = (titulo, n) => (nuevo ? `${titulo} (${diaCorto(sumarDias(hoyCrear, n))})` : titulo);
@@ -454,9 +523,14 @@ async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
   const lineaFechas = el('small', { class: 'muted crear-fechas', id: 'crear-fechas', 'aria-live': 'polite' });
   function fechas() {
     if (!nuevo) return;
-    const hoy = fechaEn(Date.now(), zonaDeIdioma(idioma.valor));
+    const hoy = fechaEn(Date.now(), zonaCopa());
     const desde = inicio.valor === 'otra' ? (otraFecha.valida() ? otraFecha.input.value : null) : inicio.valor === null ? null : sumarDias(hoy, inicio.valor);
     lineaFechas.textContent = desde ? fmt(T.startsLine, { inicio: fechaDia(desde), fin: fechaDia(sumarDias(desde, diasDe(modo.valor) - 1)) }) : '';
+    if (modo.rango) {
+      const corta = f => new Intl.DateTimeFormat(LOCALE[LANG] || LOCALE.es, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(`${f}T12:00:00Z`));
+      modo.rango.textContent = desde ? `${corta(desde)} → ${corta(sumarDias(desde, modo.valor - 1))}` : '';
+    }
+    if (desde && juegos.desde) juegos.desde(desde);
   }
   // "More options", folded, says in one line what is chosen inside
   const resumen = el('small', { class: 'muted', id: 'crear-resumen' });
@@ -512,7 +586,7 @@ async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
       const pid = pidAlAzar();
       const now = st.now();
       if (alias) { const x = await st.alias(alias); if (x && x.hasta > now) throw Object.assign(new Error('alias'), { code: 'alias' }); }
-      const zona = zonaDeIdioma(idioma.valor);
+      const zona = zonaCopa();
       const fechaInicio = inicio.valor === 'otra' ? otraFecha.input.value : sumarDias(fechaEn(now, zona), inicio.valor);
       // Las copas del laboratorio (y las de prueba) llevan la marca que deja pasar de día (D-115)
       const meta = nuevaMeta({ nombre: n, dias: diasDe(modo.valor), inicio: fechaInicio, tz: zona, admin: pid, creada: now, lab: LABS || PRUEBA, alias, cal: modo.valor === 'finde' ? finde.cal : juegos.cal, lang: modo.valor === 'finde' ? 'es' : idioma.valor, aud: alcance.valor });
@@ -535,10 +609,12 @@ async function pantallaCrearCopa({ nombreInicial = '' } = {}) {
     el('summary', {}, el('span', { class: 'mas-t' }, T.moreOptions, resumen)),
     campoIdioma, campoAlcance, link.nodo) : null;
   resumir();
+  pintarZona(); fechas();
   if (nuevo) return poner(body,
     el('div', { class: 'panel' }, nombre.nodo,
-      el('div', { class: 'field', id: 'crear-modo' }, el('label', {}, T.fMode), modo.nodo),
-      el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, notaZona)),
+      // When it starts goes first, then how long (the owner's review, D-521)
+      el('div', { class: 'field' }, el('label', {}, T.fStart), inicio.nodo, otraFecha.nodo, notaZona),
+      el('div', { class: 'field', id: 'crear-modo' }, el('label', {}, T.fMode), modo.nodo)),
     juegos.nodo, finde?.nodo,
     el('div', { class: 'panel' }, yo.nodo, ...camposPin(pin1, pin2)),
     mas, err, boton, lineaFechas, volver);

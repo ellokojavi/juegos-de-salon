@@ -13,12 +13,12 @@ import { planilla } from './planilla.js';
 import { jugador, leerYo } from '../assets/js/jugador.js';
 
 let c;
-let L, LABS, PRUEBA, S, T, ahora, avisoError, campo, campoFecha, compartir, compartirTabla, conBoton, cuenta, descargarPlanilla, entrar, errorDe, esAdmin, espera, fechaLarga, fmt, invitar, jugar, mensajeFinal, mensajeHoy, mensajeInvitacion, mensajeTabla, mostrar, podio, poner, portada, tablero, toast, zonaTexto;
+let L, LABS, PRUEBA, S, T, ahora, avisoError, campo, campoFecha, compartir, compartirTabla, conBoton, cuenta, descargarPlanilla, entrar, errorDe, esAdmin, espera, fechaLarga, fmt, invitar, jugar, mensajeFinal, mensajeHoy, mensajeInvitacion, mensajeTabla, mostrar, podio, poner, portada, tablero, toast, zonaTexto, lineaZona;
 
 /** Draws the admin screen; `ctx` is game.js's context (its `store` is read live, it changes on load). */
 export function admin(ctx, opciones) {
   c = ctx;
-  ({ L, LABS, PRUEBA, S, T, ahora, avisoError, campo, campoFecha, compartir, compartirTabla, conBoton, cuenta, descargarPlanilla, entrar, errorDe, esAdmin, espera, fechaLarga, fmt, invitar, jugar, mensajeFinal, mensajeHoy, mensajeInvitacion, mensajeTabla, mostrar, podio, poner, portada, tablero, toast, zonaTexto } = ctx);
+  ({ L, LABS, PRUEBA, S, T, ahora, avisoError, campo, campoFecha, compartir, compartirTabla, conBoton, cuenta, descargarPlanilla, entrar, errorDe, esAdmin, espera, fechaLarga, fmt, invitar, jugar, mensajeFinal, mensajeHoy, mensajeInvitacion, mensajeTabla, mostrar, podio, poner, portada, tablero, toast, zonaTexto, lineaZona } = ctx);
   pantallaAdmin(opciones);
 }
 
@@ -133,7 +133,7 @@ function pantallaAdmin({ forzar = false } = {}) {
     poner(body, el('div', { class: 'panel stack', id: 'admin-inicio' },
       el('p', { class: 'lead', style: 'margin:0' }, T.startTitle),
       el('p', { class: 'muted', style: 'margin:0' }, fmt(d >= 1 ? T.startWas : T.startIs, { fecha: fechaLarga(meta.win[1].a, meta.tz) })),
-      el('p', { class: 'muted', id: 'admin-zona', style: 'margin:0' }, fmt(T.startZone, { zona: zonaTexto(meta.tz) })),
+      el('p', { class: 'muted', id: 'admin-zona', style: 'margin:0' }, lineaZona ? lineaZona(meta) : fmt(T.startZone, { zona: zonaTexto(meta.tz) })),
       alerta ? el('div', { class: 'aviso' }, alerta) : null,
       el('div', { class: 'btn-row tres' }, mover(hoy, T.startTodayBtn, 'btn-inicio-hoy'), mover(manana, T.startTomorrowBtn, 'btn-inicio-manana'), botonOtra),
       otra.nodo));
