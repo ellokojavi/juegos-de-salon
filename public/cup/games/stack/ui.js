@@ -211,9 +211,19 @@ export function montar(raiz, ctx) {
       if (vez !== partidas || !raiz.isConnected) return;
       juego.classList.add('terminado');
       const n = e.n;
-      fin.replaceChildren(
-        el('p', { class: 'sk-sello', id: 'sk-sello' }, fmt(T.skBlocks[forma(n)], { n })),
-        el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(estado()); } }, ctx.textoFin || T.seeResults));
+      const boton = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); ctx.terminar(estado()); } }, ctx.textoFin || T.seeResults);
+      // The end's tour: the tower takes the whole screen and the camera goes down it turning a full
+      // circle, a cut every ten floors, and back up; «51 floors» up top, the tower under a blurred strip with the button,
+      // its top resting halfway between «Game over» and the button
+      juego.classList.add('gira');
+      marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
+      fin.replaceChildren(boton);
+      requestAnimationFrame(() => {
+        const r = lienzo.getBoundingClientRect(), a = aviso.getBoundingClientRect().bottom, b = boton.getBoundingClientRect().top;
+        if (r.height) sc.enfocar(Math.min(0.7, Math.max(0.3, ((a + b) / 2 - r.top) / r.height)));
+        if (!QUIETO()) sc.recorrer(n);
+        despertar();
+      });
     };
     if (recien) setTimeout(mostrar, QUIETO() ? 400 : FIN_MS); else mostrar();
   }
@@ -223,7 +233,7 @@ export function montar(raiz, ctx) {
     sc.draw(S.g, now, S.pausa || now);
     // Paused for a second (effects done), or finished and the last piece fallen: the loop sleeps until
     // the tap back, so a game left on the table does not burn battery (#892)
-    if ((S.pausa && now - S.pausa > 1000) || (S.fin && now - S.finEn > 3000)) { S.dormido = true; return; }
+    if ((S.pausa && now - S.pausa > 1000) || (S.fin && now - S.finEn > 3000 && !sc.recorriendo(now))) { S.dormido = true; return; }
     requestAnimationFrame(paso);
   };
   function despertar() { if (S.dormido) { S.dormido = false; requestAnimationFrame(paso); } }

@@ -6,6 +6,13 @@
 > flag `stack` on its /labs/ card. The cover credits the original with a link, as every inspired game
 > does. What follows describes the English lab prototype, still at `/labs/stack/` until the cleanup PR;
 > the play is the same in the new module. End to end: `tools/e2e/stack/game.mjs`.
+>
+> **The end's tour** (the owner's request, only in Babel, not the lab prototype): when a game ends the
+> tower takes the whole screen and the camera goes down it to the base at a steady pace while it turns
+> a full circle, then back up turning the other way (`scene.js` `tour`, `recorrer`). A glowing plane
+> slices the tower every ten floors, its number lying on the plane in two opposite corners. Up top it
+> reads «N pisos» (no blocks stamp); «Ver resultado» sits on a blurred strip over the tower. No tour
+> with reduced motion.
 
 A one-tap tower game for one player (D-445): a block slides over the tower, a tap drops it, and whatever
 hangs over the edge is cut off. **Inspired by [Stack](https://www.ketchappgames.com/), by Ketchapp
