@@ -66,6 +66,20 @@ export async function testerBadge(title, { lang = 'es', labsUrl = new URL('../..
   const t = T[lang] || T.es;
   chip = el('button', { type: 'button', class: 'tester-chip', id: 'tester-chip', 'aria-haspopup': 'dialog', 'aria-label': t.title, onClick: () => sheet(t, labsUrl) }, 'tester');
   title.after(chip);
+  // On the title's top right corner, over it, never pushing anything: where its text ends, not its box
+  const place = () => {
+    const r = document.createRange(); r.selectNodeContents(title);
+    const t = r.getBoundingClientRect(), box = title.offsetParent?.getBoundingClientRect();
+    if (!box || !t.width) return;
+    const left = Math.min(t.right - box.left - 18, box.width - chip.offsetWidth - 4);
+    chip.style.left = `${Math.max(4, left)}px`;
+    chip.style.top = `${t.top - box.top - 10}px`;
+  };
+  place();
+  addEventListener('resize', place);
+  document.fonts?.ready.then(place);
+  // The language toggle rewrites the title: the chip follows its new width
+  new MutationObserver(place).observe(title, { childList: true, characterData: true, subtree: true });
 }
 
 export const TESTER_TEXTS = T;
