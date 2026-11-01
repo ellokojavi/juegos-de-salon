@@ -29,7 +29,7 @@ const BASE_COLOR = [58, 20, 100];
  * the tower. The canvas is transparent: the tower stands on the app's own night. `draw(g, now)` paints
  * one frame.
  */
-export function escena(canvas, { zoom = 1 } = {}) {
+export function escena(canvas, { zoom = 1, foco = 0.56 } = {}) {
   const ctx = canvas.getContext('2d');
   let W = 0, H = 0, u = 0, camY = 0, ultimo = 0;
   let fija = null;     // a camera set from outside (the teaser): { y, yaw }; the game leaves it null
@@ -53,7 +53,7 @@ export function escena(canvas, { zoom = 1 } = {}) {
   const pt = (x, y, z) => {
     const yaw = fija?.yaw || giro;
     if (yaw) { const c = Math.cos(yaw), s = Math.sin(yaw); [x, z] = [x * c - z * s, x * s + z * c]; }
-    return [W / 2 + (x - z) * COS30 * u, H * 0.56 + (x + z) * SIN30 * u - (y - camY) * u];
+    return [W / 2 + (x - z) * COS30 * u, H * foco + (x + z) * SIN30 * u - (y - camY) * u];
   };
   const poly = (pts, fill) => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); };
 
@@ -193,6 +193,8 @@ export function escena(canvas, { zoom = 1 } = {}) {
     ctx.restore();
   }
   return {
+    /** Where the top of the tower sits, as a share of the canvas's height (the end screen centers it between its texts). */
+    enfocar(f) { foco = f; },
     /** The end's tour (`n` levels): from the top down to the base, a cut every ten, and back up. */
     recorrer(n, now = performance.now()) { gira = { n, born: now }; },
     /** Whether the tour is still moving (the loop keeps drawing while it is). */
