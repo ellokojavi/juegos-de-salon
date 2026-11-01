@@ -225,18 +225,21 @@ export function montar(raiz, ctx) {
     aviso.classList.remove('fuera', 'brilla'); aviso.classList.add('final');
     const mostrar = () => {
       if (vez !== partidas || !raiz.isConnected) return;
+      // Where the top of the tower is on screen as the game ends: the tour starts right there
+      const antes = lienzo.getBoundingClientRect().top + sc.altura();
       juego.classList.add('terminado');
       const n = e.n;
-      const boton = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); if (sim) location.reload(); else ctx.terminar(estado()); } }, ctx.textoFin || T.seeResults);
+      const boton = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); if (sim) location.reload(); else ctx.terminar(estado()); } }, ctx.textoFin || T.skContinue);
       // The end's tour: the tower takes the whole screen and the camera goes down it turning a full
-      // circle, a cut every ten floors, and back up; «51 floors» up top, the tower under a blurred strip with the button,
-      // its top resting halfway between «Game over» and the button
+      // circle, a cut every ten floors, and back up; «51 floors» up top, the tower under a blurred strip
+      // with «Continue». Its top glides from where the game left it to just under «Game over», so the
+      // tower fills the screen
       juego.classList.add('gira');
       marcador.replaceChildren(String(n), ' ', el('span', { class: 'sk-pisos' }, T.skFloors[forma(n)]));
       fin.replaceChildren(boton);
       requestAnimationFrame(() => {
         const r = lienzo.getBoundingClientRect(), a = aviso.getBoundingClientRect().bottom, b = boton.getBoundingClientRect().top;
-        if (r.height) sc.enfocar(Math.min(0.7, Math.max(0.3, ((a + b) / 2 - r.top) / r.height)));
+        if (r.height) sc.deslizar(antes - r.top, Math.min(r.height * 0.6, a - r.top + Math.max(70, (b - a) * 0.2)), QUIETO() ? 0 : 900);
         if (!QUIETO()) sc.recorrer(n);
         despertar();
       });
