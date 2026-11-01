@@ -54,7 +54,7 @@ export const MIN_OVERLAP = 4;
 export const measureOverlap = `(()=>{
   const root = document.querySelector('.screen.active') || document.body;
   const floating = x => { for (let e = x; e && e !== document.body; e = e.parentElement) { const p = getComputedStyle(e).position; if (p === 'fixed' || p === 'sticky') return true; } return false; };
-  const visible = x => { const s = getComputedStyle(x); const r = x.getBoundingClientRect(); return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && Number(s.opacity) > 0 && x.closest('[aria-hidden="true"]') === null; };
+  const visible = x => { const s = getComputedStyle(x); const r = x.getBoundingClientRect(); return r.width > 0 && r.height > 0 && (!x.checkVisibility || x.checkVisibility({ opacityProperty: true, visibilityProperty: true, contentVisibilityAuto: true })) && s.pointerEvents !== 'none' && s.visibility !== 'hidden' && Number(s.opacity) > 0 && x.closest('[aria-hidden="true"]') === null; };
   const scopes = [root, ...document.querySelectorAll('dialog[open], .confirm')].filter((x, i, a) => a.indexOf(x) === i);
   const buttons = [...new Set(scopes.flatMap(s => [...s.querySelectorAll('button, a.btn')]))]
     .filter(x => visible(x) && !floating(x) && !x.closest('[data-overlap-ok]') && !x.parentElement.closest('button, a.btn'))

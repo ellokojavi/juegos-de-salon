@@ -165,7 +165,15 @@ export async function launch({ port: requested, dir, out, width = 390, height = 
       } catch (_) { /* a page without the app (about:blank) has no boards */ }
       // And that no two buttons cover each other (U-12, D-520)
       try {
-        const pairs = JSON.parse(await api.evaluate(measureOverlap));
+        // Measured twice, 600 ms apart: a sheet still sliding in is not an overlap, one that stays is
+        const first = JSON.parse(await api.evaluate(measureOverlap));
+        let pairs = [];
+        if (first.length) {
+          await sleep(600);
+          const who = p => p.replace(/ \(\d+×\d+ px\)$/, '');
+          const again = new Set(JSON.parse(await api.evaluate(measureOverlap)).map(who));
+          pairs = first.filter(p => again.has(who(p)));
+        }
         if (pairs.length) console.log(`✗ ${name}: buttons on top of each other (U-12): ${pairs.join(', ')}`);
       } catch (_) { /* no page */ }
     },
