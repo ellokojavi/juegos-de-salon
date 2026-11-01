@@ -76,7 +76,8 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
   the `end-to-end` check on GitHub is the gate.
 - **Big files**: nothing over 5 MB enters git (D-494).
 - **Visual proposals come as images**: when the owner asks for visual treatments, render mockups
-  (HTML + the pre-installed Playwright, screenshot) and send the image, not only text.
+  on the real page (serve `public/`, change the DOM with Playwright using the existing CSS classes,
+  screenshot) and send the image, not only text; a mockup with its own styles does not count.
 
 ## Before proposing a merge (detail in [docs/MERGING.md](docs/MERGING.md))
 
