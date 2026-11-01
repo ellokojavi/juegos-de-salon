@@ -261,11 +261,12 @@ for (const g of GAMES) {
   const facts = existsSync(game) && readFileSync(game, 'utf8').includes('mountHowToPlayFacts(');
   HOW[g.id] = facts ? `${factsLine(g.id, T, 'es')} ${rules}` : rules;
 }
-// The Cup's games: their page's rules section shows the steps of their Cup rules (cup/rules.js)
+// The Cup's games: their page's rules section shows the facts line (flag cover-facts, launched for
+// everyone) and then the steps of their Cup rules (cup/rules.js), as the page renders them (D-488)
 const { JUEGOS_COPA } = await import(join(ROOT, 'public', 'cup', 'rules.js'));
 for (const g of SUELTOS) {
   const como = JUEGOS_COPA[g.id]?.como;
-  if (g.slug && como?.length) HOW[g.id] = como.join(' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  if (g.slug && como?.length) HOW[g.id] = `${factsLine(g.id, {}, 'es')} ${como.join(' ')}`.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 }
 /** '1–6' → { min: 1, max: 6 } */
 const range = s => { const [a, b = a] = String(s).split(/[–-]/).map(Number); return { minValue: a, maxValue: b }; };
