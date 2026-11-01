@@ -77,9 +77,8 @@
 .sk-credito { margin: 0; font-size: 0.85rem; color: var(--muted); text-align: center; }
 .sk-credito a { color: var(--cyan); }
 .sk-cabecera { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 4px; }
-.sk-musica { width: 44px; height: 44px; flex: none; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: inherit; font-size: 1.2rem; cursor: pointer; }
-.sk-musica.apagada { opacity: 0.6; }
-.sk-cabecera { flex-wrap: nowrap; }
+.sk-musica { flex: none; white-space: nowrap; width: auto; margin: 0; }
+.sk-musica.apagada { opacity: 0.7; }
 .sk-musica-credito { text-align: center; }
 .sk-musica-credito { font-size: 0.78rem; margin: 2px 0 0; }
 .sk-musica-credito a { color: inherit; }

@@ -131,9 +131,9 @@ export function titulo({ el, J }) {
   // The background music's switch (flag babel-music), remembered on this phone
   flag('babel-music').then(si => {
     if (!si || !cabeza.isConnected) return;
-    const boton = el('button', { type: 'button', class: 'sk-musica', id: 'btn-musica', 'aria-pressed': String(musicOn()) });
-    // Only the icon, beside the languages; its name is in the label and the tooltip
-    const pintar = () => { const on = musicOn(), nombre = on ? UI().skMusicOn : UI().skMusicOff; boton.textContent = on ? '🎵' : '🔇'; boton.setAttribute('aria-label', nombre); boton.title = nombre; boton.classList.toggle('apagada', !on); boton.setAttribute('aria-pressed', String(on)); };
+    const boton = el('button', { type: 'button', class: 'btn btn--ghost btn--sm sk-musica', id: 'btn-musica', 'aria-pressed': String(musicOn()) });
+    // In words, «Música: sí / no»: an icon alone looked like the sound effects' 🔊 (the owner's call)
+    const pintar = () => { const on = musicOn(); boton.textContent = on ? UI().skMusicOn : UI().skMusicOff; boton.classList.toggle('apagada', !on); boton.setAttribute('aria-pressed', String(on)); };
     boton.addEventListener('click', () => { setMusicOn(!musicOn()); pintar(); });
     pintar();
     // Above the title, as a header: the language toggle on the left, the music switch on its right
