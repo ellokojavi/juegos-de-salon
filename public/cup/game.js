@@ -1539,6 +1539,7 @@ async function jugar(d, { nuevo = false } = {}) {
     // queda ahí, y lo que se tarde en tocar "Ver resultado" no cuenta (D-130). Con el estado
     // final, además, el resultado sale en ese momento (D-150)
     pararReloj(estado) {
+      musica.fadeOutLater();
       if (!detenido) { rel = reloj.pausar(rel, ahora()); detenido = true; persistir(); }
       pararMuestra(cron, () => reloj.leer(rel, ahora()));
       if (estado && !fin) cerrar(estado);
@@ -1928,6 +1929,7 @@ async function jugarSinPuntaje(id, p, alTerminar, { ensayo = false, guardado = n
       return leyendo;
     },
     pararReloj() {
+      musica.fadeOutLater();
       if (!detenido) { rel = reloj.pausar(rel, Date.now()); detenido = true; }
       pararMuestra(cron, () => reloj.leer(rel, Date.now()));
     },
