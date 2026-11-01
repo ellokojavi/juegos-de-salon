@@ -101,7 +101,7 @@ async function ci() {
   console.log(report(result));
   const status = (state, description) => gh('api', '-X', 'POST', `repos/${repo}/statuses/${sha}`, '-f', `state=${state}`, '-f', `context=${STATUS}`, '-f', `description=${description}`);
   if (result.lane !== 'red') {
-    status('success', `${CONFIG.lanes[result.lane].icon} ${result.lane} lane: no owner approval needed`);
+    status('success', `${result.lane} lane: no owner approval needed`);
     try { gh('pr', 'edit', String(n), '-R', repo, '--remove-label', LABEL); } catch { /* it did not have it */ }
     return;
   }
@@ -112,7 +112,7 @@ async function ci() {
   }
   try { gh('label', 'create', LABEL, '-R', repo, '--color', 'B60205', '--description', 'Red lane: needs the owner\'s approval (docs/LANES.md)'); } catch { /* exists */ }
   gh('pr', 'edit', String(n), '-R', repo, '--add-label', LABEL);
-  status('failure', '🔴 red lane: waiting for the owner\'s tick');
+  status('failure', 'red lane: waiting for the owner tick');
   // One open question per commit: the issue title names the PR, the body the commit
   const open = JSON.parse(gh('issue', 'list', '-R', repo, '--state', 'open', '--label', 'processes', '--search', `"Owner approval: PR #${n}" in:title`, '--json', 'number,body'));
   if (open.some(i => i.body.includes(sha))) { console.log('The question for this commit is already open.'); return; }

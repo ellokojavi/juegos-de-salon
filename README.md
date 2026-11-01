@@ -575,6 +575,7 @@ node tools/agents/ideas.test.mjs
 node tools/agents/inbox.test.mjs
 node tools/agents/lab-publish.test.mjs
 node tools/agents/labs-key.test.mjs
+node tools/agents/lanes.test.mjs
 node tools/agents/marketing.test.mjs
 node tools/agents/pending.test.mjs
 node tools/agents/popularity.test.mjs
@@ -811,6 +812,7 @@ These documents are being moved to English (D-316); the ones with a Spanish titl
 - [Changelog](CHANGELOG.md)
 - [The owner's agents and tools](docs/AGENTS.md)
 - [El alemán](docs/ALEMAN.md)
+- [Merge lanes (D-519)](docs/LANES.md)
 - [Merging and publishing](docs/MERGING.md)
 - [PR previews (D-429)](docs/PREVIEWS.md)
 - [App instalable y avisos al celular (PWA + Web Push)](docs/PWA-NOTIFICACIONES.md)
