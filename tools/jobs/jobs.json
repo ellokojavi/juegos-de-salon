@@ -75,6 +75,14 @@
       "decisions": ["D-440"]
     },
     {
+      "id": "failure-log",
+      "where": "github",
+      "workflow": "failure-log.yml",
+      "trigger": "workflow_run: Tests, End to end (completed, on PRs)",
+      "what": "Records every red `tests` or `end-to-end` run of a PR on the `failure-log` branch, one record per failing test with its signature, and closes them when the PR goes green (fixed by that commit, or flaky on the same commit). `failures.mjs check` and `processes.mjs check` show the signatures seen on two PRs.",
+      "decisions": ["D-518"]
+    },
+    {
       "id": "pending-watch",
       "where": "github",
       "workflow": "pending-watch.yml",

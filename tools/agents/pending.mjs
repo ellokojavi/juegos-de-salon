@@ -20,8 +20,8 @@ export const TITLE = 'Pending work';
 const HOUR = 3600 * 1000;
 /** The checks `main` requires (D-216). */
 const REQUIRED = ['tests', 'end-to-end'];
-/** Never stranded: the published branches and the decision reservations (D-301). */
-const SKIP = /^(main|gh-pages|reserve\/|reserva\/)/;
+/** Never stranded: the published branches, the CI failure log (D-518) and the decision reservations (D-301). */
+const SKIP = /^(main|gh-pages|failure-log$|reserve\/|reserva\/)/;
 
 /**
  * Why an open PR is stuck, or [] if it is moving. A PR younger than its grace is left alone: its

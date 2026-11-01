@@ -20,7 +20,7 @@ check('each job says where, what and why', () => {
   for (const j of list) {
     assert.ok(['github', 'mac', 'hook'].includes(j.where), `${j.id}: where`);
     assert.ok(j.what && j.decisions?.length, `${j.id}: what and decisions`);
-    if (j.where === 'github') assert.ok(j.workflow && j.cron, `${j.id}: workflow and cron`);
+    if (j.where === 'github') assert.ok(j.workflow && (j.cron || j.trigger), `${j.id}: workflow and cron (or the trigger of an event-driven one)`);
     if (j.where === 'mac') assert.ok(((Number.isInteger(j.every) && j.every >= 60) !== !!j.at) && j.command?.length, `${j.id}: every or at, and command`);
     if (j.at) assert.ok(Number.isInteger(j.at.hour) && Number.isInteger(j.at.minute), `${j.id}: at.hour and at.minute`);
     if (j.where === 'hook') assert.ok(j.trigger, `${j.id}: trigger`);
