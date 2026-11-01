@@ -154,7 +154,9 @@ await test('comodín antes de empezar; resultado una vez y en su ventana', async
 });
 
 await test('el reloj adelantado abre y cierra días', async () => {
-  admin.adelantar(DIA_MS * 2);
+  // Two days and two hours: on the day a time zone leaves summer time (25 hours, as 2026-11-01 in
+  // Los Angeles) two plain days still fell inside day 1's window and this failed
+  admin.adelantar(DIA_MS * 2 + 2 * 3600e3);
   await rechaza(otro.resultado(CODE, 1, 'bbbbbb', { s: 1, ms: 1 }), 'ventana');
   await otro.empezar(CODE, 3, 'bbbbbb');
   await otro.resultado(CODE, 3, 'bbbbbb', { s: 300, ms: 1 });
