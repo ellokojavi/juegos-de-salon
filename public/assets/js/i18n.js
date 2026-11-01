@@ -887,8 +887,8 @@ export const BANDERAS = { es: '🇪🇸', en: '🇬🇧', pt: '🇧🇷' };
 export const NOMBRES_IDIOMA = { es: 'Español', en: 'English', pt: 'Português' };
 
 /**
- * El selector de idioma, el único de la app (D-231): cada botón lleva su bandera y su código,
- * siempre, también en un celular angosto (base.css). `onChange(lang)` se llama tras guardar el
+ * The app's only language selector (D-231): each button shows just its flag; the language name
+ * is in title and aria-label. `onChange(lang)` se llama tras guardar el
  * idioma nuevo; por defecto recarga la página para que todo se re-renderice con el elegido.
  */
 export function langToggle(onChange = () => location.reload()) {
@@ -899,7 +899,7 @@ export function langToggle(onChange = () => location.reload()) {
       type: 'button', class: lang === current ? 'on' : '', 'aria-pressed': lang === current ? 'true' : 'false',
       lang, title: NOMBRES_IDIOMA[lang], 'aria-label': NOMBRES_IDIOMA[lang],
       onClick: () => { if (lang === getLang()) return; setLang(lang); onChange(lang); },
-    }, el('span', { class: 'flag', 'aria-hidden': 'true' }, BANDERAS[lang]), el('span', { class: 'code' }, lang.toUpperCase())));
+    }, el('span', { class: 'flag', 'aria-hidden': 'true' }, BANDERAS[lang])));
   }
   return wrap;
 }

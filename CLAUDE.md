@@ -66,6 +66,9 @@ marks the old decision (`amended by` / `replaced by`). A canon that contradicts 
   someone would otherwise undo. Small adjustments go only in the changelog entry. Reserve the number
   first: `node tools/agents/decision.mjs reserve` (D-301); one file each in `docs/decisions/`, the index
   `docs/DECISIONS.md` is generated (`decision.mjs index`), never hand-edited (D-394).
+- **Always open the PR and drive it to merge** without asking the owner first (D-522): right after opening it,
+  run the "Before proposing a merge" steps below (lane, its agents, auto-merge), and in a cloud session
+  subscribe to the PR's activity (`subscribe_pr_activity`) so a red check is fixed without the owner asking.
 - **A single push at the end** (D-303), with the agents' fixes included.
 - **Everything in development sits behind the lab** (D-395, D-409, D-498): lab games under `/labs/`, anything
   new on a player page behind its runtime flag `flag('<id>')` (`public/assets/js/flags.js`) and listed in
