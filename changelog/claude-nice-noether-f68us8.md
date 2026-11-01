@@ -6,3 +6,5 @@ level: patch
   off, remembered on the phone, looped and low so the game's sounds stay on
   top; the mute button silences it too (`public/assets/js/music.js`).
   The end screen credits the track and its author, linked to Pixabay.
+- 🧪 Babel's lab «Simular final» moved off the cover into a folded 🧪 tab on the screen's left edge, so the
+  cover always shows what players see.
