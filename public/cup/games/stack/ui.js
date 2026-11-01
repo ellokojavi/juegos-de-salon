@@ -226,7 +226,9 @@ export function montar(raiz, ctx) {
     const mostrar = () => {
       if (vez !== partidas || !raiz.isConnected) return;
       // Where the top of the tower is on screen as the game ends: the tour starts right there
-      const antes = lienzo.getBoundingClientRect().top + sc.altura();
+      // (held in pixels before the screen grows, so the resize cannot move or rescale it)
+      const antes = sc.altura();
+      sc.deslizar(antes, antes, 0);
       juego.classList.add('terminado');
       const n = e.n;
       const boton = el('button', { type: 'button', class: 'btn btn--yellow', id: 'btn-fin', onClick: () => { SFX.tap(); if (sim) location.reload(); else ctx.terminar(estado()); } }, ctx.textoFin || T.skContinue);
@@ -239,8 +241,9 @@ export function montar(raiz, ctx) {
       fin.replaceChildren(boton);
       requestAnimationFrame(() => {
         const r = lienzo.getBoundingClientRect(), a = aviso.getBoundingClientRect().bottom, b = boton.getBoundingClientRect().top;
-        if (r.height) sc.deslizar(antes - r.top, Math.min(r.height * 0.6, a - r.top + Math.max(70, (b - a) * 0.2)), QUIETO() ? 0 : 900);
-        if (!QUIETO()) sc.recorrer(n);
+        // First the top glides up while the cuts fade in, then the camera starts down
+        if (r.height) sc.deslizar(antes, Math.min(r.height * 0.6, a - r.top + Math.max(70, (b - a) * 0.2)), QUIETO() ? 0 : 1000);
+        if (!QUIETO()) sc.recorrer(n, performance.now(), 1000);
         despertar();
       });
     };
